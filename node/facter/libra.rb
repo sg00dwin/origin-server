@@ -94,9 +94,9 @@ end
 
 
 #
-# Find capacity
+# Find active capacity
 #
-Facter.add(:capacity) do
+Facter.add(:active_capacity) do
     git_repos =  Facter.value(:git_repos).to_f
     max_active_apps = Facter.value(:max_active_apps).to_f
     stopped_app_count = 0
@@ -108,7 +108,17 @@ Facter.add(:capacity) do
             end
         end
     }
-    capacity = ( (git_repos - stopped_app_count) / max_active_apps ) * 100
+    active_capacity = ( (git_repos - stopped_app_count) / max_active_apps ) * 100
+    setcode { active_capacity.to_s }
+end
+
+#
+# Find capacity
+#
+Facter.add(:capacity) do
+    git_repos =  Facter.value(:git_repos).to_f
+    max_apps = Facter.value(:max_apps).to_f
+    capacity = ( git_repos / max_apps ) * 100
     setcode { capacity.to_s }
 end
 

@@ -3,7 +3,7 @@
 
 Summary:   Li broker components
 Name:      rhc-broker
-Version:   0.86.1
+Version:   0.86.2
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -79,6 +79,56 @@ rm -rf $RPM_BUILD_ROOT
 /bin/touch %{brokerdir}/log/production.log
 
 %changelog
+* Sat Feb 11 2012 Dan McPherson <dmcphers@redhat.com> 0.86.2-1
+- Updating gem versions (dmcphers@redhat.com)
+- get move working again and add quota support (dmcphers@redhat.com)
+- Add calls to backend for proxy. (rmillner@redhat.com)
+- Fix broker auth service, bug# 787297 (rpenta@redhat.com)
+- Minor fixes to export/conceal port functions (kraman@gmail.com)
+- Bug 789225 (dmcphers@redhat.com)
+- bug 722828 (wdecoste@localhost.localdomain)
+- bug 722828 (wdecoste@localhost.localdomain)
+- more move debug + test case simplifications (dmcphers@redhat.com)
+- Fixing add/remove embedded cartridges Fixing domain info on legacy broker
+  controller Fixing start/stop/etc app and cart. control calls for legacy
+  broker (kraman@gmail.com)
+- Update application_container_proxy to be able to distnguish between
+  app,framework,embedded carts and perform config/start/etc hooks appropriately
+  (kraman@gmail.com)
+- Bug fixes for saving connection list Abstracting difference between
+  framework/embedded cart in application_container_proxy and application
+  (kraman@gmail.com)
+- Renamed ApplicationContainer to Gear to avoid confusion Fixed gear
+  creation/configuration/deconfiguration for framework cartridge Fixed
+  save/load of group insatnce map Removed hacks where app was assuming one gear
+  only Started changes to enable rollback if operation fails (kraman@gmail.com)
+- Fixes for re-enabling cli tools. git url is not yet working.
+  (kraman@gmail.com)
+- Updated code to make it re-enterant. Adding/removing dependencies does not
+  change location of dependencies that did not change.
+  (rchopra@unused-32-159.sjc.redhat.com)
+- Updating models to improove schems of descriptor in mongo Moved
+  connection_endpoint to broker (kraman@gmail.com)
+- Changes to re-enable app to be saved/retrieved to/from mongo Various bug
+  fixes (kraman@gmail.com)
+- Creating models for descriptor Fixing manifest files Added command to list
+  installed cartridges and get descriptors (kraman@gmail.com)
+- Merge branch 'master' into haproxy (mmcgrath@redhat.com)
+- Adding expose-port and conceal-port (mmcgrath@redhat.com)
+- change status to use normal client_result instead of special handling
+  (dmcphers@redhat.com)
+- add force stop to move (dmcphers@redhat.com)
+- better messaging on move deconfigure failure (dmcphers@redhat.com)
+- add warning about existing migration data (dmcphers@redhat.com)
+- restrict ctl-district to allowed commands (dmcphers@redhat.com)
+- Bug 787994 (dmcphers@redhat.com)
+- move server_identities to array (dmcphers@redhat.com)
+- make actions and cdk commands match (dmcphers@redhat.com)
+- increase std and large gear restrictions (dmcphers@redhat.com)
+- add app url lookup to move (dmcphers@redhat.com)
+- always take the destination district uuid (dmcphers@redhat.com)
+- keep apps stopped or idled on move (dmcphers@redhat.com)
+
 * Fri Feb 03 2012 Dan McPherson <dmcphers@redhat.com> 0.86.1-1
 - Updating gem versions (dmcphers@redhat.com)
 - bump spec numbers (dmcphers@redhat.com)

@@ -14,7 +14,7 @@ Reservations:
   - MEM >= 100MB
 Components:
   default:
-     Dependencies: [rhc-cartridge-php]
+#     Dependencies: [rhc-cartridge-php]
      Publishes:
         get-proxy-path:
           Type: "STRING:proxy-path"

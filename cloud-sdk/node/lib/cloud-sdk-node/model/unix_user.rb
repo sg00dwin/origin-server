@@ -32,16 +32,18 @@ module Cloud::Sdk
   # Represents a user account on the system.
   class UnixUser < Model
     include Cloud::Sdk::Utils::ShellExec
-    attr_reader :uuid, :uid, :gid, :gecos, :homedir, :application_uuid, :container_uuid
+    attr_reader :uuid, :uid, :gid, :gecos, :homedir, :application_uuid, :container_uuid, :quota_blocks, :quota_files
     
     DEFAULT_SKEL_DIR = File.join(Cloud::Sdk::Config::CONF_DIR,"skel")
 
-    def initialize(application_uuid, container_uuid, user_uid=nil)
+    def initialize(application_uuid, container_uuid, user_uid=nil, quota_blocks=nil, quota_files=nil)
       @config = Cloud::Sdk::Config.instance
       
       @container_uuid = container_uuid
       @application_uuid = application_uuid
       @uuid = container_uuid
+      @quota_blocks = quota_blocks
+      @quota_files = quota_files
       begin
         user_info = Etc.getpwnam(@uuid)
         @uid = user_info.uid
@@ -221,8 +223,8 @@ module Cloud::Sdk
         end
         begin
           File.open(File.join(env_dir, key), File::WRONLY|File::CREAT|File::EXCL) do |file|
-            file.write "#{env_var}[#{proxy_port}]='#{proxy_target}'"
-            file.write "export #{env_var}"
+            file.write "#{env_var}[#{proxy_port}]='#{proxy_target}'\n"
+            file.write "export #{env_var}\n"
           end
           self.class.notify_observers(:after_proxy_alloc_next_port, self, proxy_port, proxy_target)
           return proxy_port
@@ -234,7 +236,7 @@ module Cloud::Sdk
 
     def proxy_remove_port(proxy_port, prefix_cloud_name=false)
       if not proxy_port_list().include?(proxy_port)
-        raise SecurityError, 'Requested port not allowed: #{proxy_port}'
+        raise SecurityError, "Requested port not allowed: #{proxy_port}"
       end
 
       self.class.notify_observers(:before_proxy_remove_port, self, proxy_port)
@@ -268,7 +270,7 @@ module Cloud::Sdk
       add_env_var("APP_UUID", @application_uuid, true)
       add_env_var("CONTAINER_UUID", @container_uuid, true)
       add_env_var("HOMEDIR", @homedir.end_with?('/') ? @homedir : @homedir + '/', true)
-      notify_observers(:after_initialize_homedir)        
+      notify_observers(:after_initialize_homedir)
     end
     
     def next_uid

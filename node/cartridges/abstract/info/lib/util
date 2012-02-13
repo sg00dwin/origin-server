@@ -196,8 +196,8 @@ function set_app_info {
     echo "APP_INFO: $1"
 }
 
-function send_status {
-    echo "STATUS: $1"
+function send_attr {
+    echo "ATTR: $1"
 }
 
 function add_ssh_key {
@@ -435,11 +435,19 @@ function send_stopped_status {
         HTTP_DIR=`dirname "/etc/httpd/conf.d/libra/${uuid}"*/00000_default.conf`
         if [ -f $HTTP_DIR/0000000000000_disabled.conf ]
         then
-            send_status "ALREADY_IDLED"
+            send_attr "status=ALREADY_IDLED"
         else
-            send_status "ALREADY_STOPPED"
+            send_attr "status=ALREADY_STOPPED"
         fi
     fi
+}
+
+function send_quotas {
+    q=`quota -w -u ${uuid} | tail -n1`
+    quota_blocks=`echo $q | gawk '{print $4}'`
+    send_attr "quota_blocks=$quota_blocks"
+    quota_files=`echo $q | gawk '{print $7}'`
+    send_attr "quota_files=$quota_files"
 }
 
 function status_client_result {
@@ -501,7 +509,7 @@ function validate_run_as_user {
     fi
 }
 
-if [ -f /usr/libexec/li/cartridges/abstract/info/lib/util_ext ]
+if [ -f /usr/libexec/li/lib/util_ext ]
 then
-    source /usr/libexec/li/cartridges/abstract/info/lib/util_ext
+    source /usr/libexec/li/lib/util_ext
 fi

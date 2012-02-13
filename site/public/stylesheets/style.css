@@ -958,6 +958,10 @@ footer.universal #copyright img {
   padding: .5em;
   margin-top: .5em;
 }
+#social img.avatar {
+  max-height: 64px;
+  max-width: 64px;
+}
 #social p.tweet {
   position: relative;
   padding: 1em;

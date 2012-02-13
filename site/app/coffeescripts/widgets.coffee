@@ -94,6 +94,7 @@ class osDialog
       event.preventDefault()
     @$overlay.hide()
     @$element.hide()
+    ($ '.message.error', @$element).remove()
   
   setText: (text) =>
     @$container.text text

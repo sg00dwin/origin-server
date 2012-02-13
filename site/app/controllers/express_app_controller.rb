@@ -38,6 +38,7 @@ class ExpressAppController < ApplicationController
     # Respond based on requested format
     Rails.logger.debug "Responding to app creation"
     @max_apps = Rails.configuration.express_max_apps
+    @operation = 'create'
 =begin
     @health_url = "http://#{app_url}"
     @health_url << "/#{@app.health_path}" unless @app.health_path.nil?
@@ -75,6 +76,7 @@ class ExpressAppController < ApplicationController
     end
         
     @max_apps = Rails.configuration.express_max_apps
+    @operation = 'destroy'
     respond_to do |format|
       format.html {flash[@message_type] = @message; redirect_to :controller => 'control_panel'}
       format.js { render :template => "express_app/create.js" }

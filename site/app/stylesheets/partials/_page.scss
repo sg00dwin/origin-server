@@ -564,6 +564,11 @@ footer.universal {
     padding: .5em;
     margin-top: .5em;
   }
+
+  img.avatar {
+    max-height: 64px;
+    max-width: 64px;
+  }
   
   p.tweet {
     position: relative;

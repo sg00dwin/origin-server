@@ -2,6 +2,7 @@
 
 CART_DIR=/usr/libexec/li/cartridges
 STOPTIMEOUT=10
+FMT="%a %b %d %Y %H:%M:%S GMT%z (%Z)"
 
 function _is_node_service_running() {
     if [ -f $OPENSHIFT_APP_DIR/run/node.pid ]; then
@@ -54,7 +55,14 @@ function _start_node_service() {
     node_app=${node_app:-"server.js"}
 
     pushd "$OPENSHIFT_REPO_DIR" > /dev/null
-    node $node_opts $node_app $node_app_args > $logf 2>&1 &
+    {
+       echo "`date +"$FMT"`: Starting application '$OPENSHIFT_APP_NAME' ..."
+       echo "    Script       = $node_app"
+       echo "    Script Args  = $node_app_args"
+       echo "    Node Options = $node_opts"
+    } >> $logf
+
+    node $node_opts $node_app $node_app_args >> $logf 2>&1 &
     ret=$?
     npid=$!
     popd > /dev/null
@@ -73,9 +81,9 @@ function _stop_node_service() {
     fi
 
     if [ -n "$node_pid" ]; then
-        # FIXME: kill -TERM doesn't seem to be sent to the process.
-        # /bin/kill $node_pid
-        /bin/kill -9 $node_pid
+        logf="$OPENSHIFT_APP_DIR/logs/node.log"
+        echo "`date +"$FMT"`: Stopping application '$OPENSHIFT_APP_NAME' ..." >> $logf
+        /bin/kill $node_pid
         ret=$?
         if [ $ret -eq 0 ]; then
             TIMEOUT="$STOPTIMEOUT"
@@ -85,6 +93,13 @@ function _stop_node_service() {
                 let TIMEOUT=${TIMEOUT}-1
             done
         fi
+
+        # Make Node go down forcefully if it is still running.
+        if _is_node_service_running ; then
+           /bin/kill -9 $node_pid
+        fi
+
+        echo "`date +"$FMT"`: Stopped Node application '$OPENSHIFT_APP_NAME'" >> $logf
         rm -f $OPENSHIFT_APP_DIR/run/node.pid
     else
         if `pgrep -x node -u $(id -u)  > /dev/null 2>&1`; then

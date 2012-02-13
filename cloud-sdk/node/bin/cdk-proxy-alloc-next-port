@@ -67,7 +67,7 @@ end
 
 begin
   container = Cloud::Sdk::ApplicationContainer.new(uuid,uuid)
-  proxy_port = container.user.proxy_alloc_next_port(proxy_target)
+  proxy_port = container.user.proxy_alloc_next_port(proxy_target, true)
   print "#{proxy_port}\n"
 rescue Exception => e
   $stderr.puts(e.message)

@@ -1,7 +1,7 @@
 %define cartridgedir %{_libexecdir}/li/cartridges/embedded/rockmongo-1.1
 
 Name: rhc-cartridge-rockmongo-1.1
-Version: 1.4.1
+Version: 1.4.2
 Release: 1%{?dist}
 Summary: Embedded RockMongo support for express
 
@@ -54,6 +54,17 @@ rm -rf $RPM_BUILD_ROOT
 %doc %{cartridgedir}/LICENSE
 
 %changelog
+* Sat Feb 11 2012 Dan McPherson <dmcphers@redhat.com> 1.4.2-1
+- more abstracting out selinux (dmcphers@redhat.com)
+- first pass at splitting out selinux logic (dmcphers@redhat.com)
+- Updating models to improove schems of descriptor in mongo Moved
+  connection_endpoint to broker (kraman@gmail.com)
+- Fixing manifest yml files (kraman@gmail.com)
+- Creating models for descriptor Fixing manifest files Added command to list
+  installed cartridges and get descriptors (kraman@gmail.com)
+- change status to use normal client_result instead of special handling
+  (dmcphers@redhat.com)
+
 * Fri Feb 03 2012 Dan McPherson <dmcphers@redhat.com> 1.4.1-1
 - bump spec numbers (dmcphers@redhat.com)
 - Make it clear the phpmyadmin and rockmongo users are just the db users

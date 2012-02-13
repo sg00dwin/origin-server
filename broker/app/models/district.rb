@@ -103,12 +103,17 @@ class District < Cloud::Sdk::Model
   def remove_node(server_identity)
     if server_identities.has_key?(server_identity)
       unless server_identities[server_identity]["active"]
-        if Cloud::Sdk::DataStore.instance.remove_district_node(@uuid, server_identity)
-          container = Cloud::Sdk::ApplicationContainerProxy.instance(server_identity)
-          container.set_district('NONE', false)
-          server_identities.delete(server_identity)
+        container = Cloud::Sdk::ApplicationContainerProxy.instance(server_identity)
+        capacity = container.get_capacity
+        if capacity == 0
+          if Cloud::Sdk::DataStore.instance.remove_district_node(@uuid, server_identity)
+            container.set_district('NONE', false)
+            server_identities.delete(server_identity)
+          else
+            raise Cloud::Sdk::CdkException.new("Node with server identity: #{server_identity} could not be removed from district: #{@uuid}")
+          end
         else
-          raise Cloud::Sdk::CdkException.new("Node with server identity: #{server_identity} could not be removed from district: #{@uuid}")
+          raise Cloud::Sdk::CdkException.new("Node with server identity: #{server_identity} could not be removed from district: #{@uuid} because it still has apps on it")
         end
       else
         raise Cloud::Sdk::CdkException.new("Node with server identity: #{server_identity} from district: #{@uuid} must be deactivated before it can be removed")

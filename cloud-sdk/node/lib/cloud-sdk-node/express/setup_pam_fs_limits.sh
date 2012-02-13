@@ -284,6 +284,16 @@ function set_fs_quotas {
 
 # get configuration values from libra configuration files or defaults
 username=$1
+quota_blocks_custom=$2
+quota_files_custom=$3
 initialize
+if [ -n "$quota_blocks_custom" ]
+then
+    quota_blocks=$quota_blocks_custom
+fi
+if [ -n "$quota_files_custom" ]
+then
+    quota_files=$quota_files_custom
+fi
 set_pam_limits $username
 set_fs_quotas $username $quota_blocks $quota_files

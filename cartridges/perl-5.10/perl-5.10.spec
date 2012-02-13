@@ -2,7 +2,7 @@
 
 Summary:   Provides mod_perl support
 Name:      rhc-cartridge-perl-5.10
-Version:   0.17.1
+Version:   0.17.11
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   ASL 2.0
@@ -91,6 +91,49 @@ rm -rf $RPM_BUILD_ROOT
 %doc %{cartridgedir}/LICENSE
 
 %changelog
+* Sat Feb 11 2012 Dan McPherson <dmcphers@redhat.com> 0.17.11-1
+- 
+
+* Sat Feb 11 2012 Dan McPherson <dmcphers@redhat.com> 0.17.10-1
+- 
+
+* Sat Feb 11 2012 Dan McPherson <dmcphers@redhat.com> 0.17.9-1
+- 
+
+* Sat Feb 11 2012 Dan McPherson <dmcphers@redhat.com> 0.17.8-1
+- 
+
+* Sat Feb 11 2012 Dan McPherson <dmcphers@redhat.com> 0.17.7-1
+- 
+
+* Sat Feb 11 2012 Dan McPherson <dmcphers@redhat.com> 0.17.6-1
+- 
+
+* Sat Feb 11 2012 Dan McPherson <dmcphers@redhat.com> 0.17.5-1
+- 
+
+* Sat Feb 11 2012 Dan McPherson <dmcphers@redhat.com> 0.17.4-1
+- 
+
+* Sat Feb 11 2012 Dan McPherson <dmcphers@redhat.com> 0.17.3-1
+- 
+
+* Sat Feb 11 2012 Dan McPherson <dmcphers@redhat.com> 0.17.2-1
+- README: added disable_cpan_tests information (tdawson@redhat.com)
+- build.sh: adding disable_cpan_tests marker (tdawson@redhat.com)
+- bug 722828 (bdecoste@gmail.com)
+- more abstracting out selinux (dmcphers@redhat.com)
+- better name consistency (dmcphers@redhat.com)
+- first pass at splitting out selinux logic (dmcphers@redhat.com)
+- Fix wrong link to remove-httpd-proxy (hypens not underscores) and fix
+  manifests for Node and Python to allow for nodejs/python app creation.
+  (ramr@redhat.com)
+- removed dependency on www-dynamic (rchopra@redhat.com)
+- Updating models to improove schems of descriptor in mongo Moved
+  connection_endpoint to broker (kraman@gmail.com)
+- Creating models for descriptor Fixing manifest files Added command to list
+  installed cartridges and get descriptors (kraman@gmail.com)
+
 * Fri Feb 03 2012 Dan McPherson <dmcphers@redhat.com> 0.17.1-1
 - bump spec numbers (dmcphers@redhat.com)
 

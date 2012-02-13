@@ -76,7 +76,8 @@ $ ->
       """
 
   ($ '#apps').osData event: 'app_form_return', onEvent: (event) ->
-    ($ '.error', this).remove()
+    ($ '.message.error', this).remove()
+    ($ '.message.error', cpDialog).remove()
     if event.osEventStatus == 'success'
       # update app table
       ($ '#app_list_container').html event.osEventData.app_table
@@ -93,9 +94,15 @@ $ ->
         ($ '.app-placeholder', this).hide()
     else
       # Error
-      ($ '#new_express_app', this).before """
+      msg = event.osEventData.message
+      op = event.osEventData.operation || 'create'
+      if 'destroy' == op
+        el = ($ 'header', cpDialog)
+      else
+        el = ($ '#new_express_app', this)
+      el.before """
         <div class="error message">
-          #{event.osEventData}
+          #{msg}
         </div>
       """
 

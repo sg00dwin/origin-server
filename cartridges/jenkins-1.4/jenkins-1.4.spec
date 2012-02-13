@@ -2,7 +2,7 @@
 
 Summary:   Provides jenkins-1.4 support
 Name:      rhc-cartridge-jenkins-1.4
-Version:   0.86.1
+Version:   0.86.2
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   ASL 2.0
@@ -76,6 +76,19 @@ rm -rf %{buildroot}
 %doc %{cartridgedir}/LICENSE
 
 %changelog
+* Sat Feb 11 2012 Dan McPherson <dmcphers@redhat.com> 0.86.2-1
+- bug 722828 (bdecoste@gmail.com)
+- more abstracting out selinux (dmcphers@redhat.com)
+- better name consistency (dmcphers@redhat.com)
+- first pass at splitting out selinux logic (dmcphers@redhat.com)
+- Fix wrong link to remove-httpd-proxy (hypens not underscores) and fix
+  manifests for Node and Python to allow for nodejs/python app creation.
+  (ramr@redhat.com)
+- Updating models to improove schems of descriptor in mongo Moved
+  connection_endpoint to broker (kraman@gmail.com)
+- Creating models for descriptor Fixing manifest files Added command to list
+  installed cartridges and get descriptors (kraman@gmail.com)
+
 * Fri Feb 03 2012 Dan McPherson <dmcphers@redhat.com> 0.86.1-1
 - bump spec numbers (dmcphers@redhat.com)
 

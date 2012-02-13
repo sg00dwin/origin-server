@@ -6,7 +6,8 @@
     ajax_response[:data][:app_limit_reached] = @userinfo.app_info.length >= @max_apps 
   else
     ajax_response[:status] = 'error'
-    ajax_response[:data] = @message
+    ajax_response[:data][:message] = @message
+    ajax_response[:data][:operation] = @operation if @operation
   end
 %>
 <%=raw ajax_response.to_json() %>

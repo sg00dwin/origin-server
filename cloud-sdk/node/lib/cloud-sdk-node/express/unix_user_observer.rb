@@ -52,7 +52,7 @@ module Cloud::Sdk
     end
     
     def after_initialize_homedir(user)
-      cmd = "/bin/sh #{File.join(Cloud::Sdk::SDK_PATH, "express/setup_pam_fs_limits.sh")} #{user.name}"
+      cmd = "/bin/sh #{File.join(Cloud::Sdk::SDK_PATH, "express/setup_pam_fs_limits.sh")} #{user.name} #{user.quota_blocks ? user.quota_blocks : ''} #{user.quota_files ? user.quota_files : ''}"
       out,err,rc = shellCmd(cmd)
       raise Cloud::Sdk::UserCreationException("Unable to setup pam/fs limits for #{user.name}") unless rc == 0
     end

@@ -736,6 +736,14 @@ class Application < Cloud::Sdk::Cartridge
     end
     retval
   end
+
+  # Provide a way of updating the component information for a given cartridge
+  # @deprecated
+  def set_embedded_cart_info(cart_name, info)
+    self.comp_instance_map.values.each do |comp_inst|
+      comp_inst.cart_data = [info] if cart_name == comp_inst.parent_cart_name
+    end
+  end
   
   # Provides an array version of the component instance map for saving in the datastore.
   # @return [Array<Hash>]
@@ -794,8 +802,9 @@ class Application < Cloud::Sdk::Cartridge
     end
   end
    
-private
-
+  def get_name_prefix
+    return "@@app"
+  end
 
   # Parse the descriptor and build or update the runtime descriptor structure
   def elaborate_descriptor
@@ -810,7 +819,8 @@ private
     generate_group_overrides(default_profile)
   
     default_profile.groups.each { |g|
-      gpath = self.name + "." + g.name
+      #gpath = self.name + "." + g.name
+      gpath = self.get_name_prefix + g.get_name_prefix
       mapped_path = group_override_map[gpath] || ""
       gi = working_group_inst_hash[mapped_path]
       if gi.nil?
@@ -825,13 +835,13 @@ private
       end
       self.group_instance_map[gpath] = gi
       self.working_group_inst_hash[gpath] = gi
-      gi.elaborate(g, "", self)
+      gi.elaborate(default_profile, g, self.get_name_prefix, self)
     }
     
     # make connection_endpoints out of provided connections
     default_profile.connections.each { |conn|
-      inst1 = ComponentInstance::find_component_in_cart(profile, app, conn.components[0], self.name)
-      inst2 = ComponentInstance::find_component_in_cart(profile, app, conn.components[1], self.name)
+      inst1 = ComponentInstance::find_component_in_cart(profile, app, conn.components[0], self.get_name_prefix)
+      inst2 = ComponentInstance::find_component_in_cart(profile, app, conn.components[1], self.get_name_prefix)
       ComponentInstance::establish_connections(inst1, inst2, app)
     }
     # check self.comp_instance_map for component instances
@@ -852,6 +862,8 @@ private
     deleted_components_list
   end
   
+private
+
   def cleanup_deleted_components
     # delete entries in {group,comp}_instance_map that do 
     # not exist in working_{group,comp}_inst_hash
@@ -865,7 +877,7 @@ private
   def get_exec_order(default_profile)
     self.configure_order = []
     self.start_order = []
-    cpath = self.name + "." + default_profile.groups.first.component_refs.first.name
+    cpath = self.get_name_prefix + default_profile.groups.first.component_refs.first.get_name_prefix(default_profile)
     cinst = self.comp_instance_map[cpath]
     ComponentInstance::collect_exec_order(self, cinst, self.configure_order)
     ComponentInstance::collect_exec_order(self, cinst, self.start_order)
@@ -892,8 +904,8 @@ private
   def generate_group_overrides(default_profile)
     if not default_profile.group_overrides.empty?
       default_profile.group_overrides.each do |n, v|
-        from = self.name + "." + n
-        to = self.name + "." + v
+        from = self.get_name_prefix + n
+        to = self.get_name_prefix + v
         self.group_override_map[from] = to
       end
     else
@@ -901,17 +913,17 @@ private
       first_group = default_profile.groups[0]
       default_profile.groups.each do |g|
         next if first_group==g
-        self.group_override_map[self.name + "." + g.name] = self.name + "." + first_group.name
+        self.group_override_map[self.get_name_prefix + g.get_name_prefix] = self.get_name_prefix + first_group.get_name_prefix
       end
     end
   end
   
   def auto_merge_top_groups(default_profile)
     first_group = default_profile.groups[0]
-    gpath = self.name + "." + first_group.name
+    gpath = self.get_name_prefix + first_group.get_name_prefix
     gi = self.group_instance_map[gpath]
     first_group.component_refs.each { |comp_ref|
-      cpath = self.name + "." + comp_ref.name
+      cpath = self.get_name_prefix + comp_ref.get_name_prefix(default_profile)
       ci = self.comp_instance_map[cpath]
       ci.dependencies.each { |cdep|
         cdepinst = self.comp_instance_map[cdep]

@@ -35,10 +35,6 @@ DEFAULT_LIBRA_SKEL_DIR=${DEFAULT_LIBRA_CONF_DIR}/skel
 
 # defaults
 limits_order=84
-limits_nproc=100
-quota_files=1000
-# a block = 1Kbytes: 1k * 1024 * 128
-quota_blocks=`expr 1024 \* 128` # 128MB
 
 CART_DIR=/usr/libexec/li/cartridges
 
@@ -78,7 +74,6 @@ function initialize {
 #
 # IN: username
 # IN: limits_order
-# IN: limits_nproc
 #
 
 LIMITSVARS="core data fsize memlock nofile rss stack cpu nproc as maxlogins priority locks sigpending msgqueue nice rprio"

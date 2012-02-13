@@ -20,7 +20,7 @@ class ApplicationsController < BaseController
         app = RestApplication.new(application, domain_id)
         apps.push(app)
       end
-      @reply = RestReply.new(:ok, "application", apps)
+      @reply = RestReply.new(:ok, "applications", apps)
       respond_with @reply, :status => @reply.status
     end
   end
@@ -108,11 +108,10 @@ class ApplicationsController < BaseController
           Rails.logger.debug "Creating dns"
           application.create_dns
         rescue Exception => e
+            Rails.logger.error e
             application.destroy_dns
             @reply = RestReply.new(:internal_server_error)
-            message = Message.new(:error, "Failed to create dns for application #{app_name}") 
-            @reply.messages.push(message)
-            message = Message.new(:error, e.message) 
+            message = Message.new(:error, "Failed to create dns for application #{app_name} due to:#{e.message}") 
             @reply.messages.push(message)
             respond_with @reply, :status => @reply.status
             return
@@ -127,9 +126,7 @@ class ApplicationsController < BaseController
         end
 
         @reply = RestReply.new(:internal_server_error)
-        message = Message.new(:error, "Failed to create application #{app_name}") 
-        @reply.messages.push(message)
-        message = Message.new(:error, e.message) 
+        message = Message.new(:error, "Failed to create application #{app_name} due to:#{e.message}") 
         @reply.messages.push(message)
         respond_with @reply, :status => @reply.status
         return
@@ -172,9 +169,7 @@ class ApplicationsController < BaseController
     rescue Exception => e
       Rails.logger.error "Failed to Delete application #{id}: #{e.message}"
       @reply = RestReply.new(:internal_server_error)
-      message = Message.new(:error, "Failed to delete application #{app_name}") 
-      @reply.messages.push(message)
-      message = Message.new(:error, e.message) 
+      message = Message.new(:error, "Failed to delete application #{app_name} due to:#{e.message}") 
       @reply.messages.push(message)
       respond_with(@reply) do |format|
          format.xml { render :xml => @reply, :status => @reply.status }

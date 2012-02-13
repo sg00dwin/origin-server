@@ -334,7 +334,7 @@ class RestApi < ActiveResource::Base
       def find_single(scope, options)
         prefix_options, query_options = split_options(options[:params])
         path = element_path(scope, prefix_options, query_options)
-        instantiate_record(format.decode(connection.get(path, headers).body), options[:as], prefix_options) #changed
+        instantiate_record(format.decode(connection(options).get(path, headers).body), options[:as], prefix_options) #changed
       end
 
       def find_every(options)
@@ -421,6 +421,10 @@ class Domain < RestApi
   has_many :applications
   def applications
     Application.find :all, { :params => { :domain_name => namespace }, :as => as }
+  end
+
+  def get_application (application_id)
+    Application.find application_id, { :params => { :domain_name => namespace }, :as => as }
   end
 
   belongs_to :user
@@ -517,9 +521,7 @@ class Key < RestApi
                     :allow_blank => false
 end
 
-run_tests = true
-
-if __FILE__==$0 && run_tests
+if __FILE__==$0
 
   require 'test/unit/ui/console/testrunner'
 
@@ -704,6 +706,12 @@ if __FILE__==$0 && run_tests
       assert_equal 2, apps.length
       assert_equal 'app1', apps[0].name
       assert_equal 'app2', apps[1].name
+
+      # test get_application
+      app1 = domain.get_application('app1')
+      app2 = domain.get_application('app2')
+      assert_equal 'app1', app1.name
+      assert_equal 'app2', app2.name
     end
 
   Test::Unit::UI::Console::TestRunner.run(RestApiTest)
