@@ -1,6 +1,6 @@
 Summary:       SELinux policy for OpenShift nodes
 Name:          rhc-selinux
-Version:       0.86.1
+Version:       0.86.2
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -48,6 +48,24 @@ rm -rf %{buildroot}
 %attr(0640,-,-) %{_datadir}/selinux/packages/libra.pp
 
 %changelog
+* Mon Feb 13 2012 Dan McPherson <dmcphers@redhat.com> 0.86.2-1
+- cleanup specs (dmcphers@redhat.com)
+- Allow anon_inodefs_t writes so that Node processes/threads can communicate.
+  (ramr@redhat.com)
+- Changes to pam_libra and sshd requires that unconfined_t and libra domains
+  can setcurrent, and unconfined_t needs to dyntrans (dwalsh@redhat.com)
+- Move libra-proxy config file to /var/lib/libra/.libra-proxy.d
+  (rmillner@redhat.com)
+- rhc-selinux: forgot to require types (blentz@redhat.com)
+- Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
+  (dwalsh@redhat.com)
+- Add dontaudit for people listing the contents of /dev, add debuginfo-install
+  as an app that a user should not be allowed to execute (dwalsh@redhat.com)
+- rhc-selinux: allow postfix and ntpd to bind to localhost (blentz@redhat.com)
+- Merge branch 'master' of li-master:/srv/git/li (ramr@redhat.com)
+- Fix bugz 787060 - ioctl fails and that causes mongo shell to give no
+  response. (ramr@redhat.com)
+
 * Fri Feb 03 2012 Dan McPherson <dmcphers@redhat.com> 0.86.1-1
 - bump spec numbers (dmcphers@redhat.com)
 
