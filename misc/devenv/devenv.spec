@@ -204,6 +204,10 @@ chkconfig cgred on
 chkconfig libra-cgroups on
 chkconfig libra-tc on
 
+# Watchman services
+chkconfig libra-watchman on || :
+service libra-watchman start || :
+
 # Populate mcollective certs
 cd /etc/mcollective/ssl/clients
 openssl genrsa -out mcollective-private.pem 1024
