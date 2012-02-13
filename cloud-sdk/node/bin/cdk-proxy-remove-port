@@ -67,7 +67,7 @@ end
 
 begin
   container = Cloud::Sdk::ApplicationContainer.new(uuid,uuid)
-  container.user.proxy_remove_port(proxy_port.to_i)
+  proxy_port = container.user.proxy_remove_port(proxy_port)
 rescue Exception => e
   $stderr.puts(e.message)
   exit -1
