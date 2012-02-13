@@ -12,7 +12,6 @@ Feature: Embedded Cartridge Verification Tests
     And the embedded mongodb-2.0 cartridge is added
     And the embedded rockmongo-1.1 cartridge is added
     And the embedded cron-1.4 cartridge is added
-    #And the embedded 10gen-mms-agent-0.1 cartridge is added
     And the embedded metrics-0.1 cartridge is added
     Then the application should be accessible
     When the application uses mysql
@@ -20,10 +19,9 @@ Feature: Embedded Cartridge Verification Tests
     And the mysql response is successful
     When the embedded phpmyadmin-3.4 cartridge is removed
     And the embedded mysql-5.1 cartridge is removed
-    And the embedded mongodb-2.0 cartridge is removed
     And the embedded rockmongo-1.1 cartridge is removed
+    And the embedded mongodb-2.0 cartridge is removed
     And the embedded cron-1.4 cartridge is removed
-    #And the embedded 10gen-mms-agent-0.1 cartridge is removed
     And the embedded metrics-0.1 cartridge is removed
     And the embedded postgresql-8.4 cartridge is added
     And the embedded postgresql-8.4 cartridge is removed
