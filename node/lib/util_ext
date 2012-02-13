@@ -19,6 +19,7 @@ function get_mcs_level() {
 function setup_user_vars {
     uid=$(id -u "$uuid")
     mcs_level=`get_mcs_level $uid`
+    export mcs_level
 }
 
 function observe_setup_app_home {
