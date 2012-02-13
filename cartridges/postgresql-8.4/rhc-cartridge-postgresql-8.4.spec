@@ -1,7 +1,7 @@
 %define cartridgedir %{_libexecdir}/li/cartridges/embedded/postgresql-8.4
 
 Name: rhc-cartridge-postgresql-8.4
-Version: 0.3.2
+Version: 0.3.3
 Release: 1%{?dist}
 Summary: Embedded postgresql support for express
 
@@ -71,6 +71,9 @@ rm -rf $RPM_BUILD_ROOT
 %doc %{cartridgedir}/LICENSE
 
 %changelog
+* Mon Feb 13 2012 Dan McPherson <dmcphers@redhat.com> 0.3.3-1
+- cleaning up specs to force a build (dmcphers@redhat.com)
+
 * Sat Feb 11 2012 Dan McPherson <dmcphers@redhat.com> 0.3.2-1
 - more abstracting out selinux (dmcphers@redhat.com)
 - first pass at splitting out selinux logic (dmcphers@redhat.com)
@@ -84,49 +87,3 @@ rm -rf $RPM_BUILD_ROOT
   (dmcphers@redhat.com)
 - Cleanup usage message to include status and fix bug - missing cat.
   (ramr@redhat.com)
-
-* Fri Feb 03 2012 Dan McPherson <dmcphers@redhat.com> 0.3.1-1
-- bump spec numbers (dmcphers@redhat.com)
-
-* Wed Feb 01 2012 Dan McPherson <dmcphers@redhat.com> 0.2.5-1
-- Remove extraneous chcon (thanks dmcphers) - we do this again after db
-  initialization. (ramr@redhat.com)
-- fix postgres move and other selinux move fixes (dmcphers@redhat.com)
-
-* Fri Jan 27 2012 Dan McPherson <dmcphers@redhat.com> 0.2.4-1
-- deploy httpd proxy from migration (dmcphers@redhat.com)
-
-* Tue Jan 24 2012 Dan McPherson <dmcphers@redhat.com> 0.2.3-1
-- Updated License value in manifest.yml files. Corrected Apache Software
-  License Fedora short name (jhonce@redhat.com)
-- postgresql-8.4: Modified license to ASL V2 (jhonce@redhat.com)
-
-* Wed Jan 18 2012 Dan McPherson <dmcphers@redhat.com> 0.2.2-1
-- reducto 'footprint'. (ramr@redhat.com)
-- Revert commit by build/devenv. (ramr@redhat.com)
-- Temporary commit to build (ramr@redhat.com)
-- Merge branch 'master' of li-master:/srv/git/li (ramr@redhat.com)
-- Update license information. (ramr@redhat.com)
-
-* Fri Jan 13 2012 Dan McPherson <dmcphers@redhat.com> 0.2.1-1
-- bump spec numbers (dmcphers@redhat.com)
-
-* Tue Jan 10 2012 Dan McPherson <dmcphers@redhat.com> 0.1.5-1
-- Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
-  (rchopra@redhat.com)
-- descriptor file for postgresql (rchopra@redhat.com)
-- Disable phpPgAdmin message on adding postgres cartridge. (mpatel@redhat.com)
-
-* Mon Jan 09 2012 Dan McPherson <dmcphers@redhat.com> 0.1.4-1
-- Add ruby postgres driver. (ramr@redhat.com)
-
-* Fri Jan 06 2012 Dan McPherson <dmcphers@redhat.com> 0.1.3-1
-- Cleanup error message to indicate only 1 embedded database is permitted per
-  application. (ramr@redhat.com)
-- Error code collision!! (ramr@redhat.com)
-
-* Fri Jan 06 2012 Dan McPherson <dmcphers@redhat.com> 0.1.2-1
-- new package built with tito
-
-* Thu Dec 22 2011 Ram Ranganathan <ramr@redhat.com> 0.1-1
-- Initial packaging

@@ -2,7 +2,7 @@
 
 Summary:   Provides php-5.3 support
 Name:      rhc-cartridge-php-5.3
-Version:   0.86.2
+Version:   0.86.3
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   ASL 2.0
@@ -98,6 +98,9 @@ rm -rf %{buildroot}
 %doc %{cartridgedir}/LICENSE
 
 %changelog
+* Mon Feb 13 2012 Dan McPherson <dmcphers@redhat.com> 0.86.3-1
+- cleaning up specs to force a build (dmcphers@redhat.com)
+
 * Sat Feb 11 2012 Dan McPherson <dmcphers@redhat.com> 0.86.2-1
 - bug 722828 (bdecoste@gmail.com)
 - more abstracting out selinux (dmcphers@redhat.com)
@@ -113,30 +116,3 @@ rm -rf %{buildroot}
 - Creating models for descriptor Fixing manifest files Added command to list
   installed cartridges and get descriptors (kraman@gmail.com)
 - Adding conceal port (mmcgrath@redhat.com)
-
-* Fri Feb 03 2012 Dan McPherson <dmcphers@redhat.com> 0.86.1-1
-- bump spec numbers (dmcphers@redhat.com)
-
-* Fri Jan 27 2012 Dan McPherson <dmcphers@redhat.com> 0.85.3-1
-- Fixes Bugzilla #785049. (mpatel@redhat.com)
-- remove old obsoletes (dmcphers@redhat.com)
-
-* Tue Jan 24 2012 Dan McPherson <dmcphers@redhat.com> 0.85.2-1
-- Updated License value in manifest.yml files. Corrected Apache Software
-  License Fedora short name (jhonce@redhat.com)
-- php-5.3: Modified license to ASL V2 (jhonce@redhat.com)
-
-* Fri Jan 13 2012 Dan McPherson <dmcphers@redhat.com> 0.85.1-1
-- bump spec numbers (dmcphers@redhat.com)
-
-* Wed Jan 11 2012 Dan McPherson <dmcphers@redhat.com> 0.84.6-1
-- Gracefully handle threaddump in cartridges that do not support it (BZ772114)
-  (aboone@redhat.com)
-
-* Fri Jan 06 2012 Dan McPherson <dmcphers@redhat.com> 0.84.5-1
-- fix build breaks (dmcphers@redhat.com)
-
-* Fri Jan 06 2012 Dan McPherson <dmcphers@redhat.com> 0.84.4-1
-- basic descriptors for all cartridges; added primitive structure for a www-
-  dynamic cartridge that will abstract all httpd processes that any cartridges
-  need (e.g. php, perl, metrics, rockmongo etc). (rchopra@redhat.com)

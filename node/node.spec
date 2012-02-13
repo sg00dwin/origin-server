@@ -2,7 +2,7 @@
 
 Summary:       Multi-tenant cloud management system node tools
 Name:          rhc-node
-Version:       0.86.2
+Version:       0.86.3
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -239,6 +239,21 @@ fi
 /lib64/security/pam_libra.so
 
 %changelog
+* Mon Feb 13 2012 Dan McPherson <dmcphers@redhat.com> 0.86.3-1
+- Added ability to specify a specific proxy to tear down. (rmillner@redhat.com)
+- Fixed bug where only the first port was used. Added ability to call with a
+  target address which gets verified to see if its in the user's range.
+  (rmillner@redhat.com)
+- add back capacity and restrict remove node to 0 capacity nodes
+  (dmcphers@redhat.com)
+- US1401 Watchman Service (jhonce@redhat.com)
+- bug 722828 (bdecoste@gmail.com)
+- Merge branch 'master' of git1.ops.rhcloud.com:/srv/git/li
+  (bdecoste@gmail.com)
+- Merge branch 'master' of git1.ops.rhcloud.com:/srv/git/li
+  (bdecoste@gmail.com)
+- bug 722828 (bdecoste@gmail.com)
+
 * Sat Feb 11 2012 Dan McPherson <dmcphers@redhat.com> 0.86.2-1
 - move the selinux logic out of abstract carts entirely (dmcphers@redhat.com)
 - get move working again and add quota support (dmcphers@redhat.com)

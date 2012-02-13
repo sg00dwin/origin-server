@@ -2,7 +2,7 @@
 
 Summary:   Provides ruby rack support running on Phusion Passenger
 Name:      rhc-cartridge-rack-1.1
-Version:   0.86.2
+Version:   0.86.3
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   ASL 2.0
@@ -109,6 +109,13 @@ rm -rf %{buildroot}
 %doc %{cartridgedir}/LICENSE
 
 %changelog
+* Mon Feb 13 2012 Dan McPherson <dmcphers@redhat.com> 0.86.3-1
+- cleaning up specs to force a build (dmcphers@redhat.com)
+- Bug 789831 (dmcphers@redhat.com)
+- Merge branch 'master' of git1.ops.rhcloud.com:/srv/git/li
+  (bdecoste@gmail.com)
+- bug 787275 (bdecoste@gmail.com)
+
 * Sat Feb 11 2012 Dan McPherson <dmcphers@redhat.com> 0.86.2-1
 - bug 722828 (bdecoste@gmail.com)
 - more abstracting out selinux (dmcphers@redhat.com)
@@ -129,65 +136,3 @@ rm -rf %{buildroot}
 * Fri Feb 03 2012 Dan McPherson <dmcphers@redhat.com> 0.86.1-1
 - bump spec numbers (dmcphers@redhat.com)
 - bug 787119 (bdecoste@gmail.com)
-
-* Wed Feb 01 2012 Dan McPherson <dmcphers@redhat.com> 0.85.12-1
-- bug 785517 (bdecoste@gmail.com)
-
-* Tue Jan 31 2012 Dan McPherson <dmcphers@redhat.com> 0.85.11-1
-- bug 785517 (bdecoste@gmail.com)
-
-* Mon Jan 30 2012 Dan McPherson <dmcphers@redhat.com> 0.85.10-1
-- bug 785517 (bdecoste@gmail.com)
-
-* Fri Jan 27 2012 Dan McPherson <dmcphers@redhat.com> 0.85.9-1
-- rack template requires thread-dump again (bdecoste@gmail.com)
-- Adds PassengerSpawnIPAddress option to rack cartridge configuration. The
-  corresponding changes in rubygem_passenger have been pushed to brew.
-  (mpatel@redhat.com)
-- remove old obsoletes (dmcphers@redhat.com)
-- removed thread-dump require (wdecoste@localhost.localdomain)
-- removed thread-dump require (wdecoste@localhost.localdomain)
-- added thread-dump rubygem (wdecoste@localhost.localdomain)
-
-* Tue Jan 24 2012 Dan McPherson <dmcphers@redhat.com> 0.85.8-1
-- Updated License value in manifest.yml files. Corrected Apache Software
-  License Fedora short name (jhonce@redhat.com)
-- rack-1.1: Modified license to ASL V2 (jhonce@redhat.com)
-
-* Fri Jan 20 2012 Mike McGrath <mmcgrath@redhat.com> 0.85.7-1
-- more rack/ruby replacements (mmcgrath@redhat.com)
-- merge and ruby-1.8 prep (mmcgrath@redhat.com)
-
-* Wed Jan 18 2012 Dan McPherson <dmcphers@redhat.com> 0.85.6-1
-- removed xray ref (wdecoste@localhost.localdomain)
-
-* Wed Jan 18 2012 Dan McPherson <dmcphers@redhat.com> 0.85.5-1
-- added xray rubygem (wdecoste@localhost.localdomain)
-
-* Wed Jan 18 2012 Dan McPherson <dmcphers@redhat.com> 0.85.4-1
-- added threaddump.sh to rack (bdecoste@gmail.com)
-- added threaddump.sh to rack (bdecoste@gmail.com)
-- added threaddump.sh to rack (bdecoste@gmail.com)
-- rollback rack chances for threaddump (bdecoste@gmail.com)
-- remove xray gem until rubygem is avail (bdecoste@gmail.com)
-
-* Tue Jan 17 2012 Dan McPherson <dmcphers@redhat.com> 0.85.3-1
-- fix build (dmcphers@redhat.com)
-
-* Tue Jan 17 2012 Dan McPherson <dmcphers@redhat.com> 0.85.2-1
-- US1667: threaddump for rack (wdecoste@localhost.localdomain)
-
-* Fri Jan 13 2012 Dan McPherson <dmcphers@redhat.com> 0.85.1-1
-- bump spec numbers (dmcphers@redhat.com)
-
-* Wed Jan 11 2012 Dan McPherson <dmcphers@redhat.com> 0.84.6-1
-- Gracefully handle threaddump in cartridges that do not support it (BZ772114)
-  (aboone@redhat.com)
-
-* Fri Jan 06 2012 Dan McPherson <dmcphers@redhat.com> 0.84.5-1
-- fix build breaks (dmcphers@redhat.com)
-
-* Fri Jan 06 2012 Dan McPherson <dmcphers@redhat.com> 0.84.4-1
-- basic descriptors for all cartridges; added primitive structure for a www-
-  dynamic cartridge that will abstract all httpd processes that any cartridges
-  need (e.g. php, perl, metrics, rockmongo etc). (rchopra@redhat.com)

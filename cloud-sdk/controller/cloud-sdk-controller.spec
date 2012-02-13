@@ -5,7 +5,7 @@
 
 Summary:        Cloud Development Controller
 Name:           rubygem-%{gemname}
-Version:        0.4.2
+Version:        0.4.3
 Release:        1%{?dist}
 Group:          Development/Languages
 License:        ASL 2.0
@@ -73,6 +73,16 @@ rm -rf %{buildroot}
 %{ruby_sitelib}/%{gemname}.rb
 
 %changelog
+* Mon Feb 13 2012 Dan McPherson <dmcphers@redhat.com> 0.4.3-1
+- Updating gem versions (dmcphers@redhat.com)
+- cleaning up specs to force a build (dmcphers@redhat.com)
+- Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
+  (mmcgrath@redhat.com)
+- merging kraman (mmcgrath@redhat.com)
+- Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
+  (mmcgrath@redhat.com)
+- Fixing some expose/conceal bits (mmcgrath@redhat.com)
+
 * Sat Feb 11 2012 Dan McPherson <dmcphers@redhat.com> 0.4.2-1
 - Updating gem versions (dmcphers@redhat.com)
 - cleanup specs (dmcphers@redhat.com)
@@ -170,7 +180,6 @@ rm -rf %{buildroot}
 
 * Fri Feb 03 2012 Dan McPherson <dmcphers@redhat.com> 0.4.1-1
 - Updating gem versions (dmcphers@redhat.com)
-- bump spec numbers (dmcphers@redhat.com)
 - add move by uuid (dmcphers@redhat.com)
 - Merge branch 'master' of git1.ops.rhcloud.com:/srv/git/li (rpenta@redhat.com)
 - mongo wrapper: 'use <user-db>' instead of 'use admin' for authentication

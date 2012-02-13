@@ -5,7 +5,7 @@
 
 Summary:        Cloud Development Common
 Name:           rubygem-%{gemname}
-Version:        0.4.2
+Version:        0.4.3
 Release:        1%{?dist}
 Group:          Development/Languages
 License:        ASL 2.0
@@ -73,6 +73,9 @@ rm -rf %{buildroot}
 %{ruby_sitelib}/%{gemname}.rb
 
 %changelog
+* Mon Feb 13 2012 Dan McPherson <dmcphers@redhat.com> 0.4.3-1
+- cleaning up specs to force a build (dmcphers@redhat.com)
+
 * Sat Feb 11 2012 Dan McPherson <dmcphers@redhat.com> 0.4.2-1
 - cleanup specs (dmcphers@redhat.com)
 - fix for finding out whether a component is auto-generated or not
@@ -91,6 +94,3 @@ rm -rf %{buildroot}
   installed cartridges and get descriptors (kraman@gmail.com)
 - change state machine dep (dmcphers@redhat.com)
 - move the rest of the controller tests into broker (dmcphers@redhat.com)
-
-* Fri Feb 03 2012 Dan McPherson <dmcphers@redhat.com> 0.4.1-1
-- bump spec numbers (dmcphers@redhat.com)

@@ -2,7 +2,7 @@
 
 Summary:   Provides JBossAS7 support
 Name:      rhc-cartridge-jbossas-7.0
-Version:   0.86.2
+Version:   0.86.3
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   ASL 2.0
@@ -106,6 +106,9 @@ rm -rf %{buildroot}
 %config(noreplace) %{cartridgedir}/info/configuration/
 
 %changelog
+* Mon Feb 13 2012 Dan McPherson <dmcphers@redhat.com> 0.86.3-1
+- cleaning up specs to force a build (dmcphers@redhat.com)
+
 * Sat Feb 11 2012 Dan McPherson <dmcphers@redhat.com> 0.86.2-1
 - bug 722828 (bdecoste@gmail.com)
 - more abstracting out selinux (dmcphers@redhat.com)
@@ -117,58 +120,3 @@ rm -rf %{buildroot}
 - Creating models for descriptor Fixing manifest files Added command to list
   installed cartridges and get descriptors (kraman@gmail.com)
 - increase std and large gear restrictions (dmcphers@redhat.com)
-
-* Fri Feb 03 2012 Dan McPherson <dmcphers@redhat.com> 0.86.1-1
-- bump spec numbers (dmcphers@redhat.com)
-
-* Wed Feb 01 2012 Dan McPherson <dmcphers@redhat.com> 0.85.9-1
-- bug 785517 (bdecoste@gmail.com)
-
-* Tue Jan 31 2012 Dan McPherson <dmcphers@redhat.com> 0.85.8-1
-- bug 785517 (bdecoste@gmail.com)
-
-* Sun Jan 29 2012 Dan McPherson <dmcphers@redhat.com> 0.85.7-1
-- 
-
-* Sun Jan 29 2012 Dan McPherson <dmcphers@redhat.com> 0.85.6-1
-- bug 785517 (bdecoste@gmail.com)
-
-* Fri Jan 27 2012 Dan McPherson <dmcphers@redhat.com> 0.85.5-1
-- Adding status=I to force proxy layer to attempt to connect every time even in
-  error scenarios. (mmcgrath@redhat.com)
-
-* Tue Jan 24 2012 Dan McPherson <dmcphers@redhat.com> 0.85.4-1
-- Updated License value in manifest.yml files. Corrected Apache Software
-  License Fedora short name (jhonce@redhat.com)
-- jbossas-7.0.spec: Modified license to ASL V2 (jhonce@redhat.com)
-- jbossas-7.0: Modified license to ASL V2 and LGPLv2. jboss configuration files
-  that are included are covered under LGPL. (jhonce@redhat.com)
-
-* Tue Jan 17 2012 Dan McPherson <dmcphers@redhat.com> 0.85.3-1
-- US1667: threaddump for rack (wdecoste@localhost.localdomain)
-
-* Tue Jan 17 2012 Dan McPherson <dmcphers@redhat.com> 0.85.2-1
-- use rhc-domain-info consistently (dmcphers@redhat.com)
-
-* Fri Jan 13 2012 Dan McPherson <dmcphers@redhat.com> 0.85.1-1
-- bump spec numbers (dmcphers@redhat.com)
-
-* Wed Jan 11 2012 Dan McPherson <dmcphers@redhat.com> 0.84.9-1
-- Gracefully handle threaddump in cartridges that do not support it (BZ772114)
-  (aboone@redhat.com)
-- Bug 773110 - added /home/wdecoste/.java (wdecoste@localhost.localdomain)
-
-* Fri Jan 06 2012 Dan McPherson <dmcphers@redhat.com> 0.84.8-1
-- fix build breaks (dmcphers@redhat.com)
-
-* Fri Jan 06 2012 Dan McPherson <dmcphers@redhat.com> 0.84.7-1
-- Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
-  (rchopra@redhat.com)
-- basic descriptors for all cartridges; added primitive structure for a www-
-  dynamic cartridge that will abstract all httpd processes that any cartridges
-  need (e.g. php, perl, metrics, rockmongo etc). (rchopra@redhat.com)
-- Fix to use correct module name + use-ccm (ramr@redhat.com)
-- Fix to move to the post-install step. (ramr@redhat.com)
-- Don't link abstract post-install hook as we now have a post-install hook.
-  (ramr@redhat.com)
-- Add postgresql driver support to jboss. (ramr@redhat.com)
