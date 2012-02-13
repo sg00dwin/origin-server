@@ -1,7 +1,7 @@
 %define cartridgedir %{_libexecdir}/li/cartridges/embedded/rockmongo-1.1
 
 Name: rhc-cartridge-rockmongo-1.1
-Version: 1.4.2
+Version: 1.4.3
 Release: 1%{?dist}
 Summary: Embedded RockMongo support for express
 
@@ -54,6 +54,10 @@ rm -rf $RPM_BUILD_ROOT
 %doc %{cartridgedir}/LICENSE
 
 %changelog
+* Mon Feb 13 2012 Dan McPherson <dmcphers@redhat.com> 1.4.3-1
+- cleaning up specs to force a build (dmcphers@redhat.com)
+- remove php dependency from others as well (rchopra@redhat.com)
+
 * Sat Feb 11 2012 Dan McPherson <dmcphers@redhat.com> 1.4.2-1
 - more abstracting out selinux (dmcphers@redhat.com)
 - first pass at splitting out selinux logic (dmcphers@redhat.com)
