@@ -2,7 +2,7 @@
 
 Summary:   Provides mod_perl support
 Name:      rhc-cartridge-perl-5.10
-Version:   0.17.12
+Version:   0.17.13
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   ASL 2.0
@@ -91,6 +91,12 @@ rm -rf $RPM_BUILD_ROOT
 %doc %{cartridgedir}/LICENSE
 
 %changelog
+* Mon Feb 13 2012 Dan McPherson <dmcphers@redhat.com> 0.17.13-1
+- Add sample/empty directories for minutely,hourly,daily and monthly
+  frequencies as well. (ramr@redhat.com)
+- Add cron example and directories to all the openshift framework templates.
+  (ramr@redhat.com)
+
 * Mon Feb 13 2012 Dan McPherson <dmcphers@redhat.com> 0.17.12-1
 - add nosql env vars to perl (dmcphers@redhat.com)
 

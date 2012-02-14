@@ -5,7 +5,7 @@
 
 Summary:        Cloud Development Controller
 Name:           rubygem-%{gemname}
-Version:        0.4.3
+Version:        0.4.4
 Release:        1%{?dist}
 Group:          Development/Languages
 License:        ASL 2.0
@@ -73,6 +73,20 @@ rm -rf %{buildroot}
 %{ruby_sitelib}/%{gemname}.rb
 
 %changelog
+* Mon Feb 13 2012 Dan McPherson <dmcphers@redhat.com> 0.4.4-1
+- Updating gem versions (dmcphers@redhat.com)
+- Bugfix for bugz#789891. Fixed issue where cartridge was left as a dependency
+  in the descriptor even if configure failed (kraman@gmail.com)
+- Fix for bugz# 789814. Fixed 10gen-mms-agent and rockmongo descriptors. Fixed
+  info sent back by legacy broker when cartridge doesnt not have info for
+  embedded cart. (kraman@gmail.com)
+- Fix for Bugz#790153. Legacy broker was throwing an error when user did not
+  have ssh key (Domain created with new REST API without ssh key)
+  (kraman@gmail.com)
+- Adding REST link for descriptor (kraman@gmail.com)
+- Bugfixes in postgres cartridge descriptor Bugfix in connection resolution
+  inside profile Adding REST API to retrieve descriptor (kraman@gmail.com)
+
 * Mon Feb 13 2012 Dan McPherson <dmcphers@redhat.com> 0.4.3-1
 - Updating gem versions (dmcphers@redhat.com)
 - cleaning up specs to force a build (dmcphers@redhat.com)

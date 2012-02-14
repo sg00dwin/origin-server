@@ -251,8 +251,6 @@ function setup_configure {
     # chowns to fail with a user not found error
     user_id=$(id -u "$uuid") || error "Could not find user $uuid ($namespace)" 134
     group_id=$(id -g "$uuid") || error "Could not find user $uuid ($namespace)" 135
-
-    export mcs_level
 }
 
 function setup_deconfigure {
@@ -492,7 +490,7 @@ function super_run_as_user {
 }
 
 function daemon_as_user {
-    daemon --user="$uuid" $1
+    daemon --user="$uuid" "$@"
 }
 
 function validate_run_as_user {

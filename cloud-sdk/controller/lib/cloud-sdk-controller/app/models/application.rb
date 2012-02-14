@@ -222,18 +222,30 @@ class Application < Cloud::Sdk::Cartridge
         succesful_gears = e.message[:succesful].map{|g| g[:gear]}
         gear_exception = e.message[:exception]        
 
+        #remove failed component from all gears
         run_on_gears(succesful_gears, reply, false) do |gear, r|
           r.append gear.deconfigure(comp_inst)
           r.append process_cartridge_commands(r.cart_commands)
           self.save
         end
+        
+        #remove failed cartridge dependency
+        self.requires_feature.delete(comp_inst.parent_cart_name)
+        self.save
+        
+        #destroy any unused gears
         run_on_gears(nil, reply, false) do |gear, r|
           r.append gear.destroy if gear.configured_components.length == 0
           self.save
         end
+        
+        #re-configure to update application model
+        self.configure_dependencies
+        
         raise gear_exception
       end
     end
+    
     save
     self.class.notify_observers(:after_application_configure, {:application => self, :reply => reply})
     reply
@@ -243,7 +255,7 @@ class Application < Cloud::Sdk::Cartridge
   def deconfigure_dependencies
     reply = ResultIO.new
     self.class.notify_observers(:before_application_deconfigure, {:application => self, :reply => reply})  
-    self.configure_order.reverse.each do |comp_inst_name|
+    self.configure_order.each do |comp_inst_name|
       comp_inst = self.comp_instance_map[comp_inst_name]
       group_inst = self.group_instance_map[comp_inst.group_instance_name]
       run_on_gears(group_inst.gears, reply, false) do |gear, r|
@@ -731,7 +743,8 @@ class Application < Cloud::Sdk::Cartridge
     retval = {}
     self.comp_instance_map.values.each do |comp_inst|
       if embedded_carts.include?(comp_inst.parent_cart_name)
-        retval[comp_inst.parent_cart_name] = {"info" => comp_inst.cart_data.first}
+        retval[comp_inst.parent_cart_name] = {}
+        retval[comp_inst.parent_cart_name] = {"info" => comp_inst.cart_data.first} unless comp_inst.cart_data.first.nil?
       end
     end
     retval

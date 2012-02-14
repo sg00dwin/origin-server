@@ -3,7 +3,7 @@
 
 Summary:   Li broker components
 Name:      rhc-broker
-Version:   0.86.3
+Version:   0.86.4
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -79,6 +79,12 @@ rm -rf $RPM_BUILD_ROOT
 /bin/touch %{brokerdir}/log/production.log
 
 %changelog
+* Mon Feb 13 2012 Dan McPherson <dmcphers@redhat.com> 0.86.4-1
+- Updating gem versions (dmcphers@redhat.com)
+- share common move logic (dmcphers@redhat.com)
+- Rolling back my changes to expose targetted proxy. Revert "Add calls to
+  backend for proxy." (rmillner@redhat.com)
+
 * Mon Feb 13 2012 Dan McPherson <dmcphers@redhat.com> 0.86.3-1
 - Updating gem versions (dmcphers@redhat.com)
 - cleaning up specs to force a build (dmcphers@redhat.com)

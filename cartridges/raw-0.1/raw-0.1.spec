@@ -2,7 +2,7 @@
 
 Summary:   Provides raw support
 Name:      rhc-cartridge-raw-0.1
-Version:   0.20.2
+Version:   0.20.3
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   ASL 2.0
@@ -84,6 +84,13 @@ rm -rf %{buildroot}
 %doc %{cartridgedir}/LICENSE
 
 %changelog
+* Mon Feb 13 2012 Dan McPherson <dmcphers@redhat.com> 0.20.3-1
+- Bugzilla #790061. (mpatel@redhat.com)
+- Add sample/empty directories for minutely,hourly,daily and monthly
+  frequencies as well. (ramr@redhat.com)
+- Add cron example and directories to all the openshift framework templates.
+  (ramr@redhat.com)
+
 * Mon Feb 13 2012 Dan McPherson <dmcphers@redhat.com> 0.20.2-1
 - Customizes the 503 page for raw cartridge. (mpatel@redhat.com)
 - Adds support for starting raw cartridge applications on creation.

@@ -11,8 +11,13 @@ class LegacyBrokerController < ApplicationController
       user_info = user.as_json
       #FIXME: This is redundant, for now keeping it for backward compatibility
       key_info = user.get_ssh_key
-      user_info["ssh_key"] = key_info['key'] 
-      user_info["ssh_type"] = key_info['type']
+      if key_info
+        user_info["ssh_key"] = key_info['key'] 
+        user_info["ssh_type"] = key_info['type']
+      else
+        user_info["ssh_key"] = ""
+        user_info["ssh_type"] = ""
+      end
         
       user_info["rhlogin"] = user_info["login"]
       user_info.delete("login")  

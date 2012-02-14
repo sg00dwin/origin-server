@@ -273,7 +273,11 @@ When /^I (start|stop|restart) the mongodb database$/ do |action|
   mongodb_pid_file = mongodb_user_root + "/pid/mongodb.pid"
 
   if File.exists? mongodb_pid_file
-    @mongodb['oldpid'] = File.open(mongodb_pid_file).readline.strip
+    begin
+      @mongodb['oldpid'] = File.open(mongodb_pid_file).readline.strip
+    rescue EOFError
+      @mongodb['oldpid'] = '0'
+    end
   end
 
   outbuf = []

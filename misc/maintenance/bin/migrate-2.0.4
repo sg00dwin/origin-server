@@ -40,7 +40,7 @@ def migrate_app_on_node(server_identity, framework, uuid, rhlogin, app_name)
                   out += "Migrate on node exit code: #{exit_code}\n"
                   raise "Failed migrating app. Rerun with: #{migrate_cmd}"
                 else
-                  reply = app.container.send(:run_cartridge_command, framework, app, 'deploy-httpd-proxy', nil, false)
+                  reply = app.container.send(:run_cartridge_command, framework, app, app.gear, 'deploy-httpd-proxy', nil, false)
                   
                   out += "DEPLOY_HTTP_PROXY DEBUG OUTPUT:\n#{reply.debugIO.string}\n" unless reply.debugIO.string.empty?
                   out += "DEPLOY_HTTP_PROXY ERROR OUTPUT:\n#{reply.errorIO.string}\n" unless reply.errorIO.string.empty?
@@ -52,7 +52,7 @@ def migrate_app_on_node(server_identity, framework, uuid, rhlogin, app_name)
                     deployed_httpd_proxy_success = true
                     app.embedded.each do |cart, cart_info|
                       out += "DEBUG: Deploying httpd proxy for embedded #{cart} for '#{app_name}' with uuid '#{uuid}' on node #{server_identity}\n"
-                      reply.append app.container.send(:run_cartridge_command, "embedded/" + cart, app, "deploy-httpd-proxy", nil, false)
+                      reply.append app.container.send(:run_cartridge_command, "embedded/" + cart, app, app.gear, "deploy-httpd-proxy", nil, false)
                       out += "DEPLOY_HTTP_PROXY DEBUG OUTPUT:\n#{reply.debugIO.string}\n" unless reply.debugIO.string.empty?
                       out += "DEPLOY_HTTP_PROXY ERROR OUTPUT:\n#{reply.errorIO.string}\n" unless reply.errorIO.string.empty?
                       if reply.exitcode != 0
@@ -63,7 +63,7 @@ def migrate_app_on_node(server_identity, framework, uuid, rhlogin, app_name)
                     raise "Failed deploying httpd proxy for app '#{app_name}' with uuid '#{uuid}' on node '#{server_identity}'" unless deployed_httpd_proxy_success
                     unless app.aliases.nil?
                       app.aliases.each do |server_alias|
-                        app.container.add_alias(app, app.framework, server_alias)
+                        app.container.add_alias(app, app.gear, app.framework, server_alias)
                       end
                     end
                     migrated = true

@@ -1,7 +1,7 @@
 %define cartridgedir %{_libexecdir}/li/cartridges/embedded/rockmongo-1.1
 
 Name: rhc-cartridge-rockmongo-1.1
-Version: 1.4.3
+Version: 1.4.4
 Release: 1%{?dist}
 Summary: Embedded RockMongo support for express
 
@@ -54,6 +54,11 @@ rm -rf $RPM_BUILD_ROOT
 %doc %{cartridgedir}/LICENSE
 
 %changelog
+* Mon Feb 13 2012 Dan McPherson <dmcphers@redhat.com> 1.4.4-1
+- Fix for bugz# 789814. Fixed 10gen-mms-agent and rockmongo descriptors. Fixed
+  info sent back by legacy broker when cartridge doesnt not have info for
+  embedded cart. (kraman@gmail.com)
+
 * Mon Feb 13 2012 Dan McPherson <dmcphers@redhat.com> 1.4.3-1
 - cleaning up specs to force a build (dmcphers@redhat.com)
 - remove php dependency from others as well (rchopra@redhat.com)

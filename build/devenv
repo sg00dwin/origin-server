@@ -158,7 +158,7 @@ class DevEnv < Thor
       end
     end
     
-    def test_instance(hostname, instance, conn, options, image_id=nil)
+    def test_instance(tag, hostname, instance, conn, options, image_id=nil)
       begin
         if options.unofficial?
           use_private_ip(hostname)
@@ -183,26 +183,45 @@ class DevEnv < Thor
         end
 
         unless options.exclude_web?
-          sauce_opts = {
-            "SAUCE_USERNAME" => (options.sauce_username || SAUCE_USER),
-            "SAUCE_ACCESS_KEY" => (options.sauce_access_key || SAUCE_SECRET),
-            "SAUCE_OS" => (options.sauce_os || SAUCE_OS),
-            "SAUCE_BROWSER" => (options.sauce_browser || SAUCE_BROWSER),
-            "SAUCE_BROWSER_VERSION" => (options.sauce_browser_version || SAUCE_BROWSER_VERSION),
-            "JENKINS_BUILD" => 'unofficial'
-          }
-
-          # If we passed a jenkins build like name, use that for the build number
-          if m = tag.match(/libra_/)
-            sauce_opts['JENKINS_BUILD'] = tag
+            
+          if options.sauce_os && options.sauce_browser && options.sauce_browser_version
+            browsers = [[options.sauce_os, options.sauce_browser, options.sauce_browser_version]]
+          else
+            browsers = [['Windows 2003', 'firefox', '7'],
+                        ['Windows 2008', 'chrome', '7'],
+                        ['Windows 2008', 'iexplore', '9'],
+                        ['Windows 2003', 'safari', '4']]
+            # not working very well
+            browsers.delete_at(2)
+            browsers.delete_at(2)
           end
-
-          env_string = sauce_opts.keys.map{|k| %Q(#{k}="#{sauce_opts[k]}")}.join(' ')
-
-          puts "Running Sauce tests with the following options:"
-          puts sauce_opts.to_yaml
-
-          add_ssh_cmd_to_threads(hostname, threads, failures, "Web Selenium", "cd li-test/selenium; #{env_string} ruby ts_web")
+      
+          browsers.each do |browser|
+            sauce_os = browser[0]
+            sauce_browser = browser[1]
+            sauce_browser_version = browser[2]
+            sauce_opts = {
+              "SAUCE_USERNAME" => (options.sauce_username || 'openshift_ci'),
+              "SAUCE_ACCESS_KEY" => (options.sauce_access_key || '3d67e770-ce7d-482a-8c7f-07aec039d564'),
+              "SAUCE_OS" => sauce_os,
+              "SAUCE_BROWSER" => sauce_browser,
+              "SAUCE_BROWSER_VERSION" => sauce_browser_version,
+              "SAUCE_SELENIUM_VERSION" => '2.18.0',
+              "SAUCE_BROWSER_URL" => "https://#{hostname}",
+              "JENKINS_BUILD" => 'unofficial'
+            }
+            # If we passed a jenkins build like name, use that for the build number
+            if m = tag.match(/libra_/)
+              sauce_opts['JENKINS_BUILD'] = tag
+            end
+            
+            env_string = sauce_opts.keys.map{|k| %Q(#{k}="#{sauce_opts[k]}")}.join(' ')
+            
+            puts "Running Sauce tests with the following options:"
+            puts sauce_opts.to_yaml
+            
+            add_ssh_cmd_to_threads(hostname, threads, failures, "Web Selenium", "cd li-test/selenium; #{env_string} ruby ts_web")
+          end
         end
 
         threads.each do |t|
@@ -372,7 +391,7 @@ class DevEnv < Thor
       end
       
       scp_remote_tests(hostname)
-      test_instance(hostname, instance, conn, options, image_id)
+      test_instance(name + '_' + build_num, hostname, instance, conn, options, image_id)
     ensure
       terminate_instance(instance) if options.terminate?
     end
@@ -623,9 +642,6 @@ END
   method_option :exclude_web, :type => :boolean, :desc => "Exclude running Selenium tests"
   method_option :sauce_username, :required => false, :desc => "Sauce Labs username (default '#{SAUCE_USER}')"
   method_option :sauce_access_key, :required => false, :desc => "Sauce Labs access key (default '#{SAUCE_SECRET}')"
-  method_option :sauce_os, :required => false, :desc => "Sauce Labs OS (default '#{SAUCE_OS}')"
-  method_option :sauce_browser, :required => false, :desc => "Sauce Labs browser (default '#{SAUCE_BROWSER}')"
-  method_option :sauce_browser_version, :required => false, :desc => "Sauce Labs browser version (default '#{SAUCE_BROWSER_VERSION}')"
   method_option :region, :required => false, :desc => "Amazon region override (default us-east-1)"
   def test(tag)
     options.verbose? ? @@log.level = Logger::DEBUG : @@log.level = Logger::ERROR
@@ -636,7 +652,7 @@ END
     instance = find_instance(conn, tag, true)
     hostname = instance.dns_name
 
-    test_instance(hostname, instance, conn, options)
+    test_instance(tag, hostname, instance, conn, options)
   end
 
   desc "test_sdk TAG", "Runs the tests on a tagged instance and downloads the results"
