@@ -334,11 +334,7 @@ class DevEnv < Thor
         puts "Done"
   
         print "Updating all packages on the system..."
-        ssh(hostname, "yum update -y --exclude='rhc*'", 1800)
-        puts "Done"
-  
-        print "Adding openssh-client tools..."
-        ssh(hostname, "yum -y install openssh-clients", 1800)
+        ssh(hostname, "yum update -y --exclude='rhc*'; yum -y install openssh-clients", 1800)
         puts "Done"
 
         if options.reboot?
@@ -469,38 +465,6 @@ class DevEnv < Thor
       use_private_ip(hostname)
     else
       use_public_ip(hostname)
-    end
-  end
-
-  desc "sync_sdk NAME PATH", "Synchronize a local git repo with a remote DevEnv instance.  NAME should be ssh resolvable. PATH should be the location of the git repository to sync"
-  method_option :tag, :type => :boolean, :desc => "NAME is an Amazon tag"
-  method_option :verbose, :type => :boolean, :desc => "Enable verbose logging"
-  method_option :skip_build, :type => :boolean, :desc => "Indicator to skip the rpm build/install"
-  method_option :region, :required => false, :desc => "Amazon region override (default us-east-1)"
-  def sync_sdk(name, path)
-    options.verbose? ? @@log.level = Logger::DEBUG : @@log.level = Logger::ERROR
-
-    # Get the hostname from a tag lookup or assume it's SSH accessible directly
-    conn = connect
-    conn = conn.regions[options.region] unless (options.region?nil)
-    hostname = options.tag? ? find_instance(conn, name, true).dns_name : name
-
-    # Get the current branch
-    branch = get_branch
-
-    puts "Synchronizing local changes from branch #{branch}..."
-    ssh_path=File.expand_path(File.dirname(__FILE__)) + "/ssh-override"
-
-    # Don't change directories until the ssh_path has been determined from the working directory
-    FileUtils.cd path 
-
-    run("export GIT_SSH=#{ssh_path}; #{branch == 'origin/master' ? "git push -q root@#{hostname}:/root/cloud-sdk master:master --tags --force; " : ''}git push -q root@#{hostname}:/root/cloud-sdk #{branch}:master --tags --force", :verbose => options.verbose?)
-    puts "Done"
-
-    if !options.skip_build?
-      puts "Performing remote install...."
-      ssh(hostname, "rm -rf cloud-sdk-working; git clone cloud-sdk cloud-sdk-working; pushd cloud-sdk-working; tito build --rpm --test -i; popd; rm -rf cloud-sdk-working", 600)
-      puts "Done"
     end
   end
 
@@ -653,31 +617,6 @@ END
     hostname = instance.dns_name
 
     test_instance(tag, hostname, instance, conn, options)
-  end
-
-  desc "test_sdk TAG", "Runs the tests on a tagged instance and downloads the results"
-  method_option :terminate, :type => :boolean, :desc => "Terminate the instance when finished"
-  method_option :verbose, :type => :boolean, :desc => "Enable verbose logging"
-  method_option :region, :required => false, :desc => "Amazon region override (default us-east-1)"
-  def test_sdk(tag)
-    options.verbose? ? @@log.level = Logger::DEBUG : @@log.level = Logger::ERROR
-
-    conn = connect
-    conn = conn.regions[options.region] unless (options.region?nil)
-    
-    instance = find_instance(conn, tag, true)
-    hostname = instance.dns_name
-    begin
-      cmd = "cd /usr/lib/ruby/gems/*/gems/cloud-sdk*; rake test"
-      exit_code = run_ssh(hostname, "OpenShift SDK Unit", cmd)
-      if exit_code != 0
-        download_artifacts hostname
-        exit exit_code
-      end
-      puts "Done"
-    ensure
-      terminate_instance(instance) if options.terminate?
-    end
   end
   
   desc "setup_multi_node_devenvs", "Sets up verifier as broker and node and verifier2 as extra node"
