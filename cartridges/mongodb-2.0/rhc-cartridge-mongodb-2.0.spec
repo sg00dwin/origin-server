@@ -1,7 +1,7 @@
 %define cartridgedir %{_libexecdir}/li/cartridges/embedded/mongodb-2.0
 
 Name: rhc-cartridge-mongodb-2.0
-Version: 0.14.2
+Version: 0.14.3
 Release: 1%{?dist}
 Summary: Embedded mongodb support for express
 
@@ -54,6 +54,13 @@ rm -rf $RPM_BUILD_ROOT
 %doc %{cartridgedir}/LICENSE
 
 %changelog
+* Tue Feb 14 2012 Dan McPherson <dmcphers@redhat.com> 0.14.3-1
+- Handle normal/running case exit code and cleanup status to be in
+  restart/start since it needs to be run with runuser. (ramr@redhat.com)
+- More resilient fix for bugz 790183 + some cleanup. (ramr@redhat.com)
+- Fix for bugz 790183 - repair mongodb and restart if mongod was not shutdown
+  cleanly. (ramr@redhat.com)
+
 * Mon Feb 13 2012 Dan McPherson <dmcphers@redhat.com> 0.14.2-1
 - more abstracting out selinux (dmcphers@redhat.com)
 - first pass at splitting out selinux logic (dmcphers@redhat.com)
