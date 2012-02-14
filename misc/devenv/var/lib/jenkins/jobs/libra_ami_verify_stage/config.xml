@@ -13,9 +13,9 @@
     <hudson.model.ParametersDefinitionProperty>
       <parameterDefinitions>
         <hudson.model.StringParameterDefinition>
-          <name>exclude_web</name>
+          <name>include_web</name>
           <description></description>
-          <defaultValue>true</defaultValue>
+          <defaultValue>false</defaultValue>
         </hudson.model.StringParameterDefinition>
         <hudson.model.StringParameterDefinition>
           <name>exclude_internal</name>
@@ -43,9 +43,9 @@
 build/devenv launch devenv-stage_verifier_${BUILD_NUMBER} --use_stage_image --verifier
 
 excludes=&quot;&quot;
-if [ &quot;$exclude_web&quot; == &quot;true&quot; ]
+if [ &quot;$include_web&quot; == &quot;true&quot; ]
 then
-    excludes=$excludes&quot; --exclude_web&quot;
+    excludes=$excludes&quot; --include_web&quot;
 fi
 if [ &quot;$exclude_internal&quot; == &quot;true&quot; ]
 then

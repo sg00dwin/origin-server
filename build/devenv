@@ -182,7 +182,7 @@ class DevEnv < Thor
           add_ssh_cmd_to_threads(hostname, threads, failures, "Verification", "cucumber -f html --out /tmp/rhc/verfication.html -f progress -t @verify li-test/tests/")
         end
 
-        unless options.exclude_web?
+        if options.include_web?
             
           if options.sauce_os && options.sauce_browser && options.sauce_browser_version
             browsers = [[options.sauce_os, options.sauce_browser, options.sauce_browser_version]]
@@ -290,7 +290,7 @@ class DevEnv < Thor
   method_option :unofficial, :type => :boolean, :desc => "For unofficial use.  Do not send emails, etc."
   method_option :exclude_internal, :type => :boolean, :desc => "Exclude running unit and internal tests"
   method_option :exclude_verification, :type => :boolean, :desc => "Exclude running verification tests"
-  method_option :exclude_web, :type => :boolean, :desc => "Exclude running Selenium tests"
+  method_option :include_web, :type => :boolean, :desc => "Include running Selenium tests"
   method_option :region, :required => false, :desc => "Amazon region override (default us-east-1)"
   method_option :build_clean_ami, :required => false, :desc => "Indicates whether to start from a base RHEL image"
   method_option :install_from_source, :required => false, :desc => "Indicates whether to start from a base RHEL image"
@@ -603,7 +603,7 @@ END
   method_option :unofficial, :type => :boolean, :desc => "For unofficial use.  Do not send emails, etc."
   method_option :exclude_internal, :type => :boolean, :desc => "Exclude running unit and internal tests"
   method_option :exclude_verification, :type => :boolean, :desc => "Exclude running verification tests"
-  method_option :exclude_web, :type => :boolean, :desc => "Exclude running Selenium tests"
+  method_option :include_web, :type => :boolean, :desc => "Include running Selenium tests"
   method_option :sauce_username, :required => false, :desc => "Sauce Labs username (default '#{SAUCE_USER}')"
   method_option :sauce_access_key, :required => false, :desc => "Sauce Labs access key (default '#{SAUCE_SECRET}')"
   method_option :region, :required => false, :desc => "Amazon region override (default us-east-1)"
