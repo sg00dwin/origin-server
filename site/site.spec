@@ -3,7 +3,7 @@
 
 Summary:   Li site components
 Name:      rhc-site
-Version:   0.86.5
+Version:   0.86.6
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -76,6 +76,29 @@ rm -rf %{buildroot}
 chmod 0770 %{sitedir}/tmp
 
 %changelog
+* Tue Feb 14 2012 Dan McPherson <dmcphers@redhat.com> 0.86.6-1
+- Minor wording tweaks (ccoleman@redhat.com)
+- Tweak rendering of domain name to make it more accurate (ccoleman@redhat.com)
+- Merge branch 'master' into dev/clayton/nextsteps (ccoleman@redhat.com)
+- Flushed out getting started content (ccoleman@redhat.com)
+- Merge branch 'dev' (sgoodwin@redhat.com)
+- styleguide additions (sgoodwin@redhat.com)
+- Merge branch 'master' into dev/clayton/nextsteps (ccoleman@redhat.com)
+- Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
+  (ccoleman@redhat.com)
+- Next steps page round #1 (ccoleman@redhat.com)
+- .reload required to refresh .applications list (ccoleman@redhat.com)
+- Improved app details page looking (ffranz@redhat.com)
+- Merge branch 'dev0213' (sgoodwin@redhat.com)
+- updates for create app fow (sgoodwin@redhat.com)
+- Move types around (ccoleman@redhat.com)
+- Further iteration on index views and confirm views, more railsisms and
+  simplifications (ccoleman@redhat.com)
+- Bug 790323 - consistent display of framework value (ccoleman@redhat.com)
+- Merge branch 'master' of git1.ops.rhcloud.com:/srv/git/li (ffranz@redhat.com)
+- New console: added some more information to app details page
+  (ffranz@redhat.com)
+
 * Mon Feb 13 2012 Dan McPherson <dmcphers@redhat.com> 0.86.5-1
 - Disable broken tests for new REST API/Applications controller
   (aboone@redhat.com)

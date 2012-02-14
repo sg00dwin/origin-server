@@ -23,9 +23,9 @@
           <defaultValue>false</defaultValue>
         </hudson.model.StringParameterDefinition>
         <hudson.model.StringParameterDefinition>
-          <name>exclude_web</name>
+          <name>include_web</name>
           <description></description>
-          <defaultValue>true</defaultValue>
+          <defaultValue>false</defaultValue>
         </hudson.model.StringParameterDefinition>
       </parameterDefinitions>
     </hudson.model.ParametersDefinitionProperty>
@@ -43,9 +43,9 @@
 build/devenv launch devenv_verifier_${BUILD_NUMBER} --verifier
 
 excludes=&quot;&quot;
-if [ &quot;$exclude_web&quot; == &quot;true&quot; ]
+if [ &quot;$include_web&quot; == &quot;true&quot; ]
 then
-    excludes=$excludes&quot; --exclude_web&quot;
+    excludes=$excludes&quot; --include_web&quot;
 fi
 if [ &quot;$exclude_internal&quot; == &quot;true&quot; ]
 then

@@ -5,7 +5,7 @@
 
 Summary:        Cloud Development Controller
 Name:           rubygem-%{gemname}
-Version:        0.4.4
+Version:        0.4.5
 Release:        1%{?dist}
 Group:          Development/Languages
 License:        ASL 2.0
@@ -73,6 +73,14 @@ rm -rf %{buildroot}
 %{ruby_sitelib}/%{gemname}.rb
 
 %changelog
+* Tue Feb 14 2012 Dan McPherson <dmcphers@redhat.com> 0.4.5-1
+- Updating gem versions (dmcphers@redhat.com)
+- add find_one capability (dmcphers@redhat.com)
+- cleaning up version reqs (dmcphers@redhat.com)
+- Bug fixes:   - Fix deconfigure order   - Fix type in exception handler of app
+  configure (kraman@gmail.com)
+- typo fix (rchopra@redhat.com)
+
 * Mon Feb 13 2012 Dan McPherson <dmcphers@redhat.com> 0.4.4-1
 - Updating gem versions (dmcphers@redhat.com)
 - Bugfix for bugz#789891. Fixed issue where cartridge was left as a dependency

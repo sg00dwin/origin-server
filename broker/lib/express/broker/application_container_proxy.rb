@@ -9,15 +9,15 @@ module Express
   module Broker
     class ApplicationContainerProxy
       @@C_CONTROLLER = 'cloud-sdk-node'
-      attr_accessor :id, :current_capacity, :district
+      attr_accessor :id, :district
       
-      def initialize(id, current_capacity=nil, district=nil)
+      def initialize(id, district=nil)
         @id = id
-        @current_capacity = current_capacity
         @district = district
       end
       
       def self.find_available_impl(node_profile=nil, district_uuid=nil)
+        district = nil
         if Rails.configuration.districts[:enabled] && (!district_uuid || district_uuid == 'NONE')  
           district = District.find_available(node_profile)
           if district
@@ -36,7 +36,16 @@ module Express
         raise Cloud::Sdk::NodeException.new("No nodes available.  If the problem persists please contact Red Hat support.", 140) unless current_server
         Rails.logger.debug "DEBUG: find_available_impl: current_server: #{current_server}: #{current_capacity}"
 
-        ApplicationContainerProxy.new(current_server, current_capacity, district)
+        ApplicationContainerProxy.new(current_server, district)
+      end
+      
+      def self.find_one_impl(node_profile=nil)
+        current_server = rpc_find_one(node_profile)
+        Rails.logger.debug "CURRENT SERVER: #{current_server}"
+        raise Cloud::Sdk::NodeException.new("No nodes found.  If the problem persists please contact Red Hat support.", 140) unless current_server
+        Rails.logger.debug "DEBUG: find_one_impl: current_server: #{current_server}"
+
+        ApplicationContainerProxy.new(current_server)
       end
 
       def self.blacklisted?(name)
@@ -44,7 +53,7 @@ module Express
       end
       
       def get_available_cartridges
-        result = execute_direct(@@C_CONTROLLER, 'cartridge-list', "--porcelain --with-descriptors")
+        result = execute_direct(@@C_CONTROLLER, 'cartridge-list', "--porcelain --with-descriptors", false)
         result = parse_result(result)
         cart_data = JSON.parse(result.resultIO.string)
         cart_data.map! {|c| Cloud::Sdk::Cartridge.new.from_descriptor(YAML.load(c))}
@@ -558,7 +567,7 @@ module Express
       # Execute an RPC call for the specified agent.
       # If a server is supplied, only execute for that server.
       #
-      def self.rpc_exec(agent, server=nil, forceRediscovery=false, options = rpc_options)
+      def self.rpc_exec(agent, server=nil, forceRediscovery=false, options=rpc_options)
         if server
           Rails.logger.debug("DEBUG: rpc_exec: Filtering rpc_exec to server #{server}")
           # Filter to the specified server
@@ -675,7 +684,7 @@ module Express
         puts message
       end
       
-      def execute_direct(cartridge, action, args)
+      def execute_direct(cartridge, action, args, log_debug_output=true)
           mc_args = { :cartridge => cartridge,
                       :action => action,
                       :args => args }
@@ -684,11 +693,10 @@ module Express
           begin
             Rails.logger.debug "DEBUG: rpc_client.custom_request('cartridge_do', #{mc_args.inspect}, #{@id}, {'identity' => #{@id}})"
             result = rpc_client.custom_request('cartridge_do', mc_args, @id, {'identity' => @id})
-            Rails.logger.debug "DEBUG: #{result.inspect}"
+            Rails.logger.debug "DEBUG: #{result.inspect}" if log_debug_output
           ensure
             rpc_client.disconnect
           end
-          Rails.logger.debug result.inspect
           result
       end
       
@@ -909,6 +917,32 @@ module Express
           Rails.logger.debug "Current server: #{current_server} active capacity: #{current_capacity}"
         end
         return current_server, current_capacity
+      end
+      
+      def self.rpc_find_one(node_profile=nil)
+        current_server = nil
+        additional_filters = []
+
+        if node_profile
+          additional_filters.push({:fact => "node_profile",
+                                   :value => node_profile,
+                                   :operator => "=="})
+        end
+
+        options = rpc_options
+        options[:filter]['fact'] = options[:filter]['fact'] + additional_filters
+        options[:mcollective_limit_targets] = "1"
+
+        rpc_client = rpcclient('rpcutil', :options => options)
+        begin
+          rpc_client.get_fact(:fact => 'public_hostname') do |response|
+            raise Cloud::Sdk::NodeException.new("No nodes found.  If the problem persists please contact Red Hat support.", 140) unless Integer(response[:body][:statuscode]) == 0
+            current_server = response[:senderid]
+          end
+        ensure
+          rpc_client.disconnect
+        end
+        return current_server
       end
       
       def self.rpc_options

@@ -14,6 +14,7 @@ class DevEnv < Thor
   include OpenShift::Tito
   include OpenShift::SSH
   include OpenShift::Amazon
+  include OpenShift::SauceLabs
   
   no_tasks do
     
@@ -158,7 +159,7 @@ class DevEnv < Thor
       end
     end
     
-    def test_instance(hostname, instance, conn, options, image_id=nil)
+    def test_instance(tag, hostname, instance, conn, options, image_id=nil)
       begin
         if options.unofficial?
           use_private_ip(hostname)
@@ -182,27 +183,58 @@ class DevEnv < Thor
           add_ssh_cmd_to_threads(hostname, threads, failures, "Verification", "cucumber -f html --out /tmp/rhc/verfication.html -f progress -t @verify li-test/tests/")
         end
 
-        unless options.exclude_web?
-          sauce_opts = {
-            "SAUCE_USERNAME" => (options.sauce_username || SAUCE_USER),
-            "SAUCE_ACCESS_KEY" => (options.sauce_access_key || SAUCE_SECRET),
-            "SAUCE_OS" => (options.sauce_os || SAUCE_OS),
-            "SAUCE_BROWSER" => (options.sauce_browser || SAUCE_BROWSER),
-            "SAUCE_BROWSER_VERSION" => (options.sauce_browser_version || SAUCE_BROWSER_VERSION),
-            "JENKINS_BUILD" => 'unofficial'
-          }
+        if options.include_web?
 
-          # If we passed a jenkins build like name, use that for the build number
-          if m = tag.match(/libra_/)
-            sauce_opts['JENKINS_BUILD'] = tag
+          # check sauce quotas first
+          usage = sauce_usage options
+          puts "Sauce Labs Usage: #{usage[:percentage]}% (#{usage[:used]} minutes of #{usage[:quota]})"
+
+          if usage[:overage] && !options[:sauce_overage]
+            puts "Refusing to run Sauce Labs tests due to quota overage concerns.  Run with --sauce_overage to override."
+            return
           end
 
-          env_string = sauce_opts.keys.map{|k| %Q(#{k}="#{sauce_opts[k]}")}.join(' ')
+          if options.sauce_os && options.sauce_browser && options.sauce_browser_version
+            browsers = [[options.sauce_os, options.sauce_browser, options.sauce_browser_version]]
+          else
+            browsers = [['Windows 2003', 'firefox', '7'],
+                        ['Windows 2008', 'chrome', '7'],
+                        ['Windows 2008', 'iexplore', '9'],
+                        ['Windows 2003', 'safari', '4']]
+            # not working very well
+            browsers.delete_at(2)
+            browsers.delete_at(2)
+          end
+      
+          browsers.each do |browser|
+            sauce_os = browser[0]
+            sauce_browser = browser[1]
+            sauce_browser_version = browser[2]
+            sauce_opts = {
+              "SAUCE_USERNAME" => (options.sauce_username || 'openshift_ci'),
+              "SAUCE_ACCESS_KEY" => (options.sauce_access_key || '3d67e770-ce7d-482a-8c7f-07aec039d564'),
+              "SAUCE_OS" => sauce_os,
+              "SAUCE_BROWSER" => sauce_browser,
+              "SAUCE_BROWSER_VERSION" => sauce_browser_version,
+              "SAUCE_SELENIUM_VERSION" => '2.18.0',
+              "SAUCE_BROWSER_URL" => "https://#{hostname}",
+              "JENKINS_BUILD" => 'unofficial'
+            }
+            # If we passed a jenkins build like name, use that for the build number
+            if tag.start_with?('libra_') || tag.start_with?('devenv_') || tag.start_with?('devenv-')
+              sauce_opts['JENKINS_BUILD'] = tag
+            else
+              sauce_opts['SAUCE_USERNAME'] = options.sauce_username
+              sauce_opts['SAUCE_ACCESS_KEY'] = options.sauce_access_key
+            end
 
-          puts "Running Sauce tests with the following options:"
-          puts sauce_opts.to_yaml
+            env_string = sauce_opts.keys.map{|k| %Q(#{k}="#{sauce_opts[k]}")}.join(' ')
 
-          add_ssh_cmd_to_threads(hostname, threads, failures, "Web Selenium", "cd li-test/selenium; #{env_string} ruby ts_web")
+            puts "Running Sauce tests with the following options:"
+            puts sauce_opts.to_yaml
+
+            add_ssh_cmd_to_threads(hostname, threads, failures, "Web Selenium (#{sauce_os} - #{sauce_browser} #{sauce_browser_version})", "cd li-test/selenium; #{env_string} ruby ts_web")
+          end
         end
 
         threads.each do |t|
@@ -271,7 +303,7 @@ class DevEnv < Thor
   method_option :unofficial, :type => :boolean, :desc => "For unofficial use.  Do not send emails, etc."
   method_option :exclude_internal, :type => :boolean, :desc => "Exclude running unit and internal tests"
   method_option :exclude_verification, :type => :boolean, :desc => "Exclude running verification tests"
-  method_option :exclude_web, :type => :boolean, :desc => "Exclude running Selenium tests"
+  method_option :include_web, :type => :boolean, :desc => "Include running Selenium tests"
   method_option :region, :required => false, :desc => "Amazon region override (default us-east-1)"
   method_option :build_clean_ami, :required => false, :desc => "Indicates whether to start from a base RHEL image"
   method_option :install_from_source, :required => false, :desc => "Indicates whether to start from a base RHEL image"
@@ -315,11 +347,7 @@ class DevEnv < Thor
         puts "Done"
   
         print "Updating all packages on the system..."
-        ssh(hostname, "yum update -y --exclude='rhc*'", 1800)
-        puts "Done"
-  
-        print "Adding openssh-client tools..."
-        ssh(hostname, "yum -y install openssh-clients", 1800)
+        ssh(hostname, "yum update -y --exclude='rhc*'; yum -y install openssh-clients", 1800)
         puts "Done"
 
         if options.reboot?
@@ -372,7 +400,7 @@ class DevEnv < Thor
       end
       
       scp_remote_tests(hostname)
-      test_instance(hostname, instance, conn, options, image_id)
+      test_instance(name + '_' + build_num, hostname, instance, conn, options, image_id)
     ensure
       terminate_instance(instance) if options.terminate?
     end
@@ -450,38 +478,6 @@ class DevEnv < Thor
       use_private_ip(hostname)
     else
       use_public_ip(hostname)
-    end
-  end
-
-  desc "sync_sdk NAME PATH", "Synchronize a local git repo with a remote DevEnv instance.  NAME should be ssh resolvable. PATH should be the location of the git repository to sync"
-  method_option :tag, :type => :boolean, :desc => "NAME is an Amazon tag"
-  method_option :verbose, :type => :boolean, :desc => "Enable verbose logging"
-  method_option :skip_build, :type => :boolean, :desc => "Indicator to skip the rpm build/install"
-  method_option :region, :required => false, :desc => "Amazon region override (default us-east-1)"
-  def sync_sdk(name, path)
-    options.verbose? ? @@log.level = Logger::DEBUG : @@log.level = Logger::ERROR
-
-    # Get the hostname from a tag lookup or assume it's SSH accessible directly
-    conn = connect
-    conn = conn.regions[options.region] unless (options.region?nil)
-    hostname = options.tag? ? find_instance(conn, name, true).dns_name : name
-
-    # Get the current branch
-    branch = get_branch
-
-    puts "Synchronizing local changes from branch #{branch}..."
-    ssh_path=File.expand_path(File.dirname(__FILE__)) + "/ssh-override"
-
-    # Don't change directories until the ssh_path has been determined from the working directory
-    FileUtils.cd path 
-
-    run("export GIT_SSH=#{ssh_path}; #{branch == 'origin/master' ? "git push -q root@#{hostname}:/root/cloud-sdk master:master --tags --force; " : ''}git push -q root@#{hostname}:/root/cloud-sdk #{branch}:master --tags --force", :verbose => options.verbose?)
-    puts "Done"
-
-    if !options.skip_build?
-      puts "Performing remote install...."
-      ssh(hostname, "rm -rf cloud-sdk-working; git clone cloud-sdk cloud-sdk-working; pushd cloud-sdk-working; tito build --rpm --test -i; popd; rm -rf cloud-sdk-working", 600)
-      puts "Done"
     end
   end
 
@@ -620,12 +616,10 @@ END
   method_option :unofficial, :type => :boolean, :desc => "For unofficial use.  Do not send emails, etc."
   method_option :exclude_internal, :type => :boolean, :desc => "Exclude running unit and internal tests"
   method_option :exclude_verification, :type => :boolean, :desc => "Exclude running verification tests"
-  method_option :exclude_web, :type => :boolean, :desc => "Exclude running Selenium tests"
+  method_option :include_web, :type => :boolean, :desc => "Include running Selenium tests"
   method_option :sauce_username, :required => false, :desc => "Sauce Labs username (default '#{SAUCE_USER}')"
   method_option :sauce_access_key, :required => false, :desc => "Sauce Labs access key (default '#{SAUCE_SECRET}')"
-  method_option :sauce_os, :required => false, :desc => "Sauce Labs OS (default '#{SAUCE_OS}')"
-  method_option :sauce_browser, :required => false, :desc => "Sauce Labs browser (default '#{SAUCE_BROWSER}')"
-  method_option :sauce_browser_version, :required => false, :desc => "Sauce Labs browser version (default '#{SAUCE_BROWSER_VERSION}')"
+  method_option :sauce_overage, :type => :boolean, :desc => "Run Sauce Labs tests even if we are over our monthly minute quota"
   method_option :region, :required => false, :desc => "Amazon region override (default us-east-1)"
   def test(tag)
     options.verbose? ? @@log.level = Logger::DEBUG : @@log.level = Logger::ERROR
@@ -636,64 +630,49 @@ END
     instance = find_instance(conn, tag, true)
     hostname = instance.dns_name
 
-    test_instance(hostname, instance, conn, options)
-  end
-
-  desc "test_sdk TAG", "Runs the tests on a tagged instance and downloads the results"
-  method_option :terminate, :type => :boolean, :desc => "Terminate the instance when finished"
-  method_option :verbose, :type => :boolean, :desc => "Enable verbose logging"
-  method_option :region, :required => false, :desc => "Amazon region override (default us-east-1)"
-  def test_sdk(tag)
-    options.verbose? ? @@log.level = Logger::DEBUG : @@log.level = Logger::ERROR
-
-    conn = connect
-    conn = conn.regions[options.region] unless (options.region?nil)
-    
-    instance = find_instance(conn, tag, true)
-    hostname = instance.dns_name
-    begin
-      cmd = "cd /usr/lib/ruby/gems/*/gems/cloud-sdk*; rake test"
-      exit_code = run_ssh(hostname, "OpenShift SDK Unit", cmd)
-      if exit_code != 0
-        download_artifacts hostname
-        exit exit_code
-      end
-      puts "Done"
-    ensure
-      terminate_instance(instance) if options.terminate?
-    end
+    test_instance(tag, hostname, instance, conn, options)
   end
   
-  desc "setup_multi_node_devenvs", "Sets up verifier as broker and node and verifier2 as extra node"
+  desc "setup_multi_node_devenvs", "Sets up verifier as a multi-node broker"
   method_option :verbose, :type => :boolean, :desc => "Enable verbose logging"
-  def setup_multi_node_devenvs
+  def setup_multi_node_broker
     options.verbose? ? @@log.level = Logger::DEBUG : @@log.level = Logger::ERROR
 
-    internal_hostname = get_internal_hostname("verifier2")
-    internal_ip = get_private_ip("verifier")
+    internal_hostname = get_internal_hostname("verifier")
     ssh("verifier", "sed -i 's,^plugin.amqp.host.*=.*,plugin.amqp.host=#{internal_hostname},' /etc/mcollective/client.cfg;" \
                   "sed -i 's,^plugin.amqp.host.*=.*,plugin.amqp.host=#{internal_hostname},' /etc/mcollective/server.cfg;" \
                   "sed -i 's,^ssl-cert-name.*=.*,ssl-cert-name=#{internal_hostname},' /etc/qpidd.conf;" \
                   "sed -i 's,^server_id.*=.*,server_id=#{internal_hostname},' /etc/libra/devenv/qpid/make-certs.sh;" \
                   "sed -i 's,^owner_domain_name.*=.*,owner_domain_name=#{internal_hostname},' /etc/libra/devenv/qpid/make-certs.sh;" \
+                  "sed -i 's,^#-A,-A,' /etc/sysconfig/iptables;" \
                   "pushd /etc/libra/devenv/qpid/ > /dev/null;" \
                   "./make-certs.sh;" \
                   "/bin/cp test/client_db/* /etc/qpid/pki/client_db/; /bin/cp test/server_db/* /etc/qpid/pki/server_db/;" \
                   "popd > /dev/null;" \
                   "restorecon -R /etc/qpid/pki/; chmod +r /etc/qpid/pki/client_db/* /etc/qpid/pki/server_db/*;" \
-                  "service qpidd restart; service mcollective restart", 240)
-    
-    puts `pushd /tmp > /dev/null; rm -rf /tmp/test; scp -r verifier:/etc/libra/devenv/qpid/test/ .; scp -r test/client_db/* verifier2:/etc/qpid/pki/client_db/; scp -r test/server_db/* verifier2:/etc/qpid/pki/server_db/; popd > /dev/null`
-    puts `pushd /tmp > /dev/null; rm -rf /tmp/clients; scp -r verifier2:/etc/mcollective/ssl/clients/ .; scp -r clients/* verifier:/etc/mcollective/ssl/clients/; popd > /dev/null`
-    
-    ssh("verifier2", "sed -i 's,^plugin.amqp.host.*=.*,plugin.amqp.host=#{internal_hostname},' /etc/mcollective/server.cfg;" \
-                  "sed -i 's,^ssl-cert-name.*=.*,ssl-cert-name=#{internal_hostname},' /etc/qpidd.conf;" \
-                  "restorecon -R /etc/qpid/pki/; chmod +r /etc/qpid/pki/client_db/* /etc/qpid/pki/server_db/*;" \
-                  "sed -i 's,^#-A,-A,' /etc/sysconfig/iptables;" \
-                  "sed -i 's,^libra_server.*=.*,libra_server=#{internal_ip},' /etc/libra/node.conf;" \
                   "service iptables restart; service qpidd restart; service mcollective restart", 240)
 
-    puts ssh("verifier", "mc-ping") 
+    puts ssh("verifier", "mc-ping")
+  end
+  
+  desc "add_multi_node_devenv", "Adds a node to a multi node devenv setup"
+  method_option :verbose, :type => :boolean, :desc => "Enable verbose logging"
+  def add_multi_node_devenv(hostname)
+    options.verbose? ? @@log.level = Logger::DEBUG : @@log.level = Logger::ERROR
+
+    internal_hostname = get_internal_hostname("verifier")
+    internal_ip = get_private_ip("verifier")
+    
+    puts `pushd /tmp > /dev/null; rm -rf /tmp/test; scp -r verifier:/etc/libra/devenv/qpid/test/ .; scp -r test/client_db/* #{hostname}:/etc/qpid/pki/client_db/; scp -r test/server_db/* #{hostname}:/etc/qpid/pki/server_db/; popd > /dev/null`
+    puts `pushd /tmp > /dev/null; rm -rf /tmp/clients; scp -r verifier:/etc/mcollective/ssl/clients/ .; scp -r clients/* #{hostname}:/etc/mcollective/ssl/clients/; popd > /dev/null`
+    
+    ssh(hostname, "sed -i 's,^plugin.amqp.host.*=.*,plugin.amqp.host=#{internal_hostname},' /etc/mcollective/server.cfg;" \
+                  "sed -i 's,^ssl-cert-name.*=.*,ssl-cert-name=#{internal_hostname},' /etc/qpidd.conf;" \
+                  "restorecon -R /etc/qpid/pki/; chmod +r /etc/qpid/pki/client_db/* /etc/qpid/pki/server_db/*;" \
+                  "sed -i 's,^libra_server.*=.*,libra_server=#{internal_ip},' /etc/libra/node.conf;" \
+                  "service qpidd restart; service mcollective restart", 240)
+  
+    puts ssh("verifier", "mc-ping")
   end
   
 

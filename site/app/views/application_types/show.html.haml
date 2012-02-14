@@ -1,43 +1,50 @@
-%section.main
-  .content
+:css
+  .application_type {background-color: #efefef; padding: 9px 35px 10px 21px; margin-bottom: 20px;}
+  .application_type > ul.meta > li {display: inline;}
+  .application_type > ul.meta > li > label {display: inline;}
 
-    :css
-      .application_type {background-color: #efefef; padding: 10px; margin-bottom: 20px;}
-      .application_type > ul.meta > li {display: inline;}
-      .application_type > ul.meta > li > label {display: inline;}
+%h1.invisible Configure New Application
+= wizard_steps_create 1
 
-    %h1 Configure New Application
-    = wizard_steps_create 1
+= render :partial => @application_type, :locals => {:hide_link => true, :extra_info => true}
 
-    = render :partial => @application_type, :locals => {:hide_link => true, :extra_info => true}
+= semantic_form_for @application, :html => {:class => 'form-horizontal'} do |f|
+  = f.hidden_field :application_type, :value => @application_type.id
 
-    = semantic_form_for @application, :html => {:class => 'form-horizontal'} do |f|
-      = f.hidden_field :application_type, :value => @application_type.id
+  = f.semantic_errors
 
-      = f.semantic_errors
+  = f.inputs do
+    -# This is implemented custom here rather than integrating into Formtastic because of its specific nature
+    .control-group
+      %label.control-label Application name
+      .controls
+        .input-prepend-append
+          %span.add-on-first http://
 
-      = f.inputs do
-        -# This is implemented custom here rather than integrating into Formtastic because of its specific nature
-        .control-group
-          %label.control-label Application name
-          .controls
-            %span http://
+          = f.text_field :name, :value => "#{@application.name}", :autofocus => true, :placeholder => 'Application name'
 
-            = f.text_field :name, :value => "#{@application.name}", :autofocus => true, :placeholder => 'Application name'
+          -# If the user has a domain, use it, otherwise prompt them for that field
+          - if @domain
 
-            %span> -
+            %span.add-on-last>= "-#{@domain.name}.#{Rails.configuration.base_domain}"
 
-            -# If the user has a domain, use it, otherwise prompt them for that field
-            - if @domain
-              %span= @domain.name
-            - else
-              = f.text_field :domain_name, :value => "#{@application.domain_name}", :placeholder => 'Domain name'
+          - else
 
-            %span> .rhcloud.com
+            %span.add-on-middle> -
+            = f.text_field :domain_name, :value => "#{@application.domain_name}", :placeholder => 'Domain name'
+            %span.add-on-last>= ".#{Rails.configuration.base_domain}"
 
-            - unless @domain
-              .help-block
-                Because this is your first application, you need to set a domain name that all your applications will share. You can map your own DNS domain names to your application once you have created the application.
+        - if @domain
+          .help-block
+            Your application name uniquely identifies the application and becomes part of your public 
+            URL. You can add your own domain names to the application later.
+        - else
+          .row
+            .help-block.span3
+              Your application name uniquely identifies the application and becomes part of your public 
+              URL. You can add your own domain names to the application later.
+            .help-block.span3
+              Because this is your first application, you need to set a name under which your applications will be grouped.
 
-      = f.buttons do
-        = f.commit_button
+  = f.buttons do
+    = f.commit_button

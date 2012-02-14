@@ -78,12 +78,12 @@
     <hudson.tasks.Shell>
       <command>if [ &quot;$BUILD_CLEAN_AMI&quot; == &quot;true&quot; ]
 then
-  build/devenv build devenv ${BUILD_NUMBER} --register --terminate --exclude_web --build_clean_ami
+  build/devenv build devenv ${BUILD_NUMBER} --register --terminate --build_clean_ami
 elif [ &quot;$INSTALL_FROM_SOURCE&quot; == &quot;true&quot; ]
 then
-  build/devenv build devenv ${BUILD_NUMBER} --register --terminate --exclude_web --install_from_source
+  build/devenv build devenv ${BUILD_NUMBER} --register --terminate --install_from_source
 else
-  build/devenv build devenv ${BUILD_NUMBER} --register --terminate --exclude_web
+  build/devenv build devenv ${BUILD_NUMBER} --register --terminate
 fi</command>
     </hudson.tasks.Shell>
   </builders>
