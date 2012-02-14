@@ -3,7 +3,7 @@
 
 Summary:   Li broker components
 Name:      rhc-broker
-Version:   0.86.4
+Version:   0.86.5
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -79,6 +79,14 @@ rm -rf $RPM_BUILD_ROOT
 /bin/touch %{brokerdir}/log/production.log
 
 %changelog
+* Tue Feb 14 2012 Dan McPherson <dmcphers@redhat.com> 0.86.5-1
+- Updating gem versions (dmcphers@redhat.com)
+- add find_one capability (dmcphers@redhat.com)
+- Supressing debug output for cartridge-list to make logs legible Turning on
+  rails caching for streamline-aws configuration (kraman@gmail.com)
+- try a different order with the embedded feature (dmcphers@redhat.com)
+- cleaning up version reqs (dmcphers@redhat.com)
+
 * Mon Feb 13 2012 Dan McPherson <dmcphers@redhat.com> 0.86.4-1
 - Updating gem versions (dmcphers@redhat.com)
 - share common move logic (dmcphers@redhat.com)
