@@ -211,15 +211,18 @@ class DevEnv < Thor
               "JENKINS_BUILD" => 'unofficial'
             }
             # If we passed a jenkins build like name, use that for the build number
-            if m = tag.match(/libra_/)
+            if tag.start_with?('libra_') || tag.start_with?('devenv_') || tag.start_with?('devenv-')
               sauce_opts['JENKINS_BUILD'] = tag
+            else
+              sauce_opts['SAUCE_USERNAME'] = options.sauce_username
+              sauce_opts['SAUCE_ACCESS_KEY'] = options.sauce_access_key
             end
-            
+
             env_string = sauce_opts.keys.map{|k| %Q(#{k}="#{sauce_opts[k]}")}.join(' ')
-            
+
             puts "Running Sauce tests with the following options:"
             puts sauce_opts.to_yaml
-            
+
             add_ssh_cmd_to_threads(hostname, threads, failures, "Web Selenium (#{sauce_os} - #{sauce_browser} #{sauce_browser_version})", "cd li-test/selenium; #{env_string} ruby ts_web")
           end
         end
