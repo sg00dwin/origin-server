@@ -5,7 +5,7 @@
 
 Summary:        Cloud Development Node
 Name:           rubygem-%{gemname}
-Version:        0.4.3
+Version:        0.4.4
 Release:        1%{?dist}
 Group:          Development/Languages
 License:        ASL 2.0
@@ -87,6 +87,29 @@ rm -rf %{buildroot}
 %{ruby_sitelib}/%{gemname}.rb
 
 %changelog
+* Mon Feb 13 2012 Dan McPherson <dmcphers@redhat.com> 0.4.4-1
+- Updating gem versions (dmcphers@redhat.com)
+- Rolling back my changes to expose targetted proxy. Revert "Port proxy API
+  calls." (rmillner@redhat.com)
+- Rolling back my changes to expose targetted proxy. Revert "Make proxy remove
+  clean up a port regardless of whether it was defined." (rmillner@redhat.com)
+- Rolling back my changes to expose targetted proxy. Revert "Only remove ports
+  which the user is allowed to use." (rmillner@redhat.com)
+- Rolling back my changes to expose targetted proxy. Revert "Add proxy
+  reconfiguration calls" (rmillner@redhat.com)
+- Rolling back my changes to expose targetted proxy. Revert "Add cdk commands
+  for proxy ports." (rmillner@redhat.com)
+- Rolling back my changes to expose targetted proxy. Revert "Fix minor syntax
+  errors." (rmillner@redhat.com)
+- Rolling back my changes to expose targetted proxy. Revert "Wrong kind of
+  quotes" (rmillner@redhat.com)
+- Rolling back my changes to expose targetted proxy. Revert "Needed end of
+  line" (rmillner@redhat.com)
+- Rolling back my changes to expose targetted proxy. Revert "Needed to convert
+  port number to integer" (rmillner@redhat.com)
+- Rolling back my changes to expose targetted proxy. Revert "For compat with
+  abstract cartridge, prefix variables with OPENSHIFT" (rmillner@redhat.com)
+
 * Mon Feb 13 2012 Dan McPherson <dmcphers@redhat.com> 0.4.3-1
 - Updating gem versions (dmcphers@redhat.com)
 - cleaning up specs to force a build (dmcphers@redhat.com)

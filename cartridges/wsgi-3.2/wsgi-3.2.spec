@@ -2,7 +2,7 @@
 
 Summary:   Provides python-wsgi-3.2 support
 Name:      rhc-cartridge-wsgi-3.2
-Version:   0.86.2
+Version:   0.86.3
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   ASL 2.0
@@ -97,6 +97,12 @@ rm -rf %{buildroot}
 %doc %{cartridgedir}/LICENSE
 
 %changelog
+* Mon Feb 13 2012 Dan McPherson <dmcphers@redhat.com> 0.86.3-1
+- Add sample/empty directories for minutely,hourly,daily and monthly
+  frequencies as well. (ramr@redhat.com)
+- Add cron example and directories to all the openshift framework templates.
+  (ramr@redhat.com)
+
 * Mon Feb 13 2012 Dan McPherson <dmcphers@redhat.com> 0.86.2-1
 - bug 722828 (bdecoste@gmail.com)
 - more abstracting out selinux (dmcphers@redhat.com)

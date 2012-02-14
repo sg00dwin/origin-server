@@ -142,8 +142,12 @@ echo "kernel.sem = 250  32000 32  4096" >> /etc/sysctl.conf
 sysctl kernel.sem="250  32000 32  4096"
 
 # Move ephemeral port range to accommodate app proxies
-echo "net.ipv4.ip_local_port_range = 15000 35534" >> /etc/sysctl.conf
-sysctl net.ipv4.ip_local_port_range="15000 35534"
+echo "net.ipv4.ip_local_port_range = 15000 35530" >> /etc/sysctl.conf
+sysctl net.ipv4.ip_local_port_range="15000 35530"
+
+# Increase the connection tracking table size
+echo "net.netfilter.nf_conntrack_max = 1048576" >> /etc/sysctl.conf
+sysctl net.netfilter.nf_conntrack_max=1048576
 
 # Setup facts
 /usr/libexec/mcollective/update_yaml.rb
