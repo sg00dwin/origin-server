@@ -46,4 +46,6 @@ source $CART_INFO_DIR/lib/util
 #
 rm -f "$MONGODB_DIR/run/stop_lock"
 restart_mongodb
-[[ "$(status_mongodb 2>&1)" == *stopped ]]  &&  repair_mongodb
+zstatus=$(runuser --shell /bin/sh "$uuid" "$mongodbctl" status 2>&1)
+[[ "$zstatus" == *running ]]  &&  exit 0
+repair_mongodb

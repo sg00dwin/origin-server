@@ -32,10 +32,6 @@ function repair_mongodb {
     super_run_as_user "$MONGODB_DIR/${application}_mongodb_ctl.sh repair"
 }
 
-function status_mongodb {
-    super_run_as_user "$MONGODB_DIR/${application}_mongodb_ctl.sh status"
-}
-
 function start_mongodb_as_user {
     ${OPENSHIFT_NOSQL_DB_CTL_SCRIPT} start
     wait_to_start
