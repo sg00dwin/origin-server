@@ -1,4 +1,4 @@
-policy_module(libra,1.0.33)
+policy_module(libra,1.0.34)
 
 ########################################
 #
@@ -257,7 +257,6 @@ require {
 	type httpd_exec_t;
 	type httpd_rotatelogs_exec_t;
 	attribute exec_type;
-	type httpd_t;
 	type sendmail_t;
 	attribute domain;
 	type quota_t;
@@ -318,15 +317,6 @@ corenet_tcp_bind_postgresql_port(libra_t)
 allow libra_t tmpfs_t:file { read write };
 allow libra_t anon_inodefs_t:file write;
 
-##########
-# Used for development or when the li controller is running outside
-# of the li framework (like when it's installed in /var/www/html
-
-corenet_tcp_connect_amqp_port(httpd_t)
-corenet_udp_bind_generic_port(httpd_t)
-
-mcs_socket_write_all_levels(httpd_t)
-
 #########
 #
 # Allow binding to localhost for certain daemons
@@ -365,12 +355,22 @@ userdom_use_inherited_user_ptys(libra_t)
 
 gpg_entry_type(libra_t)
 
-# Silence passenger
-files_dontaudit_getattr_all_files(httpd_t)
-domain_dontaudit_read_all_domains_state(httpd_t)
 require {
         type httpd_t;
 }
+
+##########
+# Used for development or when the li controller is running outside
+# of the li framework (like when it's installed in /var/www/html
+
+corenet_tcp_connect_amqp_port(httpd_t)
+corenet_udp_bind_generic_port(httpd_t)
+
+mcs_socket_write_all_levels(httpd_t)
+
+# Silence passenger
+files_dontaudit_getattr_all_files(httpd_t)
+domain_dontaudit_read_all_domains_state(httpd_t)
 
 #============= httpd_t ==============
 allow httpd_t self:capability sys_ptrace;
@@ -457,5 +457,8 @@ allow libra_t sshd_t:unix_stream_socket { write read };
 # rpm, yum, debuginfo-install
 # ping, traceroute, iptables, iptables-multi
 # dmesg
-# su, sudo
+# su, sudo, denyhosts
 #
+
+# Remove the following once sshd gets fixed.
+dontaudit libra_domain self:process dyntransition;
