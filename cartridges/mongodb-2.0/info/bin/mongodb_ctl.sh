@@ -38,11 +38,11 @@ isrunning() {
 
 repair() {
     if ! isrunning ; then
-        echo "Repairing MongoDB ..."
+        echo "Attempting to repair MongoDB ..." 1>&2
         tmp_config="/tmp/mongodb.repair.conf"
         grep -ve "fork\s*=\s*true" $MONGODB_DIR/etc/mongodb.conf > $tmp_config
-        /usr/bin/mongod --auth --nojournal --smallfiles --quiet -f $tmp_config --repair
-        echo "MongoDB repair status = $?"
+        /usr/bin/mongod --auth --nojournal --smallfiles -f $tmp_config --repair
+        echo "MongoDB repair status = $?" 1>&2
         rm -f $tmp_config
     else
         echo "MongoDB already running - not running repair" 1>&2
