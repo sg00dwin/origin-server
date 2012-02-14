@@ -20,17 +20,17 @@ Feature: Embedded Cartridge Verification Tests
     And the embedded rockmongo-1.1 cartridge is added
     And the embedded cron-1.4 cartridge is added
     And the embedded metrics-0.1 cartridge is added
-    And the embedded postgresql-8.4 cartridge is added
     Then the application should be accessible
     When the embedded rockmongo-1.1 cartridge is removed
     And the embedded mongodb-2.0 cartridge is removed
     And the embedded cron-1.4 cartridge is removed
     And the embedded metrics-0.1 cartridge is removed
+    And the embedded postgresql-8.4 cartridge is added
     And the embedded postgresql-8.4 cartridge is removed
     Then the application should be accessible
     When the application is destroyed
     Then the application should not be accessible
-    
+
   Scenario: Jenkins Client Usage
     Given the libra client tools
     And an accepted node
