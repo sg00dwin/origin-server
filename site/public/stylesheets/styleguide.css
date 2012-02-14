@@ -1,4 +1,4 @@
-/*!
+/**!
  * Bootstrap v2.0.0
  *
  * Copyright 2012 Twitter, Inc
@@ -283,7 +283,7 @@ section {
 	margin-bottom: 60px;
 }
 p {
-  margin: 0 0 9px;
+  margin: 0 0 13px;
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
   font-size: 13px;
   line-height: 18px;
@@ -321,6 +321,7 @@ h6 small {
 h1 {
   font-size: 280%;
   line-height: 36px;
+  margin-bottom: 15px;
 }
 h1 small {
   font-size: 18px;
@@ -328,6 +329,7 @@ h1 small {
 h2 {
   font-size: 200%;
   line-height: 36px;
+  margin-bottom: 15px;
 }
 h2 small {
   font-size: 15px;
@@ -2534,7 +2536,7 @@ a.thumbnail:hover {
   line-height: 18px;
 }
 .alert-success {
-  background-color: #E5ECA3;
+  background-color: #D4E16B;
   border-color: none;
 }
 .alert-danger, .alert-error {
@@ -3084,7 +3086,7 @@ a.thumbnail:hover {
   display: block;
 }
 .invisible {
-  visibility: hidden;
+  border: 0; clip: rect(0 0 0 0); height: 1px; margin: -1px; overflow: hidden; padding: 0; position: absolute; width: 1px;
 }
 .fade {
   -webkit-transition: opacity 0.15s linear;
@@ -3111,7 +3113,8 @@ a.thumbnail:hover {
   height: auto;
 }
 .wizard-steps {
-	margin: 0;
+	margin: 5px 0 13px;
+	overflow: hidden;
 }  
 .wizard-steps li {
   font-size: 11px;
@@ -3124,10 +3127,14 @@ a.thumbnail:hover {
   text-shadow: 0 1px 2px #fff;
   list-style: none;
 }
-.wizard-steps li.active-step {
+.wizard-steps li.active {
   color: #000;
   background-color: #d8d8d8;
 }
+
+.clearfix:before, .clearfix:after { content: ""; display: table; }
+.clearfix:after { clear: both; }
+.clearfix { *zoom: 1; }
 
 /* =============================================================================
    Print styles.
