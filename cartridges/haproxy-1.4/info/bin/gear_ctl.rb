@@ -69,7 +69,6 @@ def add_gear()
     gear_name=new_gear.split('.')[0]
     
     add_string="    server #{gear_name} #{new_gear} check fall 2 rise 3 inter 2000\n"
-    puts add_string if opt['debug']
     
     File.open(local_filename, 'a') {|f| f.write(add_string) }
 end
