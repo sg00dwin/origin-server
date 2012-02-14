@@ -137,7 +137,7 @@ class Application < Cloud::Sdk::Cartridge
       Rails.logger.debug e.message
       Rails.logger.debug e.backtrace.join("\n")
       Rails.logger.debug "Rolling back application gear creation"
-      reply.append self.destroy
+      result_io.append self.destroy
       self.class.notify_observers(:application_creation_failure, {:application => self, :reply => result_io})
       raise
     ensure
