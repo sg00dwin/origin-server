@@ -14,6 +14,7 @@ class DevEnv < Thor
   include OpenShift::Tito
   include OpenShift::SSH
   include OpenShift::Amazon
+  include OpenShift::SauceLabs
   
   no_tasks do
     
@@ -183,7 +184,16 @@ class DevEnv < Thor
         end
 
         if options.include_web?
-            
+
+          # check sauce quotas first
+          usage = sauce_usage options
+          puts "Sauce Labs Usage: #{usage[:percentage]}% (#{usage[:used]} minutes of #{usage[:quota]})"
+
+          if usage[:overage] && !options[:sauce_overage]
+            puts "Refusing to run Sauce Labs tests due to quota overage concerns.  Run with --sauce_overage to override."
+            return
+          end
+
           if options.sauce_os && options.sauce_browser && options.sauce_browser_version
             browsers = [[options.sauce_os, options.sauce_browser, options.sauce_browser_version]]
           else
@@ -609,6 +619,7 @@ END
   method_option :include_web, :type => :boolean, :desc => "Include running Selenium tests"
   method_option :sauce_username, :required => false, :desc => "Sauce Labs username (default '#{SAUCE_USER}')"
   method_option :sauce_access_key, :required => false, :desc => "Sauce Labs access key (default '#{SAUCE_SECRET}')"
+  method_option :sauce_overage, :type => :boolean, :desc => "Run Sauce Labs tests even if we are over our monthly minute quota"
   method_option :region, :required => false, :desc => "Amazon region override (default us-east-1)"
   def test(tag)
     options.verbose? ? @@log.level = Logger::DEBUG : @@log.level = Logger::ERROR
