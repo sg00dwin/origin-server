@@ -2,7 +2,7 @@
 
 Summary:   Provides JBossAS7 support
 Name:      rhc-cartridge-jbossas-7.0
-Version:   0.86.3
+Version:   0.86.4
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   ASL 2.0
@@ -106,6 +106,12 @@ rm -rf %{buildroot}
 %config(noreplace) %{cartridgedir}/info/configuration/
 
 %changelog
+* Mon Feb 13 2012 Dan McPherson <dmcphers@redhat.com> 0.86.4-1
+- Add sample/empty directories for minutely,hourly,daily and monthly
+  frequencies as well. (ramr@redhat.com)
+- Add cron example and directories to all the openshift framework templates.
+  (ramr@redhat.com)
+
 * Mon Feb 13 2012 Dan McPherson <dmcphers@redhat.com> 0.86.3-1
 - cleaning up specs to force a build (dmcphers@redhat.com)
 

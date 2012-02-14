@@ -26,8 +26,8 @@ When /^the embedded (.*) cartridge is added OLD$/ do |type|
   rhc_embed_add_old(@app, type)
 end
 
-When /^the embedded cartridge is removed OLD$/ do
-  rhc_embed_remove_old(@app)
+When /^the embedded (.*) cartridge is removed OLD$/ do |type|
+  rhc_embed_remove_old(@app, type)
 end
 
 When /^the application is stopped OLD$/ do

@@ -28,6 +28,8 @@ Feature: MongoDB Application Sub-Cartridge
     And a new guest account
     And a new <type> application
     And a new mongodb database
+    When I stop the mongodb database
+    Then the mongodb daemon will not be running
     And the mongodb daemon is stopped
     When I start the mongodb database
     Then the mongodb daemon will be running

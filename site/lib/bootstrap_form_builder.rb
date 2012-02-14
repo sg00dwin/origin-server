@@ -94,10 +94,53 @@ class BootstrapFormBuilder < Formtastic::SemanticFormBuilder
         send(:"inline_#{type}_for", method, options)
       end
     end.compact.join("\n")
-    
+
     label(method, label_options) <<
       template.content_tag(:div, Formtastic::Util.html_safe(control_content), {:class => 'controls'}) #added class
     # end changes
+  end
+
+  # wrap select in a control
+  def select_input(method, options)
+    html_options = options.delete(:input_html) || {}
+    html_options[:multiple] = html_options[:multiple] || options.delete(:multiple)
+    html_options.delete(:multiple) if html_options[:multiple].nil?
+
+    reflection = reflection_for(method)
+    if reflection && [ :has_many, :has_and_belongs_to_many ].include?(reflection.macro)
+      html_options[:multiple] = true if html_options[:multiple].nil?
+      html_options[:size]     ||= 5
+      options[:include_blank] ||= false
+    end
+    options = set_include_blank(options)
+    input_name = generate_association_input_name(method)
+    html_options[:id] ||= generate_html_id(input_name, "")
+
+    select_html = if options[:group_by]
+      # The grouped_options_select is a bit counter intuitive and not optimised (mostly due to ActiveRecord).
+      # The formtastic user however shouldn't notice this too much.
+      raw_collection = find_raw_collection_for_column(method, options.reverse_merge(:find_options => { :include => options[:group_by] }))
+      label, value = detect_label_and_value_method!(raw_collection, options)
+      group_collection = raw_collection.map { |option| option.send(options[:group_by]) }.uniq
+      group_label_method = options[:group_label_method] || detect_label_method(group_collection)
+      group_collection = group_collection.sort_by { |group_item| group_item.send(group_label_method) }
+      group_association = options[:group_association] || detect_group_association(method, options[:group_by])
+
+      # Here comes the monster with 8 arguments
+      grouped_collection_select(input_name, group_collection,
+                                     group_association, group_label_method,
+                                     value, label,
+                                     strip_formtastic_options(options), html_options)
+    else
+      collection = find_collection_for_column(method, options)
+
+      select(input_name, collection, strip_formtastic_options(options), html_options)
+    end
+
+    label_options = options_for_label(options).merge(:input_name => input_name)
+    label_options[:for] ||= html_options[:id]
+    label(method, label_options) <<
+      template.content_tag(:div, Formtastic::Util.html_safe(select_html), {:class => 'controls'})
   end
 
   # remove the button wrapper

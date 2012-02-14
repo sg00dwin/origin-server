@@ -371,41 +371,34 @@ module Express
         
         url = "http://#{app.name}-#{app.user.namespace}.#{Rails.configuration.cdk[:domain_suffix]}"
         
-        num_tries = 2
         reply = ResultIO.new
         leave_stopped = false
         idle = false
         quota_blocks = nil
         quota_files = nil
         log_debug "DEBUG: Getting existing app '#{app.name}' status before moving"
-        (1..num_tries).each do |i|
-          begin
-            result = source_container.status(app, app.gear, app.framework)
-            result.cart_commands.each do |command_item|
-              case command_item[:command]
-              when "ATTR"
-                key = command_item[:args][0]
-                value = command_item[:args][1]
-                if key == 'status'
-                  case value
-                  when "ALREADY_STOPPED"
-                    leave_stopped = true
-                  when "ALREADY_IDLED"
-                    leave_stopped = true
-                    idle = true
-                  end
-                elsif key == 'quota_blocks'
-                  quota_blocks = value
-                elsif key == 'quota_files'
-                  quota_files = value
+        do_with_retry('status') do
+          result = source_container.status(app, app.gear, app.framework)
+          result.cart_commands.each do |command_item|
+            case command_item[:command]
+            when "ATTR"
+              key = command_item[:args][0]
+              value = command_item[:args][1]
+              if key == 'status'
+                case value
+                when "ALREADY_STOPPED"
+                  leave_stopped = true
+                when "ALREADY_IDLED"
+                  leave_stopped = true
+                  idle = true
                 end
+              elsif key == 'quota_blocks'
+                quota_blocks = value
+              elsif key == 'quota_files'
+                quota_files = value
               end
             end
             reply.append result
-            break
-          rescue Exception => e
-            log_debug "DEBUG: Error force stopping existing app on try #{i}: #{e.message}"
-            raise if i == num_tries
           end
         end
         
@@ -436,26 +429,14 @@ module Express
         begin
           unless leave_stopped
             log_debug "DEBUG: Stopping existing app '#{app.name}' before moving"
-            (1..num_tries).each do |i|
-              begin
-                reply.append source_container.stop(app, app.gear, app.framework)
-                break
-              rescue Exception => e
-                log_debug "DEBUG: Error stopping existing app on try #{i}: #{e.message}"
-                raise if i == num_tries
-              end
+            do_with_retry('stop') do
+              reply.append source_container.stop(app, app.gear, app.framework)
             end
           end
 
           log_debug "DEBUG: Force stopping existing app '#{app.name}' before moving"
-          (1..num_tries).each do |i|
-            begin
-              reply.append source_container.force_stop(app, app.gear, app.framework)
-              break
-            rescue Exception => e
-              log_debug "DEBUG: Error force stopping existing app on try #{i}: #{e.message}"
-              raise if i == num_tries
-            end
+          do_with_retry('force-stop') do
+            reply.append source_container.force_stop(app, app.gear, app.framework)
           end
 
           begin
@@ -512,14 +493,8 @@ module Express
   
               unless leave_stopped
                 log_debug "DEBUG: Starting '#{app.name}' after move on #{destination_container.id}"
-                (1..num_tries).each do |i|
-                  begin
-                    reply.append destination_container.start(app, app.gear, app.framework)
-                    break
-                  rescue Exception => e
-                    log_debug "DEBUG: Error starting after move on try #{i}: #{e.message}"
-                    raise if i == num_tries
-                  end
+                do_with_retry('start') do
+                  reply.append destination_container.start(app, app.gear, app.framework)
                 end
               end
   
@@ -563,21 +538,17 @@ module Express
         end
 
         log_debug "DEBUG: Deconfiguring old app '#{app.name}' on #{source_container.id} after move"
-        (1..num_tries).each do |i|
-          begin
+        begin
+          do_with_retry('destroy') do
             begin
               reply.append source_container.run_cartridge_command(app.framework, app, app.gear, "deconfigure", nil, false)
             ensure
               reply.append source_container.destroy(app, app.gear, keep_uid, orig_uid)
             end
-            break
-          rescue Exception => e
-            log_error "ERROR: Error deconfiguring old app on try #{i}: #{e.message}"
-            if i == num_tries
-              log_debug "DEBUG: The application '#{app.name}' with uuid '#{app.gear.uuid}' is now moved to '#{source_container.id}' but not completely deconfigured from '#{destination_container.id}'"
-              raise
-            end
           end
+        rescue Exception => e
+          log_debug "DEBUG: The application '#{app.name}' with uuid '#{app.gear.uuid}' is now moved to '#{source_container.id}' but not completely deconfigured from '#{destination_container.id}'"
+          raise
         end
         log_debug "Successfully moved '#{app.name}' with uuid '#{app.gear.uuid}' from '#{source_container.id}' to '#{destination_container.id}'"
         reply
@@ -629,6 +600,18 @@ module Express
       end
       
       protected
+      
+      def do_with_retry(action, num_tries=2)
+        (1..num_tries).each do |i|
+          begin
+            yield
+            break
+          rescue Exception => e
+            log_debug "DEBUG: Error performing #{action} on existing app on try #{i}: #{e.message}"
+            raise if i == num_tries
+          end
+        end
+      end
       
       def framework_carts
         @framework_carts ||= CartridgeCache.cartridge_names('standalone')
