@@ -137,7 +137,7 @@ class Application < Cloud::Sdk::Cartridge
       Rails.logger.debug e.message
       Rails.logger.debug e.backtrace.join("\n")
       Rails.logger.debug "Rolling back application gear creation"
-      reply.append self.destroy
+      result_io.append self.destroy
       self.class.notify_observers(:application_creation_failure, {:application => self, :reply => result_io})
       raise
     ensure
@@ -255,7 +255,7 @@ class Application < Cloud::Sdk::Cartridge
   def deconfigure_dependencies
     reply = ResultIO.new
     self.class.notify_observers(:before_application_deconfigure, {:application => self, :reply => reply})  
-    self.configure_order.reverse.each do |comp_inst_name|
+    self.configure_order.each do |comp_inst_name|
       comp_inst = self.comp_instance_map[comp_inst_name]
       group_inst = self.group_instance_map[comp_inst.group_instance_name]
       run_on_gears(group_inst.gears, reply, false) do |gear, r|

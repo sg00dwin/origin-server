@@ -44,5 +44,3 @@ module Broker
     config.autoload_paths += %W(#{config.root}/lib)
   end
 end
-
-class AccessDeniedException < StandardError; end

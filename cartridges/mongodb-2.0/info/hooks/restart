@@ -5,6 +5,7 @@
 # Exit on any errors
 set -e
 
+
 function print_help {
     echo "Usage: $0 app-name namespace uuid"
     echo "Get application status"
@@ -40,3 +41,7 @@ mongodbctl="$MONGODB_DIR/${application}_mongodb_ctl.sh"
 #
 rm -f "$MONGODB_DIR/run/stop_lock"
 super_run_as_user "$mongodbctl restart"
+sleep 2
+if super_run_as_user "$mongodbctl status" 2>&1 | grep 'stopped' > /dev/null; then
+    super_run_as_user "$mongodbctl repair"
+fi
