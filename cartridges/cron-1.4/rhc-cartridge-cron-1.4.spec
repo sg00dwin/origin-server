@@ -1,7 +1,7 @@
 %define cartridgedir %{_libexecdir}/li/cartridges/embedded/cron-1.4
 
 Name: rhc-cartridge-cron-1.4
-Version: 0.2.2
+Version: 0.2.3
 Release: 1%{?dist}
 Summary: Embedded cron support for express
 
@@ -77,6 +77,13 @@ rm -rf $RPM_BUILD_ROOT
 %doc %{cartridgedir}/LICENSE
 
 %changelog
+* Mon Feb 13 2012 Dan McPherson <dmcphers@redhat.com> 0.2.3-1
+- Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
+  (rchopra@redhat.com)
+- default profile name should match a listed profile (rchopra@redhat.com)
+- Remove extra chmod - not needed. (ramr@redhat.com)
+- Support job black/white listing via run-parts. (ramr@redhat.com)
+
 * Mon Feb 13 2012 Dan McPherson <dmcphers@redhat.com> 0.2.2-1
 - more abstracting out selinux (dmcphers@redhat.com)
 - first pass at splitting out selinux logic (dmcphers@redhat.com)

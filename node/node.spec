@@ -2,7 +2,7 @@
 
 Summary:       Multi-tenant cloud management system node tools
 Name:          rhc-node
-Version:       0.86.4
+Version:       0.86.5
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -242,6 +242,20 @@ fi
 /lib64/security/pam_libra.so
 
 %changelog
+* Mon Feb 13 2012 Dan McPherson <dmcphers@redhat.com> 0.86.5-1
+- move export of mcs_level (dmcphers@redhat.com)
+- Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
+  (rmillner@redhat.com)
+- The expose-port, conceal-port and system-messages calls fell out while
+  rolling back patches. (rmillner@redhat.com)
+- Fix bug - need to pass all parameters down rather than just the first.
+  (ramr@redhat.com)
+- Rolling back my changes to expose targetted proxy. Revert "Add proxy script
+  calls to the API" (rmillner@redhat.com)
+- Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
+  (rmillner@redhat.com)
+- Back-out selectable targets. (rmillner@redhat.com)
+
 * Mon Feb 13 2012 Dan McPherson <dmcphers@redhat.com> 0.86.4-1
 - start Watchman services (jhonce@redhat.com)
 - Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
