@@ -182,10 +182,10 @@ class DevEnv < Thor
           add_ssh_cmd_to_threads(hostname, threads, failures, "Verification", "cucumber -f html --out /tmp/rhc/verfication.html -f progress -t @verify li-test/tests/")
         end
 
-        unless options.exclude_web?       
+        unless options.exclude_web?
             
           if options.sauce_os && options.sauce_browser && options.sauce_browser_version
-            browsers = [[options.sauce_os, options.sauce_browser, sauce_browser_version]]
+            browsers = [[options.sauce_os, options.sauce_browser, options.sauce_browser_version]]
           else
             browsers = [['Windows 2003', 'firefox', '7'],
                         ['Windows 2008', 'chrome', '7'],
@@ -207,6 +207,7 @@ class DevEnv < Thor
               "SAUCE_BROWSER" => sauce_browser,
               "SAUCE_BROWSER_VERSION" => sauce_browser_version,
               "SAUCE_SELENIUM_VERSION" => '2.18.0',
+              "SAUCE_BROWSER_URL" => "https://${hostname}",
               "JENKINS_BUILD" => 'unofficial'
             }
             # If we passed a jenkins build like name, use that for the build number
