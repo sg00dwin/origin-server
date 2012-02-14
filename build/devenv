@@ -193,7 +193,7 @@ class DevEnv < Thor
                         ['Windows 2003', 'safari', '4']]
             # not working very well
             browsers.delete_at(2)
-            browsers.delete_at(3)
+            browsers.delete_at(2)
           end
       
           browsers.each do |browser|
@@ -207,7 +207,7 @@ class DevEnv < Thor
               "SAUCE_BROWSER" => sauce_browser,
               "SAUCE_BROWSER_VERSION" => sauce_browser_version,
               "SAUCE_SELENIUM_VERSION" => '2.18.0',
-              "SAUCE_BROWSER_URL" => "https://${hostname}",
+              "SAUCE_BROWSER_URL" => "https://#{hostname}",
               "JENKINS_BUILD" => 'unofficial'
             }
             # If we passed a jenkins build like name, use that for the build number
