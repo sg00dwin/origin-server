@@ -23,11 +23,12 @@ Feature: MongoDB Application Sub-Cartridge
     |type|
     |php|
 
-  Scenario Outline: Start Restart a MongoDB database
+  Scenario Outline: Stop Start Restart a MongoDB database
     Given an accepted node
     And a new guest account
     And a new <type> application
     And a new mongodb database
+    And the mongodb daemon is running
     When I stop the mongodb database
     Then the mongodb daemon will not be running
     And the mongodb daemon is stopped
@@ -38,22 +39,6 @@ Feature: MongoDB Application Sub-Cartridge
     And the mongodb daemon pid will be different
     And I deconfigure the mongodb database
 
-  Scenarios: Start Restart a MongoDB database scenarios
-    |type|
-    |php|
-   
-
-  Scenario Outline: Stop a MongoDB database
-    Given an accepted node
-    And a new guest account
-    And a new <type> application
-    And a new mongodb database
-    And the mongodb daemon is running
-    When I stop the mongodb database
-    Then the mongodb daemon will not be running
-    And I deconfigure the mongodb database
-
-
-  Scenarios: Stop a MongoDB database scenarios
+  Scenarios: Stop Start Restart a MongoDB database scenarios
     |type|
     |php|
