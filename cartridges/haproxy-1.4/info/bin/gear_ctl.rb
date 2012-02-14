@@ -14,10 +14,11 @@ def p_usage
 Usage: #{$0}
 Create an OpenShift Express app.
 
-  -a|--app   application     Application name  (alphanumeric - max #{RHC::APP_NAME_MAX_LENGTH} chars) (required)
   -t|--type  type            Type of app to create (#{type_keys}) (required)
   -d|--debug                 Print Debug info
   -h|--help                  Show Usage info
+  -r|--remove                Remove a gear
+  -a|--add                   Add a gear
   --config  path             Path of alternate config file
   --timeout #                Timeout, in seconds, for connection
 
@@ -29,8 +30,9 @@ begin
     opts = GetoptLong.new(
         ["--debug", "-d", GetoptLong::NO_ARGUMENT],
         ["--help",  "-h", GetoptLong::NO_ARGUMENT],
-        ["--app",   "-a", GetoptLong::REQUIRED_ARGUMENT],
-        ["--type",  "-t", GetoptLong::REQUIRED_ARGUMENT],
+        ["--remove",  "-r", GetoptLong::NO_ARGUMENT],
+        ["--add",  "-a", GetoptLong::NO_ARGUMENT],
+        ["--type",  "-t", GetoptLong::OPTIONAL_ARGUMENT],
         ["--timeout", GetoptLong::REQUIRED_ARGUMENT]
     )
     opt = {}
@@ -42,23 +44,51 @@ rescue Exception => e
   p_usage
 end
 
-libra_server='localhost'
-password = ' '
-rhlogin='mmcgrath@redhat.com'
-action='expose-port'
+@libra_server='localhost'
+@password = ' '
+@rhlogin='mmcgrath@redhat.com'
+@type='php-5.3'
 
-user_info = RHC::get_user_info(libra_server, rhlogin, password, @http, true)
-#p user_info
+def add_gear()
+    user_info = RHC::get_user_info(@libra_server, @rhlogin, @password, @http, true)
+    #p user_info
 
-main_app = RHC::create_app(libra_server, @http, user_info, opt['app'], opt['type'], rhlogin, password, '/dev/null', opt['no-dns'], true, false)
-#p main_app
+    local_filename="/var/lib/libra/a35777ade8e54a41b83ad6b8c21ed187/ha1/conf/haproxy.cfg"
+    haproxy_conf = File.open(local_filename).readlines
+    last_app_short = haproxy_conf[-1].split[1].split('-')[0]
+    app_num=(/\d+/).match(last_app_short)[0].to_i
+    new_app_num=app_num + 1
+    new_app_name = "php#{new_app_num}"
+    puts "creating #{new_app_name}"
+   
+    main_app = RHC::create_app(@libra_server, @http, user_info, new_app_name, @type, @rhlogin, @password, '/dev/null', false, true, false)
+    #p main_app
+    
+    ctl_out = RHC::ctl_app(@libra_server, @http, new_app_name, @rhlogin, @password, 'expose-port', false, @type, false)
+    new_gear=ctl_out["messages"].split()[2]
+    gear_name=new_gear.split('.')[0]
+    
+    add_string="    server #{gear_name} #{new_gear} check fall 2 rise 3 inter 2000\n"
+    puts add_string
+    
+    File.open(local_filename, 'a') {|f| f.write(add_string) }
+end
 
-ctl_out = RHC::ctl_app(libra_server, @http, opt['app'], rhlogin, password, action, false, opt['type'], false)
-new_gear=ctl_out["messages"].split()[2]
-gear_name=new_gear.split('.')[0]
+def remove_gear()
+    local_filename="/var/lib/libra/a35777ade8e54a41b83ad6b8c21ed187/ha1/conf/haproxy.cfg"
+    haproxy_conf = File.open(local_filename).readlines
+    last_app = haproxy_conf[-1].split[1]
+    last_app_short = last_app.split('-')[0]
+    app = last_app_short
+    haproxy_conf.delete_if{|line| line.include?(" #{last_app} ")}
+    puts "removing #{last_app}"
+    ctl_out = RHC::ctl_app(@libra_server, @http, app, @rhlogin, @password, 'deconfigure', false, @type, false)
+    File.open(local_filename, 'w') {|fp| fp.write(haproxy_conf) }
+end
 
-add_string="    server #{gear_name} #{new_gear} check fall 2 rise 3 inter 2000\n"
-puts add_string
 
-local_filename="/var/lib/libra/a35777ade8e54a41b83ad6b8c21ed187/ha1/conf/haproxy.cfg"
-File.open(local_filename, 'a') {|f| f.write(add_string) }
+if opt['remove']
+    remove_gear
+else
+    add_gear
+end
