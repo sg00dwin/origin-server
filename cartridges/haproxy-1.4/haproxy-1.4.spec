@@ -2,7 +2,7 @@
 
 Summary:   Provides haproxy-1.4 support
 Name:      rhc-cartridge-haproxy-1.4
-Version:   0.4.1
+Version:   0.4.2
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   ASL 2.0
@@ -83,6 +83,13 @@ rm -rf %{buildroot}
 %doc %{cartridgedir}/LICENSE
 
 %changelog
+* Tue Feb 14 2012 Dan McPherson <dmcphers@redhat.com> 0.4.2-1
+- removing debug (mmcgrath@redhat.com)
+- Adding sourcing for ctl_all to work (mmcgrath@redhat.com)
+- Added add/remove gear (mmcgrath@redhat.com)
+- added add/remove logic (mmcgrath@redhat.com)
+- Adding basic gear_ctl script (mmcgrath@redhat.com)
+
 * Mon Feb 13 2012 Dan McPherson <dmcphers@redhat.com> 0.4.1-1
 - add a digit to haproxy version (dmcphers@redhat.com)
 
