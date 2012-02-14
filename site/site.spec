@@ -3,7 +3,7 @@
 
 Summary:   Li site components
 Name:      rhc-site
-Version:   0.86.6
+Version:   0.86.7
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -76,6 +76,11 @@ rm -rf %{buildroot}
 chmod 0770 %{sitedir}/tmp
 
 %changelog
+* Tue Feb 14 2012 Dan McPherson <dmcphers@redhat.com> 0.86.7-1
+- Developer fails at understanding core principles of coding
+  (ccoleman@redhat.com)
+- have rest api ActiveResource implement ActiveModel::Dirty (johnp@redhat.com)
+
 * Tue Feb 14 2012 Dan McPherson <dmcphers@redhat.com> 0.86.6-1
 - Minor wording tweaks (ccoleman@redhat.com)
 - Tweak rendering of domain name to make it more accurate (ccoleman@redhat.com)
