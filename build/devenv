@@ -220,7 +220,7 @@ class DevEnv < Thor
             puts "Running Sauce tests with the following options:"
             puts sauce_opts.to_yaml
             
-            add_ssh_cmd_to_threads(hostname, threads, failures, "Web Selenium", "cd li-test/selenium; #{env_string} ruby ts_web")
+            add_ssh_cmd_to_threads(hostname, threads, failures, "Web Selenium (#{sauce_os} - #{sauce_browser} #{sauce_browser_version})", "cd li-test/selenium; #{env_string} ruby ts_web")
           end
         end
 
