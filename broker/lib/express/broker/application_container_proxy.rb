@@ -44,7 +44,7 @@ module Express
       end
       
       def get_available_cartridges
-        result = execute_direct(@@C_CONTROLLER, 'cartridge-list', "--porcelain --with-descriptors")
+        result = execute_direct(@@C_CONTROLLER, 'cartridge-list', "--porcelain --with-descriptors", false)
         result = parse_result(result)
         cart_data = JSON.parse(result.resultIO.string)
         cart_data.map! {|c| Cloud::Sdk::Cartridge.new.from_descriptor(YAML.load(c))}
@@ -675,7 +675,7 @@ module Express
         puts message
       end
       
-      def execute_direct(cartridge, action, args)
+      def execute_direct(cartridge, action, args, log_debug_output=true)
           mc_args = { :cartridge => cartridge,
                       :action => action,
                       :args => args }
@@ -684,11 +684,10 @@ module Express
           begin
             Rails.logger.debug "DEBUG: rpc_client.custom_request('cartridge_do', #{mc_args.inspect}, #{@id}, {'identity' => #{@id}})"
             result = rpc_client.custom_request('cartridge_do', mc_args, @id, {'identity' => @id})
-            Rails.logger.debug "DEBUG: #{result.inspect}"
+            Rails.logger.debug "DEBUG: #{result.inspect}" if log_debug_output
           ensure
             rpc_client.disconnect
           end
-          Rails.logger.debug result.inspect
           result
       end
       
