@@ -5,7 +5,7 @@
 
 Summary:        Cloud Development Controller
 Name:           rubygem-%{gemname}
-Version:        0.4.5
+Version:        0.4.6
 Release:        1%{?dist}
 Group:          Development/Languages
 License:        ASL 2.0
@@ -73,6 +73,11 @@ rm -rf %{buildroot}
 %{ruby_sitelib}/%{gemname}.rb
 
 %changelog
+* Tue Feb 14 2012 Dan McPherson <dmcphers@redhat.com> 0.4.6-1
+- Updating gem versions (dmcphers@redhat.com)
+- Merge branch 'master' of git1.ops.rhcloud.com:/srv/git/li (lnader@redhat.com)
+- bug 790370 (lnader@redhat.com)
+
 * Tue Feb 14 2012 Dan McPherson <dmcphers@redhat.com> 0.4.5-1
 - Updating gem versions (dmcphers@redhat.com)
 - add find_one capability (dmcphers@redhat.com)
