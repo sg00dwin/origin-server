@@ -633,36 +633,46 @@ END
     test_instance(tag, hostname, instance, conn, options)
   end
   
-  desc "setup_multi_node_devenvs", "Sets up verifier as broker and node and verifier2 as extra node"
+  desc "setup_multi_node_devenvs", "Sets up verifier as a multi-node broker"
   method_option :verbose, :type => :boolean, :desc => "Enable verbose logging"
-  def setup_multi_node_devenvs
+  def setup_multi_node_broker
     options.verbose? ? @@log.level = Logger::DEBUG : @@log.level = Logger::ERROR
 
-    internal_hostname = get_internal_hostname("verifier2")
-    internal_ip = get_private_ip("verifier")
+    internal_hostname = get_internal_hostname("verifier")
     ssh("verifier", "sed -i 's,^plugin.amqp.host.*=.*,plugin.amqp.host=#{internal_hostname},' /etc/mcollective/client.cfg;" \
                   "sed -i 's,^plugin.amqp.host.*=.*,plugin.amqp.host=#{internal_hostname},' /etc/mcollective/server.cfg;" \
                   "sed -i 's,^ssl-cert-name.*=.*,ssl-cert-name=#{internal_hostname},' /etc/qpidd.conf;" \
                   "sed -i 's,^server_id.*=.*,server_id=#{internal_hostname},' /etc/libra/devenv/qpid/make-certs.sh;" \
                   "sed -i 's,^owner_domain_name.*=.*,owner_domain_name=#{internal_hostname},' /etc/libra/devenv/qpid/make-certs.sh;" \
+                  "sed -i 's,^#-A,-A,' /etc/sysconfig/iptables;" \
                   "pushd /etc/libra/devenv/qpid/ > /dev/null;" \
                   "./make-certs.sh;" \
                   "/bin/cp test/client_db/* /etc/qpid/pki/client_db/; /bin/cp test/server_db/* /etc/qpid/pki/server_db/;" \
                   "popd > /dev/null;" \
                   "restorecon -R /etc/qpid/pki/; chmod +r /etc/qpid/pki/client_db/* /etc/qpid/pki/server_db/*;" \
-                  "service qpidd restart; service mcollective restart", 240)
-    
-    puts `pushd /tmp > /dev/null; rm -rf /tmp/test; scp -r verifier:/etc/libra/devenv/qpid/test/ .; scp -r test/client_db/* verifier2:/etc/qpid/pki/client_db/; scp -r test/server_db/* verifier2:/etc/qpid/pki/server_db/; popd > /dev/null`
-    puts `pushd /tmp > /dev/null; rm -rf /tmp/clients; scp -r verifier2:/etc/mcollective/ssl/clients/ .; scp -r clients/* verifier:/etc/mcollective/ssl/clients/; popd > /dev/null`
-    
-    ssh("verifier2", "sed -i 's,^plugin.amqp.host.*=.*,plugin.amqp.host=#{internal_hostname},' /etc/mcollective/server.cfg;" \
-                  "sed -i 's,^ssl-cert-name.*=.*,ssl-cert-name=#{internal_hostname},' /etc/qpidd.conf;" \
-                  "restorecon -R /etc/qpid/pki/; chmod +r /etc/qpid/pki/client_db/* /etc/qpid/pki/server_db/*;" \
-                  "sed -i 's,^#-A,-A,' /etc/sysconfig/iptables;" \
-                  "sed -i 's,^libra_server.*=.*,libra_server=#{internal_ip},' /etc/libra/node.conf;" \
                   "service iptables restart; service qpidd restart; service mcollective restart", 240)
 
-    puts ssh("verifier", "mc-ping") 
+    puts ssh("verifier", "mc-ping")
+  end
+  
+  desc "add_multi_node_devenv", "Adds a node to a multi node devenv setup"
+  method_option :verbose, :type => :boolean, :desc => "Enable verbose logging"
+  def add_multi_node_devenv(hostname)
+    options.verbose? ? @@log.level = Logger::DEBUG : @@log.level = Logger::ERROR
+
+    internal_hostname = get_internal_hostname("verifier")
+    internal_ip = get_private_ip("verifier")
+    
+    puts `pushd /tmp > /dev/null; rm -rf /tmp/test; scp -r verifier:/etc/libra/devenv/qpid/test/ .; scp -r test/client_db/* #{hostname}:/etc/qpid/pki/client_db/; scp -r test/server_db/* #{hostname}:/etc/qpid/pki/server_db/; popd > /dev/null`
+    puts `pushd /tmp > /dev/null; rm -rf /tmp/clients; scp -r verifier:/etc/mcollective/ssl/clients/ .; scp -r clients/* #{hostname}:/etc/mcollective/ssl/clients/; popd > /dev/null`
+    
+    ssh(hostname, "sed -i 's,^plugin.amqp.host.*=.*,plugin.amqp.host=#{internal_hostname},' /etc/mcollective/server.cfg;" \
+                  "sed -i 's,^ssl-cert-name.*=.*,ssl-cert-name=#{internal_hostname},' /etc/qpidd.conf;" \
+                  "restorecon -R /etc/qpid/pki/; chmod +r /etc/qpid/pki/client_db/* /etc/qpid/pki/server_db/*;" \
+                  "sed -i 's,^libra_server.*=.*,libra_server=#{internal_ip},' /etc/libra/node.conf;" \
+                  "service qpidd restart; service mcollective restart", 240)
+  
+    puts ssh("verifier", "mc-ping")
   end
   
 
