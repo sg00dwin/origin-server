@@ -65,14 +65,14 @@ class Watchman
       }
 
       app_env.keys.each {|uuid|
-        if app_env[uuid][:OPENSHIFT_APP_TYPE].starts_with?('jboss')
+        if app_env[uuid][:OPENSHIFT_APP_TYPE].start_with?('jboss')
           File.open("#{app_env[uuid][:OPENSHIFT_LOG_DIR]}/server.log").grep(/ java.lang.OutOfMemoryError/) {|msg|
             # timezones are just a PITA. server.log message doesn't include timezone or date so inject both from today
             ts = DateTime.strptime(msg, '%T')
             today = now()
             timestamp = DateTime.civil(today.year, today.month, today.day, ts.hour, ts.min, ts.sec, today.zone)
-
             next if epoch > timestamp 
+
             cache_incident(uuid, timestamp, app_env)
           }
         end
