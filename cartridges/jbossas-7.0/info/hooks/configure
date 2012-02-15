@@ -139,7 +139,6 @@ ln -s ${JBOSS_CARTRIDGE_ROOT}/info/bin/standalone.sh $APP_JBOSS_BIN_DIR/standalo
 # Link to the standalone.conf file
 ln -s ${JBOSS_CARTRIDGE_ROOT}/info/bin/standalone.conf $APP_JBOSS_BIN_DIR/standalone.conf
 
-# Update the standalone.xml for the application IP
 popd > /dev/null
 
 # Repo
