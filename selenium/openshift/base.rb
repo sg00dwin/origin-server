@@ -102,7 +102,7 @@ module OpenShift
     end
 
     # helper method to wait for a (ruby) condition to become true
-    def await(condition=nil, timeout=10)
+    def await(condition=nil, timeout=20)
       if block_given?
         secs = timeout
         while true
