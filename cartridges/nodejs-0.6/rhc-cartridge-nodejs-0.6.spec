@@ -2,7 +2,7 @@
 
 Summary:   Provides Node-0.6 support
 Name:      rhc-cartridge-nodejs-0.6
-Version:   0.1.6
+Version:   0.1.7
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   ASL 2.0
@@ -91,6 +91,10 @@ npm install -g mongodb --mongodb:native
 %doc %{cartridgedir}/LICENSE
 
 %changelog
+* Wed Feb 15 2012 Dan McPherson <dmcphers@redhat.com> 0.1.7-1
+- Fix template to keep symlinks as is and ignore set times error.
+  (ramr@redhat.com)
+
 * Tue Feb 14 2012 Dan McPherson <dmcphers@redhat.com> 0.1.6-1
 - Add missing jenkins job and ssl templates. (ramr@redhat.com)
 
