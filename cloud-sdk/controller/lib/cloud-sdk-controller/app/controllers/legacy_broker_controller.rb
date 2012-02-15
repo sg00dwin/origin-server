@@ -66,11 +66,15 @@ class LegacyBrokerController < ApplicationController
         @reply.append user.update_ssh_key(@req.ssh, @req.key_type, @req.key_name)
       when "list-keys"
         #FIXME: when client tools are updated
-        keys = user.ssh_keys.reject {|k, v| k == CloudUser::DEFAULT_SSH_KEY_NAME }
-        @reply.data = { :keys => keys, 
+        if user.ssh_keys.nil? || user.ssh_keys.empty?
+          @reply.data = {:keys => {}, :ssh_key => "", :ssh_type => ""}.to_json
+        else
+          keys = user.ssh_keys.reject {|k, v| k == CloudUser::DEFAULT_SSH_KEY_NAME }
+          @reply.data = { :keys => keys, 
                         :ssh_key => user.ssh_keys[CloudUser::DEFAULT_SSH_KEY_NAME]['key'],
                         :ssh_type => user.ssh_keys[CloudUser::DEFAULT_SSH_KEY_NAME]['type']
                       }.to_json
+        end
       else
         raise Cloud::Sdk::UserKeyException.new("Invalid action #{@req.action}", 111)
       end
