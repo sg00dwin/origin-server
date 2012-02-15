@@ -61,31 +61,52 @@ class Watchman
         # We don't want to restart any application that may already be running.
         next if epoch > timestamp 
 
-        if @incidents.has_key?(uuid) 
-          if @incidents[uuid][:last_updated] < timestamp
-            # Repeat death. Should there be an additional delay here?
-            restart(uuid, app_env)
-            @incidents[uuid] = {:last_updated => timestamp}
-          end
-        else
-          # First death. Restart and move on...
-          restart(uuid, app_env)
-          @incidents[uuid] = {:last_updated => timestamp}
+        cache_incident(uuid, timestamp, app_env)
+      }
+
+      app_env.keys.each {|uuid|
+        if app_env[uuid][:OPENSHIFT_APP_TYPE].starts_with?('jboss')
+          File.open("#{app_env[uuid][:OPENSHIFT_LOG_DIR]}/server.log").grep(/ java.lang.OutOfMemoryError/) {|msg|
+            # timezones are just a PITA. server.log message doesn't include timezone or date so inject both from today
+            ts = DateTime.strptime(msg, '%T')
+            today = now()
+            timestamp = DateTime.civil(today.year, today.month, today.day, ts.hour, ts.min, ts.sec, today.zone)
+
+            next if epoch > timestamp 
+            cache_incident(uuid, timestamp, app_env)
+          }
         end
       }
     end while @daemon
   end
   
+  # Exposed to be overridden by unit tests
+  def now() DateTime.now end
+
   # Don't restart if application has been marked down
   def restart(uuid, env) 
     stop_lock = "#{env[uuid][:OPENSHIFT_APP_DIR]}run/stop_lock"
     if not File.exists?(stop_lock) 
       `service libra restartuser #{uuid}`
-      Syslog.info("watchman restarted user #{uuid}") 
+      Syslog.info("watchman restarted user #{uuid}: application #{env[uuid][:OPENSHIFT_APP_NAME]}") 
     end
   end
 
   private
+
+  def cache_incident(uuid, timestamp, env)
+    if @incidents.has_key?(uuid) 
+      if @incidents[uuid][:last_updated] < timestamp
+        # Repeat death. Should there be an additional delay here?
+        restart(uuid, env)
+        @incidents[uuid] = {:last_updated => timestamp}
+      end
+    else
+      # First death. Restart and move on...
+      restart(uuid, env)
+      @incidents[uuid] = {:last_updated => timestamp}
+    end
+  end
 
   # Load environment variables into a hash
   def read_env(path)
