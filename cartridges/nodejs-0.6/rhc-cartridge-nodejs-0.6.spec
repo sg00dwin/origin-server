@@ -2,7 +2,7 @@
 
 Summary:   Provides Node-0.6 support
 Name:      rhc-cartridge-nodejs-0.6
-Version:   0.1.7
+Version:   0.1.8
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   ASL 2.0
@@ -93,6 +93,9 @@ npm install -g mongodb --mongodb:native
 %doc %{cartridgedir}/LICENSE
 
 %changelog
+* Wed Feb 15 2012 Dan McPherson <dmcphers@redhat.com> 0.1.8-1
+- Adding expose/conceal port to more cartridges. (rmillner@redhat.com)
+
 * Wed Feb 15 2012 Dan McPherson <dmcphers@redhat.com> 0.1.7-1
 - Fix template to keep symlinks as is and ignore set times error.
   (ramr@redhat.com)
