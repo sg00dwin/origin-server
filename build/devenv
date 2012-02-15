@@ -235,18 +235,24 @@ class DevEnv < Thor
             puts "Running Sauce tests with the following options:"
             puts sauce_opts.to_yaml
 
-            add_ssh_cmd_to_threads(hostname, threads, failures, "Web Selenium (#{sauce_os} - #{sauce_browser} #{sauce_browser_version})", "cd li-test/selenium; #{env_string} ruby ts_web")
+            Dir.foreach('selenium/testcases') do |filename|
+              if filename =~ /^tc_(.*)\.rb$/
+                add_ssh_cmd_to_threads(hostname, threads, failures, "Web Selenium (#{sauce_os} - #{sauce_browser} #{sauce_browser_version})", "cd li-test/selenium; #{env_string} ruby ts_web #{$1}")
+              end
+            end
           end
         end
 
         threads.each do |t|
           t.join
         end
-        
-        if failures.length > 2
+
+        retry_threshold = (options.include_web? && 5) || 2
+
+        if failures.length > retry_threshold
           download_artifacts hostname
           exit 1
-        elsif failures.length > 0 && failures.length <= 2
+        elsif failures.length > 0 && failures.length <= retry_threshold
           ssh(hostname, "rm -rf /tmp/rhc; mkdir -p /tmp/rhc/junit")
           failures.each do |failure|
             title = failure[0]
