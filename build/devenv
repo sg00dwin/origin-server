@@ -163,7 +163,7 @@ class DevEnv < Thor
     
     def test_instance(tag, hostname, instance, conn, options, image_id=nil)
       begin
-        if options.unofficial?
+        unless options.official?
           use_private_ip(hostname)
         end
 
@@ -271,7 +271,7 @@ class DevEnv < Thor
         # Download the successful artifacts
         download_artifacts hostname
     
-        if !options.unofficial?
+        if options.official?
           image_id = image_id ? image_id : instance.image_id
           # Mark the image as verified
           image = conn.images[image_id]
@@ -308,7 +308,7 @@ class DevEnv < Thor
   method_option :use_stage_repo, :type => :boolean, :desc => "Build instance off the stage repository"
   method_option :reboot, :type => :boolean, :desc => "Reboot the instance after updating"
   method_option :verbose, :type => :boolean, :desc => "Enable verbose logging"
-  method_option :unofficial, :type => :boolean, :desc => "For unofficial use.  Do not send emails, etc."
+  method_option :official, :type => :boolean, :desc => "For official use.  Do not send emails, etc."
   method_option :exclude_internal, :type => :boolean, :desc => "Exclude running unit and internal tests"
   method_option :exclude_verification, :type => :boolean, :desc => "Exclude running verification tests"
   method_option :include_web, :type => :boolean, :desc => "Include running Selenium tests"
@@ -621,7 +621,7 @@ END
   desc "test TAG", "Runs the tests on a tagged instance and downloads the results"
   method_option :terminate, :type => :boolean, :desc => "Terminate the instance when finished"
   method_option :verbose, :type => :boolean, :desc => "Enable verbose logging"
-  method_option :unofficial, :type => :boolean, :desc => "For unofficial use.  Do not send emails, etc."
+  method_option :official, :type => :boolean, :desc => "For official use.  Do not send emails, etc."
   method_option :exclude_internal, :type => :boolean, :desc => "Exclude running unit and internal tests"
   method_option :exclude_verification, :type => :boolean, :desc => "Exclude running verification tests"
   method_option :include_web, :type => :boolean, :desc => "Include running Selenium tests"
