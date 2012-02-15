@@ -1,4 +1,5 @@
 
+
     <div class="navbar">
       <div class="navbar-inner">
         <div class="container">
@@ -13,7 +14,7 @@
             </ul>
             
             <ul id="utility-nav" class="navbar-text pull-right">
-             <li><a href="#">sgoodwin@redhat.com</a></li>
+             <li><a href="#">joe@redhat.com</a></li>
              <li><a href="#">Community</a></li>
           </ul><!-- /#utility-nav -->
           </div><!--/.nav-collapse -->
@@ -21,7 +22,8 @@
       </div>
     </div>
 				
-				<div class="container">
+<div class="container">
+
 				
 	<ul class="breadcrumb">
     <li>
@@ -33,11 +35,9 @@
     <li class="active">
     You are here
     </li>
-   </ul>
+  </ul>
   
  <section>
-
-   
    <div class="hero-unit">
       <h1>Create your namespace!</h1>
       <p>The namespace is part of the URL that your OpenShift applications will be available under. </p>
@@ -438,9 +438,21 @@
                 <span class="add-on">.00</span>
               </div>
               <p class="help-block">Here's more help text</p>
-
             </div>
           </div>
+          
+          <div class="control-group">
+          	<label class="control-label">Prepended & appended</label>
+          	<div class="controls">
+          	<div class="input-prepend-append">
+        			<span class="add-on-first">http://</span>
+        		  <input type="text" placeholder="Application name" id="" class="span2"> <span class="add-on-middle">-</span> 
+        		  <input type="text" placeholder="Domain name" id="" class="span2">
+        		  <span class="add-on-last">-rhcloud.com</span>
+        		</div>
+        		</div>
+          </div>
+          
           <div class="control-group">
             <label class="control-label" for="inlineCheckboxes">Inline checkboxes</label>
             <div class="controls">
@@ -501,7 +513,7 @@
     </div>
     <div class="span4">
       <h4>Prepend &amp; append inputs</h4>
-      <p>Input groups&mdash;with appended or prepended text&mdash;</p>
+      <p>Input groups&mdash;with appended, prepended, or both&mdash;</p>
       <hr>
       <h4>Checkboxes and radios</h4>
       <p>Inline checkboxes and radios are also supported. Just add <code>.inline</code> to any <code>.checkbox</code> or <code>.radio</code> and you're done.</p>
@@ -763,21 +775,44 @@
 
 <section>
 	<div class="row">
-		<div class="span8">
+		<div class="span6">
 		<h3>Wizard</h3>
-	  <ul class="wizard-steps">
-	  	<li class="step1 start">Step 1<span></span></li>
-	  	<li class="step2">Step 2<span></span></li>
-	  	<li class="step3 active-step">Step 3<span></span></li>
-	  	<li class="step4">Step 4<span></span></li>
-	  	<li class="step5">Step 5<span></span></li>
-	  </ul>
+	  <ol class="wizard-steps">
+	  	<li class="step1 start">First<span></span></li>
+	  	<li class="step2">Second<span></span></li>
+	  	<li class="step3 active">Third<span></span></li>
+	  	<li class="step4">Fourth<span></span></li>
+	  	<li class="step5">Fifth<span></span></li>
+	  </ol>
 	  </div>
+	 
+		<div class="span6">
+		<h3>Code</h3>
+		<h4>Inline</h4>
+	  	<code>&lt;code&gt;...&lt;code&gt;</code>
+		
+	  <h4>Block</h4>
+<pre>&lt;pre&gt;Sample text here...&lt;/pre&gt;</pre>
+	  
+	  <h4>Command line</h4>
+<pre class="cli">
+build/devenv                                       |   47 +++++++---
+build/lib/openshift.rb                             |    1 +
+build/lib/openshift/sauce_labs.rb
+</pre>
+			
+				  </div>
 	</div><!-- /row -->
 </section>
+
+
+
+
+
     
     
     
 
 </div> <!-- /container -->
 
+		
