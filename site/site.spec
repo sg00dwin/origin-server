@@ -3,7 +3,7 @@
 
 Summary:   Li site components
 Name:      rhc-site
-Version:   0.86.7
+Version:   0.86.8
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -76,6 +76,13 @@ rm -rf %{buildroot}
 chmod 0770 %{sitedir}/tmp
 
 %changelog
+* Wed Feb 15 2012 Dan McPherson <dmcphers@redhat.com> 0.86.8-1
+- restyle application list to new boostrap styles (johnp@redhat.com)
+- bug 790635 (wdecoste@localhost.localdomain)
+- add the config.base_domain var to all config files (johnp@redhat.com)
+- Merge branch 'dev' (sgoodwin@redhat.com)
+- style addtions for code pre and append-prepend (sgoodwin@redhat.com)
+
 * Tue Feb 14 2012 Dan McPherson <dmcphers@redhat.com> 0.86.7-1
 - Developer fails at understanding core principles of coding
   (ccoleman@redhat.com)
