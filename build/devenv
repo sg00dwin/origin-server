@@ -191,8 +191,8 @@ class DevEnv < Thor
           usage = sauce_usage options
           puts "Sauce Labs Usage: #{usage[:percentage]}% (#{usage[:used]} minutes of #{usage[:quota]})"
 
-          if usage[:overage] && !options[:sauce_overage]
-            puts "Refusing to run Sauce Labs tests due to quota overage concerns.  Run with --sauce_overage to override."
+          if usage[:percentage] > 95 && !options[:sauce_overage]
+            puts "Refusing to run Sauce Labs tests due to quota overage considerations.  Run with --sauce_overage to override."
             return
           end
 

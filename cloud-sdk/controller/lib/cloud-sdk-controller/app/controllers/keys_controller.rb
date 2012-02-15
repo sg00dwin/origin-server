@@ -74,6 +74,12 @@ class KeysController < BaseController
       respond_with @reply, :status => @reply.status
       return
     end
+    if !(name =~ /\A[A-Za-z0-9]+\z/)
+      @reply = RestReply.new(:bad_request)
+      @reply.messages.push(Message.new(:error, "Invalid key name: #{name}"))
+      respond_with @reply, :status => @reply.status
+      return
+    end
     if type.nil?
       @reply = RestReply.new(:bad_request)
       @reply.messages.push(Message.new(:error, "Missing required parameters type"))
