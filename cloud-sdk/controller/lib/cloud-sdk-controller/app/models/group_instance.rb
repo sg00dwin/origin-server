@@ -60,8 +60,9 @@ class GroupInstance < Cloud::Sdk::UserModel
       else
         cpath = parent_comp_path + "/cart-" + self.cart_name + comp_ref.get_name_prefix(profile)
       end
-      #ci = app.comp_instance_map[cpath]
+      old_ci = app.comp_instance_map[cpath]
       ci = ComponentInstance.new(self.cart_name, self.profile_name, self.group_name, comp_ref.name, cpath, self)
+      ci.cart_data += old_ci.cart_data unless old_ci.nil?
       new_components << cpath
       self.component_instances << cpath if not self.component_instances.include? cpath
       app.comp_instance_map[cpath] = ci
