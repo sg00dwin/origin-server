@@ -1,0 +1,1 @@
+export OPENSHIFT_APP_TYPE = 'ruby-1.8'

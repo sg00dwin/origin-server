@@ -12,11 +12,12 @@ users.each do |user|
       else
         new_app = Application.new(nil, app["name"], app["uuid"], nil, app["framework"])
         new_app.creation_time = app["creation_time"]
+        new_app.aliases = app["aliases"]
         app["embedded"].each do |em,val|
           new_app.requires_feature << em["framework"]
         end
         new_app.send(:elaborate_descriptor)
-        
+
         app["embedded"].each do |em|
           fw = em["framework"]
           val = em["info"]
@@ -26,7 +27,7 @@ users.each do |user|
             end
           end
         end
-        
+
         ginst = new_app.group_instance_map.values.uniq.first
         gear = Gear.new(new_app, ginst, new_app.uuid, app["uid"])
         gear.server_identity = app["server_identity"]
@@ -44,3 +45,4 @@ users.each do |user|
     print "\tNo apps found. skipping\n"
   end
 end
+
