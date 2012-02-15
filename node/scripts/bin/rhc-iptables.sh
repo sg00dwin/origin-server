@@ -23,7 +23,7 @@ UAPP_NM="25"
 
 
 # Rules for allowing a UID to access a proxy
-PORT_BEGIN=35535
+PORT_BEGIN=35531
 PORTS_PER_USER=5
 
 
