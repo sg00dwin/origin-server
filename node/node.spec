@@ -2,7 +2,7 @@
 
 Summary:       Multi-tenant cloud management system node tools
 Name:          rhc-node
-Version:       0.86.5
+Version:       0.86.6
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -242,6 +242,13 @@ fi
 /lib64/security/pam_libra.so
 
 %changelog
+* Wed Feb 15 2012 Dan McPherson <dmcphers@redhat.com> 0.86.6-1
+- Fixed bad method name (jhonce@redhat.com)
+- Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
+  (rmillner@redhat.com)
+- Port ranges incorrect (rmillner@redhat.com)
+- BZ790622 (jhonce@redhat.com)
+
 * Mon Feb 13 2012 Dan McPherson <dmcphers@redhat.com> 0.86.5-1
 - move export of mcs_level (dmcphers@redhat.com)
 - Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
