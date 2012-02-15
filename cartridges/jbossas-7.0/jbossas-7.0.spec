@@ -2,7 +2,7 @@
 
 Summary:   Provides JBossAS7 support
 Name:      rhc-cartridge-jbossas-7.0
-Version:   0.86.4
+Version:   0.86.5
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   ASL 2.0
@@ -106,6 +106,9 @@ rm -rf %{buildroot}
 %config(noreplace) %{cartridgedir}/info/configuration/
 
 %changelog
+* Wed Feb 15 2012 Dan McPherson <dmcphers@redhat.com> 0.86.5-1
+- remove old comment (dmcphers@redhat.com)
+
 * Mon Feb 13 2012 Dan McPherson <dmcphers@redhat.com> 0.86.4-1
 - Add sample/empty directories for minutely,hourly,daily and monthly
   frequencies as well. (ramr@redhat.com)
