@@ -279,13 +279,20 @@ class DevEnv < Thor
         elsif failures.length > 0 && failures.length <= retry_threshold
           ssh(hostname, "rm -rf /tmp/rhc; mkdir -p /tmp/rhc/junit")
           failures.each do |failure|
-            title = failure[0]
-            cmd = failure[1]
-            puts "Retrying: #{title}"
-            output, exit_code = run_ssh(hostname, title, cmd)
-            if exit_code != 0
-              download_artifacts hostname
-              exit exit_code
+            num_retries = 2
+            (1..num_retries) do |i|
+              title = failure[0]
+              cmd = failure[1]
+              puts "Retry attempt #{i} for: #{title}"
+              output, exit_code = run_ssh(hostname, title, cmd)
+              if exit_code != 0
+                if i == num_tries
+                  download_artifacts hostname
+                  exit exit_code
+                end
+              else
+                break
+              end
             end
           end
         end
