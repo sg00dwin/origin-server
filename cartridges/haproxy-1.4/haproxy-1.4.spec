@@ -2,7 +2,7 @@
 
 Summary:   Provides haproxy-1.4 support
 Name:      rhc-cartridge-haproxy-1.4
-Version:   0.5.0
+Version:   0.5.1
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   ASL 2.0
@@ -82,6 +82,14 @@ rm -rf %{buildroot}
 %doc %{cartridgedir}/LICENSE
 
 %changelog
+* Thu Feb 16 2012 Dan McPherson <dmcphers@redhat.com> 0.5.1-1
+- bump spec numbers (dmcphers@redhat.com)
+- fixing ssh permissions (mmcgrath@redhat.com)
+- Adding git-repo setups (mmcgrath@redhat.com)
+- Adding more ssh pre-configuring (mmcgrath@redhat.com)
+- removed preconfigure from specfile, it's now provided (mmcgrath@redhat.com)
+- Added ssh key and broker key (mmcgrath@redhat.com)
+
 * Tue Feb 14 2012 Dan McPherson <dmcphers@redhat.com> 0.4.2-1
 - removing debug (mmcgrath@redhat.com)
 - Adding sourcing for ctl_all to work (mmcgrath@redhat.com)
