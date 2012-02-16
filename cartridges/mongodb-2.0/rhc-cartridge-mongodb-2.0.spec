@@ -1,7 +1,7 @@
 %define cartridgedir %{_libexecdir}/li/cartridges/embedded/mongodb-2.0
 
 Name: rhc-cartridge-mongodb-2.0
-Version: 0.15.0
+Version: 0.15.1
 Release: 1%{?dist}
 Summary: Embedded mongodb support for express
 
@@ -54,6 +54,9 @@ rm -rf $RPM_BUILD_ROOT
 %doc %{cartridgedir}/LICENSE
 
 %changelog
+* Thu Feb 16 2012 Dan McPherson <dmcphers@redhat.com> 0.15.1-1
+- bump spec numbers (dmcphers@redhat.com)
+
 * Tue Feb 14 2012 Dan McPherson <dmcphers@redhat.com> 0.14.3-1
 - Handle normal/running case exit code and cleanup status to be in
   restart/start since it needs to be run with runuser. (ramr@redhat.com)
