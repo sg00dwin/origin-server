@@ -12,7 +12,7 @@ class BootstrapFormBuilder < Formtastic::SemanticFormBuilder
     return super unless new_forms_enabled?
 
     options = args.extract_options!
-    options[:class] ||= 'form-actions'
+    options[:class] ||= 'form-actions' unless options[:simple]
     super *(args << options)
   end
 
@@ -102,6 +102,8 @@ class BootstrapFormBuilder < Formtastic::SemanticFormBuilder
 
   # wrap select in a control
   def select_input(method, options)
+    return super unless new_forms_enabled?
+
     html_options = options.delete(:input_html) || {}
     html_options[:multiple] = html_options[:multiple] || options.delete(:multiple)
     html_options.delete(:multiple) if html_options[:multiple].nil?
