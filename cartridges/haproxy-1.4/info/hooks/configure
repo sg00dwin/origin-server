@@ -47,7 +47,6 @@ app_type="haproxy-1.4"
 source ${CART_DIR}/abstract/info/lib/util
 setup_configure "$1" $2 $3
 
-check_app_dir_doesnt_exist
 unobfuscate_app_home $uuid $namespace $application
 
 clone_git_repo $application $user_id $group_id $uuid "haproxy 1.4"
@@ -59,7 +58,7 @@ clone_git_repo $application $user_id $group_id $uuid "haproxy 1.4"
 mkdir -p "$APP_DIR"
 pushd "$APP_DIR" > /dev/null
 create_standard_app_dirs
-mkdir conf conf.d logs sessions
+mkdir -p conf conf.d logs sessions
 ln -s /usr/lib64/httpd/modules modules
 ln -s /etc/httpd/conf/magic conf/magic
 #sed -e "s,TEMPLATE_SET_ME_SESSION_SAVE_PATH,$APP_DIR/sessions/," \
