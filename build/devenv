@@ -119,9 +119,9 @@ class DevEnv < Thor
 
 
       eos
-      code
+      return output, code
     end
-    
+
     def rpm_manifest(hostname)
       print "Retrieving RPM manifest..."
       manifest = ssh(hostname, 'rpm -qa | grep rhc-')
@@ -135,7 +135,7 @@ class DevEnv < Thor
       puts "Done"
       return manifest
     end
-    
+
     def validate_instance(hostname)
       # Validate the node installation
       print "Validating instance..."
@@ -145,26 +145,38 @@ class DevEnv < Thor
       end
       puts "Done"
     end
-    
+
     def reboot(instance)
       print "Rebooting instance to apply new kernel..."
       instance.reboot
       puts "Done"
     end
-    
-    def add_ssh_cmd_to_threads(hostname, threads, failures, title, *cmd)
+
+    def add_ssh_cmd_to_threads(hostname, threads, failures, titles, cmds)
+      titles = [titles] if titles.kind_of?(String)
+      cmds = [cmds] if cmds.kind_of?(String) 
       threads << Thread.new do
-        multi = cmd.length > 1
-        cmd.each do |c|
-          exit_code = run_ssh(hostname, title, c)
+        multi = cmds.length > 1
+        cmds.each_with_index do |cmd, index|
+          title = titles[index]
+          output, exit_code = run_ssh(hostname, title, cmd)
           if exit_code != 0
-            t = multi ? "#{title} (#{c})" : title
-            failures.push([t, c])
+            if output =~ /^Failing Scenarios:/
+              lines = output.split('\n')
+              lines.each do |line|
+                if line =~ /^cucumber li-test\/tests\/(.*\.feature):\d+/
+                  test = $1
+                  failures.push(["#{title} (#{test})", "cucumber -f html --out /tmp/rhc/#{test}.html -f progress li-test/tests/#{test}"])
+                end
+              end
+            else
+              failures.push([title, cmd])
+            end
           end
         end
       end
     end
-    
+
     def test_instance(tag, hostname, instance, conn, options, image_id=nil)
       begin
         unless options.official?
@@ -241,10 +253,13 @@ class DevEnv < Thor
 
             Dir.foreach('selenium/testcases') do |filename|
               cmds = []
+              titles = []
               if filename =~ /^tc_(.*)\.rb$/
-                cmds << "cd li-test/selenium; #{env_string} ruby ts_web #{$1}"
+                test = $1
+                cmds << "cd li-test/selenium; #{env_string} ruby ts_web #{test}"
+                titles << "Web Selenium (#{sauce_os} - #{sauce_browser} #{sauce_browser_version}) (#{test})"
               end
-              add_ssh_cmd_to_threads(hostname, threads, failures, "Web Selenium (#{sauce_os} - #{sauce_browser} #{sauce_browser_version})", *cmds)
+              add_ssh_cmd_to_threads(hostname, threads, failures, titles, cmds)
             end
           end
         end
@@ -252,8 +267,11 @@ class DevEnv < Thor
         threads.each do |t|
           t.join
         end
-
-        retry_threshold = (options.include_web? && 5) || 2
+        
+        retry_threshold = 2
+        retry_threshold += 6 unless options.exclude_internal?
+        retry_threshold += 1 unless options.exclude_verification?
+        retry_threshold += 6 if options.include_web?  
 
         if failures.length > retry_threshold
           download_artifacts hostname
@@ -264,7 +282,7 @@ class DevEnv < Thor
             title = failure[0]
             cmd = failure[1]
             puts "Retrying #{title} tests after failure the first time"
-            exit_code = run_ssh(hostname, title, cmd)
+            output, exit_code = run_ssh(hostname, title, cmd)
             if exit_code != 0
               download_artifacts hostname
               exit exit_code
