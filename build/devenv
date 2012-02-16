@@ -72,11 +72,11 @@ class DevEnv < Thor
       print "Archiving local changes..."
       `git archive --prefix li-test/ HEAD --output /tmp/li-test.tar`
       puts "Done"
-      print "Copying tests to remote instance: #{hostname}..."
+      print "Copying tests to remote instance: #{hostname}"
       scp_to(hostname, "/tmp/li-test.tar", "~/", 600)
       puts "Done"
-      print "Extracting tests on remote instance: #{hostname}..."
-      ssh(hostname, 'rm -rf li-test; tar -xf li-test.tar; mkdir -p /tmp/rhc/junit')
+      print "Extracting tests on remote instance: #{hostname}"
+      ssh(hostname, 'set -e; rm -rf li-test; tar -xf li-test.tar; mkdir -p /tmp/rhc/junit', 120)
       puts "Done"
     end
 
@@ -281,7 +281,7 @@ class DevEnv < Thor
           failures.each do |failure|
             title = failure[0]
             cmd = failure[1]
-            puts "Retrying #{title}"
+            puts "Retrying: #{title}"
             output, exit_code = run_ssh(hostname, title, cmd)
             if exit_code != 0
               download_artifacts hostname
@@ -424,6 +424,7 @@ class DevEnv < Thor
 
         manifest = rpm_manifest(hostname)
       end
+      
 
       image_id = nil
       if options.register?
