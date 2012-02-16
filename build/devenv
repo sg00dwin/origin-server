@@ -286,7 +286,7 @@ class DevEnv < Thor
               puts "Retry attempt #{i} for: #{title}"
               output, exit_code = run_ssh(hostname, title, cmd)
               if exit_code != 0
-                if i == num_tries
+                if i == num_retries
                   download_artifacts hostname
                   exit exit_code
                 end
