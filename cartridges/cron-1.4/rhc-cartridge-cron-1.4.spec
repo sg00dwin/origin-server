@@ -1,7 +1,7 @@
 %define cartridgedir %{_libexecdir}/li/cartridges/embedded/cron-1.4
 
 Name: rhc-cartridge-cron-1.4
-Version: 0.3.0
+Version: 0.3.1
 Release: 1%{?dist}
 Summary: Embedded cron support for express
 
@@ -77,6 +77,9 @@ rm -rf $RPM_BUILD_ROOT
 %doc %{cartridgedir}/LICENSE
 
 %changelog
+* Thu Feb 16 2012 Dan McPherson <dmcphers@redhat.com> 0.3.1-1
+- bump spec numbers (dmcphers@redhat.com)
+
 * Mon Feb 13 2012 Dan McPherson <dmcphers@redhat.com> 0.2.3-1
 - Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
   (rchopra@redhat.com)
