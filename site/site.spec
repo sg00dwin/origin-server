@@ -3,7 +3,7 @@
 
 Summary:   Li site components
 Name:      rhc-site
-Version:   0.86.8
+Version:   0.86.9
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -76,6 +76,10 @@ rm -rf %{buildroot}
 chmod 0770 %{sitedir}/tmp
 
 %changelog
+* Thu Feb 16 2012 Dan McPherson <dmcphers@redhat.com> 0.86.9-1
+- add style change to My Applications (johnp@redhat.com)
+- allow mutable attrs to be added one at a time (johnp@redhat.com)
+
 * Wed Feb 15 2012 Dan McPherson <dmcphers@redhat.com> 0.86.8-1
 - restyle application list to new boostrap styles (johnp@redhat.com)
 - bug 790635 (wdecoste@localhost.localdomain)
