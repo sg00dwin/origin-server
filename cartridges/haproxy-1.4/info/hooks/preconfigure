@@ -24,8 +24,8 @@ function generate_ssh_keys {
 
     /bin/chown root.$uuid -R "$APP_DIR/data/.ssh/"
     chmod 0750 "$APP_DIR/data/.ssh/"
-    chmod 0640 "$APP_DIR/data/.ssh/haproxy_id_rsa"
-    chmod 0640 "$APP_DIR/data/.ssh/haproxy_id_rsa.pub"
+    chmod 0600 "$APP_DIR/data/.ssh/haproxy_id_rsa"
+    chmod 0600 "$APP_DIR/data/.ssh/haproxy_id_rsa.pub"
     observe_setup_var_lib_dir "$APP_DIR/data/.ssh/"
 }
 
