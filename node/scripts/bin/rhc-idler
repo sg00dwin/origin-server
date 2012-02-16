@@ -71,6 +71,11 @@ then
     print_help
 fi
 
+if is_idled "$uuid"
+then
+    exit 0 # app is already idled, nothing to do
+fi
+
 sed -i "s/ ProxyPass/ #ProxyPass/g" "/etc/httpd/conf.d/libra/${uuid}"*.conf
 
 HTTP_DIR=`dirname "/etc/httpd/conf.d/libra/${uuid}"*/00000_default.conf`
