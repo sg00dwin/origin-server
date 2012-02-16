@@ -1,7 +1,7 @@
 %define cartridgedir %{_libexecdir}/li/cartridges/embedded/postgresql-8.4
 
 Name: rhc-cartridge-postgresql-8.4
-Version: 0.4.0
+Version: 0.4.1
 Release: 1%{?dist}
 Summary: Embedded postgresql support for express
 
@@ -71,6 +71,11 @@ rm -rf $RPM_BUILD_ROOT
 %doc %{cartridgedir}/LICENSE
 
 %changelog
+* Thu Feb 16 2012 Dan McPherson <dmcphers@redhat.com> 0.4.1-1
+- bump spec numbers (dmcphers@redhat.com)
+- Fix for bugz 791091 - snapshot restore postgresql data failure.
+  (ramr@redhat.com)
+
 * Mon Feb 13 2012 Dan McPherson <dmcphers@redhat.com> 0.3.4-1
 - Bugfixes in postgres cartridge descriptor Bugfix in connection resolution
   inside profile Adding REST API to retrieve descriptor (kraman@gmail.com)
