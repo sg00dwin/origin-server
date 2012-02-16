@@ -45,7 +45,19 @@ module OpenShift
       output = ""
       begin
         scp_cmd = "#{SCP_CMD} -r #{local} root@#{hostname}:#{remote}"
-        Timeout::timeout(timeout) { output = `#{scp_cmd}`.chomp }
+        num_tries = 2
+        (1..num_tries).each do |i|
+          Timeout::timeout(timeout) { 
+            output = `#{scp_cmd}`
+            exit_code = $?
+            if exit_code == 0
+              break
+            elsif i == num_tries
+              puts "scp failed to #{hostname} with output: #{output}"
+              exit 1
+            end
+          }
+        end
       rescue Timeout::Error
         log.error "SCP command '#{scp_cmd}' timed out"
       end
