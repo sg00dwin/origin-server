@@ -161,7 +161,7 @@ class DevEnv < Thor
           title = titles[index]
           output, exit_code = run_ssh(hostname, title, cmd)
           if exit_code != 0
-            if output =~ /^Failing Scenarios:/
+            if output.include?("Failing Scenarios:") && output =~ /cucumber li-test\/tests\/.*\.feature:\d+/
               lines = output.split('\n')
               lines.each do |line|
                 if line =~ /^cucumber li-test\/tests\/(.*\.feature):\d+/
@@ -281,7 +281,7 @@ class DevEnv < Thor
           failures.each do |failure|
             title = failure[0]
             cmd = failure[1]
-            puts "Retrying #{title} tests after failure the first time"
+            puts "Retrying #{title}"
             output, exit_code = run_ssh(hostname, title, cmd)
             if exit_code != 0
               download_artifacts hostname
