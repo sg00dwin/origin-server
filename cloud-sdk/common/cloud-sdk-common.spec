@@ -5,7 +5,7 @@
 
 Summary:        Cloud Development Common
 Name:           rubygem-%{gemname}
-Version:        0.5.0
+Version:        0.5.1
 Release:        1%{?dist}
 Group:          Development/Languages
 License:        ASL 2.0
@@ -73,6 +73,9 @@ rm -rf %{buildroot}
 %{ruby_sitelib}/%{gemname}.rb
 
 %changelog
+* Thu Feb 16 2012 Dan McPherson <dmcphers@redhat.com> 0.5.1-1
+- bump spec numbers (dmcphers@redhat.com)
+
 * Mon Feb 13 2012 Dan McPherson <dmcphers@redhat.com> 0.4.4-1
 - Bugfixes in postgres cartridge descriptor Bugfix in connection resolution
   inside profile Adding REST API to retrieve descriptor (kraman@gmail.com)
