@@ -520,16 +520,16 @@ pre code {
   border-radius: 3px;
 }
 .label-important {
-  background-color: #ffffff;
+  background-color: #c00;
 }
 .label-warning {
-  background-color: #ff9f00;
+  background-color: #ffb02e;
 }
 .label-success {
-  background-color: #ffffff;
+  background-color: #ABB64C;
 }
 .label-info {
-  background-color: #3a87ad;
+  background-color: #93d8e2;
 }
 table {
   max-width: 100%;
@@ -1357,7 +1357,7 @@ input:focus:required:invalid:focus, textarea:focus:required:invalid:focus, selec
   background-color: #959f41 \9;
 }
 .btn-info {
-  background-color: #a0dde6;
+  background-color: #93d8e2;
   background-image: none;
   border-color: rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.25);
 }
