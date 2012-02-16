@@ -76,7 +76,7 @@ class DevEnv < Thor
       scp_to(hostname, "/tmp/li-test.tar", "~/", 600)
       puts "Done"
       print "Extracting tests on remote instance: #{hostname}"
-      ssh(hostname, 'set -e; rm -rf li-test; tar -xf li-test.tar; mkdir -p /tmp/rhc/junit', 120)
+      puts ssh(hostname, 'set -e; rm -rf li-test; tar -xf li-test.tar; mkdir -p /tmp/rhc/junit', 120)
       puts "Done"
     end
 
