@@ -2,7 +2,7 @@
 
 Summary:   Provides php-5.3 support
 Name:      rhc-cartridge-php-5.3
-Version:   0.87.0
+Version:   0.87.1
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   ASL 2.0
@@ -98,6 +98,9 @@ rm -rf %{buildroot}
 %doc %{cartridgedir}/LICENSE
 
 %changelog
+* Thu Feb 16 2012 Dan McPherson <dmcphers@redhat.com> 0.87.1-1
+- bump spec numbers (dmcphers@redhat.com)
+
 * Mon Feb 13 2012 Dan McPherson <dmcphers@redhat.com> 0.86.4-1
 - Add sample/empty directories for minutely,hourly,daily and monthly
   frequencies as well. (ramr@redhat.com)
