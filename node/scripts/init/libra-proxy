@@ -111,7 +111,7 @@ setproxy() {
   fi
 
   if [ "$target" == "delete" -o "$target" == "del" ]; then
-    sed -i -e '/^listen '"$proxport"':/,/^#End '"$proxport"':/ d' $cfgfile
+    sed -i -e '/^listen '"$proxport"':/,/^# End '"$proxport"':/ d' $cfgfile
     return $?
   fi
 
@@ -140,7 +140,7 @@ setproxy() {
 
   baddr=$(getaddr)
 
-  sed -i -e '/^listen '"$proxport"':/,/^#End '"$proxport"':/ d' $cfgfile
+  sed -i -e '/^listen '"$proxport"':/,/^# End '"$proxport"':/ d' $cfgfile
 
   cat <<EOF >> $cfgfile
 listen $proxport:$target
