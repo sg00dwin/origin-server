@@ -282,7 +282,7 @@ class DevEnv < Thor
             title = failure[0]
             cmd = failure[1]
             num_retries = 2
-            (1..num_retries) do |i|
+            (1..num_retries).each do |i|
               puts "Retry attempt #{i} for: #{title}"
               output, exit_code = run_ssh(hostname, title, cmd)
               if exit_code != 0
