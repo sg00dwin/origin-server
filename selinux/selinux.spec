@@ -1,6 +1,6 @@
 Summary:       SELinux policy for OpenShift nodes
 Name:          rhc-selinux
-Version:       0.87.0
+Version:       0.87.1
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -48,6 +48,9 @@ rm -rf %{buildroot}
 %attr(0640,-,-) %{_datadir}/selinux/packages/libra.pp
 
 %changelog
+* Thu Feb 16 2012 Dan McPherson <dmcphers@redhat.com> 0.87.1-1
+- bump spec numbers (dmcphers@redhat.com)
+
 * Tue Feb 14 2012 Dan McPherson <dmcphers@redhat.com> 0.86.3-1
 - There is a bug in sshd which we want to dontaudit dyntrans for libra domains
   for the time being. (dwalsh@redhat.com)
