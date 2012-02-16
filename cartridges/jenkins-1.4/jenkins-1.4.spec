@@ -2,7 +2,7 @@
 
 Summary:   Provides jenkins-1.4 support
 Name:      rhc-cartridge-jenkins-1.4
-Version:   0.87.0
+Version:   0.87.1
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   ASL 2.0
@@ -76,6 +76,9 @@ rm -rf %{buildroot}
 %doc %{cartridgedir}/LICENSE
 
 %changelog
+* Thu Feb 16 2012 Dan McPherson <dmcphers@redhat.com> 0.87.1-1
+- bump spec numbers (dmcphers@redhat.com)
+
 * Wed Feb 15 2012 Dan McPherson <dmcphers@redhat.com> 0.86.4-1
 - bump the jenkins heap size a little (dmcphers@redhat.com)
 
