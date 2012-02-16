@@ -195,7 +195,7 @@ class Application < Cloud::Sdk::Cartridge
       end
       
       f.each do |failed_data|
-        Rails.logger.debug("Failed to deconfigure cartridge #{comp_inst.parent_cart_name} on gear #{failed_data[:gear].server_id}:#{failed_data[:gear].uuid}")
+        Rails.logger.debug("Failed to deconfigure cartridge #{comp_inst.parent_cart_name} on gear #{failed_data[:gear].server_identity}:#{failed_data[:gear].uuid}")
         Rails.logger.debug("Exception #{failed_data[:exception].message}")
         Rails.logger.debug("#{failed_data[:exception].backtrace.inspect}")
       end

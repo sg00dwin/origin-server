@@ -41,8 +41,8 @@ start_jenkins() {
         -Dhudson.slaves.NodeProvisioner.recurrencePeriod=500 \
         -Dhudson.slaves.NodeProvisioner.initialDelay=100 \
         -Dhudson.slaves.NodeProvisioner.MARGIN=100 \
-        -Xmx95m \
-        -XX:MaxPermSize=85m \
+        -Xmx168m \
+        -XX:MaxPermSize=100m \
         -jar /usr/lib/jenkins/jenkins.war \
         --ajp13Port=-1 \
         --controlPort=-1 \

@@ -7,7 +7,7 @@
 
 Summary:   Dependencies for OpenShift development
 Name:      rhc-devenv
-Version:   0.86.4
+Version:   0.86.6
 Release:   1%{?dist}
 Group:     Development/Libraries
 License:   GPLv2
@@ -255,6 +255,12 @@ cp -f %{devenvdir}/puppet-private.pem /var/lib/puppet/ssl/private_keys/localhost
 %{_initddir}/sauce-connect
 
 %changelog
+* Wed Feb 15 2012 Dan McPherson <dmcphers@redhat.com> 0.86.6-1
+- switch builds to use new official flag (dmcphers@redhat.com)
+
+* Wed Feb 15 2012 Dan McPherson <dmcphers@redhat.com> 0.86.5-1
+- Port ranges incorrect (rmillner@redhat.com)
+
 * Tue Feb 14 2012 Dan McPherson <dmcphers@redhat.com> 0.86.4-1
 - allow many node devenv setup (dmcphers@redhat.com)
 - change exclude_web to include_web (dmcphers@redhat.com)

@@ -5,7 +5,7 @@
 
 Summary:        Cloud Development Controller
 Name:           rubygem-%{gemname}
-Version:        0.4.5
+Version:        0.4.7
 Release:        1%{?dist}
 Group:          Development/Languages
 License:        ASL 2.0
@@ -73,6 +73,18 @@ rm -rf %{buildroot}
 %{ruby_sitelib}/%{gemname}.rb
 
 %changelog
+* Wed Feb 15 2012 Dan McPherson <dmcphers@redhat.com> 0.4.7-1
+- Updating gem versions (dmcphers@redhat.com)
+- bug 790635 (wdecoste@localhost.localdomain)
+- fix for bug#790672 (rchopra@redhat.com)
+- BugzId #790637. Fixed broker code. Legacy rhc tools now ask user to add a new
+  key. (kraman@gmail.com)
+
+* Tue Feb 14 2012 Dan McPherson <dmcphers@redhat.com> 0.4.6-1
+- Updating gem versions (dmcphers@redhat.com)
+- Merge branch 'master' of git1.ops.rhcloud.com:/srv/git/li (lnader@redhat.com)
+- bug 790370 (lnader@redhat.com)
+
 * Tue Feb 14 2012 Dan McPherson <dmcphers@redhat.com> 0.4.5-1
 - Updating gem versions (dmcphers@redhat.com)
 - add find_one capability (dmcphers@redhat.com)

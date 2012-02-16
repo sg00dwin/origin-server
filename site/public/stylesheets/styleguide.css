@@ -1,4 +1,4 @@
-/**!
+/*!
  * Bootstrap v2.0.0
  *
  * Copyright 2012 Twitter, Inc
@@ -319,30 +319,32 @@ h6 small {
   color: #999999;
 }
 h1 {
-  font-size: 280%;
+  font-size: 260%;
   line-height: 36px;
-  margin-bottom: 18px;
+  margin-bottom: 13px;
 }
 h1 small {
   font-size: 18px;
 }
 h2 {
-  font-size: 200%;
+  font-size: 185%;
   line-height: 36px;
-  margin-bottom: 15px;
+  margin-bottom: 11px;
 }
 h2 small {
   font-size: 15px;
 }
 h3 {
   line-height: 27px;
-  font-size: 161%;
+  font-size: 155%;
+  margin-bottom: 8px;
 }
 h3 small {
   font-size: 13px;
 }
 h4, h5, h6 {
   line-height: 18px;
+  margin-bottom: 5px;
 }
 h4 {
   font-size: 125%;
@@ -359,7 +361,6 @@ h6 {
   text-transform: uppercase;
 }
 .page-header {
-  padding-bottom: 17px;
   margin: 18px 0;
   border-bottom: 1px solid #eeeeee;
 }
@@ -473,16 +474,16 @@ code, pre {
   padding: 0 3px 2px;
   font-family: Monaco, "Courier New", monospace;
   font-size: 12px;
-  color: #333333;
-  -webkit-border-radius: 3px;
-  -moz-border-radius: 3px;
-  border-radius: 3px;
+  color: #333333;  
+  border: 1px solid #E1E1E8;
 }
 code {
   background-color: #F7F7F9;
-  border: 1px solid #E1E1E8;
   color: #DD1144;
   padding: 3px 4px;
+  -webkit-border-radius: 3px;
+  -moz-border-radius: 3px;
+  border-radius: 3px;
 }
 pre {
   display: block;
@@ -490,15 +491,15 @@ pre {
   margin: 0 0 9px;
   font-size: 12px;
   line-height: 18px;
-  background-color: #f4f4f4;
-  border: 1px solid #ccc;
-  border: 1px solid rgba(0, 0, 0, 0.15);
-  -webkit-border-radius: 4px;
-  -moz-border-radius: 4px;
-  border-radius: 4px;
+  background-color: #F7F7F9;
   white-space: pre;
   white-space: pre-wrap;
   word-break: break-all;
+}
+pre.cli {
+	color: #000c5a;
+	background-color: #E9ECFF;
+	border: none;
 }
 pre.prettyprint {
   margin-bottom: 18px;

@@ -40,7 +40,7 @@ def migrate_app_on_node(server_identity, framework, uuid, rhlogin, app_name)
                   out += "Migrate on node exit code: #{exit_code}\n"
                   raise "Failed migrating app. Rerun with: #{migrate_cmd}"
                 else
-                  reply = app.container.send(:run_cartridge_command, framework, app, app.gear, 'deploy-httpd-proxy', nil, false)
+                  reply = app.gear.container.send(:run_cartridge_command, framework, app, app.gear, 'deploy-httpd-proxy', nil, false)
                   
                   out += "DEPLOY_HTTP_PROXY DEBUG OUTPUT:\n#{reply.debugIO.string}\n" unless reply.debugIO.string.empty?
                   out += "DEPLOY_HTTP_PROXY ERROR OUTPUT:\n#{reply.errorIO.string}\n" unless reply.errorIO.string.empty?
@@ -52,7 +52,7 @@ def migrate_app_on_node(server_identity, framework, uuid, rhlogin, app_name)
                     deployed_httpd_proxy_success = true
                     app.embedded.each do |cart, cart_info|
                       out += "DEBUG: Deploying httpd proxy for embedded #{cart} for '#{app_name}' with uuid '#{uuid}' on node #{server_identity}\n"
-                      reply.append app.container.send(:run_cartridge_command, "embedded/" + cart, app, app.gear, "deploy-httpd-proxy", nil, false)
+                      reply.append app.gear.container.send(:run_cartridge_command, "embedded/" + cart, app, app.gear, "deploy-httpd-proxy", nil, false)
                       out += "DEPLOY_HTTP_PROXY DEBUG OUTPUT:\n#{reply.debugIO.string}\n" unless reply.debugIO.string.empty?
                       out += "DEPLOY_HTTP_PROXY ERROR OUTPUT:\n#{reply.errorIO.string}\n" unless reply.errorIO.string.empty?
                       if reply.exitcode != 0
@@ -63,7 +63,7 @@ def migrate_app_on_node(server_identity, framework, uuid, rhlogin, app_name)
                     raise "Failed deploying httpd proxy for app '#{app_name}' with uuid '#{uuid}' on node '#{server_identity}'" unless deployed_httpd_proxy_success
                     unless app.aliases.nil?
                       app.aliases.each do |server_alias|
-                        app.container.add_alias(app, app.gear, app.framework, server_alias)
+                        app.gear.container.add_alias(app, app.gear, app.framework, server_alias)
                       end
                     end
                     migrated = true
@@ -127,7 +127,7 @@ def migrate(continue=false)
         apps = user.applications
         apps.each do |app|
           app_name = app.name
-          server_identity = app.server_identity
+          server_identity = app.gear.server_identity
           mutex.synchronize do
             node_to_apps[server_identity] = [] unless node_to_apps[server_identity]
             node_to_users[server_identity] = [] unless node_to_users[server_identity]
@@ -229,7 +229,7 @@ def write_node_to_file(server_identity, apps, node_to_users)
     app_name = app_hash[:name]
     user = users[index]
     rhlogin = user.login
-    migrate_on_node_args = "#{app.server_identity},#{app.framework},#{app.uuid},#{rhlogin},#{app_name}"
+    migrate_on_node_args = "#{app.gear.server_identity},#{app.framework},#{app.gear.uuid},#{rhlogin},#{app_name}"
     append_to_file(f, migrate_on_node_args)
   end
 end

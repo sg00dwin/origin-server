@@ -33,7 +33,7 @@ class DevEnv < Thor
     end
     
     def init_repo(hostname)
-      ssh(hostname, "rm -rf /root/li; git clone --bare git://git1.ops.rhcloud.com/li.git/ /root/li")
+      ssh(hostname, "rm -rf /root/li; git clone --bare git://git1.ops.rhcloud.com/li.git/ /root/li", 120)
     end
     
     def temp_commit
@@ -72,9 +72,11 @@ class DevEnv < Thor
       print "Archiving local changes..."
       `git archive --prefix li-test/ HEAD --output /tmp/li-test.tar`
       puts "Done"
-      print "Updating tests to remote instance..."
+      print "Copying tests to remote instance: #{hostname}"
       scp_to(hostname, "/tmp/li-test.tar", "~/", 600)
-      ssh(hostname, 'rm -rf li-test; tar -xf li-test.tar; mkdir -p /tmp/rhc/junit')
+      puts "Done"
+      print "Extracting tests on remote instance: #{hostname}"
+      puts ssh(hostname, 'set -e; rm -rf li-test; tar -xf li-test.tar; mkdir -p /tmp/rhc/junit', 120)
       puts "Done"
     end
 
@@ -117,9 +119,9 @@ class DevEnv < Thor
 
 
       eos
-      code
+      return output, code
     end
-    
+
     def rpm_manifest(hostname)
       print "Retrieving RPM manifest..."
       manifest = ssh(hostname, 'rpm -qa | grep rhc-')
@@ -133,7 +135,7 @@ class DevEnv < Thor
       puts "Done"
       return manifest
     end
-    
+
     def validate_instance(hostname)
       # Validate the node installation
       print "Validating instance..."
@@ -143,25 +145,41 @@ class DevEnv < Thor
       end
       puts "Done"
     end
-    
+
     def reboot(instance)
       print "Rebooting instance to apply new kernel..."
       instance.reboot
       puts "Done"
     end
-    
-    def add_ssh_cmd_to_threads(hostname, threads, failures, title, cmd)
+
+    def add_ssh_cmd_to_threads(hostname, threads, failures, titles, cmds)
+      titles = [titles] if titles.kind_of?(String)
+      cmds = [cmds] if cmds.kind_of?(String) 
       threads << Thread.new do
-        exit_code = run_ssh(hostname, title, cmd)
-        if exit_code != 0
-          failures.push([title, cmd])
+        multi = cmds.length > 1
+        cmds.each_with_index do |cmd, index|
+          title = titles[index]
+          output, exit_code = run_ssh(hostname, title, cmd)
+          if exit_code != 0
+            if output.include?("Failing Scenarios:") && output =~ /cucumber li-test\/tests\/.*\.feature:\d+/
+              lines = output.split('\n')
+              lines.each do |line|
+                if line =~ /^cucumber li-test\/tests\/(.*\.feature):\d+/
+                  test = $1
+                  failures.push(["#{title} (#{test})", "cucumber -f html --out /tmp/rhc/#{test}.html -f progress li-test/tests/#{test}"])
+                end
+              end
+            else
+              failures.push([title, cmd])
+            end
+          end
         end
       end
     end
-    
+
     def test_instance(tag, hostname, instance, conn, options, image_id=nil)
       begin
-        if options.unofficial?
+        unless options.official?
           use_private_ip(hostname)
         end
 
@@ -189,18 +207,18 @@ class DevEnv < Thor
           usage = sauce_usage options
           puts "Sauce Labs Usage: #{usage[:percentage]}% (#{usage[:used]} minutes of #{usage[:quota]})"
 
-          if usage[:overage] && !options[:sauce_overage]
-            puts "Refusing to run Sauce Labs tests due to quota overage concerns.  Run with --sauce_overage to override."
+          if usage[:percentage] > 95 && !options[:sauce_overage]
+            puts "Refusing to run Sauce Labs tests due to quota overage considerations.  Run with --sauce_overage to override."
             return
           end
 
           if options.sauce_os && options.sauce_browser && options.sauce_browser_version
             browsers = [[options.sauce_os, options.sauce_browser, options.sauce_browser_version]]
           else
-            browsers = [['Windows 2003', 'firefox', '7'],
-                        ['Windows 2008', 'chrome', '7'],
+            browsers = [['Windows 2003', 'firefox', ''],
+                        ['Windows 2008', 'chrome', ''],
                         ['Windows 2008', 'iexplore', '9'],
-                        ['Windows 2003', 'safari', '4']]
+                        ['Windows 2003', 'safari', '']]
             # not working very well
             browsers.delete_at(2)
             browsers.delete_at(2)
@@ -233,7 +251,16 @@ class DevEnv < Thor
             puts "Running Sauce tests with the following options:"
             puts sauce_opts.to_yaml
 
-            add_ssh_cmd_to_threads(hostname, threads, failures, "Web Selenium (#{sauce_os} - #{sauce_browser} #{sauce_browser_version})", "cd li-test/selenium; #{env_string} ruby ts_web")
+            Dir.foreach('selenium/testcases') do |filename|
+              cmds = []
+              titles = []
+              if filename =~ /^tc_(.*)\.rb$/
+                test = $1
+                cmds << "cd li-test/selenium; #{env_string} ruby ts_web #{test}"
+                titles << "Web Selenium (#{sauce_os} - #{sauce_browser} #{sauce_browser_version}) (#{test})"
+              end
+              add_ssh_cmd_to_threads(hostname, threads, failures, titles, cmds)
+            end
           end
         end
 
@@ -241,19 +268,31 @@ class DevEnv < Thor
           t.join
         end
         
-        if failures.length > 2
+        retry_threshold = 0
+        retry_threshold += 4 unless options.exclude_internal?
+        retry_threshold += 1 unless options.exclude_verification?
+        retry_threshold += 6 if options.include_web?  
+
+        if failures.length > retry_threshold
           download_artifacts hostname
           exit 1
-        elsif failures.length > 0 && failures.length <= 2
+        elsif failures.length > 0 && failures.length <= retry_threshold
           ssh(hostname, "rm -rf /tmp/rhc; mkdir -p /tmp/rhc/junit")
           failures.each do |failure|
             title = failure[0]
             cmd = failure[1]
-            puts "Retrying #{title} tests after failure the first time"
-            exit_code = run_ssh(hostname, title, cmd)
-            if exit_code != 0
-              download_artifacts hostname
-              exit exit_code
+            num_retries = 2
+            (1..num_retries).each do |i|
+              puts "Retry attempt #{i} for: #{title}"
+              output, exit_code = run_ssh(hostname, title, cmd)
+              if exit_code != 0
+                if i == num_retries
+                  download_artifacts hostname
+                  exit exit_code
+                end
+              else
+                break
+              end
             end
           end
         end
@@ -263,7 +302,7 @@ class DevEnv < Thor
         # Download the successful artifacts
         download_artifacts hostname
     
-        if !options.unofficial?
+        if options.official?
           image_id = image_id ? image_id : instance.image_id
           # Mark the image as verified
           image = conn.images[image_id]
@@ -300,7 +339,7 @@ class DevEnv < Thor
   method_option :use_stage_repo, :type => :boolean, :desc => "Build instance off the stage repository"
   method_option :reboot, :type => :boolean, :desc => "Reboot the instance after updating"
   method_option :verbose, :type => :boolean, :desc => "Enable verbose logging"
-  method_option :unofficial, :type => :boolean, :desc => "For unofficial use.  Do not send emails, etc."
+  method_option :official, :type => :boolean, :desc => "For official use.  Send emails, etc."
   method_option :exclude_internal, :type => :boolean, :desc => "Exclude running unit and internal tests"
   method_option :exclude_verification, :type => :boolean, :desc => "Exclude running verification tests"
   method_option :include_web, :type => :boolean, :desc => "Include running Selenium tests"
@@ -392,6 +431,7 @@ class DevEnv < Thor
 
         manifest = rpm_manifest(hostname)
       end
+      
 
       image_id = nil
       if options.register?
@@ -613,7 +653,7 @@ END
   desc "test TAG", "Runs the tests on a tagged instance and downloads the results"
   method_option :terminate, :type => :boolean, :desc => "Terminate the instance when finished"
   method_option :verbose, :type => :boolean, :desc => "Enable verbose logging"
-  method_option :unofficial, :type => :boolean, :desc => "For unofficial use.  Do not send emails, etc."
+  method_option :official, :type => :boolean, :desc => "For official use.  Send emails, etc."
   method_option :exclude_internal, :type => :boolean, :desc => "Exclude running unit and internal tests"
   method_option :exclude_verification, :type => :boolean, :desc => "Exclude running verification tests"
   method_option :include_web, :type => :boolean, :desc => "Include running Selenium tests"
