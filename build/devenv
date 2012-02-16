@@ -215,10 +215,10 @@ class DevEnv < Thor
           if options.sauce_os && options.sauce_browser && options.sauce_browser_version
             browsers = [[options.sauce_os, options.sauce_browser, options.sauce_browser_version]]
           else
-            browsers = [['Windows 2003', 'firefox', '7'],
-                        ['Windows 2008', 'chrome', '7'],
+            browsers = [['Windows 2003', 'firefox', ''],
+                        ['Windows 2008', 'chrome', ''],
                         ['Windows 2008', 'iexplore', '9'],
-                        ['Windows 2003', 'safari', '4']]
+                        ['Windows 2003', 'safari', '']]
             # not working very well
             browsers.delete_at(2)
             browsers.delete_at(2)
