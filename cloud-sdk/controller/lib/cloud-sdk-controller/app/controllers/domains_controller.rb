@@ -6,15 +6,19 @@ class DomainsController < BaseController
   NAMESPACE_MAX_LENGTH = 16
   # GET /domains
   def index
-    domain = RestDomain.new(@cloud_user.namespace)
-    @reply = RestReply.new(:ok, "domains", [domain])
+    domains = Array.new
+    if @cloud_user
+      domain = RestDomain.new(@cloud_user.namespace)
+      domains.push(domain)
+    end
+    @reply = RestReply.new(:ok, "domains", domains)
     respond_with @reply, :status => @reply.status
   end
 
   # GET /domains/<id>
   def show
     id = params[:id]
-    if(@cloud_user.namespace != id)
+    if not @cloud_user or @cloud_user.namespace != id
       @reply = RestReply.new(:not_found)
       @reply.messages.push(message = Message.new(:error, "Domain #{id} not found."))
       respond_with @reply, :status => @reply.status
@@ -72,10 +76,11 @@ class DomainsController < BaseController
 
   # PUT /domains/<id>
   def update
+    
     id = params[:id]
     new_namespace = params[:namespace]
-
-    if @cloud_user.namespace != id
+    Rails.logger.debug "Updating domain #{@cloud_user.namespace} to #{new_namespace}"
+    if not @cloud_user or @cloud_user.namespace != id
       @reply = RestReply.new(:not_found)
       @reply.messages.push(Message.new(:error, "Domain #{id} not found."))
       respond_with @reply, :status => @reply.status
@@ -84,11 +89,16 @@ class DomainsController < BaseController
 
     result_io = ResultIO.new
     result_io.append @cloud_user.update_namespace(new_namespace) unless params[:namespace].nil?
-
+    @cloud_user = CloudUser.find(@login)
     domain = RestDomain.new(@cloud_user.namespace)
     @reply = RestReply.new(:ok, "domain", domain)
     @reply.process_result_io(result_io)
-    respond_with @reply, :status => @reply.status
+    #respond_with @reply, :status => @reply.status
+    
+    respond_with(@reply) do |format|
+      format.xml { render :xml => @reply, :status => @reply.status }
+      format.json { render :json => @reply, :status => @reply.status }
+    end
   end
 
   # DELETE /domains/<id>
@@ -101,7 +111,7 @@ class DomainsController < BaseController
       force = false
     end
 
-    if(@cloud_user.namespace != id)
+    if not @cloud_user or @cloud_user.namespace != id
       @reply = RestReply.new(:not_found)
       @reply.messages.push(Message.new(:error, "Domain #{id} not found."))
       #respond_with @reply, :status => @reply.status
@@ -151,7 +161,7 @@ class DomainsController < BaseController
         errors.push({:message => "Invalid namespace: #{val}", :exit_code => 106})
       end
       if val and val.length > NAMESPACE_MAX_LENGTH
-        errors.push({:message => "Namespace (#{val}) is not available for use.  Please choose another.", :exit_code => 106})
+        errors.push({:message => "Namespace (#{val}) is too long.  Maximum length is #{NAMESPACE_MAX_LENGTH} characters", :exit_code => 106})
       end
       if Cloud::Sdk::ApplicationContainerProxy.blacklisted? val
         error.push({:message => "Namespace (#{val}) is not allowed.  Please choose another.", :exit_code => 106})
@@ -159,7 +169,7 @@ class DomainsController < BaseController
     end
 
     unless errors.empty?
-      @reply = RestReply.new(:bad_request)
+      @reply = RestReply.new(:unprocessable_entity)
       errors.each do |msg|
         @reply.messages.push(Message.new(:error, msg))
       end
@@ -170,11 +180,5 @@ class DomainsController < BaseController
 
   def lookup_user
     @cloud_user = CloudUser.find(@login)
-    if @cloud_user.nil?
-      @reply = RestReply.new(:not_found)
-      @reply.messages.push(Message.new(:error, "User #{@login} not found"))
-      respond_with @reply, :status => @reply.status
-    return
-    end
   end
 end
