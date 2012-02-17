@@ -99,6 +99,19 @@ module OpenShift
 
     def teardown
       if @driver
+        unless passed?
+          begin
+            start_time = Time.now # comment out in Ruby 1.9.3
+            @driver.save_screenshot("#{name}_#{start_time.to_i}.png")
+            File.open("#{name}_#{start_time.to_i}.html", 'w') do |f| 
+              f.write(@driver.page_source)
+            end
+          rescue Exception => e
+            puts "<unable to output logs for #{name}>"
+            $stderr.puts e
+          end
+        end
+
         @driver.quit
 
         unless OpenShift::SeleniumTestCase.local?
