@@ -146,11 +146,8 @@ class ExpressDomainController < ApplicationController
       end
     else
       # userinfo previously validated ssh key so no need to do so again
-      ssh_key = @userinfo.ssh_key
       ssh_invalid = false
-      if ssh_key
-        ssh = "#{ssh_key[:type]} #{ssh_key[:key]}"
-      end
+      ssh = @userinfo.key_type.to_s + " " + @userinfo.ssh_key.to_s
 
       if ssh.to_s.strip.length != 0
         domain_params[:ssh] = ssh

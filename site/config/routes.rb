@@ -58,6 +58,14 @@ RedHatCloud::Application.routes.draw do
         match 'edit_namespace' => 'express_domain#edit_namespace', :via => :get
         match 'edit_sshkey' => 'express_domain#edit_sshkey', :via => :get
       end
+      resource :express_sshkeys,
+               :controller => "express_ssh_keys" do
+        match 'add_sshkey' => 'express_ssh_keys#add_sshkey', :via => :get
+        match 'add_sshkey' => 'express_ssh_keys#create', :via => :post
+        match 'edit_sshkey/:key_name' => 'express_ssh_keys#edit_sshkey', :via => :get
+        match 'edit_sshkey' => 'express_ssh_keys#create', :via => :put
+        match 'delete_sshkey/:key_name' => 'express_ssh_keys#delete_sshkey', :via => :delete
+      end
 
       resource :keys, :only => [:new, :create]
     end

@@ -2,20 +2,11 @@
   = ssh_key.name
 %dd.ssh_key_preview{:id => "preview_ssh_key_#{ssh_key.name}"}
   %code
-    = ssh_key.to_s.slice(0, 25) + '...'
-  %span.edit-widget
-    %span.popup
-      %span.popup-trigger.edit-key-link
-        = link_to 'Edit', '#'
-      .popup-content
-        = render :partial => 'express_ssh_keys/ssh_key_form', :locals => {:ssh_key => ssh_key}
+    = ssh_key.to_s.slice(0, 40) + '...'
+
+  - if ssh_key.primary?
+    = link_to 'Edit', { :controller => "express_domain", :action => "edit_sshkey" }
 
   - unless ssh_key.primary?
-    %span.edit-widget
-      %span.popup
-        %span.popup-trigger.delete-key-link
-          = link_to 'Delete', '#'
-
-        .form.popup-content
-          = render :partial => 'express_ssh_keys/ssh_key_deletion_form', :locals => {:ssh_key => ssh_key}
-
+    = link_to 'Edit', { :controller => "express_ssh_keys", :action => "edit_sshkey", :key_name => ssh_key.name }
+    = link_to 'Delete', { :controller => "express_ssh_keys", :action => "delete_sshkey", :key_name => ssh_key.name }, :confirm => "Are you sure you want to delete your key '#{ssh_key.name}'?", :method => "delete"
