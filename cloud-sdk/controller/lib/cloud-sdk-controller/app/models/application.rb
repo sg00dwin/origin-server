@@ -640,14 +640,15 @@ class Application < Cloud::Sdk::Cartridge
     reply = ResultIO.new
     begin
       self.aliases.push(server_alias)
+      self.save      
       reply.append self.container.add_alias(self, self.gear, self.framework, server_alias)
     rescue Exception => e
       Rails.logger.debug e.message
       Rails.logger.debug e.backtrace.inspect
       reply.append self.container.remove_alias(self, self.gear, self.framework, server_alias)      
       self.aliases.delete(server_alias)
-    ensure
-      self.save      
+      self.save
+      raise
     end
     reply
   end
