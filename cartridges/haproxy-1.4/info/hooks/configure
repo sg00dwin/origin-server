@@ -92,6 +92,8 @@ create_standard_path_env_var
 export IP2=`embedded_find_open_ip $uid "$APP_DIR/../"`
 echo "export OPENSHIFT_HAPROXY_STATUS_IP='$IP'" > "$APP_DIR/../.env/OPENSHIFT_HAPROXY_STATUS_IP"
 $CART_INFO_DIR/bin/deploy_httpd_config.sh $application $uuid $IP
+mkdir /var/lib/libra/${uuid}/.openshift
+chown ${uuid} /var/lib/libra/${uuid}/.openshift
 
 #
 # Start the server

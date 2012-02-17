@@ -1,7 +1,9 @@
 #!/bin/bash
-
-cd ~/git/${OPENSHIFT_APP_NAME}.git
-rm -rf *
+set -e
 export GIT_SSH=/usr/libexec/li/cartridges/haproxy-1.4/info/bin/ssh
-git clone --bare $1
-git add remote haproxy $1
+export GIT_DIR=~/git/${OPENSHIFT_APP_NAME}.git
+cd $GIT_DIR
+rm -rf * 2> /dev/null || :
+git clone --bare $1 /tmp/${OPENSHIFT_APP_NAME}
+mv -f /tmp/${OPENSHIFT_APP_NAME}/[^h]* ./ 2> /dev/null || :
+git remote add haproxy $1
