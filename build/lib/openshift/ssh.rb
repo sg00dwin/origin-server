@@ -52,7 +52,7 @@ module OpenShift
             if exit_code == 0
               break
             elsif i == num_tries
-              puts "\nCopy failed to #{hostname} with output: #{output}"
+              puts "\nSCP failed to #{hostname} with output: #{output}"
               exit 1
             else
               sleep 10
