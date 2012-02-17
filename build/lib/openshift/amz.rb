@@ -290,7 +290,7 @@ module OpenShift
       ssh(hostname, "sed -i \"s/.*public_ip.*/public_ip='#{ip}'/g\" /etc/libra/node.conf;sed -i \"s/public_ip.*/public_ip='#{ip}'/g\" /etc/libra/node_data.conf")
 
       # Run update_yaml to correct facter calls
-      ssh(hostname, "/usr/libexec/mcollective/update_yaml.rb")
+      ssh(hostname, "/usr/libexec/mcollective/update_yaml.rb > /etc/mcollective/facts.yaml")
       puts 'Done'
     end
 

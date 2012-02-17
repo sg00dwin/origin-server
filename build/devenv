@@ -15,31 +15,30 @@ class DevEnv < Thor
   include OpenShift::SSH
   include OpenShift::Amazon
   include OpenShift::SauceLabs
-  
+
   no_tasks do
-    
     def sync_repo(repo_name, hostname, ssh_path)
       temp_commit
 
       # Get the current branch
       branch = get_branch
-  
+
       puts "Synchronizing local changes from branch #{branch} for repo #{repo_name}..."
       run("export GIT_SSH=#{ssh_path}; #{branch == 'origin/master' ? "git push -q root@#{hostname}:/root/#{repo_name} master:master --tags --force; " : ''}git push -q root@#{hostname}:/root/#{repo_name} #{branch}:master --tags --force", :verbose => options.verbose?)
       update_remote_tests(hostname) if repo_name == 'li'
       puts "Done"
-  
+
       reset_temp_commit
     end
-    
+
     def init_repo(hostname)
       ssh(hostname, "rm -rf /root/li; git clone --bare git://git1.ops.rhcloud.com/li.git/ /root/li", 120)
     end
-    
+
     def temp_commit
       # Warn on uncommitted changes
       `git diff-index --quiet HEAD`
-  
+
       if $? != 0
         # Perform a temporary commit
         puts "Creating temporary commit to build"
@@ -52,7 +51,7 @@ class DevEnv < Thor
         end
       end
     end
-    
+
     def reset_temp_commit
       if @temp_commit
         puts "Undoing temporary commit..."
@@ -61,13 +60,13 @@ class DevEnv < Thor
         puts "Done."
       end
     end
-    
+
     def update_remote_tests(hostname)
       print "Updating remote tests..."
       ssh(hostname, "rm -rf /root/li-test; cd /root/li; git archive --prefix li-test/ --format=tar HEAD | (cd /root && tar --warning=no-timestamp -xf -); mkdir -p /tmp/rhc/junit")
       puts "Done"
     end
-    
+
     def scp_remote_tests(hostname)
       print "Archiving local changes..."
       `git archive --prefix li-test/ HEAD --output /tmp/li-test.tar`
@@ -116,7 +115,7 @@ class DevEnv < Thor
           -----------------------------------------------------------
                        End Output From #{title} Tests
           -----------------------------------------------------------
-
+      
 
       eos
       return output, code
@@ -154,7 +153,7 @@ class DevEnv < Thor
 
     def add_ssh_cmd_to_threads(hostname, threads, failures, titles, cmds)
       titles = [titles] if titles.kind_of?(String)
-      cmds = [cmds] if cmds.kind_of?(String) 
+      cmds = [cmds] if cmds.kind_of?(String)
       threads << Thread.new do
         multi = cmds.length > 1
         cmds.each_with_index do |cmd, index|
@@ -216,14 +215,14 @@ class DevEnv < Thor
             browsers = [[options.sauce_os, options.sauce_browser, options.sauce_browser_version]]
           else
             browsers = [['Windows 2003', 'firefox', ''],
-                        ['Windows 2008', 'chrome', ''],
-                        ['Windows 2008', 'iexplore', '9'],
-                        ['Windows 2003', 'safari', '']]
+              ['Windows 2008', 'chrome', ''],
+              ['Windows 2008', 'iexplore', '9'],
+              ['Windows 2003', 'safari', '']]
             # not working very well
             browsers.delete_at(2)
             browsers.delete_at(2)
           end
-      
+
           browsers.each do |browser|
             sauce_os = browser[0]
             sauce_browser = browser[1]
@@ -267,11 +266,11 @@ class DevEnv < Thor
         threads.each do |t|
           t.join
         end
-        
+
         retry_threshold = 0
         retry_threshold += 4 unless options.exclude_internal?
         retry_threshold += 1 unless options.exclude_verification?
-        retry_threshold += 6 if options.include_web?  
+        retry_threshold += 6 if options.include_web?
 
         if failures.length > retry_threshold
           download_artifacts hostname
@@ -301,13 +300,13 @@ class DevEnv < Thor
 
         # Download the successful artifacts
         download_artifacts hostname
-    
+
         if options.official?
           image_id = image_id ? image_id : instance.image_id
           # Mark the image as verified
           image = conn.images[image_id]
           verify_image(image)
-          
+
           print "Sending QE ready email..."
           begin
             send_verified_email(image_id, image.name)
@@ -324,10 +323,11 @@ class DevEnv < Thor
         terminate_instance(instance) if options.terminate?
       end
     end
-    
+
   end
-  
+
   desc "write_sync_history", "Write out the sync history so updates won't happen for already installed changes"
+
   def write_sync_history()
     options.verbose? ? @@log.level = Logger::DEBUG : @@log.level = Logger::ERROR
     get_sync_dirs
@@ -346,6 +346,7 @@ class DevEnv < Thor
   method_option :region, :required => false, :desc => "Amazon region override (default us-east-1)"
   method_option :build_clean_ami, :required => false, :desc => "Indicates whether to start from a base RHEL image"
   method_option :install_from_source, :required => false, :desc => "Indicates whether to start from a base RHEL image"
+
   def build(name, build_num)
     options.verbose? ? @@log.level = Logger::DEBUG : @@log.level = Logger::ERROR
 
@@ -353,7 +354,7 @@ class DevEnv < Thor
     conn = connect
     conn = conn.regions[options.region] unless (options.region?nil)
 
-    image = nil    
+    image = nil
     if options.build_clean_ami || options.install_from_source
       # Create a new builder instance
       if (options.region?nil)
@@ -373,7 +374,7 @@ class DevEnv < Thor
       end
       image = get_latest_ami(conn, filter)
     end
-    
+
     instance = launch_instance(image, name + '_' + build_num)
     hostname = instance.dns_name
 
@@ -384,7 +385,7 @@ class DevEnv < Thor
         print "Running one yum update to get around RHEL 6.2 AMI problem..."
         ssh(hostname, "yum update -y --exclude='rhc*'", 1800)
         puts "Done"
-  
+
         print "Updating all packages on the system..."
         ssh(hostname, "yum update -y --exclude='rhc*'; yum -y install openssh-clients", 1800)
         puts "Done"
@@ -410,15 +411,15 @@ class DevEnv < Thor
         end
         output = ssh(hostname, cmd, 3600)
         puts "Done"
-  
+
         puts "----------------- Install Output ------------------------"
         puts output
         puts "---------------------------------------------------------"
-        
+
         validate_instance(hostname)
-        
+
         manifest = rpm_manifest(hostname)
-        
+
         if options.register? && !options.install_from_source
           register_image(conn, instance, name + '-clean_' + build_num, manifest)
         end
@@ -431,14 +432,17 @@ class DevEnv < Thor
 
         manifest = rpm_manifest(hostname)
       end
-      
 
       image_id = nil
       if options.register?
         image = register_image(conn, instance, name + '_' + build_num, manifest)
         image_id = image.id
+        
+        puts "Sleeping for 30 seconds to let node stabilize..."
+        sleep 30
+        puts "Done"
       end
-      
+
       scp_remote_tests(hostname)
       test_instance(name + '_' + build_num, hostname, instance, conn, options, image_id)
     ensure
@@ -448,18 +452,19 @@ class DevEnv < Thor
 
   desc "update", "Update current instance by installing RPMs from local git tree"
   method_option :verbose, :type => :boolean, :desc => "Enable verbose logging"
+
   def update
     options.verbose? ? @@log.level = Logger::DEBUG : @@log.level = Logger::ERROR
 
     # Warn on uncommitted changes
-    `git diff-index --quiet HEAD` 
+    `git diff-index --quiet HEAD`
     puts "WARNING - Uncommitted repository changes" if $? != 0
 
     remove_dir '/tmp/tito/'
 
     # Figure out what needs to be built - exclude devenv for syncs
     build_dirs = get_sync_dirs
-    
+
     # Build and install them
     build_dirs.each do |build_dir|
       puts "Building in #{build_dir}"
@@ -481,6 +486,7 @@ class DevEnv < Thor
   method_option :skip_build, :type => :boolean, :desc => "Indicator to skip the rpm build/install"
   method_option :clean_metadata, :type => :boolean, :desc => "Cleans metadata before running yum update"
   method_option :region, :required => false, :desc => "Amazon region override (default us-east-1)"
+
   def sync(name)
     options.verbose? ? @@log.level = Logger::DEBUG : @@log.level = Logger::ERROR
 
@@ -488,12 +494,12 @@ class DevEnv < Thor
     conn = connect
     conn = conn.regions[options.region] unless (options.region?nil)
     hostname = options.tag? ? find_instance(conn, name, true).dns_name : name
-    
+
     ssh_path=File.expand_path(File.dirname(__FILE__)) + "/ssh-override"
     sync_repo('li', hostname, ssh_path)
-    
+
     has_client = File.exists?('../os-client-tools')
-    
+
     if has_client
       inside('../os-client-tools') do
         sync_repo('os-client-tools', hostname, ssh_path)
@@ -524,6 +530,7 @@ class DevEnv < Thor
   desc "terminate TAG", "Terminates the instance with the specified tag"
   method_option :verbose, :type => :boolean, :desc => "Enable verbose logging"
   method_option :region, :required => false, :desc => "Amazon region override (default us-east-1)"
+
   def terminate(tag)
     options.verbose? ? @@log.level = Logger::DEBUG : @@log.level = Logger::ERROR
     conn = connect
@@ -543,6 +550,7 @@ class DevEnv < Thor
   method_option :instance_type, :required => false, :desc => "Amazon machine type override (default m1.large)"
   method_option :region, :required => false, :desc => "Amazon region override (default us-east-1)"
   method_option :image_name, :required => false, :desc => "AMI ID or DEVENV name to launch"
+
   def launch(name)
     options.verbose? ? @@log.level = Logger::DEBUG : @@log.level = Logger::ERROR
 
@@ -581,7 +589,7 @@ class DevEnv < Thor
     puts "Sleeping for 30 seconds to let node stabilize..."
     sleep 30
     puts "Done"
-  
+
     if options.verifier?
       use_private_ip(hostname)
 
@@ -596,7 +604,7 @@ class DevEnv < Thor
     end
 
     validate_instance(hostname)
-    
+
     if options.ssh_config_verifier?
       public_ip = instance.public_ip_address
       ssh_config = "~/.ssh/config"
@@ -629,24 +637,23 @@ END
           file_mode = 'a'
           File.open(config_file, file_mode) { |f| f.write(config_template) }
         end
-        
+
       end
 
-      
       line_num = `grep -n 'Host verifier' ~/.ssh/config`.chomp.split(':')[0]
       puts "Updating ~/.ssh/config verifier entry with public ip = #{public_ip}"
       (1..4).each do |i|
         `sed -i '#{line_num.to_i + i}s,HostName.*,HostName #{public_ip},' ~/.ssh/config`
       end
     end
-    
+
     if options.express_server?
       public_ip = instance.public_ip_address
       puts "Updating ~/.openshift/express.conf libra_server entry with public ip = #{public_ip}"
       `sed -i 's,^libra_server.*,libra_server=#{public_ip},' ~/.openshift/express.conf`
       use_public_ip(hostname)
     end
-    
+
     puts "Done"
   end
 
@@ -661,20 +668,22 @@ END
   method_option :sauce_access_key, :required => false, :desc => "Sauce Labs access key (default '#{SAUCE_SECRET}')"
   method_option :sauce_overage, :type => :boolean, :desc => "Run Sauce Labs tests even if we are over our monthly minute quota"
   method_option :region, :required => false, :desc => "Amazon region override (default us-east-1)"
+
   def test(tag)
     options.verbose? ? @@log.level = Logger::DEBUG : @@log.level = Logger::ERROR
 
     conn = connect
     conn = conn.regions[options.region] unless (options.region?nil)
-      
+
     instance = find_instance(conn, tag, true)
     hostname = instance.dns_name
 
     test_instance(tag, hostname, instance, conn, options)
   end
-  
+
   desc "setup_multi_node_devenvs", "Sets up verifier as a multi-node broker"
   method_option :verbose, :type => :boolean, :desc => "Enable verbose logging"
+
   def setup_multi_node_broker
     options.verbose? ? @@log.level = Logger::DEBUG : @@log.level = Logger::ERROR
 
@@ -694,51 +703,53 @@ END
 
     puts ssh("verifier", "mc-ping")
   end
-  
+
   desc "add_multi_node_devenv", "Adds a node to a multi node devenv setup"
   method_option :verbose, :type => :boolean, :desc => "Enable verbose logging"
+
   def add_multi_node_devenv(hostname)
     options.verbose? ? @@log.level = Logger::DEBUG : @@log.level = Logger::ERROR
 
     internal_hostname = get_internal_hostname("verifier")
     internal_ip = get_private_ip("verifier")
-    
+
     puts `pushd /tmp > /dev/null; rm -rf /tmp/test; scp -r verifier:/etc/libra/devenv/qpid/test/ .; scp -r test/client_db/* #{hostname}:/etc/qpid/pki/client_db/; scp -r test/server_db/* #{hostname}:/etc/qpid/pki/server_db/; popd > /dev/null`
     puts `pushd /tmp > /dev/null; rm -rf /tmp/clients; scp -r verifier:/etc/mcollective/ssl/clients/ .; scp -r clients/* #{hostname}:/etc/mcollective/ssl/clients/; popd > /dev/null`
-    
+
     ssh(hostname, "sed -i 's,^plugin.amqp.host.*=.*,plugin.amqp.host=#{internal_hostname},' /etc/mcollective/server.cfg;" \
                   "sed -i 's,^ssl-cert-name.*=.*,ssl-cert-name=#{internal_hostname},' /etc/qpidd.conf;" \
                   "restorecon -R /etc/qpid/pki/; chmod +r /etc/qpid/pki/client_db/* /etc/qpid/pki/server_db/*;" \
                   "sed -i 's,^libra_server.*=.*,libra_server=#{internal_ip},' /etc/libra/node.conf;" \
                   "service qpidd restart; service mcollective restart", 240)
-  
+
     puts ssh("verifier", "mc-ping")
   end
-  
 
   desc "install_local_client", "Builds and installs the local client rpm (uses sudo)"
   method_option :verbose, :type => :boolean, :desc => "Enable verbose logging"
+
   def install_local_client
     options.verbose? ? @@log.level = Logger::DEBUG : @@log.level = Logger::ERROR
 
     if File.exists?('../os-client-tools')
       inside('../os-client-tools') do
         temp_commit
-        
+
         `rm -rf /tmp/tito/; pushd express; tito build --rpm --test; popd; sudo rpm -Uvh /tmp/tito/noarch/rhc-*;rm -rf /tmp/tito/`
-    
+
         reset_temp_commit
-    
+
         puts "Done"
       end
     else
       puts "Couldn't find ../os-client-tools."
     end
-  end  
-  
+  end
+
   desc "sync_groups GROUPNAME", "Copies the security group permission from specified region to other regions"
   method_option :clean, :type => :boolean, :desc => "Revokes any existing permissions and starts fresh"
   method_option :region, :required => false, :default => 'us-east-1', :desc => "Amazon region to copy (default us-east-1)"
+
   def sync_groups(group_name)
     conn = connect
     origin_sg = conn.regions[options.region].security_groups.filter('group-name', group_name).first
@@ -748,8 +759,8 @@ END
     end
     conn.regions.each do |region|
       #skip the region of origin
-      next if(region.name == options.region) 
-      
+      next if(region.name == options.region)
+
       puts "Synching #{region.name}"
       sg = conn.regions[region.name].security_groups.filter('group-name', group_name).first
       #If group does not exist then create it
@@ -771,28 +782,28 @@ END
       end
       puts "Adding permissions"
       origin_sg.ingress_ip_permissions.each do |i|
-        i.ip_ranges.each do |ip| 
-          puts "#{i.protocol}  \tport_range=#{i.port_range}\t" + 
-            "ip_range=#{ip} "
+        i.ip_ranges.each do |ip|
+          puts "#{i.protocol}  \tport_range=#{i.port_range}\t" +
+          "ip_range=#{ip} "
           begin
             sg.authorize_ingress(i.protocol , i.port_range, ip )
           rescue AWS::EC2::Errors::InvalidPermission::Duplicate
             puts "Permission already exists."
-          end 
+          end
         end
-        i.groups.each do |g| 
+        i.groups.each do |g|
           if(g.owner_id != sg.owner_id)
-            puts "#{i.protocol}  \tport_range=#{i.port_range}\t" + 
-              "group name=#{g.name} owner=#{g.owner_id} id=#{g.group_id} " 
+            puts "#{i.protocol}  \tport_range=#{i.port_range}\t" +
+            "group name=#{g.name} owner=#{g.owner_id} id=#{g.group_id} "
             if(g.exists?)
               begin
                 sg.authorize_ingress(i.protocol , i.port_range, g )
               rescue AWS::EC2::Errors::InvalidPermission::Duplicate
                 puts "Permission already exists."
-              end 
+              end
             else
-              puts "ERROR: Group name=#{g.name} owner=#{g.owner_id} id=#{g.group_id} " + 
-                "does not exist or is in a different region."
+              puts "ERROR: Group name=#{g.name} owner=#{g.owner_id} id=#{g.group_id} " +
+              "does not exist or is in a different region."
             end
           end
         end

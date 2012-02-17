@@ -44,8 +44,20 @@ module OpenShift
       log.debug "(scp_to: timeout = #{timeout}) / local = '#{local}' remote = '#{remote}'"
       output = ""
       begin
-        scp_cmd = "#{SCP_CMD} -r #{local} root@#{hostname}:#{remote}"
-        Timeout::timeout(timeout) { output = `#{scp_cmd}`.chomp }
+        scp_cmd = "#{SCP_CMD} -r #{local} root@#{hostname}:#{remote} 2>&1"
+        num_tries = 2
+        (1..num_tries).each do |i|
+          Timeout::timeout(timeout) { 
+            output = `#{scp_cmd}`
+            exit_code = $?
+            if exit_code == 0
+              break
+            elsif i == num_tries
+              puts "\nCopy failed to #{hostname} with output: #{output}"
+              exit 1
+            end
+          }
+        end
       rescue Timeout::Error
         log.error "SCP command '#{scp_cmd}' timed out"
       end
