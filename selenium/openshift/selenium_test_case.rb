@@ -102,8 +102,9 @@ module OpenShift
         unless passed?
           begin
             start_time = Time.now # comment out in Ruby 1.9.3
-            @driver.save_screenshot("#{name}_#{start_time.to_i}.png")
-            File.open("#{name}_#{start_time.to_i}.html", 'w') do |f| 
+            Dir.mkdir 'output' rescue
+            @driver.save_screenshot("output/#{name}_#{start_time.to_i}.png")
+            File.open("output/#{name}_#{start_time.to_i}.html", 'w') do |f| 
               f.write(@driver.page_source)
             end
           rescue Exception => e
