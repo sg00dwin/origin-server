@@ -3,7 +3,7 @@
 
 Summary:   Li site components
 Name:      rhc-site
-Version:   0.86.8
+Version:   0.87.1
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -76,6 +76,22 @@ rm -rf %{buildroot}
 chmod 0770 %{sitedir}/tmp
 
 %changelog
+* Thu Feb 16 2012 Dan McPherson <dmcphers@redhat.com> 0.87.1-1
+- bump spec numbers (dmcphers@redhat.com)
+- Added contextual help on the app details page for the new console
+  (ffranz@redhat.com)
+- Added contextual help on the app details page for the new console
+  (ffranz@redhat.com)
+- Merge branch 'master' of git1.ops.rhcloud.com:/srv/git/li (ffranz@redhat.com)
+- Fixed errors that caused Sauce tests failures (ffranz@redhat.com)
+- label style edits (sgoodwin@redhat.com)
+- Merge branch 'dev2' (sgoodwin@redhat.com)
+- edits for get started and other page styles (sgoodwin@redhat.com)
+
+* Thu Feb 16 2012 Dan McPherson <dmcphers@redhat.com> 0.86.9-1
+- add style change to My Applications (johnp@redhat.com)
+- allow mutable attrs to be added one at a time (johnp@redhat.com)
+
 * Wed Feb 15 2012 Dan McPherson <dmcphers@redhat.com> 0.86.8-1
 - restyle application list to new boostrap styles (johnp@redhat.com)
 - bug 790635 (wdecoste@localhost.localdomain)

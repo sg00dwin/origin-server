@@ -69,10 +69,17 @@ class LegacyBrokerController < ApplicationController
         if user.ssh_keys.nil? || user.ssh_keys.empty?
           @reply.data = {:keys => {}, :ssh_key => "", :ssh_type => ""}.to_json
         else
-          keys = user.ssh_keys.reject {|k, v| k == CloudUser::DEFAULT_SSH_KEY_NAME }
-          @reply.data = { :keys => keys, 
-                        :ssh_key => user.ssh_keys[CloudUser::DEFAULT_SSH_KEY_NAME]['key'],
-                        :ssh_type => user.ssh_keys[CloudUser::DEFAULT_SSH_KEY_NAME]['type']
+          other_keys = user.ssh_keys.reject {|k, v| k == CloudUser::DEFAULT_SSH_KEY_NAME }
+          if user.ssh_keys.has_key?(CloudUser::DEFAULT_SSH_KEY_NAME)
+            default_key = user.ssh_keys[CloudUser::DEFAULT_SSH_KEY_NAME]['key'] 
+            default_key_type = user.ssh_keys[CloudUser::DEFAULT_SSH_KEY_NAME]['type']
+          else
+            default_key = default_key_type = ""            
+          end
+          
+          @reply.data = { :keys => other_keys, 
+                        :ssh_key => default_key,
+                        :ssh_type => default_key_type,
                       }.to_json
         end
       else

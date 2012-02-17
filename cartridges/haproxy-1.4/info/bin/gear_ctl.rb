@@ -53,10 +53,14 @@ def add_gear()
     user_info = RHC::get_user_info(@libra_server, @rhlogin, @password, @http, true)
     #p user_info
 
-    local_filename="/var/lib/libra/a35777ade8e54a41b83ad6b8c21ed187/ha1/conf/haproxy.cfg"
+    local_filename="#{ENV['OPENSHIFT_APP_DIR']}/conf/haproxy.cfg"
     haproxy_conf = File.open(local_filename).readlines
     last_app_short = haproxy_conf[-1].split[1].split('-')[0]
-    app_num=(/\d+/).match(last_app_short)[0].to_i
+    if last_app_short == 'filler' # This matches the filler default in the haproxy config
+        app_num=0
+    else
+        app_num=(/\d+/).match(last_app_short)[0].to_i
+    end
     new_app_num=app_num + 1
     new_app_name = "php#{new_app_num}"
     puts "creating #{new_app_name}"
@@ -74,7 +78,7 @@ def add_gear()
 end
 
 def remove_gear()
-    local_filename="/var/lib/libra/a35777ade8e54a41b83ad6b8c21ed187/ha1/conf/haproxy.cfg"
+    local_filename="#{ENV['OPENSHIFT_APP_DIR']}/conf/haproxy.cfg"
     haproxy_conf = File.open(local_filename).readlines
     last_app = haproxy_conf[-1].split[1]
     last_app_short = last_app.split('-')[0]

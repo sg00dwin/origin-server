@@ -2,7 +2,7 @@
 
 Summary:   Provides python-wsgi-3.2 support
 Name:      rhc-cartridge-wsgi-3.2
-Version:   0.86.4
+Version:   0.87.1
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   ASL 2.0
@@ -99,6 +99,9 @@ rm -rf %{buildroot}
 %doc %{cartridgedir}/LICENSE
 
 %changelog
+* Thu Feb 16 2012 Dan McPherson <dmcphers@redhat.com> 0.87.1-1
+- bump spec numbers (dmcphers@redhat.com)
+
 * Wed Feb 15 2012 Dan McPherson <dmcphers@redhat.com> 0.86.4-1
 - Adding expose/conceal port to more cartridges. (rmillner@redhat.com)
 

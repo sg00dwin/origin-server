@@ -2,7 +2,7 @@
 
 Summary:       Multi-tenant cloud management system node tools
 Name:          rhc-node
-Version:       0.86.6
+Version:       0.87.1
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -242,6 +242,15 @@ fi
 /lib64/security/pam_libra.so
 
 %changelog
+* Thu Feb 16 2012 Dan McPherson <dmcphers@redhat.com> 0.87.1-1
+- bump spec numbers (dmcphers@redhat.com)
+- rhc-idler: changed it to not try to idle already idled apps
+  (twiest@redhat.com)
+
+* Thu Feb 16 2012 Dan McPherson <dmcphers@redhat.com> 0.86.7-1
+- Bug 791044: Missing space caused sed expression to match till the end of the
+  file. (rmillner@redhat.com)
+
 * Wed Feb 15 2012 Dan McPherson <dmcphers@redhat.com> 0.86.6-1
 - Fixed bad method name (jhonce@redhat.com)
 - Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li

@@ -5,7 +5,7 @@
 
 Summary:        Cloud Development Controller
 Name:           rubygem-%{gemname}
-Version:        0.4.7
+Version:        0.5.1
 Release:        1%{?dist}
 Group:          Development/Languages
 License:        ASL 2.0
@@ -73,6 +73,20 @@ rm -rf %{buildroot}
 %{ruby_sitelib}/%{gemname}.rb
 
 %changelog
+* Thu Feb 16 2012 Dan McPherson <dmcphers@redhat.com> 0.5.1-1
+- Updating gem versions (dmcphers@redhat.com)
+- bump spec numbers (dmcphers@redhat.com)
+- Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
+  (rchopra@redhat.com)
+- mongo save should not happen 5 times for an application create - fixed to 2
+  times (rchopra@redhat.com)
+- Fixing rails route to pick up base path from configuration instead of being
+  hardcoded. (kraman@gmail.com)
+
+* Thu Feb 16 2012 Dan McPherson <dmcphers@redhat.com> 0.4.8-1
+- Updating gem versions (dmcphers@redhat.com)
+- BugzID# 790637. (kraman@gmail.com)
+
 * Wed Feb 15 2012 Dan McPherson <dmcphers@redhat.com> 0.4.7-1
 - Updating gem versions (dmcphers@redhat.com)
 - bug 790635 (wdecoste@localhost.localdomain)

@@ -2,7 +2,7 @@
 
 Summary:   Provides mod_perl support
 Name:      rhc-cartridge-perl-5.10
-Version:   0.17.14
+Version:   0.18.1
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   ASL 2.0
@@ -93,6 +93,9 @@ rm -rf $RPM_BUILD_ROOT
 %doc %{cartridgedir}/LICENSE
 
 %changelog
+* Thu Feb 16 2012 Dan McPherson <dmcphers@redhat.com> 0.18.1-1
+- bump spec numbers (dmcphers@redhat.com)
+
 * Wed Feb 15 2012 Dan McPherson <dmcphers@redhat.com> 0.17.14-1
 - Adding expose/conceal port to more cartridges. (rmillner@redhat.com)
 

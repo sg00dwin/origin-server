@@ -57,11 +57,11 @@ module OpenShift
         when :label
           "label.error[for=#{@fields[name]}]"
         when :error
-          "div.message.error"
+          "div.error"
         when :success
-          "div.message.success"
+          "div.success"
         when :notice
-          "div.message.notice"
+          "div.notice"
         end
       end
 

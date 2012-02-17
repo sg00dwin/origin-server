@@ -124,7 +124,7 @@ class Application < Cloud::Sdk::Cartridge
         gears_created.push gear
         create_result = gear.create
         ginst.gears = [gear]
-        self.save
+        # self.save
         result_io.append create_result
         unless create_result.exitcode == 0
           raise NodeException.new("Unable to create gear on node", "-100", result_io)
@@ -191,7 +191,7 @@ class Application < Cloud::Sdk::Cartridge
       s,f = run_on_gears(group_inst.gears, reply, false) do |gear, r|
         r.append gear.deconfigure(comp_inst)
         r.append process_cartridge_commands(r.cart_commands)
-        self.save
+        # self.save
       end
       
       f.each do |failed_data|
@@ -202,11 +202,11 @@ class Application < Cloud::Sdk::Cartridge
       
       run_on_gears(group_inst.gears, reply, false) do |gear, r|
         r.append gear.destroy if gear.configured_components.length == 0
-        self.save        
+        # self.save        
       end
     end
     cleanup_deleted_components
-    self.save
+    # self.save
     
     #process new additions
     self.configure_order.each do |comp_inst_name|
@@ -216,7 +216,7 @@ class Application < Cloud::Sdk::Cartridge
         run_on_gears(group_inst.gears, reply) do |gear, r|
           r.append gear.configure(comp_inst)
           r.append process_cartridge_commands(r.cart_commands)
-          self.save
+          # self.save
         end
       rescue Exception => e
         succesful_gears = e.message[:succesful].map{|g| g[:gear]}
@@ -226,18 +226,20 @@ class Application < Cloud::Sdk::Cartridge
         run_on_gears(succesful_gears, reply, false) do |gear, r|
           r.append gear.deconfigure(comp_inst)
           r.append process_cartridge_commands(r.cart_commands)
-          self.save
+          # self.save
         end
         
         #remove failed cartridge dependency
         self.requires_feature.delete(comp_inst.parent_cart_name)
-        self.save
+        # self.save
         
         #destroy any unused gears
         run_on_gears(nil, reply, false) do |gear, r|
           r.append gear.destroy if gear.configured_components.length == 0
-          self.save
+          # self.save
         end
+
+        self.save
         
         #re-configure to update application model
         self.configure_dependencies
@@ -246,7 +248,7 @@ class Application < Cloud::Sdk::Cartridge
       end
     end
     
-    save
+    self.save
     self.class.notify_observers(:after_application_configure, {:application => self, :reply => reply})
     reply
   end
@@ -258,12 +260,18 @@ class Application < Cloud::Sdk::Cartridge
     self.configure_order.each do |comp_inst_name|
       comp_inst = self.comp_instance_map[comp_inst_name]
       group_inst = self.group_instance_map[comp_inst.group_instance_name]
-      run_on_gears(group_inst.gears, reply, false) do |gear, r|
-        r.append gear.deconfigure(comp_inst)
-        r.append process_cartridge_commands(r.cart_commands)
+      begin
+        run_on_gears(group_inst.gears, reply, false) do |gear, r|
+          r.append gear.deconfigure(comp_inst)
+          r.append process_cartridge_commands(r.cart_commands)
+          # self.save
+        end
+      rescue  Exception => e
         self.save
+        raise e
       end
     end
+    self.save
     self.class.notify_observers(:after_application_deconfigure, {:application => self, :reply => reply})
     reply
   end
@@ -632,14 +640,15 @@ class Application < Cloud::Sdk::Cartridge
     reply = ResultIO.new
     begin
       self.aliases.push(server_alias)
+      self.save      
       reply.append self.container.add_alias(self, self.gear, self.framework, server_alias)
     rescue Exception => e
       Rails.logger.debug e.message
       Rails.logger.debug e.backtrace.inspect
       reply.append self.container.remove_alias(self, self.gear, self.framework, server_alias)      
       self.aliases.delete(server_alias)
-    ensure
-      self.save      
+      self.save
+      raise
     end
     reply
   end
