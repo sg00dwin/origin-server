@@ -9,7 +9,7 @@ RedHatCloud::Application.routes.draw do
     #FIXME Remove when console is enabled
     if Rails.env.staging? or Rails.env.production?
       match 'console(/*path)' => redirect('/app/control_panel', :status => 302)
-      match 'account(/*path)' => redirect('/app/control_panel', :status => 302)
+      # match 'account(/*path)' => redirect('/app/control_panel', :status => 302)
     end
 
     # Legacy redirects
