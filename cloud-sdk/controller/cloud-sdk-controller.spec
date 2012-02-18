@@ -5,7 +5,7 @@
 
 Summary:        Cloud Development Controller
 Name:           rubygem-%{gemname}
-Version:        0.5.2
+Version:        0.5.1
 Release:        1%{?dist}
 Group:          Development/Languages
 License:        ASL 2.0
@@ -73,7 +73,7 @@ rm -rf %{buildroot}
 %{ruby_sitelib}/%{gemname}.rb
 
 %changelog
-* Fri Feb 17 2012 Ram Ranganathan <ramr@redhat.com> 0.5.2-1
+* Fri Feb 17 2012 Ram Ranganathan <ramr@redhat.com> 0.5.1-1
 - Updating gem versions (ramr@redhat.com)
 - bug fixes 789785 and 794917 (lnader@redhat.com)
 - BugzID# 794664. Add alias not returns an error if using an alias that already
