@@ -20,20 +20,9 @@ function is_node_module_installed() {
     return 1
 }
 
-
 if [ -f "${OPENSHIFT_REPO_DIR}/.openshift/markers/force_clean_build" ]; then
     echo ".openshift/markers/force_clean_build found!  Recreating npm modules" 1>&2
-    declare -A npm_global_modules
-    for k in `perl -ne 'print if /^\s*[^#\s]/' "${OPENSHIFT_REPO_DIR}"/npm_global_module_list`; do
-        npm_global_modules[$k]="$k"
-    done
-
-    for m in `ls "${OPENSHIFT_APP_DIR}"/node_modules`; do
-        #  Remove all local (or non-globally linked) modules.
-        if [ -z "${npm_global_modules[$m]}" ]; then
-            rm -rf "${OPENSHIFT_APP_DIR}/node_modules/$m"
-        fi
-    done
+    rm -rf "${OPENSHIFT_APP_DIR}"/node_modules/*
 fi
 
 if [ -f "${OPENSHIFT_REPO_DIR}"/deplist.txt ]; then
