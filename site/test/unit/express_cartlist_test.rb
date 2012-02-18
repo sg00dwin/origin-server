@@ -3,7 +3,7 @@ require 'test_helper'
 class ExpressCartlistTest < ActiveSupport::TestCase
 
   @@valid_cart_types = ['standalone', 'embedded']
-  @@standalone_list =  ['perl-5.10', 'jbossas-7.0', 'python-2.6', 'ruby-1.8', 'php-5.3', 'raw-0.1', 'jenkins-1.4']
+  @@standalone_list =  ['perl-5.10', 'jbossas-7.0', 'python-2.6', 'ruby-1.8', 'php-5.3', 'raw-0.1', 'jenkins-1.4', 'nodejs-0.6']
   @@embedded_list = ['mysql-5.1']
 
 
@@ -13,12 +13,12 @@ class ExpressCartlistTest < ActiveSupport::TestCase
   
   test 'standalone cartlist is correct' do
     cartlist = ExpressCartlist.new 'standalone'
-    assert_equal @@standalone_list, cartlist.list
+    assert_equal @@standalone_list.sort, cartlist.list.sort
   end
   
   test 'embedded cartlist is correct' do
     cartlist = ExpressCartlist.new 'embedded'
-    assert_equal @@embedded_list, cartlist.list
+    assert_equal @@embedded_list.sort, cartlist.list.sort
   end
 
   #test 'zero exit code creates list' do
