@@ -13,15 +13,20 @@ BuildRoot: %(mktemp -ud %{_tmppath}/%{name}-%{version}-%{release}-XXXXXX)
 BuildRequires: git
 Requires:  rhc-node
 Requires:  nodejs >= 0.6
-Requires:  nodejs-async
-Requires:  nodejs-connect
-Requires:  nodejs-express
-Requires:  nodejs-mongodb
+#
+# FIXME: temporarily comment the requires lines to get build working.
+# Requires:  nodejs-async
+# Requires:  nodejs-connect
+# Requires:  nodejs-express
+# Requires:  nodejs-mongodb
+#
 # FIXME: wait for nodejs-hashish fix ... depends on nodejs-traverse version
 #        (0.5.2 in lieu of 0.2.4).
 # Requires:  nodejs-mysql
-Requires:  nodejs-node-static
-Requires:  nodejs-pg
+#
+# FIXME: temporarily comment the requires lines to get build working.
+# Requires:  nodejs-node-static
+# Requires:  nodejs-pg
 
 BuildArch: noarch
 
