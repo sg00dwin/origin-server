@@ -2,7 +2,7 @@
 
 Summary:   Provides Node-0.6 support
 Name:      rhc-cartridge-nodejs-0.6
-Version:   0.2.1
+Version:   0.2.2
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   ASL 2.0
@@ -94,6 +94,17 @@ rm -rf %{buildroot}
 %doc %{cartridgedir}/LICENSE
 
 %changelog
+* Mon Feb 20 2012 Dan McPherson <dmcphers@redhat.com> 0.2.2-1
+- Fixup spec file to use newly built rpms. (ramr@redhat.com)
+- Temporary bandaid -- gave up on getting build + sync working ... commenting
+  Require lines in the spec file so that build can work. (ramr@redhat.com)
+- Fix nodejs installation to use rpms for common node modules. As a result of
+  rpms, also changed to link global modules in the home directory so that the
+  app is now able to override the common modules with a locally installed
+  versions. nodejs-mysql module is pending "enablement" ... due to a nodejs-
+  hashish rpm dependency issue (nodejs-mysql depends on nodejs-hashish).
+  (ramr@redhat.com)
+
 * Thu Feb 16 2012 Dan McPherson <dmcphers@redhat.com> 0.2.1-1
 - bump spec numbers (dmcphers@redhat.com)
 
