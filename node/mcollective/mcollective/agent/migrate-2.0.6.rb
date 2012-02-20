@@ -18,58 +18,50 @@ module LibraMigration
     if (File.exists?(app_home) && !File.symlink?(app_home))
       cartridge_root_dir = "/usr/libexec/li/cartridges"
       cartridge_dir = "#{cartridge_root_dir}/#{app_type}"
-      
-      env_echos = []
-      if app_type == 'rack-1.1' || app_type == 'ruby-1.8' 
-        env_echos.push("echo \"export OPENSHIFT_APP_TYPE='ruby-1.8'\" > #{app_home}/.env/OPENSHIFT_APP_TYPE")
-        env_echos.push("echo \"export PATH=#{cartridge_root_dir}/ruby-1.8/info/bin/:#{cartridge_root_dir}/abstract-httpd/info/bin/:#{cartridge_root_dir}/abstract/info/bin/:/bin:/usr/bin\" > #{app_home}/.env/PATH")
-      elsif app_type == 'wsgi-3.2' || app_type == 'python-2.6'
-        env_echos.push("echo \"export OPENSHIFT_APP_TYPE='python-2.6'\" > #{app_home}/.env/OPENSHIFT_APP_TYPE")
-        env_echos.push("echo \"export PATH=#{cartridge_root_dir}/python-2.6/info/bin/:#{cartridge_root_dir}/abstract-httpd/info/bin/:#{cartridge_root_dir}/abstract/info/bin/:/bin:/usr/bin\" > #{app_home}/.env/PATH")
-      elsif app_type == 'php-5.3' || app_type == 'perl-5.10' || app_type == 'jenkins-1.4'
-        # Unrelated to renames, this fixes a double cartridge_dir/info/bin listing
-        env_echos.push("echo \"export PATH=#{cartridge_dir}/info/bin/:#{cartridge_root_dir}/abstract-httpd/info/bin/:#{cartridge_root_dir}/abstract/info/bin/:/bin:/usr/bin\" > #{app_home}/.env/PATH")
-      end
-      
-      env_echos.each do |env_echo|
-        echo_output, echo_exitcode = Util.execute_script(env_echo)
-        output += echo_output
-      end
-      
-      sed_output, sed_exitcode = Util.execute_script("sed -i 's/,no-port-forwarding//' #{app_home}/.ssh/authorized_keys")
-      output += sed_output
-      
-      ip = Util.get_env_var_value(app_home, "OPENSHIFT_INTERNAL_IP")
-      
-      if app_type == 'rack-1.1' || app_type == 'ruby-1.8'
-        deploy_httpd_config = "#{cartridge_dir}/info/bin/deploy_httpd_config.sh"
-        if File.exists?(deploy_httpd_config)
-          deploy_httpd_config_output, deploy_httpd_config_exitcode = Util.execute_script("#{deploy_httpd_config} #{app_name} #{uuid} #{ip} 2>&1")
-          output += "deploy_httpd_config_exitcode: #{deploy_httpd_config_exitcode.to_s}\n"
-          output += "deploy_httpd_config_output: #{deploy_httpd_config_output}\n"
+
+      if app_type == 'jenkins-1.4' 
+        config_xml = "#{app_dir}/data/config.xml"
+        config_xml_contents = Util.file_to_string(config_xml)
+  
+        output += "Migrating jenkins config.xml: #{config_xml}\n"
+  
+        users = Dir.glob("#{app_dir}/data/users/*").map do |user_path|
+          File.basename(user_path)
+        end
+  
+        lines = config_xml_contents.split('\n')
+        file = File.open(config_xml, 'w')
+        begin
+          lines.each do |line|
+            if line =~ /<authorizationStrategy class="hudson.security.FullControlOnceLoggedInAuthorizationStrategy"\/> *$/
+              file.puts "  <authorizationStrategy class=\"hudson.security.GlobalMatrixAuthorizationStrategy\">"
+              users.each do |user|
+                file.puts "    <permission>hudson.model.Computer.Configure:#{user}</permission>"
+                file.puts "    <permission>hudson.model.Computer.Delete:#{user}</permission>"
+                file.puts "    <permission>hudson.model.Hudson.Administer:#{user}</permission>"
+                file.puts "    <permission>hudson.model.Hudson.Read:#{user}</permission>"
+                file.puts "    <permission>hudson.model.Item.Build:#{user}</permission>"
+                file.puts "    <permission>hudson.model.Item.Configure:#{user}</permission>"
+                file.puts "    <permission>hudson.model.Item.Create:#{user}</permission>"
+                file.puts "    <permission>hudson.model.Item.Delete:#{user}</permission>"
+                file.puts "    <permission>hudson.model.Item.Read:#{user}</permission>"
+                file.puts "    <permission>hudson.model.Item.Workspace:#{user}</permission>"
+                file.puts "    <permission>hudson.model.Run.Delete:#{user}</permission>"
+                file.puts "    <permission>hudson.model.Run.Update:#{user}</permission>"
+                file.puts "    <permission>hudson.model.View.Configure:#{user}</permission>"
+                file.puts "    <permission>hudson.model.View.Create:#{user}</permission>"
+                file.puts "    <permission>hudson.model.View.Delete:#{user}</permission>"
+                file.puts "    <permission>hudson.scm.SCM.Tag:#{user}</permission>"
+              end
+              file.puts "  </authorizationStrategy>"
+            else
+              file.puts line
+            end
+          end
+        ensure
+          file.close
         end
       end
-      
-      ctl_sh = "#{app_dir}/#{app_name}_ctl.sh"
-      output += "Migrating _ctl.sh: #{ctl_sh}\n"
-      file = File.open(ctl_sh, 'w')
-      begin
-file.puts <<EOF
-#!/bin/bash -e
-# Import Environment Variables
-for f in ~/.env/*
-do
-    . $f
-done
-app_ctl.sh $1
-EOF
-
-      ensure
-        file.close
-      end
-      
-      FileUtils.chmod(0755, ctl_sh)
-      FileUtils.chown("root", "root", ctl_sh)
       
     else
       exitcode = 127
