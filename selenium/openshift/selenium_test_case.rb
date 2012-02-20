@@ -108,8 +108,9 @@ module OpenShift
               f.write(@driver.page_source)
             end
           rescue Exception => e
-            puts "<unable to output logs for #{name}>"
-            $stderr.puts e
+            puts "<unable to output logs for #{name}"
+            puts e.inspect
+            puts ">"
           end
         end
 
