@@ -11,7 +11,7 @@ require 'syslog'
 ##
 # Monitor syslog files for messages from cgroups killing off applications 
 class Watchman
-  attr_accessor :epoch, :period_seconds, :message_file
+  attr_accessor :epoch, :period_seconds, :message_file, :retries
 
   ##
   # monitor +message_file+ every +period+ seconds for cgroups kill messages
@@ -20,6 +20,7 @@ class Watchman
     @period_seconds = period
     @daemon = daemon
     @var_lib = libra_var_lib
+    @retries = 10
 
     # Once the SDK has finer control over whether an application should be running or not this could be lifted.
     # Don't process any errors that occurred before we were started.
@@ -46,7 +47,7 @@ class Watchman
         app_env[app_uuid] = read_env(app_path) if app_uuid =~ /^[a-f0-9]{32}$/ 
       }
       next if app_env.empty?
-
+	
       # Read current message_file and troll for killed applications
       # todo dump incidents if message_file has rolled?
       File.open(@message_file).grep(/ killed as a result of limit of /).each {|msg|
@@ -77,6 +78,11 @@ class Watchman
           }
         end
       }
+    rescue Exception => e
+      @retries -= 1
+      Syslog.warning("watchman caught #{e.inspect}: #{e.message}. Retries left: #{@retries}")
+      retry if @daemon and 0 < @retries
+      raise
     end while @daemon
   end
   
