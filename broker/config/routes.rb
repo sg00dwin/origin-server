@@ -9,6 +9,9 @@ Broker::Application.routes.draw do
     #   match 'products/:id' => 'catalog#view'
     # Keep in mind you can assign values other than :controller and :action
     match 'nurture' => 'broker#nurture_post', :via => [:post]
+    scope "/rest" do
+      resources :application_template
+    end
 
     # Sample resource route with options:
     #   resources :products do
