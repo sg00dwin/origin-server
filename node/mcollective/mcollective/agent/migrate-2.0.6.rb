@@ -28,11 +28,10 @@ module LibraMigration
         users = Dir.glob("#{app_dir}/data/users/*").map do |user_path|
           File.basename(user_path)
         end
-  
-        lines = config_xml_contents.split('\n')
+
         file = File.open(config_xml, 'w')
         begin
-          lines.each do |line|
+          config_xml_contents.lines.each do |line|
             if line =~ /<authorizationStrategy class="hudson.security.FullControlOnceLoggedInAuthorizationStrategy"\/> *$/
               file.puts "  <authorizationStrategy class=\"hudson.security.GlobalMatrixAuthorizationStrategy\">"
               users.each do |user|
