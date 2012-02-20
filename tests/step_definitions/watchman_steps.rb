@@ -1,6 +1,5 @@
 load 'li-test/node/scripts/bin/rhc-watchman'
 
-
 Given /^a Watchman object using "([^"]*)" and "([^"]*)"$/ do |log, epoch|
   class Watchman1 < Watchman
     attr_accessor :restarted
@@ -71,7 +70,7 @@ Given /^a Watchman object using "([^"]*)" and "([^"]*)" expect "([^"]*)" excepti
     begin
       @watchman.run
     rescue
-      puts "exception in steps... #{@watchman.retries}"
+      #puts "exception in steps... #{@watchman.retries}"
       # eat exceptions since we are not running as a daemon they all show up here...
     end
   end
