@@ -13,6 +13,20 @@ BuildRoot: %(mktemp -ud %{_tmppath}/%{name}-%{version}-%{release}-XXXXXX)
 BuildRequires: git
 Requires:  rhc-node
 Requires:  nodejs >= 0.6
+#
+# FIXME: temporarily comment the requires lines to get build working.
+# Requires:  nodejs-async
+# Requires:  nodejs-connect
+# Requires:  nodejs-express
+# Requires:  nodejs-mongodb
+#
+# FIXME: wait for nodejs-hashish fix ... depends on nodejs-traverse version
+#        (0.5.2 in lieu of 0.2.4).
+# Requires:  nodejs-mysql
+#
+# FIXME: temporarily comment the requires lines to get build working.
+# Requires:  nodejs-node-static
+# Requires:  nodejs-pg
 
 BuildArch: noarch
 
@@ -71,12 +85,6 @@ ln -s %{cartridgedir}/../abstract/info/hooks/system-messages %{buildroot}%{cartr
 
 %clean
 rm -rf %{buildroot}
-
-%post
-# Install npm modules
-npm install -g $(perl -ne 'print if /^\s*[^#\s]/' %{cartridgedir}/info/configuration/npm_global_module_list | tr '\n' ' ')
-# npm install -g mysql pg
-npm install -g mongodb --mongodb:native
 
 %files
 %defattr(-,root,root,-)

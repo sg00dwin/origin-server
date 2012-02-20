@@ -3,23 +3,19 @@
 #
 
 #  DB drivers.
+mongodb
 mysql
 pg
-mongodb
 
 #  Other modules (including frameworks, middleware etc).
-mime
 async
-express
 connect
+express
+formidable
+generic-pool
+hashish
+mime
+mkdirp
 node-static
-socket.io
-xml2js
-optimist
-underscore
-testosterone
-funk
-gently
-jade
-request
-jsdom
+qs
+traverse

@@ -12,10 +12,11 @@ source ${CART_INFO_DIR}/lib/util
 
 start_postgresql_as_user
 
-# Dump all databases but remove any sql statements that create and alter the admin and user roles.
-/usr/bin/pg_dumpall -c | sed "/^\s*CREATE\s*ROLE\s*\(\"$OPENSHIFT_APP_UUID\"\|admin\).*/d;       \
-                           /^\s*ALTER\s*ROLE\s*\(\"$OPENSHIFT_APP_UUID\"\|admin\).*/d;"    |  \
-                      /bin/gzip -v > $OPENSHIFT_DATA_DIR/postgresql_dump_snapshot.gz
+# Dump all databases but remove any sql statements that drop, create and alter
+# the admin and user roles.
+rexp="^\s*\(DROP\|CREATE\|ALTER\)\s*ROLE\s*\(\"$OPENSHIFT_APP_UUID\"\|admin\).*"
+/usr/bin/pg_dumpall -c | sed "/$rexp/d;" |   \
+            /bin/gzip -v > $OPENSHIFT_DATA_DIR/postgresql_dump_snapshot.gz
 
 if [ ! ${PIPESTATUS[0]} -eq 0 ]
 then
