@@ -11,6 +11,15 @@ Broker::Application.routes.draw do
     match 'nurture' => 'broker#nurture_post', :via => [:post]
     scope "/rest" do
       resources :application_template
+      resources :domains, :constraints => { :id => /[A-Za-z0-9]+/ } do
+        resources :applications, :controller => :extended_applications, :constraints => { :id => /[\w]+/ } do
+          resource :descriptor, :only => [:show]
+          resources :cartridges, :controller => :emb_cart, :only => [:index, :create, :destroy], :constraints => { :id => /[\w\-\.]+/ } do
+              resources :events, :controller => :emb_cart_events, :only => [:create]
+          end
+          resources :events, :controller => :app_events, :only => [:create]
+        end
+      end
     end
 
     # Sample resource route with options:

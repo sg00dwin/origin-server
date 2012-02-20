@@ -209,7 +209,8 @@ class Application < Cloud::Sdk::Cartridge
     # self.save
     
     #process new additions
-    self.configure_order.each do |comp_inst_name|
+    #TODO: fix configure after framework cartridge is no longer a requirement for adding embedded cartridges
+    self.configure_order.reverse.each do |comp_inst_name|
       comp_inst = self.comp_instance_map[comp_inst_name]
       group_inst = self.group_instance_map[comp_inst.group_instance_name]
       begin
