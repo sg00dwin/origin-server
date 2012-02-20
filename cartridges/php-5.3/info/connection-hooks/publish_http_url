@@ -50,6 +50,11 @@ setup_basic_hook "$1" $2 $3
 #
 # echo external gear location
 # 
+for file in /var/lib/libra/$3/.env/OPENSHIFT_*_PUB_PORT
+do
+    source $file
+done
+source "/var/lib/libra/$3/.env/OPENSHIFT_APP_DNS"
 port=`echo ${!OPENSHIFT_PUB_PORT[@]} | awk '{ print $1 }'`
 
 echo ${OPENSHIFT_APP_DNS}:$port

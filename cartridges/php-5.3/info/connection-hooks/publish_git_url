@@ -50,4 +50,7 @@ setup_basic_hook "$1" $2 $3
 #
 # echo ssh location
 # 
+source /var/lib/libra/$3/.env/OPENSHIFT_APP_UUID # yes its the same, this is a sanity check
+source /var/lib/libra/$3/.env/OPENSHIFT_APP_DNS
+source /var/lib/libra/$3/.env/OPENSHIFT_APP_NAME
 echo "ssh://${OPENSHIFT_APP_UUID}@${OPENSHIFT_APP_DNS}/~/git/${OPENSHIFT_APP_NAME}.git/"
