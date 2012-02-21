@@ -1,6 +1,0 @@
-= div_for key do
-  %dt= key.name
-  %dd
-    %code= key.display_name
-
-  = link_to 'Delete', key_path(key), :class => 'btn btn-warning', :method => :delete, :confirm => "Are you sure you want to delete your key '#{key.name}'?"
