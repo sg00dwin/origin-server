@@ -21,6 +21,7 @@ Requires:       rubygem(mocha)
 Requires:       rubygem(parseconfig)
 Requires:       rubygem(state_machine)
 Requires:       rubygem(cloud-sdk-common)
+Requires:       rubygem(open4)
 
 BuildRequires:  ruby
 BuildRequires:  rubygems
@@ -238,5 +239,4 @@ rm -rf %{buildroot}
 - Merge branch 'master' of git1.ops.rhcloud.com:/srv/git/li (rpenta@redhat.com)
 - mongo wrapper: 'use <user-db>' instead of 'use admin' for authentication
   (rpenta@redhat.com)
-
 

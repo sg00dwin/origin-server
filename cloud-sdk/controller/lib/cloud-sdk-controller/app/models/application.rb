@@ -127,7 +127,7 @@ class Application < Cloud::Sdk::Cartridge
         # self.save
         result_io.append create_result
         unless create_result.exitcode == 0
-          raise NodeException.new("Unable to create gear on node", "-100", result_io)
+          raise Cloud::Sdk::NodeException.new("Unable to create gear on node", "-100", result_io)
         end
 
         #TODO: save gears here

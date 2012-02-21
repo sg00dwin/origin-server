@@ -62,8 +62,8 @@ begin
   carts = []
   cartridge_path = Cloud::Sdk::Config.instance.get("cartridges_path")
   Dir.foreach(cartridge_path) do |cart_dir|
+    next if [".",".."].include? cart_dir
     path = File.join(cartridge_path, cart_dir, "info", "manifest.yml")
-    next if [".",".."].include? path
     begin
       print "Loading #{cart_dir}..." if $cdk_debug
       carts.push Cloud::Sdk::Cartridge.new.from_descriptor(YAML.load(File.open(path)))
@@ -76,8 +76,8 @@ begin
   
   embedded_cartridge_path = File.join(cartridge_path, "embedded")
   Dir.foreach(embedded_cartridge_path) do |cart_dir|
+    next if [".",".."].include? cart_dir
     path = File.join(embedded_cartridge_path, cart_dir, "info", "manifest.yml")
-    next if [".",".."].include? path
     begin
       print "Loading #{cart_dir}..." if $cdk_debug
       carts.push Cloud::Sdk::Cartridge.new.from_descriptor(YAML.load(File.open(path)))

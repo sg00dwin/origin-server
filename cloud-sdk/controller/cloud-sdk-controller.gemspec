@@ -26,6 +26,7 @@ Gem::Specification.new do |s|
   s.add_dependency "json"
   s.add_dependency "cloud-sdk-common"
   s.add_dependency('state_machine')  
+  s.add_dependency('open4')
   s.add_development_dependency('rake')  
   s.add_development_dependency('rspec')
   s.add_development_dependency('bundler')
