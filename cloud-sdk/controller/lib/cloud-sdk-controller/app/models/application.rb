@@ -349,7 +349,7 @@ class Application < Cloud::Sdk::Cartridge
       run_on_gears(sub_ginst.gears, reply, false) do |gear, r|
         r.append gear.execute_connector(sub_inst, conn.to_connector.name, [self.name, self.domain, gear.uuid, output])
       end
-    end
+    }
   end
   
   # Deconfigure all cartriges for the application. Errors are logged but no exception is thrown.

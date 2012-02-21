@@ -24,7 +24,7 @@ class GroupInstance < Cloud::Sdk::UserModel
     self.component_instances = (self.component_instances + ginst.component_instances).uniq unless ginst.component_instances.nil?
     if not ginst.gears.nil?
       self.gears = [] if self.gears.nil?
-      self.gears = self.gears + ginst.gears
+      @gears += ginst.gears
     end
   end
 
@@ -46,7 +46,7 @@ class GroupInstance < Cloud::Sdk::UserModel
       raise NodeException.new("Unable to create gear on node", "-100", create_result)
     end
     self.gears << gear
-    create_result, gear
+    return [create_result, gear]
   end
 
   def fulfil_requirements(app)
