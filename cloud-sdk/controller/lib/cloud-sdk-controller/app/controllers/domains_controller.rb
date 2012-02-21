@@ -1,7 +1,8 @@
 class DomainsController < BaseController
   respond_to :xml, :json
-  before_filter :authenticate, :validate_params
+  before_filter :authenticate
   before_filter :lookup_user, :except => [:create]
+  before_filter :validate_params, :except => [:index, :show, :destroy]
 
   NAMESPACE_MAX_LENGTH = 16
   # GET /domains
@@ -9,7 +10,7 @@ class DomainsController < BaseController
     domains = Array.new
     if @cloud_user
       domain = RestDomain.new(@cloud_user.namespace)
-      domains.push(domain)
+    domains.push(domain)
     end
     @reply = RestReply.new(:ok, "domains", domains)
     respond_with @reply, :status => @reply.status
@@ -33,6 +34,15 @@ class DomainsController < BaseController
   def create
     namespace = params[:namespace]
     Rails.logger.debug "Creating domain with namespace #{namespace}"
+    domain = Domain.new(namespace)
+    if domain.invalid?
+      @reply = RestReply.new(:unprocessable_entity)
+      domain.errors.each do |attribute, message, exit_code|
+        @reply.messages.push(Message.new(:error, message, exit_code, attribute))
+      end
+      respond_with @reply, :status => @reply.status
+    end
+    
     cloud_user = CloudUser.find(@login)
 
     if cloud_user
@@ -76,7 +86,7 @@ class DomainsController < BaseController
 
   # PUT /domains/<id>
   def update
-    
+
     id = params[:id]
     new_namespace = params[:namespace]
     Rails.logger.debug "Updating domain #{@cloud_user.namespace} to #{new_namespace}"
@@ -94,7 +104,7 @@ class DomainsController < BaseController
     @reply = RestReply.new(:ok, "domain", domain)
     @reply.process_result_io(result_io)
     #respond_with @reply, :status => @reply.status
-    
+
     respond_with(@reply) do |format|
       format.xml { render :xml => @reply, :status => @reply.status }
       format.json { render :json => @reply, :status => @reply.status }
@@ -106,9 +116,9 @@ class DomainsController < BaseController
     id = params[:id]
     force_str = params[:force]
     if not force_str.nil? and force_str.upcase == "TRUE"
-      force = true
+    force = true
     else
-      force = false
+    force = false
     end
 
     if not @cloud_user or @cloud_user.namespace != id
@@ -136,7 +146,7 @@ class DomainsController < BaseController
         format.xml { render :xml => @reply, :status => @reply.status }
         format.json { render :json => @reply, :status => @reply.status }
       end
-      return  
+    return
     end
 
     @reply = RestReply.new(:no_content)
@@ -154,18 +164,15 @@ class DomainsController < BaseController
 
   def validate_params
     errors = []
-
-    unless params[:namespace].nil? and params[:id].nil?
-      val = params[:namespace] || params[:id]
-      if !(val =~ /\A[A-Za-z0-9]+\z/)
-        errors.push({:message => "Invalid namespace: #{val}", :exit_code => 106})
-      end
-      if val and val.length > NAMESPACE_MAX_LENGTH
-        errors.push({:message => "Namespace (#{val}) is too long.  Maximum length is #{NAMESPACE_MAX_LENGTH} characters", :exit_code => 106})
-      end
-      if Cloud::Sdk::ApplicationContainerProxy.blacklisted? val
-        error.push({:message => "Namespace (#{val}) is not allowed.  Please choose another.", :exit_code => 106})
-      end
+    val = params[:namespace]
+    if !(val =~ /\A[A-Za-z0-9]+\z/)
+      errors.push({:message => "Invalid namespace: #{val}", :exit_code => 106})
+    end
+    if val and val.length > NAMESPACE_MAX_LENGTH
+      errors.push({:message => "Namespace (#{val}) is too long.  Maximum length is #{NAMESPACE_MAX_LENGTH} characters", :exit_code => 106})
+    end
+    if Cloud::Sdk::ApplicationContainerProxy.blacklisted? val
+      error.push({:message => "Namespace (#{val}) is not allowed.  Please choose another.", :exit_code => 106})
     end
 
     unless errors.empty?
