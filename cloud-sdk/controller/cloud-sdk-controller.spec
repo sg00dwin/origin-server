@@ -5,7 +5,7 @@
 
 Summary:        Cloud Development Controller
 Name:           rubygem-%{gemname}
-Version:        0.5.1
+Version:        0.5.3
 Release:        1%{?dist}
 Group:          Development/Languages
 License:        ASL 2.0
@@ -73,6 +73,13 @@ rm -rf %{buildroot}
 %{ruby_sitelib}/%{gemname}.rb
 
 %changelog
+* Mon Feb 20 2012 Dan McPherson <dmcphers@redhat.com> 0.5.3-1
+- Updating gem versions (dmcphers@redhat.com)
+- secure jenkins (dmcphers@redhat.com)
+- Revert "Updating gem versions" (ramr@redhat.com)
+- Sigh -- friday night build failures -- switching version by hand to 0.5.1 to
+  get build running. Do need something strong now ... (ramr@redhat.com)
+
 * Fri Feb 17 2012 Ram Ranganathan <ramr@redhat.com> 0.5.1-1
 - Updating gem versions (ramr@redhat.com)
 - bug fixes 789785 and 794917 (lnader@redhat.com)

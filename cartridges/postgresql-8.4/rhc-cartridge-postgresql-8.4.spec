@@ -1,7 +1,7 @@
 %define cartridgedir %{_libexecdir}/li/cartridges/embedded/postgresql-8.4
 
 Name: rhc-cartridge-postgresql-8.4
-Version: 0.4.1
+Version: 0.4.2
 Release: 1%{?dist}
 Summary: Embedded postgresql support for express
 
@@ -71,6 +71,10 @@ rm -rf $RPM_BUILD_ROOT
 %doc %{cartridgedir}/LICENSE
 
 %changelog
+* Mon Feb 20 2012 Dan McPherson <dmcphers@redhat.com> 0.4.2-1
+- Fix minor irritant message saying logged in user can't be dropped on a
+  restore snapshot (fallout of bugz 791091). (ramr@redhat.com)
+
 * Thu Feb 16 2012 Dan McPherson <dmcphers@redhat.com> 0.4.1-1
 - bump spec numbers (dmcphers@redhat.com)
 - Fix for bugz 791091 - snapshot restore postgresql data failure.
