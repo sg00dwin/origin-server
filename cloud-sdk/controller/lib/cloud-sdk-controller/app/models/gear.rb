@@ -58,6 +58,10 @@ class Gear < Cloud::Sdk::UserModel
     self.configured_components.delete(comp_inst.name)
     r
   end
+
+  def execute_connector(comp_inst, connector_name, input_args)
+    get_proxy.execute_connector(app, self, comp_inst.parent_cart_name, connector_name, input_args)
+  end
   
   def start(comp_inst)
     get_proxy.start(app,self,comp_inst.parent_cart_name)

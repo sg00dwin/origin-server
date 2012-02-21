@@ -248,9 +248,35 @@ class Application < Cloud::Sdk::Cartridge
       end
     end
     
+    #execute_connections
+
     self.save
     self.class.notify_observers(:after_application_configure, {:application => self, :reply => reply})
     reply
+  end
+
+  # execute all connections
+  def execute_connections
+    self.conn_endpoints_list.each { |conn|
+      # get publisher's gears, execute the connector, and
+      # give the output to subscriber gears
+      pub_inst = self.comp_instance_map[conn.from_comp_inst]
+      pub_ginst = self.group_instance_map[pub_inst.group_instance_name]
+
+      output = ResultIO.new
+      run_on_gears(pub_ginst.gears, output, false) do |gear, r|
+        r.append execute_connector(pub_inst, conn.from_connector.name, [self.name, self.domain, gear.uuid])
+      end
+
+      Rails.logger.debug "Output of publisher - #{output}"
+
+      sub_inst = self.comp_instance_map[conn.to_comp_inst]
+      sub_ginst = self.group_instance_map[sub_inst.group_instance_name]
+
+      run_on_gears(sub_ginst.gears, reply, false) do |gear, r|
+        r.append gear.execute_connector(sub_inst, conn.to_connector.name, [self.name, self.domain, gear.uuid, output])
+      end
+    end
   end
   
   # Deconfigure all cartriges for the application. Errors are logged but no exception is thrown.
