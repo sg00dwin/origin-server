@@ -828,7 +828,7 @@ module Express
       end
       
       def run_cartridge_command(framework, app, gear, command, arg=nil, allow_move=true)
-        if app.scalable and framework!="haproxy-0.1"
+        if app.scalable and framework!=self.proxy_cartridge
           appname = gear.uuid[0..9] 
         else
           appname = app.name

@@ -4,7 +4,8 @@ class Application < Cloud::Sdk::Cartridge
   attr_accessor :user, :creation_time, :uuid, :aliases, :cart_data,
                 :state, :group_instance_map, :comp_instance_map, :conn_endpoints_list,
                 :domain, :group_override_map, :working_comp_inst_hash,
-                :working_group_inst_hash, :configure_order, :start_order
+                :working_group_inst_hash, :configure_order, :start_order,
+                :scalable, :proxy_cartridge
   primary_key :name
   exclude_attributes :user, :comp_instance_map, :group_instance_map, 
                 :working_comp_inst_hash, :working_group_inst_hash
@@ -21,12 +22,17 @@ class Application < Cloud::Sdk::Cartridge
   # @param [optional, String] uuid Unique identifier for the application
   # @param [deprecated, String] node_profile Node profile for the first application gear
   # @param [deprecated, String] framework Cartridge name to use as the framwwork of the application
-  def initialize(user=nil, app_name=nil, uuid=nil, node_profile=nil, framework=nil)
+  def initialize(user=nil, app_name=nil, uuid=nil, node_profile=nil, framework=nil, will_scale=false)
     self.user = user
     from_descriptor({"Name"=>app_name, "Subscribes"=>{"doc-root"=>{"Type"=>"FILESYSTEM:doc-root"}}})
     self.creation_time = DateTime::now().strftime
     self.uuid = uuid || Cloud::Sdk::Model.gen_uuid
     self.requires_feature = [framework]
+    self.scalable = will_scale
+    if self.scalable and framework != "haproxy-1.4"
+      self.proxy_cartridge = "haproxy-1.4"
+      self.requires_feature << self.proxy_cartridge
+    end
   end
   
   # Find an application to which user has access
@@ -123,12 +129,13 @@ class Application < Cloud::Sdk::Cartridge
         
         gears_created.push gear
         create_result = gear.create
-        ginst.gears = [gear]
         # self.save
         result_io.append create_result
         unless create_result.exitcode == 0
           raise NodeException.new("Unable to create gear on node", "-100", result_io)
         end
+
+        ginst.gears << gear
 
         #TODO: save gears here
       end
@@ -175,6 +182,70 @@ class Application < Cloud::Sdk::Cartridge
     self.class.notify_observers(:after_application_destroy, {:application => self, :reply => reply})    
     reply
   end
+
+  def web_cart
+    web_cart = nil
+    framework_carts = CartridgeCache.cartridge_names('standalone')
+    self.requires_feature.each do |feature|
+      if framework_carts.include? feature and feature != self.proxy_cartridge
+        web_cart = feature 
+        break
+      end
+    end
+    raise Exception.new("Cannot find web framework for the application") if web_cart.nil?
+    web_cart
+  end
+
+  def scaleup
+    result_io = ResultIO.new
+    wb = web_cart
+    # find the group instance where the web-cartridge is residing
+    self.group_instance_map.keys.each { |ginst_name|
+      next if not ginst_name.include? wb
+      ginst = self.group_instance_map[ginst_name]
+      result, new_gear = ginst.add_gear
+      result_io.append result
+      self.add_dns(new_gear.uuid, @user.namespace, new_gear.get_proxy.get_public_hostname)
+      break
+    }
+    result_io.append self.configure_dependencies
+    result_io
+  end
+
+  def scaledown
+    result_io = ResultIO.new
+    wb = web_cart
+    # find the group instance where the web-cartridge is residing
+    self.group_instance_map.keys.each { |ginst_name|
+      next if not ginst_name.include? wb
+      ginst = self.group_instance_map[ginst_name]
+
+      # remove any gear out of this ginst
+      raise Exception.new("Cannot scale below one gear") if ginst.gears.length == 1
+
+      gear = ginst.gears.first
+      gear.configured_components.each { |conf_comp|
+        cinst = self.comp_instance_map[conf_comp]
+        result_io.append gear.deconfigure(cinst)
+      }
+
+      result_io.append gear.destroy
+      ginst.gears.delete gear
+
+      dns = Cloud::Sdk::DnsService.instance
+      begin
+        dns.deregister_application(gear.uuid, @user.namespace)
+        dns.publish
+      ensure
+        dns.close
+      end
+
+      break
+    }
+    # inform anyone who needs to know that this gear is no more
+    execute_connections
+    result_io
+  end
   
   # Elaborates the descriptor, deconfigures cartridges that were removed and configures cartridges that were added to the application dependencies.
   # If a node is empty after removing components, then the gear is destroyed. Errors that occur while removing cartridges are logged but no exception is thrown.
@@ -204,6 +275,7 @@ class Application < Cloud::Sdk::Cartridge
         r.append gear.destroy if gear.configured_components.length == 0
         # self.save        
       end
+      group_inst.gears.delete_if { |gear| gear.configured_components.length == 0 }
     end
     cleanup_deleted_components
     # self.save
@@ -213,6 +285,7 @@ class Application < Cloud::Sdk::Cartridge
       comp_inst = self.comp_instance_map[comp_inst_name]
       group_inst = self.group_instance_map[comp_inst.group_instance_name]
       begin
+        group_inst.fulfil_requirements(self)
         run_on_gears(group_inst.gears, reply) do |gear, r|
           r.append gear.configure(comp_inst)
           r.append process_cartridge_commands(r.cart_commands)
@@ -600,18 +673,22 @@ class Application < Cloud::Sdk::Cartridge
     end if @user.env_vars
     reply
   end
-  
-  def create_dns
-    reply = ResultIO.new
-    self.class.notify_observers(:before_create_dns, {:application => self, :reply => reply})    
+
+  def add_dns(appname, namespace, public_hostname)
     dns = Cloud::Sdk::DnsService.instance
     begin
-      public_hostname = self.container.get_public_hostname
-      dns.register_application(@name,@user.namespace, public_hostname)
+      dns.register_application(appname, namespace, public_hostname)
       dns.publish
     ensure
       dns.close
     end
+  end
+  
+  def create_dns
+    reply = ResultIO.new
+    self.class.notify_observers(:before_create_dns, {:application => self, :reply => reply})    
+    public_hostname = self.container.get_public_hostname
+    add_dns(@name, @user.namespace, public_hostname)
     self.class.notify_observers(:after_create_dns, {:application => self, :reply => reply})    
     reply
   end
@@ -734,6 +811,12 @@ class Application < Cloud::Sdk::Cartridge
       elaborate_descriptor
     end
     
+    if scalable
+      self.group_instance_map.keys.each { |ginst_name|
+        return self.group_instance_map[ginst_name].gears.first if ginst_name.include? self.proxy_cartridge
+      }
+    end
+
     group_instance = self.group_instances.first
     return nil unless group_instance
     
@@ -761,10 +844,11 @@ class Application < Cloud::Sdk::Cartridge
   # @return [String]
   # @deprecated  
   def framework
+    return self.proxy_cartridge if self.scalable
     framework_carts = CartridgeCache.cartridge_names('standalone')
     self.requires_feature.each do |feature|
       if framework_carts.include? feature
-        return feature
+        return feature 
       end
     end
     return nil
@@ -967,6 +1051,7 @@ private
   end
   
   def auto_merge_top_groups(default_profile)
+    return if self.scalable
     first_group = default_profile.groups[0]
     gpath = self.get_name_prefix + first_group.get_name_prefix
     gi = self.group_instance_map[gpath]

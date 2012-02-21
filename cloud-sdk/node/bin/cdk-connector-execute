@@ -72,8 +72,8 @@ unless uuid
 end
 
 begin
-  if File.exists? "/usr/libexec/li/cartridges/#{cart_name}/info/connectors/#{hook_name}"                
-     pid, stdin, stdout, stderr = Open4::popen4ext(true, "runuser --shell /bin/sh #{gear_uuid} /usr/libexec/li/cartridges/#{cart_name}/info/connectors/#{hook_name} #{ARGV} 2>&1")
+  if File.exists? "/usr/libexec/li/cartridges/#{cart_name}/info/connection-hooks/#{hook_name}"                
+     pid, stdin, stdout, stderr = Open4::popen4ext(true, "runuser --shell /bin/sh #{gear_uuid} /usr/libexec/li/cartridges/#{cart_name}/info/connection-hooks/#{hook_name} #{ARGV} 2>&1")
      $stdout.puts stdout
   end
 rescue Cloud::Sdk::Model::UserCreationException => e
