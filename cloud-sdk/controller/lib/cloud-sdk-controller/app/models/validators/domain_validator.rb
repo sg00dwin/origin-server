@@ -1,8 +1,16 @@
-class NamespaceValidator < ActiveModel::EachValidator
+class DomainValidator < ActiveModel::Validator
   NAMESPACE_MAX_LENGTH = 16
   NAMESPACE_MIN_LENGTH = 1
-  
+  def validate(record)
+    attributes.each do |attribute|
+      value = record.read_attribute_for_validation(attribute)
+      next if (value.nil? && options[:allow_nil]) || (value.blank? && options[:allow_blank])
+      validate_each(record, attribute, value)
+    end
+  end
+
   def validate_each(record, attribute, val)
+    Rails.logger.debug "*************Validating namespace"
     if val.nil?
       record.errors.add(attribute, {:message => "Namespace is required", :exit_code => 106})
     end
