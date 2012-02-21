@@ -31,6 +31,8 @@ class AppEventsController < BaseController
           application.expose_port
         when "conceal-port"
           application.conceal_port
+        when "show-port"
+          application.show_port
         else
           @reply = RestReply.new(:bad_request)
           message = Message.new(:error, "Invalid event #{event}.  Valid events are start, stop, restart, force-stop")

@@ -281,7 +281,8 @@ class Application < Cloud::Sdk::Cartridge
     # self.save
     
     #process new additions
-    self.configure_order.each do |comp_inst_name|
+    #TODO: fix configure after framework cartridge is no longer a requirement for adding embedded cartridges
+    self.configure_order.reverse.each do |comp_inst_name|
       comp_inst = self.comp_instance_map[comp_inst_name]
       group_inst = self.group_instance_map[comp_inst.group_instance_name]
       begin
@@ -580,6 +581,20 @@ class Application < Cloud::Sdk::Cartridge
       group_inst = self.group_instance_map[comp_inst.group_instance_name]
       s,f = run_on_gears(group_inst.gears, reply, false) do |gear, r|
         r.append gear.conceal_port(comp_inst)
+      end
+      raise f[0][:exception] if(f.length > 0)      
+    end
+    reply
+  end
+  
+  def show_port(dependency=nil)
+    reply = ResultIO.new
+    self.comp_instance_map.each do |comp_inst_name, comp_inst|
+      next if !dependency.nil? and (comp_inst.parent_cart_name != dependency)
+
+      group_inst = self.group_instance_map[comp_inst.group_instance_name]
+      s,f = run_on_gears(group_inst.gears, reply, false) do |gear, r|
+        r.append gear.show_port(comp_inst)
       end
       raise f[0][:exception] if(f.length > 0)      
     end
