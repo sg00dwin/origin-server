@@ -67,6 +67,7 @@ RedHatCloud::Application.routes.draw do
         match 'delete_sshkey/:key_name' => 'express_ssh_keys#delete_sshkey', :via => :delete
       end
 
+      resource :domain, :only => [:new, :create, :edit, :update]
       resources :keys, :only => [:new, :create, :destroy]
     end
 
