@@ -21,3 +21,9 @@ Feature: Watchman Service
     | messages.log | Feb  9 18:00:00 | Feb 9 00:00:00 | 0 |
     | messages.log | Feb  9 16:00:00 | Feb 9 00:00:00 | 1 |
     | empty.log    | Feb  9 16:00:00 | Feb 9 00:00:00 | 1 | 
+
+  Scenario: Watchman survives one exception
+    Given a Watchman object using "messages.log" and "Feb  7 18:20:44" expect "1" exception
+
+  Scenario: Watchman dies with 10 exceptions
+    Given a Watchman object using "messages.log" and "Feb  7 18:20:44" expect "10" exception

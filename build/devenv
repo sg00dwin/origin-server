@@ -162,9 +162,8 @@ class DevEnv < Thor
           output, exit_code = run_ssh(hostname, title, cmd)
           if exit_code != 0
             if output.include?("Failing Scenarios:") && output =~ /cucumber li-test\/tests\/.*\.feature:\d+/
-              lines = output.split('\n')
-              lines.each do |line|
-                if line =~ /^cucumber li-test\/tests\/(.*\.feature):\d+/
+              output.lines.each do |line|
+                if line =~ /cucumber li-test\/tests\/(.*\.feature):\d+/
                   test = $1
                   failures.push(["#{title} (#{test})", "cucumber -f html --out /tmp/rhc/#{test}.html -f progress li-test/tests/#{test}"])
                 end
@@ -272,11 +271,14 @@ class DevEnv < Thor
         retry_threshold += 4 unless options.exclude_internal?
         retry_threshold += 1 unless options.exclude_verification?
         retry_threshold += 6 if options.include_web?
+        
+        failures.uniq!
 
         if failures.length > retry_threshold
           download_artifacts hostname
           exit 1
-        elsif failures.length > 0 && failures.length <= retry_threshold
+        elsif failures.length > 0
+          puts "All Failures: #{failures.pretty_inspect}"
           ssh(hostname, "rm -rf /tmp/rhc; mkdir -p /tmp/rhc/junit")
           failures.each do |failure|
             title = failure[0]
