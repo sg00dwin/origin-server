@@ -83,6 +83,7 @@ class ExpressDomainController < ApplicationController
       @dom_action = 'create'
     end
     @domain = ExpressDomain.new :rhlogin => @userinfo.rhlogin, :namespace => @userinfo.namespace
+    render :layout => 'console'
   end
 
   def edit_sshkey
