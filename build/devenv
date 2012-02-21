@@ -291,6 +291,8 @@ class DevEnv < Thor
                 if i == num_retries
                   download_artifacts hostname
                   exit exit_code
+                else
+                  ssh(hostname, "rm -rf /tmp/rhc; mkdir -p /tmp/rhc/junit")
                 end
               else
                 break
