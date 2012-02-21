@@ -78,6 +78,7 @@ rescue Exception => e
   usage
   exit -100
 end
+tags = tags.split(",")
 
 template = ApplicationTemplate.new(display_name,descriptor, git_url,tags,gear_cost,metadata)
 template.save

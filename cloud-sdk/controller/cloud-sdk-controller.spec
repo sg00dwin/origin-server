@@ -20,6 +20,7 @@ Requires:       rubygem(json_pure)
 Requires:       rubygem(mocha)
 Requires:       rubygem(parseconfig)
 Requires:       rubygem(state_machine)
+Requires:       rubygem(dnsruby)
 Requires:       rubygem(cloud-sdk-common)
 
 BuildRequires:  ruby
