@@ -7,7 +7,7 @@ module OpenShift
             esb fedora freeipa gatein gfs gravel guvnor hibernate hornetq iiop
             infinispan ironjacamar javassist jbcaa jbcd jboss jbpm jdcom jgroups
             jmx jopr jrunit jsfunit kosmos liberation makara mass maven metajizer
-            metamatrix mobicents mod_cluster modeshape mugshot netty openshift
+            metamatrix mobicents mod_cluster modeshape mugshot mysql netty openshift
             osgi overlord ovirt penrose picketbox picketlink portletbridge portletswap
             posse pressgang qumranet railo redhat resteasy rhca rhcds rhce
             rhcsa rhcss rhct rhcva rhel rhev rhq rhx richfaces riftsaw savara scribble
