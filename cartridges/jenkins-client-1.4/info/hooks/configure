@@ -60,9 +60,11 @@ echo "export PATH=\$PATH:${CART_INFO_DIR}/bin/" > $APP_HOME/.env/PATH_JENKINS_CL
 . $APP_HOME/.env/JENKINS_USERNAME
 . $APP_HOME/.env/JENKINS_PASSWORD
 
+JENKINS_DNS_NAME=${JENKINS_URL:7} #remove http://
+
 mkdir -p "$OPENSHIFT_HOMEDIR/jenkins-client-1.4/"
 
-if ! $(/usr/bin/wget --no-check-certificate -q ${JENKINS_URL}jnlpJars/jenkins-cli.jar -O "$OPENSHIFT_HOMEDIR/jenkins-client-1.4/jenkins-cli.jar")
+if ! $(/usr/bin/wget --no-check-certificate -q https://${JENKINS_USERNAME}:${JENKINS_PASSWORD}@${JENKINS_DNS_NAME}jnlpJars/jenkins-cli.jar -O "$OPENSHIFT_HOMEDIR/jenkins-client-1.4/jenkins-cli.jar")
 then
    client_error "Error contacting Jenkins server."
    client_error "Could not download ${JENKINS_URL}jnlpJars/jenkins-cli.jar"
@@ -92,12 +94,12 @@ else
         client_result "Associated with existing job '${JOB_NAME}' in Jenkins server."
         client_result "If this was not intended you can remove the jenkins client, remove or rename "
         client_result "the existing job, and re-add the jenkins client to get a new job created."
-        bldr_url="${JENKINS_URL}computer/${OPENSHIFT_APP_NAME}bldr/"
-        status_code=`curl -s -w %{http_code} --output /dev/null $bldr_url`
+        bldr_url="${JENKINS_DNS_NAME}computer/${OPENSHIFT_APP_NAME}bldr/"
+        status_code=`curl -s -w %{http_code} --output /dev/null --insecure https://${JENKINS_USERNAME}:${JENKINS_PASSWORD}@$bldr_url`
         if [ "$status_code" == "200" ]
         then
             client_result "In addition we found an existing builder which you might also want"
-            client_result "to delete: ${bldr_url}"
+            client_result "to delete: http://${bldr_url}"
         fi
         client_result ""
     else
