@@ -66,6 +66,16 @@ class Watchman
       }
 
       app_env.keys.each {|uuid|
+        if app_env[uuid][:OPENSHIFT_APP_TYPE].nil?
+          Syslog.warning("watchman unable to determine application type of user #{uuid}. OPENSHIFT_HOMEDIR/.env/OPENSHIFT_APP_TYPE missing.")
+          next
+        end
+
+        if app_env[uuid][:OPENSHIFT_LOG_DIR].nil?
+          Syslog.warning("watchman unable to determine log directory for user #{uuid}. OPENSHIFT_HOMEDIR/.env/OPENSHIFT_LOG_DIR missing.")
+          next
+        end
+
         if app_env[uuid][:OPENSHIFT_APP_TYPE].start_with?('jboss')
           File.open("#{app_env[uuid][:OPENSHIFT_LOG_DIR]}/server.log").grep(/ java.lang.OutOfMemoryError/) {|msg|
             # timezones are just a PITA. server.log message doesn't include timezone or date so inject both from today
@@ -91,6 +101,11 @@ class Watchman
 
   # Don't restart if application has been marked down
   def restart(uuid, env) 
+    if env[uuid][:OPENSHIFT_APP_DIR].nil?
+      Syslog.warning("watchman unable to determine application home directory. OPENSHIFT_APP_DIR/.env/OPENSHIFT_APP_DIR missing. User #{uuid}: application #{env[uuid][:OPENSHIFT_APP_NAME]} will not be restarted as it should be.")
+      return
+    end
+
     stop_lock = "#{env[uuid][:OPENSHIFT_APP_DIR]}run/stop_lock"
     if not File.exists?(stop_lock) 
       `service libra restartuser #{uuid}`
@@ -99,7 +114,6 @@ class Watchman
   end
 
   private
-
   def cache_incident(uuid, timestamp, env)
     if @incidents.has_key?(uuid) 
       if @incidents[uuid][:last_updated] < timestamp
