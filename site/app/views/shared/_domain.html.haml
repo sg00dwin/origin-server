@@ -3,6 +3,6 @@
   = f.hidden_field :form_type, :value => 'namespace'
   .input-prepend-append
     %span.add-on-first> http://applicationname-
-    = f.text_field :namespace, :value => "#{@domain.namespace}", :autofocus => true
+    = f.text_field :namespace, :autofocus => true
     %span.add-on-last> .rhcloud.com
   = f.submit "Save", :class => 'btn btn-primary', :style => 'vertical-align: top'
