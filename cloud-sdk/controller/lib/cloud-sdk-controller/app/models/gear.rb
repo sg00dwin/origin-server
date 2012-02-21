@@ -40,6 +40,10 @@ class Gear < Cloud::Sdk::UserModel
     get_proxy.conceal_port(app,self,comp_inst.parent_cart_name)
   end
   
+  def show_port(comp_inst)
+    get_proxy.show_port(app,self,comp_inst.parent_cart_name)
+  end
+  
   def configure(comp_inst)
     r = ResultIO.new
     return r if self.configured_components.include?(comp_inst.name)
@@ -93,6 +97,10 @@ class Gear < Cloud::Sdk::UserModel
 
   def conceal_port(comp_inst)
     get_proxy.conceal_port(app,self,comp_inst.parent_cart_name)
+  end
+ 
+  def show_port(comp_inst)
+    get_proxy.show_port(app,self,comp_inst.parent_cart_name)
   end
  
   def threaddump(comp_inst)

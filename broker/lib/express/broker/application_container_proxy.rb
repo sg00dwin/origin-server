@@ -315,6 +315,10 @@ module Express
         run_cartridge_command(cart, app, gear, "conceal-port")
       end
 
+      def show_port(app, gear, cart)
+        run_cartridge_command(cart, app, gear, "show-port")
+      end
+
       def add_alias(app, gear, cart, server_alias)
         if framework_carts.include?(cart)
           run_cartridge_command(cart, app, gear, "add-alias", server_alias)
