@@ -11,6 +11,7 @@ class GroupInstance < Cloud::Sdk::UserModel
     self.component_instances = []
     self.group_name = groupname
     self.reused_by = []
+    self.gears = []
   end
 
   def merge_inst(ginst)
@@ -23,7 +24,7 @@ class GroupInstance < Cloud::Sdk::UserModel
     self.component_instances = (self.component_instances + ginst.component_instances).uniq unless ginst.component_instances.nil?
     if not ginst.gears.nil?
       self.gears = [] if self.gears.nil?
-      self.gears = self.gears + ginst.gears
+      @gears += ginst.gears
     end
   end
 
@@ -38,6 +39,28 @@ class GroupInstance < Cloud::Sdk::UserModel
     # component_instances remains a flat collection
   end
   
+  def add_gear(app)
+    gear = Gear.new(app, self)
+    create_result = gear.create
+    unless create_result.exitcode == 0
+      raise NodeException.new("Unable to create gear on node", "-100", create_result)
+    end
+    self.gears << gear
+    return [create_result, gear]
+  end
+
+  def fulfil_requirements(app)
+    result_io = ResultIO.new
+    cart = CartridgeCache::find_cartridge(self.cart_name)
+    profile = cart.profiles(self.profile_name)
+    group = profile.groups(self.group_name)
+    deficit = group.scaling.min - self.gears.length
+    deficit.times do
+      result, new_gear = add_gear
+      result_io.append result
+    end
+  end
+
   def gears=(data)
     @gears = [] if @gears.nil?
     data.each do |hash|

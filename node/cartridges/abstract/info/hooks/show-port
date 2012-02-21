@@ -49,6 +49,6 @@ setup_configure "$1" $2 $3
 
 import_env_vars
 
-find_next_proxy_port "$OPENSHIFT_INTERNAL_IP:$OPENSHIFT_INTERNAL_PORT"
+show_proxy_port "$OPENSHIFT_INTERNAL_IP:$OPENSHIFT_INTERNAL_PORT"
 
 exit 0
