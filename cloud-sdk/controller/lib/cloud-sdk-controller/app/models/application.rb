@@ -347,22 +347,26 @@ class Application < Cloud::Sdk::Cartridge
       pub_inst = self.comp_instance_map[conn.from_comp_inst]
       pub_ginst = self.group_instance_map[pub_inst.group_instance_name]
 
-      output = ResultIO.new
-      run_on_gears(pub_ginst.gears, output, false) do |gear, r|
+      r = ResultIO.new
+      pub_out = {}
+      run_on_gears(pub_ginst.gears, r, false) do |gear, r|
         appname = gear.uuid[0..9]
         appname = self.name if pub_inst.parent_cart_name == self.framework
-        r.append gear.execute_connector(pub_inst, conn.from_connector.name, [appname, self.user.namespace, gear.uuid])
+        gout, gstatus = gear.execute_connector(pub_inst, conn.from_connector.name, [appname, self.user.namespace, gear.uuid])
+        if gstatus==0
+          pub_out[gear.uuid] = gout
+        end
       end
 
-      Rails.logger.debug "Output of publisher - #{output}"
+      Rails.logger.debug "Output of publisher - '#{pub_out.to_json}'"
 
       sub_inst = self.comp_instance_map[conn.to_comp_inst]
       sub_ginst = self.group_instance_map[sub_inst.group_instance_name]
 
-      run_on_gears(sub_ginst.gears, output, false) do |gear, r|
+      run_on_gears(sub_ginst.gears, r, false) do |gear, r|
         appname = gear.uuid[0..9]
         appname = self.name if sub_inst.parent_cart_name == self.framework
-        r.append gear.execute_connector(sub_inst, conn.to_connector.name, [appname, self.user.namespace, gear.uuid, "'#{output.data}'"])
+        r.append gear.execute_connector(sub_inst, conn.to_connector.name, [appname, self.user.namespace, gear.uuid, "'#{pub_out.to_json}'"])
       end
     }
   end
