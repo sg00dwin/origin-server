@@ -39,7 +39,7 @@ module Cloud
       end
       
       def reserve_uid
-        reserved_uid = 11111111
+        reserved_uid = nil
         reserved_uid
       end
       
@@ -53,7 +53,7 @@ module Cloud
       def create(app, gear)
         result = nil
         cmd = "cdk-app-create"
-        args = "--with-app-uuid '#{app.uuid}' --named '#{app.name}' --with-container-uuid #{gear.uid}"
+        args = "--with-app-uuid '#{app.uuid}' --named '#{app.name}' --with-container-uuid '#{gear.uuid}'"
         Rails.logger.debug("App creation command: #{cmd} #{args}")
         reply = exec_command(cmd, args)
         result = parse_result(reply)
@@ -63,10 +63,22 @@ module Cloud
       def destroy(app, gear)
       end
       
-      def add_authorized_ssh_key(app, ssh_key, key_type=nil, comment=nil)
+      def add_authorized_ssh_key(app, gear, ssh_key, key_type=nil, comment=nil)
+        cmd = "cdk-authorized-ssh-key-add"
+        args = "--with-app-uuid '#{app.uuid}' --with-container-uuid '#{gear.uuid}' -s '#{ssh_key}'"
+        args += " -t '#{key_type}'" if key_type
+        args += " -m '-#{comment}'" if comment
+        Rails.logger.debug("App ssh key: #{cmd} #{args}")
+        result = execute_command(cmd, args)
+        parse_result(result)
       end
       
-      def remove_authorized_ssh_key(app, ssh_key)
+      def remove_authorized_ssh_key(app, gear, ssh_key)
+        cmd = "cdk-authorized-ssh-key-remove"
+        args = "--with-app-uuid '#{app.uuid}' --with-container-uuid '#{gear.uuid}' -s '#{ssh_key}'" 
+        Rails.logger.debug("Remove ssh key: #{cmd} #{args}")
+        result = execute_command(cmd, args)
+        parse_result(result)
       end
     
       def add_env_var(app, key, value)
@@ -81,13 +93,16 @@ module Cloud
       def remove_broker_auth_key(app)
       end
       
-      def preconfigure_cartridge(app, cart)
+      def preconfigure_cartridge(app, cart, parent_cart_name)
+        return ResultIO.new
       end
       
-      def configure_cartridge(app, cart)
+      def configure_cartridge(app, cart, parent_cart_name)
+        return ResultIO.new
       end
       
-      def deconfigure_cartridge(app, cart)
+      def deconfigure_cartridge(app, cart, parent_cart_name)
+        return ResultIO.new
       end
       
       def get_public_hostname
