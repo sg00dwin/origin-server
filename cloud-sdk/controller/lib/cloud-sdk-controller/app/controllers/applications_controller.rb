@@ -99,6 +99,9 @@ class ApplicationsController < BaseController
     user = CloudUser.find(@login)
     app_name = params[:name]
     cartridge = params[:cartridge]
+    scale = params[:scale]
+    scale = false if scale.nil? or scale=="false"
+    scale = true if scale=="true"
     if app_name.nil? 
       @reply = RestReply.new( :bad_request)
       message = Message.new(:error, "Missing required parameter name.") 
@@ -139,7 +142,7 @@ class ApplicationsController < BaseController
       return nil
     end
     Rails.logger.debug "Validating application"
-    return Application.new(user, app_name, nil, nil, cartridge)   
+    return Application.new(user, app_name, nil, nil, cartridge, scale)   
   end
   
   def create_and_configure_application(application)

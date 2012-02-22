@@ -77,9 +77,6 @@ begin
      pid, stdin, stdout, stderr = Open4::popen4ext(true, "/usr/libexec/li/cartridges/#{cart_name}/info/connection-hooks/#{hook_name} #{ARGV} 2>&1")
      $stdout.puts stdout
   end
-rescue Cloud::Sdk::Model::UserCreationException => e
-  $stderr.puts(e.message)
-  exit 129
 rescue Exception => e
   $stderr.puts(e.message)
   exit -1

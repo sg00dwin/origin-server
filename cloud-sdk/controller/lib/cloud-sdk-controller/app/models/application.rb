@@ -203,6 +203,7 @@ class Application < Cloud::Sdk::Cartridge
   def scaleup
     result_io = ResultIO.new
     wb = web_cart
+    new_gear = nil
     # find the group instance where the web-cartridge is residing
     self.group_instance_map.keys.each { |ginst_name|
       next if not ginst_name.include? wb
@@ -212,9 +213,11 @@ class Application < Cloud::Sdk::Cartridge
       self.add_dns(new_gear.uuid, @user.namespace, new_gear.get_proxy.get_public_hostname)
       break
     }
-    result_io.append self.configure_dependencies
-    self.add_system_ssh_keys([new_gear])
-    self.add_ssh_keys([new_gear])
+    if not new_gear.nil?
+      result_io.append self.configure_dependencies
+      self.add_system_ssh_keys([new_gear])
+      self.add_ssh_keys([new_gear])
+    end
     result_io
   end
 
