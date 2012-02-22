@@ -53,9 +53,6 @@ includepkgs=java-1.6.0-openjdk*
 
 EOF
 
-ls /etc/yum.repos.d/
-cat /etc/yum.repos.d/*.repo
-
 # Install the 32 bit java before anything else
 yum update -y --exclude='rhc*'; yum -y install java-1.6.0-openjdk.i686 java-1.6.0-openjdk-devel.i686
 
