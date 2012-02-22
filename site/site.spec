@@ -3,7 +3,7 @@
 
 Summary:   Li site components
 Name:      rhc-site
-Version:   0.87.2
+Version:   0.87.3
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -76,6 +76,23 @@ rm -rf %{buildroot}
 chmod 0770 %{sitedir}/tmp
 
 %changelog
+* Wed Feb 22 2012 Dan McPherson <dmcphers@redhat.com> 0.87.3-1
+- add tests for the show application page (johnp@redhat.com)
+- add tests for the applications list page (johnp@redhat.com)
+- Text cleanup and form help (ccoleman@redhat.com)
+- Use btn-mini, remove unused partial (ccoleman@redhat.com)
+- Fix and update raw_content to be cleaner and fix bugs, some almost final
+  styles (ccoleman@redhat.com)
+- Saving with validation clears update_id (ccoleman@redhat.com)
+- Add domains controller (ccoleman@redhat.com)
+- Bug 795628 (ccoleman@redhat.com)
+- set jboss version back for now (dmcphers@redhat.com)
+- update jboss version (dmcphers@redhat.com)
+- Cleanup of spacing, elements, names, and page titles (ccoleman@redhat.com)
+- Merge branch 'dev/clayton/keys' (ccoleman@redhat.com)
+- Fixup failing test (ccoleman@redhat.com)
+- Overhaul of keys to work around existing defects (ccoleman@redhat.com)
+
 * Mon Feb 20 2012 Dan McPherson <dmcphers@redhat.com> 0.87.2-1
 - Styleguide should use split files (ccoleman@redhat.com)
 - Pull out help links into their own helper URLs to minimize changes
