@@ -53,6 +53,9 @@ includepkgs=java-1.6.0-openjdk*
 
 EOF
 
+# Install the 32 bit java before anything else
+yum install -y java-1.6.0-openjdk.i686 java-1.6.0-openjdk-devel.i686
+
 function install_build_requires {
   spec_file=$1
   for s in `grep -e "^BuildRequires:" $spec_file`
