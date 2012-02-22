@@ -32,6 +32,10 @@ class Application < Cloud::Sdk::Cartridge
     if self.scalable and framework != "haproxy-1.4"
       self.proxy_cartridge = "haproxy-1.4"
       self.requires_feature << self.proxy_cartridge
+      prof = @profile_name_map[@default_profile]
+      conn = Cloud::Sdk::Connection.new("auto_scale")
+      conn.components = ["cart-#{self.proxy_cartridge}", "cart-#{framework}"]
+      prof.add_connection(conn)
     end
   end
   
@@ -342,7 +346,9 @@ class Application < Cloud::Sdk::Cartridge
 
       output = ResultIO.new
       run_on_gears(pub_ginst.gears, output, false) do |gear, r|
-        r.append gear.execute_connector(pub_inst, conn.from_connector.name, [self.name, self.domain, gear.uuid])
+        appname = gear.uuid[0..9]
+        appname = self.name if pub_inst.parent_cart_name == self.framework
+        r.append gear.execute_connector(pub_inst, conn.from_connector.name, appname, self.user.namespace, gear.uuid])
       end
 
       Rails.logger.debug "Output of publisher - #{output}"
@@ -351,7 +357,9 @@ class Application < Cloud::Sdk::Cartridge
       sub_ginst = self.group_instance_map[sub_inst.group_instance_name]
 
       run_on_gears(sub_ginst.gears, output, false) do |gear, r|
-        r.append gear.execute_connector(sub_inst, conn.to_connector.name, [self.name, self.domain, gear.uuid, output])
+        appname = gear.uuid[0..9]
+        appname = self.name if sub_inst.parent_cart_name == self.framework
+        r.append gear.execute_connector(sub_inst, conn.to_connector.name, appname, self.user.namespace, gear.uuid, "'#{output.data}'"])
       end
     }
   end
@@ -990,9 +998,9 @@ class Application < Cloud::Sdk::Cartridge
     
     # make connection_endpoints out of provided connections
     default_profile.connections.each { |conn|
-      inst1 = ComponentInstance::find_component_in_cart(profile, app, conn.components[0], self.get_name_prefix)
-      inst2 = ComponentInstance::find_component_in_cart(profile, app, conn.components[1], self.get_name_prefix)
-      ComponentInstance::establish_connections(inst1, inst2, app)
+      inst1 = ComponentInstance::find_component_in_cart(default_profile, self, conn.components[0], self.get_name_prefix)
+      inst2 = ComponentInstance::find_component_in_cart(default_profile, self, conn.components[1], self.get_name_prefix)
+      ComponentInstance::establish_connections(inst1, inst2, self)
     }
     # check self.comp_instance_map for component instances
     # check self.group_instance_map for group instances
