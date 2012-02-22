@@ -48,6 +48,8 @@ GEM
       cloud-sdk-common
       json
       state_machine
+      open4
+      dnsruby
     crack (0.1.8)
     erubis (2.6.6)
       abstract
