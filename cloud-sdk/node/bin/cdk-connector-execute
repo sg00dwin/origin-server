@@ -74,9 +74,8 @@ end
 
 begin
   if File.exists? "/usr/libexec/li/cartridges/#{cart_name}/info/connection-hooks/#{hook_name}"                
-     # pid, stdin, stdout, stderr = Open4::popen4ext(true, "runuser --shell /bin/sh #{gear_uuid} /usr/libexec/li/cartridges/#{cart_name}/info/connection-hooks/#{hook_name} #{ARGV} 2>&1")
-     pid, stdin, stdout, stderr = Open4::popen4ext(true, "/usr/libexec/li/cartridges/#{cart_name}/info/connection-hooks/#{hook_name} #{ARGV} 2>&1")
-     $stdout.puts stdout
+     pid, stdin, stdout, stderr = Open4::popen4ext(true, "runuser --shell /bin/sh #{gear_uuid} /usr/libexec/li/cartridges/#{cart_name}/info/connection-hooks/#{hook_name} #{ARGV.join(' ')} 2>&1")
+     $stdout.puts stdout.gets
   end
 rescue Exception => e
   $stderr.puts(e.message)
