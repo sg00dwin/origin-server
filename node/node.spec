@@ -223,6 +223,7 @@ fi
 %attr(0755,-,-) %{_libexecdir}/li/lib/
 #%{_libexecdir}/li/cartridges/abstract/info
 %attr(0750,-,-) %{_bindir}/rhc-accept-node
+%attr(0750,-,-) %{_bindir}/rhc-idle-apps
 %attr(0755,-,-) %{_bindir}/rhc-list-ports
 %attr(0750,-,-) %{_bindir}/rhc-node-account
 %attr(0750,-,-) %{_bindir}/rhc-node-application
