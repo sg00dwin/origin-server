@@ -16,10 +16,10 @@ Publishes:
   get-balancer-connection-info:
     Type: "NET_TCP:http:http"
 Subscribes:
-  set-proxy-info:
+  set-proxy:
     Type: "NET_TCP:httpd-proxy-info"
     Required : false
-  set-git-url-info:
+  set-git-url:
     Type: "NET_TCP:git-url-info"
     Required: false
 

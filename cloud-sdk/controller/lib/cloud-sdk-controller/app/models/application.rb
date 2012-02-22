@@ -209,6 +209,8 @@ class Application < Cloud::Sdk::Cartridge
       break
     }
     result_io.append self.configure_dependencies
+    self.add_system_ssh_keys([new_gear])
+    self.add_ssh_keys([new_gear])
     result_io
   end
 
@@ -322,7 +324,7 @@ class Application < Cloud::Sdk::Cartridge
       end
     end
     
-    #execute_connections
+    execute_connections
 
     self.save
     self.class.notify_observers(:after_application_configure, {:application => self, :reply => reply})
@@ -331,6 +333,7 @@ class Application < Cloud::Sdk::Cartridge
 
   # execute all connections
   def execute_connections
+    return if not app.scalable
     self.conn_endpoints_list.each { |conn|
       # get publisher's gears, execute the connector, and
       # give the output to subscriber gears
@@ -339,7 +342,7 @@ class Application < Cloud::Sdk::Cartridge
 
       output = ResultIO.new
       run_on_gears(pub_ginst.gears, output, false) do |gear, r|
-        r.append execute_connector(pub_inst, conn.from_connector.name, [self.name, self.domain, gear.uuid])
+        r.append gear.execute_connector(pub_inst, conn.from_connector.name, [self.name, self.domain, gear.uuid])
       end
 
       Rails.logger.debug "Output of publisher - #{output}"
@@ -347,7 +350,7 @@ class Application < Cloud::Sdk::Cartridge
       sub_inst = self.comp_instance_map[conn.to_comp_inst]
       sub_ginst = self.group_instance_map[sub_inst.group_instance_name]
 
-      run_on_gears(sub_ginst.gears, reply, false) do |gear, r|
+      run_on_gears(sub_ginst.gears, output, false) do |gear, r|
         r.append gear.execute_connector(sub_inst, conn.to_connector.name, [self.name, self.domain, gear.uuid, output])
       end
     }
@@ -659,9 +662,9 @@ class Application < Cloud::Sdk::Cartridge
     reply
   end
   
-  def add_system_ssh_keys
+  def add_system_ssh_keys(gears=nil)
     reply = ResultIO.new
-    run_on_gears(nil,reply,false) do |gear,r|
+    run_on_gears(gears,reply,false) do |gear,r|
       @user.system_ssh_keys.each do |key_name, key_info|
         r.append gear.add_authorized_ssh_key(key_info, nil, key_name)
       end
@@ -669,9 +672,9 @@ class Application < Cloud::Sdk::Cartridge
     reply
   end
   
-  def add_ssh_keys
+  def add_ssh_keys(gears=nil)
     reply = ResultIO.new
-    run_on_gears(nil,reply,false) do |gear,r|
+    run_on_gears(gears,reply,false) do |gear,r|
       @user.ssh_keys.each do |key_name, key_info|
         r.append gear.add_authorized_ssh_key(key_info["key"], key_info["type"], key_name)
       end
@@ -1043,7 +1046,7 @@ private
         # these two group instances need to be colocated
         #ginst1.merge(ginst2.cart_name, ginst2.profile_name, ginst2.group_name, ginst2.name, ginst2.component_instances)
         ginst1.merge_inst(ginst2)
-        self.group_instance_map[conn.to_comp_inst.group_instance_name] = ginst1
+        self.group_instance_map[cinst2.group_instance_name] = ginst1
       end
     }
   end

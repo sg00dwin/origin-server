@@ -226,7 +226,8 @@ module Express
       end
 
       def execute_connector(app, gear, cart, connector_name, input_args)
-        result = execute_direct(@@C_CONTROLLER, 'connector-execute', "--gear-uuid '#{gear.uuid}' --cart-name '#{cart}' --hook-name '#{connector_name}' " + input_args.join(" "))
+        mcoll_reply = execute_direct(@@C_CONTROLLER, 'connector-execute', "--gear-uuid '#{gear.uuid}' --cart-name '#{cart}' --hook-name '#{connector_name}' " + input_args.join(" "))
+        parse_result(mcoll_reply)
       end
       
       def start(app, gear, cart)
@@ -832,7 +833,7 @@ module Express
       end
       
       def run_cartridge_command(framework, app, gear, command, arg=nil, allow_move=true)
-        if app.scalable and framework!=self.proxy_cartridge
+        if app.scalable and framework!=app.proxy_cartridge
           appname = gear.uuid[0..9] 
         else
           appname = app.name
