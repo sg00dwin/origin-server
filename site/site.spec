@@ -32,6 +32,10 @@ Requires:  rubygem-recaptcha
 Requires:  rubygem-hpricot
 Requires:  rubygem-barista
 Requires:  js
+# The following requires are for the status subsite
+Requires:  ruby-sqlite3
+Requires:  rubygem-sqlite3
+Requires:  rubygem-sinatra
 
 BuildArch: noarch
 

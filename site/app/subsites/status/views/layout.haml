@@ -1,0 +1,60 @@
+!!!
+%html
+  %head
+    %title OpenShift Status: (#{header[:short]})
+    = haml :'css/style'
+    :css
+      h1 { background-color: #00a300 }
+      h1 a:link {
+        text-decoration: none 
+      }
+      h1:before { 
+        border: .5em solid #007a00;
+        border-left-color: transparent;
+        border-bottom-color: transparent;
+      }
+      h1:after { 
+        border: .5em solid #007a00;
+        border-right-color: transparent;
+        border-bottom-color: transparent;
+      }
+      h1.error { background-color: #c00 }
+      h1.error:before { 
+        border: .5em solid #900;
+        border-left-color: transparent;
+        border-bottom-color: transparent;
+      }
+      h1.error:after { 
+        border: .5em solid #900;
+        border-right-color: transparent;
+        border-bottom-color: transparent;
+      }
+
+      .issue header span.title {
+        font-size: large
+      }
+      .issue header span.at {
+        font-size: small;
+        font-style: italic
+      }
+
+      .update {
+        padding-left: 20px;
+      }
+      .update .at {
+        text-align: right;
+        font-size: x-small;
+      }
+
+  %body
+    %img(alt='OpenShift Logo' src="#{haml :'images/logo'}")
+    = yield
+
+    %script(src="https://www.google.com/jsapi")
+    %script(src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js")
+    = haml :'js/jquery.timeago.js'
+
+    :javascript
+      $(function(){
+        $('time.timeago').timeago();
+      });
