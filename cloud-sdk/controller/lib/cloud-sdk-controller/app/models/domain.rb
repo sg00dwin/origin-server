@@ -1,7 +1,8 @@
+require 'validators/namespace_validator'
 class Domain < Cloud::Sdk::Model
-  include NamespaceValidator
+  include ActiveModel::Validations
    attr_accessor :namespace
-   validates :namespace => true
+   validates :namespace, :presence => true, :namespace => true
    def initialize(namespace)
      self.namespace = namespace
    end

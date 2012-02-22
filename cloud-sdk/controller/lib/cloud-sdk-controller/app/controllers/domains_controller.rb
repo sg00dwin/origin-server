@@ -34,23 +34,29 @@ class DomainsController < BaseController
   def create
     namespace = params[:namespace]
     Rails.logger.debug "Creating domain with namespace #{namespace}"
-    domain = Domain.new(namespace)
-    if domain.invalid?
-      @reply = RestReply.new(:unprocessable_entity)
-      domain.errors.each do |attribute, message, exit_code|
-        @reply.messages.push(Message.new(:error, message, exit_code, attribute))
-      end
-      respond_with @reply, :status => @reply.status
-    end
-    
-    cloud_user = CloudUser.find(@login)
 
+    cloud_user = CloudUser.find(@login)
     if cloud_user
       @reply = RestReply.new(:conflict)
       @reply.messages.push(Message.new(:error, "User already has a domain associated. Update the domain to modify."))
       respond_with @reply, :status => @reply.status
     return
     end
+
+    domain = Domain.new(namespace)
+    if domain.invalid?
+      @reply = RestReply.new(:unprocessable_entity)
+      domain.errors.keys.each do |key|
+        error_messages = domain.errors.get(key)
+        error_messages.each do |error_message|
+          @reply.messages.push(Message.new(:error, error_message[:message], error_message[:exit_code], key))
+        end
+      end
+      respond_with @reply, :status => @reply.status
+    return
+    end
+
+    #we are using this object for validation until the user and domain are separated
     Rails.logger.debug "Validating user"
     cloud_user = CloudUser.new(@login, nil, namespace)
     if cloud_user.invalid?
@@ -86,14 +92,32 @@ class DomainsController < BaseController
 
   # PUT /domains/<id>
   def update
-
     id = params[:id]
     new_namespace = params[:namespace]
     Rails.logger.debug "Updating domain #{@cloud_user.namespace} to #{new_namespace}"
     if not @cloud_user or @cloud_user.namespace != id
       @reply = RestReply.new(:not_found)
       @reply.messages.push(Message.new(:error, "Domain #{id} not found."))
-      respond_with @reply, :status => @reply.status
+      respond_with(@reply) do |format|
+        format.xml { render :xml => @reply, :status => @reply.status }
+        format.json { render :json => @reply, :status => @reply.status }
+      end
+    return
+    end
+
+    domain = Domain.new(new_namespace)
+    if domain.invalid?
+      @reply = RestReply.new(:unprocessable_entity)
+      domain.errors.keys.each do |key|
+        error_messages = domain.errors.get(key)
+        error_messages.each do |error_message|
+          @reply.messages.push(Message.new(:error, error_message[:message], error_message[:exit_code], key))
+        end
+      end
+      respond_with(@reply) do |format|
+        format.xml { render :xml => @reply, :status => @reply.status }
+        format.json { render :json => @reply, :status => @reply.status }
+      end
     return
     end
 
@@ -163,26 +187,6 @@ class DomainsController < BaseController
   protected
 
   def validate_params
-    errors = []
-    val = params[:namespace]
-    if !(val =~ /\A[A-Za-z0-9]+\z/)
-      errors.push({:message => "Invalid namespace: #{val}", :exit_code => 106})
-    end
-    if val and val.length > NAMESPACE_MAX_LENGTH
-      errors.push({:message => "Namespace (#{val}) is too long.  Maximum length is #{NAMESPACE_MAX_LENGTH} characters", :exit_code => 106})
-    end
-    if Cloud::Sdk::ApplicationContainerProxy.blacklisted? val
-      error.push({:message => "Namespace (#{val}) is not allowed.  Please choose another.", :exit_code => 106})
-    end
-
-    unless errors.empty?
-      @reply = RestReply.new(:unprocessable_entity)
-      errors.each do |msg|
-        @reply.messages.push(Message.new(:error, msg))
-      end
-      respond_with @reply, :status => @reply.status
-    return
-    end
   end
 
   def lookup_user
