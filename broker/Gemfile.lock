@@ -46,11 +46,12 @@ GEM
     cloud-sdk-controller (0.5.3)
       activesupport
       cloud-sdk-common
-      json
-      state_machine
-      open4
       dnsruby
+      json
+      open4
+      state_machine
     crack (0.1.8)
+    dnsruby (1.53)
     erubis (2.6.6)
       abstract
     httparty (0.7.4)
@@ -68,6 +69,7 @@ GEM
       bson
     multimap (1.1.2)
     nokogiri (1.4.3.1)
+    open4 (1.3.0)
     parseconfig (0.5.2)
     polyglot (0.2.5)
     rack (1.1.0)
@@ -113,6 +115,7 @@ DEPENDENCIES
   mocha
   mongo
   multimap
+  open4
   parseconfig
   rack
   rails (~> 3.0.10)
