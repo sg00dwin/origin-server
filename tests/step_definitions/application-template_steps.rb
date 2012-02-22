@@ -62,3 +62,16 @@ Then /^the template should (not?) exist in list$/ do |n|
     templates.should be_empty    
   end
 end
+
+When /^I create a new application named '([^\']*)' with the template$/ do |app|
+  payload = {"name" => app, "template" => @template_uuid}
+  url = @base_url + "/domains/cucumber/applications"
+  @request = RestClient::Request.new(:method => :post, :url => url, 
+  :user => @username, :password => @password, :headers => @headers,
+  :payload => payload)
+  begin
+    @response = @request.execute()
+  rescue => e
+    @response = e.response
+  end
+end
