@@ -1,0 +1,127 @@
+#!/usr/bin/env ruby
+
+MY_ROOT = File.expand_path(File.dirname(__FILE__))
+$LOAD_PATH << File.join(MY_ROOT,'lib')
+
+# Error message to use when unable to write to db"
+SQL_RO_ERR = "Cannot write to database, unable to update issue (Rails is probably running; try running with sudo or as Rails user)"
+
+require 'rubygems'
+require 'thor'
+require 'yaml'
+require 'socket'
+
+require 'database'
+require 'models'
+require 'helpers'
+
+HOSTS = YAML.load(File.open(File.join(MY_ROOT,'config','hosts.yml')))
+
+class UpdateStatusCli < Thor
+  include Thor::Actions
+
+  no_tasks do
+    def say_errors(model, msg=nil)
+      unless msg.nil?
+        say msg
+      end
+      model.errors.each {|attr,msg| say "#{attr} - #{msg}" }
+    end
+  end
+
+  desc "new TITLE DESCRIPTION", "Start a new issue with and describe what is going on/affected"
+  def new(title,description)
+    issue = Issue.new :title => title
+    begin
+      if issue.save
+        say "Created issue \##{issue.id}"
+        invoke :update , [issue.id, description], :nested => true
+        invoke :sync, []
+      else
+        say_errors issue, "Unable to create issue"
+      end
+    rescue ActiveRecord::StatementInvalid => sql
+      say_errors issue, SQL_RO_ERR
+    rescue ActiveRecord::Rollback
+      say_errors issue, "Undoing creation of #{issue.id}" 
+      issue.delete
+    end
+  end
+
+  desc "update ISSUE_ID DESCRIPTION", "Add an update to an issue without resolving it"
+  def update(issue_id, description)
+    issue = Issue.find_by_id issue_id
+    if issue.nil?
+      say "Issue #{issue_id} does not exist"
+    else
+      update = issue.updates.new :description => description
+      begin
+        if update.save
+          say "Update applied to issue \##{issue_id}"
+          if options[:nested].nil?
+            invoke :sync, []
+          end
+        else
+          say_errors update, "Unable to update issue"
+          raise ActiveRecord::Rollback
+        end
+      rescue ActiveRecord::StatementInvalid => sql
+        say_errors update, SQL_RO_ERR
+      end
+    end
+  end
+
+  desc "resolve ISSUE_ID DESCRIPTION", "Resolve an issue with a final update. Description is required."
+  def resolve(issue_id, description)
+    issue = Issue.find_by_id issue_id
+    if issue.nil?
+      say "Issue #{issue_id} does not exist"
+    else
+      begin
+        invoke :update, [issue_id, description], :nested => true
+        if issue.resolve
+          say "Resolved issue \##{issue_id}"
+          invoke :sync, []
+        else
+          say_errors issue, "Unable to resolve issue"
+        end
+      rescue ActiveRecord::StatementInvalid => sql
+        say_errors issue, SQL_RO_ERR
+      rescue ActiveRecord::Rollback
+        say_errors issue, "Undoing resolution of #{issue.id}" 
+      end
+    end
+  end
+
+  desc "list","List all issues"
+  def list
+    [ ['Open',Issue.is_open],
+      ['Resolved',Issue.resolved]
+    ].each do |args|
+      name,issues = args[0],args[1]
+      say name
+      if issues.empty?
+        say "      None"
+      else
+        issues.each do |issue|
+          say sprintf("  #%d: %s",issue.id,issue.title)
+        end
+      end
+    end
+  end
+
+  desc "sync", "Synchronize all hosts (based on this host)"
+  def sync()
+    hostname = get_hostname
+
+    (HOSTS[:hosts] - [hostname]).each do |host|
+      url = sprintf(HOSTS[:template],host)
+      say "Syncing #{url}"
+      http_req(:get, "#{url}/sync/#{hostname}") do |resp|
+        puts "\tSuccess"
+      end
+    end
+  end
+end
+
+UpdateStatusCli.start

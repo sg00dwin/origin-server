@@ -69,7 +69,7 @@ module Cloud
         args += " -t '#{key_type}'" if key_type
         args += " -m '-#{comment}'" if comment
         Rails.logger.debug("App ssh key: #{cmd} #{args}")
-        result = execute_command(cmd, args)
+        result = exec_command(cmd, args)
         parse_result(result)
       end
       
@@ -77,7 +77,7 @@ module Cloud
         cmd = "cdk-authorized-ssh-key-remove"
         args = "--with-app-uuid '#{app.uuid}' --with-container-uuid '#{gear.uuid}' -s '#{ssh_key}'" 
         Rails.logger.debug("Remove ssh key: #{cmd} #{args}")
-        result = execute_command(cmd, args)
+        result = exec_command(cmd, args)
         parse_result(result)
       end
     

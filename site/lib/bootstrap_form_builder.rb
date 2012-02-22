@@ -12,7 +12,7 @@ class BootstrapFormBuilder < Formtastic::SemanticFormBuilder
     return super unless new_forms_enabled?
 
     options = args.extract_options!
-    options[:class] ||= 'form-actions' unless options[:simple]
+    options[:class] ||= @options[:simple] ? 'btn-toolbar' : 'form-actions'
     super *(args << options)
   end
 
