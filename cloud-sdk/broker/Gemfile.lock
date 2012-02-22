@@ -45,7 +45,7 @@ GEM
       json
       open4
       state_machine
-    cloud-sdk-node (0.5.1)
+    cloud-sdk-node (0.5.2)
       activemodel
       cloud-sdk-common
       highline
