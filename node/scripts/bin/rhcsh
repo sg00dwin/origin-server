@@ -38,6 +38,29 @@ function ctl_all {
 }
 
 
+function mysql() {
+   #  Setup default options.
+   [ -n "$OPENSHIFT_DB_HOST" ]  &&  hostopt="-h $OPENSHIFT_DB_HOST"
+   portopt="-P ${OPENSHIFT_DB_PORT:-3306}"
+   useropt="-u ${OPENSHIFT_DB_USERNAME:-'admin'}"
+   passopt=--password="$OPENSHIFT_DB_PASSWORD"
+
+   #  Unset default value if it was provided to us.
+   for arg in $@; do
+      case "$arg" in
+         --host=*|-h)      unset hostopt  ;;
+         --port=*|-P)      unset portopt  ;;
+         --user=*|-u)      unset useropt  ;;
+         --password=*|-p)  unset passopt  ;;
+         *)  ;;
+      esac
+   done
+
+   /usr/bin/mysql ${hostopt} ${portopt} ${useropt} ${passopt} "$@"
+
+}  #  End of  mysql  function.
+
+
 function mongo() {
    if test $# -gt 0; then
       uopt=""
@@ -73,6 +96,7 @@ rm              remove files / directories
 ls              list files / directories
 ps              list running applications
 kill            kill running applications
+mysql           interactive MySQL shell
 mongo           interactive MongoDB shell
 
 EOF

@@ -40,74 +40,15 @@ do
 done
 
 
-[ $# -eq 3 -o $# -eq 4 ] || print_help
+[ $# -eq 3 ] || print_help
 
 CART_DIR=/usr/libexec/li/cartridges
 source ${CART_DIR}/abstract/info/lib/util
 
-setup_basic_hook "$1" $2 $3
+setup_configure "$1" $2 $3
 
-uuid=$3
-uid=`id -u $uuid`
+import_env_vars
 
-PORT_BEGIN=35531
-PORTS_PER_USER=5
-UID_BEGIN=500
-# UID_END=12700   # Too large for port numbers
-UID_END=6500
+find_next_proxy_port "$OPENSHIFT_INTERNAL_IP:$OPENSHIFT_INTERNAL_PORT"
 
-function uid_to_portbegin {
-  echo $(($(($(($1-$UID_BEGIN))*$PORTS_PER_USER))+$PORT_BEGIN))
-}
-
-function uid_to_portend {
-  pbegin=`uid_to_portbegin $1`
-  echo $(( $pbegin + $PORTS_PER_USER - 1 ))
-}
-
-
-function find_next_port {
-  uuid=$1
-  uid=`id -u $uuid`
-
-  source "/var/lib/libra/${uuid}/.env/OPENSHIFT_INTERNAL_IP"
-  source "/var/lib/libra/${uuid}/.env/OPENSHIFT_INTERNAL_PORT"
-  source "/var/lib/libra/${uuid}/.env/OPENSHIFT_APP_DNS"
-
-  for port_file in `/bin/ls /var/lib/libra/${uuid}/.env/OPENSHIFT_*_PUB_PORT 2> /dev/null`
-  do
-    source "$port_file"
-  done
-
-
-  target="$OPENSHIFT_INTERNAL_IP:$OPENSHIFT_INTERNAL_PORT"
-
-  first_port=$(uid_to_portbegin $uid)
-  last_port=$(uid_to_portend $uid)
-
-  for proxy_port in $(seq $first_port $last_port)
-  do
-    if [ "$target" == "${OPENSHIFT_PUB_PORT[$proxy_port]}" ]
-    then
-      client_error "$target is already exposed on $OPENSHIFT_APP_DNS:$proxy_port"
-      exit 8
-    fi
-  done
-
-  for proxy_port in $(seq $first_port $last_port)
-  do
-    if [ -z "${OPENSHIFT_PUB_PORT[$proxy_port]}" ]
-    then
-      service libra-proxy setproxy $proxy_port "$target"
-      client_message "Exposing port: $OPENSHIFT_APP_DNS:$proxy_port"
-      echo "OPENSHIFT_PUB_PORT[$proxy_port]='$target'" > $APP_HOME/.env/OPENSHIFT_${proxy_port}_PUB_PORT
-      echo "export OPENSHIFT_PUB_PORT" >> $APP_HOME/.env/OPENSHIFT_${proxy_port}_PUB_PORT
-      exit 0
-    fi
-  done
-  client_error "All ports are taken, cannot add more"
-  exit 67
-}
-
-
-find_next_port $uuid
+exit 0

@@ -8,6 +8,8 @@ gem 'xml-simple'
 gem 'rack'
 gem 'multimap'
 gem 'regin'
+gem 'open4'
+gem 'cloud-sdk-node'
 gem 'cloud-sdk-controller'
 
 # Bundle edge Rails instead:

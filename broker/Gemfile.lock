@@ -43,11 +43,13 @@ GEM
       json
       mongo
       rack
-    cloud-sdk-controller (0.5.1)
+    cloud-sdk-controller (0.5.3)
       activesupport
       cloud-sdk-common
       json
       state_machine
+      open4
+      dnsruby
     crack (0.1.8)
     erubis (2.6.6)
       abstract

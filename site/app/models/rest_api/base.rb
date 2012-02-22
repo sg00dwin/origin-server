@@ -87,11 +87,12 @@ module RestApi
       def aliased_attributes
         @aliased_attributes
       end
-      def attr_set_on_load(*args)
-        (@calculated_attributes ||= []).concat(args)
+      def attr_alters(from, *args)
+        (@calculated_attributes ||= {})[from] = args.flatten.uniq
+        define_attribute_methods [from]
       end
       def calculated_attributes
-        @calculated_attributes
+        @calculated_attributes ||= {}
       end
     end
 
@@ -100,13 +101,14 @@ module RestApi
         attributes = attributes.dup
         self.class.aliased_attributes.each do |from,to|
           value = attributes.delete(from)
-          attributes[to] = value if value
+          send("#{to}=", value) if value
         end
         super attributes
       else
         super
       end
-      self.class.calculated_attributes.each { |attr| send("#{attr}=", attributes[attr]) } if self.class.calculated_attributes
+      self.class.calculated_attributes.each_key { |attr| send("#{attr}=", attributes[attr]) }
+      self
     end
 
     #
@@ -139,11 +141,28 @@ module RestApi
     end
 
     def save
-      @previously_changed = changes
+      @previously_changed = changes # track changes
       @changed_attributes.clear
-      resp = super
-      remove_instance_variable(:@update_id) if @update_id
-      resp
+      valid = super
+      remove_instance_variable(:@update_id) if @update_id && valid
+      valid
+    rescue Exception => error
+      raise error unless rescue_save_failure(error)
+      false
+    end
+
+    # Copy calculated attribute errors
+    def valid?
+      if super
+        true
+      else
+        self.class.calculated_attributes.each_pair do |from, attrs|
+          attrs.each do |to|
+            (errors[from] ||= []).concat(errors[to])
+          end
+        end
+        false
+      end
     end
 
     class << self
@@ -278,7 +297,6 @@ module RestApi
     #  end
     #end
 
-
     #
     # Must provide OpenShift compatible error decoding
     #
@@ -385,7 +403,7 @@ module RestApi
       @connection = nil
       @as = as
     end
-
+    
     protected
       #
       # The user under whose context we will be accessing the remote server
@@ -398,6 +416,24 @@ module RestApi
         raise "All RestApi model classes must have the 'as' attribute set in order to make remote requests" unless as
         @connection = nil if refresh
         @connection ||= self.class.connection({:as => as})
+      end
+
+      #
+      # Return true if the exception has been handled by this method.  Return false
+      # to raise.  If returning true, it is expected that errors is populated.
+      #
+      def rescue_save_failure(error)
+        Rails.logger.debug "Unable to handle save error, throwing #{error.inspect}"
+        if defined? error.response and defined? error.response.body
+          Rails.logger.debug error.response.body
+        end
+        false
+      end
+
+      # Helper to avoid subclasses forgetting to set @remote_errors
+      def set_remote_errors(error)
+        @remote_errors = error
+        load_remote_errors(@remote_errors, true)
       end
   end
   
@@ -464,4 +500,6 @@ module RestApi
   # Raised when the authorization context is missing
   class MissingAuthorizationError < StandardError ; end
 
+  # Raised when a newly created resource exists with the same unique primary key
+  class ResourceExistsError < StandardError ; end
 end
