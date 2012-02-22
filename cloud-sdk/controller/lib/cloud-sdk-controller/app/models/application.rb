@@ -333,7 +333,7 @@ class Application < Cloud::Sdk::Cartridge
 
   # execute all connections
   def execute_connections
-    return if not app.scalable
+    return if not self.scalable
     self.conn_endpoints_list.each { |conn|
       # get publisher's gears, execute the connector, and
       # give the output to subscriber gears
