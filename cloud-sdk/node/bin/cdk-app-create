@@ -83,7 +83,7 @@ end
 begin
   container = Cloud::Sdk::ApplicationContainer.new(uuid, uuid, uid, name, quota_blocks, quota_files)
   container.create
-rescue Cloud::Sdk::Model::UserCreationException => e
+rescue Cloud::Sdk::UserCreationException => e
   $stderr.puts(e.message)
   exit 129
 rescue Exception => e

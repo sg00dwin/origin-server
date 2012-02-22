@@ -1,0 +1,42 @@
+#!/bin/bash
+
+function usage {
+  echo "usage: $0 --with-app-uuid|-a UUID --with-remote-url|-r URL" 1>&2
+  exit 1
+}
+
+set -- `getopt -u -l with-app-uuid:,with-remote-url: a:r: $*`
+if [ $? != 0 ]; then
+  usage
+fi
+
+while [ $# -gt 0 ]; do
+  case "$1" in
+    -a | --with-app-uuid)   uuid="$2";    shift;;
+    -r | --with-remote-url) remote="$2";  shift;;
+
+    --) shift; break;;
+    *)  usage; break;;
+  esac
+  shift
+done
+
+if [ -z "$uuid" -o -z "$remote" ]; then
+  usage
+fi
+
+
+for env_var in  /var/lib/libra/$uuid/.env/*; do
+  . $env_var
+done
+
+# will add process id later to make this a better citizen
+rm -rf /tmp/${OPENSHIFT_APP_NAME}.git
+git clone --bare $remote /tmp/${OPENSHIFT_APP_NAME}.git
+
+rm -rf $OPENSHIFT_HOMEDIR/git/${OPENSHIFT_APP_NAME}.git/[^h]*
+cp -rp /tmp/${OPENSHIFT_APP_NAME}.git/[^h]* $OPENSHIFT_HOMEDIR/git/${OPENSHIFT_APP_NAME}.git
+
+# Use subshell to guard against changing pwd
+(cd $OPENSHIFT_HOMEDIR/git/${OPENSHIFT_APP_NAME}.git; git remote add upstream -m master $remote)
+

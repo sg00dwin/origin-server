@@ -37,13 +37,13 @@ module Cloud::Sdk
       out,err,rc = shellCmd("service cgconfig status > /dev/null 2>&1")
       if rc == 0
         out,err,rc = shellCmd("service libra-cgroups startuser #{user.name} > /dev/null")
-        raise Cloud::Sdk::UserCreationException("Unable to setup cgroups for #{user.name}") unless rc == 0
+        raise Cloud::Sdk::UserCreationException.new("Unable to setup cgroups for #{user.name}") unless rc == 0
       end
 
       out,err,rc = shellCmd("service libra-tc status > /dev/null 2>&1")
       if rc == 0
         shellCmd("service libra-tc startuser #{user.name} > /dev/null")
-        raise Cloud::Sdk::UserCreationException("Unable to setup tc for #{user.name}") unless rc == 0
+        raise Cloud::Sdk::UserCreationException.new("Unable to setup tc for #{user.name}") unless rc == 0
       end
     end
 
@@ -53,7 +53,7 @@ module Cloud::Sdk
     def after_initialize_homedir(user)
       cmd = "/bin/sh #{File.join(Cloud::Sdk::SDK_PATH, "express/setup_pam_fs_limits.sh")} #{user.name} #{user.quota_blocks ? user.quota_blocks : ''} #{user.quota_files ? user.quota_files : ''}"
       out,err,rc = shellCmd(cmd)
-      raise Cloud::Sdk::UserCreationException("Unable to setup pam/fs limits for #{user.name}") unless rc == 0
+      raise Cloud::Sdk::UserCreationException.new("Unable to setup pam/fs limits for #{user.name}") unless rc == 0
     end
     
     

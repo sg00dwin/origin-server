@@ -2,7 +2,7 @@
 
 Summary:   Provides JBossAS7 support
 Name:      rhc-cartridge-jbossas-7.0
-Version:   0.87.1
+Version:   0.87.2
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   ASL 2.0
@@ -69,6 +69,7 @@ ln -s %{cartridgedir}/../abstract/info/hooks/remove-alias %{buildroot}%{cartridg
 ln -s %{cartridgedir}/../abstract/info/hooks/move %{buildroot}%{cartridgedir}/info/hooks/move
 ln -s %{cartridgedir}/../abstract/info/hooks/expose-port %{buildroot}%{cartridgedir}/info/hooks/expose-port
 ln -s %{cartridgedir}/../abstract/info/hooks/conceal-port %{buildroot}%{cartridgedir}/info/hooks/conceal-port
+ln -s %{cartridgedir}/../abstract/info/hooks/show-port %{buildroot}%{cartridgedir}/info/hooks/show-port
 ln -s %{cartridgedir}/../abstract/info/hooks/system-messages %{buildroot}%{cartridgedir}/info/hooks/system-messages
 
 %post
@@ -108,6 +109,11 @@ rm -rf %{buildroot}
 %config(noreplace) %{cartridgedir}/info/configuration/
 
 %changelog
+* Wed Feb 22 2012 Dan McPherson <dmcphers@redhat.com> 0.87.2-1
+- Add show-proxy call. (rmillner@redhat.com)
+- set jboss version back for now (dmcphers@redhat.com)
+- update jboss version (dmcphers@redhat.com)
+
 * Thu Feb 16 2012 Dan McPherson <dmcphers@redhat.com> 0.87.1-1
 - bump spec numbers (dmcphers@redhat.com)
 

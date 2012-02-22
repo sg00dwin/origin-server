@@ -2,7 +2,7 @@
 
 Summary:   Provides Node-0.6 support
 Name:      rhc-cartridge-nodejs-0.6
-Version:   0.2.2
+Version:   0.2.3
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   ASL 2.0
@@ -74,6 +74,7 @@ ln -s %{cartridgedir}/../abstract/info/hooks/move %{buildroot}%{cartridgedir}/in
 ln -s %{cartridgedir}/../abstract/info/hooks/threaddump %{buildroot}%{cartridgedir}/info/hooks/threaddump
 ln -s %{cartridgedir}/../abstract/info/hooks/expose-port %{buildroot}%{cartridgedir}/info/hooks/expose-port
 ln -s %{cartridgedir}/../abstract/info/hooks/conceal-port %{buildroot}%{cartridgedir}/info/hooks/conceal-port
+ln -s %{cartridgedir}/../abstract/info/hooks/show-port %{buildroot}%{cartridgedir}/info/hooks/show-port
 ln -s %{cartridgedir}/../abstract/info/hooks/system-messages %{buildroot}%{cartridgedir}/info/hooks/system-messages
 
 %clean
@@ -94,6 +95,9 @@ rm -rf %{buildroot}
 %doc %{cartridgedir}/LICENSE
 
 %changelog
+* Wed Feb 22 2012 Dan McPherson <dmcphers@redhat.com> 0.2.3-1
+- Add show-proxy call. (rmillner@redhat.com)
+
 * Mon Feb 20 2012 Dan McPherson <dmcphers@redhat.com> 0.2.2-1
 - Fixup spec file to use newly built rpms. (ramr@redhat.com)
 - Temporary bandaid -- gave up on getting build + sync working ... commenting

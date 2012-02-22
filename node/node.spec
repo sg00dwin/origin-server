@@ -2,7 +2,7 @@
 
 Summary:       Multi-tenant cloud management system node tools
 Name:          rhc-node
-Version:       0.87.1
+Version:       0.87.2
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -223,6 +223,7 @@ fi
 %attr(0755,-,-) %{_libexecdir}/li/lib/
 #%{_libexecdir}/li/cartridges/abstract/info
 %attr(0750,-,-) %{_bindir}/rhc-accept-node
+%attr(0750,-,-) %{_bindir}/rhc-idle-apps
 %attr(0755,-,-) %{_bindir}/rhc-list-ports
 %attr(0750,-,-) %{_bindir}/rhc-node-account
 %attr(0750,-,-) %{_bindir}/rhc-node-application
@@ -242,6 +243,33 @@ fi
 /lib64/security/pam_libra.so
 
 %changelog
+* Wed Feb 22 2012 Dan McPherson <dmcphers@redhat.com> 0.87.2-1
+- Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
+  (mpatel@redhat.com)
+- Adds idle app script. (mpatel@redhat.com)
+- checkpoint 3 - horizontal scaling, minor fixes, connector hook for haproxy
+  not complete (rchopra@redhat.com)
+- Add show-proxy call. (rmillner@redhat.com)
+- Move expose, conceal, and show functions to the network include script.
+  Accept multiple targets for port proxy functions.  The expose-port hook is
+  all-or-nothing: it will either add all proxy ports requested or fail without
+  adding any.  Add show port hook.  Harmonize output from all hooks so it
+  follows same format for regexps that parse the output. (rmillner@redhat.com)
+- Added checks for missing entries in .env directory (jhonce@redhat.com)
+- Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
+  (mmcgrath@redhat.com)
+- Adding a ulimit so selinux will complete" (mmcgrath@redhat.com)
+- Bug 795654 (dmcphers@redhat.com)
+- use var_tmp_t (mmcgrath@redhat.com)
+- Merge branch 'master' of li-master:/srv/git/li (ramr@redhat.com)
+- change to use lines rather than split (dmcphers@redhat.com)
+- US1848 -- implement mysql "passwordless" access. (ramr@redhat.com)
+- Merge branch 'US1401' (jhonce@redhat.com)
+- Added capture of exceptions in event loop + retry count Added syslog warning
+  to debug BZ795331 (jhonce@redhat.com)
+- add migration for jenkins security (dmcphers@redhat.com)
+- switch epel rpm (dmcphers@redhat.com)
+
 * Thu Feb 16 2012 Dan McPherson <dmcphers@redhat.com> 0.87.1-1
 - bump spec numbers (dmcphers@redhat.com)
 - rhc-idler: changed it to not try to idle already idled apps

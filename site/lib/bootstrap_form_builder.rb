@@ -45,6 +45,13 @@ class BootstrapFormBuilder < Formtastic::SemanticFormBuilder
     fieldset
   end
 
+  def semantic_errors(*args)
+    return super unless new_forms_enabled?
+    html_options = args.extract_options!
+    html_options[:class] ||= 'alert alert-error unstyled errors'
+    super *(args << html_options)
+  end
+
   # change from li to div.control-group, move hints/errors into the input block
   def input(method, options = {})
     return super unless new_forms_enabled?

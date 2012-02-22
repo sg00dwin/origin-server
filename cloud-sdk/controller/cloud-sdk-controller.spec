@@ -5,7 +5,7 @@
 
 Summary:        Cloud Development Controller
 Name:           rubygem-%{gemname}
-Version:        0.5.3
+Version:        0.5.4
 Release:        1%{?dist}
 Group:          Development/Languages
 License:        ASL 2.0
@@ -20,7 +20,9 @@ Requires:       rubygem(json_pure)
 Requires:       rubygem(mocha)
 Requires:       rubygem(parseconfig)
 Requires:       rubygem(state_machine)
+Requires:       rubygem(dnsruby)
 Requires:       rubygem(cloud-sdk-common)
+Requires:       rubygem(open4)
 
 BuildRequires:  ruby
 BuildRequires:  rubygems
@@ -73,6 +75,36 @@ rm -rf %{buildroot}
 %{ruby_sitelib}/%{gemname}.rb
 
 %changelog
+* Wed Feb 22 2012 Dan McPherson <dmcphers@redhat.com> 0.5.4-1
+- Updating gem versions (dmcphers@redhat.com)
+- dont need targz of ddns test capsule (mlamouri@redhat.com)
+- syntax bug fix (rchopra@redhat.com)
+- checkpoint 4 - horizontal scaling bug fixes, multiple gears ok, scaling to be
+  tested (rchopra@redhat.com)
+- typo fix (rchopra@redhat.com)
+- add bind_dns_service to cloud-sdk-controller.rb (rpenta@redhat.com)
+- Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
+  (rchopra@redhat.com)
+- checkpoint 3 - horizontal scaling, minor fixes, connector hook for haproxy
+  not complete (rchopra@redhat.com)
+- merging changes (abhgupta@redhat.com)
+- Added application creation from template test case (kraman@gmail.com)
+- initial checkin for US1900 (abhgupta@redhat.com)
+- Merge remote-tracking branch 'origin/master' (mlamouri@redhat.com)
+- Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
+  (rchopra@redhat.com)
+- typo fixes (rchopra@redhat.com)
+- Add show-proxy call. (rmillner@redhat.com)
+- added BindDnsService unit test and test service module (mlamouri@redhat.com)
+- merged BindDnsService and packaging update (mlamouri@redhat.com)
+- Adding admin scripts to manage templates Adding REST API for creatig
+  applications given a template GUID (kraman@gmail.com)
+- checkpoint 2 - option to create scalable type of app, scaleup/scaledown apis
+  added, group minimum requirements get fulfilled (rchopra@redhat.com)
+- Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
+  (rchopra@redhat.com)
+- checkpoint 1 - horizontal scaling broker support (rchopra@redhat.com)
+
 * Mon Feb 20 2012 Dan McPherson <dmcphers@redhat.com> 0.5.3-1
 - Updating gem versions (dmcphers@redhat.com)
 - secure jenkins (dmcphers@redhat.com)
@@ -245,5 +277,4 @@ rm -rf %{buildroot}
 - Merge branch 'master' of git1.ops.rhcloud.com:/srv/git/li (rpenta@redhat.com)
 - mongo wrapper: 'use <user-db>' instead of 'use admin' for authentication
   (rpenta@redhat.com)
-
 

@@ -56,10 +56,73 @@ class RestApiTest < ActiveSupport::TestCase
     assert RestApi::Base.connection({:as => {}}).is_a? RestApi::UserAwareConnection
   end
 
+  def test_load_remote_errors
+    assert_raise RestApi::BadServerResponseError do RestApi::Base.new.load_remote_errors(stub(:response => {})); end
+    assert_raise RestApi::BadServerResponseError do RestApi::Base.new.load_remote_errors(stub(:response => stub(:body => nil))); end
+    assert_raise RestApi::BadServerResponseError do RestApi::Base.new.load_remote_errors(stub(:response => stub(:body => ''))); end
+    assert_raise RestApi::BadServerResponseError do RestApi::Base.new.load_remote_errors(stub(:response => stub(:body => ActiveSupport::JSON.encode({})))); end
+    assert_raise RestApi::BadServerResponseError do RestApi::Base.new.load_remote_errors(stub(:response => stub(:body => ActiveSupport::JSON.encode({:messages => nil})))); end
+    assert RestApi::Base.new.load_remote_errors(stub(:response => stub(:body => ActiveSupport::JSON.encode({:messages => []})))).empty?
+    assert_equal ['hello'], RestApi::Base.new.load_remote_errors(stub(:response => stub(:body => ActiveSupport::JSON.encode({:messages => [{:text => 'hello'}]}))))[:base]
+    assert_equal ['hello'], RestApi::Base.new.load_remote_errors(stub(:response => stub(:body => ActiveSupport::JSON.encode({:messages => [{:attribute => 'test', :text => 'hello'}]}))))[:test]
+  end
+
   def test_serialization
     app = Application.new :name => 'test1', :cartridge => 'cool', :application_type => 'raw-0.1', :as => @user
     #puts app.class.send('known_attributes').inspect
     app.serializable_hash
+  end
+
+  class Calculated < RestApi::Base
+    schema do
+      string :first, :last
+    end
+    attr_alters :together, [:first, :last]
+    def together=(together)
+      self.first, self.last = together.split if together
+      super
+    end
+
+    validates :first, :length => {:maximum => 1},
+              :presence => true,
+              :allow_blank => false
+    validates :last, :length => {:minimum => 2},
+              :presence => true,
+              :allow_blank => false
+  end
+
+  def test_calculated_attr
+    c = Calculated.new
+    assert_equal 'a b', c.together = 'a b'
+    assert_equal 'a b', c.attributes[:together]
+    assert_equal 'a', c.first
+    assert_equal 'b', c.last
+
+    c = Calculated.new :together => 'a b'
+    assert_equal 'a b', c.together
+    assert_equal 'a b', c.attributes[:together]
+    assert_equal 'a', c.first
+    assert_equal 'b', c.last
+
+    c = Calculated.new.load(:together => 'a b')
+    assert_equal 'a b', c.together
+    assert_equal 'a', c.first
+    assert_equal 'b', c.last
+
+    c = Calculated.new :first => 'c', :last => 'd'
+    assert_equal 'a b', c.together = 'a b'
+    assert_equal 'a', c.first
+    assert_equal 'b', c.last
+  end
+
+  def test_calculated_errors
+    c = Calculated.new :first => 'ab', :last => 'c'
+    assert !c.valid?
+    assert c.errors[:first].length == 1
+    assert c.errors[:last].length == 1
+    assert_equal 2, c.errors[:together].length
+    assert c.errors[:together].include? c.errors[:first][0]
+    assert c.errors[:together].include? c.errors[:last][0]
   end
 
   def test_client_key_validation
@@ -100,6 +163,57 @@ class RestApiTest < ActiveSupport::TestCase
     user = User.find :one, :as => @user
     assert user
     assert_equal @user.login, user.login
+  end
+
+  def test_custom_id_rename
+    ActiveResource::HttpMock.respond_to do |mock|
+      mock.get '/broker/rest/domains.json', json_header, [{:namespace => 'a'}].to_json
+      mock.put '/broker/rest/domains/a.json', json_header(true), {:namespace => 'b'}.to_json
+    end
+
+    domain = Domain.first :as => @user
+    assert_equal 'a', domain.name
+    assert_equal '/broker/rest/domains/a.json', domain.send(:element_path)
+
+    domain.name = 'b'
+
+    assert_equal 'a', domain.instance_variable_get(:@update_id)
+    assert_equal 'a', domain.id
+    assert_equal 'b', domain.namespace
+    assert_equal '/broker/rest/domains/a.json', domain.send(:element_path)
+    assert domain.save
+
+    domain = Domain.first :as => @user
+    domain.load({:name => 'b'})
+
+    assert_equal 'a', domain.instance_variable_get(:@update_id)
+    assert_equal 'a', domain.id
+    assert_equal 'b', domain.namespace
+    assert_equal '/broker/rest/domains/a.json', domain.send(:element_path)
+  end
+
+  class DomainWithValidation < Domain
+    self.element_name = 'domain'
+    validates :name, :length => {:maximum => 1},
+              :presence => true,
+              :allow_blank => false
+  end
+
+  def test_custom_id_rename_with_validation
+    ActiveResource::HttpMock.respond_to do |mock|
+      mock.get '/broker/rest/domains.json', json_header, [{:namespace => 'a'}].to_json
+      mock.put '/broker/rest/domains/a.json', json_header(true), {:namespace => 'b'}.to_json
+    end
+    t = DomainWithValidation.first :as => @user
+    assert_nil t.instance_variable_get(:@update_id)
+
+    t.name = 'ab'
+    assert !t.save
+    assert_equal 'a', t.instance_variable_get(:@update_id)
+
+    t.name = 'b'
+    assert t.save
+    assert_nil t.instance_variable_get(:@update_id)
   end
 
   def test_key_make_unique_noop

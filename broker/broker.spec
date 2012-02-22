@@ -3,7 +3,7 @@
 
 Summary:   Li broker components
 Name:      rhc-broker
-Version:   0.87.2
+Version:   0.87.3
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -83,6 +83,29 @@ rm -rf $RPM_BUILD_ROOT
 /bin/touch %{brokerdir}/log/production.log
 
 %changelog
+* Wed Feb 22 2012 Dan McPherson <dmcphers@redhat.com> 0.87.3-1
+- Updating gem versions (dmcphers@redhat.com)
+- trying to fix the build... continued (dmcphers@redhat.com)
+- fixing gemfile.lock for open4/dnsruby dependencies (rchopra@redhat.com)
+- Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
+  (rchopra@redhat.com)
+- checkpoint 3 - horizontal scaling, minor fixes, connector hook for haproxy
+  not complete (rchopra@redhat.com)
+- Adding template management tests (kraman@gmail.com)
+- Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
+  (rchopra@redhat.com)
+- Add show-proxy call. (rmillner@redhat.com)
+- Adding admin scripts to manage templates Adding REST API for creatig
+  applications given a template GUID (kraman@gmail.com)
+- checkpoint 2 - option to create scalable type of app, scaleup/scaledown apis
+  added, group minimum requirements get fulfilled (rchopra@redhat.com)
+- Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
+  (rchopra@redhat.com)
+- checkpoint 1 - horizontal scaling broker support (rchopra@redhat.com)
+- Adding admin scripts to manage templates (kraman@gmail.com)
+- Added ability to list and retrieve application template data
+  (kraman@gmail.com)
+
 * Mon Feb 20 2012 Dan McPherson <dmcphers@redhat.com> 0.87.2-1
 - Updating gem versions (dmcphers@redhat.com)
 - Revert "Updating gem versions" (ramr@redhat.com)

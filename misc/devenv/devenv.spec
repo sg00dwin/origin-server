@@ -7,7 +7,7 @@
 
 Summary:   Dependencies for OpenShift development
 Name:      rhc-devenv
-Version:   0.87.2
+Version:   0.87.3
 Release:   1%{?dist}
 Group:     Development/Libraries
 License:   GPLv2
@@ -49,6 +49,7 @@ Requires:  rubygem-nokogiri
 Requires:  charlie
 Requires:  pam
 Requires:  pam-devel
+Requires:  bind
 
 # CI Requirements
 Requires:  jenkins
@@ -180,6 +181,7 @@ git init --bare /root/os-client-tools
 
 # Start services
 service iptables restart
+service named stop
 service qpidd restart
 service mcollective start
 service libra-datastore configure
@@ -190,6 +192,7 @@ service jenkins restart
 service httpd restart
 service sshd restart
 chkconfig iptables on
+#chkconfig named on
 chkconfig qpidd on
 chkconfig mcollective on
 chkconfig libra-datastore on
@@ -255,6 +258,11 @@ cp -f %{devenvdir}/puppet-private.pem /var/lib/puppet/ssl/private_keys/localhost
 %{_initddir}/sauce-connect
 
 %changelog
+* Wed Feb 22 2012 Dan McPherson <dmcphers@redhat.com> 0.87.3-1
+- disable named for now (dmcphers@redhat.com)
+- added devenv modifications for BIND dns testing (mlamouri@redhat.com)
+- switch epel rpm (dmcphers@redhat.com)
+
 * Mon Feb 20 2012 Dan McPherson <dmcphers@redhat.com> 0.87.2-1
 - fix calls to update_yaml to actually do something (dmcphers@redhat.com)
 

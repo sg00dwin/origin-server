@@ -224,6 +224,11 @@ module Express
       def get_node_profile
         rpc_get_fact_direct('node_profile')
       end
+
+      def execute_connector(app, gear, cart, connector_name, input_args)
+        mcoll_reply = execute_direct(@@C_CONTROLLER, 'connector-execute', "--gear-uuid '#{gear.uuid}' --cart-name '#{cart}' --hook-name '#{connector_name}' " + input_args.join(" "))
+        parse_result(mcoll_reply)
+      end
       
       def start(app, gear, cart)
         if framework_carts.include?(cart)
@@ -313,6 +318,10 @@ module Express
 
       def conceal_port(app, gear, cart)
         run_cartridge_command(cart, app, gear, "conceal-port")
+      end
+
+      def show_port(app, gear, cart)
+        run_cartridge_command(cart, app, gear, "show-port")
       end
 
       def add_alias(app, gear, cart, server_alias)
@@ -824,7 +833,12 @@ module Express
       end
       
       def run_cartridge_command(framework, app, gear, command, arg=nil, allow_move=true)
-        arguments = "'#{app.name}' '#{app.user.namespace}' '#{gear.uuid}'"
+        if app.scalable and framework!=app.proxy_cartridge
+          appname = gear.uuid[0..9] 
+        else
+          appname = app.name
+        end
+        arguments = "'#{appname}' '#{app.user.namespace}' '#{gear.uuid}'"
         arguments += " '#{arg}'" if arg
 
         if allow_move
