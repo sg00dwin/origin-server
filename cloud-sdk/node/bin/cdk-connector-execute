@@ -38,6 +38,7 @@ USAGE
 end
 
 require 'cloud-sdk-node'
+require 'open4'
 opts = GetoptLong.new(
     ["--gear-uuid",       "-g", GetoptLong::REQUIRED_ARGUMENT],
     ["--cart-name",       "-c", GetoptLong::REQUIRED_ARGUMENT],
