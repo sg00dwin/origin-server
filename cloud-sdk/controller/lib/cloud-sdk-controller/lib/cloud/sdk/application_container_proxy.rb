@@ -93,15 +93,18 @@ module Cloud
       def remove_broker_auth_key(app)
       end
       
-      def preconfigure_cartridge(app, cart, parent_cart_name)
+      def preconfigure_cartridge(app, gear, cart)
+        Rails.logger.debug("Inside preconfigure_cartridge :: application: #{app.name} :: cartridge name: #{cart}")
         return ResultIO.new
       end
       
-      def configure_cartridge(app, cart, parent_cart_name)
+      def configure_cartridge(app, gear, cart)
+        Rails.logger.debug("Inside configure_cartridge :: application: #{app.name} :: cartridge name: #{cart}")
         return ResultIO.new
       end
       
-      def deconfigure_cartridge(app, cart, parent_cart_name)
+      def deconfigure_cartridge(app, gear, cart)
+        Rails.logger.debug("Inside deconfigure_cartridge :: application: #{app.name} :: cartridge name: #{cart}")
         return ResultIO.new
       end
       
@@ -199,11 +202,11 @@ module Cloud
           Rails.logger.debug("exec_command WARNING - stdout read timed out")
         end
 
-        if exitcode == 0
-          Rails.logger.debug("exec_command (#{exitcode})\n------\n#{output}\n------)")
-        else
-          Rails.logger.debug("exec_command ERROR (#{exitcode})\n------\n#{output}\n------)")
-        end
+#        if exitcode == 0
+#          Rails.logger.debug("exec_command (#{exitcode})\n------\n#{output}\n------)")
+#        else
+#          Rails.logger.debug("exec_command ERROR (#{exitcode})\n------\n#{output}\n------)")
+#        end
 
         reply[:output] = output
         reply[:exitcode] = exitcode
