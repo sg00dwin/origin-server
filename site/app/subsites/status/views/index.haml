@@ -1,0 +1,9 @@
+%h1(class="#{header[:class]}") 
+  %script(src="/app/status/status.js")
+
+%h2 Open Issues
+- @open.each do |issue|
+  = haml :issue, :locals => { :issue => issue }
+%h2 Resolved Issues
+- @resolved.each do |issue|
+  = haml :issue, :locals => { :issue => issue }

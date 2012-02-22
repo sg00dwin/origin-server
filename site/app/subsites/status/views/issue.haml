@@ -1,0 +1,17 @@
+.issue
+  %header
+    %span.title= issue.title
+
+    - args = issue.resolved? ?  [ "Resolved",issue.resolved_at ] : [ "Started",issue.created_at ]
+    %span.at
+      = surround '(',')' do
+        = sprintf "%s %s",args[0], (haml :date, :locals => {:date => args[1]})
+
+  - updates = issue.updates #resolved? ? issue.updates : issue.updates.reverse # historical updates should read in time order, ongoing issues should put most important first
+  .updates
+    - updates.each do |update|
+      .update
+        .description
+          = update.description
+        .at
+          = haml :date, :locals => {:date => update.created_at }

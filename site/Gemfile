@@ -43,3 +43,6 @@ group :development, :test do
   gem 'mocha', :require => nil
   gem 'hpricot'
 end
+
+gem 'sinatra', '1.2.6'
+gem 'tilt', '1.2.2'
