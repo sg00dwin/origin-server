@@ -2,6 +2,7 @@ require "rubygems"
 require "test/unit"
 require "openshift/base"
 require "openshift/sauce_helper"
+require "pathname"
 
 module OpenShift
   class SeleniumTestCase < Test::Unit::TestCase
@@ -103,10 +104,16 @@ module OpenShift
           begin
             start_time = Time.now # comment out in Ruby 1.9.3
             Dir.mkdir 'output' rescue
-            @driver.save_screenshot("output/#{name}_#{start_time.to_i}.png")
-            File.open("output/#{name}_#{start_time.to_i}.html", 'w') do |f| 
+
+            image = "output/#{name}_#{start_time.to_i}.png"
+            @driver.save_screenshot(image)
+
+            html = "output/#{name}_#{start_time.to_i}.html"
+            File.open(html, 'w') do |f| 
               f.write(@driver.page_source)
             end
+
+            puts "Wrote screenshot to #{Pathname.new(image)} and html to #{Pathname.new(html)}"
           rescue Exception => e
             puts "<unable to output logs for #{name}"
             puts e.inspect

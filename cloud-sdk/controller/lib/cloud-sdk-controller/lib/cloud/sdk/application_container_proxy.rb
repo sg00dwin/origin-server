@@ -69,7 +69,7 @@ module Cloud
         args += " -t '#{key_type}'" if key_type
         args += " -m '-#{comment}'" if comment
         Rails.logger.debug("App ssh key: #{cmd} #{args}")
-        result = execute_command(cmd, args)
+        result = exec_command(cmd, args)
         parse_result(result)
       end
       
@@ -77,7 +77,7 @@ module Cloud
         cmd = "cdk-authorized-ssh-key-remove"
         args = "--with-app-uuid '#{app.uuid}' --with-container-uuid '#{gear.uuid}' -s '#{ssh_key}'" 
         Rails.logger.debug("Remove ssh key: #{cmd} #{args}")
-        result = execute_command(cmd, args)
+        result = exec_command(cmd, args)
         parse_result(result)
       end
     
@@ -95,17 +95,42 @@ module Cloud
       
       def preconfigure_cartridge(app, gear, cart)
         Rails.logger.debug("Inside preconfigure_cartridge :: application: #{app.name} :: cartridge name: #{cart}")
-        return ResultIO.new
+
+        if framework_carts.include? cart
+          run_cartridge_command(cart, app, gear, "preconfigure")
+        else
+          #no-op
+          ResultIO.new
+        end
       end
       
       def configure_cartridge(app, gear, cart)
         Rails.logger.debug("Inside configure_cartridge :: application: #{app.name} :: cartridge name: #{cart}")
-        return ResultIO.new
+
+        result_io = ResultIO.new
+        cart_data = nil
+                  
+        if framework_carts.include? cart
+          result_io = run_cartridge_command(cart, app, gear, "configure")
+        elsif embedded_carts.include? cart
+          result_io, cart_data = add_component(app,gear,cart)
+        else
+          #no-op
+        end
+        
+        return result_io, cart_data
       end
       
       def deconfigure_cartridge(app, gear, cart)
         Rails.logger.debug("Inside deconfigure_cartridge :: application: #{app.name} :: cartridge name: #{cart}")
-        return ResultIO.new
+
+        if framework_carts.include? cart
+          run_cartridge_command(cart, app, gear, "deconfigure")
+        elsif embedded_carts.include? cart
+          remove_component(app,gear,cart)
+        else
+          ResultIO.new
+        end        
       end
       
       def get_public_hostname
@@ -153,12 +178,38 @@ module Cloud
       def remove_alias(app, cart, server_alias)
       end
       
-      def add_component(app, component)
+      def framework_carts
+        @framework_carts ||= CartridgeCache.cartridge_names('standalone')
       end
       
-      def remove_component(app, component)
+      def embedded_carts
+        @embedded_carts ||= CartridgeCache.cartridge_names('embedded')
       end
       
+      def add_component(app, gear, component)
+        reply = ResultIO.new
+        begin
+          reply.append run_cartridge_command('embedded/' + component, app, gear, 'configure')
+        rescue Exception => e
+          begin
+            Rails.logger.debug "DEBUG: Failed to embed '#{component}' in '#{app.name}' for user '#{app.user.login}'"
+            reply.debugIO << "Failed to embed '#{component} in '#{app.name}'"
+            reply.append run_cartridge_command('embedded/' + component, app, gear, 'deconfigure')
+          ensure
+            raise
+          end
+        end
+        
+        component_details = reply.appInfoIO.string.empty? ? '' : reply.appInfoIO.string
+        reply.debugIO << "Embedded app details: #{component_details}"
+        [reply, component_details]
+      end
+      
+      def remove_component(app, gear, component)
+        Rails.logger.debug "DEBUG: Deconfiguring embedded application '#{component}' in application '#{app.name}' on node '#{@id}'"
+        return run_cartridge_command('embedded/' + component, app, gear, 'deconfigure')
+      end
+
       def start_component(app, component)
       end
       
@@ -180,16 +231,64 @@ module Cloud
       def update_namespace(app, cart, new_ns, old_ns)
       end
 
+      def run_cartridge_command(framework, app, gear, command, arg=nil)
+        if app.scalable and framework!=app.proxy_cartridge
+          appname = gear.uuid[0..9] 
+        else
+          appname = app.name
+        end
+        arguments = "'#{appname}' '#{app.user.namespace}' '#{gear.uuid}'"
+        arguments += " '#{arg}'" if arg
+
+        reply = {}
+        if File.exists? "/usr/libexec/li/cartridges/#{framework}/info/hooks/#{command}"
+          reply = exec_command("/usr/libexec/li/cartridges/#{framework}/info/hooks/#{command}", arguments)
+        else
+          reply[:output] = "run_cartridge_command ERROR action '#{command}' not found."
+          reply[:exitcode] = 127
+          Rails.logger.error("run_cartridge_command failed: 127.  Output: Cartridge hook not found: /usr/libexec/li/cartridges/#{framework}/info/hooks/#{command}")
+        end
+        
+        resultIO = parse_result(reply, app, command)
+        if resultIO.exitcode != 0
+          resultIO.debugIO << "Cartridge return code: " + resultIO.exitcode.to_s
+          begin
+            raise Cloud::Sdk::NodeException.new("Node execution failure (invalid exit code from node).  If the problem persists please contact Red Hat support.", 143, resultIO)
+          rescue Cloud::Sdk::NodeException => e
+            if command == 'deconfigure'
+              if framework.start_with?('embedded/')
+                if has_embedded_app?(app.uuid, framework[9..-1])
+                  raise
+                else
+                  Rails.logger.debug "DEBUG: Component '#{framework}' in application '#{app.name}' not found on node '#{@id}'.  Continuing with deconfigure."
+                end
+              else
+                if has_app?(app.uuid, app.name)
+                  raise
+                else
+                  Rails.logger.debug "DEBUG: Application '#{app.name}' not found on node '#{@id}'.  Continuing with deconfigure."
+                end
+              end
+            else
+              raise
+            end
+          end
+        end
+        resultIO
+      end
+      
       def exec_command(cmd, args)
         reply = {}
         exitcode = 1
         pid, stdin, stdout, stderr = nil, nil, nil, nil
+
         Bundler.with_clean_env {
           pid, stdin, stdout, stderr = Open4::popen4("#{cmd} #{args} 2>&1")
           stdin.close
           ignored, status = Process::waitpid2 pid
           exitcode = status.exitstatus
         }
+        
         # Do this to avoid cartridges that might hold open stdout
         output = ""
         begin
@@ -275,6 +374,20 @@ module Cloud
           end
         end
         result
+      end
+
+      #
+      # Returns whether this app is present
+      #
+      def has_app?(app_uuid, app_name)
+        return false
+      end
+      
+      #
+      # Returns whether this embedded app is present
+      #
+      def has_embedded_app?(app_uuid, embedded_type)
+        return false
       end
     end
   end
