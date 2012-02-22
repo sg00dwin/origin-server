@@ -36,9 +36,10 @@ class Signup < OpenShift::SeleniumTestCase
       :no_captcha => lambda{|s|
         assert_dialog_error(s,:error,nil,[ :bad_captcha ])
       },
-      :bad_domain => lambda{|s|
-        assert_dialog_error(s,:error,nil,[ :bad_domain ])
-      },
+      #:bad_domain => lambda{|s|
+      #  assert_dialog_error(s,:error,nil,[ :bad_domain ])
+      #},
+      #FIXME restore this method
 
       # This should succeed
       :success => lambda{|s|
