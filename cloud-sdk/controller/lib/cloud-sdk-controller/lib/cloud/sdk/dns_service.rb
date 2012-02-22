@@ -15,6 +15,7 @@ module Cloud
       end
       
       def namespace_available?(namespace)
+        return true
       end
       
       def register_namespace(namespace)

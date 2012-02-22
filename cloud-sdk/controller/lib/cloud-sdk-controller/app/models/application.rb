@@ -132,7 +132,7 @@ class Application < Cloud::Sdk::Cartridge
         # self.save
         result_io.append create_result
         unless create_result.exitcode == 0
-          raise NodeException.new("Unable to create gear on node", "-100", result_io)
+          raise Cloud::Sdk::NodeException.new("Unable to create gear on node", "-100", result_io)
         end
 
         ginst.gears << gear
@@ -284,7 +284,7 @@ class Application < Cloud::Sdk::Cartridge
     
     #process new additions
     #TODO: fix configure after framework cartridge is no longer a requirement for adding embedded cartridges
-    self.configure_order.reverse.each do |comp_inst_name|
+    self.configure_order.each do |comp_inst_name|
       comp_inst = self.comp_instance_map[comp_inst_name]
       group_inst = self.group_instance_map[comp_inst.group_instance_name]
       begin

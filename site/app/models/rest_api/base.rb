@@ -87,11 +87,12 @@ module RestApi
       def aliased_attributes
         @aliased_attributes
       end
-      def attr_set_on_load(*args)
-        (@calculated_attributes ||= []).concat(args)
+      def attr_alters(from, *args)
+        (@calculated_attributes ||= {})[from] = args.flatten.uniq
+        define_attribute_methods [from]
       end
       def calculated_attributes
-        @calculated_attributes
+        @calculated_attributes ||= {}
       end
     end
 
@@ -100,13 +101,13 @@ module RestApi
         attributes = attributes.dup
         self.class.aliased_attributes.each do |from,to|
           value = attributes.delete(from)
-          attributes[to] = value if value
+          send("#{to}=", value) if value
         end
         super attributes
       else
         super
       end
-      self.class.calculated_attributes.each { |attr| send("#{attr}=", attributes[attr]) } if self.class.calculated_attributes
+      self.class.calculated_attributes.each_key { |attr| send("#{attr}=", attributes[attr]) }
       self
     end
 
@@ -139,15 +140,29 @@ module RestApi
       end
     end
 
-    def save#FIXME: should be _without_validation?, need unit tests
-      @previously_changed = changes
+    def save
+      @previously_changed = changes # track changes
       @changed_attributes.clear
-      resp = super
-      remove_instance_variable(:@update_id) if @update_id
-      resp
+      valid = super
+      remove_instance_variable(:@update_id) if @update_id && valid
+      valid
     rescue Exception => error
       raise error unless rescue_save_failure(error)
       false
+    end
+
+    # Copy calculated attribute errors
+    def valid?
+      if super
+        true
+      else
+        self.class.calculated_attributes.each_pair do |from, attrs|
+          attrs.each do |to|
+            (errors[from] ||= []).concat(errors[to])
+          end
+        end
+        false
+      end
     end
 
     class << self

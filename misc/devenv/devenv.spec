@@ -49,6 +49,7 @@ Requires:  rubygem-nokogiri
 Requires:  charlie
 Requires:  pam
 Requires:  pam-devel
+Requires:  bind
 
 # CI Requirements
 Requires:  jenkins
@@ -180,6 +181,7 @@ git init --bare /root/os-client-tools
 
 # Start services
 service iptables restart
+service named restart
 service qpidd restart
 service mcollective start
 service libra-datastore configure
@@ -190,6 +192,7 @@ service jenkins restart
 service httpd restart
 service sshd restart
 chkconfig iptables on
+chkconfig named on
 chkconfig qpidd on
 chkconfig mcollective on
 chkconfig libra-datastore on
