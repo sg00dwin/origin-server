@@ -5,7 +5,7 @@
 
 Summary:        Cloud Development Node
 Name:           rubygem-%{gemname}
-Version:        0.5.1
+Version:        0.5.2
 Release:        1%{?dist}
 Group:          Development/Languages
 License:        ASL 2.0
@@ -87,6 +87,20 @@ rm -rf %{buildroot}
 %{ruby_sitelib}/%{gemname}.rb
 
 %changelog
+* Wed Feb 22 2012 Dan McPherson <dmcphers@redhat.com> 0.5.2-1
+- Updating gem versions (dmcphers@redhat.com)
+- Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
+  (rchopra@redhat.com)
+- checkpoint 4 - horizontal scaling bug fixes, multiple gears ok, scaling to be
+  tested (rchopra@redhat.com)
+- Merge branch 'TA1550' (jhonce@redhat.com)
+- initial load of cdk-populate-repo (jhonce@redhat.com)
+- merging changes (abhgupta@redhat.com)
+- initial checkin for US1900 (abhgupta@redhat.com)
+- checkpoint 2 - option to create scalable type of app, scaleup/scaledown apis
+  added, group minimum requirements get fulfilled (rchopra@redhat.com)
+- checkpoint 1 - horizontal scaling broker support (rchopra@redhat.com)
+
 * Thu Feb 16 2012 Dan McPherson <dmcphers@redhat.com> 0.5.1-1
 - Updating gem versions (dmcphers@redhat.com)
 - bump spec numbers (dmcphers@redhat.com)

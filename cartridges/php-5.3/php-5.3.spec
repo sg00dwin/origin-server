@@ -2,7 +2,7 @@
 
 Summary:   Provides php-5.3 support
 Name:      rhc-cartridge-php-5.3
-Version:   0.87.2
+Version:   0.87.3
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   ASL 2.0
@@ -100,6 +100,13 @@ rm -rf %{buildroot}
 %doc %{cartridgedir}/LICENSE
 
 %changelog
+* Wed Feb 22 2012 Dan McPherson <dmcphers@redhat.com> 0.87.3-1
+- Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
+  (rchopra@redhat.com)
+- Add show-proxy call. (rmillner@redhat.com)
+- checkpoint 2 - option to create scalable type of app, scaleup/scaledown apis
+  added, group minimum requirements get fulfilled (rchopra@redhat.com)
+
 * Mon Feb 20 2012 Dan McPherson <dmcphers@redhat.com> 0.87.2-1
 - adding publish git and http url hooks (mmcgrath@redhat.com)
 - Added connection hooks (mmcgrath@redhat.com)

@@ -2,7 +2,7 @@
 
 Summary:   Provides haproxy-1.4 support
 Name:      rhc-cartridge-haproxy-1.4
-Version:   0.5.2
+Version:   0.5.3
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   ASL 2.0
@@ -83,6 +83,13 @@ rm -rf %{buildroot}
 %doc %{cartridgedir}/LICENSE
 
 %changelog
+* Wed Feb 22 2012 Dan McPherson <dmcphers@redhat.com> 0.5.3-1
+- spec fix to include connection-hooks (rchopra@redhat.com)
+- checkpoint 3 - horizontal scaling, minor fixes, connector hook for haproxy
+  not complete (rchopra@redhat.com)
+- checkpoint 2 - option to create scalable type of app, scaleup/scaledown apis
+  added, group minimum requirements get fulfilled (rchopra@redhat.com)
+
 * Mon Feb 20 2012 Dan McPherson <dmcphers@redhat.com> 0.5.2-1
 - Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
   (mmcgrath@redhat.com)

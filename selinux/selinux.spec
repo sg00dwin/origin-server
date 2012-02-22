@@ -1,6 +1,6 @@
 Summary:       SELinux policy for OpenShift nodes
 Name:          rhc-selinux
-Version:       0.87.2
+Version:       0.87.3
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -48,6 +48,12 @@ rm -rf %{buildroot}
 %attr(0640,-,-) %{_datadir}/selinux/packages/libra.pp
 
 %changelog
+* Wed Feb 22 2012 Dan McPherson <dmcphers@redhat.com> 0.87.3-1
+- Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
+  (dwalsh@redhat.com)
+- Libra directories contain a .tmp directory that is being bind mounted over
+  the /tmp directory, we want to label this libra_tmp_t (dwalsh@redhat.com)
+
 * Mon Feb 20 2012 Dan McPherson <dmcphers@redhat.com> 0.87.2-1
 - Allow libra domains to create fifo_files in the libra_var_lib_t directory
   (dwalsh@redhat.com)
