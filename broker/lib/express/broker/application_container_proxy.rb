@@ -229,8 +229,8 @@ module Express
         mcoll_reply = execute_direct(@@C_CONTROLLER, 'connector-execute', "--gear-uuid '#{gear.uuid}' --cart-name '#{cart}' --hook-name '#{connector_name}' " + input_args.join(" "))
         if mcoll_reply and mcoll_reply.length>0
           mcoll_reply = mcoll_reply[0]
-          output = mcoll_result.results[:data][:output]
-          exitcode = mcoll_result.results[:data][:exitcode]
+          output = mcoll_reply.results[:data][:output]
+          exitcode = mcoll_reply.results[:data][:exitcode]
           return [output, exitcode]
         end
         [nil, nil]

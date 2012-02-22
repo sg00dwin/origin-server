@@ -366,7 +366,7 @@ class Application < Cloud::Sdk::Cartridge
       run_on_gears(sub_ginst.gears, r, false) do |gear, r|
         appname = gear.uuid[0..9]
         appname = self.name if sub_inst.parent_cart_name == self.framework
-        r.append gear.execute_connector(sub_inst, conn.to_connector.name, [appname, self.user.namespace, gear.uuid, "'#{pub_out.to_json}'"])
+        gout, gstatus = gear.execute_connector(sub_inst, conn.to_connector.name, [appname, self.user.namespace, gear.uuid, "'#{pub_out.to_json}'"])
       end
     }
   end
