@@ -207,7 +207,7 @@ class Application < Cloud::Sdk::Cartridge
     self.group_instance_map.keys.each { |ginst_name|
       next if not ginst_name.include? wb
       ginst = self.group_instance_map[ginst_name]
-      result, new_gear = ginst.add_gear
+      result, new_gear = ginst.add_gear(self)
       result_io.append result
       self.add_dns(new_gear.uuid, @user.namespace, new_gear.get_proxy.get_public_hostname)
       break
@@ -348,7 +348,7 @@ class Application < Cloud::Sdk::Cartridge
       run_on_gears(pub_ginst.gears, output, false) do |gear, r|
         appname = gear.uuid[0..9]
         appname = self.name if pub_inst.parent_cart_name == self.framework
-        r.append gear.execute_connector(pub_inst, conn.from_connector.name, appname, self.user.namespace, gear.uuid])
+        r.append gear.execute_connector(pub_inst, conn.from_connector.name, [appname, self.user.namespace, gear.uuid])
       end
 
       Rails.logger.debug "Output of publisher - #{output}"
@@ -359,7 +359,7 @@ class Application < Cloud::Sdk::Cartridge
       run_on_gears(sub_ginst.gears, output, false) do |gear, r|
         appname = gear.uuid[0..9]
         appname = self.name if sub_inst.parent_cart_name == self.framework
-        r.append gear.execute_connector(sub_inst, conn.to_connector.name, appname, self.user.namespace, gear.uuid, "'#{output.data}'"])
+        r.append gear.execute_connector(sub_inst, conn.to_connector.name, [appname, self.user.namespace, gear.uuid, "'#{output.data}'"])
       end
     }
   end
