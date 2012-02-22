@@ -35,10 +35,11 @@ GEM
       activemodel
       json
       mongo
-    cloud-sdk-controller (0.5.1)
-      activesupport
+    cloud-sdk-controller (0.5.3)
+      activesupport (~> 3.0.10)
       cloud-sdk-common
-      json
+      dnsruby
+      json (= 1.4.6)
       open4
       state_machine
     cloud-sdk-node (0.5.1)
@@ -48,11 +49,12 @@ GEM
       json
       parseconfig
       state_machine
+    dnsruby (1.53)
     erubis (2.6.6)
       abstract (>= 1.0.0)
     highline (1.6.11)
     i18n (0.5.0)
-    json (1.6.5)
+    json (1.4.6)
     mail (2.2.19)
       activesupport (>= 2.3.6)
       i18n (>= 0.4.0)

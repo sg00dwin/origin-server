@@ -76,7 +76,7 @@ class RestApiTest < ActiveSupport::TestCase
     items = Key.find :all, :as => @user
     assert_equal orig_num_keys + 1, items.length
   end
-  
+
   def test_invalid_key_create
     items = Key.find :all, :as => @user
 

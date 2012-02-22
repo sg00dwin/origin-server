@@ -3,7 +3,7 @@
 
 Summary:   Li site components
 Name:      rhc-site
-Version:   0.87.1
+Version:   0.87.2
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -76,6 +76,41 @@ rm -rf %{buildroot}
 chmod 0770 %{sitedir}/tmp
 
 %changelog
+* Mon Feb 20 2012 Dan McPherson <dmcphers@redhat.com> 0.87.2-1
+- Styleguide should use split files (ccoleman@redhat.com)
+- Pull out help links into their own helper URLs to minimize changes
+  (ccoleman@redhat.com)
+- Update my account with lost changes (ccoleman@redhat.com)
+- Switch to split CSS files (ccoleman@redhat.com)
+- Merge branch 'dev/clayton/units' (ccoleman@redhat.com)
+- Split unit and integration tests for rest_api_test.rb (ccoleman@redhat.com)
+- default bootstrap css (sgoodwin@redhat.com)
+- customizations to bootstrap.css (sgoodwin@redhat.com)
+- Unit test for 794764 (ccoleman@redhat.com)
+- Fixes 794764: added Node.js to the list of standalone cartridges on website
+  (ffranz@redhat.com)
+- changes for US1797 (abhgupta@redhat.com)
+- Remove puts (ccoleman@redhat.com)
+- Update references to @application_type to work around issue with
+  ActiveResource serialization for now (ccoleman@redhat.com)
+- Use 'console' layout on User.show (ccoleman@redhat.com)
+- Fixed bug 794643 by temporarily removing application_type getter
+  (ccoleman@redhat.com)
+- Merge branch 'master' into dev/clayton/layouts (ccoleman@redhat.com)
+- Fixes 794539: staging and production routes was redirecting the account
+  creation to the control panel (ffranz@redhat.com)
+- Tweak text (ccoleman@redhat.com)
+- Add Node.js, remove version label and website (for now), and add :new marker
+  (ccoleman@redhat.com)
+- Add more aggressive guard to logging exceptions (ccoleman@redhat.com)
+- Merge branch 'master' into dev/clayton/layouts (ccoleman@redhat.com)
+- <model>.first returns null if no items Fix domain name link for bug 790695
+  (ccoleman@redhat.com)
+- Add in more extensive key unit tests, fix a connection allocation bug, make
+  unit tests reuse same user and teardown domain, fix layout of simple semantic
+  forms, implement simple ssh key form for use within get_started
+  (ccoleman@redhat.com)
+
 * Thu Feb 16 2012 Dan McPherson <dmcphers@redhat.com> 0.87.1-1
 - bump spec numbers (dmcphers@redhat.com)
 - Added contextual help on the app details page for the new console

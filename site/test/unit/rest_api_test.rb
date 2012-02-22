@@ -62,6 +62,58 @@ class RestApiTest < ActiveSupport::TestCase
     app.serializable_hash
   end
 
+  class Calculated < RestApi::Base
+    schema do
+      string :first, :last
+    end
+    attr_alters :together, [:first, :last]
+    def together=(together)
+      self.first, self.last = together.split if together
+      super
+    end
+
+    validates :first, :length => {:maximum => 1},
+              :presence => true,
+              :allow_blank => false
+    validates :last, :length => {:minimum => 2},
+              :presence => true,
+              :allow_blank => false
+  end
+
+  def test_calculated_attr
+    c = Calculated.new
+    assert_equal 'a b', c.together = 'a b'
+    assert_equal 'a b', c.attributes[:together]
+    assert_equal 'a', c.first
+    assert_equal 'b', c.last
+
+    c = Calculated.new :together => 'a b'
+    assert_equal 'a b', c.together
+    assert_equal 'a b', c.attributes[:together]
+    assert_equal 'a', c.first
+    assert_equal 'b', c.last
+
+    c = Calculated.new.load(:together => 'a b')
+    assert_equal 'a b', c.together
+    assert_equal 'a', c.first
+    assert_equal 'b', c.last
+
+    c = Calculated.new :first => 'c', :last => 'd'
+    assert_equal 'a b', c.together = 'a b'
+    assert_equal 'a', c.first
+    assert_equal 'b', c.last
+  end
+
+  def test_calculated_errors
+    c = Calculated.new :first => 'ab', :last => 'c'
+    assert !c.valid?
+    assert c.errors[:first].length == 1
+    assert c.errors[:last].length == 1
+    assert_equal 2, c.errors[:together].length
+    assert c.errors[:together].include? c.errors[:first][0]
+    assert c.errors[:together].include? c.errors[:last][0]
+  end
+
   def test_client_key_validation
     key = Key.new :type => 'ssh-rsa', :name => 'test2', :as => @user
     assert !key.save
@@ -87,6 +139,11 @@ class RestApiTest < ActiveSupport::TestCase
     assert_equal 'rh_sso=1234', headers['Cookie']
   end
 
+  def test_load_returns_self
+    key = Key.new
+    assert_equal key, key.load({})
+  end
+
   def test_user_get
     ActiveResource::HttpMock.respond_to do |mock|
       mock.get '/broker/rest/user.json', json_header, { :login => 'test1' }.to_json()
@@ -95,6 +152,85 @@ class RestApiTest < ActiveSupport::TestCase
     user = User.find :one, :as => @user
     assert user
     assert_equal @user.login, user.login
+  end
+
+  def test_custom_id_rename
+    ActiveResource::HttpMock.respond_to do |mock|
+      mock.get '/broker/rest/domains.json', json_header, [{:namespace => 'a'}].to_json
+      mock.put '/broker/rest/domains/a.json', json_header(true), {:namespace => 'b'}.to_json
+    end
+
+    domain = Domain.first :as => @user
+    assert_equal 'a', domain.name
+    assert_equal '/broker/rest/domains/a.json', domain.send(:element_path)
+
+    domain.name = 'b'
+
+    assert_equal 'a', domain.instance_variable_get(:@update_id)
+    assert_equal 'a', domain.id
+    assert_equal 'b', domain.namespace
+    assert_equal '/broker/rest/domains/a.json', domain.send(:element_path)
+    assert domain.save
+
+    domain = Domain.first :as => @user
+    domain.load({:name => 'b'})
+
+    assert_equal 'a', domain.instance_variable_get(:@update_id)
+    assert_equal 'a', domain.id
+    assert_equal 'b', domain.namespace
+    assert_equal '/broker/rest/domains/a.json', domain.send(:element_path)
+  end
+
+  class DomainWithValidation < Domain
+    self.element_name = 'domain'
+    validates :name, :length => {:maximum => 1},
+              :presence => true,
+              :allow_blank => false
+  end
+
+  def test_custom_id_rename_with_validation
+    ActiveResource::HttpMock.respond_to do |mock|
+      mock.get '/broker/rest/domains.json', json_header, [{:namespace => 'a'}].to_json
+      mock.put '/broker/rest/domains/a.json', json_header(true), {:namespace => 'b'}.to_json
+    end
+    t = DomainWithValidation.first :as => @user
+    assert_nil t.instance_variable_get(:@update_id)
+
+    t.name = 'ab'
+    assert !t.save
+    assert_equal 'a', t.instance_variable_get(:@update_id)
+
+    t.name = 'b'
+    assert t.save
+    assert_nil t.instance_variable_get(:@update_id)
+  end
+
+  def test_key_make_unique_noop
+    key = Key.new :name => 'key'
+    key.instance_variable_set :@persisted, true
+    key.instance_variable_set :@update_id, key.name
+    key.expects(:connection).never.expects(:as).never
+    assert_equal 'key', key.make_unique!.name
+  end
+
+  def test_key_make_unique
+    ActiveResource::HttpMock.respond_to do |mock|
+      mock.get '/broker/rest/user/keys.json', json_header, [].to_json
+    end
+    assert_equal 'key', Key.new(:name => 'key', :as => @user).make_unique!.name
+    assert_equal 'key', Key.new(:name => 'key', :as => @user).make_unique!('key %s').name
+
+    ActiveResource::HttpMock.respond_to do |mock|
+      mock.get '/broker/rest/user/keys.json', json_header, [{:name => 'key'}].to_json
+    end
+    assert_equal 'key 2', Key.new(:name => 'key', :as => @user).make_unique!.name
+    assert_equal 'new key 2', Key.new(:name => 'key', :as => @user).make_unique!('new key %s').name
+    
+    ActiveResource::HttpMock.respond_to do |mock|
+      mock.get '/broker/rest/user/keys.json', json_header, [{:name => 'key'}, {:name => 'key 2'}].to_json
+    end
+    assert_equal 'key 3', Key.new(:name => 'key', :as => @user).make_unique!.name
+    assert_equal 'new key 2', Key.new(:name => 'key', :as => @user).make_unique!('new key %s').name
   end
 
   def test_key_attributes

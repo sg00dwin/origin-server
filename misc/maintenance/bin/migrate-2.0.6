@@ -1,5 +1,5 @@
 #!/usr/bin/env ruby
-# Usage: ./migrate-2.0.4 > out.txt
+# Usage: ./migrate-2.0.6 > out.txt
 $:.unshift('/var/www/libra/broker')
 require 'config/environment'
 require 'rubygems'
@@ -30,7 +30,7 @@ def migrate_app_on_node(server_identity, framework, uuid, rhlogin, app_name)
                              :application => app_name,
                              :app_type => framework,
                              :namespace => user.namespace,
-                             :version => '2.0.4') do |response|
+                             :version => '2.0.6') do |response|
                 exit_code = response[:body][:data][:exitcode]
                 output = response[:body][:data][:output]
                 if (output.length > 0)
@@ -40,11 +40,13 @@ def migrate_app_on_node(server_identity, framework, uuid, rhlogin, app_name)
                   out += "Migrate on node exit code: #{exit_code}\n"
                   raise "Failed migrating app. Rerun with: #{migrate_cmd}"
                 else
+                  migrated = true
+=begin
                   reply = app.gear.container.send(:run_cartridge_command, framework, app, app.gear, 'deploy-httpd-proxy', nil, false)
-                  
+
                   out += "DEPLOY_HTTP_PROXY DEBUG OUTPUT:\n#{reply.debugIO.string}\n" unless reply.debugIO.string.empty?
                   out += "DEPLOY_HTTP_PROXY ERROR OUTPUT:\n#{reply.errorIO.string}\n" unless reply.errorIO.string.empty?
-          
+
                   if reply.exitcode != 0
                     out += "Deploy httpd proxy on node exit code: #{reply.exitcode}\n"
                     raise "Failed deploying httpd proxy for app '#{app_name}' with uuid '#{uuid}' on node '#{server_identity}'"
@@ -68,6 +70,7 @@ def migrate_app_on_node(server_identity, framework, uuid, rhlogin, app_name)
                     end
                     migrated = true
                   end
+=end
                 end
               end
             end
@@ -89,7 +92,7 @@ def migrate_app_on_node(server_identity, framework, uuid, rhlogin, app_name)
 end
 
 #
-# Migrate applications between 2.0.3 and 2.0.4
+# Migrate applications between 2.0.5 and 2.0.6
 #
 def migrate(continue=false)
   start_time = Time.now.to_i

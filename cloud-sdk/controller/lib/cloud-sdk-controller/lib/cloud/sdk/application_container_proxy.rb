@@ -108,6 +108,9 @@ module Cloud
       def conceal_port(app, cart)
       end
       
+      def show_port(app, cart)
+      end
+      
       def restart(app, cart)
       end
       

@@ -6,7 +6,7 @@
 # [ $(semanage node -l | grep -c 255.255.255.128) -lt 1000 ] && ./rhc-ip-prep.sh
 
 # lock down the localhost ip addresses
-
+ulimit -n 15000
 for uid in `seq 500 12700`
 do
     a=$(($uid*128+2130706432))

@@ -11,7 +11,7 @@ require 'syslog'
 ##
 # Monitor syslog files for messages from cgroups killing off applications 
 class Watchman
-  attr_accessor :epoch, :period_seconds, :message_file
+  attr_accessor :epoch, :period_seconds, :message_file, :retries
 
   ##
   # monitor +message_file+ every +period+ seconds for cgroups kill messages
@@ -20,6 +20,7 @@ class Watchman
     @period_seconds = period
     @daemon = daemon
     @var_lib = libra_var_lib
+    @retries = 10
 
     # Once the SDK has finer control over whether an application should be running or not this could be lifted.
     # Don't process any errors that occurred before we were started.
@@ -46,7 +47,7 @@ class Watchman
         app_env[app_uuid] = read_env(app_path) if app_uuid =~ /^[a-f0-9]{32}$/ 
       }
       next if app_env.empty?
-
+	
       # Read current message_file and troll for killed applications
       # todo dump incidents if message_file has rolled?
       File.open(@message_file).grep(/ killed as a result of limit of /).each {|msg|
@@ -65,6 +66,16 @@ class Watchman
       }
 
       app_env.keys.each {|uuid|
+        if app_env[uuid][:OPENSHIFT_APP_TYPE].nil?
+          Syslog.warning("watchman unable to determine application type of user #{uuid}. OPENSHIFT_HOMEDIR/.env/OPENSHIFT_APP_TYPE missing.")
+          next
+        end
+
+        if app_env[uuid][:OPENSHIFT_LOG_DIR].nil?
+          Syslog.warning("watchman unable to determine log directory for user #{uuid}. OPENSHIFT_HOMEDIR/.env/OPENSHIFT_LOG_DIR missing.")
+          next
+        end
+
         if app_env[uuid][:OPENSHIFT_APP_TYPE].start_with?('jboss')
           File.open("#{app_env[uuid][:OPENSHIFT_LOG_DIR]}/server.log").grep(/ java.lang.OutOfMemoryError/) {|msg|
             # timezones are just a PITA. server.log message doesn't include timezone or date so inject both from today
@@ -77,6 +88,11 @@ class Watchman
           }
         end
       }
+    rescue Exception => e
+      @retries -= 1
+      Syslog.warning("watchman caught #{e.inspect}: #{e.message}. Retries left: #{@retries}")
+      retry if @daemon and 0 < @retries
+      raise
     end while @daemon
   end
   
@@ -85,6 +101,11 @@ class Watchman
 
   # Don't restart if application has been marked down
   def restart(uuid, env) 
+    if env[uuid][:OPENSHIFT_APP_DIR].nil?
+      Syslog.warning("watchman unable to determine application home directory. OPENSHIFT_APP_DIR/.env/OPENSHIFT_APP_DIR missing. User #{uuid}: application #{env[uuid][:OPENSHIFT_APP_NAME]} will not be restarted as it should be.")
+      return
+    end
+
     stop_lock = "#{env[uuid][:OPENSHIFT_APP_DIR]}run/stop_lock"
     if not File.exists?(stop_lock) 
       `service libra restartuser #{uuid}`
@@ -93,7 +114,6 @@ class Watchman
   end
 
   private
-
   def cache_incident(uuid, timestamp, env)
     if @incidents.has_key?(uuid) 
       if @incidents[uuid][:last_updated] < timestamp

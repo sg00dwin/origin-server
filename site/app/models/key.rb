@@ -9,7 +9,8 @@ class Key < RestApi::Base
     string :name, 'type', :content, :raw_content
   end
   custom_id :name, true
-  # type is a method on Object in 1.8.7 and must be overriden
+  # type is a method on Object in 1.8.7 and must be overriden so that the attribute 
+  # will be read (method_missing is how ActiveResource attributes are looked up)
   def type
     @attributes[:type]
   end
@@ -17,24 +18,24 @@ class Key < RestApi::Base
   belongs_to :user
   self.prefix = "#{RestApi::Base.site.path}/user/"
 
-  attr_set_on_load :raw_content
+  attr_alters :raw_content, [:content, :type]
   # Raw content is decomposed into content and type
   def raw_content=(contents)
     if contents
       parts = contents.split
       case parts.length
       when 1
+        self.type = nil
         self.content = parts[0]
       when 2
         if /^ssh-(rsa|dss)$/.match(parts[0])
-          self.type = parts[0]
-          self.content = parts[1]
+          self.type, self.content = parts
         else
+          self.type = nil
           self.content = parts[0]
         end
       when 3
-        self.type = parts[0]
-        self.content = parts[1]
+        self.type, self.content = parts
       end
     end
     super
@@ -50,42 +51,44 @@ class Key < RestApi::Base
                     :presence => true,
                     :allow_blank => false
 
-  def validate_ssh(ssh)
-    type_regex = /^ssh-(rsa|dss)$/
-    key_regex =  /^[A-Za-z0-9+\/]+[=]*$/
-    type_required = true
-
-    values = { :valid => true }
-    parts = ssh.split
-
-    case parts.length
-    when 1
-      values[:key] = parts[0]
-    when 2
-      if type_regex.match(parts[0])
-        values[:type] = parts[0]
-        values[:key] = parts[1]
-      else
-        values[:key] = parts[0]
-        values[:comment] = parts[1]
+  Inf = 1.0/0.0 # Replace with Float::INFINITY in 1.9 ruby
+  def make_unique!(format='key %s')
+    unless persisted? && @update_id == name
+      keys = Key.find(:all, :as => as)
+      if keys.any? {|k| k.name == name }
+        self.name = format % (2..keys.length+2).find do |i|
+          not keys.any? {|k| k.name == format % i}
+        end
       end
-    when 3
-      values[:type] = parts[0]
-      values[:key] = parts[1]
-      values[:comment] = parts[2]
+    end
+    self
+  end
+
+  def display_content
+    if content.length > 20
+      "#{content[1..8]}..#{content[-8..-1]}"
+    else
+      content
+    end
+  end
+
+  #
+  # Until the empty default key is attached from domain, ignore in lists
+  #
+  def default?
+    'default' == name
+  end
+  def empty_default?
+    default? and (!content or content.blank? or 'nossh' == content)
+  end
+
+  class << self
+    def default(options=nil)
+      Key.find('default', options)
     end
 
-    if type_required && !values[:type]
-      values[:valid] = false
+    def instantiate_collection(*args)
+      super.select { |item| not item.empty_default? }
     end
-
-    if values[:type] && !type_regex.match(values[:type])
-      values[:valid] = false
-    end
-
-    if values[:key] && !key_regex.match(values[:key])
-      values[:valid] = false
-    end
-    values
   end
 end
