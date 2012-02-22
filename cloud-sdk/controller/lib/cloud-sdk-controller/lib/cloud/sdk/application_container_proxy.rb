@@ -64,9 +64,21 @@ module Cloud
       end
       
       def add_authorized_ssh_key(app, ssh_key, key_type=nil, comment=nil)
+        cmd = "cdk-authorized-ssh-key-add"
+        args = "--with-app-uuid '#{app.uuid}' --with-container-uuid '#{gear.uuid}' -s '#{ssh_key}'"
+        args += " -t '#{key_type}'" if key_type
+        args += " -m '-#{message}'" if message
+        Rails.logger.debug("App ssh key: #{cmd} #{args}")
+        result = execute_command(cmd, args)
+        parse_result(result)
       end
       
       def remove_authorized_ssh_key(app, ssh_key)
+        cmd = "cdk-authorized-ssh-key-remove"
+        args = "--with-app-uuid '#{app.uuid}' --with-container-uuid '#{gear.uuid}' -s '#{ssh_key}'" 
+        Rails.logger.debug("Remove ssh key: #{cmd} #{args}")
+        result = execute_command(cmd, args)
+        parse_result(result)
       end
     
       def add_env_var(app, key, value)
