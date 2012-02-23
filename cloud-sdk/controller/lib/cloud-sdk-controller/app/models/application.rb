@@ -159,9 +159,9 @@ class Application < Cloud::Sdk::Cartridge
   #convinence method to cleanup an application
   def cleanup_and_delete
     reply = ResultIO.new
+    reply.append self.destroy_dns
     reply.append self.deconfigure_dependencies
     reply.append self.destroy
-    reply.append self.destroy_dns
     self.delete
     reply
   end
@@ -210,7 +210,7 @@ class Application < Cloud::Sdk::Cartridge
       ginst = self.group_instance_map[ginst_name]
       result, new_gear = ginst.add_gear(self)
       result_io.append result
-      self.add_dns(new_gear.uuid, @user.namespace, new_gear.get_proxy.get_public_hostname)
+      self.add_dns(new_gear.uuid[0..9], @user.namespace, new_gear.get_proxy.get_public_hostname)
       break
     }
     if not new_gear.nil?
@@ -234,6 +234,15 @@ class Application < Cloud::Sdk::Cartridge
       raise Exception.new("Cannot scale below one gear") if ginst.gears.length == 1
 
       gear = ginst.gears.first
+
+      dns = Cloud::Sdk::DnsService.instance
+      begin
+        dns.deregister_application(gear.uuid[0..9], @user.namespace)
+        dns.publish
+      ensure
+        dns.close
+      end
+
       gear.configured_components.each { |conf_comp|
         cinst = self.comp_instance_map[conf_comp]
         result_io.append gear.deconfigure(cinst)
@@ -241,15 +250,6 @@ class Application < Cloud::Sdk::Cartridge
 
       result_io.append gear.destroy
       ginst.gears.delete gear
-
-      dns = Cloud::Sdk::DnsService.instance
-      begin
-        dns.deregister_application(gear.uuid, @user.namespace)
-        dns.publish
-      ensure
-        dns.close
-      end
-
       break
     }
     # inform anyone who needs to know that this gear is no more
@@ -738,7 +738,7 @@ class Application < Cloud::Sdk::Cartridge
         next if not ginst_name.include? wb
         ginst = self.group_instance_map[ginst_name]
         ginst.gears.each { |gear|
-          self.add_dns(gear.uuid, @user.namespace, gear.get_proxy.get_public_hostname)
+          self.add_dns(gear.uuid[0..9], @user.namespace, gear.get_proxy.get_public_hostname)
         }
       }
     end
@@ -752,6 +752,18 @@ class Application < Cloud::Sdk::Cartridge
     dns = Cloud::Sdk::DnsService.instance
     begin
       dns.deregister_application(@name,@user.namespace)
+      if self.scalable
+        # add dns for web cart gears
+        wb = web_cart
+        # find the group instance where the web-cartridge is residing
+        self.group_instance_map.keys.each { |ginst_name|
+          next if not ginst_name.include? wb
+          ginst = self.group_instance_map[ginst_name]
+          ginst.gears.each { |gear|
+            dns.deregister_application(gear.uuid[0..9],@user.namespace)
+          }
+        }
+      end
       dns.publish
     ensure
       dns.close
