@@ -91,3 +91,5 @@ service libra stopuser "${uuid}"
 # Disable
 source "/var/lib/libra/${uuid}/.env/OPENSHIFT_RUN_DIR"
 touch "${OPENSHIFT_RUN_DIR}/stop_lock"
+
+echo "Idled: ${uuid}" | /usr/bin/logger -p local0.notice -t rhc_idler
