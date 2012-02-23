@@ -70,7 +70,7 @@ class MongoDataStoreTest < ActiveSupport::TestCase
     assert_equal(1, cu['consumed_gears'])
       
     by_uuid_cu = ds.find_by_uuid("Application", a_uuid)
-    assert_equal(orig_a, by_uuid_cu)
+    assert_equal(cu, by_uuid_cu)
   end
   
   test "create and save application with embedded" do

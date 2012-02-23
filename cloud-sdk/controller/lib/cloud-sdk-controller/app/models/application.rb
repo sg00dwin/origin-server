@@ -91,6 +91,20 @@ class Application < Cloud::Sdk::Cartridge
     apps
   end
   
+  def self.find_by_uuid(uuid)
+    hash = Cloud::Sdk::DataStore.instance.find_by_uuid(self.name,uuid)
+    return nil unless hash
+    user = CloudUser.hash_to_obj hash
+    app  = nil
+    user.applications.each do |next_app|
+      if next_app.uuid == uuid
+        app = next_app
+        break
+      end
+    end
+    return app
+  end
+  
   # @overload Application.get_available_cartridges(cart_type)
   #   @deprecated
   #   Returns List of names of available cartridges of specified type
