@@ -49,13 +49,11 @@ module Cloud
       end
       
       def create(app, gear)
-        result = nil
         cmd = "cdk-app-create"
         args = "--with-app-uuid '#{app.uuid}' --named '#{app.name}' --with-container-uuid '#{gear.uuid}'"
         Rails.logger.debug("App creation command: #{cmd} #{args}")
         reply = exec_command(cmd, args)
-        result = parse_result(reply)
-        result
+        parse_result(reply)
       end
     
       def destroy(app, gear)
@@ -63,8 +61,7 @@ module Cloud
         args = "--with-app-uuid '#{app.uuid}' --with-container-uuid '#{gear.uuid}'"
         Rails.logger.debug("App destroy command: #{cmd} #{args}")
         reply = exec_command(cmd, args)
-        result = parse_result(reply)
-        result
+        parse_result(reply)
       end
       
       def add_authorized_ssh_key(app, gear, ssh_key, key_type=nil, comment=nil)
@@ -84,17 +81,37 @@ module Cloud
         result = exec_command(cmd, args)
         parse_result(result)
       end
-    
-      def add_env_var(app, key, value)
+
+      def add_env_var(app, gear, key, value)
+        cmd = "cdk-env-var-add"
+        args = "--with-app-uuid '#{app.uuid}' --with-container-uuid '#{gear.uuid}' -k '#{key}' -v '#{value}'"
+        Rails.logger.debug("Env var add command: #{cmd} #{args}")
+        reply = exec_command(cmd, args)
+        parse_result(reply)
       end
       
-      def remove_env_var(app, key)
+      def remove_env_var(app, gear, key)
+        cmd = "cdk-env-var-remove"
+        args = "--with-app-uuid '#{app.uuid}' --with-container-uuid '#{gear.uuid}' -k '#{key}'"
+        Rails.logger.debug("Env var remove command: #{cmd} #{args}")
+        reply = exec_command(cmd, args)
+        parse_result(reply)
       end
     
-      def add_broker_auth_key(app, id, token)
+      def add_broker_auth_key(app, gear, iv, token)
+        cmd = "cdk-broker-auth-key-add"
+        args = "--with-app-uuid '#{app.uuid}' --with-container-uuid '#{gear.uuid}' -i '#{iv}' -t '#{token}'"
+        Rails.logger.debug("Add broker auth key command: #{cmd} #{args}")
+        reply = exec_command(cmd, args)
+        parse_result(reply)
       end
     
-      def remove_broker_auth_key(app)
+      def remove_broker_auth_key(app, gear)
+        cmd = "cdk-broker-auth-key-remove"
+        args = "--with-app-uuid '#{app.uuid}' --with-container-uuid '#{gear.uuid}'"
+        Rails.logger.debug("Add broker auth key command: #{cmd} #{args}")
+        reply = exec_command(cmd, args)
+        parse_result(reply)
       end
       
       def preconfigure_cartridge(app, gear, cart)
@@ -117,7 +134,7 @@ module Cloud
         if framework_carts.include? cart
           result_io = run_cartridge_command(cart, app, gear, "configure")
         elsif embedded_carts.include? cart
-          result_io, cart_data = add_component(app,gear,cart)
+          result_io, cart_data = add_component(app, gear, cart)
         else
           #no-op
         end
@@ -140,46 +157,114 @@ module Cloud
       def get_public_hostname
       end
       
-      def start(app, cart)
+      def start(app, gear, cart)
+        if framework_carts.include?(cart)
+          run_cartridge_command(cart, app, gear, "start")
+        elsif embedded_carts.include? cart
+          start_component(app, gear, cart)
+        else
+          ResultIO.new
+        end
       end
       
-      def stop(app, cart)
+      def stop(app, gear, cart)
+        if framework_carts.include?(cart)
+          run_cartridge_command(cart, app, gear, "stop")
+        elsif embedded_carts.include? cart
+          stop_component(app, gear, cart)
+        else
+          ResultIO.new
+        end
       end
       
-      def force_stop(app, cart)
-      end
- 
-      def expose_port(app, cart)
-      end
- 
-      def conceal_port(app, cart)
-      end
-      
-      def show_port(app, cart)
+      def force_stop(app, gear, cart)
+        if framework_carts.include?(cart)
+          run_cartridge_command(cart, app, gear, "force-stop")
+        else
+          ResultIO.new
+        end          
       end
       
-      def restart(app, cart)
+      def expose_port(app, gear, cart)
+        run_cartridge_command(cart, app, gear, "expose-port")
+      end
+
+      def conceal_port(app, gear, cart)
+        run_cartridge_command(cart, app, gear, "conceal-port")
+      end
+
+      def show_port(app, gear, cart)
+        run_cartridge_command(cart, app, gear, "show-port")
+      end
+
+      def restart(app, gear, cart)
+        if framework_carts.include?(cart)
+          run_cartridge_command(cart, app, gear, "restart")
+        elsif embedded_carts.include? cart
+          restart_component(app, gear, cart)
+        else
+          ResultIO.new                  
+        end
+      end
+
+      def reload(app, gear, cart)
+        if framework_carts.include?(cart)
+          run_cartridge_command(cart, app, gear, "reload")
+        elsif embedded_carts.include? cart
+          reload_component(app, gear, cart)
+        else
+          ResultIO.new          
+        end
       end
       
-      def reload(app, cart)
+      def status(app, gear, cart)
+        if framework_carts.include?(cart)
+          run_cartridge_command(cart, app, gear, "status")
+        elsif embedded_carts.include? cart
+          component_status(app, gear, cart)
+        else
+          ResultIO.new          
+        end
       end
       
-      def status(app, cart)
+      def tidy(app, gear, cart)
+        if framework_carts.include?(cart)        
+          run_cartridge_command(cart, app, gear, "tidy") 
+        else
+          ResultIO.new
+        end
       end
       
-      def tidy(app, cart)
+      def threaddump(app, gear, cart)
+        if framework_carts.include?(cart)
+          run_cartridge_command(cart, app, gear, "threaddump")
+        else
+          ResultIO.new
+        end          
       end
       
-      def threaddump(app, cart)
+      def system_messages(app, gear, cart)
+        if framework_carts.include?(cart)
+          run_cartridge_command(cart, app, gear, "system-messages")
+        else
+          ResultIO.new
+        end          
       end
       
-      def system_messages(app, cart)
+      def add_alias(app, gear, cart, server_alias)
+        if framework_carts.include?(cart)
+          run_cartridge_command(cart, app, gear, "add-alias", server_alias)
+        else
+          ResultIO.new
+        end
       end
       
-      def add_alias(app, cart, server_alias)
-      end
-      
-      def remove_alias(app, cart, server_alias)
+      def remove_alias(app, gear, cart, server_alias)
+        if framework_carts.include?(cart)        
+          run_cartridge_command(cart, app, gear, "remove-alias", server_alias)
+        else
+          ResultIO.new
+        end
       end
       
       def framework_carts
@@ -214,19 +299,24 @@ module Cloud
         return run_cartridge_command('embedded/' + component, app, gear, 'deconfigure')
       end
 
-      def start_component(app, component)
+      def start_component(app, gear, component)
+        run_cartridge_command('embedded/' + component, app, gear, "start")
       end
       
-      def stop_component(app, component)
+      def stop_component(app, gear, component)
+        run_cartridge_command('embedded/' + component, app, gear, "stop")
       end
       
-      def restart_component(app, component)
+      def restart_component(app, gear, component)
+        run_cartridge_command('embedded/' + component, app, gear, "restart")    
       end
       
-      def reload_component(app, component)
+      def reload_component(app, gear, component)
+        run_cartridge_command('embedded/' + component, app, gear, "reload")    
       end
       
-      def component_status(app, component)
+      def component_status(app, gear, component)
+        run_cartridge_command('embedded/' + component, app, gear, "status")    
       end
       
       def move_app(app, destination_container_proxy, node_profile=nil)
@@ -234,7 +324,7 @@ module Cloud
       
       def update_namespace(app, cart, new_ns, old_ns)
       end
-
+      
       def run_cartridge_command(framework, app, gear, command, arg=nil)
         if app.scalable and framework!=app.proxy_cartridge
           appname = gear.uuid[0..9] 
