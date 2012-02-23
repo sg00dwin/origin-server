@@ -33,6 +33,10 @@ class AppEventsController < BaseController
           application.conceal_port
         when "show-port"
           application.show_port
+        when "scale-up"
+          application.scaleup
+        when "scale-down"
+          application.scaledown
         else
           @reply = RestReply.new(:bad_request)
           message = Message.new(:error, "Invalid event #{event}.  Valid events are start, stop, restart, force-stop")

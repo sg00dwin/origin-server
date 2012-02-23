@@ -187,6 +187,7 @@ class Application < Cloud::Sdk::Cartridge
 
   def web_cart
     web_cart = nil
+    return web_cart if not self.scalable
     framework_carts = CartridgeCache.cartridge_names('standalone')
     self.requires_feature.each do |feature|
       if framework_carts.include? feature and feature != self.proxy_cartridge
@@ -200,6 +201,7 @@ class Application < Cloud::Sdk::Cartridge
 
   def scaleup
     result_io = ResultIO.new
+    return result_io if not self.scalable
     wb = web_cart
     new_gear = nil
     # find the group instance where the web-cartridge is residing
@@ -221,6 +223,7 @@ class Application < Cloud::Sdk::Cartridge
 
   def scaledown
     result_io = ResultIO.new
+    return result_io if not self.scalable
     wb = web_cart
     # find the group instance where the web-cartridge is residing
     self.group_instance_map.keys.each { |ginst_name|
@@ -727,6 +730,18 @@ class Application < Cloud::Sdk::Cartridge
     self.class.notify_observers(:before_create_dns, {:application => self, :reply => reply})    
     public_hostname = self.container.get_public_hostname
     add_dns(@name, @user.namespace, public_hostname)
+    if self.scalable
+      # add dns for web cart gears
+      wb = web_cart
+      # find the group instance where the web-cartridge is residing
+      self.group_instance_map.keys.each { |ginst_name|
+        next if not ginst_name.include? wb
+        ginst = self.group_instance_map[ginst_name]
+        ginst.gears.each { |gear|
+          self.add_dns(gear.uuid, @user.namespace, gear.get_proxy.get_public_hostname)
+        }
+      }
+    end
     self.class.notify_observers(:after_create_dns, {:application => self, :reply => reply})    
     reply
   end
