@@ -20,7 +20,7 @@ Feature: domains
     When I send a POST request to "/domains" with the following:"namespace=cucumber"
     Then the response should be "201"
     
-  Scenario: Create domain with blank, missing and invalid namespace
+  Scenario: Create domain with blank, missing, too long and invalid namespace
     Given a new guest account
     And I am a valid user
     And I accept "XML"
@@ -29,6 +29,8 @@ Feature: domains
     When I send a POST request to "/domains" with the following:""
     Then the response should be "422"
     When I send a POST request to "/domains" with the following:"namespace=cucum?ber"
+    Then the response should be "422"
+    When I send a POST request to "/domains" with the following:"namespace=cucumbercucumbercucumbercucumbercucumbercucumbercucumbercucumber"
     Then the response should be "422"
     
   Scenario: Retrieve domain
@@ -56,7 +58,7 @@ Feature: domains
     When I send a PUT request to "/domains/cucumber" with the following:"namespace=cucumber1"
     Then the response should be "200"
     
-  Scenario: Update domain with blank, missing and invalid namespace
+  Scenario: Update domain with blank, missing, too long and invalid namespace
     Given a new guest account
     And I am a valid user
     And I accept "XML"
@@ -67,6 +69,8 @@ Feature: domains
     When I send a PUT request to "/domains/cucumber" with the following:""
     Then the response should be "422"
     When I send a PUT request to "/domains/cucumber" with the following:"namespace=cucumber?"
+    Then the response should be "422"
+    When I send a PUT request to "/domains/cucumber" with the following:"namespace=cucumbercucumbercucumbercucumbercucumbercucumbercucumbercucumber"
     Then the response should be "422"
     
   Scenario: Update non-exitent domain
