@@ -37,12 +37,10 @@ module Cloud
       def initialize(id)
         @id = id
       end
-      
+     
       def reserve_uid
-        reserved_uid = nil
-        reserved_uid
       end
-      
+ 
       def get_available_cartridges
         reply = exec_command('cdk-cartridge-list', '--porcelain --with-descriptors')
         result = parse_result(reply)
@@ -61,6 +59,12 @@ module Cloud
       end
     
       def destroy(app, gear)
+        cmd = "cdk-app-destroy"
+        args = "--with-app-uuid '#{app.uuid}' --with-container-uuid '#{gear.uuid}'"
+        Rails.logger.debug("App destroy command: #{cmd} #{args}")
+        reply = exec_command(cmd, args)
+        result = parse_result(reply)
+        result
       end
       
       def add_authorized_ssh_key(app, gear, ssh_key, key_type=nil, comment=nil)
