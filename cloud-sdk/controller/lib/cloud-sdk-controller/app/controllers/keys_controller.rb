@@ -71,7 +71,7 @@ class KeysController < BaseController
         end
       end
       respond_with @reply, :status => @reply.status
-      return
+    return
     end
     #check to see if key already exists
     if user.ssh_keys
@@ -125,7 +125,7 @@ class KeysController < BaseController
     return
     end
 
-    key = Key.new(name, type, content)
+    key = Key.new(id, type, content)
     if key.invalid?
       @reply = RestReply.new(:unprocessable_entity)
       key.errors.keys.each do |field|
@@ -138,7 +138,17 @@ class KeysController < BaseController
         format.xml { render :xml => @reply, :status => @reply.status }
         format.json { render :json => @reply, :status => @reply.status }
       end
-      return
+    return
+    end
+
+    if user.ssh_keys.nil? or not user.ssh_keys.has_key?(id)
+      @reply = RestReply.new(:not_found)
+      @reply.messages.push(Message.new(:error, "SSH key with name #{id} not found for user #{@login}"))
+      respond_with(@reply) do |format|
+        format.xml { render :xml => @reply, :status => @reply.status }
+        format.json { render :json => @reply, :status => @reply.status }
+      end
+    return
     end
 
     begin
