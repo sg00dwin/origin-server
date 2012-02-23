@@ -12,8 +12,7 @@
 # time when this file is sourced.
 # 
 
-FORWARD_CONF=${FORWARD_CONF:="/var/named/dynamic/forwarders.conf"}
-#FORWARD_CONF=${FORWARD_CONF:="/var/lib/dhclient/forwarders.conf"}
+FORWARD_CONF=${FORWARD_CONF:="/var/named/forwarders.conf"}
 
 if [ -n "$new_domain_name_servers" ]
 then
