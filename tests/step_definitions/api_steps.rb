@@ -1,13 +1,18 @@
 require 'rubygems'
 require 'rest_client'
 require 'nokogiri'
+#require '/var/www/libra/broker/lib/express/broker/dns_service'
+
 
 Before do
   @base_url = "https://localhost/broker/rest"
 end
 
 After do |scenario|
-  #TODO delete user
+  #dns = Express::Broker::DnsService.new
+  #dns.deregister_namespace("cucumber")
+  #dns.publish
+  #dns.close
 end
     
 Given /^I am a valid user$/ do 
