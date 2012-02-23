@@ -63,10 +63,11 @@ class KeysController < BaseController
 
     key = Key.new(name, type, content)
     if key.invalid?
-      key.errors.keys.each do |key|
-        error_messages = domain.errors.get(key)
+      @reply = RestReply.new(:unprocessable_entity)
+      key.errors.keys.each do |field|
+        error_messages = key.errors.get(field)
         error_messages.each do |error_message|
-          @reply.messages.push(Message.new(:error, error_message[:message], error_message[:exit_code], key))
+          @reply.messages.push(Message.new(:error, error_message[:message], error_message[:exit_code], field))
         end
       end
       respond_with @reply, :status => @reply.status
@@ -77,13 +78,13 @@ class KeysController < BaseController
       user.ssh_keys.each do |key_name, key|
         if key_name == name
           @reply = RestReply.new(:conflict)
-          @reply.messages.push(Message.new(:error, "SSH key with name #{name} already exists. Please choose a different name"))
+          @reply.messages.push(Message.new(:error, "SSH key with name #{name} already exists. Use a different name or delete conflicting key and retry."))
           respond_with @reply, :status => @reply.status
         return
         end
         if key["key"] == content
           @reply = RestReply.new(:conflict)
-          @reply.messages.push(Message.new(:error, "Given public key is already in use. Use different key or delete conflicting key and retry"))
+          @reply.messages.push(Message.new(:error, "Given public key is already in use. Use different key or delete conflicting key and retry."))
           respond_with @reply, :status => @reply.status
         return
         end
@@ -126,10 +127,11 @@ class KeysController < BaseController
 
     key = Key.new(name, type, content)
     if key.invalid?
-      key.errors.keys.each do |key|
-        error_messages = domain.errors.get(key)
+      @reply = RestReply.new(:unprocessable_entity)
+      key.errors.keys.each do |field|
+        error_messages = key.errors.get(field)
         error_messages.each do |error_message|
-          @reply.messages.push(Message.new(:error, error_message[:message], error_message[:exit_code], key))
+          @reply.messages.push(Message.new(:error, error_message[:message], error_message[:exit_code], field))
         end
       end
       respond_with(@reply) do |format|

@@ -4,7 +4,7 @@ class NamespaceValidator < ActiveModel::EachValidator
 
   def validate_each(record, attribute, val)
     if val.nil?
-      record.errors.add(attribute, {:message => "Namespace is required.", :exit_code => 106})
+      record.errors.add(attribute, {:message => "Namespace is required and cannot be blank.", :exit_code => 106})
     end
     if !(val =~ /\A[A-Za-z0-9]+\z/)
       record.errors.add(attribute, {:message => "Invalid namespace: #{val}. Namespace must only contain alphanumeric characters.", :exit_code => 106})

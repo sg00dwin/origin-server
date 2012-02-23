@@ -94,7 +94,7 @@ class RestApiTest < ActiveSupport::TestCase
 
   def test_key_server_validation
     key = Key.new :as => @user
-    assert_raise ActiveResource::BadRequest do #FIXME US1895, when correct uncomment
+    assert_raise ActiveResource::ResourceInvalid do #FIXME US1895, when correct uncomment
       key.save_without_validation
     end
     #assert_equal 2, key.errors.length
