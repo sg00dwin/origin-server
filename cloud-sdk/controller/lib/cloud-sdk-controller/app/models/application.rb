@@ -352,17 +352,18 @@ class Application < Cloud::Sdk::Cartridge
       pub_ginst = self.group_instance_map[pub_inst.group_instance_name]
 
       r = ResultIO.new
-      pub_out = {}
+      pub_out = []
       run_on_gears(pub_ginst.gears, r, false) do |gear, r|
         appname = gear.uuid[0..9]
         appname = self.name if pub_inst.parent_cart_name == self.framework
         gout, gstatus = gear.execute_connector(pub_inst, conn.from_connector.name, [appname, self.user.namespace, gear.uuid])
         if gstatus==0
-          pub_out[gear.uuid] = gout
+          pub_out.push("'#{gear.uuid}'='#{gout}'")
         end
       end
 
-      Rails.logger.debug "Output of publisher - '#{pub_out.to_json}'"
+      input_to_subscriber = Shellwords::shellescape(pub_out.join(' '))
+      Rails.logger.debug "Output of publisher - '#{pub_out}'"
 
       sub_inst = self.comp_instance_map[conn.to_comp_inst]
       sub_ginst = self.group_instance_map[sub_inst.group_instance_name]
@@ -370,7 +371,7 @@ class Application < Cloud::Sdk::Cartridge
       run_on_gears(sub_ginst.gears, r, false) do |gear, r|
         appname = gear.uuid[0..9]
         appname = self.name if sub_inst.parent_cart_name == self.framework
-        gout, gstatus = gear.execute_connector(sub_inst, conn.to_connector.name, [appname, self.user.namespace, gear.uuid, "'#{pub_out.to_json}'"])
+        gout, gstatus = gear.execute_connector(sub_inst, conn.to_connector.name, [appname, self.user.namespace, gear.uuid, input_to_subscriber])
       end
     }
   end
