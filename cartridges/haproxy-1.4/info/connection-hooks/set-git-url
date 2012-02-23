@@ -1,7 +1,11 @@
 #!/bin/bash
 
 # Set a newly added gear's git url to the list of mirrors we need to push too.
-APP_CHECKOUT_DIR=git-gear-add.$$
+CART_DIR=/usr/libexec/li/cartridges
+CART_NAME=haproxy
+CART_VERSION=1.4
+CART_INFO_DIR=$CART_DIR/$CART_NAME-$CART_VERSION/info
+export GIT_SSH=$CART_INFO_DIR/bin/ssh
 
 # Exit on any errors
 set -e
@@ -15,20 +19,38 @@ function print_help {
 }
 
 
+function setup_git_repo_from_framework() {
+    checkout_dir_name=app-framework-gear
+    pushd "${OPENSHIFT_HOMEDIR}/git/${OPENSHIFT_APP_NAME}.git" > /dev/null
+    git clone --bare "$1" /tmp/$checkout_dir_name
+    rm -rf * 2> /dev/null  ||  :
+    mv -f /tmp/$checkout_dir_name/[^h]* ./ 2> /dev/null  ||  :
+    # git add remote app-fw-gear "$url"
+    popd > /dev/null
+}
+
+
 function register_gear() {
     [ $# -lt 2 ]  &&  return 1
 
-    name="$1"
-    git_url="$2"
+    name=$1
+    git_url=$2
 
     # Generate registry entry of the form: gear-${gear_name}=${gear_git_url}
     entry="gear-$name=$git_url"
     gear_registry=$OPENSHIFT_APP_DIR/conf/gear-registry.git
 
+    #  Check if its the first framework gear and if so setup the haproxy
+    #  git repo from there.
+    [ -s "$gear_registry" ]  ||  setup_git_repo_from_framework "$git_url"
+
     #  Add to the gear git registry if entry doesn't exist.
     if ! grep "$entry" $gear_registry 2>&1 > /dev/null; then
         echo "$entry" >> $gear_registry
+        return 0
     fi
+
+    return 1
 }
 
 
@@ -45,46 +67,31 @@ done
 
 [ $# -gt 3 ] || print_help
 
-# This doesn't work at this time because sourcing in /etc/libra/node.conf gives
-# a permission denied issue -- think its how the connection-hooks are run.
-if [ -n "$FIXED_CONNECTION_HOOK_PERMS_ISSUE" ]; then
-    CART_DIR=/usr/libexec/li/cartridges
-    source ${CART_DIR}/abstract/info/lib/util
-
-    setup_basic_hook "$1" $2 $3
-
-    import_env_vars
-else
-    # Import Environment Variables
-    for f in ~/.env/*; do
-        source $f
-    done
-fi
-
-# checkout the current code.
-app_git_url=${OPENSHIFT_HOMEDIR}/git/${OPENSHIFT_APP_NAME}.git
-git clone "$app_git_url" "/tmp/$APP_CHECKOUT_DIR"
-
-# Remove the first 3 args and process all the gear git urls:
-for url in ${@:4}; do
-    gear_name=$(echo "$url" | cut -f 2 -d '@' | cut -f 1 -d '.')
-    register_gear "$gear_name" "$url"
-
-    #
-    # FIXME: This maybe inefficient if we have jenkins as we will do builds on
-    #        every gear. rsync is more efficient if each framework has a gear
-    #        sync - as what to sync varies by framework - do a push for now.
-    #
-    pushd "/tmp/$APP_CHECKOUT_DIR" > /dev/null
-    git add remote gear-$gear_name "$url"
-
-    # Need two git "mirrored" pushes as the first push updates us with the
-    # newly added gear-$gear_name.
-    git push --mirror gear-$gear_name  ||  :
-    git push --mirror gear-$gear_name  ||  :
-
-    popd > /dev/null
-
+# Import Environment Variables
+for f in ~/.env/*; do
+    source $f
 done
 
-rm -rf "/tmp/$APP_CHECKOUT_DIR"
+#  Remove the first 3 args and process all the remaining args of the form
+#  key=value. The values are the git urls for each gear.
+for arg in "${@:4}"; do
+    url=$(echo "$arg" | tr "\n" " " | cut -f 2 -d '=' | tr -d "'")
+    gear_name=$(echo "$url" | cut -f 2 -d '@' | cut -f 1 -d '.')
+    if register_gear "$gear_name" "$url"; then
+        #
+        # FIXME: This maybe inefficient if we have jenkins as we will do builds
+        #        on every gear. rsync is more efficient if each framework has a
+        #        gear sync - as what to sync varies by framework - do a git push
+        #        for now.
+        #
+
+        pushd "${OPENSHIFT_HOMEDIR}/git/${OPENSHIFT_APP_NAME}.git" > /dev/null
+        git add remote gear-$gear_name "$url"
+        # Need two git "mirrored" pushes as the first push updates us with the
+        # newly added gear-$gear_name.
+        git push --mirror gear-$gear_name  ||  :
+        git push --mirror gear-$gear_name  ||  :
+        popd > /dev/null
+    fi
+done
+

@@ -9,7 +9,7 @@ function print_help {
     echo "Usage: $0 app-name namespace uuid"
     echo "Start a running application"
 
-    echo "$0 $@" | logger -p local0.notice -t libra_httpd_start
+    echo "$0 $@" | logger -p local0.notice -t libra_haproxy_set_proxy
     exit 1
 }
 
@@ -26,28 +26,21 @@ done
 
 [ $# -gt 3 ] || print_help
 
-# This doesn't work at this time because sourcing in /etc/libra/node.conf gives
-# a permission denied issue -- think its how the connection-hooks are run.
-if [ -n "$FIXED_CONNECTION_HOOK_PERMS_ISSUE" ]; then
-    CART_DIR=/usr/libexec/li/cartridges
-    source ${CART_DIR}/abstract/info/lib/util
-
-    setup_basic_hook "$1" $2 $3
-
-    import_env_vars
-else
-    # Import Environment Variables
-    for f in ~/.env/*; do
-        source $f
-    done
-fi
+# Import Environment Variables
+for f in ~/.env/*; do
+    source $f
+done
 
 haproxy_cfg=$OPENSHIFT_APP_DIR/conf/haproxy.cfg
-# Remove the first 3 args and process all the gear endpoints:
-for ep in ${@:4}; do
-    #  Add gear to the proxy configuration.
+# Remove the first 3 args and process all the remaining args of the form k=v.
+# The values are the gear endpoints.
+for arg in "${@:4}"; do
+    ep=$(echo "$arg" | tr "\n" " " | cut -f 2 -d '=' | tr -d "'")
+    #  Add gear to the proxy configuration if not already in there.
     #  Gear end-point is the form: $gear-dns-entry:$gear-port
     gear_name=$(echo "$ep" | cut -f 1 -d '.')
-    echo "    server $gear_name $ep check fall 2 rise 3 inter 2000" >> "$haproxy_cfg"
+    if ! grep "server gear-$gear_name" "$haproxy_cfg" 2>&1 > /dev/null; then
+        echo "    server gear-$gear_name $ep check fall 2 rise 3 inter 2000" >> "$haproxy_cfg"
+    fi
 done
 
