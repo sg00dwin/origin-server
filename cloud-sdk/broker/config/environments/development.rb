@@ -36,7 +36,7 @@ Broker::Application.configure do
   ############################################
   # OpenShift Configuration Below this point #
   ############################################
-  config.app_scope = "cloudsdkbroker"
+  config.app_scope = "broker"
 
   # CDK Config
   config.cdk = {
