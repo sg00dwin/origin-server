@@ -175,7 +175,7 @@ module Streamline
     else
       # <b>DEPRECATED</b> Will be removed
       http_post(@@change_password_url, args) do |json|
-        return js
+        return json
       end
     end
   end
