@@ -5,10 +5,11 @@ class Application < Cloud::Sdk::Cartridge
                 :state, :group_instance_map, :comp_instance_map, :conn_endpoints_list,
                 :domain, :group_override_map, :working_comp_inst_hash,
                 :working_group_inst_hash, :configure_order, :start_order,
-                :scalable, :proxy_cartridge
+                :scalable, :proxy_cartridge, :init_git_url
   primary_key :name
   exclude_attributes :user, :comp_instance_map, :group_instance_map, 
-                :working_comp_inst_hash, :working_group_inst_hash
+                :working_comp_inst_hash, :working_group_inst_hash,
+                :init_git_url
   include_attributes :comp_instances, :group_instances
   
   validate :extended_validator
@@ -22,13 +23,24 @@ class Application < Cloud::Sdk::Cartridge
   # @param [optional, String] uuid Unique identifier for the application
   # @param [deprecated, String] node_profile Node profile for the first application gear
   # @param [deprecated, String] framework Cartridge name to use as the framwwork of the application
-  def initialize(user=nil, app_name=nil, uuid=nil, node_profile=nil, framework=nil, will_scale=false)
+  def initialize(user=nil, app_name=nil, uuid=nil, node_profile=nil, framework=nil, template=nil, will_scale=false)
     self.user = user
-    from_descriptor({"Name"=>app_name, "Subscribes"=>{"doc-root"=>{"Type"=>"FILESYSTEM:doc-root"}}})
+    
+    if template.nil?
+      from_descriptor({"Name"=>app_name, "Subscribes"=>{"doc-root"=>{"Type"=>"FILESYSTEM:doc-root"}}})
+      self.requires_feature = []
+      self.requires_feature << framework unless framework.nil?      
+    else
+      template_descriptor = YAML.load(template.descriptor_yaml)
+      template_descriptor["Name"] = app_name
+      from_descriptor(template_descriptor)
+      @init_git_url = template.git_url
+    end
+    
     self.creation_time = DateTime::now().strftime
     self.uuid = uuid || Cloud::Sdk::Model.gen_uuid
-    self.requires_feature = [framework]
     self.scalable = will_scale
+    
     if self.scalable and framework != "haproxy-1.4"
       self.proxy_cartridge = "haproxy-1.4"
       self.requires_feature << self.proxy_cartridge
@@ -203,6 +215,7 @@ class Application < Cloud::Sdk::Cartridge
   def scaleup
     result_io = ResultIO.new
     wb = web_cart
+    new_gear = nil
     # find the group instance where the web-cartridge is residing
     self.group_instance_map.keys.each { |ginst_name|
       next if not ginst_name.include? wb
@@ -212,9 +225,11 @@ class Application < Cloud::Sdk::Cartridge
       self.add_dns(new_gear.uuid, @user.namespace, new_gear.get_proxy.get_public_hostname)
       break
     }
-    result_io.append self.configure_dependencies
-    self.add_system_ssh_keys([new_gear])
-    self.add_ssh_keys([new_gear])
+    if not new_gear.nil?
+      result_io.append self.configure_dependencies
+      self.add_system_ssh_keys([new_gear])
+      self.add_ssh_keys([new_gear])
+    end
     result_io
   end
 
@@ -286,46 +301,52 @@ class Application < Cloud::Sdk::Cartridge
     cleanup_deleted_components
     # self.save
     
+    exceptions = []
+    Rails.logger.debug "Configure order is #{self.configure_order.inspect}"
     #process new additions
     #TODO: fix configure after framework cartridge is no longer a requirement for adding embedded cartridges
-    self.configure_order.each do |comp_inst_name|
+    self.configure_order.reverse.each do |comp_inst_name|
       comp_inst = self.comp_instance_map[comp_inst_name]
       group_inst = self.group_instance_map[comp_inst.group_instance_name]
       begin
         group_inst.fulfil_requirements(self)
         run_on_gears(group_inst.gears, reply) do |gear, r|
-          r.append gear.configure(comp_inst)
+          r.append gear.configure(comp_inst, @init_git_url)
           r.append process_cartridge_commands(r.cart_commands)
           # self.save
         end
       rescue Exception => e
-        succesful_gears = e.message[:succesful].map{|g| g[:gear]}
+        Rails.logger.debug e.message
+        Rails.logger.debug e.backtrace.inspect        
+        
+        succesful_gears = []
+        succesful_gears = e.message[:succesful].map{|g| g[:gear]} if e.message[:succesful]
         gear_exception = e.message[:exception]        
 
         #remove failed component from all gears
         run_on_gears(succesful_gears, reply, false) do |gear, r|
           r.append gear.deconfigure(comp_inst)
           r.append process_cartridge_commands(r.cart_commands)
-          # self.save
+          #self.save
         end
         
         #remove failed cartridge dependency
         self.requires_feature.delete(comp_inst.parent_cart_name)
-        # self.save
+        #self.save
         
         #destroy any unused gears
         run_on_gears(nil, reply, false) do |gear, r|
           r.append gear.destroy if gear.configured_components.length == 0
-          # self.save
+          #self.save
         end
 
         self.save
-        
-        #re-configure to update application model
-        self.configure_dependencies
-        
-        raise gear_exception
+        exceptions << gear_exception
       end
+    end
+    
+    unless exceptions.empty?
+      raise exceptions.first
     end
     
     execute_connections
@@ -344,22 +365,26 @@ class Application < Cloud::Sdk::Cartridge
       pub_inst = self.comp_instance_map[conn.from_comp_inst]
       pub_ginst = self.group_instance_map[pub_inst.group_instance_name]
 
-      output = ResultIO.new
-      run_on_gears(pub_ginst.gears, output, false) do |gear, r|
+      r = ResultIO.new
+      pub_out = {}
+      run_on_gears(pub_ginst.gears, r, false) do |gear, r|
         appname = gear.uuid[0..9]
         appname = self.name if pub_inst.parent_cart_name == self.framework
-        r.append gear.execute_connector(pub_inst, conn.from_connector.name, [appname, self.user.namespace, gear.uuid])
+        gout, gstatus = gear.execute_connector(pub_inst, conn.from_connector.name, [appname, self.user.namespace, gear.uuid])
+        if gstatus==0
+          pub_out[gear.uuid] = gout
+        end
       end
 
-      Rails.logger.debug "Output of publisher - #{output}"
+      Rails.logger.debug "Output of publisher - '#{pub_out.to_json}'"
 
       sub_inst = self.comp_instance_map[conn.to_comp_inst]
       sub_ginst = self.group_instance_map[sub_inst.group_instance_name]
 
-      run_on_gears(sub_ginst.gears, output, false) do |gear, r|
+      run_on_gears(sub_ginst.gears, r, false) do |gear, r|
         appname = gear.uuid[0..9]
         appname = self.name if sub_inst.parent_cart_name == self.framework
-        r.append gear.execute_connector(sub_inst, conn.to_connector.name, [appname, self.user.namespace, gear.uuid, "'#{output.data}'"])
+        gout, gstatus = gear.execute_connector(sub_inst, conn.to_connector.name, [appname, self.user.namespace, gear.uuid, "'#{pub_out.to_json}'"])
       end
     }
   end

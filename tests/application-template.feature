@@ -35,7 +35,7 @@ Feature: Application template list
 	Then the response should be "200"
 	And the template should not exist in list
 	
-  Scenario: Add a template and search for it by UUID
+  Scenario: Add a template and create an application
 	Given a new guest account
     And I am a valid user
     And I accept "XML"

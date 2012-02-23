@@ -14,7 +14,7 @@ class ApplicationTemplateController < BaseController
       @reply = RestReply.new(:ok, "application_template", template)
       respond_with @reply, :status => @reply.status
     else
-      templates = ApplicationTemplate.find_by_tag(id_or_tag)      
+      templates = ApplicationTemplate.find_all(id_or_tag)      
       @reply = RestReply.new(:ok, "application_templates", templates)
       respond_with @reply, :status => @reply.status
     end

@@ -7,7 +7,7 @@
   DEFAULT_SSH_KEY_NAME = "default"
   
   validates_each :login do |record, attribute, val|
-    record.errors.add(attribute, {:message => "Invalid characters found in login '#{val}' ", :code => 107}) if val =~ /["\$\^<>\|%\/;:,\\\*=~]/
+    record.errors.add(attribute, {:message => "Invalid characters found in login '#{val}' ", :exit_code => 107}) if val =~ /["\$\^<>\|%\/;:,\\\*=~]/
   end
   
   validates_each :namespace do |record, attribute, val|

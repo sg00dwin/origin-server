@@ -45,5 +45,22 @@ module Cloud::Sdk
       @user.destroy
       notify_observers(:after_container_destroy)      
     end
+    
+    def load_env
+      env = {}
+      # Load environment variables into a hash
+      Dir["#{user.homedir}/.env/*"].each { |f|
+        contents = nil
+        File.open(f) {|input|
+          contents = input.read.chomp
+          index = contents.index('=')
+          contents = contents[(index + 1)..-1]
+          contents = contents[/'(.*)'/, 1] if contents.start_with?("'")
+          contents = contents[/"(.*)"/, 1] if contents.start_with?('"')
+        }
+        env[File.basename(f).intern] =  contents
+      }
+      env
+    end
   end
 end

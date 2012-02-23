@@ -164,7 +164,7 @@ module Express
     
       def remove_broker_auth_key(app, gear)
         result = execute_direct(@@C_CONTROLLER, 'broker-auth-key-remove', "--with-app-uuid '#{app.uuid}' --with-container-uuid '#{gear.uuid}'")
-        handle_controller_result(result)
+        parse_result(result)
       end
       
       def preconfigure_cartridge(app, gear, cart)
@@ -176,12 +176,12 @@ module Express
         end
       end
       
-      def configure_cartridge(app, gear, cart)
+      def configure_cartridge(app, gear, cart, template_git_url=nil)
         result_io = ResultIO.new
         cart_data = nil
                   
         if framework_carts.include? cart
-          result_io = run_cartridge_command(cart, app, gear, "configure")
+          result_io = run_cartridge_command(cart, app, gear, "configure", template_git_url)
         elsif embedded_carts.include? cart
           result_io, cart_data = add_component(app,gear,cart)
         else
@@ -227,7 +227,13 @@ module Express
 
       def execute_connector(app, gear, cart, connector_name, input_args)
         mcoll_reply = execute_direct(@@C_CONTROLLER, 'connector-execute', "--gear-uuid '#{gear.uuid}' --cart-name '#{cart}' --hook-name '#{connector_name}' " + input_args.join(" "))
-        parse_result(mcoll_reply)
+        if mcoll_reply and mcoll_reply.length>0
+          mcoll_reply = mcoll_reply[0]
+          output = mcoll_reply.results[:data][:output]
+          exitcode = mcoll_reply.results[:data][:exitcode]
+          return [output, exitcode]
+        end
+        [nil, nil]
       end
       
       def start(app, gear, cart)

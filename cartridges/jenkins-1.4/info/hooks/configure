@@ -6,7 +6,7 @@
 set -e
 
 function print_help {
-    echo "Usage: $0 app-name namespace uuid"
+    echo "Usage: $0 app-name namespace uuid git-url"
 
     echo "$0 $@" | logger -p local0.notice -t libra_jenkins_configure
     exit 1
@@ -53,13 +53,13 @@ do
     esac
 done
 
-[ $# -eq 3 ] || print_help
+[ $# -eq 4 -o $# -eq 3 ] || print_help
 
 CART_DIR=${CART_DIR:=/usr/libexec/li/cartridges}
 app_type="jenkins-1.4"
 
 source ${CART_DIR}/abstract/info/lib/util
-setup_configure "$1" $2 $3
+setup_configure "$1" $2 $3 $4
 
 unobfuscate_app_home $uuid $namespace $application
 
@@ -77,7 +77,12 @@ system_builder_password_hash=`obfuscate_password $system_builder_password`
 sed -i "s,PASSWORD,$system_builder_password_hash,g" "$APP_DIR/data/users/system_builder/config.xml"
 echo $system_builder_password > $APP_HOME/.jenkins_password
 
-create_repo $application $user_id $group_id $uuid
+# Repo
+if [ ! -d $git_url ]; then
+	clone_external_git_repo $application $user_id $group_id $uuid $git_url
+else
+	create_repo $application $user_id $group_id $uuid
+fi
 
 #
 # Find an open localhost IP

@@ -6,7 +6,7 @@
 set -e
 
 function print_help {
-    echo "Usage: $0 app-name namespace uuid"
+    echo "Usage: $0 app-name namespace uuid git-url"
 
     echo "$0 $@" | logger -p local0.notice -t libra_raw_configure
     exit 1
@@ -23,19 +23,23 @@ do
 done
 
 
-[ $# -eq 3 ] || print_help
+[ $# -eq 4 -o $# -eq 3 ] || print_help
 
 CART_DIR=${CART_DIR:=/usr/libexec/li/cartridges}
 app_type="raw-0.1"
 
 source ${CART_DIR}/abstract/info/lib/util
-setup_configure "$1" $2 $3
+setup_configure "$1" $2 $3 $4
 
 check_app_dir_doesnt_exist
 unobfuscate_app_home $uuid $namespace $application
 
-clone_git_repo $application $user_id $group_id $uuid "raw 0.1"
-
+# Repo
+if [ ! -d $git_url ]; then
+	clone_external_git_repo $application $user_id $group_id $uuid $git_url
+else
+	clone_git_repo $application $user_id $group_id $uuid "raw 0.1"
+fi
 
 #
 # Create the core of the application

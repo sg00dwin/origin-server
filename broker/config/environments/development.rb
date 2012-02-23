@@ -93,6 +93,16 @@ Broker::Application.configure do
     :domain_suffix => "dev.rhcloud.com",
     :default_max_gears => 5,
 
+    :dns => {
+      :bind => {
+        :server => "127.0.0.1",
+        :port => 53,
+        :keyname => "example.com",
+        :keyvalue => "H6NDDnTbNpcBrUM5c4BJtohyK2uuZ5Oi6jxg3ME+RJsNl5Wl2B87oL12YxWUR3Gp7FdZQojTKBSfs5ZjghYxGw==",
+        :zone => "example.com"
+      }
+    },
+
     :datastore_mongo => {
       :replica_set => true,
       # Replica set example: [[<host-1>, <port-1>], [<host-2>, <port-2>], ...]
