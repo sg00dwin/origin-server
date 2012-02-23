@@ -73,20 +73,6 @@ class Application < Cloud::Sdk::Cartridge
     app
   end
   
-  # Find an application to which user has access
-  # @param [CloudUser] user
-  # @param [String] app_uuid
-  # @return [Application]  
-  def self.find_by_uuid(user, app_uuid)
-    user.applications.each do |app|
-      if app.uuid == app_uuid
-        app.reset_state
-        return app
-      end
-    end
-    return nil
-  end
-  
   # Find an applications to which user has access
   # @param [CloudUser] user
   # @return [Array<Application>]
