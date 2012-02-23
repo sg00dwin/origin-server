@@ -13,8 +13,15 @@ module Cloud
         hash_to_obj(hash)
       end
       
-      def self.find_all(login)
-        hash_list = DataStore.instance.find_all(self.name,login)
+      def self.find_by_uuid(uuid)        
+        hash = DataStore.instance.find_by_uuid(self.name,uuid)
+        return nil unless hash
+
+        hash_to_obj(hash)
+      end
+      
+      def self.find_all(login, f=nil)
+        hash_list = DataStore.instance.find_all(self.name,login,f)
         return [] if hash_list.empty?
         hash_list.map! do |hash|
           hash_to_obj(hash)

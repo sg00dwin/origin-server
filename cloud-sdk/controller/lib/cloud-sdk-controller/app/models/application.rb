@@ -5,10 +5,11 @@ class Application < Cloud::Sdk::Cartridge
                 :state, :group_instance_map, :comp_instance_map, :conn_endpoints_list,
                 :domain, :group_override_map, :working_comp_inst_hash,
                 :working_group_inst_hash, :configure_order, :start_order,
-                :scalable, :proxy_cartridge
+                :scalable, :proxy_cartridge, :init_git_url
   primary_key :name
   exclude_attributes :user, :comp_instance_map, :group_instance_map, 
-                :working_comp_inst_hash, :working_group_inst_hash
+                :working_comp_inst_hash, :working_group_inst_hash,
+                :init_git_url
   include_attributes :comp_instances, :group_instances
   
   validate :extended_validator
@@ -22,13 +23,24 @@ class Application < Cloud::Sdk::Cartridge
   # @param [optional, String] uuid Unique identifier for the application
   # @param [deprecated, String] node_profile Node profile for the first application gear
   # @param [deprecated, String] framework Cartridge name to use as the framwwork of the application
-  def initialize(user=nil, app_name=nil, uuid=nil, node_profile=nil, framework=nil, will_scale=false)
+  def initialize(user=nil, app_name=nil, uuid=nil, node_profile=nil, framework=nil, template=nil, will_scale=false)
     self.user = user
-    from_descriptor({"Name"=>app_name, "Subscribes"=>{"doc-root"=>{"Type"=>"FILESYSTEM:doc-root"}}})
+    
+    if template.nil?
+      from_descriptor({"Name"=>app_name, "Subscribes"=>{"doc-root"=>{"Type"=>"FILESYSTEM:doc-root"}}})
+      self.requires_feature = []
+      self.requires_feature << framework unless framework.nil?      
+    else
+      template_descriptor = YAML.load(template.descriptor_yaml)
+      template_descriptor["Name"] = app_name
+      from_descriptor(template_descriptor)
+      @init_git_url = template.git_url
+    end
+    
     self.creation_time = DateTime::now().strftime
     self.uuid = uuid || Cloud::Sdk::Model.gen_uuid
-    self.requires_feature = [framework]
     self.scalable = will_scale
+    
     if self.scalable and framework != "haproxy-1.4"
       self.proxy_cartridge = "haproxy-1.4"
       self.requires_feature << self.proxy_cartridge
@@ -59,20 +71,6 @@ class Application < Cloud::Sdk::Cartridge
       app.reset_state
     end
     app
-  end
-  
-  # Find an application to which user has access
-  # @param [CloudUser] user
-  # @param [String] app_uuid
-  # @return [Application]  
-  def self.find_by_uuid(user, app_uuid)
-    user.applications.each do |app|
-      if app.uuid == app_uuid
-        app.reset_state
-        return app
-      end
-    end
-    return nil
   end
   
   # Find an applications to which user has access
@@ -289,46 +287,52 @@ class Application < Cloud::Sdk::Cartridge
     cleanup_deleted_components
     # self.save
     
+    exceptions = []
+    Rails.logger.debug "Configure order is #{self.configure_order.inspect}"
     #process new additions
     #TODO: fix configure after framework cartridge is no longer a requirement for adding embedded cartridges
-    self.configure_order.each do |comp_inst_name|
+    self.configure_order.reverse.each do |comp_inst_name|
       comp_inst = self.comp_instance_map[comp_inst_name]
       group_inst = self.group_instance_map[comp_inst.group_instance_name]
       begin
         group_inst.fulfil_requirements(self)
         run_on_gears(group_inst.gears, reply) do |gear, r|
-          r.append gear.configure(comp_inst)
+          r.append gear.configure(comp_inst, @init_git_url)
           r.append process_cartridge_commands(r.cart_commands)
           # self.save
         end
       rescue Exception => e
-        succesful_gears = e.message[:succesful].map{|g| g[:gear]}
+        Rails.logger.debug e.message
+        Rails.logger.debug e.backtrace.inspect        
+        
+        succesful_gears = []
+        succesful_gears = e.message[:succesful].map{|g| g[:gear]} if e.message[:succesful]
         gear_exception = e.message[:exception]        
 
         #remove failed component from all gears
         run_on_gears(succesful_gears, reply, false) do |gear, r|
           r.append gear.deconfigure(comp_inst)
           r.append process_cartridge_commands(r.cart_commands)
-          # self.save
+          #self.save
         end
         
         #remove failed cartridge dependency
         self.requires_feature.delete(comp_inst.parent_cart_name)
-        # self.save
+        #self.save
         
         #destroy any unused gears
         run_on_gears(nil, reply, false) do |gear, r|
           r.append gear.destroy if gear.configured_components.length == 0
-          # self.save
+          #self.save
         end
 
         self.save
-        
-        #re-configure to update application model
-        self.configure_dependencies
-        
-        raise gear_exception
+        exceptions << gear_exception
       end
+    end
+    
+    unless exceptions.empty?
+      raise exceptions.first
     end
     
     execute_connections

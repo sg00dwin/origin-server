@@ -23,16 +23,24 @@ module Cloud::Sdk
 	      MongoDataStore.get_user(user_id)
       when "Application"
 	      MongoDataStore.get_app(user_id, id)
+	    when "ApplicationTemplate"
+	      MongoDataStore.find_application_template(id)
       end
     end
     
-    def find_all(obj_type, user_id=nil)
-      Rails.logger.debug "MongoDataStore.find_all(#{obj_type}, #{user_id})\n\n"
+    def find_all(obj_type, user_id=nil, f=nil)
+      Rails.logger.debug "MongoDataStore.find_all(#{obj_type}, #{user_id}, #{f})\n\n"
       case obj_type
       when "CloudUser"
 	      MongoDataStore.get_users
       when "Application"
 	      MongoDataStore.get_apps(user_id)
+	    when "ApplicationTemplate"
+	      if f.nil? || f.empty?
+	        MongoDataStore.find_all_application_templates()
+	      else
+	        MongoDataStore.find_application_template_by_tag(f[:tag])
+        end
       end
     end
     
@@ -42,7 +50,9 @@ module Cloud::Sdk
       when "CloudUser"
         MongoDataStore.get_user_by_uuid(uuid)
       when "Application"
-        MongoDataStore.get_user_by_app_uuid(uuid)
+        MongoDataStore.get_app_by_uuid(uuid)
+	    when "ApplicationTemplate"
+	      MongoDataStore.find_application_template(uuid)
       end
     end
     
@@ -65,6 +75,8 @@ module Cloud::Sdk
         MongoDataStore.add_user(user_id, obj_attrs)
       when "Application"
         MongoDataStore.add_app(user_id, id, obj_attrs)
+	    when "ApplicationTemplate"
+	      MongoDataStore.save_application_template(id, obj_attrs)
       end
     end
     
@@ -75,10 +87,57 @@ module Cloud::Sdk
 	      MongoDataStore.delete_user(user_id)
       when "Application"
 	      MongoDataStore.delete_app(user_id, id)
+	    when "ApplicationTemplate"
+	      MongoDataStore.delete_application_template(id)	      
       end
     end
 
     private
+    
+    def self.find_application_template_by_tag(tag)
+      arr = MongoDataStore::application_template_collection.find( {"tags" => tag} )
+      return nil if arr.nil?
+      templates = []
+      arr.each do |hash|
+        hash.delete("_id")
+        templates.push(hash)
+      end
+      templates
+    end
+    
+    def self.find_application_template(id)
+      hash = MongoDataStore::application_template_collection.find_one( {"_id" => id} )        
+      return nil if hash.nil?
+      hash.delete("_id")
+      hash
+    end
+    
+    def self.find_all_application_templates()
+      arr = MongoDataStore::application_template_collection.find()
+      return nil if arr.nil?
+      templates = []
+      arr.each do |hash|
+        hash.delete("_id")
+        templates.push(hash)
+      end
+      templates
+    end
+    
+    def self.save_application_template(uuid, attrs)
+      Rails.logger.debug "MongoDataStore.save_application_template(#{uuid}, #{attrs.pretty_inspect})\n\n"
+      attrs["_id"] = uuid
+      MongoDataStore.application_template_collection.update({ "_id" => uuid }, attrs, { :upsert => true })
+      attrs.delete("_id")
+    end
+    
+    def self.delete_application_template(uuid)
+      Rails.logger.debug "MongoDataStore.delete_application_template(#{uuid})\n\n"
+      MongoDataStore.application_template_collection.remove({ "_id" => uuid })
+    end
+    
+    def self.application_template_collection
+      MongoDataStore.db.collection(Rails.configuration.datastore_mongo[:collections][:application_template])
+    end
 
     # Ensure retry upon connection failure
     def self.rescue_con_failure(max_retries=MAX_CON_RETRIES, retry_wait_tm=CON_RETRY_WAIT_TM)
@@ -160,6 +219,20 @@ module Cloud::Sdk
       return nil unless hash && !hash.empty?
       
       user_hash_to_ret(hash)
+    end
+    
+    def self.get_app_by_uuid(uuid)
+      hash = MongoDataStore.find_one( "apps.uuid" => uuid )
+      return nil unless hash && !hash.empty?
+      return nil if hash["apps"].nil? or hash["apps"].empty?
+      app_hash = nil
+      hash["apps"].each do |app|
+        if app["uuid"] == uuid
+          app_hash = app
+          break
+        end
+      end
+      app_hash_to_ret(app_hash)
     end
 
     def self.get_users

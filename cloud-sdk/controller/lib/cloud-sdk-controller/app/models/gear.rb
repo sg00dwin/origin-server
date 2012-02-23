@@ -44,11 +44,11 @@ class Gear < Cloud::Sdk::UserModel
     get_proxy.show_port(app,self,comp_inst.parent_cart_name)
   end
   
-  def configure(comp_inst)
+  def configure(comp_inst, template_git_url=nil)
     r = ResultIO.new
     return r if self.configured_components.include?(comp_inst.name)
     r.append get_proxy.preconfigure_cartridge(app,self,comp_inst.parent_cart_name)
-    result_io,cart_data = get_proxy.configure_cartridge(app,self,comp_inst.parent_cart_name)
+    result_io,cart_data = get_proxy.configure_cartridge(app,self,comp_inst.parent_cart_name, template_git_url)
     r.append result_io
     comp_inst.process_cart_data(cart_data)
     self.configured_components.push(comp_inst.name)
@@ -66,7 +66,7 @@ class Gear < Cloud::Sdk::UserModel
   def execute_connector(comp_inst, connector_name, input_args)
     get_proxy.execute_connector(app, self, comp_inst.parent_cart_name, connector_name, input_args)
   end
-  
+
   def start(comp_inst)
     get_proxy.start(app,self,comp_inst.parent_cart_name)
   end

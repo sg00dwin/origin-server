@@ -4,30 +4,6 @@ module Express
   module Broker
     class MongoDataStore < Cloud::Sdk::MongoDataStore
       
-      def find_application_template_by_tag(tag)
-        MongoDataStore::application_template_collection.find( {"tags" => tag} )
-      end
-      
-      def find_application_template(id)
-        MongoDataStore::application_template_collection.find_one( {"_id" => id} )        
-      end
-      
-      def find_all_application_templates()
-        MongoDataStore::application_template_collection.find()
-      end
-      
-      def save_application_template(uuid, attrs)
-        Rails.logger.debug "MongoDataStore.save_application_template(#{uuid}, #{attrs.pretty_inspect})\n\n"
-        attrs["_id"] = uuid
-        MongoDataStore.application_template_collection.update({ "_id" => uuid }, attrs, { :upsert => true })
-        attrs.delete("_id")
-      end
-      
-      def delete_application_template(uuid)
-        Rails.logger.debug "MongoDataStore.delete_application_template(#{uuid})\n\n"
-        MongoDataStore.application_template_collection.remove({ "_id" => uuid })
-      end
-
       def find_district(uuid)
         Rails.logger.debug "MongoDataStore.find_district(#{uuid})\n\n"
         hash = MongoDataStore.find_one( "_id" => uuid )
@@ -136,10 +112,6 @@ module Express
       
       def self.district_collection
         MongoDataStore.db.collection(Rails.configuration.datastore_mongo[:collections][:district])
-      end
-      
-      def self.application_template_collection
-        MongoDataStore.db.collection(Rails.configuration.datastore_mongo[:collections][:application_template])
       end
       
       def self.find_one(*args)

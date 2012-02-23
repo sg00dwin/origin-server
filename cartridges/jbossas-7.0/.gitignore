@@ -1,5 +1,4 @@
 # Ignore intellij project files/eclipse project files
 *.iml
 *.project
-*.DS_Store
 *.classpath
