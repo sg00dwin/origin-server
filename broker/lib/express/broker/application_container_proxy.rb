@@ -227,7 +227,13 @@ module Express
 
       def execute_connector(app, gear, cart, connector_name, input_args)
         mcoll_reply = execute_direct(@@C_CONTROLLER, 'connector-execute', "--gear-uuid '#{gear.uuid}' --cart-name '#{cart}' --hook-name '#{connector_name}' " + input_args.join(" "))
-        parse_result(mcoll_reply)
+        if mcoll_reply and mcoll_reply.length>0
+          mcoll_reply = mcoll_reply[0]
+          output = mcoll_reply.results[:data][:output]
+          exitcode = mcoll_reply.results[:data][:exitcode]
+          return [output, exitcode]
+        end
+        [nil, nil]
       end
       
       def start(app, gear, cart)
