@@ -153,7 +153,7 @@ class ApplicationsController < BaseController
       application.stop
       application.start
       
-      app = RestApplication.new(application, application.domain)
+      app = RestApplication.new(application, domain_id)
       @reply = RestReply.new( :created, "application", app)
       message = Message.new(:info, "Application #{application.name} was created.")
       @reply.messages.push(message)
