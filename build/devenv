@@ -655,10 +655,13 @@ END
       use_public_ip(hostname)
     end
 
-    Dir.glob(ENV['HOME'] + '/.openshiftdev/home.d/???*', File::FNM_DOTMATCH).each {|file|
-      puts "Installing ~/#{File.basename(file)}"
-      scp_to(hostname, file, "~/#{File.basename(file)}", File.stat(file).mode, 10)
-    }
+    home_dir=File.join(ENV['HOME'], '.openshiftdev/home.d')
+    if File.exists?(home_dir)
+      Dir.glob(File.join(home_dir, '???*'), File::FNM_DOTMATCH).each {|file|
+        puts "Installing ~/#{File.basename(file)}"
+        scp_to(hostname, file, "~/#{File.basename(file)}", File.stat(file).mode, 10)
+      }
+    end
 
     puts "Done"
   end
