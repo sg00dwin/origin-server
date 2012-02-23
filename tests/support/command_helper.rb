@@ -15,7 +15,7 @@ module CommandHelper
       exit_code = $?.exitstatus
     end
 
-    $logger.error("(#{$$}): Execution failed #{cmd} with exit_code: #{exit_code.to_s}") if exit_code != 0
+    $logger.error("(#{$$}): Execution failed #{cmd} with exit_code: #{exit_code.to_s} and output:\n #{output}") if exit_code != 0
     exit_code.should == 0
     return output
   end

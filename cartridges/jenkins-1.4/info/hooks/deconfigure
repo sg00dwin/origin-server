@@ -34,7 +34,7 @@ import_env_vars
 
 destroy_git_repo $application $uuid
 
-jenkins_pid=$(/bin/cat ${OPENSHIFT_RUN_DIR}/jenkins.pid)
+jenkins_pid=`pgrep -U $uid -f ".*java.*-jar.*jenkins.war.*--httpListenAddress=${OPENSHIFT_INTERNAL_IP}.*" 2> /dev/null`
 
 stop_app
 
