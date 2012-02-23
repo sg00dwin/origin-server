@@ -4,6 +4,9 @@ function libra_users() {
     grep ":libra guest:" /etc/passwd | cut -d: -f1
 }
 
+days=15
+[ -z $1 ] || days=$1
+
 for f in $(libra_users)
 do
     APPHOME=/var/lib/libra/$f
@@ -13,13 +16,7 @@ do
         then
             . $APPHOME/.env/OPENSHIFT_APP_DIR
             #find $OPENSHIFT_APP_DIR -mtime -60 -name 'access_log-*'
-
-            if [ -d "$APPHOME/mysql-5.1" ]
-            then
-                echo "$f is stale but not movable (mysql)"
-            else
-                echo "$f is stale"
-            fi
+            echo "$f is stale"
         fi
     fi
 done
