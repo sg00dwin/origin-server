@@ -1,22 +1,7 @@
 #!/bin/bash
 
-# Copyright © 2012 Mike McGrath All rights reserved
-# Copyright © 2012 Red Hat, Inc. All rights reserved
-
-# This copyrighted material is made available to anyone wishing to use, modify,
-# copy, or redistribute it subject to the terms and conditions of the GNU
-# General Public License v.2.  This program is distributed in the hope that it
-# will be useful, but WITHOUT ANY WARRANTY expressed or implied, including the
-# implied warranties of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
-# See the GNU General Public License for more details.  You should have
-# received a copy of the GNU General Public License along with this program;
-# if not, write to the Free Software Foundation, Inc., 51 Franklin Street,
-# Fifth Floor, Boston, MA 02110-1301, USA. Any Red Hat trademarks that are
-# incorporated in the source code or documentation are not subject to the GNU
-# General Public License and may only be used or replicated with the express
-# permission of Red Hat, Inc.
-
-# Start the application httpd instance
+# Set a newly added gear's git url to the list of mirrors we need to push too.
+APP_CHECKOUT_DIR=git-gear-add.$$
 
 # Exit on any errors
 set -e
@@ -25,9 +10,27 @@ function print_help {
     echo "Usage: $0 app-name namespace uuid"
     echo "Start a running application"
 
-    echo "$0 $@" | logger -p local0.notice -t libra_httpd_start
+    echo "$0 $@" | logger -p local0.notice -t libra_haproxy_set_git_url
     exit 1
 }
+
+
+function register_gear() {
+    [ $# -lt 2 ]  &&  return 1
+
+    name="$1"
+    git_url="$2"
+
+    # Generate registry entry of the form: gear-${gear_name}=${gear_git_url}
+    entry="gear-$name=$git_url"
+    gear_registry=$OPENSHIFT_APP_DIR/conf/gear-registry.git
+
+    #  Add to the gear git registry if entry doesn't exist.
+    if ! grep "$entry" $gear_registry 2>&1 > /dev/null; then
+        echo "$entry" >> $gear_registry
+    fi
+}
+
 
 while getopts 'd' OPTION
 do
@@ -40,17 +43,48 @@ do
 done
 
 
-[ $# -eq 3 ] || print_help
+[ $# -gt 3 ] || print_help
 
-CART_DIR=/usr/libexec/li/cartridges
-source ${CART_DIR}/abstract/info/lib/util
+# This doesn't work at this time because sourcing in /etc/libra/node.conf gives
+# a permission denied issue -- think its how the connection-hooks are run.
+if [ -n "$FIXED_CONNECTION_HOOK_PERMS_ISSUE" ]; then
+    CART_DIR=/usr/libexec/li/cartridges
+    source ${CART_DIR}/abstract/info/lib/util
 
-setup_basic_hook "$1" $2 $3
+    setup_basic_hook "$1" $2 $3
 
-#
-# echo ssh location
-# 
-source /var/lib/libra/$3/.env/OPENSHIFT_APP_UUID # yes its the same, this is a sanity check
-source /var/lib/libra/$3/.env/OPENSHIFT_APP_DNS
-source /var/lib/libra/$3/.env/OPENSHIFT_APP_NAME
-echo "ssh://${OPENSHIFT_APP_UUID}@${OPENSHIFT_APP_DNS}/~/git/${OPENSHIFT_APP_NAME}.git/"
+    import_env_vars
+else
+    # Import Environment Variables
+    for f in ~/.env/*; do
+        source $f
+    done
+fi
+
+# checkout the current code.
+app_git_url=${OPENSHIFT_HOMEDIR}/git/${OPENSHIFT_APP_NAME}.git
+git clone "$app_git_url" "/tmp/$APP_CHECKOUT_DIR"
+
+# Remove the first 3 args and process all the gear git urls:
+for url in ${@:4}; do
+    gear_name=$(echo "$url" | cut -f 2 -d '@' | cut -f 1 -d '.')
+    register_gear "$gear_name" "$url"
+
+    #
+    # FIXME: This maybe inefficient if we have jenkins as we will do builds on
+    #        every gear. rsync is more efficient if each framework has a gear
+    #        sync - as what to sync varies by framework - do a push for now.
+    #
+    pushd "/tmp/$APP_CHECKOUT_DIR" > /dev/null
+    git add remote gear-$gear_name "$url"
+
+    # Need two git "mirrored" pushes as the first push updates us with the
+    # newly added gear-$gear_name.
+    git push --mirror gear-$gear_name  ||  :
+    git push --mirror gear-$gear_name  ||  :
+
+    popd > /dev/null
+
+done
+
+rm -rf "/tmp/$APP_CHECKOUT_DIR"
