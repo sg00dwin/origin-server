@@ -71,13 +71,17 @@ class Watchman
           next
         end
 
-        if app_env[uuid][:OPENSHIFT_LOG_DIR].nil?
-          Syslog.warning("watchman unable to determine log directory for user #{uuid}. OPENSHIFT_HOMEDIR/.env/OPENSHIFT_LOG_DIR missing.")
-          next
-        end
-
         if app_env[uuid][:OPENSHIFT_APP_TYPE].start_with?('jboss')
-          File.open("#{app_env[uuid][:OPENSHIFT_LOG_DIR]}/server.log").grep(/ java.lang.OutOfMemoryError/) {|msg|
+          if app_env[uuid][:OPENSHIFT_LOG_DIR].nil?
+            Syslog.warning("watchman unable to determine log directory for user #{uuid}. OPENSHIFT_HOMEDIR/.env/OPENSHIFT_LOG_DIR missing.")
+            next
+          end
+
+          # skip missing log files as jboss may be comming up. 
+          server_log = File.join(app_env[uuid][:OPENSHIFT_LOG_DIR], 'server.log')
+          next if not File.exists?(server_log)
+
+          File.open(server_log).grep(/ java.lang.OutOfMemoryError/) {|msg|
             # timezones are just a PITA. server.log message doesn't include timezone or date so inject both from today
             ts = DateTime.strptime(msg, '%T')
             today = now()
