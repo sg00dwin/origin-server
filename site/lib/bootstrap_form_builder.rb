@@ -29,8 +29,7 @@ class BootstrapFormBuilder < Formtastic::SemanticFormBuilder
   end
 
   def loading(*args)
-    #template.image_tag(template.image_path('maccaco/maccaco-load.gif'), 'data-loading' => 'true', :style => 'display: none;')
-    template.content_tag(:span, 'Loading...', 'data-loading' => 'true', :style => 'display: none;')
+    template.image_tag('loader.gif', :alt => 'Working...', 'data-loading' => 'true', :style => 'display: none;')
   end
 
   # override tag creation
