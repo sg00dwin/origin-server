@@ -16,6 +16,11 @@ class BootstrapFormBuilder < Formtastic::SemanticFormBuilder
     super *(args << options)
   end
 
+  def loading(*args)
+    #template.image_tag(template.image_path('maccaco/maccaco-load.gif'), 'data-loading' => 'true', :style => 'display: none;')
+    template.content_tag(:span, 'Loading...', 'data-loading' => 'true', :style => 'display: none;')
+  end
+
   # override tag creation
   def field_set_and_list_wrapping(*args, &block) #:nodoc:
     return super unless new_forms_enabled?

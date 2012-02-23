@@ -25,6 +25,14 @@ $ ->
     
     setInterval scroll_announcements, 10000
 
+  loading_match = '*[data-loading=true'
+  ($ 'form '+loading_match).each ->
+    ($ window).bind 'pagehide', ->
+      ($ loading_match, body).hide
+    ($ this).closest('form').bind 'submit', ->
+      ($ loading_match, this).show
+      true
+
 ## Product page ##
   if body.hasClass 'product'
     links = $ '.content nav a[href^=#]'
