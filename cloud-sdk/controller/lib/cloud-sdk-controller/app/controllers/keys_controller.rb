@@ -7,7 +7,7 @@ class KeysController < BaseController
     user = CloudUser.find(@login)
     if(user.nil?)
       @reply = RestReply.new(:not_found)
-      @reply.messages.push(Message.new(:error, "User #{@login} not found"))
+      @reply.messages.push(Message.new(:error, "User #{@login} not found", 99))
       respond_with @reply, :status => @reply.status
     return
     end
@@ -28,7 +28,7 @@ class KeysController < BaseController
     user = CloudUser.find(@login)
     if user.nil? or user.ssh_keys.nil?
       @reply = RestReply.new(:not_found)
-      @reply.messages.push(Message.new(:error, "User #{@login} not found"))
+      @reply.messages.push(Message.new(:error, "User #{@login} not found", 99))
       respond_with @reply, :status => @reply.status
     return
     end
@@ -43,7 +43,7 @@ class KeysController < BaseController
     end
 
     @reply = RestReply.new(:not_found)
-    @reply.messages.push(Message.new(:error, "SSH key #{id} for user #{@login} not found"))
+    @reply.messages.push(Message.new(:error, "SSH key #{id} for user #{@login} not found", 118))
     respond_with @reply, :status => @reply.status
   end
 
@@ -56,7 +56,7 @@ class KeysController < BaseController
     user = CloudUser.find(@login)
     if(user.nil?)
       @reply = RestReply.new(:not_found)
-      @reply.messages.push(Message.new(:error, "User #{@login} not found"))
+      @reply.messages.push(Message.new(:error, "User #{@login} not found", 99))
       respond_with @reply, :status => @reply.status
     return
     end
@@ -78,13 +78,13 @@ class KeysController < BaseController
       user.ssh_keys.each do |key_name, key|
         if key_name == name
           @reply = RestReply.new(:conflict)
-          @reply.messages.push(Message.new(:error, "SSH key with name #{name} already exists. Use a different name or delete conflicting key and retry."))
+          @reply.messages.push(Message.new(:error, "SSH key with name #{name} already exists. Use a different name or delete conflicting key and retry.", 120, "name"))
           respond_with @reply, :status => @reply.status
         return
         end
         if key["key"] == content
           @reply = RestReply.new(:conflict)
-          @reply.messages.push(Message.new(:error, "Given public key is already in use. Use different key or delete conflicting key and retry."))
+          @reply.messages.push(Message.new(:error, "Given public key is already in use. Use different key or delete conflicting key and retry.", 121, "content"))
           respond_with @reply, :status => @reply.status
         return
         end
@@ -117,7 +117,7 @@ class KeysController < BaseController
     user = CloudUser.find(@login)
     if(user.nil?)
       @reply = RestReply.new(:not_found)
-      @reply.messages.push(Message.new(:error, "User #{@login} not found"))
+      @reply.messages.push(Message.new(:error, "User #{@login} not found", 99))
       respond_with(@reply) do |format|
         format.xml { render :xml => @reply, :status => @reply.status }
         format.json { render :json => @reply, :status => @reply.status }
@@ -143,7 +143,7 @@ class KeysController < BaseController
 
     if user.ssh_keys.nil? or not user.ssh_keys.has_key?(id)
       @reply = RestReply.new(:not_found)
-      @reply.messages.push(Message.new(:error, "SSH key with name #{id} not found for user #{@login}"))
+      @reply.messages.push(Message.new(:error, "SSH key with name #{id} not found for user #{@login}", 118))
       respond_with(@reply) do |format|
         format.xml { render :xml => @reply, :status => @reply.status }
         format.json { render :json => @reply, :status => @reply.status }
@@ -180,7 +180,7 @@ class KeysController < BaseController
     user = CloudUser.find(@login)
     if(user.nil?)
       @reply = RestReply.new(:not_found)
-      @reply.messages.push(Message.new(:error, "User #{@login} not found"))
+      @reply.messages.push(Message.new(:error, "User #{@login} not found", 99))
       respond_with(@reply) do |format|
         format.xml { render :xml => @reply, :status => @reply.status }
         format.json { render :json => @reply, :status => @reply.status }
@@ -190,7 +190,7 @@ class KeysController < BaseController
 
     if user.ssh_keys.nil? or not user.ssh_keys.has_key?(id)
       @reply = RestReply.new(:not_found)
-      @reply.messages.push(Message.new(:error, "SSH key with name #{id} not found for user #{@login}"))
+      @reply.messages.push(Message.new(:error, "SSH key with name #{id} not found for user #{@login}", 118))
       respond_with(@reply) do |format|
         format.xml { render :xml => @reply, :status => @reply.status }
         format.json { render :json => @reply, :status => @reply.status }
