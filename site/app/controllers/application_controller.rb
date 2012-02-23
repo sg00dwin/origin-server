@@ -10,7 +10,12 @@ class ApplicationController < ActionController::Base
     end
     raise e
   end
-  
+
+  def handle_unverified_request
+    super
+    redirect_to_logout
+  end
+
   def set_no_cache
     response.headers["Cache-Control"] = "no-cache, no-store, max-age=0, must-revalidate"
     response.headers["Pragma"] = "no-cache"
