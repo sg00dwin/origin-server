@@ -12,12 +12,11 @@ Source0: %{name}-%{version}.tar.gz
 BuildRoot:    %(mktemp -ud %{_tmppath}/%{name}-%{version}-%{release}-XXXXXX)
 BuildArch: noarch
 
-Requires: rhc-node
 Requires: mysql-server
 Requires: mysql-devel
 
 %description
-Provides rhc perl cartridge support
+Provides rhc mysql cartridge support
 
 %prep
 %setup -q
