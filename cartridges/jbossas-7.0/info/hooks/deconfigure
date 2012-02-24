@@ -27,6 +27,8 @@ source ${CART_DIR}/abstract/info/lib/util
 
 setup_deconfigure "$1" $2 $3
 
+remove_all_proxy_ports $uuid
+
 M2_DIR="$APP_HOME/.m2" # maven dir
 JAVA_PREFS_DIR="$APP_HOME/.java" # Java preferences dir
 

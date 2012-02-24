@@ -27,6 +27,8 @@ source ${CART_DIR}/abstract/info/lib/util
 
 setup_deconfigure "$1" $2 $3
 
+remove_all_proxy_ports $uuid
+
 destroy_git_repo $application $uuid
 
 stop_app
