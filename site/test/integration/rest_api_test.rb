@@ -72,7 +72,6 @@ class RestApiTest < ActiveSupport::TestCase
   def test_key_server_validation
     key = Key.new :as => @user
     assert !key.save
-    assert_equal 3, key.errors.length
     assert_equal ['Key name is required and cannot be blank.'], key.errors[:name]
     assert_equal ['Key content is required and cannot be blank.'], key.errors[:content]
     assert_equal ['Type is required and cannot be blank.'], key.errors[:type]
