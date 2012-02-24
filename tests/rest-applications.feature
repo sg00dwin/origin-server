@@ -169,8 +169,58 @@ Feature: applications
     When I send a DELETE request to "/domains/cucumber/applications/app"
     Then the response should be "204"
   
+  Scenario: Stop and Start embedded cartridge
+    Given a new guest account
+    And I am a valid user
+    And I accept "XML"
+    When I send a POST request to "/domains" with the following:"namespace=cucumber"
+    Then the response should be "201"
+    When I send a POST request to "/domains/cucumber/applications" with the following:"name=app&cartridge=php-5.3"
+    Then the response should be "201"
+    When I send a POST request to "/domains/cucumber/applications/app/cartridges" with the following:"cartridge=mysql-5.1"
+    Then the response should be "201"
+    When I send a GET request to "/domains/cucumber/applications/app/descriptor"
+    Then the response descriptor should have "php-5.3,mysql-5.1" as dependencies
+    When I send a POST request to "/domains/cucumber/applications/app/cartridges/mysql-5.1/events" with the following:"event=stop"
+    Then the response should be "200"
+    When I send a POST request to "/domains/cucumber/applications/app/cartridges/mysql-5.1/events" with the following:"event=start"
+    Then the response should be "200"
+    When I send a DELETE request to "/domains/cucumber/applications/app"
+    Then the response should be "204"
     
+  Scenario: Restart embedded cartridge
+    Given a new guest account
+    And I am a valid user
+    And I accept "XML"
+    When I send a POST request to "/domains" with the following:"namespace=cucumber"
+    Then the response should be "201"
+    When I send a POST request to "/domains/cucumber/applications" with the following:"name=app&cartridge=php-5.3"
+    Then the response should be "201"
+    When I send a POST request to "/domains/cucumber/applications/app/cartridges" with the following:"cartridge=mysql-5.1"
+    Then the response should be "201"
+    When I send a GET request to "/domains/cucumber/applications/app/descriptor"
+    Then the response descriptor should have "php-5.3,mysql-5.1" as dependencies
+    When I send a POST request to "/domains/cucumber/applications/app/cartridges/mysql-5.1/events" with the following:"event=restart"
+    Then the response should be "200"
+    When I send a DELETE request to "/domains/cucumber/applications/app"
+    Then the response should be "204"
     
-  
-  
+  Scenario: Remove embedded cartridge
+    Given a new guest account
+    And I am a valid user
+    And I accept "XML"
+    When I send a POST request to "/domains" with the following:"namespace=cucumber"
+    Then the response should be "201"
+    When I send a POST request to "/domains/cucumber/applications" with the following:"name=app&cartridge=php-5.3"
+    Then the response should be "201"
+    When I send a POST request to "/domains/cucumber/applications/app/cartridges" with the following:"cartridge=mysql-5.1"
+    Then the response should be "201"
+    When I send a GET request to "/domains/cucumber/applications/app/descriptor"
+    Then the response descriptor should have "php-5.3,mysql-5.1" as dependencies
+    When I send a DELETE request to "/domains/cucumber/applications/app/cartridges/mysql-5.1"
+    Then the response should be "200"
+    When I send a GET request to "/domains/cucumber/applications/app/descriptor"
+    Then the response descriptor should have "php-5.3" as dependencies
+    When I send a DELETE request to "/domains/cucumber/applications/app"
+    Then the response should be "204"
   
