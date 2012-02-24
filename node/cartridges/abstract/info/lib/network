@@ -102,79 +102,37 @@ function uuid_to_portrange {
   uid_to_portrange $uid
 }
 
-
 function find_next_proxy_port {
-  import_env_vars
+  uuid="$1"
+  target="$2"
 
-  # All-or-nothing: run all checks first before committing
-  exposing=()
-  for target in "$@"; do
-    for proxy_port in $(uuid_to_portset $uuid)
-    do
-      if [ "$target" == "${OPENSHIFT_PUB_PORT[$proxy_port]}" ]
-      then
-        client_error "Already exposed: $OPENSHIFT_APP_DNS:$proxy_port -> $target"
-        exit 8
-      fi
-      if [ -z "${OPENSHIFT_PUB_PORT[$proxy_port]}" ]
-      then
-        OPENSHIFT_PUB_PORT[$proxy_port]="$target"
-        exposing=("${exposing[@]}" "$proxy_port")
-        continue 2
-      fi
-    done
-    client_error "All ports are taken, cannot add more"
-    exit 67
-  done
-
-  # Commit changes 
-  setproxy=()
-  for proxy_port in "${exposing[@]}"
+  for proxy_port in $(uuid_to_portset $uuid)
   do
-    setproxy=( "${setproxy[@]}" "$proxy_port" "${OPENSHIFT_PUB_PORT[$proxy_port]}" )
-    client_message "Exposing port: $OPENSHIFT_APP_DNS:$proxy_port -> ${OPENSHIFT_PUB_PORT[$proxy_port]}"
-    echo "OPENSHIFT_PUB_PORT[$proxy_port]='$target'" > $APP_HOME/.env/OPENSHIFT_${proxy_port}_PUB_PORT
-    echo "export OPENSHIFT_PUB_PORT" >> $APP_HOME/.env/OPENSHIFT_${proxy_port}_PUB_PORT
+    proxtarg=$(service libra-proxy showproxy "$proxy_port" | awk '{ print $2 }')
+    if [ -z "$proxtarg" -o "$target" == "$proxtarg" ]
+    then
+      echo "$proxy_port"
+      [ -z "$proxtarg"] && service libra-proxy setproxy "$proxy_port" "$target"
+      return 0
+    fi
   done
-
-  # Libra-proxy is more stable/efficient if it takes the whole task set in one go
-  service libra-proxy setproxy "${setproxy[@]}"
+  echo "All ports are taken, cannot add more"
+  exit 67
 }
 
 function remove_proxy_port {
-  import_env_vars
+  uuid=$1
+  target="$2"
 
   # This function may be called to clean-up a half-built proxy
-  setproxy=()
-  for target in "$@"
+  for proxy_port in $(uuid_to_portset $uuid)
   do
-    for proxy_port in "${!OPENSHIFT_PUB_PORT[@]}"
-    do
-      if [ "$target" ==  "${OPENSHIFT_PUB_PORT[$proxy_port]}" ]
-      then
-        client_message "Concealing port: $OPENSHIFT_APP_DNS:$proxy_port -> $target"
-        setproxy=("${setproxy[@]}" "$proxy_port" "del" )
-        rm -f $APP_HOME/.env/OPENSHIFT_${proxy_port}_PUB_PORT
-      fi
-    done
+    proxtarg=$(service libra-proxy showproxy "$proxy_port" | awk '{ print $2 }')
+    if [ "$target" ==  "$proxtarg" ]
+    then
+      echo "$proxy_port"
+      service libra-proxy setproxy "$proxy_port" "delete"
+    fi
   done
-
-  # Libra-proxy is more stable/efficient if it takes the whole task set in one go
-  service libra-proxy setproxy "${setproxy[@]}"  
-}
-
-function show_proxy_port {
-  import_env_vars
-
-  # Display proxy ports which match the supplied targets
-  for target in "$@"
-  do
-    for proxy_port in "${!OPENSHIFT_PUB_PORT[@]}"
-    do
-      if [ "$target" ==  "${OPENSHIFT_PUB_PORT[$proxy_port]}" ]
-      then
-        client_message "Exposed port: $OPENSHIFT_APP_DNS:$proxy_port -> ${OPENSHIFT_PUB_PORT[$proxy_port]}"
-      fi
-    done
-  done
+  return 0
 }

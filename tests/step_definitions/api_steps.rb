@@ -1,7 +1,7 @@
 require 'rubygems'
 require 'rest_client'
 require 'nokogiri'
-#require '/var/www/libra/broker/lib/express/broker/dns_service'
+require '/var/www/libra/broker/lib/express/broker/dns_service'
 
 
 Before do
@@ -9,10 +9,22 @@ Before do
 end
 
 After do |scenario|
-  #dns = Express::Broker::DnsService.new
-  #dns.deregister_namespace("cucumber")
-  #dns.publish
-  #dns.close
+  dns_service = Express::Broker::DnsService.new({:end_point => "https://api2.dynect.net", :customer_name => "demo-redhat", 
+  :user_name => "dev-rhcloud-user", :password => "vo8zaijoN7Aecoo", :domain_suffix => "dev.rhcloud.com", :zone => "rhcloud.com"})
+  domains = ["cucumber", "app-cucumber"]
+  i=0
+  while i<3 
+    domains.push("cucumber"+i.to_s)
+    i += 1
+  end
+  domains.each do |domain|
+    yes = dns_service.namespace_available?(domain)
+    if !yes
+      dns_service.deregister_namespace(domain)
+    end
+  end
+  dns_service.publish
+  dns_service.close
 end
     
 Given /^I am a valid user$/ do 

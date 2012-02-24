@@ -128,7 +128,7 @@ ln -s ${jboss_home}/jboss-modules.jar
 ln -s ${jboss_home}/modules
 
 # Copy the jbossas server install standalone configuration files
-cp ${jboss_home}/standalone/configuration/{standalone.xml,logging.properties} "$APP_JBOSS"/standalone/configuration
+cp ${jboss_home}/standalone/configuration/{standalone.xml,*.properties} "$APP_JBOSS"/standalone/configuration
 # Look for cartridge overrides of the configuration/{standalone.xml,logging.properties}
 
 cp ${JBOSS_CARTRIDGE_ROOT}/info/configuration/standalone.xml "$APP_JBOSS"/standalone/configuration

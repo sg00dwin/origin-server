@@ -1,37 +1,30 @@
 :css
   .subtitle  { margin-top: 0.8em; margin-left: 0.5em;}
 
-.row.application.hero-unit
-  .span8
-    .row
-      .span8
-        .row
-          .span4
-            CARTRIDGE NAME
-          .span3
-            CARTRIDGE TYPE
-        .row
-          .span4
-            %h3
-              = application.name
-          .span3
-            %h3
-              = application.framework_name
-    .row
-      .span8
-        .row
-          .span7
-            .app_url
-              = link_to application.web_url, application.web_url
-    .row
-      .span8
-        .row
-          .span7
-            %pre.command-line.git_url
-              = application.git_url
-    .row
-      .span8
-        .row
-          .spanz
-            Created
-            = "#{time_ago_in_words(application.creation_time)} ago"
+.hero-unit
+  .row-fluid
+    .span12
+      .row-fluid
+        .span6
+          CARTRIDGE NAME
+        .span6
+          CARTRIDGE TYPE
+      .row-fluid
+        .span6
+          %h3
+            = application.name
+        .span6
+          %h3
+            = application.framework_name
+      .row-fluid
+        .span12
+          .app_url
+            = link_to application.web_url, application.web_url
+      .row-fluid
+        .span12
+          %pre.command-line.git_url
+            = application.git_url
+      .row-fluid
+        .span12
+          Created
+          = "#{time_ago_in_words(application.creation_time)} ago"

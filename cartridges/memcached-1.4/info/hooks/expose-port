@@ -49,6 +49,15 @@ setup_configure "$1" $2 $3
 
 import_env_vars
 
-find_next_proxy_port "$OPENSHIFT_INTERNAL_IP:11211"
-
+proxy_port=$(find_next_proxy_port $uuid "$OPENSHIFT_CACHE_IP:$OPENSHIFT_CACHE_PORT")
+ret=$?
+if [ $ret -ne 0 ]; then
+  client_error "$proxy_port"
+  exit $ret
+fi
+echo "export OPENSHIFT_CACHE_PROXY_PORT=$proxy_port" > $APP_HOME/.env/OPENSHIFT_CACHE_PROXY_PORT
+cart_data "PROXY_HOST=$OPENSHIFT_APP_DNS"
+cart_data "PROXY_PORT=$proxy_port"
+cart_data "HOST=$OPENSHIFT_CACHE_IP"
+cart_data "PORT=$OPENSHIFT_CACHE_PORT"
 exit 0

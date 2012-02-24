@@ -1,20 +1,21 @@
-.row.application.hero-unit
-  .span8
-    .row
-      .span8
-        .row
-          .span8
-            %h2.pull-left
-              = application.name
-            .clear-both
-              = application.framework_name
-
-    .row
-      .span8
-        .row
-          .span6
-            %strong.app_url
-              = link_to application.web_url, application.web_url
-          .span2
-            = link_to("Delete", delete_application_path(application), :class => ['btn', 'btn-danger'])
-            = link_to("Details >", application_path(application), :class => ['btn', 'btn-info'])
+.hero-unit
+  .row.application
+    .span8
+      .row
+        .span8
+          .row
+            .span8
+              %h2.pull-left
+                = application.name
+              .clear-both
+                = application.framework_name
+  
+      .row
+        .span8
+          .row
+            .span6
+              %strong.app_url
+                = link_to application.web_url, application.web_url
+            .span2
+              = link_to("Delete", delete_application_path(application), :class => ['btn', 'btn-danger'])
+              = link_to("Details >", application_path(application), :class => ['btn', 'btn-info'])
