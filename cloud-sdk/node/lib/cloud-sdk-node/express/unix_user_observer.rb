@@ -23,16 +23,16 @@ module Cloud::Sdk
   class UnixUserObserver
     include Cloud::Sdk::Utils::ShellExec
     include Object::Singleton
-    
+
     def update(*args)
       method = args.first
       args = args.drop(1)
       send(method, *args)
     end
-    
+
     def before_unix_user_create(user)
     end
-    
+
     def after_unix_user_create(user)
       out,err,rc = shellCmd("service cgconfig status > /dev/null 2>&1")
       if rc == 0
@@ -49,47 +49,50 @@ module Cloud::Sdk
 
     def before_initialize_homedir(user)
     end
-    
+
     def after_initialize_homedir(user)
       cmd = "/bin/sh #{File.join(Cloud::Sdk::SDK_PATH, "express/setup_pam_fs_limits.sh")} #{user.name} #{user.quota_blocks ? user.quota_blocks : ''} #{user.quota_files ? user.quota_files : ''}"
       out,err,rc = shellCmd(cmd)
       raise Cloud::Sdk::UserCreationException.new("Unable to setup pam/fs limits for #{user.name}") unless rc == 0
     end
-    
-    
+
+
     def before_unix_user_destroy(user)
       out,err,rc = shellCmd("service libra-tc status #{user.name} > /dev/null 2>&1")
       if rc == 0
         shellCmd("service libra-tc stopuser #{user.name} > /dev/null")
       end
-      
+
       out,err,rc = shellCmd("service cgconfig status > /dev/null")
       if rc == 0
         shellCmd("service libra-cgroups stopuser #{user.name} > /dev/null")
       end
-      
+
+      last_access_dir = Cloud::Sdk::Config.instance.get("last_access_dir")
+      shellCmd("rm -f #{last_access_dir}/#{user.name} > /dev/null")
+
       cmd = "/bin/sh #{File.join(Cloud::Sdk::SDK_PATH, "express/teardown_pam_fs_limits.sh")} #{user.name}"
       shellCmd(cmd)
     end
-    
+
     def after_unix_user_destroy(user)
     end
-    
+
     def before_add_ssh_key(user,key)
     end
-    
+
     def after_add_ssh_key(user,key)
       ssh_dir = File.join(user.homedir, ".ssh")
       cmd = "restorecon -R #{ssh_dir}"
-      shellCmd(cmd)      
+      shellCmd(cmd)
     end
-    
+
     def before_remove_ssh_key(user,key)
     end
-    
+
     def after_remove_ssh_key(user,key)
     end
   end
-  
+
   Cloud::Sdk::UnixUser.add_observer(UnixUserObserver.instance)
 end
