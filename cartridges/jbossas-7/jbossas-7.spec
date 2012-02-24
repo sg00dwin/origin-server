@@ -1,8 +1,8 @@
-%define cartridgedir %{_libexecdir}/li/cartridges/jbossas-7.0
+%define cartridgedir %{_libexecdir}/li/cartridges/jbossas-7
 
 Summary:   Provides JBossAS7 support
-Name:      rhc-cartridge-jbossas-7.0
-Version:   0.87.2
+Name:      rhc-cartridge-jbossas-7
+Version:   0.87.3
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   ASL 2.0
@@ -81,14 +81,14 @@ ln -s %{cartridgedir}/../abstract/info/hooks/system-messages %{buildroot}%{cartr
 alternatives --install /etc/alternatives/maven-3.0 maven-3.0 /usr/share/java/apache-maven-3.0.3 100
 alternatives --set maven-3.0 /usr/share/java/apache-maven-3.0.3
 alternatives --remove jbossas-7.0 /opt/jboss-as-7.0.2.Final
-alternatives --install /etc/alternatives/jbossas-7.0 jbossas-7.0 /opt/jboss-as-7.1.0.Final 102
-alternatives --set jbossas-7.0 /opt/jboss-as-7.1.0.Final
+alternatives --install /etc/alternatives/jbossas-7 jbossas-7 /opt/jboss-as-7.1.0.Final 102
+alternatives --set jbossas-7 /opt/jboss-as-7.1.0.Final
 #
 # Temp placeholder to add a postgresql datastore -- keep this until the
 # the postgresql module is added to jboss as 7.* upstream.
-mkdir -p /etc/alternatives/jbossas-7.0/modules/org/postgresql/jdbc/main
-ln -fs /usr/share/java/postgresql-jdbc3.jar /etc/alternatives/jbossas-7.0/modules/org/postgresql/jdbc/main
-cp -p %{cartridgedir}/info/configuration/postgresql_module.xml /etc/alternatives/jbossas-7.0/modules/org/postgresql/jdbc/main/module.xml
+mkdir -p /etc/alternatives/jbossas-7/modules/org/postgresql/jdbc/main
+ln -fs /usr/share/java/postgresql-jdbc3.jar /etc/alternatives/jbossas-7/modules/org/postgresql/jdbc/main
+cp -p %{cartridgedir}/info/configuration/postgresql_module.xml /etc/alternatives/jbossas-7/modules/org/postgresql/jdbc/main/module.xml
 
 
 %clean

@@ -1,5 +1,5 @@
-Name: jbossas-7.0.0
-Version: 7.0.0
+Name: jbossas-7
+Version: 7
 Architecture: noarch
 Provides: jbossas
 Depends: java-1.6.0-openjdk
@@ -7,7 +7,7 @@ Conflicts:
 Type: Cartridge
 Role: misc
 Vendor: www.jboss.org
-DisplayName: JBossAS-7.0.0
+DisplayName: JBossAS-7
 Bundles:
 Description: 
 A Java EE certified platform for developing and deploying enterprise Java

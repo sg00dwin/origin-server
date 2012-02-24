@@ -3,7 +3,7 @@ require 'test_helper'
 class ExpressCartlistTest < ActiveSupport::TestCase
 
   @@valid_cart_types = ['standalone', 'embedded']
-  @@standalone_list =  ['perl-5.10', 'jbossas-7.0', 'python-2.6', 'ruby-1.8', 'php-5.3', 'raw-0.1', 'jenkins-1.4', 'nodejs-0.6']
+  @@standalone_list =  ['perl-5.10', 'jbossas-7', 'python-2.6', 'ruby-1.8', 'php-5.3', 'raw-0.1', 'jenkins-1.4', 'nodejs-0.6']
   @@embedded_list = ['mysql-5.1']
 
 
