@@ -144,7 +144,7 @@ chown -R jenkins:jenkins /var/lib/jenkins
 /usr/sbin/setsebool -P httpd_can_network_relay=on || :
 
 # Add policy for developement environment
-cd ${policydir} ; make -f ../devel/Makefile
+cd %{policydir} ; make -f ../devel/Makefile
 semodule -i dhcpnamedforward.pp
 cd
 
