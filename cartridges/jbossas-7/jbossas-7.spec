@@ -2,7 +2,7 @@
 
 Summary:   Provides JBossAS7 support
 Name:      rhc-cartridge-jbossas-7
-Version:   0.87.3
+Version:   0.87.4
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   ASL 2.0
@@ -110,6 +110,9 @@ rm -rf %{buildroot}
 %config(noreplace) %{cartridgedir}/info/configuration/
 
 %changelog
+* Fri Feb 24 2012 Dan McPherson <dmcphers@redhat.com> 0.87.4-1
+- new package built with tito
+
 * Wed Feb 22 2012 Dan McPherson <dmcphers@redhat.com> 0.87.2-1
 - Add show-proxy call. (rmillner@redhat.com)
 - set jboss version back for now (dmcphers@redhat.com)
