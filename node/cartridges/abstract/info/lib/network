@@ -141,9 +141,10 @@ function show_proxy_port {
   uuid=$1
   target=$2
   
-  service libra-proxy showproxy $(uuid_to_portset $uuid) | \
-    while read proxy_port proxtarg
+
+  for proxy_port in $(uuid_to_portset $uuid)
   do
+    proxtarg=$(service libra-proxy showproxy "$proxy_port" | awk '{ print $2 }')
     if [ "$proxtarg" == "$target" ]; then
       echo "$proxy_port"
       return 0
