@@ -14,10 +14,14 @@ HOSTS = YAML.load(File.open(File.join(MY_ROOT,'config','hosts.yml')))
 class StatusApp < Sinatra::Base
   configure do
     set :views, File.join(MY_ROOT,'views')
+    set :synced, false
   end
 
   before do
-    #sync(sprintf(HOSTS[:template],HOSTS[:host])) unless defined?(settings.synced)
+    if !settings.synced && Issue.all.empty?
+      _log("Not synced")
+      sync(sprintf(HOSTS[:template],HOSTS[:host]))
+    end
   end
 
   get '/app/status' do
@@ -86,30 +90,32 @@ class StatusApp < Sinatra::Base
     end
     
     def sync(host)
-      set :synced, true
       uri = "#{host}/current.json"
       _log "Syncing to #{uri}"  
 
       http_req(:get,uri) do |resp|
         unless resp.empty?
-          data = JSON.parse(resp)
+          begin
+            data = JSON.parse(resp)
 
-          Issue.delete_all
-          Update.delete_all
+            Issue.delete_all
+            Update.delete_all
 
-          string = "update sqlite_sequence set seq = 0 where name = '%s'"
-          ActiveRecord::Base.connection.execute(sprintf(string,'issues'))
-          ActiveRecord::Base.connection.execute(sprintf(string,'updates'))
+            string = "update sqlite_sequence set seq = 0 where name = '%s'"
+            ActiveRecord::Base.connection.execute(sprintf(string,'issues'))
+            ActiveRecord::Base.connection.execute(sprintf(string,'updates'))
 
-          data['issues'].each do |val| 
-            issue = val['issue']
-            puts YAML.dump issue
-            Issue.create issue
-          end
-          data['updates'].each do |val| 
-            update = val['update']
-            puts YAML.dump update
-            Update.create update
+            data['issues'].each do |val| 
+              issue = val['issue']
+              Issue.create issue
+            end
+            data['updates'].each do |val| 
+              update = val['update']
+              Update.create update
+            end
+            settings.synced = true
+          rescue JSON::ParserError
+            _log "Site not responding to status request"
           end
         end
       end
