@@ -101,21 +101,21 @@ module OpenShift
     def teardown
       if @driver
         unless passed?
+          start_time = Time.now # comment out in Ruby 1.9.3
+          image = "output/#{start_time.to_i.to_s[-4..-1]}_#{name}.png"
+          html = "output/#{start_time.to_i.to_s[-4..-1]}_#{name}.html"
           begin
-            start_time = Time.now # comment out in Ruby 1.9.3
             Dir.mkdir 'output' rescue
 
-            image = "output/#{name}_#{start_time.to_i}.png"
             @driver.save_screenshot(image)
 
-            html = "output/#{name}_#{start_time.to_i}.html"
-            File.open(html, 'w') do |f| 
+            File.open(html, 'w') do |f|
               f.write(@driver.page_source)
             end
 
-            puts "Wrote screenshot to #{Pathname.new(image).realpath} and html to #{Pathname.new(html).realpath}"
+            puts ":<logged to #{Pathname.new(image).realpath}>"
           rescue Exception => e
-            puts "<unable to output logs for #{name}"
+            print "<unable to output logs for #{name}"
             puts e.inspect
             puts ">"
           end

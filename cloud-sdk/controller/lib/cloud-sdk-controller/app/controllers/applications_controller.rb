@@ -8,21 +8,15 @@ class ApplicationsController < BaseController
     domain_id = params[:domain_id]
     cloud_user = CloudUser.find(@login)
     applications = Application.find_all(cloud_user)
-    
-    if applications.nil? 
-      @reply = RestReply.new(:not_found)
-      message = Message.new(:error, "No applications found for user #{@login}.")
-      @reply.messages.push(message)
-      respond_with @reply, :status => @reply.status
-    else
-      apps = Array.new
+    apps = Array.new
+    if not applications.nil? 
       applications.each do |application|
         app = RestApplication.new(application, domain_id)
         apps.push(app)
       end
-      @reply = RestReply.new(:ok, "applications", apps)
-      respond_with @reply, :status => @reply.status
     end
+    @reply = RestReply.new(:ok, "applications", apps)
+    respond_with @reply, :status => @reply.status
   end
   
   # GET /domains/[domain_id]/applications/<id>
@@ -55,57 +49,57 @@ class ApplicationsController < BaseController
     scale = false if scale.nil? or scale=="false"
     scale = true if scale=="true"
     template_id = params[:template]
-    
-    if app_name.nil? 
-      @reply = RestReply.new( :bad_request)
-      message = Message.new(:error, "Missing required parameter name.") 
+
+    if app_name.nil? or app_name.empty? or !(app_name =~ /\A[A-Za-z0-9]+\z/)
+      @reply = RestReply.new(:unprocessable_entity)
+      message = Message.new(:error, "Application name is required and cannot be blank", 105, "name") 
       @reply.messages.push(message)
       respond_with @reply, :status => @reply.status
-      return nil
+      return
     end
     application = Application.find(user,app_name)
     if not application.nil?
       @reply = RestReply.new(:conflict)
-      message = Message.new(:error, "The supplied application name '#{app_name}' already exists") 
+      message = Message.new(:error, "The supplied application name '#{app_name}' already exists", 100, "name") 
       @reply.messages.push(message)
       respond_with @reply, :status => @reply.status
-      return nil
+      return
     end
     Rails.logger.debug "Checking to see if application name is black listed"
     if Cloud::Sdk::ApplicationContainerProxy.blacklisted? app_name
-      @reply = RestReply.new(:forbidden)
-      message = Message.new(:error, "The supplied application name '#{app_name}' is not allowed") 
+      @reply = RestReply.new(:unprocessable_entity)
+      message = Message.new(:error, "The supplied application name '#{app_name}' is not allowed", 105, "name") 
       @reply.messages.push(message)
       respond_with @reply, :status => @reply.status
-      return nil
+      return
     end
     Rails.logger.debug "Checking to see if user limit for number of apps has been reached"
     if (user.consumed_gears >= user.max_gears)
       @reply = RestReply.new(:forbidden)
-      message = Message.new(:error, "#{@login} has already reached the application limit of #{user.max_gears}")
+      message = Message.new(:error, "#{@login} has already reached the application limit of #{user.max_gears}", 104)
       @reply.messages.push(message)
       respond_with @reply, :status => @reply.status
-      return nil
+      return
     end
     application = nil
     
     if not template_id.nil?
       template = ApplicationTemplate.find(params[:template])
       if template.nil?
-        @reply = RestReply.new(:bad_request)
-        message = Message.new(:error, "Invalid template #{params[:template]}.") 
+        @reply = RestReply.new(:unprocessable_entity)
+        message = Message.new(:error, "Invalid template #{params[:template]}.", nil, "template") 
         @reply.messages.push(message)
         respond_with @reply, :status => @reply.status
       end
       application = Application.new(user, app_name, nil, nil, nil, template, scale)
     else
       if cartridge.nil? or not CartridgeCache.cartridge_names('standalone').include?(cartridge)
-        @reply = RestReply.new( :bad_request)
+        @reply = RestReply.new(:unprocessable_entity)
         carts = get_cached("cart_list_standalone", :expires_in => 21600.seconds) {Application.get_available_cartridges("standalone")}
-        message = Message.new(:error, "Invalid cartridge #{cartridge}.  Valid values are (#{carts.join(', ')})") 
+        message = Message.new(:error, "Invalid cartridge #{cartridge}.  Valid values are (#{carts.join(', ')})", 109, "cartridge") 
         @reply.messages.push(message)
         respond_with @reply, :status => @reply.status
-        return nil
+        return
       end
       application = Application.new(user, app_name, nil, nil, cartridge, nil, scale)
     end
@@ -117,10 +111,11 @@ class ApplicationsController < BaseController
         application.create
         Rails.logger.debug "Configuring dependencies #{application.name}"
         application.configure_dependencies
-        Rails.logger.debug "Adding system ssh keys #{application.name}"
-        application.add_system_ssh_keys
-        Rails.logger.debug "Adding ssh keys #{application.name}"
-        application.add_ssh_keys
+
+        # Rails.logger.debug "Adding system ssh keys #{application.name}"
+        # application.add_system_ssh_keys
+        # Rails.logger.debug "Adding ssh keys #{application.name}"
+        # application.add_ssh_keys
         Rails.logger.debug "Adding system environment vars #{application.name}"
         application.add_system_env_vars
         begin
@@ -159,11 +154,13 @@ class ApplicationsController < BaseController
       @reply.messages.push(message)
       respond_with @reply, :status => @reply.status
     else
-      @reply = RestReply.new( :bad_request)
-      message = Message.new(:error, "Failed to create application #{application.name}") 
-      @reply.messages.push(message)
-      message = Message.new(:error, application.errors.first[1][:message]) 
-      @reply.messages.push(message)
+      @reply = RestReply.new(:unprocessable_entity)
+      application.errors.keys.each do |key|
+        error_messages = application.errors.get(key)
+        error_messages.each do |error_message|
+          @reply.messages.push(Message.new(:error, error_message[:message], error_message[:exit_code], key))
+        end
+      end
       respond_with @reply, :status => @reply.status
     end
   end

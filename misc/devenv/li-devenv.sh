@@ -69,6 +69,7 @@ function install_build_requires {
 
 if [ "$2" == "--install_from_source" ]
 then
+  mkdir -p  /tmp/tito
   rm -rf /root/li-working
   git clone git://git1.ops.rhcloud.com/li.git/ /root/li-working
   rm -rf /root/os-client-tools

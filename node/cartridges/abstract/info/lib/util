@@ -224,6 +224,10 @@ function remove_broker_auth_key {
     echo "BROKER_AUTH_KEY_REMOVE: "
 }
 
+function cart_data {
+    echo "CART_DATA: $@"
+}
+
 function setup_configure {
     source ${CART_DIR}/abstract/info/lib/git
     source ${CART_DIR}/abstract/info/lib/network
