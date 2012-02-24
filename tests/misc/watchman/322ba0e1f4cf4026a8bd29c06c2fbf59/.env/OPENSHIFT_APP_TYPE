@@ -1,1 +1,1 @@
-export OPENSHIFT_APP_TYPE='jbossas-7.0'
+export OPENSHIFT_APP_TYPE='jbossas-7'

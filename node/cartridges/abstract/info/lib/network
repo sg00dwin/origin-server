@@ -136,3 +136,14 @@ function remove_proxy_port {
   done
   return 0
 }
+
+function remove_all_proxy_ports {
+  uuid=$1
+
+  setproxy=()
+  for proxy_port in $(uuid_to_portset $uuid)
+  do
+    setproxy=("${setproxy[@]}" "$proxy_port" "delete")
+  done
+  service libra-proxy setproxy "${setproxy[@]}"
+}

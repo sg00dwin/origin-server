@@ -98,7 +98,7 @@ class DevEnv < Thor
       scp_from(hostname, "/var/log/dmesg", "rhc/log/messages.log")
       scp_from(hostname, "/tmp/rhc/screenshots/", "rhc/log")
       scp_from(hostname, "/root/li-test/selenium/output/*", "rhc/log")
-      scp_from(hostname, "/var/lib/libra/*/*/jbossas-7.0/standalone/tmp/*.log", "rhc/log")
+      scp_from(hostname, "/var/lib/libra/*/*/jbossas-7/standalone/tmp/*.log", "rhc/log")
       puts "Done"
     end
 
@@ -462,6 +462,7 @@ class DevEnv < Thor
     puts "WARNING - Uncommitted repository changes" if $? != 0
 
     remove_dir '/tmp/tito/'
+    FileUtils.mkdir_p '/tmp/tito/'
 
     # Figure out what needs to be built - exclude devenv for syncs
     build_dirs = get_sync_dirs
@@ -744,7 +745,7 @@ END
       inside('../os-client-tools') do
         temp_commit
 
-        `rm -rf /tmp/tito/; pushd express; tito build --rpm --test; popd; sudo rpm -Uvh /tmp/tito/noarch/rhc-*;rm -rf /tmp/tito/`
+        `rm -rf /tmp/tito/; pushd express; tito build --rpm --test; popd; sudo rpm -Uvh /tmp/tito/noarch/rhc-*;rm -rf /tmp/tito/; mkdir -p /tmp/tito`
 
         reset_temp_commit
 
