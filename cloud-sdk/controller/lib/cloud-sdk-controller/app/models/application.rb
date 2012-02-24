@@ -272,11 +272,11 @@ class Application < Cloud::Sdk::Cartridge
 
       result_io.append gear.destroy
       ginst.gears.delete gear
+
+      # inform anyone who needs to know that this gear is no more
+      self.configure_dependencies
       break
     }
-    # inform anyone who needs to know that this gear is no more
-    execute_connections
-    self.save
     result_io
   end
   
