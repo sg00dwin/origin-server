@@ -12,10 +12,10 @@ Broker::Application.configure do
 
   # Show full error reports and disable caching
   config.consider_all_requests_local       = true
-  config.action_controller.perform_caching = true
+  config.action_controller.perform_caching = false
 
   # Raise exceptions instead of rendering exception templates
-  config.action_dispatch.show_exceptions = true
+  config.action_dispatch.show_exceptions = false
 
   # Disable request forgery protection in test environment
   config.action_controller.allow_forgery_protection    = false
@@ -40,18 +40,8 @@ Broker::Application.configure do
 
   # CDK Config
   config.cdk = {
-    :domain_suffix => "rhcloud.com",
+    :domain_suffix => "dev.rhcloud.com",
     :default_max_gears => 5,
-
-    :dns => {
-      :bind => {
-        :server => "127.0.0.1",
-        :port => 53,
-        :keyname => "example.com",
-        :keyvalue => "H6NDDnTbNpcBrUM5c4BJtohyK2uuZ5Oi6jxg3ME+RJsNl5Wl2B87oL12YxWUR3Gp7FdZQojTKBSfs5ZjghYxGw==",
-        :zone => "example.com"
-      }
-    },
 
     :datastore_mongo => {
       :replica_set => false,

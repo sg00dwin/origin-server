@@ -2,6 +2,7 @@
 bin_dir  = File.join("bin", "*")
 conf_dir = File.join("conf", "*")
 lib_dir  = File.join(File.join("lib", "**"), "*")
+misc_dir  = File.join(File.join("misc", "**"), "*")
 test_dir  = File.join(File.join("test", "**"), "*")
 
 Gem::Specification.new do |s|
@@ -15,15 +16,12 @@ Gem::Specification.new do |s|
   s.description = %q{Cloud Development Node}
 
   s.rubyforge_project = "cloud-sdk-node"
-  s.files       = Dir[lib_dir] + Dir[bin_dir] + Dir[conf_dir] + Dir[test_dir]
+  s.files       = Dir[lib_dir] + Dir[bin_dir] + Dir[conf_dir] + Dir[test_dir] + Dir[misc_dir]
   s.files       += %w(README.md Rakefile Gemfile cloud-sdk-node.spec cloud-sdk-node.gemspec COPYRIGHT LICENSE)
   s.executables = Dir[bin_dir].map {|binary| File.basename(binary)}
   s.require_paths = ["lib"]
   s.add_dependency("json")
-  s.add_dependency("highline")
-  s.add_dependency("state_machine")
   s.add_dependency("parseconfig")
-  s.add_dependency("activemodel")
   s.add_dependency("cloud-sdk-common")
 
   s.add_development_dependency('rspec')

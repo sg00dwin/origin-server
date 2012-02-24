@@ -15,11 +15,7 @@ BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 Requires:       ruby(abi) = 1.8
 Requires:       rubygems
 Requires:       rubygem(activemodel)
-Requires:       rubygem(highline)
-Requires:       rubygem(json_pure)
-Requires:       rubygem(mocha)
-Requires:       rubygem(parseconfig)
-Requires:       rubygem(state_machine)
+Requires:       rubygem(json)
 Requires:       rubygem(mongo)
 
 BuildRequires:  ruby

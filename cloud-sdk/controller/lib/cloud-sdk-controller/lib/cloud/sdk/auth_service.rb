@@ -18,15 +18,15 @@ module Cloud
       end
       
       def authenticate(request, login, password)
-        return login
+        return {:username => login, :auth_method => :login}
       end
 
       def login(request, params, cookies)
         if params['broker_auth_key'] && params['broker_auth_iv']
-          return params['broker_auth_key']
+          return {:username => params['broker_auth_key'], :auth_method => :broker_auth}
         else
           data = JSON.parse(params['json_data'])          
-          return data["rhlogin"]
+          return {:username => data["rhlogin"], :auth_method => :login}
         end
       end
     end

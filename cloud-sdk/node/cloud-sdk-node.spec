@@ -14,13 +14,12 @@ Source0:        rubygem-%{gemname}-%{version}.tar.gz
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 Requires:       ruby(abi) = 1.8
 Requires:       rubygems
-Requires:       rubygem(activemodel)
-Requires:       rubygem(highline)
-Requires:       rubygem(json_pure)
-Requires:       rubygem(mocha)
+Requires:       rubygem(json)
 Requires:       rubygem(parseconfig)
-Requires:       rubygem(state_machine)
 Requires:       rubygem(cloud-sdk-common)
+Requires:       rubygem(mocha)
+Requires:       rubygem(rspec)
+Requires:       python
 
 BuildRequires:  ruby
 BuildRequires:  rubygems
@@ -51,15 +50,13 @@ mkdir -p %{buildroot}%{gemdir}
 mkdir -p %{buildroot}%{ruby_sitelib}
 mkdir -p %{_bindir}
 
-ln -s %{geminstdir}/lib/cloud-sdk-node/express/setup_pam_fs_limits.sh %{buildroot}/%{_bindir}/setup_pam_fs_limits.sh
-
 # Build and install into the rubygem structure
 gem build %{gemname}.gemspec
 gem install --local --install-dir %{buildroot}%{gemdir} --force %{gemname}-%{version}.gem
 
 # Move the gem binaries to the standard filesystem location
 mv %{buildroot}%{gemdir}/bin/* %{buildroot}%{_bindir}
-rm -rf %{buildroot}%gemdir}/bin
+rm -rf %{buildroot}%{gemdir}/bin
 
 # Move the gem configs to the standard filesystem location
 mv %{buildroot}%{geminstdir}/conf/* %{buildroot}%{_sysconfdir}/cdk
@@ -67,6 +64,10 @@ mv %{buildroot}%{geminstdir}/conf/* %{buildroot}%{_sysconfdir}/cdk
 # Symlink into the ruby site library directories
 ln -s %{geminstdir}/lib/%{gemname} %{buildroot}%{ruby_sitelib}
 ln -s %{geminstdir}/lib/%{gemname}.rb %{buildroot}%{ruby_sitelib}
+
+#move the shell binaries into proper location
+mv %{buildroot}%{geminstdir}/misc/bin/* %{buildroot}%{_bindir}/
+rm -rf %{buildroot}%{geminstdir}/misc
 
 %clean
 rm -rf %{buildroot}                                
@@ -85,6 +86,9 @@ rm -rf %{buildroot}
 %files -n ruby-%{gemname}
 %{ruby_sitelib}/%{gemname}
 %{ruby_sitelib}/%{gemname}.rb
+
+%post
+echo "/usr/bin/cdk-trap-user" >> /etc/shells
 
 %changelog
 * Fri Mar 02 2012 Dan McPherson <dmcphers@redhat.com> 0.6.1-1
