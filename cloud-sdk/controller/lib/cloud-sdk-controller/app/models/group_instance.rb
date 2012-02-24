@@ -45,6 +45,8 @@ class GroupInstance < Cloud::Sdk::UserModel
     unless create_result.exitcode == 0
       raise NodeException.new("Unable to create gear on node", "-100", create_result)
     end
+    app.add_system_ssh_keys([gear])
+    app.add_ssh_keys([gear])
     self.gears << gear
     return [create_result, gear]
   end

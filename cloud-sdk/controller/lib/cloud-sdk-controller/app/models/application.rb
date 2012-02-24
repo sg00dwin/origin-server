@@ -162,6 +162,8 @@ class Application < Cloud::Sdk::Cartridge
 
         #TODO: save gears here
       end
+      self.add_ssh_keys(gears_created)
+      self.add_system_ssh_keys(gears_created)
       self.class.notify_observers(:application_creation_success, {:application => self, :reply => result_io})              
     rescue Exception => e
       Rails.logger.debug e.message
@@ -236,8 +238,7 @@ class Application < Cloud::Sdk::Cartridge
     }
     if not new_gear.nil?
       result_io.append self.configure_dependencies
-      self.add_system_ssh_keys([new_gear])
-      self.add_ssh_keys([new_gear])
+      self.add_system_env_vars([new_gear])
     end
     result_io
   end
@@ -264,7 +265,8 @@ class Application < Cloud::Sdk::Cartridge
         dns.close
       end
 
-      gear.configured_components.each { |conf_comp|
+      comps_to_deconfigure = gear.configured_components.dup
+      comps_to_deconfigure.each { |conf_comp|
         cinst = self.comp_instance_map[conf_comp]
         result_io.append gear.deconfigure(cinst)
       }
@@ -275,6 +277,7 @@ class Application < Cloud::Sdk::Cartridge
     }
     # inform anyone who needs to know that this gear is no more
     execute_connections
+    self.save
     result_io
   end
   
@@ -322,6 +325,7 @@ class Application < Cloud::Sdk::Cartridge
         group_inst.fulfil_requirements(self)
         run_on_gears(group_inst.gears, reply) do |gear, r|
           r.append gear.configure(comp_inst, @init_git_url)
+          r.append gear.expose_port(comp_inst) if comp_inst.parent_cart_name==web_cart
           r.append process_cartridge_commands(r.cart_commands)
           # self.save
         end
@@ -726,9 +730,9 @@ class Application < Cloud::Sdk::Cartridge
     reply
   end
   
-  def add_system_env_vars
+  def add_system_env_vars(gears=nil)
     reply = ResultIO.new
-    run_on_gears(nil,reply,false) do |gear,r|
+    run_on_gears(gears,reply,false) do |gear,r|
       @user.env_vars.each do |key, value|
         r.append gear.add_env_var(key, value)
       end
