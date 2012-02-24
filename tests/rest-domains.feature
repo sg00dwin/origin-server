@@ -110,6 +110,8 @@ Feature: domains
     Then the response should be "201"
     When I send a DELETE request to "/domains/cucumber"
     Then the response should be "400"
+    When I send a DELETE request to "/domains/cucumber/applications/app"
+    Then the response should be "204"
     
   Scenario: Force Delete domain with existing applications
     Given a new guest account
