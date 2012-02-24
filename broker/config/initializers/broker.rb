@@ -4,3 +4,6 @@ Cloud::Sdk::ApplicationContainerProxy.provider=Express::Broker::ApplicationConta
 Cloud::Sdk::DnsService.provider=Express::Broker::DnsService
 ApplicationObserver.instance
 CloudUserObserver.instance
+
+#customizations to models
+require 'cloud_user_ext'

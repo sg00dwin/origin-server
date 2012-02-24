@@ -41,7 +41,7 @@ module Cloud
       end
       
       def self.attr_reader(*accessors)
-        attribute_methods_generated = false
+        @attribute_methods_generated = false
         define_attribute_methods accessors
         
         accessors.each do |m|
@@ -52,7 +52,7 @@ module Cloud
       end
       
       def self.attr_writer(*accessors)
-        attribute_methods_generated = false
+        @attribute_methods_generated = false
         define_attribute_methods accessors
         
         accessors.each do |m|
