@@ -125,14 +125,14 @@ module Cloud
         end
       end
       
-      def configure_cartridge(app, gear, cart)
+      def configure_cartridge(app, gear, cart, template_git_url=nil)
         Rails.logger.debug("Inside configure_cartridge :: application: #{app.name} :: cartridge name: #{cart}")
 
         result_io = ResultIO.new
         cart_data = nil
                   
         if framework_carts.include? cart
-          result_io = run_cartridge_command(cart, app, gear, "configure")
+          result_io = run_cartridge_command(cart, app, gear, "configure", template_git_url)
         elsif embedded_carts.include? cart
           result_io, cart_data = add_component(app, gear, cart)
         else
