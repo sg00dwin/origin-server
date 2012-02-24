@@ -61,6 +61,7 @@ create_standard_app_dirs
 mkdir -p conf conf.d logs sessions
 ln -s /usr/lib64/httpd/modules modules
 ln -s /etc/httpd/conf/magic conf/magic
+touch conf/gear-registry.git
 #sed -e "s,TEMPLATE_SET_ME_SESSION_SAVE_PATH,$APP_DIR/sessions/," \
 #    -e "s,TEMPLATE_SET_ME_UPLOAD_TMP_DIR,$APP_DIR/tmp/," $CART_CONF_DIR/php.ini > $APP_DIR/conf/php.ini 
 popd > /dev/null
@@ -93,7 +94,7 @@ export IP2=`embedded_find_open_ip $uid "$APP_DIR/../"`
 echo "export OPENSHIFT_HAPROXY_STATUS_IP='$IP'" > "$APP_DIR/../.env/OPENSHIFT_HAPROXY_STATUS_IP"
 $CART_INFO_DIR/bin/deploy_httpd_config.sh $application $uuid $IP
 mkdir /var/lib/libra/${uuid}/.openshift
-chown ${uuid} /var/lib/libra/${uuid}/.openshift
+chown ${uuid} /var/lib/libra/${uuid}/.openshift $APP_DIR/conf/gear-registry.git
 
 #
 # Start the server
