@@ -1,10 +1,13 @@
-policy_module(libra,1.0.36)
+policy_module(libra,1.1.1)
 
 ########################################
 #
 # Declarations
 #
+attribute libra_net_domain;
+attribute libra_app_domain;
 attribute libra_domain;
+attribute libra_file_type;
 
 type libra_initrc_t;
 type libra_initrc_exec_t;
@@ -15,25 +18,34 @@ oddjob_system_entry(libra_initrc_t, libra_initrc_exec_t)
 type libra_initrc_tmp_t;
 files_tmp_file(libra_initrc_tmp_t)
 
-type libra_tmp_t;
+type libra_tmp_t, libra_file_type;
 files_tmp_file(libra_tmp_t)
 files_mountpoint(libra_tmp_t)
 
 type libra_var_run_t;
 files_pid_file(libra_var_run_t)
 
-type libra_var_lib_t;
+type libra_var_lib_t, libra_file_type;
 files_poly(libra_var_lib_t)
 files_poly_parent(libra_var_lib_t)
 
-type libra_t;
-libra_service_domain(libra_t)
+type libra_rw_file_t, libra_file_type;
+files_poly(libra_rw_file_t)
+files_poly_parent(libra_rw_file_t)
 
-type libra_net_t;
-libra_service_domain(libra_net_t)
+type libra_private_file_t, libra_file_type;
+files_poly(libra_private_file_t)
+files_poly_parent(libra_private_file_t)
 
-type libra_min_t;
-libra_service_domain(libra_min_t)
+libra_service_domain_template(libra)
+libra_net_type(libra_t)
+libra_net_type(libra_app_t)
+
+libra_service_domain_template(libra_net)
+libra_net_type(libra_net_t)
+libra_net_type(libra_net_app_t)
+
+libra_service_domain_template(libra_min)
 
 type libra_log_t;
 logging_log_file(libra_log_t)
@@ -46,33 +58,33 @@ corenet_reserved_port(libra_port_t)
 #
 # libra standard local policy
 #
-corenet_tcp_connect_mssql_port(libra_t)
-corenet_tcp_connect_mysqld_port(libra_t)
-corenet_tcp_connect_postgresql_port(libra_t)
-corenet_tcp_connect_git_port(libra_t)
-corenet_tcp_connect_oracle_port(libra_t)
-corenet_tcp_connect_http_port(libra_t)
-corenet_tcp_connect_ftp_port(libra_t)
+corenet_tcp_connect_mssql_port(libra_net_domain)
+corenet_tcp_connect_mysqld_port(libra_net_domain)
+corenet_tcp_connect_postgresql_port(libra_net_domain)
+corenet_tcp_connect_git_port(libra_net_domain)
+corenet_tcp_connect_oracle_port(libra_net_domain)
+corenet_tcp_connect_http_port(libra_net_domain)
+corenet_tcp_connect_ftp_port(libra_net_domain)
 #/* These ports are the ephemeral ports needed for ftp */
-corenet_tcp_connect_virt_migration_port(libra_t)
-corenet_tcp_connect_ssh_port(libra_t)
-corenet_tcp_connect_jboss_management_port(libra_t)
-corenet_tcp_connect_jboss_debug_port(libra_t)
-corenet_tcp_connect_memcache_port(libra_t)
-corenet_tcp_connect_http_cache_port(libra_t)
-corenet_tcp_connect_amqp_port(libra_t)
-corenet_tcp_connect_generic_port(libra_t)
-corenet_tcp_connect_mongod_port(libra_t)
-corenet_tcp_connect_munin_port(libra_t)
-corenet_tcp_connect_pop_port(libra_t)
-corenet_udp_bind_generic_port(libra_t)
-corenet_tcp_bind_jboss_management_port(libra_t)
-corenet_tcp_bind_jboss_debug_port(libra_t)
-corenet_tcp_bind_mongod_port(libra_t)
-corenet_tcp_connect_smtp_port(libra_t)
+corenet_tcp_connect_virt_migration_port(libra_net_domain)
+corenet_tcp_connect_ssh_port(libra_net_domain)
+corenet_tcp_connect_jboss_management_port(libra_net_domain)
+corenet_tcp_connect_jboss_debug_port(libra_net_domain)
+corenet_tcp_connect_memcache_port(libra_net_domain)
+corenet_tcp_connect_http_cache_port(libra_net_domain)
+corenet_tcp_connect_amqp_port(libra_net_domain)
+corenet_tcp_connect_generic_port(libra_net_domain)
+corenet_tcp_connect_mongod_port(libra_net_domain)
+corenet_tcp_connect_munin_port(libra_net_domain)
+corenet_tcp_connect_pop_port(libra_net_domain)
+corenet_udp_bind_generic_port(libra_net_domain)
+corenet_tcp_bind_jboss_management_port(libra_net_domain)
+corenet_tcp_bind_jboss_debug_port(libra_net_domain)
+corenet_tcp_bind_mongod_port(libra_net_domain)
+corenet_tcp_connect_smtp_port(libra_net_domain)
 
-ssh_exec(libra_t)
-cloudform_exec_mongod(libra_t)
+ssh_exec(libra_app_domain)
+cloudform_exec_mongod(libra_app_domain)
 
 ########################################
 #
@@ -84,121 +96,129 @@ corenet_tcp_connect_all_ports(libra_net_t)
 #
 # libra general local policy
 #
-allow libra_domain self:process { setcurrent getattr fork getpgid setpgid setrlimit setsched signal_perms ptrace getsched execmem };
-dontaudit libra_t self:process getcap;
+allow libra_app_domain self:process { setcurrent getattr fork getpgid setpgid setrlimit setsched signal_perms ptrace getsched execmem };
+dontaudit libra_app_domain self:process getcap;
 
-allow libra_domain self:shm create_shm_perms;
-allow libra_domain self:sem create_sem_perms;
-allow libra_domain self:tcp_socket  create_stream_socket_perms;
+allow libra_app_domain self:shm create_shm_perms;
+allow libra_app_domain self:sem create_sem_perms;
+allow libra_app_domain self:tcp_socket  create_stream_socket_perms;
 
-allow libra_domain self:fifo_file manage_fifo_file_perms;
-allow libra_domain self:unix_stream_socket { create_stream_socket_perms connectto };
-allow libra_domain self:unix_dgram_socket { create_socket_perms sendto };
-dontaudit libra_domain self:netlink_audit_socket { create_socket_perms nlmsg_relay };
+allow libra_app_domain self:fifo_file manage_fifo_file_perms;
+allow libra_app_domain self:unix_stream_socket { create_stream_socket_perms connectto };
+allow libra_app_domain self:unix_dgram_socket { create_socket_perms sendto };
+dontaudit libra_app_domain self:netlink_audit_socket { create_socket_perms nlmsg_relay };
 
-allow libra_domain libra_log_t:file { getattr append lock ioctl };
+allow libra_app_domain libra_log_t:file { getattr append lock ioctl };
 
-dontaudit libra_domain libra_initrc_tmp_t:file append;
-dontaudit libra_domain libra_var_run_t:file append;
+dontaudit libra_app_domain libra_initrc_tmp_t:file append;
+dontaudit libra_app_domain libra_var_run_t:file append;
 
-manage_dirs_pattern(libra_domain, libra_tmp_t, libra_tmp_t)
-manage_fifo_files_pattern(libra_domain, libra_tmp_t, libra_tmp_t)
-manage_files_pattern(libra_domain, libra_tmp_t, libra_tmp_t)
-manage_lnk_files_pattern(libra_domain, libra_tmp_t, libra_tmp_t)
-manage_sock_files_pattern(libra_t, libra_tmp_t, libra_tmp_t)
-allow libra_domain libra_tmp_t:file { relabelfrom relabelto };
-files_tmp_filetrans(libra_domain, libra_tmp_t, { file dir sock_file fifo_file })
-can_exec(libra_t, libra_tmp_t)
-
-manage_dirs_pattern(libra_domain, libra_var_lib_t, libra_var_lib_t)
-manage_files_pattern(libra_domain, libra_var_lib_t, libra_var_lib_t)
-manage_fifo_files_pattern(libra_domain, libra_var_lib_t, libra_var_lib_t)
-manage_sock_files_pattern(libra_domain, libra_var_lib_t, libra_var_lib_t)
-manage_lnk_files_pattern(libra_domain, libra_var_lib_t, libra_var_lib_t)
+manage_dirs_pattern(libra_domain, libra_file_type, libra_file_type)
+manage_fifo_files_pattern(libra_domain, libra_file_type, libra_file_type)
+manage_files_pattern(libra_domain, libra_file_type, libra_file_type)
+manage_lnk_files_pattern(libra_domain, libra_file_type, libra_file_type)
+manage_sock_files_pattern(libra_domain, libra_file_type, libra_file_type)
 files_var_lib_filetrans(libra_domain, libra_var_lib_t, { dir file sock_file } )
-allow libra_domain libra_var_lib_t:file entrypoint;
 allow libra_domain libra_var_lib_t:file { relabelfrom relabelto };
+can_exec(libra_domain, libra_file_type)
+allow libra_app_domain libra_file_type:file entrypoint;
 
-kernel_read_system_state(libra_domain)
-kernel_read_network_state(libra_domain)
-kernel_read_vm_sysctls(libra_t)
-kernel_search_vm_sysctl(libra_t)
-kernel_dontaudit_list_all_proc(libra_domain)
-kernel_dontaudit_list_all_sysctls(libra_domain)
+manage_dirs_pattern(libra_app_domain, libra_tmp_t, libra_tmp_t)
+manage_fifo_files_pattern(libra_app_domain, libra_tmp_t, libra_tmp_t)
+manage_files_pattern(libra_app_domain, libra_tmp_t, libra_tmp_t)
+manage_lnk_files_pattern(libra_app_domain, libra_tmp_t, libra_tmp_t)
+manage_sock_files_pattern(libra_app_domain, libra_tmp_t, libra_tmp_t)
+allow libra_app_domain libra_tmp_t:file { relabelfrom relabelto };
+files_tmp_filetrans(libra_app_domain, libra_tmp_t, { file dir sock_file fifo_file })
+can_exec(libra_app_domain, libra_tmp_t)
 
-corecmd_exec_bin(libra_domain)
-corecmd_exec_shell(libra_domain)
+list_dirs_pattern(libra_app_domain, libra_var_lib_t, libra_var_lib_t)
+read_files_pattern(libra_app_domain, libra_var_lib_t, libra_var_lib_t)
+rw_fifo_files_pattern(libra_app_domain, libra_var_lib_t, libra_var_lib_t)
+rw_sock_files_pattern(libra_app_domain, libra_var_lib_t, libra_var_lib_t)
+read_lnk_files_pattern(libra_app_domain, libra_var_lib_t, libra_var_lib_t)
+allow libra_app_domain libra_var_lib_t:file entrypoint;
 
-dev_list_sysfs(libra_domain)
-dev_read_rand(libra_domain)
-dev_dontaudit_append_rand(libra_domain)
-dev_dontaudit_write_urand(libra_domain)
-dev_dontaudit_getattr_all_blk_files(libra_domain)
-dev_dontaudit_getattr_all_chr_files(libra_domain)
 
-domain_use_interactive_fds(libra_domain)
-domain_dontaudit_read_all_domains_state(libra_domain)
+kernel_read_system_state(libra_app_domain)
+kernel_read_network_state(libra_app_domain)
+kernel_dontaudit_list_all_proc(libra_app_domain)
+kernel_dontaudit_list_all_sysctls(libra_app_domain)
 
-fs_dontaudit_rw_anon_inodefs_files(libra_domain)
-fs_search_tmpfs(libra_domain)
-fs_getattr_xattr_fs(libra_domain)
-fs_dontaudit_getattr_all_fs(libra_domain)
-fs_list_inotifyfs(libra_domain)
-fs_dontaudit_list_auto_mountpoints(libra_domain)
-storage_dontaudit_getattr_fixed_disk_dev(libra_domain)
+corecmd_exec_bin(libra_app_domain)
+corecmd_exec_shell(libra_app_domain)
 
-files_dontaudit_search_all_pids(libra_domain)
-files_dontaudit_getattr_all_dirs(libra_domain)
-files_dontaudit_getattr_all_files(libra_domain)
-files_dontaudit_list_var(libra_domain)
-files_dontaudit_getattr_lost_found_dirs(libra_domain)
-files_dontaudit_search_all_mountpoints(libra_domain)
-files_dontaudit_search_spool(libra_domain)
+dev_list_sysfs(libra_app_domain)
+dev_read_rand(libra_app_domain)
+dev_dontaudit_append_rand(libra_app_domain)
+dev_dontaudit_write_urand(libra_app_domain)
+dev_dontaudit_getattr_all_blk_files(libra_app_domain)
+dev_dontaudit_getattr_all_chr_files(libra_app_domain)
+
+domain_use_interactive_fds(libra_app_domain)
+domain_dontaudit_read_all_domains_state(libra_app_domain)
+
+fs_dontaudit_rw_anon_inodefs_files(libra_app_domain)
+fs_search_tmpfs(libra_app_domain)
+fs_getattr_xattr_fs(libra_app_domain)
+fs_dontaudit_getattr_all_fs(libra_app_domain)
+fs_list_inotifyfs(libra_app_domain)
+fs_dontaudit_list_auto_mountpoints(libra_app_domain)
+storage_dontaudit_getattr_fixed_disk_dev(libra_app_domain)
+
+files_dontaudit_list_home(libra_app_domain)
+files_dontaudit_search_all_pids(libra_app_domain)
+files_dontaudit_getattr_all_dirs(libra_app_domain)
+files_dontaudit_getattr_all_files(libra_app_domain)
+files_dontaudit_list_var(libra_app_domain)
+files_dontaudit_getattr_lost_found_dirs(libra_app_domain)
+files_dontaudit_search_all_mountpoints(libra_app_domain)
+files_dontaudit_search_spool(libra_app_domain)
 # Uncomment when we have selinux-policy-3.7.19-134.el6
-# files_dontaudit_list_var(libra_domain)
-files_read_etc_files(libra_domain)
-files_read_usr_files(libra_domain)
-files_dontaudit_getattr_non_security_sockets(libra_domain)
+# files_dontaudit_list_var(libra_app_domain)
+files_read_etc_files(libra_app_domain)
+files_read_usr_files(libra_app_domain)
+files_dontaudit_getattr_non_security_sockets(libra_app_domain)
 # Uncomment when we have selinux-policy-3.7.19-133.el6
-files_dontaudit_setattr_etc_runtime_files(libra_domain)
+files_dontaudit_setattr_etc_runtime_files(libra_app_domain)
 
-libs_exec_lib_files(libra_domain)
-libs_exec_ld_so(libra_domain)
+libs_exec_lib_files(libra_app_domain)
+libs_exec_ld_so(libra_app_domain)
 
-logging_send_syslog_msg(libra_domain)
-logging_inherit_append_all_logs(libra_domain)
+logging_send_syslog_msg(libra_app_domain)
+logging_inherit_append_all_logs(libra_app_domain)
 
-init_dontaudit_read_utmp(libra_domain)
+init_dontaudit_read_utmp(libra_app_domain)
 
-miscfiles_read_localization(libra_domain)
-miscfiles_read_fonts(libra_domain)
-miscfiles_read_man_pages(libra_domain)
-miscfiles_dontaudit_setattr_fonts_cache_dirs(libra_domain)
+miscfiles_read_localization(libra_app_domain)
+miscfiles_read_fonts(libra_app_domain)
+miscfiles_read_man_pages(libra_app_domain)
+miscfiles_dontaudit_setattr_fonts_cache_dirs(libra_app_domain)
 
-mta_dontaudit_read_spool_symlinks(libra_domain)
+mta_dontaudit_read_spool_symlinks(libra_app_domain)
 
-term_dontaudit_search_ptys(libra_domain)
+term_dontaudit_search_ptys(libra_app_domain)
 
-userdom_dontaudit_search_admin_dir(libra_domain)
+userdom_dontaudit_search_admin_dir(libra_app_domain)
 
-application_exec(libra_domain)
+application_exec(libra_app_domain)
 
-apache_exec(libra_domain)
-apache_exec_modules(libra_domain)
-apache_list_modules(libra_domain)
-apache_read_config(libra_domain)
-apache_search_config(libra_domain)
-apache_read_sys_content(libra_domain)
-corenet_tcp_bind_http_cache_port(libra_domain)
-apache_search_sys_scripts(libra_domain)
+apache_exec(libra_app_domain)
+apache_exec_modules(libra_app_domain)
+apache_list_modules(libra_app_domain)
+apache_read_config(libra_app_domain)
+apache_search_config(libra_app_domain)
+apache_read_sys_content(libra_app_domain)
+corenet_tcp_bind_http_cache_port(libra_app_domain)
+apache_search_sys_scripts(libra_app_domain)
 # Will need to change to this when it becomes available in RHEL6.3 policy
-#apache_exec_sys_scripts(libra_domain)
+#apache_exec_sys_scripts(libra_app_domain)
 
 apache_content_template(libra)
 domtrans_pattern(httpd_libra_script_t, libra_initrc_exec_t, libra_initrc_t)
 oddjob_dbus_chat(httpd_libra_script_t)
 dbus_system_bus_client(httpd_libra_script_t)
-oddjob_dontaudit_rw_fifo_file(libra_domain)
+oddjob_dontaudit_rw_fifo_file(libra_app_domain)
 
 ########################################
 #
@@ -239,17 +259,15 @@ manage_dirs_pattern(libra_initrc_t, libra_log_t, libra_log_t)
 manage_files_pattern(libra_initrc_t, libra_log_t, libra_log_t)
 logging_log_filetrans(libra_initrc_t, libra_log_t, { file dir })
 
-allow libra_initrc_t libra_domain:process { getattr getsched setsched transition signal signull sigkill };
-allow libra_domain libra_initrc_t:fd use;
-allow libra_domain libra_initrc_t:fifo_file rw_inherited_fifo_file_perms;
-allow libra_domain libra_initrc_t:process sigchld;
-dontaudit libra_domain libra_initrc_t:process signull;
-dontaudit libra_domain libra_initrc_t:socket_class_set { read write };
+allow libra_initrc_t libra_app_domain:process { getattr getsched setsched transition signal signull sigkill };
+allow libra_app_domain libra_initrc_t:fd use;
+allow libra_app_domain libra_initrc_t:fifo_file rw_inherited_fifo_file_perms;
+allow libra_app_domain libra_initrc_t:process sigchld;
+dontaudit libra_app_domain libra_initrc_t:process signull;
+dontaudit libra_app_domain libra_initrc_t:socket_class_set { read write };
 
 # use this when available, see can_exec below MAL 20110422
-#apache_exec_rotatelogs(libra_domain)
-
-netutils_domtrans_ping(libra_t)
+#apache_exec_rotatelogs(libra_app_domain)
 
 ########################################
 #
@@ -267,13 +285,13 @@ require {
         type system_cronjob_t;
 }
 
-allow libra_domain httpd_exec_t:file entrypoint;
-dontaudit libra_domain exec_type:file getattr;
-ssh_dontaudit_search_user_home_dir(libra_domain)
+allow libra_app_domain httpd_exec_t:file entrypoint;
+dontaudit libra_app_domain exec_type:file getattr;
+ssh_dontaudit_search_user_home_dir(libra_app_domain)
 dontaudit sendmail_t libra_initrc_t:fifo_file { read write };
-dontaudit domain libra_t:fifo_file { getattr write };
+dontaudit domain libra_app_domain:fifo_file { getattr write };
 
-allow libra_t libra_port_t:tcp_socket name_connect;
+allow libra_net_domain libra_port_t:tcp_socket name_connect;
 
 append_files_pattern(sendmail_t, libra_var_lib_t, libra_var_lib_t)
 allow domain libra_var_lib_t:dir search_dir_perms;
@@ -287,20 +305,20 @@ kernel_dontaudit_request_load_module(domain)
 #
 # Cron support
 #
-cron_role(system_r, libra_t)
-allow system_cronjob_t libra_t:process transition;
-allow libra_t system_cronjob_t:process sigchld;
+cron_role(system_r, libra_app_domain)
+allow system_cronjob_t libra_app_domain:process transition;
+allow libra_app_domain system_cronjob_t:process sigchld;
 
 ########################################
 #
 # Mysql support
 #
 
-mysql_exec(libra_t)
-mysql_safe_exec(libra_t)
-corenet_tcp_bind_mysqld_port(libra_t)
-mysql_search_db(libra_t)
-allow libra_t self:process setexec;
+mysql_exec(libra_app_domain)
+mysql_safe_exec(libra_app_domain)
+corenet_tcp_bind_mysqld_port(libra_app_domain)
+mysql_search_db(libra_app_domain)
+allow libra_app_domain self:process setexec;
 
 ########################################
 #
@@ -312,13 +330,13 @@ require {
 }
 
 # Uncomment when we have selinux-policy-3.7.19-134.el6
-# fs_rw_inherited_tmpfs_files(libra_domain)
-# postgresql_exec(libra_domain)
-can_exec(libra_t, postgresql_exec_t)
-corenet_tcp_bind_postgresql_port(libra_t)
+# fs_rw_inherited_tmpfs_files(libra_app_domain)
+# postgresql_exec(libra_app_domain)
+can_exec(libra_app_domain, postgresql_exec_t)
+corenet_tcp_bind_postgresql_port(libra_net_domain)
 # Do not allow open or create, just allow it to use inherited from kernel
-allow libra_t tmpfs_t:file { read write };
-allow libra_t anon_inodefs_t:file write;
+allow libra_app_domain tmpfs_t:file { read write };
+allow libra_app_domain anon_inodefs_t:file write;
 
 #########
 #
@@ -337,26 +355,26 @@ mcs_socket_write_all_levels(postfix_master_t)
 #################################
 
 # Allow users to execute files in their home dir
-allow libra_t libra_var_lib_t:file { execute execute_no_trans };
+allow libra_app_domain libra_var_lib_t:file { execute execute_no_trans };
 
 #################################
 # Allow Log Rotation            #
 #################################
 # Allow libra users to run apache rotatelogs
-# replace with apache_exec_rotatelogs(libra_domain) when available MAL 20110422
-can_exec(libra_t, httpd_rotatelogs_exec_t)
+# replace with apache_exec_rotatelogs(libra_app_domain) when available MAL 20110422
+can_exec(libra_app_domain, httpd_rotatelogs_exec_t)
 
-allow unconfined_usertype libra_t:process transition;
-dontaudit unconfined_usertype libra_t:process { noatsecure siginh rlimitinh };
-allow unconfined_usertype libra_t:fd use;
-allow unconfined_usertype libra_t:fifo_file rw_inherited_fifo_file_perms;
-allow unconfined_usertype libra_t:process sigchld;
-dontaudit unconfined_usertype libra_t:socket_class_set { read write };
-corecmd_shell_entry_type(libra_domain)
-corecmd_bin_entry_type(libra_domain)
-userdom_use_inherited_user_ptys(libra_t)
+allow unconfined_usertype libra_app_domain:process transition;
+dontaudit unconfined_usertype libra_app_domain:process { noatsecure siginh rlimitinh };
+allow unconfined_usertype libra_app_domain:fd use;
+allow unconfined_usertype libra_app_domain:fifo_file rw_inherited_fifo_file_perms;
+allow unconfined_usertype libra_app_domain:process sigchld;
+dontaudit unconfined_usertype libra_app_domain:socket_class_set { read write };
+corecmd_shell_entry_type(libra_app_domain)
+corecmd_bin_entry_type(libra_app_domain)
+userdom_use_inherited_user_ptys(libra_app_domain)
 
-gpg_entry_type(libra_t)
+gpg_entry_type(libra_app_domain)
 
 require {
         type httpd_t;
@@ -407,7 +425,7 @@ miscfiles_read_localization(libra_cgroup_read_t)
 domtrans_pattern(libra_domain, libra_cgroup_read_exec_t, libra_cgroup_read_t)
 role system_r types libra_cgroup_read_t;
 
-allow libra_t libra_cgroup_read_t:process { getattr signal signull sigkill };
+allow libra_domain libra_cgroup_read_t:process { getattr signal signull sigkill };
 
 fs_read_cgroup_files(libra_cgroup_read_t)
 
@@ -419,7 +437,7 @@ read_files_pattern(libra_cgroup_read_t, libra_var_lib_t, libra_var_lib_t)
 # libra_cgroup_read local policy
 #
 mta_base_mail_template(libra)
-mta_sendmail_domtrans(libra_t, libra_mail_t)
+mta_sendmail_domtrans(libra_app_domain, libra_mail_t)
 role system_r types libra_mail_t;
 
 allow libra_mail_t libra_initrc_t:fifo_file rw_inherited_fifo_file_perms;
@@ -448,10 +466,17 @@ manage_dirs_pattern(sshd_t, libra_tmp_t, libra_tmp_t)
 manage_sock_files_pattern(sshd_t, libra_tmp_t, libra_tmp_t)
 allow sshd_t libra_tmp_t:dir mounton;
 
-allow libra_t ptmx_t:chr_file { read write ioctl };
-allow libra_t sshd_devpts_t:chr_file { read write ioctl open getattr };
-allow libra_t sshd_t:tcp_socket { read write getattr setopt getopt shutdown };
-allow libra_t sshd_t:unix_stream_socket { write read };
+allow libra_domain ptmx_t:chr_file { read write ioctl };
+allow libra_domain sshd_devpts_t:chr_file { read write ioctl open getattr };
+allow libra_domain sshd_t:tcp_socket { read write getattr setopt getopt shutdown };
+allow libra_domain sshd_t:unix_stream_socket { write read };
+
+manage_dirs_pattern(libra_app_domain, libra_rw_file_t, libra_rw_file_t)
+manage_files_pattern(libra_app_domain, libra_rw_file_t, libra_rw_file_t)
+manage_fifo_files_pattern(libra_app_domain, libra_rw_file_t, libra_rw_file_t)
+manage_sock_files_pattern(libra_app_domain, libra_rw_file_t, libra_rw_file_t)
+manage_lnk_files_pattern(libra_app_domain, libra_rw_file_t, libra_rw_file_t)
+allow libra_app_domain libra_rw_file_t:file { relabelfrom relabelto };
 
 #
 # Programs that libra instances should not be allowed to execute, that I have 
@@ -465,3 +490,11 @@ allow libra_t sshd_t:unix_stream_socket { write read };
 
 # Remove the following once sshd gets fixed.
 dontaudit libra_domain self:process dyntransition;
+
+allow libra_domain libra_app_domain:process transition;
+kernel_read_vm_sysctls(libra_t)
+kernel_search_vm_sysctl(libra_t)
+kernel_read_vm_sysctls(libra_app_t)
+kernel_search_vm_sysctl(libra_app_t)
+netutils_domtrans_ping(libra_t)
+
