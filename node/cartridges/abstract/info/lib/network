@@ -137,6 +137,22 @@ function remove_proxy_port {
   return 0
 }
 
+function show_proxy_port {
+  uuid=$1
+  target=$2
+  
+  service libra-proxy showproxy $(uuid_to_portset $uuid) | \
+    while read proxy_port proxtarg
+  do
+    if [ "$proxtarg" == "$target" ]; then
+      echo "$proxy_port"
+      return 0
+    fi
+  done
+  echo "Failed to find proxy."
+  exit 1
+}
+
 function remove_all_proxy_ports {
   uuid=$1
 
