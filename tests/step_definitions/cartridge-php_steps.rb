@@ -228,6 +228,10 @@ Then /^the php application will( not)? be aliased$/ do | negate |
 end
 
 Then /^the php application will( not)? be exposed$/ do | negate |
+  account_name = @account['accountname']
+  namespace = @app['namespace']
+  app_name = @app['name']
+
   good_status = negate ? 1 : 0
 
   command = "#{$php_hooks}/show-port %s %s %s" % [app_name, namespace, account_name]
