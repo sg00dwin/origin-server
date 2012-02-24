@@ -24,7 +24,13 @@ class Gear < Cloud::Sdk::UserModel
       self.container = Cloud::Sdk::ApplicationContainerProxy.find_available(self.node_profile)
       self.server_identity = self.container.id
       self.uid = self.container.reserve_uid
-      return self.container.create(app,self)
+      result = self.container.create(app,self)
+      if result.exitcode == 0
+        app.add_system_ssh_keys([self])
+        app.add_ssh_keys([self])
+        app.add_system_env_vars([self])
+      end
+      return result
     end
   end
 

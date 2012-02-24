@@ -311,22 +311,50 @@ interface(`libra_admin',`
 ## <summary>
 ##	Make the specified type usable as a libra domain.
 ## </summary>
+## </summary>
+## <param name="libradomain_prefix">
+##  <summary>
+##  The prefix of the domain (e.g., libra
+##  is the prefix for libra_t).
+##  </summary>
+## </param>
+#
+template(`libra_service_domain_template',`
+	gen_require(`
+		attribute libra_domain;
+		attribute libra_app_domain;
+	')
+
+	type $1_t;
+	typeattribute $1_t libra_domain, libra_app_domain;
+	domain_type($1_t)
+	role system_r types $1_t;
+	mcs_untrusted_proc($1_t)
+	domain_user_exemption_target($1_t)
+	auth_use_nsswitch($1_t)
+
+	type $1_app_t;
+	typeattribute $1_app_t libra_app_domain;
+	domain_type($1_app_t)
+	role system_r types $1_app_t;
+	mcs_untrusted_proc($1_app_t)
+	domain_user_exemption_target($1_app_t)
+')
+
+########################################
+## <summary>
+##	Make the specified type usable as a libra domain.
+## </summary>
 ## <param name="type">
 ##	<summary>
 ##	Type to be used as a libra domain type.
 ##	</summary>
 ## </param>
 #
-template(`libra_service_domain',`
+template(`libra_net_type',`
 	gen_require(`
-		attribute libra_domain;
+		attribute libra_net_domain;
 	')
 
-	typeattribute $1 libra_domain;
-	domain_type($1)
-	role system_r types $1;
-	mcs_untrusted_proc($1)
-	domain_user_exemption_target($1)
-
-	auth_use_nsswitch($1)
+	typeattribute $1 libra_net_domain;
 ')

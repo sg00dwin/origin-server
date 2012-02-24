@@ -35,6 +35,8 @@ source ${CART_DIR}/abstract/info/lib/util
 # Deconfigure app.
 setup_deconfigure "$1" $2 $3
 
+remove_all_proxy_ports $uuid
+
 # Destroy git repo and stop app.
 destroy_git_repo $application $uuid
 stop_app

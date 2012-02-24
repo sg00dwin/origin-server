@@ -33,6 +33,11 @@ source ${CART_INFO_DIR}/lib/util
 MEMCACHED_DIR="$APP_HOME/memcached-1.4/"
 
 #
+# Teardown port proxy (ignore failures or missing hook)
+#
+( ${CART_INFO_DIR}/hooks/conceal-port "$1" $2 $3 ) &>/dev/null || :
+
+#
 # Remove environment variables
 #
 [ -f $APP_HOME/.env/OPENSHIFT_CACHE_TYPE ]  &&  source $APP_HOME/.env/OPENSHIFT_CACHE_TYPE
