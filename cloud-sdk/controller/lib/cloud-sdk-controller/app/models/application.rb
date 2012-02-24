@@ -324,10 +324,12 @@ class Application < Cloud::Sdk::Cartridge
       begin
         group_inst.fulfil_requirements(self)
         run_on_gears(group_inst.gears, reply) do |gear, r|
-          r.append gear.configure(comp_inst, @init_git_url)
+          doExpose = false
           if comp_inst.parent_cart_name==web_cart
-            r.append gear.expose_port(comp_inst) if not gear.configured_components.include? comp_inst.name
+            doExpose = true if not gear.configured_components.include? comp_inst.name
           end
+          r.append gear.configure(comp_inst, @init_git_url)
+          r.append gear.expose_port(comp_inst) if doExpose
           r.append process_cartridge_commands(r.cart_commands)
           # self.save
         end
