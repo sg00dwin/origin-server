@@ -25,7 +25,7 @@ function setup_git_repo_from_framework() {
     git clone --bare "$1" /tmp/$checkout_dir_name
     rm -rf * 2> /dev/null  ||  :
     mv -f /tmp/$checkout_dir_name/[^h]* ./ 2> /dev/null  ||  :
-    # git add remote app-fw-gear "$url"
+    git remote add all-gears file://${OPENSHIFT_HOMEDIR}/git/${OPENSHIFT_APP_NAME}.git
     popd > /dev/null
 }
 
@@ -87,6 +87,8 @@ for arg in "${@:4}"; do
 
         pushd "${OPENSHIFT_HOMEDIR}/git/${OPENSHIFT_APP_NAME}.git" > /dev/null
         git add remote gear-$gear_name "$url"
+        git remote set-url --add --push all-gears "$url"
+
         # Need two git "mirrored" pushes as the first push updates us with the
         # newly added gear-$gear_name.
         git push --mirror gear-$gear_name  ||  :
