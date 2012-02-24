@@ -5,7 +5,7 @@ class Application < Cloud::Sdk::Cartridge
                 :state, :group_instance_map, :comp_instance_map, :conn_endpoints_list,
                 :domain, :group_override_map, :working_comp_inst_hash,
                 :working_group_inst_hash, :configure_order, :start_order,
-                :scalable, :proxy_cartridge, :init_git_url
+                :scalable, :proxy_cartridge, :init_git_url, :node_profile
   primary_key :name
   exclude_attributes :user, :comp_instance_map, :group_instance_map, 
                 :working_comp_inst_hash, :working_group_inst_hash,
@@ -25,6 +25,7 @@ class Application < Cloud::Sdk::Cartridge
   # @param [deprecated, String] framework Cartridge name to use as the framwwork of the application
   def initialize(user=nil, app_name=nil, uuid=nil, node_profile=nil, framework=nil, template=nil, will_scale=false)
     self.user = user
+    self.node_profile = node_profile
     
     if template.nil?
       from_descriptor({"Name"=>app_name, "Subscribes"=>{"doc-root"=>{"Type"=>"FILESYSTEM:doc-root"}}})
@@ -139,27 +140,34 @@ class Application < Cloud::Sdk::Cartridge
       
       Rails.logger.debug "Creating gears"
       group_instances.uniq.each do |ginst|
+        is_web_cart = false
         gear = Gear.new(self, ginst)
-        #FIXME: backward compat: first gears UUID = app.uuid
-        gear.uuid = self.uuid if gears_created.size == 0
-        
-        gears_created.push gear
-        create_result = gear.create
         if self.scalable
           ginst.reused_by.each { |gname|
             if gname.include? self.web_cart
-              # register dns here
-              self.add_dns(gear.uuid[0..9], @user.namespace, gear.get_proxy.get_public_hostname)
+              is_web_cart = true
+              gear.node_profile = self.node_profile
+              break
+            end
+            if gname.include? self.proxy_cartridge
+              is_web_cart = false
+              gear.uuid = self.uuid
               break
             end
           }
+        else
+          #FIXME: backward compat: first gears UUID = app.uuid
+          gear.uuid = self.uuid if gears_created.size == 0
         end
-        # self.save
+        
+        create_result = gear.create
         result_io.append create_result
         unless create_result.exitcode == 0
           raise Cloud::Sdk::NodeException.new("Unable to create gear on node", "-100", result_io)
         end
 
+        self.add_dns(gear.uuid[0..9], @user.namespace, gear.get_proxy.get_public_hostname) if self.scalable and is_web_cart
+        gears_created.push gear
         ginst.gears << gear
 
         #TODO: save gears here
