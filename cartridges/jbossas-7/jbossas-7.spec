@@ -101,7 +101,6 @@ rm -rf %{buildroot}
 %attr(0755,-,-) %{cartridgedir}/info/bin/
 %{cartridgedir}/template/
 %{_sysconfdir}/libra/cartridges/%{name}
-%{cartridgedir}/info/changelog
 %{cartridgedir}/info/control
 %{cartridgedir}/info/manifest.yml
 %{cartridgedir}/README
