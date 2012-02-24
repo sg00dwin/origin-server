@@ -2,6 +2,18 @@ require 'formtastic'
 
 class BootstrapFormBuilder < Formtastic::SemanticFormBuilder
 
+  # In Rails 3.2, the builder is initialized before the form_tag is generated so
+  # we can add helper logic
+  #def initialize(object_name, object, template, options, proc)
+  #  options[:html] ||= {}
+  #  class_names = options[:html][:class] ? options[:html][:class].split(" ") : []
+
+  #  class_names << 'form-inline' if options[:simple]
+  #  options[:html][:class] = class_names.join(" ")
+
+  #  super
+  #end
+
   # remove once all forms converted
   def new_forms_enabled?
     template.instance_variable_get('@new_forms_enabled')
@@ -14,6 +26,10 @@ class BootstrapFormBuilder < Formtastic::SemanticFormBuilder
     options = args.extract_options!
     options[:class] ||= @options[:simple] ? 'btn-toolbar' : 'form-actions'
     super *(args << options)
+  end
+
+  def loading(*args)
+    template.image_tag('loader.gif', :alt => 'Working...', 'data-loading' => 'true', :style => 'display: none;')
   end
 
   # override tag creation

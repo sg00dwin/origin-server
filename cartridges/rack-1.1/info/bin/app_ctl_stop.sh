@@ -13,7 +13,7 @@ httpd_pid=`cat ${OPENSHIFT_RUN_DIR}httpd.pid 2> /dev/null`
 /usr/sbin/httpd -C 'Include ${OPENSHIFT_APP_DIR}conf.d/*.conf' -f $CART_CONF_DIR/httpd_nolog.conf -k $1
 for i in {1..20}
 do
-    if `ps --pid $httpd_pid > /dev/null 2>&1` || `pgrep Passenger* > /dev/null 2>&1`
+    if `ps --pid $httpd_pid > /dev/null 2>&1` || `pgrep Passenger.* > /dev/null 2>&1`
     then
         echo "Waiting for stop to finish"
         sleep 3

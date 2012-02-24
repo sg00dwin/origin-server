@@ -97,7 +97,7 @@ class DevEnv < Thor
       scp_from(hostname, "/var/log/messages", "rhc/log/messages.log")
       scp_from(hostname, "/var/log/dmesg", "rhc/log/messages.log")
       scp_from(hostname, "/tmp/rhc/screenshots/", "rhc/log")
-      scp_from(hostname, "/root/li-test/selenium/output/", "rhc/log")
+      scp_from(hostname, "/root/li-test/selenium/output/*", "rhc/log")
       scp_from(hostname, "/var/lib/libra/*/*/jbossas-7.0/standalone/tmp/*.log", "rhc/log")
       puts "Done"
     end

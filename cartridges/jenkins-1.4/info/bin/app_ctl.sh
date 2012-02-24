@@ -21,13 +21,11 @@ validate_run_as_user
 
 isrunning() {
     # Check for running app
-    if [ -f ${OPENSHIFT_RUN_DIR}jenkins.pid ]
+    #pid=`cat ${OPENSHIFT_RUN_DIR}jenkins.pid 2> /dev/null`
+    pid=`pgrep -f ".*java.*-jar.*jenkins.war.*--httpListenAddress=${OPENSHIFT_INTERNAL_IP}.*" 2> /dev/null`
+    if [ -n "$pid" ]
     then
-      pid=`cat ${OPENSHIFT_RUN_DIR}jenkins.pid 2> /dev/null`
-      if `ps --pid $pid > /dev/null 2>&1`
-      then
         return 0
-      fi
     fi
     # not running
     return 1
@@ -53,11 +51,10 @@ start_jenkins() {
         --handlerCountMax=45 \
         --handlerCountMaxIdle=20 \
         --httpListenAddress="$OPENSHIFT_INTERNAL_IP" &
-    echo $! > "$OPENSHIFT_RUN_DIR/jenkins.pid"
+    echo $! > /dev/null
 }
 
 stop_jenkins() {
-    pid=`cat ${OPENSHIFT_RUN_DIR}jenkins.pid 2> /dev/null`
     kill -TERM $pid > /dev/null 2>&1
     wait_for_stop $pid
 }
@@ -78,15 +75,12 @@ case "$1" in
         fi
     ;;
     graceful-stop|stop)
-        if [ -f $OPENSHIFT_RUN_DIR/jenkins.pid ]
+        if isrunning
         then
-            if isrunning
-            then
-                stop_jenkins
-            else
-                echo "Application is already stopped!" 1>&2
-                exit 0
-            fi
+            stop_jenkins
+        else
+            echo "Application is already stopped!" 1>&2
+            exit 0
         fi
     ;;
     restart|graceful)

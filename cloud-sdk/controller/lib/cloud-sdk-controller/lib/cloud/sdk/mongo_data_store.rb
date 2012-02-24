@@ -50,7 +50,7 @@ module Cloud::Sdk
       when "CloudUser"
         MongoDataStore.get_user_by_uuid(uuid)
       when "Application"
-        MongoDataStore.get_app_by_uuid(uuid)
+        MongoDataStore.get_user_by_app_uuid(uuid)
 	    when "ApplicationTemplate"
 	      MongoDataStore.find_application_template(uuid)
       end
@@ -221,20 +221,6 @@ module Cloud::Sdk
       user_hash_to_ret(hash)
     end
     
-    def self.get_app_by_uuid(uuid)
-      hash = MongoDataStore.find_one( "apps.uuid" => uuid )
-      return nil unless hash && !hash.empty?
-      return nil if hash["apps"].nil? or hash["apps"].empty?
-      app_hash = nil
-      hash["apps"].each do |app|
-        if app["uuid"] == uuid
-          app_hash = app
-          break
-        end
-      end
-      app_hash_to_ret(app_hash)
-    end
-
     def self.get_users
       MongoDataStore.rescue_con_failure do
         mcursor = MongoDataStore.collection.find()

@@ -1,0 +1,30 @@
+%form#test{:action=>"slow", :method=>"POST"}
+  %input.btn.btn-primary{:type => "submit"}
+  %span.loading{:style => 'display: none;'}
+    Loading...
+
+- content_for :javascripts do
+  :javascript
+    jQuery(function() {
+    jQuery('#test').submit(function() {
+      $('.form-loading').show()
+    });
+
+    jQuery(window).bind('pagehide', function() {
+      $('body .form-loading').hide()
+    });
+
+    jQuery(document).ready(function() {
+      console.log("page ready")
+    });
+    });
+
+    $('form *[data-loading=true]').each(function() {
+      $(window).bind('pagehide', function() {
+        $('*[data-loading=true]', body).hide()
+      })
+      $(this).closest('form').bind('submit', function() {
+        $('*[data-loading=true]', this).show()
+        return true;
+      })
+    })

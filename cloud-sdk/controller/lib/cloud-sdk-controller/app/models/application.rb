@@ -43,7 +43,7 @@ class Application < Cloud::Sdk::Cartridge
     
     if self.scalable and framework != "haproxy-1.4"
       self.proxy_cartridge = "haproxy-1.4"
-      self.requires_feature << self.proxy_cartridge
+      self.requires_feature.insert(0, self.proxy_cartridge)
       prof = @profile_name_map[@default_profile]
       conn = Cloud::Sdk::Connection.new("auto_scale")
       conn.components = ["cart-#{self.proxy_cartridge}", "cart-#{framework}"]
@@ -91,6 +91,20 @@ class Application < Cloud::Sdk::Cartridge
     apps
   end
   
+  def self.find_by_uuid(uuid)
+    hash = Cloud::Sdk::DataStore.instance.find_by_uuid(self.name,uuid)
+    return nil unless hash
+    user = CloudUser.hash_to_obj hash
+    app  = nil
+    user.applications.each do |next_app|
+      if next_app.uuid == uuid
+        app = next_app
+        break
+      end
+    end
+    return app
+  end
+  
   # @overload Application.get_available_cartridges(cart_type)
   #   @deprecated
   #   Returns List of names of available cartridges of specified type
@@ -131,6 +145,13 @@ class Application < Cloud::Sdk::Cartridge
         
         gears_created.push gear
         create_result = gear.create
+        ginst.reused_by.each { |gname|
+          if gname.include? self.web_cart
+            # register dns here
+            self.add_dns(gear.uuid[0..9], @user.namespace, gear.get_proxy.get_public_hostname)
+            break
+          end
+        }
         # self.save
         result_io.append create_result
         unless create_result.exitcode == 0
@@ -159,9 +180,9 @@ class Application < Cloud::Sdk::Cartridge
   #convinence method to cleanup an application
   def cleanup_and_delete
     reply = ResultIO.new
+    reply.append self.destroy_dns
     reply.append self.deconfigure_dependencies
     reply.append self.destroy
-    reply.append self.destroy_dns
     self.delete
     reply
   end
@@ -187,6 +208,7 @@ class Application < Cloud::Sdk::Cartridge
 
   def web_cart
     web_cart = nil
+    return framework if not self.scalable
     framework_carts = CartridgeCache.cartridge_names('standalone')
     self.requires_feature.each do |feature|
       if framework_carts.include? feature and feature != self.proxy_cartridge
@@ -200,6 +222,7 @@ class Application < Cloud::Sdk::Cartridge
 
   def scaleup
     result_io = ResultIO.new
+    return result_io if not self.scalable
     wb = web_cart
     new_gear = nil
     # find the group instance where the web-cartridge is residing
@@ -208,7 +231,7 @@ class Application < Cloud::Sdk::Cartridge
       ginst = self.group_instance_map[ginst_name]
       result, new_gear = ginst.add_gear(self)
       result_io.append result
-      self.add_dns(new_gear.uuid, @user.namespace, new_gear.get_proxy.get_public_hostname)
+      self.add_dns(new_gear.uuid[0..9], @user.namespace, new_gear.get_proxy.get_public_hostname)
       break
     }
     if not new_gear.nil?
@@ -221,6 +244,7 @@ class Application < Cloud::Sdk::Cartridge
 
   def scaledown
     result_io = ResultIO.new
+    return result_io if not self.scalable
     wb = web_cart
     # find the group instance where the web-cartridge is residing
     self.group_instance_map.keys.each { |ginst_name|
@@ -231,6 +255,15 @@ class Application < Cloud::Sdk::Cartridge
       raise Exception.new("Cannot scale below one gear") if ginst.gears.length == 1
 
       gear = ginst.gears.first
+
+      dns = Cloud::Sdk::DnsService.instance
+      begin
+        dns.deregister_application(gear.uuid[0..9], @user.namespace)
+        dns.publish
+      ensure
+        dns.close
+      end
+
       gear.configured_components.each { |conf_comp|
         cinst = self.comp_instance_map[conf_comp]
         result_io.append gear.deconfigure(cinst)
@@ -238,15 +271,6 @@ class Application < Cloud::Sdk::Cartridge
 
       result_io.append gear.destroy
       ginst.gears.delete gear
-
-      dns = Cloud::Sdk::DnsService.instance
-      begin
-        dns.deregister_application(gear.uuid, @user.namespace)
-        dns.publish
-      ensure
-        dns.close
-      end
-
       break
     }
     # inform anyone who needs to know that this gear is no more
@@ -352,17 +376,18 @@ class Application < Cloud::Sdk::Cartridge
       pub_ginst = self.group_instance_map[pub_inst.group_instance_name]
 
       r = ResultIO.new
-      pub_out = {}
+      pub_out = []
       run_on_gears(pub_ginst.gears, r, false) do |gear, r|
         appname = gear.uuid[0..9]
         appname = self.name if pub_inst.parent_cart_name == self.framework
         gout, gstatus = gear.execute_connector(pub_inst, conn.from_connector.name, [appname, self.user.namespace, gear.uuid])
         if gstatus==0
-          pub_out[gear.uuid] = gout
+          pub_out.push("'#{gear.uuid}'='#{gout}'")
         end
       end
 
-      Rails.logger.debug "Output of publisher - '#{pub_out.to_json}'"
+      input_to_subscriber = Shellwords::shellescape(pub_out.join(' '))
+      Rails.logger.debug "Output of publisher - '#{pub_out}'"
 
       sub_inst = self.comp_instance_map[conn.to_comp_inst]
       sub_ginst = self.group_instance_map[sub_inst.group_instance_name]
@@ -370,7 +395,7 @@ class Application < Cloud::Sdk::Cartridge
       run_on_gears(sub_ginst.gears, r, false) do |gear, r|
         appname = gear.uuid[0..9]
         appname = self.name if sub_inst.parent_cart_name == self.framework
-        gout, gstatus = gear.execute_connector(sub_inst, conn.to_connector.name, [appname, self.user.namespace, gear.uuid, "'#{pub_out.to_json}'"])
+        gout, gstatus = gear.execute_connector(sub_inst, conn.to_connector.name, [appname, self.user.namespace, gear.uuid, input_to_subscriber])
       end
     }
   end
@@ -726,6 +751,18 @@ class Application < Cloud::Sdk::Cartridge
     self.class.notify_observers(:before_create_dns, {:application => self, :reply => reply})    
     public_hostname = self.container.get_public_hostname
     add_dns(@name, @user.namespace, public_hostname)
+    if false and self.scalable
+      # add dns for web cart gears
+      wb = web_cart
+      # find the group instance where the web-cartridge is residing
+      self.group_instance_map.keys.each { |ginst_name|
+        next if not ginst_name.include? wb
+        ginst = self.group_instance_map[ginst_name]
+        ginst.gears.each { |gear|
+          self.add_dns(gear.uuid[0..9], @user.namespace, gear.get_proxy.get_public_hostname)
+        }
+      }
+    end
     self.class.notify_observers(:after_create_dns, {:application => self, :reply => reply})    
     reply
   end
@@ -736,6 +773,18 @@ class Application < Cloud::Sdk::Cartridge
     dns = Cloud::Sdk::DnsService.instance
     begin
       dns.deregister_application(@name,@user.namespace)
+      if self.scalable
+        # add dns for web cart gears
+        wb = web_cart
+        # find the group instance where the web-cartridge is residing
+        self.group_instance_map.keys.each { |ginst_name|
+          next if not ginst_name.include? wb
+          ginst = self.group_instance_map[ginst_name]
+          ginst.gears.each { |gear|
+            dns.deregister_application(gear.uuid[0..9],@user.namespace)
+          }
+        }
+      end
       dns.publish
     ensure
       dns.close

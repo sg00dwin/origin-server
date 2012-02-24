@@ -113,7 +113,7 @@ module OpenShift
               f.write(@driver.page_source)
             end
 
-            puts "Wrote screenshot to #{Pathname.new(image)} and html to #{Pathname.new(html)}"
+            puts "Wrote screenshot to #{Pathname.new(image).realpath} and html to #{Pathname.new(html).realpath}"
           rescue Exception => e
             puts "<unable to output logs for #{name}"
             puts e.inspect
