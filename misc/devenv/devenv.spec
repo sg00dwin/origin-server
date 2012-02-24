@@ -4,6 +4,7 @@
 %define sitedir %{_localstatedir}/www/libra/site
 %define devenvdir %{_sysconfdir}/libra/devenv
 %define jenkins %{_sharedstatedir}/jenkins
+%define policydir %{_datadir}/selinux/packages
 
 Summary:   Dependencies for OpenShift development
 Name:      rhc-devenv
@@ -89,6 +90,10 @@ touch %{buildroot}%{sitedir}/log/development.log
 mkdir -p %{buildroot}%{jenkins}/jobs
 mv %{buildroot}%{devenvdir}%{jenkins}/jobs/* %{buildroot}%{jenkins}/jobs
 
+# Add the SELinux policy files
+mkdir -p %{buildroot}%{policydir}
+cp %{buildroot}%{devenvdir}%{policydir}/* %{buildroot}%{policydir} 
+
 %clean
 rm -rf %{buildroot}
 
@@ -137,6 +142,12 @@ chown -R jenkins:jenkins /var/lib/jenkins
 
 # Allow httpd to relay
 /usr/sbin/setsebool -P httpd_can_network_relay=on || :
+
+# Add policy for developement environment
+cd %{policydir} ; make -f ../devel/Makefile
+semodule -i dhcpnamedforward.pp
+cd
+
 
 # Increase kernel semaphores to accomodate many httpds
 echo "kernel.sem = 250  32000 32  4096" >> /etc/sysctl.conf
@@ -256,6 +267,7 @@ cp -f %{devenvdir}/puppet-private.pem /var/lib/puppet/ssl/private_keys/localhost
 %{_initddir}/libra-broker
 %{_initddir}/libra-site
 %{_initddir}/sauce-connect
+%{policydir}/*
 
 %changelog
 * Wed Feb 22 2012 Dan McPherson <dmcphers@redhat.com> 0.87.3-1

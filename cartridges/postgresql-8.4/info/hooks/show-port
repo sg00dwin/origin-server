@@ -49,6 +49,14 @@ setup_configure "$1" $2 $3
 
 import_env_vars
 
-show_proxy_port "$OPENSHIFT_INTERNAL_IP:5432"
-
+proxy_port=$(show_proxy_port $uuid "$OPENSHIFT_DB_IP:$OPENSHIFT_DB_PORT")
+ret=$?
+if [ $ret -ne 0 ]; then
+  client_error "$proxy_port"
+  exit $ret
+fi
+cart_data "PROXY_HOST=$OPENSHIFT_APP_DNS"
+cart_data "PROXY_PORT=$proxy_port"
+cart_data "HOST=$OPENSHIFT_DB_IP"
+cart_data "PORT=$OPENSHIFT_DB_PORT"
 exit 0

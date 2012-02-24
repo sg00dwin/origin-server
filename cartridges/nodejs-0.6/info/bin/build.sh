@@ -10,7 +10,7 @@ function is_node_module_installed() {
     module_name=${1:-""}
     if [ -n "$module_name" ]; then
         pushd "$OPENSHIFT_APP_DIR" > /dev/null
-        if npm list --parseable 2>&1 | grep "node_modules/$m" > /dev/null; then
+        if [ -d $m ] ; then
             popd
             return 0
         fi

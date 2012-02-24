@@ -7,7 +7,14 @@ class EmbCartController < BaseController
   def index
     domain_id = params[:domain_id]
     id = params[:application_id]
+    Rails.logger.debug "Getting cartridges for application #{id} under domain #{domain_id}"
     cloud_user = CloudUser.find(@login)
+    if cloud_user.nil?
+      @reply = RestReply.new(:not_found)
+      @reply.messages.push(Message.new(:error, "User #{@login} not found", 99))
+      respond_with @reply, :status => @reply.status
+      return
+    end
     application = Application.find(cloud_user,id)
     cartridges = Array.new
     unless application.embedded.nil?
@@ -25,12 +32,19 @@ class EmbCartController < BaseController
     domain_id = params[:domain_id]
     application_id = params[:application_id]
     id = params[:id]
+    Rails.logger.debug "Getting cartridge #{id} for application #{application_id} under domain #{domain_id}"
     cloud_user = CloudUser.find(@login)
-    application = Application.find(cloud_user,id)
+    if cloud_user.nil?
+      @reply = RestReply.new(:not_found)
+      @reply.messages.push(Message.new(:error, "User #{@login} not found", 99))
+      respond_with @reply, :status => @reply.status
+      return
+    end
+    application = Application.find(cloud_user,application_id)
     unless application.embedded.nil?
       application.embedded.each do |key, value|
         if key == id
-          cartridge = RestCartridge.new("embedded", key, id, domain_id)
+          cartridge = RestCartridge.new("embedded", key, application_id, domain_id)
           @reply = RestReply.new(:ok, "cartridge", cartridge)
           respond_with @reply, :status => @reply.status
           return
