@@ -39,7 +39,8 @@ module Cloud::Sdk
     end
 
     def dns
-      Dnsruby::Resolver.new(:nameserver => @server, :port => @port)
+      @dns_con = Dnsruby::Resolver.new(:nameserver => @server, :port => @port) if not @dns_con
+      @dns_con
     end
 
     def namespace_available?(namespace)
