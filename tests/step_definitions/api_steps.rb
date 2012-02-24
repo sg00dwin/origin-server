@@ -11,7 +11,7 @@ end
 After do |scenario|
   dns_service = Express::Broker::DnsService.new({:end_point => "https://api2.dynect.net", :customer_name => "demo-redhat", 
   :user_name => "dev-rhcloud-user", :password => "vo8zaijoN7Aecoo", :domain_suffix => "dev.rhcloud.com", :zone => "rhcloud.com"})
-  domains = ["cucumber"]
+  domains = ["cucumber", "app-cucumber"]
   i=0
   while i<3 
     domains.push("cucumber"+i.to_s)
