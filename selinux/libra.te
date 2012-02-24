@@ -1,4 +1,4 @@
-policy_module(libra,1.0.35)
+policy_module(libra,1.0.36)
 
 ########################################
 #
@@ -249,6 +249,8 @@ dontaudit libra_domain libra_initrc_t:socket_class_set { read write };
 # use this when available, see can_exec below MAL 20110422
 #apache_exec_rotatelogs(libra_domain)
 
+netutils_domtrans_ping(libra_t)
+
 ########################################
 #
 # generic policy 
@@ -456,7 +458,7 @@ allow libra_t sshd_t:unix_stream_socket { write read };
 # see users attempt to execute
 #
 # rpm, yum, debuginfo-install
-# ping, traceroute, iptables, iptables-multi
+# traceroute, iptables, iptables-multi
 # dmesg
 # su, sudo, denyhosts
 #
