@@ -141,23 +141,14 @@ class Application < Cloud::Sdk::Cartridge
       Rails.logger.debug "Creating gears"
       group_instances.uniq.each do |ginst|
         is_web_cart = false
+        wb = self.web_cart
         gear = Gear.new(self, ginst)
-        if self.scalable
-          ginst.reused_by.each { |gname|
-            if gname.include? self.web_cart
-              is_web_cart = true
-              gear.node_profile = self.node_profile
-              break
-            end
-            if gname.include? self.proxy_cartridge
-              is_web_cart = false
-              gear.uuid = self.uuid
-              break
-            end
-          }
+        ginst.component_instances.each { |cname| is_web_cart = true if cname.include? wb }
+        if scalable
+          gear.uuid = self.uuid if not is_web_cart
         else
           #FIXME: backward compat: first gears UUID = app.uuid
-          gear.uuid = self.uuid if gears_created.size == 0
+          gear.uuid = self.uuid
         end
         
         create_result = gear.create
