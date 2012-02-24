@@ -206,6 +206,18 @@ module CommandHelper
     end
   end
 
+  def rhc_expose_port(app)
+    rhc_do('rhc_expose_port') do
+      run("#{$rhc_app_script} expose-port -l #{app.login} -a #{app.name} -p fakepw -d").should == 0
+    end
+  end
+
+  def rhc_conceal_port(app)
+    rhc_do('rhc_conceal_port') do
+      run("#{$rhc_app_script} conceal-port -l #{app.login} -a #{app.name} -p fakepw -d").should == 0
+    end
+  end
+
   def rhc_ctl_start(app)
     rhc_do('rhc_ctl_start') do
       run("#{$rhc_app_script} start -l #{app.login} -a #{app.name} -p fakepw -d").should == 0
