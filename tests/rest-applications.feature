@@ -28,6 +28,19 @@ Feature: applications
     When I send a DELETE request to "/domains/cucumber/applications/app"
     Then the response should be "204"
     
+  Scenario: Create application with blank, missing, invalid name
+    Given a new guest account
+    And I am a valid user
+    And I accept "XML"
+    When I send a POST request to "/domains" with the following:"namespace=cucumber"
+    Then the response should be "201"
+    When I send a POST request to "/domains/cucumber/applications" with the following:"name=&cartridge=php-5.3"
+    Then the response should be "422"
+    When I send a POST request to "/domains/cucumber/applications" with the following:"cartridge=php-5.3"
+    Then the response should be "422"
+    When I send a POST request to "/domains/cucumber/applications" with the following:"name=app?one&cartridge=php-5.3"
+    Then the response should be "422"
+    
   Scenario: Retrieve application
     Given a new guest account
     And I am a valid user
@@ -124,7 +137,7 @@ Feature: applications
     When I send a POST request to "/domains" with the following:"namespace=cucumber"
     Then the response should be "201"
     When I send a POST request to "/domains/cucumber/applications" with the following:"name=app&cartridge=bogus"
-    Then the response should be "400"
+    Then the response should be "422"
     When I send a DELETE request to "/domains/cucumber/applications/app"
     Then the response should be "404"
   
