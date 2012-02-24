@@ -33,29 +33,6 @@ class RestApiTest < ActiveSupport::TestCase
     domain.destroy_recursive if domain
   end
 
-  # TODO fix
-  def setup_mock
-    require 'active_resource/http_mock'
-
-    @user = RestApi::Authorization.new 'test1', '1234'
-    auth_headers = {'Cookie' => "rh_sso=1234", 'Authorization' => 'Basic dGVzdDE6'};
-
-    RestApi::Base.site = 'https://localhost'
-    Key.prefix = '/user/'
-    User.prefix = '/'
-    Domain.prefix = '/'
-    Application.prefix = "#{Domain.prefix}domains/:domain_name/"
-    ActiveSupport::XmlMini.backend = 'REXML'
-    ActiveResource::HttpMock.respond_to do |mock|
-      mock.get '/user/keys.json', {'Accept' => 'application/json'}.merge!(auth_headers), [{:type => :rsa, :name => 'test1', :value => '1234' }].to_json()
-      mock.post '/user/keys.json', {'Content-Type' => 'application/json'}.merge!(auth_headers), {:type => :rsa, :name => 'test2', :value => '1234_2' }.to_json()
-      mock.delete '/user/keys/test1.json', {'Accept' => 'application/json'}.merge!(auth_headers), {}
-      mock.get '/user.json', {'Accept' => 'application/json'}.merge!(auth_headers), { :login => 'test1' }.to_json()
-      mock.get '/domains.json', {'Accept' => 'application/json'}.merge!(auth_headers), [{ :namespace => 'adomain' }].to_json()
-      mock.get '/domains/adomain/applications.json', {'Accept' => 'application/json'}.merge!(auth_headers), [{ :name => 'app1' }, { :name => 'app2' }].to_json()
-    end
-  end
-
   def test_key_get_all
     items = Key.find :all, :as => @user
     assert_equal 0, items.length
@@ -94,12 +71,11 @@ class RestApiTest < ActiveSupport::TestCase
 
   def test_key_server_validation
     key = Key.new :as => @user
-    assert_raise ActiveResource::ResourceInvalid do #FIXME US1895, when correct uncomment
-      key.save_without_validation
-    end
-    #assert_equal 2, key.errors.length
-    #assert_equal ['Name can't be blank'], key.errors[:name]
-    #assert_equal ['Content can't be blank'], key.errors[:content]
+    assert !key.save
+    assert_equal 3, key.errors.length
+    assert_equal ['Key name is required and cannot be blank.'], key.errors[:name]
+    assert_equal ['Key content is required and cannot be blank.'], key.errors[:content]
+    assert_equal ['Type is required and cannot be blank.'], key.errors[:type]
   end
 
   def test_key_delete
