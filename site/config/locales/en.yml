@@ -52,3 +52,7 @@ en:
       app_available: "Congratulations! Your app is live!"
       app_created: "Congratulations! Your app has been created. It may be a few minutes before it is live."
       app_deleted: "Your app has been successfully deleted"
+
+  rest_api:
+    errors:
+      '116': "Type is required and cannot be blank."
