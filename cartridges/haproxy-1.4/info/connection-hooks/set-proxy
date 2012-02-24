@@ -1,22 +1,6 @@
 #!/bin/bash
 
-# Copyright © 2012 Mike McGrath All rights reserved
-# Copyright © 2012 Red Hat, Inc. All rights reserved
-
-# This copyrighted material is made available to anyone wishing to use, modify,
-# copy, or redistribute it subject to the terms and conditions of the GNU
-# General Public License v.2.  This program is distributed in the hope that it
-# will be useful, but WITHOUT ANY WARRANTY expressed or implied, including the
-# implied warranties of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
-# See the GNU General Public License for more details.  You should have
-# received a copy of the GNU General Public License along with this program;
-# if not, write to the Free Software Foundation, Inc., 51 Franklin Street,
-# Fifth Floor, Boston, MA 02110-1301, USA. Any Red Hat trademarks that are
-# incorporated in the source code or documentation are not subject to the GNU
-# General Public License and may only be used or replicated with the express
-# permission of Red Hat, Inc.
-
-# Start the application httpd instance
+# Adds a gear to the haproxy configuration.
 
 # Exit on any errors
 set -e
@@ -25,7 +9,7 @@ function print_help {
     echo "Usage: $0 app-name namespace uuid"
     echo "Start a running application"
 
-    echo "$0 $@" | logger -p local0.notice -t libra_httpd_start
+    echo "$0 $@" | logger -p local0.notice -t libra_haproxy_set_proxy
     exit 1
 }
 
@@ -40,21 +24,23 @@ do
 done
 
 
-[ $# -eq 3 ] || print_help
+[ $# -gt 3 ] || print_help
 
-CART_DIR=/usr/libexec/li/cartridges
-source ${CART_DIR}/abstract/info/lib/util
-
-setup_basic_hook "$1" $2 $3
-
-#
-# echo external gear location
-# 
-for file in /var/lib/libra/$3/.env/OPENSHIFT_*_PUB_PORT
-do
-    source $file
+# Import Environment Variables
+for f in ~/.env/*; do
+    source $f
 done
-source "/var/lib/libra/$3/.env/OPENSHIFT_APP_DNS"
-port=`echo ${!OPENSHIFT_PUB_PORT[@]} | awk '{ print $1 }'`
 
-echo ${OPENSHIFT_APP_DNS}:$port
+haproxy_cfg=$OPENSHIFT_APP_DIR/conf/haproxy.cfg
+# Remove the first 3 args and process all the remaining args of the form k=v.
+# The values are the gear endpoints.
+for arg in "${@:4}"; do
+    ep=$(echo "$arg" | tr "\n" " " | cut -f 2 -d '=' | tr -d "'")
+    #  Add gear to the proxy configuration if not already in there.
+    #  Gear end-point is the form: $gear-dns-entry:$gear-port
+    gear_name=$(echo "$ep" | cut -f 1 -d '.')
+    if ! grep "server gear-$gear_name" "$haproxy_cfg" 2>&1 > /dev/null; then
+        echo "    server gear-$gear_name $ep check fall 2 rise 3 inter 2000" >> "$haproxy_cfg"
+    fi
+done
+
