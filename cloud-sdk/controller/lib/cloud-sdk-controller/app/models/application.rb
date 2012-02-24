@@ -164,8 +164,6 @@ class Application < Cloud::Sdk::Cartridge
 
         #TODO: save gears here
       end
-      self.add_ssh_keys(gears_created)
-      self.add_system_ssh_keys(gears_created)
       self.class.notify_observers(:application_creation_success, {:application => self, :reply => result_io})              
     rescue Exception => e
       Rails.logger.debug e.message
@@ -240,7 +238,6 @@ class Application < Cloud::Sdk::Cartridge
     }
     if not new_gear.nil?
       result_io.append self.configure_dependencies
-      self.add_system_env_vars([new_gear])
     end
     result_io
   end
@@ -275,11 +272,11 @@ class Application < Cloud::Sdk::Cartridge
 
       result_io.append gear.destroy
       ginst.gears.delete gear
+
+      # inform anyone who needs to know that this gear is no more
+      self.configure_dependencies
       break
     }
-    # inform anyone who needs to know that this gear is no more
-    execute_connections
-    self.save
     result_io
   end
   
@@ -326,10 +323,12 @@ class Application < Cloud::Sdk::Cartridge
       begin
         group_inst.fulfil_requirements(self)
         run_on_gears(group_inst.gears, reply) do |gear, r|
-          r.append gear.configure(comp_inst, @init_git_url)
-          if comp_inst.parent_cart_name==web_cart
-            r.append gear.expose_port(comp_inst) if not gear.configured_components.include? comp_inst.name
+          doExpose = false
+          if self.scalable and comp_inst.parent_cart_name==web_cart
+            doExpose = true if not gear.configured_components.include? comp_inst.name
           end
+          r.append gear.configure(comp_inst, @init_git_url)
+          r.append gear.expose_port(comp_inst) if doExpose
           r.append process_cartridge_commands(r.cart_commands)
           # self.save
         end

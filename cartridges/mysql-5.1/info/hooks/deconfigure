@@ -33,6 +33,11 @@ source ${CART_INFO_DIR}/lib/util
 MYSQL_DIR="$APP_HOME/mysql-5.1/"
 
 #
+# Teardown port proxy (ignore failures or missing hook)
+#
+( ${CART_INFO_DIR}/hooks/conceal-port "$1" $2 $3 ) &>/dev/null || :
+
+#
 # Remove environment variables
 #
 [ -f $APP_HOME/.env/OPENSHIFT_DB_TYPE ]  &&  source $APP_HOME/.env/OPENSHIFT_DB_TYPE

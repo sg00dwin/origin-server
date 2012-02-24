@@ -87,7 +87,7 @@ module AppHelper
         when "ruby-1.8" then "config.ru"
         when "python-2.6" then "wsgi/application"
         when "perl-5.10" then "perl/index.pl"
-        when "jbossas-7.0" then "src/main/webapp/index.html"
+        when "jbossas-7" then "src/main/webapp/index.html"
         when "nodejs-0.6" then "index.html"
       end
     end

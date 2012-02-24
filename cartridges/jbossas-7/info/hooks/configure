@@ -5,7 +5,7 @@
 : << --COMMENT--
 # jboss.version
 jboss_home = the location where the jbossas server is installed
-jboss_version = the name/type of the jbossas cartridge, e.g., jbossas-7.0
+jboss_version = the name/type of the jbossas cartridge, e.g., jbossas-7
 # /etc/libra/node.conf
 unobfuscate = Enable user-unobfuscate to create ~/appname-namespace in addition to ~/uuid
 libra_dir=Users home dirs (where customer data ends up)
