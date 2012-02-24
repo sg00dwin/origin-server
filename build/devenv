@@ -660,7 +660,7 @@ END
     if File.exists?(home_dir)
       Dir.glob(File.join(home_dir, '???*'), File::FNM_DOTMATCH).each {|file|
         puts "Installing ~/#{File.basename(file)}"
-        scp_to(hostname, file, "~/#{File.basename(file)}", File.stat(file).mode, 10)
+        scp_to(hostname, file, "~/", File.stat(file).mode, 10)
       }
     end
 
