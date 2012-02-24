@@ -162,8 +162,6 @@ class Application < Cloud::Sdk::Cartridge
 
         #TODO: save gears here
       end
-      self.add_ssh_keys(gears_created)
-      self.add_system_ssh_keys(gears_created)
       self.class.notify_observers(:application_creation_success, {:application => self, :reply => result_io})              
     rescue Exception => e
       Rails.logger.debug e.message
@@ -238,7 +236,6 @@ class Application < Cloud::Sdk::Cartridge
     }
     if not new_gear.nil?
       result_io.append self.configure_dependencies
-      self.add_system_env_vars([new_gear])
     end
     result_io
   end
@@ -325,7 +322,7 @@ class Application < Cloud::Sdk::Cartridge
         group_inst.fulfil_requirements(self)
         run_on_gears(group_inst.gears, reply) do |gear, r|
           doExpose = false
-          if comp_inst.parent_cart_name==web_cart
+          if self.scalable and comp_inst.parent_cart_name==web_cart
             doExpose = true if not gear.configured_components.include? comp_inst.name
           end
           r.append gear.configure(comp_inst, @init_git_url)
