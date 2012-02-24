@@ -4,6 +4,7 @@
 %define sitedir %{_localstatedir}/www/libra/site
 %define devenvdir %{_sysconfdir}/libra/devenv
 %define jenkins %{_sharedstatedir}/jenkins
+%define policydir %{_datadir}/selinux/packages
 
 Summary:   Dependencies for OpenShift development
 Name:      rhc-devenv
@@ -137,6 +138,12 @@ chown -R jenkins:jenkins /var/lib/jenkins
 
 # Allow httpd to relay
 /usr/sbin/setsebool -P httpd_can_network_relay=on || :
+
+# Add policy for developement environment
+cd ${policydir} ; make -f ../devel/Makefile
+semodule -i dhcpnamedforward.pp
+cd
+
 
 # Increase kernel semaphores to accomodate many httpds
 echo "kernel.sem = 250  32000 32  4096" >> /etc/sysctl.conf
