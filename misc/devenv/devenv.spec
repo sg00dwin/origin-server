@@ -90,6 +90,10 @@ touch %{buildroot}%{sitedir}/log/development.log
 mkdir -p %{buildroot}%{jenkins}/jobs
 mv %{buildroot}%{devenvdir}%{jenkins}/jobs/* %{buildroot}%{jenkins}/jobs
 
+# Add the SELinux policy files
+mkdir -p %{buildroot}%{policydir}
+cp %{buildroot}%{devenvdir}%{policydir}/* %{buildroot}%{policydir} 
+
 %clean
 rm -rf %{buildroot}
 
