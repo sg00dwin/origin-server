@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
 
-MY_ROOT = File.expand_path(File.dirname(__FILE__))
-$LOAD_PATH << File.join(MY_ROOT,'lib')
+SCRIPT_ROOT = File.expand_path(File.dirname(__FILE__))
+$LOAD_PATH << File.join(SCRIPT_ROOT,'lib')
 
 # Error message to use when unable to write to db"
 SQL_RO_ERR = "Cannot write to database, unable to update issue (Rails is probably running; try running with sudo or as Rails user)"
@@ -15,7 +15,6 @@ require 'database'
 require 'models'
 require 'helpers'
 
-HOSTS = YAML.load(File.open(File.join(MY_ROOT,'config','hosts.yml')))
 
 class UpdateStatusCli < Thor
   include Thor::Actions
@@ -112,10 +111,11 @@ class UpdateStatusCli < Thor
 
   desc "sync", "Synchronize all hosts (based on this host)"
   def sync()
+    hosts = YAML.load(File.open(File.join(SCRIPT_ROOT,'config','hosts.yml')))
     hostname = get_hostname
 
-    (HOSTS[:hosts] - [hostname]).each do |host|
-      url = sprintf(HOSTS[:template],host)
+    (hosts[:hosts] - [hostname]).each do |host|
+      url = sprintf(hosts[:template],host)
       say "Syncing #{url}"
       http_req(:get, "#{url}/sync/#{hostname}") do |resp|
         puts "\tSuccess"

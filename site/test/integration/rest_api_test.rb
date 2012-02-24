@@ -103,15 +103,13 @@ class RestApiTest < ActiveSupport::TestCase
     assert user
     assert_equal @user.login, user.login
   end
-  
+
   def test_key_create_without_domain 
     Domain.first(:as => @user).destroy_recursive
 
     key = Key.new :raw_content => 'ssh-rsa key', :name => 'default', :as => @user
-    assert_raise ActiveResource::ResourceNotFound do #FIXME US1876
-      assert key.save
-      assert key.errors.empty?
-    end
+    assert !key.save, "Bug 787730 has been fixed, users can be created without domains. Update UI"
+    assert !key.errors.empty?
   end
 
   def test_key_create

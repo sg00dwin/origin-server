@@ -37,5 +37,5 @@ end
 
 def _log(string)
   logger = defined?(Rails) ? Rails.logger : Logger.new(STDOUT)
-  logger.info('status_app'){string}
+  logger.debug("STATUS_APP: #{string}")
 end
