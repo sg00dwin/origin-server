@@ -180,8 +180,8 @@ class LegacyBrokerController < ApplicationController
         begin
           @reply.append app.create
           @reply.append app.configure_dependencies
-          @reply.append app.add_ssh_keys
-          @reply.append app.add_system_ssh_keys
+          # @reply.append app.add_ssh_keys
+          # @reply.append app.add_system_ssh_keys
           @reply.append app.add_system_env_vars
           begin
             @reply.append app.create_dns

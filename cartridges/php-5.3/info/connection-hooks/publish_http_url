@@ -44,6 +44,6 @@ done
 
 
 source "/var/lib/libra/$3/.env/OPENSHIFT_APP_DNS"
-port=80
+source "/var/lib/libra/$3/.env/OPENSHIFT_PROXY_PORT"
 
-echo ${OPENSHIFT_APP_DNS}:$port
+echo ${OPENSHIFT_APP_DNS}:${OPENSHIFT_PROXY_PORT}
