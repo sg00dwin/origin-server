@@ -19,13 +19,15 @@ class KeysController < ConsoleController
   # FIXME When resource validation is added, we may need the server to return a unique code
   # for this condition with the error, and then this logic should be moved to Key.rescue_save_failure
   # which should throw a more specific exception Key::NameExists / Key::ContentExists
-  rescue ActiveResource::ResourceConflict => error
+  rescue Key::DuplicateName
     if @first
       if @key.default?
         @key = Key.default(:as => session_user).load(params[:key])
       else
         @key.make_unique! "#{@key.name}%s"
       end
+      raise if @retried
+      @retried = true
       retry
     end
     @key.errors.add(:name, 'You have already created a key with that name')
