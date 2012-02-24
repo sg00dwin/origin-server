@@ -1,8 +1,8 @@
-%define cartridgedir %{_libexecdir}/li/cartridges/jbossas-7.0
+%define cartridgedir %{_libexecdir}/li/cartridges/jbossas-7
 
 Summary:   Provides JBossAS7 support
-Name:      rhc-cartridge-jbossas-7.0
-Version:   0.87.2
+Name:      rhc-cartridge-jbossas-7
+Version:   0.87.5
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   ASL 2.0
@@ -18,6 +18,8 @@ Requires:  rhc-node
 Requires: jboss-as7 = 7.1.0.Final
 Requires:  maven3
 Requires:  apr
+
+Obsoletes: rhc-cartridge-jbossas-7.0
 
 BuildArch: noarch
 
@@ -81,14 +83,14 @@ ln -s %{cartridgedir}/../abstract/info/hooks/system-messages %{buildroot}%{cartr
 alternatives --install /etc/alternatives/maven-3.0 maven-3.0 /usr/share/java/apache-maven-3.0.3 100
 alternatives --set maven-3.0 /usr/share/java/apache-maven-3.0.3
 alternatives --remove jbossas-7.0 /opt/jboss-as-7.0.2.Final
-alternatives --install /etc/alternatives/jbossas-7.0 jbossas-7.0 /opt/jboss-as-7.1.0.Final 102
-alternatives --set jbossas-7.0 /opt/jboss-as-7.1.0.Final
+alternatives --install /etc/alternatives/jbossas-7 jbossas-7 /opt/jboss-as-7.1.0.Final 102
+alternatives --set jbossas-7 /opt/jboss-as-7.1.0.Final
 #
 # Temp placeholder to add a postgresql datastore -- keep this until the
 # the postgresql module is added to jboss as 7.* upstream.
-mkdir -p /etc/alternatives/jbossas-7.0/modules/org/postgresql/jdbc/main
-ln -fs /usr/share/java/postgresql-jdbc3.jar /etc/alternatives/jbossas-7.0/modules/org/postgresql/jdbc/main
-cp -p %{cartridgedir}/info/configuration/postgresql_module.xml /etc/alternatives/jbossas-7.0/modules/org/postgresql/jdbc/main/module.xml
+mkdir -p /etc/alternatives/jbossas-7/modules/org/postgresql/jdbc/main
+ln -fs /usr/share/java/postgresql-jdbc3.jar /etc/alternatives/jbossas-7/modules/org/postgresql/jdbc/main
+cp -p %{cartridgedir}/info/configuration/postgresql_module.xml /etc/alternatives/jbossas-7/modules/org/postgresql/jdbc/main/module.xml
 
 
 %clean
@@ -101,7 +103,6 @@ rm -rf %{buildroot}
 %attr(0755,-,-) %{cartridgedir}/info/bin/
 %{cartridgedir}/template/
 %{_sysconfdir}/libra/cartridges/%{name}
-%{cartridgedir}/info/changelog
 %{cartridgedir}/info/control
 %{cartridgedir}/info/manifest.yml
 %{cartridgedir}/README
@@ -110,6 +111,12 @@ rm -rf %{buildroot}
 %config(noreplace) %{cartridgedir}/info/configuration/
 
 %changelog
+* Fri Feb 24 2012 Dan McPherson <dmcphers@redhat.com> 0.87.5-1
+- fix spec (dmcphers@redhat.com)
+
+* Fri Feb 24 2012 Dan McPherson <dmcphers@redhat.com> 0.87.4-1
+- new package built with tito
+
 * Wed Feb 22 2012 Dan McPherson <dmcphers@redhat.com> 0.87.2-1
 - Add show-proxy call. (rmillner@redhat.com)
 - set jboss version back for now (dmcphers@redhat.com)

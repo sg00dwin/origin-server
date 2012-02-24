@@ -14,7 +14,7 @@
       <builderSize>large</builderSize>
     </hudson.plugins.openshift.OpenShiftBuilderSizeJobProperty>
     <hudson.plugins.openshift.OpenShiftBuilderTypeJobProperty>
-      <builderType>jbossas-7.0</builderType>
+      <builderType>jbossas-7</builderType>
     </hudson.plugins.openshift.OpenShiftBuilderTypeJobProperty>
   </properties>
   <scm class="hudson.plugins.git.GitSCM">

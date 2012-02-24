@@ -260,6 +260,7 @@ function setup_configure {
 
 function setup_deconfigure {
     source ${CART_DIR}/abstract/info/lib/git
+    source ${CART_DIR}/abstract/info/lib/network
     source ${CART_DIR}/abstract/info/lib/apache
 
     load_node_conf
