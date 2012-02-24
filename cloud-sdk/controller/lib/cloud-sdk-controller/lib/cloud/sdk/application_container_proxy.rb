@@ -1,5 +1,6 @@
 require 'open4'
 require 'pp'
+require 'parseconfig'
 
 module Cloud
   module Sdk
@@ -41,6 +42,9 @@ module Cloud
       def reserve_uid
       end
  
+      def unreserve_uid(uid)
+      end
+
       def get_available_cartridges
         reply = exec_command('cdk-cartridge-list', '--porcelain --with-descriptors')
         result = parse_result(reply)
@@ -155,8 +159,27 @@ module Cloud
       end
       
       def get_public_hostname
+        public_hostname = 'UNKNOWN'
+        if File.exists?('/etc/libra/node_data.conf')
+          config_file = ParseConfig.new('/etc/libra/node_data.conf')
+          public_hostname = config_file.get_value('public_hostname') ? config_file.get_value('public_hostname') : 'UNKNOWN'
+        end
+        public_hostname
       end
       
+      def execute_connector(app, gear, cart, connector_name, input_args)
+        cmd = "cdk-connector-execute"
+        args = "--gear-uuid '#{gear.uuid}' --cart-name '#{cart}' --hook-name '#{connector_name}' " + input_args.join(" ")
+        reply = exec_command(cmd, args)
+        if reply and reply.length>0
+          reply = reply[0]
+          output = reply.results[:data][:output]
+          exitcode = reply.results[:data][:exitcode]
+          return [output, exitcode]
+        end
+        [nil, nil]
+      end
+
       def start(app, gear, cart)
         if framework_carts.include?(cart)
           run_cartridge_command(cart, app, gear, "start")
@@ -185,18 +208,6 @@ module Cloud
         end          
       end
       
-      def expose_port(app, gear, cart)
-        run_cartridge_command(cart, app, gear, "expose-port")
-      end
-
-      def conceal_port(app, gear, cart)
-        run_cartridge_command(cart, app, gear, "conceal-port")
-      end
-
-      def show_port(app, gear, cart)
-        run_cartridge_command(cart, app, gear, "show-port")
-      end
-
       def restart(app, gear, cart)
         if framework_carts.include?(cart)
           run_cartridge_command(cart, app, gear, "restart")
@@ -251,6 +262,18 @@ module Cloud
         end          
       end
       
+      def expose_port(app, gear, cart)
+        run_cartridge_command(cart, app, gear, "expose-port")
+      end
+
+      def conceal_port(app, gear, cart)
+        run_cartridge_command(cart, app, gear, "conceal-port")
+      end
+
+      def show_port(app, gear, cart)
+        run_cartridge_command(cart, app, gear, "show-port")
+      end
+
       def add_alias(app, gear, cart, server_alias)
         if framework_carts.include?(cart)
           run_cartridge_command(cart, app, gear, "add-alias", server_alias)
@@ -267,6 +290,10 @@ module Cloud
         end
       end
       
+      def update_namespace(app, cart, new_ns, old_ns)
+        #FIXME
+      end
+
       def framework_carts
         @framework_carts ||= CartridgeCache.cartridge_names('standalone')
       end
@@ -317,12 +344,6 @@ module Cloud
       
       def component_status(app, gear, component)
         run_cartridge_command('embedded/' + component, app, gear, "status")    
-      end
-      
-      def move_app(app, destination_container_proxy, node_profile=nil)
-      end
-      
-      def update_namespace(app, cart, new_ns, old_ns)
       end
       
       def run_cartridge_command(framework, app, gear, command, arg=nil)
@@ -474,6 +495,9 @@ module Cloud
       # Returns whether this app is present
       #
       def has_app?(app_uuid, app_name)
+        if File.exist?("/var/lib/libra/#{app_uuid}/#{app_name}")
+          return true
+        end
         return false
       end
       
@@ -481,6 +505,9 @@ module Cloud
       # Returns whether this embedded app is present
       #
       def has_embedded_app?(app_uuid, embedded_type)
+        if File.exist?("/var/lib/libra/#{app_uuid}/#{embedded_type}")
+          return true
+        end
         return false
       end
     end
