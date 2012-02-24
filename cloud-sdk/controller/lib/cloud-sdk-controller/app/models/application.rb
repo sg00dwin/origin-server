@@ -145,13 +145,15 @@ class Application < Cloud::Sdk::Cartridge
         
         gears_created.push gear
         create_result = gear.create
-        ginst.reused_by.each { |gname|
-          if gname.include? self.web_cart
-            # register dns here
-            self.add_dns(gear.uuid[0..9], @user.namespace, gear.get_proxy.get_public_hostname)
-            break
-          end
-        }
+        if self.scalable
+          ginst.reused_by.each { |gname|
+            if gname.include? self.web_cart
+              # register dns here
+              self.add_dns(gear.uuid[0..9], @user.namespace, gear.get_proxy.get_public_hostname)
+              break
+            end
+          }
+        end
         # self.save
         result_io.append create_result
         unless create_result.exitcode == 0

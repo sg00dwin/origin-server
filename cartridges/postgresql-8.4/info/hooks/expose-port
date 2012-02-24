@@ -49,7 +49,7 @@ setup_configure "$1" $2 $3
 
 import_env_vars
 
-proxy_port=$(find_next_proxy_port "$OPENSHIFT_DB_IP:$OPENSHIFT_DB_PORT")
+proxy_port=$(find_next_proxy_port $uuid "$OPENSHIFT_DB_IP:$OPENSHIFT_DB_PORT")
 ret=$?
 if [ $ret -ne 0 ]; then
   client_error "$proxy_port"
