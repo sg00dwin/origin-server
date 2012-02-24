@@ -19,6 +19,8 @@ Requires: jboss-as7 = 7.1.0.Final
 Requires:  maven3
 Requires:  apr
 
+Obsoletes: rhc-cartridge-jbossas-7.0
+
 BuildArch: noarch
 
 %description
