@@ -49,8 +49,8 @@ class ApplicationsController < BaseController
     scale = false if scale.nil? or scale=="false"
     scale = true if scale=="true"
     template_id = params[:template]
-    
-    if app_name.nil? or app_name.empty?
+
+    if app_name.nil? or app_name.empty? or !(app_name =~ /\A[A-Za-z0-9]+\z/)
       @reply = RestReply.new(:unprocessable_entity)
       message = Message.new(:error, "Application name is required and cannot be blank", 105, "name") 
       @reply.messages.push(message)
