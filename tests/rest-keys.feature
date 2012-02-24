@@ -137,7 +137,7 @@ Feature: keys
     Then the response should be "201"
     When I send a POST request to "/user/keys" with the following:"name=cucumber&type=ssh-rsa&content=XYZ123"
     Then the response should be "201"
-    When I send a POST request to "/user/keys" with the following:"name=cucumber1&type=ssh-rsa&content=XYZ123"
+    When I send a POST request to "/user/keys" with the following:"name=cucumber1&type=ssh-rsa&content=XYZ123456"
     Then the response should be "201"
     When I send a DELETE request to "/user/keys/cucumber1"
     Then the response should be "204"

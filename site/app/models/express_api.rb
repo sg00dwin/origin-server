@@ -40,6 +40,8 @@ module ExpressApi
       req.add_field "Cookie", "rh_sso=#{ticket}" unless ticket.blank?
       Rails.logger.debug "cookies: #{req.to_hash.inspect}"
       # set up http connection
+      # proxy = Net::HTTP::Proxy('file.rdu.redhat.com', 3128)
+      # http = proxy.new(url.host, url.port)
       http = Net::HTTP.new(url.host, url.port)
       http.use_ssl = true
       http.verify_mode = OpenSSL::SSL::VERIFY_NONE
