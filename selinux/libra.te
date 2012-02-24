@@ -1,4 +1,4 @@
-policy_module(libra,1.1.1)
+policy_module(libra,1.1.2)
 
 ########################################
 #
@@ -226,12 +226,15 @@ oddjob_dontaudit_rw_fifo_file(libra_app_domain)
 #
 
 gen_require(`
-    role system_r;
-    role unconfined_r;
-    attribute unconfined_usertype;
-    type rpm_script_t;
-    type puppet_t;
-    type puppet_tmp_t;
+	type sshd_devpts_t;
+	type ptmx_t;
+	type sshd_t;
+	role system_r;
+	role unconfined_r;
+	attribute unconfined_usertype;
+	type rpm_script_t;
+	type puppet_t;
+	type puppet_tmp_t;
 ')
  
 allow unconfined_usertype self:process dyntransition;
@@ -434,13 +437,14 @@ read_files_pattern(libra_cgroup_read_t, libra_var_lib_t, libra_var_lib_t)
 
 ########################################
 #
-# libra_cgroup_read local policy
+# libra_mail local policy
 #
 mta_base_mail_template(libra)
 mta_sendmail_domtrans(libra_app_domain, libra_mail_t)
 role system_r types libra_mail_t;
 
 allow libra_mail_t libra_initrc_t:fifo_file rw_inherited_fifo_file_perms;
+dontaudit libra_mail_t sshd_devpts_t:chr_file { read write };
 
 read_files_pattern(libra_mail_t, libra_var_lib_t, libra_var_lib_t)
 manage_files_pattern(libra_mail_t, libra_tmp_t, libra_tmp_t)
@@ -448,12 +452,6 @@ manage_files_pattern(libra_mail_t, libra_tmp_t, libra_tmp_t)
 mta_dontaudit_read_spool_symlinks(libra_mail_t)
 
 userdom_dontaudit_use_user_ptys(libra_mail_t)
-
-gen_require(`
-	type sshd_devpts_t;
-	type ptmx_t;
-	type sshd_t;
-')
 
 allow sshd_t libra_domain:process { transition dyntransition };
 libra_search_lib(sshd_t)
@@ -497,4 +495,3 @@ kernel_search_vm_sysctl(libra_t)
 kernel_read_vm_sysctls(libra_app_t)
 kernel_search_vm_sysctl(libra_app_t)
 netutils_domtrans_ping(libra_t)
-
