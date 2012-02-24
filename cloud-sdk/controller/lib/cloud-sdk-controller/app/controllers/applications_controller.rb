@@ -111,13 +111,14 @@ class ApplicationsController < BaseController
         application.create
         Rails.logger.debug "Configuring dependencies #{application.name}"
         application.configure_dependencies
-
-        # Rails.logger.debug "Adding system ssh keys #{application.name}"
-        # application.add_system_ssh_keys
-        # Rails.logger.debug "Adding ssh keys #{application.name}"
-        # application.add_ssh_keys
-        # Rails.logger.debug "Adding system environment vars #{application.name}"
-        # application.add_system_env_vars
+        Rails.logger.debug "Adding system ssh keys #{application.name}"
+        application.add_system_ssh_keys
+        Rails.logger.debug "Adding ssh keys #{application.name}"
+        application.add_ssh_keys
+        Rails.logger.debug "Adding system environment vars #{application.name}"
+        application.add_system_env_vars
+        Rails.logger.debug "Executing connections for #{application.name}"
+        application.execute_connections
         begin
           Rails.logger.debug "Creating dns"
           application.create_dns

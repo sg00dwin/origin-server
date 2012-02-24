@@ -237,6 +237,7 @@ class Application < Cloud::Sdk::Cartridge
     }
     if not new_gear.nil?
       result_io.append self.configure_dependencies
+      self.execute_connections
     end
     result_io
   end
@@ -274,6 +275,7 @@ class Application < Cloud::Sdk::Cartridge
 
       # inform anyone who needs to know that this gear is no more
       self.configure_dependencies
+      self.execute_connections
       break
     }
     result_io
@@ -365,8 +367,6 @@ class Application < Cloud::Sdk::Cartridge
       raise exceptions.first
     end
     
-    execute_connections
-
     self.save
     self.class.notify_observers(:after_application_configure, {:application => self, :reply => reply})
     reply
