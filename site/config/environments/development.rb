@@ -52,7 +52,7 @@ RedHatCloud::Application.configure do
   config.action_mailer.perform_deliveries = false
   
   # Express API base url
-  config.express_api_url = 'https://ec2-107-21-184-152.compute-1.amazonaws.com'
+  config.express_api_url = 'https://localhost'
 
   # base domain
   config.base_domain = 'dev.rhcloud.com'
