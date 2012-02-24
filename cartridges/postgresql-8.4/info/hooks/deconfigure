@@ -33,6 +33,11 @@ source ${CART_INFO_DIR}/lib/util
 PSQL_DIR="$APP_HOME/postgresql-8.4/"
 
 #
+# Teardown port proxy (ignore failures or missing hook)
+#
+( ${CART_INFO_DIR}/hooks/conceal-port "$1" $2 $3 ) &>/dev/null || :
+
+#
 # Remove environment variables
 #
 [ -f $APP_HOME/.env/OPENSHIFT_DB_TYPE ]  &&  source $APP_HOME/.env/OPENSHIFT_DB_TYPE

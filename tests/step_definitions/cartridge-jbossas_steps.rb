@@ -1,5 +1,5 @@
 $cartridge_root ||= "/usr/libexec/li/cartridges"
-$jbossas_version = "jbossas-7.0"
+$jbossas_version = "jbossas-7"
 $jbossas_cartridge = "#{$cartridge_root}/#{$jbossas_version}"
 #$jbossas_common_conf_path = "#{$jbossas_cartridge}/info/configuration/etc/conf/httpd_nolog.conf"
 $jbossas_hooks = "#{$jbossas_cartridge}/info/hooks"
