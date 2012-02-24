@@ -43,7 +43,7 @@ class Application < Cloud::Sdk::Cartridge
     
     if self.scalable and framework != "haproxy-1.4"
       self.proxy_cartridge = "haproxy-1.4"
-      self.requires_feature << self.proxy_cartridge
+      self.requires_feature.insert(0, self.proxy_cartridge)
       prof = @profile_name_map[@default_profile]
       conn = Cloud::Sdk::Connection.new("auto_scale")
       conn.components = ["cart-#{self.proxy_cartridge}", "cart-#{framework}"]
@@ -145,6 +145,10 @@ class Application < Cloud::Sdk::Cartridge
         
         gears_created.push gear
         create_result = gear.create
+        if ginst.cart_name.include? self.web_cart
+          # register dns here
+          self.add_dns(gear.uuid[0..9], @user.namespace, gear.get_proxy.get_public_hostname)
+        end
         # self.save
         result_io.append create_result
         unless create_result.exitcode == 0
@@ -201,7 +205,7 @@ class Application < Cloud::Sdk::Cartridge
 
   def web_cart
     web_cart = nil
-    return web_cart if not self.scalable
+    return framework if not self.scalable
     framework_carts = CartridgeCache.cartridge_names('standalone')
     self.requires_feature.each do |feature|
       if framework_carts.include? feature and feature != self.proxy_cartridge
@@ -744,7 +748,7 @@ class Application < Cloud::Sdk::Cartridge
     self.class.notify_observers(:before_create_dns, {:application => self, :reply => reply})    
     public_hostname = self.container.get_public_hostname
     add_dns(@name, @user.namespace, public_hostname)
-    if self.scalable
+    if false and self.scalable
       # add dns for web cart gears
       wb = web_cart
       # find the group instance where the web-cartridge is residing
