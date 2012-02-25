@@ -238,6 +238,9 @@ class Application < Cloud::Sdk::Cartridge
     }
     if not new_gear.nil?
       result_io.append self.configure_dependencies
+      self.add_system_ssh_keys([new_gear])
+      self.add_ssh_keys([new_gear])
+      self.add_system_env_vars([new_gear])
       self.execute_connections
     end
     result_io
