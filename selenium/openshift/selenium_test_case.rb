@@ -1,13 +1,17 @@
-require "rubygems"
+$local_selenium = ENV['LOCAL_SELENIUM'] == '1'
+
 require "test/unit"
 require "openshift/base"
-require "openshift/sauce_helper"
+require "uri"
 require "pathname"
+require "selenium/client"
+require "selenium/webdriver"
+require "openshift/sauce_helper" unless $local_selenium
 
 module OpenShift
   class SeleniumTestCase < Test::Unit::TestCase
     include ::OpenShift::TestBase
-    include ::OpenShift::SauceHelper
+    include ::OpenShift::SauceHelper unless $local_selenium
     include ::OpenShift::CSSHelpers
     include ::OpenShift::Assertions
     
@@ -17,9 +21,7 @@ module OpenShift
     alias_method :selenium, :driver
 
     def self.local?
-      # ENV['LOCAL_SELENIUM']
-      cfg = Sauce::Config.new()
-      return cfg.local?
+      $local_selenium || Sauce::Config.new().local?
     end
 
     def setup
@@ -119,6 +121,7 @@ module OpenShift
             puts e.inspect
             puts ">"
           end
+          sleep (ENV['SAUCE_SLEEP_ON_FAILURE'] || 0).to_i
         end
 
         @driver.quit

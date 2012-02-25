@@ -1,0 +1,17 @@
+Run 'bundle install' to get Gems - however, seems to be a bug with sauce/selenium that bundle exec ruby ts_web doesn't work.
+
+Screenshots
+ Screenshots are generated after every failure to the output/ directory
+
+Waiting after failure
+ export SAUCE_SLEEP_ON_FAILURE=<number of seconds after each failure>
+
+Running local tests
+ export LOCAL_SELENIUM=1
+ export SAUCE_BROWSER_URL=https://<host>/app
+ ruby ts_web
+
+Running an individual test
+ export LOCAL_SELENIUM=1
+ export SAUCE_BROWSER_URL=https://<host>/app
+ ruby -rubygems testcases/tc_console.rb -n test_ssh_keys
