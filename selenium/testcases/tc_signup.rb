@@ -1,4 +1,9 @@
-#!/usr/bin/env ruby
+require 'openshift/selenium_test_case'
+require 'openshift/express/dialogs'
+require 'openshift/express/navbars'
+require 'openshift/express/pages'
+require 'openshift/express/forms'
+
 class Signup < OpenShift::SeleniumTestCase
 
   def setup
@@ -36,10 +41,9 @@ class Signup < OpenShift::SeleniumTestCase
       :no_captcha => lambda{|s|
         assert_dialog_error(s,:error,nil,[ :bad_captcha ])
       },
-      #:bad_domain => lambda{|s|
-      #  assert_dialog_error(s,:error,nil,[ :bad_domain ])
-      #},
-      #FIXME restore this method
+      :bad_domain => lambda{|s|
+        assert_dialog_error(s,:error,nil,[ :bad_domain ])
+      },
 
       # This should succeed
       :success => lambda{|s|

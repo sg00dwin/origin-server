@@ -1,4 +1,9 @@
-#!/usr/bin/env ruby
+require 'openshift/selenium_test_case'
+require 'openshift/express/dialogs'
+require 'openshift/express/navbars'
+require 'openshift/express/pages'
+require 'openshift/express/forms'
+
 class Signin < OpenShift::SeleniumTestCase
 
   def setup
