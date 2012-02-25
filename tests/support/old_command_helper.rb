@@ -134,6 +134,18 @@ module OldCommandHelper
     end
   end
 
+  def rhc_expose_port_old(app)
+    rhc_do('rhc_expose_port_old') do
+      run("#{$ctl_app_script} -l #{app.login} -a #{app.name} -p fakepw -c expose-port -d").should == 0
+    end
+  end
+
+  def rhc_conceal_port_old(app)
+    rhc_do('rhc_conceal_port_old') do
+      run("#{$ctl_app_script} -l #{app.login} -a #{app.name} -p fakepw -c conceal-port -d").should == 0
+    end
+  end
+
   def rhc_ctl_start_old(app)
     rhc_do('rhc_ctl_start_old') do
       run("#{$ctl_app_script} -l #{app.login} -a #{app.name} -p fakepw -c start -d").should == 0

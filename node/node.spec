@@ -205,6 +205,8 @@ fi
 %attr(0750,-,-) %{_bindir}/rhc-idler
 %attr(0750,-,-) %{_bindir}/rhc-last-access
 %attr(0750,-,-) %{_bindir}/rhc-app-idle
+%attr(0750,-,-) %{_bindir}/rhc-autoidler
+%attr(0750,-,-) %{_bindir}/rhc-idler-stats
 %attr(0750,-,-) %{_bindir}/rhc-restorer
 %attr(0750,-,apache) %{_bindir}/rhc-restorer-wrapper.sh
 %attr(0750,-,-) %{_bindir}/ec2-prep.sh

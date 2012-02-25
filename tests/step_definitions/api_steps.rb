@@ -2,7 +2,7 @@ require 'rubygems'
 require 'rest_client'
 require 'nokogiri'
 require '/var/www/libra/broker/lib/express/broker/dns_service'
-
+require 'logger'
 
 Before do
   @base_url = "https://localhost/broker/rest"
@@ -10,7 +10,8 @@ end
 
 After do |scenario|
   dns_service = Express::Broker::DnsService.new({:end_point => "https://api2.dynect.net", :customer_name => "demo-redhat", 
-  :user_name => "dev-rhcloud-user", :password => "vo8zaijoN7Aecoo", :domain_suffix => "dev.rhcloud.com", :zone => "rhcloud.com"})
+  :user_name => "dev-rhcloud-user", :password => "vo8zaijoN7Aecoo", :domain_suffix => "dev.rhcloud.com", :zone => "rhcloud.com", :log_file => "/dev/null"})
+
   domains = ["cucumber", "app-cucumber"]
   i=0
   while i<3 
