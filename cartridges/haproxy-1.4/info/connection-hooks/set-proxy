@@ -34,8 +34,9 @@ done
 haproxy_cfg=$OPENSHIFT_APP_DIR/conf/haproxy.cfg
 # Remove the first 3 args and process all the remaining args of the form k=v.
 # The values are the gear endpoints.
-for arg in "${@:4}"; do
-    ep=$(echo "$arg" | tr "\n" " " | cut -f 2 -d '=' | tr -d "'")
+kvargs=$(echo "${@:4}" | tr -d "\n" )
+for arg in $kvargs; do
+    ep=$(echo "$arg" | cut -f 2 -d '=' | tr -d "'")
     #  Add gear to the proxy configuration if not already in there.
     #  Gear end-point is the form: $gear-dns-entry:$gear-port
     gear_name=$(echo "$ep" | cut -f 1 -d '.')

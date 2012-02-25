@@ -5,7 +5,7 @@ CART_DIR=/usr/libexec/li/cartridges
 CART_NAME=haproxy
 CART_VERSION=1.4
 CART_INFO_DIR=$CART_DIR/$CART_NAME-$CART_VERSION/info
-export GIT_SSH=$CART_INFO_DIR/bin/ssh
+DNS_CHECK_TIMEOUT=30
 
 # Exit on any errors
 set -e
@@ -19,13 +19,34 @@ function print_help {
 }
 
 
+function check_gear_dns_availability() {
+    gear_dns_name=$(echo $1 | cut -f 2 -d '@' | cut -f 1 -d '/')
+    timeout=${2:-$DNS_CHECK_TIMEOUT}
+    i=0
+    while [ $i -lt $timeout ]; do
+        if dig CNAME $gear_dns_name | grep "ANSWER SECTION" 2>&1 > /dev/null; then
+            return 0
+        fi
+
+        i=$((i + 1))
+        sleep 1
+    done
+
+    return 1
+}
+
+
 function setup_git_repo_from_framework() {
     checkout_dir_name=app-framework-gear
-    pushd "${OPENSHIFT_HOMEDIR}/git/${OPENSHIFT_APP_NAME}.git" > /dev/null
-    git clone --bare "$1" /tmp/$checkout_dir_name
+
+    #  Ensure framework gear is available.
+    check_gear_dns_availability "$1" $DNS_CHECK_TIMEOUT  ||  sleep 10
+
+    pushd "$GIT_DIR" > /dev/null
+    git clone --bare $1 /tmp/$checkout_dir_name
     rm -rf * 2> /dev/null  ||  :
     mv -f /tmp/$checkout_dir_name/[^h]* ./ 2> /dev/null  ||  :
-    git remote add all-gears file://${OPENSHIFT_HOMEDIR}/git/${OPENSHIFT_APP_NAME}.git
+    git remote add all-gears "file://$GIT_DIR"
     popd > /dev/null
 }
 
@@ -72,10 +93,14 @@ for f in ~/.env/*; do
     source $f
 done
 
+export GIT_SSH=$CART_INFO_DIR/bin/ssh
+export GIT_DIR=${OPENSHIFT_HOMEDIR}/git/${OPENSHIFT_APP_NAME}.git
+
 #  Remove the first 3 args and process all the remaining args of the form
 #  key=value. The values are the git urls for each gear.
-for arg in "${@:4}"; do
-    url=$(echo "$arg" | tr "\n" " " | cut -f 2 -d '=' | tr -d "'")
+kvargs=$(echo "${@:4}" | tr -d "\n" )
+for arg in $kvargs; do
+    url=$(echo "$arg" | cut -f 2 -d '=' | tr -d "'")
     gear_name=$(echo "$url" | cut -f 2 -d '@' | cut -f 1 -d '.')
     if register_gear "$gear_name" "$url"; then
         #
@@ -85,9 +110,9 @@ for arg in "${@:4}"; do
         #        for now.
         #
 
-        pushd "${OPENSHIFT_HOMEDIR}/git/${OPENSHIFT_APP_NAME}.git" > /dev/null
-        git add remote gear-$gear_name "$url"
-        git remote set-url --add --push all-gears "$url"
+        pushd "$GIT_DIR" > /dev/null
+        git remote add gear-$gear_name $url
+        git remote set-url --add --push all-gears $url
 
         # Need two git "mirrored" pushes as the first push updates us with the
         # newly added gear-$gear_name.
