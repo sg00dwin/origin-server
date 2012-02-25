@@ -12,11 +12,12 @@ do
     APPHOME=/var/lib/libra/$f
     if [ -d "$APPHOME" ]
     then
-        if ! GIT_DIR=`echo $APPHOME/git/*/` git log --since="$(/bin/date "+%Y-%m-%d" --date="60 days ago")" | grep -q commit
+        if ! GIT_DIR=`echo $APPHOME/git/*/` git log --since="$(/bin/date "+%Y-%m-%d" --date="$days days ago")" | grep -q commit
         then
-            . $APPHOME/.env/OPENSHIFT_APP_DIR
-            #find $OPENSHIFT_APP_DIR -mtime -60 -name 'access_log-*'
-            echo "$f is stale"
+            if /usr/bin/rhc-app-idle $f $days
+            then
+                echo "$f is stale"
+            fi
         fi
     fi
 done
