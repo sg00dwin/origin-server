@@ -42,3 +42,13 @@ Feature: PHP Application
     When I remove-alias the php application
     Then the php application will not be aliased 
     
+
+  Scenario: Enable Disable Proxy a PHP Application
+    Given an accepted node
+    And a new guest account
+    And a new php application
+    And the php application is running
+    When I expose-port the php application
+    Then the php application will be exposed
+    When I conceal-port the php application
+    Then the php application will not be exposed

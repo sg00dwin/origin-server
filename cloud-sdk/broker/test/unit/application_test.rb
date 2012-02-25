@@ -17,6 +17,7 @@ class ApplicationTest < ActiveSupport::TestCase
     cart = Cloud::Sdk::Cartridge.new.from_descriptor({ 'Name' => 'dummy' } )
     CartridgeCache.expects(:find_cartridge).returns(cart).at_least_once
     Gear.any_instance.stubs(:create).returns(ResultIO.new)
+    Application.any_instance.stubs(:framework).returns('dummy')
     
     user = mock("user")
     Application.expects(:notify_observers).with(:before_application_create, anything).in_sequence(observer_seq).once
@@ -30,6 +31,7 @@ class ApplicationTest < ActiveSupport::TestCase
   
   test "configure_dependencies" do    
     user = mock("user")    
+    Application.any_instance.stubs(:framework).returns('dummy')
     application = Application.new(user, "app_name", "app_uuid", "std", "dummy")
     
     observer_seq = sequence("observer_seq")
@@ -50,6 +52,7 @@ class ApplicationTest < ActiveSupport::TestCase
   
   test "deconfigure_dependencies" do
     user = mock("user")    
+    Application.any_instance.stubs(:framework).returns('dummy')
     application = Application.new(user, "app_name", "app_uuid", "std", "dummy")
     
     observer_seq = sequence("observer_seq")
