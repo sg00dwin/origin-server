@@ -94,7 +94,7 @@ class KeysController < BaseController
     begin
       user.add_ssh_key(name, content, type)
       user.save
-      ssh_key = RestKey.new(name, user.ssh_keys[name][:key], user.ssh_keys[name][:type])
+      ssh_key = RestKey.new(name, user.ssh_keys[name]["key"], user.ssh_keys[name]["type"])
       @reply = RestReply.new(:created, "key", ssh_key)
       @reply.messages.push(Message.new(:info, "Created SSH key #{name} for user #{@login}"))
       respond_with @reply, :status => @reply.status
@@ -154,7 +154,7 @@ class KeysController < BaseController
     begin
       user.update_ssh_key(content, type, id)
       user.save
-      ssh_key = RestKey.new(id, user.ssh_keys[id][:key], user.ssh_keys[id][:type])
+      ssh_key = RestKey.new(id, user.ssh_keys[id]["key"], user.ssh_keys[id]["type"])
       @reply = RestReply.new(:ok, "key", ssh_key)
       @reply.messages.push(Message.new(:info, "Updated SSH key with name #{id} for user #{@login}"))
       respond_with(@reply) do |format|
