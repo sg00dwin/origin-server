@@ -15,3 +15,5 @@ Running an individual test
  export LOCAL_SELENIUM=1
  export SAUCE_BROWSER_URL=https://<host>/app
  ruby -rubygems testcases/tc_console.rb -n test_ssh_keys
+
+ (some individual tests have not been converted - if you get an error about undefined constants be sure to add the correct requires)
