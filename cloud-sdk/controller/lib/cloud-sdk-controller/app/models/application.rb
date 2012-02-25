@@ -140,16 +140,17 @@ class Application < Cloud::Sdk::Cartridge
       
       Rails.logger.debug "Creating gears"
       group_instances.uniq.each do |ginst|
-        is_web_cart = false
+        is_web_gear = false
         wb = self.web_cart
         gear = Gear.new(self, ginst)
-        ginst.component_instances.each { |cname| is_web_cart = true if cname.include? wb }
+        ginst.component_instances.each { |cname| is_web_gear = true if cname.include? wb }
         if scalable
-          gear.uuid = self.uuid if not is_web_cart
+          gear.uuid = self.uuid if not is_web_gear
         else
           #FIXME: backward compat: first gears UUID = app.uuid
           gear.uuid = self.uuid
         end
+        gear.node_profile = self.node_profile if is_web_gear 
         
         create_result = gear.create
         result_io.append create_result
@@ -157,7 +158,7 @@ class Application < Cloud::Sdk::Cartridge
           raise Cloud::Sdk::NodeException.new("Unable to create gear on node", "-100", result_io)
         end
 
-        self.add_dns(gear.uuid[0..9], @user.namespace, gear.get_proxy.get_public_hostname) if self.scalable and is_web_cart
+        self.add_dns(gear.uuid[0..9], @user.namespace, gear.get_proxy.get_public_hostname) if self.scalable and is_web_gear
         gears_created.push gear
         ginst.gears << gear
 

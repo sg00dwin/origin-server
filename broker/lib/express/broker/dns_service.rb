@@ -18,6 +18,7 @@ module Express
           @domain_suffix = args[:domain_suffix]
           @zone = args[:zone]
           @@dyn_retries = args[:retries] || 1
+          @@log_file = args[:log_file] || STDOUT
         elsif defined?Rails
           @end_point = Rails.configuration.dns[:dynect_url]
           @customer_name = Rails.configuration.dns[:dynect_customer_name]
@@ -35,7 +36,7 @@ module Express
         if defined?(Rails.logger)
           Rails.logger
         else
-          Logger.new(STDOUT)
+          logger = Logger.new(@@log_file)
         end
       end
       
@@ -110,6 +111,9 @@ module Express
         auth_token = nil
         dyn_do('dyn_login', retries) do
           http = Net::HTTP.new(url.host, url.port)
+          # below line get rid of the warning message
+          # warning: peer certificate won't be verified in this SSL session
+          http.verify_mode = OpenSSL::SSL::VERIFY_NONE
           #http.set_debug_output $stderr
           http.use_ssl = true
           begin
@@ -237,6 +241,9 @@ module Express
           headers = { "Content-Type" => 'application/json', 'Auth-Token' => auth_token }
           url = URI.parse("#{@end_point}#{resp.body}")
           http = Net::HTTP.new(url.host, url.port)
+          # below line get rid of the warning message
+          # warning: peer certificate won't be verified in this SSL session
+          http.verify_mode = OpenSSL::SSL::VERIFY_NONE
           #http.set_debug_output $stderr
           http.use_ssl = true
           sleep_time = 2
@@ -288,6 +295,9 @@ module Express
         has = false
         dyn_do('dyn_has?', retries) do
           http = Net::HTTP.new(url.host, url.port)
+          # below line get rid of the warning message
+          # warning: peer certificate won't be verified in this SSL session
+          http.verify_mode = OpenSSL::SSL::VERIFY_NONE
           #http.set_debug_output $stderr
           http.use_ssl = true
           begin
@@ -331,6 +341,9 @@ module Express
         resp, data = nil, nil
         dyn_do('dyn_put_post', retries) do
           http = Net::HTTP.new(url.host, url.port)
+          # below line get rid of the warning message
+          # warning: peer certificate won't be verified in this SSL session
+          http.verify_mode = OpenSSL::SSL::VERIFY_NONE
           #http.set_debug_output $stderr
           http.use_ssl = true
           json_data = JSON.generate(post_data);
@@ -380,6 +393,9 @@ module Express
         resp, data = nil, nil
         dyn_do('dyn_delete', retries) do
           http = Net::HTTP.new(url.host, url.port)
+          # below line get rid of the warning message
+          # warning: peer certificate won't be verified in this SSL session
+          http.verify_mode = OpenSSL::SSL::VERIFY_NONE
           #http.set_debug_output $stderr
           http.use_ssl = true
           begin

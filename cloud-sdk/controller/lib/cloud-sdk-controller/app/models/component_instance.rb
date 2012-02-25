@@ -54,8 +54,22 @@ class ComponentInstance < Cloud::Sdk::UserModel
       }
     end
 
-    self.dependencies.each { |dep| self.exec_order << dep if not self.exec_order.include? dep }
-
+    deps = self.dependencies.dup
+    self.dependencies.each { |dep| 
+      depinst = app.comp_instance_map[dep]
+      comp,p,c = depinst.get_component_definition(app)
+      if comp.depends_service and !comp.depends_service.empty?
+        comp.depends_service.each { |dependent_cart|
+          deps.each { |parent_dep| 
+            if parent_dep.include? dependent_cart 
+              # add parent_dep to exec_order
+              self.exec_order << parent_dep if not self.exec_order.include? parent_dep
+            end
+          }
+        }
+      end
+      self.exec_order << dep if not self.exec_order.include? dep 
+    }
     return group_list
   end
 
