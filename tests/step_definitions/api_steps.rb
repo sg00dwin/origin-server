@@ -9,7 +9,6 @@ Before do
 end
 
 After do |scenario|
-  puts "Running clean-up for api_steps"
   dns_service = Express::Broker::DnsService.new({:end_point => "https://api2.dynect.net", :customer_name => "demo-redhat", 
   :user_name => "dev-rhcloud-user", :password => "vo8zaijoN7Aecoo", :domain_suffix => "dev.rhcloud.com", :zone => "rhcloud.com", :log_file => "/dev/null"})
 
