@@ -18,6 +18,7 @@ class GearsController < BaseController
     else
       app_gears_info = []
       gears = app.group_instances.uniq.map{ |ginst| ginst.gears }.flatten
+
       has_proxy_cart = false
       gears.each do |gear|
         gear.configured_components.each do |cname|
@@ -26,19 +27,30 @@ class GearsController < BaseController
             break 
           end
         end
-      end
+      end if app.proxy_cartridge
+
       gears.each do |gear|
         comp_list = []
         gear.configured_components.each do |cname|
-          comp_inst = app.comp_instance_map(cname)
-          comp_list.push { "name" : comp_inst.parent_cart_name, "proxy_port" : gear.show_port(comp_inst) }
+          comp_inst = app.comp_instance_map[cname]
+          next if comp_inst.parent_cart_name == app.name
+          begin
+            proxy_port = gear.show_port(comp_inst)
+          rescue
+          end
+          comp_info = { 
+                       'name' => comp_inst.parent_cart_name, 
+                       'proxy_port' => proxy_port
+                      }
+          comp_list.push comp_info
         end
         app_name = app.name
         app_name = gear.uuid[0..9] if app.scalable and has_proxy_cart
-        git_url = "ssh://#{gear.uuid}@#{app_name}-#{cloud_user.namespace}" + Rails.applicaton.config.cdk[:domain_suffix] + "/~/git/#{app_name}.git/"
+        git_url = "ssh://#{gear.uuid}@#{app_name}-#{cloud_user.namespace}." + Rails.application.config.cdk[:domain_suffix] + "/~/git/#{app_name}.git/"
         gear_info = RestGear.new(gear.uuid, comp_list, git_url)
         app_gears_info.push gear_info
       end
+
       @reply = RestReply.new(:ok, "gears", app_gears_info)
       respond_with @reply, :status => @reply.status
     end
