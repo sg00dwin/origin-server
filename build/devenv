@@ -453,7 +453,6 @@ class DevEnv < Thor
 
   desc "update", "Update current instance by installing RPMs from local git tree"
   method_option :verbose, :type => :boolean, :desc => "Enable verbose logging"
-
   def update
     options.verbose? ? @@log.level = Logger::DEBUG : @@log.level = Logger::ERROR
 
@@ -472,7 +471,12 @@ class DevEnv < Thor
       puts "Building in #{build_dir}"
       inside(File.expand_path("../#{build_dir}", File.dirname(__FILE__))) do
         # Build and install the RPM's locally
-        unless run('tito build --rpm --test --install', :verbose => options.verbose?)
+        unless run('tito build --rpm --test', :verbose => options.verbose?)
+          FileUtils.rm_rf '/tmp/devenv/sync/'
+          exit 1
+        end
+        FileUtils.cp "/tmp/tito/x86_64/*.rpm", "/tmp/tito/noarch/"
+        unless run('yum install /tmp/tito/noarch/*.rpm', :verbose => options.verbose?)
           FileUtils.rm_rf '/tmp/devenv/sync/'
           exit 1
         end
@@ -486,9 +490,8 @@ class DevEnv < Thor
   method_option :verbose, :type => :boolean, :desc => "Enable verbose logging"
   method_option :verifier, :type => :boolean, :desc => "Maintain verifier functionality (private IP setup)"
   method_option :skip_build, :type => :boolean, :desc => "Indicator to skip the rpm build/install"
-  method_option :clean_metadata, :type => :boolean, :desc => "Cleans metadata before running yum update"
+  method_option :clean_metadata, :type => :boolean, :desc => "Cleans metadata before running yum commands"
   method_option :region, :required => false, :desc => "Amazon region override (default us-east-1)"
-
   def sync(name)
     options.verbose? ? @@log.level = Logger::DEBUG : @@log.level = Logger::ERROR
 
@@ -510,7 +513,7 @@ class DevEnv < Thor
 
     if !options.skip_build?
       puts "Performing remote install...."
-      output, exit_code = ssh(hostname, "set -e; #{options.clean_metadata? ? 'yum clean metadata; ' : ''}yum update -y --exclude='rhc-devenv' --disablerepo=\* --enablerepo=li rhc-*; rm -rf li-working os-client-tools-working; git clone li li-working;#{has_client ? ' git clone os-client-tools os-client-tools-working;' : ''} pushd li-working; build/devenv update #{options.verbose? ? '--verbose' : ''} 2>&1; popd; rm -rf li-working os-client-tools-working", 600, true)
+      output, exit_code = ssh(hostname, "set -e; #{options.clean_metadata? ? 'yum clean metadata; ' : ''}rm -rf li-working os-client-tools-working; git clone li li-working;#{has_client ? ' git clone os-client-tools os-client-tools-working;' : ''} pushd li-working; build/devenv update #{options.verbose? ? '--verbose' : ''} 2>&1; popd; rm -rf li-working os-client-tools-working; yum update -y --exclude='rhc-devenv' --disablerepo=\* --enablerepo=li rhc-*", 600, true)
       if exit_code != 0
         puts "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
         puts "Build failed!  Exiting."
