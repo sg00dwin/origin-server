@@ -39,4 +39,4 @@ WORKING_DIR=/tmp/${application}_migrate_clone
 
 #TODO add actual standalone.xml migration
 #TODO exit on error properly
-run_as_user "git clone $GIT_DIR $WORKING_DIR; pushd $WORKING_DIR > /dev/null; echo blah >> blah; git add blah; git commit -m 'blah'; git push; popd > /dev/null; rm -rf $WORKING_DIR" 2>&1 || exit 1
+run_as_user "rm -rf $WORKING_DIR; git clone $GIT_DIR $WORKING_DIR; pushd $WORKING_DIR > /dev/null; echo blah >> blah; git add blah; git commit -m 'blah'; git push; popd > /dev/null; rm -rf $WORKING_DIR" 2>&1 || exit 1

@@ -754,7 +754,7 @@ END
       inside('../os-client-tools') do
         temp_commit
 
-        `rm -rf /tmp/tito/; pushd express; tito build --rpm --test; popd; sudo rpm -Uvh /tmp/tito/noarch/rhc-*;rm -rf /tmp/tito/; mkdir -p /tmp/tito`
+        `rm -rf /tmp/tito/; pushd express; tito build --rpm --test; popd; sudo rpm -Uvh --force /tmp/tito/noarch/rhc-*;rm -rf /tmp/tito/; mkdir -p /tmp/tito`
 
         reset_temp_commit
 
