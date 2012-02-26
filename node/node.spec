@@ -2,7 +2,7 @@
 
 Summary:       Multi-tenant cloud management system node tools
 Name:          rhc-node
-Version:       0.87.2
+Version:       0.87.3
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -247,6 +247,41 @@ fi
 /lib64/security/pam_libra.so
 
 %changelog
+* Sat Feb 25 2012 Dan McPherson <dmcphers@redhat.com> 0.87.3-1
+- Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
+  (mpatel@redhat.com)
+- Adding the idling related scripts. (mpatel@redhat.com)
+- Don't run this in a subshell (rmillner@redhat.com)
+- Update show-port hook and re-add function. (rmillner@redhat.com)
+- Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
+  (mpatel@redhat.com)
+- Adds script to check whether a particular app is idle or not.
+  (mpatel@redhat.com)
+- Blanket purge proxy ports on application teardown. (rmillner@redhat.com)
+- Forgot to include uuid in calls (rmillner@redhat.com)
+- Use the libra-proxy configuration rather than variables to spot conflict and
+  allocation. Switch to machine readable output. Simplify the proxy calls to
+  take one target at a time (what most cartridges do anyway). Use cartridge
+  specific variables. (rmillner@redhat.com)
+- Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
+  (rmillner@redhat.com)
+- Adds rhc-last-access to node.spec. (mpatel@redhat.com)
+- Adds rhc-last-access script. (mpatel@redhat.com)
+- Add showproxy command (rmillner@redhat.com)
+- adding logger to rhc-idler (mmcgrath@redhat.com)
+- Allow rhc-list-stale to take an arbitrary number of days
+  (mmcgrath@redhat.com)
+- Add additional guards in case jboss has been created but not started
+  (jhonce@redhat.com)
+- Update cartridge configure hooks to load git repo from remote URL Add REST
+  API to create application from template Moved application template
+  models/controller to cloud-sdk (kraman@gmail.com)
+- comma is also a valid json character... fixing mcollective args validation
+  (rchopra@redhat.com)
+- quotes are valid characters in json (rchopra@redhat.com)
+- fix validate args for mcollective calls as we are sending json strings over
+  now (rchopra@redhat.com)
+
 * Wed Feb 22 2012 Dan McPherson <dmcphers@redhat.com> 0.87.2-1
 - Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
   (mpatel@redhat.com)
