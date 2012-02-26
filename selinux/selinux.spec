@@ -1,6 +1,6 @@
 Summary:       SELinux policy for OpenShift nodes
 Name:          rhc-selinux
-Version:       0.87.3
+Version:       0.87.4
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -48,6 +48,10 @@ rm -rf %{buildroot}
 %attr(0640,-,-) %{_datadir}/selinux/packages/libra.pp
 
 %changelog
+* Sat Feb 25 2012 Dan McPherson <dmcphers@redhat.com> 0.87.4-1
+- Add new libra_app domains an libra file types (dwalsh@redhat.com)
+- Allow libra_t to transition to ping command (dwalsh@redhat.com)
+
 * Wed Feb 22 2012 Dan McPherson <dmcphers@redhat.com> 0.87.3-1
 - Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
   (dwalsh@redhat.com)
