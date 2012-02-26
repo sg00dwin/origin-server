@@ -13,6 +13,9 @@ class StyleguideController < ApplicationController
   def community
   end
 
+  def community_real
+  end
+
   def slow
     sleep 3
     redirect_to :action => "index", :controller => "styleguide"

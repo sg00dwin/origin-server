@@ -2483,6 +2483,7 @@ a.thumbnail:hover {
  *
  * Date: @DATE
  */
+@import url(mixins.css);
 .clearfix {
   *zoom: 1; }
   .clearfix:before, .clearfix:after {
@@ -2762,10 +2763,12 @@ a.thumbnail:hover {
   .navbar-fixed-top .navbar-inner {
     padding: 5px; }
 
-  .navbar .container {
-    width: auto;
-    padding: 0; }
-
+  /* Prefer to leave navbar aligned with column edges 
+    .navbar .container {
+      width: auto;
+      padding: 0;
+    }
+  */
   .navbar .brand {
     padding-left: 10px;
     padding-right: 10px;

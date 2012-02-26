@@ -1,102 +1,4 @@
-:css
-  #top {background-color: black; color: white;}
-  #nav {background-color: #333; color: white; }
-  #contents {background-color: #eee;}
-  .column-nav { background-color: black; color: white; }
-  .column-content { background-color: white; }
-  #contents > .container > div > .row { background-color: #f5f5f5; }
-
-  /* Nav section */
-
-  #nav .navigation-bar { padding-top: 30px; height: 130px; position: relative; }
-  .navigation-bar > .brand { position: relative; top: 70px; text-align: center; }
-  .navigation-bar > ul.navigation > li.group-one { float: left; width: 20%; }
-  .navigation-bar > ul.navigation > li.group-spacer { width: 20%; }
-  .navigation-bar > ul.navigation > li.group-two { float: right; width: 20%; text-align: right; }
-
-  @media (max-width: 767px) {
-    #nav .navigation-bar { height: 100px; }
-    .navigation-bar > .brand { position: static; float: left; text-align: center; width: 100px; }
-    .navigation-bar > ul.navigation { margin-left: 110px; }
-    .navigation-bar > ul.navigation > li { float: left !important; width: 50% !important; text-align: center !important;}
-  }
-
-  .navigation-bar > ul.navigation { font-size: 13px; text-transform: uppercase }
-  .navigation-bar > ul.navigation a { color: white; font-size: 13px; text-transform: uppercase; font-weight: bold }
-  .navigation-bar > ul.navigation > li.active > a { border-bottom: 2px solid white; padding-bottom: 4px; }
-  .brand { text-transform: uppercase; }
-
-  .messaging { margin-bottom: 30px; clear: both; }
-  .messaging { color: #bbb; text-align: center;}
-  .messaging > .primary { font-size: 40px; line-height: 40px;}
-  .messaging > .primary { text-transform: uppercase; }
-  .messaging strong { color: white; }
-  .messaging > .secondary { font-size: 16px; line-height: 18px; }
-
-  @media (max-width: 767px) {
-    #contents > .container > div > .row { background-color: black; }
-    .messaging { margin-bottom: 10px; }
-    .messaging > .primary { font-size: 20px; line-height: 20px;}
-    .messaging > .secondary { font-size: 13px; line-height: 18px; }
-  }
-
-  /* Content section */
-
-  #nav { padding-bottom: 100px; }
-  #contents .lift { }
-  #contents .lift .column-nav { margin-top: -80px; }
-  #contents .lift .column-content { margin-top: -90px; }
-  #contents .lift .column-content h1 { margin-top: 25px; margin-bottom: 25px; }
-
-  #contents .row > .column-nav { margin-left: 0; padding-right: 20px; }
-  #contents .row > .column-content { margin-left: 0px; padding-left: 20px; margin-right: -20px; padding-right: 20px; }
-  @media (max-width: 767px) {
-    #nav { padding-bottom: 30px; }
-    #contents .container { padding: 0; } 
-    #contents .row > .column-content { margin-right: 0; } 
-    #contents .lift .column-nav { margin-top: 0; }
-    #contents .lift .column-content { margin-top: 0; }
-  }
-
-  #contents .row > .column-content { padding-bottom: 30px; }
-  #contents .row { margin-bottom: 20px; }
-
-  /* Left nav section */
-
-  #contents .column-nav .navigation-location { font-size: 19px; line-height: 46px; text-transform: uppercase; margin-top: 15px; }
-  #contents .column-nav > * { margin-left: 20px; }
-  #contents .column-nav > .nav-stacked { margin-left: 10px; }
-
-  .nav-stacked .nav-stacked { margin-left: 20px; margin-bottom: 0; }
-
-  @media (max-width: 767px) {
-    #contents .column-nav > ul > li { float: left; width: 32%; }
-    .navigation-location { display: none; }
-  }
-
-  /* Body */
-
-  .ribbon { position: relative; /* margin-left: -Xpx; */ }
-  .ribbon > .ribbon-content { z-index: 1; position: relative; /* padding-left: Xpx; */ }
-  .ribbon > .ribbon-left {
-    content: " ";
-    position: absolute;
-    left: 0;
-    /* border-top: Ypx solid color;
-       bottom: -Ypx;
-  	   border-left: Xpx solid transparent;
-    */
-  }
-
-  #contents h1.ribbon { margin-left: -30px; }
-  #contents h1.ribbon > .ribbon-content { background-color: red; color: white; box-shadow: 1px 2px 2px rgba(0,0,0,0.5); display: inline-block; }
-  #contents h1.ribbon > .ribbon-content { padding: 5px 20px 5px 30px; min-width: 30% }
-  #contents h1.ribbon > .ribbon-left {
-    border-top:10px solid #aa0000;
-    bottom:-10px;
-  	border-left:10px solid transparent;
-  }
-
+= stylesheet_link_tag '/app/stylesheets/site.css', :media => 'all'
 %header
   #top
     .container
@@ -107,25 +9,27 @@
         %span.provider{:style => 'width: 16px; height: 16px; background-color: #555; display: inline-block;'} T
         %span.provider{:style => 'width: 16px; height: 16px; background-color: #555; display: inline-block;'} G
   #nav
-    .container
-      .navigation-bar
-        .brand
-          %strong> Open
-          Shift
-        %ul.navigation.unstyled
-          %li.group-one.active= link_to "Overview", "."
-          %li.group-one= link_to "Documentation", "dev_center"
-          %li.group-spacer
-          %li.group-two= link_to "Console", "console"
-          %li.group-two= link_to "Community", "community"
+    .navbar
+      .container
+        -# Was .nav-collapse, has some issues
+        %div
+          .brand
+            %strong> Open
+            Shift
+          %ul.nav
+            %li.active= link_to "Overview", "."
+            %li= link_to "Documentation", "dev_center"
+            %li= link_to "Console", "console"
+            %li= link_to "Community", "community"
 
-      .messaging
+    .messaging
+      .container
         .primary 
           Join the 
           %strong OpenShift Community
         .secondary This is the place to learn and engage with OpenShift users and developers. Sign in to participate
 
-#contents
+#content
   .container
     .lift
       .row
