@@ -2,7 +2,7 @@
 
 Summary:   Provides JBossAS7 support
 Name:      rhc-cartridge-jbossas-7
-Version:   0.87.6
+Version:   0.87.7
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   ASL 2.0
@@ -112,6 +112,12 @@ rm -rf %{buildroot}
 %config(noreplace) %{cartridgedir}/info/configuration/
 
 %changelog
+* Sat Feb 25 2012 Dan McPherson <dmcphers@redhat.com> 0.87.7-1
+- add back apr (dmcphers@redhat.com)
+- remove apr from jboss spec (dmcphers@redhat.com)
+- add >= to jboss requires (dmcphers@redhat.com)
+- Add jboss modules as a dependency to jboss cartridge. (mpatel@redhat.com)
+
 * Fri Feb 24 2012 Dan McPherson <dmcphers@redhat.com> 0.87.6-1
 - add obsoletes of old package (dmcphers@redhat.com)
 - Automatic commit of package [rhc-cartridge-jbossas-7] release [0.87.5-1].
