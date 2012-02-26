@@ -9,6 +9,7 @@ $: << File.dirname(__FILE__)
 require "test/unit"
 require "test/unit/ui/console/testrunner"
 
+require 'rubygems'
 require 'openshift/base'
 require 'openshift/selenium_test_case'
 require 'openshift/express/dialogs'
