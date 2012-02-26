@@ -10,6 +10,9 @@ class StyleguideController < ApplicationController
   def loading
   end
 
+  def community
+  end
+
   def slow
     sleep 3
     redirect_to :action => "index", :controller => "styleguide"

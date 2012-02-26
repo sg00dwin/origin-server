@@ -1,3 +1,72 @@
+:css
+  #top {background-color: black; color: white;}
+  #nav {background-color: #333; color: white; }
+  #contents {background-color: #eee;}
+  .column-nav { background-color: black; color: white; }
+  .column-content { background-color: white; }
+  #contents > .container > div > .row { background-color: #f5f5f5; }
+
+  #nav .navigation-bar { padding-top: 30px; height: 130px; position: relative; }
+  .navigation-bar > .brand { position: relative; top: 70px; text-align: center; }
+  .navigation-bar > ul.navigation > li.group-one { float: left; width: 20%; }
+  .navigation-bar > ul.navigation > li.group-spacer { width: 20%; }
+  .navigation-bar > ul.navigation > li.group-two { float: right; width: 20%; text-align: right; }
+
+  @media (max-width: 767px) {
+    .navigation-bar > .brand { position: static; float: left; text-align: center; width: 100px; }
+    .navigation-bar > ul.navigation { float: left; }
+    .navigation-bar > ul.navigation > li { float: none !important; width: auto !important; text-align: left !important;}
+  }
+
+  .navigation-bar > ul.navigation { font-size: 13px; text-transform: uppercase }
+  .navigation-bar > ul.navigation a { color: white; font-size: 13px; text-transform: uppercase; font-weight: bold }
+  .navigation-bar > ul.navigation > li.active > a { border-bottom: 2px solid white; padding-bottom: 4px; }
+  .brand { text-transform: uppercase; }
+
+  .messaging { margin-bottom: 30px; }
+  .messaging { color: #bbb; text-align: center;}
+  .messaging > .primary { font-size: 40px; line-height: 40px;}
+  .messaging > .primary { text-transform: uppercase; }
+  .messaging strong { color: white; }
+  .messaging > .secondary { font-size: 16px; line-height: 18px; }
+
+  @media (max-width: 767px) {
+    #contents > .container > div > .row { background-color: black; }
+    .messaging { margin-bottom: 10px; }
+    .messaging > .primary { font-size: 20px; line-height: 20px;}
+    .messaging > .secondary { font-size: 13px; line-height: 18px; }
+  }
+
+  #nav { padding-bottom: 100px; }
+  #contents .lift { }
+  #contents .lift .column-nav { margin-top: -80px; }
+  #contents .lift .column-content { margin-top: -90px; }
+  #contents .lift .column-content h1 { margin-top: 25px; margin-bottom: 25px; }
+
+  #contents .row > .column-nav { margin-left: 0; padding-right: 20px; }
+  #contents .row > .column-content { margin-left: 0px; padding-left: 20px; margin-right: -20px; padding-right: 20px; }
+  @media (max-width: 767px) {
+    #nav { padding-bottom: 30px; }
+    #contents .container { padding: 0; } 
+    #contents .row > .column-content { margin-right: 0; } 
+    #contents .lift .column-nav { margin-top: 0; }
+    #contents .lift .column-content { margin-top: 0; }
+  }
+
+  #contents .row > .column-content { padding-bottom: 30px; }
+  #contents .row { margin-bottom: 20px; }
+
+  #contents .column-nav .navigation-location { font-size: 22px; line-height: 46px; text-transform: uppercase; margin-top: 15px; }
+  #contents .column-nav > * { margin-left: 20px; }
+
+  @media (max-width: 767px) {
+    #contents .column-nav > ul > li { float: left; width: 50%; }
+    .navigation-location { display: none; }
+  }
+
+  #contents h1 { background-color: red; color: white; box-shadow: 1px 2px 2px rgba(0,0,0,0.5); }
+  #contents h1 { margin-left: -35px; padding: 5px 20px 5px 30px; display: inline-block; }
+
 %header
   #top
     .container
@@ -9,16 +78,16 @@
         %span.provider{:style => 'width: 16px; height: 16px; background-color: #555; display: inline-block;'} G
   #nav
     .container
-      .branding
-        .logo{:style => 'width: 100px; height: 100px; background-color: #555;'} Logo
+      .navigation-bar
         .brand
           %strong> Open
           Shift
-      %ul.navigation
-        %li.group-one.active= link_to "Overview", "."
-        %li.group-one= link_to "Developer Center", "dev_center"
-        %li.group-two= link_to "Console", "console"
-        %li.group-two= link_to "Community", "community"
+        %ul.navigation.unstyled
+          %li.group-one.active= link_to "Overview", "."
+          %li.group-one= link_to "Documentation", "dev_center"
+          %li.group-spacer
+          %li.group-two= link_to "Console", "console"
+          %li.group-two= link_to "Community", "community"
 
       .messaging
         .primary 
@@ -26,67 +95,69 @@
           %strong OpenShift Community
         .secondary This is the place to learn and engage with OpenShift users and developers. Sign in to participate
 
-.container#contents
-  .row
-    .span3.navigation-column
-      .navigation-location Community
+#contents
+  .container
+    .lift
+      .row
+        .span3.column-nav
+          .navigation-location Community
 
-      -# may need a block or three
-      %ul.menu
-        %li.leaf= link_to "Overview", "overview"
-        %li.expanded
-          = link_to "Blogs", "blog"
-          %ul.menu
-            %li.first.last.leaf= link_to "Planet OpenShift", "planet"
-        %li.expanded
-          = link_to "Froums", "forums"
-          %ul.menu
-            %li.first.leaf= link_to "Express", "express_forum"
-            %li.last.leaf= link_to "Open Source", "opensource_forum"
-        %li.leaf= link_to "FAQs", "faq"
-        %li.leaf= link_to "Knowledge Base", "kb"
-        %li.leaf= link_to "Videos", "videos"
-        %li.leaf= link_to "Events", "events"
-        %li.leaf= link_to "MongoDB Resources", "mongodb"
+          -# may need a block or three
+          %ul.menu.unstyled
+            %li.leaf= link_to "Overview", "overview"
+            %li.expanded
+              = link_to "Blogs", "blog"
+              %ul.menu
+                %li.first.last.leaf= link_to "Planet OpenShift", "planet"
+            %li.expanded
+              = link_to "Froums", "forums"
+              %ul.menu
+                %li.first.leaf= link_to "Express", "express_forum"
+                %li.last.leaf= link_to "Open Source", "opensource_forum"
+            %li.leaf= link_to "FAQs", "faq"
+            %li.leaf= link_to "Knowledge Base", "kb"
+            %li.leaf= link_to "Videos", "videos"
+            %li.leaf= link_to "Events", "events"
+            %li.leaf= link_to "MongoDB Resources", "mongodb"
 
-      %form.form-search
-        %input.input-medium.search-query
-        %button.btn{:type => 'submit'} Search
+          %form.form-search
+            %input.input-medium.search-query
+            %button.btn{:type => 'submit'} Search
 
-    .span9.content-column
-      %h1 OpenShift Blog
-      .post-info
-        .author
-          %span{:style => 'height: 24px; width: 24px; background-color: #555;'} P
-          %span.name Issac Roth
-        .metadata
-          = link_to "Comments (0)", "create_comment"
-        %hr
-        %ul.breadcrumb
-          %li
-            = link_to "Blogs", "blog"
-            %span.divider &gt;
-          %li
-            = link_to "February 7, 2012", "blogs_on_feb_7"
-            %span.divider &gt;
+        .span9.column-content
+          %h1 OpenShift Blog
+          .post-info
+            .author
+              %span{:style => 'height: 24px; width: 24px; background-color: #555;'} P
+              %span.name Issac Roth
+            .metadata
+              = link_to "Comments (0)", "create_comment"
+            %hr
+            %ul.breadcrumb
+              %li
+                = link_to "Blogs", "blog"
+                %span.divider &gt;
+              %li
+                = link_to "February 7, 2012", "blogs_on_feb_7"
+                %span.divider &gt;
 
-      %h2 PaaS is the Cloud Operating System
+          %h2 PaaS is the Cloud Operating System
 
-      %p Lorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam ac luctus arcu. Praesent sagittis vehicula erat, quis porttitor diam placerat sed. Aenean non nibh nisi, ut dignissim dui. In quis ipsum a metus rutrum ornare eu sit amet risus. Ut adipiscing, diam vel faucibus fermentum, dolor velit fermentum libero, eget pretium neque sapien blandit mi. Aenean ligula nunc, suscipit blandit aliquet vel, luctus a enim. Vestibulum imperdiet neque quis felis rhoncus egestas. Nullam sagittis, tellus eget tristique euismod, arcu erat luctus nunc, ac ultricies nisi sem vel nisi. Sed sagittis eleifend magna et elementum. Vivamus sed lectus et lorem ultricies mollis. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Mauris tempus lobortis magna nec sollicitudin. Phasellus vitae leo orci, dictum rutrum ligula. Suspendisse luctus quam a libero posuere eget consectetur sem varius.
-      %p In ultrices dui vitae ante ultrices porttitor dictum enim vulputate. Integer ut leo nisl, sit amet elementum elit. Morbi vitae urna ac diam elementum congue. Nunc cursus tempor arcu, vel eleifend urna blandit eget. Nulla lorem augue, ornare egestas semper eget, mollis non turpis. Nullam eget mauris augue. Nam interdum felis vitae dolor aliquet tincidunt.
-      %p Etiam sed pharetra ipsum. Suspendisse in gravida urna. Fusce at enim tellus. Nullam orci diam, bibendum sit amet bibendum sit amet, lacinia a metus. Morbi quis nunc metus, ac feugiat nibh. Quisque dapibus nisl quis leo dictum ornare. Vivamus dignissim imperdiet eros in rutrum. Integer malesuada rutrum elit eget varius. Morbi vel velit nulla, ut mollis lorem. Vivamus id lorem consequat ipsum gravida facilisis non posuere est. Duis interdum sapien eget libero sollicitudin dignissim. Donec mollis euismod egestas.
-      %p Nulla in ante tellus. Nullam blandit ligula quis nibh viverra vestibulum. Vestibulum vitae ante erat, et ultrices massa. Quisque aliquam bibendum lacus in congue. Aenean dictum magna in magna ultricies vitae eleifend odio iaculis. Fusce eget imperdiet diam. Duis tincidunt cursus aliquam. Fusce suscipit accumsan diam, ut consectetur lacus laoreet ut. Nulla facilisi. Suspendisse vestibulum varius tortor, vel ullamcorper arcu adipiscing id. Nullam ultricies posuere urna, et ornare augue faucibus nec. Etiam egestas, felis ut volutpat dignissim, lectus sem eleifend nisi, elementum viverra odio velit nec erat. Integer diam metus, pulvinar eu pulvinar vel, semper vel nisl. Maecenas urna turpis, interdum quis convallis quis, suscipit vitae metus.
-      %p Donec urna dui, auctor ac lobortis vehicula, pulvinar sed sem. Aenean et molestie dui. Sed a orci vitae eros auctor eleifend eget sit amet turpis. Duis ultrices venenatis fringilla. Aenean lacinia ultricies purus sed feugiat. Nunc commodo aliquam venenatis. Aenean sit amet nisi vitae tortor volutpat egestas id eleifend nunc. Maecenas et condimentum augue. Nulla dapibus pellentesque metus, non condimentum lectus pellentesque sed. In magna mauris, tempus vitae pretium in, rhoncus tristique urna. Ut sodales, dolor ac feugiat pretium, nisl dui eleifend lacus, vitae dictum purus justo viverra diam. Donec adipiscing egestas commodo. Ut tristique ullamcorper leo, a tempor dui vulputate non. 
+          %p Lorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam ac luctus arcu. Praesent sagittis vehicula erat, quis porttitor diam placerat sed. Aenean non nibh nisi, ut dignissim dui. In quis ipsum a metus rutrum ornare eu sit amet risus. Ut adipiscing, diam vel faucibus fermentum, dolor velit fermentum libero, eget pretium neque sapien blandit mi. Aenean ligula nunc, suscipit blandit aliquet vel, luctus a enim. Vestibulum imperdiet neque quis felis rhoncus egestas. Nullam sagittis, tellus eget tristique euismod, arcu erat luctus nunc, ac ultricies nisi sem vel nisi. Sed sagittis eleifend magna et elementum. Vivamus sed lectus et lorem ultricies mollis. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Mauris tempus lobortis magna nec sollicitudin. Phasellus vitae leo orci, dictum rutrum ligula. Suspendisse luctus quam a libero posuere eget consectetur sem varius.
+          %p In ultrices dui vitae ante ultrices porttitor dictum enim vulputate. Integer ut leo nisl, sit amet elementum elit. Morbi vitae urna ac diam elementum congue. Nunc cursus tempor arcu, vel eleifend urna blandit eget. Nulla lorem augue, ornare egestas semper eget, mollis non turpis. Nullam eget mauris augue. Nam interdum felis vitae dolor aliquet tincidunt.
+          %p Etiam sed pharetra ipsum. Suspendisse in gravida urna. Fusce at enim tellus. Nullam orci diam, bibendum sit amet bibendum sit amet, lacinia a metus. Morbi quis nunc metus, ac feugiat nibh. Quisque dapibus nisl quis leo dictum ornare. Vivamus dignissim imperdiet eros in rutrum. Integer malesuada rutrum elit eget varius. Morbi vel velit nulla, ut mollis lorem. Vivamus id lorem consequat ipsum gravida facilisis non posuere est. Duis interdum sapien eget libero sollicitudin dignissim. Donec mollis euismod egestas.
+          %p Nulla in ante tellus. Nullam blandit ligula quis nibh viverra vestibulum. Vestibulum vitae ante erat, et ultrices massa. Quisque aliquam bibendum lacus in congue. Aenean dictum magna in magna ultricies vitae eleifend odio iaculis. Fusce eget imperdiet diam. Duis tincidunt cursus aliquam. Fusce suscipit accumsan diam, ut consectetur lacus laoreet ut. Nulla facilisi. Suspendisse vestibulum varius tortor, vel ullamcorper arcu adipiscing id. Nullam ultricies posuere urna, et ornare augue faucibus nec. Etiam egestas, felis ut volutpat dignissim, lectus sem eleifend nisi, elementum viverra odio velit nec erat. Integer diam metus, pulvinar eu pulvinar vel, semper vel nisl. Maecenas urna turpis, interdum quis convallis quis, suscipit vitae metus.
+          %p Donec urna dui, auctor ac lobortis vehicula, pulvinar sed sem. Aenean et molestie dui. Sed a orci vitae eros auctor eleifend eget sit amet turpis. Duis ultrices venenatis fringilla. Aenean lacinia ultricies purus sed feugiat. Nunc commodo aliquam venenatis. Aenean sit amet nisi vitae tortor volutpat egestas id eleifend nunc. Maecenas et condimentum augue. Nulla dapibus pellentesque metus, non condimentum lectus pellentesque sed. In magna mauris, tempus vitae pretium in, rhoncus tristique urna. Ut sodales, dolor ac feugiat pretium, nisl dui eleifend lacus, vitae dictum purus justo viverra diam. Donec adipiscing egestas commodo. Ut tristique ullamcorper leo, a tempor dui vulputate non. 
 
-      .action-auth
-        = link_to "Login", "login"
-        or 
-        = link_to "register", "register"
-        to post comments.
-      .action-share
-        = link_to "share" do
-          %span.invert +
-          Share this post
+          .action-auth
+            = link_to "Login", "login"
+            or 
+            = link_to "register", "register"
+            to post comments.
+          .action-share
+            = link_to "share" do
+              %span.invert +
+              Share this post
 
 %footer
   #footer-nav
