@@ -1,7 +1,7 @@
 %define cartridgedir %{_libexecdir}/li/cartridges/embedded/postgresql-8.4
 
 Name: rhc-cartridge-postgresql-8.4
-Version: 0.4.2
+Version: 0.4.3
 Release: 1%{?dist}
 Summary: Embedded postgresql support for express
 
@@ -71,6 +71,20 @@ rm -rf $RPM_BUILD_ROOT
 %doc %{cartridgedir}/LICENSE
 
 %changelog
+* Sat Feb 25 2012 Dan McPherson <dmcphers@redhat.com> 0.4.3-1
+- Update show-port hook and re-add function. (rmillner@redhat.com)
+- Merge branch 'master' of li-master:/srv/git/li (ramr@redhat.com)
+- Fix for bugz 797140 - restore PostgreSQL data using snapshot tarball
+  (ramr@redhat.com)
+- Embedded cartridges that expose ports should reap their proxy in removal if
+  it hasn't been done already. (rmillner@redhat.com)
+- Forgot to include uuid in calls (rmillner@redhat.com)
+- Use the libra-proxy configuration rather than variables to spot conflict and
+  allocation. Switch to machine readable output. Simplify the proxy calls to
+  take one target at a time (what most cartridges do anyway). Use cartridge
+  specific variables. (rmillner@redhat.com)
+- Add port hooks to postgres (rmillner@redhat.com)
+
 * Mon Feb 20 2012 Dan McPherson <dmcphers@redhat.com> 0.4.2-1
 - Fix minor irritant message saying logged in user can't be dropped on a
   restore snapshot (fallout of bugz 791091). (ramr@redhat.com)
