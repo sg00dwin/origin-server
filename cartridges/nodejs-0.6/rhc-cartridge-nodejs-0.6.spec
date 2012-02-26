@@ -2,7 +2,7 @@
 
 Summary:   Provides Node-0.6 support
 Name:      rhc-cartridge-nodejs-0.6
-Version:   0.2.3
+Version:   0.2.4
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   ASL 2.0
@@ -95,6 +95,15 @@ rm -rf %{buildroot}
 %doc %{cartridgedir}/LICENSE
 
 %changelog
+* Sat Feb 25 2012 Dan McPherson <dmcphers@redhat.com> 0.2.4-1
+- nodjs/build.sh: fixed the is_node_module_installed function.  Before it was
+  claiming that a module was installed if it was only installed as a
+  dependancy, which npm does not claim is fully installed. (tdawson@redhat.com)
+- Blanket purge proxy ports on application teardown. (rmillner@redhat.com)
+- Update cartridge configure hooks to load git repo from remote URL Add REST
+  API to create application from template Moved application template
+  models/controller to cloud-sdk (kraman@gmail.com)
+
 * Wed Feb 22 2012 Dan McPherson <dmcphers@redhat.com> 0.2.3-1
 - Add show-proxy call. (rmillner@redhat.com)
 
