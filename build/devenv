@@ -460,14 +460,15 @@ class DevEnv < Thor
     `git diff-index --quiet HEAD`
     puts "WARNING - Uncommitted repository changes" if $? != 0
 
-    remove_dir '/tmp/tito/'
-    FileUtils.mkdir_p '/tmp/tito/'
-
     # Figure out what needs to be built - exclude devenv for syncs
-    build_dirs = get_sync_dirs
+    sync_dirs = get_sync_dirs
 
     # Build and install them
-    build_dirs.each do |build_dir|
+    sync_dirs.each do |sync_dir|
+      package_name = sync_dir[0]
+      build_dir = sync_dir[1]
+      remove_dir '/tmp/tito/'
+      FileUtils.mkdir_p '/tmp/tito/'
       puts "Building in #{build_dir}"
       inside(File.expand_path("../#{build_dir}", File.dirname(__FILE__))) do
         # Build and install the RPM's locally
@@ -475,15 +476,17 @@ class DevEnv < Thor
           FileUtils.rm_rf '/tmp/devenv/sync/'
           exit 1
         end
+        Dir.glob('/tmp/tito/x86_64/*.rpm').each {|file|
+          FileUtils.mkdir_p "/tmp/tito/noarch/"
+          FileUtils.mv file, "/tmp/tito/noarch/"
+        }
+        unless run("rpm -Uvh --force /tmp/tito/noarch/*.rpm", :verbose => options.verbose?)
+          unless run("rpm -e --justdb --nodeps #{package_name}; yum install -y /tmp/tito/noarch/*.rpm", :verbose => options.verbose?)
+            FileUtils.rm_rf '/tmp/devenv/sync/'
+            exit 1
+          end
+        end
       end
-    end
-    Dir.glob('/tmp/tito/x86_64/*.rpm').each {|file|
-      FileUtils.mv file, "/tmp/tito/noarch/"
-    }
-    run('yum install -y /tmp/tito/noarch/*.rpm', :verbose => options.verbose?)
-    unless run('yum update -y /tmp/tito/noarch/*.rpm', :verbose => options.verbose?)
-      FileUtils.rm_rf '/tmp/devenv/sync/'
-      exit 1
     end
     run('service mcollective restart; service libra-broker restart; service libra-site restart', :verbose => options.verbose?)
   end

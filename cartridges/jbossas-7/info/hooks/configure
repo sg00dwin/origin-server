@@ -68,7 +68,7 @@ __EOF__
     rm -rf template
     popd > /dev/null
     
-    setup_git_repo $application $user_id $group_id $uuid "jbossas 7.0"
+    setup_git_repo $application $user_id $group_id $uuid "jbossas 7"
 }
 
 while getopts 'd' OPTION

@@ -43,15 +43,17 @@ module OpenShift
         if package =~ /^rhc-devenv-\d+/
           puts "The devenv package has an update but isn't being installed."
         elsif package =~ /^rubygem-cloud-sdk-([\w]+)-\d+/
-          component = $1
-          current_package = "cloud-sdk-#{component}"
-          current_sync_dir = "cloud-sdk/#{component}"
+          dir_name = $1
+          current_package = "rubygem-cloud-sdk-#{dir_name}"
+          current_sync_dir = "cloud-sdk/#{dir_name}"
         elsif package =~ /^rhc-(cartridge-[\w-]+\d+[\.\d+]*)-\d+\.\d+\.\d+-/
-          current_package = $1['cartridge-'.length..-1]
-          current_sync_dir = "cartridges/#{current_package}"
+          dir_name = $1['cartridge-'.length..-1]
+          current_package = "rhc-cartridge-#{dir_name}"
+          current_sync_dir = "cartridges/#{dir_name}"
         elsif package =~ /^rhc-([\w-]+)-\d+/
-          current_package = $1
-          current_sync_dir = current_package
+          dir_name = $1
+          current_package = "rhc-#{dir_name}"
+          current_sync_dir = dir_name
         elsif package =~ /---------------------/
           if current_package
             update_sync_history(current_package, current_package_contents, current_sync_dir, sync_dirs)
@@ -91,7 +93,7 @@ module OpenShift
         previous_package_contents = `cat #{current_package_file}`.chomp
       end
       unless previous_package_contents == current_package_contents
-        sync_dirs << current_sync_dir
+      sync_dirs << [current_package, current_sync_dir]
         file = File.open(current_package_file, 'w')
         begin
           file.print current_package_contents
