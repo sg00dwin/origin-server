@@ -2,7 +2,7 @@
 
 Summary:   Provides JBossAS7 support
 Name:      rhc-cartridge-jbossas-7
-Version:   0.87.8
+Version:   0.87.9
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   ASL 2.0
@@ -112,6 +112,13 @@ rm -rf %{buildroot}
 %config(noreplace) %{cartridgedir}/info/configuration/
 
 %changelog
+* Sun Feb 26 2012 Dan McPherson <dmcphers@redhat.com> 0.87.9-1
+- finishing standalone.xml migration (dmcphers@redhat.com)
+- remembering old standalone.xml for reference (dmcphers@redhat.com)
+- add a force to the client install (dmcphers@redhat.com)
+- moved xslt (bdecoste@gmail.com)
+- initial jboss migration and sync fixes (dmcphers@redhat.com)
+
 * Sat Feb 25 2012 Dan McPherson <dmcphers@redhat.com> 0.87.8-1
 - 
 
