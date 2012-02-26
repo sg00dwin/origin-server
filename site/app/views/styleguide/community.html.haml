@@ -1,0 +1,130 @@
+%header
+  #top
+    .container
+      .pull-left Sign up for the newsletter
+      .pull-right.signin
+        %a Sign in
+        %span.provider{:style => 'width: 16px; height: 16px; background-color: #555; display: inline-block;'} F
+        %span.provider{:style => 'width: 16px; height: 16px; background-color: #555; display: inline-block;'} T
+        %span.provider{:style => 'width: 16px; height: 16px; background-color: #555; display: inline-block;'} G
+  #nav
+    .container
+      .branding
+        .logo{:style => 'width: 100px; height: 100px; background-color: #555;'} Logo
+        .brand
+          %strong> Open
+          Shift
+      %ul.navigation
+        %li.group-one.active= link_to "Overview", "."
+        %li.group-one= link_to "Developer Center", "dev_center"
+        %li.group-two= link_to "Console", "console"
+        %li.group-two= link_to "Community", "community"
+
+      .messaging
+        .primary 
+          Join the 
+          %strong OpenShift Community
+        .secondary This is the place to learn and engage with OpenShift users and developers. Sign in to participate
+
+.container#contents
+  .row
+    .span3.navigation-column
+      .navigation-location Community
+
+      -# may need a block or three
+      %ul.menu
+        %li.leaf= link_to "Overview", "overview"
+        %li.expanded
+          = link_to "Blogs", "blog"
+          %ul.menu
+            %li.first.last.leaf= link_to "Planet OpenShift", "planet"
+        %li.expanded
+          = link_to "Froums", "forums"
+          %ul.menu
+            %li.first.leaf= link_to "Express", "express_forum"
+            %li.last.leaf= link_to "Open Source", "opensource_forum"
+        %li.leaf= link_to "FAQs", "faq"
+        %li.leaf= link_to "Knowledge Base", "kb"
+        %li.leaf= link_to "Videos", "videos"
+        %li.leaf= link_to "Events", "events"
+        %li.leaf= link_to "MongoDB Resources", "mongodb"
+
+      %form.form-search
+        %input.input-medium.search-query
+        %button.btn{:type => 'submit'} Search
+
+    .span9.content-column
+      %h1 OpenShift Blog
+      .post-info
+        .author
+          %span{:style => 'height: 24px; width: 24px; background-color: #555;'} P
+          %span.name Issac Roth
+        .metadata
+          = link_to "Comments (0)", "create_comment"
+        %hr
+        %ul.breadcrumb
+          %li
+            = link_to "Blogs", "blog"
+            %span.divider &gt;
+          %li
+            = link_to "February 7, 2012", "blogs_on_feb_7"
+            %span.divider &gt;
+
+      %h2 PaaS is the Cloud Operating System
+
+      %p Lorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam ac luctus arcu. Praesent sagittis vehicula erat, quis porttitor diam placerat sed. Aenean non nibh nisi, ut dignissim dui. In quis ipsum a metus rutrum ornare eu sit amet risus. Ut adipiscing, diam vel faucibus fermentum, dolor velit fermentum libero, eget pretium neque sapien blandit mi. Aenean ligula nunc, suscipit blandit aliquet vel, luctus a enim. Vestibulum imperdiet neque quis felis rhoncus egestas. Nullam sagittis, tellus eget tristique euismod, arcu erat luctus nunc, ac ultricies nisi sem vel nisi. Sed sagittis eleifend magna et elementum. Vivamus sed lectus et lorem ultricies mollis. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Mauris tempus lobortis magna nec sollicitudin. Phasellus vitae leo orci, dictum rutrum ligula. Suspendisse luctus quam a libero posuere eget consectetur sem varius.
+      %p In ultrices dui vitae ante ultrices porttitor dictum enim vulputate. Integer ut leo nisl, sit amet elementum elit. Morbi vitae urna ac diam elementum congue. Nunc cursus tempor arcu, vel eleifend urna blandit eget. Nulla lorem augue, ornare egestas semper eget, mollis non turpis. Nullam eget mauris augue. Nam interdum felis vitae dolor aliquet tincidunt.
+      %p Etiam sed pharetra ipsum. Suspendisse in gravida urna. Fusce at enim tellus. Nullam orci diam, bibendum sit amet bibendum sit amet, lacinia a metus. Morbi quis nunc metus, ac feugiat nibh. Quisque dapibus nisl quis leo dictum ornare. Vivamus dignissim imperdiet eros in rutrum. Integer malesuada rutrum elit eget varius. Morbi vel velit nulla, ut mollis lorem. Vivamus id lorem consequat ipsum gravida facilisis non posuere est. Duis interdum sapien eget libero sollicitudin dignissim. Donec mollis euismod egestas.
+      %p Nulla in ante tellus. Nullam blandit ligula quis nibh viverra vestibulum. Vestibulum vitae ante erat, et ultrices massa. Quisque aliquam bibendum lacus in congue. Aenean dictum magna in magna ultricies vitae eleifend odio iaculis. Fusce eget imperdiet diam. Duis tincidunt cursus aliquam. Fusce suscipit accumsan diam, ut consectetur lacus laoreet ut. Nulla facilisi. Suspendisse vestibulum varius tortor, vel ullamcorper arcu adipiscing id. Nullam ultricies posuere urna, et ornare augue faucibus nec. Etiam egestas, felis ut volutpat dignissim, lectus sem eleifend nisi, elementum viverra odio velit nec erat. Integer diam metus, pulvinar eu pulvinar vel, semper vel nisl. Maecenas urna turpis, interdum quis convallis quis, suscipit vitae metus.
+      %p Donec urna dui, auctor ac lobortis vehicula, pulvinar sed sem. Aenean et molestie dui. Sed a orci vitae eros auctor eleifend eget sit amet turpis. Duis ultrices venenatis fringilla. Aenean lacinia ultricies purus sed feugiat. Nunc commodo aliquam venenatis. Aenean sit amet nisi vitae tortor volutpat egestas id eleifend nunc. Maecenas et condimentum augue. Nulla dapibus pellentesque metus, non condimentum lectus pellentesque sed. In magna mauris, tempus vitae pretium in, rhoncus tristique urna. Ut sodales, dolor ac feugiat pretium, nisl dui eleifend lacus, vitae dictum purus justo viverra diam. Donec adipiscing egestas commodo. Ut tristique ullamcorper leo, a tempor dui vulputate non. 
+
+      .action-auth
+        = link_to "Login", "login"
+        or 
+        = link_to "register", "register"
+        to post comments.
+      .action-share
+        = link_to "share" do
+          %span.invert +
+          Share this post
+
+%footer
+  #footer-nav
+    .container
+      .row
+        .span3.link-column
+          %header
+            %h3 News
+          %ul.unstyled
+            %li= link_to 'Announcements', 'https://www.redhat.com/openshift/forums/news-and-announcements'
+            %li= link_to 'Blog', 'https://www.redhat.com/openshift/blogs'
+            %li= link_to 'Twitter', 'http://www.twitter.com/#!/openshift'
+
+        .span3.link-column
+          %header
+            %h3 Community
+          %ul.unstyled
+            %li= link_to 'Forum', 'https://www.redhat.com/openshift/forums/'
+            %li= link_to 'Partner Program', partners_path
+            %li= link_to 'IRC Channel', 'http://webchat.freenode.net/?randomnick=1&channels=openshift&uio=d4'
+            %li= link_to 'Feedback', 'mailto:openshift@redhat.com'
+
+        .span3.link-column
+          %header
+            %h3 Legal
+          %ul.unstyled
+            %li= link_to 'Legal', legal_path
+            %li= link_to 'Privacy Policy', legal_openshift_privacy_path
+            %li= link_to 'Security', 'https://access.redhat.com/security/team/contact/'
+
+        .span3.link-column
+          %header
+            %h3 Help
+          %ul.unstyled
+            %li= link_to 'FAQ', 'http://www.redhat.com/openshift/faq'
+            %li= link_to 'Contact', 'mailto:openshift@redhat.com'
+
+  %section#copyright
+    .container
+      %img{ :src => "/app/images/redhat.png", :alt => "Red Hat" }
+      .pull-right Copyright &copy; 2011 Red Hat, Inc.
