@@ -3,7 +3,7 @@
 
 Summary:   Li site components
 Name:      rhc-site
-Version:   0.87.5
+Version:   0.87.6
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -80,6 +80,9 @@ rm -rf %{buildroot}
 chmod 0770 %{sitedir}/tmp
 
 %changelog
+* Sun Feb 26 2012 Dan McPherson <dmcphers@redhat.com> 0.87.6-1
+- 
+
 * Sun Feb 26 2012 Dan McPherson <dmcphers@redhat.com> 0.87.5-1
 - Add ribbon magic, start pulling variables out, realized that $gridGutterWidth
   is not constant in all responsive layouts. (ccoleman@redhat.com)
