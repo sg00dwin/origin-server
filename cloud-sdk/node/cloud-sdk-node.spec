@@ -5,7 +5,7 @@
 
 Summary:        Cloud Development Node
 Name:           rubygem-%{gemname}
-Version:        0.5.2
+Version:        0.5.3
 Release:        1%{?dist}
 Group:          Development/Languages
 License:        ASL 2.0
@@ -87,6 +87,23 @@ rm -rf %{buildroot}
 %{ruby_sitelib}/%{gemname}.rb
 
 %changelog
+* Sat Feb 25 2012 Dan McPherson <dmcphers@redhat.com> 0.5.3-1
+- Updating gem versions (dmcphers@redhat.com)
+- Adds code to remove last access file when an app is destroyed.
+  (mpatel@redhat.com)
+- shellescape on cdk side too (rchopra@redhat.com)
+- Update cartridge configure hooks to load git repo from remote URL Add REST
+  API to create application from template Moved application template
+  models/controller to cloud-sdk (kraman@gmail.com)
+- run connectors as non-root (rchopra@redhat.com)
+- include open4 for cdk-connector-execute, fix in php publish_http_url
+  connector.. we dont need the external port for proxying web interfaces
+  (rchopra@redhat.com)
+- Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
+  (rchopra@redhat.com)
+- REST call to create a scalable app; fix in cdk-connector-execute; fix in
+  app.scaleup function (rchopra@redhat.com)
+
 * Wed Feb 22 2012 Dan McPherson <dmcphers@redhat.com> 0.5.2-1
 - Updating gem versions (dmcphers@redhat.com)
 - Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
