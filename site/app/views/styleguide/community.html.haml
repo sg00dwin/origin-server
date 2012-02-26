@@ -4,9 +4,9 @@
       .pull-left Sign up for the newsletter
       .pull-right.signin
         %a Sign in
-        %span.provider{:style => 'width: 16px; height: 16px; background-color: #555;'} F
-        %span.provider{:style => 'width: 16px; height: 16px; background-color: #555;'} T
-        %span.provider{:style => 'width: 16px; height: 16px; background-color: #555;'} G
+        %span.provider{:style => 'width: 16px; height: 16px; background-color: #555; display: inline-block;'} F
+        %span.provider{:style => 'width: 16px; height: 16px; background-color: #555; display: inline-block;'} T
+        %span.provider{:style => 'width: 16px; height: 16px; background-color: #555; display: inline-block;'} G
   #nav
     .container
       .branding
@@ -84,7 +84,9 @@
         = link_to "register", "register"
         to post comments.
       .action-share
-        = link_to 
+        = link_to "share" do
+          %span.invert +
+          Share this post
 
 %footer
   #footer-nav
