@@ -3,7 +3,7 @@
 
 Summary:   Li site components
 Name:      rhc-site
-Version:   0.87.4
+Version:   0.87.5
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -80,6 +80,18 @@ rm -rf %{buildroot}
 chmod 0770 %{sitedir}/tmp
 
 %changelog
+* Sun Feb 26 2012 Dan McPherson <dmcphers@redhat.com> 0.87.5-1
+- Add ribbon magic, start pulling variables out, realized that $gridGutterWidth
+  is not constant in all responsive layouts. (ccoleman@redhat.com)
+- Start using bootstrap styles, quick example of community markup from drupal
+  (which can be changed), convert to SASS for navigation elements
+  (ccoleman@redhat.com)
+- Get ribbon perfected (ccoleman@redhat.com)
+- Working prototype of community blog page (ccoleman@redhat.com)
+- Merge branch 'dev/clayton/branding1' (ccoleman@redhat.com)
+- More changes to community (ccoleman@redhat.com)
+- Start prepping markup for community site (ccoleman@redhat.com)
+
 * Sat Feb 25 2012 Dan McPherson <dmcphers@redhat.com> 0.87.4-1
 - Log errors on test failure (ccoleman@redhat.com)
 - Allow users to access new console in preview state (ccoleman@redhat.com)
