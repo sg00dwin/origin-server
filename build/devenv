@@ -425,7 +425,7 @@ class DevEnv < Thor
 
         manifest = rpm_manifest(hostname)
 
-        if options.register? && !options.install_from_source
+        if options.register? && options.build_clean_ami
           register_image(conn, instance, name + '-clean_' + build_num, manifest)
         end
       else
