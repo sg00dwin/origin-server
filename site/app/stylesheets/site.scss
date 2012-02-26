@@ -1,15 +1,86 @@
+/*
+  Draft CSS for the site
+
+  Notes:
+
+  $gridGutterWidth changes based on responsive layout - we need to have a single responsive style
+  per element that depends on it (maybe define $gridGutterWidthLarge and use it in responsive.scss)
+
+  SASS 3.0 doesn't support inlining media queries - we need to upgrade
+
+  Navbar markup seems to be correct, but needs lots of love at smaller resolutions
+
+  Continue to pull out variables
+
+  Simplify login link behavior - lots of styles for fairly simple markup
+
+ */
+
+
+@import "variables";
+@import "bootstrap/variables";
+@import "ribbon";
+
+$topBarColor:                 #010101 !default;
+$navigationColumnColor:       #030303 !default;
+$underNavigationColumnColor:  #f2f2f2 !default;
+$topNavigationColor:          #343434 !default;
+$bodyColor:                   #eaeaea !default;
+$contentColumnColor:          white !default;
+$loginBackgroundColor:        #343434 !default;
+$loginColor:                  #eaeaea !default;
+$signupLinkColor:             #aaa !default;
+
 $logoHeight:      70px !default;
 $logoWidth:       100px !default;
 $logoSeparation:  10px !default;
 
-#top {background-color: black; color: white;}
-#nav {background-color: #333; color: white; }
-#content {background-color: #eee;}
-.column-nav { background-color: black; color: white; }
-.column-content { background-color: white; }
-#content > .container > div > .row { background-color: #f5f5f5; }
+$ribbonColor:     #eb0011 !default;
+$ribbonTextColor: white !default;
+$ribbonFoldColor: #91010b !default;
+
+#top {background-color: $topBarColor; color: white;}
+#nav {background-color: $topNavigationColor; color: white; }
+#content {background-color: $bodyColor;}
+.column-nav { background-color: $navigationColumnColor; color: white; }
+.column-content { background-color: $contentColumnColor; }
+#content > .container > div > .row { background-color: $underNavigationColumnColor; }
 
 /* Nav section */
+
+#top > .container {
+  > div {
+    padding: 8px 0;
+    > a {
+      color: $signupLinkColor;
+      font-weight: bold;
+      text-transform: uppercase;
+    }
+    > a:hover {
+      text-decoration: none;
+      color: $loginBackgroundColor;
+      background-color: $loginColor;
+    }
+  }
+  > div.login {
+    padding: 5px 0;
+    /* may want to turn these into some sort of specific styled button */
+    > a {
+      color: $loginColor;
+      padding: 3px 10px;
+      display: inline-block;
+      background-color: $loginBackgroundColor;
+    }
+    > a.login-provider {
+      height: 18px;
+    }
+    > a:hover {
+      text-decoration: none;
+      color: $loginBackgroundColor;
+      background-color: $loginColor;
+    }
+  }
+}
 
 .navbar {
   padding-top: 30px;
@@ -35,7 +106,7 @@ $logoSeparation:  10px !default;
 
     > li {
       float: left;
-      width: 25%;
+      width: 20%;
       text-align: center;
 
       > a {
@@ -85,6 +156,9 @@ $logoSeparation:  10px !default;
   width: 50% !important;
   text-align: center !important;
 } }
+@media (max-width: 767px) { .navbar .nav > li.divider {
+  display: none;
+} }
 /*End FIXME*/
 
 .messaging {
@@ -105,7 +179,8 @@ $logoSeparation:  10px !default;
 
 @media (max-width: 767px) {
   #content > .container > div > .row { background-color: black; }
-  .messaging { 
+  .messaging {
+    text-align: left;
     margin-bottom: 10px; 
 
     .primary { font-size: 20px; line-height: 20px;}
@@ -116,31 +191,50 @@ $logoSeparation:  10px !default;
 /* Content section */
 
 #nav { padding-bottom: 100px; }
-#content .lift { }
-#content .lift .column-nav { margin-top: -80px; }
-#content .lift .column-content { margin-top: -90px; }
-#content .lift .column-content h1 { margin-top: 25px; margin-bottom: 25px; }
 
-#content .row > .column-nav { margin-left: 0; padding-right: 20px; }
-#content .row > .column-content { margin-left: 0px; padding-left: 20px; margin-right: -20px; padding-right: 20px; }
-@media (max-width: 767px) {
-  #nav { padding-bottom: 30px; }
-  #content .container { padding: 0; } 
-  #content .row > .column-content { margin-right: 0; } 
-  #content .lift .column-nav { margin-top: 0; }
-  #content .lift .column-content { margin-top: 0; }
+.lift {
+  .column-nav { margin-top: -80px; }
+  .column-content { margin-top: -90px; }
+  .column-content h1 { margin-top: 25px; margin-bottom: 25px; }
 }
 
-#content .row > .column-content { padding-bottom: 30px; }
-#content .row { margin-bottom: 20px; }
+/* The body content of a site page */
+.row-content {
+  margin-bottom: 20px;
+
+  > .column-nav {
+    margin-left: 0;
+    padding-right: $gridGutterWidth;
+  }
+  > .column-content {
+    margin-left: 0px;
+    margin-right: -$gridGutterWidth;
+
+    padding-left: $gridGutterWidth;
+    padding-right: $gridGutterWidth;
+    padding-bottom: 30px;
+  }
+}
+
+@media (max-width: 767px) {
+  #nav { padding-bottom: 30px; }
+  #content > .container { padding: 0; }
+  .lift {
+    .column-nav { margin-top: 0; }
+    .column-content { margin-top: 0; }
+  }
+  .row-content > .column-content { margin-right: 0; } 
+}
+
 
 /* Left nav section */
-
-#content .column-nav .nav-location { font-size: 19px; line-height: 46px; text-transform: uppercase; margin-top: 15px; }
-#content .column-nav > * { margin-left: 20px; }
-#content .column-nav > .nav-stacked { margin-left: 10px; }
-
-.nav-stacked .nav-stacked { margin-left: 20px; margin-bottom: 0; }
+.column-nav {
+  .nav-location { font-size: 19px; line-height: 46px; text-transform: uppercase; margin-top: 15px; }
+  > * { margin-left: $gridGutterWidth; }
+  > .nav-stacked { margin-left: $gridGutterWidth/2; }
+}
+/* Stacked navigations indent by 1 gutter each time */
+.nav-stacked .nav-stacked { margin-left: $gridGutterWidth; margin-bottom: 0; }
 
 @media (max-width: 767px) {
   #content .column-nav > ul > li { float: left; width: 32%; }
@@ -148,25 +242,14 @@ $logoSeparation:  10px !default;
 }
 
 /* Body */
-
-.ribbon { position: relative; /* margin-left: -Xpx; */ }
-.ribbon > .ribbon-content { z-index: 1; position: relative; /* padding-left: Xpx; */ }
-.ribbon > .ribbon-left {
-  content: " ";
-  position: absolute;
-  left: 0;
-  /* border-top: Ypx solid color;
-     bottom: -Ypx;
-     border-left: Xpx solid transparent;
-     */
+#content h1.ribbon {
+  @include ribbon($gridGutterWidth/2, $gridGutterWidth, $ribbonFoldColor);
+  > .ribbon-content { 
+    background-color: $ribbonColor;
+    color: $ribbonTextColor;
+    box-shadow: 1px 2px 2px rgba(0,0,0,0.5);
+    display: inline-block;
+    padding: 5px $gridGutterWidth 5px $gridGutterWidth*1.5; /* calculated to match above */
+    min-width: 30%;
+  }
 }
-
-#content h1.ribbon { margin-left: -30px; }
-#content h1.ribbon > .ribbon-content { background-color: red; color: white; box-shadow: 1px 2px 2px rgba(0,0,0,0.5); display: inline-block; }
-#content h1.ribbon > .ribbon-content { padding: 5px 20px 5px 30px; min-width: 30% }
-#content h1.ribbon > .ribbon-left {
-  border-top:10px solid #aa0000;
-  bottom:-10px;
-  border-left:10px solid transparent;
-}
-

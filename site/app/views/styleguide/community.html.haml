@@ -2,12 +2,12 @@
 %header
   #top
     .container
-      .pull-left Sign up for the newsletter
-      .pull-right.signin
-        %a Sign in
-        %span.provider{:style => 'width: 16px; height: 16px; background-color: #555; display: inline-block;'} F
-        %span.provider{:style => 'width: 16px; height: 16px; background-color: #555; display: inline-block;'} T
-        %span.provider{:style => 'width: 16px; height: 16px; background-color: #555; display: inline-block;'} G
+      .pull-left= link_to "Sign up for the newsletter >", "signup_news"
+      .pull-right.login
+        = link_to "Sign in", "signin"
+        - ['f', 'g', 't'].each do |p|
+          = link_to p, :class => 'login-provider' do
+            %img{:alt => p}
   #nav
     .navbar
       .container
@@ -19,6 +19,7 @@
           %ul.nav
             %li.active= link_to "Overview", "."
             %li= link_to "Documentation", "dev_center"
+            %li.divider &nbsp;
             %li= link_to "Console", "console"
             %li= link_to "Community", "community"
 
@@ -32,9 +33,9 @@
 #content
   .container
     .lift
-      .row
+      .row.row-content
         .span3.column-nav
-          .navigation-location Community
+          .nav-location Community
 
           -# may need a block or three
           %ul.menu.nav.nav-pills.nav-stacked
