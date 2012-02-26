@@ -12,9 +12,9 @@ MAX_THREADS = 10
 WORK_DIR = '/tmp/rhc/migration'
 
 #
-#  Migrate the specified app on the node
+#  Migrate the specified app
 #
-def migrate_app_on_node(server_identity, framework, uuid, rhlogin, app_name)
+def migrate_app(server_identity, framework, uuid, rhlogin, app_name)
   migrate_cmd = "#{__FILE__} '#{server_identity}' '#{framework}' '#{uuid}' '#{rhlogin}' '#{app_name}'"
   out =  "Migrating app on node with: #{migrate_cmd}\n"
   migrated = false
@@ -284,7 +284,7 @@ def migrate_from_file(file)
       num_tries = 2
       (1..num_tries).each do |i|
         begin
-          output = migrate_app_on_node(server_identity, framework, uuid, rhlogin, app_name)
+          output = migrate_app(server_identity, framework, uuid, rhlogin, app_name)
           append_to_file(log_file, output)
           
           break
@@ -362,7 +362,7 @@ if ARGV.length == 1
     migrate_from_file(ARGV[0])
   end
 elsif ARGV.length == 5
-  puts migrate_app_on_node(ARGV[0], ARGV[1], ARGV[2], ARGV[3], ARGV[4])
+  puts migrate_app(ARGV[0], ARGV[1], ARGV[2], ARGV[3], ARGV[4])
 else
   if File.exists?("/tmp/rhc/migration")
     puts <<-WARNING
