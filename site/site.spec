@@ -3,7 +3,7 @@
 
 Summary:   Li site components
 Name:      rhc-site
-Version:   0.87.3
+Version:   0.87.4
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -80,6 +80,101 @@ rm -rf %{buildroot}
 chmod 0770 %{sitedir}/tmp
 
 %changelog
+* Sat Feb 25 2012 Dan McPherson <dmcphers@redhat.com> 0.87.4-1
+- Log errors on test failure (ccoleman@redhat.com)
+- Allow users to access new console in preview state (ccoleman@redhat.com)
+- Fix tc_console failures, revert tc_signup.rb to see if we can trigger the
+  failure again (ccoleman@redhat.com)
+- Use absolute path on logo (ccoleman@redhat.com)
+- Integrate sass-twitter-bootstrap temporarily (should be gem'd), begin moving
+  override code out of _custom.scss and into variables and sections that mimic
+  their origin (ccoleman@redhat.com)
+- Bug 797270 is on Q/A.  Fix the test. (rmillner@redhat.com)
+- Indentation was off by one space, causing build errors. (rmillner@redhat.com)
+- Add preview message and links for the Management Console
+  (ccoleman@redhat.com)
+- Fixed location of applications partial (fotios@redhat.com)
+- Merge branch 'master' into dev/clayton/app_tests (ccoleman@redhat.com)
+- Added ability to status site to sync upon starting up (fotios@redhat.com)
+- Functionals are running, errors are being returned, specific exceptions
+  arechecked and thrown. (ccoleman@redhat.com)
+- add obsoletes of old package (dmcphers@redhat.com)
+- renaming jbossas7 (dmcphers@redhat.com)
+- Handing application list over to ffranz (fotios@redhat.com)
+- Helper to create shared domain object for test suite (ccoleman@redhat.com)
+- Prevent infinite loop on bad server response - try rename only once
+  (ccoleman@redhat.com)
+- Removed RH proxy from the rest client source (ffranz@redhat.com)
+- Added basic cartridge information to the app details page (ffranz@redhat.com)
+- Merge branch 'master' of git1.ops.rhcloud.com:/srv/git/li (ffranz@redhat.com)
+- Merge branch 'master' into dev/clayton/app_tests (ccoleman@redhat.com)
+- Server side validations (ccoleman@redhat.com)
+- Merge branch 'master' of git1.ops.rhcloud.com:/srv/git/li (ffranz@redhat.com)
+- Merge branch 'master' into dev/clayton/validation (ccoleman@redhat.com)
+- Creation flow and key flow tests (ccoleman@redhat.com)
+- minor style edits (sgoodwin@redhat.com)
+- Update for jboss-as-7.1.0.Final (starksm64@gmail.com)
+- Temporary commit to build (ffranz@redhat.com)
+- Fixed several interface bugs (style and markup) (ffranz@redhat.com)
+- Tests on server validation, local error handling (ccoleman@redhat.com)
+- Removed that message from hell, embedded model of the rest api client
+  (ffranz@redhat.com)
+- Reverted production.rb (ffranz@redhat.com)
+- Created ActiveResource structure for cartridges and embedded
+  (ffranz@redhat.com)
+- Add validation logic from server (ccoleman@redhat.com)
+- Created ActiveResource structure for cartridges and embedded
+  (ffranz@redhat.com)
+- Temporary commit to build (ffranz@redhat.com)
+- Added sqlite3 to Gemfile to correspond with site.spec (fotios@redhat.com)
+- work with applications details page layout (johnp@redhat.com)
+- Fix for BZ796812 (fotios@redhat.com)
+- Revert Gemfile change (ccoleman@redhat.com)
+- make the application title look better (johnp@redhat.com)
+- Added top level content id (ccoleman@redhat.com)
+- Fixed misaligned toolbar (ccoleman@redhat.com)
+- Merge branch 'dev/clayton/loading' (ccoleman@redhat.com)
+- Toolbar loading icon, correct styles in various forms (ccoleman@redhat.com)
+- Add back button to application details page (ccoleman@redhat.com)
+- Merge branch 'master' into dev/clayton/loading (ccoleman@redhat.com)
+- Loading tweaks (ccoleman@redhat.com)
+- loader and styles for config app form (sgoodwin@redhat.com)
+- Forms with loading, use form-inline where possible, disable form submit while
+  submitting (ccoleman@redhat.com)
+- Add sqlite-ruby to gemfile (ccoleman@redhat.com)
+- make cancel button go back to the refering page (johnp@redhat.com)
+- fix up application list layout a bit (johnp@redhat.com)
+- revert to claytons styles (sgoodwin@redhat.com)
+- Merge branch 'master' into dev/clayton/loading (ccoleman@redhat.com)
+- Display loading content when form submit occurs (ccoleman@redhat.com)
+- revert jboss 7.1 changes (dmcphers@redhat.com)
+- quick fix to CSRF security bug (johnp@redhat.com)
+- Merge branch 'master' of git1.ops.rhcloud.com:/srv/git/li (lnader@redhat.com)
+- bug fixes (lnader@redhat.com)
+- merge with my latest edits (sgoodwin@redhat.com)
+- Update for jboss-as-7.1.0.Final (starksm64@gmail.com)
+- Merge branch 'dev/clayton/header' (ccoleman@redhat.com)
+- Make utility-nav drop below application list on small screens
+  (ccoleman@redhat.com)
+- Fix small device issues with footer (ccoleman@redhat.com)
+- US1736: OpenShift status page (fotios@redhat.com)
+- Reorder button in namespace section (ccoleman@redhat.com)
+- More header tweaks via steve, fix not found error on Domain#edit
+  (ccoleman@redhat.com)
+- Removal of remaining :simple => true flags (ccoleman@redhat.com)
+- Round one, transition console header (ccoleman@redhat.com)
+- Update forms with back buttons, move :simple flag up into bootstrap form
+  builder (ccoleman@redhat.com)
+- Updates to forms to have better layout (ccoleman@redhat.com)
+- Preparation for transitional styles, integrate fonts, fix weight to be normal
+  (ccoleman@redhat.com)
+- footer styles (sgoodwin@redhat.com)
+- moved styleguide only styles to page level (sgoodwin@redhat.com)
+- error thumbnail and defaul button edits (sgoodwin@redhat.com)
+- Better unit tests for error handling, throw and log more detailed exception
+  when server response is unexpected, and properly display composite errors on
+  application creation page. (ccoleman@redhat.com)
+
 * Wed Feb 22 2012 Dan McPherson <dmcphers@redhat.com> 0.87.3-1
 - add tests for the show application page (johnp@redhat.com)
 - add tests for the applications list page (johnp@redhat.com)
