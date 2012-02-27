@@ -18,6 +18,7 @@ class Prune < Thor
       puts "Terminating instances in region=#{region.name}"
       terminate_flagged_instances(region)
       stop_untagged_instances(region)
+      terminate_old_verifiers(region)
     end
   end
 
