@@ -61,18 +61,18 @@ wars.  With exploded wars the main issue is with committing binaries (class and 
 conflicts tedious. With prebuilt wars the main issue is each time you modify the war and git push, it 
 takes up the size of the war file away from your OpenShift file system quota.  One alternative to this 
 (other then using Maven from option 1) is to use rsync to push your war into the deployments folder.  You 
-would have to do this after each git push followed by 'rhc-ctl-app -a appname -c restart'.  Example:
+would have to do this after each git push followed by 'rhc app restart -a appname'.  Example:
 
 rsync -avz localdir/deployments/ app_uuid@appname-namespace.rhcloud.com:~/appname/repo/deployments/
 
-Note: You can get the information in the uri above from running 'rhc-domain-info -a'
+Note: You can get the information in the uri above from running 'rhc domain show'
 
 If you have already committed large files to your git repo, you rewrite or reset the history of those files in git
 to an earlier point in time and then 'git push --force' to apply those changes on the remote OpenShift server.  A 
 git gc on the remote OpenShift repo can be forced with (Note: tidy also does other cleanup including clearing log
 files and tmp dirs):
 
-rhc-ctl-app -a appname -c tidy
+rhc app tidy -a appname
 
 
 Whether you choose option 1) or 2) the end result will be the application 
@@ -134,7 +134,7 @@ of use.  The following list are some common variables but far from exhaustive:
     System.getenv("OPENSHIFT_DATA_DIR")  - For persistent storage (between pushes)
     System.getenv("OPENSHIFT_TMP_DIR")   - Temp storage (unmodified files deleted after 10 days)
 
-When embedding a database using rhc-ctl-app, you can reference environment
+When embedding a database using 'rhc app cartridge add', you can reference environment
 variables for username, host and password:
 
     System.getenv("OPENSHIFT_DB_HOST")      - DB host

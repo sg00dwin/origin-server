@@ -153,7 +153,7 @@ fi
 mkdir -p "$APP_DIR"/repo/deployments
 ln -s ../../repo/deployments "$APP_JBOSS"/standalone/deployments
 
-# Create a link from the standalone/log directory to ${APP_DIR}/logs for rhc-tail-files
+# Create a link from the standalone/log directory to ${APP_DIR}/logs for rhc app tail
 ln -s ${jboss_version}/standalone/log "$APP_DIR"/logs
 
 create_app_ctl_script

@@ -20,7 +20,7 @@ function welcome {
     !!! IMPORTANT !!! IMPORTANT !!! IMPORTANT !!!
     Shell access is quite powerful and it is possible for you to
     accidentally damage your application.  Procede with care!
-    If worse comes to worse, destroy your application with rhc-ctl-app
+    If worse comes to worse, destroy your application with 'rhc app destroy'
     and recreate it
     !!! IMPORTANT !!! IMPORTANT !!! IMPORTANT !!!
 

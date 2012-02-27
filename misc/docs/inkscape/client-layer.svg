@@ -266,9 +266,9 @@
              style="font-size:12px" /></flowRegion><flowPara
            id="flowPara5331"
            style="font-size:18px">Application Creation</flowPara><flowPara
-           id="flowPara5345">Step 1: rhc-create-app contacts broker and requests a new application be made.  Broker returns success / fail</flowPara><flowPara
+           id="flowPara5345">Step 1: rhc app create contacts broker and requests a new application be made.  Broker returns success / fail</flowPara><flowPara
            id="flowPara5333" /><flowPara
-           id="flowPara5335">Step 2: rhc-create-app calls out to git, which issues a git clone from the node (node was assigned by the broker)</flowPara><flowPara
+           id="flowPara5335">Step 2: rhc app create calls out to git, which issues a git clone from the node (node was assigned by the broker)</flowPara><flowPara
            id="flowPara5337" /><flowPara
            id="flowPara5341">Step 3: Local git repo created, remote application available.</flowPara></flowRoot>      <flowRoot
          xml:space="preserve"
@@ -284,7 +284,7 @@
              style="font-size:12px" /></flowRegion><flowPara
            id="flowPara5331-7"
            style="font-size:18px">Application Control</flowPara><flowPara
-           id="flowPara5345-9">Step 1: rhc-ctl-app calls out to the broker to run cartridge start, stops and embedded additions (like adding mysql)</flowPara><flowPara
+           id="flowPara5345-9">Step 1: rhc-app calls out to the broker to run cartridge start, stops and embedded additions (like adding mysql)</flowPara><flowPara
            id="flowPara5333-1" /><flowPara
            id="flowPara5335-4">Step 2: git pushes go directly to node and call git hooks</flowPara><flowPara
            id="flowPara5337-0" /><flowPara

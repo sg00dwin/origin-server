@@ -40,7 +40,7 @@ if [$result .eq ""]; then
     DATE=`date '+%Y%m%d'`
     client_result "Success"
     client_result ""
-    client_result "The thread dump file will be available via 'rhc-tail-files -a ${application} -f ${application}/logs/error_log-$DATE-000000-EST'"
+    client_result "The thread dump file will be available via 'rhc app tail -a ${application} -f ${application}/logs/error_log-$DATE-000000-EST'"
 else
     client_result " $result"
 fi

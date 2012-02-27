@@ -286,7 +286,7 @@ jrcq3gYOyVkvcjjwUWA53iD6KaGAhISEvC/xg+QaYFQiHivqXVAh7w7hLxKGhIS8XzkHeCoUj/cv
     Place your application here
   </p>
   <p>
-    In order to commit to your new project, go to your projects git repo (created with the rhc-create-app command).  Make your changes, then run:
+    In order to commit to your new project, go to your projects git repo (created with the rhc app create command).  Make your changes, then run:
   </p>
   <pre>
     git commit -a -m 'Some commit message'

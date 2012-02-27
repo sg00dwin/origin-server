@@ -19,7 +19,7 @@ Jenkins integrates with other openshift applications.  To use start building
 against Jenkins, embed the jenkins-client into an existing application.  The
 below example will cause app "myapp" to start building against Jenkins.
 
- $ rhc-ctl-app -a myapp -e add-jenkins-client-1.4
+ $ rhc app cartridge add -a myapp -c jenkins-client-1.4
 
 From then on, running a "git push" will cause the build process to happen
 inside a Jenkins builder instead of inside your normal application compute
@@ -83,7 +83,7 @@ inaccessible.  During a build the following steps take place:
 1) User issues a git push
 2) Jenkins is notified a new push is ready.
 3) A dedicated Jenkins slave (builder) is created.  It can be seen by using
-   the rhc-domain-info command.  The app name will be the same as the originating
+   the 'rhc domain show' command.  The app name will be the same as the originating
    app plus "bldr" tagged onto the end.  Note:  This requires the first 28 chars
    of app name be unique or builders will be shared (can cause issues).
 4) Jenkins runs the build
@@ -104,7 +104,7 @@ inaccessible.  During a build the following steps take place:
 12) .openshift/action_hooks/post_deploy is executed on the originating application
 13) Jenkins archives build artifiacts for later reference
 14) After 15 minutes of idle time, the 'build app' will be destroyed and will
-    no longer show up with the rhc-domain-info command.  The build artificats
+    no longer show up with the 'rhc domain show' command.  The build artificats
     however, will still exist in Jenkins and can be viewed there.
 
 Users can look at the build job by clicking on it in the Jenkins interface and
