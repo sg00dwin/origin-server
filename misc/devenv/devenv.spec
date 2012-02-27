@@ -192,7 +192,6 @@ git init --bare /root/os-client-tools
 
 # Start services
 service iptables restart
-service named stop
 service qpidd restart
 service mcollective start
 service libra-datastore configure
@@ -203,7 +202,7 @@ service jenkins restart
 service httpd restart
 service sshd restart
 chkconfig iptables on
-#chkconfig named on
+chkconfig named on
 chkconfig qpidd on
 chkconfig mcollective on
 chkconfig libra-datastore on
@@ -221,6 +220,10 @@ chkconfig cgconfig on
 chkconfig cgred on
 chkconfig libra-cgroups on
 chkconfig libra-tc on
+
+# DHCP/DNS Service initialization
+service network restart
+service named restart
 
 # Watchman services
 chkconfig libra-watchman on || :
