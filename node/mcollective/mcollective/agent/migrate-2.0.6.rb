@@ -106,6 +106,9 @@ module LibraMigration
         if git_migrate_exit_code != 0
           exitcode = git_migrate_exit_code
         end
+      elsif app_type == 'ruby-1.8'
+        FileUtils.rm_f "#{app_dir}/logs/production.log"
+        FileUtils.ln_s "../runtime/repo/log/production.log", "#{app_dir}/logs/production.log"
       end
 
       env_echos.each do |env_echo|
