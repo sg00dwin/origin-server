@@ -23,10 +23,10 @@ Components:
       set-mongo-connection-info:
         Type: "NET_TCP:db:mongodb"
         Required : true
-  Groups:
-    default:
-      Components:
-        default : default
-        Scaling:
-          Min: 1
-          Max: 1
+Groups:
+  default:
+    Components:
+      default : default
+    Scaling:
+      Min: 1
+      Max: 1
