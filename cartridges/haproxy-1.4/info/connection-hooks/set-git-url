@@ -145,8 +145,9 @@ function unregister_gear() {
 
     #  Check if the gear git registry entry exists.
     if grep "$entry" "$gear_registry" 2>&1 > /dev/null; then
-        sed "/$gear_name=.*/d" "$gear_registry"  > /tmp/gear-registry.git
-        mv -f /tmp/gear-registry.git "$gear_registry"
+        sed "/$gear_name=.*/d" "$gear_registry"  > /tmp/gear.registry
+        cat /tmp/gear.registry > "$gear_registry"
+        rm -f /tmp/gear.registry
     fi
 
     remove_gear_git_mirror "$gear_name" "$git_url"
