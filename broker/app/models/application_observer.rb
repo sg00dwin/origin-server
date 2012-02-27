@@ -46,6 +46,10 @@ may be ok if '#{uapp.name}#{BUILDER_SUFFIX}' was the builder of a previously des
         end
       end
     end
+    
+    if application.user.vip == false and not ["std","small"].include?(application.node_profile)
+      raise Cloud::Sdk::UserException.new("Invalid Profile: #{application.node_profile}.  Must be: std or small", 1)
+    end
   end
   
   def after_application_destroy(data)
