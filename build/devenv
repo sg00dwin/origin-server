@@ -193,18 +193,19 @@ class DevEnv < Thor
         end
 
         unless options.exclude_internal?
+          add_ssh_cmd_to_threads(hostname, threads, failures, "Internal", "cucumber -f html --out /tmp/rhc/internals.html -f progress -t @internals li-test/tests/")
+        end
+
+        unless options.exclude_verification?
           # create a submodule repo for the tests
+          puts "Creating submodule repo for verification tests"
           cmd = "git init /root/submodule_test_repo;"
           cmd += "cd /root/submodule_test_repo;"
           cmd += "echo Submodule > index;"
           cmd += "git add index;"
           cmd += "git commit -a -m 'test';"
-          add_ssh_cmd_to_threads(hostname, threads, failures, "Creating Test Submodule Repo", cmd)
+          ssh(hostname, cmd, 4800, true)
 
-          add_ssh_cmd_to_threads(hostname, threads, failures, "Internal", "cucumber -f html --out /tmp/rhc/internals.html -f progress -t @internals li-test/tests/")
-        end
-
-        unless options.exclude_verification?
           add_ssh_cmd_to_threads(hostname, threads, failures, "Verification", "cucumber -f html --out /tmp/rhc/verfication.html -f progress -t @verify li-test/tests/")
         end
 
