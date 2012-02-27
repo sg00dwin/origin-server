@@ -414,18 +414,20 @@ class Application < Cloud::Sdk::Cartridge
   def deconfigure_dependencies
     reply = ResultIO.new
     self.class.notify_observers(:before_application_deconfigure, {:application => self, :reply => reply})  
-    self.configure_order.each do |comp_inst_name|
-      comp_inst = self.comp_instance_map[comp_inst_name]
-      group_inst = self.group_instance_map[comp_inst.group_instance_name]
-      begin
-        run_on_gears(group_inst.gears, reply, false) do |gear, r|
-          r.append gear.deconfigure(comp_inst)
-          r.append process_cartridge_commands(r.cart_commands)
-          # self.save
+    if(self.configure_order)
+      self.configure_order.each do |comp_inst_name|
+        comp_inst = self.comp_instance_map[comp_inst_name]
+        group_inst = self.group_instance_map[comp_inst.group_instance_name]
+        begin
+          run_on_gears(group_inst.gears, reply, false) do |gear, r|
+            r.append gear.deconfigure(comp_inst)
+            r.append process_cartridge_commands(r.cart_commands)
+            # self.save
+          end
+        rescue  Exception => e
+          self.save
+          raise e
         end
-      rescue  Exception => e
-        self.save
-        raise e
       end
     end
     self.save
