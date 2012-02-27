@@ -11,11 +11,14 @@ require "test/unit/ui/console/testrunner"
 
 require 'rubygems'
 require 'openshift/base'
+require 'openshift/sauce_helper'
 require 'openshift/selenium_test_case'
 require 'openshift/express/dialogs'
 require 'openshift/express/navbars'
 require 'openshift/express/pages'
 require 'openshift/express/forms'
+
+require 'openshift/rest/pages'
 
 # Load desired test cases
 Dir["testcases/*.rb"].each {|file| require file }
@@ -60,6 +63,7 @@ class TS_web
       :express => Express.suite,
       :flex => Flex.suite,
       :console => ExpressConsole.suite,
+      :rest_console => RestConsole.suite
     }
 
     suite = TestDecorator.new('Sauce Tests')

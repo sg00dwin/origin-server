@@ -13,6 +13,7 @@ DEVENV_WILDCARD = "devenv_*"
 DEVENV_STAGE_WILDCARD = "devenv-stage_*"
 DEVENV_CLEAN_WILDCARD = "devenv-clean_*"
 DEVENV_STAGE_CLEAN_WILDCARD = "devenv-stage-clean_*"
+VERIFIER_REGEXS = [/^(devenv)_(\d+)$/, /^(devenv_verifier)_(\d+)$/, /^(devenv-stage)_(\d+)$/, /^(devenv-stage_verifier)_(\d+)$/, /^(libra_check)_(\d+)$/]
 TERMINATE_REGEX = /terminate/
 VERIFIED_TAG = "qe-ready"
 RSA = File.expand_path("~/.ssh/libra.pem")
