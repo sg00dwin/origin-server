@@ -73,7 +73,7 @@ Broker::Application.configure do
   }
   
   config.datastore_mongo = {
-    :collections => {:district => "district_test"}
+    :collections => {:district => "district", :application_template => "template"}
   }
   
   config.analytics = {
