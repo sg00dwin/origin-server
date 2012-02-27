@@ -1,2 +1,2 @@
 * * * * * /usr/libexec/mcollective/update_yaml.rb > /etc/mcollective/facts.yaml
-0 * * * * /usr/bin/rhc-last-access > /var/lib/libra/.last_access/last_access.log 2>&1
+0 * * * * /usr/bin/rhc-last-access > /var/lib/libra/last_access.log 2>&1
