@@ -18,6 +18,10 @@ print_stats "Before"
 for user in `get_appids_to_idle`
 do
     /usr/bin/rhc-idler -u $user > /dev/null 2>&1
+
+    # Report to apptegic
+    inner="{\"app_uuid\": \"$user\", \"action\":\"idle\"}"
+    curl -k -v -H "Accept: application/json" -X POST -d json_data="$inner" https://127.0.0.1/broker/nurture
 done
 
 print_stats "After"

@@ -3,7 +3,7 @@
 
 Summary:   Li site components
 Name:      rhc-site
-Version:   0.87.6
+Version:   0.87.7
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -80,6 +80,22 @@ rm -rf %{buildroot}
 chmod 0770 %{sitedir}/tmp
 
 %changelog
+* Mon Feb 27 2012 Dan McPherson <dmcphers@redhat.com> 0.87.7-1
+- start selenium tests for new console (johnp@redhat.com)
+- Merge branch 'master' of git1.ops.rhcloud.com:/srv/git/li (ffranz@redhat.com)
+- Added cartridge related Rails stuff (ffranz@redhat.com)
+- Test failure on def argument (ccoleman@redhat.com)
+- Can't create keys until domain exists (ccoleman@redhat.com)
+- Merge branch 'dev0227' (sgoodwin@redhat.com)
+- new console specific styles (sgoodwin@redhat.com)
+- Bug 795538 - not copying :content errors to :raw_content, hidden by bad unit
+  tests (ccoleman@redhat.com)
+- Keys controller test was building content incorrectly (ccoleman@redhat.com)
+- changes addressing default list margin issues and moved a couple things from
+  type to custom (sgoodwin@redhat.com)
+- Use old layout for reset password, bug 797749 (ccoleman@redhat.com)
+- cleanup all the old command usage in help and messages (dmcphers@redhat.com)
+
 * Sun Feb 26 2012 Dan McPherson <dmcphers@redhat.com> 0.87.6-1
 - 
 

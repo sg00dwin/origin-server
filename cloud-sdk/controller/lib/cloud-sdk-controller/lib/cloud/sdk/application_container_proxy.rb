@@ -24,6 +24,11 @@ module Cloud
       end
       
       def self.blacklisted?(name)
+        if @proxy_provider != self.class
+          @proxy_provider.blacklisted?(name)
+        else
+          false
+        end
       end
       
       attr_accessor :id

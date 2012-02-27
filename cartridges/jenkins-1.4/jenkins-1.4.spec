@@ -2,7 +2,7 @@
 
 Summary:   Provides jenkins-1.4 support
 Name:      rhc-cartridge-jenkins-1.4
-Version:   0.87.3
+Version:   0.87.4
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   ASL 2.0
@@ -76,6 +76,9 @@ rm -rf %{buildroot}
 %doc %{cartridgedir}/LICENSE
 
 %changelog
+* Mon Feb 27 2012 Dan McPherson <dmcphers@redhat.com> 0.87.4-1
+- cleanup all the old command usage in help and messages (dmcphers@redhat.com)
+
 * Sat Feb 25 2012 Dan McPherson <dmcphers@redhat.com> 0.87.3-1
 - Blanket purge proxy ports on application teardown. (rmillner@redhat.com)
 - Bug 796595 (dmcphers@redhat.com)

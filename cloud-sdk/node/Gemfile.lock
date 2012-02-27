@@ -18,7 +18,7 @@ GEM
       i18n
     activesupport (3.0.10)
     builder (2.1.2)
-    cloud-sdk-common (0.5.2)
+    cloud-sdk-common (0.5.3)
       activemodel
       json
     diff-lcs (1.1.3)
