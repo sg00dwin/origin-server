@@ -8,7 +8,7 @@
 
 Summary:   Dependencies for OpenShift development
 Name:      rhc-devenv
-Version:   0.87.4
+Version:   0.87.5
 Release:   1%{?dist}
 Group:     Development/Libraries
 License:   GPLv2
@@ -273,6 +273,19 @@ cp -f %{devenvdir}/puppet-private.pem /var/lib/puppet/ssl/private_keys/localhost
 %{policydir}/*
 
 %changelog
+* Mon Feb 27 2012 Dan McPherson <dmcphers@redhat.com> 0.87.5-1
+- Merge remote-tracking branch 'origin/master' (mlamouri@redhat.com)
+- commented resolver prepend to bypass local DNS (mlamouri@redhat.com)
+- disabled dnssec: it interferes with forwarding EC2 internal requests
+  (mlamouri@redhat.com)
+- add logic for killing old verifiers (dmcphers@redhat.com)
+- Merge remote-tracking branch 'origin/master' (mlamouri@redhat.com)
+- disabled recursion to allow correct resolution of ec2 internals
+  (mlamouri@redhat.com)
+- Fixed path of log file. (mpatel@redhat.com)
+- enable named, restart network service to initialize forwarding
+  (mlamouri@redhat.com)
+
 * Sat Feb 25 2012 Dan McPherson <dmcphers@redhat.com> 0.87.4-1
 - Adds rhc-last-access to cron. (mpatel@redhat.com)
 - Merge remote-tracking branch 'origin/master' (mlamouri@redhat.com)
