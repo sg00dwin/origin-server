@@ -145,7 +145,9 @@ function unregister_gear() {
 
     #  Check if the gear git registry entry exists.
     if grep "$entry" "$gear_registry" 2>&1 > /dev/null; then
-        cat "$gear_registry" | sed "/$gear_name=.*/d"  > "$gear_registry"
+        sed "/$gear_name=.*/d" "$gear_registry"  > /tmp/gear.registry
+        cat /tmp/gear.registry > "$gear_registry"
+        rm -f /tmp/gear.registry
     fi
 
     remove_gear_git_mirror "$gear_name" "$git_url"
@@ -188,14 +190,10 @@ for arg in $kvargs; do
     register_gear "$gear_name" "$url"  ||  :
 done
 
-#
 # Get a list of all the git mirror gears and remove the gears which are not
 # in the current set.
-#
-# FIXME: Disable for now as we are only getting a single gear's info and not
-#        everything.
-# for gear_name in $(get_gear_git_mirrors); do
-#     if [ -z "${curr_gears[$gear_name]}" ]; then
-#         unregister_gear "$gear_name" $(get_gear_git_url "$gear_name")
-#     fi
-# done
+for gear_name in $(get_gear_git_mirrors); do
+    if [ -z "${curr_gears[$gear_name]}" ]; then
+        unregister_gear "$gear_name" $(get_gear_git_url "$gear_name")
+    fi
+done
