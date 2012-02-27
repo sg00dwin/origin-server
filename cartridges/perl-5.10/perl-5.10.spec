@@ -18,6 +18,9 @@ Requires:  perl-DBD-MySQL
 Requires:  perl-MongoDB
 Requires:  ImageMagick-perl
 Requires:  perl-App-cpanminus
+# Include here to be consistant with production
+Requires:  perl-CPAN
+Requires:  perl-CPANPLUS
 # used to do dep resolving for perl
 Requires:  rpm-build
 
