@@ -50,7 +50,7 @@ class ApplicationsController < BaseController
     scale = true if scale=="true"
     template_id = params[:template]
 
-    if app_name.nil? or app_name.empty? or !(app_name =~ /\A[A-Za-z0-9]+\z/)
+    if app_name.nil? or app_name.empty?
       @reply = RestReply.new(:unprocessable_entity)
       message = Message.new(:error, "Application name is required and cannot be blank", 105, "name") 
       @reply.messages.push(message)
@@ -61,14 +61,6 @@ class ApplicationsController < BaseController
     if not application.nil?
       @reply = RestReply.new(:conflict)
       message = Message.new(:error, "The supplied application name '#{app_name}' already exists", 100, "name") 
-      @reply.messages.push(message)
-      respond_with @reply, :status => @reply.status
-      return
-    end
-    Rails.logger.debug "Checking to see if application name is black listed"
-    if Cloud::Sdk::ApplicationContainerProxy.blacklisted? app_name
-      @reply = RestReply.new(:unprocessable_entity)
-      message = Message.new(:error, "The supplied application name '#{app_name}' is not allowed", 105, "name") 
       @reply.messages.push(message)
       respond_with @reply, :status => @reply.status
       return
