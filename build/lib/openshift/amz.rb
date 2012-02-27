@@ -356,7 +356,7 @@ module OpenShift
           end
         end
         build_name_to_verifiers.each do |build_name, verifiers|
-          if verifiers.length > 0
+          if verifiers.length > 1
             verifiers.sort!
             verifiers.pop
             verifiers.each do |verifier| 
