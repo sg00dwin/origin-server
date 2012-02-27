@@ -2,7 +2,7 @@
 
 Summary:   Provides haproxy-1.4 support
 Name:      rhc-cartridge-haproxy-1.4
-Version:   0.5.4
+Version:   0.5.5
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   ASL 2.0
@@ -83,6 +83,10 @@ rm -rf %{buildroot}
 %doc %{cartridgedir}/LICENSE
 
 %changelog
+* Mon Feb 27 2012 Dan McPherson <dmcphers@redhat.com> 0.5.5-1
+- Fix inter-device move failure to cat + rm. (ramr@redhat.com)
+- Remove git entries on gear removal (scale down). (ramr@redhat.com)
+
 * Sat Feb 25 2012 Dan McPherson <dmcphers@redhat.com> 0.5.4-1
 - Fix bugs to get gear sync + registration + scale up working.
   (ramr@redhat.com)
