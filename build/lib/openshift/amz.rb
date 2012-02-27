@@ -334,9 +334,39 @@ module OpenShift
     def terminate_flagged_instances(conn)
       AWS.memoize do
         conn.instances.each do |i|
-          if (instance_status(i) == :stopped) and (i.tags["Name"] =~ TERMINATE_REGEX)
-            log.info "Terminating #{i.id}"
+          if ((instance_status(i) == :stopped) || (instance_status(i) == :running)) && (i.tags["Name"] =~ TERMINATE_REGEX)
+            log.info "Terminating #{i.id} - #{i.tags["Name"]}"
             terminate_instance(i)
+          end
+        end
+      end
+    end
+    
+    def terminate_old_verifiers(conn)
+      AWS.memoize do
+        build_name_to_verifiers = {}
+        conn.instances.each do |i|
+          VERIFIER_REGEXS.each do |regex|
+            if i.tags["Name"] =~ regex
+              build_name = $1
+              build_num = $2
+              build_name_to_verifiers[build_name] = [] unless build_name_to_verifiers[build_name]
+              build_name_to_verifiers[build_name] << [build_num, i]
+            end
+          end
+        end
+        build_name_to_verifiers.each do |build_name, verifiers|
+          if verifiers.length > 0
+            verifiers.sort!
+            verifiers.pop
+            verifiers.each do |verifier| 
+              build_num = verifier[0]
+              i = verifier[1]
+              if instance_status(i) == :running || instance_status(i) == :stopped
+                log.info "Terminating verifier #{i.id} - #{i.tags["Name"]}"
+                terminate_instance(i)
+              end
+            end
           end
         end
       end
