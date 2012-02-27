@@ -165,7 +165,7 @@ class ComponentInstance < Cloud::Sdk::UserModel
     
     depends.each do |feature| 
       cart = CartridgeCache::find_cartridge(feature)
-      raise Exception.new "Cannot find cartridge for dependency '#{feature}'" if cart.nil?
+      raise Cloud::Sdk::UserException.new("Invalid cartridge specified: #{feature}",1) if cart.nil?
       capability = feature
       capability = nil if feature==cart.name
       profile = cart.find_profile(capability)
