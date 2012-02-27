@@ -375,7 +375,7 @@ module OpenShift
     def stop_untagged_instances(conn)
       AWS.memoize do
         conn.instances.each do |i|
-          if (instance_status(i) == :running) and (i.tags['Name'] == nil)
+          if (instance_status(i) == :running || instance_status(i) == :stopped) && (i.tags['Name'] == nil)
             # Tag the node to give people a heads up
             add_tag(i, 'will-terminate')
 
