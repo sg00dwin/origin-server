@@ -193,6 +193,14 @@ class DevEnv < Thor
         end
 
         unless options.exclude_internal?
+          # create a submodule repo for the tests
+          cmd = "git init /root/submodule_test_repo;"
+          cmd += "cd /root/submodule_test_repo;"
+          cmd += "echo Submodule > index;"
+          cmd += "git add index;"
+          cmd += "git commit -a -m 'test';"
+          add_ssh_cmd_to_threads(hostname, threads, failures, "Creating Test Submodule Repo", cmd)
+
           add_ssh_cmd_to_threads(hostname, threads, failures, "Internal", "cucumber -f html --out /tmp/rhc/internals.html -f progress -t @internals li-test/tests/")
         end
 

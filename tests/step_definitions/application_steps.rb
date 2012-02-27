@@ -44,6 +44,17 @@ When /^(\d+) (.+) applications are created$/ do |app_count, type|
   end
 end
 
+When /^the submodule is added$/ do
+  Dir.chdir(@app.repo) do
+    # Add a submodule created in devenv and link the index file
+    run("git submodule add /root/submodule_test_repo")
+    run("rm " + @app.get_index_file)
+    run("ln -s " + @app.get_index_file + " submodule_test_repo/index")
+    run("git commit -a -m 'Test submodule change'")
+    run("git push >> " + @app.get_log("git_push") + " 2>&1")
+  end
+end
+
 When /^the embedded (.*) cartridge is added$/ do |type|
   rhc_embed_add(@app, type)
 end
@@ -151,6 +162,19 @@ Then /^it should be updated successfully$/ do
   body = @app.connect
   body.should_not be_nil
   body.should match(/#{@update}/)
+end
+
+Then /^the submodule should be deployed successfully$/ do
+  60.times do |i|
+    body = @app.connect
+    break if body and body =~ /Submodule/
+    sleep 1
+  end
+
+  # Make sure the update is present
+  body = @app.connect
+  body.should_not be_nil
+  body.should match(/Submodule/)
 end
 
 Then /^the application should be accessible$/ do
