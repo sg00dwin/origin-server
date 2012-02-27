@@ -135,7 +135,8 @@ RedHatCloud::Application.routes.draw do
       resources :application_types, :only => [:show, :index], :id => /[^\/]+/
 
       resources :applications,
-                :controller => "applications" do
+                :controller => "applications" do 
+        resources :cartridges, :only => [:show], :id => /[^\/]+/
         member do
           get :delete
           get :get_started
