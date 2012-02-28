@@ -1,6 +1,8 @@
 require 'state_machine'
+#require 'validators/app_validator'
 
 class Application < Cloud::Sdk::Cartridge
+  #include ActiveModel::Validations
   attr_accessor :user, :creation_time, :uuid, :aliases, :cart_data,
                 :state, :group_instance_map, :comp_instance_map, :conn_endpoints_list,
                 :domain, :group_override_map, :working_comp_inst_hash,
@@ -13,7 +15,8 @@ class Application < Cloud::Sdk::Cartridge
   include_attributes :comp_instances, :group_instances
   
   validate :extended_validator
-
+  #validates_with AppValidator
+  
   def extended_validator
     notify_observers(:validate_application)
   end
