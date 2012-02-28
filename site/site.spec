@@ -3,7 +3,7 @@
 
 Summary:   Li site components
 Name:      rhc-site
-Version:   0.87.7
+Version:   0.87.8
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -80,6 +80,10 @@ rm -rf %{buildroot}
 chmod 0770 %{sitedir}/tmp
 
 %changelog
+* Mon Feb 27 2012 Dan McPherson <dmcphers@redhat.com> 0.87.8-1
+- Fixing site unit test to account for Bugz 797307 (kraman@gmail.com)
+- make errors show up on the domain edit account page (johnp@redhat.com)
+
 * Mon Feb 27 2012 Dan McPherson <dmcphers@redhat.com> 0.87.7-1
 - start selenium tests for new console (johnp@redhat.com)
 - Merge branch 'master' of git1.ops.rhcloud.com:/srv/git/li (ffranz@redhat.com)
