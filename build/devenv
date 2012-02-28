@@ -362,7 +362,7 @@ class DevEnv < Thor
       say "Using your custom sync config '#{config}'"
     else
       say "Creating the default sync config"
-      template = IO.read(repo_path('build/default_watch.lua')).gsub('{LOCAL_DIR}', "#{repo_path}")
+      template = IO.read(repo_path('build/watch_default.lua')).gsub('{LOCAL_DIR}', "#{repo_path}")
       if options.verbose?
         puts "Lsyncd template"
         puts "----------"
