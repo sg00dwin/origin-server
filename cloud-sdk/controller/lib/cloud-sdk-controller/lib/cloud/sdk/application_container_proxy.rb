@@ -24,7 +24,7 @@ module Cloud
       end
       
       def self.blacklisted?(name)
-        if @proxy_provider != self.class
+        if @proxy_provider != self
           @proxy_provider.blacklisted?(name)
         else
           false
