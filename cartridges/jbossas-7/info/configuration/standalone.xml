@@ -16,7 +16,7 @@
         <extension module="org.jboss.as.mail"/>
         <extension module="org.jboss.as.naming"/>
         <extension module="org.jboss.as.pojo"/>
-        <extension module="org.jboss.as.remoting"/>
+        <!--extension module="org.jboss.as.remoting"/-->
         <extension module="org.jboss.as.sar"/>
         <extension module="org.jboss.as.security"/>
         <extension module="org.jboss.as.threads"/>
@@ -25,7 +25,7 @@
         <extension module="org.jboss.as.weld"/>
     </extensions>
 
-    <management>
+    <!--management>
         <security-realms>
             <security-realm name="ManagementRealm">
                 <authentication>
@@ -46,16 +46,16 @@
                 <socket-binding http="management-http"/>
             </http-interface>
         </management-interfaces>
-    </management>
+    </management-->
 
     <profile>
         <subsystem xmlns="urn:jboss:domain:logging:1.1">
-            <console-handler name="CONSOLE">
+            <!--console-handler name="CONSOLE">
                 <level name="INFO"/>
                 <formatter>
                     <pattern-formatter pattern="%d{HH:mm:ss,SSS} %-5p [%c] (%t) %s%E%n"/>
                 </formatter>
-            </console-handler>
+            </console-handler-->
             <periodic-rotating-file-handler name="FILE">
                 <formatter>
                     <pattern-formatter pattern="%d{yyyy/MM/dd HH:mm:ss,SSS} %-5p [%c] (%t) %s%E%n"/>
@@ -82,7 +82,7 @@
             <root-logger>
                 <level name="INFO"/>
                 <handlers>
-                    <handler name="CONSOLE"/>
+                    <!--handler name="CONSOLE"/-->
                     <handler name="FILE"/>
                 </handlers>
             </root-logger>
@@ -159,7 +159,7 @@
             <timer-service thread-pool-name="default">
                 <data-store path="timer-service-data" relative-to="jboss.server.data.dir"/>
             </timer-service>
-            <remote connector-ref="remoting-connector" thread-pool-name="default"/>
+            <!--remote connector-ref="remoting-connector" thread-pool-name="default"/-->
             <thread-pools>
                 <thread-pool name="default">
                     <max-threads count="10"/>
@@ -215,24 +215,16 @@
         </subsystem>
         <subsystem xmlns="urn:jboss:domain:naming:1.1"/>
         <subsystem xmlns="urn:jboss:domain:pojo:1.0"/>
-        <subsystem xmlns="urn:jboss:domain:remoting:1.1">
+        <!--subsystem xmlns="urn:jboss:domain:remoting:1.1">
             <connector name="remoting-connector" socket-binding="remoting" security-realm="ApplicationRealm"/>
-        </subsystem>
+        </subsystem-->
         <subsystem xmlns="urn:jboss:domain:resource-adapters:1.0"/>
         <subsystem xmlns="urn:jboss:domain:sar:1.0"/>
         <subsystem xmlns="urn:jboss:domain:security:1.1">
             <security-domains>
                 <security-domain name="other" cache-type="default">
                     <authentication>
-                        <login-module code="Remoting" flag="optional">
-                            <module-option name="password-stacking" value="useFirstPass"/>
-                        </login-module>
-                        <login-module code="RealmUsersRoles" flag="required">
-                            <module-option name="usersProperties" value="${jboss.server.config.dir}/application-users.properties"/>
-                            <module-option name="rolesProperties" value="${jboss.server.config.dir}/application-roles.properties"/>
-                            <module-option name="realm" value="ApplicationRealm"/>
-                            <module-option name="password-stacking" value="useFirstPass"/>
-                        </login-module>
+                        <login-module code="UsersRoles" flag="required"/>
                     </authentication>
                 </security-domain>
                 <security-domain name="jboss-web-policy" cache-type="default">
@@ -278,9 +270,9 @@
     <socket-binding-group name="standard-sockets" default-interface="public" port-offset="${jboss.socket.binding.port-offset:0}">
         <socket-binding name="http" port="8080"/>
         <socket-binding name="https" port="8443"/>
-        <socket-binding name="management-native" interface="management" port="${jboss.management.native.port:9999}"/>
+        <!--socket-binding name="management-native" interface="management" port="${jboss.management.native.port:9999}"/>
         <socket-binding name="management-http" interface="management" port="${jboss.management.http.port:9990}"/>
-        <socket-binding name="remoting" port="4447"/>
+        <socket-binding name="remoting" port="4447"/-->
         <socket-binding name="txn-recovery-environment" port="4712"/>
         <socket-binding name="txn-status-manager" port="4713"/>
         <outbound-socket-binding name="mail-smtp">
