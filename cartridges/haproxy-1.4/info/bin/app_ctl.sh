@@ -68,6 +68,19 @@ stop() {
     fi
 }
 
+
+reload() {
+    if ! isrunning; then
+       start
+    else
+        [ -f $HAPROXY_PID ]  &&  zpid=$( /bin/cat "${HAPROXY_PID}" )
+        [ -n "$zpid" ]       &&  zopts="-sf $zpid"
+        echo "Reloading haproxy gracefully without service interruption" 1>&2
+        /usr/sbin/haproxy -f $OPENSHIFT_APP_DIR/conf/haproxy.cfg ${zopts} > /dev/null 2>&1
+    fi
+}
+
+
 case "$1" in
     start)
         #/usr/sbin/haproxy -f $OPENSHIFT_APP_DIR/conf/haproxy.cfg
@@ -82,8 +95,7 @@ case "$1" in
     restart)
     ;;
     reload)
-        stop;
-        start;
+        reload;
     ;;
     status)
         print_running_processes

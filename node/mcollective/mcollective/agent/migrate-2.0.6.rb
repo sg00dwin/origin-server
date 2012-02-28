@@ -29,6 +29,8 @@ module LibraMigration
         # Migrate and jbossas-7.0 jobs to jbossas-7
         Dir.glob('#{app_dir}/data/config.xml').each {|file|
           Util.replace_in_file("#{app_dir}/data/jobs/*/config.xml", "<builderType>jbossas-7.0</builderType>", "<builderType>jbossas-7</builderType>")
+          Util.replace_in_file("#{app_dir}/data/jobs/*/config.xml", "<builderType>wsgi-3.2</builderType>", "<builderType>python-2.6</builderType>")
+          Util.replace_in_file("#{app_dir}/data/jobs/*/config.xml", "<builderType>rack-1.1</builderType>", "<builderType>ruby-1.8</builderType>")
         }
 
         # Add security

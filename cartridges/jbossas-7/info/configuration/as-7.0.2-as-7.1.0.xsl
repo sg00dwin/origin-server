@@ -132,7 +132,7 @@
 				<timer-service thread-pool-name="default">
 					<data-store path="timer-service-data" relative-to="jboss.server.data.dir" />
 				</timer-service>
-				<remote connector-ref="remoting-connector" thread-pool-name="default" />
+				<!--remote connector-ref="remoting-connector" thread-pool-name="default" /-->
 				<thread-pools>
 					<thread-pool name="default">
 						<max-threads count="10" />
@@ -357,7 +357,7 @@
 			</subsystem>
 			<!--subsystem xmlns="urn:jboss:domain:webservices:1.1">
 				<modify-wsdl-address>true</modify-wsdl-address>
-				<wsdl-host>${OPENSHIFT_INTERNAL_IP}</wsdl-host>
+				<wsdl-host>${env.OPENSHIFT_INTERNAL_IP}</wsdl-host>
 				<endpoint-config name="Standard-Endpoint-Config" />
 				<endpoint-config name="Recording-Endpoint-Config">
 					<pre-handler-chain name="recording-handlers"
