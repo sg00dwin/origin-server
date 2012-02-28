@@ -80,7 +80,7 @@ module LibraMigration
         env_echos.push("echo \"export OPENSHIFT_APP_TYPE='jbossas-7'\" > #{app_home}/.env/OPENSHIFT_APP_TYPE")
         java_home = '/etc/alternatives/java_sdk_1.6.0'
         m2_home = '/etc/alternatives/maven-3.0'
-        env_echos.push("echo \"export PATH=#{cartridge_dir}/info/bin/:#{cartridge_root_dir}/abstract-httpd/info/bin/:#{cartridge_root_dir}/abstract/info/bin/:#{java_home}/bin:#{m2_home}/bin:/bin:/usr/bin\" > #{app_home}/.env/PATH")
+        env_echos.push("echo \"export PATH=#{cartridge_dir}/info/bin/:#{cartridge_root_dir}/abstract/info/bin/:#{java_home}/bin:#{m2_home}/bin:/bin:/usr/bin\" > #{app_home}/.env/PATH")
 
         FileUtils.rm_f "#{app_dir}/logs"
         FileUtils.ln_s "#{app_dir}/jbossas-7/standalone/log", "#{app_dir}/logs"

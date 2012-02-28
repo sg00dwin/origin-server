@@ -183,7 +183,7 @@ JAVA_HOME=/etc/alternatives/java_sdk_1.6.0
 M2_HOME=/etc/alternatives/maven-3.0
 echo "export JAVA_HOME=$JAVA_HOME" > $APP_HOME/.env/JAVA_HOME
 echo "export M2_HOME=$M2_HOME" > $APP_HOME/.env/M2_HOME
-echo "export PATH=$JBOSS_CARTRIDGE_ROOT/info/bin/:$CART_DIR/abstract-httpd/info/bin/:$CART_DIR/abstract/info/bin/:$JAVA_HOME/bin:$M2_HOME/bin:$PATH" > $APP_HOME/.env/PATH
+echo "export PATH=$JBOSS_CARTRIDGE_ROOT/info/bin/:$CART_DIR/abstract/info/bin/:$JAVA_HOME/bin:$M2_HOME/bin:$PATH" > $APP_HOME/.env/PATH
 
 
 #

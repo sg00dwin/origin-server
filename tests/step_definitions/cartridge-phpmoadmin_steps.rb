@@ -7,7 +7,7 @@ $phpmoadmin_config = $phpmoadmin_hooks + "/configure"
 $phpmoadmin_config_format = "#{$phpmoadmin_config} %s %s %s"
 $phpmoadmin_deconfig = $phpmoadmin_hooks + "/deconfigure"
 $phpmoadmin_deconfig_format = "#{$phpmoadmin_deconfig} %s %s %s"
-$phpmoadmin_proc_regex = /httpd -C Include \$\{OPENSHIFT_PHPMOADMIN_APP_DIR\}/
+$phpmoadmin_proc_regex = /httpd -C Include .*phpmoadmin/
 
 Given /^a new phpmoadmin$/ do
   account_name = @account['accountname']
