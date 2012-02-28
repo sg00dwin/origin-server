@@ -78,6 +78,10 @@ rm -rf %{buildroot}
 %post
 /bin/touch %{sitedir}/log/production.log
 chmod 0770 %{sitedir}/tmp
+# Modified permissions for status subsite
+chmod 0775 %{sitedir}/app/subsites/status/db
+chmod 0664 %{sitedir}/app/subsites/status/db/status.sqlite
+chmod 0744 %{sitedir}/app/subsites/status/rhc-outage
 
 %changelog
 * Mon Feb 27 2012 Dan McPherson <dmcphers@redhat.com> 0.87.8-1
