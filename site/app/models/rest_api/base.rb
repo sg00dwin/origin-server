@@ -146,22 +146,27 @@ module RestApi
       valid = super
       remove_instance_variable(:@update_id) if @update_id && valid
       valid
-    rescue Exception => error
-      raise error unless rescue_save_failure(error)
-      false
+
+    rescue ActiveResource::ConnectionError => error
+      # if the server returns a body that has messages, filter them through
+      # the error handler.  If one or more errors were set, assume that the message
+      # is more useful than the exception and return false. Otherwise throw as ActiveResource
+      # would
+      raise unless set_remote_errors(error, true)
     end
 
     # Copy calculated attribute errors
     def valid?
-      if super
-        true
-      else
-        self.class.calculated_attributes.each_pair do |from, attrs|
-          attrs.each do |to|
-            (errors[from] ||= []).concat(errors[to])
+      super.tap { |valid| duplicate_errors unless valid }
+    end
+
+    def duplicate_errors
+      self.class.calculated_attributes.each_pair do |from, attrs|
+        attrs.each do |to|
+          (errors[to] || []).each do |error|
+            errors.add(from, error) unless errors.has_key?(from) && errors[:from].include?(error)
           end
         end
-        false
       end
     end
 
@@ -301,7 +306,7 @@ module RestApi
     #
     # Must provide OpenShift compatible error decoding
     #
-    def load_remote_errors(remote_errors, save_cache=false)
+    def load_remote_errors(remote_errors, save_cache=false, optional=false)
       case self.class.format
       when ActiveResource::Formats[:openshift_json]
         response = remote_errors.response
@@ -309,7 +314,12 @@ module RestApi
           ActiveSupport::JSON.decode(response.body)['messages'].each do |m|
             self.class.translate_api_error(errors, m['exit_code'], m['field'], m['text'])
           end
-        rescue
+          duplicate_errors
+        rescue ActiveResource::ConnectionError
+          raise
+        rescue Exception => e
+          Rails.logger.warn e
+          Rails.logger.warn e.backtrace
           msg = if defined? response
             Rails.logger.warn "Unable to read server response, #{response.inspect}"
             Rails.logger.warn "  Body: #{response.body.inspect}" if defined? response.body
@@ -317,16 +327,27 @@ module RestApi
           else
             'No response object'
           end
-          raise RestApi::BadServerResponseError, msg, $@
+          raise RestApi::BadServerResponseError, msg, $@ unless optional
         end
-        errors
+        optional ? !errors.empty? : errors
       else
         super
       end
     end
 
     class << self
+      def on_exit_code(code, handles=nil, &block)
+        (@exit_code_conditions ||= {})[code] = handles || block
+      end
       def translate_api_error(errors, code, field, text)
+        Rails.logger.debug "Server error: :#{field} \##{code}: #{text}"
+        if @exit_code_conditions
+          handler = @exit_code_conditions[code]
+          case handler
+          when Proc then return if handler.call errors, code, field, text
+          when Class then raise handler, text
+          end
+        end
         message = I18n.t(code, :scope => [:rest_api, :errors], :default => text.to_s)
         errors.add( (field || 'base').to_sym, message) unless message.blank?
       end
@@ -439,22 +460,10 @@ module RestApi
         @connection ||= self.class.connection({:as => as})
       end
 
-      #
-      # Return true if the exception has been handled by this method.  Return false
-      # to raise.  If returning true, it is expected that errors is populated.
-      #
-      def rescue_save_failure(error)
-        Rails.logger.debug "Unable to handle save error, throwing #{error.inspect}"
-        if defined? error.response and defined? error.response.body
-          Rails.logger.debug error.response.body
-        end
-        false
-      end
-
       # Helper to avoid subclasses forgetting to set @remote_errors
-      def set_remote_errors(error)
+      def set_remote_errors(error, optional=false)
         @remote_errors = error
-        load_remote_errors(@remote_errors, true)
+        load_remote_errors(@remote_errors, true, optional)
       end
   end
   

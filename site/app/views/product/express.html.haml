@@ -295,11 +295,11 @@
           .main
             
             %p
-              Using your OpenShift login and password, call rhc-create-domain to create a unique domain name for your applications.
+              Using your OpenShift login and password, call rhc domain create to create a unique domain name for your applications.
 
               %pre
                 :preserve
-                  $ rhc-create-domain -n mydomain -l rhlogin
+                  $ rhc domain create -n mydomain -l rhlogin
                   Password: (type... type... type...)
 
               
@@ -309,7 +309,7 @@
                 
             %aside
               %p
-                The <code>rhc-create-domain</code> command will create a configuration file - &lt;your home directory&gt;/.openshift/express.conf - which sets up a default login.
+                The <code>rhc domain create</code> command will create a configuration file - &lt;your home directory&gt;/.openshift/express.conf - which sets up a default login.
           
           #domain_link
             %h4 Why wait?
@@ -328,7 +328,7 @@
 
             %pre
               :preserve
-                $ rhc-create-app -a myapp -t php-5.3
+                $ rhc app create -a myapp -t php-5.3
                 Password: (type... type... type...)
           
           %p
@@ -336,7 +336,7 @@
           
           %aside
             %p
-              OpenShift offers many application stacks. Run <code>rhc-create-app -h</code> to see all of your options.
+              OpenShift offers many application stacks. Run <code>rhc app create -h</code> to see all of your options.
           
           %aside
             %p

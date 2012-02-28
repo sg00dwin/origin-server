@@ -119,8 +119,8 @@ ARGF.read.each do |login|
   wait_for_processes(false)
 
   # Kick off a new process
-  cmd1 = "rhc-create-domain -n #{namespace} -l #{login} -p redhat"
-  cmd2 = "rhc-create-app -a test -t php-5.3 -l #{login} -p redhat -n"
+  cmd1 = "rhc domain create -n #{namespace} -l #{login} -p redhat"
+  cmd2 = "rhc app create -a test -t php-5.3 -l #{login} -p redhat -n"
   pid, stdin, stdout, stderr = Open4::popen4(cmd1 + ";" + cmd2)
 
   stdin.close

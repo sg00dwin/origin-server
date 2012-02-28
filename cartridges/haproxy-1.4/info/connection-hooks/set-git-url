@@ -5,12 +5,12 @@ CART_DIR=/usr/libexec/li/cartridges
 CART_NAME=haproxy
 CART_VERSION=1.4
 CART_INFO_DIR=$CART_DIR/$CART_NAME-$CART_VERSION/info
-export GIT_SSH=$CART_INFO_DIR/bin/ssh
+DNS_CHECK_TIMEOUT=30
 
 # Exit on any errors
 set -e
 
-function print_help {
+function print_help() {
     echo "Usage: $0 app-name namespace uuid"
     echo "Start a running application"
 
@@ -19,25 +19,69 @@ function print_help {
 }
 
 
+function check_gear_dns_availability() {
+    gear_dns_name=$(echo $1 | cut -f 2 -d '@' | cut -f 1 -d '/')
+    timeout=${2:-$DNS_CHECK_TIMEOUT}
+    i=0
+    while [ $i -lt $timeout ]; do
+        if dig CNAME $gear_dns_name | grep "ANSWER SECTION" 2>&1 > /dev/null; then
+            return 0
+        fi
+
+        i=$((i + 1))
+        sleep 1
+    done
+
+    return 1
+}
+
+
 function setup_git_repo_from_framework() {
     checkout_dir_name=app-framework-gear
-    pushd "${OPENSHIFT_HOMEDIR}/git/${OPENSHIFT_APP_NAME}.git" > /dev/null
-    git clone --bare "$1" /tmp/$checkout_dir_name
+
+    #  Ensure framework gear is available.
+    check_gear_dns_availability "$1" $DNS_CHECK_TIMEOUT  ||  sleep 10
+
+    pushd "$GIT_DIR" > /dev/null
+    git clone --bare $1 /tmp/$checkout_dir_name
     rm -rf * 2> /dev/null  ||  :
     mv -f /tmp/$checkout_dir_name/[^h]* ./ 2> /dev/null  ||  :
-    # git add remote app-fw-gear "$url"
+    git remote add all-gears "file://$GIT_DIR"
     popd > /dev/null
+    rm -rf /tmp/$checkout_dir_name
+}
+
+
+function add_gear_git_mirror() {
+    [ $# -lt 2 ]  &&  return 1
+
+    gear_name=$1
+    url=$2
+
+    git remote add $gear_name $git_url
+    git remote set-url --add --push all-gears $git_url
+}
+
+
+function git_mirror_push() {
+    [ $# -lt 1 ]  &&  return 1
+
+    gear_name=$1
+
+    #  Need to push twice so that mirror states are also synced.
+    git push $gear_name --mirror
+    git push $gear_name --mirror
 }
 
 
 function register_gear() {
     [ $# -lt 2 ]  &&  return 1
 
-    name=$1
+    gear_name=$1
     git_url=$2
 
     # Generate registry entry of the form: gear-${gear_name}=${gear_git_url}
-    entry="gear-$name=$git_url"
+    entry="$gear_name=$git_url"
     gear_registry=$OPENSHIFT_APP_DIR/conf/gear-registry.git
 
     #  Check if its the first framework gear and if so setup the haproxy
@@ -45,8 +89,22 @@ function register_gear() {
     [ -s "$gear_registry" ]  ||  setup_git_repo_from_framework "$git_url"
 
     #  Add to the gear git registry if entry doesn't exist.
-    if ! grep "$entry" $gear_registry 2>&1 > /dev/null; then
-        echo "$entry" >> $gear_registry
+    if ! grep "$entry" "$gear_registry" 2>&1 > /dev/null; then
+        echo "$entry" >> "$gear_registry"
+
+        pushd "$GIT_DIR" > /dev/null
+        add_gear_git_mirror "$gear_name" "$gear_url"
+
+        #
+        # FIXME: This maybe inefficient if we have jenkins as we will do builds
+        #        on every gear. rsync is more efficient if each framework has a
+        #        gear sync - as what to sync varies by framework - do a git push
+        #        for now.
+        #
+        git_mirror_push "$gear_name"
+
+        popd > /dev/null
+
         return 0
     fi
 
@@ -54,6 +112,51 @@ function register_gear() {
 }
 
 
+function get_gear_git_mirrors() {
+    echo $(git remote -v  | grep -E "^gear\-.*(push)"  |  awk '{print $1}')
+}
+
+
+function get_gear_git_url() {
+    echo $(git remote -v  | grep -E "^$1\s*.*(push)"  |  awk '{print $2}')
+}
+
+
+function remove_gear_git_mirror() {
+    [ $# -lt 2 ]  &&  return 1
+
+    gear_name=$1
+    git_url=$2
+
+    git remote rm $gear_name
+    git remote set-url --delete --push all-gears $git_url
+}
+
+
+function unregister_gear() {
+    [ $# -lt 2 ]  &&  return 1
+
+    gear_name=$1
+    git_url=$2
+
+    # Search for registry entry of the form: gear-${gear_name}=${gear_git_url}
+    entry="$gear_name=$git_url"
+    gear_registry=$OPENSHIFT_APP_DIR/conf/gear-registry.git
+
+    #  Check if the gear git registry entry exists.
+    if grep "$entry" "$gear_registry" 2>&1 > /dev/null; then
+        sed "/$gear_name=.*/d" "$gear_registry"  > /tmp/gear.registry
+        cat /tmp/gear.registry > "$gear_registry"
+        rm -f /tmp/gear.registry
+    fi
+
+    remove_gear_git_mirror "$gear_name" "$git_url"
+}
+
+
+#
+# main():
+#
 while getopts 'd' OPTION
 do
     case $OPTION in
@@ -72,26 +175,25 @@ for f in ~/.env/*; do
     source $f
 done
 
+export GIT_SSH=$CART_INFO_DIR/bin/ssh
+export GIT_DIR=${OPENSHIFT_HOMEDIR}/git/${OPENSHIFT_APP_NAME}.git
+
+declare -A curr_gears
+
 #  Remove the first 3 args and process all the remaining args of the form
 #  key=value. The values are the git urls for each gear.
-for arg in "${@:4}"; do
-    url=$(echo "$arg" | tr "\n" " " | cut -f 2 -d '=' | tr -d "'")
-    gear_name=$(echo "$url" | cut -f 2 -d '@' | cut -f 1 -d '.')
-    if register_gear "$gear_name" "$url"; then
-        #
-        # FIXME: This maybe inefficient if we have jenkins as we will do builds
-        #        on every gear. rsync is more efficient if each framework has a
-        #        gear sync - as what to sync varies by framework - do a git push
-        #        for now.
-        #
-
-        pushd "${OPENSHIFT_HOMEDIR}/git/${OPENSHIFT_APP_NAME}.git" > /dev/null
-        git add remote gear-$gear_name "$url"
-        # Need two git "mirrored" pushes as the first push updates us with the
-        # newly added gear-$gear_name.
-        git push --mirror gear-$gear_name  ||  :
-        git push --mirror gear-$gear_name  ||  :
-        popd > /dev/null
-    fi
+kvargs=$(echo "${@:4}" | tr -d "\n" )
+for arg in $kvargs; do
+    url=$(echo "$arg" | cut -f 2 -d '=' | tr -d "'")
+    gear_name=gear-$(echo "$url" | cut -f 2 -d '@' | cut -f 1 -d '.')
+    curr_gears[$gear_name]="$url"
+    register_gear "$gear_name" "$url"  ||  :
 done
 
+# Get a list of all the git mirror gears and remove the gears which are not
+# in the current set.
+for gear_name in $(get_gear_git_mirrors); do
+    if [ -z "${curr_gears[$gear_name]}" ]; then
+        unregister_gear "$gear_name" $(get_gear_git_url "$gear_name")
+    fi
+done

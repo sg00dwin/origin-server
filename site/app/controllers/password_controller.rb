@@ -6,7 +6,7 @@ class PasswordController < ApplicationController
 
   def new
     @user ||= WebUser.new
-    render :layout => 'simple'
+    render :layout => 'application'
   end
 
   # This function makes the first request to send an email with a token

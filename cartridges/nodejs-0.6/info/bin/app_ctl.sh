@@ -33,7 +33,7 @@ function _status_node_service() {
 
 function _start_node_service() {
     if [ -f $OPENSHIFT_APP_DIR/run/stop_lock ]; then
-        echo "Application is explicitly stopped!  Use 'rhc-ctl-app -a ${OPENSHIFT_APP_NAME} -c start' to start back up." 1>&2
+        echo "Application is explicitly stopped!  Use 'rhc app start -a ${OPENSHIFT_APP_NAME}' to start back up." 1>&2
         return 0
     else
         # Check if service is running.

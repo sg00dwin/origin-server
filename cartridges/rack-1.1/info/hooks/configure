@@ -54,6 +54,7 @@ create_standard_app_dirs
 mkdir conf conf.d logs runtime/repo/public runtime/repo/tmp
 ln -s /usr/lib64/httpd/modules modules
 ln -s /etc/httpd/conf/magic conf/magic
+ln -s ../runtime/repo/log/production.log logs/production.log
 
 popd > /dev/null
 

@@ -2,7 +2,7 @@
 
 Summary:   Provides raw support
 Name:      rhc-cartridge-raw-0.1
-Version:   0.21.1
+Version:   0.21.3
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   ASL 2.0
@@ -87,6 +87,17 @@ rm -rf %{buildroot}
 %doc %{cartridgedir}/LICENSE
 
 %changelog
+* Mon Feb 27 2012 Dan McPherson <dmcphers@redhat.com> 0.21.3-1
+- Fixed path to start stop scripts in instructions. (mpatel@redhat.com)
+- cleanup all the old command usage in help and messages (dmcphers@redhat.com)
+
+* Sat Feb 25 2012 Dan McPherson <dmcphers@redhat.com> 0.21.2-1
+- Blanket purge proxy ports on application teardown. (rmillner@redhat.com)
+- Update cartridge configure hooks to load git repo from remote URL Add REST
+  API to create application from template Moved application template
+  models/controller to cloud-sdk (kraman@gmail.com)
+- Add proxy hooks from abstract (rmillner@redhat.com)
+
 * Thu Feb 16 2012 Dan McPherson <dmcphers@redhat.com> 0.21.1-1
 - bump spec numbers (dmcphers@redhat.com)
 

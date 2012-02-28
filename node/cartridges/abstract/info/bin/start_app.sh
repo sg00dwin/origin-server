@@ -5,7 +5,15 @@ echo "Starting application..."
     do
         . $env_var
     done
-    for cmd in `awk 'BEGIN { for (a in ENVIRON) if (a ~ /_CTL_SCRIPT$/) print ENVIRON[a] }'`
+    for cmd in `awk 'BEGIN { for (a in ENVIRON) if (a ~ /DB_CTL_SCRIPT$/) print ENVIRON[a] }'`
+    do
+        $cmd start
+    done
+    for cmd in `awk 'BEGIN { for (a in ENVIRON) if ((a ~ /_CTL_SCRIPT$/) && !(a ~ /DB_CTL_SCRIPT$/) && (a != "OPENSHIFT_APP_CTL_SCRIPT")) print ENVIRON[a] }'`
+    do
+        $cmd start
+    done
+    for cmd in `awk 'BEGIN { for (a in ENVIRON) if (a == "OPENSHIFT_APP_CTL_SCRIPT") print ENVIRON[a] }'`
     do
         $cmd start
     done

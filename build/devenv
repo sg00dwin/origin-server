@@ -68,15 +68,19 @@ class DevEnv < Thor
     end
 
     def scp_remote_tests(hostname)
-      print "Archiving local changes..."
+      puts "Archiving local changes..."
       `git archive --prefix li-test/ HEAD --output /tmp/li-test.tar`
       puts "Done"
-      print "Copying tests to remote instance: #{hostname}"
+      puts "Copying tests to remote instance: #{hostname}"
       scp_to(hostname, "/tmp/li-test.tar", "~/", 600, 10)
       puts "Done"
-      print "Extracting tests on remote instance: #{hostname}"
-      puts ssh(hostname, 'set -e; rm -rf li-test; tar -xf li-test.tar; mkdir -p /tmp/rhc/junit', 120)
+      puts "Extracting tests on remote instance: #{hostname}"
+      ssh(hostname, 'set -e; rm -rf li-test; tar -xf li-test.tar; mkdir -p /tmp/rhc/junit', 120)
       puts "Done"
+    end
+
+    def repo_path(dir='')
+      File.expand_path("../#{dir}", File.dirname(__FILE__))
     end
 
     def download_artifacts(hostname)
@@ -197,6 +201,15 @@ class DevEnv < Thor
         end
 
         unless options.exclude_verification?
+          # create a submodule repo for the tests
+          puts "Creating submodule repo for verification tests"
+          cmd = "git init /root/submodule_test_repo;"
+          cmd += "cd /root/submodule_test_repo;"
+          cmd += "echo Submodule > index;"
+          cmd += "git add index;"
+          cmd += "git commit -a -m 'test';"
+          ssh(hostname, cmd, 4800, true)
+
           add_ssh_cmd_to_threads(hostname, threads, failures, "Verification", "cucumber -f html --out /tmp/rhc/verfication.html -f progress -t @verify li-test/tests/")
         end
 
@@ -338,6 +351,35 @@ class DevEnv < Thor
     get_sync_dirs
   end
 
+  desc "watch", "Watch for changes to your source directory and copy them to the remote image.  Will look for ~/.openshiftdev/watch.lua for an override configuration.  Not a full replacement for 'sync' - intended to speed Rails development. Requires the lsyncd package installed."
+  method_option :verbose, :type => :boolean, :desc => "Enable verbose logging"
+  def watch
+    raise Thor::Error, "You must install lsyncd ('sudo yum install lsyncd') in order to run the 'watch' command" if not run "which lsyncd > /dev/null", :verbose => false
+    options.verbose? ? @@log.level = Logger::DEBUG : @@log.level = Logger::ERROR
+
+    config = File.join ENV['HOME'], '.openshiftdev/watch.lua'
+    if File.exists? config
+      say "Using your custom sync config '#{config}'"
+    else
+      say "Creating the default sync config"
+      template = IO.read(repo_path('build/watch_default.lua')).gsub('{LOCAL_DIR}', "#{repo_path}")
+      if options.verbose?
+        puts "Lsyncd template"
+        puts "----------"
+        puts template
+        puts "----------"
+      end
+      Tempfile.open('lsynctemplate') { |f| f.puts template; config = f.path }
+    end
+
+    # Rsync cannot set owner or group, so we should inherit
+    ssh("verifier", "find /var/www/libra -type d | xargs chmod g+s", 1800)
+    ssh("verifier", "find /usr/lib/ruby/site_ruby -type d | xargs chmod g+s", 1800)
+
+    say "Watching your development directories, hit CTRL+C to stop"
+    run "lsyncd #{options.verbose? ? '-log all' : ''} #{config}"
+  end
+
   desc "build NAME BUILD_NUM", "Build a new devenv AMI with the given NAME"
   method_option :register, :type => :boolean, :desc => "Register the instance"
   method_option :terminate, :type => :boolean, :desc => "Terminate the instance on exit"
@@ -425,7 +467,7 @@ class DevEnv < Thor
 
         manifest = rpm_manifest(hostname)
 
-        if options.register? && !options.install_from_source
+        if options.register? && options.build_clean_ami
           register_image(conn, instance, name + '-clean_' + build_num, manifest)
         end
       else
@@ -453,7 +495,6 @@ class DevEnv < Thor
 
   desc "update", "Update current instance by installing RPMs from local git tree"
   method_option :verbose, :type => :boolean, :desc => "Enable verbose logging"
-
   def update
     options.verbose? ? @@log.level = Logger::DEBUG : @@log.level = Logger::ERROR
 
@@ -461,20 +502,31 @@ class DevEnv < Thor
     `git diff-index --quiet HEAD`
     puts "WARNING - Uncommitted repository changes" if $? != 0
 
-    remove_dir '/tmp/tito/'
-    FileUtils.mkdir_p '/tmp/tito/'
-
     # Figure out what needs to be built - exclude devenv for syncs
-    build_dirs = get_sync_dirs
+    sync_dirs = get_sync_dirs
 
     # Build and install them
-    build_dirs.each do |build_dir|
+    sync_dirs.each do |sync_dir|
+      package_name = sync_dir[0]
+      build_dir = sync_dir[1]
+      remove_dir '/tmp/tito/'
+      FileUtils.mkdir_p '/tmp/tito/'
       puts "Building in #{build_dir}"
       inside(File.expand_path("../#{build_dir}", File.dirname(__FILE__))) do
         # Build and install the RPM's locally
-        unless run('tito build --rpm --test --install', :verbose => options.verbose?)
+        unless run('tito build --rpm --test', :verbose => options.verbose?)
           FileUtils.rm_rf '/tmp/devenv/sync/'
           exit 1
+        end
+        Dir.glob('/tmp/tito/x86_64/*.rpm').each {|file|
+          FileUtils.mkdir_p "/tmp/tito/noarch/"
+          FileUtils.mv file, "/tmp/tito/noarch/"
+        }
+        unless run("rpm -Uvh --force /tmp/tito/noarch/*.rpm", :verbose => options.verbose?)
+          unless run("rpm -e --justdb --nodeps #{package_name}; yum install -y /tmp/tito/noarch/*.rpm", :verbose => options.verbose?)
+            FileUtils.rm_rf '/tmp/devenv/sync/'
+            exit 1
+          end
         end
       end
     end
@@ -486,9 +538,8 @@ class DevEnv < Thor
   method_option :verbose, :type => :boolean, :desc => "Enable verbose logging"
   method_option :verifier, :type => :boolean, :desc => "Maintain verifier functionality (private IP setup)"
   method_option :skip_build, :type => :boolean, :desc => "Indicator to skip the rpm build/install"
-  method_option :clean_metadata, :type => :boolean, :desc => "Cleans metadata before running yum update"
+  method_option :clean_metadata, :type => :boolean, :desc => "Cleans metadata before running yum commands"
   method_option :region, :required => false, :desc => "Amazon region override (default us-east-1)"
-
   def sync(name)
     options.verbose? ? @@log.level = Logger::DEBUG : @@log.level = Logger::ERROR
 
@@ -510,7 +561,7 @@ class DevEnv < Thor
 
     if !options.skip_build?
       puts "Performing remote install...."
-      output, exit_code = ssh(hostname, "set -e; #{options.clean_metadata? ? 'yum clean metadata; ' : ''}yum update -y --exclude='rhc-devenv' --disablerepo=\* --enablerepo=li rhc-*; rm -rf li-working os-client-tools-working; git clone li li-working;#{has_client ? ' git clone os-client-tools os-client-tools-working;' : ''} pushd li-working; build/devenv update #{options.verbose? ? '--verbose' : ''} 2>&1; popd; rm -rf li-working os-client-tools-working", 600, true)
+      output, exit_code = ssh(hostname, "set -e; #{options.clean_metadata? ? 'yum clean metadata; ' : ''}rm -rf li-working os-client-tools-working; git clone li li-working;#{has_client ? ' git clone os-client-tools os-client-tools-working;' : ''} pushd li-working; build/devenv update #{options.verbose? ? '--verbose' : ''} 2>&1; popd; rm -rf li-working os-client-tools-working; yum update -y --exclude='rhc-devenv' --disablerepo=\* --enablerepo=li rhc-* *cloud-sdk*", 600, true)
       if exit_code != 0
         puts "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
         puts "Build failed!  Exiting."
@@ -660,10 +711,13 @@ END
     if File.exists?(home_dir)
       Dir.glob(File.join(home_dir, '???*'), File::FNM_DOTMATCH).each {|file|
         puts "Installing ~/#{File.basename(file)}"
-        scp_to(hostname, file, "~/#{File.basename(file)}", File.stat(file).mode, 10)
+        scp_to(hostname, file, "~/", File.stat(file).mode, 10)
       }
     end
 
+    puts "Public IP:       #{instance.public_ip_address}"
+    puts "Public Hostname: #{hostname}"
+    puts "Site URL:        https://#{hostname}"
     puts "Done"
   end
 
@@ -745,7 +799,7 @@ END
       inside('../os-client-tools') do
         temp_commit
 
-        `rm -rf /tmp/tito/; pushd express; tito build --rpm --test; popd; sudo rpm -Uvh /tmp/tito/noarch/rhc-*;rm -rf /tmp/tito/; mkdir -p /tmp/tito`
+        `rm -rf /tmp/tito/; pushd express; tito build --rpm --test; popd; sudo rpm -Uvh --force /tmp/tito/noarch/rhc-*;rm -rf /tmp/tito/; mkdir -p /tmp/tito`
 
         reset_temp_commit
 

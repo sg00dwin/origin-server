@@ -2,7 +2,7 @@
 
 Summary:   Provides JBossAS7 support
 Name:      rhc-cartridge-jbossas-7
-Version:   0.87.5
+Version:   0.87.10
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   ASL 2.0
@@ -11,13 +11,14 @@ Source0:   %{name}-%{version}.tar.gz
 
 BuildRoot: %(mktemp -ud %{_tmppath}/%{name}-%{version}-%{release}-XXXXXX)
 BuildRequires:  git
-BuildRequires:  java-devel >= 1:1.6.0 
+BuildRequires:  java-devel >= 1:1.6.0
 BuildRequires:  jpackage-utils
 Requires:  rhc-node
 # When updating jboss-as7, update the alternatives link below
-Requires: jboss-as7 = 7.1.0.Final
-Requires:  maven3
-Requires:  apr
+Requires: jboss-as7 >= 7.1.0.Final
+Requires: jboss-as7-modules >= 7.1.0.Final
+Requires: maven3
+Requires: apr
 
 Obsoletes: rhc-cartridge-jbossas-7.0
 
@@ -33,11 +34,11 @@ Provides JBossAS7 support to OpenShift
 
 #mkdir -p template/src/main/webapp/WEB-INF/classes
 #pushd template/src/main/java > /dev/null
-#/usr/bin/javac *.java -d ../webapp/WEB-INF/classes 
+#/usr/bin/javac *.java -d ../webapp/WEB-INF/classes
 #popd
 
 mkdir -p info/data
-pushd template/src/main/webapp > /dev/null 
+pushd template/src/main/webapp > /dev/null
 /usr/bin/jar -cvf ../../../../info/data/ROOT.war -C . .
 popd
 
@@ -111,6 +112,35 @@ rm -rf %{buildroot}
 %config(noreplace) %{cartridgedir}/info/configuration/
 
 %changelog
+* Mon Feb 27 2012 Dan McPherson <dmcphers@redhat.com> 0.87.10-1
+- cleanup all the old command usage in help and messages (dmcphers@redhat.com)
+- add existence check for standalone.xml before migrating (dmcphers@redhat.com)
+
+* Sun Feb 26 2012 Dan McPherson <dmcphers@redhat.com> 0.87.9-1
+- finishing standalone.xml migration (dmcphers@redhat.com)
+- remembering old standalone.xml for reference (dmcphers@redhat.com)
+- add a force to the client install (dmcphers@redhat.com)
+- moved xslt (bdecoste@gmail.com)
+- initial jboss migration and sync fixes (dmcphers@redhat.com)
+
+* Sat Feb 25 2012 Dan McPherson <dmcphers@redhat.com> 0.87.8-1
+- 
+
+* Sat Feb 25 2012 Dan McPherson <dmcphers@redhat.com> 0.87.7-1
+- add back apr (dmcphers@redhat.com)
+- remove apr from jboss spec (dmcphers@redhat.com)
+- add >= to jboss requires (dmcphers@redhat.com)
+- Add jboss modules as a dependency to jboss cartridge. (mpatel@redhat.com)
+
+* Fri Feb 24 2012 Dan McPherson <dmcphers@redhat.com> 0.87.6-1
+- add obsoletes of old package (dmcphers@redhat.com)
+- Automatic commit of package [rhc-cartridge-jbossas-7] release [0.87.5-1].
+  (dmcphers@redhat.com)
+- fix spec (dmcphers@redhat.com)
+- Automatic commit of package [rhc-cartridge-jbossas-7] release [0.87.4-1].
+  (dmcphers@redhat.com)
+- renaming jbossas7 (dmcphers@redhat.com)
+
 * Fri Feb 24 2012 Dan McPherson <dmcphers@redhat.com> 0.87.5-1
 - fix spec (dmcphers@redhat.com)
 

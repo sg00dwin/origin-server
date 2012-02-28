@@ -4,10 +4,11 @@
 %define sitedir %{_localstatedir}/www/libra/site
 %define devenvdir %{_sysconfdir}/libra/devenv
 %define jenkins %{_sharedstatedir}/jenkins
+%define policydir %{_datadir}/selinux/packages
 
 Summary:   Dependencies for OpenShift development
 Name:      rhc-devenv
-Version:   0.87.3
+Version:   0.87.6
 Release:   1%{?dist}
 Group:     Development/Libraries
 License:   GPLv2
@@ -89,6 +90,10 @@ touch %{buildroot}%{sitedir}/log/development.log
 mkdir -p %{buildroot}%{jenkins}/jobs
 mv %{buildroot}%{devenvdir}%{jenkins}/jobs/* %{buildroot}%{jenkins}/jobs
 
+# Add the SELinux policy files
+mkdir -p %{buildroot}%{policydir}
+cp %{buildroot}%{devenvdir}%{policydir}/* %{buildroot}%{policydir} 
+
 %clean
 rm -rf %{buildroot}
 
@@ -138,6 +143,12 @@ chown -R jenkins:jenkins /var/lib/jenkins
 # Allow httpd to relay
 /usr/sbin/setsebool -P httpd_can_network_relay=on || :
 
+# Add policy for developement environment
+cd %{policydir} ; make -f ../devel/Makefile
+semodule -i dhcpnamedforward.pp
+cd
+
+
 # Increase kernel semaphores to accomodate many httpds
 echo "kernel.sem = 250  32000 32  4096" >> /etc/sysctl.conf
 sysctl kernel.sem="250  32000 32  4096"
@@ -181,7 +192,6 @@ git init --bare /root/os-client-tools
 
 # Start services
 service iptables restart
-service named stop
 service qpidd restart
 service mcollective start
 service libra-datastore configure
@@ -192,7 +202,7 @@ service jenkins restart
 service httpd restart
 service sshd restart
 chkconfig iptables on
-#chkconfig named on
+chkconfig named on
 chkconfig qpidd on
 chkconfig mcollective on
 chkconfig libra-datastore on
@@ -210,6 +220,10 @@ chkconfig cgconfig on
 chkconfig cgred on
 chkconfig libra-cgroups on
 chkconfig libra-tc on
+
+# DHCP/DNS Service initialization
+service network restart
+service named restart
 
 # Watchman services
 chkconfig libra-watchman on || :
@@ -256,8 +270,60 @@ cp -f %{devenvdir}/puppet-private.pem /var/lib/puppet/ssl/private_keys/localhost
 %{_initddir}/libra-broker
 %{_initddir}/libra-site
 %{_initddir}/sauce-connect
+%{policydir}/*
 
 %changelog
+* Mon Feb 27 2012 Dan McPherson <dmcphers@redhat.com> 0.87.6-1
+- Merge remote-tracking branch 'origin/master' (mlamouri@redhat.com)
+- re-enable lookup recursion (mlamouri@redhat.com)
+
+* Mon Feb 27 2012 Dan McPherson <dmcphers@redhat.com> 0.87.5-1
+- Merge remote-tracking branch 'origin/master' (mlamouri@redhat.com)
+- commented resolver prepend to bypass local DNS (mlamouri@redhat.com)
+- disabled dnssec: it interferes with forwarding EC2 internal requests
+  (mlamouri@redhat.com)
+- add logic for killing old verifiers (dmcphers@redhat.com)
+- Merge remote-tracking branch 'origin/master' (mlamouri@redhat.com)
+- disabled recursion to allow correct resolution of ec2 internals
+  (mlamouri@redhat.com)
+- Fixed path of log file. (mpatel@redhat.com)
+- enable named, restart network service to initialize forwarding
+  (mlamouri@redhat.com)
+
+* Sat Feb 25 2012 Dan McPherson <dmcphers@redhat.com> 0.87.4-1
+- Adds rhc-last-access to cron. (mpatel@redhat.com)
+- Merge remote-tracking branch 'origin/master' (mlamouri@redhat.com)
+- named listens on 953 as well for rndc silence (mlamouri@redhat.com)
+- corrected %%policydir reference in %%post (mlamouri@redhat.com)
+- add files entry for policy sources (mlamouri@redhat.com)
+- add build code to copy policy files (mlamouri@redhat.com)
+- add code to compile and install policy (mlamouri@redhat.com)
+- renaming jbossas7 (dmcphers@redhat.com)
+- added policy source to allow local DNS server (mlamouri@redhat.com)
+- create tito tmp.  seems to be an issue with the new tito
+  (dmcphers@redhat.com)
+- allow execute of hooks (mlamouri@redhat.com)
+- invert named restart condition (mlamouri@redhat.com)
+- added rndc config for named status and control (mlamouri@redhat.com)
+- Adding httpd.conf file (mmcgrath@redhat.com)
+- Merge remote-tracking branch 'origin/master' (mlamouri@redhat.com)
+- added a script to update named forwarders on dhcp renew (mlamouri@redhat.com)
+- uncommented forwarders (mlamouri@redhat.com)
+- li-devenv.sh: removed extra testing output (tdawson@redhat.com)
+- li-devenv.sh: fixed my variable in the repo (tdawson@redhat.com)
+- li-devenv.sh: added some testing to look at stuff (tdawson@redhat.com)
+- li-devenv.sh: install 32 bit java before anything else, do extra yum
+  (tdawson@redhat.com)
+- li-devenv.sh: added the 32 bit RHUI repo (tdawson@redhat.com)
+- Merge branch 'master' of git1.ops.rhcloud.com:/srv/git/li
+  (tdawson@redhat.com)
+- li-devenv.sh: removed all 32 bit java stuff (tdawson@redhat.com)
+- Merge remote-tracking branch 'origin/master' (mlamouri@redhat.com)
+- recursion allows proper next-step lookup for non-authoritative zones in the
+  local domain (mlamouri@redhat.com)
+- li-devenv.sh: install 32 bit java before anything else (tdawson@redhat.com)
+- li-devenv.sh: added the 32 bit RHUI repo (tdawson@redhat.com)
+
 * Wed Feb 22 2012 Dan McPherson <dmcphers@redhat.com> 0.87.3-1
 - disable named for now (dmcphers@redhat.com)
 - added devenv modifications for BIND dns testing (mlamouri@redhat.com)

@@ -5,14 +5,36 @@ class Application < Cloud::Sdk::Cartridge
                 :state, :group_instance_map, :comp_instance_map, :conn_endpoints_list,
                 :domain, :group_override_map, :working_comp_inst_hash,
                 :working_group_inst_hash, :configure_order, :start_order,
-                :scalable, :proxy_cartridge, :init_git_url
+                :scalable, :proxy_cartridge, :init_git_url, :node_profile
   primary_key :name
   exclude_attributes :user, :comp_instance_map, :group_instance_map, 
                 :working_comp_inst_hash, :working_group_inst_hash,
                 :init_git_url
   include_attributes :comp_instances, :group_instances
+
+  APP_NAME_MAX_LENGTH = 32
+  NAMESPACE_MAX_LENGTH = 16
   
   validate :extended_validator
+  
+  validates_each :name, :allow_nil =>false do |record, attribute, val|
+    if !(val =~ /\A[A-Za-z0-9]+\z/)
+      record.errors.add attribute, {:message => "Invalid #{attribute} specified: #{val}", :exit_code => 105}
+    end
+    if val and val.length > APP_NAME_MAX_LENGTH
+      record.errors.add attribute, {:message => "The supplied application name '#{val}' is too long. (Max permitted length: #{APP_NAME_MAX_LENGTH} characters)", :exit_code => 105}
+    end
+    Rails.logger.debug "Checking to see if application name is black listed"    
+    if Cloud::Sdk::ApplicationContainerProxy.blacklisted?(val)
+      record.errors.add attribute, {:message => "The supplied application name '#{val}' is not allowed", :exit_code => 105}
+    end
+  end
+  
+  validates_each :node_profile, :allow_nil =>true do |record, attribute, val|
+    if !(val =~ /\A(jumbo|exlarge|large|micro|std)\z/)
+      record.errors.add attribute, {:message => "Invalid Profile: #{val}.  Must be: (jumbo|exlarge|large|micro|std)", :exit_code => 1}
+    end
+  end
 
   def extended_validator
     notify_observers(:validate_application)
@@ -25,6 +47,7 @@ class Application < Cloud::Sdk::Cartridge
   # @param [deprecated, String] framework Cartridge name to use as the framwwork of the application
   def initialize(user=nil, app_name=nil, uuid=nil, node_profile=nil, framework=nil, template=nil, will_scale=false)
     self.user = user
+    self.node_profile = node_profile
     
     if template.nil?
       from_descriptor({"Name"=>app_name, "Subscribes"=>{"doc-root"=>{"Type"=>"FILESYSTEM:doc-root"}}})
@@ -139,27 +162,26 @@ class Application < Cloud::Sdk::Cartridge
       
       Rails.logger.debug "Creating gears"
       group_instances.uniq.each do |ginst|
+        is_web_gear = false
+        wb = self.web_cart
         gear = Gear.new(self, ginst)
-        #FIXME: backward compat: first gears UUID = app.uuid
-        gear.uuid = self.uuid if gears_created.size == 0
-        
-        gears_created.push gear
-        create_result = gear.create
-        if self.scalable
-          ginst.reused_by.each { |gname|
-            if gname.include? self.web_cart
-              # register dns here
-              self.add_dns(gear.uuid[0..9], @user.namespace, gear.get_proxy.get_public_hostname)
-              break
-            end
-          }
+        ginst.component_instances.each { |cname| is_web_gear = true if cname.include? wb }
+        if scalable
+          gear.uuid = self.uuid if not is_web_gear
+        else
+          #FIXME: backward compat: first gears UUID = app.uuid
+          gear.uuid = self.uuid
         end
-        # self.save
+        gear.node_profile = self.node_profile if is_web_gear 
+        
+        create_result = gear.create
         result_io.append create_result
         unless create_result.exitcode == 0
           raise Cloud::Sdk::NodeException.new("Unable to create gear on node", "-100", result_io)
         end
 
+        self.add_dns(gear.uuid[0..9], @user.namespace, gear.get_proxy.get_public_hostname) if self.scalable and is_web_gear
+        gears_created.push gear
         ginst.gears << gear
 
         #TODO: save gears here
@@ -238,6 +260,10 @@ class Application < Cloud::Sdk::Cartridge
     }
     if not new_gear.nil?
       result_io.append self.configure_dependencies
+      self.add_system_ssh_keys([new_gear])
+      self.add_ssh_keys([new_gear])
+      self.add_system_env_vars([new_gear])
+      self.execute_connections
     end
     result_io
   end
@@ -275,6 +301,7 @@ class Application < Cloud::Sdk::Cartridge
 
       # inform anyone who needs to know that this gear is no more
       self.configure_dependencies
+      self.execute_connections
       break
     }
     result_io
@@ -366,8 +393,6 @@ class Application < Cloud::Sdk::Cartridge
       raise exceptions.first
     end
     
-    execute_connections
-
     self.save
     self.class.notify_observers(:after_application_configure, {:application => self, :reply => reply})
     reply
@@ -411,18 +436,20 @@ class Application < Cloud::Sdk::Cartridge
   def deconfigure_dependencies
     reply = ResultIO.new
     self.class.notify_observers(:before_application_deconfigure, {:application => self, :reply => reply})  
-    self.configure_order.each do |comp_inst_name|
-      comp_inst = self.comp_instance_map[comp_inst_name]
-      group_inst = self.group_instance_map[comp_inst.group_instance_name]
-      begin
-        run_on_gears(group_inst.gears, reply, false) do |gear, r|
-          r.append gear.deconfigure(comp_inst)
-          r.append process_cartridge_commands(r.cart_commands)
-          # self.save
+    if(self.configure_order)
+      self.configure_order.each do |comp_inst_name|
+        comp_inst = self.comp_instance_map[comp_inst_name]
+        group_inst = self.group_instance_map[comp_inst.group_instance_name]
+        begin
+          run_on_gears(group_inst.gears, reply, false) do |gear, r|
+            r.append gear.deconfigure(comp_inst)
+            r.append process_cartridge_commands(r.cart_commands)
+            # self.save
+          end
+        rescue  Exception => e
+          self.save
+          raise e
         end
-      rescue  Exception => e
-        self.save
-        raise e
       end
     end
     self.save
@@ -878,7 +905,14 @@ class Application < Cloud::Sdk::Cartridge
     
     raise Cloud::Sdk::UserException.new("#{dep} already embedded in '#{@name}'", 101) if self.embedded.include? dep
     self.requires_feature << dep
-    reply.append self.configure_dependencies
+    begin
+      reply.append self.configure_dependencies
+    rescue Exception=>e
+      self.elaborate_descriptor
+      cleanup_deleted_components
+      self.save
+      raise e
+    end
 
     self.class.notify_observers(:after_add_dependency, {:application => self, :dependency => dep, :reply => reply})
     reply

@@ -1,3 +1,5 @@
+require 'selenium/webdriver/support/select'
+
 module OpenShift
   module Express
     class Form
@@ -12,10 +14,8 @@ module OpenShift
       def set_value(field, value)
         el = @page.find_element(:id => @fields[field])
         if "select" == el.tag_name
-          el.click
-          el.find_elements( :tag_name => "option" ).find do |option|
-            option.text == value
-          end.click
+          select = Selenium::WebDriver::Support::Select.new(el)
+          select.select_by(:value, value)
         else
           el.clear
           el.send_keys value

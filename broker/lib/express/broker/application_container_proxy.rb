@@ -744,6 +744,8 @@ module Express
               else
                 result.errorIO << line['CLIENT_ERROR: '.length..-1]
               end
+            elsif line =~ /^CART_DATA: /
+              result.data << line['CART_DATA: '.length..-1]
             elsif line =~ /^APP_INFO: /
               result.appInfoIO << line['APP_INFO: '.length..-1]
             elsif result.exitcode == 0

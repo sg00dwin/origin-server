@@ -2,7 +2,7 @@
 
 Summary:   Provides php-5.3 support
 Name:      rhc-cartridge-php-5.3
-Version:   0.87.3
+Version:   0.87.5
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   ASL 2.0
@@ -100,6 +100,23 @@ rm -rf %{buildroot}
 %doc %{cartridgedir}/LICENSE
 
 %changelog
+* Mon Feb 27 2012 Dan McPherson <dmcphers@redhat.com> 0.87.5-1
+- cleanup all the old command usage in help and messages (dmcphers@redhat.com)
+
+* Sat Feb 25 2012 Dan McPherson <dmcphers@redhat.com> 0.87.4-1
+- Blanket purge proxy ports on application teardown. (rmillner@redhat.com)
+- fix php publish url to send exposed port (rchopra@redhat.com)
+- Update cartridge configure hooks to load git repo from remote URL Add REST
+  API to create application from template Moved application template
+  models/controller to cloud-sdk (kraman@gmail.com)
+- Revert "local commits for testing - required for tito build"
+  (abhgupta@redhat.com)
+- local commits for testing - required for tito build (abhgupta@redhat.com)
+- run connectors as non-root (rchopra@redhat.com)
+- include open4 for cdk-connector-execute, fix in php publish_http_url
+  connector.. we dont need the external port for proxying web interfaces
+  (rchopra@redhat.com)
+
 * Wed Feb 22 2012 Dan McPherson <dmcphers@redhat.com> 0.87.3-1
 - Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
   (rchopra@redhat.com)

@@ -1,0 +1,184 @@
+= stylesheet_link_tag '/app/stylesheets/site.css', :media => 'all'
+%header
+  #top
+    .container
+      .pull-left Sign up for the newsletter
+      .pull-right.signin
+        %a Sign in
+        %span.provider{:style => 'width: 16px; height: 16px; background-color: #555; display: inline-block;'} F
+        %span.provider{:style => 'width: 16px; height: 16px; background-color: #555; display: inline-block;'} T
+        %span.provider{:style => 'width: 16px; height: 16px; background-color: #555; display: inline-block;'} G
+  #nav
+    .container
+      .navigation-bar
+        .brand
+          %strong> Open
+          Shift
+        %ul.navigation.unstyled
+          %li.group-one.active= link_to "Overview", "."
+          %li.group-one= link_to "Documentation", "dev_center"
+          %li.group-spacer
+          %li.group-two= link_to "Console", "console"
+          %li.group-two= link_to "Community", "community"
+
+      .messaging
+        .primary 
+          Join the 
+          %strong OpenShift Community
+        .secondary This is the place to learn and engage with OpenShift users and developers. Sign in to participate
+
+:plain
+  <section class="main">
+    <header>
+      <h1>
+        Express
+        </h1>
+      </header>
+      <div class="content content-main">
+        <nav>
+          <div class="block block-search" id="block-search-0">
+  <h2>Search</h2>
+
+  <div class="content">
+    <form id="search-block-form" method="post" accept-charset="UTF-8" action="/openshift/community/blogs/new-openshift-release-feb-21-2012-w-auto-recovery-and-rest-api">
+  <div><div class="container-inline">
+    <div id="edit-search-block-form-1-wrapper" class="form-item">
+  <label for="edit-search-block-form-1"> </label>
+  <input type="text" class="form-text" title="Enter the terms you wish to search for." value="" size="15" id="edit-search-block-form-1" name="search_block_form" maxlength="128">
+  </div>
+  <input type="submit" class="form-submit" value="Search" id="edit-submit" name="op">
+  <input type="hidden" value="form-7e6db968d5d80073cb85ccebcd622673" id="form-7e6db968d5d80073cb85ccebcd622673" name="form_build_id">
+  <input type="hidden" value="search_block_form" id="edit-search-block-form" name="form_id">
+  </div>
+
+  </div></form>
+  </div>
+  </div>
+  <div class="block block-menu" id="block-menu-menu-community-navigation">
+  <h2>Community Navigation</h2>
+
+  <div class="content">
+    <ul class="menu"><li class="leaf first"><a title="Post your feature/enhancement ideas here and vote on them!" href="/openshift/community/ideas">Vote on Features</a></li>
+  <li class="leaf"><a title="OpenShift Blogs page - read about OpenShift news, features, and events!" href="/openshift/community/blogs">Blogs</a></li>
+  <li class="leaf"><a title="OpenShift Forums page - where our community posts Q&amp;A about OpenShift usage" href="/openshift/community/forums">Forums</a></li>
+  <li class="leaf"><a title="OpenShift Frequently Asked Questions" href="/openshift/community/faq">FAQs</a></li>
+  <li class="leaf"><a title="OpenShift Knowledge Base" href="/openshift/community/kb">Knowledge Base</a></li>
+  <li class="leaf"><a title="OpenShift videos - see what everyone is doing with OpenShift!" href="/openshift/community/videos">Videos</a></li>
+  <li class="leaf"><a title="OpenShift Events - see where we'll be presenting next!" href="/openshift/community/events">Events</a></li>
+  <li class="leaf"><a title="OpenShift end user documentation" href="/openshift/community/documents">Documentation</a></li>
+  <li class="leaf"><a title="A catalog of OpenShift resources for MongoDB." href="https://www.redhat.com/openshift/community/page/mongodb-resources">MongoDB Resources</a></li>
+  <li class="leaf"><a title="A catalog of OpenShift resources for JBoss." href="/openshift/community/page/jboss-resources">JBoss Resources</a></li>
+  <li class="leaf last"><a title="Hang out with the OpenShift Community on IRC!" href="http://webchat.freenode.net/?channels=openshift&amp;uio=d4">Chat With Us on IRC</a></li>
+  </ul>  </div>
+  </div>
+  </nav>
+    <div class="content-inner">
+      <section id="about" class="default">
+        <div class="breadcrumb"><a class="active" href="http://openshift.redhat.com/app">OpenShift</a> &gt; <a href="/openshift/community/">Community</a> &gt; <a href="/openshift/community/blogs">Blogs</a> &gt; New OpenShift Release - Feb 21, 2012 - w/ Auto-Recovery and REST API</div>	        	        	        	        <div class="node node-blog" id="node-7515">
+
+  <h2>New OpenShift Release - Feb 21, 2012 - w/ Auto-Recovery and REST API</h2>
+  <p>Tuesday, February 21, 2012</p>
+  <div class="view view-author-profile-box view-id-author_profile_box view-display-id-block_1 view-dom-id-1">
+
+
+
+  <div class="view-content">
+    <div class="author-bio-box">
+  <div class="blog-author-image"><img width="80" height="80" class="imagecache imagecache-blog_author_image_80x80 imagecache-default imagecache-blog_author_image_80x80_default" title="" alt="" src="https://www.redhat.com/openshift/community/sites/default/files/imagecache/blog_author_image_80x80/blog/author/images/headshot.png"></div>
+  <div class="title_1">by Mike Mcgrath</div>
+  <div class="field_author_profession_title_value"></div>
+  <div class="author-bio">Cloud Architect at Red Hat and general cloud / open source advocate.</div>
+  </div>
+  </div>
+
+
+
+
+
+
+  </div> 
+  <div class="content clear-block">
+    <div class="field field-type-nodereference field-field-author">
+      <div class="field-label">Author:&nbsp;</div>
+    <div class="field-items">
+      <div class="field-item odd">
+        <a href="/openshift/community/author/mike-mcgrath">Mike Mcgrath</a>        </div>
+        </div>
+  </div>
+  <p>A new OpenShift Express update is available today. We've been working on a lot of "behind the scenes" architecture. One of them is a feature we're calling Watchman. When your applications misbehave or bloat beyond their jail, our PaaS layer kicks in and protects the other applications from harm. The problem is this leaves the misfit application in a bad state.</p>
+
+  <p>&nbsp;</p>
+
+  <p>Watchman watches for events like these and attempts to auto-recover applications that get in a bad state. You don't have to do anything to use this feature, it's just there working to make sure your applications stay as long as possible, even if they hit an out of memory killer.</p>
+
+  <p>&nbsp;</p>
+
+  <p>Since we don't have too many user changing announcements to make this time around I thought I'd go into a sneak-peak of what is going on under the covers in OpenShift so everyone can better understand what we're working on. One new feature coming soon involves dramatic changes in our API. If you happen to be using the API directly pay attention for future announcements there. We've been hard at work for an API that is completely REST compliant.</p>
+
+  <p>&nbsp;</p>
+
+  <p>Along with that change we're working on new ways to define more complex applications. For users that have been using our git hub examples at <a title="https://github.com/openshift/" href="https://github.com/openshift/">https://github.com/openshift/</a> you may have noticed that this process is still pretty manual requiring to add and specify framework type and dependencies manually. We're working on ways for everyone to simplify this process and change the way we all think of an "application".</p>
+
+  <p>&nbsp;</p>
+
+  <p>Users are coming up with more complex uses for OpenShift every day and we making sure we keep up. We follow the forums and work with the community to find new features to put in OpenShift. Make sure you participate so we can get in the features you want - <a title="https://www.redhat.com/openshift/community/ideas" href="https://www.redhat.com/openshift/community/ideas">https://www.redhat.com/openshift/community/ideas</a></p>
+    </div>
+
+    <div class="clear-block">
+      <div class="meta">
+        </div>
+
+          <div class="links"><ul class="links inline"><li class="comment_forbidden first"><span><a href="/openshift/community/user/login?destination=node%2F7515%23comment-form">Login</a> or <a href="/openshift/community/user/register?destination=node%2F7515%23comment-form">register</a> to post comments</span></li>
+  <li class="addthis last"><span><a addthis:title="New OpenShift Release - Feb 21, 2012 - w/ Auto-Recovery and REST API" addthis:url="https://www.redhat.com/openshift/community/blogs/new-openshift-release-feb-21-2012-w-auto-recovery-and-rest-api" class="addthis_button" href="/openshift/community/"><img width="125" border="0" height="16" alt="Share" src="//s7.addthis.com/static/btn/v2/lg-share-en.gif"></a></span></li>
+  </ul></div>
+    </div>
+
+  </div>
+  <div id="comments">
+    </div>
+
+      </section>
+        </div>
+        </div>
+      </section>
+
+%footer
+  #footer-nav
+    .container
+      .row
+        .span3.link-column
+          %header
+            %h3 News
+          %ul.unstyled
+            %li= link_to 'Announcements', 'https://www.redhat.com/openshift/forums/news-and-announcements'
+            %li= link_to 'Blog', 'https://www.redhat.com/openshift/blogs'
+            %li= link_to 'Twitter', 'http://www.twitter.com/#!/openshift'
+
+        .span3.link-column
+          %header
+            %h3 Community
+          %ul.unstyled
+            %li= link_to 'Forum', 'https://www.redhat.com/openshift/forums/'
+            %li= link_to 'Partner Program', partners_path
+            %li= link_to 'IRC Channel', 'http://webchat.freenode.net/?randomnick=1&channels=openshift&uio=d4'
+            %li= link_to 'Feedback', 'mailto:openshift@redhat.com'
+
+        .span3.link-column
+          %header
+            %h3 Legal
+          %ul.unstyled
+            %li= link_to 'Legal', legal_path
+            %li= link_to 'Privacy Policy', legal_openshift_privacy_path
+            %li= link_to 'Security', 'https://access.redhat.com/security/team/contact/'
+
+        .span3.link-column
+          %header
+            %h3 Help
+          %ul.unstyled
+            %li= link_to 'FAQ', 'http://www.redhat.com/openshift/faq'
+            %li= link_to 'Contact', 'mailto:openshift@redhat.com'
+
+  %section#copyright
+    .container
+      %img{ :src => "/app/images/redhat.png", :alt => "Red Hat" }
+      .pull-right Copyright &copy; 2011 Red Hat, Inc.

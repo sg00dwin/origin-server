@@ -5,7 +5,7 @@
 
 Summary:        Cloud Development Common
 Name:           rubygem-%{gemname}
-Version:        0.5.1
+Version:        0.5.3
 Release:        1%{?dist}
 Group:          Development/Languages
 License:        ASL 2.0
@@ -73,6 +73,18 @@ rm -rf %{buildroot}
 %{ruby_sitelib}/%{gemname}.rb
 
 %changelog
+* Mon Feb 27 2012 Dan McPherson <dmcphers@redhat.com> 0.5.3-1
+- US1908: Allow only vip users to create gears that are larger than medium
+  (std) (kraman@gmail.com)
+- Adding missing gemfile.lock in cloud-sdk-common gem (kraman@gmail.com)
+
+* Sat Feb 25 2012 Dan McPherson <dmcphers@redhat.com> 0.5.2-1
+- BugzId# 795829: find_by_uuid no longer requires login name when looking up
+  application (kraman@gmail.com)
+- Update cartridge configure hooks to load git repo from remote URL Add REST
+  API to create application from template Moved application template
+  models/controller to cloud-sdk (kraman@gmail.com)
+
 * Thu Feb 16 2012 Dan McPherson <dmcphers@redhat.com> 0.5.1-1
 - bump spec numbers (dmcphers@redhat.com)
 

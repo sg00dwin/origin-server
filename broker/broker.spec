@@ -3,7 +3,7 @@
 
 Summary:   Li broker components
 Name:      rhc-broker
-Version:   0.87.3
+Version:   0.87.8
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -83,6 +83,41 @@ rm -rf $RPM_BUILD_ROOT
 /bin/touch %{brokerdir}/log/production.log
 
 %changelog
+* Mon Feb 27 2012 Dan McPherson <dmcphers@redhat.com> 0.87.8-1
+- Updating gem versions (dmcphers@redhat.com)
+
+* Mon Feb 27 2012 Dan McPherson <dmcphers@redhat.com> 0.87.7-1
+- 
+
+* Mon Feb 27 2012 Dan McPherson <dmcphers@redhat.com> 0.87.6-1
+- Updating gem versions (dmcphers@redhat.com)
+- Merge branch 'master' of git1.ops.rhcloud.com:/srv/git/li (rpenta@redhat.com)
+- gear info REST api call fix (rpenta@redhat.com)
+
+* Mon Feb 27 2012 Dan McPherson <dmcphers@redhat.com> 0.87.5-1
+- Updating gem versions (dmcphers@redhat.com)
+- BugzID# 797098, 796088. Application validation (kraman@gmail.com)
+- Adding config for template collection to all environments (kraman@gmail.com)
+- Bigfix. App creation was failing for non vip users. (kraman@gmail.com)
+- US1908: Allow only vip users to create gears that are larger than medium
+  (std) (kraman@gmail.com)
+
+* Sat Feb 25 2012 Dan McPherson <dmcphers@redhat.com> 0.87.4-1
+- Updating gem versions (dmcphers@redhat.com)
+- get rid of debug log messages in libra_check (lnader@redhat.com)
+- adding back Gemfile.lock assuming it was deleted by accident
+  (dmcphers@redhat.com)
+- Temporary commit to build (ffranz@redhat.com)
+- Update cartridge configure hooks to load git repo from remote URL Add REST
+  API to create application from template Moved application template
+  models/controller to cloud-sdk (kraman@gmail.com)
+- Merge branch 'master' of git1.ops.rhcloud.com:/srv/git/li (rpenta@redhat.com)
+- bind dns service bug fixes and cleanup (rpenta@redhat.com)
+- fix validate args for mcollective calls as we are sending json strings over
+  now (rchopra@redhat.com)
+- jsonify connector output from multiple gears for consumption by subscriber
+  connectors (rchopra@redhat.com)
+
 * Wed Feb 22 2012 Dan McPherson <dmcphers@redhat.com> 0.87.3-1
 - Updating gem versions (dmcphers@redhat.com)
 - trying to fix the build... continued (dmcphers@redhat.com)
