@@ -132,7 +132,7 @@
 				<timer-service thread-pool-name="default">
 					<data-store path="timer-service-data" relative-to="jboss.server.data.dir" />
 				</timer-service>
-				<remote connector-ref="remoting-connector" thread-pool-name="default" />
+				<!--remote connector-ref="remoting-connector" thread-pool-name="default" /-->
 				<thread-pools>
 					<thread-pool name="default">
 						<max-threads count="10" />
