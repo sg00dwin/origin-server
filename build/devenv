@@ -79,6 +79,10 @@ class DevEnv < Thor
       puts "Done"
     end
 
+    def repo_path(dir='')
+      File.expand_path("../#{dir}", File.dirname(__FILE__))
+    end
+
     def download_artifacts(hostname)
       print "Downloading logs and screenshots..."
       `mkdir -p rhc/log`
@@ -345,6 +349,35 @@ class DevEnv < Thor
   def write_sync_history()
     options.verbose? ? @@log.level = Logger::DEBUG : @@log.level = Logger::ERROR
     get_sync_dirs
+  end
+
+  desc "watch", "Watch for changes to your source directory and copy them to the remote image.  Will look for ~/.openshiftdev/watch.lua for an override configuration.  Not a full replacement for 'sync' - intended to speed Rails development. Requires the lsyncd package installed."
+  method_option :verbose, :type => :boolean, :desc => "Enable verbose logging"
+  def watch
+    raise Thor::Error, "You must install lsyncd ('sudo yum install lsyncd') in order to run the 'watch' command" if not run "which lsyncd > /dev/null", :verbose => false
+    options.verbose? ? @@log.level = Logger::DEBUG : @@log.level = Logger::ERROR
+
+    config = File.join ENV['HOME'], '.openshiftdev/watch.lua'
+    if File.exists? config
+      say "Using your custom sync config '#{config}'"
+    else
+      say "Creating the default sync config"
+      template = IO.read(repo_path('build/default_watch.lua')).gsub('{LOCAL_DIR}', "#{repo_path}")
+      if options.verbose?
+        puts "Lsyncd template"
+        puts "----------"
+        puts template
+        puts "----------"
+      end
+      Tempfile.open('lsynctemplate') { |f| f.puts template; config = f.path }
+    end
+
+    # Rsync cannot set owner or group, so we should inherit
+    ssh("verifier", "find /var/www/libra -type d | xargs chmod g+s", 1800)
+    ssh("verifier", "find /usr/lib/ruby/site_ruby -type d | xargs chmod g+s", 1800)
+
+    say "Watching your development directories, hit CTRL+C to stop"
+    run "lsyncd #{options.verbose? ? '-log all' : ''} #{config}"
   end
 
   desc "build NAME BUILD_NUM", "Build a new devenv AMI with the given NAME"
@@ -682,6 +715,9 @@ END
       }
     end
 
+    puts "Public IP:       #{instance.public_ip_address}"
+    puts "Public Hostname: #{hostname}"
+    puts "Site URL:        https://#{hostname}"
     puts "Done"
   end
 
