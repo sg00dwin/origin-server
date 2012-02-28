@@ -52,6 +52,8 @@ class KeysController < BaseController
     content = params[:content]
     name = params[:name]
     type = params[:type]
+    
+    Rails.logger.debug "Creating key name:#{name} type:#{type} for user #{@login}"
 
     user = CloudUser.find(@login)
     if(user.nil?)
@@ -113,6 +115,8 @@ class KeysController < BaseController
     id = params[:id]
     content = params[:content]
     type = params[:type]
+    
+    Rails.logger.debug "Updating key name:#{id} type:#{type} for user #{@login}"
 
     user = CloudUser.find(@login)
     if(user.nil?)

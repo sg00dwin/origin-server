@@ -10,35 +10,35 @@
 		<server xmlns="urn:jboss:domain:1.1">
 			<extensions>
 				<extension module="org.jboss.as.clustering.infinispan" />
-				<extension module="org.jboss.as.cmp" />
-				<extension module="org.jboss.as.configadmin" />
+				<!--extension module="org.jboss.as.cmp" /-->
+				<!--extension module="org.jboss.as.configadmin" /-->
 				<extension module="org.jboss.as.connector" />
 				<extension module="org.jboss.as.deployment-scanner" />
 				<extension module="org.jboss.as.ee" />
 				<extension module="org.jboss.as.ejb3" />
-				<extension module="org.jboss.as.jacorb" />
-				<extension module="org.jboss.as.jaxr" />
+				<!--extension module="org.jboss.as.jacorb" /-->
+				<!--extension module="org.jboss.as.jaxr" /-->
 				<extension module="org.jboss.as.jaxrs" />
 				<extension module="org.jboss.as.jdr" />
 				<extension module="org.jboss.as.jmx" />
 				<extension module="org.jboss.as.jpa" />
-				<extension module="org.jboss.as.jsr77" />
+				<!--extension module="org.jboss.as.jsr77" /-->
 				<extension module="org.jboss.as.logging" />
 				<extension module="org.jboss.as.mail" />
-				<extension module="org.jboss.as.messaging" />
+				<!--extension module="org.jboss.as.messaging" /-->
 				<extension module="org.jboss.as.naming" />
-				<extension module="org.jboss.as.osgi" />
+				<!--extension module="org.jboss.as.osgi" /-->
 				<extension module="org.jboss.as.pojo" />
-				<extension module="org.jboss.as.remoting" />
+				<!--extension module="org.jboss.as.remoting" /-->
 				<extension module="org.jboss.as.sar" />
 				<extension module="org.jboss.as.security" />
 				<extension module="org.jboss.as.threads" />
 				<extension module="org.jboss.as.transactions" />
 				<extension module="org.jboss.as.web" />
-				<extension module="org.jboss.as.webservices" />
+				<!--extension module="org.jboss.as.webservices" /-->
 				<extension module="org.jboss.as.weld" />
 			</extensions>
-			<management>
+			<!--management>
 				<management-interfaces>
 					<native-interface>
 						<socket-binding native="management-native" />
@@ -47,7 +47,7 @@
 						<socket-binding http="management-http" />
 					</http-interface>
 				</management-interfaces>
-			</management>
+			</management-->
 			<xsl:apply-templates select="domain:profile" />
 			<interfaces>
 				<interface name="management">
@@ -56,15 +56,15 @@
 				<interface name="public">
 					<loopback-address value="${{OPENSHIFT_INTERNAL_IP}}" />
 				</interface>
-				<interface name="unsecure">
+				<!--interface name="unsecure">
 					<loopback-address value="${{OPENSHIFT_INTERNAL_IP}}" />
-				</interface>
+				</interface-->
 			</interfaces>
 			<socket-binding-group name="standard-sockets"
 				default-interface="public">
 				<socket-binding name="http" port="8080" />
 				<socket-binding name="https" port="8443" />
-				<socket-binding name="jacorb" interface="unsecure"
+				<!--socket-binding name="jacorb" interface="unsecure"
 					port="3528" />
 				<socket-binding name="jacorb-ssl" interface="unsecure"
 					port="3529" />
@@ -77,7 +77,7 @@
 				<socket-binding name="messaging" port="5445" />
 				<socket-binding name="messaging-throughput" port="5455" />
 				<socket-binding name="osgi-http" port="8090" />
-				<socket-binding name="remoting" port="4447" />
+				<socket-binding name="remoting" port="4447" /-->
 				<socket-binding name="txn-recovery-environment" port="4712" />
 				<socket-binding name="txn-status-manager" port="4713" />
 				<outbound-socket-binding name="mail-smtp">
@@ -86,47 +86,12 @@
 			</socket-binding-group>
 		</server>
 	</xsl:template>
-
-	<xsl:template match="domain:extensions">
-		<extensions>
-			<extension module="org.jboss.as.clustering.infinispan" />
-			<extension module="org.jboss.as.cmp" />
-			<extension module="org.jboss.as.configadmin" />
-			<extension module="org.jboss.as.connector" />
-			<extension module="org.jboss.as.deployment-scanner" />
-			<extension module="org.jboss.as.ee" />
-			<extension module="org.jboss.as.ejb3" />
-			<extension module="org.jboss.as.jacorb" />
-			<extension module="org.jboss.as.jaxr" />
-			<extension module="org.jboss.as.jaxrs" />
-			<extension module="org.jboss.as.jdr" />
-			<extension module="org.jboss.as.jmx" />
-			<extension module="org.jboss.as.jpa" />
-			<extension module="org.jboss.as.jsr77" />
-			<extension module="org.jboss.as.logging" />
-			<extension module="org.jboss.as.mail" />
-			<extension module="org.jboss.as.messaging" />
-			<extension module="org.jboss.as.naming" />
-			<extension module="org.jboss.as.osgi" />
-			<extension module="org.jboss.as.pojo" />
-			<extension module="org.jboss.as.remoting" />
-			<extension module="org.jboss.as.sar" />
-			<extension module="org.jboss.as.security" />
-			<extension module="org.jboss.as.threads" />
-			<extension module="org.jboss.as.transactions" />
-			<extension module="org.jboss.as.web" />
-			<extension module="org.jboss.as.webservices" />
-			<extension module="org.jboss.as.weld" />
-		</extensions>
-	</xsl:template>
 	
-
-
 	<xsl:template match="domain:profile">
 		<profile xmlns="urn:jboss:domain:1.1">
 			<xsl:apply-templates select="logging:subsystem" />
-			<subsystem xmlns="urn:jboss:domain:cmp:1.0" />
-			<subsystem xmlns="urn:jboss:domain:configadmin:1.0" />
+			<!--subsystem xmlns="urn:jboss:domain:cmp:1.0" />
+			<subsystem xmlns="urn:jboss:domain:configadmin:1.0" /-->
 			<xsl:apply-templates select="datasources:subsystem" />
 			<subsystem xmlns="urn:jboss:domain:deployment-scanner:1.1">
 				<deployment-scanner path="deployments"
@@ -195,16 +160,16 @@
 					</local-cache>
 				</cache-container>
 			</subsystem>
-			<subsystem xmlns="urn:jboss:domain:jacorb:1.1">
+			<!--subsystem xmlns="urn:jboss:domain:jacorb:1.1">
 				<orb>
 					<initializers transactions="spec" security="on" />
 				</orb>
-			</subsystem>
-			<subsystem xmlns="urn:jboss:domain:jaxr:1.0">
+			</subsystem-->
+			<!--subsystem xmlns="urn:jboss:domain:jaxr:1.0">
 				<connection-factory jndi-name="java:jboss/jaxr/ConnectionFactory" />
 				<juddi-server publish-url="http://localhost:8080/juddi/publish"
 					query-url="http://localhost:8080/juddi/query" />
-			</subsystem>
+			</subsystem-->
 			<subsystem xmlns="urn:jboss:domain:jaxrs:1.0" />
 			<subsystem xmlns="urn:jboss:domain:jca:1.1">
 				<archive-validation xmlns="urn:jboss:domain:jca:1.0"
@@ -227,20 +192,20 @@
 				</default-workmanager>
 			</subsystem>
 			<subsystem xmlns="urn:jboss:domain:jdr:1.0" />
-			<subsystem xmlns="urn:jboss:domain:jmx:1.1">
+			<!--subsystem xmlns="urn:jboss:domain:jmx:1.1">
 				<show-model value="true" />
 				<remoting-connector />
-			</subsystem>
+			</subsystem-->
 			<subsystem xmlns="urn:jboss:domain:jpa:1.0">
 				<jpa default-datasource="" />
 			</subsystem>
-			<subsystem xmlns="urn:jboss:domain:jsr77:1.0" />
+			<!--subsystem xmlns="urn:jboss:domain:jsr77:1.0" /-->
 			<subsystem xmlns="urn:jboss:domain:mail:1.0">
 				<mail-session jndi-name="java:jboss/mail/Default">
 					<smtp-server outbound-socket-binding-ref="mail-smtp" />
 				</mail-session>
 			</subsystem>
-			<subsystem xmlns="urn:jboss:domain:messaging:1.1">
+			<!--subsystem xmlns="urn:jboss:domain:messaging:1.1">
 				<hornetq-server>
 					<persistence-enabled>true</persistence-enabled>
 					<journal-file-size>102400</journal-file-size>
@@ -326,18 +291,15 @@
 						</jms-topic>
 					</jms-destinations>
 				</hornetq-server>
-			</subsystem>
+			</subsystem-->
 			<subsystem xmlns="urn:jboss:domain:naming:1.1" />
-			<subsystem xmlns="urn:jboss:domain:osgi:1.2" activation="lazy">
+			<!--subsystem xmlns="urn:jboss:domain:osgi:1.2" activation="lazy">
 				<properties>
-					<!-- Specifies the beginning start level of the framework -->
 					<property name="org.osgi.framework.startlevel.beginning">1</property>
 				</properties>
 				<capabilities>
-					<!-- modules registered with the OSGi layer on startup -->
 					<capability name="javax.servlet.api:v25" />
 					<capability name="javax.transaction.api" />
-					<!-- bundles started in startlevel 1 -->
 					<capability name="org.apache.felix.log" startlevel="1" />
 					<capability name="org.jboss.osgi.logging" startlevel="1" />
 					<capability name="org.apache.felix.configadmin"
@@ -345,11 +307,11 @@
 					<capability name="org.jboss.as.osgi.configadmin"
 						startlevel="1" />
 				</capabilities>
-			</subsystem>
+			</subsystem-->
 			<subsystem xmlns="urn:jboss:domain:pojo:1.0" />
-			<subsystem xmlns="urn:jboss:domain:remoting:1.1">
+			<!--subsystem xmlns="urn:jboss:domain:remoting:1.1">
 				<connector name="remoting-connector" socket-binding="remoting" />
-			</subsystem>
+			</subsystem-->
 			<subsystem xmlns="urn:jboss:domain:resource-adapters:1.0" />
 			<subsystem xmlns="urn:jboss:domain:sar:1.0" />
 			<subsystem xmlns="urn:jboss:domain:security:1.1">
@@ -393,7 +355,7 @@
 					<alias name="localhost" />
 				</virtual-server>
 			</subsystem>
-			<subsystem xmlns="urn:jboss:domain:webservices:1.1">
+			<!--subsystem xmlns="urn:jboss:domain:webservices:1.1">
 				<modify-wsdl-address>true</modify-wsdl-address>
 				<wsdl-host>${OPENSHIFT_INTERNAL_IP}</wsdl-host>
 				<endpoint-config name="Standard-Endpoint-Config" />
@@ -404,7 +366,7 @@
 							class="org.jboss.ws.common.invocation.RecordingServerHandler" />
 					</pre-handler-chain>
 				</endpoint-config>
-			</subsystem>
+			</subsystem-->
 			<subsystem xmlns="urn:jboss:domain:weld:1.0" />
 		</profile>
 	</xsl:template>
