@@ -2,7 +2,7 @@
 
 Summary:   Provides mod_perl support
 Name:      rhc-cartridge-perl-5.10
-Version:   0.18.3
+Version:   0.18.4
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   ASL 2.0
@@ -97,6 +97,11 @@ rm -rf $RPM_BUILD_ROOT
 %doc %{cartridgedir}/LICENSE
 
 %changelog
+* Mon Feb 27 2012 Dan McPherson <dmcphers@redhat.com> 0.18.4-1
+- perl-5.10.spec: added requires cpan to be consistant with production nodes
+  (tdawson@redhat.com)
+- cleanup all the old command usage in help and messages (dmcphers@redhat.com)
+
 * Sat Feb 25 2012 Dan McPherson <dmcphers@redhat.com> 0.18.3-1
 - Blanket purge proxy ports on application teardown. (rmillner@redhat.com)
 - Update cartridge configure hooks to load git repo from remote URL Add REST

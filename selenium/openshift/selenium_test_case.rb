@@ -91,6 +91,10 @@ module OpenShift
       @signin  = OpenShift::Express::Login.new(page,'signin')
       @reset   = OpenShift::Express::Reset.new(page,'reset_password')
       @signup  = OpenShift::Express::Signup.new(page,'signup')
+
+      # new console tests using the REST API
+      @rest_console = OpenShift::Rest::Console.new(page, "#{base_url}/app/console")
+      @rest_account = OpenShift::Rest::Account.new(page, "#{base_url}/app/account")
     end
 
     def run(*args, &blk)

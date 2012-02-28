@@ -2,7 +2,7 @@
 
 Summary:       Multi-tenant cloud management system node tools
 Name:          rhc-node
-Version:       0.87.4
+Version:       0.87.5
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -247,6 +247,16 @@ fi
 /lib64/security/pam_libra.so
 
 %changelog
+* Mon Feb 27 2012 Dan McPherson <dmcphers@redhat.com> 0.87.5-1
+- Adds apptegic call to report idled apps. (mpatel@redhat.com)
+- add link to rails production.log (dmcphers@redhat.com)
+- specify full path to the git deploy script (johnp@redhat.com)
+- add submodule support testsing and move to app tmp dir instead of user tmp
+  (johnp@redhat.com)
+- add support for submodules when deploying to repo directory
+  (johnp@redhat.com)
+- cleanup all the old command usage in help and messages (dmcphers@redhat.com)
+
 * Sun Feb 26 2012 Dan McPherson <dmcphers@redhat.com> 0.87.4-1
 - finishing standalone.xml migration (dmcphers@redhat.com)
 - initial jboss migration and sync fixes (dmcphers@redhat.com)

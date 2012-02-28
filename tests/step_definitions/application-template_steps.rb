@@ -4,7 +4,7 @@ end
 
 When /^I add a new template named '([^\']*)' with dependencies: '([^\']*)' and git repository '([^\']*)' and tags '([^\']*)' consuming (\d+) gear and metadata '([^\']*)'$/ do |display_name, dependencies, git_url, tags, num_gears, metadata|
   dependencies = dependencies.split(",").map{ |dep| "  - #{dep}\n"}
-  output = `rhc-admin-add-template -n "#{display_name}" -d "Requires: \n#{dependencies}" -g #{git_url} -t#{tags} -c #{num_gears} -m '#{metadata}'`
+  output = `rhc-admin-add-template -n "#{display_name}" -d "Requires: \n#{dependencies}\nSubscribes:\n  doc-root:\n    Type: \"FILESYSTEM:doc-root\"" -g #{git_url} -t#{tags} -c #{num_gears} -m '#{metadata}'`
   @template_uuid = output.split(" ")[1]
 end
 
