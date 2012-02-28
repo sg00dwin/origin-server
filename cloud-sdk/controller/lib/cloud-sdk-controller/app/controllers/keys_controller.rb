@@ -4,16 +4,15 @@ class KeysController < BaseController
   include LegacyBrokerHelper
   #GET /user/keys
   def index
-    user = CloudUser.find(@login)
-    if(user.nil?)
+    if(@cloud_user.nil?)
       @reply = RestReply.new(:not_found)
       @reply.messages.push(Message.new(:error, "User #{@login} not found", 99))
       respond_with @reply, :status => @reply.status
     return
     end
     ssh_keys = Array.new
-    unless user.ssh_keys.nil?
-      user.ssh_keys.each do |name, key|
+    unless @cloud_user.ssh_keys.nil?
+      @cloud_user.ssh_keys.each do |name, key|
         ssh_key = RestKey.new(name, key["key"], key["type"])
         ssh_keys.push(ssh_key)
       end
@@ -25,15 +24,14 @@ class KeysController < BaseController
   #GET /user/keys/<id>
   def show
     id = params[:id]
-    user = CloudUser.find(@login)
-    if user.nil? or user.ssh_keys.nil?
+    if @cloud_user.nil? or @cloud_user.ssh_keys.nil?
       @reply = RestReply.new(:not_found)
       @reply.messages.push(Message.new(:error, "User #{@login} not found", 99))
       respond_with @reply, :status => @reply.status
     return
     end
-    if user.ssh_keys
-      user.ssh_keys.each do |key_name, key|
+    if @cloud_user.ssh_keys
+      @cloud_user.ssh_keys.each do |key_name, key|
         if key_name == id
           @reply = RestReply.new(:ok, "key", RestKey.new(key_name, key["key"], key["type"]))
           respond_with @reply, :status => @reply.status
@@ -55,8 +53,7 @@ class KeysController < BaseController
     
     Rails.logger.debug "Creating key name:#{name} type:#{type} for user #{@login}"
 
-    user = CloudUser.find(@login)
-    if(user.nil?)
+    if(@cloud_user.nil?)
       @reply = RestReply.new(:not_found)
       @reply.messages.push(Message.new(:error, "User #{@login} not found", 99))
       respond_with @reply, :status => @reply.status
@@ -76,8 +73,8 @@ class KeysController < BaseController
     return
     end
     #check to see if key already exists
-    if user.ssh_keys
-      user.ssh_keys.each do |key_name, key|
+    if @cloud_user.ssh_keys
+      @cloud_user.ssh_keys.each do |key_name, key|
         if key_name == name
           @reply = RestReply.new(:conflict)
           @reply.messages.push(Message.new(:error, "SSH key with name #{name} already exists. Use a different name or delete conflicting key and retry.", 120, "name"))
@@ -94,9 +91,9 @@ class KeysController < BaseController
     end
 
     begin
-      user.add_ssh_key(name, content, type)
-      user.save
-      ssh_key = RestKey.new(name, user.ssh_keys[name]["key"], user.ssh_keys[name]["type"])
+      @cloud_user.add_ssh_key(name, content, type)
+      @cloud_user.save
+      ssh_key = RestKey.new(name, @cloud_user.ssh_keys[name]["key"], @cloud_user.ssh_keys[name]["type"])
       @reply = RestReply.new(:created, "key", ssh_key)
       @reply.messages.push(Message.new(:info, "Created SSH key #{name} for user #{@login}"))
       respond_with @reply, :status => @reply.status
@@ -118,8 +115,7 @@ class KeysController < BaseController
     
     Rails.logger.debug "Updating key name:#{id} type:#{type} for user #{@login}"
 
-    user = CloudUser.find(@login)
-    if(user.nil?)
+    if(@cloud_user.nil?)
       @reply = RestReply.new(:not_found)
       @reply.messages.push(Message.new(:error, "User #{@login} not found", 99))
       respond_with(@reply) do |format|
@@ -145,7 +141,7 @@ class KeysController < BaseController
     return
     end
 
-    if user.ssh_keys.nil? or not user.ssh_keys.has_key?(id)
+    if @cloud_user.ssh_keys.nil? or not @cloud_user.ssh_keys.has_key?(id)
       @reply = RestReply.new(:not_found)
       @reply.messages.push(Message.new(:error, "SSH key with name #{id} not found for user #{@login}", 118))
       respond_with(@reply) do |format|
@@ -156,9 +152,9 @@ class KeysController < BaseController
     end
 
     begin
-      user.update_ssh_key(content, type, id)
-      user.save
-      ssh_key = RestKey.new(id, user.ssh_keys[id]["key"], user.ssh_keys[id]["type"])
+      @cloud_user.update_ssh_key(content, type, id)
+      @cloud_user.save
+      ssh_key = RestKey.new(id, @cloud_user.ssh_keys[id]["key"], @cloud_user.ssh_keys[id]["type"])
       @reply = RestReply.new(:ok, "key", ssh_key)
       @reply.messages.push(Message.new(:info, "Updated SSH key with name #{id} for user #{@login}"))
       respond_with(@reply) do |format|
@@ -181,8 +177,7 @@ class KeysController < BaseController
   def destroy
     id = params[:id]
 
-    user = CloudUser.find(@login)
-    if(user.nil?)
+    if(@cloud_user.nil?)
       @reply = RestReply.new(:not_found)
       @reply.messages.push(Message.new(:error, "User #{@login} not found", 99))
       respond_with(@reply) do |format|
@@ -192,7 +187,7 @@ class KeysController < BaseController
     return
     end
 
-    if user.ssh_keys.nil? or not user.ssh_keys.has_key?(id)
+    if @cloud_user.ssh_keys.nil? or not @cloud_user.ssh_keys.has_key?(id)
       @reply = RestReply.new(:not_found)
       @reply.messages.push(Message.new(:error, "SSH key with name #{id} not found for user #{@login}", 118))
       respond_with(@reply) do |format|
@@ -203,8 +198,8 @@ class KeysController < BaseController
     end
 
     begin
-      user.remove_ssh_key(id)
-      user.save
+      @cloud_user.remove_ssh_key(id)
+      @cloud_user.save
       @reply = RestReply.new(:no_content)
       @reply.messages.push(Message.new(:info, "Deleted SSH key #{id} for user #{@login}"))
       respond_with(@reply) do |format|

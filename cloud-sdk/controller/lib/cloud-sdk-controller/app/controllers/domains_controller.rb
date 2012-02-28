@@ -1,7 +1,6 @@
 class DomainsController < BaseController
   respond_to :xml, :json
   before_filter :authenticate
-  before_filter :lookup_user, :except => [:create]
 
   # GET /domains
   def index
@@ -205,12 +204,5 @@ class DomainsController < BaseController
       end
       return
     end
-  end
-
-  protected
-
-
-  def lookup_user
-    @cloud_user = CloudUser.find(@login)
   end
 end

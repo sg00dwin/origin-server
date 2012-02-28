@@ -1,7 +1,7 @@
  class CloudUser < Cloud::Sdk::UserModel
-  attr_accessor :login, :uuid, :system_ssh_keys, :env_vars, :ssh_keys, :namespace, :max_gears, :consumed_gears, :applications
+  attr_accessor :login, :uuid, :system_ssh_keys, :env_vars, :ssh_keys, :namespace, :max_gears, :consumed_gears, :applications, :auth_method
   primary_key :login
-  exclude_attributes :applications
+  exclude_attributes :applications, :auth_method
   require_update_attributes :system_ssh_keys, :env_vars, :ssh_keys
   private :login=, :uuid=, :namespace=
   DEFAULT_SSH_KEY_NAME = "default"

@@ -10,8 +10,7 @@ class EmbCartEventsController < BaseController
     cartridge = params[:cartridge_id]
     event = params[:event]
 
-    cloud_user = CloudUser.find(@login)
-    application = Application.find(cloud_user,id)
+    application = Application.find(@cloud_user,id)
     if(application.nil?)
       @reply = RestReply.new(:not_found)
       message = Message.new(:error, "Application #{id} not found.")
@@ -53,7 +52,7 @@ class EmbCartEventsController < BaseController
       return
     end
     
-    application = Application.find(cloud_user, id)
+    application = Application.find(@cloud_user, id)
     app = RestApplication.new(application, domain_id)
     @reply = RestReply.new(:ok, "application", app)
     message = Message.new(:info, "Added #{event} on #{cartridge} for application #{id}")
