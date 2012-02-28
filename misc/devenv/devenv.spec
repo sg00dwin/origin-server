@@ -8,7 +8,7 @@
 
 Summary:   Dependencies for OpenShift development
 Name:      rhc-devenv
-Version:   0.87.5
+Version:   0.87.6
 Release:   1%{?dist}
 Group:     Development/Libraries
 License:   GPLv2
@@ -273,6 +273,10 @@ cp -f %{devenvdir}/puppet-private.pem /var/lib/puppet/ssl/private_keys/localhost
 %{policydir}/*
 
 %changelog
+* Mon Feb 27 2012 Dan McPherson <dmcphers@redhat.com> 0.87.6-1
+- Merge remote-tracking branch 'origin/master' (mlamouri@redhat.com)
+- re-enable lookup recursion (mlamouri@redhat.com)
+
 * Mon Feb 27 2012 Dan McPherson <dmcphers@redhat.com> 0.87.5-1
 - Merge remote-tracking branch 'origin/master' (mlamouri@redhat.com)
 - commented resolver prepend to bypass local DNS (mlamouri@redhat.com)
