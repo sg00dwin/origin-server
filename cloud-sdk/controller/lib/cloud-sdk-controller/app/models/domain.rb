@@ -6,4 +6,10 @@ class Domain < Cloud::Sdk::Model
    def initialize(namespace)
      self.namespace = namespace
    end
+   
+   def self.namespace_available?(namespace)
+     Rails.logger.debug "Checking too see if namesspace #{namespace} is available"
+     dns_service = Cloud::Sdk::DnsService.instance
+     return dns_service.namespace_available?(namespace)
+   end
 end
