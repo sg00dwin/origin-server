@@ -10,6 +10,9 @@
 
 # The environment is inherited from the context in the dhclient-script at the
 # time when this file is sourced.
+
+# The file operations here require the dhcpnamedforward SELinux module to
+# succeed.  If the file write fails, check that the policy is loaded.
 # 
 
 FORWARD_CONF=${FORWARD_CONF:="/var/named/forwarders.conf"}
