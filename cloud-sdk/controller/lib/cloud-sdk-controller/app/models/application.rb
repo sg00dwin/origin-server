@@ -905,7 +905,14 @@ class Application < Cloud::Sdk::Cartridge
     
     raise Cloud::Sdk::UserException.new("#{dep} already embedded in '#{@name}'", 101) if self.embedded.include? dep
     self.requires_feature << dep
-    reply.append self.configure_dependencies
+    begin
+      reply.append self.configure_dependencies
+    rescue Exception=>e
+      self.elaborate_descriptor
+      cleanup_deleted_components
+      self.save
+      raise e
+    end
 
     self.class.notify_observers(:after_add_dependency, {:application => self, :dependency => dep, :reply => reply})
     reply
