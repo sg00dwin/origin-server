@@ -73,13 +73,13 @@ class DomainsController < BaseController
     rescue Cloud::Sdk::UserException => e
       @reply = RestReply.new(:conflict)
       @reply.process_result_io(e.resultIO)
-      @reply.messages.push(e.message)
+      @reply.messages.push(Message.new(:error, e.message, e.code, :namespace))
       respond_with @reply, :status => @reply.status
       return
     rescue Cloud::Sdk::DNSException => e
       @reply = RestReply.new(:conflict)
       @reply.process_result_io(e.resultIO)
-      @reply.messages.push(e.message)
+      @reply.messages.push(Message.new(:error, e.message, e.code))
       respond_with @reply, :status => @reply.status
     return
     end
@@ -122,7 +122,28 @@ class DomainsController < BaseController
     end
 
     result_io = ResultIO.new
-    result_io.append @cloud_user.update_namespace(new_namespace) unless params[:namespace].nil?
+    begin
+      result_io.append @cloud_user.update_namespace(new_namespace) unless params[:namespace].nil?
+    rescue Cloud::Sdk::UserException => e
+      @reply = RestReply.new(:conflict)
+      @reply.process_result_io(e.resultIO)
+      @reply.messages.push(Message.new(:error, e.message, e.code, :namespace))
+      respond_with(@reply) do |format|
+        format.xml { render :xml => @reply, :status => @reply.status }
+        format.json { render :json => @reply, :status => @reply.status }
+      end
+      return
+    rescue Cloud::Sdk::DNSException => e
+      @reply = RestReply.new(:conflict)
+      @reply.process_result_io(e.resultIO)
+      @reply.messages.push(Message.new(:error, e.message, e.code))
+    respond_with(@reply) do |format|
+        format.xml { render :xml => @reply, :status => @reply.status }
+        format.json { render :json => @reply, :status => @reply.status }
+      end
+    return
+    end
+
     @cloud_user = CloudUser.find(@login)
     domain = RestDomain.new(@cloud_user.namespace)
     @reply = RestReply.new(:ok, "domain", domain)

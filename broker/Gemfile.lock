@@ -43,7 +43,7 @@ GEM
       json
       mongo
       rack
-    cloud-sdk-controller (0.5.6)
+    cloud-sdk-controller (0.5.8)
       activesupport
       cloud-sdk-common
       dnsruby
