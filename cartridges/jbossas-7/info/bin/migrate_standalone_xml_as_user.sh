@@ -1,9 +1,16 @@
 #!/bin/bash
 set -e
 
+# Import Environment Variables
+for f in ~/.env/*
+do
+    . $f
+done
+
 WORKING_DIR=$1
 GIT_DIR=$2
 
+export OPENSHIFT_SKIP_GIT_HOOKS="true"
 rm -rf $WORKING_DIR 
 git clone $GIT_DIR $WORKING_DIR
 pushd $WORKING_DIR > /dev/null
