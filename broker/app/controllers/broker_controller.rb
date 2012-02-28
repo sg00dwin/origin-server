@@ -56,6 +56,7 @@ class BrokerController < ApplicationController
       
     rescue Exception => e
       Rails.logger.debug "Exception in nurture post: #{e.message}"
+      Rails.logger.debug e.backtrace.inspect
       render :json => generate_result_json(e.message, nil, e.respond_to?('exit_code') ? e.exit_code : 1), :status => :internal_server_error
     end
   end

@@ -5,7 +5,7 @@
 
 Summary:        Cloud Development Controller
 Name:           rubygem-%{gemname}
-Version:        0.5.5
+Version:        0.5.7
 Release:        1%{?dist}
 Group:          Development/Languages
 License:        ASL 2.0
@@ -75,6 +75,20 @@ rm -rf %{buildroot}
 %{ruby_sitelib}/%{gemname}.rb
 
 %changelog
+* Mon Feb 27 2012 Dan McPherson <dmcphers@redhat.com> 0.5.7-1
+- Updating gem versions (dmcphers@redhat.com)
+- set errors correctly when updating domain (johnp@redhat.com)
+- Merge branch 'master' of git1.ops.rhcloud.com:/srv/git/li (rpenta@redhat.com)
+- gear info REST api call fix (rpenta@redhat.com)
+
+* Mon Feb 27 2012 Dan McPherson <dmcphers@redhat.com> 0.5.6-1
+- Updating gem versions (dmcphers@redhat.com)
+- BugzID# 797098, 796088. Application validation (kraman@gmail.com)
+- BugzID# 797782. Adding links for application templates (kraman@gmail.com)
+- BugzID 797764. Skip deconfigure_dependencies if app descriptor elaboration
+  failed. Return error message if invalid cartridge was specified in template
+  and revert app creation (kraman@gmail.com)
+
 * Sat Feb 25 2012 Dan McPherson <dmcphers@redhat.com> 0.5.5-1
 - Updating gem versions (dmcphers@redhat.com)
 - Merge branch 'master' of git1.ops.rhcloud.com:/srv/git/li (rpenta@redhat.com)

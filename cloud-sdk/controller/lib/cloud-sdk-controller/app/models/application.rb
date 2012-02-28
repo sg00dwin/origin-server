@@ -1,8 +1,6 @@
 require 'state_machine'
-#require 'validators/app_validator'
 
 class Application < Cloud::Sdk::Cartridge
-  #include ActiveModel::Validations
   attr_accessor :user, :creation_time, :uuid, :aliases, :cart_data,
                 :state, :group_instance_map, :comp_instance_map, :conn_endpoints_list,
                 :domain, :group_override_map, :working_comp_inst_hash,
@@ -13,10 +11,31 @@ class Application < Cloud::Sdk::Cartridge
                 :working_comp_inst_hash, :working_group_inst_hash,
                 :init_git_url
   include_attributes :comp_instances, :group_instances
+
+  APP_NAME_MAX_LENGTH = 32
+  NAMESPACE_MAX_LENGTH = 16
   
   validate :extended_validator
-  #validates_with AppValidator
   
+  validates_each :name, :allow_nil =>false do |record, attribute, val|
+    if !(val =~ /\A[A-Za-z0-9]+\z/)
+      record.errors.add attribute, {:message => "Invalid #{attribute} specified: #{val}", :exit_code => 105}
+    end
+    if val and val.length > APP_NAME_MAX_LENGTH
+      record.errors.add attribute, {:message => "The supplied application name '#{val}' is too long. (Max permitted length: #{APP_NAME_MAX_LENGTH} characters)", :exit_code => 105}
+    end
+    Rails.logger.debug "Checking to see if application name is black listed"    
+    if Cloud::Sdk::ApplicationContainerProxy.blacklisted?(val)
+      record.errors.add attribute, {:message => "The supplied application name '#{val}' is not allowed", :exit_code => 105}
+    end
+  end
+  
+  validates_each :node_profile, :allow_nil =>true do |record, attribute, val|
+    if !(val =~ /\A(jumbo|exlarge|large|micro|std)\z/)
+      record.errors.add attribute, {:message => "Invalid Profile: #{val}.  Must be: (jumbo|exlarge|large|micro|std)", :exit_code => 1}
+    end
+  end
+
   def extended_validator
     notify_observers(:validate_application)
   end

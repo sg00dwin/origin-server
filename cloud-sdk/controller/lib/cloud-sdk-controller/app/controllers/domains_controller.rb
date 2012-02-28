@@ -178,6 +178,7 @@ class DomainsController < BaseController
     elsif not @cloud_user.applications.empty?
       @reply = RestReply.new(:bad_request)
       @reply.messages.push(Message.new(:error, "Domain contains applications. Delete applications first or set force to true."))
+
       respond_with(@reply) do |format|
         format.xml { render :xml => @reply, :status => @reply.status }
         format.json { render :json => @reply, :status => @reply.status }

@@ -3,7 +3,7 @@
 
 Summary:   Li broker components
 Name:      rhc-broker
-Version:   0.87.4
+Version:   0.87.7
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -83,6 +83,22 @@ rm -rf $RPM_BUILD_ROOT
 /bin/touch %{brokerdir}/log/production.log
 
 %changelog
+* Mon Feb 27 2012 Dan McPherson <dmcphers@redhat.com> 0.87.7-1
+- 
+
+* Mon Feb 27 2012 Dan McPherson <dmcphers@redhat.com> 0.87.6-1
+- Updating gem versions (dmcphers@redhat.com)
+- Merge branch 'master' of git1.ops.rhcloud.com:/srv/git/li (rpenta@redhat.com)
+- gear info REST api call fix (rpenta@redhat.com)
+
+* Mon Feb 27 2012 Dan McPherson <dmcphers@redhat.com> 0.87.5-1
+- Updating gem versions (dmcphers@redhat.com)
+- BugzID# 797098, 796088. Application validation (kraman@gmail.com)
+- Adding config for template collection to all environments (kraman@gmail.com)
+- Bigfix. App creation was failing for non vip users. (kraman@gmail.com)
+- US1908: Allow only vip users to create gears that are larger than medium
+  (std) (kraman@gmail.com)
+
 * Sat Feb 25 2012 Dan McPherson <dmcphers@redhat.com> 0.87.4-1
 - Updating gem versions (dmcphers@redhat.com)
 - get rid of debug log messages in libra_check (lnader@redhat.com)
