@@ -68,14 +68,14 @@ class DevEnv < Thor
     end
 
     def scp_remote_tests(hostname)
-      print "Archiving local changes..."
+      puts "Archiving local changes..."
       `git archive --prefix li-test/ HEAD --output /tmp/li-test.tar`
       puts "Done"
-      print "Copying tests to remote instance: #{hostname}"
+      puts "Copying tests to remote instance: #{hostname}"
       scp_to(hostname, "/tmp/li-test.tar", "~/", 600, 10)
       puts "Done"
-      print "Extracting tests on remote instance: #{hostname}"
-      puts ssh(hostname, 'set -e; rm -rf li-test; tar -xf li-test.tar; mkdir -p /tmp/rhc/junit', 120)
+      puts "Extracting tests on remote instance: #{hostname}"
+      ssh(hostname, 'set -e; rm -rf li-test; tar -xf li-test.tar; mkdir -p /tmp/rhc/junit', 120)
       puts "Done"
     end
 
