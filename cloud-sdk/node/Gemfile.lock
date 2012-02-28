@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    cloud-sdk-node (0.5.3)
+    cloud-sdk-node (0.5.6)
       activemodel
       cloud-sdk-common
       highline

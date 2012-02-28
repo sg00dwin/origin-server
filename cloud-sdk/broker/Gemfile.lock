@@ -38,14 +38,14 @@ GEM
       json
       mongo
       rack
-    cloud-sdk-controller (0.5.7)
+    cloud-sdk-controller (0.5.8)
       activesupport
       cloud-sdk-common
       dnsruby
       json
       open4
       state_machine
-    cloud-sdk-node (0.5.3)
+    cloud-sdk-node (0.5.6)
       activemodel
       cloud-sdk-common
       highline
