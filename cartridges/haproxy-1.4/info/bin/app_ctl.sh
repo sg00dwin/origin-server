@@ -34,6 +34,7 @@ isrunning() {
 }
 
 start() {
+    set_app_state started
     if ! isrunning
     then
         /usr/sbin/haproxy -f $OPENSHIFT_APP_DIR/conf/haproxy.cfg > /dev/null 2>&1
@@ -44,6 +45,7 @@ start() {
 
 
 stop() {
+    set_app_state stopped
     if [ -f $HAPROXY_PID ]; then
         pid=$( /bin/cat "${HAPROXY_PID}" )
         /bin/kill $pid

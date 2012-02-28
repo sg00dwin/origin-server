@@ -110,10 +110,21 @@ class Watchman
       return
     end
 
-    stop_lock = "#{env[uuid][:OPENSHIFT_APP_DIR]}run/stop_lock"
-    if not File.exists?(stop_lock) 
-      `service libra restartuser #{uuid}`
-      Syslog.info("watchman restarted user #{uuid}: application #{env[uuid][:OPENSHIFT_APP_NAME]}") 
+    state_file = env[uuid][:OPENSHIFT_APP_STATE].nil?  ? File.join(env[uuid][:OPENSHIFT_APP_DIR], 'runtime') : env[uuid][:OPENSHIFT_APP_STATE]
+    state_file = File.join(state_file, '.state')
+
+    if File.exists?(state_file)
+      state = File.read(state_file)
+      if 'idle' != state && 'stopped' != state
+        `service libra restartuser #{uuid}`
+        Syslog.info("watchman restarted user #{uuid}: application #{env[uuid][:OPENSHIFT_APP_NAME]}") 
+      end
+    else
+      stop_lock = File.join(env[uuid][:OPENSHIFT_APP_DIR], 'run', 'stop_lock')
+      if not File.exists?(stop_lock) 
+        `service libra restartuser #{uuid}`
+        Syslog.info("watchman restarted user #{uuid}: application #{env[uuid][:OPENSHIFT_APP_NAME]}") 
+      end
     end
   end
 
