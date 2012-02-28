@@ -27,7 +27,7 @@ class GearsController < BaseController
         comp_list = []
         gear.configured_components.each do |cname|
           comp_inst = app.comp_instance_map[cname]
-          has_proxy_cart = true if cname.include? app.proxy_cartridge
+          has_proxy_cart = true if app.proxy_cartridge and cname.include? app.proxy_cartridge
           next if comp_inst.parent_cart_name == app.name
 
           begin
