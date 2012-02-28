@@ -109,10 +109,18 @@ function find_next_proxy_port {
   for proxy_port in $(uuid_to_portset $uuid)
   do
     proxtarg=$(service libra-proxy showproxy "$proxy_port" | awk '{ print $2 }')
-    if [ -z "$proxtarg" -o "$target" == "$proxtarg" ]
+    if [ -z "$proxtarg" ]
+    then
+      service libra-proxy setproxy "$proxy_port" "$target"
+      retv=$?
+      if [ $retv != 0 ]; then
+        exit 67
+      fi
+      echo "$proxy_port"
+      return 0
+    elif [ "$target" == "$proxtarg" ]
     then
       echo "$proxy_port"
-      [ -z "$proxtarg"] && service libra-proxy setproxy "$proxy_port" "$target"
       return 0
     fi
   done
@@ -163,4 +171,5 @@ function remove_all_proxy_ports {
     setproxy=("${setproxy[@]}" "$proxy_port" "delete")
   done
   service libra-proxy setproxy "${setproxy[@]}"
+  return 0
 }

@@ -32,6 +32,7 @@ isrunning() {
 }
 
 start_jenkins() {
+    set_app_state started
     /usr/lib/jvm/jre-1.6.0/bin/java \
         -Dcom.sun.akuma.Daemon=daemonized \
         -Djava.awt.headless=true \
@@ -55,13 +56,15 @@ start_jenkins() {
 }
 
 stop_jenkins() {
+    set_app_state stopped
     kill -TERM $pid > /dev/null 2>&1
     wait_for_stop $pid
 }
 
 case "$1" in
     start)
-        if [ -f ${OPENSHIFT_APP_DIR}run/stop_lock ]
+        _state=`get_app_state`
+        if [ -f ${OPENSHIFT_APP_DIR}run/stop_lock -o idle = "$_state" ]
         then
             echo "Application is explicitly stopped!  Use 'rhc app start -a ${OPENSHIFT_APP_NAME}' to start back up." 1>&2
             exit 0
