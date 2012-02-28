@@ -395,7 +395,7 @@
 			</subsystem>
 			<subsystem xmlns="urn:jboss:domain:webservices:1.1">
 				<modify-wsdl-address>true</modify-wsdl-address>
-				<wsdl-host>${OPENSHIFT_INTERNAL_IP}</wsdl-host>
+				<wsdl-host>${env.OPENSHIFT_INTERNAL_IP}</wsdl-host>
 				<endpoint-config name="Standard-Endpoint-Config" />
 				<endpoint-config name="Recording-Endpoint-Config">
 					<pre-handler-chain name="recording-handlers"

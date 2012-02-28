@@ -382,7 +382,7 @@ module Express
         
         log_debug "DEBUG: Source district uuid: #{source_district_uuid}"
         log_debug "DEBUG: Destination district uuid: #{destination_district_uuid}"
-        keep_uid = destination_district_uuid == source_district_uuid
+        keep_uid = destination_district_uuid == source_district_uuid && destination_district_uuid && destination_district_uuid != 'NONE'
         log_debug "DEBUG: District unchanged keeping uid" if keep_uid
 
         if source_container.id == destination_container.id
@@ -464,7 +464,7 @@ module Express
           end
 
           begin
-            unless app.embedded.nil?
+            unless app.embedded.nil? || keep_uid
               app.embedded.each do |cart, cart_info|
                 log_debug "DEBUG: Performing cartridge level pre-move for embedded #{cart} for '#{app.name}' on #{source_container.id}"
                 reply.append source_container.send(:run_cartridge_command, "embedded/" + cart, app, app.gear, "pre-move", nil, false)
@@ -497,8 +497,10 @@ module Express
                       app.set_embedded_cart_info(cart, component_details)
                     end
                     reply.append embedded_reply
-                    log_debug "DEBUG: Performing cartridge level post-move for embedded #{cart} for '#{app.name}' on #{destination_container.id}"
-                    reply.append destination_container.send(:run_cartridge_command, "embedded/" + cart, app, app.gear, "post-move", nil, false)
+                    unless keep_uid
+                      log_debug "DEBUG: Performing cartridge level post-move for embedded #{cart} for '#{app.name}' on #{destination_container.id}"
+                      reply.append destination_container.send(:run_cartridge_command, "embedded/" + cart, app, app.gear, "post-move", nil, false)
+                    end
                   end
                 end
 
@@ -537,12 +539,14 @@ module Express
             end
           rescue Exception => e
             begin
-              app.embedded.each do |cart, cart_info|
-                begin
-                  log_debug "DEBUG: Performing cartridge level post-move for embedded #{cart} for '#{app.name}' on #{source_container.id}"
-                  reply.append source_container.send(:run_cartridge_command, "embedded/" + cart, app, app.gear, "post-move", nil, false)
-                rescue Exception => e
-                  log_error "ERROR: Error performing cartridge level post-move for embedded #{cart} for '#{app.name}' on #{source_container.id}: #{e.message}"
+              unless keep_uid
+                app.embedded.each do |cart, cart_info|
+                  begin
+                    log_debug "DEBUG: Performing cartridge level post-move for embedded #{cart} for '#{app.name}' on #{source_container.id}"
+                    reply.append source_container.send(:run_cartridge_command, "embedded/" + cart, app, app.gear, "post-move", nil, false)
+                  rescue Exception => e
+                    log_error "ERROR: Error performing cartridge level post-move for embedded #{cart} for '#{app.name}' on #{source_container.id}: #{e.message}"
+                  end
                 end
               end
             ensure
