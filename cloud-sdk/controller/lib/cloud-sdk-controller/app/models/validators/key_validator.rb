@@ -14,11 +14,11 @@ class KeyValidator < ActiveModel::Validator
     if record.name and  !(record.name =~ /\A[A-Za-z0-9]+\z/)
       record.errors.add("name", {:message => "Invalid key name: #{record.name }", :exit_code => 117})
     end
-    if record.name and record.name.length > NAMESPACE_MAX_LENGTH
-      record.errors.add(attribute, {:message => "Namespace (#{record.name}) is too long.  Maximum length is #{KEY_NAME_MAX_LENGTH} characters.", :exit_code => 117})
+    if record.name and record.name.length > KEY_NAME_MAX_LENGTH
+      record.errors.add("name", {:message => "Namespace (#{record.name}) is too long.  Maximum length is #{KEY_NAME_MAX_LENGTH} characters.", :exit_code => 117})
     end
-    if record.name and record.name.length < NAMESPACE_MIN_LENGTH
-      record.errors.add(attribute, {:message => "Namespace (#{record.name}) is too short.  Minimum length is #{KEY_NAME_MIN_LENGTH} characters.", :exit_code => 117})
+    if record.name and record.name.length < KEY_NAME_MIN_LENGTH
+      record.errors.add("name", {:message => "Namespace (#{record.name}) is too short.  Minimum length is #{KEY_NAME_MIN_LENGTH} characters.", :exit_code => 117})
     end
     if !record.type
       record.errors.add("type", {:message => "Key type is required and cannot be blank.", :exit_code => 116})
