@@ -5,7 +5,7 @@
 
 Summary:        Cloud Development Node
 Name:           rubygem-%{gemname}
-Version:        0.5.5
+Version:        0.5.6
 Release:        1%{?dist}
 Group:          Development/Languages
 License:        ASL 2.0
@@ -87,6 +87,10 @@ rm -rf %{buildroot}
 %{ruby_sitelib}/%{gemname}.rb
 
 %changelog
+* Mon Feb 27 2012 Dan McPherson <dmcphers@redhat.com> 0.5.6-1
+- Updating gem versions (dmcphers@redhat.com)
+- bumping spec version (dmcphers@redhat.com)
+
 * Mon Feb 27 2012 Dan McPherson <dmcphers@redhat.com> 0.5.4-1
 - Updating gem versions (dmcphers@redhat.com)
 
