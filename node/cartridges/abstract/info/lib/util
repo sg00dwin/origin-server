@@ -8,6 +8,9 @@ function start_app {
     do
         . $env_var
     done
+
+    set_app_state started
+
     for cmd in `awk 'BEGIN { for (a in ENVIRON) if (a ~ /DB_CTL_SCRIPT$/) print ENVIRON[a] }'`
     do
         run_as_user "$cmd start" || error "Failed to start ${cmd}" 121
@@ -27,6 +30,9 @@ function stop_app {
     do
         . $env_var
     done
+
+    set_app_state stopped
+
     for cmd in `awk 'BEGIN { for (a in ENVIRON) if (a == "OPENSHIFT_APP_CTL_SCRIPT") print ENVIRON[a] }'`
     do
         run_as_user "$cmd stop" || echo "Failed to stop ${cmd}" 1>&2
@@ -434,16 +440,27 @@ function unobfuscate_app_home {
 }
 
 function send_stopped_status {
-    if [ -f $APP_DIR/run/stop_lock ]
-    then
-        HTTP_DIR=`dirname "/etc/httpd/conf.d/libra/${uuid}"*/00000_default.conf`
-        if [ -f $HTTP_DIR/0000000000000_disabled.conf ]
-        then
-            send_attr "status=ALREADY_IDLED"
-        else
-            send_attr "status=ALREADY_STOPPED"
-        fi
-    fi
+    _state=`get_app_state`
+
+    case "$_state" in
+      idle)     send_attr "status=ALREADY_IDLED" ;;
+      stopped)  send_attr "status=ALREADY_STOPPED" ;;
+      *)
+          if [ -f $APP_DIR/run/stop_lock ]
+          then
+              send_attr "status=ALREADY_IDLED"
+          else
+              send_attr "status=ALREADY_STOPPED"
+              HTTP_DIR=`dirname "/etc/httpd/conf.d/libra/${uuid}"*/00000_default.conf`
+              if [ -f $HTTP_DIR/0000000000000_disabled.conf ]
+              then
+                  send_attr "status=ALREADY_IDLED"
+              else
+                  send_attr "status=ALREADY_STOPPED"
+              fi
+          fi
+          ;;
+    esac
 }
 
 function send_quotas {
@@ -488,7 +505,13 @@ function observe_setup_var_lib_file {
 }
 
 function run_as_user {
-    runuser --shell /bin/sh "$uuid" -c "$1"
+    _uuid=${uuid:-$OPENSHIFT_APP_UUID}
+
+    if [ "`whoami`" = "$_uuid" ]; then
+        eval $1
+    else
+      runuser --shell /bin/sh "$_uuid" -c "$1"
+    fi
 }
 
 function super_run_as_user {
@@ -511,6 +534,51 @@ function validate_run_as_user {
         echo 2>&1
         exit 15
     fi
+}
+
+function openshift_state_dir {
+  if [ -z "$OPENSHIFT_APP_STATE" ]; then
+    echo "${APP_DIR:-$OPENSHIFT_APP_DIR}/runtime/"
+  else
+    echo "$OPENSHIFT_APP_STATE"
+  fi
+}
+
+function get_app_state {
+  get_cartridge_state `openshift_state_dir`
+}
+
+function get_cartridge_state {
+  _state_file="$1/.state"
+  if [ -f "$_state_file" ]; then
+    cat "$_state_file"
+  else
+    echo unknown
+  fi
+}
+
+# expected values: building, deploying, started, idle, stopped, or unknown
+function set_app_state {
+  set_cartridge_state `openshift_state_dir` $1
+}
+
+function set_cartridge_state {
+  _state_file="$1/.state"
+  #if [ ! -d "$1" ]; then
+  #  run_as_user "mkdir -p \"$1\""
+  #fi
+
+  run_as_user "echo \"$2\" >$_state_file"
+}
+
+function test_app_state {
+  _state=`get_app_state`
+  return `test "$_state" = "$1"`
+}
+
+function test_cartridge_state {
+  _state=`get_cartridge_state "$1"`
+  return `test "$_state" = $2`
 }
 
 if [ -f /usr/libexec/li/lib/util_ext ]

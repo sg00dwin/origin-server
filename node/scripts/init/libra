@@ -145,27 +145,40 @@ startapp() {
     uid=$(id -u "$1")
     setuppam $1
     mcs_level=`get_mcs_level $uid`
+
+    _state_file="/var/lib/libra/$1/.env/OPENSHIFT_APP_STATE"
+    [ -f "$_state_file" ] && source "$_state_file"
     source /var/lib/libra/$1/.env/OPENSHIFT_RUN_DIR
-    if [ -f "${OPENSHIFT_RUN_DIR}/stop_lock" ]
-    then
-        echo "$1 is locked"
-    else
-        print_column -n 59 "    $(basename $2)"
-        local OUTPUT=$(daemon --user="$1" --pidfile=httpd_$1-$(basename $2) runcon -t libra_t -l $mcs_level $2 start)
-        RETVAL=$?
-        if [ $RETVAL -eq 0 ]
-        then
-            echo_success
-        else
-            GROUP_RETVAL=$(($GROUP_RETVAL+1))
-            echo_failure
-            echo
-            echo $OUTPUT
-            echo
-        fi
-        echo
+
+    _state_file="$OPENSHIFT_APP_STATE/.state"
+    if [ -f "$_state_file" ]; then
+      _state=`cat "$_state_file"`
+    elif [ -f "${OPENSHIFT_RUN_DIR}/stop_lock" ]; then
+      _state='idle'
     fi
+
+    case "$_state" in
+        idle) echo "$1 is locked" ;;
+        stopped) echo "$1 is locked" ;;
+        *)
+            print_column -n 59 "    $(basename $2)"
+            local OUTPUT=$(daemon --user="$1" --pidfile=httpd_$1-$(basename $2) runcon -t libra_t -l $mcs_level $2 start)
+            RETVAL=$?
+            if [ $RETVAL -eq 0 ]
+            then
+                echo_success
+            else
+                GROUP_RETVAL=$(($GROUP_RETVAL+1))
+                echo_failure
+                echo
+                echo $OUTPUT
+                echo
+            fi
+            echo
+            ;;
+    esac
     unset OPENSHIFT_RUN_DIR
+    unset OPENSHIFT_APP_STATE
 }
 
 stopapp() {

@@ -111,6 +111,8 @@ module LibraMigration
         FileUtils.ln_s "../runtime/repo/log/production.log", "#{app_dir}/logs/production.log"
       end
 
+      env_echos.push("echo \"export OPENSHIFT_APP_STATE=#{app_dir}/runtime\" > #{app_home}/.env/OPENSHIFT_APP_STATE")
+
       env_echos.each do |env_echo|
         echo_output, echo_exitcode = Util.execute_script(env_echo)
         output += echo_output

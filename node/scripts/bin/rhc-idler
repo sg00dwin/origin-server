@@ -31,19 +31,24 @@ function print_idled {
 }
 
 function is_idled {
-    appid=$1
-    if ! grep -q ' #ProxyPass' "/etc/httpd/conf.d/libra/${appid}"*.conf 2>/dev/null
-    then
-        return $FALSE
-    fi
+    if [ -f "$OPENSHIFT_APP_STATE" ]; then
+        _test=`cat $OPENSHIFT_APP_STATE/.state`
+        return `test idle = "$_test"`
+    else
+        appid=$1
+        if ! grep -q ' #ProxyPass' "/etc/httpd/conf.d/libra/${appid}"*.conf 2>/dev/null
+        then
+            return $FALSE
+        fi
 
-    if [ ! -f "/etc/httpd/conf.d/libra/${appid}"*/0000000000000_disabled.conf ]
-    then
-        return $FALSE
-    fi
+        if [ ! -f "/etc/httpd/conf.d/libra/${appid}"*/0000000000000_disabled.conf ]
+        then
+            return $FALSE
+        fi
 
-    # if it makes it here, then the app is definitely idled
-    return $TRUE
+        # if it makes it here, then the app is definitely idled
+        return $TRUE
+    fi
 }
 
 while getopts 'u:dl' OPTION
@@ -71,6 +76,10 @@ then
     print_help
 fi
 
+source "/var/lib/libra/${uuid}/.env/OPENSHIFT_APP_DIR"
+[ -f "/var/lib/libra/${uuid}/.env/OPENSHIFT_APP_STATE" ] && source "/var/lib/libra/${uuid}/.env/OPENSHIFT_APP_STATE"
+: ${OPENSHIFT_APP_STATE:=$OPENSHIFT_APP_DIR/runtime}
+
 if is_idled "$uuid"
 then
     exit 0 # app is already idled, nothing to do
@@ -89,6 +98,9 @@ service httpd graceful
 service libra stopuser "${uuid}"
 
 # Disable
+# code copied from node/lib/util_ext
+runuser --shell /bin/sh "$uuid" -c "echo idle >$OPENSHIFT_APP_STATE/.state"
+
 source "/var/lib/libra/${uuid}/.env/OPENSHIFT_RUN_DIR"
 touch "${OPENSHIFT_RUN_DIR}/stop_lock"
 

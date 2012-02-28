@@ -33,6 +33,14 @@ fi
 source "/var/lib/libra/${uuid}/.env/OPENSHIFT_RUN_DIR"
 rm -f "${OPENSHIFT_RUN_DIR}/stop_lock"
 
+
+source "/var/lib/libra/${uuid}/.env/OPENSHIFT_APP_DIR"
+[ -f "/var/lib/libra/${uuid}/.env/OPENSHIFT_APP_STATE" ] && source "/var/lib/libra/${uuid}/.env/OPENSHIFT_APP_STATE"
+: ${OPENSHIFT_APP_STATE:=$OPENSHIFT_APP_DIR/runtime}
+
+# code copied from node/lib/util_ext
+runuser --shell /bin/sh "$uuid" -c "echo started >$OPENSHIFT_APP_STATE/.state"
+
 /sbin/service libra startuser "${uuid}"
 
 # Enable proxy setup
@@ -44,3 +52,4 @@ HTTP_DIR=`dirname "/etc/httpd/conf.d/libra/${uuid}"*/00000_default.conf`
 rm -f $HTTP_DIR/0000000000000_disabled.conf
 
 service httpd graceful
+/usr/bin/logger -p local0.notice -t rhc_restorer "Restored: ${uuid}"
