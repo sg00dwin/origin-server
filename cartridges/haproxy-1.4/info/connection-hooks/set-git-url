@@ -92,6 +92,7 @@ function register_gear() {
     if ! grep "$entry" "$gear_registry" 2>&1 > /dev/null; then
         echo "$entry" >> "$gear_registry"
 
+        check_gear_dns_availability "$gear_url" $DNS_CHECK_TIMEOUT
         pushd "$GIT_DIR" > /dev/null
         add_gear_git_mirror "$gear_name" "$gear_url"
 
