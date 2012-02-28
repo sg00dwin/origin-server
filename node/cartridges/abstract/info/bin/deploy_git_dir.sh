@@ -19,7 +19,8 @@ function extract_submodules {
     [ ! -z "${GIT_DIR+xxx}" ] && unset GIT_DIR
 
     # expload tree into a tmp dir
-    tmp_dir = ${OPENSHIFT_APP_DIR}/tmp
+    tmp_dir=${OPENSHIFT_APP_DIR}/tmp
+    [ -e ${tmp_dir} ] || mkdir ${tmp_dir}
     submodule_tmp_dir=${tmp_dir}/submodules
     pushd ${tmp_dir}
 
