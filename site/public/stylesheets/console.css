@@ -31,6 +31,9 @@
 .app-block > .row > a {
   display: inline-table; }
 
+.app-block h2 {
+  word-wrap: break-word; }
+
 /*	App details
 	----------------------------------------------------- */
 .app-settings img {

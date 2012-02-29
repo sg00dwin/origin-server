@@ -18,7 +18,7 @@ class DomainsController < BaseController
     id = params[:id]
     if not @cloud_user or @cloud_user.namespace != id
       @reply = RestReply.new(:not_found)
-      @reply.messages.push(message = Message.new(:error, "Domain #{id} not found."))
+      @reply.messages.push(message = Message.new(:error, "Domain #{id} not found.", 127))
       respond_with @reply, :status => @reply.status
     return
     end
@@ -94,7 +94,7 @@ class DomainsController < BaseController
     Rails.logger.debug "Updating domain #{@cloud_user.namespace} to #{new_namespace}"
     if not @cloud_user or @cloud_user.namespace != id
       @reply = RestReply.new(:not_found)
-      @reply.messages.push(Message.new(:error, "Domain #{id} not found."))
+      @reply.messages.push(Message.new(:error, "Domain #{id} not found.", 127))
       respond_with(@reply) do |format|
         format.xml { render :xml => @reply, :status => @reply.status }
         format.json { render :json => @reply, :status => @reply.status }
@@ -160,7 +160,7 @@ class DomainsController < BaseController
 
     if not @cloud_user or @cloud_user.namespace != id
       @reply = RestReply.new(:not_found)
-      @reply.messages.push(Message.new(:error, "Domain #{id} not found."))
+      @reply.messages.push(Message.new(:error, "Domain #{id} not found.", 127))
       #respond_with @reply, :status => @reply.status
       respond_with(@reply) do |format|
         format.xml { render :xml => @reply, :status => @reply.status }
@@ -176,7 +176,7 @@ class DomainsController < BaseController
       end
     elsif not @cloud_user.applications.empty?
       @reply = RestReply.new(:bad_request)
-      @reply.messages.push(Message.new(:error, "Domain contains applications. Delete applications first or set force to true."))
+      @reply.messages.push(Message.new(:error, "Domain contains applications. Delete applications first or set force to true.", 128))
 
       respond_with(@reply) do |format|
         format.xml { render :xml => @reply, :status => @reply.status }

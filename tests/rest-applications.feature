@@ -129,7 +129,7 @@ Feature: applications
     When I send a POST request to "/domains/cucumber/applications" with the following:"name=app&cartridge=php-5.3"
     Then the response should be "201"
     When I send a POST request to "/domains/cucumber/applications" with the following:"name=app&cartridge=php-5.3"
-    Then the response should be "409"
+    Then the response should be "422"
     When I send a DELETE request to "/domains/cucumber/applications/app"
     Then the response should be "204"
     
@@ -202,7 +202,7 @@ Feature: applications
     When I send a POST request to "/domains/cucumber/applications/app/cartridges" with the following:"cartridge=mysql-5.1"
     Then the response should be "201"
     When I send a GET request to "/domains/cucumber/applications/app/cartridges/mysql-5.1"
-    Then the response should be "201"
+    Then the response should be "200"
     When I send a GET request to "/domains/cucumber/applications/app/descriptor"
     Then the response descriptor should have "php-5.3,mysql-5.1" as dependencies
     When I send a POST request to "/domains/cucumber/applications/app/cartridges/mysql-5.1/events" with the following:"event=restart"
