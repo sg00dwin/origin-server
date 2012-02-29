@@ -1,0 +1,144 @@
+= stylesheet_link_tag '/app/stylesheets/site.css', :media => 'all'
+%header
+  #top
+    .container
+      .pull-left= link_to "Sign up for the newsletter >", "signup_news"
+      .pull-right.login
+        = link_to "Sign in", "signin"
+        - ['f', 'g', 't'].each do |p|
+          = link_to p, :class => 'login-provider' do
+            %img{:alt => p}
+  #nav
+    .navbar
+      .container
+        -# Was .nav-collapse, has some issues
+        %div
+          .brand
+            %strong> Open
+            Shift
+          %ul.nav
+            %li.active= link_to "Overview", "."
+            %li= link_to "Documentation", "dev_center"
+            %li.divider &nbsp;
+            %li= link_to "Console", "console"
+            %li= link_to "Community", "community"
+
+    .messaging
+      .container
+        .primary
+          Develop and Scale 
+          %strong#technology-rotate Java
+          in the Cloud
+        .secondary OpenShift is a free, auto-scaling platform as a service for web applications.  It streamlines the application life cycle so developers can focus on their users, customers, and code.
+
+#learn
+  .container
+    .row
+      = link_to "signup", :class => 'take-action span12' do
+        .pull-left
+          Create your 
+          %strong first three apps 
+          for free
+        .pull-right
+          Try it out >
+
+      .span6
+        %ul.learn.unstyled
+          %li
+            = link_to "learn", :class => 'link-tile' do
+              %img{:src => 'clock.png'}
+              %h4 Superfast!
+              %p Code and deploy to the cloud in minutes.  Faster and easier than it has ever been.
+          %li
+            = link_to "learn", :class => 'link-tile' do
+              %img{:src => 'key.png'}
+              %h4 Don't get locked in
+              %p Minimal coding to the platform and built on open technologies, so you can take it with you.
+          %li
+            = link_to "learn", :class => 'link-tile' do
+              %img{:src => 'scale.png'}
+              %h4 Scale easily in any language
+              %p Grow your Java, Perl, Ruby, Python, and Node.js apps easily with resource scaling.
+        %p.gutter= link_to "Learn about OpenShift...", "learn"
+      .span6
+        %ul.news.unstyled
+          %li
+            = link_to "news", :class => 'link-tile' do
+              %h4 Node.js now running on Openshift
+              %p Everyone's most liked (and most hated) language is now available on OpenShift. Deploy your node.js apps in the cloud faster than you can say NaN!
+          %li
+            = link_to "news", :class => 'link-tile' do
+              %h4 New OpenShift Express upgrade - March 12
+              %p We pushed a minor Express upgrade today, including some bug fixes and general UI enhancements. We've added a preview section to the app
+        %p.gutter= link_to "Read the OpenShift blog...", "blog"
+
+#buzz
+  .container
+    .row.row-buzz.lift
+      .span12
+        .column-buzz
+          %h2 
+            Check the 
+            %strong Buzz
+          %hr
+          .row
+            .span6
+              %quote Testimonial 1
+              %quote Testimonial 2
+              = link_to "community" do
+                %strong Join
+                our community
+            .span6
+              %quote Twitter post 1
+              %quote Twitter post 2
+              = link_to "follow" do
+                %strong Follow
+                OpenShift
+              = link_to "feed" do
+                %strong More
+                OpenShift buzz
+
+          .callout
+            .one Look for team
+            .two OpenShift
+            .three at Mongo DB
+%footer
+  #footer-nav
+    .container
+      .row
+        .span3.link-column
+          %header
+            %h3 News
+          %ul.unstyled
+            %li= link_to 'Announcements', 'https://www.redhat.com/openshift/forums/news-and-announcements'
+            %li= link_to 'Blog', 'https://www.redhat.com/openshift/blogs'
+            %li= link_to 'Twitter', 'http://www.twitter.com/#!/openshift'
+
+        .span3.link-column
+          %header
+            %h3 Community
+          %ul.unstyled
+            %li= link_to 'Forum', 'https://www.redhat.com/openshift/forums/'
+            %li= link_to 'Partner Program', partners_path
+            %li= link_to 'IRC Channel', 'http://webchat.freenode.net/?randomnick=1&channels=openshift&uio=d4'
+            %li= link_to 'Feedback', 'mailto:openshift@redhat.com'
+
+        .span3.link-column
+          %header
+            %h3 Legal
+          %ul.unstyled
+            %li= link_to 'Legal', legal_path
+            %li= link_to 'Privacy Policy', legal_openshift_privacy_path
+            %li= link_to 'Security', 'https://access.redhat.com/security/team/contact/'
+
+        .span3.link-column
+          %header
+            %h3 Help
+          %ul.unstyled
+            %li= link_to 'FAQ', 'http://www.redhat.com/openshift/faq'
+            %li= link_to 'Contact', 'mailto:openshift@redhat.com'
+
+  %section#copyright
+    .container
+      %img{ :src => "/app/images/redhat.png", :alt => "Red Hat" }
+      .pull-right Copyright &copy; 2011 Red Hat, Inc.

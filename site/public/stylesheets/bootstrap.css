@@ -2460,7 +2460,6 @@ a.thumbnail:hover {
  *
  * Date: @DATE
  */
-@import url(mixins.css);
 .clearfix {
   *zoom: 1; }
   .clearfix:before, .clearfix:after {
@@ -3496,7 +3495,8 @@ input:focus, textarea:focus {
   border: none;
   -webkit-border-radius: 4px;
   -moz-border-radius: 4px;
-  border-radius: 4px; }
+  border-radius: 4px;
+  word-wrap: break-word; }
 
 .alert, .alert-heading {
   color: #222; }

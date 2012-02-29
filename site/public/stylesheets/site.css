@@ -33,6 +33,27 @@
      border-left: Xpx solid transparent;
      */ }
 
+/* Hitch a div out of its parent */
+.lift {
+  margin-top: -90px; }
+
+.lift-less {
+  margin-top: -80px; }
+
+/* Preliminary gutter adjustment on spans */
+.gutter {
+  margin-left: 20px; }
+
+/*FIXME needs responsive treatment */
+.gutter-fill {
+  margin-left: 0;
+  padding-left: 20px; }
+
+.gutter-fill-right {
+  margin-right: -20px;
+  padding-right: 20px; }
+
+/* A link that is a block, kind of like a thumbnail */
 #top {
   background-color: #010101;
   color: white; }
@@ -41,8 +62,11 @@
   background-color: #343434;
   color: white; }
 
-#content {
+#content, #learn {
   background-color: #eaeaea; }
+
+#buzz {
+  background-color: #343434; }
 
 .column-nav {
   background-color: #030303;
@@ -50,6 +74,10 @@
 
 .column-content {
   background-color: white; }
+
+.column-buzz {
+  background-color: black;
+  color: white; }
 
 #content > .container > div > .row {
   background-color: #f2f2f2; }
@@ -182,14 +210,86 @@
       line-height: 18px; } }
 
 /* Content section */
-#nav {
+#nav, #learn {
   padding-bottom: 100px; }
 
-.lift .column-nav {
-  margin-top: -80px; }
-.lift .column-content {
-  margin-top: -90px; }
-.lift .column-content h1 {
+#buzz {
+  min-height: 300px; }
+
+.column-buzz {
+  padding: 20px;
+  position: relative; }
+
+#learn .link-tile {
+  color: #343434;
+  padding: 15px 20px;
+  display: block;
+  text-decoration: none; }
+  #learn .link-tile:hover {
+    text-decoration: none;
+    color: #343434;
+    background-color: #999999; }
+  #learn .link-tile:active {
+    text-decoration: none;
+    color: #343434;
+    background-color: #91010b; }
+  #learn .link-tile > :last-child {
+    margin-bottom: 0; }
+
+.take-action {
+  *zoom: 1;
+  display: block;
+  text-transform: uppercase;
+  font-weight: bold;
+  font-size: 20px;
+  letter-spacing: 1px;
+  color: white;
+  background-color: #eb0011; }
+  .take-action:before, .take-action:after {
+    display: table;
+    content: ""; }
+  .take-action:after {
+    clear: both; }
+  .take-action:hover, .take-action:active {
+    text-decoration: none;
+    color: white; }
+  .take-action > * {
+    padding: 27px 20px; }
+  .take-action > .pull-right {
+    background-color: #91010b; }
+
+#learn .take-action {
+  margin-top: -37px;
+  margin-bottom: 20px; }
+
+#buzz h2 {
+  text-align: center;
+  color: white;
+  text-transform: uppercase;
+  font-size: 46px;
+  letter-spacing: -4px; }
+  #buzz h2 > strong {
+    letter-spacing: -4px; }
+
+#buzz hr {
+  margin: 10px 43% 20px;
+  border: 0;
+  border-top: 4px solid #eb0011; }
+
+.column-buzz > .callout {
+  position: absolute;
+  width: 120px;
+  height: 120px;
+  background-color: white;
+  color: black;
+  top: -60px;
+  right: -60px;
+  text-align: center; }
+  .column-buzz > .callout > .one {
+    color: gray; }
+
+/* FIXME: better scoped or defined? */
+.column-content h1 {
   margin-top: 25px;
   margin-bottom: 25px; }
 

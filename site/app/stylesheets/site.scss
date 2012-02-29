@@ -19,6 +19,7 @@
 
 @import "variables";
 @import "bootstrap/variables";
+@import "bootstrap/mixins";
 @import "ribbon";
 
 $topBarColor:                 #010101 !default;
@@ -39,12 +40,41 @@ $ribbonColor:     #eb0011 !default;
 $ribbonTextColor: white !default;
 $ribbonFoldColor: #91010b !default;
 
+/* Hitch a div out of its parent */
+.lift { margin-top: -90px; }
+.lift-less { margin-top: -80px; }
+
+/* Preliminary gutter adjustment on spans */
+.gutter { margin-left: $gridGutterWidth; } /*FIXME needs responsive treatment */
+.gutter-fill { margin-left: 0; padding-left: $gridGutterWidth; }
+.gutter-fill-right { margin-right: -$gridGutterWidth; padding-right: $gridGutterWidth; }
+
+/* A link that is a block, kind of like a thumbnail */
+@mixin tile($activeColor, $hoverColor, $backgroundActiveColor, $backgroundHoverColor) {
+  display: block;
+  text-decoration: none;
+
+  &:hover { 
+    text-decoration: none; 
+    color: $hoverColor; 
+    background-color: $backgroundHoverColor;
+  }
+  &:active {
+    text-decoration: none; 
+    color: $activeColor; 
+    background-color: $backgroundActiveColor;
+  }
+}
+
 #top {background-color: $topBarColor; color: white;}
 #nav {background-color: $topNavigationColor; color: white; }
-#content {background-color: $bodyColor;}
+#content, #learn {background-color: $bodyColor;}
+#buzz {background-color: $topNavigationColor;}
 .column-nav { background-color: $navigationColumnColor; color: white; }
 .column-content { background-color: $contentColumnColor; }
+.column-buzz { background-color: black; color: white; }
 #content > .container > div > .row { background-color: $underNavigationColumnColor; }
+
 
 /* Nav section */
 
@@ -190,13 +220,77 @@ $ribbonFoldColor: #91010b !default;
 
 /* Content section */
 
-#nav { padding-bottom: 100px; }
+#nav, #learn { padding-bottom: 100px; }
+#buzz { min-height: 300px; }
+.column-buzz { padding: $gridGutterWidth; position: relative;}
 
-.lift {
-  .column-nav { margin-top: -80px; }
-  .column-content { margin-top: -90px; }
-  .column-content h1 { margin-top: 25px; margin-bottom: 25px; }
+#learn .link-tile {
+  color: #343434;
+  padding: 15px $gridGutterWidth;
+  @include tile(#343434, #343434, $ribbonFoldColor, #999);
+
+  > :last-child { margin-bottom: 0; }
 }
+
+.take-action {
+  @include clearfix();
+  display: block;
+
+  text-transform: uppercase;
+  font-weight: bold;
+  font-size: 20px;
+  letter-spacing: 1px;
+
+  color: white;
+  background-color: $ribbonColor;
+
+  &:hover, &:active {
+    text-decoration: none;
+    color: white;
+  }
+
+  > * {
+    padding: 27px 20px;
+  }
+
+  > .pull-right {
+    background-color: $ribbonFoldColor;
+  }
+}
+#learn .take-action { margin-top: -37px; margin-bottom: 20px; }
+#buzz h2 { 
+  text-align: center; 
+  color: white; 
+  text-transform: uppercase;
+  font-size: 46px;
+  letter-spacing: -4px;
+  > strong {
+    letter-spacing: -4px;
+  }
+}
+#buzz hr {
+  margin: 10px 43% 20px;
+  border: 0;
+  border-top: 4px solid $ribbonColor;
+}
+
+.column-buzz > .callout {
+  position: absolute;
+  width: 120px;
+  height: 120px;
+  background-color: white;
+  color: black;
+  top: -60px;
+  right: -60px;
+  text-align: center;
+
+  > .one {
+    color: gray;
+  }
+}
+
+/* FIXME: better scoped or defined? */
+.column-content h1 { margin-top: 25px; margin-bottom: 25px; }
 
 /* The body content of a site page */
 .row-content {
