@@ -1,6 +1,6 @@
 Summary:       SELinux policy for OpenShift nodes
 Name:          rhc-selinux
-Version:       0.87.4
+Version:       0.87.5
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -48,6 +48,16 @@ rm -rf %{buildroot}
 %attr(0640,-,-) %{_datadir}/selinux/packages/libra.pp
 
 %changelog
+* Wed Feb 29 2012 Dan McPherson <dmcphers@redhat.com> 0.87.5-1
+- Dontaudit domains attempting to list /mnt, /dev/shm, and dontaudit leaked
+  terminal device from sshd terminal to libra subdomains (dwalsh@redhat.com)
+- Libra domains are creating /anon_hugepage  which are MCS Separated and then
+  reading them, should be allowed (dwalsh@redhat.com)
+- Allow libra domains to create msgq (dwalsh@redhat.com)
+- Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
+  (dwalsh@redhat.com)
+- Dontaudit leaked terminal from sshd to libra_mail_t (dwalsh@redhat.com)
+
 * Sat Feb 25 2012 Dan McPherson <dmcphers@redhat.com> 0.87.4-1
 - Add new libra_app domains an libra file types (dwalsh@redhat.com)
 - Allow libra_t to transition to ping command (dwalsh@redhat.com)
