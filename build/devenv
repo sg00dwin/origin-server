@@ -736,7 +736,7 @@ END
     test_instance(tag, hostname, instance, conn, options)
   end
 
-  desc "setup_multi_node_devenvs", "Sets up verifier as a multi-node broker"
+  desc "setup_multi_node_broker", "Sets up verifier as a multi-node broker"
   method_option :verbose, :type => :boolean, :desc => "Enable verbose logging"
 
   def setup_multi_node_broker
