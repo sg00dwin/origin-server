@@ -1,7 +1,7 @@
 %define cartridgedir %{_libexecdir}/li/cartridges/embedded/postgresql-8.4
 
 Name: rhc-cartridge-postgresql-8.4
-Version: 0.4.3
+Version: 0.4.4
 Release: 1%{?dist}
 Summary: Embedded postgresql support for express
 
@@ -71,6 +71,10 @@ rm -rf $RPM_BUILD_ROOT
 %doc %{cartridgedir}/LICENSE
 
 %changelog
+* Tue Feb 28 2012 Dan McPherson <dmcphers@redhat.com> 0.4.4-1
+- Missed that we'd transitioned from OPENSHIFT_*_IP to OPENSHIFT_*_HOST.
+  (rmillner@redhat.com)
+
 * Sat Feb 25 2012 Dan McPherson <dmcphers@redhat.com> 0.4.3-1
 - Update show-port hook and re-add function. (rmillner@redhat.com)
 - Merge branch 'master' of li-master:/srv/git/li (ramr@redhat.com)

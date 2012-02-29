@@ -124,6 +124,15 @@ Feature: domains
     When I send a DELETE request to "/domains/cucumber?force=true"
     Then the response should be "204"
     
+  Scenario: Create more than one domain
+    Given a new guest account
+    And I am a valid user
+    And I accept "XML"
+    When I send a POST request to "/domains" with the following:"namespace=cucumber"
+    Then the response should be "201"
+    When I send a POST request to "/domains" with the following:"namespace=cucumber1"
+    Then the response should be "409"
+    
   Scenario: Create duplicate domain
     Given a new guest account
     And I am a valid user
@@ -131,6 +140,7 @@ Feature: domains
     When I send a POST request to "/domains" with the following:"namespace=cucumber"
     Then the response should be "201"
     When I send a POST request to "/domains" with the following:"namespace=cucumber"
-    Then the response should be "409"
+    Then the response should be "422"
+    
 
     

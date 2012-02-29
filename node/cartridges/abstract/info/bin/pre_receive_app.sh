@@ -6,7 +6,10 @@ do
     . $f
 done
 
-if [ -z "$OPENSHIFT_CI_TYPE" ] || [ -z "$JENKINS_URL" ]
+if [ -z $OPENSHIFT_SKIP_GIT_HOOKS ]
 then
-  stop_app.sh
+    if [ -z "$OPENSHIFT_CI_TYPE" ] || [ -z "$JENKINS_URL" ]
+    then
+        stop_app.sh
+    fi
 fi

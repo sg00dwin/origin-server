@@ -26,6 +26,10 @@ module OpenShift
       return count > 0
     end
 
+    def signout
+      @logout.call
+    end
+
     def signin(login=@valid_credentials[:email],password=@valid_credentials[:password])
       open_dialog(:signin, false){ |signin|
         signin.submit(login,password)

@@ -32,7 +32,7 @@ module OpenShift
       end
 
       def in_error?(field)
-        xpath_exists?("//*[@id='#{@fields[field]}' and @class='error']")
+        xpath_exists?("//*[@id='#{@fields[field]}' and contains(@class, 'error')]")
       end  
 
       def error_message(field)
@@ -60,7 +60,8 @@ module OpenShift
       def initialize(page,id)
         super(page,id)
         @fields = {
-          :namespace => "domain_name"
+          :namespace => "domain_name",
+          :namespace_group => "domain_name_group"
         }
 
       	@submit = "//input[@id='domain_submit']"

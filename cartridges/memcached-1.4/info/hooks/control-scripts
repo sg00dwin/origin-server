@@ -70,10 +70,15 @@ IP=$OPENSHIFT_INTERNAL_IP
 . $APP_HOME/.env/OPENSHIFT_CACHE_PORT
 . $APP_HOME/.env/OPENSHIFT_CACHE_HOST
 
-ORIG_DB_HOST=$OPENSHIFT_CACHE_HOST
-echo "export OPENSHIFT_CACHE_URL='memcached://$IP:$OPENSHIFT_CACHE_PORT/'" > $APP_HOME/.env/OPENSHIFT_CACHE_URL
+ORIG_CACHE_HOST=$OPENSHIFT_CACHE_HOST
 
-set_app_info "Connection URL: memcached://$IP:$OPENSHIFT_CACHE_PORT/"
+if [ "$ORIG_CACHE_HOST" != "$IP" ]
+then
+    echo "export OPENSHIFT_CACHE_URL='memcached://$IP:$OPENSHIFT_CACHE_PORT/'" > $APP_HOME/.env/OPENSHIFT_CACHE_URL
+    echo "export OPENSHIFT_CACHE_HOST='$IP'" > $APP_HOME/.env/OPENSHIFT_CACHE_HOST
+
+    set_app_info "Connection URL: memcached://$IP:$OPENSHIFT_CACHE_PORT/"
+fi
 
 }  #  End of function  _move_memcached_service.
 

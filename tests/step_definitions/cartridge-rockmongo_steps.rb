@@ -7,7 +7,7 @@ $rockmongo_config = $rockmongo_hooks + "/configure"
 $rockmongo_config_format = "#{$rockmongo_config} %s %s %s"
 $rockmongo_deconfig = $rockmongo_hooks + "/deconfigure"
 $rockmongo_deconfig_format = "#{$rockmongo_deconfig} %s %s %s"
-$rockmongo_proc_regex = /httpd -C Include \$\{OPENSHIFT_ROCKMONGO_APP_DIR\}/
+$rockmongo_proc_regex = /httpd -C Include .*rockmongo/
 
 Given /^a new rockmongo$/ do
   account_name = @account['accountname']

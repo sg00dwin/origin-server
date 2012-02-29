@@ -1,4 +1,4 @@
-policy_module(dhcpnamedforward,0.0.8)
+policy_module(dhcpnamedforward,0.0.9)
 
 require {
 	type dhcpc_t;
@@ -14,6 +14,6 @@ files_type(named_forward_file_t)
 filetrans_pattern(dhcpc_t, named_zone_t, named_forward_file_t, file)
 manage_files_pattern(dhcpc_t, named_forward_file_t, named_forward_file_t)
 
-allow named_t named_forward_file_t:file { open read };
+allow named_t named_forward_file_t:file { getattr open read };
 init_labeled_script_domtrans(dhcpc_t, named_initrc_exec_t)
 #allow dhcpc_t named_initrc_exec_t:file { getattr execute };

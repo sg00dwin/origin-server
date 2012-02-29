@@ -34,6 +34,7 @@ isrunning() {
 }
 
 start() {
+    set_app_state started
     if ! isrunning
     then
         /usr/sbin/haproxy -f $OPENSHIFT_APP_DIR/conf/haproxy.cfg > /dev/null 2>&1
@@ -44,6 +45,7 @@ start() {
 
 
 stop() {
+    set_app_state stopped
     if [ -f $HAPROXY_PID ]; then
         pid=$( /bin/cat "${HAPROXY_PID}" )
         /bin/kill $pid
@@ -66,6 +68,19 @@ stop() {
     fi
 }
 
+
+reload() {
+    if ! isrunning; then
+       start
+    else
+        [ -f $HAPROXY_PID ]  &&  zpid=$( /bin/cat "${HAPROXY_PID}" )
+        [ -n "$zpid" ]       &&  zopts="-sf $zpid"
+        echo "Reloading haproxy gracefully without service interruption" 1>&2
+        /usr/sbin/haproxy -f $OPENSHIFT_APP_DIR/conf/haproxy.cfg ${zopts} > /dev/null 2>&1
+    fi
+}
+
+
 case "$1" in
     start)
         #/usr/sbin/haproxy -f $OPENSHIFT_APP_DIR/conf/haproxy.cfg
@@ -80,8 +95,7 @@ case "$1" in
     restart)
     ;;
     reload)
-        stop;
-        start;
+        reload;
     ;;
     status)
         print_running_processes

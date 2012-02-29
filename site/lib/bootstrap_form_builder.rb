@@ -29,7 +29,7 @@ class BootstrapFormBuilder < Formtastic::SemanticFormBuilder
   end
 
   def loading(*args)
-    template.image_tag('loader.gif', :alt => 'Working...', 'data-loading' => 'true', :style => 'display: none;')
+    template.image_tag('/app/images/loader.gif', :alt => 'Working...', 'data-loading' => 'true', :style => 'display: none;')
   end
 
   # override tag creation
@@ -65,7 +65,45 @@ class BootstrapFormBuilder < Formtastic::SemanticFormBuilder
     return super unless new_forms_enabled?
     html_options = args.extract_options!
     html_options[:class] ||= 'alert alert-error unstyled errors'
-    super *(args << html_options)
+
+    full_errors = args.inject([]) do |array, method|
+      attribute = localized_string(method, method.to_sym, :label) || humanized_attribute_name(method)
+      @object.errors[method.to_sym].each do |error|
+        if error.present?
+          error = [attribute, error].join(" ") unless error[0,1] == error[0,1].upcase
+          array << error
+        end
+      end
+      #errors = Array(@object.errors[method.to_sym]).to_sentence
+      #errors.present? ? array << [attribute, errors].join(" ") : array ||= []
+    end
+    full_errors << @object.errors[:base]
+    full_errors.flatten!
+    full_errors.compact!
+    return nil if full_errors.blank?
+    #html_options[:class] ||= "errors"
+    template.content_tag(:ul, html_options) do
+      Formtastic::Util.html_safe(full_errors.map { |error| template.content_tag(:li, Formtastic::Util.html_safe(error)) }.join)
+    end
+  end
+
+  def inline_errors_for(method, options = {}) #:nodoc:
+    if render_inline_errors?
+      errors = error_keys(method, options).map do |x|
+        attribute = localized_string(x, x.to_sym, :label) || humanized_attribute_name(x)
+        @object.errors[x].map do |error| 
+          (error[0,1] == error[0,1].upcase) ? error : [attribute, error].join(" ")
+        end
+      end.flatten.compact.uniq
+      send(:"error_#{inline_errors}", [*errors], options) if errors.any?
+    else
+      nil
+    end
+  end
+
+  def error_list(errors, options = {}) #:nodoc:
+    error_class = options[:error_class] || default_inline_error_class
+    template.content_tag(:p, Formtastic::Util.html_safe(errors.join(' ').untaint), :class => error_class)
   end
 
   # change from li to div.control-group, move hints/errors into the input block

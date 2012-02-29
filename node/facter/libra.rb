@@ -102,8 +102,14 @@ Facter.add(:active_capacity) do
     stopped_app_count = 0
     Dir.glob("/var/lib/libra/*").each { |app_dir|
         if File.directory?(app_dir)
-            stop_count = Dir.glob("#{app_dir}/*/run/stop_lock").count
-            if stop_count > 0
+            active = true
+            Dir.glob(File.join(app_dir, '*', 'runtime', '.state')).each {|file|
+                state = File.read(file)
+                if 'idle' == state || 'stopped' == state
+                    active = false
+                end
+            }
+            if not active
                 stopped_app_count += 1
             end
         end

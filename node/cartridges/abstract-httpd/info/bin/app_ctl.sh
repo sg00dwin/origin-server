@@ -23,11 +23,12 @@ CART_CONF_DIR=/usr/libexec/li/cartridges/${OPENSHIFT_APP_TYPE}/info/configuratio
 
 case "$1" in
     start)
-        if [ -f ${OPENSHIFT_APP_DIR}run/stop_lock ]
-        then
+        _state=`get_app_state`
+        if [ -f ${OPENSHIFT_APP_DIR}run/stop_lock -o idle = "$_state" ]; then
             echo "Application is explicitly stopped!  Use 'rhc app start -a ${OPENSHIFT_APP_NAME}' to start back up." 1>&2
             exit 0
         else
+            set_app_state started
             /usr/sbin/httpd -C "Include ${OPENSHIFT_APP_DIR}conf.d/*.conf" -f $CART_CONF_DIR/httpd_nolog.conf -k $1
         fi
     ;;
@@ -35,6 +36,7 @@ case "$1" in
         app_ctl_stop.sh $1
     ;;
     restart|graceful)
+        set_app_state started
         /usr/sbin/httpd -C "Include ${OPENSHIFT_APP_DIR}conf.d/*.conf" -f $CART_CONF_DIR/httpd_nolog.conf -k $1
     ;;
 esac
