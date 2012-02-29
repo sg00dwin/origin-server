@@ -3,7 +3,7 @@
 
 Summary:   Li site components
 Name:      rhc-site
-Version:   0.87.9
+Version:   0.87.10
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -84,6 +84,29 @@ chmod 0664 %{sitedir}/app/subsites/status/db/status.sqlite
 chmod 0744 %{sitedir}/app/subsites/status/rhc-outage
 
 %changelog
+* Tue Feb 28 2012 Dan McPherson <dmcphers@redhat.com> 0.87.10-1
+- add an id to the control group so sauce can check for error conditions
+  (johnp@redhat.com)
+- Merge branch 'master' of git1.ops.rhcloud.com:/srv/git/li (lnader@redhat.com)
+- Integrated app details page to new console markup and css (ffranz@redhat.com)
+- Merge branch 'master' of git1.ops.rhcloud.com:/srv/git/li (lnader@redhat.com)
+- Bug 797296 - [REST API] API allowed creation of key with 8000 character name
+  (lnader@redhat.com)
+- Merge branch 'master' of git1.ops.rhcloud.com:/srv/git/li (ffranz@redhat.com)
+- add class and id markup so sauce tests can easily find elements
+  (johnp@redhat.com)
+- Integrated app details page to new console markup and css (ffranz@redhat.com)
+- Bug 797296 - [REST API] API allowed creation of key with 8000 character name
+  (lnader@redhat.com)
+- Bug 797296 - [REST API] API allowed creation of key with 8000 character name
+  (lnader@redhat.com)
+- Integrated app details page to new console markup and css (ffranz@redhat.com)
+- bug 798128 fix (sgoodwin@redhat.com)
+- console css edit (sgoodwin@redhat.com)
+- console updates (sgoodwin@redhat.com)
+- Integrating markup and style for the new console (ffranz@redhat.com)
+- Check in change to bootstrap (ccoleman@redhat.com)
+
 * Mon Feb 27 2012 Dan McPherson <dmcphers@redhat.com> 0.87.9-1
 - Added correct permissions for status site (fotios@redhat.com)
 
