@@ -47,6 +47,7 @@ class EmbCartController < BaseController
       respond_with @reply, :status => @reply.status
       return
     end
+    application = Application.find(cloud_user,application_id)
     if application.nil?
       @reply = RestReply.new(:not_found)
       message = Message.new(:error, "Application #{id} not found.", 101)
@@ -54,7 +55,7 @@ class EmbCartController < BaseController
       respond_with @reply, :status => @reply.status
       return
     end
-    application = Application.find(cloud_user,application_id)
+    
     unless application.embedded.nil?
       application.embedded.each do |key, value|
         if key == id

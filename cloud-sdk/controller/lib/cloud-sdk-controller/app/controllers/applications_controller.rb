@@ -59,7 +59,7 @@ class ApplicationsController < BaseController
     end
     application = Application.find(user,app_name)
     if not application.nil?
-      @reply = RestReply.new(:conflict)
+      @reply = RestReply.new(:unprocessable_entity)
       message = Message.new(:error, "The supplied application name '#{app_name}' already exists", 100, "name") 
       @reply.messages.push(message)
       respond_with @reply, :status => @reply.status
