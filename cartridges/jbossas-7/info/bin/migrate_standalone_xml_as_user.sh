@@ -17,6 +17,7 @@ pushd $WORKING_DIR > /dev/null
     if [ -f .openshift/config/standalone.xml ]
     then
 	    xsltproc -o .openshift/config/standalone.xml /usr/libexec/li/cartridges/jbossas-7/info/configuration/as-7.0.2-as-7.1.0.xsl .openshift/config/standalone.xml
+	    sed -i "s/{OPENSHIFT/{env.OPENSHIFT/g" standalone.xml
 	    git add .openshift/config/standalone.xml
 	    if git commit -m 'Updating .openshift/config/standalone.xml to be 7.1.0 compatible'
 	    then
