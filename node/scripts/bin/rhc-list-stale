@@ -10,10 +10,10 @@ days=15
 for f in $(libra_users)
 do
     APPHOME=/var/lib/libra/$f
-    if [ -d "$APPHOME" ]
-    then
-        if ! GIT_DIR=`echo $APPHOME/git/*/` git log --since="$(/bin/date "+%Y-%m-%d" --date="$days days ago")" | grep -q commit
-        then
+    if [ -d "$APPHOME" ]; then
+        # Determine if something was committed using the git objects directory
+        objects_modified=$(find $APPHOME/git -name objects -mtime -$days)
+        if [ -z "${objects_modified}" ]; then
             if /usr/bin/rhc-app-idle $f $days
             then
                 echo "$f is stale"
