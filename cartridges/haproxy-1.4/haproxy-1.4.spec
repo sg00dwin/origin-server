@@ -2,7 +2,7 @@
 
 Summary:   Provides haproxy-1.4 support
 Name:      rhc-cartridge-haproxy-1.4
-Version:   0.5.6
+Version:   0.5.7
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   ASL 2.0
@@ -83,6 +83,12 @@ rm -rf %{buildroot}
 %doc %{cartridgedir}/LICENSE
 
 %changelog
+* Wed Feb 29 2012 Dan McPherson <dmcphers@redhat.com> 0.5.7-1
+- Cleanup to put the cdk-connector-execute workaround in the utility extensions
+  for express. (ramr@redhat.com)
+- Handle git push errors - better check for gear is up and running.
+  (ramr@redhat.com)
+
 * Tue Feb 28 2012 Dan McPherson <dmcphers@redhat.com> 0.5.6-1
 - Need to wait for dns entries to become available -- we do need some other
   mechanism to ensure connection-hooks are invoked after everything works in
