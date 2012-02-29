@@ -32,7 +32,7 @@ module OpenShift
       end
 
       def in_error?(field)
-        xpath_exists?("//*[@id='#{@fields[field]}' and @class='error']")
+        xpath_exists?("//*[@id='#{@fields[field]}' and contains(@class, 'error')]")
       end  
 
       def error_message(field)
