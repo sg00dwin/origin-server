@@ -2,7 +2,7 @@
 
 Summary:       Multi-tenant cloud management system node tools
 Name:          rhc-node
-Version:       0.87.5
+Version:       0.87.6
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -247,6 +247,17 @@ fi
 /lib64/security/pam_libra.so
 
 %changelog
+* Tue Feb 28 2012 Dan McPherson <dmcphers@redhat.com> 0.87.6-1
+- rework migration of git to not stop/start/redeploy (dmcphers@redhat.com)
+- dont pre/post move for same uid (dmcphers@redhat.com)
+- some cleanup of http -C Include (dmcphers@redhat.com)
+- Improper method of counting length of bash array (rmillner@redhat.com)
+- Rewrote to deal better with errors from the proxy init script
+  (rmillner@redhat.com)
+- No longer needed. (rmillner@redhat.com)
+- ~/.state tracking feature (jhonce@redhat.com)
+- remove the spaces from the assignment and create tmp dir (johnp@redhat.com)
+
 * Mon Feb 27 2012 Dan McPherson <dmcphers@redhat.com> 0.87.5-1
 - Adds apptegic call to report idled apps. (mpatel@redhat.com)
 - add link to rails production.log (dmcphers@redhat.com)
