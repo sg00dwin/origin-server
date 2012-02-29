@@ -21,6 +21,8 @@ figure {
 	margin: 0;
 	padding: 0;
 	}
+body {word-wrap: break-word;}
+table {table-layout:fixed;}
 ul, ol {
   margin: 0; /* Set at 0, otherwise default margin causes havoc when assigning grid system classes to list elements. Use <ul class="regular"> for traditional lists */
   padding: 0;
@@ -587,19 +589,6 @@ input:focus, textarea:focus {
 	}
 .navbar .navbar-text a {
 	color: #999;
-	}
-.breadcrumb {
-  margin: 0 0 18px;
-	}
-.breadcrumb li {
-  display: inline;
-	}
-.breadcrumb .divider {
-  padding: 0 5px;
-  color: #ccc;
-	}
-.breadcrumb .active a {
-  color: #8F8F8F;
 	}
 .hero-unit {
   padding: 20px 25px;

@@ -7,8 +7,8 @@ class LegacyBrokerController < ApplicationController
   
   def user_info_post
     user = CloudUser.find(@login)
-    user.auth_method = @auth_method
     if user
+      user.auth_method = @auth_method
       user_info = user.as_json
       #FIXME: This is redundant, for now keeping it for backward compatibility
       key_info = user.get_ssh_key
@@ -48,8 +48,8 @@ class LegacyBrokerController < ApplicationController
   
   def ssh_keys_post
     user = CloudUser.find(@login)
-    user.auth_method = @auth_method    
     if user
+      user.auth_method = @auth_method    
       case @req.action
       when "add-key"
         raise Cloud::Sdk::UserKeyException.new("Missing SSH key or key name", 119) if @req.ssh.nil? or @req.key_name.nil?
@@ -274,9 +274,10 @@ class LegacyBrokerController < ApplicationController
   end
   
   def embed_cartridge_post
-    user = CloudUser.find(@login)    
+    user = CloudUser.find(@login)
     raise Cloud::Sdk::UserException.new("Invalid user", 99) if user.nil?
-        
+    user.auth_method = @auth_method
+    
     app = get_app_from_request(user)    
     check_cartridge_type(@req.cartridge, "embedded")
     if @req.action != "configure" and !app.requires_feature.include?(@req.cartridge)

@@ -18,7 +18,7 @@ Requires:  rhc-node
 Requires: jboss-as7 >= 7.1.0.Final
 Requires: jboss-as7-modules >= 7.1.0.Final
 Requires: maven3
-Requires: apr
+#Requires: apr
 
 Obsoletes: rhc-cartridge-jbossas-7.0
 
