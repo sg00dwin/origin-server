@@ -60,7 +60,8 @@ module OpenShift
       def initialize(page,id)
         super(page,id)
         @fields = {
-          :namespace => "domain_name"
+          :namespace => "domain_name",
+          :namespace_group => "domain_name_group"
         }
 
       	@submit = "//input[@id='domain_submit']"
