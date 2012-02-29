@@ -2460,7 +2460,6 @@ a.thumbnail:hover {
  *
  * Date: @DATE
  */
-@import url(mixins.css);
 .clearfix {
   *zoom: 1; }
   .clearfix:before, .clearfix:after {
@@ -3041,6 +3040,12 @@ figure {
   margin: 0;
   padding: 0; }
 
+body {
+  word-wrap: break-word; }
+
+table {
+  table-layout: fixed; }
+
 ul, ol {
   margin: 0;
   /* Set at 0, otherwise default margin causes havoc when assigning grid system classes to list elements. Use <ul class="regular"> for traditional lists */
@@ -3496,7 +3501,8 @@ input:focus, textarea:focus {
   border: none;
   -webkit-border-radius: 4px;
   -moz-border-radius: 4px;
-  border-radius: 4px; }
+  border-radius: 4px;
+  word-wrap: break-word; }
 
 .alert, .alert-heading {
   color: #222; }
