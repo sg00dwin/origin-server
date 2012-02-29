@@ -2,7 +2,7 @@
 
 Summary:   Provides raw support
 Name:      rhc-cartridge-raw-0.1
-Version:   0.21.3
+Version:   0.21.4
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   ASL 2.0
@@ -87,6 +87,10 @@ rm -rf %{buildroot}
 %doc %{cartridgedir}/LICENSE
 
 %changelog
+* Wed Feb 29 2012 Dan McPherson <dmcphers@redhat.com> 0.21.4-1
+- Adds instructions to raw cartridge README. (mpatel@redhat.com)
+- fix wrong cased OpenShift (dmcphers@redhat.com)
+
 * Mon Feb 27 2012 Dan McPherson <dmcphers@redhat.com> 0.21.3-1
 - Fixed path to start stop scripts in instructions. (mpatel@redhat.com)
 - cleanup all the old command usage in help and messages (dmcphers@redhat.com)
