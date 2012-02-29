@@ -1,5 +1,7 @@
 #!/bin/bash
 
+# Add lib/util loading
+
 libra_server=$1
 
 # Import Environment Variables
@@ -7,6 +9,9 @@ for f in ~/.env/*
 do
     . $f
 done
+
+CART_DIR=${CART_DIR:=/usr/libexec/li/cartridges}
+source ${CART_DIR}/abstract/info/lib/util
 
 if [ -z $OPENSHIFT_SKIP_GIT_HOOKS ]
 then
@@ -25,11 +30,15 @@ then
             echo "!!!!!!!!"
         fi
 
+        set_app_state building
+
         # Do any cleanup before the next build
         pre_build.sh
 
         # Lay down new code, run internal build steps, then user build
         build.sh
+
+        set_app_state deploying
 
         # Deploy new build, run internal deploy steps, then user deploy
         deploy.sh
