@@ -37,7 +37,13 @@ function observe_setup_var_lib_file {
 function run_as_user {
     _uuid=${uuid:-$OPENSHIFT_APP_UUID}
     if [ "`whoami`" = "$_uuid" ]; then
-        eval "$1"
+        #  Run confined as user - temporary bandaid to fix issues with
+        #  cdk-connector-execute - connection hooks are run unconfined.
+        if [ "$(runcon | cut -f 3 -d ':')" != "libra_t" ]; then
+            runcon -t libra_t -l $mcs_level "$@"
+        else
+            eval "$1"
+        fi
     else
         runuser --shell /bin/sh "$_uuid" -c "runcon -t libra_t -l $mcs_level $1"
     fi
