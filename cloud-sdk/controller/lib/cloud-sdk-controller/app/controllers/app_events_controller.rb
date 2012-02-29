@@ -12,7 +12,7 @@ class AppEventsController < BaseController
     application = Application.find(cloud_user,id)
     if application.nil?
       @reply = RestReply.new(:not_found)
-      message = Message.new(:error, "Application #{id} not found.")
+      message = Message.new(:error, "Application #{id} not found.", 101)
       @reply.messages.push(message)
       respond_with @reply, :status => @reply.status
       return
@@ -38,8 +38,8 @@ class AppEventsController < BaseController
         when "scale-down"
           application.scaledown
         else
-          @reply = RestReply.new(:bad_request)
-          message = Message.new(:error, "Invalid event #{event}.  Valid events are start, stop, restart, force-stop")
+          @reply = RestReply.new(:unprocessable_entity)
+          message = Message.new(:error, "Invalid event #{event}.  Valid events are start, stop, restart, force-stop", 126, "event")
           @reply.messages.push(message)
           respond_with @reply, :status => @reply.status   
           return
@@ -47,7 +47,7 @@ class AppEventsController < BaseController
     rescue Exception => e
       Rails.logger.error e
       @reply = RestReply.new(:internal_server_error)
-      message = Message.new(:error, "Failed to add event #{event} to application #{id} due to: #{e.message}") 
+      message = Message.new(:error, "Failed to add event #{event} to application #{id} due to: #{e.message}", e.code) 
       @reply.messages.push(message)
       respond_with @reply, :status => @reply.status
       return

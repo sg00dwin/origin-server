@@ -12,7 +12,7 @@ class DescriptorsController < BaseController
     
     if application.nil?
       @reply = RestReply.new(:not_found)
-      message = Message.new(:error, "Application #{id} not found.")
+      message = Message.new(:error, "Application #{id} not found.", 101)
       @reply.messages.push(message)
       respond_with @reply, :status => @reply.status
     else

@@ -8,7 +8,7 @@ class UserController < BaseController
     
     if(user.nil?)
       @reply = RestReply.new(:not_found)
-      @reply.messages.push(Message.new(:error, "User #{@login} not found"))
+      @reply.messages.push(Message.new(:error, "User #{@login} not found", 99))
       respond_with @reply, :status => @reply.status
       return
     end

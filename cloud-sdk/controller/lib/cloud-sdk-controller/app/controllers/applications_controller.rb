@@ -29,7 +29,7 @@ class ApplicationsController < BaseController
     
     if application.nil?
       @reply = RestReply.new(:not_found)
-      message = Message.new(:error, "Application #{id} not found.")
+      message = Message.new(:error, "Application #{id} not found.", 101)
       @reply.messages.push(message)
       respond_with @reply, :status => @reply.status
     else
@@ -79,7 +79,7 @@ class ApplicationsController < BaseController
       template = ApplicationTemplate.find(params[:template])
       if template.nil?
         @reply = RestReply.new(:unprocessable_entity)
-        message = Message.new(:error, "Invalid template #{params[:template]}.", nil, "template") 
+        message = Message.new(:error, "Invalid template #{params[:template]}.", 125, "template") 
         @reply.messages.push(message)
         respond_with @reply, :status => @reply.status
       end
@@ -118,7 +118,7 @@ class ApplicationsController < BaseController
             Rails.logger.error e
             application.destroy_dns
             @reply = RestReply.new(:internal_server_error)
-            message = Message.new(:error, "Failed to create dns for application #{application.name} due to:#{e.message}") 
+            message = Message.new(:error, "Failed to create dns for application #{application.name} due to:#{e.message}", e.code) 
             @reply.messages.push(message)
             respond_with @reply, :status => @reply.status
             return
@@ -133,7 +133,7 @@ class ApplicationsController < BaseController
         end
     
         @reply = RestReply.new(:internal_server_error)
-        message = Message.new(:error, "Failed to create application #{application.name} due to:#{e.message}") 
+        message = Message.new(:error, "Failed to create application #{application.name} due to:#{e.message}", e.code) 
         @reply.messages.push(message)
         respond_with @reply, :status => @reply.status
         return
@@ -166,7 +166,7 @@ class ApplicationsController < BaseController
     application = Application.find(cloud_user,id)
     if application.nil?
       @reply = RestReply.new(:not_found)
-      message = Message.new(:error, "Application #{id} not found.")
+      message = Message.new(:error, "Application #{id} not found.", 101)
       @reply.messages.push(message)
       respond_with(@reply) do |format|
          format.xml { render :xml => @reply, :status => @reply.status }
@@ -181,7 +181,7 @@ class ApplicationsController < BaseController
     rescue Exception => e
       Rails.logger.error "Failed to Delete application #{id}: #{e.message}"
       @reply = RestReply.new(:internal_server_error)
-      message = Message.new(:error, "Failed to delete application #{app_name} due to:#{e.message}") 
+      message = Message.new(:error, "Failed to delete application #{app_name} due to:#{e.message}", e.code) 
       @reply.messages.push(message)
       respond_with(@reply) do |format|
          format.xml { render :xml => @reply, :status => @reply.status }
