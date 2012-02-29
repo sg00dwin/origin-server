@@ -2,7 +2,7 @@
 
 Summary:       Multi-tenant cloud management system node tools
 Name:          rhc-node
-Version:       0.87.6
+Version:       0.87.7
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -247,6 +247,9 @@ fi
 /lib64/security/pam_libra.so
 
 %changelog
+* Tue Feb 28 2012 Dan McPherson <dmcphers@redhat.com> 0.87.7-1
+- Allow applications to restart after migration (jhonce@redhat.com)
+
 * Tue Feb 28 2012 Dan McPherson <dmcphers@redhat.com> 0.87.6-1
 - rework migration of git to not stop/start/redeploy (dmcphers@redhat.com)
 - dont pre/post move for same uid (dmcphers@redhat.com)
