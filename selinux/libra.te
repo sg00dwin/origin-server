@@ -1,4 +1,4 @@
-policy_module(libra,1.1.2)
+policy_module(libra,1.1.3)
 
 ########################################
 #
@@ -99,8 +99,11 @@ corenet_tcp_connect_all_ports(libra_net_t)
 allow libra_app_domain self:process { setcurrent getattr fork getpgid setpgid setrlimit setsched signal_perms ptrace getsched execmem };
 dontaudit libra_app_domain self:process getcap;
 
+allow libra_app_domain self:msgq create_msgq_perms;
 allow libra_app_domain self:shm create_shm_perms;
 allow libra_app_domain self:sem create_sem_perms;
+# Not sure if we should allow or dontaudit.
+#allow libra_app_domain self:socket  create_socket_perms;
 allow libra_app_domain self:tcp_socket  create_stream_socket_perms;
 
 allow libra_app_domain self:fifo_file manage_fifo_file_perms;
@@ -419,6 +422,8 @@ dev_read_urand(libra_cgroup_read_t)
 domain_use_interactive_fds(libra_cgroup_read_t)
 
 files_read_etc_files(libra_cgroup_read_t)
+
+fs_dontaudit_rw_anon_inodefs_files(libra_cgroup_read_t)
 
 userdom_use_inherited_user_ptys(libra_cgroup_read_t)
 
