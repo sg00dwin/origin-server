@@ -9,7 +9,7 @@
 
     = semantic_form_for @user, :url => password_path, :simple => true, :html => {:class => 'form-inline'} do |f|
       %p If you have forgotten your password please enter your email address here, and we will send you an email with a link that will reset your password.
-
+      = f.semantic_errors
       = f.input :email_address, :as => :email, :required => true
       = f.buttons do
         = f.commit_button :label => "Reset Password"
