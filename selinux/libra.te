@@ -1,4 +1,4 @@
-policy_module(libra,1.1.4)
+policy_module(libra,1.1.5)
 
 ########################################
 #
@@ -168,12 +168,14 @@ fs_getattr_xattr_fs(libra_app_domain)
 fs_dontaudit_getattr_all_fs(libra_app_domain)
 fs_list_inotifyfs(libra_app_domain)
 fs_dontaudit_list_auto_mountpoints(libra_app_domain)
+fs_dontaudit_list_tmpfs(libra_app_domain)
 storage_dontaudit_getattr_fixed_disk_dev(libra_app_domain)
 
 files_dontaudit_list_home(libra_app_domain)
 files_dontaudit_search_all_pids(libra_app_domain)
 files_dontaudit_getattr_all_dirs(libra_app_domain)
 files_dontaudit_getattr_all_files(libra_app_domain)
+files_dontaudit_list_mnt(libra_app_domain)
 files_dontaudit_list_var(libra_app_domain)
 files_dontaudit_getattr_lost_found_dirs(libra_app_domain)
 files_dontaudit_search_all_mountpoints(libra_app_domain)
@@ -451,6 +453,7 @@ role system_r types libra_mail_t;
 
 allow libra_mail_t libra_initrc_t:fifo_file rw_inherited_fifo_file_perms;
 dontaudit libra_mail_t sshd_devpts_t:chr_file { read write };
+dontaudit libra_cgroup_read_t sshd_devpts_t:chr_file { read write };
 
 read_files_pattern(libra_mail_t, libra_var_lib_t, libra_var_lib_t)
 manage_files_pattern(libra_mail_t, libra_tmp_t, libra_tmp_t)
