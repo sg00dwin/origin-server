@@ -1,7 +1,7 @@
 %define cartridgedir %{_libexecdir}/li/cartridges/embedded/mongodb-2.0
 
 Name: rhc-cartridge-mongodb-2.0
-Version: 0.15.3
+Version: 0.15.4
 Release: 1%{?dist}
 Summary: Embedded mongodb support for express
 
@@ -54,6 +54,9 @@ rm -rf $RPM_BUILD_ROOT
 %doc %{cartridgedir}/LICENSE
 
 %changelog
+* Wed Feb 29 2012 Dan McPherson <dmcphers@redhat.com> 0.15.4-1
+- do even less when ip doesnt change on move (dmcphers@redhat.com)
+
 * Tue Feb 28 2012 Dan McPherson <dmcphers@redhat.com> 0.15.3-1
 - Missed that we'd transitioned from OPENSHIFT_*_IP to OPENSHIFT_*_HOST.
   (rmillner@redhat.com)
