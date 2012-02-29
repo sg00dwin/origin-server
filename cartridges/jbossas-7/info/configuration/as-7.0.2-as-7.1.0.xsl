@@ -51,13 +51,13 @@
 			<xsl:apply-templates select="domain:profile" />
 			<interfaces>
 				<interface name="management">
-					<loopback-address value="${{OPENSHIFT_INTERNAL_IP}}" />
+					<loopback-address value="${{env.OPENSHIFT_INTERNAL_IP}}" />
 				</interface>
 				<interface name="public">
-					<loopback-address value="${{OPENSHIFT_INTERNAL_IP}}" />
+					<loopback-address value="${{env.OPENSHIFT_INTERNAL_IP}}" />
 				</interface>
 				<!--interface name="unsecure">
-					<loopback-address value="${{OPENSHIFT_INTERNAL_IP}}" />
+					<loopback-address value="${{env.OPENSHIFT_INTERNAL_IP}}" />
 				</interface-->
 			</interfaces>
 			<socket-binding-group name="standard-sockets"
