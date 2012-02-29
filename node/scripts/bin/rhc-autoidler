@@ -2,6 +2,10 @@
 
 export PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin:/root/bin:$PATH
 
+# Get the libra_server
+. /usr/libexec/li/cartridges/abstract/info/lib/util
+load_node_conf
+
 function get_appids_to_idle() {
     /usr/bin/rhc-list-stale 15 2>/dev/null | /bin/awk '{print $1}'
 }
@@ -19,9 +23,8 @@ for user in `get_appids_to_idle`
 do
     /usr/bin/rhc-idler -u $user > /dev/null 2>&1
 
-    # Report to apptegic
-    inner="{\"app_uuid\": \"$user\", \"action\":\"idle\"}"
-    curl -k -v -H "Accept: application/json" -X POST -d json_data="$inner" https://127.0.0.1/broker/nurture
+    # Report to apptegic/nurture
+    curl -s -O /dev/null -d "json_data=\"{\"app_uuid\":\"${user}\",\"action\":\"idle\"}\"" https://${libra_server}/broker/nurture >/dev/null 2>&1 &
 done
 
 print_stats "After"
