@@ -451,7 +451,6 @@ function send_stopped_status {
           then
               send_attr "status=ALREADY_IDLED"
           else
-              send_attr "status=ALREADY_STOPPED"
               HTTP_DIR=`dirname "/etc/httpd/conf.d/libra/${uuid}"*/00000_default.conf`
               if [ -f $HTTP_DIR/0000000000000_disabled.conf ]
               then
