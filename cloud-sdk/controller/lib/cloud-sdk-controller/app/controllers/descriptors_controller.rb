@@ -7,8 +7,7 @@ class DescriptorsController < BaseController
     domain_id = params[:domain_id]
     application_id = params[:application_id]
     
-    cloud_user = CloudUser.find(@login)
-    application = Application.find(cloud_user,application_id)
+    application = Application.find(@cloud_user,application_id)
     
     if application.nil?
       @reply = RestReply.new(:not_found)

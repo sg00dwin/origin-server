@@ -6,8 +6,8 @@ class ApplicationsController < BaseController
   # GET /domains/[domain id]/applications
   def index
     domain_id = params[:domain_id]
-    cloud_user = CloudUser.find(@login)
-    applications = Application.find_all(cloud_user)
+    
+    applications = Application.find_all(@cloud_user)
     apps = Array.new
     if not applications.nil? 
       applications.each do |application|
@@ -24,8 +24,7 @@ class ApplicationsController < BaseController
     domain_id = params[:domain_id]
     id = params[:id]
     
-    cloud_user = CloudUser.find(@login)
-    application = Application.find(cloud_user,id)
+    application = Application.find(@cloud_user,id)
     
     if application.nil?
       @reply = RestReply.new(:not_found)
@@ -42,7 +41,7 @@ class ApplicationsController < BaseController
   # POST /domains/[domain_id]/applications
   def create
     domain_id = params[:domain_id]
-    user = CloudUser.find(@login)
+    
     app_name = params[:name]
     cartridge = params[:cartridge]
     scale = params[:scale]
@@ -57,7 +56,7 @@ class ApplicationsController < BaseController
       respond_with @reply, :status => @reply.status
       return
     end
-    application = Application.find(user,app_name)
+    application = Application.find(@cloud_user,app_name)
     if not application.nil?
       @reply = RestReply.new(:unprocessable_entity)
       message = Message.new(:error, "The supplied application name '#{app_name}' already exists", 100, "name") 
@@ -66,9 +65,9 @@ class ApplicationsController < BaseController
       return
     end
     Rails.logger.debug "Checking to see if user limit for number of apps has been reached"
-    if (user.consumed_gears >= user.max_gears)
+    if (@cloud_user.consumed_gears >= @cloud_user.max_gears)
       @reply = RestReply.new(:forbidden)
-      message = Message.new(:error, "#{@login} has already reached the application limit of #{user.max_gears}", 104)
+      message = Message.new(:error, "#{@login} has already reached the application limit of #{@cloud_user.max_gears}", 104)
       @reply.messages.push(message)
       respond_with @reply, :status => @reply.status
       return
@@ -83,7 +82,7 @@ class ApplicationsController < BaseController
         @reply.messages.push(message)
         respond_with @reply, :status => @reply.status
       end
-      application = Application.new(user, app_name, nil, nil, nil, template, scale)
+      application = Application.new(@cloud_user, app_name, nil, nil, nil, template, scale)
     else
       if cartridge.nil? or not CartridgeCache.cartridge_names('standalone').include?(cartridge)
         @reply = RestReply.new(:unprocessable_entity)
@@ -93,7 +92,7 @@ class ApplicationsController < BaseController
         respond_with @reply, :status => @reply.status
         return
       end
-      application = Application.new(user, app_name, nil, nil, cartridge, nil, scale)
+      application = Application.new(@cloud_user, app_name, nil, nil, cartridge, nil, scale)
     end
         
     Rails.logger.debug "Validating application"  
@@ -162,8 +161,8 @@ class ApplicationsController < BaseController
   def destroy
     domain_id = params[:domain_id]
     id = params[:id]
-    cloud_user = CloudUser.find(@login)
-    application = Application.find(cloud_user,id)
+    
+    application = Application.find(@cloud_user,id)
     if application.nil?
       @reply = RestReply.new(:not_found)
       message = Message.new(:error, "Application #{id} not found.", 101)

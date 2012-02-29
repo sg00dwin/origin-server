@@ -7,6 +7,7 @@ class LegacyBrokerController < ApplicationController
   
   def user_info_post
     user = CloudUser.find(@login)
+    user.auth_method = @auth_method
     if user
       user_info = user.as_json
       #FIXME: This is redundant, for now keeping it for backward compatibility
@@ -47,6 +48,7 @@ class LegacyBrokerController < ApplicationController
   
   def ssh_keys_post
     user = CloudUser.find(@login)
+    user.auth_method = @auth_method    
     if user
       case @req.action
       when "add-key"
@@ -93,7 +95,8 @@ class LegacyBrokerController < ApplicationController
   
   def domain_post
     cloud_user = CloudUser.find(@login)
-
+    cloud_user.auth_method = @auth_method unless cloud_user.nil?
+    
     if !cloud_user && (@req.alter || @req.delete)
       @reply.resultIO << "Cannot alter or remove namespace #{@req.namespace}. Namspace does not exist.\n"
       render :json => @reply, :status => :bad_request
@@ -165,6 +168,7 @@ class LegacyBrokerController < ApplicationController
     @req.node_profile ||= "std"
     user = CloudUser.find(@login)
     raise Cloud::Sdk::UserException.new("Invalid user", 99) if user.nil?
+    user.auth_method = @auth_method
     
     case @req.action
     when 'configure'    #create app and configure framework
@@ -341,7 +345,10 @@ class LegacyBrokerController < ApplicationController
   end
   
   def authenticate
-    @login = Cloud::Sdk::AuthService.instance.login(request, params, cookies)
+    auth = Cloud::Sdk::AuthService.instance.login(request, params, cookies)
+    
+    @login = auth[:username]
+    @auth_method = auth[:auth_method]
     unless @login
       @reply.resultIO << "Invalid user credentials"
       @reply.exitcode = 97

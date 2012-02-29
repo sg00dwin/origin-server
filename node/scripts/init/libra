@@ -159,7 +159,6 @@ startapp() {
 
     case "$_state" in
         idle) echo "$1 is locked" ;;
-        stopped) echo "$1 is locked" ;;
         *)
             print_column -n 59 "    $(basename $2)"
             local OUTPUT=$(daemon --user="$1" --pidfile=httpd_$1-$(basename $2) runcon -t libra_t -l $mcs_level $2 start)

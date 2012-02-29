@@ -8,7 +8,7 @@
 
 Summary:   Dependencies for OpenShift development
 Name:      rhc-devenv
-Version:   0.87.6
+Version:   0.87.7
 Release:   1%{?dist}
 Group:     Development/Libraries
 License:   GPLv2
@@ -273,6 +273,14 @@ cp -f %{devenvdir}/puppet-private.pem /var/lib/puppet/ssl/private_keys/localhost
 %{policydir}/*
 
 %changelog
+* Tue Feb 28 2012 Dan McPherson <dmcphers@redhat.com> 0.87.7-1
+- allow named to getattr on the forwarders file too (mlamouri@redhat.com)
+- dnsdomainname still doesnt work with local named (mlamouri@redhat.com)
+- removed temp comment and added reference to dhcpnamedforward SELinux policy
+  requirement (mlamouri@redhat.com)
+- Merge remote-tracking branch 'origin/master' (mlamouri@redhat.com)
+- re-enable local DNS (mlamouri@redhat.com)
+
 * Mon Feb 27 2012 Dan McPherson <dmcphers@redhat.com> 0.87.6-1
 - Merge remote-tracking branch 'origin/master' (mlamouri@redhat.com)
 - re-enable lookup recursion (mlamouri@redhat.com)
