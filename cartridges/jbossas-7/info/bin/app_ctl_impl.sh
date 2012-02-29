@@ -1,5 +1,8 @@
 #!/bin/bash -e
 
+CART_DIR=/usr/libexec/li/cartridges
+source ${CART_DIR}/abstract/info/lib/util
+
 # Import Environment Variables
 for f in ~/.env/*
 do
@@ -62,14 +65,15 @@ function start_app() {
        ENABLE_JPDA=1
     fi
 
-    if [ -f $OPENSHIFT_APP_DIR/run/stop_lock ]
-    then
+    _state=`get_app_state`
+    if [ -f $OPENSHIFT_APP_DIR/run/stop_lock -o idle = "$_state" ]; then
         echo "Application is explicitly stopped!  Use 'rhc app start -a ${OPENSHIFT_APP_NAME}' to start back up." 1>&2
     else
         # Check for running app
         if isrunning; then
             echo "Application is already running" 1>&2
         else
+            set_app_state started
             # Start
             jopts="${JAVA_OPTS}"
             [ "${ENABLE_JPDA:-0}" -eq 1 ] && jopts="-Xdebug -Xrunjdwp:transport=dt_socket,address=$OPENSHIFT_INTERNAL_IP:8787,server=y,suspend=n ${JAVA_OPTS}"
@@ -85,6 +89,7 @@ function start_app() {
 }
 
 function stop_app() {
+    set_app_state stopped
     if ! isrunning; then
         jbpid=$(cat $JBOSS_PID_FILE);
         echo "Application($jbpid) is already stopped" 1>&2

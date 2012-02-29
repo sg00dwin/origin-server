@@ -7,7 +7,7 @@ $metrics_config = $metrics_hooks + "/configure"
 $metrics_config_format = "#{$metrics_config} %s %s %s"
 $metrics_deconfig = $metrics_hooks + "/deconfigure"
 $metrics_deconfig_format = "#{$metrics_deconfig} %s %s %s"
-$metrics_proc_regex = /httpd -C Include \$\{OPENSHIFT_METRICS_APP_DIR\}/
+$metrics_proc_regex = /httpd -C Include .*metrics/
 
 Given /^a new metrics$/ do
   account_name = @account['accountname']

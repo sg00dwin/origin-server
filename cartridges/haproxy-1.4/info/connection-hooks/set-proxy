@@ -5,6 +5,10 @@
 # Exit on any errors
 set -e
 
+CART_DIR=/usr/libexec/li/cartridges
+source ${CART_DIR}/abstract/info/lib/util
+
+
 function print_help {
     echo "Usage: $0 app-name namespace uuid"
     echo "Start a running application"
@@ -31,6 +35,8 @@ for f in ~/.env/*; do
     source $f
 done
 
+declare -A curr_server_gears
+
 haproxy_cfg=$OPENSHIFT_APP_DIR/conf/haproxy.cfg
 # Remove the first 3 args and process all the remaining args of the form k=v.
 # The values are the gear endpoints.
@@ -40,8 +46,33 @@ for arg in $kvargs; do
     #  Add gear to the proxy configuration if not already in there.
     #  Gear end-point is the form: $gear-dns-entry:$gear-port
     gear_name=$(echo "$ep" | cut -f 1 -d '.')
+    curr_server_gears[$gear_name]="$ep"
+
     if ! grep "server gear-$gear_name" "$haproxy_cfg" 2>&1 > /dev/null; then
         echo "    server gear-$gear_name $ep check fall 2 rise 3 inter 2000" >> "$haproxy_cfg"
     fi
 done
 
+# Now remove all the gears from the haproxy configuration which are not in the
+# current set. No recreate permissions on haproxy.cfg, so need to use a temp
+# file to operate on and then overlay the contents of haproxy.cfg
+srvgears=$(grep -E "server\s*gear" "$haproxy_cfg" |  \
+           sed "s/\s*server\s*gear-\([A-Za-z0-9\-]*\).*/\\1/g" | tr "\n" " ")
+cp "$haproxy_cfg" /tmp/haproxy.cfg
+for sg in $srvgears; do
+    if [ -z "${curr_server_gears[$sg]}" ]; then
+        sed -i "/\s*server\s*gear-$sg.*/d" /tmp/haproxy.cfg
+    fi
+done
+
+cat /tmp/haproxy.cfg > "$haproxy_cfg"
+rm -f /tmp/haproxy.cfg
+
+# FIXME: connection-hooks run unconfined as the user - something in
+#        cdk-connector-execute is not correct -- switch confinement so that
+#        app_ctl.sh can run. This is temporary to get stuff working --
+#        really needs to be fixed in cdk-connector-execute to run a
+#        connection-hooks thru' a custom libra.rb confinement policy.
+uuid=$3
+setup_user_vars
+runcon -r system_r -t libra_t -l $mcs_level app_ctl.sh reload

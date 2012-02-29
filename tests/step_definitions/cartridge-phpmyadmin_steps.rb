@@ -7,7 +7,7 @@ $phpmyadmin_config = $phpmyadmin_hooks + "/configure"
 $phpmyadmin_config_format = "#{$phpmyadmin_config} %s %s %s"
 $phpmyadmin_deconfig = $phpmyadmin_hooks + "/deconfigure"
 $phpmyadmin_deconfig_format = "#{$phpmyadmin_deconfig} %s %s %s"
-$phpmyadmin_proc_regex = /httpd -C Include \$\{OPENSHIFT_PHPMYADMIN_APP_DIR\}/
+$phpmyadmin_proc_regex = /httpd -C Include .*phpmyadmin/
 
 Given /^a new phpmyadmin$/ do
   account_name = @account['accountname']

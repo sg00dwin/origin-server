@@ -29,6 +29,8 @@ module LibraMigration
         # Migrate and jbossas-7.0 jobs to jbossas-7
         Dir.glob('#{app_dir}/data/config.xml').each {|file|
           Util.replace_in_file("#{app_dir}/data/jobs/*/config.xml", "<builderType>jbossas-7.0</builderType>", "<builderType>jbossas-7</builderType>")
+          Util.replace_in_file("#{app_dir}/data/jobs/*/config.xml", "<builderType>wsgi-3.2</builderType>", "<builderType>python-2.6</builderType>")
+          Util.replace_in_file("#{app_dir}/data/jobs/*/config.xml", "<builderType>rack-1.1</builderType>", "<builderType>ruby-1.8</builderType>")
         }
 
         # Add security
@@ -80,7 +82,7 @@ module LibraMigration
         env_echos.push("echo \"export OPENSHIFT_APP_TYPE='jbossas-7'\" > #{app_home}/.env/OPENSHIFT_APP_TYPE")
         java_home = '/etc/alternatives/java_sdk_1.6.0'
         m2_home = '/etc/alternatives/maven-3.0'
-        env_echos.push("echo \"export PATH=#{cartridge_dir}/info/bin/:#{cartridge_root_dir}/abstract-httpd/info/bin/:#{cartridge_root_dir}/abstract/info/bin/:#{java_home}/bin:#{m2_home}/bin:/bin:/usr/bin\" > #{app_home}/.env/PATH")
+        env_echos.push("echo \"export PATH=#{cartridge_dir}/info/bin/:#{cartridge_root_dir}/abstract/info/bin/:#{java_home}/bin:#{m2_home}/bin:/bin:/usr/bin\" > #{app_home}/.env/PATH")
 
         FileUtils.rm_f "#{app_dir}/logs"
         FileUtils.ln_s "#{app_dir}/jbossas-7/standalone/log", "#{app_dir}/logs"
@@ -110,6 +112,8 @@ module LibraMigration
         FileUtils.rm_f "#{app_dir}/logs/production.log"
         FileUtils.ln_s "../runtime/repo/log/production.log", "#{app_dir}/logs/production.log"
       end
+
+      env_echos.push("echo \"export OPENSHIFT_APP_STATE=#{app_dir}/runtime\" > #{app_home}/.env/OPENSHIFT_APP_STATE")
 
       env_echos.each do |env_echo|
         echo_output, echo_exitcode = Util.execute_script(env_echo)

@@ -11,7 +11,7 @@ module OpenShift
 
       def open
         @page.get @path
-        wait_for_page @path
+        wait
       end
 
       def title
@@ -22,15 +22,20 @@ module OpenShift
         text = @items[element]
         @page.find_element(:link_text, text).click
       end
+
+      def wait
+        wait_for_page @path
+      end
     end
 
     class Account < Page
-      attr_accessor :domain_form, :domain_edit_page, :ssh_key_form
+      attr_accessor :domain_form, :domain_edit_page, :domain_page, :ssh_key_form
 
       def initialize(page,path)
         super
         @domain_form = OpenShift::Rest::DomainForm.new(page, "")
         @domain_edit_page = Page.new(page, "#{@path}/domain/edit")
+        @domain_page = Page.new(page, "#{@path}/domain")
         @ssh_key_form = OpenShift::Rest::SshKeyForm.new(page, "new_key")
       end
 

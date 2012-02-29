@@ -35,7 +35,7 @@ module Express
           return check_broker_key(login, password)
         else
           unless Rails.configuration.auth[:integrated]
-            return login
+            {:username => login, :auth_method => :login}
           else
             return check_login(request, login, password)
           end
@@ -50,7 +50,7 @@ module Express
           return check_broker_key(params['broker_auth_key'],params['broker_auth_iv'])
         else
           unless Rails.configuration.auth[:integrated]
-            return data['rhlogin']
+            {:username => data['rhlogin'], :auth_method => :login}
           else
             login = data['rhlogin']
             password = params['password']
@@ -97,7 +97,7 @@ module Express
           end
         end
         
-        return rhlogin
+        {:username => rhlogin, :auth_method => :login}
       end
       
       def check_broker_key(key, iv)
@@ -121,7 +121,7 @@ module Express
         app = Application.find(user, app_name)
         
         raise Cloud::Sdk::UserValidationException.new if !app or creation_time != app.creation_time
-        return username
+        return {:username => username, :auth_method => :broker_auth}
       end
       
       def check_access(roles)

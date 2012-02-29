@@ -35,7 +35,7 @@ Feature: keys
     When I send a POST request to "/user/keys" with the following:"name=cucumber&type=ssh-rsa"
     Then the response should be "422"
     
-  Scenario: Create key with with blank, missing and invalid name
+  Scenario: Create key with with blank, missing, too long and invalid name
     Given a new guest account
     And I am a valid user
     And I accept "XML"
@@ -46,6 +46,8 @@ Feature: keys
     When I send a POST request to "/user/keys" with the following:"name=&type=ssh-rsa&content=XYZ123"
     Then the response should be "422"
     When I send a POST request to "/user/keys" with the following:"type=ssh-rsa&content=XYZ123"
+    Then the response should be "422"
+    When I send a POST request to "/user/keys" with the following:"name=cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc&type=ssh-rsa&content=XYZ123"
     Then the response should be "422"
  
   Scenario: Create key with blank, missing and invalid type

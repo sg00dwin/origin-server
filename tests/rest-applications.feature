@@ -28,7 +28,7 @@ Feature: applications
     When I send a DELETE request to "/domains/cucumber/applications/app"
     Then the response should be "204"
     
-  Scenario: Create application with blank, missing, invalid name
+  Scenario: Create application with blank, missing, too long and invalid name
     Given a new guest account
     And I am a valid user
     And I accept "XML"
@@ -40,6 +40,9 @@ Feature: applications
     Then the response should be "422"
     When I send a POST request to "/domains/cucumber/applications" with the following:"name=app?one&cartridge=php-5.3"
     Then the response should be "422"
+    When I send a POST request to "/domains/cucumber/applications" with the following:"name=appone1234567890123456789012345678901234567890&cartridge=php-5.3"
+    Then the response should be "422"
+    
     
   Scenario: Retrieve application
     Given a new guest account
@@ -195,8 +198,10 @@ Feature: applications
     When I send a POST request to "/domains" with the following:"namespace=cucumber"
     Then the response should be "201"
     When I send a POST request to "/domains/cucumber/applications" with the following:"name=app&cartridge=php-5.3"
-    Then the response should be "201"
+    Then the response should be "201"  
     When I send a POST request to "/domains/cucumber/applications/app/cartridges" with the following:"cartridge=mysql-5.1"
+    Then the response should be "201"
+    When I send a GET request to "/domains/cucumber/applications/app/cartridges/mysql-5.1"
     Then the response should be "201"
     When I send a GET request to "/domains/cucumber/applications/app/descriptor"
     Then the response descriptor should have "php-5.3,mysql-5.1" as dependencies

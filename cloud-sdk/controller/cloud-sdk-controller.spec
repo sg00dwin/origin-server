@@ -5,7 +5,7 @@
 
 Summary:        Cloud Development Controller
 Name:           rubygem-%{gemname}
-Version:        0.5.8
+Version:        0.5.9
 Release:        1%{?dist}
 Group:          Development/Languages
 License:        ASL 2.0
@@ -75,6 +75,24 @@ rm -rf %{buildroot}
 %{ruby_sitelib}/%{gemname}.rb
 
 %changelog
+* Tue Feb 28 2012 Dan McPherson <dmcphers@redhat.com> 0.5.9-1
+- Updating gem versions (dmcphers@redhat.com)
+- Fix for Bugz 798256 Consolidating user lookup (kraman@gmail.com)
+- Fix Cloud::Sdk::ApplicationContainerProxy.blacklisted: avoid infinite
+  recursion (rpenta@redhat.com)
+- Merge branch 'master' of git1.ops.rhcloud.com:/srv/git/li (lnader@redhat.com)
+- fix for bug#796919 (rchopra@redhat.com)
+- Merge branch 'master' of git1.ops.rhcloud.com:/srv/git/li (lnader@redhat.com)
+- added log message to keys_controller (lnader@redhat.com)
+- Bug 797296 (lnader@redhat.com)
+- Merge branch 'master' of git1.ops.rhcloud.com:/srv/git/li (lnader@redhat.com)
+- merged changes (lnader@redhat.com)
+- commented out the validation code (lnader@redhat.com)
+- bug 797971 (lnader@redhat.com)
+- adding application validator (lnader@redhat.com)
+- Merge branch 'master' of git1.ops.rhcloud.com:/srv/git/li (lnader@redhat.com)
+- bug 797296 (lnader@redhat.com)
+
 * Mon Feb 27 2012 Dan McPherson <dmcphers@redhat.com> 0.5.8-1
 - Updating gem versions (dmcphers@redhat.com)
 - Merge branch 'master' of git1.ops.rhcloud.com:/srv/git/li (rpenta@redhat.com)

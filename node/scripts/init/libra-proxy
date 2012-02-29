@@ -116,7 +116,7 @@ setproxy() {
   fi
 
   ipbytes=( $(echo "$target" | cut -f 1 -d : | sed -e 's/\./ /g') )
-  if [ ${#ipbytes} -ne 3 ]; then
+  if [ ${#ipbytes[@]} -ne 4 ]; then
     echo "Dest addr must be a valid IP address."
     return 1
   fi

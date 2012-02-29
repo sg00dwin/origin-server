@@ -28,7 +28,7 @@ case "$1" in
             echo "Application is explicitly stopped!  Use 'rhc app cartridge start -a ${OPENSHIFT_APP_NAME} -c phpmyadmin-3.4' to start back up." 1>&2
             exit 0
         else
-            /usr/sbin/httpd -C 'Include ${OPENSHIFT_PHPMYADMIN_APP_DIR}conf.d/*.conf' -f $CART_CONF_DIR/httpd_nolog.conf -k $1
+            /usr/sbin/httpd -C "Include ${OPENSHIFT_PHPMYADMIN_APP_DIR}conf.d/*.conf" -f $CART_CONF_DIR/httpd_nolog.conf -k $1
         fi
     ;;
 
@@ -36,12 +36,12 @@ case "$1" in
         if [ -f ${OPENSHIFT_PHPMYADMIN_APP_DIR}run/httpd.pid ]
         then
             httpd_pid=`cat ${OPENSHIFT_PHPMYADMIN_APP_DIR}run/httpd.pid 2> /dev/null`
-            /usr/sbin/httpd -C 'Include ${OPENSHIFT_PHPMYADMIN_APP_DIR}conf.d/*.conf' -f $CART_CONF_DIR/httpd_nolog.conf -k $1
+            /usr/sbin/httpd -C "Include ${OPENSHIFT_PHPMYADMIN_APP_DIR}conf.d/*.conf" -f $CART_CONF_DIR/httpd_nolog.conf -k $1
             wait_for_stop $httpd_pid
         fi
     ;;
 
     restart|graceful)
-        /usr/sbin/httpd -C 'Include ${OPENSHIFT_PHPMYADMIN_APP_DIR}conf.d/*.conf' -f $CART_CONF_DIR/httpd_nolog.conf -k $1
+        /usr/sbin/httpd -C "Include ${OPENSHIFT_PHPMYADMIN_APP_DIR}conf.d/*.conf" -f $CART_CONF_DIR/httpd_nolog.conf -k $1
     ;;
 esac

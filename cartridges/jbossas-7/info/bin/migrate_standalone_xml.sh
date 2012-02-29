@@ -36,4 +36,5 @@ setup_basic_vars
 GIT_DIR=$APP_HOME/git/$application.git
 WORKING_DIR=/tmp/${application}_migrate_clone
 
-run_as_user "$CART_DIR/jbossas-7/info/bin/migrate_standalone_xml_as_user.sh $WORKING_DIR $GIT_DIR 2>&1" || exit 1
+run_as_user "$CART_DIR/jbossas-7/info/bin/migrate_standalone_xml_as_user.sh $WORKING_DIR $GIT_DIR 2>&1"
+run_as_user "$CART_DIR/abstract/info/bin/redeploy_config_dir.sh"

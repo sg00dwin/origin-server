@@ -2,7 +2,7 @@
 
 Summary:   Provides JBossAS7 support
 Name:      rhc-cartridge-jbossas-7
-Version:   0.87.10
+Version:   0.87.11
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   ASL 2.0
@@ -112,6 +112,18 @@ rm -rf %{buildroot}
 %config(noreplace) %{cartridgedir}/info/configuration/
 
 %changelog
+* Tue Feb 28 2012 Dan McPherson <dmcphers@redhat.com> 0.87.11-1
+- rework migration of git to not stop/start/redeploy (dmcphers@redhat.com)
+- use env.OPENSHIFT (wdecoste@localhost.localdomain)
+- updated jboss xslt (wdecoste@localhost.localdomain)
+- updated xslt (bdecoste@gmail.com)
+- removed jboss remoting, management (bdecoste@gmail.com)
+- some cleanup of http -C Include (dmcphers@redhat.com)
+- Cleanup the standalone conf/sh to be consistent with 7.1.0.Final version
+  (starksm64@gmail.com)
+- full jee xslt (bdecoste@gmail.com)
+- ~/.state tracking feature (jhonce@redhat.com)
+
 * Mon Feb 27 2012 Dan McPherson <dmcphers@redhat.com> 0.87.10-1
 - cleanup all the old command usage in help and messages (dmcphers@redhat.com)
 - add existence check for standalone.xml before migrating (dmcphers@redhat.com)

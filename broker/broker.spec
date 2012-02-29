@@ -3,7 +3,7 @@
 
 Summary:   Li broker components
 Name:      rhc-broker
-Version:   0.87.8
+Version:   0.87.9
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -83,6 +83,11 @@ rm -rf $RPM_BUILD_ROOT
 /bin/touch %{brokerdir}/log/production.log
 
 %changelog
+* Tue Feb 28 2012 Dan McPherson <dmcphers@redhat.com> 0.87.9-1
+- Updating gem versions (dmcphers@redhat.com)
+- Fix for Bugz 798256 Consolidating user lookup (kraman@gmail.com)
+- dont pre/post move for same uid (dmcphers@redhat.com)
+
 * Mon Feb 27 2012 Dan McPherson <dmcphers@redhat.com> 0.87.8-1
 - Updating gem versions (dmcphers@redhat.com)
 

@@ -1,10 +1,7 @@
 class DomainsController < BaseController
   respond_to :xml, :json
   before_filter :authenticate
-  before_filter :lookup_user, :except => [:create]
-  before_filter :validate_params, :except => [:index, :show, :destroy]
 
-  NAMESPACE_MAX_LENGTH = 16
   # GET /domains
   def index
     domains = Array.new
@@ -35,14 +32,6 @@ class DomainsController < BaseController
     namespace = params[:namespace]
     Rails.logger.debug "Creating domain with namespace #{namespace}"
 
-    cloud_user = CloudUser.find(@login)
-    if cloud_user
-      @reply = RestReply.new(:conflict)
-      @reply.messages.push(Message.new(:error, "User already has a domain associated. Update the domain to modify."))
-      respond_with @reply, :status => @reply.status
-    return
-    end
-
     domain = Domain.new(namespace)
     if domain.invalid?
       @reply = RestReply.new(:unprocessable_entity)
@@ -52,6 +41,21 @@ class DomainsController < BaseController
           @reply.messages.push(Message.new(:error, error_message[:message], error_message[:exit_code], key))
         end
       end
+      respond_with @reply, :status => @reply.status
+    return
+    end
+    
+    if not Domain.namespace_available?(namespace)
+      @reply = RestReply.new(:unprocessable_entity)
+      @reply.messages.push(Message.new(:error, "Namespace '#{namespace}' is already in use. Please choose another.", 103, "namespace"))
+      respond_with @reply, :status => @reply.status
+    return
+    end
+    
+    cloud_user = CloudUser.find(@login)
+    if cloud_user
+      @reply = RestReply.new(:conflict)
+      @reply.messages.push(Message.new(:error, "User already has a domain associated. Update the domain to modify.", 102))
       respond_with @reply, :status => @reply.status
     return
     end
@@ -69,24 +73,17 @@ class DomainsController < BaseController
     end
 
     begin
-      result_io = cloud_user.save
-    rescue Cloud::Sdk::UserException => e
-      @reply = RestReply.new(:conflict)
-      @reply.process_result_io(e.resultIO)
-      @reply.messages.push(Message.new(:error, e.message, e.code, :namespace))
-      respond_with @reply, :status => @reply.status
-      return
-    rescue Cloud::Sdk::DNSException => e
-      @reply = RestReply.new(:conflict)
-      @reply.process_result_io(e.resultIO)
+      cloud_user.save
+    rescue Exception => e
+      Rails.logger.error "Failed to create domain #{e.message}"
+      @reply = RestReply.new(:internal_server_error)
       @reply.messages.push(Message.new(:error, e.message, e.code))
       respond_with @reply, :status => @reply.status
-    return
+      return
     end
 
     domain = RestDomain.new(cloud_user.namespace)
     @reply = RestReply.new(:created, "domain", domain)
-    @reply.process_result_io(result_io)
     respond_with @reply, :status => @reply.status
   end
 
@@ -102,6 +99,13 @@ class DomainsController < BaseController
         format.xml { render :xml => @reply, :status => @reply.status }
         format.json { render :json => @reply, :status => @reply.status }
       end
+    return
+    end
+    
+    if not Domain.namespace_available?(new_namespace)
+      @reply = RestReply.new(:unprocessable_entity)
+      @reply.messages.push(Message.new(:error, "Namespace '#{new_namespace}' already in use. Please choose another.", 103, "namespace"))
+      respond_with @reply, :status => @reply.status
     return
     end
 
@@ -121,33 +125,21 @@ class DomainsController < BaseController
     return
     end
 
-    result_io = ResultIO.new
     begin
-      result_io.append @cloud_user.update_namespace(new_namespace) unless params[:namespace].nil?
-    rescue Cloud::Sdk::UserException => e
-      @reply = RestReply.new(:conflict)
-      @reply.process_result_io(e.resultIO)
-      @reply.messages.push(Message.new(:error, e.message, e.code, :namespace))
+      @cloud_user.update_namespace(new_namespace)
+    rescue Exception => e
+      Rails.logger.error "Failed to update domain #{e.message}"
+      @reply = RestReply.new(:internal_server_error)
+      @reply.messages.push(Message.new(:error, e.message, e.code))
       respond_with(@reply) do |format|
         format.xml { render :xml => @reply, :status => @reply.status }
         format.json { render :json => @reply, :status => @reply.status }
       end
       return
-    rescue Cloud::Sdk::DNSException => e
-      @reply = RestReply.new(:conflict)
-      @reply.process_result_io(e.resultIO)
-      @reply.messages.push(Message.new(:error, e.message, e.code))
-    respond_with(@reply) do |format|
-        format.xml { render :xml => @reply, :status => @reply.status }
-        format.json { render :json => @reply, :status => @reply.status }
-      end
-    return
     end
-
     @cloud_user = CloudUser.find(@login)
     domain = RestDomain.new(@cloud_user.namespace)
     @reply = RestReply.new(:ok, "domain", domain)
-    @reply.process_result_io(result_io)
     #respond_with @reply, :status => @reply.status
 
     respond_with(@reply) do |format|
@@ -177,16 +169,15 @@ class DomainsController < BaseController
     return
     end
 
-    result_io = ResultIO.new
     if force
       Rails.logger.debug "Force deleting domain #{id}"
       @cloud_user.applications.each do |app|
-        result_io.append app.cleanup_and_delete()
+        app.cleanup_and_delete()
       end
     elsif not @cloud_user.applications.empty?
       @reply = RestReply.new(:bad_request)
       @reply.messages.push(Message.new(:error, "Domain contains applications. Delete applications first or set force to true."))
-      #respond_with @reply, :status => @reply.status
+
       respond_with(@reply) do |format|
         format.xml { render :xml => @reply, :status => @reply.status }
         format.json { render :json => @reply, :status => @reply.status }
@@ -194,23 +185,24 @@ class DomainsController < BaseController
     return
     end
 
+    
+    begin
+    @cloud_user.delete
     @reply = RestReply.new(:no_content)
-    result_io.append @cloud_user.delete
-    @reply.process_result_io(result_io)
     @reply.messages.push(Message.new(:info, "Damain deleted."))
-    #respond_with @reply, :status => @reply.status
     respond_with(@reply) do |format|
       format.xml { render :xml => @reply, :status => @reply.status }
       format.json { render :json => @reply, :status => @reply.status }
     end
-  end
-
-  protected
-
-  def validate_params
-  end
-
-  def lookup_user
-    @cloud_user = CloudUser.find(@login)
+    rescue Exception => e
+      Rails.logger.error "Failed to delete domain #{e.message}"
+      @reply = RestReply.new(:internal_server_error)
+      @reply.messages.push(Message.new(:error, e.message, e.code))
+      respond_with(@reply) do |format|
+        format.xml { render :xml => @reply, :status => @reply.status }
+        format.json { render :json => @reply, :status => @reply.status }
+      end
+      return
+    end
   end
 end

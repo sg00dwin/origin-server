@@ -26,12 +26,16 @@ class BaseController < ActionController::Base
       login = u
       password = p
     }
-    user = Cloud::Sdk::AuthService.instance.authenticate(request, login, password)
-    if user
-      @login = user
+    auth = Cloud::Sdk::AuthService.instance.authenticate(request, login, password)
+    if auth
+      @login = auth[:username]
+      @auth_method = auth[:auth_method]      
     else
       request_http_basic_authentication
     end
+    
+    @cloud_user = CloudUser.find @login
+    @cloud_user.auth_method = @auth_method unless @cloud_user.nil?
   end
   
   def rest_replies_url(*args)

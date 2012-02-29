@@ -2,7 +2,7 @@
 
 Summary:   Provides haproxy-1.4 support
 Name:      rhc-cartridge-haproxy-1.4
-Version:   0.5.5
+Version:   0.5.6
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   ASL 2.0
@@ -83,6 +83,18 @@ rm -rf %{buildroot}
 %doc %{cartridgedir}/LICENSE
 
 %changelog
+* Tue Feb 28 2012 Dan McPherson <dmcphers@redhat.com> 0.5.6-1
+- Need to wait for dns entries to become available -- we do need some other
+  mechanism to ensure connection-hooks are invoked after everything works in
+  dns. For now fix the bug by waiting in here for the dns entry to become
+  available. (ramr@redhat.com)
+- Bug fix to get haproxy reload working. (ramr@redhat.com)
+- Fixup reload haproxy - temporary bandaid until cdk-connector execute is
+  fixed. (ramr@redhat.com)
+- Manage gear reg/unreg from haproxy on scale up/down + reload haproxy
+  gracefully. (ramr@redhat.com)
+- ~/.state tracking feature (jhonce@redhat.com)
+
 * Mon Feb 27 2012 Dan McPherson <dmcphers@redhat.com> 0.5.5-1
 - Fix inter-device move failure to cat + rm. (ramr@redhat.com)
 - Remove git entries on gear removal (scale down). (ramr@redhat.com)
