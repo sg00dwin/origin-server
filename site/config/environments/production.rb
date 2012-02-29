@@ -68,7 +68,7 @@ RedHatCloud::Application.configure do
   config.sso_verify_interval = 60
 
   # Promo code Email notification setup
-  config.email_from = 'Openshift <noreply@openshift.redhat.com>'
+  config.email_from = 'OpenShift <noreply@openshift.redhat.com>'
   config.marketing_mailing_list = 'Marketing Mailing List <jgurrero@redhat.com>'
   
   # Express API base url

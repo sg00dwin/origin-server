@@ -1,5 +1,5 @@
 #
-# Make Openshift updates to a BIND DNS service
+# Make OpenShift updates to a BIND DNS service
 #
 require 'rubygems'
 require 'dnsruby'
