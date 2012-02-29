@@ -186,6 +186,14 @@ git init --bare /root/li
 git init --bare /root/os-client-tools
 #git init --bare /root/cloud-sdk
 
+# create a submodule repo for the tests
+git init /root/submodule_test_repo
+pushd /root/submodule_test_repo > /dev/null
+    echo Submodule > index
+    git add index
+    git commit -m 'test'
+popd > /dev/null
+
 # Restore permissions
 /sbin/restorecon -R %{_sysconfdir}/qpid/pki
 /sbin/restorecon -R %{libradir}
