@@ -95,11 +95,6 @@ Feature: Cartridge Verification Tests
   Scenarios: Application Submodule Addition Scenarios
     |      type     |
     |   php-5.3     |
-    |   python-2.6  |
-    |   perl-5.10   |
-    |   ruby-1.8    |
-    |   jbossas-7   |
-    |   nodejs-0.6  |
 
   Scenario Outline: Application Change Namespace
     Given an existing <type> application

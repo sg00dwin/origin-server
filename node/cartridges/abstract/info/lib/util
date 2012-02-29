@@ -62,6 +62,7 @@ function create_standard_env_vars {
     echo "export OPENSHIFT_RUN_DIR='$APP_DIR/run/'" > $APP_HOME/.env/OPENSHIFT_RUN_DIR
     echo "export OPENSHIFT_APP_NAME='$application'" > $APP_HOME/.env/OPENSHIFT_APP_NAME
     echo "export OPENSHIFT_APP_TYPE='$app_type'" > $APP_HOME/.env/OPENSHIFT_APP_TYPE
+    echo "export OPENSHIFT_APP_STATE='$APP_DIR/runtime'" > $APP_HOME/.env/OPENSHIFT_APP_STATE
 }
 
 function create_standard_network_env_vars {
@@ -450,7 +451,6 @@ function send_stopped_status {
           then
               send_attr "status=ALREADY_IDLED"
           else
-              send_attr "status=ALREADY_STOPPED"
               HTTP_DIR=`dirname "/etc/httpd/conf.d/libra/${uuid}"*/00000_default.conf`
               if [ -f $HTTP_DIR/0000000000000_disabled.conf ]
               then

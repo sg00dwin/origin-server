@@ -68,11 +68,6 @@ done
 cat /tmp/haproxy.cfg > "$haproxy_cfg"
 rm -f /tmp/haproxy.cfg
 
-# FIXME: connection-hooks run unconfined as the user - something in
-#        cdk-connector-execute is not correct -- switch confinement so that
-#        app_ctl.sh can run. This is temporary to get stuff working --
-#        really needs to be fixed in cdk-connector-execute to run a
-#        connection-hooks thru' a custom libra.rb confinement policy.
 uuid=$3
 setup_user_vars
-runcon -r system_r -t libra_t -l $mcs_level app_ctl.sh reload
+run_as_user "app_ctl.sh reload"

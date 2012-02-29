@@ -24,26 +24,14 @@ Then /^I should see "([^"]*)" restarts$/ do |restarts|
   count.should be restarts.to_i
 end
 
-Given /^a JBoss application the Watchman Service using "([^"]*)" and "([^"]*)" at "([^"]*)"$/ do |log, epoch, timestamp|
-  class Watchman2 < Watchman
-    attr_accessor :restarted, :now
-
-    def initialize(timestamp, message_file, period, daemon, epoch, libra_var_lib)
-     super(message_file, period, daemon, epoch, libra_var_lib)
-     @now = timestamp
-    end
-
-    def restart(uuid, env)
-      @restarted = @restarted.nil? ? 1 : @restarted += 1
-    end
-  end
+Given /^a JBoss application the Watchman Service using "([^"]*)" and "([^"]*)"$/ do |log, epoch |
 
   home = File.expand_path("../misc/watchman", File.expand_path(File.dirname(__FILE__)))
   messages = "#{home}/#{log}"
 
   raise "Watchman tests missing #{messages} file" if not File.exist?(messages)
 
-  @watchman = Watchman2.new(DateTime.strptime(timestamp, "%b %d %T"), messages, 2, false, DateTime.strptime(epoch, '%b %d %T'), home)
+  @watchman = Watchman1.new(messages, 2, false, DateTime.strptime(epoch, '%b %d %T'), home)
   @watchman.run
 end
 

@@ -75,13 +75,17 @@ IP=$OPENSHIFT_INTERNAL_IP
 . $APP_HOME/.env/OPENSHIFT_DB_USERNAME
 
 ORIG_DB_HOST=$OPENSHIFT_DB_HOST
-echo "export OPENSHIFT_DB_HOST='$IP'" > $APP_HOME/.env/OPENSHIFT_DB_HOST
-echo "export OPENSHIFT_DB_URL='postgresql://$OPENSHIFT_DB_USERNAME:$OPENSHIFT_DB_PASSWORD@$IP:$OPENSHIFT_DB_PORT/'" > $APP_HOME/.env/OPENSHIFT_DB_URL
 
-sed -i "s,$ORIG_DB_HOST,$IP," $PSQL_DIR/data/postgresql.conf
-echo "$IP:$OPENSHIFT_DB_PORT:*:$OPENSHIFT_DB_USERNAME:$OPENSHIFT_DB_PASSWORD" > $APP_HOME/.pgpass
+if [ "$ORIG_DB_HOST" != "$IP" ]
+then
+    echo "export OPENSHIFT_DB_HOST='$IP'" > $APP_HOME/.env/OPENSHIFT_DB_HOST
+    echo "export OPENSHIFT_DB_URL='postgresql://$OPENSHIFT_DB_USERNAME:$OPENSHIFT_DB_PASSWORD@$IP:$OPENSHIFT_DB_PORT/'" > $APP_HOME/.env/OPENSHIFT_DB_URL
 
-set_app_info "Connection URL: postgresql://$IP:5432/"
+    sed -i "s,$ORIG_DB_HOST,$IP," $PSQL_DIR/data/postgresql.conf
+    echo "$IP:$OPENSHIFT_DB_PORT:*:$OPENSHIFT_DB_USERNAME:$OPENSHIFT_DB_PASSWORD" > $APP_HOME/.pgpass
+
+    set_app_info "Connection URL: postgresql://$IP:$OPENSHIFT_DB_PORT/"
+fi
 
 }  #  End of function  _move_postgres_service.
 
