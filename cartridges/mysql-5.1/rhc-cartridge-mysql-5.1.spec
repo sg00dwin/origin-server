@@ -1,7 +1,7 @@
 %define cartridgedir %{_libexecdir}/li/cartridges/embedded/mysql-5.1
 
 Name: rhc-cartridge-mysql-5.1
-Version: 0.21.3
+Version: 0.21.4
 Release: 1%{?dist}
 Summary: Embedded mysql support for express
 
@@ -53,6 +53,10 @@ rm -rf $RPM_BUILD_ROOT
 %doc %{cartridgedir}/LICENSE
 
 %changelog
+* Tue Feb 28 2012 Dan McPherson <dmcphers@redhat.com> 0.21.4-1
+- Missed that we'd transitioned from OPENSHIFT_*_IP to OPENSHIFT_*_HOST.
+  (rmillner@redhat.com)
+
 * Sat Feb 25 2012 Dan McPherson <dmcphers@redhat.com> 0.21.3-1
 - Update show-port hook and re-add function. (rmillner@redhat.com)
 - Embedded cartridges that expose ports should reap their proxy in removal if
