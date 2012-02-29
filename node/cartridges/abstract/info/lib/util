@@ -62,6 +62,7 @@ function create_standard_env_vars {
     echo "export OPENSHIFT_RUN_DIR='$APP_DIR/run/'" > $APP_HOME/.env/OPENSHIFT_RUN_DIR
     echo "export OPENSHIFT_APP_NAME='$application'" > $APP_HOME/.env/OPENSHIFT_APP_NAME
     echo "export OPENSHIFT_APP_TYPE='$app_type'" > $APP_HOME/.env/OPENSHIFT_APP_TYPE
+    echo "export OPENSHIFT_APP_STATE='$APP_DIR/runtime'" > $APP_HOME/.env/OPENSHIFT_APP_STATE
 }
 
 function create_standard_network_env_vars {
