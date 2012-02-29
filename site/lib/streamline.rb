@@ -197,7 +197,7 @@ module Streamline
             errors.add(:base, I18n.t(:service_error, :scope => :streamline))
           end
         end
-        errors.has_key? :email_address 
+        errors.empty?
       end
     else
       http_post(@@request_password_reset_url, args, false) do |json|
