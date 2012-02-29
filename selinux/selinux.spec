@@ -1,6 +1,6 @@
 Summary:       SELinux policy for OpenShift nodes
 Name:          rhc-selinux
-Version:       0.87.5
+Version:       0.87.6
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -48,6 +48,9 @@ rm -rf %{buildroot}
 %attr(0640,-,-) %{_datadir}/selinux/packages/libra.pp
 
 %changelog
+* Wed Feb 29 2012 Dan McPherson <dmcphers@redhat.com> 0.87.6-1
+- disabling hugetlbfs (mmcgrath@redhat.com)
+
 * Wed Feb 29 2012 Dan McPherson <dmcphers@redhat.com> 0.87.5-1
 - Dontaudit domains attempting to list /mnt, /dev/shm, and dontaudit leaked
   terminal device from sshd terminal to libra subdomains (dwalsh@redhat.com)
