@@ -45,7 +45,7 @@ This contains the Cloud Development Node packaged as a ruby site library.
 %install
 rm -rf %{buildroot}
 mkdir -p %{buildroot}%{_bindir}/ss
-mkdir -p %{buildroot}%{_sysconfdir}/ss
+mkdir -p %{buildroot}%{_sysconfdir}/stickshift
 mkdir -p %{buildroot}%{gemdir}
 mkdir -p %{buildroot}%{ruby_sitelib}
 mkdir -p %{_bindir}
@@ -59,7 +59,7 @@ mv %{buildroot}%{gemdir}/bin/* %{buildroot}%{_bindir}
 rm -rf %{buildroot}%{gemdir}/bin
 
 # Move the gem configs to the standard filesystem location
-mv %{buildroot}%{geminstdir}/conf/* %{buildroot}%{_sysconfdir}/ss
+mv %{buildroot}%{geminstdir}/conf/* %{buildroot}%{_sysconfdir}/stickshift
 
 # Symlink into the ruby site library directories
 ln -s %{geminstdir}/lib/%{gemname} %{buildroot}%{ruby_sitelib}
@@ -80,7 +80,7 @@ rm -rf %{buildroot}
 %{gemdir}/gems/%{gemname}-%{version}
 %{gemdir}/cache/%{gemname}-%{version}.gem
 %{gemdir}/specifications/%{gemname}-%{version}.gemspec
-%{_sysconfdir}/ss
+%{_sysconfdir}/stickshift
 %{_bindir}/*
 
 %files -n ruby-%{gemname}

@@ -7,6 +7,7 @@ import syslog
 import glob
 import base64
 import commands
+import ConfigParser
 
 commands_map = {
     "git-receive-pack": "/usr/bin/git-receive-pack",
@@ -40,8 +41,21 @@ def read_env_vars():
         fp.close()
         os.putenv(env, env_var)
 
+def read_config():
+	config = {}
+	f = open('/etc/stickshift/stickshift-node.conf','r')
+	data = f.read()
+	f.close()
+	lines = data.split("\n")
+	for line in lines:
+		if line != "":
+			split_line = line.split("=")
+			config[split_line[0]] = split_line[1]
+	return config
+
 if __name__ == '__main__':
     read_env_vars()
+    config = read_config()
 
     orig_cmd = os.environ.get('SSH_ORIGINAL_COMMAND', "sssh")
     syslog.syslog(orig_cmd)
@@ -129,10 +143,10 @@ if __name__ == '__main__':
 
         # replace leading tilde (~) with user's home path
         realpath = os.path.expanduser(thearg)
-        if not realpath.startswith('/var/lib/libra/'):
-            syslog.syslog("Invalid repository: not in libra_root - %s: (%s)" % 
+        if not realpath.startswith(config['user_base_dir']):
+            syslog.syslog("Invalid repository: not in application root - %s: (%s)" % 
                           (thearg, realpath))
-            print "Invalid repository %s: not in libra_root" % thearg
+            print "Invalid repository %s: not in application root" % thearg
             sys.exit(3)
 
         if not os.path.isdir(realpath):

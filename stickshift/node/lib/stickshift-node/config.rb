@@ -31,7 +31,7 @@ module StickShift
     include Object::Singleton
 
     CONF_NAME = 'stickshift-node.conf'
-    CONF_DIR = '/etc/ss/'
+    CONF_DIR = '/etc/stickshift/'
     
     def initialize()
       _linux_cfg = File.join(CONF_DIR,CONF_NAME)
