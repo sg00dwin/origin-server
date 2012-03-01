@@ -3,7 +3,7 @@
 
 Summary:   Li site components
 Name:      rhc-site
-Version:   0.87.11
+Version:   0.87.12
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -84,6 +84,10 @@ chmod 0664 %{sitedir}/app/subsites/status/db/status.sqlite
 chmod 0744 %{sitedir}/app/subsites/status/rhc-outage
 
 %changelog
+* Thu Mar 01 2012 Dan McPherson <dmcphers@redhat.com> 0.87.12-1
+- Bug 798854 - some error messages were eaten because each block didn't return
+  the same value for the block. (ccoleman@redhat.com)
+
 * Wed Feb 29 2012 Dan McPherson <dmcphers@redhat.com> 0.87.11-1
 - move to application layout since simple isn't ready (johnp@redhat.com)
 - Add mthompso@redhat.com to promo mailing list (ccoleman@redhat.com)
