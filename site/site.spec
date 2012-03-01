@@ -74,14 +74,14 @@ rm -rf %{buildroot}
 %config(noreplace) %{sitedir}/config/environments/production.rb
 %{sitedir}
 %{htmldir}/app
+%attr(0775,root,libra_user) %{sitedir}/app/subsites/status/db
+%attr(0664,root,libra_user) %{sitedir}/app/subsites/status/db/status.sqlite3
+%attr(0744,root,libra_user) %{sitedir}/app/subsites/status/rhc-outage
+%attr(0770,root,libra_user) %{sitedir}/tmp
+%config(noreplace) %{sitedir}/app/subsites/status/config/hosts.yml
 
 %post
 /bin/touch %{sitedir}/log/production.log
-chmod 0770 %{sitedir}/tmp
-# Modified permissions for status subsite
-chmod 0775 %{sitedir}/app/subsites/status/db
-chmod 0664 %{sitedir}/app/subsites/status/db/status.sqlite
-chmod 0744 %{sitedir}/app/subsites/status/rhc-outage
 
 %changelog
 * Thu Mar 01 2012 Dan McPherson <dmcphers@redhat.com> 0.87.13-1
