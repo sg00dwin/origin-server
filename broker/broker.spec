@@ -3,7 +3,7 @@
 
 Summary:   Li broker components
 Name:      rhc-broker
-Version:   0.87.10
+Version:   0.87.11
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -85,6 +85,9 @@ rm -rf $RPM_BUILD_ROOT
 /bin/touch %{brokerdir}/log/production.log
 
 %changelog
+* Thu Mar 01 2012 Dan McPherson <dmcphers@redhat.com> 0.87.11-1
+- Adding admin script to set user VIP status (kraman@gmail.com)
+
 * Wed Feb 29 2012 Dan McPherson <dmcphers@redhat.com> 0.87.10-1
 - Updating gem versions (dmcphers@redhat.com)
 
