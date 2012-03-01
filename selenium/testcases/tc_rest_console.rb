@@ -151,6 +151,56 @@ class RestConsole < OpenShift::SeleniumTestCase
     end
   end
 
+  def test_ssh_key_add_more_than_one
+    @login, pass = dummy_credentials
+
+    signin(@login, pass)
+    @rest_account.open
+
+    create_namespace(@login, pass, @login, false)
+
+    # go back to the account page
+    @rest_account.open
+
+    # create a default SSH key
+    form = @rest_account.ssh_key_form
+
+    key = dummy_ssh_key
+    form.set_value(:key, key)
+    form.submit
+
+    await('preview SSH key') { @rest_account.find_ssh_key_row('default') }
+    # we shorten key so split and check via regex
+    cmp_key = @rest_account.find_ssh_key('default')
+    cmp_key = cmp_key.split('..')
+    if cmp_key.length > 1:
+      key_re = "(#{Regexp.quote(cmp_key[0])}).*(#{Regexp.quote(cmp_key[1])})$"
+      assert_match /#{key_re}/, key
+    else
+      assert_equal key, cmp_key[0]
+    end
+
+    ['CCCC', 'DDDD', 'EEEE'].each do |name|
+      key = dummy_ssh_key2(name)
+      @rest_account.ssh_key_add_button.click
+      @rest_account.ssh_key_add_page.wait
+      form.set_value(:name, name)
+      form.set_value(:key, key)
+      form.submit
+
+      await('preview SSH key') { @rest_account.find_ssh_key_row(name) }
+      # we shorten key so split and check via regex
+      cmp_key = @rest_account.find_ssh_key(name)
+      cmp_key = cmp_key.split('..')
+      if cmp_key.length > 1:
+        key_re = "(#{Regexp.quote(cmp_key[0])}).*(#{Regexp.quote(cmp_key[1])})$"
+        assert_match /#{key_re}/, key
+      else
+        assert_equal key, cmp_key[0]
+      end
+    end
+  end
+
   def test_ssh_key_add_invalid
     @login, pass = dummy_credentials
 
@@ -254,7 +304,7 @@ class RestConsole < OpenShift::SeleniumTestCase
     "#{type} AAAA#{Time.now.to_f.to_s.sub('.', '/')}B3NzaC1kc3MAAACBAOmtY5dhWtrsoFFlc6hjhTcu7ZEV/V4iCixcpbMedboUfiWz2Fd6x2zLrsx432Dh7IDPz2/KwW5M+h7Ns0E7rLQvJbeB7NAXjKrgTPQiuKmhx+czDQmy5KdINtddHRR0TARpd5aSE6MHTIgav8+9bvM1h5s3S1g7khempam+0Wq/AAAAFQDrV0Jcs+YjxH5OMTAKJOzmEiyAswAAAIBsykXvxFzro6KtGn7gfeyfJSTvE7UtswYi2TqU8Hopbor0fAKKw2oKo3jJB4/fM0sm7s61i0YgLkv++tEDF1xUJnTVElZkRVIdhtNo1CnlOMkLoUnIaCubhbyDaV5oPMMHDx6QrCLz1rUFLwjGoZeuzoqXaY43aTG9dZiFZdB/SQAAAIEArHL0J93k6yz6/8/gfXKMqa1xk+i0F+9ARuw0VzHw3tn1EeVlvAXukS1ZnHriK+08kX3kI4ZQejdKyTAFu4UWLJacjg+jDj5qXeQLxrHE8tXrfLboszQriV5Pg9e2qjwSso4irXkptbomie1IcdlCA0lZC6auIAoLCKa3cILojKE="
   end
 
-  def dummy_ssh_key2(type='ssh-rsa')
-    "#{type} BBBB#{Time.now.to_f.to_s.sub('.', '/')}B3NzaC1kc3MAAACBAOmtY5dhWtrsoFFlc6hjhTcu7ZEV/V4iCixcpbMedboUfiWz2Fd6x2zLrsx432Dh7IDPz2/KwW5M+h7Ns0E7rLQvJbeB7NAXjKrgTPQiuKmhx+czDQmy5KdINtddHRR0TARpd5aSE6MHTIgav8+9bvM1h5s3S1g7khempam+0Wq/AAAAFQDrV0Jcs+YjxH5OMTAKJOzmEiyAswAAAIBsykXvxFzro6KtGn7gfeyfJSTvE7UtswYi2TqU8Hopbor0fAKKw2oKo3jJB4/fM0sm7s61i0YgLkv++tEDF1xUJnTVElZkRVIdhtNo1CnlOMkLoUnIaCubhbyDaV5oPMMHDx6QrCLz1rUFLwjGoZeuzoqXaY43aTG9dZiFZdB/SQAAAIEArHL0J93k6yz6/8/gfXKMqa1xk+i0F+9ARuw0VzHw3tn1EeVlvAXukS1ZnHriK+08kX3kI4ZQejdKyTAFu4UWLJacjg+jDj5qXeQLxrHE8tXrfLboszQriV5Pg9e2qjwSso4irXkptbomie1IcdlCA0lZC6auIAoLCKa3cILojKE="
+  def dummy_ssh_key2(prefix='BBBB')
+    "ssh-rsa #{prefix}#{Time.now.to_f.to_s.sub('.', '/')}B3NzaC1kc3MAAACBAOmtY5dhWtrsoFFlc6hjhTcu7ZEV/V4iCixcpbMedboUfiWz2Fd6x2zLrsx432Dh7IDPz2/KwW5M+h7Ns0E7rLQvJbeB7NAXjKrgTPQiuKmhx+czDQmy5KdINtddHRR0TARpd5aSE6MHTIgav8+9bvM1h5s3S1g7khempam+0Wq/AAAAFQDrV0Jcs+YjxH5OMTAKJOzmEiyAswAAAIBsykXvxFzro6KtGn7gfeyfJSTvE7UtswYi2TqU8Hopbor0fAKKw2oKo3jJB4/fM0sm7s61i0YgLkv++tEDF1xUJnTVElZkRVIdhtNo1CnlOMkLoUnIaCubhbyDaV5oPMMHDx6QrCLz1rUFLwjGoZeuzoqXaY43aTG9dZiFZdB/SQAAAIEArHL0J93k6yz6/8/gfXKMqa1xk+i0F+9ARuw0VzHw3tn1EeVlvAXukS1ZnHriK+08kX3kI4ZQejdKyTAFu4UWLJacjg+jDj5qXeQLxrHE8tXrfLboszQriV5Pg9e2qjwSso4irXkptbomie1IcdlCA0lZC6auIAoLCKa3cILojKE="
   end
 end
