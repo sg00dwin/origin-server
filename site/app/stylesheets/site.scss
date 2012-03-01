@@ -31,6 +31,10 @@ $contentColumnColor:          white !default;
 $loginBackgroundColor:        #343434 !default;
 $loginColor:                  #eaeaea !default;
 $signupLinkColor:             #aaa !default;
+$textDarkBackground:          white !default;
+$darkBackground:              #030303 !default;
+$textLightBackground:         white !default;
+$lightBackground:             white !default;
 
 $logoHeight:      70px !default;
 $logoWidth:       100px !default;
@@ -82,8 +86,8 @@ a:hover, a:active { color: $ribbonColor; }
 .column-content { background-color: $contentColumnColor; }
 #content > .container > div > .row { background-color: $underNavigationColumnColor; }
 
-.column-buzz { background-color: black; color: white; }
-.column-buzz a { color: white; }
+.column-buzz { background-color: $darkBackground; color: $textDarkBackground; }
+.column-buzz a { color: $textDarkBackground; }
 
 .column-nav { background-color: $navigationColumnColor; }
 .column-nav,
@@ -226,7 +230,7 @@ a:hover, a:active { color: $ribbonColor; }
 }
 
 @media (max-width: 767px) {
-  #content > .container > div > .row { background-color: black; }
+  #content > .container > div > .row { background-color: $textLightBackground; }
   .messaging {
     text-align: left;
     margin-bottom: 10px; 
@@ -348,8 +352,8 @@ a:hover, a:active { color: $ribbonColor; }
     position: absolute;
     width: 120px;
     height: 120px;
-    background-color: white;
-    color: black;
+    background-color: $lightBackground;
+    color: $textLightBackground;
     top: -60px;
     right: -60px;
     text-align: center;
