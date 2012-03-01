@@ -429,3 +429,45 @@ a:hover, a:active {
     padding: 5px 20px 5px 30px;
     /* calculated to match above */
     min-width: 30%; }
+
+.views-field-rss {
+  float: right; }
+
+.views-field-title {
+  font-size: 16px;
+  line-height: 20px; }
+
+.views-field-picture {
+  float: left;
+  margin-right: 6px; }
+
+.view-forum-list .views-field-picture {
+  float: right;
+  margin-left: 6px; }
+
+.block-stats div {
+  display: inline; }
+
+.views-table .views-field-pageviews {
+  white-space: nowrap; }
+
+.views-field-group-name {
+  display: inline; }
+
+.view-threads-by-popularity .views-table h4 {
+  display: inline; }
+
+.view-threads-by-popularity .views-table > div {
+  margin-bottom: 10px; }
+
+.block {
+  *zoom: 1;
+  margin-bottom: 20px; }
+  .block:before, .block:after {
+    display: table;
+    content: ""; }
+  .block:after {
+    clear: both; }
+
+.column-nav .block .item-list {
+  margin-left: 20px; }
