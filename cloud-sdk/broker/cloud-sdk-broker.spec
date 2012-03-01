@@ -13,6 +13,7 @@ Source0:   cloud-sdk-broker-%{version}.tar.gz
 
 BuildRoot: %(mktemp -ud %{_tmppath}/%{name}-%{version}-%{release}-XXXXXX)
 Requires:  httpd
+Requires:  bind
 Requires:  mod_ssl
 Requires:  oddjob
 Requires:  mod_passenger

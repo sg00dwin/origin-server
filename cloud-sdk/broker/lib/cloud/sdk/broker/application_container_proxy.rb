@@ -128,12 +128,7 @@ module Cloud
         end
         
         def get_public_hostname
-          public_hostname = 'UNKNOWN'
-          if File.exists?('/etc/cloud-sdk/node_data.conf')
-            config_file = ParseConfig.new('/etc/cloud-sdk/node_data.conf')
-            public_hostname = config_file.get_value('public_hostname') ? config_file.get_value('public_hostname') : 'UNKNOWN'
-          end
-          public_hostname
+          "localhost"
         end
         
         def execute_connector(app, gear, cart, connector_name, input_args)
