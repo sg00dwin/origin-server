@@ -449,8 +449,6 @@ function send_stopped_status {
       *)
           if [ -f $APP_DIR/run/stop_lock ]
           then
-              send_attr "status=ALREADY_IDLED"
-          else
               HTTP_DIR=`dirname "/etc/httpd/conf.d/libra/${uuid}"*/00000_default.conf`
               if [ -f $HTTP_DIR/0000000000000_disabled.conf ]
               then
