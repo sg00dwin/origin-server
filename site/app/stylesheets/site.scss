@@ -79,10 +79,19 @@ a:hover, a:active { color: $ribbonColor; }
   //background-size: 120px 120px; 
 }
 #buzz {background-color: $topNavigationColor;}
-.column-nav { background-color: $navigationColumnColor; color: white; }
 .column-content { background-color: $contentColumnColor; }
-.column-buzz { background-color: black; color: white; }
 #content > .container > div > .row { background-color: $underNavigationColumnColor; }
+
+.column-buzz { background-color: black; color: white; }
+.column-buzz a { color: white; }
+
+.column-nav { background-color: $navigationColumnColor; }
+.column-nav,
+.column-nav label { color: #666; }
+.column-nav .headline,
+.column-nav h3,
+.column-nav h3 > a { color: white; text-transform: uppercase; }
+.column-nav a { color: #999; }
 
 
 /* Nav section */
@@ -365,10 +374,6 @@ a:hover, a:active { color: $ribbonColor; }
   &:hover, &:active { color: $ribbonFoldColor; text-decoration: none; }
 }
 
-.column-buzz a {
-  color: white;
-}
-
 /* FIXME: better scoped or defined? */
 .column-content h1 { margin-top: 25px; margin-bottom: 25px; }
 
@@ -428,6 +433,7 @@ a:hover, a:active { color: $ribbonColor; }
   }
 }
 
+/* Drupal specific markup, we may want to wrap this with a top level selector on body.drupal or something */
 .views-field-rss { float: right; }
 .views-field-title { font-size: 16px; line-height: 20px; }
 .views-field-picture { float: left; margin-right: 6px; }
@@ -435,7 +441,17 @@ a:hover, a:active { color: $ribbonColor; }
 .block-stats div { display: inline; }
 .views-table .views-field-pageviews { white-space: nowrap; }
 .views-field-group-name { display: inline; }
-.view-threads-by-popularity .views-table h4 { display: inline; }
-.view-threads-by-popularity .views-table > div { margin-bottom: 10px; }
+
+.view-threads-by-popularity .views-table {
+  h4 { display: inline; color: #666; font-size: 13px; line-height: 18px; }
+  a { text-decoration: underline; }
+  span.views-field-title { display: block; }
+  > div { margin-bottom: 10px; }
+  .block-stats { clear: both; }
+}
+
 .block { @include clearfix(); margin-bottom: 20px; }
-.column-nav .block .item-list { margin-left: $gridGutterWidth; }
+.column-nav {
+  .block .item-list { margin-left: $gridGutterWidth; }
+  .view-user-profile-box { margin-bottom: 20px; }
+}

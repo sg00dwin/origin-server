@@ -75,19 +75,34 @@ a:hover, a:active {
 #buzz {
   background-color: #343434; }
 
-.column-nav {
-  background-color: #030303;
-  color: white; }
-
 .column-content {
   background-color: white; }
+
+#content > .container > div > .row {
+  background-color: #f2f2f2; }
 
 .column-buzz {
   background-color: black;
   color: white; }
 
-#content > .container > div > .row {
-  background-color: #f2f2f2; }
+.column-buzz a {
+  color: white; }
+
+.column-nav {
+  background-color: #030303; }
+
+.column-nav,
+.column-nav label {
+  color: #666; }
+
+.column-nav .headline,
+.column-nav h3,
+.column-nav h3 > a {
+  color: white;
+  text-transform: uppercase; }
+
+.column-nav a {
+  color: #999; }
 
 /* Nav section */
 #top > .container > div {
@@ -354,9 +369,6 @@ a:hover, a:active {
     color: #91010b;
     text-decoration: none; }
 
-.column-buzz a {
-  color: white; }
-
 /* FIXME: better scoped or defined? */
 .column-content h1 {
   margin-top: 25px;
@@ -430,6 +442,7 @@ a:hover, a:active {
     /* calculated to match above */
     min-width: 30%; }
 
+/* Drupal specific markup, we may want to wrap this with a top level selector on body.drupal or something */
 .views-field-rss {
   float: right; }
 
@@ -455,10 +468,18 @@ a:hover, a:active {
   display: inline; }
 
 .view-threads-by-popularity .views-table h4 {
-  display: inline; }
-
+  display: inline;
+  color: #666;
+  font-size: 13px;
+  line-height: 18px; }
+.view-threads-by-popularity .views-table a {
+  text-decoration: underline; }
+.view-threads-by-popularity .views-table span.views-field-title {
+  display: block; }
 .view-threads-by-popularity .views-table > div {
   margin-bottom: 10px; }
+.view-threads-by-popularity .views-table .block-stats {
+  clear: both; }
 
 .block {
   *zoom: 1;
@@ -471,3 +492,5 @@ a:hover, a:active {
 
 .column-nav .block .item-list {
   margin-left: 20px; }
+.column-nav .view-user-profile-box {
+  margin-bottom: 20px; }
