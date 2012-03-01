@@ -153,7 +153,7 @@ echo "Edit /etc/mongodb.conf and turn auth=true"
 
 echo "Create a new mongodb is not already created"
 echo "$ mongo"
-echo "> use cloud_sdk_broker_dev"
-echo "> db.addUser(\"cloud_sdk\", \"mooo\")"
+echo "> use stickshift_broker_dev"
+echo "> db.addUser(\"stickshift\", \"mooo\")"
 
 %changelog

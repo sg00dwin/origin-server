@@ -48,9 +48,9 @@ Broker::Application.configure do
       # Replica set example: [[<host-1>, <port-1>], [<host-2>, <port-2>], ...]
       :host_port => ["localhost", 27017],
 
-      :user => "cloud_sdk",
+      :user => "stickshift",
       :password => "mooo",
-      :db => "cloud_sdk_broker_dev",
+      :db => "stickshift_broker_dev",
       :collections => {:user => "user_test"}
     }
   }

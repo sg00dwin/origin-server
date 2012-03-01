@@ -8,8 +8,8 @@ require 'mocha'
 require 'ddns/named_service'
 
 require 'dnsruby'
-require 'lib/stickshift-controller/lib/cloud/sdk/dns_service'
-require 'lib/stickshift-controller/lib/cloud/sdk/bind_dns_service'
+require 'lib/stickshift-controller/lib/stickshift/dns_service'
+require 'lib/stickshift-controller/lib/stickshift/bind_dns_service'
 
 
 class BindDnsServiceTest < ActiveSupport::TestCase

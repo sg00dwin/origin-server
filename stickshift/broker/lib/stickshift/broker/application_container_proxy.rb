@@ -354,7 +354,7 @@ module StickShift
 
         encoded_command = Shellwords::shellescape({:cartridge => cartridge, :action => action, :args => args}.to_json)
         Bundler.with_clean_env {
-          pid, stdin, stdout, stderr = Open4::popen4("/usr/bin/oddjob_request -s com.redhat.oddjob.cloud_sdk -o /com/redhat/oddjob/cloud_sdk -i com.redhat.oddjob.cloud_sdk run_command #{encoded_command} 2>&1")
+          pid, stdin, stdout, stderr = Open4::popen4("/usr/bin/oddjob_request -s com.redhat.oddjob.stickshift -o /com/redhat/oddjob/stickshift -i com.redhat.oddjob.stickshift run_command #{encoded_command} 2>&1")
           stdin.close
           ignored, status = Process::waitpid2 pid
           exitcode = status.exitstatus
