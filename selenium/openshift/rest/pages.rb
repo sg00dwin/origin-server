@@ -39,7 +39,7 @@ module OpenShift
         @ssh_key_form = OpenShift::Rest::SshKeyForm.new(page, "new_key")
       end
 
-      def find_edit_namespace_button
+      def edit_namespace_button
         @page.find_element(:xpath => "//a[@href='/app/account/domain/edit']")
       end
 

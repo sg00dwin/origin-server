@@ -105,7 +105,7 @@ class RestConsole < OpenShift::SeleniumTestCase
     @login, pass = dummy_credentials
     create_namespace(@login, pass, @login)
 
-    @rest_account.find_edit_namespace_button.click
+    @rest_account.edit_namespace_button.click
     wait_for_page @rest_account.domain_edit_page.path
 
     form = @rest_account.domain_form
