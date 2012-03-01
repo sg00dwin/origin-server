@@ -144,7 +144,7 @@ a:hover {
   text-decoration: underline; }
 
 .row {
-  margin-left: -20px;
+  margin-left: -28px;
   *zoom: 1; }
   .row:before, .row:after {
     display: table;
@@ -154,77 +154,77 @@ a:hover {
 
 [class*="span"] {
   float: left;
-  margin-left: 20px; }
+  margin-left: 28px; }
 
 .span1 {
-  width: 60px; }
+  width: 50px; }
 
 .span2 {
-  width: 140px; }
+  width: 128px; }
 
 .span3 {
-  width: 220px; }
+  width: 206px; }
 
 .span4 {
-  width: 300px; }
+  width: 284px; }
 
 .span5 {
-  width: 380px; }
+  width: 362px; }
 
 .span6 {
-  width: 460px; }
+  width: 440px; }
 
 .span7 {
-  width: 540px; }
+  width: 518px; }
 
 .span8 {
-  width: 620px; }
+  width: 596px; }
 
 .span9 {
-  width: 700px; }
+  width: 674px; }
 
 .span10 {
-  width: 780px; }
+  width: 752px; }
 
 .span11 {
-  width: 860px; }
+  width: 830px; }
 
 .span12,
 .container {
-  width: 940px; }
+  width: 908px; }
 
 .offset1 {
-  margin-left: 100px; }
+  margin-left: 106px; }
 
 .offset2 {
-  margin-left: 180px; }
+  margin-left: 184px; }
 
 .offset3 {
-  margin-left: 260px; }
+  margin-left: 262px; }
 
 .offset4 {
   margin-left: 340px; }
 
 .offset5 {
-  margin-left: 420px; }
+  margin-left: 418px; }
 
 .offset6 {
-  margin-left: 500px; }
+  margin-left: 496px; }
 
 .offset7 {
-  margin-left: 580px; }
+  margin-left: 574px; }
 
 .offset8 {
-  margin-left: 660px; }
+  margin-left: 652px; }
 
 .offset9 {
-  margin-left: 740px; }
+  margin-left: 730px; }
 
 .offset10 {
-  margin-left: 820px; }
+  margin-left: 808px; }
 
 .offset11 {
-  margin-left: 900px; }
+  margin-left: 886px; }
 
 .row-fluid {
   width: 100%;
@@ -265,7 +265,7 @@ a:hover {
     width: 100.0%; }
 
 .container {
-  width: 940px;
+  width: 908px;
   margin-left: auto;
   margin-right: auto;
   *zoom: 1; }
@@ -276,8 +276,8 @@ a:hover {
     clear: both; }
 
 .container-fluid {
-  padding-left: 20px;
-  padding-right: 20px;
+  padding-left: 28px;
+  padding-right: 28px;
   *zoom: 1; }
   .container-fluid:before, .container-fluid:after {
     display: table;
@@ -746,51 +746,51 @@ textarea[class*="span"],
 input.span1,
 textarea.span1,
 .uneditable-input.span1 {
-  width: 50px; }
+  width: 40px; }
 input.span2,
 textarea.span2,
 .uneditable-input.span2 {
-  width: 130px; }
+  width: 118px; }
 input.span3,
 textarea.span3,
 .uneditable-input.span3 {
-  width: 210px; }
+  width: 196px; }
 input.span4,
 textarea.span4,
 .uneditable-input.span4 {
-  width: 290px; }
+  width: 274px; }
 input.span5,
 textarea.span5,
 .uneditable-input.span5 {
-  width: 370px; }
+  width: 352px; }
 input.span6,
 textarea.span6,
 .uneditable-input.span6 {
-  width: 450px; }
+  width: 430px; }
 input.span7,
 textarea.span7,
 .uneditable-input.span7 {
-  width: 530px; }
+  width: 508px; }
 input.span8,
 textarea.span8,
 .uneditable-input.span8 {
-  width: 610px; }
+  width: 586px; }
 input.span9,
 textarea.span9,
 .uneditable-input.span9 {
-  width: 690px; }
+  width: 664px; }
 input.span10,
 textarea.span10,
 .uneditable-input.span10 {
-  width: 770px; }
+  width: 742px; }
 input.span11,
 textarea.span11,
 .uneditable-input.span11 {
-  width: 850px; }
+  width: 820px; }
 input.span12,
 textarea.span12,
 .uneditable-input.span12 {
-  width: 930px; }
+  width: 898px; }
 
 input[disabled],
 select[disabled],
@@ -1146,51 +1146,51 @@ table {
 
 table .span1 {
   float: none;
-  width: 44px;
+  width: 34px;
   margin-left: 0; }
 table .span2 {
   float: none;
-  width: 124px;
+  width: 112px;
   margin-left: 0; }
 table .span3 {
   float: none;
-  width: 204px;
+  width: 190px;
   margin-left: 0; }
 table .span4 {
   float: none;
-  width: 284px;
+  width: 268px;
   margin-left: 0; }
 table .span5 {
   float: none;
-  width: 364px;
+  width: 346px;
   margin-left: 0; }
 table .span6 {
   float: none;
-  width: 444px;
+  width: 424px;
   margin-left: 0; }
 table .span7 {
   float: none;
-  width: 524px;
+  width: 502px;
   margin-left: 0; }
 table .span8 {
   float: none;
-  width: 604px;
+  width: 580px;
   margin-left: 0; }
 table .span9 {
   float: none;
-  width: 684px;
+  width: 658px;
   margin-left: 0; }
 table .span10 {
   float: none;
-  width: 764px;
+  width: 736px;
   margin-left: 0; }
 table .span11 {
   float: none;
-  width: 844px;
+  width: 814px;
   margin-left: 0; }
 table .span12 {
   float: none;
-  width: 924px;
+  width: 892px;
   margin-left: 0; }
 
 .well {
@@ -2336,7 +2336,7 @@ input[type="submit"].btn {
   float: left; }
 
 .thumbnails {
-  margin-left: -20px;
+  margin-left: -28px;
   list-style: none;
   *zoom: 1; }
   .thumbnails:before, .thumbnails:after {
@@ -2347,7 +2347,7 @@ input[type="submit"].btn {
 
 .thumbnails > li {
   float: left;
-  margin: 0 0 18px 20px; }
+  margin: 0 0 18px 28px; }
 
 .thumbnail {
   display: block;
@@ -2572,74 +2572,74 @@ a.thumbnail:hover {
     margin-left: 20px; }
 
   .span1 {
-    width: 42px; }
+    width: 42.5px; }
 
   .span2 {
-    width: 104px; }
+    width: 105px; }
 
   .span3 {
-    width: 166px; }
+    width: 167.5px; }
 
   .span4 {
-    width: 228px; }
+    width: 230px; }
 
   .span5 {
-    width: 290px; }
+    width: 292.5px; }
 
   .span6 {
-    width: 352px; }
+    width: 355px; }
 
   .span7 {
-    width: 414px; }
+    width: 417.5px; }
 
   .span8 {
-    width: 476px; }
+    width: 480px; }
 
   .span9 {
-    width: 538px; }
+    width: 542.5px; }
 
   .span10 {
-    width: 600px; }
+    width: 605px; }
 
   .span11 {
-    width: 662px; }
+    width: 667.5px; }
 
   .span12,
   .container {
-    width: 724px; }
+    width: 730px; }
 
   .offset1 {
-    margin-left: 82px; }
+    margin-left: 82.5px; }
 
   .offset2 {
-    margin-left: 144px; }
+    margin-left: 145px; }
 
   .offset3 {
-    margin-left: 206px; }
+    margin-left: 207.5px; }
 
   .offset4 {
-    margin-left: 268px; }
+    margin-left: 270px; }
 
   .offset5 {
-    margin-left: 330px; }
+    margin-left: 332.5px; }
 
   .offset6 {
-    margin-left: 392px; }
+    margin-left: 395px; }
 
   .offset7 {
-    margin-left: 454px; }
+    margin-left: 457.5px; }
 
   .offset8 {
-    margin-left: 516px; }
+    margin-left: 520px; }
 
   .offset9 {
-    margin-left: 578px; }
+    margin-left: 582.5px; }
 
   .offset10 {
-    margin-left: 640px; }
+    margin-left: 645px; }
 
   .offset11 {
-    margin-left: 702px; }
+    margin-left: 707.5px; }
 
   .row-fluid {
     width: 100%;
@@ -2682,51 +2682,51 @@ a.thumbnail:hover {
   input.span1,
   textarea.span1,
   .uneditable-input.span1 {
-    width: 32px; }
+    width: 32.5px; }
   input.span2,
   textarea.span2,
   .uneditable-input.span2 {
-    width: 94px; }
+    width: 95px; }
   input.span3,
   textarea.span3,
   .uneditable-input.span3 {
-    width: 156px; }
+    width: 157.5px; }
   input.span4,
   textarea.span4,
   .uneditable-input.span4 {
-    width: 218px; }
+    width: 220px; }
   input.span5,
   textarea.span5,
   .uneditable-input.span5 {
-    width: 280px; }
+    width: 282.5px; }
   input.span6,
   textarea.span6,
   .uneditable-input.span6 {
-    width: 342px; }
+    width: 345px; }
   input.span7,
   textarea.span7,
   .uneditable-input.span7 {
-    width: 404px; }
+    width: 407.5px; }
   input.span8,
   textarea.span8,
   .uneditable-input.span8 {
-    width: 466px; }
+    width: 470px; }
   input.span9,
   textarea.span9,
   .uneditable-input.span9 {
-    width: 528px; }
+    width: 532.5px; }
   input.span10,
   textarea.span10,
   .uneditable-input.span10 {
-    width: 590px; }
+    width: 595px; }
   input.span11,
   textarea.span11,
   .uneditable-input.span11 {
-    width: 652px; }
+    width: 657.5px; }
   input.span12,
   textarea.span12,
   .uneditable-input.span12 {
-    width: 714px; } }
+    width: 720px; } }
 
 @media (max-width: 979px) {
   body {
@@ -2856,74 +2856,74 @@ a.thumbnail:hover {
     margin-left: 30px; }
 
   .span1 {
-    width: 70px; }
+    width: 60px; }
 
   .span2 {
-    width: 170px; }
+    width: 150px; }
 
   .span3 {
-    width: 270px; }
+    width: 240px; }
 
   .span4 {
-    width: 370px; }
+    width: 330px; }
 
   .span5 {
-    width: 470px; }
+    width: 420px; }
 
   .span6 {
-    width: 570px; }
+    width: 510px; }
 
   .span7 {
-    width: 670px; }
+    width: 600px; }
 
   .span8 {
-    width: 770px; }
+    width: 690px; }
 
   .span9 {
-    width: 870px; }
+    width: 780px; }
 
   .span10 {
-    width: 970px; }
+    width: 870px; }
 
   .span11 {
-    width: 1070px; }
+    width: 960px; }
 
   .span12,
   .container {
-    width: 1170px; }
+    width: 1050px; }
 
   .offset1 {
-    margin-left: 130px; }
+    margin-left: 120px; }
 
   .offset2 {
-    margin-left: 230px; }
+    margin-left: 210px; }
 
   .offset3 {
-    margin-left: 330px; }
+    margin-left: 300px; }
 
   .offset4 {
-    margin-left: 430px; }
+    margin-left: 390px; }
 
   .offset5 {
-    margin-left: 530px; }
+    margin-left: 480px; }
 
   .offset6 {
-    margin-left: 630px; }
+    margin-left: 570px; }
 
   .offset7 {
-    margin-left: 730px; }
+    margin-left: 660px; }
 
   .offset8 {
-    margin-left: 830px; }
+    margin-left: 750px; }
 
   .offset9 {
-    margin-left: 930px; }
+    margin-left: 840px; }
 
   .offset10 {
-    margin-left: 1030px; }
+    margin-left: 930px; }
 
   .offset11 {
-    margin-left: 1130px; }
+    margin-left: 1020px; }
 
   .row-fluid {
     width: 100%;
@@ -2966,51 +2966,51 @@ a.thumbnail:hover {
   input.span1,
   textarea.span1,
   .uneditable-input.span1 {
-    width: 60px; }
+    width: 50px; }
   input.span2,
   textarea.span2,
   .uneditable-input.span2 {
-    width: 160px; }
+    width: 140px; }
   input.span3,
   textarea.span3,
   .uneditable-input.span3 {
-    width: 260px; }
+    width: 230px; }
   input.span4,
   textarea.span4,
   .uneditable-input.span4 {
-    width: 360px; }
+    width: 320px; }
   input.span5,
   textarea.span5,
   .uneditable-input.span5 {
-    width: 460px; }
+    width: 410px; }
   input.span6,
   textarea.span6,
   .uneditable-input.span6 {
-    width: 560px; }
+    width: 500px; }
   input.span7,
   textarea.span7,
   .uneditable-input.span7 {
-    width: 660px; }
+    width: 590px; }
   input.span8,
   textarea.span8,
   .uneditable-input.span8 {
-    width: 760px; }
+    width: 680px; }
   input.span9,
   textarea.span9,
   .uneditable-input.span9 {
-    width: 860px; }
+    width: 770px; }
   input.span10,
   textarea.span10,
   .uneditable-input.span10 {
-    width: 960px; }
+    width: 860px; }
   input.span11,
   textarea.span11,
   .uneditable-input.span11 {
-    width: 1060px; }
+    width: 950px; }
   input.span12,
   textarea.span12,
   .uneditable-input.span12 {
-    width: 1160px; }
+    width: 1040px; }
 
   .thumbnails {
     margin-left: -30px; }

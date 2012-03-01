@@ -49,16 +49,16 @@ a:hover, a:active {
 
 /* Preliminary gutter adjustment on spans */
 .gutter {
-  margin-left: 20px; }
+  margin-left: 28px; }
 
 /*FIXME needs responsive treatment */
 .gutter-fill {
   margin-left: 0;
-  padding-left: 20px; }
+  padding-left: 28px; }
 
 .gutter-fill-right {
-  margin-right: -20px;
-  padding-right: 20px; }
+  margin-right: -28px;
+  padding-right: 28px; }
 
 /* A link that is a block, kind of like a thumbnail */
 #top {
@@ -243,12 +243,12 @@ a:hover, a:active {
   min-height: 500px; }
 
 .column-buzz {
-  padding: 20px;
+  padding: 28px;
   position: relative; }
 
 #learn .link-tile {
   color: #343434;
-  padding: 15px 20px;
+  padding: 15px 28px;
   display: block;
   text-decoration: none; }
   #learn .link-tile:hover {
@@ -280,7 +280,7 @@ a:hover, a:active {
     text-decoration: none;
     color: white; }
   .take-action > * {
-    padding: 27px 20px; }
+    padding: 27px 28px; }
   .take-action > .pull-right {
     background-color: #91010b; }
 
@@ -379,13 +379,33 @@ a:hover, a:active {
   margin-bottom: 20px; }
   .row-content > .column-nav {
     margin-left: 0;
-    padding-right: 20px; }
+    padding-right: 28px; }
   .row-content > .column-content {
     margin-left: 0px;
+    padding-bottom: 30px; }
+
+.row-content > .column-nav {
+  padding-right: 28px; }
+.row-content > .column-content {
+  margin-right: -28px;
+  padding-left: 28px;
+  padding-right: 28px; }
+
+@media (min-width: 768px) and (max-width: 979px) {
+  .row-content > .column-nav {
+    padding-right: 20px; }
+  .row-content > .column-content {
     margin-right: -20px;
     padding-left: 20px;
-    padding-right: 20px;
-    padding-bottom: 30px; }
+    padding-right: 20px; } }
+
+@media (min-width: 1200px) {
+  .row-content > .column-nav {
+    padding-right: 30px; }
+  .row-content > .column-content {
+    margin-right: -30px;
+    padding-left: 30px;
+    padding-right: 30px; } }
 
 @media (max-width: 767px) {
   #nav {
@@ -402,21 +422,44 @@ a:hover, a:active {
   .row-content > .column-content {
     margin-right: 0; } }
 
+@media (min-width: 768px) and (max-width: 979px) {}
+@media (min-width: 1200px) {}
 /* Left nav section */
 .column-nav .nav-location {
   font-size: 19px;
   line-height: 46px;
   text-transform: uppercase;
   margin-top: 15px; }
+
 .column-nav > * {
-  margin-left: 20px; }
+  margin-left: 28px; }
 .column-nav > .nav-stacked {
-  margin-left: 10px; }
+  margin-left: 14px; }
+
+@media (min-width: 768px) and (max-width: 979px) {
+  .column-nav > * {
+    margin-left: 20px; }
+  .column-nav > .nav-stacked {
+    margin-left: 10px; } }
+
+@media (min-width: 1200px) {
+  .column-nav > * {
+    margin-left: 30px; }
+  .column-nav > .nav-stacked {
+    margin-left: 15px; } }
 
 /* Stacked navigations indent by 1 gutter each time */
 .nav-stacked .nav-stacked {
-  margin-left: 20px;
+  margin-left: 28px;
   margin-bottom: 0; }
+
+@media (min-width: 768px) and (max-width: 979px) {
+  .nav-stacked .nav-stacked {
+    margin-left: 20px; } }
+
+@media (min-width: 1200px) {
+  .nav-stacked .nav-stacked {
+    margin-left: 30px; } }
 
 @media (max-width: 767px) {
   #content .column-nav > ul > li {
@@ -428,19 +471,33 @@ a:hover, a:active {
 
 /* Body */
 #content h1.ribbon {
-  margin-left: -30px; }
-  #content h1.ribbon > .ribbon-left {
-    border-top: 10px solid #91010b;
-    bottom: -10px;
-    border-left: 10px solid transparent; }
+  margin-left: -38px; }
   #content h1.ribbon > .ribbon-content {
     background-color: #eb0011;
     color: white;
     box-shadow: 1px 2px 2px rgba(0, 0, 0, 0.5);
     display: inline-block;
-    padding: 5px 20px 5px 30px;
-    /* calculated to match above */
+    padding: 5px 28px 5px 0;
+    /* left margin set by ribbon */
     min-width: 30%; }
+  #content h1.ribbon > .ribbon-content {
+    padding-left: 38px; }
+  #content h1.ribbon > .ribbon-left {
+    border-top: 10px solid #91010b;
+    bottom: -10px;
+    border-left: 10px solid transparent; }
+
+@media (min-width: 768px) and (max-width: 979px) {
+  #content h1.ribbon {
+    margin-left: -25px; }
+    #content h1.ribbon > .ribbon-content {
+      padding-left: 25px; } }
+
+@media (min-width: 1200px) {
+  #content h1.ribbon {
+    margin-left: -35px; }
+    #content h1.ribbon > .ribbon-content {
+      padding-left: 35px; } }
 
 /* Drupal specific markup, we may want to wrap this with a top level selector on body.drupal or something */
 .views-field-rss {
@@ -467,19 +524,22 @@ a:hover, a:active {
 .views-field-group-name {
   display: inline; }
 
-.view-threads-by-popularity .views-table h4 {
+.column-nav .view-threads-by-popularity .views-table h4 {
   display: inline;
   color: #666;
   font-size: 13px;
   line-height: 18px; }
-.view-threads-by-popularity .views-table a {
+.column-nav .view-threads-by-popularity .views-table a {
   text-decoration: underline; }
-.view-threads-by-popularity .views-table span.views-field-title {
+.column-nav .view-threads-by-popularity .views-table span.views-field-title {
   display: block; }
-.view-threads-by-popularity .views-table > div {
-  margin-bottom: 10px; }
-.view-threads-by-popularity .views-table .block-stats {
+.column-nav .view-threads-by-popularity .views-table > div {
+  margin-bottom: 15px; }
+.column-nav .view-threads-by-popularity .views-table .block-stats {
   clear: both; }
+
+.og-mission {
+  margin-bottom: 10px; }
 
 .block {
   *zoom: 1;
@@ -491,6 +551,54 @@ a:hover, a:active {
     clear: both; }
 
 .column-nav .block .item-list {
-  margin-left: 20px; }
+  margin-left: 28px; }
 .column-nav .view-user-profile-box {
   margin-bottom: 20px; }
+
+.node-form fieldset legend {
+  font-size: 14px;
+  line-height: 18px; }
+.node-form .fieldset-wrapper {
+  margin-left: 10px; }
+
+.clear-block {
+  *zoom: 1; }
+  .clear-block:before, .clear-block:after {
+    display: table;
+    content: ""; }
+  .clear-block:after {
+    clear: both; }
+
+/* copied from system.css */
+html.js fieldset.collapsed {
+  border-bottom-width: 0;
+  border-left-width: 0;
+  border-right-width: 0;
+  height: 1em;
+  margin-bottom: 0; }
+
+html.js fieldset.collapsed * {
+  display: none; }
+
+html.js fieldset.collapsed legend {
+  display: block; }
+
+html.js fieldset.collapsible legend a {
+  background: url("../../misc/menu-expanded.png") no-repeat scroll 5px 75% transparent;
+  padding-left: 15px; }
+
+html.js fieldset.collapsed legend a {
+  background-image: url("../../misc/menu-collapsed.png");
+  background-position: 5px 50%; }
+
+* html.js fieldset.collapsed legend, * html.js fieldset.collapsed legend *, * html.js fieldset.collapsed table * {
+  display: inline; }
+
+html.js fieldset.collapsible {
+  position: relative; }
+
+html.js fieldset.collapsible legend a {
+  display: block; }
+
+html.js fieldset.collapsible .fieldset-wrapper {
+  overflow: auto; }

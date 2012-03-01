@@ -271,7 +271,7 @@ a:hover, a:active { color: $ribbonColor; }
   }
 
   > * {
-    padding: 27px 20px;
+    padding: 27px $gridGutterWidth;
   }
 
   > .pull-right {
@@ -387,13 +387,29 @@ a:hover, a:active { color: $ribbonColor; }
   }
   > .column-content {
     margin-left: 0px;
-    margin-right: -$gridGutterWidth;
-
-    padding-left: $gridGutterWidth;
-    padding-right: $gridGutterWidth;
     padding-bottom: 30px;
   }
 }
+@mixin row_content_gutters($width=$gridGutterWidth) {
+  .row-content {
+    > .column-nav {
+      padding-right: $width;
+    }
+    > .column-content {
+      margin-right: -$width;
+
+      padding-left: $width;
+      padding-right: $width;
+    }
+  }
+}
+@include row_content_gutters();
+@if $gridGutterWidthTablet != $gridGutterWidth { @media (min-width: 768px) and (max-width: 979px) {
+  @include row_content_gutters($gridGutterWidthTablet);
+} }
+@if $gridGutterWidthLarge != $gridGutterWidth { @media (min-width: 1200px) {
+  @include row_content_gutters($gridGutterWidthLarge);
+} }
 
 @media (max-width: 767px) {
   #nav { padding-bottom: 30px; }
@@ -405,16 +421,37 @@ a:hover, a:active { color: $ribbonColor; }
   .row-content > .column-content { margin-right: 0; } 
 }
 
+@if $gridGutterWidthTablet != $gridGutterWidth { @media (min-width: 768px) and (max-width: 979px) {
+} }
+@if $gridGutterWidthLarge != $gridGutterWidth { @media (min-width: 1200px) {
+} }
 
 /* Left nav section */
 .column-nav {
   .nav-location { font-size: 19px; line-height: 46px; text-transform: uppercase; margin-top: 15px; }
-  > * { margin-left: $gridGutterWidth; }
-  > .nav-stacked { margin-left: $gridGutterWidth/2; }
 }
+@mixin column_nav_gutters($width=$gridGutterWidth) {
+  .column-nav {
+    > * { margin-left: $width; }
+    > .nav-stacked { margin-left: $width/2; }
+  }
+}
+@include column_nav_gutters();
+@if $gridGutterWidthTablet != $gridGutterWidth { @media (min-width: 768px) and (max-width: 979px) {
+  @include column_nav_gutters($gridGutterWidthTablet);
+} }
+@if $gridGutterWidthLarge != $gridGutterWidth { @media (min-width: 1200px) {
+  @include column_nav_gutters($gridGutterWidthLarge);
+} }
+
 /* Stacked navigations indent by 1 gutter each time */
 .nav-stacked .nav-stacked { margin-left: $gridGutterWidth; margin-bottom: 0; }
-
+@if $gridGutterWidthTablet != $gridGutterWidth { @media (min-width: 768px) and (max-width: 979px) {
+  .nav-stacked .nav-stacked { margin-left: $gridGutterWidthTablet; }
+} }
+@if $gridGutterWidthLarge != $gridGutterWidth { @media (min-width: 1200px) {
+  .nav-stacked .nav-stacked { margin-left: $gridGutterWidthLarge; }
+} }
 @media (max-width: 767px) {
   #content .column-nav > ul > li { float: left; width: 32%; }
   .nav-location { display: none; }
@@ -422,16 +459,22 @@ a:hover, a:active { color: $ribbonColor; }
 
 /* Body */
 #content h1.ribbon {
-  @include ribbon($gridGutterWidth/2, $gridGutterWidth, $ribbonFoldColor);
   > .ribbon-content { 
     background-color: $ribbonColor;
     color: $ribbonTextColor;
     box-shadow: 1px 2px 2px rgba(0,0,0,0.5);
     display: inline-block;
-    padding: 5px $gridGutterWidth 5px $gridGutterWidth*1.5; /* calculated to match above */
+    padding: 5px $gridGutterWidth 5px 0; /* left margin set by ribbon */
     min-width: 30%;
   }
+  @include ribbon($ribbonFoldColor);
 }
+@if $gridGutterWidthTablet != $gridGutterWidth { @media (min-width: 768px) and (max-width: 979px) {
+  #content h1.ribbon { @include ribbon_gutters($gridGutterWidthTablet); }
+} }
+@if $gridGutterWidthLarge != $gridGutterWidth { @media (min-width: 1200px) {
+  #content h1.ribbon { @include ribbon_gutters($gridGutterWidthLarge); }
+} }
 
 /* Drupal specific markup, we may want to wrap this with a top level selector on body.drupal or something */
 .views-field-rss { float: right; }
@@ -442,16 +485,59 @@ a:hover, a:active { color: $ribbonColor; }
 .views-table .views-field-pageviews { white-space: nowrap; }
 .views-field-group-name { display: inline; }
 
-.view-threads-by-popularity .views-table {
+.column-nav .view-threads-by-popularity .views-table {
   h4 { display: inline; color: #666; font-size: 13px; line-height: 18px; }
   a { text-decoration: underline; }
   span.views-field-title { display: block; }
-  > div { margin-bottom: 10px; }
+  > div { margin-bottom: 15px; }
   .block-stats { clear: both; }
 }
+
+.og-mission { margin-bottom: 10px; }
 
 .block { @include clearfix(); margin-bottom: 20px; }
 .column-nav {
   .block .item-list { margin-left: $gridGutterWidth; }
   .view-user-profile-box { margin-bottom: 20px; }
+}
+
+.node-form {
+  fieldset legend { font-size: 14px; line-height: 18px; }
+  .fieldset-wrapper { margin-left: 10px; }
+}
+.clear-block { @include clearfix(); }
+
+/* copied from system.css */
+html.js fieldset.collapsed {
+    border-bottom-width: 0;
+    border-left-width: 0;
+    border-right-width: 0;
+    height: 1em;
+    margin-bottom: 0;
+}
+html.js fieldset.collapsed * {
+    display: none;
+}
+html.js fieldset.collapsed legend {
+    display: block;
+}
+html.js fieldset.collapsible legend a {
+    background: url("../../misc/menu-expanded.png") no-repeat scroll 5px 75% transparent;
+    padding-left: 15px;
+}
+html.js fieldset.collapsed legend a {
+    background-image: url("../../misc/menu-collapsed.png");
+    background-position: 5px 50%;
+}
+* html.js fieldset.collapsed legend, * html.js fieldset.collapsed legend *, * html.js fieldset.collapsed table * {
+    display: inline;
+}
+html.js fieldset.collapsible {
+    position: relative;
+}
+html.js fieldset.collapsible legend a {
+    display: block;
+}
+html.js fieldset.collapsible .fieldset-wrapper {
+    overflow: auto;
 }
