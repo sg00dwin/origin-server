@@ -11,7 +11,7 @@ gem 'rack'
 gem 'open4'
 gem 'multimap'
 gem 'regin'
-gem 'cloud-sdk-controller'
+gem 'stickshift-controller'
 gem 'rest-client'
 gem 'thread-dump'
 

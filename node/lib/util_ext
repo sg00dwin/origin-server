@@ -38,7 +38,7 @@ function run_as_user {
     _uuid=${uuid:-$OPENSHIFT_APP_UUID}
     if [ "`whoami`" = "$_uuid" ]; then
         #  Run confined as user - temporary bandaid to fix issues with
-        #  cdk-connector-execute - connection hooks are run unconfined.
+        #  ss-connector-execute - connection hooks are run unconfined.
         if [ "$(runcon | cut -f 3 -d ':')" != "libra_t" ]; then
             runcon -t libra_t -l $mcs_level $@
         else

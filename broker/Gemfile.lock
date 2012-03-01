@@ -38,14 +38,14 @@ GEM
       uuidtools
     bson (1.5.2)
     builder (2.1.2)
-    cloud-sdk-common (0.6.1)
+    stickshift-common (0.6.1)
       activemodel
       json
       mongo
       rack
-    cloud-sdk-controller (0.6.1)
+    stickshift-controller (0.6.1)
       activesupport
-      cloud-sdk-common
+      stickshift-common
       dnsruby
       json
       open4
@@ -110,7 +110,7 @@ PLATFORMS
 
 DEPENDENCIES
   aws-sdk
-  cloud-sdk-controller
+  stickshift-controller
   json
   mocha
   mongo

@@ -2,7 +2,7 @@ class CloudUserObserver < ActiveModel::Observer
   observe CloudUser
 
   def before_cloud_user_create(user)
-    raise Cloud::Sdk::UserException.new("Invalid characters in login '#{user.login}' found", 107) if user.login =~ /["\$\^<>\|%\/;:,\\\*=~]/
+    raise StickShift::UserException.new("Invalid characters in login '#{user.login}' found", 107) if user.login =~ /["\$\^<>\|%\/;:,\\\*=~]/
   end
 
   def cloud_user_create_success(user)

@@ -4,7 +4,7 @@
 $:.unshift('/var/www/libra/broker')
 require 'config/environment'
 
-ds = Cloud::Sdk::DataStore.instance
+ds = StickShift::DataStore.instance
 users = ds.class.collection.find({"apps.requires_feature" => 'jbossas-7.0' })
 users.each do |user|
   print "Processing user #{user["_id"]}\n"

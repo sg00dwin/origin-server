@@ -133,7 +133,7 @@ rm -rf %{buildroot}
 - Bug 796595 (dmcphers@redhat.com)
 - Update cartridge configure hooks to load git repo from remote URL Add REST
   API to create application from template Moved application template
-  models/controller to cloud-sdk (kraman@gmail.com)
+  models/controller to stickshift (kraman@gmail.com)
 
 * Wed Feb 22 2012 Dan McPherson <dmcphers@redhat.com> 0.87.2-1
 - Add show-proxy call. (rmillner@redhat.com)

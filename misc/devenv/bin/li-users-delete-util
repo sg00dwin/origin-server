@@ -11,7 +11,7 @@ end
 $dns = Express::Broker::DnsService.new
 
 def users_delete
-  ds = Cloud::Sdk::MongoDataStore.new
+  ds = StickShift::MongoDataStore.new
 
   users = ds.find_all("CloudUser")
   users.each do |user|

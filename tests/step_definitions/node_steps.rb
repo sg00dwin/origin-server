@@ -10,9 +10,9 @@ include OpenShift
 
 # Controller cartridge command paths
 $cartridge_root = '/usr/libexec/li/cartridges'
-$controller_config_path = "cdk-app-create"
+$controller_config_path = "ss-app-create"
 $controller_config_format = "#{$controller_config_path} -c '%s'"
-$controller_deconfig_path = "cdk-app-destroy"
+$controller_deconfig_path = "ss-app-destroy"
 $controller_deconfig_format = "#{$controller_deconfig_path} -c '%s'"
 $home_root = "/var/lib/libra"
 # --------------------------------------------------------------------------

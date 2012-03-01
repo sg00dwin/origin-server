@@ -75,14 +75,14 @@ unless app
   puts "ERROR: Application not found: #{options[:app_uuid] ? options[:app_uuid] : options[:app_name]}"
 end
 
-url = "http://#{app.name}-#{app.user.namespace}.#{Rails.configuration.cdk[:domain_suffix]}"
+url = "http://#{app.name}-#{app.user.namespace}.#{Rails.configuration.ss[:domain_suffix]}"
 
 puts "URL: #{url}"
 puts "Login: #{app.user.login}"
 puts "App UUID: #{app.uuid}"
 
 destination_container = nil
-destination_container = Cloud::Sdk::ApplicationContainerProxy.instance(options[:target_server_identity]) if options[:target_server_identity]
+destination_container = StickShift::ApplicationContainerProxy.instance(options[:target_server_identity]) if options[:target_server_identity]
 reply = app.container.move_app(app, destination_container, options[:destination_district_uuid], options[:allow_change_district], options[:node_profile])
 
 puts "################# ADDITIONAL DEBUG OUTPUT #################\n#{reply.debugIO.string}\n" unless reply.debugIO.string.empty?

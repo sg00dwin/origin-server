@@ -111,12 +111,12 @@ rm -rf %{buildroot}
 - fix php publish url to send exposed port (rchopra@redhat.com)
 - Update cartridge configure hooks to load git repo from remote URL Add REST
   API to create application from template Moved application template
-  models/controller to cloud-sdk (kraman@gmail.com)
+  models/controller to stickshift (kraman@gmail.com)
 - Revert "local commits for testing - required for tito build"
   (abhgupta@redhat.com)
 - local commits for testing - required for tito build (abhgupta@redhat.com)
 - run connectors as non-root (rchopra@redhat.com)
-- include open4 for cdk-connector-execute, fix in php publish_http_url
+- include open4 for ss-connector-execute, fix in php publish_http_url
   connector.. we dont need the external port for proxying web interfaces
   (rchopra@redhat.com)
 

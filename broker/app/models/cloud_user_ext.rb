@@ -1,4 +1,4 @@
-class CloudUser < Cloud::Sdk::UserModel
+class CloudUser < StickShift::UserModel
   attr_accessor :vip
   alias :initialize_old :initialize
   

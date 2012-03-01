@@ -8,7 +8,7 @@ include MCollective::RPC
 module Express
   module Broker
     class ApplicationContainerProxy
-      @@C_CONTROLLER = 'cloud-sdk-node'
+      @@C_CONTROLLER = 'stickshift-node'
       attr_accessor :id, :district
       
       def initialize(id, district=nil)
@@ -24,7 +24,7 @@ module Express
             district_uuid = district.uuid
             Rails.logger.debug "DEBUG: find_available_impl: district_uuid: #{district_uuid}"
           elsif Rails.configuration.districts[:require_for_app_create]
-            raise Cloud::Sdk::NodeException.new("No district nodes available.  If the problem persists please contact Red Hat support.", 140)
+            raise StickShift::NodeException.new("No district nodes available.  If the problem persists please contact Red Hat support.", 140)
           end
         end
         current_server, current_capacity = rpc_find_available(node_profile, district_uuid)
@@ -33,7 +33,7 @@ module Express
           current_server, current_capacity = rpc_find_available(node_profile, district_uuid, true)
           Rails.logger.debug "CURRENT SERVER: #{current_server}"
         end
-        raise Cloud::Sdk::NodeException.new("No nodes available.  If the problem persists please contact Red Hat support.", 140) unless current_server
+        raise StickShift::NodeException.new("No nodes available.  If the problem persists please contact Red Hat support.", 140) unless current_server
         Rails.logger.debug "DEBUG: find_available_impl: current_server: #{current_server}: #{current_capacity}"
 
         ApplicationContainerProxy.new(current_server, district)
@@ -42,7 +42,7 @@ module Express
       def self.find_one_impl(node_profile=nil)
         current_server = rpc_find_one(node_profile)
         Rails.logger.debug "CURRENT SERVER: #{current_server}"
-        raise Cloud::Sdk::NodeException.new("No nodes found.  If the problem persists please contact Red Hat support.", 140) unless current_server
+        raise StickShift::NodeException.new("No nodes found.  If the problem persists please contact Red Hat support.", 140) unless current_server
         Rails.logger.debug "DEBUG: find_one_impl: current_server: #{current_server}"
 
         ApplicationContainerProxy.new(current_server)
@@ -56,7 +56,7 @@ module Express
         result = execute_direct(@@C_CONTROLLER, 'cartridge-list', "--porcelain --with-descriptors", false)
         result = parse_result(result)
         cart_data = JSON.parse(result.resultIO.string)
-        cart_data.map! {|c| Cloud::Sdk::Cartridge.new.from_descriptor(YAML.load(c))}
+        cart_data.map! {|c| StickShift::Cartridge.new.from_descriptor(YAML.load(c))}
       end
       
       def reserve_uid(district_uuid=nil)
@@ -68,8 +68,8 @@ module Express
             district_uuid = get_district_uuid unless district_uuid
           end
           if district_uuid && district_uuid != 'NONE'
-            reserved_uid = Cloud::Sdk::DataStore.instance.reserve_district_uid(district_uuid)
-            raise Cloud::Sdk::CdkException.new("uid could not be reserved") unless reserved_uid
+            reserved_uid = StickShift::DataStore.instance.reserve_district_uid(district_uuid)
+            raise StickShift::SSException.new("uid could not be reserved") unless reserved_uid
           end
         end
         reserved_uid
@@ -83,7 +83,7 @@ module Express
             district_uuid = get_district_uuid unless district_uuid
           end
           if district_uuid && district_uuid != 'NONE'
-            Cloud::Sdk::DataStore.instance.unreserve_district_uid(district_uuid, uid)
+            StickShift::DataStore.instance.unreserve_district_uid(district_uuid, uid)
           end
         end
       end
@@ -96,7 +96,7 @@ module Express
             district_uuid = get_district_uuid unless district_uuid
           end
           if district_uuid && district_uuid != 'NONE'
-            Cloud::Sdk::DataStore.instance.inc_district_externally_reserved_uids_size(district_uuid)
+            StickShift::DataStore.instance.inc_district_externally_reserved_uids_size(district_uuid)
           end
         end
       end
@@ -363,7 +363,7 @@ module Express
         if destination_container.nil?
           unless allow_change_district
             if destination_district_uuid && destination_district_uuid != source_district_uuid
-              raise Cloud::Sdk::UserException.new("Error moving app.  Cannot change district from '#{source_district_uuid}' to '#{destination_district_uuid}' without allow_change_district flag.", 1)
+              raise StickShift::UserException.new("Error moving app.  Cannot change district from '#{source_district_uuid}' to '#{destination_district_uuid}' without allow_change_district flag.", 1)
             else
               destination_district_uuid = source_district_uuid unless source_district_uuid == 'NONE'
             end
@@ -377,7 +377,7 @@ module Express
           end
           destination_district_uuid = destination_container.get_district_uuid
           unless allow_change_district || (source_district_uuid == destination_district_uuid)
-            raise Cloud::Sdk::UserException.new("Resulting move would change districts from '#{source_district_uuid}' to '#{destination_district_uuid}'", 1)
+            raise StickShift::UserException.new("Resulting move would change districts from '#{source_district_uuid}' to '#{destination_district_uuid}'", 1)
           end
         end
         
@@ -387,14 +387,14 @@ module Express
         log_debug "DEBUG: District unchanged keeping uid" if keep_uid
 
         if source_container.id == destination_container.id
-          raise Cloud::Sdk::UserException.new("Error moving app.  Old and new servers are the same: #{source_container.id}", 1)
+          raise StickShift::UserException.new("Error moving app.  Old and new servers are the same: #{source_container.id}", 1)
         end
         
         orig_uid = app.gear.uid
 
         log_debug "DEBUG: Moving app '#{app.name}' with uuid #{app.gear.uuid} from #{source_container.id} to #{destination_container.id}"
         
-        url = "http://#{app.name}-#{app.user.namespace}.#{Rails.configuration.cdk[:domain_suffix]}"
+        url = "http://#{app.name}-#{app.user.namespace}.#{Rails.configuration.ss[:domain_suffix]}"
         
         reply = ResultIO.new
         leave_stopped = false
@@ -483,7 +483,7 @@ module Express
               log_debug "DEBUG: Moving content for app '#{app.name}' to #{destination_container.id}"
               log_debug `eval \`ssh-agent\`; ssh-add /var/www/libra/broker/config/keys/rsync_id_rsa; ssh -o StrictHostKeyChecking=no -A root@#{source_container.get_ip_address} "rsync -aA#{(app.gear.uid && app.gear.uid == orig_uid) ? 'X' : ''} -e 'ssh -o StrictHostKeyChecking=no' /var/lib/libra/#{app.gear.uuid}/ root@#{destination_container.get_ip_address}:/var/lib/libra/#{app.gear.uuid}/"`
               if $?.exitstatus != 0
-                raise Cloud::Sdk::NodeException.new("Error moving app '#{app.name}' from #{source_container.id} to #{destination_container.id}", 143)
+                raise StickShift::NodeException.new("Error moving app '#{app.name}' from #{source_container.id} to #{destination_container.id}", 143)
               end
   
               begin
@@ -609,7 +609,7 @@ module Express
           rpc_client.disconnect
         end
 
-        raise Cloud::Sdk::NodeException.new("Node execution failure (error getting result from node).  If the problem persists please contact Red Hat support.", 143) unless result
+        raise StickShift::NodeException.new("Node execution failure (error getting result from node).  If the problem persists please contact Red Hat support.", 143) unless result
 
         result
       end
@@ -733,9 +733,9 @@ module Express
         else
           server_identity = app ? ApplicationContainerProxy.find_app(app.uuid, app.name) : nil
           if server_identity && @id != server_identity
-            raise Cloud::Sdk::InvalidNodeException.new("Node execution failure (invalid  node).  If the problem persists please contact Red Hat support.", 143, nil, server_identity)
+            raise StickShift::InvalidNodeException.new("Node execution failure (invalid  node).  If the problem persists please contact Red Hat support.", 143, nil, server_identity)
           else
-            raise Cloud::Sdk::NodeException.new("Node execution failure (error getting result from node).  If the problem persists please contact Red Hat support.", 143)
+            raise StickShift::NodeException.new("Node execution failure (error getting result from node).  If the problem persists please contact Red Hat support.", 143)
           end
         end
         
@@ -864,11 +864,11 @@ module Express
         result = execute_direct(framework, command, arguments)
         begin
           resultIO = parse_result(result, app, command)
-        rescue Cloud::Sdk::InvalidNodeException => e
+        rescue StickShift::InvalidNodeException => e
           if command != 'configure' && allow_move
             @id = e.server_identity
             Rails.logger.debug "DEBUG: Changing server identity of '#{app.name}' from '#{app.server_identity}' to '#{@id}'"
-            dns_service = Cloud::Sdk::DnsService.instance
+            dns_service = StickShift::DnsService.instance
             dns_service.deregister_application(app.name, app.user.namespace)
             dns_service.register_application(app.name, app.user.namespace, get_public_hostname)
             dns_service.publish
@@ -884,8 +884,8 @@ module Express
         if resultIO.exitcode != 0
           resultIO.debugIO << "Cartridge return code: " + resultIO.exitcode.to_s
           begin
-            raise Cloud::Sdk::NodeException.new("Node execution failure (invalid exit code from node).  If the problem persists please contact Red Hat support.", 143, resultIO)
-          rescue Cloud::Sdk::NodeException => e
+            raise StickShift::NodeException.new("Node execution failure (invalid exit code from node).  If the problem persists please contact Red Hat support.", 143, resultIO)
+          rescue StickShift::NodeException => e
             if command == 'deconfigure'
               if framework.start_with?('embedded/')
                 if has_embedded_app?(app.uuid, framework[9..-1])
@@ -965,7 +965,7 @@ module Express
         rpc_client = rpcclient('rpcutil', :options => options)
         begin
           rpc_client.get_fact(:fact => 'public_hostname') do |response|
-            raise Cloud::Sdk::NodeException.new("No nodes found.  If the problem persists please contact Red Hat support.", 140) unless Integer(response[:body][:statuscode]) == 0
+            raise StickShift::NodeException.new("No nodes found.  If the problem persists please contact Red Hat support.", 140) unless Integer(response[:body][:statuscode]) == 0
             current_server = response[:senderid]
           end
         ensure
@@ -1038,7 +1038,7 @@ module Express
             if (result && defined? result.results && result.results.has_key?(:data))
               value = result.results[:data][:value]
             else
-              raise Cloud::Sdk::NodeException.new("Node execution failure (error getting fact).  If the problem persists please contact Red Hat support.", 143)
+              raise StickShift::NodeException.new("Node execution failure (error getting fact).  If the problem persists please contact Red Hat support.", 143)
             end
           ensure
             rpc_client.disconnect

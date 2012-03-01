@@ -89,8 +89,8 @@ Broker::Application.configure do
     :apptegic_dataset => "test"
   }
 
-  # CDK Config
-  config.cdk = {
+  # SS Config
+  config.ss = {
     :domain_suffix => "dev.rhcloud.com",
     :default_max_gears => 5,
 

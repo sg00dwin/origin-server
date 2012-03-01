@@ -2,7 +2,7 @@ require 'pp'
 
 module Express
   module Broker
-    class MongoDataStore < Cloud::Sdk::MongoDataStore
+    class MongoDataStore < StickShift::MongoDataStore
       
       def find_district(uuid)
         Rails.logger.debug "MongoDataStore.find_district(#{uuid})\n\n"

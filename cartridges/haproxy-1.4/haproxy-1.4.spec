@@ -89,7 +89,7 @@ rm -rf %{buildroot}
 - add/remove gear via SDK (jhonce@redhat.com)
 
 * Wed Feb 29 2012 Dan McPherson <dmcphers@redhat.com> 0.5.7-1
-- Cleanup to put the cdk-connector-execute workaround in the utility extensions
+- Cleanup to put the ss-connector-execute workaround in the utility extensions
   for express. (ramr@redhat.com)
 - Handle git push errors - better check for gear is up and running.
   (ramr@redhat.com)
@@ -100,7 +100,7 @@ rm -rf %{buildroot}
   dns. For now fix the bug by waiting in here for the dns entry to become
   available. (ramr@redhat.com)
 - Bug fix to get haproxy reload working. (ramr@redhat.com)
-- Fixup reload haproxy - temporary bandaid until cdk-connector execute is
+- Fixup reload haproxy - temporary bandaid until ss-connector execute is
   fixed. (ramr@redhat.com)
 - Manage gear reg/unreg from haproxy on scale up/down + reload haproxy
   gracefully. (ramr@redhat.com)
@@ -164,7 +164,7 @@ rm -rf %{buildroot}
   (ramr@redhat.com)
 - correcting haproxy name (mmcgrath@redhat.com)
 - Fix HAProxy descriptor Add HAProxy to standalone cart list on
-  CartridgeCache(temp till descriptor changes are made on cloud-sdk-node)
+  CartridgeCache(temp till descriptor changes are made on stickshift-node)
   (kraman@gmail.com)
 - Altered haproxy (mmcgrath@redhat.com)
 - removed dependency on www-dynamic (rchopra@redhat.com)
