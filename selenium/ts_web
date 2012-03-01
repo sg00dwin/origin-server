@@ -19,6 +19,7 @@ require 'openshift/express/pages'
 require 'openshift/express/forms'
 
 require 'openshift/rest/pages'
+require 'openshift/rest/forms'
 
 # Load desired test cases
 Dir["testcases/*.rb"].each {|file| require file }
@@ -63,7 +64,7 @@ class TS_web
       :express => Express.suite,
       :flex => Flex.suite,
       :console => ExpressConsole.suite,
-      :rest_console => RestConsole.suite
+      :rest_account => RestAccount.suite
     }
 
     suite = TestDecorator.new('Sauce Tests')
