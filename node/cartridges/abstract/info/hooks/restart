@@ -53,7 +53,7 @@ setup_basic_hook "$1" $2 $3
 _state=`get_app_state`
 set_app_state started
 rm -f "$APP_DIR/run/stop_lock"
-if [ "$_state" = "stopped" ] || [ "$_state" = "idled" ]
+if [ "$_state" = "stopped" ] || [ "$_state" = "idle" ]
 then
     start_app
 else
