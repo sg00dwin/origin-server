@@ -2,7 +2,7 @@
 
 Summary:       Multi-tenant cloud management system node tools
 Name:          rhc-node
-Version:       0.87.8
+Version:       0.87.9
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -247,6 +247,11 @@ fi
 /lib64/security/pam_libra.so
 
 %changelog
+* Thu Mar 01 2012 Dan McPherson <dmcphers@redhat.com> 0.87.9-1
+- Bug 798867 (dmcphers@redhat.com)
+- handle idled on restart as well (dmcphers@redhat.com)
+- Bug 798888 (dmcphers@redhat.com)
+
 * Wed Feb 29 2012 Dan McPherson <dmcphers@redhat.com> 0.87.8-1
 - Support new server.log time format BZ795331 (jhonce@redhat.com)
 - Removed extra line send_attr line (jhonce@redhat.com)

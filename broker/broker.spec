@@ -3,7 +3,7 @@
 
 Summary:   Li broker components
 Name:      rhc-broker
-Version:   0.87.10
+Version:   0.87.11
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -54,6 +54,7 @@ mv %{buildroot}%{brokerdir}/script/rhc-admin-move %{buildroot}/%{_bindir}
 mv %{buildroot}%{brokerdir}/script/rhc-admin-ctl-district %{buildroot}/%{_bindir}
 mv %{buildroot}%{brokerdir}/script/rhc-admin-add-template %{buildroot}/%{_bindir}
 mv %{buildroot}%{brokerdir}/script/rhc-admin-remove-template %{buildroot}/%{_bindir}
+mv %{buildroot}%{brokerdir}/script/rhc-admin-user-vip %{buildroot}/%{_bindir}
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -78,11 +79,15 @@ rm -rf $RPM_BUILD_ROOT
 %attr(0750,-,-) %{_bindir}/rhc-admin-ctl-district
 %attr(0750,-,-) %{_bindir}/rhc-admin-add-template
 %attr(0750,-,-) %{_bindir}/rhc-admin-remove-template
+%attr(0750,-,-) %{_bindir}/rhc-admin-user-vip
 
 %post
 /bin/touch %{brokerdir}/log/production.log
 
 %changelog
+* Thu Mar 01 2012 Dan McPherson <dmcphers@redhat.com> 0.87.11-1
+- Adding admin script to set user VIP status (kraman@gmail.com)
+
 * Wed Feb 29 2012 Dan McPherson <dmcphers@redhat.com> 0.87.10-1
 - Updating gem versions (dmcphers@redhat.com)
 
