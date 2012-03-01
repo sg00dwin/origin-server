@@ -130,13 +130,17 @@ def migrate(continue=false)
         apps = user.applications
         apps.each do |app|
           app_name = app.name
-          server_identity = app.gear.server_identity
-          mutex.synchronize do
-            node_to_apps[server_identity] = [] unless node_to_apps[server_identity]
-            node_to_users[server_identity] = [] unless node_to_users[server_identity]
-            node_to_apps[server_identity] << {:name => app_name, :app => app}
-            node_to_users[server_identity] << user
-            app_cnt += 1
+          if app.gear
+            server_identity = app.gear.server_identity
+            mutex.synchronize do
+              node_to_apps[server_identity] = [] unless node_to_apps[server_identity]
+              node_to_users[server_identity] = [] unless node_to_users[server_identity]
+              node_to_apps[server_identity] << {:name => app_name, :app => app}
+              node_to_users[server_identity] << user
+              app_cnt += 1
+            end
+          else
+            puts "ERROR: Gear not found for app: '#{app_name}' of user #{user.login}"
           end
         end
       end
