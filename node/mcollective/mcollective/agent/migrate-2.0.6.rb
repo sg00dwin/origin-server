@@ -113,6 +113,27 @@ module LibraMigration
 
       env_echos.push("echo \"export OPENSHIFT_APP_STATE=#{app_dir}/runtime\" > #{app_home}/.env/OPENSHIFT_APP_STATE")
 
+
+      state = "#{app_dir}/runtime/.state"
+      if not File.exists?(state)
+        begin
+          state_file = File.new(state, "w")
+          if File.exists?("/var/lib/libra/#{uuid}/#{app_name}/run/stop_lock")
+            if File.exists?("/etc/httpd/conf.d/libra/#{uuid}_#{app_name}_#{namespace}/0000000000000_disabled.conf")
+              state_file.write("idle\n")
+            else
+              state_file.write("stopped\n")
+            end
+          else
+            state_file.write("started\n")
+          end
+        ensure
+          state_file.close
+        end
+        FileUtils.chown(uuid, uuid, state)
+        FileUtils.chmod(0644, state)
+      end
+
       env_echos.each do |env_echo|
         echo_output, echo_exitcode = Util.execute_script(env_echo)
         output += echo_output
