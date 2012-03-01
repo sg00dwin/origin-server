@@ -33,6 +33,13 @@
      border-left: Xpx solid transparent;
      */ }
 
+/* move into core when th ebranding converges */
+a {
+  color: #91010b; }
+
+a:hover, a:active {
+  color: #eb0011; }
+
 /* Hitch a div out of its parent */
 .lift {
   margin-top: -90px; }
@@ -63,7 +70,7 @@
   color: white; }
 
 #content, #learn {
-  background-color: #eaeaea; }
+  background: -moz-repeating-linear-gradient(-70deg, #e6e6e6, #e6e6e6 6px, #e4e4e4 9px, #e4e4e4 15px, #e6e6e6 18px) repeat scroll 0 0 transparent; }
 
 #buzz {
   background-color: #343434; }
@@ -209,12 +216,16 @@
       font-size: 13px;
       line-height: 18px; } }
 
+/* squash the secondary message into the space the primary uses */
+.messaging-home .secondary {
+  padding: 0 45px; }
+
 /* Content section */
 #nav, #learn {
-  padding-bottom: 100px; }
+  padding-bottom: 110px; }
 
 #buzz {
-  min-height: 300px; }
+  min-height: 500px; }
 
 .column-buzz {
   padding: 20px;
@@ -228,7 +239,7 @@
   #learn .link-tile:hover {
     text-decoration: none;
     color: #343434;
-    background-color: #999999; }
+    background-color: #cccccc; }
   #learn .link-tile:active {
     text-decoration: none;
     color: #343434;
@@ -262,20 +273,59 @@
   margin-top: -37px;
   margin-bottom: 20px; }
 
-#buzz h2 {
+.column-buzz > h2 {
   text-align: center;
   color: white;
   text-transform: uppercase;
   font-size: 46px;
   letter-spacing: -4px; }
-  #buzz h2 > strong {
-    letter-spacing: -4px; }
-
-#buzz hr {
-  margin: 10px 43% 20px;
+.column-buzz > hr {
+  margin: 10px 43% 30px;
   border: 0;
   border-top: 4px solid #eb0011; }
-
+.column-buzz blockquote {
+  quotes: "\201C""\201D""\2018""\2019";
+  border-left: 0;
+  padding: 0;
+  margin-bottom: 15px; }
+  .column-buzz blockquote:after {
+    content: ""; }
+  .column-buzz blockquote:before {
+    content: open-quote;
+    color: #aaa;
+    font-size: 4em;
+    line-height: .1em;
+    margin-right: .25em;
+    vertical-align: -0.4em; }
+.column-buzz .tweet {
+  *zoom: 1;
+  position: relative;
+  margin-bottom: 15px; }
+  .column-buzz .tweet:before, .column-buzz .tweet:after {
+    display: table;
+    content: ""; }
+  .column-buzz .tweet:after {
+    clear: both; }
+  .column-buzz .tweet > img {
+    width: 58px;
+    height: 58px;
+    border: 6px solid white;
+    float: left; }
+  .column-buzz .tweet > p {
+    margin: 0 0 5px 90px;
+    background-color: #343434;
+    padding: 5px 10px;
+    min-height: 50px; }
+    .column-buzz .tweet > p:before {
+      border-color: transparent #343434;
+      border-style: solid;
+      border-width: 10px 10px 0 0;
+      top: 10px;
+      content: "";
+      position: absolute;
+      left: 80px; }
+  .column-buzz .tweet > small {
+    margin-left: 80px; }
 .column-buzz > .callout {
   position: absolute;
   width: 120px;
@@ -286,7 +336,26 @@
   right: -60px;
   text-align: center; }
   .column-buzz > .callout > .one {
+    margin-top: 30px;
     color: gray; }
+
+.align-right {
+  text-align: right; }
+
+.link-with-action {
+  font-weight: bold;
+  text-transform: uppercase;
+  text-decoration: none; }
+  .link-with-action > strong {
+    color: #eb0011; }
+  .link-with-action:hover > strong, .link-with-action:active > strong {
+    color: #91010b; }
+  .link-with-action:hover, .link-with-action:active {
+    color: #91010b;
+    text-decoration: none; }
+
+.column-buzz a {
+  color: white; }
 
 /* FIXME: better scoped or defined? */
 .column-content h1 {

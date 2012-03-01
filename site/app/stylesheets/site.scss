@@ -40,6 +40,10 @@ $ribbonColor:     #eb0011 !default;
 $ribbonTextColor: white !default;
 $ribbonFoldColor: #91010b !default;
 
+/* move into core when th ebranding converges */
+a { color: $ribbonFoldColor; }
+a:hover, a:active { color: $ribbonColor; }
+
 /* Hitch a div out of its parent */
 .lift { margin-top: -90px; }
 .lift-less { margin-top: -80px; }
@@ -68,7 +72,12 @@ $ribbonFoldColor: #91010b !default;
 
 #top {background-color: $topBarColor; color: white;}
 #nav {background-color: $topNavigationColor; color: white; }
-#content, #learn {background-color: $bodyColor;}
+#content, #learn {
+  background: -moz-repeating-linear-gradient(-70deg, #e6e6e6, #e6e6e6 6px, #e4e4e4 9px, #e4e4e4 15px, #e6e6e6 18px) repeat scroll 0 0 transparent;
+  //background-image: -moz-linear-gradient(-70deg, #e6e6e6 25%, #444 75%);
+  //background-image: -moz-repeating-linear-gradient(-45deg, #e6e6e6 0%, #e4e4e4 50%, #e6e6e6);
+  //background-size: 120px 120px; 
+}
 #buzz {background-color: $topNavigationColor;}
 .column-nav { background-color: $navigationColumnColor; color: white; }
 .column-content { background-color: $contentColumnColor; }
@@ -218,16 +227,19 @@ $ribbonFoldColor: #91010b !default;
   }
 }
 
+/* squash the secondary message into the space the primary uses */
+.messaging-home .secondary { padding: 0 45px; }
+
 /* Content section */
 
-#nav, #learn { padding-bottom: 100px; }
-#buzz { min-height: 300px; }
+#nav, #learn { padding-bottom: 110px; }
+#buzz { min-height: 500px; }
 .column-buzz { padding: $gridGutterWidth; position: relative;}
 
 #learn .link-tile {
   color: #343434;
   padding: 15px $gridGutterWidth;
-  @include tile(#343434, #343434, $ribbonFoldColor, #999);
+  @include tile(#343434, #343434, $ribbonFoldColor, #ccc);
 
   > :last-child { margin-bottom: 0; }
 }
@@ -258,35 +270,103 @@ $ribbonFoldColor: #91010b !default;
   }
 }
 #learn .take-action { margin-top: -37px; margin-bottom: 20px; }
-#buzz h2 { 
-  text-align: center; 
-  color: white; 
-  text-transform: uppercase;
-  font-size: 46px;
-  letter-spacing: -4px;
-  > strong {
+.column-buzz {
+  > h2 { 
+    text-align: center; 
+    color: white;
+    text-transform: uppercase;
+    font-size: 46px;
     letter-spacing: -4px;
   }
-}
-#buzz hr {
-  margin: 10px 43% 20px;
-  border: 0;
-  border-top: 4px solid $ribbonColor;
-}
-
-.column-buzz > .callout {
-  position: absolute;
-  width: 120px;
-  height: 120px;
-  background-color: white;
-  color: black;
-  top: -60px;
-  right: -60px;
-  text-align: center;
-
-  > .one {
-    color: gray;
+  > hr {
+    margin: 10px 43% 30px;
+    border: 0;
+    border-top: 4px solid $ribbonColor;
   }
+
+  blockquote {
+    quotes: "\201C""\201D""\2018""\2019";
+    border-left: 0;
+    padding: 0;
+    margin-bottom: 15px;
+
+    &:after {
+      content: "";
+    }
+    &:before {
+      content: open-quote;
+      color: #aaa;
+      font-size:4em;
+      line-height:.1em;
+      margin-right:.25em;
+      vertical-align:-.4em;
+    }
+  }
+
+  .tweet {
+    @include clearfix();
+    position: relative;
+    margin-bottom: 15px;
+
+    > img {
+      width: 58px;
+      height: 58px;
+      border: 6px solid white;
+      float: left;
+    }
+    > p {
+      margin: 0 0 5px 90px;
+      background-color: #343434; 
+      padding: 5px 10px; 
+      min-height: 50px;
+
+      &:before {
+        border-color: transparent #343434;
+        border-style: solid;
+        border-width: 10px 10px 0 0;
+        top: 10px;
+        content: "";
+        position: absolute;
+        left: 80px;
+      }
+    }
+    > small {
+      margin-left: 80px;
+    }
+  }
+
+  > .callout {
+    position: absolute;
+    width: 120px;
+    height: 120px;
+    background-color: white;
+    color: black;
+    top: -60px;
+    right: -60px;
+    text-align: center;
+
+    > .one {
+      margin-top: 30px;
+      color: gray;
+    }
+  }
+}
+
+.align-right {
+  text-align: right;
+}
+
+.link-with-action {
+  font-weight: bold;
+  text-transform: uppercase;
+  text-decoration: none;
+  > strong { color: $ribbonColor; }
+  &:hover > strong, &:active > strong { color: $ribbonFoldColor; }
+  &:hover, &:active { color: $ribbonFoldColor; text-decoration: none; }
+}
+
+.column-buzz a {
+  color: white;
 }
 
 /* FIXME: better scoped or defined? */
