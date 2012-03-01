@@ -14,10 +14,10 @@ class RestConsole < OpenShift::SeleniumTestCase
     signin(@login, pass)
     @rest_account.open
     form = @rest_account.domain_form
-    assert !form.in_error?(:namespace_group)
+    assert !form.in_error?(:namespace)
     form.submit
     @rest_account.domain_page.wait
-    assert form.in_error?(:namespace_group)
+    assert form.in_error?(:namespace)
   end
 
   def test_create_namespace_invalid
@@ -25,11 +25,11 @@ class RestConsole < OpenShift::SeleniumTestCase
     signin(@login, pass)
     @rest_account.open
     form = @rest_account.domain_form
-    assert !form.in_error?(:namespace_group)
+    assert !form.in_error?(:namespace)
     form.set_value(:namespace, "thisnamespaceisoverthemaxsizeallowed")
     form.submit
     @rest_account.domain_page.wait
-    assert form.in_error?(:namespace_group)
+    assert form.in_error?(:namespace)
   end
 
   def test_create_namespace_duplicate
@@ -45,11 +45,11 @@ class RestConsole < OpenShift::SeleniumTestCase
     signin(@login, pass)
     @rest_account.open
     form = @rest_account.domain_form
-    assert !form.in_error?(:namespace_group)
+    assert !form.in_error?(:namespace)
     form.set_value(:namespace, dup_namespace)
     form.submit
     @rest_account.domain_page.wait
-    assert form.in_error?(:namespace_group)
+    assert form.in_error?(:namespace)
 
   end
 
@@ -71,29 +71,29 @@ class RestConsole < OpenShift::SeleniumTestCase
     # try to edit with blank namespace
     @rest_account.domain_edit_page.open
     assert_equal @login, form.get_value(:namespace)
-    assert !form.in_error?(:namespace_group)
+    assert !form.in_error?(:namespace)
     form.set_value(:namespace, "")
     form.submit
     @rest_account.domain_page.wait
-    assert form.in_error?(:namespace_group)
+    assert form.in_error?(:namespace)
 
     # try to edit with an invalid namespace
     @rest_account.domain_edit_page.open
     assert_equal @login, form.get_value(:namespace)
-    assert !form.in_error?(:namespace_group)
+    assert !form.in_error?(:namespace)
     form.set_value(:namespace, "thisnamespaceisoverthemaxsizeallowed")
     form.submit
     @rest_account.domain_page.wait
-    assert form.in_error?(:namespace_group)
+    assert form.in_error?(:namespace)
 
     # try to edit with a duplicate namespace
     @rest_account.domain_edit_page.open
     assert_equal @login, form.get_value(:namespace)
-    assert !form.in_error?(:namespace_group)
+    assert !form.in_error?(:namespace)
     form.set_value(:namespace, dup_namespace)
     form.submit
     @rest_account.domain_page.wait
-    assert form.in_error?(:namespace_group)
+    assert form.in_error?(:namespace)
   end
 
   def test_create_namespace_valid
