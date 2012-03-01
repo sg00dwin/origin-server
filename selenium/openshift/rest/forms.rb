@@ -87,7 +87,13 @@ module OpenShift
 
       	@submit = "//input[@id='key_submit']"
 
-        @loc_btn_cancel = "//a[@href='/app/account']"
+        @cancel_path = '/app/account'
+        @loc_btn_cancel = "//a[@href='#{@cancel_path}']"
+      end
+
+      def cancel
+        @page.find_element(:xpath => @loc_btn_cancel).click
+        wait_for_page @cancel_path
       end
     end
   end

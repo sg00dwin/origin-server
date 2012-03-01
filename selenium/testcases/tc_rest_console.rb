@@ -121,7 +121,7 @@ class RestConsole < OpenShift::SeleniumTestCase
     await("namespace updated on page") { text('.namespace') == new_namespace }
   end
 
-def test_ssh_keys
+  def test_ssh_key_add_default
     @login, pass = dummy_credentials
 
     signin(@login, pass)
@@ -149,6 +149,77 @@ def test_ssh_keys
     else
       assert_equal key, cmp_key[0]
     end
+  end
+
+  def test_ssh_key_add_invalid
+    @login, pass = dummy_credentials
+
+    signin(@login, pass)
+    @rest_account.open
+
+    create_namespace(@login, pass, @login, false)
+
+    # go back to the account page
+    @rest_account.open
+
+    # create a default SSH key
+    form = @rest_account.ssh_key_form
+
+    key = dummy_ssh_key
+    form.set_value(:key, key)
+    form.submit
+
+    await('preview SSH key') { @rest_account.find_ssh_key_row('default') }
+
+    # add a duplicate key with a different name
+    @rest_account.ssh_key_add_button.click
+    @rest_account.ssh_key_add_page.wait
+
+    assert !form.in_error?(:name)
+    assert !form.in_error?(:key)
+
+    form.set_value(:name, 'new')
+    form.set_value(:key, key)
+    form.submit
+
+    @rest_account.ssh_key_page.wait
+    assert !form.in_error?(:name)
+    assert form.in_error?(:key)
+
+    form.cancel
+
+    # add a duplicate key name with a different key
+    key = dummy_ssh_key2
+    @rest_account.ssh_key_add_button.click
+    @rest_account.ssh_key_add_page.wait
+
+    assert !form.in_error?(:name)
+    assert !form.in_error?(:key)
+
+    form.set_value(:name, 'default')
+    form.set_value(:key, key)
+    form.submit
+
+    @rest_account.ssh_key_page.wait
+    assert form.in_error?(:name)
+    assert !form.in_error?(:key)
+
+    form.cancel
+
+    # make both form and key blank
+    @rest_account.ssh_key_add_button.click
+    @rest_account.ssh_key_add_page.wait
+
+    assert !form.in_error?(:name)
+    assert !form.in_error?(:key)
+
+    form.submit
+
+    @rest_account.ssh_key_page.wait
+    assert form.in_error?(:name)
+    assert form.in_error?(:key)
+
+    form.cancel
   end
 
   private
@@ -181,5 +252,9 @@ def test_ssh_keys
 
   def dummy_ssh_key(type='ssh-rsa')
     "#{type} AAAA#{Time.now.to_f.to_s.sub('.', '/')}B3NzaC1kc3MAAACBAOmtY5dhWtrsoFFlc6hjhTcu7ZEV/V4iCixcpbMedboUfiWz2Fd6x2zLrsx432Dh7IDPz2/KwW5M+h7Ns0E7rLQvJbeB7NAXjKrgTPQiuKmhx+czDQmy5KdINtddHRR0TARpd5aSE6MHTIgav8+9bvM1h5s3S1g7khempam+0Wq/AAAAFQDrV0Jcs+YjxH5OMTAKJOzmEiyAswAAAIBsykXvxFzro6KtGn7gfeyfJSTvE7UtswYi2TqU8Hopbor0fAKKw2oKo3jJB4/fM0sm7s61i0YgLkv++tEDF1xUJnTVElZkRVIdhtNo1CnlOMkLoUnIaCubhbyDaV5oPMMHDx6QrCLz1rUFLwjGoZeuzoqXaY43aTG9dZiFZdB/SQAAAIEArHL0J93k6yz6/8/gfXKMqa1xk+i0F+9ARuw0VzHw3tn1EeVlvAXukS1ZnHriK+08kX3kI4ZQejdKyTAFu4UWLJacjg+jDj5qXeQLxrHE8tXrfLboszQriV5Pg9e2qjwSso4irXkptbomie1IcdlCA0lZC6auIAoLCKa3cILojKE="
+  end
+
+  def dummy_ssh_key2(type='ssh-rsa')
+    "#{type} BBBB#{Time.now.to_f.to_s.sub('.', '/')}B3NzaC1kc3MAAACBAOmtY5dhWtrsoFFlc6hjhTcu7ZEV/V4iCixcpbMedboUfiWz2Fd6x2zLrsx432Dh7IDPz2/KwW5M+h7Ns0E7rLQvJbeB7NAXjKrgTPQiuKmhx+czDQmy5KdINtddHRR0TARpd5aSE6MHTIgav8+9bvM1h5s3S1g7khempam+0Wq/AAAAFQDrV0Jcs+YjxH5OMTAKJOzmEiyAswAAAIBsykXvxFzro6KtGn7gfeyfJSTvE7UtswYi2TqU8Hopbor0fAKKw2oKo3jJB4/fM0sm7s61i0YgLkv++tEDF1xUJnTVElZkRVIdhtNo1CnlOMkLoUnIaCubhbyDaV5oPMMHDx6QrCLz1rUFLwjGoZeuzoqXaY43aTG9dZiFZdB/SQAAAIEArHL0J93k6yz6/8/gfXKMqa1xk+i0F+9ARuw0VzHw3tn1EeVlvAXukS1ZnHriK+08kX3kI4ZQejdKyTAFu4UWLJacjg+jDj5qXeQLxrHE8tXrfLboszQriV5Pg9e2qjwSso4irXkptbomie1IcdlCA0lZC6auIAoLCKa3cILojKE="
   end
 end
