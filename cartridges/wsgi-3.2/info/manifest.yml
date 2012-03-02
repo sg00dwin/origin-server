@@ -28,6 +28,10 @@ Start-Order: wsgi
 Publishes:
   get-doc-root:
     Type: "FILESYSTEM:doc-root"
+  publish_http_url:
+    Type: "NET_TCP:httpd-proxy-info"
+  publish_git_url:
+    Type: "NET_TCP:git-url-info"
 Subscribes:
   set-mysql-connection-info:
     Type: "NET_TCP:db:mysql"
