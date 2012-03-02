@@ -11,6 +11,8 @@ RHLOGINS = nil #['rhlogin']
 MAX_THREADS = 10
 WORK_DIR = '/tmp/rhc/migration'
 
+STDOUT.sync, STDERR.sync = true
+
 #
 #  Migrate the specified app
 #
