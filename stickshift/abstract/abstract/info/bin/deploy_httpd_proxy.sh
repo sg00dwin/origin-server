@@ -9,7 +9,7 @@
 function print_help {
     echo "Usage: $0 app-name namespace uuid IP"
 
-    echo "$0 $@" | logger -p local0.notice -t libra_deploy_httpd_proxy
+    echo "$0 $@" | logger -p local0.notice -t stickshift_deploy_httpd_proxy
     exit 1
 }
 
@@ -21,8 +21,8 @@ namespace=`basename $2`
 uuid=$3
 IP=$4
 
-CART_DIR=/usr/libexec/li/cartridges
-source ${CART_DIR}/abstract/info/lib/util
+source load_config.sh
+source ${CARTRIDGE_BASE_PATH}/abstract/info/lib/util
 
 load_node_conf
 
@@ -31,7 +31,7 @@ rm -rf "/etc/httpd/conf.d/stickshift/${uuid}_${namespace}_${application}.conf" "
 mkdir "/etc/httpd/conf.d/stickshift/${uuid}_${namespace}_${application}"
 
 cat <<EOF > "/etc/httpd/conf.d/stickshift/${uuid}_${namespace}_${application}/00000_default.conf"
-  ServerName ${application}-${namespace}.${libra_domain}
+  ServerName ${application}-${namespace}.${CLOUD_DOMAIN}
   ServerAdmin mmcgrath@redhat.com
   DocumentRoot /var/www/html
   DefaultType None

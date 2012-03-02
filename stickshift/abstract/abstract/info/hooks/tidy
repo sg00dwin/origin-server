@@ -25,7 +25,7 @@ function print_help {
     echo "Usage: $0 app-name namespace uuid"
     echo "Stop a running application and disable it"
 
-    echo "$0 $@" | logger -p local0.notice -t libra_force_stop
+    echo "$0 $@" | logger -p local0.notice -t stickshift_force_stop
     exit 1
 }
 
@@ -41,8 +41,8 @@ done
 
 [ $# -eq 3 ] || print_help
 
-CART_DIR=/usr/libexec/li/cartridges
-source ${CART_DIR}/abstract/info/lib/util
+source ../bin/load_config.sh
+source ${CARTRIDGE_BASE_PATH}/abstract/info/lib/util
 
 setup_basic_hook "$1" $2 $3
 
@@ -50,14 +50,14 @@ check_app_dir_exists
 
 . $APP_HOME/.env/OPENSHIFT_APP_TYPE
 
-CART_INFO_DIR=$CART_DIR/$OPENSHIFT_APP_TYPE/info
+CART_INFO_DIR=$CARTRIDGE_BASE_PATH/$OPENSHIFT_APP_TYPE/info
 
 #
 # Tidy up
 #
 client_message "Stopping app..."
 stop_app
-run_as_user "${CART_DIR}/abstract/info/bin/tidy.sh $application $namespace $uuid"
+run_as_user "${CARTRIDGE_BASE_PATH}/abstract/info/bin/tidy.sh $application $namespace $uuid"
 
 if [ -f $CART_INFO_DIR/bin/tidy.sh ]
 then

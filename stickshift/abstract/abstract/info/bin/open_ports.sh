@@ -3,24 +3,18 @@
 uuid=$1
 new_port_request=$2 # This is the offset used 1-5
 
-PORT_BEGIN=35531
-PORTS_PER_USER=5
-UID_BEGIN=500
-# UID_END=12700   # Too large for port numbers
-UID_END=6500
+source load_config.sh
+source ${CARTRIDGE_BASE_PATH}/abstract/info/lib/util
+
 NTABLE="rhc-user-table"             # Switchyard for app UID tables
 function uid_to_portbegin {
-  echo $(($(($(($1-$UID_BEGIN))*$PORTS_PER_USER))+$PORT_BEGIN))
+  echo $(($(($(($1-$GEAR_MIN_UID))*$PROXY_PORTS_PER_GEAR))+$PROXY_MIN_PORT_NUM))
 }
 
 function uid_to_portend {
   pbegin=`uid_to_portbegin $1`
-  echo $(( $pbegin + $PORTS_PER_USER - 1 ))
+  echo $(( $pbegin + $PROXY_PORTS_PER_GEAR - 1 ))
 }
-
-
-#uid_to_portbegin 500
-#uid_to_portend 500
 
 function public_port_check()
 {
@@ -81,7 +75,7 @@ function start_socat()
 }
 
 
-for port_file in `/bin/ls /var/lib/libra/${uuid}/.env/*_PUB_PORT`
+for port_file in `/bin/ls ${GEAR_BASE_DIR}/${uuid}/.env/*_PUB_PORT`
 do
     source "$port_file"
 done

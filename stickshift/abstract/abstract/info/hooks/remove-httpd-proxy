@@ -21,9 +21,8 @@
 # Exit on any errors
 set -e
 
-CART_DIR=/usr/libexec/li/cartridges
-
-source ${CART_DIR}/abstract/info/lib/util
+source ../bin/load_config.sh
+source ${CARTRIDGE_BASE_PATH}/abstract/info/lib/util
 
 load_node_conf
 
@@ -31,7 +30,7 @@ function print_help {
     echo "Usage: $0 app-name namespace uuid"
     echo "Remove httpd proxy for an application"
 
-    echo "$0 $@" | logger -p local0.notice -t libra_remove_httpd_proxy
+    echo "$0 $@" | logger -p local0.notice -t stickshift_remove_httpd_proxy
     exit 1
 }
 
@@ -53,4 +52,4 @@ uuid=$3
 
 rm_unobfuscated_app_home $namespace $application
 
-rm -rf "/etc/httpd/conf.d/libra/${uuid}_${namespace}_${application}.conf" "/etc/httpd/conf.d/libra/${uuid}_${namespace}_${application}"
+rm -rf "/etc/httpd/conf.d/stickshift/${uuid}_${namespace}_${application}.conf" "/etc/httpd/conf.d/stickshift/${uuid}_${namespace}_${application}"

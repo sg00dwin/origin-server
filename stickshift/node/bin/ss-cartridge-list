@@ -60,7 +60,7 @@ $porcelain = args['--porcelain'] ? true : false
 
 begin
   carts = []
-  cartridge_path = StickShift::Config.instance.get("cartridges_path")
+  cartridge_path = StickShift::Config.instance.get("CARTRIDGE_BASE_PATH")
   Dir.foreach(cartridge_path) do |cart_dir|
     next if [".",".."].include? cart_dir
     path = File.join(cartridge_path, cart_dir, "info", "manifest.yml")

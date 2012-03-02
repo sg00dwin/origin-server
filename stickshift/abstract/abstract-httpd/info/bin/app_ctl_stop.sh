@@ -1,7 +1,7 @@
 #!/bin/bash
 
-CART_DIR=/usr/libexec/li/cartridges
-source ${CART_DIR}/abstract/info/lib/util
+source load_config.sh
+source ${CARTRIDGE_BASE_PATH}/abstract/info/lib/util
 
 # Import Environment Variables
 for f in ~/.env/*
@@ -9,7 +9,7 @@ do
     . $f
 done
 
-CART_CONF_DIR=/usr/libexec/li/cartridges/${OPENSHIFT_APP_TYPE}/info/configuration/etc/conf
+CART_CONF_DIR=${CARTRIDGE_BASE_PATH}/${OPENSHIFT_APP_TYPE}/info/configuration/etc/conf
 
 # Stop the app
 set_app_state stopped

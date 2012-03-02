@@ -2,7 +2,7 @@
 
 # Add lib/util loading
 
-libra_server=$1
+stickshift_broker_server=$1
 
 # Import Environment Variables
 for f in ~/.env/*
@@ -10,8 +10,8 @@ do
     . $f
 done
 
-CART_DIR=${CART_DIR:=/usr/libexec/li/cartridges}
-source ${CART_DIR}/abstract/info/lib/util
+source load_config.sh
+source ${CARTRIDGE_BASE_PATH}/abstract/info/lib/util
 
 if [ -z $OPENSHIFT_SKIP_GIT_HOOKS ]
 then
@@ -51,5 +51,5 @@ then
     fi
 
     # Not running inside a build
-    nurture_app_push.sh $libra_server
+    nurture_app_push.sh $stickshift_broker_server
 fi

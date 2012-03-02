@@ -16,8 +16,9 @@
 
 require 'rubygems'
 module StickShift
-  #load plugins
-  Config.instance.get("plugins").each do |plugin|
-    require "#{plugin}"
+  #load STICKSHIFT_NODE_PLUGINS
+  plugin_list = Config.instance.get("STICKSHIFT_NODE_PLUGINS").split(",")
+  plugin_list.each do |plugin|
+    require "#{plugin}" unless plugin.start_with?("#")
   end
 end

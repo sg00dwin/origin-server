@@ -101,10 +101,10 @@ when 'tail'
     args_str = Base64.decode64(allargs[2])
     args = args_str.split()
     args.each do |arg|
-      if arg.starts_with?('..') || arg.starts_with?('/')
+      if arg.start_with?('..') || arg.starts_with?('/')
         print "All paths must be relative: " + arg
         exit(88)
-      elsif arg == '-f' or arg == '-F' or arg.starts_with?('--follow')
+      elsif arg == '-f' or arg == '-F' or arg.start_with?('--follow')
         add_follow = false
       end
     end
@@ -113,7 +113,7 @@ when 'tail'
   allargs[files_start_index..-1].each do |glob_list|
     Dir.glob(glob_list).each do |f|
       begin
-        if !f[".."].nil? or f.starts_with?("/")
+        if !f[".."].nil? or f.start_with?("/")
           print "invalid character"
           exit 91
         elsif File.symlink?(f)
@@ -152,8 +152,8 @@ when 'git-receive-pack', 'git-upload-pack'
 
     # replace leading tilde (~) with user's home path
     realpath = File.absolute_path(thearg)
-    unless realpath.starts_with?(config.get('user_base_dir'))
-      syslog("Invalid repository: not in user_base_dir - #{thearg}: (#{realpath})")
+    unless realpath.start_with?(config.get('GEAR_BASE_DIR'))
+      syslog("Invalid repository: not in GEAR_BASE_DIR - #{thearg}: (#{realpath})")
       print "Invalid repository #{thearg}: not in gear dir"
       exit 3
     end

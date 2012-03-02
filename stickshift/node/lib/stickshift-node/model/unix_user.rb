@@ -64,11 +64,11 @@ module StickShift
     end
     
     def create
-      skel_dir = @config.get("user_skel_dir") || DEFAULT_SKEL_DIR
-      shell    = @config.get("user_shell")     || "/bin/bash"
-      gecos    = @config.get("user_gecos")     || "SS application container"
+      skel_dir = @config.get("GEAR_SKEL_DIR") || DEFAULT_SKEL_DIR
+      shell    = @config.get("GEAR_SHELL")     || "/bin/bash"
+      gecos    = @config.get("GEAR_GECOS")     || "SS application container"
       notify_observers(:before_unix_user_create)
-      basedir = @config.get("user_base_dir")
+      basedir = @config.get("GEAR_BASE_DIR")
       
       File.open("/var/lock/ss-create", File::RDWR|File::CREAT, 0o0600) do |lock|
         lock.flock(File::LOCK_EX)
@@ -112,13 +112,13 @@ module StickShift
     def add_ssh_key(key, key_type=nil, comment=nil)
       self.class.notify_observers(:before_add_ssh_key, self, key)
       ssh_dir = File.join(@homedir, ".ssh")
-      cloud_name = @config.get("cloud_name") || "SS"
+      CLOUD_NAME = @config.get("CLOUD_NAME") || "SS"
       authorized_keys_file = File.join(ssh_dir,"authorized_keys")
-      shell    = @config.get("user_shell")     || "/bin/bash"
+      shell    = @config.get("GEAR_SHELL")     || "/bin/bash"
       key_type = "ssh-rsa" if key_type.to_s.strip.length == 0
       comment  = "" unless comment
       
-      cmd_entry = "command=\"#{shell}\",no-X11-forwarding #{key_type} #{key} #{cloud_name}-#{@uuid}#{comment}\n"
+      cmd_entry = "command=\"#{shell}\",no-X11-forwarding #{key_type} #{key} #{CLOUD_NAME}-#{@uuid}#{comment}\n"
       FileUtils.mkdir_p ssh_dir
       FileUtils.chmod(0o0750,ssh_dir)
       File.open(authorized_keys_file, File::WRONLY|File::APPEND|File::CREAT, 0o0440) do |file|
@@ -154,20 +154,20 @@ module StickShift
       self.class.notify_observers(:after_remove_ssh_key, self, key)
     end
     
-    def add_env_var(key, value, prefix_cloud_name=false)
+    def add_env_var(key, value, prefix_CLOUD_NAME=false)
       env_dir = File.join(@homedir,".env")
-      if prefix_cloud_name
-        key = (@config.get("cloud_name") || "SS") + "_#{key}"
+      if prefix_CLOUD_NAME
+        key = (@config.get("CLOUD_NAME") || "SS") + "_#{key}"
       end
       File.open(File.join(env_dir, key),File::WRONLY|File::TRUNC|File::CREAT) do |file|
         file.write "export #{key}='#{value}'"
       end
     end
     
-    def remove_env_var(key, prefix_cloud_name=false)
+    def remove_env_var(key, prefix_CLOUD_NAME=false)
       env_dir = File.join(@homedir,".env")
-      if prefix_cloud_name
-        key = (@config.get("cloud_name") || "SS") + "_#{key}"
+      if prefix_CLOUD_NAME
+        key = (@config.get("CLOUD_NAME") || "SS") + "_#{key}"
       end
       FileUtils.rm_f File.join(env_dir, key)
     end
@@ -228,8 +228,8 @@ module StickShift
     def next_uid
       uids = IO.readlines("/etc/passwd").map{ |line| line.split(":")[2].to_i }
       gids = IO.readlines("/etc/group").map{ |line| line.split(":")[2].to_i }
-      min_uid = (@config.get("user_min_uid") || "500").to_i
-      max_uid = (@config.get("user_max_uid") || "1500").to_i
+      min_uid = (@config.get("GEAR_MIN_UID") || "500").to_i
+      max_uid = (@config.get("GEAR_MAX_UID") || "1500").to_i
       
       (min_uid..max_uid).each do |i|
         if !uids.include?(i) and !gids.include?(i)

@@ -1,7 +1,7 @@
 #!/bin/bash
 
-CART_DIR=/usr/libexec/li/cartridges
-source ${CART_DIR}/abstract/info/lib/util
+source load_config.sh
+source ${CARTRIDGE_BASE_PATH}/abstract/info/lib/util
 
 start_dbs
 
