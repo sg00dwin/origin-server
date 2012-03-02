@@ -49,6 +49,8 @@ module StickShift
     def get(name)
       val = @@global_config.get_value(name)
       val.gsub!(/\\:/,":") if not val.nil?
+      val.gsub!(/[ \t]*#[^\n]*/,"") if not val.nil?
+      val = val[1..-2] if not val.nil? and val.start_with? "\""
       val
     end
   end

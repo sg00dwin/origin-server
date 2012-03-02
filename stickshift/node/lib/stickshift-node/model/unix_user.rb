@@ -83,7 +83,7 @@ module StickShift
         
         cmd = "useradd -u #{@uid} -d #{@homedir} -s #{shell} -c '#{gecos}' -m -k #{skel_dir} #{@uuid}"
         out,err,rc = shellCmd(cmd)
-        raise UserCreationException.new("ERROR: unable to create user account #{@uuid}") unless rc == 0
+        raise UserCreationException.new("ERROR: unable to create user account #{@uuid}, #{cmd}") unless rc == 0
         
         FileUtils.chown("root", @uuid, @homedir)
         FileUtils.chmod 0o0750, @homedir
@@ -112,13 +112,13 @@ module StickShift
     def add_ssh_key(key, key_type=nil, comment=nil)
       self.class.notify_observers(:before_add_ssh_key, self, key)
       ssh_dir = File.join(@homedir, ".ssh")
-      CLOUD_NAME = @config.get("CLOUD_NAME") || "SS"
+      cloud_name = @config.get("CLOUD_NAME") || "SS"
       authorized_keys_file = File.join(ssh_dir,"authorized_keys")
       shell    = @config.get("GEAR_SHELL")     || "/bin/bash"
       key_type = "ssh-rsa" if key_type.to_s.strip.length == 0
       comment  = "" unless comment
       
-      cmd_entry = "command=\"#{shell}\",no-X11-forwarding #{key_type} #{key} #{CLOUD_NAME}-#{@uuid}#{comment}\n"
+      cmd_entry = "command=\"#{shell}\",no-X11-forwarding #{key_type} #{key} #{cloud_name}-#{@uuid}#{comment}\n"
       FileUtils.mkdir_p ssh_dir
       FileUtils.chmod(0o0750,ssh_dir)
       File.open(authorized_keys_file, File::WRONLY|File::APPEND|File::CREAT, 0o0440) do |file|
@@ -154,9 +154,9 @@ module StickShift
       self.class.notify_observers(:after_remove_ssh_key, self, key)
     end
     
-    def add_env_var(key, value, prefix_CLOUD_NAME=false)
+    def add_env_var(key, value, prefix_cloud_name=false)
       env_dir = File.join(@homedir,".env")
-      if prefix_CLOUD_NAME
+      if prefix_cloud_name
         key = (@config.get("CLOUD_NAME") || "SS") + "_#{key}"
       end
       File.open(File.join(env_dir, key),File::WRONLY|File::TRUNC|File::CREAT) do |file|
@@ -164,9 +164,9 @@ module StickShift
       end
     end
     
-    def remove_env_var(key, prefix_CLOUD_NAME=false)
+    def remove_env_var(key, prefix_cloud_name=false)
       env_dir = File.join(@homedir,".env")
-      if prefix_CLOUD_NAME
+      if prefix_cloud_name
         key = (@config.get("CLOUD_NAME") || "SS") + "_#{key}"
       end
       FileUtils.rm_f File.join(env_dir, key)

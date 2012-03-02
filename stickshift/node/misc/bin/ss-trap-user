@@ -7,7 +7,7 @@ import syslog
 import glob
 import base64
 import commands
-import ConfigParser
+import re
 
 commands_map = {
     "git-receive-pack": "/usr/bin/git-receive-pack",
@@ -42,16 +42,17 @@ def read_env_vars():
         os.putenv(env, env_var)
 
 def read_config():
-	config = {}
-	f = open('/etc/stickshift/stickshift-node.conf','r')
-	data = f.read()
-	f.close()
-	lines = data.split("\n")
-	for line in lines:
-		if line != "":
-			split_line = line.split("=")
-			config[split_line[0]] = split_line[1]
-	return config
+  config = {}
+  f = open('/etc/stickshift/stickshift-node.conf','r')
+  data = f.read()
+  f.close()
+  lines = data.split("\n")
+  for line in lines:
+    if line != "":
+      split_line = line.split("=")
+      value = re.sub(r"[ \t]*#[^\n]*", "", split_line[1]).strip('\'"')     #bash comments
+      config[split_line[0]] = value
+  return config
 
 if __name__ == '__main__':
     read_env_vars()
@@ -143,6 +144,7 @@ if __name__ == '__main__':
 
         # replace leading tilde (~) with user's home path
         realpath = os.path.expanduser(thearg)
+        print config['GEAR_BASE_DIR']
         if not realpath.startswith(config['GEAR_BASE_DIR']):
             syslog.syslog("Invalid repository: not in application root - %s: (%s)" % 
                           (thearg, realpath))

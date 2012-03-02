@@ -21,10 +21,9 @@
 # Exit on any errors
 set -e
 
-source ../bin/load_config.sh
+CART_DIR=$(dirname $(dirname $(dirname $0)))
+source ${CART_DIR}/info/bin/load_config.sh
 source ${CARTRIDGE_BASE_PATH}/abstract/info/lib/util
-
-load_node_conf
 
 function print_help {
     echo "Usage: $0 app-name namespace uuid"

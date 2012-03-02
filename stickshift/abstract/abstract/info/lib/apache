@@ -3,7 +3,8 @@
 [ ! -z "$LI_CONTROLLER_LIB_APACHE" ] && return 0
 LI_CONTROLLER_LIB_APACHE=true
 
-source ../bin/load_config.sh
+CART_DIR=$(dirname $(dirname $(dirname $0)))
+source ${CART_DIR}/info/bin/load_config.sh
 source ${CARTRIDGE_BASE_PATH}/abstract/info/lib/util
 
 function rm_httpd_proxy {

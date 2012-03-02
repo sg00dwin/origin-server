@@ -26,8 +26,10 @@ done
 
 [ $# -eq 3 ] || print_help
 
-
-source "/var/lib/libra/$3/.env/OPENSHIFT_APP_DNS"
-source "/var/lib/libra/$3/.env/OPENSHIFT_PROXY_PORT"
+CART_DIR=$(dirname $(dirname $(dirname $0)))
+source ${CART_DIR}/info/bin/load_config.sh
+source ${CARTRIDGE_BASE_PATH}/abstract/info/lib/util
+source "${GEAR_BASE_DIR}/$3/.env/OPENSHIFT_APP_DNS"
+source "${GEAR_BASE_DIR}/$3/.env/OPENSHIFT_PROXY_PORT"
 
 echo ${OPENSHIFT_APP_DNS}:${OPENSHIFT_PROXY_PORT}
