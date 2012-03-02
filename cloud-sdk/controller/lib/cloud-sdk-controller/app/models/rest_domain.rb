@@ -16,6 +16,10 @@ class RestDomain < Cloud::Sdk::Model
         Param.new("name", "string", "Name of the application"),
         Param.new("cartridge", "string", "framework-type, e.g: php-5.3", carts)
       ]),
+      "ADD_APPLICATION_FROM_TEMPLATE" => Link.new("Create new application", "POST", "/domains/#{namespace}/applications", [
+        Param.new("name", "string", "Name of the application"),
+        Param.new("template", "string", "UUID of the application template")
+      ]),
       "CREATE" => Link.new("Create new domain", "POST", "/domains", [
         Param.new("namespace", "string", "Name of the domain")
       ]),

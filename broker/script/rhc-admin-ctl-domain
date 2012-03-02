@@ -1,6 +1,6 @@
 #!/usr/bin/env ruby
 
-require "/var/www/libra/broker/config/environment"
+require 'rubygems'
 require 'getoptlong'
 
 def usage
@@ -58,6 +58,8 @@ if login.nil? or args["--help"]
   usage
   exit 1
 end
+
+require "/var/www/libra/broker/config/environment"
 
 reply = ResultIO.new
 case args["--command"]

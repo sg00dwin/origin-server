@@ -31,9 +31,14 @@ module OpenShift
         end
       end
 
-      def in_error?(field)
-        xpath_exists?("//*[@id='#{@fields[field]}' and contains(@class, 'error')]")
-      end  
+      def in_error?(field_name)
+        error_field_name = :"#{field_name}_error"
+        field = @fields[error_field_name]
+        if field.nil?
+          field = @fields[field_name]
+        end
+        xpath_exists?("//*[@id='#{field}' and contains(@class, 'error')]")
+      end
 
       def error_message(field)
         if in_error? field
@@ -61,7 +66,7 @@ module OpenShift
         super(page,id)
         @fields = {
           :namespace => "domain_name",
-          :namespace_group => "domain_name_group"
+          :namespace_error => "domain_name_group"
         }
 
       	@submit = "//input[@id='domain_submit']"
@@ -75,12 +80,20 @@ module OpenShift
         super(page,id)
         @fields = {
           :name => "key_name",
-          :key => "key_raw_content"
+          :name_error => "key_name_input",
+          :key => "key_raw_content",
+          :key_error => "key_raw_content_input"
         }
 
       	@submit = "//input[@id='key_submit']"
 
-        @loc_btn_cancel = "//a[@href='/app/account']"
+        @cancel_path = '/app/account'
+        @loc_btn_cancel = "//a[@href='#{@cancel_path}']"
+      end
+
+      def cancel
+        @page.find_element(:xpath => @loc_btn_cancel).click
+        wait_for_page @cancel_path
       end
     end
   end

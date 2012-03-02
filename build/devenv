@@ -274,8 +274,8 @@ class DevEnv < Thor
         end
 
         retry_threshold = 0
-        retry_threshold += 4 unless options.exclude_internal?
-        retry_threshold += 1 unless options.exclude_verification?
+        retry_threshold += 6 unless options.exclude_internal?
+        retry_threshold += 2 unless options.exclude_verification?
         retry_threshold += 6 if options.include_web?
         
         failures.uniq!
@@ -465,7 +465,7 @@ class DevEnv < Thor
         end
       else
         print "Updating all packages on the system..."
-        ssh(hostname, "yum clean metadata; yum update -y --exclude='rhc-devenv'; set -e; yum update -y --exclude='rhc-devenv' --disablerepo=\* --enablerepo=li", 600)
+        ssh(hostname, "yum clean metadata; yum update -y --exclude='rhc-devenv'; set -e; yum update -y --exclude='rhc-devenv' --disablerepo=\\* --enablerepo=li", 600)
         puts "Done"
 
         validate_instance(hostname)
@@ -523,7 +523,8 @@ class DevEnv < Thor
         end
       end
     end
-    run('service mcollective restart; service libra-broker restart; service libra-site restart', :verbose => options.verbose?)
+    run("yum update -y --exclude='rhc-devenv' --disablerepo=\\* --enablerepo=li rhc-* rubygem-cloud-sdk-*", :verbose => options.verbose?)
+    run("service mcollective restart; service libra-broker restart; service libra-site restart", :verbose => options.verbose?)
   end
 
   desc "sync NAME", "Synchronize a local git repo with a remote DevEnv instance.  NAME should be ssh resolvable."
@@ -554,7 +555,7 @@ class DevEnv < Thor
 
     if !options.skip_build?
       puts "Performing remote install...."
-      output, exit_code = ssh(hostname, "set -e; #{options.clean_metadata? ? 'yum clean metadata; ' : ''}rm -rf li-working os-client-tools-working; git clone li li-working;#{has_client ? ' git clone os-client-tools os-client-tools-working;' : ''} pushd li-working; build/devenv update #{options.verbose? ? '--verbose' : ''} 2>&1; popd; rm -rf li-working os-client-tools-working; yum update -y --exclude='rhc-devenv' --disablerepo=\* --enablerepo=li rhc-* *cloud-sdk*", 600, true)
+      output, exit_code = ssh(hostname, "set -e; #{options.clean_metadata? ? 'yum clean metadata; ' : ''}rm -rf li-working os-client-tools-working; git clone li li-working;#{has_client ? ' git clone os-client-tools os-client-tools-working;' : ''} pushd li-working; build/devenv update #{options.verbose? ? '--verbose' : ''} 2>&1; popd; rm -rf li-working os-client-tools-working; #{options.clean_metadata? ? "yum update -y --exclude='rhc-devenv' rhc-* rubygem-cloud-sdk-*; " : ''}", 600, true)
       if exit_code != 0
         puts "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
         puts "Build failed!  Exiting."

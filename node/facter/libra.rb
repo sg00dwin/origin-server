@@ -104,7 +104,7 @@ Facter.add(:active_capacity) do
         if File.directory?(app_dir)
             active = true
             Dir.glob(File.join(app_dir, '*', 'runtime', '.state')).each {|file|
-                state = File.read(file)
+                state = File.read(file).chomp
                 if 'idle' == state || 'stopped' == state
                     active = false
                 end

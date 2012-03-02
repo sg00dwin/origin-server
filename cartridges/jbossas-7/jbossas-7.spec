@@ -2,7 +2,7 @@
 
 Summary:   Provides JBossAS7 support
 Name:      rhc-cartridge-jbossas-7
-Version:   0.87.11
+Version:   0.87.12
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   ASL 2.0
@@ -112,6 +112,15 @@ rm -rf %{buildroot}
 %config(noreplace) %{cartridgedir}/info/configuration/
 
 %changelog
+* Wed Feb 29 2012 Dan McPherson <dmcphers@redhat.com> 0.87.12-1
+- remove apr dep from jboss cart (dmcphers@redhat.com)
+- Bug 798553 (dmcphers@redhat.com)
+- remove old jboss env logic (dmcphers@redhat.com)
+- make migrate sed a little more selective (dmcphers@redhat.com)
+- add env via sed (bdecoste@gmail.com)
+- add env via sed (bdecoste@gmail.com)
+- added env (bdecoste@gmail.com)
+
 * Tue Feb 28 2012 Dan McPherson <dmcphers@redhat.com> 0.87.11-1
 - rework migration of git to not stop/start/redeploy (dmcphers@redhat.com)
 - use env.OPENSHIFT (wdecoste@localhost.localdomain)

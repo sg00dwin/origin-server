@@ -29,7 +29,8 @@ module OpenShift
     end
 
     class Account < Page
-      attr_accessor :domain_form, :domain_edit_page, :domain_page, :ssh_key_form
+      attr_accessor :domain_form, :domain_edit_page, :domain_page,
+                    :ssh_key_form, :ssh_key_add_page, :ssh_key_page
 
       def initialize(page,path)
         super
@@ -37,10 +38,16 @@ module OpenShift
         @domain_edit_page = Page.new(page, "#{@path}/domain/edit")
         @domain_page = Page.new(page, "#{@path}/domain")
         @ssh_key_form = OpenShift::Rest::SshKeyForm.new(page, "new_key")
+        @ssh_key_add_page = Page.new(page, "#{@path}/keys/new")
+        @ssh_key_page = Page.new(page, "#{@path}/keys")
       end
 
-      def find_edit_namespace_button
+      def edit_namespace_button
         @page.find_element(:xpath => "//a[@href='/app/account/domain/edit']")
+      end
+
+      def ssh_key_add_button
+        @page.find_element(:xpath => "//a[@href='/app/account/keys/new']")
       end
 
       def find_ssh_key_row(key_name)

@@ -2,8 +2,9 @@ require 'openshift/selenium_test_case'
 
 require 'openshift/rest/pages'
 require 'openshift/rest/forms'
+require 'openshift/rest/testcase'
 
-class RestConsole < OpenShift::SeleniumTestCase
+class RestAccount < OpenShift::Rest::TestCase
 
   def setup
     super
@@ -14,10 +15,10 @@ class RestConsole < OpenShift::SeleniumTestCase
     signin(@login, pass)
     @rest_account.open
     form = @rest_account.domain_form
-    assert !form.in_error?(:namespace_group)
+    assert !form.in_error?(:namespace)
     form.submit
     @rest_account.domain_page.wait
-    assert form.in_error?(:namespace_group)
+    assert form.in_error?(:namespace)
   end
 
   def test_create_namespace_invalid
@@ -25,11 +26,11 @@ class RestConsole < OpenShift::SeleniumTestCase
     signin(@login, pass)
     @rest_account.open
     form = @rest_account.domain_form
-    assert !form.in_error?(:namespace_group)
+    assert !form.in_error?(:namespace)
     form.set_value(:namespace, "thisnamespaceisoverthemaxsizeallowed")
     form.submit
     @rest_account.domain_page.wait
-    assert form.in_error?(:namespace_group)
+    assert form.in_error?(:namespace)
   end
 
   def test_create_namespace_duplicate
@@ -45,11 +46,11 @@ class RestConsole < OpenShift::SeleniumTestCase
     signin(@login, pass)
     @rest_account.open
     form = @rest_account.domain_form
-    assert !form.in_error?(:namespace_group)
+    assert !form.in_error?(:namespace)
     form.set_value(:namespace, dup_namespace)
     form.submit
     @rest_account.domain_page.wait
-    assert form.in_error?(:namespace_group)
+    assert form.in_error?(:namespace)
 
   end
 
@@ -71,29 +72,29 @@ class RestConsole < OpenShift::SeleniumTestCase
     # try to edit with blank namespace
     @rest_account.domain_edit_page.open
     assert_equal @login, form.get_value(:namespace)
-    assert !form.in_error?(:namespace_group)
+    assert !form.in_error?(:namespace)
     form.set_value(:namespace, "")
     form.submit
     @rest_account.domain_page.wait
-    assert form.in_error?(:namespace_group)
+    assert form.in_error?(:namespace)
 
     # try to edit with an invalid namespace
     @rest_account.domain_edit_page.open
     assert_equal @login, form.get_value(:namespace)
-    assert !form.in_error?(:namespace_group)
+    assert !form.in_error?(:namespace)
     form.set_value(:namespace, "thisnamespaceisoverthemaxsizeallowed")
     form.submit
     @rest_account.domain_page.wait
-    assert form.in_error?(:namespace_group)
+    assert form.in_error?(:namespace)
 
     # try to edit with a duplicate namespace
     @rest_account.domain_edit_page.open
     assert_equal @login, form.get_value(:namespace)
-    assert !form.in_error?(:namespace_group)
+    assert !form.in_error?(:namespace)
     form.set_value(:namespace, dup_namespace)
     form.submit
     @rest_account.domain_page.wait
-    assert form.in_error?(:namespace_group)
+    assert form.in_error?(:namespace)
   end
 
   def test_create_namespace_valid
@@ -105,7 +106,7 @@ class RestConsole < OpenShift::SeleniumTestCase
     @login, pass = dummy_credentials
     create_namespace(@login, pass, @login)
 
-    @rest_account.find_edit_namespace_button.click
+    @rest_account.edit_namespace_button.click
     wait_for_page @rest_account.domain_edit_page.path
 
     form = @rest_account.domain_form
@@ -121,7 +122,7 @@ class RestConsole < OpenShift::SeleniumTestCase
     await("namespace updated on page") { text('.namespace') == new_namespace }
   end
 
-def test_ssh_keys
+  def test_ssh_key_add_default
     @login, pass = dummy_credentials
 
     signin(@login, pass)
@@ -151,35 +152,124 @@ def test_ssh_keys
     end
   end
 
-  private
+  def test_ssh_key_add_more_than_one
+    @login, pass = dummy_credentials
 
-  # helper method for creating a namespace
-  # post: user is on account page
-  def create_namespace(login, password, namespace, log_in=true)
-    if log_in
-      signin(login, password)
-    end
-
+    signin(@login, pass)
     @rest_account.open
 
-    form = @rest_account.domain_form
+    create_namespace(@login, pass, @login, false)
 
-    assert !form.in_error?(:namespace)
+    # go back to the account page
+    @rest_account.open
 
-    form.set_value(:namespace, namespace)
+    # create a default SSH key
+    form = @rest_account.ssh_key_form
+
+    key = dummy_ssh_key
+    form.set_value(:key, key)
+    form.submit
+
+    await('preview SSH key') { @rest_account.find_ssh_key_row('default') }
+    # we shorten key so split and check via regex
+    cmp_key = @rest_account.find_ssh_key('default')
+    cmp_key = cmp_key.split('..')
+    if cmp_key.length > 1:
+      key_re = "(#{Regexp.quote(cmp_key[0])}).*(#{Regexp.quote(cmp_key[1])})$"
+      assert_match /#{key_re}/, key
+    else
+      assert_equal key, cmp_key[0]
+    end
+
+    ['CCCC', 'DDDD', 'EEEE'].each do |name|
+      key = dummy_ssh_key2(name)
+      @rest_account.ssh_key_add_button.click
+      @rest_account.ssh_key_add_page.wait
+      form.set_value(:name, name)
+      form.set_value(:key, key)
+      form.submit
+
+      await('preview SSH key') { @rest_account.find_ssh_key_row(name) }
+      # we shorten key so split and check via regex
+      cmp_key = @rest_account.find_ssh_key(name)
+      cmp_key = cmp_key.split('..')
+      if cmp_key.length > 1:
+        key_re = "(#{Regexp.quote(cmp_key[0])}).*(#{Regexp.quote(cmp_key[1])})$"
+        assert_match /#{key_re}/, key
+      else
+        assert_equal key, cmp_key[0]
+      end
+    end
+  end
+
+  def test_ssh_key_add_invalid
+    @login, pass = dummy_credentials
+
+    signin(@login, pass)
+    @rest_account.open
+
+    create_namespace(@login, pass, @login, false)
+
+    # go back to the account page
+    @rest_account.open
+
+    # create a default SSH key
+    form = @rest_account.ssh_key_form
+
+    key = dummy_ssh_key
+    form.set_value(:key, key)
+    form.submit
+
+    await('preview SSH key') { @rest_account.find_ssh_key_row('default') }
+
+    # add a duplicate key with a different name
+    @rest_account.ssh_key_add_button.click
+    @rest_account.ssh_key_add_page.wait
+
+    assert !form.in_error?(:name)
+    assert !form.in_error?(:key)
+
+    form.set_value(:name, 'new')
+    form.set_value(:key, key)
+    form.submit
+
+    @rest_account.ssh_key_page.wait
+    assert !form.in_error?(:name)
+    assert form.in_error?(:key)
+
+    form.cancel
+
+    # add a duplicate key name with a different key
+    key = dummy_ssh_key2
+    @rest_account.ssh_key_add_button.click
+    @rest_account.ssh_key_add_page.wait
+
+    assert !form.in_error?(:name)
+    assert !form.in_error?(:key)
+
+    form.set_value(:name, 'default')
+    form.set_value(:key, key)
+    form.submit
+
+    @rest_account.ssh_key_page.wait
+    assert form.in_error?(:name)
+    assert !form.in_error?(:key)
+
+    form.cancel
+
+    # make both form and key blank
+    @rest_account.ssh_key_add_button.click
+    @rest_account.ssh_key_add_page.wait
+
+    assert !form.in_error?(:name)
+    assert !form.in_error?(:key)
 
     form.submit
 
-    wait_for_page @rest_account.path
+    @rest_account.ssh_key_page.wait
+    assert form.in_error?(:name)
+    assert form.in_error?(:key)
 
-    await("namespace created") { text('.namespace') ==  namespace }
-  end
-
-  def dummy_credentials
-    return ["test#{data[:uid]}", data[:password]]
-  end
-
-  def dummy_ssh_key(type='ssh-rsa')
-    "#{type} AAAA#{Time.now.to_f.to_s.sub('.', '/')}B3NzaC1kc3MAAACBAOmtY5dhWtrsoFFlc6hjhTcu7ZEV/V4iCixcpbMedboUfiWz2Fd6x2zLrsx432Dh7IDPz2/KwW5M+h7Ns0E7rLQvJbeB7NAXjKrgTPQiuKmhx+czDQmy5KdINtddHRR0TARpd5aSE6MHTIgav8+9bvM1h5s3S1g7khempam+0Wq/AAAAFQDrV0Jcs+YjxH5OMTAKJOzmEiyAswAAAIBsykXvxFzro6KtGn7gfeyfJSTvE7UtswYi2TqU8Hopbor0fAKKw2oKo3jJB4/fM0sm7s61i0YgLkv++tEDF1xUJnTVElZkRVIdhtNo1CnlOMkLoUnIaCubhbyDaV5oPMMHDx6QrCLz1rUFLwjGoZeuzoqXaY43aTG9dZiFZdB/SQAAAIEArHL0J93k6yz6/8/gfXKMqa1xk+i0F+9ARuw0VzHw3tn1EeVlvAXukS1ZnHriK+08kX3kI4ZQejdKyTAFu4UWLJacjg+jDj5qXeQLxrHE8tXrfLboszQriV5Pg9e2qjwSso4irXkptbomie1IcdlCA0lZC6auIAoLCKa3cILojKE="
+    form.cancel
   end
 end

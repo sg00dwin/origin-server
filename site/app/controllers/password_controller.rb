@@ -6,7 +6,7 @@ class PasswordController < ApplicationController
 
   def new
     @user ||= WebUser.new
-    render :layout => 'simple'
+    render :layout => 'application'
   end
 
   # This function makes the first request to send an email with a token
@@ -19,14 +19,14 @@ class PasswordController < ApplicationController
         format.html { redirect_to success_password_path }
         format.js { render :json => { :status => 'success', :message => "The information you have requested has been emailed to you at #{params[:email]}." } }
       else
-        format.html { render :action => :new, :layout => 'simple'}
+        format.html { render :action => :new, :layout => 'application'}
         format.js { render :json => { :status => 'error', :message => 'The email supplied is invalid' } }
       end
     end
   end
 
   def success
-    render :layout => 'simple'
+    render :layout => 'application'
   end
 
   def show
