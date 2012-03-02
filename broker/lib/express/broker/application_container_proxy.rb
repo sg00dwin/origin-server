@@ -889,14 +889,12 @@ module Express
                   raise
                 else
                   Rails.logger.debug "DEBUG: Component '#{framework}' in application '#{app.name}' not found on node '#{@id}'.  Continuing with deconfigure."
-                  raise
                 end
               else
                 if has_app?(app.uuid, app.name)
                   raise
                 else
                   Rails.logger.debug "DEBUG: Application '#{app.name}' not found on node '#{@id}'.  Continuing with deconfigure."
-                  raise
                 end
               end
             else
