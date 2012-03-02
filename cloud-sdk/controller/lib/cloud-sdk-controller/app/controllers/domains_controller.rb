@@ -105,7 +105,10 @@ class DomainsController < BaseController
     if not Domain.namespace_available?(new_namespace)
       @reply = RestReply.new(:unprocessable_entity)
       @reply.messages.push(Message.new(:error, "Namespace '#{new_namespace}' already in use. Please choose another.", 103, "namespace"))
-      respond_with @reply, :status => @reply.status
+      respond_with @reply, :status => @reply.status  do |format|
+        format.xml { render :xml => @reply, :status => @reply.status }
+        format.json { render :json => @reply, :status => @reply.status }
+      end
     return
     end
 

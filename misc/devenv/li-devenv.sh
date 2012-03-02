@@ -67,11 +67,16 @@ function install_build_requires {
   done
 }
 
-if [ "$2" == "--install_from_source" ]
+if [ "$2" == "--install_from_source" ] || [ "$2" == "--install_from_local_source" ]
 then
   mkdir -p  /tmp/tito
   rm -rf /root/li-working
-  git clone git://git1.ops.rhcloud.com/li.git/ /root/li-working
+  if [ "$2" == "--install_from_source" ]
+  then
+    git clone git://git1.ops.rhcloud.com/li.git/ /root/li-working
+  else
+    git clone /root/li /root/li-working
+  fi  
   rm -rf /root/os-client-tools
   git clone https://github.com/openshift/os-client-tools.git /root/os-client-tools
   pushd /root/li-working > /dev/null

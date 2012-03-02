@@ -1,6 +1,6 @@
 #!/usr/bin/env ruby
 
-require "/var/www/libra/broker/config/environment"
+require 'rubygems'
 require 'getoptlong'
 require 'json'
 
@@ -46,6 +46,8 @@ if login.nil? or vip.nil? or not (vip == "1" or vip == "0")
   usage
   exit -100
 end
+
+require "/var/www/libra/broker/config/environment"
 
 user = CloudUser.find(login)
 if user.nil?

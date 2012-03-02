@@ -385,7 +385,9 @@ class DevEnv < Thor
   method_option :include_web, :type => :boolean, :desc => "Include running Selenium tests"
   method_option :region, :required => false, :desc => "Amazon region override (default us-east-1)"
   method_option :build_clean_ami, :required => false, :desc => "Indicates whether to start from a base RHEL image"
-  method_option :install_from_source, :required => false, :desc => "Indicates whether to start from a base RHEL image"
+  method_option :install_from_source, :required => false, :desc => "Indicates whether to build based off origin/master"
+  method_option :install_from_local_source, :required => false, :desc => "Indicates whether to build based on your local source"
+  method_option :skip_verify, :required => false, :desc => "Skip running tests to verify the build"
 
   def build(name, build_num)
     options.verbose? ? @@log.level = Logger::DEBUG : @@log.level = Logger::ERROR
@@ -395,7 +397,7 @@ class DevEnv < Thor
     conn = conn.regions[options.region] unless (options.region?nil)
 
     image = nil
-    if options.build_clean_ami || options.install_from_source
+    if options.build_clean_ami || options.install_from_source || options.install_from_local_source
       # Create a new builder instance
       if (options.region?nil)
         image = conn.images[AMI["us-east-1"]]
@@ -417,10 +419,12 @@ class DevEnv < Thor
 
     instance = launch_instance(image, name + '_' + build_num)
     hostname = instance.dns_name
+    
+    puts "Building on: #{hostname}"
 
     begin
       manifest = nil
-      if options.build_clean_ami || options.install_from_source
+      if options.build_clean_ami || options.install_from_source || options.install_from_local_source
         # TODO - Remove this once nss is updated in RHEL 6.2
         print "Running one yum update to get around RHEL 6.2 AMI problem..."
         ssh(hostname, "yum update -y --exclude='rhc*'", 1800)
@@ -444,6 +448,13 @@ class DevEnv < Thor
           output += ssh(hostname, cmd, 600)
           print "Performing clean install from source..."
           cmd = 'set -e; sh li-devenv.sh candidate --install_from_source'
+        elsif options.install_from_local_source
+          cmd = 'set -e; sh li-devenv.sh candidate --install_build_prereqs'
+          output += ssh(hostname, cmd, 600)
+          init_repo(hostname)
+          sync_repo('li', hostname, File.expand_path(File.dirname(__FILE__)) + "/ssh-override")
+          print "Performing clean install from local source..."
+          cmd = 'set -e; sh li-devenv.sh candidate --install_from_local_source'
         else
           print "Performing clean install with the latest code..."
           cmd = 'set -e ; sh ~/li-devenv.sh'
@@ -479,8 +490,10 @@ class DevEnv < Thor
         image_id = image.id
       end
 
-      scp_remote_tests(hostname)
-      test_instance(name + '_' + build_num, hostname, instance, conn, options, image_id)
+      unless options.skip_verify?
+        scp_remote_tests(hostname)
+        test_instance(name + '_' + build_num, hostname, instance, conn, options, image_id)
+      end
     ensure
       terminate_instance(instance) if options.terminate?
     end

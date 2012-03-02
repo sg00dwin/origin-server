@@ -441,7 +441,7 @@ class Application < Cloud::Sdk::Cartridge
         comp_inst = self.comp_instance_map[comp_inst_name]
         group_inst = self.group_instance_map[comp_inst.group_instance_name]
         begin
-          run_on_gears(group_inst.gears, reply, false) do |gear, r|
+          run_on_gears(group_inst.gears, reply, true) do |gear, r|
             r.append gear.deconfigure(comp_inst)
             r.append process_cartridge_commands(r.cart_commands)
             # self.save

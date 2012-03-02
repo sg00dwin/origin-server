@@ -1,6 +1,6 @@
 #!/usr/bin/env ruby
 
-require "/var/www/libra/broker/config/environment"
+require 'rubygems'
 require 'getoptlong'
 require 'json'
 
@@ -79,6 +79,8 @@ rescue Exception => e
   exit -100
 end
 tags = tags.split(",")
+
+require "/var/www/libra/broker/config/environment"
 
 template = ApplicationTemplate.new(display_name,descriptor, git_url,tags,gear_cost,metadata)
 template.save
