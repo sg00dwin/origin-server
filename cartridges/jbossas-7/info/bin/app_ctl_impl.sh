@@ -1,7 +1,8 @@
 #!/bin/bash -e
 
-CART_DIR=/usr/libexec/li/cartridges
-source ${CART_DIR}/abstract/info/lib/util
+CART_DIR=$(dirname $(dirname $(dirname $0)))
+source ${CART_DIR}/info/bin/load_config.sh
+source ${CARTRIDGE_BASE_PATH}/abstract/info/lib/util
 
 # Import Environment Variables
 for f in ~/.env/*

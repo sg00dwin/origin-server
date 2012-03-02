@@ -6,8 +6,10 @@ do
     . $f
 done
 
-CART_DIR=/usr/libexec/li/cartridges
-CONFIG_DIR="$CART_DIR/$OPENSHIFT_APP_TYPE/info/configuration"
+CART_DIR=$(dirname $(dirname $(dirname $0)))
+source ${CART_DIR}/info/bin/load_config.sh
+
+CONFIG_DIR="$CARTRIDGE_BASE_PATH/$OPENSHIFT_APP_TYPE/info/configuration"
 if `echo $OPENSHIFT_APP_DNS | grep -q .stg.rhcloud.com` || `echo $OPENSHIFT_APP_DNS | grep -q .dev.rhcloud.com`
 then 
 	OPENSHIFT_MAVEN_MIRROR="$CONFIG_DIR/settings.stg.xml"
@@ -15,7 +17,7 @@ else
 	OPENSHIFT_MAVEN_MIRROR="$CONFIG_DIR/settings.prod.xml"
 fi
 
-resource_limits_file=`readlink -f /etc/libra/resource_limits.conf`
+resource_limits_file=`readlink -f /etc/stickshift/resource_limits.conf`
 resource_limits_file_name=`basename $resource_limits_file`
 node_profile=`echo ${resource_limits_file_name/*./}`
 case "$node_profile" in
@@ -53,7 +55,7 @@ then
         rm -rf ${OPENSHIFT_HOMEDIR}.m2/* ${OPENSHIFT_HOMEDIR}.m2/.[^.]*
 
         #pushd ${OPENSHIFT_HOMEDIR}.m2/ > /dev/null
-        #tar -xf ${CART_DIR}/${OPENSHIFT_APP_TYPE}/info/data/m2_repository.tar.gz
+        #tar -xf ${CARTRIDGE_BASE_PATH}/${OPENSHIFT_APP_TYPE}/info/data/m2_repository.tar.gz
         #popd > /dev/null
     fi
 

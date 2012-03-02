@@ -1,4 +1,4 @@
-%define cartridgedir %{_libexecdir}/li/cartridges/jbossas-7
+%define cartridgedir %{_libexecdir}/stickshift/cartridges/jbossas-7
 
 Summary:   Provides JBossAS7 support
 Name:      rhc-cartridge-jbossas-7
@@ -13,7 +13,7 @@ BuildRoot: %(mktemp -ud %{_tmppath}/%{name}-%{version}-%{release}-XXXXXX)
 BuildRequires:  git
 BuildRequires:  java-devel >= 1:1.6.0
 BuildRequires:  jpackage-utils
-Requires:  rhc-node
+Requires:  stickshift-abstract
 # When updating jboss-as7, update the alternatives link below
 Requires: jboss-as7 >= 7.1.0.Final
 Requires: jboss-as7-modules >= 7.1.0.Final
@@ -45,13 +45,14 @@ popd
 %install
 rm -rf %{buildroot}
 mkdir -p %{buildroot}%{cartridgedir}
-mkdir -p %{buildroot}/%{_sysconfdir}/libra/cartridges
-ln -s %{cartridgedir}/info/configuration/ %{buildroot}/%{_sysconfdir}/libra/cartridges/%{name}
+mkdir -p %{buildroot}/%{_sysconfdir}/stickshift/cartridges
+ln -s %{cartridgedir}/info/configuration/ %{buildroot}/%{_sysconfdir}/stickshift/cartridges/%{name}
 cp -r info %{buildroot}%{cartridgedir}/
 cp LICENSE %{buildroot}%{cartridgedir}/
 cp COPYRIGHT %{buildroot}%{cartridgedir}/
 cp -r template %{buildroot}%{cartridgedir}/
 cp README %{buildroot}%{cartridgedir}/
+ln -s %{cartridgedir}/../abstract/info/bin/load_config.sh %{buildroot}%{cartridgedir}/info/bin/load_config.sh
 ln -s %{cartridgedir}/../abstract/info/hooks/add-module %{buildroot}%{cartridgedir}/info/hooks/add-module
 ln -s %{cartridgedir}/../abstract/info/hooks/info %{buildroot}%{cartridgedir}/info/hooks/info
 ln -s %{cartridgedir}/../abstract/info/hooks/post-install %{buildroot}%{cartridgedir}/info/hooks/post-install
@@ -104,7 +105,7 @@ rm -rf %{buildroot}
 %attr(0755,-,-) %{cartridgedir}/info/bin/
 %attr(0755,-,-) %{cartridgedir}/info/connection-hooks/
 %{cartridgedir}/template/
-%{_sysconfdir}/libra/cartridges/%{name}
+%{_sysconfdir}/stickshift/cartridges/%{name}
 %{cartridgedir}/info/control
 %{cartridgedir}/info/manifest.yml
 %{cartridgedir}/README
