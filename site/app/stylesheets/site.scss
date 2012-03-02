@@ -394,7 +394,7 @@ a:hover, a:active { color: $ribbonColor; }
     padding-bottom: 30px;
   }
 }
-@mixin row_content_gutters($width=$gridGutterWidth) {
+@mixin row_content_gutters($width: $gridGutterWidth) {
   .row-content {
     > .column-nav {
       padding-right: $width;
@@ -434,7 +434,7 @@ a:hover, a:active { color: $ribbonColor; }
 .column-nav {
   .nav-location { font-size: 19px; line-height: 46px; text-transform: uppercase; margin-top: 15px; }
 }
-@mixin column_nav_gutters($width=$gridGutterWidth) {
+@mixin column_nav_gutters($width: $gridGutterWidth) {
   .column-nav {
     > * { margin-left: $width; }
     > .nav-stacked { margin-left: $width/2; }
@@ -505,7 +505,11 @@ a:hover, a:active { color: $ribbonColor; }
   .view-user-profile-box { margin-bottom: 20px; }
 }
 
-.node-form {
+.community textarea {
+  width: auto;
+}
+
+.community form {
   fieldset legend { font-size: 14px; line-height: 18px; }
   .fieldset-wrapper { margin-left: 10px; }
 }

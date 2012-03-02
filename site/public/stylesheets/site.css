@@ -555,10 +555,13 @@ a:hover, a:active {
 .column-nav .view-user-profile-box {
   margin-bottom: 20px; }
 
-.node-form fieldset legend {
+.community textarea {
+  width: auto; }
+
+.community form fieldset legend {
   font-size: 14px;
   line-height: 18px; }
-.node-form .fieldset-wrapper {
+.community form .fieldset-wrapper {
   margin-left: 10px; }
 
 .clear-block {
