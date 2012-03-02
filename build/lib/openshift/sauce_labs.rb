@@ -10,7 +10,7 @@ module OpenShift
   module SauceLabs
 
     #TODO: fetch from Sauce Labs service
-    USERS =  %w(openshift_ci flindiak aboone dmcphers)
+    USERS =  %w(openshift_ci flindiak dmcphers)
     PLAN_MINUTES = 4000
 
     def sauce_usage(options)

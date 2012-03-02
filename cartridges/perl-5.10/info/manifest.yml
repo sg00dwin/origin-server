@@ -22,6 +22,10 @@ Publishes:
     Type: "FILESYSTEM:doc-root"
   get-proxy-url:
     Type: "STRING:proxy-path"
+  publish_http_url:
+    Type: "NET_TCP:httpd-proxy-info"
+  publish_git_url:
+    Type: "NET_TCP:git-url-info"
 Subscribes:
   set-proxy-path:
     Type: "STRING:proxy-path"
