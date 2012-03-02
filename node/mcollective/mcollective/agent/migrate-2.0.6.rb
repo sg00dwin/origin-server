@@ -119,7 +119,7 @@ module LibraMigration
         begin
           state_file = File.new(state, "w")
           if File.exists?("/var/lib/libra/#{uuid}/#{app_name}/run/stop_lock")
-            if File.exists?("/etc/httpd/conf.d/libra/#{uuid}_#{app_name}_#{namespace}/0000000000000_disabled.conf")
+            if File.exists?("/etc/httpd/conf.d/libra/#{uuid}_#{namespace}_#{app_name}/0000000000000_disabled.conf")
               state_file.write("idle\n")
             else
               state_file.write("stopped\n")
