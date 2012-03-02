@@ -569,6 +569,55 @@ a:hover, a:active {
   .clear-block:after {
     clear: both; }
 
+.view-nodes-by-category article.blog {
+  margin-bottom: 25px; }
+  .view-nodes-by-category article.blog > h2 {
+    line-height: 25px; }
+  .view-nodes-by-category article.blog > .breadcrumb {
+    margin-bottom: 5px;
+    text-transform: uppercase;
+    font-weight: bold; }
+    .view-nodes-by-category article.blog > .breadcrumb > .creator {
+      color: black; }
+    .view-nodes-by-category article.blog > .breadcrumb > .created {
+      color: #888; }
+  .view-nodes-by-category article.blog .nid a {
+    font-size: 16px; }
+  .view-nodes-by-category article.blog > .nid_1 {
+    text-transform: uppercase;
+    text-align: right;
+    padding-bottom: 3px;
+    border-bottom: 1px solid #aaa;
+    font-size: 11px; }
+    .view-nodes-by-category article.blog > .nid_1 > a {
+      color: #888; }
+
+.comment {
+  margin-bottom: 20px;
+  padding-top: 8px;
+  border-top: 1px solid #ddd; }
+
+.comment > table td {
+  vertical-align: top; }
+
+.comment .comment-author .views-row {
+  padding: 10px;
+  width: 170px;
+  margin-right: 10px;
+  margin-top: 5px;
+  background-color: #efefef; }
+  .comment .comment-author .views-row:hover .views-field-value {
+    height: 100%; }
+  .comment .comment-author .views-row:hover .views-field-phpcode:after {
+    content: none; }
+.comment .comment-author .views-field-phpcode {
+  clear: both; }
+  .comment .comment-author .views-field-phpcode:after {
+    content: '...'; }
+.comment .comment-author .views-field-value {
+  height: 0px;
+  overflow: hidden; }
+
 /* copied from system.css */
 html.js fieldset.collapsed {
   border-bottom-width: 0;
