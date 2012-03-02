@@ -58,7 +58,7 @@ class StatusApp < Sinatra::Base
     <<-eos 
       var div = "                               \
         <div class='status #{status[:class]}'>  \
-          <a href='#{@base}'>                \
+          <a href='/app/status'>                \
     #{status[:message]}                 \
           </a> \
         </div>" ;
