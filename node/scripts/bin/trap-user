@@ -144,15 +144,8 @@ if __name__ == '__main__':
         for glob_list in allargs[files_start_index:]:
             for f in glob.glob(glob_list):
                 try:
-                    if f.find('..') != -1 or f.startswith('/'):
-                        print "invalid character"
-                        sys.exit(91)
-                    elif os.path.islink(f):
-                        print "Links not supported"
-                        sys.exit(94)
-                    elif os.getuid() != os.stat(f).st_uid:
-                        print "Not your file"
-                        sys.exit(87)
+                    if os.path.islink(f) and os.path.lexists(f):
+                        files.append(f)
                     else:
                         files.append(f)
                 except OSError, e:
