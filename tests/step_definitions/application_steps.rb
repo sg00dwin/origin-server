@@ -77,7 +77,7 @@ When /^the application uses mysql$/ do
   Dir.chdir(@app.repo) do
     # Copy the MySQL file over the index and replace the variables
     FileUtils.cp @app.get_mysql_file, @app.get_index_file
-  
+
     # Make a change to the app index file
     run("sed -i 's/HOSTNAME/#{@app.mysql_hostname}/' #{@app.get_index_file}")
     run("sed -i 's/USER/#{@app.mysql_user}/' #{@app.get_index_file}")
@@ -183,4 +183,16 @@ end
 
 Then /^the application should not be accessible$/ do
   @app.is_inaccessible?.should be_true
+end
+
+When /^the last access script is run$/ do
+  `/usr/bin/rhc-last-access`
+end
+
+Then /^the application last access file should be present$/ do
+  @app.last_access_file_present?.should be_true
+end
+
+Then /^the application last access file should not be present$/ do
+  @app.last_access_file_present?.should_not be_true
 end

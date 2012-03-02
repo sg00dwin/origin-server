@@ -57,6 +57,7 @@ module AppHelper
       app.mysql_user = json['mysql_user']
       app.mysql_password = json['mysql_password']
       app.mysql_hostname = json['mysql_hostname']
+      app.uid = json['uid']
       return app
     end
 
@@ -147,6 +148,10 @@ module AppHelper
       end
 
       return false
+    end
+
+    def last_access_file_present?
+      File.exists? "/var/lib/libra/.last_access/#{uid}"
     end
 
     def connect(use_https=false, max_retries=30)
