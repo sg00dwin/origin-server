@@ -153,7 +153,10 @@ startapp() {
     _state_file="$OPENSHIFT_APP_STATE/.state"
     if [ -f "$_state_file" ]; then
       _state=`cat "$_state_file"`
-    elif [ -f "${OPENSHIFT_RUN_DIR}/stop_lock" ]; then
+    fi
+
+    #  If app is stopped, we should not start the embedded cartridges.
+    if [ -f "${OPENSHIFT_RUN_DIR}/stop_lock" ]; then
       _state='idle'
     fi
 
