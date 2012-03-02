@@ -385,8 +385,8 @@ class DevEnv < Thor
   method_option :include_web, :type => :boolean, :desc => "Include running Selenium tests"
   method_option :region, :required => false, :desc => "Amazon region override (default us-east-1)"
   method_option :build_clean_ami, :required => false, :desc => "Indicates whether to start from a base RHEL image"
-  method_option :install_from_source, :required => false, :desc => "Indicates whether to start from a base RHEL image"
-  method_option :install_from_local_source, :required => false, :desc => "Indicates whether build based on your local source"
+  method_option :install_from_source, :required => false, :desc => "Indicates whether to build based off origin/master"
+  method_option :install_from_local_source, :required => false, :desc => "Indicates whether to build based on your local source"
   method_option :skip_verify, :required => false, :desc => "Skip running tests to verify the build"
 
   def build(name, build_num)
