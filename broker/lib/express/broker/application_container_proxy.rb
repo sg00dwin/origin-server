@@ -607,7 +607,9 @@ module Express
         ensure
           rpc_client.disconnect
         end
-      
+
+        raise Cloud::Sdk::NodeException.new("Node execution failure (error getting result from node).  If the problem persists please contact Red Hat support.", 143) unless result
+
         result
       end
       

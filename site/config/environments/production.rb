@@ -75,7 +75,7 @@ RedHatCloud::Application.configure do
   config.express_api_url = 'https://localhost'
 
   # base domain
-  config.base_domain = '.rhcloud.com'
+  config.base_domain = 'rhcloud.com'
 
   # Max apps for express
   config.express_max_apps = 5
