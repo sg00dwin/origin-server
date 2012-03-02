@@ -139,6 +139,28 @@ module OpenShift
         location == match
       }
     end
+
+   ##
+   # wait_for_pages - checks for multiple pages as a way of
+   # handling redirects
+   def wait_for_pages(locations, timeout=5)
+     uri = URI.parse(@page.current_url)
+     match_list = []
+     locations.each do |loc|
+       match = loc.start_with?("http") ? #assume absolute URL
+        uri.to_s : uri.to_s.split(uri.host)[1]
+       match_list.push(match)
+     end
+
+     await("locations: #{locations.join(', ')}", timeout) {
+       match_list.zip(locations) do |match, loc|
+         if loc == match
+           return true
+         end
+       end
+       return false
+     }
+   end
   end
 
   module Assertions
