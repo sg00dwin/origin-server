@@ -96,5 +96,17 @@ module OpenShift
         wait_for_page @cancel_path
       end
     end
+
+    class ApplicationCreateForm < Form
+      def initialize(page,id)
+        super(page,id)
+        @fields = {
+          :name => "application_name",
+          :namespace => "application_domain_name"
+        }
+
+      	@submit = "//input[@id='application_submit']"
+      end
+    end
   end
 end
