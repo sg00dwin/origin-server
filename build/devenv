@@ -397,7 +397,7 @@ class DevEnv < Thor
     conn = conn.regions[options.region] unless (options.region?nil)
 
     image = nil
-    if options.build_clean_ami || options.install_from_source
+    if options.build_clean_ami || options.install_from_source || options.install_from_local_source
       # Create a new builder instance
       if (options.region?nil)
         image = conn.images[AMI["us-east-1"]]
