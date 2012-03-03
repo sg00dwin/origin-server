@@ -33,19 +33,19 @@ GEM
     arel (2.0.9)
     bson (1.5.2)
     builder (2.1.2)
-    cloud-sdk-common (0.5.3)
+    cloud-sdk-common (0.6.1)
       activemodel
       json
       mongo
       rack
-    cloud-sdk-controller (0.5.10)
+    cloud-sdk-controller (0.6.1)
       activesupport
       cloud-sdk-common
       dnsruby
       json
       open4
       state_machine
-    cloud-sdk-node (0.5.6)
+    cloud-sdk-node (0.6.1)
       activemodel
       cloud-sdk-common
       highline
