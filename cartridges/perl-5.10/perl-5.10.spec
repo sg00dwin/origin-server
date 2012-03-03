@@ -2,7 +2,7 @@
 
 Summary:   Provides mod_perl support
 Name:      rhc-cartridge-perl-5.10
-Version:   0.19.0
+Version:   0.19.1
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   ASL 2.0
@@ -98,6 +98,10 @@ rm -rf $RPM_BUILD_ROOT
 %doc %{cartridgedir}/LICENSE
 
 %changelog
+* Fri Mar 02 2012 Dan McPherson <dmcphers@redhat.com> 0.19.1-1
+- bump spec numbers (dmcphers@redhat.com)
+- connectors for scaling perl/nodejs/rack/wsgi (rchopra@redhat.com)
+
 * Mon Feb 27 2012 Dan McPherson <dmcphers@redhat.com> 0.18.4-1
 - perl-5.10.spec: added requires cpan to be consistant with production nodes
   (tdawson@redhat.com)
