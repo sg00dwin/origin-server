@@ -2,7 +2,7 @@
 
 Summary:       Multi-tenant cloud management system node tools
 Name:          rhc-node
-Version:       0.88.0
+Version:       0.88.1
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -247,6 +247,19 @@ fi
 /lib64/security/pam_libra.so
 
 %changelog
+* Fri Mar 02 2012 Dan McPherson <dmcphers@redhat.com> 0.88.1-1
+- bump spec numbers (dmcphers@redhat.com)
+- Fix for bug# 799515 (rpenta@redhat.com)
+- Merge branch 'master' of li-master:/srv/git/li (ramr@redhat.com)
+- Bug fix - don't start embedded cartridges for stopped applications.
+  (ramr@redhat.com)
+- allow tail to work for links (dmcphers@redhat.com)
+- handle state properly from ruby (dmcphers@redhat.com)
+- fix migrate for .state (dmcphers@redhat.com)
+- Fixed idler stats script. (mpatel@redhat.com)
+- create .state file during migration (jhonce@redhat.com)
+- used wrong name for idled (dmcphers@redhat.com)
+
 * Thu Mar 01 2012 Dan McPherson <dmcphers@redhat.com> 0.87.9-1
 - Bug 798867 (dmcphers@redhat.com)
 - handle idled on restart as well (dmcphers@redhat.com)
