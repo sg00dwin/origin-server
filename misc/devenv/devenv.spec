@@ -8,7 +8,7 @@
 
 Summary:   Dependencies for OpenShift development
 Name:      rhc-devenv
-Version:   0.88.0
+Version:   0.88.1
 Release:   1%{?dist}
 Group:     Development/Libraries
 License:   GPLv2
@@ -281,6 +281,16 @@ cp -f %{devenvdir}/puppet-private.pem /var/lib/puppet/ssl/private_keys/localhost
 %{policydir}/*
 
 %changelog
+* Fri Mar 02 2012 Dan McPherson <dmcphers@redhat.com> 0.88.1-1
+- bump spec numbers (dmcphers@redhat.com)
+- add install_from_local_source (dmcphers@redhat.com)
+- bypass local named again (mlamouri@redhat.com)
+- ok, try this again: local named active and in-line (markllama@redhat.com)
+- reverted default use of local named again (markllama@redhat.com)
+- trying again to enable local named (mlamouri@redhat.com)
+- dont go straight to root to recurse
+  (mlamouri@blade14.cloud.lab.eng.bos.redhat.com)
+
 * Wed Feb 29 2012 Dan McPherson <dmcphers@redhat.com> 0.87.8-1
 - move submodule create to devenv.spec (dmcphers@redhat.com)
 
