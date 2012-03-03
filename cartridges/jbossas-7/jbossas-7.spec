@@ -2,7 +2,7 @@
 
 Summary:   Provides JBossAS7 support
 Name:      rhc-cartridge-jbossas-7
-Version:   0.88.0
+Version:   0.88.1
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   ASL 2.0
@@ -112,6 +112,12 @@ rm -rf %{buildroot}
 %config(noreplace) %{cartridgedir}/info/configuration/
 
 %changelog
+* Fri Mar 02 2012 Dan McPherson <dmcphers@redhat.com> 0.88.1-1
+- bump spec numbers (dmcphers@redhat.com)
+- fixup jboss index.html (dmcphers@redhat.com)
+- changes requested by dblado (mmcgrath@redhat.com)
+- combine into 1 sed (dmcphers@redhat.com)
+
 * Wed Feb 29 2012 Dan McPherson <dmcphers@redhat.com> 0.87.12-1
 - remove apr dep from jboss cart (dmcphers@redhat.com)
 - Bug 798553 (dmcphers@redhat.com)
