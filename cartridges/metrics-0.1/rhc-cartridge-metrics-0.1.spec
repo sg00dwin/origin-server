@@ -1,7 +1,7 @@
 %define cartridgedir %{_libexecdir}/li/cartridges/embedded/metrics-0.1
 
 Name: rhc-cartridge-metrics-0.1
-Version: 0.9.3
+Version: 0.10.0
 Release: 1%{?dist}
 Summary: Embedded metrics support for express
 

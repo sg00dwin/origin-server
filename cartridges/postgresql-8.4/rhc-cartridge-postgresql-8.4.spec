@@ -1,7 +1,7 @@
 %define cartridgedir %{_libexecdir}/li/cartridges/embedded/postgresql-8.4
 
 Name: rhc-cartridge-postgresql-8.4
-Version: 0.4.5
+Version: 0.5.0
 Release: 1%{?dist}
 Summary: Embedded postgresql support for express
 

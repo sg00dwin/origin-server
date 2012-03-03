@@ -2,7 +2,7 @@
 
 Summary:   Provides raw support
 Name:      rhc-cartridge-raw-0.1
-Version:   0.21.4
+Version:   0.22.0
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   ASL 2.0

@@ -2,7 +2,7 @@
 
 Summary:   Provides jenkins-1.4 support
 Name:      rhc-cartridge-jenkins-1.4
-Version:   0.87.5
+Version:   0.88.0
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   ASL 2.0
