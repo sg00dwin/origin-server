@@ -5,7 +5,7 @@
 
 Summary:        Cloud Development Controller
 Name:           rubygem-%{gemname}
-Version:        0.6.0
+Version:        0.6.1
 Release:        1%{?dist}
 Group:          Development/Languages
 License:        ASL 2.0
@@ -75,6 +75,15 @@ rm -rf %{buildroot}
 %{ruby_sitelib}/%{gemname}.rb
 
 %changelog
+* Fri Mar 02 2012 Dan McPherson <dmcphers@redhat.com> 0.6.1-1
+- Updating gem versions (dmcphers@redhat.com)
+- bump spec numbers (dmcphers@redhat.com)
+- Merge branch 'master' of git1.ops.rhcloud.com:/srv/git/li (rpenta@redhat.com)
+- Fix for bug# 799225 (rpenta@redhat.com)
+- for deconfigure, fail if any of the deconfigures fail i.e. node not found or
+  deconfigure failed (rchopra@redhat.com)
+- [rest api] make sure we return data in the correct format (johnp@redhat.com)
+
 * Wed Feb 29 2012 Dan McPherson <dmcphers@redhat.com> 0.5.10-1
 - Updating gem versions (dmcphers@redhat.com)
 - Bugz 798148 (kraman@gmail.com)
