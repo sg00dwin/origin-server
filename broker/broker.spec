@@ -3,7 +3,7 @@
 
 Summary:   Li broker components
 Name:      rhc-broker
-Version:   0.88.0
+Version:   0.88.1
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -85,6 +85,17 @@ rm -rf $RPM_BUILD_ROOT
 /bin/touch %{brokerdir}/log/production.log
 
 %changelog
+* Fri Mar 02 2012 Dan McPherson <dmcphers@redhat.com> 0.88.1-1
+- Updating gem versions (dmcphers@redhat.com)
+- bump spec numbers (dmcphers@redhat.com)
+- fail if you dont get a result from rpc_exec (dmcphers@redhat.com)
+- make help pages fast on admin tools and sync output from migrate
+  (dmcphers@redhat.com)
+- rolling back changes for raising exceptions when component is not found on
+  gear (rchopra@redhat.com)
+- do not consider deconfigure benign if a component is not found on the node
+  (rchopra@redhat.com)
+
 * Thu Mar 01 2012 Dan McPherson <dmcphers@redhat.com> 0.87.11-1
 - Adding admin script to set user VIP status (kraman@gmail.com)
 
