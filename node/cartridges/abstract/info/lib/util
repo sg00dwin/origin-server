@@ -62,7 +62,7 @@ function create_standard_env_vars {
     echo "export OPENSHIFT_RUN_DIR='$APP_DIR/run/'" > $APP_HOME/.env/OPENSHIFT_RUN_DIR
     echo "export OPENSHIFT_APP_NAME='$application'" > $APP_HOME/.env/OPENSHIFT_APP_NAME
     echo "export OPENSHIFT_APP_TYPE='$app_type'" > $APP_HOME/.env/OPENSHIFT_APP_TYPE
-    echo "export OPENSHIFT_APP_STATE='$APP_DIR/runtime'" > $APP_HOME/.env/OPENSHIFT_APP_STATE
+    echo "export OPENSHIFT_RUNTIME_DIR='$APP_DIR/runtime/'" > $APP_HOME/.env/OPENSHIFT_RUNTIME_DIR
 }
 
 function create_standard_network_env_vars {
@@ -535,10 +535,10 @@ function validate_run_as_user {
 }
 
 function openshift_state_dir {
-  if [ -z "$OPENSHIFT_APP_STATE" ]; then
+  if [ -z "$OPENSHIFT_RUNTIME_DIR" ]; then
     echo "${APP_DIR:-$OPENSHIFT_APP_DIR}/runtime/"
   else
-    echo "$OPENSHIFT_APP_STATE"
+    echo "$OPENSHIFT_RUNTIME_DIR"
   fi
 }
 
