@@ -10,6 +10,9 @@ Requires:
 Conflicts:
 Native-Requires:
 Architecture: noarch
+Publishes:
+  get-doc-root:
+    Type: "FILESYSTEM:doc-root"
 Reservations:
   - MEM >= 10MB
 Scaling:
