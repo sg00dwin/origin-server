@@ -33,104 +33,6 @@
      border-left: Xpx solid transparent;
      */ }
 
-/* move into core when the branding converges */
-a {
-  color: #91010b; }
-
-a:hover, a:active {
-  color: #eb0011; }
-
-/* Hitch a div out of its parent */
-.lift {
-  margin-top: -90px; }
-
-.lift-less {
-  margin-top: -80px; }
-
-.lift-counter {
-  padding-bottom: 90px; }
-
-@media (max-width: 767px) {
-  .lift,
-  .lift-less {
-    margin-top: 0; } }
-
-.box-content {
-  padding: 20px 28px; }
-
-/* A link that is a block, kind of like a thumbnail */
-body.signup {
-  background-color: #343434; }
-
-#top {
-  background-color: #010101;
-  color: white; }
-
-#nav {
-  background-color: #343434;
-  color: white; }
-
-#content, #learn {
-  background: -moz-repeating-linear-gradient(-70deg, #e6e6e6, #e6e6e6 6px, #e4e4e4 9px, #e4e4e4 15px, #e6e6e6 18px) repeat scroll 0 0 transparent; }
-
-#buzz {
-  background-color: #343434; }
-
-.column-content {
-  background-color: white; }
-
-#content > .container > div > .row {
-  background-color: #f2f2f2; }
-
-.column-buzz {
-  background-color: #030303;
-  color: white; }
-
-.column-buzz a {
-  color: white; }
-
-.column-nav {
-  background-color: #030303; }
-
-.column-nav,
-.column-nav label {
-  color: #666; }
-
-.column-nav .headline,
-.column-nav h3,
-.column-nav h3 > a {
-  color: white;
-  text-transform: uppercase; }
-
-.column-nav a {
-  color: #999; }
-
-/* Nav section */
-#top > .container > div {
-  padding: 8px 0; }
-  #top > .container > div > a {
-    color: #aaaaaa;
-    font-weight: bold;
-    text-transform: uppercase; }
-  #top > .container > div > a:hover {
-    text-decoration: none;
-    color: #343434;
-    background-color: #eaeaea; }
-#top > .container > div.login {
-  padding: 5px 0;
-  /* may want to turn these into some sort of specific styled button */ }
-  #top > .container > div.login > a {
-    color: #eaeaea;
-    padding: 3px 10px;
-    display: inline-block;
-    background-color: #343434; }
-  #top > .container > div.login > a.login-provider {
-    height: 18px; }
-  #top > .container > div.login > a:hover {
-    text-decoration: none;
-    color: #343434;
-    background-color: #eaeaea; }
-
 .navbar {
   padding-top: 30px;
   height: 130px;
@@ -204,11 +106,103 @@ body.signup {
     display: none; } }
 
 /*End FIXME*/
+/* move into core when the branding converges */
+a {
+  color: #91010b; }
+
+a:hover, a:active {
+  color: #eb0011; }
+
+.align-right {
+  text-align: right; }
+
+/* Hitch a div out of its parent */
+.lift {
+  margin-top: -90px; }
+
+.lift-less {
+  margin-top: -80px; }
+
+.lift-counter {
+  padding-bottom: 90px; }
+
+@media (max-width: 767px) {
+  .lift,
+  .lift-less {
+    margin-top: 0; } }
+
+.gutter {
+  margin-left: 28px; }
+
+.box-content {
+  padding: 20px 28px; }
+
+/* A link that is a block, similar to a thumbnail */
+body.signup {
+  background-color: #343434; }
+
+.section-top {
+  background-color: #010101;
+  color: white; }
+
+.section-nav {
+  background-color: #343434;
+  color: white;
+  padding-bottom: 50px; }
+
+.section-nav.lift-counter {
+  padding-bottom: 90px; }
+
+@media (max-width: 767px) {
+  .section-nav.lift-counter {
+    padding-bottom: 30px; } }
+
+.section-striped {
+  background: -moz-repeating-linear-gradient(-70deg, #e6e6e6, #e6e6e6 6px, #e4e4e4 9px, #e4e4e4 15px, #e6e6e6 18px) repeat scroll 0 0 transparent; }
+  .section-striped .link-tile {
+    color: #343434;
+    padding: 15px 28px;
+    display: block;
+    text-decoration: none; }
+    .section-striped .link-tile:hover {
+      text-decoration: none;
+      color: #343434;
+      background-color: #cccccc;
+      background: -moz-repeating-linear-gradient(-180deg, #cccccc 6px, rgba(204, 204, 204, 0) 6px, rgba(204, 204, 204, 0) 10px, #cccccc 10px, #cccccc) repeat scroll 0 0 transparent; }
+    .section-striped .link-tile:active {
+      text-decoration: none;
+      color: #343434;
+      background-color: #91010b; }
+    .section-striped .link-tile > :last-child {
+      margin-bottom: 0; }
+
+.section-striped.lift-counter {
+  padding-bottom: 130px; }
+
+@media (max-width: 767px) {
+  .section-striped.lift-counter {
+    padding-bottom: 30px; } }
+
+.section-base {
+  background-color: #343434; }
+
+.section-top > .container > div {
+  padding: 8px 0; }
+  .section-top > .container > div > a {
+    color: #aaaaaa;
+    font-weight: bold;
+    text-transform: uppercase; }
+  .section-top > .container > div > a:hover {
+    text-decoration: none;
+    color: white; }
+.section-top > .container > .login {
+  padding: 5px 0; }
+
 .messaging {
-  margin-bottom: 30px;
   clear: both;
   color: #bbb;
-  text-align: center; }
+  text-align: center;
+  margin-bottom: 30px; }
   .messaging .primary {
     font-size: 40px;
     line-height: 40px;
@@ -220,9 +214,6 @@ body.signup {
     line-height: 18px; }
 
 @media (max-width: 767px) {
-  #content > .container > div > .row {
-    background-color: white; }
-
   .messaging {
     text-align: left;
     margin-bottom: 10px; }
@@ -232,34 +223,6 @@ body.signup {
     .messaging .secondary {
       font-size: 13px;
       line-height: 18px; } }
-
-/* squash the secondary message into the space the primary uses */
-.messaging-home .secondary {
-  padding: 0 45px; }
-
-/* Content section */
-#buzz {
-  min-height: 500px; }
-
-.column-buzz {
-  padding: 28px;
-  position: relative; }
-
-#learn .link-tile {
-  color: #343434;
-  padding: 15px 28px;
-  display: block;
-  text-decoration: none; }
-  #learn .link-tile:hover {
-    text-decoration: none;
-    color: #343434;
-    background-color: #cccccc; }
-  #learn .link-tile:active {
-    text-decoration: none;
-    color: #343434;
-    background-color: #91010b; }
-  #learn .link-tile > :last-child {
-    margin-bottom: 0; }
 
 .take-action {
   *zoom: 1;
@@ -353,8 +316,8 @@ body.signup {
     margin-top: 30px;
     color: gray; }
 
-.align-right {
-  text-align: right; }
+#buzz {
+  min-height: 500px; }
 
 .link-with-action {
   font-weight: bold;
@@ -367,35 +330,6 @@ body.signup {
   .link-with-action:hover, .link-with-action:active {
     color: #91010b;
     text-decoration: none; }
-
-/* FIXME: better scoped or defined? */
-.column-content h1 {
-  margin-top: 25px;
-  margin-bottom: 25px; }
-
-/* The body content of a site page */
-.row-content {
-  margin-bottom: 20px; }
-
-#nav {
-  padding-bottom: 50px; }
-
-#nav.lift-counter {
-  padding-bottom: 90px; }
-
-@media (max-width: 767px) {
-  #nav {
-    padding-bottom: 30px; } }
-
-/* Left nav section */
-.column-nav .nav-location {
-  font-size: 19px;
-  line-height: 46px;
-  text-transform: uppercase;
-  margin-top: 15px; }
-.column-nav .menu {
-  margin-left: -14px;
-  margin-right: 14px; }
 
 /* Stacked navigations indent by 1 gutter each time */
 .nav-stacked .nav-stacked {
@@ -418,7 +352,6 @@ body.signup {
   .nav-location {
     display: none; } }
 
-/* Body */
 h1.ribbon {
   margin-left: -38px; }
   h1.ribbon > .ribbon-content {
@@ -447,6 +380,55 @@ h1.ribbon {
     margin-left: -40px; }
     h1.ribbon > .ribbon-content {
       padding-left: 40px; } }
+
+.row-content > .row {
+  background-color: #f2f2f2; }
+
+@media (max-width: 767px) {
+  .row-content > .row {
+    background-color: white; } }
+
+.column-buzz {
+  background-color: #030303;
+  color: white; }
+
+.column-buzz a {
+  color: white; }
+
+.column-nav {
+  background-color: #030303;
+  color: #666; }
+  .column-nav label {
+    color: #666; }
+  .column-nav a {
+    color: #999; }
+  .column-nav .headline,
+  .column-nav h3,
+  .column-nav h3 > a {
+    color: white;
+    text-transform: uppercase; }
+  .column-nav .nav-location {
+    font-size: 19px;
+    line-height: 46px;
+    text-transform: uppercase;
+    margin-top: 15px; }
+  .column-nav .menu {
+    margin-left: -14px;
+    margin-right: 14px; }
+
+.column-content {
+  background-color: white; }
+  .column-content h1 {
+    margin-top: 25px;
+    margin-bottom: 25px; }
+
+.column-buzz {
+  padding: 28px;
+  position: relative; }
+
+/* The body content of a site page */
+.row-content {
+  margin-bottom: 20px; }
 
 /* Drupal specific markup, we may want to wrap this with a top level selector on body.drupal or something */
 .views-field-rss {

@@ -1,14 +1,14 @@
 = stylesheet_link_tag '/app/stylesheets/site.css', :media => 'all'
 %header
-  #top
+  #top.section-top
     .container
       .pull-left= link_to "Sign up for the newsletter >", "signup_news"
       .pull-right.login
-        = link_to "Sign in", "signin"
+        = link_to "Sign in", "signin", :class => 'btn btn-small'
         - ['f', 'g', 't'].each do |p|
-          = link_to p, :class => 'login-provider' do
+          = link_to p, :class => 'btn btn-small login-provider' do
             %img{:alt => p}
-  #nav.lift-counter
+  #nav.section-nav.lift-counter
     .navbar
       .container
         -# Was .nav-collapse, has some issues
@@ -29,7 +29,7 @@
           %strong OpenShift Community
         .secondary This is the place to learn and engage with OpenShift users and developers. Sign in to participate
 
-#content
+#content.section-striped
   .container
     .row-content
       .row.row-flush-right
