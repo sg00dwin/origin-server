@@ -95,4 +95,8 @@ module ApplicationHelper
   def newsletter_signup_url
     "http://makara.nurturehq.com/makara/newsletter_signup.html"
   end
+
+  def irc_web_url
+    "http://webchat.freenode.net/?randomnick=1&channels=openshift&uio=d4"
+  end
 end
