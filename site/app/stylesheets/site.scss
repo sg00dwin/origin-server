@@ -22,14 +22,15 @@
 @import "bootstrap/mixins";
 @import "ribbon";
 
-$topBarColor:                 #010101 !default;
-$navigationColumnColor:       #030303 !default;
-$underNavigationColumnColor:  #f2f2f2 !default;
-$topNavigationColor:          #343434 !default;
-$bodyColor:                   #eaeaea !default;
-$contentColumnColor:          white !default;
+$topBarBackgroundColor:         #010101 !default;
+$navBackgroundColor:            #343434 !default;
+$navColumnBackgroundColor:      #030303 !default;
+$belowNavColumnBackgroundColor: #f2f2f2 !default;
+$contentColumnBackgroundColor:  white !default;
+
 $loginBackgroundColor:        #343434 !default;
 $loginColor:                  #eaeaea !default;
+
 $signupLinkColor:             #aaa !default;
 $textDarkBackground:          white !default;
 $darkBackground:              #030303 !default;
@@ -41,6 +42,7 @@ $ribbonTextColor: white !default;
 $ribbonFoldColor: #91010b !default;
 
 @import "navbar";
+@import "community";
 
 /* move into core when the branding converges */
 a { color: $ribbonFoldColor; }
@@ -51,20 +53,20 @@ a:hover, a:active { color: $ribbonColor; }
 }
 
 /* Hitch a div out of its parent */
-.lift { 
-  margin-top: -90px; 
+.lift {
+  margin-top: -90px;
 }
-.lift-less { 
-  margin-top: -80px; 
+.lift-less {
+  margin-top: -80px;
 }
 // Apply to the appropriate element above a lifted item
 .lift-counter {
   padding-bottom: 90px;
 }
 @media (max-width: 767px) {
-  .lift, 
-  .lift-less { 
-    margin-top: 0; 
+  .lift,
+  .lift-less {
+    margin-top: 0;
   }
 }
 
@@ -97,16 +99,16 @@ a:hover, a:active { color: $ribbonColor; }
 
 // Temporary
 body.signup { 
-  background-color: $topNavigationColor; 
+  background-color: $navBackgroundColor; 
 }
 
 // Concrete sections of pages
 .section-top {
-  background-color: $topBarColor; 
+  background-color: $topBarBackgroundColor; 
   color: white;
 }
 .section-nav {
-  background-color: $topNavigationColor; 
+  background-color: $navBackgroundColor; 
   color: white;
   padding-bottom: 50px;
 }
@@ -140,7 +142,7 @@ body.signup {
 }
 
 .section-base {
-  background-color: $topNavigationColor;
+  background-color: $navBackgroundColor;
 }
 
 // Top bar
@@ -342,7 +344,7 @@ h1.ribbon {
 
 
 // Main content containers, rows, columns
-.row-content > .row { background-color: $underNavigationColumnColor; }
+.row-content > .row { background-color: $belowNavColumnBackgroundColor; }
 @media (max-width: 767px) {
   .row-content > .row { background-color: $textLightBackground; }
 }
@@ -352,7 +354,7 @@ h1.ribbon {
 
 // Column navigation
 .column-nav {
-  background-color: $navigationColumnColor;
+  background-color: $navColumnBackgroundColor;
   color: #666;
 
   label {
@@ -396,7 +398,7 @@ h1.ribbon {
 
 
 .column-content {
-  background-color: $contentColumnColor;
+  background-color: $contentColumnBackgroundColor;
 
   h1 {
     margin-top: 25px;
@@ -411,5 +413,4 @@ h1.ribbon {
   margin-bottom: 20px;
 }
 
-@import "community";
 
