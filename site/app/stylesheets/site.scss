@@ -62,6 +62,10 @@ a:hover, a:active { color: $ribbonColor; }
   }
 }
 
+.box-content {
+  padding: 20px $gridGutterWidth;
+}
+
 /* A link that is a block, kind of like a thumbnail */
 @mixin tile($activeColor, $hoverColor, $backgroundActiveColor, $backgroundHoverColor) {
   display: block;

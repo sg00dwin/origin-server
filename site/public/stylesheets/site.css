@@ -52,6 +52,9 @@ a:hover, a:active {
   .lift-less {
     margin-top: 0; } }
 
+.box-content {
+  padding: 20px 28px; }
+
 /* A link that is a block, kind of like a thumbnail */
 body.signup {
   background-color: #343434; }
