@@ -15,29 +15,17 @@
 # succeed.  If the file write fails, check that the policy is loaded.
 # 
 
-function dns_value() {
-  # The value of DNS records is in the fifth field
-  echo $5
-}
-
 FORWARD_CONF=${FORWARD_CONF:="/var/named/forwarders.conf"}
-
-HOSTNAME=`hostname`
-DNSDOMAINNAME=`dnsdomainname`.
-
-NSRECORD=`dig ${DNSDOMAINNAME} NS | grep -v \; | grep NS`
-NSNAME=`dns_value ${NSRECORD}`
-ARECORD=`dig ${NSNAME} A | grep -v \; | grep A`
-NSADDRESS=`dns_value ${ARECORD}`
 
 HINTSCONFFILE=${HINTSCONFFILE:="/var/named/upstream_hints.conf"}
 HINTSDBFILE=${HINTSDBFILE:="/var/named/upstream_hints.db"}
 
 if [ -n "$new_domain_name_servers" ]
 then
-# remove the localhost reference if it's provided
-NAME_SERVER_LIST=`echo ${new_domain_name_servers} | sed -e 's/127.0.0.1 *// ; s/ / ; /g'`
-cat > ${FORWARD_CONF} <<EOF
+  # remove the localhost reference if it's provided
+  NAME_SERVER_LIST=`echo ${new_domain_name_servers} | sed -e 's/127.0.0.1 *// ; s/ / ; /g'`
+
+  cat > ${FORWARD_CONF} <<EOF
 // created by /etc/dhcp/dhclient-eth0-up-hooks
 // set named forwarders from the DHCP supplied name server list
 forward first ;
@@ -47,16 +35,16 @@ EOF
   logmessage "set forwarders: ${NAME_SERVER_LIST}"
 
 
-cat > ${HINTSCONFFILE} <<EOF
-zone \"${DNSDOMAINNAME}\" IN {
+  cat > ${HINTSCONFFILE} <<EOF
+zone "${new_domain_name}." IN {
       type hint ;
-      file \"${HINTSDBFILE}\";
+      file "${HINTSDBFILE}";
 };
 EOF
 
-cat > ${HINTSDBFILE} <<EOF
-${DNSDOMAINNAME}	3600	IN	NS	${NSNAME}
-${NSNAME}	3600	IN	A	${NSADDRESS}
+  cat > ${HINTSDBFILE} <<EOF
+${new_domain_name}.	3600	IN	NS	ns0.${new_domain_name}.
+ns0.${new_domain_name}.	3600	IN	A	${NAME_SERVER_LIST}
 EOF
   
   # reload the named configuration if needed
@@ -67,4 +55,3 @@ EOF
 else
   logmessage "no new name servers provided by DHCP"
 fi
-
