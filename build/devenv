@@ -334,7 +334,29 @@ class DevEnv < Thor
         terminate_instance(instance) if options.terminate?
       end
     end
-
+    
+    def build_and_install(package_name, build_dir)
+      remove_dir '/tmp/tito/'
+      FileUtils.mkdir_p '/tmp/tito/'
+      puts "Building in #{build_dir}"
+      inside(File.expand_path("../#{build_dir}", File.dirname(__FILE__))) do
+        # Build and install the RPM's locally
+        unless run('tito build --rpm --test', :verbose => options.verbose?)
+          FileUtils.rm_rf '/tmp/devenv/sync/'
+          exit 1
+        end
+        Dir.glob('/tmp/tito/x86_64/*.rpm').each {|file|
+          FileUtils.mkdir_p "/tmp/tito/noarch/"
+          FileUtils.mv file, "/tmp/tito/noarch/"
+        }
+        unless run("rpm -Uvh --force /tmp/tito/noarch/*.rpm", :verbose => options.verbose?)
+          unless run("rpm -e --justdb --nodeps #{package_name}; yum install -y /tmp/tito/noarch/*.rpm", :verbose => options.verbose?)
+            FileUtils.rm_rf '/tmp/devenv/sync/'
+            exit 1
+          end
+        end
+      end
+    end
   end
 
   desc "write_sync_history", "Write out the sync history so updates won't happen for already installed changes"
@@ -500,6 +522,7 @@ class DevEnv < Thor
   end
 
   desc "update", "Update current instance by installing RPMs from local git tree"
+  method_option :include_stale, :type => :boolean, :desc => "Include packages that have been tagged but not synced to the repo"
   method_option :verbose, :type => :boolean, :desc => "Enable verbose logging"
   def update
     options.verbose? ? @@log.level = Logger::DEBUG : @@log.level = Logger::ERROR
@@ -511,29 +534,18 @@ class DevEnv < Thor
     # Figure out what needs to be built - exclude devenv for syncs
     sync_dirs = get_sync_dirs
 
-    # Build and install them
     sync_dirs.each do |sync_dir|
       package_name = sync_dir[0]
       build_dir = sync_dir[1]
-      remove_dir '/tmp/tito/'
-      FileUtils.mkdir_p '/tmp/tito/'
-      puts "Building in #{build_dir}"
-      inside(File.expand_path("../#{build_dir}", File.dirname(__FILE__))) do
-        # Build and install the RPM's locally
-        unless run('tito build --rpm --test', :verbose => options.verbose?)
-          FileUtils.rm_rf '/tmp/devenv/sync/'
-          exit 1
-        end
-        Dir.glob('/tmp/tito/x86_64/*.rpm').each {|file|
-          FileUtils.mkdir_p "/tmp/tito/noarch/"
-          FileUtils.mv file, "/tmp/tito/noarch/"
-        }
-        unless run("rpm -Uvh --force /tmp/tito/noarch/*.rpm", :verbose => options.verbose?)
-          unless run("rpm -e --justdb --nodeps #{package_name}; yum install -y /tmp/tito/noarch/*.rpm", :verbose => options.verbose?)
-            FileUtils.rm_rf '/tmp/devenv/sync/'
-            exit 1
-          end
-        end
+      build_and_install(package_name, build_dir)
+    end
+    
+    if options.include_stale?
+      stale_dirs = get_stale_dirs
+      stale_dirs.each do |stale_dir|
+        package_name = stale_dir[0]
+        build_dir = stale_dir[1]
+        build_and_install(package_name, build_dir)
       end
     end
     run("yum update -y --exclude='rhc-devenv' --disablerepo=\\* --enablerepo=li rhc-* rubygem-cloud-sdk-*", :verbose => options.verbose?)
@@ -568,7 +580,7 @@ class DevEnv < Thor
 
     if !options.skip_build?
       puts "Performing remote install...."
-      output, exit_code = ssh(hostname, "set -e; #{options.clean_metadata? ? 'yum clean metadata; ' : ''}rm -rf li-working os-client-tools-working; git clone li li-working;#{has_client ? ' git clone os-client-tools os-client-tools-working;' : ''} pushd li-working; build/devenv update #{options.verbose? ? '--verbose' : ''} 2>&1; popd; rm -rf li-working os-client-tools-working; #{options.clean_metadata? ? "yum update -y --exclude='rhc-devenv' rhc-* rubygem-cloud-sdk-*; " : ''}", 600, true)
+      output, exit_code = ssh(hostname, "set -e; #{options.clean_metadata? ? 'yum clean metadata; ' : ''}rm -rf li-working os-client-tools-working; git clone li li-working;#{has_client ? ' git clone os-client-tools os-client-tools-working;' : ''} pushd li-working; build/devenv update#{options.verbose? ? ' --verbose' : ''}#{options.clean_metadata? ? ' --include_stale' : ''} 2>&1; popd; rm -rf li-working os-client-tools-working; #{options.clean_metadata? ? "yum update -y --exclude='rhc-devenv' rhc-* rubygem-cloud-sdk-*; " : ''}", 600, true)
       if exit_code != 0
         puts "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
         puts "Build failed!  Exiting."

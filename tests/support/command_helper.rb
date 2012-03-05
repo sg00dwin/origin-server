@@ -24,7 +24,7 @@ module CommandHelper
     $logger.info("Running: #{cmd}")
 
     exit_code = -1
-    output = nil 
+    output = nil
     # Don't let a command run more than 5 minutes
     Timeout::timeout(500) do
       output = `#{cmd} 2>&1`
@@ -116,13 +116,13 @@ module CommandHelper
       app.persist
     end
   end
-  
+
   def rhc_restore(app)
     rhc_do('rhc_restore') do
       run("#{$rhc_app_script} snapshot restore -l #{app.login} -a #{app.name} -f '#{app.snapshot}' -p fakepw -d").should == 0
     end
   end
-  
+
   def rhc_tidy(app)
     rhc_do('rhc_tidy') do
       run("#{$rhc_app_script} tidy -l #{app.login} -a #{app.name} -p fakepw -d").should == 0
@@ -144,9 +144,12 @@ module CommandHelper
 
       # Update the application uid from the command output
       app.update_uid(output_buffer[0])
-      
+
       # Update the application creation code
       app.create_app_code = exit_code
+
+      # Persist the app data to filesystem
+      app.persist
 
       return app
     end

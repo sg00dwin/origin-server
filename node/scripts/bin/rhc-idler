@@ -31,8 +31,8 @@ function print_idled {
 }
 
 function is_idled {
-    if [ -f "$OPENSHIFT_APP_STATE" ]; then
-        _test=`cat $OPENSHIFT_APP_STATE/.state`
+    if [ -f "$OPENSHIFT_RUNTIME_DIR" ]; then
+        _test=`cat $OPENSHIFT_RUNTIME_DIR/.state`
         return `test idle = "$_test"`
     else
         appid=$1
@@ -77,8 +77,8 @@ then
 fi
 
 source "/var/lib/libra/${uuid}/.env/OPENSHIFT_APP_DIR"
-[ -f "/var/lib/libra/${uuid}/.env/OPENSHIFT_APP_STATE" ] && source "/var/lib/libra/${uuid}/.env/OPENSHIFT_APP_STATE"
-: ${OPENSHIFT_APP_STATE:=$OPENSHIFT_APP_DIR/runtime}
+[ -f "/var/lib/libra/${uuid}/.env/OPENSHIFT_RUNTIME_DIR" ] && source "/var/lib/libra/${uuid}/.env/OPENSHIFT_RUNTIME_DIR"
+: ${OPENSHIFT_RUNTIME_DIR:=$OPENSHIFT_APP_DIR/runtime}
 
 if is_idled "$uuid"
 then
@@ -99,7 +99,7 @@ service libra stopuser "${uuid}"
 
 # Disable
 # code copied from node/lib/util_ext
-runuser --shell /bin/sh "$uuid" -c "echo idle >$OPENSHIFT_APP_STATE/.state"
+runuser --shell /bin/sh "$uuid" -c "echo idle >$OPENSHIFT_RUNTIME_DIR/.state"
 
 source "/var/lib/libra/${uuid}/.env/OPENSHIFT_RUN_DIR"
 touch "${OPENSHIFT_RUN_DIR}/stop_lock"

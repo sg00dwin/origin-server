@@ -1,7 +1,7 @@
 %define cartridgedir %{_libexecdir}/li/cartridges/embedded/postgresql-8.4
 
 Name: rhc-cartridge-postgresql-8.4
-Version: 0.4.5
+Version: 0.5.1
 Release: 1%{?dist}
 Summary: Embedded postgresql support for express
 
@@ -71,6 +71,9 @@ rm -rf $RPM_BUILD_ROOT
 %doc %{cartridgedir}/LICENSE
 
 %changelog
+* Fri Mar 02 2012 Dan McPherson <dmcphers@redhat.com> 0.5.1-1
+- bump spec numbers (dmcphers@redhat.com)
+
 * Wed Feb 29 2012 Dan McPherson <dmcphers@redhat.com> 0.4.5-1
 - do even less when ip doesnt change on move (dmcphers@redhat.com)
 

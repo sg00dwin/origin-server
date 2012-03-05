@@ -64,7 +64,8 @@ class TS_web
       :express => Express.suite,
       :flex => Flex.suite,
       :console => ExpressConsole.suite,
-      :rest_account => RestAccount.suite
+      :rest_account => RestAccount.suite,
+      :rest_console => RestConsole.suite
     }
 
     suite = TestDecorator.new('Sauce Tests')

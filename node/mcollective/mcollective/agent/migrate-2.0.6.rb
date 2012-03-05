@@ -111,8 +111,12 @@ module LibraMigration
         FileUtils.ln_s "../runtime/repo/log/production.log", "#{app_dir}/logs/production.log"
       end
 
-      env_echos.push("echo \"export OPENSHIFT_APP_STATE=#{app_dir}/runtime\" > #{app_home}/.env/OPENSHIFT_APP_STATE")
+      
+      if File.exists?("#{app_home}/.env/OPENSHIFT_APP_STATE")
+        File.delete("#{app_home}/.env/OPENSHIFT_APP_STATE")
+      end
 
+      env_echos.push("echo \"export OPENSHIFT_RUNTIME_DIR=#{app_dir}/runtime/\" > #{app_home}/.env/OPENSHIFT_RUNTIME_DIR")
 
       state = "#{app_dir}/runtime/.state"
       if not File.exists?(state)

@@ -1,7 +1,7 @@
 %define cartridgedir %{_libexecdir}/li/cartridges/embedded/phpmyadmin-3.4
 
 Name: rhc-cartridge-phpmyadmin-3.4
-Version: 0.9.3
+Version: 0.10.1
 Release: 1%{?dist}
 Summary: Embedded phpMyAdmin support for express
 
@@ -55,6 +55,9 @@ rm -rf $RPM_BUILD_ROOT
 %doc %{cartridgedir}/LICENSE
 
 %changelog
+* Fri Mar 02 2012 Dan McPherson <dmcphers@redhat.com> 0.10.1-1
+- bump spec numbers (dmcphers@redhat.com)
+
 * Tue Feb 28 2012 Dan McPherson <dmcphers@redhat.com> 0.9.3-1
 - some cleanup of http -C Include (dmcphers@redhat.com)
 
