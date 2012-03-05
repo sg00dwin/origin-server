@@ -26,7 +26,7 @@ done
 [ $# -eq 4 -o $# -eq 3 ] || print_help
 
 CART_DIR=${CART_DIR:=/usr/libexec/li/cartridges}
-app_type="raw-0.1"
+app_type="diy-0.1"
 
 source ${CART_DIR}/abstract/info/lib/util
 setup_configure "$1" $2 $3 $4
@@ -38,7 +38,7 @@ unobfuscate_app_home $uuid $namespace $application
 if [ ! -d $git_url ]; then
 	clone_external_git_repo $application $user_id $group_id $uuid $git_url
 else
-	clone_git_repo $application $user_id $group_id $uuid "raw 0.1"
+	clone_git_repo $application $user_id $group_id $uuid "diy 0.1"
 fi
 
 #

@@ -1,10 +1,10 @@
 class ControlPanelController < ApplicationController
   before_filter :require_login, :require_user
 
-  @@exclude_carts = ['raw-0.1', 'jenkins-1.4']
+  @@exclude_carts = ['diy-0.1', 'jenkins-1.4']
 
   def index
-      
+
     Rails.logger.debug "In cp controller. userinfo: #{@userinfo.inspect}"
 
     ssh_key_string = @userinfo.default_ssh_key.placeholder? ? 'ssh-rsa nossh' : @userinfo.default_ssh_key.key_string

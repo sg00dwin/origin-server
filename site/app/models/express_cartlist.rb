@@ -3,25 +3,25 @@ class ExpressCartlist
   include ActiveModel::Conversion
   include ActiveModel::Serialization
   extend ActiveModel::Naming
-  
+
   include ExpressApi
-  
+
   attr_accessor :list, :cart_type, :debug
-  
+
   validates :cart_type, :presence => true,
-                        :inclusion => { :in => ['standalone', 'embedded'] } 
-  
+                        :inclusion => { :in => ['standalone', 'embedded'] }
+
   def initialize( cart_type, debug = false )
     @cart_type = cart_type
     @debug = debug ? 'true' : 'false'
     case cart_type
       when 'standalone'
-        @list = ['jbossas-7', 'nodejs-0.6', 'perl-5.10', 'php-5.3', 'python-2.6', 'raw-0.1', 'ruby-1.8', 'jenkins-1.4']
+        @list = ['jbossas-7', 'nodejs-0.6', 'perl-5.10', 'php-5.3', 'python-2.6', 'diy-0.1', 'ruby-1.8', 'jenkins-1.4']
       when 'embedded'
         @list = ['mysql-5.1']
     end
   end
-  
+
   #def establish(force=false)
     #@list = Rails.cache.fetch "cartlist_#{@cart_type}", :force => force do
       #data = { :cart_type => @cart_type, :debug => @debug }
