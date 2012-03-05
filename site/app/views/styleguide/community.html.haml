@@ -8,20 +8,19 @@
         - ['f', 'g', 't'].each do |p|
           = link_to p, :class => 'login-provider' do
             %img{:alt => p}
-  #nav
+  #nav.lift-counter
     .navbar
       .container
         -# Was .nav-collapse, has some issues
-        %div
-          .brand
-            %strong> Open
-            Shift
-          %ul.nav
-            %li.active= link_to "Overview", "."
-            %li= link_to "Documentation", "dev_center"
-            %li.divider &nbsp;
-            %li= link_to "Console", "console"
-            %li= link_to "Community", "community"
+        .brand
+          %strong> Open
+          Shift
+        %ul.nav
+          %li.active= link_to "Overview", "."
+          %li= link_to "Documentation", "dev_center"
+          %li.divider &nbsp;
+          %li= link_to "Console", "console"
+          %li= link_to "Community", "community"
 
     .messaging
       .container
@@ -36,7 +35,7 @@
       .row.row-flush-right
         .column-nav.lift-less.span-wrapper
           .span3
-            .nav-location Community
+            .nav-location.headline Community
 
             -# may need a block or three
             %ul.menu.nav.nav-pills.nav-stacked

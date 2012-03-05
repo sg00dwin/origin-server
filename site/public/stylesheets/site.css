@@ -47,6 +47,9 @@ a:hover, a:active {
 .lift-less {
   margin-top: -80px; }
 
+.lift-counter {
+  padding-bottom: 90px; }
+
 @media (max-width: 767px) {
   .lift,
   .lift-less {
@@ -147,6 +150,7 @@ body.signup {
     /* reset styles */
     float: none;
     margin: 0;
+    margin-bottom: 110px;
     /* needs fixing */ }
     .navbar .nav > li {
       float: left;
@@ -234,9 +238,6 @@ body.signup {
   padding: 0 45px; }
 
 /* Content section */
-#nav, #learn {
-  padding-bottom: 110px; }
-
 #buzz {
   min-height: 500px; }
 
@@ -376,6 +377,12 @@ body.signup {
 .row-content {
   margin-bottom: 20px; }
 
+#nav {
+  padding-bottom: 50px; }
+
+#nav.lift-counter {
+  padding-bottom: 90px; }
+
 @media (max-width: 767px) {
   #nav {
     padding-bottom: 30px; } }
@@ -386,21 +393,22 @@ body.signup {
   line-height: 46px;
   text-transform: uppercase;
   margin-top: 15px; }
-.column-nav > .nav-stacked {
-  margin-left: 14px; }
+.column-nav .menu {
+  margin-left: -14px;
+  margin-right: 14px; }
 
 /* Stacked navigations indent by 1 gutter each time */
 .nav-stacked .nav-stacked {
-  margin-left: 28px;
+  margin-left: 14px;
   margin-bottom: 0; }
 
 @media (min-width: 768px) and (max-width: 979px) {
   .nav-stacked .nav-stacked {
-    margin-left: 20px; } }
+    margin-left: 10px; } }
 
 @media (min-width: 1200px) {
   .nav-stacked .nav-stacked {
-    margin-left: 30px; } }
+    margin-left: 15px; } }
 
 @media (max-width: 767px) {
   .column-nav > ul > li {

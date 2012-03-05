@@ -55,6 +55,10 @@ a:hover, a:active { color: $ribbonColor; }
 .lift-less { 
   margin-top: -80px; 
 }
+// Apply to the appropriate element above a lifted item
+.lift-counter {
+  padding-bottom: 90px;
+}
 @media (max-width: 767px) {
   .lift, 
   .lift-less { 
@@ -167,6 +171,8 @@ body.signup { background-color: $topNavigationColor; }
     float: none;
     margin: 0;
 
+    margin-bottom: 110px;
+
     > li {
       float: left;
       width: 20%;
@@ -256,7 +262,6 @@ body.signup { background-color: $topNavigationColor; }
 
 /* Content section */
 
-#nav, #learn { padding-bottom: 110px; }
 #buzz { min-height: 500px; }
 .column-buzz { padding: $gridGutterWidth; position: relative;}
 
@@ -396,23 +401,33 @@ body.signup { background-color: $topNavigationColor; }
   margin-bottom: 20px;
 }
 
+#nav { padding-bottom: 50px; }
+#nav.lift-counter { padding-bottom: 90px; }
 @media (max-width: 767px) {
   #nav { padding-bottom: 30px; }
 }
 
 /* Left nav section */
 .column-nav {
-  .nav-location { font-size: 19px; line-height: 46px; text-transform: uppercase; margin-top: 15px; }
-  > .nav-stacked { margin-left: $gridGutterWidth/2; }
+  .nav-location { 
+    font-size: 19px; 
+    line-height: 46px; 
+    text-transform: uppercase; 
+    margin-top: 15px; 
+  }
+  .menu {
+    margin-left: -$gridGutterWidth/2;
+    margin-right: $gridGutterWidth/2;
+  }
 }
 
 /* Stacked navigations indent by 1 gutter each time */
-.nav-stacked .nav-stacked { margin-left: $gridGutterWidth; margin-bottom: 0; }
+.nav-stacked .nav-stacked { margin-left: $gridGutterWidth/2; margin-bottom: 0; }
 @if $gridGutterWidthTablet != $gridGutterWidth { @media (min-width: 768px) and (max-width: 979px) {
-  .nav-stacked .nav-stacked { margin-left: $gridGutterWidthTablet; }
+  .nav-stacked .nav-stacked { margin-left: $gridGutterWidthTablet/2; }
 } }
 @if $gridGutterWidthLarge != $gridGutterWidth { @media (min-width: 1200px) {
-  .nav-stacked .nav-stacked { margin-left: $gridGutterWidthLarge; }
+  .nav-stacked .nav-stacked { margin-left: $gridGutterWidthLarge/2; }
 } }
 @media (max-width: 767px) {
   .column-nav > ul > li { float: left; width: 32%; }
