@@ -321,20 +321,6 @@ body.signup {
   &:hover, &:active { color: $ribbonFoldColor; text-decoration: none; }
 }
 
-/* Stacked navigations indent by 1 gutter each time */
-.nav-stacked .nav-stacked { margin-left: $gridGutterWidth/2; margin-bottom: 0; }
-@if $gridGutterWidthTablet != $gridGutterWidth { @media (min-width: 768px) and (max-width: 979px) {
-  .nav-stacked .nav-stacked { margin-left: $gridGutterWidthTablet/2; }
-} }
-@if $gridGutterWidthLarge != $gridGutterWidth { @media (min-width: 1200px) {
-  .nav-stacked .nav-stacked { margin-left: $gridGutterWidthLarge/2; }
-} }
-
-@media (max-width: 767px) {
-  .column-nav > ul > li { float: left; width: 32%; }
-  .nav-location { display: none; }
-}
-
 // Standard header with ribbon
 h1.ribbon {
   > .ribbon-content { 
@@ -388,11 +374,26 @@ h1.ribbon {
     text-transform: uppercase;
     margin-top: 15px;
   }
-  .menu {
+  > div > .menu {
     margin-left: -$gridGutterWidth/2;
     margin-right: $gridGutterWidth/2;
   }
 }
+
+@media (max-width: 767px) {
+  .column-nav > div > ul > li { float: left; width: 32%; }
+  .nav-location { display: none; }
+}
+
+/* Stacked navigations indent by 1 gutter each time */
+.nav-stacked .nav-stacked { margin-left: $gridGutterWidth/2; margin-bottom: 0; }
+@if $gridGutterWidthTablet != $gridGutterWidth { @media (min-width: 768px) and (max-width: 979px) {
+  .nav-stacked .nav-stacked { margin-left: $gridGutterWidthTablet/2; }
+} }
+@if $gridGutterWidthLarge != $gridGutterWidth { @media (min-width: 1200px) {
+  .nav-stacked .nav-stacked { margin-left: $gridGutterWidthLarge/2; }
+} }
+
 
 .column-content {
   background-color: $contentColumnColor;

@@ -331,27 +331,6 @@ body.signup {
     color: #91010b;
     text-decoration: none; }
 
-/* Stacked navigations indent by 1 gutter each time */
-.nav-stacked .nav-stacked {
-  margin-left: 14px;
-  margin-bottom: 0; }
-
-@media (min-width: 768px) and (max-width: 979px) {
-  .nav-stacked .nav-stacked {
-    margin-left: 10px; } }
-
-@media (min-width: 1200px) {
-  .nav-stacked .nav-stacked {
-    margin-left: 15px; } }
-
-@media (max-width: 767px) {
-  .column-nav > ul > li {
-    float: left;
-    width: 32%; }
-
-  .nav-location {
-    display: none; } }
-
 h1.ribbon {
   margin-left: -38px; }
   h1.ribbon > .ribbon-content {
@@ -412,9 +391,30 @@ h1.ribbon {
     line-height: 46px;
     text-transform: uppercase;
     margin-top: 15px; }
-  .column-nav .menu {
+  .column-nav > div > .menu {
     margin-left: -14px;
     margin-right: 14px; }
+
+@media (max-width: 767px) {
+  .column-nav > div > ul > li {
+    float: left;
+    width: 32%; }
+
+  .nav-location {
+    display: none; } }
+
+/* Stacked navigations indent by 1 gutter each time */
+.nav-stacked .nav-stacked {
+  margin-left: 14px;
+  margin-bottom: 0; }
+
+@media (min-width: 768px) and (max-width: 979px) {
+  .nav-stacked .nav-stacked {
+    margin-left: 10px; } }
+
+@media (min-width: 1200px) {
+  .nav-stacked .nav-stacked {
+    margin-left: 15px; } }
 
 .column-content {
   background-color: white; }
