@@ -9,9 +9,7 @@ done
 
 if [ -f $OPENSHIFT_DATA_DIR/mysql_dump_snapshot.gz ]
 then
-    CART_DIR=$(dirname $(dirname $(dirname $0)))
-    source ${CART_DIR}/info/bin/load_config.sh
-  
+    source /etc/stickshift/stickshift-node.conf
     CART_INFO_DIR=${CARTRIDGE_BASE_PATH}/embedded/mysql-5.1/info
     source ${CART_INFO_DIR}/lib/util
 
