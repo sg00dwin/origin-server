@@ -43,6 +43,7 @@ zone "${new_domain_name}." IN {
 EOF
 
   cat > ${HINTSDBFILE} <<EOF
+${new_domain_name}.	3600    IN      SOA     ns0.${new_domain_name}. hostmaster.example.com. 2007101600 3600 3600 3600 1800
 ${new_domain_name}.	3600	IN	NS	ns0.${new_domain_name}.
 ns0.${new_domain_name}.	3600	IN	A	${NAME_SERVER_LIST}
 EOF
