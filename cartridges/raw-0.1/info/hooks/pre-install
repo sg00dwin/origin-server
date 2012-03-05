@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Confirms all required raw bits are in place or fails
+# Confirms all required diy bits are in place or fails
 
 set -e
 
@@ -35,5 +35,5 @@ done
 
 uuid=$1
 
-rpm -q raw httpd > /dev/null || quit "Missing packages"
+rpm -q rhc-cartridge-raw-0.1 httpd > /dev/null || quit "Missing packages"
 [ -d "$CARTRIDGE_DIR" ] || quit "Missing cartridge dir: $CARTRIDGE_DIR"

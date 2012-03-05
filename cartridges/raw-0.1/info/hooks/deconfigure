@@ -1,11 +1,11 @@
 #!/bin/bash
 
-# Destroys raw instance
+# Destroys diy instance
 
 function print_help {
     echo "Usage: $0 app-name namespace uuid"
 
-    echo "$0 $@" | logger -p local0.notice -t libra_raw_deconfigure
+    echo "$0 $@" | logger -p local0.notice -t libra_diy_deconfigure
     exit 1
 }
 

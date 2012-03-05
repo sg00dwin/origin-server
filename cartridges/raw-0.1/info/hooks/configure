@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Creates a raw instance
+# Creates a diy instance
 
 # Exit on any errors
 set -e
@@ -8,7 +8,7 @@ set -e
 function print_help {
     echo "Usage: $0 app-name namespace uuid git-url"
 
-    echo "$0 $@" | logger -p local0.notice -t libra_raw_configure
+    echo "$0 $@" | logger -p local0.notice -t libra_diy_configure
     exit 1
 }
 
