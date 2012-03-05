@@ -264,6 +264,14 @@ a:hover {
   .row-fluid > .span12 {
     width: 100.0%; }
 
+.row > .span-wrapper {
+  margin-left: 0; }
+
+.row-flush-right {
+  margin-right: -28px; }
+  .row-flush-right .span-flush-right {
+    padding-right: 28px; }
+
 .container {
   width: 908px;
   margin-left: auto;
@@ -2551,11 +2559,17 @@ a.thumbnail:hover {
     margin-left: 0; }
 
   .row > [class*="span"],
+  .row > .span-wrapper > [class*="span"],
   .row-fluid > [class*="span"] {
     float: none;
     display: block;
     width: auto;
-    margin: 0; } }
+    margin: 0; }
+
+  .row-flush-right {
+    margin-right: 0; }
+    .row-flush-right .span-flush-right {
+      padding-right: 0; } }
 
 @media (min-width: 768px) and (max-width: 979px) {
   .row {
@@ -2726,7 +2740,12 @@ a.thumbnail:hover {
   input.span12,
   textarea.span12,
   .uneditable-input.span12 {
-    width: 720px; } }
+    width: 720px; }
+
+  .row-flush-right {
+    margin-right: -20px; }
+    .row-flush-right .span-flush-right {
+      padding-right: 20px; } }
 
 @media (max-width: 979px) {
   body {
@@ -3016,7 +3035,12 @@ a.thumbnail:hover {
     margin-left: -30px; }
 
   .thumbnails > li {
-    margin-left: 30px; } }
+    margin-left: 30px; }
+
+  .row-flush-right {
+    margin-right: -30px; }
+    .row-flush-right .span-flush-right {
+      padding-right: 30px; } }
 
 /** Twitter Bootstrap Customizations
 ------------------------------------------------ 

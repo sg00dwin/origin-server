@@ -33,7 +33,7 @@
      border-left: Xpx solid transparent;
      */ }
 
-/* move into core when th ebranding converges */
+/* move into core when the branding converges */
 a {
   color: #91010b; }
 
@@ -47,20 +47,15 @@ a:hover, a:active {
 .lift-less {
   margin-top: -80px; }
 
-/* Preliminary gutter adjustment on spans */
-.gutter {
-  margin-left: 28px; }
-
-/*FIXME needs responsive treatment */
-.gutter-fill {
-  margin-left: 0;
-  padding-left: 28px; }
-
-.gutter-fill-right {
-  margin-right: -28px;
-  padding-right: 28px; }
+@media (max-width: 767px) {
+  .lift,
+  .lift-less {
+    margin-top: 0; } }
 
 /* A link that is a block, kind of like a thumbnail */
+body.signup {
+  background-color: #343434; }
+
 #top {
   background-color: #010101;
   color: white; }
@@ -377,76 +372,19 @@ a:hover, a:active {
 /* The body content of a site page */
 .row-content {
   margin-bottom: 20px; }
-  .row-content > .column-nav {
-    margin-left: 0;
-    padding-right: 28px; }
-  .row-content > .column-content {
-    margin-left: 0px;
-    padding-bottom: 30px; }
-
-.row-content > .column-nav {
-  padding-right: 28px; }
-.row-content > .column-content {
-  margin-right: -28px;
-  padding-left: 28px;
-  padding-right: 28px; }
-
-@media (min-width: 768px) and (max-width: 979px) {
-  .row-content > .column-nav {
-    padding-right: 20px; }
-  .row-content > .column-content {
-    margin-right: -20px;
-    padding-left: 20px;
-    padding-right: 20px; } }
-
-@media (min-width: 1200px) {
-  .row-content > .column-nav {
-    padding-right: 30px; }
-  .row-content > .column-content {
-    margin-right: -30px;
-    padding-left: 30px;
-    padding-right: 30px; } }
 
 @media (max-width: 767px) {
   #nav {
-    padding-bottom: 30px; }
+    padding-bottom: 30px; } }
 
-  #content > .container {
-    padding: 0; }
-
-  .lift .column-nav {
-    margin-top: 0; }
-  .lift .column-content {
-    margin-top: 0; }
-
-  .row-content > .column-content {
-    margin-right: 0; } }
-
-@media (min-width: 768px) and (max-width: 979px) {}
-@media (min-width: 1200px) {}
 /* Left nav section */
 .column-nav .nav-location {
   font-size: 19px;
   line-height: 46px;
   text-transform: uppercase;
   margin-top: 15px; }
-
-.column-nav > * {
-  margin-left: 28px; }
 .column-nav > .nav-stacked {
   margin-left: 14px; }
-
-@media (min-width: 768px) and (max-width: 979px) {
-  .column-nav > * {
-    margin-left: 20px; }
-  .column-nav > .nav-stacked {
-    margin-left: 10px; } }
-
-@media (min-width: 1200px) {
-  .column-nav > * {
-    margin-left: 30px; }
-  .column-nav > .nav-stacked {
-    margin-left: 15px; } }
 
 /* Stacked navigations indent by 1 gutter each time */
 .nav-stacked .nav-stacked {
@@ -462,7 +400,7 @@ a:hover, a:active {
     margin-left: 30px; } }
 
 @media (max-width: 767px) {
-  #content .column-nav > ul > li {
+  .column-nav > ul > li {
     float: left;
     width: 32%; }
 
@@ -470,9 +408,9 @@ a:hover, a:active {
     display: none; } }
 
 /* Body */
-#content h1.ribbon {
+h1.ribbon {
   margin-left: -38px; }
-  #content h1.ribbon > .ribbon-content {
+  h1.ribbon > .ribbon-content {
     background-color: #eb0011;
     color: white;
     box-shadow: 1px 2px 2px rgba(0, 0, 0, 0.5);
@@ -480,24 +418,24 @@ a:hover, a:active {
     padding: 5px 28px 5px 0;
     /* left margin set by ribbon */
     min-width: 30%; }
-  #content h1.ribbon > .ribbon-content {
+  h1.ribbon > .ribbon-content {
     padding-left: 38px; }
-  #content h1.ribbon > .ribbon-left {
+  h1.ribbon > .ribbon-left {
     border-top: 10px solid #91010b;
     bottom: -10px;
     border-left: 10px solid transparent; }
 
 @media (min-width: 768px) and (max-width: 979px) {
-  #content h1.ribbon {
-    margin-left: -25px; }
-    #content h1.ribbon > .ribbon-content {
-      padding-left: 25px; } }
+  h1.ribbon {
+    margin-left: -30px; }
+    h1.ribbon > .ribbon-content {
+      padding-left: 30px; } }
 
 @media (min-width: 1200px) {
-  #content h1.ribbon {
-    margin-left: -35px; }
-    #content h1.ribbon > .ribbon-content {
-      padding-left: 35px; } }
+  h1.ribbon {
+    margin-left: -40px; }
+    h1.ribbon > .ribbon-content {
+      padding-left: 40px; } }
 
 /* Drupal specific markup, we may want to wrap this with a top level selector on body.drupal or something */
 .views-field-rss {

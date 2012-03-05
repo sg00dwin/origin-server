@@ -32,70 +32,73 @@
 
 #content
   .container
-    .row.row-content
-      .span3.column-nav.lift-less
-        .nav-location Community
+    .row-content
+      .row.row-flush-right
+        .column-nav.lift-less.span-wrapper
+          .span3
+            .nav-location Community
 
-        -# may need a block or three
-        %ul.menu.nav.nav-pills.nav-stacked
-          %li.leaf= link_to "Overview", "overview"
-          %li.expanded
-            = link_to "Blogs", "blog"
+            -# may need a block or three
             %ul.menu.nav.nav-pills.nav-stacked
-              %li.first.last.leaf= link_to "Planet OpenShift", "planet"
-          %li.expanded
-            = link_to "Forums", "forums"
-            %ul.menu.nav.nav-pills.nav-stacked
-              %li.first.leaf= link_to "Express", "express_forum"
-              %li.last.leaf= link_to "Open Source", "opensource_forum"
-          %li.leaf= link_to "FAQs", "faq"
-          %li.leaf= link_to "Knowledge Base", "kb"
-          %li.leaf= link_to "Videos", "videos"
-          %li.leaf= link_to "Events", "events"
-          %li.leaf= link_to "MongoDB Resources", "mongodb"
+              %li.leaf= link_to "Overview", "overview"
+              %li.expanded
+                = link_to "Blogs", "blog"
+                %ul.menu.nav.nav-pills.nav-stacked
+                  %li.first.last.leaf= link_to "Planet OpenShift", "planet"
+              %li.expanded
+                = link_to "Forums", "forums"
+                %ul.menu.nav.nav-pills.nav-stacked
+                  %li.first.leaf= link_to "Express", "express_forum"
+                  %li.last.leaf= link_to "Open Source", "opensource_forum"
+              %li.leaf= link_to "FAQs", "faq"
+              %li.leaf= link_to "Knowledge Base", "kb"
+              %li.leaf= link_to "Videos", "videos"
+              %li.leaf= link_to "Events", "events"
+              %li.leaf= link_to "MongoDB Resources", "mongodb"
 
-        %form.form-search
-          %input.input-medium.search-query
-          %button.btn{:type => 'submit'} Search
+            %form.form-search
+              %input.input-medium.search-query
+              %button.btn{:type => 'submit'} Search
+        
+        .column-content.lift.span-wrapper
+          .span9.span-flush-right
+            %h1.ribbon
+              .ribbon-content OpenShift Blog
+              .ribbon-left
+            .post-info
+              .author
+                %span{:style => 'display: inline-block; height: 24px; width: 24px; background-color: #555;'} P
+                %span.name Issac Roth
+              .metadata
+                = link_to "Comments (0)", "create_comment"
+              %hr
+              %ul.breadcrumb
+                %li
+                  = link_to "Blogs", "blog"
+                  %span.divider &gt;
+                %li
+                  = link_to "February 7, 2012", "blogs_on_feb_7"
+                  %span.divider &gt;
 
-      .span9.column-content.lift
-        %h1.ribbon
-          .ribbon-content OpenShift Blog
-          .ribbon-left
-        .post-info
-          .author
-            %span{:style => 'display: inline-block; height: 24px; width: 24px; background-color: #555;'} P
-            %span.name Issac Roth
-          .metadata
-            = link_to "Comments (0)", "create_comment"
-          %hr
-          %ul.breadcrumb
-            %li
-              = link_to "Blogs", "blog"
-              %span.divider &gt;
-            %li
-              = link_to "February 7, 2012", "blogs_on_feb_7"
-              %span.divider &gt;
+            %h2 PaaS is the Cloud Operating System
 
-        %h2 PaaS is the Cloud Operating System
+            %p Lorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam ac luctus arcu. Praesent sagittis vehicula erat, quis porttitor diam placerat sed. Aenean non nibh nisi, ut dignissim dui. In quis ipsum a metus rutrum ornare eu sit amet risus. Ut adipiscing, diam vel faucibus fermentum, dolor velit fermentum libero, eget pretium neque sapien blandit mi. Aenean ligula nunc, suscipit blandit aliquet vel, luctus a enim. Vestibulum imperdiet neque quis felis rhoncus egestas. Nullam sagittis, tellus eget tristique euismod, arcu erat luctus nunc, ac ultricies nisi sem vel nisi. Sed sagittis eleifend magna et elementum. Vivamus sed lectus et lorem ultricies mollis. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Mauris tempus lobortis magna nec sollicitudin. Phasellus vitae leo orci, dictum rutrum ligula. Suspendisse luctus quam a libero posuere eget consectetur sem varius.
+            %p In ultrices dui vitae ante ultrices porttitor dictum enim vulputate. Integer ut leo nisl, sit amet elementum elit. Morbi vitae urna ac diam elementum congue. Nunc cursus tempor arcu, vel eleifend urna blandit eget. Nulla lorem augue, ornare egestas semper eget, mollis non turpis. Nullam eget mauris augue. Nam interdum felis vitae dolor aliquet tincidunt.
+            %p Etiam sed pharetra ipsum. Suspendisse in gravida urna. Fusce at enim tellus. Nullam orci diam, bibendum sit amet bibendum sit amet, lacinia a metus. Morbi quis nunc metus, ac feugiat nibh. Quisque dapibus nisl quis leo dictum ornare. Vivamus dignissim imperdiet eros in rutrum. Integer malesuada rutrum elit eget varius. Morbi vel velit nulla, ut mollis lorem. Vivamus id lorem consequat ipsum gravida facilisis non posuere est. Duis interdum sapien eget libero sollicitudin dignissim. Donec mollis euismod egestas.
+            %p Nulla in ante tellus. Nullam blandit ligula quis nibh viverra vestibulum. Vestibulum vitae ante erat, et ultrices massa. Quisque aliquam bibendum lacus in congue. Aenean dictum magna in magna ultricies vitae eleifend odio iaculis. Fusce eget imperdiet diam. Duis tincidunt cursus aliquam. Fusce suscipit accumsan diam, ut consectetur lacus laoreet ut. Nulla facilisi. Suspendisse vestibulum varius tortor, vel ullamcorper arcu adipiscing id. Nullam ultricies posuere urna, et ornare augue faucibus nec. Etiam egestas, felis ut volutpat dignissim, lectus sem eleifend nisi, elementum viverra odio velit nec erat. Integer diam metus, pulvinar eu pulvinar vel, semper vel nisl. Maecenas urna turpis, interdum quis convallis quis, suscipit vitae metus.
+            %p Donec urna dui, auctor ac lobortis vehicula, pulvinar sed sem. Aenean et molestie dui. Sed a orci vitae eros auctor eleifend eget sit amet turpis. Duis ultrices venenatis fringilla. Aenean lacinia ultricies purus sed feugiat. Nunc commodo aliquam venenatis. Aenean sit amet nisi vitae tortor volutpat egestas id eleifend nunc. Maecenas et condimentum augue. Nulla dapibus pellentesque metus, non condimentum lectus pellentesque sed. In magna mauris, tempus vitae pretium in, rhoncus tristique urna. Ut sodales, dolor ac feugiat pretium, nisl dui eleifend lacus, vitae dictum purus justo viverra diam. Donec adipiscing egestas commodo. Ut tristique ullamcorper leo, a tempor dui vulputate non. 
 
-        %p Lorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam ac luctus arcu. Praesent sagittis vehicula erat, quis porttitor diam placerat sed. Aenean non nibh nisi, ut dignissim dui. In quis ipsum a metus rutrum ornare eu sit amet risus. Ut adipiscing, diam vel faucibus fermentum, dolor velit fermentum libero, eget pretium neque sapien blandit mi. Aenean ligula nunc, suscipit blandit aliquet vel, luctus a enim. Vestibulum imperdiet neque quis felis rhoncus egestas. Nullam sagittis, tellus eget tristique euismod, arcu erat luctus nunc, ac ultricies nisi sem vel nisi. Sed sagittis eleifend magna et elementum. Vivamus sed lectus et lorem ultricies mollis. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Mauris tempus lobortis magna nec sollicitudin. Phasellus vitae leo orci, dictum rutrum ligula. Suspendisse luctus quam a libero posuere eget consectetur sem varius.
-        %p In ultrices dui vitae ante ultrices porttitor dictum enim vulputate. Integer ut leo nisl, sit amet elementum elit. Morbi vitae urna ac diam elementum congue. Nunc cursus tempor arcu, vel eleifend urna blandit eget. Nulla lorem augue, ornare egestas semper eget, mollis non turpis. Nullam eget mauris augue. Nam interdum felis vitae dolor aliquet tincidunt.
-        %p Etiam sed pharetra ipsum. Suspendisse in gravida urna. Fusce at enim tellus. Nullam orci diam, bibendum sit amet bibendum sit amet, lacinia a metus. Morbi quis nunc metus, ac feugiat nibh. Quisque dapibus nisl quis leo dictum ornare. Vivamus dignissim imperdiet eros in rutrum. Integer malesuada rutrum elit eget varius. Morbi vel velit nulla, ut mollis lorem. Vivamus id lorem consequat ipsum gravida facilisis non posuere est. Duis interdum sapien eget libero sollicitudin dignissim. Donec mollis euismod egestas.
-        %p Nulla in ante tellus. Nullam blandit ligula quis nibh viverra vestibulum. Vestibulum vitae ante erat, et ultrices massa. Quisque aliquam bibendum lacus in congue. Aenean dictum magna in magna ultricies vitae eleifend odio iaculis. Fusce eget imperdiet diam. Duis tincidunt cursus aliquam. Fusce suscipit accumsan diam, ut consectetur lacus laoreet ut. Nulla facilisi. Suspendisse vestibulum varius tortor, vel ullamcorper arcu adipiscing id. Nullam ultricies posuere urna, et ornare augue faucibus nec. Etiam egestas, felis ut volutpat dignissim, lectus sem eleifend nisi, elementum viverra odio velit nec erat. Integer diam metus, pulvinar eu pulvinar vel, semper vel nisl. Maecenas urna turpis, interdum quis convallis quis, suscipit vitae metus.
-        %p Donec urna dui, auctor ac lobortis vehicula, pulvinar sed sem. Aenean et molestie dui. Sed a orci vitae eros auctor eleifend eget sit amet turpis. Duis ultrices venenatis fringilla. Aenean lacinia ultricies purus sed feugiat. Nunc commodo aliquam venenatis. Aenean sit amet nisi vitae tortor volutpat egestas id eleifend nunc. Maecenas et condimentum augue. Nulla dapibus pellentesque metus, non condimentum lectus pellentesque sed. In magna mauris, tempus vitae pretium in, rhoncus tristique urna. Ut sodales, dolor ac feugiat pretium, nisl dui eleifend lacus, vitae dictum purus justo viverra diam. Donec adipiscing egestas commodo. Ut tristique ullamcorper leo, a tempor dui vulputate non. 
+            .action-auth
+              = link_to "Login", "login"
+              or 
+              = link_to "register", "register"
+              to post comments.
+            .action-share
+              = link_to "share" do
+                %span.invert +
+                Share this post
 
-        .action-auth
-          = link_to "Login", "login"
-          or 
-          = link_to "register", "register"
-          to post comments.
-        .action-share
-          = link_to "share" do
-            %span.invert +
-            Share this post
-
-        %hr
+            %hr
 
 %footer
   #footer-nav

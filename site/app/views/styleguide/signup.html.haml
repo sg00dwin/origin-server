@@ -1,0 +1,27 @@
+= stylesheet_link_tag '/app/stylesheets/site.css', :media => 'all'
+%header
+  #nav
+    .navbar
+      .container
+        -# Was .nav-collapse, has some issues
+        %div
+          .brand
+            %strong> Open
+            Shift
+
+#solo
+  .container
+    .row.row-content
+      .offset3.span6.column-content
+        %h1.ribbon
+          .ribbon-content Signup
+          .ribbon-left
+
+        %p some content
+
+        %footer
+          %section#copyright
+            %img{ :src => "/app/images/redhat.png", :alt => "Red Hat" }
+            .pull-right Copyright &copy; 2011 Red Hat, Inc.
+
+
