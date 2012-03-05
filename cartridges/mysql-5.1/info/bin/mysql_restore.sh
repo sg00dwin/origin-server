@@ -9,9 +9,11 @@ done
 
 if [ -f $OPENSHIFT_DATA_DIR/mysql_dump_snapshot.gz ]
 then
-	CART_DIR=${CART_DIR:=/usr/libexec/li/cartridges}
-	CART_INFO_DIR=$CART_DIR/embedded/mysql-5.1/info
-	source ${CART_INFO_DIR}/lib/util
+    CART_DIR=$(dirname $(dirname $(dirname $0)))
+    source ${CART_DIR}/info/bin/load_config.sh
+  
+    CART_INFO_DIR=${CARTRIDGE_BASE_PATH}/embedded/mysql-5.1/info
+    source ${CART_INFO_DIR}/lib/util
 
     start_mysql_as_user
 

@@ -8,7 +8,7 @@ set -e
 function print_help {
     echo "Usage: $0 app-name namespace uuid"
 
-    echo "$0 $@" | logger -p local0.notice -t libra_mysql_configure
+    echo "$0 $@" | logger -p local0.notice -t stickshift_mysql_configure
     exit 1
 }
 
@@ -74,10 +74,11 @@ done
 
 [ $# -eq 4 -o $# -eq 3 ] || print_help
 
-CART_DIR=${CART_DIR:=/usr/libexec/li/cartridges}
 CART_NAME="mysql"
 CART_VERSION="5.1"
-source ${CART_DIR}/abstract/info/lib/util
+CART_DIR=$(dirname $(dirname $(dirname $0)))
+source ${CART_DIR}/info/bin/load_config.sh
+source ${CARTRIDGE_BASE_PATH}/abstract/info/lib/util
 
 app_type="$CART_NAME-$CART_VERSION"
 
@@ -88,6 +89,7 @@ fi
 
 setup_embedded_configure "$1" $2 $3
 
+CART_INFO_DIR=${CARTRIDGE_BASE_PATH}/embedded/mysql-5.1/info
 source ${CART_INFO_DIR}/lib/util
 
 MYSQL_DIR="$APP_HOME/$CART_NAME-$CART_VERSION/"

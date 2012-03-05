@@ -9,7 +9,7 @@ function print_help {
     echo "Usage: $0 app-name namespace uuid"
     echo "Start a running application"
 
-    echo "$0 $@" | logger -p local0.notice -t libra_mysql_start
+    echo "$0 $@" | logger -p local0.notice -t stickshift_mysql_start
     exit 1
 }
 
@@ -26,8 +26,10 @@ done
 
 [ $# -eq 3 ] || print_help
 
-CART_DIR=/usr/libexec/li/cartridges
-source ${CART_DIR}/abstract/info/lib/util
+CART_DIR=$(dirname $(dirname $(dirname $0)))
+source ${CART_DIR}/info/bin/load_config.sh
+
+source ${CARTRIDGE_BASE_PATH}/abstract/info/lib/util
 
 setup_basic_hook "$1" $2 $3
 

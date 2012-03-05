@@ -5,7 +5,7 @@
 function print_help {
     echo "Usage: $0 app-name namespace uuid"
 
-    echo "$0 $@" | logger -p local0.notice -t libra_mysql_deconfigure
+    echo "$0 $@" | logger -p local0.notice -t stickshift_mysql_deconfigure
     exit 1
 }
 
@@ -22,13 +22,15 @@ done
 
 [ $# -eq 3 ] || print_help
 
-CART_DIR=${CART_DIR:=/usr/libexec/li/cartridges}
-source ${CART_DIR}/abstract/info/lib/util
+CART_DIR=$(dirname $(dirname $(dirname $0)))
+source ${CART_DIR}/info/bin/load_config.sh
+source ${CARTRIDGE_BASE_PATH}/abstract/info/lib/util
 source ${CART_DIR}/abstract/info/lib/git
 
 app_type="mysql-5.1"
 setup_embedded_deconfigure "$1" $2 $3
 
+CART_INFO_DIR=${CARTRIDGE_BASE_PATH}/embedded/mysql-5.1/info
 source ${CART_INFO_DIR}/lib/util
 
 MYSQL_DIR="$APP_HOME/mysql-5.1/"

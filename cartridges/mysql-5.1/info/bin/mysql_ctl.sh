@@ -23,8 +23,9 @@ then
 fi
 
 MYSQL_DIR="$OPENSHIFT_HOMEDIR/mysql-5.1/"
-CART_DIR=${CART_DIR:=/usr/libexec/li/cartridges}
-CART_INFO_DIR=$CART_DIR/embedded/mysql-5.1/info
+
+CARTRIDGE_BASE_PATH="/usr/libexec/stickshift/cartridges"
+CART_INFO_DIR=${CARTRIDGE_BASE_PATH}/embedded/mysql-5.1/info
 source ${CART_INFO_DIR}/lib/util
 
 isrunning() {
