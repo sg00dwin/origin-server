@@ -14,7 +14,7 @@
 
   Simplify login link behavior - lots of styles for fairly simple markup
 
- */
+*/
 .ribbon {
   position: relative;
   /* margin-left: -Xpx; */ }
@@ -269,9 +269,6 @@ a {
 a:hover, a:active {
   color: #eb0011; }
 
-.align-right {
-  text-align: right; }
-
 /* Hitch a div out of its parent */
 .lift {
   margin-top: -90px; }
@@ -286,12 +283,6 @@ a:hover, a:active {
   .lift,
   .lift-less {
     margin-top: 0; } }
-
-.gutter {
-  margin-left: 28px; }
-
-.box-content {
-  padding: 20px 28px; }
 
 /* A link that is a block, similar to a thumbnail */
 body.signup {

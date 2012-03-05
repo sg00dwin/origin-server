@@ -14,7 +14,7 @@
 
   Simplify login link behavior - lots of styles for fairly simple markup
 
- */
+*/
 
 
 @import "variables";
@@ -22,35 +22,12 @@
 @import "bootstrap/mixins";
 @import "ribbon";
 
-$topBarBackgroundColor:         #010101 !default;
-$navBackgroundColor:            #343434 !default;
-$navColumnBackgroundColor:      #030303 !default;
-$belowNavColumnBackgroundColor: #f2f2f2 !default;
-$contentColumnBackgroundColor:  white !default;
-
-$loginBackgroundColor:        #343434 !default;
-$loginColor:                  #eaeaea !default;
-
-$signupLinkColor:             #aaa !default;
-$textDarkBackground:          white !default;
-$darkBackground:              #030303 !default;
-$textLightBackground:         white !default;
-$lightBackground:             white !default;
-
-$ribbonColor:     #eb0011 !default;
-$ribbonTextColor: white !default;
-$ribbonFoldColor: #91010b !default;
-
 @import "navbar";
 @import "community";
 
 /* move into core when the branding converges */
 a { color: $ribbonFoldColor; }
 a:hover, a:active { color: $ribbonColor; }
-
-.align-right {
-  text-align: right;
-}
 
 /* Hitch a div out of its parent */
 .lift {
@@ -68,15 +45,6 @@ a:hover, a:active { color: $ribbonColor; }
   .lift-less {
     margin-top: 0;
   }
-}
-
-.gutter { 
-  margin-left: $gridGutterWidth;
-}
-
-// Put content into a box with gutters compatible with the grid
-.box-content {
-  padding: 20px $gridGutterWidth;
 }
 
 /* A link that is a block, similar to a thumbnail */

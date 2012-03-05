@@ -4,9 +4,9 @@
     .container
       .pull-left= link_to "Sign up for the newsletter >", "signup_news"
       .pull-right.login
-        = link_to "Sign in", "signin"
+        = link_to "Sign in", "signin", :class => 'btn btn-small'
         - ['f', 'g', 't'].each do |p|
-          = link_to p, :class => 'login-provider' do
+          = link_to p, :class => 'btn btn-small login-provider' do
             %img{:alt => p}
   #nav.section-nav
     .navbar
