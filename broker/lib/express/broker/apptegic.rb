@@ -1,5 +1,5 @@
 require 'rest-client'
-require 'cgi'
+
 module Express
   module Broker
     class Apptegic
@@ -37,9 +37,9 @@ module Express
         payload["_at"] = Rails.configuration.analytics[:apptegic_secret]
         payload["_ds"] = Rails.configuration.analytics[:apptegic_dataset]
         payload["userAgent"] = Thread.current[:user_agent] || "Unknown"
-        payload["accountId"] = CGI::escape(login)
+        payload["accountId"] = login
         payload["accountType"] = "regular"
-        payload["userId"] = CGI::escape(login)
+        payload["userId"] = login
         payload["user_uuid"] = user_uuid
         payload["app_uuid"] = app_uuid
         payload["app_name"] = app_name
@@ -140,9 +140,9 @@ module Express
         payload["_at"] = Rails.configuration.analytics[:apptegic_secret]
         payload["_ds"] = Rails.configuration.analytics[:apptegic_dataset]
         payload["userAgent"] = Thread.current[:user_agent] || "Unknown"
-        payload["accountId"] = CGI::escape(login)
+        payload["accountId"] = login
         payload["accountType"] = "regular"
-        payload["userId"] = CGI::escape(login)
+        payload["userId"] = login
         payload["namespace"] = user_namespace
         payload["action"] = action
         payload["user_uuid"] = uuid
