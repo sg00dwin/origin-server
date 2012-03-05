@@ -1,1 +1,3 @@
 /var/named/forwarders.conf  -- gen_context(system_u:object_r:named_forward_file_t,s0)
+/var/named/upstream_hints.conf  -- gen_context(system_u:object_r:named_forward_file_t,s0)
+/var/named/upstream_hints.db  -- gen_context(system_u:object_r:named_forward_file_t,s0)
