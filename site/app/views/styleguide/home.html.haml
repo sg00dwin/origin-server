@@ -1,27 +1,26 @@
 = stylesheet_link_tag '/app/stylesheets/site.css', :media => 'all'
 %header
-  #top
+  #top.section-top
     .container
       .pull-left= link_to "Sign up for the newsletter >", "signup_news"
       .pull-right.login
-        = link_to "Sign in", "signin"
+        = link_to "Sign in", "signin", :class => 'btn btn-small'
         - ['f', 'g', 't'].each do |p|
-          = link_to p, :class => 'login-provider' do
+          = link_to p, :class => 'btn btn-small login-provider' do
             %img{:alt => p}
-  #nav
+  #nav.section-nav
     .navbar
       .container
         -# Was .nav-collapse, has some issues
-        %div
-          .brand
-            %strong> Open
-            Shift
-          %ul.nav
-            %li.active= link_to "Overview", "."
-            %li= link_to "Documentation", "dev_center"
-            %li.divider &nbsp;
-            %li= link_to "Console", "console"
-            %li= link_to "Community", "community"
+        .brand
+          %strong> Open
+          Shift
+        %ul.nav
+          %li.active= link_to "Overview", "."
+          %li= link_to "Documentation", "dev_center"
+          %li.divider &nbsp;
+          %li= link_to "Console", "console"
+          %li= link_to "Community", "community"
 
     .messaging.messaging-home
       .container
@@ -31,12 +30,12 @@
           in the Cloud
         .secondary OpenShift is a free, auto-scaling platform as a service for web applications.  It streamlines the application life cycle so developers can focus on their users, customers, and code.
 
-#learn
+#learn.section-striped.lift-counter
   .container
     .row
       = link_to "signup", :class => 'take-action span12' do
         .pull-right
-          Try it out >
+          Try it out
         %div
           Create your 
           %strong first three apps 
@@ -75,7 +74,7 @@
       .span6
         %p.gutter= link_to "Read the OpenShift blog...", "blog"
 
-#buzz
+#buzz.section-base
   .container
     .row.row-buzz.lift
       .span12

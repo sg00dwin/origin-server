@@ -14,7 +14,7 @@
 
   Simplify login link behavior - lots of styles for fairly simple markup
 
- */
+*/
 .ribbon {
   position: relative;
   /* margin-left: -Xpx; */ }
@@ -32,103 +32,6 @@
      bottom: -Ypx;
      border-left: Xpx solid transparent;
      */ }
-
-/* move into core when th ebranding converges */
-a {
-  color: #91010b; }
-
-a:hover, a:active {
-  color: #eb0011; }
-
-/* Hitch a div out of its parent */
-.lift {
-  margin-top: -90px; }
-
-.lift-less {
-  margin-top: -80px; }
-
-/* Preliminary gutter adjustment on spans */
-.gutter {
-  margin-left: 28px; }
-
-/*FIXME needs responsive treatment */
-.gutter-fill {
-  margin-left: 0;
-  padding-left: 28px; }
-
-.gutter-fill-right {
-  margin-right: -28px;
-  padding-right: 28px; }
-
-/* A link that is a block, kind of like a thumbnail */
-#top {
-  background-color: #010101;
-  color: white; }
-
-#nav {
-  background-color: #343434;
-  color: white; }
-
-#content, #learn {
-  background: -moz-repeating-linear-gradient(-70deg, #e6e6e6, #e6e6e6 6px, #e4e4e4 9px, #e4e4e4 15px, #e6e6e6 18px) repeat scroll 0 0 transparent; }
-
-#buzz {
-  background-color: #343434; }
-
-.column-content {
-  background-color: white; }
-
-#content > .container > div > .row {
-  background-color: #f2f2f2; }
-
-.column-buzz {
-  background-color: #030303;
-  color: white; }
-
-.column-buzz a {
-  color: white; }
-
-.column-nav {
-  background-color: #030303; }
-
-.column-nav,
-.column-nav label {
-  color: #666; }
-
-.column-nav .headline,
-.column-nav h3,
-.column-nav h3 > a {
-  color: white;
-  text-transform: uppercase; }
-
-.column-nav a {
-  color: #999; }
-
-/* Nav section */
-#top > .container > div {
-  padding: 8px 0; }
-  #top > .container > div > a {
-    color: #aaaaaa;
-    font-weight: bold;
-    text-transform: uppercase; }
-  #top > .container > div > a:hover {
-    text-decoration: none;
-    color: #343434;
-    background-color: #eaeaea; }
-#top > .container > div.login {
-  padding: 5px 0;
-  /* may want to turn these into some sort of specific styled button */ }
-  #top > .container > div.login > a {
-    color: #eaeaea;
-    padding: 3px 10px;
-    display: inline-block;
-    background-color: #343434; }
-  #top > .container > div.login > a.login-provider {
-    height: 18px; }
-  #top > .container > div.login > a:hover {
-    text-decoration: none;
-    color: #343434;
-    background-color: #eaeaea; }
 
 .navbar {
   padding-top: 30px;
@@ -149,6 +52,7 @@ a:hover, a:active {
     /* reset styles */
     float: none;
     margin: 0;
+    margin-bottom: 110px;
     /* needs fixing */ }
     .navbar .nav > li {
       float: left;
@@ -202,303 +106,6 @@ a:hover, a:active {
     display: none; } }
 
 /*End FIXME*/
-.messaging {
-  margin-bottom: 30px;
-  clear: both;
-  color: #bbb;
-  text-align: center; }
-  .messaging .primary {
-    font-size: 40px;
-    line-height: 40px;
-    text-transform: uppercase; }
-  .messaging strong {
-    color: white; }
-  .messaging .secondary {
-    font-size: 16px;
-    line-height: 18px; }
-
-@media (max-width: 767px) {
-  #content > .container > div > .row {
-    background-color: white; }
-
-  .messaging {
-    text-align: left;
-    margin-bottom: 10px; }
-    .messaging .primary {
-      font-size: 20px;
-      line-height: 20px; }
-    .messaging .secondary {
-      font-size: 13px;
-      line-height: 18px; } }
-
-/* squash the secondary message into the space the primary uses */
-.messaging-home .secondary {
-  padding: 0 45px; }
-
-/* Content section */
-#nav, #learn {
-  padding-bottom: 110px; }
-
-#buzz {
-  min-height: 500px; }
-
-.column-buzz {
-  padding: 28px;
-  position: relative; }
-
-#learn .link-tile {
-  color: #343434;
-  padding: 15px 28px;
-  display: block;
-  text-decoration: none; }
-  #learn .link-tile:hover {
-    text-decoration: none;
-    color: #343434;
-    background-color: #cccccc; }
-  #learn .link-tile:active {
-    text-decoration: none;
-    color: #343434;
-    background-color: #91010b; }
-  #learn .link-tile > :last-child {
-    margin-bottom: 0; }
-
-.take-action {
-  *zoom: 1;
-  display: block;
-  text-transform: uppercase;
-  font-weight: bold;
-  font-size: 20px;
-  letter-spacing: 1px;
-  color: white;
-  background-color: #eb0011; }
-  .take-action:before, .take-action:after {
-    display: table;
-    content: ""; }
-  .take-action:after {
-    clear: both; }
-  .take-action:hover, .take-action:active {
-    text-decoration: none;
-    color: white; }
-  .take-action > * {
-    padding: 27px 28px; }
-  .take-action > .pull-right {
-    background-color: #91010b; }
-
-#learn .take-action {
-  margin-top: -37px;
-  margin-bottom: 20px; }
-
-.column-buzz > h2 {
-  text-align: center;
-  color: white;
-  text-transform: uppercase;
-  font-size: 46px;
-  letter-spacing: -4px; }
-.column-buzz > hr {
-  margin: 10px 43% 30px;
-  border: 0;
-  border-top: 4px solid #eb0011; }
-.column-buzz blockquote {
-  quotes: "\201C""\201D""\2018""\2019";
-  border-left: 0;
-  padding: 0;
-  margin-bottom: 15px; }
-  .column-buzz blockquote:after {
-    content: ""; }
-  .column-buzz blockquote:before {
-    content: open-quote;
-    color: #aaa;
-    font-size: 4em;
-    line-height: .1em;
-    margin-right: .25em;
-    vertical-align: -0.4em; }
-.column-buzz .tweet {
-  *zoom: 1;
-  position: relative;
-  margin-bottom: 15px; }
-  .column-buzz .tweet:before, .column-buzz .tweet:after {
-    display: table;
-    content: ""; }
-  .column-buzz .tweet:after {
-    clear: both; }
-  .column-buzz .tweet > img {
-    width: 58px;
-    height: 58px;
-    border: 6px solid white;
-    float: left; }
-  .column-buzz .tweet > p {
-    margin: 0 0 5px 90px;
-    background-color: #343434;
-    padding: 5px 10px;
-    min-height: 50px; }
-    .column-buzz .tweet > p:before {
-      border-color: transparent #343434;
-      border-style: solid;
-      border-width: 10px 10px 0 0;
-      top: 10px;
-      content: "";
-      position: absolute;
-      left: 80px; }
-  .column-buzz .tweet > small {
-    margin-left: 80px; }
-.column-buzz > .callout {
-  position: absolute;
-  width: 120px;
-  height: 120px;
-  background-color: white;
-  color: white;
-  top: -60px;
-  right: -60px;
-  text-align: center; }
-  .column-buzz > .callout > .one {
-    margin-top: 30px;
-    color: gray; }
-
-.align-right {
-  text-align: right; }
-
-.link-with-action {
-  font-weight: bold;
-  text-transform: uppercase;
-  text-decoration: none; }
-  .link-with-action > strong {
-    color: #eb0011; }
-  .link-with-action:hover > strong, .link-with-action:active > strong {
-    color: #91010b; }
-  .link-with-action:hover, .link-with-action:active {
-    color: #91010b;
-    text-decoration: none; }
-
-/* FIXME: better scoped or defined? */
-.column-content h1 {
-  margin-top: 25px;
-  margin-bottom: 25px; }
-
-/* The body content of a site page */
-.row-content {
-  margin-bottom: 20px; }
-  .row-content > .column-nav {
-    margin-left: 0;
-    padding-right: 28px; }
-  .row-content > .column-content {
-    margin-left: 0px;
-    padding-bottom: 30px; }
-
-.row-content > .column-nav {
-  padding-right: 28px; }
-.row-content > .column-content {
-  margin-right: -28px;
-  padding-left: 28px;
-  padding-right: 28px; }
-
-@media (min-width: 768px) and (max-width: 979px) {
-  .row-content > .column-nav {
-    padding-right: 20px; }
-  .row-content > .column-content {
-    margin-right: -20px;
-    padding-left: 20px;
-    padding-right: 20px; } }
-
-@media (min-width: 1200px) {
-  .row-content > .column-nav {
-    padding-right: 30px; }
-  .row-content > .column-content {
-    margin-right: -30px;
-    padding-left: 30px;
-    padding-right: 30px; } }
-
-@media (max-width: 767px) {
-  #nav {
-    padding-bottom: 30px; }
-
-  #content > .container {
-    padding: 0; }
-
-  .lift .column-nav {
-    margin-top: 0; }
-  .lift .column-content {
-    margin-top: 0; }
-
-  .row-content > .column-content {
-    margin-right: 0; } }
-
-@media (min-width: 768px) and (max-width: 979px) {}
-@media (min-width: 1200px) {}
-/* Left nav section */
-.column-nav .nav-location {
-  font-size: 19px;
-  line-height: 46px;
-  text-transform: uppercase;
-  margin-top: 15px; }
-
-.column-nav > * {
-  margin-left: 28px; }
-.column-nav > .nav-stacked {
-  margin-left: 14px; }
-
-@media (min-width: 768px) and (max-width: 979px) {
-  .column-nav > * {
-    margin-left: 20px; }
-  .column-nav > .nav-stacked {
-    margin-left: 10px; } }
-
-@media (min-width: 1200px) {
-  .column-nav > * {
-    margin-left: 30px; }
-  .column-nav > .nav-stacked {
-    margin-left: 15px; } }
-
-/* Stacked navigations indent by 1 gutter each time */
-.nav-stacked .nav-stacked {
-  margin-left: 28px;
-  margin-bottom: 0; }
-
-@media (min-width: 768px) and (max-width: 979px) {
-  .nav-stacked .nav-stacked {
-    margin-left: 20px; } }
-
-@media (min-width: 1200px) {
-  .nav-stacked .nav-stacked {
-    margin-left: 30px; } }
-
-@media (max-width: 767px) {
-  #content .column-nav > ul > li {
-    float: left;
-    width: 32%; }
-
-  .nav-location {
-    display: none; } }
-
-/* Body */
-#content h1.ribbon {
-  margin-left: -38px; }
-  #content h1.ribbon > .ribbon-content {
-    background-color: #eb0011;
-    color: white;
-    box-shadow: 1px 2px 2px rgba(0, 0, 0, 0.5);
-    display: inline-block;
-    padding: 5px 28px 5px 0;
-    /* left margin set by ribbon */
-    min-width: 30%; }
-  #content h1.ribbon > .ribbon-content {
-    padding-left: 38px; }
-  #content h1.ribbon > .ribbon-left {
-    border-top: 10px solid #91010b;
-    bottom: -10px;
-    border-left: 10px solid transparent; }
-
-@media (min-width: 768px) and (max-width: 979px) {
-  #content h1.ribbon {
-    margin-left: -25px; }
-    #content h1.ribbon > .ribbon-content {
-      padding-left: 25px; } }
-
-@media (min-width: 1200px) {
-  #content h1.ribbon {
-    margin-left: -35px; }
-    #content h1.ribbon > .ribbon-content {
-      padding-left: 35px; } }
-
 /* Drupal specific markup, we may want to wrap this with a top level selector on body.drupal or something */
 .views-field-rss {
   float: right; }
@@ -654,3 +261,320 @@ html.js fieldset.collapsible legend a {
 
 html.js fieldset.collapsible .fieldset-wrapper {
   overflow: auto; }
+
+/* move into core when the branding converges */
+a {
+  color: #91010b; }
+
+a:hover, a:active {
+  color: #eb0011; }
+
+/* Hitch a div out of its parent */
+.lift {
+  margin-top: -90px; }
+
+.lift-less {
+  margin-top: -80px; }
+
+.lift-counter {
+  padding-bottom: 90px; }
+
+@media (max-width: 767px) {
+  .lift,
+  .lift-less {
+    margin-top: 0; } }
+
+/* A link that is a block, similar to a thumbnail */
+body.signup {
+  background-color: #343434; }
+
+.section-top {
+  background-color: #010101;
+  color: white; }
+
+.section-nav {
+  background-color: #343434;
+  color: white;
+  padding-bottom: 50px; }
+
+.section-nav.lift-counter {
+  padding-bottom: 90px; }
+
+@media (max-width: 767px) {
+  .section-nav.lift-counter {
+    padding-bottom: 30px; } }
+
+.section-striped {
+  background: -moz-repeating-linear-gradient(-70deg, #e6e6e6, #e6e6e6 6px, #e4e4e4 9px, #e4e4e4 15px, #e6e6e6 18px) repeat scroll 0 0 transparent; }
+  .section-striped .link-tile {
+    color: #343434;
+    padding: 15px 28px;
+    display: block;
+    text-decoration: none; }
+    .section-striped .link-tile:hover {
+      text-decoration: none;
+      color: #343434;
+      background-color: #cccccc;
+      background: -moz-repeating-linear-gradient(-180deg, #cccccc 6px, rgba(204, 204, 204, 0) 6px, rgba(204, 204, 204, 0) 10px, #cccccc 10px, #cccccc) repeat scroll 0 0 transparent; }
+    .section-striped .link-tile:active {
+      text-decoration: none;
+      color: #343434;
+      background-color: #91010b; }
+    .section-striped .link-tile > :last-child {
+      margin-bottom: 0; }
+
+.section-striped.lift-counter {
+  padding-bottom: 130px; }
+
+@media (max-width: 767px) {
+  .section-striped.lift-counter {
+    padding-bottom: 30px; } }
+
+.section-base {
+  background-color: #343434; }
+
+.section-top > .container > div {
+  padding: 8px 0; }
+  .section-top > .container > div > a {
+    color: #aaaaaa;
+    font-weight: bold;
+    text-transform: uppercase; }
+  .section-top > .container > div > a:hover {
+    text-decoration: none;
+    color: white; }
+.section-top > .container > .login {
+  padding: 5px 0; }
+
+.messaging {
+  clear: both;
+  color: #bbb;
+  text-align: center;
+  margin-bottom: 30px; }
+  .messaging .primary {
+    font-size: 40px;
+    line-height: 40px;
+    text-transform: uppercase; }
+  .messaging strong {
+    color: white; }
+  .messaging .secondary {
+    font-size: 16px;
+    line-height: 18px; }
+
+@media (max-width: 767px) {
+  .messaging {
+    text-align: left;
+    margin-bottom: 10px; }
+    .messaging .primary {
+      font-size: 20px;
+      line-height: 20px; }
+    .messaging .secondary {
+      font-size: 13px;
+      line-height: 18px; } }
+
+.take-action {
+  *zoom: 1;
+  display: block;
+  text-transform: uppercase;
+  font-weight: bold;
+  font-size: 20px;
+  letter-spacing: 1px;
+  color: white;
+  background-color: #eb0011; }
+  .take-action:before, .take-action:after {
+    display: table;
+    content: ""; }
+  .take-action:after {
+    clear: both; }
+  .take-action:hover, .take-action:active {
+    text-decoration: none;
+    color: white; }
+  .take-action > * {
+    padding: 27px 28px; }
+  .take-action > .pull-right {
+    background-color: #91010b;
+    padding-right: 40px;
+    background: url("../images/arrow-large.gif") 87% center no-repeat #91010b; }
+
+#learn .take-action {
+  margin-top: -37px;
+  margin-bottom: 20px; }
+
+.column-buzz > h2 {
+  text-align: center;
+  color: white;
+  text-transform: uppercase;
+  font-size: 46px;
+  letter-spacing: -4px; }
+.column-buzz > hr {
+  margin: 10px 43% 30px;
+  border: 0;
+  border-top: 4px solid #eb0011; }
+.column-buzz blockquote {
+  quotes: "\201C""\201D""\2018""\2019";
+  border-left: 0;
+  padding: 0;
+  margin-bottom: 15px; }
+  .column-buzz blockquote:after {
+    content: ""; }
+  .column-buzz blockquote:before {
+    content: open-quote;
+    color: #aaa;
+    font-size: 4em;
+    line-height: .1em;
+    margin-right: .25em;
+    vertical-align: -0.4em; }
+.column-buzz .tweet {
+  *zoom: 1;
+  position: relative;
+  margin-bottom: 15px; }
+  .column-buzz .tweet:before, .column-buzz .tweet:after {
+    display: table;
+    content: ""; }
+  .column-buzz .tweet:after {
+    clear: both; }
+  .column-buzz .tweet > img {
+    width: 58px;
+    height: 58px;
+    border: 6px solid white;
+    float: left; }
+  .column-buzz .tweet > p {
+    margin: 0 0 5px 90px;
+    background-color: #343434;
+    padding: 5px 10px;
+    min-height: 50px; }
+    .column-buzz .tweet > p:before {
+      border-color: transparent #343434;
+      border-style: solid;
+      border-width: 10px 10px 0 0;
+      top: 10px;
+      content: "";
+      position: absolute;
+      left: 80px; }
+  .column-buzz .tweet > small {
+    margin-left: 80px; }
+.column-buzz > .callout {
+  position: absolute;
+  width: 120px;
+  height: 120px;
+  background-color: white;
+  color: white;
+  top: -60px;
+  right: -60px;
+  text-align: center; }
+  .column-buzz > .callout > .one {
+    margin-top: 30px;
+    color: gray; }
+
+#buzz {
+  min-height: 500px; }
+
+.link-with-action {
+  font-weight: bold;
+  text-transform: uppercase;
+  text-decoration: none; }
+  .link-with-action > strong {
+    color: #eb0011; }
+  .link-with-action:hover > strong, .link-with-action:active > strong {
+    color: #91010b; }
+  .link-with-action:hover, .link-with-action:active {
+    color: #91010b;
+    text-decoration: none; }
+
+h1.ribbon {
+  margin-left: -38px; }
+  h1.ribbon > .ribbon-content {
+    background-color: #eb0011;
+    color: white;
+    box-shadow: 1px 2px 2px rgba(0, 0, 0, 0.5);
+    display: inline-block;
+    padding: 5px 28px 5px 0;
+    /* left margin set by ribbon */
+    min-width: 30%; }
+  h1.ribbon > .ribbon-content {
+    padding-left: 38px; }
+  h1.ribbon > .ribbon-left {
+    border-top: 10px solid #91010b;
+    bottom: -10px;
+    border-left: 10px solid transparent; }
+
+@media (min-width: 768px) and (max-width: 979px) {
+  h1.ribbon {
+    margin-left: -30px; }
+    h1.ribbon > .ribbon-content {
+      padding-left: 30px; } }
+
+@media (min-width: 1200px) {
+  h1.ribbon {
+    margin-left: -40px; }
+    h1.ribbon > .ribbon-content {
+      padding-left: 40px; } }
+
+.row-content > .row {
+  background-color: #f2f2f2; }
+
+@media (max-width: 767px) {
+  .row-content > .row {
+    background-color: white; } }
+
+.column-buzz {
+  background-color: #030303;
+  color: white; }
+
+.column-buzz a {
+  color: white; }
+
+.column-nav {
+  background-color: #030303;
+  color: #666; }
+  .column-nav label {
+    color: #666; }
+  .column-nav a {
+    color: #999; }
+  .column-nav .headline,
+  .column-nav h3,
+  .column-nav h3 > a {
+    color: white;
+    text-transform: uppercase; }
+  .column-nav .nav-location {
+    font-size: 19px;
+    line-height: 46px;
+    text-transform: uppercase;
+    margin-top: 15px; }
+  .column-nav > div > .menu {
+    margin-left: -14px;
+    margin-right: 14px; }
+
+@media (max-width: 767px) {
+  .column-nav > div > ul > li {
+    float: left;
+    width: 32%; }
+
+  .nav-location {
+    display: none; } }
+
+/* Stacked navigations indent by 1 gutter each time */
+.nav-stacked .nav-stacked {
+  margin-left: 14px;
+  margin-bottom: 0; }
+
+@media (min-width: 768px) and (max-width: 979px) {
+  .nav-stacked .nav-stacked {
+    margin-left: 10px; } }
+
+@media (min-width: 1200px) {
+  .nav-stacked .nav-stacked {
+    margin-left: 15px; } }
+
+.column-content {
+  background-color: white; }
+  .column-content h1 {
+    margin-top: 25px;
+    margin-bottom: 25px; }
+
+.column-buzz {
+  padding: 28px;
+  position: relative; }
+
+/* The body content of a site page */
+.row-content {
+  margin-bottom: 20px; }

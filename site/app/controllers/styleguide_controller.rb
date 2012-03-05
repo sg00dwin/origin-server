@@ -19,6 +19,9 @@ class StyleguideController < ApplicationController
   def home
   end
 
+  def signup
+  end
+
   def slow
     sleep 3
     redirect_to :action => "index", :controller => "styleguide"

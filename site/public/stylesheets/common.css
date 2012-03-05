@@ -272,6 +272,12 @@ a:hover {
   .row-flush-right .span-flush-right {
     padding-right: 28px; }
 
+.gutter {
+  margin-left: 28px; }
+
+.box-content {
+  padding: 20px 28px; }
+
 .container {
   width: 908px;
   margin-left: auto;
@@ -490,6 +496,9 @@ h5 {
 
 h6 {
   font-size: 11px; }
+
+.align-right {
+  text-align: right; }
 
 code,
 pre {
