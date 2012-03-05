@@ -96,10 +96,11 @@ class StatusApp < Sinatra::Base
       uri = "#{host}/current.json"
       _log "Syncing to #{uri}"  
 
-      http_req(:get,uri) do |resp|
-        unless resp.empty?
+      http_req(uri) do |resp|
+        case resp
+        when Net::HTTPSuccess
           begin
-            data = JSON.parse(resp)
+            data = JSON.parse(resp.body)
 
             Issue.delete_all
             Update.delete_all
@@ -120,6 +121,8 @@ class StatusApp < Sinatra::Base
           rescue JSON::ParserError
             _log "Site not responding to status request"
           end
+        else
+          _log("Did not succeed: #{resp}")
         end
       end
 

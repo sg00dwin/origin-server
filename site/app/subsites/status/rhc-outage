@@ -117,8 +117,17 @@ class UpdateStatusCli < Thor
     (hosts[:hosts] - [hostname]).each do |host|
       url = sprintf(hosts[:template],host)
       say "Syncing #{url}"
-      http_req(:get, "#{url}/sync/#{hostname}") do |resp|
-        puts "\tSuccess"
+      http_req("#{url}/sync/#{hostname}") do |resp|
+        string = "Failed: Server responded with "
+        case resp
+        when Net::HTTPSuccess, Net::HTTPRedirection
+          string = "Success"
+        when String
+          string << resp
+        else
+          string << resp.code
+        end
+        puts "\t#{string}"
       end
     end
   end
