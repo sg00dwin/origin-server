@@ -195,6 +195,8 @@ body.signup {
 
   > .pull-right {
     background-color: $ribbonFoldColor;
+    padding-right: $gridGutterWidth + 12px;
+    background: url('../images/arrow-large.gif') 87% center no-repeat $ribbonFoldColor;
   }
 }
 #learn .take-action { margin-top: -37px; margin-bottom: 20px; }

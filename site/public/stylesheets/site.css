@@ -391,7 +391,9 @@ body.signup {
   .take-action > * {
     padding: 27px 28px; }
   .take-action > .pull-right {
-    background-color: #91010b; }
+    background-color: #91010b;
+    padding-right: 40px;
+    background: url("../images/arrow-large.gif") 87% center no-repeat #91010b; }
 
 #learn .take-action {
   margin-top: -37px;
