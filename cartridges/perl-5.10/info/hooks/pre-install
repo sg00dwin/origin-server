@@ -4,12 +4,13 @@
 
 set -e
 
-CART_DIR=/usr/libexec/li/cartridges
-source ${CART_DIR}/abstract/info/lib/util
+CART_DIR=$(dirname $(dirname $(dirname $0)))
+source ${CART_DIR}/info/bin/load_config.sh
+source ${CARTRIDGE_BASE_PATH}/abstract/info/lib/util
 
 load_node_conf
 
-[ -z "$CARTRIDGE_DIR" ] && CARTRIDGE_DIR="/usr/libexec/li/cartridges/perl-5.10/"
+[ -z "$CARTRIDGE_DIR" ] && CARTRIDGE_DIR="${CARTRIDGE_BASE_PATH}/perl-5.10/"
 
 function print_help {
     echo "Usage: customername"
