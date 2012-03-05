@@ -13,9 +13,6 @@ class StyleguideController < ApplicationController
   def community
   end
 
-  def community_real
-  end
-
   def home
   end
 

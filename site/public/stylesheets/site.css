@@ -41,17 +41,19 @@
     text-align: center;
     text-transform: uppercase;
     position: relative;
-    top: 80px;
+    background: url("../images/logo-medium.png") center top no-repeat transparent;
     /* reset styles */
     float: none;
     margin: 0;
-    padding: 0; }
+    padding: 0;
+    padding-top: 100px; }
   .navbar .nav {
     font-size: 13px;
     text-transform: uppercase;
     /* reset styles */
     float: none;
     margin: 0;
+    margin-top: -83px;
     margin-bottom: 110px;
     /* needs fixing */ }
     .navbar .nav > li {
@@ -88,12 +90,12 @@
     position: static;
     float: left;
     text-align: center;
-    width: 100px;
-    margin-top: 80px; } }
+    width: 90px;
+    margin-top: 100px; } }
 
 @media (max-width: 767px) {
   .navbar .nav {
-    margin-left: 110px; } }
+    margin-left: 100px; } }
 
 @media (max-width: 767px) {
   .navbar .nav > li {

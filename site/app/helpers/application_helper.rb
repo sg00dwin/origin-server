@@ -92,4 +92,7 @@ module ApplicationHelper
     end
   end
 
+  def newsletter_signup_url
+    "http://makara.nurturehq.com/makara/newsletter_signup.html"
+  end
 end
