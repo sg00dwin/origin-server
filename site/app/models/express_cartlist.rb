@@ -16,7 +16,11 @@ class ExpressCartlist
     @debug = debug ? 'true' : 'false'
     case cart_type
       when 'standalone'
-        @list = ['jbossas-7', 'nodejs-0.6', 'perl-5.10', 'php-5.3', 'python-2.6', 'diy-0.1', 'ruby-1.8', 'jenkins-1.4']
+        if Rails.configuration.node_js_enabled # TODO: remove this and load cart list from broker
+          @list = ['jbossas-7', 'nodejs-0.6', 'perl-5.10', 'php-5.3', 'python-2.6', 'diy-0.1', 'ruby-1.8', 'jenkins-1.4']
+        else 
+          @list = ['jbossas-7', 'perl-5.10', 'php-5.3', 'python-2.6', 'diy-0.1', 'ruby-1.8', 'jenkins-1.4']
+        end
       when 'embedded'
         @list = ['mysql-5.1']
     end

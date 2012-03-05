@@ -137,12 +137,14 @@ RedHatCloud::Application.routes.draw do
       resources :applications,
                 :controller => "applications" do 
         resources :cartridges, :only => [:show], :id => /[^\/]+/
+        resources :cartridge_types, :only => [:show, :index], :id => /[^\/]+/
         member do
           get :delete
           get :get_started
         end
       end
     end
+
     match 'console' => 'console#index', :via => :get
     match 'new_application' => 'application_types#index', :via => :get
 

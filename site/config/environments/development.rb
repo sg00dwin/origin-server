@@ -52,12 +52,15 @@ RedHatCloud::Application.configure do
   config.action_mailer.perform_deliveries = false
   
   # Express API base url
-  config.express_api_url = 'https://localhost'
+  config.express_api_url = 'https://ec2-50-17-121-231.compute-1.amazonaws.com'
 
   # base domain
   config.base_domain = 'dev.rhcloud.com'
   
   # Max apps for express
   config.express_max_apps = 5
+  
+  # Used to disable Node.JS ONLY IN PRODUCTION. Will set false using a puppet.
+  config.node_js_enabled = true
 
 end
