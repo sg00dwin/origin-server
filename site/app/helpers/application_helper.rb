@@ -93,6 +93,38 @@ module ApplicationHelper
   end
 
   def newsletter_signup_url
-    "http://makara.nurturehq.com/makara/newsletter_signup.html"
+    'http://makara.nurturehq.com/makara/newsletter_signup.html'
+  end
+
+  def irc_web_url
+    'http://webchat.freenode.net/?randomnick=1&channels=openshift&uio=d4'
+  end
+
+  def openshift_twitter_url
+    'http://www.twitter.com/#!/openshift'
+  end
+
+  def openshift_blog_url
+    'https://www.redhat.com/openshift/blogs'
+  end
+
+  def open_bug_url
+    'https://bugzilla.redhat.com/enter_bug.cgi?product=OpenShift%20Express'
+  end
+
+  def openshift_github_url
+    'https://github.com/openshift'
+  end
+
+  def openshift_github_project_url(project)
+    "https://github.com/openshift/#{project}"
+  end
+
+  def quickstart_path
+    "#{express_path}#quickstart"
+  end
+
+  def mailto_openshift_url
+    'mailto:openshift@redhat.com'
   end
 end
