@@ -8,7 +8,7 @@ set -e
 function print_help {
     echo "Usage: $0 app-name namespace uuid git-url"
 
-    echo "$0 $@" | logger -p local0.notice -t libra_wsgi_configure
+    echo "$0 $@" | logger -p local0.notice -t stickshift_wsgi_configure
     exit 1
 }
 
@@ -24,10 +24,11 @@ done
 
 [ $# -eq 4 -o $# -eq 3 ] || print_help
 
-CART_DIR=${CART_DIR:=/usr/libexec/li/cartridges}
+CART_DIR=$(dirname $(dirname $(dirname $0)))
+source ${CART_DIR}/info/bin/load_config.sh
 app_type="python-2.6"
+source ${CARTRIDGE_BASE_PATH}/abstract/info/lib/util
 
-source ${CART_DIR}/abstract/info/lib/util
 setup_configure "$1" $2 $3 $4
 
 check_app_dir_doesnt_exist
@@ -87,6 +88,6 @@ start_app
 # Create virtualhost definition for apache
 #
 export CART_INFO_DIR
-$CART_DIR/abstract/info/bin/deploy_httpd_proxy.sh $application $namespace $uuid $IP
+$CARTRIDGE_BASE_PATH/abstract/info/bin/deploy_httpd_proxy.sh $application $namespace $uuid $IP
 
 restart_httpd_graceful
