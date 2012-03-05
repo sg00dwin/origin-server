@@ -1,30 +1,26 @@
-.navbar
-  .navbar-inner
+#top.section-top
+  .container
+    .pull-left= link_to "Sign up for the newsletter >", newsletter_signup_url
+    .pull-right.login
+      = link_to "Sign In", control_panel_path, :class => 'btn btn-small'
+      -#
+        - ['f', 'g', 't'].each do |p|
+          = link_to p, :class => 'btn btn-small login-provider' do
+            %img{:alt => p}
+
+#nav.section-nav
+  .navbar
     .container
-
+      -# Was .nav-collapse, has some issues
       = link_to root_path, :class => 'brand' do
-        %img{:src => image_path('/app/images/openshift-logo-white.png')}
-
-      %span.navbar-text.headline 
-        Management Console
-        %span.label.label-important{:style => 'vertical-align:top'} Preview
-
-      -#= link_to root_path, :class => 'brand' do
-        Open
-        %strong> Shift
-        %span.trademark> &trade;
-        &nbsp;
-        Management Console
-
-      .nav-collapse
-        = navigation_tabs do
-          = navigation_tab :applications, :action => :index, :name => "My Applications"
-          = navigation_tab :application_types, :name => "Create a New Application"
-          -#= navigation_tab :help, :show
-          -#= navigation_tab :user, :action => :show
-
-      %ul.navbar-text.pull-right#utility-nav
+        %strong> Open
+        Shift
+      %ul.nav
+        %li.active= link_to "Overview", product_overview_path
+        %li= link_to "Express", express_path
+        %li.divider &nbsp;
+        %li= link_to "Flex", flex_path
         %li= link_to "Community", community_url
-        %li= link_to "My Account", account_path
-        %li= link_to "Sign Out", logout_path
 
+  - if content_for? :header
+    = yield :header

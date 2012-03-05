@@ -1,11 +1,11 @@
-Name: raw-0.1
-Display-Name: raw v1.0.0 (noarch)
+Name: diy-0.1
+Display-Name: diy v1.0.0 (noarch)
 Description: Cartridge providing raw compute power to applications
 Version: 1.0.0
 License: ASL 2.0
-Vendor: 
+Vendor:
 Provides:
-  - "raw"
+  - "diy-0.1"
 Requires:
 Conflicts:
 Native-Requires:

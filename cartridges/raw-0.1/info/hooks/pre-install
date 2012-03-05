@@ -9,7 +9,7 @@ source ${CART_DIR}/abstract/info/lib/util
 
 load_node_conf
 
-[ -z "$CARTRIDGE_DIR" ] && CARTRIDGE_DIR="/usr/libexec/li/cartridges/raw-0.1/"
+[ -z "$CARTRIDGE_DIR" ] && CARTRIDGE_DIR="/usr/libexec/li/cartridges/diy-0.1/"
 
 function print_help {
     echo "Usage: uuid"

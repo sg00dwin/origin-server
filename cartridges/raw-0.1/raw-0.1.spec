@@ -1,6 +1,6 @@
-%define cartridgedir %{_libexecdir}/li/cartridges/raw-0.1
+%define cartridgedir %{_libexecdir}/li/cartridges/diy-0.1
 
-Summary:   Provides raw support
+Summary:   Provides diy support
 Name:      rhc-cartridge-raw-0.1
 Version:   0.22.1
 Release:   1%{?dist}
@@ -17,7 +17,7 @@ Requires:  httpd
 BuildArch: noarch
 
 %description
-Provides raw http support to OpenShift
+Provides diy support to OpenShift
 
 %prep
 %setup -q
