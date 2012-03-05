@@ -6,7 +6,9 @@ do
     . $f
 done
 
-CART_CONF_DIR=/usr/libexec/li/cartridges/${OPENSHIFT_APP_TYPE}/info/configuration/etc/conf
+CART_DIR=$(dirname $(dirname $(dirname $0)))
+source ${CART_DIR}/info/bin/load_config.sh
+CART_CONF_DIR=${CARTRIDGE_BASE_PATH}/${OPENSHIFT_APP_TYPE}/info/configuration/etc/conf
 
 # Stop the app
 httpd_pid=`cat ${OPENSHIFT_RUN_DIR}httpd.pid 2> /dev/null`
