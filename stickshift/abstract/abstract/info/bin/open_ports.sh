@@ -3,8 +3,7 @@
 uuid=$1
 new_port_request=$2 # This is the offset used 1-5
 
-CART_DIR=$(dirname $(dirname $(dirname $0)))
-source ${CART_DIR}/info/bin/load_config.sh
+source "/etc/stickshift/stickshift-node.conf"
 source ${CARTRIDGE_BASE_PATH}/abstract/info/lib/util
 
 NTABLE="rhc-user-table"             # Switchyard for app UID tables

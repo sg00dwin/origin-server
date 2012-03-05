@@ -3,8 +3,7 @@
 [ ! -z "$STICKSHIFT_CONTROLLER_LIB_GIT" ] && return 0
 STICKSHIFT_CONTROLLER_LIB_GIT=true
 
-CART_DIR=$(dirname $(dirname $(dirname $0)))
-source ${CART_DIR}/info/bin/load_config.sh
+source "/etc/stickshift/stickshift-node.conf"
 
 function clone_git_repo {
     application="$1"

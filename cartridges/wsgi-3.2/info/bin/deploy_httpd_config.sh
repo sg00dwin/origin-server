@@ -1,7 +1,6 @@
 #!/bin/bash
 
-CART_DIR=$(dirname $(dirname $(dirname $0)))
-source ${CART_DIR}/info/bin/load_config.sh
+source "/etc/stickshift/stickshift-node.conf"
 source ${CARTRIDGE_BASE_PATH}/abstract/info/lib/util
 
 application="$1"

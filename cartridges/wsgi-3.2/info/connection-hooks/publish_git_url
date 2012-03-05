@@ -23,8 +23,7 @@ do
     esac
 done
 
-CART_DIR=$(dirname $(dirname $(dirname $0)))
-source ${CART_DIR}/info/bin/load_config.sh
+source "/etc/stickshift/stickshift-node.conf"
 
 [ $# -eq 3 ] || print_help
 

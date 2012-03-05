@@ -21,8 +21,7 @@ namespace=`basename $2`
 uuid=$3
 IP=$4
 
-CART_DIR=$(dirname $(dirname $(dirname $0)))
-source ${CART_DIR}/info/bin/load_config.sh
+source "/etc/stickshift/stickshift-node.conf"
 source ${CARTRIDGE_BASE_PATH}/abstract/info/lib/util
 
 rm -rf "/etc/httpd/conf.d/stickshift/${uuid}_${namespace}_${application}.conf" "/etc/httpd/conf.d/stickshift/${uuid}_${namespace}_${application}"

@@ -24,8 +24,7 @@ done
 
 [ $# -eq 4 -o $# -eq 3 ] || print_help
 
-CART_DIR=$(dirname $(dirname $(dirname $0)))
-source ${CART_DIR}/info/bin/load_config.sh
+source "/etc/stickshift/stickshift-node.conf"
 app_type="ruby-1.8"
 source ${CARTRIDGE_BASE_PATH}/abstract/info/lib/util
 

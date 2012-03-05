@@ -12,6 +12,7 @@ Source0:   %{name}-%{version}.tar.gz
 BuildRoot: %(mktemp -ud %{_tmppath}/%{name}-%{version}-%{release}-XXXXXX)
 BuildRequires: git
 Requires:  stickshift-abstract
+Requires:  rubygem(stickshift-node)
 Requires:  mod_bw
 Requires:  python
 Requires:  mod_wsgi = 3.2
@@ -55,7 +56,6 @@ cp LICENSE %{buildroot}%{cartridgedir}/
 cp COPYRIGHT %{buildroot}%{cartridgedir}/
 mkdir -p %{buildroot}%{cartridgedir}/info/data/
 cp -r git_template.git %{buildroot}%{cartridgedir}/info/data/
-ln -s %{cartridgedir}/../abstract/info/bin/load_config.sh %{buildroot}%{cartridgedir}/info/bin/load_config.sh
 ln -s %{cartridgedir}/../abstract/info/hooks/add-module %{buildroot}%{cartridgedir}/info/hooks/add-module
 ln -s %{cartridgedir}/../abstract/info/hooks/info %{buildroot}%{cartridgedir}/info/hooks/info
 ln -s %{cartridgedir}/../abstract/info/hooks/post-install %{buildroot}%{cartridgedir}/info/hooks/post-install

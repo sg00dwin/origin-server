@@ -14,10 +14,18 @@ BuildRequires:  git
 BuildRequires:  java-devel >= 1:1.6.0
 BuildRequires:  jpackage-utils
 Requires:  stickshift-abstract
-# When updating jboss-as7, update the alternatives link below
+Requires: rubygem(stickshift-node)# When updating jboss-as7, update the alternatives link below
 Requires: jboss-as7 >= 7.1.0.Final
 Requires: jboss-as7-modules >= 7.1.0.Final
+
+%if 0%{?rhel}
 Requires: maven3
+%endif
+
+%if 0%{?fedora}
+Requires: maven
+%endif
+
 #Requires: apr
 
 Obsoletes: rhc-cartridge-jbossas-7.0
@@ -52,7 +60,6 @@ cp LICENSE %{buildroot}%{cartridgedir}/
 cp COPYRIGHT %{buildroot}%{cartridgedir}/
 cp -r template %{buildroot}%{cartridgedir}/
 cp README %{buildroot}%{cartridgedir}/
-ln -s %{cartridgedir}/../abstract/info/bin/load_config.sh %{buildroot}%{cartridgedir}/info/bin/load_config.sh
 ln -s %{cartridgedir}/../abstract/info/hooks/add-module %{buildroot}%{cartridgedir}/info/hooks/add-module
 ln -s %{cartridgedir}/../abstract/info/hooks/info %{buildroot}%{cartridgedir}/info/hooks/info
 ln -s %{cartridgedir}/../abstract/info/hooks/post-install %{buildroot}%{cartridgedir}/info/hooks/post-install

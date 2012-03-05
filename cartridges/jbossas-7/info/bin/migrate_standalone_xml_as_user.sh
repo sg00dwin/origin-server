@@ -10,8 +10,7 @@ done
 WORKING_DIR=$1
 GIT_DIR=$2
 
-CART_DIR=$(dirname $(dirname $(dirname $0)))
-source ${CART_DIR}/info/bin/load_config.sh
+source "/etc/stickshift/stickshift-node.conf"
 
 export OPENSHIFT_SKIP_GIT_HOOKS="true"
 rm -rf $WORKING_DIR 

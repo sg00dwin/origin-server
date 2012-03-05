@@ -6,8 +6,7 @@ do
     . $f
 done
 
-CART_DIR=$(dirname $(dirname $(dirname $0)))
-source ${CART_DIR}/info/bin/load_config.sh
+source "/etc/stickshift/stickshift-node.conf"
 
 CONFIG_DIR="$CARTRIDGE_BASE_PATH/$OPENSHIFT_APP_TYPE/info/configuration"
 if `echo $OPENSHIFT_APP_DNS | grep -q .stg.rhcloud.com` || `echo $OPENSHIFT_APP_DNS | grep -q .dev.rhcloud.com`

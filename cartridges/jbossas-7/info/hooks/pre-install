@@ -8,8 +8,7 @@ set -e
 # The name of the jbossas cartridge dir under /usr/libexec/stickshift/cartridges
 jboss_version=jbossas-7
 
-CART_DIR=$(dirname $(dirname $(dirname $0)))
-source ${CART_DIR}/info/bin/load_config.sh
+source "/etc/stickshift/stickshift-node.conf"
 source ${CARTRIDGE_BASE_PATH}/abstract/info/lib/util
 
 
