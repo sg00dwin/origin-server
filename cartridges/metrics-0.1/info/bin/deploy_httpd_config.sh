@@ -1,8 +1,8 @@
 #!/bin/bash
 
-CART_DIR=/usr/libexec/li/cartridges
-source ${CART_DIR}/abstract/info/lib/util
-CART_INFO_DIR=$CART_DIR/embedded/metrics-0.1/info
+source "/etc/stickshift/stickshift-node.conf"
+source ${CARTRIDGE_BASE_PATH}/abstract/info/lib/util
+CART_INFO_DIR=${CARTRIDGE_BASE_PATH}/embedded/metrics-0.1/info
 
 load_node_conf
 
@@ -12,10 +12,10 @@ application="$1"
 uuid="$2"
 IP="$3"
 
-APP_HOME="$libra_dir/$uuid"
+APP_HOME="${GEAR_BASE_DIR}/$uuid"
 METRICS_DIR=`echo $APP_HOME/metrics-0.1 | tr -s /`
 
-cat <<EOF > "$METRICS_DIR/conf.d/libra.conf"
+cat <<EOF > "$METRICS_DIR/conf.d/stickshift.conf"
 ServerRoot "$METRICS_DIR"
 Listen $IP:8080
 User $uuid
