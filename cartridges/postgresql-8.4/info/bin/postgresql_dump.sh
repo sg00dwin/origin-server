@@ -6,8 +6,9 @@ do
     . $f
 done
 
-CART_DIR=${CART_DIR:=/usr/libexec/li/cartridges}
-CART_INFO_DIR=$CART_DIR/embedded/postgresql-8.4/info
+source "/etc/stickshift/stickshift-node.conf"
+source ${CARTRIDGE_BASE_PATH}/abstract/info/lib/util
+CART_INFO_DIR=$CARTRIDGE_BASE_PATH/embedded/postgresql-8.4/info
 source ${CART_INFO_DIR}/lib/util
 
 start_postgresql_as_user

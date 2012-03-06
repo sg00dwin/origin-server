@@ -1,11 +1,13 @@
 #!/bin/bash
 
+source "/etc/stickshift/stickshift-node.conf"
+
 # Control application's embedded PostgreSQL server instance
 SERVICE_NAME=PostgreSQL
 CART_NAME=postgresql
 CART_VERSION=8.4
 CART_DIRNAME=${CART_NAME}-$CART_VERSION
-CART_INSTALL_DIR=/usr/libexec/li/cartridges
+CART_INSTALL_DIR=${CARTRIDGE_BASE_PATH}
 CART_INFO_DIR=$CART_INSTALL_DIR/embedded/$CART_DIRNAME/info
 export STOPTIMEOUT=10
 
