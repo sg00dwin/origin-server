@@ -23,10 +23,10 @@ do
     . $f
 done
 
-CART_DIR=/usr/libexec/li/cartridges
-source ${CART_DIR}/abstract/info/lib/util
+source /etc/stickshift/stickshift-node.conf
+source ${CARTRIDGE_BASE_PATH}/abstract/info/lib/util
 
-export GIT_SSH="/usr/libexec/li/cartridges/haproxy-1.4/info/bin/ssh"
+export GIT_SSH="${CARTRIDGE_BASE_PATH}/haproxy-1.4/info/bin/ssh"
 
 #  Optimized case - push to all mirrors.
 if ! git_mirror_push all-gears; then

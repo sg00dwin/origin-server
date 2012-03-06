@@ -9,7 +9,7 @@
 function print_help {
     echo "Usage: $0 app-name namespace uuid IP"
 
-    echo "$0 $@" | logger -p local0.notice -t libra_deploy_httpd_proxy
+    echo "$0 $@" | logger -p local0.notice -t stickshift_deploy_httpd_proxy
     exit 1
 }
 
@@ -21,44 +21,43 @@ namespace=`basename $2`
 uuid=$3
 IP=$4
 
-CART_DIR=/usr/libexec/li/cartridges
-source ${CART_DIR}/abstract/info/lib/util
+source /etc/stickshift/stickshift-node.conf
+source ${CARTRIDGE_BASE_PATH}/abstract/info/lib/util
 
 load_node_conf
 
-rm -rf "/etc/httpd/conf.d/libra/${uuid}_${namespace}_${application}.conf" "/etc/httpd/conf.d/libra/${uuid}_${namespace}_${application}"
+rm -rf "${STICKSHIFT_HTTP_CONF_DIR}/${uuid}_${namespace}_${application}.conf" "${STICKSHIFT_HTTP_CONF_DIR}/${uuid}_${namespace}_${application}"
 
-mkdir "/etc/httpd/conf.d/libra/${uuid}_${namespace}_${application}"
+mkdir "${STICKSHIFT_HTTP_CONF_DIR}/${uuid}_${namespace}_${application}"
 
-cat <<EOF > "/etc/httpd/conf.d/libra/${uuid}_${namespace}_${application}/00000_default.conf"
+cat <<EOF > "${STICKSHIFT_HTTP_CONF_DIR}/${uuid}_${namespace}_${application}/00000_default.conf"
   ServerName ${application}-${namespace}.${libra_domain}
   ServerAdmin mmcgrath@redhat.com
   DocumentRoot /var/www/html
   DefaultType None
 
   ProxyPass /health !
-  Alias /health $CART_DIR/haproxy-1.4/info/configuration/health.html
+  Alias /health ${CARTRIDGE_BASE_PATH}/haproxy-1.4/info/configuration/health.html
 
   ProxyPass /haproxy-status/ http://$IP2:8080/ status=I
   ProxyPassReverse /haproxy-status/ http://$IP2:8080/
   ProxyPass / http://$IP:8080/ status=I
   ProxyPassReverse / http://$IP:8080/
 EOF
-cat <<EOF > "/etc/httpd/conf.d/libra/${uuid}_${namespace}_${application}.conf"
+cat <<EOF > "${STICKSHIFT_HTTP_CONF_DIR}/${uuid}_${namespace}_${application}.conf"
 <VirtualHost *:80>
   RequestHeader append X-Forwarded-Proto "http"
 
-  Include /etc/httpd/conf.d/libra/${uuid}_${namespace}_${application}/*.conf
+  Include ${STICKSHIFT_HTTP_CONF_DIR}/${uuid}_${namespace}_${application}/*.conf
 
 </VirtualHost>
 
 <VirtualHost *:443>
   RequestHeader append X-Forwarded-Proto "https"
 
-$(/bin/cat $CART_DIR/haproxy-1.4/info/configuration/node_ssl_template.conf)
+$(/bin/cat ${CARTRIDGE_BASE_PATH}/haproxy-1.4/info/configuration/node_ssl_template.conf)
 
-  Include /etc/httpd/conf.d/libra/${uuid}_${namespace}_${application}/*.conf
+  Include ${STICKSHIFT_HTTP_CONF_DIR}/${uuid}_${namespace}_${application}/*.conf
 
 </VirtualHost>
 EOF
-
