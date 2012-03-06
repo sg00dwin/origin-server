@@ -1,10 +1,12 @@
 #!/bin/bash
 
+source "/etc/stickshift/stickshift-node.conf"
+
 # Control application's embedded Memcached server instance
 CART_NAME=memcached
 CART_VERSION=1.4
 CART_DIRNAME=${CART_NAME}-$CART_VERSION
-CART_DIR=${CART_DIR:=/usr/libexec/li/cartridges}
+CART_DIR=${CARTRIDGE_BASE_PATH}
 
 
 # Exit on any errors
@@ -16,7 +18,7 @@ function print_help() {
     echo "Usage: $0 app-name namespace uuid"
     echo "$cmd embedded Memcached service"
 
-    echo "$0 $@" | logger -p local0.notice -t libra_memcached_$cmd
+    echo "$0 $@" | logger -p local0.notice -t stickshift_memcached_$cmd
     exit 1
 
 }  #  End of function  print_help.
@@ -56,9 +58,9 @@ function _reload_memcached_service() {
 
 
 function _move_memcached_service() {
-   source ${CART_DIR}/abstract/info/lib/apache
-   source ${CART_DIR}/abstract/info/lib/network
-   load_node_conf
+   source ${CARTRIDGE_BASE_PATH}/abstract/info/lib/apache
+   source ${CARTRIDGE_BASE_PATH}/abstract/info/lib/apache
+   source ${CARTRIDGE_BASE_PATH}/abstract/info/lib/network
 
 MEMCACHED_DIR="$APP_HOME/memcached-1.4/"
 
@@ -83,16 +85,14 @@ fi
 }  #  End of function  _move_memcached_service.
 
 function _pre_move_memcached_service() {
-   source ${CART_DIR}/abstract/info/lib/apache
-   source ${CART_DIR}/abstract/info/lib/network
-   load_node_conf
+   source ${CARTRIDGE_BASE_PATH}/abstract/info/lib/apache
+   source ${CARTRIDGE_BASE_PATH}/abstract/info/lib/network
 
 }  #  End of function  _pre_move_memcached_service.
 
 function _post_move_memcached_service() {
-   source ${CART_DIR}/abstract/info/lib/apache
-   source ${CART_DIR}/abstract/info/lib/network
-   load_node_conf
+   source ${CARTRIDGE_BASE_PATH}/abstract/info/lib/apache
+   source ${CARTRIDGE_BASE_PATH}/abstract/info/lib/network
 
 }  #  End of function  _post_move_memcached_service.
 
@@ -110,7 +110,7 @@ function _status_memcached_service() {
 #
 # main():
 #
-source ${CART_DIR}/abstract/info/lib/util
+source ${CARTRIDGE_BASE_PATH}/abstract/info/lib/util
 
 # Parse and ensure arguments.
 while getopts 'd' OPTION

@@ -4,12 +4,12 @@
 
 set -e
 
-CART_DIR=/usr/libexec/li/cartridges
-source ${CART_DIR}/abstract/info/lib/util
+source "/etc/stickshift/stickshift-node.conf"
+source ${CARTRIDGE_BASE_PATH}/abstract/info/lib/util
 
 load_node_conf
 
-[ -z "$CARTRIDGE_DIR" ] && CARTRIDGE_DIR="/usr/libexec/li/cartridges/memcached-1.4/"
+[ -z "$CARTRIDGE_DIR" ] && CARTRIDGE_DIR="${CARTRIDGE_BASE_PATH}/memcached-1.4/"
 
 function print_help {
     echo "Usage: customername"
