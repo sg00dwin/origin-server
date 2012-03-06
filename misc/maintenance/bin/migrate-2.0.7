@@ -104,8 +104,8 @@ def restart_app(app)
     rescue Exception => e
       out += "WARNING: Error force stopping app '#{app.name}' with uuid '#{app.gear.uuid}' on node '#{app.gear.server_identity}': #{e.message}\n"
     end
-    out += "Starting app '#{app.name}' with uuid '#{app.gear.uuid}' on node '#{app.gear.server_identity}'\n"
-    reply.append app.container.start(app, app.gear, app.framework)
+    out += "Restarting app '#{app.name}' with uuid '#{app.gear.uuid}' on node '#{app.gear.server_identity}'\n"
+    reply.append app.container.restart(app, app.gear, app.framework)
   else
     out += "Leaving app stopped '#{app.name}' with uuid '#{app.gear.uuid}' on node '#{app.gear.server_identity}'\n"
   end
