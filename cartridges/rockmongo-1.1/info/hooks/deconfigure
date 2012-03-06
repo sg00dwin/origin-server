@@ -5,7 +5,7 @@
 function print_help {
     echo "Usage: $0 app-name namespace uuid"
 
-    echo "$0 $@" | logger -p local0.notice -t libra_rockmongo_deconfigure
+    echo "$0 $@" | logger -p local0.notice -t stickshift_rockmongo_deconfigure
     exit 1
 }
 
@@ -21,8 +21,8 @@ done
 
 [ $# -eq 3 ] || print_help
 
-CART_DIR=${CART_DIR:=/usr/libexec/li/cartridges}
-source ${CART_DIR}/abstract/info/lib/util
+source "/etc/stickshift/stickshift-node.conf"
+source ${CARTRIDGE_BASE_PATH}/abstract/info/lib/util
 
 app_type="rockmongo-1.1"
 setup_embedded_deconfigure "$1" $2 $3
@@ -51,6 +51,6 @@ runcon -l s0-s0:c0.c1023 rm -rf "$ROCKMONGO_DIR"
 #
 # Remove ProxyPass definition from apache
 #
-rm -f /etc/httpd/conf.d/libra/${uuid}_${namespace}_${application}/rockmongo-1.1.conf || warning "Could not remove rockmongo apache definition" 156
+rm -f ${STICKSHIFT_HTTP_CONF_DIR}/${uuid}_${namespace}_${application}/rockmongo-1.1.conf || warning "Could not remove rockmongo apache definition" 156
 
 /sbin/service httpd configtest 2> /dev/null && /sbin/service httpd graceful || warning "Failed to restart master httpd, please contact support" 120

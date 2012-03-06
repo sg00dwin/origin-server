@@ -8,7 +8,7 @@ set -e
 function print_help {
     echo "Usage: $0 app-name namespace uuid"
 
-    echo "$0 $@" | logger -p local0.notice -t libra_rockmongo_configure
+    echo "$0 $@" | logger -p local0.notice -t stickshift_rockmongo_configure
     exit 1
 }
 
@@ -24,8 +24,9 @@ done
 
 [ $# -eq 3 ] || print_help
 
-CART_DIR=${CART_DIR:=/usr/libexec/li/cartridges}
-source ${CART_DIR}/abstract/info/lib/util
+source "/etc/stickshift/stickshift-node.conf"
+source ${CARTRIDGE_BASE_PATH}/abstract/info/lib/util
+CART_INFO_DIR=${CARTRIDGE_BASE_PATH}/embedded/rockmongo-1.1/info
 
 app_type="rockmongo-1.1"
 setup_embedded_configure "$1" $2 $3
@@ -54,7 +55,7 @@ else
 fi
 
 # check that the proxy pass include directory exists
-[ -d "/etc/httpd/conf.d/libra/${uuid}_${namespace}_${application}" ] || error "httpd conf dir not available" 136
+[ -d "${STICKSHIFT_HTTP_CONF_DIR}/${uuid}_${namespace}_${application}" ] || error "httpd conf dir not available" 136
 
 #
 # Create the core of the application
