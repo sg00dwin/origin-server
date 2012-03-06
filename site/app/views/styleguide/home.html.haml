@@ -15,8 +15,11 @@
       .container
         -# Was .nav-collapse, has some issues
         .brand
-          %strong> Open
-          Shift
+          %a{:href => '.'}
+            .brand-image
+            .brand-text
+              %strong> Open
+              Shift
         %ul.nav
           %li.active= link_to "Overview", "."
           %li= link_to "Documentation", "dev_center"
