@@ -22,7 +22,7 @@ done
 
 [ $# -eq 3 ] || print_help
 
-source /etc/stickshift/stickshift-node.conf
+source "/etc/stickshift/stickshift-node.conf"
 source ${CARTRIDGE_BASE_PATH}/abstract/info/lib/util
 CART_INFO_DIR=${CARTRIDGE_BASE_PATH}/embedded/mongodb-2.0/info
 
