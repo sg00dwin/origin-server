@@ -43,6 +43,19 @@ Broker::Application.configure do
     :domain_suffix => "rhcloud.com",
     :default_max_gears => 5,
 
+    :auth => {
+      :mongo => {
+        :replica_set => false,
+        # Replica set example: [[<host-1>, <port-1>], [<host-2>, <port-2>], ...]
+        :host_port => ["localhost", 27017],
+
+        :user => "stickshift",
+        :password => "mooo",
+        :db => "stickshift_broker_dev",
+        :collections => {:user => "auth_user"}
+      }
+    }
+
     :dns => {
       :bind => {
         :server => "127.0.0.1",
@@ -53,15 +66,17 @@ Broker::Application.configure do
       }
     },
 
-    :datastore_mongo => {
-      :replica_set => false,
-      # Replica set example: [[<host-1>, <port-1>], [<host-2>, <port-2>], ...]
-      :host_port => ["localhost", 27017],
+    :datastore => {
+      :mongo => {
+        :replica_set => false,
+        # Replica set example: [[<host-1>, <port-1>], [<host-2>, <port-2>], ...]
+        :host_port => ["localhost", 27017],
 
-      :user => "stickshift",
-      :password => "mooo",
-      :db => "stickshift_broker_dev",
-      :collections => {:user => "user_test"}
+        :user => "stickshift",
+        :password => "mooo",
+        :db => "stickshift_broker_dev",
+        :collections => {:user => "user"}
+      }
     }
   }
 
