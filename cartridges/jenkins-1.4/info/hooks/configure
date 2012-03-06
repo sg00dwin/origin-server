@@ -8,7 +8,7 @@ set -e
 function print_help {
     echo "Usage: $0 app-name namespace uuid git-url"
 
-    echo "$0 $@" | logger -p local0.notice -t libra_jenkins_configure
+    echo "$0 $@" | logger -p local0.notice -t stickshift_jenkins_configure
     exit 1
 }
 
@@ -55,10 +55,10 @@ done
 
 [ $# -eq 4 -o $# -eq 3 ] || print_help
 
-CART_DIR=${CART_DIR:=/usr/libexec/li/cartridges}
+source "/etc/stickshift/stickshift-node.conf"
 app_type="jenkins-1.4"
+source ${CARTRIDGE_BASE_PATH}/abstract/info/lib/util
 
-source ${CART_DIR}/abstract/info/lib/util
 setup_configure "$1" $2 $3 $4
 
 unobfuscate_app_home $uuid $namespace $application
@@ -67,8 +67,8 @@ admin_password=$(generate_password)
 system_builder_password=$(generate_password)
 
 cp -ad "$CART_INFO_DIR/configuration/jenkins-pre-deploy/"* "$APP_DIR/data/"
-sed -i "s,JENKINS_URL_TEMPLATE,http://${application}-${namespace}.${libra_domain}/,g" "$APP_DIR/data/config.xml"
-openshift_server=`echo "${libra_server}" | sed -e "s/\/*$//" `
+sed -i "s,JENKINS_URL_TEMPLATE,http://${application}-${namespace}.${CLOUD_DOMAIN}/,g" "$APP_DIR/data/config.xml"
+openshift_server=`echo "${BROKER_HOST}" | sed -e "s/\/*$//" `
 sed -i "s,OPENSHIFT_SERVER,$openshift_server,g" "$APP_DIR/data/config.xml"
 unzip -q /usr/lib/jenkins/jenkins.war -d "$APP_DIR/data/war/"
 admin_password_hash=`obfuscate_password $admin_password`
@@ -129,9 +129,9 @@ client_result ""
 client_result "   User: admin"
 client_result "   Password: $admin_password"
 client_result ""
-client_result "Note:  You can change your password at: http://${application}-${namespace}.${libra_domain}/me/configure"
+client_result "Note:  You can change your password at: http://${application}-${namespace}.${CLOUD_DOMAIN}/me/configure"
 client_result ""
 
-add_env_var "JENKINS_URL=http://${application}-${namespace}.${libra_domain}/"
+add_env_var "JENKINS_URL=http://${application}-${namespace}.${CLOUD_DOMAIN}/"
 add_env_var "JENKINS_USERNAME=system_builder"
 add_env_var "JENKINS_PASSWORD=$system_builder_password"
