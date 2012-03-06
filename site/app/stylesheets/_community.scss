@@ -15,7 +15,10 @@
   .block-stats { clear: both; }
 }
 
-.og-mission { margin-bottom: 10px; }
+.og-mission,
+.forum-header-description { 
+  margin-bottom: 10px; 
+}
 
 .block { @include clearfix(); margin-bottom: 20px; }
 .column-nav {

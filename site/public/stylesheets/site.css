@@ -160,7 +160,8 @@
 .column-nav .view-threads-by-popularity .views-table .block-stats {
   clear: both; }
 
-.og-mission {
+.og-mission,
+.forum-header-description {
   margin-bottom: 10px; }
 
 .block {
