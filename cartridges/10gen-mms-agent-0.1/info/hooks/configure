@@ -8,7 +8,7 @@ set -e
 function print_help {
     echo "Usage: $0 app-name namespace uuid"
 
-    echo "$0 $@" | logger -p local0.notice -t libra_10gen_mms_agent_configure
+    echo "$0 $@" | logger -p local0.notice -t stickshift_10gen_mms_agent_configure
     exit 1
 }
 
@@ -24,8 +24,8 @@ done
 
 [ $# -eq 3 ] || print_help
 
-CART_DIR=${CART_DIR:=/usr/libexec/li/cartridges}
-source ${CART_DIR}/abstract/info/lib/util
+source /etc/stickshift/stickshift-node.conf
+source ${CARTRIDGE_BASE_PATH}/abstract/info/lib/util
 
 app_type="10gen-mms-agent-0.1"
 setup_embedded_configure "$1" $2 $3
