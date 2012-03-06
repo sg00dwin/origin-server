@@ -1,7 +1,7 @@
 #!/bin/bash -e
 
-CART_DIR=/usr/libexec/li/cartridges
-source ${CART_DIR}/abstract/info/lib/util
+source "/etc/stickshift/stickshift-node.conf"
+source ${CARTRIDGE_BASE_PATH}/abstract/info/lib/util
 
 # Import Environment Variables
 for f in ~/.env/*
@@ -19,7 +19,7 @@ validate_run_as_user
 
 export PHPRC="${OPENSHIFT_PHPMOADMIN_APP_DIR}conf/php.ini"
 
-CART_CONF_DIR=/usr/libexec/li/cartridges/embedded/phpmoadmin-1.0/info/configuration/etc/conf
+CART_CONF_DIR=${CARTRIDGE_BASE_PATH}/embedded/phpmoadmin-1.0/info/configuration/etc/conf
 
 case "$1" in
     start)
