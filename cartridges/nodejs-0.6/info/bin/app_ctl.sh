@@ -1,6 +1,6 @@
 #!/bin/bash
 
-CART_DIR=/usr/libexec/li/cartridges
+source "/etc/stickshift/stickshift-node.conf"
 STOPTIMEOUT=10
 FMT="%a %b %d %Y %H:%M:%S GMT%z (%Z)"
 
@@ -129,7 +129,7 @@ if ! [ $# -eq 1 ]; then
 fi
 
 # Source utility functions.
-source ${CART_DIR}/abstract/info/lib/util
+source ${CARTRIDGE_BASE_PATH}/abstract/info/lib/util
 
 # Import Environment Variables
 for f in ~/.env/*; do

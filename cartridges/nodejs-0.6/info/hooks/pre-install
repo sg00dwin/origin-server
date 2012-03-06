@@ -5,8 +5,9 @@
 set -e
 
 # Variables.
-CART_DIR=/usr/libexec/li/cartridges
-CARTRIDGE_DIR=${CARTRIDGE_DIR:-"$CART_DIR/nodejs-0.6/"}
+source "/etc/stickshift/stickshift-node.conf"
+source ${CARTRIDGE_BASE_PATH}/abstract/info/lib/util
+CARTRIDGE_DIR=${CARTRIDGE_DIR:-"${CARTRIDGE_BASE_PATH}/nodejs-0.6/"}
 
 
 function print_help() {
@@ -26,7 +27,7 @@ function quit() {
 #
 
 # Load utility functions and node conf.
-source ${CART_DIR}/abstract/info/lib/util
+source ${CARTRIDGE_BASE_PATH}/abstract/info/lib/util
 load_node_conf
 
 # Parse arguments.
