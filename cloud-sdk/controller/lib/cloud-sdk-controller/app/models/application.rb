@@ -245,8 +245,8 @@ class Application < Cloud::Sdk::Cartridge
   end
 
   def scaleup
+    raise Exception.new("Cannot scale a non-scalable app") if not self.scalable
     result_io = ResultIO.new
-    return result_io if not self.scalable
     wb = web_cart
     new_gear = nil
     # find the group instance where the web-cartridge is residing

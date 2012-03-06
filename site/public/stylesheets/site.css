@@ -34,27 +34,34 @@
      */ }
 
 .navbar {
-  padding-top: 30px;
-  height: 130px;
+  margin-bottom: 30px;
   position: relative; }
   .navbar .brand {
-    text-align: center;
     text-transform: uppercase;
-    position: relative;
-    background: url("../images/logo-medium.png") center top no-repeat transparent;
     /* reset styles */
     float: none;
     margin: 0;
-    padding: 0;
-    padding-top: 100px; }
+    padding: 0; }
+  .navbar .brand > a {
+    display: block; }
+  .navbar .brand > a > .brand-image {
+    -moz-transition: all 0.2s; }
+  .navbar .brand > a:hover > .brand-image {
+    -moz-transform: rotate(-10deg); }
+  .navbar .brand-image {
+    content: ' ';
+    background: url("../images/logo-medium.png") center top no-repeat transparent;
+    height: 90px;
+    width: 93px; }
+  .navbar .brand-text {
+    color: white;
+    text-align: center; }
   .navbar .nav {
     font-size: 13px;
     text-transform: uppercase;
     /* reset styles */
     float: none;
-    margin: 0;
-    margin-top: -83px;
-    margin-bottom: 110px;
+    /*margin-bottom: 110px;*/
     /* needs fixing */ }
     .navbar .nav > li {
       float: left;
@@ -80,34 +87,40 @@
       box-shadow: none;
       text-decoration: underline; }
 
-/*FIXME After 3.1, move into element */
 @media (max-width: 767px) {
   .navbar {
-    height: 100px; } }
+    padding-top: 15px;
+    min-height: 100px; }
+    .navbar .brand {
+      float: left;
+      text-align: center;
+      width: 93px; }
+    .navbar .nav {
+      margin-left: 103px;
+      margin-top: 15px;
+      /* centers navigation text on the logo */ }
+      .navbar .nav > li {
+        float: left !important;
+        width: 50% !important;
+        text-align: center !important; }
+      .navbar .nav > li.divider {
+        display: none; } }
 
-@media (max-width: 767px) {
-  .navbar .brand {
-    position: static;
-    float: left;
-    text-align: center;
-    width: 90px;
-    margin-top: 100px; } }
+@media (min-width: 768px) {
+  .navbar {
+    padding-top: 30px;
+    min-height: 130px; }
+    .navbar .brand {
+      z-index: 1;
+      position: absolute;
+      left: 50%; }
+    .navbar .brand > a {
+      position: relative;
+      left: -50%; }
+    .navbar .nav {
+      margin-top: 30px;
+      /* centers navigation text on the logo */ } }
 
-@media (max-width: 767px) {
-  .navbar .nav {
-    margin-left: 100px; } }
-
-@media (max-width: 767px) {
-  .navbar .nav > li {
-    float: left !important;
-    width: 50% !important;
-    text-align: center !important; } }
-
-@media (max-width: 767px) {
-  .navbar .nav > li.divider {
-    display: none; } }
-
-/*End FIXME*/
 /* Drupal specific markup, we may want to wrap this with a top level selector on body.drupal or something */
 .views-field-rss {
   float: right; }
@@ -395,7 +408,10 @@ body.signup {
   .take-action > .pull-right {
     background-color: #91010b;
     padding-right: 40px;
-    background: url("../images/arrow-large.gif") 87% center no-repeat #91010b; }
+    background: url("../images/arrow-large.gif") 87% center no-repeat #91010b;
+    -moz-transition: background-position 0.2s; }
+  .take-action:hover > .pull-right {
+    background-position: 89% center; }
 
 #learn .take-action {
   margin-top: -37px;

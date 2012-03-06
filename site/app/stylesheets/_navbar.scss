@@ -1,29 +1,46 @@
 .navbar {
-  padding-top: 30px;
-  height: 130px;
+  margin-bottom: 30px;
   position: relative;
 
   .brand {
-    text-align: center;
     text-transform: uppercase;
-    position: relative;
-    background: url('../images/logo-medium.png') center top no-repeat transparent;
     /* reset styles */
     float: none;
     margin: 0;
     padding: 0;
-
-    padding-top: $logoHeight + $logoSeparation;
   }
+
+  .brand > a {
+    display: block;
+  }
+
+  .brand > a > .brand-image {
+    -moz-transition: all 0.2s;
+  }
+
+  .brand > a:hover > .brand-image {
+    -moz-transform: rotate(-10deg);
+  }
+
+  .brand-image {
+    content: ' ';
+    background: url('../images/logo-medium.png') center top no-repeat transparent;
+    height: $logoHeight;
+    width: $logoWidth;
+  }
+
+  .brand-text {
+    color: white;
+    text-align: center;
+  }
+
   .nav {
     font-size: 13px; 
     text-transform: uppercase;
     /* reset styles */
     float: none;
-    margin: 0;
 
-    margin-top: -($logoHeight + $logoSeparation)/2.0 - 33px; //FIXME make this cleaner
-    margin-bottom: 110px;
+    /*margin-bottom: 110px;*/
 
     > li {
       float: left;
@@ -56,28 +73,49 @@
   }
 }
 
-/*FIXME After 3.1, move into element */
-@media (max-width: 767px) { .navbar {
-  height: 100px; 
-} }
-@media (max-width: 767px) { .navbar .brand {
-  position: static;
-  float: left;
-  text-align: center;
-  width: $logoWidth;
-  margin-top: $logoHeight + $logoSeparation;
-} }
+@media (max-width: 767px) {
+  .navbar {
+    padding-top: 15px;
+    min-height: $logoHeight + $logoSeparation;
 
-@media (max-width: 767px) { .navbar .nav { 
-  margin-left: $logoWidth + 10px; 
-} }
+    .brand {
+      float: left;
+      text-align: center;
+      width: $logoWidth;
+    }
 
-@media (max-width: 767px) { .navbar .nav > li {
-  float: left !important;
-  width: 50% !important;
-  text-align: center !important;
-} }
-@media (max-width: 767px) { .navbar .nav > li.divider {
-  display: none;
-} }
-/*End FIXME*/
+    .nav {
+      margin-left: $logoWidth + 10px; 
+      margin-top: 15px; /* centers navigation text on the logo */
+
+      > li {
+        float: left !important;
+        width: 50% !important;
+        text-align: center !important;
+      }
+      > li.divider {
+        display: none;
+      }
+    }
+  }
+}
+@media (min-width: 768px) {
+  .navbar {
+    padding-top: 30px;
+    min-height: $logoHeight + $logoSeparation + 30px;
+
+    .brand {
+      z-index: 1;
+      position: absolute;
+      left: 50%;
+    }
+    .brand > a {
+      position: relative;
+      left: -50%;
+    }
+
+    .nav {
+      margin-top: 30px; /* centers navigation text on the logo */
+    }
+  }
+}
