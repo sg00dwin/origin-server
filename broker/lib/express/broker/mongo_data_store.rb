@@ -111,7 +111,7 @@ module Express
       private
       
       def self.district_collection
-        MongoDataStore.db.collection(Rails.configuration.datastore_mongo[:collections][:district])
+        MongoDataStore.instance.db.collection(Rails.configuration.datastore_mongo[:collections][:district])
       end
       
       def self.find_one(*args)
