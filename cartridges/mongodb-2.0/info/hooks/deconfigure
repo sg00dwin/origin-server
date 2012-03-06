@@ -5,7 +5,7 @@
 function print_help {
     echo "Usage: $0 app-name namespace uuid"
 
-    echo "$0 $@" | logger -p local0.notice -t libra_mongodb_deconfigure
+    echo "$0 $@" | logger -p local0.notice -t stickshift_mongodb_deconfigure
     exit 1
 }
 
@@ -22,8 +22,9 @@ done
 
 [ $# -eq 3 ] || print_help
 
-CART_DIR=${CART_DIR:=/usr/libexec/li/cartridges}
-source ${CART_DIR}/abstract/info/lib/util
+source /etc/stickshift/stickshift-node.conf
+source ${CARTRIDGE_BASE_PATH}/abstract/info/lib/util
+CART_INFO_DIR=${CARTRIDGE_BASE_PATH}/embedded/mongodb-2.0/info
 
 app_type="mongodb-2.0"
 setup_embedded_deconfigure "$1" $2 $3
@@ -47,4 +48,3 @@ stop_mongodb
 confirm_pid_gone "${MONGODB_DIR}/pid/mongodb.pid"
 
 runcon -l s0-s0:c0.c1023 rm -rf "$MONGODB_DIR" "$MONGODB_DIR/${application}_mongodb_ctl.sh"
-

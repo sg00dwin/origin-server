@@ -8,7 +8,7 @@ set -e
 function print_help {
     echo "Usage: $0 app-name namespace uuid"
 
-    echo "$0 $@" | logger -p local0.notice -t libra_mongodb_configure
+    echo "$0 $@" | logger -p local0.notice -t stickshift_mongodb_configure
     exit 1
 }
 
@@ -25,8 +25,9 @@ done
 
 [ $# -eq 3 ] || print_help
 
-CART_DIR=${CART_DIR:=/usr/libexec/li/cartridges}
-source ${CART_DIR}/abstract/info/lib/util
+source /etc/stickshift/stickshift-node.conf
+source ${CARTRIDGE_BASE_PATH}/abstract/info/lib/util
+CART_INFO_DIR=${CARTRIDGE_BASE_PATH}/embedded/mongodb-2.0/info
 
 app_type="mongodb-2.0"
 setup_embedded_configure "$1" $2 $3

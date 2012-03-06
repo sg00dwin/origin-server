@@ -11,7 +11,7 @@ function print_help {
     echo "Usage: $0 app-name namespace uuid"
     echo "Stop a running application and disable it"
 
-    echo "$0 $@" | logger -p local0.notice -t libra_mongodb_stop
+    echo "$0 $@" | logger -p local0.notice -t stickshift_mongodb_stop
     exit 1
 }
 
@@ -28,16 +28,16 @@ done
 
 [ $# -eq 3 ] || print_help
 
-CART_DIR=/usr/libexec/li/cartridges
-source ${CART_DIR}/abstract/info/lib/util
+source /etc/stickshift/stickshift-node.conf
+source ${CARTRIDGE_BASE_PATH}/abstract/info/lib/util
 
 setup_basic_hook "$1" $2 $3
 
 MONGODB_DIR="$APP_HOME/$CART_NAME-$CART_VERSION/"
 mongodbctl="$MONGODB_DIR/${application}_mongodb_ctl.sh"
 
-CART_INFO_DIR="$CART_DIR/embedded/$CART_NAME-$CART_VERSION/info"
-source $CART_INFO_DIR/lib/util
+CART_INFO_DIR="${CARTRIDGE_BASE_PATH}/embedded/$CART_NAME-$CART_VERSION/info"
+source ${CART_INFO_DIR}/lib/util
 
 #
 # Stop application

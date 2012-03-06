@@ -5,11 +5,10 @@
 # Exit on any errors
 set -e
 
-CART_DIR=/usr/libexec/li/cartridges
-
-source ${CART_DIR}/abstract/info/lib/util
-source ${CART_DIR}/abstract/info/lib/apache
-source ${CART_DIR}/abstract/info/lib/network
+source /etc/stickshift/stickshift-node.conf
+source ${CARTRIDGE_BASE_PATH}/abstract/info/lib/util
+source ${CARTRIDGE_BASE_PATH}/abstract/info/lib/apache
+source ${CARTRIDGE_BASE_PATH}/abstract/info/lib/network
 
 load_node_conf
 
@@ -31,7 +30,7 @@ uuid=$3
 
 setup_basic_vars
 
-CART_INFO_DIR=$CART_DIR/embedded/mongodb-2.0/info
+CART_INFO_DIR=${CARTRIDGE_BASE_PATH}/embedded/mongodb-2.0/info
 source ${CART_INFO_DIR}/lib/util
 
 MONGODB_DIR="$APP_HOME/mongodb-2.0/"
