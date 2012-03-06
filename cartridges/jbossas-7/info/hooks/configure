@@ -71,6 +71,10 @@ __EOF__
     setup_git_repo $application $user_id $group_id $uuid "jbossas 7"
 }
 
+function create_jboss_network_env_vars {
+    echo "export OPENSHIFT_JBOSS_CLUSTER='$IP[7600]'" > $APP_HOME/.env/OPENSHIFT_INTERNAL_IP
+}
+
 while getopts 'd' OPTION
 do
     case $OPTION in
@@ -178,6 +182,7 @@ chown -R $user_id.$group_id $JAVA_PREFS_DIR
 #
 create_standard_env_vars
 create_standard_network_env_vars
+create_jboss_network_env_vars
 create_standard_repo_dir_env_var
 JAVA_HOME=/etc/alternatives/java_sdk_1.6.0
 M2_HOME=/etc/alternatives/maven-3.0
