@@ -32,21 +32,23 @@ class Gear_scale_ctl
     user, password, url, payload = case action
       when 'add-gear'
         [
-          File.read("/var/lib/libra/#{opts['app']}-#{opts['namespace']}/.auth/iv").chomp,
-          File.read("/var/lib/libra/#{opts['app']}-#{opts['namespace']}/.auth/token").chomp,
+#          File.read("/var/lib/libra/#{opts['app']}-#{opts['namespace']}/.auth/iv").chomp,
+#          File.read("/var/lib/libra/#{opts['app']}-#{opts['namespace']}/.auth/token").chomp,
+          opts['rhlogin'], opts['password'],
           "#{base_url}#{$scale_url % [opts['namespace'], opts['app']]}",
           {'event' => 'scale-up'}
         ]
       when 'remove-gear'
         [
-          URI.escape(File.read("/var/lib/libra/#{opt['app']}-#{opt['namespace']}/.auth/token")),
-          URI.escape(File.read("/var/lib/libra/#{opt['app']}-#{opt['namespace']}/.auth/iv")),
+#          URI.escape(File.read("/var/lib/libra/#{opt['app']}-#{opt['namespace']}/.auth/token")),
+#          URI.escape(File.read("/var/lib/libra/#{opt['app']}-#{opt['namespace']}/.auth/iv")),
+          opts['rhlogin'], opts['password'],
           "#{base_url}#{$scale_url % [opts['namespace'], opts['app']]}",
           {'event' => 'scale-down'}
         ]
       when 'create-gear'
         [
-          opt['rhlogin'], opt['password'],
+          opts['rhlogin'], opts['password'],
           "#{base_url}#{$create_url % opts['namespace']}",
           {'name' => opts["app"], 'cartridge' => opts["type"], 'scale' => 'true'}
         ]
@@ -58,7 +60,6 @@ class Gear_scale_ctl
         :payload => payload
         )
 
-    pp request
     response = request.execute()
     unless 200 == response.code
       raise response
@@ -86,7 +87,11 @@ class Gear_scale_ctl
         :user => opts['rhlogin'], :password => opts["password"],
         :headers => {:accept => 'application/json'})
     response = request.execute()
-    JSON.parse(response.body) if 200 == response.code
+    if 200 == response.code
+      JSON.parse(response.body)
+    else
+      raise "code: #{response.code} : #{response.body}"
+    end
   end
 end
 
@@ -128,9 +133,6 @@ opts = {
   "rhlogin" => get_var('default_rhlogin')
 }
 
-domain = Gear_scale_ctl.domain(opts)
-opts['namespace'] = domain['data'][0]['namespace']
-
 begin
   args = GetoptLong.new(
     ["--debug",     "-d", GetoptLong::NO_ARGUMENT],
@@ -147,13 +149,17 @@ begin
 
   if opts["rhlogin"].nil? || opts["rhlogin"].empty? \
         || opts["server"].nil? || opts["server"].empty? \
-        || opts["app"].nil? || opts["app"].empty?
+        || opts["app"].nil? || opts["app"].empty? \
+        || opts['password'].nil? || opts['password'].empty?
     usage opts
   end
 
 rescue Exception => e
   usage opts
 end
+
+domain = Gear_scale_ctl.domain(opts)
+opts['namespace'] = domain['data'][0]['namespace']
 
 o = Gear_scale_ctl.new(File.basename($0), opts)
 
