@@ -5,7 +5,7 @@ require 'rubygems'
 require 'dnsruby'
 
 module StickShift
-  class BindDnsService < DnsService
+  class BindDnsService < StickShift::DnsService
     @ss_dns_provider = StickShift::BindDnsService
 
     # DEPENDENCIES
@@ -16,26 +16,19 @@ module StickShift
 
     def initialize(access_info = nil)
       if access_info != nil
-        @server = access_info[:server]
-        @port = access_info[:port].to_i
-        @keyname = access_info[:keyname]
-        @keyvalue = access_info[:keyvalue]
-
-        @zone = access_info[:zone]
         @domain_suffix = access_info[:domain_suffix]
       elsif defined? Rails
         # extract from Rails.application.config[dns,ss]
-        rails_config = Rails.application.config.ss[:dns][:bind]
-        @server = rails_config[:server]
-        @port = rails_config[:port].to_i
-        @keyname = rails_config[:keyname]
-        @keyvalue = rails_config[:keyvalue]
-
-        @zone = rails_config[:zone]
+        access_info = Rails.application.config.ss[:dns][:bind]
         @domain_suffix = Rails.application.config.ss[:domain_suffix]
       else
         raise Exception.new("BIND DNS service is not inilialized")
       end
+      @server = access_info[:server]
+      @port = access_info[:port].to_i
+      @keyname = access_info[:keyname]
+      @keyvalue = access_info[:keyvalue]
+      @zone = access_info[:zone]
     end
 
     def dns
