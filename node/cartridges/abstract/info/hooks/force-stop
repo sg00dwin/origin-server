@@ -51,6 +51,7 @@ setup_basic_hook "$1" $2 $3
 # Stop application
 #
 
+set_app_state stopped
 for i in {1..10}
 do
     if /bin/ps -U "$uuid" -o pid | /bin/grep -v PID | xargs kill -9 2> /dev/null
