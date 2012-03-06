@@ -4,10 +4,8 @@
 
 set -e
 
-source /etc/stickshift/stickshift-node.conf
+source "/etc/stickshift/stickshift-node.conf"
 source ${CARTRIDGE_BASE_PATH}/abstract/info/lib/util
-
-load_node_conf
 
 CARTRIDGE_DIR=${CARTRIDGE_DIR:=${CARTRIDGE_BASE_PATH}/php-5.3/}
 

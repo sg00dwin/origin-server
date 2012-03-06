@@ -24,9 +24,7 @@ IP=$4
 source "/etc/stickshift/stickshift-node.conf"
 source ${CARTRIDGE_BASE_PATH}/abstract/info/lib/util
 
-load_node_conf
-
-cat <<EOF > "/etc/httpd/conf.d/libra/${uuid}_${namespace}_${application}/phpmyadmin-3.4.conf"
+cat <<EOF > "${STICKSHIFT_HTTP_CONF_DIR}/${uuid}_${namespace}_${application}/phpmyadmin-3.4.conf"
 ProxyPass /phpmyadmin http://$IP:8080/phpmyadmin status=I
 ProxyPassReverse /phpmyadmin http://$IP:8080/phpmyadmin
 

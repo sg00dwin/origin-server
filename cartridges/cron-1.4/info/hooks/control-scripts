@@ -57,7 +57,6 @@ function _reload_cron_service() {
 function _move_cron_service() {
    source ${CARTRIDGE_BASE_PATH}/abstract/info/lib/apache
    source ${CARTRIDGE_BASE_PATH}/abstract/info/lib/network
-   load_node_conf
    
    CRON_DIR="$APP_HOME/cron-1.4/"
    
@@ -68,14 +67,12 @@ function _move_cron_service() {
 function _pre_move_cron_service() {
    source ${CARTRIDGE_BASE_PATH}/abstract/info/lib/apache
    source ${CARTRIDGE_BASE_PATH}/abstract/info/lib/network
-   load_node_conf
 
 }  #  End of function  _pre_move_cron_service.
 
 function _post_move_cron_service() {
    source ${CARTRIDGE_BASE_PATH}/abstract/info/lib/apache
    source ${CARTRIDGE_BASE_PATH}/abstract/info/lib/network
-   load_node_conf
 
 }  #  End of function  _post_move_cron_service.
 
@@ -121,4 +118,3 @@ case "$cmd" in
    pre-move)         _pre_move_cron_service   ;;
    post-move)        _post_move_cron_service  ;;
 esac
-

@@ -4,8 +4,6 @@ source "/etc/stickshift/stickshift-node.conf"
 source ${CARTRIDGE_BASE_PATH}/abstract/info/lib/util
 CART_INFO_DIR=${CARTRIDGE_BASE_PATH}/embedded/metrics-0.1/info
 
-load_node_conf
-
 load_resource_limits_conf
 
 application="$1"

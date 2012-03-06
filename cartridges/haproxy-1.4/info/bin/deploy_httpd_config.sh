@@ -1,9 +1,7 @@
 #!/bin/bash
 
-source /etc/stickshift/stickshift-node.conf
+source "/etc/stickshift/stickshift-node.conf"
 source ${CARTRIDGE_BASE_PATH}/abstract/info/lib/util
-
-load_node_conf
 
 load_resource_limits_conf
 
@@ -11,7 +9,7 @@ application="$1"
 uuid="$2"
 IP="$3"
 
-APP_HOME="$libra_dir/$uuid"
+APP_HOME="${GEAR_BASE_DIR}/$uuid"
 APP_DIR=`echo $APP_HOME/$application | tr -s /`
 
 cat <<EOF > "$APP_DIR/conf/haproxy.cfg.template"

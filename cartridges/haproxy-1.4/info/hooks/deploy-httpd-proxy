@@ -5,12 +5,10 @@
 # Exit on any errors
 set -e
 
-source /etc/stickshift/stickshift-node.conf
+source "/etc/stickshift/stickshift-node.conf"
 source ${CARTRIDGE_BASE_PATH}/abstract/info/lib/util
 source ${CARTRIDGE_BASE_PATH}/abstract/info/lib/apache
 source ${CARTRIDGE_BASE_PATH}/abstract/info/lib/network
-
-load_node_conf
 
 function print_help {
     echo "Usage: $0 app-name namespace uuid"

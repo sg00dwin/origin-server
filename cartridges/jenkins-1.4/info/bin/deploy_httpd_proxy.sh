@@ -24,27 +24,25 @@ IP=$4
 source "/etc/stickshift/stickshift-node.conf"
 source ${CARTRIDGE_BASE_PATH}/abstract/info/lib/util
 
-load_node_conf
+rm -rf "${STICKSHIFT_HTTP_CONF_DIR}/${uuid}_${namespace}_${application}.conf" "${STICKSHIFT_HTTP_CONF_DIR}/${uuid}_${namespace}_${application}"
 
-rm -rf "/etc/httpd/conf.d/stickshift/${uuid}_${namespace}_${application}.conf" "/etc/httpd/conf.d/stickshift/${uuid}_${namespace}_${application}"
+mkdir "${STICKSHIFT_HTTP_CONF_DIR}/${uuid}_${namespace}_${application}"
 
-mkdir "/etc/httpd/conf.d/stickshift/${uuid}_${namespace}_${application}"
-
-cat <<EOF > "/etc/httpd/conf.d/stickshift/${uuid}_${namespace}_${application}/00000_default.conf"
+cat <<EOF > "${STICKSHIFT_HTTP_CONF_DIR}/${uuid}_${namespace}_${application}/00000_default.conf"
   ServerName ${application}-${namespace}.${CLOUD_DOMAIN}
   ServerAdmin mmcgrath@redhat.com
   DocumentRoot /var/www/html
   DefaultType None
 EOF
-cat <<EOF > "/etc/httpd/conf.d/stickshift/${uuid}_${namespace}_${application}.conf"
+cat <<EOF > "${STICKSHIFT_HTTP_CONF_DIR}/${uuid}_${namespace}_${application}.conf"
 <VirtualHost *:80>
   RequestHeader append X-Forwarded-Proto "http"
 
-  Include /etc/httpd/conf.d/stickshift/${uuid}_${namespace}_${application}/*.conf
+  Include ${STICKSHIFT_HTTP_CONF_DIR}/${uuid}_${namespace}_${application}/*.conf
 
   ##RewriteEngine On
-  ##RewriteRule /health /usr/libexec/li/cartridges/jenkins-1.4/info/configuration/health [L]
-  Alias /health /usr/libexec/li/cartridges/jenkins-1.4/info/configuration/health
+  ##RewriteRule /health ${CARTRIDGE_BASE_PATH}/jenkins-1.4/info/configuration/health [L]
+  Alias /health ${CARTRIDGE_BASE_PATH}/jenkins-1.4/info/configuration/health
   ProxyPass /health !
   ProxyPass / http://$IP:8080/ status=I
   ProxyPassReverse / http://$IP:8080/
@@ -55,11 +53,11 @@ cat <<EOF > "/etc/httpd/conf.d/stickshift/${uuid}_${namespace}_${application}.co
 
 $(/bin/cat $CART_INFO_DIR/configuration/node_ssl_template.conf)
 
-  Include /etc/httpd/conf.d/stickshift/${uuid}_${namespace}_${application}/*.conf
+  Include ${STICKSHIFT_HTTP_CONF_DIR}/${uuid}_${namespace}_${application}/*.conf
   
   ##RewriteEngine On
-  ##RewriteRule /health /usr/libexec/li/cartridges/jenkins-1.4/info/configuration/health [L]
-  Alias /health /usr/libexec/li/cartridges/jenkins-1.4/info/configuration/health
+  ##RewriteRule /health ${CARTRIDGE_BASE_PATH}/jenkins-1.4/info/configuration/health [L]
+  Alias /health ${CARTRIDGE_BASE_PATH}/jenkins-1.4/info/configuration/health
   ProxyPass /health !
   ProxyPass / http://$IP:8080/ status=I
   ProxyPassReverse / http://$IP:8080/

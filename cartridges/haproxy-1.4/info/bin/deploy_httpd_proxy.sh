@@ -21,10 +21,8 @@ namespace=`basename $2`
 uuid=$3
 IP=$4
 
-source /etc/stickshift/stickshift-node.conf
+source "/etc/stickshift/stickshift-node.conf"
 source ${CARTRIDGE_BASE_PATH}/abstract/info/lib/util
-
-load_node_conf
 
 rm -rf "${STICKSHIFT_HTTP_CONF_DIR}/${uuid}_${namespace}_${application}.conf" "${STICKSHIFT_HTTP_CONF_DIR}/${uuid}_${namespace}_${application}"
 

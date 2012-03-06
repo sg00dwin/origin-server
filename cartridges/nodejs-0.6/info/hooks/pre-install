@@ -28,7 +28,6 @@ function quit() {
 
 # Load utility functions and node conf.
 source ${CARTRIDGE_BASE_PATH}/abstract/info/lib/util
-load_node_conf
 
 # Parse arguments.
 while getopts 'd' OPTION; do
