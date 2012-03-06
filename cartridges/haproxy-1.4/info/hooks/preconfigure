@@ -29,10 +29,11 @@ function generate_ssh_keys {
     observe_setup_var_lib_dir "$APP_DIR/data/.ssh/"
 }
 
-CART_DIR=${CART_DIR:=/usr/libexec/li/cartridges}
+source /etc/stickshift/stickshift-node.conf
+
 app_type="haproxy-1.4"
 
-source ${CART_DIR}/abstract/info/lib/util
+source ${CARTRIDGE_BASE_PATH}/abstract/info/lib/util
 
 setup_configure "$1" $2 $3
 

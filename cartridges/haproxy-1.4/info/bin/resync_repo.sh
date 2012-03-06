@@ -1,6 +1,9 @@
 #!/bin/bash
 set -e
-export GIT_SSH=/usr/libexec/li/cartridges/haproxy-1.4/info/bin/ssh
+
+source /etc/stickshift/stickshift-node.conf
+
+export GIT_SSH=${CARTRIDGE_BASE_PATH}/haproxy-1.4/info/bin/ssh
 export GIT_DIR=~/git/${OPENSHIFT_APP_NAME}.git
 cd $GIT_DIR
 rm -rf * 2> /dev/null || :
