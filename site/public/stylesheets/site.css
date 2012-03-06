@@ -221,6 +221,11 @@
   margin-bottom: 20px;
   padding-top: 8px;
   border-top: 1px solid #ddd; }
+  .comment .submitted {
+    margin-top: 10px;
+    font-style: italic; }
+  .comment .links.btn-group {
+    margin-top: 10px; }
 
 .comment > table td {
   vertical-align: top; }
@@ -231,17 +236,33 @@
   margin-right: 10px;
   margin-top: 5px;
   background-color: #efefef; }
-  .comment .comment-author .views-row:hover .views-field-value {
-    height: 100%; }
-  .comment .comment-author .views-row:hover .views-field-phpcode:after {
-    content: none; }
 .comment .comment-author .views-field-phpcode {
   clear: both; }
-  .comment .comment-author .views-field-phpcode:after {
-    content: '...'; }
 .comment .comment-author .views-field-value {
-  height: 0px;
-  overflow: hidden; }
+  font-style: italic;
+  margin-top: 5px; }
+
+.view-user-profile-box .badge {
+  display: inline-block;
+  padding: 0 3px;
+  color: #fff;
+  text-transform: uppercase;
+  font-size: 11px; }
+
+.badge.newbie {
+  background-color: #89aa00; }
+
+.badge.member {
+  background-color: #fc6b00; }
+
+.badge.accomplished {
+  background-color: #191919; }
+
+.badge.pro {
+  background-color: #356fce; }
+
+.badge.expert {
+  background-color: #a80f00; }
 
 /* copied from system.css */
 html.js fieldset.collapsed {
