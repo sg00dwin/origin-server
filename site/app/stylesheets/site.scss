@@ -346,9 +346,15 @@ h1.ribbon {
     text-transform: uppercase;
     margin-top: 15px;
   }
-  > div > .menu {
+  .nav-stacked {
     margin-left: -$gridGutterWidth/2;
     margin-right: $gridGutterWidth/2;
+  }
+
+  .nav-pills .active > a,
+  .nav-pills .active > a:hover {
+    background-color: $navColumnBackgroundColor;
+    color: $textDarkBackground;
   }
 }
 
@@ -358,12 +364,12 @@ h1.ribbon {
 }
 
 /* Stacked navigations indent by 1 gutter each time */
-.nav-stacked .nav-stacked { margin-left: $gridGutterWidth/2; margin-bottom: 0; }
+.nav-stacked > li > .nav-stacked { margin-left: $gridGutterWidth/2; margin-bottom: 0; margin-right: 0; }
 @if $gridGutterWidthTablet != $gridGutterWidth { @media (min-width: 768px) and (max-width: 979px) {
-  .nav-stacked .nav-stacked { margin-left: $gridGutterWidthTablet/2; }
+  .nav-stacked > li > .nav-stacked { margin-left: $gridGutterWidthTablet/2; }
 } }
 @if $gridGutterWidthLarge != $gridGutterWidth { @media (min-width: 1200px) {
-  .nav-stacked .nav-stacked { margin-left: $gridGutterWidthLarge/2; }
+  .nav-stacked > li > .nav-stacked { margin-left: $gridGutterWidthLarge/2; }
 } }
 
 

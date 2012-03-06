@@ -14,7 +14,7 @@
       <builderSize>std</builderSize>
     </hudson.plugins.openshift.OpenShiftBuilderSizeJobProperty>
     <hudson.plugins.openshift.OpenShiftBuilderTypeJobProperty>
-      <builderType>raw-0.1</builderType>
+      <builderType>diy-0.1</builderType>
     </hudson.plugins.openshift.OpenShiftBuilderTypeJobProperty>
   </properties>
   <scm class="hudson.plugins.git.GitSCM">

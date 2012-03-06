@@ -132,17 +132,20 @@ RedHatCloud::Application.routes.draw do
               :only => [:new, :create]
 
     scope '/console' do
-      resources :application_types, :only => [:show, :index], :id => /[^\/]+/
+      match 'help' => 'console#help', :via => :get, :as => 'console_help'
 
+      resources :application_types, :only => [:show, :index], :id => /[^\/]+/
       resources :applications,
                 :controller => "applications" do 
         resources :cartridges, :only => [:show], :id => /[^\/]+/
+        resources :cartridge_types, :only => [:show, :index], :id => /[^\/]+/
         member do
           get :delete
           get :get_started
         end
       end
     end
+
     match 'console' => 'console#index', :via => :get
     match 'new_application' => 'application_types#index', :via => :get
 

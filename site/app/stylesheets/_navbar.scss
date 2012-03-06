@@ -1,8 +1,3 @@
-
-$logoHeight:      70px !default;
-$logoWidth:       100px !default;
-$logoSeparation:  10px !default;
-
 .navbar {
   padding-top: 30px;
   height: 130px;
@@ -12,11 +7,13 @@ $logoSeparation:  10px !default;
     text-align: center;
     text-transform: uppercase;
     position: relative;
-    top: $logoHeight + $logoSeparation;
+    background: url('../images/logo-medium.png') center top no-repeat transparent;
     /* reset styles */
     float: none;
     margin: 0;
     padding: 0;
+
+    padding-top: $logoHeight + $logoSeparation;
   }
   .nav {
     font-size: 13px; 
@@ -25,6 +22,7 @@ $logoSeparation:  10px !default;
     float: none;
     margin: 0;
 
+    margin-top: -($logoHeight + $logoSeparation)/2.0 - 33px; //FIXME make this cleaner
     margin-bottom: 110px;
 
     > li {

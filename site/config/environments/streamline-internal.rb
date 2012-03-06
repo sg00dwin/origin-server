@@ -57,4 +57,8 @@ RedHatCloud::Application.configure do
 
   # Max apps for express
   config.express_max_apps = 5
+
+  # Used to disable Node.JS ONLY IN PRODUCTION. Will set false using a puppet.
+  config.node_js_enabled = true
+
 end
