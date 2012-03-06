@@ -11,12 +11,14 @@ li_repo=$1
 setenforce 0
 
 # Get interface
-ifc=`ifconfig | grep "encap:Ethernet" | awk '{print $1;}'`
-echo $ifc
+IFS=" "
+ifc=( $(ifconfig | grep "encap:Ethernet" | awk '{print $1;}' | tr '\n' ' ') )
+unset IFS
 
 # Turn off NetworkManager service
 chkconfig NetworkManager off
 service NetworkManager stop
+chkconfig named on
 
 # Kill dhclient
 kill -9  `ps -aef | grep  dhclient | grep -v grep | awk '{print $2;}'` 2> /dev/null
@@ -34,7 +36,7 @@ cp example.com.key /tmp/dummy
 sed 's/example/rhcloud/g' </tmp/dummy  >/var/named/rhcloud.com.key
 cp dynamic/example.com.db /tmp/dummy
 sed 's/example/rhcloud/g' </tmp/dummy  >/var/named/dynamic/rhcloud.com.db
-touch /var/named/dynamic/rhcloud.com.db.jnl
+#touch /var/named/dynamic/rhcloud.com.db.jnl
 popd
 
 pushd $li_repo/misc/devenv/etc
@@ -46,16 +48,19 @@ touch /var/named/data/queries.log
 touch /var/named/data/cache_dump.db
 touch /var/named/data/named_stats.txt
 touch /var/named/data/named_mem_stats.txt
-touch /var/named/managed-keys.bind
-touch /var/named/managed-keys.bind.jnl
+#touch /var/named/managed-keys.bind
+#touch /var/named/managed-keys.bind.jnl
 touch /var/named/forwarders.conf
 chmod 755 /var/named/forwarders.conf
 cp /usr/share/doc/bind-*/sample/var/named/named* /var/named/
-cp dhclient-eth0.conf /etc/dhclient-$ifc.conf
 mkdir -p /etc/dhcp
-cp dhcp/dhclient-eth0-up-hooks /tmp/dummy
-sed s/eth0/$ifc/g </tmp/dummy  >/etc/dhcp/dhclient-$ifc-up-hooks
-chmod 755 /etc/dhcp/dhclient-$ifc-up-hooks
+for (( i=0; i < ${#ifc[@]}; i++ ))
+do
+  cp dhclient-eth0.conf /etc/dhclient-${ifc[$i]}.conf
+  cp dhcp/dhclient-eth0-up-hooks /tmp/dummy
+  sed s/eth0/${ifc[$i]}/g </tmp/dummy  >/etc/dhcp/dhclient-${ifc[$i]}-up-hooks
+  chmod 755 /etc/dhcp/dhclient-${ifc[$i]}-up-hooks
+done
 cp rndc.conf /etc/rndc.conf
 popd
 
@@ -67,5 +72,5 @@ chown -R named:named /var/named
 rm /tmp/dummy
 
 # start services
-service network start
 service named start
+service network start
