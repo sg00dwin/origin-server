@@ -54,7 +54,7 @@ Broker::Application.configure do
         :db => "stickshift_broker_dev",
         :collections => {:user => "auth_user"}
       }
-    }
+    },
 
     :dns => {
       :bind => {

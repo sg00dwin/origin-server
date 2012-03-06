@@ -1,0 +1,19 @@
+#!/usr/bin/ruby
+require 'rubygems'
+require '/var/www/stickshift/broker/config/environment'
+
+opts = GetoptLong.new(["--user",  "-u", GetoptLong::REQUIRED_ARGUMENT],
+                      ["--password",  "-p", GetoptLong::REQUIRED_ARGUMENT])
+opt = {}
+opts.each do |o, a|
+    opt[o[2..-1]] = a.to_s
+end
+
+auth_config = Rails.application.config.ss[:auth][:mongo]
+ds = StickShift::MongoDataStore.new(auth_config)
+
+hash = ds.find_one( {"_id" => opt['user']} )
+return "Error: User '#{opt['user']}' already registered." if hash && !hash.empty?
+
+ds.insert({"_id" => opt['user'], "password" => opt['password']})
+puts "User '#{opt['user']}' successfully registered with StickShift."
