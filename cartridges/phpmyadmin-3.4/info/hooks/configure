@@ -8,7 +8,7 @@ set -e
 function print_help {
     echo "Usage: $0 app-name namespace uuid"
 
-    echo "$0 $@" | logger -p local0.notice -t libra_phpmyadmin_configure
+    echo "$0 $@" | logger -p local0.notice -t stickshift_phpmyadmin_configure
     exit 1
 }
 
@@ -24,8 +24,8 @@ done
 
 [ $# -eq 3 ] || print_help
 
-CART_DIR=${CART_DIR:=/usr/libexec/li/cartridges}
-source ${CART_DIR}/abstract/info/lib/util
+source "/etc/stickshift/stickshift-node.conf"
+source ${CARTRIDGE_BASE_PATH}/abstract/info/lib/util
 
 app_type="phpmyadmin-3.4"
 setup_embedded_configure "$1" $2 $3
@@ -45,7 +45,7 @@ then
 fi
 
 # check that the proxy pass include directory exists
-[ -d "/etc/httpd/conf.d/libra/${uuid}_${namespace}_${application}" ] || error "httpd conf dir not available" 136
+[ -d "/etc/httpd/conf.d/stickshift/${uuid}_${namespace}_${application}" ] || error "httpd conf dir not available" 136
 
 #
 # Create the core of the application
