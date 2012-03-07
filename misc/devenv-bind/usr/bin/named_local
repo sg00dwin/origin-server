@@ -1,0 +1,110 @@
+#!/usr/bin/ruby
+#
+# Control a BIND DNS service for testing
+#
+
+
+require 'rubygems'
+require 'open4'
+require 'ftools' # adds File.cp
+require 'fileutils' # for change directory
+require 'pp'
+
+require 'dnsruby'
+
+$named_init_dir = ENV['NAMED_INIT_DIR'] or "/usr/share/bind-ddns"
+#named_dir = File.dirname(__FILE__)
+named_dir = "."
+
+class BindTestService
+
+  attr_reader :testroot, :pid
+  def initialize(testroot=named_dir)
+
+    @testroot = testroot
+
+    # get server, port, keyname, keyvalue, zone, domain_suffix
+    reset
+  end
+
+  def clean
+    # delete all journal files
+    `rm -f *.jnl`
+
+    # delete the dynamic managed keys file
+    if File.exists? 'managed-keys.bind'
+      File.delete 'managed-keys.bind'
+    end
+  end
+
+  def reset
+    clean
+    File.copy($named_init_dir + "/example.com.db.init", "example.com.db")
+  end
+
+  # start the daemon
+  def start
+
+    if @pid != nil
+      raise "I think a named is already running with PID #{@pid}"
+    end
+
+    conf_file = $named_init_dir + '/named.conf'
+
+    cmd = "/usr/sbin/named -4 -c #{conf_file}"
+    pid, stdin, stdout, stderr = Open4::popen4 cmd
+     
+    # Need to check if there already is one
+    
+    stdin.close
+    stdout.close
+    stderr.close
+
+    sleep 2
+    @pid = File.open("named.pid").read.to_i
+  end
+
+  def stop
+    if @pid == nil
+      raise "no PID: is there really a named running?"
+    end
+
+    Process.kill('INT', @pid)
+    @pid = nil
+
+  end
+
+  def self.stop(named_root)
+    pid = File.read("named.pid").strip.to_i
+    Process.kill('INT', pid)
+  end
+
+  def self.clean(named_root)
+    FileUtils.cd named_root
+    `rm -f *.jnl`
+  end
+
+end
+
+if __FILE__ == $0
+  # UPDATE AS NEEDED
+
+  case ARGV[0]
+  when "start"
+    c = BindTestService.new named_dir
+
+    c.reset
+
+    c.start
+
+  when "stop"
+    BindTestService.stop named_dir
+
+  when "clean"
+    BindTestService.clean named_dir
+
+  else
+
+  end
+end
+
