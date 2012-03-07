@@ -31,11 +31,13 @@ function print_idled {
 }
 
 function is_idled {
-    if [ -f "$OPENSHIFT_RUNTIME_DIR" ]; then
+    appid=$1
+
+    source "/var/lib/libra/${appid}/.env/OPENSHIFT_RUNTIME_DIR"
+    if [ -f "$OPENSHIFT_RUNTIME_DIR/.state" ]; then
         _test=`cat $OPENSHIFT_RUNTIME_DIR/.state`
         return `test idle = "$_test"`
     else
-        appid=$1
         if ! grep -q ' #ProxyPass' "/etc/httpd/conf.d/libra/${appid}"*.conf 2>/dev/null
         then
             return $FALSE
