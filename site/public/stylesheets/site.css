@@ -160,6 +160,10 @@
 .column-nav .view-threads-by-popularity .views-table .block-stats {
   clear: both; }
 
+.links > a,
+.links > span {
+  margin-right: 8px; }
+
 .og-mission,
 .forum-header-description {
   margin-bottom: 10px; }
@@ -173,8 +177,6 @@
   .block:after {
     clear: both; }
 
-.column-nav .block .item-list {
-  margin-left: 28px; }
 .column-nav .view-user-profile-box {
   margin-bottom: 20px; }
 
@@ -218,6 +220,15 @@
     .view-nodes-by-category article.blog > .nid_1 > a {
       color: #888; }
 
+.node {
+  margin-bottom: 20px; }
+
+.comment-content .links,
+.node > .links {
+  margin-top: 10px;
+  text-transform: uppercase;
+  font-weight: bold; }
+
 .comment {
   margin-bottom: 20px;
   padding-top: 8px;
@@ -225,8 +236,6 @@
   .comment .submitted {
     margin-top: 10px;
     font-style: italic; }
-  .comment .links.btn-group {
-    margin-top: 10px; }
 
 .comment > table td {
   vertical-align: top; }
@@ -265,6 +274,13 @@
 .badge.expert {
   background-color: #a80f00; }
 
+.column-nav .poll > .title {
+  margin-bottom: 5px; }
+.column-nav .poll > .text {
+  margin-bottom: 2px; }
+.column-nav .poll > .bar > .foreground {
+  background-color: #91010b; }
+
 /* copied from system.css */
 html.js fieldset.collapsed {
   border-bottom-width: 0;
@@ -280,11 +296,11 @@ html.js fieldset.collapsed legend {
   display: block; }
 
 html.js fieldset.collapsible legend a {
-  background: url("../../misc/menu-expanded.png") no-repeat scroll 5px 75% transparent;
+  background: url("../images/menu-expanded.png") no-repeat scroll 5px 75% transparent;
   padding-left: 15px; }
 
 html.js fieldset.collapsed legend a {
-  background-image: url("../../misc/menu-collapsed.png");
+  background-image: url("../images/menu-collapsed.png");
   background-position: 5px 50%; }
 
 * html.js fieldset.collapsed legend, * html.js fieldset.collapsed legend *, * html.js fieldset.collapsed table * {
@@ -304,25 +320,22 @@ html.js fieldset.collapsible .fieldset-wrapper {
   margin-right: 15px; }
 
 #search-field {
-  position: relative;
-  text-align: right; }
-
-button.search {
-  background: transparent url("../images/sprite-vert.png") 4px -170px no-repeat;
-  height: 25px;
-  width: 20px;
-  border: 0;
-  position: absolute;
-  right: 5px;
-  top: 1px; }
-
-.search-query {
-  margin-bottom: 0;
-  border-radius: 5px;
-  width: -moz-available;
-  width: inherit;
-  padding-left: 5px;
-  padding-right: 25px; }
+  position: relative; }
+  #search-field button.search {
+    background: transparent url("../images/sprite-vert.png") 4px -170px no-repeat;
+    height: 25px;
+    width: 20px;
+    border: 0;
+    position: absolute;
+    right: 14px;
+    top: 1px; }
+  #search-field .search-query {
+    margin-bottom: 0;
+    border-radius: 5px;
+    width: -moz-available;
+    width: inherit;
+    padding-left: 5px;
+    padding-right: 25px; }
 
 /* move into core when the branding converges */
 a {
@@ -607,8 +620,7 @@ h1.ribbon {
     text-transform: uppercase;
     margin-top: 15px; }
   .column-nav .nav-stacked {
-    margin-left: -14px;
-    margin-right: 14px; }
+    margin-left: -14px; }
   .column-nav .nav-pills .active > a,
   .column-nav .nav-pills .active > a:hover {
     background-color: #030303;
@@ -625,8 +637,7 @@ h1.ribbon {
 /* Stacked navigations indent by 1 gutter each time */
 .nav-stacked > li > .nav-stacked {
   margin-left: 14px;
-  margin-bottom: 0;
-  margin-right: 0; }
+  margin-bottom: 0; }
 
 @media (min-width: 768px) and (max-width: 979px) {
   .nav-stacked > li > .nav-stacked {

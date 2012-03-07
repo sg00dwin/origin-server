@@ -40,29 +40,30 @@
       .row.row-flush-right
         .column-nav.lift-less.span-wrapper
           .span3
-            .nav-location.headline Community
+            .gutter-right
+              .nav-location.headline Community
 
-            -# may need a block or three
-            %ul.menu.nav.nav-pills.nav-stacked
-              %li.leaf= link_to "Overview", "overview"
-              %li.expanded.active
-                = link_to "Blogs", "blog"
-                %ul.menu.nav.nav-pills.nav-stacked
-                  %li.first.last.leaf= link_to "Planet OpenShift", "planet"
-              %li.expanded
-                = link_to "Forums", "forums"
-                %ul.menu.nav.nav-pills.nav-stacked
-                  %li.first.leaf= link_to "Express", "express_forum"
-                  %li.last.leaf= link_to "Open Source", "opensource_forum"
-              %li.leaf= link_to "FAQs", "faq"
-              %li.leaf= link_to "Knowledge Base", "kb"
-              %li.leaf= link_to "Videos", "videos"
-              %li.leaf= link_to "Events", "events"
-              %li.leaf= link_to "MongoDB Resources", "mongodb"
+              -# may need a block or three
+              %ul.menu.nav.nav-pills.nav-stacked
+                %li.leaf= link_to "Overview", "overview"
+                %li.expanded.active
+                  = link_to "Blogs", "blog"
+                  %ul.menu.nav.nav-pills.nav-stacked
+                    %li.first.last.leaf= link_to "Planet OpenShift", "planet"
+                %li.expanded
+                  = link_to "Forums", "forums"
+                  %ul.menu.nav.nav-pills.nav-stacked
+                    %li.first.leaf= link_to "Express", "express_forum"
+                    %li.last.leaf= link_to "Open Source", "opensource_forum"
+                %li.leaf= link_to "FAQs", "faq"
+                %li.leaf= link_to "Knowledge Base", "kb"
+                %li.leaf= link_to "Videos", "videos"
+                %li.leaf= link_to "Events", "events"
+                %li.leaf= link_to "MongoDB Resources", "mongodb"
 
-            %form.form-search
-              %input.input-medium.search-query
-              %button.btn{:type => 'submit'} Search
+              %form.form-search
+                %input.input-medium.search-query
+                %button.btn{:type => 'submit'} Search
         
         .column-content.lift.span-wrapper
           .span9.span-flush-right

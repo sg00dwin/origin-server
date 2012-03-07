@@ -275,6 +275,9 @@ a:hover {
 .gutter {
   margin-left: 28px; }
 
+.gutter-right {
+  margin-right: 14px; }
+
 .box-content {
   padding: 20px 28px; }
 
