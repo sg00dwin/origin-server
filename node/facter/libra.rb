@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 #
 # = libra.rb: Facter integration for li
 #
@@ -73,12 +74,12 @@ end
 #
 # Find node_profile, max_apps, max_active_apps
 #
-node_profile = 'std'
+node_profile = 'small'
 max_apps = '0'
 max_active_apps = '0'
 if File.exists?('/etc/libra/resource_limits.conf')
   config_file = ParseConfig.new('/etc/libra/resource_limits.conf')
-  node_profile = config_file.get_value('node_profile') ? config_file.get_value('node_profile') : 'std'
+  node_profile = config_file.get_value('node_profile') ? config_file.get_value('node_profile') : 'small'
   max_apps = config_file.get_value('max_apps') ? config_file.get_value('max_apps') : '0'
   max_active_apps = config_file.get_value('max_active_apps') ? config_file.get_value('max_active_apps') : '0'
 end
