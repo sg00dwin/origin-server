@@ -22,8 +22,11 @@ case "$node_profile" in
 	micro)
         OPENSHIFT_MAVEN_XMX="-Xmx208m"
     ;;
-    std)
+    small)
         OPENSHIFT_MAVEN_XMX="-Xmx396m"
+    ;;
+    medium)
+        OPENSHIFT_MAVEN_XMX="-Xmx792m"
     ;;
     large)
         OPENSHIFT_MAVEN_XMX="-Xmx792m"
