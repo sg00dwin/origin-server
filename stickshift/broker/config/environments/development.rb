@@ -44,6 +44,7 @@ Broker::Application.configure do
     :default_max_gears => 5,
 
     :auth => {
+      :salt => "ClWqe5zKtEW4CJEMyjzQ",
       :mongo => {
         :replica_set => false,
         # Replica set example: [[<host-1>, <port-1>], [<host-2>, <port-2>], ...]

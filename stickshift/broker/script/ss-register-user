@@ -1,8 +1,8 @@
 #!/usr/bin/ruby
 require 'rubygems'
+require 'digest/md5'
 require '/var/www/stickshift/broker/config/environment'
 
-<<<<<<< HEAD
 def p_usage
   puts <<USAGE
 Usage: #{$0}
@@ -33,29 +33,18 @@ end
 
 if opt['help'] || !opt['user'] || !opt['password']
     p_usage
-=======
-opts = GetoptLong.new(["--user",  "-u", GetoptLong::REQUIRED_ARGUMENT],
-                      ["--password",  "-p", GetoptLong::REQUIRED_ARGUMENT])
-opt = {}
-opts.each do |o, a|
-    opt[o[2..-1]] = a.to_s
->>>>>>> 095cb22c7c89e75ccac7e61cb31f3a98f6bef8bc
 end
 
-auth_config = Rails.application.config.ss[:auth][:mongo]
-ds = StickShift::MongoDataStore.new(auth_config)
+auth_config = Rails.application.config.ss[:auth]
+ds = StickShift::MongoDataStore.new(auth_config[:mongo])
 
 hash = ds.find_one( {"_id" => opt['user']} )
-<<<<<<< HEAD
 if hash && !hash.empty?
   puts "Error: User '#{opt['user']}' already registered."
   exit 1
 end
 
-ds.insert({"_id" => opt['user'], "user" => opt['user'], "password" => opt['password']})
-=======
-return "Error: User '#{opt['user']}' already registered." if hash && !hash.empty?
 
-ds.insert({"_id" => opt['user'], "password" => opt['password']})
->>>>>>> 095cb22c7c89e75ccac7e61cb31f3a98f6bef8bc
+encoded_password = Digest::MD5.hexdigest(Digest::MD5.hexdigest(opt['password']) + auth_config[:salt])
+ds.insert({"_id" => opt['user'], "user" => opt['user'], "password" => encoded_password})
 puts "User '#{opt['user']}' successfully registered with StickShift."
