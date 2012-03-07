@@ -9,90 +9,92 @@
         in the Cloud
       .secondary OpenShift is a free, auto-scaling platform as a service for web applications.  It streamlines the application life cycle so developers can focus on their users, customers, and code.
 
-#learn.section-striped.lift-counter
-  .container
-    .row
-      = link_to "signup", :class => 'take-action span12' do
-        .pull-right
-          Try it out
-        %div
-          Create your 
-          %strong first three apps 
-          for free
-
-      .span6
-        %ul.learn.unstyled
-          %li
-            = link_to "learn", :class => 'link-tile' do
-              %img{:src => 'clock.png'}
-              %h4 Superfast!
-              %p Code and deploy to the cloud in minutes.  Faster and easier than it has ever been.
-          %li
-            = link_to "learn", :class => 'link-tile' do
-              %img{:src => 'key.png'}
-              %h4 Don't get locked in
-              %p Minimal coding to the platform and built on open technologies, so you can take it with you.
-          %li
-            = link_to "learn", :class => 'link-tile' do
-              %img{:src => 'scale.png'}
-              %h4 Scale easily in any language
-              %p Grow your Java, Perl, Ruby, Python, and Node.js apps easily with resource scaling.
-      .span6
-        %ul.news.unstyled
-          %li
-            = link_to "news", :class => 'link-tile' do
-              %h4 Node.js now running on Openshift
-              %p Everyone's most liked (and most hated) language is now available on OpenShift. Deploy your node.js apps in the cloud faster than you can say NaN!
-          %li
-            = link_to "news", :class => 'link-tile' do
-              %h4 New OpenShift Express upgrade - March 12
-              %p We pushed a minor Express upgrade today, including some bug fixes and general UI enhancements. We've added a preview section to the app
-    .row
-      .span6
-        %p.gutter= link_to "Learn about OpenShift...", "learn"
-      .span6
-        %p.gutter= link_to "Read the OpenShift blog...", "blog"
-
-
-#buzz.section-base
-  .container
-    .row.row-buzz.lift
-      .span12
-        .column-buzz
-          %h2 
-            Check the 
-            %strong Buzz
-          %hr
-          .row-fluid
-            .span6
-              %blockquote
-                %p Testimonial 1
-                %small Some person
-              %blockquote 
-                %p Testimonial 2
-                %small Some other person
-            #buzz-twitter.span6
-
-          .row-fluid
-            .span6
-              = link_to "community", :class => 'link-with-action' do
-                %strong Join
-                our community
-            .span6
-              .align-right
-                = link_to "follow", :class => 'link-with-action' do
-                  %strong Follow
-                  OpenShift
-              .align-right
-                = link_to "feed", :class => 'link-with-action' do
-                  %strong More
-                  = "#OpenShift buzz"
-
-          .callout
-            .one Look for team
-            .two OpenShift
-            .three at Mongo DB
-
 - content_for :javascripts do
   = javascript_include_tag "/app/javascripts/twitter.branding.js"
   = javascript_include_tag "/app/javascripts/home.branding.js"
+
+- content_for :sub_layout do
+
+  #learn.section-striped.lift-counter
+    .container
+      .row
+        = link_to "signup", :class => 'take-action span12' do
+          .pull-right
+            Try it out
+          %div
+            Create your 
+            %strong first three apps 
+            for free
+  
+        .span6
+          %ul.learn.unstyled
+            %li
+              = link_to "learn", :class => 'link-tile' do
+                %img{:src => 'clock.png'}
+                %h4 Superfast!
+                %p Code and deploy to the cloud in minutes.  Faster and easier than it has ever been.
+            %li
+              = link_to "learn", :class => 'link-tile' do
+                %img{:src => 'key.png'}
+                %h4 Don't get locked in
+                %p Minimal coding to the platform and built on open technologies, so you can take it with you.
+            %li
+              = link_to "learn", :class => 'link-tile' do
+                %img{:src => 'scale.png'}
+                %h4 Scale easily in any language
+                %p Grow your Java, Perl, Ruby, Python, and Node.js apps easily with resource scaling.
+        .span6
+          %ul.news.unstyled
+            %li
+              = link_to "news", :class => 'link-tile' do
+                %h4 Node.js now running on Openshift
+                %p Everyone's most liked (and most hated) language is now available on OpenShift. Deploy your node.js apps in the cloud faster than you can say NaN!
+            %li
+              = link_to "news", :class => 'link-tile' do
+                %h4 New OpenShift Express upgrade - March 12
+                %p We pushed a minor Express upgrade today, including some bug fixes and general UI enhancements. We've added a preview section to the app
+      .row
+        .span6
+          %p.gutter= link_to "Learn about OpenShift...", "learn"
+        .span6
+          %p.gutter= link_to "Read the OpenShift blog...", "blog"
+  
+  #buzz.section-base
+    .container
+      .row.row-buzz.lift
+        .span12
+          .column-buzz
+            %h2 
+              Check the 
+              %strong Buzz
+            %hr
+            .row-fluid
+              .span6
+                %blockquote
+                  %p OpenShift has dramatically improved my cloud experience. Managing my application is so much easier, I haven't had any problems dealing with usage spikes, and its security and scalability really help my peace of mind.
+                  %small Some person
+                %blockquote 
+                  %p OpenShift has dramatically improved my cloud experience. Managing my application is so much easier, I haven't had any problems dealing with usage spikes, and its security and scalability really help my peace of mind.
+                  %small Some other person
+              #buzz-twitter.span6
+  
+            .row-fluid
+              .span6
+                = link_to "community", :class => 'link-with-action' do
+                  %strong Join
+                  our community
+              .span6
+                .align-right
+                  = link_to "follow", :class => 'link-with-action' do
+                    %strong Follow
+                    OpenShift
+                .align-right
+                  = link_to "feed", :class => 'link-with-action' do
+                    %strong More
+                    = "#OpenShift buzz"
+  
+            .callout
+              .one Look for team
+              .two OpenShift
+              .three at Mongo DB
+

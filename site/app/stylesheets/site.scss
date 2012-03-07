@@ -320,7 +320,7 @@ body.signup {
   }
 }
 
-#buzz { min-height: 500px; }
+#buzz { min-height: 500px; background: $buzzBackgroundColor url($buzzBackgroundImage) repeat-x bottom left; }
 
 .link-with-action {
   font-weight: bold;
@@ -357,7 +357,7 @@ h1.ribbon {
   .row-content > .row { background-color: $textLightBackground; }
 }
 
-.column-buzz { background-color: $darkBackground; color: $textDarkBackground; }
+.column-buzz { background: $darkNoiseBackgroundColor url($transparentNoiseImageData); color: $textDarkBackground; }
 .column-buzz a { color: $textDarkBackground; }
 
 // Column navigation
