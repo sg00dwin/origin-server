@@ -1,11 +1,12 @@
 #!/usr/bin/ruby
 
 require 'socket'
-
+require 'logger'
 
 @max_sessions_per_gear=10.0
-@gear_down_pct = 50.0
+@gear_down_pct = 50.1
 @gear_up_pct = 90.0
+@log = Logger.new("#{ENV['OPENSHIFT_LOG_DIR']}/scale_events.log")
 
 class Haproxy_attr
     attr_accessor :pxname,:svname,:qcur,:qmax,:scur,:smax,:slim,:stot,:bin,:bout,:dreq,:dresp,:ereq,:econ,:eresp,:wretr,:wredis,:status,:weight,:act,:bck,:chkfail,:chkdown,:lastchg,:downtime,:qlimit,:pid,:iid,:sid,:throttle,:lbtot,:tracked,:type,:rate,:rate_lim,:rate_max,:check_status,:check_code,:check_duration,:hrsp_1xx,:hrsp_2xx,:hrsp_3xx,:hrsp_4xx,:hrsp_5xx,:hrsp_other,:hanafail,:req_rate,:req_rate_max,:req_tot,:cli_abrt,:srv_abrt
@@ -42,11 +43,8 @@ class Haproxy
 
 end
 
-
-
 def check_capacity
     ha=Haproxy.new("/tmp/stats")
-    #puts "Cluster: Express - #{ha.stats['express']['FRONTEND'].status}"
     gear_namespace=ENV['OPENSHIFT_APP_DNS'].split('.')[0].split('-')[1]
     gear_count = ha.stats['express'].count - 3.0 # Remove backend, frontend and 'filler'
     sessions = ha.stats['express']['BACKEND'].scur.to_f
@@ -54,16 +52,20 @@ def check_capacity
     session_capacity_pct = (sessions_per_gear / @max_sessions_per_gear ) * 100
     
     if session_capacity_pct >= @gear_up_pct
-        puts "gear up: #{session_capacity_pct}"
+        @log.info("GEAR_UP - capacity: #{session_capacity_pct}% gear_count:#{gear_count} sessions: #{sessions} up_threshold: #{@gear_up_pct}%")
         # Replace with jhonce's scripts
-        `curl -k -H 'Accept: application/xml' --user 'mmcgrath@redhat.com:woot' https://localhost/broker/rest/domains/#{gear_namespace}/applications/#{ENV['OPENSHIFT_APP_NAME']}/events -X POST -d event=scale-up`
-    elsif session_capacity_pct <= @gear_down_pct and session_capacity_pct > 5.0
-        puts "gear down: #{session_capacity_pct}"
-        `curl -k -H 'Accept: application/xml' --user 'mmcgrath@redhat.com:woot' https://localhost/broker/rest/domains/#{gear_namespace}/applications/#{ENV['OPENSHIFT_APP_NAME']}/events -X POST -d event=scale-down`
+        `add-gear -l mmcgrath@redhat.com -p ' ' -n #{gear_namespace} -t php-5.3 -h localhost -a #{ENV['OPENSHIFT_APP_NAME']}`
+    elsif session_capacity_pct < @gear_down_pct and gear_count > 1
+        @log.info("GEAR_DOWN - capacity: #{session_capacity_pct}% gear_count:#{gear_count} sessions: #{sessions} down_threshold: #{@gear_down_pct}%")
+        `remove-gear -l mmcgrath@redhat.com -p ' ' -n #{gear_namespace} -t php-5.3 -h localhost -a #{ENV['OPENSHIFT_APP_NAME']}`
     else
-        puts "Do nothing"
-        puts "Session Capcity: #{session_capacity_pct}"
+        @log.debug("GEAR_DO_NOTHING - Capacity: #{session_capacity_pct}% gear_count:#{gear_count} sessions: #{sessions} up/down_threshold: #{@gear_up_pct}%/#{@gear_down_pct}%")
     end
 end
 
-check_capacity
+@log.info("Haproxy watcher started")
+
+while true
+    check_capacity
+    sleep 3
+end

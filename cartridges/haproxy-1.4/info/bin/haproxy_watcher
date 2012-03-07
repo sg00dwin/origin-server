@@ -1,0 +1,18 @@
+#!/usr/bin/ruby
+#
+require 'rubygems'
+require 'daemons'
+
+options = {
+    :backgrace => true,
+    :ontop => false,
+    :log_output => true,
+    :log_dir => '/var/lib/libra/178a8023319849e08b510a7b607d9f1e/hatest/logs/',
+    :log_output => true,
+    :dir_mode => :normal,
+    :dir => '/var/lib/libra/178a8023319849e08b510a7b607d9f1e/hatest/run/',
+    :multiple => false,
+    
+}
+
+Daemons.run('/usr/libexec/li/cartridges/haproxy-1.4/info/bin/haproxy_tracker', options)
