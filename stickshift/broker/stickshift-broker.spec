@@ -100,6 +100,7 @@ rm -rf $RPM_BUILD_ROOT
 %config(noreplace) %{_sysconfdir}/oddjobd.conf.d/oddjobd-ss-exec.conf 
 %config(noreplace) %{_sysconfdir}/dbus-1/system.d/stickshift-dbus.conf
 %attr(0700,-,-) %{_bindir}/ss-exec-command
+%attr(0700,-,-) %{_bindir}/ss-register-user
 %attr(0755,-,-) %{_var}/lib/stickshift
 
 %post
@@ -158,3 +159,5 @@ echo "> use stickshift_broker_dev"
 echo "> db.addUser(\"stickshift\", \"mooo\")"
 
 %changelog
+* Tue Mar 06 2012 Krishna Raman <kraman@gmail.com> 0.5.2-1
+- Cloud-Sdk => Stickshift rename
