@@ -524,7 +524,7 @@ module Express
                 end
               end
   
-              log_debug "DEBUG: Fixing DNS and s3 for app '#{app.name}' after move"
+              log_debug "DEBUG: Fixing DNS and mongo for app '#{app.name}' after move"
               log_debug "DEBUG: Changing server identity of '#{app.name}' from '#{source_container.id}' to '#{destination_container.id}'"
               app.gear.server_identity = destination_container.id
               app.gear.container = destination_container
