@@ -16,6 +16,10 @@ class StyleguideController < ApplicationController
   def home
   end
 
+  def overview
+    render :layout => 'site'
+  end
+
   def signup
   end
 
