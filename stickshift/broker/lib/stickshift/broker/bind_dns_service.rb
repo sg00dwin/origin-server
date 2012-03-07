@@ -4,7 +4,7 @@
 require 'rubygems'
 require 'dnsruby'
 
-module StickShift
+module StickShift::Broker
   class BindDnsService < StickShift::DnsService
     @ss_dns_provider = StickShift::BindDnsService
 
