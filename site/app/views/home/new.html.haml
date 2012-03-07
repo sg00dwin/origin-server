@@ -53,96 +53,46 @@
       .span6
         %p.gutter= link_to "Read the OpenShift blog...", "blog"
 
-%section#opener
-  .content
-    %header
-      %hgroup
-        %h1
-          Go Beyond the Clouds
-        %h2
-          Java PHP Ruby Python Perl
-    
-    - unless logged_in?
-      = link_to 'Sign up and try it', '/app/user/new/express', :class => 'button sign_up'
-    - else
-      - if has_access? :express
-        = link_to 'Get started!', '/app/express#quickstart', :class => 'button quickstart'
 
+#buzz.section-base
+  .container
+    .row.row-buzz.lift
+      .span12
+        .column-buzz
+          %h2 
+            Check the 
+            %strong Buzz
+          %hr
+          .row-fluid
+            .span6
+              %blockquote
+                %p Testimonial 1
+                %small Some person
+              %blockquote 
+                %p Testimonial 2
+                %small Some other person
+            #buzz-twitter.span6
 
-%section#exposition.main
-  %header
-    %h1
-      What is OpenShift?
-  
-  .content
-    %p#intro
-      OpenShift is a free, auto-scaling platform-as-a-service for Java, Ruby, PHP, Perl and Python applications.
-    
-  %header
-    %h1
-      Why Use OpenShift?
-  
-  .content
-    #fast
-      %header
-        %h2
-          Time of the essence? Just upload code and go!
+          .row-fluid
+            .span6
+              = link_to "community", :class => 'link-with-action' do
+                %strong Join
+                our community
+            .span6
+              .align-right
+                = link_to "follow", :class => 'link-with-action' do
+                  %strong Follow
+                  OpenShift
+              .align-right
+                = link_to "feed", :class => 'link-with-action' do
+                  %strong More
+                  = "#OpenShift buzz"
 
-      %img.icon{ :src => "/app/images/fast_icon.png" }
-      
-      %p
-        Whether you prefer the command line or a browser-based interface, OpenShift provides the fastest and easiest on-ramp to the cloud for free.
-          
-    #free
-      %header
-        %h2
-          Experiencing growing pains? OpenShift is tailored to meet your needs.
-                
-      %img.icon{ :src => "/app/images/free_icon.png" }
-    
-      %p
-        OpenShift adapts to the varying needs of your app with auto-scaling built-in. No need for complicated scripts or additional coding.
-          
-    #open
-      %header
-        %h2
-          Don't get locked in! Choose your languages, frameworks, middleware and clouds.
-      
-      %img.icon{ :src => "/app/images/open_icon.png" }
-
-      %p
-        Keep your options open. OpenShift is based on Open Source with support for Java, PHP, Ruby, Python, and Perl and more.
-      
-%section#social.main
-  %header
-    %h1
-      Buzz
-  
-  .content
-    #latest
-      = link_to 'http://twitter.com/#!/openshift', :title => 'OpenShift' do
-        %img.avatar{ :src => "/app/images/avatars/openshift.png" }
-      
-      %p.tweet{ :id => "latest_tweet" }
-    
-    #retweets
-
-    #social_links
-      %a.more{ :href => "http://twitter.com/#!/search/openshift" }
-        More #openshift buzz
-      
-      %a.button{ :href => "http://twitter.com/#!/openshift" }
-        Follow @OpenShift
-
-- unless logged_in?
-  %section#bottom_signup.main
-    %header
-      %h1
-        Try OpenShift now for free!
-      
-    .content
-      = link_to 'Sign up and try it', '/app/user/new/express', :class => 'sign_up button'
+          .callout
+            .one Look for team
+            .two OpenShift
+            .three at Mongo DB
 
 - content_for :javascripts do
-  = javascript_include_tag "/app/javascripts/twitter.js"
-  = javascript_include_tag "/app/javascripts/home.js"
+  = javascript_include_tag "/app/javascripts/twitter.branding.js"
+  = javascript_include_tag "/app/javascripts/home.branding.js"
