@@ -197,6 +197,11 @@ body.signup {
     background-color: $ribbonFoldColor;
     padding-right: $gridGutterWidth + 12px;
     background: url('../images/arrow-large.gif') 87% center no-repeat $ribbonFoldColor;
+    -moz-transition: background-position 0.2s;
+  }
+
+  &:hover > .pull-right {
+    background-position: 89% center;
   }
 }
 #learn .take-action { margin-top: -37px; margin-bottom: 20px; }
@@ -339,6 +344,7 @@ h1.ribbon {
   h3 > a { 
     color: white; 
     text-transform: uppercase; 
+    font-weight: bold;
   }
   .nav-location {
     font-size: 19px;
