@@ -459,47 +459,55 @@ body.signup {
       line-height: 18px; } }
 
 .take-action {
-  *zoom: 1;
-  display: block;
-  text-transform: uppercase;
-  font-weight: bold;
-  font-size: 20px;
-  letter-spacing: 1px;
-  color: white;
-  background-color: #eb0011; }
-  .take-action:before, .take-action:after {
-    display: table;
-    content: ""; }
-  .take-action:after {
-    clear: both; }
+  display: table !important; }
   .take-action:hover, .take-action:active {
     text-decoration: none;
     color: white; }
-  .take-action > * {
-    padding: 28px; }
-  .take-action > .pull-right {
+  .take-action > div {
+    display: table-cell;
+    padding: 20px 28px;
+    text-align: left;
+    vertical-align: middle;
+    text-transform: uppercase;
+    font-weight: bold;
+    font-size: 20px;
+    line-height: 21px;
+    letter-spacing: 1px;
+    color: white;
+    background-color: #eb0011; }
+  .take-action > div:last-child {
+    white-space: nowrap;
     background-color: #91010b;
     padding-right: 40px;
     background: url("../images/arrow-large.gif") 87% center no-repeat #91010b;
-    -moz-transition: background-position 0.2s; }
-  .take-action:hover > .pull-right {
+    -moz-transition: background-position 0.2s;
+    -webkit-transition: background-position 0.2s;
+    transition: background-position 0.2s; }
+  .take-action:hover > div:last-child {
     background-position: 89% center; }
 
+#learn .take-action {
+  margin-top: -28px;
+  margin-bottom: 20px; }
+
 @media (max-width: 768px) {
-  .take-action > * {
-    padding: 16px 20px; } }
+  .take-action > div {
+    padding: 10px 20px;
+    font-size: 13px;
+    line-height: 14px;
+    letter-spacing: 0px; }
+
+  #learn .take-action {
+    margin-top: 0px;
+    width: 100%; } }
 
 @media (min-width: 768px) and (max-width: 979px) {
-  .take-action > * {
-    padding: 20px; } }
+  .take-action > div {
+    padding: 15px 20px; } }
 
 @media (min-width: 1200px) {
-  .take-action > * {
-    padding: 30px; } }
-
-#learn .take-action {
-  margin-top: -37px;
-  margin-bottom: 20px; }
+  .take-action > div {
+    padding: 20px 30px; } }
 
 .column-buzz > h2 {
   text-align: center;
