@@ -183,49 +183,60 @@ body.signup {
 }
 
 .take-action {
-  @include clearfix();
-  display: block;
-
-  text-transform: uppercase;
-  font-weight: bold;
-  font-size: 20px;
-  letter-spacing: 1px;
-
-  color: white;
-  background-color: $ribbonColor;
+  display: table !important; // override span12 CSS rules
 
   &:hover, &:active {
     text-decoration: none;
     color: white;
   }
 
-  > * {
-    padding: $gridGutterWidth;
+  > div {
+    display: table-cell;
+    padding: 20px $gridGutterWidth;
+    text-align: left;
+    vertical-align: middle;
+
+    text-transform: uppercase;
+    font-weight: bold;
+    font-size: 20px;
+    line-height: 21px;
+    letter-spacing: 1px;
+
+    color: white;
+    background-color: $ribbonColor;
   }
 
-  > .pull-right {
+  > div:last-child {
+    white-space: nowrap;
     background-color: $ribbonFoldColor;
     padding-right: $gridGutterWidth + 12px;
     background: url('../images/arrow-large.gif') 87% center no-repeat $ribbonFoldColor;
     -moz-transition: background-position 0.2s;
+    -webkit-transition: background-position 0.2s;
+    transition: background-position 0.2s;
   }
 
-  &:hover > .pull-right {
+  &:hover > div:last-child {
     background-position: 89% center;
   }
 }
+#learn .take-action { margin-top: -28px; margin-bottom: 20px; }
+
 @media (max-width: 768px) {
-  .take-action > * { padding: $gridGutterWidthPhone/1.25 $gridGutterWidthPhone; }
+  .take-action > div { 
+    padding: 10px $gridGutterWidthPhone;
+    font-size: 13px;
+    line-height: 14px;
+    letter-spacing: 0px;
+  }
+  #learn .take-action { margin-top: 0px; width: 100%;}
 }
 @if $gridGutterWidthTablet != $gridGutterWidth { @media (min-width: 768px) and (max-width: 979px) {
-  .take-action > * { padding: $gridGutterWidthTablet; }
+  .take-action > div { padding: 15px $gridGutterWidthTablet; }
 } }
 @if $gridGutterWidthLarge != $gridGutterWidth { @media (min-width: 1200px) {
-  .take-action > * { padding: $gridGutterWidthLarge; }
+  .take-action > div { padding: 20px $gridGutterWidthLarge; }
 } }
-
-
-#learn .take-action { margin-top: -37px; margin-bottom: 20px; }
 
 .column-buzz {
   > h2 { 
