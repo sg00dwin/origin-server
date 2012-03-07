@@ -49,7 +49,7 @@ for arg in $kvargs; do
     curr_server_gears[$gear_name]="$ep"
 
     if ! grep "server gear-$gear_name" "$haproxy_cfg" 2>&1 > /dev/null; then
-        echo "    server gear-$gear_name $ep check fall 2 rise 3 inter 2000" >> "$haproxy_cfg"
+        echo "    server gear-$gear_name $ep check fall 2 rise 3 inter 2000 cookie $gear_name" >> "$haproxy_cfg"
     fi
 done
 

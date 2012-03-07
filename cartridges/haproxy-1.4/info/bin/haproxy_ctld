@@ -129,7 +129,7 @@ end
 
 begin
     opts = GetoptLong.new(
-        ["--up", "-i", GetoptLong::NO_ARGUMENT],
+        ["--up", "-u", GetoptLong::NO_ARGUMENT],
         ["--down", "-d", GetoptLong::NO_ARGUMENT],
         ["--auto", "-a", GetoptLong::NO_ARGUMENT],
         ["--debug", GetoptLong::NO_ARGUMENT],
@@ -145,9 +145,11 @@ end
 
 
 if opt['up']
+    ha=Haproxy.new("/tmp/stats")
    ha.add_gear
    exit 0
 elsif opt['down']
+    ha=Haproxy.new("/tmp/stats")
     ha.remove_gear
     exit 0
 end

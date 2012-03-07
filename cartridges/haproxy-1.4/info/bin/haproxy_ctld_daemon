@@ -7,10 +7,10 @@ options = {
     :backgrace => true,
     :ontop => false,
     :log_output => true,
-    :log_dir => '/var/lib/libra/178a8023319849e08b510a7b607d9f1e/hatest/logs/',
+    :log_dir => "#{ENV['OPENSHIFT_LOG_DIR']}",
     :log_output => true,
     :dir_mode => :normal,
-    :dir => '/var/lib/libra/178a8023319849e08b510a7b607d9f1e/hatest/run/',
+    :dir => "#{ENV['OPENSHIFT_RUN_DIR']}",
     :multiple => false,
     
 }

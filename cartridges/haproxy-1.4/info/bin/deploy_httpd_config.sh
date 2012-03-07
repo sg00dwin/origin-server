@@ -77,6 +77,7 @@ listen stats $IP2:8080
     stats uri /
 
 listen express $IP:8080
+    cookie GEAR insert indirect nocache
     balance roundrobin
     server  filler $IP2:8080 backup
 EOF
