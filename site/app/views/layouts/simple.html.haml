@@ -6,13 +6,13 @@
 -ie_html :class => 'no-js console console-transition', :lang => 'en' do
   %head
     = render "layouts/head"
-    = render "layouts/new_stylesheets"
+    = render "layouts/site/stylesheets"
 
   %body{ :class => "#{controller.controller_name} #{controller.action_name}" }
     = outage_notification
 
     %header
-      = render 'layouts/simple_header'
+      = render 'layouts/simple/header'
 
     = flashes
 
@@ -23,7 +23,7 @@
         = yield
 
     %footer
-      = render 'layouts/simple_footer'
+      = render 'layouts/simple/footer'
 
     = render 'layouts/javascripts'
 

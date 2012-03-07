@@ -1,0 +1,196 @@
+/* Drupal specific markup, we may want to wrap this with a top level selector on body.drupal or something */
+.views-field-rss { float: right; }
+.views-field-title { font-size: 16px; line-height: 20px; }
+.views-field-picture { float: left; margin-right: 6px; }
+.view-forum-list .views-field-picture { float: right; margin-left: 6px; }
+.block-stats div { display: inline; }
+.views-table .views-field-pageviews { white-space: nowrap; }
+.views-field-group-name { display: inline; }
+
+.column-nav .view-threads-by-popularity .views-table {
+  h4 { display: inline; color: #666; font-size: 13px; line-height: 18px; }
+  a { text-decoration: underline; }
+  span.views-field-title { display: block; }
+  > div { margin-bottom: 15px; }
+  .block-stats { clear: both; }
+}
+
+.links > a,
+.links > span { 
+  margin-right: 8px; 
+}
+
+.og-mission,
+.forum-header-description { 
+  margin-bottom: 10px; 
+}
+
+.block { @include clearfix(); margin-bottom: 20px; }
+.column-nav {
+  .view-user-profile-box { margin-bottom: 20px; }
+}
+
+.community textarea {
+  width: auto;
+}
+
+.community form {
+  fieldset legend { font-size: 14px; line-height: 18px; }
+  .fieldset-wrapper { margin-left: 10px; }
+}
+.clear-block { @include clearfix(); }
+
+.view-nodes-by-category article.blog {
+  margin-bottom: 25px;
+
+  > h2 { line-height: 25px; }
+
+  > .breadcrumb {
+    margin-bottom: 5px;
+    text-transform: uppercase;
+    font-weight: bold;
+
+    > .creator { color: black; }
+    > .created { color: #888; }
+
+  }
+
+  .nid a { font-size: 16px; }
+
+  > .nid_1 {
+    text-transform: uppercase;
+    text-align: right;
+    padding-bottom: 3px;
+    border-bottom: 1px solid #aaa;
+    font-size: 11px;
+    > a {
+      color: #888;
+    }
+  }
+}
+
+.node {
+  margin-bottom: 20px;
+}
+
+.comment-content .links,
+.node > .links {
+  margin-top: 10px;
+  text-transform: uppercase;
+  font-weight: bold;
+}
+
+.comment { 
+  margin-bottom: 20px; 
+  padding-top: 8px; 
+  border-top: 1px solid #ddd; 
+
+  .submitted {
+    margin-top: 10px;
+    font-style: italic;
+  }
+}
+.comment > table td { vertical-align: top; }
+.comment .comment-author {
+  .views-row {
+    padding: 10px; 
+    width: 170px;
+    margin-right: 10px;
+    margin-top: 5px;
+    background-color: rgb(239, 239, 239);
+  }
+  .views-field-phpcode {
+    clear: both;
+  }
+  .views-field-value {
+    font-style: italic;
+    margin-top: 5px;
+  }
+}
+
+.view-user-profile-box .badge { 
+  display: inline-block; 
+  padding: 0 3px;
+  color: #fff; 
+  text-transform: uppercase; 
+  font-size: 11px; 
+}
+.badge.newbie { background-color: #89aa00; }
+.badge.member { background-color: #fc6b00; }
+.badge.accomplished { background-color: #191919; }
+.badge.pro { background-color: #356fce; }
+.badge.expert { background-color: #a80f00; }
+
+.column-nav .poll {
+  > .title {
+    margin-bottom: 5px;
+  }
+  > .text {
+    margin-bottom: 2px;
+  }
+
+  > .bar > .foreground {
+    background-color: $ribbonFoldColor;
+  }
+}
+
+/* copied from system.css */
+html.js fieldset.collapsed {
+    border-bottom-width: 0;
+    border-left-width: 0;
+    border-right-width: 0;
+    height: 1em;
+    margin-bottom: 0;
+}
+html.js fieldset.collapsed * {
+    display: none;
+}
+html.js fieldset.collapsed legend {
+    display: block;
+}
+html.js fieldset.collapsible legend a {
+    background: url("../images/menu-expanded.png") no-repeat scroll 5px 75% transparent;
+    padding-left: 15px;
+}
+html.js fieldset.collapsed legend a {
+    background-image: url("../images/menu-collapsed.png");
+    background-position: 5px 50%;
+}
+* html.js fieldset.collapsed legend, * html.js fieldset.collapsed legend *, * html.js fieldset.collapsed table * {
+    display: inline;
+}
+html.js fieldset.collapsible {
+    position: relative;
+}
+html.js fieldset.collapsible legend a {
+    display: block;
+}
+html.js fieldset.collapsible .fieldset-wrapper {
+    overflow: auto;
+}
+
+/* side column */
+.sidenav-column-inner {
+  margin-right: 15px;
+}
+#search-field {
+  position: relative;
+
+  button.search {
+    background: transparent url("../images/sprite-vert.png") 4px -170px no-repeat;
+    height: 25px;
+    width: 20px;
+    border: 0;
+    position: absolute;
+    right: 14px;
+    top: 1px;
+  }
+  .search-query {
+    margin-bottom: 0;
+    border-radius: 5px;
+    width: -moz-available;
+    width: inherit;
+    padding-left: 5px;
+    padding-right: 25px;
+  }
+}

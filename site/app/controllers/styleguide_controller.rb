@@ -13,7 +13,14 @@ class StyleguideController < ApplicationController
   def community
   end
 
-  def community_real
+  def home
+  end
+
+  def overview
+    render :layout => 'site'
+  end
+
+  def signup
   end
 
   def slow

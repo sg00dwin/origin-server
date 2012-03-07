@@ -3,7 +3,7 @@
 
 Summary:   Li site components
 Name:      rhc-site
-Version:   0.87.10
+Version:   0.88.1
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -74,16 +74,74 @@ rm -rf %{buildroot}
 %config(noreplace) %{sitedir}/config/environments/production.rb
 %{sitedir}
 %{htmldir}/app
+%attr(0775,root,libra_user) %{sitedir}/app/subsites/status/db
+%attr(0664,root,libra_user) %{sitedir}/app/subsites/status/db/status.sqlite3
+%attr(0744,root,libra_user) %{sitedir}/app/subsites/status/rhc-outage
+%attr(0770,root,libra_user) %{sitedir}/tmp
+%config(noreplace) %{sitedir}/app/subsites/status/config/hosts.yml
 
 %post
 /bin/touch %{sitedir}/log/production.log
-chmod 0770 %{sitedir}/tmp
-# Modified permissions for status subsite
-chmod 0775 %{sitedir}/app/subsites/status/db
-chmod 0664 %{sitedir}/app/subsites/status/db/status.sqlite
-chmod 0744 %{sitedir}/app/subsites/status/rhc-outage
 
 %changelog
+* Fri Mar 02 2012 Dan McPherson <dmcphers@redhat.com> 0.88.1-1
+- bump spec numbers (dmcphers@redhat.com)
+- Had to fix the view too (fotios@redhat.com)
+- Fixed static routes in status app (fotios@redhat.com)
+- Refactored status_app to work with different Rails app_scopes
+  (fotios@redhat.com)
+- Reword text to match recommendations from dblado (ccoleman@redhat.com)
+- Fixes 799503 (ffranz@redhat.com)
+- Adjust base_domain configuration for stg and prod (ffranz@redhat.com)
+- Merge branch 'master' into dev/clayton/home (ccoleman@redhat.com)
+- Disable node.js 799188 (ccoleman@redhat.com)
+- More comment tweaks (ccoleman@redhat.com)
+- Minor tweaks to comments (ccoleman@redhat.com)
+- Reorder try it out to be better (ccoleman@redhat.com)
+- Pixel-perfect layout adjustments (ffranz@redhat.com)
+- Fixed gutters to be more accurate within various resolutions, lines up
+  exactly with ipad screen. (ccoleman@redhat.com)
+- Fixes 798142, major app list style improvements (ffranz@redhat.com)
+- sprite img (sgoodwin@redhat.com)
+- Merge branch 'master' of git1.ops.rhcloud.com:/srv/git/li (ffranz@redhat.com)
+- Fixes 798502: added links to docs (ffranz@redhat.com)
+- Removed switch to use attr in %%files instead of chmod Mark hosts.yml as
+  config(noreplace) (whearn@redhat.com)
+- More changes to styling of community (ccoleman@redhat.com)
+- Comments, various small tweaks to community CSS (ccoleman@redhat.com)
+- Tweets, block quotes, some padding adjustments, default link colors, and
+  background with repeating gradient. (ccoleman@redhat.com)
+- Merge branch 'master' into dev/clayton/home (ccoleman@redhat.com)
+- Merge of bootstrap (ccoleman@redhat.com)
+- Styles for homepage (ccoleman@redhat.com)
+
+* Thu Mar 01 2012 Dan McPherson <dmcphers@redhat.com> 0.87.13-1
+- Fixed link for user guide to point to html version (fotios@redhat.com)
+
+* Thu Mar 01 2012 Dan McPherson <dmcphers@redhat.com> 0.87.12-1
+- Bug 798854 - some error messages were eaten because each block didn't return
+  the same value for the block. (ccoleman@redhat.com)
+
+* Wed Feb 29 2012 Dan McPherson <dmcphers@redhat.com> 0.87.11-1
+- move to application layout since simple isn't ready (johnp@redhat.com)
+- Add mthompso@redhat.com to promo mailing list (ccoleman@redhat.com)
+- switch to simple layout for password reset (johnp@redhat.com)
+- show errors (johnp@redhat.com)
+- make sure streamline return the correct result when resetting password
+  (johnp@redhat.com)
+- render password reset with the correct layout (johnp@redhat.com)
+- Another fix for BZ796075 (fotios@redhat.com)
+- Fix for BZ796075. Moved _console.scss -> console.scss to reduce confusion,
+  since its not a partial. Removed left over import in _responsive.scss to
+  unbreak (fotios@redhat.com)
+- styles to force word-wrap when needed (sgoodwin@redhat.com)
+- fix wrong cased OpenShift (dmcphers@redhat.com)
+- Merge branch 'master' of git:/srv/git/li (ccoleman@redhat.com)
+- Loading icon not being displayed on staging (bad URL), and overly aggressive
+  string aggregation in error messages leads to bad text.  Bug 797747
+  (ccoleman@redhat.com)
+- Breadcrumbs matching style (ccoleman@redhat.com)
+
 * Tue Feb 28 2012 Dan McPherson <dmcphers@redhat.com> 0.87.10-1
 - add an id to the control group so sauce can check for error conditions
   (johnp@redhat.com)

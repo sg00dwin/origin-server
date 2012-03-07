@@ -21,9 +21,6 @@
 // -------------------------
 // Required since we compile the responsive stuff separately
 
-@import "variables"; // Modify this for custom colors, font-sizes, etc
-@import "mixins";
-
 .clearfix {
   @include clearfix();
 }
@@ -148,11 +145,21 @@
   }
   // Make all columns even
   .row > [class*="span"],
+  .row > .span-wrapper > [class*="span"],
   .row-fluid > [class*="span"] {
     float: none;
     display: block;
     width: auto;
     margin: 0;
+  }
+
+  // Custom: adjust a span to adjust to the right of a box
+  .row-flush-right {
+    margin-right: 0;
+
+    .span-flush-right {
+      padding-right: 0;
+    }
   }
 }
 
@@ -164,14 +171,22 @@
 @media (min-width: 768px) and (max-width: 979px) {
 
   // Fixed grid
-  @include gridSystem-generate(12, 42px, 20px);
+  @include gridSystem-generate(12, $gridColumnWidthTablet, $gridGutterWidthTablet);
 
   // Fluid grid
   @include fluidGridSystem-generate(12, 5.801104972%, 2.762430939%);
 
   // Input grid
-  @include inputGridSystem-generate(12, 42px, 20px);
+  @include inputGridSystem-generate(12, $gridColumnWidthTablet, $gridGutterWidthTablet);
 
+  // Custom: adjust a span to adjust to the right of a box
+  .row-flush-right { 
+    margin-right: -$gridGutterWidthTablet;
+
+    .span-flush-right { 
+      padding-right: $gridGutterWidthTablet;
+    }
+  }
 }
 
 
@@ -317,20 +332,28 @@
 @media (min-width: 1200px) {
 
   // Fixed grid
-  @include gridSystem-generate(12, 70px, 30px);
+  @include gridSystem-generate(12, $gridColumnWidthLarge, $gridGutterWidthLarge);
 
   // Fluid grid
   @include fluidGridSystem-generate(12, 5.982905983%, 2.564102564%);
 
   // Input grid
-  @include inputGridSystem-generate(12, 70px, 30px);
+  @include inputGridSystem-generate(12, $gridColumnWidthLarge, $gridGutterWidthLarge);
 
   // Thumbnails
   .thumbnails {
-    margin-left: -30px;
+    margin-left: -$gridGutterWidthLarge;
   }
   .thumbnails > li {
-    margin-left: 30px;
+    margin-left: $gridGutterWidthLarge;
   }
 
+  // Custom: adjust a span to adjust to the right of a box
+  .row-flush-right { 
+    margin-right: -$gridGutterWidthLarge;
+
+    .span-flush-right { 
+      padding-right: $gridGutterWidthLarge;
+    }
+  }
 }

@@ -1,6 +1,6 @@
 @api
 Feature: Application template list
-  As an Openshift user
+  As an OpenShift user
   I should be able to preview the # of gears used by a quickstart based application
   So that I can quickly estimate how much it will cost.
 

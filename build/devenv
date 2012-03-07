@@ -191,7 +191,9 @@ class DevEnv < Thor
 
         unless options.exclude_internal?
           add_ssh_cmd_to_threads(hostname, threads, failures, "Broker Unit", "cd li-test/broker; rake test")
-          add_ssh_cmd_to_threads(hostname, threads, failures, "Site Unit", "cd li-test/site; rake test")
+          site_titles = ["Site Unit:Units", "Site Unit:Functionals", "Site Unit:Integration"]
+          site_cmds = ["cd li-test/site; rake test:units", "cd li-test/site; rake test:functionals", "cd li-test/site; rake test:integration"]
+          add_ssh_cmd_to_threads(hostname, threads, failures, site_titles, site_cmds)
           add_ssh_cmd_to_threads(hostname, threads, failures, "Cloud SDK Node Unit", "cd li-test/cloud-sdk/node; rake test")
           add_ssh_cmd_to_threads(hostname, threads, failures, "Cloud SDK Broker Unit", "cd li-test/cloud-sdk/broker; rake test")
         end
@@ -201,15 +203,6 @@ class DevEnv < Thor
         end
 
         unless options.exclude_verification?
-          # create a submodule repo for the tests
-          puts "Creating submodule repo for verification tests"
-          cmd = "git init /root/submodule_test_repo;"
-          cmd += "cd /root/submodule_test_repo;"
-          cmd += "echo Submodule > index;"
-          cmd += "git add index;"
-          cmd += "git commit -a -m 'test';"
-          ssh(hostname, cmd, 4800, true)
-
           add_ssh_cmd_to_threads(hostname, threads, failures, "Verification", "cucumber -f html --out /tmp/rhc/verfication.html -f progress -t @verify li-test/tests/")
         end
 
@@ -281,8 +274,8 @@ class DevEnv < Thor
         end
 
         retry_threshold = 0
-        retry_threshold += 4 unless options.exclude_internal?
-        retry_threshold += 1 unless options.exclude_verification?
+        retry_threshold += 6 unless options.exclude_internal?
+        retry_threshold += 2 unless options.exclude_verification?
         retry_threshold += 6 if options.include_web?
         
         failures.uniq!
@@ -341,7 +334,29 @@ class DevEnv < Thor
         terminate_instance(instance) if options.terminate?
       end
     end
-
+    
+    def build_and_install(package_name, build_dir)
+      remove_dir '/tmp/tito/'
+      FileUtils.mkdir_p '/tmp/tito/'
+      puts "Building in #{build_dir}"
+      inside(File.expand_path("../#{build_dir}", File.dirname(__FILE__))) do
+        # Build and install the RPM's locally
+        unless run('tito build --rpm --test', :verbose => options.verbose?)
+          FileUtils.rm_rf '/tmp/devenv/sync/'
+          exit 1
+        end
+        Dir.glob('/tmp/tito/x86_64/*.rpm').each {|file|
+          FileUtils.mkdir_p "/tmp/tito/noarch/"
+          FileUtils.mv file, "/tmp/tito/noarch/"
+        }
+        unless run("rpm -Uvh --force /tmp/tito/noarch/*.rpm", :verbose => options.verbose?)
+          unless run("rpm -e --justdb --nodeps #{package_name}; yum install -y /tmp/tito/noarch/*.rpm", :verbose => options.verbose?)
+            FileUtils.rm_rf '/tmp/devenv/sync/'
+            exit 1
+          end
+        end
+      end
+    end
   end
 
   desc "write_sync_history", "Write out the sync history so updates won't happen for already installed changes"
@@ -392,7 +407,9 @@ class DevEnv < Thor
   method_option :include_web, :type => :boolean, :desc => "Include running Selenium tests"
   method_option :region, :required => false, :desc => "Amazon region override (default us-east-1)"
   method_option :build_clean_ami, :required => false, :desc => "Indicates whether to start from a base RHEL image"
-  method_option :install_from_source, :required => false, :desc => "Indicates whether to start from a base RHEL image"
+  method_option :install_from_source, :required => false, :desc => "Indicates whether to build based off origin/master"
+  method_option :install_from_local_source, :required => false, :desc => "Indicates whether to build based on your local source"
+  method_option :skip_verify, :required => false, :desc => "Skip running tests to verify the build"
 
   def build(name, build_num)
     options.verbose? ? @@log.level = Logger::DEBUG : @@log.level = Logger::ERROR
@@ -402,7 +419,7 @@ class DevEnv < Thor
     conn = conn.regions[options.region] unless (options.region?nil)
 
     image = nil
-    if options.build_clean_ami || options.install_from_source
+    if options.build_clean_ami || options.install_from_source || options.install_from_local_source
       # Create a new builder instance
       if (options.region?nil)
         image = conn.images[AMI["us-east-1"]]
@@ -424,10 +441,12 @@ class DevEnv < Thor
 
     instance = launch_instance(image, name + '_' + build_num)
     hostname = instance.dns_name
+    
+    puts "Building on: #{hostname}"
 
     begin
       manifest = nil
-      if options.build_clean_ami || options.install_from_source
+      if options.build_clean_ami || options.install_from_source || options.install_from_local_source
         # TODO - Remove this once nss is updated in RHEL 6.2
         print "Running one yum update to get around RHEL 6.2 AMI problem..."
         ssh(hostname, "yum update -y --exclude='rhc*'", 1800)
@@ -451,6 +470,13 @@ class DevEnv < Thor
           output += ssh(hostname, cmd, 600)
           print "Performing clean install from source..."
           cmd = 'set -e; sh li-devenv.sh candidate --install_from_source'
+        elsif options.install_from_local_source
+          cmd = 'set -e; sh li-devenv.sh candidate --install_build_prereqs'
+          output += ssh(hostname, cmd, 600)
+          init_repo(hostname)
+          sync_repo('li', hostname, File.expand_path(File.dirname(__FILE__)) + "/ssh-override")
+          print "Performing clean install from local source..."
+          cmd = 'set -e; sh li-devenv.sh candidate --install_from_local_source'
         else
           print "Performing clean install with the latest code..."
           cmd = 'set -e ; sh ~/li-devenv.sh'
@@ -472,7 +498,7 @@ class DevEnv < Thor
         end
       else
         print "Updating all packages on the system..."
-        ssh(hostname, "yum clean metadata; yum update -y --exclude='rhc-devenv'; set -e; yum update -y --exclude='rhc-devenv' --disablerepo=\* --enablerepo=li", 600)
+        ssh(hostname, "yum clean metadata; yum update -y --exclude='rhc-devenv'; set -e; yum update -y --exclude='rhc-devenv' --disablerepo=\\* --enablerepo=li", 600)
         puts "Done"
 
         validate_instance(hostname)
@@ -486,14 +512,17 @@ class DevEnv < Thor
         image_id = image.id
       end
 
-      scp_remote_tests(hostname)
-      test_instance(name + '_' + build_num, hostname, instance, conn, options, image_id)
+      unless options.skip_verify?
+        scp_remote_tests(hostname)
+        test_instance(name + '_' + build_num, hostname, instance, conn, options, image_id)
+      end
     ensure
       terminate_instance(instance) if options.terminate?
     end
   end
 
   desc "update", "Update current instance by installing RPMs from local git tree"
+  method_option :include_stale, :type => :boolean, :desc => "Include packages that have been tagged but not synced to the repo"
   method_option :verbose, :type => :boolean, :desc => "Enable verbose logging"
   def update
     options.verbose? ? @@log.level = Logger::DEBUG : @@log.level = Logger::ERROR
@@ -505,32 +534,22 @@ class DevEnv < Thor
     # Figure out what needs to be built - exclude devenv for syncs
     sync_dirs = get_sync_dirs
 
-    # Build and install them
     sync_dirs.each do |sync_dir|
       package_name = sync_dir[0]
       build_dir = sync_dir[1]
-      remove_dir '/tmp/tito/'
-      FileUtils.mkdir_p '/tmp/tito/'
-      puts "Building in #{build_dir}"
-      inside(File.expand_path("../#{build_dir}", File.dirname(__FILE__))) do
-        # Build and install the RPM's locally
-        unless run('tito build --rpm --test', :verbose => options.verbose?)
-          FileUtils.rm_rf '/tmp/devenv/sync/'
-          exit 1
-        end
-        Dir.glob('/tmp/tito/x86_64/*.rpm').each {|file|
-          FileUtils.mkdir_p "/tmp/tito/noarch/"
-          FileUtils.mv file, "/tmp/tito/noarch/"
-        }
-        unless run("rpm -Uvh --force /tmp/tito/noarch/*.rpm", :verbose => options.verbose?)
-          unless run("rpm -e --justdb --nodeps #{package_name}; yum install -y /tmp/tito/noarch/*.rpm", :verbose => options.verbose?)
-            FileUtils.rm_rf '/tmp/devenv/sync/'
-            exit 1
-          end
-        end
+      build_and_install(package_name, build_dir)
+    end
+    
+    if options.include_stale?
+      stale_dirs = get_stale_dirs
+      stale_dirs.each do |stale_dir|
+        package_name = stale_dir[0]
+        build_dir = stale_dir[1]
+        build_and_install(package_name, build_dir)
       end
     end
-    run('service mcollective restart; service libra-broker restart; service libra-site restart', :verbose => options.verbose?)
+    run("yum update -y --exclude='rhc-devenv' --disablerepo=\\* --enablerepo=li rhc-* rubygem-cloud-sdk-*", :verbose => options.verbose?)
+    run("service mcollective restart; service libra-broker restart; service libra-site restart", :verbose => options.verbose?)
   end
 
   desc "sync NAME", "Synchronize a local git repo with a remote DevEnv instance.  NAME should be ssh resolvable."
@@ -561,7 +580,7 @@ class DevEnv < Thor
 
     if !options.skip_build?
       puts "Performing remote install...."
-      output, exit_code = ssh(hostname, "set -e; #{options.clean_metadata? ? 'yum clean metadata; ' : ''}rm -rf li-working os-client-tools-working; git clone li li-working;#{has_client ? ' git clone os-client-tools os-client-tools-working;' : ''} pushd li-working; build/devenv update #{options.verbose? ? '--verbose' : ''} 2>&1; popd; rm -rf li-working os-client-tools-working; yum update -y --exclude='rhc-devenv' --disablerepo=\* --enablerepo=li rhc-* *cloud-sdk*", 600, true)
+      output, exit_code = ssh(hostname, "set -e; #{options.clean_metadata? ? 'yum clean metadata; ' : ''}rm -rf li-working os-client-tools-working; git clone li li-working;#{has_client ? ' git clone os-client-tools os-client-tools-working;' : ''} pushd li-working; build/devenv update#{options.verbose? ? ' --verbose' : ''}#{options.clean_metadata? ? ' --include_stale' : ''} 2>&1; popd; rm -rf li-working os-client-tools-working; #{options.clean_metadata? ? "yum update -y --exclude='rhc-devenv' rhc-* rubygem-cloud-sdk-*; " : ''}", 600, true)
       if exit_code != 0
         puts "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
         puts "Build failed!  Exiting."
@@ -745,7 +764,7 @@ END
     test_instance(tag, hostname, instance, conn, options)
   end
 
-  desc "setup_multi_node_devenvs", "Sets up verifier as a multi-node broker"
+  desc "setup_multi_node_broker", "Sets up verifier as a multi-node broker"
   method_option :verbose, :type => :boolean, :desc => "Enable verbose logging"
 
   def setup_multi_node_broker

@@ -27,11 +27,9 @@ module LibraMigration
         FileUtils.rm_f "#{app_dir}/run/jenkins.pid"
         
         # Migrate and jbossas-7.0 jobs to jbossas-7
-        Dir.glob('#{app_dir}/data/config.xml').each {|file|
-          Util.replace_in_file("#{app_dir}/data/jobs/*/config.xml", "<builderType>jbossas-7.0</builderType>", "<builderType>jbossas-7</builderType>")
-          Util.replace_in_file("#{app_dir}/data/jobs/*/config.xml", "<builderType>wsgi-3.2</builderType>", "<builderType>python-2.6</builderType>")
-          Util.replace_in_file("#{app_dir}/data/jobs/*/config.xml", "<builderType>rack-1.1</builderType>", "<builderType>ruby-1.8</builderType>")
-        }
+        Util.replace_in_file("#{app_dir}/data/jobs/*/config.xml", "<builderType>jbossas-7.0</builderType>", "<builderType>jbossas-7</builderType>")
+        Util.replace_in_file("#{app_dir}/data/jobs/*/config.xml", "<builderType>wsgi-3.2</builderType>", "<builderType>python-2.6</builderType>")
+        Util.replace_in_file("#{app_dir}/data/jobs/*/config.xml", "<builderType>rack-1.1</builderType>", "<builderType>ruby-1.8</builderType>")
 
         # Add security
         config_xml = "#{app_dir}/data/config.xml"
@@ -113,7 +111,32 @@ module LibraMigration
         FileUtils.ln_s "../runtime/repo/log/production.log", "#{app_dir}/logs/production.log"
       end
 
-      env_echos.push("echo \"export OPENSHIFT_APP_STATE=#{app_dir}/runtime\" > #{app_home}/.env/OPENSHIFT_APP_STATE")
+      
+      if File.exists?("#{app_home}/.env/OPENSHIFT_APP_STATE")
+        File.delete("#{app_home}/.env/OPENSHIFT_APP_STATE")
+      end
+
+      env_echos.push("echo \"export OPENSHIFT_RUNTIME_DIR=#{app_dir}/runtime/\" > #{app_home}/.env/OPENSHIFT_RUNTIME_DIR")
+
+      state = "#{app_dir}/runtime/.state"
+      if not File.exists?(state)
+        begin
+          state_file = File.new(state, "w")
+          if File.exists?("/var/lib/libra/#{uuid}/#{app_name}/run/stop_lock")
+            if File.exists?("/etc/httpd/conf.d/libra/#{uuid}_#{namespace}_#{app_name}/0000000000000_disabled.conf")
+              state_file.write("idle\n")
+            else
+              state_file.write("stopped\n")
+            end
+          else
+            state_file.write("started\n")
+          end
+        ensure
+          state_file.close
+        end
+        FileUtils.chown(uuid, uuid, state)
+        FileUtils.chmod(0644, state)
+      end
 
       env_echos.each do |env_echo|
         echo_output, echo_exitcode = Util.execute_script(env_echo)

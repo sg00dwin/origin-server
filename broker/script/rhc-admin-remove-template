@@ -1,6 +1,6 @@
 #!/usr/bin/env ruby
 
-require "/var/www/libra/broker/config/environment"
+require 'rubygems'
 require 'getoptlong'
 
 def usage
@@ -40,6 +40,8 @@ if uuid.nil?
   usage
   exit -100
 end
+
+require "/var/www/libra/broker/config/environment"
 
 template = ApplicationTemplate.find(uuid)
 if template.nil?

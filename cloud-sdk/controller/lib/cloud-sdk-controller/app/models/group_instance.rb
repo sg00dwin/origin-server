@@ -56,7 +56,7 @@ class GroupInstance < Cloud::Sdk::UserModel
     group = profile.groups(self.group_name)
     deficit = group.scaling.min - self.gears.length
     deficit.times do
-      result, new_gear = add_gear
+      result, new_gear = add_gear(app)
       result_io.append result
     end
   end

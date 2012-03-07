@@ -2,7 +2,7 @@
 
 Summary:       Multi-tenant cloud management system node tools
 Name:          rhc-node
-Version:       0.87.7
+Version:       0.88.1
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -247,6 +247,39 @@ fi
 /lib64/security/pam_libra.so
 
 %changelog
+* Fri Mar 02 2012 Dan McPherson <dmcphers@redhat.com> 0.88.1-1
+- bump spec numbers (dmcphers@redhat.com)
+- Fix for bug# 799515 (rpenta@redhat.com)
+- Merge branch 'master' of li-master:/srv/git/li (ramr@redhat.com)
+- Bug fix - don't start embedded cartridges for stopped applications.
+  (ramr@redhat.com)
+- allow tail to work for links (dmcphers@redhat.com)
+- handle state properly from ruby (dmcphers@redhat.com)
+- fix migrate for .state (dmcphers@redhat.com)
+- Fixed idler stats script. (mpatel@redhat.com)
+- create .state file during migration (jhonce@redhat.com)
+- used wrong name for idled (dmcphers@redhat.com)
+
+* Thu Mar 01 2012 Dan McPherson <dmcphers@redhat.com> 0.87.9-1
+- Bug 798867 (dmcphers@redhat.com)
+- handle idled on restart as well (dmcphers@redhat.com)
+- Bug 798888 (dmcphers@redhat.com)
+
+* Wed Feb 29 2012 Dan McPherson <dmcphers@redhat.com> 0.87.8-1
+- Support new server.log time format BZ795331 (jhonce@redhat.com)
+- Removed extra line send_attr line (jhonce@redhat.com)
+- Bug fix to properly invoke the command. (ramr@redhat.com)
+- Merge branch 'master' of li-master:/srv/git/li (ramr@redhat.com)
+- Cleanup to put the cdk-connector-execute workaround in the utility extensions
+  for express. (ramr@redhat.com)
+- Bugzilla 798587 (mpatel@redhat.com)
+- Fixed the libra_server in url. (mpatel@redhat.com)
+- Moved recording the state further up the stack (jhonce@redhat.com)
+- Moved marking building/deploying state from build/deploy.sh to
+  user_build/user_deploy.sh (jhonce@redhat.com)
+- Minor typos in shell notice (mhicks@redhat.com)
+- Bug 798529 (dmcphers@redhat.com)
+
 * Tue Feb 28 2012 Dan McPherson <dmcphers@redhat.com> 0.87.7-1
 - Allow applications to restart after migration (jhonce@redhat.com)
 

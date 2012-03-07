@@ -3,13 +3,13 @@
     %ul.unstyled-flat
       %li.span4
         %h4 Updates
-        %a{:href => 'https://www.redhat.com/openshift/community/blogs', :target => '_blank'} Latest Releases
+        = link_to 'Latest Releases', openshift_blog_url, :target => '_blank'
         %p Check out what new features are available
       %li.span4
         %h4 Need Help?
-        %a{:href => 'https://www.redhat.com/openshift/forums/', :target => '_blank'} Check out the forum
+        = link_to 'Check out the forums', forums_url, :target => '_blank'
         %p Post a question, Get the answers
       %li.span4
         %h4 Found a Bug?
-        %a{:href => 'https://bugzilla.redhat.com/enter_bug.cgi?product=OpenShift%20Express', :target => '_blank'} Report a Bug
+        = link_to 'Report a Bug', open_bug_url, :target => '_blank'
         %p The OpenShift bug tracker is now public

@@ -141,9 +141,11 @@ module Cloud::Sdk
       end
       
       keys.delete_if{ |k| k.include?(key)}
+      keys.map!{ |k| k.strip }
       
       File.open(authorized_keys_file, File::WRONLY|File::TRUNC|File::CREAT, 0o0440) do |file|
         file.write(keys.join("\n"))
+        file.write("\n")
       end
       
       FileUtils.chmod 0o0440, authorized_keys_file

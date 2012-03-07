@@ -46,7 +46,7 @@ RedHatCloud::Application.configure do
   config.sso_verify_interval = 60
 
   # Promo code Email notification setup
-  config.email_from = 'Openshift <noreply@openshift.redhat.com>'
+  config.email_from = 'OpenShift <noreply@openshift.redhat.com>'
   config.marketing_mailing_list = 'Marketing Mailing List <jgurrero@redhat.com>'
   
   # Express API base url
@@ -57,4 +57,8 @@ RedHatCloud::Application.configure do
 
   # Max apps for express
   config.express_max_apps = 5
+
+  # Used to disable Node.JS ONLY IN PRODUCTION. Will set false using a puppet.
+  config.node_js_enabled = true
+
 end

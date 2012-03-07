@@ -1,6 +1,6 @@
 Summary:       SELinux policy for OpenShift nodes
 Name:          rhc-selinux
-Version:       0.87.4
+Version:       0.88.1
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -34,8 +34,6 @@ rm -rf %{buildroot}
 
 %post
 /usr/sbin/semodule -i %{_datadir}/selinux/packages/libra.pp || :
-# This can be removed after 2012-02-06
-/usr/sbin/semanage node -d -t node_t -r s0 -p ipv4 -M 255.255.255.255 127.0.0.1 || :
 
 # Bring in external smtp ports but _NOT_ 25.
 #semanage -i - << _EOF
@@ -48,6 +46,23 @@ rm -rf %{buildroot}
 %attr(0640,-,-) %{_datadir}/selinux/packages/libra.pp
 
 %changelog
+* Fri Mar 02 2012 Dan McPherson <dmcphers@redhat.com> 0.88.1-1
+- bump spec numbers (dmcphers@redhat.com)
+- remove 127.0.0.1 restrictions (mmcgrath@redhat.com)
+
+* Wed Feb 29 2012 Dan McPherson <dmcphers@redhat.com> 0.87.6-1
+- disabling hugetlbfs (mmcgrath@redhat.com)
+
+* Wed Feb 29 2012 Dan McPherson <dmcphers@redhat.com> 0.87.5-1
+- Dontaudit domains attempting to list /mnt, /dev/shm, and dontaudit leaked
+  terminal device from sshd terminal to libra subdomains (dwalsh@redhat.com)
+- Libra domains are creating /anon_hugepage  which are MCS Separated and then
+  reading them, should be allowed (dwalsh@redhat.com)
+- Allow libra domains to create msgq (dwalsh@redhat.com)
+- Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
+  (dwalsh@redhat.com)
+- Dontaudit leaked terminal from sshd to libra_mail_t (dwalsh@redhat.com)
+
 * Sat Feb 25 2012 Dan McPherson <dmcphers@redhat.com> 0.87.4-1
 - Add new libra_app domains an libra file types (dwalsh@redhat.com)
 - Allow libra_t to transition to ping command (dwalsh@redhat.com)

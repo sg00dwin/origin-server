@@ -37,4 +37,4 @@ run_as_user "$APP_DIR/${application}_ctl.sh threaddump"
 
 client_result "Success"
 client_result ""
-client_result "The thread dump file will be available via 'rhc app tail -a $1 -f $1/jbossas-7/stdout.log'"
+client_result "The thread dump file will be available via: rhc app tail -a $1 -f $1/jbossas-7/standalone/tmp/$1.log -o '-n 250'"

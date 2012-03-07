@@ -38,12 +38,12 @@ GEM
       uuidtools
     bson (1.5.2)
     builder (2.1.2)
-    cloud-sdk-common (0.5.3)
+    cloud-sdk-common (0.6.1)
       activemodel
       json
       mongo
       rack
-    cloud-sdk-controller (0.5.9)
+    cloud-sdk-controller (0.6.1)
       activesupport
       cloud-sdk-common
       dnsruby

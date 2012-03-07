@@ -35,11 +35,11 @@ rm -f "${OPENSHIFT_RUN_DIR}/stop_lock"
 
 
 source "/var/lib/libra/${uuid}/.env/OPENSHIFT_APP_DIR"
-[ -f "/var/lib/libra/${uuid}/.env/OPENSHIFT_APP_STATE" ] && source "/var/lib/libra/${uuid}/.env/OPENSHIFT_APP_STATE"
-: ${OPENSHIFT_APP_STATE:=$OPENSHIFT_APP_DIR/runtime}
+[ -f "/var/lib/libra/${uuid}/.env/OPENSHIFT_RUNTIME_DIR" ] && source "/var/lib/libra/${uuid}/.env/OPENSHIFT_RUNTIME_DIR"
+: ${OPENSHIFT_RUNTIME_DIR:=$OPENSHIFT_APP_DIR/runtime}
 
 # code copied from node/lib/util_ext
-runuser --shell /bin/sh "$uuid" -c "echo started >$OPENSHIFT_APP_STATE/.state"
+runuser --shell /bin/sh "$uuid" -c "echo started >$OPENSHIFT_RUNTIME_DIR/.state"
 
 /sbin/service libra startuser "${uuid}"
 

@@ -76,7 +76,7 @@ has an mcs of "s0:c2"
 The MCS categories are a set.  This means that order is not important. A label
 is made up of a list of Sensitivities and a set of Categories.
 
-For Openshift, each user is given two categories from the set.  Those two
+For OpenShift, each user is given two categories from the set.  Those two
 categories define the user's label.
 
 Because the categories are a set, s0:c0,c1 is the same as s0:c1,c0. This means

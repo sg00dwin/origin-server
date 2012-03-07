@@ -39,6 +39,11 @@ def get_build_num
   jobs_info["lastBuild"] ? jobs_info["lastBuild"]["number"].to_i : 0
 end
 
+def is_cancelled
+  jobs_info = get_jobs_info
+  queueItem = jobs_info["queueItem"]
+end
+
 def schedule_build
   status_code = `curl -s -w %{http_code} --output /dev/null -X POST --insecure https://${JENKINS_USERNAME}:${JENKINS_PASSWORD}@#{@hostname}#{@job_url}/build`
   if status_code != '302' && status_code != '200'
@@ -59,6 +64,13 @@ if job_available?
   print "Waiting for build to schedule..."
   until next_build_num == build_num + 1
     print "."
+    cancelled = is_cancelled
+    if cancelled == nil
+      puts ""
+      puts "**BUILD FAILED/CANCELLED**"
+      puts "Please see the Jenkins log for more details via rhc-tail-files"
+      exit 1
+    end
     sleep 1
     next_build_num = get_build_num
   end

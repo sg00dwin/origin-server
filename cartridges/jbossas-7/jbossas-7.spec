@@ -2,7 +2,7 @@
 
 Summary:   Provides JBossAS7 support
 Name:      rhc-cartridge-jbossas-7
-Version:   0.87.11
+Version:   0.88.1
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   ASL 2.0
@@ -18,7 +18,7 @@ Requires:  rhc-node
 Requires: jboss-as7 >= 7.1.0.Final
 Requires: jboss-as7-modules >= 7.1.0.Final
 Requires: maven3
-Requires: apr
+#Requires: apr
 
 Obsoletes: rhc-cartridge-jbossas-7.0
 
@@ -102,6 +102,7 @@ rm -rf %{buildroot}
 %attr(0750,-,-) %{cartridgedir}/info/hooks/
 %attr(0640,-,-) %{cartridgedir}/info/data/
 %attr(0755,-,-) %{cartridgedir}/info/bin/
+%attr(0755,-,-) %{cartridgedir}/info/connection-hooks/
 %{cartridgedir}/template/
 %{_sysconfdir}/libra/cartridges/%{name}
 %{cartridgedir}/info/control
@@ -112,6 +113,21 @@ rm -rf %{buildroot}
 %config(noreplace) %{cartridgedir}/info/configuration/
 
 %changelog
+* Fri Mar 02 2012 Dan McPherson <dmcphers@redhat.com> 0.88.1-1
+- bump spec numbers (dmcphers@redhat.com)
+- fixup jboss index.html (dmcphers@redhat.com)
+- changes requested by dblado (mmcgrath@redhat.com)
+- combine into 1 sed (dmcphers@redhat.com)
+
+* Wed Feb 29 2012 Dan McPherson <dmcphers@redhat.com> 0.87.12-1
+- remove apr dep from jboss cart (dmcphers@redhat.com)
+- Bug 798553 (dmcphers@redhat.com)
+- remove old jboss env logic (dmcphers@redhat.com)
+- make migrate sed a little more selective (dmcphers@redhat.com)
+- add env via sed (bdecoste@gmail.com)
+- add env via sed (bdecoste@gmail.com)
+- added env (bdecoste@gmail.com)
+
 * Tue Feb 28 2012 Dan McPherson <dmcphers@redhat.com> 0.87.11-1
 - rework migration of git to not stop/start/redeploy (dmcphers@redhat.com)
 - use env.OPENSHIFT (wdecoste@localhost.localdomain)

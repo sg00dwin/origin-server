@@ -14,41 +14,107 @@
 
   Simplify login link behavior - lots of styles for fairly simple markup
 
- */
+*/
 
 
 @import "variables";
 @import "bootstrap/variables";
+@import "bootstrap/mixins";
 @import "ribbon";
 
-$topBarColor:                 #010101 !default;
-$navigationColumnColor:       #030303 !default;
-$underNavigationColumnColor:  #f2f2f2 !default;
-$topNavigationColor:          #343434 !default;
-$bodyColor:                   #eaeaea !default;
-$contentColumnColor:          white !default;
-$loginBackgroundColor:        #343434 !default;
-$loginColor:                  #eaeaea !default;
-$signupLinkColor:             #aaa !default;
+@import "navbar";
+@import "community";
 
-$logoHeight:      70px !default;
-$logoWidth:       100px !default;
-$logoSeparation:  10px !default;
+/* move into core when the branding converges */
+a { color: $ribbonFoldColor; }
+a:hover, a:active { color: $ribbonColor; }
 
-$ribbonColor:     #eb0011 !default;
-$ribbonTextColor: white !default;
-$ribbonFoldColor: #91010b !default;
+/* Hitch a div out of its parent */
+.lift {
+  margin-top: -90px;
+}
+.lift-less {
+  margin-top: -80px;
+}
+// Apply to the appropriate element above a lifted item
+.lift-counter {
+  padding-bottom: 90px;
+}
+@media (max-width: 767px) {
+  .lift,
+  .lift-less {
+    margin-top: 0;
+  }
+}
 
-#top {background-color: $topBarColor; color: white;}
-#nav {background-color: $topNavigationColor; color: white; }
-#content {background-color: $bodyColor;}
-.column-nav { background-color: $navigationColumnColor; color: white; }
-.column-content { background-color: $contentColumnColor; }
-#content > .container > div > .row { background-color: $underNavigationColumnColor; }
+/* A link that is a block, similar to a thumbnail */
+@mixin tile($activeColor, $hoverColor, $backgroundActiveColor, $backgroundHoverColor) {
+  display: block;
+  text-decoration: none;
 
-/* Nav section */
+  &:hover { 
+    text-decoration: none; 
+    color: $hoverColor; 
+    background-color: $backgroundHoverColor;
+    background: -moz-repeating-linear-gradient(-180deg, $backgroundHoverColor 6px, transparentize($backgroundHoverColor, 1.0) 6px, transparentize($backgroundHoverColor, 1.0) 10px, $backgroundHoverColor 10px, $backgroundHoverColor) repeat scroll 0 0 transparent;
+  }
+  &:active {
+    text-decoration: none; 
+    color: $activeColor; 
+    background-color: $backgroundActiveColor;
+  }
+}
 
-#top > .container {
+// Temporary
+body.signup { 
+  background-color: $navBackgroundColor; 
+}
+
+// Concrete sections of pages
+.section-top {
+  background-color: $topBarBackgroundColor; 
+  color: white;
+}
+.section-nav {
+  background-color: $navBackgroundColor; 
+  color: white;
+  padding-bottom: 50px;
+}
+.section-nav.lift-counter {
+  padding-bottom: 90px;
+}
+@media (max-width: 767px) {
+  .section-nav.lift-counter {
+    padding-bottom: 30px;
+  }
+}
+
+.section-striped {
+  background: -moz-repeating-linear-gradient(-70deg, #e6e6e6, #e6e6e6 6px, #e4e4e4 9px, #e4e4e4 15px, #e6e6e6 18px) repeat scroll 0 0 transparent;
+
+  .link-tile {
+    color: #343434;
+    padding: 15px $gridGutterWidth;
+    @include tile(#343434, #343434, $ribbonFoldColor, #ccc);
+
+    > :last-child { margin-bottom: 0; }
+  }
+}
+.section-striped.lift-counter {
+  padding-bottom: 130px;
+}
+@media (max-width: 767px) {
+  .section-striped.lift-counter {
+    padding-bottom: 30px;
+  }
+}
+
+.section-base {
+  background-color: $navBackgroundColor;
+}
+
+// Top bar
+.section-top > .container {
   > div {
     padding: 8px 0;
     > a {
@@ -58,198 +124,274 @@ $ribbonFoldColor: #91010b !default;
     }
     > a:hover {
       text-decoration: none;
-      color: $loginBackgroundColor;
-      background-color: $loginColor;
+      color: white;
     }
   }
-  > div.login {
+  > .login {
     padding: 5px 0;
-    /* may want to turn these into some sort of specific styled button */
-    > a {
-      color: $loginColor;
-      padding: 3px 10px;
-      display: inline-block;
-      background-color: $loginBackgroundColor;
-    }
-    > a.login-provider {
-      height: 18px;
-    }
-    > a:hover {
-      text-decoration: none;
-      color: $loginBackgroundColor;
-      background-color: $loginColor;
-    }
   }
 }
 
-.navbar {
-  padding-top: 30px;
-  height: 130px;
-  position: relative;
-
-  .brand {
-    text-align: center;
-    text-transform: uppercase;
-    position: relative;
-    top: $logoHeight + $logoSeparation;
-    /* reset styles */
-    float: none;
-    margin: 0;
-    padding: 0;
-  }
-  .nav {
-    font-size: 13px; 
-    text-transform: uppercase;
-    /* reset styles */
-    float: none;
-    margin: 0;
-
-    > li {
-      float: left;
-      width: 20%;
-      text-align: center;
-
-      > a {
-        color: white; 
-        font-size: 13px; 
-        text-transform: uppercase; 
-        font-weight: bold;
-        /* reset styles */
-        padding: 5px 0;
-      }
-    }
-
-    > li:nth-child(1) { text-align: left; }
-    > li:nth-last-child(1) { text-align: right; }
-
-    /* needs fixing */
-    > .active > a,
-    > .active > a:hover,
-    > li > a:hover {
-      /* reset styles */
-      background: transparent;
-      border: 0;
-      box-shadow: none;
-      text-decoration: underline;
-    }
-  }
-}
-
-/*FIXME After 3.1, move into element */
-@media (max-width: 767px) { .navbar {
-  height: 100px; 
-} }
-@media (max-width: 767px) { .navbar .brand {
-  position: static;
-  float: left;
-  text-align: center;
-  width: $logoWidth;
-  margin-top: $logoHeight + $logoSeparation;
-} }
-
-@media (max-width: 767px) { .navbar .nav { 
-  margin-left: $logoWidth + 10px; 
-} }
-
-@media (max-width: 767px) { .navbar .nav > li {
-  float: left !important;
-  width: 50% !important;
-  text-align: center !important;
-} }
-@media (max-width: 767px) { .navbar .nav > li.divider {
-  display: none;
-} }
-/*End FIXME*/
-
+// Central messaging content
 .messaging {
-  margin-bottom: 30px; 
   clear: both;
 
-  color: #bbb; 
+  color: #bbb;
   text-align: center;
 
-  .primary { 
-    font-size: 40px; 
+  margin-bottom: 30px;
+
+  .primary {
+    font-size: 40px;
     line-height: 40px;
-    text-transform: uppercase; 
+    text-transform: uppercase;
   }
-  strong { color: white; }
-  .secondary { font-size: 16px; line-height: 18px; }
+
+  strong {
+    color: white;
+  }
+  .secondary {
+    font-size: 16px;
+    line-height: 18px;
+  }
 }
 
 @media (max-width: 767px) {
-  #content > .container > div > .row { background-color: black; }
   .messaging {
     text-align: left;
-    margin-bottom: 10px; 
+    margin-bottom: 10px;
 
-    .primary { font-size: 20px; line-height: 20px;}
-    .secondary { font-size: 13px; line-height: 18px; }
+    .primary {
+      font-size: 20px;
+      line-height: 20px;
+    }
+    .secondary {
+      font-size: 13px;
+      line-height: 18px;
+    }
   }
 }
 
-/* Content section */
+.take-action {
+  @include clearfix();
+  display: block;
 
-#nav { padding-bottom: 100px; }
+  text-transform: uppercase;
+  font-weight: bold;
+  font-size: 20px;
+  letter-spacing: 1px;
 
-.lift {
-  .column-nav { margin-top: -80px; }
-  .column-content { margin-top: -90px; }
-  .column-content h1 { margin-top: 25px; margin-bottom: 25px; }
-}
+  color: white;
+  background-color: $ribbonColor;
 
-/* The body content of a site page */
-.row-content {
-  margin-bottom: 20px;
-
-  > .column-nav {
-    margin-left: 0;
-    padding-right: $gridGutterWidth;
+  &:hover, &:active {
+    text-decoration: none;
+    color: white;
   }
-  > .column-content {
-    margin-left: 0px;
-    margin-right: -$gridGutterWidth;
 
-    padding-left: $gridGutterWidth;
-    padding-right: $gridGutterWidth;
-    padding-bottom: 30px;
+  > * {
+    padding: 27px $gridGutterWidth;
+  }
+
+  > .pull-right {
+    background-color: $ribbonFoldColor;
+    padding-right: $gridGutterWidth + 12px;
+    background: url('../images/arrow-large.gif') 87% center no-repeat $ribbonFoldColor;
+    -moz-transition: background-position 0.2s;
+  }
+
+  &:hover > .pull-right {
+    background-position: 89% center;
   }
 }
+#learn .take-action { margin-top: -37px; margin-bottom: 20px; }
 
-@media (max-width: 767px) {
-  #nav { padding-bottom: 30px; }
-  #content > .container { padding: 0; }
-  .lift {
-    .column-nav { margin-top: 0; }
-    .column-content { margin-top: 0; }
+.column-buzz {
+  > h2 { 
+    text-align: center; 
+    color: white;
+    text-transform: uppercase;
+    font-size: 46px;
+    letter-spacing: -4px;
   }
-  .row-content > .column-content { margin-right: 0; } 
+  > hr {
+    margin: 10px 43% 30px;
+    border: 0;
+    border-top: 4px solid $ribbonColor;
+  }
+
+  blockquote {
+    quotes: "\201C""\201D""\2018""\2019";
+    border-left: 0;
+    padding: 0;
+    margin-bottom: 15px;
+
+    &:after {
+      content: "";
+    }
+    &:before {
+      content: open-quote;
+      color: #aaa;
+      font-size:4em;
+      line-height:.1em;
+      margin-right:.25em;
+      vertical-align:-.4em;
+    }
+  }
+
+  .tweet {
+    @include clearfix();
+    position: relative;
+    margin-bottom: 15px;
+
+    > img {
+      width: 58px;
+      height: 58px;
+      border: 6px solid white;
+      float: left;
+    }
+    > p {
+      margin: 0 0 5px 90px;
+      background-color: #343434; 
+      padding: 5px 10px; 
+      min-height: 50px;
+
+      &:before {
+        border-color: transparent #343434;
+        border-style: solid;
+        border-width: 10px 10px 0 0;
+        top: 10px;
+        content: "";
+        position: absolute;
+        left: 80px;
+      }
+    }
+    > small {
+      margin-left: 80px;
+    }
+  }
+
+  > .callout {
+    position: absolute;
+    width: 120px;
+    height: 120px;
+    background-color: $lightBackground;
+    color: $textLightBackground;
+    top: -60px;
+    right: -60px;
+    text-align: center;
+
+    > .one {
+      margin-top: 30px;
+      color: gray;
+    }
+  }
+}
+#buzz { min-height: 500px; }
+
+.link-with-action {
+  font-weight: bold;
+  text-transform: uppercase;
+  text-decoration: none;
+  > strong { color: $ribbonColor; }
+  &:hover > strong, &:active > strong { color: $ribbonFoldColor; }
+  &:hover, &:active { color: $ribbonFoldColor; text-decoration: none; }
 }
 
-
-/* Left nav section */
-.column-nav {
-  .nav-location { font-size: 19px; line-height: 46px; text-transform: uppercase; margin-top: 15px; }
-  > * { margin-left: $gridGutterWidth; }
-  > .nav-stacked { margin-left: $gridGutterWidth/2; }
-}
-/* Stacked navigations indent by 1 gutter each time */
-.nav-stacked .nav-stacked { margin-left: $gridGutterWidth; margin-bottom: 0; }
-
-@media (max-width: 767px) {
-  #content .column-nav > ul > li { float: left; width: 32%; }
-  .nav-location { display: none; }
-}
-
-/* Body */
-#content h1.ribbon {
-  @include ribbon($gridGutterWidth/2, $gridGutterWidth, $ribbonFoldColor);
+// Standard header with ribbon
+h1.ribbon {
   > .ribbon-content { 
     background-color: $ribbonColor;
     color: $ribbonTextColor;
     box-shadow: 1px 2px 2px rgba(0,0,0,0.5);
     display: inline-block;
-    padding: 5px $gridGutterWidth 5px $gridGutterWidth*1.5; /* calculated to match above */
+    padding: 5px $gridGutterWidth 5px 0; /* left margin set by ribbon */
     min-width: 30%;
   }
+  @include ribbon($ribbonFoldColor);
 }
+@if $gridGutterWidthTablet != $gridGutterWidth { @media (min-width: 768px) and (max-width: 979px) {
+  h1.ribbon { @include ribbon_gutters($gridGutterWidthTablet); }
+} }
+@if $gridGutterWidthLarge != $gridGutterWidth { @media (min-width: 1200px) {
+  h1.ribbon { @include ribbon_gutters($gridGutterWidthLarge); }
+} }
+
+
+// Main content containers, rows, columns
+.row-content > .row { background-color: $belowNavColumnBackgroundColor; }
+@media (max-width: 767px) {
+  .row-content > .row { background-color: $textLightBackground; }
+}
+
+.column-buzz { background-color: $darkBackground; color: $textDarkBackground; }
+.column-buzz a { color: $textDarkBackground; }
+
+// Column navigation
+.column-nav {
+  background-color: $navColumnBackgroundColor;
+  color: #666;
+
+  label {
+    color: #666;
+  }
+  a {
+    color: #999;
+  }
+
+  .headline,
+  h3,
+  h3 > a { 
+    color: white; 
+    text-transform: uppercase; 
+    font-weight: bold;
+  }
+  .nav-location {
+    font-size: 19px;
+    line-height: 46px;
+    text-transform: uppercase;
+    margin-top: 15px;
+  }
+  .nav-stacked {
+    margin-left: -$gridGutterWidth/2;
+  }
+
+  .nav-pills .active > a,
+  .nav-pills .active > a:hover {
+    background-color: $navColumnBackgroundColor;
+    color: $textDarkBackground;
+  }
+}
+
+@media (max-width: 767px) {
+  .column-nav > div > ul > li { float: left; width: 32%; }
+  .nav-location { display: none; }
+}
+
+/* Stacked navigations indent by 1 gutter each time */
+.nav-stacked > li > .nav-stacked { margin-left: $gridGutterWidth/2; margin-bottom: 0; }
+@if $gridGutterWidthTablet != $gridGutterWidth { @media (min-width: 768px) and (max-width: 979px) {
+  .nav-stacked > li > .nav-stacked { margin-left: $gridGutterWidthTablet/2; }
+} }
+@if $gridGutterWidthLarge != $gridGutterWidth { @media (min-width: 1200px) {
+  .nav-stacked > li > .nav-stacked { margin-left: $gridGutterWidthLarge/2; }
+} }
+
+
+.column-content {
+  background-color: $contentColumnBackgroundColor;
+
+  h1 {
+    margin-top: 25px;
+    margin-bottom: 25px;
+  }
+}
+
+.column-buzz { padding: $gridGutterWidth; position: relative;}
+
+/* The body content of a site page */
+.row-content {
+  margin-bottom: 20px;
+}
+
+

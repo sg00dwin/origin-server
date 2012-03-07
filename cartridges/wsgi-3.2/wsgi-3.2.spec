@@ -2,7 +2,7 @@
 
 Summary:   Provides python-wsgi-3.2 support
 Name:      rhc-cartridge-wsgi-3.2
-Version:   0.87.4
+Version:   0.88.1
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   ASL 2.0
@@ -91,6 +91,7 @@ rm -rf %{buildroot}
 %attr(0750,-,-) %{cartridgedir}/info/data/
 %attr(0750,-,-) %{cartridgedir}/info/build/
 %attr(0755,-,-) %{cartridgedir}/info/bin/
+%attr(0755,-,-) %{cartridgedir}/info/connection-hooks/
 %config(noreplace) %{cartridgedir}/info/configuration/
 %{_sysconfdir}/libra/cartridges/%{name}
 %{cartridgedir}/info/changelog
@@ -100,6 +101,10 @@ rm -rf %{buildroot}
 %doc %{cartridgedir}/LICENSE
 
 %changelog
+* Fri Mar 02 2012 Dan McPherson <dmcphers@redhat.com> 0.88.1-1
+- bump spec numbers (dmcphers@redhat.com)
+- connectors for scaling perl/nodejs/rack/wsgi (rchopra@redhat.com)
+
 * Mon Feb 27 2012 Dan McPherson <dmcphers@redhat.com> 0.87.4-1
 - cleanup all the old command usage in help and messages (dmcphers@redhat.com)
 

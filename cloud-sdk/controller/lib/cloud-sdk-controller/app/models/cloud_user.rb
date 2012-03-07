@@ -151,13 +151,13 @@
     result = ResultIO.new
 
     # validations
-    raise Cloud::Sdk::UserKeyException.new("ERROR: Can't remove all ssh keys for user #{self.login}", 
-                                           122) if num_keys_check and self.ssh_keys.size <= 1
     #FIXME: remove this check when client tools are updated
     raise Cloud::Sdk::UserKeyException.new("ERROR: Can't remove '#{key_name}' ssh key for user #{self.login}", 
                                            124) if num_keys_check and (key_name == CloudUser::DEFAULT_SSH_KEY_NAME)
     key_info = self.ssh_keys[key_name]
     raise Cloud::Sdk::UserKeyException.new("ERROR: Key name '#{key_name}' doesn't exist for user #{self.login}", 118) unless key_info
+    raise Cloud::Sdk::UserKeyException.new("ERROR: Can't remove all ssh keys for user #{self.login}", 
+                                           122) if num_keys_check and self.ssh_keys.size <= 1
 
     applications.each do |app|
       Rails.logger.debug "DEBUG: Removing ssh key named #{key_name} from app: #{app.name} for user #{@name}"

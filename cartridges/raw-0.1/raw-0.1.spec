@@ -1,8 +1,8 @@
-%define cartridgedir %{_libexecdir}/li/cartridges/raw-0.1
+%define cartridgedir %{_libexecdir}/li/cartridges/diy-0.1
 
-Summary:   Provides raw support
+Summary:   Provides diy support
 Name:      rhc-cartridge-raw-0.1
-Version:   0.21.3
+Version:   0.22.1
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   ASL 2.0
@@ -17,7 +17,7 @@ Requires:  httpd
 BuildArch: noarch
 
 %description
-Provides raw http support to OpenShift
+Provides diy support to OpenShift
 
 %prep
 %setup -q
@@ -87,6 +87,13 @@ rm -rf %{buildroot}
 %doc %{cartridgedir}/LICENSE
 
 %changelog
+* Fri Mar 02 2012 Dan McPherson <dmcphers@redhat.com> 0.22.1-1
+- bump spec numbers (dmcphers@redhat.com)
+
+* Wed Feb 29 2012 Dan McPherson <dmcphers@redhat.com> 0.21.4-1
+- Adds instructions to raw cartridge README. (mpatel@redhat.com)
+- fix wrong cased OpenShift (dmcphers@redhat.com)
+
 * Mon Feb 27 2012 Dan McPherson <dmcphers@redhat.com> 0.21.3-1
 - Fixed path to start stop scripts in instructions. (mpatel@redhat.com)
 - cleanup all the old command usage in help and messages (dmcphers@redhat.com)

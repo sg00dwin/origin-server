@@ -1,6 +1,6 @@
 #!/usr/bin/env ruby
 
-require "/var/www/libra/broker/config/environment"
+require 'rubygems'
 require 'getoptlong'
 require 'pp'
 
@@ -70,6 +70,8 @@ if args["--help"]
   usage
   exit 1
 end
+
+require "/var/www/libra/broker/config/environment"
 
 uuid     = args["--uuid"]
 command  = args['--command']

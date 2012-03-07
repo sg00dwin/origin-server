@@ -1,6 +1,6 @@
 # Controller cartridge command paths
 $cartridge_root ||= "/usr/libexec/li/cartridges"
-$raw_cartridge = "#{$cartridge_root}/raw-0.1"
+$raw_cartridge = "#{$cartridge_root}/diy-0.1"
 $raw_hooks = "#{$raw_cartridge}/info/hooks"
 $raw_config_path = "#{$raw_hooks}/configure"
 # app_name namespace acct_name
@@ -67,7 +67,7 @@ Then /^a raw application source tree will( not)? exist$/ do | negate |
   app_name = @app['name']
 
   app_root = "#{$home_root}/#{acct_name}/#{app_name}"
-  status = (File.exists? app_root and File.directory? app_root) 
+  status = (File.exists? app_root and File.directory? app_root)
   # TODO - need to check permissions and SELinux labels
 
   if not negate

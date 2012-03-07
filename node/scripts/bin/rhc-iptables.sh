@@ -16,7 +16,7 @@ UWHOLE_NET="127.0.0.0"
 UWHOLE_NM="8"
 USAFE_NET="127.0.0.0"
 USAFE_NM="25"
-UAPP_BASE="127.0.250.0"
+UAPP_BASE="127.0.0.0"  # UID 0
 UAPP_NM="25"
 # Example of use:
 # iptables -I rhc-app-table -d 127.0.250.0/25 -m owner --uid-owner 500 -j ACCEPT

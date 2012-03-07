@@ -1,6 +1,43 @@
+$responsivePhone:         480px;
+$responsiveTablet:        768px;
+$responsiveDefault:       980px;
+$responsiveLarge:         1200px;
+
+$gridGutterWidth:         28px;
+$gridColumnWidth:         50px; // 80 * 12 = 960
+
+$gridGutterWidthTablet:   20px;
+$gridColumnWidthTablet:   42.5px; // 62 * 12 = 744 and 12px gutters
+
+$gridGutterWidthLarge:    30px;
+$gridColumnWidthLarge:    60px;
+
+$logoHeight:      90px;
+$logoWidth:       93px;
+$logoSeparation:  10px;
+
 $cliText:                   #000C5A;
 $cliBackground:             #E9ECFF;
 
 $breadcrumbDividerColor:    #91010b;
 $breadcrumbTextColor:       #343434;
+
+$topBarBackgroundColor:         #010101;
+$navBackgroundColor:            #343434;
+$navColumnBackgroundColor:      #030303;
+$belowNavColumnBackgroundColor: #f2f2f2;
+$contentColumnBackgroundColor:  white;
+
+$loginBackgroundColor:        #343434;
+$loginColor:                  #eaeaea;
+
+$signupLinkColor:             #aaa;
+$textDarkBackground:          white;
+$darkBackground:              #030303;
+$textLightBackground:         white;
+$lightBackground:             white;
+
+$ribbonColor:     #eb0011;
+$ribbonTextColor: white;
+$ribbonFoldColor: #91010b;
 

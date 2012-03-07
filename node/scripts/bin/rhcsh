@@ -15,16 +15,16 @@ function welcome {
 
     Welcome to OpenShift shell
 
-    This shell will assist you in managing openshift applications.
+    This shell will assist you in managing OpenShift applications.
 
     !!! IMPORTANT !!! IMPORTANT !!! IMPORTANT !!!
     Shell access is quite powerful and it is possible for you to
-    accidentally damage your application.  Procede with care!
-    If worse comes to worse, destroy your application with 'rhc app destroy'
+    accidentally damage your application.  Proceed with care!
+    If worse comes to worst, destroy your application with 'rhc app destroy'
     and recreate it
     !!! IMPORTANT !!! IMPORTANT !!! IMPORTANT !!!
 
-    type "help" for more info.
+    Type "help" for more info.
 
 EOF
 }

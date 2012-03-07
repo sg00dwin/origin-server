@@ -3,7 +3,7 @@
 
 Summary:   Li broker components
 Name:      rhc-broker
-Version:   0.87.9
+Version:   0.88.1
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -54,6 +54,7 @@ mv %{buildroot}%{brokerdir}/script/rhc-admin-move %{buildroot}/%{_bindir}
 mv %{buildroot}%{brokerdir}/script/rhc-admin-ctl-district %{buildroot}/%{_bindir}
 mv %{buildroot}%{brokerdir}/script/rhc-admin-add-template %{buildroot}/%{_bindir}
 mv %{buildroot}%{brokerdir}/script/rhc-admin-remove-template %{buildroot}/%{_bindir}
+mv %{buildroot}%{brokerdir}/script/rhc-admin-user-vip %{buildroot}/%{_bindir}
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -78,11 +79,29 @@ rm -rf $RPM_BUILD_ROOT
 %attr(0750,-,-) %{_bindir}/rhc-admin-ctl-district
 %attr(0750,-,-) %{_bindir}/rhc-admin-add-template
 %attr(0750,-,-) %{_bindir}/rhc-admin-remove-template
+%attr(0750,-,-) %{_bindir}/rhc-admin-user-vip
 
 %post
 /bin/touch %{brokerdir}/log/production.log
 
 %changelog
+* Fri Mar 02 2012 Dan McPherson <dmcphers@redhat.com> 0.88.1-1
+- Updating gem versions (dmcphers@redhat.com)
+- bump spec numbers (dmcphers@redhat.com)
+- fail if you dont get a result from rpc_exec (dmcphers@redhat.com)
+- make help pages fast on admin tools and sync output from migrate
+  (dmcphers@redhat.com)
+- rolling back changes for raising exceptions when component is not found on
+  gear (rchopra@redhat.com)
+- do not consider deconfigure benign if a component is not found on the node
+  (rchopra@redhat.com)
+
+* Thu Mar 01 2012 Dan McPherson <dmcphers@redhat.com> 0.87.11-1
+- Adding admin script to set user VIP status (kraman@gmail.com)
+
+* Wed Feb 29 2012 Dan McPherson <dmcphers@redhat.com> 0.87.10-1
+- Updating gem versions (dmcphers@redhat.com)
+
 * Tue Feb 28 2012 Dan McPherson <dmcphers@redhat.com> 0.87.9-1
 - Updating gem versions (dmcphers@redhat.com)
 - Fix for Bugz 798256 Consolidating user lookup (kraman@gmail.com)

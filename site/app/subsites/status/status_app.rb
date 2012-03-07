@@ -1,6 +1,7 @@
 require 'sinatra/base'
 require 'haml'
 require 'json'
+require 'uri'
 
 MY_ROOT = File.expand_path(File.dirname(__FILE__))
 $LOAD_PATH << File.join(MY_ROOT,'lib')
@@ -18,35 +19,37 @@ class StatusApp < Sinatra::Base
   end
 
   before do
+    _log("Handing request")
+    @base = URI.parse(request.path_info).path.split('/')[0..-2].join('/')
     if !settings.synced && Issue.all.empty?
       _log("Not synced")
       sync(sprintf(HOSTS[:template],HOSTS[:host]))
     end
   end
-
-  get '/app/status' do
+  
+  get '*/status' do
     @open = Issue.is_open
     @resolved = Issue.resolved.merge(Issue.year)
     haml :index
   end
 
-  get '/app/status/current.json' do
+  get '*/status/current.json' do
     content_type :json
     { :issues => Issue.all, :updates => Update.all }.to_json 
   end
   
-  get '/app/status/sync/?' do
-    redirect "/app/status/sync/#{HOSTS[:host]}"
+  get '*/status/sync/?' do
+    redirect "*/status/sync/#{HOSTS[:host]}"
   end
 
-  get '/app/status/sync/:server' do
+  get '*/status/sync/:server' do
     server = params[:server]
     _log "Syncing to #{server}"
     sync(sprintf(HOSTS[:template],server))
-    redirect '/app/status'
+    redirect '*/status'
   end
 
-  get '/app/status/status.js' do
+  get '*/status/status.js' do
     @open = Issue.is_open
     status = header
     content_type 'text/javascript'
@@ -93,10 +96,11 @@ class StatusApp < Sinatra::Base
       uri = "#{host}/current.json"
       _log "Syncing to #{uri}"  
 
-      http_req(:get,uri) do |resp|
-        unless resp.empty?
+      http_req(uri) do |resp|
+        case resp
+        when Net::HTTPSuccess
           begin
-            data = JSON.parse(resp)
+            data = JSON.parse(resp.body)
 
             Issue.delete_all
             Update.delete_all
@@ -117,6 +121,8 @@ class StatusApp < Sinatra::Base
           rescue JSON::ParserError
             _log "Site not responding to status request"
           end
+        else
+          _log("Did not succeed: #{resp}")
         end
       end
 

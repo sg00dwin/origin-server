@@ -74,6 +74,7 @@ class BootstrapFormBuilder < Formtastic::SemanticFormBuilder
           array << error
         end
       end
+      array
       #errors = Array(@object.errors[method.to_sym]).to_sentence
       #errors.present? ? array << [attribute, errors].join(" ") : array ||= []
     end
@@ -88,6 +89,7 @@ class BootstrapFormBuilder < Formtastic::SemanticFormBuilder
   end
 
   def inline_errors_for(method, options = {}) #:nodoc:
+    return super unless new_forms_enabled?
     if render_inline_errors?
       errors = error_keys(method, options).map do |x|
         attribute = localized_string(x, x.to_sym, :label) || humanized_attribute_name(x)
@@ -102,6 +104,7 @@ class BootstrapFormBuilder < Formtastic::SemanticFormBuilder
   end
 
   def error_list(errors, options = {}) #:nodoc:
+    return super unless new_forms_enabled?
     error_class = options[:error_class] || default_inline_error_class
     template.content_tag(:p, Formtastic::Util.html_safe(errors.join(' ').untaint), :class => error_class)
   end

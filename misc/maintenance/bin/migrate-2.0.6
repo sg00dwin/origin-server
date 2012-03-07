@@ -11,6 +11,55 @@ RHLOGINS = nil #['rhlogin']
 MAX_THREADS = 10
 WORK_DIR = '/tmp/rhc/migration'
 
+VALID_SERVERS = {
+  "ex-lg-node4.prod.rhcloud.com" => nil,
+  "ex-lg-node5.prod.rhcloud.com" => nil,
+  "ex-lg-node6.prod.rhcloud.com" => nil,
+  "ex-node1.prod.rhcloud.com" => nil,
+  "ex-node2.prod.rhcloud.com" => nil,
+  "ex-node3.prod.rhcloud.com" => nil,
+  "ex-node5.prod.rhcloud.com" => nil,
+  "ex-node6.prod.rhcloud.com" => nil,
+  "ex-node7.prod.rhcloud.com" => nil,
+  "ex-node8.prod.rhcloud.com" => nil,
+  "ex-node9.prod.rhcloud.com" => nil,
+  "ex-node10.prod.rhcloud.com" => nil,
+  "ex-node11.prod.rhcloud.com" => nil,
+  "ex-node12.prod.rhcloud.com" => nil,
+  "ex-node15.prod.rhcloud.com" => nil,
+  "ex-node17.prod.rhcloud.com" => nil,
+  "ex-node19.prod.rhcloud.com" => nil,
+  "ex-node20.prod.rhcloud.com" => nil,
+  "ex-node23.prod.rhcloud.com" => nil,
+  "ex-node24.prod.rhcloud.com" => nil,
+  "ex-node27.prod.rhcloud.com" => nil,
+  "ex-node28.prod.rhcloud.com" => nil,
+  "ex-node30.prod.rhcloud.com" => nil,
+  "ex-node31.prod.rhcloud.com" => nil,
+  "ex-std-node1.prod.rhcloud.com" => nil,
+  "ex-std-node2.prod.rhcloud.com" => nil,
+  "ex-std-node3.prod.rhcloud.com" => nil,
+  "ex-std-node4.prod.rhcloud.com" => nil,
+  "ex-std-node5.prod.rhcloud.com" => nil,
+  "ex-std-node6.prod.rhcloud.com" => nil,
+  "ex-std-node7.prod.rhcloud.com" => nil,
+  "ex-std-node8.prod.rhcloud.com" => nil,
+  "ex-std-node9.prod.rhcloud.com" => nil,
+  "ex-std-node10.prod.rhcloud.com" => nil,
+  "ex-std-node11.prod.rhcloud.com" => nil,
+  "ex-std-node12.prod.rhcloud.com" => nil,
+  "ex-std-node13.prod.rhcloud.com" => nil,
+  "ex-std-node14.prod.rhcloud.com" => nil,
+  "ex-std-node15.prod.rhcloud.com" => nil,
+  "ex-std-node16.prod.rhcloud.com" => nil,
+  "ex-std-node17.prod.rhcloud.com" => nil,
+  "ex-std-node18.prod.rhcloud.com" => nil,
+  "ex-std-node19.prod.rhcloud.com" => nil,
+  "ex-std-node20.prod.rhcloud.com" => nil
+}
+
+STDOUT.sync, STDERR.sync = true
+
 #
 #  Migrate the specified app
 #
@@ -130,13 +179,21 @@ def migrate(continue=false)
         apps = user.applications
         apps.each do |app|
           app_name = app.name
-          server_identity = app.gear.server_identity
-          mutex.synchronize do
-            node_to_apps[server_identity] = [] unless node_to_apps[server_identity]
-            node_to_users[server_identity] = [] unless node_to_users[server_identity]
-            node_to_apps[server_identity] << {:name => app_name, :app => app}
-            node_to_users[server_identity] << user
-            app_cnt += 1
+          if app.gear
+            server_identity = app.gear.server_identity
+            mutex.synchronize do
+              if VALID_SERVERS.has_key?(server_identity)
+                node_to_apps[server_identity] = [] unless node_to_apps[server_identity]
+                node_to_users[server_identity] = [] unless node_to_users[server_identity]
+                node_to_apps[server_identity] << {:name => app_name, :app => app}
+                node_to_users[server_identity] << user
+                app_cnt += 1
+              else
+                puts "ERROR: App: '#{app_name}' of user: #{user.login} is registered with an invalid node: #{server_identity}"
+              end
+            end
+          else
+            puts "ERROR: Gear not found for app: '#{app_name}' of user #{user.login}"
           end
         end
       end

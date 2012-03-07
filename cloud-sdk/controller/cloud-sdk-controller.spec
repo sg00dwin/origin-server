@@ -5,7 +5,7 @@
 
 Summary:        Cloud Development Controller
 Name:           rubygem-%{gemname}
-Version:        0.5.9
+Version:        0.6.1
 Release:        1%{?dist}
 Group:          Development/Languages
 License:        ASL 2.0
@@ -75,6 +75,27 @@ rm -rf %{buildroot}
 %{ruby_sitelib}/%{gemname}.rb
 
 %changelog
+* Fri Mar 02 2012 Dan McPherson <dmcphers@redhat.com> 0.6.1-1
+- Updating gem versions (dmcphers@redhat.com)
+- bump spec numbers (dmcphers@redhat.com)
+- Merge branch 'master' of git1.ops.rhcloud.com:/srv/git/li (rpenta@redhat.com)
+- Fix for bug# 799225 (rpenta@redhat.com)
+- for deconfigure, fail if any of the deconfigures fail i.e. node not found or
+  deconfigure failed (rchopra@redhat.com)
+- [rest api] make sure we return data in the correct format (johnp@redhat.com)
+
+* Wed Feb 29 2012 Dan McPherson <dmcphers@redhat.com> 0.5.10-1
+- Updating gem versions (dmcphers@redhat.com)
+- Bugz 798148 (kraman@gmail.com)
+- Merge branch 'master' of git1.ops.rhcloud.com:/srv/git/li (lnader@redhat.com)
+- fix for bug 798643 (abhgupta@redhat.com)
+- fix wrong cased OpenShift (dmcphers@redhat.com)
+- merged changes (lnader@redhat.com)
+- Bug 797136 - [Rest API] no Exit_code for error message for some rest api
+  (lnader@redhat.com)
+- Bug 797136 - [Rest API] no Exit_code for error message for some rest api
+  (lnader@redhat.com)
+
 * Tue Feb 28 2012 Dan McPherson <dmcphers@redhat.com> 0.5.9-1
 - Updating gem versions (dmcphers@redhat.com)
 - Fix for Bugz 798256 Consolidating user lookup (kraman@gmail.com)

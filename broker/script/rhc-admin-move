@@ -1,6 +1,6 @@
 #!/usr/bin/env ruby
 
-require "/var/www/libra/broker/config/environment"
+require 'rubygems'
 require 'getoptlong'
 require 'mcollective'
 
@@ -39,6 +39,8 @@ options = rpcoptions do |parser, options|
     end
     options[:allow_change_district] = false unless options[:allow_change_district]
 end
+
+require "/var/www/libra/broker/config/environment"
 
 unless options.include?(:app_name) && options.include?(:rhlogin) || options.include?(:app_uuid)
     puts "ERROR: Specify app name (-n) and rhlogin (-l) or app uuid (--app_uuid)"

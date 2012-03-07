@@ -1,10 +1,12 @@
 require 'enumerator'
 
 module LayoutHelper
+  
   def navigation_tabs(options={}, &block)
     content = capture &block
     content_tag(:ul, content, :class => 'nav')
   end
+  
   def navigation_tab(name, options={})
     action = options[:action]
     active = (name.to_s == controller_name) && (action.nil? || action.to_s == controller.action_name)
@@ -66,7 +68,7 @@ module LayoutHelper
     content_tag(:span, '/', :class => 'divider')
   end
 
-  WizardStepsCreate = [
+  AppWizardStepsCreate = [
     {
       :name => 'Choose a type of application',
       :link => 'application_types_path'
@@ -79,9 +81,27 @@ module LayoutHelper
     }
   ]
 
-  def wizard_steps_create(active, options={})
-    wizard_steps(WizardStepsCreate, active, options)
+  def app_wizard_steps_create(active, options={})
+    wizard_steps(AppWizardStepsCreate, active, options)
   end
+
+  CartridgeWizardStepsCreate = [
+    {
+      :name => 'Choose a cartridge type',
+      :link => 'application_cartridge_types_path'
+    },
+    {
+      :name => 'Configure and deploy the cartridge'
+    },
+    {
+      :name => 'Next steps'
+    }
+  ]
+
+  def cartridge_wizard_steps_create(active, options={})
+    wizard_steps(CartridgeWizardStepsCreate, active, options)
+  end
+
   def wizard_steps(items, active, options={})
     content_tag(
       :ol,
