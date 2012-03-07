@@ -1,4 +1,4 @@
-policy_module(libra,1.1.5)
+policy_module(libra,1.1.6)
 
 ########################################
 #
@@ -63,6 +63,7 @@ corenet_tcp_connect_mysqld_port(libra_net_domain)
 corenet_tcp_connect_postgresql_port(libra_net_domain)
 corenet_tcp_connect_git_port(libra_net_domain)
 corenet_tcp_connect_oracle_port(libra_net_domain)
+corenet_tcp_connect_flash_port(libra_net_domain)
 corenet_tcp_connect_http_port(libra_net_domain)
 corenet_tcp_connect_ftp_port(libra_net_domain)
 #/* These ports are the ephemeral ports needed for ftp */
@@ -308,6 +309,8 @@ allow domain libra_var_lib_t:dir search_dir_perms;
 allow domain libra_var_lib_t:file { append getattr };
 
 filetrans_pattern(quota_t, libra_var_lib_t, quota_db_t, file)
+# Puppet redirection causes this AVC
+dontaudit quota_t libra_tmp_t:file write;
 
 kernel_dontaudit_request_load_module(domain)
 
@@ -419,6 +422,8 @@ allow libra_cgroup_read_t self:fifo_file rw_fifo_file_perms;
 allow libra_cgroup_read_t self:unix_stream_socket create_stream_socket_perms;
 allow libra_cgroup_read_t libra_initrc_t:fifo_file rw_inherited_fifo_file_perms;
 
+dontaudit libra_cgroup_read_t sshd_devpts_t:chr_file { read write };
+
 corecmd_exec_bin(libra_cgroup_read_t)
 
 dev_read_urand(libra_cgroup_read_t)
@@ -454,7 +459,8 @@ role system_r types libra_mail_t;
 
 allow libra_mail_t libra_initrc_t:fifo_file rw_inherited_fifo_file_perms;
 dontaudit libra_mail_t sshd_devpts_t:chr_file { read write };
-dontaudit libra_cgroup_read_t sshd_devpts_t:chr_file { read write };
+
+fs_dontaudit_rw_anon_inodefs_files(libra_mail_t)
 
 read_files_pattern(libra_mail_t, libra_var_lib_t, libra_var_lib_t)
 manage_files_pattern(libra_mail_t, libra_tmp_t, libra_tmp_t)
@@ -492,7 +498,7 @@ allow libra_app_domain libra_rw_file_t:file { relabelfrom relabelto };
 #
 # rpm, yum, debuginfo-install
 # traceroute, iptables, iptables-multi
-# dmesg
+# dmesg, tcpdump
 # su, sudo, denyhosts
 #
 
