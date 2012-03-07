@@ -60,19 +60,31 @@ the behavior of the host system.
 
 ** keys
 
-** test zone file
+** initial zone file
 
 ** starting and stopping the daemon
 
 ** log files
 
-
-
 * Integrated/Forwarding
+
+** named.conf
+
+** keys
+
+** initial zone file
+
+** forwarders
+
+** /etc/resolv.conf
 
 * Forwarders by DHCP
 
+** /etc/dhclient.conf
 
+** /etc/dhcp/dhclient-up-hooks
+
+** SELinux policy
 
 * References
 
