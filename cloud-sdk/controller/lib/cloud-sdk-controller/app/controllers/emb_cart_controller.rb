@@ -69,12 +69,13 @@ class EmbCartController < BaseController
     @reply.messages.push(message)
     respond_with @reply, :status => @reply.status
   end
-  
+
   # POST /domains/[domain_id]/applications/[application_id]/cartridges
   def create
     domain_id = params[:domain_id]
     id = params[:application_id]
-    cartridge = params[:cartridge]
+    name = params[:name]
+
     application = Application.find(@cloud_user,id)
     if(application.nil?)
       @reply = RestReply.new(:not_found)
@@ -86,7 +87,7 @@ class EmbCartController < BaseController
     begin
       #container = Cloud::Sdk::ApplicationContainerProxy.find_available(application.server_identity)
       container = Cloud::Sdk::ApplicationContainerProxy.find_available(nil)
-      if not check_cartridge_type(cartridge, container, "embedded")
+      if not check_cartridge_type(name, container, "embedded")
         @reply = RestReply.new( :bad_request)
         carts = get_cached("cart_list_embedded", :expires_in => 21600.seconds) {
         Application.get_available_cartridges("embedded")}
@@ -108,27 +109,26 @@ class EmbCartController < BaseController
       respond_with @reply, :status => @reply.status
       return
     end
-    
 
     begin
-      application.add_dependency(cartridge)
+      application.add_dependency(name)
     rescue Exception => e
       Rails.logger.error e
       @reply = RestReply.new(:internal_server_error)
-      message = Message.new(:error, "Failed to add #{cartridge} to application #{id} due to #{e.message}", e.code) 
+      message = Message.new(:error, "Failed to add #{name} to application #{id} due to #{e.message}", e.code)
       @reply.messages.push(message)
       respond_with @reply, :status => @reply.status
       return
     end
-      
+
     application = Application.find(@cloud_user,id)
-    
+
     unless application.embedded.nil?
       application.embedded.each do |key, value|
-        if key == cartridge
+        if key == name
           cartridge = RestCartridge.new("embedded", key, id, domain_id)
           @reply = RestReply.new(:created, "cartridge", cartridge)
-          message = Message.new(:info, "Added #{cartridge} to application #{id}")
+          message = Message.new(:info, "Added #{name} to application #{id}")
           @reply.messages.push(message)
           respond_with @reply, :status => @reply.status
           return
@@ -136,7 +136,7 @@ class EmbCartController < BaseController
       end
     end
   end
-  
+
   # DELETE /domains/[domain_id]/applications/[application_id]/cartridges/[cartridge_id]
   def destroy
     domain_id = params[:domain_id]
