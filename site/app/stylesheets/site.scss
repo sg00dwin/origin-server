@@ -344,6 +344,7 @@ h1.ribbon {
   h3 > a { 
     color: white; 
     text-transform: uppercase; 
+    font-weight: bold;
   }
   .nav-location {
     font-size: 19px;
@@ -353,7 +354,6 @@ h1.ribbon {
   }
   .nav-stacked {
     margin-left: -$gridGutterWidth/2;
-    margin-right: $gridGutterWidth/2;
   }
 
   .nav-pills .active > a,
@@ -369,7 +369,7 @@ h1.ribbon {
 }
 
 /* Stacked navigations indent by 1 gutter each time */
-.nav-stacked > li > .nav-stacked { margin-left: $gridGutterWidth/2; margin-bottom: 0; margin-right: 0; }
+.nav-stacked > li > .nav-stacked { margin-left: $gridGutterWidth/2; margin-bottom: 0; }
 @if $gridGutterWidthTablet != $gridGutterWidth { @media (min-width: 768px) and (max-width: 979px) {
   .nav-stacked > li > .nav-stacked { margin-left: $gridGutterWidthTablet/2; }
 } }

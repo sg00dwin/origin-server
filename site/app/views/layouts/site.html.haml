@@ -14,12 +14,26 @@
     %header
       = render 'layouts/site/header'
 
-    - if content_for?(:sub_layout) 
+    - if content_for? :sub_layout
       = yield :sub_layout
     - else
-      .container#content
-        = flashes
-        = yield
+      .section-striped#content
+        .container
+          .row-content
+            .row.row-flush-right
+              - if content_for? :navigation
+                .column-nav.lift-less.span-wrapper
+                  .span3
+                    = yield :navigation
+                .column-content.lift.span-wrapper
+                  .span9.span-flush-right
+                    = flashes
+                    = yield
+              - else
+                .column-content.lift-less.span-wrapper
+                  .span12.span-flush-right
+                    = flashes
+                    = yield
 
     %footer
       = render 'layouts/site/footer'

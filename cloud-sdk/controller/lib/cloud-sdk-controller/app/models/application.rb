@@ -1065,6 +1065,24 @@ class Application < Cloud::Sdk::Cartridge
     return "@@app"
   end
 
+  def add_group_override(from, to)
+    # assuming from/to to be cartridge names as of now
+    # this also means that one cannot issue a group override at a lower hierarchy 
+    #   (e.g. some new cartridge that uses mysql inside it, and app wants to co-locate/re-use that mysql for app's use)
+    # this also means that one cannot have two instances of the same cartridge
+    from_cart = CartridgeCache.find_cartridge(from)
+    raise Exception.new("Cartridge #{from} not found.") if from_cart.nil?
+    to_cart = CartridgeCache.find_cartridge(to)
+    raise Exception.new("Cartridge #{to} not found.") if to_cart.nil?
+    from_group = from_cart.find_profile(nil).groups[0]
+    to_group = to_cart.find_profile(nil).groups[0]
+
+    from_gpath = self.get_name_prefix + from_cart.get_name_prefix + from_group.get_name_prefix
+    to_gpath = self.get_name_prefix + to_cart.get_name_prefix + to_group.get_name_prefix
+    group_override_map[from_gpath] = to_gpath
+    group_override_map[to_gpath] = from_gpath
+  end
+
   # Parse the descriptor and build or update the runtime descriptor structure
   def elaborate_descriptor
     self.group_instance_map = {} if group_instance_map.nil?
@@ -1075,7 +1093,7 @@ class Application < Cloud::Sdk::Cartridge
     self.conn_endpoints_list = [] 
     default_profile = @profile_name_map[@default_profile]
     
-    generate_group_overrides(default_profile)
+    # generate_group_overrides(default_profile)
   
     default_profile.groups.each { |g|
       #gpath = self.name + "." + g.name

@@ -8,21 +8,22 @@
           = link_to p, :class => 'btn btn-small login-provider' do
             %img{:alt => p}
 
-#nav.section-nav
+#nav.section-nav.lift-counter
   .navbar
     .container
       -# Was .nav-collapse, has some issues
-      = link_to root_path, :class => 'brand' do
-        .brand-image
-        .brand-text
-          %strong> Open
-          Shift
-    %ul.nav
-      %li.active= link_to "Learn More", product_overview_path
-      %li= link_to "Express", express_path
-      %li.divider &nbsp;
-      %li= link_to "Flex", flex_path
-      %li= link_to "Community", community_url
+      .brand
+        = link_to root_path do
+          .brand-image
+          .brand-text
+            %strong> Open
+            Shift
+      %ul.nav
+        %li.active= link_to "Learn More", product_overview_path
+        %li= link_to "Express", express_path
+        %li.divider &nbsp;
+        %li= link_to "Flex", flex_path
+        %li= link_to "Community", community_url
 
-- if content_for? :header
-  = yield :header
+  - if content_for? :header
+    = yield :header

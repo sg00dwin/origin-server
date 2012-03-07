@@ -275,6 +275,9 @@ a:hover {
 .gutter {
   margin-left: 28px; }
 
+.gutter-right {
+  margin-right: 14px; }
+
 .box-content {
   padding: 20px 28px; }
 
@@ -3080,8 +3083,6 @@ table {
   table-layout: fixed; }
 
 ul, ol {
-  margin: 0;
-  /* Set at 0, otherwise default margin causes havoc when assigning grid system classes to list elements. Use <ul class="regular"> for traditional lists */
   padding: 0; }
 
 ul.regular, ol.regular {
