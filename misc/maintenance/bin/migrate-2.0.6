@@ -11,7 +11,7 @@ RHLOGINS = nil #['rhlogin']
 MAX_THREADS = 10
 WORK_DIR = '/tmp/rhc/migration'
 
-valid_servers = {
+VALID_SERVERS = {
   "ex-lg-node4.prod.rhcloud.com" => nil,
   "ex-lg-node5.prod.rhcloud.com" => nil,
   "ex-lg-node6.prod.rhcloud.com" => nil,
@@ -182,7 +182,7 @@ def migrate(continue=false)
           if app.gear
             server_identity = app.gear.server_identity
             mutex.synchronize do
-              if valid_servers.has_key?(server_identity)
+              if VALID_SERVERS.has_key?(server_identity)
                 node_to_apps[server_identity] = [] unless node_to_apps[server_identity]
                 node_to_users[server_identity] = [] unless node_to_users[server_identity]
                 node_to_apps[server_identity] << {:name => app_name, :app => app}
