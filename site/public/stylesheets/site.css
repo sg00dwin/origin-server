@@ -398,6 +398,18 @@ body.signup {
     .section-striped .link-tile > :last-child {
       margin-bottom: 0; }
 
+@media (max-width: 768px) {
+  .section-striped .link-tile {
+    padding: 10px 20px; } }
+
+@media (min-width: 768px) and (max-width: 979px) {
+  .section-striped .link-tile {
+    padding: 10px 20px; } }
+
+@media (min-width: 1200px) {
+  .section-striped .link-tile {
+    padding: 15px 30px; } }
+
 .section-striped.lift-counter {
   padding-bottom: 130px; }
 
@@ -464,7 +476,7 @@ body.signup {
     text-decoration: none;
     color: white; }
   .take-action > * {
-    padding: 27px 28px; }
+    padding: 28px; }
   .take-action > .pull-right {
     background-color: #91010b;
     padding-right: 40px;
@@ -472,6 +484,18 @@ body.signup {
     -moz-transition: background-position 0.2s; }
   .take-action:hover > .pull-right {
     background-position: 89% center; }
+
+@media (max-width: 768px) {
+  .take-action > * {
+    padding: 16px 20px; } }
+
+@media (min-width: 768px) and (max-width: 979px) {
+  .take-action > * {
+    padding: 20px; } }
+
+@media (min-width: 1200px) {
+  .take-action > * {
+    padding: 30px; } }
 
 #learn .take-action {
   margin-top: -37px;
@@ -482,6 +506,7 @@ body.signup {
   color: white;
   text-transform: uppercase;
   font-size: 46px;
+  line-height: 48px;
   letter-spacing: -4px; }
 .column-buzz > hr {
   margin: 10px 43% 30px;
@@ -542,6 +567,14 @@ body.signup {
   .column-buzz > .callout > .one {
     margin-top: 30px;
     color: gray; }
+
+@media (max-width: 768px) {
+  .column-buzz > h2 {
+    font-size: 26px;
+    line-height: 28px; }
+
+  .column-buzz > .callout {
+    display: none; } }
 
 #buzz {
   min-height: 500px; }
