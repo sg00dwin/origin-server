@@ -30,10 +30,16 @@ module StickShift
       end
 
       def get_available_cartridges
-        reply = exec_command('stickshift', 'cartridge-list', '--porcelain --with-descriptors')
+        reply = exec_command('stickshift', 'cartridge-list', '--porcelain')
         result = parse_result(reply)
         cart_data = JSON.parse(result.resultIO.string)
-        cart_data.map! {|c| StickShift::Cartridge.new.from_descriptor(YAML.load(c))}
+        
+        cart_data.map! do |cart_name|
+          reply = exec_command('stickshift', 'cartridge-info', "--porcelain #{cart_name}")
+          result = parse_result(reply)
+          StickShift::Cartridge.new.from_descriptor(JSON.parse(result.resultIO.string))
+        end
+
       end
 
       def create(app, gear)
