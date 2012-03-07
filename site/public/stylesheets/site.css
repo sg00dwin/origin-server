@@ -462,6 +462,10 @@ body.signup {
   color: white;
 }
 
+#nav {
+  background: #343434 url("../images/landscape-mountains.png") repeat-x bottom left;
+}
+
 .section-nav {
   background-color: #343434;
   color: white;

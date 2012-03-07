@@ -75,6 +75,9 @@ body.signup {
   background-color: $topBarBackgroundColor; 
   color: white;
 }
+#nav {
+  background: $navBackgroundColor url($navBackgroundImage) repeat-x bottom left;
+}
 .section-nav {
   background-color: $navBackgroundColor; 
   color: white;
