@@ -18,7 +18,27 @@
     - if content_for? :important_layout
       = yield :important_layout
 
-    = content_for?(:sub_layout) ? yield(:sub_layout) : yield
+    -#= content_for?(:sub_layout) ? yield(:sub_layout) : yield
+    - if content_for? :sub_layout
+      = yield :sub_layout
+    - else
+      .section-striped#content
+        .container
+          .row-content
+            .row.row-flush-right
+              - if content_for? :navigation
+                .column-nav.lift-less.span-wrapper
+                  .span3
+                    = yield :navigation
+                .column-content.lift.span-wrapper
+                  .span9.span-flush-right
+                    = flashes
+                    = yield
+              - else
+                .column-content.lift-less.span-wrapper
+                  .span12.span-flush-right
+                    = flashes
+                    = yield
 
     %footer
       = render 'layouts/site/footer'

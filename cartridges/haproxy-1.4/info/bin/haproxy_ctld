@@ -1,0 +1,159 @@
+#!/usr/bin/ruby
+
+require 'socket'
+require 'logger'
+require 'getoptlong'
+
+
+class Haproxy_attr
+    attr_accessor :pxname,:svname,:qcur,:qmax,:scur,:smax,:slim,:stot,:bin,:bout,:dreq,:dresp,:ereq,:econ,:eresp,:wretr,:wredis,:status,:weight,:act,:bck,:chkfail,:chkdown,:lastchg,:downtime,:qlimit,:pid,:iid,:sid,:throttle,:lbtot,:tracked,:type,:rate,:rate_lim,:rate_max,:check_status,:check_code,:check_duration,:hrsp_1xx,:hrsp_2xx,:hrsp_3xx,:hrsp_4xx,:hrsp_5xx,:hrsp_other,:hanafail,:req_rate,:req_rate_max,:req_tot,:cli_abrt,:srv_abrt
+
+    def initialize(line)
+        (@pxname,@svname,@qcur,@qmax,@scur,@smax,@slim,@stot,@bin,@bout,@dreq,@dresp,@ereq,@econ,@eresp,@wretr,@wredis,@status,@weight,@act,@bck,@chkfail,@chkdown,@lastchg,@downtime,@qlimit,@pid,@iid,@sid,@throttle,@lbtot,@tracked,@type,@rate,@rate_lim,@rate_max,@check_status,@check_code,@check_duration,@hrsp_1xx,@hrsp_2xx,@hrsp_3xx,@hrsp_4xx,@hrsp_5xx,@hrsp_other,@hanafail,@req_rate,@req_rate_max,@req_tot,@cli_abrt,@srv_abrt) = line.split(',')
+    end
+end
+
+class Haproxy
+    #ha=Haproxy.new("/tmp/stats")
+    #gear_namespace=ENV['OPENSHIFT_APP_DNS'].split('.')[0].split('-')[1]
+    #gear_count = ha.stats['express'].count - 3.0 # Remove backend, frontend and 'filler'
+    #sessions = ha.stats['express']['BACKEND'].scur.to_f
+    #sessions_per_gear = sessions / gear_count
+    #session_capacity_pct = (sessions_per_gear / @max_sessions_per_gear ) * 100
+
+    def initialize(stats_sock)
+        socket = UNIXSocket.open("/tmp/stats")
+        socket.puts("show stat\n") 
+        @max_sessions_per_gear=10.0
+        @gear_down_pct = 50.1
+        @gear_up_pct = 90.0
+        @log = Logger.new("#{ENV['OPENSHIFT_LOG_DIR']}/scale_events.log")
+#       @log.info("Haproxy watcher started")
+
+        @status={}
+        while(line = socket.gets) do
+            pxname=line.split(',')[0]
+            svname=line.split(',')[1]
+            @status[pxname] = {} unless @status[pxname]
+            @status[pxname][svname] = Haproxy_attr.new(line)
+            #@status[pxname] = Haproxy_attr.new(line)
+        end
+        socket.close
+        @gear_namespace = ENV['OPENSHIFT_APP_DNS'].split('.')[0].split('-')[1]
+        @gear_count = self.stats['express'].count - 3
+        @sessions = self.stats['express']['BACKEND'].scur.to_i
+        @sessions_per_gear = @sessions / @gear_count
+        @session_capacity_pct = @session_capacity_pct = (@sessions_per_gear / @max_sessions_per_gear ) * 100
+    end
+
+    def gear_namespace()
+        @gear_namespace
+    end
+
+    def gear_count()
+        @gear_count
+    end
+
+    def sessions()
+        @sessions
+    end
+
+    def sessions_per_gear()
+        @sessions_per_gear
+    end
+
+    def session_capacity_pct()
+        @session_capacity_pct
+    end
+
+    def add_gear
+        @log.info("GEAR_UP - capacity: #{self.session_capacity_pct}% gear_count: #{self.gear_count} sessions: #{self.sessions} up_threshold: #{@gear_up_pct}%")
+        # Replace with jhonce's scripts
+        `add-gear -l mmcgrath@redhat.com -p ' ' -n #{self.gear_namespace} -t php-5.3 -h localhost -a #{ENV['OPENSHIFT_APP_NAME']}`
+    end
+
+    def remove_gear
+        @log.info("GEAR_DOWN - capacity: #{self.session_capacity_pct}% gear_count: #{self.gear_count} sessions: #{self.sessions} down_threshold: #{@gear_down_pct}%")
+        `remove-gear -l mmcgrath@redhat.com -p ' ' -n #{self.gear_namespace} -t php-5.3 -h localhost -a #{ENV['OPENSHIFT_APP_NAME']}`
+    end
+
+    def print_gear_stats
+        @log.debug("GEAR_DO_NOTHING - Capacity: #{session_capacity_pct}% gear_count: #{gear_count} sessions: #{sessions} up/down_threshold: #{@gear_up_pct}%/#{@gear_down_pct}%")
+    end
+    def check_capacity(debug=nil)
+        if @session_capacity_pct >= @gear_up_pct
+            self.add_gear
+        elsif @session_capacity_pct < @gear_down_pct and @gear_count > 1
+            self.remove_gear
+        else
+            self.print_gear_stats if debug
+        end
+    end
+
+
+    def stats()
+        @status
+    end
+
+    def scur()
+        @scur
+    end
+
+end
+
+def p_usage
+    puts <<USAGE
+
+Usage: #{$0}
+Control scaling features for this application.  Has two operating modes, auto
+and manual.  Manual scaling options will run requested action and exit, auto
+scaling options will stay running in the foreground.
+
+  -h|--help         Display this help menu
+
+Manual scaling options:
+  -u|--up           Trigger a gear_up event and add an additional gear
+  -d|--down         Trigger a gear_down event and remove a gear
+  --debug           Puts logger into debug mode
+
+Auto scaling options:
+  -a|--auto         Enable auto-scale
+  --debug           Puts logger into debug mode
+
+Notes:
+1. To start/stop auto scaling in daemon mode run:
+    haproxy_watcher (start|stop|restart|run|)
+USAGE
+    exit 255
+end
+
+begin
+    opts = GetoptLong.new(
+        ["--up", "-i", GetoptLong::NO_ARGUMENT],
+        ["--down", "-d", GetoptLong::NO_ARGUMENT],
+        ["--auto", "-a", GetoptLong::NO_ARGUMENT],
+        ["--debug", GetoptLong::NO_ARGUMENT],
+        ["--help",  "-h", GetoptLong::NO_ARGUMENT]
+    )
+    opt = {}
+    opts.each do |o, a|
+        opt[o[2..-1]] = a.to_s
+    end
+rescue Exception => e
+  p_usage
+end
+
+
+if opt['up']
+   ha.add_gear
+   exit 0
+elsif opt['down']
+    ha.remove_gear
+    exit 0
+end
+
+while true
+    ha=Haproxy.new("/tmp/stats")
+    ha.check_capacity(opt['debug'])
+    sleep 3
+end
