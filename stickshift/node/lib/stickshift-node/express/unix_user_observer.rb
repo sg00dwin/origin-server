@@ -68,8 +68,8 @@ module StickShift
         shellCmd("service libra-cgroups stopuser #{user.name} > /dev/null")
       end
 
-      LAST_ACCESS_DIR = StickShift::Config.instance.get("LAST_ACCESS_DIR")
-      shellCmd("rm -f #{LAST_ACCESS_DIR}/#{user.name} > /dev/null")
+      last_access_dir = StickShift::Config.instance.get("LAST_ACCESS_DIR")
+      shellCmd("rm -f #{last_access_dir}/#{user.name} > /dev/null")
 
       cmd = "/bin/sh #{File.join(StickShift::SDK_PATH, "express/teardown_pam_fs_limits.sh")} #{user.name}"
       shellCmd(cmd)

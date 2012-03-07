@@ -38,12 +38,12 @@ function is_idled {
         _test=`cat $OPENSHIFT_RUNTIME_DIR/.state`
         return `test idle = "$_test"`
     else
-        if ! grep -q ' #ProxyPass' "/etc/httpd/conf.d/libra/${appid}"*.conf 2>/dev/null
+        if ! grep -q ' #ProxyPass' "/etc/httpd/conf.d/stickshift/${appid}"*.conf 2>/dev/null
         then
             return $FALSE
         fi
 
-        if [ ! -f "/etc/httpd/conf.d/libra/${appid}"*/0000000000000_disabled.conf ]
+        if [ ! -f "/etc/httpd/conf.d/stickshift/${appid}"*/0000000000000_disabled.conf ]
         then
             return $FALSE
         fi
@@ -73,13 +73,13 @@ then
     exit 0
 fi
 
-if [ -z "$uuid" ] || ! [ -d "/var/lib/libra/$uuid" ]
+if [ -z "$uuid" ] || ! [ -d "/var/lib/stickshift/$uuid" ]
 then
     print_help
 fi
 
-source "/var/lib/libra/${uuid}/.env/OPENSHIFT_APP_DIR"
-[ -f "/var/lib/libra/${uuid}/.env/OPENSHIFT_RUNTIME_DIR" ] && source "/var/lib/libra/${uuid}/.env/OPENSHIFT_RUNTIME_DIR"
+source "/var/lib/stickshift/${uuid}/.env/OPENSHIFT_APP_DIR"
+[ -f "/var/lib/stickshift/${uuid}/.env/OPENSHIFT_RUNTIME_DIR" ] && source "/var/lib/stickshift/${uuid}/.env/OPENSHIFT_RUNTIME_DIR"
 : ${OPENSHIFT_RUNTIME_DIR:=$OPENSHIFT_APP_DIR/runtime}
 
 if is_idled "$uuid"
@@ -87,9 +87,9 @@ then
     exit 0 # app is already idled, nothing to do
 fi
 
-sed -i "s/ ProxyPass/ #ProxyPass/g" "/etc/httpd/conf.d/libra/${uuid}"*.conf
+sed -i "s/ ProxyPass/ #ProxyPass/g" "/etc/httpd/conf.d/stickshift/${uuid}"*.conf
 
-HTTP_DIR=`dirname "/etc/httpd/conf.d/libra/${uuid}"*/00000_default.conf`
+HTTP_DIR=`dirname "/etc/httpd/conf.d/stickshift/${uuid}"*/00000_default.conf`
 
 cat > $HTTP_DIR/0000000000000_disabled.conf <<EOF
 Alias / /var/www/html/restorer.php/${uuid}/
@@ -103,7 +103,7 @@ service libra stopuser "${uuid}"
 # code copied from node/lib/util_ext
 runuser --shell /bin/sh "$uuid" -c "echo idle >$OPENSHIFT_RUNTIME_DIR/.state"
 
-source "/var/lib/libra/${uuid}/.env/OPENSHIFT_RUN_DIR"
+source "/var/lib/stickshift/${uuid}/.env/OPENSHIFT_RUN_DIR"
 touch "${OPENSHIFT_RUN_DIR}/stop_lock"
 
 echo "Idled: ${uuid}" | /usr/bin/logger -p local0.notice -t rhc_idler

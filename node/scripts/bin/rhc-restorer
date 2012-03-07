@@ -23,19 +23,19 @@ case $OPTION in
 esac
 done
 
-if [ -z "$uuid" ] || ! [ -d "/var/lib/libra/$uuid" ]
+if [ -z "$uuid" ] || ! [ -d "/var/lib/stickshift/$uuid" ]
 then
     print_help
 fi
 
 # Turn user application back on.
 # enable
-source "/var/lib/libra/${uuid}/.env/OPENSHIFT_RUN_DIR"
+source "/var/lib/stickshift/${uuid}/.env/OPENSHIFT_RUN_DIR"
 rm -f "${OPENSHIFT_RUN_DIR}/stop_lock"
 
 
-source "/var/lib/libra/${uuid}/.env/OPENSHIFT_APP_DIR"
-[ -f "/var/lib/libra/${uuid}/.env/OPENSHIFT_RUNTIME_DIR" ] && source "/var/lib/libra/${uuid}/.env/OPENSHIFT_RUNTIME_DIR"
+source "/var/lib/stickshift/${uuid}/.env/OPENSHIFT_APP_DIR"
+[ -f "/var/lib/stickshift/${uuid}/.env/OPENSHIFT_RUNTIME_DIR" ] && source "/var/lib/stickshift/${uuid}/.env/OPENSHIFT_RUNTIME_DIR"
 : ${OPENSHIFT_RUNTIME_DIR:=$OPENSHIFT_APP_DIR/runtime}
 
 # code copied from node/lib/util_ext
@@ -45,9 +45,9 @@ runuser --shell /bin/sh "$uuid" -c "echo started >$OPENSHIFT_RUNTIME_DIR/.state"
 
 # Enable proxy setup
 
-sed -i "s/#ProxyPass/ProxyPass/g" "/etc/httpd/conf.d/libra/${uuid}"*.conf
+sed -i "s/#ProxyPass/ProxyPass/g" "/etc/httpd/conf.d/stickshift/${uuid}"*.conf
 
-HTTP_DIR=`dirname "/etc/httpd/conf.d/libra/${uuid}"*/00000_default.conf`
+HTTP_DIR=`dirname "/etc/httpd/conf.d/stickshift/${uuid}"*/00000_default.conf`
 
 rm -f $HTTP_DIR/0000000000000_disabled.conf
 

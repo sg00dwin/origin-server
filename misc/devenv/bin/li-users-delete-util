@@ -1,6 +1,6 @@
 #!/usr/bin/ruby
 require 'rubygems'
-require '/var/www/libra/broker/config/environment'
+require '/var/www/stickshift/broker/config/environment'
 
 opts = GetoptLong.new(["--namespace",  "-n", GetoptLong::REQUIRED_ARGUMENT])
 opt = {}

@@ -7,7 +7,7 @@
 
 require 'etc'
 
-home_dirs = Dir.glob("/var/lib/libra/[0-9a-zA-Z]*")
+home_dirs = Dir.glob("/var/lib/stickshift/[0-9a-zA-Z]*")
 
 debug=1
 

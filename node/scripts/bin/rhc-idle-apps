@@ -3,8 +3,8 @@ require 'fileutils'
 
 # App is considered idle if it has not been accessed in 24 hours
 OPENSHIFT_IDLE_TIME = 24
-APP_ROOT_DIR = '/var/lib/libra'
-CARTRIDGES_DIR = '/usr/libexec/li/cartridges'
+APP_ROOT_DIR = '/var/lib/stickshift'
+CARTRIDGES_DIR = '/usr/libexec/stickshift/cartridges'
 
 class IdleAppsFinder
   def initialize(app_root_dir)

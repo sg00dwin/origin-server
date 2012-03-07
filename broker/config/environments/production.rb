@@ -108,15 +108,17 @@ Broker::Application.configure do
     :domain_suffix => "rhcloud.com",
     :default_max_gears => 5,
 
-    :datastore_mongo => {
-      :replica_set => true,
-      # Replica set example: [[<host-1>, <port-1>], [<host-2>, <port-2>], ...]
-      :host_port => [["HOST_NAME", 27017]],
-
-      :user => "USER_NAME",
-      :password => "PASSWORD",
-      :db => "openshift_broker",
-      :collections => {:user => "user"}
+    :datastore => {
+      :mongo => {
+        :replica_set => true,
+        # Replica set example: [[<host-1>, <port-1>], [<host-2>, <port-2>], ...]
+        :host_port => [["HOST_NAME", 27017]],
+        
+        :user => "USER_NAME",
+        :password => "PASSWORD",
+        :db => "openshift_broker",
+        :collections => {:user => "user"}
+      }
     }
   }
 

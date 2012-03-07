@@ -1,5 +1,5 @@
 %define htmldir %{_localstatedir}/www/html
-%define brokerdir %{_localstatedir}/www/libra/broker
+%define brokerdir %{_localstatedir}/www/stickshift/broker
 
 Summary:   Li broker components
 Name:      rhc-broker

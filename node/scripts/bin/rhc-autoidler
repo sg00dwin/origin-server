@@ -3,8 +3,8 @@
 export PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin:/root/bin:$PATH
 
 # Get the libra_server
-. /usr/libexec/li/cartridges/abstract/info/lib/util
-load_node_conf
+source /etc/stickshift/stickshift-node.conf
+source ${CARTRIDGE_BASE_PATH}/abstract/info/lib/util
 
 function get_appids_to_idle() {
     /usr/bin/rhc-list-stale 15 2>/dev/null | /bin/awk '{print $1}'
@@ -24,7 +24,7 @@ do
     /usr/bin/rhc-idler -u $user > /dev/null 2>&1
 
     # Report to apptegic/nurture
-    curl -s -O /dev/null -d "json_data=\"{\"app_uuid\":\"${user}\",\"action\":\"idle\"}\"" https://${libra_server}/broker/nurture >/dev/null 2>&1 &
+    curl -s -O /dev/null -d "json_data=\"{\"app_uuid\":\"${user}\",\"action\":\"idle\"}\"" https://${BROKER_HOST}/broker/nurture >/dev/null 2>&1 &
 done
 
 print_stats "After"

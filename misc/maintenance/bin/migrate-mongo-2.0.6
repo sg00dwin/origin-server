@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
 # Usage: ./migrate-mongo-2.0.6 > out.txt
 
-$:.unshift('/var/www/libra/broker')
+$:.unshift('/var/www/stickshift/broker')
 require 'config/environment'
 
 ds = StickShift::DataStore.instance

@@ -26,7 +26,7 @@ module StickShift
     end
      
     def self.instance
-      Cloud::Sdk::MongoDataStore.new
+      StickShift::MongoDataStore.new
     end
 
     def find(obj_type, user_id, id)

@@ -103,15 +103,17 @@ Broker::Application.configure do
       }
     },
 
-    :datastore_mongo => {
-      :replica_set => true,
-      # Replica set example: [[<host-1>, <port-1>], [<host-2>, <port-2>], ...]
-      :host_port => [["localhost", 27017]],
-
-      :user => "libra",
-      :password => "momo",
-      :db => "openshift_broker_dev",
-      :collections => {:user => "user"}
+    :datastore => {
+      :mongo => {
+        :replica_set => true,
+        # Replica set example: [[<host-1>, <port-1>], [<host-2>, <port-2>], ...]
+        :host_port => [["localhost", 27017]],
+        
+        :user => "libra",
+        :password => "momo",
+        :db => "openshift_broker_dev",
+        :collections => {:user => "user"}
+      }
     }
   }
 

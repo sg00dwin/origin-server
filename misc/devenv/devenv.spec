@@ -1,8 +1,8 @@
 %define htmldir %{_localstatedir}/www/html
-%define libradir %{_localstatedir}/www/libra
-%define brokerdir %{_localstatedir}/www/libra/broker
-%define sitedir %{_localstatedir}/www/libra/site
-%define devenvdir %{_sysconfdir}/libra/devenv
+%define libradir %{_localstatedir}/www/stickshift
+%define brokerdir %{_localstatedir}/www/stickshift/broker
+%define sitedir %{_localstatedir}/www/stickshift/site
+%define devenvdir %{_sysconfdir}/stickshift/devenv
 %define jenkins %{_sharedstatedir}/jenkins
 %define policydir %{_datadir}/selinux/packages
 

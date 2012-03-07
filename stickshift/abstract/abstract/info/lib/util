@@ -2,6 +2,7 @@
 
 [ ! -z "$LI_CONTROLLER_LIB_UTIL" ] && return 0
 LI_CONTROLLER_LIB_UTIL=true
+source /etc/stickshift/stickshift-node.conf
 
 function start_app {
     for env_var in  $APP_HOME/.env/*_CTL_SCRIPT
@@ -372,7 +373,7 @@ function rm_unobfuscated_app_home {
     namespace=$1
     appname=$2
 
-    if [ $unobfuscate -eq 1 ]
+    if [ $CREATE_APP_SYMLINKS -eq 1 ]
     then
         rm -f "${GEAR_BASE_DIR}/${appname}-${namespace}"
     fi
@@ -387,7 +388,7 @@ function unobfuscate_app_home {
     namespace=$2
     appname=$3
 
-    if [ $unobfuscate -eq 1 ]
+    if [ $CREATE_APP_SYMLINKS -eq 1 ]
     then
         if [ ! -f "${GEAR_BASE_DIR}/$appname-$namespace" ] && [ ! -d "${GEAR_BASE_DIR}/$appname-$namespace" ]
         then

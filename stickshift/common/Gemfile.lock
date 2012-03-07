@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    stickshift-common (0.5.1)
+    stickshift-common (0.6.1)
       activemodel
       json
       mongo

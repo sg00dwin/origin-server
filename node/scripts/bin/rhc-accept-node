@@ -6,8 +6,8 @@
 #
 # ============================================================================
 
-LIBRA_CONF_DIR=${LIBRA_CONF_DIR:=/etc/libra}
-NODE_CONF_FILE=${NODE_CONF_FILE:=${LIBRA_CONF_DIR}/node.conf}
+LIBRA_CONF_DIR=${LIBRA_CONF_DIR:=/etc/stickshift}
+NODE_CONF_FILE=${NODE_CONF_FILE:=${LIBRA_CONF_DIR}/stickshift-node.conf}
 RESOURCE_LIMITS_FILE=${RESOURCE_LIMITS_FILE:=${LIBRA_CONF_DIR}/resource_limits.conf}
 
 #
@@ -77,14 +77,14 @@ function load_node_conf() {
 
     . $NODE_CONF_FILE
 
-    if [ -z "$libra_dir" ]
+    if [ -z "$GEAR_BASE_DIR" ]
     then
-	fail "libra_dir is not set in the node configuration"
+	fail "GEAR_BASE_DIR is not set in the node configuration"
     fi
 
-    if [ ! -d "$libra_dir" ]
+    if [ ! -d "$GEAR_BASE_DIR" ]
     then
-	fail "libra_dir does not exist or is not a directory: $libra_dir"
+	fail "GEAR_BASE_DIR does not exist or is not a directory: $GEAR_BASE_DIR"
     fi
 
     verbose loading resource limit file $RESOURCE_LIMITS_FILE
@@ -133,10 +133,10 @@ function check_selinux() {
     #
     # Check standard file/directory labeling
     #
-	RELABELS=`restorecon -n -v $libra_dir`
+	RELABELS=`restorecon -n -v $GEAR_BASE_DIR`
         if [ "$RELABELS" != "" ]
         then
-            fail "invalid selinux labels in LIBRA_DIR $libra_dir"
+            fail "invalid selinux labels in LIBRA_DIR $GEAR_BASE_DIR"
         fi
     fi
 }
@@ -270,8 +270,8 @@ function libra_mountpoint() {
 
 function check_quotas() {
     verbose checking filesystem quotas
-    LIBRA_DEVICE=`libra_device $libra_dir`
-    LIBRA_MOUNTPOINT=`libra_mountpoint $libra_dir`
+    LIBRA_DEVICE=`libra_device $GEAR_BASE_DIR`
+    LIBRA_MOUNTPOINT=`libra_mountpoint $GEAR_BASE_DIR`
     QUOTASTAT=`quotaon -u -p $LIBRA_MOUNTPOINT 2>&1`
     if [ "$QUOTASTAT" != "user quota on $LIBRA_MOUNTPOINT ($LIBRA_DEVICE) is on" ]
     then
@@ -427,7 +427,7 @@ function check_user_quota() {
 
 function check_app_dirs() {
     # save modified env settings
-    pushd $libra_dir > /dev/null
+    pushd $GEAR_BASE_DIR > /dev/null
     SAVEIFS=$IFS
 
     IFS=$(echo -en "\n\b")

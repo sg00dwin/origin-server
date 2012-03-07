@@ -7,16 +7,16 @@ require File.dirname(__FILE__) + "/migrate-util"
 module LibraMigration
 
   def self.migrate(uuid, app_name, app_type, namespace, version)
-    node_config = ParseConfig.new('/etc/libra/node.conf')
-    libra_home = '/var/lib/libra' #node_config.get_value('libra_dir')
-    libra_server = node_config.get_value('libra_server')
-    libra_domain = node_config.get_value('libra_domain')
+    node_config = ParseConfig.new('/etc/stickshift/stickshift-node.conf')
+    libra_home = '/var/lib/stickshift' #node_config.get_value('libra_dir')
+    libra_server = node_config.get_value('BROKER_HOST')
+    libra_domain = node_config.get_value('CLOUD_DOMAIN')
     app_home = "#{libra_home}/#{uuid}"
     app_dir = "#{app_home}/#{app_name}"
     output = ''
     exitcode = 0
     if (File.exists?(app_home) && !File.symlink?(app_home))
-      cartridge_root_dir = "/usr/libexec/li/cartridges"
+      cartridge_root_dir = "/usr/libexec/stickshift/cartridges"
       cartridge_dir = "#{cartridge_root_dir}/#{app_type}"
       
       env_echos = []
@@ -122,8 +122,8 @@ module LibraMigration
       if not File.exists?(state)
         begin
           state_file = File.new(state, "w")
-          if File.exists?("/var/lib/libra/#{uuid}/#{app_name}/run/stop_lock")
-            if File.exists?("/etc/httpd/conf.d/libra/#{uuid}_#{namespace}_#{app_name}/0000000000000_disabled.conf")
+          if File.exists?("/var/lib/stickshift/#{uuid}/#{app_name}/run/stop_lock")
+            if File.exists?("/etc/httpd/conf.d/stickshift/#{uuid}_#{namespace}_#{app_name}/0000000000000_disabled.conf")
               state_file.write("idle\n")
             else
               state_file.write("stopped\n")

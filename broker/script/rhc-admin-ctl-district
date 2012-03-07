@@ -71,7 +71,7 @@ if args["--help"]
   exit 1
 end
 
-require "/var/www/libra/broker/config/environment"
+require "/var/www/stickshift/broker/config/environment"
 
 uuid     = args["--uuid"]
 command  = args['--command']

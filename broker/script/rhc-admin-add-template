@@ -79,7 +79,7 @@ rescue Exception => e
 end
 tags = tags.split(",")
 
-require "/var/www/libra/broker/config/environment"
+require "/var/www/stickshift/broker/config/environment"
 
 template = ApplicationTemplate.new(display_name,descriptor, git_url,tags,gear_cost,metadata)
 template.save

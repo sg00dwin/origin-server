@@ -88,21 +88,21 @@ class DevEnv < Thor
       `mkdir -p rhc/log`
       scp_from(hostname, "/tmp/rhc/*.log", "rhc/log")
       scp_from(hostname, "/tmp/rhc/*.html", "rhc/log")
-      scp_from(hostname, "/var/www/libra/site/httpd/logs/access_log", "rhc/log/site_access_log.txt")
-      scp_from(hostname, "/var/www/libra/site/httpd/logs/error_log", "rhc/log/site_error_log.txt")
-      scp_from(hostname, "/var/www/libra/site/log/development.log", "rhc/log")
-      scp_from(hostname, "/var/www/libra/broker/httpd/logs/access_log", "rhc/log/broker_access_log.log")
-      scp_from(hostname, "/var/www/libra/broker/httpd/logs/error_log", "rhc/log/broker_error_log.log")
-      scp_from(hostname, "/var/www/libra/broker/log/development.log", "rhc/log")
+      scp_from(hostname, "/var/www/stickshift/site/httpd/logs/access_log", "rhc/log/site_access_log.txt")
+      scp_from(hostname, "/var/www/stickshift/site/httpd/logs/error_log", "rhc/log/site_error_log.txt")
+      scp_from(hostname, "/var/www/stickshift/site/log/development.log", "rhc/log")
+      scp_from(hostname, "/var/www/stickshift/broker/httpd/logs/access_log", "rhc/log/broker_access_log.log")
+      scp_from(hostname, "/var/www/stickshift/broker/httpd/logs/error_log", "rhc/log/broker_error_log.log")
+      scp_from(hostname, "/var/www/stickshift/broker/log/development.log", "rhc/log")
       scp_from(hostname, "/var/log/mcollective.log", "rhc/log")
-      scp_from(hostname, "/var/www/libra/broker/log/mcollective-client.log", "rhc/log")
+      scp_from(hostname, "/var/www/stickshift/broker/log/mcollective-client.log", "rhc/log")
       scp_from(hostname, "/var/log/httpd/access_log", "rhc/log/system_access_log.log")
       scp_from(hostname, "/var/log/httpd/error_log", "rhc/log/system_error_log.log")
       scp_from(hostname, "/var/log/messages", "rhc/log/messages.log")
       scp_from(hostname, "/var/log/dmesg", "rhc/log/messages.log")
       scp_from(hostname, "/tmp/rhc/screenshots/", "rhc/log")
       scp_from(hostname, "/root/li-test/selenium/output/*", "rhc/log")
-      scp_from(hostname, "/var/lib/libra/*/*/jbossas-7/standalone/tmp/*.log", "rhc/log")
+      scp_from(hostname, "/var/lib/stickshift/*/*/jbossas-7/standalone/tmp/*.log", "rhc/log")
       puts "Done"
     end
 
@@ -388,7 +388,7 @@ class DevEnv < Thor
     end
 
     # Rsync cannot set owner or group, so we should inherit
-    ssh("verifier", "find /var/www/libra -type d | xargs chmod g+s", 1800)
+    ssh("verifier", "find /var/www/stickshift -type d | xargs chmod g+s", 1800)
     ssh("verifier", "find /usr/lib/ruby/site_ruby -type d | xargs chmod g+s", 1800)
 
     say "Watching your development directories, hit CTRL+C to stop"
@@ -780,10 +780,10 @@ END
     ssh("verifier", "sed -i 's,^plugin.amqp.host.*=.*,plugin.amqp.host=#{internal_hostname},' /etc/mcollective/client.cfg;" \
                   "sed -i 's,^plugin.amqp.host.*=.*,plugin.amqp.host=#{internal_hostname},' /etc/mcollective/server.cfg;" \
                   "sed -i 's,^ssl-cert-name.*=.*,ssl-cert-name=#{internal_hostname},' /etc/qpidd.conf;" \
-                  "sed -i 's,^server_id.*=.*,server_id=#{internal_hostname},' /etc/libra/devenv/qpid/make-certs.sh;" \
-                  "sed -i 's,^owner_domain_name.*=.*,owner_domain_name=#{internal_hostname},' /etc/libra/devenv/qpid/make-certs.sh;" \
+                  "sed -i 's,^server_id.*=.*,server_id=#{internal_hostname},' /etc/stickshift/devenv/qpid/make-certs.sh;" \
+                  "sed -i 's,^owner_domain_name.*=.*,owner_domain_name=#{internal_hostname},' /etc/stickshift/devenv/qpid/make-certs.sh;" \
                   "sed -i 's,^#-A,-A,' /etc/sysconfig/iptables;" \
-                  "pushd /etc/libra/devenv/qpid/ > /dev/null;" \
+                  "pushd /etc/stickshift/devenv/qpid/ > /dev/null;" \
                   "./make-certs.sh;" \
                   "/bin/cp test/client_db/* /etc/qpid/pki/client_db/; /bin/cp test/server_db/* /etc/qpid/pki/server_db/;" \
                   "popd > /dev/null;" \
@@ -802,13 +802,13 @@ END
     internal_hostname = get_internal_hostname("verifier")
     internal_ip = get_private_ip("verifier")
 
-    puts `pushd /tmp > /dev/null; rm -rf /tmp/test; scp -r verifier:/etc/libra/devenv/qpid/test/ .; scp -r test/client_db/* #{hostname}:/etc/qpid/pki/client_db/; scp -r test/server_db/* #{hostname}:/etc/qpid/pki/server_db/; popd > /dev/null`
+    puts `pushd /tmp > /dev/null; rm -rf /tmp/test; scp -r verifier:/etc/stickshift/devenv/qpid/test/ .; scp -r test/client_db/* #{hostname}:/etc/qpid/pki/client_db/; scp -r test/server_db/* #{hostname}:/etc/qpid/pki/server_db/; popd > /dev/null`
     puts `pushd /tmp > /dev/null; rm -rf /tmp/clients; scp -r verifier:/etc/mcollective/ssl/clients/ .; scp -r clients/* #{hostname}:/etc/mcollective/ssl/clients/; popd > /dev/null`
 
     ssh(hostname, "sed -i 's,^plugin.amqp.host.*=.*,plugin.amqp.host=#{internal_hostname},' /etc/mcollective/server.cfg;" \
                   "sed -i 's,^ssl-cert-name.*=.*,ssl-cert-name=#{internal_hostname},' /etc/qpidd.conf;" \
                   "restorecon -R /etc/qpid/pki/; chmod +r /etc/qpid/pki/client_db/* /etc/qpid/pki/server_db/*;" \
-                  "sed -i 's,^libra_server.*=.*,libra_server=#{internal_ip},' /etc/libra/node.conf;" \
+                  "sed -i 's,^BROKER_HOST.*=.*,BROKER_HOST=#{internal_ip},' /etc/stickshift/stickshift-node.conf;" \
                   "service qpidd restart; service mcollective restart", 240)
 
     puts ssh("verifier", "mc-ping")

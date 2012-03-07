@@ -287,7 +287,7 @@ module OpenShift
     def set_instance_ip(hostname, ip)
       print "Updating the controller to use the ip '#{ip}'..."
       # Both calls below are needed to fix a race condition between ssh and libra-data start times
-      ssh(hostname, "sed -i \"s/.*public_ip.*/public_ip='#{ip}'/g\" /etc/libra/node.conf;sed -i \"s/public_ip.*/public_ip='#{ip}'/g\" /etc/libra/node_data.conf; /usr/libexec/mcollective/update_yaml.rb > /etc/mcollective/facts.yaml")
+      ssh(hostname, "sed -i \"s/.*PUBLIC_IP_OVERRIDE.*/PUBLIC_IP_OVERRIDE='#{ip}'/g\" /etc/stickshift/stickshift-node.conf; sed -i \"s/.*PUBLIC_HOSTNAME_OVERRIDE.*/PUBLIC_HOSTNAME_OVERRIDE='#{hostname}'/g\" /etc/stickshift/stickshift-node.conf; /usr/libexec/mcollective/update_yaml.rb > /etc/mcollective/facts.yaml")
       puts 'Done'
     end
 
