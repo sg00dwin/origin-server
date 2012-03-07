@@ -98,7 +98,7 @@ module Express
       end
       
       def find_available_district(node_profile=nil)
-        node_profile = node_profile ? node_profile : "std"
+        node_profile = node_profile ? node_profile : "small"
         MongoDataStore.rescue_con_failure do
           hash = MongoDataStore.district_collection.find(
             { "available_capacity" => { "$gt" => 0 }, 

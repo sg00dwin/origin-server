@@ -203,7 +203,7 @@ class MongoDataStoreTest < ActiveSupport::TestCase
       "max_uid" => 10,
       "max_capacity" => 10,
       "externally_reserved_uids_size" => 0,
-      "node_profile" => 'std',
+      "node_profile" => 'small',
       "name" => "name#{uuid}"
     }
     district

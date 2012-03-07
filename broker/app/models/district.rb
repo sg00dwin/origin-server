@@ -18,7 +18,7 @@ class District < Cloud::Sdk::Model
     self.externally_reserved_uids_size = 0
     self.active_server_identities_size = 0
     self.name = name
-    self.node_profile = node_profile ? node_profile : "std"
+    self.node_profile = node_profile ? node_profile : "small"
   end
   
   def self.find(uuid)

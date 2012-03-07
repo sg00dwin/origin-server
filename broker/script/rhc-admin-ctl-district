@@ -81,8 +81,8 @@ bypass   = args['--bypass']
 name     = args['--name']
 node_profile = args['--node_profile']
   
-if node_profile && !(node_profile =~ /\A(jumbo|exlarge|large|micro|std)\z/)
-  puts "Node profile must be one of: (std(default)|jumbo|exlarge|large|micro)"
+if node_profile && !(node_profile =~ /\A(jumbo|exlarge|large|medium|micro|small)\z/)
+  puts "Node profile must be one of: (small(default)|jumbo|exlarge|medium|large|micro)"
   exit 1
 end
 
@@ -142,7 +142,7 @@ begin
     district.remove_capacity(size)
     reply.resultIO << "Success!"
   when "create"
-    puts "node_profile not specified.  Using default: std" unless node_profile
+    puts "node_profile not specified.  Using default: small" unless node_profile
     district = District.new
     district.construct(name, node_profile)
     district.save
