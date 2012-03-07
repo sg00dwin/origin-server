@@ -347,9 +347,11 @@ class LegacyBrokerController < ApplicationController
   
   def authenticate
     auth = StickShift::AuthService.instance.login(request, params, cookies)
-    
-    @login = auth[:username]
-    @auth_method = auth[:auth_method]
+  
+    if auth  
+      @login = auth[:username]
+      @auth_method = auth[:auth_method]
+    end
     unless @login
       @reply.resultIO << "Invalid user credentials"
       @reply.exitcode = 97
