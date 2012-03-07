@@ -464,6 +464,12 @@ class DevEnv < Thor
         script_path = File.expand_path(File.dirname(__FILE__) + "/../misc/devenv/li-devenv.sh")
         scp_to(hostname, script_path, "~/")
         puts "Done"
+        print "Uploading yum client certificates..."
+        script_path = File.expand_path(File.dirname(__FILE__) + "/../misc/client-cert.pem")
+        scp_to(hostname, script_path, "/var/lib/yum/")
+        script_path = File.expand_path(File.dirname(__FILE__) + "/../misc/client-key.pem")
+        scp_to(hostname, script_path, "/var/lib/yum/")
+        puts "Done"
         output = ''
         if options.install_from_source
           cmd = 'set -e; sh li-devenv.sh candidate --install_build_prereqs'
