@@ -73,6 +73,7 @@ mv %{buildroot}%{brokerdir}/httpd/000000_stickshift_proxy.conf %{buildroot}%{_sy
 mv %{buildroot}%{brokerdir}/misc/stickshift-dbus.conf %{buildroot}%{_sysconfdir}/dbus-1/system.d/
 mv %{buildroot}%{brokerdir}/misc/oddjobd-ss-exec.conf %{buildroot}%{_sysconfdir}/oddjobd.conf.d/
 mv %{buildroot}%{brokerdir}/script/ss-exec-command %{buildroot}%{_bindir}
+mv %{buildroot}%{brokerdir}/script/ss-register-user %{buildroot}%{_bindir}
 %clean
 rm -rf $RPM_BUILD_ROOT
 
