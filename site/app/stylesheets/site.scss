@@ -100,6 +100,16 @@ body.signup {
     > :last-child { margin-bottom: 0; }
   }
 }
+@media (max-width: 768px) {
+  .section-striped .link-tile { padding: 10px $gridGutterWidthPhone; }
+}
+@if $gridGutterWidthTablet != $gridGutterWidth { @media (min-width: 768px) and (max-width: 979px) {
+  .section-striped .link-tile { padding: 10px $gridGutterWidthTablet; }
+} }
+@if $gridGutterWidthLarge != $gridGutterWidth { @media (min-width: 1200px) {
+  .section-striped .link-tile { padding: 15px $gridGutterWidthLarge; }
+} }
+
 .section-striped.lift-counter {
   padding-bottom: 130px;
 }
@@ -173,38 +183,60 @@ body.signup {
 }
 
 .take-action {
-  @include clearfix();
-  display: block;
-
-  text-transform: uppercase;
-  font-weight: bold;
-  font-size: 20px;
-  letter-spacing: 1px;
-
-  color: white;
-  background-color: $ribbonColor;
+  display: table !important; // override span12 CSS rules
 
   &:hover, &:active {
     text-decoration: none;
     color: white;
   }
 
-  > * {
-    padding: 27px $gridGutterWidth;
+  > div {
+    display: table-cell;
+    padding: 20px $gridGutterWidth;
+    text-align: left;
+    vertical-align: middle;
+
+    text-transform: uppercase;
+    font-weight: bold;
+    font-size: 20px;
+    line-height: 21px;
+    letter-spacing: 1px;
+
+    color: white;
+    background-color: $ribbonColor;
   }
 
-  > .pull-right {
+  > div:last-child {
+    white-space: nowrap;
     background-color: $ribbonFoldColor;
     padding-right: $gridGutterWidth + 12px;
     background: url('../images/arrow-large.gif') 87% center no-repeat $ribbonFoldColor;
     -moz-transition: background-position 0.2s;
+    -webkit-transition: background-position 0.2s;
+    transition: background-position 0.2s;
   }
 
-  &:hover > .pull-right {
+  &:hover > div:last-child {
     background-position: 89% center;
   }
 }
-#learn .take-action { margin-top: -37px; margin-bottom: 20px; }
+#learn .take-action { margin-top: -28px; margin-bottom: 20px; }
+
+@media (max-width: 768px) {
+  .take-action > div { 
+    padding: 10px $gridGutterWidthPhone;
+    font-size: 13px;
+    line-height: 14px;
+    letter-spacing: 0px;
+  }
+  #learn .take-action { margin-top: 0px; width: 100%;}
+}
+@if $gridGutterWidthTablet != $gridGutterWidth { @media (min-width: 768px) and (max-width: 979px) {
+  .take-action > div { padding: 15px $gridGutterWidthTablet; }
+} }
+@if $gridGutterWidthLarge != $gridGutterWidth { @media (min-width: 1200px) {
+  .take-action > div { padding: 20px $gridGutterWidthLarge; }
+} }
 
 .column-buzz {
   > h2 { 
@@ -212,6 +244,7 @@ body.signup {
     color: white;
     text-transform: uppercase;
     font-size: 46px;
+    line-height: 48px;
     letter-spacing: -4px;
   }
   > hr {
@@ -287,7 +320,18 @@ body.signup {
     }
   }
 }
-#buzz { min-height: 500px; }
+
+@media (max-width: 768px) {
+  .column-buzz > h2 {
+    font-size: 26px;
+    line-height: 28px;
+  }
+  .column-buzz > .callout {
+    display: none;
+  }
+}
+
+#buzz { min-height: 500px; background: $buzzBackgroundColor url($buzzBackgroundImage) repeat-x bottom left; }
 
 .link-with-action {
   font-weight: bold;
@@ -324,7 +368,7 @@ h1.ribbon {
   .row-content > .row { background-color: $textLightBackground; }
 }
 
-.column-buzz { background-color: $darkBackground; color: $textDarkBackground; }
+.column-buzz { background: $darkNoiseBackgroundColor url($transparentNoiseImageData); color: $textDarkBackground; }
 .column-buzz a { color: $textDarkBackground; }
 
 // Column navigation

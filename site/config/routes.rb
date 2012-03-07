@@ -137,7 +137,9 @@ RedHatCloud::Application.routes.draw do
       resources :application_types, :only => [:show, :index], :id => /[^\/]+/
       resources :applications,
                 :controller => "applications" do 
-        resources :cartridges, :only => [:show], :id => /[^\/]+/
+        resources :cartridges,
+                  :controller => "cartridges",
+                  :only => [:show, :create, :index], :id => /[^\/]+/
         resources :cartridge_types, :only => [:show, :index], :id => /[^\/]+/
         member do
           get :delete
@@ -156,6 +158,9 @@ RedHatCloud::Application.routes.draw do
     match 'control_panel' => 'control_panel#index', :as => 'control_panel'
     match 'dashboard' => 'control_panel#index', :as => 'dashboard'
     match 'control_panel/apps' => 'express_app#list', :as => 'list_apps'
+    
+    # new marketing site
+    match 'new' => 'home#new', :as => 'new'
 
     unless Rails.env.production?
       match 'styleguide/:action' => 'styleguide'

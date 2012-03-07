@@ -506,7 +506,7 @@ module Express
 
                 unless app.aliases.nil?
                   app.aliases.each do |server_alias|
-                    destination_container.add_alias(app, app.gear, app.framework, server_alias)
+                    reply.append destination_container.send(:run_cartridge_command, app.framework, app, app.gear, "add-alias", server_alias, false)
                   end
                 end
               rescue Exception => e
@@ -520,11 +520,11 @@ module Express
               unless leave_stopped
                 log_debug "DEBUG: Starting '#{app.name}' after move on #{destination_container.id}"
                 do_with_retry('start') do
-                  reply.append destination_container.start(app, app.gear, app.framework)
+                  reply.append destination_container.send(:run_cartridge_command, app.framework, app, app.gear, "start", nil, false)
                 end
               end
   
-              log_debug "DEBUG: Fixing DNS and s3 for app '#{app.name}' after move"
+              log_debug "DEBUG: Fixing DNS and mongo for app '#{app.name}' after move"
               log_debug "DEBUG: Changing server identity of '#{app.name}' from '#{source_container.id}' to '#{destination_container.id}'"
               app.gear.server_identity = destination_container.id
               app.gear.container = destination_container

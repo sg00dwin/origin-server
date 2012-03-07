@@ -8,12 +8,17 @@
     = render "layouts/head"
     = render "layouts/site/stylesheets"
 
-  %body{ :class => "site #{controller.controller_name} #{controller.action_name}" }
+  %body{ :class => "#{controller.controller_name} #{controller.action_name}" }
+
     = outage_notification
 
     %header
       = render 'layouts/site/header'
 
+    - if content_for? :important_layout
+      = yield :important_layout
+
+    -#= content_for?(:sub_layout) ? yield(:sub_layout) : yield
     - if content_for? :sub_layout
       = yield :sub_layout
     - else
@@ -38,7 +43,7 @@
     %footer
       = render 'layouts/site/footer'
 
-    = render 'layouts/javascripts'
+    = render 'layouts/site/javascripts'
 
     -# Omniture code will not load in devenvs to force it to load, just comment out if statement
     = render('shared/omniture_code', :controller => controller.controller_name, :action => controller.action_name, :event => @event ||= '', :evar8 => @evar8 ||= '') if Rails.env.production?

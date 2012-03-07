@@ -1,0 +1,12 @@
+The Openshift service depends on Dynamic DNS to publish the names and
+addresses of new applications. In a production service the DNS
+components would be housed separately from the main components and
+would be integrated with the public DNS infrastructure.
+
+For testing and development this kind of overhead and formal
+integration is impractical (and potentially dangerous if they are
+making changes to live production service resources). It is preferable
+to create an isolated Dynamic DNS service who's sole purpose is to
+receive and reflect the change requests that are issued as a result of
+the Openshift service operation. This document describes two service
+configurations that are useful when 
