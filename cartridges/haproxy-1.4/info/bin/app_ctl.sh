@@ -38,6 +38,7 @@ start() {
     if ! isrunning
     then
         /usr/sbin/haproxy -f $OPENSHIFT_APP_DIR/conf/haproxy.cfg > /dev/null 2>&1
+        haproxy_ctld_daemon start > /dev/null 2>&1
     else
         echo "Haproxy already running" 1>&2
     fi
@@ -46,6 +47,7 @@ start() {
 
 stop() {
     set_app_state stopped
+    haproxy_ctld_daemon stop > /dev/null 2>&1
     if [ -f $HAPROXY_PID ]; then
         pid=$( /bin/cat "${HAPROXY_PID}" )
         /bin/kill $pid
@@ -77,6 +79,7 @@ reload() {
         [ -n "$zpid" ]       &&  zopts="-sf $zpid"
         echo "Reloading haproxy gracefully without service interruption" 1>&2
         /usr/sbin/haproxy -f $OPENSHIFT_APP_DIR/conf/haproxy.cfg ${zopts} > /dev/null 2>&1
+        haproxy_ctld_daemon restart > /dev/null 2>&1
     fi
 }
 

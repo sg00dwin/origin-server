@@ -1,6 +1,0 @@
-#!/bin/bash
-source /usr/bin/rhcsh > /dev/null
-gear_ctl.rb -a
-ctl_all stop
-sleep .2
-ctl_all start
