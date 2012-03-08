@@ -15,6 +15,21 @@
   Simplify login link behavior - lots of styles for fairly simple markup
 
 */
+/* From style guide */
+/*FIXME: Not accurate */
+/* From screenshots, for nav */
+/* From screenshots, background of sign in link */
+/* Used on the signup link */
+/* From screenshots */
+/* From Hylke's screenshot additions */
+/*FIXME Possibly this should be lighter.  Blog text is standard #666 in screenshots. */
+/* FIXME: From screenshots, is this accurate? */
+/* FIXME: From screenshots, is this accurate? */
+/* FIXME: This makes the logo look desaturated.  We may want a different color set for the nav */
+/* FIXME: Need to resolve these colors with _custom.scss */
+/* END */
+/* Was going to call this $openshiftNoneMoreBlack */
+/*FIXME: From screenshots this averages to #070707 */
 .ribbon {
   position: relative;
   /* margin-left: -Xpx; */ }
@@ -447,7 +462,7 @@ body.signup {
 .section-top > .container > div {
   padding: 8px 0; }
   .section-top > .container > div > a {
-    color: #aaaaaa;
+    color: #c2c2c2;
     font-weight: bold;
     text-transform: uppercase; }
   .section-top > .container > div > a:hover {
@@ -465,6 +480,8 @@ body.signup {
     font-size: 40px;
     line-height: 40px;
     text-transform: uppercase; }
+  .messaging strong {
+    color: white; }
   .messaging .secondary {
     font-size: 16px;
     line-height: 18px; }
@@ -541,72 +558,74 @@ body.signup {
   .take-action > div {
     padding: 0 30px; } }
 
-.column-buzz > h2 {
-  text-align: center;
-  color: white;
-  text-transform: uppercase;
-  font-size: 46px;
-  line-height: 48px;
-  letter-spacing: -4px; }
-.column-buzz > hr {
-  margin: 10px 43% 30px;
-  border: 0;
-  border-top: 4px solid #eb0011; }
-.column-buzz blockquote {
-  quotes: "\201C""\201D""\2018""\2019";
-  border-left: 0;
-  padding: 0;
-  margin-bottom: 15px; }
-  .column-buzz blockquote:after {
-    content: ""; }
-  .column-buzz blockquote:before {
-    content: open-quote;
-    color: #aaa;
-    font-size: 4em;
-    line-height: .1em;
-    margin-right: .25em;
-    vertical-align: -0.4em; }
-.column-buzz .tweet {
-  *zoom: 1;
-  position: relative;
-  margin-bottom: 15px; }
-  .column-buzz .tweet:before, .column-buzz .tweet:after {
-    display: table;
-    content: ""; }
-  .column-buzz .tweet:after {
-    clear: both; }
-  .column-buzz .tweet > img {
-    width: 58px;
-    height: 58px;
-    border: 6px solid white;
-    float: left; }
-  .column-buzz .tweet > p {
-    margin: 0 0 5px 90px;
-    background-color: #343434;
-    padding: 5px 10px;
-    min-height: 50px; }
-    .column-buzz .tweet > p:before {
-      border-color: transparent #343434;
-      border-style: solid;
-      border-width: 10px 10px 0 0;
-      top: 10px;
-      content: "";
-      position: absolute;
-      left: 80px; }
-  .column-buzz .tweet > small {
-    margin-left: 80px; }
-.column-buzz > .callout {
-  position: absolute;
-  width: 120px;
-  height: 120px;
-  background-color: white;
-  color: white;
-  top: -60px;
-  right: -60px;
-  text-align: center; }
-  .column-buzz > .callout > .one {
-    margin-top: 30px;
-    color: gray; }
+.column-buzz {
+  background: #343434 url("../images/landscape-trees.png") repeat-x bottom left; }
+  .column-buzz > h2 {
+    text-align: center;
+    color: white;
+    text-transform: uppercase;
+    font-size: 46px;
+    line-height: 48px;
+    letter-spacing: -4px; }
+  .column-buzz > hr {
+    margin: 10px 43% 30px;
+    border: 0;
+    border-top: 4px solid #eb0011; }
+  .column-buzz blockquote {
+    quotes: "\201C""\201D""\2018""\2019";
+    border-left: 0;
+    padding: 0;
+    margin-bottom: 15px; }
+    .column-buzz blockquote:after {
+      content: ""; }
+    .column-buzz blockquote:before {
+      content: open-quote;
+      color: #aaa;
+      font-size: 4em;
+      line-height: .1em;
+      margin-right: .25em;
+      vertical-align: -0.4em; }
+  .column-buzz .tweet {
+    *zoom: 1;
+    position: relative;
+    margin-bottom: 15px; }
+    .column-buzz .tweet:before, .column-buzz .tweet:after {
+      display: table;
+      content: ""; }
+    .column-buzz .tweet:after {
+      clear: both; }
+    .column-buzz .tweet > img {
+      width: 58px;
+      height: 58px;
+      border: 6px solid white;
+      float: left; }
+    .column-buzz .tweet > p {
+      margin: 0 0 5px 90px;
+      background-color: #343434;
+      padding: 5px 10px;
+      min-height: 50px; }
+      .column-buzz .tweet > p:before {
+        border-color: transparent #343434;
+        border-style: solid;
+        border-width: 10px 10px 0 0;
+        top: 10px;
+        content: "";
+        position: absolute;
+        left: 80px; }
+    .column-buzz .tweet > small {
+      margin-left: 80px; }
+  .column-buzz > .callout {
+    position: absolute;
+    width: 120px;
+    height: 120px;
+    background-color: white;
+    color: white;
+    top: -60px;
+    right: -60px;
+    text-align: center; }
+    .column-buzz > .callout > .one {
+      margin-top: 30px;
+      color: gray; }
 
 @media (max-width: 768px) {
   .column-buzz > h2 {
@@ -617,8 +636,7 @@ body.signup {
     display: none; } }
 
 #buzz {
-  min-height: 500px;
-  background: #343434 url("../images/landscape-trees.png") repeat-x bottom left; }
+  min-height: 500px; }
 
 .link-with-action {
   font-weight: bold;

@@ -184,6 +184,9 @@ body.signup {
     text-transform: uppercase;
   }
 
+  strong {
+    color: white;
+  }
   .secondary {
     font-size: 16px;
     line-height: 18px;
@@ -225,7 +228,7 @@ body.signup {
     padding: 0 $gridGutterWidth;
 
     color: white;
-    background-color: $ribbonColor;
+    background-color: $takeActionBackground;
   }
 
   > .highlight {
@@ -234,7 +237,7 @@ body.signup {
 
     padding-right: 5px;
 
-    background-color: $ribbonFoldColor;
+    background-color: $takeActionHighlightBackground;
   }
 
   > .highlight-arrow {
@@ -248,7 +251,7 @@ body.signup {
     transition: background-position 0.2s;
   }
   > .highlight-arrow:nth-child(2) {
-    border-left: 20px solid $ribbonFoldColor;
+    border-left: 20px solid $takeActionHighlightBackground;
   }
 
   &:hover > .highlight-arrow {
@@ -287,6 +290,8 @@ body.signup {
 } }
 
 .column-buzz {
+  background: $buzzBackgroundColor url($buzzBackgroundImage) repeat-x bottom left; 
+
   > h2 { 
     text-align: center; 
     color: white;
@@ -379,7 +384,9 @@ body.signup {
   }
 }
 
-#buzz { min-height: 500px; background: $buzzBackgroundColor url($buzzBackgroundImage) repeat-x bottom left; }
+#buzz { 
+  min-height: 500px; 
+}
 
 .link-with-action {
   font-weight: bold;
