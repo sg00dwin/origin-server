@@ -16,7 +16,7 @@
 # General Public License and may only be used or replicated with the express
 # permission of Red Hat, Inc.
 
-# Creates a libra user
+# Creates a stickshift user
 #
 # IN: username
 #     SSH RSA public key
@@ -29,8 +29,8 @@
 #
 # default values
 #
-DEFAULT_LIBRA_DIR=/var/lib/libra
-DEFAULT_LIBRA_CONF_DIR=/etc/libra
+DEFAULT_LIBRA_DIR=/var/lib/stickshift
+DEFAULT_LIBRA_CONF_DIR=/etc/stickshift
 DEFAULT_LIBRA_SKEL_DIR=${DEFAULT_LIBRA_CONF_DIR}/skel
 
 # defaults
@@ -39,12 +39,12 @@ limits_order=84
 CART_DIR=/usr/libexec/li/cartridges
 
 function load_node_conf {
-    if [ -f '/etc/libra/node.conf' ]
+    if [ -f '/etc/stickshift/stickshift-node.conf' ]
     then
-        . /etc/libra/node.conf
-    elif [ -f 'node.conf' ]
+        . /etc/stickshift/stickshift-node.conf
+    elif [ -f 'stickshift-node.conf' ]
     then
-        . node.conf
+        . stickshift-node.conf
     else
         echo "node.conf not found.  Cannot continue" 1>&2
         exit 3
@@ -52,9 +52,9 @@ function load_node_conf {
 }
 
 function load_resource_limits_conf {
-    if [ -f '/etc/libra/resource_limits.conf' ]
+    if [ -f '/etc/stickshift/resource_limits.conf' ]
     then
-        . /etc/libra/resource_limits.conf
+        . /etc/stickshift/resource_limits.conf
     fi
 }
 
@@ -63,9 +63,9 @@ function initialize {
 
     load_resource_limits_conf
 
-    if [ -z "$libra_dir" ]
+    if [ -z "$stickshift_dir" ]
     then
-	      libra_dir=$DEFAULT_LIBRA_DIR
+	      stickshift_dir=$DEFAULT_LIBRA_DIR
     fi
 }
 
@@ -107,7 +107,7 @@ function remove_pam_limits {
 # repeat until you find a terminal device
 #
 #function get_filesystem() {
-#    # $1=libra_dir
+#    # $1=stickshift_dir
 #    df -P $1 | tail -1 | tr -s ' ' | cut -d' ' -f 1
 #}
 
@@ -136,8 +136,8 @@ function get_terminal_mountpoint() {
     echo $MP
 }
 
-#LIBRA_FILESYSTEM=`get_filesystem $libra_dir`
-LIBRA_MOUNTPOINT=`get_terminal_mountpoint $libra_dir`
+#LIBRA_FILESYSTEM=`get_filesystem $stickshift_dir`
+LIBRA_MOUNTPOINT=`get_terminal_mountpoint $stickshift_dir`
 QUOTA_FILE=$( echo ${LIBRA_MOUNTPOINT}/aquota.user | tr -s /)
 
 #
@@ -192,11 +192,11 @@ function remove_fs_quotas {
     USERNAME=$1
     if quotas_configured
     then
-        if quotas_enabled $libra_dir
+        if quotas_enabled $stickshift_dir
         then
-            setquota $1 0 0 0 0 `get_quota_root $libra_dir`
+            setquota $1 0 0 0 0 `get_quota_root $stickshift_dir`
         else
-            echo "WARNING: quotas not enabled on $libra_dir" >&2
+            echo "WARNING: quotas not enabled on $stickshift_dir" >&2
         fi
     else
         echo "WARNING: quotas not configured" >&2
@@ -207,7 +207,7 @@ function remove_fs_quotas {
 #                                 MAIN
 # ============================================================================
 
-# get configuration values from libra configuration files or defaults
+# get configuration values from stickshift configuration files or defaults
 username=$1
 initialize
 remove_fs_quotas $username
