@@ -39,13 +39,7 @@
 #learn.section-striped.lift-counter
   .container.container-inset
     .row
-      = link_to "signup", :class => 'take-action span12' do
-        %div
-          Create your 
-          %strong first three apps 
-          for free
-        %div
-          Try it out
+      = take_action new_web_user_path, 'Create your <strong>first three apps</strong> for free', 'Try it out', :class => 'span12'
 
       .span6
         %ul.learn.unstyled

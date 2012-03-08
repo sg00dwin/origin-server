@@ -47,6 +47,14 @@ a:hover, a:active { color: $ribbonColor; }
   }
 }
 
+.offset-up {
+  position: relative;
+}
+.offset-up > .offset-up {
+  position: absolute;
+  bottom: 50%;
+}
+
 /* A link that is a block, similar to a thumbnail */
 @mixin tile($activeColor, $hoverColor, $backgroundActiveColor, $backgroundHoverColor) {
   display: block;
@@ -187,6 +195,10 @@ body.signup {
 
 .take-action {
   display: table !important; // override span12 CSS rules
+  height: 2.6em;
+  line-height: 1em;
+
+  text-transform: uppercase;
 
   &:hover, &:active {
     text-decoration: none;
@@ -195,50 +207,67 @@ body.signup {
 
   > div {
     display: table-cell;
-    padding: 20px $gridGutterWidth;
-    text-align: left;
     vertical-align: middle;
 
-    text-transform: uppercase;
-    font-weight: bold;
-    font-size: 20px;
-    line-height: 21px;
-    letter-spacing: 1px;
+    padding: 0 $gridGutterWidth;
 
     color: white;
     background-color: $ribbonColor;
   }
 
-  > div:last-child {
+  > .highlight {
+    text-align: center;
     white-space: nowrap;
+
+    padding-right: 5px;
+
     background-color: $ribbonFoldColor;
-    padding-right: $gridGutterWidth + 12px;
-    background: url('../images/arrow-large.gif') 87% center no-repeat $ribbonFoldColor;
+  }
+
+  > .highlight-arrow {
+    padding-left: 0;
+
+    color: transparent;
+
+    background: url('../images/arrow-large.gif') left center no-repeat $ribbonFoldColor;
     -moz-transition: background-position 0.2s;
     -webkit-transition: background-position 0.2s;
     transition: background-position 0.2s;
   }
+  > .highlight-arrow:nth-child(2) {
+    border-left: 20px solid $ribbonFoldColor;
+  }
 
-  &:hover > div:last-child {
-    background-position: 89% center;
+  &:hover > .highlight-arrow {
+    background-position: 5px center;
   }
 }
-#learn .take-action { margin-top: -28px; margin-bottom: 20px; }
+#learn .take-action { 
+  margin-top: -1.3em; 
+  margin-bottom: 20px;
+  font-size: 20px;
+  font-weight: bold;
+  letter-spacing: 1px;
+}
+#nav .take-action {
+  margin: 0 auto 20px;
+}
 
 @media (max-width: 768px) {
-  .take-action > div { 
-    padding: 10px $gridGutterWidthPhone;
+  .take-action > div {
+    padding: 0 $gridGutterWidthPhone;
+  }
+  #learn .take-action { 
+    width: 100%;
     font-size: 13px;
-    line-height: 14px;
     letter-spacing: 0px;
   }
-  #learn .take-action { margin-top: 0px; width: 100%;}
 }
 @if $gridGutterWidthTablet != $gridGutterWidth { @media (min-width: 768px) and (max-width: 979px) {
-  .take-action > div { padding: 15px $gridGutterWidthTablet; }
+  .take-action > div { padding: 0 $gridGutterWidthTablet; }
 } }
 @if $gridGutterWidthLarge != $gridGutterWidth { @media (min-width: 1200px) {
-  .take-action > div { padding: 20px $gridGutterWidthLarge; }
+  .take-action > div { padding: 0 $gridGutterWidthLarge; }
 } }
 
 .column-buzz {
