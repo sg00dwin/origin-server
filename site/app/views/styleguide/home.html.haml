@@ -1,5 +1,6 @@
 - content_for :stylesheets do
   = stylesheet_link_tag '/app/stylesheets/site.css', :media => 'all'
+  = stylesheet_link_tag '/app/stylesheets/home.css', :media => 'all'
 
 %header
   #top.section-top
@@ -10,7 +11,7 @@
         - ['f', 'g', 't'].each do |p|
           = link_to p, :class => 'btn btn-small login-provider' do
             %img{:alt => p}
-  #nav.section-nav
+  %nav#nav.section-nav
     .navbar
       .container
         -# Was .nav-collapse, has some issues
