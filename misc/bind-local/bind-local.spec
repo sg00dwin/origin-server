@@ -45,9 +45,8 @@ rm -rf tmp
 rm -rf $RPM_BUILD_ROOT
 #make install DESTDIR=$RPM_BUILD_ROOT
 mkdir $RPM_BUILD_ROOT
-cp -r etc usr %{buildroot}
-mkdir -p %{buildroot}/var/named/dynamic
-cp usr/share/bind-local/
+cp -r etc usr var %{buildroot}
+
 
 %post
 # Install the policy extension
