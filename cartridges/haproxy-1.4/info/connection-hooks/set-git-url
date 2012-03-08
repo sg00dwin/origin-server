@@ -98,7 +98,7 @@ function register_gear() {
     [ -s "$gear_registry" ]  ||  setup_git_repo_from_framework "$git_url"
 
     #  Add to the gear git registry if entry doesn't exist.
-    if ! grep "$entry" "$gear_registry" 2>&1 > /dev/null; then
+    if ! grep "$entry" "$gear_registry" > /dev/null 2>&1; then
         echo "$entry" >> "$gear_registry"
 
         check_gear_availability "$git_url" $GEAR_AVAILABILITY_TIMEOUT  ||   \
@@ -156,7 +156,7 @@ function unregister_gear() {
     gear_registry=$OPENSHIFT_APP_DIR/conf/gear-registry.git
 
     #  Check if the gear git registry entry exists.
-    if grep "$entry" "$gear_registry" 2>&1 > /dev/null; then
+    if grep "$entry" "$gear_registry" > /dev/null 2>&1; then
         sed "/$gear_name=.*/d" "$gear_registry"  > /tmp/gear.registry
         cat /tmp/gear.registry > "$gear_registry"
         rm -f /tmp/gear.registry
