@@ -1,6 +1,7 @@
 #!/bin/bash
 
 source "/etc/stickshift/stickshift-node.conf"
+source "/etc/stickshift/resource_limits.conf"
 source ${CARTRIDGE_BASE_PATH}/abstract/info/lib/util
 
 application="$1"
@@ -22,17 +23,18 @@ CustomLog "|/usr/sbin/rotatelogs $PHPMOADMIN_DIR/logs/access_log$rotatelogs_form
 php_value include_path "."
 
 # TODO: Adjust from ALL to more conservative values
-#<IfModule !mod_bw.c>
-#    LoadModule bw_module    modules/mod_bw.so
-#</IfModule>
-#
-#<ifModule mod_bw.c>
-#  BandWidthModule On
-#  ForceBandWidthModule On
-#  BandWidth $apache_bandwidth
-#  MaxConnection $apache_maxconnection
-#  BandWidthError $apache_bandwidtherror
-#</IfModule>
+<IfModule !mod_bw.c>
+    LoadModule bw_module    modules/mod_bw.so
+</IfModule>
+
+<ifModule mod_bw.c>
+  BandWidthModule On
+  ForceBandWidthModule On
+  BandWidth $apache_bandwidth
+  MaxConnection $apache_maxconnection
+  BandWidthError $apache_bandwidtherror
+</IfModule>
+
 
 EOF
 

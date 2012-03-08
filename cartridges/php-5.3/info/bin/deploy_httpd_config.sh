@@ -1,6 +1,7 @@
 #!/bin/bash
 
 source "/etc/stickshift/stickshift-node.conf"
+source "/etc/stickshift/resource_limits.conf"
 source ${CARTRIDGE_BASE_PATH}/abstract/info/lib/util
 
 application="$1"
@@ -23,4 +24,18 @@ php_value include_path ".:$APP_DIR/repo/libs/:$APP_DIR/phplib/pear/pear/php/:/us
 <Directory "$APP_DIR/repo/php">
   AllowOverride All
 </Directory>
+
+# TODO: Adjust from ALL to more conservative values
+<IfModule !mod_bw.c>
+    LoadModule bw_module    modules/mod_bw.so
+</IfModule>
+
+<ifModule mod_bw.c>
+  BandWidthModule On
+  ForceBandWidthModule On
+  BandWidth $apache_bandwidth
+  MaxConnection $apache_maxconnection
+  BandWidthError $apache_bandwidtherror
+</IfModule>
+
 EOF

@@ -1,6 +1,7 @@
 #!/bin/bash
 
 source "/etc/stickshift/stickshift-node.conf"
+source "/etc/stickshift/resource_limits.conf"
 source ${CARTRIDGE_BASE_PATH}/abstract/info/lib/util
 
 application="$1"
@@ -29,5 +30,19 @@ WSGIScriptAlias / "$APP_DIR/repo/wsgi/application"
 Alias /static "$APP_DIR/repo/wsgi/static/"
 WSGIPythonPath "$APP_DIR/repo/libs:$APP_DIR/repo/wsgi:$APP_DIR/virtenv/lib/python2.6/"
 WSGIPassAuthorization On
+
+# TODO: Adjust from ALL to more conservative values
+<IfModule !mod_bw.c>
+    LoadModule bw_module    modules/mod_bw.so
+</IfModule>
+
+<ifModule mod_bw.c>
+  BandWidthModule On
+  ForceBandWidthModule On
+  BandWidth $apache_bandwidth
+  MaxConnection $apache_maxconnection
+  BandWidthError $apache_bandwidtherror
+</IfModule>
+
 
 EOF
