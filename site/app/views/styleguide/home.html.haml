@@ -3,6 +3,14 @@
   -#= stylesheet_link_tag '/app/stylesheets/home.css', :media => 'all'
 
 %header
+  %div{:style=>'display:none'}
+    .is-above-980
+    .is-above-1200
+    .is-under-979
+    .is-in-portrait
+    .is-under-767
+    .is-under-481
+
   #top.section-top
     .container
       .pull-left= link_to "Sign up for the newsletter >", "signup_news"

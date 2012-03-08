@@ -74,7 +74,14 @@ class EmbCartController < BaseController
   def create
     domain_id = params[:domain_id]
     id = params[:application_id]
+
     name = params[:name]
+    if name.nil?
+      # :cartridge param is deprecated because it isn't consistent with
+      # the rest of the apis which take :name. Leave it here because
+      # some tools may still use it
+      name = params[:cartridge]
+    end
     colocate_with = params[:colocate_with]
 
     application = Application.find(@cloud_user,id)
