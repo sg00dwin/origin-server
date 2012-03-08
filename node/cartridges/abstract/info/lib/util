@@ -561,12 +561,11 @@ function set_app_state {
 }
 
 function set_cartridge_state {
-  _state_file="$1/.state"
-  #if [ ! -d "$1" ]; then
-  #  run_as_user "mkdir -p \"$1\""
-  #fi
-
-  run_as_user "echo \"$2\" >$_state_file"
+  _state=`get_cartridge_state "$1"`
+  if [ ! \( "idle" = "$_state" -a "stopped" = "$2" \) ]; then
+    _state_file="$1/.state"
+    run_as_user "echo \"$2\" >$_state_file"
+  fi  
 }
 
 function test_app_state {
