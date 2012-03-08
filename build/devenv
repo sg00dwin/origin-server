@@ -625,7 +625,7 @@ class DevEnv < Thor
   method_option :express_server, :type => :boolean, :desc => "Set as express server in express.conf and leave on public_ip"
   method_option :ssh_config_verifier, :type => :boolean, :desc => "Set as verifier in .ssh/config"
   method_option :init_repo, :type => :boolean, :desc => "Initialize git repo for syncing and tests (requires --verifier)"
-  method_option :instance_type, :required => false, :desc => "Amazon machine type override (default m1.large)"
+  method_option :instance_type, :required => false, :desc => "Amazon machine type override (default m1.medium)"
   method_option :region, :required => false, :desc => "Amazon region override (default us-east-1)"
   method_option :image_name, :required => false, :desc => "AMI ID or DEVENV name to launch"
 
