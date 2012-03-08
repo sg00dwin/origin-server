@@ -13,6 +13,7 @@ Requires:	selinux-policy-targeted >= 3.7.19-134
 Requires(post): /usr/sbin/semanage
 Requires(postun): /usr/sbin/semanage
 Requires:	ruby
+Requires:	bind
 
 BuildArch: noarch
 
@@ -43,7 +44,28 @@ rm -rf $RPM_BUILD_ROOT
 make install DESTDIR=$RPM_BUILD_ROOT
 
 %post
+# Install the policy extension
 /usr/sbin/semodule -i %{_datadir}/selinux/packages/dhcpnamedforward.pp || :
+
+# determine if any interfaces use DHCP
+
+# DHCP: No?
+
+## flip SELinux dhcpnamedforward boolean off
+
+## get forwarder from /etc/resolv.conf
+
+## write forwarder file
+
+## update /etc/resolv.conf
+
+# DHCP: Yes?
+
+## flip SELinux dhcpnamedforward boolean on 
+
+## disable NetworkManager
+
+## enable network
 
 %preun
 /usr/sbin/semodule -r dhcpnamedforward || :
