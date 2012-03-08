@@ -102,8 +102,6 @@ echo "export OPENSHIFT_DB_MYSQL_51_DUMP_CLEANUP='$CART_INFO_DIR/bin/mysql_cleanu
 echo "export OPENSHIFT_DB_MYSQL_51_RESTORE='$CART_INFO_DIR/bin/mysql_restore.sh'" > $APP_HOME/.env/OPENSHIFT_DB_MYSQL_51_RESTORE
 echo "export OPENSHIFT_DB_MYSQL_51_EMBEDDED_TYPE='mysql-5.1'" > $APP_HOME/.env/OPENSHIFT_DB_MYSQL_51_EMBEDDED_TYPE
 
-chown $user_id $APP_HOME/.env/OPENSHIFT_DB_USERNAME $APP_HOME/.env/OPENSHIFT_DB_PASSWORD
-
 ## Setup user
 echo "drop database test;
 create database \`${application}\` DEFAULT CHARACTER SET utf8 DEFAULT COLLATE utf8_general_ci;" | mysql -u root -S "${MYSQL_DIR}/socket/mysql.sock" > /dev/null || error "Failed to create ${application}" 188

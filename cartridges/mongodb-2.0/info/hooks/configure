@@ -92,8 +92,6 @@ echo "export OPENSHIFT_NOSQL_DB_MONGODB_20_DUMP_CLEANUP='$CART_INFO_DIR/bin/mong
 echo "export OPENSHIFT_NOSQL_DB_MONGODB_20_RESTORE='$CART_INFO_DIR/bin/mongodb_restore.sh'" > $APP_HOME/.env/OPENSHIFT_NOSQL_DB_MONGODB_20_RESTORE
 echo "export OPENSHIFT_NOSQL_DB_MONGODB_20_EMBEDDED_TYPE='mongodb-2.0'" > $APP_HOME/.env/OPENSHIFT_NOSQL_DB_MONGODB_20_EMBEDDED_TYPE
 
-chown $user_id $APP_HOME/.env/OPENSHIFT_NOSQL_DB_USERNAME $APP_HOME/.env/OPENSHIFT_NOSQL_DB_PASSWORD
-
 ## Setup user
 echo "use admin
       db.addUser(\"admin\", \"${password}\")
