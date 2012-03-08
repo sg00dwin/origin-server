@@ -409,6 +409,9 @@ body.signup {
       margin-bottom: 0; }
 
 @media (max-width: 768px) {
+  .section-striped {
+    background: none; }
+
   .section-striped .link-tile {
     padding: 10px 20px; } }
 
@@ -516,7 +519,10 @@ body.signup {
   #learn .take-action {
     width: 100%;
     font-size: 13px;
-    letter-spacing: 0px; } }
+    letter-spacing: 0px; }
+
+  #nav .take-action {
+    margin: 20px 0 0; } }
 
 @media (min-width: 768px) and (max-width: 979px) {
   .take-action > div {
@@ -710,6 +716,8 @@ h1.ribbon {
   background-color: white; }
   .column-content h1 {
     margin-top: 25px;
+    margin-bottom: 25px; }
+  .column-content section {
     margin-bottom: 25px; }
 
 .column-buzz {
