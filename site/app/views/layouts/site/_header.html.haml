@@ -3,7 +3,7 @@
     .pull-left= link_to "Sign up for the newsletter »", newsletter_signup_url
     .pull-right.login
       = link_to "Sign In", control_panel_path, :class => 'btn btn-small'
-      - ['f', 'g', 't'].each do |p|
+      -# ['f', 'g', 't'].each do |p|
         = link_to p, :class => 'btn btn-small login-provider' do
           %img{:alt => p}
 

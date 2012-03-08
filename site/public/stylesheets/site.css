@@ -373,6 +373,17 @@ body.signup {
 .section-top {
   background-color: #010101;
   color: white; }
+  .section-top .container .btn {
+    background: #333;
+    border-radius: 0;
+    -moz-border-radius: 0;
+    text-shadow: none;
+    border: 0;
+    color: white;
+    box-shadow: none; }
+    .section-top .container .btn:hover, .section-top .container .btn:active {
+      background: #AAAAAA;
+      color: black; }
 
 #nav {
   background: #343434 url("../images/landscape-mountains.png") repeat-x bottom left; }
@@ -447,15 +458,13 @@ body.signup {
 
 .messaging {
   clear: both;
-  color: #bbb;
+  color: white;
   text-align: center;
   margin-bottom: 30px; }
   .messaging .primary {
     font-size: 40px;
     line-height: 40px;
     text-transform: uppercase; }
-  .messaging strong {
-    color: white; }
   .messaging .secondary {
     font-size: 16px;
     line-height: 18px; }
