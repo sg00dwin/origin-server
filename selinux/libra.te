@@ -1,4 +1,4 @@
-policy_module(libra,1.1.6)
+policy_module(libra,1.1.7)
 
 ########################################
 #
@@ -408,6 +408,8 @@ domain_dontaudit_read_all_domains_state(httpd_t)
 
 #============= httpd_t ==============
 allow httpd_t self:capability sys_ptrace;
+
+dontaudit httpd_t libra_initrc_t:process signull;
 
 type libra_cgroup_read_t;
 type libra_cgroup_read_exec_t;
