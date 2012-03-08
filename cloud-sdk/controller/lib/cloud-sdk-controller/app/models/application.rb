@@ -1173,6 +1173,7 @@ class Application < Cloud::Sdk::Cartridge
 
       from_gpath = self.get_name_prefix + from_cart.get_name_prefix + from_group.get_name_prefix
       to_gpath = self.get_name_prefix + to_cart.get_name_prefix + to_group.get_name_prefix
+      self.group_override_map = {} if self.group_override_map.nil?
       group_override_map[from_gpath] = to_gpath
       group_override_map[to_gpath] = from_gpath
     rescue Exception=>e
@@ -1186,7 +1187,7 @@ class Application < Cloud::Sdk::Cartridge
     self.comp_instance_map = {} if comp_instance_map.nil?
     self.working_comp_inst_hash = {}
     self.working_group_inst_hash = {}
-    self.group_override_map = {} 
+    self.group_override_map = {} if self.group_override_map.nil?
     self.conn_endpoints_list = [] 
     default_profile = @profile_name_map[@default_profile]
     
