@@ -23,7 +23,7 @@ class ApplicationTest < ActiveSupport::TestCase
     Application.expects(:notify_observers).with(:before_application_create, anything).in_sequence(observer_seq).once
     Application.expects(:notify_observers).with(:application_creation_success, anything).in_sequence(observer_seq).once
     Application.expects(:notify_observers).with(:after_application_create, anything).in_sequence(observer_seq).once
-    application = Application.new(user, "app_name", "app_uuid", "std", "dummy")
+    application = Application.new(user, "app_name", "app_uuid", "small", "dummy")
     application.expects(:save).returns(nil).at_least_once
     application.create
   end
@@ -32,7 +32,7 @@ class ApplicationTest < ActiveSupport::TestCase
   test "configure_dependencies" do    
     user = mock("user")    
     Application.any_instance.stubs(:framework).returns('dummy')
-    application = Application.new(user, "app_name", "app_uuid", "std", "dummy")
+    application = Application.new(user, "app_name", "app_uuid", "small", "dummy")
     
     observer_seq = sequence("observer_seq")
     Application.expects(:notify_observers).with(:before_application_create, anything).in_sequence(observer_seq).once
@@ -53,7 +53,7 @@ class ApplicationTest < ActiveSupport::TestCase
   test "deconfigure_dependencies" do
     user = mock("user")    
     Application.any_instance.stubs(:framework).returns('dummy')
-    application = Application.new(user, "app_name", "app_uuid", "std", "dummy")
+    application = Application.new(user, "app_name", "app_uuid", "small", "dummy")
     
     observer_seq = sequence("observer_seq")
     Application.expects(:notify_observers).with(:before_application_create, anything).in_sequence(observer_seq).once
@@ -81,7 +81,7 @@ class ApplicationTest < ActiveSupport::TestCase
     user = mock("user")
     Application.expects(:notify_observers).with(:before_application_destroy, anything).in_sequence(observer_seq).once
     Application.expects(:notify_observers).with(:after_application_destroy, anything).in_sequence(observer_seq).once
-    application = Application.new(user, "app_name", "app_uuid", "std", "dummy")
+    application = Application.new(user, "app_name", "app_uuid", "small", "dummy")
     application.expects(:save).returns(nil).at_most(1)
     
     application.destroy
@@ -89,7 +89,7 @@ class ApplicationTest < ActiveSupport::TestCase
 
   test "create_dns" do
     user = mock("user")    
-    application = Application.new(user, "app_name", "app_uuid", "std", "php-5.3")
+    application = Application.new(user, "app_name", "app_uuid", "small", "php-5.3")
     
     observer_seq = sequence("observer_seq")
     Application.expects(:notify_observers).with(:before_create_dns, anything).in_sequence(observer_seq).once
@@ -107,7 +107,7 @@ class ApplicationTest < ActiveSupport::TestCase
 
   test "destroy_dns" do
     user = mock("user")    
-    application = Application.new(user, "app_name", "app_uuid", "std", "php-5.3")
+    application = Application.new(user, "app_name", "app_uuid", "small", "php-5.3")
     
     observer_seq = sequence("observer_seq")
     Application.expects(:notify_observers).with(:before_destroy_dns, anything).in_sequence(observer_seq).once
@@ -123,7 +123,7 @@ class ApplicationTest < ActiveSupport::TestCase
   
   test "recreate_dns" do    
     user = mock("user")    
-    application = Application.new(user, "app_name", "app_uuid", "std", "php-5.3")
+    application = Application.new(user, "app_name", "app_uuid", "small", "php-5.3")
     
     observer_seq = sequence("observer_seq")
     Application.expects(:notify_observers).with(:before_recreate_dns, anything).in_sequence(observer_seq).once
@@ -145,7 +145,7 @@ class ApplicationTest < ActiveSupport::TestCase
     CartridgeCache.expects(:cartridge_names).returns(["php-5.3"])
 
     user = mock("user")
-    application = Application.new(user, "app_name", "app_uuid", "std", "php-5.3")
+    application = Application.new(user, "app_name", "app_uuid", "small", "php-5.3")
     application.expects(:container).returns(Cloud::Sdk::ApplicationContainerProxy.instance("asldksd")).at_least_once
     Cloud::Sdk::ApplicationContainerProxy.any_instance.stubs(:add_alias).returns(ResultIO.new)
     application.expects(:save).once
@@ -155,7 +155,7 @@ class ApplicationTest < ActiveSupport::TestCase
   test "remove alias" do    
     user = mock("user")
     CartridgeCache.expects(:cartridge_names).returns(["php-5.3"])
-    application = Application.new(user, "app_name", "app_uuid", "std", "php-5.3")
+    application = Application.new(user, "app_name", "app_uuid", "small", "php-5.3")
     application.expects(:aliases).returns(["foo.bar.com"]).at_least_once    
     application.expects(:container).returns(Cloud::Sdk::ApplicationContainerProxy.instance("asldksd")).at_least_once
     Cloud::Sdk::ApplicationContainerProxy.any_instance.stubs(:remove_alias).returns(ResultIO.new)
@@ -166,7 +166,7 @@ class ApplicationTest < ActiveSupport::TestCase
 
   test "add dependency" do
     user = mock("user")    
-    application = Application.new(user, "app_name", "app_uuid", "std", "php-5.3")
+    application = Application.new(user, "app_name", "app_uuid", "small", "php-5.3")
     
     CartridgeCache.expects(:cartridge_names).with('embedded').returns([])
     observer_seq = sequence("observer_seq")
@@ -180,7 +180,7 @@ class ApplicationTest < ActiveSupport::TestCase
 
   test "remove dependency" do
     user = mock("user")    
-    application = Application.new(user, "app_name", "app_uuid", "std", "php-5.3")
+    application = Application.new(user, "app_name", "app_uuid", "small", "php-5.3")
     
     observer_seq = sequence("observer_seq")
     Application.expects(:notify_observers).with(:before_remove_dependency, anything).in_sequence(observer_seq).once

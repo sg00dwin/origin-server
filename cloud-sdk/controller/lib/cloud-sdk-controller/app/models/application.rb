@@ -483,7 +483,7 @@ class Application < Cloud::Sdk::Cartridge
   def get_parallel_run_results(handle, &block)
     handle.each { |id, job_list|
       job_list.each { |parallel_job|
-        block.call(parallel_job['tag'], parallel_job['gear'], parallel_job['result_stdout'], parallel_job['result_exit_code'])
+        block.call(parallel_job[:tag], parallel_job[:gear], parallel_job[:result_stdout], parallel_job[:result_exit_code])
       }
     }
   end
