@@ -22,21 +22,50 @@ body > header {
 }
 /* line 41, ../../app/stylesheets/home.scss */
 .messaging .secondary {
-  max-width: 875px;
+  max-width: 790px;
   margin: 0 auto;
+  font-family: Liberation Sans, Helvetica Neue, Helvetica, Arial, Sans-serif;
 }
-/* line 45, ../../app/stylesheets/home.scss */
+/* line 46, ../../app/stylesheets/home.scss */
 .messaging h1, .messaging h2 {
   color: #bbb;
 }
 
+/* line 49, ../../app/stylesheets/home.scss */
+#buzz {
+  background-color: #181919;
+  background-image: url("../images/diagonals-bottom.png"), url("../images/tiny-panda.png"), url("../images/mts-bottom.png");
+  background-repeat: no-repeat, no-repeat, repeat-x;
+  background-position: left top,     50px bottom,     center bottom;
+}
+/* line 61, ../../app/stylesheets/home.scss */
+#buzz .column-buzz {
+  background: black url("../images/black-noise.png");
+  margin: 0 80px;
+}
+
 @media (max-width: 767px) {
-  /* line 49, ../../app/stylesheets/home.scss */
+  /* line 68, ../../app/stylesheets/home.scss */
   body > header {
     background: url("../images/dark-gray-diagonal-noise.jpg") repeat;
   }
+
+  /* line 72, ../../app/stylesheets/home.scss */
+  .messaging {
+    margin: 0;
+  }
+
+  /* line 76, ../../app/stylesheets/home.scss */
+  #buzz {
+    background-image: none;
+  }
+  /* line 78, ../../app/stylesheets/home.scss */
+  #buzz .column-buzz {
+    background-image: none;
+    margin: 0;
+  }
 }
-/* line 54, ../../app/stylesheets/home.scss */
+/* line 85, ../../app/stylesheets/home.scss */
 #nav {
   background-color: transparent;
   background-image: none;
