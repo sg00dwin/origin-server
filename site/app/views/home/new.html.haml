@@ -1,14 +1,11 @@
 - content_for :header do
   .messaging.messaging-home
     .container
-      .primary.headline
+      %h1.primary.headline
         Develop and Scale 
         %strong#technology-rotate Apps
         in the Cloud
-      .secondary OpenShift is a free, auto-scaling platform as a service for web applications.  It streamlines the application life cycle so developers can focus on their users, customers, and code.
-
-- content_for :stylesheets do
-  = stylesheet_link_tag '/app/stylesheets/home.css', :media => 'all'
+      %h2.secondary OpenShift is a free, auto-scaling platform as a service for web applications.  It streamlines the application life cycle so developers can focus on their users, customers, and code.
 
 - content_for :javascripts do
   = javascript_include_tag "/app/javascripts/twitter.branding.js"
@@ -19,13 +16,7 @@
   #learn.section-striped.lift-counter
     .container.container-inset
       .row
-        = link_to "signup", :class => 'take-action span12' do
-          %div
-            Create your 
-            %strong first three apps 
-            for free
-          %div
-            Try it out
+        = take_action 'signup', 'Create your <strong>first three apps</strong> for free', 'Try it out', :class => 'span12'
   
         .span6
           %ul.learn.unstyled
