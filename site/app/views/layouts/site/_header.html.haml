@@ -3,12 +3,11 @@
     .pull-left= link_to "Sign up for the newsletter »", newsletter_signup_url
     .pull-right.login
       = link_to "Sign In", control_panel_path, :class => 'btn btn-small'
-      -#
-        - ['f', 'g', 't'].each do |p|
-          = link_to p, :class => 'btn btn-small login-provider' do
-            %img{:alt => p}
+      - ['f', 'g', 't'].each do |p|
+        = link_to p, :class => 'btn btn-small login-provider' do
+          %img{:alt => p}
 
-#nav.section-nav.lift-counter
+%nav#nav.section-nav
   .navbar
     .container
       -# Was .nav-collapse, has some issues
@@ -20,10 +19,10 @@
             Shift
       %ul.nav
         %li.active= link_to "Learn More", product_overview_path
-        %li= link_to "Express", express_path
+        %li= link_to "Documentation", "dev_center"
         %li.divider &nbsp;
-        %li= link_to "Flex", flex_path
-        %li= link_to "Community", community_url
+        %li= link_to "Console", "console"
+        %li= link_to "Community", "community"
 
   - if content_for? :header
     = yield :header

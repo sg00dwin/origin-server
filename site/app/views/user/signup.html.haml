@@ -1,0 +1,36 @@
+- content_for :header do
+  .messaging
+    .container
+      .primary.headline
+        What is
+        %strong OpenShift?
+      .secondary
+        Start your journey into the cloud with the answers you need.
+
+%h1.ribbon
+  .ribbon-content Sign up and shift your App to the Cloud.
+  .ribbon-left
+
+
+#new-user
+  = semantic_form_for('web_user', :remote => true, :url => web_user_path) do |form|
+    = form.inputs do
+      = form.hidden_field :cloud_access_choice,
+        :value => (@product == CloudAccess::FLEX_NAME ? CloudAccess::FLEX : CloudAccess::EXPRESS)
+      = form.input :email_address
+      
+    %fieldset.confirm 
+      %legend Password
+      = form.input :password, :label => ' ', :input_html => { :autocomplete => 'off', :placeholder => 'At least 6 characters' }
+      = form.input :password_confirmation, :label => ' ', :input_html => { :autocomplete => 'off', :placeholder => 'Enter it again' }
+    %fieldset.promo
+      = form.input :promo_code, :label => 'Promotional Code', :required => false
+    %li.captcha
+      %label(for="recaptcha_response_field") Prove You Are Human
+      = recaptcha_tags :ssl => true          
+
+    = form.buttons do
+      = form.commit_button "Sign up for OpenShift", :button_html => { :class => 'button' }
+
+  = render 'layouts/dialogs/extra_options', :page => 'signup'
+
