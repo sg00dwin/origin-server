@@ -12,6 +12,7 @@ gem 'formtastic', '~> 1.2.3'
 gem 'rack'
 gem 'multimap'
 gem 'regin'
+gem 'rdiscount'
 
 # Files for Barista (https://github.com/Sutto/barista)
 gem 'barista'
