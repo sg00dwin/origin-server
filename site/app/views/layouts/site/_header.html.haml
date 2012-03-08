@@ -18,17 +18,17 @@
     .container
       -# Was .nav-collapse, has some issues
       .brand
-        = link_to root_path do
+        = link_to "/app/new" do
           .brand-image
           .brand-text
             %strong> Open
             Shift
       %ul.nav
-        %li.active= link_to "Learn More", "/app/new/express"
-        %li= link_to "Documentation", "dev_center"
+        %li.active= link_to "Learn More", ""
+        %li= link_to "Express", "/app/new/express"
         %li.divider &nbsp;
-        %li= link_to "Console", "console"
-        %li= link_to "Community", "community"
+        %li= link_to "Flex", "/app/new/flex"
+        %li= link_to "Community", "/app/styleguide/community"
 
   - if content_for? :header
     = yield :header
