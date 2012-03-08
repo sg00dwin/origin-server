@@ -34,7 +34,7 @@ DHCP.
 
 
 %build
-cd %{_datadir}/selinux/packages
+cd ./%{_datadir}/selinux/packages
 make -f /usr/share/selinux/devel/Makefile
 
 %install
