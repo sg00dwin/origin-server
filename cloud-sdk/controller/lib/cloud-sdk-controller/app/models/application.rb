@@ -422,7 +422,7 @@ class Application < Cloud::Sdk::Cartridge
       pub_out = []
       get_parallel_run_results(handle) { |tag, gear, output, status|
         if status==0
-          pub_out.push("'#{gear.uuid}'='#{output}'")
+          pub_out.push("'#{gear}'='#{output}'")
         end
       }
       input_to_subscriber = Shellwords::shellescape(pub_out.join(' '))
@@ -435,7 +435,7 @@ class Application < Cloud::Sdk::Cartridge
         appname = gear.uuid[0..9]
         appname = self.name if sub_inst.parent_cart_name == self.framework
         connector_name = conn.to_connector.name
-        car = sub_inst.parent_cart_name
+        cart = sub_inst.parent_cart_name
         input_args = [appname, self.user.namespace, gear.uuid, input_to_subscriber]
         args = "--gear-uuid '#{gear.uuid}' --cart-name '#{cart}' --hook-name '#{connector_name}' " + input_args.join(" ")
         mc_args = { :cartridge => 'cloud-sdk-node', 
@@ -457,7 +457,7 @@ class Application < Cloud::Sdk::Cartridge
     }
     # now execute
     begin
-      ApplicationContainerProxy.execute_parallel_jobs(handle)
+      Express::Broker::ApplicationContainerProxy.execute_parallel_jobs(handle)
     rescue Exception=>e
       Rails.logger.error e.message
       Rails.logger.error e.inspect
@@ -469,8 +469,8 @@ class Application < Cloud::Sdk::Cartridge
   def add_parallel_job(handle, tag, gear, job)
     parallel_job = { 
                      :tag => tag,
-                     :gear => gear,
-                     :job => job.to_json,
+                     :gear => gear.uuid,
+                     :job => job,
                      :result_stdout => "",
                      :result_stderr => "",
                      :result_exit_code => ""

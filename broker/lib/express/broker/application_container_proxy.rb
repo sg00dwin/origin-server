@@ -1061,12 +1061,22 @@ module Express
           begin
             options = ApplicationContainerProxy.rpc_options
             rpc_client = rpcclient('libra', :options => options)
-            result = rpc_client.custom_request('execute_parallel', JSON.encode(job_list), id, {'identity' => id})
+            # mc_args = { :joblist => JSON.generate(job_list) }
+            mc_args = { :joblist => job_list }
+            mcoll_reply = rpc_client.custom_request('execute_parallel', mc_args, id, {'identity' => id})
+            rpc_client.disconnect
+            if mcoll_reply and mcoll_reply.length>0
+              mcoll_reply = mcoll_reply[0]
+              output = mcoll_reply.results[:data][:output]
+              exitcode = mcoll_reply.results[:data][:exitcode]
+              Rails.logger.debug("DEBUG: Output of parallel execute: #{output}, status: #{exitcode}")
+              handle[id] = JSON.parse output if exitcode==0
+            end
           rescue Exception =>e
           end
         }
       end
-
+      
     end
   end
 end

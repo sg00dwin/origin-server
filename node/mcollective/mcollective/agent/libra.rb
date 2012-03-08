@@ -28,6 +28,7 @@
 require 'rubygems'
 require 'open4'
 require 'pp'
+require 'json'
 
 module MCollective
   #
@@ -220,6 +221,95 @@ module MCollective
         reply[:exitcode] = 0
       end
 
+      #
+      # Executes a list of jobs parallely and returns their results embedded in args
+      #
+      def execute_parallel_action
+        Log.instance.debug("execute_parallel_action call / request = #{request.pretty_inspect}")
+        #validate :joblist, /\A[\w\+\/= \{\}\"@\-\.:\'\\\n~,_]+\z/
+        #validate :joblist, :shellsafe
+        joblist_json = request[:joblist]
+
+        begin
+          # joblist = JSON.parse joblist_json
+          joblist = joblist_json
+        rescue Exception =>e
+          reply[:output] = e.message
+          reply[:exitcode] = 10
+          reply.fail! "execute_parallel_action failed.  Output #{e}"
+          return
+        end
+
+        pidlist = []
+        joblist.each { |parallel_job|
+          
+          job = parallel_job[:job]
+          cartridge = job[:cartridge]
+          action = job[:action]
+          args = job[:args]
+          begin
+            pid, stdout, stderr = helper_parallel_job(cartridge, action, args)
+          rescue Exception =>e
+            parallel_job[:result_exit_code] = 127
+            parallel_job[:result_stdout] = e.message
+            parallel_job[:result_stderr] = e.message
+            next
+          end
+          pidlist << [parallel_job, pid, stdout, stderr]
+        }
+
+        pidlist.each { |reap_args|
+          pj, pid, sout, serr = reap_args
+          helper_reap_output(pj, pid, sout, serr)
+        }
+        Log.instance.debug("execute_parallel_action call - 10 #{joblist}")
+        reply[:output] = joblist
+        reply[:exitcode] = 0 
+      end
+
+      def helper_parallel_job(cartridge, action, args)
+        pid, stdin, stdout, stderr = nil, nil, nil, nil
+        if cartridge == 'cloud-sdk-node'
+          cmd = "cdk-#{action}"
+          pid, stdin, stdout, stderr = Open4::popen4("/usr/bin/runcon -l s0-s0:c0.c1023 #{cmd} #{args} 2>&1")
+        else
+          if File.exists? "/usr/libexec/li/cartridges/#{cartridge}/info/hooks/#{action}"                
+            pid, stdin, stdout, stderr = Open4::popen4ext(true, "/usr/bin/runcon -l s0-s0:c0.c1023 /usr/libexec/li/cartridges/#{cartridge}/info/hooks/#{action} #{args} 2>&1")
+            #pid, stdin, stdout, stderr = Open4::popen4("/usr/bin/runcon -l s0-s0:c0.c1023 /usr/libexec/li/cartridges/#{cartridge}/info/hooks/#{action} #{args} 2>&1")
+          elsif File.exists? "/usr/libexec/li/cartridges/embedded/#{cartridge}/info/hooks/#{action}"                
+            pid, stdin, stdout, stderr = Open4::popen4ext(true, "/usr/bin/runcon -l s0-s0:c0.c1023 /usr/libexec/li/cartridges/embedded/#{cartridge}/info/hooks/#{action} #{args} 2>&1")
+          else
+            raise Exception.new("cartridge_do_action ERROR action '#{action}' not found.")
+          end
+        end
+        stdin.close
+        return pid, stdout, stderr
+      end
+
+      def helper_reap_output(parallel_job, pid, stdout, stderr)
+        ignored, status = Process::waitpid2 pid
+        exitcode = status.exitstatus
+        # Do this to avoid cartridges that might hold open stdout
+        output = ""
+        begin
+          Timeout::timeout(5) do
+            while (line = stdout.gets)
+              output << line
+            end
+          end
+        rescue Timeout::Error
+          Log.instance.debug("cartridge_do_action WARNING - stdout read timed out")
+        end
+
+        if exitcode == 0
+          Log.instance.debug("cartridge_do_action (#{exitcode})\n------\n#{output}\n------)")
+        else
+          Log.instance.debug("cartridge_do_action ERROR (#{exitcode})\n------\n#{output}\n------)")
+        end
+
+        parallel_job[:result_stdout] = output
+        parallel_job[:result_exit_code] = exitcode
+      end
     end
   end
 end
