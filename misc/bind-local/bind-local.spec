@@ -36,6 +36,7 @@ DHCP.
 %build
 cd ./%{_datadir}/selinux/packages
 make -f /usr/share/selinux/devel/Makefile
+rm -rf tmp
 
 %install
 # Install overlay files
@@ -44,7 +45,7 @@ make -f /usr/share/selinux/devel/Makefile
 rm -rf $RPM_BUILD_ROOT
 #make install DESTDIR=$RPM_BUILD_ROOT
 mkdir $RPM_BUILD_ROOT
-cp -r %{buildroot}
+cp -r usr var %{buildroot}
 
 %post
 # Install the policy extension
