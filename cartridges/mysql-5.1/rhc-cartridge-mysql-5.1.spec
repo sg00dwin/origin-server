@@ -1,4 +1,5 @@
 %define cartridgedir %{_libexecdir}/li/cartridges/embedded/mysql-5.1
+%define frameworkdir %{_libexecdir}/li/cartridges/mysql-5.1
 
 Name: rhc-cartridge-mysql-5.1
 Version: 0.22.1
@@ -23,6 +24,16 @@ Provides rhc perl cartridge support
 %setup -q
 
 %build
+rm -rf git_template
+cp -r template/ git_template/
+cd git_template
+git init
+git add -f .
+git commit -m 'Creating template'
+cd ..
+git clone --bare git_template git_template.git
+rm -rf git_template
+touch git_template.git/refs/heads/.gitignore
 
 %install
 rm -rf $RPM_BUILD_ROOT
@@ -30,9 +41,12 @@ rm -rf %{buildroot}
 mkdir -p %{buildroot}%{cartridgedir}
 mkdir -p %{buildroot}/%{_sysconfdir}/libra/cartridges
 ln -s %{cartridgedir}/info/configuration/ %{buildroot}/%{_sysconfdir}/libra/cartridges/%{name}
+ln -s %{cartridgedir} %{buildroot}/%{frameworkdir}
 cp -r info %{buildroot}%{cartridgedir}/
 cp LICENSE %{buildroot}%{cartridgedir}/
 cp COPYRIGHT %{buildroot}%{cartridgedir}/
+mkdir -p %{buildroot}%{cartridgedir}/info/data/
+cp -r git_template.git %{buildroot}%{cartridgedir}/info/data/
 
 
 %clean
@@ -41,10 +55,13 @@ rm -rf $RPM_BUILD_ROOT
 %files
 %defattr(-,root,root,-)
 %attr(0750,-,-) %{cartridgedir}/info/hooks/
+%attr(0750,-,-) %{cartridgedir}/info/data/
 %attr(0750,-,-) %{cartridgedir}/info/build/
 %config(noreplace) %{cartridgedir}/info/configuration/
 %attr(0755,-,-) %{cartridgedir}/info/bin/
 %attr(0755,-,-) %{cartridgedir}/info/lib/
+%attr(0755,-,-) %{cartridgedir}/info/connection-hooks/
+%attr(0755,-,-) %{frameworkdir}
 %{_sysconfdir}/libra/cartridges/%{name}
 %{cartridgedir}/info/changelog
 %{cartridgedir}/info/control
