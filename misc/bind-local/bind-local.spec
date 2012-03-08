@@ -92,8 +92,7 @@ cp -r etc usr var %{buildroot}
 /usr/share/bind-local/Kexample.com.+157+06142.key
 /usr/share/bind-local/Kexample.com.+157+06142.private
 
-/usr/share/bind-local/self-contained-named.conf
-/usr/share/bind-local/system-named.conf
+/usr/share/bind-local/named.conf
 
 # config files
 /etc/named.conf
