@@ -126,7 +126,7 @@ body.signup {
     > :last-child { margin-bottom: 0; }
   }
 }
-@media (max-width: 768px) {
+@media (max-width: 767px) {
   .section-striped { background: none; }
   .section-striped .link-tile { padding: 10px $gridGutterWidthPhone; }
 }
@@ -180,15 +180,26 @@ body.signup {
 
   .primary {
     font-size: 40px;
-    line-height: 40px;
+    line-height: 1em;
     text-transform: uppercase;
     color: white;
   }
 
   .secondary {
     font-size: 16px;
-    line-height: 18px;
+    line-height: 1.2em;
     color: white;
+  }
+}
+
+@media (max-width: 979px) {
+  .messaging {
+    .primary {
+      font-size: 32px;
+    }
+    .secondary {
+      font-size: 15px;
+    }
   }
 }
 
@@ -199,11 +210,9 @@ body.signup {
 
     .primary {
       font-size: 20px;
-      line-height: 20px;
     }
     .secondary {
       font-size: 13px;
-      line-height: 18px;
     }
   }
 }
@@ -268,7 +277,12 @@ body.signup {
   margin: 0 auto 20px;
 }
 
-@media (max-width: 768px) {
+@media (max-width: 979px) {
+  #learn .take-action {
+    font-size: 17px;
+  }
+}
+@media (max-width: 767px) {
   .take-action > div {
     padding: 0 $gridGutterWidthPhone;
   }
@@ -281,6 +295,7 @@ body.signup {
     margin: 20px 0 0;
   }
 }
+
 @if $gridGutterWidthTablet != $gridGutterWidth { @media (min-width: 768px) and (max-width: 979px) {
   .take-action > div { padding: 0 $gridGutterWidthTablet; }
 } }
@@ -373,7 +388,7 @@ body.signup {
   }
 }
 
-@media (max-width: 768px) {
+@media (max-width: 767px) {
   .column-buzz > h2 {
     font-size: 26px;
     line-height: 28px;
