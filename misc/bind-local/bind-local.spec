@@ -1,5 +1,5 @@
 Name:		bind-local
-Version:	0.1
+Version:	0.2
 Release:	1%{?dist}
 Summary:	Config for local named for test and development with Dynamic DNS
 Group:		Network/Daemons
@@ -109,3 +109,8 @@ make install DESTDIR=$RPM_BUILD_ROOT
 
 
 %changelog
+* Thu Mar 08 2012 Mark Lamourine <mlamouri@redhat.com> 0.2-1
+- new package built with tito
+- Configure a local named with dynamic DNS enabled for testing
+- all non-local zones are forwarded to the first nameserver in /etc/resolv.conf
+- handles interfaces configured with DHCP: updates forwarders on DHCP renew
