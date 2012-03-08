@@ -75,6 +75,7 @@ class EmbCartController < BaseController
     domain_id = params[:domain_id]
     id = params[:application_id]
     name = params[:name]
+    colocate_with = params[:colocate_with]
 
     application = Application.find(@cloud_user,id)
     if(application.nil?)
@@ -111,6 +112,9 @@ class EmbCartController < BaseController
     end
 
     begin
+      if not colocate_with.nil?
+        application.add_group_override(name, colocate_with)
+      end
       application.add_dependency(name)
     rescue Exception => e
       Rails.logger.error e

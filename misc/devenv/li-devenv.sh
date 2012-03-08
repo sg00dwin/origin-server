@@ -7,37 +7,53 @@ rpm -Uhv http://download.fedoraproject.org/pub/epel/6/x86_64/epel-release-6-5.no
 
 cat > /etc/yum.repos.d/li.repo <<EOF
 [li]
-name=Li repo for Enterprise Linux 6 - \$basearch
-baseurl=http://209.132.178.9/gpxe/trees/libra-rhel-6.2-${1-candidate}/\$basearch/
+name=Li repo for Enterprise Linux 6 - $basearch
+baseurl=https://mirror1.stg.rhcloud.com/libra/libra-rhel-6.2-${1-candidate}/\$basearch/
+        https://mirror2.stg.rhcloud.com/libra/libra-rhel-6.2-${1-candidate}/\$basearch/
 failovermethod=priority
 enabled=1
 gpgcheck=0
-gpgkey=http://209.132.178.9/gpxe/trees/RPM-GPG-KEY-redhat-beta
-ggpkey=http://209.132.178.9/gpxe/trees/RPM-GPG-KEY-redhat-release
+gpgkey=https://mirror1.stg.rhcloud.com/libra/RPM-GPG-KEY-redhat-beta
+ggpkey=https://mirror1.stg.rhcloud.com/libra/RPM-GPG-KEY-redhat-release
+sslverify=0
+sslclientcert=/var/lib/yum/client-cert.pem
+sslclientkey=/var/lib/yum/client-key.pem
 
 [li-source]
-name=Li repo for Enterprise Linux 6 - Source
-baseurl=http://209.132.178.9/gpxe/trees/libra-rhel-6.2-${1-candidate}/source/SRPMS/
+name=Li repo for Enterprise Linux 6 - $basearch
+baseurl=https://mirror1.stg.rhcloud.com/libra/libra-rhel-6.2-${1-candidate}/source/SRPMS/
+        https://mirror2.stg.rhcloud.com/libra/libra-rhel-6.2-${1-candidate}/source/SRPMS/
 failovermethod=priority
 enabled=0
-gpgkey=http://209.132.178.9/gpxe/trees/RPM-GPG-KEY-redhat-beta
-ggpkey=http://209.132.178.9/gpxe/trees/RPM-GPG-KEY-redhat-release
+gpgkey=https://mirror1.stg.rhcloud.com/libra/RPM-GPG-KEY-redhat-beta
+ggpkey=https://mirror1.stg.rhcloud.com/libra/RPM-GPG-KEY-redhat-release
 gpgcheck=0
+sslverify=0
+sslclientcert=/var/lib/yum/client-cert.pem
+sslclientkey=/var/lib/yum/client-key.pem
 
 [qpid]
-name=Qpid repo
-baseurl=http://209.132.178.9/gpxe/trees/qpid/\$basearch/Packages/
+name=Qpid repo for Enterprise Linux 6 - $basearch
+baseurl=https://mirror1.stg.rhcloud.com/libra/qpid/\$basearch/Packages/
+        https://mirror2.stg.rhcloud.com/libra/qpid/\$basearch/Packages/
 failovermethod=priority
 enabled=1
 gpgcheck=1
-gpgkey=http://209.132.178.9/gpxe/trees/li/li-signing.asc
+gpgkey=https://mirror1.stg.rhcloud.com/libra/li-signing.asc
+sslverify=0
+sslclientcert=/var/lib/yum/client-cert.pem
+sslclientkey=/var/lib/yum/client-key.pem
 
 [passenger]
 name=Passenger repo for Enterprise Linux 6
-baseurl=http://209.132.178.9/gpxe/trees/passenger
+baseurl=https://mirror1.stg.rhcloud.com/libra/passenger
+        https://mirror2.stg.rhcloud.com/libra/passenger
 failovermethod=priority
 enabled=1
 gpgcheck=0
+sslverify=0
+sslclientcert=/var/lib/yum/client-cert.pem
+sslclientkey=/var/lib/yum/client-key.pem
 
 [rhui-us-east-1-rhel-server-releases-i386]
 name=Red Hat Enterprise Linux Server 6 -i386 (RPMs)

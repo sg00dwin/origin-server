@@ -54,6 +54,8 @@ class ComponentInstance < Cloud::Sdk::UserModel
       }
     end
 
+    ComponentInstance.establish_connections(self, self, app)
+
     deps = self.dependencies.dup
     self.dependencies.each { |dep| 
       depinst = app.comp_instance_map[dep]
@@ -87,6 +89,7 @@ class ComponentInstance < Cloud::Sdk::UserModel
         new_connections << ce
       end
     end
+    return if inst1==inst2
     comp1.subscribes.each do |sub|
       comp2.publishes.each do |pub|
         next if not pub.type==sub.type

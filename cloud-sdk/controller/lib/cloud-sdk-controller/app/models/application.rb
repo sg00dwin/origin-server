@@ -398,6 +398,53 @@ class Application < Cloud::Sdk::Cartridge
     reply
   end
 
+  def execute_connections_optimized
+    return if not self.scalable
+
+    self.conn_endpoints_list.each { |conn|
+      pub_inst = self.comp_instance_map[conn.from_comp_inst]
+      pub_ginst = self.group_instance_map[pub_inst.group_instance_name]
+
+      tag = ""
+      handle = run_parallel_on_gears(pub_ginst.gears) { |exec_agent, gear|
+        appname = gear.uuid[0..9]
+        appname = self.name if pub_inst.parent_cart_name == self.framework
+        connector_name = conn.from_connector.name
+        cart = pub_inst.parent_cart_name
+        input_args = [appname, self.user.namespace, gear.uuid]
+        args = "--gear-uuid '#{gear.uuid}' --cart-name '#{cart}' --hook-name '#{connector_name}' " + input_args.join(" ")
+        mc_args = { :cartridge => 'cloud-sdk-node', 
+                    :action => 'connector-execute',
+                    :args => args }
+        exec_agent.add(tag, gear, mc_args)
+      }
+      pub_out = []
+      get_parallel_run_results(handle) { |tag, gear, output, status|
+        if status==0
+          pub_out.push("'#{gear.uuid}'='#{output}'")
+        end
+      }
+      input_to_subscriber = Shellwords::shellescape(pub_out.join(' '))
+      Rails.logger.debug "Output of publisher - '#{pub_out}'"
+
+      sub_inst = self.comp_instance_map[conn.to_comp_inst]
+      sub_ginst = self.group_instance_map[sub_inst.group_instance_name]
+      handle = run_parallel_on_gears(sub_ginst.gears) { |exec_agent, gear|
+        appname = gear.uuid[0..9]
+        appname = self.name if sub_inst.parent_cart_name == self.framework
+        connector_name = conn.to_connector.name
+        car = sub_inst.parent_cart_name
+        input_args = [appname, self.user.namespace, gear.uuid, input_to_subscriber]
+        args = "--gear-uuid '#{gear.uuid}' --cart-name '#{cart}' --hook-name '#{connector_name}' " + input_args.join(" ")
+        mc_args = { :cartridge => 'cloud-sdk-node', 
+                    :action => 'connector-execute',
+                    :args => args }
+        exec_agent.add(tag, gear, mc_args)
+      }
+      # we dont care about subscriber's output/status
+    }
+  end
+
   # execute all connections
   def execute_connections
     return if not self.scalable
@@ -907,6 +954,7 @@ class Application < Cloud::Sdk::Cartridge
     self.requires_feature << dep
     begin
       reply.append self.configure_dependencies
+      self.execute_connections
     rescue Exception=>e
       self.elaborate_descriptor
       cleanup_deleted_components
@@ -1074,13 +1122,17 @@ class Application < Cloud::Sdk::Cartridge
     raise Exception.new("Cartridge #{from} not found.") if from_cart.nil?
     to_cart = CartridgeCache.find_cartridge(to)
     raise Exception.new("Cartridge #{to} not found.") if to_cart.nil?
-    from_group = from_cart.find_profile(nil).groups[0]
-    to_group = to_cart.find_profile(nil).groups[0]
+    begin 
+      from_group = from_cart.find_profile(nil).groups[0]
+      to_group = to_cart.find_profile(nil).groups[0]
 
-    from_gpath = self.get_name_prefix + from_cart.get_name_prefix + from_group.get_name_prefix
-    to_gpath = self.get_name_prefix + to_cart.get_name_prefix + to_group.get_name_prefix
-    group_override_map[from_gpath] = to_gpath
-    group_override_map[to_gpath] = from_gpath
+      from_gpath = self.get_name_prefix + from_cart.get_name_prefix + from_group.get_name_prefix
+      to_gpath = self.get_name_prefix + to_cart.get_name_prefix + to_group.get_name_prefix
+      group_override_map[from_gpath] = to_gpath
+      group_override_map[to_gpath] = from_gpath
+    rescue Exception=>e
+      raise Exception.new("Cannot co-locate #{to} and #{from}. Internal fault - #{e.message}")
+    end
   end
 
   # Parse the descriptor and build or update the runtime descriptor structure
