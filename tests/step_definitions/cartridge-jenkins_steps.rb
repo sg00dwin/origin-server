@@ -1,4 +1,4 @@
-$cartridge_root ||= "/usr/libexec/li/cartridges"
+$cartridge_root ||= "/usr/libexec/stickshift/cartridges"
 $jenkins_version = "jenkins-1.4"
 $jenkins_cartridge = "#{$cartridge_root}/#{$jenkins_version}"
 $jenkins_hooks = "#{$jenkins_cartridge}/info/hooks"

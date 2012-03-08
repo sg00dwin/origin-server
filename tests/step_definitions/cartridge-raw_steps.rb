@@ -1,5 +1,5 @@
 # Controller cartridge command paths
-$cartridge_root ||= "/usr/libexec/li/cartridges"
+$cartridge_root ||= "/usr/libexec/stickshift/cartridges"
 $raw_cartridge = "#{$cartridge_root}/diy-0.1"
 $raw_hooks = "#{$raw_cartridge}/info/hooks"
 $raw_config_path = "#{$raw_hooks}/configure"
@@ -17,7 +17,7 @@ $raw_stop_format = "#{$raw_stop_path} '%s' '%s' '%s'"
 $raw_status_path = "#{$raw_hooks}/status"
 $raw_status_format = "#{$raw_status_path} '%s' '%s' '%s'"
 
-$libra_httpd_conf_d ||= "/etc/httpd/conf.d/libra"
+$libra_httpd_conf_d ||= "/etc/httpd/conf.d/stickshift"
 
 When /^I configure a raw application$/ do
   account_name = @account['accountname']

@@ -1,5 +1,7 @@
 #!/bin/bash
 
+source "/etc/stickshift/stickshift-node.conf"
+
 # Creates a jboss-as7 instance
 # Variables used in this script:
 : << --COMMENT--
@@ -15,7 +17,6 @@ application=$1
 uuid=$3
 git_url=$4
 
-source "/etc/stickshift/stickshift-node.conf"
 
 # Script local
 JBOSS_CARTRIDGE_ROOT=${CARTRIDGE_BASE_PATH}/${jboss_version}

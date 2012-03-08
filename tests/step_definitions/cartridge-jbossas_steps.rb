@@ -1,4 +1,4 @@
-$cartridge_root ||= "/usr/libexec/li/cartridges"
+$cartridge_root ||= "/usr/libexec/stickshift/cartridges"
 $jbossas_version = "jbossas-7"
 $jbossas_cartridge = "#{$cartridge_root}/#{$jbossas_version}"
 #$jbossas_common_conf_path = "#{$jbossas_cartridge}/info/configuration/etc/conf/httpd_nolog.conf"

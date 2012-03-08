@@ -1,5 +1,5 @@
 # Controller cartridge command paths
-$cartridge_root ||= "/usr/libexec/li/cartridges"
+$cartridge_root ||= "/usr/libexec/stickshift/cartridges"
 $ruby_cartridge = "#{$cartridge_root}/ruby-1.8"
 $ruby_common_conf_path = "#{$ruby_cartridge}/info/configuration/etc/conf/httpd_nolog.conf"
 $ruby_hooks = "#{$ruby_cartridge}/info/hooks"
@@ -18,7 +18,7 @@ $ruby_stop_format = "#{$ruby_stop_path} '%s' '%s' '%s'"
 $ruby_status_path = "#{$ruby_hooks}/status"
 $ruby_status_format = "#{$ruby_status_path} '%s' '%s' '%s'"
 
-$libra_httpd_conf_d ||= "/etc/httpd/conf.d/libra"
+$libra_httpd_conf_d ||= "/etc/httpd/conf.d/stickshift"
 
 When /^I configure a ruby application$/ do
   account_name = @account['accountname']
