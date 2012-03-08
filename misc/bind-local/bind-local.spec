@@ -45,7 +45,8 @@ rm -rf tmp
 rm -rf $RPM_BUILD_ROOT
 #make install DESTDIR=$RPM_BUILD_ROOT
 mkdir $RPM_BUILD_ROOT
-cp -r usr var %{buildroot}
+cp -r etc usr %{buildroot}
+mkdir -p %{buildroot}/var/named
 
 %post
 # Install the policy extension
