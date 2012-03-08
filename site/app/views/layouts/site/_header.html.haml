@@ -7,7 +7,7 @@
         = link_to p, :class => 'btn btn-small login-provider' do
           %img{:alt => p}
 
-%nav#nav.section-nav
+%nav#nav{:class => 'section-nav' << content_for(:nav_class)}
   .navbar
     .container
       -# Was .nav-collapse, has some issues
