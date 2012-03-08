@@ -97,11 +97,9 @@ cp -r etc usr var %{buildroot}
 # config files
 /etc/named.conf
 
-# 
+# system service config files
 /var/named/example.com.key
-
-# dynamic files
-/var/named/forwarders.conf
+#/var/named/forwarders.conf
 /var/named/dynamic/example.com.db
 
 # SELinux files
