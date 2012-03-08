@@ -142,7 +142,7 @@ class ApplicationTest < ActiveSupport::TestCase
   
   test "add alias" do
     user = mock("user")
-    CartridgeCache.expects(:cartridge_names).returns(["php-5.3"])
+    CartridgeCache.expects(:cartridge_names).returns(["php-5.3"]).at_least_once
 
     user = mock("user")
     application = Application.new(user, "app_name", "app_uuid", "small", "php-5.3")
