@@ -2,6 +2,8 @@ class SiteController < ApplicationController
 
   layout 'site'
 
+  before_filter :new_forms, :only => [ :show, :signup, :signin ]
+
   def index
     Rails.logger.debug "Index controller"
     # Handle any workflow routing
