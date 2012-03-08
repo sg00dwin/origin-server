@@ -1,7 +1,7 @@
-# file: Serves home + static pages
+class SiteController < ApplicationController
 
-class HomeController < ApplicationController
-  
+  layout 'site'
+
   def index
     Rails.logger.debug "Index controller"
     # Handle any workflow routing
@@ -10,8 +10,16 @@ class HomeController < ApplicationController
       return
     end
   end
-  
-  # Hijacking home controller
-  # for general static page serving
-  def about; end
+
+  def express
+  end
+
+  def signup
+    
+  end
+
+  def signin
+    
+  end
+
 end
