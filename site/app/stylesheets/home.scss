@@ -39,15 +39,46 @@ body > header {
     margin-bottom: 10px;
   }
   .secondary {
-    max-width: 875px;
+    max-width: 790px;
     margin: 0 auto;
+    font-family: Liberation Sans, Helvetica Neue, Helvetica, Arial, Sans-serif;
   }
   h1, h2 { color: #bbb; }
+}
+
+#buzz {
+  background-color: #181919;
+  background-image: 
+    url('../images/diagonals-bottom.png'),
+    url('../images/tiny-panda.png'),
+    url('../images/mts-bottom.png');
+  background-repeat: no-repeat, no-repeat, repeat-x;
+  background-position: 
+    left top,
+    50px bottom,
+    center bottom;
+
+  .column-buzz {
+    background: black url('../images/black-noise.png');
+    margin: 0 80px;
+  }
 }
 
 @media (max-width: 767px) {
   body > header {
     background: url('../images/dark-gray-diagonal-noise.jpg') repeat;
+  }
+
+  .messaging {
+    margin: 0;
+  }
+
+  #buzz {
+    background-image: none;
+    .column-buzz{
+      background-image: none;
+      margin: 0;
+    }
   }
 }
 

@@ -341,8 +341,8 @@ body.signup {
   text-transform: uppercase;
   text-decoration: none;
   > strong { color: $ribbonColor; }
-  &:hover > strong, &:active > strong { color: $ribbonFoldColor; }
-  &:hover, &:active { color: $ribbonFoldColor; text-decoration: none; }
+  &:hover > strong, &:active > strong { color: $ribbonColor; }
+  &:hover, &:active { color: $ribbonColor; text-decoration: none; }
 }
 
 // Standard header with ribbon
