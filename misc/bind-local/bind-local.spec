@@ -34,6 +34,7 @@ DHCP.
 
 
 %build
+cd %{_datadir}/selinux/packages
 make -f /usr/share/selinux/devel/Makefile
 
 %install
@@ -42,6 +43,7 @@ make -f /usr/share/selinux/devel/Makefile
 # Install SELinux policy module
 rm -rf $RPM_BUILD_ROOT
 #make install DESTDIR=$RPM_BUILD_ROOT
+mkdir $RPM_BUILD_ROOT
 cp -r %{buildroot}
 
 %post
