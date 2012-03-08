@@ -162,6 +162,7 @@ RedHatCloud::Application.routes.draw do
     # new marketing site
     match 'new' => 'home#new', :via => [:get]
     match 'signup' => 'user#signup', :as => :user, :via => [:get]
+    match 'signin' => 'user#signin', :as => :user, :via => [:get]
 
     unless Rails.env.production?
       match 'styleguide/:action' => 'styleguide'

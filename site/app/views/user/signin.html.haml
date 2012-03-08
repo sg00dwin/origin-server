@@ -1,0 +1,41 @@
+- content_for :header do
+  .messaging.messaging-home
+    .container
+      %h1.primary.headline
+        Develop and Scale 
+        %strong#technology-rotate Apps
+        in the Cloud
+      %h2.secondary OpenShift is a free, auto-scaling platform as a service for web applications.  It streamlines the application life cycle so developers can focus on their users, customers, and code.
+
+%h1.ribbon
+  .ribbon-content Sign in and shift your App to the Cloud.
+  .ribbon-left
+  
+- input_html = { :class => input_class } if defined? input_class
+
+#login-form
+  = form_tag(login_ajax_path, :remote => true ) do
+    %input(type="hidden" value="✓" name="utf8")
+    %input{:type => "hidden", :value => form_authenticity_token, :name => "authenticity_token"}
+    
+    %label(for="login_input")
+      Login:
+      %input{:type => "text", :value => session[:confirm_login] ? session[:confirm_login] : '', :name => "login",  :id => "login_input"}
+  
+    
+    %label(for="pwd_input")
+      Password:
+      %input(id="pwd_input"
+           type="password" 
+           name="password" 
+           autocomplete="off")
+
+    %input{:type => "hidden", :name => "redirectUrl", :value => @redirectUrl}
+    %input{:type => "hidden", :name => "errorUrl",  :value => @errorUrl}
+    
+    %input(type="submit" 
+           value="Sign in" 
+           class="button")
+
+= render 'layouts/dialogs/extra_options', :page => 'signin'
+
