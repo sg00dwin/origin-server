@@ -21,7 +21,7 @@ class Gear_scale_ctl
       exit 2
     end
 
-    if not ['add-gear', 'remove-gear', 'create-app'].include? action
+    if not ['add-gear', 'remove-gear', 'create-gear'].include? action
       usage opts
     end
 
@@ -61,7 +61,7 @@ class Gear_scale_ctl
         )
 
     response = request.execute()
-    unless 200 == response.code
+    unless 300 < response.code
       raise response
     end
   end
