@@ -23,6 +23,7 @@ class Haproxy
 
     def initialize(stats_sock="/tmp/stats")
         @stats_sock=stats_sock
+        @last_scale_up_time=0
         self.refresh
     end
 
@@ -56,6 +57,14 @@ class Haproxy
         @gear_namespace
     end
 
+    def last_scale_up_time()
+        @last_scale_up_time
+    end
+
+    def last_scale_up_time_seconds()
+        Time.now - @last_scale_up_time
+    end
+
     def gear_count()
         @gear_count
     end
@@ -73,8 +82,8 @@ class Haproxy
     end
 
     def add_gear
+        @last_scale_up_time = Time.now
         @log.info("GEAR_UP - capacity: #{self.session_capacity_pct}% gear_count: #{self.gear_count} sessions: #{self.sessions} up_threshold: #{@gear_up_pct}%")
-        # Replace with jhonce's scripts
         `add-gear -l mmcgrath@redhat.com -p ' ' -n #{self.gear_namespace}  -h localhost -a #{ENV['OPENSHIFT_APP_NAME']}`
     end
 
@@ -84,13 +93,17 @@ class Haproxy
     end
 
     def print_gear_stats
-        @log.debug("GEAR_DO_NOTHING - Capacity: #{session_capacity_pct}% gear_count: #{gear_count} sessions: #{sessions} up/down_threshold: #{@gear_up_pct}%/#{@gear_down_pct}%")
+        @log.debug("GEAR_DO_NOTHING - Capacity: #{session_capacity_pct}% gear_count: #{gear_count} sessions: #{sessions} up/down_threshold: #{@gear_up_pct}%/#{@gear_down_pct}% last_up_threshold: #{self.last_scale_up_time}/30")
     end
     def check_capacity(debug=nil)
         if @session_capacity_pct >= @gear_up_pct
             self.add_gear
         elsif @session_capacity_pct < @gear_down_pct and @gear_count > 1
-            self.remove_gear
+            if self.last_scale_up_time_seconds > 30
+                self.remove_gear
+            else
+                self.print_gear_stats if debug
+            end
         else
             self.print_gear_stats if debug
         end
