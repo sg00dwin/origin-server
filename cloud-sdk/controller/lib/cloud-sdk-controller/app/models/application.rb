@@ -810,8 +810,10 @@ class Application < Cloud::Sdk::Cartridge
   
   def add_broker_key
     iv, token = Cloud::Sdk::AuthService.instance.generate_broker_key(self)
-    iv = Base64::encode64(iv).gsub("\n", '')
-    token = Base64::encode64(token).gsub("\n", '')
+    # iv = Base64::encode64(iv).gsub("\n", '')
+    # token = Base64::encode64(token).gsub("\n", '')
+    iv = Base64::encode64(iv)
+    token = Base64::encode64(token)
     
     reply = ResultIO.new
     s,f = run_on_gears(nil,reply,false) do |gear,r|
