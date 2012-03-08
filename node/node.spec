@@ -238,9 +238,9 @@ fi
 %attr(0755,-,-) %{_bindir}/rhcsh
 %attr(0640,-,-) %config(noreplace) %{_sysconfdir}/oddjobd.conf.d/oddjobd-restorer.conf
 %attr(0640,-,-) %config(noreplace) %{_sysconfdir}/dbus-1/system.d/openshift-restorer.conf
-%attr(0640,-,-) %config(noreplace) %{_sysconfdir}/stickshift/stickshift-node.conf.libra
+%attr(0644,-,-) %config(noreplace) %{_sysconfdir}/stickshift/stickshift-node.conf.libra
 %attr(0640,-,-) %config(noreplace) %{_sysconfdir}/stickshift/stickshift-proxy.cfg
-%attr(0640,-,-) %config(noreplace) %{_sysconfdir}/stickshift/resource_limits.con*
+%attr(0644,-,-) %config(noreplace) %{_sysconfdir}/stickshift/resource_limits.con*
 %attr(0750,-,-) %config(noreplace) %{_sysconfdir}/cron.daily/stickshift_tmpwatch.sh
 %attr(0644,-,-) %config(noreplace) %{_sysconfdir}/security/namespace.d/*
 %{_localstatedir}/www/html/restorer.php
