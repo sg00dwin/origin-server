@@ -1,6 +1,6 @@
 %define htmldir %{_localstatedir}/www/html
 %define brokerdir %{_localstatedir}/www/stickshift/broker
-%define appdir %{_localstatedir}/lib/stickshift
+%define appdir %{_localstatedir}/lib/stick_shift
 
 Summary:   StickShift broker components
 Name:      stickshift-broker
