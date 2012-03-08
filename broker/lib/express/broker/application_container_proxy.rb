@@ -1055,6 +1055,18 @@ module Express
           Rails.logger.debug("DEBUG: rpc_exec_direct: rpc_client=#{rpc_client}")
           rpc_client
       end
+
+      def self.execute_parallel_jobs(handle)
+        handle.each { |id, job_list|
+          begin
+            options = ApplicationContainerProxy.rpc_options
+            rpc_client = rpcclient('libra', :options => options)
+            result = rpc_client.custom_request('execute_parallel', JSON.encode(job_list), id, {'identity' => id})
+          rescue Exception =>e
+          end
+        }
+      end
+
     end
   end
 end

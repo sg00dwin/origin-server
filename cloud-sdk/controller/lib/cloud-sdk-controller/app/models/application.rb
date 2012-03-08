@@ -406,7 +406,8 @@ class Application < Cloud::Sdk::Cartridge
       pub_ginst = self.group_instance_map[pub_inst.group_instance_name]
 
       tag = ""
-      handle = run_parallel_on_gears(pub_ginst.gears) { |exec_agent, gear|
+      handle = create_parallel_job
+      run_parallel_on_gears(pub_ginst.gears, handle) { |exec_agent, gear|
         appname = gear.uuid[0..9]
         appname = self.name if pub_inst.parent_cart_name == self.framework
         connector_name = conn.from_connector.name
@@ -416,7 +417,7 @@ class Application < Cloud::Sdk::Cartridge
         mc_args = { :cartridge => 'cloud-sdk-node', 
                     :action => 'connector-execute',
                     :args => args }
-        exec_agent.add(tag, gear, mc_args)
+        add_parallel_job(exec_agent, tag, gear, mc_args)
       }
       pub_out = []
       get_parallel_run_results(handle) { |tag, gear, output, status|
@@ -429,7 +430,8 @@ class Application < Cloud::Sdk::Cartridge
 
       sub_inst = self.comp_instance_map[conn.to_comp_inst]
       sub_ginst = self.group_instance_map[sub_inst.group_instance_name]
-      handle = run_parallel_on_gears(sub_ginst.gears) { |exec_agent, gear|
+      handle = create_parallel_job
+      run_parallel_on_gears(sub_ginst.gears, handle) { |exec_agent, gear|
         appname = gear.uuid[0..9]
         appname = self.name if sub_inst.parent_cart_name == self.framework
         connector_name = conn.to_connector.name
@@ -439,9 +441,50 @@ class Application < Cloud::Sdk::Cartridge
         mc_args = { :cartridge => 'cloud-sdk-node', 
                     :action => 'connector-execute',
                     :args => args }
-        exec_agent.add(tag, gear, mc_args)
+        add_parallel_job(exec_agent, tag, gear, mc_args)
       }
       # we dont care about subscriber's output/status
+    }
+  end
+
+  def create_parallel_job
+    return { }
+  end
+
+  def run_parallel_on_gears(gears, handle, &block)
+    gears.each { |gear|
+      block.call(handle, gear)
+    }
+    # now execute
+    begin
+      ApplicationContainerProxy.execute_parallel_jobs(handle)
+    rescue Exception=>e
+      Rails.logger.error e.message
+      Rails.logger.error e.inspect
+      Rails.logger.error e.backtrace.inspect        
+      raise e
+    end
+  end
+
+  def add_parallel_job(handle, tag, gear, job)
+    parallel_job = { 
+                     :tag => tag,
+                     :gear => gear,
+                     :job => job.to_json,
+                     :result_stdout => "",
+                     :result_stderr => "",
+                     :result_exit_code => ""
+                   }
+    job_list = handle[gear.get_proxy.id] || []
+    job_list << parallel_job
+    handle[gear.get_proxy.id] = job_list
+  end
+
+  def get_parallel_run_results(handle, &block)
+    handle.each { |id, job_list|
+      job_list.each { |parallel_job|
+        block.call(parallel_job['tag'], parallel_job['gear'], parallel_job['result_stdout'], parallel_job['result_exit_code'])
+      }
     }
   end
 
