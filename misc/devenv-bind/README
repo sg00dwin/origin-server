@@ -62,9 +62,10 @@ the behavior of the host system.
 
 ** initial zone file
 
+** log files
+
 ** starting and stopping the daemon
 
-** log files
 
 * Integrated/Forwarding
 
@@ -80,11 +81,140 @@ the behavior of the host system.
 
 * Forwarders by DHCP
 
+It is now common for people to do test and devlopment on hosts which
+get their IP and DNS information from DHCP.  As noted above, testing with the
+local named requires both that the resolver points to it first, and
+that the named correctly forwards to the upstream server.  This means
+that both of those configuration elements must be updated when the
+DCHP client renews the lease.
+
+** NetworkManager and network services.
+
+NetworkManager does have the means to trigger some behaviors on
+interface up and down, but dhclient has more precise hooks, and there
+does not seem to be good information on the interaction between
+NetworkManager and dhclient.
+
+To make this work cleanly we're going to revert to using the 'network'
+service and disable NetworkManager:
+
+  chkconfig NetworkManager off
+  chkconfig network on
+  
+  service NetworkManager stop
+  service network start
+
 ** /etc/dhclient.conf
+
+The dhclient.conf file is used to apply local customizations to the
+response from the DHCP server.  In this case, we're going to use it to
+modify the nameserver entries in /etc/resolv.conf.  This line will do
+it:
+
+  prepend domain-name-servers 127.0.0.1;
 
 ** /etc/dhcp/dhclient-up-hooks
 
-** SELinux policy
+The dhclient service has "hooks" which allow you to code behaviors to
+be triggered when the state of an interface changes.  In this case,
+we're going to generate a fragment of named configuration to indicate
+where to forward DNS requests that are not served by the local named,
+and then tell the named service to reload it's configuration.
+
+** /var/named/forwarders.conf
+
+The /etc/named.conf contains an include line for a file which is
+expected to contain a list of forwarders.  The dhclient-up-hooks
+script will be called when any interface changes state, and will write
+the forwarders.conf file and kick the named service.
+
+The forwarders.conf will contain a single line indicating the server
+to forward to:
+
+    forwarders { <ip address>  ; } ;
+
+Where <ip address> is the address retrieved from the
+domain-name-servers response from the DHCP server.
+
+* SELinux policy
+
+With SELinux enabled (which it should be), the dhclient service no
+longer has the ability to write a file which is readable by the named
+service.  Normally this is correct as there is no reason for them to
+interact.
+
+Now we have to provide a new ruleset which allows the dhclient service
+to write the forwarders.conf file and also allows the named service to
+read it.
+
+The policy is defined in two files, dhcpnamedforward.te and
+dhcpnamedforward.fc, and it compiles to a third file,
+dhcpnamedforward.pp. It is this last file, the compiled policy module
+which is loaded into the running SELinux policy.
+
+Policy files can be compiled anywhere but to have them loaded at boot
+the .pp file must be placed in /usr/share/selinux/packages. For ease
+of re-compiling if the system policy version is updated, it is
+conventional to place the source files there as well.
+
+** dhcpnamedforward.te
+
+This file defines a new file type and the rules which allow the dhcp
+client daemon to write and the named to read files of that type.
+
+The policy extension depends on types from two other standard modules: 
+
+  sysnetwork - dhcpc_t
+  bind - named_*_t
+
+It should be optional based on the presence of these two other modules.
+
+** dhcpnamedforward.fc
+
+This file defines the correct labeling for files.  In this case it
+indicates that the forwarding.conf file should have the
+named_forward_file_t type.
+
+** compiling the policy
+
+Compiling an SELinux policy module is fairly simple.  In the directory
+containing the source (.te, .fc) files:
+
+  make -f /usr/share/selinux/devel/Makefile
+
+This will produce a compiled policy module (.pp) file and may leave an
+empty interface (.if) file.
+
+** loading (and unloading) the policy
+
+If you place the .pp file in /usr/share/selinux/packages, then the
+module will be loaded at boot.
+
+Use semodule(8) to manage policy modules:
+
+  semodule -l                 # list modules
+  semodule -i <module file>   # install a module
+  semodule -r <module>        # remove a module
+
+Check the man pages for additional operations.
+
+** Checking for Errors
+
+SELinux reports errors in /var/log/audit/audit.log.  I find it easiest
+to read and search there when something is rejected.
+
+There are also tools to help parse and understand the logs.
+
+** Testing Updates
+
+To test the DHCP update function, use 
+
+   service network restart
+
+This will cause the DHCP network interfaces to re-acquire IP address
+and DHCP information (be sure to be on a serial port when you do this,
+or your connection may drop.)  If the dhclient-up-hooks script runs
+and the write or restart fails you will see the reported errors.
 
 * References
 
@@ -107,3 +237,6 @@ the behavior of the host system.
 
   - A step-by-step guide to building a new SELinux policy module, 
       Dan Walsh, Copyright © 2012 Red Hat, Inc.
+
+  - SELinux reference policy
+      http://oss.tresys.com/projects/refpolicy
