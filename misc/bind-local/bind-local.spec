@@ -5,7 +5,7 @@ Summary:	Config for local named for test and development with Dynamic DNS
 Group:		Network/Daemons
 License:	GPLv2
 URL:		http://openshift.redhat.com
-Source0:	rhc-bind-local-${version}.tar.gz
+Source0:	bind-local-${version}.tar.gz
 
 BuildRoot:     %(mktemp -ud %{_tmppath}/%{name}-%{version}-%{release}-XXXXXX)
 BuildRequires:	selinux-policy => 3.7.19-134
@@ -41,7 +41,8 @@ make -f /usr/share/selinux/devel/Makefile
 
 # Install SELinux policy module
 rm -rf $RPM_BUILD_ROOT
-make install DESTDIR=$RPM_BUILD_ROOT
+#make install DESTDIR=$RPM_BUILD_ROOT
+cp -r %{buildroot}
 
 %post
 # Install the policy extension
