@@ -224,6 +224,7 @@ fi
 %attr(0750,-,-) %{_libexecdir}/li/cartridges/abstract/info/hooks/
 %attr(0755,-,-) %{_libexecdir}/li/cartridges/abstract/info/bin/
 %attr(0755,-,-) %{_libexecdir}/li/cartridges/abstract/info/lib/
+%attr(0750,-,-) %{_libexecdir}/li/cartridges/abstract/info/connection-hooks/
 %attr(0755,-,-) %{_libexecdir}/li/lib/
 #%{_libexecdir}/li/cartridges/abstract/info
 %attr(0750,-,-) %{_bindir}/rhc-accept-node

@@ -54,6 +54,39 @@ function start_dbs {
     done
 }
 
+function source_if_exists {
+    [ -n "$1" ]  &&  [ -f "$1" ]  &&  source "$1"
+}
+
+function is_a_scalable_app {
+    source_if_exists "$libra_dir/$uuid/.env/OPENSHIFT_USER_APP_NAME"
+    source_if_exists "$libra_dir/$uuid/.env/OPENSHIFT_APP_TYPE"
+
+    # FIXME: Need better mechanism to evaluate if the app is scalable or not.
+    [ "haproxy-1.4" = "$OPENSHIFT_APP_TYPE" ]         &&  return 0
+    [ "$application" != "$OPENSHIFT_USER_APP_NAME" ]  &&  return 0
+    return 1
+}
+
+function create_env_uservars_dir {
+    mkdir -p "$APP_HOME/.env/.uservars"
+    chmod 755 "$APP_HOME/.env/.uservars"
+}
+
+function create_env_uservars_script {
+    cat <<EOF > "$APP_HOME/.env/USER_VARS"
+#!/bin/bash -e
+
+# Setup user Environment Variables
+for f in ~/.env/.uservars/*
+do
+    export \$f=\$(cat \$f)
+done
+
+EOF
+
+}
+
 function create_standard_env_vars {
     echo "export OPENSHIFT_APP_DIR='$APP_DIR/'" > $APP_HOME/.env/OPENSHIFT_APP_DIR
     echo "export OPENSHIFT_LOG_DIR='$APP_DIR/logs/'" > $APP_HOME/.env/OPENSHIFT_LOG_DIR
@@ -63,6 +96,8 @@ function create_standard_env_vars {
     echo "export OPENSHIFT_APP_NAME='$application'" > $APP_HOME/.env/OPENSHIFT_APP_NAME
     echo "export OPENSHIFT_APP_TYPE='$app_type'" > $APP_HOME/.env/OPENSHIFT_APP_TYPE
     echo "export OPENSHIFT_RUNTIME_DIR='$APP_DIR/runtime/'" > $APP_HOME/.env/OPENSHIFT_RUNTIME_DIR
+    create_env_uservars_dir
+    create_env_uservars_script
 }
 
 function create_standard_network_env_vars {
@@ -484,6 +519,11 @@ IFS="
 function observe_setup_app_and_git_dirs {
     observe_setup_var_lib_dir "$APP_HOME/git/"
     observe_setup_var_lib_dir "$APP_DIR"
+    observe_setup_app_env_uservars_dir
+}
+
+function observe_setup_app_env_uservars_dir {
+    observe_setup_var_lib_dir "$APP_HOME/.env/.uservars"
 }
 
 function setup_user_vars {
