@@ -46,7 +46,8 @@ rm -rf $RPM_BUILD_ROOT
 #make install DESTDIR=$RPM_BUILD_ROOT
 mkdir $RPM_BUILD_ROOT
 cp -r etc usr %{buildroot}
-mkdir -p %{buildroot}/var/named
+mkdir -p %{buildroot}/var/named/dynamic
+cp usr/share/bind-local/
 
 %post
 # Install the policy extension
@@ -84,16 +85,16 @@ mkdir -p %{buildroot}/var/named
 %attr(0750,-,-) /etc/dhcp/dhclient-up-hooks
 
 # script to start a self-contained named
-%defattr(0755,-,-) /usr/bin/named-local
+%attr(0755,-,-) /usr/bin/named-local
 
 # self-contained named config/template files
-/usr/share/named-local/example.com.db.init
-/usr/share/named-local/example.com.key
-/usr/share/named-local/Kexample.com.+157+06142.key
-/usr/share/named-local/Kexample.com.+157+06142.private
+/usr/share/bind-local/example.com.db.init
+/usr/share/bind-local/example.com.key
+/usr/share/bind-local/Kexample.com.+157+06142.key
+/usr/share/bind-local/Kexample.com.+157+06142.private
 
-/usr/share/named-local/self-contained-named.conf
-/usr/share/named-local/system-named.conf
+/usr/share/bind-local/self-contained-named.conf
+/usr/share/bind-local/system-named.conf
 
 # config files
 /etc/named.conf
