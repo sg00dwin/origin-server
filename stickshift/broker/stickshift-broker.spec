@@ -101,7 +101,7 @@ rm -rf $RPM_BUILD_ROOT
 %config(noreplace) %{_sysconfdir}/dbus-1/system.d/stickshift-dbus.conf
 %attr(0700,-,-) %{_bindir}/ss-exec-command
 %attr(0700,-,-) %{_bindir}/ss-register-user
-%attr(0755,-,-) %{_var}/lib/stickshift
+%attr(0755,-,-) %{_var}/lib/stick_shift
 
 %post
 /bin/touch %{brokerdir}/log/production.log
