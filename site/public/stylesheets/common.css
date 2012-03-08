@@ -1,4 +1,4 @@
-/*!
+/*
  * Bootstrap v2.0.1
  *
  * Copyright 2012 Twitter, Inc
@@ -144,7 +144,7 @@ textarea {
 
 body {
   margin: 0;
-  font-family: "Liberation Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-family: "Helvetica Neue", Helvetica, "Liberation Sans", Arial, sans-serif;
   font-size: 13px;
   line-height: 18px;
   color: #030303;
@@ -319,7 +319,7 @@ a:hover {
 
 p {
   margin: 0 0 9px;
-  font-family: "Liberation Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-family: "Helvetica Neue", Helvetica, "Liberation Sans", Arial, sans-serif;
   font-size: 13px;
   line-height: 18px; }
   p small {
@@ -859,46 +859,32 @@ textarea[readonly] {
   background-color: #ffd24e;
   border-color: #ff9f00; }
 
-.control-group.error > label,
-.control-group.error .help-block,
-.control-group.error .help-inline {
+.control-group.error > label, .control-group.error .help-block, .control-group.error .help-inline {
   color: #cc0000; }
-.control-group.error input,
-.control-group.error select,
-.control-group.error textarea {
+.control-group.error input, .control-group.error select, .control-group.error textarea {
   color: #cc0000;
   border-color: #cc0000; }
-  .control-group.error input:focus,
-  .control-group.error select:focus,
-  .control-group.error textarea:focus {
+  .control-group.error input:focus, .control-group.error select:focus, .control-group.error textarea:focus {
     border-color: #990000;
     -webkit-box-shadow: 0 0 6px #ff3333;
     -moz-box-shadow: 0 0 6px #ff3333;
     box-shadow: 0 0 6px #ff3333; }
-.control-group.error .input-prepend .add-on,
-.control-group.error .input-append .add-on {
+.control-group.error .input-prepend .add-on, .control-group.error .input-append .add-on {
   color: #cc0000;
   background-color: #cd1e25;
   border-color: #cc0000; }
 
-.control-group.success > label,
-.control-group.success .help-block,
-.control-group.success .help-inline {
+.control-group.success > label, .control-group.success .help-block, .control-group.success .help-inline {
   color: #95a321; }
-.control-group.success input,
-.control-group.success select,
-.control-group.success textarea {
+.control-group.success input, .control-group.success select, .control-group.success textarea {
   color: #95a321;
   border-color: #95a321; }
-  .control-group.success input:focus,
-  .control-group.success select:focus,
-  .control-group.success textarea:focus {
+  .control-group.success input:focus, .control-group.success select:focus, .control-group.success textarea:focus {
     border-color: #6e7918;
     -webkit-box-shadow: 0 0 6px #ccdb4f;
     -moz-box-shadow: 0 0 6px #ccdb4f;
     box-shadow: 0 0 6px #ccdb4f; }
-.control-group.success .input-prepend .add-on,
-.control-group.success .input-append .add-on {
+.control-group.success .input-prepend .add-on, .control-group.success .input-append .add-on {
   color: #95a321;
   background-color: #d4e16b;
   border-color: #95a321; }
@@ -2482,7 +2468,7 @@ a.thumbnail:hover {
 .invisible {
   visibility: hidden; }
 
-/*!
+/*
  * Bootstrap Responsive v2.0.1
  *
  * Copyright 2012 Twitter, Inc
@@ -2573,7 +2559,6 @@ a.thumbnail:hover {
 
   .carousel-caption {
     position: static; } }
-
 @media (max-width: 767px) {
   .container {
     width: auto;
@@ -2609,7 +2594,6 @@ a.thumbnail:hover {
 
   .box-content {
     padding: 10px 20px; } }
-
 @media (min-width: 768px) and (max-width: 979px) {
   .row {
     margin-left: -20px;
@@ -2794,7 +2778,6 @@ a.thumbnail:hover {
 
   .box-content {
     padding: 20px; } }
-
 @media (max-width: 979px) {
   body {
     padding-top: 0; }
@@ -2903,11 +2886,9 @@ a.thumbnail:hover {
   .nav-collapse {
     overflow: hidden;
     height: 0; } }
-
 @media (min-width: 980px) {
   .nav-collapse.collapse {
     height: auto !important; } }
-
 @media (min-width: 1200px) {
   .row {
     margin-left: -30px;
@@ -3098,7 +3079,6 @@ a.thumbnail:hover {
 
   .box-content {
     padding: 30px; } }
-
 /** Twitter Bootstrap Customizations
 ------------------------------------------------ 
 Colors
@@ -3883,7 +3863,6 @@ footer {
 
   h2, h3 {
     page-break-after: avoid; } }
-
 /* Temporary styles for the old openshift look */
 .console-transition #footer-nav {
   background-color: #574D4F;
@@ -3941,7 +3920,6 @@ footer {
     display: block;
     float: left;
     padding: 0px 6px 5px; } }
-
 @media (max-width: 768px) {
   .hero-unit {
     padding: 0;
@@ -3990,8 +3968,6 @@ footer {
   .console-transition .navbar #utility-nav {
     margin: 0;
     float: none; } }
-
-@media (min-width: 768px) and (max-width: 980px) {}
 @media (max-width: 980px) {
   #utility-nav {
     margin: 8px 5px 0 0; }
@@ -4032,7 +4008,6 @@ footer {
   .console-transition .navbar #utility-nav {
     margin: 0;
     float: none; } }
-
 @media (min-width: 980px) {
   .nav-collapse.collapse {
     height: auto !important; }
@@ -4041,5 +4016,3 @@ footer {
     -webkit-border-radius: 6px 6px 0 0;
     -moz-border-radius: 6px 6px 0 0;
     border-radius: 6px 6px 0 0; } }
-
-@media (min-width: 1200px) {}

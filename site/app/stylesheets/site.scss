@@ -98,11 +98,11 @@ body.signup {
     }
   }
 }
-#nav {
+/*#nav {
   background: $navBackgroundColor url($navBackgroundImage) repeat-x bottom left;
-}
+}*/
 .section-nav {
-  background-color: $navBackgroundColor; 
+  /*background-color: $navBackgroundColor; */
   color: white;
   padding-bottom: 50px;
 }
@@ -182,14 +182,13 @@ body.signup {
     font-size: 40px;
     line-height: 40px;
     text-transform: uppercase;
-  }
-
-  strong {
     color: white;
   }
+
   .secondary {
     font-size: 16px;
     line-height: 18px;
+    color: white;
   }
 }
 
@@ -378,6 +377,7 @@ body.signup {
   .column-buzz > h2 {
     font-size: 26px;
     line-height: 28px;
+    letter-spacing: -2px;
   }
   .column-buzz > .callout {
     display: none;
@@ -497,4 +497,53 @@ h1.ribbon {
   margin-bottom: 20px;
 }
 
+
+/* Site standard backgrounds */
+@media (min-width: 768px) {
+  /* Until we can build with compass this is directly included and modified
+  /* line 3, ../../app/stylesheets/home.scss */
+  body > header {
+    background-image: url("../images/dark-gray-diagonal-noise.jpg");
+    background-image: url("../images/diagonals-top.png"), url("../images/mts.png"), -webkit-gradient(radial, circle, 0, circle, 2, color-stop(0%, #ffffff), color-stop(50%, #ffffff), color-stop(100%, rgba(255, 255, 255, 0))), -webkit-gradient(radial, circle, 0, circle, 2, color-stop(0%, #ffffff), color-stop(100%, rgba(0, 0, 0, 0))), -webkit-gradient(radial, circle, 0, circle, 2, color-stop(0%, #eeeeee), color-stop(100%, rgba(0, 0, 0, 0))), -webkit-gradient(radial, circle, 0, circle, 2, color-stop(0%, #eeeeee), color-stop(100%, rgba(0, 0, 0, 0))), url("../images/dark-gray-diagonal-noise.jpg");
+    background-image: url("../images/diagonals-top.png"), url("../images/mts.png"), -webkit-radial-gradient(circle, #ffffff 0%, #ffffff 1px, rgba(255, 255, 255, 0) 2px), -webkit-radial-gradient(circle, #ffffff 0%, rgba(0, 0, 0, 0) 2px), -webkit-radial-gradient(circle, #eeeeee 0%, rgba(0, 0, 0, 0) 2px), -webkit-radial-gradient(circle, #eeeeee 0%, rgba(0, 0, 0, 0) 2px), url("../images/dark-gray-diagonal-noise.jpg");
+    background-image: url("../images/diagonals-top.png"), url("../images/mts.png"), -moz-radial-gradient(circle, #ffffff 0%, #ffffff 1px, rgba(255, 255, 255, 0) 2px), -moz-radial-gradient(circle, #ffffff 0%, rgba(0, 0, 0, 0) 2px), -moz-radial-gradient(circle, #eeeeee 0%, rgba(0, 0, 0, 0) 2px), -moz-radial-gradient(circle, #eeeeee 0%, rgba(0, 0, 0, 0) 2px), url("../images/dark-gray-diagonal-noise.jpg");
+    background-image: url("../images/diagonals-top.png"), url("../images/mts.png"), -o-radial-gradient(circle, #ffffff 0%, #ffffff 1px, rgba(255, 255, 255, 0) 2px), -o-radial-gradient(circle, #ffffff 0%, rgba(0, 0, 0, 0) 2px), -o-radial-gradient(circle, #eeeeee 0%, rgba(0, 0, 0, 0) 2px), -o-radial-gradient(circle, #eeeeee 0%, rgba(0, 0, 0, 0) 2px), url("../images/dark-gray-diagonal-noise.jpg");
+    background-image: url("../images/diagonals-top.png"), url("../images/mts.png"), -ms-radial-gradient(circle, #ffffff 0%, #ffffff 1px, rgba(255, 255, 255, 0) 2px), -ms-radial-gradient(circle, #ffffff 0%, rgba(0, 0, 0, 0) 2px), -ms-radial-gradient(circle, #eeeeee 0%, rgba(0, 0, 0, 0) 2px), -ms-radial-gradient(circle, #eeeeee 0%, rgba(0, 0, 0, 0) 2px), url("../images/dark-gray-diagonal-noise.jpg");
+    background-image: url("../images/diagonals-top.png"), url("../images/mts.png"), radial-gradient(circle, #ffffff 0%, #ffffff 1px, rgba(255, 255, 255, 0) 2px), radial-gradient(circle, #ffffff 0%, rgba(0, 0, 0, 0) 2px), radial-gradient(circle, #eeeeee 0%, rgba(0, 0, 0, 0) 2px), radial-gradient(circle, #eeeeee 0%, rgba(0, 0, 0, 0) 2px), url("../images/dark-gray-diagonal-noise.jpg");
+    background-repeat: no-repeat,     repeat-x,     repeat, repeat, repeat, repeat, repeat;
+    background-size: auto,     auto,     457px 241px,     307px 151px,     167px 199px,     239px 257px,     auto;
+    background-position: right bottom, center bottom, left top, -157px center, 89px 97px, 43px 31px, center bottom;
+  }
+  /* line 49, ../../app/stylesheets/home.scss */
+  .section-base {
+    background-color: #181919;
+    background-image: url("../images/diagonals-bottom.png"), url("../images/tiny-panda.png"), url("../images/mts-bottom.png");
+    background-repeat: no-repeat, no-repeat, repeat-x;
+    background-position: left top,     50px bottom,     center bottom;
+  }
+  /* line 61, ../../app/stylesheets/home.scss */
+  .section-base .column-buzz {
+    background: black url("../images/black-noise.png");
+    margin: 0 80px;
+  }
+}
+
+@media (max-width: 767px) {
+  body > header {
+    background: url('../images/dark-gray-diagonal-noise.jpg') repeat;
+  }
+
+  .messaging {
+    margin: 0;
+  }
+
+  .section-base {
+    background-image: none;
+
+    .column-buzz {
+      background-image: none;
+      margin: 0;
+    }
+  }
+}
 
