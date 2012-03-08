@@ -26,7 +26,6 @@ rm -rf %{buildroot}
 mkdir -p %{buildroot}%{cartdir}
 cp -rv abstract %{buildroot}%{cartdir}/
 cp -rv abstract-httpd %{buildroot}%{cartdir}/
-ln -s %{cartdir}/abstract/info/bin/load_config.sh %{buildroot}%{cartdir}/abstract-httpd/info/bin/load_config.sh
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -47,3 +46,6 @@ rm -rf $RPM_BUILD_ROOT
 %post
 
 %changelog
+* Thu Mar 08 2012 Krishna Raman <kraman@gmail.com> 0.6.1-1
+- Creating StickShift abstract package
+

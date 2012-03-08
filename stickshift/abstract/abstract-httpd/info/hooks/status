@@ -1,5 +1,21 @@
 #!/bin/bash
 
+# Copyright © 2010 Mike McGrath All rights reserved
+# Copyright © 2010 Red Hat, Inc. All rights reserved
+
+# This copyrighted material is made available to anyone wishing to use, modify,
+# copy, or redistribute it subject to the terms and conditions of the GNU
+# General Public License v.2.  This program is distributed in the hope that it
+# will be useful, but WITHOUT ANY WARRANTY expressed or implied, including the
+# implied warranties of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+# See the GNU General Public License for more details.  You should have
+# received a copy of the GNU General Public License along with this program;
+# if not, write to the Free Software Foundation, Inc., 51 Franklin Street,
+# Fifth Floor, Boston, MA 02110-1301, USA. Any Red Hat trademarks that are
+# incorporated in the source code or documentation are not subject to the GNU
+# General Public License and may only be used or replicated with the express
+# permission of Red Hat, Inc.
+
 # Check status of application httpd instance
 
 # Exit on any errors
@@ -9,7 +25,7 @@ function print_help {
     echo "Usage: $0 app-name namespace uuid"
     echo "Get application status"
 
-    echo "$0 $@" | logger -p local0.notice -t libra_httpd_status
+    echo "$0 $@" | logger -p local0.notice -t stickshift_httpd_status
     exit 1
 }
 
@@ -25,8 +41,8 @@ done
 
 [ $# -eq 3 ] || print_help
 
-CART_DIR=/usr/libexec/li/cartridges
-source ${CART_DIR}/abstract/info/lib/util
+source "/etc/stickshift/stickshift-node.conf"
+source ${CARTRIDGE_BASE_PATH}/abstract/info/lib/util
 
 setup_basic_hook "$1" $2 $3
 
@@ -34,7 +50,7 @@ setup_basic_hook "$1" $2 $3
 #
 # Get the status of the application
 #
-if output=$(runuser --shell /bin/sh "$uuid" -c "/usr/bin/wget -qO- http://$(awk '/Listen/{ print $2 }' $APP_DIR/conf.d/libra.conf)/server-status?auto" 2>&1)
+if output=$(runuser --shell /bin/sh "$uuid" -c "/usr/bin/wget -qO- http://$(awk '/Listen/{ print $2 }' $APP_DIR/conf.d/stickshift.conf)/server-status?auto" 2>&1)
 then
     status_client_result "$output"
 else
