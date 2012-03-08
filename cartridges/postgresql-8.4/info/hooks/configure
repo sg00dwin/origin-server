@@ -122,8 +122,6 @@ echo "export OPENSHIFT_DB_POSTGRESQL_84_DUMP_CLEANUP='$CART_INFO_DIR/bin/postgre
 echo "export OPENSHIFT_DB_POSTGRESQL_84_RESTORE='$CART_INFO_DIR/bin/postgresql_restore.sh'" > $APP_HOME/.env/OPENSHIFT_DB_POSTGRESQL_84_RESTORE
 echo "export OPENSHIFT_DB_POSTGRESQL_84_EMBEDDED_TYPE='postgresql-8.4'" > $APP_HOME/.env/OPENSHIFT_DB_POSTGRESQL_84_EMBEDDED_TYPE
 
-chown $user_id $APP_HOME/.env/OPENSHIFT_DB_USERNAME $APP_HOME/.env/OPENSHIFT_DB_PASSWORD
-
 ## Setup automatic login file.
 echo "$IP:5432:*:admin:$password" > $APP_HOME/.pgpass
 chmod 0400 $APP_HOME/.pgpass
