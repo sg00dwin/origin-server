@@ -430,7 +430,7 @@ body.signup {
     .section-striped .link-tile > :last-child {
       margin-bottom: 0; }
 
-@media (max-width: 768px) {
+@media (max-width: 767px) {
   .section-striped {
     background: none; }
 
@@ -470,24 +470,27 @@ body.signup {
   margin-bottom: 30px; }
   .messaging .primary {
     font-size: 40px;
-    line-height: 40px;
+    line-height: 1em;
     text-transform: uppercase;
     color: white; }
   .messaging .secondary {
     font-size: 16px;
-    line-height: 18px;
+    line-height: 1.2em;
     color: white; }
 
+@media (max-width: 979px) {
+  .messaging .primary {
+    font-size: 32px; }
+  .messaging .secondary {
+    font-size: 15px; } }
 @media (max-width: 767px) {
   .messaging {
     text-align: left;
     margin-bottom: 10px; }
     .messaging .primary {
-      font-size: 20px;
-      line-height: 20px; }
+      font-size: 20px; }
     .messaging .secondary {
-      font-size: 13px;
-      line-height: 18px; } }
+      font-size: 13px; } }
 .take-action {
   display: table !important;
   height: 2.6em;
@@ -529,7 +532,10 @@ body.signup {
 #nav .take-action {
   margin: 0 auto 20px; }
 
-@media (max-width: 768px) {
+@media (max-width: 979px) {
+  #learn .take-action {
+    font-size: 17px; } }
+@media (max-width: 767px) {
   .take-action > div {
     padding: 0 20px; }
 
@@ -615,7 +621,7 @@ body.signup {
       margin-top: 30px;
       color: gray; }
 
-@media (max-width: 768px) {
+@media (max-width: 767px) {
   .column-buzz > h2 {
     font-size: 26px;
     line-height: 28px;
