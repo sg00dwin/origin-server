@@ -216,7 +216,6 @@ class CloudUserTest < ActiveSupport::TestCase
     StickShift::DnsService.expects(:instance).returns(dns)
 
     dns.expects(:namespace_available?).with(namespace).returns(true)
-    dns.expects(:create)
     dns.expects(:register_namespace).with(namespace).at_least_once
     dns.expects(:publish).at_least_once
     dns.expects(:close).at_least_once
