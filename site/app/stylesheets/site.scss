@@ -110,6 +110,13 @@ body.signup {
 .section-nav.lift-counter {
   padding-bottom: 90px;
 }
+.recaptcha table {
+  table-layout: auto;
+}
+#signup-and-signin {
+  margin-bottom: 50px;
+}
+
 @media (max-width: 767px) {
   .section-nav.lift-counter {
     padding-bottom: 30px;
@@ -220,7 +227,7 @@ body.signup {
   }
 }
 
-.take-action {
+.action-call {
   display: table !important; // override span12 CSS rules
   height: 2.6em;
   line-height: 1em;
@@ -269,49 +276,54 @@ body.signup {
     background-position: 5px center;
   }
 }
-#learn .take-action { 
+
+.action-more {
+  font-size: 16px;
+  &:before {
+    content: '→ ';
+    color: $takeActionHighlightBackground;
+  }
+  &:hover:before {
+    content: '→ ';
+    color: $takeActionBackground;
+  }
+}
+
+#learn .action-call { 
   margin-top: -1.3em; 
   margin-bottom: 20px;
   font-size: 20px;
   font-weight: bold;
   letter-spacing: 1px;
 }
-#nav .take-action {
+#nav .action-call {
   margin: 0 auto 20px;
 }
 
-.recaptcha table {
-  table-layout: auto;
-}
-
-#signup-and-signin {
-  margin-bottom: 50px;
-}
-
 @media (max-width: 979px) {
-  #learn .take-action {
+  #learn .action-call {
     font-size: 17px;
   }
 }
 @media (max-width: 767px) {
-  .take-action > div {
+  .action-call > div {
     padding: 0 $gridGutterWidthPhone;
   }
-  #learn .take-action { 
+  #learn .action-call { 
     width: 100%;
     font-size: 13px;
     letter-spacing: 0px;
   }
-  #nav .take-action {
+  #nav .action-call {
     margin: 20px 0 0;
   }
 }
 
 @if $gridGutterWidthTablet != $gridGutterWidth { @media (min-width: 768px) and (max-width: 979px) {
-  .take-action > div { padding: 0 $gridGutterWidthTablet; }
+  .action-call > div { padding: 0 $gridGutterWidthTablet; }
 } }
 @if $gridGutterWidthLarge != $gridGutterWidth { @media (min-width: 1200px) {
-  .take-action > div { padding: 0 $gridGutterWidthLarge; }
+  .action-call > div { padding: 0 $gridGutterWidthLarge; }
 } }
 
 .column-buzz {
