@@ -24,7 +24,7 @@ done
 
 source "/etc/stickshift/stickshift-node.conf"
 source ${CARTRIDGE_BASE_PATH}/abstract/info/lib/util
-source ${CART_DIR}/abstract/info/lib/git
+source ${CARTRIDGE_BASE_PATH}/abstract/info/lib/git
 
 app_type="mysql-5.1"
 setup_embedded_deconfigure "$1" $2 $3

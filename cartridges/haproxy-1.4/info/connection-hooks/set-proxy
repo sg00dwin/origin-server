@@ -8,7 +8,6 @@ set -e
 source /etc/stickshift/stickshift-node.conf
 source ${CARTRIDGE_BASE_PATH}/abstract/info/lib/util
 
-
 function print_help {
     echo "Usage: $0 app-name namespace uuid"
     echo "Start a running application"
@@ -29,9 +28,6 @@ done
 
 
 [ $# -gt 3 ] || print_help
-
-CART_DIR=/usr/libexec/li/cartridges
-source ${CART_DIR}/abstract/info/lib/util
 
 setup_configure "$1" $2 $3
 

@@ -1,9 +1,9 @@
 #!/bin/bash -e
 
-CART_DIR=/usr/libexec/li/cartridges
+source /etc/stickshift/stickshift-node.conf
 CART_NAME="mysql"
 CART_VERSION="5.1"
-source ${CART_DIR}/abstract/info/lib/util
+source ${CARTRIDGE_BASE_PATH}/abstract/info/lib/util
 
 # Import Environment Variables
 for f in ~/.env/*; do

@@ -1,7 +1,7 @@
 #!/bin/bash
 
-[ ! -z "$LI_CONTROLLER_LIB_UTIL" ] && return 0
-LI_CONTROLLER_LIB_UTIL=true
+[ ! -z "$SS_CONTROLLER_LIB_UTIL" ] && return 0
+SS_CONTROLLER_LIB_UTIL=true
 source /etc/stickshift/stickshift-node.conf
 
 function start_app {
@@ -61,14 +61,15 @@ function source_if_exists {
 }
 
 function get_app_type {
-    load_node_conf
-    [ -z "$OPENSHIFT_APP_TYPE" ]  &&  source_if_exists "$libra_dir/$1/.env/OPENSHIFT_APP_TYPE"
+    source /etc/stickshift/stickshift-node.conf
+    [ -z "$OPENSHIFT_APP_TYPE" ]  &&  source_if_exists "${GEAR_BASE_DIR}/$1/.env/OPENSHIFT_APP_TYPE"
     echo "$OPENSHIFT_APP_TYPE"
 }
 
 function is_a_scalable_app {
-    source_if_exists "$libra_dir/$uuid/.env/OPENSHIFT_USER_APP_NAME"
-    source_if_exists "$libra_dir/$uuid/.env/OPENSHIFT_APP_TYPE"
+    source /etc/stickshift/stickshift-node.conf
+    source_if_exists "${GEAR_BASE_DIR}/$uuid/.env/OPENSHIFT_USER_APP_NAME"
+    source_if_exists "${GEAR_BASE_DIR}/$uuid/.env/OPENSHIFT_APP_TYPE"
 
     # FIXME: Need better mechanism to evaluate if the app is scalable or not.
     [ "haproxy-1.4" = "$OPENSHIFT_APP_TYPE" ]         &&  return 0

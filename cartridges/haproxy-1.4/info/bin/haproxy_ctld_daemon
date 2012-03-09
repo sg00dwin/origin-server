@@ -2,6 +2,7 @@
 #
 require 'rubygems'
 require 'daemons'
+require 'stickshift-node'
 
 options = {
     :backgrace => true,
@@ -14,5 +15,6 @@ options = {
     :multiple => false,
     
 }
+config = StickShift::Config.instance
 
-Daemons.run('/usr/libexec/li/cartridges/haproxy-1.4/info/bin/haproxy_ctld', options)
+Daemons.run("#{config.get("CARTRIDGE_BASE_PATH")}/haproxy-1.4/info/bin/haproxy_ctld", options)

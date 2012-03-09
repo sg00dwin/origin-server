@@ -29,9 +29,9 @@
 #
 # default values
 #
-DEFAULT_LIBRA_DIR=/var/lib/stickshift
-DEFAULT_LIBRA_CONF_DIR=/etc/stickshift
-DEFAULT_LIBRA_SKEL_DIR=${DEFAULT_LIBRA_CONF_DIR}/skel
+
+source /etc/stickshift/stickshift-node.conf
+DEFAULT_LIBRA_SKEL_DIR=$GEAR_SKEL_DIR
 
 # defaults
 limits_order=84
@@ -65,7 +65,7 @@ function initialize {
 
     if [ -z "$stickshift_dir" ]
     then
-	      stickshift_dir=$DEFAULT_LIBRA_DIR
+	      stickshift_dir=$GEAR_BASE_DIR
     fi
 }
 
