@@ -2,7 +2,7 @@
 %define frameworkdir %{_libexecdir}/stickshift/cartridges/mysql-5.1
 
 Name: rhc-cartridge-mysql-5.1
-Version: 0.22.1
+Version: 0.22.2
 Release: 1%{?dist}
 Summary: Provides embedded mysql support
 
@@ -69,6 +69,24 @@ rm -rf $RPM_BUILD_ROOT
 %doc %{cartridgedir}/LICENSE
 
 %changelog
+* Fri Mar 09 2012 Dan McPherson <dmcphers@redhat.com> 0.22.2-1
+- Batch variable name chage (rmillner@redhat.com)
+- Fix merge issues (kraman@gmail.com)
+- Fixed a git merge fragment ended up getting checked in. (rmillner@redhat.com)
+- Adding export control files (kraman@gmail.com)
+- replacing references to libra with stickshift (abhgupta@redhat.com)
+- hard-coding the stickshift-node.conf path (abhgupta@redhat.com)
+- changes to paths and variable names for mysql-5.1 cartridge for opensource
+  (abhgupta@redhat.com)
+- Screen-scraping in unit tests fails - so set it back to the old output.
+  (ramr@redhat.com)
+- Re-enable both flavors of mysql. (ramr@redhat.com)
+- Fix missing end brace. (ramr@redhat.com)
+- Temporary fix to get build working. (ramr@redhat.com)
+- Checkpoint support for mysql running standalone on gears. (ramr@redhat.com)
+- take back username and pw (dmcphers@redhat.com)
+- Removed new instances of GNU license headers (jhonce@redhat.com)
+
 * Fri Mar 02 2012 Dan McPherson <dmcphers@redhat.com> 0.22.1-1
 - bump spec numbers (dmcphers@redhat.com)
 

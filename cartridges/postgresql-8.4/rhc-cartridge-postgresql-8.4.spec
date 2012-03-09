@@ -1,7 +1,7 @@
 %define cartridgedir %{_libexecdir}/stickshift/cartridges/embedded/postgresql-8.4
 
 Name: rhc-cartridge-postgresql-8.4
-Version: 0.5.1
+Version: 0.5.2
 Release: 1%{?dist}
 Summary: Embedded postgresql support for express
 
@@ -72,6 +72,13 @@ rm -rf $RPM_BUILD_ROOT
 %doc %{cartridgedir}/LICENSE
 
 %changelog
+* Fri Mar 09 2012 Dan McPherson <dmcphers@redhat.com> 0.5.2-1
+- Batch variable name chage (rmillner@redhat.com)
+- Adding export control files (kraman@gmail.com)
+- Update postgres cartridge li/libra => stickshift (kraman@gmail.com)
+- take back username and pw (dmcphers@redhat.com)
+- Removed new instances of GNU license headers (jhonce@redhat.com)
+
 * Fri Mar 02 2012 Dan McPherson <dmcphers@redhat.com> 0.5.1-1
 - bump spec numbers (dmcphers@redhat.com)
 

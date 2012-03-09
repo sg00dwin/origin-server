@@ -84,12 +84,12 @@ GEM
     regin (0.3.7)
     rest-client (1.6.1)
     state_machine (1.1.2)
-    stickshift-common (0.6.2)
+    stickshift-common (0.6.4)
       activemodel
       json
       mongo
       rack
-    stickshift-controller (0.6.2)
+    stickshift-controller (0.6.4)
       activesupport
       dnsruby
       json
