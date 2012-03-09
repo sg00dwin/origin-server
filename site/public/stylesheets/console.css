@@ -16,11 +16,40 @@
 /* END */
 /* Was going to call this $openshiftNoneMoreBlack */
 /*FIXME: From screenshots this averages to #070707 */
+/* Common navbar branding */
+/* FIXME: Move common branding in _custom.scss here */
+.navbar .brand {
+  text-transform: uppercase; }
+.navbar .brand > a {
+  display: block; }
+.navbar .brand > a > .brand-image {
+  -moz-transition: all 0.2s;
+  -webkit-transition: all 0.2s;
+  transition: all 0.2s; }
+.navbar .brand > a:hover > .brand-image {
+  -moz-transform: rotate(-10deg);
+  -webkit-transform: rotate(-10deg);
+  transform: rotate(-10deg); }
+.navbar .brand-image {
+  content: ' ';
+  /*background-image: url('../images/logo-medium.png') center top no-repeat;
+  height: logoHeight;
+  width: logoWidth;*/ }
+.navbar .brand-text {
+  color: white;
+  text-align: center; }
+
 /*------------------------------------------------------
 	 Console specific styles
 	------------------------------------------------------ */
 #help {
   margin-top: 60px; }
+
+.console-transition .navbar .brand-image {
+  float: left; }
+.console-transition .navbar .brand-text {
+  float: left;
+  padding: 20px 8px; }
 
 /*	Console overview
 	----------------------------------------------------- */
