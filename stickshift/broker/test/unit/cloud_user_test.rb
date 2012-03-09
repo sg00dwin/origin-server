@@ -249,6 +249,7 @@ class CloudUserTest < ActiveSupport::TestCase
     dns.expects(:deregister_namespace).with(namespace).once
     dns.expects(:register_namespace).with(new_namespace).once
     dns.expects(:publish).once
+    dns.expects(:close).once
     
     dns.expects(:deregister_application).with("app1", namespace).once
     dns.expects(:deregister_application).with("app2", namespace).once
