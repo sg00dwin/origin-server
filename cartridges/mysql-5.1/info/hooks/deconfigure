@@ -45,7 +45,7 @@ if [ "$OPENSHIFT_DB_TYPE" = "mysql" ]; then
 fi
 
 # For non-embedded (dedicated) mysql gear, destroy the git repo and stop app.
-if [ "embedded" != "${OPENSHIFT_DB_MYSQL_51_PROFILE:-embedded" ]; then
+if [ "embedded" != "${OPENSHIFT_DB_MYSQL_51_PROFILE:-embedded}" ]; then
    remove_all_proxy_ports $uuid
 
    # Destroy git repo and stop app.
@@ -67,7 +67,7 @@ fi
 runcon -l s0-s0:c0.c1023 rm -rf "$MYSQL_DIR" "$MYSQL_DIR/${application}_mysql_ctl.sh"
 
 # For non-embedded (dedicated) mysql gear, destroy the gear.
-if [ "embedded" != "${OPENSHIFT_DB_MYSQL_51_PROFILE:-embedded" ]; then
+if [ "embedded" != "${OPENSHIFT_DB_MYSQL_51_PROFILE:-embedded}" ]; then
     # Blow away the directories.
     rm_app_dir
     rm_unobfuscated_app_home $namespace $application
