@@ -44,15 +44,15 @@
               .nav-location.headline Community
 
               -# may need a block or three
-              %ul.menu.nav.nav-pills.nav-stacked
+              %ul.menu.nav.nav-list
                 %li.leaf= link_to "Overview", "overview"
                 %li.expanded.active
                   = link_to "Blogs", "blog"
-                  %ul.menu.nav.nav-pills.nav-stacked
+                  %ul.menu.nav.nav-list
                     %li.first.last.leaf= link_to "Planet OpenShift", "planet"
                 %li.expanded
                   = link_to "Forums", "forums"
-                  %ul.menu.nav.nav-pills.nav-stacked
+                  %ul.menu.nav.nav-list
                     %li.first.leaf= link_to "Express", "express_forum"
                     %li.last.leaf= link_to "Open Source", "opensource_forum"
                 %li.leaf= link_to "FAQs", "faq"
@@ -61,9 +61,10 @@
                 %li.leaf= link_to "Events", "events"
                 %li.leaf= link_to "MongoDB Resources", "mongodb"
 
-              %form.form-search
-                %input.input-medium.search-query
-                %button.btn{:type => 'submit'} Search
+              %form.row
+                #search-field
+                  %input.search-query
+                  %button.search{:type => 'submit'} 
         
         .column-content.lift.span-wrapper
           .span9.span-flush-right
