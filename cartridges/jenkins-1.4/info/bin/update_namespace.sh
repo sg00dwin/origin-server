@@ -25,16 +25,13 @@ uuid=$4
 setup_app_dir_vars
 setup_user_vars
 
-echo "export JENKINS_URL='http://${application}-${new_namespace}.${CLOUD_DOMAIN}/'" > $APP_HOME/.env/JENKINS_URL
+echo "export JENKINS_URL='https://${application}-${new_namespace}.${CLOUD_DOMAIN}/'" > $APP_HOME/.env/JENKINS_URL
 . $APP_HOME/.env/OPENSHIFT_INTERNAL_IP
 . $APP_HOME/.env/OPENSHIFT_INTERNAL_PORT
-export JENKINS_URL="http://$OPENSHIFT_INTERNAL_IP:$OPENSHIFT_INTERNAL_PORT"
+export JENKINS_URL="https://$OPENSHIFT_INTERNAL_IP:$OPENSHIFT_INTERNAL_PORT"
 . $APP_HOME/.env/JENKINS_USERNAME
 . $APP_HOME/.env/JENKINS_PASSWORD
 . $APP_HOME/.env/OPENSHIFT_DATA_DIR
-
-#TODO only have this here because some apps in stg might not have this file
-echo $JENKINS_PASSWORD > $APP_HOME/.jenkins_password
 
 if ls $APP_DIR/data/jobs/*/config.xml > /dev/null 2>&1
 then
@@ -55,9 +52,17 @@ then
     client_message "This might be expected if '${application}' isn't running."
     client_message "Otherwise you might need to reload it with 'rhc app reload -a ${application}'"
     client_message "or by using the Jenkins interface:"
+<<<<<<< HEAD
     client_message "http://${application}-${new_namespace}.${CLOUD_DOMAIN}/manage"
     client_message ""
 fi
 
 add_env_var "JENKINS_URL=http://${application}-${new_namespace}.${CLOUD_DOMAIN}/"
+=======
+    client_message "https://${application}-${new_namespace}.${libra_domain}/manage"
+    client_message ""
+fi
+
+add_env_var "JENKINS_URL=https://${application}-${new_namespace}.${libra_domain}/"
+>>>>>>> force jenkins to https
 

@@ -60,7 +60,7 @@ echo "export PATH=\$PATH:${CART_INFO_DIR}/bin/" > $APP_HOME/.env/PATH_JENKINS_CL
 . $APP_HOME/.env/JENKINS_USERNAME
 . $APP_HOME/.env/JENKINS_PASSWORD
 
-JENKINS_DNS_NAME=${JENKINS_URL:7} #remove http://
+JENKINS_DNS_NAME=${JENKINS_URL:8} #remove https://
 
 mkdir -p "$OPENSHIFT_HOMEDIR/jenkins-client-1.4/"
 

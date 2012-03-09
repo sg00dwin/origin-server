@@ -20,9 +20,24 @@ module LibraMigration
       cartridge_dir = "#{cartridge_root_dir}/#{app_type}"
 
       env_echos = []
+        
+      jenkins_url = nil
+      orig_jenkins_url = nil
+      if File.exists?("#{app_home}/.env/JENKINS_URL")
+        jenkins_url = Util.get_env_var_value(app_home, "JENKINS_URL")
+        if jenkins_url.start_with?("http://")
+          orig_jenkins_url = jenkins_url
+          jenkins_url = "https://#{jenkins_url[7..-1]}"
+          env_echos.push("echo \"export JENKINS_URL='#{jenkins_url}'\" > #{app_home}/.env/JENKINS_URL")
+        end
+      end
 
       if app_type == 'jenkins-1.4'
         #Util.replace_in_file("#{app_dir}/data/jobs/*/config.xml", "<builderType>raw-0.1</builderType>", "<builderType>diy-0.1</builderType>")
+        if orig_jenkins_url
+          Util.replace_in_file("#{app_dir}/data/config.xml", "<jenkinsUrl>.*</jenkinsUrl>", "")
+          Util.replace_in_file("#{app_dir}/data/hudson.tasks.Mailer.xml", "<hudsonUrl>#{orig_jenkins_url}</hudsonUrl>", "<hudsonUrl>#{jenkins_url}</hudsonUrl>")
+        end
       end
 
       env_echos.each do |env_echo|

@@ -67,7 +67,6 @@ admin_password=$(generate_password)
 system_builder_password=$(generate_password)
 
 cp -ad "$CART_INFO_DIR/configuration/jenkins-pre-deploy/"* "$APP_DIR/data/"
-sed -i "s,JENKINS_URL_TEMPLATE,http://${application}-${namespace}.${CLOUD_DOMAIN}/,g" "$APP_DIR/data/config.xml"
 openshift_server=`echo "${BROKER_HOST}" | sed -e "s/\/*$//" `
 sed -i "s,OPENSHIFT_SERVER,$openshift_server,g" "$APP_DIR/data/config.xml"
 unzip -q /usr/lib/jenkins/jenkins.war -d "$APP_DIR/data/war/"
@@ -132,6 +131,10 @@ client_result ""
 client_result "Note:  You can change your password at: http://${application}-${namespace}.${CLOUD_DOMAIN}/me/configure"
 client_result ""
 
+<<<<<<< HEAD
 add_env_var "JENKINS_URL=http://${application}-${namespace}.${CLOUD_DOMAIN}/"
+=======
+add_env_var "JENKINS_URL=https://${application}-${namespace}.${libra_domain}/"
+>>>>>>> force jenkins to https
 add_env_var "JENKINS_USERNAME=system_builder"
 add_env_var "JENKINS_PASSWORD=$system_builder_password"

@@ -43,15 +43,17 @@ def migrate_app(rhlogin, app_name)
                   out += "Migrate on node exit code: #{exit_code}\n"
                   raise "Failed migrating app. Rerun with: #{migrate_cmd}"
                 else
-                  #redeployed, redeploy_out = redeploy_httpd_proxy(app)
-                  #migrated = redeployed
-                  #out += redeploy_out
-                  #if migrated
-                    #if framework == 'jenkins-1.4'
+                  if framework == 'jenkins-1.4'
+                    redeployed, redeploy_out = redeploy_httpd_proxy(app)
+                    migrated = redeployed
+                    out += redeploy_out
+                    if migrated
                       out += restart_app(app)
                       migrated = true
-                    #end
-                  #end
+                    end
+                  else
+                    migrated = true
+                  end
                 end
               end
             end
@@ -170,6 +172,21 @@ def migrate(continue=false, target_server_identity=nil)
   all_rhlogins_length = users.length
   app_cnt = 0
   puts "RHLogins.length: #{all_rhlogins_length.to_s}"
+  
+  #Migrate jenkins_url to https
+  users.each do |user|
+    if user.env_vars.has_key?('JENKINS_URL')
+      jenkins_url = user.env_vars['JENKINS_URL']
+      if jenkins_url.start_with?("http://")
+        puts "Updating jenkins env var for user: #{user.login}"
+        jenkins_url = "https://#{jenkins_url[7..-1]}"
+        user.env_vars['JENKINS_URL'] = jenkins_url
+        user.save
+      end
+    end
+  end
+  
+  
   node_to_apps = {}
   node_to_users = {}
   ds_queues = []
