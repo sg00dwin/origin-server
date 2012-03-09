@@ -86,10 +86,6 @@ Broker::Application.configure do
     :config      => "/etc/mcollective/client.cfg"
   }
   
-  config.datastore_mongo = {
-    :collections => {:district => "district", :application_template => "template"}
-  }
-  
   config.analytics = {
     :nurture_enabled => true,
     :nurture_username => "admin",
@@ -117,7 +113,7 @@ Broker::Application.configure do
         :user => "USER_NAME",
         :password => "PASSWORD",
         :db => "openshift_broker",
-        :collections => {:user => "user"}
+        :collections => {:user => "user", :district => "district", :application_template => "template"}
       }
     }
   }

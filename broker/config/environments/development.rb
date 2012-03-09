@@ -71,10 +71,6 @@ Broker::Application.configure do
 #    :s3_bucket => "libra_dev"
 #  }
   
-  config.datastore_mongo = {
-    :collections => {:district => "district", :application_template => "template"}
-  }
-  
   config.analytics = {
     :nurture_enabled => false,
     :nurture_username => "admin",
@@ -112,7 +108,7 @@ Broker::Application.configure do
         :user => "libra",
         :password => "momo",
         :db => "openshift_broker_dev",
-        :collections => {:user => "user"}
+        :collections => {:user => "user", :district => "district", :application_template => "template"}
       }
     }
   }
