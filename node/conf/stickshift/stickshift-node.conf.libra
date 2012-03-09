@@ -1,6 +1,6 @@
 GEAR_BASE_DIR="/var/lib/stickshift"           #gear root directory
 GEAR_SKEL_DIR="/etc/stickshift/skel"          #skel files to use when building a gear
-GEAR_SHELL="/usr/bin/ss-trap-user"            #shell to use for the gear
+GEAR_SHELL="/usr/bin/trap-user"            #shell to use for the gear
 GEAR_GECOS="libra guest"             #Gecos information to populate for the gear user
 CLOUD_NAME="OPENSHIFT"                  #Cloud name prefix
 GEAR_MIN_UID=500                    #Lower bound of UID used to create gears
