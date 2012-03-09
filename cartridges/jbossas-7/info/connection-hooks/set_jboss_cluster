@@ -18,5 +18,4 @@ done
 
 echo "$list" > /var/lib/libra/$3/.env/OPENSHIFT_JBOSS_CLUSTER
 
-echo "done" >> /log/sub.log
 
