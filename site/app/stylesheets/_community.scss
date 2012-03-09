@@ -173,24 +173,4 @@ html.js fieldset.collapsible .fieldset-wrapper {
 .sidenav-column-inner {
   margin-right: 15px;
 }
-#search-field {
-  position: relative;
 
-  button.search {
-    background: transparent url("../images/sprite-vert.png") 4px -170px no-repeat;
-    height: 25px;
-    width: 20px;
-    border: 0;
-    position: absolute;
-    right: 14px;
-    top: 1px;
-  }
-  .search-query {
-    margin-bottom: 0;
-    border-radius: 5px;
-    width: -moz-available;
-    width: inherit;
-    padding-left: 5px;
-    padding-right: 25px;
-  }
-}
