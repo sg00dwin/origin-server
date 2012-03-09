@@ -10,7 +10,8 @@ class BaseController < ActionController::Base
         Param.new("namespace", "string", "Name of the domain")
       ]),
       "LIST_CARTRIDGES" => Link.new("List cartridges", "GET", "/cartridges"),
-      "LIST_TEMPLATES" => Link.new("List application templates", "GET", "/application_template")
+      "LIST_TEMPLATES" => Link.new("List application templates", "GET", "/application_template"),
+      "GET_ESTIMATES" => Link.new("List available estimates", "GET" , "/estimates")
     }
     
     @reply = RestReply.new(:ok, "links", links)
