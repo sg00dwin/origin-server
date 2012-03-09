@@ -26,6 +26,12 @@ class BaseController < ActionController::Base
       login = u
       password = p
     }
+    if request.headers['User-Agent'] == "StickShift"
+      if params['broker_auth_key'] && params['broker_auth_iv']
+        login = params['broker_auth_key']
+        password = params['broker_auth_iv']
+      end
+    end
     auth = StickShift::AuthService.instance.authenticate(request, login, password)
     if auth
       @login = auth[:username]
