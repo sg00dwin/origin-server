@@ -10,7 +10,7 @@ source "/etc/stickshift/stickshift-node.conf"
 source ${CARTRIDGE_BASE_PATH}/abstract/info/lib/util
 
 client_message "Running 'git gc --prune --aggressive'"
-pushd ${OPENSHIFT_HOMEDIR}git/${OPENSHIFT_APP_NAME}.git > /dev/null
+pushd ${OPENSHIFT_HOMEDIR}git/${OPENSHIFT_GEAR_NAME}.git > /dev/null
 git gc --prune --aggressive 
 popd > /dev/null
 
@@ -20,8 +20,8 @@ rm -rf ${OPENSHIFT_LOG_DIR}* ${OPENSHIFT_LOG_DIR}.[^.]*
 client_message "Emptying tmp dir: ${OPENSHIFT_TMP_DIR}"
 rm -rf ${OPENSHIFT_TMP_DIR}* ${OPENSHIFT_TMP_DIR}.[^.]*
 
-if [ -d ${OPENSHIFT_APP_DIR}tmp/ ]
+if [ -d ${OPENSHIFT_GEAR_DIR}tmp/ ]
 then
-    client_message "Emptying tmp dir: ${OPENSHIFT_APP_DIR}tmp/"
-    rm -rf ${OPENSHIFT_APP_DIR}tmp/* ${OPENSHIFT_APP_DIR}tmp/.[^.]*
+    client_message "Emptying tmp dir: ${OPENSHIFT_GEAR_DIR}tmp/"
+    rm -rf ${OPENSHIFT_GEAR_DIR}tmp/* ${OPENSHIFT_GEAR_DIR}tmp/.[^.]*
 fi

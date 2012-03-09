@@ -102,10 +102,10 @@ mongo           interactive MongoDB shell
 EOF
 }
 
-alias ctl_app=$OPENSHIFT_APP_CTL_SCRIPT
-alias tail_all="/usr/bin/tail -f $OPENSHIFT_APP_DIR/logs/*"
+alias ctl_app=$OPENSHIFT_GEAR_CTL_SCRIPT
+alias tail_all="/usr/bin/tail -f $OPENSHIFT_GEAR_DIR/logs/*"
 
-export PS1="[$OPENSHIFT_APP_DNS \W]\> "
+export PS1="[$OPENSHIFT_GEAR_DNS \W]\> "
 export TMOUT=300
 welcome
 

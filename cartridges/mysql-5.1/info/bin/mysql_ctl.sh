@@ -17,7 +17,7 @@ if whoami | grep -q root
 then
     echo 1>&2
     echo "Please don't run script as root, try:" 1>&2
-    echo "runuser --shell /bin/sh $OPENSHIFT_APP_UUID $MYSQL_DIR/${OPENSHIFT_APP_NAME}_mysql_ctl.sh" 1>&2
+    echo "runuser --shell /bin/sh $OPENSHIFT_GEAR_UUID $MYSQL_DIR/${OPENSHIFT_GEAR_NAME}_mysql_ctl.sh" 1>&2
     echo 2>&1
     exit 15
 fi

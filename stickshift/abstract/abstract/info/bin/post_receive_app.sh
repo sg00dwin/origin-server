@@ -25,7 +25,7 @@ then
         then
             echo "!!!!!!!!"
             echo "Jenkins client installed but a Jenkins server does not exist!"
-            echo "You can remove the jenkins client with rhc app cartridge remove -a $OPENSHIFT_APP_NAME -c jenkins-client-1.4"
+            echo "You can remove the jenkins client with rhc app cartridge remove -a $OPENSHIFT_GEAR_NAME -c jenkins-client-1.4"
             echo "Continuing with local build/deployment."
             echo "!!!!!!!!"
         fi

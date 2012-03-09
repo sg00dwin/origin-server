@@ -42,7 +42,7 @@ confirm_log_files_inactive "$MMS_DIR/logs"
 #
 # Remove environment variables
 #
-/bin/rm -f $APP_HOME/.env/OPENSHIFT_10GEN_MMS_AGENT_APP_DIR $APP_HOME/.env/OPENSHIFT_10GEN_MMS_AGENT_CTL_SCRIPT 
+/bin/rm -f $APP_HOME/.env/OPENSHIFT_10GEN_MMS_AGENT_GEAR_DIR $APP_HOME/.env/OPENSHIFT_10GEN_MMS_AGENT_CTL_SCRIPT 
 
 
 # Remove 10gen mms agent dir. This MUST be after stopping the agent as the CTL script relies on these.

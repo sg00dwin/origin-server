@@ -10,15 +10,15 @@ done
 
 if [ "$include_git" = "INCLUDE_GIT" ]
 then
-  ~/git/${OPENSHIFT_APP_NAME}.git/hooks/pre-receive 1>&2
-  echo "Removing old git repo: ~/git/${OPENSHIFT_APP_NAME}.git/" 1>&2
-  /bin/rm -rf ~/git/${OPENSHIFT_APP_NAME}.git/[^h]*/*
+  ~/git/${OPENSHIFT_GEAR_NAME}.git/hooks/pre-receive 1>&2
+  echo "Removing old git repo: ~/git/${OPENSHIFT_GEAR_NAME}.git/" 1>&2
+  /bin/rm -rf ~/git/${OPENSHIFT_GEAR_NAME}.git/[^h]*/*
 else
   stop_app.sh 1>&2
 fi
 
-echo "Removing old data dir: ~/${OPENSHIFT_APP_NAME}/data/*" 1>&2
-/bin/rm -rf ~/${OPENSHIFT_APP_NAME}/data/* ~/${OPENSHIFT_APP_NAME}/data/.[^.]*
+echo "Removing old data dir: ~/${OPENSHIFT_GEAR_NAME}/data/*" 1>&2
+/bin/rm -rf ~/${OPENSHIFT_GEAR_NAME}/data/* ~/${OPENSHIFT_GEAR_NAME}/data/.[^.]*
 
 restore_tar.sh $include_git
 
@@ -30,7 +30,7 @@ done
 
 if [ "$include_git" = "INCLUDE_GIT" ]
 then
-  GIT_DIR=~/git/${OPENSHIFT_APP_NAME}.git/ ~/git/${OPENSHIFT_APP_NAME}.git/hooks/post-receive 1>&2  
+  GIT_DIR=~/git/${OPENSHIFT_GEAR_NAME}.git/ ~/git/${OPENSHIFT_GEAR_NAME}.git/hooks/post-receive 1>&2  
 else
   start_app.sh 1>&2
 fi

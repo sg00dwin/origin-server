@@ -10,9 +10,9 @@ done
 
 if [ "$include_git" = "INCLUDE_GIT" ]
 then
-  echo "Restoring ~/git/${OPENSHIFT_APP_NAME}.git and ~/${OPENSHIFT_APP_NAME}/data" 1>&2
-  /bin/tar --strip=2 --overwrite -xmz "./*/${OPENSHIFT_APP_NAME}/data" "./*/git" --exclude="./*/git/${OPENSHIFT_APP_NAME}.git/hooks" 1>&2  
+  echo "Restoring ~/git/${OPENSHIFT_GEAR_NAME}.git and ~/${OPENSHIFT_GEAR_NAME}/data" 1>&2
+  /bin/tar --strip=2 --overwrite -xmz "./*/${OPENSHIFT_GEAR_NAME}/data" "./*/git" --exclude="./*/git/${OPENSHIFT_GEAR_NAME}.git/hooks" 1>&2  
 else
-  echo "Restoring ~/${OPENSHIFT_APP_NAME}/data" 1>&2
-  /bin/tar --strip=2 --overwrite -xmz "./*/${OPENSHIFT_APP_NAME}/data" 1>&2
+  echo "Restoring ~/${OPENSHIFT_GEAR_NAME}/data" 1>&2
+  /bin/tar --strip=2 --overwrite -xmz "./*/${OPENSHIFT_GEAR_NAME}/data" 1>&2
 fi

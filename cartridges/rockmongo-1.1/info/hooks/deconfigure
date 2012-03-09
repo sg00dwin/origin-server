@@ -42,7 +42,7 @@ confirm_log_files_inactive "$ROCKMONGO_DIR/logs"
 #
 # Remove environment variables
 #
-/bin/rm -f $APP_HOME/.env/OPENSHIFT_ROCKMONGO_APP_DIR $APP_HOME/.env/OPENSHIFT_ROCKMONGO_CTL_SCRIPT $APP_HOME/.env/OPENSHIFT_ROCKMONGO_IP 
+/bin/rm -f $APP_HOME/.env/OPENSHIFT_ROCKMONGO_GEAR_DIR $APP_HOME/.env/OPENSHIFT_ROCKMONGO_CTL_SCRIPT $APP_HOME/.env/OPENSHIFT_ROCKMONGO_IP 
 
 
 # Remove rockmongo dir. This MUST be after stopping rockmongo as the CTL script relies on these.

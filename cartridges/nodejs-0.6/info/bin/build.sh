@@ -9,7 +9,7 @@ done
 function is_node_module_installed() {
     module_name=${1:-""}
     if [ -n "$module_name" ]; then
-        pushd "$OPENSHIFT_APP_DIR" > /dev/null
+        pushd "$OPENSHIFT_GEAR_DIR" > /dev/null
         if [ -d $m ] ; then
             popd
             return 0
@@ -22,7 +22,7 @@ function is_node_module_installed() {
 
 if [ -f "${OPENSHIFT_REPO_DIR}/.openshift/markers/force_clean_build" ]; then
     echo ".openshift/markers/force_clean_build found!  Recreating npm modules" 1>&2
-    rm -rf "${OPENSHIFT_APP_DIR}"/node_modules/*
+    rm -rf "${OPENSHIFT_GEAR_DIR}"/node_modules/*
 fi
 
 if [ -f "${OPENSHIFT_REPO_DIR}"/deplist.txt ]; then
@@ -30,9 +30,9 @@ if [ -f "${OPENSHIFT_REPO_DIR}"/deplist.txt ]; then
         echo "Checking npm module: $m"
         echo
         if is_node_module_installed "$m"; then
-            (cd "${OPENSHIFT_APP_DIR}"; npm update "$m")
+            (cd "${OPENSHIFT_GEAR_DIR}"; npm update "$m")
         else
-            (cd "${OPENSHIFT_APP_DIR}"; npm install "$m")
+            (cd "${OPENSHIFT_GEAR_DIR}"; npm install "$m")
         fi
     done
 fi

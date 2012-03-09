@@ -77,7 +77,7 @@ module LibraMigration
           FileUtils.mv "#{app_dir}/jbossas-7.0", "#{app_dir}/jbossas-7"
         end
 
-        env_echos.push("echo \"export OPENSHIFT_APP_TYPE='jbossas-7'\" > #{app_home}/.env/OPENSHIFT_APP_TYPE")
+        env_echos.push("echo \"export OPENSHIFT_GEAR_TYPE='jbossas-7'\" > #{app_home}/.env/OPENSHIFT_GEAR_TYPE")
         java_home = '/etc/alternatives/java_sdk_1.6.0'
         m2_home = '/etc/alternatives/maven-3.0'
         env_echos.push("echo \"export PATH=#{cartridge_dir}/info/bin/:#{cartridge_root_dir}/abstract/info/bin/:#{java_home}/bin:#{m2_home}/bin:/bin:/usr/bin\" > #{app_home}/.env/PATH")
@@ -112,8 +112,8 @@ module LibraMigration
       end
 
       
-      if File.exists?("#{app_home}/.env/OPENSHIFT_APP_STATE")
-        File.delete("#{app_home}/.env/OPENSHIFT_APP_STATE")
+      if File.exists?("#{app_home}/.env/OPENSHIFT_GEAR_STATE")
+        File.delete("#{app_home}/.env/OPENSHIFT_GEAR_STATE")
       end
 
       env_echos.push("echo \"export OPENSHIFT_RUNTIME_DIR=#{app_dir}/runtime/\" > #{app_home}/.env/OPENSHIFT_RUNTIME_DIR")

@@ -35,7 +35,7 @@ function observe_setup_var_lib_file {
 }
 
 function run_as_user {
-    _uuid=${uuid:-$OPENSHIFT_APP_UUID}
+    _uuid=${uuid:-$OPENSHIFT_GEAR_UUID}
     if [ "`whoami`" = "$_uuid" ]; then
         #  Run confined as user - temporary bandaid to fix issues with
         #  ss-connector-execute - connection hooks are run unconfined.
@@ -58,7 +58,7 @@ function daemon_as_user {
 }
 
 function validate_run_as_user {
-    uuid=$OPENSHIFT_APP_UUID
+    uuid=$OPENSHIFT_GEAR_UUID
     setup_user_vars
 
     if whoami | grep -q root || ! runcon | grep system_r:libra_t:$mcs_level > /dev/null

@@ -33,9 +33,9 @@ fi
 
 setup_basic_vars
 
-. $APP_HOME/.env/OPENSHIFT_APP_TYPE
+. $APP_HOME/.env/OPENSHIFT_GEAR_TYPE
 
-CART_INFO_DIR=$CARTRIDGE_BASE_PATH/$OPENSHIFT_APP_TYPE/info
+CART_INFO_DIR=$CARTRIDGE_BASE_PATH/$OPENSHIFT_GEAR_TYPE/info
 
 unobfuscate_app_home $uuid $namespace $application
 

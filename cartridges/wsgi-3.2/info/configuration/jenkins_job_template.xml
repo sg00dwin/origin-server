@@ -62,7 +62,7 @@
 alias rsync="rsync --delete-after -az -e '$GIT_SSH'"
 
 # Sync virtual env cache - Faster builds
-rsync UPSTREAM_SSH:~/UPSTREAM_APP_NAME/virtenv/ ~/${OPENSHIFT_APP_NAME}/virtenv/
+rsync UPSTREAM_SSH:~/UPSTREAM_APP_NAME/virtenv/ ~/${OPENSHIFT_GEAR_NAME}/virtenv/
 
 # Build/update virtual env and run user pre_build and build
 . ci_build.sh
@@ -76,7 +76,7 @@ rsync UPSTREAM_SSH:~/UPSTREAM_APP_NAME/virtenv/ ~/${OPENSHIFT_APP_NAME}/virtenv/
 $GIT_SSH UPSTREAM_SSH 'ctl_all stop'
 
 # Push content back to application
-rsync ~/${OPENSHIFT_APP_NAME}/virtenv/ UPSTREAM_SSH:~/UPSTREAM_APP_NAME/virtenv/
+rsync ~/${OPENSHIFT_GEAR_NAME}/virtenv/ UPSTREAM_SSH:~/UPSTREAM_APP_NAME/virtenv/
 rsync ~/$WORKSPACE/ UPSTREAM_SSH:~/UPSTREAM_APP_NAME/repo/
 
 # Configure / start app

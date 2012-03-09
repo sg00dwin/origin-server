@@ -140,7 +140,7 @@ observe_setup_var_lib_dir "$PHPMOADMIN_DIR"
 # Create environment variables. This MUST be before starting phpmoadmin as the CTL script relies on these.
 #
 echo "export OPENSHIFT_PHPMOADMIN_IP='$IP'" > $APP_HOME/.env/OPENSHIFT_PHPMOADMIN_IP
-echo "export OPENSHIFT_PHPMOADMIN_APP_DIR='$PHPMOADMIN_DIR/'" > $APP_HOME/.env/OPENSHIFT_PHPMOADMIN_APP_DIR
+echo "export OPENSHIFT_PHPMOADMIN_GEAR_DIR='$PHPMOADMIN_DIR/'" > $APP_HOME/.env/OPENSHIFT_PHPMOADMIN_GEAR_DIR
 echo "export OPENSHIFT_PHPMOADMIN_CTL_SCRIPT='$PHPMOADMIN_CTL_SCRIPT'" > $APP_HOME/.env/OPENSHIFT_PHPMOADMIN_CTL_SCRIPT
 
 
@@ -159,7 +159,7 @@ restart_httpd_graceful
 
 
 # Grab the env vars so we can print them
-. $APP_HOME/.env/OPENSHIFT_APP_DNS
+. $APP_HOME/.env/OPENSHIFT_GEAR_DNS
 
 
 client_result ""
@@ -168,6 +168,6 @@ client_result ""
 client_result "   PhpMoAdmin User    : $OPENSHIFT_PHPMOADMIN_USERNAME"
 client_result "   PhpMoAdmin Password: $OPENSHIFT_PHPMOADMIN_PASSWORD"
 client_result ""
-client_result "URL: https://$OPENSHIFT_APP_DNS/phpmoadmin/"
+client_result "URL: https://$OPENSHIFT_GEAR_DNS/phpmoadmin/"
 
-set_app_info "URL: https://$OPENSHIFT_APP_DNS/phpmoadmin/"
+set_app_info "URL: https://$OPENSHIFT_GEAR_DNS/phpmoadmin/"

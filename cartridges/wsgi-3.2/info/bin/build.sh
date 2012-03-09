@@ -6,7 +6,7 @@ do
     . $f
 done
 
-if `echo $OPENSHIFT_APP_DNS | grep -q .stg.rhcloud.com` || `echo $OPENSHIFT_APP_DNS | grep -q .dev.rhcloud.com`
+if `echo $OPENSHIFT_GEAR_DNS | grep -q .stg.rhcloud.com` || `echo $OPENSHIFT_GEAR_DNS | grep -q .dev.rhcloud.com`
 then 
 	OPENSHIFT_PYTHON_MIRROR="http://mirror1.stg.rhcloud.com/mirror/python/web/simple"
 else
@@ -17,17 +17,17 @@ fi
 if [ -f "${OPENSHIFT_REPO_DIR}/.openshift/markers/force_clean_build" ]
 then
     echo ".openshift/markers/force_clean_build found!  Recreating virtenv" 1>&2
-    rm -rf "${OPENSHIFT_APP_DIR}"/virtenv/*
+    rm -rf "${OPENSHIFT_GEAR_DIR}"/virtenv/*
 fi
 
 if [ -f ${OPENSHIFT_REPO_DIR}setup.py ]
 then
     echo "setup.py found.  Setting up virtualenv"
-    cd ~/${OPENSHIFT_APP_NAME}/virtenv
+    cd ~/${OPENSHIFT_GEAR_NAME}/virtenv
 
     # Hack to fix symlink on rsync issue
     /bin/rm -f lib64
-    virtualenv ~/${OPENSHIFT_APP_NAME}/virtenv
+    virtualenv ~/${OPENSHIFT_GEAR_NAME}/virtenv
     . ./bin/activate
 	if [ -n "$OPENSHIFT_PYTHON_MIRROR" ]
 	then
@@ -35,7 +35,7 @@ then
 	else
 		python ${OPENSHIFT_REPO_DIR}setup.py develop
 	fi
-    virtualenv --relocatable ~/${OPENSHIFT_APP_NAME}/virtenv
+    virtualenv --relocatable ~/${OPENSHIFT_GEAR_NAME}/virtenv
 fi
 
 # Run build

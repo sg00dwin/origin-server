@@ -120,7 +120,7 @@ observe_setup_var_lib_dir "$ROCKMONGO_DIR"
 # Create environment variables. This MUST be before starting rockmongo as the CTL script relies on these.
 #
 echo "export OPENSHIFT_ROCKMONGO_IP='$IP'" > $APP_HOME/.env/OPENSHIFT_ROCKMONGO_IP
-echo "export OPENSHIFT_ROCKMONGO_APP_DIR='$ROCKMONGO_DIR/'" > $APP_HOME/.env/OPENSHIFT_ROCKMONGO_APP_DIR
+echo "export OPENSHIFT_ROCKMONGO_GEAR_DIR='$ROCKMONGO_DIR/'" > $APP_HOME/.env/OPENSHIFT_ROCKMONGO_GEAR_DIR
 echo "export OPENSHIFT_ROCKMONGO_CTL_SCRIPT='$ROCKMONGO_CTL_SCRIPT'" > $APP_HOME/.env/OPENSHIFT_ROCKMONGO_CTL_SCRIPT
 
 
@@ -139,7 +139,7 @@ restart_httpd_graceful
 
 
 # Grab the env vars so we can print them
-. $APP_HOME/.env/OPENSHIFT_APP_DNS
+. $APP_HOME/.env/OPENSHIFT_GEAR_DNS
 
 
 client_result ""
@@ -148,6 +148,6 @@ client_result ""
 client_result "   RockMongo User    : $OPENSHIFT_NOSQL_DB_USERNAME"
 client_result "   RockMongo Password: $OPENSHIFT_NOSQL_DB_PASSWORD"
 client_result ""
-client_result "URL: https://$OPENSHIFT_APP_DNS/rockmongo/"
+client_result "URL: https://$OPENSHIFT_GEAR_DNS/rockmongo/"
 
-set_app_info "URL: https://$OPENSHIFT_APP_DNS/rockmongo/"
+set_app_info "URL: https://$OPENSHIFT_GEAR_DNS/rockmongo/"

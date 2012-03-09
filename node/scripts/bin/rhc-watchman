@@ -66,12 +66,12 @@ class Watchman
       }
 
       app_env.keys.each {|uuid|
-        if app_env[uuid][:OPENSHIFT_APP_TYPE].nil?
-          Syslog.warning("watchman unable to determine application type of user #{uuid}. OPENSHIFT_HOMEDIR/.env/OPENSHIFT_APP_TYPE missing.")
+        if app_env[uuid][:OPENSHIFT_GEAR_TYPE].nil?
+          Syslog.warning("watchman unable to determine application type of user #{uuid}. OPENSHIFT_HOMEDIR/.env/OPENSHIFT_GEAR_TYPE missing.")
           next
         end
 
-        if app_env[uuid][:OPENSHIFT_APP_TYPE].start_with?('jboss')
+        if app_env[uuid][:OPENSHIFT_GEAR_TYPE].start_with?('jboss')
           if app_env[uuid][:OPENSHIFT_LOG_DIR].nil?
             Syslog.warning("watchman unable to determine log directory for user #{uuid}. OPENSHIFT_HOMEDIR/.env/OPENSHIFT_LOG_DIR missing.")
             next
@@ -104,25 +104,25 @@ class Watchman
 
   # Don't restart if application has been marked down
   def restart(uuid, env) 
-    if env[uuid][:OPENSHIFT_APP_DIR].nil?
-      Syslog.warning("watchman unable to determine application home directory. OPENSHIFT_APP_DIR/.env/OPENSHIFT_APP_DIR missing. User #{uuid}: application #{env[uuid][:OPENSHIFT_APP_NAME]} will not be restarted as it should be.")
+    if env[uuid][:OPENSHIFT_GEAR_DIR].nil?
+      Syslog.warning("watchman unable to determine application home directory. OPENSHIFT_GEAR_DIR/.env/OPENSHIFT_GEAR_DIR missing. User #{uuid}: application #{env[uuid][:OPENSHIFT_GEAR_NAME]} will not be restarted as it should be.")
       return
     end
 
-    state_file = env[uuid][:OPENSHIFT_RUNTIME_DIR].nil?  ? File.join(env[uuid][:OPENSHIFT_APP_DIR], 'runtime') : env[uuid][:OPENSHIFT_RUNTIME_DIR]
+    state_file = env[uuid][:OPENSHIFT_RUNTIME_DIR].nil?  ? File.join(env[uuid][:OPENSHIFT_GEAR_DIR], 'runtime') : env[uuid][:OPENSHIFT_RUNTIME_DIR]
     state_file = File.join(state_file, '.state')
 
     if File.exists?(state_file)
       state = File.read(state_file)
       if 'idle' != state && 'stopped' != state
         `service libra restartuser #{uuid}`
-        Syslog.info("watchman restarted user #{uuid}: application #{env[uuid][:OPENSHIFT_APP_NAME]}") 
+        Syslog.info("watchman restarted user #{uuid}: application #{env[uuid][:OPENSHIFT_GEAR_NAME]}") 
       end
     else
-      stop_lock = File.join(env[uuid][:OPENSHIFT_APP_DIR], 'run', 'stop_lock')
+      stop_lock = File.join(env[uuid][:OPENSHIFT_GEAR_DIR], 'run', 'stop_lock')
       if not File.exists?(stop_lock) 
         `service libra restartuser #{uuid}`
-        Syslog.info("watchman restarted user #{uuid}: application #{env[uuid][:OPENSHIFT_APP_NAME]}") 
+        Syslog.info("watchman restarted user #{uuid}: application #{env[uuid][:OPENSHIFT_GEAR_NAME]}") 
       end
     end
   end

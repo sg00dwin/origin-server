@@ -115,7 +115,7 @@
                     <statement></statement>
                 </datasource>
                 <datasource jndi-name="java:jboss/datasources/MysqlDS" enabled="${mysql.enabled}" use-java-context="true" pool-name="MysqlDS">
-                    <connection-url>jdbc:mysql://${OPENSHIFT_DB_HOST}:${OPENSHIFT_DB_PORT}/${OPENSHIFT_APP_NAME}</connection-url>
+                    <connection-url>jdbc:mysql://${OPENSHIFT_DB_HOST}:${OPENSHIFT_DB_PORT}/${OPENSHIFT_GEAR_NAME}</connection-url>
                     <driver>mysql</driver>
                     <security>
                       <user-name>${OPENSHIFT_DB_USERNAME}</user-name>

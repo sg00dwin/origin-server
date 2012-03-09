@@ -78,9 +78,9 @@ then
     print_help
 fi
 
-source "/var/lib/stickshift/${uuid}/.env/OPENSHIFT_APP_DIR"
+source "/var/lib/stickshift/${uuid}/.env/OPENSHIFT_GEAR_DIR"
 [ -f "/var/lib/stickshift/${uuid}/.env/OPENSHIFT_RUNTIME_DIR" ] && source "/var/lib/stickshift/${uuid}/.env/OPENSHIFT_RUNTIME_DIR"
-: ${OPENSHIFT_RUNTIME_DIR:=$OPENSHIFT_APP_DIR/runtime}
+: ${OPENSHIFT_RUNTIME_DIR:=$OPENSHIFT_GEAR_DIR/runtime}
 
 if is_idled "$uuid"
 then

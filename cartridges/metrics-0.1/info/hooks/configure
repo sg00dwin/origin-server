@@ -84,7 +84,7 @@ observe_setup_var_lib_dir "$METRICS_DIR"
 # Create environment variables. This MUST be before starting metrics as the CTL script relies on these.
 #
 echo "export OPENSHIFT_METRICS_IP='$IP'" > $APP_HOME/.env/OPENSHIFT_METRICS_IP
-echo "export OPENSHIFT_METRICS_APP_DIR='$METRICS_DIR/'" > $APP_HOME/.env/OPENSHIFT_METRICS_APP_DIR
+echo "export OPENSHIFT_METRICS_GEAR_DIR='$METRICS_DIR/'" > $APP_HOME/.env/OPENSHIFT_METRICS_GEAR_DIR
 echo "export OPENSHIFT_METRICS_CTL_SCRIPT='$METRICS_CTL_SCRIPT'" > $APP_HOME/.env/OPENSHIFT_METRICS_CTL_SCRIPT
 
 
@@ -102,7 +102,7 @@ restart_httpd_graceful
 
 
 # Grab the env vars so we can print them
-. $APP_HOME/.env/OPENSHIFT_APP_DNS
+. $APP_HOME/.env/OPENSHIFT_GEAR_DNS
 
 
 client_result ""
@@ -112,6 +112,6 @@ client_result "metrics 0.1 added."
 #client_result "   User: $OPENSHIFT_METRICS_USERNAME"
 #client_result "   Password: $OPENSHIFT_METRICS_PASSWORD"
 client_result ""
-client_result "URL: https://$OPENSHIFT_APP_DNS/metrics/"
+client_result "URL: https://$OPENSHIFT_GEAR_DNS/metrics/"
 
-set_app_info "URL: https://$OPENSHIFT_APP_DNS/metrics/"
+set_app_info "URL: https://$OPENSHIFT_GEAR_DNS/metrics/"

@@ -19,7 +19,7 @@ validate_run_as_user
 
 . app_ctl_pre.sh
 
-mysql_ctl="$OPENSHIFT_HOMEDIR/$CART_NAME-$CART_VERSION/${OPENSHIFT_APP_NAME}_mysql_ctl.sh"
+mysql_ctl="$OPENSHIFT_HOMEDIR/$CART_NAME-$CART_VERSION/${OPENSHIFT_GEAR_NAME}_mysql_ctl.sh"
 
 case "$1" in
     start)                    "$mysql_ctl" start    ;;

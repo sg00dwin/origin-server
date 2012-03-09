@@ -598,7 +598,7 @@ fi
 - working on base migration (dmcphers@redhat.com)
 - Merge branch 'master' of git1.ops.rhcloud.com:/srv/git/li
   (bdecoste@gmail.com)
-- replace OPENSHIFT_APP_DIR in httpd start (bdecoste@gmail.com)
+- replace OPENSHIFT_GEAR_DIR in httpd start (bdecoste@gmail.com)
 
 * Tue Jan 17 2012 Dan McPherson <dmcphers@redhat.com> 0.85.4-1
 - remove broker gem refs for threaddump (bdecoste@gmail.com)

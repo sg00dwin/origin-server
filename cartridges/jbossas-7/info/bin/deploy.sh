@@ -11,7 +11,7 @@ source ${CARTRIDGE_BASE_PATH}/abstract/info/lib/util
 
 start_dbs
 
-standalone_tmp=${OPENSHIFT_APP_DIR}${OPENSHIFT_APP_TYPE}/standalone/tmp
+standalone_tmp=${OPENSHIFT_GEAR_DIR}${OPENSHIFT_GEAR_TYPE}/standalone/tmp
 if [ -d $standalone_tmp ]
 then
     for d in $standalone_tmp/*

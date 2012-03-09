@@ -99,7 +99,7 @@ done
 
 # Cartridge instance dir and control script name.
 CART_INSTANCE_DIR="$OPENSHIFT_HOMEDIR/$CART_DIRNAME"
-CTL_SCRIPT="$CART_INSTANCE_DIR/${OPENSHIFT_APP_NAME}_${CART_NAME}_ctl.sh"
+CTL_SCRIPT="$CART_INSTANCE_DIR/${OPENSHIFT_GEAR_NAME}_${CART_NAME}_ctl.sh"
 source ${CART_INFO_DIR}/lib/util
 
 #  Ensure logged in as user.
@@ -107,7 +107,7 @@ if whoami | grep -q root
 then
     echo 1>&2
     echo "Please don't run script as root, try:" 1>&2
-    echo "runuser --shell /bin/sh $OPENSHIFT_APP_UUID $CTL_SCRIPT" 1>&2
+    echo "runuser --shell /bin/sh $OPENSHIFT_GEAR_UUID $CTL_SCRIPT" 1>&2
     echo 2>&1
     exit 15
 fi

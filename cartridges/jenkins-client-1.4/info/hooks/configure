@@ -53,9 +53,9 @@ echo "export OPENSHIFT_CI_TYPE='jenkins-1.4'" > $APP_HOME/.env/OPENSHIFT_CI_TYPE
 echo "export PATH=\$PATH:${CART_INFO_DIR}/bin/" > $APP_HOME/.env/PATH_JENKINS_CLIENT
 
 . $APP_HOME/.env/OPENSHIFT_HOMEDIR
-. $APP_HOME/.env/OPENSHIFT_APP_NAME
-. $APP_HOME/.env/OPENSHIFT_APP_UUID
-. $APP_HOME/.env/OPENSHIFT_APP_TYPE
+. $APP_HOME/.env/OPENSHIFT_GEAR_NAME
+. $APP_HOME/.env/OPENSHIFT_GEAR_UUID
+. $APP_HOME/.env/OPENSHIFT_GEAR_TYPE
 . $APP_HOME/.env/JENKINS_URL
 . $APP_HOME/.env/JENKINS_USERNAME
 . $APP_HOME/.env/JENKINS_PASSWORD
@@ -74,14 +74,14 @@ fi
 echo $JENKINS_PASSWORD > $OPENSHIFT_HOMEDIR/jenkins-client-1.4/.password
 
 # Maybe allow cartridges to create their own jenkins job
-if [ -f "${CARTRIDGE_BASE_PATH}/${OPENSHIFT_APP_TYPE}/info/configuration/jenkins_job_template.xml" ]
+if [ -f "${CARTRIDGE_BASE_PATH}/${OPENSHIFT_GEAR_TYPE}/info/configuration/jenkins_job_template.xml" ]
 then
-    JOB_XML="${CARTRIDGE_BASE_PATH}/${OPENSHIFT_APP_TYPE}/info/configuration/jenkins_job_template.xml"
+    JOB_XML="${CARTRIDGE_BASE_PATH}/${OPENSHIFT_GEAR_TYPE}/info/configuration/jenkins_job_template.xml"
 else
     JOB_XML="$CART_INFO_DIR/configuration/jenkins_job_template.xml"
 fi
 
-JOB_NAME=${OPENSHIFT_APP_NAME}-build
+JOB_NAME=${OPENSHIFT_GEAR_NAME}-build
 
 if out=$(${CART_INFO_DIR}/bin/jenkins_create_job "${namespace}" "${CLOUD_DOMAIN}" "$JOB_XML" 2>&1)
 then
@@ -94,7 +94,7 @@ else
         client_result "Associated with existing job '${JOB_NAME}' in Jenkins server."
         client_result "If this was not intended you can remove the jenkins client, remove or rename "
         client_result "the existing job, and re-add the jenkins client to get a new job created."
-        bldr_url="${JENKINS_DNS_NAME}computer/${OPENSHIFT_APP_NAME}bldr/"
+        bldr_url="${JENKINS_DNS_NAME}computer/${OPENSHIFT_GEAR_NAME}bldr/"
         status_code=`curl -s -w %{http_code} --output /dev/null --insecure https://${JENKINS_USERNAME}:${JENKINS_PASSWORD}@$bldr_url`
         if [ "$status_code" == "200" ]
         then
@@ -113,6 +113,6 @@ else
 fi
 client_result "Job URL: ${JENKINS_URL}job/${JOB_NAME}/"
 client_result ""
-client_result "Jenkins client 1.4 has been added to: $OPENSHIFT_APP_NAME"
+client_result "Jenkins client 1.4 has been added to: $OPENSHIFT_GEAR_NAME"
 
 set_app_info "Job URL: ${JENKINS_URL}job/${JOB_NAME}/"

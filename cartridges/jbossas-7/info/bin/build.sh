@@ -8,8 +8,8 @@ done
 
 source "/etc/stickshift/stickshift-node.conf"
 
-CONFIG_DIR="$CARTRIDGE_BASE_PATH/$OPENSHIFT_APP_TYPE/info/configuration"
-if `echo $OPENSHIFT_APP_DNS | grep -q .stg.rhcloud.com` || `echo $OPENSHIFT_APP_DNS | grep -q .dev.rhcloud.com`
+CONFIG_DIR="$CARTRIDGE_BASE_PATH/$OPENSHIFT_GEAR_TYPE/info/configuration"
+if `echo $OPENSHIFT_GEAR_DNS | grep -q .stg.rhcloud.com` || `echo $OPENSHIFT_GEAR_DNS | grep -q .dev.rhcloud.com`
 then 
 	OPENSHIFT_MAVEN_MIRROR="$CONFIG_DIR/settings.stg.xml"
 else
@@ -54,7 +54,7 @@ then
         rm -rf ${OPENSHIFT_HOMEDIR}.m2/* ${OPENSHIFT_HOMEDIR}.m2/.[^.]*
 
         #pushd ${OPENSHIFT_HOMEDIR}.m2/ > /dev/null
-        #tar -xf ${CARTRIDGE_BASE_PATH}/${OPENSHIFT_APP_TYPE}/info/data/m2_repository.tar.gz
+        #tar -xf ${CARTRIDGE_BASE_PATH}/${OPENSHIFT_GEAR_TYPE}/info/data/m2_repository.tar.gz
         #popd > /dev/null
     fi
 

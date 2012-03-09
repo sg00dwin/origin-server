@@ -30,7 +30,7 @@ done
 # echo ssh location
 # 
 source "/etc/stickshift/stickshift-node.conf"
-source ${GEAR_BASE_DIR}/$3/.env/OPENSHIFT_APP_UUID # yes its the same, this is a sanity check
-source ${GEAR_BASE_DIR}/$3/.env/OPENSHIFT_APP_DNS
-source ${GEAR_BASE_DIR}/$3/.env/OPENSHIFT_APP_NAME
-echo "ssh://${OPENSHIFT_APP_UUID}@${OPENSHIFT_APP_DNS}/~/git/${OPENSHIFT_APP_NAME}.git/"
+source ${GEAR_BASE_DIR}/$3/.env/OPENSHIFT_GEAR_UUID # yes its the same, this is a sanity check
+source ${GEAR_BASE_DIR}/$3/.env/OPENSHIFT_GEAR_DNS
+source ${GEAR_BASE_DIR}/$3/.env/OPENSHIFT_GEAR_NAME
+echo "ssh://${OPENSHIFT_GEAR_UUID}@${OPENSHIFT_GEAR_DNS}/~/git/${OPENSHIFT_GEAR_NAME}.git/"

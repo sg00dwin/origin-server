@@ -64,9 +64,9 @@ stop_jenkins() {
 case "$1" in
     start)
         _state=`get_app_state`
-        if [ -f ${OPENSHIFT_APP_DIR}run/stop_lock -o idle = "$_state" ]
+        if [ -f ${OPENSHIFT_GEAR_DIR}run/stop_lock -o idle = "$_state" ]
         then
-            echo "Application is explicitly stopped!  Use 'rhc app start -a ${OPENSHIFT_APP_NAME}' to start back up." 1>&2
+            echo "Application is explicitly stopped!  Use 'rhc app start -a ${OPENSHIFT_GEAR_NAME}' to start back up." 1>&2
             exit 0
         else
             if isrunning
@@ -99,7 +99,7 @@ case "$1" in
             if ! out=$(jenkins_reload 2>&1)
             then
                 # An error occurred reloading jenkins configuration
-                echo "Could not reload Jenkins server '${OPENSHIFT_APP_NAME}' configuration:" 1>&2
+                echo "Could not reload Jenkins server '${OPENSHIFT_GEAR_NAME}' configuration:" 1>&2
                 echo "   $out" 1>&2
                 exit 1
             fi
@@ -110,7 +110,7 @@ case "$1" in
     ;;
     status)
         if ! isrunning; then
-            echo "Application '${OPENSHIFT_APP_NAME}' is either stopped or inaccessible"
+            echo "Application '${OPENSHIFT_GEAR_NAME}' is either stopped or inaccessible"
             exit 0
         fi
         print_running_processes

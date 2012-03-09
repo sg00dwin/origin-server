@@ -8,10 +8,10 @@ STDOUT.sync = true
 STDERR.sync = true
 
 @hostname = ENV['JENKINS_URL'].split("/")[-1]
-@job_name = "#{ENV['OPENSHIFT_APP_NAME']}-build"
+@job_name = "#{ENV['OPENSHIFT_GEAR_NAME']}-build"
 @job_url = "/job/#{@job_name}"
-@app_name = ENV['OPENSHIFT_APP_NAME']
-@uuid = ENV['OPENSHIFT_APP_UUID']
+@app_name = ENV['OPENSHIFT_GEAR_NAME']
+@uuid = ENV['OPENSHIFT_GEAR_UUID']
 @namespace = ARGV[0]
 @stickshift_domain = ARGV[1]
 @job_xml = ARGV[2]

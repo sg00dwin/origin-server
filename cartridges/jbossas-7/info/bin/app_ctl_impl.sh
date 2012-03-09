@@ -15,13 +15,13 @@ then
     exit 1
 fi
 
-APP_JBOSS="$OPENSHIFT_APP_DIR"/${OPENSHIFT_APP_TYPE}
+APP_JBOSS="$OPENSHIFT_GEAR_DIR"/${OPENSHIFT_GEAR_TYPE}
 APP_JBOSS_TMP_DIR="$APP_JBOSS"/standalone/tmp
 APP_JBOSS_BIN_DIR="$APP_JBOSS"/bin
 
 # For debugging, capture script output into app tmp dir
 exec 4>&1 > /dev/null 2>&1  # Link file descriptor 4 with stdout, saves stdout.
-exec > "$APP_JBOSS_TMP_DIR/jbossas7-${OPENSHIFT_APP_NAME}_ctl-$1.log" 2>&1
+exec > "$APP_JBOSS_TMP_DIR/jbossas7-${OPENSHIFT_GEAR_NAME}_ctl-$1.log" 2>&1
 
 # Kill the process given by $1 and its children
 killtree() {
@@ -66,8 +66,8 @@ function start_app() {
     fi
 
     _state=`get_app_state`
-    if [ -f $OPENSHIFT_APP_DIR/run/stop_lock -o idle = "$_state" ]; then
-        echo "Application is explicitly stopped!  Use 'rhc app start -a ${OPENSHIFT_APP_NAME}' to start back up." 1>&2
+    if [ -f $OPENSHIFT_GEAR_DIR/run/stop_lock -o idle = "$_state" ]; then
+        echo "Application is explicitly stopped!  Use 'rhc app start -a ${OPENSHIFT_GEAR_NAME}' to start back up." 1>&2
     else
         # Check for running app
         if isrunning; then
@@ -77,7 +77,7 @@ function start_app() {
             # Start
             jopts="${JAVA_OPTS}"
             [ "${ENABLE_JPDA:-0}" -eq 1 ] && jopts="-Xdebug -Xrunjdwp:transport=dt_socket,address=$OPENSHIFT_INTERNAL_IP:8787,server=y,suspend=n ${JAVA_OPTS}"
-            JAVA_OPTS="${jopts}" $APP_JBOSS_BIN_DIR/standalone.sh > ${APP_JBOSS_TMP_DIR}/${OPENSHIFT_APP_NAME}.log 2>&1 &
+            JAVA_OPTS="${jopts}" $APP_JBOSS_BIN_DIR/standalone.sh > ${APP_JBOSS_TMP_DIR}/${OPENSHIFT_GEAR_NAME}.log 2>&1 &
 	        PROCESS_ID=$!
 	        echo $PROCESS_ID > $JBOSS_PID_FILE
 	        if ! ishttpup; then
@@ -116,7 +116,7 @@ function threaddump() {
 }
 
 
-JBOSS_PID_FILE="$OPENSHIFT_APP_DIR/run/jboss.pid"
+JBOSS_PID_FILE="$OPENSHIFT_GEAR_DIR/run/jboss.pid"
 
 case "$1" in
     start)
@@ -142,12 +142,12 @@ case "$1" in
         exec 1>&4 4>&-
         
         if ! isrunning; then
-            echo "Application '${OPENSHIFT_APP_NAME}' is either stopped or inaccessible"
+            echo "Application '${OPENSHIFT_GEAR_NAME}' is either stopped or inaccessible"
             exit 0
         fi
 
         echo tailing "$APP_JBOSS/standalone/log/server.log"
-        echo "------ Tail of ${OPENSHIFT_APP_NAME} application server.log ------"
+        echo "------ Tail of ${OPENSHIFT_GEAR_NAME} application server.log ------"
         tail "$APP_JBOSS/standalone/log/server.log"
         exit 0
     ;;

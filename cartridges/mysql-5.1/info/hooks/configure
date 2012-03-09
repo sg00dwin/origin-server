@@ -174,9 +174,9 @@ mysql_ip="$IP"
 mysql_port="3306"
 if is_a_scalable_app; then
    if $(dirname "$0")/expose-port "$@"; then
-       source $APP_HOME/.env/OPENSHIFT_APP_DNS
+       source $APP_HOME/.env/OPENSHIFT_GEAR_DNS
        source $APP_HOME/.env/OPENSHIFT_DB_PROXY_PORT
-       mysql_ip=${OPENSHIFT_APP_DNS:-"$IP"}
+       mysql_ip=${OPENSHIFT_GEAR_DNS:-"$IP"}
        mysql_port=${OPENSHIFT_DB_PROXY_PORT:-3306}
    fi
 fi

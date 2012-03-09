@@ -7,15 +7,15 @@ do
 done
 
 # Run when jenkins is not being used or run when inside a build
-export PERL5LIB="${OPENSHIFT_REPO_DIR}libs:~/${OPENSHIFT_APP_NAME}/perl5lib"
+export PERL5LIB="${OPENSHIFT_REPO_DIR}libs:~/${OPENSHIFT_GEAR_NAME}/perl5lib"
 
 if [ -f "${OPENSHIFT_REPO_DIR}/.openshift/markers/force_clean_build" ]
 then
     echo ".openshift/markers/force_clean_build found!  Rebuilding perl modules" 1>&2
-    rm -rf ~/"${OPENSHIFT_APP_NAME}/perl5lib/"* ~/.cpanm/*
+    rm -rf ~/"${OPENSHIFT_GEAR_NAME}/perl5lib/"* ~/.cpanm/*
 fi
 
-if `echo $OPENSHIFT_APP_DNS | grep -q .stg.rhcloud.com` || `echo $OPENSHIFT_APP_DNS | grep -q .dev.rhcloud.com`
+if `echo $OPENSHIFT_GEAR_DNS | grep -q .stg.rhcloud.com` || `echo $OPENSHIFT_GEAR_DNS | grep -q .dev.rhcloud.com`
 then 
     OPENSHIFT_CPAN_MIRROR="http://mirror1.stg.rhcloud.com/mirror/perl/CPAN/"
 else 
@@ -31,16 +31,16 @@ then
             echo ".openshift/markers/disable_cpan_tests!  bypassing cpan tests" 1>&2
             if [ -n "$OPENSHIFT_CPAN_MIRROR" ]
             then
-                cpanm -n --mirror $OPENSHIFT_CPAN_MIRROR -L ~/${OPENSHIFT_APP_NAME}/perl5lib "$f"
+                cpanm -n --mirror $OPENSHIFT_CPAN_MIRROR -L ~/${OPENSHIFT_GEAR_NAME}/perl5lib "$f"
             else
-                cpanm -n -L ~/${OPENSHIFT_APP_NAME}/perl5lib "$f"
+                cpanm -n -L ~/${OPENSHIFT_GEAR_NAME}/perl5lib "$f"
             fi
         else
             if [ -n "$OPENSHIFT_CPAN_MIRROR" ]
             then
-                cpanm --mirror $OPENSHIFT_CPAN_MIRROR -L ~/${OPENSHIFT_APP_NAME}/perl5lib "$f"
+                cpanm --mirror $OPENSHIFT_CPAN_MIRROR -L ~/${OPENSHIFT_GEAR_NAME}/perl5lib "$f"
             else
-                cpanm -L ~/${OPENSHIFT_APP_NAME}/perl5lib "$f"
+                cpanm -L ~/${OPENSHIFT_GEAR_NAME}/perl5lib "$f"
             fi
         fi
     done

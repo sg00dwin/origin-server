@@ -34,9 +34,9 @@ source "/var/lib/stickshift/${uuid}/.env/OPENSHIFT_RUN_DIR"
 rm -f "${OPENSHIFT_RUN_DIR}/stop_lock"
 
 
-source "/var/lib/stickshift/${uuid}/.env/OPENSHIFT_APP_DIR"
+source "/var/lib/stickshift/${uuid}/.env/OPENSHIFT_GEAR_DIR"
 [ -f "/var/lib/stickshift/${uuid}/.env/OPENSHIFT_RUNTIME_DIR" ] && source "/var/lib/stickshift/${uuid}/.env/OPENSHIFT_RUNTIME_DIR"
-: ${OPENSHIFT_RUNTIME_DIR:=$OPENSHIFT_APP_DIR/runtime}
+: ${OPENSHIFT_RUNTIME_DIR:=$OPENSHIFT_GEAR_DIR/runtime}
 
 # code copied from node/lib/util_ext
 runuser --shell /bin/sh "$uuid" -c "echo started >$OPENSHIFT_RUNTIME_DIR/.state"

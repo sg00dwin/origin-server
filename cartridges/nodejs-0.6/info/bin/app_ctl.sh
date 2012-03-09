@@ -5,8 +5,8 @@ STOPTIMEOUT=10
 FMT="%a %b %d %Y %H:%M:%S GMT%z (%Z)"
 
 function _is_node_service_running() {
-    if [ -f $OPENSHIFT_APP_DIR/run/node.pid ]; then
-        node_pid=$( cat $OPENSHIFT_APP_DIR/run/node.pid 2> /dev/null )
+    if [ -f $OPENSHIFT_GEAR_DIR/run/node.pid ]; then
+        node_pid=$( cat $OPENSHIFT_GEAR_DIR/run/node.pid 2> /dev/null )
         myid=$( id -u )
         if `ps --pid $node_pid 2>&1 | grep node > /dev/null 2>&1`  ||  \
            `pgrep -x node -u $myid > /dev/null 2>&1`; then
@@ -26,27 +26,27 @@ function _status_node_service() {
         app_state="either stopped or inaccessible"
     fi
 
-    echo "Application '$OPENSHIFT_APP_NAME' is $app_state" 1>&2
+    echo "Application '$OPENSHIFT_GEAR_NAME' is $app_state" 1>&2
 
 }  #  End of function  _status_node_service.
 
 
 function _start_node_service() {
-    if [ -f $OPENSHIFT_APP_DIR/run/stop_lock ]; then
-        echo "Application is explicitly stopped!  Use 'rhc app start -a ${OPENSHIFT_APP_NAME}' to start back up." 1>&2
+    if [ -f $OPENSHIFT_GEAR_DIR/run/stop_lock ]; then
+        echo "Application is explicitly stopped!  Use 'rhc app start -a ${OPENSHIFT_GEAR_NAME}' to start back up." 1>&2
         return 0
     else
         # Check if service is running.
         if _is_node_service_running; then
-            echo "Application '$OPENSHIFT_APP_NAME' is already running" 1>&2
+            echo "Application '$OPENSHIFT_GEAR_NAME' is already running" 1>&2
             return 0
         fi
     fi
 
     #  Got here - it means that we need to start up Node.
 
-    envf="$OPENSHIFT_APP_DIR/conf/node.env"
-    logf="$OPENSHIFT_APP_DIR/logs/node.log"
+    envf="$OPENSHIFT_GEAR_DIR/conf/node.env"
+    logf="$OPENSHIFT_GEAR_DIR/logs/node.log"
 
     #  Source environment if it exists.
     [ -f "$envf" ]  &&  source "$envf"
@@ -56,7 +56,7 @@ function _start_node_service() {
 
     pushd "$OPENSHIFT_REPO_DIR" > /dev/null
     {
-       echo "`date +"$FMT"`: Starting application '$OPENSHIFT_APP_NAME' ..."
+       echo "`date +"$FMT"`: Starting application '$OPENSHIFT_GEAR_NAME' ..."
        echo "    Script       = $node_app"
        echo "    Script Args  = $node_app_args"
        echo "    Node Options = $node_opts"
@@ -67,22 +67,22 @@ function _start_node_service() {
     npid=$!
     popd > /dev/null
     if [ $ret -eq 0 ]; then
-        echo "$npid" > "$OPENSHIFT_APP_DIR/run/node.pid"
+        echo "$npid" > "$OPENSHIFT_GEAR_DIR/run/node.pid"
     else
-        echo "Application '$OPENSHIFT_APP_NAME' failed to start - $ret" 1>&2
+        echo "Application '$OPENSHIFT_GEAR_NAME' failed to start - $ret" 1>&2
     fi
 
 }  #  End of function  _start_node_service.
 
 
 function _stop_node_service() {
-    if [ -f $OPENSHIFT_APP_DIR/run/node.pid ]; then
-        node_pid=$( cat $OPENSHIFT_APP_DIR/run/node.pid 2> /dev/null )
+    if [ -f $OPENSHIFT_GEAR_DIR/run/node.pid ]; then
+        node_pid=$( cat $OPENSHIFT_GEAR_DIR/run/node.pid 2> /dev/null )
     fi
 
     if [ -n "$node_pid" ]; then
-        logf="$OPENSHIFT_APP_DIR/logs/node.log"
-        echo "`date +"$FMT"`: Stopping application '$OPENSHIFT_APP_NAME' ..." >> $logf
+        logf="$OPENSHIFT_GEAR_DIR/logs/node.log"
+        echo "`date +"$FMT"`: Stopping application '$OPENSHIFT_GEAR_NAME' ..." >> $logf
         /bin/kill $node_pid
         ret=$?
         if [ $ret -eq 0 ]; then
@@ -99,11 +99,11 @@ function _stop_node_service() {
            /bin/kill -9 $node_pid
         fi
 
-        echo "`date +"$FMT"`: Stopped Node application '$OPENSHIFT_APP_NAME'" >> $logf
-        rm -f $OPENSHIFT_APP_DIR/run/node.pid
+        echo "`date +"$FMT"`: Stopped Node application '$OPENSHIFT_GEAR_NAME'" >> $logf
+        rm -f $OPENSHIFT_GEAR_DIR/run/node.pid
     else
         if `pgrep -x node -u $(id -u)  > /dev/null 2>&1`; then
-            echo "Warning: Application '$OPENSHIFT_APP_NAME' Node server exists without a pid file.  Use force-stop to kill." 1>&2
+            echo "Warning: Application '$OPENSHIFT_GEAR_NAME' Node server exists without a pid file.  Use force-stop to kill." 1>&2
         fi
     fi
 
