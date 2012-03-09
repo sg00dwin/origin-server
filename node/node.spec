@@ -24,6 +24,7 @@ Requires:      ruby
 Requires:      rubygem-open4
 Requires:      rubygem-parseconfig
 Requires:      rubygem-stickshift-node
+Requires:      stickshift-abstract
 Requires:      quota
 Requires:      lsof
 Requires:      wget
@@ -154,6 +155,13 @@ fi
 
 cp -f /etc/stickshift/stickshift-node.conf.libra /etc/stickshift/stickshift-node.conf
 restorecon /var/lib/stickshift/stickshift-node.conf || :
+
+
+%triggerin -- rubygem-stickshift-node
+
+cp -f /etc/stickshift/stickshift-node.conf.libra /etc/stickshift/stickshift-node.conf
+restorecon /var/lib/stickshift/stickshift-node.conf || :
+
 
 %preun
 if [ "$1" -eq "0" ]; then
