@@ -855,7 +855,6 @@ class Application < Cloud::Sdk::Cartridge
   def add_system_env_vars(gears=nil)
     reply = ResultIO.new
     run_on_gears(gears,reply,false) do |gear,r|
-      r.append gear.add_env_var("OPENSHIFT_USER_APP_NAME", self.name)
       @user.env_vars.each do |key, value|
         r.append gear.add_env_var(key, value)
       end

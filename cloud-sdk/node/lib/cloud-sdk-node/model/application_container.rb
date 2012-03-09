@@ -27,7 +27,7 @@ module Cloud::Sdk
     def initialize(application_uuid, container_uuid, user_uid=nil, app_name=nil, quota_blocks=nil, quota_files=nil)
       @uuid = container_uuid
       @application_uuid = application_uuid
-      @user = UnixUser.new(application_uuid, container_uuid, user_uid, quota_blocks, quota_files)
+      @user = UnixUser.new(application_uuid, container_uuid, user_uid, app_name, quota_blocks, quota_files)
     end
     
     def name

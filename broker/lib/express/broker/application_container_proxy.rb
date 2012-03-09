@@ -106,6 +106,7 @@ module Express
         (1..10).each do |i|
           cmd = "--with-app-uuid '#{app.uuid}' --with-container-uuid '#{gear.uuid}'"
           cmd += " -i '#{gear.uid}'" if gear.uid
+          cmd += " --named '#{app.name}'" if app.name
           cmd += " --with-quota-blocks '#{quota_blocks}'" if quota_blocks
           cmd += " --with-quota-files '#{quota_files}'" if quota_files
           mcoll_reply = execute_direct(@@C_CONTROLLER, 'app-create', cmd)
