@@ -2,7 +2,7 @@
 
 Summary:   StickShift common cartridge components
 Name:      stickshift-abstract
-Version:   0.6.3
+Version:   0.6.4
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   ASL 2.0
@@ -46,6 +46,9 @@ rm -rf $RPM_BUILD_ROOT
 %post
 
 %changelog
+* Fri Mar 09 2012 Dan McPherson <dmcphers@redhat.com> 0.6.4-1
+- bump spec numbers (dmcphers@redhat.com)
+
 * Fri Mar 09 2012 Krishna Raman <kraman@gmail.com> 0.6.1-1
 - New package for StickShift (was Cloud-Sdk)
 
