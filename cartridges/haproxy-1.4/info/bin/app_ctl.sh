@@ -79,8 +79,8 @@ reload() {
         [ -n "$zpid" ]       &&  zopts="-sf $zpid"
         echo "Reloading haproxy gracefully without service interruption" 1>&2
         /usr/sbin/haproxy -f $OPENSHIFT_APP_DIR/conf/haproxy.cfg ${zopts} > /dev/null 2>&1
-        #haproxy_ctld_daemon restart > /dev/null 2>&1
     fi
+    #haproxy_ctld_daemon restart > /dev/null 2>&1
 }
 
 

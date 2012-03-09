@@ -1,0 +1,30 @@
+#!/bin/bash
+
+# Start the application httpd instance
+
+# Exit on any errors
+set -e
+
+function print_help {
+    echo "Usage: $0 app-name namespace uuid"
+    echo "Start a running application"
+
+    echo "$0 $@" | logger -p local0.notice -t libra_httpd_start
+    exit 1
+}
+
+while getopts 'd' OPTION
+do
+    case $OPTION in
+        d) set -x
+        ;;
+        ?) print_help
+        ;;
+    esac
+done
+
+[ $# -eq 3 ] || print_help
+
+source "/var/lib/libra/$3/.env/OPENSHIFT_INTERNAL_IP"
+
+echo ${OPENSHIFT_INTERNAL_IP}

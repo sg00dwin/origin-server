@@ -33,11 +33,15 @@ Profiles:
             Type: "NET_TCP:http"
           publish_http_url:
             Type: "NET_TCP:httpd-proxy-info"
+          publish_jboss_cluster:
+            Type: "NET_TCP:jboss-cluster-info"
           publish_git_url:
             Type: "NET_TCP:git-url-info"
         Subscribes:
           set-jdbc-info:
             Type: "NET_TCP:jdbc"
+          set_jboss_cluster:
+            Type: "NET_TCP:jboss-cluster-info"
     Groups:
       app-servers:
         Components:
