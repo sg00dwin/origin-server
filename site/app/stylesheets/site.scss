@@ -110,6 +110,13 @@ body.signup {
 .section-nav.lift-counter {
   padding-bottom: 90px;
 }
+.recaptcha table {
+  table-layout: auto;
+}
+#signup-and-signin {
+  margin-bottom: 50px;
+}
+
 @media (max-width: 767px) {
   .section-nav.lift-counter {
     padding-bottom: 30px;
@@ -278,14 +285,6 @@ body.signup {
 }
 #nav .take-action {
   margin: 0 auto 20px;
-}
-
-.recaptcha table {
-  table-layout: auto;
-}
-
-#signup-and-signin {
-  margin-bottom: 50px;
 }
 
 @media (max-width: 979px) {
