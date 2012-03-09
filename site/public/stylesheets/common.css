@@ -608,7 +608,7 @@ cite {
   font-style: normal;
 }
 
-h1, h2, h3, h4, h5, .headline {
+h1, h2, h3, h4, h5, .headline .nav {
   font-family: Overpass, "Helvetica Neue", Helvetica, Arial, sans-serif;
   font-weight: normal;
 }

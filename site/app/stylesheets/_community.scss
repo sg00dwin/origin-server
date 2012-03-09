@@ -125,6 +125,10 @@
 .badge.pro { background-color: #356fce; }
 .badge.expert { background-color: #a80f00; }
 
+.community .poll > .bar > .foreground {
+  background-color: $pollBarColor;
+}
+
 .column-nav .poll {
   > .title {
     margin-bottom: 5px;
@@ -133,9 +137,39 @@
     margin-bottom: 2px;
   }
 
-  > .bar > .foreground {
-    background-color: $ribbonFoldColor;
+}
+
+/* Voting on Ideas */
+td.views-field-vud-node-widget {
+  width: 55px;
+}
+.community .vud-widget-updown .updown-down,
+.community .vud-widget-updown .vud-link-down,
+{
+  float: right;
+}
+
+/* Ideas table generation doesn't generate separate divs because it is using the view Table layout */
+.view-Ideas .views-table .views-field-title {
+  font-size: 13px;
+  line-height: 1.4em;
+
+  a:first-child {
+    font-size: 16px;
+    line-height: 1.2em;
   }
+}
+
+.vud-widget-updown > div.down-active {
+  background: $openshiftRed;
+  color: black;
+  border-color: black;
+}
+
+.vud-widget-updown > div.up-active {
+  background: $genericLightGreen;
+  color: black;
+  border-color: black;
 }
 
 /* copied from system.css */

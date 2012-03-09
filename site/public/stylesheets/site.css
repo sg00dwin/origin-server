@@ -300,12 +300,39 @@
 .badge.expert {
   background-color: #a80f00; }
 
+.community .poll > .bar > .foreground {
+  background-color: #8b161e; }
+
 .column-nav .poll > .title {
   margin-bottom: 5px; }
 .column-nav .poll > .text {
   margin-bottom: 2px; }
-.column-nav .poll > .bar > .foreground {
-  background-color: #91010b; }
+
+/* Voting on Ideas */
+td.views-field-vud-node-widget {
+  width: 55px; }
+
+.community .vud-widget-updown .updown-down,
+.community .vud-widget-updown .vud-link-down {
+  float: right; }
+
+/* Ideas table generation doesn't generate separate divs because it is using the view Table layout */
+.view-Ideas .views-table .views-field-title {
+  font-size: 13px;
+  line-height: 1.4em; }
+  .view-Ideas .views-table .views-field-title a:first-child {
+    font-size: 16px;
+    line-height: 1.2em; }
+
+.vud-widget-updown > div.down-active {
+  background: #cd202c;
+  color: black;
+  border-color: black; }
+
+.vud-widget-updown > div.up-active {
+  background: #d4e16b;
+  color: black;
+  border-color: black; }
 
 /* copied from system.css */
 html.js fieldset.collapsed {
@@ -344,24 +371,6 @@ html.js fieldset.collapsible .fieldset-wrapper {
 /* side column */
 .sidenav-column-inner {
   margin-right: 15px; }
-
-#search-field {
-  position: relative; }
-  #search-field button.search {
-    background: transparent url("../images/sprite-vert.png") 4px -170px no-repeat;
-    height: 25px;
-    width: 20px;
-    border: 0;
-    position: absolute;
-    right: 14px;
-    top: 1px; }
-  #search-field .search-query {
-    margin-bottom: 0;
-    border-radius: 5px;
-    width: -moz-available;
-    width: inherit;
-    padding-left: 5px;
-    padding-right: 25px; }
 
 /* move into core when the branding converges */
 a {
@@ -718,12 +727,66 @@ h1.ribbon {
     line-height: 46px;
     text-transform: uppercase;
     margin-top: 15px; }
-  .column-nav .nav-stacked {
-    margin-left: -14px; }
-  .column-nav .nav-pills .active > a,
-  .column-nav .nav-pills .active > a:hover {
-    background-color: #030303;
-    color: white; }
+  .column-nav .nav-list li a {
+    border-top: 1px solid #212121; }
+  .column-nav .nav-list > li:last-child a {
+    border-bottom: 1px solid #212121; }
+  .column-nav .nav-list ul > li:last-child a {
+    border-bottom: 0; }
+  .column-nav .nav-list li.expanded {
+    border-bottom: 0; }
+  .column-nav .gutter-right {
+    padding-right: 15px;
+    margin-bottom: 30px; }
+  .column-nav .nav-list {
+    padding: 0;
+    margin-bottom: 0; }
+  .column-nav .nav-list > li > a,
+  .column-nav .nav-list .nav-header {
+    margin-left: -15px;
+    margin-right: -15px;
+    text-shadow: none; }
+  .column-nav .nav-list > li > a {
+    padding: 12px 15px; }
+  .column-nav .nav-list .nav-list > li > a {
+    padding-left: 30px; }
+  .column-nav .nav-list > li > a {
+    background: transparent url("../images/sprite-vert.png") right -157px no-repeat; }
+  .column-nav .nav-list > li > a:hover {
+    background-color: #181818;
+    background-position: right -100px;
+    color: #fff; }
+  .column-nav .nav-list > .active > a,
+  .column-nav .nav-list > li.active > a:hover {
+    background-color: #181818;
+    color: #fff;
+    background-position: right -43px; }
+  .column-nav #search-field {
+    position: relative;
+    text-align: right;
+    width: -moz-available;
+    margin-right: -15px;
+    margin-top: 30px; }
+  .column-nav #search-field .search-query {
+    margin-left: 15px;
+    margin-bottom: 0;
+    padding-left: 13px;
+    padding-right: 30px;
+    color: #ccc;
+    border-radius: 3px;
+    border-width: 0;
+    background-color: #434343;
+    width: inherit;
+    width: -moz-available; }
+  .column-nav #search-field button.search {
+    right: 3px;
+    width: 25px;
+    background: transparent url("../images/sprite-vert.png") 2px -228px no-repeat;
+    height: 25px;
+    width: 20px;
+    border: 0;
+    position: absolute;
+    top: 1px; }
 
 @media (max-width: 767px) {
   .column-nav > div > ul > li {
