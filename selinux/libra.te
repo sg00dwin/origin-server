@@ -1,4 +1,4 @@
-policy_module(libra,1.1.7)
+policy_module(libra,1.1.8)
 
 ########################################
 #
@@ -123,7 +123,7 @@ manage_files_pattern(libra_domain, libra_file_type, libra_file_type)
 manage_lnk_files_pattern(libra_domain, libra_file_type, libra_file_type)
 manage_sock_files_pattern(libra_domain, libra_file_type, libra_file_type)
 files_var_lib_filetrans(libra_domain, libra_var_lib_t, { dir file sock_file } )
-allow libra_domain libra_var_lib_t:file { relabelfrom relabelto };
+allow libra_domain libra_var_lib_t:dir_file_class_set { relabelfrom relabelto };
 can_exec(libra_domain, libra_file_type)
 allow libra_app_domain libra_file_type:file entrypoint;
 
@@ -132,7 +132,7 @@ manage_fifo_files_pattern(libra_app_domain, libra_tmp_t, libra_tmp_t)
 manage_files_pattern(libra_app_domain, libra_tmp_t, libra_tmp_t)
 manage_lnk_files_pattern(libra_app_domain, libra_tmp_t, libra_tmp_t)
 manage_sock_files_pattern(libra_app_domain, libra_tmp_t, libra_tmp_t)
-allow libra_app_domain libra_tmp_t:file { relabelfrom relabelto };
+allow libra_app_domain libra_tmp_t:dir_file_class_set { relabelfrom relabelto };
 files_tmp_filetrans(libra_app_domain, libra_tmp_t, { file dir sock_file fifo_file })
 can_exec(libra_app_domain, libra_tmp_t)
 
@@ -492,7 +492,7 @@ manage_files_pattern(libra_app_domain, libra_rw_file_t, libra_rw_file_t)
 manage_fifo_files_pattern(libra_app_domain, libra_rw_file_t, libra_rw_file_t)
 manage_sock_files_pattern(libra_app_domain, libra_rw_file_t, libra_rw_file_t)
 manage_lnk_files_pattern(libra_app_domain, libra_rw_file_t, libra_rw_file_t)
-allow libra_app_domain libra_rw_file_t:file { relabelfrom relabelto };
+allow libra_app_domain libra_rw_file_t:dir_file_class_set { relabelfrom relabelto };
 
 #
 # Programs that libra instances should not be allowed to execute, that I have 
@@ -500,7 +500,7 @@ allow libra_app_domain libra_rw_file_t:file { relabelfrom relabelto };
 #
 # rpm, yum, debuginfo-install
 # traceroute, iptables, iptables-multi
-# dmesg, tcpdump
+# dmesg, tcpdump, mtr
 # su, sudo, denyhosts
 #
 
