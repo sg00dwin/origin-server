@@ -8,7 +8,7 @@
 
 Summary:   Dependencies for OpenShift development
 Name:      rhc-devenv
-Version:   0.88.1
+Version:   0.88.2
 Release:   1%{?dist}
 Group:     Development/Libraries
 License:   GPLv2
@@ -281,6 +281,20 @@ cp -f %{devenvdir}/puppet-private.pem /var/lib/puppet/ssl/private_keys/localhost
 %{policydir}/*
 
 %changelog
+* Fri Mar 09 2012 Dan McPherson <dmcphers@redhat.com> 0.88.2-1
+- Updates for getting devenv running (kraman@gmail.com)
+- Renaming Cloud-SDK -> StickShift (kraman@gmail.com)
+- remove old comment (mlamouri@redhat.com)
+- misc/devenv/li-devenv.sh: updated libra repos to point to new machines
+  (tdawson@redhat.com)
+- fixed forwarding and removed unneeded experiments with hints
+  (mlamouri@redhat.com)
+- dont forward FIRST, forward ONLY (mlamouri@redhat.com)
+- added SOA to the hints (mlamouri@redhat.com)
+- re-insert localhost in nameserver list (mlamouri@redhat.com)
+- derive from DHCP response instead of query (mlamouri@redhat.com)
+- added upstream hints (mlamouri@redhat.com)
+
 * Fri Mar 02 2012 Dan McPherson <dmcphers@redhat.com> 0.88.1-1
 - bump spec numbers (dmcphers@redhat.com)
 - add install_from_local_source (dmcphers@redhat.com)
