@@ -1,9 +1,5 @@
-<<<<<<< HEAD
-%define cartridgedir %{_libexecdir}/li/cartridges/embedded/mysql-5.1
-%define frameworkdir %{_libexecdir}/li/cartridges/mysql-5.1
-=======
 %define cartridgedir %{_libexecdir}/stickshift/cartridges/embedded/mysql-5.1
->>>>>>> 4084f88... changes to paths and variable names for mysql-5.1 cartridge for opensource
+%define frameworkdir %{_libexecdir}/stickshift/cartridges/mysql-5.1
 
 Name: rhc-cartridge-mysql-5.1
 Version: 0.22.1
