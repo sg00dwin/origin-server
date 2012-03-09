@@ -464,6 +464,9 @@ h1.ribbon {
 .column-buzz { background: $darkNoiseBackgroundColor url($transparentNoiseImageData); color: $textDarkBackground; }
 .column-buzz a { color: $textDarkBackground; }
 
+body.box header .section-top { border-top: 7px solid #333; }
+body.box .container, body.box .box { width: 550px; }
+
 // Column navigation
 .column-nav {
   background-color: $navColumnBackgroundColor;

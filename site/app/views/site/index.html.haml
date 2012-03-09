@@ -16,7 +16,7 @@
   #learn.section-striped.lift-counter
     .container.container-inset
       .row
-        = take_action 'new/signup', 'Create your <strong>first three apps</strong> for free', 'Try it out', :class => 'span12'
+        = take_action 'new/signin', 'Create your <strong>first three apps</strong> for free', 'Try it out', :class => 'span12'
   
         .span6
           %ul.learn.unstyled
@@ -77,7 +77,7 @@
                   our community
               .span6
                 .align-right
-                  = link_to "follow", :class => 'link-with-action' do
+                  = link_to openshift_twitter_url, :class => 'link-with-action' do
                     %strong Follow
                     OpenShift
                 .align-right

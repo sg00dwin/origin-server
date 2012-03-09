@@ -165,8 +165,9 @@ RedHatCloud::Application.routes.draw do
       match 'overview' => 'site#overview', :via => [:get]
       match 'express' => 'site#express', :via => [:get]
       match 'flex' => 'site#flex', :via => [:get]
-      match 'signup' => 'site#signup', :as => :user, :via => [:get]
       match 'signin' => 'site#signin', :as => :user, :via => [:get]
+      match 'signup' => 'site#signup', :as => :user, :via => [:get]
+      match 'recover' => 'site#recover', :as => :user, :via => [:get]
     end
 
     unless Rails.env.production?
