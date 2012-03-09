@@ -4,7 +4,7 @@
 
 Summary:   StickShift broker components
 Name:      stickshift-broker
-Version:   0.6.0
+Version:   0.6.1
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   ASL 2.0
@@ -159,5 +159,8 @@ echo "> use stickshift_broker_dev"
 echo "> db.addUser(\"stickshift\", \"mooo\")"
 
 %changelog
+* Fri Mar 09 2012 Krishna Raman <kraman@gmail.com> 0.6.1-1
+- New package for StickShift (was Cloud-Sdk)
+
 * Tue Mar 06 2012 Krishna Raman <kraman@gmail.com> 0.5.2-1
 - Cloud-Sdk => Stickshift rename
