@@ -131,10 +131,6 @@ client_result ""
 client_result "Note:  You can change your password at: http://${application}-${namespace}.${CLOUD_DOMAIN}/me/configure"
 client_result ""
 
-<<<<<<< HEAD
-add_env_var "JENKINS_URL=http://${application}-${namespace}.${CLOUD_DOMAIN}/"
-=======
-add_env_var "JENKINS_URL=https://${application}-${namespace}.${libra_domain}/"
->>>>>>> force jenkins to https
+add_env_var "JENKINS_URL=https://${application}-${namespace}.${CLOUD_DOMAIN}/"
 add_env_var "JENKINS_USERNAME=system_builder"
 add_env_var "JENKINS_PASSWORD=$system_builder_password"

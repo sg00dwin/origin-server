@@ -52,17 +52,9 @@ then
     client_message "This might be expected if '${application}' isn't running."
     client_message "Otherwise you might need to reload it with 'rhc app reload -a ${application}'"
     client_message "or by using the Jenkins interface:"
-<<<<<<< HEAD
-    client_message "http://${application}-${new_namespace}.${CLOUD_DOMAIN}/manage"
+    client_message "https://${application}-${new_namespace}.${CLOUD_DOMAIN}/manage"
     client_message ""
 fi
 
-add_env_var "JENKINS_URL=http://${application}-${new_namespace}.${CLOUD_DOMAIN}/"
-=======
-    client_message "https://${application}-${new_namespace}.${libra_domain}/manage"
-    client_message ""
-fi
-
-add_env_var "JENKINS_URL=https://${application}-${new_namespace}.${libra_domain}/"
->>>>>>> force jenkins to https
+add_env_var "JENKINS_URL=https://${application}-${new_namespace}.${CLOUD_DOMAIN}/"
 
