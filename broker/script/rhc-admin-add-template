@@ -81,6 +81,6 @@ tags = tags.split(",")
 
 require "/var/www/stickshift/broker/config/environment"
 
-template = ApplicationTemplate.new(display_name,descriptor, git_url,tags,gear_cost,metadata)
+template = ApplicationTemplate.new(display_name,descriptor.to_yaml, git_url,tags,gear_cost,metadata)
 template.save
 print "Template #{template.uuid} created\n"

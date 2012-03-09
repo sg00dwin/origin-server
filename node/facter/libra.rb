@@ -29,6 +29,16 @@
 require 'rubygems'
 require 'parseconfig'
 
+def get_node_config_value(key, default)
+  config_file = ParseConfig.new('/etc/stickshift/stickshift-node.conf')
+  val = config_file.get_value(key)
+  return default if val.nil?
+  val.gsub!(/\\:/,":") if not val.nil?
+  val.gsub!(/[ \t]*#[^\n]*/,"") if not val.nil?
+  val = val[1..-2] if not val.nil? and val.start_with? "\""
+  val
+end
+
 #
 # Count the number of git repos on this host
 #
@@ -59,11 +69,8 @@ end
 #
 public_ip = 'UNKNOWN'
 public_hostname = 'UNKNOWN'
-if File.exists?('/etc/stickshift/stickshift-node.conf')
-  config_file = ParseConfig.new('/etc/stickshift/stickshift-node.conf')
-  public_ip = config_file.get_value('PUBLIC_IP_OVERRIDE') ? config_file.get_value('PUBLIC_IP_OVERRIDE') : 'UNKNOWN'
-  public_hostname = config_file.get_value('PUBLIC_HOSTNAME_OVERRIDE') ? config_file.get_value('PUBLIC_HOSTNAME_OVERRIDE') : 'UNKNOWN'
-end
+public_ip = get_node_config_value("PUBLIC_IP_OVERRIDE", "UNKNOWN")
+public_hostname = get_node_config_value("PUBLIC_HOSTNAME_OVERRIDE", "UNKNOWN")
 Facter.add(:public_ip) do
   setcode { public_ip }
 end
