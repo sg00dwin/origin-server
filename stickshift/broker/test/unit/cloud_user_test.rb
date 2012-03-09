@@ -56,16 +56,21 @@ class CloudUserTest < ActiveSupport::TestCase
     observer_seq = sequence("observer_seq")
     
     CloudUser.expects(:find).returns(nil)
-    StickShift::DnsService.instance.class.any_instance.expects(:namespace_available?).with(namespace).returns(true)
+    dns = mock("DnsService")
+    StickShift::DnsService.expects(:instance).returns(dns)
+    dns.expects(:namespace_available?).with(namespace).returns(true)
          
     CloudUser.expects(:notify_observers).with(:before_cloud_user_create, user).in_sequence(observer_seq).at_least_once
     CloudUser.expects(:notify_observers).with(:cloud_user_create_success, user).in_sequence(observer_seq).at_least_once
     CloudUser.expects(:notify_observers).with(:after_cloud_user_create, user).in_sequence(observer_seq).at_least_once
-    StickShift::DataStore.instance.class.any_instance.expects(:create)
+
+    ds = mock("DataStore")
+    StickShift::DataStore.expects(:instance).returns(ds)
+    ds.expects(:create)
     
-    StickShift::DnsService.instance.class.any_instance.expects(:register_namespace).with(namespace).at_least_once
-    StickShift::DnsService.instance.class.any_instance.expects(:publish).at_least_once
-    StickShift::DnsService.instance.class.any_instance.expects(:close).at_least_once
+    dns.expects(:register_namespace).with(namespace).at_least_once
+    dns.expects(:publish).at_least_once
+    dns.expects(:close).at_least_once
     
     user.save
   end
@@ -207,11 +212,14 @@ class CloudUserTest < ActiveSupport::TestCase
     user = CloudUser.new(login, ssh, namespace)
      
     CloudUser.expects(:find).returns(nil)
-    StickShift::DnsService.instance.class.any_instance.expects(:namespace_available?).with(namespace).returns(true)
-    StickShift::DataStore.instance.class.any_instance.expects(:create)
-    StickShift::DnsService.instance.class.any_instance.expects(:register_namespace).with(namespace).at_least_once
-    StickShift::DnsService.instance.class.any_instance.expects(:publish).at_least_once
-    StickShift::DnsService.instance.class.any_instance.expects(:close).at_least_once
+    dns = mock("DnsService")
+    StickShift::DnsService.expects(:instance).returns(dns)
+
+    dns.expects(:namespace_available?).with(namespace).returns(true)
+    dns.expects(:create)
+    dns.expects(:register_namespace).with(namespace).at_least_once
+    dns.expects(:publish).at_least_once
+    dns.expects(:close).at_least_once
     user.save
     Mocha::Mockery.instance.stubba.unstub_all
 
@@ -235,15 +243,17 @@ class CloudUserTest < ActiveSupport::TestCase
     CloudUser.expects(:notify_observers).with(:after_namespace_update, user).in_sequence(observer_seq).at_least_once
     
     new_namespace = "kraman.stickshift1.net"
-    StickShift::DnsService.instance.class.any_instance.expects(:namespace_available?).with(new_namespace).returns(true)
-    StickShift::DnsService.instance.class.any_instance.expects(:deregister_namespace).with(namespace).once
-    StickShift::DnsService.instance.class.any_instance.expects(:register_namespace).with(new_namespace).once
-    StickShift::DnsService.instance.class.any_instance.expects(:publish).once
+    dns = mock("DnsService")
+    StickShift::DnsService.expects(:instance).returns(dns)
+    dns.expects(:namespace_available?).with(new_namespace).returns(true)
+    dns.expects(:deregister_namespace).with(namespace).once
+    dns.expects(:register_namespace).with(new_namespace).once
+    dns.expects(:publish).once
     
-    StickShift::DnsService.instance.class.any_instance.expects(:deregister_application).with("app1", namespace).once
-    StickShift::DnsService.instance.class.any_instance.expects(:deregister_application).with("app2", namespace).once
-    StickShift::DnsService.instance.class.any_instance.expects(:register_application).with("app1", new_namespace, "foo.bar").once
-    StickShift::DnsService.instance.class.any_instance.expects(:register_application).with("app2", new_namespace, "foo.bar").once
+    dns.expects(:deregister_application).with("app1", namespace).once
+    dns.expects(:deregister_application).with("app2", namespace).once
+    dns.expects(:register_application).with("app1", new_namespace, "foo.bar").once
+    dns.expects(:register_application).with("app2", new_namespace, "foo.bar").once
     CloudUser.excludes_attributes.push :mocha
     
     user.update_namespace(new_namespace)
