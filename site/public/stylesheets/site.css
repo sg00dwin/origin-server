@@ -328,29 +328,29 @@
 }
 
 /* line 43, ../../app/stylesheets/_community.scss */
-.view-nodes-by-category article.blog {
+.view-nodes-by-category article {
   margin-bottom: 25px;
 }
 /* line 46, ../../app/stylesheets/_community.scss */
-.view-nodes-by-category article.blog > h2 {
+.view-nodes-by-category article > h2 {
   line-height: 25px;
 }
 /* line 48, ../../app/stylesheets/_community.scss */
-.view-nodes-by-category article.blog > .breadcrumb {
+.view-nodes-by-category article > .breadcrumb {
   margin-bottom: 5px;
   text-transform: uppercase;
   font-weight: bold;
 }
 /* line 53, ../../app/stylesheets/_community.scss */
-.view-nodes-by-category article.blog > .breadcrumb > .creator {
+.view-nodes-by-category article > .breadcrumb > .creator {
   color: black;
 }
 /* line 54, ../../app/stylesheets/_community.scss */
-.view-nodes-by-category article.blog > .breadcrumb > .created {
+.view-nodes-by-category article > .breadcrumb > .created {
   color: #888;
 }
 /* line 59, ../../app/stylesheets/_community.scss */
-.view-nodes-by-category article.blog > .nid_1 {
+.view-nodes-by-category article > div:last-child {
   text-transform: uppercase;
   text-align: right;
   padding-bottom: 3px;
@@ -358,7 +358,7 @@
   font-size: 11px;
 }
 /* line 65, ../../app/stylesheets/_community.scss */
-.view-nodes-by-category article.blog > .nid_1 > a {
+.view-nodes-by-category article > div:last-child > a {
   color: #888;
 }
 
@@ -463,38 +463,43 @@
   margin-bottom: 2px;
 }
 
+/* line 141, ../../app/stylesheets/_community.scss */
+.kb-toggle {
+  display: none;
+}
+
 /* Voting on Ideas */
-/* line 142, ../../app/stylesheets/_community.scss */
+/* line 146, ../../app/stylesheets/_community.scss */
 td.views-field-vud-node-widget {
   width: 55px;
 }
 
-/* line 147, ../../app/stylesheets/_community.scss */
+/* line 151, ../../app/stylesheets/_community.scss */
 .community .vud-widget-updown .updown-down,
 .community .vud-widget-updown .vud-link-down {
   float: right;
 }
 
 /* Ideas table generation doesn't generate separate divs because it is using the view Table layout */
-/* line 152, ../../app/stylesheets/_community.scss */
+/* line 156, ../../app/stylesheets/_community.scss */
 .view-Ideas .views-table .views-field-title {
   font-size: 13px;
   line-height: 1.4em;
 }
-/* line 156, ../../app/stylesheets/_community.scss */
+/* line 160, ../../app/stylesheets/_community.scss */
 .view-Ideas .views-table .views-field-title a:first-child {
   font-size: 16px;
   line-height: 1.2em;
 }
 
-/* line 162, ../../app/stylesheets/_community.scss */
+/* line 166, ../../app/stylesheets/_community.scss */
 .vud-widget-updown > div.down-active {
   background: #cd202c;
   color: black;
   border-color: black;
 }
 
-/* line 168, ../../app/stylesheets/_community.scss */
+/* line 172, ../../app/stylesheets/_community.scss */
 .vud-widget-updown > div.up-active {
   background: #d4e16b;
   color: black;
@@ -502,7 +507,7 @@ td.views-field-vud-node-widget {
 }
 
 /* copied from system.css */
-/* line 175, ../../app/stylesheets/_community.scss */
+/* line 179, ../../app/stylesheets/_community.scss */
 html.js fieldset.collapsed {
   border-bottom-width: 0;
   border-left-width: 0;
@@ -511,50 +516,50 @@ html.js fieldset.collapsed {
   margin-bottom: 0;
 }
 
-/* line 182, ../../app/stylesheets/_community.scss */
+/* line 186, ../../app/stylesheets/_community.scss */
 html.js fieldset.collapsed * {
   display: none;
 }
 
-/* line 185, ../../app/stylesheets/_community.scss */
+/* line 189, ../../app/stylesheets/_community.scss */
 html.js fieldset.collapsed legend {
   display: block;
 }
 
-/* line 188, ../../app/stylesheets/_community.scss */
+/* line 192, ../../app/stylesheets/_community.scss */
 html.js fieldset.collapsible legend a {
   background: url("../images/menu-expanded.png") no-repeat scroll 5px 75% transparent;
   padding-left: 15px;
 }
 
-/* line 192, ../../app/stylesheets/_community.scss */
+/* line 196, ../../app/stylesheets/_community.scss */
 html.js fieldset.collapsed legend a {
   background-image: url("../images/menu-collapsed.png");
   background-position: 5px 50%;
 }
 
-/* line 196, ../../app/stylesheets/_community.scss */
+/* line 200, ../../app/stylesheets/_community.scss */
 * html.js fieldset.collapsed legend, * html.js fieldset.collapsed legend *, * html.js fieldset.collapsed table * {
   display: inline;
 }
 
-/* line 199, ../../app/stylesheets/_community.scss */
+/* line 203, ../../app/stylesheets/_community.scss */
 html.js fieldset.collapsible {
   position: relative;
 }
 
-/* line 202, ../../app/stylesheets/_community.scss */
+/* line 206, ../../app/stylesheets/_community.scss */
 html.js fieldset.collapsible legend a {
   display: block;
 }
 
-/* line 205, ../../app/stylesheets/_community.scss */
+/* line 209, ../../app/stylesheets/_community.scss */
 html.js fieldset.collapsible .fieldset-wrapper {
   overflow: auto;
 }
 
 /* side column */
-/* line 210, ../../app/stylesheets/_community.scss */
+/* line 214, ../../app/stylesheets/_community.scss */
 .sidenav-column-inner {
   margin-right: 15px;
 }
@@ -1199,16 +1204,16 @@ h1.ribbon > .ribbon-left {
   color: #fff;
   background-position: right -43px;
 }
-/* line 538, ../../app/stylesheets/site.scss */
-.column-nav #search-field {
+/* line 539, ../../app/stylesheets/site.scss */
+.column-nav .search-row {
   position: relative;
   text-align: right;
   width: -moz-available;
   margin-right: -15px;
   margin-top: 30px;
 }
-/* line 545, ../../app/stylesheets/site.scss */
-.column-nav #search-field .search-query {
+/* line 546, ../../app/stylesheets/site.scss */
+.column-nav .search-row .search-query {
   margin-left: 15px;
   margin-bottom: 0;
   padding-left: 13px;
@@ -1220,8 +1225,8 @@ h1.ribbon > .ribbon-left {
   width: inherit;
   width: -moz-available;
 }
-/* line 557, ../../app/stylesheets/site.scss */
-.column-nav #search-field button.search {
+/* line 558, ../../app/stylesheets/site.scss */
+.column-nav .search-row button.search {
   right: 3px;
   width: 25px;
   background: transparent url("../images/sprite-vert.png") 2px -228px no-repeat;
@@ -1233,58 +1238,58 @@ h1.ribbon > .ribbon-left {
 }
 
 @media (max-width: 767px) {
-  /* line 570, ../../app/stylesheets/site.scss */
+  /* line 572, ../../app/stylesheets/site.scss */
   .column-nav > div > ul > li {
     float: left;
     width: 32%;
   }
 
-  /* line 571, ../../app/stylesheets/site.scss */
+  /* line 573, ../../app/stylesheets/site.scss */
   .nav-location {
     display: none;
   }
 }
 /* Stacked navigations indent by 1 gutter each time */
-/* line 575, ../../app/stylesheets/site.scss */
+/* line 577, ../../app/stylesheets/site.scss */
 .nav-stacked > li > .nav-stacked {
   margin-left: 14px;
   margin-bottom: 0;
 }
 
 @media (min-width: 768px) and (max-width: 979px) {
-  /* line 577, ../../app/stylesheets/site.scss */
+  /* line 579, ../../app/stylesheets/site.scss */
   .nav-stacked > li > .nav-stacked {
     margin-left: 10px;
   }
 }
 @media (min-width: 1200px) {
-  /* line 580, ../../app/stylesheets/site.scss */
+  /* line 582, ../../app/stylesheets/site.scss */
   .nav-stacked > li > .nav-stacked {
     margin-left: 15px;
   }
 }
-/* line 584, ../../app/stylesheets/site.scss */
+/* line 586, ../../app/stylesheets/site.scss */
 .column-content {
   background-color: white;
 }
-/* line 587, ../../app/stylesheets/site.scss */
+/* line 589, ../../app/stylesheets/site.scss */
 .column-content h1 {
   margin-top: 25px;
   margin-bottom: 25px;
 }
-/* line 592, ../../app/stylesheets/site.scss */
+/* line 594, ../../app/stylesheets/site.scss */
 .column-content section {
   margin-bottom: 25px;
 }
 
-/* line 597, ../../app/stylesheets/site.scss */
+/* line 599, ../../app/stylesheets/site.scss */
 .column-buzz {
   padding: 28px;
   position: relative;
 }
 
 /* The body content of a site page */
-/* line 600, ../../app/stylesheets/site.scss */
+/* line 602, ../../app/stylesheets/site.scss */
 .row-content {
   margin-bottom: 20px;
 }
@@ -1293,7 +1298,7 @@ h1.ribbon > .ribbon-left {
 @media (min-width: 768px) {
   /* Until we can build with compass this is directly included and modified
   /* line 3, ../../app/stylesheets/home.scss */
-  /* line 609, ../../app/stylesheets/site.scss */
+  /* line 611, ../../app/stylesheets/site.scss */
   body > header {
     background-image: url("../images/dark-gray-diagonal-noise.jpg");
     background-image: url("../images/diagonals-top.png"), url("../images/mts.png"), -webkit-gradient(radial, circle, 0, circle, 2, color-stop(0%, white), color-stop(50%, white), color-stop(100%, rgba(255, 255, 255, 0))), -webkit-gradient(radial, circle, 0, circle, 2, color-stop(0%, white), color-stop(100%, rgba(0, 0, 0, 0))), -webkit-gradient(radial, circle, 0, circle, 2, color-stop(0%, #eeeeee), color-stop(100%, rgba(0, 0, 0, 0))), -webkit-gradient(radial, circle, 0, circle, 2, color-stop(0%, #eeeeee), color-stop(100%, rgba(0, 0, 0, 0))), url("../images/dark-gray-diagonal-noise.jpg");
@@ -1308,7 +1313,7 @@ h1.ribbon > .ribbon-left {
   }
 
   /* line 49, ../../app/stylesheets/home.scss */
-  /* line 622, ../../app/stylesheets/site.scss */
+  /* line 624, ../../app/stylesheets/site.scss */
   .section-base {
     background-color: #181919;
     background-image: url("../images/diagonals-bottom.png"), url("../images/tiny-panda.png"), url("../images/mts-bottom.png");
@@ -1317,28 +1322,28 @@ h1.ribbon > .ribbon-left {
   }
 
   /* line 61, ../../app/stylesheets/home.scss */
-  /* line 629, ../../app/stylesheets/site.scss */
+  /* line 631, ../../app/stylesheets/site.scss */
   .section-base .column-buzz {
     background: black url("../images/black-noise.png");
     margin: 0 80px;
   }
 }
 @media (max-width: 767px) {
-  /* line 636, ../../app/stylesheets/site.scss */
+  /* line 638, ../../app/stylesheets/site.scss */
   body > header {
     background: url("../images/dark-gray-diagonal-noise.jpg") repeat;
   }
 
-  /* line 640, ../../app/stylesheets/site.scss */
+  /* line 642, ../../app/stylesheets/site.scss */
   .messaging {
     margin: 0;
   }
 
-  /* line 644, ../../app/stylesheets/site.scss */
+  /* line 646, ../../app/stylesheets/site.scss */
   .section-base {
     background-image: none;
   }
-  /* line 647, ../../app/stylesheets/site.scss */
+  /* line 649, ../../app/stylesheets/site.scss */
   .section-base .column-buzz {
     background-image: none;
     margin: 0;
