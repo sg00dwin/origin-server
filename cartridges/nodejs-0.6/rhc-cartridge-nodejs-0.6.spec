@@ -76,6 +76,9 @@ ln -s %{cartridgedir}/../abstract/info/hooks/expose-port %{buildroot}%{cartridge
 ln -s %{cartridgedir}/../abstract/info/hooks/conceal-port %{buildroot}%{cartridgedir}/info/hooks/conceal-port
 ln -s %{cartridgedir}/../abstract/info/hooks/show-port %{buildroot}%{cartridgedir}/info/hooks/show-port
 ln -s %{cartridgedir}/../abstract/info/hooks/system-messages %{buildroot}%{cartridgedir}/info/hooks/system-messages
+mkdir -p %{buildroot}%{cartridgedir}/info/connection-hooks/
+ln -s %{cartridgedir}/../abstract/info/connection-hooks/publish-git-url %{buildroot}%{cartridgedir}/info/connection-hooks/publish-git-url
+ln -s %{cartridgedir}/../abstract/info/connection-hooks/publish-http-url %{buildroot}%{cartridgedir}/info/connection-hooks/publish-http-url
 
 %clean
 rm -rf %{buildroot}
