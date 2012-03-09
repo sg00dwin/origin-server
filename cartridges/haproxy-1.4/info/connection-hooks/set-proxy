@@ -30,10 +30,12 @@ done
 
 [ $# -gt 3 ] || print_help
 
-# Import Environment Variables
-for f in ~/.env/*; do
-    source $f
-done
+CART_DIR=/usr/libexec/li/cartridges
+source ${CART_DIR}/abstract/info/lib/util
+
+setup_configure "$1" $2 $3
+
+import_env_vars
 
 declare -A curr_server_gears
 

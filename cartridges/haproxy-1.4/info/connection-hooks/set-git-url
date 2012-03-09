@@ -182,10 +182,12 @@ done
 
 [ $# -gt 3 ] || print_help
 
-# Import Environment Variables
-for f in ~/.env/*; do
-    source $f
-done
+CART_DIR=/usr/libexec/li/cartridges
+source ${CART_DIR}/abstract/info/lib/util
+
+setup_configure "$1" $2 $3
+
+import_env_vars
 
 export GIT_SSH=$CART_INFO_DIR/bin/ssh
 export GIT_DIR=${OPENSHIFT_HOMEDIR}/git/${OPENSHIFT_APP_NAME}.git
