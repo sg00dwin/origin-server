@@ -142,12 +142,11 @@ class ApplicationTest < ActiveSupport::TestCase
   
   test "add alias" do
     user = mock("user")
-    CartridgeCache.expects(:cartridge_names).returns(["php-5.3"]).at_least_once
-
-    user = mock("user")
+    CartridgeCache.expects(:cartridge_names).returns(["php-5.3"]).once
+    container = mock("ApplicationContainerProxy")
+    container.expects(:add_alias).returns(ResultIO.new).once
     application = Application.new(user, "app_name", "app_uuid", "small", "php-5.3")
-    application.expects(:container).returns(StickShift::ApplicationContainerProxy.instance("asldksd")).at_least_once
-    StickShift::ApplicationContainerProxy.any_instance.stubs(:add_alias).returns(ResultIO.new)
+    application.expects(:container).returns(container).once
     application.expects(:save).once
     application.add_alias("foo.bar.com")
   end
@@ -155,11 +154,11 @@ class ApplicationTest < ActiveSupport::TestCase
   test "remove alias" do    
     user = mock("user")
     CartridgeCache.expects(:cartridge_names).returns(["php-5.3"])
+    container = mock("ApplicationContainerProxy")
+    container.expects(:remove_alias).returns(ResultIO.new).once
     application = Application.new(user, "app_name", "app_uuid", "small", "php-5.3")
     application.expects(:aliases).returns(["foo.bar.com"]).at_least_once    
-    application.expects(:container).returns(StickShift::ApplicationContainerProxy.instance("asldksd")).at_least_once
-    StickShift::ApplicationContainerProxy.any_instance.stubs(:remove_alias).returns(ResultIO.new)
-    
+    application.expects(:container).returns(container).once
     application.expects(:save).once
     application.remove_alias("foo.bar.com")
   end
