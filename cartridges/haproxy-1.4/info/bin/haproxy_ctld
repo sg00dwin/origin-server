@@ -4,12 +4,13 @@ require 'socket'
 require 'logger'
 require 'getoptlong'
 
+@check_interval=3
 
 class Haproxy_attr
-    attr_accessor :pxname,:svname,:qcur,:qmax,:scur,:smax,:slim,:stot,:bin,:bout,:dreq,:dresp,:ereq,:econ,:eresp,:wretr,:wredis,:status,:weight,:act,:bck,:chkfail,:chkdown,:lastchg,:downtime,:qlimit,:pid,:iid,:sid,:throttle,:lbtot,:tracked,:type,:rate,:rate_lim,:rate_max,:check_status,:check_code,:check_duration,:hrsp_1xx,:hrsp_2xx,:hrsp_3xx,:hrsp_4xx,:hrsp_5xx,:hrsp_other,:hanafail,:req_rate,:req_rate_max,:req_tot,:cli_abrt,:srv_abrt
+    attr_accessor :pxname,:svname,:qcur,:qmax,:scur,:smax,:slim,:stot,:bin,:bout,:dreq,:dresp,:ereq,:econ,:eresp,:wretr,:wredis,:status,:weight,:act,:bck,:chkfail,:chkremove,:lastchg,:removetime,:qlimit,:pid,:iid,:sid,:throttle,:lbtot,:tracked,:type,:rate,:rate_lim,:rate_max,:check_status,:check_code,:check_duration,:hrsp_1xx,:hrsp_2xx,:hrsp_3xx,:hrsp_4xx,:hrsp_5xx,:hrsp_other,:hanafail,:req_rate,:req_rate_max,:req_tot,:cli_abrt,:srv_abrt
 
     def initialize(line)
-        (@pxname,@svname,@qcur,@qmax,@scur,@smax,@slim,@stot,@bin,@bout,@dreq,@dresp,@ereq,@econ,@eresp,@wretr,@wredis,@status,@weight,@act,@bck,@chkfail,@chkdown,@lastchg,@downtime,@qlimit,@pid,@iid,@sid,@throttle,@lbtot,@tracked,@type,@rate,@rate_lim,@rate_max,@check_status,@check_code,@check_duration,@hrsp_1xx,@hrsp_2xx,@hrsp_3xx,@hrsp_4xx,@hrsp_5xx,@hrsp_other,@hanafail,@req_rate,@req_rate_max,@req_tot,@cli_abrt,@srv_abrt) = line.split(',')
+        (@pxname,@svname,@qcur,@qmax,@scur,@smax,@slim,@stot,@bin,@bout,@dreq,@dresp,@ereq,@econ,@eresp,@wretr,@wredis,@status,@weight,@act,@bck,@chkfail,@chkremove,@lastchg,@removetime,@qlimit,@pid,@iid,@sid,@throttle,@lbtot,@tracked,@type,@rate,@rate_lim,@rate_max,@check_status,@check_code,@check_duration,@hrsp_1xx,@hrsp_2xx,@hrsp_3xx,@hrsp_4xx,@hrsp_5xx,@hrsp_other,@hanafail,@req_rate,@req_rate_max,@req_tot,@cli_abrt,@srv_abrt) = line.split(',')
     end
 end
 
@@ -23,15 +24,20 @@ class Haproxy
 
     def initialize(stats_sock="/tmp/stats")
         @stats_sock=stats_sock
-        @last_scale_up_time=0
+        @last_scale_up_time=Time.now
+        @flap_protection_time_seconds = 120 # number of seconds to ignore gear remove events since last up event
+        @remove_count_threshold = 3
+        @remove_count = 0
         self.refresh
+        @log.info("Starting haproxy_ctld")
+        self.print_gear_stats
     end
 
     def refresh(stats_sock="/tmp/stats")
         @socket = UNIXSocket.open(@stats_sock)
         @socket.puts("show stat\n") 
         @max_sessions_per_gear=10.0
-        @gear_down_pct = 50.1
+        @gear_remove_pct = 49.9
         @gear_up_pct = 90.0
         @log = Logger.new("#{ENV['OPENSHIFT_LOG_DIR']}/scale_events.log")
 #       @log.info("Haproxy watcher started")
@@ -62,7 +68,13 @@ class Haproxy
     end
 
     def last_scale_up_time_seconds()
-        Time.now - @last_scale_up_time
+        seconds = Time.now - @last_scale_up_time
+        seconds.to_i
+    end
+
+    def seconds_left_til_remove()
+        seconds = @flap_protection_time_seconds - self.last_scale_up_time_seconds
+        seconds.to_i
     end
 
     def gear_count()
@@ -83,28 +95,71 @@ class Haproxy
 
     def add_gear
         @last_scale_up_time = Time.now
-        @log.info("GEAR_UP - capacity: #{self.session_capacity_pct}% gear_count: #{self.gear_count} sessions: #{self.sessions} up_threshold: #{@gear_up_pct}%")
+        @log.info("GEAR_UP - capacity: #{self.session_capacity_pct}% gear_count: #{self.gear_count} sessions: #{self.sessions} up_thresh: #{@gear_up_pct}%")
         `add-gear -l mmcgrath@redhat.com -p ' ' -n #{self.gear_namespace}  -h localhost -a #{ENV['OPENSHIFT_APP_NAME']}`
+        self.print_gear_stats
     end
 
     def remove_gear
-        @log.info("GEAR_DOWN - capacity: #{self.session_capacity_pct}% gear_count: #{self.gear_count} sessions: #{self.sessions} down_threshold: #{@gear_down_pct}%")
+        @log.info("GEAR_DOWN - capacity: #{self.session_capacity_pct}% gear_count: #{self.gear_count} sessions: #{self.sessions} remove_thresh: #{@gear_remove_pct}%")
         `remove-gear -l mmcgrath@redhat.com -p ' ' -n #{self.gear_namespace} -h localhost -a #{ENV['OPENSHIFT_APP_NAME']}`
+        self.print_gear_stats
     end
 
     def print_gear_stats
-        @log.debug("GEAR_DO_NOTHING - Capacity: #{session_capacity_pct}% gear_count: #{gear_count} sessions: #{sessions} up/down_threshold: #{@gear_up_pct}%/#{@gear_down_pct}% last_up_threshold: #{self.last_scale_up_time}/30")
+        if self.seconds_left_til_remove > 0
+            seconds_left = self.seconds_left_til_remove
+        else
+            seconds_left = 0
+        end
+        @log.debug("GEAR_INFO - capacity: #{session_capacity_pct}% gear_count: #{gear_count} sessions: #{sessions} up/remove_thresh: #{@gear_up_pct}%/#{@gear_remove_pct}% sec_left_til_remove: #{seconds_left} gear_remove_thresh: #{@remove_count}/#{@remove_count_threshold}")
     end
+
     def check_capacity(debug=nil)
+        # check_capacity tracks the following information for determing whether
+        # or not to increase or decrease a gear
+        #
+        # @session_capacity_pct (%full considering total number of gears and
+        #       current sessions
+        # @gear_up_pct - When capacity is larger then gear_up_pct, add a gear
+        # @gear_remove_pct - When capacity is less then gear_remove_pct, remove a
+        #       gear
+        # @gear_count - The number of gears (don't remove a gear when there's
+        #       only one left.
+        # @last_scale_up_time_seconds - how long it's been since we last scaled
+        #       up
+        # @flap_protection_time_seconds - The number of seconds to wait until
+        #       triggering a gear_remove event
+        # @remove_count - Number of consecutive remove_gear requests
+        # @remove_count_threshold - when remove_count meets remove_count_threshold
+        #       actually issue a remove_gear
+
+
+        # If active capacity is greater then gear_up pct. Add a gear
         if @session_capacity_pct >= @gear_up_pct
+            @remove_count = 0
             self.add_gear
-        elsif @session_capacity_pct < @gear_down_pct and @gear_count > 1
-            if self.last_scale_up_time_seconds > 30
-                self.remove_gear
+        elsif @session_capacity_pct < @gear_remove_pct and @gear_count > 1
+            # If active capacity is less then gear remove percentage
+            # *AND* the last gear up happened longer then
+            # ago @flap_protection_time_seconds
+            # *AND* remove_count is larger then the remove_count_threshold
+            # Gear remove.
+
+            @remove_count += 1 if @remove_count < 3
+
+            if self.last_scale_up_time_seconds.to_i > @flap_protection_time_seconds
+                if @remove_count >= @remove_count_threshold
+                    self.remove_gear
+                    @remove_count = 0
+                else
+                    self.print_gear_stats if debug
+                end
             else
                 self.print_gear_stats if debug
             end
         else
+            @remove_count = 0
             self.print_gear_stats if debug
         end
     end
@@ -132,7 +187,7 @@ scaling options will stay running in the foreground.
 
 Manual scaling options:
   -u|--up           Trigger a gear_up event and add an additional gear
-  -d|--down         Trigger a gear_down event and remove a gear
+  -d|--down         Trigger a gear_remove event and remove a gear
   --debug           Puts logger into debug mode
 
 Auto scaling options:
@@ -177,5 +232,5 @@ ha=Haproxy.new("/tmp/stats")
 while true
     ha.refresh()
     ha.check_capacity(opt['debug'])
-    sleep 3
+    sleep @check_interval
 end
