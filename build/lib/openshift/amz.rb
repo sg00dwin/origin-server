@@ -269,14 +269,14 @@ module OpenShift
       private_ip
     end
     
-    def use_private_ip(hostname)
+    def use_private_ip(hostname, use_public_hostname=false)
       private_ip = get_private_ip(hostname)
-      set_instance_ip(hostname, private_ip)
+      set_instance_ip(hostname, private_ip, use_public_hostname)
     end
     
-    def use_public_ip(hostname)
+    def use_public_ip(hostname, use_public_hostname=false)
       public_ip = ssh(hostname, "wget -qO- http://169.254.169.254/latest/meta-data/public-ipv4")
-      set_instance_ip(hostname, public_ip)
+      set_instance_ip(hostname, public_ip, use_public_hostname)
     end
     
     def get_internal_hostname(hostname)
@@ -284,10 +284,15 @@ module OpenShift
       internal_hostname
     end
     
-    def set_instance_ip(hostname, ip)
+    def set_instance_ip(hostname, ip, use_public_hostname=false)
       print "Updating the controller to use the ip '#{ip}'..."
+      if use_public_hostname
+        dhostname = ssh(hostname, "wget -qO- http://169.254.169.254/latest/meta-data/public-hostname")
+      else
+        dhostname=hostname
+      end
       # Both calls below are needed to fix a race condition between ssh and libra-data start times
-      ssh(hostname, "sed -i \"s/.*PUBLIC_IP_OVERRIDE.*/PUBLIC_IP_OVERRIDE='#{ip}'/g\" /etc/stickshift/stickshift-node.conf; sed -i \"s/.*PUBLIC_HOSTNAME_OVERRIDE.*/PUBLIC_HOSTNAME_OVERRIDE='#{hostname}'/g\" /etc/stickshift/stickshift-node.conf; /usr/libexec/mcollective/update_yaml.rb > /etc/mcollective/facts.yaml")
+      ssh(hostname, "sed -i \"s/.*PUBLIC_IP_OVERRIDE.*/PUBLIC_IP_OVERRIDE='#{ip}'/g\" /etc/stickshift/stickshift-node.conf; sed -i \"s/.*PUBLIC_HOSTNAME_OVERRIDE.*/PUBLIC_HOSTNAME_OVERRIDE='#{dhostname}'/g\" /etc/stickshift/stickshift-node.conf; /usr/libexec/mcollective/update_yaml.rb > /etc/mcollective/facts.yaml")
       puts 'Done'
     end
 
