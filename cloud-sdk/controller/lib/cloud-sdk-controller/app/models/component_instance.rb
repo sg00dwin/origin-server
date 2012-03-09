@@ -146,7 +146,7 @@ class ComponentInstance < Cloud::Sdk::UserModel
       parent_inst = app.comp_instance_map[parent_path]
       parent_inst.dependencies.each do |dep|
         dep_inst = app.comp_instance_map[dep]
-        cartname = "cart-" + dep_inst.parent_cart_name
+        cartname = dep_inst.parent_cart_name
         if cartname == comp_name
           return dep_inst
         end

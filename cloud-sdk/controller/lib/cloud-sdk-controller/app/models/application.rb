@@ -69,11 +69,27 @@ class Application < Cloud::Sdk::Cartridge
       self.requires_feature.insert(0, self.proxy_cartridge)
       prof = @profile_name_map[@default_profile]
       conn = Cloud::Sdk::Connection.new("auto_scale")
-      conn.components = ["cart-#{self.proxy_cartridge}", "cart-#{framework}"]
+      conn.components = [self.proxy_cartridge, framework]
       prof.add_connection(conn)
     end
   end
+
+  def add_to_requires_feature(feature)
+    prof = @profile_name_map[@default_profile]
+    conn = Cloud::Sdk::Connection.new("#{feature}-conn")
+    self.requires_feature.each { |cart|
+      conn.components = [cart, feature]
+      prof.add_connection(conn)
+    }
+    self.requires_feature << feature
+  end
   
+  def remove_from_requires_feature(feature)
+    prof = @profile_name_map[@default_profile]
+    prof.connection_name_map.delete("#{feature}-conn")
+    self.requires_feature.delete feature
+  end
+
   # Find an application to which user has access
   # @param [CloudUser] user
   # @param [String] app_name
@@ -996,7 +1012,7 @@ class Application < Cloud::Sdk::Cartridge
     self.cart_data = {} if @cart_data.nil?
     
     raise Cloud::Sdk::UserException.new("#{dep} already embedded in '#{@name}'", 101) if self.embedded.include? dep
-    self.requires_feature << dep
+    add_to_requires_feature(dep)
     begin
       reply.append self.configure_dependencies
       self.execute_connections
@@ -1017,7 +1033,7 @@ class Application < Cloud::Sdk::Cartridge
     self.embedded = {} unless self.embedded
         
     raise Cloud::Sdk::UserException.new("#{dep} not embedded in '#{@name}', try adding it first", 101) unless self.embedded.include? dep
-    self.requires_feature.delete(dep)
+    remove_from_requires_feature(dep)
     reply.append self.configure_dependencies
     self.class.notify_observers(:after_remove_dependency, {:application => self, :dependency => dep, :reply => reply})
     reply
