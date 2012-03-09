@@ -15,7 +15,7 @@ commands_map = {
     "snapshot": "/bin/bash",
     "restore": "/bin/bash",
     "tail": "/usr/bin/tail",
-    "sssh": "/bin/bash",
+    "rhcsh": "/bin/bash",
     "true": "/bin/true",
     "java": "/bin/bash",
     "scp": "/bin/bash",
@@ -31,11 +31,30 @@ commands_map = {
 }
 
 #
+# Read in uservars variables.
+#
+def _set_env_uservars(uservars_dir):
+    for env in os.listdir(uservars_dir):
+        fp = open(os.path.join(uservars_dir, env), 'r')
+        env_var = fp.readlines()[0].strip().strip('\'"')
+        fp.close()
+        os.putenv(env, env_var)
+    pass
+
+#
 # Read in environment variables
 #
 def read_env_vars():
 #    os.putenv
-    for env in os.listdir(os.path.expanduser('~/.env/')):
+    envdir = os.path.expanduser('~/.env/')
+    for env in os.listdir(envdir):
+        if 'USER_VARS' == env:
+           continue
+        elif os.path.isdir(envdir + env):
+           if '.uservars' == env:
+              _set_env_uservars(envdir + env)
+           continue
+
         fp = open(os.path.expanduser('~/.env/') + env, 'r')
         env_var = fp.readlines()[0].strip().split('=')[1].strip('\'"')
         fp.close()
@@ -58,7 +77,7 @@ if __name__ == '__main__':
     read_env_vars()
     config = read_config()
 
-    orig_cmd = os.environ.get('SSH_ORIGINAL_COMMAND', "sssh")
+    orig_cmd = os.environ.get('SSH_ORIGINAL_COMMAND', "rhcsh")
     syslog.syslog(orig_cmd)
     allargs = orig_cmd.split()
     try:
@@ -80,15 +99,15 @@ if __name__ == '__main__':
         allargs = ['restore.sh'] 
         if include_git:
             allargs.append('INCLUDE_GIT')
-    elif basecmd in ('sssh',):
-        os.environ["PS1"] = "sssh> "
+    elif basecmd in ('rhcsh',):
+        os.environ["PS1"] = "rhcsh> "
         if len(allargs) < 2:
-            allargs = ['--init-file', '/usr/bin/sssh', '-i']
+            allargs = ['--init-file', '/usr/bin/rhcsh', '-i']
         else:
             str = ' '.join(allargs[1:])
-            allargs = ['--init-file', '/usr/bin/sssh', '-c', str]
+            allargs = ['--init-file', '/usr/bin/rhcsh', '-c', str]
     elif basecmd in ('ctl_all',):
-        allargs = ['-c', '. /usr/bin/sssh > /dev/null ; ctl_all %s' % allargs[-1]]
+        allargs = ['-c', '. /usr/bin/rhcsh > /dev/null ; ctl_all %s' % allargs[-1]]
     elif basecmd in ('java','set','scp', 'cd', 'test', 'mkdir', 'rsync', 'deploy.sh', 'post_deploy.sh', 'rhc-list-ports'):
         str = ' '.join(allargs)
         allargs = ['-c', str]
@@ -112,15 +131,8 @@ if __name__ == '__main__':
         for glob_list in allargs[files_start_index:]:
             for f in glob.glob(glob_list):
                 try:
-                    if f.find('..') != -1 or f.startswith('/'):
-                        print "invalid character"
-                        sys.exit(91)
-                    elif os.path.islink(f):
-                        print "Links not supported"
-                        sys.exit(94)
-                    elif os.getuid() != os.stat(f).st_uid:
-                        print "Not your file"
-                        sys.exit(87)
+                    if os.path.islink(f) and os.path.lexists(f):
+                        files.append(f)
                     else:
                         files.append(f)
                 except OSError, e:
@@ -144,9 +156,8 @@ if __name__ == '__main__':
 
         # replace leading tilde (~) with user's home path
         realpath = os.path.expanduser(thearg)
-        print config['GEAR_BASE_DIR']
         if not realpath.startswith(config['GEAR_BASE_DIR']):
-            syslog.syslog("Invalid repository: not in application root - %s: (%s)" % 
+            syslog.syslog("Invalid repository: not in libra_root - %s: (%s)" % 
                           (thearg, realpath))
             print "Invalid repository %s: not in application root" % thearg
             sys.exit(3)
