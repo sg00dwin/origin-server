@@ -2,7 +2,7 @@
 
 Summary:   Provides Node-0.6 support
 Name:      rhc-cartridge-nodejs-0.6
-Version:   0.3.1
+Version:   0.3.2
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   ASL 2.0
@@ -100,6 +100,17 @@ rm -rf %{buildroot}
 %doc %{cartridgedir}/LICENSE
 
 %changelog
+* Fri Mar 09 2012 Dan McPherson <dmcphers@redhat.com> 0.3.2-1
+- Batch variable name chage (rmillner@redhat.com)
+- Adding export control files (kraman@gmail.com)
+- replacing references to libra with stickshift (abhgupta@redhat.com)
+- NodeJS update li/libra => stickshift (kraman@gmail.com)
+- Renaming Cloud-SDK -> StickShift (kraman@gmail.com)
+- Add publication of git url and http proxy info to nodejs. Rename the
+  connection hook name in the abstract cartridge. (ramr@redhat.com)
+- Jenkens templates switch to proper gear size names (rmillner@redhat.com)
+- Removed new instances of GNU license headers (jhonce@redhat.com)
+
 * Fri Mar 02 2012 Dan McPherson <dmcphers@redhat.com> 0.3.1-1
 - bump spec numbers (dmcphers@redhat.com)
 - connectors for scaling perl/nodejs/rack/wsgi (rchopra@redhat.com)
