@@ -280,6 +280,14 @@ body.signup {
   margin: 0 auto 20px;
 }
 
+.recaptcha table {
+  table-layout: auto;
+}
+
+#signup-and-signin {
+  margin-bottom: 50px;
+}
+
 @media (max-width: 979px) {
   #learn .take-action {
     font-size: 17px;
