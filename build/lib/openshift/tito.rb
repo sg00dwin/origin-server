@@ -43,8 +43,8 @@ module OpenShift
           package_name = nil
           if file.start_with?('cartridges')
             package_name = "rhc-cartridge-#{name}"
-          elsif file.start_with?('cloud-sdk')
-            package_name = "rubygem-cloud-sdk-#{name}"
+          elsif file.start_with?('stickshift')
+            package_name = "rubygem-stickshift-#{name}"
           else
             package_name = "rhc-#{name}"
           end

@@ -430,7 +430,7 @@ class Application < StickShift::Cartridge
         cart = pub_inst.parent_cart_name
         input_args = [appname, self.user.namespace, gear.uuid]
         args = "--gear-uuid '#{gear.uuid}' --cart-name '#{cart}' --hook-name '#{connector_name}' " + input_args.join(" ")
-        mc_args = { :cartridge => 'cloud-sdk-node', 
+        mc_args = { :cartridge => 'stickshift-node', 
                     :action => 'connector-execute',
                     :args => args }
         add_parallel_job(exec_agent, tag, gear, mc_args)
@@ -454,7 +454,7 @@ class Application < StickShift::Cartridge
         cart = sub_inst.parent_cart_name
         input_args = [appname, self.user.namespace, gear.uuid, input_to_subscriber]
         args = "--gear-uuid '#{gear.uuid}' --cart-name '#{cart}' --hook-name '#{connector_name}' " + input_args.join(" ")
-        mc_args = { :cartridge => 'cloud-sdk-node', 
+        mc_args = { :cartridge => 'stickshift-node', 
                     :action => 'connector-execute',
                     :args => args }
         add_parallel_job(exec_agent, tag, gear, mc_args)

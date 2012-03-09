@@ -269,8 +269,8 @@ module MCollective
 
       def helper_parallel_job(cartridge, action, args)
         pid, stdin, stdout, stderr = nil, nil, nil, nil
-        if cartridge == 'cloud-sdk-node'
-          cmd = "cdk-#{action}"
+        if cartridge == 'stickshift-node'
+          cmd = "ss-#{action}"
           pid, stdin, stdout, stderr = Open4::popen4("/usr/bin/runcon -l s0-s0:c0.c1023 #{cmd} #{args} 2>&1")
         else
           if File.exists? "/usr/libexec/li/cartridges/#{cartridge}/info/hooks/#{action}"                
