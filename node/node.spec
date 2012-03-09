@@ -2,7 +2,7 @@
 
 Summary:       Multi-tenant cloud management system node tools
 Name:          rhc-node
-Version:       0.88.1
+Version:       0.88.2
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -258,6 +258,46 @@ fi
 /lib64/security/pam_libra.so
 
 %changelog
+* Fri Mar 09 2012 Dan McPherson <dmcphers@redhat.com> 0.88.2-1
+- Fix to select correct trap-user script (kraman@gmail.com)
+- Build fixes (kraman@gmail.com)
+- force jenkins to https (dmcphers@redhat.com)
+- Batch variable name chage (rmillner@redhat.com)
+- Fixing missing connection hooks in abstract cartridge (kraman@gmail.com)
+- Fix factor code to read node config properly Fix rhc-admin-add-template to
+  store yaml for descriptor (kraman@gmail.com)
+- Put our version of node.conf back whenever the stickshift-node package is
+  installed. (rmillner@redhat.com)
+- Changing permission to allow stickshift confi files to be user readable
+  (kraman@gmail.com)
+- Moved abstract carts from rhc-node (kraman@gmail.com)
+- Updates for getting devenv running (kraman@gmail.com)
+- NodeJS update li/libra => stickshift (kraman@gmail.com)
+- Renaming Cloud-SDK -> StickShift (kraman@gmail.com)
+- switching to new mirror1 repo (dmcphers@redhat.com)
+- Re-enable both flavors of mysql. (ramr@redhat.com)
+- Add publication of git url and http proxy info to nodejs. Rename the
+  connection hook name in the abstract cartridge. (ramr@redhat.com)
+- Return success if file doesn't exist. (ramr@redhat.com)
+- Need to fix trap user to handle .uservars directory as well and ignore the
+  USER_VARS script. (ramr@redhat.com)
+- Merge branch 'master' of li-master:/srv/git/li (ramr@redhat.com)
+- Add support functions for scalable apps and connectors. (ramr@redhat.com)
+- Do not change state to stopped if already idle (jhonce@redhat.com)
+- Select the new gear sizes (rmillner@redhat.com)
+- Updated system resource limits configuration for std->small and large->med
+  (rmillner@redhat.com)
+- checkpoint 2 - parallel execution over mcollective - not integrated yet
+  (rchopra@redhat.com)
+- Corrected test for existence of state file (jhonce@redhat.com)
+- Updated copyright headers to match concrete cartridges (jhonce@redhat.com)
+- Merge branch 'force-stop' (jhonce@redhat.com)
+- set application state to stopped on force-stop (jhonce@redhat.com)
+- add base 2.0.7 migration (dmcphers@redhat.com)
+- Incorrect offset for ip address range. (rmillner@redhat.com)
+- bug 798866 (bdecoste@gmail.com)
+- Renamed OPENSHIFT_APP_STATE to OPENSHIFT_RUNTIME_DIR (jhonce@redhat.com)
+
 * Fri Mar 02 2012 Dan McPherson <dmcphers@redhat.com> 0.88.1-1
 - bump spec numbers (dmcphers@redhat.com)
 - Fix for bug# 799515 (rpenta@redhat.com)
