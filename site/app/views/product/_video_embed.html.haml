@@ -7,7 +7,7 @@
   end
 
 - if vid
-  = render "#{vid[:provider].to_s}_embed", :vid_id => vid[:id], :width => width, :height => height
+  = render "product/#{vid[:provider].to_s}_embed", :vid_id => vid[:id], :width => width, :height => height
 - else
   %em
     Video not available

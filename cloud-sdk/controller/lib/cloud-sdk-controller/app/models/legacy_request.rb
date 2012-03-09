@@ -64,7 +64,7 @@ class LegacyRequest < Cloud::Sdk::Model
   end
   
   validates_each :node_profile, :allow_nil =>true do |record, attribute, val|
-    if !(val =~ /\A(jumbo|exlarge|large|micro|std)\z/)
+    if !(val =~ /\A(jumbo|exlarge|large|micro|small|medium)\z/)
       record.errors.add attribute, {:message => "Invalid Profile: #{val}.  Must be: (jumbo|exlarge|large|micro|std)", :exit_code => 1}
     end
   end

@@ -1,19 +1,19 @@
 #
 # Limit resources for a new Libra guest user on a node
 #
-# Standard Profile
+# Large Profile
 #
-node_profile=std
+node_profile=medium
 
 #
 # Quotas: File system limits
 #
-quota_files=40000
+quota_files=468114
 quota_blocks=1048576 # 1GB.  1 block = 1024byte
 
 # For no over commitment, should be memory_limit_in_bytes / (Total System Memory - 1G)
-max_apps=75
-max_active_apps=75
+max_apps=8
+max_active_apps=50
 
 # PAM - resource limits
 # limits_core
@@ -26,7 +26,7 @@ max_active_apps=75
 # limits_rss=unlimited          # max resident set size (KB)
 # limits_stack=unlimited        # max stack size (KB)
 # limits_cpu=unlimited          # max CPU time (MIN)
-limits_nproc=250        # max number of processes
+limits_nproc=2142        # max number of processes
 # limits_as=unlimited           # address space limit (KB)
 # limits_maxlogins=unlimited    # max number of logins for this user
 # limits_maxsyslogins=unlimited # max number of logins on the system
@@ -47,9 +47,9 @@ limits_nproc=250        # max number of processes
 cpu_shares=128
 #
 # memory
-# 1024 * 1024 * 512 = 536870912 = 512MB
-memory_limit_in_bytes=536870912
-memory_memsw_limit_in_bytes=641728512 # 512M + 100M (100M swap)
+# 1024 * 1024 * 1024 = 1073741824 = 1G
+memory_limit_in_bytes=1073741824
+memory_memsw_limit_in_bytes=1178599424  # 1G + 100M (100M swap)
 # memory_soft_limit_in_bytes=-1
 # memory_swappiness=60
 
@@ -57,13 +57,13 @@ memory_memsw_limit_in_bytes=641728512 # 512M + 100M (100M swap)
 # Apache bandwidth limit
 # 
 apache_bandwidth="all 500000"
-apache_maxconnection="all 20"
+apache_maxconnection="all 100"
 apache_bandwidtherror="510"
 #
 
 # Traffic control.  used by /etc/init.d/libra-tc
 tc_max_libra=800   # mbit/sec - Total bandwidth allowed for Libra
-tc_user_share=2     # mbit/sec - one user is allotted...
+tc_user_share=50     # mbit/sec - one user is allotted...
 tc_oversubscribe=10 # multiplier
 # but may borrow up to.. if available
 # tc_user_limit=$(expr $tc_user_share \* $tc_oversubscribe) # mbit/sec

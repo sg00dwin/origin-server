@@ -31,14 +31,7 @@ def http_req(url)
 end
 
 def get_hostname
-  http_req("http://169.254.169.254/latest/meta-data/public-hostname") do |resp|
-    case resp
-    when Net::HTTPSuccess
-      resp.body
-    else
-      Socket::getaddrinfo(Socket.gethostname,nil,Socket::AF_INET).first[3]
-    end
-  end
+  Socket.gethostname
 end
 
 def _log(string)

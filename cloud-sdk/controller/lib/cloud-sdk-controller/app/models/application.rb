@@ -31,8 +31,8 @@ class Application < Cloud::Sdk::Cartridge
   end
   
   validates_each :node_profile, :allow_nil =>true do |record, attribute, val|
-    if !(val =~ /\A(jumbo|exlarge|large|micro|std)\z/)
-      record.errors.add attribute, {:message => "Invalid Profile: #{val}.  Must be: (jumbo|exlarge|large|micro|std)", :exit_code => 1}
+    if !(val =~ /\A(jumbo|exlarge|large|micro|medium|small)\z/)
+      record.errors.add attribute, {:message => "Invalid Profile: #{val}.  Must be: (jumbo|exlarge|large|medium|micro|small)", :exit_code => 1}
     end
   end
 
@@ -483,7 +483,7 @@ class Application < Cloud::Sdk::Cartridge
   def get_parallel_run_results(handle, &block)
     handle.each { |id, job_list|
       job_list.each { |parallel_job|
-        block.call(parallel_job['tag'], parallel_job['gear'], parallel_job['result_stdout'], parallel_job['result_exit_code'])
+        block.call(parallel_job[:tag], parallel_job[:gear], parallel_job[:result_stdout], parallel_job[:result_exit_code])
       }
     }
   end
@@ -855,6 +855,7 @@ class Application < Cloud::Sdk::Cartridge
   def add_system_env_vars(gears=nil)
     reply = ResultIO.new
     run_on_gears(gears,reply,false) do |gear,r|
+      r.append gear.add_env_var("OPENSHIFT_USER_APP_NAME", self.name)
       @user.env_vars.each do |key, value|
         r.append gear.add_env_var(key, value)
       end
@@ -1173,6 +1174,7 @@ class Application < Cloud::Sdk::Cartridge
 
       from_gpath = self.get_name_prefix + from_cart.get_name_prefix + from_group.get_name_prefix
       to_gpath = self.get_name_prefix + to_cart.get_name_prefix + to_group.get_name_prefix
+      self.group_override_map = {} if self.group_override_map.nil?
       group_override_map[from_gpath] = to_gpath
       group_override_map[to_gpath] = from_gpath
     rescue Exception=>e
@@ -1186,7 +1188,7 @@ class Application < Cloud::Sdk::Cartridge
     self.comp_instance_map = {} if comp_instance_map.nil?
     self.working_comp_inst_hash = {}
     self.working_group_inst_hash = {}
-    self.group_override_map = {} 
+    self.group_override_map = {} if self.group_override_map.nil?
     self.conn_endpoints_list = [] 
     default_profile = @profile_name_map[@default_profile]
     

@@ -4,7 +4,7 @@
 
 @import "variables";
 @import "bootstrap/variables";
-
+@import "navbar";
 
 /*------------------------------------------------------
 	 Console specific styles
@@ -14,6 +14,15 @@
 	margin-top: 60px;
 	}
 
+.console-transition .navbar {
+  .brand-image {
+    float: left;
+  }
+  .brand-text {
+    float: left;
+    padding: 20px 8px;
+  }
+}
 
 /*	Console overview
 	----------------------------------------------------- */	
@@ -123,7 +132,7 @@ section#app-cartridges .cartridge-block {
 		float: none;
 		}
 }
-@media (max-width: 768px) {
+@media (max-width: 767px) {
 	#my-apps li h2 {
 		float: right;
 		}

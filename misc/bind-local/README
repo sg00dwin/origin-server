@@ -1,0 +1,242 @@
+* Introduction
+
+The Openshift service depends on Dynamic DNS to publish the names and
+addresses of new applications. In a production service the DNS
+components would be housed separately from the main components and
+would be integrated with the public DNS infrastructure.
+
+For testing and development this kind of overhead and formal
+integration is impractical (and potentially dangerous if they are
+making changes to live production service resources). It is preferable
+to create an isolated Dynamic DNS service who's sole purpose is to
+receive and reflect the change requests that are issued as a result of
+the Openshift service operation. This document describes two service
+configurations that are useful when a small local Dynamic DNS service
+is needed.
+
+The self-contained Dynamic DNS service can be run by any non-root
+user.  It does not interact with the rest of the host system in any
+way.  This configuration is meant to be used by unit and functional
+tests of the DNS_Service modules.
+
+The integrated DNS service runs as a normal system service on the
+test/development host.  It is inserted between the test host and the
+external DNS server.  It will accept update requests for the test
+zones, and respond to queries for those zones.  All other queries are
+forwarded to the upstream server for resolution.  This configuration
+is intended for use when the Openshift client and server software
+reside on the same host, and where testing will require resolution of
+the test applications' public hostname.  (Usually in the process of
+issuing and responding to an HTTP request to the application).
+
+* DNS, BIND and dynamic updates
+
+DNS is the most fundamental network service protocol on the internet
+today.  It is ubiquitous and generally invisible to ordinary users.
+
+ISC BIND named is the most widely used DNS server software for
+external nameservices.  It serves as the reference implementation for
+the RFCs that define the DNS protocol.
+
+* Self-Contained
+
+A self-contained named is what it sounds like.  It does not connect to
+other servers or allow for name resolution or updates for anything but
+it's own authoritative zones.  It is useful for testing where the test
+prerequisites, stimulus and success/failure condition checks can all
+be done using a configurable resolver.  That is: the test can specify
+the nameserver IP address and port to use for queries. They do not
+rely on the system configuration (/etc/resolv.conf) and libresolv to
+direct the updates and queries.
+
+Because it is not constrained to run on the standard UDP/TCP port (53)
+and does not require updating /etc/resolv.conf, the self-contained
+named can run as a non-privildged user.  It can be configured to read
+configuration files and to write logs and journals into user space.
+The service can re-initialized, started and stopped without altering
+the behavior of the host system. 
+
+** named.conf
+
+** keys
+
+** initial zone file
+
+** log files
+
+** starting and stopping the daemon
+
+
+* Integrated/Forwarding
+
+** named.conf
+
+** keys
+
+** initial zone file
+
+** forwarders
+
+** /etc/resolv.conf
+
+* Forwarders by DHCP
+
+It is now common for people to do test and devlopment on hosts which
+get their IP and DNS information from DHCP.  As noted above, testing with the
+local named requires both that the resolver points to it first, and
+that the named correctly forwards to the upstream server.  This means
+that both of those configuration elements must be updated when the
+DCHP client renews the lease.
+
+** NetworkManager and network services.
+
+NetworkManager does have the means to trigger some behaviors on
+interface up and down, but dhclient has more precise hooks, and there
+does not seem to be good information on the interaction between
+NetworkManager and dhclient.
+
+To make this work cleanly we're going to revert to using the 'network'
+service and disable NetworkManager:
+
+  chkconfig NetworkManager off
+  chkconfig network on
+  
+  service NetworkManager stop
+  service network start
+
+** /etc/dhclient.conf
+
+The dhclient.conf file is used to apply local customizations to the
+response from the DHCP server.  In this case, we're going to use it to
+modify the nameserver entries in /etc/resolv.conf.  This line will do
+it:
+
+  prepend domain-name-servers 127.0.0.1;
+
+** /etc/dhcp/dhclient-up-hooks
+
+The dhclient service has "hooks" which allow you to code behaviors to
+be triggered when the state of an interface changes.  In this case,
+we're going to generate a fragment of named configuration to indicate
+where to forward DNS requests that are not served by the local named,
+and then tell the named service to reload it's configuration.
+
+** /var/named/forwarders.conf
+
+The /etc/named.conf contains an include line for a file which is
+expected to contain a list of forwarders.  The dhclient-up-hooks
+script will be called when any interface changes state, and will write
+the forwarders.conf file and kick the named service.
+
+The forwarders.conf will contain a single line indicating the server
+to forward to:
+
+    forwarders { <ip address>  ; } ;
+
+Where <ip address> is the address retrieved from the
+domain-name-servers response from the DHCP server.
+
+* SELinux policy
+
+With SELinux enabled (which it should be), the dhclient service no
+longer has the ability to write a file which is readable by the named
+service.  Normally this is correct as there is no reason for them to
+interact.
+
+Now we have to provide a new ruleset which allows the dhclient service
+to write the forwarders.conf file and also allows the named service to
+read it.
+
+The policy is defined in two files, dhcpnamedforward.te and
+dhcpnamedforward.fc, and it compiles to a third file,
+dhcpnamedforward.pp. It is this last file, the compiled policy module
+which is loaded into the running SELinux policy.
+
+Policy files can be compiled anywhere but to have them loaded at boot
+the .pp file must be placed in /usr/share/selinux/packages. For ease
+of re-compiling if the system policy version is updated, it is
+conventional to place the source files there as well.
+
+** dhcpnamedforward.te
+
+This file defines a new file type and the rules which allow the dhcp
+client daemon to write and the named to read files of that type.
+
+The policy extension depends on types from two other standard modules: 
+
+  sysnetwork - dhcpc_t
+  bind - named_*_t
+
+It should be optional based on the presence of these two other modules.
+
+** dhcpnamedforward.fc
+
+This file defines the correct labeling for files.  In this case it
+indicates that the forwarding.conf file should have the
+named_forward_file_t type.
+
+** compiling the policy
+
+Compiling an SELinux policy module is fairly simple.  In the directory
+containing the source (.te, .fc) files:
+
+  make -f /usr/share/selinux/devel/Makefile
+
+This will produce a compiled policy module (.pp) file and may leave an
+empty interface (.if) file.
+
+** loading (and unloading) the policy
+
+If you place the .pp file in /usr/share/selinux/packages, then the
+module will be loaded at boot.
+
+Use semodule(8) to manage policy modules:
+
+  semodule -l                 # list modules
+  semodule -i <module file>   # install a module
+  semodule -r <module>        # remove a module
+
+Check the man pages for additional operations.
+
+** Checking for Errors
+
+SELinux reports errors in /var/log/audit/audit.log.  I find it easiest
+to read and search there when something is rejected.
+
+There are also tools to help parse and understand the logs.
+
+** Testing Updates
+
+To test the DHCP update function, use 
+
+   service network restart
+
+This will cause the DHCP network interfaces to re-acquire IP address
+and DHCP information (be sure to be on a serial port when you do this,
+or your connection may drop.)  If the dhclient-up-hooks script runs
+and the write or restart fails you will see the reported errors.
+
+* References
+
+  - RFC 2136 Dynamic Updates in the Domain Name System (DNS UPDATE)
+      http://www.rfc-editor.org/rfc/rfc2136.txt
+
+  - RFC 3007 Secure Domain Name System (DNS) Dynamic Update
+      http://www.rfc-editor.org/rfc/rfc3007.txt
+
+  - Article: Painless Dynamic DNS,
+      Copyright © 2008 Jeff Garzik
+      http://linux.yyz.us/nsupdate/
+
+  - Article: Painless DDNS part 2: the server
+      Copyright © 2008 Jeff Garzik
+      http://linux.yyz.us/dns/ddns-server.html
+
+  - dhclient-script(8) man page
+      http://linux.die.net/man/8/dhclient-script
+
+  - A step-by-step guide to building a new SELinux policy module, 
+      Dan Walsh, Copyright © 2012 Red Hat, Inc.
+
+  - SELinux reference policy
+      http://oss.tresys.com/projects/refpolicy

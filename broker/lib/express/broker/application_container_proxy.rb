@@ -1057,8 +1057,10 @@ module Express
       end
 
       def self.execute_parallel_jobs(handle)
-        handle.each { |id, job_list|
+        id_list = handle.keys
+        id_list.each { |id| 
           begin
+            job_list = handle[id]
             options = ApplicationContainerProxy.rpc_options
             rpc_client = rpcclient('libra', :options => options)
             # mc_args = { :joblist => JSON.generate(job_list) }
@@ -1070,7 +1072,7 @@ module Express
               output = mcoll_reply.results[:data][:output]
               exitcode = mcoll_reply.results[:data][:exitcode]
               Rails.logger.debug("DEBUG: Output of parallel execute: #{output}, status: #{exitcode}")
-              handle[id] = JSON.parse output if exitcode==0
+              handle[id] = output if exitcode==0
             end
           rescue Exception =>e
           end

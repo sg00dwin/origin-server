@@ -14,7 +14,7 @@ options = rpcoptions do |parser, options|
       options[:target_server_identity] = target_server_identity
     end
 
-    parser.on('-p', '--node_profile NODE_PROFILE', "Node profile (e.g. std)") do |node_profile|
+    parser.on('-p', '--node_profile NODE_PROFILE', "Node profile (e.g. small)") do |node_profile|
       options[:node_profile] = node_profile
     end
 

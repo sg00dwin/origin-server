@@ -3,6 +3,7 @@
 require 'rubygems'
 require 'getoptlong'
 require 'json'
+require 'yaml'
 
 def usage
     puts <<USAGE
@@ -58,10 +59,9 @@ gear_cost        = args["--cost"]
 metadata         = args["--metadata"]
 
 begin
-  if(File.file?(descriptor))
-    descriptor = File.open(descriptor).read
-  end
-  YAML.load(descriptor)
+  descriptor = File.file?(descriptor) ?
+    YAML.load_file(descriptor) :
+    YAML.load(descriptor)
 rescue Exception => e
   print "Invalid descriptor YAML: #{descriptor}\n"
   usage
@@ -69,10 +69,9 @@ rescue Exception => e
 end
 
 begin
-  if(File.file?(metadata))
-    metadata = File.open(metadata).read
-  end
-  metadata = JSON.parse(metadata)
+  metadata = File.file?(metadata) ?
+    JSON.load(File.open(metadata)) :
+    JSON.parse(metadata)
 rescue Exception => e
   print "Invalid metadata JSON: #{metadata}\n"
   usage

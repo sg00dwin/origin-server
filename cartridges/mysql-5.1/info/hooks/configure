@@ -12,6 +12,55 @@ function print_help {
     exit 1
 }
 
+function setup_mysql_as_a_service() {
+    [ $# -eq 4 -o $# -eq 3 ] || print_help
+
+    setup_configure "$1" $2 $3 $4
+    check_app_dir_doesnt_exist
+    unobfuscate_app_home $uuid $namespace $application
+
+    # Source the original application name if any.
+    source_if_exists "$APP_HOME/.env/OPENSHIFT_USER_APP_NAME"
+
+    # Repo
+    if [ ! -d $git_url ]; then
+        clone_external_git_repo $application $user_id $group_id $uuid $git_url
+    else
+        clone_git_repo $application $user_id $group_id $uuid "MySQL 5.1"
+    fi
+
+    #
+    # Create the core of the application
+    #
+    mkdir -p "$APP_DIR"
+    pushd "$APP_DIR" > /dev/null
+    create_standard_app_dirs
+    popd > /dev/null
+
+    #
+    # Find an open localhost IP
+    #
+    IP=`find_open_ip $uid $uuid`
+
+    create_app_ctl_script
+    populate_repo_dir
+    secure_app_dir
+    observe_setup_app_and_git_dirs
+
+    #
+    # Create environment variables
+    #
+    create_standard_env_vars
+    create_standard_network_env_vars
+    create_standard_repo_dir_env_var
+    create_standard_path_env_var
+
+    # And prepend to path variable so that mysql app_ctl.sh script is called.
+    sed -i 's#export \s*PATH=#export PATH=$CART_INFO_DIR/bin/:#' $APP_HOME/.env/PATH
+
+}
+
+
 while getopts 'd' OPTION
 do
     case $OPTION in
@@ -23,17 +72,25 @@ do
 done
 
 
-[ $# -eq 3 ] || print_help
+[ $# -eq 4 -o $# -eq 3 ] || print_help
 
 CART_DIR=${CART_DIR:=/usr/libexec/li/cartridges}
+CART_NAME="mysql"
+CART_VERSION="5.1"
 source ${CART_DIR}/abstract/info/lib/util
 
-app_type="mysql-5.1"
+app_type="$CART_NAME-$CART_VERSION"
+
+if [ ! -d "$HOME/$1" ]; then
+    #  This gear is dedicated to running mysql - configure it as such.
+    setup_mysql_as_a_service "$@"
+fi
+
 setup_embedded_configure "$1" $2 $3
 
 source ${CART_INFO_DIR}/lib/util
 
-MYSQL_DIR="$APP_HOME/mysql-5.1/"
+MYSQL_DIR="$APP_HOME/$CART_NAME-$CART_VERSION/"
 
 #
 # Detect IP
@@ -103,23 +160,42 @@ echo "export OPENSHIFT_DB_MYSQL_51_RESTORE='$CART_INFO_DIR/bin/mysql_restore.sh'
 echo "export OPENSHIFT_DB_MYSQL_51_EMBEDDED_TYPE='mysql-5.1'" > $APP_HOME/.env/OPENSHIFT_DB_MYSQL_51_EMBEDDED_TYPE
 
 ## Setup user
+dbname=${OPENSHIFT_USER_APP_NAME:-$application}
 echo "drop database test;
-create database \`${application}\` DEFAULT CHARACTER SET utf8 DEFAULT COLLATE utf8_general_ci;" | mysql -u root -S "${MYSQL_DIR}/socket/mysql.sock" > /dev/null || error "Failed to create ${application}" 188
+create database \`${dbname}\` DEFAULT CHARACTER SET utf8 DEFAULT COLLATE utf8_general_ci;" | mysql -u root -S "${MYSQL_DIR}/socket/mysql.sock" > /dev/null || error "Failed to create ${application}" 188
 
 echo "                                  
 delete from user;
 grant all on *.* to 'admin'@'$IP' identified by '$password' with grant option;
 flush privileges;" | mysql -u root -S "${MYSQL_DIR}/socket/mysql.sock" mysql > /dev/null || error "Failed to setup initial root user" 187
 
+mysql_ip="$IP"
+mysql_port="3306"
+if is_a_scalable_app; then
+   if $(dirname "$0")/expose-port "$@"; then
+       source $APP_HOME/.env/OPENSHIFT_APP_DNS
+       source $APP_HOME/.env/OPENSHIFT_DB_PROXY_PORT
+       mysql_ip=${OPENSHIFT_APP_DNS:-"$IP"}
+       mysql_port=${OPENSHIFT_DB_PROXY_PORT:-3306}
+   fi
+fi
+
 client_result ""
 client_result "MySQL 5.1 database added.  Please make note of these credentials:"
 client_result ""
 client_result "   Root User: admin"
 client_result "   Root Password: $password"
-client_result "   Database Name: ${application}"
+client_result "   Database Name: ${dbname}"
 client_result ""
-client_result "Connection URL: mysql://$IP:3306/"
+client_result "Local Connection URL: mysql://$IP:3306/"
 client_result ""
+
+if is_a_scalable_app; then
+    client_result "Inter-gear Connection URL: mysql://$mysql_ip:$mysql_port/"
+    client_result ""
+fi
+
 client_result "You can manage your new MySQL database by also embedding phpmyadmin-3.4."
 
-set_app_info "Connection URL: mysql://$IP:3306/"
+set_app_info "     Local Connection URL: mysql://$IP:3306/"
+set_app_info "Inter-gear Connection URL: mysql://$mysql_ip:$mysql_port/"

@@ -165,7 +165,7 @@ class LegacyBrokerController < ApplicationController
   end
   
   def cartridge_post
-    @req.node_profile ||= "std"
+    @req.node_profile ||= "small"
     user = CloudUser.find(@login)
     raise Cloud::Sdk::UserException.new("Invalid user", 99) if user.nil?
     user.auth_method = @auth_method

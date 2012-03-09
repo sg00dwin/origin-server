@@ -1,0 +1,35 @@
+- content_for :header do
+  .messaging.messaging-home
+    .container
+      %h1.primary.headline
+        Develop and Scale 
+        %strong#technology-rotate Apps
+        in the Cloud
+      %h2.secondary OpenShift is a free, auto-scaling platform as a service for web applications.  It streamlines the application life cycle so developers can focus on their users, customers, and code.
+
+%h1.ribbon
+  .ribbon-content Sign up and shift your App to the Cloud.
+  .ribbon-left
+  
+- input_html = { :class => input_class } if defined? input_class
+
+#new-user
+  = semantic_form_for 'web_user', :remote => true, :url => web_user_path, :simple => true, :html => {:class => 'form-horizontal'} do |form|
+    = form.inputs do
+      = form.hidden_field :cloud_access_choice,
+        :value => (@product == CloudAccess::FLEX_NAME ? CloudAccess::FLEX : CloudAccess::EXPRESS)
+      = form.input :email_address, :input_html => { :class => 'input-xlarge' }
+      = form.input :password, :input_html => { :class => 'input-xlarge', :autocomplete => 'off', :placeholder => 'At least 6 characters' }
+      = form.input :password_confirmation, :input_html => { :class => 'input-xlarge', :autocomplete => 'off', :placeholder => 'Enter it again' }
+      = form.input :promo_code, :label => 'Promotional Code', :required => false, :input_html => { :class => 'input-xlarge' }
+      .control-group
+        %label.control-label
+          Are you human?
+        .controls
+          = recaptcha_tags :ssl => true    
+    = form.buttons :class => 'form-actions' do
+      = link_to "Cancel", account_path, :class => 'btn'
+      = form.commit_button :label => 'Sign up for OpenShift'
+
+  = render 'layouts/dialogs/extra_options', :page => 'signup'
+

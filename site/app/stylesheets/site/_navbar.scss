@@ -1,0 +1,105 @@
+@import "../navbar";
+
+/* This is site specific branding */
+.navbar {
+  margin-bottom: 30px;
+  position: relative;
+
+  .brand {
+    /* reset styles */
+    float: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .brand-image {
+    background: url('../images/logo-medium.png') center top no-repeat transparent;
+    height: $logoHeight;
+    width: $logoWidth;
+  }
+
+  .nav {
+    font-size: 13px; 
+    text-transform: uppercase;
+    /* reset styles */
+    float: none;
+
+    /*margin-bottom: 110px;*/
+
+    > li {
+      float: left;
+      width: 20%;
+      text-align: center;
+
+      > a {
+        color: white; 
+        font-size: 13px; 
+        text-transform: uppercase; 
+        font-weight: bold;
+        /* reset styles */
+        padding: 5px 0;
+      }
+    }
+
+    > li:nth-child(1) { text-align: left; }
+    > li:nth-last-child(1) { text-align: right; }
+
+    /* needs fixing */
+    > .active > a,
+    > .active > a:hover,
+    > li > a:hover {
+      /* reset styles */
+      background: transparent;
+      border: 0;
+      box-shadow: none;
+      text-decoration: underline;
+    }
+  }
+}
+
+@media (max-width: 767px) {
+  .navbar {
+    padding-top: 15px;
+    min-height: $logoHeight + $logoSeparation;
+
+    .brand {
+      float: left;
+      text-align: center;
+      width: $logoWidth;
+    }
+
+    .nav {
+      margin-left: $logoWidth + 10px; 
+      margin-top: 15px; /* centers navigation text on the logo */
+
+      > li {
+        float: left !important;
+        width: 50% !important;
+        text-align: center !important;
+      }
+      > li.divider {
+        display: none;
+      }
+    }
+  }
+}
+@media (min-width: 768px) {
+  .navbar {
+    padding-top: 30px;
+    min-height: $logoHeight + $logoSeparation + 30px;
+
+    .brand {
+      z-index: 1;
+      position: absolute;
+      left: 50%;
+    }
+    .brand > a {
+      position: relative;
+      left: -50%;
+    }
+
+    .nav {
+      margin-top: 30px; /* centers navigation text on the logo */
+    }
+  }
+}

@@ -31,6 +31,7 @@ Requires:  rubygem-haml
 Requires:  rubygem-recaptcha
 Requires:  rubygem-hpricot
 Requires:  rubygem-barista
+Requires:  rubygem-rdiscount
 Requires:  js
 # The following requires are for the status subsite
 Requires:  ruby-sqlite3

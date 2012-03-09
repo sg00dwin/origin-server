@@ -1,8 +1,14 @@
 #top.section-top
   .container
-    .pull-left= link_to "Sign up for the newsletter »", newsletter_signup_url
+    .pull-left
+      = link_to "Sign up for the newsletter »", newsletter_signup_url
     .pull-right.login
-      = link_to "Sign In", control_panel_path, :class => 'btn btn-small'
+      -#if session[:login]
+        = link_to session[:login], "console", :class => 'btn btn-small'
+        = link_to 'Sign out', logout_path, :class => 'btn btn-small'
+      -# The signin link is always present so we can cache the page
+      = link_to "Sign In to Manage Your Apps", console_path, :class => 'btn btn-small'
+
       -# ['f', 'g', 't'].each do |p|
         = link_to p, :class => 'btn btn-small login-provider' do
           %img{:alt => p}
@@ -12,17 +18,17 @@
     .container
       -# Was .nav-collapse, has some issues
       .brand
-        = link_to root_path do
+        = link_to "/app/new" do
           .brand-image
           .brand-text
             %strong> Open
             Shift
       %ul.nav
-        %li.active= link_to "Learn More", product_overview_path
-        %li= link_to "Documentation", "dev_center"
+        %li.active= link_to "Learn More", ""
+        %li= link_to "Express", "/app/new/express"
         %li.divider &nbsp;
-        %li= link_to "Console", "console"
-        %li= link_to "Community", "community"
+        %li= link_to "Flex", "/app/new/flex"
+        %li= link_to "Community", "/app/styleguide/community"
 
   - if content_for? :header
     = yield :header

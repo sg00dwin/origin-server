@@ -160,8 +160,10 @@ RedHatCloud::Application.routes.draw do
     match 'control_panel/apps' => 'express_app#list', :as => 'list_apps'
     
     # new marketing site
-    match 'new' => 'home#new', :via => [:get]
-    match 'signup' => 'user#signup', :as => :user, :via => [:get]
+    match 'new' => 'site#index', :via => [:get]
+    match 'new/express' => 'site#express', :via => [:get]
+    match 'signup' => 'site#signup', :as => :user, :via => [:get]
+    match 'signin' => 'site#signin', :as => :user, :via => [:get]
 
     unless Rails.env.production?
       match 'styleguide/:action' => 'styleguide'

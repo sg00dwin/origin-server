@@ -33,11 +33,30 @@ commands_map = {
 }
 
 #
+# Read in uservars variables.
+#
+def _set_env_uservars(uservars_dir):
+    for env in os.listdir(uservars_dir):
+        fp = open(os.path.join(uservars_dir, env), 'r')
+        env_var = fp.readlines()[0].strip().strip('\'"')
+        fp.close()
+        os.putenv(env, env_var)
+    pass
+
+#
 # Read in environment variables
 #
 def read_env_vars():
 #    os.putenv
-    for env in os.listdir(os.path.expanduser('~/.env/')):
+    envdir = os.path.expanduser('~/.env/')
+    for env in os.listdir(envdir):
+        if 'USER_VARS' == env:
+           continue
+        elif os.path.isdir(envdir + env):
+           if '.uservars' == env:
+              _set_env_uservars(envdir + env)
+           continue
+
         fp = open(os.path.expanduser('~/.env/') + env, 'r')
         env_var = fp.readlines()[0].strip().split('=')[1].strip('\'"')
         fp.close()
