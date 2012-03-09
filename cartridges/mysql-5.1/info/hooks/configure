@@ -187,7 +187,7 @@ client_result "   Root User: admin"
 client_result "   Root Password: $password"
 client_result "   Database Name: ${dbname}"
 client_result ""
-client_result "Local Connection URL: mysql://$IP:3306/"
+client_result "Connection URL: mysql://$IP:3306/"
 client_result ""
 
 if is_a_scalable_app; then
@@ -197,5 +197,5 @@ fi
 
 client_result "You can manage your new MySQL database by also embedding phpmyadmin-3.4."
 
-set_app_info "     Local Connection URL: mysql://$IP:3306/"
-set_app_info "Inter-gear Connection URL: mysql://$mysql_ip:$mysql_port/"
+set_app_info "Connection URL: mysql://$IP:3306/"
+# set_app_info "Inter-gear Connection URL: mysql://$mysql_ip:$mysql_port/"
