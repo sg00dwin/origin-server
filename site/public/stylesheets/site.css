@@ -547,10 +547,6 @@ body.signup {
   table-layout: auto;
 }
 
-#signup-and-signin {
-  margin-bottom: 50px;
-}
-
 @media (max-width: 767px) {
   .section-nav.lift-counter {
     padding-bottom: 30px;
