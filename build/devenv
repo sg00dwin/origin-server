@@ -723,14 +723,14 @@ END
       line_num = `grep -n 'Host verifier' ~/.ssh/config`.chomp.split(':')[0]
       puts "Updating ~/.ssh/config verifier entry with public ip = #{public_ip}"
       (1..4).each do |i|
-        `sed -i '#{line_num.to_i + i}s,HostName.*,HostName #{public_ip},' ~/.ssh/config`
+        `sed -i -e '#{line_num.to_i + i}s,HostName.*,HostName #{public_ip},' ~/.ssh/config`
       end
     end
 
     if options.express_server?
       public_ip = instance.public_ip_address
       puts "Updating ~/.openshift/express.conf libra_server entry with public ip = #{public_ip}"
-      `sed -i 's,^libra_server.*,libra_server=#{public_ip},' ~/.openshift/express.conf`
+      `sed -i -e 's,^libra_server.*,libra_server=#{public_ip},' ~/.openshift/express.conf`
       use_public_ip(hostname, options.public_hostname?)
     end
 
