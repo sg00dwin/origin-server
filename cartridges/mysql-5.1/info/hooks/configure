@@ -13,6 +13,9 @@ function print_help {
 }
 
 function setup_mysql_as_a_service() {
+    [ $# -eq 4 -o $# -eq 3 ] || print_help
+
+    setup_configure "$1" $2 $3 $4
     check_app_dir_doesnt_exist
     unobfuscate_app_home $uuid $namespace $application
 
@@ -78,13 +81,9 @@ source ${CART_DIR}/abstract/info/lib/util
 
 app_type="$CART_NAME-$CART_VERSION"
 
-# FIXME: Disable for now so as to get embedded stuff running.
-# setup_configure "$1" $2 $3 $4
-
-if [ ! -d "$APP_DIR" ]; then
+if [ -z "$(get_app_type $3)" ]; then
     #  This gear is dedicated to running mysql - configure it as such.
-    # setup_mysql_as_a_service "$@"
-    :
+    setup_mysql_as_a_service "$@"
 fi
 
 setup_embedded_configure "$1" $2 $3

@@ -59,6 +59,12 @@ function source_if_exists {
     return 0
 }
 
+function get_app_type {
+    load_node_conf
+    [ -z "$OPENSHIFT_APP_TYPE" ]  &&  source_if_exists "$libra_dir/$1/.env/OPENSHIFT_APP_TYPE"
+    echo "$OPENSHIFT_APP_TYPE"
+}
+
 function is_a_scalable_app {
     source_if_exists "$libra_dir/$uuid/.env/OPENSHIFT_USER_APP_NAME"
     source_if_exists "$libra_dir/$uuid/.env/OPENSHIFT_APP_TYPE"
@@ -79,10 +85,9 @@ function create_env_uservars_script {
 #!/bin/bash -e
 
 # Setup user Environment Variables
-for f in ~/.env/.uservars/*
-do
-    n=\$(basename "\$f" | sed 's/[^A-Za-z0-9_]/_/g')
-    export \$n=\$(cat "\$f")
+for f in `ls $APP_HOME/.env/.uservars/`; do
+    n=\$(echo "\$f" | sed 's/[^A-Za-z0-9_]/_/g')
+    export \$n=\$(cat "$APP_HOME/.env/.uservars/\$f")
 done
 
 EOF
@@ -343,6 +348,8 @@ function setup_embedded_configure {
 }
 
 function setup_embedded_deconfigure {
+    source ${CART_DIR}/abstract/info/lib/network
+    source ${CART_DIR}/abstract/info/lib/apache
 
     CART_INFO_DIR=$CART_DIR/embedded/$app_type/info
 

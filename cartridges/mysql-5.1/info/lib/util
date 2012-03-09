@@ -23,6 +23,12 @@ function stop_mysql {
 }
 
 function start_mysql_as_user {
+    # FIXME: Need to start mysql on the right gear.
+    if [ -n "$OPENSHIFT_DB_GEAR_USERHOST" ]; then
+       echo "TBD: start mysql on its gear"
+       # ssh $OPENSHIFT_DB_GEAR_USERHOST "$OPENSHIFT_DB_CTL_SCRIPT"
+    fi
+
     ${OPENSHIFT_DB_CTL_SCRIPT} start
 }
 
