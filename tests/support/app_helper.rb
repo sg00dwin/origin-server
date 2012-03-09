@@ -110,11 +110,11 @@ module AppHelper
       return exit_code, body
     end
 
-    def curl_head(url, host=nil)
+    def curl_head(url, host=nil, http_code=200)
       if host
-        `curl --insecure -s --head -H 'Host: #{host}' --max-time 30 #{url} | grep 200`
+        `curl --insecure -s --head -H 'Host: #{host}' --max-time 30 #{url} | grep #{http_code}`
       else
-        `curl --insecure -s --head --max-time 30 #{url} | grep 200`
+        `curl --insecure -s --head --max-time 30 #{url} | grep #{http_code}`
       end
       exit_code = $?.exitstatus
       return exit_code
@@ -148,6 +148,17 @@ module AppHelper
       end
 
       return false
+    end
+
+    def is_temporarily_unavailable?(use_https=false, host=nil)
+      prefix = use_https ? "https://" : "http://"
+      url = prefix + hostname
+
+      if curl_head(url, host, 503) == 0
+        return true
+      else
+        return false
+      end
     end
 
     def last_access_file_present?

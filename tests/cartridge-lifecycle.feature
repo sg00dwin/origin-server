@@ -15,7 +15,16 @@ Feature: Cartridge Lifecycle Verification Tests
     |     1     |  jbossas-7   |
     |     1     |  nodejs-0.6  |
     |     1     |  jenkins-1.4 |
-#    |     1     |  raw-0.1     |
+
+  Scenario Outline: Application Creation diy
+    Given the libra client tools
+    And an accepted node
+    When <app_count> <type> applications are created
+    Then the applications should be temporarily unavailable
+
+  Scenarios: Application Creation diy Scenarios
+    | app_count |     type     |
+    |     1     |  diy-0.1     |
 
   Scenario Outline: Application Modification
     Given an existing <type> application
@@ -91,4 +100,4 @@ Feature: Cartridge Lifecycle Verification Tests
     |   jbossas-7   |
     |   nodejs-0.6  |
     |   jenkins-1.4 |
-#    |   raw-0.1     |
+    |   diy-0.1     |

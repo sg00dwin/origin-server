@@ -138,6 +138,12 @@ Then /^the applications should be accessible?$/ do
   end
 end
 
+Then /^the applications should be temporarily unavailable$/ do
+  @apps.each do |app|
+    app.is_temporarily_unavailable?.should be_true
+  end
+end
+
 Then /^the mysql response is successful$/ do
   60.times do |i|
     body = @app.connect
