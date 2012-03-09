@@ -2,7 +2,7 @@
 
 Summary:   Provides python-wsgi-3.2 support
 Name:      rhc-cartridge-wsgi-3.2
-Version:   0.88.1
+Version:   0.88.2
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   ASL 2.0
@@ -102,6 +102,16 @@ rm -rf %{buildroot}
 %doc %{cartridgedir}/LICENSE
 
 %changelog
+* Fri Mar 09 2012 Dan McPherson <dmcphers@redhat.com> 0.88.2-1
+- Batch variable name chage (rmillner@redhat.com)
+- Adding export control files (kraman@gmail.com)
+- loading resource limits config when needed (kraman@gmail.com)
+- Changing how node config is loaded (kraman@gmail.com)
+- Update WSGI li/libra => stickshift (kraman@gmail.com)
+- Renaming Cloud-SDK -> StickShift (kraman@gmail.com)
+- Jenkens templates switch to proper gear size names (rmillner@redhat.com)
+- Removed new instances of GNU license headers (jhonce@redhat.com)
+
 * Fri Mar 02 2012 Dan McPherson <dmcphers@redhat.com> 0.88.1-1
 - bump spec numbers (dmcphers@redhat.com)
 - connectors for scaling perl/nodejs/rack/wsgi (rchopra@redhat.com)
