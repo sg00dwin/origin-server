@@ -40,7 +40,6 @@ class Haproxy
         @gear_remove_pct = 49.9
         @gear_up_pct = 90.0
         @log = Logger.new("#{ENV['OPENSHIFT_LOG_DIR']}/scale_events.log")
-#       @log.info("Haproxy watcher started")
 
         @status={}
         while(line = @socket.gets) do
@@ -48,7 +47,6 @@ class Haproxy
             svname=line.split(',')[1]
             @status[pxname] = {} unless @status[pxname]
             @status[pxname][svname] = Haproxy_attr.new(line)
-            #@status[pxname] = Haproxy_attr.new(line)
         end
         @socket.close
         @gear_namespace = ENV['OPENSHIFT_APP_DNS'].split('.')[0].split('-')[1]
