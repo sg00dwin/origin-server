@@ -1,10 +1,10 @@
 #!/usr/bin/env ruby
 # Usage: ./migrate-mongo-2.0.6 > out.txt
 
-$:.unshift('/var/www/libra/broker')
+$:.unshift('/var/www/stickshift/broker')
 require 'config/environment'
 
-ds = Cloud::Sdk::DataStore.instance
+ds = StickShift::DataStore.instance
 users = ds.class.collection.find({"apps.requires_feature" => 'jbossas-7.0' })
 users.each do |user|
   print "Processing user #{user["_id"]}\n"

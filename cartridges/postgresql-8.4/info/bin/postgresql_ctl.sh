@@ -1,11 +1,13 @@
 #!/bin/bash
 
+source "/etc/stickshift/stickshift-node.conf"
+
 # Control application's embedded PostgreSQL server instance
 SERVICE_NAME=PostgreSQL
 CART_NAME=postgresql
 CART_VERSION=8.4
 CART_DIRNAME=${CART_NAME}-$CART_VERSION
-CART_INSTALL_DIR=/usr/libexec/li/cartridges
+CART_INSTALL_DIR=${CARTRIDGE_BASE_PATH}
 CART_INFO_DIR=$CART_INSTALL_DIR/embedded/$CART_DIRNAME/info
 export STOPTIMEOUT=10
 
@@ -97,7 +99,7 @@ done
 
 # Cartridge instance dir and control script name.
 CART_INSTANCE_DIR="$OPENSHIFT_HOMEDIR/$CART_DIRNAME"
-CTL_SCRIPT="$CART_INSTANCE_DIR/${OPENSHIFT_APP_NAME}_${CART_NAME}_ctl.sh"
+CTL_SCRIPT="$CART_INSTANCE_DIR/${OPENSHIFT_GEAR_NAME}_${CART_NAME}_ctl.sh"
 source ${CART_INFO_DIR}/lib/util
 
 #  Ensure logged in as user.
@@ -105,7 +107,7 @@ if whoami | grep -q root
 then
     echo 1>&2
     echo "Please don't run script as root, try:" 1>&2
-    echo "runuser --shell /bin/sh $OPENSHIFT_APP_UUID $CTL_SCRIPT" 1>&2
+    echo "runuser --shell /bin/sh $OPENSHIFT_GEAR_UUID $CTL_SCRIPT" 1>&2
     echo 2>&1
     exit 15
 fi

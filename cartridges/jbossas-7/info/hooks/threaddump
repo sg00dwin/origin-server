@@ -9,7 +9,7 @@ function print_help {
     echo "Usage: $0 app-name namespace uuid"
     echo "Get a thread dump for a running application"
 
-    echo "$0 $@" | logger -p local0.notice -t libra_threaddump
+    echo "$0 $@" | logger -p local0.notice -t stickshift_threaddump
     exit 1
 }
 
@@ -25,8 +25,8 @@ done
 
 [ $# -eq 3 ] || print_help
 
-CART_DIR=/usr/libexec/li/cartridges
-source ${CART_DIR}/abstract/info/lib/util
+source "/etc/stickshift/stickshift-node.conf"
+source ${CARTRIDGE_BASE_PATH}/abstract/info/lib/util
 
 setup_basic_hook "$1" $2 $3
 

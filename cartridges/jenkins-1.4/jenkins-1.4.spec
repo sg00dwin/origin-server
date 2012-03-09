@@ -1,4 +1,4 @@
-%define cartridgedir %{_libexecdir}/li/cartridges/jenkins-1.4
+%define cartridgedir %{_libexecdir}/stickshift/cartridges/jenkins-1.4
 
 Summary:   Provides jenkins-1.4 support
 Name:      rhc-cartridge-jenkins-1.4
@@ -11,7 +11,8 @@ Source0:   %{name}-%{version}.tar.gz
 
 BuildRoot: %(mktemp -ud %{_tmppath}/%{name}-%{version}-%{release}-XXXXXX)
 BuildRequires: git
-Requires:  rhc-node
+Requires:  stickshift-abstract
+Requires:  rubygem(stickshift-node)
 Requires:  jenkins
 Requires:  jenkins-plugin-openshift
 
@@ -28,8 +29,8 @@ Provides jenkins cartridge to openshift nodes
 %install
 rm -rf %{buildroot}
 mkdir -p %{buildroot}%{cartridgedir}
-mkdir -p %{buildroot}/%{_sysconfdir}/libra/cartridges
-ln -s %{cartridgedir}/info/configuration/ %{buildroot}/%{_sysconfdir}/libra/cartridges/%{name}
+mkdir -p %{buildroot}/%{_sysconfdir}/stickshift/cartridges
+ln -s %{cartridgedir}/info/configuration/ %{buildroot}/%{_sysconfdir}/stickshift/cartridges/%{name}
 cp -r info %{buildroot}%{cartridgedir}/
 cp LICENSE %{buildroot}%{cartridgedir}/
 cp COPYRIGHT %{buildroot}%{cartridgedir}/
@@ -68,7 +69,7 @@ rm -rf %{buildroot}
 %attr(0755,-,-) %{cartridgedir}/info/bin/
 %{cartridgedir}/template/
 %config(noreplace) %{cartridgedir}/info/configuration/
-%{_sysconfdir}/libra/cartridges/%{name}
+%{_sysconfdir}/stickshift/cartridges/%{name}
 %{cartridgedir}/info/changelog
 %{cartridgedir}/info/control
 %{cartridgedir}/info/manifest.yml
@@ -90,7 +91,7 @@ rm -rf %{buildroot}
 - Bug 796595 (dmcphers@redhat.com)
 - Update cartridge configure hooks to load git repo from remote URL Add REST
   API to create application from template Moved application template
-  models/controller to cloud-sdk (kraman@gmail.com)
+  models/controller to stickshift (kraman@gmail.com)
 
 * Mon Feb 20 2012 Dan McPherson <dmcphers@redhat.com> 0.87.2-1
 - secure jenkins (dmcphers@redhat.com)

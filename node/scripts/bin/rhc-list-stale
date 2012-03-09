@@ -9,7 +9,7 @@ days=15
 
 for f in $(libra_users)
 do
-    APPHOME=/var/lib/libra/$f
+    APPHOME=/var/lib/stickshift/$f
     if [ -d "$APPHOME" ]; then
         # Determine if something was committed using the git objects directory
         objects_modified=$(find $APPHOME/git -name objects -mtime -$days)

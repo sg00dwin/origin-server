@@ -9,7 +9,7 @@ function print_help {
     echo "Usage: $0 app-name namespace uuid"
     echo "Get application status"
 
-    echo "$0 $@" | logger -p local0.notice -t libra_jenkins_status
+    echo "$0 $@" | logger -p local0.notice -t stickshift_jenkins_status
     exit 1
 }
 
@@ -26,14 +26,14 @@ done
 
 [ $# -eq 3 ] || print_help
 
-CART_DIR=/usr/libexec/li/cartridges
-CART_INFO_DIR=$CART_DIR/embedded/jenkins-client-1.4/info
-source ${CART_DIR}/abstract/info/lib/util
+source "/etc/stickshift/stickshift-node.conf"
+source ${CARTRIDGE_BASE_PATH}/abstract/info/lib/util
+CART_INFO_DIR=${CARTRIDGE_BASE_PATH}/embedded/jenkins-client-1.4/info
 
 setup_basic_hook "$1" $2 $3
 
 . $APP_HOME/.env/OPENSHIFT_HOMEDIR
-. $APP_HOME/.env/OPENSHIFT_APP_NAME
+. $APP_HOME/.env/OPENSHIFT_GEAR_NAME
 . $APP_HOME/.env/JENKINS_URL
 . $APP_HOME/.env/JENKINS_USERNAME
 
@@ -42,5 +42,5 @@ setup_basic_hook "$1" $2 $3
 #
 
 client_result "You can see the job status here:"
-client_result "${JENKINS_URL}job/${OPENSHIFT_APP_NAME}-build/"
+client_result "${JENKINS_URL}job/${OPENSHIFT_GEAR_NAME}-build/"
   

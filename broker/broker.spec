@@ -1,5 +1,5 @@
 %define htmldir %{_localstatedir}/www/html
-%define brokerdir %{_localstatedir}/www/libra/broker
+%define brokerdir %{_localstatedir}/www/stickshift/broker
 
 Summary:   Li broker components
 Name:      rhc-broker
@@ -20,7 +20,7 @@ Requires:  rubygem-parseconfig
 Requires:  rubygem-passenger-native-libs
 Requires:  rubygem-rails
 Requires:  rubygem-xml-simple
-Requires:  rubygem-cloud-sdk-controller
+Requires:  rubygem-stickshift-controller
 Requires:  rubygem-bson_ext
 Requires:  rubygem-rest-client
 Requires:  rubygem-thread-dump

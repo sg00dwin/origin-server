@@ -1,4 +1,4 @@
-%define cartridgedir %{_libexecdir}/li/cartridges/diy-0.1
+%define cartridgedir %{_libexecdir}/stickshift/cartridges/diy-0.1
 
 Summary:   Provides diy support
 Name:      rhc-cartridge-raw-0.1
@@ -11,9 +11,9 @@ Source0:   %{name}-%{version}.tar.gz
 
 BuildRoot: %(mktemp -ud %{_tmppath}/%{name}-%{version}-%{release}-XXXXXX)
 BuildRequires: git
-Requires:  rhc-node
+Requires:  stickshift-abstract
+Requires: rubygem(stickshift-node)
 Requires:  httpd
-
 BuildArch: noarch
 
 %description
@@ -37,8 +37,8 @@ touch git_template.git/refs/heads/.gitignore
 %install
 rm -rf %{buildroot}
 mkdir -p %{buildroot}%{cartridgedir}
-mkdir -p %{buildroot}/%{_sysconfdir}/libra/cartridges
-ln -s %{cartridgedir}/info/configuration/ %{buildroot}/%{_sysconfdir}/libra/cartridges/%{name}
+mkdir -p %{buildroot}/%{_sysconfdir}/stickshift/cartridges
+ln -s %{cartridgedir}/info/configuration/ %{buildroot}/%{_sysconfdir}/stickshift/cartridges/%{name}
 cp -r info %{buildroot}%{cartridgedir}/
 cp LICENSE %{buildroot}%{cartridgedir}/
 cp COPYRIGHT %{buildroot}%{cartridgedir}/
@@ -79,7 +79,7 @@ rm -rf %{buildroot}
 %attr(0750,-,-) %{cartridgedir}/info/build/
 %attr(0755,-,-) %{cartridgedir}/info/bin/
 %config(noreplace) %{cartridgedir}/info/configuration/
-%{_sysconfdir}/libra/cartridges/%{name}
+%{_sysconfdir}/stickshift/cartridges/%{name}
 %{cartridgedir}/info/changelog
 %{cartridgedir}/info/control
 %{cartridgedir}/info/manifest.yml
@@ -102,7 +102,7 @@ rm -rf %{buildroot}
 - Blanket purge proxy ports on application teardown. (rmillner@redhat.com)
 - Update cartridge configure hooks to load git repo from remote URL Add REST
   API to create application from template Moved application template
-  models/controller to cloud-sdk (kraman@gmail.com)
+  models/controller to stickshift (kraman@gmail.com)
 - Add proxy hooks from abstract (rmillner@redhat.com)
 
 * Thu Feb 16 2012 Dan McPherson <dmcphers@redhat.com> 0.21.1-1

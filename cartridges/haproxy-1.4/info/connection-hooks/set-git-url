@@ -1,17 +1,18 @@
 #!/bin/bash
 
+source /etc/stickshift/stickshift-node.conf
+
 # Set a newly added gear's git url to the list of mirrors we need to push too.
-CART_DIR=/usr/libexec/li/cartridges
 CART_NAME=haproxy
 CART_VERSION=1.4
-CART_INFO_DIR=$CART_DIR/$CART_NAME-$CART_VERSION/info
+CART_INFO_DIR=${CARTRIDGE_BASE_PATH}/${CART_NAME}-${CART_VERSION}/info
 GEAR_AVAILABILITY_TIMEOUT=30
 
 # Exit on any errors
 set -e
 
 function log_error() {
-    echo "$0: $@" | logger -p local0.err -t libra_haproxy_set_git_url
+    echo "$0: $@" | logger -p local0.err -t stickshift_haproxy_set_git_url
     return ${1:-1}
 }
 
@@ -20,7 +21,7 @@ function print_help() {
     echo "Usage: $0 app-name namespace uuid"
     echo "Start a running application"
 
-    echo "$0 $@" | logger -p local0.notice -t libra_haproxy_set_git_url
+    echo "$0 $@" | logger -p local0.notice -t stickshift_haproxy_set_git_url
     exit 1
 }
 
@@ -91,7 +92,7 @@ function register_gear() {
 
     # Generate registry entry of the form: gear-${gear_name}=${gear_git_url}
     entry="$gear_name=$git_url"
-    gear_registry=$OPENSHIFT_APP_DIR/conf/gear-registry.git
+    gear_registry=$OPENSHIFT_GEAR_DIR/conf/gear-registry.git
 
     #  Check if its the first framework gear and if so setup the haproxy
     #  git repo from there.
@@ -153,7 +154,7 @@ function unregister_gear() {
 
     # Search for registry entry of the form: gear-${gear_name}=${gear_git_url}
     entry="$gear_name=$git_url"
-    gear_registry=$OPENSHIFT_APP_DIR/conf/gear-registry.git
+    gear_registry=$OPENSHIFT_GEAR_DIR/conf/gear-registry.git
 
     #  Check if the gear git registry entry exists.
     if grep "$entry" "$gear_registry" > /dev/null 2>&1; then
@@ -182,15 +183,14 @@ done
 
 [ $# -gt 3 ] || print_help
 
-CART_DIR=/usr/libexec/li/cartridges
-source ${CART_DIR}/abstract/info/lib/util
+source ${CARTRIDGE_BASE_PATH}/abstract/info/lib/util
 
 setup_configure "$1" $2 $3
 
 import_env_vars
 
-export GIT_SSH=$CART_INFO_DIR/bin/ssh
-export GIT_DIR=${OPENSHIFT_HOMEDIR}/git/${OPENSHIFT_APP_NAME}.git
+export GIT_SSH=${CART_INFO_DIR}/bin/ssh
+export GIT_DIR=${OPENSHIFT_HOMEDIR}/git/${OPENSHIFT_GEAR_NAME}.git
 
 declare -A curr_gears
 

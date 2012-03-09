@@ -5,13 +5,10 @@
 # Exit on any errors
 set -e
 
-CART_DIR=/usr/libexec/li/cartridges
-
-source ${CART_DIR}/abstract/info/lib/util
-source ${CART_DIR}/abstract/info/lib/apache
-source ${CART_DIR}/abstract/info/lib/network
-
-load_node_conf
+source "/etc/stickshift/stickshift-node.conf"
+source ${CARTRIDGE_BASE_PATH}/abstract/info/lib/util
+source ${CARTRIDGE_BASE_PATH}/abstract/info/lib/apache
+source ${CARTRIDGE_BASE_PATH}/abstract/info/lib/network
 
 while getopts 'd' OPTION
 do
@@ -31,7 +28,7 @@ uuid=$3
 
 setup_basic_vars
 
-CART_INFO_DIR=$CART_DIR/embedded/phpmyadmin-3.4/info
+CART_INFO_DIR=${CARTRIDGE_BASE_PATH}/embedded/phpmyadmin-3.4/info
 
 PHPMYADMIN_DIR="$APP_HOME/phpmyadmin-3.4"
 observe_setup_var_lib_dir "$PHPMYADMIN_DIR"

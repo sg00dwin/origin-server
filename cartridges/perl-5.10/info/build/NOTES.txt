@@ -1,4 +1,4 @@
-php 5.3.2
+Perl 5.10
 
 BUILD: Using standard RHEL RPM
 (Installed and updated via yum)
@@ -7,9 +7,9 @@ DEPENDENCIES:
 All are pulled in automatically via yum
 
 BUNDLE:
-/etc/libra/php.conf
+/etc/stickshift/perl.conf
 
 TODO:
-Create libra specific php.ini file
+Create stickshift specific perl.conf file
 Sandbox
 Jim's stack

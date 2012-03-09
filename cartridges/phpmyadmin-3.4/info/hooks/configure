@@ -8,7 +8,7 @@ set -e
 function print_help {
     echo "Usage: $0 app-name namespace uuid"
 
-    echo "$0 $@" | logger -p local0.notice -t libra_phpmyadmin_configure
+    echo "$0 $@" | logger -p local0.notice -t stickshift_phpmyadmin_configure
     exit 1
 }
 
@@ -24,8 +24,8 @@ done
 
 [ $# -eq 3 ] || print_help
 
-CART_DIR=${CART_DIR:=/usr/libexec/li/cartridges}
-source ${CART_DIR}/abstract/info/lib/util
+source "/etc/stickshift/stickshift-node.conf"
+source ${CARTRIDGE_BASE_PATH}/abstract/info/lib/util
 
 app_type="phpmyadmin-3.4"
 setup_embedded_configure "$1" $2 $3
@@ -45,7 +45,7 @@ then
 fi
 
 # check that the proxy pass include directory exists
-[ -d "/etc/httpd/conf.d/libra/${uuid}_${namespace}_${application}" ] || error "httpd conf dir not available" 136
+[ -d "/etc/httpd/conf.d/stickshift/${uuid}_${namespace}_${application}" ] || error "httpd conf dir not available" 136
 
 #
 # Create the core of the application
@@ -100,7 +100,7 @@ observe_setup_var_lib_dir "$PHPMYADMIN_DIR"
 # Create environment variables. This MUST be before starting phpmyadmin as the CTL script relies on these.
 #
 echo "export OPENSHIFT_PHPMYADMIN_IP='$IP'" > $APP_HOME/.env/OPENSHIFT_PHPMYADMIN_IP
-echo "export OPENSHIFT_PHPMYADMIN_APP_DIR='$PHPMYADMIN_DIR/'" > $APP_HOME/.env/OPENSHIFT_PHPMYADMIN_APP_DIR
+echo "export OPENSHIFT_PHPMYADMIN_GEAR_DIR='$PHPMYADMIN_DIR/'" > $APP_HOME/.env/OPENSHIFT_PHPMYADMIN_GEAR_DIR
 echo "export OPENSHIFT_PHPMYADMIN_CTL_SCRIPT='$PHPMYADMIN_CTL_SCRIPT'" > $APP_HOME/.env/OPENSHIFT_PHPMYADMIN_CTL_SCRIPT
 
 
@@ -121,7 +121,7 @@ restart_httpd_graceful
 # Grab the env vars so we can print them
 . $APP_HOME/.env/OPENSHIFT_DB_USERNAME
 . $APP_HOME/.env/OPENSHIFT_DB_PASSWORD
-. $APP_HOME/.env/OPENSHIFT_APP_DNS
+. $APP_HOME/.env/OPENSHIFT_GEAR_DNS
 
 
 client_result ""
@@ -130,6 +130,6 @@ client_result ""
 client_result "   Root User: $OPENSHIFT_DB_USERNAME"
 client_result "   Root Password: $OPENSHIFT_DB_PASSWORD"
 client_result ""
-client_result "URL: https://$OPENSHIFT_APP_DNS/phpmyadmin/"
+client_result "URL: https://$OPENSHIFT_GEAR_DNS/phpmyadmin/"
 
-set_app_info "URL: https://$OPENSHIFT_APP_DNS/phpmyadmin/"
+set_app_info "URL: https://$OPENSHIFT_GEAR_DNS/phpmyadmin/"

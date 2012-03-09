@@ -5,7 +5,7 @@
 function print_help {
     echo "Usage: $0 app-name namespace uuid"
 
-    echo "$0 $@" | logger -p local0.notice -t libra_metrics_deconfigure
+    echo "$0 $@" | logger -p local0.notice -t stickshift_metrics_deconfigure
     exit 1
 }
 
@@ -22,8 +22,8 @@ done
 
 [ $# -eq 3 ] || print_help
 
-CART_DIR=${CART_DIR:=/usr/libexec/li/cartridges}
-source ${CART_DIR}/abstract/info/lib/util
+source "/etc/stickshift/stickshift-node.conf"
+source ${CARTRIDGE_BASE_PATH}/abstract/info/lib/util
 
 app_type="metrics-0.1"
 setup_embedded_deconfigure "$1" $2 $3
@@ -43,7 +43,7 @@ confirm_log_files_inactive "$METRICS_DIR/logs"
 #
 # Remove environment variables
 #
-/bin/rm -f $APP_HOME/.env/OPENSHIFT_METRICS_APP_DIR $APP_HOME/.env/OPENSHIFT_METRICS_CTL_SCRIPT $APP_HOME/.env/OPENSHIFT_METRICS_IP
+/bin/rm -f $APP_HOME/.env/OPENSHIFT_METRICS_GEAR_DIR $APP_HOME/.env/OPENSHIFT_METRICS_CTL_SCRIPT $APP_HOME/.env/OPENSHIFT_METRICS_IP
 
 
 # Remove metrics dir. This MUST be after stopping metrics as the CTL script relies on these.
@@ -52,6 +52,6 @@ runcon -l s0-s0:c0.c1023 rm -rf "$METRICS_DIR"
 #
 # Remove ProxyPass definition from apache
 #
-rm -f /etc/httpd/conf.d/libra/${uuid}_${namespace}_${application}/metrics-0.1.conf || warning "Could not remove metrics apache definition" 156
+rm -f /etc/httpd/conf.d/stickshift/${uuid}_${namespace}_${application}/metrics-0.1.conf || warning "Could not remove metrics apache definition" 156
 
 /sbin/service httpd configtest 2> /dev/null && /sbin/service httpd graceful || warning "Failed to restart master httpd, please contact support" 120

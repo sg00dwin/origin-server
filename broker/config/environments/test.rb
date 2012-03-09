@@ -72,10 +72,6 @@ Broker::Application.configure do
     :config      => "/etc/mcollective/client.cfg"
   }
   
-  config.datastore_mongo = {
-    :collections => {:district => "district", :application_template => "template"}
-  }
-  
   config.analytics = {
     :nurture_enabled => false,
     :nurture_username => "admin",
@@ -89,20 +85,22 @@ Broker::Application.configure do
     :apptegic_dataset => "test"
   }
 
-  # CDK Config
-  config.cdk = {
+  # SS Config
+  config.ss = {
     :domain_suffix => "dev.rhcloud.com",
     :default_max_gears => 5,
 
-    :datastore_mongo => {
-      :replica_set => true,
-      # Replica set example: [[<host-1>, <port-1>], [<host-2>, <port-2>], ...]
-      :host_port => [["localhost", 27017]],
-
-      :user => "libra",
-      :password => "momo",
-      :db => "openshift_broker_dev",
-      :collections => {:user => "user_test"}
+    :datastore => {
+      :mongo => {
+        :replica_set => true,
+        # Replica set example: [[<host-1>, <port-1>], [<host-2>, <port-2>], ...]
+        :host_port => [["localhost", 27017]],
+        
+        :user => "libra",
+        :password => "momo",
+        :db => "openshift_broker_dev",
+        :collections => {:user => "user_test", :district => "district", :application_template => "template"}
+      }
     }
   }
 

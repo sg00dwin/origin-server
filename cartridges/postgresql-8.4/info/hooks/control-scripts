@@ -1,10 +1,12 @@
 #!/bin/bash
 
+source "/etc/stickshift/stickshift-node.conf"
+
 # Control application's embedded PostgreSQL server instance
 CART_NAME=postgresql
 CART_VERSION=8.4
 CART_DIRNAME=${CART_NAME}-$CART_VERSION
-CART_DIR=${CART_DIR:=/usr/libexec/li/cartridges}
+CART_DIR=${CARTRIDGE_BASE_DIR}
 
 
 # Exit on any errors
@@ -16,7 +18,7 @@ function print_help() {
     echo "Usage: $0 app-name namespace uuid"
     echo "$cmd embedded PostgreSQL service"
 
-    echo "$0 $@" | logger -p local0.notice -t libra_postgresql_$cmd
+    echo "$0 $@" | logger -p local0.notice -t stickshift_postgresql_$cmd
     exit 1
 
 }  #  End of function  print_help.
@@ -56,9 +58,8 @@ function _reload_postgres_service() {
 
 
 function _move_postgres_service() {
-   source ${CART_DIR}/abstract/info/lib/apache
-   source ${CART_DIR}/abstract/info/lib/network
-   load_node_conf
+   source ${CARTRIDGE_BASE_PATH}/abstract/info/lib/apache
+   source ${CARTRIDGE_BASE_PATH}/abstract/info/lib/network
 
 PSQL_DIR="$APP_HOME/postgresql-8.4/"
 
@@ -90,16 +91,14 @@ fi
 }  #  End of function  _move_postgres_service.
 
 function _pre_move_postgres_service() {
-   source ${CART_DIR}/abstract/info/lib/apache
-   source ${CART_DIR}/abstract/info/lib/network
-   load_node_conf
+   source ${CARTRIDGE_BASE_PATH}/abstract/info/lib/apache
+   source ${CARTRIDGE_BASE_PATH}/abstract/info/lib/network
 
 }  #  End of function  _pre_move_postgres_service.
 
 function _post_move_postgres_service() {
-   source ${CART_DIR}/abstract/info/lib/apache
-   source ${CART_DIR}/abstract/info/lib/network
-   load_node_conf
+   source ${CARTRIDGE_BASE_PATH}/abstract/info/lib/apache
+   source ${CARTRIDGE_BASE_PATH}/abstract/info/lib/network
 
 }  #  End of function  _post_move_postgres_service.
 
@@ -117,7 +116,7 @@ function _status_postgres_service() {
 #
 # main():
 #
-source ${CART_DIR}/abstract/info/lib/util
+source ${CARTRIDGE_BASE_PATH}/abstract/info/lib/util
 
 # Parse and ensure arguments.
 while getopts 'd' OPTION

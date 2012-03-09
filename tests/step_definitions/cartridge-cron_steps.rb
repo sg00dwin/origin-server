@@ -1,7 +1,7 @@
 require 'fileutils'
 
 $cron_version = "1.4"
-$cron_cart_root = "/usr/libexec/li/cartridges/embedded/cron-#{$cron_version}"
+$cron_cart_root = "/usr/libexec/stickshift/cartridges/embedded/cron-#{$cron_version}"
 $cron_hooks = $cron_cart_root + "/info/hooks"
 $cron_config = $cron_hooks + "/configure"
 $cron_config_format = "#{$cron_config} %s %s %s"

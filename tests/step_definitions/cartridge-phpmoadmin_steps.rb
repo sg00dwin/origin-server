@@ -1,7 +1,7 @@
 require 'fileutils'
 
 $phpmoadmin_version = "1.0"
-$phpmoadmin_cart_root = "/usr/libexec/li/cartridges/embedded/phpmoadmin-#{$phpmoadmin_version}"
+$phpmoadmin_cart_root = "/usr/libexec/stickshift/cartridges/embedded/phpmoadmin-#{$phpmoadmin_version}"
 $phpmoadmin_hooks = $phpmoadmin_cart_root + "/info/hooks"
 $phpmoadmin_config = $phpmoadmin_hooks + "/configure"
 $phpmoadmin_config_format = "#{$phpmoadmin_config} %s %s %s"

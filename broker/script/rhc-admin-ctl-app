@@ -53,7 +53,7 @@ if login.nil? or app_name.nil? or command.nil? or args["--help"]
   exit 1
 end
 
-require "/var/www/libra/broker/config/environment"
+require "/var/www/stickshift/broker/config/environment"
 
 user = CloudUser.find(login)
 unless user

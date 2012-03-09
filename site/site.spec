@@ -1,5 +1,5 @@
 %define htmldir %{_localstatedir}/www/html
-%define sitedir %{_localstatedir}/www/libra/site
+%define sitedir %{_localstatedir}/www/stickshift/site
 
 Summary:   Li site components
 Name:      rhc-site

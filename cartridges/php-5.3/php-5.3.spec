@@ -1,4 +1,4 @@
-%define cartridgedir %{_libexecdir}/li/cartridges/php-5.3
+%define cartridgedir %{_libexecdir}/stickshift/cartridges/php-5.3
 
 Summary:   Provides php-5.3 support
 Name:      rhc-cartridge-php-5.3
@@ -11,7 +11,8 @@ Source0:   %{name}-%{version}.tar.gz
 
 BuildRoot: %(mktemp -ud %{_tmppath}/%{name}-%{version}-%{release}-XXXXXX)
 BuildRequires: git
-Requires:  rhc-node
+Requires:  stickshift-abstract
+Requires:  rubygem(stickshift-node)
 Requires:  php >= 5.3.2
 Requires:  php < 5.4.0
 Requires:  mod_bw
@@ -49,8 +50,8 @@ touch git_template.git/refs/heads/.gitignore
 %install
 rm -rf %{buildroot}
 mkdir -p %{buildroot}%{cartridgedir}
-mkdir -p %{buildroot}/%{_sysconfdir}/libra/cartridges
-ln -s %{cartridgedir}/info/configuration/ %{buildroot}/%{_sysconfdir}/libra/cartridges/%{name}
+mkdir -p %{buildroot}/%{_sysconfdir}/stickshift/cartridges
+ln -s %{cartridgedir}/info/configuration/ %{buildroot}/%{_sysconfdir}/stickshift/cartridges/%{name}
 cp -r info %{buildroot}%{cartridgedir}/
 cp LICENSE %{buildroot}%{cartridgedir}/
 cp COPYRIGHT %{buildroot}%{cartridgedir}/
@@ -92,7 +93,7 @@ rm -rf %{buildroot}
 %attr(0755,-,-) %{cartridgedir}/info/bin/
 %attr(0755,-,-) %{cartridgedir}/info/connection-hooks/
 %config(noreplace) %{cartridgedir}/info/configuration/
-%{_sysconfdir}/libra/cartridges/%{name}
+%{_sysconfdir}/stickshift/cartridges/%{name}
 %{cartridgedir}/info/changelog
 %{cartridgedir}/info/control
 %{cartridgedir}/info/manifest.yml
@@ -111,12 +112,12 @@ rm -rf %{buildroot}
 - fix php publish url to send exposed port (rchopra@redhat.com)
 - Update cartridge configure hooks to load git repo from remote URL Add REST
   API to create application from template Moved application template
-  models/controller to cloud-sdk (kraman@gmail.com)
+  models/controller to stickshift (kraman@gmail.com)
 - Revert "local commits for testing - required for tito build"
   (abhgupta@redhat.com)
 - local commits for testing - required for tito build (abhgupta@redhat.com)
 - run connectors as non-root (rchopra@redhat.com)
-- include open4 for cdk-connector-execute, fix in php publish_http_url
+- include open4 for ss-connector-execute, fix in php publish_http_url
   connector.. we dont need the external port for proxying web interfaces
   (rchopra@redhat.com)
 

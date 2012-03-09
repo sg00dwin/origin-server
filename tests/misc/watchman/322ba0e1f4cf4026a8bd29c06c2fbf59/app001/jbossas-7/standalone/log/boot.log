@@ -4,12 +4,12 @@
 17:56:38,549 DEBUG [org.jboss.as.config] Configured system properties:
 	JAVA_HOME = /etc/alternatives/java_sdk_1.6.0
 	M2_HOME = /etc/alternatives/maven-3.0
-	OPENSHIFT_APP_CTL_SCRIPT = /var/lib/libra/322ba0e1f4cf4026a8bd29c06c2fbf59/app001/app001_ctl.sh
-	OPENSHIFT_APP_DIR = /var/lib/libra/322ba0e1f4cf4026a8bd29c06c2fbf59/app001/
-	OPENSHIFT_APP_DNS = app001-jwh201202141359.dev.rhcloud.com
-	OPENSHIFT_APP_NAME = app001
-	OPENSHIFT_APP_TYPE = jbossas-7
-	OPENSHIFT_APP_UUID = 322ba0e1f4cf4026a8bd29c06c2fbf59
+	OPENSHIFT_GEAR_CTL_SCRIPT = /var/lib/libra/322ba0e1f4cf4026a8bd29c06c2fbf59/app001/app001_ctl.sh
+	OPENSHIFT_GEAR_DIR = /var/lib/libra/322ba0e1f4cf4026a8bd29c06c2fbf59/app001/
+	OPENSHIFT_GEAR_DNS = app001-jwh201202141359.dev.rhcloud.com
+	OPENSHIFT_GEAR_NAME = app001
+	OPENSHIFT_GEAR_TYPE = jbossas-7
+	OPENSHIFT_GEAR_UUID = 322ba0e1f4cf4026a8bd29c06c2fbf59
 	OPENSHIFT_CONTAINER_UUID = 322ba0e1f4cf4026a8bd29c06c2fbf59
 	OPENSHIFT_DATA_DIR = /var/lib/libra/322ba0e1f4cf4026a8bd29c06c2fbf59/app001/data/
 	OPENSHIFT_HOMEDIR = /var/lib/libra/322ba0e1f4cf4026a8bd29c06c2fbf59/

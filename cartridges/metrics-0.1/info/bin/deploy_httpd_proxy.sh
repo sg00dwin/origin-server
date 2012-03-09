@@ -9,7 +9,7 @@
 function print_help {
     echo "Usage: $0 app-name namespace uuid IP"
 
-    echo "$0 $@" | logger -p local0.notice -t libra_deploy_httpd_proxy
+    echo "$0 $@" | logger -p local0.notice -t stickshift_metrics_deploy_httpd_proxy
     exit 1
 }
 
@@ -21,12 +21,10 @@ namespace=`basename $2`
 uuid=$3
 IP=$4
 
-CART_DIR=/usr/libexec/li/cartridges
-source ${CART_DIR}/abstract/info/lib/util
+source "/etc/stickshift/stickshift-node.conf"
+source ${CARTRIDGE_BASE_PATH}/abstract/info/lib/util
 
-load_node_conf
-
-cat <<EOF > "/etc/httpd/conf.d/libra/${uuid}_${namespace}_${application}/metrics-0.1.conf"
+cat <<EOF > "${STICKSHIFT_HTTP_CONF_DIR}/${uuid}_${namespace}_${application}/metrics-0.1.conf"
 ProxyPass /metrics http://$IP:8080/metrics status=I
 ProxyPassReverse /metrics http://$IP:8080/metrics
 

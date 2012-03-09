@@ -1,11 +1,14 @@
 #!/bin/bash
 
+source "/etc/stickshift/stickshift-node.conf"
+source ${CARTRIDGE_BASE_PATH}/abstract/info/lib/util
+
 # Control application's embedded Memcached server instance
 1ERVICE_NAME=Memcached
 CART_NAME=memcached
 CART_VERSION=1.4
 CART_DIRNAME=${CART_NAME}-$CART_VERSION
-CART_INSTALL_DIR=/usr/libexec/li/cartridges
+CART_INSTALL_DIR=${CARTRIDGE_BASE_PATH}
 CART_INFO_DIR=$CART_INSTALL_DIR/embedded/$CART_DIRNAME/info
 export STOPTIMEOUT=10
 
@@ -44,7 +47,7 @@ function _service_start() {
    else
       pidfile="$CART_INSTANCE_DIR/pid/memcached.pid"
       logfile="$CART_INSTANCE_DIR/log/memcached.log"
-      /usr/bin/memcached -d -p $OPENSHIFT_CACHE_PORT -u $OPENSHIFT_APP_UUID  \
+      /usr/bin/memcached -d -p $OPENSHIFT_CACHE_PORT -u $OPENSHIFT_GEAR_UUID  \
                          -m $MEMCACHED_CACHESIZE -c $MEMCACHED_MAXCONN       \
                          -P $pidfile $MEMCACHED_OTHER_OPTIONS > $logfile 2>&1
       wait_to_start_as_user
@@ -104,7 +107,7 @@ done
 
 # Cartridge instance dir and control script name.
 CART_INSTANCE_DIR="$OPENSHIFT_HOMEDIR/$CART_DIRNAME"
-CTL_SCRIPT="$CART_INSTANCE_DIR/${OPENSHIFT_APP_NAME}_${CART_NAME}_ctl.sh"
+CTL_SCRIPT="$CART_INSTANCE_DIR/${OPENSHIFT_GEAR_NAME}_${CART_NAME}_ctl.sh"
 source ${CART_INFO_DIR}/lib/util
 
 #  Ensure logged in as user.
@@ -112,7 +115,7 @@ if whoami | grep -q root
 then
     echo 1>&2
     echo "Please don't run script as root, try:" 1>&2
-    echo "runuser --shell /bin/sh $OPENSHIFT_APP_UUID $CTL_SCRIPT" 1>&2
+    echo "runuser --shell /bin/sh $OPENSHIFT_GEAR_UUID $CTL_SCRIPT" 1>&2
     echo 2>&1
     exit 15
 fi

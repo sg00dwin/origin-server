@@ -47,7 +47,7 @@ if login.nil? or vip.nil? or not (vip == "1" or vip == "0")
   exit -100
 end
 
-require "/var/www/libra/broker/config/environment"
+require "/var/www/stickshift/broker/config/environment"
 
 user = CloudUser.find(login)
 if user.nil?

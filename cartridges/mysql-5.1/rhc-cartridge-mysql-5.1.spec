@@ -1,24 +1,24 @@
-%define cartridgedir %{_libexecdir}/li/cartridges/embedded/mysql-5.1
-%define frameworkdir %{_libexecdir}/li/cartridges/mysql-5.1
+%define cartridgedir %{_libexecdir}/stickshift/cartridges/embedded/mysql-5.1
+%define frameworkdir %{_libexecdir}/stickshift/cartridges/mysql-5.1
 
 Name: rhc-cartridge-mysql-5.1
 Version: 0.22.1
 Release: 1%{?dist}
-Summary: Embedded mysql support for express
+Summary: Provides embedded mysql support
 
 Group: Network/Daemons
 License: ASL 2.0
-URL: https://engineering.redhat.com/trac/Libra
+URL: http://openshift.redhat.com
 Source0: %{name}-%{version}.tar.gz
 BuildRoot:    %(mktemp -ud %{_tmppath}/%{name}-%{version}-%{release}-XXXXXX)
 BuildArch: noarch
 
-Requires: rhc-node
+Requires: stickshift-abstract
 Requires: mysql-server
 Requires: mysql-devel
 
 %description
-Provides rhc perl cartridge support
+Provides mysql cartridge support to OpenShift
 
 %prep
 %setup -q
@@ -39,15 +39,14 @@ touch git_template.git/refs/heads/.gitignore
 rm -rf $RPM_BUILD_ROOT
 rm -rf %{buildroot}
 mkdir -p %{buildroot}%{cartridgedir}
-mkdir -p %{buildroot}/%{_sysconfdir}/libra/cartridges
-ln -s %{cartridgedir}/info/configuration/ %{buildroot}/%{_sysconfdir}/libra/cartridges/%{name}
+mkdir -p %{buildroot}/%{_sysconfdir}/stickshift/cartridges
+ln -s %{cartridgedir}/info/configuration/ %{buildroot}/%{_sysconfdir}/stickshift/cartridges/%{name}
 ln -s %{cartridgedir} %{buildroot}/%{frameworkdir}
 cp -r info %{buildroot}%{cartridgedir}/
 cp LICENSE %{buildroot}%{cartridgedir}/
 cp COPYRIGHT %{buildroot}%{cartridgedir}/
 mkdir -p %{buildroot}%{cartridgedir}/info/data/
 cp -r git_template.git %{buildroot}%{cartridgedir}/info/data/
-
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -62,7 +61,7 @@ rm -rf $RPM_BUILD_ROOT
 %attr(0755,-,-) %{cartridgedir}/info/lib/
 %attr(0755,-,-) %{cartridgedir}/info/connection-hooks/
 %attr(0755,-,-) %{frameworkdir}
-%{_sysconfdir}/libra/cartridges/%{name}
+%{_sysconfdir}/stickshift/cartridges/%{name}
 %{cartridgedir}/info/changelog
 %{cartridgedir}/info/control
 %{cartridgedir}/info/manifest.yml

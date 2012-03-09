@@ -5,15 +5,14 @@
 # Exit on any errors
 set -e
 
-CART_DIR=/usr/libexec/li/cartridges
-source ${CART_DIR}/abstract/info/lib/util
-
+source /etc/stickshift/stickshift-node.conf
+source ${CARTRIDGE_BASE_PATH}/abstract/info/lib/util
 
 function print_help {
     echo "Usage: $0 app-name namespace uuid"
     echo "Start a running application"
 
-    echo "$0 $@" | logger -p local0.notice -t libra_haproxy_set_proxy
+    echo "$0 $@" | logger -p local0.notice -t stickshift_haproxy_set_proxy
     exit 1
 }
 
@@ -30,16 +29,13 @@ done
 
 [ $# -gt 3 ] || print_help
 
-CART_DIR=/usr/libexec/li/cartridges
-source ${CART_DIR}/abstract/info/lib/util
-
 setup_configure "$1" $2 $3
 
 import_env_vars
 
 declare -A curr_server_gears
 
-haproxy_cfg=$OPENSHIFT_APP_DIR/conf/haproxy.cfg
+haproxy_cfg=$OPENSHIFT_GEAR_DIR/conf/haproxy.cfg
 # Remove the first 3 args and process all the remaining args of the form k=v.
 # The values are the gear endpoints.
 kvargs=$(echo "${@:4}" | tr -d "\n" )

@@ -1,7 +1,7 @@
 require 'fileutils'
 
 $rockmongo_version = "1.1"
-$rockmongo_cart_root = "/usr/libexec/li/cartridges/embedded/rockmongo-#{$rockmongo_version}"
+$rockmongo_cart_root = "/usr/libexec/stickshift/cartridges/embedded/rockmongo-#{$rockmongo_version}"
 $rockmongo_hooks = $rockmongo_cart_root + "/info/hooks"
 $rockmongo_config = $rockmongo_hooks + "/configure"
 $rockmongo_config_format = "#{$rockmongo_config} %s %s %s"

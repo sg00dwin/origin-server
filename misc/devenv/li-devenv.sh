@@ -99,7 +99,7 @@ then
   for x in `find -name *.spec`
   do
     dir=`dirname $x`
-    if [ "$dir" != "./build/seigiku" ]
+    if [ "$dir" != "./build/seigiku" -a "$dir" != "./stickshift/broker" ]
     then
       install_build_requires "$x"
       pushd $dir > /dev/null

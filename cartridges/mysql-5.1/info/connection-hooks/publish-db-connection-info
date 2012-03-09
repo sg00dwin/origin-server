@@ -9,7 +9,7 @@ function print_help {
     echo "Usage: $0 app-name namespace uuid"
     echo "Publish mysql database connection information"
 
-    echo "$0 $@" | logger -p local0.notice -t libra_mysql_publish_conn_info
+    echo "$0 $@" | logger -p local0.notice -t stickshift_mysql_publish_conn_info
     exit 1
 }
 
@@ -26,8 +26,8 @@ done
 
 [ $# -eq 3 ] || print_help
 
-CART_DIR=/usr/libexec/li/cartridges
-source ${CART_DIR}/abstract/info/lib/util
+source /etc/stickshift/stickshift-node.conf
+source ${CARTRIDGE_BASE_PATH}/abstract/info/lib/util
 
 setup_configure "$1" $2 $3
 
@@ -35,11 +35,11 @@ import_env_vars
 
 # Check scalability and setup entries accordingly.
 if is_a_scalable_app; then
-    mysql_host=$OPENSHIFT_APP_DNS
+    mysql_host=$OPENSHIFT_GEAR_DNS
     mysql_port=$OPENSHIFT_DB_PROXY_PORT
     mysql_dburl="$OPENSHIFT_DB_TYPE://$OPENSHIFT_DB_USERNAME:$OPENSHIFT_DB_PASSWORD@$mysql_host:$mysql_port/"
     mysql_dbsocket=""
-    echo "OPENSHIFT_DB_GEAR_USERHOST=$OPENSHIFT_APP_UUID@$mysql_host"
+    echo "OPENSHIFT_DB_GEAR_USERHOST=$OPENSHIFT_GEAR_UUID@$mysql_host"
     echo "OPENSHIFT_DB_GEAR_CTL_SCRIPT=$OPENSHIFT_DB_CTL_SCRIPT"
 fi
 

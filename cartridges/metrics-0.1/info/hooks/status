@@ -9,7 +9,7 @@ function print_help {
     echo "Usage: $0 app-name namespace uuid"
     echo "Stop a running application and disable it"
 
-    echo "$0 $@" | logger -p local0.notice -t libra_phpmyadmin_status
+    echo "$0 $@" | logger -p local0.notice -t stickshift_metrics_status
     exit 1
 }
 
@@ -26,8 +26,8 @@ done
 
 [ $# -eq 3 ] || print_help
 
-CART_DIR=/usr/libexec/li/cartridges
-source ${CART_DIR}/abstract/info/lib/util
+source "/etc/stickshift/stickshift-node.conf"
+source ${CARTRIDGE_BASE_PATH}/abstract/info/lib/util
 
 setup_basic_hook "$1" $2 $3
 
@@ -36,7 +36,7 @@ METRICS_DIR=`echo $APP_HOME/metrics-0.1 | tr -s /` # ensure that there aren't do
 #
 # Start application
 #
-ADDRESS="$(awk '/Listen/{ print $2 }' $METRICS_DIR/conf.d/libra.conf)"
+ADDRESS="$(awk '/Listen/{ print $2 }' $METRICS_DIR/conf.d/stickshift.conf)"
 URL="http://$ADDRESS/server-status?auto"
 
 if output=$(runuser --shell /bin/sh "$uuid" -c "/usr/bin/wget -qO- $URL" 2>&1)

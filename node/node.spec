@@ -23,7 +23,8 @@ Requires:      perl
 Requires:      ruby
 Requires:      rubygem-open4
 Requires:      rubygem-parseconfig
-Requires:      rubygem-cloud-sdk-node
+Requires:      rubygem-stickshift-node
+Requires:      stickshift-abstract
 Requires:      quota
 Requires:      lsof
 Requires:      wget
@@ -68,33 +69,32 @@ mkdir -p %{buildroot}%{_bindir}
 mkdir -p %{buildroot}%{_libexecdir}
 mkdir -p %{buildroot}%{_initddir}
 mkdir -p %{buildroot}%{ruby_sitelibdir}
-mkdir -p %{buildroot}%{_libexecdir}/li
+mkdir -p %{buildroot}%{_libexecdir}/stickshift
 mkdir -p %{buildroot}/usr/share/selinux/packages
 mkdir -p %{buildroot}%{_sysconfdir}/cron.daily/
 mkdir -p %{buildroot}%{_sysconfdir}/oddjobd.conf.d/
 mkdir -p %{buildroot}%{_sysconfdir}/dbus-1/system.d/
 mkdir -p %{buildroot}%{_sysconfdir}/cron.daily/
-mkdir -p %{buildroot}%{_sysconfdir}/libra/skel
+mkdir -p %{buildroot}%{_sysconfdir}/stickshift/skel
 mkdir -p %{buildroot}/%{_localstatedir}/www/html/
 mkdir -p %{buildroot}/%{_sysconfdir}/security/
-mkdir -p %{buildroot}%{_localstatedir}/lib/libra
-mkdir -p %{buildroot}%{_localstatedir}/run/libra
-mkdir -p %{buildroot}%{_localstatedir}/lib/libra/.httpd.d
-mkdir -p %{buildroot}%{_localstatedir}/lib/libra/.libra-proxy.d
+mkdir -p %{buildroot}%{_localstatedir}/lib/stickshift
+mkdir -p %{buildroot}%{_localstatedir}/run/stickshift
+mkdir -p %{buildroot}%{_localstatedir}/lib/stickshift/.httpd.d
+mkdir -p %{buildroot}%{_localstatedir}/lib/stickshift/.stickshift-proxy.d
 mkdir -p %{buildroot}/%{_sysconfdir}/httpd/conf.d/
 mkdir -p %{buildroot}/lib64/security/
-ln -s %{_localstatedir}/lib/libra/.httpd.d/ %{buildroot}/%{_sysconfdir}/httpd/conf.d/libra
+ln -s %{_localstatedir}/lib/stickshift/.httpd.d/ %{buildroot}/%{_sysconfdir}/httpd/conf.d/stickshift
 
-cp -r cartridges %{buildroot}%{_libexecdir}/li
-cp -r lib %{buildroot}%{_libexecdir}/li
+cp -r lib %{buildroot}%{_libexecdir}/stickshift
 cp -r conf/httpd %{buildroot}%{_sysconfdir}
-cp -r conf/libra %{buildroot}%{_sysconfdir}
+cp -r conf/stickshift %{buildroot}%{_sysconfdir}
 cp -r facter %{buildroot}%{ruby_sitelibdir}/facter
 cp -r mcollective %{buildroot}%{_libexecdir}
 cp -r namespace.d %{buildroot}%{_sysconfdir}/security
 cp scripts/bin/* %{buildroot}%{_bindir}
 cp scripts/init/* %{buildroot}%{_initddir}
-cp scripts/libra_tmpwatch.sh %{buildroot}%{_sysconfdir}/cron.daily/libra_tmpwatch.sh
+cp scripts/stickshift_tmpwatch.sh %{buildroot}%{_sysconfdir}/cron.daily/stickshift_tmpwatch.sh
 cp conf/oddjob/openshift-restorer.conf %{buildroot}%{_sysconfdir}/dbus-1/system.d/
 cp conf/oddjob/oddjobd-restorer.conf %{buildroot}%{_sysconfdir}/oddjobd.conf.d/
 cp scripts/restorer.php %{buildroot}/%{_localstatedir}/www/html/
@@ -119,11 +119,11 @@ perl -p -i -e 's:/cgroup/[^\s]+;:/cgroup/all;:; /blkio|cpuset|devices/ && ($_ = 
 /sbin/chkconfig --add libra-proxy || :
 #/sbin/service mcollective restart > /dev/null 2>&1 || :
 /sbin/restorecon /etc/init.d/libra || :
-/sbin/restorecon /var/lib/libra || :
-/sbin/restorecon /var/run/libra || :
+/sbin/restorecon /var/lib/stickshift || :
+/sbin/restorecon /var/run/stickshift || :
 /sbin/restorecon /usr/bin/rhc-cgroup-read || :
-/sbin/restorecon /var/lib/libra/.httpd.d/ || :
-/sbin/restorecon /var/lib/libra/.libra-proxy.d/ || :
+/sbin/restorecon /var/lib/stickshift/.httpd.d/ || :
+/sbin/restorecon /var/lib/stickshift/.libra-proxy.d/ || :
 /usr/bin/rhc-restorecon || :
 # only enable if cgconfig is
 chkconfig cgconfig && /sbin/service libra-cgroups start > /dev/null 2>&1 || :
@@ -141,17 +141,26 @@ echo "/usr/bin/trap-user" >> /etc/shells
 #semanage login -m -s guest_u __default__ || :
 
 # If /etc/httpd/conf.d/libra is a dir, make it a symlink
-if [[ -d "/etc/httpd/conf.d/libra.bak" && -L "/etc/httpd/conf.d/libra" ]]
+if [[ -d "/etc/httpd/conf.d/stickshift.bak" && -L "/etc/httpd/conf.d/stickshift" ]]
 then
-    mv /etc/httpd/conf.d/libra.bak/* /var/lib/libra/.httpd.d/
+    mv /etc/httpd/conf.d/stickshift.bak/* /var/lib/stickshift/.httpd.d/
     # not forced to prevent data loss
-    rmdir /etc/httpd/conf.d/libra.bak
+    rmdir /etc/httpd/conf.d/stickshift.bak
 fi
 
-if ! [ -f /var/lib/libra/.libra-proxy.d/libra-proxy.cfg ]; then
-   cp /etc/libra/libra-proxy.cfg /var/lib/libra/.libra-proxy.d/libra-proxy.cfg
-   restorecon /var/lib/libra/.libra-proxy.d/libra-proxy.cfg || :
+if ! [ -f /var/lib/stickshift/.stickshift-proxy.d/stickshift-proxy.cfg ]; then
+   cp /etc/stickshift/stickshift-proxy.cfg /var/lib/stickshift/.stickshift-proxy.d/stickshift-proxy.cfg
+   restorecon /var/lib/stickshift/.stickshift-proxy.d/stickshift-proxy.cfg || :
 fi
+
+cp -f /etc/stickshift/stickshift-node.conf.libra /etc/stickshift/stickshift-node.conf
+restorecon /var/lib/stickshift/stickshift-node.conf || :
+
+
+%triggerin -- rubygem-stickshift-node
+
+cp -f /etc/stickshift/stickshift-node.conf.libra /etc/stickshift/stickshift-node.conf
+restorecon /var/lib/stickshift/stickshift-node.conf || :
 
 
 %preun
@@ -170,6 +179,7 @@ if [ "$1" -eq "0" ]; then
 fi
 
 %postun
+
 if [ "$1" -eq 0 ]; then
     /sbin/service mcollective restart > /dev/null 2>&1 || :
 fi
@@ -177,9 +187,9 @@ fi
 
 %pre
 
-if [[ -d "/etc/httpd/conf.d/libra" && ! -L "/etc/httpd/conf.d/libra" ]]
+if [[ -d "/etc/httpd/conf.d/stickshift" && ! -L "/etc/httpd/conf.d/stickshift" ]]
 then
-    mv /etc/httpd/conf.d/libra/ /etc/httpd/conf.d/libra.bak/
+    mv /etc/httpd/conf.d/stickshift/ /etc/httpd/conf.d/stickshift.bak/
 fi
 
 %triggerin -- haproxy
@@ -212,21 +222,21 @@ fi
 %attr(0750,-,-) %{_bindir}/ec2-prep.sh
 %attr(0750,-,-) %{_bindir}/remount-secure.sh
 %attr(0755,-,-) %{_bindir}/rhc-cgroup-read
-%dir %attr(0751,root,root) %{_localstatedir}/lib/libra
-%dir %attr(0750,root,root) %{_localstatedir}/lib/libra/.httpd.d
-%dir %attr(0750,root,root) %{_localstatedir}/lib/libra/.libra-proxy.d
-%dir %attr(0700,root,root) %{_localstatedir}/run/libra
-%dir %attr(0755,root,root) %{_libexecdir}/li/cartridges/abstract-httpd/
-%attr(0750,-,-) %{_libexecdir}/li/cartridges/abstract-httpd/info/hooks/
-%attr(0755,-,-) %{_libexecdir}/li/cartridges/abstract-httpd/info/bin/
-#%{_libexecdir}/li/cartridges/abstract-httpd/info
-%dir %attr(0755,root,root) %{_libexecdir}/li/cartridges/abstract/
-%attr(0750,-,-) %{_libexecdir}/li/cartridges/abstract/info/hooks/
-%attr(0755,-,-) %{_libexecdir}/li/cartridges/abstract/info/bin/
-%attr(0755,-,-) %{_libexecdir}/li/cartridges/abstract/info/lib/
-%attr(0750,-,-) %{_libexecdir}/li/cartridges/abstract/info/connection-hooks/
-%attr(0755,-,-) %{_libexecdir}/li/lib/
-#%{_libexecdir}/li/cartridges/abstract/info
+%dir %attr(0751,root,root) %{_localstatedir}/lib/stickshift
+%dir %attr(0750,root,root) %{_localstatedir}/lib/stickshift/.httpd.d
+%dir %attr(0750,root,root) %{_localstatedir}/lib/stickshift/.stickshift-proxy.d
+%dir %attr(0700,root,root) %{_localstatedir}/run/stickshift
+#%dir %attr(0755,root,root) %{_libexecdir}/stickshift/cartridges/abstract-httpd/
+#%attr(0750,-,-) %{_libexecdir}/stickshift/cartridges/abstract-httpd/info/hooks/
+#%attr(0755,-,-) %{_libexecdir}/stickshift/cartridges/abstract-httpd/info/bin/
+##%{_libexecdir}/stickshift/cartridges/abstract-httpd/info
+#%dir %attr(0755,root,root) %{_libexecdir}/stickshift/cartridges/abstract/
+#%attr(0750,-,-) %{_libexecdir}/stickshift/cartridges/abstract/info/hooks/
+#%attr(0755,-,-) %{_libexecdir}/stickshift/cartridges/abstract/info/bin/
+#%attr(0755,-,-) %{_libexecdir}/stickshift/cartridges/abstract/info/lib/
+#%attr(0750,-,-) %{_libexecdir}/li/cartridges/abstract/info/connection-hooks/
+%attr(0755,-,-) %{_libexecdir}/stickshift/lib/
+#%{_libexecdir}/stickshift/cartridges/abstract/info
 %attr(0750,-,-) %{_bindir}/rhc-accept-node
 %attr(0750,-,-) %{_bindir}/rhc-idle-apps
 %attr(0755,-,-) %{_bindir}/rhc-list-ports
@@ -236,15 +246,15 @@ fi
 %attr(0755,-,-) %{_bindir}/rhcsh
 %attr(0640,-,-) %config(noreplace) %{_sysconfdir}/oddjobd.conf.d/oddjobd-restorer.conf
 %attr(0640,-,-) %config(noreplace) %{_sysconfdir}/dbus-1/system.d/openshift-restorer.conf
-%attr(0640,-,-) %config(noreplace) %{_sysconfdir}/libra/node.conf
-%attr(0640,-,-) %config(noreplace) %{_sysconfdir}/libra/libra-proxy.cfg
-%attr(0640,-,-) %config(noreplace) %{_sysconfdir}/libra/resource_limits.con*
-%attr(0750,-,-) %config(noreplace) %{_sysconfdir}/cron.daily/libra_tmpwatch.sh
+%attr(0644,-,-) %config(noreplace) %{_sysconfdir}/stickshift/stickshift-node.conf.libra
+%attr(0640,-,-) %config(noreplace) %{_sysconfdir}/stickshift/stickshift-proxy.cfg
+%attr(0644,-,-) %config(noreplace) %{_sysconfdir}/stickshift/resource_limits.con*
+%attr(0750,-,-) %config(noreplace) %{_sysconfdir}/cron.daily/stickshift_tmpwatch.sh
 %attr(0644,-,-) %config(noreplace) %{_sysconfdir}/security/namespace.d/*
 %{_localstatedir}/www/html/restorer.php
 %attr(0750,root,root) %config(noreplace) %{_sysconfdir}/httpd/conf.d/000000_default.conf
-%attr(0640,root,root) %{_sysconfdir}/httpd/conf.d/libra
-%dir %attr(0755,root,root) %{_sysconfdir}/libra/skel
+%attr(0640,root,root) %{_sysconfdir}/httpd/conf.d/stickshift
+%dir %attr(0755,root,root) %{_sysconfdir}/stickshift/skel
 /lib64/security/pam_libra.so
 
 %changelog
@@ -588,7 +598,7 @@ fi
 - working on base migration (dmcphers@redhat.com)
 - Merge branch 'master' of git1.ops.rhcloud.com:/srv/git/li
   (bdecoste@gmail.com)
-- replace OPENSHIFT_APP_DIR in httpd start (bdecoste@gmail.com)
+- replace OPENSHIFT_GEAR_DIR in httpd start (bdecoste@gmail.com)
 
 * Tue Jan 17 2012 Dan McPherson <dmcphers@redhat.com> 0.85.4-1
 - remove broker gem refs for threaddump (bdecoste@gmail.com)

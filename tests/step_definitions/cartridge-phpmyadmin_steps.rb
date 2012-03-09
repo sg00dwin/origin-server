@@ -1,7 +1,7 @@
 require 'fileutils'
 
 $phpmyadmin_version = "3.4"
-$phpmyadmin_cart_root = "/usr/libexec/li/cartridges/embedded/phpmyadmin-#{$phpmyadmin_version}"
+$phpmyadmin_cart_root = "/usr/libexec/stickshift/cartridges/embedded/phpmyadmin-#{$phpmyadmin_version}"
 $phpmyadmin_hooks = $phpmyadmin_cart_root + "/info/hooks"
 $phpmyadmin_config = $phpmyadmin_hooks + "/configure"
 $phpmyadmin_config_format = "#{$phpmyadmin_config} %s %s %s"

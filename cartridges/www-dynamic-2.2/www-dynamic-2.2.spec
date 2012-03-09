@@ -1,4 +1,4 @@
-%define cartridgedir %{_libexecdir}/li/cartridges/www-dynamic-2.2
+%define cartridgedir %{_libexecdir}/stickshift/cartridges/www-dynamic-2.2
 
 Summary:   Provides post proxy httpd support
 Name:      rhc-cartridge-www-dynamic-2.2
@@ -11,7 +11,7 @@ Source0:   %{name}-%{version}.tar.gz
 
 BuildRoot: %(mktemp -ud %{_tmppath}/%{name}-%{version}-%{release}-XXXXXX)
 BuildRequires: git
-Requires:  rhc-node >= 0.69.4
+Requires:  stickshift-abstract
 Requires:  httpd
 Requires:  rpm-build
 
@@ -38,8 +38,8 @@ touch git_template.git/refs/heads/.gitignore
 %install
 rm -rf %{buildroot}
 mkdir -p %{buildroot}%{cartridgedir}
-mkdir -p %{buildroot}/%{_sysconfdir}/libra/cartridges
-ln -s %{cartridgedir}/info/configuration/ %{buildroot}/%{_sysconfdir}/libra/cartridges/%{name}
+mkdir -p %{buildroot}/%{_sysconfdir}/stickshift/cartridges
+ln -s %{cartridgedir}/info/configuration/ %{buildroot}/%{_sysconfdir}/stickshift/cartridges/%{name}
 cp -r info %{buildroot}%{cartridgedir}/
 cp LICENSE %{buildroot}%{cartridgedir}/
 cp COPYRIGHT %{buildroot}%{cartridgedir}/
@@ -77,7 +77,7 @@ rm -rf $RPM_BUILD_ROOT
 %attr(0750,-,-) %{cartridgedir}/info/build/
 %attr(0755,-,-) %{cartridgedir}/info/bin/
 %config(noreplace) %{cartridgedir}/info/configuration/
-%{_sysconfdir}/libra/cartridges/%{name}
+%{_sysconfdir}/stickshift/cartridges/%{name}
 %{cartridgedir}/info/changelog
 %{cartridgedir}/info/control
 %doc %{cartridgedir}/COPYRIGHT

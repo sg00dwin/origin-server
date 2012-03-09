@@ -88,21 +88,21 @@ class DevEnv < Thor
       `mkdir -p rhc/log`
       scp_from(hostname, "/tmp/rhc/*.log", "rhc/log")
       scp_from(hostname, "/tmp/rhc/*.html", "rhc/log")
-      scp_from(hostname, "/var/www/libra/site/httpd/logs/access_log", "rhc/log/site_access_log.txt")
-      scp_from(hostname, "/var/www/libra/site/httpd/logs/error_log", "rhc/log/site_error_log.txt")
-      scp_from(hostname, "/var/www/libra/site/log/development.log", "rhc/log")
-      scp_from(hostname, "/var/www/libra/broker/httpd/logs/access_log", "rhc/log/broker_access_log.log")
-      scp_from(hostname, "/var/www/libra/broker/httpd/logs/error_log", "rhc/log/broker_error_log.log")
-      scp_from(hostname, "/var/www/libra/broker/log/development.log", "rhc/log")
+      scp_from(hostname, "/var/www/stickshift/site/httpd/logs/access_log", "rhc/log/site_access_log.txt")
+      scp_from(hostname, "/var/www/stickshift/site/httpd/logs/error_log", "rhc/log/site_error_log.txt")
+      scp_from(hostname, "/var/www/stickshift/site/log/development.log", "rhc/log")
+      scp_from(hostname, "/var/www/stickshift/broker/httpd/logs/access_log", "rhc/log/broker_access_log.log")
+      scp_from(hostname, "/var/www/stickshift/broker/httpd/logs/error_log", "rhc/log/broker_error_log.log")
+      scp_from(hostname, "/var/www/stickshift/broker/log/development.log", "rhc/log")
       scp_from(hostname, "/var/log/mcollective.log", "rhc/log")
-      scp_from(hostname, "/var/www/libra/broker/log/mcollective-client.log", "rhc/log")
+      scp_from(hostname, "/var/www/stickshift/broker/log/mcollective-client.log", "rhc/log")
       scp_from(hostname, "/var/log/httpd/access_log", "rhc/log/system_access_log.log")
       scp_from(hostname, "/var/log/httpd/error_log", "rhc/log/system_error_log.log")
       scp_from(hostname, "/var/log/messages", "rhc/log/messages.log")
       scp_from(hostname, "/var/log/dmesg", "rhc/log/messages.log")
       scp_from(hostname, "/tmp/rhc/screenshots/", "rhc/log")
       scp_from(hostname, "/root/li-test/selenium/output/*", "rhc/log")
-      scp_from(hostname, "/var/lib/libra/*/*/jbossas-7/standalone/tmp/*.log", "rhc/log")
+      scp_from(hostname, "/var/lib/stickshift/*/*/jbossas-7/standalone/tmp/*.log", "rhc/log")
       puts "Done"
     end
 
@@ -183,7 +183,7 @@ class DevEnv < Thor
     def test_instance(tag, hostname, instance, conn, options, image_id=nil)
       begin
         unless options.official?
-          use_private_ip(hostname)
+          use_private_ip(hostname, options.public_hostname?)
         end
 
         threads = []
@@ -194,8 +194,8 @@ class DevEnv < Thor
           site_titles = ["Site Unit:Units", "Site Unit:Functionals", "Site Unit:Integration"]
           site_cmds = ["cd li-test/site; rake test:units", "cd li-test/site; rake test:functionals", "cd li-test/site; rake test:integration"]
           add_ssh_cmd_to_threads(hostname, threads, failures, site_titles, site_cmds)
-          add_ssh_cmd_to_threads(hostname, threads, failures, "Cloud SDK Node Unit", "cd li-test/cloud-sdk/node; rake test")
-          add_ssh_cmd_to_threads(hostname, threads, failures, "Cloud SDK Broker Unit", "cd li-test/cloud-sdk/broker; rake test")
+          add_ssh_cmd_to_threads(hostname, threads, failures, "StickShift Node Unit", "cd li-test/stickshift/node; rake test")
+          add_ssh_cmd_to_threads(hostname, threads, failures, "StickShift Broker Unit", "cd li-test/stickshift/broker; rake test")
         end
 
         unless options.exclude_internal?
@@ -325,7 +325,7 @@ class DevEnv < Thor
             print "Failed sending email with message: #{e.message}"
           end
         else
-          use_public_ip(hostname)
+          use_public_ip(hostname, options.public_hostname?)
         end
 
         puts "Done"
@@ -388,7 +388,7 @@ class DevEnv < Thor
     end
 
     # Rsync cannot set owner or group, so we should inherit
-    ssh("verifier", "find /var/www/libra -type d | xargs chmod g+s", 1800)
+    ssh("verifier", "find /var/www/stickshift -type d | xargs chmod g+s", 1800)
     ssh("verifier", "find /usr/lib/ruby/site_ruby -type d | xargs chmod g+s", 1800)
 
     say "Watching your development directories, hit CTRL+C to stop"
@@ -554,7 +554,7 @@ class DevEnv < Thor
         build_and_install(package_name, build_dir)
       end
     end
-    run("yum update -y --exclude='rhc-devenv' --disablerepo=\\* --enablerepo=li rhc-* rubygem-cloud-sdk-*", :verbose => options.verbose?)
+    run("yum update -y --exclude='rhc-devenv' --disablerepo=\\* --enablerepo=li rhc-* rubygem-stickshift-*", :verbose => options.verbose?)
     run("service mcollective restart; service libra-broker restart; service libra-site restart", :verbose => options.verbose?)
   end
 
@@ -562,6 +562,7 @@ class DevEnv < Thor
   method_option :tag, :type => :boolean, :desc => "NAME is an Amazon tag"
   method_option :verbose, :type => :boolean, :desc => "Enable verbose logging"
   method_option :verifier, :type => :boolean, :desc => "Maintain verifier functionality (private IP setup)"
+  method_option :public_hostname, :type => :boolean, :desc => "Embed the public hostname rather than the ssh hostname"
   method_option :skip_build, :type => :boolean, :desc => "Indicator to skip the rpm build/install"
   method_option :clean_metadata, :type => :boolean, :desc => "Cleans metadata before running yum commands"
   method_option :region, :required => false, :desc => "Amazon region override (default us-east-1)"
@@ -586,7 +587,7 @@ class DevEnv < Thor
 
     if !options.skip_build?
       puts "Performing remote install...."
-      output, exit_code = ssh(hostname, "set -e; #{options.clean_metadata? ? 'yum clean metadata; ' : ''}rm -rf li-working os-client-tools-working; git clone li li-working;#{has_client ? ' git clone os-client-tools os-client-tools-working;' : ''} pushd li-working; build/devenv update#{options.verbose? ? ' --verbose' : ''}#{options.clean_metadata? ? ' --include_stale' : ''} 2>&1; popd; rm -rf li-working os-client-tools-working; #{options.clean_metadata? ? "yum update -y --exclude='rhc-devenv' rhc-* rubygem-cloud-sdk-*; " : ''}", 600, true)
+      output, exit_code = ssh(hostname, "set -e; #{options.clean_metadata? ? 'yum clean metadata; ' : ''}rm -rf li-working os-client-tools-working; git clone li li-working;#{has_client ? ' git clone os-client-tools os-client-tools-working;' : ''} pushd li-working; build/devenv update#{options.verbose? ? ' --verbose' : ''}#{options.clean_metadata? ? ' --include_stale' : ''} 2>&1; popd; rm -rf li-working os-client-tools-working; #{options.clean_metadata? ? "yum update -y --exclude='rhc-devenv' rhc-* rubygem-stickshift-*; " : ''}", 600, true)
       if exit_code != 0
         puts "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
         puts "Build failed!  Exiting."
@@ -599,9 +600,9 @@ class DevEnv < Thor
 
     # If this is a verifier, you'll need to reset the private ip setup on each sync
     if options.verifier?
-      use_private_ip(hostname)
+      use_private_ip(hostname, options.public_hostname?)
     else
-      use_public_ip(hostname)
+      use_public_ip(hostname, options.public_hostname?)
     end
   end
 
@@ -619,6 +620,7 @@ class DevEnv < Thor
 
   desc "launch NAME", "Launches the latest DevEnv instance, tagging with NAME"
   method_option :verifier, :type => :boolean, :desc => "Add verifier functionality (private IP setup and local tests)"
+  method_option :public_hostname, :type => :boolean, :desc => "Embed the public hostname rather than the ssh hostname"
   method_option :use_stage_image, :type => :boolean, :desc => "Launch a stage DevEnv image"
   method_option :use_clean_image, :type => :boolean, :desc => "Launch a clean DevEnv image"
   method_option :verbose, :type => :boolean, :desc => "Enable verbose logging"
@@ -669,7 +671,7 @@ class DevEnv < Thor
     puts "Done"
 
     if options.verifier?
-      use_private_ip(hostname)
+      use_private_ip(hostname, options.public_hostname?)
 
       if options.init_repo?
         print "Initializing git repo for syncing..."
@@ -729,7 +731,7 @@ END
       public_ip = instance.public_ip_address
       puts "Updating ~/.openshift/express.conf libra_server entry with public ip = #{public_ip}"
       `sed -i 's,^libra_server.*,libra_server=#{public_ip},' ~/.openshift/express.conf`
-      use_public_ip(hostname)
+      use_public_ip(hostname, options.public_hostname?)
     end
 
     home_dir=File.join(ENV['HOME'], '.openshiftdev/home.d')
@@ -780,10 +782,10 @@ END
     ssh("verifier", "sed -i 's,^plugin.amqp.host.*=.*,plugin.amqp.host=#{internal_hostname},' /etc/mcollective/client.cfg;" \
                   "sed -i 's,^plugin.amqp.host.*=.*,plugin.amqp.host=#{internal_hostname},' /etc/mcollective/server.cfg;" \
                   "sed -i 's,^ssl-cert-name.*=.*,ssl-cert-name=#{internal_hostname},' /etc/qpidd.conf;" \
-                  "sed -i 's,^server_id.*=.*,server_id=#{internal_hostname},' /etc/libra/devenv/qpid/make-certs.sh;" \
-                  "sed -i 's,^owner_domain_name.*=.*,owner_domain_name=#{internal_hostname},' /etc/libra/devenv/qpid/make-certs.sh;" \
+                  "sed -i 's,^server_id.*=.*,server_id=#{internal_hostname},' /etc/stickshift/devenv/qpid/make-certs.sh;" \
+                  "sed -i 's,^owner_domain_name.*=.*,owner_domain_name=#{internal_hostname},' /etc/stickshift/devenv/qpid/make-certs.sh;" \
                   "sed -i 's,^#-A,-A,' /etc/sysconfig/iptables;" \
-                  "pushd /etc/libra/devenv/qpid/ > /dev/null;" \
+                  "pushd /etc/stickshift/devenv/qpid/ > /dev/null;" \
                   "./make-certs.sh;" \
                   "/bin/cp test/client_db/* /etc/qpid/pki/client_db/; /bin/cp test/server_db/* /etc/qpid/pki/server_db/;" \
                   "popd > /dev/null;" \
@@ -802,13 +804,13 @@ END
     internal_hostname = get_internal_hostname("verifier")
     internal_ip = get_private_ip("verifier")
 
-    puts `pushd /tmp > /dev/null; rm -rf /tmp/test; scp -r verifier:/etc/libra/devenv/qpid/test/ .; scp -r test/client_db/* #{hostname}:/etc/qpid/pki/client_db/; scp -r test/server_db/* #{hostname}:/etc/qpid/pki/server_db/; popd > /dev/null`
+    puts `pushd /tmp > /dev/null; rm -rf /tmp/test; scp -r verifier:/etc/stickshift/devenv/qpid/test/ .; scp -r test/client_db/* #{hostname}:/etc/qpid/pki/client_db/; scp -r test/server_db/* #{hostname}:/etc/qpid/pki/server_db/; popd > /dev/null`
     puts `pushd /tmp > /dev/null; rm -rf /tmp/clients; scp -r verifier:/etc/mcollective/ssl/clients/ .; scp -r clients/* #{hostname}:/etc/mcollective/ssl/clients/; popd > /dev/null`
 
     ssh(hostname, "sed -i 's,^plugin.amqp.host.*=.*,plugin.amqp.host=#{internal_hostname},' /etc/mcollective/server.cfg;" \
                   "sed -i 's,^ssl-cert-name.*=.*,ssl-cert-name=#{internal_hostname},' /etc/qpidd.conf;" \
                   "restorecon -R /etc/qpid/pki/; chmod +r /etc/qpid/pki/client_db/* /etc/qpid/pki/server_db/*;" \
-                  "sed -i 's,^libra_server.*=.*,libra_server=#{internal_ip},' /etc/libra/node.conf;" \
+                  "sed -i 's,^BROKER_HOST.*=.*,BROKER_HOST=#{internal_ip},' /etc/stickshift/stickshift-node.conf;" \
                   "service qpidd restart; service mcollective restart", 240)
 
     puts ssh("verifier", "mc-ping")

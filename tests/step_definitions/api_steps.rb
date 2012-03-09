@@ -1,7 +1,7 @@
 require 'rubygems'
 require 'rest_client'
 require 'nokogiri'
-require '/var/www/libra/broker/lib/express/broker/dns_service'
+require '/var/www/stickshift/broker/lib/express/broker/dns_service'
 require 'logger'
 
 @random = nil

@@ -4,7 +4,7 @@ require 'mongo'
 require 'fileutils'
 
 $mongodb_version = "2.0"
-$mongodb_cart_root = "/usr/libexec/li/cartridges/embedded/mongodb-#{$mongodb_version}"
+$mongodb_cart_root = "/usr/libexec/stickshift/cartridges/embedded/mongodb-#{$mongodb_version}"
 $mongodb_hooks = $mongodb_cart_root + "/info/hooks"
 $mongodb_config = $mongodb_hooks + "/configure"
 $mongodb_config_format = "#{$mongodb_config} %s %s %s"
@@ -198,7 +198,7 @@ Given /^a new mongodb database$/ do
   exit_code = runcon command,  'unconfined_u', 'system_r', 'libra_initrc_t', outbuf
 
   if exit_code != 0
-    FileUtils.cp "/var/lib/libra/#{account_name}/mongodb-5.1/log/mongodb_error.log", "/tmp/rhc/mongodb_error_#{account_name}.log"
+    FileUtils.cp "/var/lib/stickshift/#{account_name}/mongodb-5.1/log/mongodb_error.log", "/tmp/rhc/mongodb_error_#{account_name}.log"
     raise "Error running #{command}: returned #{exit_code}"
   end
   # I have to get the stdout back

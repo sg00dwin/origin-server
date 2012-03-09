@@ -3,8 +3,8 @@ require 'fileutils'
 
 # App is considered idle if it has not been accessed in 24 hours
 OPENSHIFT_IDLE_TIME = 24
-APP_ROOT_DIR = '/var/lib/libra'
-CARTRIDGES_DIR = '/usr/libexec/li/cartridges'
+APP_ROOT_DIR = '/var/lib/stickshift'
+CARTRIDGES_DIR = '/usr/libexec/stickshift/cartridges'
 
 class IdleAppsFinder
   def initialize(app_root_dir)
@@ -23,8 +23,8 @@ class IdleAppsFinder
 
   def read_app_data(app_uuid)
     app_info = Hash.new
-    properties = %w[OPENSHIFT_APP_NAME OPENSHIFT_APP_TYPE
-                    OPENSHIFT_APP_DNS OPENSHIFT_APP_DIR]
+    properties = %w[OPENSHIFT_GEAR_NAME OPENSHIFT_GEAR_TYPE
+                    OPENSHIFT_GEAR_DNS OPENSHIFT_GEAR_DIR]
     properties.each do |prop|
       read_app_property(app_info, app_uuid, prop)
     end
@@ -33,10 +33,10 @@ class IdleAppsFinder
 
   def is_app_idle(app_info)
     # Invoke cartridge hook to know if app is idle
-    cartridge_name = app_info['OPENSHIFT_APP_TYPE']
+    cartridge_name = app_info['OPENSHIFT_GEAR_TYPE']
     command = "#{CARTRIDGES_DIR}/#{cartridge_name}/info/hooks/is-idle"\
-    " #{app_info['OPENSHIFT_APP_DNS']}"\
-    " #{app_info['OPENSHIFT_APP_DIR']}"\
+    " #{app_info['OPENSHIFT_GEAR_DNS']}"\
+    " #{app_info['OPENSHIFT_GEAR_DIR']}"\
     " #{OPENSHIFT_IDLE_TIME}"
     output = `#{command}`
     not $?.success?
@@ -51,7 +51,7 @@ class IdleAppsFinder
       # If filename is a length 32 uuid, then it is an app
       if file_name =~ /^[0-9a-f]{32}$/
         app_info = read_app_data(file_name)
-        puts "#{app_info['OPENSHIFT_APP_DNS']}\t\t\t#{is_app_idle(app_info)}"
+        puts "#{app_info['OPENSHIFT_GEAR_DNS']}\t\t\t#{is_app_idle(app_info)}"
       end
     end
   end

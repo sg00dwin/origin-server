@@ -1,20 +1,17 @@
 #!/bin/bash
 
-CART_DIR=/usr/libexec/li/cartridges
-source ${CART_DIR}/abstract/info/lib/util
-
-load_node_conf
-
-load_resource_limits_conf
+source "/etc/stickshift/stickshift-node.conf"
+source "/etc/stickshift/resource_limits.conf"
+source ${CARTRIDGE_BASE_PATH}/abstract/info/lib/util
 
 application="$1"
 uuid="$2"
 IP="$3"
 
-APP_HOME="$libra_dir/$uuid"
+APP_HOME="${GEAR_BASE_DIR}/$uuid"
 APP_DIR=`echo $APP_HOME/$application | tr -s /`
 
-cat <<EOF > "$APP_DIR/conf.d/libra.conf"
+cat <<EOF > "$APP_DIR/conf.d/stickshift.conf"
 ServerRoot "$APP_DIR"
 DocumentRoot "$APP_DIR/repo/public"
 Listen $IP:8080
@@ -24,6 +21,16 @@ Group $uuid
 ErrorLog "|/usr/sbin/rotatelogs $APP_DIR/logs/error_log$rotatelogs_format $rotatelogs_interval"
 CustomLog "|/usr/sbin/rotatelogs $APP_DIR/logs/access_log$rotatelogs_format $rotatelogs_interval" combined
 
+PassengerUser $uuid
+PassengerPreStart http://$IP:8080/
+PassengerSpawnIPAddress $IP
+PassengerUseGlobalQueue off
+<Directory $APP_DIR/repo/public>
+  AllowOverride all
+  Options -MultiViews
+</Directory>
+
+# TODO: Adjust from ALL to more conservative values
 <IfModule !mod_bw.c>
     LoadModule bw_module    modules/mod_bw.so
 </IfModule>
@@ -36,13 +43,5 @@ CustomLog "|/usr/sbin/rotatelogs $APP_DIR/logs/access_log$rotatelogs_format $rot
   BandWidthError $apache_bandwidtherror
 </IfModule>
 
-PassengerUser $uuid
-PassengerPreStart http://$IP:8080/
-PassengerSpawnIPAddress $IP
-PassengerUseGlobalQueue off
-<Directory $APP_DIR/repo/public>
-  AllowOverride all
-  Options -MultiViews
-</Directory>
 
 EOF

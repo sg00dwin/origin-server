@@ -1,8 +1,8 @@
 #!/usr/bin/env ruby
 require 'fileutils'
 
-APP_ROOT_DIR = '/var/lib/libra'
-LAST_ACCESS_DIR = '/var/lib/libra/.last_access'
+APP_ROOT_DIR = '/var/lib/stickshift'
+LAST_ACCESS_DIR = '/var/lib/stickshift/.last_access'
 APACHE_ACCESS_LOG = '/var/log/httpd/access_log'
 
 class LastAccessUpdater
@@ -30,7 +30,7 @@ class LastAccessUpdater
   end
 
   def read_app_data(app_uuid)
-    val = read_app_property(app_uuid, 'OPENSHIFT_APP_DNS')
+    val = read_app_property(app_uuid, 'OPENSHIFT_GEAR_DNS')
     if val
       @all_apps_info[val] = app_uuid
     end

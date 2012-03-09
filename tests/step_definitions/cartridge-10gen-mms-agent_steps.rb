@@ -1,7 +1,7 @@
 require 'fileutils'
 
 $mms_agent_version = "0.1"
-$mms_agent_cart_root = "/usr/libexec/li/cartridges/embedded/10gen-mms-agent-#{$mms_agent_version}"
+$mms_agent_cart_root = "/usr/libexec/stickshift/cartridges/embedded/10gen-mms-agent-#{$mms_agent_version}"
 $mms_agent_hooks = $mms_agent_cart_root + "/info/hooks"
 $mms_agent_config = $mms_agent_hooks + "/configure"
 $mms_agent_config_format = "#{$mms_agent_config} %s %s %s"
@@ -27,10 +27,10 @@ Given /^a settings.py file exists$/ do
   namespace = @app['namespace']
   app_name = @app['name']
 
-  system("mkdir -p /var/lib/libra/#{acct_name}/#{app_name}/.openshift/mms > /dev/null")
-  system("cp /usr/local/share/mms-agent/settings.py /var/lib/libra/#{acct_name}/#{app_name}/.openshift/mms/settings.py > /dev/null")
+  system("mkdir -p /var/lib/stickshift/#{acct_name}/#{app_name}/.openshift/mms > /dev/null")
+  system("cp /usr/local/share/mms-agent/settings.py /var/lib/stickshift/#{acct_name}/#{app_name}/.openshift/mms/settings.py > /dev/null")
 
-  filepath = "/var/lib/libra/#{acct_name}/#{app_name}/.openshift/mms/settings.py"
+  filepath = "/var/lib/stickshift/#{acct_name}/#{app_name}/.openshift/mms/settings.py"
   settingsfile = File.new filepath
   settingsfile.should be_a(File)
 end

@@ -1,6 +1,6 @@
 #!/usr/bin/env ruby
 # Usage: ./migrate-2.0.6 > out.txt
-$:.unshift('/var/www/libra/broker')
+$:.unshift('/var/www/stickshift/broker')
 require 'config/environment'
 require 'rubygems'
 require 'pp'
@@ -351,7 +351,7 @@ def migrate_from_file(file)
             append_to_file(error_file, migrate_on_node_cmd)
             break
           else
-            if Cloud::Sdk::DataStore.instance.find(Application.name, rhlogin, app_name)
+            if StickShift::DataStore.instance.find(Application.name, rhlogin, app_name)
               sleep 4
             else
               append_to_file(log_file, "App '#{app_name}' no longer found in datastore with uuid '#{uuid}'.  Ignoring...")

@@ -1,7 +1,8 @@
 #!/bin/bash -e
 
-CART_DIR=/usr/libexec/li/cartridges
-source ${CART_DIR}/abstract/info/lib/util
+source /etc/stickshift/stickshift-node.conf
+source ${CARTRIDGE_BASE_PATH}/abstract/info/lib/util
+
 export STOPTIMEOUT=10
 
 # Import Environment Variables
@@ -37,7 +38,7 @@ start() {
     set_app_state started
     if ! isrunning
     then
-        /usr/sbin/haproxy -f $OPENSHIFT_APP_DIR/conf/haproxy.cfg > /dev/null 2>&1
+        /usr/sbin/haproxy -f $OPENSHIFT_GEAR_DIR/conf/haproxy.cfg > /dev/null 2>&1
         #haproxy_ctld_daemon start > /dev/null 2>&1
     else
         echo "Haproxy already running" 1>&2
@@ -78,7 +79,7 @@ reload() {
         [ -f $HAPROXY_PID ]  &&  zpid=$( /bin/cat "${HAPROXY_PID}" )
         [ -n "$zpid" ]       &&  zopts="-sf $zpid"
         echo "Reloading haproxy gracefully without service interruption" 1>&2
-        /usr/sbin/haproxy -f $OPENSHIFT_APP_DIR/conf/haproxy.cfg ${zopts} > /dev/null 2>&1
+        /usr/sbin/haproxy -f $OPENSHIFT_GEAR_DIR/conf/haproxy.cfg ${zopts} > /dev/null 2>&1
     fi
     #haproxy_ctld_daemon restart > /dev/null 2>&1
 }
@@ -86,7 +87,7 @@ reload() {
 
 case "$1" in
     start)
-        #/usr/sbin/haproxy -f $OPENSHIFT_APP_DIR/conf/haproxy.cfg
+        #/usr/sbin/haproxy -f $OPENSHIFT_GEAR_DIR/conf/haproxy.cfg
         start
     ;;
     graceful-stop|stop)

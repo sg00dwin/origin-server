@@ -27,7 +27,7 @@ options = rpcoptions do |parser, options|
     end
 end
 
-require "/var/www/libra/broker/config/environment"
+require "/var/www/stickshift/broker/config/environment"
 
 unless options.include?(:action)
     puts "Specify action"

@@ -9,14 +9,15 @@ done
 
 if [ -f "$OPENSHIFT_DATA_DIR/postgresql_dump_snapshot.gz" ]
 then
-	CART_DIR=${CART_DIR:=/usr/libexec/li/cartridges}
-	CART_INFO_DIR=$CART_DIR/embedded/postgresql-8.4/info
+	source "/etc/stickshift/stickshift-node.conf"
+	source ${CARTRIDGE_BASE_PATH}/abstract/info/lib/util
+	CART_INFO_DIR=$CARTRIDGE_BASE_PATH/embedded/postgresql-8.4/info
 	source ${CART_INFO_DIR}/lib/util
 
     start_postgresql_as_user
 
-    old_dbname=$OPENSHIFT_APP_NAME
-    old_dbuser=$OPENSHIFT_APP_UUID
+    old_dbname=$OPENSHIFT_GEAR_NAME
+    old_dbuser=$OPENSHIFT_GEAR_UUID
     [ -f "$OPENSHIFT_DATA_DIR/postgresql_dbname" ] &&  old_dbname=$(cat "$OPENSHIFT_DATA_DIR/postgresql_dbname")
     [ -f "$OPENSHIFT_DATA_DIR/postgresql_dbuser" ] &&  old_dbuser=$(cat "$OPENSHIFT_DATA_DIR/postgresql_dbuser")
 
@@ -25,9 +26,9 @@ then
     pargz="--username=$OPENSHIFT_DB_USERNAME --host=$OPENSHIFT_DB_HOST"
 
     /bin/zcat $OPENSHIFT_DATA_DIR/postgresql_dump_snapshot.gz |        \
-        sed "s#$rexp#\\1 DATABASE $OPENSHIFT_APP_NAME#g;               \
-             s#\\connect $old_dbname#\\connect $OPENSHIFT_APP_NAME#g;  \
-             s#$old_dbuser#$OPENSHIFT_APP_UUID#g" |                    \
+        sed "s#$rexp#\\1 DATABASE $OPENSHIFT_GEAR_NAME#g;               \
+             s#\\connect $old_dbname#\\connect $OPENSHIFT_GEAR_NAME#g;  \
+             s#$old_dbuser#$OPENSHIFT_GEAR_UUID#g" |                    \
         PGPASSWORD="$OPENSHIFT_DB_PASSWORD" /usr/bin/psql $pargz -d postgres
 
     if [ ! ${PIPESTATUS[1]} -eq 0 ]

@@ -26,7 +26,7 @@ prog=$(basename $exec)
 
 lockfile=/var/lock/subsys/libra-proxy
 pidfile=/var/run/libra-proxy.pid
-cfgfile=/var/lib/libra/.libra-proxy.d/libra-proxy.cfg
+cfgfile=/var/lib/stickshift/.stickshift-proxy.d/stickshift-proxy.cfg
 
 
 check() {

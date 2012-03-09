@@ -1,6 +1,6 @@
 #!/usr/bin/ruby
 require 'rubygems'
-require '/var/www/libra/broker/config/environment'
+require '/var/www/stickshift/broker/config/environment'
 
 opts = GetoptLong.new(["--namespace",  "-n", GetoptLong::REQUIRED_ARGUMENT])
 opt = {}
@@ -11,7 +11,7 @@ end
 $dns = Express::Broker::DnsService.new
 
 def users_delete
-  ds = Cloud::Sdk::MongoDataStore.new
+  ds = StickShift::MongoDataStore.new
 
   users = ds.find_all("CloudUser")
   users.each do |user|

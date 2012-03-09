@@ -9,7 +9,7 @@ function print_help {
     echo "Usage: $0 app-name namespace uuid"
     echo "Get application status"
 
-    echo "$0 $@" | logger -p local0.notice -t libra_mysql_status
+    echo "$0 $@" | logger -p local0.notice -t stickshift_mysql_status
     exit 1
 }
 
@@ -26,8 +26,8 @@ done
 
 [ $# -eq 3 ] || print_help
 
-CART_DIR=/usr/libexec/li/cartridges
-source ${CART_DIR}/abstract/info/lib/util
+source "/etc/stickshift/stickshift-node.conf"
+source ${CARTRIDGE_BASE_PATH}/abstract/info/lib/util
 
 setup_basic_hook "$1" $2 $3
 
@@ -43,4 +43,3 @@ then
 else
     client_result "MySQL is either stopped or inaccessible"
 fi
-

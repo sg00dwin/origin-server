@@ -28,11 +28,11 @@ HTTPD_LANG=${HTTPD_LANG-"C"}
 apachectl=/usr/sbin/apachectl
 httpd=${HTTPD-/usr/sbin/httpd}
 prog=libra-broker
-pidfile=${PIDFILE-/var/www/libra/broker/httpd/run/httpd.pid}
-lockfile=${LOCKFILE-/var/lock/subsys/libra-broker}
+pidfile=${PIDFILE-/var/www/stickshift/broker/httpd/run/httpd.pid}
+lockfile=${LOCKFILE-/var/lock/subsys/stickshift-broker}
 RETVAL=0
 
-OPTIONS="-C 'Include /var/www/libra/broker/httpd/broker.conf' -f /var/www/libra/broker/httpd/httpd.conf"
+OPTIONS="-C 'Include /var/www/stickshift/broker/httpd/broker.conf' -f /var/www/stickshift/broker/httpd/httpd.conf"
 
 # The semantics of these two functions differ from the way apachectl does
 # things -- attempting to start while running is a failure, and shutdown

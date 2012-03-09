@@ -16,7 +16,7 @@ end
 
 class Haproxy
     #ha=Haproxy.new("/tmp/stats")
-    #gear_namespace=ENV['OPENSHIFT_APP_DNS'].split('.')[0].split('-')[1]
+    #gear_namespace=ENV['OPENSHIFT_GEAR_DNS'].split('.')[0].split('-')[1]
     #gear_count = ha.stats['express'].count - 3.0 # Remove backend, frontend and 'filler'
     #sessions = ha.stats['express']['BACKEND'].scur.to_f
     #sessions_per_gear = sessions / gear_count
@@ -49,7 +49,7 @@ class Haproxy
             @status[pxname][svname] = Haproxy_attr.new(line)
         end
         @socket.close
-        @gear_namespace = ENV['OPENSHIFT_APP_DNS'].split('.')[0].split('-')[1]
+        @gear_namespace = ENV['OPENSHIFT_GEAR_DNS'].split('.')[0].split('-')[1]
         @gear_count = self.stats['express'].count - 3
         @sessions = self.stats['express']['BACKEND'].scur.to_i
         @sessions_per_gear = @sessions / @gear_count
@@ -94,13 +94,13 @@ class Haproxy
     def add_gear
         @last_scale_up_time = Time.now
         @log.info("GEAR_UP - capacity: #{self.session_capacity_pct}% gear_count: #{self.gear_count} sessions: #{self.sessions} up_thresh: #{@gear_up_pct}%")
-        `add-gear -l mmcgrath@redhat.com -p ' ' -n #{self.gear_namespace}  -h localhost -a #{ENV['OPENSHIFT_APP_NAME']}`
+        `add-gear -l mmcgrath@redhat.com -p ' ' -n #{self.gear_namespace}  -h localhost -a #{ENV['OPENSHIFT_GEAR_NAME']}`
         self.print_gear_stats
     end
 
     def remove_gear
         @log.info("GEAR_DOWN - capacity: #{self.session_capacity_pct}% gear_count: #{self.gear_count} sessions: #{self.sessions} remove_thresh: #{@gear_remove_pct}%")
-        `remove-gear -l mmcgrath@redhat.com -p ' ' -n #{self.gear_namespace} -h localhost -a #{ENV['OPENSHIFT_APP_NAME']}`
+        `remove-gear -l mmcgrath@redhat.com -p ' ' -n #{self.gear_namespace} -h localhost -a #{ENV['OPENSHIFT_GEAR_NAME']}`
         self.print_gear_stats
     end
 

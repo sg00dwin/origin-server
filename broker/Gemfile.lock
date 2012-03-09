@@ -38,18 +38,6 @@ GEM
       uuidtools
     bson (1.5.2)
     builder (2.1.2)
-    cloud-sdk-common (0.6.1)
-      activemodel
-      json
-      mongo
-      rack
-    cloud-sdk-controller (0.6.1)
-      activesupport
-      cloud-sdk-common
-      dnsruby
-      json
-      open4
-      state_machine
     crack (0.1.8)
     dnsruby (1.53)
     erubis (2.6.6)
@@ -96,6 +84,18 @@ GEM
     regin (0.3.7)
     rest-client (1.6.1)
     state_machine (1.1.2)
+    stickshift-common (0.6.1)
+      activemodel
+      json
+      mongo
+      rack
+    stickshift-controller (0.6.1)
+      activesupport
+      dnsruby
+      json
+      open4
+      state_machine
+      stickshift-common
     stomp (1.1.8)
     thor (0.14.6)
     thread-dump (0.0.5)
@@ -110,7 +110,6 @@ PLATFORMS
 
 DEPENDENCIES
   aws-sdk
-  cloud-sdk-controller
   json
   mocha
   mongo
@@ -121,6 +120,7 @@ DEPENDENCIES
   rails (~> 3.0.10)
   regin
   rest-client
+  stickshift-controller
   stomp
   thread-dump
   xml-simple

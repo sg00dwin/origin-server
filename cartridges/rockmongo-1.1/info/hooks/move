@@ -5,13 +5,10 @@
 # Exit on any errors
 set -e
 
-CART_DIR=/usr/libexec/li/cartridges
-
-source ${CART_DIR}/abstract/info/lib/util
-source ${CART_DIR}/abstract/info/lib/apache
-source ${CART_DIR}/abstract/info/lib/network
-
-load_node_conf
+source "/etc/stickshift/stickshift-node.conf"
+source ${CARTRIDGE_BASE_PATH}/abstract/info/lib/util
+source ${CARTRIDGE_BASE_PATH}/abstract/info/lib/apache
+source ${CARTRIDGE_BASE_PATH}/abstract/info/lib/network
 
 while getopts 'd' OPTION
 do
@@ -35,7 +32,7 @@ ROCKMONGO_DIR=`echo $APP_HOME/rockmongo-1.1 | tr -s /`
 
 observe_setup_var_lib_dir "$ROCKMONGO_DIR"
 
-CART_INFO_DIR=$CART_DIR/embedded/rockmongo-1.1/info
+CART_INFO_DIR=${CARTRIDGE_BASE_PATH}/embedded/rockmongo-1.1/info
 
 . $APP_HOME/.env/OPENSHIFT_INTERNAL_IP
 . $APP_HOME/.env/OPENSHIFT_NOSQL_DB_PORT

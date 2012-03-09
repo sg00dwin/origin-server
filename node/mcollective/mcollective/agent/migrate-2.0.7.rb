@@ -7,16 +7,16 @@ require File.dirname(__FILE__) + "/migrate-util"
 module LibraMigration
 
   def self.migrate(uuid, app_name, app_type, namespace, version)
-    node_config = ParseConfig.new('/etc/libra/node.conf')
-    libra_home = '/var/lib/libra' #node_config.get_value('libra_dir')
-    libra_server = node_config.get_value('libra_server')
-    libra_domain = node_config.get_value('libra_domain')
+    node_config = ParseConfig.new('/etc/stickshift/stickshift-node.conf')
+    libra_home = '/var/lib/stickshift' #node_config.get_value('libra_dir')
+    libra_server = node_config.get_value('BROKER_HOST')
+    libra_domain = node_config.get_value('CLOUD_DOMAIN')
     app_home = "#{libra_home}/#{uuid}"
     app_dir = "#{app_home}/#{app_name}"
     output = ''
     exitcode = 0
     if (File.exists?(app_home) && !File.symlink?(app_home))
-      cartridge_root_dir = "/usr/libexec/li/cartridges"
+      cartridge_root_dir = "/usr/libexec/stickshift/cartridges"
       cartridge_dir = "#{cartridge_root_dir}/#{app_type}"
 
       env_echos = []
