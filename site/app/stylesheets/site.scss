@@ -22,7 +22,7 @@
 @import "bootstrap/mixins";
 @import "ribbon";
 
-@import "navbar";
+@import "site/navbar";
 @import "community";
 
 /* move into core when the branding converges */
@@ -61,10 +61,12 @@ a:hover, a:active { color: $ribbonColor; }
   text-decoration: none;
 
   &:hover { 
-    text-decoration: none; 
-    color: $hoverColor; 
-    background-color: $backgroundHoverColor;
-    background: -moz-repeating-linear-gradient(-180deg, $backgroundHoverColor 6px, transparentize($backgroundHoverColor, 1.0) 6px, transparentize($backgroundHoverColor, 1.0) 10px, $backgroundHoverColor 10px, $backgroundHoverColor) repeat scroll 0 0 transparent;
+    text-decoration: none;
+    color: $hoverColor;
+    background: -moz-repeating-linear-gradient(-180deg, $backgroundHoverColor, $backgroundHoverColor 6px, transparentize($backgroundHoverColor, 1.0) 6px, transparentize($backgroundHoverColor, 1.0) 10px, $backgroundHoverColor 10px, $backgroundHoverColor) repeat scroll 0 0 transparent;
+    background: -webkit-repeating-linear-gradient(-180deg, $backgroundHoverColor, $backgroundHoverColor 6px, transparentize($backgroundHoverColor, 1.0) 6px, transparentize($backgroundHoverColor, 1.0) 10px, $backgroundHoverColor 10px, $backgroundHoverColor) repeat scroll 0 0 transparent;
+    background: repeating-linear-gradient(-180deg, $backgroundHoverColor, $backgroundHoverColor 6px, transparentize($backgroundHoverColor, 1.0) 6px, transparentize($backgroundHoverColor, 1.0) 10px, $backgroundHoverColor 10px, $backgroundHoverColor) repeat scroll 0 0 transparent;
+    /*FIXME: no fallback? background: $backgroundHoverColor; */
   }
   &:active {
     text-decoration: none; 
@@ -86,7 +88,6 @@ body.signup {
   .container .btn {
     background: #333;
     border-radius: 0;
-    -moz-border-radius: 0;
     text-shadow: none;
     border: 0;
     color: white;
@@ -116,12 +117,14 @@ body.signup {
 }
 
 .section-striped {
-  background: -moz-repeating-linear-gradient(-70deg, #e6e6e6, #e6e6e6 6px, #e4e4e4 9px, #e4e4e4 15px, #e6e6e6 18px) repeat scroll 0 0 transparent;
+  background: -moz-repeating-linear-gradient(-70deg, $lightStripesColor, $lightStripesColor 6px, $lightStripesAltColor 9px, $lightStripesAltColor 15px, $lightStripesColor 18px) repeat scroll 0 0 $lightStripesBackground;
+  background: -webkit-repeating-linear-gradient(-70deg, $lightStripesColor, $lightStripesColor 6px, $lightStripesAltColor 9px, $lightStripesAltColor 15px, $lightStripesColor 18px) repeat scroll 0 0 $lightStripesBackground;
+  background: repeating-linear-gradient(-70deg, $lightStripesColor, $lightStripesColor 6px, $lightStripesAltColor 9px, $lightStripesAltColor 15px, $lightStripesColor 18px) repeat scroll 0 0 $lightStripesBackground;
 
   .link-tile {
-    color: #343434;
+    color: $stripesText;
     padding: 15px $gridGutterWidth;
-    @include tile(#343434, #343434, $ribbonFoldColor, #ccc);
+    @include tile($stripesText, $stripesText, $ribbonFoldColor, $stripesHover);
 
     > :last-child { margin-bottom: 0; }
   }

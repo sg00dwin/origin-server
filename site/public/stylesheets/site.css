@@ -48,29 +48,42 @@
      border-left: Xpx solid transparent;
      */ }
 
+/* Common navbar branding */
+/* FIXME: Move common branding in _custom.scss here */
+.navbar .brand {
+  text-transform: uppercase; }
+.navbar .brand > a {
+  display: block; }
+.navbar .brand > a > .brand-image {
+  -moz-transition: all 0.2s;
+  -webkit-transition: all 0.2s;
+  transition: all 0.2s; }
+.navbar .brand > a:hover > .brand-image {
+  -moz-transform: rotate(-10deg);
+  -webkit-transform: rotate(-10deg);
+  transform: rotate(-10deg); }
+.navbar .brand-image {
+  content: ' ';
+  /*background-image: url('../images/logo-medium.png') center top no-repeat;
+  height: logoHeight;
+  width: logoWidth;*/ }
+.navbar .brand-text {
+  color: white;
+  text-align: center; }
+
+/* This is site specific branding */
 .navbar {
   margin-bottom: 30px;
   position: relative; }
   .navbar .brand {
-    text-transform: uppercase;
     /* reset styles */
     float: none;
     margin: 0;
     padding: 0; }
-  .navbar .brand > a {
-    display: block; }
-  .navbar .brand > a > .brand-image {
-    -moz-transition: all 0.2s; }
-  .navbar .brand > a:hover > .brand-image {
-    -moz-transform: rotate(-10deg); }
   .navbar .brand-image {
-    content: ' ';
     background: url("../images/logo-medium.png") center top no-repeat transparent;
     height: 90px;
     width: 93px; }
-  .navbar .brand-text {
-    color: white;
-    text-align: center; }
   .navbar .nav {
     font-size: 13px;
     text-transform: uppercase;
@@ -388,7 +401,6 @@ body.signup {
   .section-top .container .btn {
     background: #333;
     border-radius: 0;
-    -moz-border-radius: 0;
     text-shadow: none;
     border: 0;
     color: white;
@@ -412,7 +424,9 @@ body.signup {
   .section-nav.lift-counter {
     padding-bottom: 30px; } }
 .section-striped {
-  background: -moz-repeating-linear-gradient(-70deg, #e6e6e6, #e6e6e6 6px, #e4e4e4 9px, #e4e4e4 15px, #e6e6e6 18px) repeat scroll 0 0 transparent; }
+  background: -moz-repeating-linear-gradient(-70deg, #e6e6e6, #e6e6e6 6px, #e4e4e4 9px, #e4e4e4 15px, #e6e6e6 18px) repeat scroll 0 0 #e5e5e5;
+  background: -webkit-repeating-linear-gradient(-70deg, #e6e6e6, #e6e6e6 6px, #e4e4e4 9px, #e4e4e4 15px, #e6e6e6 18px) repeat scroll 0 0 #e5e5e5;
+  background: repeating-linear-gradient(-70deg, #e6e6e6, #e6e6e6 6px, #e4e4e4 9px, #e4e4e4 15px, #e6e6e6 18px) repeat scroll 0 0 #e5e5e5; }
   .section-striped .link-tile {
     color: #343434;
     padding: 15px 28px;
@@ -421,8 +435,10 @@ body.signup {
     .section-striped .link-tile:hover {
       text-decoration: none;
       color: #343434;
-      background-color: #cccccc;
-      background: -moz-repeating-linear-gradient(-180deg, #cccccc 6px, rgba(204, 204, 204, 0) 6px, rgba(204, 204, 204, 0) 10px, #cccccc 10px, #cccccc) repeat scroll 0 0 transparent; }
+      background: -moz-repeating-linear-gradient(-180deg, #cccccc, #cccccc 6px, rgba(204, 204, 204, 0) 6px, rgba(204, 204, 204, 0) 10px, #cccccc 10px, #cccccc) repeat scroll 0 0 transparent;
+      background: -webkit-repeating-linear-gradient(-180deg, #cccccc, #cccccc 6px, rgba(204, 204, 204, 0) 6px, rgba(204, 204, 204, 0) 10px, #cccccc 10px, #cccccc) repeat scroll 0 0 transparent;
+      background: repeating-linear-gradient(-180deg, #cccccc, #cccccc 6px, rgba(204, 204, 204, 0) 6px, rgba(204, 204, 204, 0) 10px, #cccccc 10px, #cccccc) repeat scroll 0 0 transparent;
+      /*FIXME: no fallback? background: $backgroundHoverColor; */ }
     .section-striped .link-tile:active {
       text-decoration: none;
       color: #343434;

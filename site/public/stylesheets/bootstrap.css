@@ -3829,18 +3829,18 @@ footer {
     page-break-after: avoid; } }
 
 /* Temporary styles for the old openshift look */
-.console-transition #footer-nav {
+/*.console-transition #footer-nav {
   background-color: #574D4F;
-  color: #eee; }
+  color: #eee; }*/
 
 #copyright {
   color: #eee;
   background-color: black; }
 
-.console-transition #footer-nav a,
+/*.console-transition #footer-nav a,
 .console-transition #footer-nav h3 {
   color: #eee; }
-
+*/
 .console-transition .navbar .headline {
   color: #eee;
   font-size: 24px;
@@ -3852,7 +3852,7 @@ footer {
 
 .console-transition .navbar-inner {
   background-image: none;
-  background-color: #574D4F;
+  background-color: #343434;
   box-shadow: none; }
 
 .console-transition .navbar .nav > li > a,
