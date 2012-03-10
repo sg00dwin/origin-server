@@ -18,6 +18,8 @@ then
   exit 66
 fi  
 
+cd $wp
+
 XLATION=( \
   OPENSHIFT_10GEN_MMS_AGENT_APP_DIR \
   OPENSHIFT_APP_CTL_SCRIPT \
@@ -53,3 +55,5 @@ do
     fi
   fi
 done
+
+exit 0
