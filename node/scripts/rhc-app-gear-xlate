@@ -1,0 +1,55 @@
+#!/bin/bash
+
+#
+# In a particular path (ex: .env), make variable name translations
+#
+
+wp="$1"
+
+if [ -z "$wp" ]
+then
+  echo "ERROR: Working path is not a directory: $wp"
+  exit 65  
+fi
+
+if ! [ -d "$wp" ]
+then 
+  echo "ERROR: Working path is not a directory: $wp"
+  exit 66
+fi  
+
+XLATION=( \
+  OPENSHIFT_10GEN_MMS_AGENT_APP_DIR \
+  OPENSHIFT_APP_CTL_SCRIPT \
+  OPENSHIFT_APP_DIR \
+  OPENSHIFT_APP_DNS \
+  OPENSHIFT_APP_NAME \
+  OPENSHIFT_APP_STATE \
+  OPENSHIFT_APP_TYPE \
+  OPENSHIFT_METRICS_APP_DIR \
+  OPENSHIFT_PHPMOADMIN_APP_DIR \
+  OPENSHIFT_PHPMYADMIN_APP_DIR \
+  OPENSHIFT_ROCKMONGO_APP_DIR \
+  OPENSHIFT_APP_UUID \
+ )
+
+ref="Z_APP_TO_GEAR"
+
+for xlate in "${XLATION}"
+do
+  dst=$(echo "$xlate" | sed -e 's/APP/GEAR/')
+  if [ -f "$xlate" ]
+  then
+    sed -e s\|"$xlate"\|"$dst"\|g "$xlate" > "$dst"
+    if ! [ -f "$dst" ]
+    then
+      echo "export $xlate=\"\$$dst\"" >> $ref
+      chown root:root "$dst" "$ref"
+      chmod 0644 "$dst" "$ref"
+      chcon --reference="$xlate" "$dst" "$ref"
+      if [ "$xlate" != "OPENSHIFT_APP_UUID" ]; then
+        rm -f "$xlate"
+      fi
+    fi
+  fi
+done
