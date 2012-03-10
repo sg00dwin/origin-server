@@ -1,0 +1,77 @@
+#!/usr/bin/env ruby
+
+require 'rubygems'
+require 'getoptlong'
+
+def usage
+    puts <<USAGE
+== Synopsis
+
+rhc-admin-chk: Check all user applications
+
+== Usage
+
+rhc-admin-ctl-app OPTIONS
+
+Options:
+-v|--verbose 
+    Print information about each check being performed
+-h|--help
+    Show Usage info
+USAGE
+end
+
+puts "This script is under development!"
+exit 1
+
+opts = GetoptLong.new(
+    ["--verbose",          "-v", GetoptLong::NO_ARGUMENT],
+    ["--help",             "-h", GetoptLong::NO_ARGUMENT]
+)
+
+args = {}
+begin
+    opts.each{ |k,v| args[k]=v }
+rescue GetoptLong::Error => e
+    usage
+    exit -100
+end
+
+verbose = args["--verbose"]
+
+
+require "/var/www/stickshift/broker/config/environment"
+
+users = CloudUser.find_all(nil)
+
+mongo_hash = {}
+users.each { |user|
+  user.applications.each { |app|
+    app.group_instances.uniq.each { |gi|
+      gi.gears.each { |gear|
+        mongo_hash[gear.uuid] = app.name
+      }
+    }
+  }
+}
+
+node_hash = StickShift::ApplicationContainerProxy.get_all_gears
+no_error = true
+
+# now check
+mongo_hash.each { |mk,mv|
+  if not node_hash.has_key? mk
+    no_error = false
+    puts "Gear #{mk} in #{mv} does not exist on any node"
+  end
+}
+
+# now check reverse
+node_hash.each { |nk, nv|
+  if not mongo_hash.has_key? nk
+    no_error = false
+    puts "Gear #{nk} exists on node #{nv} but does not exist in mongo database"
+  end
+}
+
+puts no_error ? "Success" : "Check failed."
