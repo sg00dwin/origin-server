@@ -86,7 +86,7 @@ class Application < StickShift::Cartridge
   
   def remove_from_requires_feature(feature)
     prof = @profile_name_map[@default_profile]
-    prof.connection_name_map.delete("#{feature}-conn")
+    prof.connection_name_map.delete_if {|k,v| v.components[0]==feature or v.components[1]==feature }
     self.requires_feature.delete feature
   end
 
