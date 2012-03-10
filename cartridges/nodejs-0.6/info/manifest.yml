@@ -13,26 +13,25 @@ Conflicts:
 Native-Requires:
   - nodejs >= 0.6
 Architecture: noarch
-Descriptor:
-  Reservations:
-    - MEM >= 100MB
-  Scaling:
-    Min: 1
-    Max: -1
-  Publishes:
-    get-doc-root:
-      Type: "FILESYSTEM:doc-root"
-    publish-http-url:
-      Type: "NET_TCP:httpd-proxy-info"
-    publish-git-url:
-      Type: "NET_TCP:git-url-info"
-  Subscribes:
-    set-mysql-connection-info:
-      Type: "NET_TCP:db:mysql"
-      Required : false
-    set-postgres-connection-info:
-      Type: "NET_TCP:db:postgres"
-      Required : false
-    set-mongo-connection-info:
-      Type: "NET_TCP:db:mongodb"
-      Required : false
+Reservations:
+  - MEM >= 100MB
+Scaling:
+  Min: 1
+  Max: -1
+Publishes:
+  get-doc-root:
+    Type: "FILESYSTEM:doc-root"
+  publish-http-url:
+    Type: "NET_TCP:httpd-proxy-info"
+  publish-git-url:
+    Type: "NET_TCP:git-url-info"
+Subscribes:
+  set-mysql-connection-info:
+    Type: "NET_TCP:db:mysql"
+    Required : false
+  set-postgres-connection-info:
+    Type: "NET_TCP:db:postgres"
+    Required : false
+  set-mongo-connection-info:
+    Type: "NET_TCP:db:mongodb"
+    Required : false
