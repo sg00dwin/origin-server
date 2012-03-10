@@ -36,8 +36,9 @@ import_env_vars
 
 # Remove the first 3 args and process all the remaining args of the form k=v.
 # The values are the db environment variable name-value pairs.
-kvargs=$(echo "${@:4}" | tr -d "\n" )
-for arg in $kvargs; do
+while [ $# -gt 0 ]; do
+    arg=$1
+    shift
     nvs=$(echo "$arg" | tr "\n" ";" | cut -f 2- -d '=' | sed "s/'\(.*\)'/\\1/")
     echo "$nvs" | tr ";" "\n" |  while read line; do
         [ -z "$line" ]  &&  continue
