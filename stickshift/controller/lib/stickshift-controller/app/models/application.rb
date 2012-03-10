@@ -76,8 +76,8 @@ class Application < StickShift::Cartridge
 
   def add_to_requires_feature(feature)
     prof = @profile_name_map[@default_profile]
-    conn = StickShift::Connection.new("#{feature}-conn")
     self.requires_feature.each { |cart|
+      conn = StickShift::Connection.new("#{feature}-#{cart}")
       conn.components = [cart, feature]
       prof.add_connection(conn)
     }
@@ -86,7 +86,9 @@ class Application < StickShift::Cartridge
   
   def remove_from_requires_feature(feature)
     prof = @profile_name_map[@default_profile]
-    prof.connection_name_map.delete_if {|k,v| v.components[0]==feature or v.components[1]==feature }
+    if prof.connection_name_map
+      prof.connection_name_map.delete_if {|k,v| v.components[0]==feature or v.components[1]==feature }
+    end
     self.requires_feature.delete feature
   end
 
