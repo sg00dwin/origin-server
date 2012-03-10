@@ -25,8 +25,8 @@ source "/etc/stickshift/stickshift-node.conf"
 source ${CARTRIDGE_BASE_PATH}/abstract/info/lib/util
 
 rm -rf "${STICKSHIFT_HTTP_CONF_DIR}/${uuid}_${namespace}_${application}.conf" "${STICKSHIFT_HTTP_CONF_DIR}/${uuid}_${namespace}_${application}"
-
 mkdir "${STICKSHIFT_HTTP_CONF_DIR}/${uuid}_${namespace}_${application}"
+CART_INFO_DIR=${CARTRIDGE_BASE_PATH}/jenkins-1.4/info
 
 cat <<EOF > "${STICKSHIFT_HTTP_CONF_DIR}/${uuid}_${namespace}_${application}/00000_default.conf"
   ServerName ${application}-${namespace}.${CLOUD_DOMAIN}
