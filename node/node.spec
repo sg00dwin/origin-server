@@ -2,7 +2,7 @@
 
 Summary:       Multi-tenant cloud management system node tools
 Name:          rhc-node
-Version:       0.88.2
+Version:       0.88.3
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -258,6 +258,11 @@ fi
 /lib64/security/pam_libra.so
 
 %changelog
+* Fri Mar 09 2012 Dan McPherson <dmcphers@redhat.com> 0.88.3-1
+- Merge branch 'master' of li-master:/srv/git/li (ramr@redhat.com)
+- Fixes to get connections executing. (ramr@redhat.com)
+- Add set db connection info connector. (ramr@redhat.com)
+
 * Fri Mar 09 2012 Dan McPherson <dmcphers@redhat.com> 0.88.2-1
 - Fix to select correct trap-user script (kraman@gmail.com)
 - Build fixes (kraman@gmail.com)
