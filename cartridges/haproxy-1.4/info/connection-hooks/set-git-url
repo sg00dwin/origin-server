@@ -1,11 +1,6 @@
 #!/bin/bash
 
-source /etc/stickshift/stickshift-node.conf
-
 # Set a newly added gear's git url to the list of mirrors we need to push too.
-CART_NAME=haproxy
-CART_VERSION=1.4
-CART_INFO_DIR=${CARTRIDGE_BASE_PATH}/${CART_NAME}-${CART_VERSION}/info
 GEAR_AVAILABILITY_TIMEOUT=30
 
 # Exit on any errors
@@ -59,6 +54,7 @@ function setup_git_repo_from_framework() {
     git remote add all-gears "file://$GIT_DIR"
     popd > /dev/null
     rm -rf /tmp/$checkout_dir_name
+    observe_setup_app_and_git_dirs
 }
 
 
@@ -183,12 +179,16 @@ done
 
 [ $# -gt 3 ] || print_help
 
+source /etc/stickshift/stickshift-node.conf
 source ${CARTRIDGE_BASE_PATH}/abstract/info/lib/util
 
 setup_configure "$1" $2 $3
 
 import_env_vars
 
+CART_NAME=haproxy
+CART_VERSION=1.4
+CART_INFO_DIR=${CARTRIDGE_BASE_PATH}/${CART_NAME}-${CART_VERSION}/info
 export GIT_SSH=${CART_INFO_DIR}/bin/ssh
 export GIT_DIR=${OPENSHIFT_HOMEDIR}/git/${OPENSHIFT_GEAR_NAME}.git
 
