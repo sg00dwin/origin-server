@@ -4,12 +4,10 @@
 
 set -e
 
-CART_DIR=/usr/libexec/li/cartridges
-source ${CART_DIR}/abstract/info/lib/util
+source "/etc/stickshift/stickshift-node.conf"
+source ${CARTRIDGE_BASE_PATH}/abstract/info/lib/util
 
-load_node_conf
-
-[ -z "$CARTRIDGE_DIR" ] && CARTRIDGE_DIR="/usr/libexec/li/cartridges/ruby-1.8/"
+[ -z "$CARTRIDGE_DIR" ] && CARTRIDGE_DIR="${CARTRIDGE_BASE_PATH}/ruby-1.8/"
 
 function print_help {
     echo "Usage: uuid"

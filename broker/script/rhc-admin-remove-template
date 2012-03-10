@@ -41,7 +41,7 @@ if uuid.nil?
   exit -100
 end
 
-require "/var/www/libra/broker/config/environment"
+require "/var/www/stickshift/broker/config/environment"
 
 template = ApplicationTemplate.find(uuid)
 if template.nil?

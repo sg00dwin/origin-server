@@ -50,36 +50,36 @@ class Release < Thor
     build_dirs = get_build_dirs
     
     gem_updates = false
-    if build_dirs.include?("cloud-sdk/common")
-      version = /(Version: )(.*)/.match(File.read("cloud-sdk/common/cloud-sdk-common.spec"))[2].strip
+    if build_dirs.include?("stickshift/common")
+      version = /(Version: )(.*)/.match(File.read("stickshift/common/stickshift-common.spec"))[2].strip
       nv = next_version(version)
-      run("/bin/sed -i 's,cloud-sdk-common (.*,cloud-sdk-common (#{nv}),' broker/Gemfile.lock", :verbose => options.verbose?)
-      run("/bin/sed -i 's,cloud-sdk-common (.*,cloud-sdk-common (#{nv}),' cloud-sdk/controller/Gemfile.lock", :verbose => options.verbose?)
-      run("/bin/sed -i 's,cloud-sdk-common (.*,cloud-sdk-common (#{nv}),' cloud-sdk/broker/Gemfile.lock", :verbose => options.verbose?)
-      run("/bin/sed -i 's,cloud-sdk-common (.*,cloud-sdk-common (#{nv}),' cloud-sdk/node/Gemfile.lock", :verbose => options.verbose?)
+      run("/bin/sed -i 's,stickshift-common (.*,stickshift-common (#{nv}),' broker/Gemfile.lock", :verbose => options.verbose?)
+      run("/bin/sed -i 's,stickshift-common (.*,stickshift-common (#{nv}),' stickshift/controller/Gemfile.lock", :verbose => options.verbose?)
+      run("/bin/sed -i 's,stickshift-common (.*,stickshift-common (#{nv}),' stickshift/broker/Gemfile.lock", :verbose => options.verbose?)
+      run("/bin/sed -i 's,stickshift-common (.*,stickshift-common (#{nv}),' stickshift/node/Gemfile.lock", :verbose => options.verbose?)
       gem_updates = true
     end
     
-    if build_dirs.include?("cloud-sdk/controller") || build_dirs.include?("cloud-sdk/common")
-      version = /(Version: )(.*)/.match(File.read("cloud-sdk/controller/cloud-sdk-controller.spec"))[2].strip
+    if build_dirs.include?("stickshift/controller") || build_dirs.include?("stickshift/common")
+      version = /(Version: )(.*)/.match(File.read("stickshift/controller/stickshift-controller.spec"))[2].strip
       nv = next_version(version)
-      run("/bin/sed -i 's,cloud-sdk-controller (.*,cloud-sdk-controller (#{nv}),' broker/Gemfile.lock", :verbose => options.verbose?)
-      run("/bin/sed -i 's,cloud-sdk-controller (.*,cloud-sdk-controller (#{nv}),' cloud-sdk/controller/Gemfile.lock", :verbose => options.verbose?)
-      run("/bin/sed -i 's,cloud-sdk-controller (.*,cloud-sdk-controller (#{nv}),' cloud-sdk/broker/Gemfile.lock", :verbose => options.verbose?)
+      run("/bin/sed -i 's,stickshift-controller (.*,stickshift-controller (#{nv}),' broker/Gemfile.lock", :verbose => options.verbose?)
+      run("/bin/sed -i 's,stickshift-controller (.*,stickshift-controller (#{nv}),' stickshift/controller/Gemfile.lock", :verbose => options.verbose?)
+      run("/bin/sed -i 's,stickshift-controller (.*,stickshift-controller (#{nv}),' stickshift/broker/Gemfile.lock", :verbose => options.verbose?)
       gem_updates = true
     end
     
-    if build_dirs.include?("cloud-sdk/node") || build_dirs.include?("cloud-sdk/common")
-      version = /(Version: )(.*)/.match(File.read("cloud-sdk/node/cloud-sdk-node.spec"))[2].strip
+    if build_dirs.include?("stickshift/node") || build_dirs.include?("stickshift/common")
+      version = /(Version: )(.*)/.match(File.read("stickshift/node/stickshift-node.spec"))[2].strip
       nv = next_version(version)
-      run("/bin/sed -i 's,cloud-sdk-node (.*,cloud-sdk-node (#{nv}),' cloud-sdk/node/Gemfile.lock", :verbose => options.verbose?)
-      run("/bin/sed -i 's,cloud-sdk-node (.*,cloud-sdk-node (#{nv}),' cloud-sdk/broker/Gemfile.lock", :verbose => options.verbose?)
+      run("/bin/sed -i 's,stickshift-node (.*,stickshift-node (#{nv}),' stickshift/node/Gemfile.lock", :verbose => options.verbose?)
+      run("/bin/sed -i 's,stickshift-node (.*,stickshift-node (#{nv}),' stickshift/broker/Gemfile.lock", :verbose => options.verbose?)
       gem_updates = true
     end
     
     if gem_updates
       branch = get_branch
-      run("git add broker/Gemfile.lock cloud-sdk/controller/Gemfile.lock cloud-sdk/node/Gemfile.lock cloud-sdk/broker/Gemfile.lock; git commit -m 'Updating gem versions'; git push origin #{branch}", :verbose => options.verbose?)
+      run("git add broker/Gemfile.lock stickshift/controller/Gemfile.lock stickshift/node/Gemfile.lock stickshift/broker/Gemfile.lock; git commit -m 'Updating gem versions'; git push origin #{branch}", :verbose => options.verbose?)
       build_dirs = get_build_dirs
     end
 

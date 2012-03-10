@@ -104,7 +104,7 @@ fi
 
 startuser() {
     # USERNAME=$1
-    local OUTFILE=$(mktemp /var/run/libra/libra_init-startuser-$1.XXXXXXXX)
+    local OUTFILE=$(mktemp /var/run/stickshift/stickshift_init-startuser-$1.XXXXXXXX)
     echo "Starting $1..." >> $OUTFILE 2>&1
     for APPNAME in `userapps $1`
     do
@@ -118,7 +118,7 @@ startuser() {
 
 stopuser() {
     # USERNAME=$1
-    local OUTFILE=$(mktemp /var/run/libra/libra_init-stopuser-$1.XXXXXXXX)
+    local OUTFILE=$(mktemp /var/run/stickshift/stickshift_init-stopuser-$1.XXXXXXXX)
     echo "Stopping $1..." >> $OUTFILE 2>&1
     for APPNAME in `userapps $1`
     do
@@ -145,7 +145,7 @@ startapp() {
     uid=$(id -u "$1")
     setuppam $1
     mcs_level=`get_mcs_level $uid`
-    source /var/lib/libra/$1/.env/OPENSHIFT_RUN_DIR
+    source /var/lib/stickshift/$1/.env/OPENSHIFT_RUN_DIR
     if [ -f "${OPENSHIFT_RUN_DIR}/stop_lock" ]
     then
         echo "$1 is locked"
@@ -249,7 +249,7 @@ case "$1" in
 
     # check for $1 (user) and $2 (appname)
     # This won't scale forever, but works fine in the '100 or so' range
-    for ctl_script in `/bin/find /var/lib/libra/ -maxdepth 3 -mindepth 3 -type f -name "*_ctl.sh"`
+    for ctl_script in `/bin/find /var/lib/stickshift/ -maxdepth 3 -mindepth 3 -type f -name "*_ctl.sh"`
     do
         script_name=$(basename $ctl_script)
         run_as=$( echo $ctl_script | awk -F/ '{print $5}')

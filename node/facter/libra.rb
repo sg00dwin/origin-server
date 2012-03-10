@@ -29,11 +29,21 @@
 require 'rubygems'
 require 'parseconfig'
 
+def get_node_config_value(key, default)
+  config_file = ParseConfig.new('/etc/stickshift/stickshift-node.conf')
+  val = config_file.get_value(key)
+  return default if val.nil?
+  val.gsub!(/\\:/,":") if not val.nil?
+  val.gsub!(/[ \t]*#[^\n]*/,"") if not val.nil?
+  val = val[1..-2] if not val.nil? and val.start_with? "\""
+  val
+end
+
 #
 # Count the number of git repos on this host
 #
 Facter.add(:git_repos) do
-    git_repos_count = Dir.glob("/var/lib/libra/**/git/*.git").count
+    git_repos_count = Dir.glob("/var/lib/stickshift/**/git/*.git").count
     setcode { git_repos_count }
 end
 
@@ -42,8 +52,8 @@ end
 #
 district_uuid = 'NONE'
 district_active = false
-if File.exists?('/etc/libra/district.conf')
-  config_file = ParseConfig.new('/etc/libra/district.conf')
+if File.exists?('/etc/stickshift/district.conf')
+  config_file = ParseConfig.new('/etc/stickshift/district.conf')
   district_uuid = config_file.get_value('uuid') ? config_file.get_value('uuid') : 'NONE'
   district_active = config_file.get_value('active') ? config_file.get_value('active') == "true" : false
 end
@@ -59,11 +69,8 @@ end
 #
 public_ip = 'UNKNOWN'
 public_hostname = 'UNKNOWN'
-if File.exists?('/etc/libra/node_data.conf')
-  config_file = ParseConfig.new('/etc/libra/node_data.conf')
-  public_ip = config_file.get_value('public_ip') ? config_file.get_value('public_ip') : 'UNKNOWN'
-  public_hostname = config_file.get_value('public_hostname') ? config_file.get_value('public_hostname') : 'UNKNOWN'
-end
+public_ip = get_node_config_value("PUBLIC_IP_OVERRIDE", "UNKNOWN")
+public_hostname = get_node_config_value("PUBLIC_HOSTNAME_OVERRIDE", "UNKNOWN")
 Facter.add(:public_ip) do
   setcode { public_ip }
 end
@@ -77,8 +84,8 @@ end
 node_profile = 'small'
 max_apps = '0'
 max_active_apps = '0'
-if File.exists?('/etc/libra/resource_limits.conf')
-  config_file = ParseConfig.new('/etc/libra/resource_limits.conf')
+if File.exists?('/etc/stickshift/resource_limits.conf')
+  config_file = ParseConfig.new('/etc/stickshift/resource_limits.conf')
   node_profile = config_file.get_value('node_profile') ? config_file.get_value('node_profile') : 'small'
   max_apps = config_file.get_value('max_apps') ? config_file.get_value('max_apps') : '0'
   max_active_apps = config_file.get_value('max_active_apps') ? config_file.get_value('max_active_apps') : '0'
@@ -101,7 +108,7 @@ Facter.add(:active_capacity) do
     git_repos =  Facter.value(:git_repos).to_f
     max_active_apps = Facter.value(:max_active_apps).to_f
     stopped_app_count = 0
-    Dir.glob("/var/lib/libra/*").each { |app_dir|
+    Dir.glob("/var/lib/stickshift/*").each { |app_dir|
         if File.directory?(app_dir)
             active = true
             Dir.glob(File.join(app_dir, '*', 'runtime', '.state')).each {|file|
@@ -141,9 +148,9 @@ end
 #
 # Lists customers on the host as well as what what git repos they currently own
 #
-if File.exists?("/var/lib/libra") && File.directory?("/var/lib/libra")
+if File.exists?("/var/lib/stickshift") && File.directory?("/var/lib/stickshift")
     # Determine customers on host and hosted info
-    Dir.entries('/var/lib/libra/').each do |customer|
+    Dir.entries('/var/lib/stickshift/').each do |customer|
     
         if customer =~ /[A-Za-z0-9]/
             Facter.add("customer_#{customer}") do
@@ -151,8 +158,8 @@ if File.exists?("/var/lib/libra") && File.directory?("/var/lib/libra")
             end
         end
         # Repo counts for a customer
-        if File.exists?("/var/lib/libra/#{customer}/git/")
-            git_repos = Dir.glob("/var/lib/libra/#{customer}/git/*.git")
+        if File.exists?("/var/lib/stickshift/#{customer}/git/")
+            git_repos = Dir.glob("/var/lib/stickshift/#{customer}/git/*.git")
             Facter.add("git_cnt_#{customer}") do
                 setcode do git_repos.size end
             end
@@ -168,7 +175,7 @@ end
 #
 Facter.add(:cart_list) do
     carts = []
-    Dir.glob('/usr/libexec/li/cartridges/*/').each do |cart|
+    Dir.glob('/usr/libexec/stickshift/cartridges/*/').each do |cart|
         cart = File.basename(cart).sub(/^(.*)-(\d+)\.(\d+)\.?.*$/, '\1-\2.\3')
         carts << cart unless cart.nil? || cart == "embedded"
     end
@@ -182,7 +189,7 @@ end
 #
 Facter.add(:embed_cart_list) do
     carts = []
-    Dir.glob('/usr/libexec/li/cartridges/embedded/*/').each do |cart|
+    Dir.glob('/usr/libexec/stickshift/cartridges/embedded/*/').each do |cart|
         cart = File.basename(cart).sub(/^(.*)-(\d+)\.(\d+)\.?.*$/, '\1-\2.\3')
         carts << cart unless cart.nil?
     end

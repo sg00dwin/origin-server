@@ -4,7 +4,7 @@ require 'net/http'
 require 'net/https'
 require 'json'
 require 'singleton'
-require 'cloud-sdk-common'
+require 'stickshift-common'
 
 module Express
   module Broker
@@ -25,13 +25,13 @@ module Express
         encrypted_token = cipher.update(token.to_json)
         encrypted_token << cipher.final
       
-        public_key = OpenSSL::PKey::RSA.new(File.read('/var/www/libra/broker/config/keys/public.pem'), Rails.configuration.auth[:broker_auth_rsa_secret])
+        public_key = OpenSSL::PKey::RSA.new(File.read('/var/www/stickshift/broker/config/keys/public.pem'), Rails.configuration.auth[:broker_auth_rsa_secret])
         encrypted_iv = public_key.public_encrypt(iv)
         [encrypted_iv, encrypted_token]
       end
       
       def authenticate(request, login, password)
-        if request.headers['User-Agent'] == "Cloud-SDK"
+        if request.headers['User-Agent'] == "StickShift"
           return check_broker_key(login, password)
         else
           unless Rails.configuration.auth[:integrated]
@@ -93,7 +93,7 @@ module Express
             end
             check_access(roles)
             rhlogin = login
-          rescue Cloud::Sdk::AccessDeniedException
+          rescue StickShift::AccessDeniedException
           end
         end
         
@@ -101,6 +101,8 @@ module Express
       end
       
       def check_broker_key(key, iv)
+        key = key.gsub(" ", "+")
+        iv = iv.gsub(" ", "+")
         encrypted_token = Base64::decode64(key)
         cipher = OpenSSL::Cipher::Cipher.new("aes-256-cbc")
         cipher.decrypt
@@ -116,11 +118,11 @@ module Express
         creation_time = token['creation_time']
               
         user = CloudUser.find(username)
-        raise Cloud::Sdk::UserValidationException.new unless user
+        raise StickShift::UserValidationException.new unless user
         
         app = Application.find(user, app_name)
         
-        raise Cloud::Sdk::UserValidationException.new if !app or creation_time != app.creation_time
+        raise StickShift::UserValidationException.new if !app or creation_time != app.creation_time
         return {:username => username, :auth_method => :broker_auth}
       end
       
@@ -128,9 +130,9 @@ module Express
         roles = [] unless roles
         unless roles.index('cloud_access_1')
           if roles.index('cloud_access_request_1')
-            raise Cloud::Sdk::UserValidationException.new("Found valid credentials but you haven't been granted access yet", 146)
+            raise StickShift::UserValidationException.new("Found valid credentials but you haven't been granted access yet", 146)
           else
-            raise Cloud::Sdk::UserValidationException.new("Found valid credentials but you haven't requested access yet", 147)
+            raise StickShift::UserValidationException.new("Found valid credentials but you haven't requested access yet", 147)
           end
         end
       end
@@ -163,21 +165,21 @@ module Express
               yield json if block_given?
             else
               Rails.logger.error "Empty response from streamline - #{res.code}"
-              raise Cloud::Sdk::AuthServiceException
+              raise StickShift::AuthServiceException
             end
           when Net::HTTPForbidden, Net::HTTPUnauthorized
-            raise Cloud::Sdk::AccessDeniedException
+            raise StickShift::AccessDeniedException
           else
             Rails.logger.error "Invalid HTTP response from streamline - #{res.code}"
             Rails.logger.error "Response body:\n#{res.body}"
-            raise Cloud::Sdk::AuthServiceException
+            raise StickShift::AuthServiceException
           end
-        rescue Cloud::Sdk::AccessDeniedException, Cloud::Sdk::UserValidationException, Cloud::Sdk::AuthServiceException
+        rescue StickShift::AccessDeniedException, StickShift::UserValidationException, StickShift::AuthServiceException
           raise
         rescue Exception => e
           Rails.logger.error "Exception occurred while calling streamline - #{e.message}"
           Rails.logger.error e, e.backtrace
-          raise Cloud::Sdk::AuthServiceException
+          raise StickShift::AuthServiceException
         end
       end
     end

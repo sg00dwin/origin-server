@@ -1,7 +1,7 @@
 class ApplicationController < ActionController::Base
   before_filter :store_user_agent
   
-  @@outage_notification_file = '/etc/libra/express_outage_notification.txt'  
+  @@outage_notification_file = '/etc/stickshift/express_outage_notification.txt'  
   
   def store_user_agent
     user_agent = request.headers['User-Agent']

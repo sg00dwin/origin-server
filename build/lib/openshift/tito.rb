@@ -1,6 +1,7 @@
 require 'fileutils'
 
-CLOUD_SDK_REGEX = /^rubygem-cloud-sdk-([\w]+)-\d+/
+RUBYGEM_STICKSHIFT_REGEX = /^rubygem-stickshift-([\w]+)-\d+/
+STICKSHIFT_ABSTRACT_REGEX = /^stickshift-(abstract)-\d+/
 CARTRIDGE_REGEX = /^rhc-(cartridge-[\w-]+\d+[\.\d+]*)-\d+\.\d+\.\d+-/
 RHC_REGEX = /^rhc-([\w-]+)-\d+/
 DEVENV_REGEX = /^rhc-devenv-\d+/
@@ -13,8 +14,10 @@ module OpenShift
       build_dirs = packages.split("\n").collect do |package|
         if package =~ DEVENV_REGEX
           "misc/devenv"
-        elsif package =~ CLOUD_SDK_REGEX
-          "cloud-sdk/#{$1}"
+        elsif package =~ RUBYGEM_STICKSHIFT_REGEX
+          "stickshift/#{$1}"
+        elsif package =~ STICKSHIFT_ABSTRACT_REGEX
+          "stickshift/abstract"
         elsif package =~ CARTRIDGE_REGEX
           "cartridges/" + $1['cartridge-'.length..-1]
         elsif package =~ RHC_REGEX
@@ -43,8 +46,10 @@ module OpenShift
           package_name = nil
           if file.start_with?('cartridges')
             package_name = "rhc-cartridge-#{name}"
-          elsif file.start_with?('cloud-sdk')
-            package_name = "rubygem-cloud-sdk-#{name}"
+          elsif file.start_with?('stickshift/abstract/')
+            package_name = "stickshift-abstract"
+          elsif file.start_with?('stickshift')
+            package_name = "rubygem-stickshift-#{name}"
           else
             package_name = "rhc-#{name}"
           end
@@ -76,10 +81,13 @@ module OpenShift
       packages.each do |package|
         if package =~ DEVENV_REGEX
           puts "The devenv package has an update but isn't being installed."
-        elsif package =~ CLOUD_SDK_REGEX
+        elsif package =~ RUBYGEM_STICKSHIFT_REGEX
           dir_name = $1
-          current_package = "rubygem-cloud-sdk-#{dir_name}"
-          current_sync_dir = "cloud-sdk/#{dir_name}"
+          current_package = "rubygem-stickshift-#{dir_name}"
+          current_sync_dir = "stickshift/#{dir_name}"
+        elsif package =~ STICKSHIFT_ABSTRACT_REGEX
+          current_package = "stickshift-abstract"
+          current_sync_dir = "stickshift/abstract"
         elsif package =~ CARTRIDGE_REGEX
           dir_name = $1['cartridge-'.length..-1]
           current_package = "rhc-cartridge-#{dir_name}"

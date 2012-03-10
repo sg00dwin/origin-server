@@ -6,8 +6,8 @@ do
     . $f
 done
 
-CART_DIR=${CART_DIR:=/usr/libexec/li/cartridges}
-CART_INFO_DIR=$CART_DIR/embedded/mongodb-2.0/info
+source /etc/stickshift/stickshift-node.conf
+CART_INFO_DIR=${CARTRIDGE_BASE_PATH}/embedded/mongodb-2.0/info
 source ${CART_INFO_DIR}/lib/util
 
 

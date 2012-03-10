@@ -1,7 +1,7 @@
 require 'fileutils'
 
 $jenkins_client_version = "1.4"
-$jenkins_client_cart_root = "/usr/libexec/li/cartridges/embedded/jenkins-client-#{$jenkins_client_version}"
+$jenkins_client_cart_root = "/usr/libexec/stickshift/cartridges/embedded/jenkins-client-#{$jenkins_client_version}"
 $jenkins_client_hooks = $jenkins_client_cart_root + "/info/hooks"
 $jenkins_client_config = $jenkins_client_hooks + "/configure"
 $jenkins_client_config_format = "#{$jenkins_client_config} %s %s %s"

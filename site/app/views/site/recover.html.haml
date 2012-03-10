@@ -1,0 +1,16 @@
+- input_html = { :class => input_class } if defined? input_class
+
+%h1.ribbon
+  .ribbon-content Reset your password
+  .ribbon-left
+
+= form_tag(user_request_password_reset_path, :class => 'form-horizontal') do
+  %fieldset
+    .control-group
+      %label.control-label{:for => 'email_input'}
+        Email
+      .controls
+        %input{:type => "email", :required => true, :name => "email",  :id => "email_input"}
+    .form-actions
+      %input(type="submit" value="Reset Password" class="btn")
+

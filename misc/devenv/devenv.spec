@@ -1,14 +1,14 @@
 %define htmldir %{_localstatedir}/www/html
-%define libradir %{_localstatedir}/www/libra
-%define brokerdir %{_localstatedir}/www/libra/broker
-%define sitedir %{_localstatedir}/www/libra/site
-%define devenvdir %{_sysconfdir}/libra/devenv
+%define libradir %{_localstatedir}/www/stickshift
+%define brokerdir %{_localstatedir}/www/stickshift/broker
+%define sitedir %{_localstatedir}/www/stickshift/site
+%define devenvdir %{_sysconfdir}/stickshift/devenv
 %define jenkins %{_sharedstatedir}/jenkins
 %define policydir %{_datadir}/selinux/packages
 
 Summary:   Dependencies for OpenShift development
 Name:      rhc-devenv
-Version:   0.88.1
+Version:   0.88.2
 Release:   1%{?dist}
 Group:     Development/Libraries
 License:   GPLv2
@@ -181,10 +181,10 @@ perl -p -i -e "s/^#MaxStartups .*$/MaxStartups 40/" /etc/ssh/sshd_config
 
 # Setup an empty git repository to allow code transfer
 mkdir -p /root/li
-#mkdir -p /root/cloud-sdk
+#mkdir -p /root/stickshift
 git init --bare /root/li
 git init --bare /root/os-client-tools
-#git init --bare /root/cloud-sdk
+#git init --bare /root/stickshift
 
 # create a submodule repo for the tests
 git init /root/submodule_test_repo
@@ -281,6 +281,20 @@ cp -f %{devenvdir}/puppet-private.pem /var/lib/puppet/ssl/private_keys/localhost
 %{policydir}/*
 
 %changelog
+* Fri Mar 09 2012 Dan McPherson <dmcphers@redhat.com> 0.88.2-1
+- Updates for getting devenv running (kraman@gmail.com)
+- Renaming Cloud-SDK -> StickShift (kraman@gmail.com)
+- remove old comment (mlamouri@redhat.com)
+- misc/devenv/li-devenv.sh: updated libra repos to point to new machines
+  (tdawson@redhat.com)
+- fixed forwarding and removed unneeded experiments with hints
+  (mlamouri@redhat.com)
+- dont forward FIRST, forward ONLY (mlamouri@redhat.com)
+- added SOA to the hints (mlamouri@redhat.com)
+- re-insert localhost in nameserver list (mlamouri@redhat.com)
+- derive from DHCP response instead of query (mlamouri@redhat.com)
+- added upstream hints (mlamouri@redhat.com)
+
 * Fri Mar 02 2012 Dan McPherson <dmcphers@redhat.com> 0.88.1-1
 - bump spec numbers (dmcphers@redhat.com)
 - add install_from_local_source (dmcphers@redhat.com)

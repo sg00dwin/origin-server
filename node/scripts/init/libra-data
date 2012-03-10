@@ -12,14 +12,13 @@
 
 # source function library
 . /etc/rc.d/init.d/functions
-LIBRA_NODE_CONF=${LIBRA_NODE_CONF:=/etc/libra/node.conf}
-LIBRA_NODE_DATA_CONF=${LIBRA_NODE_DATA_CONF:=/etc/libra/node_data.conf}
+LIBRA_NODE_CONF=${LIBRA_NODE_CONF:=/etc/stickshift/stickshift-node.conf}
 
 if [ -f $LIBRA_NODE_CONF ]
 then
   . $LIBRA_NODE_CONF
 fi
-lockfile=/var/lock/subsys/libra
+lockfile=/var/lock/subsys/stickshift
 
 RETVAL=0
 GROUP_RETVAL=0
@@ -36,23 +35,23 @@ function get_ami_public_interface_data() {
     echo -n "Getting Libra info"
     instance_id=$(wget -qO- ${SERVICE_URL_ROOT}/instance-id)
     
-    # This allows node.conf to override public_ip
+    # This allows node.conf to override PUBLIC_IP_OVERRIDE
     # also, sometimes it takes a while for the public ip to be published in aws
     i=0
-    while [ -z "$public_ip" ] && [ $i -lt 60 ]
+    while [ -z "$PUBLIC_IP_OVERRIDE" ] && [ $i -lt 60 ]
     do
         [ $i -gt 0 ] && sleep 1 # we don't want to sleep on the first attempt
-        public_ip=$(wget -qO- ${SERVICE_URL_ROOT}/public-ipv4)
+        PUBLIC_IP_OVERRIDE=$(wget -qO- ${SERVICE_URL_ROOT}/public-ipv4)
         i=$(( i + 1 ))
     done
 
-    # This allows node.conf to override public_hostname
+    # This allows node.conf to override PUBLIC_HOSTNAME_OVERRIDE
     # also, sometimes it takes a while for the public hostname to be published in aws
     i=0
-    while [ -z "$public_hostname" ] && [ $i -lt 60 ]
+    while [ -z "$PUBLIC_HOSTNAME_OVERRIDE" ] && [ $i -lt 60 ]
     do
         [ $i -gt 0 ] && sleep 1 # we don't want to sleep on the first attempt
-        public_hostname=$(wget -qO- ${SERVICE_URL_ROOT}/public-hostname)
+        PUBLIC_HOSTNAME_OVERRIDE=$(wget -qO- ${SERVICE_URL_ROOT}/public-hostname)
         i=$(( i + 1 ))
     done
 
@@ -67,21 +66,21 @@ function get_host_interface_data() {
     instance_id="not_applicable"
 
     # check eth0?
-    public_ip=`ip --oneline addr show dev $1  | grep 'inet ' | sed -e 's/^.*inet // ; s|/.*$||'`
+    PUBLIC_IP_OVERRIDE=`ip --oneline addr show dev $1  | grep 'inet ' | sed -e 's/^.*inet // ; s|/.*$||'`
     # hostname ?
-    public_hostname=`host $public_ip | awk '{sub(/\.$/, "") ; print $5;}'`
+    PUBLIC_HOSTNAME_OVERRIDE=`host $PUBLIC_IP_OVERRIDE | awk '{sub(/\.$/, "") ; print $5;}'`
     # for later parsing
-    #echo "$instance_id:$public_ip:$public_hostname"
+    #echo "$instance_id:$PUBLIC_IP_OVERRIDE:$PUBLIC_HOSTNAME_OVERRIDE"
 }
 
 function init_node_data() {
     # instance_id=$1
-    # public_ip=$2
-    # public_hostname=$3
-    cat <<EOF > $LIBRA_NODE_DATA_CONF
-instance_id="$1"
-public_ip="$2"
-public_hostname="$3"
+    # PUBLIC_IP_OVERRIDE=$2
+    # PUBLIC_HOSTNAME_OVERRIDE=$3
+    cat <<EOF >> $LIBRA_NODE_CONF
+INSTANCE_ID="$1"
+PUBLIC_IP_OVERRIDE="$2"
+PUBLIC_HOSTNAME_OVERRIDE="$3"
 EOF
 }
 
@@ -92,8 +91,7 @@ start() {
     else
 	get_host_interface_data "eth0"
     fi
-    init_node_data $instance_id $public_ip $public_hostname
-    chmod o-rws $LIBRA_NODE_DATA_CONF
+    init_node_data $instance_id $PUBLIC_IP_OVERRIDE $PUBLIC_HOSTNAME_OVERRIDE
     return
 }
 
@@ -113,14 +111,6 @@ status() {
 	echo "Node configuration file exists: $LIBRA_NODE_CONF"
     else
 	echo "Node configuration file does not exist: $LIBRA_NODE_CONF"
-    fi
- 
-    if [ -f $LIBRA_NODE_DATA_CONF ]
-    then
-	echo "Node data configuration file exists: $LIBRA_NODE_CONF"
-
-    else
-	echo "Node data configuration file does not exist: $LIBRA_NODE_CONF"
     fi
 }
 

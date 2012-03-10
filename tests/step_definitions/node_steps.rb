@@ -9,12 +9,12 @@ require 'resolv'
 include OpenShift
 
 # Controller cartridge command paths
-$cartridge_root = '/usr/libexec/li/cartridges'
-$controller_config_path = "cdk-app-create"
+$cartridge_root = '/usr/libexec/stickshift/cartridges'
+$controller_config_path = "ss-app-create"
 $controller_config_format = "#{$controller_config_path} -c '%s'"
-$controller_deconfig_path = "cdk-app-destroy"
+$controller_deconfig_path = "ss-app-destroy"
 $controller_deconfig_format = "#{$controller_deconfig_path} -c '%s'"
-$home_root = "/var/lib/libra"
+$home_root = "/var/lib/stickshift"
 # --------------------------------------------------------------------------
 # Account Checks
 # --------------------------------------------------------------------------
@@ -56,7 +56,7 @@ Given /^the guest account has no application installed$/ do
 end
 
 When /^I create a guest account$/ do
-  # call /usr/libexec/li/cartridges  @table.hashes.each do |row|
+  # call /usr/libexec/stickshift/cartridges  @table.hashes.each do |row|
   # generate a random account name and use the stock SSH keys
   # generate a random UUID and use the stock keys
   acctname = gen_small_uuid
@@ -70,7 +70,7 @@ When /^I create a guest account$/ do
 end
 
 When /^I delete the guest account$/ do
-  # call /usr/libexec/li/cartridges  @table.hashes.each do |row|
+  # call /usr/libexec/stickshift/cartridges  @table.hashes.each do |row|
   
   command = $controller_deconfig_format % [@account['accountname']]
   run command

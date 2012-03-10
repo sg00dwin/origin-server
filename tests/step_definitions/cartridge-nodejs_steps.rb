@@ -1,5 +1,5 @@
 # Controller cartridge command paths
-$cartridge_root ||= "/usr/libexec/li/cartridges"
+$cartridge_root ||= "/usr/libexec/stickshift/cartridges"
 $nodejs_cartridge = "#{$cartridge_root}/nodejs-0.6"
 $nodejs_config_env_path = "#{$nodejs_cartridge}/info/configuration/node.env"
 $nodejs_hooks = "#{$nodejs_cartridge}/info/hooks"
@@ -18,7 +18,7 @@ $nodejs_stop_format = "#{$nodejs_stop_path} '%s' '%s' '%s'"
 $nodejs_status_path = "#{$nodejs_hooks}/status"
 $nodejs_status_format = "#{$nodejs_status_path} '%s' '%s' '%s'"
 
-$libra_httpd_conf_d ||= "/etc/httpd/conf.d/libra"
+$libra_httpd_conf_d ||= "/etc/httpd/conf.d/stickshift"
 
 When /^I configure a nodejs application$/ do
   account_name = @account['accountname']

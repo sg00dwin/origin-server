@@ -1,18 +1,18 @@
-%define cartridgedir %{_libexecdir}/li/cartridges/embedded/10gen-mms-agent-0.1
+%define cartridgedir %{_libexecdir}/stickshift/cartridges/embedded/10gen-mms-agent-0.1
 
 Name: rhc-cartridge-10gen-mms-agent-0.1
-Version: 1.6.1
+Version: 1.6.2
 Release: 1%{?dist}
 Summary: Embedded 10gen MMS agent for performance monitoring of MondoDB
 
 Group: Applications/Internet
 License: ASL 2.0
-URL: https://engineering.redhat.com/trac/Libra
+URL: http://openshift.redhat.com
 Source0: %{name}-%{version}.tar.gz
 BuildRoot:    %(mktemp -ud %{_tmppath}/%{name}-%{version}-%{release}-XXXXXX)
 BuildArch: noarch
 
-Requires: rhc-node
+Requires: stickshift-abstract
 Requires: rhc-cartridge-mongodb-2.0
 Requires: pymongo
 Requires: mms-agent
@@ -29,7 +29,7 @@ Provides 10gen MMS agent cartridge support
 rm -rf $RPM_BUILD_ROOT
 rm -rf %{buildroot}
 mkdir -p %{buildroot}%{cartridgedir}
-mkdir -p %{buildroot}/%{_sysconfdir}/libra/cartridges
+mkdir -p %{buildroot}/%{_sysconfdir}/stickshift/cartridges
 cp -r info %{buildroot}%{cartridgedir}/
 cp LICENSE %{buildroot}%{cartridgedir}/
 cp COPYRIGHT %{buildroot}%{cartridgedir}/
@@ -50,6 +50,15 @@ rm -rf $RPM_BUILD_ROOT
 %doc %{cartridgedir}/LICENSE
 
 %changelog
+* Fri Mar 09 2012 Dan McPherson <dmcphers@redhat.com> 1.6.2-1
+- Batch variable name chage (rmillner@redhat.com)
+- Adding export control files (kraman@gmail.com)
+- replacing references to libra with stickshift in rockmongo cartridge
+  (abhgupta@redhat.com)
+- removing call to load_node_conf method which is no longer present or required
+  (abhgupta@redhat.com)
+- replacing libra with stickshift for 10gen mms cartridge (abhgupta@redhat.com)
+
 * Fri Mar 02 2012 Dan McPherson <dmcphers@redhat.com> 1.6.1-1
 - bump spec numbers (dmcphers@redhat.com)
 

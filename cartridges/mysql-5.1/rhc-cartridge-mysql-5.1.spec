@@ -1,25 +1,25 @@
-%define cartridgedir %{_libexecdir}/li/cartridges/embedded/mysql-5.1
-%define frameworkdir %{_libexecdir}/li/cartridges/mysql-5.1
+%define cartridgedir %{_libexecdir}/stickshift/cartridges/embedded/mysql-5.1
+%define frameworkdir %{_libexecdir}/stickshift/cartridges/mysql-5.1
 
 Name: rhc-cartridge-mysql-5.1
-Version: 0.22.1
+Version: 0.22.2
 Release: 1%{?dist}
-Summary: Embedded mysql support for express
+Summary: Provides embedded mysql support
 
 Group: Network/Daemons
 License: ASL 2.0
-URL: https://engineering.redhat.com/trac/Libra
+URL: http://openshift.redhat.com
 Source0: %{name}-%{version}.tar.gz
 BuildRoot:    %(mktemp -ud %{_tmppath}/%{name}-%{version}-%{release}-XXXXXX)
 BuildRequires: git
 BuildArch: noarch
 
-Requires: rhc-node
+Requires: stickshift-abstract
 Requires: mysql-server
 Requires: mysql-devel
 
 %description
-Provides rhc perl cartridge support
+Provides mysql cartridge support to OpenShift
 
 %prep
 %setup -q
@@ -40,15 +40,14 @@ touch git_template.git/refs/heads/.gitignore
 rm -rf $RPM_BUILD_ROOT
 rm -rf %{buildroot}
 mkdir -p %{buildroot}%{cartridgedir}
-mkdir -p %{buildroot}/%{_sysconfdir}/libra/cartridges
-ln -s %{cartridgedir}/info/configuration/ %{buildroot}/%{_sysconfdir}/libra/cartridges/%{name}
+mkdir -p %{buildroot}/%{_sysconfdir}/stickshift/cartridges
+ln -s %{cartridgedir}/info/configuration/ %{buildroot}/%{_sysconfdir}/stickshift/cartridges/%{name}
 ln -s %{cartridgedir} %{buildroot}/%{frameworkdir}
 cp -r info %{buildroot}%{cartridgedir}/
 cp LICENSE %{buildroot}%{cartridgedir}/
 cp COPYRIGHT %{buildroot}%{cartridgedir}/
 mkdir -p %{buildroot}%{cartridgedir}/info/data/
 cp -r git_template.git %{buildroot}%{cartridgedir}/info/data/
-
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -63,7 +62,7 @@ rm -rf $RPM_BUILD_ROOT
 %attr(0755,-,-) %{cartridgedir}/info/lib/
 %attr(0755,-,-) %{cartridgedir}/info/connection-hooks/
 %attr(0755,-,-) %{frameworkdir}
-%{_sysconfdir}/libra/cartridges/%{name}
+%{_sysconfdir}/stickshift/cartridges/%{name}
 %{cartridgedir}/info/changelog
 %{cartridgedir}/info/control
 %{cartridgedir}/info/manifest.yml
@@ -71,6 +70,24 @@ rm -rf $RPM_BUILD_ROOT
 %doc %{cartridgedir}/LICENSE
 
 %changelog
+* Fri Mar 09 2012 Dan McPherson <dmcphers@redhat.com> 0.22.2-1
+- Batch variable name chage (rmillner@redhat.com)
+- Fix merge issues (kraman@gmail.com)
+- Fixed a git merge fragment ended up getting checked in. (rmillner@redhat.com)
+- Adding export control files (kraman@gmail.com)
+- replacing references to libra with stickshift (abhgupta@redhat.com)
+- hard-coding the stickshift-node.conf path (abhgupta@redhat.com)
+- changes to paths and variable names for mysql-5.1 cartridge for opensource
+  (abhgupta@redhat.com)
+- Screen-scraping in unit tests fails - so set it back to the old output.
+  (ramr@redhat.com)
+- Re-enable both flavors of mysql. (ramr@redhat.com)
+- Fix missing end brace. (ramr@redhat.com)
+- Temporary fix to get build working. (ramr@redhat.com)
+- Checkpoint support for mysql running standalone on gears. (ramr@redhat.com)
+- take back username and pw (dmcphers@redhat.com)
+- Removed new instances of GNU license headers (jhonce@redhat.com)
+
 * Fri Mar 02 2012 Dan McPherson <dmcphers@redhat.com> 0.22.1-1
 - bump spec numbers (dmcphers@redhat.com)
 

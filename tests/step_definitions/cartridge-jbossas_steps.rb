@@ -1,4 +1,4 @@
-$cartridge_root ||= "/usr/libexec/li/cartridges"
+$cartridge_root ||= "/usr/libexec/stickshift/cartridges"
 $jbossas_version = "jbossas-7"
 $jbossas_cartridge = "#{$cartridge_root}/#{$jbossas_version}"
 #$jbossas_common_conf_path = "#{$jbossas_cartridge}/info/configuration/etc/conf/httpd_nolog.conf"
@@ -293,7 +293,7 @@ Then /^the openshift environment variable files will( not)? exist$/ do |negate|
   app_name = @app['name']
 
   env_root = "#{$home_root}/#{acct_name}/.env"
-  env_list = ["OPENSHIFT_APP_DIR", 
+  env_list = ["OPENSHIFT_GEAR_DIR", 
               "OPENSHIFT_REPO_DIR", 
               "OPENSHIFT_INTERNAL_IP",
               "OPENSHIFT_INTERNAL_PORT",
@@ -301,8 +301,8 @@ Then /^the openshift environment variable files will( not)? exist$/ do |negate|
               "OPENSHIFT_DATA_DIR",
               "OPENSHIFT_TMP_DIR",
               "OPENSHIFT_RUN_DIR",
-              "OPENSHIFT_APP_NAME",
-              "OPENSHIFT_APP_CTL_SCRIPT"
+              "OPENSHIFT_GEAR_NAME",
+              "OPENSHIFT_GEAR_CTL_SCRIPT"
               ]
 
   env_list.each do |file_name|

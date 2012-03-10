@@ -4,7 +4,7 @@
 	<buildpathentry kind="src" path="build"/>
 	<buildpathentry kind="src" path="cartridges/jenkins-1.4/info/bin"/>
 	<buildpathentry kind="src" path="cartridges/jenkins-client-1.4/info/bin"/>
-	<buildpathentry kind="src" path="cloud-sdk"/>
+	<buildpathentry kind="src" path="stickshift"/>
 	<buildpathentry kind="src" path="common/mcollective/connector"/>
 	<buildpathentry kind="src" path="misc"/>
 	<buildpathentry kind="src" path="node/cartridges/abstract/info/bin"/>

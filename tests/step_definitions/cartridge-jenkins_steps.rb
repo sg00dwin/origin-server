@@ -1,4 +1,4 @@
-$cartridge_root ||= "/usr/libexec/li/cartridges"
+$cartridge_root ||= "/usr/libexec/stickshift/cartridges"
 $jenkins_version = "jenkins-1.4"
 $jenkins_cartridge = "#{$cartridge_root}/#{$jenkins_version}"
 $jenkins_hooks = "#{$jenkins_cartridge}/info/hooks"
@@ -181,7 +181,7 @@ Then /^the openshift environment variable files will( not)? exist$/ do |negate|
   app_name = @app['name']
 
   env_root = "#{$home_root}/#{acct_name}/.env"
-  env_list = ["OPENSHIFT_APP_DIR", 
+  env_list = ["OPENSHIFT_GEAR_DIR", 
               "OPENSHIFT_REPO_DIR", 
               "OPENSHIFT_INTERNAL_IP",
               "OPENSHIFT_INTERNAL_PORT",
@@ -189,8 +189,8 @@ Then /^the openshift environment variable files will( not)? exist$/ do |negate|
               "OPENSHIFT_DATA_DIR",
               "OPENSHIFT_TMP_DIR",
               "OPENSHIFT_RUN_DIR",
-              "OPENSHIFT_APP_NAME",
-              "OPENSHIFT_APP_CTL_SCRIPT",
+              "OPENSHIFT_GEAR_NAME",
+              "OPENSHIFT_GEAR_CTL_SCRIPT",
               "JENKINS_URL"
               ]
 

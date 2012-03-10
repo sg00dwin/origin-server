@@ -1,8 +1,8 @@
-%define cartridgedir %{_libexecdir}/li/cartridges/php-5.3
+%define cartridgedir %{_libexecdir}/stickshift/cartridges/php-5.3
 
 Summary:   Provides php-5.3 support
 Name:      rhc-cartridge-php-5.3
-Version:   0.88.1
+Version:   0.88.2
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   ASL 2.0
@@ -11,7 +11,8 @@ Source0:   %{name}-%{version}.tar.gz
 
 BuildRoot: %(mktemp -ud %{_tmppath}/%{name}-%{version}-%{release}-XXXXXX)
 BuildRequires: git
-Requires:  rhc-node
+Requires:  stickshift-abstract
+Requires:  rubygem(stickshift-node)
 Requires:  php >= 5.3.2
 Requires:  php < 5.4.0
 Requires:  mod_bw
@@ -49,8 +50,8 @@ touch git_template.git/refs/heads/.gitignore
 %install
 rm -rf %{buildroot}
 mkdir -p %{buildroot}%{cartridgedir}
-mkdir -p %{buildroot}/%{_sysconfdir}/libra/cartridges
-ln -s %{cartridgedir}/info/configuration/ %{buildroot}/%{_sysconfdir}/libra/cartridges/%{name}
+mkdir -p %{buildroot}/%{_sysconfdir}/stickshift/cartridges
+ln -s %{cartridgedir}/info/configuration/ %{buildroot}/%{_sysconfdir}/stickshift/cartridges/%{name}
 cp -r info %{buildroot}%{cartridgedir}/
 cp LICENSE %{buildroot}%{cartridgedir}/
 cp COPYRIGHT %{buildroot}%{cartridgedir}/
@@ -94,7 +95,7 @@ rm -rf %{buildroot}
 %attr(0755,-,-) %{cartridgedir}/info/bin/
 %attr(0755,-,-) %{cartridgedir}/info/connection-hooks/
 %config(noreplace) %{cartridgedir}/info/configuration/
-%{_sysconfdir}/libra/cartridges/%{name}
+%{_sysconfdir}/stickshift/cartridges/%{name}
 %{cartridgedir}/info/changelog
 %{cartridgedir}/info/control
 %{cartridgedir}/info/manifest.yml
@@ -102,6 +103,18 @@ rm -rf %{buildroot}
 %doc %{cartridgedir}/LICENSE
 
 %changelog
+* Fri Mar 09 2012 Dan McPherson <dmcphers@redhat.com> 0.88.2-1
+- Batch variable name chage (rmillner@redhat.com)
+- Adding export control files (kraman@gmail.com)
+- loading resource limits config when needed (kraman@gmail.com)
+- Changing how node config is loaded (kraman@gmail.com)
+- changes to paths and variable names for mysql-5.1 cartridge for opensource
+  (abhgupta@redhat.com)
+- PHP cart updates li => stickshift libra => stickshift (kraman@gmail.com)
+- Renaming Cloud-SDK -> StickShift (kraman@gmail.com)
+- Jenkens templates switch to proper gear size names (rmillner@redhat.com)
+- Removed new instances of GNU license headers (jhonce@redhat.com)
+
 * Fri Mar 02 2012 Dan McPherson <dmcphers@redhat.com> 0.88.1-1
 - bump spec numbers (dmcphers@redhat.com)
 
@@ -113,12 +126,12 @@ rm -rf %{buildroot}
 - fix php publish url to send exposed port (rchopra@redhat.com)
 - Update cartridge configure hooks to load git repo from remote URL Add REST
   API to create application from template Moved application template
-  models/controller to cloud-sdk (kraman@gmail.com)
+  models/controller to stickshift (kraman@gmail.com)
 - Revert "local commits for testing - required for tito build"
   (abhgupta@redhat.com)
 - local commits for testing - required for tito build (abhgupta@redhat.com)
 - run connectors as non-root (rchopra@redhat.com)
-- include open4 for cdk-connector-execute, fix in php publish_http_url
+- include open4 for ss-connector-execute, fix in php publish_http_url
   connector.. we dont need the external port for proxying web interfaces
   (rchopra@redhat.com)
 

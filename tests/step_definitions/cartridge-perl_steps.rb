@@ -1,5 +1,5 @@
 # Controller cartridge command paths
-$cartridge_root ||= "/usr/libexec/li/cartridges"
+$cartridge_root ||= "/usr/libexec/stickshift/cartridges"
 $perl_cartridge = "#{$cartridge_root}/perl-5.10"
 $perl_common_conf_path = "#{$perl_cartridge}/info/configuration/etc/conf/httpd_nolog.conf"
 $perl_hooks = "#{$perl_cartridge}/info/hooks"
@@ -18,7 +18,7 @@ $perl_stop_format = "#{$perl_stop_path} '%s' '%s' '%s'"
 $perl_status_path = "#{$perl_hooks}/status"
 $perl_status_format = "#{$perl_status_path} '%s' '%s' '%s'"
 
-$libra_httpd_conf_d ||= "/etc/httpd/conf.d/libra"
+$libra_httpd_conf_d ||= "/etc/httpd/conf.d/stickshift"
 
 When /^I configure a perl application$/ do
   account_name = @account['accountname']

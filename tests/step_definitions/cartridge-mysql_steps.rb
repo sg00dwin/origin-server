@@ -4,7 +4,7 @@ require 'mysql'
 require 'fileutils'
 
 $mysql_version = "5.1"
-$mysql_cart_root = "/usr/libexec/li/cartridges/embedded/mysql-#{$mysql_version}"
+$mysql_cart_root = "/usr/libexec/stickshift/cartridges/embedded/mysql-#{$mysql_version}"
 $mysql_hooks = $mysql_cart_root + "/info/hooks"
 $mysql_config = $mysql_hooks + "/configure"
 $mysql_config_format = "#{$mysql_config} %s %s %s"
@@ -199,7 +199,7 @@ Given /^a new mysql database$/ do
   exit_code = runcon command,  'unconfined_u', 'system_r', 'libra_initrc_t', outbuf
 
   if exit_code != 0
-    FileUtils.cp "/var/lib/libra/#{account_name}/mysql-5.1/log/mysql_error.log", "/tmp/rhc/mysql_error_#{account_name}.log"
+    FileUtils.cp "/var/lib/stickshift/#{account_name}/mysql-5.1/log/mysql_error.log", "/tmp/rhc/mysql_error_#{account_name}.log"
     raise "Error running #{command}: returned #{exit_code}"
   end
   # I have to get the stdout back

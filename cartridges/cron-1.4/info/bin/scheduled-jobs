@@ -1,11 +1,13 @@
 #!/bin/bash
 
+source "/etc/stickshift/stickshift-node.conf"
+
 # Constants.
 SERVICE_NAME=cron
 CART_NAME=cron
 CART_VERSION=1.4
 CART_DIRNAME=${CART_NAME}-$CART_VERSION
-CART_INSTALL_DIR=/usr/libexec/li/cartridges
+CART_INSTALL_DIR=${CARTRIDGE_BASE_PATH}
 CART_INFO_DIR=$CART_INSTALL_DIR/embedded/$CART_DIRNAME/info
 DOP=5  # Degree of Parallelism.
 
@@ -18,14 +20,13 @@ function usage() {
 function log_message() {
    msg=${1-""}
    [ -z "$msg" ]  &&  return 0
-   logger -i -s "run-scheduled-libra-user-jobs" -p user.info "`date`: $msg"
+   logger -i -s "run-scheduled-stickshift-user-jobs" -p user.info "`date`: $msg"
 }
 
 
-function libra_users() {
-    grep ":libra guest:" /etc/passwd | cut -d: -f1 | tr '\n' ' '
+function stickshift_users() {
+    grep ":${GEAR_GECOS}:" /etc/passwd | cut -d: -f1 | tr '\n' ' '
 }
-
 
 function run_all_scheduled_jobs() {
    freq=${1:-""}
@@ -36,7 +37,7 @@ function run_all_scheduled_jobs() {
 
    {
       log_message ":START: $freq run of all scheduled jobs"
-      libra_users | xargs -d' ' -I{} -n 1 -P $DOP $0 run-user {} $freq
+      stickshift_users | xargs -d' ' -I{} -n 1 -P $DOP $0 run-user {} $freq
       log_message ":END: $freq run of all scheduled jobs"
    } &> /dev/null
 }
@@ -60,7 +61,7 @@ function run_user_scheduled_jobs() {
 
    # Ensure cron jobs are enabled, there's a jobs dir and there's some jobs
    # to run.
-   USER_CRON_INSTANCE_DIR=/var/lib/libra/$uuid/$CART_DIRNAME
+   USER_CRON_INSTANCE_DIR=${GEAR_BASE_DIR}/$uuid/$CART_DIRNAME
    [ ! -f $USER_CRON_INSTANCE_DIR/run/jobs.enabled ]  &&  return 0
    [ ! -d "$USER_CRON_INSTANCE_DIR/jobs/$freq" ]  &&  return 0
    njobs=$(ls "$USER_CRON_INSTANCE_DIR/jobs/$freq" | wc -l)

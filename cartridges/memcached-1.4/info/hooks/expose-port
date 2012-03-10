@@ -9,7 +9,7 @@ function print_help {
     echo "Usage: $0 app-name namespace uuid"
     echo "Start a running application"
 
-    echo "$0 $@" | logger -p local0.notice -t libra_httpd_start
+    echo "$0 $@" | logger -p local0.notice -t stickshift_memcached_expose_port
     exit 1
 }
 
@@ -26,8 +26,8 @@ done
 
 [ $# -eq 3 ] || print_help
 
-CART_DIR=/usr/libexec/li/cartridges
-source ${CART_DIR}/abstract/info/lib/util
+source "/etc/stickshift/stickshift-node.conf"
+source ${CARTRIDGE_BASE_PATH}/abstract/info/lib/util
 
 setup_configure "$1" $2 $3
 
@@ -40,7 +40,7 @@ if [ $ret -ne 0 ]; then
   exit $ret
 fi
 echo "export OPENSHIFT_CACHE_PROXY_PORT=$proxy_port" > $APP_HOME/.env/OPENSHIFT_CACHE_PROXY_PORT
-cart_data "PROXY_HOST=$OPENSHIFT_APP_DNS"
+cart_data "PROXY_HOST=$OPENSHIFT_GEAR_DNS"
 cart_data "PROXY_PORT=$proxy_port"
 cart_data "HOST=$OPENSHIFT_CACHE_HOST"
 cart_data "PORT=$OPENSHIFT_CACHE_PORT"

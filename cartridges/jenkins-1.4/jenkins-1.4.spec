@@ -1,8 +1,8 @@
-%define cartridgedir %{_libexecdir}/li/cartridges/jenkins-1.4
+%define cartridgedir %{_libexecdir}/stickshift/cartridges/jenkins-1.4
 
 Summary:   Provides jenkins-1.4 support
 Name:      rhc-cartridge-jenkins-1.4
-Version:   0.88.1
+Version:   0.88.2
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   ASL 2.0
@@ -11,7 +11,8 @@ Source0:   %{name}-%{version}.tar.gz
 
 BuildRoot: %(mktemp -ud %{_tmppath}/%{name}-%{version}-%{release}-XXXXXX)
 BuildRequires: git
-Requires:  rhc-node
+Requires:  stickshift-abstract
+Requires:  rubygem(stickshift-node)
 Requires:  jenkins
 Requires:  jenkins-plugin-openshift
 
@@ -28,8 +29,8 @@ Provides jenkins cartridge to openshift nodes
 %install
 rm -rf %{buildroot}
 mkdir -p %{buildroot}%{cartridgedir}
-mkdir -p %{buildroot}/%{_sysconfdir}/libra/cartridges
-ln -s %{cartridgedir}/info/configuration/ %{buildroot}/%{_sysconfdir}/libra/cartridges/%{name}
+mkdir -p %{buildroot}/%{_sysconfdir}/stickshift/cartridges
+ln -s %{cartridgedir}/info/configuration/ %{buildroot}/%{_sysconfdir}/stickshift/cartridges/%{name}
 cp -r info %{buildroot}%{cartridgedir}/
 cp LICENSE %{buildroot}%{cartridgedir}/
 cp COPYRIGHT %{buildroot}%{cartridgedir}/
@@ -68,7 +69,7 @@ rm -rf %{buildroot}
 %attr(0755,-,-) %{cartridgedir}/info/bin/
 %{cartridgedir}/template/
 %config(noreplace) %{cartridgedir}/info/configuration/
-%{_sysconfdir}/libra/cartridges/%{name}
+%{_sysconfdir}/stickshift/cartridges/%{name}
 %{cartridgedir}/info/changelog
 %{cartridgedir}/info/control
 %{cartridgedir}/info/manifest.yml
@@ -76,6 +77,17 @@ rm -rf %{buildroot}
 %doc %{cartridgedir}/LICENSE
 
 %changelog
+* Fri Mar 09 2012 Dan McPherson <dmcphers@redhat.com> 0.88.2-1
+- missed a couple of merges (dmcphers@redhat.com)
+- force jenkins to https (dmcphers@redhat.com)
+- Batch variable name chage (rmillner@redhat.com)
+- Adding export control files (kraman@gmail.com)
+- Fixed jenkins configure script (kraman@gmail.com)
+- replacing references to libra with stickshift (abhgupta@redhat.com)
+- Update jenkins li/libra => stickshift (kraman@gmail.com)
+- Renaming Cloud-SDK -> StickShift (kraman@gmail.com)
+- Jenkens templates switch to proper gear size names (rmillner@redhat.com)
+
 * Fri Mar 02 2012 Dan McPherson <dmcphers@redhat.com> 0.88.1-1
 - bump spec numbers (dmcphers@redhat.com)
 
@@ -90,7 +102,7 @@ rm -rf %{buildroot}
 - Bug 796595 (dmcphers@redhat.com)
 - Update cartridge configure hooks to load git repo from remote URL Add REST
   API to create application from template Moved application template
-  models/controller to cloud-sdk (kraman@gmail.com)
+  models/controller to stickshift (kraman@gmail.com)
 
 * Mon Feb 20 2012 Dan McPherson <dmcphers@redhat.com> 0.87.2-1
 - secure jenkins (dmcphers@redhat.com)

@@ -2,7 +2,7 @@
 
 function git_mirror_push() {
     gears=${1:-"all-gears"}
-    app_git_dir=~/git/${OPENSHIFT_APP_NAME}.git/
+    app_git_dir=~/git/${OPENSHIFT_GEAR_NAME}.git/
 
     #  Need to push twice so that mirror states are also synced.
     GIT_DIR=$app_git_dir  git push $gears --mirror
@@ -11,7 +11,7 @@ function git_mirror_push() {
 
 
 function get_gear_git_mirrors() {
-    app_git_dir=~/git/${OPENSHIFT_APP_NAME}.git/
+    app_git_dir=~/git/${OPENSHIFT_GEAR_NAME}.git/
     echo $(GIT_DIR=$app_git_dir  git remote -v  |     \
               grep -E "^gear\-.*(push)"  |  awk '{print $1}')
 }
@@ -23,10 +23,10 @@ do
     . $f
 done
 
-CART_DIR=/usr/libexec/li/cartridges
-source ${CART_DIR}/abstract/info/lib/util
+source /etc/stickshift/stickshift-node.conf
+source ${CARTRIDGE_BASE_PATH}/abstract/info/lib/util
 
-export GIT_SSH="/usr/libexec/li/cartridges/haproxy-1.4/info/bin/ssh"
+export GIT_SSH="${CARTRIDGE_BASE_PATH}/haproxy-1.4/info/bin/ssh"
 
 #  Optimized case - push to all mirrors.
 if ! git_mirror_push all-gears; then

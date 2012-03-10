@@ -4,12 +4,12 @@
 #
 
 # Variables.
-CART_DIR=${CART_DIR:=/usr/libexec/li/cartridges}
-
+source "/etc/stickshift/stickshift-node.conf"
+source ${CARTRIDGE_BASE_PATH}/abstract/info/lib/util
 
 function print_help() {
    echo "Usage: $0 app-name namespace uuid"
-   echo "$0 $@" | logger -p local0.notice -t libra_nodejs_deconfigure
+   echo "$0 $@" | logger -p local0.notice -t stickshift_nodejs_deconfigure
    exit 1
 }
 
@@ -30,7 +30,7 @@ done
 [ $# -eq 3 ] || print_help
 
 # Source in common utility functions.
-source ${CART_DIR}/abstract/info/lib/util
+source ${CARTRIDGE_BASE_PATH}/abstract/info/lib/util
 
 # Deconfigure app.
 setup_deconfigure "$1" $2 $3

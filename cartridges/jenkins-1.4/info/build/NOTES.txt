@@ -7,9 +7,5 @@ DEPENDENCIES:
 All are pulled in automatically via yum
 
 BUNDLE:
-/etc/libra/php.conf
 
 TODO:
-Create libra specific php.ini file
-Sandbox
-Jim's stack

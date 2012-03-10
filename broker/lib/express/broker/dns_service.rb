@@ -24,7 +24,7 @@ module Express
           @customer_name = Rails.configuration.dns[:dynect_customer_name]
           @user_name = Rails.configuration.dns[:dynect_user_name]
           @password = Rails.configuration.dns[:dynect_password]
-          @domain_suffix = Rails.configuration.cdk[:domain_suffix]
+          @domain_suffix = Rails.configuration.ss[:domain_suffix]
           @zone = Rails.configuration.dns[:zone]
         else
           raise Exception.new("Dynect DNS service is not inilialized")
@@ -149,7 +149,7 @@ module Express
           logger.debug "DEBUG: Response code: #{resp.code}"
           logger.debug "DEBUG: Response body: #{resp.body}"
         end
-        raise Cloud::Sdk::DNSException.new(145), "Error communicating with DNS system.  If the problem persists please contact Red Hat support."
+        raise StickShift::DNSException.new(145), "Error communicating with DNS system.  If the problem persists please contact Red Hat support."
       end
       
       def delete_app_dns_entries(app_name, namespace, auth_token, retries=2)
@@ -166,7 +166,7 @@ module Express
           begin
             yield
             break
-          rescue  Cloud::Sdk::DNSException => e
+          rescue  StickShift::DNSException => e
             raise if i >= retries
             logger.debug "DEBUG: Retrying #{method} after exception caught from DNS request: #{e.message}"
             i += 1
@@ -275,7 +275,7 @@ module Express
               else
                 raise_dns_exception(nil, resp)
               end
-            rescue Cloud::Sdk::DNSException => e
+            rescue StickShift::DNSException => e
               raise
             rescue Exception => e
               raise_dns_exception(e)
@@ -318,7 +318,7 @@ module Express
             else
               raise_dns_exception(nil, resp)
             end 
-          rescue Cloud::Sdk::DNSException => e
+          rescue StickShift::DNSException => e
             raise
           rescue Exception => e
             raise_dns_exception(e)
@@ -362,7 +362,7 @@ module Express
             else
               raise_dns_exception(nil, resp)
             end
-          rescue Cloud::Sdk::DNSException => e
+          rescue StickShift::DNSException => e
             raise
           rescue Exception => e
             raise_dns_exception(e)
@@ -411,7 +411,7 @@ module Express
             else
               raise_dns_exception(nil, resp)
             end
-          rescue Cloud::Sdk::DNSException => e
+          rescue StickShift::DNSException => e
             raise
           rescue Exception => e
             raise_dns_exception(e)

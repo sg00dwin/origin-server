@@ -5,7 +5,7 @@
 function print_help {
     echo "Usage: $0 app-name namespace uuid"
 
-    echo "$0 $@" | logger -p local0.notice -t libra_mysql_deconfigure
+    echo "$0 $@" | logger -p local0.notice -t stickshift_mysql_deconfigure
     exit 1
 }
 
@@ -22,18 +22,19 @@ done
 
 [ $# -eq 3 ] || print_help
 
-CART_DIR=${CART_DIR:=/usr/libexec/li/cartridges}
-source ${CART_DIR}/abstract/info/lib/util
-source ${CART_DIR}/abstract/info/lib/git
+source "/etc/stickshift/stickshift-node.conf"
+source ${CARTRIDGE_BASE_PATH}/abstract/info/lib/util
+source ${CARTRIDGE_BASE_PATH}/abstract/info/lib/git
 
 app_type="mysql-5.1"
 setup_embedded_deconfigure "$1" $2 $3
 
+CART_INFO_DIR=${CARTRIDGE_BASE_PATH}/embedded/mysql-5.1/info
 source ${CART_INFO_DIR}/lib/util
 
 MYSQL_DIR="$APP_HOME/mysql-5.1/"
 
-source_if_exists "$APP_HOME/.env/OPENSHIFT_APP_TYPE"
+source_if_exists "$APP_HOME/.env/OPENSHIFT_GEAR_TYPE"
 source_if_exists "$APP_HOME/.env/OPENSHIFT_DB_TYPE"
 
 #
@@ -43,7 +44,7 @@ source_if_exists "$APP_HOME/.env/OPENSHIFT_DB_TYPE"
 
 
 # For non-embedded (dedicated) mysql gear, destroy the git repo and stop app.
-if [ "mysql-5.1" = "$OPENSHIFT_APP_TYPE" ]; then
+if [ "mysql-5.1" = "$OPENSHIFT_GEAR_TYPE" ]; then
    remove_all_proxy_ports $uuid
 
    # Destroy git repo and stop app.
@@ -65,7 +66,7 @@ fi
 runcon -l s0-s0:c0.c1023 rm -rf "$MYSQL_DIR" "$MYSQL_DIR/${application}_mysql_ctl.sh"
 
 # For non-embedded (dedicated) mysql gear, destroy the gear.
-if [ "mysql-5.1" = "$OPENSHIFT_APP_TYPE" ]; then
+if [ "mysql-5.1" = "$OPENSHIFT_GEAR_TYPE" ]; then
     # Blow away the directories.
     rm_app_dir
     rm_unobfuscated_app_home $namespace $application

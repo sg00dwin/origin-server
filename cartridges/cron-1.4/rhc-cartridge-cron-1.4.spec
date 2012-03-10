@@ -1,7 +1,7 @@
-%define cartridgedir %{_libexecdir}/li/cartridges/embedded/cron-1.4
+%define cartridgedir %{_libexecdir}/stickshift/cartridges/embedded/cron-1.4
 
 Name: rhc-cartridge-cron-1.4
-Version: 0.3.1
+Version: 0.3.2
 Release: 1%{?dist}
 Summary: Embedded cron support for express
 
@@ -12,7 +12,8 @@ Source0: %{name}-%{version}.tar.gz
 BuildRoot:    %(mktemp -ud %{_tmppath}/%{name}-%{version}-%{release}-XXXXXX)
 BuildArch: noarch
 
-Requires: rhc-node
+Requires: stickshift-abstract
+Requires: rubygem(stickshift-node)
 Requires: cronie
 Requires: crontabs
 
@@ -29,7 +30,7 @@ Provides rhc cron cartridge support
 rm -rf $RPM_BUILD_ROOT
 rm -rf %{buildroot}
 mkdir -p %{buildroot}%{cartridgedir}
-mkdir -p %{buildroot}/%{_sysconfdir}/libra/cartridges
+mkdir -p %{buildroot}/%{_sysconfdir}/stickshift/cartridges
 mkdir -p %{buildroot}/%{_sysconfdir}/cron.d
 mkdir -p %{buildroot}/%{_sysconfdir}/cron.minutely
 mkdir -p %{buildroot}/%{_sysconfdir}/cron.hourly
@@ -41,12 +42,12 @@ cp -r info %{buildroot}%{cartridgedir}/
 cp -r jobs %{buildroot}%{cartridgedir}/
 cp LICENSE %{buildroot}%{cartridgedir}/
 cp COPYRIGHT %{buildroot}%{cartridgedir}/
-ln -s %{cartridgedir}/info/configuration/ %{buildroot}/%{_sysconfdir}/libra/cartridges/%{name}
-ln -s %{cartridgedir}/jobs/libra-cron-minutely %{buildroot}/%{_sysconfdir}/cron.minutely/
-ln -s %{cartridgedir}/jobs/libra-cron-hourly %{buildroot}/%{_sysconfdir}/cron.hourly/
-ln -s %{cartridgedir}/jobs/libra-cron-daily %{buildroot}/%{_sysconfdir}/cron.daily/
-ln -s %{cartridgedir}/jobs/libra-cron-weekly %{buildroot}/%{_sysconfdir}/cron.weekly/
-ln -s %{cartridgedir}/jobs/libra-cron-monthly %{buildroot}/%{_sysconfdir}/cron.monthly/
+ln -s %{cartridgedir}/info/configuration/ %{buildroot}/%{_sysconfdir}/stickshift/cartridges/%{name}
+ln -s %{cartridgedir}/jobs/stickshift-cron-minutely %{buildroot}/%{_sysconfdir}/cron.minutely/
+ln -s %{cartridgedir}/jobs/stickshift-cron-hourly %{buildroot}/%{_sysconfdir}/cron.hourly/
+ln -s %{cartridgedir}/jobs/stickshift-cron-daily %{buildroot}/%{_sysconfdir}/cron.daily/
+ln -s %{cartridgedir}/jobs/stickshift-cron-weekly %{buildroot}/%{_sysconfdir}/cron.weekly/
+ln -s %{cartridgedir}/jobs/stickshift-cron-monthly %{buildroot}/%{_sysconfdir}/cron.monthly/
 
 %post
 service crond restart || :
@@ -64,12 +65,12 @@ rm -rf $RPM_BUILD_ROOT
 %attr(0755,-,-) %{cartridgedir}/info/lib/
 %attr(0755,-,-) %{cartridgedir}/jobs/
 %attr(0644,-,-) %{_sysconfdir}/cron.d/1minutely
-%attr(0755,-,-) %{_sysconfdir}/cron.minutely/libra-cron-minutely
-%attr(0755,-,-) %{_sysconfdir}/cron.hourly/libra-cron-hourly
-%attr(0755,-,-) %{_sysconfdir}/cron.daily/libra-cron-daily
-%attr(0755,-,-) %{_sysconfdir}/cron.weekly/libra-cron-weekly
-%attr(0755,-,-) %{_sysconfdir}/cron.monthly/libra-cron-monthly
-%{_sysconfdir}/libra/cartridges/%{name}
+%attr(0755,-,-) %{_sysconfdir}/cron.minutely/stickshift-cron-minutely
+%attr(0755,-,-) %{_sysconfdir}/cron.hourly/stickshift-cron-hourly
+%attr(0755,-,-) %{_sysconfdir}/cron.daily/stickshift-cron-daily
+%attr(0755,-,-) %{_sysconfdir}/cron.weekly/stickshift-cron-weekly
+%attr(0755,-,-) %{_sysconfdir}/cron.monthly/stickshift-cron-monthly
+%{_sysconfdir}/stickshift/cartridges/%{name}
 %{cartridgedir}/info/changelog
 %{cartridgedir}/info/control
 %{cartridgedir}/info/manifest.yml
@@ -77,6 +78,12 @@ rm -rf $RPM_BUILD_ROOT
 %doc %{cartridgedir}/LICENSE
 
 %changelog
+* Fri Mar 09 2012 Dan McPherson <dmcphers@redhat.com> 0.3.2-1
+- Batch variable name chage (rmillner@redhat.com)
+- Adding export control files (kraman@gmail.com)
+- replacing references to libra with stickshift (abhgupta@redhat.com)
+- Updating cron li/libra => stickshift (kraman@gmail.com)
+
 * Thu Feb 16 2012 Dan McPherson <dmcphers@redhat.com> 0.3.1-1
 - bump spec numbers (dmcphers@redhat.com)
 

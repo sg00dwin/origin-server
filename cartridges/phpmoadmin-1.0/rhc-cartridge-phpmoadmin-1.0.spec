@@ -1,7 +1,7 @@
-%define cartridgedir %{_libexecdir}/li/cartridges/embedded/phpmoadmin-1.0
+%define cartridgedir %{_libexecdir}/stickshift/cartridges/embedded/phpmoadmin-1.0
 
 Name: rhc-cartridge-phpmoadmin-1.0
-Version: 0.7.1
+Version: 0.7.2
 Release: 1%{?dist}
 Summary: Embedded phpMoAdmin support for express
 
@@ -12,7 +12,8 @@ Source0: %{name}-%{version}.tar.gz
 BuildRoot:    %(mktemp -ud %{_tmppath}/%{name}-%{version}-%{release}-XXXXXX)
 BuildArch: noarch
 
-Requires: rhc-node
+Requires: stickshift-abstract
+Requires: rubygem(stickshift-node)
 Requires: rhc-cartridge-mongodb-2.0
 Requires: php-devel
 
@@ -28,8 +29,8 @@ Provides rhc phpMoAdmin cartridge support
 rm -rf $RPM_BUILD_ROOT
 rm -rf %{buildroot}
 mkdir -p %{buildroot}%{cartridgedir}
-mkdir -p %{buildroot}/%{_sysconfdir}/libra/cartridges
-ln -s %{cartridgedir}/info/configuration/ %{buildroot}/%{_sysconfdir}/libra/cartridges/%{name}
+mkdir -p %{buildroot}/%{_sysconfdir}/stickshift/cartridges
+ln -s %{cartridgedir}/info/configuration/ %{buildroot}/%{_sysconfdir}/stickshift/cartridges/%{name}
 cp -r info %{buildroot}%{cartridgedir}/
 cp LICENSE %{buildroot}%{cartridgedir}/
 cp COPYRIGHT %{buildroot}%{cartridgedir}/
@@ -46,7 +47,7 @@ rm -rf $RPM_BUILD_ROOT
 %attr(0750,-,-) %{cartridgedir}/info/html/
 %config(noreplace) %{cartridgedir}/info/configuration/
 %attr(0755,-,-) %{cartridgedir}/info/bin/
-%{_sysconfdir}/libra/cartridges/%{name}
+%{_sysconfdir}/stickshift/cartridges/%{name}
 %{cartridgedir}/info/changelog
 %{cartridgedir}/info/control
 %{cartridgedir}/info/manifest.yml
@@ -54,6 +55,14 @@ rm -rf $RPM_BUILD_ROOT
 %doc %{cartridgedir}/LICENSE
 
 %changelog
+* Fri Mar 09 2012 Dan McPherson <dmcphers@redhat.com> 0.7.2-1
+- Batch variable name chage (rmillner@redhat.com)
+- Adding export control files (kraman@gmail.com)
+- loading resource limits config when needed (kraman@gmail.com)
+- replacing references to libra with stickshift (abhgupta@redhat.com)
+- Update phpmoadmin li/libra => stickshift (kraman@gmail.com)
+- Removed new instances of GNU license headers (jhonce@redhat.com)
+
 * Fri Mar 02 2012 Dan McPherson <dmcphers@redhat.com> 0.7.1-1
 - bump spec numbers (dmcphers@redhat.com)
 

@@ -6,18 +6,19 @@ do
     . $f
 done
 
-CART_DIR=${CART_DIR:=/usr/libexec/li/cartridges}
-CART_INFO_DIR=$CART_DIR/embedded/postgresql-8.4/info
+source "/etc/stickshift/stickshift-node.conf"
+source ${CARTRIDGE_BASE_PATH}/abstract/info/lib/util
+CART_INFO_DIR=$CARTRIDGE_BASE_PATH/embedded/postgresql-8.4/info
 source ${CART_INFO_DIR}/lib/util
 
 start_postgresql_as_user
 
-echo "$OPENSHIFT_APP_NAME" > $OPENSHIFT_DATA_DIR/postgresql_dbname
-echo "$OPENSHIFT_APP_UUID" > $OPENSHIFT_DATA_DIR/postgresql_dbuser
+echo "$OPENSHIFT_GEAR_NAME" > $OPENSHIFT_DATA_DIR/postgresql_dbname
+echo "$OPENSHIFT_GEAR_UUID" > $OPENSHIFT_DATA_DIR/postgresql_dbuser
 
 # Dump all databases but remove any sql statements that drop, create and alter
 # the admin and user roles.
-rexp="^\s*\(DROP\|CREATE\|ALTER\)\s*ROLE\s*\($OPENSHIFT_APP_UUID\|admin\).*"
+rexp="^\s*\(DROP\|CREATE\|ALTER\)\s*ROLE\s*\($OPENSHIFT_GEAR_UUID\|admin\).*"
 /usr/bin/pg_dumpall -c | sed "/$rexp/d;" |   \
             /bin/gzip -v > $OPENSHIFT_DATA_DIR/postgresql_dump_snapshot.gz
 

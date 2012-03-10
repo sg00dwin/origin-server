@@ -4,7 +4,7 @@ module ApplicationHelper
   # Checks for an outage notification
   def outage_notification
     notification = ''
-    ['/etc/libra/outage_notification.txt', '/etc/libra/express_outage_notification.txt'].each do |file|
+    ['/etc/stickshift/outage_notification.txt', '/etc/stickshift/express_outage_notification.txt'].each do |file|
       if File.exists? file
         contents = nil
         f = File.open file

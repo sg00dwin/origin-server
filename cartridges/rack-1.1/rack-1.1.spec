@@ -1,8 +1,8 @@
-%define cartridgedir %{_libexecdir}/li/cartridges/ruby-1.8
+%define cartridgedir %{_libexecdir}/stickshift/cartridges/ruby-1.8
 
 Summary:   Provides ruby rack support running on Phusion Passenger
 Name:      rhc-cartridge-rack-1.1
-Version:   0.88.1
+Version:   0.88.2
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   ASL 2.0
@@ -11,7 +11,8 @@ Source0:   %{name}-%{version}.tar.gz
 
 BuildRoot: %(mktemp -ud %{_tmppath}/%{name}-%{version}-%{release}-XXXXXX)
 BuildRequires: git
-Requires:  rhc-node
+Requires:  stickshift-abstract
+Requires:  rubygem(stickshift-node)
 Requires:  mod_bw
 Requires:  sqlite-devel
 Requires:  rubygems
@@ -63,8 +64,8 @@ touch git_template.git/refs/heads/.gitignore
 %install
 rm -rf %{buildroot}
 mkdir -p %{buildroot}%{cartridgedir}
-mkdir -p %{buildroot}/%{_sysconfdir}/libra/cartridges
-ln -s %{cartridgedir}/info/configuration/ %{buildroot}/%{_sysconfdir}/libra/cartridges/%{name}
+mkdir -p %{buildroot}/%{_sysconfdir}/stickshift/cartridges
+ln -s %{cartridgedir}/info/configuration/ %{buildroot}/%{_sysconfdir}/stickshift/cartridges/%{name}
 cp -r info %{buildroot}%{cartridgedir}/
 cp LICENSE %{buildroot}%{cartridgedir}/
 cp COPYRIGHT %{buildroot}%{cartridgedir}/
@@ -105,7 +106,7 @@ rm -rf %{buildroot}
 %attr(0755,-,-) %{cartridgedir}/info/bin/
 %attr(0755,-,-) %{cartridgedir}/info/connection-hooks/
 %config(noreplace) %{cartridgedir}/info/configuration/
-%{_sysconfdir}/libra/cartridges/%{name}
+%{_sysconfdir}/stickshift/cartridges/%{name}
 %{cartridgedir}/info/changelog
 %{cartridgedir}/info/control
 %{cartridgedir}/info/manifest.yml
@@ -113,6 +114,19 @@ rm -rf %{buildroot}
 %doc %{cartridgedir}/LICENSE
 
 %changelog
+* Fri Mar 09 2012 Dan McPherson <dmcphers@redhat.com> 0.88.2-1
+- Batch variable name chage (rmillner@redhat.com)
+- Adding export control files (kraman@gmail.com)
+- loading resource limits config when needed (kraman@gmail.com)
+- removing call to load_node_conf method which is no longer present or required
+  (abhgupta@redhat.com)
+- Changing how node config is loaded (kraman@gmail.com)
+- Updating rack-1.1 li/libra => stickshift (kraman@gmail.com)
+- Renaming Cloud-SDK -> StickShift (kraman@gmail.com)
+- Jenkens templates switch to proper gear size names (rmillner@redhat.com)
+- Removed new instances of GNU license headers (jhonce@redhat.com)
+- Renamed OPENSHIFT_APP_STATE to OPENSHIFT_RUNTIME_DIR (jhonce@redhat.com)
+
 * Fri Mar 02 2012 Dan McPherson <dmcphers@redhat.com> 0.88.1-1
 - bump spec numbers (dmcphers@redhat.com)
 - connectors for scaling perl/nodejs/rack/wsgi (rchopra@redhat.com)
@@ -133,7 +147,7 @@ rm -rf %{buildroot}
 - Bug 796595 (dmcphers@redhat.com)
 - Update cartridge configure hooks to load git repo from remote URL Add REST
   API to create application from template Moved application template
-  models/controller to cloud-sdk (kraman@gmail.com)
+  models/controller to stickshift (kraman@gmail.com)
 
 * Wed Feb 22 2012 Dan McPherson <dmcphers@redhat.com> 0.87.2-1
 - Add show-proxy call. (rmillner@redhat.com)

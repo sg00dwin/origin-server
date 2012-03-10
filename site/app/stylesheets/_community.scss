@@ -40,7 +40,7 @@
 }
 .clear-block { @include clearfix(); }
 
-.view-nodes-by-category article.blog {
+.view-nodes-by-category article {
   margin-bottom: 25px;
 
   > h2 { line-height: 25px; }
@@ -56,7 +56,7 @@
   }
 
 
-  > .nid_1 {
+  > div:last-child {
     text-transform: uppercase;
     text-align: right;
     padding-bottom: 3px;
@@ -136,6 +136,10 @@
     margin-bottom: 2px;
   }
 
+}
+
+.kb-toggle {
+  display: none;
 }
 
 /* Voting on Ideas */

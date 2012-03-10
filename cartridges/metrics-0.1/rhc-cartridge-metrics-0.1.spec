@@ -1,7 +1,7 @@
-%define cartridgedir %{_libexecdir}/li/cartridges/embedded/metrics-0.1
+%define cartridgedir %{_libexecdir}/stickshift/cartridges/embedded/metrics-0.1
 
 Name: rhc-cartridge-metrics-0.1
-Version: 0.10.1
+Version: 0.10.2
 Release: 1%{?dist}
 Summary: Embedded metrics support for express
 
@@ -12,7 +12,8 @@ Source0: %{name}-%{version}.tar.gz
 BuildRoot:    %(mktemp -ud %{_tmppath}/%{name}-%{version}-%{release}-XXXXXX)
 BuildArch: noarch
 
-Requires: rhc-node
+Requires: stickshift-abstract
+Requires: rubygem(stickshift-node)
 
 %description
 Provides rhc metrics cartridge support
@@ -26,8 +27,8 @@ Provides rhc metrics cartridge support
 rm -rf $RPM_BUILD_ROOT
 rm -rf %{buildroot}
 mkdir -p %{buildroot}%{cartridgedir}
-mkdir -p %{buildroot}/%{_sysconfdir}/libra/cartridges
-ln -s %{cartridgedir}/info/configuration/ %{buildroot}/%{_sysconfdir}/libra/cartridges/%{name}
+mkdir -p %{buildroot}/%{_sysconfdir}/stickshift/cartridges
+ln -s %{cartridgedir}/info/configuration/ %{buildroot}/%{_sysconfdir}/stickshift/cartridges/%{name}
 cp -r info %{buildroot}%{cartridgedir}/
 
 %post
@@ -42,12 +43,20 @@ rm -rf $RPM_BUILD_ROOT
 %config(noreplace) %{cartridgedir}/info/configuration/
 %attr(0755,-,-) %{cartridgedir}/info/bin/
 %attr(0755,-,-) %{cartridgedir}/info/data/
-%{_sysconfdir}/libra/cartridges/%{name}
+%{_sysconfdir}/stickshift/cartridges/%{name}
 %{cartridgedir}/info/changelog
 %{cartridgedir}/info/control
 %{cartridgedir}/info/manifest.yml
 
 %changelog
+* Fri Mar 09 2012 Dan McPherson <dmcphers@redhat.com> 0.10.2-1
+- Batch variable name chage (rmillner@redhat.com)
+- Adding export control files (kraman@gmail.com)
+- loading resource limits config when needed (kraman@gmail.com)
+- replacing references to libra with stickshift (abhgupta@redhat.com)
+- Update metrics cartridge li/libra => stickshift (kraman@gmail.com)
+- Removed new instances of GNU license headers (jhonce@redhat.com)
+
 * Fri Mar 02 2012 Dan McPherson <dmcphers@redhat.com> 0.10.1-1
 - bump spec numbers (dmcphers@redhat.com)
 

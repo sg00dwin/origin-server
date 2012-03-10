@@ -8,7 +8,7 @@ set -e
 function print_help {
     echo "Usage: $0 app-name namespace uuid"
 
-    echo "$0 $@" | logger -p local0.notice -t libra_haproxy_configure
+    echo "$0 $@" | logger -p local0.notice -t stickshift_haproxy_configure
     exit 1
 }
 
@@ -25,10 +25,14 @@ done
 
 [ $# -eq 3 ] || print_help
 
-CART_DIR=${CART_DIR:=/usr/libexec/li/cartridges}
+source /etc/stickshift/stickshift-node.conf
+
 app_type="haproxy-1.4"
 
-source ${CART_DIR}/abstract/info/lib/util
+source ${CARTRIDGE_BASE_PATH}/abstract/info/lib/util
+
+CART_INFO_DIR=${CARTRIDGE_BASE_PATH}/haproxy-1.4/info
+
 setup_configure "$1" $2 $3
 
 unobfuscate_app_home $uuid $namespace $application
@@ -77,8 +81,8 @@ create_standard_path_env_var
 export IP2=`embedded_find_open_ip $uid "$APP_DIR/../"`
 echo "export OPENSHIFT_HAPROXY_STATUS_IP='$IP'" > "$APP_DIR/../.env/OPENSHIFT_HAPROXY_STATUS_IP"
 $CART_INFO_DIR/bin/deploy_httpd_config.sh $application $uuid $IP
-mkdir /var/lib/libra/${uuid}/.openshift
-chown ${uuid} /var/lib/libra/${uuid}/.openshift $APP_DIR/conf/gear-registry.git
+mkdir ${GEAR_BASE_DIR}/${uuid}/.openshift
+chown ${uuid} ${GEAR_BASE_DIR}/${uuid}/.openshift $APP_DIR/conf/gear-registry.git
 
 #
 # Start the server

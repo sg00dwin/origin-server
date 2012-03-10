@@ -1,11 +1,13 @@
 #!/bin/bash
 
+source "/etc/stickshift/stickshift-node.conf"
+
 # Constants.
 SERVICE_NAME=cron
 CART_NAME=cron
 CART_VERSION=1.4
 CART_DIRNAME=${CART_NAME}-$CART_VERSION
-CART_INSTALL_DIR=/usr/libexec/li/cartridges
+CART_INSTALL_DIR=${CARTRIDGE_BASE_PATH}
 CART_INFO_DIR=$CART_INSTALL_DIR/embedded/$CART_DIRNAME/info
 CART_DIR=${CART_DIR:-$CART_INSTALL_DIR}
 
@@ -43,7 +45,7 @@ if [ ! -f $CART_INSTANCE_DIR/run/jobs.enabled ]; then
    exit 0
 fi
 
-log_message ":START: $freq cron run for libra user '$OPENSHIFT_APP_UUID'"
+log_message ":START: $freq cron run for stickshift user '$OPENSHIFT_GEAR_UUID'"
 
 # Run all the scripts in the $freq directory if it exists.
 SCRIPTS_DIR="$OPENSHIFT_REPO_DIR/.openshift/cron/$freq"
@@ -67,7 +69,7 @@ if [ -d "$SCRIPTS_DIR" ]; then
       status=$?
       if [ 124 -eq $status ]; then
          wmsg="Warning: $freq cron run terminated as it exceeded max run time"
-         log_message "$wmsg [$MAX_RUN_TIME] for libra user '$OPENSHIFT_APP_UUID'" > /dev/null 2>&1
+         log_message "$wmsg [$MAX_RUN_TIME] for stickshift user '$OPENSHIFT_GEAR_UUID'" > /dev/null 2>&1
          echo "$wmsg"
       fi
 
@@ -78,5 +80,5 @@ if [ -d "$SCRIPTS_DIR" ]; then
 
 fi
 
-log_message ":END: $freq cron run for libra user '$OPENSHIFT_APP_UUID'"
+log_message ":END: $freq cron run for stickshift user '$OPENSHIFT_GEAR_UUID'"
 exit 0

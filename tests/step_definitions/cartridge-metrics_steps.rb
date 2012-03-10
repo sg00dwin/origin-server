@@ -1,7 +1,7 @@
 require 'fileutils'
 
 $metrics_version = "0.1"
-$metrics_cart_root = "/usr/libexec/li/cartridges/embedded/metrics-#{$metrics_version}"
+$metrics_cart_root = "/usr/libexec/stickshift/cartridges/embedded/metrics-#{$metrics_version}"
 $metrics_hooks = $metrics_cart_root + "/info/hooks"
 $metrics_config = $metrics_hooks + "/configure"
 $metrics_config_format = "#{$metrics_config} %s %s %s"

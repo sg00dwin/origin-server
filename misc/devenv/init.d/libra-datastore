@@ -97,7 +97,7 @@ rh_configure_mongo() {
 }
 
 rh_configure_rockmongo() {
-    /bin/cp -r /usr/libexec/li/cartridges/embedded/rockmongo-1.1/info/rockmongo/ /var/www/html/
+    /bin/cp -r /usr/libexec/stickshift/cartridges/embedded/rockmongo-1.1/info/rockmongo/ /var/www/html/
     /bin/chmod -R 755 /var/www/html/rockmongo/
     echo '
 <?php
@@ -124,7 +124,7 @@ Alias /datastore /var/www/html/rockmongo/
 Order Allow,Deny
 Allow from All
 </Directory>
-' > /etc/httpd/conf.d/libra-datastore.conf
+' > /etc/httpd/conf.d/stickshift-datastore.conf
     /etc/init.d/httpd restart
 }
 

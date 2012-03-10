@@ -1,5 +1,5 @@
 # Controller cartridge command paths
-$cartridge_root ||= "/usr/libexec/li/cartridges"
+$cartridge_root ||= "/usr/libexec/stickshift/cartridges"
 $php_cartridge = "#{$cartridge_root}/php-5.3"
 $php_common_conf_path = "#{$php_cartridge}/info/configuration/etc/conf/httpd_nolog.conf"
 $php_hooks = "#{$php_cartridge}/info/hooks"
@@ -18,7 +18,7 @@ $php_stop_format = "#{$php_stop_path} '%s' '%s' '%s'"
 $php_status_path = "#{$php_hooks}/status"
 $php_status_format = "#{$php_status_path} '%s' '%s' '%s'"
 
-$libra_httpd_conf_d ||= "/etc/httpd/conf.d/libra"
+$libra_httpd_conf_d ||= "/etc/httpd/conf.d/stickshift"
 
 When /^I configure a php application$/ do
   account_name = @account['accountname']

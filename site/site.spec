@@ -1,9 +1,9 @@
 %define htmldir %{_localstatedir}/www/html
-%define sitedir %{_localstatedir}/www/libra/site
+%define sitedir %{_localstatedir}/www/stickshift/site
 
 Summary:   Li site components
 Name:      rhc-site
-Version:   0.88.1
+Version:   0.88.2
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -85,6 +85,149 @@ rm -rf %{buildroot}
 /bin/touch %{sitedir}/log/production.log
 
 %changelog
+* Fri Mar 09 2012 Dan McPherson <dmcphers@redhat.com> 0.88.2-1
+- Branding: signin, signup and recover pwd now on smaller boxes and dedicated
+  pages (ffranz@redhat.com)
+- Changed background styling for small screens (edirsh@redhat.com)
+- Tweaked background styles for home page; added bg styles for interior and
+  community pages (edirsh@redhat.com)
+- Updated #search-field to use a marker class, added styles for votes, videos,
+  and rudimentary KB articles. (ccoleman@redhat.com)
+- Merge branch 'dev/kraman/US1972' (kraman@gmail.com)
+- Moved font code to its own CSS for better loading (fotios@redhat.com)
+- Rename 'take-action' to 'action-call' and add 'action-more' for secondary
+  links.  Update styles for blog to match. (ccoleman@redhat.com)
+- Branding: styling signup page (ffranz@redhat.com)
+- Updates for getting devenv running (kraman@gmail.com)
+- Renaming Cloud-SDK -> StickShift (kraman@gmail.com)
+- Branding: signin page (ffranz@redhat.com)
+- Mark old partials as obsolete (ccoleman@redhat.com)
+- Mark style.scss as out of date so it is no longer generated, and ignore any
+  .sass-cache directories created (ccoleman@redhat.com)
+- Site css files (ccoleman@redhat.com)
+- font size tweaks (sgoodwin@redhat.com)
+- Merge branch 'dev309' (sgoodwin@redhat.com)
+- avatar and type edits (sgoodwin@redhat.com)
+- Added Overview and Flex sections to homepage header (ffranz@redhat.com)
+- Fixed Firefox desaturation of the logo by removing the color profile from the
+  PNG (ccoleman@redhat.com)
+- sprite change (sgoodwin@redhat.com)
+- Merge branch 'dev308' (sgoodwin@redhat.com)
+- secondary navigation modifications (sgoodwin@redhat.com)
+- Reorganization of navbar styles for console, minor hacks to get an
+  approximate look for the old console.  More to come (ccoleman@redhat.com)
+- when listing available carts show installed carts but disable selection
+  (johnp@redhat.com)
+- Chrome/webkit prefixed properties, fix minor bugs with gradients
+  (ccoleman@redhat.com)
+- Add rdiscount markdown support (ccoleman@redhat.com)
+- Add more metadata to the cartridges in the CartridgeType model
+  (johnp@redhat.com)
+- Branding: added Express and Flex sections (ffranz@redhat.com)
+- fix up the next steps page for carts wizard (johnp@redhat.com)
+- next steps template file (johnp@redhat.com)
+- next_steps wizard page for successful cart creation (johnp@redhat.com)
+- Fix for getting hostname on prod/stg servers (fotios@redhat.com)
+- Merge branch 'responsive' (ccoleman@redhat.com)
+- Fix some responsive bugs at 768px (exactly), balance messaging font sizes in
+  portrait mode, keep refining code (ccoleman@redhat.com)
+- Fixes user controller missing routes (ffranz@redhat.com)
+- Branding: added site controller, adjusted missing layout on legacy pages
+  (ffranz@redhat.com)
+- Branding: signin page and conditional headers according to existing session
+  (ffranz@redhat.com)
+- Branding: new signup page (ffranz@redhat.com)
+- Integrate backgrounds directly, work around lack of compass for now by
+  inlining after generation. Fix header colors Fix fonts to let Helvetica
+  override Liberation Sans Letter spacing on check the buzz
+  (ccoleman@redhat.com)
+- Start abstracting colors into variables (ccoleman@redhat.com)
+- Sign in link and header color (ccoleman@redhat.com)
+- Allow views to pass classes to nav header for lifting (ccoleman@redhat.com)
+- Give sections bottom margin, left align take-action in responsive mode, magic
+  (ccoleman@redhat.com)
+- Simplify take-action section, allow it to be used in nav and in content body,
+  provide helper method, fix problems with responsive layout
+  (ccoleman@redhat.com)
+- Merge branch 'master' of git1.ops.rhcloud.com:/srv/git/li (ffranz@redhat.com)
+- Branding: basic signup content, home header styling (ffranz@redhat.com)
+- Add styles and images for homepage buzz section (edirsh@redhat.com)
+- Add styling and images for new branding homepage header (edirsh@redhat.com)
+- redirect on successful addition of cart (johnp@redhat.com)
+- workarounds to using 'type' as a model field in the rest api
+  (johnp@redhat.com)
+- Branding: styling background images (ffranz@redhat.com)
+- Branding new home CSS styling (ffranz@redhat.com)
+- Branding new home CSS styling (ffranz@redhat.com)
+- More responsive tweaks to take action bar (ccoleman@redhat.com)
+- Favicons, headers, grid fixes for iphone and small devices, restore a minor
+  merge conflict (ccoleman@redhat.com)
+- New branding on homepage, added twitter buzz (ffranz@redhat.com)
+- fixed cartridge model encoding issue (johnp@redhat.com)
+- list style edit (sgoodwin@redhat.com)
+- add the bones around adding a cart to an application (johnp@redhat.com)
+- New branding for the home page (ffranz@redhat.com)
+- Accidentally reenabled markdown too early (ccoleman@redhat.com)
+- Add wrapper node for left column to give it a margin (Gnhhh, so many
+  wrappers.  Damn you grid) Poll styles Images for expand collapse Comment
+  style cleanup Simplification of links (ccoleman@redhat.com)
+- overview page, fixes to header, minus markdown requirements.
+  (ccoleman@redhat.com)
+- Add headline marker class to primary messaging (ccoleman@redhat.com)
+- Community tweaks (ccoleman@redhat.com)
+- Add badges and some generic cleanup to comments (ccoleman@redhat.com)
+- search block modifications (sgoodwin@redhat.com)
+- revert an errant commit to development config file (johnp@redhat.com)
+- Update tabs, update header (ccoleman@redhat.com)
+- Minor tweaks to header to accomodate possible animation, fix problems at
+  smaller resolutions (ccoleman@redhat.com)
+- add show template for cartridge types (johnp@redhat.com)
+- Add subheadings and some minor style tweaks to the help page
+  (ccoleman@redhat.com)
+- hook up the show cartridge_type action for adding cartridges
+  (johnp@redhat.com)
+- get cart list from rest api but fill in details in the model
+  (johnp@redhat.com)
+- Merge branch 'dev/clayton/help' (ccoleman@redhat.com)
+- Marker class for styles (ccoleman@redhat.com)
+- More fixup of help links (ccoleman@redhat.com)
+- Proto help page (ccoleman@redhat.com)
+- add links to add a cartridge (johnp@redhat.com)
+- add initial page for cartridge selection (johnp@redhat.com)
+- move wizard_create helper to app_wizard_create and add cartridge wizard
+  (johnp@redhat.com)
+- Fixes 799188: will remove Node.JS from the list of available cartridges in
+  production (ffranz@redhat.com)
+- Fixes 799188: will remove Node.JS from the list of available cartridges in
+  production (ffranz@redhat.com)
+- Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
+  (mpatel@redhat.com)
+- Changes to rename raw to diy. (mpatel@redhat.com)
+- Layout with header content (ccoleman@redhat.com)
+- Remove unused stylesheet, unused controller bit (ccoleman@redhat.com)
+- Use relative links in CSS (ccoleman@redhat.com)
+- sprite additions (sgoodwin@redhat.com)
+- Logo integration (ccoleman@redhat.com)
+- Merge branch 'master' of git:/srv/git/li (ccoleman@redhat.com)
+- Add active colors for menu, ensure submenus have the right margins enter the
+  commit message for your changes. Lines starting (ccoleman@redhat.com)
+- Fix for BZ799561: rhc-outage now correctly identifies sync failures
+  (fotios@redhat.com)
+- Reenable node.js (ccoleman@redhat.com)
+- Fix ordering of stylesheets on examples (ccoleman@redhat.com)
+- Merge branch 'master' into dev/clayton/home (ccoleman@redhat.com)
+- Merge branch 'master' into dev/clayton/home (ccoleman@redhat.com)
+- Right facing arrow (ccoleman@redhat.com)
+- Start on creating a layout for the new styles (ccoleman@redhat.com)
+- Rename constants (ccoleman@redhat.com)
+- Fix up menu padding (ccoleman@redhat.com)
+- Begin reorganizing site.scss into partials (ccoleman@redhat.com)
+- More tweaks to navigation and headers (ccoleman@redhat.com)
+- Signup (ccoleman@redhat.com)
+- Much simpler solution for grid filling (introduction of row-flush-right and
+  span-wrapper) to allow backgrounds to fit content more cleanly
+  (ccoleman@redhat.com)
+
 * Fri Mar 02 2012 Dan McPherson <dmcphers@redhat.com> 0.88.1-1
 - bump spec numbers (dmcphers@redhat.com)
 - Had to fix the view too (fotios@redhat.com)

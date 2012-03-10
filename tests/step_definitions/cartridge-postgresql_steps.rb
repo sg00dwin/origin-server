@@ -4,7 +4,7 @@ require 'postgres'
 require 'fileutils'
 
 $pgsql_version = "8.4"
-$pgsql_cart_root = "/usr/libexec/li/cartridges/embedded/postgresql-#{$pgsql_version}"
+$pgsql_cart_root = "/usr/libexec/stickshift/cartridges/embedded/postgresql-#{$pgsql_version}"
 $pgsql_hooks = $pgsql_cart_root + "/info/hooks"
 $pgsql_config = $pgsql_hooks + "/configure"
 $pgsql_config_format = "#{$pgsql_config} %s %s %s"
@@ -199,7 +199,7 @@ Given /^a new postgresql database$/ do
   exit_code = runcon command,  'unconfined_u', 'system_r', 'libra_initrc_t', outbuf
 
   if exit_code != 0
-    FileUtils.cp "/var/lib/libra/#{account_name}/postgresql-#{$pgsql_version}/log/postgres.log", "/tmp/rhc/postgresql_error_#{account_name}.log"
+    FileUtils.cp "/var/lib/stickshift/#{account_name}/postgresql-#{$pgsql_version}/log/postgres.log", "/tmp/rhc/postgresql_error_#{account_name}.log"
     raise "Error running #{command}: returned #{exit_code}"
   end
   # I have to get the stdout back

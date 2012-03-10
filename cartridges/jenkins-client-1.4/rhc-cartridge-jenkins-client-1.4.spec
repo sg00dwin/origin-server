@@ -1,7 +1,7 @@
-%define cartridgedir %{_libexecdir}/li/cartridges/embedded/jenkins-client-1.4
+%define cartridgedir %{_libexecdir}/stickshift/cartridges/embedded/jenkins-client-1.4
 
 Name: rhc-cartridge-jenkins-client-1.4
-Version: 0.22.1
+Version: 0.22.2
 Release: 1%{?dist}
 Summary: Embedded jenkins client support for express 
 Group: Network/Daemons
@@ -11,7 +11,8 @@ Source0: %{name}-%{version}.tar.gz
 BuildRoot:    %(mktemp -ud %{_tmppath}/%{name}-%{version}-%{release}-XXXXXX)
 BuildArch: noarch
 
-Requires: rhc-node
+Requires:  stickshift-abstract
+Requires:  rubygem(stickshift-node)
 Requires: mysql-devel
 Requires: wget
 Requires: java-1.6.0-openjdk
@@ -30,8 +31,8 @@ Provides embedded jenkins client support
 rm -rf $RPM_BUILD_ROOT
 rm -rf %{buildroot}
 mkdir -p %{buildroot}%{cartridgedir}
-mkdir -p %{buildroot}/%{_sysconfdir}/libra/cartridges
-ln -s %{cartridgedir}/info/configuration/ %{buildroot}/%{_sysconfdir}/libra/cartridges/%{name}
+mkdir -p %{buildroot}/%{_sysconfdir}/stickshift/cartridges
+ln -s %{cartridgedir}/info/configuration/ %{buildroot}/%{_sysconfdir}/stickshift/cartridges/%{name}
 cp -r info %{buildroot}%{cartridgedir}/
 cp LICENSE %{buildroot}%{cartridgedir}/
 cp COPYRIGHT %{buildroot}%{cartridgedir}/
@@ -45,7 +46,7 @@ rm -rf $RPM_BUILD_ROOT
 %attr(0750,-,-) %{cartridgedir}/info/build/
 %config(noreplace) %{cartridgedir}/info/configuration/
 %attr(0755,-,-) %{cartridgedir}/info/bin/
-%{_sysconfdir}/libra/cartridges/%{name}
+%{_sysconfdir}/stickshift/cartridges/%{name}
 %{cartridgedir}/info/changelog
 %{cartridgedir}/info/control
 %{cartridgedir}/info/manifest.yml
@@ -53,6 +54,14 @@ rm -rf $RPM_BUILD_ROOT
 %doc %{cartridgedir}/LICENSE
 
 %changelog
+* Fri Mar 09 2012 Dan McPherson <dmcphers@redhat.com> 0.22.2-1
+- force jenkins to https (dmcphers@redhat.com)
+- Batch variable name chage (rmillner@redhat.com)
+- Adding export control files (kraman@gmail.com)
+- Update jenkins li/libra => stickshift (kraman@gmail.com)
+- Jenkens templates switch to proper gear size names (rmillner@redhat.com)
+- Changes to rename raw to diy. (mpatel@redhat.com)
+
 * Fri Mar 02 2012 Dan McPherson <dmcphers@redhat.com> 0.22.1-1
 - bump spec numbers (dmcphers@redhat.com)
 

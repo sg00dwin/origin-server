@@ -1,22 +1,26 @@
 #!/bin/bash
 
+source "/etc/stickshift/stickshift-node.conf"
+
 # Creates a jboss-as7 instance
 # Variables used in this script:
 : << --COMMENT--
 # jboss.version
 jboss_home = the location where the jbossas server is installed
 jboss_version = the name/type of the jbossas cartridge, e.g., jbossas-7
-# /etc/libra/node.conf
-unobfuscate = Enable user-unobfuscate to create ~/appname-namespace in addition to ~/uuid
-libra_dir=Users home dirs (where customer data ends up)
+# /etc/stickshift/stickshift-node.conf
+CREATE_APP_SYMLINK = Enable user-unobfuscate to create ~/appname-namespace in addition to ~/uuid
+GEAR_BASE_DIR=Users home dirs (where customer data ends up)
 # Script arguments
 namespace=basename $2
 application=$1
 uuid=$3
 git_url=$4
+
+
 # Script local
-JBOSS_CARTRIDGE_ROOT=/usr/libexec/li/cartridges/${jboss_version}
-APP_HOME = ${libra_dir}/${uuid} # the root directory for application contents
+JBOSS_CARTRIDGE_ROOT=${CARTRIDGE_BASE_PATH}/${jboss_version}
+APP_HOME = ${GEAR_BASE_DIR}/${uuid} # the root directory for application contents
 APP_DIR = $APP_HOME/$application # The location of the application jboss setup
 GIT_DIR = $APP_HOME/git/$application.git
 M2_DIR = $APP_HOME/.m2 # maven dir
@@ -34,7 +38,7 @@ set -e
 function print_help {
     echo "Usage: $0 app-name namespace uuid"
 
-    echo "$0 $@" | logger -p local0.notice -t libra_jboss_configure
+    echo "$0 $@" | logger -p local0.notice -t stickshift_jboss_configure
     exit 1
 }
 
@@ -49,7 +53,7 @@ function create_repo {
     GIT_DIR=$APP_HOME/git/$application.git
     mkdir -p "$APP_HOME/git"
     
-    cp -ad /usr/libexec/li/cartridges/${jboss_version}/template $APP_HOME/git
+    cp -ad ${CARTRIDGE_BASE_PATH}/${jboss_version}/template $APP_HOME/git
     
     pushd $APP_HOME/git/template > /dev/null
     sed -i "s/{APP_NAME}/$application/g" pom.xml
@@ -87,11 +91,10 @@ done
 
 [ $# -eq 4 -o $# -eq 3 ] || print_help
 
-CART_DIR=${CART_DIR:=/usr/libexec/li/cartridges}
-JBOSS_CARTRIDGE_ROOT=$CART_DIR/${jboss_version}
+JBOSS_CARTRIDGE_ROOT=$CARTRIDGE_BASE_PATH/${jboss_version}
 app_type="${jboss_version}"
 
-source ${CART_DIR}/abstract/info/lib/util
+source ${CARTRIDGE_BASE_PATH}/abstract/info/lib/util
 setup_configure "$1" $2 $3 $4
 
 check_app_dir_doesnt_exist
@@ -188,7 +191,7 @@ JAVA_HOME=/etc/alternatives/java_sdk_1.6.0
 M2_HOME=/etc/alternatives/maven-3.0
 echo "export JAVA_HOME=$JAVA_HOME" > $APP_HOME/.env/JAVA_HOME
 echo "export M2_HOME=$M2_HOME" > $APP_HOME/.env/M2_HOME
-echo "export PATH=$JBOSS_CARTRIDGE_ROOT/info/bin/:$CART_DIR/abstract/info/bin/:$JAVA_HOME/bin:$M2_HOME/bin:$PATH" > $APP_HOME/.env/PATH
+echo "export PATH=$JBOSS_CARTRIDGE_ROOT/info/bin/:$CARTRIDGE_BASE_PATH/abstract/info/bin/:$JAVA_HOME/bin:$M2_HOME/bin:$PATH" > $APP_HOME/.env/PATH
 
 
 #

@@ -23,14 +23,14 @@ fi
 
 lockfile=/var/lock/subsys/libra-cgroups
 
-if [ -f /etc/libra/node.conf ]
+if [ -f /etc/stickshift/stickshift-node.conf ]
 then
-    . /etc/libra/node.conf
+    . /etc/stickshift/stickshift-node.conf
 fi
 
-if [ -f /etc/libra/resource_limits.conf ]
+if [ -f /etc/stickshift/resource_limits.conf ]
 then
-    . /etc/libra/resource_limits.conf
+    . /etc/stickshift/resource_limits.conf
 fi
 
 RETVAL=0

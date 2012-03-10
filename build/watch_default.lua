@@ -42,7 +42,7 @@ sync{
   default.rsync,
   delay= 0.2,
   source= sourcedir .. "/site",
-  target= "verifier:/var/www/libra/site",
+  target= "verifier:/var/www/stickshift/site",
   rsyncOps={"-vuzt", "--chmod=ug+rwX"},
   exclude= "site/log/**, site/tmp/**, site/httpd/**",
 }
@@ -51,7 +51,7 @@ sync{
   default.rsync,
   delay= 0.2,
   source= sourcedir .. "/broker",
-  target= "verifier:/var/www/libra/broker",
+  target= "verifier:/var/www/stickshift/broker",
   rsyncOps={"-vuzt", "--chmod=ug+rwX"},
   exclude= "broker/log/**, broker/tmp/**, broker/httpd/**"
 }

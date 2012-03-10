@@ -22,12 +22,20 @@ class SiteController < ApplicationController
   def flex
   end
 
-  def signup
-    
+  def signin
+    render :layout => 'box'
   end
 
-  def signin
-    
+  def signup
+    render :layout => 'box'
+  end
+
+  def recover
+    render :layout => 'box'
+  end
+
+  def success
+    render :layout => 'box'
   end
 
 end

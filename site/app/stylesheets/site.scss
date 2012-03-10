@@ -113,9 +113,6 @@ body.signup {
 .recaptcha table {
   table-layout: auto;
 }
-#signup-and-signin {
-  margin-bottom: 50px;
-}
 
 @media (max-width: 767px) {
   .section-nav.lift-counter {
@@ -464,6 +461,9 @@ h1.ribbon {
 .column-buzz { background: $darkNoiseBackgroundColor url($transparentNoiseImageData); color: $textDarkBackground; }
 .column-buzz a { color: $textDarkBackground; }
 
+body.box header .section-top { border-top: 7px solid #333; }
+body.box .container, body.box .box { width: 550px; }
+
 // Column navigation
 .column-nav {
   background-color: $navColumnBackgroundColor;
@@ -534,36 +534,38 @@ h1.ribbon {
 		background-color: #181818;
 		color: #fff;
 		background-position: right -43px;
-		}  
-  #search-field {
+		}
+
+  .search-row {
   	position: relative;
   	text-align: right;
 		width: -moz-available;
 		margin-right: -15px;
 		margin-top: 30px;
-		}
-	#search-field .search-query {
-		margin-left: 15px;
-		margin-bottom: 0;
-		padding-left: 13px;
-		padding-right: 30px;
-		color: #ccc;
-		border-radius: 3px;
-		border-width: 0;
-		background-color: #434343;
-    width: inherit;
-		width: -moz-available;
-		}
-	#search-field button.search {
-		right: 3px;
-		width: 25px;
-		background: transparent url("../images/sprite-vert.png") 2px -228px no-repeat;
-    height: 25px;
-    width: 20px;
-    border: 0;
-    position: absolute;
-    top: 1px;
-		}
+
+    .search-query {
+      margin-left: 15px;
+      margin-bottom: 0;
+      padding-left: 13px;
+      padding-right: 30px;
+      color: #ccc;
+      border-radius: 3px;
+      border-width: 0;
+      background-color: #434343;
+      width: inherit;
+      width: -moz-available;
+    }
+    button.search {
+      right: 3px;
+      width: 25px;
+      background: transparent url("../images/sprite-vert.png") 2px -228px no-repeat;
+      height: 25px;
+      width: 20px;
+      border: 0;
+      position: absolute;
+      top: 1px;
+    }
+  }
 }
 
 @media (max-width: 767px) {
@@ -601,53 +603,124 @@ h1.ribbon {
   margin-bottom: 20px;
 }
 
+/* Background */
+body > header {
+  background-color: #191919;
+  background-image:
+    url('../images/comets.png'),
+    url($transparentNoiseImageData);
+  background-repeat:
+    repeat-x,
+    repeat;
+}
 
-/* Site standard backgrounds */
-@media (min-width: 768px) {
-  /* Until we can build with compass this is directly included and modified
-  /* line 3, ../../app/stylesheets/home.scss */
+@media (max-width: 767px) {
   body > header {
-    background-image: url("../images/dark-gray-diagonal-noise.jpg");
-    background-image: url("../images/diagonals-top.png"), url("../images/mts.png"), -webkit-gradient(radial, circle, 0, circle, 2, color-stop(0%, #ffffff), color-stop(50%, #ffffff), color-stop(100%, rgba(255, 255, 255, 0))), -webkit-gradient(radial, circle, 0, circle, 2, color-stop(0%, #ffffff), color-stop(100%, rgba(0, 0, 0, 0))), -webkit-gradient(radial, circle, 0, circle, 2, color-stop(0%, #eeeeee), color-stop(100%, rgba(0, 0, 0, 0))), -webkit-gradient(radial, circle, 0, circle, 2, color-stop(0%, #eeeeee), color-stop(100%, rgba(0, 0, 0, 0))), url("../images/dark-gray-diagonal-noise.jpg");
-    background-image: url("../images/diagonals-top.png"), url("../images/mts.png"), -webkit-radial-gradient(circle, #ffffff 0%, #ffffff 1px, rgba(255, 255, 255, 0) 2px), -webkit-radial-gradient(circle, #ffffff 0%, rgba(0, 0, 0, 0) 2px), -webkit-radial-gradient(circle, #eeeeee 0%, rgba(0, 0, 0, 0) 2px), -webkit-radial-gradient(circle, #eeeeee 0%, rgba(0, 0, 0, 0) 2px), url("../images/dark-gray-diagonal-noise.jpg");
-    background-image: url("../images/diagonals-top.png"), url("../images/mts.png"), -moz-radial-gradient(circle, #ffffff 0%, #ffffff 1px, rgba(255, 255, 255, 0) 2px), -moz-radial-gradient(circle, #ffffff 0%, rgba(0, 0, 0, 0) 2px), -moz-radial-gradient(circle, #eeeeee 0%, rgba(0, 0, 0, 0) 2px), -moz-radial-gradient(circle, #eeeeee 0%, rgba(0, 0, 0, 0) 2px), url("../images/dark-gray-diagonal-noise.jpg");
-    background-image: url("../images/diagonals-top.png"), url("../images/mts.png"), -o-radial-gradient(circle, #ffffff 0%, #ffffff 1px, rgba(255, 255, 255, 0) 2px), -o-radial-gradient(circle, #ffffff 0%, rgba(0, 0, 0, 0) 2px), -o-radial-gradient(circle, #eeeeee 0%, rgba(0, 0, 0, 0) 2px), -o-radial-gradient(circle, #eeeeee 0%, rgba(0, 0, 0, 0) 2px), url("../images/dark-gray-diagonal-noise.jpg");
-    background-image: url("../images/diagonals-top.png"), url("../images/mts.png"), -ms-radial-gradient(circle, #ffffff 0%, #ffffff 1px, rgba(255, 255, 255, 0) 2px), -ms-radial-gradient(circle, #ffffff 0%, rgba(0, 0, 0, 0) 2px), -ms-radial-gradient(circle, #eeeeee 0%, rgba(0, 0, 0, 0) 2px), -ms-radial-gradient(circle, #eeeeee 0%, rgba(0, 0, 0, 0) 2px), url("../images/dark-gray-diagonal-noise.jpg");
-    background-image: url("../images/diagonals-top.png"), url("../images/mts.png"), radial-gradient(circle, #ffffff 0%, #ffffff 1px, rgba(255, 255, 255, 0) 2px), radial-gradient(circle, #ffffff 0%, rgba(0, 0, 0, 0) 2px), radial-gradient(circle, #eeeeee 0%, rgba(0, 0, 0, 0) 2px), radial-gradient(circle, #eeeeee 0%, rgba(0, 0, 0, 0) 2px), url("../images/dark-gray-diagonal-noise.jpg");
-    background-repeat: no-repeat,     repeat-x,     repeat, repeat, repeat, repeat, repeat;
-    background-size: auto,     auto,     457px 241px,     307px 151px,     167px 199px,     239px 257px,     auto;
-    background-position: right bottom, center bottom, left top, -157px center, 89px 97px, 43px 31px, center bottom;
+    background: #191919 url($transparentNoiseImageData) repeat; 
   }
-  /* line 49, ../../app/stylesheets/home.scss */
-  .section-base {
-    background-color: #181919;
-    background-image: url("../images/diagonals-bottom.png"), url("../images/tiny-panda.png"), url("../images/mts-bottom.png");
-    background-repeat: no-repeat, no-repeat, repeat-x;
-    background-position: left top,     50px bottom,     center bottom;
+}
+
+/* community background */
+body.community > header {
+  background-color: #191919;
+  background-image:
+    url('../images/planets.png'),
+    url($transparentNoiseImageData);
+  background-repeat:
+    repeat-x,
+    repeat;
+  background-position: center bottom;
+}
+
+@media (max-width: 767px) {
+  body.community > header {
+    background: #191919 url($transparentNoiseImageData) repeat; 
   }
-  /* line 61, ../../app/stylesheets/home.scss */
-  .section-base .column-buzz {
-    background: black url("../images/black-noise.png");
+}
+
+/* home-specific styles */
+body.home > header {
+  background-color: #191919; 
+  background-image:
+    url('../images/diagonals-top.png'),
+    url('../images/mts.png'), 
+    url($transparentNoiseImageData),
+    -moz-repeating-linear-gradient(110deg, #191919 0px, #191919 10px, #181818 10px, #181818 20px);
+  background-repeat:
+    no-repeat,
+    repeat-x,
+    repeat, 
+    repeat;
+  background-position:
+    right bottom,
+    center bottom,
+    center bottom, 
+    center bottom;
+}
+
+.home .messaging {
+  margin: 55px 0;
+  
+  .primary {
+    margin-bottom: 10px;
+  }
+  .secondary {
+    max-width: 790px;
+    margin: 0 auto;
+    font-family: Liberation Sans, Helvetica Neue, Helvetica, Arial, Sans-serif;
+  }
+  h1, h2 { color: white; }
+}
+
+.home #buzz {
+  background-color: #181919;
+  background-image: 
+    url('../images/diagonals-bottom.png'),
+    url('../images/mts-bottom.png');
+  background-repeat: no-repeat, repeat-x;
+  background-position: 
+    left top,
+    center bottom;
+
+  .column-buzz {
+    background: black;
     margin: 0 80px;
   }
 }
 
 @media (max-width: 767px) {
-  body > header {
-    background: url('../images/dark-gray-diagonal-noise.jpg') repeat;
+  body.home  > header {
+    background: #191919 url($transparentNoiseImageData) repeat; 
   }
 
-  .messaging {
+  .home .messaging {
     margin: 0;
   }
 
-  .section-base {
+  .home #buzz {
     background-image: none;
-
-    .column-buzz {
+    .column-buzz{
       background-image: none;
       margin: 0;
     }
   }
 }
 
+@media (min-width: 1107px) and (max-width: 1137px) {
+  .home #buzz {
+    background-image:
+      url('../images/diagonals-bottom.png'),
+      url('../images/tiny-panda.png'),
+      url('../images/mts-bottom.png');
+    background-repeat: no-repeat, no-repeat, repeat-x;
+    background-position:
+      left top,
+      right bottom,
+      center bottom;
+  }
+}
+
+#nav { 
+  background-color: transparent;
+  background-image: none;
+}

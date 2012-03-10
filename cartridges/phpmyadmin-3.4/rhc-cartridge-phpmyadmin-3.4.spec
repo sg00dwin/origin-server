@@ -1,7 +1,7 @@
-%define cartridgedir %{_libexecdir}/li/cartridges/embedded/phpmyadmin-3.4
+%define cartridgedir %{_libexecdir}/stickshift/cartridges/embedded/phpmyadmin-3.4
 
 Name: rhc-cartridge-phpmyadmin-3.4
-Version: 0.10.1
+Version: 0.10.2
 Release: 1%{?dist}
 Summary: Embedded phpMyAdmin support for express
 
@@ -12,7 +12,8 @@ Source0: %{name}-%{version}.tar.gz
 BuildRoot:    %(mktemp -ud %{_tmppath}/%{name}-%{version}-%{release}-XXXXXX)
 BuildArch: noarch
 
-Requires: rhc-node
+Requires: stickshift-abstract
+Requires: rubygem(stickshift-node)
 Requires: phpMyAdmin
 
 %description
@@ -27,8 +28,8 @@ Provides rhc phpMyAdmin cartridge support
 rm -rf $RPM_BUILD_ROOT
 rm -rf %{buildroot}
 mkdir -p %{buildroot}%{cartridgedir}
-mkdir -p %{buildroot}/%{_sysconfdir}/libra/cartridges
-ln -s %{cartridgedir}/info/configuration/ %{buildroot}/%{_sysconfdir}/libra/cartridges/%{name}
+mkdir -p %{buildroot}/%{_sysconfdir}/stickshift/cartridges
+ln -s %{cartridgedir}/info/configuration/ %{buildroot}/%{_sysconfdir}/stickshift/cartridges/%{name}
 cp -r info %{buildroot}%{cartridgedir}/
 cp LICENSE %{buildroot}%{cartridgedir}/
 cp COPYRIGHT %{buildroot}%{cartridgedir}/
@@ -47,7 +48,7 @@ rm -rf $RPM_BUILD_ROOT
 %attr(0755,-,-) %{cartridgedir}/info/bin/
 %attr(0755,-,-) %{cartridgedir}/info/html/
 %attr(0644,-,-) %{cartridgedir}/info/html/*
-%{_sysconfdir}/libra/cartridges/%{name}
+%{_sysconfdir}/stickshift/cartridges/%{name}
 %{cartridgedir}/info/changelog
 %{cartridgedir}/info/control
 %{cartridgedir}/info/manifest.yml
@@ -55,6 +56,15 @@ rm -rf $RPM_BUILD_ROOT
 %doc %{cartridgedir}/LICENSE
 
 %changelog
+* Fri Mar 09 2012 Dan McPherson <dmcphers@redhat.com> 0.10.2-1
+- Batch variable name chage (rmillner@redhat.com)
+- Adding export control files (kraman@gmail.com)
+- Fix for phpmyadmin cartridge (kraman@gmail.com)
+- loading resource limits config when needed (kraman@gmail.com)
+- replacing references to libra with stickshift (abhgupta@redhat.com)
+- Update phpmyadmin li/libra => stickshift (kraman@gmail.com)
+- Removed new instances of GNU license headers (jhonce@redhat.com)
+
 * Fri Mar 02 2012 Dan McPherson <dmcphers@redhat.com> 0.10.1-1
 - bump spec numbers (dmcphers@redhat.com)
 

@@ -5,7 +5,7 @@
 function print_help {
     echo "Usage: $0 app-name namespace uuid"
 
-    echo "$0 $@" | logger -p local0.notice -t libra_10gen_mms_agent_deconfigure
+    echo "$0 $@" | logger -p local0.notice -t stickshift_10gen_mms_agent_deconfigure
     exit 1
 }
 
@@ -21,8 +21,8 @@ done
 
 [ $# -eq 3 ] || print_help
 
-CART_DIR=${CART_DIR:=/usr/libexec/li/cartridges}
-source ${CART_DIR}/abstract/info/lib/util
+source "/etc/stickshift/stickshift-node.conf"
+source ${CARTRIDGE_BASE_PATH}/abstract/info/lib/util
 
 app_type="10gen-mms-agent-0.1"
 setup_embedded_deconfigure "$1" $2 $3
@@ -42,7 +42,7 @@ confirm_log_files_inactive "$MMS_DIR/logs"
 #
 # Remove environment variables
 #
-/bin/rm -f $APP_HOME/.env/OPENSHIFT_10GEN_MMS_AGENT_APP_DIR $APP_HOME/.env/OPENSHIFT_10GEN_MMS_AGENT_CTL_SCRIPT 
+/bin/rm -f $APP_HOME/.env/OPENSHIFT_10GEN_MMS_AGENT_GEAR_DIR $APP_HOME/.env/OPENSHIFT_10GEN_MMS_AGENT_CTL_SCRIPT 
 
 
 # Remove 10gen mms agent dir. This MUST be after stopping the agent as the CTL script relies on these.

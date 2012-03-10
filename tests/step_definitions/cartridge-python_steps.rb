@@ -1,5 +1,5 @@
 # Controller cartridge command paths
-$cartridge_root ||= "/usr/libexec/li/cartridges"
+$cartridge_root ||= "/usr/libexec/stickshift/cartridges"
 $python_cartridge = "#{$cartridge_root}/python-2.6"
 $python_common_conf_path = "#{$python_cartridge}/info/configuration/etc/conf/httpd_nolog.conf"
 $python_hooks = "#{$python_cartridge}/info/hooks"
@@ -18,7 +18,7 @@ $python_stop_format = "#{$python_stop_path} '%s' '%s' '%s'"
 $python_status_path = "#{$python_hooks}/status"
 $python_status_format = "#{$python_status_path} '%s' '%s' '%s'"
 
-$libra_httpd_conf_d ||= "/etc/httpd/conf.d/libra"
+$libra_httpd_conf_d ||= "/etc/httpd/conf.d/stickshift"
 
 When /^I configure a python application$/ do
   account_name = @account['accountname']
