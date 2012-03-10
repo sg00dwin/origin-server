@@ -21,9 +21,6 @@ Options:
 USAGE
 end
 
-puts "This script is under development!"
-exit 1
-
 opts = GetoptLong.new(
     ["--verbose",          "-v", GetoptLong::NO_ARGUMENT],
     ["--help",             "-h", GetoptLong::NO_ARGUMENT]
@@ -58,20 +55,32 @@ users.each { |user|
 node_hash = StickShift::ApplicationContainerProxy.get_all_gears
 no_error = true
 
+summary = []
 # now check
+print "Checking application gears in respective nodes :\n" if verbose
 mongo_hash.each { |mk,mv|
+  print "#{mk}...\t" if verbose
   if not node_hash.has_key? mk
     no_error = false
-    puts "Gear #{mk} in #{mv} does not exist on any node"
+    print "FAIL\n" if verbose
+    summary << "Gear #{mk} in #{mv} does not exist on any node"
+  else
+    print "OK\n" if verbose
   end
 }
 
 # now check reverse
+print "Checking node gears in application database:\n" if verbose
 node_hash.each { |nk, nv|
+  print "#{nk}...\t" if verbose
   if not mongo_hash.has_key? nk
     no_error = false
-    puts "Gear #{nk} exists on node #{nv} but does not exist in mongo database"
+    print "FAIL\n" if verbose
+    summary << "Gear #{nk} exists on node #{nv} but does not exist in mongo database"
+  else
+    print "OK\n" if verbose
   end
 }
 
-puts no_error ? "Success" : "Check failed."
+puts no_error ? "Success" : "Check failed.\n #{summary.join("\n")}"
+exit (no_error ? 0 : 1)

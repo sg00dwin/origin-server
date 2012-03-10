@@ -222,6 +222,30 @@ module MCollective
       end
 
       #
+      # Get all gears
+      #
+      def get_all_gears_action
+        gear_map = request[:gear_map]
+
+        uid_map = {}
+        uids = IO.readlines("/etc/passwd").map{ |line| 
+          uid = line.split(":")[2]
+          username = line.split(":")[0]
+          uid_map[username] = uid
+        }
+        dir = "/var/lib/stickshift/"
+        filelist = Dir.foreach(dir) { |file| 
+          if File.directory?(dir+file) and not File.symlink?(dir+file) and not file[0]=='.'
+            if uid_map.has_key?(file)
+              gear_map[file] = uid_map[file]
+            end
+          end
+        }
+        reply[:output] = gear_map
+        reply[:exitcode] = 0
+      end
+
+      #
       # Executes a list of jobs parallely and returns their results embedded in args
       #
       def execute_parallel_action

@@ -471,7 +471,7 @@ class Application < StickShift::Cartridge
     }
     # now execute
     begin
-      Express::Broker::ApplicationContainerProxy.execute_parallel_jobs(handle)
+      StickShift::ApplicationContainerProxy.execute_parallel_jobs(handle)
     rescue Exception=>e
       Rails.logger.error e.message
       Rails.logger.error e.inspect
