@@ -76,7 +76,7 @@ class Application < StickShift::Cartridge
 
   def add_to_requires_feature(feature)
     prof = @profile_name_map[@default_profile]
-    conn = Cloud::Sdk::Connection.new("#{feature}-conn")
+    conn = StickShift::Connection.new("#{feature}-conn")
     self.requires_feature.each { |cart|
       conn.components = [cart, feature]
       prof.add_connection(conn)
