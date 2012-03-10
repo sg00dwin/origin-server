@@ -271,14 +271,10 @@ class Application < StickShift::Cartridge
       ginst = self.group_instance_map[ginst_name]
       result, new_gear = ginst.add_gear(self)
       result_io.append result
-      self.add_dns(new_gear.uuid[0..9], @user.namespace, new_gear.get_proxy.get_public_hostname)
       break
     }
     if not new_gear.nil?
       result_io.append self.configure_dependencies
-      self.add_system_ssh_keys([new_gear])
-      self.add_ssh_keys([new_gear])
-      self.add_system_env_vars([new_gear])
       self.execute_connections
     end
     result_io
