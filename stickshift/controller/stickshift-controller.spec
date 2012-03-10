@@ -5,7 +5,7 @@
 
 Summary:        Cloud Development Controller
 Name:           rubygem-%{gemname}
-Version:        0.6.1
+Version:        0.6.4
 Release:        1%{?dist}
 Group:          Development/Languages
 License:        ASL 2.0
@@ -75,6 +75,14 @@ rm -rf %{buildroot}
 %{ruby_sitelib}/%{gemname}.rb
 
 %changelog
+* Fri Mar 09 2012 Dan McPherson <dmcphers@redhat.com> 0.6.4-1
+- Updating gem versions (dmcphers@redhat.com)
+- bump spec numbers (dmcphers@redhat.com)
+- Updating gem versions (dmcphers@redhat.com)
+- Build fixes (kraman@gmail.com)
+- authenticate iv/key as separate parameters because of truncation issue in
+  'username' method (rchopra@redhat.com)
+
 * Fri Mar 09 2012 Krishna Raman <kraman@gmail.com> 0.6.1-1
 - New package for StickShift (was Cloud-Sdk)
 

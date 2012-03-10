@@ -5,7 +5,7 @@
 
 Summary:        Cloud Development Node
 Name:           rubygem-%{gemname}
-Version:        0.6.1
+Version:        0.6.5
 Release:        1%{?dist}
 Group:          Development/Languages
 License:        ASL 2.0
@@ -91,6 +91,15 @@ rm -rf %{buildroot}
 echo "/usr/bin/ss-trap-user" >> /etc/shells
 
 %changelog
+* Fri Mar 09 2012 Dan McPherson <dmcphers@redhat.com> 0.6.5-1
+- Updating gem versions (dmcphers@redhat.com)
+- Merge branch 'master' of li-master:/srv/git/li (ramr@redhat.com)
+
+* Fri Mar 09 2012 Dan McPherson <dmcphers@redhat.com> 0.6.4-1
+- Updating gem versions (dmcphers@redhat.com)
+- bump spec numbers (dmcphers@redhat.com)
+- Updating gem versions (dmcphers@redhat.com)
+
 * Fri Mar 09 2012 Krishna Raman <kraman@gmail.com> 0.6.1-1
 - New package for StickShift (was Cloud-Sdk)
 

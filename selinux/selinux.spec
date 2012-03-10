@@ -1,6 +1,6 @@
 Summary:       SELinux policy for OpenShift nodes
 Name:          rhc-selinux
-Version:       0.88.1
+Version:       0.88.2
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -46,6 +46,18 @@ rm -rf %{buildroot}
 %attr(0640,-,-) %{_datadir}/selinux/packages/libra.pp
 
 %changelog
+* Fri Mar 09 2012 Dan McPherson <dmcphers@redhat.com> 0.88.2-1
+- Updates for getting devenv running (kraman@gmail.com)
+- Allow libra domains to relabelfrom/to all classes rather then just file.
+  Added mtr to dontallow list, unless we want to allow traceroute type access
+  (dwalsh@redhat.com)
+- dontaudit signull from httpd process to libra_initrc_t domains
+  (dwalsh@redhat.com)
+- Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
+  (dwalsh@redhat.com)
+- Dontaudit leaked file descriptors for anon_inodefs, allow libra domains to
+  connect to the flash port (dwalsh@redhat.com)
+
 * Fri Mar 02 2012 Dan McPherson <dmcphers@redhat.com> 0.88.1-1
 - bump spec numbers (dmcphers@redhat.com)
 - remove 127.0.0.1 restrictions (mmcgrath@redhat.com)

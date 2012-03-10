@@ -2,7 +2,7 @@
 
 Summary:   Provides JBossAS7 support
 Name:      rhc-cartridge-jbossas-7
-Version:   0.88.1
+Version:   0.88.2
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   ASL 2.0
@@ -123,6 +123,25 @@ rm -rf %{buildroot}
 %config(noreplace) %{cartridgedir}/info/configuration/
 
 %changelog
+* Fri Mar 09 2012 Dan McPherson <dmcphers@redhat.com> 0.88.2-1
+- Batch variable name chage (rmillner@redhat.com)
+- Fix merge issues (kraman@gmail.com)
+- Adding export control files (kraman@gmail.com)
+- Updating tests (kraman@gmail.com)
+- replacing references to libra with stickshift (abhgupta@redhat.com)
+- Fix to jboss spec (kraman@gmail.com)
+- Changing how node config is loaded (kraman@gmail.com)
+- Update Jboss cartridge libra/li => stickshift (kraman@gmail.com)
+- US2003 - JBoss HA (bdecoste@gmail.com)
+- US2003 - JBoss HA (bdecoste@gmail.com)
+- Jenkens templates switch to proper gear size names (rmillner@redhat.com)
+- Change memory limits based on new gear size allocation (rmillner@redhat.com)
+- fix a couple comments (dmcphers@redhat.com)
+- Removed new instances of GNU license headers (jhonce@redhat.com)
+- US2003 (bdecoste@gmail.com)
+- US2003 (bdecoste@gmail.com)
+- jboss scaling (rchopra@redhat.com)
+
 * Fri Mar 02 2012 Dan McPherson <dmcphers@redhat.com> 0.88.1-1
 - bump spec numbers (dmcphers@redhat.com)
 - fixup jboss index.html (dmcphers@redhat.com)

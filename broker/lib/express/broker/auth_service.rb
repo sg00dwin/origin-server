@@ -101,6 +101,8 @@ module Express
       end
       
       def check_broker_key(key, iv)
+        key = key.gsub(" ", "+")
+        iv = iv.gsub(" ", "+")
         encrypted_token = Base64::decode64(key)
         cipher = OpenSSL::Cipher::Cipher.new("aes-256-cbc")
         cipher.decrypt

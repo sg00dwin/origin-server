@@ -22,4 +22,7 @@ Subscribes:
   set-git-url:
     Type: "NET_TCP:git-url-info"
     Required: false
+  set-db-connection-info:
+    Type: "NET_TCP:db:connection-info"
+    Required: false
 

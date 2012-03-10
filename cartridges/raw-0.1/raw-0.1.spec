@@ -2,7 +2,7 @@
 
 Summary:   Provides diy support
 Name:      rhc-cartridge-raw-0.1
-Version:   0.22.1
+Version:   0.22.2
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   ASL 2.0
@@ -87,6 +87,20 @@ rm -rf %{buildroot}
 %doc %{cartridgedir}/LICENSE
 
 %changelog
+* Fri Mar 09 2012 Dan McPherson <dmcphers@redhat.com> 0.22.2-1
+- Batch variable name chage (rmillner@redhat.com)
+- Adding export control files (kraman@gmail.com)
+- removing call to load_node_conf method which is no longer present or required
+  (abhgupta@redhat.com)
+- Changing how node config is loaded (kraman@gmail.com)
+- Updating raw cartridge li/libra => stickshift (kraman@gmail.com)
+- Renaming Cloud-SDK -> StickShift (kraman@gmail.com)
+- Jenkens templates switch to proper gear size names (rmillner@redhat.com)
+- Cleaning up diy template. (mpatel@redhat.com)
+- Adds disclaimer during configure. (mpatel@redhat.com)
+- Rename raw to diy contd. (mpatel@redhat.com)
+- Changes to rename raw to diy. (mpatel@redhat.com)
+
 * Fri Mar 02 2012 Dan McPherson <dmcphers@redhat.com> 0.22.1-1
 - bump spec numbers (dmcphers@redhat.com)
 

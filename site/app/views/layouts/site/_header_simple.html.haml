@@ -1,0 +1,16 @@
+#top.section-top
+  .container
+
+%nav#nav{:class => 'section-nav' << content_for(:nav_class)}
+  .navbar
+    .container
+      -# Was .nav-collapse, has some issues
+      .brand
+        = link_to "/app/new" do
+          .brand-image
+          .brand-text
+            %strong> Open
+            Shift
+
+  - if content_for? :header
+    = yield :header

@@ -2,7 +2,7 @@
 
 Summary:   Provides haproxy-1.4 support
 Name:      rhc-cartridge-haproxy-1.4
-Version:   0.6.1
+Version:   0.6.3
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   ASL 2.0
@@ -64,6 +64,8 @@ ln -s %{cartridgedir}/../abstract/info/hooks/remove-alias %{buildroot}%{cartridg
 ln -s %{cartridgedir}/../abstract/info/hooks/move %{buildroot}%{cartridgedir}/info/hooks/move
 ln -s %{cartridgedir}/../abstract/info/hooks/threaddump %{buildroot}%{cartridgedir}/info/hooks/threaddump
 ln -s %{cartridgedir}/../abstract/info/hooks/system-messages %{buildroot}%{cartridgedir}/info/hooks/system-messages
+mkdir -p %{buildroot}%{cartridgedir}/info/connection-hooks/
+ln -s %{cartridgedir}/../abstract/info/connection-hooks/set-db-connection-info %{buildroot}%{cartridgedir}/info/connection-hooks/set-db-connection-info
 
 %clean
 rm -rf %{buildroot}
@@ -84,6 +86,47 @@ rm -rf %{buildroot}
 %doc %{cartridgedir}/LICENSE
 
 %changelog
+* Fri Mar 09 2012 Dan McPherson <dmcphers@redhat.com> 0.6.3-1
+- Merge branch 'master' of li-master:/srv/git/li (ramr@redhat.com)
+- Add connector for setting db connection info. (ramr@redhat.com)
+
+* Fri Mar 09 2012 Dan McPherson <dmcphers@redhat.com> 0.6.2-1
+- Batch variable name chage (rmillner@redhat.com)
+- Fix merge issues (kraman@gmail.com)
+- Adding export control files (kraman@gmail.com)
+- replacing references to libra with stickshift (abhgupta@redhat.com)
+- libra to stickshift changes for haproxy - untested (abhgupta@redhat.com)
+- partial set of libra-to-stickshift changes for haproxy (abhgupta@redhat.com)
+- Renaming Cloud-SDK -> StickShift (kraman@gmail.com)
+- Merge branch 'master' of li-master:/srv/git/li (ramr@redhat.com)
+- added README (mmcgrath@redhat.com)
+- removed comments (mmcgrath@redhat.com)
+- Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
+  (mmcgrath@redhat.com)
+- disabling ctld for now (mmcgrath@redhat.com)
+- finalizing some haproxy ctld bits (mmcgrath@redhat.com)
+- Modify haproxy connection hooks to source env variables correctly.
+  (ramr@redhat.com)
+- Bug fix - redirect streams only after the fd is opened. (ramr@redhat.com)
+- Jenkens templates switch to proper gear size names (rmillner@redhat.com)
+- Temporary commit to build (mmcgrath@redhat.com)
+- Temporary commit to build (mmcgrath@redhat.com)
+- accept any 200 response code (jhonce@redhat.com)
+- disabling haproxy_ctld_daemon (mmcgrath@redhat.com)
+- Adding cookie management to haproxy and general cleanup (mmcgrath@redhat.com)
+- removed a bunch of add/remove gear cruft (mmcgrath@redhat.com)
+- renaming haproxy watcher daemons (mmcgrath@redhat.com)
+- added a watcher script, fixed up tracker logic (mmcgrath@redhat.com)
+- Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
+  (mmcgrath@redhat.com)
+- WIP removed extraneous debugging code (jhonce@redhat.com)
+- renamed haproxy_status (mmcgrath@redhat.com)
+- Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
+  (mmcgrath@redhat.com)
+- adding more gearup/geardown logic (mmcgrath@redhat.com)
+- WIP add/remove/create gear (jhonce@redhat.com)
+- Removed new instances of GNU license headers (jhonce@redhat.com)
+
 * Fri Mar 02 2012 Dan McPherson <dmcphers@redhat.com> 0.6.1-1
 - bump spec numbers (dmcphers@redhat.com)
 - add/remove gear via SDK (jhonce@redhat.com)

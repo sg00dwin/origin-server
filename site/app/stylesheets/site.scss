@@ -113,9 +113,6 @@ body.signup {
 .recaptcha table {
   table-layout: auto;
 }
-#signup-and-signin {
-  margin-bottom: 50px;
-}
 
 @media (max-width: 767px) {
   .section-nav.lift-counter {
@@ -464,6 +461,9 @@ h1.ribbon {
 .column-buzz { background: $darkNoiseBackgroundColor url($transparentNoiseImageData); color: $textDarkBackground; }
 .column-buzz a { color: $textDarkBackground; }
 
+body.box header .section-top { border-top: 7px solid #333; }
+body.box .container, body.box .box { width: 550px; }
+
 // Column navigation
 .column-nav {
   background-color: $navColumnBackgroundColor;
@@ -614,6 +614,12 @@ body > header {
     repeat;
 }
 
+@media (max-width: 767px) {
+  body > header {
+    background: #191919 url($transparentNoiseImageData) repeat; 
+  }
+}
+
 /* community background */
 body.community > header {
   background-color: #191919;
@@ -624,6 +630,12 @@ body.community > header {
     repeat-x,
     repeat;
   background-position: center bottom;
+}
+
+@media (max-width: 767px) {
+  body.community > header {
+    background: #191919 url($transparentNoiseImageData) repeat; 
+  }
 }
 
 /* home-specific styles */
@@ -678,7 +690,7 @@ body.home > header {
 
 @media (max-width: 767px) {
   body.home  > header {
-    background: url('../images/dark-gray-diagonal-noise.jpg') repeat;
+    background: #191919 url($transparentNoiseImageData) repeat; 
   }
 
   .home .messaging {

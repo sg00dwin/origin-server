@@ -1,7 +1,7 @@
 %define cartridgedir %{_libexecdir}/stickshift/cartridges/embedded/10gen-mms-agent-0.1
 
 Name: rhc-cartridge-10gen-mms-agent-0.1
-Version: 1.6.1
+Version: 1.6.2
 Release: 1%{?dist}
 Summary: Embedded 10gen MMS agent for performance monitoring of MondoDB
 
@@ -50,6 +50,15 @@ rm -rf $RPM_BUILD_ROOT
 %doc %{cartridgedir}/LICENSE
 
 %changelog
+* Fri Mar 09 2012 Dan McPherson <dmcphers@redhat.com> 1.6.2-1
+- Batch variable name chage (rmillner@redhat.com)
+- Adding export control files (kraman@gmail.com)
+- replacing references to libra with stickshift in rockmongo cartridge
+  (abhgupta@redhat.com)
+- removing call to load_node_conf method which is no longer present or required
+  (abhgupta@redhat.com)
+- replacing libra with stickshift for 10gen mms cartridge (abhgupta@redhat.com)
+
 * Fri Mar 02 2012 Dan McPherson <dmcphers@redhat.com> 1.6.1-1
 - bump spec numbers (dmcphers@redhat.com)
 

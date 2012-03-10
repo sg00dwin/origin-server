@@ -3,7 +3,7 @@
 
 Summary:   Li broker components
 Name:      rhc-broker
-Version:   0.88.1
+Version:   0.88.2
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -85,6 +85,40 @@ rm -rf $RPM_BUILD_ROOT
 /bin/touch %{brokerdir}/log/production.log
 
 %changelog
+* Fri Mar 09 2012 Dan McPherson <dmcphers@redhat.com> 0.88.2-1
+- Updating gem versions (dmcphers@redhat.com)
+- Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
+  (rchopra@redhat.com)
+- Updating gem versions (dmcphers@redhat.com)
+- finally ...iv/token working (rchopra@redhat.com)
+- Fix factor code to read node config properly Fix rhc-admin-add-template to
+  store yaml for descriptor (kraman@gmail.com)
+- Making access to mongo config info consistent across broker and controller
+  (kraman@gmail.com)
+- Updating tests (kraman@gmail.com)
+- Updates for getting devenv running (kraman@gmail.com)
+- Changes to MongoDatastore: - Enabled creation of new mongodb instances with
+  different config parameters. - Re-organized mongo rails configuration
+  (rpenta@redhat.com)
+- Renaming Cloud-SDK -> StickShift (kraman@gmail.com)
+- missed a help message on the new gear sizes (rmillner@redhat.com)
+- Add new env var *_USER_APP_NAME (need to rename this once the *_APP_NAME is
+  switched over to *_GEAR_NAME). (ramr@redhat.com)
+- Merge branch 'master' of li-master:/srv/git/li (ramr@redhat.com)
+- checkpoint 3 - mcollective parallelized calls working - not integrated yet
+  (rchopra@redhat.com)
+- Increase timeouts to 60 secs. (ramr@redhat.com)
+- Broker defaults to small gear size (rmillner@redhat.com)
+- Fixed rhc-admin-add-template to properly parse YAML and JSON files
+  (fotios@redhat.com)
+- checkpoint 2 - parallel execution over mcollective - not integrated yet
+  (rchopra@redhat.com)
+- checkpoint - half the setup for parallel mcollective calls - not integrated
+  (rchopra@redhat.com)
+- fix issue with move changing nodes half way through (dmcphers@redhat.com)
+- fix a couple comments (dmcphers@redhat.com)
+- remove double URL encoding (lnader@redhat.com)
+
 * Fri Mar 02 2012 Dan McPherson <dmcphers@redhat.com> 0.88.1-1
 - Updating gem versions (dmcphers@redhat.com)
 - bump spec numbers (dmcphers@redhat.com)
