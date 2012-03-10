@@ -74,6 +74,42 @@ def migrate_app(rhlogin, app_name)
   out
 end
 
+#
+# Update node profile (only 2.0.6->2.0.7)
+#
+def update_node_profile(app)
+  changed = false
+
+  objects = [ app ]
+  app.group_instances.each do |g|
+    g.gears.each do |gear|
+      objects << gear
+    end
+  end
+
+  objects.each do |obj|
+    begin
+      old = obj.node_profile
+      if obj.node_profile.nil?
+        obj.node_profile = "small"
+      elsif obj.node_profile == "std"
+        obj.node_profile = "small"
+      elsif obj.node_profile == "large"
+        obj.node_profile = "medium"
+      end
+      if old != obj.node_profile
+          changed = true
+      end
+    rescue NoMethodError
+    end
+  end
+
+  if changed
+    app.save
+  end
+
+end
+
 def restart_app(app)
   out = ''
   leave_stopped = false
@@ -186,6 +222,13 @@ def migrate(continue=false, target_server_identity=nil)
     end
   end
   
+
+  #Migrate the app/gear sizes
+  users.each do |user|
+    user.applications.each do |app|
+      update_node_profile(app)
+    end
+  end
   
   node_to_apps = {}
   node_to_users = {}
