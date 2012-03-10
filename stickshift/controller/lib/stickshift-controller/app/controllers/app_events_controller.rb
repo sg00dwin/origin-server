@@ -34,8 +34,16 @@ class AppEventsController < BaseController
           application.show_port
         when "scale-up"
           application.scaleup
+          if application.web_cart=="jbossas-7"
+            Rails.logger.debug "Restarting JBoss cluster"
+            application.restart
+          end
         when "scale-down"
           application.scaledown
+          if application.web_cart=="jbossas-7"
+            Rails.logger.debug "Restarting JBoss cluster"
+            application.restart
+          end
         else
           @reply = RestReply.new(:unprocessable_entity)
           message = Message.new(:error, "Invalid event #{event}.  Valid events are start, stop, restart, force-stop", 126, "event")
