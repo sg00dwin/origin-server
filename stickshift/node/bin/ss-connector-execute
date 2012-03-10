@@ -80,7 +80,7 @@ begin
   if File.exists? "#{cart_dir}/#{cart_name}/info/connection-hooks/#{hook_name}"                
      shellsafe_argv = ARGV.map { |arg| Shellwords::shellescape(arg) }
      # pid, stdin, stdout, stderr = Open4::popen4ext(true, "runuser --shell /bin/sh #{gear_uuid} /usr/libexec/li/cartridges/#{cart_name}/info/connection-hooks/#{hook_name} #{shellsafe_argv.join(' ')} 2>&1")
-     pid, stdin, stdout, stderr = Open4::popen4(true, "#{cart_dir}/#{cart_name}/info/connection-hooks/#{hook_name} #{shellsafe_argv.join(' ')} 2>&1")
+     pid, stdin, stdout, stderr = Open4::popen4ext(true, "#{cart_dir}/#{cart_name}/info/connection-hooks/#{hook_name} #{shellsafe_argv.join(' ')} 2>&1")
      zout = stdout.gets
      zout = "" if zout.nil?
      $stdout.puts zout
