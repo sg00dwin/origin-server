@@ -19,4 +19,6 @@ Subscribes:
   set-proxy-url:
     Type: "STRING:proxy-path"
     Required: false
-
+  set-db-connection-info:
+    Type: "NET_TCP:db:connection-info"
+    Required: false

@@ -13,6 +13,10 @@ Architecture: noarch
 Publishes:
   get-doc-root:
     Type: "FILESYSTEM:doc-root"
+Subscribes:
+  set-db-connection-info:
+    Type: "NET_TCP:db:connection-info"
+    Required: false
 Reservations:
   - MEM >= 10MB
 Scaling:

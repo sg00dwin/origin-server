@@ -19,6 +19,9 @@ Components:
       get-serve-info:
         Type: "NET_TCP:db-config:url"
     Subscribes:
+      set-db-connection-info:
+        Type: "NET_TCP:db:connection-info"
+        Required: false
       set-mysql-connection-info:
         Type: "NET_TCP:db:mysql"
         Required : true
