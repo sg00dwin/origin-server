@@ -43,6 +43,11 @@ then
     sed -i "s/-${old_namespace}.${CLOUD_DOMAIN}/-${new_namespace}.${CLOUD_DOMAIN}/g" $APP_DIR/data/config.xml
 fi
 
+if [ -f $APP_DIR/data/hudson.tasks.Mailer.xml ]
+then
+    sed -i "s/-${old_namespace}.${CLOUD_DOMAIN}/-${new_namespace}.${CLOUD_DOMAIN}/g" $APP_DIR/data/hudson.tasks.Mailer.xml
+fi
+
 if ! out=$(run_as_user "$CART_INFO_DIR/bin/jenkins_reload" 2>&1)
 then
     # An error occurred reloading jenkins configuration
