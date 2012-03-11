@@ -50,7 +50,7 @@ while [ $# -gt 0 ]; do
 done
 
 if [ ! -f "$OPENSHIFT_DB_CTL_SCRIPT" ]; then
-   cat <<CTLEOF > "$APP_DIR/${application}_mysql_ctl.sh"
+   cat <<CTLEOF > "$APP_DIR/${application}_remote_db_ctl.sh"
 #!/bin/bash -e
 
 # Import Environment Variables
@@ -60,9 +60,10 @@ do
 done
 
 gear_user_and_host="\$OPENSHIFT_DB_GEAR_UUID@\$OPENSHIFT_DB_GEAR_DNS"
-ssh \$gear_user_and_host rhcsh \$OPENSHIFT_DB_GEAR_CTL_SCRIPT \$1
+ssh \$gear_user_and_host rhcsh \$OPENSHIFT_DB_CTL_ONGEAR_SCRIPT \$1
 CTLEOF
 
-   echo "$APP_DIR/${application}_mysql_ctl.sh" > "$APP_HOME/.env/.uservars/OPENSHIFT_DB_CTL_SCRIPT"
+   chmod 755 "$APP_DIR/${application}_remote_db_ctl.sh"
+   echo "$APP_DIR/${application}_remote_db_ctl.sh" > "$APP_HOME/.env/.uservars/OPENSHIFT_DB_CTL_SCRIPT"
 fi
 
