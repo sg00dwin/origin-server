@@ -18,6 +18,18 @@
     width: $logoWidth;
   }
 
+  .brand > a > .brand-image {
+    -moz-transition: all 0.2s;
+    -webkit-transition: all 0.2s;
+    transition: all 0.2s;
+  }
+
+  .brand > a:hover > .brand-image {
+    -moz-transform: rotate(-10deg);
+    -webkit-transform: rotate(-10deg);
+    transform: rotate(-10deg);
+  }
+
   .nav {
     font-size: 13px; 
     text-transform: uppercase;
