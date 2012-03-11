@@ -219,6 +219,21 @@ def migrate(continue=false, target_server_identity=nil)
         user.env_vars['JENKINS_URL'] = jenkins_url
         user.save
       end
+      apps = user.applications
+      apps.each do |app|
+        unless app.embedded.nil?
+          app.embedded.each do |cart, cart_info|
+            if cart == 'jenkins-client-1.4'
+              if cart_info['info'].include?('http://')
+                puts "Updating jenkins job url for user: #{user.login} with app: #{app.name}"
+                info = cart_info['info'].gsub(/http:\/\//, 'https://')
+                app.set_embedded_cart_info(cart, info)
+                app.save
+              end
+            end
+          end
+        end
+      end
     end
   end
   
