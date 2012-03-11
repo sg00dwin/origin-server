@@ -188,11 +188,13 @@ client_result "   Root User: admin"
 client_result "   Root Password: $password"
 client_result "   Database Name: ${dbname}"
 client_result ""
-client_result "Connection URL: mysql://$IP:3306/"
-client_result ""
 
 if is_a_scalable_app; then
-    client_result "Inter-gear Connection URL: mysql://$mysql_ip:$mysql_port/"
+    client_result "Connection URL: mysql://$mysql_ip:$mysql_port/"
+    client_result "   On the MySQL gear, you can also connect via the local Connection URL: mysql://$IP:3306/"
+    client_result ""
+else
+    client_result "Connection URL: mysql://$IP:3306/"
     client_result ""
 fi
 
