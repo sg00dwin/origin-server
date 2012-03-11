@@ -1057,7 +1057,28 @@ module Express
           rpc_client
       end
 
-      def self.execute_parallel_jobs(handle)
+      def self.get_all_gears_impl
+        gear_map = {}
+        begin
+          options = ApplicationContainerProxy.rpc_options
+          rpc_client = rpcclient('libra', :options => options)
+          mc_args = { :gear_map => {} }
+          rpc_client.custom_request('get_all_gears', mc_args, nil).each { |response|
+            if response.results[:statuscode] == 0
+              sub_gear_map = response.results[:data][:output]
+              sender = response.results[:sender]
+              sub_gear_map.each { |k,v|
+                gear_map[k] = "[#{sender}, uid:#{v}]"
+              }
+            end
+          }
+        ensure
+          rpc_client.disconnect
+        end
+        gear_map
+      end
+
+      def self.execute_parallel_jobs_impl(handle)
         id_list = handle.keys
         id_list.each { |id| 
           begin
@@ -1075,7 +1096,8 @@ module Express
               Rails.logger.debug("DEBUG: Output of parallel execute: #{output}, status: #{exitcode}")
               handle[id] = output if exitcode==0
             end
-          rescue Exception =>e
+          ensure
+            rpc_client.disconnect
           end
         }
       end

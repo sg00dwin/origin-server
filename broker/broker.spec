@@ -3,7 +3,7 @@
 
 Summary:   Li broker components
 Name:      rhc-broker
-Version:   0.88.2
+Version:   0.88.3
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -85,6 +85,12 @@ rm -rf $RPM_BUILD_ROOT
 /bin/touch %{brokerdir}/log/production.log
 
 %changelog
+* Sat Mar 10 2012 Dan McPherson <dmcphers@redhat.com> 0.88.3-1
+- Updating gem versions (dmcphers@redhat.com)
+- rhc-admin-chk (rchopra@redhat.com)
+- checkpoint - rhc-admin-chk script - incomplete (rchopra@redhat.com)
+- Fixing a couple of missed Cloud::Sdk references (kraman@gmail.com)
+
 * Fri Mar 09 2012 Dan McPherson <dmcphers@redhat.com> 0.88.2-1
 - Updating gem versions (dmcphers@redhat.com)
 - Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li

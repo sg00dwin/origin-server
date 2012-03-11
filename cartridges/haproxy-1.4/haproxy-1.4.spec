@@ -2,7 +2,7 @@
 
 Summary:   Provides haproxy-1.4 support
 Name:      rhc-cartridge-haproxy-1.4
-Version:   0.6.3
+Version:   0.6.4
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   ASL 2.0
@@ -86,6 +86,10 @@ rm -rf %{buildroot}
 %doc %{cartridgedir}/LICENSE
 
 %changelog
+* Sat Mar 10 2012 Dan McPherson <dmcphers@redhat.com> 0.6.4-1
+- Cleanup stickshift merge issues -- fix set-git-url hook failed to set the git
+  repo as ssh was not found. (ramr@redhat.com)
+
 * Fri Mar 09 2012 Dan McPherson <dmcphers@redhat.com> 0.6.3-1
 - Merge branch 'master' of li-master:/srv/git/li (ramr@redhat.com)
 - Add connector for setting db connection info. (ramr@redhat.com)

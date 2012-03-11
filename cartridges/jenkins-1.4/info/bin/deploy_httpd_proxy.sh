@@ -39,11 +39,13 @@ cat <<EOF > "${STICKSHIFT_HTTP_CONF_DIR}/${uuid}_${namespace}_${application}.con
   RequestHeader append X-Forwarded-Proto "http"
 
   Include ${STICKSHIFT_HTTP_CONF_DIR}/${uuid}_${namespace}_${application}/*.conf
-  
-  RewriteEngine on
-  RewriteCond %{HTTPS} off
-  RewriteRule /health ${CARTRIDGE_BASE_PATH}/jenkins-1.4/info/configuration/health [L]
-  RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [R=301,L]
+
+  ##RewriteEngine On
+  ##RewriteRule /health ${CARTRIDGE_BASE_PATH}/jenkins-1.4/info/configuration/health [L]
+  Alias /health ${CARTRIDGE_BASE_PATH}/jenkins-1.4/info/configuration/health
+  ProxyPass /health !
+  ProxyPass / http://$IP:8080/ status=I
+  ProxyPassReverse / http://$IP:8080/
 </VirtualHost>
 
 <VirtualHost *:443>

@@ -2,7 +2,7 @@
 
 Summary:   Provides Node-0.6 support
 Name:      rhc-cartridge-nodejs-0.6
-Version:   0.3.2
+Version:   0.3.3
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   ASL 2.0
@@ -101,6 +101,9 @@ rm -rf %{buildroot}
 %doc %{cartridgedir}/LICENSE
 
 %changelog
+* Sat Mar 10 2012 Dan McPherson <dmcphers@redhat.com> 0.3.3-1
+- Fix for bugz 801989 nodejs scaled app. (ramr@redhat.com)
+
 * Fri Mar 09 2012 Dan McPherson <dmcphers@redhat.com> 0.3.2-1
 - Batch variable name chage (rmillner@redhat.com)
 - Adding export control files (kraman@gmail.com)

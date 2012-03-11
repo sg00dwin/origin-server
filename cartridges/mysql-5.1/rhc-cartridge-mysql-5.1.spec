@@ -2,7 +2,7 @@
 %define frameworkdir %{_libexecdir}/stickshift/cartridges/mysql-5.1
 
 Name: rhc-cartridge-mysql-5.1
-Version: 0.22.3
+Version: 0.22.4
 Release: 1%{?dist}
 Summary: Provides embedded mysql support
 
@@ -70,6 +70,9 @@ rm -rf $RPM_BUILD_ROOT
 %doc %{cartridgedir}/LICENSE
 
 %changelog
+* Sat Mar 10 2012 Dan McPherson <dmcphers@redhat.com> 0.22.4-1
+- Fix issues stickshift merge missed. (ramr@redhat.com)
+
 * Fri Mar 09 2012 Dan McPherson <dmcphers@redhat.com> 0.22.3-1
 - Merge branch 'master' of li-master:/srv/git/li (ramr@redhat.com)
 - Fixes to get connections executing. (ramr@redhat.com)

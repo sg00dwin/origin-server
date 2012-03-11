@@ -128,7 +128,7 @@ client_result ""
 client_result "   User: admin"
 client_result "   Password: $admin_password"
 client_result ""
-client_result "Note:  You can change your password at: http://${application}-${namespace}.${CLOUD_DOMAIN}/me/configure"
+client_result "Note:  You can change your password at: https://${application}-${namespace}.${CLOUD_DOMAIN}/me/configure"
 client_result ""
 
 add_env_var "JENKINS_URL=https://${application}-${namespace}.${CLOUD_DOMAIN}/"

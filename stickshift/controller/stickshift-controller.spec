@@ -5,7 +5,7 @@
 
 Summary:        Cloud Development Controller
 Name:           rubygem-%{gemname}
-Version:        0.6.4
+Version:        0.6.5
 Release:        1%{?dist}
 Group:          Development/Languages
 License:        ASL 2.0
@@ -75,6 +75,15 @@ rm -rf %{buildroot}
 %{ruby_sitelib}/%{gemname}.rb
 
 %changelog
+* Sat Mar 10 2012 Dan McPherson <dmcphers@redhat.com> 0.6.5-1
+- Updating gem versions (dmcphers@redhat.com)
+- rhc-admin-chk (rchopra@redhat.com)
+- us2003 (bdecoste@gmail.com)
+- cucumber test fix (rchopra@redhat.com)
+- fixed cucumber test (rchopra@redhat.com)
+- Fixing a couple of missed Cloud::Sdk references (kraman@gmail.com)
+- fix dns issue on scaleup (rchopra@redhat.com)
+
 * Fri Mar 09 2012 Dan McPherson <dmcphers@redhat.com> 0.6.4-1
 - Updating gem versions (dmcphers@redhat.com)
 - bump spec numbers (dmcphers@redhat.com)
