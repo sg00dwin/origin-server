@@ -2,7 +2,7 @@
 
 Summary:       Multi-tenant cloud management system node tools
 Name:          rhc-node
-Version:       0.88.3
+Version:       0.88.4
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -259,6 +259,19 @@ fi
 /lib64/security/pam_libra.so
 
 %changelog
+* Sat Mar 10 2012 Dan McPherson <dmcphers@redhat.com> 0.88.4-1
+- rhc-admin-chk (rchopra@redhat.com)
+- Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
+  (rmillner@redhat.com)
+- Local migration includes variable name transition (rmillner@redhat.com)
+- Add the gear translator script (rmillner@redhat.com)
+- Merge branch 'master' of li-master:/srv/git/li (ramr@redhat.com)
+- Was in the wrong directory (rmillner@redhat.com)
+- Fix issues stickshift merge missed. (ramr@redhat.com)
+- Needed to be in the proper directory (rmillner@redhat.com)
+- Do the variable name transitions in a .env directory supplied on the command
+  line (rmillner@redhat.com)
+
 * Fri Mar 09 2012 Dan McPherson <dmcphers@redhat.com> 0.88.3-1
 - Merge branch 'master' of li-master:/srv/git/li (ramr@redhat.com)
 - Fixes to get connections executing. (ramr@redhat.com)
