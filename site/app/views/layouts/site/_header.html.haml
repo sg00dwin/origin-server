@@ -1,7 +1,7 @@
 #top.section-top
   .container
     .pull-left
-      = link_to "Sign up for the newsletter »", newsletter_signup_url
+      = link_to "Sign up for the newsletter", newsletter_signup_url
     .pull-right.login
       -#if session[:login]
         = link_to session[:login], "console", :class => 'btn btn-small'
