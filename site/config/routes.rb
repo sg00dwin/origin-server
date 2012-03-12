@@ -82,6 +82,8 @@ RedHatCloud::Application.routes.draw do
     #match 'user' => 'user#show', :via => :get
 
     # deprecated, use :password
+    match 'user/request_password_reset_form' => 'user#request_password_reset_form', :via => [:get]
+    match 'user/request_password_reset_success' => 'user#request_password_reset_success', :via => [:get]
     match 'user/request_password_reset' => 'user#request_password_reset', :via => [:post]
     match 'user/reset_password' => 'user#reset_password', :via => [:get]
     match 'user/change_password' => 'user#change_password', :via => [:post]
