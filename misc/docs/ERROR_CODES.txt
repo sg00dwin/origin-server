@@ -32,6 +32,7 @@ User errors:
 127: A domain with specified namespace does not exist and can not be operated on
 128: The domain with specified namespace contains applications. Delete applications first or set force to true.
 129: The application is not configure with this cartridge
+130: Invalid object for estimation
 146: User has valid credentials but hasn't been granted access to Express yet.
 147: User has valid credentials but hasn't requested access to Express yet.
 210: Can not override existing location for git repo

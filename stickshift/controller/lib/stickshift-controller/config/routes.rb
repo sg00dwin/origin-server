@@ -11,8 +11,9 @@ Rails.application.routes.draw do
       resource :user, :only => [:show], :controller => :user do
         resources :keys, :controller => :keys, :constraints => { :id => /[\w]+/ } 
       end
-      resources :cartridges, :only => [:index,:show], :constraints => { :id => /standalone|embedded/ }
-      resources :application_template      
+      resources :cartridges, :only => [:index, :show], :constraints => { :id => /standalone|embedded/ }
+      resources :application_template
+      resources :estimates, :constraints => { :id => /[\w]+/ }, :only => [:index, :show]
       resources :domains, :constraints => { :id => /[A-Za-z0-9]+/ } do
         resources :applications, :constraints => { :id => /[\w]+/ } do
           resource :descriptor, :only => [:show]
