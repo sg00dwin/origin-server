@@ -23,15 +23,17 @@ class BaseController < ActionController::Base
   def authenticate
     login = nil
     password = nil
-    authenticate_with_http_basic { |u, p|
-      login = u
-      password = p
-    }
     if request.headers['User-Agent'] == "StickShift"
       if params['broker_auth_key'] && params['broker_auth_iv']
         login = params['broker_auth_key']
         password = params['broker_auth_iv']
       end
+    end
+    if login.nil? or password.nil?
+      authenticate_with_http_basic { |u, p|
+        login = u
+        password = p
+      }
     end
     auth = StickShift::AuthService.instance.authenticate(request, login, password)
     if auth

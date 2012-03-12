@@ -17,6 +17,4 @@ class HomeController < ApplicationController
   # for general static page serving
   def about; end
 
-  def getting_started; end
-
 end

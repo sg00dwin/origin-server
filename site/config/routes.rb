@@ -15,7 +15,7 @@ RedHatCloud::Application.routes.draw do
     # Sample of regular route:
     #   match 'products/:id' => 'catalog#view'
     # Keep in mind you can assign values other than :controller and :action
-    match 'getting_started' => 'home#getting_started'
+    match 'getting_started', :to => redirect('/app/platform')
     match 'getting_started_external/:registration_referrer' => 'getting_started_external#show'
     match 'email_confirm' => 'email_confirm#confirm'
     match 'email_confirm_external/:registration_referrer' => 'email_confirm#confirm_external'
@@ -24,7 +24,8 @@ RedHatCloud::Application.routes.draw do
     match 'express' => 'product#express', :as => 'express'
     match 'flex' => 'product#flex', :as => 'flex'
     match 'platform' => 'product#overview', :as => 'product_overview'
-    match 'features' => 'product#features', :as => 'features'
+    match 'features', :to => redirect('/app/platform')
+    # match 'features' => 'product#features', :as => 'features'
     match 'express_protected' => 'product#express_protected', :as => 'express_protected'
     match 'flex_protected' => 'product#flex_protected', :as => 'flex_protected'
     match 'power', :to => redirect('/app/platform')
