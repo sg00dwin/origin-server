@@ -4,7 +4,7 @@ end
 
 When /^I add a new template named '([^\']*)' with dependencies: '([^\']*)' and git repository '([^\']*)' and tags '([^\']*)' consuming (\d+) gear and metadata '([^\']*)'$/ do |display_name, dependencies, git_url, tags, num_gears, metadata|
   dependencies = dependencies.split(",").map{ |dep| "  - #{dep}\n"}
-  output = `rhc-admin-add-template -n "#{display_name}" -d "Requires: \n#{dependencies}\nSubscribes:\n  doc-root:\n    Type: \"FILESYSTEM:doc-root\"" -g #{git_url} -t#{tags} -c #{num_gears} -m '#{metadata}'`
+  output = `rhc-admin-ctl-template -c add -n "#{display_name}" -d "Requires: \n#{dependencies}\nSubscribes:\n  doc-root:\n    Type: \"FILESYSTEM:doc-root\"" -g #{git_url} -t#{tags} --cost #{num_gears} -m '#{metadata}'`
   @template_uuid = output.split(" ")[1]
 end
 
@@ -32,7 +32,7 @@ When /^I search for the tag '([^\']*)'$/ do |tag|
 end
 
 When /^I remove the template$/ do
-  output = `rhc-admin-remove-template -u "#{@template_uuid}"`
+  output = `rhc-admin-ctl-template -c remove -u "#{@template_uuid}"`
 end
 
 Then /^the template exists$/ do
@@ -47,7 +47,7 @@ Then /^the template exists$/ do
   uuid.should_not be_nil
 end
 
-Then /^the template should (not?) exist in list$/ do |n|
+Then /^the template should( not)? exist in list$/ do |n|
   if @accept_type.upcase == "XML"
     page = Nokogiri::XML(@response.body)
     templates = page.xpath("//response/data/*[uuid = \"#{@template_uuid}\"]")
