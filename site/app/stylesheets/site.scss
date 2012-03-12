@@ -765,3 +765,73 @@ body.home > header {
   background-color: transparent;
   background-image: none;
 }
+
+/* Simple page */
+html { height: 100%; }
+body.box {
+  /* Override default styles */
+  & > header {
+    background: none;
+    min-height: 0;
+  }
+  .section-striped {
+    background: none;
+  }
+  #content {
+    min-height: 0;
+  }
+
+  /* background */
+  min-height: 100%;
+  background: #191919 url($transparentNoiseImageData);
+  background-image:
+    url('../images/mts-bottom-transparent.png'),
+    url('../images/stars.png'),
+    url($transparentNoiseImageData),
+    -moz-repeating-linear-gradient(110deg, #191919 0px, #191919 10px, #181818 10px, #181818 20px);
+  background-image:
+    url('../images/mts-bottom-transparent.png'),
+    url('../images/stars.png'),
+    url($transparentNoiseImageData),
+    -webkit-repeating-linear-gradient(110deg, #191919 0px, #191919 10px, #171717 10px, #171717 20px);
+  background-image:
+    url('../images/mts-bottom-transparent.png'),
+    url('../images/stars.png'),
+    url($transparentNoiseImageData),
+    -ms-repeating-linear-gradient(110deg, #191919 0px, #191919 10px, #181818 10px, #181818 20px);
+  background-image:
+    url('../images/mts-bottom-transparent.png'),
+    url('../images/stars.png'),
+    url($transparentNoiseImageData),
+    repeating-linear-gradient(110deg, #191919 0px, #191919 10px, #181818 10px, #181818 20px);
+  background-repeat:
+    repeat-x,
+    repeat,
+    repeat,
+    repeat;
+  background-position: center bottom;
+}
+
+@media (max-width: 767px) {
+  body.box {
+    > header {
+      min-height: 0;
+    }
+    .box {
+      background-color: white;
+      margin-left: 0;
+
+      h1.ribbon {
+        margin-left: -10px;
+      }
+    }
+    #nav {
+      padding-bottom: 0;
+    }
+
+    background-image: url($transparentNoiseImageData);
+    background-repeat: repeat;
+
+
+  }
+}
