@@ -83,14 +83,13 @@ body.signup {
 // Concrete sections of pages
 .section-top {
   background-color: $topBarBackgroundColor; 
-  color: white;
+  color: #888;
 
   .container .btn {
-    background: #333;
+    background: #232323;
     border-radius: 0;
     text-shadow: none;
     border: 0;
-    color: white;
     box-shadow: none;
 
     &:hover, &:active {
@@ -160,11 +159,11 @@ body.signup {
 // Top bar
 .section-top > .container {
   > div {
-    padding: 8px 0;
+    padding: 6px 0;
     > a {
       color: $signupLinkColor;
-      font-weight: bold;
       text-transform: uppercase;
+      font-size: 12px;
     }
     > a:hover {
       text-decoration: none;
@@ -176,6 +175,11 @@ body.signup {
   }
 }
 
+.section-top > .container > div.pull-left {
+	padding-right: 26px;
+	background: url("../images/sprite-vert.png") no-repeat scroll right -162px transparent;
+	}
+
 // Central messaging content
 .messaging {
   clear: both;
@@ -186,15 +190,15 @@ body.signup {
   margin-bottom: 30px;
 
   .primary {
-    font-size: 40px;
+    font-size: 42px;
     line-height: 1em;
     text-transform: uppercase;
     color: white;
   }
 
   .secondary {
-    font-size: 16px;
-    line-height: 1.2em;
+    font-size: 15px;
+    line-height: 1.5em;
     color: white;
   }
 }
@@ -441,6 +445,7 @@ h1.ribbon {
     display: inline-block;
     padding: 5px $gridGutterWidth 5px 0; /* left margin set by ribbon */
     min-width: 30%;
+    text-shadow: -1px -1px 0 rgba(0, 0, 0, 0.18);
   }
   @include ribbon($ribbonFoldColor);
 }
