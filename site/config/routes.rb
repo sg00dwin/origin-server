@@ -15,7 +15,7 @@ RedHatCloud::Application.routes.draw do
     # Sample of regular route:
     #   match 'products/:id' => 'catalog#view'
     # Keep in mind you can assign values other than :controller and :action
-    match 'getting_started' => 'getting_started/generic#show'
+    match 'getting_started' => 'home#getting_started'
     match 'getting_started_external/:registration_referrer' => 'getting_started_external#show'
     match 'email_confirm' => 'email_confirm#confirm'
     match 'email_confirm_external/:registration_referrer' => 'email_confirm#confirm_external'
