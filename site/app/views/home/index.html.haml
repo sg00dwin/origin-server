@@ -21,12 +21,12 @@
         .span6
           %ul.learn.unstyled
             %li
-              = link_to product_overview_path, :class => 'link-tile' do
+              = link_to product_overview_path(:anchor => 'code'), :class => 'link-tile' do
                 %img{:src => 'clock.png'}
                 %h4 Superfast!
                 %p Code and deploy to the cloud in minutes.  Faster and easier than it has ever been.
             %li
-              = link_to product_overview_path, :class => 'link-tile' do
+              = link_to product_overview_path(:anchor => 'open'), :class => 'link-tile' do
                 %img{:src => 'key.png'}
                 %h4 Don't get locked in
                 %p Minimal coding to the platform and built on open technologies, so you can take it with you.
