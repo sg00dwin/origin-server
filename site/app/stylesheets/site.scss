@@ -673,7 +673,7 @@ body.home > header {
   .secondary {
     max-width: 790px;
     margin: 0 auto;
-    font-family: Liberation Sans, Helvetica Neue, Helvetica, Arial, Sans-serif;
+    font-family: $baseFontFamily;
   }
   h1, h2 { color: white; }
 }
