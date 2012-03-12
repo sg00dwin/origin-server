@@ -1,5 +1,7 @@
 class VideoController < ApplicationController
 
+  layout 'site'
+
   KNOWN_TITLES = {'OpenShift-Ecosystem' => "Developers, ISVs, customers and partners", 
                   'OpenShift-Flex-demo' => "OpenShift Flex Product Tour",
                   'OpenShift-Express-demo' => "OpenShift Express Product Tour",

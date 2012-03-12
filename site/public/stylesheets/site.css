@@ -651,6 +651,11 @@ body.signup {
   color: white;
 }
 
+.video-box {
+  text-align: center;
+  padding-bottom: 30px;
+}
+
 @media (max-width: 979px) {
   .messaging .primary {
     font-size: 32px;
