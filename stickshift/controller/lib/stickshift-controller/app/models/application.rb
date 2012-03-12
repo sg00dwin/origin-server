@@ -264,8 +264,10 @@ class Application < StickShift::Cartridge
   end
 
   def scaleup
-    raise Exception.new("Cannot scale a non-scalable app") if not self.scalable
     result_io = ResultIO.new
+    if not self.scalable
+      raise StickShift::NodeException.new("Cannot scale a non-scalable application", "-100", result_io)
+    end
     wb = web_cart
     new_gear = nil
     # find the group instance where the web-cartridge is residing
@@ -285,7 +287,9 @@ class Application < StickShift::Cartridge
 
   def scaledown
     result_io = ResultIO.new
-    return result_io if not self.scalable
+    if not self.scalable
+      raise StickShift::NodeException.new("Cannot scale a non-scalable application", "-100", result_io)
+    end
     wb = web_cart
     # find the group instance where the web-cartridge is residing
     self.group_instance_map.keys.each { |ginst_name|
