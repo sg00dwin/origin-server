@@ -91,6 +91,7 @@ body.signup {
     text-shadow: none;
     border: 0;
     box-shadow: none;
+    color: #727272;
 
     &:hover, &:active {
       background: #AAAAAA;
@@ -171,13 +172,13 @@ body.signup {
     }
   }
   > .login {
-    padding: 5px 0;
+    padding: 4px 0;
   }
 }
 
 .section-top > .container > div.pull-left {
 	padding-right: 26px;
-	background: url("../images/sprite-vert.png") no-repeat scroll right -162px transparent;
+	background: url("../images/sprite-vert.png") no-repeat scroll right -163px transparent;
 	}
 
 // Central messaging content
