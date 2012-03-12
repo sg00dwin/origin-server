@@ -1,5 +1,5 @@
 Name:		bind-local
-Version:	0.6
+Version:	0.7
 Release:	1%{?dist}
 Summary:	Config for local named for test and development with Dynamic DNS
 Group:		Network/Daemons
@@ -202,6 +202,13 @@ fi
 
 
 %changelog
+* Mon Mar 12 2012 Mark Lamourine <mlamouri@redhat.com> 0.7-1
+- Finish packaging bind-local:   install named configuration files   install
+  dhcpnamedforward SELinux policy   install dhclient config and hooks to
+  generate resolv.conf and forwarders   Convert named-local script to bourne
+  shell   Drop dependency on ruby for named-local service control
+  (mlamouri@redhat.com)
+
 * Fri Mar 09 2012 Mark Lamourine <mlamouri@redhat.com> 0.3-1
 - comment forwarders for now (mlamouri@redhat.com)
 - dynamic belongs under var/named (mlamouri@redhat.com)
