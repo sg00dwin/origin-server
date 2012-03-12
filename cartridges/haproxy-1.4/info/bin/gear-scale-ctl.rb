@@ -17,149 +17,80 @@ $domain_url='/domains'
 class Gear_scale_ctl
   def initialize(action, opts)
     if action ==  'gear-scale-ctl.rb'
-      $stderr.puts 'Call gear-scale-ctl via an alias: add-gear, remove-gear, create-app'
+      $stderr.puts 'Call gear-scale-ctl via an alias: add-gear, remove-gear'
       exit 2
     end
 
-    if not ['add-gear', 'remove-gear', 'create-gear'].include? action
+    if not ['add-gear', 'remove-gear'].include? action
       usage opts
     end
 
     @action = action
     @opts = opts
 
-    base_url = $base_url % opts["server"]
-    user, password, url, payload = case action
-      when 'add-gear'
-        [
-#          File.read("/var/lib/libra/#{opts['app']}-#{opts['namespace']}/.auth/iv").chomp,
-#          File.read("/var/lib/libra/#{opts['app']}-#{opts['namespace']}/.auth/token").chomp,
-          opts['rhlogin'], opts['password'],
-          "#{base_url}#{$scale_url % [opts['namespace'], opts['app']]}",
-          {'event' => 'scale-up'}
-        ]
-      when 'remove-gear'
-        [
-#          URI.escape(File.read("/var/lib/libra/#{opt['app']}-#{opt['namespace']}/.auth/token")),
-#          URI.escape(File.read("/var/lib/libra/#{opt['app']}-#{opt['namespace']}/.auth/iv")),
-          opts['rhlogin'], opts['password'],
-          "#{base_url}#{$scale_url % [opts['namespace'], opts['app']]}",
-          {'event' => 'scale-down'}
-        ]
-      when 'create-gear'
-        [
-          opts['rhlogin'], opts['password'],
-          "#{base_url}#{$create_url % opts['namespace']}",
-          {'name' => opts["app"], 'cartridge' => opts["type"], 'scale' => 'true'}
-        ]
-    end
+    base_url = "#{$base_url % opts["server"]}#{$scale_url % [opts['namespace'], opts['app']]}"
+    params = {
+        'broker_auth_key' => File.read("/var/lib/stickshift/#{opts['uuid']}/.auth/token"),
+        'broker_auth_iv' => File.read("/var/lib/stickshift/#{opts['uuid']}/.auth/iv")
+    }
+    params['event'] = 'add-gear' == action ?  'scale-up' : 'scale-down'
 
-    request = RestClient::Request.new(:method => :post, :url => url,
-        :user => user, :password => password,
-        :headers => {:accept => 'application/json'},
-        :payload => payload
+    request = RestClient::Request.new(:method => :post, :url => base_url,
+        :headers => {:accept => 'application/json', :user_agent => 'StickShift'},
+        :payload => params
         )
 
     response = request.execute()
-    unless 300 < response.code
+    if 300 <= response.code
       raise response
-    end
-  end
-
-  def self.cartridges(opts) 
-    base_url = $base_url % opts['server']
-    request = RestClient::Request.new(:method => :get, :url => "#{base_url}#{$cartridges_url}", 
-        :user => opts['rhlogin'], :password => opts["password"],
-        :headers => {:accept => 'application/json'})
-    response = request.execute()
-    if 200 == response.code
-      payload = JSON.parse(response.body)
-      rows = payload['data'].select {|c| c['type'] == 'standalone'}
-      rows.map {|c| c['name']}
-    else
-      []
-    end
-  end
-
-  def self.domain(opts)
-    base_url = $base_url % opts['server']
-    request = RestClient::Request.new(:method => :get, :url => "#{base_url}#{$domain_url}", 
-        :user => opts['rhlogin'], :password => opts["password"],
-        :headers => {:accept => 'application/json'})
-    response = request.execute()
-    if 200 == response.code
-      JSON.parse(response.body)
-    else
-      raise "code: #{response.code} : #{response.body}"
     end
   end
 end
 
 def usage(opts)
-  types = Gear_scale_ctl.cartridges(opts)
-  rhlogin = get_var('default_rhlogin') ? "Default: #{get_var('default_rhlogin')}" : "required"
-
   $stderr.puts <<USAGE
 
-Usage: #{$0}
+Usage:
 
 Add gear to application:
-  Usage: add-gear -a|--app <application name> -l|--rhlogin <user> -p|--password <password> -n|--namespace <namespace uuid> [-h|--host <hostname>]
+  Usage: add-gear -a|--app <application name> -u|--uuid <user> -n|--namespace <namespace uuid> [-h|--host <hostname>]
 
 Remove gear from application:
-  Usage: remove-gear -a|--app <application name> -l|--rhlogin <user> -p|--password <password> -n|--namespace <namespace uuid> [-h|--host <hostname>]
+  Usage: remove-gear -a|--app <application name> -u|--uuid <user> -n|--namespace <namespace uuid> [-h|--host <hostname>]
 
-Create scalable application (used for testing...):
-  Usage: create-app -a|--app <application name> -l|--rhlogin <user> -p|--password <password> -n|--namespace <namespace uuid> -t|--type <cartridge type> [-h|--host <hostname>]
-
-
-  -a|--app         application  Name for your application (alphanumeric - max <rest call?> chars) (required)
+  -a|--app         application name  Name for your application (alphanumeric - max <rest call?> chars) (required)
+  -u|--uuid        application uuid  UUID for your application (required)
   -n|--namespace   namespace    Namespace for your application(s) (alphanumeric - max <rest call?> chars) (required)
-  -l|--rhlogin     rhlogin      Red Hat login (RHN or OpenShift login with OpenShift Express access) (#{rhlogin})
-  -p|--password    password     RHLogin password (optional, will prompt)
   -h|--host        libra server host running broker
-  -t|--type        cartridges   list of available cartridge types (#{types.join(', ')}
-  -d|--debug                    Print Debug info
-  -h|--help                     Show Usage info
 
 USAGE
-#  --config  path               Path of alternate config file
-#  --timeout #                  Timeout, in seconds, for connection
   exit 255
 end
 
 opts = {
-  "server" => get_var('libra_server'),
-  "rhlogin" => get_var('default_rhlogin')
+    "server" => get_var('libra_server')
 }
 
 begin
   args = GetoptLong.new(
-    ["--debug",     "-d", GetoptLong::NO_ARGUMENT],
-    ["--help",      "-h", GetoptLong::NO_ARGUMENT],
     ["--app",       "-a", GetoptLong::REQUIRED_ARGUMENT],
-    ["--password",  "-p", GetoptLong::OPTIONAL_ARGUMENT],
+    ["--uuid",      "-u", GetoptLong::REQUIRED_ARGUMENT],
     ["--namespace", "-n", GetoptLong::REQUIRED_ARGUMENT],
-    ["--type",      "-t", GetoptLong::OPTIONAL_ARGUMENT],
-    ["--server",    "-s", GetoptLong::OPTIONAL_ARGUMENT],
-    ["--rhlogin",   "-l", GetoptLong::OPTIONAL_ARGUMENT]
+    ["--server",    "-s", GetoptLong::OPTIONAL_ARGUMENT]
   )
 
   args.each {|opt, arg| opts[opt[2..-1]] = arg.to_s }
 
-  if opts["rhlogin"].nil? || opts["rhlogin"].empty? \
-        || opts["server"].nil? || opts["server"].empty? \
+  if opts["server"].nil? || opts["server"].empty? \
         || opts["app"].nil? || opts["app"].empty? \
-        || opts['password'].nil? || opts['password'].empty?
+        || opts["uuid"].nil? || opts["uuid"].empty? \
+        || opts["namespace"].nil? || opts["namespace"].empty?
     usage opts
   end
 
 rescue Exception => e
   usage opts
 end
-
-domain = Gear_scale_ctl.domain(opts)
-opts['namespace'] = domain['data'][0]['namespace']
 
 o = Gear_scale_ctl.new(File.basename($0), opts)
 
