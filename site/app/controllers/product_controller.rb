@@ -37,7 +37,7 @@ class ProductController < ApplicationController
 
   #Product overview page
   def overview
-    render :action => :overview, :layout => 'application'
+    render :action => :overview
   end
   
   #Feature matrix
