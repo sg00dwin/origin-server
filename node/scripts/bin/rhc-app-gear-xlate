@@ -35,23 +35,18 @@ XLATION=( \
   OPENSHIFT_APP_UUID \
  )
 
-ref="Z_APP_TO_GEAR"
-
-for xlate in "${XLATION}"
+for xlate in "${XLATION[@]}"
 do
   dst=$(echo "$xlate" | sed -e 's/APP/GEAR/')
-  if [ -f "$xlate" ]
+  if [ -f "$xlate" -a \! -f "$dst" ]
   then
     sed -e s\|"$xlate"\|"$dst"\|g "$xlate" > "$dst"
-    if ! [ -f "$dst" ]
-    then
-      echo "export $xlate=\"\$$dst\"" >> $ref
-      chown root:root "$dst" "$ref"
-      chmod 0644 "$dst" "$ref"
-      chcon --reference="$xlate" "$dst" "$ref"
-      if [ "$xlate" != "OPENSHIFT_APP_UUID" ]; then
-        rm -f "$xlate"
-      fi
+    chown root:root "$dst"
+    chmod 0644 "$dst"
+    chcon --reference="$xlate" "$dst"
+    if [ "$xlate" != "OPENSHIFT_APP_UUID" ]; then
+      echo 'source $(dirname "$_")/'"$dst" > "$xlate"
+      echo "export $xlate=\"\$$dst\"" >> "$xlate"
     fi
   fi
 done
