@@ -90,9 +90,7 @@ def update_node_profile(app)
   objects.each do |obj|
     begin
       old = obj.node_profile
-      if obj.node_profile.nil?
-        obj.node_profile = "small"
-      elsif obj.node_profile == "std"
+      if obj.node_profile == "std"
         obj.node_profile = "small"
       elsif obj.node_profile == "large"
         obj.node_profile = "medium"
