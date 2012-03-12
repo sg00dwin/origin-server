@@ -1,5 +1,7 @@
 class PartnerController < ApplicationController
 
+  layout 'site'
+
   @@data = "db/partners.json"
 
   def index
