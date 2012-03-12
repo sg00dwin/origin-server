@@ -63,7 +63,7 @@ module MCollective
         validate :cartridge, :shellsafe
         validate :action, /\A(app-create|app-destroy|env-var-add|env-var-remove|broker-auth-key-add|broker-auth-key-remove|authorized-ssh-key-add|authorized-ssh-key-remove|configure|deconfigure|preconfigure|update-namespace|tidy|deploy-httpd-proxy|remove-httpd-proxy|move|pre-move|post-move|info|post-install|post-remove|pre-install|reload|restart|start|status|stop|force-stop|add-alias|remove-alias|threaddump|cartridge-list|expose-port|conceal-port|show-port|system-messages|connector-execute)\Z/
         validate :action, :shellsafe
-        validate :args, /\A[\w\+\/= \{\}\"@\-\.:\'\\\n~,]+\z/
+        validate :args, /\A[\w\+\/= \{\}\"@\-\.:;\'\\\n~,]+\z/
         validate :args, :shellsafe
         cartridge = request[:cartridge]
         action = request[:action]
@@ -218,6 +218,30 @@ module MCollective
         else
           reply[:output] = false
         end
+        reply[:exitcode] = 0
+      end
+
+      #
+      # Get all gears
+      #
+      def get_all_gears_action
+        gear_map = request[:gear_map]
+
+        uid_map = {}
+        uids = IO.readlines("/etc/passwd").map{ |line| 
+          uid = line.split(":")[2]
+          username = line.split(":")[0]
+          uid_map[username] = uid
+        }
+        dir = "/var/lib/stickshift/"
+        filelist = Dir.foreach(dir) { |file| 
+          if File.directory?(dir+file) and not File.symlink?(dir+file) and not file[0]=='.'
+            if uid_map.has_key?(file)
+              gear_map[file] = uid_map[file]
+            end
+          end
+        }
+        reply[:output] = gear_map
         reply[:exitcode] = 0
       end
 

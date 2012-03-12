@@ -3,6 +3,8 @@ require 'json'
 
 class LegalController < ApplicationController
 
+  layout 'site'
+
   def show; end
   def site_terms; end
   def services_agreement; end

@@ -27,6 +27,9 @@ Publishes:
   publish_git_url:
     Type: "NET_TCP:git-url-info"
 Subscribes:
+  set-db-connection-info:
+    Type: "NET_TCP:db:connection-info"
+    Required: false
   set-proxy-path:
     Type: "STRING:proxy-path"
   set-mysql-connection-info:

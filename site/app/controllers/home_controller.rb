@@ -2,6 +2,8 @@
 
 class HomeController < ApplicationController
   
+  layout 'site'
+
   def index
     Rails.logger.debug "Index controller"
     # Handle any workflow routing

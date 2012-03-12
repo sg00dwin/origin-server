@@ -79,6 +79,8 @@ ln -s %{cartridgedir}/../abstract/info/hooks/expose-port %{buildroot}%{cartridge
 ln -s %{cartridgedir}/../abstract/info/hooks/conceal-port %{buildroot}%{cartridgedir}/info/hooks/conceal-port
 ln -s %{cartridgedir}/../abstract/info/hooks/show-port %{buildroot}%{cartridgedir}/info/hooks/show-port
 ln -s %{cartridgedir}/../abstract/info/hooks/system-messages %{buildroot}%{cartridgedir}/info/hooks/system-messages
+mkdir -p %{buildroot}%{cartridgedir}/info/connection-hooks/
+ln -s %{cartridgedir}/../abstract/info/connection-hooks/set-db-connection-info %{buildroot}%{cartridgedir}/info/connection-hooks/set-db-connection-info
 
 %clean
 rm -rf $RPM_BUILD_ROOT

@@ -83,15 +83,15 @@ body.signup {
 // Concrete sections of pages
 .section-top {
   background-color: $topBarBackgroundColor; 
-  color: white;
+  color: #888;
 
   .container .btn {
-    background: #333;
+    background: #232323;
     border-radius: 0;
     text-shadow: none;
     border: 0;
-    color: white;
     box-shadow: none;
+    color: #727272;
 
     &:hover, &:active {
       background: #AAAAAA;
@@ -160,11 +160,11 @@ body.signup {
 // Top bar
 .section-top > .container {
   > div {
-    padding: 8px 0;
+    padding: 6px 0;
     > a {
       color: $signupLinkColor;
-      font-weight: bold;
       text-transform: uppercase;
+      font-size: 12px;
     }
     > a:hover {
       text-decoration: none;
@@ -172,9 +172,14 @@ body.signup {
     }
   }
   > .login {
-    padding: 5px 0;
+    padding: 4px 0;
   }
 }
+
+.section-top > .container > div.pull-left {
+	padding-right: 26px;
+	background: url("../images/sprite-vert.png") no-repeat scroll right -163px transparent;
+	}
 
 // Central messaging content
 .messaging {
@@ -186,17 +191,23 @@ body.signup {
   margin-bottom: 30px;
 
   .primary {
-    font-size: 40px;
+    font-size: 42px;
     line-height: 1em;
     text-transform: uppercase;
     color: white;
   }
 
   .secondary {
-    font-size: 16px;
-    line-height: 1.2em;
+    font-size: 15px;
+    line-height: 1.5em;
     color: white;
   }
+}
+
+.video-box {
+  text-align: center;
+  padding-bottom: 30px;
+  
 }
 
 @media (max-width: 979px) {
@@ -295,6 +306,10 @@ body.signup {
 }
 #nav .action-call {
   margin: 0 auto 20px;
+}
+
+#nav .messaging + .action-call {
+  margin: -25px auto 20px;
 }
 
 @media (max-width: 979px) {
@@ -400,6 +415,7 @@ body.signup {
     top: -60px;
     right: -60px;
     text-align: center;
+    background: url('../images/events-bubble.png') no-repeat top left;
 
     > .one {
       margin-top: 30px;
@@ -441,6 +457,7 @@ h1.ribbon {
     display: inline-block;
     padding: 5px $gridGutterWidth 5px 0; /* left margin set by ribbon */
     min-width: 30%;
+    text-shadow: -1px -1px 0 rgba(0, 0, 0, 0.18);
   }
   @include ribbon($ribbonFoldColor);
 }
@@ -605,18 +622,35 @@ body.box .container, body.box .box { width: 550px; }
 
 /* Background */
 body > header {
-  background-color: #191919;
+  /* fallback */
+  background: #191919 url($transparentNoiseImageData);
   background-image:
     url('../images/comets.png'),
     url($transparentNoiseImageData);
   background-repeat:
     repeat-x,
     repeat;
+  min-height: 450px;
+}
+
+.messaging {
+  margin: 55px 0;
+  
+  .primary {
+    margin-bottom: 10px;
+  }
+  .secondary {
+    max-width: 790px;
+    margin: 0 auto;
+    font-family: $baseFontFamily;
+  }
+  h1, h2 { color: white; }
 }
 
 @media (max-width: 767px) {
   body > header {
     background: #191919 url($transparentNoiseImageData) repeat; 
+    min-height: 300px;
   }
 }
 
@@ -644,32 +678,39 @@ body.home > header {
   background-image:
     url('../images/diagonals-top.png'),
     url('../images/mts.png'), 
+    url('../images/stars.png'),
     url($transparentNoiseImageData),
     -moz-repeating-linear-gradient(110deg, #191919 0px, #191919 10px, #181818 10px, #181818 20px);
+  background-image:
+    url('../images/diagonals-top.png'),
+    url('../images/mts.png'), 
+    url('../images/stars.png'),
+    url($transparentNoiseImageData),
+    -webkit-repeating-linear-gradient(110deg, #191919 0px, #191919 10px, #171717 10px, #171717 20px);
+  background-image:
+    url('../images/diagonals-top.png'),
+    url('../images/mts.png'), 
+    url('../images/stars.png'),
+    url($transparentNoiseImageData),
+    -ms-repeating-linear-gradient(110deg, #191919 0px, #191919 10px, #181818 10px, #181818 20px);
+  background-image:
+    url('../images/diagonals-top.png'),
+    url('../images/mts.png'), 
+    url('../images/stars.png'),
+    url($transparentNoiseImageData),
+    repeating-linear-gradient(110deg, #191919 0px, #191919 10px, #181818 10px, #181818 20px);
   background-repeat:
     no-repeat,
-    repeat-x,
+    no-repeat,
+    repeat,
     repeat, 
     repeat;
   background-position:
     right bottom,
     center bottom,
+    center bottom,
     center bottom, 
     center bottom;
-}
-
-.home .messaging {
-  margin: 55px 0;
-  
-  .primary {
-    margin-bottom: 10px;
-  }
-  .secondary {
-    max-width: 790px;
-    margin: 0 auto;
-    font-family: Liberation Sans, Helvetica Neue, Helvetica, Arial, Sans-serif;
-  }
-  h1, h2 { color: white; }
 }
 
 .home #buzz {
@@ -723,4 +764,74 @@ body.home > header {
 #nav { 
   background-color: transparent;
   background-image: none;
+}
+
+/* Simple page */
+html { height: 100%; }
+body.box {
+  /* Override default styles */
+  & > header {
+    background: none;
+    min-height: 0;
+  }
+  .section-striped {
+    background: none;
+  }
+  #content {
+    min-height: 0;
+  }
+
+  /* background */
+  min-height: 100%;
+  background: #191919 url($transparentNoiseImageData);
+  background-image:
+    url('../images/mts-bottom-transparent.png'),
+    url('../images/stars.png'),
+    url($transparentNoiseImageData),
+    -moz-repeating-linear-gradient(110deg, #191919 0px, #191919 10px, #181818 10px, #181818 20px);
+  background-image:
+    url('../images/mts-bottom-transparent.png'),
+    url('../images/stars.png'),
+    url($transparentNoiseImageData),
+    -webkit-repeating-linear-gradient(110deg, #191919 0px, #191919 10px, #171717 10px, #171717 20px);
+  background-image:
+    url('../images/mts-bottom-transparent.png'),
+    url('../images/stars.png'),
+    url($transparentNoiseImageData),
+    -ms-repeating-linear-gradient(110deg, #191919 0px, #191919 10px, #181818 10px, #181818 20px);
+  background-image:
+    url('../images/mts-bottom-transparent.png'),
+    url('../images/stars.png'),
+    url($transparentNoiseImageData),
+    repeating-linear-gradient(110deg, #191919 0px, #191919 10px, #181818 10px, #181818 20px);
+  background-repeat:
+    repeat-x,
+    repeat,
+    repeat,
+    repeat;
+  background-position: center bottom;
+}
+
+@media (max-width: 767px) {
+  body.box {
+    > header {
+      min-height: 0;
+    }
+    .box {
+      background-color: white;
+      margin-left: 0;
+
+      h1.ribbon {
+        margin-left: -10px;
+      }
+    }
+    #nav {
+      padding-bottom: 0;
+    }
+
+    background-image: url($transparentNoiseImageData);
+    background-repeat: repeat;
+
+
+  }
 }

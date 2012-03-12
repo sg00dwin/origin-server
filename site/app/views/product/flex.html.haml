@@ -1,207 +1,68 @@
--# file: Flex product page
+- content_for :header do
+  .messaging.messaging-home
+    .container
+      %h1.primary.headline
+        Shift your 
+        %strong#technology-rotate App
+        to the Cloud
+      %h2.secondary OpenShift Flex is a browser-based platform-as-a-service for Java and PHP applications with auto-scaling, performance monitoring and application management capabilities built-in. 
 
-= render 'layouts/flashes'
-
-- content_for :page_title do
-  Flex
-
--# Product navigation
-- content_for :product_nav do
-  %ul 
-    %li
-      = link_to "What's Flex?", '#about', :class => 'active'
-    %li
-      = link_to 'Videos', '#videos'
-    %li
-      = link_to 'Documentation', 'http://docs.redhat.com/docs/en-US/OpenShift_Flex/1.0/html/User_Guide/index.html'
-    %li
-      = link_to 'Forum', 'http://www.redhat.com/openshift/forums/flex'
+%h1.ribbon
+  .ribbon-content What is OpenShift Flex?
+  .ribbon-left
   
-  - if logged_in?
-    - if has_access? :express
-      #account.signed_in
-        %header
-          %h2
-            Account
-        
-        %ul
-          %li
-            = link_to 'Quickstart', '#quickstart'
-          %li
-            = link_to 'Flex Console', '/flex'
-    
-    - else
-      #account.signed_out
-        %header
-          %h2
-            Account
-        
-        %ul
-          %li
-            Access Pending...
-            
-  - else
-    #account.signed_out
-      %header
-        %h2
-          Account
-      %ul  
-        %li
-          = link_to 'Sign up to try Flex!', '/app/user/new/flex', :class => 'sign_up'
+%h2
+  OpenShift Flex is a browser-based platform-as-a-service for <strong>Java</strong> and <strong>PHP</strong> applications with auto-scaling, performance monitoring and application management capabilities built-in. 
+%p
+  There's two ways to get started:
+  %p 
+    Provide your Amazon EC2 credentials in order to authorize OpenShift Flex to deploy cloud servers on your behalf.
+  %p 
+    OR
+  .alert.alert-warning
+    Take advantage of Red Hat's <strong>free trial offer</strong>. The free trial includes <strong>30 days</strong>
+    or <strong>30 hours</strong> (whichever comes first) of free cloud resources from Amazon EC2.
+  %p.terms
+    The free trial is governed by the terms and conditions agreed to during the registration process for OpenShift.
+  %p.terms
+    Please Remember:
+    %ul.terms     
+      %li
+        OpenShift is in developer preview with no service level agreements.
+      %li
+        OpenShift should not be used for production purposes.
+      %li
+        At Red Hat's discretion, it may decommission the resources it granted as part of the free trial without notification, explanation, or backup.
+      %li
+        Users of OpenShift Flex are responsible for making backups of all their data
+      %li
+        After the expiration of the free trial, the resources and data on them will be deleted
+      %li
+        To maximize the time of your free trial we recommend that you stop your cluster when not utilizing it
 
--# Main Content
-- content_for :product_content do
-  %section#about.default
-    %header
-      %h1
-        What's Flex?
-
-    #flex-ways
-      OpenShift Flex is a browser-based platform-as-a-service for Java and PHP applications with auto-scaling, performance monitoring and application management capabilities built-in. There's two ways to get started:
-
-      %ol
-        %li
-          %p 
-            Provide your Amazon EC2 credentials in order to authorize OpenShift Flex to deploy cloud servers on your behalf.
-        
-        %em OR
-
-        %li#free-flex
-          %p#offer
-            Take advantage of Red Hat's free trial offer. The free trial includes 30 days or 30 hours (whichever comes first) of free cloud resources from Amazon EC2.
-
-          %p.terms
-            The free trial is governed by the terms and conditions agreed to during the registration process for OpenShift.
-          
-          %p.terms
-            Please Remember:
-          
-          %ul.terms     
-            
-          
-            %li
-              OpenShift is in developer preview with no service level agreements.
-
-            %li
-              OpenShift should not be used for production purposes.
   
-            %li
-              At Red Hat's discretion, it may decommission the resources it granted as part of the free trial without notification, explanation, or backup.
-
-            %li
-              Users of OpenShift Flex are responsible for making backups of all their data
-
-            %li
-              After the expiration of the free trial, the resources and data on them will be deleted
-
-            %li
-              To maximize the time of your free trial we recommend that you stop your cluster when not utilizing it
-  
+.row
+  .span4
+    = render 'product/video_embed', :video => 'flex_build_cluster', :width => 311, :height => 255
+  .span4
+    = render 'product/video_embed', :video => 'flex_control_apps', :width => 311, :height => 255
+  .span4
+    = render 'product/video_embed', :video => 'flex_monitor_scale', :width => 311, :height => 255
+.row
+  .span4
     %h2
       Build your Server Cluster and Application Stack
-      
     %p
       OpenShift Flex's wizard driven interface makes it easy to provision resources and build integrated application stacks.
-
-    .vid  
-      = render 'product/video_embed', :video => 'flex_build_cluster'
-    
+  .span4
     %h2
       Deploy, Modify, Rollback and Restart Applications
-    
     %p
       OpenShift Flex makes it easy to deploy your application, make modifications to code and components, version your changes and redeploy.
-
-    .vid  
-      = render 'product/video_embed', :video => 'flex_control_apps'
+  .span4
     %h2
       Monitoring and Auto-Scaling Built-in
-    
     %p
       Without the use of agents or scripts, OpenShift Flex gives you end-to-end monitoring straight-out-of-box with configurable auto-scaling that lets you decide when and how to scale your application.
-    
-    .vid  
-      = render 'product/video_embed', :video => 'flex_monitor_scale'
 
-  %section#videos
-    %header
-      %h1
-        Videos
-        
-    .product-video 
-      %h2 
-        OpenShift Flex Product Tour
-      %p.video-author.author
-        Issac Roth,  PaaS Master - Red Hat
-      
-      .video-thumb.thumb
-        = link_to 'video/OpenShift-Flex-demo' do
-          = image_tag "/app/images/video_stills/OpenShift-Flex-demo.png", 
-            :title => "OpenShift Flex Product Tour", 
-            :alt => "OpenShift Flex Product Tour"
-    
-      %p.video-description
-        This video walks you through the high level functionality of OpenShift Flex, covering provisioning, deploying, monitoring and scaling applications in the cloud.
- 
-    .product-video 
-      %h2
-        What are people saying about OpenShift?
-      %p.video-author.author
-        Developers, ISVs, customers and partners
-      
-      .video-thumb.thumb
-        = link_to "video/OpenShift-Ecosystem" do
-          = image_tag "/app/images/video_stills/OpenShift-Ecosystem.png", 
-            :title => "Developers, ISVs, customers and partners", 
-            :alt => "Developers, ISVs, customers and partners"
-        
-      %p.video-description
-        
-        This video shows you what developers, ISVs, customers and partners are saying about Red Hat's exciting new OpenShift PaaS.
-      
-    .product-video
-      %h3 Deploying a Mongo Driven Application on OpenShift Flex
-      %p.video-author.author
-        David Blado
-        
-      .video-thumb.thumb
-        = render 'product/video_embed', :video => 'flex_mongo', :width => '300', :height => '200'
-      
-      %p.video-description
-        This video walks a user through deploying an application on OpenShift Flex that uses MongoDB as its database backend. Complete with performance and log management demo!
-      
-        .video-meta.meta
-          %p.video-length
-            3 min, 3 seconds
-          %p.video-date.date
-            Posted June 21, 2011
-      
-    .product-video
-      %h3 Deploying a Seam Application on OpenShift Flex
-      %p.video-author.author
-        David Blado
-        
-      .video-thumb.thumb
-        = render 'product/video_embed', :video => 'flex_seam', :width => '300', :height => '200'
-      
-      %p.video-description
-        This video walks a user through deploying a Seam application on OpenShift Flex. Complete with a performance and log management demo!
-      
-        .video-meta.meta
-          %p.video-length
-            2 min, 33 seconds
-          %p.video-date.date
-            Posted June 21, 2011
-    
-    = link_to 'Watch more videos',  "http://www.redhat.com/openshift/videos", :class => 'more'
-  
-  -if logged_in?
-    %section#quickstart
-      %header
-        %h1
-          Quickstart
-    
-      %p
-        Clicking on the link below will take you to the Flex application where you can start migrating your applications to the cloud.
-
-      = link_to 'Go to Flex', flex_redirect_path, :class => 'more'
+%section= take_action '/app/user/new/flex', 'Ready to get started?', 'Sign up to try Flex'

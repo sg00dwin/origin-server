@@ -1,13 +1,30 @@
--# file: Registration page
+%h1.ribbon
+  .ribbon-content Sign up for a new account
+  .ribbon-left
+  
+- input_html = { :class => input_class } if defined? input_class
 
-- content_for :page_title do
-  Sign up for OpenShift
-    
-%section.main
-  %header
-    %h1
-      Sign up for OpenShift
-
-  .content 
-    
-    = render :partial => 'signup_form'
+#new-user
+  = semantic_form_for 'web_user', :remote => true, :url => web_user_path, :simple => true, :html => {:class => 'form-horizontal'} do |form|
+    %input{:type => "hidden", :name => "redirectUrl", :value => (defined?(@redirectUrl) ? :redirectUrl : '/app/new/signup_success') }
+    = form.inputs do
+      = form.hidden_field :cloud_access_choice, :value => (@product == CloudAccess::FLEX_NAME ? CloudAccess::FLEX : CloudAccess::EXPRESS)
+      = form.input :email_address, :input_html => { :type => 'email', :class => 'input-xlarge', :placeholder => 'Enter a valid email address' }
+      = form.input :password, :input_html => { :class => 'input-xlarge', :autocomplete => 'off', :placeholder => 'At least 6 characters', :maxlength => '50' }
+      = form.input :password_confirmation, :input_html => { :class => 'input-xlarge', :autocomplete => 'off', :placeholder => 'Enter it again', :maxlength => '50' }
+      = form.input :promo_code, :label => 'Promotional Code', :required => false, :input_html => { :class => 'input-xlarge' }
+      .control-group
+        %label.control-label
+          Are you human?
+        .controls.recaptcha
+          = recaptcha_tags :ssl => true    
+      .control-group
+        By signing up you agree to the 
+        %a{:href => '/app/legal/site_terms'} 
+          Terms of Service 
+        and the
+        %a{:href => '/app/legal/openshift_privacy'} 
+          Privacy Policy
+      .form-actions
+        = form.commit_button :label => 'Sign Up for OpenShift »'
+            

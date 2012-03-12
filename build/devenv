@@ -562,7 +562,7 @@ class DevEnv < Thor
   method_option :tag, :type => :boolean, :desc => "NAME is an Amazon tag"
   method_option :verbose, :type => :boolean, :desc => "Enable verbose logging"
   method_option :verifier, :type => :boolean, :desc => "Maintain verifier functionality (private IP setup)"
-  method_option :public_hostname, :type => :boolean, :desc => "Embed the public hostname rather than the ssh hostname"
+  method_option :public_hostname, :type => :boolean, :default => true, :desc => "Embed the public hostname rather than the ssh hostname (default)"
   method_option :skip_build, :type => :boolean, :desc => "Indicator to skip the rpm build/install"
   method_option :clean_metadata, :type => :boolean, :desc => "Cleans metadata before running yum commands"
   method_option :region, :required => false, :desc => "Amazon region override (default us-east-1)"
@@ -620,7 +620,7 @@ class DevEnv < Thor
 
   desc "launch NAME", "Launches the latest DevEnv instance, tagging with NAME"
   method_option :verifier, :type => :boolean, :desc => "Add verifier functionality (private IP setup and local tests)"
-  method_option :public_hostname, :type => :boolean, :desc => "Embed the public hostname rather than the ssh hostname"
+  method_option :public_hostname, :type => :boolean, :default => true, :desc => "Embed the public hostname rather than the ssh hostname (default)"
   method_option :use_stage_image, :type => :boolean, :desc => "Launch a stage DevEnv image"
   method_option :use_clean_image, :type => :boolean, :desc => "Launch a clean DevEnv image"
   method_option :verbose, :type => :boolean, :desc => "Enable verbose logging"

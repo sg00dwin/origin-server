@@ -168,6 +168,8 @@ RedHatCloud::Application.routes.draw do
       match 'signin' => 'site#signin', :as => :user, :via => [:get]
       match 'signup' => 'site#signup', :as => :user, :via => [:get]
       match 'recover' => 'site#recover', :as => :user, :via => [:get]
+      match 'recover_success' => 'site#recover_success', :as => :user, :via => [:get]
+      match 'signup_success' => 'site#signup_success', :as => :user, :via => [:get]
     end
 
     unless Rails.env.production?

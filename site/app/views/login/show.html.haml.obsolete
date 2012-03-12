@@ -1,0 +1,13 @@
+-# file: Login form
+
+- content_for :page_title do
+  Sign in to OpenShift
+
+%section.main
+  %header
+    %h1 
+      Sign In to OpenShift
+  
+  .content
+
+    = render :partial => 'signin_form'

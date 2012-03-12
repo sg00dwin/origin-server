@@ -1,11 +1,6 @@
 #!/bin/bash
 
-source /etc/stickshift/stickshift-node.conf
-
 # Set a newly added gear's git url to the list of mirrors we need to push too.
-CART_NAME=haproxy
-CART_VERSION=1.4
-CART_INFO_DIR=${CARTRIDGE_BASE_PATH}/${CART_NAME}-${CART_VERSION}/info
 GEAR_AVAILABILITY_TIMEOUT=30
 
 # Exit on any errors
@@ -53,12 +48,16 @@ function setup_git_repo_from_framework() {
         log_error 140 "DNS check failed - setting up from gear git URL = $1"
 
     pushd "$GIT_DIR" > /dev/null
-    git clone --bare $1 /tmp/$checkout_dir_name
     rm -rf * 2> /dev/null  ||  :
-    mv -f /tmp/$checkout_dir_name/[^h]* ./ 2> /dev/null  ||  :
+    git clone --bare --no-hardlinks $1 $GIT_DIR
     git remote add all-gears "file://$GIT_DIR"
+    git repack
     popd > /dev/null
-    rm -rf /tmp/$checkout_dir_name
+
+    setup_git_repo "$application" "$user_id" "$group_id" "$uuid" "haproxy 1.4 for scalable app"
+    observe_setup_app_and_git_dirs
+
+    chown $user_id.$group_id "$OPENSHIFT_DATA_DIR/.ssh/config"
 }
 
 
@@ -183,12 +182,17 @@ done
 
 [ $# -gt 3 ] || print_help
 
+source /etc/stickshift/stickshift-node.conf
 source ${CARTRIDGE_BASE_PATH}/abstract/info/lib/util
+source ${CARTRIDGE_BASE_PATH}/abstract/info/lib/git
 
 setup_configure "$1" $2 $3
 
 import_env_vars
 
+CART_NAME=haproxy
+CART_VERSION=1.4
+CART_INFO_DIR=${CARTRIDGE_BASE_PATH}/${CART_NAME}-${CART_VERSION}/info
 export GIT_SSH=${CART_INFO_DIR}/bin/ssh
 export GIT_DIR=${OPENSHIFT_HOMEDIR}/git/${OPENSHIFT_GEAR_NAME}.git
 

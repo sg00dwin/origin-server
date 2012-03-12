@@ -87,6 +87,8 @@ function load_node_conf() {
 	fail "GEAR_BASE_DIR does not exist or is not a directory: $GEAR_BASE_DIR"
     fi
 
+    GEAR_HTTPD_DIR="${GEAR_BASE_DIR}/.httpd.d"
+
     verbose loading resource limit file $RESOURCE_LIMITS_FILE
     if [ ! -f "$RESOURCE_LIMITS_FILE" ]
     then
@@ -425,6 +427,22 @@ function check_user_quota() {
     fi
 }
 
+function check_system_httpd_configs() {
+    pushd $GEAR_HTTPD_DIR > /dev/null
+
+    verbose "checking system httpd configs"
+    for curfile in $(/bin/ls *.conf 2> /dev/null)
+    do
+        local uuid=${curfile:0:32}
+        if ! id "$uuid" &> /dev/null
+        then
+            fail "httpd config file $curfile doesn't have an associated user"
+        fi
+    done
+
+    popd > /dev/null
+}
+
 function check_app_dirs() {
     # save modified env settings
     pushd $GEAR_BASE_DIR > /dev/null
@@ -508,6 +526,7 @@ check_quotas
 
 check_users
 check_app_dirs
+check_system_httpd_configs
 
 if [ "$STATUS" -eq 0 ]
 then

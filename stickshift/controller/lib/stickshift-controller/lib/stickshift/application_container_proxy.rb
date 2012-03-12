@@ -25,6 +25,20 @@ module StickShift
     def self.blacklisted_in_impl?(name)
     end
 
+    def self.get_all_gears
+      @proxy_provider.get_all_gears_impl
+    end
+
+    def self.get_all_gears_impl
+    end
+
+    def self.execute_parallel_jobs(handle)
+      @proxy_provider.execute_parallel_jobs_impl(handle)
+    end
+
+    def self.execute_parallel_jobs_impl(handle)
+    end
+
     attr_accessor :id
     def self.find_available_impl(node_profile=nil)
     end

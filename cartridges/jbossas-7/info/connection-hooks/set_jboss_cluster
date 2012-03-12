@@ -16,6 +16,6 @@ for arg in $kvargs; do
     fi
 done
 
-echo "$list" > /var/lib/libra/$3/.env/OPENSHIFT_JBOSS_CLUSTER
+echo "$list" > /var/lib/stickshift/$3/.env/OPENSHIFT_JBOSS_CLUSTER
 
 
