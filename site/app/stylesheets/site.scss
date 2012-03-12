@@ -630,7 +630,6 @@ body > header {
   background-repeat:
     repeat-x,
     repeat;
-  min-height: 450px;
 }
 
 .messaging {
@@ -777,7 +776,7 @@ body.box {
   .section-striped {
     background: none;
   }
-  #content {
+  #content { 
     min-height: 0;
   }
 
