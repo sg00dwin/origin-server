@@ -162,19 +162,6 @@ RedHatCloud::Application.routes.draw do
     match 'dashboard' => 'control_panel#index', :as => 'dashboard'
     match 'control_panel/apps' => 'express_app#list', :as => 'list_apps'
     
-    # new marketing site
-    scope '/new' do
-      root :to => "site#index", :via => [:get]
-      match 'overview' => 'site#overview', :via => [:get]
-      match 'express' => 'site#express', :via => [:get]
-      match 'flex' => 'site#flex', :via => [:get]
-      match 'signin' => 'site#signin', :as => :user, :via => [:get]
-      match 'signup' => 'site#signup', :as => :user, :via => [:get]
-      match 'recover' => 'site#recover', :as => :user, :via => [:get]
-      match 'recover_success' => 'site#recover_success', :as => :user, :via => [:get]
-      match 'signup_success' => 'site#signup_success', :as => :user, :via => [:get]
-    end
-
     unless Rails.env.production?
       match 'styleguide/:action' => 'styleguide'
       match 'styleguide' => 'styleguide#index'

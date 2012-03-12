@@ -6,7 +6,7 @@
 
 #new-user
   = semantic_form_for 'web_user', :remote => true, :url => web_user_path, :simple => true, :html => {:class => 'form-horizontal'} do |form|
-    %input{:type => "hidden", :name => "redirectUrl", :value => (defined?(@redirectUrl) ? :redirectUrl : '/app/new/signup_success') }
+    %input{:type => "hidden", :name => "redirectUrl", :value => (defined?(@redirectUrl) ? @redirectUrl : '/app/new/signup_success') }
     = form.inputs do
       = form.hidden_field :cloud_access_choice, :value => (@product == CloudAccess::FLEX_NAME ? CloudAccess::FLEX : CloudAccess::EXPRESS)
       = form.input :email_address, :input_html => { :type => 'email', :class => 'input-xlarge', :placeholder => 'Enter a valid email address' }
