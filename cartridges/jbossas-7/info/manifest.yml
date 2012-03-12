@@ -38,6 +38,9 @@ Profiles:
           publish_git_url:
             Type: "NET_TCP:git-url-info"
         Subscribes:
+          set-db-connection-info:
+            Type: "NET_TCP:db:connection-info"
+            Required: false
           set-jdbc-info:
             Type: "NET_TCP:jdbc"
           set_jboss_cluster:

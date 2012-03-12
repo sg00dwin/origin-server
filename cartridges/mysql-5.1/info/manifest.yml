@@ -17,12 +17,12 @@ Profiles:
         Publishes:
           publish-db-connection-info:
             Type: "NET_TCP:db:connection-info"
-          get-mysql-connection-info:
-            Type: "NET_TCP:db:mysql"
-          get-mysql-jdbc-info:
-            Type: "NET_TCP:jdbc"
-          get-db-local-connection-info:
-            Type: "AFUNIX:db:connection-info"
+#          get-mysql-connection-info:
+#            Type: "NET_TCP:db:mysql"
+#          get-mysql-jdbc-info:
+#            Type: "NET_TCP:jdbc"
+#          get-db-local-connection-info:
+#            Type: "AFUNIX:db:connection-info"
     Groups:
       mysql:
         Components:

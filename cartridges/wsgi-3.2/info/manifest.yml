@@ -33,6 +33,9 @@ Publishes:
   publish_git_url:
     Type: "NET_TCP:git-url-info"
 Subscribes:
+  set-db-connection-info:
+    Type: "NET_TCP:db:connection-info"
+    Required: false
   set-mysql-connection-info:
     Type: "NET_TCP:db:mysql"
     Required : false
