@@ -22,10 +22,9 @@ class EstimatesController < BaseController
         standalone_carts = Application.get_available_cartridges("standalone")
 
         # Parse given application descriptor
-        # FIXME: Work-around to convert single quoted string to double quoted string
-        desc_lines = descriptor.split('\n')
-        descriptor = desc_lines.join("\n")
+        descriptor.gsub!('\n', "\n")
         descriptor_hash = YAML.load(descriptor)
+        raise Exception.new("Invalid application descriptor.") unless descriptor_hash
      
         # Find app framework
         framework = nil
@@ -34,8 +33,8 @@ class EstimatesController < BaseController
             framework = cart
             break
           end
-        end
-        app_name = descriptor_hash['Name']
+        end if descriptor_hash.has_key?('Requires')
+        app_name = descriptor_hash['Name'] if descriptor_hash.has_key?('Name')
         raise Exception.new("Application name or framework not found in the descriptor.") if !framework or !app_name
 
         # Elaborate app descriptor
@@ -61,8 +60,9 @@ class EstimatesController < BaseController
         @reply = RestReply.new(:ok, "application_estimates", groups)
       rescue Exception => e
         Rails.logger.error e
+        Rails.logger.debug e.backtrace.inspect
         @reply = RestReply.new(:internal_server_error)
-        message = Message.new(:error, "Failed to estimate gear usage of the application due to '#{e.message}'", e.code)
+        message = Message.new(:error, "Failed to estimate gear usage of the application due to: #{e.message}")
         @reply.messages.push(message)
       end
     end
