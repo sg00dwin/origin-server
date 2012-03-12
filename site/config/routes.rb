@@ -15,7 +15,7 @@ RedHatCloud::Application.routes.draw do
     # Sample of regular route:
     #   match 'products/:id' => 'catalog#view'
     # Keep in mind you can assign values other than :controller and :action
-    match 'getting_started', :to => redirect('/app/platform')
+    match 'getting_started', :to => redirect('/app/express')
     match 'getting_started_external/:registration_referrer' => 'getting_started_external#show'
     match 'email_confirm' => 'email_confirm#confirm'
     match 'email_confirm_external/:registration_referrer' => 'email_confirm#confirm_external'
@@ -24,7 +24,7 @@ RedHatCloud::Application.routes.draw do
     match 'express' => 'product#express', :as => 'express'
     match 'flex' => 'product#flex', :as => 'flex'
     match 'platform' => 'product#overview', :as => 'product_overview'
-    match 'features', :to => redirect('/app/platform')
+    match 'features', :to => redirect('/app/platform'), :as => 'features'
     # match 'features' => 'product#features', :as => 'features'
     match 'express_protected' => 'product#express_protected', :as => 'express_protected'
     match 'flex_protected' => 'product#flex_protected', :as => 'flex_protected'
@@ -83,7 +83,7 @@ RedHatCloud::Application.routes.draw do
     #match 'user' => 'user#show', :via => :get
 
     # deprecated, use :password
-    match 'user/request_password_reset_form' => 'user#request_password_reset_form', :via => [:get]
+    match 'user/request_password_reset_form' => 'user#request_password_reset_form', :via => [:get], :as => 'new_password'
     match 'user/request_password_reset_success' => 'user#request_password_reset_success', :via => [:get]
     match 'user/request_password_reset' => 'user#request_password_reset', :via => [:post]
     match 'user/reset_password' => 'user#reset_password', :via => [:get]
@@ -160,8 +160,8 @@ RedHatCloud::Application.routes.draw do
     match 'express_app_delete' => 'express_app#destroy', :via => [:post]
     # match 'control_panel' => 'control_panel#index', :as => 'control_panel'
     # match 'dashboard' => 'control_panel#index', :as => 'dashboard'
-    match 'control_panel', :to => redirect('/app/console')
-    match 'dashboard', :to => redirect('/app/console')
+    match 'control_panel', :to => redirect('/app/console'), :as => 'control_panel'
+    match 'dashboard', :to => redirect('/app/console'), :as => 'dashboard'
     match 'control_panel/apps' => 'express_app#list', :as => 'list_apps'
     
     unless Rails.env.production?
