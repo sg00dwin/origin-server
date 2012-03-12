@@ -14,7 +14,7 @@ class EstimatesController < BaseController
     descriptor = params[:descriptor]
     if obj != "application"
       @reply = RestReply.new(:unprocessable_entity)
-      message = Message.new(:error, "Invalid estimate object #{obj}.  Valid object: 'application'", 126, "estimates")
+      message = Message.new(:error, "Invalid estimate object. Estimats only valid for objects: 'application'", 130, "estimates")
       @reply.messages.push(message)
     else
       begin
@@ -60,8 +60,9 @@ class EstimatesController < BaseController
         end if app.group_instance_map
         @reply = RestReply.new(:ok, "application_estimates", groups)
       rescue Exception => e
+        Rails.logger.error e
         @reply = RestReply.new(:internal_server_error)
-        message = Message.new(:error, "Invalid estimate object #{obj}.  Valid object: 'application'", 126, "estimates")
+        message = Message.new(:error, "Failed to estimate gear usage of the application due to '#{e.message}'", e.code)
         @reply.messages.push(message)
       end
     end
