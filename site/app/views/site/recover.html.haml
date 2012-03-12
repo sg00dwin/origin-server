@@ -5,6 +5,7 @@
   .ribbon-left
 
 = form_tag(user_request_password_reset_path, :class => 'form-horizontal') do
+  %input{:type => "hidden", :name => "redirectUrl", :value => (defined?(@redirectUrl) ? :redirectUrl : '/app/new/recover_success') }
   %fieldset
     .control-group
       %label.control-label{:for => 'email_input'}

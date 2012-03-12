@@ -1,3 +1,5 @@
+include ActionView::Helpers::UrlHelper
+
 class SiteController < ApplicationController
 
   layout 'site'
@@ -34,8 +36,24 @@ class SiteController < ApplicationController
     render :layout => 'box'
   end
 
-  def success
-    render :layout => 'box'
+  def recover_success
+    message 'Password Reset Email Sent', "
+      <p>
+      An e-mail has been sent to you containing instructions on how to reset your password. 
+      The link in the e-mail will allow you to change your password.
+      </p>
+      <p>
+        #{link_to 'Return to the main page', '/app/new'}
+      </p>
+    "
+  end
+  
+  private
+  
+  def message(title, content)
+    @title = title
+    @content = content
+    render 'success', :layout => 'box'
   end
 
 end
