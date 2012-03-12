@@ -3,19 +3,17 @@
 - content_for :page_title do
   Meet Our Partners
 
+%h1.ribbon
+  .ribbon-content Meet Our Partners
+  .ribbon-left
 
-%section.main
-  %header  
-    %h1
-      Meet Our Partners
-   
-  .content
-    %p.intro
-      Red Hat works with an ecosystem of partners to build, optimize, and deliver complete solutions to our customers. Through our global network of leading hardware, software, and service provider vendors, Red Hat offers customers a wealth of proven technology solutions that solve real-world business challenges.
-      
-    = render 'join'
-      
-    /Start list of partners
-    %ul.partners
-      - @partners.each do |partner|
-        = render 'partner_list', :partner => partner
+.content
+  %p.intro
+    Red Hat works with an ecosystem of partners to build, optimize, and deliver complete solutions to our customers. Through our global network of leading hardware, software, and service provider vendors, Red Hat offers customers a wealth of proven technology solutions that solve real-world business challenges.
+    
+  = render 'join'
+    
+  /Start list of partners
+  %ul.partners
+    - @partners.each do |partner|
+      = render 'partner_list', :partner => partner
