@@ -867,12 +867,12 @@ module Express
         rescue StickShift::InvalidNodeException => e
           if command != 'configure' && allow_move
             @id = e.server_identity
-            Rails.logger.debug "DEBUG: Changing server identity of '#{app.name}' from '#{app.server_identity}' to '#{@id}'"
+            Rails.logger.debug "DEBUG: Changing server identity of '#{appname}' from '#{gear.server_identity}' to '#{@id}'"
             dns_service = StickShift::DnsService.instance
             dns_service.deregister_application(app.name, app.user.namespace)
             dns_service.register_application(app.name, app.user.namespace, get_public_hostname)
             dns_service.publish
-            app.server_identity = @id
+            gear.server_identity = @id
             app.save
             #retry
             result = execute_direct(framework, command, arguments)

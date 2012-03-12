@@ -47,6 +47,9 @@ class ApplicationsController < BaseController
     scale = params[:scale]
     scale = false if scale.nil? or scale=="false"
     scale = true if scale=="true"
+    optimize = params[:optimize]
+    optimize = false if optimize.nil? or optimize=="false"
+    optimize = true if optimize=="true"
     template_id = params[:template]
 
     if app_name.nil? or app_name.empty?
@@ -94,6 +97,8 @@ class ApplicationsController < BaseController
       end
       application = Application.new(@cloud_user, app_name, nil, nil, cartridge, nil, scale)
     end
+
+    application.optimize = optimize
         
     Rails.logger.debug "Validating application"  
     if application.valid?
