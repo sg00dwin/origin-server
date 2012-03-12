@@ -82,7 +82,6 @@
 .comment { 
   margin-bottom: 20px; 
   padding-top: 8px; 
-  border-top: 1px solid #ddd; 
 
   .submitted {
     margin-top: 10px;
@@ -214,4 +213,92 @@ html.js fieldset.collapsible .fieldset-wrapper {
 .sidenav-column-inner {
   margin-right: 15px;
 }
+
+
+/* New comment thread styles */
+
+.comment-author {
+	position: relative;
+	img {
+	  float: left;
+	  }
+}
+.about-author {
+	color: #909090;
+}
+.author-meta {
+	margin-left: 60px;
+	strong {
+		font-size: 150%;
+		padding-right: 13px;
+		}
+}
+.submitted {
+	font-style: italic;
+	color: #b0b0b0;
+	float: right;
+}
+.comment-text {
+	border: 1px solid #ddd;
+	border-top: 5px solid #ddd;
+	padding: 13px 21px 8px;
+	margin: 10px 0 30px;
+	overflow: hidden;
+}
+.comment-meta {
+	float: right;
+ }
+.children {
+	margin-left: 21px;
+	list-style: none;
+}
+.author-avatar {
+	float: right;
+}
+.badge {
+	display: inline-block;
+  padding: 0 3px;
+  margin: 0;
+  color: #fff;
+  font-size: 11px;
+ }
+.rank {
+	border: 1px solid #999;
+  color: #909090;
+  display: inline-block;
+  font-size: 11px;
+  padding: 0;
+  white-space: nowrap;
+  float: right;
+	span {
+		padding: 0 5px;
+		}
+}
+#thread {
+	margin-bottom: 70px;
+}
+#thread-author .rank {
+	float: none;
+}
+#thread-intro {
+	padding-bottom: 8px;
+}
+#thread-text {
+	padding: 20px;
+	margin-bottom: 10px;
+	background-color: #f0f0f0;
+}
+.posting {
+	font-style: italic;
+	color: #b0b0b0;
+}
+.thread-actions {
+	margin: 5px 5px 5px 21px;
+}
+.thread-actions li {
+	margin-right: 40px;
+}
+
+
+
 
