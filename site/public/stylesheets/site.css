@@ -30,20 +30,20 @@
 /* END */
 /* Was going to call this $openshiftNoneMoreBlack */
 /*FIXME: From screenshots this averages to #070707 */
-/* line 1, /home/clayton/code/li/site/app/stylesheets/_ribbon.scss */
+/* line 1, ../../app/stylesheets/_ribbon.scss */
 .ribbon {
   position: relative;
   /* margin-left: -Xpx; */
 }
 
-/* line 2, /home/clayton/code/li/site/app/stylesheets/_ribbon.scss */
+/* line 2, ../../app/stylesheets/_ribbon.scss */
 .ribbon > .ribbon-content {
   z-index: 1;
   position: relative;
   /* padding-left: Xpx; */
 }
 
-/* line 3, /home/clayton/code/li/site/app/stylesheets/_ribbon.scss */
+/* line 3, ../../app/stylesheets/_ribbon.scss */
 .ribbon > .ribbon-left {
   content: " ";
   position: absolute;
@@ -56,59 +56,59 @@
 
 /* Common navbar branding */
 /* FIXME: Move common branding in _custom.scss here */
-/* line 4, /home/clayton/code/li/site/app/stylesheets/site/../_navbar.scss */
+/* line 4, ../../app/stylesheets/_navbar.scss */
 .navbar .brand {
   text-transform: uppercase;
 }
-/* line 8, /home/clayton/code/li/site/app/stylesheets/site/../_navbar.scss */
+/* line 8, ../../app/stylesheets/_navbar.scss */
 .navbar .brand > a {
   display: block;
 }
-/* line 12, /home/clayton/code/li/site/app/stylesheets/site/../_navbar.scss */
+/* line 12, ../../app/stylesheets/_navbar.scss */
 .navbar .brand-image {
   content: ' ';
   /*background-image: url('../images/logo-medium.png') center top no-repeat;
   height: logoHeight;
   width: logoWidth;*/
 }
-/* line 19, /home/clayton/code/li/site/app/stylesheets/site/../_navbar.scss */
+/* line 19, ../../app/stylesheets/_navbar.scss */
 .navbar .brand-text {
   color: white;
   text-align: center;
 }
 
 /* This is site specific branding */
-/* line 4, /home/clayton/code/li/site/app/stylesheets/site/_navbar.scss */
+/* line 4, ../../app/stylesheets/site/_navbar.scss */
 .navbar {
   margin-bottom: 30px;
   position: relative;
 }
-/* line 8, /home/clayton/code/li/site/app/stylesheets/site/_navbar.scss */
+/* line 8, ../../app/stylesheets/site/_navbar.scss */
 .navbar .brand {
   /* reset styles */
   float: none;
   margin: 0;
   padding: 0;
 }
-/* line 15, /home/clayton/code/li/site/app/stylesheets/site/_navbar.scss */
+/* line 15, ../../app/stylesheets/site/_navbar.scss */
 .navbar .brand-image {
   background: url("../images/logo-medium.png") center top no-repeat transparent;
   height: 90px;
   width: 93px;
 }
-/* line 21, /home/clayton/code/li/site/app/stylesheets/site/_navbar.scss */
+/* line 21, ../../app/stylesheets/site/_navbar.scss */
 .navbar .brand > a > .brand-image {
   -moz-transition: all 0.2s;
   -webkit-transition: all 0.2s;
   transition: all 0.2s;
 }
-/* line 27, /home/clayton/code/li/site/app/stylesheets/site/_navbar.scss */
+/* line 27, ../../app/stylesheets/site/_navbar.scss */
 .navbar .brand > a:hover > .brand-image {
   -moz-transform: rotate(-10deg);
   -webkit-transform: rotate(-10deg);
   transform: rotate(-10deg);
 }
-/* line 33, /home/clayton/code/li/site/app/stylesheets/site/_navbar.scss */
+/* line 33, ../../app/stylesheets/site/_navbar.scss */
 .navbar .nav {
   font-size: 13px;
   text-transform: uppercase;
@@ -117,13 +117,13 @@
   /*margin-bottom: 110px;*/
   /* needs fixing */
 }
-/* line 41, /home/clayton/code/li/site/app/stylesheets/site/_navbar.scss */
+/* line 41, ../../app/stylesheets/site/_navbar.scss */
 .navbar .nav > li {
   float: left;
   width: 20%;
   text-align: center;
 }
-/* line 46, /home/clayton/code/li/site/app/stylesheets/site/_navbar.scss */
+/* line 46, ../../app/stylesheets/site/_navbar.scss */
 .navbar .nav > li > a {
   color: white;
   font-size: 13px;
@@ -132,15 +132,15 @@
   /* reset styles */
   padding: 5px 0;
 }
-/* line 56, /home/clayton/code/li/site/app/stylesheets/site/_navbar.scss */
+/* line 56, ../../app/stylesheets/site/_navbar.scss */
 .navbar .nav > li:nth-child(1) {
   text-align: left;
 }
-/* line 57, /home/clayton/code/li/site/app/stylesheets/site/_navbar.scss */
+/* line 57, ../../app/stylesheets/site/_navbar.scss */
 .navbar .nav > li:nth-last-child(1) {
   text-align: right;
 }
-/* line 62, /home/clayton/code/li/site/app/stylesheets/site/_navbar.scss */
+/* line 62, ../../app/stylesheets/site/_navbar.scss */
 .navbar .nav > .active > a,
 .navbar .nav > .active > a:hover,
 .navbar .nav > li > a:hover {
@@ -152,204 +152,204 @@
 }
 
 @media (max-width: 767px) {
-  /* line 73, /home/clayton/code/li/site/app/stylesheets/site/_navbar.scss */
+  /* line 73, ../../app/stylesheets/site/_navbar.scss */
   .navbar {
     padding-top: 15px;
     min-height: 100px;
   }
-  /* line 77, /home/clayton/code/li/site/app/stylesheets/site/_navbar.scss */
+  /* line 77, ../../app/stylesheets/site/_navbar.scss */
   .navbar .brand {
     float: left;
     text-align: center;
     width: 93px;
   }
-  /* line 83, /home/clayton/code/li/site/app/stylesheets/site/_navbar.scss */
+  /* line 83, ../../app/stylesheets/site/_navbar.scss */
   .navbar .nav {
     margin-left: 103px;
     margin-top: 15px;
     /* centers navigation text on the logo */
   }
-  /* line 87, /home/clayton/code/li/site/app/stylesheets/site/_navbar.scss */
+  /* line 87, ../../app/stylesheets/site/_navbar.scss */
   .navbar .nav > li {
     float: left !important;
     width: 50% !important;
     text-align: center !important;
   }
-  /* line 92, /home/clayton/code/li/site/app/stylesheets/site/_navbar.scss */
+  /* line 92, ../../app/stylesheets/site/_navbar.scss */
   .navbar .nav > li.divider {
     display: none;
   }
 }
 @media (min-width: 768px) {
-  /* line 99, /home/clayton/code/li/site/app/stylesheets/site/_navbar.scss */
+  /* line 99, ../../app/stylesheets/site/_navbar.scss */
   .navbar {
     padding-top: 30px;
     min-height: 130px;
   }
-  /* line 103, /home/clayton/code/li/site/app/stylesheets/site/_navbar.scss */
+  /* line 103, ../../app/stylesheets/site/_navbar.scss */
   .navbar .brand {
     z-index: 1;
     position: absolute;
     left: 50%;
   }
-  /* line 108, /home/clayton/code/li/site/app/stylesheets/site/_navbar.scss */
+  /* line 108, ../../app/stylesheets/site/_navbar.scss */
   .navbar .brand > a {
     position: relative;
     left: -50%;
   }
-  /* line 113, /home/clayton/code/li/site/app/stylesheets/site/_navbar.scss */
+  /* line 113, ../../app/stylesheets/site/_navbar.scss */
   .navbar .nav {
     margin-top: 30px;
     /* centers navigation text on the logo */
   }
 }
 /* Drupal specific markup, we may want to wrap this with a top level selector on body.drupal or something */
-/* line 2, /home/clayton/code/li/site/app/stylesheets/_community.scss */
+/* line 2, ../../app/stylesheets/_community.scss */
 .views-field-rss {
   float: right;
 }
 
-/* line 3, /home/clayton/code/li/site/app/stylesheets/_community.scss */
+/* line 3, ../../app/stylesheets/_community.scss */
 .views-field-title {
   font-size: 16px;
   line-height: 20px;
 }
 
-/* line 4, /home/clayton/code/li/site/app/stylesheets/_community.scss */
+/* line 4, ../../app/stylesheets/_community.scss */
 .views-field-picture {
   float: left;
   margin-right: 6px;
 }
 
-/* line 5, /home/clayton/code/li/site/app/stylesheets/_community.scss */
+/* line 5, ../../app/stylesheets/_community.scss */
 .view-forum-list .views-field-picture {
   float: right;
   margin-left: 6px;
 }
 
-/* line 6, /home/clayton/code/li/site/app/stylesheets/_community.scss */
+/* line 6, ../../app/stylesheets/_community.scss */
 .block-stats div {
   display: inline;
 }
 
-/* line 7, /home/clayton/code/li/site/app/stylesheets/_community.scss */
+/* line 7, ../../app/stylesheets/_community.scss */
 .views-table .views-field-pageviews {
   white-space: nowrap;
 }
 
-/* line 8, /home/clayton/code/li/site/app/stylesheets/_community.scss */
+/* line 8, ../../app/stylesheets/_community.scss */
 .views-field-group-name {
   display: inline;
 }
 
-/* line 11, /home/clayton/code/li/site/app/stylesheets/_community.scss */
+/* line 11, ../../app/stylesheets/_community.scss */
 .column-nav .view-threads-by-popularity .views-table h4 {
   display: inline;
   color: #666;
   font-size: 13px;
   line-height: 18px;
 }
-/* line 12, /home/clayton/code/li/site/app/stylesheets/_community.scss */
+/* line 12, ../../app/stylesheets/_community.scss */
 .column-nav .view-threads-by-popularity .views-table a {
   text-decoration: underline;
 }
-/* line 13, /home/clayton/code/li/site/app/stylesheets/_community.scss */
+/* line 13, ../../app/stylesheets/_community.scss */
 .column-nav .view-threads-by-popularity .views-table span.views-field-title {
   display: block;
 }
-/* line 14, /home/clayton/code/li/site/app/stylesheets/_community.scss */
+/* line 14, ../../app/stylesheets/_community.scss */
 .column-nav .view-threads-by-popularity .views-table > div {
   margin-bottom: 15px;
 }
-/* line 15, /home/clayton/code/li/site/app/stylesheets/_community.scss */
+/* line 15, ../../app/stylesheets/_community.scss */
 .column-nav .view-threads-by-popularity .views-table .block-stats {
   clear: both;
 }
 
-/* line 19, /home/clayton/code/li/site/app/stylesheets/_community.scss */
+/* line 19, ../../app/stylesheets/_community.scss */
 .links > a,
 .links > span {
   margin-right: 8px;
 }
 
-/* line 24, /home/clayton/code/li/site/app/stylesheets/_community.scss */
+/* line 24, ../../app/stylesheets/_community.scss */
 .og-mission,
 .forum-header-description {
   margin-bottom: 10px;
 }
 
-/* line 28, /home/clayton/code/li/site/app/stylesheets/_community.scss */
+/* line 28, ../../app/stylesheets/_community.scss */
 .block {
   *zoom: 1;
   margin-bottom: 20px;
 }
-/* line 15, /home/clayton/code/li/site/app/stylesheets/bootstrap/_mixins.scss */
+/* line 15, ../../app/stylesheets/bootstrap/_mixins.scss */
 .block:before, .block:after {
   display: table;
   content: "";
 }
-/* line 19, /home/clayton/code/li/site/app/stylesheets/bootstrap/_mixins.scss */
+/* line 19, ../../app/stylesheets/bootstrap/_mixins.scss */
 .block:after {
   clear: both;
 }
 
-/* line 30, /home/clayton/code/li/site/app/stylesheets/_community.scss */
+/* line 30, ../../app/stylesheets/_community.scss */
 .column-nav .view-user-profile-box {
   margin-bottom: 20px;
 }
 
-/* line 33, /home/clayton/code/li/site/app/stylesheets/_community.scss */
+/* line 33, ../../app/stylesheets/_community.scss */
 .community textarea {
   width: auto;
 }
 
-/* line 38, /home/clayton/code/li/site/app/stylesheets/_community.scss */
+/* line 38, ../../app/stylesheets/_community.scss */
 .community form fieldset legend {
   font-size: 14px;
   line-height: 18px;
 }
-/* line 39, /home/clayton/code/li/site/app/stylesheets/_community.scss */
+/* line 39, ../../app/stylesheets/_community.scss */
 .community form .fieldset-wrapper {
   margin-left: 10px;
 }
 
-/* line 41, /home/clayton/code/li/site/app/stylesheets/_community.scss */
+/* line 41, ../../app/stylesheets/_community.scss */
 .clear-block {
   *zoom: 1;
 }
-/* line 15, /home/clayton/code/li/site/app/stylesheets/bootstrap/_mixins.scss */
+/* line 15, ../../app/stylesheets/bootstrap/_mixins.scss */
 .clear-block:before, .clear-block:after {
   display: table;
   content: "";
 }
-/* line 19, /home/clayton/code/li/site/app/stylesheets/bootstrap/_mixins.scss */
+/* line 19, ../../app/stylesheets/bootstrap/_mixins.scss */
 .clear-block:after {
   clear: both;
 }
 
-/* line 43, /home/clayton/code/li/site/app/stylesheets/_community.scss */
+/* line 43, ../../app/stylesheets/_community.scss */
 .view-nodes-by-category article {
   margin-bottom: 25px;
 }
-/* line 46, /home/clayton/code/li/site/app/stylesheets/_community.scss */
+/* line 46, ../../app/stylesheets/_community.scss */
 .view-nodes-by-category article > h2 {
   line-height: 25px;
 }
-/* line 48, /home/clayton/code/li/site/app/stylesheets/_community.scss */
+/* line 48, ../../app/stylesheets/_community.scss */
 .view-nodes-by-category article > .breadcrumb {
   margin-bottom: 5px;
   text-transform: uppercase;
   font-weight: bold;
 }
-/* line 53, /home/clayton/code/li/site/app/stylesheets/_community.scss */
+/* line 53, ../../app/stylesheets/_community.scss */
 .view-nodes-by-category article > .breadcrumb > .creator {
   color: black;
 }
-/* line 54, /home/clayton/code/li/site/app/stylesheets/_community.scss */
+/* line 54, ../../app/stylesheets/_community.scss */
 .view-nodes-by-category article > .breadcrumb > .created {
   color: #888;
 }
-/* line 59, /home/clayton/code/li/site/app/stylesheets/_community.scss */
+/* line 59, ../../app/stylesheets/_community.scss */
 .view-nodes-by-category article > div:last-child {
   text-transform: uppercase;
   text-align: right;
@@ -357,17 +357,17 @@
   border-bottom: 1px solid #aaa;
   font-size: 11px;
 }
-/* line 65, /home/clayton/code/li/site/app/stylesheets/_community.scss */
+/* line 65, ../../app/stylesheets/_community.scss */
 .view-nodes-by-category article > div:last-child > a {
   color: #888;
 }
 
-/* line 71, /home/clayton/code/li/site/app/stylesheets/_community.scss */
+/* line 71, ../../app/stylesheets/_community.scss */
 .node {
   margin-bottom: 20px;
 }
 
-/* line 76, /home/clayton/code/li/site/app/stylesheets/_community.scss */
+/* line 76, ../../app/stylesheets/_community.scss */
 .comment-content .links,
 .node > .links {
   margin-top: 10px;
@@ -375,24 +375,24 @@
   font-weight: bold;
 }
 
-/* line 82, /home/clayton/code/li/site/app/stylesheets/_community.scss */
+/* line 82, ../../app/stylesheets/_community.scss */
 .comment {
   margin-bottom: 20px;
   padding-top: 8px;
   border-top: 1px solid #ddd;
 }
-/* line 87, /home/clayton/code/li/site/app/stylesheets/_community.scss */
+/* line 87, ../../app/stylesheets/_community.scss */
 .comment .submitted {
   margin-top: 10px;
   font-style: italic;
 }
 
-/* line 92, /home/clayton/code/li/site/app/stylesheets/_community.scss */
+/* line 92, ../../app/stylesheets/_community.scss */
 .comment > table td {
   vertical-align: top;
 }
 
-/* line 94, /home/clayton/code/li/site/app/stylesheets/_community.scss */
+/* line 94, ../../app/stylesheets/_community.scss */
 .comment .comment-author .views-row {
   padding: 10px;
   width: 170px;
@@ -400,22 +400,22 @@
   margin-top: 5px;
   background-color: #efefef;
 }
-/* line 101, /home/clayton/code/li/site/app/stylesheets/_community.scss */
+/* line 101, ../../app/stylesheets/_community.scss */
 .comment .comment-author .views-field-phpcode {
   clear: both;
 }
-/* line 104, /home/clayton/code/li/site/app/stylesheets/_community.scss */
+/* line 104, ../../app/stylesheets/_community.scss */
 .comment .comment-author .views-field-value {
   font-style: italic;
   margin-top: 5px;
 }
 
-/* line 110, /home/clayton/code/li/site/app/stylesheets/_community.scss */
+/* line 110, ../../app/stylesheets/_community.scss */
 .column-content .picture img {
   border: 4px solid #000;
 }
 
-/* line 114, /home/clayton/code/li/site/app/stylesheets/_community.scss */
+/* line 114, ../../app/stylesheets/_community.scss */
 .view-user-profile-box .badge {
   display: inline-block;
   padding: 0 3px;
@@ -424,82 +424,82 @@
   font-size: 11px;
 }
 
-/* line 121, /home/clayton/code/li/site/app/stylesheets/_community.scss */
+/* line 121, ../../app/stylesheets/_community.scss */
 .badge.newbie {
   background-color: #89aa00;
 }
 
-/* line 122, /home/clayton/code/li/site/app/stylesheets/_community.scss */
+/* line 122, ../../app/stylesheets/_community.scss */
 .badge.member {
   background-color: #fc6b00;
 }
 
-/* line 123, /home/clayton/code/li/site/app/stylesheets/_community.scss */
+/* line 123, ../../app/stylesheets/_community.scss */
 .badge.accomplished {
   background-color: #191919;
 }
 
-/* line 124, /home/clayton/code/li/site/app/stylesheets/_community.scss */
+/* line 124, ../../app/stylesheets/_community.scss */
 .badge.pro {
   background-color: #356fce;
 }
 
-/* line 125, /home/clayton/code/li/site/app/stylesheets/_community.scss */
+/* line 125, ../../app/stylesheets/_community.scss */
 .badge.expert {
   background-color: #a80f00;
 }
 
-/* line 127, /home/clayton/code/li/site/app/stylesheets/_community.scss */
+/* line 127, ../../app/stylesheets/_community.scss */
 .community .poll > .bar > .foreground {
   background-color: #8b161e;
 }
 
-/* line 132, /home/clayton/code/li/site/app/stylesheets/_community.scss */
+/* line 132, ../../app/stylesheets/_community.scss */
 .column-nav .poll > .title {
   margin-bottom: 5px;
 }
-/* line 135, /home/clayton/code/li/site/app/stylesheets/_community.scss */
+/* line 135, ../../app/stylesheets/_community.scss */
 .column-nav .poll > .text {
   margin-bottom: 2px;
 }
 
-/* line 141, /home/clayton/code/li/site/app/stylesheets/_community.scss */
+/* line 141, ../../app/stylesheets/_community.scss */
 .kb-toggle {
   display: none;
 }
 
 /* Voting on Ideas */
-/* line 146, /home/clayton/code/li/site/app/stylesheets/_community.scss */
+/* line 146, ../../app/stylesheets/_community.scss */
 td.views-field-vud-node-widget {
   width: 55px;
 }
 
-/* line 151, /home/clayton/code/li/site/app/stylesheets/_community.scss */
+/* line 151, ../../app/stylesheets/_community.scss */
 .community .vud-widget-updown .updown-down,
 .community .vud-widget-updown .vud-link-down {
   float: right;
 }
 
 /* Ideas table generation doesn't generate separate divs because it is using the view Table layout */
-/* line 156, /home/clayton/code/li/site/app/stylesheets/_community.scss */
+/* line 156, ../../app/stylesheets/_community.scss */
 .view-Ideas .views-table .views-field-title {
   font-size: 13px;
   line-height: 1.4em;
 }
-/* line 160, /home/clayton/code/li/site/app/stylesheets/_community.scss */
+/* line 160, ../../app/stylesheets/_community.scss */
 .view-Ideas .views-table .views-field-title a:first-child {
   font-size: 16px;
   line-height: 1.2em;
 }
 
-/* line 166, /home/clayton/code/li/site/app/stylesheets/_community.scss */
+/* line 166, ../../app/stylesheets/_community.scss */
 .vud-widget-updown > div.down-active {
   background: #cd202c;
   color: black;
   border-color: black;
 }
 
-/* line 172, /home/clayton/code/li/site/app/stylesheets/_community.scss */
+/* line 172, ../../app/stylesheets/_community.scss */
 .vud-widget-updown > div.up-active {
   background: #d4e16b;
   color: black;
@@ -507,7 +507,7 @@ td.views-field-vud-node-widget {
 }
 
 /* copied from system.css */
-/* line 179, /home/clayton/code/li/site/app/stylesheets/_community.scss */
+/* line 179, ../../app/stylesheets/_community.scss */
 html.js fieldset.collapsed {
   border-bottom-width: 0;
   border-left-width: 0;
@@ -516,50 +516,50 @@ html.js fieldset.collapsed {
   margin-bottom: 0;
 }
 
-/* line 186, /home/clayton/code/li/site/app/stylesheets/_community.scss */
+/* line 186, ../../app/stylesheets/_community.scss */
 html.js fieldset.collapsed * {
   display: none;
 }
 
-/* line 189, /home/clayton/code/li/site/app/stylesheets/_community.scss */
+/* line 189, ../../app/stylesheets/_community.scss */
 html.js fieldset.collapsed legend {
   display: block;
 }
 
-/* line 192, /home/clayton/code/li/site/app/stylesheets/_community.scss */
+/* line 192, ../../app/stylesheets/_community.scss */
 html.js fieldset.collapsible legend a {
   background: url("../images/menu-expanded.png") no-repeat scroll 5px 75% transparent;
   padding-left: 15px;
 }
 
-/* line 196, /home/clayton/code/li/site/app/stylesheets/_community.scss */
+/* line 196, ../../app/stylesheets/_community.scss */
 html.js fieldset.collapsed legend a {
   background-image: url("../images/menu-collapsed.png");
   background-position: 5px 50%;
 }
 
-/* line 200, /home/clayton/code/li/site/app/stylesheets/_community.scss */
+/* line 200, ../../app/stylesheets/_community.scss */
 * html.js fieldset.collapsed legend, * html.js fieldset.collapsed legend *, * html.js fieldset.collapsed table * {
   display: inline;
 }
 
-/* line 203, /home/clayton/code/li/site/app/stylesheets/_community.scss */
+/* line 203, ../../app/stylesheets/_community.scss */
 html.js fieldset.collapsible {
   position: relative;
 }
 
-/* line 206, /home/clayton/code/li/site/app/stylesheets/_community.scss */
+/* line 206, ../../app/stylesheets/_community.scss */
 html.js fieldset.collapsible legend a {
   display: block;
 }
 
-/* line 209, /home/clayton/code/li/site/app/stylesheets/_community.scss */
+/* line 209, ../../app/stylesheets/_community.scss */
 html.js fieldset.collapsible .fieldset-wrapper {
   overflow: auto;
 }
 
 /* side column */
-/* line 214, /home/clayton/code/li/site/app/stylesheets/_community.scss */
+/* line 214, ../../app/stylesheets/_community.scss */
 .sidenav-column-inner {
   margin-right: 15px;
 }
@@ -954,12 +954,12 @@ body.signup {
   position: relative;
   margin-bottom: 15px;
 }
-/* line 15, /home/clayton/code/li/site/app/stylesheets/bootstrap/_mixins.scss */
+/* line 15, ../../app/stylesheets/bootstrap/_mixins.scss */
 .column-buzz .tweet:before, .column-buzz .tweet:after {
   display: table;
   content: "";
 }
-/* line 19, /home/clayton/code/li/site/app/stylesheets/bootstrap/_mixins.scss */
+/* line 19, ../../app/stylesheets/bootstrap/_mixins.scss */
 .column-buzz .tweet:after {
   clear: both;
 }
@@ -1060,11 +1060,11 @@ h1.ribbon > .ribbon-content {
   /* left margin set by ribbon */
   min-width: 30%;
 }
-/* line 27, /home/clayton/code/li/site/app/stylesheets/_ribbon.scss */
+/* line 27, ../../app/stylesheets/_ribbon.scss */
 h1.ribbon > .ribbon-content {
   padding-left: 38px;
 }
-/* line 19, /home/clayton/code/li/site/app/stylesheets/_ribbon.scss */
+/* line 19, ../../app/stylesheets/_ribbon.scss */
 h1.ribbon > .ribbon-left {
   border-top: 10px solid #91010b;
   bottom: -10px;
@@ -1076,7 +1076,7 @@ h1.ribbon > .ribbon-left {
   h1.ribbon {
     margin-left: -30px;
   }
-  /* line 27, /home/clayton/code/li/site/app/stylesheets/_ribbon.scss */
+  /* line 27, ../../app/stylesheets/_ribbon.scss */
   h1.ribbon > .ribbon-content {
     padding-left: 30px;
   }
@@ -1086,7 +1086,7 @@ h1.ribbon > .ribbon-left {
   h1.ribbon {
     margin-left: -40px;
   }
-  /* line 27, /home/clayton/code/li/site/app/stylesheets/_ribbon.scss */
+  /* line 27, ../../app/stylesheets/_ribbon.scss */
   h1.ribbon > .ribbon-content {
     padding-left: 40px;
   }
@@ -1349,7 +1349,7 @@ body.home > header {
 .home .messaging .secondary {
   max-width: 790px;
   margin: 0 auto;
-  font-family: Liberation Sans, Helvetica Neue, Helvetica, Arial, Sans-serif;
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
 }
 /* line 672, ../../app/stylesheets/site.scss */
 .home .messaging h1, .home .messaging h2 {
