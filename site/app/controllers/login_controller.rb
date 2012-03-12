@@ -5,6 +5,10 @@ require 'uri'
 
 class LoginController < ApplicationController
 
+  layout 'site'
+
+  before_filter :new_forms, :only => [:show]
+
   def show_flex
     @register_url = user_new_flex_url
     @default_login_workflow = flex_path
@@ -42,7 +46,7 @@ class LoginController < ApplicationController
     @redirectUrl = root_url
     @errorUrl = login_error_url
     Rails.logger.debug "Session workflow in LoginController#show: #{workflow}"
-    render :show
+    render :show, :layout => 'box'
   end
 
   def error
