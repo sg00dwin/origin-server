@@ -211,7 +211,7 @@ def migrate(continue=false, target_server_identity=nil)
   
   #Migrate jenkins_url to https
   users.each do |user|
-    if user.env_vars.has_key?('JENKINS_URL')
+    if user.env_vars && user.env_vars.has_key?('JENKINS_URL')
       jenkins_url = user.env_vars['JENKINS_URL']
       if jenkins_url.start_with?("http://")
         puts "Updating jenkins env var for user: #{user.login}"
