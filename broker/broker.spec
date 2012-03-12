@@ -55,6 +55,7 @@ mv %{buildroot}%{brokerdir}/script/rhc-admin-ctl-district %{buildroot}/%{_bindir
 mv %{buildroot}%{brokerdir}/script/rhc-admin-add-template %{buildroot}/%{_bindir}
 mv %{buildroot}%{brokerdir}/script/rhc-admin-remove-template %{buildroot}/%{_bindir}
 mv %{buildroot}%{brokerdir}/script/rhc-admin-user-vip %{buildroot}/%{_bindir}
+mv %{buildroot}%{brokerdir}/script/rhc-admin-chk %{buildroot}/%{_bindir}
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -73,6 +74,7 @@ rm -rf $RPM_BUILD_ROOT
 %{brokerdir}
 %{htmldir}/broker
 %attr(0750,-,-) %{_bindir}/rhc-admin-ctl-domain
+%attr(0750,-,-) %{_bindir}/rhc-admin-chk
 %attr(0750,-,-) %{_bindir}/rhc-admin-ctl-app
 %attr(0750,-,-) %{_bindir}/rhc-admin-cartridge-do
 %attr(0750,-,-) %{_bindir}/rhc-admin-move

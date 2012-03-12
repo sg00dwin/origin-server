@@ -41,10 +41,12 @@ body > header {
   .secondary {
     max-width: 790px;
     margin: 0 auto;
-    font-family: Liberation Sans, Helvetica Neue, Helvetica, Arial, Sans-serif;
   }
   h1, h2 { color: #bbb; }
 }
+#learn h4 {
+	color: #000;
+	}
 
 #buzz {
   background-color: #181919;
