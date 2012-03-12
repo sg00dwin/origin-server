@@ -48,6 +48,18 @@ class SiteController < ApplicationController
     "
   end
   
+  def signup_success
+    message 'What\'s next?', "
+      <p>
+        Check your inbox for an email with a validation link. 
+        Click on the link to complete the registration process.
+      </p>
+      <p>
+        #{link_to 'Return to the main page', '/app/new'}
+      </p>
+    "
+  end
+  
   private
   
   def message(title, content)
