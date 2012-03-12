@@ -16,22 +16,22 @@
   #learn.section-striped.lift-counter
     .container.container-inset
       .row
-        = take_action '/app/user/new', 'Create your <strong>first three apps</strong> for free', 'Try it out', :class => 'span12'
+        = take_action new_web_user_path, 'Create your <strong>first three apps</strong> for free', 'Try it out', :class => 'span12'
   
         .span6
           %ul.learn.unstyled
             %li
-              = link_to "learn", :class => 'link-tile' do
+              = link_to product_overview_path, :class => 'link-tile' do
                 %img{:src => 'clock.png'}
                 %h4 Superfast!
                 %p Code and deploy to the cloud in minutes.  Faster and easier than it has ever been.
             %li
-              = link_to "learn", :class => 'link-tile' do
+              = link_to product_overview_path, :class => 'link-tile' do
                 %img{:src => 'key.png'}
                 %h4 Don't get locked in
                 %p Minimal coding to the platform and built on open technologies, so you can take it with you.
             %li
-              = link_to "learn", :class => 'link-tile' do
+              = link_to product_overview_path(:anchor => 'scale'), :class => 'link-tile' do
                 %img{:src => 'scale.png'}
                 %h4 Scale easily in any language
                 %p Grow your Java, Perl, Ruby, Python, and Node.js apps easily with resource scaling.
@@ -45,11 +45,12 @@
               = link_to "news", :class => 'link-tile' do
                 %h4 New OpenShift Express upgrade - March 12
                 %p We pushed a minor Express upgrade today, including some bug fixes and general UI enhancements. We've added a preview section to the app
+
       .row
         .span6
-          %p.gutter= link_to "Learn about OpenShift...", "learn"
+          %p.gutter= link_to "Learn about OpenShift", product_overview_path, :class => 'action-more'
         .span6
-          %p.gutter= link_to "Read the OpenShift blog...", "blog"
+          %p.gutter= link_to "Read the OpenShift blog", openshift_blog_url, :class => 'action-more'
   
   #buzz.section-base
     .container
