@@ -33,7 +33,7 @@ function print_idled {
 function is_idled {
     appid=$1
 
-    source "/var/lib/libra/${appid}/.env/OPENSHIFT_RUNTIME_DIR"
+    source "/var/lib/stickshift/${appid}/.env/OPENSHIFT_RUNTIME_DIR"
     if [ -f "$OPENSHIFT_RUNTIME_DIR/.state" ]; then
         _test=`cat $OPENSHIFT_RUNTIME_DIR/.state`
         return `test idle = "$_test"`
