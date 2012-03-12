@@ -1,7 +1,7 @@
 require 'state_machine'
 
 class Application < StickShift::Cartridge
-  attr_accessor :user, :creation_time, :uuid, :aliases, :cart_data,
+  attr_accessor :user, :creation_time, :uuid, :aliases, :cart_data, :optimize,
                 :state, :group_instance_map, :comp_instance_map, :conn_endpoints_list,
                 :domain, :group_override_map, :working_comp_inst_hash,
                 :working_group_inst_hash, :configure_order, :start_order,
@@ -48,6 +48,7 @@ class Application < StickShift::Cartridge
   def initialize(user=nil, app_name=nil, uuid=nil, node_profile=nil, framework=nil, template=nil, will_scale=false)
     self.user = user
     self.node_profile = node_profile
+    self.optimize = false
     
     if template.nil?
       from_descriptor({"Name"=>app_name, "Subscribes"=>{"doc-root"=>{"Type"=>"FILESYSTEM:doc-root"}}})
@@ -504,6 +505,7 @@ class Application < StickShift::Cartridge
 
   # execute all connections
   def execute_connections
+    return execute_connections_optimized if self.optimize
     return if not self.scalable
     self.conn_endpoints_list.each { |conn|
       # get publisher's gears, execute the connector, and

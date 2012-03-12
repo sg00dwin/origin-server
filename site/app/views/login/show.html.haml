@@ -20,5 +20,8 @@
         Password
       .controls
         %input(id="pwd_input" type="password" name="password" autocomplete="off" required="true")
+        %a{:href => '/app/user/request_password_reset_form'} forgot?
     .form-actions
       %input(type="submit" value="Sign in" class="btn")
+      or
+      %a{:href => '/app/account/new'} create an account

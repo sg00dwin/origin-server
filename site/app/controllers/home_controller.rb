@@ -16,4 +16,7 @@ class HomeController < ApplicationController
   # Hijacking home controller
   # for general static page serving
   def about; end
+
+  def getting_started; end
+
 end

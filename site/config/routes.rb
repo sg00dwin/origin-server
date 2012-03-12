@@ -15,7 +15,7 @@ RedHatCloud::Application.routes.draw do
     # Sample of regular route:
     #   match 'products/:id' => 'catalog#view'
     # Keep in mind you can assign values other than :controller and :action
-    match 'getting_started' => 'getting_started/generic#show'
+    match 'getting_started' => 'home#getting_started'
     match 'getting_started_external/:registration_referrer' => 'getting_started_external#show'
     match 'email_confirm' => 'email_confirm#confirm'
     match 'email_confirm_external/:registration_referrer' => 'email_confirm#confirm_external'
@@ -82,6 +82,8 @@ RedHatCloud::Application.routes.draw do
     #match 'user' => 'user#show', :via => :get
 
     # deprecated, use :password
+    match 'user/request_password_reset_form' => 'user#request_password_reset_form', :via => [:get]
+    match 'user/request_password_reset_success' => 'user#request_password_reset_success', :via => [:get]
     match 'user/request_password_reset' => 'user#request_password_reset', :via => [:post]
     match 'user/reset_password' => 'user#reset_password', :via => [:get]
     match 'user/change_password' => 'user#change_password', :via => [:post]

@@ -31,7 +31,7 @@ EOF
   logmessage "set forwarders: ${NAME_SERVER_LIST}"
   
   # reload the named configuration if needed
-  if service named status
+  if service named status 2>&1 >/dev/null
   then
     service named reload
   fi

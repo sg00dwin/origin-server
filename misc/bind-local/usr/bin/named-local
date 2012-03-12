@@ -1,110 +1,122 @@
-#!/usr/bin/ruby
+#!/bin/sh
+
+# named-local init
+# named-local start
+# named-local status
+# named-local stop
+# named-local clean
+# named-local reset
+
+# Where to get the init files from
+NAMED_LOCAL_LIB=${NAMED_LOCAL_LIB:="/usr/bin/bind-local"}
+# Where to put them to work
+NAMED_LOCAL_DIR=.
+
+# The requirements to run a local named are:
+#   named.conf
+#   example.com.key
+#   example.com.db
+# 
+
+
 #
-# Control a BIND DNS service for testing
+# Prepare a to run a named
 #
+function init() {
+    echo "init"
+    # copy named.conf
+    cp ${NAMED_LOCAL_LIB}/named.conf ${NAMED_LOCAL_DIR}
+    # copy example.com.db
+    cp ${NAMED_LOCAL_LIB}/example.com.db.init ${NAMED_LOCAL_DIR}/example.com.db
+}
 
+function start() {
+    echo "start"
+    if [ ! -f ${NAMED_LOCAL_DIR}/named.pid ]
+    then
+	/usr/sbin/named -4 -c ${NAMED_LOCAL_DIR}/named.conf
+    else
+	echo "${NAMED_LOCAL_DIR}/named.pid found: is there a named running?"
+	exit 1
+    fi
+}
 
-require 'rubygems'
-require 'open4'
-require 'ftools' # adds File.cp
-require 'fileutils' # for change directory
-require 'pp'
+function stop() {
+    echo "stop"
+    if [ -f ${NAMED_LOCAL_DIR}/named.pid ]
+    then
+	PID=`cat ${NAMED_LOCAL_DIR}/named.pid`
+	kill $PID
+    else
+	echo "${NAMED_LOCAL_DIR}/named.pid is not found.  Is there a named running?"
+    fi
+}
 
-require 'dnsruby'
+function status() {
+    echo "status"
+    if [ -f ${NAMED_LOCAL_DIR}/named.pid ]
+    then
+	PID=`cat ${NAMED_LOCAL_DIR}/named.pid`
+	ps --no-heading -p $PID
+    else
+	echo no named.pid found
+	exit 1
+    fi
+}
 
-$named_init_dir = ENV['NAMED_INIT_DIR'] or "/usr/share/bind-ddns"
-#named_dir = File.dirname(__FILE__)
-named_dir = "."
+function clean() {
+    echo "clean"
+    if [ ! -f ${NAMED_LOCAL_DIR}/named.pid ]
+    then
+	rm -f ${NAMED_LOCAL_DIR}/named.conf
+	rm -f ${NAMED_LOCAL_DIR}/example.com.db
+	rm -f ${NAMED_LOCAL_DIR}/example.com.db.jnl
+	rm -f ${NAMED_LOCAL_DIR}/named.log
+	rm -f ${NAMED_LOCAL_DIR}/named.session.key
+    else
+	echo "$NAMED_LOCAL_DIR/named.pid exists: Is there a named running?"
+    fi
+}
 
-class BindTestService
-
-  attr_reader :testroot, :pid
-  def initialize(testroot=named_dir)
-
-    @testroot = testroot
-
-    # get server, port, keyname, keyvalue, zone, domain_suffix
-    reset
-  end
-
-  def clean
-    # delete all journal files
-    `rm -f *.jnl`
-
-    # delete the dynamic managed keys file
-    if File.exists? 'managed-keys.bind'
-      File.delete 'managed-keys.bind'
-    end
-  end
-
-  def reset
+function reset() {
+    echo "reset"
+    stop
     clean
-    File.copy($named_init_dir + "/example.com.db.init", "example.com.db")
-  end
+    init
+}
 
-  # start the daemon
-  def start
 
-    if @pid != nil
-      raise "I think a named is already running with PID #{@pid}"
-    end
+ACTION=$1
 
-    conf_file = $named_init_dir + '/named.conf'
+case $ACTION in
 
-    cmd = "/usr/sbin/named -4 -c #{conf_file}"
-    pid, stdin, stdout, stderr = Open4::popen4 cmd
-     
-    # Need to check if there already is one
-    
-    stdin.close
-    stdout.close
-    stderr.close
+    "start")
+	start
+	;;
 
-    sleep 2
-    @pid = File.open("named.pid").read.to_i
-  end
+    "stop")
+	stop
+	;;
 
-  def stop
-    if @pid == nil
-      raise "no PID: is there really a named running?"
-    end
+    "status")
+	status
+	;;
 
-    Process.kill('INT', @pid)
-    @pid = nil
+    "init")
+	init
+	;;
 
-  end
+    "clean")
+	clean
+	;;
 
-  def self.stop(named_root)
-    pid = File.read("named.pid").strip.to_i
-    Process.kill('INT', pid)
-  end
+    "reset")
+	reset
+	;;
 
-  def self.clean(named_root)
-    FileUtils.cd named_root
-    `rm -f *.jnl`
-  end
-
-end
-
-if __FILE__ == $0
-  # UPDATE AS NEEDED
-
-  case ARGV[0]
-  when "start"
-    c = BindTestService.new named_dir
-
-    c.reset
-
-    c.start
-
-  when "stop"
-    BindTestService.stop named_dir
-
-  when "clean"
-    BindTestService.clean named_dir
-
-  else
-
-  end
-end
+    *)
+	echo "invalid command $ACTION"
+	exit 1
+	;;
+esac
 

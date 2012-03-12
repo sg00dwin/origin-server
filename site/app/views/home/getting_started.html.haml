@@ -1,4 +1,3 @@
-- content_for :page_title, 'What is OpenShift?'
 - content_for :nav_class, ' lift-counter'
 - content_for :header do
   .messaging
@@ -20,8 +19,6 @@
 
     ![OpenShift PaaS Illustration](/app/images/overview-paas.png)
 
-  %a{:name => 'code'}
-  :markdown
     ## Code on.
 
     For a Developer to use OpenShift to take advantage of the power and elasticity of the Cloud, they need only do the following:
@@ -51,12 +48,8 @@
 
     That's all there is to it.  Simple, right?
 
-  %section= link_to 'Read more about getting started', getting_started_path, :class => 'action-more'
-  
-
   .row
     .span6
-      %a{:name => 'open'}
       :markdown
         ## Code anything.
 
@@ -66,7 +59,6 @@
         ![OpenShift Ecosystem Logos](/app/images/overview-ecosystem.png)
 
     .span6
-      %a{:name => 'scale'}
       :markdown
         ## Blow the doors off your expectations
 
@@ -83,7 +75,7 @@
 
     ![OpenShift architecture diagram](/app/images/overview-architecture.png)
 
-    OpenShift is built on a foundation of Red Hat Enterprise Linux (RHEL).  Beyond being the leading and most respected Linux distro, RHEL provides some key capabilities that allow OpenShift to be stable, responsive, performant and secure. OpenShift leverages the multitenancy and security models within RHEL to provide fine-grained and trusted control over the compute and storage resources available to any single OpenShift application.  SELinux allows OpenShift to "firewall" one user's application from another in order to insure security and survivability.  Taking a "multi-tenant in the OS" approach vs. a "multi-tenant hypervisor" approach allows OpenShift to scale resources much more quickly so that your application will never lack the horsepower that it needs.
+    OpenShift is built on a foundation of Red Hat Enterprise Linux (RHEL).  Beyond being the leading and most respected Linux distro, RHEL provides some key capabilities that allow OpenShift to be stable, responsive, performant and secure. OpenShift leverages the multitenency and security models within RHEL to provide fine-grained and trusted control over the compute and storage resources available to any single OpenShift application.  SELinux allows OpenShift to "firewall" one user's application from another in order to insure security and survivability.  Taking a "multi-tenant in the OS" approach vs. a "multi-tenant hypervisor" approach allows OpenShift to scale resources much more quickly so that your application will never lack the horsepower that it needs.
 
     Add on top of RHEL, a full selection of open source Languages, Frameworks, and Middleware combined with a "Cartridge" approach that allows users to very easily select the components that their applications need whether it is a NoSQL datastore or a Business Intelligence analytics engine.  For full details on the OpenShift technical architecture see this link <Arch Overview on Community if it is going to be there>.
 
