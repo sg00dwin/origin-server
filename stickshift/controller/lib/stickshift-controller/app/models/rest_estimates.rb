@@ -1,5 +1,6 @@
-class RestEstimates < Cloud::Sdk::Model
-  
+class RestEstimates < StickShift::Model
+  attr_accessor :links 
+ 
   def initialize
     self.links = {
       "GET_APPLICATION" => Link.new("Get application estimate", "GET", "/estimates/application", [
