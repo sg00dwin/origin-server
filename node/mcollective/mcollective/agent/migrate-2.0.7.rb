@@ -35,8 +35,8 @@ module LibraMigration
       if app_type == 'jenkins-1.4'
         #Util.replace_in_file("#{app_dir}/data/jobs/*/config.xml", "<builderType>raw-0.1</builderType>", "<builderType>diy-0.1</builderType>")
         if orig_jenkins_url
-          Util.replace_in_file("#{app_dir}/data/config.xml", "<jenkinsUrl>.*</jenkinsUrl>", "")
-          Util.replace_in_file("#{app_dir}/data/hudson.tasks.Mailer.xml", "<hudsonUrl>#{orig_jenkins_url}</hudsonUrl>", "<hudsonUrl>#{jenkins_url}</hudsonUrl>")
+          Util.replace_in_file("#{app_dir}/data/config.xml", "<jenkinsUrl>.*</jenkinsUrl>", "<jenkinsUrl>#{jenkins_url}</jenkinsUrl>")
+          #Util.replace_in_file("#{app_dir}/data/hudson.tasks.Mailer.xml", "<hudsonUrl>.*</hudsonUrl>", "<hudsonUrl>#{jenkins_url}</hudsonUrl>")
         end
       end
 
