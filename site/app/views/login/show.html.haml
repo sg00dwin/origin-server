@@ -8,7 +8,7 @@
   %input(type="hidden" value="✓" name="utf8")
   %input{:type => "hidden", :value => form_authenticity_token, :name => "authenticity_token"}
   %input{:type => "hidden", :name => "redirectUrl", :value => (defined?(@redirectUrl) ? @redirectUrl : '/app/console') }
-  %input{:type => "hidden", :name => "errorUrl",  :value => (defined?(@errorUrl) ? :errorUrl : '/app/new/signup') }
+  %input{:type => "hidden", :name => "errorUrl",  :value => (defined?(@errorUrl) ? @errorUrl : '/app/new/signup') }
   %fieldset
     .control-group
       %label.control-label{:for => 'login_input'}
