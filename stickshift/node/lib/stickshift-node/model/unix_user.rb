@@ -129,7 +129,7 @@ module StickShift
       self.class.notify_observers(:after_add_ssh_key, self, key)
     end
     
-    def remove_ssh_key(key)
+    def remove_ssh_key(key, comment=nil)
       self.class.notify_observers(:before_remove_ssh_key, self, key)
       ssh_dir = File.join(@homedir, ".ssh")
       authorized_keys_file = File.join(ssh_dir,"authorized_keys")
@@ -141,7 +141,11 @@ module StickShift
         keys = file.readlines
       end
       
-      keys.delete_if{ |k| k.include?(key)}
+      if comment
+        keys.delete_if{ |k| k.include?(key) && k.include?(comment)}
+      else
+        keys.delete_if{ |k| k.include?(key)}
+      end
       keys.map!{ |k| k.strip }
       
       File.open(authorized_keys_file, File::WRONLY|File::TRUNC|File::CREAT, 0o0440) do |file|

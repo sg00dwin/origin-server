@@ -801,10 +801,10 @@ class Application < StickShift::Cartridge
     reply
   end
   
-  def remove_authorized_ssh_key(ssh_key)
+  def remove_authorized_ssh_key(ssh_key, comment=nil)
     reply = ResultIO.new
     s,f = run_on_gears(nil,reply,false) do |gear,r|
-      r.append gear.remove_authorized_ssh_key(ssh_key)
+      r.append gear.remove_authorized_ssh_key(ssh_key, comment)
     end
     raise f[0][:exception] if(f.length > 0)    
     reply
