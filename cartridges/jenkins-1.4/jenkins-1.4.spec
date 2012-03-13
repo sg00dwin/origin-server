@@ -2,7 +2,7 @@
 
 Summary:   Provides jenkins-1.4 support
 Name:      rhc-cartridge-jenkins-1.4
-Version:   0.88.3
+Version:   0.88.4
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   ASL 2.0
@@ -77,6 +77,14 @@ rm -rf %{buildroot}
 %doc %{cartridgedir}/LICENSE
 
 %changelog
+* Mon Mar 12 2012 Dan McPherson <dmcphers@redhat.com> 0.88.4-1
+- support https only for jenkins use case (dmcphers@redhat.com)
+- remove jenkinsUrl from config.xml (dmcphers@redhat.com)
+- adding back jenkinsUrl for now (dmcphers@redhat.com)
+- Revert "Fixing jenkins deploy proxy" (kraman@gmail.com)
+- update jenkins mailer on namespace update (dmcphers@redhat.com)
+- Fixing jenkins deploy proxy (kraman@gmail.com)
+
 * Sat Mar 10 2012 Dan McPherson <dmcphers@redhat.com> 0.88.3-1
 - point to https for changing jenkins password (dmcphers@redhat.com)
 - leave http enabled for now (dmcphers@redhat.com)

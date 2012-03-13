@@ -2,7 +2,7 @@
 
 Summary:       Multi-tenant cloud management system node tools
 Name:          rhc-node
-Version:       0.88.4
+Version:       0.88.5
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -259,6 +259,18 @@ fi
 /lib64/security/pam_libra.so
 
 %changelog
+* Mon Mar 12 2012 Dan McPherson <dmcphers@redhat.com> 0.88.5-1
+- remove jenkinsUrl from config.xml (dmcphers@redhat.com)
+- Change strategy for old variables.  Leave the old files in place, source the
+  new file in case its value changes. (rmillner@redhat.com)
+- /var/lib/libra became /var/lib/stickshift in the stickshift merge.
+  (rmillner@redhat.com)
+- rhc-accept-node: added a check for the system httpd configs to catch configs
+  that don't have an associated user account (twiest@redhat.com)
+- adding back jenkinsUrl for now (dmcphers@redhat.com)
+- semicolon is a valid character with connector-hook output now.
+  (rchopra@redhat.com)
+
 * Sat Mar 10 2012 Dan McPherson <dmcphers@redhat.com> 0.88.4-1
 - rhc-admin-chk (rchopra@redhat.com)
 - Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li

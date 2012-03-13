@@ -5,7 +5,7 @@
 
 Summary:        Cloud Development Node
 Name:           rubygem-%{gemname}
-Version:        0.6.6
+Version:        0.6.7
 Release:        1%{?dist}
 Group:          Development/Languages
 License:        ASL 2.0
@@ -91,6 +91,10 @@ rm -rf %{buildroot}
 echo "/usr/bin/ss-trap-user" >> /etc/shells
 
 %changelog
+* Mon Mar 12 2012 Dan McPherson <dmcphers@redhat.com> 0.6.7-1
+- Updating gem versions (dmcphers@redhat.com)
+- fixing bug 802425 and bug 802473 (abhgupta@redhat.com)
+
 * Sat Mar 10 2012 Dan McPherson <dmcphers@redhat.com> 0.6.6-1
 - Updating gem versions (dmcphers@redhat.com)
 - Fixes to get ss-connector-execute working after 'ss' merge. (ramr@redhat.com)

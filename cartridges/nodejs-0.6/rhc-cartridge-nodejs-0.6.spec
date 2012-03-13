@@ -2,7 +2,7 @@
 
 Summary:   Provides Node-0.6 support
 Name:      rhc-cartridge-nodejs-0.6
-Version:   0.3.3
+Version:   0.3.4
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   ASL 2.0
@@ -101,6 +101,11 @@ rm -rf %{buildroot}
 %doc %{cartridgedir}/LICENSE
 
 %changelog
+* Mon Mar 12 2012 Dan McPherson <dmcphers@redhat.com> 0.3.4-1
+- Update cartridge landing page styles (ccoleman@redhat.com)
+- Merge branch 'master' of li-master:/srv/git/li (ramr@redhat.com)
+- Add the set-db-connection-info hook to all the frameworks. (ramr@redhat.com)
+
 * Sat Mar 10 2012 Dan McPherson <dmcphers@redhat.com> 0.3.3-1
 - Fix for bugz 801989 nodejs scaled app. (ramr@redhat.com)
 
