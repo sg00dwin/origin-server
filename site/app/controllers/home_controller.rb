@@ -1,8 +1,6 @@
 # file: Serves home + static pages
 
-class HomeController < ApplicationController
-  
-  layout 'site'
+class HomeController < SiteController
 
   def index
     Rails.logger.debug "Index controller"
@@ -12,9 +10,5 @@ class HomeController < ApplicationController
       return
     end
   end
-  
-  # Hijacking home controller
-  # for general static page serving
-  def about; end
 
 end

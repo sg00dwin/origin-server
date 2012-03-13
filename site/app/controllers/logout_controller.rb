@@ -1,6 +1,6 @@
 require 'pp'
 
-class LogoutController < ApplicationController
+class LogoutController < SiteController
   def show_flex
     @redirect_path = login_flex_path
     show

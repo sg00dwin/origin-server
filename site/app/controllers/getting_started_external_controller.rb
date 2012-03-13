@@ -1,4 +1,4 @@
-class GettingStartedExternalController < ApplicationController
+class GettingStartedExternalController < SiteController
   
   before_filter :require_login
   

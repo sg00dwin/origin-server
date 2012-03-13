@@ -3,9 +3,7 @@ require 'net/http'
 require 'net/https'
 require 'uri'
 
-class LoginController < ApplicationController
-
-  layout 'site'
+class LoginController < SiteController
 
   before_filter :new_forms, :only => [:show]
 
@@ -46,7 +44,7 @@ class LoginController < ApplicationController
     @redirectUrl = root_url
     @errorUrl = login_error_url
     Rails.logger.debug "Session workflow in LoginController#show: #{workflow}"
-    render :show, :layout => 'box'
+    render :show, :layout => 'simple'
   end
 
   def error

@@ -1,9 +1,7 @@
 require 'pp'
 require 'json'
 
-class LegalController < ApplicationController
-
-  layout 'site'
+class LegalController < SiteController
 
   def show; end
   def site_terms; end

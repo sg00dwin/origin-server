@@ -1,6 +1,4 @@
-class PartnerController < ApplicationController
-
-  layout 'site'
+class PartnerController < SiteController
 
   @@data = "db/partners.json"
 

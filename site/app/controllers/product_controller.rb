@@ -1,8 +1,6 @@
 require 'uri'
 
-class ProductController < ApplicationController
-
-  layout 'site'
+class ProductController < SiteController
 
   def express
     # Handle the email confirmation flow

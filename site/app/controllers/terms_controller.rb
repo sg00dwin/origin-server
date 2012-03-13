@@ -2,7 +2,7 @@ require 'pp'
 require 'json'
 require 'recaptcha'
 
-class TermsController < ApplicationController
+class TermsController < SiteController
 
   def new
     new_terms
