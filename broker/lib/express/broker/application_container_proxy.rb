@@ -512,6 +512,7 @@ module Express
                 end
               rescue Exception => e
                 begin
+                  log_debug "DEBUG: Moving failed.  Rolling back '#{app.name}' with remove-httpd-proxy on '#{destination_container.id}'"
                   reply.append destination_container.send(:run_cartridge_command, app.framework, app, app.gear, "remove-httpd-proxy", nil, false)
                 ensure
                   raise
@@ -533,6 +534,7 @@ module Express
               app.save
             rescue Exception => e
               begin
+                log_debug "DEBUG: Moving failed.  Rolling back '#{app.name}' with destroy on '#{destination_container.id}'"
                 reply.append destination_container.destroy(app, app.gear, keep_uid)
               ensure
                 raise

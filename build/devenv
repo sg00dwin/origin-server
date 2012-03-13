@@ -183,7 +183,7 @@ class DevEnv < Thor
     def test_instance(tag, hostname, instance, conn, options, image_id=nil)
       begin
         unless options.official?
-          use_private_ip(hostname, options.public_hostname?)
+          use_private_ip(hostname)
         end
 
         threads = []
@@ -562,7 +562,8 @@ class DevEnv < Thor
   method_option :tag, :type => :boolean, :desc => "NAME is an Amazon tag"
   method_option :verbose, :type => :boolean, :desc => "Enable verbose logging"
   method_option :verifier, :type => :boolean, :desc => "Maintain verifier functionality (private IP setup)"
-  method_option :public_hostname, :type => :boolean, :default => true, :desc => "Embed the public hostname rather than the ssh hostname (default)"
+  method_option :public_hostname, :type => :boolean, :default => false, :desc => "Embed the public hostname rather than the ssh hostname"
+  method_option :private_hostname, :type => :boolean, :default => false, :desc => "Embed the ssh hostname rather than the public hostname"
   method_option :skip_build, :type => :boolean, :desc => "Indicator to skip the rpm build/install"
   method_option :clean_metadata, :type => :boolean, :desc => "Cleans metadata before running yum commands"
   method_option :region, :required => false, :desc => "Amazon region override (default us-east-1)"
@@ -600,9 +601,15 @@ class DevEnv < Thor
 
     # If this is a verifier, you'll need to reset the private ip setup on each sync
     if options.verifier?
-      use_private_ip(hostname, options.public_hostname?)
+      if options.public_hostname?
+        use_public_ip(hostname)
+      elsif options.private_hostname?
+        use_private_ip(hostname)
+      else
+        update_facts(hostname)
+      end
     else
-      use_public_ip(hostname, options.public_hostname?)
+      use_public_ip(hostname)
     end
   end
 
@@ -620,7 +627,8 @@ class DevEnv < Thor
 
   desc "launch NAME", "Launches the latest DevEnv instance, tagging with NAME"
   method_option :verifier, :type => :boolean, :desc => "Add verifier functionality (private IP setup and local tests)"
-  method_option :public_hostname, :type => :boolean, :default => true, :desc => "Embed the public hostname rather than the ssh hostname (default)"
+  method_option :public_hostname, :type => :boolean, :default => false, :desc => "Embed the public hostname rather than the ssh hostname"
+  method_option :private_hostname, :type => :boolean, :default => false, :desc => "Embed the ssh hostname"
   method_option :use_stage_image, :type => :boolean, :desc => "Launch a stage DevEnv image"
   method_option :use_clean_image, :type => :boolean, :desc => "Launch a clean DevEnv image"
   method_option :verbose, :type => :boolean, :desc => "Enable verbose logging"
@@ -671,7 +679,13 @@ class DevEnv < Thor
     puts "Done"
 
     if options.verifier?
-      use_private_ip(hostname, options.public_hostname?)
+      if options.public_hostname?
+        use_public_ip(hostname)
+      elsif options.private_hostname?
+        use_private_ip(hostname)
+      else
+        update_facts(hostname)
+      end
 
       if options.init_repo?
         print "Initializing git repo for syncing..."
@@ -731,7 +745,7 @@ END
       public_ip = instance.public_ip_address
       puts "Updating ~/.openshift/express.conf libra_server entry with public ip = #{public_ip}"
       `sed -i -e 's,^libra_server.*,libra_server=#{public_ip},' ~/.openshift/express.conf`
-      use_public_ip(hostname, options.public_hostname?)
+      #use_public_ip(hostname, options.public_hostname?)
     end
 
     home_dir=File.join(ENV['HOME'], '.openshiftdev/home.d')
