@@ -9,7 +9,7 @@ function print_help {
     echo "Usage: $0 app-name namespace uuid"
     echo "Start a running application"
 
-    echo "$0 $@" | logger -p local0.notice -t libra_httpd_start
+    echo "$0 $@" | logger -p local0.notice -t stickshift_haproxy_set_db_connection_info
     exit 1
 }
 
@@ -66,4 +66,3 @@ CTLEOF
    chmod 755 "$APP_DIR/${application}_remote_db_ctl.sh"
    echo "$APP_DIR/${application}_remote_db_ctl.sh" > "$APP_HOME/.env/.uservars/OPENSHIFT_DB_CTL_SCRIPT"
 fi
-
