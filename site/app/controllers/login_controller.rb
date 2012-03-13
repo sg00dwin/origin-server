@@ -154,7 +154,7 @@ class LoginController < ApplicationController
         if @message_type == 'success'
           redirect_to root_url
         else
-          render :new and return
+          render :show, :layout => 'box' and return
         end
       end
       format.js do
