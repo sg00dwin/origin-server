@@ -19,8 +19,8 @@ class RestApplication < StickShift::Model
 
     self.links = {
       "GET" => Link.new("Get application", "GET", "/domains/#{@domain_id}/applications/#{@name}"),
-      "GET" => Link.new("Get application descriptor", "GET", "/domains/#{@domain_id}/applications/#{@name}/descriptor"),      
-      "GET" => Link.new("Get application gears", "GET", "/domains/#{@domain_id}/applications/#{@name}/gears"),      
+      "GET_DESCRIPTOR" => Link.new("Get application descriptor", "GET", "/domains/#{@domain_id}/applications/#{@name}/descriptor"),      
+      "GET_GEARS" => Link.new("Get application gears", "GET", "/domains/#{@domain_id}/applications/#{@name}/gears"),      
       "START" => Link.new("Start application", "POST", "/domains/#{@domain_id}/applications/#{@name}/events", [
         Param.new("event", "string", "event", "start")
       ]),
@@ -32,6 +32,23 @@ class RestApplication < StickShift::Model
       ]),
       "FORCE_STOP" => Link.new("Force stop application", "POST", "/domains/#{@domain_id}/applications/#{@name}/events", [
         Param.new("event", "string", "event", "force-stop")
+      ]),
+      "EXPOSE_PORT" => Link.new("Expose port", "POST", "/domains/#{@domain_id}/applications/#{@name}/events", [
+        Param.new("event", "string", "event", "force-stop")
+      ]),
+      "CONCEAL_PORT" => Link.new("Conceal port", "POST", "/domains/#{@domain_id}/applications/#{@name}/events", [
+        Param.new("event", "string", "event", "force-stop")
+      ]),
+      "SHOW_PORT" => Link.new("Show port", "POST", "/domains/#{@domain_id}/applications/#{@name}/events", [
+        Param.new("event", "string", "event", "force-stop")
+      ]),
+      "ADD_ALIAS" => Link.new("Add application alias", "POST", "/domains/#{@domain_id}/applications/#{@name}/events", [
+        Param.new("event", "string", "event", "add-alias"),
+        Param.new("alias", "string", "The server alias for the application")
+      ]),
+      "REMOVE_ALIAS" => Link.new("Remove application alias", "POST", "/domains/#{@domain_id}/applications/#{@name}/events", [
+        Param.new("event", "string", "event", "remove-alias"),
+        Param.new("alias", "string", "The application alias to be removed")
       ]),
       "DELETE" => Link.new("Delete application", "DELETE", "/domains/#{@domain_id}/applications/#{@name}"),
       

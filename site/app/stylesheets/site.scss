@@ -450,9 +450,14 @@ body.signup {
     text-align: center;
     background: url('../images/events-bubble.png') no-repeat top left;
 
-    > .one {
-      margin-top: 30px;
-      color: gray;
+    > div {
+      color: #666666;
+   		margin-right: 70px;
+      position: static;
+      
+      &:first-child {
+      	margin-top: 75px;
+      }    
     }
   }
 }
