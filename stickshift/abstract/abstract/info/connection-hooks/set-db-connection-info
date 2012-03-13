@@ -9,7 +9,7 @@ function print_help {
     echo "Usage: $0 app-name namespace uuid"
     echo "Start a running application"
 
-    echo "$0 $@" | logger -p local0.notice -t libra_httpd_start
+    echo "$0 $@" | logger -p local0.notice -t stickshift_abstract_set_db_connection_info
     exit 1
 }
 

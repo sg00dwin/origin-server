@@ -13,8 +13,6 @@
         = link_to p, :class => 'btn btn-small login-provider' do
           %img{:alt => p}
 
-- Rails.logger.debug "Active: #{YAML.dump request.fullpath}"
-
 %nav#nav{:class => 'section-nav' << content_for(:nav_class)}
   .navbar
     .container
@@ -35,7 +33,9 @@
           - if link.class.name == "String"
             %li.divider!= link.to_s
           -else
-            %li{:class => cur_url == link[1] ? :active : ''}= link_to link[0],link[1]
+            %li{:class => cur_url == link[1] ? :active : ''}
+              = link_to link[1] do
+                %span= link[0]
 
   - if content_for? :header
     = yield :header
