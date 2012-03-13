@@ -10,6 +10,9 @@
     float: none;
     margin: 0;
     padding: 0;
+    font-size: 17px;
+    font-family:Overpass, "Helvetica Neue", Helvetica, Arial, sans-serif;
+    text-shadow: none;
   }
 
   .brand-image {
@@ -31,12 +34,10 @@
   }
 
   .nav {
-    font-size: 14px; 
-    text-transform: uppercase;
     /* reset styles */
     float: none;
-
-    /*margin-bottom: 110px;*/
+    width: 100%;
+    font-size: 14px; 
 
     > li {
       float: left;
@@ -45,7 +46,6 @@
 
       > a {
         color: white; 
-        font-size: 13px; 
         text-transform: uppercase; 
         font-weight: bold;
         /* reset styles */
@@ -90,6 +90,7 @@
     .nav {
       margin-left: $logoWidth + 10px; 
       margin-top: 15px; /* centers navigation text on the logo */
+      width: inherit;
 
       > li {
         float: left !important;
@@ -121,4 +122,13 @@
       margin-top: 30px; /* centers navigation text on the logo */
     }
   }
+}
+
+@media (max-width: 480px) {
+	.navbar {
+		.nav {
+    	font-size: 12px;
+    }
+  }
+  
 }
