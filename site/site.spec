@@ -3,7 +3,7 @@
 
 Summary:   Li site components
 Name:      rhc-site
-Version:   0.88.3
+Version:   0.88.4
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -85,6 +85,79 @@ rm -rf %{buildroot}
 /bin/touch %{sitedir}/log/production.log
 
 %changelog
+* Mon Mar 12 2012 Dan McPherson <dmcphers@redhat.com> 0.88.4-1
+- Removed login flow tests, starting to integrate with the new login flow
+  (ffranz@redhat.com)
+- Fixes old control_panel test (ffranz@redhat.com)
+- Fixes some test failures on login flows (ffranz@redhat.com)
+- Fixed user_controller tests that requires create.html.haml
+  (ffranz@redhat.com)
+- Fixes signup success page (ffranz@redhat.com)
+- Branding: old control_panel and dashboard routes redirects to /console
+  (ffranz@redhat.com)
+- Branding: removed the temporary /new controller route (ffranz@redhat.com)
+- Fixed signup redirect bug (ffranz@redhat.com)
+- Fixed login redirect bug (ffranz@redhat.com)
+- Merge branch 'master' of git1.ops.rhcloud.com:/srv/git/li (ffranz@redhat.com)
+- Fixed login redirect bug (ffranz@redhat.com)
+- focus states for primary nav (sgoodwin@redhat.com)
+- Branding: fixed broken images, adjust routes for the good of SEO
+  (ffranz@redhat.com)
+- Branding: improved login page (ffranz@redhat.com)
+- Branding: improved login page (ffranz@redhat.com)
+- Overview typo, remove max-height (ccoleman@redhat.com)
+- Merge branch 'master' of git1.ops.rhcloud.com:/srv/git/li (ffranz@redhat.com)
+- Branding: links on signin, signup, recover pages (ffranz@redhat.com)
+- Fixed workflow for signup form (fotios@redhat.com)
+- updated comment thread styles (sgoodwin@redhat.com)
+- Branding: improved Express and Flex pages (ffranz@redhat.com)
+- Branding: merged header (ffranz@redhat.com)
+- section-top color changes (sgoodwin@redhat.com)
+- Fix links in between overview and content (ccoleman@redhat.com)
+- Integrate overview site (ccoleman@redhat.com)
+- Regeneration of home/common with merges (ccoleman@redhat.com)
+- Reenable btn-primary for commit buttons (ccoleman@redhat.com)
+- Update cartridge landing page styles (ccoleman@redhat.com)
+- Styleguide example of landing page (ccoleman@redhat.com)
+- Branding: getting started page (ffranz@redhat.com)
+- Merge branch 'master' of git1.ops.rhcloud.com:/srv/git/li (ffranz@redhat.com)
+- Branding: partners pages (ffranz@redhat.com)
+- add cartridge_types functional tests (johnp@redhat.com)
+- add bridge styling for simple page (edirsh@redhat.com)
+- Merge branch 'master' of git1.ops.rhcloud.com:/srv/git/li (ffranz@redhat.com)
+- Branding: videos pages (ffranz@redhat.com)
+- make sure we have a leading slash when concatting rest urls
+  (johnp@redhat.com)
+- cartridges functional test (johnp@redhat.com)
+- Branding: Flex page (ffranz@redhat.com)
+- Branding: legal pages (ffranz@redhat.com)
+- Merge branch 'master' of git1.ops.rhcloud.com:/srv/git/li (ffranz@redhat.com)
+- Merge branch 'devmon' (sgoodwin@redhat.com)
+- Merge branch 'master' of git1.ops.rhcloud.com:/srv/git/li (ffranz@redhat.com)
+- Branding: integrating everything into current site (hold on your seat)
+  (ffranz@redhat.com)
+- checking in compiled stylesheet (edirsh@redhat.com)
+- Further tweaks to large backgrounds (edirsh@redhat.com)
+- cleanup odds and ends (sgoodwin@redhat.com)
+- Update help link to app cli management (ccoleman@redhat.com)
+- Make create app a button (ccoleman@redhat.com)
+- Comment out videos for this sprint, will deal with in a follow up
+  (ccoleman@redhat.com)
+- Merge branch 'master' of git1.ops.rhcloud.com:/srv/git/li (ffranz@redhat.com)
+- Branding: signup confirmation page (ffranz@redhat.com)
+- Regen CSS after merge (ccoleman@redhat.com)
+- New logo for status site, some minor css tweaks for now.
+  (ccoleman@redhat.com)
+- Update font family to match global variable (ccoleman@redhat.com)
+- section-top bar mods (sgoodwin@redhat.com)
+- newletter signup edit (sgoodwin@redhat.com)
+- ui tweaks (sgoodwin@redhat.com)
+- Merge branch 'master' of git1.ops.rhcloud.com:/srv/git/li (ffranz@redhat.com)
+- Branding: recover password workflow (ffranz@redhat.com)
+- touch icons (sgoodwin@redhat.com)
+- Update logo for console site to match branding guidelines (roughly), still
+  needs lots of love. (ccoleman@redhat.com)
+
 * Fri Mar 09 2012 Dan McPherson <dmcphers@redhat.com> 0.88.3-1
 - Merge branch 'master' of git1.ops.rhcloud.com:/srv/git/li (ffranz@redhat.com)
 - Branding: signin, signup and recover pwd now on smaller boxes and dedicated
