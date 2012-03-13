@@ -4,8 +4,11 @@ _this = this
 
 # success callback for latest tweet
 latestSuccess = (data, textStatus, jqXHR) ->
-  if data.length > 0
-    tweet = data[0]
+  rts = $ '#buzz-twitter-2' #remove after page is simplified
+  for tweet in data.slice(0,4)
+    rts.append $ (_this.renderTweet tweet, false)
+  #if data.length > 0
+  #  tweet = data[0]
     # ($ '#buzz-twitter').replaceWith $ (_this.renderTweet tweet, false)
 
 # error callback for latest tweet

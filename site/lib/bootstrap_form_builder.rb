@@ -244,7 +244,7 @@ class BootstrapFormBuilder < Formtastic::SemanticFormBuilder
             ::Formtastic::I18n.t(key, :model => object_name)) unless text.is_a?(::String)
 
     button_html = options.delete(:button_html) || {}
-    button_html.merge!(:class => [button_html[:class], key, 'btn btn-primary'].compact.join(' '))
+    button_html.merge!(:class => [button_html[:class] || 'btn btn-primary', key].compact.join(' '))
 
     #remove need for wrapper
     #wrapper_html_class = ['btn-primary'] #changed # TODO: Add class reflecting on form action.

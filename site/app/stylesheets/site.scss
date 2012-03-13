@@ -440,6 +440,16 @@ body.signup {
      margin-left: 105px;
      color: $subtleTextDarkBackground;
     }
+
+    > p:first-child {
+      margin-left: 0;
+      &:before {
+        border: 0;
+      }
+    }
+    > small:nth-child(2) {
+      margin-left: 15px;
+    }
   }
 
   > .callout {

@@ -16,7 +16,7 @@
   #learn.section-striped.lift-counter
     .container.container-inset
       .row
-        = take_action new_web_user_path, 'Create your <strong>first three apps</strong> for free', 'Try it out', :class => 'span12'
+        = take_action new_web_user_path, 'Get started in the cloud for <strong>free</strong>', 'Try it now', :class => 'span12'
   
         .span6
           %ul.learn.unstyled
@@ -39,7 +39,7 @@
           %ul.news.unstyled
             %li
               = link_to openshift_blog_url, :class => 'link-tile' do
-                %h4 Follow the OpenShift Blog
+                %h4 Want to keep up to date?
                 %p Keep up to date with the latest news and announcements from the OpenShift team. Our team is constantly bringing you the latest advice and tutorials.
             %li
               = link_to console_path, :class => 'link-tile' do
@@ -66,13 +66,16 @@
               %strong Buzz
             %hr
             .row-fluid
-              .span6
+              -#.span6 #disabled for now
                 %blockquote
                   %p OpenShift has dramatically improved my cloud experience. Managing my application is so much easier, I haven't had any problems dealing with usage spikes, and its security and scalability really help my peace of mind.
                   %small Some person
                 %blockquote 
                   %p OpenShift has dramatically improved my cloud experience. Managing my application is so much easier, I haven't had any problems dealing with usage spikes, and its security and scalability really help my peace of mind.
                   %small Some other person
+              -# move to server side
+              #buzz-twitter-2.span5
+              .span1 &nbsp;
               #buzz-twitter.span6
   
             .row-fluid
@@ -90,7 +93,7 @@
                     %strong More
                     = "#OpenShift buzz"
   
-            .callout
+            -#.callout disabled for this sprint, will eventually pull latest events
               .one Look for team
               .two OpenShift
               .three at Mongo DB

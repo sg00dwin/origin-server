@@ -1,5 +1,5 @@
 %h1.ribbon
-  .ribbon-content Sign up for a new account
+  .ribbon-content Sign up for OpenShift
   .ribbon-left
   
 - input_html = { :class => input_class } if defined? input_class
@@ -26,7 +26,7 @@
         %a{:href => '/app/legal/openshift_privacy'} 
           Privacy Policy
       .form-actions
-        = form.commit_button :label => 'Sign Up for OpenShift »'
+        = form.commit_button 'Sign Up', :button_html => {:class => 'btn'}
         or
         %a{:href => '/app/login'} sign in if you have an account
             
