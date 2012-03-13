@@ -115,6 +115,9 @@ body.signup {
 }
 
 @media (max-width: 767px) {
+  .section-nav {
+    padding-bottom: 20px;
+  }
   .section-nav.lift-counter {
     padding-bottom: 30px;
   }
@@ -516,9 +519,6 @@ h1.ribbon {
 .column-buzz { background: $darkNoiseBackgroundColor url($transparentNoiseImageData); color: $textDarkBackground; }
 .column-buzz a { color: $linkTextDarkBackground; }
 
-body.box header .section-top { border-top: 7px solid #333; }
-body.box .container, body.box .box { width: 550px; }
-
 // Column navigation
 .column-nav {
   background-color: $navColumnBackgroundColor;
@@ -817,17 +817,31 @@ body.home {
 
 /* Simple page */
 html { height: 100%; }
-body.box {
+
+body.simple {
   /* Override default styles */
-  & > header {
+  > header {
     background: none;
     min-height: 0;
+
+    .section-top { 
+      border-top: 7px solid #333; 
+    }
   }
+
+  h1 { 
+    margin-bottom: 35px;
+  }
+
   .section-striped {
     background: none;
   }
   #content { 
     min-height: 0;
+  }
+
+  .form-actions {
+    background: none;
   }
 
   /* background */
@@ -862,25 +876,20 @@ body.box {
 }
 
 @media (max-width: 767px) {
-  body.box {
+  body.simple {
     > header {
       min-height: 0;
     }
-    .box {
+    .section-striped {
       background-color: white;
-      margin-left: 0;
-
-      h1.ribbon {
-        margin-left: -10px;
-      }
-    }
-    #nav {
-      padding-bottom: 0;
     }
 
     background-image: url($transparentNoiseImageData);
     background-repeat: repeat;
-
-
+  }
+}
+@media (max-width: 480px) {
+  body.simple .form-actions {
+    padding-left: 0;
   }
 }

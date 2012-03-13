@@ -190,6 +190,35 @@ a:hover {
   text-decoration: underline;
 }
 
+/* line 3, ../../app/stylesheets/_grid.scss */
+.span-wrapper {
+  margin-left: 0;
+}
+
+/* line 8, ../../app/stylesheets/_grid.scss */
+.row-flush-right {
+  margin-right: -28px;
+}
+/* line 11, ../../app/stylesheets/_grid.scss */
+.row-flush-right .span-flush-right {
+  padding-right: 28px;
+}
+
+/* line 17, ../../app/stylesheets/_grid.scss */
+.gutter {
+  margin-left: 28px;
+}
+
+/* line 20, ../../app/stylesheets/_grid.scss */
+.gutter-right {
+  margin-right: 14px;
+}
+
+/* line 25, ../../app/stylesheets/_grid.scss */
+.box-content {
+  padding: 20px 28px;
+}
+
 /* line 164, ../../app/stylesheets/bootstrap/_mixins.scss */
 .row {
   margin-left: -28px;
@@ -397,35 +426,6 @@ a:hover {
 /* line 235, ../../app/stylesheets/bootstrap/_mixins.scss */
 .row-fluid > .span12 {
   width: 100.0%;
-}
-
-/* line 3, ../../app/stylesheets/_grid.scss */
-.row > .span-wrapper {
-  margin-left: 0;
-}
-
-/* line 8, ../../app/stylesheets/_grid.scss */
-.row-flush-right {
-  margin-right: -28px;
-}
-/* line 11, ../../app/stylesheets/_grid.scss */
-.row-flush-right .span-flush-right {
-  padding-right: 28px;
-}
-
-/* line 17, ../../app/stylesheets/_grid.scss */
-.gutter {
-  margin-left: 28px;
-}
-
-/* line 20, ../../app/stylesheets/_grid.scss */
-.gutter-right {
-  margin-right: 14px;
-}
-
-/* line 25, ../../app/stylesheets/_grid.scss */
-.box-content {
-  padding: 20px 28px;
 }
 
 /* line 8, ../../app/stylesheets/bootstrap/_layouts.scss */
@@ -767,6 +767,11 @@ h6 {
 }
 
 /* line 36, ../../app/stylesheets/_type.scss */
+footer h3 {
+  text-transform: uppercase;
+}
+
+/* line 40, ../../app/stylesheets/_type.scss */
 .align-right {
   text-align: right;
 }

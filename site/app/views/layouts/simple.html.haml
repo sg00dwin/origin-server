@@ -8,7 +8,7 @@
     = render "layouts/head"
     = render "layouts/site/stylesheets"
 
-  %body{ :class => "box #{controller.controller_name} #{controller.action_name}" }
+  %body{ :class => "simple #{controller.controller_name} #{controller.action_name}" }
 
     %header
       = render 'layouts/site/header_simple'
@@ -22,10 +22,10 @@
     - else
       .section-striped#content
         .container
-          .row-content
-            .row-fluid.row-flush-right
-              .column-content.lift-less.span-wrapper
-                .box.span-flush-right
+          %div
+            .row.row-flush-right
+              .offset2.column-content.lift-less.span-wrapper
+                .span8.span-flush-right
                   = flashes
                   = yield
 

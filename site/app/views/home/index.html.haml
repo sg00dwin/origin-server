@@ -21,6 +21,11 @@
         .span6
           %ul.learn.unstyled
             %li
+              = link_to product_overview_path(:anchor => 'scale'), :class => 'link-tile' do
+                -#%img{:src => 'scale.png'}
+                %h4 Scale easily in any language
+                %p Grow your Java, Perl, Ruby, Python, and Node.js apps easily with resource scaling.
+            %li
               = link_to product_overview_path(:anchor => 'code'), :class => 'link-tile' do
                 -#%img{:src => 'clock.png'}
                 %h4 Superfast!
@@ -30,21 +35,20 @@
                 -#%img{:src => 'key.png'}
                 %h4 Don't get locked in
                 %p Minimal coding to the platform and built on open technologies, so you can take it with you.
-            %li
-              = link_to product_overview_path(:anchor => 'scale'), :class => 'link-tile' do
-                -#%img{:src => 'scale.png'}
-                %h4 Scale easily in any language
-                %p Grow your Java, Perl, Ruby, Python, and Node.js apps easily with resource scaling.
         .span6
           %ul.news.unstyled
             %li
-              = link_to "news", :class => 'link-tile' do
-                %h4 Node.js now running on Openshift
-                %p Everyone's most liked (and most hated) language is now available on OpenShift. Deploy your node.js apps in the cloud faster than you can say NaN!
+              = link_to openshift_blog_url, :class => 'link-tile' do
+                %h4 Follow the OpenShift Blog
+                %p Keep up to date with the latest news and announcements from the OpenShift team. Our team is constantly bringing you the latest advice and tutorials.
             %li
-              = link_to "news", :class => 'link-tile' do
-                %h4 New OpenShift Express upgrade - March 12
-                %p We pushed a minor Express upgrade today, including some bug fixes and general UI enhancements. We've added a preview section to the app
+              = link_to console_path, :class => 'link-tile' do
+                %h4 Try out the new console preview
+                %p We're rapidly improving the new management console to make OpenShift as easy to build your apps on as possible.  The old control panel is still available.
+            %li
+              = link_to events_url, :class => 'link-tile' do
+                %h4 Meet the OpenShift team
+                %p We're in your area - check out the event list and join us!
 
       .row
         .span6
