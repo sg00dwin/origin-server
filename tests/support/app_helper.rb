@@ -110,26 +110,35 @@ module AppHelper
       return exit_code, body
     end
 
-    def curl_head(url, host=nil, http_code=200)
-      if host
-        `curl --insecure -s --head -H 'Host: #{host}' --max-time 30 #{url} | grep #{http_code}`
-      else
-        `curl --insecure -s --head --max-time 30 #{url} | grep #{http_code}`
+    def curl_head_success?(url, host=nil, http_code=200)
+      response_code = curl_head(url, host)
+      is_http = url.start_with?('http://')
+      if (is_http && response_code.to_i == 301)
+        url = "https://#{url[7..-1]}"
+        response_code = curl_head(url, host)
       end
-      exit_code = $?.exitstatus
-      return exit_code
+      return response_code.to_i == http_code 
+    end
+    
+    def curl_head(url, host=nil)
+      response_code = nil
+      if host
+        response_code = `curl -w %{http_code} --output /dev/null --insecure -s --head -H 'Host: #{host}' --max-time 30 #{url}`
+      else
+        response_code = `curl -w %{http_code} --output /dev/null --insecure -s --head --max-time 30 #{url}`
+      end
+      response_code 
     end
 
     def is_inaccessible?(max_retries=60)
       max_retries.times do |i|
-        if curl_head("http://#{hostname}") != 0
+        if !curl_head_success?("http://#{hostname}")
           return true
         else
           $logger.info("Connection still accessible / retry #{i} / #{hostname}")
           sleep 1
         end
       end
-
       return false
     end
 
@@ -139,7 +148,7 @@ module AppHelper
       url = prefix + hostname
 
       max_retries.times do |i|
-        if curl_head(url, host) == 0
+        if curl_head_success?(url, host)
           return true
         else
           $logger.info("Connection still inaccessible / retry #{i} / #{url}")
@@ -154,7 +163,7 @@ module AppHelper
       prefix = use_https ? "https://" : "http://"
       url = prefix + hostname
 
-      if curl_head(url, host, 503) == 0
+      if curl_head_success?(url, host, 503)
         return true
       else
         return false
