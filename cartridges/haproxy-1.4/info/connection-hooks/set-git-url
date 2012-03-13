@@ -41,8 +41,6 @@ function check_gear_availability() {
 
 
 function setup_git_repo_from_framework() {
-    checkout_dir_name=app-framework-gear
-
     #  Ensure framework gear is available.
     check_gear_availability "$1" $GEAR_AVAILABILITY_TIMEOUT  ||   \
         log_error 140 "DNS check failed - setting up from gear git URL = $1"
@@ -50,7 +48,7 @@ function setup_git_repo_from_framework() {
     pushd "$GIT_DIR" > /dev/null
     rm -rf * 2> /dev/null  ||  :
     git clone --bare --no-hardlinks $1 $GIT_DIR
-    git remote add all-gears "file://$GIT_DIR"
+    git remote add all-gears "$HAPROXY_GIT_URL"
     git repack
     popd > /dev/null
 
@@ -72,6 +70,15 @@ function add_gear_git_mirror() {
 }
 
 
+function secure_git_remotes() {
+   remotes="$GIT_DIR/refs/remotes"
+   [ -d "$remotes" ]  ||  return 0
+
+   chown $user_id.$group_id -R "$remotes"
+   observe_setup_var_lib_dir "$remotes"
+}
+
+
 function git_mirror_push() {
     [ $# -lt 1 ]  &&  return 1
 
@@ -80,6 +87,8 @@ function git_mirror_push() {
     #  Need to push twice so that mirror states are also synced.
     git push $gear_name --mirror
     git push $gear_name --mirror
+
+    secure_git_remotes
 }
 
 
@@ -195,6 +204,7 @@ CART_VERSION=1.4
 CART_INFO_DIR=${CARTRIDGE_BASE_PATH}/${CART_NAME}-${CART_VERSION}/info
 export GIT_SSH=${CART_INFO_DIR}/bin/ssh
 export GIT_DIR=${OPENSHIFT_HOMEDIR}/git/${OPENSHIFT_GEAR_NAME}.git
+export HAPROXY_GIT_URL=ssh://${OPENSHIFT_GEAR_UUID}@${OPENSHIFT_GEAR_DNS}/~/git/${OPENSHIFT_GEAR_NAME}.git
 
 declare -A curr_gears
 

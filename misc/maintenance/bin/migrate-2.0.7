@@ -242,10 +242,12 @@ def migrate(continue=false, target_server_identity=nil)
   
   #Migrate the app/gear sizes
   users.each do |user|
-    user.env_vars.each_key do |key|
-      user.env_vars[key] = user.env_vars[key].gsub("/var/lib/libra", "/var/lib/stickshift")
-      user.env_vars[key] = user.env_vars[key].gsub("/usr/libexec/li", "/usr/libexec/stickshift")
-      user.save
+    unless user.env_vars.nil?
+      user.env_vars.each_key do |key|
+        user.env_vars[key] = user.env_vars[key].gsub("/var/lib/libra", "/var/lib/stickshift")
+        user.env_vars[key] = user.env_vars[key].gsub("/usr/libexec/li", "/usr/libexec/stickshift")
+        user.save
+      end
     end
   end
 
