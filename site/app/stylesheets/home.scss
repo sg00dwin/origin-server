@@ -48,24 +48,6 @@ body > header {
 	color: #000;
 	}
 
-#buzz {
-  background-color: #181919;
-  background-image: 
-    url('../images/diagonals-bottom.png'),
-    url('../images/tiny-panda.png'),
-    url('../images/mts-bottom.png');
-  background-repeat: no-repeat, no-repeat, repeat-x;
-  background-position: 
-    left top,
-    50px bottom,
-    center bottom;
-
-  .column-buzz {
-    background: black url('../images/black-noise.png');
-    margin: 0 80px;
-  }
-}
-
 @media (max-width: 767px) {
   body > header {
     background: url('../images/dark-gray-diagonal-noise.jpg') repeat;
