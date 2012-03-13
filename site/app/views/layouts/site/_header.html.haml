@@ -13,6 +13,8 @@
         = link_to p, :class => 'btn btn-small login-provider' do
           %img{:alt => p}
 
+- Rails.logger.debug "Active: #{YAML.dump request.fullpath}"
+
 %nav#nav{:class => 'section-nav' << content_for(:nav_class)}
   .navbar
     .container
@@ -24,11 +26,16 @@
             %strong> Open
             Shift
       %ul.nav
-        %li.active= link_to "Learn More", product_overview_path
-        %li= link_to "Express", express_path
-        %li.divider &nbsp;
-        %li= link_to "Flex", flex_path
-        %li= link_to "Community", community_url
+        - cur_url = url_for(:action => controller.action_name, :controller => controller.controller_name)
+        -[  ["Learn More", product_overview_path],
+            ["Express", express_path],
+            "&nbsp;",
+            ["Flex", flex_path],
+            ["Community", community_url] ].each do |link|
+          - if link.class.name == "String"
+            %li.divider!= link.to_s
+          -else
+            %li{:class => cur_url == link[1] ? :active : ''}= link_to link[0],link[1]
 
   - if content_for? :header
     = yield :header
