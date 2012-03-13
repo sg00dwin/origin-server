@@ -269,28 +269,32 @@ module OpenShift
       private_ip
     end
     
-    def use_private_ip(hostname, use_public_hostname=false)
+    def use_private_ip(hostname)
       private_ip = get_private_ip(hostname)
-      set_instance_ip(hostname, private_ip, use_public_hostname)
+      puts "Updating instance facts with private ip #{private_ip}"
+      set_instance_ip(hostname, private_ip, private_ip)
     end
     
-    def use_public_ip(hostname, use_public_hostname=false)
+    def use_public_ip(hostname, use_hostname=false)
+      dhostname = ssh(hostname, "wget -qO- http://169.254.169.254/latest/meta-data/public-hostname")
       public_ip = ssh(hostname, "wget -qO- http://169.254.169.254/latest/meta-data/public-ipv4")
-      set_instance_ip(hostname, public_ip, use_public_hostname)
+      public_ip = dhostname unless use_hostname
+      puts "Updating instance facts with public ip #{public_ip} and hostname #{dhostname}"
+      set_instance_ip(hostname,public_ip,dhostname)
     end
     
     def get_internal_hostname(hostname)
       internal_hostname = ssh(hostname, "hostname")
       internal_hostname
     end
+
+    def update_facts(hostname)
+      puts "Updating instance facts"
+      ssh(hostname, "sed -i \"s/.*PUBLIC_IP_OVERRIDE.*/#PUBLIC_IP_OVERRIDE=/g\" /etc/stickshift/stickshift-node.conf; sed -i \"s/.*PUBLIC_HOSTNAME_OVERRIDE.*/#PUBLIC_HOSTNAME_OVERRIDE=/g\" /etc/stickshift/stickshift-node.conf; /usr/libexec/mcollective/update_yaml.rb > /etc/mcollective/facts.yaml")
+    end
     
-    def set_instance_ip(hostname, ip, use_public_hostname=false)
+    def set_instance_ip(hostname, ip, dhostname)
       print "Updating the controller to use the ip '#{ip}'..."
-      if use_public_hostname
-        dhostname = ssh(hostname, "wget -qO- http://169.254.169.254/latest/meta-data/public-hostname")
-      else
-        dhostname=hostname
-      end
       # Both calls below are needed to fix a race condition between ssh and libra-data start times
       ssh(hostname, "sed -i \"s/.*PUBLIC_IP_OVERRIDE.*/PUBLIC_IP_OVERRIDE='#{ip}'/g\" /etc/stickshift/stickshift-node.conf; sed -i \"s/.*PUBLIC_HOSTNAME_OVERRIDE.*/PUBLIC_HOSTNAME_OVERRIDE='#{dhostname}'/g\" /etc/stickshift/stickshift-node.conf; /usr/libexec/mcollective/update_yaml.rb > /etc/mcollective/facts.yaml")
       puts 'Done'
