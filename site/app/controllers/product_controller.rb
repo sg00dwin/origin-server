@@ -33,12 +33,11 @@ class ProductController < SiteController
 
   #Product overview page
   def overview
-    render :action => :overview
   end
   
   #Feature matrix
-  def features
-    render :action => :features, :layout => 'application'
-  end
+  #def features
+  #  render :action => :features
+  #end
   
 end
