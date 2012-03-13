@@ -1,5 +1,3 @@
-include ActionView::Helpers::UrlHelper
-
 class SiteController < ApplicationController
 
   layout 'site'

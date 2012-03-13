@@ -1,5 +1,3 @@
-require 'uri'
-
 class ProductController < SiteController
 
   def express
