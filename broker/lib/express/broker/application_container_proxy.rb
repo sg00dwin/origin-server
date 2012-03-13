@@ -510,6 +510,20 @@ module Express
                     reply.append destination_container.send(:run_cartridge_command, app.framework, app, app.gear, "add-alias", server_alias, false)
                   end
                 end
+                
+                unless leave_stopped
+                  log_debug "DEBUG: Starting '#{app.name}' after move on #{destination_container.id}"
+                  do_with_retry('start') do
+                    reply.append destination_container.send(:run_cartridge_command, app.framework, app, app.gear, "start", nil, false)
+                  end
+                end
+                
+                log_debug "DEBUG: Fixing DNS and mongo for app '#{app.name}' after move"
+                log_debug "DEBUG: Changing server identity of '#{app.name}' from '#{source_container.id}' to '#{destination_container.id}'"
+                app.gear.server_identity = destination_container.id
+                app.gear.container = destination_container
+                reply.append app.recreate_dns
+                app.save
               rescue Exception => e
                 begin
                   log_debug "DEBUG: Moving failed.  Rolling back '#{app.name}' with remove-httpd-proxy on '#{destination_container.id}'"
@@ -518,20 +532,6 @@ module Express
                   raise
                 end
               end
-  
-              unless leave_stopped
-                log_debug "DEBUG: Starting '#{app.name}' after move on #{destination_container.id}"
-                do_with_retry('start') do
-                  reply.append destination_container.send(:run_cartridge_command, app.framework, app, app.gear, "start", nil, false)
-                end
-              end
-  
-              log_debug "DEBUG: Fixing DNS and mongo for app '#{app.name}' after move"
-              log_debug "DEBUG: Changing server identity of '#{app.name}' from '#{source_container.id}' to '#{destination_container.id}'"
-              app.gear.server_identity = destination_container.id
-              app.gear.container = destination_container
-              reply.append app.recreate_dns
-              app.save
             rescue Exception => e
               begin
                 log_debug "DEBUG: Moving failed.  Rolling back '#{app.name}' with destroy on '#{destination_container.id}'"
