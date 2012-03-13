@@ -1,5 +1,5 @@
 Name:		bind-local
-Version:	0.7
+Version:	0.8
 Release:	1%{?dist}
 Summary:	Config for local named for test and development with Dynamic DNS
 Group:		Network/Daemons
@@ -202,6 +202,10 @@ fi
 
 
 %changelog
+* Tue Mar 13 2012 Mark Lamourine <mlamouri@redhat.com> 0.8-1
+- cd on start to get logs placed properly (mlamouri@redhat.com)
+- fixed location of named-local init files (mlamouri@redhat.com)
+
 * Mon Mar 12 2012 Mark Lamourine <mlamouri@redhat.com> 0.7-1
 - Finish packaging bind-local:   install named configuration files   install
   dhcpnamedforward SELinux policy   install dhclient config and hooks to
