@@ -280,11 +280,20 @@ body.signup {
     transition: background-position 0.2s;
   }
   > .highlight-arrow:nth-child(2) {
-    border-left: 20px solid $takeActionHighlightBackground;
+    border-left: 20px solid transparent;
   }
 
-  &:hover > .highlight-arrow {
-    background-position: 5px center;
+  &:hover {
+    > div {
+      background-color: darken($takeActionBackground, 5%);
+    }
+    > .highlight,
+    > .highlight-arrow {
+      background-color: darken($takeActionHighlightBackground, 5%);
+    }
+    > .highlight-arrow {
+      background-position: 5px center;
+    }
   }
 }
 
