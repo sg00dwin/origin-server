@@ -155,6 +155,15 @@ class RestApiTest < ActiveSupport::TestCase
     assert_equal "#{@ts}", domain.namespace
   end
 
+  def test_domain_exists_error
+    domain = Domain.first(:as => @user)
+    domain2 = Domain.new :name => domain.name, :as => @user
+    assert !domain2.save
+    assert domain2.errors[:name].is_a? Array
+    assert domain2.errors[:name][0].is_a? String
+    assert domain2.errors[:name][0].include? 'Namespace'
+  end
+
   def test_domains_update
     domains = Domain.find :all, :as => @user
     assert_equal 1, domains.length
