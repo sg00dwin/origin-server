@@ -26,6 +26,8 @@ Requires:  php-pgsql
 Requires:  php-mbstring
 Requires:  php-pear
 Requires:  php-imap
+Requires:  php-pecl-apc
+Requires:  php-mcrypt
 
 BuildArch: noarch
 
