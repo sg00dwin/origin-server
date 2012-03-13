@@ -158,10 +158,10 @@ RedHatCloud::Application.routes.draw do
 
     match 'express_ssh_key_delete' => 'express_ssh_keys#destroy', :via => [:post]
     match 'express_app_delete' => 'express_app#destroy', :via => [:post]
-    # match 'control_panel' => 'control_panel#index', :as => 'control_panel'
-    # match 'dashboard' => 'control_panel#index', :as => 'dashboard'
-    match 'control_panel', :to => redirect('/app/console'), :as => 'control_panel'
-    match 'dashboard', :to => redirect('/app/console'), :as => 'dashboard'
+    match 'control_panel' => 'control_panel#index', :as => 'control_panel'
+    match 'dashboard' => 'control_panel#index', :as => 'dashboard'
+    #match 'control_panel', :to => redirect('/app/console'), :as => 'control_panel'
+    #match 'dashboard', :to => redirect('/app/console'), :as => 'dashboard'
     match 'control_panel/apps' => 'express_app#list', :as => 'list_apps'
     
     unless Rails.env.production?
