@@ -285,6 +285,7 @@ class ApplicationController < ActionController::Base
   def require_login
     Rails.logger.debug 'Login required'
     if !session[:login]
+      Rails.logger.debug "Session contents: #{session.inspect}"
       session[:login_workflow] = url_for :controller => self.controller_name, 
                                          :action => self.action_name
       redirect_to login_path
@@ -323,6 +324,7 @@ class ApplicationController < ActionController::Base
   
   # Block all access to a controller
   def deny_access
+    Rails.logger.debug 'Access denied to this controller'
     redirect_to root_path
   end
   
