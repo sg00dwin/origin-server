@@ -2,7 +2,7 @@
 
 Summary:   Provides python-wsgi-3.2 support
 Name:      rhc-cartridge-wsgi-3.2
-Version:   0.88.2
+Version:   0.88.3
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   ASL 2.0
@@ -104,6 +104,10 @@ rm -rf %{buildroot}
 %doc %{cartridgedir}/LICENSE
 
 %changelog
+* Mon Mar 12 2012 Dan McPherson <dmcphers@redhat.com> 0.88.3-1
+- Update cartridge landing page styles (ccoleman@redhat.com)
+- Add the set-db-connection-info hook to all the frameworks. (ramr@redhat.com)
+
 * Fri Mar 09 2012 Dan McPherson <dmcphers@redhat.com> 0.88.2-1
 - Batch variable name chage (rmillner@redhat.com)
 - Adding export control files (kraman@gmail.com)

@@ -113,11 +113,23 @@ function check_selinux() {
     # check selinux libra policy is loaded
     #
 	verbose checking selinux libra policy
-	POLICY=`semodule -l | grep libra`
+        ITERS=0
+        while [ $ITERS -le 10 ]
+        do
+	  POLICY=`semodule -l | grep libra`
+          XCODE=$?
+          if [ $XCODE -eq 0 ]
+          then
+            break
+          else
+            sleep 1
+          fi
+        done
 	if [ -z "$POLICY" ]
 	then
-	    fail "selinux libra policy is not loaded"
-        fi  
+	  fail "selinux libra policy is not loaded"
+        fi
+
     #
     # Check selinux booleans
     #

@@ -1,11 +1,11 @@
 Name:		bind-local
-Version:	0.7
+Version:	0.9
 Release:	1%{?dist}
 Summary:	Config for local named for test and development with Dynamic DNS
 Group:		Network/Daemons
 License:	GPLv2
 URL:		http://openshift.redhat.com
-Source0:	bind-local-${version}.tar.gz
+Source0:	bind-local-%{version}.tar.gz
 
 BuildRoot:     %(mktemp -ud %{_tmppath}/%{name}-%{version}-%{release}-XXXXXX)
 BuildRequires:	selinux-policy => 3.7.19-134
@@ -202,6 +202,15 @@ fi
 
 
 %changelog
+* Tue Mar 13 2012 Mark Lamourine <mlamouri@redhat.com> 0.9-1
+- fixed $var in spec to %%var (mlamouri@redhat.com)
+- Automatic commit of package [bind-local] release [0.8-1].
+  (mlamouri@redhat.com)
+
+* Tue Mar 13 2012 Mark Lamourine <mlamouri@redhat.com> 0.8-1
+- cd on start to get logs placed properly (mlamouri@redhat.com)
+- fixed location of named-local init files (mlamouri@redhat.com)
+
 * Mon Mar 12 2012 Mark Lamourine <mlamouri@redhat.com> 0.7-1
 - Finish packaging bind-local:   install named configuration files   install
   dhcpnamedforward SELinux policy   install dhclient config and hooks to

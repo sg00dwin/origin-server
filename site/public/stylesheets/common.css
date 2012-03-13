@@ -715,7 +715,7 @@ cite {
 }
 
 /* line 1, ../../app/stylesheets/_type.scss */
-h1, h2, h3, h4, h5, .headline, .nav, .secondary, .section-top {
+h1, h2, h3, h4, h5, .headline, .nav, .section-top {
   font-family: Overpass, "Helvetica Neue", Helvetica, Arial, sans-serif;
   font-weight: normal;
 }
@@ -4575,7 +4575,7 @@ input:focus, textarea:focus {
 }
 
 /* line 69, ../../app/stylesheets/_custom.scss */
-.control-group.warning > label, .control-group.warning .help-block, .control-group.warning .help-inline {
+.control-group.warning > label, .control-group.warning .help-inline {
   color: #FF9F00;
 }
 
@@ -4601,7 +4601,7 @@ input:focus, textarea:focus {
 }
 
 /* line 87, ../../app/stylesheets/_custom.scss */
-.control-group.error > label, .control-group.error .help-block, .control-group.error .help-inline {
+.control-group.error > label, .control-group.error .help-inline {
   color: #cc0000;
 }
 
@@ -4627,7 +4627,7 @@ input:focus, textarea:focus {
 }
 
 /* line 105, ../../app/stylesheets/_custom.scss */
-.control-group.success > label, .control-group.success .help-block, .control-group.success .help-inline {
+.control-group.success > label, .control-group.success .help-inline {
   color: #95a321;
 }
 

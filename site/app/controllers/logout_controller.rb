@@ -17,7 +17,7 @@ class LogoutController < ApplicationController
     if params[:redirectUrl]
       session[:login_workflow] = params[:redirectUrl]
     end
-    @redirect_path = @redirect_path ? @redirect_path : login_path
+    @redirect_path = @redirect_path || root_path
     redirect_to @redirect_path
   end
 end

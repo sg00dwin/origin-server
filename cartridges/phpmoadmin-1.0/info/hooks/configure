@@ -45,7 +45,7 @@ then
    exit 137
 else
    source "$APP_HOME/.env/OPENSHIFT_NOSQL_DB_TYPE"
-   if [ $OPENSHIFT_NOSQL_DB_TYPE -ne "mongodb" ]; then
+   if [ $OPENSHIFT_NOSQL_DB_TYPE != "mongodb" ]; then
       client_error ""
       client_error "MongoDB must be embedded before phpMoAdmin"
       client_error ""

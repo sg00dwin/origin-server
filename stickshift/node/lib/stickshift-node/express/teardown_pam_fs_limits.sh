@@ -36,7 +36,7 @@ DEFAULT_LIBRA_SKEL_DIR=$GEAR_SKEL_DIR
 # defaults
 limits_order=84
 
-CART_DIR=/usr/libexec/li/cartridges
+CART_DIR=/usr/libexec/stickshift/cartridges
 
 function load_node_conf {
     if [ -f '/etc/stickshift/stickshift-node.conf' ]

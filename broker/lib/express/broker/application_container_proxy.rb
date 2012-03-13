@@ -636,6 +636,9 @@ module Express
         (1..num_tries).each do |i|
           begin
             yield
+            if (i > 1)
+              log_debug "DEBUG: Action '#{action}' succeeded on try #{i}.  You can ignore previous error messages or following mcollective debug related to '#{action}'"
+            end
             break
           rescue Exception => e
             log_debug "DEBUG: Error performing #{action} on existing app on try #{i}: #{e.message}"

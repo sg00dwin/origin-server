@@ -18,18 +18,22 @@
 /*FIXME: From screenshots this averages to #070707 */
 /* Common navbar branding */
 /* FIXME: Move common branding in _custom.scss here */
+/* line 4, /home/clayton/code/li/site/app/stylesheets/_navbar.scss */
 .navbar .brand {
   text-transform: uppercase;
 }
+/* line 8, /home/clayton/code/li/site/app/stylesheets/_navbar.scss */
 .navbar .brand > a {
   display: block;
 }
+/* line 12, /home/clayton/code/li/site/app/stylesheets/_navbar.scss */
 .navbar .brand-image {
   content: ' ';
   /*background-image: url('../images/logo-medium.png') center top no-repeat;
   height: logoHeight;
   width: logoWidth;*/
 }
+/* line 19, /home/clayton/code/li/site/app/stylesheets/_navbar.scss */
 .navbar .brand-text {
   color: white;
   text-align: center;
@@ -38,13 +42,16 @@
 /*------------------------------------------------------
 	 Console specific styles
 	------------------------------------------------------ */
+/* line 13, ../../app/stylesheets/console.scss */
 #help {
   margin-top: 60px;
 }
 
+/* line 18, ../../app/stylesheets/console.scss */
 .console-transition .navbar .brand-image {
   float: left;
 }
+/* line 21, ../../app/stylesheets/console.scss */
 .console-transition .navbar .brand-text {
   font-size: 24px;
   line-height: 1em;
@@ -54,82 +61,99 @@
 
 /*	Console overview
 	----------------------------------------------------- */
+/* line 32, ../../app/stylesheets/console.scss */
 #app-list, #account-digest {
   margin-top: 20px;
 }
 
+/* line 35, ../../app/stylesheets/console.scss */
 #console-mast {
   background: #f0f0f0;
 }
 
+/* line 38, ../../app/stylesheets/console.scss */
 #console-mast h1 {
   margin: 15px 0 10px 20px;
 }
 
+/* line 41, ../../app/stylesheets/console.scss */
 #console-mast ul li {
   padding: 10px 0;
 }
 
+/* line 44, ../../app/stylesheets/console.scss */
 .account-total {
   font-size: 250%;
   margin-top: 20px;
 }
 
+/* line 48, ../../app/stylesheets/console.scss */
 .app-block {
   background: #f0f0f0;
   margin-bottom: 15px;
 }
 
+/* line 52, ../../app/stylesheets/console.scss */
 .app-block > .row > ul > li {
   margin-top: 10px;
   margin-bottom: 10px;
 }
 
+/* line 56, ../../app/stylesheets/console.scss */
 .app-block > .row > ul > li:first-child {
   margin-left: 40px;
   margin-right: -10px;
 }
 
+/* line 60, ../../app/stylesheets/console.scss */
 .app-block > .row > ul > li:last-child > a {
   margin-right: 10px;
 }
 
+/* line 63, ../../app/stylesheets/console.scss */
 .app-block h2 {
   word-wrap: break-word;
 }
 
 /*	App details
 	----------------------------------------------------- */
+/* line 71, ../../app/stylesheets/console.scss */
 .app-settings img {
   vertical-align: middle;
 }
 
+/* line 74, ../../app/stylesheets/console.scss */
 .app-settings a {
   padding: 5px;
 }
 
+/* line 77, ../../app/stylesheets/console.scss */
 #app-mast {
   background-color: #f0f0f0;
   margin-bottom: 21px;
   padding: 10px 0;
 }
 
+/* line 82, ../../app/stylesheets/console.scss */
 #app-mast h1 {
   font-weight: normal;
   margin-bottom: 0;
 }
 
+/* line 86, ../../app/stylesheets/console.scss */
 #app-mast li.app-title, #app-mast li.app-status {
   float: left;
   margin: 15px 40px 15px 20px;
 }
 
+/* line 90, ../../app/stylesheets/console.scss */
 .app-status span {
   font-size: 30px;
   line-height: 36px;
   font-family: Overpass, Helvetica, Arial, sans-serif;
 }
 
+/* line 95, ../../app/stylesheets/console.scss */
 #app-unique-info {
   border: 5px solid #efefef;
   padding: 15px;
@@ -137,29 +161,35 @@
   border-radius: 8px;
 }
 
+/* line 101, ../../app/stylesheets/console.scss */
 #app-unique-info h5 {
   border-bottom: 1px solid #eee;
 }
 
+/* line 104, ../../app/stylesheets/console.scss */
 #app-unique-info a {
   word-wrap: break-word;
 }
 
+/* line 107, ../../app/stylesheets/console.scss */
 section#app-cartridges .cartridge-block {
   background: #f0f0f0 url("http://placehold.it/60&text=img") 15px 15px no-repeat;
   margin-bottom: 15px;
 }
 
+/* line 111, ../../app/stylesheets/console.scss */
 section#app-cartridges .cartridge-block-overview {
   padding: 10px 0;
   overflow: hidden;
 }
 
+/* line 115, ../../app/stylesheets/console.scss */
 section#app-cartridges .embeded-cartridge-block {
   border-top: 2px solid #ddd;
   padding: 10px 0;
 }
 
+/* line 119, ../../app/stylesheets/console.scss */
 section#app-cartridges > header {
   overflow: hidden;
 }
@@ -167,32 +197,39 @@ section#app-cartridges > header {
 /*	Responsive customizations
 	--------------------------------------------------------- */
 @media (max-width: 480px) {
+  /* line 130, ../../app/stylesheets/console.scss */
   #my-apps .status {
     position: static;
   }
 
+  /* line 133, ../../app/stylesheets/console.scss */
   #my-apps li h2 {
     float: none;
   }
 }
 @media (max-width: 767px) {
+  /* line 138, ../../app/stylesheets/console.scss */
   #my-apps li h2 {
     float: right;
   }
 
+  /* line 141, ../../app/stylesheets/console.scss */
   section#console-mast .row ul.unstyled-flat li.span7.right {
     text-align: left;
   }
 }
 @media (min-width: 768px) and (max-width: 980px) {
+  /* line 144, ../../app/stylesheets/console.scss */
   #my-apps li h2 {
     float: none;
   }
 
+  /* line 147, ../../app/stylesheets/console.scss */
   #my-apps .status {
     position: static;
   }
 }
+/* line 160, ../../app/stylesheets/console.scss */
 .show-grid [class*="span"] {
   background-color: #c0ddf3;
   margin-bottom: 1px;

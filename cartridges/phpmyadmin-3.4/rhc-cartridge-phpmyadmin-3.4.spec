@@ -1,7 +1,7 @@
 %define cartridgedir %{_libexecdir}/stickshift/cartridges/embedded/phpmyadmin-3.4
 
 Name: rhc-cartridge-phpmyadmin-3.4
-Version: 0.10.2
+Version: 0.10.3
 Release: 1%{?dist}
 Summary: Embedded phpMyAdmin support for express
 
@@ -59,6 +59,9 @@ rm -rf $RPM_BUILD_ROOT
 %doc %{cartridgedir}/LICENSE
 
 %changelog
+* Mon Mar 12 2012 Dan McPherson <dmcphers@redhat.com> 0.10.3-1
+- Add the set-db-connection-info hook to all the frameworks. (ramr@redhat.com)
+
 * Fri Mar 09 2012 Dan McPherson <dmcphers@redhat.com> 0.10.2-1
 - Batch variable name chage (rmillner@redhat.com)
 - Adding export control files (kraman@gmail.com)

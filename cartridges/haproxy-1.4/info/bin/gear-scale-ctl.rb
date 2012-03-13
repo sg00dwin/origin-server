@@ -35,7 +35,7 @@ class Gear_scale_ctl
     }
     params['event'] = 'add-gear' == action ?  'scale-up' : 'scale-down'
 
-    request = RestClient::Request.new(:method => :post, :url => base_url,
+    request = RestClient::Request.new(:method => :post, :url => base_url, :timeout => 120,
         :headers => {:accept => 'application/json', :user_agent => 'StickShift'},
         :payload => params
         )

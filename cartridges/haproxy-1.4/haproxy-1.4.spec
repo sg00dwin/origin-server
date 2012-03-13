@@ -2,7 +2,7 @@
 
 Summary:   Provides haproxy-1.4 support
 Name:      rhc-cartridge-haproxy-1.4
-Version:   0.6.4
+Version:   0.6.5
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   ASL 2.0
@@ -84,6 +84,16 @@ rm -rf %{buildroot}
 %doc %{cartridgedir}/LICENSE
 
 %changelog
+* Mon Mar 12 2012 Dan McPherson <dmcphers@redhat.com> 0.6.5-1
+- remove login and password requirements (mmcgrath@redhat.com)
+- SDK authenticate using token/iv in API (jhonce@redhat.com)
+- Fix for bugz 802230 - secure git correctly so user can do pushes. Fallout of
+  connection hooks run as root. (ramr@redhat.com)
+- Add remote db control script + bug fixes w/ variable name changes.
+  (ramr@redhat.com)
+- Checkpoint work to call mysql on gear from haproxy + setup haproxy control
+  scripts. (ramr@redhat.com)
+
 * Sat Mar 10 2012 Dan McPherson <dmcphers@redhat.com> 0.6.4-1
 - Cleanup stickshift merge issues -- fix set-git-url hook failed to set the git
   repo as ssh was not found. (ramr@redhat.com)

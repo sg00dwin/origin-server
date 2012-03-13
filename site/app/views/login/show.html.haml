@@ -12,9 +12,9 @@
   %fieldset
     .control-group
       %label.control-label{:for => 'login_input'}
-        Email
+        Login
       .controls
-        %input{:type => "email", :required => true, :placeholder => 'Your redhat.com or RHN account', :value => session[:confirm_login] ? session[:confirm_login] : '', :name => "login",  :id => "login_input"}
+        %input{:required => true, :placeholder => 'Your redhat.com or RHN account', :value => session[:confirm_login] ? session[:confirm_login] : '', :name => "login",  :id => "login_input"}
     .control-group
       %label.control-label{:for => 'pwd_input'}
         Password

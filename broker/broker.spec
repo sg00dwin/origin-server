@@ -3,7 +3,7 @@
 
 Summary:   Li broker components
 Name:      rhc-broker
-Version:   0.88.3
+Version:   0.88.4
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -85,6 +85,14 @@ rm -rf $RPM_BUILD_ROOT
 /bin/touch %{brokerdir}/log/production.log
 
 %changelog
+* Mon Mar 12 2012 Dan McPherson <dmcphers@redhat.com> 0.88.4-1
+- Updating gem versions (dmcphers@redhat.com)
+- merging admin scripts to add/remove template into a single control script
+  (abhgupta@redhat.com)
+- fix for case when server_identity changes; switch to flip mcollective
+  optimizations on/off (rchopra@redhat.com)
+- spec file fix so that rhc-admin-chk is available in bin (rchopra@redhat.com)
+
 * Sat Mar 10 2012 Dan McPherson <dmcphers@redhat.com> 0.88.3-1
 - Updating gem versions (dmcphers@redhat.com)
 - rhc-admin-chk (rchopra@redhat.com)
