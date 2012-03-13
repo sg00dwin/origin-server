@@ -1,5 +1,5 @@
 Name:		bind-local
-Version:	0.8
+Version:	0.9
 Release:	1%{?dist}
 Summary:	Config for local named for test and development with Dynamic DNS
 Group:		Network/Daemons
@@ -202,6 +202,11 @@ fi
 
 
 %changelog
+* Tue Mar 13 2012 Mark Lamourine <mlamouri@redhat.com> 0.9-1
+- fixed $var in spec to %%var (mlamouri@redhat.com)
+- Automatic commit of package [bind-local] release [0.8-1].
+  (mlamouri@redhat.com)
+
 * Tue Mar 13 2012 Mark Lamourine <mlamouri@redhat.com> 0.8-1
 - cd on start to get logs placed properly (mlamouri@redhat.com)
 - fixed location of named-local init files (mlamouri@redhat.com)
