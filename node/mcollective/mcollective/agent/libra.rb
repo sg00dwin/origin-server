@@ -297,11 +297,11 @@ module MCollective
           cmd = "ss-#{action}"
           pid, stdin, stdout, stderr = Open4::popen4("/usr/bin/runcon -l s0-s0:c0.c1023 #{cmd} #{args} 2>&1")
         else
-          if File.exists? "/usr/libexec/li/cartridges/#{cartridge}/info/hooks/#{action}"                
-            pid, stdin, stdout, stderr = Open4::popen4ext(true, "/usr/bin/runcon -l s0-s0:c0.c1023 /usr/libexec/li/cartridges/#{cartridge}/info/hooks/#{action} #{args} 2>&1")
-            #pid, stdin, stdout, stderr = Open4::popen4("/usr/bin/runcon -l s0-s0:c0.c1023 /usr/libexec/li/cartridges/#{cartridge}/info/hooks/#{action} #{args} 2>&1")
-          elsif File.exists? "/usr/libexec/li/cartridges/embedded/#{cartridge}/info/hooks/#{action}"                
-            pid, stdin, stdout, stderr = Open4::popen4ext(true, "/usr/bin/runcon -l s0-s0:c0.c1023 /usr/libexec/li/cartridges/embedded/#{cartridge}/info/hooks/#{action} #{args} 2>&1")
+          if File.exists? "/usr/libexec/stickshift/cartridges/#{cartridge}/info/hooks/#{action}"                
+            pid, stdin, stdout, stderr = Open4::popen4ext(true, "/usr/bin/runcon -l s0-s0:c0.c1023 /usr/libexec/stickshift/cartridges/#{cartridge}/info/hooks/#{action} #{args} 2>&1")
+            #pid, stdin, stdout, stderr = Open4::popen4("/usr/bin/runcon -l s0-s0:c0.c1023 /usr/libexec/stickshift/cartridges/#{cartridge}/info/hooks/#{action} #{args} 2>&1")
+          elsif File.exists? "/usr/libexec/stickshift/cartridges/embedded/#{cartridge}/info/hooks/#{action}"                
+            pid, stdin, stdout, stderr = Open4::popen4ext(true, "/usr/bin/runcon -l s0-s0:c0.c1023 /usr/libexec/stickshift/cartridges/embedded/#{cartridge}/info/hooks/#{action} #{args} 2>&1")
           else
             raise Exception.new("cartridge_do_action ERROR action '#{action}' not found.")
           end
