@@ -312,8 +312,8 @@ function setup_embedded_configure {
 }
 
 function setup_embedded_deconfigure {
-    source ${CART_DIR}/abstract/info/lib/network
-    source ${CART_DIR}/abstract/info/lib/apache
+    source ${CARTRIDGE_BASE_PATH}/abstract/info/lib/network
+    source ${CARTRIDGE_BASE_PATH}/abstract/info/lib/apache
 
     CART_INFO_DIR=$CARTRIDGE_BASE_PATH/embedded/$app_type/info
 
