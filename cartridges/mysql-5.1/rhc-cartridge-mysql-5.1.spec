@@ -2,7 +2,7 @@
 %define frameworkdir %{_libexecdir}/stickshift/cartridges/mysql-5.1
 
 Name: rhc-cartridge-mysql-5.1
-Version: 0.22.4
+Version: 0.22.5
 Release: 1%{?dist}
 Summary: Provides embedded mysql support
 
@@ -70,6 +70,16 @@ rm -rf $RPM_BUILD_ROOT
 %doc %{cartridgedir}/LICENSE
 
 %changelog
+* Mon Mar 12 2012 Dan McPherson <dmcphers@redhat.com> 0.22.5-1
+- Fixup message to promote using the inter-gear mysql URL for scalable apps.
+  (ramr@redhat.com)
+- Add remote db control script + bug fixes w/ variable name changes.
+  (ramr@redhat.com)
+- Checkpoint work to call mysql on gear from haproxy + setup haproxy control
+  scripts. (ramr@redhat.com)
+- Merge branch 'master' of li-master:/srv/git/li (ramr@redhat.com)
+- Add the set-db-connection-info hook to all the frameworks. (ramr@redhat.com)
+
 * Sat Mar 10 2012 Dan McPherson <dmcphers@redhat.com> 0.22.4-1
 - Fix issues stickshift merge missed. (ramr@redhat.com)
 

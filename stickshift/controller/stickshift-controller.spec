@@ -5,7 +5,7 @@
 
 Summary:        Cloud Development Controller
 Name:           rubygem-%{gemname}
-Version:        0.6.5
+Version:        0.6.6
 Release:        1%{?dist}
 Group:          Development/Languages
 License:        ASL 2.0
@@ -75,6 +75,28 @@ rm -rf %{buildroot}
 %{ruby_sitelib}/%{gemname}.rb
 
 %changelog
+* Mon Mar 12 2012 Dan McPherson <dmcphers@redhat.com> 0.6.6-1
+- Updating gem versions (dmcphers@redhat.com)
+- fix for Bug 802221 (rchopra@redhat.com)
+- fix for bug 798469 (rchopra@redhat.com)
+- do not user username/password if iv/token method is used for authentication
+  (rchopra@redhat.com)
+- fixes to estimates controller (rpenta@redhat.com)
+- Merge branch 'master' of git1.ops.rhcloud.com:/srv/git/li (rpenta@redhat.com)
+- Fix error codes for estimates controller (rpenta@redhat.com)
+- fix for case when server_identity changes; switch to flip mcollective
+  optimizations on/off (rchopra@redhat.com)
+- Merge branch 'master' of git1.ops.rhcloud.com:/srv/git/li (rpenta@redhat.com)
+- REST api changes to estimate gear usage given a descriptor
+  (rpenta@redhat.com)
+- Changes for US2033 - adding add/remove alias functionality to REST calls
+  (abhgupta@redhat.com)
+- Merge branch 'master' of git1.ops.rhcloud.com:/srv/git/li (rpenta@redhat.com)
+- Merge branch 'master' of git1.ops.rhcloud.com:/srv/git/li (rpenta@redhat.com)
+- add REST estimates model (rpenta@redhat.com)
+- add estimates, application_estimate controller (rpenta@redhat.com)
+- Add /estimates to base controller (rpenta@redhat.com)
+
 * Sat Mar 10 2012 Dan McPherson <dmcphers@redhat.com> 0.6.5-1
 - Updating gem versions (dmcphers@redhat.com)
 - rhc-admin-chk (rchopra@redhat.com)

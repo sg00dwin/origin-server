@@ -2,7 +2,7 @@
 
 Summary:   StickShift common cartridge components
 Name:      stickshift-abstract
-Version:   0.6.5
+Version:   0.6.6
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   ASL 2.0
@@ -46,6 +46,9 @@ rm -rf $RPM_BUILD_ROOT
 %post
 
 %changelog
+* Mon Mar 12 2012 Dan McPherson <dmcphers@redhat.com> 0.6.6-1
+- cart_dir is now cartridge_base_path (rchopra@redhat.com)
+
 * Sat Mar 10 2012 Dan McPherson <dmcphers@redhat.com> 0.6.5-1
 - Fix issues stickshift merge missed. (ramr@redhat.com)
 - Fixes to get ss-connector-execute working after 'ss' merge. (ramr@redhat.com)
