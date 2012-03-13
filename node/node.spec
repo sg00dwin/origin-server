@@ -245,6 +245,7 @@ fi
 %attr(0750,-,-) %{_bindir}/rhc-node-application
 %attr(0750,-,-) %{_bindir}/rhc-watchman
 %attr(0755,-,-) %{_bindir}/rhcsh
+%attr(0700,-,-) %{_bindir}/migration-symlink-as-user
 %attr(0640,-,-) %config(noreplace) %{_sysconfdir}/oddjobd.conf.d/oddjobd-restorer.conf
 %attr(0640,-,-) %config(noreplace) %{_sysconfdir}/dbus-1/system.d/openshift-restorer.conf
 %attr(0644,-,-) %config(noreplace) %{_sysconfdir}/stickshift/stickshift-node.conf.libra
