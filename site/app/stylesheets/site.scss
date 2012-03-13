@@ -362,7 +362,8 @@ body.signup {
 } }
 
 .column-buzz {
-  background: $buzzBackgroundColor url($buzzBackgroundImage) repeat-x bottom left; 
+  background: $buzzBackgroundColor url($buzzBackgroundImage) repeat-x bottom left;
+  font-weight: 300; 
 
   > h2 { 
     text-align: center; 
@@ -370,7 +371,7 @@ body.signup {
     text-transform: uppercase;
     font-size: 46px;
     line-height: 48px;
-    letter-spacing: -4px;
+    letter-spacing: -3px;
   }
   > hr {
     margin: 10px 43% 30px;
@@ -382,7 +383,7 @@ body.signup {
     quotes: "\201C""\201D""\2018""\2019";
     border-left: 0;
     padding: 0;
-    margin-bottom: 15px;
+    margin-bottom: 38px;
 
     &:after {
       content: "";
@@ -394,6 +395,14 @@ body.signup {
       line-height:.1em;
       margin-right:.25em;
       vertical-align:-.4em;
+    }
+    p {
+    	margin: -23px 0 0 28px;
+    	font-weight: 300;
+    }
+    small {
+      margin-left: 36px;
+      color: $subtleTextDarkBackground;
     }
   }
 
@@ -410,12 +419,12 @@ body.signup {
     }
     > p {
       margin: 0 0 5px 90px;
-      background-color: #343434; 
-      padding: 5px 10px; 
+      background-color: #222; 
+      padding: 10px 15px; 
       min-height: 50px;
 
       &:before {
-        border-color: transparent #343434;
+        border-color: transparent #222;
         border-style: solid;
         border-width: 10px 10px 0 0;
         top: 10px;
@@ -425,18 +434,19 @@ body.signup {
       }
     }
     > small {
-      margin-left: 80px;
+     margin-left: 105px;
+     color: $subtleTextDarkBackground;
     }
   }
 
   > .callout {
     position: absolute;
-    width: 120px;
-    height: 120px;
+    width: 288px;
+    height: 229px;
     background-color: $lightBackground;
     color: $textLightBackground;
-    top: -60px;
-    right: -60px;
+    top: -82px;
+    right: -166px;
     text-align: center;
     background: url('../images/events-bubble.png') no-repeat top left;
 
@@ -446,6 +456,7 @@ body.signup {
     }
   }
 }
+
 
 @media (max-width: 767px) {
   .column-buzz > h2 {
@@ -499,7 +510,7 @@ h1.ribbon {
 }
 
 .column-buzz { background: $darkNoiseBackgroundColor url($transparentNoiseImageData); color: $textDarkBackground; }
-.column-buzz a { color: $textDarkBackground; }
+.column-buzz a { color: $linkTextDarkBackground; }
 
 body.box header .section-top { border-top: 7px solid #333; }
 body.box .container, body.box .box { width: 550px; }
@@ -636,7 +647,6 @@ body.box .container, body.box .box { width: 550px; }
   }
 }
 
-.column-buzz { padding: $gridGutterWidth; position: relative;}
 
 /* The body content of a site page */
 .row-content {
@@ -669,6 +679,7 @@ body > header {
   h1, h2 { color: white; }
 }
 
+
 @media (max-width: 767px) {
   body > header {
     background: #191919 url($transparentNoiseImageData) repeat; 
@@ -695,44 +706,47 @@ body.community > header {
 }
 
 /* home-specific styles */
-body.home > header {
-  background-color: #191919; 
-  background-image:
-    url('../images/diagonals-top.png'),
-    url('../images/mts.png'), 
-    url('../images/stars.png'),
-    url($transparentNoiseImageData),
-    -moz-repeating-linear-gradient(110deg, #191919 0px, #191919 10px, #181818 10px, #181818 20px);
-  background-image:
-    url('../images/diagonals-top.png'),
-    url('../images/mts.png'), 
-    url('../images/stars.png'),
-    url($transparentNoiseImageData),
-    -webkit-repeating-linear-gradient(110deg, #191919 0px, #191919 10px, #171717 10px, #171717 20px);
-  background-image:
-    url('../images/diagonals-top.png'),
-    url('../images/mts.png'), 
-    url('../images/stars.png'),
-    url($transparentNoiseImageData),
-    -ms-repeating-linear-gradient(110deg, #191919 0px, #191919 10px, #181818 10px, #181818 20px);
-  background-image:
-    url('../images/diagonals-top.png'),
-    url('../images/mts.png'), 
-    url('../images/stars.png'),
-    url($transparentNoiseImageData),
-    repeating-linear-gradient(110deg, #191919 0px, #191919 10px, #181818 10px, #181818 20px);
-  background-repeat:
-    no-repeat,
-    no-repeat,
-    repeat,
-    repeat, 
-    repeat;
-  background-position:
-    right bottom,
-    center bottom,
-    center bottom,
-    center bottom, 
-    center bottom;
+body.home {
+	overflow-x:hidden;
+		> header {
+	  background-color: #191919; 
+	  background-image:
+	    url('../images/diagonals-top.png'),
+	    url('../images/mts.png'), 
+	    url('../images/stars.png'),
+	    url($transparentNoiseImageData),
+	    -moz-repeating-linear-gradient(110deg, #191919 0px, #191919 10px, #181818 10px, #181818 20px);
+	  background-image:
+	    url('../images/diagonals-top.png'),
+	    url('../images/mts.png'), 
+	    url('../images/stars.png'),
+	    url($transparentNoiseImageData),
+	    -webkit-repeating-linear-gradient(110deg, #191919 0px, #191919 10px, #171717 10px, #171717 20px);
+	  background-image:
+	    url('../images/diagonals-top.png'),
+	    url('../images/mts.png'), 
+	    url('../images/stars.png'),
+	    url($transparentNoiseImageData),
+	    -ms-repeating-linear-gradient(110deg, #191919 0px, #191919 10px, #181818 10px, #181818 20px);
+	  background-image:
+	    url('../images/diagonals-top.png'),
+	    url('../images/mts.png'), 
+	    url('../images/stars.png'),
+	    url($transparentNoiseImageData),
+	    repeating-linear-gradient(110deg, #191919 0px, #191919 10px, #181818 10px, #181818 20px);
+	  background-repeat:
+	    no-repeat,
+	    no-repeat,
+	    repeat,
+	    repeat, 
+	    repeat;
+	  background-position:
+	    right bottom,
+	    center bottom,
+	    center bottom,
+	    center bottom, 
+	    center bottom;
+	}
 }
 
 .home #buzz {
@@ -747,7 +761,16 @@ body.home > header {
 
   .column-buzz {
     background: black;
-    margin: 0 80px;
+    margin: 0 30px 115px 30px;
+    position:relative;
+    padding: 75px 50px 85px;
+  }
+}
+
+@media (min-width: 767px) and (max-width: 980px) {
+	.home #buzz .column-buzz {
+  	margin-left:22px;
+  	margin-right:22px;
   }
 }
 
