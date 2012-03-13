@@ -8,7 +8,7 @@
 # named-local reset
 
 # Where to get the init files from
-NAMED_LOCAL_LIB=${NAMED_LOCAL_LIB:="/usr/bin/bind-local"}
+NAMED_LOCAL_LIB=${NAMED_LOCAL_LIB:="/usr/share/bind-local"}
 # Where to put them to work
 NAMED_LOCAL_DIR=.
 
