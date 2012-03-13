@@ -34,13 +34,13 @@ class RestApplication < StickShift::Model
         Param.new("event", "string", "event", "force-stop")
       ]),
       "EXPOSE_PORT" => Link.new("Expose port", "POST", "/domains/#{@domain_id}/applications/#{@name}/events", [
-        Param.new("event", "string", "event", "force-stop")
+        Param.new("event", "string", "event", "expose-port")
       ]),
       "CONCEAL_PORT" => Link.new("Conceal port", "POST", "/domains/#{@domain_id}/applications/#{@name}/events", [
-        Param.new("event", "string", "event", "force-stop")
+        Param.new("event", "string", "event", "conceal-port")
       ]),
       "SHOW_PORT" => Link.new("Show port", "POST", "/domains/#{@domain_id}/applications/#{@name}/events", [
-        Param.new("event", "string", "event", "force-stop")
+        Param.new("event", "string", "event", "show-port")
       ]),
       "ADD_ALIAS" => Link.new("Add application alias", "POST", "/domains/#{@domain_id}/applications/#{@name}/events", [
         Param.new("event", "string", "event", "add-alias"),
