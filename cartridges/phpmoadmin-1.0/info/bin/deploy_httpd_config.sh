@@ -8,7 +8,7 @@ application="$1"
 uuid="$2"
 IP="$3"
 
-APP_HOME="${GEAR_BASE_DIR)}/$uuid"
+APP_HOME="${GEAR_BASE_DIR}/$uuid"
 PHPMOADMIN_DIR=`echo $APP_HOME/phpmoadmin-1.0 | tr -s /`
 
 cat <<EOF > "$PHPMOADMIN_DIR/conf.d/stickshift.conf"

@@ -1021,6 +1021,7 @@ class Application < StickShift::Cartridge
       reply.append self.configure_dependencies
       self.execute_connections
     rescue Exception=>e
+      remove_from_requires_feature(dep)
       self.elaborate_descriptor
       cleanup_deleted_components
       self.save
