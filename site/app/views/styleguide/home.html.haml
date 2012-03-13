@@ -30,11 +30,19 @@
               %strong> Open
               Shift
         %ul.nav
-          %li.active= link_to "Learn More", "."
-          %li= link_to "Documentation", "dev_center"
+          %li.active
+            = link_to "." do
+              %span Learn More
+          %li
+            = link_to "dev_center" do
+              %span Documentation
           %li.divider &nbsp;
-          %li= link_to "Console", "console"
-          %li= link_to "Community", "community"
+          %li
+            = link_to "console" do
+              %span Console
+          %li
+            = link_to "community" do
+              %span Community
 
     .messaging.messaging-home
       .container

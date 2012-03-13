@@ -107,7 +107,7 @@
   text-transform: uppercase;
   font-weight: bold;
   /* reset styles */
-  padding: 5px 0;
+  padding: 15px 0;
   border-radius: 0;
   text-shadow: 0 1px 1px rgba(0, 0, 0, 0.5);
 }
@@ -127,9 +127,16 @@
   background: transparent;
   border: 0;
   box-shadow: none;
-  text-decoration: underline;
+  text-decoration: none;
 }
-/* line 72, ../../app/stylesheets/site/_navbar.scss */
+/* line 71, ../../app/stylesheets/site/_navbar.scss */
+.navbar .nav > .active > a > span,
+.navbar .nav > .active > a:hover > span,
+.navbar .nav > li > a:hover > span {
+  padding-bottom: 3px;
+  border-bottom: 2px solid white;
+}
+/* line 77, ../../app/stylesheets/site/_navbar.scss */
 .navbar .nav > li > a:focus {
   outline: thin dotted;
   outline: 5px auto -webkit-focus-ring-color;
@@ -137,62 +144,70 @@
 }
 
 @media (max-width: 767px) {
-  /* line 81, ../../app/stylesheets/site/_navbar.scss */
+  /* line 86, ../../app/stylesheets/site/_navbar.scss */
   .navbar {
     padding-top: 15px;
     min-height: 107px;
   }
-  /* line 85, ../../app/stylesheets/site/_navbar.scss */
+  /* line 90, ../../app/stylesheets/site/_navbar.scss */
   .navbar .brand {
     float: left;
     text-align: center;
     width: 99px;
   }
-  /* line 91, ../../app/stylesheets/site/_navbar.scss */
+  /* line 96, ../../app/stylesheets/site/_navbar.scss */
   .navbar .nav {
     margin-left: 109px;
-    margin-top: 15px;
+    margin-top: 5px;
     /* centers navigation text on the logo */
     width: inherit;
   }
-  /* line 96, ../../app/stylesheets/site/_navbar.scss */
+  /* line 101, ../../app/stylesheets/site/_navbar.scss */
   .navbar .nav > li {
     float: left !important;
     width: 50% !important;
     text-align: center !important;
   }
-  /* line 101, ../../app/stylesheets/site/_navbar.scss */
+  /* line 106, ../../app/stylesheets/site/_navbar.scss */
+  .navbar .nav > li > a {
+    padding: 10px 0;
+  }
+  /* line 110, ../../app/stylesheets/site/_navbar.scss */
   .navbar .nav > li.divider {
     display: none;
   }
 }
 @media (min-width: 768px) {
-  /* line 108, ../../app/stylesheets/site/_navbar.scss */
+  /* line 117, ../../app/stylesheets/site/_navbar.scss */
   .navbar {
     padding-top: 30px;
     min-height: 137px;
   }
-  /* line 112, ../../app/stylesheets/site/_navbar.scss */
+  /* line 121, ../../app/stylesheets/site/_navbar.scss */
   .navbar .brand {
     z-index: 1;
     position: absolute;
     left: 50%;
   }
-  /* line 117, ../../app/stylesheets/site/_navbar.scss */
+  /* line 126, ../../app/stylesheets/site/_navbar.scss */
   .navbar .brand > a {
     position: relative;
     left: -50%;
   }
-  /* line 122, ../../app/stylesheets/site/_navbar.scss */
+  /* line 131, ../../app/stylesheets/site/_navbar.scss */
   .navbar .nav {
-    margin-top: 30px;
+    margin-top: 20px;
     /* centers navigation text on the logo */
   }
 }
 @media (max-width: 480px) {
-  /* line 130, ../../app/stylesheets/site/_navbar.scss */
+  /* line 139, ../../app/stylesheets/site/_navbar.scss */
   .navbar .nav {
     font-size: 12px;
+  }
+  /* line 142, ../../app/stylesheets/site/_navbar.scss */
+  .navbar .nav li > a {
+    padding: 5px 0;
   }
 }
 /* Drupal specific markup, we may want to wrap this with a top level selector on body.drupal or something */
@@ -1514,7 +1529,7 @@ body > header {
 .messaging .secondary {
   max-width: 790px;
   margin: 0 auto;
-  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-family: "Helvetica Neue", Helvetica, "Liberation Sans", Arial, sans-serif;
 }
 /* line 702, ../../app/stylesheets/site.scss */
 .messaging h1, .messaging h2 {
