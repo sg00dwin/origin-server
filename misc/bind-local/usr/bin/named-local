@@ -7,6 +7,9 @@
 # named-local clean
 # named-local reset
 
+# options: -l: where to find init file copies
+# options: -r: where to put the running copies
+
 # Where to get the init files from
 NAMED_LOCAL_LIB=${NAMED_LOCAL_LIB:="/usr/share/bind-local"}
 # Where to put them to work
@@ -34,7 +37,10 @@ function start() {
     echo "start"
     if [ ! -f ${NAMED_LOCAL_DIR}/named.pid ]
     then
+	OPWD=`pwd`
+	cd ${NAMED_LOCAL_DIR}
 	/usr/sbin/named -4 -c ${NAMED_LOCAL_DIR}/named.conf
+	cd $OPWD
     else
 	echo "${NAMED_LOCAL_DIR}/named.pid found: is there a named running?"
 	exit 1
@@ -85,6 +91,58 @@ function reset() {
     init
 }
 
+function usage() {
+    echo "
+usage $0 [options] [command]
+
+options:
+
+  -r <dir>: where to put the config and log files for the daemon
+            defaults to CWD
+
+  -l <dir>: where to get the initial config files
+            defaults to /usr/share/bind-local
+
+commands:
+
+  start: start the local named
+
+  stop: stop the local named
+
+  status: get the PID and process information for a running named
+
+  init: copy initial config files to the daemon "root"
+
+  clean: remove config files and logs
+
+  reset: clean and re-initialize the local daemon
+"
+    
+}
+
+
+while getopts l:r: OPT
+do
+    case "$OPT" in
+	l)
+	    NAMED_LOCAL_LIB="$OPTARG"
+	    ;;
+
+	r)
+	    NAMED_LOCAL_DIR="$OPTARG"
+	    ;;
+
+	*)
+	    echo "Invalid argument: $OPT"
+	    usage
+	    exit 1
+	    ;;
+    esac
+done
+if [ $OPTIND -gt 1 ]
+then
+    shift $(($OPTIND-1))
+fi
 
 ACTION=$1
 
@@ -116,6 +174,7 @@ case $ACTION in
 
     *)
 	echo "invalid command $ACTION"
+	usage
 	exit 1
 	;;
 esac

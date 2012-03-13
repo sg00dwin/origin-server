@@ -24,12 +24,59 @@ class Release < Thor
       last_index_of_dot = version.rindex('.')
       version[0..last_index_of_dot] + (version[last_index_of_dot+1..-1].to_i + 1).to_s
     end
+    
+    def get_updated_build_dirs(verbose, push_changes=false)
+      build_dirs = get_build_dirs
+      gem_updates = false
+      if build_dirs.include?("stickshift/common")
+        version = /(Version: )(.*)/.match(File.read("stickshift/common/stickshift-common.spec"))[2].strip
+        nv = next_version(version)
+        run("/bin/sed -i 's,stickshift-common (.*,stickshift-common (#{nv}),' broker/Gemfile.lock", :verbose => verbose)
+        run("/bin/sed -i 's,stickshift-common (.*,stickshift-common (#{nv}),' stickshift/controller/Gemfile.lock", :verbose => verbose)
+        run("/bin/sed -i 's,stickshift-common (.*,stickshift-common (#{nv}),' stickshift/broker/Gemfile.lock", :verbose => verbose)
+        run("/bin/sed -i 's,stickshift-common (.*,stickshift-common (#{nv}),' stickshift/node/Gemfile.lock", :verbose => verbose)
+        gem_updates = true
+      end
+      
+      if build_dirs.include?("stickshift/controller") || build_dirs.include?("stickshift/common")
+        version = /(Version: )(.*)/.match(File.read("stickshift/controller/stickshift-controller.spec"))[2].strip
+        nv = next_version(version)
+        run("/bin/sed -i 's,stickshift-controller (.*,stickshift-controller (#{nv}),' broker/Gemfile.lock", :verbose => verbose)
+        run("/bin/sed -i 's,stickshift-controller (.*,stickshift-controller (#{nv}),' stickshift/controller/Gemfile.lock", :verbose => verbose)
+        run("/bin/sed -i 's,stickshift-controller (.*,stickshift-controller (#{nv}),' stickshift/broker/Gemfile.lock", :verbose => verbose)
+        gem_updates = true
+      end
+      
+      if build_dirs.include?("stickshift/node") || build_dirs.include?("stickshift/common")
+        version = /(Version: )(.*)/.match(File.read("stickshift/node/stickshift-node.spec"))[2].strip
+        nv = next_version(version)
+        run("/bin/sed -i 's,stickshift-node (.*,stickshift-node (#{nv}),' stickshift/node/Gemfile.lock", :verbose => verbose)
+        run("/bin/sed -i 's,stickshift-node (.*,stickshift-node (#{nv}),' stickshift/broker/Gemfile.lock", :verbose => verbose)
+        gem_updates = true
+      end
+      
+      if gem_updates
+        branch = get_branch
+        if push
+          run("git add broker/Gemfile.lock stickshift/controller/Gemfile.lock stickshift/node/Gemfile.lock stickshift/broker/Gemfile.lock; git commit -m 'Updating gem versions'; git push origin #{branch}", :verbose => options.verbose?)
+          build_dirs = get_build_dirs
+        end
+      end
+      build_dirs
+    end
   end
 
   desc "check", "Check the directories that need to be released"
   def check
     git_pull
     puts "Changes detected in the following directories: #{get_build_dirs.pretty_inspect}"
+  end
+  
+  desc "update_gem_versions", "Check the directories that need to be released"
+  method_option :verbose, :type => :boolean, :desc => "Enable verbose logging"
+  method_option :push_changes, :type => :boolean, :desc => "Push the changes to the current branch"
+  def update_gem_versions
+    get_updated_build_dirs(options.verbose?, options.push_changes?)
   end
 
   desc "build", "Tag and build new RPMs for any changes"
@@ -47,41 +94,7 @@ class Release < Thor
     # Update the repo
     git_pull
     
-    build_dirs = get_build_dirs
-    
-    gem_updates = false
-    if build_dirs.include?("stickshift/common")
-      version = /(Version: )(.*)/.match(File.read("stickshift/common/stickshift-common.spec"))[2].strip
-      nv = next_version(version)
-      run("/bin/sed -i 's,stickshift-common (.*,stickshift-common (#{nv}),' broker/Gemfile.lock", :verbose => options.verbose?)
-      run("/bin/sed -i 's,stickshift-common (.*,stickshift-common (#{nv}),' stickshift/controller/Gemfile.lock", :verbose => options.verbose?)
-      run("/bin/sed -i 's,stickshift-common (.*,stickshift-common (#{nv}),' stickshift/broker/Gemfile.lock", :verbose => options.verbose?)
-      run("/bin/sed -i 's,stickshift-common (.*,stickshift-common (#{nv}),' stickshift/node/Gemfile.lock", :verbose => options.verbose?)
-      gem_updates = true
-    end
-    
-    if build_dirs.include?("stickshift/controller") || build_dirs.include?("stickshift/common")
-      version = /(Version: )(.*)/.match(File.read("stickshift/controller/stickshift-controller.spec"))[2].strip
-      nv = next_version(version)
-      run("/bin/sed -i 's,stickshift-controller (.*,stickshift-controller (#{nv}),' broker/Gemfile.lock", :verbose => options.verbose?)
-      run("/bin/sed -i 's,stickshift-controller (.*,stickshift-controller (#{nv}),' stickshift/controller/Gemfile.lock", :verbose => options.verbose?)
-      run("/bin/sed -i 's,stickshift-controller (.*,stickshift-controller (#{nv}),' stickshift/broker/Gemfile.lock", :verbose => options.verbose?)
-      gem_updates = true
-    end
-    
-    if build_dirs.include?("stickshift/node") || build_dirs.include?("stickshift/common")
-      version = /(Version: )(.*)/.match(File.read("stickshift/node/stickshift-node.spec"))[2].strip
-      nv = next_version(version)
-      run("/bin/sed -i 's,stickshift-node (.*,stickshift-node (#{nv}),' stickshift/node/Gemfile.lock", :verbose => options.verbose?)
-      run("/bin/sed -i 's,stickshift-node (.*,stickshift-node (#{nv}),' stickshift/broker/Gemfile.lock", :verbose => options.verbose?)
-      gem_updates = true
-    end
-    
-    if gem_updates
-      branch = get_branch
-      run("git add broker/Gemfile.lock stickshift/controller/Gemfile.lock stickshift/node/Gemfile.lock stickshift/broker/Gemfile.lock; git commit -m 'Updating gem versions'; git push origin #{branch}", :verbose => options.verbose?)
-      build_dirs = get_build_dirs
-    end
+    build_dirs = get_updated_build_dirs(options.verbose?, true)
 
     build_dirs.each do |build_dir|
       inside(File.expand_path("../#{build_dir}", File.dirname(__FILE__))) do

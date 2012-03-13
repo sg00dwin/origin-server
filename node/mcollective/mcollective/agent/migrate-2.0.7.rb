@@ -75,6 +75,8 @@ module LibraMigration
           end
         end
       when 'jenkins-1.4'
+        Util.replace_in_file("#{app_dir}/logs/jenkins.log", "/var/lib/libra", "/var/lib/stickshift")
+        
         #Util.replace_in_file("#{app_dir}/data/jobs/*/config.xml", "<builderType>raw-0.1</builderType>", "<builderType>diy-0.1</builderType>")
         if orig_jenkins_url
           Util.replace_in_file("#{app_dir}/data/config.xml", "<jenkinsUrl>.*</jenkinsUrl>", "")
@@ -174,6 +176,8 @@ module LibraMigration
       
       #10gen-mms-agent-0.1 : no-op
       
+      #jenkins-client-1.4 : no-op
+      
       #metrics-0.1
       if File.directory?("#{app_home}/metrics-0.1") && !File.symlink?("#{app_home}/metrics-0.1")
         Util.replace_in_file("#{app_home}/metrics-0.1/conf.d/metrics.conf", "/var/lib/libra", "/var/lib/stickshift")
@@ -184,6 +188,12 @@ module LibraMigration
         symlink_output, symlink_exitcode = Util.execute_script("/usr/bin/migration-symlink-as-user #{app_name} #{uuid}  #{cartridge_root_dir}/embedded/metrics-0.1/info/bin/metrics_ctl.sh #{app_home}/metrics-0.1/#{app_name}_metrics_ctl.sh 2>&1")
         output += symlink_output
         FileUtils.chown(uuid,uuid,"#{app_home}/metrics-0.1/#{app_name}_metrics_ctl.sh")
+      end
+      
+      if get_config_value("CREATE_APP_SYMLINKS").to_i == 1
+        symlink_output, symlink_exitcode = Util.execute_script("/usr/bin/migration-symlink-as-user #{app_name} #{uuid} #{app_home} #{libra_home}/#{app_name}-#{namespace} 2>&1")
+        output += symlink_output
+        FileUtils.chown(uuid,uuid,"#{app_home} #{libra_home}/#{app_name}-#{namespace}")        
       end
 
       env_echos.each do |env_echo|

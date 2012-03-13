@@ -45,8 +45,10 @@ do
     chmod 0644 "$dst"
     chcon --reference="$xlate" "$dst"
     if [ "$xlate" != "OPENSHIFT_APP_UUID" ]; then
-      echo 'source $(dirname "$_")/'"$dst" > "$xlate"
-      echo "export $xlate=\"\$$dst\"" >> "$xlate"
+      echo 'source $(dirname "$_")/'"$dst"' >/dev/null 2>&1' > "$xlate"
+      echo 'if [ $? -eq 0 ]; then'                           >> "$xlate"
+      echo "export $xlate=\"\$$dst\""                        >> "$xlate"
+      echo 'fi'                                              >> "$xlate"
     fi
   fi
 done
