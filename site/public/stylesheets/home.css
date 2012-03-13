@@ -35,41 +35,28 @@ body > header {
   color: #000;
 }
 
-/* line 51, ../../app/stylesheets/home.scss */
-#buzz {
-  background-color: #181919;
-  background-image: url("../images/diagonals-bottom.png"), url("../images/tiny-panda.png"), url("../images/mts-bottom.png");
-  background-repeat: no-repeat, no-repeat, repeat-x;
-  background-position: left top,     50px bottom,     center bottom;
-}
-/* line 63, ../../app/stylesheets/home.scss */
-#buzz .column-buzz {
-  background: black url("../images/black-noise.png");
-  margin: 0 80px;
-}
-
 @media (max-width: 767px) {
-  /* line 70, ../../app/stylesheets/home.scss */
+  /* line 52, ../../app/stylesheets/home.scss */
   body > header {
     background: url("../images/dark-gray-diagonal-noise.jpg") repeat;
   }
 
-  /* line 74, ../../app/stylesheets/home.scss */
+  /* line 56, ../../app/stylesheets/home.scss */
   .messaging {
     margin: 0;
   }
 
-  /* line 78, ../../app/stylesheets/home.scss */
+  /* line 60, ../../app/stylesheets/home.scss */
   #buzz {
     background-image: none;
   }
-  /* line 80, ../../app/stylesheets/home.scss */
+  /* line 62, ../../app/stylesheets/home.scss */
   #buzz .column-buzz {
     background-image: none;
     margin: 0;
   }
 }
-/* line 87, ../../app/stylesheets/home.scss */
+/* line 69, ../../app/stylesheets/home.scss */
 #nav {
   background-color: transparent;
   background-image: none;

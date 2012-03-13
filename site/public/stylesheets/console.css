@@ -18,22 +18,22 @@
 /*FIXME: From screenshots this averages to #070707 */
 /* Common navbar branding */
 /* FIXME: Move common branding in _custom.scss here */
-/* line 4, /home/clayton/code/li/site/app/stylesheets/_navbar.scss */
+/* line 4, ../../app/stylesheets/_navbar.scss */
 .navbar .brand {
   text-transform: uppercase;
 }
-/* line 8, /home/clayton/code/li/site/app/stylesheets/_navbar.scss */
+/* line 8, ../../app/stylesheets/_navbar.scss */
 .navbar .brand > a {
   display: block;
 }
-/* line 12, /home/clayton/code/li/site/app/stylesheets/_navbar.scss */
+/* line 12, ../../app/stylesheets/_navbar.scss */
 .navbar .brand-image {
   content: ' ';
   /*background-image: url('../images/logo-medium.png') center top no-repeat;
   height: logoHeight;
   width: logoWidth;*/
 }
-/* line 19, /home/clayton/code/li/site/app/stylesheets/_navbar.scss */
+/* line 19, ../../app/stylesheets/_navbar.scss */
 .navbar .brand-text {
   color: white;
   text-align: center;
