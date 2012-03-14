@@ -88,9 +88,9 @@ function init_node_data() {
     # PUBLIC_IP=$2
     # PUBLIC_HOSTNAME=$3
     sed -i \
-      -e 's|^INSTANCE_ID=.*|INSTANCE_ID='"$1"'|' \
-      -e 's|^PUBLIC_IP=.*|PUBLIC_IP='"$2"'|' \
-      -e 's|^PUBLIC_HOSTNAME=.*|PUBLIC_HOSTNAME='"$3"'|' \
+      -e 's|^[# \t]*INSTANCE_ID=.*|INSTANCE_ID='"$1"'|' \
+      -e 's|^[# \t]*PUBLIC_IP=.*|PUBLIC_IP='"$2"'|' \
+      -e 's|^[# \t]*PUBLIC_HOSTNAME=.*|PUBLIC_HOSTNAME='"$3"'|' \
       $LIBRA_NODE_CONF
 }
 
