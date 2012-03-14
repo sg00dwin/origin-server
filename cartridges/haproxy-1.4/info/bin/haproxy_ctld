@@ -145,7 +145,7 @@ class Haproxy
             # *AND* remove_count is larger then the remove_count_threshold
             # Gear remove.
 
-            @remove_count += 1 if @remove_count < 3
+            @remove_count += 1 if @remove_count < @remove_count_threshold
 
             if self.last_scale_up_time_seconds.to_i > @flap_protection_time_seconds
                 if @remove_count >= @remove_count_threshold
