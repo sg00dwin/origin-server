@@ -17,7 +17,7 @@ class LoginController < SiteController
         Rails.logger.debug "Logging out user referred from: #{referrer.to_s}"
         reset_sso
       else
-        @localReferrer = referrer
+        @localReferrer = referrer.to_s
       end
     end
   end
@@ -44,7 +44,7 @@ class LoginController < SiteController
       set_previous_login_detection
       redirect_to @redirectUrl
     else
-      puts @user.errors.inspect
+      Rails.logger.debug "Authentication failed"
       render :show, :layout => 'simple'
     end
   end

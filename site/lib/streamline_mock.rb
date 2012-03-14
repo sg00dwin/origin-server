@@ -86,9 +86,14 @@ module StreamlineMock
   end
 
   def authenticate(login, password)
-    @rhlogin = login
-    @ticket = nil
-    true
+    if login.present? and password.present?
+      @rhlogin = login
+      @ticket = nil
+      true
+    else
+      errors.add(:base, I18n.t(:login_error, :scope => :streamline))
+      false
+    end
   end
 
   def streamline_cookie
