@@ -104,6 +104,9 @@ cp pam_libra/pam_libra.so.1  %{buildroot}/lib64/security/pam_libra.so
 rm -rf $RPM_BUILD_ROOT
 
 %post
+cp -f /etc/stickshift/stickshift-node.conf.libra /etc/stickshift/stickshift-node.conf
+restorecon /var/lib/stickshift/stickshift-node.conf || :
+
 # mount all desired cgroups under a single root
 perl -p -i -e 's:/cgroup/[^\s]+;:/cgroup/all;:; /blkio|cpuset|devices/ && ($_ = "#$_")' /etc/cgconfig.conf
 /sbin/restorecon /etc/cgconfig.conf || :
@@ -153,14 +156,12 @@ if ! [ -f /var/lib/stickshift/.stickshift-proxy.d/stickshift-proxy.cfg ]; then
    restorecon /var/lib/stickshift/.stickshift-proxy.d/stickshift-proxy.cfg || :
 fi
 
-cp -f /etc/stickshift/stickshift-node.conf.libra /etc/stickshift/stickshift-node.conf
-restorecon /var/lib/stickshift/stickshift-node.conf || :
-
 
 %triggerin -- rubygem-stickshift-node
 
 cp -f /etc/stickshift/stickshift-node.conf.libra /etc/stickshift/stickshift-node.conf
 restorecon /var/lib/stickshift/stickshift-node.conf || :
+/sbin/service libra-data start > /dev/null 2>&1 || :
 
 
 %preun

@@ -51,7 +51,7 @@ module StickShift
     end
 
     def after_initialize_homedir(user)
-      cmd = "/bin/sh #{File.join(StickShift::SDK_PATH, "express/setup_pam_fs_limits.sh")} #{user.name} #{user.quota_blocks ? user.quota_blocks : ''} #{user.quota_files ? user.quota_files : ''}"
+      cmd = "/bin/sh #{File.join('/usr/libexec/stickshift/lib', "express/setup_pam_fs_limits.sh")} #{user.name} #{user.quota_blocks ? user.quota_blocks : ''} #{user.quota_files ? user.quota_files : ''}"
       out,err,rc = shellCmd(cmd)
       raise StickShift::UserCreationException.new("Unable to setup pam/fs limits for #{user.name}") unless rc == 0
     end
@@ -71,7 +71,7 @@ module StickShift
       last_access_dir = StickShift::Config.instance.get("LAST_ACCESS_DIR")
       shellCmd("rm -f #{last_access_dir}/#{user.name} > /dev/null")
 
-      cmd = "/bin/sh #{File.join(StickShift::SDK_PATH, "express/teardown_pam_fs_limits.sh")} #{user.name}"
+      cmd = "/bin/sh #{File.join("/usr/libexec/stickshift/lib", "express/teardown_pam_fs_limits.sh")} #{user.name}"
       shellCmd(cmd)
     end
 
