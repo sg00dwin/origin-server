@@ -1,11 +1,8 @@
-%h1.ribbon
-  .ribbon-content Sign up for OpenShift
-  .ribbon-left
-  
-- input_html = { :class => input_class } if defined? input_class
+- content_for :ribbon, 'Sign up for OpenShift'
 
 #new-user
-  = semantic_form_for 'web_user', :url => web_user_path, :simple => true, :html => {:class => 'form-horizontal'} do |form|
+  = semantic_form_for @user, :url => web_user_path, :simple => true, :html => {:class => 'form-horizontal'} do |form|
+    = form.semantic_errors :email_address, :password, :password_confirmation, :promo_code, :captcha
     %input{:type => "hidden", :name => "redirectUrl", :value => (defined?(@redirectUrl) ? @redirectUrl : '/app/user/complete') }
     = form.inputs do
       = form.hidden_field :cloud_access_choice, :value => (@product == CloudAccess::FLEX_NAME ? CloudAccess::FLEX : CloudAccess::EXPRESS)
@@ -14,10 +11,10 @@
       = form.input :password_confirmation, :input_html => { :class => 'input-xlarge', :autocomplete => 'off', :placeholder => 'Enter it again', :maxlength => '50' }
       = form.input :promo_code, :label => 'Promotional Code', :required => false, :input_html => { :class => 'input-xlarge' }
       .control-group
-        %label.control-label
+        %label.control-label(for="recaptcha_response_field")
           Are you human?
         .controls.recaptcha
-          = recaptcha_tags :ssl => true    
+          = recaptcha_tags :ssl => true 
       .control-group
         By signing up you agree to the 
         %a{:href => '/app/legal/site_terms'} 

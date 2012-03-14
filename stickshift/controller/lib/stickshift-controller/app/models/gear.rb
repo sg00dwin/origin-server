@@ -125,8 +125,8 @@ class Gear < StickShift::UserModel
     get_proxy.add_authorized_ssh_key(app, self, ssh_key, key_type, comment)
   end
   
-  def remove_authorized_ssh_key(ssh_key)
-    get_proxy.remove_authorized_ssh_key(app, self, ssh_key)
+  def remove_authorized_ssh_key(ssh_key, comment=nil)
+    get_proxy.remove_authorized_ssh_key(app, self, ssh_key, comment)
   end
   
   def add_env_var(key, value)

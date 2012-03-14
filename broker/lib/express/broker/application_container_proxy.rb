@@ -143,8 +143,10 @@ module Express
         parse_result(result)
       end
 
-      def remove_authorized_ssh_key(app, gear, ssh_key)
-        result = execute_direct(@@C_CONTROLLER, 'authorized-ssh-key-remove', "--with-app-uuid '#{app.uuid}' --with-container-uuid '#{gear.uuid}' -s '#{ssh_key}'")
+      def remove_authorized_ssh_key(app, gear, ssh_key, comment=nil)
+        cmd = "--with-app-uuid '#{app.uuid}' --with-container-uuid '#{gear.uuid}' -s '#{ssh_key}'"
+        cmd += " -m '-#{comment}'" if comment
+        result = execute_direct(@@C_CONTROLLER, 'authorized-ssh-key-remove', cmd)
         parse_result(result)
       end
 

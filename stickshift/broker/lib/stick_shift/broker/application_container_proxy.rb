@@ -61,8 +61,9 @@ module StickShift::Broker
       parse_result(reply)
     end
 
-    def remove_authorized_ssh_key(app, gear, ssh_key)
+    def remove_authorized_ssh_key(app, gear, ssh_key, comment=nil)
       args = "--with-app-uuid '#{app.uuid}' --with-container-uuid '#{gear.uuid}' -s '#{ssh_key}'"
+      args += " -m '-#{comment}'" if comment
       reply = exec_command("stickshift","authorized-ssh-key-remove", args)
       parse_result(reply)
     end

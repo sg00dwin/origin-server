@@ -57,3 +57,8 @@ en:
     errors:
       '116': 'Type is required and cannot be blank.'
       '121': 'You have already saved this public key with a different name. Provide a different key here.'
+
+  recaptcha:
+    errors:
+      incorrect-captcha-sol: "Captcha text didn't match"
+      

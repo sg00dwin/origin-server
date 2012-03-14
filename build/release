@@ -57,7 +57,7 @@ class Release < Thor
       
       if gem_updates
         branch = get_branch
-        if push
+        if push_changes
           run("git add broker/Gemfile.lock stickshift/controller/Gemfile.lock stickshift/node/Gemfile.lock stickshift/broker/Gemfile.lock; git commit -m 'Updating gem versions'; git push origin #{branch}", :verbose => options.verbose?)
           build_dirs = get_build_dirs
         end
@@ -72,11 +72,40 @@ class Release < Thor
     puts "Changes detected in the following directories: #{get_build_dirs.pretty_inspect}"
   end
   
-  desc "update_gem_versions", "Check the directories that need to be released"
+  desc "update_gem_versions", "Update the gem versions for gems going to be released"
   method_option :verbose, :type => :boolean, :desc => "Enable verbose logging"
   method_option :push_changes, :type => :boolean, :desc => "Push the changes to the current branch"
   def update_gem_versions
     get_updated_build_dirs(options.verbose?, options.push_changes?)
+  end
+  
+  desc "release_jenkins_plugin", "Brew build the jenkins plugin"
+  method_option :verbose, :type => :boolean, :desc => "Enable verbose logging"
+  def release_jenkins_plugin(commit_message, committer_name="Dan McPherson", committer_email="dmcphers@redhat.com")
+    if File.exists?("../jenkins-cloud")
+      inside("../jenkins-cloud") do
+        run("git pull", :verbose => options.verbose?)
+        exit unless run("mvn package -DskipTests", :verbose => options.verbose?)
+      end
+      inside("..") do
+        FileUtils.rm_rf "jenkins-plugin-openshift/"
+        exit unless run("rhpkg clone -b libra-rhel-6.2 jenkins-plugin-openshift", :verbose => options.verbose?)
+      end
+      inside("../jenkins-plugin-openshift/") do
+        FileUtils.cp "../jenkins-cloud/target/openshift.hpi", "./openshift.hpi"
+        version = /^(Version: )(.*)/.match(File.read("jenkins-plugin-openshift.spec"))[2].strip
+        nv = next_version(version)
+        run("sed -i 's/Version:.*#{version}.*/Version: #{nv}/' jenkins-plugin-openshift.spec", :verbose => options.verbose?)
+        date = `date +'%a %b %d %Y'`.chomp
+        puts "sed -i 's/%changelog.*/%changelog\\n* #{date} #{committer_name} <#{committer_email}> - #{nv}\\n- #{commit_message}/' jenkins-plugin-openshift.spec"
+        run("sed -i 's/%changelog.*/%changelog\\n* #{date} #{committer_name} <#{committer_email}> - #{nv}\\n- #{commit_message}/' jenkins-plugin-openshift.spec", :verbose => options.verbose?)
+        if run("rhpkg commit -p -m '#{commit_message}'", :verbose => options.verbose?)
+          run("rhpkg build", :verbose => options.verbose?)
+        end
+      end
+    else
+      puts "Jenkins plugin not found at ../jenkins-cloud"
+    end
   end
 
   desc "build", "Tag and build new RPMs for any changes"

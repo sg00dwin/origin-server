@@ -332,6 +332,7 @@ template(`libra_service_domain_template',`
 	mcs_untrusted_proc($1_t)
 	domain_user_exemption_target($1_t)
 	auth_use_nsswitch($1_t)
+	domain_obj_id_change_exemption($1_t)
 
 	type $1_app_t;
 	typeattribute $1_app_t libra_app_domain;
@@ -339,6 +340,7 @@ template(`libra_service_domain_template',`
 	role system_r types $1_app_t;
 	mcs_untrusted_proc($1_app_t)
 	domain_user_exemption_target($1_app_t)
+	domain_obj_id_change_exemption($1_app_t)
 ')
 
 ########################################

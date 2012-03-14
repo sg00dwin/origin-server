@@ -64,7 +64,7 @@ module StickShift
     def add_authorized_ssh_key(app, gear, ssh_key, key_type=nil, comment=nil)
     end
 
-    def remove_authorized_ssh_key(app, gear, ssh_key)
+    def remove_authorized_ssh_key(app, gear, ssh_key, comment=nil)
     end
 
     def add_env_var(app, gear, key, value)

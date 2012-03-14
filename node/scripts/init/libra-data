@@ -133,10 +133,8 @@ case "$1" in
   stop) 
     stop
     ;;
-  restart|force-reload)
+  restart|restart|condrestart|force-reload)
     restart
-    ;;
-  reload)
     ;;
   status)
     status

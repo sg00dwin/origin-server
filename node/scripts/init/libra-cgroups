@@ -44,7 +44,7 @@ LIBRA_CGROUP_SUBSYSTEMS=${LIBRA_CGROUP_SUBSYSTEMS:="cpu,cpuacct,memory,net_cls,f
 
 CGROUP_RULES_FILE=${CGROUP_RULES_FILE:="/etc/cgrules.conf"}
 
-CPU_VARS="rt_period_us rt_runtime_us shares"
+CPU_VARS="cfs_period_us cfs_quota_us rt_period_us rt_runtime_us shares"
 MEM_VARS="limit_in_bytes memsw_limit_in_bytes soft_limit_in_bytes swappiness"
 
 # Get a user's UID
@@ -82,7 +82,7 @@ function set_net_cls() {
 # ==========================================================================
 #  Functions for tuning the user's CPU limits in cgroups
 # ==========================================================================
-CPUVARS="rt_period_us rt_runtime_us shares"
+CPUVARS="cfs_period_us cfs_quota_us rt_period_us rt_runtime_us shares"
 function set_cpu() {
     # USERNAME=$1
     CGPATH=libra/$1

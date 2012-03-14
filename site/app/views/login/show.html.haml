@@ -1,16 +1,11 @@
-- content_for :title, 'Login'
-- input_html = { :class => input_class } if defined? input_class
-
-%h1.ribbon
-  .ribbon-content Sign in to OpenShift 
-  .ribbon-left
+- content_for :title, 'Sign in'
+- content_for :ribbon, 'Sign in to OpenShift'
 
 #login-form
-  = form_tag(login_ajax_path, :class => 'form-horizontal') do
+  = form_tag(login_path, :class => 'form-horizontal') do
     %input(type="hidden" value="✓" name="utf8")
     %input{:type => "hidden", :value => form_authenticity_token, :name => "authenticity_token"}
     %input{:type => "hidden", :name => "redirectUrl", :value => (defined?(@redirectUrl) ? @redirectUrl : '/app/console') }
-    %input{:type => "hidden", :name => "errorUrl",  :value => (defined?(@errorUrl) ? @errorUrl : '/app/new/signup') }
     %fieldset
       .control-group
         %label.control-label{:for => 'login_input'}
@@ -26,4 +21,4 @@
       .form-actions
         %input(type="submit" value="Sign in" class="btn")
         or
-        %a{:href => '/app/account/new'} create an account
+        %a{:href => defined?(@register_url) ? @register_url : '/app/account/new'} create an account

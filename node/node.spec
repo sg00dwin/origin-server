@@ -2,7 +2,7 @@
 
 Summary:       Multi-tenant cloud management system node tools
 Name:          rhc-node
-Version:       0.88.5
+Version:       0.88.6
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -104,6 +104,9 @@ cp pam_libra/pam_libra.so.1  %{buildroot}/lib64/security/pam_libra.so
 rm -rf $RPM_BUILD_ROOT
 
 %post
+cp -f /etc/stickshift/stickshift-node.conf.libra /etc/stickshift/stickshift-node.conf
+restorecon /var/lib/stickshift/stickshift-node.conf || :
+
 # mount all desired cgroups under a single root
 perl -p -i -e 's:/cgroup/[^\s]+;:/cgroup/all;:; /blkio|cpuset|devices/ && ($_ = "#$_")' /etc/cgconfig.conf
 /sbin/restorecon /etc/cgconfig.conf || :
@@ -153,14 +156,12 @@ if ! [ -f /var/lib/stickshift/.stickshift-proxy.d/stickshift-proxy.cfg ]; then
    restorecon /var/lib/stickshift/.stickshift-proxy.d/stickshift-proxy.cfg || :
 fi
 
-cp -f /etc/stickshift/stickshift-node.conf.libra /etc/stickshift/stickshift-node.conf
-restorecon /var/lib/stickshift/stickshift-node.conf || :
-
 
 %triggerin -- rubygem-stickshift-node
 
 cp -f /etc/stickshift/stickshift-node.conf.libra /etc/stickshift/stickshift-node.conf
 restorecon /var/lib/stickshift/stickshift-node.conf || :
+/sbin/service libra-data start > /dev/null 2>&1 || :
 
 
 %preun
@@ -260,6 +261,56 @@ fi
 /lib64/security/pam_libra.so
 
 %changelog
+* Tue Mar 13 2012 Dan McPherson <dmcphers@redhat.com> 0.88.6-1
+- The values of stickshift-node.conf were being overridden after libra-data,
+  should be before. (rmillner@redhat.com)
+- Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
+  (rmillner@redhat.com)
+- Reload should actually do that. (rmillner@redhat.com)
+- Merge branch 'master' of git1.ops.rhcloud.com:/srv/git/li
+  (abhgupta@redhat.com)
+- fixing path (abhgupta@redhat.com)
+- Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
+  (rmillner@redhat.com)
+- Discovered this would always retry 60 times each variable  while testing
+  other changes (rmillner@redhat.com)
+- Merge branch 'master' of git1.ops.rhcloud.com:/srv/git/li
+  (abhgupta@redhat.com)
+- fixing missing module variable (abhgupta@redhat.com)
+- Added a param to specify number of days. (mpatel@redhat.com)
+- Raw to diy migration. (mpatel@redhat.com)
+- Give libra-data the ability to uncomment these variables
+  (rmillner@redhat.com)
+- Since libra.rb sources the configuration, PUBLIC_IP and PUBLIC_HOSTNAME are
+  no longer optional.  But in order for the dev/build/test environment to work
+  we still need a way to override them.  Separate out the usage of
+  PUBLIC_IP_OVERRIDE and PUBLIC_HOSTNAME_OVERRIDE from PUBLIC_IP and
+  PUBLIC_HOSTNAME so that OVERRIDE is optional and can be used from devenv.
+  (rmillner@redhat.com)
+- moving li/stickshift/node/lib/stickshift-node/express to li/node/lib
+  (abhgupta@redhat.com)
+- Fix to chown in migrate script. (mpatel@redhat.com)
+- Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
+  (rmillner@redhat.com)
+- BugzID 802387 (kraman@gmail.com)
+- The old variables are designed to track the values of the new ones until they
+  are re-used for another purpose.  This behaved poorly if the new ones went
+  away entirely. (rmillner@redhat.com)
+- Migrate script recreates app-symlinks (for devenv) and handles env vars
+  (kraman@gmail.com)
+- Change remaining references from /usr/libexec/li to /usr/libexec/stickshift
+  (rmillner@redhat.com)
+- Bug fixes in migrate script (checkpoint, migrates all except jenkins and
+  broker-mongo-ds) (kraman@gmail.com)
+- Migration for li/libra => stickshift change (checkpoint, covers all but
+  jenkins case, does not cover change to httpd.d/*) (kraman@gmail.com)
+- Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
+  (rmillner@redhat.com)
+- Either rhc-accept-node is running alongside other selinux commands or there's
+  multiple instances of rhc-accept-node running simultaneously.  This works
+  around the semodule lock conflict that keeps coming up in testing.
+  (rmillner@redhat.com)
+
 * Mon Mar 12 2012 Dan McPherson <dmcphers@redhat.com> 0.88.5-1
 - remove jenkinsUrl from config.xml (dmcphers@redhat.com)
 - Change strategy for old variables.  Leave the old files in place, source the

@@ -135,7 +135,7 @@ setuppam(){
     if [ ! -f "/etc/security/limits.d/84-${uuid}.conf" ]
     then
         echo "found"
-        /usr/bin/setup_pam_fs_limits.sh $uuid
+        /usr/libexec/stickshift/lib/express/setup_pam_fs_limits.sh $uuid
     fi
 }
 

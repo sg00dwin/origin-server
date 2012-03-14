@@ -12,11 +12,9 @@ class UserController < SiteController
   before_filter :new_forms, :only => [:show, :new, :create, :new_flex, :new_express]
   protect_from_forgery :except => :create_external
 
-  def signup
-  end
-
   def new(cloud_access_choice=nil)
     @product = 'openshift' unless defined? @product
+    @user = WebUser.new
     render :new, :layout => 'simple' and return
   end
 
@@ -52,6 +50,7 @@ class UserController < SiteController
         unless verify_recaptcha
           Rails.logger.debug "Captcha check failed"
           valid = false
+          flash.delete(:recaptcha_error) # prevent the default flash from recaptcha gem
           @user.errors[:captcha] = "Captcha text didn't match"
         end
       end
@@ -79,7 +78,7 @@ class UserController < SiteController
     unless valid
       respond_to do |format|
         format.js { render :json => @user.errors and return }
-        format.html { render 'new', :layout => 'box' and return }
+        format.html { render 'new', :layout => 'simple' and return }
       end
     end
 
@@ -95,7 +94,7 @@ class UserController < SiteController
     unless @user.errors.length == 0
       respond_to do |format|
         format.js { render :json => @user.errors and return }
-        format.html { render :new, :layout => 'box' and return }
+        format.html { render :new, :layout => 'simple' and return }
       end
     end
 

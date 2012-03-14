@@ -26,6 +26,10 @@
             .row.row-flush-right
               .offset2.column-content.lift-less.grid-wrapper
                 .span8.span-flush-right
+                  - if content_for? :ribbon
+                    %h1.ribbon
+                      .ribbon-content= yield :ribbon 
+                      .ribbon-left
                   = flashes
                   = yield
 
