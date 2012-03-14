@@ -2,7 +2,7 @@
 
 /* This is site specific branding */
 .navbar {
-  margin-bottom: 30px;
+  /*margin-bottom: 30px;*/
   position: relative;
 
   .brand {
@@ -19,6 +19,7 @@
     background: url('../images/logo-medium.png') center top no-repeat transparent;
     height: $logoHeight;
     width: $logoWidth;
+    margin-bottom: 13px;
   }
 
   .brand > a > .brand-image {
@@ -31,6 +32,19 @@
     -moz-transform: rotate(-10deg);
     -webkit-transform: rotate(-10deg);
     transform: rotate(-10deg);
+  }
+  .brand > a > .brand-text {
+  	background: url('../images/logo-text-medium.png') center top no-repeat transparent;
+  	border-bottom: 2px solid transparent;
+    bottom: 0;
+    color: white;
+    height: 18px;
+    text-align: center;
+    width: 111px;
+    padding-bottom: 2px;
+  }
+  .brand > a:hover > .brand-text {
+  	border-bottom: 2px solid #EB0011;
   }
 
   .nav {
@@ -122,10 +136,12 @@
       z-index: 1;
       position: absolute;
       left: 50%;
+      top: 24px;
     }
     .brand > a {
       position: relative;
       left: -50%;
+      height: 125px;
     }
 
     .nav {
@@ -134,8 +150,46 @@
   }
 }
 
+
+@media (max-width: 480px) {
+	#learn .action-call {
+    font-size: 11px;
+  }
+  .navbar .brand-image {
+    background: transparent url("../images/OSlogo-mobile.png") left top no-repeat;
+    height: 63px;
+    width: 63px;
+    margin-bottom: 5px;
+  }
+  .navbar .brand > a:hover > .brand-image {
+    -moz-transform: rotate(0);
+    -webkit-transform: rotate(0);
+    transform: rotate(0);
+  }
+  .navbar .brand {
+  	font-size:12.5px;
+  	width: 63px;
+  	height: auto;
+  }
+  .navbar .brand > a > .brand-text {
+  	background-image: none;
+  	width: 63px;
+  	height:0;
+  	padding:0;
+  	}
+  .navbar .nav > li > a {
+  	font-weight:normal;
+  	word-wrap:normal;
+  }
+  .navbar {
+    margin-bottom: 0;
+  }
+}
+
 @media (max-width: 480px) {
 	.navbar {
+		min-height: 90px;
+		
 		.nav {
     	font-size: 12px;
 
