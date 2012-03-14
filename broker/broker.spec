@@ -3,7 +3,7 @@
 
 Summary:   Li broker components
 Name:      rhc-broker
-Version:   0.88.4
+Version:   0.88.5
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -85,6 +85,12 @@ rm -rf $RPM_BUILD_ROOT
 /bin/touch %{brokerdir}/log/production.log
 
 %changelog
+* Tue Mar 13 2012 Dan McPherson <dmcphers@redhat.com> 0.88.5-1
+- Updating gem versions (dmcphers@redhat.com)
+- make sure remove httpd proxy gets run on move failure (dmcphers@redhat.com)
+- move error handling messaging (dmcphers@redhat.com)
+- give a better retry success message on move (dmcphers@redhat.com)
+
 * Mon Mar 12 2012 Dan McPherson <dmcphers@redhat.com> 0.88.4-1
 - Updating gem versions (dmcphers@redhat.com)
 - merging admin scripts to add/remove template into a single control script
