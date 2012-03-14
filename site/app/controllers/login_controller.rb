@@ -68,7 +68,7 @@ class LoginController < SiteController
 
   def ajax
     referrer = URI.parse(request.referer)
-    setup_login_workflow(referrer,false)
+    setup_login_workflow(referrer, false)
 
     # Keep track of response information
     responseText = {}
@@ -87,34 +87,8 @@ class LoginController < SiteController
       responseText[:status] = 200
       responseText[:redirectUrl] = root_url
     else
-      # Do the remote login
-      uri = URI.join( Rails.configuration.streamline[:host], Rails.configuration.streamline[:login_url])
       
-      # Create the HTTPS object
-      https = Net::HTTP.new( uri.host, uri.port )
-      Rails.logger.debug "Integrated login, use SSL"
-      https.use_ssl = true
-      # TODO: Need to figure out where CAs are so we can do something like:
-      #   http://goo.gl/QLFFC
-      https.verify_mode = OpenSSL::SSL::VERIFY_NONE
-        
-      # Make the request
-      req = Net::HTTP::Post.new( uri.path )
-      req.set_form_data({:login => params[:login], :password => params[:password]})
-  
-      # Create the request
-      # Add timing code
-      start_time = Time.now
-      res = https.start{ |http| http.request(req) }
-      responseText[:status] = res.code
-      end_time = Time.now
-      Rails.logger.debug "Response from Streamline took (#{uri.path}): #{(end_time - start_time)*1000} ms"
-  
-      Rails.logger.debug "Status received: #{res.code}"
-      Rails.logger.debug "-------------------"
-      Rails.logger.debug res.header.to_yaml
-      Rails.logger.debug "-------------------"
-
+      res, responseText[:status] = handle_remote_login(params[:login], params[:password])
   
       case res
         when Net::HTTPSuccess, Net::HTTPRedirection
@@ -172,4 +146,38 @@ class LoginController < SiteController
     end
     defaults.merge(opts)
   end
+  
+  def handle_remote_login(login, password)
+    # Do the remote login
+    uri = URI.join( Rails.configuration.streamline[:host], Rails.configuration.streamline[:login_url])
+    
+    # Create the HTTPS object
+    https = Net::HTTP.new( uri.host, uri.port )
+    Rails.logger.debug "Integrated login, use SSL"
+    https.use_ssl = true
+    # TODO: Need to figure out where CAs are so we can do something like:
+    #   http://goo.gl/QLFFC
+    https.verify_mode = OpenSSL::SSL::VERIFY_NONE
+      
+    # Make the request
+    req = Net::HTTP::Post.new( uri.path )
+    req.set_form_data({:login => login, :password => password})
+  
+    # Create the request
+    # Add timing code
+    start_time = Time.now
+    res = https.start{ |http| http.request(req) }
+    code = res.code
+    
+    end_time = Time.now
+    Rails.logger.debug "Response from Streamline took (#{uri.path}): #{(end_time - start_time)*1000} ms"
+  
+    Rails.logger.debug "Status received: #{res.code}"
+    Rails.logger.debug "-------------------"
+    Rails.logger.debug res.header.to_yaml
+    Rails.logger.debug "-------------------"
+    
+    return res, code
+  end
+  
 end
