@@ -5,7 +5,7 @@
 
 Summary:        Cloud Development Node
 Name:           rubygem-%{gemname}
-Version:        0.6.8
+Version:        0.6.9
 Release:        1%{?dist}
 Group:          Development/Languages
 License:        ASL 2.0
@@ -91,6 +91,13 @@ rm -rf %{buildroot}
 echo "/usr/bin/ss-trap-user" >> /etc/shells
 
 %changelog
+* Wed Mar 14 2012 Dan McPherson <dmcphers@redhat.com> 0.6.9-1
+- Updating gem versions (dmcphers@redhat.com)
+- Merge branch 'master' of git1.ops.rhcloud.com:/srv/git/li (rpenta@redhat.com)
+- minor fix in ss-authorized-ssh-key-remove (rpenta@redhat.com)
+- Merge branch 'master' of git1.ops.rhcloud.com:/srv/git/li (rpenta@redhat.com)
+- Fix for bug# 800095 (rpenta@redhat.com)
+
 * Tue Mar 13 2012 Dan McPherson <dmcphers@redhat.com> 0.6.8-1
 - Updating gem versions (dmcphers@redhat.com)
 - Since libra.rb sources the configuration, PUBLIC_IP and PUBLIC_HOSTNAME are

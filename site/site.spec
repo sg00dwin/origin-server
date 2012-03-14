@@ -3,7 +3,7 @@
 
 Summary:   Li site components
 Name:      rhc-site
-Version:   0.88.5
+Version:   0.88.6
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -85,6 +85,10 @@ rm -rf %{buildroot}
 /bin/touch %{sitedir}/log/production.log
 
 %changelog
+* Wed Mar 14 2012 Dan McPherson <dmcphers@redhat.com> 0.88.6-1
+- Fixed box layout to simple layout on user and login controllers
+  (ffranz@redhat.com)
+
 * Tue Mar 13 2012 Dan McPherson <dmcphers@redhat.com> 0.88.5-1
 - Had to switch away from 'span-wrapper' to 'grid-wrapper' to get the proper
   ordering.  Responsive is updated to take into account.  Community styles
