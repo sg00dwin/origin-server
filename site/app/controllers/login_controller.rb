@@ -6,26 +6,9 @@ require 'uri'
 class LoginController < SiteController
 
   before_filter :new_forms, :only => [:show]
+  before_filter :protect_remote, :only => :show
 
-  def show_flex
-    @register_url = user_new_flex_url
-    @default_login_workflow = flex_path
-    show
-  end
-  
-  def show_express
-    @register_url = user_new_express_url
-    @default_login_workflow = express_path
-    show
-  end
-
-  def show
-    if logged_in?
-      redirect_to default_logged_in_redirect and return
-    end
-
-    remote_request = false
-    referrer = nil
+  def protect_remote
     if request.referer && request.referer != '/'
       referrer = URI.parse(request.referer)
       Rails.logger.debug "Referrer: #{referrer.to_s}"
@@ -33,130 +16,45 @@ class LoginController < SiteController
       if remote_request
         Rails.logger.debug "Logging out user referred from: #{referrer.to_s}"
         reset_sso
+      else
+        @localReferrer = referrer
       end
     end
-    @register_url = @register_url ? @register_url : user_new_express_url
-    if params[:redirectUrl]
-      session[:login_workflow] = params[:redirectUrl]
-    else
-      setup_login_workflow(referrer, remote_request)
-    end
-    Rails.logger.debug "Session workflow in LoginController#show: #{workflow}"
+  end
+
+  def show
+    @redirectUrl = params[:redirectUrl] || @localReferrer
+
+    # The login page should ensure the rh_sso cookie is empty
+    cookies.delete :rh_sso, :domain => cookie_domain if cookies[:rh_sso]
+
     render :show, :layout => 'simple'
   end
 
   def create
-    referrer = URI.parse(request.referer)
-    setup_login_workflow(referrer, false)
+    @redirectUrl = params[:redirectUrl] || console_path
 
-    # Keep track of response information
-    responseText = {}
-
-    unless Rails.configuration.integrated
-      Rails.logger.warn "Non integrated environment - faking login"
-      session[:login] = params['login']
-      session[:ticket] = "test"
-      session[:user] = WebUser.new(:email_address => params['login'], :rhlogin => params['login'])
-      cookies[:rh_sso] = domain_cookie_opts(:value => 'test')
-      Rails.logger.debug "Session workflow in LoginController#create: #{workflow}"
-      Rails.logger.debug "Redirecting to home#index"
-      @message_type = 'success'
+    @user = WebUser.new
+    if @user.authenticate(params['login'], params['password'])
+      session[:login] = @user.rhlogin
+      session[:ticket] = @user.ticket
+      session[:user] = @user
+      cookies[:rh_sso] = domain_cookie_opts(:value => @user.ticket)
       set_previous_login_detection
-
-      # Added options to make sure non-integrated environment works
-      responseText[:status] = 200
-      responseText[:redirectUrl] = defined?(params[:redirectUrl]) ? params[:redirectUrl] : root_url
+      redirect_to @redirectUrl
     else
-      
-      res, responseText[:status] = handle_remote_login(params[:login], params[:password])
-  
-      case res
-        when Net::HTTPSuccess, Net::HTTPRedirection
-          # Decode the JSON response
-          json = ActiveSupport::JSON::decode(res.body)
-  
-          # Set cookie and session information
-          Rails.logger.debug "Cookies sent: #{YAML.dump res.header['set-cookie']}"
-          cookie = res.header['set-cookie']
-          if cookie
-            @message_type = 'success'
-            rh_sso = cookie.split('; ')[0].split('=')[1]
-            cookies[:rh_sso] = domain_cookie_opts(:value => rh_sso)
-            session[:ticket] = rh_sso
-            responseText[:redirectUrl] = defined?(params[:redirectUrl]) ? params[:redirectUrl] : root_url
-            set_previous_login_detection
-          else 
-            Rails.logger.debug "Unknown error (no cookie sent): #{res.code}"
-            responseText[:warning] = flash[:error] = 'An unknown error occurred'
-          end 
-        when Net::HTTPUnauthorized
-          Rails.logger.debug 'Unauthorized'
-          responseText[:warning] = flash[:error] = 'Invalid username or password'
-        else
-          Rails.logger.debug "Unknown error: #{res.code}"
-          responseText[:warning] = flash[:error] = 'An unknown error occurred'
-        end
+      render :show, :layout => 'simple'
     end
-
-    respond_to do |format|
-      format.html do
-        # Fallback for those without js
-        if @message_type == 'success'
-          redirect_to defined?(params[:redirectUrl]) ? params[:redirectUrl] : root_url
-        else
-          redirect_to login_path
-        end
-      end
-      format.js do
-        render(:json => responseText, :status => responseText[:status] ) and return
-      end
-    end
-
   end
 
   # Helper to apply common defaults to cookie options
   def domain_cookie_opts(opts)
     defaults = {
       :secure => true,
-      :path => '/'
+      :path => '/',
+      :domain => cookie_domain
     }
-    if Rails.configuration.integrated
-      defaults[:domain] = '.redhat.com'
-    end
     defaults.merge(opts)
-  end
-  
-  def handle_remote_login(login, password)
-    # Do the remote login
-    uri = URI.join( Rails.configuration.streamline[:host], Rails.configuration.streamline[:login_url])
-    
-    # Create the HTTPS object
-    https = Net::HTTP.new( uri.host, uri.port )
-    Rails.logger.debug "Integrated login, use SSL"
-    https.use_ssl = true
-    # TODO: Need to figure out where CAs are so we can do something like:
-    #   http://goo.gl/QLFFC
-    https.verify_mode = OpenSSL::SSL::VERIFY_NONE
-      
-    # Make the request
-    req = Net::HTTP::Post.new( uri.path )
-    req.set_form_data({:login => login, :password => password})
-  
-    # Create the request
-    # Add timing code
-    start_time = Time.now
-    res = https.start{ |http| http.request(req) }
-    code = res.code
-    
-    end_time = Time.now
-    Rails.logger.debug "Response from Streamline took (#{uri.path}): #{(end_time - start_time)*1000} ms"
-  
-    Rails.logger.debug "Status received: #{res.code}"
-    Rails.logger.debug "-------------------"
-    Rails.logger.debug res.header.to_yaml
-    Rails.logger.debug "-------------------"
-    
-    return res, code
   end
   
 end

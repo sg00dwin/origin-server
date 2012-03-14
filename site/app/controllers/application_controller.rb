@@ -98,15 +98,18 @@ class ApplicationController < ActionController::Base
         Rails.logger.debug "Unexpected HTTP status from logout: #{res.code}"
       end
     end
-
     Rails.logger.debug "Removing current SSO cookie value of '#{cookies[:rh_sso]}'"
-    if Rails.configuration.integrated
-      cookies.delete :rh_sso, :domain => '.redhat.com'
-    else
-      cookies.delete :rh_sso
-    end
+    cookies.delete :rh_sso, :domain => cookie_domain
   end
   
+  # The domain that the user's cookie should be stored under
+  def cookie_domain
+    domain = Rails.configuration.streamline[:cookie_domain] || 'redhat.com'
+    domain = request.host if :current == domain
+    domain = ".#{domain}" unless domain[0..0] == '.'
+    domain
+  end
+
   def redirect_to_logout
     redirect_to logout_path and return
   end
