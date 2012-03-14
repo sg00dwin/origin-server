@@ -5,7 +5,7 @@
 
 Summary:        Cloud Development Controller
 Name:           rubygem-%{gemname}
-Version:        0.6.6
+Version:        0.6.7
 Release:        1%{?dist}
 Group:          Development/Languages
 License:        ASL 2.0
@@ -75,6 +75,15 @@ rm -rf %{buildroot}
 %{ruby_sitelib}/%{gemname}.rb
 
 %changelog
+* Tue Mar 13 2012 Dan McPherson <dmcphers@redhat.com> 0.6.7-1
+- Updating gem versions (dmcphers@redhat.com)
+- fix for bu 803085 (rchopra@redhat.com)
+- fixing links in REST response for show/expose/conceal port calls
+  (abhgupta@redhat.com)
+- Merge branch 'master' of git1.ops.rhcloud.com:/srv/git/li
+  (abhgupta@redhat.com)
+- adding links in REST response for add/remove alias (abhgupta@redhat.com)
+
 * Mon Mar 12 2012 Dan McPherson <dmcphers@redhat.com> 0.6.6-1
 - Updating gem versions (dmcphers@redhat.com)
 - fix for Bug 802221 (rchopra@redhat.com)
