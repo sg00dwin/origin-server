@@ -275,6 +275,12 @@ module OpenShift
       set_instance_ip(hostname, private_ip, private_ip)
     end
     
+    def run_libra_data(hostname)
+      print "Running libra-data to set the public ip..."
+      ssh(hostname, "service libra-data start")
+      puts 'Done'
+    end
+
     def use_public_ip(hostname, use_hostname=false)
       dhostname = ssh(hostname, "wget -qO- http://169.254.169.254/latest/meta-data/public-hostname")
       public_ip = ssh(hostname, "wget -qO- http://169.254.169.254/latest/meta-data/public-ipv4")

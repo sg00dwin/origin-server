@@ -611,6 +611,8 @@ class DevEnv < Thor
     else
       use_public_ip(hostname)
     end
+    
+    run_libra_data(hostname)
   end
 
   desc "terminate TAG", "Terminates the instance with the specified tag"
@@ -696,6 +698,8 @@ class DevEnv < Thor
         scp_remote_tests(hostname)
       end
     end
+
+    run_libra_data(hostname)
 
     validate_instance(hostname)
 
