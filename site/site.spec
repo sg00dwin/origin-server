@@ -3,7 +3,7 @@
 
 Summary:   Li site components
 Name:      rhc-site
-Version:   0.88.4
+Version:   0.88.5
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -85,6 +85,54 @@ rm -rf %{buildroot}
 /bin/touch %{sitedir}/log/production.log
 
 %changelog
+* Tue Mar 13 2012 Dan McPherson <dmcphers@redhat.com> 0.88.5-1
+- Had to switch away from 'span-wrapper' to 'grid-wrapper' to get the proper
+  ordering.  Responsive is updated to take into account.  Community styles
+  updated (ccoleman@redhat.com)
+- Fix navigation bar styles for thick underlines, make clickable area larger.
+  (ccoleman@redhat.com)
+- Give tiny highlight behavior to take action (ccoleman@redhat.com)
+- Show openshift tweets until we have recommendation content For login page
+  show a button that is not btn-primary (allow form to override btn-primary)
+  (ccoleman@redhat.com)
+- Switch to grid based column layout, fix problems with offset* and span-
+  wrapper in various scenarios (ccoleman@redhat.com)
+- More tweaks to layout and controllers (ccoleman@redhat.com)
+- Stylesheets (ccoleman@redhat.com)
+- Clean up references (ccoleman@redhat.com)
+- Rename 'box' layout to 'simple', collapse references to both Add
+  SiteController as a parent controller for controllers that are specific to a
+  specific side of the site (ccoleman@redhat.com)
+- Merge branch 'master' of git1.ops.rhcloud.com:/srv/git/li (ffranz@redhat.com)
+- Fixes login flow bugs (ffranz@redhat.com)
+- Change multi-element ribbon headers to single element headers
+  (edirsh@redhat.com)
+- Add styling for single-element ribbonw (edirsh@redhat.com)
+- home callout styling (sgoodwin@redhat.com)
+- Detect currently active tab in header navigation (fotios@redhat.com)
+- Reverse order of buttons in the ui (ccoleman@redhat.com)
+- Failing unit test caused by change in logout logic (ccoleman@redhat.com)
+- Bug 802732 - was not merging errors correctly in applications_controller.
+  Added some debug logging for future. (ccoleman@redhat.com)
+- Temporarily fix stylesheet issues with help-block being turned to a color
+  (and thus confusing users about whether the help is an error).
+  (ccoleman@redhat.com)
+- Allow aliased errors to be reported correctly for their originating attribute
+  (ccoleman@redhat.com)
+- Remove comments for now, no confusion (ccoleman@redhat.com)
+- Add better logging to certain filters (ccoleman@redhat.com)
+- Unit test updates (ccoleman@redhat.com)
+- Merge branch 'devtues' (sgoodwin@redhat.com)
+- detailing buzz section and other minor things home related
+  (sgoodwin@redhat.com)
+- add unit test for cartridges model (johnp@redhat.com)
+- Various login tweaks to work around limitations from RHN
+  (ccoleman@redhat.com)
+- Make ID based rules class based (ccoleman@redhat.com)
+- fine tuning navbar (sgoodwin@redhat.com)
+- Merge branch 'master' of git1.ops.rhcloud.com:/srv/git/li (ffranz@redhat.com)
+- Fixes login flows tests (ffranz@redhat.com)
+
 * Mon Mar 12 2012 Dan McPherson <dmcphers@redhat.com> 0.88.4-1
 - Removed login flow tests, starting to integrate with the new login flow
   (ffranz@redhat.com)

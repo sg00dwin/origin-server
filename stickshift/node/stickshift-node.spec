@@ -5,7 +5,7 @@
 
 Summary:        Cloud Development Node
 Name:           rubygem-%{gemname}
-Version:        0.6.7
+Version:        0.6.8
 Release:        1%{?dist}
 Group:          Development/Languages
 License:        ASL 2.0
@@ -91,6 +91,19 @@ rm -rf %{buildroot}
 echo "/usr/bin/ss-trap-user" >> /etc/shells
 
 %changelog
+* Tue Mar 13 2012 Dan McPherson <dmcphers@redhat.com> 0.6.8-1
+- Updating gem versions (dmcphers@redhat.com)
+- Since libra.rb sources the configuration, PUBLIC_IP and PUBLIC_HOSTNAME are
+  no longer optional.  But in order for the dev/build/test environment to work
+  we still need a way to override them.  Separate out the usage of
+  PUBLIC_IP_OVERRIDE and PUBLIC_HOSTNAME_OVERRIDE from PUBLIC_IP and
+  PUBLIC_HOSTNAME so that OVERRIDE is optional and can be used from devenv.
+  (rmillner@redhat.com)
+- moving li/stickshift/node/lib/stickshift-node/express to li/node/lib
+  (abhgupta@redhat.com)
+- Change remaining references from /usr/libexec/li to /usr/libexec/stickshift
+  (rmillner@redhat.com)
+
 * Mon Mar 12 2012 Dan McPherson <dmcphers@redhat.com> 0.6.7-1
 - Updating gem versions (dmcphers@redhat.com)
 - fixing bug 802425 and bug 802473 (abhgupta@redhat.com)
