@@ -3,12 +3,14 @@ require 'net/https'
 require 'json'
 require 'cgi'
 
-class EmailConfirmController < ApplicationController
+class EmailConfirmController < SiteController
 
   @@ERRORS = {'user_failed_confirmation' => "Email confirmation failed",
             'user_email_failed_confirmation' => "Email confirmation failed",
             :unknown => "An unknown error has occurred"
   }
+
+  layout 'simple'
   
   def confirm_flex
     confirm(flex_path)

@@ -1,10 +1,10 @@
 -# file: Email confirmation errors page
 
-%section.main
-  %header
-    %h1
-      Confirmation errors
-  .content
-    - @errors.each do |field, msg|
-      .message.error
-        = msg
+%h1.ribbon
+  Confirmation errors
+.content
+  - @errors.each do |field, msg|
+    .alert
+      = msg
+
+%p #{link_to 'Register again', new_web_user_path} or #{link_to 'return to the main page.', root_path}
