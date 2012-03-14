@@ -609,7 +609,8 @@ class DevEnv < Thor
         update_facts(hostname)
       end
     else
-      use_public_ip(hostname)
+      #use_public_ip(hostname)
+      update_facts(hostname)
     end
     
     run_libra_data(hostname)
@@ -697,6 +698,8 @@ class DevEnv < Thor
       else
         scp_remote_tests(hostname)
       end
+    else
+      update_facts(hostname)
     end
 
     run_libra_data(hostname)
