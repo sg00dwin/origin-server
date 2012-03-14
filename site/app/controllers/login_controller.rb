@@ -134,21 +134,20 @@ class LoginController < SiteController
             set_previous_login_detection
           else 
             Rails.logger.debug "Unknown error (no cookie sent): #{res.code}"
-            responseText[:error] = 'An unknown error occurred'
+            responseText[:error] = flash[:error] = 'An unknown error occurred'
           end 
         when Net::HTTPUnauthorized
           Rails.logger.debug 'Unauthorized'
-          responseText[:error] = 'Invalid username or password'
+          responseText[:error] = flash[:error] = 'Invalid username or password'
         else
           Rails.logger.debug "Unknown error: #{res.code}"
-          responseText[:error] = 'An unknown error occurred'
+          responseText[:error] = flash[:error] = 'An unknown error occurred'
         end
     end
 
     respond_to do |format|
       format.html do
         # Fallback for those without js
-        flash[@message_type] = @message
         if @message_type == 'success'
           redirect_to root_url
         else

@@ -1,8 +1,4 @@
-%h1.ribbon
-  .ribbon-content Sign up for OpenShift
-  .ribbon-left
-  
-- input_html = { :class => input_class } if defined? input_class
+- content_for :ribbon, 'Sign up for OpenShift'
 
 #new-user
   = semantic_form_for 'web_user', :url => web_user_path, :simple => true, :html => {:class => 'form-horizontal'} do |form|

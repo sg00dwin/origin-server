@@ -1,9 +1,5 @@
-- content_for :title, 'Login'
-- input_html = { :class => input_class } if defined? input_class
-
-%h1.ribbon
-  .ribbon-content Sign in to OpenShift 
-  .ribbon-left
+- content_for :title, 'Sign in'
+- content_for :ribbon, 'Sign in to OpenShift'
 
 #login-form
   = form_tag(login_ajax_path, :class => 'form-horizontal') do
