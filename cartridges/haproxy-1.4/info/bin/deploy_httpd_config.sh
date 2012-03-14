@@ -76,6 +76,7 @@ listen stats $IP2:8080
 
 listen express $IP:8080
     cookie GEAR insert indirect nocache
+    option httpchk
     balance leastconn
     server  filler $IP2:8080 backup
 EOF

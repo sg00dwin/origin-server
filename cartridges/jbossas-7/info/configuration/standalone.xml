@@ -251,7 +251,6 @@
                 	<property name="num_initial_members">2</property>
                 </protocol>
                 <protocol type="MERGE2"/>
-                <protocol type="FD_SOCK" socket-binding="jgroups-tcp-fd"/>
                 <protocol type="FD"/>
                 <protocol type="VERIFY_SUSPECT"/>
                 <protocol type="BARRIER"/>
@@ -330,7 +329,6 @@
         <socket-binding name="http" port="8080"/>
         <socket-binding name="https" port="8443"/>
         <socket-binding name="jgroups-tcp" port="7600"/>
-        <socket-binding name="jgroups-tcp-fd" port="57600"/>
         <!--socket-binding name="management-native" interface="management" port="${jboss.management.native.port:9999}"/>
         <socket-binding name="management-http" interface="management" port="${jboss.management.http.port:9990}"/-->
         <socket-binding name="remoting" port="4447"/>
