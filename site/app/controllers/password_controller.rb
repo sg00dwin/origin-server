@@ -101,7 +101,7 @@ class PasswordController < ApplicationController
         format.js { render :json => { :status => 'success', :message => 'Your password has been successfully changed' } }
       else
         msg = @user.errors.values.first
-        format.html { render :action => :edit }
+        format.html { render :action => :edit, :layout => 'console' }
         format.js { render :json => { :status => 'error', :message => msg } }
       end
     end

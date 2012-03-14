@@ -70,15 +70,16 @@ touch %{buildroot}%{sitedir}/log/production.log
 rm -rf %{buildroot}                                
 
 %files
-%defattr(0640,root,libra_user,0750)
-%attr(0666,root,libra_user) %{sitedir}/log/production.log
-%config(noreplace) %{sitedir}/config/environments/production.rb
-%{sitedir}
-%{htmldir}/app
 %attr(0775,root,libra_user) %{sitedir}/app/subsites/status/db
-%attr(0664,root,libra_user) %{sitedir}/app/subsites/status/db/status.sqlite3
+%attr(0664,root,libra_user) %config(noreplace) %{sitedir}/app/subsites/status/db/status.sqlite3
 %attr(0744,root,libra_user) %{sitedir}/app/subsites/status/rhc-outage
 %attr(0770,root,libra_user) %{sitedir}/tmp
+%attr(0666,root,libra_user) %{sitedir}/log/production.log
+
+%defattr(0640,root,libra_user,0750)
+%{sitedir}
+%{htmldir}/app
+%config(noreplace) %{sitedir}/config/environments/production.rb
 %config(noreplace) %{sitedir}/app/subsites/status/config/hosts.yml
 
 %post
