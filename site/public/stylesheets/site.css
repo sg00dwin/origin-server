@@ -723,15 +723,12 @@ a:hover, a:active {
     margin-top: 0;
   }
 }
-/* line 50, ../../app/stylesheets/site.scss */
-.offset-up {
-  position: relative;
-}
-
-/* line 53, ../../app/stylesheets/site.scss */
-.offset-up > .offset-up {
-  position: absolute;
-  bottom: 50%;
+/* FIXME: For videos temporarily, replace with use of standard tile pattern and grid */
+/* line 52, ../../app/stylesheets/site.scss */
+.row iframe,
+.row-fluid iframe {
+  width: 100%;
+  max-width: 311px;
 }
 
 /* A link that is a block, similar to a thumbnail */
