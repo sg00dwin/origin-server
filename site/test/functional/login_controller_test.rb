@@ -74,16 +74,16 @@ class LoginControllerTest < ActionController::TestCase
     assert_nil assigns(:redirectUrl)
   end
 
-  test "should allow internal relative referrer" do
+  test "should not allow internal relative referrer" do
     @request.env['HTTP_REFERER'] = new_application_path
     get :show
-    assert_equal new_application_path, assigns(:redirectUrl)
+    assert_nil assigns(:redirectUrl)
   end
 
-  test "should allow internal absolute referrer" do
+  test "should not allow internal absolute referrer" do
     @request.env['HTTP_REFERER'] = new_application_url
     get :show
-    assert_equal new_application_url, assigns(:redirectUrl)
+    assert_nil assigns(:redirectUrl)
   end
 
   test 'cookie domain can be external' do

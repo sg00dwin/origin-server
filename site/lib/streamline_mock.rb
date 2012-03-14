@@ -88,7 +88,7 @@ module StreamlineMock
   def authenticate(login, password)
     if login.present? and password.present?
       @rhlogin = login
-      @ticket = nil
+      @ticket = 'test'
       true
     else
       errors.add(:base, I18n.t(:login_error, :scope => :streamline))

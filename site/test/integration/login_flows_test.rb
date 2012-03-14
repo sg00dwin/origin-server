@@ -65,7 +65,7 @@ class LoginFlowsTest < ActionDispatch::IntegrationTest
   end
   
   test 'user should be redirected to express app when logging in directly from the express new user' do
-    get '/app/login', {}, {'HTTP_REFERER' => '/app/user/new/express'} #TODO: fix to use login_path
+    get '/app/login', {}, {'HTTP_REFERER' => new_web_user_path} #TODO: fix to use login_path
     assert_response :success
   
     post_via_redirect(path, {:login => 'testuser', :redirectUrl => root_path })

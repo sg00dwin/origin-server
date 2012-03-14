@@ -16,14 +16,12 @@ class LoginController < SiteController
       if remote_request
         Rails.logger.debug "Logging out user referred from: #{referrer.to_s}"
         reset_sso
-      else
-        @localReferrer = referrer.to_s
       end
     end
   end
 
   def show
-    @redirectUrl = params[:redirectUrl] || @localReferrer
+    @redirectUrl = params[:redirectUrl]
 
     # The login page should ensure the rh_sso cookie is empty
     cookies.delete :rh_sso, :domain => cookie_domain if cookies[:rh_sso]
@@ -42,6 +40,7 @@ class LoginController < SiteController
       cookies[:rh_sso] = domain_cookie_opts(:value => @user.ticket)
       session[:ticket_verified] = Time.now.to_i
       set_previous_login_detection
+      Rails.logger.debug "Authenticated, redirecting to #{@redirectUrl}"
       redirect_to @redirectUrl
     else
       Rails.logger.debug "Authentication failed"
