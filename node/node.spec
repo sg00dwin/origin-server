@@ -119,14 +119,12 @@ perl -p -i -e 's:/cgroup/[^\s]+;:/cgroup/all;:; /blkio|cpuset|devices/ && ($_ = 
 /sbin/chkconfig --add libra-data || :
 /sbin/chkconfig --add libra-cgroups || :
 /sbin/chkconfig --add libra-tc || :
-/sbin/chkconfig --add libra-proxy || :
 #/sbin/service mcollective restart > /dev/null 2>&1 || :
 /sbin/restorecon /etc/init.d/libra || :
 /sbin/restorecon /var/lib/stickshift || :
 /sbin/restorecon /var/run/stickshift || :
 /sbin/restorecon /usr/bin/rhc-cgroup-read || :
 /sbin/restorecon /var/lib/stickshift/.httpd.d/ || :
-/sbin/restorecon /var/lib/stickshift/.libra-proxy.d/ || :
 /usr/bin/rhc-restorecon || :
 # only enable if cgconfig is
 chkconfig cgconfig && /sbin/service libra-cgroups start > /dev/null 2>&1 || :
@@ -139,7 +137,6 @@ echo "/usr/bin/trap-user" >> /etc/shells
 /sbin/restorecon /usr/bin/rhc-restorer* || :
 [ $(/usr/sbin/semanage node -l | /bin/grep -c 255.255.255.128) -lt 1000 ] && /usr/bin/rhc-ip-prep.sh || :
 /sbin/chkconfig --add libra-watchman || :
-
 # Ensure the default users have a more restricted shell then normal.
 #semanage login -m -s guest_u __default__ || :
 
@@ -151,10 +148,21 @@ then
     rmdir /etc/httpd/conf.d/stickshift.bak
 fi
 
+# Enable proxy and handle proxy integration
+/sbin/chkconfig --add stickshift-proxy || :
 if ! [ -f /var/lib/stickshift/.stickshift-proxy.d/stickshift-proxy.cfg ]; then
+   oldproxies=( $(ls /var/lib/stickshift/.*-proxy.d/*-proxy.cfg 2>/dev/null) ) || :
    cp /etc/stickshift/stickshift-proxy.cfg /var/lib/stickshift/.stickshift-proxy.d/stickshift-proxy.cfg
+   for oldproxy in "${oldproxies[@]}"; do
+       sed -n -e '/^listen .*:.*:.*/,/^\# End .*:.*:.*/ p' "$oldproxy" >> /var/lib/stickshift/.stickshift-proxy.d/stickshift-proxy.cfg
+       mv -f "${oldproxy}" "${oldproxy}.old"
+   done
    restorecon /var/lib/stickshift/.stickshift-proxy.d/stickshift-proxy.cfg || :
 fi
+/sbin/restorecon /var/lib/stickshift/.stickshift-proxy.d/ || :
+/sbin/service stickshift-proxy condrestart || :
+
+
 
 
 %triggerin -- rubygem-stickshift-node
@@ -173,7 +181,7 @@ if [ "$1" -eq "0" ]; then
     /sbin/chkconfig --del libra-cgroups || :
     /sbin/chkconfig --del libra-data || :
     /sbin/chkconfig --del libra || :
-    /sbin/chkconfig --del libra-proxy || :
+    /sbin/chkconfig --del stickshift-proxy || :
     /sbin/chkconfig --del libra-watchman || :
     /usr/sbin/semodule -r libra
     sed -i -e '\:/usr/bin/trap-user:d' /etc/shells
@@ -194,7 +202,7 @@ then
 fi
 
 %triggerin -- haproxy
-/sbin/service libra-proxy condrestart
+/sbin/service stickshift-proxy condrestart
 
 %files
 %defattr(-,root,root,-)
@@ -205,7 +213,7 @@ fi
 %attr(0750,-,-) %{_initddir}/libra-data
 %attr(0750,-,-) %{_initddir}/libra-cgroups
 %attr(0750,-,-) %{_initddir}/libra-tc
-%attr(0750,-,-) %{_initddir}/libra-proxy
+%attr(0750,-,-) %{_initddir}/stickshift-proxy
 %attr(0750,-,-) %{_initddir}/libra-watchman
 %attr(0755,-,-) %{_bindir}/trap-user
 %attr(0750,-,-) %{_bindir}/rhc-ip-prep.sh

@@ -199,9 +199,10 @@ class Application < StickShift::Cartridge
           raise StickShift::NodeException.new("Unable to create gear on node", "-100", result_io)
         end
 
-        self.add_dns(gear.uuid[0..9], @user.namespace, gear.get_proxy.get_public_hostname) if self.scalable and is_web_gear
         gears_created.push gear
         ginst.gears << gear
+
+        self.add_dns(gear.uuid[0..9], @user.namespace, gear.get_proxy.get_public_hostname) if self.scalable and is_web_gear
 
         #TODO: save gears here
       end
@@ -297,7 +298,7 @@ class Application < StickShift::Cartridge
       ginst = self.group_instance_map[ginst_name]
 
       # remove any gear out of this ginst
-      raise Exception.new("Cannot scale below one gear") if ginst.gears.length == 1
+      raise StickShift::NodeException.new("Cannot scale below one gear", "-100", result_io) if ginst.gears.length == 1
 
       gear = ginst.gears.first
 
@@ -1185,9 +1186,9 @@ class Application < StickShift::Cartridge
     #   (e.g. some new cartridge that uses mysql inside it, and app wants to co-locate/re-use that mysql for app's use)
     # this also means that one cannot have two instances of the same cartridge
     from_cart = CartridgeCache.find_cartridge(from)
-    raise Exception.new("Cartridge #{from} not found.") if from_cart.nil?
+    raise StickShift::NodeException.new("Cartridge #{from} not found.", "-101", ResultIO.new) if from_cart.nil?
     to_cart = CartridgeCache.find_cartridge(to)
-    raise Exception.new("Cartridge #{to} not found.") if to_cart.nil?
+    raise StickShift::NodeException.new("Cartridge #{to} not found.", "-101", ResultIO.new) if to_cart.nil?
     begin 
       from_group = from_cart.find_profile(nil).groups[0]
       to_group = to_cart.find_profile(nil).groups[0]
@@ -1198,7 +1199,7 @@ class Application < StickShift::Cartridge
       group_override_map[from_gpath] = to_gpath
       group_override_map[to_gpath] = from_gpath
     rescue Exception=>e
-      raise Exception.new("Cannot co-locate #{to} and #{from}. Internal fault - #{e.message}")
+      raise StickShift::NodeException.new("Cannot co-locate #{to} and #{from}. Internal fault - #{e.message}", "-101", ResultIO.new)
     end
   end
 

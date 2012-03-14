@@ -102,16 +102,26 @@ function uuid_to_portrange {
   uid_to_portrange $uid
 }
 
+function proxy_cmd {
+  # Run proxy commands if one exists; otherwise, this is a stub.
+  if chkconfig --list stickshift-proxy >/dev/null 2>&1 
+  then
+    service stickshift-proxy "${@}"
+    return $?
+  fi
+  return 0
+}
+
 function find_next_proxy_port {
   uuid="$1"
   target="$2"
 
   for proxy_port in $(uuid_to_portset $uuid)
   do
-    proxtarg=$(service libra-proxy showproxy "$proxy_port" | awk '{ print $2 }')
+    proxtarg=$(proxy_cmd showproxy "$proxy_port" | awk '{ print $2 }')
     if [ -z "$proxtarg" ]
     then
-      service libra-proxy setproxy "$proxy_port" "$target"
+      proxy_cmd setproxy "$proxy_port" "$target"
       retv=$?
       if [ $retv != 0 ]; then
         exit 67
@@ -135,11 +145,11 @@ function remove_proxy_port {
   # This function may be called to clean-up a half-built proxy
   for proxy_port in $(uuid_to_portset $uuid)
   do
-    proxtarg=$(service libra-proxy showproxy "$proxy_port" | awk '{ print $2 }')
+    proxtarg=$(proxy_cmd showproxy "$proxy_port" | awk '{ print $2 }')
     if [ "$target" ==  "$proxtarg" ]
     then
       echo "$proxy_port"
-      service libra-proxy setproxy "$proxy_port" "delete"
+      proxy_cmd setproxy "$proxy_port" "delete"
     fi
   done
   return 0
@@ -152,7 +162,7 @@ function show_proxy_port {
 
   for proxy_port in $(uuid_to_portset $uuid)
   do
-    proxtarg=$(service libra-proxy showproxy "$proxy_port" | awk '{ print $2 }')
+    proxtarg=$(proxy_cmd showproxy "$proxy_port" | awk '{ print $2 }')
     if [ "$proxtarg" == "$target" ]; then
       echo "$proxy_port"
       return 0
@@ -170,6 +180,6 @@ function remove_all_proxy_ports {
   do
     setproxy=("${setproxy[@]}" "$proxy_port" "delete")
   done
-  service libra-proxy setproxy "${setproxy[@]}"
+  proxy_cmd setproxy "${setproxy[@]}"
   return 0
 }

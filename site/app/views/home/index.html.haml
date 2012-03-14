@@ -80,7 +80,7 @@
   
             .row-fluid
               .span6
-                = link_to "community", :class => 'link-with-action' do
+                = link_to community_url, :class => 'link-with-action' do
                   %strong Join
                   our community
               .span6
@@ -89,7 +89,7 @@
                     %strong Follow
                     OpenShift
                 .align-right
-                  = link_to "feed", :class => 'link-with-action' do
+                  = link_to openshift_twitter_hashtag_url, :class => 'link-with-action' do
                     %strong More
                     = "#OpenShift buzz"
   
