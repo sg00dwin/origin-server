@@ -41,32 +41,11 @@ class LoginController < SiteController
     else
       setup_login_workflow(referrer, remote_request)
     end
-    @redirectUrl = root_url
-    @errorUrl = login_error_url
     Rails.logger.debug "Session workflow in LoginController#show: #{workflow}"
     render :show, :layout => 'simple'
   end
 
-  def error
-    #TODO - better error handling
-    @user = WebUser.new
-    @user.errors[:error] << "- Invalid username or password"
-    show
-  end
-
   def create
-    Rails.logger.warn "Non integrated environment - faking login"
-    session[:login] = params['login']
-    session[:ticket] = "test"
-    session[:user] = WebUser.new(:email_address => params['login'], :rhlogin => params['login'])
-    cookies[:rh_sso] = domain_cookie_opts(:value => 'test')
-
-    Rails.logger.debug "Session workflow in LoginController#create: #{workflow}"
-    Rails.logger.debug "Redirecting to home#index"
-    redirect_to params['redirectUrl']
-  end
-
-  def ajax
     referrer = URI.parse(request.referer)
     setup_login_workflow(referrer, false)
 
@@ -79,13 +58,14 @@ class LoginController < SiteController
       session[:ticket] = "test"
       session[:user] = WebUser.new(:email_address => params['login'], :rhlogin => params['login'])
       cookies[:rh_sso] = domain_cookie_opts(:value => 'test')
-      @message = 'Welcome back to OpenShift!'
+      Rails.logger.debug "Session workflow in LoginController#create: #{workflow}"
+      Rails.logger.debug "Redirecting to home#index"
       @message_type = 'success'
       set_previous_login_detection
 
       # Added options to make sure non-integrated environment works
       responseText[:status] = 200
-      responseText[:redirectUrl] = root_url
+      responseText[:redirectUrl] = defined?(params[:redirectUrl]) ? params[:redirectUrl] : root_url
     else
       
       res, responseText[:status] = handle_remote_login(params[:login], params[:password])
@@ -100,11 +80,10 @@ class LoginController < SiteController
           cookie = res.header['set-cookie']
           if cookie
             @message_type = 'success'
-            @message = 'Welcome back to OpenShift!'
             rh_sso = cookie.split('; ')[0].split('=')[1]
             cookies[:rh_sso] = domain_cookie_opts(:value => rh_sso)
             session[:ticket] = rh_sso
-            responseText[:redirectUrl] = root_url
+            responseText[:redirectUrl] = defined?(params[:redirectUrl]) ? params[:redirectUrl] : root_url
             set_previous_login_detection
           else 
             Rails.logger.debug "Unknown error (no cookie sent): #{res.code}"
@@ -123,9 +102,9 @@ class LoginController < SiteController
       format.html do
         # Fallback for those without js
         if @message_type == 'success'
-          redirect_to root_url
+          redirect_to defined?(params[:redirectUrl]) ? params[:redirectUrl] : root_url
         else
-          render :show, :layout => 'simple' and return
+          redirect_to login_path
         end
       end
       format.js do
