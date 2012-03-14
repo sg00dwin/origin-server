@@ -57,22 +57,7 @@ fi
 #
 # Checking if the user has added the settings.py file in the git repo
 #
-pushd "$APP_HOME" > /dev/null
-mkdir -p tmp_${uuid}
-cd tmp_${uuid}
-git clone $APP_HOME/git/${application}.git/ .
-
-if [ -f ".openshift/mms/settings.py" ]
-then
-    mkdir -p $APP_DIR/.openshift/mms
-    cp .openshift/mms/settings.py $APP_DIR/.openshift/mms/settings.py
-fi
-
-popd > /dev/null
-rm -rf $APP_HOME/tmp_${uuid}
-
-
-if [ ! -f "$APP_DIR/.openshift/mms/settings.py" ]
+if [ ! -f "${APP_DIR}/repo/.openshift/mms/settings.py" ]
 then
     client_error ""
     client_error "Missing settings.py file:  $APP_DIR/.openshift/mms/settings.py"
@@ -98,20 +83,6 @@ pushd "$MMS_DIR" > /dev/null
 mkdir -p logs mms-agent run
 cp -r /usr/local/share/mms-agent/* $MMS_DIR/mms-agent/
 ln -s agent.py $MMS_DIR/mms-agent/"$uuid"_agent.py
-
-#
-# Create symbolic links to the settings.py file and remove the compiled files.
-# This is required so that the user can set the credentials in this file
-#
-rm -f $MMS_DIR/mms-agent/settings.py $MMS_DIR/mms-agent/settings.pyc $MMS_DIR/mms-agent/settings.pyo
-
-# The $APP_HOME/${application}/.openshift/mms directory will be created by the user
-# and the settings.py file will be placed there by the user too.
-# mkdir -p $APP_HOME/${application}/.openshift/mms
-# cp /usr/local/share/mms-agent/settings.py $APP_DIR/.openshift/mms/settings.py
-ln -s $APP_DIR/.openshift/mms/settings.py $MMS_DIR/mms-agent/settings.py
-chown $user_id.$group_id -R $APP_HOME/${application}/.openshift
-
 popd > /dev/null
 
 
