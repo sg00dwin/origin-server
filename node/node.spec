@@ -154,7 +154,7 @@ if ! [ -f /var/lib/stickshift/.stickshift-proxy.d/stickshift-proxy.cfg ]; then
    oldproxies=( $(ls /var/lib/stickshift/.*-proxy.d/*-proxy.cfg 2>/dev/null) ) || :
    cp /etc/stickshift/stickshift-proxy.cfg /var/lib/stickshift/.stickshift-proxy.d/stickshift-proxy.cfg
    for oldproxy in "${oldproxies[@]}"; do
-       sed -n -e '/^listen .*:.*:.*/,/^# End .*:.*:.*/ p' "$oldproxy" >> /var/lib/stickshift/.stickshift-proxy.d/stickshift-proxy.cfg
+       sed -n -e '/^listen .*:.*:.*/,/^\# End .*:.*:.*/ p' "$oldproxy" >> /var/lib/stickshift/.stickshift-proxy.d/stickshift-proxy.cfg
        mv -f "${oldproxy}" "${oldproxy}.old"
    done
    restorecon /var/lib/stickshift/.stickshift-proxy.d/stickshift-proxy.cfg || :
