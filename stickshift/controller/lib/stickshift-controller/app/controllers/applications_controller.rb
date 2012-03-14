@@ -124,6 +124,11 @@ class ApplicationsController < BaseController
             @reply = RestReply.new(:internal_server_error)
             message = Message.new(:error, "Failed to create dns for application #{application.name} due to:#{e.message}", e.code) 
             @reply.messages.push(message)
+            message = Message.new(:error, "Failed to create application #{application.name} due to DNS failure.", e.code) 
+            @reply.messages.push(message)
+            application.deconfigure_dependencies
+            application.destroy
+            application.delete
             respond_with @reply, :status => @reply.status
             return
         end

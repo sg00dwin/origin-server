@@ -54,7 +54,12 @@ module LibraMigration
       when "python-2.6", "ruby-1.8", "perl-5.10"
         FileUtils.mv("#{app_dir}/conf.d/libra.conf", "#{app_dir}/conf.d/stickshift.conf") unless File.exists?("#{app_dir}/conf.d/stickshift.conf")
         Util.replace_in_file("#{app_dir}/conf.d/stickshift.conf", "/var/lib/libra", "/var/lib/stickshift")
-      when "raw-0.1"
+      when "diy-0.1"
+        Util.replace_in_file("/etc/httpd/conf.d/stickshift/#{uuid}_#{namespace}_#{app_name}.conf", "raw-0.1", "diy-0.1")
+        Util.replace_in_file("/etc/httpd/conf.d/stickshift/#{uuid}_#{namespace}_#{app_name}.conf", "/usr/libexec/li/cartridges", "/usr/libexec/stickshift/cartridges")
+        env_echos.push("echo \"export OPENSHIFT_GEAR_TYPE='diy-0.1'\" > #{app_home}/.env/OPENSHIFT_GEAR_TYPE")
+        env_echos.push("echo \"export PATH=#{cartridge_root_dir}/diy-0.1/info/bin/:#{cartridge_root_dir}/abstract/info/bin/:/sbin:/usr/sbin:/bin:/usr/bin\" > #{app_home}/.env/PATH")
+
         #no-op
       when "php-5.3"
         FileUtils.mv("#{app_dir}/conf.d/libra.conf", "#{app_dir}/conf.d/stickshift.conf") unless File.exists?("#{app_dir}/conf.d/stickshift.conf")
