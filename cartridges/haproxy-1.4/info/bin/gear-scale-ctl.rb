@@ -1,9 +1,9 @@
 #!/usr/bin/ruby
 
 require 'rubygems'
-require 'rhc-common'
-require 'pp'
 require 'rest-client'
+require 'stickshift-node'
+require 'pp'
 
 #$create_url='curl -k -X POST -H "Accept: application/xml" --user "%s:%s" https://%s/broker/rest/domains/%s/applications'
 #$scale_url="#{$create_url}/%s/events"
@@ -47,7 +47,7 @@ class Gear_scale_ctl
   end
 end
 
-def usage(opts)
+def usage
   $stderr.puts <<USAGE
 
 Usage:
@@ -64,32 +64,37 @@ Remove gear from application:
   -h|--host        libra server host running broker
 
 USAGE
-  exit 255
+  exit! 255
 end
 
+config = StickShift::Config.instance
+
 opts = {
-    "server" => get_var('libra_server')
+    'server' => config.get('BROKER_HOST')
 }
 
 begin
   args = GetoptLong.new(
-    ["--app",       "-a", GetoptLong::REQUIRED_ARGUMENT],
-    ["--uuid",      "-u", GetoptLong::REQUIRED_ARGUMENT],
-    ["--namespace", "-n", GetoptLong::REQUIRED_ARGUMENT],
-    ["--server",    "-s", GetoptLong::OPTIONAL_ARGUMENT]
+    ['--app',       '-a', GetoptLong::REQUIRED_ARGUMENT],
+    ['--uuid',      '-u', GetoptLong::REQUIRED_ARGUMENT],
+    ['--namespace', '-n', GetoptLong::REQUIRED_ARGUMENT],
+    ['--server',    '-s', GetoptLong::REQUIRED_ARGUMENT]
   )
 
-  args.each {|opt, arg| opts[opt[2..-1]] = arg.to_s }
+  args.each {|opt, arg| opts[opt[2..-1]] = arg.to_s}
 
-  if opts["server"].nil? || opts["server"].empty? \
-        || opts["app"].nil? || opts["app"].empty? \
-        || opts["uuid"].nil? || opts["uuid"].empty? \
-        || opts["namespace"].nil? || opts["namespace"].empty?
-    usage opts
+  if 0 != ARGV.length
+    usage
   end
 
+  if opts['server'].nil? || opts['server'].empty? \
+        || opts['app'].nil? || opts['app'].empty? \
+        || opts['uuid'].nil? || opts['uuid'].empty? \
+        || opts['namespace'].nil? || opts['namespace'].empty?
+    usage
+  end
 rescue Exception => e
-  usage opts
+  usage
 end
 
 o = Gear_scale_ctl.new(File.basename($0), opts)

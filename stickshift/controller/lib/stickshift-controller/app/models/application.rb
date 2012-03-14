@@ -600,7 +600,7 @@ class Application < StickShift::Cartridge
   def stop(dependency=nil,force_stop_on_failure=true, throw_exception_on_failure=true)
     reply = ResultIO.new
     self.class.notify_observers(:before_stop, {:application => self, :reply => reply, :dependency => dependency})
-    self.start_order.each do |comp_inst_name|
+    self.start_order.reverse.each do |comp_inst_name|
       comp_inst = self.comp_instance_map[comp_inst_name]
       next if !dependency.nil? and (comp_inst.parent_cart_name != dependency)
       
