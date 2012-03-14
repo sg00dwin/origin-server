@@ -375,7 +375,10 @@ class Application < StickShift::Cartridge
             doExpose = true if not gear.configured_components.include? comp_inst.name
           end
           r.append gear.configure(comp_inst, @init_git_url)
-          r.append gear.expose_port(comp_inst) if doExpose
+          begin
+            r.append gear.expose_port(comp_inst) if doExpose
+          rescue Exception=>e
+          end
           r.append process_cartridge_commands(r.cart_commands)
           # self.save
         end
