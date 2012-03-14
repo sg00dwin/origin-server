@@ -2,7 +2,7 @@
 
 Summary:   Provides php-5.3 support
 Name:      rhc-cartridge-php-5.3
-Version:   0.88.4
+Version:   0.88.5
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   ASL 2.0
@@ -105,6 +105,9 @@ rm -rf %{buildroot}
 %doc %{cartridgedir}/LICENSE
 
 %changelog
+* Tue Mar 13 2012 Dan McPherson <dmcphers@redhat.com> 0.88.5-1
+- Bugzilla ticket 800558, add php-mcrypt and php-pecl-apc (rmillner@redhat.com)
+
 * Mon Mar 12 2012 Dan McPherson <dmcphers@redhat.com> 0.88.4-1
 - Update cartridge landing page styles (ccoleman@redhat.com)
 
