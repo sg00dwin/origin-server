@@ -13,7 +13,7 @@
         %label.control-label
           Are you human?
         .controls.recaptcha
-          = recaptcha_tags :ssl => true    
+          = recaptcha_tags :ssl => true, :error => 'foo da bar' 
       .control-group
         By signing up you agree to the 
         %a{:href => '/app/legal/site_terms'} 
