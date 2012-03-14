@@ -157,7 +157,7 @@ if __name__ == '__main__':
         # replace leading tilde (~) with user's home path
         realpath = os.path.expanduser(thearg)
         if not realpath.startswith(config['GEAR_BASE_DIR']):
-            syslog.syslog("Invalid repository: not in libra_root - %s: (%s)" % 
+            syslog.syslog("Invalid repository: not in stickshift_root - %s: (%s)" %
                           (thearg, realpath))
             print "Invalid repository %s: not in application root" % thearg
             sys.exit(3)
