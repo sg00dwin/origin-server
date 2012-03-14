@@ -8,7 +8,10 @@
         cloud solution
       .secondary Get more control over your apps, or move your existing applications to the cloud with ease! 
 
-  = take_action new_web_user_path, 'Sign up to try <strong>OpenShift Flex</strong>'
+  - if logged_in?
+    = take_action flex_redirect_path, 'Open the <strong>OpenShift Flex</strong> Console'
+  - else
+    = take_action '/app/user/new/flex', 'Sign up to try <strong>OpenShift Flex</strong>'
 
 %h1.ribbon
   .ribbon-content What is OpenShift Flex?
@@ -70,4 +73,4 @@
       %p
         Without the use of agents or scripts, OpenShift Flex gives you end-to-end monitoring straight-out-of-box with configurable auto-scaling that lets you decide when and how to scale your application.
   
-  %section= take_action '/app/user/new/flex', 'Ready to get started?', 'Sign up to try Flex'
+  %section= take_action '/app/getting_started/flex', 'Ready to Shift your App to the Cloud?', 'Read the Flex Getting Started Guide'

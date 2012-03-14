@@ -35,6 +35,14 @@ class ProductController < SiteController
   def overview
   end
   
+  def getting_started
+    
+  end
+  
+  def getting_started_flex
+    
+  end
+  
   #Feature matrix
   #def features
   #  render :action => :features

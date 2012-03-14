@@ -8,7 +8,10 @@
         cloud solution
       .secondary Express is a free, cloud-based application platform for Java, Perl, PHP, Python, and Ruby applications. 
 
-  = take_action new_web_user_path, 'Sign up to try <strong>OpenShift Express</strong>'
+  - if logged_in?
+    = take_action console_path, 'Open the <strong>OpenShift Express</strong> Console'
+  - else
+    = take_action '/app/user/new/express', 'Sign up to try <strong>OpenShift Express</strong>'
 
 %h1.ribbon
   .ribbon-content What is OpenShift Express?
@@ -45,4 +48,4 @@
       %p
         Add your application code to the Git repository and push to the cloud. Congratulations, your application is live!
   
-  %section= take_action '/app/user/new/express', 'Ready to get started?', 'Sign up to try Express'
+  %section= take_action '/app/getting_started', 'Ready to Shift your App to the Cloud?', 'Read the Express Getting Started Guide'
