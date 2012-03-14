@@ -152,7 +152,7 @@ class LoginController < SiteController
         if @message_type == 'success'
           redirect_to root_url
         else
-          render :show, :layout => 'box' and return
+          render :show, :layout => 'simple' and return
         end
       end
       format.js do
