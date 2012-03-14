@@ -69,8 +69,8 @@ end
 #
 public_ip = 'UNKNOWN'
 public_hostname = 'UNKNOWN'
-public_ip = get_node_config_value("PUBLIC_IP_OVERRIDE", "UNKNOWN")
-public_hostname = get_node_config_value("PUBLIC_HOSTNAME_OVERRIDE", "UNKNOWN")
+public_ip = get_node_config_value("PUBLIC_IP", "UNKNOWN")
+public_hostname = get_node_config_value("PUBLIC_HOSTNAME", "UNKNOWN")
 Facter.add(:public_ip) do
   setcode { public_ip }
 end

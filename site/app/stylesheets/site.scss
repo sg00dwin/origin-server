@@ -643,7 +643,12 @@ h1.ribbon {
 }
 
 @media (max-width: 767px) {
-  .column-nav > div > ul > li { float: left; width: 32%; }
+  /* FIXME: May be a better way to handle this */
+  .container .row-content .column-nav { 
+    margin: 0 -20px; 
+    padding: 0 20px; 
+  }
+
   .nav-location { display: none; }
 }
 

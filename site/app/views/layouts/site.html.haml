@@ -27,15 +27,15 @@
           .row-content
             .row.row-flush-right
               - if content_for? :navigation
-                .column-nav.lift-less.span-wrapper
+                .column-nav.lift-less.grid-wrapper
                   .span3
                     = yield :navigation
-                .column-content.lift.span-wrapper
+                .column-content.lift.grid-wrapper
                   .span9.span-flush-right
                     = flashes
                     = yield
               - else
-                .column-content.lift-less.span-wrapper
+                .column-content.lift-less.grid-wrapper
                   .span12.span-flush-right
                     = flashes
                     = yield
