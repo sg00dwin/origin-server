@@ -57,7 +57,7 @@ class Release < Thor
       
       if gem_updates
         branch = get_branch
-        if push
+        if push_changes
           run("git add broker/Gemfile.lock stickshift/controller/Gemfile.lock stickshift/node/Gemfile.lock stickshift/broker/Gemfile.lock; git commit -m 'Updating gem versions'; git push origin #{branch}", :verbose => options.verbose?)
           build_dirs = get_build_dirs
         end
