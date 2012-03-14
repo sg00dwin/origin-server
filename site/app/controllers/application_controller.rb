@@ -331,11 +331,6 @@ class ApplicationController < ActionController::Base
     redirect_to root_path
   end
   
-  # Set previous log in detection cookie
-  def set_previous_login_detection
-    cookies.permanent[:prev_login] = true
-  end
-  
   def sauce_testing?
     retval = false
     if Rails.env.development?

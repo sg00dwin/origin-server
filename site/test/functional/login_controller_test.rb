@@ -1,10 +1,44 @@
 require 'test_helper'
 
 class LoginControllerTest < ActionController::TestCase
+
+  def integrated_user
+    {:login => 'ccoleman@redhat.com', :password => 'aoeuaoeu'}
+  end
+
+  def internal_user
+    {:login => 'test', :password => 'password'}
+  end
+
   test "should get index" do
     get :show
     #assert assigns(:redirectUrl)
     #assert assigns(:errorUrl)
+    assert_response :success
+    assert_template :show
+  end
+
+  test "login" do
+    post :create, internal_user
+    assert assigns(:user)
+    assert_equal assigns(:user).ticket, cookies['rh_sso']
+    assert_equal 'true', cookies['prev_login']
+    assert_not_nil session[:ticket_verifier]
+    assert_redirected_to console_path
+  end
+
+  test "login with redirect" do
+    post :create, internal_user.merge(:redirectUrl => new_application_path)
+    assert_redirected_to new_application_path
+  end
+
+  test "login should fail" do
+    post :create, {:login => ''}
+    assert assigns(:user)
+    puts assigns(:user).inspect
+    assert assigns(:user).errors.present?
+    assert_nil cookies['prev_login']
+    assert_nil cookies['rh_sso']
     assert_response :success
     assert_template :show
   end

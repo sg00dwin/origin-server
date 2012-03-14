@@ -40,9 +40,11 @@ class LoginController < SiteController
       session[:ticket] = @user.ticket
       session[:user] = @user
       cookies[:rh_sso] = domain_cookie_opts(:value => @user.ticket)
+      session[:ticket_verified] = Time.now.to_i
       set_previous_login_detection
       redirect_to @redirectUrl
     else
+      puts @user.errors.inspect
       render :show, :layout => 'simple'
     end
   end
@@ -56,5 +58,10 @@ class LoginController < SiteController
     }
     defaults.merge(opts)
   end
-  
+
+  # Set previous log in detection cookie
+  def set_previous_login_detection
+    cookies.permanent[:prev_login] = true
+  end
+
 end
