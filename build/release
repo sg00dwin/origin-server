@@ -163,6 +163,14 @@ class Release < Thor
         puts "Done"
       end
     end
+    if File.exists?("../jenkins-cloud")
+      inside("../jenkins-cloud") do
+        git_pull_output = `git pull`.chomp
+        unless git_pull_output.include?("Already up-to-date.")
+          puts "INFO: There is a change to the jenkins plugin.  You can release that with 'build/release release_jenkins_plugin'"
+        end
+      end
+    end
   end
 
   desc "sync", "Download a build from Brew (using Mash) and sync it to the OpenShift repos"
