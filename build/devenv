@@ -66,6 +66,12 @@ class DevEnv < Thor
       ssh(hostname, "rm -rf /root/li-test; cd /root/li; git archive --prefix li-test/ --format=tar HEAD | (cd /root && tar --warning=no-timestamp -xf -); mkdir -p /tmp/rhc/junit")
       puts "Done"
     end
+    
+    def idle_all_gears(hostname)
+      print "Idling all gears on remote instance: #{hostname}"
+      ssh(hostname, "for dir in /var/lib/stickshift/*; do if [ -d $dir ] && [ ! -h $dir ] ; then rhc-idler -u `basename $dir`; fi; done")
+      puts "Done"
+    end
 
     def scp_remote_tests(hostname)
       puts "Archiving local changes..."
@@ -185,6 +191,8 @@ class DevEnv < Thor
         unless options.official?
           use_private_ip(hostname)
         end
+        
+        idle_all_gears(hostname)
 
         threads = []
         failures = []
@@ -272,6 +280,8 @@ class DevEnv < Thor
         threads.each do |t|
           t.join
         end
+        
+        idle_all_gears(hostname)
 
         retry_threshold = 0
         retry_threshold += 6 unless options.exclude_internal?
@@ -301,6 +311,7 @@ class DevEnv < Thor
                   ssh(hostname, "rm -rf /tmp/rhc; mkdir -p /tmp/rhc/junit")
                 end
               else
+                idle_all_gears(hostname)
                 break
               end
             end
