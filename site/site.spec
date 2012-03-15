@@ -3,7 +3,7 @@
 
 Summary:   Li site components
 Name:      rhc-site
-Version:   0.88.9
+Version:   0.88.10
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -86,6 +86,14 @@ rm -rf %{buildroot}
 /bin/touch %{sitedir}/log/production.log
 
 %changelog
+* Wed Mar 14 2012 Dan McPherson <dmcphers@redhat.com> 0.88.10-1
+- Fixed minLength for validations (fotios@redhat.com)
+- Updated overview with new style commands and python package
+  (ccoleman@redhat.com)
+- Videos expand outside their boundaries when on a small device, temporary
+  hac^Hfix (ccoleman@redhat.com)
+- Added form validations (fotios@redhat.com)
+
 * Wed Mar 14 2012 Dan McPherson <dmcphers@redhat.com> 0.88.9-1
 - 
 
