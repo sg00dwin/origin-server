@@ -109,7 +109,7 @@ Facter.add(:active_capacity) do
     max_active_apps = Facter.value(:max_active_apps).to_f
     stopped_app_count = 0
     Dir.glob("/var/lib/stickshift/*").each { |app_dir|
-        if File.directory?(app_dir)
+        if File.directory?(app_dir) && !File.symlink?(app_dir)
             active = true
             Dir.glob(File.join(app_dir, '*', 'runtime', '.state')).each {|file|
                 state = File.read(file).chomp
