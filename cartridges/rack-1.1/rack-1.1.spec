@@ -28,6 +28,7 @@ Requires:  rubygem-sqlite3
 Requires:  rubygem-thread-dump
 Requires:  ruby-sqlite3
 Requires:  ruby-mysql
+Requires:  rubygem-bson_ext
 Requires:  mysql-devel
 Requires:  ruby-devel
 Requires:  ruby-nokogiri
