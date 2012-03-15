@@ -1304,9 +1304,7 @@ private
   def generate_group_overrides(default_profile)
     if not default_profile.group_overrides.empty?
       default_profile.group_overrides.each do |n, v|
-        from = self.get_name_prefix + n
-        to = self.get_name_prefix + v
-        self.group_override_map[from] = to
+        add_group_override(n,v)
       end
     else
       default_profile = @profile_name_map[@default_profile]
