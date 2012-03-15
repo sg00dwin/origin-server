@@ -2,7 +2,7 @@
 
 Summary:       Multi-tenant cloud management system node tools
 Name:          rhc-node
-Version:       0.88.6
+Version:       0.88.7
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -268,6 +268,21 @@ fi
 /lib64/security/pam_libra.so
 
 %changelog
+* Wed Mar 14 2012 Dan McPherson <dmcphers@redhat.com> 0.88.7-1
+- Removing rhc-idle-apps. (mpatel@redhat.com)
+- Removing unused file from spec. (mpatel@redhat.com)
+- Fix for Bugzilla 801985 (mpatel@redhat.com)
+- Refactored for .state to be after original tests for idle (jhonce@redhat.com)
+- Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
+  (rmillner@redhat.com)
+- Escape the # character (rmillner@redhat.com)
+- Copy over old proxies if creating a new proxy cfg (rmillner@redhat.com)
+- Rename libra-proxy to stickshift-proxy (rmillner@redhat.com)
+- Bug 803267: Fixing incorrect path (rmillner@redhat.com)
+- enable support for cfs quotas (mmcgrath@redhat.com)
+- Fixing migration script for jenkins and jboss apps Also updated notes
+  https://engineering.redhat.com/trac/Libra/ticket/149 (kraman@gmail.com)
+
 * Tue Mar 13 2012 Dan McPherson <dmcphers@redhat.com> 0.88.6-1
 - The values of stickshift-node.conf were being overridden after libra-data,
   should be before. (rmillner@redhat.com)
