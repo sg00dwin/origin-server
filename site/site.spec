@@ -3,7 +3,7 @@
 
 Summary:   Li site components
 Name:      rhc-site
-Version:   0.88.6
+Version:   0.88.7
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -86,6 +86,38 @@ rm -rf %{buildroot}
 /bin/touch %{sitedir}/log/production.log
 
 %changelog
+* Wed Mar 14 2012 Dan McPherson <dmcphers@redhat.com> 0.88.7-1
+- Added an inspector to watch an intermittent test failure (ffranz@redhat.com)
+- Removed placeholder for application type image (fotios@redhat.com)
+- Merge branch 'master' of git1.ops.rhcloud.com:/srv/git/li (ffranz@redhat.com)
+- Merge branch 'devwed' (sgoodwin@redhat.com)
+- new and improved header logo now with vitamin d (sgoodwin@redhat.com)
+- Fixed streamline tests (ffranz@redhat.com)
+- Fixes 803232 (ffranz@redhat.com)
+- Merge branch 'master' of git1.ops.rhcloud.com:/srv/git/li (ffranz@redhat.com)
+- Fixes 803232; added new getting started pages; conditional take_action
+  according to existing session (ffranz@redhat.com)
+- Bug 802709 - some links on homepage broken (ccoleman@redhat.com)
+- Added haproxy application_type so scaled apps show up (fotios@redhat.com)
+- Add text comments from yesterday (ccoleman@redhat.com)
+- Fixes 803223 - added proper captcha error messages (ffranz@redhat.com)
+- site/site.spec: Fixed permissions not taking (whearn@redhat.com)
+- Bug 803189 - using wrong layout when change password fails
+  (ccoleman@redhat.com)
+- Bug 803229, fixup email confirm page with new styles (ccoleman@redhat.com)
+- Merge branch 'master' of git1.ops.rhcloud.com:/srv/git/li (ffranz@redhat.com)
+- Fixes 802658 (ffranz@redhat.com)
+- Need to force the URL for aliases (fotios@redhat.com)
+- Fixed login_ajax_path missing (fotios@redhat.com)
+- Moved jQuery to use CDN and commented on JS usage (fotios@redhat.com)
+- Fixed broken unit tests (ccoleman@redhat.com)
+- Fixes 803212: added more error messages on signup (ffranz@redhat.com)
+- Improvements to login flow. Time to go to sleep. (ffranz@redhat.com)
+- Fixed error messages on signin (ffranz@redhat.com)
+- Merge branch 'master' of git1.ops.rhcloud.com:/srv/git/li (ffranz@redhat.com)
+- Fixed error messages on signin, signup and recover screens; added ribbon
+  content support for the simple layout (ffranz@redhat.com)
+
 * Wed Mar 14 2012 Dan McPherson <dmcphers@redhat.com> 0.88.6-1
 - Fixed box layout to simple layout on user and login controllers
   (ffranz@redhat.com)
