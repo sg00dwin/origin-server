@@ -86,12 +86,12 @@ body.signup {
   color: #888;
 
   .container .btn {
-    background: #333;
     border-radius: 0;
     text-shadow: none;
     border: 0;
     box-shadow: none;
     color: #ccc;
+    background: #333;
 
     &:hover, &:active {
       background: #AAAAAA;
@@ -131,6 +131,7 @@ body.signup {
   .link-tile {
     color: $stripesText;
     padding: 15px $gridGutterWidth;
+    overflow: hidden;
     @include tile($stripesText, $stripesText, $ribbonFoldColor, $stripesHover);
 
     > :last-child { margin-bottom: 0; }
@@ -667,7 +668,8 @@ body > header {
   /* fallback */
   background: #191919 url($transparentNoiseImageData);
   background-image:
-    url('../images/comets.png'),
+    url('../images/mts.png'),
+    url('../images/stars.png'),
     url($transparentNoiseImageData);
   background-repeat:
     repeat-x,
@@ -755,7 +757,17 @@ body.home {
 	    center bottom,
 	    center bottom, 
 	    center bottom;
-	}
+		}
+}
+
+.home .learn li img {
+	float:left;
+}
+.home .learn li h4 {
+	margin-left: 100px;
+}
+.home .learn li p {
+	margin-left: 100px;
 }
 
 .home #buzz {
