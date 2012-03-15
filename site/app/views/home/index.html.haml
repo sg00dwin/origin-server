@@ -20,19 +20,19 @@
   
         .span6
           %ul.learn.unstyled
-            %li
+            %li.scale
               = link_to product_overview_path(:anchor => 'scale'), :class => 'link-tile' do
-                -#%img{:src => 'scale.png'}
+                %img{:src => '/app/images/scale.png'}
                 %h4 Scale easily in any language
                 %p Grow your Java, Perl, Ruby, Python, and Node.js apps easily with resource scaling.
-            %li
+            %li.time
               = link_to product_overview_path(:anchor => 'code'), :class => 'link-tile' do
-                -#%img{:src => 'clock.png'}
+                %img{:src => '/app/images/time.png'}
                 %h4 Superfast!
                 %p Code and deploy to the cloud in minutes.  Faster and easier than it has ever been.
-            %li
+            %li.locked
               = link_to product_overview_path(:anchor => 'open'), :class => 'link-tile' do
-                -#%img{:src => 'key.png'}
+                %img{:src => '/app/images/lock.png'}
                 %h4 Don't get locked in
                 %p Minimal coding to the platform and built on open technologies, so you can take it with you.
         .span6
