@@ -58,6 +58,12 @@ function setup_mysql_as_a_service() {
     # And prepend to path variable so that mysql app_ctl.sh script is called.
     sed -i 's#export \s*PATH=#export PATH=$CART_INFO_DIR/bin/:#' $APP_HOME/.env/PATH
 
+    #  Add apache vhost configuration.
+    export CART_INFO_DIR
+    import_env_vars
+    $CART_INFO_DIR/bin/deploy_httpd_proxy.sh $application $namespace $uuid $IP
+
+    restart_httpd_graceful
 }
 
 
@@ -191,7 +197,7 @@ client_result ""
 
 if is_a_scalable_app; then
     client_result "Connection URL: mysql://$mysql_ip:$mysql_port/"
-    client_result "   On the MySQL gear, you can also connect via the local Connection URL: mysql://$IP:3306/"
+    client_result "MySQL gear-local connection URL: mysql://$IP:3306/"
     client_result ""
 else
     client_result "Connection URL: mysql://$IP:3306/"
