@@ -18,7 +18,6 @@ RedHatCloud::Application.routes.draw do
 
     match 'getting_started' => 'product#getting_started', :as => 'getting_started'
     match 'getting_started/express', :to => redirect('/app/getting_started')
-    match 'getting_started/flex' => 'product#getting_started_flex', :as => 'getting_started_flex'
     match 'getting_started_external/:registration_referrer' => 'getting_started_external#show'
 
     match 'email_confirm' => 'email_confirm#confirm'

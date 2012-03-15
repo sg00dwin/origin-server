@@ -13,9 +13,7 @@
   - else
     = take_action '/app/user/new/express', 'Sign up to try <strong>OpenShift Express</strong>'
 
-%h1.ribbon
-  .ribbon-content Getting started with OpenShift Express
-  .ribbon-left
+%h1.ribbon Getting started with Express
   
 %section#quickstart
 
@@ -261,9 +259,4 @@
             = link_to 'Technical Documentation', 'http://docs.redhat.com/docs/en-US/OpenShift_Express/2.0/html/User_Guide/index.html', :class => 'more'
           %li
             = link_to 'Support Forums', 'http://www.redhat.com/openshift/forums', :class => 'more'
-
-  - if logged_in?
-    = take_action console_path, 'Open the <strong>OpenShift Express</strong> Console'
-  - else
-    = take_action '/app/user/new/express', 'Sign up to try <strong>OpenShift Express</strong>'
 
