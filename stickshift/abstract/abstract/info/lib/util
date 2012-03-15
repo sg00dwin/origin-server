@@ -403,6 +403,23 @@ function import_env_vars {
     done
 }
 
+function translate_env_vars {
+  xlations=( $(echo $TRANSLATE_GEAR_VARS) )
+  i=0
+  while [ "${xlations[$i]}" ]
+  do
+    keyname="${xlations[$i]}"
+    i=$(( $i + 1 ))
+    valref="${xlations[$i]}"
+    i=$(( $i + 1 ))
+    keyprev=$(eval "echo \$$keyname")
+    if [ "$keyname" ] && [ "$valref" ] && [ -z "$keyprev" ]
+    then
+      eval "export ${keyname}=\"\$${valref}\""
+    fi
+  done
+}
+
 function print_running_processes {
     echo ""
     echo "Running Processes:"

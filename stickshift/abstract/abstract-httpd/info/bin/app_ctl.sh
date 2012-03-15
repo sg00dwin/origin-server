@@ -9,6 +9,8 @@ do
     . $f
 done
 
+transalte_env_vars
+
 if ! [ $# -eq 1 ]
 then
     echo "Usage: \$0 [start|restart|graceful|graceful-stop|stop]"
