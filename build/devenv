@@ -192,7 +192,7 @@ class DevEnv < Thor
           use_private_ip(hostname)
         end
         
-        idle_all_gears(hostname)
+        idle_all_gears(hostname) unless options.official?
 
         threads = []
         failures = []
@@ -280,8 +280,6 @@ class DevEnv < Thor
         threads.each do |t|
           t.join
         end
-        
-        idle_all_gears(hostname)
 
         retry_threshold = 0
         retry_threshold += 6 unless options.exclude_internal?
@@ -294,6 +292,7 @@ class DevEnv < Thor
           download_artifacts hostname
           exit 1
         elsif failures.length > 0
+          idle_all_gears(hostname)
           puts "All Failures: #{failures.pretty_inspect}"
           ssh(hostname, "rm -rf /tmp/rhc; mkdir -p /tmp/rhc/junit")
           failures.each do |failure|
@@ -311,7 +310,6 @@ class DevEnv < Thor
                   ssh(hostname, "rm -rf /tmp/rhc; mkdir -p /tmp/rhc/junit")
                 end
               else
-                idle_all_gears(hostname)
                 break
               end
             end
@@ -336,6 +334,7 @@ class DevEnv < Thor
             print "Failed sending email with message: #{e.message}"
           end
         else
+          idle_all_gears(hostname)
           use_public_ip(hostname, options.public_hostname?)
         end
 
