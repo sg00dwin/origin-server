@@ -136,6 +136,8 @@ for f in ~/.env/*; do
     . $f
 done
 
+translate_env_vars
+
 validate_run_as_user
 
 # Handle commands.

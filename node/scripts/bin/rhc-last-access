@@ -56,8 +56,8 @@ class LastAccessUpdater
   end
 
   def parse_log
-    lines = %x[for f in  `awk '{ print $2 }' #{@log_file} | sort -u`; do     grep $f #{@log_file} | tail -n1 | awk '{ print $2,"=",$5,$6 }'; done]
-    for line in lines   
+    lines = %x[for f in  `awk '{ print $2 }' #{@log_file} | sort -u`; do     tac #{@log_file} | grep -m1 $f | awk '{ print $2,"=",$5,$6 }'; done]
+    for line in lines
       parts = line.split("=")
       timestamp = parts[1].delete("[").delete("]").strip
       hostname = parts[0].strip
