@@ -35,10 +35,10 @@
     Here's an example of the command-line approach (in this case the application was already coded and resident in the github repository):
 
         //Create App
-        rhc-create-app –a twt -t wsgi-3.2
+        rhc app create –a twt -t python-2.6
 
         //Add MongoDB NoSQL Database
-        rhc-ctl-app -a twt -e add-mongodb-2.0
+        rhc app add -a twt -e mongodb-2.0
 
         //Add Upstream Repo
         cd twt

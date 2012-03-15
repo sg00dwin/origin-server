@@ -173,7 +173,7 @@
 
 /* line 107, ../../app/stylesheets/console.scss */
 section#app-cartridges .cartridge-block {
-  background: #f0f0f0 url("http://placehold.it/60&text=img") 15px 15px no-repeat;
+  background: #f0f0f0;
   margin-bottom: 15px;
 }
 
@@ -233,4 +233,9 @@ section#app-cartridges > header {
 .show-grid [class*="span"] {
   background-color: #c0ddf3;
   margin-bottom: 1px;
+}
+
+/* line 165, ../../app/stylesheets/console.scss */
+#app-errors {
+  display: none;
 }

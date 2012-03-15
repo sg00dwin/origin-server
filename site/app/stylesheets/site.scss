@@ -47,13 +47,13 @@ a:hover, a:active { color: $ribbonColor; }
   }
 }
 
-.offset-up {
-  position: relative;
+/* FIXME: For videos temporarily, replace with use of standard tile pattern and grid */
+.row iframe,
+.row-fluid iframe {
+  width: 100%;
+  max-width: 311px;
 }
-.offset-up > .offset-up {
-  position: absolute;
-  bottom: 50%;
-}
+
 
 /* A link that is a block, similar to a thumbnail */
 @mixin tile($activeColor, $hoverColor, $backgroundActiveColor, $backgroundHoverColor) {
@@ -345,26 +345,7 @@ body.signup {
     padding: 11px 20px;
 	}
 }
-@media (max-width: 480px) {
-	#learn .action-call {
-    font-size: 11px;
-  }
-  .navbar .brand-image {
-    background-image: url("../images/OSlogo57.png");
-    height: 64px;
-    width: 99px;
-  }
-  .navbar .brand {
-  	font-size:12.5px;
-  }
-  .navbar .nav > li > a {
-  	font-weight:normal;
-  	word-wrap:normal;
-  }
-  .navbar {
-    margin-bottom: 0;
-  }
-}
+
 
 @if $gridGutterWidthTablet != $gridGutterWidth { @media (min-width: 768px) and (max-width: 979px) {
   .action-call > div { padding: 0 $gridGutterWidthTablet; }

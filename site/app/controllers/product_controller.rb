@@ -31,13 +31,9 @@ class ProductController < SiteController
     end
   end
 
-  #Product overview page
   def overview
   end
-  
-  #Feature matrix
-  #def features
-  #  render :action => :features
-  #end
-  
+
+  def getting_started
+  end
 end

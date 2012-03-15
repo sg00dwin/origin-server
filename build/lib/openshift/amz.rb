@@ -386,6 +386,25 @@ module OpenShift
         end
       end
     end
+    
+    def flag_old_devenvs(conn)
+      AWS.memoize do
+        conn.instances.each do |i|
+          if (instance_status(i) == :stopped)
+            launch_yday = i.launch_time.yday
+            yday = Time.new.yday
+            if yday < launch_yday
+              yday += 365 # minor leap year bug here (will terminate 1 day late)
+            end
+            if yday - launch_yday > 6
+              # Tag the node to give people a heads up
+              add_tag(i, 'will-terminate')
+              log.info "Tagging old instances to terminate #{i.id}"
+            end
+          end
+        end
+      end
+    end
 
     def stop_untagged_instances(conn)
       AWS.memoize do

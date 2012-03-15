@@ -284,7 +284,7 @@ module Streamline
   # Whether the user is authorized for a given cloud solution
   #<b>DEPRECATED</b>: Use entitled?
   def has_access?(solution)
-    @roles.index(CloudAccess.auth_role(solution)) != nil
+    @roles.nil? ? false : @roles.index(CloudAccess.auth_role(solution)) != nil
   end
 
   #
@@ -292,7 +292,7 @@ module Streamline
   #
   #<b>DEPRECATED</b>: Use waiting_for_entitle?
   def has_requested?(solution)
-    @roles.index(CloudAccess.req_role(solution)) != nil
+    @roles.nil? ? false : @roles.index(CloudAccess.req_role(solution)) != nil
   end
 
   # Return true if the user has access to OpenShift, and false if they are not yet

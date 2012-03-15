@@ -31,6 +31,18 @@ case "$1" in
             exit 0
         fi
 
+        #
+        # Remove the compiled versions of the settings.py file and reset the mms credentials from the file in repo
+        # This is required so that any user changes to credentials in this file can be picked up and recompiled
+        #
+        rm -f ${OPENSHIFT_10GEN_MMS_AGENT_GEAR_DIR}mms-agent/settings.pyc ${OPENSHIFT_10GEN_MMS_AGENT_GEAR_DIR}mms-agent/settings.pyo
+        
+        new_mms_key_line=`cat ${OPENSHIFT_GEAR_DIR}repo/.openshift/mms/settings.py | grep -E "^mms_key\s*=.*"`
+        new_secret_key_line=`cat ${OPENSHIFT_GEAR_DIR}repo/.openshift/mms/settings.py | grep -E "^secret_key\s*=.*"`
+        sed -i "s/^mms_key\s*=.*/${new_mms_key_line}/g" ${OPENSHIFT_10GEN_MMS_AGENT_GEAR_DIR}mms-agent/settings.py
+        sed -i "s/^secret_key\s*=.*/${new_secret_key_line}/g" ${OPENSHIFT_10GEN_MMS_AGENT_GEAR_DIR}mms-agent/settings.py
+
+
         nohup python ${OPENSHIFT_10GEN_MMS_AGENT_GEAR_DIR}mms-agent/${OPENSHIFT_GEAR_UUID}_agent.py > ${OPENSHIFT_10GEN_MMS_AGENT_GEAR_DIR}logs/agent.log 2>&1 &
         echo $! > ${OPENSHIFT_10GEN_MMS_AGENT_GEAR_DIR}run/mms-agent.pid
     ;;
