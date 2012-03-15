@@ -5,7 +5,10 @@
         Develop and Scale 
         %strong#technology-rotate Apps
         in the Cloud
-      %h2.secondary OpenShift is Red Hat's free, auto-scaling Platform as a Service (PaaS) for applications.  It streamlines the application life cycle so developers can focus on their users, customers, and code.
+      %h2.secondary OpenShift is Red Hat's free, auto-scaling Platform as a Service 
+      (PaaS) for applications.  Run your application in the cloud on OpenShift and 
+      take the hassle out of application development. You focus on coding your 
+      application, and we'll focus on running, managing, and scaling it in the cloud.
 
 - content_for :javascripts do
   = javascript_include_tag "/app/javascripts/twitter.branding.js"
@@ -22,19 +25,19 @@
           %ul.learn.unstyled
             %li.scale
               = link_to product_overview_path(:anchor => 'scale'), :class => 'link-tile' do
-                %img{:src => '/app/images/scale.png'}
-                %h4 Scale easily in any language
-                %p Grow your Java, Perl, Ruby, Python, and Node.js apps easily with resource scaling.
+                -#%img{:src => '/app/images/scale.png'}
+                %h4 Java, Ruby, Node.js, Python, PHP, or Perl
+                %p Code in your favorite language, framework, and middleware.  Grow your applications easily with resource scaling.
             %li.time
               = link_to product_overview_path(:anchor => 'code'), :class => 'link-tile' do
-                %img{:src => '/app/images/time.png'}
-                %h4 Superfast!
+                -#%img{:src => '/app/images/time.png'}
+                %h4 Super Fast!
                 %p Code and deploy to the cloud in minutes.  Faster and easier than it has ever been.
             %li.locked
               = link_to product_overview_path(:anchor => 'open'), :class => 'link-tile' do
-                %img{:src => '/app/images/lock.png'}
-                %h4 Don't get locked in
-                %p Minimal coding to the platform and built on open technologies, so you can take it with you.
+                -#%img{:src => '/app/images/lock.png'}
+                %h4 No Lock-In
+                %p Built on open technologies so you can take it with you.
         .span6
           %ul.news.unstyled
             %li
