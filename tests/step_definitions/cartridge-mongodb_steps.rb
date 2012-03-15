@@ -198,7 +198,7 @@ Given /^a new mongodb database$/ do
   exit_code = runcon command,  'unconfined_u', 'system_r', 'libra_initrc_t', outbuf
 
   if exit_code != 0
-    FileUtils.cp "/var/lib/stickshift/#{account_name}/mongodb-5.1/log/mongodb_error.log", "/tmp/rhc/mongodb_error_#{account_name}.log"
+    FileUtils.cp "/var/lib/stickshift/#{account_name}/mongodb-2.0/log/mongodb_error.log", "/tmp/rhc/mongodb_error_#{account_name}.log"
     raise "Error running #{command}: returned #{exit_code}"
   end
   # I have to get the stdout back
