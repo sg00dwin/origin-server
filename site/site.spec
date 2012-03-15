@@ -3,7 +3,7 @@
 
 Summary:   Li site components
 Name:      rhc-site
-Version:   0.88.7
+Version:   0.88.8
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -86,6 +86,10 @@ rm -rf %{buildroot}
 /bin/touch %{sitedir}/log/production.log
 
 %changelog
+* Wed Mar 14 2012 Dan McPherson <dmcphers@redhat.com> 0.88.8-1
+- add requires and conflicts data to cart types and display (johnp@redhat.com)
+- fix the phpmyadmin descriptor (johnp@redhat.com)
+
 * Wed Mar 14 2012 Dan McPherson <dmcphers@redhat.com> 0.88.7-1
 - Added an inspector to watch an intermittent test failure (ffranz@redhat.com)
 - Removed placeholder for application type image (fotios@redhat.com)
