@@ -333,7 +333,7 @@ class DevEnv < Thor
           rescue Exception => e
             print "Failed sending email with message: #{e.message}"
           end
-        else
+        elsif !options.terminate?
           idle_all_gears(hostname)
           use_public_ip(hostname, options.public_hostname?)
         end
