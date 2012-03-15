@@ -34,13 +34,14 @@ class EstimatesController < BaseController
             break
           end
         end if descriptor_hash.has_key?('Requires')
-        app_name = descriptor_hash['Name'] if descriptor_hash.has_key?('Name')
+        app_name = descriptor_hash['Name'] || nil
+        scalable = descriptor_hash['Scalable'] || false
         raise Exception.new("Application name or framework not found in the descriptor.") if !framework or !app_name
 
         # Elaborate app descriptor
         template = ApplicationTemplate.new
         template.descriptor_yaml = descriptor
-        app = Application.new(nil, app_name, nil, nil, framework, template)
+        app = Application.new(nil, app_name, nil, nil, framework, template, scalable)
         app.elaborate_descriptor
 
         # Generate output  
@@ -54,15 +55,19 @@ class EstimatesController < BaseController
             comp['Name'] = cinst.parent_cart_name
             components.push comp
           end if ginst
-          app_gear = RestApplicationEstimate.new(components)
-          groups.push(app_gear)
+
+          if !components.empty?
+            app_gear = RestApplicationEstimate.new(components)
+            groups.push(app_gear)
+          end
         end if app.group_instance_map
+
         @reply = RestReply.new(:ok, "application_estimates", groups)
       rescue Exception => e
         Rails.logger.error e
         Rails.logger.debug e.backtrace.inspect
         @reply = RestReply.new(:internal_server_error)
-        message = Message.new(:error, "Failed to estimate gear usage of the application due to: #{e.message}")
+        message = Message.new(:error, "Failed to estimate gear usage of the application due to: #{e.message}", 131)
         @reply.messages.push(message)
       end
     end
