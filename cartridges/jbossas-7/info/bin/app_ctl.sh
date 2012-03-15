@@ -9,6 +9,8 @@ do
     . $f
 done
 
+translate_env_vars
+
 if ! [ $# -eq 1 ]
 then
     echo "Usage: \$0 [start|restart|graceful|graceful-stop|stop|threaddump]"
