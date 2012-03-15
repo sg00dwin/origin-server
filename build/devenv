@@ -69,7 +69,7 @@ class DevEnv < Thor
     
     def idle_all_gears(hostname)
       print "Idling all gears on remote instance: #{hostname}"
-      ssh(hostname, "for dir in /var/lib/stickshift/*; do if [ -d $dir ] && [ ! -h $dir ] ; then rhc-idler -u `basename $dir`; fi; done")
+      ssh(hostname, "for dir in /var/lib/stickshift/*; do if [ -d $dir ] && [ ! -h $dir ] ; then rhc-idler -u `basename $dir`; fi; done", 240)
       puts "Done"
     end
 
