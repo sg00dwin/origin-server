@@ -15,7 +15,7 @@ Requires:  stickshift-abstract
 Requires:  rubygem(stickshift-node)
 Requires:  mod_bw
 Requires:  python
-Requires:  mod_wsgi = 3.2
+Requires:  mod_wsgi >= 3.2
 Requires:  MySQL-python
 Requires:  pymongo
 Requires:  pymongo-gridfs

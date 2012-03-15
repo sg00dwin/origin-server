@@ -1,6 +1,6 @@
 %define htmldir %{_localstatedir}/www/html
 %define brokerdir %{_localstatedir}/www/stickshift/broker
-%define appdir %{_localstatedir}/lib/stick_shift
+%define appdir %{_localstatedir}/lib/stickshift
 
 Summary:   StickShift broker components
 Name:      stickshift-broker
@@ -25,6 +25,7 @@ Requires:  rubygem(rest-client)
 Requires:  rubygem(thread-dump)
 Requires:  rubygem(parseconfig)
 Requires:  rubygem(json)
+Requires:  rubygem(multimap)
 Requires:  rubygem(stickshift-controller)
 Requires:  rubygem(stickshift-node)
 Requires:  stickshift-abstract
@@ -103,7 +104,7 @@ rm -rf $RPM_BUILD_ROOT
 %config(noreplace) %{_sysconfdir}/dbus-1/system.d/stickshift-dbus.conf
 %attr(0700,-,-) %{_bindir}/ss-exec-command
 %attr(0700,-,-) %{_bindir}/ss-register-user
-%attr(0755,-,-) %{_var}/lib/stick_shift
+%attr(0755,-,-) %{_var}/lib/stickshift
 
 %post
 /bin/touch %{brokerdir}/log/production.log
