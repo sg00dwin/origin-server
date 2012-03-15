@@ -2,7 +2,7 @@
 
 Summary:       Multi-tenant cloud management system node tools
 Name:          rhc-node
-Version:       0.88.7
+Version:       0.88.8
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -262,6 +262,19 @@ fi
 /lib64/security/pam_libra.so
 
 %changelog
+* Thu Mar 15 2012 Dan McPherson <dmcphers@redhat.com> 0.88.8-1
+- This was well on the slippery slope to being a migration script.  Moving the
+  migration part to the release ticket. (rmillner@redhat.com)
+- single quote style seems to be preferred (rmillner@redhat.com)
+- Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
+  (rmillner@redhat.com)
+- The legacy APP env files were fine for bash but we have a number of parsers
+  which could not handle the new format.  Move legacy variables to the app_ctl
+  scripts and have migration set the TRANSLATE_GEAR_VARS variable to include
+  pairs of variables to migrate. (rmillner@redhat.com)
+- Further optimization to reduce search time. (mpatel@redhat.com)
+- Bug 803581 (dmcphers@redhat.com)
+
 * Wed Mar 14 2012 Dan McPherson <dmcphers@redhat.com> 0.88.7-1
 - Removing rhc-idle-apps. (mpatel@redhat.com)
 - Removing unused file from spec. (mpatel@redhat.com)

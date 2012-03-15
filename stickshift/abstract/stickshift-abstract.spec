@@ -2,7 +2,7 @@
 
 Summary:   StickShift common cartridge components
 Name:      stickshift-abstract
-Version:   0.6.8
+Version:   0.6.9
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   ASL 2.0
@@ -46,6 +46,13 @@ rm -rf $RPM_BUILD_ROOT
 %post
 
 %changelog
+* Thu Mar 15 2012 Dan McPherson <dmcphers@redhat.com> 0.6.9-1
+- Character swap in a function name. (rmillner@redhat.com)
+- The legacy APP env files were fine for bash but we have a number of parsers
+  which could not handle the new format.  Move legacy variables to the app_ctl
+  scripts and have migration set the TRANSLATE_GEAR_VARS variable to include
+  pairs of variables to migrate. (rmillner@redhat.com)
+
 * Wed Mar 14 2012 Dan McPherson <dmcphers@redhat.com> 0.6.8-1
 - Rename libra-proxy to stickshift-proxy (rmillner@redhat.com)
 - dont set status multiple times (dmcphers@redhat.com)

@@ -2,7 +2,7 @@
 
 Summary:   Provides JBossAS7 support
 Name:      rhc-cartridge-jbossas-7
-Version:   0.88.5
+Version:   0.88.6
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   ASL 2.0
@@ -122,6 +122,20 @@ rm -rf %{buildroot}
 %config(noreplace) %{cartridgedir}/info/configuration/
 
 %changelog
+* Thu Mar 15 2012 Dan McPherson <dmcphers@redhat.com> 0.88.6-1
+- US2003 (wdecoste@localhost.localdomain)
+- Expose the JBOSS cluster port along with the JBOSS port when exposed
+  (rmillner@redhat.com)
+- The legacy APP env files were fine for bash but we have a number of parsers
+  which could not handle the new format.  Move legacy variables to the app_ctl
+  scripts and have migration set the TRANSLATE_GEAR_VARS variable to include
+  pairs of variables to migrate. (rmillner@redhat.com)
+- US2003 (wdecoste@localhost.localdomain)
+- US2003 (bdecoste@gmail.com)
+- US2003 (bdecoste@gmail.com)
+- US2003 (bdecoste@gmail.com)
+- US2003 (bdecoste@gmail.com)
+
 * Wed Mar 14 2012 Dan McPherson <dmcphers@redhat.com> 0.88.5-1
 - US2003 (wdecoste@localhost.localdomain)
 
