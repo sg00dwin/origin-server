@@ -4,7 +4,7 @@
   = semantic_form_for @user, :url => web_user_path, :simple => true, :html => {:class => 'form-horizontal'} do |form|
     %input{:type => "hidden", :name => "redirectUrl", :value => (defined?(@redirectUrl) ? @redirectUrl : '/app/user/complete') }
     = form.hidden_field :cloud_access_choice, :value => (@product == CloudAccess::FLEX_NAME ? CloudAccess::FLEX : CloudAccess::EXPRESS)
-    = form.semantic_errors :email_address, :password, :password_confirmation, :promo_code, :captcha
+    = form.semantic_errors :captcha
     = form.inputs do
       = form.input :email_address, :input_html => { :type => 'email', :class => 'input-xlarge', :placeholder => 'Enter a valid email address' }
       = form.input :password, :input_html => { :class => 'input-xlarge', :autocomplete => 'off', :placeholder => 'At least 6 characters', :maxlength => '50' }

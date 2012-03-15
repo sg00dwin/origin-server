@@ -245,10 +245,9 @@
                 <transport type="TCP" socket-binding="jgroups-tcp" /> 
                 <!--protocol type="MPING" socket-binding="jgroups-mping"/-->
                 <protocol type="TCPPING">
-                	<property name="timeout">3000</property>
+                	<property name="timeout">10000</property>
                 	<property name="initial_hosts">${env.OPENSHIFT_JBOSS_CLUSTER}</property>
                 	<property name="port_range">1</property>
-                	<property name="num_initial_members">2</property>
                 </protocol>
                 <protocol type="MERGE2"/>
                 <protocol type="FD"/>
