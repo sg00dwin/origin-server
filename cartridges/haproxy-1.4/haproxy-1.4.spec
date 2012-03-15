@@ -2,7 +2,7 @@
 
 Summary:   Provides haproxy-1.4 support
 Name:      rhc-cartridge-haproxy-1.4
-Version:   0.6.6
+Version:   0.6.7
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   ASL 2.0
@@ -84,6 +84,14 @@ rm -rf %{buildroot}
 %doc %{cartridgedir}/LICENSE
 
 %changelog
+* Wed Mar 14 2012 Dan McPherson <dmcphers@redhat.com> 0.6.7-1
+- Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
+  (mmcgrath@redhat.com)
+- adding http chk (mmcgrath@redhat.com)
+- Refactor to use StickShift::Config (jhonce@redhat.com)
+- fixing remove count threshold bug (mmcgrath@redhat.com)
+- fixing some thrashing bugs and a misleading log line (mmcgrath@redhat.com)
+
 * Tue Mar 13 2012 Dan McPherson <dmcphers@redhat.com> 0.6.6-1
 - changing libra to stickshift in logger tag (abhgupta@redhat.com)
 - Fix for bugz 802707 - reduce error messages doing git push to a scalable app
