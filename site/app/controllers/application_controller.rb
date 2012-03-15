@@ -148,7 +148,7 @@ class ApplicationController < ActionController::Base
   end
   
   def default_logged_in_redirect
-    return @default_login_workflow ? @default_login_workflow : product_overview_path
+    return @default_login_workflow ? @default_login_workflow : console_path
   end
 
   def remote_request?(referrer)

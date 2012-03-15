@@ -6,9 +6,8 @@ require 'uri'
 class LoginController < SiteController
 
   before_filter :new_forms, :only => [:show]
-  before_filter :protect_remote, :only => :show
 
-  def protect_remote
+  def get_referrer
     if request.referer && request.referer != '/'
       referrer = URI.parse(request.referer)
       Rails.logger.debug "Referrer: #{referrer.to_s}"
@@ -17,11 +16,20 @@ class LoginController < SiteController
         Rails.logger.debug "Logging out user referred from: #{referrer.to_s}"
         reset_sso
       end
+      @referrerRedirect = valid_referrer(referrer)
+    end
+  end
+  
+  def valid_referrer(referrer)
+    case
+    when referrer.path.starts_with?(user_new_flex_path); flex_path
+    when referrer.path.starts_with?(login_path); nil
+    else referrer.to_s
     end
   end
 
   def show
-    @redirectUrl = params[:redirectUrl]
+    @redirectUrl = params[:redirectUrl] || get_referrer
 
     # The login page should ensure the rh_sso cookie is empty
     cookies.delete :rh_sso, :domain => cookie_domain if cookies[:rh_sso]
@@ -30,7 +38,7 @@ class LoginController < SiteController
   end
 
   def create
-    @redirectUrl = params[:redirectUrl] || console_path
+    @redirectUrl = params[:redirectUrl] || default_logged_in_redirect
 
     @user = WebUser.new
     if @user.authenticate(params['login'], params['password'])
@@ -50,12 +58,11 @@ class LoginController < SiteController
 
   # Helper to apply common defaults to cookie options
   def domain_cookie_opts(opts)
-    defaults = {
+    {
       :secure => true,
       :path => '/',
       :domain => cookie_domain
-    }
-    defaults.merge(opts)
+    }.merge!(opts)
   end
 
   # Set previous log in detection cookie
