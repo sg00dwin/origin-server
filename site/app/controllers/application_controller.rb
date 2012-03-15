@@ -106,6 +106,7 @@ class ApplicationController < ActionController::Base
   def cookie_domain
     domain = Rails.configuration.streamline[:cookie_domain] || 'redhat.com'
     domain = request.host if :current == domain
+    return nil if domain == :nil
     domain = ".#{domain}" unless domain[0..0] == '.'
     domain
   end
@@ -148,7 +149,7 @@ class ApplicationController < ActionController::Base
   end
   
   def default_logged_in_redirect
-    return @default_login_workflow ? @default_login_workflow : console_path
+    @default_login_workflow || console_path
   end
 
   def remote_request?(referrer)

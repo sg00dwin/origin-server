@@ -48,7 +48,8 @@ RedHatCloud::Application.configure do
     :login_url => '',
     :logout_url => '',
     :register_secret => 'c0ldW1n3',
-    :user_info_secret => 'sw33tl1Qu0r'
+    :user_info_secret => 'sw33tl1Qu0r',
+    :cookie_domain => :current
   }
   config.captcha_secret = 'secret'
   config.sso_verify_interval = 0

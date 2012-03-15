@@ -39,14 +39,14 @@ class LoginControllerTest < ActionController::TestCase
     assert_redirected_to console_path
     assert_equal 'true', cookies['prev_login']
     assert_not_nil session[:ticket_verified]
-    #assert_equal assigns(:user).ticket, cookies['rh_sso'] #FIXME broken
+    #assert_equal assigns(:user).ticket, cookies['rh_sso'] #FIXME: broken, can't get cookie
   end
 
   test "should clear sso" do
-    @request.cookies[:rh_sso] = 'test'
-    assert cookies[:rh_sso]
+    @request.cookies['rh_sso'] = 'test'
+    assert cookies['rh_sso']
     get :show
-    #assert_nil cookies[:rh_sso] FIXME: Not sure why cookie value is still here
+    assert_nil cookies['rh_sso']
   end
 
   test "login should fail" do
@@ -128,7 +128,7 @@ class LoginControllerTest < ActionController::TestCase
   end
 
   test 'integrated default domain_cookie_opts' do
-    with_custom_config({}, false) do
+    with_custom_config({:cookie_domain => nil}, false) do
       opts = @controller.domain_cookie_opts({})
       assert_equal '/', opts[:path]
       assert_equal true, opts[:secure]
