@@ -371,12 +371,16 @@ module OpenShift
           end
         end
         build_name_to_verifiers.each do |build_name, verifiers|
-          if verifiers.length > 1
+          unless verifiers.empty?
             verifiers.sort!
-            verifiers.pop
-            verifiers.each do |verifier| 
+            verifiers.each_with_index do |verifier, index|
               build_num = verifier[0]
               i = verifier[1]
+              if index == verifiers.length - 1
+                unless Time.new - i.launch_time > 9000 #2.5 hours
+                  break
+                end
+              end
               if instance_status(i) == :running || instance_status(i) == :stopped
                 log.info "Terminating verifier #{i.id} - #{i.tags["Name"]}"
                 terminate_instance(i)
