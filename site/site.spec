@@ -3,7 +3,7 @@
 
 Summary:   Li site components
 Name:      rhc-site
-Version:   0.88.10
+Version:   0.88.11
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -86,6 +86,12 @@ rm -rf %{buildroot}
 /bin/touch %{sitedir}/log/production.log
 
 %changelog
+* Wed Mar 14 2012 Dan McPherson <dmcphers@redhat.com> 0.88.11-1
+- Simple header should not have text, move content (ccoleman@redhat.com)
+- Minor cleanup to the getting started content - Flex is bare enough that we
+  should axe it (ccoleman@redhat.com)
+- Minor routes cleanup (ccoleman@redhat.com)
+
 * Wed Mar 14 2012 Dan McPherson <dmcphers@redhat.com> 0.88.10-1
 - Fixed minLength for validations (fotios@redhat.com)
 - Updated overview with new style commands and python package
