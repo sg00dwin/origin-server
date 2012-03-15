@@ -9,7 +9,7 @@ do
     . $f
 done
 
-transalte_env_vars
+translate_env_vars
 
 if ! [ $# -eq 1 ]
 then
