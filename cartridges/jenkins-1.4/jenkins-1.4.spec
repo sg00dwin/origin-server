@@ -2,7 +2,7 @@
 
 Summary:   Provides jenkins-1.4 support
 Name:      rhc-cartridge-jenkins-1.4
-Version:   0.88.4
+Version:   0.88.5
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   ASL 2.0
@@ -77,6 +77,10 @@ rm -rf %{buildroot}
 %doc %{cartridgedir}/LICENSE
 
 %changelog
+* Wed Mar 14 2012 Dan McPherson <dmcphers@redhat.com> 0.88.5-1
+- jenkins does-not/need-not contain an expose-port, so dont raise a fatal
+  exception if that fails on a scalable app (rchopra@redhat.com)
+
 * Mon Mar 12 2012 Dan McPherson <dmcphers@redhat.com> 0.88.4-1
 - support https only for jenkins use case (dmcphers@redhat.com)
 - remove jenkinsUrl from config.xml (dmcphers@redhat.com)

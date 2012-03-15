@@ -7,31 +7,33 @@ RedHatCloud::Application.routes.draw do
     # first created -> highest priority.
 
     # Legacy redirects
-    match 'getting_started/express', :to => redirect('/app/express')
-    match 'getting_started/flex', :to => redirect('/app/flex')
     match 'access/express(/:request)', :to => redirect('/app/express')
     match 'access/flex(/:request)', :to => redirect('/app/flex')
+    match 'features', :to => redirect('/app/platform'), :as => 'features'
+    match 'power', :to => redirect('/app/platform')
+    match 'about', :to => redirect('/app/platform'), :as => 'about'
 
-    # Sample of regular route:
-    #   match 'products/:id' => 'catalog#view'
-    # Keep in mind you can assign values other than :controller and :action
-    match 'getting_started', :to => redirect('/app/express')
+    match 'express' => 'product#express', :as => 'express'
+    match 'flex' => 'product#flex', :as => 'flex'
+
+    match 'getting_started' => 'product#getting_started', :as => 'getting_started'
+    match 'getting_started/express', :to => redirect('/app/getting_started')
     match 'getting_started_external/:registration_referrer' => 'getting_started_external#show'
+
     match 'email_confirm' => 'email_confirm#confirm'
     match 'email_confirm_external/:registration_referrer' => 'email_confirm#confirm_external'
     match 'email_confirm_flex' => 'email_confirm#confirm_flex'
     match 'email_confirm_express' => 'email_confirm#confirm_express'
-    match 'express' => 'product#express', :as => 'express'
-    match 'flex' => 'product#flex', :as => 'flex'
+
     match 'platform' => 'product#overview', :as => 'product_overview'
-    match 'features', :to => redirect('/app/platform'), :as => 'features'
+
     match 'express_protected' => 'product#express_protected', :as => 'express_protected'
     match 'flex_protected' => 'product#flex_protected', :as => 'flex_protected'
-    match 'power', :to => redirect('/app/platform')
     match 'flex_redirect' => 'product#flex_redirect', :as => 'flex_redirect'
-    match 'about' => 'home#about', :as => 'about'
+
     match 'twitter_latest_tweet' => 'twitter#latest_tweet'
     match 'twitter_latest_retweets' => 'twitter#latest_retweets'
+
     match 'partners/join' => 'partner#join', :as=> 'join_partner'
 
     resource :account,

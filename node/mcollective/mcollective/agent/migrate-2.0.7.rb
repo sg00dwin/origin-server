@@ -50,6 +50,13 @@ module LibraMigration
 
       Util.replace_in_file("#{libra_home}/.httpd.d/#{uuid}_#{namespace}_#{app_name}.conf", "/etc/httpd/conf.d/libra/" , "/etc/httpd/conf.d/stickshift/" )
 
+      #fix builder repos
+      if File.symlink?("#{app_dir}/runtime/repo")
+        link_path = File.readlink("#{app_dir}/runtime/repo").gsub("/var/lib/libra", "/var/lib/stickshift")
+        symlink_output, symlink_exitcode = Util.execute_script("/usr/bin/migration-symlink-as-user #{app_name} #{uuid}  #{link_path} #{app_dir}/runtime/repo 2>&1")
+        output += symlink_output
+      end
+      
       case app_type
       when "python-2.6", "ruby-1.8", "perl-5.10"
         FileUtils.mv("#{app_dir}/conf.d/libra.conf", "#{app_dir}/conf.d/stickshift.conf") unless File.exists?("#{app_dir}/conf.d/stickshift.conf")
@@ -65,22 +72,33 @@ module LibraMigration
         FileUtils.mv("#{app_dir}/conf.d/libra.conf", "#{app_dir}/conf.d/stickshift.conf") unless File.exists?("#{app_dir}/conf.d/stickshift.conf")
         Util.replace_in_file("#{app_dir}/conf.d/stickshift.conf", "/var/lib/libra", "/var/lib/stickshift")
         Util.replace_in_file("#{app_dir}/conf/php.ini", "/var/lib/libra", "/var/lib/stickshift")
-      when "jbossas-7.0"
-        ["/jbossas-7.0/standalone/configuration/standalone.xml", "/jbossas-7.0/standalone/configuration/standalone_xml_history/current/standalone.last.xml",
-        "/jbossas-7.0/standalone/log/boot.log", "/jbossas-7.0/standalone/log/server.log", "/jbossas-7.0/standalone/tmp/#{app_name}.log",
-        "/logs/boot.log", "/logs/server.log"].each do |fname|
+      when "jbossas-7"
+        ["/jbossas-7/standalone/configuration/standalone.xml", "/jbossas-7/standalone/configuration/standalone_xml_history/current/standalone.last.xml"].each do |fname|
           if File.exists? "#{app_dir}#{fname}"
             Util.replace_in_file("#{app_dir}#{fname}", "/var/lib/libra", "/var/lib/stickshift")
           end
         end
-
-        ["/jbossas-7.0/standalone/log/boot.log", "/jbossas-7.0/standalone/tmp/#{app_name}.log", "/logs/boot.log"].each do |fname|
-          if File.exists? "#{app_dir}#{fname}"
-            Util.replace_in_file("#{app_dir}#{fname}", "/usr/libexec/li", "/usr/libexec/stickshift")
+        
+        symlink_output, symlink_exitcode = Util.execute_script("/usr/bin/migration-symlink-as-user #{app_name} #{uuid}  #{cartridge_root_dir}/jbossas-7/info/bin/standalone.conf #{app_dir}/jbossas-7/bin/standalone.conf 2>&1")
+        output += symlink_output
+        symlink_output, symlink_exitcode = Util.execute_script("/usr/bin/migration-symlink-as-user #{app_name} #{uuid}  #{cartridge_root_dir}/jbossas-7/info/bin/standalone.sh #{app_dir}/jbossas-7/bin/standalone.sh 2>&1")
+        output += symlink_output
+        symlink_output, symlink_exitcode = Util.execute_script("/usr/bin/migration-symlink-as-user #{app_name} #{uuid}  #{app_dir}/repo/.openshift/config/modules #{app_dir}/jbossas-7/standalone/configuration/modules 2>&1")
+        output += symlink_output
+      when 'jenkins-1.4'
+        files,exitcode = Util.execute_script("fgrep -r \"/usr/libexec/li/\" #{app_dir}/data | awk 'BEGIN { FS=\":\" } { print $1 }' | grep -v 'Binary file ' | sort -u")
+        files.each do |fpath|
+          unless fpath.end_with?("log")
+            Util.replace_in_file("#{fpath}", "/usr/libexec/li", "/usr/libexec/stickshift") 
           end
         end
-      when 'jenkins-1.4'
-        Util.replace_in_file("#{app_dir}/logs/jenkins.log", "/var/lib/libra", "/var/lib/stickshift")
+        
+        files,exitcode = Util.execute_script("fgrep -r \"/var/lib/libra/\" #{app_dir}/data | awk 'BEGIN { FS=\":\" } { print $1 }' | grep -v 'Binary file ' | sort -u")
+        files.each do |fpath|
+          unless fpath.end_with?("log")
+            Util.replace_in_file("#{fpath}", "/var/lib/libra", "/var/lib/stickshift") 
+          end
+        end
 
         #Util.replace_in_file("#{app_dir}/data/jobs/*/config.xml", "<builderType>raw-0.1</builderType>", "<builderType>diy-0.1</builderType>")
         if orig_jenkins_url
@@ -92,7 +110,6 @@ module LibraMigration
       #mongodb-2.0
       if File.directory?("#{app_home}/mongodb-2.0") && !File.symlink?("#{app_home}/mongodb-2.0")
         Util.replace_in_file("#{app_home}/mongodb-2.0/etc/mongodb.conf", "/var/lib/libra", "/var/lib/stickshift")
-        Util.replace_in_file("#{app_home}/mongodb-2.0/log/mongodb.log", "/var/lib/libra", "/var/lib/stickshift")
 
         symlink_output, symlink_exitcode = Util.execute_script("/usr/bin/migration-symlink-as-user #{app_name} #{uuid}  #{cartridge_root_dir}/embedded/mongodb-2.0/info/bin/mongodb_ctl.sh #{app_home}/mongodb-2.0/#{app_name}_mongodb_ctl.sh 2>&1")
         output += symlink_output
@@ -144,9 +161,6 @@ module LibraMigration
       #mysql-5.1
       if File.directory?("#{app_home}/mysql-5.1") && !File.symlink?("#{app_home}/mysql-5.1")
         Util.replace_in_file("#{app_home}/mysql-5.1/etc/my.cnf", "/var/lib/libra", "/var/lib/stickshift")
-        Dir.glob("#{app_home}/mysql-5.1/log/*").each do |log_file_name|
-          Util.replace_in_file("#{log_file_name}", "/var/lib/libra", "/var/lib/stickshift")
-        end
 
         symlink_output, symlink_exitcode = Util.execute_script("/usr/bin/migration-symlink-as-user #{app_name} #{uuid}  #{cartridge_root_dir}/embedded/mysql-5.1/info/bin/mysql_ctl.sh #{app_home}/mysql-5.1/#{app_name}_mysql_ctl.sh 2>&1")
         output += symlink_output
@@ -179,7 +193,17 @@ module LibraMigration
         FileUtils.chown(uuid,uuid,"#{app_home}/postgresql-8.4/#{app_name}_postgresql_ctl.sh")
       end
 
-      #10gen-mms-agent-0.1 : no-op
+      #10gen-mms-agent-0.1
+      if File.directory?("#{app_home}/10gen-mms-agent-0.1") && !File.symlink?("#{app_home}/10gen-mms-agent-0.1")
+        FileUtils.rm_f("#{app_home}/10gen-mms-agent-0.1/mms-agent/settings.pyc")
+        FileUtils.rm_f("#{app_home}/10gen-mms-agent-0.1/mms-agent/logConfig.pyc")
+
+        symlink_output, symlink_exitcode = Util.execute_script("/usr/bin/migration-symlink-as-user #{app_name} #{uuid} #{app_dir}/.openshift/mms/settings.py #{app_home}/10gen-mms-agent-0.1/mms-agent/settings.py 2>&1")
+        output += symlink_output
+        symlink_output, symlink_exitcode = Util.execute_script("/usr/bin/migration-symlink-as-user #{app_name} #{uuid}  #{cartridge_root_dir}/embedded/10gen-mms-agent-0.1/info/bin/10gen_mms_agent_ctl.sh #{app_home}/10gen-mms-agent-0.1/#{app_name}_10gen_mms_agent_ctl.sh 2>&1")
+        output += symlink_output
+        FileUtils.chown(uuid,uuid,"#{app_home}/10gen-mms-agent-0.1/#{app_name}_10gen_mms_agent_ctl.sh")
+      end      
 
       #jenkins-client-1.4 : no-op
 

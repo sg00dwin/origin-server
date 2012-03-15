@@ -100,6 +100,10 @@ module ApplicationHelper
     'http://webchat.freenode.net/?randomnick=1&channels=openshift&uio=d4'
   end
 
+  def openshift_twitter_hashtag_url
+    'http://twitter.com/#!/search/%23OpenShift'
+  end
+
   def openshift_twitter_url
     'http://www.twitter.com/#!/openshift'
   end

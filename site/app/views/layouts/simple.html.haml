@@ -11,7 +11,7 @@
   %body{ :class => "simple #{controller.controller_name} #{controller.action_name}" }
 
     %header
-      = render 'layouts/site/header_simple'
+      = render 'layouts/simple/header'
 
     - if content_for? :important_layout
       = yield :important_layout
@@ -24,7 +24,7 @@
         .container
           %div
             .row.row-flush-right
-              .offset2.column-content.lift-less.grid-wrapper
+              .offset2.column-content.grid-wrapper
                 .span8.span-flush-right
                   - if content_for? :ribbon
                     %h1.ribbon

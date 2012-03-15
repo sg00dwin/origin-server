@@ -2,7 +2,7 @@
 
 Summary:   StickShift common cartridge components
 Name:      stickshift-abstract
-Version:   0.6.7
+Version:   0.6.8
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   ASL 2.0
@@ -46,6 +46,10 @@ rm -rf $RPM_BUILD_ROOT
 %post
 
 %changelog
+* Wed Mar 14 2012 Dan McPherson <dmcphers@redhat.com> 0.6.8-1
+- Rename libra-proxy to stickshift-proxy (rmillner@redhat.com)
+- dont set status multiple times (dmcphers@redhat.com)
+
 * Tue Mar 13 2012 Dan McPherson <dmcphers@redhat.com> 0.6.7-1
 - changing libra to stickshift in logger tag (abhgupta@redhat.com)
 

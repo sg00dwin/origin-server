@@ -5,7 +5,7 @@
 
 Summary:        Cloud Development Controller
 Name:           rubygem-%{gemname}
-Version:        0.6.8
+Version:        0.6.9
 Release:        1%{?dist}
 Group:          Development/Languages
 License:        ASL 2.0
@@ -75,6 +75,13 @@ rm -rf %{buildroot}
 %{ruby_sitelib}/%{gemname}.rb
 
 %changelog
+* Wed Mar 14 2012 Dan McPherson <dmcphers@redhat.com> 0.6.9-1
+- Updating gem versions (dmcphers@redhat.com)
+- jenkins does-not/need-not contain an expose-port, so dont raise a fatal
+  exception if that fails on a scalable app (rchopra@redhat.com)
+- bug fixes - 803085, 803190 (rchopra@redhat.com)
+- stop order is reverse of start order (rchopra@redhat.com)
+
 * Wed Mar 14 2012 Dan McPherson <dmcphers@redhat.com> 0.6.8-1
 - Updating gem versions (dmcphers@redhat.com)
 - Merge branch 'master' of git1.ops.rhcloud.com:/srv/git/li (rpenta@redhat.com)

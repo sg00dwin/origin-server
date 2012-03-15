@@ -56,24 +56,17 @@ class LastAccessUpdater
   end
 
   def parse_log
-    # This is based on the LogFormat for access log in httpd.conf
-    # We are interested in Virtual Host (2) and Time (5)
-    rex = Regexp.new('(.*) (.*) (.*) (.*) \[(.*)\]')
-    begin
-      File.open(@log_file) do |file|
-        file.each_line do |line|
-          m = rex.match(line)
-          if m
-            # Virtual host is same as app dns
-            app_uuid = @all_apps_info[m[2]]
-            if app_uuid
-              @last_access_data[app_uuid] = m[5]
-            end
-          end
-        end
+    lines = %x[for f in  `awk '{ print $2 }' #{@log_file} | sort -u`; do     grep $f #{@log_file} | tail -n1 | awk '{ print $2,"=",$5,$6 }'; done]
+    for line in lines   
+      parts = line.split("=")
+      timestamp = parts[1].delete("[").delete("]").strip
+      hostname = parts[0].strip
+      # puts "#{hostname}-->#{timestamp}"
+      # Virtual host is same as app dns
+      app_uuid = @all_apps_info[hostname]
+      if app_uuid
+        @last_access_data[app_uuid] = timestamp
       end
-    rescue Exception => e
-      puts "EXCEPTION: #{e}"
     end
   end
 
@@ -95,7 +88,18 @@ class LastAccessUpdater
   end
 end
 
-l = LastAccessUpdater.new(APP_ROOT_DIR, APACHE_ACCESS_LOG)
-l.load_apps_data
-l.parse_log
-l.persist_last_access_data
+# Cool trick from ruby-forum
+def single_instance(&block)
+  if File.open($0).flock(File::LOCK_EX|File::LOCK_NB)
+    block.call
+  else
+    warn "Script #{ $0 } is already running"
+  end
+end
+
+single_instance do
+  l = LastAccessUpdater.new(APP_ROOT_DIR, APACHE_ACCESS_LOG)
+  l.load_apps_data
+  l.parse_log
+  l.persist_last_access_data
+end

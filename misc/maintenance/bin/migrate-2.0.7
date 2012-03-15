@@ -4,6 +4,7 @@ require 'pp'
 require 'thread'
 require 'thread-dump'
 require 'getoptlong'
+require 'stringio'
 
 RHLOGINS = nil #['rhlogin']
 MAX_THREADS = 10
@@ -16,7 +17,8 @@ STDOUT.sync, STDERR.sync = true
 #
 def migrate_app(rhlogin, app_name)
   migrate_cmd = "#{__FILE__} --rhlogin '#{rhlogin}' --migrate-app '#{app_name}'"
-  out =  "Migrating app on node with: #{migrate_cmd}\n"
+  out = StringIO.new
+  out << "Migrating app on node with: #{migrate_cmd}\n"
   migrated = false
   begin
     user = CloudUser.find(rhlogin)
@@ -37,21 +39,19 @@ def migrate_app(rhlogin, app_name)
                 exit_code = response[:body][:data][:exitcode]
                 output = response[:body][:data][:output]
                 if (output.length > 0)
-                  out += "Migrate on node output: #{output}\n"
+                  out << "Migrate on node output: #{output}\n"
                 end
                 if exit_code != 0
-                  out += "Migrate on node exit code: #{exit_code}\n"
+                  out << "Migrate on node exit code: #{exit_code}\n"
                   raise "Failed migrating app. Rerun with: #{migrate_cmd}"
                 else
                   if framework == 'jenkins-1.4'
-                    redeployed, redeploy_out = redeploy_httpd_proxy(app)
-                    migrated = redeployed
-                    out += redeploy_out
+                    migrated = redeploy_httpd_proxy(app, out)
                     if migrated
-                      out += restart_app(app)
-                      migrated = true
+                      restart_app(app, out)
                     end
                   else
+                    restart_app(app, out)
                     migrated = true
                   end
                 end
@@ -69,9 +69,9 @@ def migrate_app(rhlogin, app_name)
     end 
     raise "Migrate on node failed.  Rerun with: #{migrate_cmd}" if !migrated
   rescue Exception => e
-    raise "#{e.message}\n#{e.backtrace}\nOutput:\n#{out}"
+    raise "#{e.message}\n#{e.backtrace}\nOutput:\n#{out.string}"
   end
-  out
+  out.string
 end
 
 #
@@ -113,8 +113,7 @@ def update_node_profile(app)
 
 end
 
-def restart_app(app)
-  out = ''
+def restart_app(app, out)
   leave_stopped = false
   reply = app.container.status(app, app.gear, app.framework)
   reply.cart_commands.each do |command_item|
@@ -134,59 +133,65 @@ def restart_app(app)
   end
   unless leave_stopped
     begin
-      out += "Stopping app '#{app.name}' with uuid '#{app.gear.uuid}' on node '#{app.gear.server_identity}'\n"
+      out << "Stopping app '#{app.name}' with uuid '#{app.gear.uuid}' on node '#{app.gear.server_identity}'\n"
       reply.append app.container.stop(app, app.gear, app.framework)
     rescue Exception => e
-      out += "WARNING: Error stopping app '#{app.name}' with uuid '#{app.gear.uuid}' on node '#{app.gear.server_identity}': #{e.message}\n"
+      out << "WARNING: Error stopping app '#{app.name}' with uuid '#{app.gear.uuid}' on node '#{app.gear.server_identity}': #{e.message}\n"
     end
     begin
-      out += "Force stopping app '#{app.name}' with uuid '#{app.gear.uuid}' on node '#{app.gear.server_identity}'\n"
+      out << "Force stopping app '#{app.name}' with uuid '#{app.gear.uuid}' on node '#{app.gear.server_identity}'\n"
       reply.append app.container.force_stop(app, app.gear, app.framework)
     rescue Exception => e
-      out += "WARNING: Error force stopping app '#{app.name}' with uuid '#{app.gear.uuid}' on node '#{app.gear.server_identity}': #{e.message}\n"
+      out << "WARNING: Error force stopping app '#{app.name}' with uuid '#{app.gear.uuid}' on node '#{app.gear.server_identity}': #{e.message}\n"
     end
-    out += "Restarting app '#{app.name}' with uuid '#{app.gear.uuid}' on node '#{app.gear.server_identity}'\n"
+    out << "Restarting app '#{app.name}' with uuid '#{app.gear.uuid}' on node '#{app.gear.server_identity}'\n"
     reply.append app.container.restart(app, app.gear, app.framework)
   else
-    out += "Leaving app stopped '#{app.name}' with uuid '#{app.gear.uuid}' on node '#{app.gear.server_identity}'\n"
+    out << "Leaving app stopped '#{app.name}' with uuid '#{app.gear.uuid}' on node '#{app.gear.server_identity}'\n"
   end
-  out += "RESTART DEBUG OUTPUT:\n#{reply.debugIO.string}\n" unless reply.debugIO.string.empty?
-  out += "RESTART ERROR OUTPUT:\n#{reply.errorIO.string}\n" unless reply.errorIO.string.empty?
-  out
+  out << "RESTART DEBUG OUTPUT:\n#{reply.debugIO.string}\n" unless reply.debugIO.string.empty?
+  out << "RESTART ERROR OUTPUT:\n#{reply.errorIO.string}\n" unless reply.errorIO.string.empty?
 end
 
-def redeploy_httpd_proxy(app)
+def redeploy_httpd_proxy(app, out)
   redeployed = false
-  out = ''
+  out << "Redeploying httpd proxy for '#{app.name}' with uuid '#{app.gear.uuid}' on node #{app.gear.server_identity}\n"
   reply = app.container.send(:run_cartridge_command, app.framework, app, app.gear, 'deploy-httpd-proxy', nil, false)
 
-  out += "DEPLOY_HTTP_PROXY DEBUG OUTPUT:\n#{reply.debugIO.string}\n" unless reply.debugIO.string.empty?
-  out += "DEPLOY_HTTP_PROXY ERROR OUTPUT:\n#{reply.errorIO.string}\n" unless reply.errorIO.string.empty?
+  out << "DEPLOY_HTTP_PROXY DEBUG OUTPUT:\n#{reply.debugIO.string}\n" unless reply.debugIO.string.empty?
+  out << "DEPLOY_HTTP_PROXY ERROR OUTPUT:\n#{reply.errorIO.string}\n" unless reply.errorIO.string.empty?
 
   if reply.exitcode != 0
-    out += "Deploy httpd proxy on node exit code: #{reply.exitcode}\n"
+    out << "Deploy httpd proxy on node exit code: #{reply.exitcode}\n"
     raise "Failed deploying httpd proxy for app '#{app.name}' with uuid '#{app.gear.uuid}' on node '#{app.gear.server_identity}'"
   else
     deployed_httpd_proxy_success = true
     app.embedded.each do |cart, cart_info|
-      out += "DEBUG: Deploying httpd proxy for embedded #{cart} for '#{app.name}' with uuid '#{app.gear.uuid}' on node #{app.gear.server_identity}\n"
-      reply.append app.container.send(:run_cartridge_command, "embedded/" + cart, app, app.gear, "deploy-httpd-proxy", nil, false)
-      out += "DEPLOY_HTTP_PROXY DEBUG OUTPUT:\n#{reply.debugIO.string}\n" unless reply.debugIO.string.empty?
-      out += "DEPLOY_HTTP_PROXY ERROR OUTPUT:\n#{reply.errorIO.string}\n" unless reply.errorIO.string.empty?
+      out << "Deploying httpd proxy for embedded #{cart} for '#{app.name}' with uuid '#{app.gear.uuid}' on node #{app.gear.server_identity}\n"
+      reply = app.container.send(:run_cartridge_command, "embedded/" + cart, app, app.gear, "deploy-httpd-proxy", nil, false)
+      out << "DEPLOY_HTTP_PROXY DEBUG OUTPUT:\n#{reply.debugIO.string}\n" unless reply.debugIO.string.empty?
+      out << "DEPLOY_HTTP_PROXY ERROR OUTPUT:\n#{reply.errorIO.string}\n" unless reply.errorIO.string.empty?
       if reply.exitcode != 0
-        out += "Deploy httpd proxy for cart: #{cart} on node exit code: #{reply.exitcode}\n"
+        out << "Deploy httpd proxy for cart: #{cart} on node exit code: #{reply.exitcode}\n"
         deployed_httpd_proxy_success = false
       end
     end
     raise "Failed deploying httpd proxy for app '#{app.name}' with uuid '#{app.gear.uuid}' on node '#{app.gear.server_identity}'" unless deployed_httpd_proxy_success
     unless app.aliases.nil?
       app.aliases.each do |server_alias|
-        app.container.add_alias(app, app.gear, app.framework, server_alias)
+        out << "Adding alias '#{server_alias}' for '#{app.name}' with uuid '#{app.gear.uuid}' on node #{app.gear.server_identity}\n"
+        reply = app.container.add_alias(app, app.gear, app.framework, server_alias)
+        out << "ADD_ALIAS DEBUG OUTPUT:\n#{reply.debugIO.string}\n" unless reply.debugIO.string.empty?
+        out << "ADD_ALIAS ERROR OUTPUT:\n#{reply.errorIO.string}\n" unless reply.errorIO.string.empty?
+        if reply.exitcode != 0
+          out << "Add alias on node exit code: #{reply.exitcode}\n"
+          raise "Failed adding alias #{server_alias} for app '#{app.name}' with uuid '#{app.gear.uuid}' on node '#{app.gear.server_identity}'"
+        end
       end
     end
     redeployed = true
   end
-  return redeployed, out
+  return redeployed
 end
 
 #

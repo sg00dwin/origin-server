@@ -1,6 +1,6 @@
 Summary:       SELinux policy for OpenShift nodes
 Name:          rhc-selinux
-Version:       0.88.2
+Version:       0.88.3
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -46,6 +46,10 @@ rm -rf %{buildroot}
 %attr(0640,-,-) %{_datadir}/selinux/packages/libra.pp
 
 %changelog
+* Wed Mar 14 2012 Dan McPherson <dmcphers@redhat.com> 0.88.3-1
+- Allow libra domains to change the user componant of the file label, since vi
+  attempts to do this by default (dwalsh@redhat.com)
+
 * Fri Mar 09 2012 Dan McPherson <dmcphers@redhat.com> 0.88.2-1
 - Updates for getting devenv running (kraman@gmail.com)
 - Allow libra domains to relabelfrom/to all classes rather then just file.

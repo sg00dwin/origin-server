@@ -53,6 +53,8 @@ class CartridgeType < RestApi::Base
       :categories => [:cartridge],
       :description => 'MongoDB is a scalable, high-performance, open source NoSQL database.',
       :website => 'http://www.mongodb.org/',
+      :requires => [],
+      :conflicts => [],
       :help_topics => {
       }
     },
@@ -67,6 +69,8 @@ class CartridgeType < RestApi::Base
       :categories => [:embedded],
       :description => 'MySQL is a multi-user, multi-threaded SQL database server.',
       :website => 'http://www.mysql.com/',
+      :requires => [],
+      :conflicts => ['postgresql-8.4'],
       :help_topics => {
       }
     },
@@ -81,6 +85,8 @@ class CartridgeType < RestApi::Base
       :categories => [:embedded],
       :description => 'Cron is a daemon that runs specified programs at scheduled times',
       :website => 'https://fedorahosted.org/cronie/',
+      :requires => [],
+      :conflicts => [],
       :help_topics => {
       }
     },
@@ -95,6 +101,8 @@ class CartridgeType < RestApi::Base
       :categories => [:embedded],
       :description => 'PostgreSQL is an advanced Object-Relational database management system',
       :website => 'http://www.postgresql.org/',
+      :requires => [],
+      :conflicts => ['mysql-5.1'],
       :help_topics => {
       }
     },
@@ -106,23 +114,27 @@ class CartridgeType < RestApi::Base
       :version => '10gen MMS Agent 0.1',
       :license => nil,
       :license_url => nil,
-      :categories => [:embedded],
+      :categories => [:embedded, :blacklist],
       :description => 'This cartridge provides the agent for connecting to 10gen\'s MongoDB Monitoring Service.  MongoDB Monitoring Service is a publicly available SaaS solution for proactive monitoring of your MongoDB cluster.  You must install the MongoDB cartridge before installing 10gen MMS Agent.',
       :website => 'http://www.10gen.com/mongodb-monitoring-service',
+      :requires => [],
+      :conflicts => [],
       :help_topics => {
       }
     },
     "phpmyadmin-3.4" =>
     {
-      :id => 'cron-1.4',
-      :name => 'Cron 1.4',
+      :id => 'phpmyadmin-3.4',
+      :name => 'phpMyAdmin 3.4',
       :type => 'embedded',
-      :version => 'Cron 1.4',
-      :license => 'MIT and BSD and ISC and GPLv2',
-      :license_url => nil,
+      :version => 'phpMyAdmin 3.4',
+      :license => 'GPLv2',
+      :license_url => 'http://www.phpmyadmin.net/home_page/license.php',
       :categories => [:embedded],
-      :description => 'Cron is a daemon that runs specified programs at scheduled times',
+      :description => 'Web based MySQL admin tool.  Requires the MySQL cartridge to be installed first.',
       :website => 'https://fedorahosted.org/cronie/',
+      :requires => ['mysql-5.1'],
+      :conflicts => [],
       :help_topics => {
       }
     },
@@ -134,9 +146,11 @@ class CartridgeType < RestApi::Base
       :version => 'Metrics 0.1',
       :license => nil,
       :license_url => nil,
-      :categories => [:embedded],
+      :categories => [:embedded, :blacklist],
       :description => 'The OpenShift Metrics cartridge',
       :website => nil,
+      :requires => [],
+      :conflicts => [],
       :help_topics => {
       }
     },
@@ -149,8 +163,10 @@ class CartridgeType < RestApi::Base
       :license => 'GPL v3',
       :license_url => 'http://www.gnu.org/licenses/gpl-3.0.html',
       :categories => [:embedded],
-      :description => 'Web based MongoDB administration tool',
+      :description => 'Web based MongoDB administration tool. Requires the MongoDB cartridge to be installed first.',
       :website => 'http://www.phpmoadmin.com/',
+      :requires => ['mongodb-2.0'],
+      :conflicts => [],
       :help_topics => {
       }
     },
@@ -163,8 +179,10 @@ class CartridgeType < RestApi::Base
       :license => 'BSD',
       :license_url => 'http://www.opensource.org/licenses/bsd-license.php',
       :categories => [:embedded],
-      :description => 'Web based MongoDB administration tool',
+      :description => 'Web based MongoDB administration tool. Requires the MongoDB cartridge to be installed first.',
       :website => 'http://code.google.com/p/rock-php/wiki/rock_mongo',
+      :requires => ['mongodb-2.0'],
+      :conflicts => [],
       :help_topics => {
       }
     },
@@ -176,9 +194,11 @@ class CartridgeType < RestApi::Base
       :version => 'Jenkins Client 1.4',
       :license => 'MIT',
       :license_url => 'http://www.opensource.org/licenses/mit-license.php',
-      :categories => [:embedded],
-      :description => 'Tool for running and monitoring jobs such as continuous building and testing of your OpenShift applications',
+      :categories => [:embedded, :blacklist],
+      :description => 'Tool for running and monitoring jobs such as continuous building and testing of your OpenShift applications.  Requires the Jenkins Server Application to be created first.',
       :website => 'https://jenkins-ci.org/',
+      :requires => [],
+      :conflicts => [],
       :help_topics => {
       }
     }

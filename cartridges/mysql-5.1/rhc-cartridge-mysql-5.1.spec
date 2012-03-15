@@ -2,7 +2,7 @@
 %define frameworkdir %{_libexecdir}/stickshift/cartridges/mysql-5.1
 
 Name: rhc-cartridge-mysql-5.1
-Version: 0.22.5
+Version: 0.22.6
 Release: 1%{?dist}
 Summary: Provides embedded mysql support
 
@@ -70,6 +70,9 @@ rm -rf $RPM_BUILD_ROOT
 %doc %{cartridgedir}/LICENSE
 
 %changelog
+* Wed Mar 14 2012 Dan McPherson <dmcphers@redhat.com> 0.22.6-1
+- Fix to get snapshot working. (ramr@redhat.com)
+
 * Mon Mar 12 2012 Dan McPherson <dmcphers@redhat.com> 0.22.5-1
 - Fixup message to promote using the inter-gear mysql URL for scalable apps.
   (ramr@redhat.com)

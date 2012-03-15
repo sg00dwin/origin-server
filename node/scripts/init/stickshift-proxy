@@ -1,14 +1,14 @@
 #!/bin/sh
 #
-# libra-proxy
+# stickshift-proxy
 #
 # chkconfig:   345 85 15
 # description:  HAProxy is a free, very fast and reliable solution \
 #               offering high availability, load balancing, and \
 #               proxying for TCP and  HTTP-based applications
 # processname: haproxy
-# config:      /etc/libra/libra-proxy.cfg
-# pidfile:     /var/run/libra-proxy.pid
+# config:      /etc/stickshift/stickshift-proxy.cfg
+# pidfile:     /var/run/stickshift-proxy.pid
 
 # Source function library.
 . /etc/rc.d/init.d/functions
@@ -22,10 +22,10 @@
 exec="/usr/sbin/haproxy"
 prog=$(basename $exec)
 
-[ -e /etc/sysconfig/libra-proxy ] && . /etc/sysconfig/libra-proxy
+[ -e /etc/sysconfig/stickshift-proxy ] && . /etc/sysconfig/stickshift-proxy
 
-lockfile=/var/lock/subsys/libra-proxy
-pidfile=/var/run/libra-proxy.pid
+lockfile=/var/lock/subsys/stickshift-proxy
+pidfile=/var/run/stickshift-proxy.pid
 cfgfile=/var/lib/stickshift/.stickshift-proxy.d/stickshift-proxy.cfg
 
 
@@ -57,14 +57,14 @@ rollcfg() {
     oldpid=$( cat $pidfile )
 
     if ! [ "$(readlink /proc/$oldpid/exe)" == "$exec" -o "$(readlink /proc/$oldpid/exe)" == "$exec (deleted)" ]; then
-      echo "libra-proxy has crashed."
+      echo "stickshift-proxy has crashed."
       return 1
     fi
 
     $exec -D -f $cfgfile -p $pidfile -sf "$oldpid"
     retv=$?
     if [ $retv != 0 ]; then
-      echo "libra-proxy failed to start"
+      echo "stickshift-proxy failed to start"
       return 1
     fi
 
@@ -74,7 +74,7 @@ rollcfg() {
 
     newpid=$( cat $pidfile )
     if [ $newpid == $oldpid ]; then
-      echo "libra-proxy failed to update"
+      echo "stickshift-proxy failed to update"
       return 1
     fi
   fi
@@ -180,11 +180,11 @@ start() {
     fixaddr
     $exec -c -q -f $cfgfile
     if [ $? -ne 0 ]; then
-        echo "Errors in configuration file, check with libra-proxy check."
+        echo "Errors in configuration file, check with stickshift-proxy check."
         return 1
     fi
  
-    echo -n $"Starting libra-proxy: "
+    echo -n $"Starting stickshift-proxy: "
     # start it up here, usually something like "daemon $exec"
     daemon --pidfile $pidfile $exec -D -f $cfgfile -p $pidfile
     retval=$?
@@ -194,7 +194,7 @@ start() {
 }
 
 stop() {
-    echo -n $"Stopping libra-proxy: "
+    echo -n $"Stopping stickshift-proxy: "
     # stop it here, often "killproc $prog"
     killproc -p $pidfile $prog 
     retval=$?
@@ -206,7 +206,7 @@ stop() {
 restart() {
     $exec -c -q -f $cfgfile
     if [ $? -ne 0 ]; then
-        echo "Errors in configuration file, check with libra-proxy check."
+        echo "Errors in configuration file, check with stickshift-proxy check."
         return 1
     fi
     stop
@@ -216,10 +216,10 @@ restart() {
 reload() {
     $exec -c -q -f $cfgfile
     if [ $? -ne 0 ]; then
-        echo "Errors in configuration file, check with libra-proxy check."
+        echo "Errors in configuration file, check with stickshift-proxy check."
         return 1
     fi
-    echo -n $"Reloading libra-proxy: "
+    echo -n $"Reloading stickshift-proxy: "
     $exec -D -f $cfgfile -p $pidfile -sf $(cat $pidfile)
     retval=$?
     echo

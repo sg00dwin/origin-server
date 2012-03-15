@@ -2,7 +2,7 @@
 
 Summary:       Multi-tenant cloud management system node tools
 Name:          rhc-node
-Version:       0.88.6
+Version:       0.88.7
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -119,14 +119,12 @@ perl -p -i -e 's:/cgroup/[^\s]+;:/cgroup/all;:; /blkio|cpuset|devices/ && ($_ = 
 /sbin/chkconfig --add libra-data || :
 /sbin/chkconfig --add libra-cgroups || :
 /sbin/chkconfig --add libra-tc || :
-/sbin/chkconfig --add libra-proxy || :
 #/sbin/service mcollective restart > /dev/null 2>&1 || :
 /sbin/restorecon /etc/init.d/libra || :
 /sbin/restorecon /var/lib/stickshift || :
 /sbin/restorecon /var/run/stickshift || :
 /sbin/restorecon /usr/bin/rhc-cgroup-read || :
 /sbin/restorecon /var/lib/stickshift/.httpd.d/ || :
-/sbin/restorecon /var/lib/stickshift/.libra-proxy.d/ || :
 /usr/bin/rhc-restorecon || :
 # only enable if cgconfig is
 chkconfig cgconfig && /sbin/service libra-cgroups start > /dev/null 2>&1 || :
@@ -139,7 +137,6 @@ echo "/usr/bin/trap-user" >> /etc/shells
 /sbin/restorecon /usr/bin/rhc-restorer* || :
 [ $(/usr/sbin/semanage node -l | /bin/grep -c 255.255.255.128) -lt 1000 ] && /usr/bin/rhc-ip-prep.sh || :
 /sbin/chkconfig --add libra-watchman || :
-
 # Ensure the default users have a more restricted shell then normal.
 #semanage login -m -s guest_u __default__ || :
 
@@ -151,10 +148,21 @@ then
     rmdir /etc/httpd/conf.d/stickshift.bak
 fi
 
+# Enable proxy and handle proxy integration
+/sbin/chkconfig --add stickshift-proxy || :
 if ! [ -f /var/lib/stickshift/.stickshift-proxy.d/stickshift-proxy.cfg ]; then
+   oldproxies=( $(ls /var/lib/stickshift/.*-proxy.d/*-proxy.cfg 2>/dev/null) ) || :
    cp /etc/stickshift/stickshift-proxy.cfg /var/lib/stickshift/.stickshift-proxy.d/stickshift-proxy.cfg
+   for oldproxy in "${oldproxies[@]}"; do
+       sed -n -e '/^listen .*:.*:.*/,/^\# End .*:.*:.*/ p' "$oldproxy" >> /var/lib/stickshift/.stickshift-proxy.d/stickshift-proxy.cfg
+       mv -f "${oldproxy}" "${oldproxy}.old"
+   done
    restorecon /var/lib/stickshift/.stickshift-proxy.d/stickshift-proxy.cfg || :
 fi
+/sbin/restorecon /var/lib/stickshift/.stickshift-proxy.d/ || :
+/sbin/service stickshift-proxy condrestart || :
+
+
 
 
 %triggerin -- rubygem-stickshift-node
@@ -173,7 +181,7 @@ if [ "$1" -eq "0" ]; then
     /sbin/chkconfig --del libra-cgroups || :
     /sbin/chkconfig --del libra-data || :
     /sbin/chkconfig --del libra || :
-    /sbin/chkconfig --del libra-proxy || :
+    /sbin/chkconfig --del stickshift-proxy || :
     /sbin/chkconfig --del libra-watchman || :
     /usr/sbin/semodule -r libra
     sed -i -e '\:/usr/bin/trap-user:d' /etc/shells
@@ -194,7 +202,7 @@ then
 fi
 
 %triggerin -- haproxy
-/sbin/service libra-proxy condrestart
+/sbin/service stickshift-proxy condrestart
 
 %files
 %defattr(-,root,root,-)
@@ -205,7 +213,7 @@ fi
 %attr(0750,-,-) %{_initddir}/libra-data
 %attr(0750,-,-) %{_initddir}/libra-cgroups
 %attr(0750,-,-) %{_initddir}/libra-tc
-%attr(0750,-,-) %{_initddir}/libra-proxy
+%attr(0750,-,-) %{_initddir}/stickshift-proxy
 %attr(0750,-,-) %{_initddir}/libra-watchman
 %attr(0755,-,-) %{_bindir}/trap-user
 %attr(0750,-,-) %{_bindir}/rhc-ip-prep.sh
@@ -240,7 +248,6 @@ fi
 %attr(0755,-,-) %{_libexecdir}/stickshift/lib/
 #%{_libexecdir}/stickshift/cartridges/abstract/info
 %attr(0750,-,-) %{_bindir}/rhc-accept-node
-%attr(0750,-,-) %{_bindir}/rhc-idle-apps
 %attr(0755,-,-) %{_bindir}/rhc-list-ports
 %attr(0750,-,-) %{_bindir}/rhc-node-account
 %attr(0750,-,-) %{_bindir}/rhc-node-application
@@ -261,6 +268,21 @@ fi
 /lib64/security/pam_libra.so
 
 %changelog
+* Wed Mar 14 2012 Dan McPherson <dmcphers@redhat.com> 0.88.7-1
+- Removing rhc-idle-apps. (mpatel@redhat.com)
+- Removing unused file from spec. (mpatel@redhat.com)
+- Fix for Bugzilla 801985 (mpatel@redhat.com)
+- Refactored for .state to be after original tests for idle (jhonce@redhat.com)
+- Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
+  (rmillner@redhat.com)
+- Escape the # character (rmillner@redhat.com)
+- Copy over old proxies if creating a new proxy cfg (rmillner@redhat.com)
+- Rename libra-proxy to stickshift-proxy (rmillner@redhat.com)
+- Bug 803267: Fixing incorrect path (rmillner@redhat.com)
+- enable support for cfs quotas (mmcgrath@redhat.com)
+- Fixing migration script for jenkins and jboss apps Also updated notes
+  https://engineering.redhat.com/trac/Libra/ticket/149 (kraman@gmail.com)
+
 * Tue Mar 13 2012 Dan McPherson <dmcphers@redhat.com> 0.88.6-1
 - The values of stickshift-node.conf were being overridden after libra-data,
   should be before. (rmillner@redhat.com)
