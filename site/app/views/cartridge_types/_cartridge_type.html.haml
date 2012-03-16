@@ -2,12 +2,8 @@
 
   - if cartridge_type.categories.include? :installed
     %span.label.pull-right Installed
-
-  - if defined? reason
-    - if reason == :requires
-      %span.label.pull-right Requires #{cartridge_type.requires.join(',')}
-    - if reason == :conflicts
-      %span.label.pull-right Conflicts with #{cartridge_type.conflicts.join(',')}
+  - if cartridge_type.categories.include? :experimental
+    %span.label.pull-right Experimental
 
   %h3= cartridge_type.name
 
@@ -44,6 +40,15 @@
       %ul
         - cartridge_type.provides.each do |provided|
           %li= provided
+
+  - if defined? reason
+    - case reason
+    - when :requires
+      .alert Requires #{cartridge_type.requires.join(',')}
+    - when :conflicts
+      .alert Conflicts with #{cartridge_type.conflicts.join(',')}
+    - when :blocked
+      .alert Cannot be added to #{@application.framework_name}
 
   - unless defined? hide_link
     = link_to "Select »", application_cartridge_type_path(@application_id, cartridge_type), :class => 'btn'

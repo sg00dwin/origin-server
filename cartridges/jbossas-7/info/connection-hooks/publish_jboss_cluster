@@ -26,6 +26,7 @@ done
 [ $# -eq 3 ] || print_help
 
 source "/etc/stickshift/stickshift-node.conf"
-source "${GEAR_BASE_DIR}/$3/.env/OPENSHIFT_INTERNAL_IP"
+source "${GEAR_BASE_DIR}/$3/.env/OPENSHIFT_GEAR_DNS"
+source "${GEAR_BASE_DIR}/$3/.env/OPENSHIFT_JBOSS_CLUSTER_PROXY_PORT"
 
-echo ${OPENSHIFT_INTERNAL_IP}
+echo ${OPENSHIFT_GEAR_DNS}:${OPENSHIFT_JBOSS_CLUSTER_PROXY_PORT}

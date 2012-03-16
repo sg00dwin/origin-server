@@ -36,7 +36,8 @@ PHPMYADMIN_CTL_SCRIPT="$PHPMYADMIN_DIR/${application}_phpmyadmin_ctl.sh"
 if [ ! -f "$APP_HOME/.env/OPENSHIFT_DB_USERNAME" ] ||
    [ ! -f "$APP_HOME/.env/OPENSHIFT_DB_PASSWORD" ] ||
    [ ! -f "$APP_HOME/.env/OPENSHIFT_DB_HOST" ] ||
-   [ ! -f "$APP_HOME/.env/OPENSHIFT_DB_PORT" ]
+   [ ! -f "$APP_HOME/.env/OPENSHIFT_DB_PORT" ] ||
+   [ ! -d "$APP_HOME/mysql-5.1" ]
 then
     client_error ""
     client_error "MySQL must be embedded before phpMyAdmin"

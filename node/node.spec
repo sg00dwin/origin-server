@@ -2,7 +2,7 @@
 
 Summary:       Multi-tenant cloud management system node tools
 Name:          rhc-node
-Version:       0.88.7
+Version:       0.88.8
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -148,20 +148,14 @@ then
     rmdir /etc/httpd/conf.d/stickshift.bak
 fi
 
-# Enable proxy and handle proxy integration
+# Enable proxy and fix if the config file is missing
 /sbin/chkconfig --add stickshift-proxy || :
 if ! [ -f /var/lib/stickshift/.stickshift-proxy.d/stickshift-proxy.cfg ]; then
-   oldproxies=( $(ls /var/lib/stickshift/.*-proxy.d/*-proxy.cfg 2>/dev/null) ) || :
    cp /etc/stickshift/stickshift-proxy.cfg /var/lib/stickshift/.stickshift-proxy.d/stickshift-proxy.cfg
-   for oldproxy in "${oldproxies[@]}"; do
-       sed -n -e '/^listen .*:.*:.*/,/^\# End .*:.*:.*/ p' "$oldproxy" >> /var/lib/stickshift/.stickshift-proxy.d/stickshift-proxy.cfg
-       mv -f "${oldproxy}" "${oldproxy}.old"
-   done
    restorecon /var/lib/stickshift/.stickshift-proxy.d/stickshift-proxy.cfg || :
 fi
 /sbin/restorecon /var/lib/stickshift/.stickshift-proxy.d/ || :
 /sbin/service stickshift-proxy condrestart || :
-
 
 
 
@@ -268,6 +262,19 @@ fi
 /lib64/security/pam_libra.so
 
 %changelog
+* Thu Mar 15 2012 Dan McPherson <dmcphers@redhat.com> 0.88.8-1
+- This was well on the slippery slope to being a migration script.  Moving the
+  migration part to the release ticket. (rmillner@redhat.com)
+- single quote style seems to be preferred (rmillner@redhat.com)
+- Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
+  (rmillner@redhat.com)
+- The legacy APP env files were fine for bash but we have a number of parsers
+  which could not handle the new format.  Move legacy variables to the app_ctl
+  scripts and have migration set the TRANSLATE_GEAR_VARS variable to include
+  pairs of variables to migrate. (rmillner@redhat.com)
+- Further optimization to reduce search time. (mpatel@redhat.com)
+- Bug 803581 (dmcphers@redhat.com)
+
 * Wed Mar 14 2012 Dan McPherson <dmcphers@redhat.com> 0.88.7-1
 - Removing rhc-idle-apps. (mpatel@redhat.com)
 - Removing unused file from spec. (mpatel@redhat.com)

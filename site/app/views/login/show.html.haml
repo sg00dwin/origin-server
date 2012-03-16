@@ -16,7 +16,9 @@
           Password
         .controls
           %input(id="pwd_input" type="password" name="password" autocomplete="off" required="true")
-          %a{:href => '/app/user/request_password_reset_form'} forgot?
+      .control-group
+        .controls
+          %a{:href => '/app/user/request_password_reset_form'} Forgot your password?
       .form-actions
         %input(type="submit" value="Sign in" class="btn")
         or

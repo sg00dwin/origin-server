@@ -371,12 +371,16 @@ module OpenShift
           end
         end
         build_name_to_verifiers.each do |build_name, verifiers|
-          if verifiers.length > 1
+          unless verifiers.empty?
             verifiers.sort!
-            verifiers.pop
-            verifiers.each do |verifier| 
+            verifiers.each_with_index do |verifier, index|
               build_num = verifier[0]
               i = verifier[1]
+              if index == verifiers.length - 1
+                unless Time.new - i.launch_time > 16200 #4.5 hours
+                  break
+                end
+              end
               if instance_status(i) == :running || instance_status(i) == :stopped
                 log.info "Terminating verifier #{i.id} - #{i.tags["Name"]}"
                 terminate_instance(i)
@@ -390,7 +394,7 @@ module OpenShift
     def flag_old_devenvs(conn)
       AWS.memoize do
         conn.instances.each do |i|
-          if (instance_status(i) == :stopped)
+          if (instance_status(i) == :stopped) && !(i.tags["Name"] =~ /preserve/)
             launch_yday = i.launch_time.yday
             yday = Time.new.yday
             if yday < launch_yday

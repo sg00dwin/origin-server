@@ -11,6 +11,8 @@ do
     . $f
 done
 
+translate_env_vars
+
 export HAPROXY_PID="${OPENSHIFT_RUN_DIR}/haproxy.pid"
 
 if ! [ $# -eq 1 ]

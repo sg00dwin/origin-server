@@ -2,7 +2,7 @@
 %define frameworkdir %{_libexecdir}/stickshift/cartridges/mysql-5.1
 
 Name: rhc-cartridge-mysql-5.1
-Version: 0.22.6
+Version: 0.22.7
 Release: 1%{?dist}
 Summary: Provides embedded mysql support
 
@@ -48,6 +48,7 @@ cp LICENSE %{buildroot}%{cartridgedir}/
 cp COPYRIGHT %{buildroot}%{cartridgedir}/
 mkdir -p %{buildroot}%{cartridgedir}/info/data/
 cp -r git_template.git %{buildroot}%{cartridgedir}/info/data/
+ln -s %{cartridgedir}/../../abstract/info/hooks/update-namespace %{buildroot}%{cartridgedir}/info/hooks/update-namespace
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -70,6 +71,19 @@ rm -rf $RPM_BUILD_ROOT
 %doc %{cartridgedir}/LICENSE
 
 %changelog
+* Thu Mar 15 2012 Dan McPherson <dmcphers@redhat.com> 0.22.7-1
+- Forgot to check in descriptive index.html for standalone mysql  - sync
+  removed added files. (ramr@redhat.com)
+- Fix bug for standalone mysql need to add proxy config - so that embedding
+  phpmyadmin works and runs where php is running. Use -d name=phpmyadmin-3.4 -d
+  colocate_with=mysql-5.1 when posting to
+  /broker/rest/domains/$domain/applications/$app/cartridges via the REST api.
+  (ramr@redhat.com)
+- The legacy APP env files were fine for bash but we have a number of parsers
+  which could not handle the new format.  Move legacy variables to the app_ctl
+  scripts and have migration set the TRANSLATE_GEAR_VARS variable to include
+  pairs of variables to migrate. (rmillner@redhat.com)
+
 * Wed Mar 14 2012 Dan McPherson <dmcphers@redhat.com> 0.22.6-1
 - Fix to get snapshot working. (ramr@redhat.com)
 

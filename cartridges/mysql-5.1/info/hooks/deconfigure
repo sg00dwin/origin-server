@@ -70,4 +70,7 @@ if [ "mysql-5.1" = "$OPENSHIFT_GEAR_TYPE" ]; then
     # Blow away the directories.
     rm_app_dir
     rm_unobfuscated_app_home $namespace $application
+
+    # Remove apache vhost configuration.
+    rm_httpd_proxy $uuid $namespace $application
 fi

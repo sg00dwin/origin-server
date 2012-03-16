@@ -76,7 +76,8 @@ __EOF__
 }
 
 function create_jboss_network_env_vars {
-    echo "export OPENSHIFT_JBOSS_CLUSTER='$IP[7600]'" > $APP_HOME/.env/OPENSHIFT_JBOSS_CLUSTER
+  echo "export OPENSHIFT_JBOSS_CLUSTER_PORT='7600'" > $APP_HOME/.env/OPENSHIFT_JBOSS_CLUSTER_PORT
+  echo "export OPENSHIFT_JBOSS_CLUSTER='$IP[7600]'" > $APP_HOME/.env/OPENSHIFT_JBOSS_CLUSTER
 }
 
 while getopts 'd' OPTION

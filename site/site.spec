@@ -3,7 +3,7 @@
 
 Summary:   Li site components
 Name:      rhc-site
-Version:   0.88.10
+Version:   0.88.12
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -86,6 +86,36 @@ rm -rf %{buildroot}
 /bin/touch %{sitedir}/log/production.log
 
 %changelog
+* Thu Mar 15 2012 Dan McPherson <dmcphers@redhat.com> 0.88.12-1
+- when creating cart make sure to pass the server results back to the UI
+  (johnp@redhat.com)
+- Fixed embedding display (fotios@redhat.com)
+- Cleaned up embedded cart listing (fotios@redhat.com)
+- Merge branch 'master' of git1.ops.rhcloud.com:/srv/git/li (ffranz@redhat.com)
+- Added more blocked type to scaled application and error message
+  (fotios@redhat.com)
+- Fixes 802713 (ffranz@redhat.com)
+- Added support for scaling app to block certain embedded cartridges
+  (fotios@redhat.com)
+- Updated homepage copy based on Dan's feedback, disabled images until we can
+  get styles. (ccoleman@redhat.com)
+- Fixes 803674, improved terms layout (ffranz@redhat.com)
+- Fixed form validation to be more consistant (fotios@redhat.com)
+- fix cartridge_type index view to check if there are any carts to be displayed
+  (johnp@redhat.com)
+- Fixes 803665 (ffranz@redhat.com)
+- Merge branch 'master' of git1.ops.rhcloud.com:/srv/git/li (ffranz@redhat.com)
+- Fixes 803212 (ffranz@redhat.com)
+- mark the metrics cart as experimental and tag it in the UI (johnp@redhat.com)
+- Merge branch 'devweb' (sgoodwin@redhat.com)
+- including graphics on home and fix ie bugs (sgoodwin@redhat.com)
+
+* Wed Mar 14 2012 Dan McPherson <dmcphers@redhat.com> 0.88.11-1
+- Simple header should not have text, move content (ccoleman@redhat.com)
+- Minor cleanup to the getting started content - Flex is bare enough that we
+  should axe it (ccoleman@redhat.com)
+- Minor routes cleanup (ccoleman@redhat.com)
+
 * Wed Mar 14 2012 Dan McPherson <dmcphers@redhat.com> 0.88.10-1
 - Fixed minLength for validations (fotios@redhat.com)
 - Updated overview with new style commands and python package

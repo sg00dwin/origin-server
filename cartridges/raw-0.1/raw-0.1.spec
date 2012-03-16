@@ -2,7 +2,7 @@
 
 Summary:   Provides diy support
 Name:      rhc-cartridge-raw-0.1
-Version:   0.22.3
+Version:   0.22.4
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   ASL 2.0
@@ -90,6 +90,12 @@ rm -rf %{buildroot}
 %doc %{cartridgedir}/LICENSE
 
 %changelog
+* Thu Mar 15 2012 Dan McPherson <dmcphers@redhat.com> 0.22.4-1
+- The legacy APP env files were fine for bash but we have a number of parsers
+  which could not handle the new format.  Move legacy variables to the app_ctl
+  scripts and have migration set the TRANSLATE_GEAR_VARS variable to include
+  pairs of variables to migrate. (rmillner@redhat.com)
+
 * Mon Mar 12 2012 Dan McPherson <dmcphers@redhat.com> 0.22.3-1
 - Update raw configuration files to have the right styling
   (ccoleman@redhat.com)

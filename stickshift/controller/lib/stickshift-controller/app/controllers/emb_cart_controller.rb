@@ -118,15 +118,20 @@ class EmbCartController < BaseController
       return
     end
 
+    cart_create_reply = ""
     begin
       if not colocate_with.nil?
         application.add_group_override(name, colocate_with)
       end
-      application.add_dependency(name)
+      cart_create_reply = application.add_dependency(name)
     rescue Exception => e
       Rails.logger.error e
       @reply = RestReply.new(:internal_server_error)
-      message = Message.new(:error, "Failed to add #{name} to application #{id} due to #{e.message}", e.code)
+      if e.class==StickShift::NodeException
+        message = Message.new(:error, "Failed to add #{name} to application #{id}. Details : \n#{e.resultIO}", e.code)
+      else
+        message = Message.new(:error, "Failed to add #{name} to application #{id} due to #{e.message}.")
+      end
       @reply.messages.push(message)
       respond_with @reply, :status => @reply.status
       return
@@ -141,6 +146,11 @@ class EmbCartController < BaseController
           @reply = RestReply.new(:created, "cartridge", cartridge)
           message = Message.new(:info, "Added #{name} to application #{id}")
           @reply.messages.push(message)
+          message = Message.new(:info, cart_create_reply.resultIO.string, 0, :result)
+          @reply.messages.push(message)
+          message = Message.new(:info, cart_create_reply.appInfoIO.string, 0, :appinfo)
+          @reply.messages.push(message)
+
           respond_with @reply, :status => @reply.status
           return
         end

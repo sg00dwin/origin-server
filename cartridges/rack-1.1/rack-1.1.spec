@@ -2,7 +2,7 @@
 
 Summary:   Provides ruby rack support running on Phusion Passenger
 Name:      rhc-cartridge-rack-1.1
-Version:   0.88.4
+Version:   0.88.5
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   ASL 2.0
@@ -28,6 +28,7 @@ Requires:  rubygem-sqlite3
 Requires:  rubygem-thread-dump
 Requires:  ruby-sqlite3
 Requires:  ruby-mysql
+Requires:  rubygem-bson_ext
 Requires:  mysql-devel
 Requires:  ruby-devel
 Requires:  ruby-nokogiri
@@ -116,6 +117,11 @@ rm -rf %{buildroot}
 %doc %{cartridgedir}/LICENSE
 
 %changelog
+* Thu Mar 15 2012 Dan McPherson <dmcphers@redhat.com> 0.88.5-1
+- Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
+  (mmcgrath@redhat.com)
+- Added rubygem-bson_ext (mmcgrath@redhat.com)
+
 * Wed Mar 14 2012 Dan McPherson <dmcphers@redhat.com> 0.88.4-1
 - Bug 803179 (dmcphers@redhat.com)
 

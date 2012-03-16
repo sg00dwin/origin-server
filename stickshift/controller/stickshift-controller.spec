@@ -5,7 +5,7 @@
 
 Summary:        Cloud Development Controller
 Name:           rubygem-%{gemname}
-Version:        0.6.9
+Version:        0.6.10
 Release:        1%{?dist}
 Group:          Development/Languages
 License:        ASL 2.0
@@ -75,6 +75,17 @@ rm -rf %{buildroot}
 %{ruby_sitelib}/%{gemname}.rb
 
 %changelog
+* Thu Mar 15 2012 Dan McPherson <dmcphers@redhat.com> 0.6.10-1
+- Updating gem versions (dmcphers@redhat.com)
+- when creating cart make sure to pass the server results back to the UI
+  (johnp@redhat.com)
+- Fix applicaton group overrides (rpenta@redhat.com)
+- Estimate application gear usage when scalable:true passed in the descriptor
+  (rpenta@redhat.com)
+- Fix for bug# 798884 (rpenta@redhat.com)
+- fix for bug 803522 - better message on embed cartridge failure
+  (rchopra@redhat.com)
+
 * Wed Mar 14 2012 Dan McPherson <dmcphers@redhat.com> 0.6.9-1
 - Updating gem versions (dmcphers@redhat.com)
 - jenkins does-not/need-not contain an expose-port, so dont raise a fatal
