@@ -58,6 +58,18 @@ module LibraMigration
       end
 
       case app_type
+      when "jenkins-1.4"
+        jenkins_configs=["#{app_dir}/data/config.xml"]
+        Dir.glob("#{app_dir}/data/jobs/*/config.xml") do |jobcfg|
+          jenkins_configs << "#{jobcfg}"
+        end
+        jenkins_configs.each do |jenkins_config|
+          ['builderSize', 'defaultBuilderSize'].each do |builder_opt|
+            { "std" => "small", "large" => "medium" }.each do |srcsize, dstsize|
+              output += Util.replace_in_file("#{jenkins_config}", "<#{builder_opt}>#{srcsize}<\\/#{builder_opt}>", "<#{builder_opt}>#{dstsize}</#{builder_opt}>")
+            end
+          end
+        end
       when "python-2.6", "ruby-1.8", "perl-5.10"
         FileUtils.mv("#{app_dir}/conf.d/libra.conf", "#{app_dir}/conf.d/stickshift.conf") unless File.exists?("#{app_dir}/conf.d/stickshift.conf")
         Util.replace_in_file("#{app_dir}/conf.d/stickshift.conf", "/var/lib/libra", "/var/lib/stickshift")
