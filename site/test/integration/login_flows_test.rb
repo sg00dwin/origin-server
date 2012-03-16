@@ -69,8 +69,8 @@ class LoginFlowsTest < ActionDispatch::IntegrationTest
     assert_response :success
     #puts @request.pretty_inspect
     #puts cookies.pretty_inspect
-    #assert_equal 'true', cookies['prev_login']
-    #assert cookies['rh_sso']
+    assert_equal 'true', cookies['prev_login']
+    #assert cookies['rh_sso'] #FIXME: GAAAAAH - something wierd about cookie jar URL comparison
 
     get('/app/account')
     assert_response :success
@@ -80,6 +80,6 @@ class LoginFlowsTest < ActionDispatch::IntegrationTest
     assert_equal '/app', path
 
     assert_nil cookies['rh_sso']
-    #assert_equal 'true', cookies[:prev_login]
+    assert_equal 'true', cookies['prev_login']
   end
 end

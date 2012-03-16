@@ -44,7 +44,7 @@ class LoginController < SiteController
       session[:ticket_verified] = Time.now.to_i
 
       set_previous_login_detection
-      cookies['rh_sso'] = domain_cookie_opts(:value => @user.ticket)
+      cookies[:rh_sso] = domain_cookie_opts(:value => @user.ticket)
 
       Rails.logger.debug "Authenticated with cookie #{cookies[:rh_sso]} redirecting to #{@redirectUrl}"
       redirect_to @redirectUrl
@@ -57,8 +57,8 @@ class LoginController < SiteController
   # Helper to apply common defaults to cookie options
   def domain_cookie_opts(opts)
     {
-      :secure => true,
-      :path => '/',
+      :secure => true, 
+      :path => '/', 
       :domain => cookie_domain
     }.merge!(opts)
   end

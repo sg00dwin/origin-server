@@ -123,7 +123,7 @@ class LoginControllerTest < ActionController::TestCase
     @request.host = 'a.test.domain.com'
     with_custom_config({:cookie_domain => :current}, false) do
       opts = @controller.domain_cookie_opts({})
-      assert_equal '.a.test.domain.com', opts[:domain]
+      assert_equal 'a.test.domain.com', opts[:domain]
     end
   end
 
