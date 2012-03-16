@@ -56,7 +56,7 @@ module LibraMigration
         symlink_output, symlink_exitcode = Util.execute_script("/usr/bin/migration-symlink-as-user #{app_name} #{uuid}  #{link_path} #{app_dir}/runtime/repo 2>&1")
         output += symlink_output
       end
-      
+
       case app_type
       when "python-2.6", "ruby-1.8", "perl-5.10"
         FileUtils.mv("#{app_dir}/conf.d/libra.conf", "#{app_dir}/conf.d/stickshift.conf") unless File.exists?("#{app_dir}/conf.d/stickshift.conf")
@@ -78,7 +78,7 @@ module LibraMigration
             Util.replace_in_file("#{app_dir}#{fname}", "/var/lib/libra", "/var/lib/stickshift")
           end
         end
-        
+
         symlink_output, symlink_exitcode = Util.execute_script("/usr/bin/migration-symlink-as-user #{app_name} #{uuid}  #{cartridge_root_dir}/jbossas-7/info/bin/standalone.conf #{app_dir}/jbossas-7/bin/standalone.conf 2>&1")
         output += symlink_output
         symlink_output, symlink_exitcode = Util.execute_script("/usr/bin/migration-symlink-as-user #{app_name} #{uuid}  #{cartridge_root_dir}/jbossas-7/info/bin/standalone.sh #{app_dir}/jbossas-7/bin/standalone.sh 2>&1")
@@ -89,18 +89,18 @@ module LibraMigration
         files,exitcode = Util.execute_script("fgrep -r \"/usr/libexec/li/\" #{app_dir}/data | awk 'BEGIN { FS=\":\" } { print $1 }' | grep -v 'Binary file ' | sort -u")
         files.each do |fpath|
           unless fpath.end_with?("log")
-            Util.replace_in_file("#{fpath}", "/usr/libexec/li", "/usr/libexec/stickshift") 
-          end
-        end
-        
-        files,exitcode = Util.execute_script("fgrep -r \"/var/lib/libra/\" #{app_dir}/data | awk 'BEGIN { FS=\":\" } { print $1 }' | grep -v 'Binary file ' | sort -u")
-        files.each do |fpath|
-          unless fpath.end_with?("log")
-            Util.replace_in_file("#{fpath}", "/var/lib/libra", "/var/lib/stickshift") 
+            Util.replace_in_file("#{fpath}", "/usr/libexec/li", "/usr/libexec/stickshift")
           end
         end
 
-        #Util.replace_in_file("#{app_dir}/data/jobs/*/config.xml", "<builderType>raw-0.1</builderType>", "<builderType>diy-0.1</builderType>")
+        files,exitcode = Util.execute_script("fgrep -r \"/var/lib/libra/\" #{app_dir}/data | awk 'BEGIN { FS=\":\" } { print $1 }' | grep -v 'Binary file ' | sort -u")
+        files.each do |fpath|
+          unless fpath.end_with?("log")
+            Util.replace_in_file("#{fpath}", "/var/lib/libra", "/var/lib/stickshift")
+          end
+        end
+
+        Util.replace_in_file("#{app_dir}/data/jobs/*/config.xml", "<builderType>raw-0.1</builderType>", "<builderType>diy-0.1</builderType>")
         if orig_jenkins_url
           Util.replace_in_file("#{app_dir}/data/config.xml", "<jenkinsUrl>.*</jenkinsUrl>", "")
           #Util.replace_in_file("#{app_dir}/data/hudson.tasks.Mailer.xml", "<hudsonUrl>.*</hudsonUrl>", "<hudsonUrl>#{jenkins_url}</hudsonUrl>")
@@ -203,7 +203,7 @@ module LibraMigration
         symlink_output, symlink_exitcode = Util.execute_script("/usr/bin/migration-symlink-as-user #{app_name} #{uuid}  #{cartridge_root_dir}/embedded/10gen-mms-agent-0.1/info/bin/10gen_mms_agent_ctl.sh #{app_home}/10gen-mms-agent-0.1/#{app_name}_10gen_mms_agent_ctl.sh 2>&1")
         output += symlink_output
         FileUtils.chown(uuid,uuid,"#{app_home}/10gen-mms-agent-0.1/#{app_name}_10gen_mms_agent_ctl.sh")
-      end      
+      end
 
       #jenkins-client-1.4 : no-op
 
