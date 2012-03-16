@@ -105,10 +105,12 @@ class ApplicationController < ActionController::Base
   # The domain that the user's cookie should be stored under
   def cookie_domain
     domain = Rails.configuration.streamline[:cookie_domain] || 'redhat.com'
-    domain = request.host if :current == domain
-    return nil if domain == :nil
-    domain = ".#{domain}" unless domain[0..0] == '.'
-    domain
+    case domain
+    when :current; request.host
+    when :nil; nil
+    when nil; nil
+    else (domain[0..0] == '.') ? domain : ".#{domain}"
+    end
   end
 
   def redirect_to_logout

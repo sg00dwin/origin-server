@@ -1,8 +1,3 @@
-require 'pp'
-require 'net/http'
-require 'net/https'
-require 'uri'
-
 class LoginController < SiteController
 
   before_filter :new_forms, :only => [:show]
@@ -16,6 +11,7 @@ class LoginController < SiteController
         reset_sso
       end
       @referrerRedirect = valid_referrer(referrer)
+      logger.debug "Stored referrer #{@referrerRedirect}"
     end
   end
 
