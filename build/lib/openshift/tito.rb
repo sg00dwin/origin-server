@@ -57,8 +57,8 @@ module OpenShift
           if installed_version =~ /(\d+\.\d+\.\d+)-/
             installed_version = $1
             spec_version = /Version: (.*)/.match(File.read(file))[1].strip
-            installed_version_parts = installed_version.split(".")
-            spec_version_parts = spec_version.split(".")
+            installed_version_parts = installed_version.split(".").map { |part| part.to_i }
+            spec_version_parts = spec_version.split(".").map { |part| part.to_i }
             if (installed_version_parts <=> spec_version_parts) < 0
               stale_dirs << [package_name, build_dir]
             end
