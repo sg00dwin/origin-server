@@ -377,7 +377,7 @@ module OpenShift
               build_num = verifier[0]
               i = verifier[1]
               if index == verifiers.length - 1
-                unless Time.new - i.launch_time > 9000 #2.5 hours
+                unless Time.new - i.launch_time > 16200 #4.5 hours
                   break
                 end
               end
