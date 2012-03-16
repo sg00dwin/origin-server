@@ -394,7 +394,7 @@ module OpenShift
     def flag_old_devenvs(conn)
       AWS.memoize do
         conn.instances.each do |i|
-          if (instance_status(i) == :stopped)
+          if (instance_status(i) == :stopped) && !(i.tags["Name"] =~ /preserve/)
             launch_yday = i.launch_time.yday
             yday = Time.new.yday
             if yday < launch_yday
