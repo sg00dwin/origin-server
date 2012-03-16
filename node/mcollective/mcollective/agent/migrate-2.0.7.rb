@@ -66,7 +66,7 @@ module LibraMigration
         jenkins_configs.each do |jenkins_config|
           ['builderSize', 'defaultBuilderSize'].each do |builder_opt|
             { "std" => "small", "large" => "medium" }.each do |srcsize, dstsize|
-              output += Util.replace_in_file("#{jenkins_config}", "<#{builder_opt}>#{srcsize}<\\/#{builder_opt}>", "<#{builder_opt}>#{dstsize}</#{builder_opt}>")
+              Util.replace_in_file("#{jenkins_config}", "<#{builder_opt}>#{srcsize}<\\/#{builder_opt}>", "<#{builder_opt}>#{dstsize}</#{builder_opt}>")
             end
           end
         end
