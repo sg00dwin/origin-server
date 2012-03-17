@@ -3,7 +3,7 @@
 
 Summary:   Li site components
 Name:      rhc-site
-Version:   0.89.0
+Version:   0.89.1
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -86,6 +86,16 @@ rm -rf %{buildroot}
 /bin/touch %{sitedir}/log/production.log
 
 %changelog
+* Sat Mar 17 2012 Dan McPherson <dmcphers@redhat.com> 0.89.1-1
+- bump spec numbers (dmcphers@redhat.com)
+- Capitalization of node.js (ccoleman@redhat.com)
+- Feedback from Dan J about message (ccoleman@redhat.com)
+- Reorganize cartridge page to avoid visual bugs, other minor arrangements
+  (ccoleman@redhat.com)
+- don't error out if server doesn't send back messages (johnp@redhat.com)
+- Bug 803854 - bad URL for php my admin (ccoleman@redhat.com)
+- Fixes 803934 (ffranz@redhat.com)
+
 * Thu Mar 15 2012 Dan McPherson <dmcphers@redhat.com> 0.88.12-1
 - when creating cart make sure to pass the server results back to the UI
   (johnp@redhat.com)
