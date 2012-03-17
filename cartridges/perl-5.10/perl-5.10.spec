@@ -2,7 +2,7 @@
 
 Summary:   Provides mod_perl support
 Name:      rhc-cartridge-perl-5.10
-Version:   0.20.0
+Version:   0.20.1
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   ASL 2.0
@@ -101,6 +101,9 @@ rm -rf $RPM_BUILD_ROOT
 %doc %{cartridgedir}/LICENSE
 
 %changelog
+* Sat Mar 17 2012 Dan McPherson <dmcphers@redhat.com> 0.20.1-1
+- bump spec numbers (dmcphers@redhat.com)
+
 * Mon Mar 12 2012 Dan McPherson <dmcphers@redhat.com> 0.19.3-1
 - Update cartridge landing page styles (ccoleman@redhat.com)
 - Add the set-db-connection-info hook to all the frameworks. (ramr@redhat.com)
