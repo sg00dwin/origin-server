@@ -1,7 +1,7 @@
 %define cartridgedir %{_libexecdir}/stickshift/cartridges/embedded/mongodb-2.0
 
 Name: rhc-cartridge-mongodb-2.0
-Version: 0.17.0
+Version: 0.17.1
 Release: 1%{?dist}
 Summary: Embedded mongodb support for OpenShift
 
@@ -54,6 +54,9 @@ rm -rf $RPM_BUILD_ROOT
 %doc %{cartridgedir}/LICENSE
 
 %changelog
+* Sat Mar 17 2012 Dan McPherson <dmcphers@redhat.com> 0.17.1-1
+- bump spec numbers (dmcphers@redhat.com)
+
 * Fri Mar 09 2012 Dan McPherson <dmcphers@redhat.com> 0.16.2-1
 - Batch variable name chage (rmillner@redhat.com)
 - Adding export control files (kraman@gmail.com)
