@@ -224,7 +224,7 @@ module StickShift
 
       add_env_var("APP_UUID", @application_uuid, true)
       add_env_var("GEAR_UUID", @container_uuid, true)
-      add_env_var("USER_APP_NAME", @app_name, true)
+      add_env_var("APP_NAME", @app_name, true)
       add_env_var("HOMEDIR", @homedir.end_with?('/') ? @homedir : @homedir + '/', true)
       notify_observers(:after_initialize_homedir)
     end
