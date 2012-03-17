@@ -2,7 +2,7 @@
 
 Summary:   StickShift common cartridge components
 Name:      stickshift-abstract
-Version:   0.7.0
+Version:   0.7.1
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   ASL 2.0
@@ -46,6 +46,10 @@ rm -rf $RPM_BUILD_ROOT
 %post
 
 %changelog
+* Sat Mar 17 2012 Dan McPherson <dmcphers@redhat.com> 0.7.1-1
+- bump spec numbers (dmcphers@redhat.com)
+- USER_APP_NAME -> APP_NAME (dmcphers@redhat.com)
+
 * Thu Mar 15 2012 Dan McPherson <dmcphers@redhat.com> 0.6.9-1
 - Character swap in a function name. (rmillner@redhat.com)
 - The legacy APP env files were fine for bash but we have a number of parsers
