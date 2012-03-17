@@ -2,7 +2,7 @@
 
 Summary:       Multi-tenant cloud management system node tools
 Name:          rhc-node
-Version:       0.89.0
+Version:       0.89.1
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -262,6 +262,17 @@ fi
 /lib64/security/pam_libra.so
 
 %changelog
+* Sat Mar 17 2012 Dan McPherson <dmcphers@redhat.com> 0.89.1-1
+- bump spec numbers (dmcphers@redhat.com)
+- USER_APP_NAME -> APP_NAME (dmcphers@redhat.com)
+- Add APP_NAME to the list of retained variables. (rmillner@redhat.com)
+- missing variable migration (rmillner@redhat.com)
+- Had missed the existing jenkins block (rmillner@redhat.com)
+- Dont need verbose output from the file edit. (rmillner@redhat.com)
+- Update jenkins config.xml and per-job config.xml to reflect new gear sizes.
+  (rmillner@redhat.com)
+- Uncomment jenkins diy migration. (mpatel@redhat.com)
+
 * Thu Mar 15 2012 Dan McPherson <dmcphers@redhat.com> 0.88.8-1
 - This was well on the slippery slope to being a migration script.  Moving the
   migration part to the release ticket. (rmillner@redhat.com)
