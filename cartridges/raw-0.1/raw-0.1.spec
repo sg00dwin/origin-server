@@ -2,7 +2,7 @@
 
 Summary:   Provides diy support
 Name:      rhc-cartridge-raw-0.1
-Version:   0.22.4
+Version:   0.23.0
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   ASL 2.0

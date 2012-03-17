@@ -1,7 +1,7 @@
 %define cartridgedir %{_libexecdir}/stickshift/cartridges/embedded/rockmongo-1.1
 
 Name: rhc-cartridge-rockmongo-1.1
-Version: 1.6.2
+Version: 1.7.0
 Release: 1%{?dist}
 Summary: Embedded RockMongo support for OpenShift
 

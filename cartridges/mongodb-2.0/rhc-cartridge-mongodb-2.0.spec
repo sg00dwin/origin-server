@@ -1,7 +1,7 @@
 %define cartridgedir %{_libexecdir}/stickshift/cartridges/embedded/mongodb-2.0
 
 Name: rhc-cartridge-mongodb-2.0
-Version: 0.16.2
+Version: 0.17.0
 Release: 1%{?dist}
 Summary: Embedded mongodb support for OpenShift
 

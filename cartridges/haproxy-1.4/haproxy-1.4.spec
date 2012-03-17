@@ -2,7 +2,7 @@
 
 Summary:   Provides haproxy-1.4 support
 Name:      rhc-cartridge-haproxy-1.4
-Version:   0.6.7
+Version:   0.7.0
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   ASL 2.0

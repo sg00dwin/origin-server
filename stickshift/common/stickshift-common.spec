@@ -5,7 +5,7 @@
 
 Summary:        Cloud Development Common
 Name:           rubygem-%{gemname}
-Version:        0.6.4
+Version:        0.7.0
 Release:        1%{?dist}
 Group:          Development/Languages
 License:        ASL 2.0
