@@ -1,7 +1,7 @@
 %define cartridgedir %{_libexecdir}/stickshift/cartridges/embedded/cron-1.4
 
 Name: rhc-cartridge-cron-1.4
-Version: 0.4.0
+Version: 0.4.1
 Release: 1%{?dist}
 Summary: Embedded cron support for express
 
@@ -78,6 +78,9 @@ rm -rf $RPM_BUILD_ROOT
 %doc %{cartridgedir}/LICENSE
 
 %changelog
+* Sat Mar 17 2012 Dan McPherson <dmcphers@redhat.com> 0.4.1-1
+- bump spec numbers (dmcphers@redhat.com)
+
 * Thu Mar 15 2012 Dan McPherson <dmcphers@redhat.com> 0.3.4-1
 - Fix for bugz 803658 - rename libra-cron-* scripts to stickshift-cron-*. The
   spec file was changed blindly as part of the libra to stickshift changes but
