@@ -5,7 +5,7 @@
 
 Summary:        Cloud Development Node
 Name:           rubygem-%{gemname}
-Version:        0.7.0
+Version:        0.7.1
 Release:        1%{?dist}
 Group:          Development/Languages
 License:        ASL 2.0
@@ -91,6 +91,11 @@ rm -rf %{buildroot}
 echo "/usr/bin/ss-trap-user" >> /etc/shells
 
 %changelog
+* Sat Mar 17 2012 Dan McPherson <dmcphers@redhat.com> 0.7.1-1
+- Updating gem versions (dmcphers@redhat.com)
+- bump spec numbers (dmcphers@redhat.com)
+- USER_APP_NAME -> APP_NAME (dmcphers@redhat.com)
+
 * Wed Mar 14 2012 Dan McPherson <dmcphers@redhat.com> 0.6.10-1
 - Updating gem versions (dmcphers@redhat.com)
 - Minor rename for BZ 802605 (rmillner@redhat.com)
