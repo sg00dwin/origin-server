@@ -2,7 +2,7 @@
 
 Summary:   Provides Node-0.6 support
 Name:      rhc-cartridge-nodejs-0.6
-Version:   0.4.0
+Version:   0.4.1
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   ASL 2.0
@@ -101,6 +101,9 @@ rm -rf %{buildroot}
 %doc %{cartridgedir}/LICENSE
 
 %changelog
+* Sat Mar 17 2012 Dan McPherson <dmcphers@redhat.com> 0.4.1-1
+- bump spec numbers (dmcphers@redhat.com)
+
 * Thu Mar 15 2012 Dan McPherson <dmcphers@redhat.com> 0.3.5-1
 - The legacy APP env files were fine for bash but we have a number of parsers
   which could not handle the new format.  Move legacy variables to the app_ctl
