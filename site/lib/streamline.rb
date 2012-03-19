@@ -406,6 +406,8 @@ module Streamline
           end
         end
       when Net::HTTPForbidden, Net::HTTPUnauthorized
+        Rails.logger.error "Streamline rejected the request - #{res.code}"
+        Rails.logger.error "Response body:\n#{res.body}"
         raise AccessDeniedException
       else
         Rails.logger.error "Invalid HTTP response from streamline - #{res.code}"

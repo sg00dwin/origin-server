@@ -1,5 +1,7 @@
 class LoginController < SiteController
 
+  layout 'simple'
+
   before_filter :new_forms, :only => [:show]
   before_filter :check_referrer, :only => :show
 
@@ -27,19 +29,18 @@ class LoginController < SiteController
   def show
     @redirectUrl = params[:redirectUrl] || @referrerRedirect
     user_params = params[:web_user] || params
-    @user = WebUser.new :rhlogin => user_params[:rhlogin] || user_params[:email_address]
+    @user = WebUser.new :rhlogin => (user_params[:rhlogin] || user_params[:email_address])
 
     # The login page should ensure the rh_sso cookie is empty
     cookies.delete :rh_sso, :domain => cookie_domain if cookies[:rh_sso]
-
-    render :show, :layout => 'simple'
   end
 
   def create
     @redirectUrl = params[:redirectUrl] || default_logged_in_redirect
+    user_params = params[:web_user] || params
 
     @user = WebUser.new
-    if @user.authenticate(params['rhlogin'], params['password'])
+    if @user.authenticate(user_params[:rhlogin], user_params[:password])
       session[:login] = @user.rhlogin
       session[:ticket] = @user.ticket
       session[:user] = @user
@@ -52,7 +53,8 @@ class LoginController < SiteController
       redirect_to @redirectUrl
     else
       logger.debug "Authentication failed"
-      render :show, :layout => 'simple'
+      @user.rhlogin = user_params[:rhlogin] #preserve user login for next request
+      render :show
     end
   end
 
