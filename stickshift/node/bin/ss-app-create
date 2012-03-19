@@ -33,6 +33,7 @@ Options:
 APP_UUID: Unique identifier for the application
 UUID: Unique identifier for the container
 NAME: The name of the application to create
+NAMESPACE: The namespace of the application to create
 
 USAGE
 end
