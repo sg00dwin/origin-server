@@ -44,12 +44,10 @@ RedHatCloud::Application.routes.draw do
       resource :password,
                :controller => "password" do
         match 'edit' => 'password#update', :via => :put
-        #match 'reset' => 'password#reset', :via => :get
         member do
           get :reset
           get :success
         end
-        #match 'success' => 'password#success', :via => :get
       end
       resource :express_domains,
                :controller => "express_domain" do
@@ -89,10 +87,10 @@ RedHatCloud::Application.routes.draw do
 
     # deprecated, use :password
     #match 'user/request_password_reset_form' => 'user#request_password_reset_form', :via => [:get], :as => 'new_password'
-    match 'user/request_password_reset_success' => 'user#request_password_reset_success', :via => [:get]
-    match 'user/request_password_reset' => 'user#request_password_reset', :via => [:post]
-    match 'user/reset_password' => 'user#reset_password', :via => [:get]
-    match 'user/change_password' => 'user#change_password', :via => [:post]
+    #match 'user/request_password_reset_success' => 'user#request_password_reset_success', :via => [:get]
+    #match 'user/request_password_reset' => redirect() 'user#request_password_reset', :via => [:post]
+    match 'user/reset_password' => redirect {|p, req| "/app/account/password/reset?#{req.query_string}"}, :via => [:get]
+    #match 'user/change_password' => 'user#change_password', :via => [:post]
 
     resource :terms,
              :as => "terms",
