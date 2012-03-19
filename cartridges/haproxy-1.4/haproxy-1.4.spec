@@ -1,4 +1,5 @@
 %define cartridgedir %{_libexecdir}/stickshift/cartridges/haproxy-1.4
+%define embeddedcartridgedir %{_libexecdir}/stickshift/cartridges/embedded/haproxy-1.4
 
 Summary:   Provides haproxy-1.4 support
 Name:      rhc-cartridge-haproxy-1.4
@@ -65,6 +66,34 @@ ln -s %{cartridgedir}/../abstract/info/hooks/move %{buildroot}%{cartridgedir}/in
 ln -s %{cartridgedir}/../abstract/info/hooks/threaddump %{buildroot}%{cartridgedir}/info/hooks/threaddump
 ln -s %{cartridgedir}/../abstract/info/hooks/system-messages %{buildroot}%{cartridgedir}/info/hooks/system-messages
 
+# Embedded
+ln -s %{embeddedcartridgedir}/info/configuration/ %{buildroot}/%{_sysconfdir}/stickshift/cartridges/%{name}-embedded
+mkdir -p %{buildroot}%{embeddedcartridgedir}
+cp -r info_embedded %{buildroot}%{embeddedcartridgedir}/info
+cp LICENSE %{buildroot}%{embeddedcartridgedir}/
+cp COPYRIGHT %{buildroot}%{embeddedcartridgedir}/
+cp -r git_template.git %{buildroot}%{embeddedcartridgedir}/info/data/
+ln -s %{embeddedcartridgedir}/../../abstract/info/hooks/add-module %{buildroot}%{embeddedcartridgedir}/info/hooks/add-module
+ln -s %{embeddedcartridgedir}/../../abstract/info/hooks/info %{buildroot}%{embeddedcartridgedir}/info/hooks/info
+ln -s %{embeddedcartridgedir}/../../abstract/info/hooks/post-install %{buildroot}%{embeddedcartridgedir}/info/hooks/post-install
+ln -s %{embeddedcartridgedir}/../../abstract/info/hooks/post-remove %{buildroot}%{embeddedcartridgedir}/info/hooks/post-remove
+ln -s %{embeddedcartridgedir}/../../abstract/info/hooks/reload %{buildroot}%{embeddedcartridgedir}/info/hooks/reload
+ln -s %{embeddedcartridgedir}/../../abstract/info/hooks/remove-module %{buildroot}%{embeddedcartridgedir}/info/hooks/remove-module
+ln -s %{embeddedcartridgedir}/../../abstract/info/hooks/restart %{buildroot}%{embeddedcartridgedir}/info/hooks/restart
+ln -s %{embeddedcartridgedir}/../../abstract/info/hooks/start %{buildroot}%{embeddedcartridgedir}/info/hooks/start
+ln -s %{embeddedcartridgedir}/../../abstract-httpd/info/hooks/status %{buildroot}%{embeddedcartridgedir}/info/hooks/status
+ln -s %{embeddedcartridgedir}/../../abstract/info/hooks/stop %{buildroot}%{embeddedcartridgedir}/info/hooks/stop
+ln -s %{embeddedcartridgedir}/../../abstract/info/hooks/update-namespace %{buildroot}%{embeddedcartridgedir}/info/hooks/update-namespace
+ln -s %{embeddedcartridgedir}/../../abstract/info/hooks/remove-httpd-proxy %{buildroot}%{embeddedcartridgedir}/info/hooks/remove-httpd-proxy
+ln -s %{embeddedcartridgedir}/../../abstract/info/hooks/force-stop %{buildroot}%{embeddedcartridgedir}/info/hooks/force-stop
+ln -s %{embeddedcartridgedir}/../../abstract/info/hooks/add-alias %{buildroot}%{embeddedcartridgedir}/info/hooks/add-alias
+ln -s %{embeddedcartridgedir}/../../abstract/info/hooks/tidy %{buildroot}%{embeddedcartridgedir}/info/hooks/tidy
+ln -s %{embeddedcartridgedir}/../../abstract/info/hooks/remove-alias %{buildroot}%{embeddedcartridgedir}/info/hooks/remove-alias
+ln -s %{embeddedcartridgedir}/../../abstract/info/hooks/move %{buildroot}%{embeddedcartridgedir}/info/hooks/move
+ln -s %{embeddedcartridgedir}/../../abstract/info/hooks/threaddump %{buildroot}%{embeddedcartridgedir}/info/hooks/threaddump
+ln -s %{embeddedcartridgedir}/../../abstract/info/hooks/system-messages %{buildroot}%{embeddedcartridgedir}/info/hooks/system-messages
+
+
 %clean
 rm -rf %{buildroot}
 
@@ -82,6 +111,19 @@ rm -rf %{buildroot}
 %{cartridgedir}/info/manifest.yml
 %doc %{cartridgedir}/COPYRIGHT
 %doc %{cartridgedir}/LICENSE
+
+%attr(0750,-,-) %{embeddedcartridgedir}/info/hooks/
+%attr(0750,-,-) %{embeddedcartridgedir}/info/data/
+%attr(0750,-,-) %{embeddedcartridgedir}/info/build/
+%attr(0755,-,-) %{embeddedcartridgedir}/info/bin/
+%attr(0755,-,-) %{embeddedcartridgedir}/info/connection-hooks/
+%config(noreplace) %{embeddedcartridgedir}/info/configuration/
+%{_sysconfdir}/stickshift/cartridges/%{name}-embedded
+%{embeddedcartridgedir}/info/changelog
+%{embeddedcartridgedir}/info/control
+%{embeddedcartridgedir}/info/manifest.yml
+%doc %{embeddedcartridgedir}/COPYRIGHT
+%doc %{embeddedcartridgedir}/LICENSE
 
 %changelog
 * Sat Mar 17 2012 Dan McPherson <dmcphers@redhat.com> 0.7.1-1
