@@ -12,6 +12,10 @@ module Streamline
   include ErrorCodes
   attr_accessor :rhlogin, :ticket, :roles, :terms
 
+  # Raised when the reset token has already been used
+  class TokenExpired < Streamline::StreamlineException
+  end
+
   class Cookie
     def initialize(*arguments)
       @name, @value, @options = arguments
@@ -193,6 +197,7 @@ module Streamline
           :url => args
         }
         http_post(@@request_password_reset_url, args, false) do |json|
+          Rails.logger.debug "Password reset request #{json.inspect}"
           if json['errors']
             errors.add(:base, I18n.t(:service_error, :scope => :streamline))
           end
@@ -210,6 +215,21 @@ module Streamline
     http_post(@@reset_password_url, args) do |json|
       return json
     end
+  end
+
+  def complete_reset_password(token)
+    args = {
+      :login => @email_address,
+      :token => token
+    }
+    http_post(@@reset_password_url, args, false) do |json|
+      Rails.logger.debug "Password reset completion #{json.inspect}"
+      if json['errors']
+        raise TokenExpired if 'token_is_invalid' == json['errors'].first
+        errors.add(:base, I18n.t(:unknown)) if errors.empty?
+      end
+    end
+    errors.empty?
   end
 
   def check_access

@@ -1,0 +1,14 @@
+- content_for :page_title, 'Unable to reset password'
+
+%h1.ribbon Unable to reset password
+
+%section
+  %p 
+    Your password could not be reset at this time.  Please try again in a few minutes 
+    by refreshing this page. If this error persists, contact us at #{link_to_account_mailto} 
+    or on #{link_to_irc}.
+
+  - @user.errors.full_messages.each do |e|
+    .alert= e
+
+  %p= link_to '« Reset your password again', new_password_path(:email_address => @user.email_address)

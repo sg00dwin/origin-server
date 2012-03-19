@@ -44,8 +44,12 @@ RedHatCloud::Application.routes.draw do
       resource :password,
                :controller => "password" do
         match 'edit' => 'password#update', :via => :put
-        match 'reset' => 'password#edit_with_token', :via => :get
-        match 'success' => 'password#success', :via => :get
+        #match 'reset' => 'password#reset', :via => :get
+        member do
+          get :reset
+          get :success
+        end
+        #match 'success' => 'password#success', :via => :get
       end
       resource :express_domains,
                :controller => "express_domain" do
@@ -84,7 +88,7 @@ RedHatCloud::Application.routes.draw do
     #match 'user' => 'user#show', :via => :get
 
     # deprecated, use :password
-    match 'user/request_password_reset_form' => 'user#request_password_reset_form', :via => [:get], :as => 'new_password'
+    #match 'user/request_password_reset_form' => 'user#request_password_reset_form', :via => [:get], :as => 'new_password'
     match 'user/request_password_reset_success' => 'user#request_password_reset_success', :via => [:get]
     match 'user/request_password_reset' => 'user#request_password_reset', :via => [:post]
     match 'user/reset_password' => 'user#reset_password', :via => [:get]

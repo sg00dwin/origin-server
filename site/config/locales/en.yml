@@ -18,6 +18,7 @@ en:
     password_invalid: 'Password format invalid'
     password_required: 'Password is required'
     password_match_failure: 'Passwords must match'
+    token_is_invalid: "This password reset request is no longer valid. This could be caused by the link being more than 24 hours old or it's already been used. Please try to reset your password again using the 'Sign in' form."
     terms_not_accepted: 'Terms must be accepted'
     service_error: 'A system error has occurred.  If the problem persists, please contact Red Hat support.'
     user_not_found: 'A system error has occurred.  If the problem persists, please contact Red Hat support.'

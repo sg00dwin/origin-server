@@ -1,16 +1,12 @@
-- content_for :page_title do
-  OpenShift Password Reset
+- content_for :page_title, 'Password Reset'
 
--# content_for :important do # fill out once layout supports the :important yield
+%h1.ribbon Reset your password
 
-%section.main
-  .content
-    %h1 Reset Your Password
-
-    = semantic_form_for @user, :url => password_path, :simple => true, :html => {:class => 'form-inline'} do |f|
-      %p If you have forgotten your password please enter your email address here, and we will send you an email with a link that will reset your password.
-      = f.semantic_errors
-      = f.input :email_address, :as => :email, :required => true
-      = f.buttons do
-        = f.commit_button :label => "Reset Password"
-
+= semantic_form_for @user, :url => password_path, :html => {:class => 'form-horizontal'} do |f|
+  %p If you have forgotten your password please enter your email address here, and we will send you an email with a link that will create a new, random password for your account.
+  = f.semantic_errors
+  = f.input :email_address, :as => :email
+  = f.buttons do
+    = f.commit_button "Reset Password", :button_html =>  {:class => 'btn'}
+    or 
+    = link_to 'sign in', login_path

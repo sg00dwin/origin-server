@@ -1,0 +1,17 @@
+- content_for :page_title, 'New password created'
+
+%h1.ribbon New password created
+
+%section
+  %p 
+    An email has been sent to you with a new, unique password. We recommend changing 
+    your password once you sign in.
+
+  %p 
+    If you do not receive an email within a few minutes, check your Spam folder to 
+    ensure it was not incorrectly moved. If you don't receive an email, contact us 
+    at #{link_to_account_mailto} or on #{link_to_irc}.
+
+  %p= link_to 'Sign in now', login_path(:email_address => @user.email_address), :class => 'action-more'
+
+  %p= link_to '« Back to the main page', root_path
