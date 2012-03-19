@@ -12,12 +12,14 @@ class EmailConfirmController < SiteController
 
   layout 'simple'
   
+  # FIXME: remove
   def confirm_flex
-    confirm(flex_path)
+    confirm
   end
   
+  # FIXME: remove
   def confirm_express
-    confirm(express_path)
+    confirm
   end
   
   def confirm_external
@@ -33,23 +35,28 @@ class EmailConfirmController < SiteController
     end
   end
 
-  def confirm(redirect_path=express_path)
+  def confirm(redirect_path=console_path)
     key = params[:key]
     email = params[:emailAddress]
 
-    @errors = {}
-    if key == nil
-      @errors[:invalidConfirmLinkMissingKey] = 'The confirmation link used is missing the key parameter.  Please check your link or try registering again.'
-    end
-    if email == nil
-      @errors[:invalidConfirmLinkMissingEmail] = 'The confirmation link used is missing the emailAddress parameter.  Please check your link or try registering again.'
-    end
-    
-    # Run validations
-    valid = @errors.length == 0
+    @user = WebUser.new
 
-    # Stop if you have a validation error
-    render :error and return unless valid
+    if key.blank? or email.blank?
+      @user.errors.add(:base, 'The confirmation link is not correct.  Please check that you copied the link correctly or try registering again.')
+
+    elsif @user.confirm_email(key, email) #sets errors
+      reset_sso
+      reset_session
+      session[:confirm_flow] = true #FIXME should not be needed when user flow check is simplified
+      session[:confirm_login] = email #FIXME should not be needed when user flow check is simplified
+      redirect_to redirect_path and return
+    end
+
+    logger.debug "Errors during confirmation #{@user.errors}"
+    render :error
+
+    # everything after this point is old dead code
+    return
 
     begin
       query = {:key => key, :emailAddress => email}

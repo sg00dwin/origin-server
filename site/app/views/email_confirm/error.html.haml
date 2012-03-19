@@ -1,9 +1,9 @@
 -# file: Email confirmation errors page
 
 %h1.ribbon
-  Confirmation errors
+  Confirm Email
 .content
-  - @errors.each do |field, msg|
+  - @user.errors.each do |field, msg|
     .alert
       = msg
 

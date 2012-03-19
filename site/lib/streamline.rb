@@ -235,12 +235,38 @@ module Streamline
 
     http_post(@@register_url, register_args, false) do |json|
       Rails.logger.debug "Registration response #{json.inspect}"
-      unless json['emailAddress']
+      if json['emailAddress']
+        @email_address = json['emailAddress']
+      else
         if errors.length == 0
           errors.add(:base, I18n.t(:unknown))
         end
       end
     end
+    errors.empty?
+  end
+
+  def confirm_email(key,email=@email_address)
+    raise "No email address provided" unless email
+    confirm_args = {
+      :emailAddress => email,
+      :key => key
+    }
+    errors.clear
+    http_post(@@email_confirm_url, confirm_args, false) do |json|
+      Rails.logger.debug "Confirmation response #{json.inspect}"
+      if json['emailAddress']
+        # success
+      elsif json['errors'] and json['errors'][0] == 'user_already_registered'
+        # success
+        errors.clear
+      else
+        if errors.length == 0
+          errors.add(:base, I18n.t(:unknown))
+        end
+      end
+    end
+    errors.empty?
   end
 
   #
