@@ -20,7 +20,7 @@ function setup_mysql_as_a_service() {
     unobfuscate_app_home $uuid $namespace $application
 
     # Source the original application name if any.
-    source_if_exists "$APP_HOME/.env/OPENSHIFT_USER_APP_NAME"
+    source_if_exists "$APP_HOME/.env/OPENSHIFT_APP_NAME"
 
     # Repo
     if [ ! -d $git_url ]; then
@@ -167,7 +167,7 @@ echo "export OPENSHIFT_DB_MYSQL_51_RESTORE='$CART_INFO_DIR/bin/mysql_restore.sh'
 echo "export OPENSHIFT_DB_MYSQL_51_EMBEDDED_TYPE='mysql-5.1'" > $APP_HOME/.env/OPENSHIFT_DB_MYSQL_51_EMBEDDED_TYPE
 
 ## Setup user
-dbname=${OPENSHIFT_USER_APP_NAME:-$application}
+dbname=${OPENSHIFT_APP_NAME:-$application}
 echo "drop database test;
 create database \`${dbname}\` DEFAULT CHARACTER SET utf8 DEFAULT COLLATE utf8_general_ci;" | mysql -u root -S "${MYSQL_DIR}/socket/mysql.sock" > /dev/null || error "Failed to create ${application}" 188
 

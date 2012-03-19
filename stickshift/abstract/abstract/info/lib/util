@@ -68,12 +68,12 @@ function get_app_type {
 
 function is_a_scalable_app {
     source /etc/stickshift/stickshift-node.conf
-    source_if_exists "${GEAR_BASE_DIR}/$uuid/.env/OPENSHIFT_USER_APP_NAME"
+    source_if_exists "${GEAR_BASE_DIR}/$uuid/.env/OPENSHIFT_APP_NAME"
     source_if_exists "${GEAR_BASE_DIR}/$uuid/.env/OPENSHIFT_GEAR_TYPE"
 
     # FIXME: Need better mechanism to evaluate if the app is scalable or not.
     [ "haproxy-1.4" = "$OPENSHIFT_GEAR_TYPE" ]         &&  return 0
-    [ "$application" != "$OPENSHIFT_USER_APP_NAME" ]  &&  return 0
+    [ "$application" != "$OPENSHIFT_APP_NAME" ]  &&  return 0
     return 1
 }
 

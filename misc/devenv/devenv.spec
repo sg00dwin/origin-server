@@ -8,7 +8,7 @@
 
 Summary:   Dependencies for OpenShift development
 Name:      rhc-devenv
-Version:   0.88.2
+Version:   0.89.1
 Release:   1%{?dist}
 Group:     Development/Libraries
 License:   GPLv2
@@ -281,6 +281,15 @@ cp -f %{devenvdir}/puppet-private.pem /var/lib/puppet/ssl/private_keys/localhost
 %{policydir}/*
 
 %changelog
+* Sat Mar 17 2012 Dan McPherson <dmcphers@redhat.com> 0.89.1-1
+- bump spec numbers (dmcphers@redhat.com)
+- use proper comments in named.conf (markllama@redhat.com)
+- rndc control requires TWO config files: rndc.conf and rndc.key
+  (markllama@redhat.com)
+- let rndc key auto-generate (mlamouri@redhat.com)
+- added real rndc.key (mlamouri@redhat.com)
+- correctly name default rndc key file (mlamouri@redhat.com)
+
 * Fri Mar 09 2012 Dan McPherson <dmcphers@redhat.com> 0.88.2-1
 - Updates for getting devenv running (kraman@gmail.com)
 - Renaming Cloud-SDK -> StickShift (kraman@gmail.com)

@@ -105,6 +105,21 @@ module LibraMigration
           Util.replace_in_file("#{app_dir}/data/config.xml", "<jenkinsUrl>.*</jenkinsUrl>", "")
           #Util.replace_in_file("#{app_dir}/data/hudson.tasks.Mailer.xml", "<hudsonUrl>.*</hudsonUrl>", "<hudsonUrl>#{jenkins_url}</hudsonUrl>")
         end
+
+        jenkins_configs=["#{app_dir}/data/config.xml"]
+        Dir.glob("#{app_dir}/data/jobs/*/config.xml") do |jobcfg|
+          jenkins_configs << "#{jobcfg}"
+        end
+
+        jenkins_configs.each do |jenkins_config|
+          Util.replace_in_file(jenkins_config, "OPENSHIFT_APP_NAME", "OPENSHIFT_GEAR_NAME")
+          ['builderSize', 'defaultBuilderSize'].each do |builder_opt|
+            { "std" => "small", "large" => "medium" }.each do |srcsize, dstsize|
+              Util.replace_in_file(jenkins_config, "<#{builder_opt}>#{srcsize}<\\/#{builder_opt}>", "<#{builder_opt}>#{dstsize}</#{builder_opt}>")
+            end
+          end
+        end
+
       end
 
       #mongodb-2.0

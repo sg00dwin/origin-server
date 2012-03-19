@@ -2,7 +2,7 @@
 %define frameworkdir %{_libexecdir}/stickshift/cartridges/mysql-5.1
 
 Name: rhc-cartridge-mysql-5.1
-Version: 0.22.7
+Version: 0.23.1
 Release: 1%{?dist}
 Summary: Provides embedded mysql support
 
@@ -71,6 +71,13 @@ rm -rf $RPM_BUILD_ROOT
 %doc %{cartridgedir}/LICENSE
 
 %changelog
+* Sat Mar 17 2012 Dan McPherson <dmcphers@redhat.com> 0.23.1-1
+- bump spec numbers (dmcphers@redhat.com)
+- USER_APP_NAME -> APP_NAME (dmcphers@redhat.com)
+- Merge branch 'master' of li-master:/srv/git/li (ramr@redhat.com)
+- Add deploy httpd proxy file to work with 'standalone' gears.
+  (ramr@redhat.com)
+
 * Thu Mar 15 2012 Dan McPherson <dmcphers@redhat.com> 0.22.7-1
 - Forgot to check in descriptive index.html for standalone mysql  - sync
   removed added files. (ramr@redhat.com)
