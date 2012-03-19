@@ -49,7 +49,7 @@ do
     chown root:root "$dst"
     chmod 0644 "$dst"
     chcon --reference="$xlate" "$dst"
-    if [ "$xlate" != "OPENSHIFT_APP_UUID" -a "$xlate" != "OPENSHIFT_APP_NAME" ]; then
+    if [ "$xlate" != "OPENSHIFT_APP_UUID" -a "$xlate" != "OPENSHIFT_APP_NAME" -a "$xlate" != "OPENSHIFT_APP_DNS" ]; then
       TRANSLATE_GEAR_VARS="$xlate $dst ${TRANSLATE_GEAR_VARS}"
       echo "export TRANSLATE_GEAR_VARS='${TRANSLATE_GEAR_VARS}'" > TRANSLATE_GEAR_VARS
       chown root:root TRANSLATE_GEAR_VARS

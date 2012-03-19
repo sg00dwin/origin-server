@@ -32,17 +32,18 @@ module StickShift
   # Represents a user account on the system.
   class UnixUser < Model
     include StickShift::Utils::ShellExec
-    attr_reader :uuid, :uid, :gid, :gecos, :homedir, :application_uuid, :container_uuid, :app_name, :quota_blocks, :quota_files
+    attr_reader :uuid, :uid, :gid, :gecos, :homedir, :application_uuid, :container_uuid, :app_name, :namespace, :quota_blocks, :quota_files
     
     DEFAULT_SKEL_DIR = File.join(StickShift::Config::CONF_DIR,"skel")
 
-    def initialize(application_uuid, container_uuid, user_uid=nil, app_name=nil, quota_blocks=nil, quota_files=nil)
+    def initialize(application_uuid, container_uuid, user_uid=nil, app_name=nil, namespace=nil, quota_blocks=nil, quota_files=nil)
       @config = StickShift::Config.instance
       
       @container_uuid = container_uuid
       @application_uuid = application_uuid
       @uuid = container_uuid
       @app_name = app_name
+      @namespace = namespace
       @quota_blocks = quota_blocks
       @quota_files = quota_files
       begin
@@ -225,6 +226,7 @@ module StickShift
       add_env_var("APP_UUID", @application_uuid, true)
       add_env_var("GEAR_UUID", @container_uuid, true)
       add_env_var("APP_NAME", @app_name, true)
+      add_env_var("APP_DNS", "#{@app_name}-#{@namespace}.#{@config.get("CLOUD_DOMAIN")}", true)
       add_env_var("HOMEDIR", @homedir.end_with?('/') ? @homedir : @homedir + '/', true)
       notify_observers(:after_initialize_homedir)
     end

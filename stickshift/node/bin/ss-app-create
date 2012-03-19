@@ -24,7 +24,7 @@ ss-app-create: Creates a new application container.
 
 == Usage
 
-ss-app-create --with-app-uuid APP_UUID --with-container-uuid UUID [--named NAME] [--with-uid UID] [--with-quota-blocks QUOTA_BLOCKS] [--with-quota-files QUOTA_FILES]
+ss-app-create --with-app-uuid APP_UUID --with-container-uuid UUID --with-namespace NAMESPACE [--named NAME] [--with-uid UID] [--with-quota-blocks QUOTA_BLOCKS] [--with-quota-files QUOTA_FILES]
 
 Options:
 -h|--help:
@@ -42,6 +42,7 @@ opts = GetoptLong.new(
     ["--with-app-uuid",       "-a", GetoptLong::REQUIRED_ARGUMENT],
     ["--with-container-uuid", "-c", GetoptLong::REQUIRED_ARGUMENT],
     ["--with-uid",            "-i", GetoptLong::REQUIRED_ARGUMENT],
+    ["--with-namespace",            GetoptLong::REQUIRED_ARGUMENT],
     ["--with-quota-blocks",         GetoptLong::REQUIRED_ARGUMENT],
     ["--with-quota-files",          GetoptLong::REQUIRED_ARGUMENT],
     ["--dry-run",             "-n", GetoptLong::NO_ARGUMENT],
@@ -71,6 +72,7 @@ uid = nil if uid && uid.empty?
 quota_blocks = args['--with-quota-blocks']
 quota_files = args['--with-quota-files']
 name = args['--named']
+namespace = args['--with-namespace']
 $dry_run = true if args['--dry-run']
 $ss_debug = true if args['--debug']
 $porcelin = args['--porcelain'] ? true : false
@@ -81,7 +83,7 @@ unless uuid
 end
 
 begin
-  container = StickShift::ApplicationContainer.new(uuid, uuid, uid, name, quota_blocks, quota_files)
+  container = StickShift::ApplicationContainer.new(uuid, uuid, uid, name, namespace, quota_blocks, quota_files)
   container.create
 rescue StickShift::UserCreationException => e
   $stderr.puts(e.message)
