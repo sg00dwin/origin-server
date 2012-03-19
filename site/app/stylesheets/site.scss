@@ -668,8 +668,7 @@ body > header {
   /* fallback */
   background: #191919 url($transparentNoiseImageData);
   background-image:
-    url('../images/mts.png'),
-    url('../images/stars.png'),
+    url('../images/comets.png'),
     url($transparentNoiseImageData);
   background-repeat:
     repeat-x,
@@ -718,7 +717,7 @@ body.community > header {
 
 /* home-specific styles */
 body.home {
-	overflow-x:hidden;
+
 		> header {
 	  background-color: #191919; 
 	  background-image:
