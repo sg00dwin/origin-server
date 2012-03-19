@@ -234,6 +234,7 @@ module Streamline
                      'confirmationUrl' => confirm_url}
 
     http_post(@@register_url, register_args, false) do |json|
+      Rails.logger.debug "Registration response #{json.inspect}"
       unless json['emailAddress']
         if errors.length == 0
           errors.add(:base, I18n.t(:unknown))

@@ -26,6 +26,7 @@ class LoginController < SiteController
 
   def show
     @redirectUrl = params[:redirectUrl] || @referrerRedirect
+    @user = WebUser.new
 
     # The login page should ensure the rh_sso cookie is empty
     cookies.delete :rh_sso, :domain => cookie_domain if cookies[:rh_sso]
