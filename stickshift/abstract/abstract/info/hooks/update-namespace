@@ -25,7 +25,7 @@ function mv_symlink {
     new_namespace=$2
     appname=$3
 
-    if [ $CREATE_APP_SYMLINKS -eq 1 ] && [ -d ${GEAR_BASE_DIR}/${appname}-${old_namespace} ]
+    if [ $CREATE_APP_SYMLINKS -eq 1 ] && [ -h ${GEAR_BASE_DIR}/${appname}-${old_namespace} ]
     then
         mv "${GEAR_BASE_DIR}/${appname}-${old_namespace}" "${GEAR_BASE_DIR}/${appname}-${new_namespace}"
     fi
