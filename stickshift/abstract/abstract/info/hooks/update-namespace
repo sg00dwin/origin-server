@@ -51,6 +51,11 @@ then
     echo "export OPENSHIFT_GEAR_DNS='${application}-${new_namespace}.${CLOUD_DOMAIN}'" > $APP_HOME/.env/OPENSHIFT_GEAR_DNS
 fi
 
+if [ -f $APP_HOME/.env/OPENSHIFT_APP_DNS ]
+then
+    sed -i "s/-${old_namespace}.${CLOUD_DOMAIN}/-${new_namespace}.${CLOUD_DOMAIN}/g" $APP_HOME/.env/OPENSHIFT_APP_DNS
+fi
+
 if [ -f "/etc/httpd/conf.d/stickshift/${uuid}_${old_namespace}_${application}.conf" ]
 then
   sed -i "s/ServerName ${application}-${old_namespace}./ServerName ${application}-${new_namespace}./" /etc/httpd/conf.d/stickshift/${uuid}_${old_namespace}_${application}/00000_default.conf

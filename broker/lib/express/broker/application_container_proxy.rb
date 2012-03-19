@@ -109,6 +109,7 @@ module Express
           cmd += " --named '#{app.name}'" if app.name
           cmd += " --with-quota-blocks '#{quota_blocks}'" if quota_blocks
           cmd += " --with-quota-files '#{quota_files}'" if quota_files
+          cmd += " --with-namespace '#{app.user.namespace}'"
           mcoll_reply = execute_direct(@@C_CONTROLLER, 'app-create', cmd)
           result = parse_result(mcoll_reply)
           if result.exitcode == 129 && has_uid_or_gid?(app.gear.uid) # Code to indicate uid already taken
