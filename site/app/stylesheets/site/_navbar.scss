@@ -21,6 +21,12 @@
     width: $logoWidth;
     margin-bottom: 13px;
   }
+  
+  .brand > a {
+    display: block;
+    color: #fff;
+    text-decoration:none;
+  }
 
   .brand > a > .brand-image {
     -moz-transition: all 0.2s;
@@ -200,3 +206,30 @@
   }
   
 }
+
+
+
+
+
+/* ie conditionals */
+.ie8 .navbar {
+    min-height: 130px;
+    padding-top: 30px;
+}
+.ie8 .navbar .brand {
+    left: 50%;
+    position: absolute;
+    top: 24px;
+    z-index: 1;
+}
+.ie8 .navbar .brand > a {
+    height: 125px;
+    left: -50%;
+    position: relative;
+    width: 111px;
+}
+.ie8 .navbar .nav {
+    margin-top: 20px;
+}
+
+
