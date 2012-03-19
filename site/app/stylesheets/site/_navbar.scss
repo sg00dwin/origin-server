@@ -21,6 +21,12 @@
     width: $logoWidth;
     margin-bottom: 13px;
   }
+  
+  .brand > a {
+    display: block;
+    color: #fff;
+    text-decoration:none;
+  }
 
   .brand > a > .brand-image {
     -moz-transition: all 0.2s;
