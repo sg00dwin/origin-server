@@ -1,5 +1,5 @@
 %define cartridgedir %{_libexecdir}/stickshift/cartridges/haproxy-1.4
-%define embeddedcartridgedir %{_libexecdir}/stickshift/cartridges/haproxy-1.4
+%define embeddedcartridgedir %{_libexecdir}/stickshift/cartridges/embedded/haproxy-1.4
 
 Summary:   Provides haproxy-1.4 support
 Name:      rhc-cartridge-haproxy-1.4
@@ -68,10 +68,10 @@ ln -s %{cartridgedir}/../abstract/info/hooks/system-messages %{buildroot}%{cartr
 
 # Embedded
 ln -s %{embeddedcartridgedir}/info/configuration/ %{buildroot}/%{_sysconfdir}/stickshift/cartridges/%{name}-embedded
-cp -r info_embedded %{buildroot}%{embeddedcartridgedir}/
+mkdir -p %{buildroot}%{embeddedcartridgedir}
+cp -r info_embedded %{buildroot}%{embeddedcartridgedir}/info
 cp LICENSE %{buildroot}%{embeddedcartridgedir}/
 cp COPYRIGHT %{buildroot}%{embeddedcartridgedir}/
-mkdir -p %{buildroot}%{embeddedcartridgedir}/info/data/
 cp -r git_template.git %{buildroot}%{embeddedcartridgedir}/info/data/
 ln -s %{embeddedcartridgedir}/../../abstract/info/hooks/add-module %{buildroot}%{embeddedcartridgedir}/info/hooks/add-module
 ln -s %{embeddedcartridgedir}/../../abstract/info/hooks/info %{buildroot}%{embeddedcartridgedir}/info/hooks/info
@@ -118,7 +118,7 @@ rm -rf %{buildroot}
 %attr(0755,-,-) %{embeddedcartridgedir}/info/bin/
 %attr(0755,-,-) %{embeddedcartridgedir}/info/connection-hooks/
 %config(noreplace) %{embeddedcartridgedir}/info/configuration/
-%{_sysconfdir}/stickshift/cartridges/%{name}
+%{_sysconfdir}/stickshift/cartridges/%{name}-embedded
 %{embeddedcartridgedir}/info/changelog
 %{embeddedcartridgedir}/info/control
 %{embeddedcartridgedir}/info/manifest.yml
