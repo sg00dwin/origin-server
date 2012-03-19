@@ -2,7 +2,7 @@
 
 Summary:   Provides JBossAS7 support
 Name:      rhc-cartridge-jbossas-7
-Version:   0.88.6
+Version:   0.89.1
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   ASL 2.0
@@ -122,6 +122,9 @@ rm -rf %{buildroot}
 %config(noreplace) %{cartridgedir}/info/configuration/
 
 %changelog
+* Sat Mar 17 2012 Dan McPherson <dmcphers@redhat.com> 0.89.1-1
+- bump spec numbers (dmcphers@redhat.com)
+
 * Thu Mar 15 2012 Dan McPherson <dmcphers@redhat.com> 0.88.6-1
 - US2003 (wdecoste@localhost.localdomain)
 - Expose the JBOSS cluster port along with the JBOSS port when exposed

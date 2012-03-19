@@ -5,7 +5,7 @@
 
 Summary:        Cloud Development Controller
 Name:           rubygem-%{gemname}
-Version:        0.6.10
+Version:        0.7.1
 Release:        1%{?dist}
 Group:          Development/Languages
 License:        ASL 2.0
@@ -75,6 +75,11 @@ rm -rf %{buildroot}
 %{ruby_sitelib}/%{gemname}.rb
 
 %changelog
+* Sat Mar 17 2012 Dan McPherson <dmcphers@redhat.com> 0.7.1-1
+- Updating gem versions (dmcphers@redhat.com)
+- bump spec numbers (dmcphers@redhat.com)
+- cleanup error message (rmillner@redhat.com)
+
 * Thu Mar 15 2012 Dan McPherson <dmcphers@redhat.com> 0.6.10-1
 - Updating gem versions (dmcphers@redhat.com)
 - when creating cart make sure to pass the server results back to the UI

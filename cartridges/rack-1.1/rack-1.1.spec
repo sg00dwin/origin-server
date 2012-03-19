@@ -2,7 +2,7 @@
 
 Summary:   Provides ruby rack support running on Phusion Passenger
 Name:      rhc-cartridge-rack-1.1
-Version:   0.88.5
+Version:   0.89.1
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   ASL 2.0
@@ -117,6 +117,9 @@ rm -rf %{buildroot}
 %doc %{cartridgedir}/LICENSE
 
 %changelog
+* Sat Mar 17 2012 Dan McPherson <dmcphers@redhat.com> 0.89.1-1
+- bump spec numbers (dmcphers@redhat.com)
+
 * Thu Mar 15 2012 Dan McPherson <dmcphers@redhat.com> 0.88.5-1
 - Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
   (mmcgrath@redhat.com)

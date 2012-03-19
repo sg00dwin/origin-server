@@ -4,7 +4,7 @@ Given /^an accepted node$/ do
   num_tries = 10
   (1..num_tries).each do |i|
     begin
-      pass = `sudo #{accept_node}`.chomp  
+      pass = `sudo #{accept_node} 2>&1`.chomp  
       exit_status = $?.exitstatus
       
       if i == num_tries

@@ -24,10 +24,10 @@ module StickShift
   class ApplicationContainer < Model
     attr_reader :uuid, :application_uuid, :user
     
-    def initialize(application_uuid, container_uuid, user_uid=nil, app_name=nil, quota_blocks=nil, quota_files=nil)
+    def initialize(application_uuid, container_uuid, user_uid=nil, app_name=nil, namespace=nil, quota_blocks=nil, quota_files=nil)
       @uuid = container_uuid
       @application_uuid = application_uuid
-      @user = UnixUser.new(application_uuid, container_uuid, user_uid, app_name, quota_blocks, quota_files)
+      @user = UnixUser.new(application_uuid, container_uuid, user_uid, app_name, namespace, quota_blocks, quota_files)
     end
     
     def name
