@@ -35,9 +35,11 @@ class EmailConfirmController < SiteController
     end
   end
 
-  def confirm(redirect_path=console_path)
+  def confirm(redirect_path=nil)
     key = params[:key]
     email = params[:emailAddress]
+
+    redirect_path ||= login_path(:email_address => email)
 
     @user = WebUser.new
 
