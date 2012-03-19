@@ -1,4 +1,4 @@
-policy_module(libra,1.1.9)
+policy_module(libra,1.1.10)
 
 ########################################
 #
@@ -185,6 +185,7 @@ files_dontaudit_search_spool(libra_app_domain)
 # Uncomment when we have selinux-policy-3.7.19-134.el6
 # files_dontaudit_list_var(libra_app_domain)
 files_read_etc_files(libra_app_domain)
+files_exec_etc_files(libra_app_domain)
 files_read_usr_files(libra_app_domain)
 files_dontaudit_getattr_non_security_sockets(libra_app_domain)
 # Uncomment when we have selinux-policy-3.7.19-133.el6
