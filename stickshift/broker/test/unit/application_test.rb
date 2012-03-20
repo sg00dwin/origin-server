@@ -26,7 +26,7 @@ class ApplicationTest < ActiveSupport::TestCase
     StickShift::ApplicationContainerProxy.any_instance.stubs(:get_public_hostname).returns("foo.bar")
     
     user = mock("user")
-    user.expects(:namespace).returns("dummy_namespace")    
+    # user.expects(:namespace).returns("dummy_namespace") 
     Application.expects(:notify_observers).with(:before_application_create, anything).in_sequence(observer_seq).once
     Application.expects(:notify_observers).with(:application_creation_success, anything).in_sequence(observer_seq).once
     Application.expects(:notify_observers).with(:after_application_create, anything).in_sequence(observer_seq).once
@@ -38,7 +38,7 @@ class ApplicationTest < ActiveSupport::TestCase
   
   test "configure_dependencies" do    
     user = mock("user")    
-    user.expects(:namespace).returns("dummy_namespace")    
+    # user.expects(:namespace).returns("dummy_namespace") 
     Application.any_instance.stubs(:framework).returns('dummy')
     Application.any_instance.stubs(:add_dns).returns(nil)
     Application.any_instance.stubs(:add_ssh_keys).returns(nil)
@@ -66,7 +66,7 @@ class ApplicationTest < ActiveSupport::TestCase
   
   test "deconfigure_dependencies" do
     user = mock("user")    
-    user.expects(:namespace).returns("dummy_namespace")    
+    # user.expects(:namespace).returns("dummy_namespace") 
     Application.any_instance.stubs(:framework).returns('dummy')
     Application.any_instance.stubs(:add_dns).returns(nil)
     Application.any_instance.stubs(:add_ssh_keys).returns(nil)

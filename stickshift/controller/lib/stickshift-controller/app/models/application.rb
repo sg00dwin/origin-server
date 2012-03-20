@@ -841,11 +841,8 @@ class Application < StickShift::Cartridge
     begin
       dns.deregister_application(@name,@user.namespace)
       if self.scalable
-        # add dns for web cart gears
-        wb = web_cart
         # find the group instance where the web-cartridge is residing
         self.group_instance_map.keys.each { |ginst_name|
-          next if not ginst_name.include? wb
           ginst = self.group_instance_map[ginst_name]
           ginst.gears.each { |gear|
             dns.deregister_application(gear.name,@user.namespace)
