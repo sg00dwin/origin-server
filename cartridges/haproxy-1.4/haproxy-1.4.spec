@@ -1,4 +1,4 @@
-%define cartridgedir %{_libexecdir}/stickshift/cartridges/haproxy-1.4
+%define cartridgedir %{_libexecdir}/stickshift/cartridges/haproxy-depricated-1.4
 %define embeddedcartridgedir %{_libexecdir}/stickshift/cartridges/embedded/haproxy-1.4
 
 Summary:   Provides haproxy-1.4 support
