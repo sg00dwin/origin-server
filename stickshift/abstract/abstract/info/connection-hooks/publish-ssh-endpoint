@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Start the application httpd instance
+# Publishes the endpoint for this gear. Output format = $uuid@$dns:$appname
 
 # Exit on any errors
 set -e
@@ -9,7 +9,7 @@ function print_help {
     echo "Usage: $0 app-name namespace uuid"
     echo "Start a running application"
 
-    echo "$0 $@" | logger -p local0.notice -t stickshift_publish_ssh_endpoint
+    echo "$0 $@" | logger -p local0.notice -t stickshift_publish_gear_endpoint
     exit 1
 }
 
@@ -34,6 +34,6 @@ setup_basic_hook
 import_env_vars
 
 #
-# Publish this gear's ssh endpoint.
+# Publish this gear's endpoint.
 # 
-echo "${OPENSHIFT_GEAR_UUID}@${OPENSHIFT_GEAR_DNS}"
+echo "${OPENSHIFT_GEAR_UUID}@${OPENSHIFT_GEAR_DNS}:${OPENSHIFT_GEAR_NAME}"
