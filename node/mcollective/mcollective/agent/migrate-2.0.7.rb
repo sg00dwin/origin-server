@@ -86,19 +86,19 @@ module LibraMigration
         symlink_output, symlink_exitcode = Util.execute_script("/usr/bin/migration-symlink-as-user #{app_name} #{uuid}  #{app_dir}/repo/.openshift/config/modules #{app_dir}/jbossas-7/standalone/configuration/modules 2>&1")
         output += symlink_output
       when 'jenkins-1.4'
-        files,exitcode = Util.execute_script("fgrep -r \"/usr/libexec/li/\" #{app_dir}/data | awk 'BEGIN { FS=\":\" } { print $1 }' | grep -v 'Binary file ' | sort -u")
-        files.each do |fpath|
-          unless fpath.end_with?("log")
-            Util.replace_in_file("#{fpath}", "/usr/libexec/li", "/usr/libexec/stickshift")
-          end
-        end
+        #files,exitcode = Util.execute_script("fgrep -r \"/usr/libexec/li/\" #{app_dir}/data | awk 'BEGIN { FS=\":\" } { print $1 }' | grep -v 'Binary file ' | sort -u")
+        #files.each do |fpath|
+        #  unless fpath.end_with?("log")
+        #    Util.replace_in_file("#{fpath}", "/usr/libexec/li", "/usr/libexec/stickshift")
+        #  end
+        #end
 
-        files,exitcode = Util.execute_script("fgrep -r \"/var/lib/libra/\" #{app_dir}/data | awk 'BEGIN { FS=\":\" } { print $1 }' | grep -v 'Binary file ' | sort -u")
-        files.each do |fpath|
-          unless fpath.end_with?("log")
-            Util.replace_in_file("#{fpath}", "/var/lib/libra", "/var/lib/stickshift")
-          end
-        end
+        #files,exitcode = Util.execute_script("fgrep -r \"/var/lib/libra/\" #{app_dir}/data | awk 'BEGIN { FS=\":\" } { print $1 }' | grep -v 'Binary file ' | sort -u")
+        #files.each do |fpath|
+        #  unless fpath.end_with?("log")
+        #    Util.replace_in_file("#{fpath}", "/var/lib/libra", "/var/lib/stickshift")
+        #  end
+        #end
 
         Util.replace_in_file("#{app_dir}/data/jobs/*/config.xml", "<builderType>raw-0.1</builderType>", "<builderType>diy-0.1</builderType>")
         if orig_jenkins_url

@@ -1,0 +1,87 @@
+#!/bin/bash
+
+# Creates a haproxy instance
+
+# Exit on any errors
+set -e
+
+function print_help {
+    echo "Usage: $0 app-name namespace uuid"
+
+    echo "$0 $@" | logger -p local0.notice -t stickshift_haproxy_configure
+    exit 1
+}
+
+while getopts 'd' OPTION
+do
+    case $OPTION in
+        d) set -x
+        ;;
+        ?) print_help
+        ;;
+    esac
+done
+
+
+[ $# -eq 3 ] || print_help
+
+source /etc/stickshift/stickshift-node.conf
+
+app_type="haproxy-1.4"
+
+source ${CARTRIDGE_BASE_PATH}/abstract/info/lib/util
+
+setup_configure "$1" $2 $3
+
+stop_app
+
+unobfuscate_app_home $uuid $namespace $application
+
+CART_INFO_DIR=${CARTRIDGE_BASE_PATH}/embedded/haproxy-1.4/info
+
+#
+# Create the core of the application
+#
+
+export APP_DIR="$APP_HOME/haproxy-1.4"
+
+mkdir -p "$APP_DIR"
+pushd "$APP_DIR" > /dev/null
+create_standard_app_dirs
+chown -R $uuid runtime
+mkdir -p conf conf.d logs sessions
+ln -s /usr/lib64/httpd/modules modules
+ln -s /etc/httpd/conf/magic conf/magic
+touch conf/gear-registry.git
+popd > /dev/null
+
+#
+# Find an open localhost IP
+#
+source ${GEAR_BASE_DIR}/${uuid}/.env/OPENSHIFT_INTERNAL_IP
+IP=$OPENSHIFT_INTERNAL_IP
+unset OPENSHIFT_INTERNAL_IP
+
+export IP2=`embedded_find_open_ip $uid "$APP_DIR/../"`
+echo "export OPENSHIFT_HAPROXY_STATUS_IP='$IP'" > "$APP_DIR/../.env/OPENSHIFT_HAPROXY_STATUS_IP"
+$CART_INFO_DIR/bin/deploy_httpd_config.sh $application $uuid $IP
+mkdir -p ${GEAR_BASE_DIR}/${uuid}/.openshift
+chown ${uuid} ${GEAR_BASE_DIR}/${uuid}/.openshift $APP_DIR/run/
+
+# Alter PATH
+OLD_PATH=$PATH
+source ${GEAR_BASE_DIR}/${uuid}/.env/PATH
+echo "PATH=/usr/libexec/stickshift/cartridges/embedded/haproxy-1.4/info/bin/:$PATH" > ${GEAR_BASE_DIR}/${uuid}/.env/PATH
+PATH=$OLD_PATH
+
+#
+# Start the server
+#
+start_app
+
+#
+# Create virtualhost definition for apache
+#
+$CART_INFO_DIR/bin/deploy_httpd_proxy.sh $application $namespace $uuid $IP
+
+restart_httpd_graceful
