@@ -6,7 +6,7 @@ STDERR.sync = true
 @hostname = ENV['JENKINS_URL'].split("/")[-1]
 
 def reload
-  status_code = `curl -s -w %{http_code} --output /dev/null -X POST --insecure http://${JENKINS_USERNAME}:${JENKINS_PASSWORD}@#{@hostname}/reload`
+  status_code = `curl -s -w %{http_code} --output /dev/null -X POST --insecure https://${JENKINS_USERNAME}:${JENKINS_PASSWORD}@#{@hostname}/reload`
   
   if status_code != '302' && status_code != '200' # returns a 302 but checking 200 just to be safe
     exit 1
