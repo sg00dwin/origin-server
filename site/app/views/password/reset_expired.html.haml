@@ -1,0 +1,11 @@
+- content_for :page_title, 'Unable to reset password'
+
+%h1.ribbon Unable to reset password
+
+%section
+  %p
+    This password reset request is no longer valid. This could be caused by the link 
+    being more than 24 hours old or already been used. Please try to reset your password 
+    again.
+
+  %p= link_to '« Reset your password again', new_password_path(:email_address => @user.email_address)

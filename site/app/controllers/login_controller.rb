@@ -1,162 +1,75 @@
-require 'pp'
-require 'net/http'
-require 'net/https'
-require 'uri'
-
 class LoginController < SiteController
 
-  before_filter :new_forms, :only => [:show]
+  layout 'simple'
 
-  def show_flex
-    @register_url = user_new_flex_url
-    @default_login_workflow = flex_path
-    show
+  before_filter :new_forms, :only => [:show]
+  before_filter :check_referrer, :only => :show
+
+  def check_referrer
+    if request.referer && request.referer != '/'
+      referrer = URI.parse(request.referer)
+      if remote_request? referrer
+        logger.debug "Logging out user referred from: #{referrer.to_s}"
+        reset_sso
+      end
+      @referrerRedirect = valid_referrer(referrer)
+      logger.debug "Stored referrer #{@referrerRedirect}"
+    end
   end
-  
-  def show_express
-    @register_url = user_new_express_url
-    @default_login_workflow = express_path
-    show
+
+  def valid_referrer(referrer)
+    case
+    when referrer.path.starts_with?(user_new_flex_path); flex_path
+    when referrer.path.starts_with?(login_flex_path); flex_path
+    when referrer.path.starts_with?(login_path); nil
+    else referrer.to_s
+    end
   end
 
   def show
-    if logged_in?
-      redirect_to default_logged_in_redirect and return
-    end
+    @redirectUrl = params[:redirectUrl] || @referrerRedirect
+    user_params = params[:web_user] || params
+    @user = WebUser.new :rhlogin => (user_params[:rhlogin] || user_params[:email_address])
 
-    remote_request = false
-    referrer = nil
-    if request.referer && request.referer != '/'
-      referrer = URI.parse(request.referer)
-      Rails.logger.debug "Referrer: #{referrer.to_s}"
-      remote_request = remote_request?(referrer)
-      if remote_request
-        Rails.logger.debug "Logging out user referred from: #{referrer.to_s}"
-        reset_sso
-      end
-    end
-    @register_url = @register_url ? @register_url : user_new_express_url
-    if params[:redirectUrl]
-      session[:login_workflow] = params[:redirectUrl]
-    else
-      setup_login_workflow(referrer, remote_request)
-    end
-    Rails.logger.debug "Session workflow in LoginController#show: #{workflow}"
-    render :show, :layout => 'simple'
+    # The login page should ensure the rh_sso cookie is empty
+    cookies.delete :rh_sso, :domain => cookie_domain if cookies[:rh_sso]
   end
 
   def create
-    referrer = URI.parse(request.referer)
-    setup_login_workflow(referrer, false)
+    @redirectUrl = params[:redirectUrl] || default_logged_in_redirect
+    user_params = params[:web_user] || params
 
-    # Keep track of response information
-    responseText = {}
+    @user = WebUser.new
+    if @user.authenticate(user_params[:rhlogin], user_params[:password])
+      session[:login] = @user.rhlogin
+      session[:ticket] = @user.ticket
+      session[:user] = @user
+      session[:ticket_verified] = Time.now.to_i
 
-    unless Rails.configuration.integrated
-      Rails.logger.warn "Non integrated environment - faking login"
-      session[:login] = params['login']
-      session[:ticket] = "test"
-      session[:user] = WebUser.new(:email_address => params['login'], :rhlogin => params['login'])
-      cookies[:rh_sso] = domain_cookie_opts(:value => 'test')
-      Rails.logger.debug "Session workflow in LoginController#create: #{workflow}"
-      Rails.logger.debug "Redirecting to home#index"
-      @message_type = 'success'
       set_previous_login_detection
+      cookies[:rh_sso] = domain_cookie_opts(:value => @user.ticket)
 
-      # Added options to make sure non-integrated environment works
-      responseText[:status] = 200
-      responseText[:redirectUrl] = defined?(params[:redirectUrl]) ? params[:redirectUrl] : root_url
+      logger.debug "Authenticated with cookie #{cookies[:rh_sso]} redirecting to #{@redirectUrl}"
+      redirect_to @redirectUrl
     else
-      
-      res, responseText[:status] = handle_remote_login(params[:login], params[:password])
-  
-      case res
-        when Net::HTTPSuccess, Net::HTTPRedirection
-          # Decode the JSON response
-          json = ActiveSupport::JSON::decode(res.body)
-  
-          # Set cookie and session information
-          Rails.logger.debug "Cookies sent: #{YAML.dump res.header['set-cookie']}"
-          cookie = res.header['set-cookie']
-          if cookie
-            @message_type = 'success'
-            rh_sso = cookie.split('; ')[0].split('=')[1]
-            cookies[:rh_sso] = domain_cookie_opts(:value => rh_sso)
-            session[:ticket] = rh_sso
-            responseText[:redirectUrl] = defined?(params[:redirectUrl]) ? params[:redirectUrl] : root_url
-            set_previous_login_detection
-          else 
-            Rails.logger.debug "Unknown error (no cookie sent): #{res.code}"
-            responseText[:warning] = flash[:error] = 'An unknown error occurred'
-          end 
-        when Net::HTTPUnauthorized
-          Rails.logger.debug 'Unauthorized'
-          responseText[:warning] = flash[:error] = 'Invalid username or password'
-        else
-          Rails.logger.debug "Unknown error: #{res.code}"
-          responseText[:warning] = flash[:error] = 'An unknown error occurred'
-        end
+      logger.debug "Authentication failed"
+      @user.rhlogin = user_params[:rhlogin] #preserve user login for next request
+      render :show
     end
-
-    respond_to do |format|
-      format.html do
-        # Fallback for those without js
-        if @message_type == 'success'
-          redirect_to defined?(params[:redirectUrl]) ? params[:redirectUrl] : root_url
-        else
-          redirect_to login_path
-        end
-      end
-      format.js do
-        render(:json => responseText, :status => responseText[:status] ) and return
-      end
-    end
-
   end
 
   # Helper to apply common defaults to cookie options
   def domain_cookie_opts(opts)
-    defaults = {
-      :secure => true,
-      :path => '/'
-    }
-    if Rails.configuration.integrated
-      defaults[:domain] = '.redhat.com'
-    end
-    defaults.merge(opts)
+    {
+      :secure => true, 
+      :path => '/', 
+      :domain => cookie_domain
+    }.merge!(opts)
   end
-  
-  def handle_remote_login(login, password)
-    # Do the remote login
-    uri = URI.join( Rails.configuration.streamline[:host], Rails.configuration.streamline[:login_url])
-    
-    # Create the HTTPS object
-    https = Net::HTTP.new( uri.host, uri.port )
-    Rails.logger.debug "Integrated login, use SSL"
-    https.use_ssl = true
-    # TODO: Need to figure out where CAs are so we can do something like:
-    #   http://goo.gl/QLFFC
-    https.verify_mode = OpenSSL::SSL::VERIFY_NONE
-      
-    # Make the request
-    req = Net::HTTP::Post.new( uri.path )
-    req.set_form_data({:login => login, :password => password})
-  
-    # Create the request
-    # Add timing code
-    start_time = Time.now
-    res = https.start{ |http| http.request(req) }
-    code = res.code
-    
-    end_time = Time.now
-    Rails.logger.debug "Response from Streamline took (#{uri.path}): #{(end_time - start_time)*1000} ms"
-  
-    Rails.logger.debug "Status received: #{res.code}"
-    Rails.logger.debug "-------------------"
-    Rails.logger.debug res.header.to_yaml
-    Rails.logger.debug "-------------------"
-    
-    return res, code
+
+  # Set previous log in detection cookie
+  def set_previous_login_detection
+    cookies.permanent[:prev_login] = true
   end
-  
+
 end

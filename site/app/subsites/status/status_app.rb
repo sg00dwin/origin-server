@@ -3,18 +3,13 @@ require 'haml'
 require 'json'
 require 'uri'
 
-MY_ROOT = File.expand_path(File.dirname(__FILE__))
-$LOAD_PATH << File.join(MY_ROOT,'lib')
-
 require 'models'
 require 'database'
 require 'helpers'
 
-HOSTS = YAML.load(File.open(File.join(MY_ROOT,'config','hosts.yml')))
-
 class StatusApp < Sinatra::Base
   configure do
-    set :views, File.join(MY_ROOT,'views')
+    set :views, File.join(STATUS_APP_ROOT,'views')
     set :synced, false
   end
 
@@ -23,7 +18,7 @@ class StatusApp < Sinatra::Base
     @base = URI.parse(request.path_info).path.split('/')[0..-2].join('/')
     if !settings.synced && Issue.all.empty?
       _log("Not synced")
-      sync(sprintf(HOSTS[:template],HOSTS[:host]))
+      sync(sprintf(STATUS_APP_HOSTS[:template],STATUS_APP_HOSTS[:host]))
     end
   end
   
@@ -39,13 +34,13 @@ class StatusApp < Sinatra::Base
   end
   
   get '*/status/sync/?' do
-    redirect "*/status/sync/#{HOSTS[:host]}"
+    redirect "*/status/sync/#{STATUS_APP_HOSTS[:host]}"
   end
 
   get '*/status/sync/:server' do
     server = params[:server]
     _log "Syncing to #{server}"
-    sync(sprintf(HOSTS[:template],server))
+    sync(sprintf(STATUS_APP_HOSTS[:template],server))
     redirect '*/status'
   end
 

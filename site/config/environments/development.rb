@@ -40,7 +40,8 @@ RedHatCloud::Application.configure do
     :login_url => '/wapps/streamline/login.html',
     :logout_url => '/wapps/sso/logout.html',
     :register_secret => '',
-    :user_info_secret => ''
+    :user_info_secret => '',
+    :cookie_domain => :current
   }
   config.captcha_secret = 'zvw5LiixMB0I4mjk06aR'
   config.sso_verify_interval = 0

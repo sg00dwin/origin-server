@@ -98,15 +98,21 @@ class ApplicationController < ActionController::Base
         Rails.logger.debug "Unexpected HTTP status from logout: #{res.code}"
       end
     end
-
     Rails.logger.debug "Removing current SSO cookie value of '#{cookies[:rh_sso]}'"
-    if Rails.configuration.integrated
-      cookies.delete :rh_sso, :domain => '.redhat.com'
-    else
-      cookies.delete :rh_sso
-    end
+    cookies.delete :rh_sso, :domain => cookie_domain
   end
   
+  # The domain that the user's cookie should be stored under
+  def cookie_domain
+    domain = Rails.configuration.streamline[:cookie_domain] || 'redhat.com'
+    case domain
+    when :current; request.host
+    when :nil; nil
+    when nil; nil
+    else (domain[0..0] == '.') ? domain : ".#{domain}"
+    end
+  end
+
   def redirect_to_logout
     redirect_to logout_path and return
   end
@@ -145,7 +151,7 @@ class ApplicationController < ActionController::Base
   end
   
   def default_logged_in_redirect
-    return @default_login_workflow ? @default_login_workflow : product_overview_path
+    @default_login_workflow || console_path
   end
 
   def remote_request?(referrer)
@@ -326,11 +332,6 @@ class ApplicationController < ActionController::Base
   def deny_access
     Rails.logger.debug 'Access denied to this controller'
     redirect_to root_path
-  end
-  
-  # Set previous log in detection cookie
-  def set_previous_login_detection
-    cookies.permanent[:prev_login] = true
   end
   
   def sauce_testing?

@@ -1,7 +1,7 @@
-- content_for :page_title do
-  OpenShift Change Password
+- content_for :page_title, 'OpenShift Change Password'
 
-%h1 Change Your Password
+%h1 Change your password
+
 = semantic_form_for @user, :url => edit_password_path, :simple => true, :html => {:method => :put, :class => 'form-inline'} do |f|
   %p When choosing a password we recommend using numbers, symbols, and upper and lower case letters for extra security.
   = f.inputs do

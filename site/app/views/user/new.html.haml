@@ -6,7 +6,7 @@
     = form.hidden_field :cloud_access_choice, :value => (@product == CloudAccess::FLEX_NAME ? CloudAccess::FLEX : CloudAccess::EXPRESS)
     = form.semantic_errors :captcha
     = form.inputs do
-      = form.input :email_address, :input_html => { :type => 'email', :class => 'input-xlarge', :placeholder => 'Enter a valid email address' }
+      = form.input :email_address, :input_html => { :type => 'email', :class => 'input-xlarge', :placeholder => 'Enter a valid email address', :autofocus => true }
       = form.input :password, :input_html => { :class => 'input-xlarge', :autocomplete => 'off', :placeholder => 'At least 6 characters', :maxlength => '50' }
       = form.input :password_confirmation, :input_html => { :class => 'input-xlarge', :autocomplete => 'off', :placeholder => 'Enter it again', :maxlength => '50' }
       = form.input :promo_code, :label => 'Promotional Code', :required => false, :input_html => { :class => 'input-xlarge' }

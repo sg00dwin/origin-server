@@ -16,7 +16,7 @@ class BootstrapFormBuilder < Formtastic::SemanticFormBuilder
 
   # remove once all forms converted
   def new_forms_enabled?
-    template.instance_variable_get('@new_forms_enabled')
+    true #template.instance_variable_get('@new_forms_enabled')
   end
 
   # set the default css class

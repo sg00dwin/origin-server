@@ -1,8 +1,13 @@
 require 'rubygems'
-require 'sinatra'
+#require 'sinatra'
 require 'webrick'
 require 'webrick/https'
 require 'openssl'
+
+STATUS_APP_ROOT = File.expand_path(File.dirname(__FILE__))
+$LOAD_PATH << File.join(STATUS_APP_ROOT, 'lib')
+
+STATUS_APP_HOSTS = YAML.load(File.open(File.join(STATUS_APP_ROOT,'config','hosts.yml')))
 
 webrick_options = {
   :Port => 443,
