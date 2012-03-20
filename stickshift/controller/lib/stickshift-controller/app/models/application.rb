@@ -1,7 +1,7 @@
 require 'state_machine'
 
 class Application < StickShift::Cartridge
-  attr_accessor :user, :creation_time, :uuid, :aliases, :cart_data, :optimize,
+  attr_accessor :user, :creation_time, :uuid, :aliases, :cart_data, 
                 :state, :group_instance_map, :comp_instance_map, :conn_endpoints_list,
                 :domain, :group_override_map, :working_comp_inst_hash,
                 :working_group_inst_hash, :configure_order, :start_order,
@@ -9,7 +9,7 @@ class Application < StickShift::Cartridge
   primary_key :name
   exclude_attributes :user, :comp_instance_map, :group_instance_map, 
                 :working_comp_inst_hash, :working_group_inst_hash,
-                :init_git_url
+                :init_git_url, :group_override_map
   include_attributes :comp_instances, :group_instances
 
   APP_NAME_MAX_LENGTH = 32
@@ -48,7 +48,6 @@ class Application < StickShift::Cartridge
   def initialize(user=nil, app_name=nil, uuid=nil, node_profile=nil, framework=nil, template=nil, will_scale=false)
     self.user = user
     self.node_profile = node_profile
-    self.optimize = false
     
     if template.nil?
       from_descriptor({"Name"=>app_name, "Subscribes"=>{"doc-root"=>{"Type"=>"FILESYSTEM:doc-root"}}})
@@ -429,21 +428,19 @@ class Application < StickShift::Cartridge
       pub_ginst = self.group_instance_map[pub_inst.group_instance_name]
 
       tag = ""
-      handle = create_parallel_job
-      run_parallel_on_gears(pub_ginst.gears, handle) { |exec_agent, gear|
+      handle = RemoteJob.create_parallel_job
+      RemoteJob.run_parallel_on_gears(pub_ginst.gears, handle) { |exec_handle, gear|
         appname = gear.uuid[0..9]
         appname = self.name if pub_inst.parent_cart_name == self.framework
         connector_name = conn.from_connector.name
         cart = pub_inst.parent_cart_name
         input_args = [appname, self.user.namespace, gear.uuid]
         args = "--gear-uuid '#{gear.uuid}' --cart-name '#{cart}' --hook-name '#{connector_name}' " + input_args.join(" ")
-        mc_args = { :cartridge => 'stickshift-node', 
-                    :action => 'connector-execute',
-                    :args => args }
-        add_parallel_job(exec_agent, tag, gear, mc_args)
+        job = RemoteJob.new('stickshift-node', 'connector-execute', args)
+        RemoteJob.add_parallel_job(exec_handle, tag, gear, job)
       }
       pub_out = []
-      get_parallel_run_results(handle) { |tag, gear, output, status|
+      RemoteJob.get_parallel_run_results(handle) { |tag, gear, output, status|
         if status==0
           pub_out.push("'#{gear}'='#{output}'")
         end
@@ -453,67 +450,24 @@ class Application < StickShift::Cartridge
 
       sub_inst = self.comp_instance_map[conn.to_comp_inst]
       sub_ginst = self.group_instance_map[sub_inst.group_instance_name]
-      handle = create_parallel_job
-      run_parallel_on_gears(sub_ginst.gears, handle) { |exec_agent, gear|
+      handle = RemoteJob.create_parallel_job
+      RemoteJob.run_parallel_on_gears(sub_ginst.gears, handle) { |exec_handle, gear|
         appname = gear.uuid[0..9]
         appname = self.name if sub_inst.parent_cart_name == self.framework
         connector_name = conn.to_connector.name
         cart = sub_inst.parent_cart_name
         input_args = [appname, self.user.namespace, gear.uuid, input_to_subscriber]
         args = "--gear-uuid '#{gear.uuid}' --cart-name '#{cart}' --hook-name '#{connector_name}' " + input_args.join(" ")
-        mc_args = { :cartridge => 'stickshift-node', 
-                    :action => 'connector-execute',
-                    :args => args }
-        add_parallel_job(exec_agent, tag, gear, mc_args)
+        job = RemoteJob.new('stickshift-node', 'connector-execute', args)
+        RemoteJob.add_parallel_job(exec_handle, tag, gear, job)
       }
       # we dont care about subscriber's output/status
     }
   end
 
-  def create_parallel_job
-    return { }
-  end
-
-  def run_parallel_on_gears(gears, handle, &block)
-    gears.each { |gear|
-      block.call(handle, gear)
-    }
-    # now execute
-    begin
-      StickShift::ApplicationContainerProxy.execute_parallel_jobs(handle)
-    rescue Exception=>e
-      Rails.logger.error e.message
-      Rails.logger.error e.inspect
-      Rails.logger.error e.backtrace.inspect        
-      raise e
-    end
-  end
-
-  def add_parallel_job(handle, tag, gear, job)
-    parallel_job = { 
-                     :tag => tag,
-                     :gear => gear.uuid,
-                     :job => job,
-                     :result_stdout => "",
-                     :result_stderr => "",
-                     :result_exit_code => ""
-                   }
-    job_list = handle[gear.get_proxy.id] || []
-    job_list << parallel_job
-    handle[gear.get_proxy.id] = job_list
-  end
-
-  def get_parallel_run_results(handle, &block)
-    handle.each { |id, job_list|
-      job_list.each { |parallel_job|
-        block.call(parallel_job[:tag], parallel_job[:gear], parallel_job[:result_stdout], parallel_job[:result_exit_code])
-      }
-    }
-  end
-
   # execute all connections
   def execute_connections
-    return execute_connections_optimized if self.optimize
+    return execute_connections_optimized 
     return if not self.scalable
     self.conn_endpoints_list.each { |conn|
       # get publisher's gears, execute the connector, and
@@ -1184,14 +1138,20 @@ class Application < StickShift::Cartridge
   end
 
   def add_group_override(from, to)
+    prof = @profile_name_map[@default_profile]
+    prof.group_overrides = [] if prof.group_overrides.nil?
+    prof.group_overrides << [from, to]
+  end
+
+  def create_group_override(from, to)
     # assuming from/to to be cartridge names as of now
     # this also means that one cannot issue a group override at a lower hierarchy 
     #   (e.g. some new cartridge that uses mysql inside it, and app wants to co-locate/re-use that mysql for app's use)
     # this also means that one cannot have two instances of the same cartridge
     from_cart = CartridgeCache.find_cartridge(from)
-    raise StickShift::NodeException.new("Cartridge #{from} not found.", "-101", ResultIO.new) if from_cart.nil?
+    raise StickShift::NodeException.new("Cartridge #{from} not found, while resolving group overrides.", "-101", ResultIO.new) if from_cart.nil?
     to_cart = CartridgeCache.find_cartridge(to)
-    raise StickShift::NodeException.new("Cartridge #{to} not found.", "-101", ResultIO.new) if to_cart.nil?
+    raise StickShift::NodeException.new("Cartridge #{to} not found, while resolving group overrides.", "-101", ResultIO.new) if to_cart.nil?
     begin 
       from_group = from_cart.find_profile(nil).groups[0]
       to_group = to_cart.find_profile(nil).groups[0]
@@ -1302,18 +1262,20 @@ private
   end
   
   def generate_group_overrides(default_profile)
-    if not default_profile.group_overrides.empty?
-      default_profile.group_overrides.each do |n, v|
-        add_group_override(n,v)
-      end
-    else
-      default_profile = @profile_name_map[@default_profile]
-      first_group = default_profile.groups[0]
-      default_profile.groups.each do |g|
-        next if first_group==g
-        self.group_override_map[self.get_name_prefix + g.get_name_prefix] = self.get_name_prefix + first_group.get_name_prefix
-      end
+    default_profile.group_overrides.each do |go|
+      go_copy = go.dup
+      n = go_copy.pop
+      go_copy.each { |v|
+        create_group_override(n,v)
+      }
     end
+    return
+    #  default_profile = @profile_name_map[@default_profile]
+    #   first_group = default_profile.groups[0]
+    #   default_profile.groups.each do |g|
+    #     next if first_group==g
+    #     self.group_override_map[self.get_name_prefix + g.get_name_prefix] = self.get_name_prefix + first_group.get_name_prefix
+    #   end
   end
   
   def auto_merge_top_groups(default_profile)

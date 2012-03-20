@@ -10,7 +10,7 @@ module StickShift
     def initialize
       self.generated = false
       self.provides = []
-      self.group_overrides = {}
+      self.group_overrides = nil
     end
     
     def components=(data)
@@ -136,12 +136,11 @@ module StickShift
         end
       end
 
-      self.group_overrides = {}
+      self.group_overrides = [] if self.group_overrides.nil?
       if spec_hash.has_key?("GroupOverrides")
         spec_hash["GroupOverrides"].each do |go|
           # each group override is a list
-          map_to = go.pop
-          go.each { |g| group_overrides[g] = map_to }
+          group_overrides << go.dup
         end
       end
       self
