@@ -41,15 +41,17 @@ class GroupInstance < StickShift::UserModel
   
   def add_gear(app)
     gear = Gear.new(app, self)
+    #FIXME: backward compat: first gears UUID = app.uuid
+    gear.uuid = app.uuid if not app.scalable
     create_result = gear.create
     unless create_result.exitcode == 0
       raise NodeException.new("Unable to create gear on node", "-100", create_result)
     end
-    app.add_dns(gear.uuid[0..9], app.user.namespace, gear.get_proxy.get_public_hostname)
+    self.gears << gear
+    app.add_dns(gear.name, app.user.namespace, gear.get_proxy.get_public_hostname)
     app.add_system_ssh_keys([gear])
     app.add_ssh_keys([gear])
     app.add_system_env_vars([gear])
-    self.gears << gear
     return [create_result, gear]
   end
 
