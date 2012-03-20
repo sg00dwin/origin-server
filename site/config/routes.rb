@@ -22,8 +22,9 @@ RedHatCloud::Application.routes.draw do
 
     match 'email_confirm' => 'email_confirm#confirm'
     match 'email_confirm_external/:registration_referrer' => 'email_confirm#confirm_external'
-    match 'email_confirm_flex' => 'email_confirm#confirm_flex'
-    match 'email_confirm_express' => 'email_confirm#confirm_express'
+    # Legacy redirects
+    match 'email_confirm_flex' => redirect {|p, req| "/app/email_confirm?#{req.query_string}"}
+    match 'email_confirm_express' => redirect {|p, req| "/app/email_confirm?#{req.query_string}"}
 
     match 'platform' => 'product#overview', :as => 'product_overview'
 
