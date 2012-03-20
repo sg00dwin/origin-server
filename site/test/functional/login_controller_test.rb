@@ -18,11 +18,11 @@ class LoginControllerTest < ActionController::TestCase
   end
 
   def integrated_user
-    {:login => 'ccoleman@redhat.com', :password => 'aoeuaoeu'}
+    {:rhlogin => 'ccoleman@redhat.com', :password => 'aoeuaoeu'}
   end
 
   def internal_user
-    {:login => 'test', :password => 'password'}
+    {:rhlogin => 'test', :password => 'password'}
   end
 
   test "should get index" do
