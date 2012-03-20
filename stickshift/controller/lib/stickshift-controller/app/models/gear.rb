@@ -1,5 +1,5 @@
 class Gear < StickShift::UserModel
-  attr_accessor :uuid, :uid, :server_identity, :group_instance_name, :node_profile, :container, :app, :configured_components
+  attr_accessor :uuid, :uid, :server_identity, :group_instance_name, :node_profile, :container, :app, :configured_components, :name
   primary_key :uuid
   exclude_attributes :container, :app
   
