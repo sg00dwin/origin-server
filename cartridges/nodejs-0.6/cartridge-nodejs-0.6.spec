@@ -1,7 +1,7 @@
 %define cartridgedir %{_libexecdir}/stickshift/cartridges/nodejs-0.6
 
 Summary:   Provides Node-0.6 support
-Name:      rhc-cartridge-nodejs-0.6
+Name:      cartridge-nodejs-0.6
 Version:   0.4.3
 Release:   1%{?dist}
 Group:     Development/Languages

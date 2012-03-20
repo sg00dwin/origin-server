@@ -1,7 +1,7 @@
 %define cartridgedir %{_libexecdir}/stickshift/cartridges/perl-5.10
 
 Summary:   Provides mod_perl support
-Name:      rhc-cartridge-perl-5.10
+Name:      cartridge-perl-5.10
 Version:   0.20.3
 Release:   1%{?dist}
 Group:     Development/Languages

@@ -1,7 +1,7 @@
 %define cartridgedir %{_libexecdir}/stickshift/cartridges/jenkins-1.4
 
 Summary:   Provides jenkins-1.4 support
-Name:      rhc-cartridge-jenkins-1.4
+Name:      cartridge-jenkins-1.4
 Version:   0.89.2
 Release:   1%{?dist}
 Group:     Development/Languages

@@ -1,7 +1,7 @@
 %define cartridgedir %{_libexecdir}/stickshift/cartridges/jbossas-7
 
 Summary:   Provides JBossAS7 support
-Name:      rhc-cartridge-jbossas-7
+Name:      cartridge-jbossas-7
 Version:   0.89.3
 Release:   1%{?dist}
 Group:     Development/Languages
@@ -30,7 +30,7 @@ Requires: maven
 
 #Requires: apr
 
-Obsoletes: rhc-cartridge-jbossas-7.0
+Obsoletes: cartridge-jbossas-7.0
 
 BuildArch: noarch
 

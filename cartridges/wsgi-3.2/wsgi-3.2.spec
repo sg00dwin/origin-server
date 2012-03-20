@@ -1,7 +1,7 @@
 %define cartridgedir %{_libexecdir}/stickshift/cartridges/python-2.6
 
 Summary:   Provides python-wsgi-3.2 support
-Name:      rhc-cartridge-wsgi-3.2
+Name:      cartridge-wsgi-3.2
 Version:   0.89.4
 Release:   1%{?dist}
 Group:     Development/Languages

@@ -1,6 +1,6 @@
 %define cartridgedir %{_libexecdir}/stickshift/cartridges/embedded/10gen-mms-agent-0.1
 
-Name: rhc-cartridge-10gen-mms-agent-0.1
+Name: cartridge-10gen-mms-agent-0.1
 Version: 1.7.1
 Release: 1%{?dist}
 Summary: Embedded 10gen MMS agent for performance monitoring of MondoDB
@@ -13,7 +13,7 @@ BuildRoot:    %(mktemp -ud %{_tmppath}/%{name}-%{version}-%{release}-XXXXXX)
 BuildArch: noarch
 
 Requires: stickshift-abstract
-Requires: rhc-cartridge-mongodb-2.0
+Requires: cartridge-mongodb-2.0
 Requires: pymongo
 Requires: mms-agent
 

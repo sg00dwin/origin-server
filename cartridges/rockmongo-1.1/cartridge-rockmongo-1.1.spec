@@ -1,6 +1,6 @@
 %define cartridgedir %{_libexecdir}/stickshift/cartridges/embedded/rockmongo-1.1
 
-Name: rhc-cartridge-rockmongo-1.1
+Name: cartridge-rockmongo-1.1
 Version: 1.7.1
 Release: 1%{?dist}
 Summary: Embedded RockMongo support for OpenShift
@@ -12,7 +12,7 @@ Source0: %{name}-%{version}.tar.gz
 BuildRoot:    %(mktemp -ud %{_tmppath}/%{name}-%{version}-%{release}-XXXXXX)
 BuildArch: noarch
 Requires: stickshift-abstract
-Requires: rhc-cartridge-mongodb-2.0
+Requires: cartridge-mongodb-2.0
 Requires: php-devel
 
 %description

@@ -2,7 +2,7 @@
 %define frameworkdir %{_libexecdir}/stickshift/cartridges/haproxy-1.4
 
 Summary:   Provides embedded haproxy-1.4 support
-Name:      rhc-cartridge-haproxy-1.4
+Name:      cartridge-haproxy-1.4
 Version:   0.7.5
 Release:   1%{?dist}
 Group:     Network/Daemons

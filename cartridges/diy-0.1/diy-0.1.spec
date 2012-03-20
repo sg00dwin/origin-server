@@ -1,7 +1,7 @@
 %define cartridgedir %{_libexecdir}/stickshift/cartridges/diy-0.1
 
 Summary:   Provides diy support
-Name:      rhc-cartridge-raw-0.1
+Name:      cartridge-diy-0.1
 Version:   0.23.3
 Release:   1%{?dist}
 Group:     Development/Languages

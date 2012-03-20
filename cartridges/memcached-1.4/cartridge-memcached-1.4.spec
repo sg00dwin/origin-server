@@ -1,6 +1,6 @@
 %define cartridgedir %{_libexecdir}/stickshift/cartridges/embedded/memcached-1.4
 
-Name: rhc-cartridge-memcached-1.4
+Name: cartridge-memcached-1.4
 Version: 0.2.0
 Release: 1%{?dist}
 Summary: Embedded memcached support for express

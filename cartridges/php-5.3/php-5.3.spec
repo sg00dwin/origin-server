@@ -1,7 +1,7 @@
 %define cartridgedir %{_libexecdir}/stickshift/cartridges/php-5.3
 
 Summary:   Provides php-5.3 support
-Name:      rhc-cartridge-php-5.3
+Name:      cartridge-php-5.3
 Version:   0.89.3
 Release:   1%{?dist}
 Group:     Development/Languages
