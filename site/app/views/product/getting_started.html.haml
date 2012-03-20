@@ -9,11 +9,11 @@
       .secondary Express is a free, cloud-based application platform for Java, Perl, PHP, Python, and Ruby applications. 
 
   - if logged_in?
-    = take_action console_path, 'Open the <strong>OpenShift Express</strong> Console'
+    = take_action console_path, 'Open the <strong>OpenShift</strong> Console'
   - else
-    = take_action '/app/user/new/express', 'Sign up to try <strong>OpenShift Express</strong>'
+    = take_action '/app/user/new/express', 'Sign up to try <strong>OpenShift</strong>'
 
-%h1.ribbon Getting started with Express
+%h1.ribbon Getting started with OpenShift
   
 %section#quickstart
 
@@ -244,8 +244,7 @@
             
             %li
               = link_to 'MediaWiki', 'https://www.redhat.com/openshift/sites/default/files/documents/RHOS_Express_Getting_Started_w_MediaWiki.pdf'
-              
-      
+    
     %li#next_steps
       %h4 Next steps
 
@@ -254,9 +253,14 @@
 
         %ul
           %li
-            = link_to 'Videos', 'http://www.redhat.com/openshift/videos', :class => 'more'
+            = link_to 'Other Videos', 'http://www.redhat.com/openshift/videos', :class => 'more'
           %li
             = link_to 'Technical Documentation', 'http://docs.redhat.com/docs/en-US/OpenShift_Express/2.0/html/User_Guide/index.html', :class => 'more'
           %li
             = link_to 'Support Forums', 'http://www.redhat.com/openshift/forums', :class => 'more'
+
+- if logged_in?
+  %section= take_action console_path, 'Ready to scale in the cloud?', 'Open the OpenShift Console'
+- else
+  %section= take_action new_web_user_path, 'Ready to scale in the cloud?', 'Sign up now'
 
