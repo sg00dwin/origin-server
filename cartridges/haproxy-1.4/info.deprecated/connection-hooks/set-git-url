@@ -47,8 +47,9 @@ function setup_git_repo_from_framework() {
 
     pushd "$GIT_DIR" > /dev/null
     rm -rf * 2> /dev/null  ||  :
-    git clone --bare --no-hardlinks $1 $GIT_DIR
+    git clone --bare --no-hardlinks $1 "$GIT_DIR"
     git remote add all-gears "$HAPROXY_GIT_URL"
+    touch config
     git repack
     popd > /dev/null
 
