@@ -1,0 +1,55 @@
+#!/bin/bash
+# Destroys haproxy instance
+
+function print_help {
+    echo "Usage: $0 app-name namespace uuid"
+
+    echo "$0 $@" | logger -p local0.notice -t stickshift_haproxy_deconfigure
+    exit 1
+}
+
+while getopts 'd' OPTION
+do
+    case $OPTION in
+        d) set -x
+        ;;
+        ?) print_help
+        ;;
+    esac
+done
+
+[ $# -eq 3 ] || print_help
+
+source /etc/stickshift/stickshift-node.conf
+source ${CARTRIDGE_BASE_PATH}/abstract/info/lib/util
+
+
+setup_deconfigure "$1" $2 $3
+
+export APP_DIR="$APP_HOME/haproxy-1.4"
+
+# Remove PATH override
+OLD_PATH=$PATH
+source ${GEAR_BASE_DIR}/${uuid}/.env/PATH
+
+# Stop old apps
+stop_app
+
+export PATH=`echo "$PATH" | sed 's,/usr/libexec/stickshift/cartridges/embedded/haproxy-1.4/info/bin/:,,g'`
+
+echo "PATH=$PATH" > ${GEAR_BASE_DIR}/${uuid}/.env/PATH
+export PATH=$OLD_PATH
+kill `cat ${APP_DIR}/run/haproxy.pid`
+
+confirm_pid_gone "${APP_DIR}/run/haproxy.pid"
+
+# Start up all apps with new path (IE: without haproxy)
+start_app
+
+confirm_log_files_inactive "$APP_DIR/logs"
+
+rm_app_dir
+
+rm -rf ${GEAR_BASE_DIR}/${uuid}/.openshift
+
+rm -f /etc/httpd/conf.d/stickshift/${uuid}_${namespace}_${application}/000000_haproxy.conf
