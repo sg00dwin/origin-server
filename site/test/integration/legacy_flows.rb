@@ -4,13 +4,23 @@ class LegacyFlowsTest < ActionController::IntegrationTest
   test "getting started express redirect" do
     get "/app/getting_started/express"
     follow_redirect!
-    assert_equal "/app/express", path
+    assert_equal "/app/getting_started", path
   end
 
+	test "should create new flex user" do
+		get_via_redirect '/app/user/new/flex'
+		assert_equal '/app/user/new', path
+	end
+
+	test "should create new express user" do
+		get_via_redirect '/app/user/new/express'
+		assert_equal '/app/user/new', path
+	end
+	
   test "getting started flex redirect" do
-    get "/app/getting_started/flex"
-    follow_redirect!
-    assert_equal "/app/flex", path
+    assert_raise ActionController::RoutingError do
+      get "/app/getting_started/flex"
+    end
   end
 
   test "access express redirect" do

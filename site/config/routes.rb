@@ -75,8 +75,8 @@ RedHatCloud::Application.routes.draw do
              :as => "web_user",
              :controller => "user",
              :only => [:new, :create, :show]
-    match 'user/new/flex' => 'user#new_flex', :via => [:get]
-    match 'user/new/express' => 'user#new_express', :via => [:get]
+    match 'user/new/flex' => redirect('/app/user/new'), :via => [:get]
+    match 'user/new/express' => redirect('/app/user/new'), :via => [:get]
     match 'user/create/external' => 'user#create_external', :via => [:post]
     match 'user/complete' => 'user#complete', :via => [:get]
     # legacy routes
