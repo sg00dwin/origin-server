@@ -33,7 +33,6 @@ class LoginFlowsTest < ActionDispatch::IntegrationTest
     assert_response :success
 
     post(path, internal_user)
-    puts response.pretty_inspect
     assert_redirected_to console_path
   end
   
