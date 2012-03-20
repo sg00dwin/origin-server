@@ -856,12 +856,7 @@ module Express
       end
       
       def run_cartridge_command(framework, app, gear, command, arg=nil, allow_move=true)
-        if app.scalable and framework!=app.proxy_cartridge
-          appname = gear.uuid[0..9] 
-        else
-          appname = app.name
-        end
-        arguments = "'#{appname}' '#{app.user.namespace}' '#{gear.uuid}'"
+        arguments = "'#{gear.name}' '#{app.user.namespace}' '#{gear.uuid}'"
         arguments += " '#{arg}'" if arg
 
         if allow_move
@@ -875,7 +870,7 @@ module Express
         rescue StickShift::InvalidNodeException => e
           if command != 'configure' && allow_move
             @id = e.server_identity
-            Rails.logger.debug "DEBUG: Changing server identity of '#{appname}' from '#{gear.server_identity}' to '#{@id}'"
+            Rails.logger.debug "DEBUG: Changing server identity of '#{gear.name}' from '#{gear.server_identity}' to '#{@id}'"
             dns_service = StickShift::DnsService.instance
             dns_service.deregister_application(app.name, app.user.namespace)
             dns_service.register_application(app.name, app.user.namespace, get_public_hostname)

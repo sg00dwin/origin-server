@@ -6,6 +6,7 @@ class Gear < StickShift::UserModel
   def initialize(app, group_instance, uuid=nil, uid=nil)
     self.app = app
     @uuid = uuid || StickShift::Model.gen_uuid
+    self.name = @uuid[0..9]
     self.group_instance_name = group_instance.name
     self.node_profile = group_instance.node_profile
     self.configured_components = []
