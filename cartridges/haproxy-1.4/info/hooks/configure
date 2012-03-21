@@ -141,7 +141,7 @@ export HAPROXY_DIR="$APP_HOME/$CART_NAME-$CART_VERSION"
 
 mkdir -p "$HAPROXY_DIR"
 pushd "$HAPROXY_DIR" > /dev/null
-mkdir -p conf conf.d logs sessions
+mkdir -p conf conf.d logs run sessions
 ln -s /usr/lib64/httpd/modules modules
 ln -s /etc/httpd/conf/magic conf/magic
 touch conf/gear-registry.db
@@ -158,7 +158,7 @@ export IP2=`embedded_find_open_ip $uid "$APP_HOME"`
 echo "export OPENSHIFT_HAPROXY_STATUS_IP='$IP'" > "$APP_HOME/.env/OPENSHIFT_HAPROXY_STATUS_IP"
 $CART_INFO_DIR/bin/deploy_httpd_config.sh $application $uuid $IP
 mkdir -p $APP_HOME/.openshift
-chown ${uuid} $APP_HOME/.openshift $APP_DIR/run/
+chown ${uuid} $APP_HOME/.openshift $HAPROXY_DIR/run/
 
 # Alter PATH so that the haproxy app_ctl.sh script is called.
 sed -i "s#export \s*PATH=#export PATH=$CART_INFO_DIR/bin/:#" $APP_HOME/.env/PATH
