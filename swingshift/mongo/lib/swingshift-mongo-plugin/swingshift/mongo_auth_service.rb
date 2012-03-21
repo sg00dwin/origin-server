@@ -1,7 +1,7 @@
 require 'rubygems'
 require 'digest/md5'
 
-module StickShift::Broker
+module Swingshift
   class MongoAuthService < StickShift::AuthService
 
     def authenticate(request, login, password)

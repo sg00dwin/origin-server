@@ -6,9 +6,8 @@ require 'json'
 require 'singleton'
 require 'stickshift-common'
 
-module Express
-  module Broker
-    class AuthService
+module Swingshift
+    class StreamlineAuthService < StickShift::AuthService
       service_base_url = defined?(Rails) ? Rails.configuration.auth[:auth_service][:host] + Rails.configuration.auth[:auth_service][:base_url] : ""
       @@login_url = URI.parse(service_base_url + "/login.html")
       @@roles_url = URI.parse(service_base_url + "/cloudVerify.html")
@@ -200,5 +199,4 @@ module Express
         end
       end
     end
-  end
 end
