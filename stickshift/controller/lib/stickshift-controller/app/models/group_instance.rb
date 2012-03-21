@@ -21,6 +21,12 @@ class GroupInstance < StickShift::UserModel
     self.cart_name = ginst.cart_name
     self.profile_name = ginst.profile_name
     self.group_name = ginst.group_name
+    ginst.component_instances.each { |ci_name|
+      cinst = self.app.comp_instance_map[ci_name]
+      next if cinst.nil?
+      cur_ginst = self.app.group_instance_map[cinst.group_instance_name]
+      self.app.group_instance_map[cinst.group_instance_name] = self if ginst==cur_ginst
+    }
     self.component_instances = (self.component_instances + ginst.component_instances).uniq unless ginst.component_instances.nil?
     if not ginst.gears.nil?
       self.gears = [] if self.gears.nil?

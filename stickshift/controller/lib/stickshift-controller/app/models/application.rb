@@ -48,29 +48,30 @@ class Application < StickShift::Cartridge
   def initialize(user=nil, app_name=nil, uuid=nil, node_profile=nil, framework=nil, template=nil, will_scale=false)
     self.user = user
     self.node_profile = node_profile
+    self.creation_time = DateTime::now().strftime
+    self.uuid = uuid || StickShift::Model.gen_uuid
+    self.scalable = will_scale
     
     if template.nil?
-      from_descriptor({"Name"=>app_name, "Subscribes"=>{"doc-root"=>{"Type"=>"FILESYSTEM:doc-root"}}})
-      self.requires_feature = []
-      self.requires_feature << framework unless framework.nil?      
+      if self.scalable
+        descriptor_hash = YAML.load(template_scalable_app(app_name, framework))
+        from_descriptor(descriptor_hash)
+        self.proxy_cartridge = "haproxy-1.4"
+        ##self.requires_feature.insert(0, self.proxy_cartridge)
+        ##prof = @profile_name_map[@default_profile]
+        ##conn = StickShift::Connection.new("auto_scale")
+        ##conn.components = [self.proxy_cartridge, framework]
+        ##prof.add_connection(conn)
+      else
+        from_descriptor({"Name"=>app_name, "Subscribes"=>{"doc-root"=>{"Type"=>"FILESYSTEM:doc-root"}}})
+        self.requires_feature = []
+        self.requires_feature << framework unless framework.nil?      
+      end
     else
       template_descriptor = YAML.load(template.descriptor_yaml)
       template_descriptor["Name"] = app_name
       from_descriptor(template_descriptor)
       @init_git_url = template.git_url
-    end
-    
-    self.creation_time = DateTime::now().strftime
-    self.uuid = uuid || StickShift::Model.gen_uuid
-    self.scalable = will_scale
-    
-    if self.scalable and framework != "haproxy-1.4"
-      self.proxy_cartridge = "haproxy-1.4"
-      self.requires_feature.insert(0, self.proxy_cartridge)
-      prof = @profile_name_map[@default_profile]
-      conn = StickShift::Connection.new("auto_scale")
-      conn.components = [self.proxy_cartridge, framework]
-      prof.add_connection(conn)
     end
   end
 
@@ -84,6 +85,33 @@ class Application < StickShift::Cartridge
     self.requires_feature << feature
   end
   
+  def template_scalable_app(app_name, framework)
+    return "
+Name: #{app_name}
+Components:
+  proxy:
+    Dependencies: [\"haproxy-1.4\", #{framework}]
+    Subscribes:
+      doc-root:
+        Type: \"FILESYSTEM:doc-root\"
+  web:
+    Dependencies: [#{framework}]
+    Subscribes:
+      doc-root:
+        Type: \"FILESYSTEM:doc-root\"
+Groups:
+  proxy:
+    Components:
+      proxy: proxy
+  web:
+    Components:
+      web: web
+Connections:
+  auto-scale:
+    Components: [\"proxy/haproxy-1.4\", \"web/#{framework}\"]
+"
+  end
+
   def remove_from_requires_feature(feature)
     prof = @profile_name_map[@default_profile]
     if prof.connection_name_map
@@ -183,7 +211,7 @@ class Application < StickShift::Cartridge
         create_result, new_gear = ginst.add_gear(self)
         result_io.append create_result
       end
-      self.gear.name = self.name # if not scalable
+      self.gear.name = self.name if not scalable
       self.class.notify_observers(:application_creation_success, {:application => self, :reply => result_io})              
     rescue Exception => e
       Rails.logger.debug e.message
@@ -246,6 +274,17 @@ class Application < StickShift::Cartridge
     result_io = ResultIO.new
     if not self.scalable
       raise StickShift::NodeException.new("Cannot scale a non-scalable application", "-100", result_io)
+    end
+    prof = @profile_name_map[@default_profile]
+    web_group = prof.groups("web")
+    gpath = self.get_name_prefix + web_group.get_name_prefix
+    ginst = self.group_instance_map[gpath]
+    if ginst
+       result, new_gear = ginst.add_gear(self)
+       result_io.append result
+       result_io.append self.configure_dependencies
+       self.execute_connections
+       return result_io
     end
     wb = web_cart
     new_gear = nil
@@ -316,6 +355,7 @@ class Application < StickShift::Cartridge
     #remove unused components
     removed_component_instances.each do |comp_inst_name|
       comp_inst = self.comp_instance_map[comp_inst_name]
+      next if comp_inst.parent_cart_name == self.name
       group_inst = self.group_instance_map[comp_inst.group_instance_name]
       s,f = run_on_gears(group_inst.gears, reply, false) do |gear, r|
         r.append gear.deconfigure(comp_inst)
@@ -342,14 +382,15 @@ class Application < StickShift::Cartridge
     Rails.logger.debug "Configure order is #{self.configure_order.inspect}"
     #process new additions
     #TODO: fix configure after framework cartridge is no longer a requirement for adding embedded cartridges
-    self.configure_order.reverse.each do |comp_inst_name|
+    self.configure_order.each do |comp_inst_name|
       comp_inst = self.comp_instance_map[comp_inst_name]
+      next if comp_inst.parent_cart_name == self.name
       group_inst = self.group_instance_map[comp_inst.group_instance_name]
       begin
         group_inst.fulfil_requirements(self)
         run_on_gears(group_inst.gears, reply) do |gear, r|
           doExpose = false
-          if self.scalable and comp_inst.parent_cart_name==web_cart
+          if self.scalable and comp_inst.parent_cart_name!=self.proxy_cartridge
             doExpose = true if not gear.configured_components.include? comp_inst.name
           end
           r.append gear.configure(comp_inst, @init_git_url)
@@ -482,6 +523,7 @@ class Application < StickShift::Cartridge
     if(self.configure_order)
       self.configure_order.each do |comp_inst_name|
         comp_inst = self.comp_instance_map[comp_inst_name]
+        next if comp_inst.parent_cart_name == self.name
         group_inst = self.group_instance_map[comp_inst.group_instance_name]
         begin
           run_on_gears(group_inst.gears, reply, true) do |gear, r|
@@ -510,6 +552,7 @@ class Application < StickShift::Cartridge
     self.start_order.each do |comp_inst_name|
       comp_inst = self.comp_instance_map[comp_inst_name]
       next if !dependency.nil? and (comp_inst.parent_cart_name != dependency)
+      next if comp_inst.parent_cart_name == self.name
       
       begin
         group_inst = self.group_instance_map[comp_inst.group_instance_name]
@@ -536,6 +579,7 @@ class Application < StickShift::Cartridge
     self.start_order.reverse.each do |comp_inst_name|
       comp_inst = self.comp_instance_map[comp_inst_name]
       next if !dependency.nil? and (comp_inst.parent_cart_name != dependency)
+      next if comp_inst.parent_cart_name == self.name
       
       group_inst = self.group_instance_map[comp_inst.group_instance_name]
       s,f = run_on_gears(group_inst.gears, reply, false) do |gear, r|
@@ -1195,14 +1239,20 @@ private
   end
   
   def get_exec_order(default_profile)
-    self.configure_order = []
-    self.start_order = []
-    cpath = self.get_name_prefix + default_profile.groups.first.component_refs.first.get_name_prefix(default_profile)
-    cinst = self.comp_instance_map[cpath]
-    ComponentInstance::collect_exec_order(self, cinst, self.configure_order)
-    ComponentInstance::collect_exec_order(self, cinst, self.start_order)
-    self.configure_order << cpath
-    self.start_order << cpath
+    collect_configure_order = []
+    collect_start_order = []
+    default_profile.groups.each { |g|
+      g.component_refs.each { |cr|
+        cpath = self.get_name_prefix + cr.get_name_prefix(default_profile)
+        cinst = self.comp_instance_map[cpath]
+        ComponentInstance::collect_exec_order(self, cinst, collect_configure_order)
+        ComponentInstance::collect_exec_order(self, cinst, collect_start_order)
+        collect_configure_order << cpath
+        collect_start_order << cpath
+      }
+    }
+    self.start_order = collect_start_order.reverse
+    self.configure_order = collect_configure_order.reverse
   end
   
   def colocate_groups

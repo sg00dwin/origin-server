@@ -6,7 +6,7 @@
         Our
         %strong#technology-rotate shared
         cloud solution
-      .secondary Express is a free, cloud-based application platform for Java, Perl, PHP, Python, and Ruby applications. 
+      .secondary Express is a free, cloud-based application platform for Java, Ruby, Node.js, Python, PHP and Perl applications. 
 
   - if logged_in?
     = take_action console_path, 'Open the <strong>OpenShift</strong> Console'
@@ -34,7 +34,7 @@
       = link_to 'Next steps', '#next_steps'
 
   %ol#instructions
-    %li#install_client_tools
+    %li#install_client_tools.topic
       %h3 Install the client tools
       
       %ul#install
@@ -149,7 +149,7 @@
                 Install the gem:
                 %pre $ gem install rhc
     
-    %li#create_domain_name
+    %li#create_domain_name.topic
       
       %h4 Create a domain name
       .main
@@ -180,7 +180,7 @@
         = link_to 'Create your domain now', '/app/console', :class => 'button'
       
           
-    %li#create_application
+    %li#create_application.topic
       %h4 Create your first application
 
       %p
@@ -205,7 +205,7 @@
       %aside
         = link_to 'Creating an application video walkthrough', local_video_url('express_create_app')
       
-    %li#publish 
+    %li#publish.topic
       %h4 Make a change, publish
 
       %p
@@ -245,7 +245,7 @@
             %li
               = link_to 'MediaWiki', 'https://www.redhat.com/openshift/sites/default/files/documents/RHOS_Express_Getting_Started_w_MediaWiki.pdf'
     
-    %li#next_steps
+    %li#next_steps.topic
       %h4 Next steps
 
       %p
@@ -253,7 +253,7 @@
 
         %ul
           %li
-            = link_to 'Other Videos', 'http://www.redhat.com/openshift/videos', :class => 'more'
+            = link_to 'Videos', 'http://www.redhat.com/openshift/videos', :class => 'more'
           %li
             = link_to 'Technical Documentation', 'http://docs.redhat.com/docs/en-US/OpenShift_Express/2.0/html/User_Guide/index.html', :class => 'more'
           %li
@@ -262,5 +262,5 @@
 - if logged_in?
   %section= take_action console_path, 'Ready to scale in the cloud?', 'Open the OpenShift Console'
 - else
-  %section= take_action new_web_user_path, 'Ready to scale in the cloud?', 'Sign up now'
+  %section= take_action new_account_path, 'Ready to scale in the cloud?', 'Sign up now'
 
