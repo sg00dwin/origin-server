@@ -8,12 +8,12 @@ node_profile=large
 #
 # Quotas: File system limits
 #
-quota_files=468114
+quota_files=40000
 quota_blocks=1048576 # 1GB.  1 block = 1024byte
 
 # For no over commitment, should be memory_limit_in_bytes / (Total System Memory - 1G)
-max_apps=8
-max_active_apps=50
+max_apps=20
+max_active_apps=20
 
 # PAM - resource limits
 # limits_core
@@ -47,9 +47,9 @@ limits_nproc=2142        # max number of processes
 cpu_shares=128
 #
 # memory
-# 1024 * 1024 * 1024 = 1073741824 = 1G
-memory_limit_in_bytes=1073741824
-memory_memsw_limit_in_bytes=1178599424  # 1G + 100M (100M swap)
+# 1024 * 1024 * 1024 * 2 = 2147483648 = 2G
+memory_limit_in_bytes=2147483648
+memory_memsw_limit_in_bytes=2252341248  # 2G + 100M (100M swap)
 # memory_soft_limit_in_bytes=-1
 # memory_swappiness=60
 

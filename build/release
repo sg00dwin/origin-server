@@ -10,6 +10,11 @@ class Release < Thor
   include Thor::Actions
   include OpenShift::Tito
   
+  method_option :temp_dir, :type => :string, :default => '/tmp', :desc => "A location to write temporary files to"
+  def initialize(*args)
+    super(*args)
+  end
+  
   no_tasks do
     def git_pull
       run("git pull", :verbose => options.verbose?)
@@ -130,7 +135,7 @@ class Release < Thor
         puts "Releasing #{build_dir}"
 
         # Cleanup any tito data
-        unless run("rm -rf /tmp/tito/cvswork/", :verbose => options.verbose?)
+        unless run("rm -rf #{options.temp_dir}/tito/cvswork/", :verbose => options.verbose?)
           puts "ERROR - tito temp cleanup failed"; exit 1
         end
 
@@ -150,13 +155,13 @@ class Release < Thor
         cmd_exit = $?.exitstatus
         if cmd_exit == 0
           # The release command is supported - use it
-          tito_cmd = "tito release brew < /tmp/answerfile"
+          tito_cmd = "tito release brew < #{options.temp_dir}/answerfile"
         else
           raise "Your version of tito is no longer supported after the Brew migration to git"
         end
 
         # Build the RPM in brew
-        run('echo -e "y\nn" > /tmp/answerfile', :verbose => options.verbose?)
+        run('echo -e "y\nn" > #{options.temp_dir}/answerfile', :verbose => options.verbose?)
         unless run(tito_cmd, :verbose => options.verbose?)
           puts "ERROR - tito cvs release failed"
         end
@@ -303,7 +308,7 @@ class Release < Thor
   
       # Run mash twice since it usually fails the first time
       puts "Running mash sync"
-      mash_cmd = "/usr/bin/mash -o /tmp/#{mash_config} -c /etc/mash/li-mash.conf #{mash_config}"
+      mash_cmd = "/usr/bin/mash -o #{options.temp_dir}/#{mash_config} -c /etc/mash/li-mash.conf #{mash_config}"
       puts mash_cmd
       run(mash_cmd, :verbose => options.verbose?)
       unless run(mash_cmd, :verbose => options.verbose?)
@@ -317,7 +322,7 @@ class Release < Thor
         `/usr/bin/createrepo -h | grep -q compress-type`
         cmd_exit = $?.exitstatus
         if cmd_exit == 0
-          repos = `/usr/bin/find /tmp/#{mash_config} -type d -name repodata | /bin/sed 's,/repodata$,,'`.chomp.split("\n")
+          repos = `/usr/bin/find #{options.temp_dir}/#{mash_config} -type d -name repodata | /bin/sed 's,/repodata$,,'`.chomp.split("\n")
           repos.each do |repo_dir|
             `/usr/bin/createrepo -s sha --compress-type bz2 #{repo_dir}`
           end
@@ -341,7 +346,7 @@ class Release < Thor
       end
 
       puts "Syncing RPMs to repo..."
-      unless run("#{rsync} /tmp/#{mash_config}/#{mash_config}/* #{repo}/#{mash_config}/", :verbose => options.verbose?)
+      unless run("#{rsync} #{options.temp_dir}/#{mash_config}/#{mash_config}/* #{repo}/#{mash_config}/", :verbose => options.verbose?)
         puts "ERROR - RPM sync failed."
         exit 1
       end

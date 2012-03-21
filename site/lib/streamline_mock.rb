@@ -85,10 +85,20 @@ module StreamlineMock
     end
   end
 
-  def authenticate(login, password)
-    @rhlogin = login
-    @ticket = nil
+  def complete_reset_password(token)
+    raise Streamline::TokenExpired if token.blank?
     true
+  end
+
+  def authenticate(login, password)
+    if login.present? and password.present?
+      @rhlogin = login
+      @ticket = 'test'
+      true
+    else
+      errors.add(:base, I18n.t(:login_error, :scope => :streamline))
+      false
+    end
   end
 
   def streamline_cookie
@@ -100,6 +110,11 @@ module StreamlineMock
   #
   def register(confirm_url)
     Rails.logger.warn("Non integrated environment - passing through")
+  end
+
+  def confirm_email(key, email=@email_address)
+    raise "No email address provided" unless email
+    true
   end
 
   #

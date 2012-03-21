@@ -13,8 +13,8 @@ RedHatCloud::Application.routes.draw do
     match 'power', :to => redirect('/app/platform')
     match 'about', :to => redirect('/app/platform'), :as => 'about'
 
-    match 'express' => 'product#express', :as => 'express'
-    match 'flex' => 'product#flex', :as => 'flex'
+    match 'express', :to => redirect('/app/platform'), :as => 'express'
+    match 'flex', :to => redirect('/app/platform'), :as => 'flex'
 
     match 'getting_started' => 'product#getting_started', :as => 'getting_started'
     match 'getting_started/express', :to => redirect('/app/getting_started')
@@ -22,13 +22,12 @@ RedHatCloud::Application.routes.draw do
 
     match 'email_confirm' => 'email_confirm#confirm'
     match 'email_confirm_external/:registration_referrer' => 'email_confirm#confirm_external'
-    match 'email_confirm_flex' => 'email_confirm#confirm_flex'
-    match 'email_confirm_express' => 'email_confirm#confirm_express'
+    # Legacy redirects
+    match 'email_confirm_flex' => redirect {|p, req| "/app/email_confirm?#{req.query_string}"}
+    match 'email_confirm_express' => redirect {|p, req| "/app/email_confirm?#{req.query_string}"}
 
     match 'platform' => 'product#overview', :as => 'product_overview'
 
-    match 'express_protected' => 'product#express_protected', :as => 'express_protected'
-    match 'flex_protected' => 'product#flex_protected', :as => 'flex_protected'
     match 'flex_redirect' => 'product#flex_redirect', :as => 'flex_redirect'
 
     match 'twitter_latest_tweet' => 'twitter#latest_tweet'
@@ -44,8 +43,10 @@ RedHatCloud::Application.routes.draw do
       resource :password,
                :controller => "password" do
         match 'edit' => 'password#update', :via => :put
-        match 'reset' => 'password#edit_with_token', :via => :get
-        match 'success' => 'password#success', :via => :get
+        member do
+          get :reset
+          get :success
+        end
       end
       resource :express_domains,
                :controller => "express_domain" do
@@ -73,8 +74,8 @@ RedHatCloud::Application.routes.draw do
              :as => "web_user",
              :controller => "user",
              :only => [:new, :create, :show]
-    match 'user/new/flex' => 'user#new_flex', :via => [:get]
-    match 'user/new/express' => 'user#new_express', :via => [:get]
+    match 'user/new/flex' => redirect('/app/user/new'), :via => [:get]
+    match 'user/new/express' => redirect('/app/user/new'), :via => [:get]
     match 'user/create/external' => 'user#create_external', :via => [:post]
     match 'user/complete' => 'user#complete', :via => [:get]
     # legacy routes
@@ -84,11 +85,11 @@ RedHatCloud::Application.routes.draw do
     #match 'user' => 'user#show', :via => :get
 
     # deprecated, use :password
-    match 'user/request_password_reset_form' => 'user#request_password_reset_form', :via => [:get], :as => 'new_password'
-    match 'user/request_password_reset_success' => 'user#request_password_reset_success', :via => [:get]
-    match 'user/request_password_reset' => 'user#request_password_reset', :via => [:post]
-    match 'user/reset_password' => 'user#reset_password', :via => [:get]
-    match 'user/change_password' => 'user#change_password', :via => [:post]
+    #match 'user/request_password_reset_form' => 'user#request_password_reset_form', :via => [:get], :as => 'new_password'
+    #match 'user/request_password_reset_success' => 'user#request_password_reset_success', :via => [:get]
+    #match 'user/request_password_reset' => redirect() 'user#request_password_reset', :via => [:post]
+    match 'user/reset_password' => redirect {|p, req| "/app/account/password/reset?#{req.query_string}"}, :via => [:get]
+    #match 'user/change_password' => 'user#change_password', :via => [:post]
 
     resource :terms,
              :as => "terms",

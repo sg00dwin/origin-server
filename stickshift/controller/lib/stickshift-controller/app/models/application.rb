@@ -180,31 +180,10 @@ class Application < StickShift::Cartridge
       
       Rails.logger.debug "Creating gears"
       group_instances.uniq.each do |ginst|
-        is_web_gear = false
-        wb = self.web_cart
-        gear = Gear.new(self, ginst)
-        ginst.component_instances.each { |cname| is_web_gear = true if cname.include? wb }
-        if scalable
-          gear.uuid = self.uuid if not is_web_gear
-        else
-          #FIXME: backward compat: first gears UUID = app.uuid
-          gear.uuid = self.uuid
-        end
-        gear.node_profile = self.node_profile if is_web_gear 
-        
-        create_result = gear.create
+        create_result, new_gear = ginst.add_gear(self)
         result_io.append create_result
-        unless create_result.exitcode == 0
-          raise StickShift::NodeException.new("Unable to create gear on node", "-100", result_io)
-        end
-
-        gears_created.push gear
-        ginst.gears << gear
-
-        self.add_dns(gear.uuid[0..9], @user.namespace, gear.get_proxy.get_public_hostname) if self.scalable and is_web_gear
-
-        #TODO: save gears here
       end
+      self.gear.name = self.name # if not scalable
       self.class.notify_observers(:application_creation_success, {:application => self, :reply => result_io})              
     rescue Exception => e
       Rails.logger.debug e.message
@@ -303,7 +282,7 @@ class Application < StickShift::Cartridge
 
       dns = StickShift::DnsService.instance
       begin
-        dns.deregister_application(gear.uuid[0..9], @user.namespace)
+        dns.deregister_application(gear.name, @user.namespace)
         dns.publish
       ensure
         dns.close
@@ -430,8 +409,7 @@ class Application < StickShift::Cartridge
       tag = ""
       handle = RemoteJob.create_parallel_job
       RemoteJob.run_parallel_on_gears(pub_ginst.gears, handle) { |exec_handle, gear|
-        appname = gear.uuid[0..9]
-        appname = self.name if pub_inst.parent_cart_name == self.framework
+        appname = gear.name
         connector_name = conn.from_connector.name
         cart = pub_inst.parent_cart_name
         input_args = [appname, self.user.namespace, gear.uuid]
@@ -452,8 +430,7 @@ class Application < StickShift::Cartridge
       sub_ginst = self.group_instance_map[sub_inst.group_instance_name]
       handle = RemoteJob.create_parallel_job
       RemoteJob.run_parallel_on_gears(sub_ginst.gears, handle) { |exec_handle, gear|
-        appname = gear.uuid[0..9]
-        appname = self.name if sub_inst.parent_cart_name == self.framework
+        appname = gear.name
         connector_name = conn.to_connector.name
         cart = sub_inst.parent_cart_name
         input_args = [appname, self.user.namespace, gear.uuid, input_to_subscriber]
@@ -478,8 +455,7 @@ class Application < StickShift::Cartridge
       r = ResultIO.new
       pub_out = []
       run_on_gears(pub_ginst.gears, r, false) do |gear, r|
-        appname = gear.uuid[0..9]
-        appname = self.name if pub_inst.parent_cart_name == self.framework
+        appname = gear.name
         gout, gstatus = gear.execute_connector(pub_inst, conn.from_connector.name, [appname, self.user.namespace, gear.uuid])
         if gstatus==0
           pub_out.push("'#{gear.uuid}'='#{gout}'")
@@ -493,8 +469,7 @@ class Application < StickShift::Cartridge
       sub_ginst = self.group_instance_map[sub_inst.group_instance_name]
 
       run_on_gears(sub_ginst.gears, r, false) do |gear, r|
-        appname = gear.uuid[0..9]
-        appname = self.name if sub_inst.parent_cart_name == self.framework
+        appname = gear.name
         gout, gstatus = gear.execute_connector(sub_inst, conn.to_connector.name, [appname, self.user.namespace, gear.uuid, input_to_subscriber])
       end
     }
@@ -855,18 +830,6 @@ class Application < StickShift::Cartridge
     self.class.notify_observers(:before_create_dns, {:application => self, :reply => reply})    
     public_hostname = self.container.get_public_hostname
     add_dns(@name, @user.namespace, public_hostname)
-    if false and self.scalable
-      # add dns for web cart gears
-      wb = web_cart
-      # find the group instance where the web-cartridge is residing
-      self.group_instance_map.keys.each { |ginst_name|
-        next if not ginst_name.include? wb
-        ginst = self.group_instance_map[ginst_name]
-        ginst.gears.each { |gear|
-          self.add_dns(gear.uuid[0..9], @user.namespace, gear.get_proxy.get_public_hostname)
-        }
-      }
-    end
     self.class.notify_observers(:after_create_dns, {:application => self, :reply => reply})    
     reply
   end
@@ -878,14 +841,11 @@ class Application < StickShift::Cartridge
     begin
       dns.deregister_application(@name,@user.namespace)
       if self.scalable
-        # add dns for web cart gears
-        wb = web_cart
         # find the group instance where the web-cartridge is residing
         self.group_instance_map.keys.each { |ginst_name|
-          next if not ginst_name.include? wb
           ginst = self.group_instance_map[ginst_name]
           ginst.gears.each { |gear|
-            dns.deregister_application(gear.uuid[0..9],@user.namespace)
+            dns.deregister_application(gear.name,@user.namespace)
           }
         }
       end
@@ -1176,7 +1136,7 @@ class Application < StickShift::Cartridge
     self.conn_endpoints_list = [] 
     default_profile = @profile_name_map[@default_profile]
     
-    # generate_group_overrides(default_profile)
+    generate_group_overrides(default_profile)
   
     default_profile.groups.each { |g|
       #gpath = self.name + "." + g.name
