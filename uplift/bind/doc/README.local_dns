@@ -108,13 +108,26 @@ would never use this value in production.
 
 * Configure named
 
-
-
-** dnssec
+The master configuration file for ISC BIND named is /etc/named.conf.
+There is an example in the directory which contains this README.
+There are several significant settings in that file which bear
+pointing out.
 
 ** forwarding
 
+The local server must be set to forward only.  While recursion is
+enabled, it will not be used.  Requests for zones which are not
+locally authoritative (basically everything but example.com) will be
+forwarded to the upstream DNS server.
+
+The forwarders clause in the configuration will be included from a
+file named /var/named/forwarders.conf.  This will allow you to update
+the forwarders without editing the named.conf itself.  This will
+become important if you're getting your primary IP address from DHCP.
+
 ** control key
+
+
 
 ** update keys
 
