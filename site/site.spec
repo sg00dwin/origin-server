@@ -28,6 +28,7 @@ Requires:  rubygem-parseconfig
 Requires:  rubygem-xml-simple
 Requires:  rubygem-formtastic
 Requires:  rubygem-haml
+Requires:  rubygem-compass
 Requires:  rubygem-recaptcha
 Requires:  rubygem-hpricot
 Requires:  rubygem-barista
