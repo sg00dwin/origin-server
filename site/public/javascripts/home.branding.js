@@ -10,8 +10,15 @@
   _this = this;
 
   latestSuccess = function(data, textStatus, jqXHR) {
-    var tweet;
-    if (data.length > 0) return tweet = data[0];
+    var rts, tweet, _i, _len, _ref, _results;
+    rts = $('#buzz-twitter-2');
+    _ref = data.slice(0, 4);
+    _results = [];
+    for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+      tweet = _ref[_i];
+      _results.push(rts.append($(_this.renderTweet(tweet, false))));
+    }
+    return _results;
   };
 
   latestError = function(jqXHR, textStatus, errorThrown) {

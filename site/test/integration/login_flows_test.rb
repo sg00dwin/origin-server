@@ -46,30 +46,6 @@ class LoginFlowsTest < ActionDispatch::IntegrationTest
     assert_redirected_to console_path
   end
   
-  test 'user should be redirected to console when logging in directly from the flex login' do
-    get '/app/login', {}, {'HTTP_REFERER' => '/app/login/flex'}
-    assert_response :success
-
-    post(path, internal_user.merge(:redirectUrl => assigns(:redirectUrl)))
-    assert_redirected_to console_path
-    follow_redirect!
-    follow_redirect!
-    follow_redirect!
-
-    assert_response :success
-    assert_equal application_types_path, path
-  end
-
-  test 'user should be redirected to console when logging in directly from the flex new user' do
-    get '/app/login', {}, {'HTTP_REFERER' => '/app/user/new/flex'}
-    assert_response :success
-
-    post_via_redirect(path, internal_user.merge(:redirectUrl => assigns(:redirectUrl)))
-
-    assert_response :success
-    assert_equal application_types_path, path
-  end
-
   test 'user can visit site, login, has cookies' do
     get '/app'
     assert_response :success

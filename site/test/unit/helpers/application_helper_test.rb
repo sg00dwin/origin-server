@@ -14,22 +14,4 @@ class ApplicationHelperTest < ActionView::TestCase
     assert_equal 'express', get_product(controller_name, action_name)
   end
   
-  test 'get_product returns flex when controller name contains flex' do
-    controller_name = 'flex_test'
-    action_name = 'test'
-    assert_equal 'flex', get_product(controller_name, action_name)
-  end
-  
-  test 'get_product returns flex when action name contains flex' do
-    controller_name = 'flex'
-    action_name = 'test_flex'
-    assert_equal 'flex', get_product(controller_name, action_name)
-  end
-  
-  test 'get_product returns empty string when neither controller nor action contains a product name' do
-    controller_name = 'test'
-    action_name = 'test'
-    assert_equal '', get_product(controller_name, action_name)
-  end
-
 end

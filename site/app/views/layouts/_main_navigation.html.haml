@@ -1,13 +1,12 @@
 %ul
   %li.link
-    = link_to 'Platform Overview', product_overview_path, :class => 'overview'
+    = link_to 'Learn More', product_overview_path, :class => 'overview'
   %li.link
-    = link_to 'Express', express_path, :class => 'express'
+    = link_to 'Getting Started', getting_started_path
   %li.link
-    = link_to 'Flex', flex_path, :class => 'flex'
+    = link_to 'Console', console_path
   %li.link
-    = link_to 'Community', 'https://www.redhat.com/openshift', :class => 'community'
-
+    = link_to 'Community', community_url, :class => 'community'
   -if session[:login]
     %li.user
       = link_to 'Sign out', logout_path, :class => 'sign_out'

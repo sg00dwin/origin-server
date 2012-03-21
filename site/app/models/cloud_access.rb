@@ -1,13 +1,11 @@
 class CloudAccess
   EXPRESS = 1
-  FLEX = 2
   
-  IDS = [EXPRESS, FLEX]
+  IDS = [EXPRESS]
   
   EXPRESS_NAME = 'express'
-  FLEX_NAME = 'flex'
   
-  NAME_TO_ID = {EXPRESS_NAME => EXPRESS, FLEX_NAME => FLEX}
+  NAME_TO_ID = {EXPRESS_NAME => EXPRESS}
   ID_TO_NAME = NAME_TO_ID.invert
   
   def self.access_id(name)
