@@ -1,0 +1,153 @@
+Running a service which adds new hostnames to the internet requires a
+Dynamic DNS service.  The uplift-bind package provides the client side
+of service interface for a Dynamic DNS based on ISC BIND DNS (or any
+other DNS service which honors RFC 2136 and 3007 dynamic update
+queries).  If you're running a self-contained service for development
+or testing, you'll need to have a local DNS service capable of
+accepting updates and responding to queries for your test zones while
+passing all other requests through to your external DNS servers.
+
+This document describes how to configure a DNS service on a
+self-contained system so that it can accept updates for local zones
+but does not interfere with normal system operation.
+
+The initial steps assume that the host has a static IP address.
+Additional steps to configure a system with an IP address provided by
+DHCP follow.
+
+* Install BIND
+* Generate update keys
+* Create initial test zone files
+* Configure named
+** dnssec
+** forwarding
+** control key
+** update keys
+** test zones
+* Start named service
+** Test local queries
+** Test remote queries
+** Test updates
+* Enable named service
+* Set resolver order
+* DHCP updates
+** Disable NetworkManager service
+** Enable network service
+** dhclient hooks (update forwarders)
+** named.conf: include forwarders
+** dhclient config (resolver prefix)
+* SELinux
+** Compiling policy module
+** Installing policy module
+
+* Summary
+
+This procedure will add a local named service which will accept
+updates using RFC compliant queries.  A tool in bind-utils named
+nsupdate can be used to send updates for testing.  The uplift-bind
+Ruby module uses rubygem-dnsruby to do the same thing.
+
+For this procedure, we're going to use a target domain of
+'example.com'.  This domain is set aside by RFC 2606 for just this
+purpose. When it is done you will be able to query the example.com
+domain and get local answers.  You will also be able to update the
+contents of the local example.com domain. Modify any instance of
+'example.com' in the procedure below if you wish to use another domain
+for your configuration.
+
+All other queries will be forwarded to the normal external DNS service.
+
+* Install BIND
+
+You should just be able to request the 'bind' package. The bind-utils
+package is needed for verification and testing.
+
+  yum install bind bind-utils
+
+* Generate update keys
+
+There are several good sites that go into details about how to create
+DNSSEC keys. See the references section. For now I'm just going to
+give one example.
+
+Note that dnssec-keygen needs a source of "entropy".  If it appears to
+hang, log onto the host with another session and type or execute a few
+commands until enough entropy has been generated to complete the key
+generation.
+
+  dnssec-keygen -a HMAC-MD5 -b 512 -n USER example.com.
+
+This will produce two files who's names look something like this:
+
+  Kexample.com.+157+30572.key
+  Kexample.com.+157+30572.private
+
+The key string is in both files but you can extract it most easily
+like this:
+
+  grep Key: Kexample.com.*.private | cut -d' ' -f 2
+
+(assuming you only have one private key file in your current working directory)
+  
+Copy the files to /var/named for safe keeping.  We'll need the key
+string later for configuring /etc/named.conf
+
+* Create initial test zone files
+
+
+
+* Configure named
+
+** dnssec
+
+** forwarding
+
+** control key
+
+** update keys
+
+** test zones
+
+* Start named service
+
+** Test local queries
+
+** Test remote queries
+
+** Test updates
+
+* Enable named service
+
+* Set resolver order
+
+* References
+
+  - RFC 2136 Dynamic Updates in the Domain Name System (DNS UPDATE)
+      http://tools.ietf.org/rfc/rfc2136.txt
+
+  - RFC 2606 Reserved Top Level DNS Names
+      http://tools.ietf.org/rfc/rfc2606.txt
+
+  - RFC 3007 Secure Domain Name System (DNS) Dynamic Update
+      http://tools.ietf.org/rfc/rfc3007.txt
+
+  - Article: Painless Dynamic DNS,
+      Copyright © 2008 Jeff Garzik
+      http://linux.yyz.us/nsupdate/
+
+  - Article: Painless DDNS part 2: the server
+      Copyright © 2008 Jeff Garzik
+      http://linux.yyz.us/dns/ddns-server.html
+
+  - dhclient-script(8) man page
+      http://linux.die.net/man/8/dhclient-script
+
+
+  - ISC BIND documentation
+      http://www.isc.org/software/bind/documentation
+
+  - A step-by-step guide to building a new SELinux policy module, 
+      Dan Walsh, Copyright © 2012 Red Hat, Inc.
+
+  - SELinux reference policy
+      http://oss.tresys.com/projects/refpolicy
