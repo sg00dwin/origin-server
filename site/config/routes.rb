@@ -1,6 +1,6 @@
 RedHatCloud::Application.routes.draw do
 
-  scope Rails.configuration.app_scope do
+  #scope Rails.configuration.app_scope do
     # Map all the actions on the home controller
 
     # The priority is based upon order of creation:
@@ -219,5 +219,5 @@ RedHatCloud::Application.routes.draw do
       match '/sync/(:host)', :to => StatusApp, :constraints => {:host => /[0-z\.-]+/}
     end
     #mount StatusApp => '/status',
-  end
+  #end
 end
