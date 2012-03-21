@@ -37,7 +37,11 @@ RedHatCloud::Application.routes.draw do
 
     resource :account,
              :controller => "user",
-             :only => [:new, :create, :show]
+             :only => [:new, :create, :show] do
+      get :complete, :on => :member
+    end
+    # preserve legacy support for this path
+    match 'user/create/external' => 'user#create_external', :via => [:post]
 
     scope '/account' do
       resource :password,
@@ -69,19 +73,19 @@ RedHatCloud::Application.routes.draw do
     end
 
     # deprecated, move to :account
-    resource :user,
-             :path => :account,
-             :as => "web_user",
-             :controller => "user",
-             :only => [:new, :create, :show]
-    match 'user/new/flex' => redirect('/app/user/new'), :via => [:get]
-    match 'user/new/express' => redirect('/app/user/new'), :via => [:get]
-    match 'user/create/external' => 'user#create_external', :via => [:post]
-    match 'user/complete' => 'user#complete', :via => [:get]
+    #resource :user,
+    #         :path => :account,
+    #         :as => "web_user",
+    #         :controller => "user"
+    
+    # legacy user redirects
+    match 'user/new' => redirect('/app/account/new'), :via => [:get]
+    match 'user/new/flex' => redirect('/app/account/new'), :via => [:get]
+    match 'user/new/express' => redirect('/app/account/new'), :via => [:get]
+    match 'user/complete' => redirect('/app/account/complete'), :via => [:get]
+    
     # legacy routes
-    match 'user' => 'user#create', :as => :web_users, :via => [:post]
-    match 'user/new' => 'user#new', :as => :new_web_users, :via => [:get]
-    match 'user' => 'user#new', :as => :user, :via => [:get]
+    #match 'user' => 'user#new', :as => :user, :via => [:get]
     #match 'user' => 'user#show', :via => :get
 
     # deprecated, use :password
@@ -90,6 +94,8 @@ RedHatCloud::Application.routes.draw do
     #match 'user/request_password_reset' => redirect() 'user#request_password_reset', :via => [:post]
     match 'user/reset_password' => redirect {|p, req| "/app/account/password/reset?#{req.query_string}"}, :via => [:get]
     #match 'user/change_password' => 'user#change_password', :via => [:post]
+
+    match 'user' => redirect('/app/account/new'), :via => [:get]
 
     resource :terms,
              :as => "terms",

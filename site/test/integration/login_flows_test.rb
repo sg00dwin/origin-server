@@ -18,6 +18,9 @@ class LoginFlowsTest < ActionDispatch::IntegrationTest
       assert_response :success, "Requesting #{url}"
     end
     {
+      '/app/user/new' => '/app/account/new',
+      '/app/user/new/flex' => '/app/account/new',
+      '/app/user/new/express' => '/app/account/new',
       '/app/express' => '/app/platform',
       '/app/flex' => '/app/platform'
     }.each_pair do |url,to|
