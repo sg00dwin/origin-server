@@ -141,24 +141,31 @@ class ComponentInstance < StickShift::UserModel
   def self.find_component_in_cart(profile, app, comp_name, parent_path) 
     # FIXME : comp_name could be a component_name only, feature_name, cartridge_name that 
     #         one of the components depend upon, or a hierarchical name
-    comp_inst = app.comp_instance_map[parent_path + "/" + comp_name]
-    return comp_inst if not comp_inst.nil?
-    parent_inst = app.comp_instance_map[parent_path]
-    if parent_inst
-      parent_inst.dependencies.each do |dep|
-        dep_inst = app.comp_instance_map[dep]
-        cartname = dep_inst.parent_cart_name
-        if cartname == comp_name
-          return dep_inst
-        end
-      end
-    end
+
+    comp_name_list = comp_name.split("/")
+    comp_name = comp_name_list.first
+    rest = comp_name_list[1..-1]
+
     group_comp_refs = profile.groups.map { |g| g.component_refs }
     comp_refs = group_comp_refs.flatten
     comp_refs.each { |comp_ref|
       name_prefix = comp_ref.get_name_prefix(profile)
       comp_inst = app.comp_instance_map[parent_path + name_prefix]
-      return comp_inst if not comp_inst.nil?
+      next if comp_inst.nil?
+      if name_prefix!=""
+        next if comp_ref.name!=comp_name
+        return comp_inst if rest.length==0
+        comp_name = rest.first
+        rest = rest[1..-1]
+      end
+      comp_inst.dependencies.each { |dep|
+        dep_inst = app.comp_instance_map[dep]
+        next if dep_inst.parent_cart_name != comp_name
+        return dep_inst if rest.length==0
+        c, dep_profile, ca = dep_inst.get_component_definition(app)
+        found_inst = self.find_component_in_cart(dep_profile, app, rest.join('/'), dep_inst.name)
+        return found_inst if not found_inst.nil?
+      }
     }
 
     return comp_inst

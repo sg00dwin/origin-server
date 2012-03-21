@@ -58,10 +58,10 @@ class Application < StickShift::Cartridge
         from_descriptor(descriptor_hash)
         self.proxy_cartridge = "haproxy-1.4"
         ##self.requires_feature.insert(0, self.proxy_cartridge)
-        prof = @profile_name_map[@default_profile]
-        conn = StickShift::Connection.new("auto_scale")
-        conn.components = [self.proxy_cartridge, framework]
-        prof.add_connection(conn)
+        ##prof = @profile_name_map[@default_profile]
+        ##conn = StickShift::Connection.new("auto_scale")
+        ##conn.components = [self.proxy_cartridge, framework]
+        ##prof.add_connection(conn)
       else
         from_descriptor({"Name"=>app_name, "Subscribes"=>{"doc-root"=>{"Type"=>"FILESYSTEM:doc-root"}}})
         self.requires_feature = []
@@ -106,6 +106,9 @@ Groups:
   web:
     Components:
       web: web
+Connections:
+  auto-scale:
+    Components: [\"proxy/haproxy-1.4\", \"web/#{framework}\"]
 "
   end
 
