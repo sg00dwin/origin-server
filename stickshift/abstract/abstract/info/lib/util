@@ -72,7 +72,7 @@ function is_a_scalable_app {
     source_if_exists "${GEAR_BASE_DIR}/$uuid/.env/OPENSHIFT_GEAR_TYPE"
 
     # FIXME: Need better mechanism to evaluate if the app is scalable or not.
-    [ "haproxy-1.4" = "$OPENSHIFT_GEAR_TYPE" ]         &&  return 0
+    [ "haproxy-1.4" = "$OPENSHIFT_GEAR_TYPE" ]   &&  return 0
     [ "$application" != "$OPENSHIFT_APP_NAME" ]  &&  return 0
     return 1
 }
