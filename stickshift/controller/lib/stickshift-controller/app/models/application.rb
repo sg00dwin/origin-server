@@ -90,7 +90,7 @@ class Application < StickShift::Cartridge
 Name: #{app_name}
 Components:
   proxy:
-    Dependencies: [\"haproxy-1.4\", #{framework}]
+    Dependencies: [#{framework}, \"haproxy-1.4\"]
     Subscribes:
       doc-root:
         Type: \"FILESYSTEM:doc-root\"
