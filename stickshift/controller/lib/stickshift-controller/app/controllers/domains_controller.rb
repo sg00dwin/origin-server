@@ -1,13 +1,13 @@
 class DomainsController < BaseController
   respond_to :xml, :json
   before_filter :authenticate
-
   # GET /domains
   def index
     domains = Array.new
-    if @cloud_user
-      domain = RestDomain.new(@cloud_user.namespace)
-    domains.push(domain)
+    Rails.logger.debug "Getting domains for user #{@cloud_user.login}"
+    Rails.logger.debug @cloud_user.domains
+    @cloud_user.domains.each do |domain|
+      domains.push(domain)
     end
     @reply = RestReply.new(:ok, "domains", domains)
     respond_with @reply, :status => @reply.status
@@ -16,15 +16,18 @@ class DomainsController < BaseController
   # GET /domains/<id>
   def show
     id = params[:id]
-    if not @cloud_user or @cloud_user.namespace != id
+    Rails.logger.debug "Getting domain #{id}"
+    domain = get_domain(id)
+    if domain and domain.hasAccess?(@cloud_user)
+      Rails.logger.debug "Found domain #{id}"
+      domain = RestDomain.new(domain)
+      @reply = RestReply.new(:ok, "domain", domain)
+      respond_with @reply, :status => @reply.status
+    else
       @reply = RestReply.new(:not_found)
       @reply.messages.push(message = Message.new(:error, "Domain #{id} not found.", 127))
       respond_with @reply, :status => @reply.status
-    return
     end
-    domain = RestDomain.new(@cloud_user.namespace)
-    @reply = RestReply.new(:ok, "domain", domain)
-    respond_with @reply, :status => @reply.status
   end
 
   # POST /domains
@@ -32,8 +35,10 @@ class DomainsController < BaseController
     namespace = params[:namespace]
     Rails.logger.debug "Creating domain with namespace #{namespace}"
 
-    domain = Domain.new(namespace)
-    if domain.invalid?
+    domain = Domain.new(namespace, @cloud_user)
+    if not domain.valid?
+      Rails.logger.debug "Domain is not valid"
+      Rails.logger.error "Domain is not valid"
       @reply = RestReply.new(:unprocessable_entity)
       domain.errors.keys.each do |key|
         error_messages = domain.errors.get(key)
@@ -44,45 +49,33 @@ class DomainsController < BaseController
       respond_with @reply, :status => @reply.status
     return
     end
-    
+
     if not Domain.namespace_available?(namespace)
       @reply = RestReply.new(:unprocessable_entity)
       @reply.messages.push(Message.new(:error, "Namespace '#{namespace}' is already in use. Please choose another.", 103, "namespace"))
       respond_with @reply, :status => @reply.status
     return
     end
-    
-    cloud_user = CloudUser.find(@login)
-    if cloud_user
-      @reply = RestReply.new(:conflict)
-      @reply.messages.push(Message.new(:error, "User already has a domain associated. Update the domain to modify.", 102))
-      respond_with @reply, :status => @reply.status
-    return
-    end
 
-    #we are using this object for validation until the user and domain are separated
-    Rails.logger.debug "Validating user"
-    cloud_user = CloudUser.new(@login, nil, namespace)
-    if cloud_user.invalid?
-      @reply = RestReply.new(:unprocessable_entity)
-      cloud_user.errors.each do |key, message|
-        @reply.messages.push(Message.new(:error, message))
-      end
-      respond_with @reply, :status => @reply.status
-    return
-    end
+    # if not @cloud_user.domains.empty?
+    #   @reply = RestReply.new(:conflict)
+    #   @reply.messages.push(Message.new(:error, "User already has a domain associated. Update the domain to modify.", 102))
+    #   respond_with @reply, :status => @reply.status
+    # return
+    # end
 
     begin
-      cloud_user.save
+      domain.save
     rescue Exception => e
       Rails.logger.error "Failed to create domain #{e.message}"
+      Rails.logger.error e.backtrace
       @reply = RestReply.new(:internal_server_error)
       @reply.messages.push(Message.new(:error, e.message, e.code))
       respond_with @reply, :status => @reply.status
-      return
+    return
     end
 
-    domain = RestDomain.new(cloud_user.namespace)
+    domain = RestDomain.new(domain)
     @reply = RestReply.new(:created, "domain", domain)
     respond_with @reply, :status => @reply.status
   end
@@ -91,17 +84,29 @@ class DomainsController < BaseController
   def update
     id = params[:id]
     new_namespace = params[:namespace]
-    Rails.logger.debug "Updating domain #{@cloud_user.namespace} to #{new_namespace}"
-    if not @cloud_user or @cloud_user.namespace != id
+    domain = get_domain(id)
+
+    if not domain or not domain.hasAccess?@cloud_user
       @reply = RestReply.new(:not_found)
-      @reply.messages.push(Message.new(:error, "Domain #{id} not found.", 127))
+      @reply.messages.push(message = Message.new(:error, "Domain #{id} not found.", 127))
       respond_with(@reply) do |format|
         format.xml { render :xml => @reply, :status => @reply.status }
         format.json { render :json => @reply, :status => @reply.status }
       end
     return
     end
-    
+    if domain and not domain.hasFullAccess?@cloud_user
+      @reply = RestReply.new(:forbidden)
+      @reply.messages.push(message = Message.new(:error, "You do not have permission to modify this domain", 131))
+      respond_with(@reply) do |format|
+        format.xml { render :xml => @reply, :status => @reply.status }
+        format.json { render :json => @reply, :status => @reply.status }
+      end
+    return
+    end
+
+    Rails.logger.debug "Updating domain #{domain.namespace} to #{new_namespace}"
+
     if not Domain.namespace_available?(new_namespace)
       @reply = RestReply.new(:unprocessable_entity)
       @reply.messages.push(Message.new(:error, "Namespace '#{new_namespace}' already in use. Please choose another.", 103, "namespace"))
@@ -112,7 +117,7 @@ class DomainsController < BaseController
     return
     end
 
-    domain = Domain.new(new_namespace)
+    domain.namespace = new_namespace
     if domain.invalid?
       @reply = RestReply.new(:unprocessable_entity)
       domain.errors.keys.each do |key|
@@ -129,21 +134,20 @@ class DomainsController < BaseController
     end
 
     begin
-      @cloud_user.update_namespace(new_namespace)
+      domain.save
     rescue Exception => e
-      Rails.logger.error "Failed to update domain #{e.message}"
+      Rails.logger.error "Failed to update domain #{e.message} #{e.backtrace}"
       @reply = RestReply.new(:internal_server_error)
       @reply.messages.push(Message.new(:error, e.message, e.code))
       respond_with(@reply) do |format|
         format.xml { render :xml => @reply, :status => @reply.status }
         format.json { render :json => @reply, :status => @reply.status }
       end
-      return
+    return
     end
     @cloud_user = CloudUser.find(@login)
-    domain = RestDomain.new(@cloud_user.namespace)
+    domain = RestDomain.new(domain)
     @reply = RestReply.new(:ok, "domain", domain)
-    #respond_with @reply, :status => @reply.status
 
     respond_with(@reply) do |format|
       format.xml { render :xml => @reply, :status => @reply.status }
@@ -161,10 +165,20 @@ class DomainsController < BaseController
     force = false
     end
 
-    if not @cloud_user or @cloud_user.namespace != id
+    domain = get_domain(id)
+    if not domain or not domain.hasAccess?@cloud_user
       @reply = RestReply.new(:not_found)
-      @reply.messages.push(Message.new(:error, "Domain #{id} not found.", 127))
-      #respond_with @reply, :status => @reply.status
+      @reply.messages.push(message = Message.new(:error, "Domain #{id} not found.", 127))
+      respond_with(@reply) do |format|
+        format.xml { render :xml => @reply, :status => @reply.status }
+        format.json { render :json => @reply, :status => @reply.status }
+      end
+    return
+    end
+
+    if domain and not domain.hasFullAccess?@cloud_user
+      @reply = RestReply.new(:forbidden)
+      @reply.messages.push(message = Message.new(:error, "You do not have permission to delete this domain", 131))
       respond_with(@reply) do |format|
         format.xml { render :xml => @reply, :status => @reply.status }
         format.json { render :json => @reply, :status => @reply.status }
@@ -175,28 +189,33 @@ class DomainsController < BaseController
     if force
       Rails.logger.debug "Force deleting domain #{id}"
       @cloud_user.applications.each do |app|
+        if app.domain.uuid == domain.uuid
         app.cleanup_and_delete()
+        end
       end
     elsif not @cloud_user.applications.empty?
-      @reply = RestReply.new(:bad_request)
-      @reply.messages.push(Message.new(:error, "Domain contains applications. Delete applications first or set force to true.", 128))
+      @cloud_user.applications.each do |app|
+        if app.domain.uuid == domain.uuid
+          @reply = RestReply.new(:bad_request)
+          @reply.messages.push(Message.new(:error, "Domain contains applications. Delete applications first or set force to true.", 128))
 
+          respond_with(@reply) do |format|
+            format.xml { render :xml => @reply, :status => @reply.status }
+            format.json { render :json => @reply, :status => @reply.status }
+          end
+        return
+        end
+      end
+    end
+
+    begin
+      domain.delete
+      @reply = RestReply.new(:no_content)
+      @reply.messages.push(Message.new(:info, "Damain deleted."))
       respond_with(@reply) do |format|
         format.xml { render :xml => @reply, :status => @reply.status }
         format.json { render :json => @reply, :status => @reply.status }
       end
-    return
-    end
-
-    
-    begin
-    @cloud_user.delete
-    @reply = RestReply.new(:no_content)
-    @reply.messages.push(Message.new(:info, "Damain deleted."))
-    respond_with(@reply) do |format|
-      format.xml { render :xml => @reply, :status => @reply.status }
-      format.json { render :json => @reply, :status => @reply.status }
-    end
     rescue Exception => e
       Rails.logger.error "Failed to delete domain #{e.message}"
       @reply = RestReply.new(:internal_server_error)
@@ -205,7 +224,16 @@ class DomainsController < BaseController
         format.xml { render :xml => @reply, :status => @reply.status }
         format.json { render :json => @reply, :status => @reply.status }
       end
-      return
+    return
     end
+  end
+
+  def get_domain(id)
+    @cloud_user.domains.each do |domain|
+      if domain.namespace == id
+      return domain
+      end
+    end
+    return nil
   end
 end

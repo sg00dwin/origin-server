@@ -42,7 +42,7 @@ module StickShift::Broker
     end
 
     def create(app, gear)
-      args = "--with-app-uuid '#{app.uuid}' --named '#{app.name}' --with-container-uuid '#{gear.uuid}' --with-namespace '#{app.user.namespace}'"
+      args = "--with-app-uuid '#{app.uuid}' --named '#{app.name}' --with-container-uuid '#{gear.uuid}' --with-namespace '#{app.domain.namespace}'"
       reply = exec_command("stickshift","app-create", args)
       parse_result(reply)
     end
@@ -320,7 +320,7 @@ module StickShift::Broker
       else
         appname = app.name
       end
-      arguments = "'#{appname}' '#{app.user.namespace}' '#{gear.uuid}'"
+      arguments = "'#{appname}' '#{app.domain.namespace}' '#{gear.uuid}'"
       arguments += " '#{arg}'" if arg
 
       result = exec_command(framework, command, arguments)

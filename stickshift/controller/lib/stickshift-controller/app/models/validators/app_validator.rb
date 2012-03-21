@@ -1,5 +1,5 @@
 class AppValidator < ActiveModel::Validator
-  APP_NAME_MAX_LENGTH = 46
+  APP_NAME_MAX_LENGTH = 32
   APP_NAME_MIN_LENGTH = 1
   def validate(record)
     attributes.each do |attribute|
@@ -25,9 +25,6 @@ class AppValidator < ActiveModel::Validator
     end
     if val and StickShift::ApplicationContainerProxy.blacklisted? val
       record.errors.add(attribute, {:message => "Name (#{val}) is not allowed.  Please choose another.", :exit_code => 105})
-    end
-    if not Application.find(record.user, record.name).nil?
-      record.errors.add(attribute, {:message => "An application named '#{record.name}' in namespace '#{record.user.namespace}' already exists", :exit_code => 100})
     end
   end
 end

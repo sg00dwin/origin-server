@@ -13,7 +13,7 @@ After do |scenario|
   dns_service = Express::Broker::DnsService.new({:end_point => "https://api2.dynect.net", :customer_name => "demo-redhat",
     :user_name => "dev-rhcloud-user", :password => "vo8zaijoN7Aecoo", :domain_suffix => "dev.rhcloud.com", :zone => "rhcloud.com", :log_file => "/dev/null"})
 
-  domains = ["cucumber#{@random}", "cucumber1#{@random}", "app-cucumber#{@random}"]
+  domains = ["cucumber#{@random}", "cucumberX#{@random}", "cucumberY#{@random}", "app-cucumber#{@random}"]
   domains.each do |domain|
     yes = dns_service.namespace_available?(domain)
     if !yes
@@ -171,11 +171,14 @@ Then /^the error message should have "([^\"]*)"$/ do |attributes_str|
     #puts @response.body
     result = Nokogiri::XML(@response.body)
     messages = result.xpath("//message")
+    #puts messages
     attributes_array.each do |attributes|
       key, value = attributes.split("=", 2)
       key = key.sub("_", "-")
       messages.each do |message|
-        result.xpath("/#{key}").text.should == value
+        #puts message
+        #puts message.xpath("#{key}").text
+        message.xpath("#{key}").text.should == value
       end
     end
   elsif @accept_type.upcase == "JSON"
@@ -193,15 +196,17 @@ Then /^the error message should have "([^\"]*)"$/ do |attributes_str|
 end
 
 Then /^the response descriptor should have "([^\"]*)" as dependencies$/ do |deps|
+  #puts @response.body
   if @accept_type.upcase == "XML"
     page = Nokogiri::XML(@response.body)
     desc_yaml = page.xpath("//response/data")
+    desc = YAML.load(desc_yaml.text.to_s)
   elsif @accept_type.upcase == "JSON"
     page = JSON.parse(@response.body)
     desc_yaml = page["data"]
+    desc = YAML.load(desc_yaml)
   end
-
-  desc = YAML.load(desc_yaml.text.to_s)
+  #desc = YAML.load(desc_yaml.text.to_s)
   deps.split(",").each do |dep|
     desc["Requires"].should include(dep)
   end
