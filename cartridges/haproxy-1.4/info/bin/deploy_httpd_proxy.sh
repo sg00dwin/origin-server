@@ -24,13 +24,48 @@ IP=$4
 source "/etc/stickshift/stickshift-node.conf"
 source ${CARTRIDGE_BASE_PATH}/abstract/info/lib/util
 
-if ! [ -d "${STICKSHIFT_HTTP_CONF_DIR}/${uuid}_${namespace}_${application}" ]
-then
-  echo "Cannot find application dir - ${uuid}_${namespace}_${application}" 1>&2
-  exit 22
-fi
-
-cat <<EOF > "${STICKSHIFT_HTTP_CONF_DIR}/${uuid}_${namespace}_${application}/000000_haproxy.conf"
+vhost="${STICKSHIFT_HTTP_CONF_DIR}/${uuid}_${namespace}_${application}.conf"
+if [ -f "$vhost" ]; then
+   #  Already have a vhost - just add haproxy routing to it.
+   cat <<EOF > "${STICKSHIFT_HTTP_CONF_DIR}/${uuid}_${namespace}_${application}/000000_haproxy.conf"
   ProxyPass /haproxy-status/ http://$IP2:8080/ status=I
   ProxyPassReverse /haproxy-status/ http://$IP2:8080/
+EOF
+   return
+fi
+
+rm -rf "${STICKSHIFT_HTTP_CONF_DIR}/${uuid}_${namespace}_${application}.conf" "${STICKSHIFT_HTTP_CONF_DIR}/${uuid}_${namespace}_${application}"
+
+mkdir "${STICKSHIFT_HTTP_CONF_DIR}/${uuid}_${namespace}_${application}"
+
+cat <<EOF > "${STICKSHIFT_HTTP_CONF_DIR}/${uuid}_${namespace}_${application}/00000_default.conf"
+  ServerName ${application}-${namespace}.${CLOUD_DOMAIN}
+  ServerAdmin mmcgrath@redhat.com
+  DocumentRoot /var/www/html
+  DefaultType None
+
+  ProxyPass /health !
+  Alias /health ${CARTRIDGE_BASE_PATH}/haproxy-1.4/info/configuration/health.html
+
+  ProxyPass /haproxy-status/ http://$IP2:8080/ status=I
+  ProxyPassReverse /haproxy-status/ http://$IP2:8080/
+  ProxyPass / http://$IP:8080/ status=I
+  ProxyPassReverse / http://$IP:8080/
+EOF
+cat <<EOF > "${STICKSHIFT_HTTP_CONF_DIR}/${uuid}_${namespace}_${application}.conf"
+<VirtualHost *:80>
+  RequestHeader append X-Forwarded-Proto "http"
+
+  Include ${STICKSHIFT_HTTP_CONF_DIR}/${uuid}_${namespace}_${application}/*.conf
+
+</VirtualHost>
+
+<VirtualHost *:443>
+  RequestHeader append X-Forwarded-Proto "https"
+
+$(/bin/cat ${CARTRIDGE_BASE_PATH}/haproxy-1.4/info/configuration/node_ssl_template.conf)
+
+  Include ${STICKSHIFT_HTTP_CONF_DIR}/${uuid}_${namespace}_${application}/*.conf
+
+</VirtualHost>
 EOF

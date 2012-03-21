@@ -173,4 +173,11 @@ start_app
 #
 $CART_INFO_DIR/bin/deploy_httpd_proxy.sh $application $namespace $uuid $IP
 
+#  Check if its a scalable app and if so need to do deploy an additional
+#  virtualhost definition for the actual app.
+source "$APP_HOME/.env/OPENSHIFT_APP_NAME"
+if [ "$application" != "$OPENSHIFT_APP_NAME" ]; then
+   $CART_INFO_DIR/bin/deploy_httpd_proxy.sh $OPENSHIFT_APP_NAME $namespace $uuid $IP
+fi
+
 restart_httpd_graceful
