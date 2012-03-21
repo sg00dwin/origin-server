@@ -2,7 +2,7 @@
 $:.push File.expand_path("../lib", __FILE__)
 lib_dir  = File.join(File.join("lib", "**"), "*")
 test_dir  = File.join(File.join("test", "**"), "*")
-bin_dir  = File.join("bin", "*")
+bin_dir  = File.join("bin","*")
 
 Gem::Specification.new do |s|
   s.name        = "swingshift-mongo-plugin"
@@ -16,9 +16,9 @@ Gem::Specification.new do |s|
 
   s.rubyforge_project = "swingshift-mongo-plugin"
 
-  s.files       = Dir[lib_dir]
+  s.files       = Dir[lib_dir] + Dir[bin_dir]
   s.test_files  = Dir[test_dir]
-  s.executables   = Dir[bin_dir]
+  s.executables = Dir[bin_dir].map {|binary| File.basename(binary)}
   s.files       += %w(README.md Rakefile Gemfile swingshift-mongo-plugin.spec swingshift-mongo-plugin.gemspec LICENSE COPYRIGHT)
   s.require_paths = ["lib"]
 

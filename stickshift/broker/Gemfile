@@ -11,6 +11,11 @@ gem 'open4'
 gem 'stickshift-node'
 gem 'stickshift-controller'
 
+gem 'swingshift-mongo-plugin'
+gem 'uplift-bind-plugin'
+gem 'crankcase-mongo-plugin'
+gem 'gearchanger-oddjob-plugin'
+
 # Bundle edge Rails instead:
 # gem 'rails', :git => 'git://github.com/rails/rails.git'
 

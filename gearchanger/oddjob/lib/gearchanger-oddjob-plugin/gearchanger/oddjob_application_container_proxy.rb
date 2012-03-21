@@ -3,15 +3,15 @@ require 'pp'
 require 'parseconfig'
 require 'shellwords'
 
-module StickShift::Broker
-  class ApplicationContainerProxy < StickShift::ApplicationContainerProxy
+module GearChanger
+  class OddJobApplicationContainerProxy < StickShift::ApplicationContainerProxy
     attr_accessor :id
     def self.find_available_impl(node_profile=nil)
-      ApplicationContainerProxy.new('localhost')
+      OddJobApplicationContainerProxy.new('localhost')
     end
 
     def self.find_one_impl(node_profile=nil)
-      ApplicationContainerProxy.new('localhost')
+      OddJobApplicationContainerProxy.new('localhost')
     end
 
     def self.blacklisted_in_impl?(name)

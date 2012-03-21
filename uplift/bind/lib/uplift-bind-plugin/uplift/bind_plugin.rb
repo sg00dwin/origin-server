@@ -6,7 +6,7 @@ require 'dnsruby'
 
 module Uplift
   class BindPlugin < StickShift::DnsService
-    @ss_dns_provider = StickShift::BindDnsService
+    @ss_dns_provider = Uplift::BindPlugin
 
     # DEPENDENCIES
     # Rails.application.config.ss[:domain_suffix]
@@ -20,7 +20,7 @@ module Uplift
       elsif defined? Rails
         # extract from Rails.application.config[dns,ss]
         access_info = Rails.application.config.dns
-        @domain_suffix = Rails.application.config.dns[:domain_suffix]
+        @domain_suffix = Rails.application.config.ss[:domain_suffix]
       else
         raise Exception.new("BIND DNS service is not inilialized")
       end

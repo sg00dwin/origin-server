@@ -1,6 +1,7 @@
 #!/usr/bin/ruby
 require 'rubygems'
 require 'digest/md5'
+require 'swingshift-mongo-plugin'
 require '/var/www/stickshift/broker/config/environment'
 
 def p_usage
@@ -35,16 +36,13 @@ if opt['help'] || !opt['user'] || !opt['password']
     p_usage
 end
 
-auth_config = Rails.application.config.ss[:auth]
-ds = StickShift::MongoDataStore.new(auth_config[:mongo])
+auth_config = Rails.application.config.auth
+auth_service = Swingshift::MongoAuthService.new(auth_config)
 
-hash = ds.find_one( {"_id" => opt['user']} )
-if hash && !hash.empty?
+if auth_service.user_exists?(opt['user'])
   puts "Error: User '#{opt['user']}' already registered."
   exit 1
 end
 
-
-encoded_password = Digest::MD5.hexdigest(Digest::MD5.hexdigest(opt['password']) + auth_config[:salt])
-ds.insert({"_id" => opt['user'], "user" => opt['user'], "password" => encoded_password})
+auth_service.register_user(opt['user'],opt['password'])
 puts "User '#{opt['user']}' successfully registered with StickShift."
