@@ -22,7 +22,7 @@ Feature: keys
     When I send a POST request to "/user/keys" with the following:"name=cucumber&type=ssh-rsa&content=XYZ123567"
     Then the response should be "201"
 
-  Scenario: Create key with with blank, missing and invalid content
+  Scenario: Create key with blank, missing and invalid content
     Given a new guest account
     And I am a valid user
     And I accept "XML"
@@ -35,7 +35,7 @@ Feature: keys
     When I send a POST request to "/user/keys" with the following:"name=cucumber&type=ssh-rsa"
     Then the response should be "422"
     
-  Scenario: Create key with with blank, missing, too long and invalid name
+  Scenario: Create key with blank, missing, too long and invalid name
     Given a new guest account
     And I am a valid user
     And I accept "XML"
@@ -92,7 +92,7 @@ Feature: keys
     When I send a PUT request to "/user/keys/cucumber" with the following:"type=ssh-rsa&content=ABC890"
     Then the response should be "200"
     
-  Scenario: Update key with with blank, missing and invalid content
+  Scenario: Update key with blank, missing and invalid content
     Given a new guest account
     And I am a valid user
     And I accept "XML"
@@ -153,7 +153,7 @@ Feature: keys
     When I send a POST request to "/user/keys" with the following:"name=cucumber&type=ssh-rsa&content=XYZ123"
     Then the response should be "201"
     When I send a DELETE request to "/user/keys/cucumber"
-    Then the response should be "500"
+    Then the response should be "204"
     
   Scenario: Delete non-existent key
     Given a new guest account
