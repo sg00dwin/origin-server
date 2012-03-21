@@ -6,12 +6,12 @@
         Our
         %strong#technology-rotate shared
         cloud solution
-      .secondary Express is a free, cloud-based application platform for Java, Ruby, Node.js, Python, PHP and Perl applications. 
+      .secondary OpenShift is a free, cloud-based application platform for Java, Ruby, Node.js, Python, PHP and Perl applications. 
 
   - if logged_in?
     = take_action console_path, 'Open the <strong>OpenShift</strong> Console'
   - else
-    = take_action '/app/user/new/express', 'Sign up to try <strong>OpenShift</strong>'
+    = take_action new_account_path, 'Sign up to try <strong>OpenShift</strong>'
 
 %h1.ribbon Getting started with OpenShift
   
@@ -59,7 +59,7 @@
                 %li RHEL 6 and up or Fedora 14 and up.
                 %li Root or sudoer access
             %li
-              Download the express repo file
+              Download the OpenShift repo file
               %a(href="https://openshift.redhat.com/app/repo/openshift.repo") openshift.repo
             
             %li
@@ -177,7 +177,7 @@
         %p
           All you need is an ssh keypair and a unique name.
         
-        = link_to 'Create your domain now', '/app/console', :class => 'button'
+        = link_to 'Create your domain now', console_path, :class => 'button'
       
           
     %li#create_application.topic
@@ -252,6 +252,11 @@
         While this has gotten you started, there is a lot more information out there to really get you going.  Check out the following pages for videos, blogs, and tutorials:
 
         %ul
+          %li
+            - if logged_in?
+              = link_to 'Open the OpenShift Console', console_path, :class => 'more'
+            - else
+              = link_to 'Sign up', new_account_path, :class => 'more'
           %li
             = link_to 'Videos', 'http://www.redhat.com/openshift/videos', :class => 'more'
           %li
