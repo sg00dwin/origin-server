@@ -142,8 +142,9 @@ class ComponentInstance < StickShift::UserModel
     # FIXME : comp_name could be a component_name only, feature_name, cartridge_name that 
     #         one of the components depend upon, or a hierarchical name
     comp_inst = app.comp_instance_map[parent_path + "/" + comp_name]
-    if comp_inst.nil?
-      parent_inst = app.comp_instance_map[parent_path]
+    return comp_inst if not comp_inst.nil?
+    parent_inst = app.comp_instance_map[parent_path]
+    if parent_inst
       parent_inst.dependencies.each do |dep|
         dep_inst = app.comp_instance_map[dep]
         cartname = dep_inst.parent_cart_name
@@ -152,6 +153,14 @@ class ComponentInstance < StickShift::UserModel
         end
       end
     end
+    group_comp_refs = profile.groups.map { |g| g.component_refs }
+    comp_refs = group_comp_refs.flatten
+    comp_refs.each { |comp_ref|
+      name_prefix = comp_ref.get_name_prefix(profile)
+      comp_inst = app.comp_instance_map[parent_path + name_prefix]
+      return comp_inst if not comp_inst.nil?
+    }
+
     return comp_inst
   end
 
