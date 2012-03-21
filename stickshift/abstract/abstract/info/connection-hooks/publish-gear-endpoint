@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Start the application httpd instance
+# Publishes the endpoint for this gear. Output format = $uuid@$dns:$appname
 
 # Exit on any errors
 set -e
@@ -9,7 +9,7 @@ function print_help {
     echo "Usage: $0 app-name namespace uuid"
     echo "Start a running application"
 
-    echo "$0 $@" | logger -p local0.notice -t stickshift_publish_http_url
+    echo "$0 $@" | logger -p local0.notice -t stickshift_publish_gear_endpoint
     exit 1
 }
 
@@ -28,7 +28,12 @@ done
 
 source "/etc/stickshift/stickshift-node.conf"
 source ${CARTRIDGE_BASE_PATH}/abstract/info/lib/util
-source "${GEAR_BASE_DIR}/$3/.env/OPENSHIFT_GEAR_DNS"
-source "${GEAR_BASE_DIR}/$3/.env/OPENSHIFT_PROXY_PORT"
 
-echo ${OPENSHIFT_GEAR_DNS}:${OPENSHIFT_PROXY_PORT}
+setup_basic_hook "$@"
+
+import_env_vars
+
+#
+# Publish this gear's endpoint.
+# 
+echo "${OPENSHIFT_GEAR_UUID}@${OPENSHIFT_GEAR_DNS}:${OPENSHIFT_GEAR_NAME}"

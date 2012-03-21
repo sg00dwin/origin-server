@@ -31,48 +31,58 @@ app_type="haproxy-1.4"
 
 source ${CARTRIDGE_BASE_PATH}/abstract/info/lib/util
 
-setup_configure "$1" $2 $3
+CART_INFO_DIR=${CARTRIDGE_BASE_PATH}/haproxy-1.4/info
 
-stop_app
+setup_configure "$1" $2 $3
 
 unobfuscate_app_home $uuid $namespace $application
 
-CART_INFO_DIR=${CARTRIDGE_BASE_PATH}/embedded/haproxy-1.4/info
+clone_git_repo $application $user_id $group_id $uuid "haproxy 1.4"
 
 #
 # Create the core of the application
 #
 
-export APP_DIR="$APP_HOME/haproxy-1.4"
-
 mkdir -p "$APP_DIR"
 pushd "$APP_DIR" > /dev/null
 create_standard_app_dirs
-chown -R $uuid runtime
 mkdir -p conf conf.d logs sessions
 ln -s /usr/lib64/httpd/modules modules
 ln -s /etc/httpd/conf/magic conf/magic
 touch conf/gear-registry.git
+#sed -e "s,TEMPLATE_SET_ME_SESSION_SAVE_PATH,$APP_DIR/sessions/," \
+#    -e "s,TEMPLATE_SET_ME_UPLOAD_TMP_DIR,$APP_DIR/tmp/," $CART_CONF_DIR/php.ini > $APP_DIR/conf/php.ini 
 popd > /dev/null
 
 #
 # Find an open localhost IP
 #
-source ${GEAR_BASE_DIR}/${uuid}/.env/OPENSHIFT_INTERNAL_IP
-IP=$OPENSHIFT_INTERNAL_IP
-unset OPENSHIFT_INTERNAL_IP
+IP=`find_open_ip $uid $uuid`
+
+create_app_ctl_script
+
+populate_repo_dir
+
+secure_app_dir
+
+secure_conf_dirs
+
+observe_setup_app_and_git_dirs
+
+#
+# Create environment variables
+#
+create_standard_env_vars
+create_standard_network_env_vars
+create_standard_repo_dir_env_var
+create_standard_path_env_var
+
 
 export IP2=`embedded_find_open_ip $uid "$APP_DIR/../"`
 echo "export OPENSHIFT_HAPROXY_STATUS_IP='$IP'" > "$APP_DIR/../.env/OPENSHIFT_HAPROXY_STATUS_IP"
 $CART_INFO_DIR/bin/deploy_httpd_config.sh $application $uuid $IP
-mkdir -p ${GEAR_BASE_DIR}/${uuid}/.openshift
-chown ${uuid} ${GEAR_BASE_DIR}/${uuid}/.openshift $APP_DIR/run/
-
-# Alter PATH
-OLD_PATH=$PATH
-source ${GEAR_BASE_DIR}/${uuid}/.env/PATH
-echo "PATH=/usr/libexec/stickshift/cartridges/embedded/haproxy-1.4/info/bin/:$PATH" > ${GEAR_BASE_DIR}/${uuid}/.env/PATH
-PATH=$OLD_PATH
+mkdir ${GEAR_BASE_DIR}/${uuid}/.openshift
+chown ${uuid} ${GEAR_BASE_DIR}/${uuid}/.openshift $APP_DIR/conf/gear-registry.git
 
 #
 # Start the server
