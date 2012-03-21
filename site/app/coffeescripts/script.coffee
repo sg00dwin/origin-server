@@ -92,8 +92,6 @@ $ ->
     if trackLink?
       if body.hasClass 'express'
         product = 'Express'
-      else if body.hasClass 'flex'
-        product = 'Flex'
       else if body.hasClass 'home'
         product = 'Home'
       else
