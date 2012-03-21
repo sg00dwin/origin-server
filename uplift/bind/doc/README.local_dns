@@ -55,6 +55,8 @@ contents of the local example.com domain. Modify any instance of
 'example.com' in the procedure below if you wish to use another domain
 for your configuration.
 
+Nearly all of the commands below must be run as root or using sudo(8).
+
 All other queries will be forwarded to the normal external DNS service.
 
 * Install BIND
@@ -124,10 +126,6 @@ The forwarders clause in the configuration will be included from a
 file named /var/named/forwarders.conf.  This will allow you to update
 the forwarders without editing the named.conf itself.  This will
 become important if you're getting your primary IP address from DHCP.
-
-** control key
-
-
 
 ** update keys
 
