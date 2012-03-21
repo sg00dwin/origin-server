@@ -4,8 +4,8 @@
 require 'rubygems'
 require 'dnsruby'
 
-module StickShift::Broker
-  class BindDnsService < StickShift::DnsService
+module Uplift
+  class BindPlugin < StickShift::DnsService
     @ss_dns_provider = StickShift::BindDnsService
 
     # DEPENDENCIES
@@ -19,8 +19,8 @@ module StickShift::Broker
         @domain_suffix = access_info[:domain_suffix]
       elsif defined? Rails
         # extract from Rails.application.config[dns,ss]
-        access_info = Rails.application.config.ss[:dns][:bind]
-        @domain_suffix = Rails.application.config.ss[:domain_suffix]
+        access_info = Rails.application.config.dns
+        @domain_suffix = Rails.application.config.dns[:domain_suffix]
       else
         raise Exception.new("BIND DNS service is not inilialized")
       end
