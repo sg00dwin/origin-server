@@ -10,9 +10,9 @@ uuid="$2"
 IP="$3"
 
 APP_HOME="${GEAR_BASE_DIR}/$uuid"
-HAPROXY_DIR=`echo $APP_HOME/haproxy-1.4 | tr -s /`
+APP_DIR=`echo $APP_HOME/$application | tr -s /`
 
-cat <<EOF > "$APP_HOME/haproxy-1.4/conf/haproxy.cfg.template"
+cat <<EOF > "$APP_DIR/conf/haproxy.cfg.template"
 #---------------------------------------------------------------------
 # Example configuration for a possible web application.  See the
 # full configuration options online.
@@ -40,7 +40,7 @@ global
     #
     #log         127.0.0.1 local2
 
-    pidfile     $HAPROXY_DIR/run/haproxy.pid
+    pidfile     $APP_DIR/run/haproxy.pid
     maxconn     4000
     daemon
 
@@ -76,10 +76,10 @@ listen stats $IP2:8080
 
 listen express $IP:8080
     cookie GEAR insert indirect nocache
-    option httpchk
+    option httpchk GET /
     balance leastconn
     server  filler $IP2:8080 backup
 EOF
 
-cp $HAPROXY_DIR/conf/haproxy.cfg.template $HAPROXY_DIR/conf/haproxy.cfg
-chown $uuid $HAPROXY_DIR/conf/haproxy.cfg
+cp $APP_DIR/conf/haproxy.cfg.template $APP_DIR/conf/haproxy.cfg
+chown $uuid $APP_DIR/conf/haproxy.cfg

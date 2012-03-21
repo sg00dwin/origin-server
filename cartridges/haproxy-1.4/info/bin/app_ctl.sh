@@ -11,9 +11,7 @@ do
     . $f
 done
 
-translate_env_vars
-
-export HAPROXY_PID="${OPENSHIFT_RUN_DIR}/haproxy.pid"
+export HAPROXY_PID="${OPENSHIFT_HOMEDIR}/haproxy-1.4/run/haproxy.pid"
 
 if ! [ $# -eq 1 ]
 then
@@ -40,7 +38,7 @@ start() {
     set_app_state started
     if ! isrunning
     then
-        /usr/sbin/haproxy -f $OPENSHIFT_GEAR_DIR/conf/haproxy.cfg > /dev/null 2>&1
+        /usr/sbin/haproxy -f $OPENSHIFT_HOMEDIR/haproxy-1.4/conf/haproxy.cfg > /dev/null 2>&1
         #haproxy_ctld_daemon start > /dev/null 2>&1
     else
         echo "Haproxy already running" 1>&2
@@ -81,29 +79,17 @@ reload() {
         [ -f $HAPROXY_PID ]  &&  zpid=$( /bin/cat "${HAPROXY_PID}" )
         [ -n "$zpid" ]       &&  zopts="-sf $zpid"
         echo "Reloading haproxy gracefully without service interruption" 1>&2
-        /usr/sbin/haproxy -f $OPENSHIFT_GEAR_DIR/conf/haproxy.cfg ${zopts} > /dev/null 2>&1
+        /usr/sbin/haproxy -f $OPENSHIFT_HOMEDIR/haproxy-1.4/conf/haproxy.cfg ${zopts} > /dev/null 2>&1
     fi
     #haproxy_ctld_daemon restart > /dev/null 2>&1
 }
 
 
 case "$1" in
-    start)
-        #/usr/sbin/haproxy -f $OPENSHIFT_GEAR_DIR/conf/haproxy.cfg
-        start
-    ;;
-    graceful-stop|stop)
-        stop
-    ;;
-    graceful)
-        /bin/kill -HUP `cat $OPENSHIFT_RUN_DIR/haproxy.pid`
-    ;;
-    restart)
-    ;;
-    reload)
-        reload;
-    ;;
-    status)
-        print_running_processes
-    ;;
+    start)                   start          ;;
+    graceful-stop|stop)      stop           ;;
+    restart|graceful|reload) reload         ;;
+    force-stop)              pkill haproxy  ;;
+    status)                  print_running_processes ;;
+    # FIXME:  status should just report on haproxy not all the user's processes.
 esac

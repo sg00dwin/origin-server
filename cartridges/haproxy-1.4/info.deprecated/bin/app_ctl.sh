@@ -11,6 +11,8 @@ do
     . $f
 done
 
+translate_env_vars
+
 export HAPROXY_PID="${OPENSHIFT_RUN_DIR}/haproxy.pid"
 
 if ! [ $# -eq 1 ]
@@ -38,7 +40,7 @@ start() {
     set_app_state started
     if ! isrunning
     then
-        /usr/sbin/haproxy -f $OPENSHIFT_GEAR_DIR/../haproxy-1.4/conf/haproxy.cfg > /dev/null 2>&1
+        /usr/sbin/haproxy -f $OPENSHIFT_GEAR_DIR/conf/haproxy.cfg > /dev/null 2>&1
         #haproxy_ctld_daemon start > /dev/null 2>&1
     else
         echo "Haproxy already running" 1>&2
@@ -79,7 +81,7 @@ reload() {
         [ -f $HAPROXY_PID ]  &&  zpid=$( /bin/cat "${HAPROXY_PID}" )
         [ -n "$zpid" ]       &&  zopts="-sf $zpid"
         echo "Reloading haproxy gracefully without service interruption" 1>&2
-        /usr/sbin/haproxy -f $OPENSHIFT_GEAR_DIR/../conf/haproxy.cfg ${zopts} > /dev/null 2>&1
+        /usr/sbin/haproxy -f $OPENSHIFT_GEAR_DIR/conf/haproxy.cfg ${zopts} > /dev/null 2>&1
     fi
     #haproxy_ctld_daemon restart > /dev/null 2>&1
 }
