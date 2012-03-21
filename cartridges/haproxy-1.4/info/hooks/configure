@@ -52,7 +52,7 @@ chown -R $uuid runtime
 mkdir -p conf conf.d logs sessions
 ln -s /usr/lib64/httpd/modules modules
 ln -s /etc/httpd/conf/magic conf/magic
-touch conf/gear-registry.git
+touch conf/gear-registry.db
 popd > /dev/null
 
 #
