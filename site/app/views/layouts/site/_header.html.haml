@@ -24,9 +24,9 @@
       %ul.nav
         - cur_url = url_for(:action => controller.action_name, :controller => controller.controller_name)
         -[  ["Learn More", product_overview_path],
-            ["Express", express_path],
+            ["Getting Started", getting_started_path],
             "&nbsp;",
-            ["Flex", flex_path],
+            ["Console", console_path],
             ["Community", community_url] ].each do |link|
           - if link.class.name == "String"
             %li.divider!= link.to_s

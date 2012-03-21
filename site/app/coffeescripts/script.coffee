@@ -31,9 +31,10 @@ $ ->
       ($ loading_match, body).hide()
       ($ 'input[type=submit][disabled]').removeAttr('disabled')
     ($ this).closest('form').bind 'submit', ->
-      ($ loading_match, this).show()
-      ($ 'input[type=submit]', this).attr('disabled','disabled')
-      true
+      if ($ 'input.error').length == 0
+        ($ loading_match, this).show()
+        ($ 'input[type=submit]', this).attr('disabled','disabled')
+        true
 
 ## Product page ##
   if body.hasClass 'product'

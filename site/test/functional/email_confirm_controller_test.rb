@@ -1,36 +1,33 @@
 require 'test_helper'
 
 class EmailConfirmControllerTest < ActionController::TestCase
-  test "error handling" do
+
+  def setup
     setup_session
+  end
 
-    # call with no params
-    get :confirm_express
-
+  test "no parameters should error" do
+    get :confirm
     assert_template :error
   end
 
-  test "confirm express" do
-    setup_session
-    res = Net::HTTPSuccess.new('', '200', '')
-    res.expects(:body).at_least_once.returns({'emailAddress' => 'not_nil'}.to_json)
-    Net::HTTP.any_instance.expects(:start).returns(res)
-
-    get :confirm_express, {:key => 'test', :emailAddress => 'test'}
-
-    assert_equal 'test', session[:confirm_login]
-    assert_redirected_to express_path
+  test "one parameter should error" do
+    get :confirm, :emailAddress => 'test'
+    assert_template :error
   end
 
-  test "confirm flex" do
-    setup_session
-    res = Net::HTTPSuccess.new('', '200', '')
-    res.expects(:body).at_least_once.returns({'emailAddress' => 'not_nil'}.to_json)
-    Net::HTTP.any_instance.expects(:start).returns(res)
+  test "other parameter should error" do
+    get :confirm, :key => 'test'
+    assert_template :error
+  end
 
-    get :confirm_flex, {:key => 'test', :emailAddress => 'test'}
+  test "streamline returns false is an error" do
+    WebUser.any_instance.expects(:confirm_email).returns(false)
 
-    assert_equal 'test', session[:confirm_login]
-    assert_redirected_to flex_path
+    get :confirm, {:key => 'test', :emailAddress => 'test'}
+
+    assert assigns(:user)
+    assert assigns(:user).errors.empty? # stub method added none
+    assert_template :error
   end
 end

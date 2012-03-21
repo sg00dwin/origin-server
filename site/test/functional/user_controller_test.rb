@@ -101,24 +101,6 @@ class UserControllerTest < ActionController::TestCase
 		assert_response :success
 	end
 
-	test "should create new flex user" do
-		get(:new_flex)
-
-		#assert assigns(:user)
-		#assert_equal assigns(:user).cloud_access_choice, CloudAccess::FLEX
-		assert_equal assigns(:product), 'flex'
-		assert_response :success
-	end
-
-	test "should create new express user" do
-		get(:new_express)
-
-		#assert assigns(:user)
-		#assert_equal assigns(:user).cloud_access_choice, CloudAccess::EXPRESS
-		assert_equal assigns(:product), 'express'
-		assert_response :success
-	end
-	
   test "should register user from external" do
     post(:create_external, {:json_data => '{"email_address":"tester@example.com","password":"pw1234"}', :captcha_secret => 'secret', :registration_referrer => 'appcelerator'})
     assert_response :success

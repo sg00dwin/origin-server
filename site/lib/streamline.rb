@@ -12,6 +12,10 @@ module Streamline
   include ErrorCodes
   attr_accessor :rhlogin, :ticket, :roles, :terms
 
+  # Raised when the reset token has already been used
+  class TokenExpired < Streamline::StreamlineException
+  end
+
   class Cookie
     def initialize(*arguments)
       @name, @value, @options = arguments
@@ -193,6 +197,7 @@ module Streamline
           :url => args
         }
         http_post(@@request_password_reset_url, args, false) do |json|
+          Rails.logger.debug "Password reset request #{json.inspect}"
           if json['errors']
             errors.add(:base, I18n.t(:service_error, :scope => :streamline))
           end
@@ -210,6 +215,21 @@ module Streamline
     http_post(@@reset_password_url, args) do |json|
       return json
     end
+  end
+
+  def complete_reset_password(token)
+    args = {
+      :login => @email_address,
+      :token => token
+    }
+    http_post(@@reset_password_url, args, false) do |json|
+      Rails.logger.debug "Password reset completion #{json.inspect}"
+      if json['errors']
+        raise TokenExpired if 'token_is_invalid' == json['errors'].first
+        errors.add(:base, I18n.t(:unknown)) if errors.empty?
+      end
+    end
+    errors.empty?
   end
 
   def check_access
@@ -234,12 +254,39 @@ module Streamline
                      'confirmationUrl' => confirm_url}
 
     http_post(@@register_url, register_args, false) do |json|
-      unless json['emailAddress']
+      Rails.logger.debug "Registration response #{json.inspect}"
+      if json['emailAddress']
+        @email_address = json['emailAddress']
+      else
         if errors.length == 0
           errors.add(:base, I18n.t(:unknown))
         end
       end
     end
+    errors.empty?
+  end
+
+  def confirm_email(key,email=@email_address)
+    raise "No email address provided" unless email
+    confirm_args = {
+      :emailAddress => email,
+      :key => key
+    }
+    errors.clear
+    http_post(@@email_confirm_url, confirm_args, false) do |json|
+      Rails.logger.debug "Confirmation response #{json.inspect}"
+      if json['emailAddress']
+        # success
+      elsif json['errors'] and json['errors'][0] == 'user_already_registered'
+        # success
+        errors.clear
+      else
+        if errors.length == 0
+          errors.add(:base, I18n.t(:unknown))
+        end
+      end
+    end
+    errors.empty?
   end
 
   #
@@ -359,6 +406,8 @@ module Streamline
           end
         end
       when Net::HTTPForbidden, Net::HTTPUnauthorized
+        Rails.logger.error "Streamline rejected the request - #{res.code}"
+        Rails.logger.error "Response body:\n#{res.body}"
         raise AccessDeniedException
       else
         Rails.logger.error "Invalid HTTP response from streamline - #{res.code}"
