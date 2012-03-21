@@ -19,8 +19,8 @@ class LoginController < SiteController
 
   def valid_referrer(referrer)
     case
-    when referrer.path.starts_with?(user_new_flex_path); flex_path
-    when referrer.path.starts_with?(login_flex_path); flex_path
+    when referrer.path.starts_with?(user_new_flex_path); nil
+    when referrer.path.starts_with?(login_flex_path); nil
     when referrer.path.starts_with?(login_path); nil
     else referrer.to_s
     end
