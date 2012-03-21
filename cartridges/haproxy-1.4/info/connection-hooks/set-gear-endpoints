@@ -39,7 +39,7 @@ function register_gear_endpoint() {
 }
 
 
-function unregister_gear() {
+function unregister_gear_endpoint() {
     [ $# -lt 2 ]  &&  return 1
 
     #  Check if the gear endpoint registry entry exists.
@@ -77,7 +77,7 @@ setup_configure "$1" $2 $3
 import_env_vars
 
 # Defines.
-HAPROXY_CONF_DIR=$OPENSHIFT_GEAR_DIR/$CART_NAME-$CART_VERSION/conf
+HAPROXY_CONF_DIR=$APP_HOME/$CART_NAME-$CART_VERSION/conf
 HAPROXY_GEAR_REGISTRY=$HAPROXY_CONF_DIR/gear-registry.db
 
 # Array containing current endpoints.
@@ -98,6 +98,6 @@ done
 for gear_ep in $(get_registered_endpoints); do
     gear_name=gear-$(echo "$gear_ep" | cut -f 2 -d '@' | cut -f 1 -d '.')
     if [ -z "${curr_endpoints[$gear_name]}" ]; then
-        unregister_gear "$gear_name" "$gear_ep"  ||  :
+        unregister_gear_endpoint "$gear_name" "$gear_ep"  ||  :
     fi
 done

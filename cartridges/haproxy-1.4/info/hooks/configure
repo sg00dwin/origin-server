@@ -14,6 +14,18 @@ function print_help {
     exit 1
 }
 
+function generate_ssh_keys {
+    /bin/mkdir -p $APP_DIR/data/.ssh/
+    /usr/bin/ssh-keygen -N '' -f $APP_DIR/data/.ssh/haproxy_id_rsa > /dev/null
+
+    /bin/chown root.$uuid -R "$APP_DIR/data/.ssh/"
+    chmod 0750 "$APP_DIR/data/.ssh/"
+    touch "$APP_DIR/data/.ssh/known_hosts"
+    chmod 0600 "$APP_DIR/data/.ssh/haproxy_id_rsa"
+    chmod 0600 "$APP_DIR/data/.ssh/haproxy_id_rsa.pub"
+    observe_setup_var_lib_dir "$APP_DIR/data/.ssh/"
+}
+
 function setup_haproxy_as_a_service() {
     [ $# -eq 4 -o $# -eq 3 ] || print_help
 
@@ -60,9 +72,6 @@ function setup_haproxy_as_a_service() {
     create_standard_network_env_vars
     create_standard_repo_dir_env_var
     create_standard_path_env_var
-
-    # And prepend to path variable so that haproxy app_ctl.sh script is called.
-    sed -i 's#export \s*PATH=#export PATH=$CART_INFO_DIR/bin/:#' $APP_HOME/.env/PATH
 
     export IP2=`embedded_find_open_ip $uid "$APP_HOME/"`
     echo "export OPENSHIFT_HAPROXY_STATUS_IP='$IP'" > "$APP_HOME/.env/OPENSHIFT_HAPROXY_STATUS_IP"
@@ -113,6 +122,17 @@ stop_app
 
 CART_INFO_DIR=${CARTRIDGE_BASE_PATH}/embedded/haproxy-1.4/info
 
+
+#
+# Generate key pair
+#
+generate_ssh_keys
+
+public_key=$(cat $APP_DIR/data/.ssh/haproxy_id_rsa.pub | grep -v "^-----")
+add_ssh_key "$public_key"
+
+add_broker_auth_key
+
 #
 # Create the core of the application
 #
@@ -138,10 +158,10 @@ export IP2=`embedded_find_open_ip $uid "$APP_HOME"`
 echo "export OPENSHIFT_HAPROXY_STATUS_IP='$IP'" > "$APP_HOME/.env/OPENSHIFT_HAPROXY_STATUS_IP"
 $CART_INFO_DIR/bin/deploy_httpd_config.sh $application $uuid $IP
 mkdir -p $APP_HOME/.openshift
-chown ${uuid} $APP_HOME/.openshift $HAPROXY_DIR/run/
+chown ${uuid} $APP_HOME/.openshift $APP_DIR/run/
 
 # Alter PATH so that the haproxy app_ctl.sh script is called.
-sed -i 's#export \s*PATH=#export PATH=$CART_INFO_DIR/bin/:#' $APP_HOME/.env/PATH
+sed -i "s#export \s*PATH=#export PATH=$CART_INFO_DIR/bin/:#" $APP_HOME/.env/PATH
 
 #
 # Start the server

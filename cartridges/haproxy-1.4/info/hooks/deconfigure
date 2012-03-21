@@ -1,5 +1,9 @@
 #!/bin/bash
+
 # Destroys haproxy instance
+CART_NAME="haproxy"
+CART_VERSION="1.4"
+
 
 function print_help {
     echo "Usage: $0 app-name namespace uuid"
@@ -22,11 +26,25 @@ done
 
 source /etc/stickshift/stickshift-node.conf
 source ${CARTRIDGE_BASE_PATH}/abstract/info/lib/util
+source ${CARTRIDGE_BASE_PATH}/abstract/info/lib/git
 
-
+app_type="haproxy-1.4"
 setup_deconfigure "$1" $2 $3
 
-export APP_DIR="$APP_HOME/haproxy-1.4"
+CART_INFO_DIR=${CARTRIDGE_BASE_PATH}/embedded/haproxy-1.4/info
+
+source_if_exists "$APP_HOME/.env/OPENSHIFT_GEAR_TYPE"
+source_if_exists "$APP_HOME/.env/OPENSHIFT_DB_TYPE"
+
+export HAPROXY_DIR="$APP_HOME/haproxy-1.4"
+
+#
+# Teardown port proxy (ignore failures or missing hook)
+#
+( ${CART_INFO_DIR}/hooks/conceal-port "$1" $2 $3 ) &>/dev/null || :
+
+# For non-embedded (dedicated) haproxy gear, remove all the proxy ports.
+[ "$app_type" = "$OPENSHIFT_GEAR_TYPE" ]  &&  remove_all_proxy_ports $uuid
 
 # Remove PATH override
 OLD_PATH=$PATH
@@ -34,22 +52,40 @@ source ${GEAR_BASE_DIR}/${uuid}/.env/PATH
 
 # Stop old apps
 stop_app
+confirm_log_files_inactive "$HAPROXY_DIR/logs"
 
-export PATH=`echo "$PATH" | sed 's,/usr/libexec/stickshift/cartridges/embedded/haproxy-1.4/info/bin/:,,g'`
+# Remove PATH override
+export PATH=`echo "$PATH" | sed 's,$CART_INFO_DIR/bin/:,,g'`
 
-echo "PATH=$PATH" > ${GEAR_BASE_DIR}/${uuid}/.env/PATH
+echo "export PATH=$PATH" > ${GEAR_BASE_DIR}/${uuid}/.env/PATH
 export PATH=$OLD_PATH
-kill `cat ${APP_DIR}/run/haproxy.pid`
 
-confirm_pid_gone "${APP_DIR}/run/haproxy.pid"
+kill `cat ${HAPROXY_DIR}/run/haproxy.pid`
+confirm_pid_gone "${HAPROXY_DIR}/run/haproxy.pid"
 
-# Start up all apps with new path (IE: without haproxy)
+# Remove haproxy dir. This MUST be after stopping haproxy as the CTL script relies on these.
+runcon -l s0-s0:c0.c1023 rm -rf "$HAPROXY_DIR"
+
+rm -rf ${APP_HOME}/.openshift
+rm -f /etc/httpd/conf.d/stickshift/${uuid}_${namespace}_${application}/000000_haproxy.conf
+
+if [ "$app_type" = "$OPENSHIFT_GEAR_TYPE" ]; then
+    # For non-embedded (dedicated) haproxy gear, destroy the gear.
+
+    # Destroy git repo.
+    destroy_git_repo $application $uuid
+
+    # Blow away the directories.
+    rm_app_dir
+    rm_unobfuscated_app_home $namespace $application
+
+    # Remove apache vhost configuration.
+    rm_httpd_proxy $uuid $namespace $application
+
+    return
+fi
+
+# Got here if its haproxy embedded and got removed - so start up all apps with
+# the new path (IE: without haproxy)
 start_app
 
-confirm_log_files_inactive "$APP_DIR/logs"
-
-rm_app_dir
-
-rm -rf ${GEAR_BASE_DIR}/${uuid}/.openshift
-
-rm -f /etc/httpd/conf.d/stickshift/${uuid}_${namespace}_${application}/000000_haproxy.conf
