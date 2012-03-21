@@ -129,8 +129,8 @@ CART_INFO_DIR=${CARTRIDGE_BASE_PATH}/embedded/haproxy-1.4/info
 #
 generate_ssh_keys
 
-public_key=$(cat $APP_DIR/data/.ssh/haproxy_id_rsa.pub | grep -v "^-----")
-add_ssh_key "$public_key"
+public_key=$(cat $APP_DIR/data/.ssh/haproxy_id_rsa.pub | awk '{print $2}')
+add_ssh_key $public_key
 
 add_broker_auth_key
 
