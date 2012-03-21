@@ -29,7 +29,7 @@ done
 source "/etc/stickshift/stickshift-node.conf"
 source ${CARTRIDGE_BASE_PATH}/abstract/info/lib/util
 
-setup_basic_hook
+setup_basic_hook "$@"
 
 import_env_vars
 

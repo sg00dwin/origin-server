@@ -18,11 +18,12 @@ function generate_ssh_keys {
     /bin/mkdir -p $APP_DIR/data/.ssh/
     /usr/bin/ssh-keygen -N '' -f $APP_DIR/data/.ssh/haproxy_id_rsa > /dev/null
 
+    touch "$APP_DIR/data/.ssh/known_hosts"
+    touch "$APP_DIR/data/.ssh/config"
     /bin/chown root.$uuid -R "$APP_DIR/data/.ssh/"
     chmod 0750 "$APP_DIR/data/.ssh/"
-    touch "$APP_DIR/data/.ssh/known_hosts"
-    chmod 0600 "$APP_DIR/data/.ssh/haproxy_id_rsa"
-    chmod 0600 "$APP_DIR/data/.ssh/haproxy_id_rsa.pub"
+    chmod 0640 "$APP_DIR/data/.ssh/haproxy_id_rsa" "$APP_DIR/data/.ssh/haproxy_id_rsa.pub"
+    chmod 0660 "$APP_DIR/data/.ssh/config" "$APP_DIR/data/.ssh/known_hosts"
     observe_setup_var_lib_dir "$APP_DIR/data/.ssh/"
 }
 
