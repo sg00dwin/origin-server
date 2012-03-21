@@ -30,8 +30,8 @@ Publishes:
     Type: "FILESYSTEM:doc-root"
   publish-http-url:
     Type: "NET_TCP:httpd-proxy-info"
-  publish-ssh-endpoint:
-    Type: "NET_TCP:ssh-endpoint-info"
+  publish-gear-endpoint:
+    Type: "NET_TCP:gear-endpoint-info"
 Subscribes:
   set-db-connection-info:
     Type: "NET_TCP:db:connection-info"

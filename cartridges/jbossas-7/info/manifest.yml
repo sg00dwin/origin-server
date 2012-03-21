@@ -35,8 +35,8 @@ Profiles:
             Type: "NET_TCP:httpd-proxy-info"
           publish_jboss_cluster:
             Type: "NET_TCP:jboss-cluster-info"
-          publish-ssh-endpoint:
-            Type: "NET_TCP:ssh-endpoint-info"
+          publish-gear-endpoint:
+            Type: "NET_TCP:gear-endpoint-info"
         Subscribes:
           set-db-connection-info:
             Type: "NET_TCP:db:connection-info"
