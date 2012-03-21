@@ -94,9 +94,21 @@ string later for configuring /etc/named.conf
 
 * Create initial test zone files
 
+DNS updates have to be sent to a specific zone.  You need to have the
+example.com zone configured into your local named as a dynamic zone.
+There is a sample initial example.com.db file included in this
+directory.
 
+One thing to note is that the example has the default TTL value set to
+1 second.  This is to avoid testing errors caused by caching.  If the
+TTL is larger then changes will not be reflected until the record
+times out.  As it is, delete test queries should wait 2 seconds after
+the delete operation completes to be sure to get a correct answer. You
+would never use this value in production.
 
 * Configure named
+
+
 
 ** dnssec
 
