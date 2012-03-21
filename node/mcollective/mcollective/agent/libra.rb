@@ -272,7 +272,7 @@ module MCollective
           action = job[:action]
           args = job[:args]
           begin
-            pid, stdout, stderr = helper_parallel_job(cartridge, action, args)
+            pid, stdout, stderr = execute_parallel_job(cartridge, action, args)
           rescue Exception =>e
             parallel_job[:result_exit_code] = 127
             parallel_job[:result_stdout] = e.message
@@ -284,14 +284,14 @@ module MCollective
 
         pidlist.each { |reap_args|
           pj, pid, sout, serr = reap_args
-          helper_reap_output(pj, pid, sout, serr)
+          reap_output(pj, pid, sout, serr)
         }
         Log.instance.debug("execute_parallel_action call - 10 #{joblist}")
         reply[:output] = joblist
         reply[:exitcode] = 0 
       end
 
-      def helper_parallel_job(cartridge, action, args)
+      def execute_parallel_job(cartridge, action, args)
         pid, stdin, stdout, stderr = nil, nil, nil, nil
         if cartridge == 'stickshift-node'
           cmd = "ss-#{action}"
@@ -310,7 +310,7 @@ module MCollective
         return pid, stdout, stderr
       end
 
-      def helper_reap_output(parallel_job, pid, stdout, stderr)
+      def reap_output(parallel_job, pid, stdout, stderr)
         ignored, status = Process::waitpid2 pid
         exitcode = status.exitstatus
         # Do this to avoid cartridges that might hold open stdout

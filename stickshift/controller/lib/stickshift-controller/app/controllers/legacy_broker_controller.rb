@@ -56,13 +56,16 @@ class LegacyBrokerController < ApplicationController
         if user.ssh_keys
           raise StickShift::UserKeyException.new("Key with name #{@req.key_name} already exists.  Please choose a different name", 120) if user.ssh_keys.has_key?(@req.key_name)
         end
-        @reply.append user.add_ssh_key(@req.key_name, @req.ssh, @req.key_type)
+        user.add_ssh_key(@req.key_name, @req.ssh, @req.key_type)
+        user.save
       when "remove-key"
         raise StickShift::UserKeyException.new("Missing key name", 119) if @req.key_name.nil?
-        @reply.append user.remove_ssh_key(@req.key_name)
+        user.remove_ssh_key(@req.key_name)
+        user.save
       when "update-key"
         raise StickShift::UserKeyException.new("Missing SSH key or key name", 119) if @req.ssh.nil? or @req.key_name.nil?
-        @reply.append user.update_ssh_key(@req.ssh, @req.key_type, @req.key_name)
+        user.update_ssh_key(@req.ssh, @req.key_type, @req.key_name)
+        user.save
       when "list-keys"
         #FIXME: when client tools are updated
         if user.ssh_keys.nil? || user.ssh_keys.empty?
@@ -102,8 +105,10 @@ class LegacyBrokerController < ApplicationController
 
     if @req.alter
       #FIXME: Either this needs to be removed or user should pass key name to alter
-      @reply.append cloud_user.update_ssh_key(@req.ssh, @req.key_type, CloudUser::DEFAULT_SSH_KEY_NAME) if @req.ssh
-      
+      if @req.ssh
+        cloud_user.update_ssh_key(@req.ssh, @req.key_type, CloudUser::DEFAULT_SSH_KEY_NAME)
+        cloud_user.save
+      end
       raise StickShift::UserException.new("The supplied namespace '#{@req.namespace}' is not allowed", 106) if StickShift::ApplicationContainerProxy.blacklisted? @req.namespace            
       @reply.append cloud_user.update_namespace(@req.namespace)
     elsif @req.delete
@@ -181,9 +186,7 @@ class LegacyBrokerController < ApplicationController
         begin
           @reply.append app.create
           @reply.append app.configure_dependencies
-          @reply.append app.add_ssh_keys
-          @reply.append app.add_system_ssh_keys
-          @reply.append app.add_system_env_vars
+          #@reply.append app.add_node_settings
           app.execute_connections
           begin
             @reply.append app.create_dns
@@ -260,8 +263,8 @@ class LegacyBrokerController < ApplicationController
       app = get_app_from_request(user)
       @reply.append app.show_port(app.framework)
     when 'system-messages'
-          app = get_app_from_request(user)
-          @reply.append app.system_messages
+      app = get_app_from_request(user)
+      @reply.append app.system_messages
     else
       raise StickShift::UserException.new("Invalid action #{@req.action}", 111)
     end
