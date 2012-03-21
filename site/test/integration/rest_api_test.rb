@@ -89,13 +89,10 @@ class RestApiTest < ActiveSupport::TestCase
     items = Key.find :all, :as => @user
     assert_equal orig_num_keys + 1, items.length
 
-    # Bug #789786, when fixed will handle issue
-    assert_raise ActiveResource::ServerError do
-      assert items[items.length-1].destroy
+    assert items[items.length-1].destroy
 
-      items = Key.find :all, :as => @user
-      assert_equal orig_num_keys, items.length
-    end
+    items = Key.find :all, :as => @user
+    assert_equal orig_num_keys, items.length
   end
 
   def test_user_get
@@ -117,10 +114,8 @@ class RestApiTest < ActiveSupport::TestCase
     assert key.save
     assert key.errors.empty?
 
-    assert_raise ActiveResource::ServerError do #FIXME bug 789786
-      key.destroy
-    end
-    assert_nothing_raised do #FIXME bug 789786
+    key.destroy
+    assert_raise ActiveResource::ResourceNotFound do
       Key.find 'default', :as => @user
     end
   end

@@ -24,6 +24,16 @@ IP=$4
 source "/etc/stickshift/stickshift-node.conf"
 source ${CARTRIDGE_BASE_PATH}/abstract/info/lib/util
 
+vhost="${STICKSHIFT_HTTP_CONF_DIR}/${uuid}_${namespace}_${application}.conf"
+if [ -f "$vhost" ]; then
+   #  Already have a vhost - just add haproxy routing to it.
+   cat <<EOF > "${STICKSHIFT_HTTP_CONF_DIR}/${uuid}_${namespace}_${application}/000000_haproxy.conf"
+  ProxyPass /haproxy-status/ http://$IP2:8080/ status=I
+  ProxyPassReverse /haproxy-status/ http://$IP2:8080/
+EOF
+   return
+fi
+
 rm -rf "${STICKSHIFT_HTTP_CONF_DIR}/${uuid}_${namespace}_${application}.conf" "${STICKSHIFT_HTTP_CONF_DIR}/${uuid}_${namespace}_${application}"
 
 mkdir "${STICKSHIFT_HTTP_CONF_DIR}/${uuid}_${namespace}_${application}"
