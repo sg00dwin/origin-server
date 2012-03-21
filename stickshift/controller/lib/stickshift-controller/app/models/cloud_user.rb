@@ -176,7 +176,7 @@
 
     applications.each do |app|
       Rails.logger.debug "DEBUG: Removing ssh key named #{key_name} from app: #{app.name} for user #{@name}"
-      result.append app.remove_authorized_ssh_key(key_info["key"], key_name)
+      result.append app.remove_authorized_ssh_key(self.ssh_keys[key_name]["key"], key_name)
     end
     
     self.ssh_keys.delete key_name
