@@ -79,6 +79,7 @@ when "add"
     descriptor = File.file?(descriptor) ?
       YAML.load_file(descriptor) :
       YAML.load(descriptor)
+    raise unless descriptor.kind_of?(Hash)
   rescue Exception => e
     print "Invalid descriptor YAML: #{descriptor}\n"
     usage
@@ -89,6 +90,7 @@ when "add"
     metadata = File.file?(metadata) ?
       JSON.load(File.open(metadata)) :
       JSON.parse(metadata)
+    raise unless metadata.kind_of?(Hash)
   rescue Exception => e
     print "Invalid metadata JSON: #{metadata}\n"
     usage

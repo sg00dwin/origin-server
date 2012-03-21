@@ -146,18 +146,12 @@
     result
   end
   
-  def remove_ssh_key(key_name, num_keys_check=true)
+  def remove_ssh_key(key_name)
     self.ssh_keys = {} unless self.ssh_keys    
     result = ResultIO.new
 
     # validations
-    #FIXME: remove this check when client tools are updated
-    raise StickShift::UserKeyException.new("ERROR: Can't remove '#{key_name}' ssh key for user #{self.login}", 
-                                           124) if num_keys_check and (key_name == CloudUser::DEFAULT_SSH_KEY_NAME)
-    key_info = self.ssh_keys[key_name]
-    raise StickShift::UserKeyException.new("ERROR: Key name '#{key_name}' doesn't exist for user #{self.login}", 118) unless key_info
-    raise StickShift::UserKeyException.new("ERROR: Can't remove all ssh keys for user #{self.login}", 
-                                           122) if num_keys_check and self.ssh_keys.size <= 1
+    raise StickShift::UserKeyException.new("ERROR: Key name '#{key_name}' doesn't exist for user #{self.login}", 118) if not self.ssh_keys.has_key?(key_name)
 
     applications.each do |app|
       Rails.logger.debug "DEBUG: Removing ssh key named #{key_name} from app: #{app.name} for user #{@name}"
@@ -171,13 +165,13 @@
 
   def update_ssh_key(key, key_type=nil, key_name=nil)
     key_name = CloudUser::DEFAULT_SSH_KEY_NAME if key_name.to_s.strip.length == 0
-    remove_ssh_key(key_name, false)
+    remove_ssh_key(key_name)
     add_ssh_key(key_name, key, key_type)
   end
  
   def get_ssh_key
-    raise StickShift::UserKeyException.new("ERROR: At least one ssh key doesn't exist for user #{self.login}", 
-                                           123) unless self.ssh_keys and self.ssh_keys.kind_of?(Hash)
+    raise StickShift::UserKeyException.new("ERROR: No ssh keys found for user #{self.login}", 
+                                           123) if self.ssh_keys.nil? or not self.ssh_keys.kind_of?(Hash)
     (self.ssh_keys.key?(CloudUser::DEFAULT_SSH_KEY_NAME)) ? self.ssh_keys[CloudUser::DEFAULT_SSH_KEY_NAME] : self.ssh_keys.keys[0]
   end
  

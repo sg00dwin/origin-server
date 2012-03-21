@@ -270,77 +270,60 @@ Connections:
     web_cart
   end
 
-  def scaleup
+  def scaleup(comp_name=nil)
     result_io = ResultIO.new
     if not self.scalable
       raise StickShift::NodeException.new("Cannot scale a non-scalable application", "-100", result_io)
     end
+    comp_name = "web" if comp_name.nil?
     prof = @profile_name_map[@default_profile]
-    web_group = prof.groups("web")
-    gpath = self.get_name_prefix + web_group.get_name_prefix
-    ginst = self.group_instance_map[gpath]
-    if ginst
-       result, new_gear = ginst.add_gear(self)
-       result_io.append result
-       result_io.append self.configure_dependencies
-       self.execute_connections
-       return result_io
-    end
-    wb = web_cart
-    new_gear = nil
-    # find the group instance where the web-cartridge is residing
-    self.group_instance_map.keys.each { |ginst_name|
-      next if not ginst_name.include? wb
-      ginst = self.group_instance_map[ginst_name]
-      result, new_gear = ginst.add_gear(self)
-      result_io.append result
-      break
-    }
-    if not new_gear.nil?
-      result_io.append self.configure_dependencies
-      self.execute_connections
-    end
+    cinst = ComponentInstance::find_component_in_cart(prof, self, comp_name, self.get_name_prefix)
+    raise StickShift::NodeException.new("Cannot find #{comp_name} in app #{self.name}.", "-101", result_io) if cinst.nil?
+    ginst = self.group_instance_map[cinst.group_instance_name]
+    raise StickShift::NodeException.new("Cannot find group #{cinst.group_instance_name} for #{comp_name} in app #{self.name}.", "-101", result_io) if ginst.nil?
+    result, new_gear = ginst.add_gear(self)
+    result_io.append result
+    result_io.append self.configure_dependencies
+    self.execute_connections
     result_io
   end
 
-  def scaledown
+  def scaledown(comp_name=nil)
     result_io = ResultIO.new
     if not self.scalable
       raise StickShift::NodeException.new("Cannot scale a non-scalable application", "-100", result_io)
     end
-    wb = web_cart
-    # find the group instance where the web-cartridge is residing
-    self.group_instance_map.keys.each { |ginst_name|
-      next if not ginst_name.include? wb
-      ginst = self.group_instance_map[ginst_name]
+    comp_name = "web" if comp_name.nil?
+    prof = @profile_name_map[@default_profile]
+    cinst = ComponentInstance::find_component_in_cart(prof, self, comp_name, self.get_name_prefix)
+    raise StickShift::NodeException.new("Cannot find #{comp_name} in app #{self.name}.", "-101", result_io) if cinst.nil?
+    ginst = self.group_instance_map[cinst.group_instance_name]
+    raise StickShift::NodeException.new("Cannot find group #{cinst.group_instance_name} for #{comp_name} in app #{self.name}.", "-101", result_io) if ginst.nil?
+    # remove any gear out of this ginst
+    raise StickShift::NodeException.new("Cannot scale below one gear", "-100", result_io) if ginst.gears.length == 1
 
-      # remove any gear out of this ginst
-      raise StickShift::NodeException.new("Cannot scale below one gear", "-100", result_io) if ginst.gears.length == 1
+    gear = ginst.gears.first
 
-      gear = ginst.gears.first
+    dns = StickShift::DnsService.instance
+    begin
+      dns.deregister_application(gear.name, @user.namespace)
+      dns.publish
+    ensure
+      dns.close
+    end
 
-      dns = StickShift::DnsService.instance
-      begin
-        dns.deregister_application(gear.name, @user.namespace)
-        dns.publish
-      ensure
-        dns.close
-      end
-
-      comps_to_deconfigure = gear.configured_components.dup
-      comps_to_deconfigure.each { |conf_comp|
-        cinst = self.comp_instance_map[conf_comp]
-        result_io.append gear.deconfigure(cinst)
-      }
-
-      result_io.append gear.destroy
-      ginst.gears.delete gear
-
-      # inform anyone who needs to know that this gear is no more
-      self.configure_dependencies
-      self.execute_connections
-      break
+    comps_to_deconfigure = gear.configured_components.dup
+    comps_to_deconfigure.each { |conf_comp|
+      cinst = self.comp_instance_map[conf_comp]
+      result_io.append gear.deconfigure(cinst)
     }
+
+    result_io.append gear.destroy
+    ginst.gears.delete gear
+
+    # inform anyone who needs to know that this gear is no more
+    self.configure_dependencies
+    self.execute_connections
     result_io
   end
   

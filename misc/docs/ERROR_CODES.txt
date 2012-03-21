@@ -23,7 +23,6 @@ User errors:
 118: SSH key name doesn't exist
 119: SSH key or key name not specified
 120: SSH key name already exists
-121: SSH key already exists
 122: Last SSH key for user
 123: No SSH key for user
 124: Could not delete 'default'/primary key  #FIXME: remove when client tools are updated
