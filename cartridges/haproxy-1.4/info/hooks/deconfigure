@@ -82,7 +82,7 @@ if [ "$app_type" = "$OPENSHIFT_GEAR_TYPE" ]; then
     # Remove apache vhost configuration.
     rm_httpd_proxy $uuid $namespace $application
 
-    return
+    exit 0
 fi
 
 # Got here if its haproxy embedded and got removed - so start up all apps with

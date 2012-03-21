@@ -11,8 +11,10 @@ IP="$3"
 
 APP_HOME="${GEAR_BASE_DIR}/$uuid"
 HAPROXY_DIR=`echo $APP_HOME/haproxy-1.4 | tr -s /`
+[ -d "$HAPROXY_DIR" ]  ||   HAPROXY_DIR=`echo $APP_HOME/$application | tr -s /`
 
-cat <<EOF > "$APP_HOME/haproxy-1.4/conf/haproxy.cfg.template"
+
+cat <<EOF > "$HAPROXY_DIR/conf/haproxy.cfg.template"
 #---------------------------------------------------------------------
 # Example configuration for a possible web application.  See the
 # full configuration options online.
