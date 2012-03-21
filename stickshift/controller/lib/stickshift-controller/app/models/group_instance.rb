@@ -55,7 +55,7 @@ class GroupInstance < StickShift::UserModel
     end
     self.gears << gear
     if app.scalable
-      app.add_dns(gear.name, app.user.namespace, gear.get_proxy.get_public_hostname) 
+      app.add_dns(gear.name, app.domain.namespace, gear.get_proxy.get_public_hostname) 
       app.add_system_ssh_keys([gear])
       app.add_ssh_keys([gear])
       app.add_system_env_vars([gear])

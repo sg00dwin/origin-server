@@ -17,7 +17,7 @@ class RestApiTest < ActiveSupport::TestCase
 
     @ts = "#{Time.now.to_i}#{gen_small_uuid[0,6]}"
 
-    @user = RestApi::Authorization.new "test1@test1.com"
+    @user = RestApi::Authorization.new "test-#{uuid}@test1.com"
 
     auth_headers = {'Authorization' => "Basic #{Base64.encode64("#{@user.login}:#{@user.password}").strip}"}
 
@@ -108,8 +108,8 @@ class RestApiTest < ActiveSupport::TestCase
     Domain.first(:as => @user).destroy_recursive
 
     key = Key.new :raw_content => 'ssh-rsa key', :name => 'default', :as => @user
-    assert !key.save, "Bug 787730 has been fixed, users can be created without domains. Update UI"
-    assert !key.errors.empty?
+    assert key.save
+    assert key.errors.empty?
   end
 
   def test_key_create

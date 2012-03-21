@@ -133,6 +133,7 @@ Feature: keys
      | JSON | 
      | XML | 
     
+
   Scenario Outline: Update key with with blank, missing and invalid content
     Given a new guest account
     And I am a valid user
@@ -217,7 +218,7 @@ Feature: keys
     When I send a POST request to "/user/keys" with the following:"name=cucumber&type=ssh-rsa&content=XYZ123"
     Then the response should be "201"
     When I send a DELETE request to "/user/keys/cucumber"
-    Then the response should be "500"
+    Then the response should be "204"
     
     Scenarios:
      | format | 

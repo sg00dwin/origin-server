@@ -54,21 +54,11 @@ class KeysController < BaseController
     return
     end
     #check to see if key already exists
-    if @cloud_user.ssh_keys
-      @cloud_user.ssh_keys.each do |key_name, key|
-        if key_name == name
-          @reply = RestReply.new(:conflict)
-          @reply.messages.push(Message.new(:error, "SSH key with name #{name} already exists. Use a different name or delete conflicting key and retry.", 120, "name"))
-          respond_with @reply, :status => @reply.status
-        return
-        end
-        if key["key"] == content
-          @reply = RestReply.new(:conflict)
-          @reply.messages.push(Message.new(:error, "Given public key is already in use. Use different key or delete conflicting key and retry.", 121, "content"))
-          respond_with @reply, :status => @reply.status
-        return
-        end
-      end
+    if @cloud_user.ssh_keys && @cloud_user.ssh_keys.has_key?(name)
+      @reply = RestReply.new(:conflict)
+      @reply.messages.push(Message.new(:error, "SSH key with name #{name} already exists. Use a different name or delete conflicting key and retry.", 120, "name"))
+      respond_with @reply, :status => @reply.status
+      return
     end
 
     begin
