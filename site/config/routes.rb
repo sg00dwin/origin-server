@@ -12,28 +12,27 @@ RedHatCloud::Application.routes.draw do
     match 'features', :to => redirect('/app/platform'), :as => 'features'
     match 'power', :to => redirect('/app/platform')
     match 'about', :to => redirect('/app/platform'), :as => 'about'
-
     match 'express', :to => redirect('/app/platform'), :as => 'express'
     match 'flex', :to => redirect('/app/platform'), :as => 'flex'
-
-    match 'getting_started' => 'product#getting_started', :as => 'getting_started'
-    match 'getting_started/express', :to => redirect('/app/getting_started')
-    match 'getting_started_external/:registration_referrer' => 'getting_started_external#show'
-
-    match 'email_confirm' => 'email_confirm#confirm'
-    match 'email_confirm_external/:registration_referrer' => 'email_confirm#confirm_external'
-    # Legacy redirects
+    match 'flex_redirect', :to => redirect('/app/flex'), :as => 'flex_redirect'
     match 'email_confirm_flex' => redirect {|p, req| "/app/email_confirm?#{req.query_string}"}
     match 'email_confirm_express' => redirect {|p, req| "/app/email_confirm?#{req.query_string}"}
+    match 'user/new' => redirect('/app/account/new'), :via => [:get]
+    match 'user/new/flex' => redirect('/app/account/new'), :via => [:get]
+    match 'user/new/express' => redirect('/app/account/new'), :via => [:get]
+    match 'user/complete' => redirect('/app/account/complete'), :via => [:get]
 
+    #Marketing site
+    match 'getting_started' => 'product#getting_started', :as => 'getting_started'
+    match 'getting_started/express', :to => redirect('/app/getting_started')
+    match 'getting_started/flex', :to => redirect('/app/getting_started')
+    match 'getting_started_external/:registration_referrer' => 'getting_started_external#show'
     match 'platform' => 'product#overview', :as => 'product_overview'
+    match 'partners/join' => 'partner#join', :as=> 'join_partner'
 
-    match 'flex_redirect' => 'product#flex_redirect', :as => 'flex_redirect'
-
+    # Buzz
     match 'twitter_latest_tweet' => 'twitter#latest_tweet'
     match 'twitter_latest_retweets' => 'twitter#latest_retweets'
-
-    match 'partners/join' => 'partner#join', :as=> 'join_partner'
 
     resource :account,
              :controller => "user",
@@ -78,12 +77,6 @@ RedHatCloud::Application.routes.draw do
     #         :as => "web_user",
     #         :controller => "user"
     
-    # legacy user redirects
-    match 'user/new' => redirect('/app/account/new'), :via => [:get]
-    match 'user/new/flex' => redirect('/app/account/new'), :via => [:get]
-    match 'user/new/express' => redirect('/app/account/new'), :via => [:get]
-    match 'user/complete' => redirect('/app/account/complete'), :via => [:get]
-    
     # legacy routes
     #match 'user' => 'user#new', :as => :user, :via => [:get]
     #match 'user' => 'user#show', :via => :get
@@ -93,6 +86,9 @@ RedHatCloud::Application.routes.draw do
     #match 'user/request_password_reset_success' => 'user#request_password_reset_success', :via => [:get]
     #match 'user/request_password_reset' => redirect() 'user#request_password_reset', :via => [:post]
     match 'user/reset_password' => redirect {|p, req| "/app/account/password/reset?#{req.query_string}"}, :via => [:get]
+    match 'email_confirm' => 'email_confirm#confirm'
+    match 'email_confirm_external/:registration_referrer' => 'email_confirm#confirm_external'
+    
     #match 'user/change_password' => 'user#change_password', :via => [:post]
 
     match 'user' => redirect('/app/account/new'), :via => [:get]
