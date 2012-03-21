@@ -917,6 +917,14 @@ body.signup {
   letter-spacing: 1px;
 }
 
+#instructions li.topic {
+  margin-bottom: 20px;
+}
+
+#instructions li.install {
+  margin-top: 15px;
+}
+
 #nav .action-call {
   margin: 0 auto 20px;
 }
