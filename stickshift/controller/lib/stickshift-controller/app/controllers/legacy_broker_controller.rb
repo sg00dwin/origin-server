@@ -145,7 +145,7 @@ class LegacyBrokerController < ApplicationController
          end
        end
        @reply.append domain.delete
-       @reply.append cloud_user.delete
+       #@reply.append cloud_user.delete
        render :json => @reply
        return
     else
