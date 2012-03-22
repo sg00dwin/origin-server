@@ -68,7 +68,7 @@ Requires:  php-pecl-apc
 Requires:  php-soap
 Requires:  php-tidy
 Requires:  drupal6
-Requires:  drupal6-drush'
+Requires:  drupal6-drush
 Requires:  drupal6-addthis
 Requires:  drupal6-admin_menu
 Requires:  drupal6-advanced-help
