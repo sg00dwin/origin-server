@@ -201,7 +201,7 @@ class LegacyBrokerController < ApplicationController
       apps = user.applications
       domain = user.domains.first
       app = Application.new(user, @req.app_name, nil, @req.node_profile, @req.cartridge, nil, false, domain)
-      check_cartridge_type(app.framework, "standalone")
+      check_cartridge_type(@req.cartridge, "standalone")
       if (user.consumed_gears >= user.max_gears)
         raise StickShift::UserException.new("#{@login} has already reached the application limit of #{user.max_gears}", 104)
       end
