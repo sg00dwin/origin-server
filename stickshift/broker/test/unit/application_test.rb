@@ -19,9 +19,7 @@ class ApplicationTest < ActiveSupport::TestCase
     Gear.any_instance.stubs(:create).returns(ResultIO.new)
     Application.any_instance.stubs(:framework).returns('dummy')
     Application.any_instance.stubs(:add_dns).returns(nil)
-    Application.any_instance.stubs(:add_ssh_keys).returns(nil)
-    Application.any_instance.stubs(:add_system_ssh_keys).returns(nil)
-    Application.any_instance.stubs(:add_system_env_vars).returns(nil)
+    Application.any_instance.stubs(:add_node_settings).returns(nil)
     Gear.any_instance.stubs(:get_proxy).returns(StickShift::ApplicationContainerProxy.instance("asldksd"))
     StickShift::ApplicationContainerProxy.any_instance.stubs(:get_public_hostname).returns("foo.bar")
     
@@ -37,13 +35,12 @@ class ApplicationTest < ActiveSupport::TestCase
   
   
   test "configure_dependencies" do    
-    user = mock("user")    
-    # user.expects(:namespace).returns("dummy_namespace") 
+    user = mock("user")
+    user.stubs(:save_jobs).returns(false)
+    # user.expects(:namespace).returns("dummy_namespace")
     Application.any_instance.stubs(:framework).returns('dummy')
     Application.any_instance.stubs(:add_dns).returns(nil)
-    Application.any_instance.stubs(:add_ssh_keys).returns(nil)
-    Application.any_instance.stubs(:add_system_ssh_keys).returns(nil)
-    Application.any_instance.stubs(:add_system_env_vars).returns(nil)
+    Application.any_instance.stubs(:add_node_settings).returns(nil)
     Gear.any_instance.stubs(:get_proxy).returns(StickShift::ApplicationContainerProxy.instance("asldksd"))
     StickShift::ApplicationContainerProxy.any_instance.stubs(:get_public_hostname).returns("foo.bar")
     application = Application.new(user, "app_name", "app_uuid", "small", "dummy")
@@ -65,13 +62,12 @@ class ApplicationTest < ActiveSupport::TestCase
   end
   
   test "deconfigure_dependencies" do
-    user = mock("user")    
+    user = mock("user")
+    user.stubs(:save_jobs).returns(false)
     # user.expects(:namespace).returns("dummy_namespace") 
     Application.any_instance.stubs(:framework).returns('dummy')
     Application.any_instance.stubs(:add_dns).returns(nil)
-    Application.any_instance.stubs(:add_ssh_keys).returns(nil)
-    Application.any_instance.stubs(:add_system_ssh_keys).returns(nil)
-    Application.any_instance.stubs(:add_system_env_vars).returns(nil)
+    Application.any_instance.stubs(:add_node_settings).returns(nil)
     Gear.any_instance.stubs(:get_proxy).returns(StickShift::ApplicationContainerProxy.instance("asldksd"))
     StickShift::ApplicationContainerProxy.any_instance.stubs(:get_public_hostname).returns("foo.bar")
     application = Application.new(user, "app_name", "app_uuid", "small", "dummy")

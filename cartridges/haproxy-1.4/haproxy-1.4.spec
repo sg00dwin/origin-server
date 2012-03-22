@@ -1,11 +1,11 @@
-%define cartridgedir %{_libexecdir}/stickshift/cartridges/haproxy-depricated-1.4
-%define embeddedcartridgedir %{_libexecdir}/stickshift/cartridges/embedded/haproxy-1.4
+%define cartridgedir %{_libexecdir}/stickshift/cartridges/embedded/haproxy-1.4
+%define frameworkdir %{_libexecdir}/stickshift/cartridges/haproxy-1.4
 
-Summary:   Provides haproxy-1.4 support
+Summary:   Provides embedded haproxy-1.4 support
 Name:      rhc-cartridge-haproxy-1.4
 Version:   0.7.1
 Release:   1%{?dist}
-Group:     Development/Languages
+Group:     Network/Daemons
 License:   ASL 2.0
 URL:       http://openshift.redhat.com
 Source0:   %{name}-%{version}.tar.gz
@@ -41,58 +41,31 @@ rm -rf %{buildroot}
 mkdir -p %{buildroot}%{cartridgedir}
 mkdir -p %{buildroot}/%{_sysconfdir}/stickshift/cartridges
 ln -s %{cartridgedir}/info/configuration/ %{buildroot}/%{_sysconfdir}/stickshift/cartridges/%{name}
+ln -s %{cartridgedir} %{buildroot}/%{frameworkdir}
 cp -r info %{buildroot}%{cartridgedir}/
 cp LICENSE %{buildroot}%{cartridgedir}/
 cp COPYRIGHT %{buildroot}%{cartridgedir}/
 mkdir -p %{buildroot}%{cartridgedir}/info/data/
 cp -r git_template.git %{buildroot}%{cartridgedir}/info/data/
-ln -s %{cartridgedir}/../abstract/info/hooks/add-module %{buildroot}%{cartridgedir}/info/hooks/add-module
-ln -s %{cartridgedir}/../abstract/info/hooks/info %{buildroot}%{cartridgedir}/info/hooks/info
-ln -s %{cartridgedir}/../abstract/info/hooks/post-install %{buildroot}%{cartridgedir}/info/hooks/post-install
-ln -s %{cartridgedir}/../abstract/info/hooks/post-remove %{buildroot}%{cartridgedir}/info/hooks/post-remove
-ln -s %{cartridgedir}/../abstract/info/hooks/reload %{buildroot}%{cartridgedir}/info/hooks/reload
-ln -s %{cartridgedir}/../abstract/info/hooks/remove-module %{buildroot}%{cartridgedir}/info/hooks/remove-module
-ln -s %{cartridgedir}/../abstract/info/hooks/restart %{buildroot}%{cartridgedir}/info/hooks/restart
-ln -s %{cartridgedir}/../abstract/info/hooks/start %{buildroot}%{cartridgedir}/info/hooks/start
-ln -s %{cartridgedir}/../abstract-httpd/info/hooks/status %{buildroot}%{cartridgedir}/info/hooks/status
-ln -s %{cartridgedir}/../abstract/info/hooks/stop %{buildroot}%{cartridgedir}/info/hooks/stop
-ln -s %{cartridgedir}/../abstract/info/hooks/update-namespace %{buildroot}%{cartridgedir}/info/hooks/update-namespace
-ln -s %{cartridgedir}/../abstract/info/hooks/remove-httpd-proxy %{buildroot}%{cartridgedir}/info/hooks/remove-httpd-proxy
-ln -s %{cartridgedir}/../abstract/info/hooks/force-stop %{buildroot}%{cartridgedir}/info/hooks/force-stop
-ln -s %{cartridgedir}/../abstract/info/hooks/add-alias %{buildroot}%{cartridgedir}/info/hooks/add-alias
-ln -s %{cartridgedir}/../abstract/info/hooks/tidy %{buildroot}%{cartridgedir}/info/hooks/tidy
-ln -s %{cartridgedir}/../abstract/info/hooks/remove-alias %{buildroot}%{cartridgedir}/info/hooks/remove-alias
-ln -s %{cartridgedir}/../abstract/info/hooks/move %{buildroot}%{cartridgedir}/info/hooks/move
-ln -s %{cartridgedir}/../abstract/info/hooks/threaddump %{buildroot}%{cartridgedir}/info/hooks/threaddump
-ln -s %{cartridgedir}/../abstract/info/hooks/system-messages %{buildroot}%{cartridgedir}/info/hooks/system-messages
-
-# Embedded
-ln -s %{embeddedcartridgedir}/info/configuration/ %{buildroot}/%{_sysconfdir}/stickshift/cartridges/%{name}-embedded
-mkdir -p %{buildroot}%{embeddedcartridgedir}
-cp -r info_embedded %{buildroot}%{embeddedcartridgedir}/info
-cp LICENSE %{buildroot}%{embeddedcartridgedir}/
-cp COPYRIGHT %{buildroot}%{embeddedcartridgedir}/
-cp -r git_template.git %{buildroot}%{embeddedcartridgedir}/info/data/
-ln -s %{embeddedcartridgedir}/../../abstract/info/hooks/add-module %{buildroot}%{embeddedcartridgedir}/info/hooks/add-module
-ln -s %{embeddedcartridgedir}/../../abstract/info/hooks/info %{buildroot}%{embeddedcartridgedir}/info/hooks/info
-ln -s %{embeddedcartridgedir}/../../abstract/info/hooks/post-install %{buildroot}%{embeddedcartridgedir}/info/hooks/post-install
-ln -s %{embeddedcartridgedir}/../../abstract/info/hooks/post-remove %{buildroot}%{embeddedcartridgedir}/info/hooks/post-remove
-ln -s %{embeddedcartridgedir}/../../abstract/info/hooks/reload %{buildroot}%{embeddedcartridgedir}/info/hooks/reload
-ln -s %{embeddedcartridgedir}/../../abstract/info/hooks/remove-module %{buildroot}%{embeddedcartridgedir}/info/hooks/remove-module
-ln -s %{embeddedcartridgedir}/../../abstract/info/hooks/restart %{buildroot}%{embeddedcartridgedir}/info/hooks/restart
-ln -s %{embeddedcartridgedir}/../../abstract/info/hooks/start %{buildroot}%{embeddedcartridgedir}/info/hooks/start
-ln -s %{embeddedcartridgedir}/../../abstract-httpd/info/hooks/status %{buildroot}%{embeddedcartridgedir}/info/hooks/status
-ln -s %{embeddedcartridgedir}/../../abstract/info/hooks/stop %{buildroot}%{embeddedcartridgedir}/info/hooks/stop
-ln -s %{embeddedcartridgedir}/../../abstract/info/hooks/update-namespace %{buildroot}%{embeddedcartridgedir}/info/hooks/update-namespace
-ln -s %{embeddedcartridgedir}/../../abstract/info/hooks/remove-httpd-proxy %{buildroot}%{embeddedcartridgedir}/info/hooks/remove-httpd-proxy
-ln -s %{embeddedcartridgedir}/../../abstract/info/hooks/force-stop %{buildroot}%{embeddedcartridgedir}/info/hooks/force-stop
-ln -s %{embeddedcartridgedir}/../../abstract/info/hooks/add-alias %{buildroot}%{embeddedcartridgedir}/info/hooks/add-alias
-ln -s %{embeddedcartridgedir}/../../abstract/info/hooks/tidy %{buildroot}%{embeddedcartridgedir}/info/hooks/tidy
-ln -s %{embeddedcartridgedir}/../../abstract/info/hooks/remove-alias %{buildroot}%{embeddedcartridgedir}/info/hooks/remove-alias
-ln -s %{embeddedcartridgedir}/../../abstract/info/hooks/move %{buildroot}%{embeddedcartridgedir}/info/hooks/move
-ln -s %{embeddedcartridgedir}/../../abstract/info/hooks/threaddump %{buildroot}%{embeddedcartridgedir}/info/hooks/threaddump
-ln -s %{embeddedcartridgedir}/../../abstract/info/hooks/system-messages %{buildroot}%{embeddedcartridgedir}/info/hooks/system-messages
-
+ln -s %{cartridgedir}/../../abstract/info/hooks/add-module %{buildroot}%{cartridgedir}/info/hooks/add-module
+ln -s %{cartridgedir}/../../abstract/info/hooks/info %{buildroot}%{cartridgedir}/info/hooks/info
+ln -s %{cartridgedir}/../../abstract/info/hooks/preconfigure %{buildroot}%{cartridgedir}/info/hooks/preconfigure
+ln -s %{cartridgedir}/../../abstract/info/hooks/post-install %{buildroot}%{cartridgedir}/info/hooks/post-install
+ln -s %{cartridgedir}/../../abstract/info/hooks/post-remove %{buildroot}%{cartridgedir}/info/hooks/post-remove
+ln -s %{cartridgedir}/../../abstract/info/hooks/reload %{buildroot}%{cartridgedir}/info/hooks/reload
+ln -s %{cartridgedir}/../../abstract/info/hooks/remove-module %{buildroot}%{cartridgedir}/info/hooks/remove-module
+ln -s %{cartridgedir}/../../abstract/info/hooks/restart %{buildroot}%{cartridgedir}/info/hooks/restart
+ln -s %{cartridgedir}/../../abstract/info/hooks/start %{buildroot}%{cartridgedir}/info/hooks/start
+ln -s %{cartridgedir}/../../abstract-httpd/info/hooks/status %{buildroot}%{cartridgedir}/info/hooks/status
+ln -s %{cartridgedir}/../../abstract/info/hooks/stop %{buildroot}%{cartridgedir}/info/hooks/stop
+ln -s %{cartridgedir}/../../abstract/info/hooks/update-namespace %{buildroot}%{cartridgedir}/info/hooks/update-namespace
+ln -s %{cartridgedir}/../../abstract/info/hooks/force-stop %{buildroot}%{cartridgedir}/info/hooks/force-stop
+ln -s %{cartridgedir}/../../abstract/info/hooks/add-alias %{buildroot}%{cartridgedir}/info/hooks/add-alias
+ln -s %{cartridgedir}/../../abstract/info/hooks/tidy %{buildroot}%{cartridgedir}/info/hooks/tidy
+ln -s %{cartridgedir}/../../abstract/info/hooks/remove-alias %{buildroot}%{cartridgedir}/info/hooks/remove-alias
+ln -s %{cartridgedir}/../../abstract/info/hooks/move %{buildroot}%{cartridgedir}/info/hooks/move
+ln -s %{cartridgedir}/../../abstract/info/hooks/threaddump %{buildroot}%{cartridgedir}/info/hooks/threaddump
+ln -s %{cartridgedir}/../../abstract/info/hooks/system-messages %{buildroot}%{cartridgedir}/info/hooks/system-messages
 
 %clean
 rm -rf %{buildroot}
@@ -104,6 +77,7 @@ rm -rf %{buildroot}
 %attr(0750,-,-) %{cartridgedir}/info/build/
 %attr(0755,-,-) %{cartridgedir}/info/bin/
 %attr(0755,-,-) %{cartridgedir}/info/connection-hooks/
+%attr(0755,-,-) %{frameworkdir}
 %config(noreplace) %{cartridgedir}/info/configuration/
 %{_sysconfdir}/stickshift/cartridges/%{name}
 %{cartridgedir}/info/changelog
@@ -111,19 +85,6 @@ rm -rf %{buildroot}
 %{cartridgedir}/info/manifest.yml
 %doc %{cartridgedir}/COPYRIGHT
 %doc %{cartridgedir}/LICENSE
-
-%attr(0750,-,-) %{embeddedcartridgedir}/info/hooks/
-%attr(0750,-,-) %{embeddedcartridgedir}/info/data/
-%attr(0750,-,-) %{embeddedcartridgedir}/info/build/
-%attr(0755,-,-) %{embeddedcartridgedir}/info/bin/
-%attr(0755,-,-) %{embeddedcartridgedir}/info/connection-hooks/
-%config(noreplace) %{embeddedcartridgedir}/info/configuration/
-%{_sysconfdir}/stickshift/cartridges/%{name}-embedded
-%{embeddedcartridgedir}/info/changelog
-%{embeddedcartridgedir}/info/control
-%{embeddedcartridgedir}/info/manifest.yml
-%doc %{embeddedcartridgedir}/COPYRIGHT
-%doc %{embeddedcartridgedir}/LICENSE
 
 %changelog
 * Sat Mar 17 2012 Dan McPherson <dmcphers@redhat.com> 0.7.1-1

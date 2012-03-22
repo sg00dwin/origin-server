@@ -99,12 +99,6 @@ class LoginControllerTest < ActionController::TestCase
     assert_nil assigns(:redirectUrl)
   end
 
-  test "should send flex login to flex page" do
-    @request.env['HTTP_REFERER'] = user_new_flex_path
-    get :show
-    assert_equal flex_path, assigns(:redirectUrl)
-  end
-
   test 'cookie domain can be external' do
     with_custom_config({:cookie_domain => '.test.com'}, false) do
       opts = @controller.domain_cookie_opts({})

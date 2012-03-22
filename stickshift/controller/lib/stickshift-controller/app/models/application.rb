@@ -204,13 +204,13 @@ Configure-Order: [\"proxy/#{framework}\", \"proxy/haproxy-1.4\"]
     gears_created = []
     begin
       elaborate_descriptor()
-      
+      user.applications << self
       Rails.logger.debug "Creating gears"
       group_instances.uniq.each do |ginst|
         create_result, new_gear = ginst.add_gear(self)
         result_io.append create_result
       end
-      self.gear.name = self.name if not scalable
+      self.gear.name = self.name unless scalable
       self.class.notify_observers(:application_creation_success, {:application => self, :reply => result_io})              
     rescue Exception => e
       Rails.logger.debug e.message
@@ -257,6 +257,10 @@ Configure-Order: [\"proxy/#{framework}\", \"proxy/haproxy-1.4\"]
 
   def web_cart
     return framework 
+  end
+  
+  def gears
+    self.group_instances.uniq.map{ |ginst| ginst.gears }.flatten
   end
 
   def scaleup(comp_name=nil)
@@ -377,12 +381,12 @@ Configure-Order: [\"proxy/#{framework}\", \"proxy/haproxy-1.4\"]
         Rails.logger.debug e.message
         Rails.logger.debug e.backtrace.inspect        
         
-        succesful_gears = []
-        succesful_gears = e.message[:succesful].map{|g| g[:gear]} if e.message[:succesful]
+        successful_gears = []
+        successful_gears = e.message[:successful].map{|g| g[:gear]} if e.message[:successful]
         gear_exception = e.message[:exception]        
 
         #remove failed component from all gears
-        run_on_gears(succesful_gears, reply, false) do |gear, r|
+        run_on_gears(successful_gears, reply, false) do |gear, r|
           r.append gear.deconfigure(comp_inst)
           r.append process_cartridge_commands(r.cart_commands)
           #self.save
@@ -801,33 +805,34 @@ Configure-Order: [\"proxy/#{framework}\", \"proxy/haproxy-1.4\"]
     reply
   end
   
-  def add_system_ssh_keys(gears=nil)
+  def add_node_settings(gears=nil)
     reply = ResultIO.new
-    run_on_gears(gears,reply,false) do |gear,r|
-      @user.system_ssh_keys.each do |key_name, key_info|
-        r.append gear.add_authorized_ssh_key(key_info, nil, key_name)
-      end
-    end if @user.system_ssh_keys
-    reply
-  end
-  
-  def add_ssh_keys(gears=nil)
-    reply = ResultIO.new
-    run_on_gears(gears,reply,false) do |gear,r|
-      @user.ssh_keys.each do |key_name, key_info|
-        r.append gear.add_authorized_ssh_key(key_info["key"], key_info["type"], key_name)
-      end
-    end if @user.ssh_keys
-    reply
-  end
-  
-  def add_system_env_vars(gears=nil)
-    reply = ResultIO.new
-    run_on_gears(gears,reply,false) do |gear,r|
-      @user.env_vars.each do |key, value|
-        r.append gear.add_env_var(key, value)
-      end
-    end if @user.env_vars
+    
+    gears = self.gears unless gears
+    
+    if @user.env_vars || @user.ssh_keys || @user.system_ssh_keys
+      tag = ""
+      handle = RemoteJob.create_parallel_job
+      RemoteJob.run_parallel_on_gears(gears, handle) { |exec_handle, gear|
+        @user.env_vars.each do |key, value|
+          job = gear.env_var_job_add(key, value)
+          RemoteJob.add_parallel_job(exec_handle, tag, gear, job)
+        end if @user.env_vars
+        @user.ssh_keys.each do |key_name, key_info|
+          job = gear.ssh_key_job_add(key_info["key"], key_info["type"], key_name)
+          RemoteJob.add_parallel_job(exec_handle, tag, gear, job)
+        end if @user.ssh_keys
+        @user.system_ssh_keys.each do |key_name, key_info|
+          job = gear.ssh_key_job_add(key_info, nil, key_name)
+          RemoteJob.add_parallel_job(exec_handle, tag, gear, job)
+        end if @user.system_ssh_keys
+      }
+      RemoteJob.get_parallel_run_results(handle) { |tag, gear, output, status|
+        if status != 0
+          raise StickShift::NodeException.new("Error applying settings to gear: #{gear} with status: #{status} and output: #{output}", 143)
+        end
+      }
+    end
     reply
   end
 
@@ -1293,7 +1298,7 @@ private
   def run_on_gears(gears=nil, result_io = nil, fail_fast=true, &block)
     successful_runs = []
     failed_runs = []
-    gears = self.group_instances.uniq.map{ |ginst| ginst.gears }.flatten if gears.nil?
+    gears = self.gears if gears.nil?
     
     gears.each do |gear|
       begin
@@ -1308,7 +1313,7 @@ private
           result_io.append(e.resultIO)
         end
         if fail_fast
-          raise Exception.new({:succesful => successful_runs, :failed => failed_runs, :exception => e})
+          raise Exception.new({:successful => successful_runs, :failed => failed_runs, :exception => e})
         end
       end
     end
@@ -1322,21 +1327,24 @@ private
       case command_item[:command]
       when "SYSTEM_SSH_KEY_ADD"
         key = command_item[:args][0]
-        result.append self.user.add_system_ssh_key(self.name, key)
+        self.user.add_system_ssh_key(self.name, key)
       when "SYSTEM_SSH_KEY_REMOVE"
-        result.append self.user.remove_system_ssh_key(self.name)
+        self.user.remove_system_ssh_key(self.name)
       when "ENV_VAR_ADD"
         key = command_item[:args][0]
         value = command_item[:args][1]
-        result.append self.user.add_env_var(key,value)
+        self.user.add_env_var(key,value)
       when "ENV_VAR_REMOVE"
         key = command_item[:args][0]
-        result.append self.user.remove_env_var(key)
+        self.user.remove_env_var(key)
       when "BROKER_KEY_ADD"
         add_broker_key
       when "BROKER_KEY_REMOVE"
         remove_broker_key
       end
+    end
+    if user.save_jobs
+      user.save
     end
     result
   end

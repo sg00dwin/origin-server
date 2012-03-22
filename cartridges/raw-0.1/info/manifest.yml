@@ -13,6 +13,10 @@ Architecture: noarch
 Publishes:
   get-doc-root:
     Type: "FILESYSTEM:doc-root"
+  publish-http-url:
+    Type: "NET_TCP:httpd-proxy-info"
+  publish-gear-endpoint:
+    Type: "NET_TCP:gear-endpoint-info"
 Subscribes:
   set-db-connection-info:
     Type: "NET_TCP:db:connection-info"

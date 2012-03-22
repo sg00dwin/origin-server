@@ -84,7 +84,10 @@ when "update"
     exit 1
   end
   
-  reply.append user.update_ssh_key(ssh_key, key_type, key_name) unless ssh_key.nil?
+  unless ssh_key.nil?
+    user.update_ssh_key(ssh_key, key_type, key_name)
+    user.save
+  end
   reply.append user.update_namespace(namespace) unless namespace.nil?
   reply.resultIO << "Successfully updated user.\n"
 when "delete"

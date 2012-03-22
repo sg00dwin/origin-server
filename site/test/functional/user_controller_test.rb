@@ -87,13 +87,6 @@ class UserControllerTest < ActionController::TestCase
 		assert_equal "Captcha text didn't match", assigns(:user).errors[:captcha].to_s
 	end
 
-	test "should get success on post and choosing Flex" do
-		post(:create, {:web_user => get_post_form.merge({:cloud_access_choice => CloudAccess::FLEX})})
-
-		assert_equal 'flex', assigns(:product)
-		assert_response :success
-	end
-
 	test "should get success on post and choosing Express" do
 		post(:create, {:web_user => get_post_form.merge({:cloud_access_choice => CloudAccess::EXPRESS})})
 

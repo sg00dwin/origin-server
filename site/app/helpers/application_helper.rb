@@ -26,7 +26,7 @@ module ApplicationHelper
   
   # Which product is the current page referring to?
   def get_product(controller, action)
-    ['express', 'flex'].each do |product|
+    ['express'].each do |product|
       unless controller.index(product).nil? and action.index(product).nil?
         return product
       end
@@ -46,8 +46,6 @@ module ApplicationHelper
       case product
         when :express
           session[:user].has_access?(CloudAccess::EXPRESS)
-        when :flex
-          session[:user].has_access?(CloudAccess::FLEX)
       end
     end
   end

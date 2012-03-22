@@ -35,7 +35,7 @@ import_env_vars
 
 declare -A curr_server_gears
 
-haproxy_cfg=$OPENSHIFT_GEAR_DIR/conf/haproxy.cfg
+haproxy_cfg=$OPENSHIFT_HOMEDIR/haproxy-1.4/conf/haproxy.cfg
 # Remove the first 3 args and process all the remaining args of the form k=v.
 # The values are the gear endpoints.
 kvargs=$(echo "${@:4}" | tr -d "\n" )
