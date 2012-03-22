@@ -1,4 +1,4 @@
-policy_module(libra,1.1.10)
+policy_module(libra,1.1.11)
 
 ########################################
 #
@@ -123,6 +123,7 @@ manage_files_pattern(libra_domain, libra_file_type, libra_file_type)
 manage_lnk_files_pattern(libra_domain, libra_file_type, libra_file_type)
 manage_sock_files_pattern(libra_domain, libra_file_type, libra_file_type)
 files_var_lib_filetrans(libra_domain, libra_var_lib_t, { dir file sock_file } )
+files_read_var_lib_symlinks(libra_app_domain)
 allow libra_domain libra_var_lib_t:dir_file_class_set { relabelfrom relabelto };
 can_exec(libra_domain, libra_file_type)
 allow libra_app_domain libra_file_type:file entrypoint;
