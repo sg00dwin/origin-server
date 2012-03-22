@@ -510,7 +510,7 @@ Configure-Order: [\"proxy/#{framework}\", \"proxy/haproxy-1.4\"]
     reply = ResultIO.new
     self.class.notify_observers(:before_application_deconfigure, {:application => self, :reply => reply})  
     if(self.configure_order)
-      self.configure_order.each do |comp_inst_name|
+      self.configure_order.reverse.each do |comp_inst_name|
         comp_inst = self.comp_instance_map[comp_inst_name]
         next if comp_inst.parent_cart_name == self.name
         group_inst = self.group_instance_map[comp_inst.group_instance_name]
