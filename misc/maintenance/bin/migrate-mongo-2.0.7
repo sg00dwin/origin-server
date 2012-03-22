@@ -7,7 +7,7 @@ require 'config/environment'
 ds = StickShift::DataStore.instance
 users = ds.collection.find({"apps.requires_feature" => 'raw-0.1' })
 users.each do |user|
-  print "Processing user #{user["_id"]}\n"
+  puts "Processing user #{user["_id"]}"
   if user["apps"]
     user["apps"].each do |app|
       if app['requires_feature'].include?('raw-0.1')
@@ -19,7 +19,9 @@ users.each do |user|
       end
     end
   else
-    print "\tNo apps found. skipping\n"
+    puts "\tNo apps found. skipping"
   end
 end
+puts "Done"
+
 
