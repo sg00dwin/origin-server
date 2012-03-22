@@ -12,7 +12,7 @@ done
 [ -z "$OPENSHIFT_SYNC_GEARS_PRE" ] && OPENSHIFT_SYNC_GEARS_PRE=('ctl_all stop')
 [ -z "$OPENSHIFT_SYNC_GEARS_POST" ] && OPENSHIFT_SYNC_GEARS_POST=('deploy.sh' 'ctl_all start' 'post_deploy.sh')
 [ -z "$OPENSHIFT_SYNC_GEARS_POST" ] && OPENSHIFT_SYNC_GEARS_SSH_KEY="${OPENSHIFT_DATA_DIR}/.ssh/haproxy_id_rsa"
-declare -ax OPENSHIFT_SYNC_GEARS_DIRS OPENSHIFT_SYNC_GEARS_PRE OPENSHIFT_SYNC_GEARS_POST 
+declare -ax OPENSHIFT_SYNC_GEARS_DIRS OPENSHIFT_SYNC_GEARS_PRE OPENSHIFT_SYNC_GEARS_POST
 declare -x OPENSHIFT_SYNC_GEARS_SSH_KEY
 
 
@@ -27,9 +27,11 @@ sshcmd="/usr/bin/ssh -q -o BatchMode=yes -o StrictHostKeyChecking=no -o UserKnow
 rsynccmd="rsync -v --delete-after -az"
 export RSYNC_RSH="$sshcmd"
 
+HAPROXY_CONF_DIR=$APP_HOME/$CART_NAME-$CART_VERSION/conf
+HAPROXY_GEAR_REGISTRY=$HAPROXY_CONF_DIR/gear-registry.db
 
 # Manage sync tasks in parallel
-GEARSET=()   # TODO, obtan gear list
+GEARSET=($(< "${HAPROXY_GEAR_REGISTRY}"))
 STDOUTS=()   # Set of outputs
 EXITCODES=() # Set of exit codes
 
@@ -41,7 +43,7 @@ do
   EXITCODES="${EXITCODES[@]} $output"
 
   (
-    ( 
+    (
       set -x -e
       echo "Syncing to gear: $gear @ " $(date)
 
@@ -66,7 +68,7 @@ do
           $rsynccmd "${OPENSHIFT_GEAR_DIR}/${subd}/" "${gear}:${TARGET_GEAR_DIR}/${subd}/"
         fi
       done
-      
+
       # Post-sync calls & start
       for rpccall in "${OPENSHIFT_SYNC_GEARS_POST[@]}"
       do
