@@ -56,6 +56,12 @@ class ComponentInstance < StickShift::UserModel
 
     ComponentInstance.establish_connections(self, self, app)
 
+    resolve_exec_order(app)
+
+    return group_list
+  end
+
+  def resolve_exec_order(app)
     deps = self.dependencies.dup
     self.dependencies.each { |dep| 
       depinst = app.comp_instance_map[dep]
@@ -72,7 +78,6 @@ class ComponentInstance < StickShift::UserModel
       end
       self.exec_order << dep if not self.exec_order.include? dep 
     }
-    return group_list
   end
 
   def self.establish_connections(inst1, inst2, app)
@@ -172,10 +177,10 @@ class ComponentInstance < StickShift::UserModel
   end
 
   def self.collect_exec_order(app, cinst, return_list)
-    cinst.exec_order.reverse.each do |dep|
+    cinst.exec_order.each do |dep|
       depinst = app.comp_instance_map[dep]
       collect_exec_order(app, depinst, return_list)
-      return_list << dep
+      return_list << dep if not return_list.include? dep
     end
   end
 

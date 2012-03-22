@@ -14,6 +14,8 @@ class Application < StickShift::Cartridge
 
   APP_NAME_MAX_LENGTH = 32
   NAMESPACE_MAX_LENGTH = 16
+  UNSCALABLE_FRAMEWORKS = ["haproxy-1.4", "jenkins-1.4", "diy-0.1"]
+  SCALABLE_EMBEDDED_CARTS = ["mysql-5.1"]
   
   validate :extended_validator
   
@@ -54,14 +56,10 @@ class Application < StickShift::Cartridge
     
     if template.nil?
       if self.scalable
+        raise StickShift::NodeException("Scalable app cannot be of type #{UNSCALABLE_FRAMEWORKS.join(' ')}", "-100", ResultIO.new) if UNSCALABLE_FRAMEWORKS.include? framework
         descriptor_hash = YAML.load(template_scalable_app(app_name, framework))
         from_descriptor(descriptor_hash)
         self.proxy_cartridge = "haproxy-1.4"
-        ##self.requires_feature.insert(0, self.proxy_cartridge)
-        ##prof = @profile_name_map[@default_profile]
-        ##conn = StickShift::Connection.new("auto_scale")
-        ##conn.components = [self.proxy_cartridge, framework]
-        ##prof.add_connection(conn)
       else
         from_descriptor({"Name"=>app_name, "Subscribes"=>{"doc-root"=>{"Type"=>"FILESYSTEM:doc-root"}}})
         self.requires_feature = []
@@ -109,6 +107,7 @@ Groups:
 Connections:
   auto-scale:
     Components: [\"proxy/haproxy-1.4\", \"web/#{framework}\"]
+Configure-Order: [\"proxy/#{framework}\", \"proxy/haproxy-1.4\"]
 "
   end
 
@@ -257,17 +256,7 @@ Connections:
   end
 
   def web_cart
-    web_cart = nil
-    return framework if not self.scalable
-    framework_carts = CartridgeCache.cartridge_names('standalone')
-    self.requires_feature.each do |feature|
-      if framework_carts.include? feature and feature != self.proxy_cartridge
-        web_cart = feature 
-        break
-      end
-    end
-    raise Exception.new("Cannot find web framework for the application") if web_cart.nil?
-    web_cart
+    return framework 
   end
 
   def scaleup(comp_name=nil)
@@ -961,6 +950,9 @@ Connections:
     self.cart_data = {} if @cart_data.nil?
     
     raise StickShift::UserException.new("#{dep} already embedded in '#{@name}'", 101) if self.embedded.include? dep
+    if self.scalable
+      raise StickShift::UserException.new("#{dep} cannot be embedded in scalable app '#{@name}'", 101) if not SCALABLE_EMBEDDED_CARTS.include? dep
+    end
     add_to_requires_feature(dep)
     begin
       reply.append self.configure_dependencies
@@ -1030,13 +1022,11 @@ Connections:
   # @return [String]
   # @deprecated  
   def framework
-    return self.proxy_cartridge if self.scalable
     framework_carts = CartridgeCache.cartridge_names('standalone')
-    self.requires_feature.each do |feature|
-      if framework_carts.include? feature
-        return feature 
-      end
-    end
+    self.comp_instance_map.each { |cname, cinst|
+      cartname = cinst.parent_cart_name
+      return cartname if framework_carts.include? cartname
+    }
     return nil
   end
   
@@ -1222,20 +1212,22 @@ private
   end
   
   def get_exec_order(default_profile)
-    collect_configure_order = []
-    collect_start_order = []
+    self.configure_order = []
+    default_profile.configure_order.each { |raw_c_name|
+      cinst = ComponentInstance::find_component_in_cart(default_profile, self, raw_c_name, self.get_name_prefix)
+      next if cinst.nil?
+      ComponentInstance::collect_exec_order(self, cinst, self.configure_order)
+      self.configure_order << cinst.name if not self.configure_order.include? cinst.name
+    }
     default_profile.groups.each { |g|
       g.component_refs.each { |cr|
         cpath = self.get_name_prefix + cr.get_name_prefix(default_profile)
         cinst = self.comp_instance_map[cpath]
-        ComponentInstance::collect_exec_order(self, cinst, collect_configure_order)
-        ComponentInstance::collect_exec_order(self, cinst, collect_start_order)
-        collect_configure_order << cpath
-        collect_start_order << cpath
+        ComponentInstance::collect_exec_order(self, cinst, self.configure_order)
+        self.configure_order << cpath if not self.configure_order.include? cpath
       }
     }
-    self.start_order = collect_start_order.reverse
-    self.configure_order = collect_configure_order.reverse
+    self.start_order = self.configure_order
   end
   
   def colocate_groups
