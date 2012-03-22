@@ -14,6 +14,8 @@ class Application < StickShift::Cartridge
 
   APP_NAME_MAX_LENGTH = 32
   NAMESPACE_MAX_LENGTH = 16
+  UNSCALABLE_FRAMEWORKS = ["haproxy-1.4", "jenkins-1.4", "diy-0.1"]
+  SCALABLE_EMBEDDED_CARTS = ["mysql-5.1"]
   
   validate :extended_validator
   
@@ -55,14 +57,10 @@ class Application < StickShift::Cartridge
     
     if template.nil?
       if self.scalable
+        raise StickShift::NodeException("Scalable app cannot be of type #{UNSCALABLE_FRAMEWORKS.join(' ')}", "-100", ResultIO.new) if UNSCALABLE_FRAMEWORKS.include? framework
         descriptor_hash = YAML.load(template_scalable_app(app_name, framework))
         from_descriptor(descriptor_hash)
         self.proxy_cartridge = "haproxy-1.4"
-        ##self.requires_feature.insert(0, self.proxy_cartridge)
-        ##prof = @profile_name_map[@default_profile]
-        ##conn = StickShift::Connection.new("auto_scale")
-        ##conn.components = [self.proxy_cartridge, framework]
-        ##prof.add_connection(conn)
       else
         from_descriptor({"Name"=>app_name, "Subscribes"=>{"doc-root"=>{"Type"=>"FILESYSTEM:doc-root"}}})
         self.requires_feature = []
@@ -110,6 +108,7 @@ Groups:
 Connections:
   auto-scale:
     Components: [\"proxy/haproxy-1.4\", \"web/#{framework}\"]
+Configure-Order: [\"proxy/#{framework}\", \"proxy/haproxy-1.4\"]
 "
   end
 
@@ -216,14 +215,14 @@ Connections:
     gears_created = []
     begin
       elaborate_descriptor()
-      
+      user.applications << self
       Rails.logger.debug "Creating gears"
       group_instances.uniq.each do |ginst|
         create_result, new_gear = ginst.add_gear(self)
         result_io.append create_result
       end
 
-      self.gear.name = self.name if not scalable
+      self.gear.name = self.name unless scalable
       self.class.notify_observers(:application_creation_success, {:application => self, :reply => result_io})              
     rescue Exception => e
       Rails.logger.debug e.message
@@ -269,17 +268,11 @@ Connections:
   end
 
   def web_cart
-    web_cart = nil
-    return framework if not self.scalable
-    framework_carts = CartridgeCache.cartridge_names('standalone')
-    self.requires_feature.each do |feature|
-      if framework_carts.include? feature and feature != self.proxy_cartridge
-        web_cart = feature 
-        break
-      end
-    end
-    raise Exception.new("Cannot find web framework for the application") if web_cart.nil?
-    web_cart
+    return framework 
+  end
+  
+  def gears
+    self.group_instances.uniq.map{ |ginst| ginst.gears }.flatten
   end
 
   def scaleup(comp_name=nil)
@@ -400,12 +393,12 @@ Connections:
         Rails.logger.debug e.message
         Rails.logger.debug e.backtrace.inspect        
         
-        succesful_gears = []
-        succesful_gears = e.message[:succesful].map{|g| g[:gear]} if e.message[:succesful]
+        successful_gears = []
+        successful_gears = e.message[:successful].map{|g| g[:gear]} if e.message[:successful]
         gear_exception = e.message[:exception]        
 
         #remove failed component from all gears
-        run_on_gears(succesful_gears, reply, false) do |gear, r|
+        run_on_gears(successful_gears, reply, false) do |gear, r|
           r.append gear.deconfigure(comp_inst)
           r.append process_cartridge_commands(r.cart_commands)
           #self.save
@@ -825,33 +818,34 @@ Connections:
     reply
   end
   
-  def add_system_ssh_keys(gears=nil)
+  def add_node_settings(gears=nil)
     reply = ResultIO.new
-    run_on_gears(gears,reply,false) do |gear,r|
-      @user.system_ssh_keys.each do |key_name, key_info|
-        r.append gear.add_authorized_ssh_key(key_info, nil, key_name)
-      end
-    end if @user.system_ssh_keys
-    reply
-  end
-  
-  def add_ssh_keys(gears=nil)
-    reply = ResultIO.new
-    run_on_gears(gears,reply,false) do |gear,r|
-      @user.ssh_keys.each do |key_name, key_info|
-        r.append gear.add_authorized_ssh_key(key_info["key"], key_info["type"], key_name)
-      end
-    end if @user.ssh_keys
-    reply
-  end
-  
-  def add_system_env_vars(gears=nil)
-    reply = ResultIO.new
-    run_on_gears(gears,reply,false) do |gear,r|
-      @user.env_vars.each do |key, value|
-        r.append gear.add_env_var(key, value)
-      end
-    end if @user.env_vars
+    
+    gears = self.gears unless gears
+    
+    if @user.env_vars || @user.ssh_keys || @user.system_ssh_keys
+      tag = ""
+      handle = RemoteJob.create_parallel_job
+      RemoteJob.run_parallel_on_gears(gears, handle) { |exec_handle, gear|
+        @user.env_vars.each do |key, value|
+          job = gear.env_var_job_add(key, value)
+          RemoteJob.add_parallel_job(exec_handle, tag, gear, job)
+        end if @user.env_vars
+        @user.ssh_keys.each do |key_name, key_info|
+          job = gear.ssh_key_job_add(key_info["key"], key_info["type"], key_name)
+          RemoteJob.add_parallel_job(exec_handle, tag, gear, job)
+        end if @user.ssh_keys
+        @user.system_ssh_keys.each do |key_name, key_info|
+          job = gear.ssh_key_job_add(key_info, nil, key_name)
+          RemoteJob.add_parallel_job(exec_handle, tag, gear, job)
+        end if @user.system_ssh_keys
+      }
+      RemoteJob.get_parallel_run_results(handle) { |tag, gear, output, status|
+        if status != 0
+          raise StickShift::NodeException.new("Error applying settings to gear: #{gear} with status: #{status} and output: #{output}", 143)
+        end
+      }
+    end
     reply
   end
 
@@ -976,6 +970,9 @@ Connections:
     self.cart_data = {} if @cart_data.nil?
     
     raise StickShift::UserException.new("#{dep} already embedded in '#{@name}'", 101) if self.embedded.include? dep
+    if self.scalable
+      raise StickShift::UserException.new("#{dep} cannot be embedded in scalable app '#{@name}'", 101) if not SCALABLE_EMBEDDED_CARTS.include? dep
+    end
     add_to_requires_feature(dep)
     begin
       reply.append self.configure_dependencies
@@ -1045,13 +1042,11 @@ Connections:
   # @return [String]
   # @deprecated  
   def framework
-    return self.proxy_cartridge if self.scalable
     framework_carts = CartridgeCache.cartridge_names('standalone')
-    self.requires_feature.each do |feature|
-      if framework_carts.include? feature
-        return feature 
-      end
-    end
+    self.comp_instance_map.each { |cname, cinst|
+      cartname = cinst.parent_cart_name
+      return cartname if framework_carts.include? cartname
+    }
     return nil
   end
   
@@ -1237,20 +1232,22 @@ private
   end
   
   def get_exec_order(default_profile)
-    collect_configure_order = []
-    collect_start_order = []
+    self.configure_order = []
+    default_profile.configure_order.each { |raw_c_name|
+      cinst = ComponentInstance::find_component_in_cart(default_profile, self, raw_c_name, self.get_name_prefix)
+      next if cinst.nil?
+      ComponentInstance::collect_exec_order(self, cinst, self.configure_order)
+      self.configure_order << cinst.name if not self.configure_order.include? cinst.name
+    }
     default_profile.groups.each { |g|
       g.component_refs.each { |cr|
         cpath = self.get_name_prefix + cr.get_name_prefix(default_profile)
         cinst = self.comp_instance_map[cpath]
-        ComponentInstance::collect_exec_order(self, cinst, collect_configure_order)
-        ComponentInstance::collect_exec_order(self, cinst, collect_start_order)
-        collect_configure_order << cpath
-        collect_start_order << cpath
+        ComponentInstance::collect_exec_order(self, cinst, self.configure_order)
+        self.configure_order << cpath if not self.configure_order.include? cpath
       }
     }
-    self.start_order = collect_start_order.reverse
-    self.configure_order = collect_configure_order.reverse
+    self.start_order = self.configure_order
   end
   
   def colocate_groups
@@ -1316,7 +1313,7 @@ private
   def run_on_gears(gears=nil, result_io = nil, fail_fast=true, &block)
     successful_runs = []
     failed_runs = []
-    gears = self.group_instances.uniq.map{ |ginst| ginst.gears }.flatten if gears.nil?
+    gears = self.gears if gears.nil?
     
     gears.each do |gear|
       begin
@@ -1331,7 +1328,7 @@ private
           result_io.append(e.resultIO)
         end
         if fail_fast
-          raise Exception.new({:succesful => successful_runs, :failed => failed_runs, :exception => e})
+          raise Exception.new({:successful => successful_runs, :failed => failed_runs, :exception => e})
         end
       end
     end
@@ -1345,21 +1342,24 @@ private
       case command_item[:command]
       when "SYSTEM_SSH_KEY_ADD"
         key = command_item[:args][0]
-        result.append self.user.add_system_ssh_key(self.name, key)
+        self.user.add_system_ssh_key(self.name, key)
       when "SYSTEM_SSH_KEY_REMOVE"
-        result.append self.user.remove_system_ssh_key(self.name)
+        self.user.remove_system_ssh_key(self.name)
       when "ENV_VAR_ADD"
         key = command_item[:args][0]
         value = command_item[:args][1]
-        result.append self.user.add_env_var(key,value)
+        self.user.add_env_var(key,value)
       when "ENV_VAR_REMOVE"
         key = command_item[:args][0]
-        result.append self.user.remove_env_var(key)
+        self.user.remove_env_var(key)
       when "BROKER_KEY_ADD"
         add_broker_key
       when "BROKER_KEY_REMOVE"
         remove_broker_key
       end
+    end
+    if user.save_jobs
+      user.save
     end
     result
   end
