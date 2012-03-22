@@ -1,6 +1,7 @@
 require 'test_helper'
 
 class ProductControllerTest < ActionController::TestCase
+  
   test "express" do
     get :express
     assert_response :success

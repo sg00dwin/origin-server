@@ -50,8 +50,6 @@ Broker::Application.configure do
   ############################################
   # OpenShift Configuration Below this point #
   ############################################
-  config.app_scope = ""
-  
   config.districts = {
     :enabled => true,
     :require_for_app_create => true,

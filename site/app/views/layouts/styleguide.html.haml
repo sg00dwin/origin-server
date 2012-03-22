@@ -1,5 +1,5 @@
 - content_for :javascripts do
-  = javascript_include_tag '/app/javascripts/script.js'
+  = javascript_include_tag 'script.js'
 
 !!! 5
 -# http://paulirish.com/2008/conditional-stylesheets-vs-css-hacks-answer-neither
@@ -8,8 +8,8 @@
     = render "layouts/head" 
 
     -# CSS: implied media="all"
-    = stylesheet_link_tag '/app/stylesheets/common.css', :media => 'all'
-    -# moved into core scss = stylesheet_link_tag '/app/stylesheets/custom.css', :media => 'all'
+    = stylesheet_link_tag 'common.css', :media => 'all'
+    -# moved into core scss = stylesheet_link_tag 'custom.css', :media => 'all'
     -# Append your own using content_for :stylesheets
     = yield :stylesheets
     -# No longer support :stylesheet_partial
@@ -34,7 +34,7 @@
       ]
 
     - scripts.each do |script|
-      = javascript_include_tag "/app/javascripts/#{script}"
+      = javascript_include_tag script
 
     -#  Append your own using content_for :javascripts
     = yield :javascripts
