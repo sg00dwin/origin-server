@@ -4,11 +4,11 @@
   Watch #{@title}
 
 - content_for :stylesheets do
-  = stylesheet_link_tag '/app/stylesheets/projekktor_maccaco.css'
+  = stylesheet_link_tag 'projekktor_maccaco.css'
 
 - content_for :javascripts do
-  = javascript_include_tag '/app/javascripts/projekktor.min.js'
-  = javascript_include_tag '/app/javascripts/video.js'
+  = javascript_include_tag 'projekktor.min.js'
+  = javascript_include_tag 'video.js'
 
 %h1.ribbon
   .ribbon-content= @title

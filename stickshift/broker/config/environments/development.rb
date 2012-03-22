@@ -36,8 +36,6 @@ Broker::Application.configure do
   ############################################
   # OpenShift Configuration Below this point #
   ############################################
-  config.app_scope = "broker"
-
   # SS Config
   config.ss = {
     :domain_suffix => "rhcloud.com",
