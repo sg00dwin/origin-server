@@ -8,7 +8,7 @@
 
 Summary:   Dependencies for OpenShift development
 Name:      rhc-devenv
-Version:   0.89.1
+Version:   0.89.2
 Release:   1%{?dist}
 Group:     Development/Libraries
 License:   GPLv2
@@ -55,6 +55,87 @@ Requires:  bind
 # CI Requirements
 Requires:  jenkins
 Requires:  tito
+
+# Drupal Requirements
+Requires:  php-domxml-php4-php5
+Requires:  php-gd
+Requires:  php-mbstring
+Requires:  php-mysql
+Requires:  php-pdo
+Requires:  php-pear-MDB2-Driver-mysql
+Requires:  php-pear-MDB2-Driver-mysqli
+Requires:  php-pecl-apc
+Requires:  php-soap
+Requires:  php-tidy
+Requires:  drupal6
+Requires:  drupal6-drush'
+Requires:  drupal6-addthis
+Requires:  drupal6-admin_menu
+Requires:  drupal6-advanced-help
+Requires:  drupal6-ajax_poll
+Requires:  drupal6-better_formats
+Requires:  drupal6-calendar
+Requires:  drupal6-cck
+Requires:  drupal6-comment_bonus_api
+Requires:  drupal6-context
+Requires:  drupal6-ctools
+Requires:  drupal6-custom_breadcrumbs
+Requires:  drupal6-date
+Requires:  drupal6-devel
+Requires:  drupal6-eazylaunch
+Requires:  drupal6-emfield
+Requires:  drupal6-faq
+Requires:  drupal6-features
+Requires:  drupal6-filefield
+Requires:  drupal6-fivestar
+Requires:  drupal6-flag
+Requires:  drupal6-geshifilter
+Requires:  drupal6-homebox
+Requires:  drupal6-imageapi
+Requires:  drupal6-imagecache
+Requires:  drupal6-imagecache_profiles
+Requires:  drupal6-imagefield
+Requires:  drupal6-image_resize_filter
+Requires:  drupal6-insert
+Requires:  drupal6-jquery_ui-lib
+Requires:  drupal6-link
+Requires:  drupal6-markdown
+Requires:  drupal6-media_vimeo
+Requires:  drupal6-media_youtube
+Requires:  drupal6-menu_block
+Requires:  drupal6-messaging
+Requires:  drupal6-notifications
+Requires:  drupal6-og
+Requires:  drupal6-pathauto
+Requires:  drupal6-rules
+Requires:  drupal6-stringoverrides
+Requires:  drupal6-token
+Requires:  drupal6-user_badges
+Requires:  drupal6-userpoints
+Requires:  drupal6-userpoints_votingapi
+Requires:  drupal6-vertical_tabs
+Requires:  drupal6-views
+Requires:  drupal6-views_bonus
+Requires:  drupal6-views_customfield
+Requires:  drupal6-vote_up_down
+Requires:  drupal6-votingapi
+Requires:  drupal6-openshift-custom_forms
+Requires:  drupal6-openshift-features-blogs
+Requires:  drupal6-openshift-features-forums
+Requires:  drupal6-openshift-features-front_page
+Requires:  drupal6-openshift-features-global_settings
+Requires:  drupal6-openshift-features-reporting_csv_views
+Requires:  drupal6-openshift-features-rules_by_category
+Requires:  drupal6-openshift-features-user_profile
+Requires:  drupal6-openshift-features-video
+Requires:  drupal6-openshift-modals
+Requires:  drupal6-openshift-og_comment_perms
+Requires:  drupal6-openshift-redhat_acquia
+Requires:  drupal6-openshift-redhat_events
+Requires:  drupal6-openshift-redhat_frontpage
+Requires:  drupal6-openshift-redhat_ideas
+Requires:  drupal6-openshift-redhat_sso
+Requires:  drupal6-openshift-theme
 
 BuildArch: noarch
 
@@ -197,6 +278,7 @@ popd > /dev/null
 # Restore permissions
 /sbin/restorecon -R %{_sysconfdir}/qpid/pki
 /sbin/restorecon -R %{libradir}
+/sbin/restorecon -R /etc/drupal6
 
 # Start services
 service iptables restart
@@ -281,6 +363,10 @@ cp -f %{devenvdir}/puppet-private.pem /var/lib/puppet/ssl/private_keys/localhost
 %{policydir}/*
 
 %changelog
+
+* Wed Mar 22 2012 Anderson Silva <ansilva@redhat.com> 0.89.2-1
+- add drupal6
+
 * Sat Mar 17 2012 Dan McPherson <dmcphers@redhat.com> 0.89.1-1
 - bump spec numbers (dmcphers@redhat.com)
 - use proper comments in named.conf (markllama@redhat.com)
