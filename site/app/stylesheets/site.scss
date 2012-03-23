@@ -806,9 +806,13 @@ body.home {
 
   .home #buzz {
     background-image: none;
-    .column-buzz{
+    .container {
+      padding: 0;
+    }
+    .column-buzz {
       background-image: none;
       margin: 0;
+      padding: 30px $gridGutterWidthTablet 40px;
     }
   }
 }
