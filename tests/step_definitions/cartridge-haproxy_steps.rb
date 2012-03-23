@@ -54,24 +54,19 @@ Then /^the haproxy directory will( not)? exist$/ do |negate|
 end
 
 
-Then /^the haproxy control script will( not)? exist$/ do |negate|
+Then /^the haproxy PATH override will( not)? exist$/ do |negate|
   account_name = @account['accountname']
   namespace = @app['namespace']
   app_name = @app['name']
 
-  haproxy_user_root = "#{$home_root}/#{account_name}/haproxy-#{$haproxy_version}"
-  haproxy_startup_file = "#{haproxy_user_root}/#{app_name}_haproxy_ctl.sh"
+  path_location = "#{$home_root}/#{account_name}/.env/PATH"
 
-  begin
-    startfile = File.new haproxy_startup_file
-  rescue Errno::ENOENT
-    startfile = nil
-  end
+  path_override = open(path_location).grep(/haproxy-1.4/)[0]
 
   unless negate
-    startfile.should be_a(File)
+    path_override.should be_a(String)
   else
-    startfile.should be_nil
+    path_override.should be_nil
   end
 end
 
@@ -81,7 +76,7 @@ Then /^the haproxy configuration file will( not)? exist$/ do |negate|
   app_name = @app['name']
 
   haproxy_user_root = "#{$home_root}/#{account_name}/haproxy-#{$haproxy_version}"
-  haproxy_config_file = "#{haproxy_user_root}/conf/haproxy.cfg-template"
+  haproxy_config_file = "#{haproxy_user_root}/conf/haproxy.cfg.template"
 
   begin
     cnffile = File.new haproxy_config_file

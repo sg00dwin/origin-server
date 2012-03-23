@@ -3,25 +3,34 @@ Feature: HAProxy Application Sub-Cartridge
   
   Scenario Outline: Create Delete one application with haproxy
     Given an accepted node
-    And a new guest account
+    And a new gear with namespace "ns1" and app name "app1"
     And the guest account has no application installed
-    And a new <type> application
-    When I configure a php application
+    When I configure a <type> application
+    Then the <type> application will be running
     When I configure haproxy
     Then the haproxy directory will exist
     And the haproxy configuration file will exist
-    And the haproxy control script will exist
+    And the haproxy PATH override will exist
     And the haproxy daemon will be running
+    And the <type> application will not be running
 #    And the status-page will respond
     When I deconfigure haproxy
     Then the haproxy daemon will not be running
-    And the haproxy control script will not exist
+    And the <type> application will be running
+    And the haproxy PATH override will not exist
     And the haproxy configuration file will not exist
     And the haproxy directory will not exist
+    When I deconfigure the <type> application
+    And I delete the guest account
+    Then an account password entry should not exist
 
   Scenarios: Create Delete Application With Database Scenarios
     |type|
     |php|
+    |python|
+    |ruby|
+    |nodejs|
+    |perl|
     
 #  Scenario Outline: Stop Start Restart a MySQL database
 #    Given an accepted node
