@@ -31,14 +31,14 @@ DHCP follow.
 * Enable named service
 * Set resolver order
 * DHCP updates
+** SELinux
+*** Compiling policy module
+*** Installing policy module
 ** Disable NetworkManager service
 ** Enable network service
 ** dhclient hooks (update forwarders)
 ** named.conf: include forwarders
 ** dhclient config (resolver prefix)
-* SELinux
-** Compiling policy module
-** Installing policy module
 
 * Summary
 
@@ -284,13 +284,70 @@ and let interface control fall back to the more primative network
 service and the dhclient daemon. 
 
 Note that the forwarders update below will fail if you have SELinux
-enabled.  If you're running with SELinux skip down to the the SELinux
-instructions at the bottom and come back when they're done.
+enabled.  If you're running with SELinux disabled skip down past the SELinux
+instructions.
 
 If you consider it safe you can temporarily suspend SELinux and
 re-enable it later.
 
   setenforce 0
+
+** SELinux
+
+If you are running your host with SELinux enabled then the dhclient
+service will not have permission to write any file which the named
+service has permission to read.  You will need to extend the SELinux
+policy to allow the dhclient-up-hooks script to write the
+/var/named/forwarders.conf file and make it readable.
+
+To compile and load the new policy you will need the selinux-policy
+and policycoreutils RPMs installed.  If you have SELinux enabled you
+will certainly already have the selinux-policy package.  You may still
+need to install policycoreutils.
+
+  yum install selinux-policy policycoreutils
+
+The examples directory contains two files which define a policy update that
+does just that:
+
+  dhcpnamedforward.te
+  dhcpnamedforward.fc
+
+The first is a set of new policy rules.  The second defines the
+default label for the /var/named/forwarders.conf file so that the
+rules will apply.
+
+*** Compiling policy module
+
+Copy the policy files to /usr/share/selinux/packages.
+
+Compile the policy module:
+
+  cd /usr/share/selinux/packages
+  make -f /usr/share/selinux/devel/Makefile
+
+This will generate two additional files.
+
+  dhcpnamedforward.if
+  dhcpnamedforward.pp
+
+The .if file is an empty "interface" template and can be ignored.
+
+The .pp file is the compiled policy.  This is what gets loaded.
+
+*** Installing policy module
+
+To load the policy module use semodule(8)
+
+  semodule -i /usr/share/selinux/packages/dhcpnamedforward.pp
+
+This could take a couple of minutes.  When it completes, check that
+the module is installed:
+
+  semodule -l | grep dhcpnamedforward
+
+At this point SELinux should allow the dhclient-up-hooks script to
+write /var/named/forwarders.conf and the named service to read it.
 
 ** Disable NetworkManager service
 
@@ -350,65 +407,6 @@ updated and the named reloaded to get the update
 If you get an error or you don't see the timestamp change on
 /var/named/forwarders.conf then check the execute bit on
 /etc/dhcp/dhclient-up-hooks.
-
-* SELinux
-
-If you are running your host with SELinux enabled then the dhclient
-service will not have permission to write any file which the named
-service has permission to read.  You will need to extend the SELinux
-policy to allow the dhclient-up-hooks script to write the
-/var/named/forwarders.conf file and make it readable.
-
-To compile and load the new policy you will need the selinux-policy
-and policycoreutils RPMs installed.  If you have SELinux enabled you
-will certainly already have the selinux-policy package.  You may still
-need to install policycoreutils.
-
-  yum install selinux-policy policycoreutils
-
-The examples directory contains two files which define a policy update that
-does just that:
-
-  dhcpnamedforward.te
-  dhcpnamedforward.fc
-
-The first is a set of new policy rules.  The second defines the
-default label for the /var/named/forwarders.conf file so that the
-rules will apply.
-
-** Compiling policy module
-
-Copy the policy files to /usr/share/selinux/packages.
-
-Compile the policy module:
-
-  cd /usr/share/selinux/packages
-  make -f /usr/share/selinux/devel/Makefile
-
-This will generate two additional files.
-
-  dhcpnamedforward.if
-  dhcpnamedforward.pp
-
-The .if file is an empty "interface" template and can be ignored.
-
-The .pp file is the compiled policy.  This is what gets loaded.
-
-** Installing policy module
-
-To load the policy module use semodule(8)
-
-  semodule -i /usr/share/selinux/packages/dhcpnamedforward.pp
-
-This could take a couple of minutes.  When it completes, check that
-the module is installed:
-
-  semodule -l | grep dhcpnamedforward
-
-At this point SELinux should allow the dhclient-up-hooks script to
-write /var/named/forwarders.conf and the named service to read it.  If
-you were getting "permission denied" when restarting the network
-service, they should now go away.
 
 * References
 
