@@ -90,6 +90,15 @@ class Application < StickShift::Cartridge
       conn = StickShift::Connection.new("#{feature}-proxy-#{fcart}")
       conn.components = ["proxy/#{feature}", "proxy/#{fcart}"]
       prof.add_connection(conn)
+
+      #  FIXME: Booya - hacks galore -- fix this to be more generic when
+      #         scalable apps allow more components in SCALABLE_EMBEDDED_CARTS
+      if feature == "jenkins-client-1.4"
+        conn = StickShift::Connection.new("#{feature}-proxy-haproxy-1.4")
+        conn.components = ["proxy/#{feature}", "proxy/haproxy-1.4"]
+        prof.add_connection(conn)
+      end
+
       comp.depends << feature
     else
       self.requires_feature.each { |cart|
