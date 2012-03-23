@@ -36,6 +36,9 @@ module LibraMigration
         output += echo_output
       end
 
+      echo_output, echo_exitcode = Util.execute_script("/usr/bin/rhc-app-gear-xlate #{app_home}/.env")
+      output += echo_output
+
     else
       exitcode = 127
       output += "Application not found to migrate: #{app_home}\n"
