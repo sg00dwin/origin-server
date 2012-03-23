@@ -70,7 +70,7 @@ runcon -l s0-s0:c0.c1023 rm -rf "$HAPROXY_DIR"
 rm -rf ${APP_HOME}/.openshift
 rm -f /etc/httpd/conf.d/stickshift/${uuid}_${namespace}_${application}/000000_haproxy.conf
 
-if [ "$application" != "$OPENSHIFT_APP_NAME]; then
+if [ "$application" != "$OPENSHIFT_APP_NAME" ]; then
    rm -rf "/etc/httpd/conf.d/stickshift/${uuid}_${namespace}_${OPENSHIFT_APP_NAME}.conf" "/etc/httpd/conf.d/stickshift/${uuid}_${namespace}_${OPENSHIFT_APP_NAME}"
 fi
 
