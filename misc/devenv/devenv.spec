@@ -69,7 +69,11 @@ Requires:  php-soap
 Requires:  php-tidy
 Requires:  drupal6
 Requires:  drupal6-drush
+# Note: this RPM has a fix for getting mysql
+# running in the devenv w/o breaking because
+# of pam_namespace.
 Requires:  drupal6-openshift-devenv-dbdump
+#
 Requires:  drupal6-addthis
 Requires:  drupal6-admin_menu
 Requires:  drupal6-advanced-help
