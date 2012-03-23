@@ -20,7 +20,11 @@ HAPROXY_CONF_DIR=$OPENSHIFT_HOMEDIR/haproxy-1.4/conf
 HAPROXY_GEAR_REGISTRY=$HAPROXY_CONF_DIR/gear-registry.db
 
 # Manage sync tasks in parallel
-GEARSET=($(< "${HAPROXY_GEAR_REGISTRY}"))
+if [ -n "$1" ]; then
+   GEARSET[0]="$1"
+else
+   GEARSET=($(< "${HAPROXY_GEAR_REGISTRY}"))
+fi
 STDOUTS=()   # Set of outputs
 EXITCODES=() # Set of exit codes
 

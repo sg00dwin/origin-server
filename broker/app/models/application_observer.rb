@@ -20,7 +20,7 @@ called '#{application.name[0..-(BUILDER_SUFFIX.length+1)]}' and build that app i
     if application.framework_cartridge == 'jenkins'
       application.user.applications.each do |uapp|
         if uapp.framework_cartridge == "jenkins"
-          raise StickShift::UserException.new("A jenkins application named '#{uapp.name}' in namespace '#{application.user.namespace}' already exists.  You can only have 1 jenkins application per account.", 115)
+          raise StickShift::UserException.new("A jenkins application named '#{uapp.name}' in namespace '#{application.domain.namespace}' already exists.  You can only have 1 jenkins application per account.", 115)
         end
 
         if application.name == "#{uapp.name}#{BUILDER_SUFFIX}"
@@ -36,13 +36,13 @@ may be ok if '#{uapp.name}#{BUILDER_SUFFIX}' was the builder of a previously des
     end
 
     unless Application.find(application.user, application.name).nil?
-      raise StickShift::UserException.new("An application named '#{application.name}' in namespace '#{application.user.namespace}' already exists", 100)
+      raise StickShift::UserException.new("An application named '#{application.name}' in namespace '#{application.domain.namespace}' already exists", 100)
     end
 
     if application.framework_cartridge == 'jenkins'
       application.user.applications.each do |app|
         if app.framework_cartridge == 'jenkins'
-          raise StickShift::UserException.new("A jenkins application named '#{application.name}' in namespace '#{application.user.namespace}' already exists. You can only have 1 jenkins application per account.", 115)
+          raise StickShift::UserException.new("A jenkins application named '#{application.name}' in namespace '#{application.domain.namespace}' already exists. You can only have 1 jenkins application per account.", 115)
         end
       end
     end

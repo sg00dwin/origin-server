@@ -47,8 +47,9 @@ class Application < StickShift::Cartridge
   # @param [optional, String] uuid Unique identifier for the application
   # @param [deprecated, String] node_profile Node profile for the first application gear
   # @param [deprecated, String] framework Cartridge name to use as the framwwork of the application
-  def initialize(user=nil, app_name=nil, uuid=nil, node_profile=nil, framework=nil, template=nil, will_scale=false)
+  def initialize(user=nil, app_name=nil, uuid=nil, node_profile=nil, framework=nil, template=nil, will_scale=false, domain=nil)
     self.user = user
+    self.domain = domain
     self.node_profile = node_profile
     self.creation_time = DateTime::now().strftime
     self.uuid = uuid || StickShift::Model.gen_uuid
@@ -90,6 +91,15 @@ class Application < StickShift::Cartridge
       conn = StickShift::Connection.new("#{feature}-proxy-#{fcart}")
       conn.components = ["proxy/#{feature}", "proxy/#{fcart}"]
       prof.add_connection(conn)
+
+      #  FIXME: Booya - hacks galore -- fix this to be more generic when
+      #         scalable apps allow more components in SCALABLE_EMBEDDED_CARTS
+      if feature == "jenkins-client-1.4"
+        conn = StickShift::Connection.new("#{feature}-proxy-haproxy-1.4")
+        conn.components = ["proxy/#{feature}", "proxy/haproxy-1.4"]
+        prof.add_connection(conn)
+      end
+
       comp.depends << feature
     else
       self.requires_feature.each { |cart|
@@ -201,6 +211,16 @@ Configure-Order: [\"proxy/#{framework}\", \"proxy/haproxy-1.4\"]
     return app
   end
   
+  def self.hash_to_obj(hash)
+    domain = nil
+    if hash["domain"]
+      domain = Domain.hash_to_obj(hash["domain"])
+    end
+    app = super(hash)
+    app.domain = domain
+    app
+  end
+  
   # @overload Application.get_available_cartridges(cart_type)
   #   @deprecated
   #   Returns List of names of available cartridges of specified type
@@ -238,6 +258,7 @@ Configure-Order: [\"proxy/#{framework}\", \"proxy/haproxy-1.4\"]
         create_result, new_gear = ginst.add_gear(self)
         result_io.append create_result
       end
+
       self.gear.name = self.name unless scalable
       self.class.notify_observers(:application_creation_success, {:application => self, :reply => result_io})              
     rescue Exception => e
@@ -327,7 +348,7 @@ Configure-Order: [\"proxy/#{framework}\", \"proxy/haproxy-1.4\"]
 
     dns = StickShift::DnsService.instance
     begin
-      dns.deregister_application(gear.name, @user.namespace)
+      dns.deregister_application(gear.name, @domain.namespace)
       dns.publish
     ensure
       dns.close
@@ -457,7 +478,7 @@ Configure-Order: [\"proxy/#{framework}\", \"proxy/haproxy-1.4\"]
         appname = gear.name
         connector_name = conn.from_connector.name
         cart = pub_inst.parent_cart_name
-        input_args = [appname, self.user.namespace, gear.uuid]
+        input_args = [appname, self.domain.namespace, gear.uuid]
         args = "--gear-uuid '#{gear.uuid}' --cart-name '#{cart}' --hook-name '#{connector_name}' " + input_args.join(" ")
         job = RemoteJob.new('stickshift-node', 'connector-execute', args)
         RemoteJob.add_parallel_job(exec_handle, tag, gear, job)
@@ -478,7 +499,7 @@ Configure-Order: [\"proxy/#{framework}\", \"proxy/haproxy-1.4\"]
         appname = gear.name
         connector_name = conn.to_connector.name
         cart = sub_inst.parent_cart_name
-        input_args = [appname, self.user.namespace, gear.uuid, input_to_subscriber]
+        input_args = [appname, self.domain.namespace, gear.uuid, input_to_subscriber]
         args = "--gear-uuid '#{gear.uuid}' --cart-name '#{cart}' --hook-name '#{connector_name}' " + input_args.join(" ")
         job = RemoteJob.new('stickshift-node', 'connector-execute', args)
         RemoteJob.add_parallel_job(exec_handle, tag, gear, job)
@@ -501,12 +522,13 @@ Configure-Order: [\"proxy/#{framework}\", \"proxy/haproxy-1.4\"]
       pub_out = []
       run_on_gears(pub_ginst.gears, r, false) do |gear, r|
         appname = gear.name
-        gout, gstatus = gear.execute_connector(pub_inst, conn.from_connector.name, [appname, self.user.namespace, gear.uuid])
+
+        gout, gstatus = gear.execute_connector(pub_inst, conn.from_connector.name, [appname, self.domain.namespace, gear.uuid])
+
         if gstatus==0
           pub_out.push("'#{gear.uuid}'='#{gout}'")
         end
       end
-
       input_to_subscriber = Shellwords::shellescape(pub_out.join(' '))
       Rails.logger.debug "Output of publisher - '#{pub_out}'"
 
@@ -515,7 +537,7 @@ Configure-Order: [\"proxy/#{framework}\", \"proxy/haproxy-1.4\"]
 
       run_on_gears(sub_ginst.gears, r, false) do |gear, r|
         appname = gear.name
-        gout, gstatus = gear.execute_connector(sub_inst, conn.to_connector.name, [appname, self.user.namespace, gear.uuid, input_to_subscriber])
+        gout, gstatus = gear.execute_connector(sub_inst, conn.to_connector.name, [appname, self.domain.namespace, gear.uuid, input_to_subscriber])
       end
     }
   end
@@ -878,7 +900,9 @@ Configure-Order: [\"proxy/#{framework}\", \"proxy/haproxy-1.4\"]
     reply = ResultIO.new
     self.class.notify_observers(:before_create_dns, {:application => self, :reply => reply})    
     public_hostname = self.container.get_public_hostname
-    add_dns(@name, @user.namespace, public_hostname)
+
+    add_dns(@name, @domain.namespace, public_hostname)
+
     self.class.notify_observers(:after_create_dns, {:application => self, :reply => reply})    
     reply
   end
@@ -888,13 +912,13 @@ Configure-Order: [\"proxy/#{framework}\", \"proxy/haproxy-1.4\"]
     self.class.notify_observers(:before_destroy_dns, {:application => self, :reply => reply})
     dns = StickShift::DnsService.instance
     begin
-      dns.deregister_application(@name,@user.namespace)
+      dns.deregister_application(@name,@domain.namespace)
       if self.scalable
         # find the group instance where the web-cartridge is residing
         self.group_instance_map.keys.each { |ginst_name|
           ginst = self.group_instance_map[ginst_name]
           ginst.gears.each { |gear|
-            dns.deregister_application(gear.name,@user.namespace)
+            dns.deregister_application(gear.name,@domain.namespace)
           }
         }
       end
@@ -911,9 +935,9 @@ Configure-Order: [\"proxy/#{framework}\", \"proxy/haproxy-1.4\"]
     self.class.notify_observers(:before_recreate_dns, {:application => self, :reply => reply})    
     dns = StickShift::DnsService.instance
     begin
-      dns.deregister_application(@name,@user.namespace)
+      dns.deregister_application(@name,@domain.namespace)
       public_hostname = self.container.get_public_hostname
-      dns.register_application(@name,@user.namespace, public_hostname)
+      dns.register_application(@name,@domain.namespace, public_hostname)
       dns.publish
     ensure
       dns.close

@@ -4,25 +4,25 @@ RedHatCloud::Application.routes.draw do
   # first created -> highest priority.
 
   # Legacy redirects
-  match 'access/express(/:request)', :to => redirect('/app/express')
-  match 'access/flex(/:request)', :to => redirect('/app/flex')
-  match 'features', :to => redirect('/app/platform'), :as => 'features'
-  match 'power', :to => redirect('/app/platform')
-  match 'about', :to => redirect('/app/platform'), :as => 'about'
-  match 'express', :to => redirect('/app/platform'), :as => 'express'
-  match 'flex', :to => redirect('/app/platform'), :as => 'flex'
-  match 'flex_redirect', :to => redirect('/app/flex'), :as => 'flex_redirect'
-  match 'email_confirm_flex' => redirect {|p, req| "/app/email_confirm?#{req.query_string}"}
-  match 'email_confirm_express' => redirect {|p, req| "/app/email_confirm?#{req.query_string}"}
-  match 'user/new' => redirect('/app/account/new'), :via => [:get]
-  match 'user/new/flex' => redirect('/app/account/new'), :via => [:get]
-  match 'user/new/express' => redirect('/app/account/new'), :via => [:get]
-  match 'user/complete' => redirect('/app/account/complete'), :via => [:get]
+  match 'access/express(/:request)' => app_redirect('express')
+  match 'access/flex(/:request)' => app_redirect('flex')
+  match 'features' => app_redirect('platform'), :as => 'features'
+  match 'power' => app_redirect('platform')
+  match 'about' => app_redirect('platform'), :as => 'about'
+  match 'express' => app_redirect('platform'), :as => 'express'
+  match 'flex' => app_redirect('platform'), :as => 'flex'
+  match 'flex_redirect' => app_redirect('flex'), :as => 'flex_redirect'
+  match 'email_confirm_flex' => app_redirect {|p, req| "email_confirm?#{req.query_string}"}
+  match 'email_confirm_express' => app_redirect {|p, req| "email_confirm?#{req.query_string}"}
+  match 'user/new' => app_redirect('account/new'), :via => [:get]
+  match 'user/new/flex' => app_redirect('account/new'), :via => [:get]
+  match 'user/new/express' => app_redirect('account/new'), :via => [:get]
+  match 'user/complete' => app_redirect('account/complete'), :via => [:get]
 
   #Marketing site
   match 'getting_started' => 'product#getting_started', :as => 'getting_started'
-  match 'getting_started/express', :to => redirect('/app/getting_started')
-  match 'getting_started/flex', :to => redirect('/app/getting_started')
+  match 'getting_started/express' => app_redirect('getting_started')
+  match 'getting_started/flex' => app_redirect('getting_started')
   match 'getting_started_external/:registration_referrer' => 'getting_started_external#show'
   match 'platform' => 'product#overview', :as => 'product_overview'
   match 'partners/join' => 'partner#join', :as=> 'join_partner'
@@ -82,13 +82,13 @@ RedHatCloud::Application.routes.draw do
   #match 'user/request_password_reset_form' => 'user#request_password_reset_form', :via => [:get], :as => 'new_password'
   #match 'user/request_password_reset_success' => 'user#request_password_reset_success', :via => [:get]
   #match 'user/request_password_reset' => redirect() 'user#request_password_reset', :via => [:post]
-  match 'user/reset_password' => redirect {|p, req| "/app/account/password/reset?#{req.query_string}"}, :via => [:get]
+  match 'user/reset_password' => app_redirect {|p, req| "account/password/reset?#{req.query_string}"}, :via => [:get]
   match 'email_confirm' => 'email_confirm#confirm'
   match 'email_confirm_external/:registration_referrer' => 'email_confirm#confirm_external'
   
   #match 'user/change_password' => 'user#change_password', :via => [:post]
 
-  match 'user' => redirect('/app/account/new'), :via => [:get]
+  match 'user' => app_redirect('account/new'), :via => [:get]
 
   resource :terms,
            :as => "terms",
@@ -212,7 +212,8 @@ RedHatCloud::Application.routes.draw do
 
 
   scope '/status' do
-    match '/(:id)(.:format)', :to => StatusApp
-    match '/sync/(:host)', :to => StatusApp, :constraints => {:host => /[0-z\.-]+/}
+    match '/(:id)(.:format)' => StatusApp
+    match '/sync/(:host)' => StatusApp, :constraints => {:host => /[0-z\.-]+/}
   end
 end
+
