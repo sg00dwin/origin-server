@@ -15,7 +15,7 @@ class Application < StickShift::Cartridge
   APP_NAME_MAX_LENGTH = 32
   NAMESPACE_MAX_LENGTH = 16
   UNSCALABLE_FRAMEWORKS = ["haproxy-1.4", "jenkins-1.4", "diy-0.1"]
-  SCALABLE_EMBEDDED_CARTS = ["mysql-5.1"]
+  SCALABLE_EMBEDDED_CARTS = ["mysql-5.1", "jenkins-client-1.4"]
   
   validate :extended_validator
   
@@ -75,12 +75,27 @@ class Application < StickShift::Cartridge
 
   def add_to_requires_feature(feature)
     prof = @profile_name_map[@default_profile]
-    self.requires_feature.each { |cart|
-      conn = StickShift::Connection.new("#{feature}-#{cart}")
-      conn.components = [cart, feature]
+    if self.scalable
+      # add to the proxy component
+      comp_name = "proxy" if comp_name.nil?
+      prof = @profile_name_map[@default_profile]
+      cinst = ComponentInstance::find_component_in_cart(prof, self, comp_name, self.get_name_prefix)
+      raise StickShift::NodeException.new("Cannot find component '#{comp_name}' in app #{self.name}.", "-101", result_io) if cinst.nil?
+      comp,profile,cart = cinst.get_component_definition(self)
+      raise StickShift::UserException.new("#{dep} already embedded in '#{@name}'", 101) if comp.depends.include? feature
+      fcart = self.framework
+      conn = StickShift::Connection.new("#{feature}-#{fcart}")
+      conn.components = ["proxy/#{feature}", "web/#{fcart}"]
       prof.add_connection(conn)
-    }
-    self.requires_feature << feature
+      comp.depends << feature
+    else
+      self.requires_feature.each { |cart|
+        conn = StickShift::Connection.new("#{feature}-#{cart}")
+        conn.components = [cart, feature]
+        prof.add_connection(conn)
+      }
+      self.requires_feature << feature
+    end
   end
   
   def template_scalable_app(app_name, framework)
@@ -114,9 +129,19 @@ Configure-Order: [\"proxy/#{framework}\", \"proxy/haproxy-1.4\"]
   def remove_from_requires_feature(feature)
     prof = @profile_name_map[@default_profile]
     if prof.connection_name_map
-      prof.connection_name_map.delete_if {|k,v| v.components[0]==feature or v.components[1]==feature }
+      prof.connection_name_map.delete_if {|k,v| v.components[0].include? feature or v.components[1].include? feature }
     end
-    self.requires_feature.delete feature
+    if self.scalable
+      comp_name = "proxy" if comp_name.nil?
+      prof = @profile_name_map[@default_profile]
+      cinst = ComponentInstance::find_component_in_cart(prof, self, comp_name, self.get_name_prefix)
+      raise StickShift::NodeException.new("Cannot find component '#{comp_name}' in app #{self.name}.", "-101", result_io) if cinst.nil?
+      comp,profile,cart = cinst.get_component_definition(self)
+      raise StickShift::UserException.new("#{dep} already embedded in '#{@name}'", 101) if comp.depends.include? feature
+      comp.depends.delete(feature)
+    else
+      self.requires_feature.delete feature
+    end
   end
 
   # Find an application to which user has access
@@ -1158,7 +1183,7 @@ Configure-Order: [\"proxy/#{framework}\", \"proxy/haproxy-1.4\"]
     self.conn_endpoints_list = [] 
     default_profile = @profile_name_map[@default_profile]
     
-    generate_group_overrides(default_profile)
+    # generate_group_overrides(default_profile)
   
     default_profile.groups.each { |g|
       #gpath = self.name + "." + g.name
@@ -1260,12 +1285,6 @@ private
       }
     end
     return
-    #  default_profile = @profile_name_map[@default_profile]
-    #   first_group = default_profile.groups[0]
-    #   default_profile.groups.each do |g|
-    #     next if first_group==g
-    #     self.group_override_map[self.get_name_prefix + g.get_name_prefix] = self.get_name_prefix + first_group.get_name_prefix
-    #   end
   end
   
   def auto_merge_top_groups(default_profile)
