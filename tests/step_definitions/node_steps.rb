@@ -11,7 +11,7 @@ include OpenShift
 # Controller cartridge command paths
 $cartridge_root = '/usr/libexec/stickshift/cartridges'
 $controller_config_path = "ss-app-create"
-$controller_config_format = "#{$controller_config_path} -c '%s'"
+$controller_config_format = "#{$controller_config_path} -c '%s' --with-namespace '%s' --named '%s'"
 $controller_deconfig_path = "ss-app-destroy"
 $controller_deconfig_format = "#{$controller_deconfig_path} -c '%s'"
 $home_root = "/var/lib/stickshift"
@@ -37,6 +37,20 @@ def gen_small_uuid()
     %x[/usr/bin/uuidgen].gsub('-', '').strip
 end
 
+Given /^a new gear with namespace "([^\"]*)" and app name "([^\"]*)"$/ do |namespace, name|
+  # generate a random account name and use the stock SSH keys
+  # generate a random UUID and use the stock keys
+  acctname = gen_small_uuid
+  @account = {
+    'accountname' => acctname,
+  }
+  command = $controller_config_format % [acctname, namespace, name]
+
+  run command
+  # get and store the account UID's by name
+  @account['uid'] = Etc.getpwnam(acctname).uid
+end
+
 Given /^a new guest account$/ do
   # generate a random account name and use the stock SSH keys
   # generate a random UUID and use the stock keys
@@ -44,7 +58,7 @@ Given /^a new guest account$/ do
   @account = {
     'accountname' => acctname,
   }
-  command = $controller_config_format % [acctname]
+  command = $controller_config_format % [acctname, '', '']
 
   run command
   # get and store the account UID's by name
@@ -63,7 +77,7 @@ When /^I create a guest account$/ do
   @account = {
       'accountname' => acctname,
     }
-  command = $controller_config_format % [acctname]
+  command = $controller_config_format % [acctname, '', '']
   run command
   # get and store the account UID's by name
   @account['uid'] = Etc.getpwnam(acctname).uid

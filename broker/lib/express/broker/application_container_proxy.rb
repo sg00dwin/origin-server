@@ -624,7 +624,7 @@ module Express
         rpc_client = rpc_exec_direct('libra')
         result = nil
         begin
-          Rails.logger.debug "DEBUG: rpc_client.custom_request('set_district', #{mc_args.inspect}, #{@id}, {'identity' => #{@id}})"
+          Rails.logger.debug "DEBUG: rpc_client.custom_request('set_district', #{mc_args.inspect}, @id, {'identity' => @id})"
           result = rpc_client.custom_request('set_district', mc_args, @id, {'identity' => @id})
           Rails.logger.debug "DEBUG: #{result.inspect}"
         ensure
@@ -720,7 +720,7 @@ module Express
           rpc_client = rpc_exec_direct('libra')
           result = nil
           begin
-            Rails.logger.debug "DEBUG: rpc_client.custom_request('cartridge_do', #{mc_args.inspect}, #{@id}, {'identity' => #{@id}})"
+            Rails.logger.debug "DEBUG: rpc_client.custom_request('cartridge_do', mc_args.inspect, @id, {'identity' => @id})"
             result = rpc_client.custom_request('cartridge_do', mc_args, @id, {'identity' => @id})
             Rails.logger.debug "DEBUG: #{result.inspect}" if log_debug_output
           ensure
@@ -1082,29 +1082,23 @@ module Express
       end
 
       def self.execute_parallel_jobs_impl(handle)
-        id_list = handle.keys
-        id_list.each { |id| 
-          begin
-            job_list = handle[id]
-            options = ApplicationContainerProxy.rpc_options
-            rpc_client = rpcclient('libra', :options => options)
-            # mc_args = { :joblist => JSON.generate(job_list) }
-            mc_args = { :joblist => job_list }
-            mcoll_reply = rpc_client.custom_request('execute_parallel', mc_args, id, {'identity' => id})
-            rpc_client.disconnect
-            if mcoll_reply and mcoll_reply.length>0
-              mcoll_reply = mcoll_reply[0]
+        begin
+          options = ApplicationContainerProxy.rpc_options
+          rpc_client = rpcclient('libra', :options => options)
+          mc_args = handle.clone
+          rpc_client.custom_request('execute_parallel', mc_args, nil, {'identity' => handle.keys}).each { |mcoll_reply|
+            if mcoll_reply.results[:statuscode] == 0              
               output = mcoll_reply.results[:data][:output]
               exitcode = mcoll_reply.results[:data][:exitcode]
-              Rails.logger.debug("DEBUG: Output of parallel execute: #{output}, status: #{exitcode}")
-              handle[id] = output if exitcode==0
+              sender = mcoll_reply.results[:sender]
+              Rails.logger.debug("DEBUG: Output of parallel execute: #{output}, exitcode: #{exitcode}, from: #{sender}")
+              handle[sender] = output if exitcode == 0
             end
-          ensure
-            rpc_client.disconnect
-          end
-        }
+          }
+        ensure
+          rpc_client.disconnect
+        end
       end
-      
     end
   end
 end
