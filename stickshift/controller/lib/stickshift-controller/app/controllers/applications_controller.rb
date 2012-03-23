@@ -6,13 +6,23 @@ class ApplicationsController < BaseController
   # GET /domains/[domain id]/applications
   def index
     domain_id = params[:domain_id]
+    domain = get_domain(domain_id)
+     if not domain or not domain.hasAccess?(@cloud_user)
+       Rails.logger.debug "Domain #{domain_id}"
+      @reply = RestReply.new(:not_found)
+      @reply.messages.push(message = Message.new(:error, "Domain #{id} not found.", 127))
+      respond_with @reply, :status => @reply.status
+      return
+    end
     
     applications = Application.find_all(@cloud_user)
     apps = Array.new
     if not applications.nil? 
       applications.each do |application|
-        app = RestApplication.new(application, domain_id)
-        apps.push(app)
+        if application.domain.uuid = domain.uuid
+          app = RestApplication.new(application, domain_id)
+          apps.push(app)
+        end
       end
     end
     @reply = RestReply.new(:ok, "applications", apps)
@@ -24,9 +34,18 @@ class ApplicationsController < BaseController
     domain_id = params[:domain_id]
     id = params[:id]
     
+    domain = get_domain(domain_id)
+     if not domain or not domain.hasAccess?(@cloud_user)
+      Rails.logger.debug "Domain #{domain_id}"
+      @reply = RestReply.new(:not_found)
+      @reply.messages.push(message = Message.new(:error, "Domain #{domain_id} not found.", 127))
+      respond_with @reply, :status => @reply.status
+      return
+    end
+    
     application = Application.find(@cloud_user,id)
     
-    if application.nil?
+    if application.nil? or application.domain.uuid != domain.uuid
       @reply = RestReply.new(:not_found)
       message = Message.new(:error, "Application #{id} not found.", 101)
       @reply.messages.push(message)
@@ -42,6 +61,15 @@ class ApplicationsController < BaseController
   def create
     domain_id = params[:domain_id]
     
+    domain = get_domain(domain_id)
+     if not domain or not domain.hasAccess?(@cloud_user)
+       Rails.logger.debug "Domain #{domain_id}"
+      @reply = RestReply.new(:not_found)
+      @reply.messages.push(message = Message.new(:error, "Domain #{domain_id} not found.", 127))
+      respond_with @reply, :status => @reply.status
+      return
+    end
+    
     app_name = params[:name]
     cartridge = params[:cartridge]
     scale = params[:scale]
@@ -56,6 +84,7 @@ class ApplicationsController < BaseController
       respond_with @reply, :status => @reply.status
       return
     end
+
     application = Application.find(@cloud_user,app_name)
     if not application.nil?
       @reply = RestReply.new(:unprocessable_entity)
@@ -82,7 +111,7 @@ class ApplicationsController < BaseController
         @reply.messages.push(message)
         respond_with @reply, :status => @reply.status
       end
-      application = Application.new(@cloud_user, app_name, nil, nil, nil, template, scale)
+      application = Application.new(@cloud_user, app_name, nil, nil, nil, template, scale, domain)
     else
       if cartridge.nil? or not CartridgeCache.cartridge_names('standalone').include?(cartridge)
         @reply = RestReply.new(:unprocessable_entity)
@@ -92,7 +121,7 @@ class ApplicationsController < BaseController
         respond_with @reply, :status => @reply.status
         return
       end
-      application = Application.new(@cloud_user, app_name, nil, nil, cartridge, nil, scale)
+      application = Application.new(@cloud_user, app_name, nil, nil, cartridge, nil, scale, domain)
     end
 
     Rails.logger.debug "Validating application"  
@@ -161,10 +190,23 @@ class ApplicationsController < BaseController
   # DELELTE domains/[domain_id]/applications/[id]
   def destroy
     domain_id = params[:domain_id]
+    
+    domain = get_domain(domain_id)
+     if not domain or not domain.hasAccess?(@cloud_user)
+      Rails.logger.debug "Domain #{domain_id}"
+      @reply = RestReply.new(:not_found)
+      @reply.messages.push(message = Message.new(:error, "Domain #{id} not found.", 127))
+      respond_with(@reply) do |format|
+        format.xml { render :xml => @reply, :status => @reply.status }
+        format.json { render :json => @reply, :status => @reply.status }
+      end
+      return
+    end
+    
     id = params[:id]
     
     application = Application.find(@cloud_user,id)
-    if application.nil?
+    if application.nil? or application.domain.uuid != domain.uuid
       @reply = RestReply.new(:not_found)
       message = Message.new(:error, "Application #{id} not found.", 101)
       @reply.messages.push(message)
@@ -197,5 +239,13 @@ class ApplicationsController < BaseController
       format.xml { render :xml => @reply, :status => @reply.status }
       format.json { render :json => @reply, :status => @reply.status }
     end
+  end
+  def get_domain(id)
+    @cloud_user.domains.each do |domain|
+      if domain.namespace == id
+      return domain
+      end
+    end
+    return nil
   end
 end

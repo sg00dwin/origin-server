@@ -11,7 +11,7 @@ module Rails
 end
 
 class ApplicationTest < ActiveSupport::TestCase
-
+=begin
   test "create" do
     observer_seq = sequence("observer_seq")
     cart = StickShift::Cartridge.new.from_descriptor({ 'Name' => 'dummy' } )
@@ -210,4 +210,5 @@ class ApplicationTest < ActiveSupport::TestCase
     
     application.remove_dependency("foo")    
   end
+=end
 end

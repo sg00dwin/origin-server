@@ -284,9 +284,10 @@ class ApplicationController < ActionController::Base
     Rails.logger.debug 'Login required'
     if !session[:login]
       Rails.logger.debug "Session contents: #{session.inspect}"
-      session[:login_workflow] = url_for :controller => self.controller_name, 
-                                         :action => self.action_name
-      redirect_to login_path
+      redirect_path = url_for :controller => self.controller_name, 
+                              :action => self.action_name,
+                              :only_path => true
+      redirect_to login_path(:redirectUrl => redirect_path)
     end
   end
 
