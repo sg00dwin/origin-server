@@ -33,6 +33,7 @@ setup_deconfigure "$1" $2 $3
 
 CART_INFO_DIR=${CARTRIDGE_BASE_PATH}/embedded/haproxy-1.4/info
 
+source_if_exists "$APP_HOME/.env/OPENSHIFT_APP_NAME"
 source_if_exists "$APP_HOME/.env/OPENSHIFT_GEAR_TYPE"
 source_if_exists "$APP_HOME/.env/OPENSHIFT_DB_TYPE"
 
@@ -68,6 +69,10 @@ runcon -l s0-s0:c0.c1023 rm -rf "$HAPROXY_DIR"
 
 rm -rf ${APP_HOME}/.openshift
 rm -f /etc/httpd/conf.d/stickshift/${uuid}_${namespace}_${application}/000000_haproxy.conf
+
+if [ "$application" != "$OPENSHIFT_APP_NAME]; then
+   rm -rf "/etc/httpd/conf.d/stickshift/${uuid}_${namespace}_${OPENSHIFT_APP_NAME}.conf" "/etc/httpd/conf.d/stickshift/${uuid}_${namespace}_${OPENSHIFT_APP_NAME}"
+fi
 
 if [ "$app_type" = "$OPENSHIFT_GEAR_TYPE" ]; then
     # For non-embedded (dedicated) haproxy gear, destroy the gear.
