@@ -84,8 +84,11 @@ class Application < StickShift::Cartridge
       comp,profile,cart = cinst.get_component_definition(self)
       raise StickShift::UserException.new("#{dep} already embedded in '#{@name}'", 101) if comp.depends.include? feature
       fcart = self.framework
-      conn = StickShift::Connection.new("#{feature}-#{fcart}")
+      conn = StickShift::Connection.new("#{feature}-web-#{fcart}")
       conn.components = ["proxy/#{feature}", "web/#{fcart}"]
+      prof.add_connection(conn)
+      conn = StickShift::Connection.new("#{feature}-proxy-#{fcart}")
+      conn.components = ["proxy/#{feature}", "proxy/#{fcart}"]
       prof.add_connection(conn)
       comp.depends << feature
     else
