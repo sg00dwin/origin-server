@@ -16,6 +16,7 @@ function print_help {
 
 function generate_ssh_keys {
     /bin/mkdir -p $APP_DIR/data/.ssh/
+    /bin/rm -f $APP_DIR/data/.ssh/haproxy_id_rsa $APP_DIR/data/.ssh/haproxy_id_rsa.pub
     /usr/bin/ssh-keygen -N '' -f $APP_DIR/data/.ssh/haproxy_id_rsa > /dev/null
 
     touch "$APP_DIR/data/.ssh/known_hosts"
