@@ -1,10 +1,10 @@
 class RestDomain < StickShift::Model
-  attr_accessor :namespace, :links
+  attr_accessor :namespace, :suffix, :links
   include LegacyBrokerHelper
   
   def initialize(domain)
     self.namespace = domain.namespace
-    
+    self.suffix = Rails.application.config.ss[:domain_suffix] 
 
     carts = get_cached("cart_list_standalone", :expires_in => 21600.seconds) do
       Application.get_available_cartridges("standalone")
