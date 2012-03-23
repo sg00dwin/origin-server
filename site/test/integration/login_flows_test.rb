@@ -11,20 +11,30 @@ class LoginFlowsTest < ActionDispatch::IntegrationTest
     {:rhlogin => 'test', :password => 'password'}
   end
 
+  test "basic site redirection works for subsites" do
+    get '/user/new'
+    assert_redirected_to '/account/new'
+  end
+  test "basic site redirection works with real sites" do
+    get '/user/new', nil, {'SCRIPT_NAME' => '/app'}
+    assert_redirected_to '/app/account/new'
+  end
+
   # Make sure unauthenticated users can get to basic pages
   test "browse unauthenticated pages" do
-    ['/app', '/app/login', '/app/account/new', '/app/account/password/new', '/app/partners'].each do |url|
-      get url
+    
+    ['/', '/login', '/account/new', '/account/password/new', '/partners'].each do |url|
+      get url, nil, {'SCRIPT_NAME' => '/app'}
       assert_response :success, "Requesting #{url}"
     end
     {
-      '/app/user/new' => '/app/account/new',
-      '/app/user/new/flex' => '/app/account/new',
-      '/app/user/new/express' => '/app/account/new',
-      '/app/express' => '/app/platform',
-      '/app/flex' => '/app/platform'
+      '/user/new' => '/app/account/new',
+      '/user/new/flex' => '/app/account/new',
+      '/user/new/express' => '/app/account/new',
+      '/express' => '/app/platform',
+      '/flex' => '/app/platform'
     }.each_pair do |url,to|
-      get url
+      get url, nil, {'SCRIPT_NAME' => '/app'}
       assert_redirected_to to, "Requesting #{url} => #{to}"
     end
   end
@@ -32,14 +42,14 @@ class LoginFlowsTest < ActionDispatch::IntegrationTest
   # Make sure users are sent to the login controller when requesting 
   # a protected page
   test 'test being redirected to the login controller' do
-    ['/app/console'].each do |url|
+    ['/console'].each do |url|
       get url
       assert_redirected_to login_path, "Requesting #{url}"
     end
   end
 
   test 'user should be redirected to console when logging in directly' do
-    get '/app/login'
+    get '/login'
     assert_response :success
 
     post(path, internal_user)
@@ -47,10 +57,10 @@ class LoginFlowsTest < ActionDispatch::IntegrationTest
   end
   
   test 'user can visit site, login, has cookies' do
-    get '/app'
+    get '/'
     assert_response :success
 
-    get_via_redirect '/app/console'
+    get_via_redirect '/console'
     assert_response :success
 
     post_via_redirect(path, internal_user)
@@ -60,12 +70,12 @@ class LoginFlowsTest < ActionDispatch::IntegrationTest
     #assert_equal 'true', cookies['prev_login'] #FIXME Cookies BAH!
     #assert cookies['rh_sso'] #FIXME: GAAAAAH - something wierd about cookie jar URL comparison
 
-    get('/app/account')
+    get('/account')
     assert_response :success
 
-    get_via_redirect '/app/logout'
+    get_via_redirect '/logout'
     assert_response :success
-    assert_equal '/app', path
+    assert_equal '/', path
 
     assert_blank cookies['rh_sso']
     assert_equal 'true', cookies['prev_login']
