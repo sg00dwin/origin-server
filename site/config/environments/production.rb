@@ -50,7 +50,6 @@ RedHatCloud::Application.configure do
   ############################################
   # OpenShift Configuration Below this point #
   ############################################
-  config.app_scope = ""
   config.integrated = true
   config.login = "https://www.redhat.com/wapps/streamline/login.html"
   config.streamline = {
