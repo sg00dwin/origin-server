@@ -16,19 +16,18 @@ class RestDomain < StickShift::Model
       "ADD_APPLICATION" => Link.new("Create new application", "POST", "/domains/#{namespace}/applications", [
         Param.new("name", "string", "Name of the application"),
         Param.new("cartridge", "string", "framework-type, e.g: php-5.3", carts)
+      ], [
+        OptionalParam.new("scale", "boolean", "Mark application as scalable", [true, false], false)
       ]),
       "ADD_APPLICATION_FROM_TEMPLATE" => Link.new("Create new application", "POST", "/domains/#{namespace}/applications", [
         Param.new("name", "string", "Name of the application"),
         Param.new("template", "string", "UUID of the application template")
       ]),
-      "CREATE" => Link.new("Create new domain", "POST", "/domains", [
-        Param.new("namespace", "string", "Name of the domain")
-      ]),
       "UPDATE" => Link.new("Update domain", "PUT", "/domains/#{namespace}",[
         Param.new("namespace", "string", "Name of the domain")
       ]),
       "DELETE" => Link.new("Delete domain", "DELETE", "/domains/#{namespace}",nil,[
-        OptionalParam.new("force", "boolean", "Force delete domain.  i.e. delete any applications under this domain", "true or false", false)
+        OptionalParam.new("force", "boolean", "Force delete domain.  i.e. delete any applications under this domain", [true, false], false)
       ])
     }
   end
