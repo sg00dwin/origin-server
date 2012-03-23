@@ -30,9 +30,9 @@ do
   sshcmd="ssh ${arr[0]}"
   echo "SSH_CMD: ${sshcmd}"
   output=$(mktemp "${OPENSHIFT_GEAR_DIR}/tmp/sync_gears.output.XXXXXXXXXXXXXXXX")
-  STDOUTS="${STDOUTS[@]} $output"
+  STDOUTS+=("$output")
   exitcode=$(mktemp "${OPENSHIFT_GEAR_DIR}/tmp/sync_gears.exit.XXXXXXXXXXXXXXXX")
-  EXITCODES="${EXITCODES[@]} $exitcode"
+  EXITCODES+=("$exitcode")
   (
     (
       set -x -e
