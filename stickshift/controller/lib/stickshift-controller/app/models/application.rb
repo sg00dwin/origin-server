@@ -84,9 +84,21 @@ class Application < StickShift::Cartridge
       comp,profile,cart = cinst.get_component_definition(self)
       raise StickShift::UserException.new("#{dep} already embedded in '#{@name}'", 101) if comp.depends.include? feature
       fcart = self.framework
-      conn = StickShift::Connection.new("#{feature}-#{fcart}")
+      conn = StickShift::Connection.new("#{feature}-web-#{fcart}")
       conn.components = ["proxy/#{feature}", "web/#{fcart}"]
       prof.add_connection(conn)
+      conn = StickShift::Connection.new("#{feature}-proxy-#{fcart}")
+      conn.components = ["proxy/#{feature}", "proxy/#{fcart}"]
+      prof.add_connection(conn)
+
+      #  FIXME: Booya - hacks galore -- fix this to be more generic when
+      #         scalable apps allow more components in SCALABLE_EMBEDDED_CARTS
+      if feature == "jenkins-client-1.4"
+        conn = StickShift::Connection.new("#{feature}-proxy-haproxy-1.4")
+        conn.components = ["proxy/#{feature}", "proxy/haproxy-1.4"]
+        prof.add_connection(conn)
+      end
+
       comp.depends << feature
     else
       self.requires_feature.each { |cart|
