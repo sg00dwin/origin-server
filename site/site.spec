@@ -12,8 +12,33 @@ Source0:   rhc-site-%{version}.tar.gz
 
 BuildRoot: %(mktemp -ud %{_tmppath}/%{name}-%{version}-%{release}-XXXXXX)
 
+# Core dependencies to run the build steps
+BuildRequires: rubygem-bundler
+BuildRequires: rubygem-rake
 BuildRequires: js
-BuildRequires: rubygem-coffee-script
+
+# Additional dependencies to satisfy the gems, listed in Gemfile order
+BuildRequires: rubygem-rails
+BuildRequires: rubygem-recaptcha
+BuildRequires: rubygem-json
+BuildRequires: rubygem-stomp
+BuildRequires: rubygem-parseconfig
+BuildRequires: rubygem-aws-sdk
+BuildRequires: rubygem-xml-simple
+BuildRequires: rubygem-haml
+BuildRequires: rubygem-compass
+BuildRequires: rubygem-formtastic
+BuildRequires: rubygem-rack
+BuildRequires: rubygem-regin
+BuildRequires: rubygem-rdiscount
+BuildRequires: rubygem-barista
+
+BuildRequires: rubygem-mocha
+BuildRequires: rubygem-hpricot
+
+BuildRequires: rubygem-sinatra
+BuildRequires: rubygem-tilt
+BuildRequires: rubygem-sqlite3
 
 Requires:  rhc-common
 Requires:  rhc-server-common
@@ -49,11 +74,9 @@ authorization and also the workflows to request access.
 %setup -q
 
 %build
-for x in `/bin/ls ./app/coffeescripts | /bin/grep \.coffee$ | /bin/sed 's/\.coffee$//'`
-do
-  file="./app/coffeescripts/$x.coffee"
-  /usr/bin/ruby -e "require 'rubygems'; require 'coffee_script'; puts CoffeeScript.compile File.read('$file')" > ./public/javascripts/$x.js
-done
+bundle exec compass compile
+rm -rf tmp/sass-cache
+bundle exec rake barista:brew
 
 %install
 rm -rf %{buildroot}

@@ -47,14 +47,6 @@ a:hover, a:active { color: $ribbonColor; }
   }
 }
 
-/* FIXME: For videos temporarily, replace with use of standard tile pattern and grid */
-.row iframe,
-.row-fluid iframe {
-  width: 100%;
-  max-width: 311px;
-}
-
-
 /* A link that is a block, similar to a thumbnail */
 @mixin tile($activeColor, $hoverColor, $backgroundActiveColor, $backgroundHoverColor) {
   display: block;
