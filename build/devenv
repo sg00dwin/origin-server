@@ -288,7 +288,7 @@ class DevEnv < Thor
         retry_threshold += 2 unless options.exclude_verification?
         retry_threshold += 6 if options.include_web?
         
-        failures.uniq!
+        failures.uniq!.reverse!
 
         if failures.length > retry_threshold
           download_artifacts hostname
