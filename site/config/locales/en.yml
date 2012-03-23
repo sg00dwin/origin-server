@@ -37,8 +37,6 @@ en:
        password_confirmation: "Retype Password"
       term:
        terms_accepted: "Accept Terms?"
-      access/flex_request:
-       terms_accepted: "Accept Terms?"
       access/express_request:
        terms_accepted: "Accept Terms?"
 
