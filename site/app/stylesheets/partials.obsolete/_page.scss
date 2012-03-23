@@ -60,16 +60,6 @@ small {
   background-color: $express;
 }
 
-.flex ::-moz-selection {
-  background-color: $flex;
-}
-.flex ::-webkit-selection {
-  background-color: $flex;
-}
-.flex ::selection {
-  background-color: $flex;
-}
-
 header, footer, section { display: block; }
 
 h1 { font-size: 1.5em }
@@ -250,7 +240,6 @@ header.universal {
       }
     
       .express & a.express,
-      .flex & a.flex,
       &.active a,
       a:hover {
         background-color: lighten(black, 20%);
@@ -680,15 +669,6 @@ nav.service {
     }
   }
   
-  .flex & {
-    background-color: $flex;
-    
-    .flex {
-      background-color: white;
-      color: #666;
-    }
-  }
-  
   li.active a,
   a:hover {
     background-color: white !important;
@@ -804,12 +784,6 @@ nav.service {
   &.express .main nav h2 {
     color: $express;
   }
-  &.flex .main h1 {
-    color: $flex;
-  }
-  &.flex .main nav h2 {
-    color: $flex;
-  }
 
 }
 
@@ -867,10 +841,6 @@ body.product.overview { min-width: 55em; }
 
   &.express h2 a, &.express a.more {
     color: $express;
-  }
-
-  &.flex h2 a, &.flex a.more{
-    color: $flex;
   }
 
   .product .main .content & .content {
@@ -1051,30 +1021,6 @@ body.product.overview { min-width: 55em; }
   }
 
   a.more { margin: 1.5em 0 }
-}
-
-#flex-ways {
-  em {
-    font-weight: bold;
-    font-style: normal;
-  }
-  
-  ol {
-    list-style-type: none;
-    padding-left: 0;
-  }
-}
-
-#free-flex {
-  #offer {
-    background-color: #5FCF07;
-    color: white;
-    font-family: Overpass, $base-font-family;
-    font-size: 1.1em;
-    margin: 1em 0;
-    padding: 1em;
-    @include border-radius(0.5em);
-  }
 }
 
 

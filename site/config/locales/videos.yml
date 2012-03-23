@@ -4,11 +4,6 @@ en:
       express_client_tools: "KLtbuvyJFFE"
       express_create_app: "p83Cx6s_q1U"
       express_deploy: "H9rMgKCoW3w"
-      flex_build_cluster: "CEm-o61tocU"
-      flex_control_apps: "KxX7wUg4zq8"
-      flex_monitor_scale: "CbUQyc7OFlA"
-      flex_mongo: "tGOUo3_I8pQ"
-      flex_seam: "axH_XNGhr08"
 
 zh_CN:
   openshift:
@@ -16,8 +11,3 @@ zh_CN:
       express_client_tools: "MUx16XMfBi0"
       express_create_app: "bV4wk9cW_Tw"
       express_deploy: "5cvvaOlvQPk"
-      flex_build_cluster: "BDaWtC3Xna4"
-      flex_control_apps: "O_pK1rZvSmg"
-      flex_monitor_scale: "sW1F5ctl9jg"
-      flex_mongo: "J3iar3YeQmw"
-      flex_seam: "widhYRP3pII"

@@ -29,7 +29,7 @@ def migrate_app(rhlogin, app_name)
         framework = app.framework
         server_identity = app.gear.server_identity
         begin
-          Timeout::timeout(180) do
+          Timeout::timeout(360) do
             Express::Broker::ApplicationContainerProxy.rpc_exec('libra', server_identity) do |client|
               client.migrate(:uuid => uuid,
                              :application => app_name,
@@ -48,12 +48,7 @@ def migrate_app(rhlogin, app_name)
                   #migrated = redeploy_httpd_proxy(app, out)
                   migrated = true
                   if migrated
-                    begin
-                      restart_app(app, out)
-                    rescue Exception => e
-                      migrate_cmd += " # Failed to restart"
-                      raise
-                    end
+                    restart_app(app, out)
                   end
                 end
               end

@@ -67,8 +67,6 @@ end
 #
 # Pull public_ip and public_hostname out of the node_data config
 #
-public_ip = 'UNKNOWN'
-public_hostname = 'UNKNOWN'
 public_ip = get_node_config_value("PUBLIC_IP", "UNKNOWN")
 public_hostname = get_node_config_value("PUBLIC_HOSTNAME", "UNKNOWN")
 Facter.add(:public_ip) do
