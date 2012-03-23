@@ -18,6 +18,8 @@ Publishes:
   get-doc-root:
     Type: "FILESYSTEM:doc-root"
 Subscribes:
+  haproxy-colocation-hack:
+    Type: "FILESYSTEM:haproxy:colocate-hack"
   set-proxy:
     Type: "NET_TCP:httpd-proxy-info"
     Required : false
