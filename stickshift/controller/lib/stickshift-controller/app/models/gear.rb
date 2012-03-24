@@ -71,6 +71,10 @@ class Gear < StickShift::UserModel
   def execute_connector(comp_inst, connector_name, input_args)
     get_proxy.execute_connector(app, self, comp_inst.parent_cart_name, connector_name, input_args)
   end
+  
+  def get_execute_connector_job
+    get_proxy.get_execute_connector_job(app, self, cart, connector_name, input_args)
+  end
 
   def start(comp_inst)
     get_proxy.start(app,self,comp_inst.parent_cart_name)
@@ -139,16 +143,12 @@ class Gear < StickShift::UserModel
   end
   
   def env_var_job_add(key, value)
-    args = "--with-app-uuid '#{app.uuid}' --with-container-uuid '#{uuid}' -k '#{key}' -v '#{value}'"
-    job = RemoteJob.new('stickshift-node', 'env-var-add', args)
+    job = get_proxy.get_env_var_add_job(app, self, key, value)
     job
   end
   
   def ssh_key_job_add(ssh_key, ssh_key_type, ssh_key_comment)
-    args = "--with-app-uuid '#{app.uuid}' --with-container-uuid '#{uuid}' -s '#{ssh_key}'"
-    args += " -t '#{ssh_key_type}'" if ssh_key_type
-    args += " -m '-#{ssh_key_comment}'" if ssh_key_comment
-    job = RemoteJob.new('stickshift-node', 'authorized-ssh-key-add', args)
+    job = get_proxy.get_add_authorized_ssh_key_job(app, self, ssh_key, ssh_key_type, ssh_key_comment)
     job
   end
   
@@ -159,15 +159,12 @@ class Gear < StickShift::UserModel
   end
   
   def env_var_job_remove(key)
-    args = "--with-app-uuid '#{app.uuid}' --with-container-uuid '#{uuid}' -k '#{key}'"
-    job = RemoteJob.new('stickshift-node', 'env-var-remove', args)
+    job = get_proxy.get_env_var_remove_job(app, self, key)
     job
   end
   
   def ssh_key_job_remove(ssh_key, ssh_key_comment)
-    args = "--with-app-uuid '#{app.uuid}' --with-container-uuid '#{uuid}' -s '#{ssh_key}'"
-    args += " -m '-#{ssh_key_comment}'" if ssh_key_comment
-    job = RemoteJob.new('stickshift-node', 'authorized-ssh-key-remove', args)
+    job = get_proxy.get_remove_authorized_ssh_key_job(app, self, ssh_key, ssh_key_comment)
     job
   end
   

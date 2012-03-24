@@ -171,5 +171,20 @@ module StickShift
 
     def has_embedded_app?(app_uuid, embedded_type)
     end
+
+    def get_env_var_add_job(app, gear, key, value)
+    end
+    
+    def get_env_var_remove_job(app, gear, key)
+    end
+
+    def get_add_authorized_ssh_key_job(app, gear, ssh_key, key_type=nil, comment=nil)
+    end
+    
+    def get_remove_authorized_ssh_key_job(app, gear, ssh_key, comment=nil)
+    end
+    
+    def get_execute_connector_job(app, gear, cart, connector_name, input_args)
+    end
   end
 end

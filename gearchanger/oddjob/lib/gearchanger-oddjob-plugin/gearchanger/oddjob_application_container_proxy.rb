@@ -314,6 +314,36 @@ module GearChanger
       run_cartridge_command('embedded/' + component, app, gear, "status")
     end
 
+    def self.execute_parallel_jobs_impl(handle)
+      proxy_impl = find_one(nil)
+      proxy_impl.execute_parallel_jobs_impl(handle)
+    end
+
+    def execute_parallel_jobs_impl(handle)
+      id_list = handle.keys
+      id_list.each { |id| 
+        begin
+          joblist = handle[id]
+
+          pidlist = []
+          joblist.each { |parallel_job|
+            
+            job = parallel_job[:job]
+            begin
+              reply = exec_command(job[:cartridge], job[:action], job[:args])
+              parallel_job[:result_exit_code] = reply[:exitcode]
+              parallel_job[:result_stdout] = reply[:output]
+            rescue Exception =>e
+              parallel_job[:result_exit_code] = 127
+              parallel_job[:result_stdout] = e.message
+              parallel_job[:result_stderr] = e.message
+              next
+            end
+          }
+        end
+      }
+    end
+
     def run_cartridge_command(framework, app, gear, command, arg=nil)
       if app.scalable and framework!=app.proxy_cartridge
         appname = gear.uuid[0..9]
@@ -474,5 +504,39 @@ module GearChanger
       end
       return false
     end
+
+    def get_env_var_add_job(app, gear, key, value)
+      args = "--with-app-uuid '#{app.uuid}' --with-container-uuid '#{gear.uuid}' -k '#{key}' -v '#{value}'"
+      job = RemoteJob.new('stickshift', 'env-var-add', args)
+      job
+    end
+    
+    def get_env_var_remove_job(app, gear, key)
+      args = "--with-app-uuid '#{app.uuid}' --with-container-uuid '#{gear.uuid}' -k '#{key}'"
+      job = RemoteJob.new('stickshift', 'env-var-remove', args)
+      job
+    end
+
+    def get_add_authorized_ssh_key_job(app, gear, ssh_key, key_type=nil, comment=nil)
+      args = "--with-app-uuid '#{app.uuid}' --with-container-uuid '#{gear.uuid}' -s '#{ssh_key}'"
+      args += " -t '#{key_type}'" if key_type
+      args += " -m '-#{comment}'" if comment
+      job = RemoteJob.new('stickshift', 'authorized-ssh-key-add', args)
+      job
+    end
+    
+    def get_remove_authorized_ssh_key_job(app, gear, ssh_key, comment=nil)
+      args = "--with-app-uuid '#{app.uuid}' --with-container-uuid '#{gear.uuid}' -s '#{ssh_key}'"
+      args += " -m '-#{comment}'" if comment
+      job = RemoteJob.new('stickshift', 'authorized-ssh-key-remove', args)
+      job
+    end
+
+    def get_execute_connector_job(app, gear, cart, connector_name, input_args)
+      args = "--gear-uuid '#{gear.uuid}' --cart-name '#{cart}' --hook-name '#{connector_name}' " + input_args.join(" ")
+      job = RemoteJob.new('stickshift', 'connector-execute', args)
+      job
+    end
+
   end
 end

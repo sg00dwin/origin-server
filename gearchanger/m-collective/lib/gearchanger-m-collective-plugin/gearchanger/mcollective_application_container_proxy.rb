@@ -6,7 +6,7 @@ require 'open-uri'
 
 include MCollective::RPC
 module GearChanger
-  class MCollectiveApplicationContainerProxy < StickShift::ApplicationContainerProxy
+    class MCollectiveApplicationContainerProxy < StickShift::ApplicationContainerProxy
       @@C_CONTROLLER = 'stickshift-node'
       attr_accessor :id, :district
       
@@ -719,7 +719,7 @@ module GearChanger
           rpc_client = rpc_exec_direct('libra')
           result = nil
           begin
-            Rails.logger.debug "DEBUG: rpc_client.custom_request('cartridge_do', mc_args.inspect, @id, {'identity' => @id})"
+            Rails.logger.debug "DEBUG: rpc_client.custom_request('cartridge_do', #{mc_args.inspect}, @id, {'identity' => @id})"
             result = rpc_client.custom_request('cartridge_do', mc_args, @id, {'identity' => @id})
             Rails.logger.debug "DEBUG: #{result.inspect}" if log_debug_output
           ensure
@@ -1119,5 +1119,5 @@ module GearChanger
         end
 =end
       end
-  end
+    end
 end
