@@ -63,7 +63,7 @@ module LibraMigration
 
         if File.symlink?(path)
           link_targ=File.readlink(path)
-          new_targ=link_targ
+          new_targ=String.new(link_targ)
           path_conversions.each do |orig_path, dst_path|
             while new_targ[orig_path] != nil
               new_targ[orig_path]=dst_path
