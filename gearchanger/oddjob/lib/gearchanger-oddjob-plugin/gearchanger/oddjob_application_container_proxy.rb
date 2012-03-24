@@ -2,6 +2,7 @@ require 'open4'
 require 'pp'
 require 'parseconfig'
 require 'shellwords'
+require 'stickshift-controller'
 
 module GearChanger
   class OddJobApplicationContainerProxy < StickShift::ApplicationContainerProxy
@@ -315,7 +316,7 @@ module GearChanger
     end
 
     def self.execute_parallel_jobs_impl(handle)
-      proxy_impl = find_one(nil)
+      proxy_impl = StickShift::ApplicationContainerProxy.find_one(nil)
       proxy_impl.execute_parallel_jobs_impl(handle)
     end
 

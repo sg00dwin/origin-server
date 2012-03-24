@@ -10,7 +10,7 @@ module Uplift
 
     # DEPENDENCIES
     # Rails.application.config.ss[:domain_suffix]
-    # Rails.application.config.ss[:dns][:bind]
+    # Rails.application.config.dns[...]
 
     attr_reader :server, :port, :keyname, :keyvalue
 

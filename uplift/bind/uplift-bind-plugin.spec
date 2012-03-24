@@ -16,6 +16,8 @@ Requires:       ruby(abi) = 1.8
 Requires:       rubygems
 Requires:       rubygem(stickshift-common)
 Requires:       rubygem(json)
+Requires:       bind
+Requires:       bind-utils
 
 BuildRequires:  ruby
 BuildRequires:  rubygems
