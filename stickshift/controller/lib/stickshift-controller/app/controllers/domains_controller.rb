@@ -7,7 +7,7 @@ class DomainsController < BaseController
     Rails.logger.debug "Getting domains for user #{@cloud_user.login}"
     Rails.logger.debug @cloud_user.domains
     @cloud_user.domains.each do |domain|
-      domains.push(domain)
+      domains.push(RestDomain.new(domain))
     end
     @reply = RestReply.new(:ok, "domains", domains)
     respond_with @reply, :status => @reply.status

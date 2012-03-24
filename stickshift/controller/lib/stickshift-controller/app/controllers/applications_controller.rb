@@ -76,6 +76,12 @@ class ApplicationsController < BaseController
     scale = false if scale.nil? or scale=="false"
     scale = true if scale=="true"
     template_id = params[:template]
+    node_profile = params[:node_profile]
+    if not node_profile 
+      node_profile = "small"
+    else
+      node_profile.downcase!
+    end
 
     if app_name.nil? or app_name.empty?
       @reply = RestReply.new(:unprocessable_entity)
@@ -111,7 +117,7 @@ class ApplicationsController < BaseController
         @reply.messages.push(message)
         respond_with @reply, :status => @reply.status
       end
-      application = Application.new(@cloud_user, app_name, nil, nil, nil, template, scale, domain)
+      application = Application.new(@cloud_user, app_name, nil, node_profile, nil, template, scale, domain)
     else
       if cartridge.nil? or not CartridgeCache.cartridge_names('standalone').include?(cartridge)
         @reply = RestReply.new(:unprocessable_entity)
@@ -121,7 +127,7 @@ class ApplicationsController < BaseController
         respond_with @reply, :status => @reply.status
         return
       end
-      application = Application.new(@cloud_user, app_name, nil, nil, cartridge, nil, scale, domain)
+      application = Application.new(@cloud_user, app_name, nil, node_profile, cartridge, nil, scale, domain)
     end
 
     Rails.logger.debug "Validating application"  

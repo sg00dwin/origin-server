@@ -34,7 +34,7 @@ class Application < StickShift::Cartridge
   
   validates_each :node_profile, :allow_nil =>true do |record, attribute, val|
     if !(val =~ /\A(jumbo|exlarge|large|micro|medium|small)\z/)
-      record.errors.add attribute, {:message => "Invalid Profile: #{val}.  Must be: (jumbo|exlarge|large|medium|micro|small)", :exit_code => 1}
+      record.errors.add attribute, {:message => "Invalid Profile: #{val}.  Must be: (jumbo|exlarge|large|medium|micro|small)", :exit_code => 134}
     end
   end
 
