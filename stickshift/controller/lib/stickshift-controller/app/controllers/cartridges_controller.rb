@@ -1,5 +1,6 @@
 class CartridgesController < BaseController
   respond_to :xml, :json
+  before_filter :authenticate
   include LegacyBrokerHelper
   
   def show
