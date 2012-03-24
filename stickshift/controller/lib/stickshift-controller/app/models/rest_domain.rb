@@ -18,7 +18,7 @@ class RestDomain < StickShift::Model
         Param.new("cartridge", "string", "framework-type, e.g: php-5.3", carts)
       ], [
         OptionalParam.new("scale", "boolean", "Mark application as scalable", [true, false], false),
-        OptionalParam.new("node_profile", "string", "The size of the gear", ["small", "medium", "large"], "small")
+        OptionalParam.new("node_profile", "string", "The size of the gear", ["small", "micro", "medium", "large", "exlarge", , "jumbo"], "small")
       ]),
       "ADD_APPLICATION_FROM_TEMPLATE" => Link.new("Create new application", "POST", "/domains/#{namespace}/applications", [
         Param.new("name", "string", "Name of the application"),
