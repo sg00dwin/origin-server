@@ -21,8 +21,11 @@ class LegacyBrokerController < ApplicationController
       end
         
       user_info["rhlogin"] = user_info["login"]
-      user_info.delete("login")  
-      
+      user_info.delete("login") 
+      # this is to support old version of client tools
+      if user.domains and user.domains.length > 0
+        user_info["namespace"] = user.domains.first.namespace
+      end
       user_info[:rhc_domain] = Rails.configuration.ss[:domain_suffix]
       app_info = {}
       user.applications.each do |app|
