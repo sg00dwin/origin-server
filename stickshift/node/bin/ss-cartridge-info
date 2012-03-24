@@ -58,17 +58,19 @@ $ss_debug = true if args['--debug']
 $porcelain = args['--porcelain'] ? true : false
 
 cart_name = ARGV.shift
+cart_found = false
 
 begin
   cartridge_path = StickShift::Config.instance.get("CARTRIDGE_BASE_PATH")
   Dir.foreach(cartridge_path) do |cart_dir|
-    next if [".", "..", "embedded", "abstract", "abstract-httpd"].include? cart_dir
+    next if [".", "..", "embedded", "abstract", "abstract-httpd", "mysql-5.1"].include? cart_dir
     path = File.join(cartridge_path, cart_dir, "info", "manifest.yml")
     begin
       cart = StickShift::Cartridge.new.from_descriptor(YAML.load(File.open(path)))
       if cart.name == cart_name
         print "CLIENT_RESULT: ",cart.to_descriptor.to_json
-        return 0
+        cart_found = true
+        break
       end
     rescue Exception => e
       print "ERROR\n" if $ss_debug      
@@ -77,7 +79,7 @@ begin
   end
   
   embedded_cartridge_path = File.join(cartridge_path, "embedded")
-  if File.directory?(embedded_cartridge_path)
+  if (! cart_found) and File.directory?(embedded_cartridge_path)
     Dir.foreach(embedded_cartridge_path) do |cart_dir|
       next if [".",".."].include? cart_dir
       path = File.join(embedded_cartridge_path, cart_dir, "info", "manifest.yml")
@@ -85,7 +87,7 @@ begin
         cart = StickShift::Cartridge.new.from_descriptor(YAML.load(File.open(path)))
         if cart.name == cart_name
           print "CLIENT_RESULT: ",cart.to_descriptor.to_json
-          return 0
+          break
         end
       rescue Exception => e
         print "ERROR\n" if $ss_debug      
