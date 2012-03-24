@@ -5,9 +5,8 @@ require 'express/broker/apptegic'
 require 'open-uri'
 
 include MCollective::RPC
-module Express
-  module Broker
-    class ApplicationContainerProxy
+module GearChanger
+  class MCollectiveApplicationContainerProxy < StickShift::ApplicationContainerProxy
       @@C_CONTROLLER = 'stickshift-node'
       attr_accessor :id, :district
       
@@ -36,7 +35,7 @@ module Express
         raise StickShift::NodeException.new("No nodes available.  If the problem persists please contact Red Hat support.", 140) unless current_server
         Rails.logger.debug "DEBUG: find_available_impl: current_server: #{current_server}: #{current_capacity}"
 
-        ApplicationContainerProxy.new(current_server, district)
+        MCollectiveApplicationContainerProxy.new(current_server, district)
       end
       
       def self.find_one_impl(node_profile=nil)
@@ -45,7 +44,7 @@ module Express
         raise StickShift::NodeException.new("No nodes found.  If the problem persists please contact Red Hat support.", 140) unless current_server
         Rails.logger.debug "DEBUG: find_one_impl: current_server: #{current_server}"
 
-        ApplicationContainerProxy.new(current_server)
+        MCollectiveApplicationContainerProxy.new(current_server)
       end
 
       def self.blacklisted_in_impl?(name)
@@ -371,7 +370,7 @@ module Express
               destination_district_uuid = source_district_uuid unless source_district_uuid == 'NONE'
             end
           end
-          destination_container = ApplicationContainerProxy.find_available_impl(app.gear.node_profile, destination_district_uuid)
+          destination_container = MCollectiveApplicationContainerProxy.find_available_impl(app.gear.node_profile, destination_district_uuid)
           log_debug "DEBUG: Destination container: #{destination_container.id}"
           destination_district_uuid = destination_container.get_district_uuid
         else
@@ -720,7 +719,7 @@ module Express
           rpc_client = rpc_exec_direct('libra')
           result = nil
           begin
-            Rails.logger.debug "DEBUG: rpc_client.custom_request('cartridge_do', #{mc_args.inspect}, @id, {'identity' => @id})"
+            Rails.logger.debug "DEBUG: rpc_client.custom_request('cartridge_do', mc_args.inspect, @id, {'identity' => @id})"
             result = rpc_client.custom_request('cartridge_do', mc_args, @id, {'identity' => @id})
             Rails.logger.debug "DEBUG: #{result.inspect}" if log_debug_output
           ensure
@@ -738,7 +737,7 @@ module Express
           output = mcoll_result.results[:data][:output]
           result.exitcode = mcoll_result.results[:data][:exitcode]
         else
-          server_identity = app ? ApplicationContainerProxy.find_app(app.uuid, app.name) : nil
+          server_identity = app ? MCollectiveApplicationContainerProxy.find_app(app.uuid, app.name) : nil
           if server_identity && @id != server_identity
             raise StickShift::InvalidNodeException.new("Node execution failure (invalid  node).  If the problem persists please contact Red Hat support.", 143, nil, server_identity)
           else
@@ -820,7 +819,7 @@ module Express
       # Returns whether this server has the specified app
       #
       def has_app?(app_uuid, app_name)
-        ApplicationContainerProxy.rpc_exec('libra', @id) do |client|
+        MCollectiveApplicationContainerProxy.rpc_exec('libra', @id) do |client|
           client.has_app(:uuid => app_uuid,
                          :application => app_name) do |response|
             output = response[:body][:data][:output]
@@ -833,7 +832,7 @@ module Express
       # Returns whether this server has the specified embedded app
       #
       def has_embedded_app?(app_uuid, embedded_type)
-        ApplicationContainerProxy.rpc_exec('libra', @id) do |client|
+        MCollectiveApplicationContainerProxy.rpc_exec('libra', @id) do |client|
           client.has_embedded_app(:uuid => app_uuid,
                                   :embedded_type => embedded_type) do |response|
             output = response[:body][:data][:output]
@@ -846,7 +845,7 @@ module Express
       # Returns whether this server has already reserved the specified uid as a uid or gid
       #
       def has_uid_or_gid?(uid)
-        ApplicationContainerProxy.rpc_exec('libra', @id) do |client|
+        MCollectiveApplicationContainerProxy.rpc_exec('libra', @id) do |client|
           client.has_uid_or_gid(:uid => uid.to_s) do |response|
             output = response[:body][:data][:output]
             return output == true
@@ -1033,7 +1032,7 @@ module Express
       # If multiple nodes of the same name exist, it will pick just one
       #
       def rpc_get_fact_direct(fact)
-          options = ApplicationContainerProxy.rpc_options
+          options = MCollectiveApplicationContainerProxy.rpc_options
     
           rpc_client = rpcclient("rpcutil", :options => options)
           begin
@@ -1054,7 +1053,7 @@ module Express
       # Execute direct rpc call directly against a node
       # If more then one node exists, just pick one
       def rpc_exec_direct(agent)
-          options = ApplicationContainerProxy.rpc_options
+          options = MCollectiveApplicationContainerProxy.rpc_options
           rpc_client = rpcclient(agent, :options => options)
           Rails.logger.debug("DEBUG: rpc_exec_direct: rpc_client=#{rpc_client}")
           rpc_client
@@ -1063,7 +1062,7 @@ module Express
       def self.get_all_gears_impl
         gear_map = {}
         begin
-          options = ApplicationContainerProxy.rpc_options
+          options = MCollectiveApplicationContainerProxy.rpc_options
           rpc_client = rpcclient('libra', :options => options)
           mc_args = { :gear_map => {} }
           rpc_client.custom_request('get_all_gears', mc_args, nil).each { |response|
@@ -1103,7 +1102,7 @@ module Express
 #TODO Identity doesn't really seem to handle multiple
 =begin
         begin
-          options = ApplicationContainerProxy.rpc_options
+          options = MCollectiveApplicationContainerProxy.rpc_options
           rpc_client = rpcclient('libra', :options => options)
           mc_args = handle.clone
           rpc_client.custom_request('execute_parallel', mc_args, nil, {'identity' => handle.keys}).each { |mcoll_reply|
@@ -1120,6 +1119,5 @@ module Express
         end
 =end
       end
-    end
   end
 end
