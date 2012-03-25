@@ -1,13 +1,12 @@
 -# file: Require users to agree to any terms they haven't seen yet
 
-- content_for :page_title do
-  Legal terms
+- content_for :page_title, 'Legal terms'
 
 %h1.ribbon
   .ribbon-content Legal terms
   .ribbon-left
   
-.content
+%section.content
   - @term.errors.each do |key, value|
     - if key == :base
       #errors

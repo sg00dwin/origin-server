@@ -17,7 +17,7 @@
         = link_to p, :class => 'btn btn-small login-provider' do
           %img{:alt => p}
 
-%nav#nav{:class => 'section-nav' << content_for(:nav_class)}
+%nav#nav{:class => ((content_for? :nav_class) ? content_for(:nav_class) : 'section-nav lift-counter')}
   .navbar
     .container
       -# Was .nav-collapse, has some issues
@@ -25,10 +25,12 @@
         = link_to root_path do
           .brand-image
           .brand-text
+            %strong> Open
+            Shift
       %ul.nav
         - cur_url = url_for(:action => controller.action_name, :controller => controller.controller_name)
         -[  ["Learn More", product_overview_path],
-            ["Getting Started", getting_started_path],
+            ["Get Started", getting_started_path],
             "&nbsp;",
             ["Console", console_path],
             ["Community", community_url] ].each do |link|

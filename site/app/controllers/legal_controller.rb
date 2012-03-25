@@ -1,6 +1,3 @@
-require 'pp'
-require 'json'
-
 class LegalController < SiteController
 
   def show; end
