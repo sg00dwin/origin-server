@@ -77,6 +77,7 @@ authorization and also the workflows to request access.
 bundle exec compass compile
 rm -rf tmp/sass-cache
 bundle exec rake barista:brew
+rm log/development.log
 
 %install
 rm -rf %{buildroot}
