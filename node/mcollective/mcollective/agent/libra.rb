@@ -43,7 +43,7 @@ module MCollective
                   :license     => "GPLv2",
                   :version     => "0.1",
                   :url         => "https://engineering.redhat.com/trac/Libra",
-                  :timeout     => 60
+                  :timeout     => 240
 
       #
       # Simple echo method

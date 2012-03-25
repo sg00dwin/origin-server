@@ -734,7 +734,7 @@ module Express
         
         mcoll_result = mcoll_reply[0]
         output = nil
-        if (mcoll_result && defined? mcoll_result.results && mcoll_result.results.has_key?(:data))
+        if (mcoll_result && (defined? mcoll_result.results) && !mcoll_result.results[:data].nil?)
           output = mcoll_result.results[:data][:output]
           result.exitcode = mcoll_result.results[:data][:exitcode]
         else
