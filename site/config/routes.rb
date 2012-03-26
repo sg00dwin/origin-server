@@ -48,21 +48,21 @@ RedHatCloud::Application.routes.draw do
         get :success
       end
     end
-    resource :express_domains,
-             :controller => "express_domain" do
-      match 'edit_namespace' => 'express_domain#account_update', :via => :put
-      match 'edit_sshkey' => 'express_domain#account_update', :via => :put
-      match 'edit_namespace' => 'express_domain#edit_namespace', :via => :get
-      match 'edit_sshkey' => 'express_domain#edit_sshkey', :via => :get
-    end
-    resource :express_sshkeys,
-             :controller => "express_ssh_keys" do
-      match 'add_sshkey' => 'express_ssh_keys#add_sshkey', :via => :get
-      match 'add_sshkey' => 'express_ssh_keys#create', :via => :post
-      match 'edit_sshkey/:key_name' => 'express_ssh_keys#edit_sshkey', :via => :get
-      match 'edit_sshkey' => 'express_ssh_keys#create', :via => :put
-      match 'delete_sshkey/:key_name' => 'express_ssh_keys#delete_sshkey', :via => :delete
-    end
+#    resource :express_domains,
+#             :controller => "express_domain" do
+#      match 'edit_namespace' => 'express_domain#account_update', :via => :put
+#      match 'edit_sshkey' => 'express_domain#account_update', :via => :put
+#      match 'edit_namespace' => 'express_domain#edit_namespace', :via => :get
+#      match 'edit_sshkey' => 'express_domain#edit_sshkey', :via => :get
+#    end
+#    resource :express_sshkeys,
+#             :controller => "express_ssh_keys" do
+#      match 'add_sshkey' => 'express_ssh_keys#add_sshkey', :via => :get
+#      match 'add_sshkey' => 'express_ssh_keys#create', :via => :post
+#      match 'edit_sshkey/:key_name' => 'express_ssh_keys#edit_sshkey', :via => :get
+#      match 'edit_sshkey' => 'express_ssh_keys#create', :via => :put
+#      match 'delete_sshkey/:key_name' => 'express_ssh_keys#delete_sshkey', :via => :delete
+#    end
 
     resource :domain, :only => [:new, :create, :edit, :update]
     resources :keys, :only => [:new, :create, :destroy]
@@ -124,15 +124,15 @@ RedHatCloud::Application.routes.draw do
             :controller => "partner",
             :only => [:show, :index]
 
-  resource :express_domain,
-           :controller => "express_domain",
-           :as => "express_domains",
-           :only => [:new, :create]
-
-  resource  :express_app,
-            :controller => "express_app",
-            :as => "express_apps",
-            :only => [:new, :create]
+#  resource :express_domain,
+#           :controller => "express_domain",
+#           :as => "express_domains",
+#           :only => [:new, :create]
+#
+#  resource  :express_app,
+#            :controller => "express_app",
+#            :as => "express_apps",
+#            :only => [:new, :create]
 
   scope '/console' do
     match 'help' => 'console#help', :via => :get, :as => 'console_help'
@@ -154,13 +154,13 @@ RedHatCloud::Application.routes.draw do
   match 'console' => 'console#index', :via => :get
   match 'new_application' => 'application_types#index', :via => :get
 
-  resources :express_ssh_keys
-
-  match 'express_ssh_key_delete' => 'express_ssh_keys#destroy', :via => [:post]
-  match 'express_app_delete' => 'express_app#destroy', :via => [:post]
-  match 'control_panel' => 'control_panel#index', :as => 'control_panel'
-  match 'dashboard' => 'control_panel#index', :as => 'dashboard'
-  match 'control_panel/apps' => 'express_app#list', :as => 'list_apps'
+#  resources :express_ssh_keys
+#
+#  match 'express_ssh_key_delete' => 'express_ssh_keys#destroy', :via => [:post]
+#  match 'express_app_delete' => 'express_app#destroy', :via => [:post]
+#  match 'control_panel' => 'control_panel#index', :as => 'control_panel'
+#  match 'dashboard' => 'control_panel#index', :as => 'dashboard'
+#  match 'control_panel/apps' => 'express_app#list', :as => 'list_apps'
   
   unless Rails.env.production?
     match 'styleguide/:action' => 'styleguide'
@@ -216,4 +216,3 @@ RedHatCloud::Application.routes.draw do
     match '/sync/(:host)' => StatusApp, :constraints => {:host => /[0-z\.-]+/}
   end
 end
-

@@ -10,6 +10,7 @@ class Home < OpenShift::SeleniumTestCase
     assert_match @home.fields[:title], @home.title
   end
 
+=begin
   def test_signup_links
     @home.items[:signup_links].each do |link|
       @home.click(link)
@@ -19,4 +20,5 @@ class Home < OpenShift::SeleniumTestCase
       @signup.click(:close)
     end
   end
+=end
 end

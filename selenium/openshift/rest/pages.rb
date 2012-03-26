@@ -33,6 +33,19 @@ module OpenShift
       end
     end
 
+    class Login < Page
+      attr_accessor :login_form
+
+      def initialize(page, path)
+        super
+        @login_form = OpenShift::Rest::LoginForm.new(page, "web_user_password_input")
+      end
+
+      def submit(login=nil,password=nil)
+        @login_form.submit(login, password)
+      end
+    end
+
     class Account < Page
       attr_accessor :domain_form, :domain_edit_page, :domain_page,
                     :ssh_key_form, :ssh_key_add_page, :ssh_key_page
@@ -133,6 +146,23 @@ module OpenShift
         add_redirect(@applications_page.path)
         #@domain_form = OpenShift::Express::DomainForm.new(page, "new_express_domain")
        # @app_form = OpenShift::Express::AppForm.new(page, "new_express_app")
+      end
+    end
+
+    class Home < Page
+      def initialize(page,path)
+        super
+        @fields = {
+          :title => /^OpenShift by Red Hat$/,
+        }
+
+        @items = {
+          :logo => 'header div.brand a'
+        }
+      end
+
+      def click(css)
+        @page.find_element(:css => css).click
       end
     end
   end
