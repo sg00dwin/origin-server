@@ -50,7 +50,7 @@ module LibraMigration
       }
       path_forbidden=["#{app_home}/git"]
 
-      Find.find("#{libra_home}/#{app_name}-#{namespace}", app_home) do |path|
+      Find.find(app_home) do |path|
         stat=File.lstat(path)
         context=Selinux.lgetfilecon(path)
 

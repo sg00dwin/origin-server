@@ -6,6 +6,10 @@ class Reset < OpenShift::SeleniumTestCase
     @home.open
   end
 
+# FIXME: reset is no longer a dialog but a page.  We need to do these same
+#        tests on the reset password page
+
+=begin
   def test_reset_dialog
     # Submit with no inputs
     open_dialog(:reset){ |reset|
@@ -32,4 +36,5 @@ class Reset < OpenShift::SeleniumTestCase
       assert_dialog_error(reset,:success,nil,[ :reset_success, /at #{email}\.$/ ])
     }
   end
+=end
 end
