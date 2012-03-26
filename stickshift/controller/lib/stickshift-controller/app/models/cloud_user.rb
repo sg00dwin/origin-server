@@ -241,7 +241,8 @@
   def get_ssh_key
     raise StickShift::UserKeyException.new("ERROR: No ssh keys found for user #{self.login}", 
                                            123) if self.ssh_keys.nil? or not self.ssh_keys.kind_of?(Hash)
-    (self.ssh_keys.key?(CloudUser::DEFAULT_SSH_KEY_NAME)) ? self.ssh_keys[CloudUser::DEFAULT_SSH_KEY_NAME] : self.ssh_keys.keys[0]
+    key_name = (self.ssh_keys.key?(CloudUser::DEFAULT_SSH_KEY_NAME)) ? CloudUser::DEFAULT_SSH_KEY_NAME : self.ssh_keys.keys[0]
+    self.ssh_keys[key_name]
   end
  
   def add_env_var(key, value)
