@@ -213,6 +213,7 @@ ln -s /usr/lib64/httpd/modules/ %{brokerdir}/httpd/modules
 # Ensure /tmp and /var/tmp aren't world usable
 
 chmod o-rwX /tmp /var/tmp
+chown root.mysql /tmp
 setfacl -m u:libra_passenger:rwx /tmp
 setfacl -m u:jenkins:rwx /tmp
 
@@ -320,6 +321,10 @@ chkconfig libra-tc on
 service network restart
 service named restart
 
+# Drupal Requirements
+chkconfig mysqld on
+service mysqld start
+
 # Watchman services
 chkconfig libra-watchman on || :
 service libra-watchman start || :
@@ -352,6 +357,9 @@ cp -f %{devenvdir}/puppet-private.pem /var/lib/puppet/ssl/private_keys/localhost
 
 # Add user nagios_monitor to wheel group for running rpm, dmesg, su, and sudo
 /usr/bin/gpasswd nagios_monitor wheel
+
+# Pouplate Drupal Database 
+zcat /usr/share/drupal6/sites/default/openshift-dump.gz | mysql -u root
 
 %files
 %defattr(-,root,root,-)
