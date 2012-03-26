@@ -4,7 +4,6 @@ class Domain < StickShift::UserModel
   attr_accessor :uuid, :namespace, :user
   primary_key :uuid
   exclude_attributes :user
-  require_update_attributes :namespace
   validates :namespace, :namespace => true
   def initialize(namespace=nil, user=nil)
     self.user = user
