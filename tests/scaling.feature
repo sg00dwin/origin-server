@@ -10,10 +10,15 @@ Feature: Scaling Verification Tests
     And 1 gears will be in the cluster
     When a gear is added
     Then 2 gears will be in the cluster
-    And the applications should be accessible
+    # This is doubled up to hit both gears
+    And the <type> health-check will be successful
+    And the <type> health-check will be successful
     When a gear is removed
-    Then 1 gears should be in the cluster
-    And the application should be accessible
+    Then 1 gears will be in the cluster
+    And the <type> health-check will be successful
+    When the application is destroyed
+    Then the application should not be accessible
+    And the <type> health-check will not be successful
 
   Scenarios: Application Creation Scenarios
     | app_count |     type     |
