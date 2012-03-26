@@ -210,10 +210,13 @@ ln -s %{sitedir}/public/* %{htmldir}
 ln -s /usr/lib64/httpd/modules/ %{sitedir}/httpd/modules
 ln -s /usr/lib64/httpd/modules/ %{brokerdir}/httpd/modules
 
-# Ensure /tmp and /var/tmp aren't world usable
+# Ensure /var/tmp aren't world usable
+chmod o-rwX /var/tmp
 
-chmod o-rwX /tmp /var/tmp
-chown root.mysql /tmp
+# /tmp needs to be world writable because
+# mysql and apache needs to write to it
+# for drupal
+chmod 777 /tmp
 setfacl -m u:libra_passenger:rwx /tmp
 setfacl -m u:jenkins:rwx /tmp
 
