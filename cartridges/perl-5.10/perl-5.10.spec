@@ -2,7 +2,7 @@
 
 Summary:   Provides mod_perl support
 Name:      rhc-cartridge-perl-5.10
-Version:   0.20.1
+Version:   0.20.2
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   ASL 2.0
@@ -104,6 +104,23 @@ rm -rf $RPM_BUILD_ROOT
 %doc %{cartridgedir}/LICENSE
 
 %changelog
+* Mon Mar 26 2012 Dan McPherson <dmcphers@redhat.com> 0.20.2-1
+- README: removed disable_cpan_tests section, added enable_cpan_tests section
+  (tdawson@redhat.com)
+- build.sh: changed disable_cpan_tests to enable_cpan_tests.  Changed default
+  to bypass tests. (tdawson@redhat.com)
+- Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
+  (rmillner@redhat.com)
+- Add sync_gears script to abstract and make available in server cartridges
+  (rmillner@redhat.com)
+- Rename connector type to gear endpoint info (from ssh). (ramr@redhat.com)
+- Work for publishing ssh endpoint information from all cartridges as well as
+  cleanup the multiple copies of publish http and git (now ssh) information.
+  (ramr@redhat.com)
+- no need for app ctl script really (dmcphers@redhat.com)
+- PERL has an environment variable screen which needed to be updated to include
+  both APP and GEAR (rmillner@redhat.com)
+
 * Sat Mar 17 2012 Dan McPherson <dmcphers@redhat.com> 0.20.1-1
 - bump spec numbers (dmcphers@redhat.com)
 
