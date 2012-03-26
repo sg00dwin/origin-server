@@ -287,13 +287,14 @@ class DevEnv < Thor
         retry_threshold += 6 unless options.exclude_internal?
         retry_threshold += 2 unless options.exclude_verification?
         retry_threshold += 6 if options.include_web?
+        
+        failures.uniq!
 
         if failures.length > retry_threshold
           download_artifacts hostname
           exit 1
         elsif failures.length > 0
           idle_all_gears(hostname)
-          failures.uniq!
           failures.reverse!
           puts "All Failures: #{failures.pretty_inspect}"
           ssh(hostname, "rm -rf /tmp/rhc; mkdir -p /tmp/rhc/junit")
