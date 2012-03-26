@@ -2,6 +2,7 @@ require 'rubygems'
 require 'uri'
 require 'fileutils'
 require 'json'
+require 'pty'
 
 include AppHelper
 
@@ -43,8 +44,8 @@ Then /^the php-5.3 health\-check will( not)? be successful$/ do |negate|
 end
 
 When /^a gear is added$/ do
-  ssh_cmd = "ssh -t #{@app.uid}@#{@app.hostname} rhcsh haproxy_ctl -u"
-
+  ssh_cmd = "ssh -t #{@app.uid}@#{@app.hostname} 'rhcsh haproxy_ctl -u'"
+  puts ssh_cmd
   stdout, stdin, pid = PTY.spawn ssh_cmd
 
   @ssh_cmd = {
