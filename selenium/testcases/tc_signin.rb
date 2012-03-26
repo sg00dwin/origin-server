@@ -33,6 +33,6 @@ class Signin < OpenShift::SeleniumTestCase
     # FIXME: when navbar functionality is restored click the logout link instead
     # Log out and make sure we're redirected
     signout
-    assert_redirected_to '/app'
+    assert_redirected_to '/app/'
   end
 end

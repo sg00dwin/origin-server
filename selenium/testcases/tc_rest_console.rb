@@ -39,7 +39,7 @@ class RestConsole < OpenShift::Rest::TestCase
     form.set_value(:namespace, @login)
     form.submit
 
-    get_started_page.wait(30)
+    get_started_page.wait(90)
 
     app_link = get_started_page.find_app_link
     href = app_link.attribute('href')

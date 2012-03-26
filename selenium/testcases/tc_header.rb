@@ -8,7 +8,7 @@ class Header < OpenShift::SeleniumTestCase
 
   def test_header_links
     @home.click(@home.items[:logo])
-    assert_redirected_to '/app'
+    assert_redirected_to '/app/'
   end
 
 # FIXME: Navbar links no longer have ids.
