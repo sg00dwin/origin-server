@@ -62,7 +62,4 @@ RedHatCloud::Application.configure do
   # base domain
   config.base_domain = 'dev.rhcloud.com'
 
-  # Used to disable Node.JS ONLY IN PRODUCTION. Will set false using a puppet.
-  config.node_js_enabled = true
-
 end
