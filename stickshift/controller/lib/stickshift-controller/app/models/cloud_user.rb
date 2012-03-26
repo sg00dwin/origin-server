@@ -49,13 +49,13 @@
       resultIO.append(create())
     end
     
+    gears = []
+    tag = ""
     if applications && !applications.empty? && save_jobs
-      gears = []
       applications.each do |app|
         gears += app.gears
       end
 
-      tag = ""
       if save_jobs['removes']
         save_jobs['removes'].each do |action, values|
           handle = RemoteJob.create_parallel_job
