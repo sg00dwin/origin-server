@@ -45,6 +45,7 @@ module Express
       #
       def self.libra_contact(login, uuid, user_namespace, action)
           return unless Rails.configuration.analytics[:nurture_enabled]
+          user_namespace = "" if not user_namespace
           Rails.logger.debug "DEBUG: Sending to Nurture:libra_contact: login='#{login}' namespace='#{user_namespace}' action='#{action}'"
           `curl -s -O /dev/null -X POST -u '#{Rails.configuration.analytics[:nurture_username]}:#{Rails.configuration.analytics[:nurture_password]}' '#{Rails.configuration.analytics[:nurture_url]}libra_contact' \
        --data-urlencode "user_type=express" \

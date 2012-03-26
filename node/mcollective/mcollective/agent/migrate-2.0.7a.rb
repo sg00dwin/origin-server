@@ -2,6 +2,8 @@ require 'rubygems'
 require 'fileutils'
 require 'parseconfig'
 require 'pp'
+require 'find'
+require 'selinux'
 require File.dirname(__FILE__) + "/migrate-util"
 
 module LibraMigration
@@ -36,8 +38,48 @@ module LibraMigration
         output += echo_output
       end
 
+      # Fix app variables
       echo_output, echo_exitcode = Util.execute_script("/usr/bin/rhc-app-gear-xlate #{app_home}/.env")
       output += echo_output
+
+      # Fix symlinks inside the app, and top level symlink (only on dev?).
+      # Don't mess with the git repo.
+      path_conversions={
+        '/var/lib/libra'  => '/var/lib/stickshift',
+        '/var/libexec/li' => '/var/libexec/stickshift'
+      }
+      path_forbidden=["#{app_home}/git"]
+
+      Find.find("#{libra_home}/#{app_name}-#{namespace}", app_home) do |path|
+        stat=File.lstat(path)
+        context=Selinux.lgetfilecon(path)
+
+        path_forbidden.each do |nopath|
+          nostat=File.lstat(nopath)
+          if (stat.dev == nostat.dev) and (stat.ino == nostat.ino)
+            Find.prune # Start the next iteration of find
+          end
+        end
+
+        if File.symlink?(path)
+          link_targ=File.readlink(path)
+          new_targ=String.new(link_targ)
+          path_conversions.each do |orig_path, dst_path|
+            while new_targ[orig_path] != nil
+              new_targ[orig_path]=dst_path
+            end
+          end
+          if link_targ!=new_targ
+            File.unlink(path)
+            File.symlink(new_targ, path)
+            File.lchown(stat.uid, stat.gid, path)
+            # File.lchmod(stat.mode & 0777, path) # Not implemented on RHEL 6
+            Selinux.lsetfilecon(path, context[1])
+          end
+        end
+
+      end
+
 
     else
       exitcode = 127

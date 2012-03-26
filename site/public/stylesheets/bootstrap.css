@@ -12,7 +12,7 @@
  * Date: @DATE
  */
 @font-face {
-  font-family: 'OverpassBold';
+  font-family: 'Overpass';
   src: url("fonts/overpass-bold-wf.eot");
   src: url("fonts/overpass-bold-wf.eot?#iefix") format("eot"), url("fonts/overpass-bold-wf.woff") format("woff"), url("fonts/overpass-bold-wf.ttf") format("truetype"), url("fonts/overpass-bold-wf.svg#webfontzRhIMntw") format("svg");
   font-weight: bold;
@@ -3883,7 +3883,7 @@ footer {
     float: left;
     padding: 0px 6px 5px; } }
 
-@media (max-width: 768px) {
+@media (max-width: 767px) {
   .hero-unit {
     padding: 0;
     margin-bottom: 13px;
@@ -3932,8 +3932,8 @@ footer {
     margin: 0;
     float: none; } }
 
-@media (min-width: 768px) and (max-width: 980px) {}
-@media (max-width: 980px) {
+@media (min-width: 768px) and (max-width: 979px) {}
+@media (max-width: 979px) {
   #utility-nav {
     margin: 8px 5px 0 0; }
 

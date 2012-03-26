@@ -109,7 +109,7 @@ module Express
           cmd += " --named '#{app.name}'" if app.name
           cmd += " --with-quota-blocks '#{quota_blocks}'" if quota_blocks
           cmd += " --with-quota-files '#{quota_files}'" if quota_files
-          cmd += " --with-namespace '#{app.user.namespace}'"
+          cmd += " --with-namespace '#{app.domain.namespace}'"
           mcoll_reply = execute_direct(@@C_CONTROLLER, 'app-create', cmd)
           result = parse_result(mcoll_reply)
           if result.exitcode == 129 && has_uid_or_gid?(app.gear.uid) # Code to indicate uid already taken
@@ -396,8 +396,7 @@ module Express
         orig_uid = app.gear.uid
 
         log_debug "DEBUG: Moving app '#{app.name}' with uuid #{app.gear.uuid} from #{source_container.id} to #{destination_container.id}"
-        
-        url = "http://#{app.name}-#{app.user.namespace}.#{Rails.configuration.ss[:domain_suffix]}"
+        url = "http://#{app.name}-#{app.domain.namespace}.#{Rails.configuration.ss[:domain_suffix]}"
         
         reply = ResultIO.new
         leave_stopped = false
@@ -735,7 +734,7 @@ module Express
         
         mcoll_result = mcoll_reply[0]
         output = nil
-        if (mcoll_result && defined? mcoll_result.results && mcoll_result.results.has_key?(:data))
+        if (mcoll_result && (defined? mcoll_result.results) && !mcoll_result.results[:data].nil?)
           output = mcoll_result.results[:data][:output]
           result.exitcode = mcoll_result.results[:data][:exitcode]
         else
@@ -856,12 +855,13 @@ module Express
       end
       
       def run_cartridge_command(framework, app, gear, command, arg=nil, allow_move=true)
-        arguments = "'#{gear.name}' '#{app.user.namespace}' '#{gear.uuid}'"
+
+        arguments = "'#{gear.name}' '#{app.domain.namespace}' '#{gear.uuid}'"
         arguments += " '#{arg}'" if arg
 
         if allow_move
-          Nurture.application(app.user.login, app.user.uuid, app.name, app.user.namespace, framework, command, app.uuid)
-          Apptegic.application(app.user.login, app.user.uuid, app.name, app.user.namespace, framework, command, app.uuid)
+          Nurture.application(app.user.login, app.user.uuid, app.name, app.domain.namespace, framework, command, app.uuid)
+          Apptegic.application(app.user.login, app.user.uuid, app.name, app.domain.namespace, framework, command, app.uuid)
         end
         
         result = execute_direct(framework, command, arguments)
@@ -872,8 +872,8 @@ module Express
             @id = e.server_identity
             Rails.logger.debug "DEBUG: Changing server identity of '#{gear.name}' from '#{gear.server_identity}' to '#{@id}'"
             dns_service = StickShift::DnsService.instance
-            dns_service.deregister_application(app.name, app.user.namespace)
-            dns_service.register_application(app.name, app.user.namespace, get_public_hostname)
+            dns_service.deregister_application(app.name, app.domain.namespace)
+            dns_service.register_application(app.name, app.domain.namespace, get_public_hostname)
             dns_service.publish
             gear.server_identity = @id
             app.save

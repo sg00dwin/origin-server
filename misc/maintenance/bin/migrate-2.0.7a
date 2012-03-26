@@ -35,7 +35,7 @@ def migrate_app(rhlogin, app_name)
                              :application => app_name,
                              :app_type => framework,
                              :namespace => user.namespace,
-                             :version => '2.0.8') do |response|
+                             :version => '2.0.7a') do |response|
                 exit_code = response[:body][:data][:exitcode]
                 output = response[:body][:data][:output]
                 if (output.length > 0)
@@ -106,6 +106,7 @@ def restart_app(app, out)
       out << "Restarting app '#{app.name}' with uuid '#{app.gear.uuid}' on node '#{app.gear.server_identity}'\n"
       begin
         reply.append app.container.restart(app, app.gear, app.framework)
+        break
       rescue Exception => e
         if i == num_tries
           out << "Failed to restart '#{app.name}' with uuid '#{app.gear.uuid}' on node '#{app.gear.server_identity}' after #{num_tries} tries with exception: #{e.message}\n"
@@ -163,7 +164,7 @@ def redeploy_httpd_proxy(app, out)
 end
 
 #
-# Migrate applications between 2.0.7 and 2.0.8
+# Migrate applications between 2.0.7 and 2.0.7a
 #
 def migrate(continue=false, target_server_identity=nil)
   start_time = Time.now.to_i

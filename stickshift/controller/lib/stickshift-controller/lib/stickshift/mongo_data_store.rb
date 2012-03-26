@@ -36,6 +36,8 @@ module StickShift
         get_user(user_id)
       when "Application"
         get_app(user_id, id)
+       when "Domain"
+        get_domain(user_id, id)
       when "ApplicationTemplate"
         find_application_template(id)
       end
@@ -48,6 +50,8 @@ module StickShift
         get_users
       when "Application"
         get_apps(user_id)
+      when "Domain"
+        get_domains(user_id)
       when "ApplicationTemplate"
         if f.nil? || f.empty?
           find_all_application_templates()
@@ -64,6 +68,8 @@ module StickShift
         get_user_by_uuid(uuid)
       when "Application"
         get_user_by_app_uuid(uuid)
+      when "Domain"
+        get_user_by_domain_uuid(uuid)
       when "ApplicationTemplate"
         find_application_template(uuid)
       end
@@ -76,6 +82,8 @@ module StickShift
         put_user(user_id, obj_attrs)
       when "Application"
         put_app(user_id, id, obj_attrs)
+      when "Domain"
+        put_domain(user_id, id, obj_attrs)
       end
     end
     
@@ -87,6 +95,8 @@ module StickShift
         add_user(user_id, obj_attrs)
       when "Application"
         add_app(user_id, id, obj_attrs)
+      when "Domain"
+        add_domain(user_id, id, obj_attrs)
       when "ApplicationTemplate"
         save_application_template(id, obj_attrs)
       end
@@ -99,6 +109,8 @@ module StickShift
         delete_user(user_id)
       when "Application"
         delete_app(user_id, id)
+      when "Domain"
+        delete_domain(user_id, id)
       when "ApplicationTemplate"
         delete_application_template(id)       
       end
@@ -230,6 +242,13 @@ module StickShift
       user_hash_to_ret(hash)
     end
     
+    def get_user_by_domain_uuid(uuid)
+      hash = find_one( "domains.uuid" => uuid )
+      return nil unless hash && !hash.empty?
+      
+      user_hash_to_ret(hash)
+    end
+    
     def get_users
       MongoDataStore.rescue_con_failure do
         mcursor = collection.find()
@@ -245,6 +264,9 @@ module StickShift
       hash.delete("_id")
       if hash["apps"] 
         hash["apps"] = apps_hash_to_apps_ret(hash["apps"])
+      end
+      if hash["domains"] 
+        hash["domains"] = domains_hash_to_domains_ret(hash["domains"])
       end
       hash
     end
@@ -269,15 +291,39 @@ module StickShift
       return [] unless hash["apps"] && !hash["apps"].empty?
       apps_hash_to_apps_ret(hash["apps"])
     end
+    
+    def get_domain(user_id, id)
+      hash = find_one({ "_id" => user_id, "domains.uuid" => id }, :fields => ["domains"])
+      return nil unless hash && !hash.empty?
+
+      domain_hash = nil
+      hash["domains"].each do |domain|
+        if domain["uuid"] == id
+          domain_hash = domain
+          break
+        end
+      end
+      domain_hash_to_ret(domain_hash)
+    end
+  
+    def get_domains(user_id)
+      hash = find_one({ "_id" => user_id }, :fields => ["domains"] )
+      return [] unless hash && !hash.empty?
+      return [] unless hash["domains"] && !hash["domains"].empty?
+      domains_hash_to_domains_ret(hash["domains"])
+    end
+
 
     def put_user(user_id, changed_user_attrs)
       changed_user_attrs.delete("apps")
+      changed_user_attrs.delete("domains")
       update({ "_id" => user_id }, { "$set" => changed_user_attrs })
     end
     
     def add_user(user_id, user_attrs)
       user_attrs["_id"] = user_id
       user_attrs.delete("apps")
+      user_attrs.delete("domains")
       insert(user_attrs)
       user_attrs.delete("_id")
     end
@@ -293,6 +339,18 @@ module StickShift
              "$where" => "this.consumed_gears < this.max_gears"},
              :update => { "$push" => { "apps" => app_attrs }, "$inc" => { "consumed_gears" => 1 }} })
       raise StickShift::UserException.new("#{user_id} has already reached the application limit", 104) if hash == nil
+    end
+    
+    def put_domain(user_id, id, domain_attrs)
+      domain_attrs_to_internal(domain_attrs)
+      update({ "_id" => user_id, "domains.uuid" => id}, { "$set" => { "domains.$" => domain_attrs }} )
+    end
+
+    def add_domain(user_id, id, domain_attrs)
+      domain_attrs_to_internal(domain_attrs)
+      hash = find_and_modify({ :query => { "_id" => user_id, "domains.uuid" => { "$ne" => id }},
+             :update => { "$push" => { "domains" => domain_attrs }, "$inc" => { "consumed_gears" => 1 }} })
+      #raise StickShift::UserException.new("#{user_id} has already reached the domain limit", 104) if hash == nil
     end
 
     def delete_user(user_id)
@@ -315,6 +373,25 @@ module StickShift
     def apps_hash_to_apps_ret(apps_hash)
       ret = []
       ret = apps_hash.map { |app_hash| app_hash_to_ret(app_hash) } if apps_hash
+      ret
+    end
+    
+    def delete_domain(user_id, id)
+      update({ "_id" => user_id, "domains.uuid" => id},
+             { "$pull" => { "domains" => {"uuid" => id }}})
+    end
+
+    def domain_attrs_to_internal(domain_attrs)
+      domain_attrs
+    end
+    
+    def domain_hash_to_ret(domain_hash)
+      domain_hash
+    end
+    
+    def domains_hash_to_domains_ret(domains_hash)
+      ret = []
+      ret = domains_hash.map { |domain_hash| domain_hash_to_ret(domain_hash) } if domains_hash
       ret
     end
   end

@@ -21,8 +21,11 @@ class LegacyBrokerController < ApplicationController
       end
         
       user_info["rhlogin"] = user_info["login"]
-      user_info.delete("login")  
-      
+      user_info.delete("login") 
+      # this is to support old version of client tools
+      if user.domains and user.domains.length > 0
+        user_info["namespace"] = user.domains.first.namespace
+      end
       user_info[:rhc_domain] = Rails.configuration.ss[:domain_suffix]
       app_info = {}
       user.applications.each do |app|
@@ -96,47 +99,71 @@ class LegacyBrokerController < ApplicationController
   def domain_post
     cloud_user = CloudUser.find(@login)
     cloud_user.auth_method = @auth_method unless cloud_user.nil?
+    domain = get_domain(cloud_user, @req.namespace)
+    domain = cloud_user.domains.first if not domain
     
-    if !cloud_user && (@req.alter || @req.delete)
+    if (!domain or not domain.hasFullAccess?(cloud_user)) && (@req.alter || @req.delete)
+      Rails.logger.debug "Cannot alter or remove namespace #{@req.namespace}. Namspace does not exist.\n"
       @reply.resultIO << "Cannot alter or remove namespace #{@req.namespace}. Namspace does not exist.\n"
       render :json => @reply, :status => :bad_request
       return
     end
 
     if @req.alter
+      
+      Rails.logger.debug "Updating namespace for domain #{domain.uuid} from #{domain.namespace} to #{@req.namespace}"
       #FIXME: Either this needs to be removed or user should pass key name to alter
+
+      @reply.append cloud_user.update_ssh_key(@req.ssh, @req.key_type, CloudUser::DEFAULT_SSH_KEY_NAME) if @req.ssh
+      raise StickShift::UserException.new("The supplied namespace '#{@req.namespace}' is not allowed", 106) if StickShift::ApplicationContainerProxy.blacklisted? @req.namespace   
+      begin
+        domain.namespace = @req.namespace     
+        @reply.append domain.save
+      rescue 
+       Rail.logger.error "Failed to update domain #{domain.uuid} from #{domain.namespace} to #{@req.namespace} #{e.message}"
+       Rail.logger.error e.backtrace
+       raise
+      end
+
       if @req.ssh
         cloud_user.update_ssh_key(@req.ssh, @req.key_type, CloudUser::DEFAULT_SSH_KEY_NAME)
         cloud_user.save
       end
-      raise StickShift::UserException.new("The supplied namespace '#{@req.namespace}' is not allowed", 106) if StickShift::ApplicationContainerProxy.blacklisted? @req.namespace            
-      @reply.append cloud_user.update_namespace(@req.namespace)
     elsif @req.delete
-       if  @req.namespace != cloud_user.namespace
+       if not domain.hasFullAccess?(cloud_user)
          @reply.resultIO << "Cannot remove namespace #{@req.namespace}. This namespace is not associated with login: #{cloud_user.login}\n"
          @reply.exitcode = 106
          render :json => @reply, :status => :bad_request
          return
        end
        if not cloud_user.applications.empty?
-         @reply.resultIO << "Cannot remove namespace #{cloud_user.namespace}. Remove existing app(s) first: "
-         @reply.resultIO << cloud_user.applications.map{|a| a.name}.join("\n")
-         @reply.exitcode = 106 
-         render :json => @reply, :status => :bad_request
+         cloud_user.application.each do |app|
+           if app.domain.uuid == domain.uuid
+             @reply.resultIO << "Cannot remove namespace #{@namespace}. Remove existing app(s) first: "
+             @reply.resultIO << cloud_user.applications.map{|a| a.name}.join("\n")
+             @reply.exitcode = 106 
+             render :json => @reply, :status => :bad_request
          return
+           end
+         end
        end
-       @reply.append cloud_user.delete
+       @reply.append domain.delete
+       #@reply.append cloud_user.delete
        render :json => @reply
        return
     else
       raise StickShift::UserException.new("The supplied namespace '#{@req.namespace}' is not allowed", 106) if StickShift::ApplicationContainerProxy.blacklisted? @req.namespace
-      cloud_user = CloudUser.new(@login, @req.ssh, @req.namespace, @req.key_type)
-      if cloud_user.invalid?
-        @reply.resultIO << cloud_user.errors.first[1][:message]
-        @reply.exitcode = cloud_user.errors.first[1][:exit_code]
-        render :json => @reply, :status => :bad_request 
-        return
+      #cloud_user = CloudUser.new(@login, @req.ssh, @req.namespace, @req.key_type)
+      key = Key.new(CloudUser::DEFAULT_SSH_KEY_NAME, @req.key_type, @req.ssh)
+      if key.invalid?
+         @reply.resultIO << key.errors.first[1][:message]
+         @reply.exitcode = key.errors.first[1][:exit_code]
+         render :json => @reply, :status => :bad_request 
+         return
       end
+      cloud_user.add_ssh_key(CloudUser::DEFAULT_SSH_KEY_NAME, @req.ssh, @req.key_type)
+      domain = Domain.new(@req.namespace, cloud_user)
+      @reply.append domain.save
     end
 
     @reply.append cloud_user.save
@@ -175,8 +202,8 @@ class LegacyBrokerController < ApplicationController
     case @req.action
     when 'configure'    #create app and configure framework
       apps = user.applications
-
-      app = Application.new(user, @req.app_name, nil, @req.node_profile, @req.cartridge)
+      domain = user.domains.first
+      app = Application.new(user, @req.app_name, nil, @req.node_profile, @req.cartridge, nil, false, domain)
       check_cartridge_type(@req.cartridge, "standalone")
       if (user.consumed_gears >= user.max_gears)
         raise StickShift::UserException.new("#{@login} has already reached the application limit of #{user.max_gears}", 104)
@@ -184,9 +211,12 @@ class LegacyBrokerController < ApplicationController
       raise StickShift::UserException.new("The supplied application name '#{app.name}' is not allowed", 105) if StickShift::ApplicationContainerProxy.blacklisted? app.name
       if app.valid?
         begin
+          Rails.logger.debug "Creating application #{app.name}"
           @reply.append app.create
+          Rails.logger.debug "Configuring dependencies #{app.name}"
           @reply.append app.configure_dependencies
           #@reply.append app.add_node_settings
+
           app.execute_connections
           begin
             @reply.append app.create_dns
@@ -202,10 +232,14 @@ class LegacyBrokerController < ApplicationController
           
             @reply.data = {:health_check_path => page, :uuid => app.uuid}.to_json
           rescue Exception => e
+            Rails.logger.error "failed to create application #{app.name} #{e.message}"
+            Rails.logger.debug e.backtrace
             @reply.append app.destroy_dns
             raise
           end
         rescue Exception => e
+          Rails.logger.error "failed to create application #{app.name} #{e.message}"
+          Rails.logger.debug e.backtrace
           if app.persisted?
             @reply.append app.deconfigure_dependencies
             @reply.append app.destroy
@@ -390,5 +424,14 @@ class LegacyBrokerController < ApplicationController
     
     @reply.exitcode = e.respond_to?('exit_code') ? e.exit_code : 1
     render :json => @reply, :status => status
+  end
+  
+  def get_domain(cloud_user, id)
+    cloud_user.domains.each do |domain|
+      if domain.namespace == id
+      return domain
+      end
+    end
+    return nil
   end
 end
