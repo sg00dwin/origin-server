@@ -94,7 +94,7 @@ module OpenShift
 
       @home    = OpenShift::Rest::Home.new(page, "#{base_url}/app")
       @login_page = OpenShift::Rest::Login.new(page,"#{base_url}/app/login")
-      @logout = Proc.new { @page.get "#{base_url}/app/logout"; wait_for_page "#{base_url}/app" }
+      @logout = Proc.new { @page.get "#{base_url}/app/logout"; wait_for_page "#{base_url}/app/" }
 
       @rest_console = OpenShift::Rest::Console.new(page, "#{base_url}/app/console")
       @rest_account = OpenShift::Rest::Account.new(page, "#{base_url}/app/account")
