@@ -1,6 +1,6 @@
 @verify
 Feature: Scaling Verification Tests
-  Scenario Outline: Scaled App Creation
+  Scenario Outline: Scale App
     Given the libra client tools
     And an accepted node
     When a scaled <type> application is created
@@ -20,6 +20,22 @@ Feature: Scaling Verification Tests
     Then the application should not be accessible
     And the <type> health-check will not be successful
 
-  Scenarios: Application Creation Scenarios
+  Scenarios: Scaled App Scenarios
     | app_count |     type     |
     |     1     |  php-5.3     |
+
+  Scenario Outline: AutoScale App
+    Given the libra client tools
+    And an accepted node
+    When a scaled <type> application is created
+    Then the haproxy-status page will be responding
+    And the gear member will be UP
+    And the <type> health-check will be successful
+    When the application is destroyed
+    Then the application should not be accessible
+    And the <type> health-check will not be successful
+
+  Scenarios: AutoScale App Scenarios
+    | app_count |     type     |
+    |     1     |  php-5.3     |
+
