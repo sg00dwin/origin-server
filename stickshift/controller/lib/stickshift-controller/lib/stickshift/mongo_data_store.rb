@@ -349,7 +349,7 @@ module StickShift
     def add_domain(user_id, id, domain_attrs)
       domain_attrs_to_internal(domain_attrs)
       hash = find_and_modify({ :query => { "_id" => user_id, "domains.uuid" => { "$ne" => id }},
-             :update => { "$push" => { "domains" => domain_attrs }, "$inc" => { "consumed_gears" => 1 }} })
+             :update => { "$push" => { "domains" => domain_attrs } } })
       #raise StickShift::UserException.new("#{user_id} has already reached the domain limit", 104) if hash == nil
     end
 

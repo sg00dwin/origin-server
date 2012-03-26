@@ -75,6 +75,24 @@ module OpenShift
       end
     end
 
+    class LoginForm < Form
+      def initialize(page,id)
+        super
+        @fields = {
+          :login => 'web_user_rhlogin',
+          :password => 'web_user_password'
+        }
+
+        @submit = "//input[@id='web_user_submit']"
+      end
+
+      def submit(login=nil,password=nil)
+        set_value(:login, login) if login
+        set_value(:password, password) if password
+        super()
+      end
+    end
+
     class SshKeyForm < Form
       def initialize(page,id)
         super(page,id)

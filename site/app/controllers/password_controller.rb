@@ -36,6 +36,9 @@ class PasswordController < ApplicationController
       render :reset_error
     elsif not @user.complete_reset_password(token)
       render :reset_error
+    else
+      reset_sso
+      reset_session
     end
 
   rescue Streamline::TokenExpired

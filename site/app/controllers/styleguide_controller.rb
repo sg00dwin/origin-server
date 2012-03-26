@@ -23,6 +23,10 @@ class StyleguideController < ApplicationController
   def signup
   end
 
+  def fonts
+    render :layout => nil
+  end
+
   def landing
     render :layout => nil
   end

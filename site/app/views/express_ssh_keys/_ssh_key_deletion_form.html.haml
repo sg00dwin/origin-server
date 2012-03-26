@@ -1,9 +1,0 @@
-%header
-  %h2
-    = "Are you sure you want to delete this SSH key?"
-%p
-  = "You will no longer be able to access the application and git repository with the \"#{ssh_key.display_name}\" keypair."
-
-%form{ :id => "#{ssh_key.name}_delete_form", :class => 'ssh_key_delete_form', 'data-remote' => 'true', :action => "#{express_ssh_key_delete_path}", :method => 'post' }
-  %input{ :type => 'hidden', :name => 'express_ssh_key[name]', :value => "#{ssh_key.name}" }
-  %input{ :type => 'submit', :class => 'delete_button', :value => 'Delete it!' }

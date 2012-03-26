@@ -42,6 +42,10 @@ class BaseController < ActionController::Base
     else
       request_http_basic_authentication
     end
+
+    unless @login
+      request_http_basic_authentication
+    end
     
     @cloud_user = CloudUser.find @login
     @cloud_user.auth_method = @auth_method unless @cloud_user.nil?

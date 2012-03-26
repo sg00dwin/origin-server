@@ -94,7 +94,7 @@ class Haproxy
     def add_gear
         @last_scale_up_time = Time.now
         @log.info("GEAR_UP - capacity: #{self.session_capacity_pct}% gear_count: #{self.gear_count} sessions: #{self.sessions} up_thresh: #{@gear_up_pct}%")
-        `add-gear -n #{self.gear_namespace}  -a #{ENV['OPENSHIFT_GEAR_NAME']} -u #{ENV['OPENSHIFT_APP_UUID']}`
+        `add-gear -n #{self.gear_namespace}  -a #{ENV['OPENSHIFT_APP_NAME']} -u #{ENV['OPENSHIFT_APP_UUID']}`
         self.print_gear_stats
     end
 

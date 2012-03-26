@@ -3,34 +3,18 @@ require 'test_helper'
 class RestApiTest < ActiveSupport::TestCase
 
   def setup
-    #if @@integrated
-      setup_integrated
-    #else
-    #  setup_mock
-    #end
+    with_unique_user
   end
-
-  def setup_integrated
-    host = ENV['LIBRA_HOST'] || 'localhost'
-    RestApi::Base.site = "https://#{host}/broker/rest"
-    RestApi::Base.prefix='/broker/rest/'
-
-    @ts = "#{Time.now.to_i}#{gen_small_uuid[0,6]}"
-
-    @user = RestApi::Authorization.new "test-#{uuid}@test1.com"
-
-    auth_headers = {'Authorization' => "Basic #{Base64.encode64("#{@user.login}:#{@user.password}").strip}"}
-
-    domain = Domain.new :namespace => "#{@ts}", :as => @user
-    unless domain.save
-      puts domain.errors.inspect
-      fail 'Unable to create the initial domain, test cannot be run'
-    end
-  end
-
   def teardown
-    domain = Domain.first :as => @user
-    domain.destroy_recursive if domain
+    @domain.destroy_recursive if @domain
+  end
+
+  #
+  # Integration tests have no session, so we skip that setup
+  #
+  def with_unique_user
+    setup_api
+    @user = RestApi::Authorization.new "rest-api-test-#{uuid}@test1.com"
   end
 
   def test_key_get_all
@@ -101,8 +85,9 @@ class RestApiTest < ActiveSupport::TestCase
     assert_equal @user.login, user.login
   end
 
-  def test_key_create_without_domain 
-    Domain.first(:as => @user).destroy_recursive
+  def test_key_create_without_domain
+    domain = Domain.first(:as => @user)
+    domain.destroy_recursive if domain
 
     key = Key.new :raw_content => 'ssh-rsa key', :name => 'default', :as => @user
     assert key.save
@@ -140,17 +125,20 @@ class RestApiTest < ActiveSupport::TestCase
   end
 
   def test_domains_get
+    setup_domain
     domains = Domain.find :all, :as => @user
     assert_equal 1, domains.length
     assert_equal "#{@ts}", domains[0].namespace
   end
 
   def test_domains_first
+    setup_domain
     domain = Domain.first(:as => @user)
     assert_equal "#{@ts}", domain.namespace
   end
 
   def test_domain_exists_error
+    setup_domain
     domain = Domain.first(:as => @user)
     domain2 = Domain.new :name => domain.name, :as => @user
     assert !domain2.save
@@ -160,6 +148,7 @@ class RestApiTest < ActiveSupport::TestCase
   end
 
   def test_domains_update
+    setup_domain
     domains = Domain.find :all, :as => @user
     assert_equal 1, domains.length
     assert_equal "#{@ts}", domains[0].namespace
@@ -183,9 +172,14 @@ class RestApiTest < ActiveSupport::TestCase
     domains = Domain.find :all, :as => @user
     assert_equal 1, domains.length
     assert_equal "#{@ts.reverse}", domains[0].namespace
+
+    #cleanup
+    domains.each {|d| d.destroy_recursive}
+    @domain = nil
   end
 
   def test_domain_delete
+    setup_domain
     # we can only have one domain so delete it and restore it
     items = Domain.find :all, :as => @user
     domain = items[0]
@@ -198,13 +192,11 @@ class RestApiTest < ActiveSupport::TestCase
     items = Domain.find :all, :as => @user
     assert_equal orig_num_domains - 1, items.length
 
-    # restore domain just in case we get run before other tests
-    domain = Domain.new :name => name, :as => @user
-
-    assert domain.save
+    @domain = nil # don't need to clear the first domain now
   end
 
   def test_domains_applications
+    setup_domain
     domain = Domain.first(:as => @user)
 
     app1 = Application.new :name => 'app1', :cartridge => 'php-5.3', :as => @user
@@ -213,8 +205,8 @@ class RestApiTest < ActiveSupport::TestCase
     app1.domain = domain
     app2.domain = domain
 
-    assert app1.save
-    assert app2.save
+    assert app1.save, app1.errors.inspect
+    assert app2.save, app2.errors.inspect
 
     apps = domain.applications
     assert_equal 2, apps.length
@@ -229,6 +221,7 @@ class RestApiTest < ActiveSupport::TestCase
   end
 
   def test_domains_applications_delete
+    setup_domain
     domain = Domain.first(:as => @user)
 
     items = domain.applications
@@ -254,6 +247,7 @@ class RestApiTest < ActiveSupport::TestCase
   end
 
   def test_domain_reload
+    setup_domain
     domain = Domain.first :as => @user
     oldname = domain.name
     domain.name = 'foo'

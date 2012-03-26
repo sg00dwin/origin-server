@@ -2,77 +2,105 @@
 
 require 'rubygems'
 require 'getoptlong'
-require 'mcollective'
 
-include MCollective::RPC
+def usage
+    puts <<USAGE
+== Synopsis
 
-options = rpcoptions do |parser, options|
-    parser.define_head "Move an application to another node"
-    parser.banner = "Usage: rhc-admin-move [options]"
+rhc-admin-move: Run cartridge hooks
 
-    parser.on('-i', '--target_server_identity TARGET_SERVER_IDENTITY', 'Target server identity (e.g. ip-10-10-10-10)') do |target_server_identity|
-      options[:target_server_identity] = target_server_identity
-    end
+== Usage
 
-    parser.on('-p', '--node_profile NODE_PROFILE', "Node profile (e.g. small)") do |node_profile|
-      options[:node_profile] = node_profile
-    end
+rhc-admin-move OPTIONS
 
-    parser.on('-n', '--app APP', 'Application name (required with rhlogin)') do |app_name|
-      options[:app_name] = app_name
-    end
-    
-    parser.on('--app_uuid APP_UUID', 'Application uuid (replaces rhlogin and app name)') do |app_uuid|
-      options[:app_uuid] = app_uuid
-    end
-
-    parser.on('-l', '--rhlogin RHLOGIN', 'Account to act on (required with app name)') do |rhlogin|
-      options[:rhlogin] = rhlogin
-    end
-    
-    parser.on('-u', '--destination_district_uuid DISTRICT_UUID', 'Uuid of the district to move to.  Not to be used in conjunction with -i') do |destination_district_uuid|
-      options[:destination_district_uuid] = destination_district_uuid
-    end
-    
-    parser.on('--allow_change_district', 'Must be used in conjunction with -i or -u if changing district') do |v|
-      options[:allow_change_district] = true
-    end
-    options[:allow_change_district] = false unless options[:allow_change_district]
+Options:
+-l|--rhlogin <rhlogin>
+    Red Hat login (RHN or OpenShift login with OpenShift Express access)
+-a|--app     <application>
+    Application name (alphanumeric)
+--app_uuid   <app_uuid>
+    Application uuid
+--destination_district_uuid <district_uuid>
+    Destination district uuid
+-i|--target_server_identity <server_identity>
+    Target server identity
+-p|--node_profile <node_profile>
+    Node profile
+-t|--timeout
+    timeout
+--allow_change_district
+    Allow the move to be between districts
+-h|--help
+    Show Usage info
+USAGE
 end
 
-require "/var/www/stickshift/broker/config/environment"
+opts = GetoptLong.new(
+    ["--rhlogin",          "-l", GetoptLong::REQUIRED_ARGUMENT],
+    ["--app",              "-a", GetoptLong::REQUIRED_ARGUMENT],
+    ["--app_uuid",               GetoptLong::REQUIRED_ARGUMENT],
+    ["--destination_district_uuid", "-u", GetoptLong::REQUIRED_ARGUMENT],
+    ["--target_server_identity", "-i", GetoptLong::REQUIRED_ARGUMENT],
+    ["--node_profile",     "-p", GetoptLong::REQUIRED_ARGUMENT],
+    ["--timeout",          "-t", GetoptLong::REQUIRED_ARGUMENT],
+    ["--allow_change_district",  GetoptLong::NO_ARGUMENT],
+    ["--help",             "-h", GetoptLong::NO_ARGUMENT]
+)
 
-unless options.include?(:app_name) && options.include?(:rhlogin) || options.include?(:app_uuid)
-    puts "ERROR: Specify app name (-n) and rhlogin (-l) or app uuid (--app_uuid)"
+args = {}
+begin
+    opts.each{ |k,v| args[k]=v }
+rescue GetoptLong::Error => e
+    usage
+    exit -100
+end
+
+login    = args["--rhlogin"]
+app_name = args["--app"]
+app_uuid = args["--app_uuid"]
+target_server_identity = args['--target_server_identity']
+destination_district_uuid = args['--destination_district_uuid']
+node_profile = args['--node_profile']
+allow_change_district = false unless args['--allow_change_district']
+timeout  = args['--timeout']
+
+if args["--help"]
+  usage
+  exit 1
+end
+
+unless app_name && login || app_uuid
+    puts "ERROR: Specify app name (-a) and rhlogin (-l) or app uuid (--app_uuid)"
     exit 1
 end
 
-if options.include?(:app_uuid) and options.include?(:app_name)
+if app_uuid and app_name
     puts "ERROR: you can't specify both app uuid and app name or rhlogin"
     exit 1
 end
 
-if options.include?(:app_uuid) and options.include?(:rhlogin)
+if app_uuid and login
     puts "ERROR: you can't specify both app uuid and rhlogin"
     exit 1
 end
 
+require "/var/www/stickshift/broker/config/environment"
+
 # Set the MCollective options
-if options[:timeout] && options[:timeout] < 30
-    options[:timeout] = 30
+if timeout
+  Rails.configuration.rpc_opts[:timeout] = timeout.to_i 
 end
-#Rails.configuration.rpc_opts = options
 
 app = nil
-if (options[:app_uuid])
-  app  = Application.find_by_uuid(options[:app_uuid])
+if (app_uuid)
+  app  = Application.find_by_uuid(app_uuid)
 else
-  user = CloudUser.find(options[:rhlogin])
-  app  = Application.find(user, options[:app_name])
+  user = CloudUser.find(login)
+  app  = Application.find(user, app_name)
 end
 
 unless app
-  puts "ERROR: Application not found: #{options[:app_uuid] ? options[:app_uuid] : options[:app_name]}"
+  puts "ERROR: Application not found: #{app_uuid ? app_uuid : app_name}"
 end
 
 url = "http://#{app.name}-#{app.user.namespace}.#{Rails.configuration.ss[:domain_suffix]}"
@@ -82,8 +110,8 @@ puts "Login: #{app.user.login}"
 puts "App UUID: #{app.uuid}"
 
 destination_container = nil
-destination_container = StickShift::ApplicationContainerProxy.instance(options[:target_server_identity]) if options[:target_server_identity]
-reply = app.container.move_app(app, destination_container, options[:destination_district_uuid], options[:allow_change_district], options[:node_profile])
+destination_container = StickShift::ApplicationContainerProxy.instance(target_server_identity) if target_server_identity
+reply = app.container.move_app(app, destination_container, destination_district_uuid, allow_change_district, node_profile)
 
 puts "################# ADDITIONAL DEBUG OUTPUT #################\n#{reply.debugIO.string}\n" unless reply.debugIO.string.empty?
 puts "################# ADDITIONAL ERROR OUTPUT #################\n#{reply.errorIO.string}\n" unless reply.errorIO.string.empty?
