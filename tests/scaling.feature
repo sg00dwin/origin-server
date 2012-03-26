@@ -10,7 +10,10 @@ Feature: Scaling Verification Tests
     And 1 gears will be in the cluster
     When a gear is added
     Then 2 gears will be in the cluster
-    #Then the applications should be accessible
+    And the applications should be accessible
+    When a gear is removed
+    Then 1 gears should be in the cluster
+    And the application should be accessible
 
   Scenarios: Application Creation Scenarios
     | app_count |     type     |

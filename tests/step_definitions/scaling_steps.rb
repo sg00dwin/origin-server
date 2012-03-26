@@ -11,7 +11,12 @@ When /^a scaled (.+) application is created$/ do |app_type|
   # Create our app via the curl api:
   # Replace when the REST API libraries are complete
   rhc_create_domain(@app)
-  run("curl -k -H 'Accept: application/json' --user '#{@app.login}:fakepw' https://localhost/broker/rest/domains/#{@app.namespace}/applications -X POST -d name=#{@app.name} -d cartridge=#{app_type} -d scale=true > /tmp/rhc/json_response_#{@app.name}_#{@app.namespace}.json")
+  run("curl -o /tmp/rhc/json_response_#{@app.name}_#{@app.namespace}.json -k -H 'Accept: application/json' --user '#{@app.login}:fakepw' https://localhost/broker/rest/domains/#{@app.namespace}/applications -X POST -d name=#{@app.name} -d cartridge=#{app_type} -d scale=true")
+  fp = File.open("/tmp/rhc/json_response_#{@app.name}_#{@app.namespace}.json")
+  json_string = fp.read
+  app_info = JSON.parse(json_string)
+  @app.uid = app_info['data']['uuid']
+  fp.close
 end
 
 Then /^the haproxy-status page will( not)? be responding$/ do |negate|
@@ -31,8 +36,8 @@ Then /^the gear member will( not)? be UP$/ do |negate|
 end
 
 Then /^(\d+) gears will be in the cluster$/ do |count|
-  gear_count = `/usr/bin/curl -H 'Host: #{@app.name}-#{@app.namespace}.dev.rhcloud.com' -s 'http://localhost/haproxy-status/;csv' | grep -c "express,gear"`.to_i
-  gear_count == count
+  gear_count = `/usr/bin/curl -H 'Host: #{@app.name}-#{@app.namespace}.dev.rhcloud.com' -s 'http://localhost/haproxy-status/;csv' | grep -c "express,gear"`
+  gear_count.to_i == count.to_i
 end
 
 Then /^the php-5.3 health\-check will( not)? be successful$/ do |negate|
@@ -43,26 +48,16 @@ Then /^the php-5.3 health\-check will( not)? be successful$/ do |negate|
   exit_status.should == good_status
 end
 
-When /^a gear is added$/ do
-  ssh_cmd = "ssh -t #{@app.uid}@#{@app.hostname} 'rhcsh haproxy_ctl -u'"
-  puts ssh_cmd
-  stdout, stdin, pid = PTY.spawn ssh_cmd
+When /^a gear is (added|removed)$/ do |action|
+  if action == "added"
+    ssh_cmd = "ssh -t #{@app.uid}@#{@app.hostname} 'rhcsh haproxy_ctld -u'"
+  elsif action == "removed"
+    ssh_cmd = "ssh -t #{@app.uid}@#{@app.hostname} 'rhcsh haproxy_ctld -u'"
+  else
+    puts "Invalid gear action specified (must be added/removed)"
+    exit 1
+  end
 
-  @ssh_cmd = {
-    :pid => pid,
-    :stdin => stdin,
-    :stdout => stdout,
-  }
+  runcon ssh_cmd, 'unconfined_u', 'unconfined_r', 'unconfined_t'
 end
 
-When /^a gear is removed$/ do
-  ssh_cmd = "ssh -t #{@app.uid}@#{@app.hostname} rhcsh haproxy_ctl -d"
-
-  stdout, stdin, pid = PTY.spawn ssh_cmd
-
-  @ssh_cmd = {
-    :pid => pid,
-    :stdin => stdin,
-    :stdout => stdout,
-  }
-end
