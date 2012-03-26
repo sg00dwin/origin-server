@@ -1,18 +1,13 @@
 require 'test_helper'
 
 class CartridgesControllerTest < ActionController::TestCase
-#  test "should get new unauthorized" do
-#    get :new
-#    assert_response :success
-#  end
-
   def setup
     with_domain
 
-    @domain.applications.each {|app| app.destroy}
-    
+    @domain.reload.applications.each {|app| app.destroy}
+
     @application_type = ApplicationType.find 'ruby-1.8'
-    @app = Application.new :name => "cart_#{uuid}", :as => @user
+    @app = Application.new :name => "cart#{uuid}", :as => @user
     @app.cartridge = @application_type.cartridge || @application_type.id
     @app.domain = @domain
     @app.save

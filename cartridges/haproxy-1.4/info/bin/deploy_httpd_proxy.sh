@@ -31,7 +31,7 @@ if [ -f "$vhost" ]; then
   ProxyPass /haproxy-status/ http://$IP2:8080/ status=I
   ProxyPassReverse /haproxy-status/ http://$IP2:8080/
 EOF
-   return
+   exit $?
 fi
 
 rm -rf "${STICKSHIFT_HTTP_CONF_DIR}/${uuid}_${namespace}_${application}.conf" "${STICKSHIFT_HTTP_CONF_DIR}/${uuid}_${namespace}_${application}"

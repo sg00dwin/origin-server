@@ -126,10 +126,6 @@ module ApplicationHelper
     "https://github.com/openshift/#{project}"
   end
 
-  def quickstart_path
-    "#{express_path}#quickstart"
-  end
-
   def mailto_openshift_url
     'mailto:openshift@redhat.com'
   end
