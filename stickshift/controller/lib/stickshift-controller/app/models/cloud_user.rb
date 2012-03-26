@@ -49,7 +49,7 @@
       resultIO.append(create())
     end
     
-    if applications && save_jobs
+    if applications && !applications.empty? && save_jobs
       gears = []
       applications.each do |app|
         gears += app.gears
@@ -84,14 +84,14 @@
               raise StickShift::NodeException.new("Error removing settings from gear: #{gear} with status: #{status} and output: #{output}", 143)
             end
           }
-          save_jobs['removes'].clear
         end
       end
     end
+    save_jobs['removes'].clear if save_jobs && save_jobs['removes']  
 
     super(@login)
     
-    if applications && save_jobs
+    if applications && !applications.empty? && save_jobs
       if save_jobs['adds']
         handle = RemoteJob.create_parallel_job
        
@@ -121,9 +121,9 @@
             raise StickShift::NodeException.new("Error adding settings to gear: #{gear} with status: #{status} and output: #{output}", 143)
           end
         }
-        save_jobs['adds'].clear
       end
     end
+    save_jobs['adds'].clear if save_jobs && save_jobs['adds']
 
     resultIO
   end
@@ -241,7 +241,8 @@
   def get_ssh_key
     raise StickShift::UserKeyException.new("ERROR: No ssh keys found for user #{self.login}", 
                                            123) if self.ssh_keys.nil? or not self.ssh_keys.kind_of?(Hash)
-    (self.ssh_keys.key?(CloudUser::DEFAULT_SSH_KEY_NAME)) ? self.ssh_keys[CloudUser::DEFAULT_SSH_KEY_NAME] : self.ssh_keys.keys[0]
+    key_name = (self.ssh_keys.key?(CloudUser::DEFAULT_SSH_KEY_NAME)) ? CloudUser::DEFAULT_SSH_KEY_NAME : self.ssh_keys.keys[0]
+    self.ssh_keys[key_name]
   end
  
   def add_env_var(key, value)

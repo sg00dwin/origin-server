@@ -31,13 +31,12 @@ module OpenShift
     end
 
     def signin(login=@valid_credentials[:email],password=@valid_credentials[:password])
-      open_dialog(:signin, false){ |signin|
-        signin.submit(login,password)
-      
+        @login_page.open
+        @login_page.submit(login, password)
+
         await("logout link", 10) {
           exists?("a[href='/app/logout']")
         }
-      }
     end
   end
 

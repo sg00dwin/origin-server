@@ -112,21 +112,19 @@ class LegacyBrokerController < ApplicationController
     if @req.alter
       
       Rails.logger.debug "Updating namespace for domain #{domain.uuid} from #{domain.namespace} to #{@req.namespace}"
-      #FIXME: Either this needs to be removed or user should pass key name to alter
 
-      @reply.append cloud_user.update_ssh_key(@req.ssh, @req.key_type, CloudUser::DEFAULT_SSH_KEY_NAME) if @req.ssh
       raise StickShift::UserException.new("The supplied namespace '#{@req.namespace}' is not allowed", 106) if StickShift::ApplicationContainerProxy.blacklisted? @req.namespace   
       begin
         domain.namespace = @req.namespace     
         @reply.append domain.save
-      rescue 
-       Rail.logger.error "Failed to update domain #{domain.uuid} from #{domain.namespace} to #{@req.namespace} #{e.message}"
-       Rail.logger.error e.backtrace
+      rescue Exception => e 
+       Rails.logger.error "Failed to update domain #{domain.uuid} from #{domain.namespace} to #{@req.namespace} #{e.message}"
+       Rails.logger.error e.backtrace
        raise
       end
 
       if @req.ssh
-        cloud_user.update_ssh_key(@req.ssh, @req.key_type, CloudUser::DEFAULT_SSH_KEY_NAME)
+        cloud_user.update_ssh_key(@req.ssh, @req.key_type, @req.key_name)
         cloud_user.save
       end
     elsif @req.delete
