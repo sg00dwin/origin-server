@@ -41,6 +41,7 @@ BuildRequires: rubygem-tilt
 BuildRequires: rubygem-sqlite3
 
 BuildRequires: rubygem-mail
+BuildRequires: rubygem-treetop
 
 Requires:  rhc-common
 Requires:  rhc-server-common
@@ -65,7 +66,9 @@ Requires:  js
 Requires:  ruby-sqlite3
 Requires:  rubygem-sqlite3
 Requires:  rubygem-sinatra
+
 Requires:  rubygem-mail
+Requires:  rubygem-treetop
 
 BuildArch: noarch
 
