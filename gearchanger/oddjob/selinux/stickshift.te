@@ -1,0 +1,18 @@
+policy_module(stickshift, 1.0)
+
+type stickshift_t;
+type stickshift_exec_t;
+application_domain(stickshift_t, stickshift_exec_t)
+oddjob_system_entry(stickshift_t, stickshift_exec_t)
+role system_r types stickshift_t;
+unconfined_domain(stickshift_t)
+mcs_process_set_categories(stickshift_t)
+init_ranged_daemon_domain(stickshift_t, stickshift_exec_t, s0 - mcs_systemhigh)
+
+gen_require(`
+	type httpd_t;
+')
+domtrans_pattern(httpd_t, stickshift_exec_t, stickshift_t)
+oddjob_dbus_chat(httpd_t)
+domain_dontaudit_read_all_domains_state(httpd_t)
+dontaudit httpd_t self:capability sys_ptrace;

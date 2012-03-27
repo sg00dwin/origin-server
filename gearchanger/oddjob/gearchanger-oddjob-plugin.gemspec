@@ -1,6 +1,7 @@
 # -*- encoding: utf-8 -*-
 $:.push File.expand_path("../lib", __FILE__)
 lib_dir  = File.join(File.join("lib", "**"), "*")
+selinux_dir  = File.join(File.join("selinux", "**"), "*")
 test_dir  = File.join(File.join("test", "**"), "*")
 bin_dir  = File.join("bin", "*")
 
@@ -16,7 +17,7 @@ Gem::Specification.new do |s|
 
   s.rubyforge_project = "gearchanger-oddjob-plugin"
 
-  s.files       = Dir[lib_dir]
+  s.files       = Dir[lib_dir] + Dir[selinux_dir]
   s.test_files  = Dir[test_dir]
   s.executables   = Dir[bin_dir]
   s.files       += %w(README.md Rakefile Gemfile gearchanger-oddjob-plugin.spec gearchanger-oddjob-plugin.gemspec LICENSE COPYRIGHT)

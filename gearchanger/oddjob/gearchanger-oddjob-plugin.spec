@@ -39,6 +39,10 @@ GearChanger plugin for oddjob based node/gear manager
 %build
 
 %post
+/usr/sbin/semodule -i /var/lib/stickshift/stickshift.pp
+/usr/sbin/semanage fcontext -a -e /home /var/lib/stickshift
+/sbin/restorecon -R /var/lib/stickshift /usr/bin/ss-exec-command || :
+
 
 %install
 rm -rf %{buildroot}
@@ -53,8 +57,22 @@ gem install --local --install-dir %{buildroot}%{gemdir} --force %{gemname}-%{ver
 ln -s %{geminstdir}/lib/%{gemname} %{buildroot}%{ruby_sitelib}
 ln -s %{geminstdir}/lib/%{gemname}.rb %{buildroot}%{ruby_sitelib}
 
+# move the selinux policy files into proper location
+mkdir -p /var/lib/stickshift
+cp %{buildroot}%{geminstdir}/selinux/* /var/lib/stickshift/.
+rm -rf %{buildroot}%{geminstdir}/selinux
+
+
 %clean
 rm -rf %{buildroot}                                
+
+
+%postun
+/usr/sbin/semodule -r stickshift
+/usr/sbin/semanage fcontext -d /var/lib/stickshift
+/sbin/restorecon -R /var/lib/stickshift /usr/bin/ss-exec-command || :
+
+
 
 %files
 %defattr(-,root,root,-)
