@@ -34,7 +34,7 @@ def migrate_app(rhlogin, app_name)
               client.migrate(:uuid => uuid,
                              :application => app_name,
                              :app_type => framework,
-                             :namespace => user.namespace,
+                             :namespace => app.domain.namespace,
                              :version => '2.0.8') do |response|
                 exit_code = response[:body][:data][:exitcode]
                 output = response[:body][:data][:output]
@@ -48,7 +48,9 @@ def migrate_app(rhlogin, app_name)
                   #migrated = redeploy_httpd_proxy(app, out)
                   migrated = true
                   if migrated
-                    restart_app(app, out)
+                    if framework == 'jenkins-1.4'
+                      restart_app(app, out)
+                    end
                   end
                 end
               end
@@ -185,6 +187,13 @@ def migrate(continue=false, target_server_identity=nil)
   all_rhlogins_length = users.length
   app_cnt = 0
   puts "RHLogins.length: #{all_rhlogins_length.to_s}"
+  
+  users.each_with_index do |user, index|
+    if user.max_gears == 5
+      user.max_gears = 3
+      user.save
+    end
+  end
   
   node_to_apps = {}
   node_to_users = {}
