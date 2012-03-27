@@ -31,6 +31,11 @@ Feature: Scaling Verification Tests
     Then the haproxy-status page will be responding
     And the gear member will be UP
     And the <type> health-check will be successful
+    When haproxy_ctld_daemon is restarted
+    Then haproxy_ctld is running
+    And 1 gears will be in the cluster
+    When 15 concurrent http connections are generated for 90 seconds
+    Then 2 gears will be in the cluster
     When the application is destroyed
     Then the application should not be accessible
     And the <type> health-check will not be successful

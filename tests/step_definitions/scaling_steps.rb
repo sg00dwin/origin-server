@@ -61,3 +61,20 @@ When /^a gear is (added|removed)$/ do |action|
   runcon ssh_cmd, 'unconfined_u', 'unconfined_r', 'unconfined_t'
 end
 
+When /^haproxy_ctld_daemon is restarted$/ do
+  ssh_cmd = "ssh -t #{@app.uid}@#{@app.hostname} 'rhcsh haproxy_ctld_daemon restart'"
+
+  runcon ssh_cmd, 'unconfined_u', 'unconfined_r', 'unconfined_t'
+end
+
+Then /^haproxy_ctld is running$/ do
+  ssh_cmd = "ssh -t #{@app.uid}@#{@app.hostname} 'rhcsh ps auxwww | grep -q haproxy_ctld'"
+  runcon ssh_cmd, 'unconfined_u', 'unconfined_r', 'unconfined_t'
+end
+
+When /^(\d+) concurrent http connections are generated for (\d+) seconds$/ do |concurrent, seconds|
+  cmd = "ab -H 'Host: #{@app.name}-#{@app.namespace}.dev.rhcloud.com' -c #{concurrent} -t #{seconds} http://localhost/ > /tmp/rhc/http_load_test_#{@app.name}_#{@app.namespace}.txt"
+  exit_status = runcon cmd, 'unconfined_u', 'unconfined_r', 'unconfined_t'
+  puts exit_status
+  exit_status
+end
