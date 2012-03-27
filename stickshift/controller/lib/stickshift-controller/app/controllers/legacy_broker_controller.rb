@@ -383,6 +383,13 @@ class LegacyBrokerController < ApplicationController
       if auth  
         @login = auth[:username]
         @auth_method = auth[:auth_method]
+        
+        Rails.logger.debug "Adding user #{@login}...inside legacy_controller"
+        @cloud_user = CloudUser.find @login
+        if @cloud_user.nil?
+          @cloud_user = CloudUser.new(@login)
+          @cloud_user.save
+        end
       end
       unless @login
         @reply.resultIO << "Invalid user credentials"

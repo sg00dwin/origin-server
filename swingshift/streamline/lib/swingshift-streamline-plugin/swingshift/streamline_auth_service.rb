@@ -39,12 +39,6 @@ module Swingshift
             token = check_login(request, login, password)
           end
         end
-        Rails.logger.debug "Adding user #{login}...inside authenticate"
-        cloud_user = CloudUser.find login
-        if cloud_user.nil?
-           cloud_user = CloudUser.new(login)
-           cloud_user.save
-        end
         return token
       end
       
@@ -61,15 +55,6 @@ module Swingshift
           else
             password = params['password']
             token =  check_login(request, login, password)
-          end
-        end
-        if token
-          username = token[:username]
-          Rails.logger.debug "Adding user #{username}...inside login"
-          cloud_user = CloudUser.find username
-          if cloud_user.nil?
-            cloud_user = CloudUser.new(username)
-            cloud_user.save
           end
         end
         return token
@@ -109,7 +94,6 @@ module Swingshift
             end
             check_access(roles)
             rhlogin = login
-          #rescue StickShift::AccessDeniedException
           end
         end
         
