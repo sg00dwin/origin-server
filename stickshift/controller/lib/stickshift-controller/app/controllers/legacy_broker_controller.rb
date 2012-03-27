@@ -312,9 +312,6 @@ class LegacyBrokerController < ApplicationController
     
     app = get_app_from_request(user)    
     check_cartridge_type(@req.cartridge, "embedded")
-    if @req.action != "configure" and !app.requires_feature.include?(@req.cartridge)
-      raise StickShift::UserException.new("#{@req.cartridge} not embedded in '#{app.name}', try adding it first", 101)
-    end
 
     Rails.logger.debug "DEBUG: Performing action '#{@req.action}'"    
     case @req.action
