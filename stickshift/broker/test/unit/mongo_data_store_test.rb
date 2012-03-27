@@ -18,7 +18,7 @@ class MongoDataStoreTest < ActiveSupport::TestCase
     cu = ds.find_by_uuid("CloudUser", user_uuid)
     assert_equal(orig_cu, cu)
   end
-  
+ 
   test "delete cloud user" do
     ds = MongoDataStore.new
     cu = cloud_user
@@ -53,12 +53,79 @@ class MongoDataStoreTest < ActiveSupport::TestCase
     assert(ds.find_all("CloudUser", nil).length >= 2)
   end
   
+  test "create and find domain" do
+    ds = MongoDataStore.new
+    cu = cloud_user
+    user_id = cu["login"]
+    ds.create("CloudUser", user_id, nil, cu)
+    orig_dom = domain
+    dom_id = orig_dom["uuid"]
+    ds.create("Domain", user_id, dom_id, orig_dom)
+    dom = ds.find("Domain", user_id, dom_id)
+    assert_equal(orig_dom, dom)
+    dom = ds.find_by_uuid("Domain", dom_id)
+    cu["domains"] = [ orig_dom ]
+    assert_equal(cu, dom)
+  end
+ 
+  test "delete cloud domain" do
+    ds = MongoDataStore.new
+    cu = cloud_user
+    user_id = cu["login"]
+    ds.create("CloudUser", user_id, nil, cu)
+    orig_dom = domain
+    dom_id = orig_dom["uuid"]
+    ds.create("Domain", user_id, dom_id, orig_dom)
+    ds.delete("Domain", user_id, dom_id)
+    dom = ds.find("Domain", user_id, dom_id)
+    assert_equal(nil, dom)
+    ds.delete("CloudUser", user_id, nil)
+    cu = ds.find("CloudUser", user_id, nil)
+    assert_equal(nil, cu)
+  end
+
+=begin 
+  test "save domain" do
+    ds = MongoDataStore.new
+    cu = cloud_user
+    user_id = cu["login"]
+    ds.create("CloudUser", user_id, nil, cu)
+    orig_dom = domain
+    dom_id = orig_dom["uuid"]
+    ds.create("Domain", user_id, dom_id, orig_dom)
+    updates = {
+      "namespace" => "ns1"
+    }
+    ds.save("Domain", user_id, dom_id, updates)
+    orig_dom["namespace"] = "ns1"
+    updated_dom = ds.find("Domain", user_id, dom_id)
+    assert_equal(orig_dom, updated_dom)
+  end
+=end
+  
+  test "find all domains" do
+    ds = MongoDataStore.new
+    cu = cloud_user
+    user_id = cu["login"]
+    ds.create("CloudUser", user_id, nil, cu)
+    (1..2).each do |i|
+      orig_dom = domain
+      dom_id = orig_dom["uuid"]
+      ds.create("Domain", user_id, dom_id, orig_dom)
+    end
+    assert(ds.find_all("Domain", user_id).length >= 2)
+    assert(ds.find_all("CloudUser", nil).length >= 2)
+  end
+
   test "create and find application" do
     ds = MongoDataStore.new
     
     orig_cu = cloud_user
     user_id = orig_cu["login"]
     ds.create("CloudUser", user_id, nil, orig_cu)
+    orig_dom = domain
+    dom_id = domain["uuid"]
+    ds.create("Domain", user_id, dom_id, orig_dom)
     
     orig_a = application
     a_uuid = orig_a['uuid']
@@ -79,6 +146,9 @@ class MongoDataStoreTest < ActiveSupport::TestCase
     cu = cloud_user
     user_id = cu["login"]
     ds.create("CloudUser", user_id, nil, cu)
+    orig_dom = domain
+    dom_id = domain["uuid"]
+    ds.create("Domain", user_id, dom_id, orig_dom)
     
     orig_a = application
     orig_a["embedded"] = {"mysql-5.1" => {"info" => "Connection URL: mysql://..."}}
@@ -101,6 +171,9 @@ class MongoDataStoreTest < ActiveSupport::TestCase
     cu = cloud_user
     user_id = cu["login"]
     ds.create("CloudUser", user_id, nil, cu)
+    orig_dom = domain
+    dom_id = domain["uuid"]
+    ds.create("Domain", user_id, dom_id, orig_dom)
     
     orig_a = application
     ds.create("Application", user_id, orig_a["name"], orig_a)
@@ -130,6 +203,9 @@ class MongoDataStoreTest < ActiveSupport::TestCase
     cu = cloud_user
     user_id = cu["login"]
     ds.create("CloudUser", user_id, nil, cu)
+    orig_dom = domain
+    dom_id = domain["uuid"]
+    ds.create("Domain", user_id, dom_id, orig_dom)
     
     a = application
     ds.create("Application", user_id, a["name"], a)
@@ -154,6 +230,9 @@ class MongoDataStoreTest < ActiveSupport::TestCase
     cu = cloud_user
     user_id = cu["login"]
     ds.create("CloudUser", user_id, nil, cu)
+    orig_dom = domain
+    dom_id = domain["uuid"]
+    ds.create("Domain", user_id, dom_id, orig_dom)
     
     a = nil
     (1..2).each do |i|
@@ -192,7 +271,7 @@ class MongoDataStoreTest < ActiveSupport::TestCase
     apps = ds.find_all("Application", user_id)
     assert_equal(2, apps.length)
   end
-
+ 
   def cloud_user
     uuid = gen_uuid
     cloud_user = {
@@ -201,11 +280,20 @@ class MongoDataStoreTest < ActiveSupport::TestCase
       "system_ssh_keys" => {},
       "env_vars" => {},
       "ssh_keys" => {},
-      "namespace" => "namespace#{uuid}",
       "max_gears" => 2,
-      "consumed_gears" => 0
+      "consumed_gears" => 0,
+      "vip" => false
     }
     cloud_user
+  end
+
+  def domain
+    uuid = gen_uuid
+    domain = {
+      "namespace" => "namespace#{uuid}",
+      "uuid" => uuid
+    }
+    domain
   end
   
   def application
