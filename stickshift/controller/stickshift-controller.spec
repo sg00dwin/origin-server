@@ -5,7 +5,7 @@
 
 Summary:        Cloud Development Controller
 Name:           rubygem-%{gemname}
-Version:        0.7.2
+Version:        0.7.3
 Release:        1%{?dist}
 Group:          Development/Languages
 License:        ASL 2.0
@@ -75,6 +75,11 @@ rm -rf %{buildroot}
 %{ruby_sitelib}/%{gemname}.rb
 
 %changelog
+* Mon Mar 26 2012 Dan McPherson <dmcphers@redhat.com> 0.7.3-1
+- Updating gem versions (dmcphers@redhat.com)
+- Fix for bugs# 807045, 807061 (rpenta@redhat.com)
+- Fix destroy domain (rpenta@redhat.com)
+
 * Mon Mar 26 2012 Dan McPherson <dmcphers@redhat.com> 0.7.2-1
 - Updating gem versions (dmcphers@redhat.com)
 - make code a little more readable (dmcphers@redhat.com)

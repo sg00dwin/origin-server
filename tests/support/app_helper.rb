@@ -58,7 +58,6 @@ module AppHelper
       app.mysql_password = json['mysql_password']
       app.mysql_hostname = json['mysql_hostname']
       app.uid = json['uid']
-      p json
       return app
     end
 

@@ -192,7 +192,7 @@ class Release < Thor
     mash_and_rsync "libra-rhel-6.2", false, options
 
     # now RHEL 5.x, skipping rhc gem build/deploy
-    mash_and_rsync "libra-rhel-5.7", true, options
+    mash_and_rsync "libra-rhel-5.8", true, options
 
     unless options.no_ami?
       create_ami options

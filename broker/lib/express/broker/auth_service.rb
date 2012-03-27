@@ -110,7 +110,7 @@ module Express
             end
             check_access(roles)
             rhlogin = login
-          rescue StickShift::AccessDeniedException
+          #rescue StickShift::AccessDeniedException
           end
         end
         
