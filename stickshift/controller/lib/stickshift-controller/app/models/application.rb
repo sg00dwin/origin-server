@@ -1011,7 +1011,7 @@ Configure-Order: [\"proxy/#{framework}\", \"proxy/haproxy-1.4\"]
     
     raise StickShift::UserException.new("#{dep} already embedded in '#{@name}'", 101) if self.embedded.include? dep
     if self.scalable
-      raise StickShift::UserException.new("#{dep} cannot be embedded in scalable app '#{@name}'", 108) if not SCALABLE_EMBEDDED_CARTS.include? dep
+      raise StickShift::UserException.new("#{dep} cannot be embedded in scalable app '#{@name}'. Allowed cartridges: #{SCALABLE_EMBEDDED_CARTS.join(',')}", 108) if not SCALABLE_EMBEDDED_CARTS.include? dep
     end
     add_to_requires_feature(dep)
     begin
