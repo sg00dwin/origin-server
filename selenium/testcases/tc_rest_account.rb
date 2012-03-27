@@ -222,23 +222,6 @@ class RestAccount < OpenShift::Rest::TestCase
 
     await('preview SSH key') { @rest_account.find_ssh_key_row('default') }
 
-    # add a duplicate key with a different name
-    @rest_account.ssh_key_add_button.click
-    @rest_account.ssh_key_add_page.wait
-
-    assert !form.in_error?(:name)
-    assert !form.in_error?(:key)
-
-    form.set_value(:name, 'new')
-    form.set_value(:key, key)
-    form.submit
-
-    @rest_account.ssh_key_page.wait
-    assert !form.in_error?(:name)
-    assert form.in_error?(:key)
-
-    form.cancel
-
     # add a duplicate key name with a different key
     key = dummy_ssh_key2
     @rest_account.ssh_key_add_button.click
