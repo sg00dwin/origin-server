@@ -10,6 +10,8 @@ License:   ASL 2.0
 URL:       http://openshift.redhat.com
 Source0:   %{name}-%{version}.tar.gz
 
+Obsoletes: rhc-cartridge-haproxy-1.4
+
 BuildRoot: %(mktemp -ud %{_tmppath}/%{name}-%{version}-%{release}-XXXXXX)
 BuildRequires: git
 Requires:  stickshift-abstract

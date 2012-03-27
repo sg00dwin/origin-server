@@ -12,6 +12,8 @@ Source0: %{name}-%{version}.tar.gz
 BuildRoot:    %(mktemp -ud %{_tmppath}/%{name}-%{version}-%{release}-XXXXXX)
 BuildArch: noarch
 
+Obsoletes: rhc-cartridge-metrics-0.1
+
 Requires: stickshift-abstract
 Requires: rubygem(stickshift-node)
 

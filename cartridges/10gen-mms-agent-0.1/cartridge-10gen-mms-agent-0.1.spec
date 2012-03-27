@@ -12,6 +12,8 @@ Source0: %{name}-%{version}.tar.gz
 BuildRoot:    %(mktemp -ud %{_tmppath}/%{name}-%{version}-%{release}-XXXXXX)
 BuildArch: noarch
 
+Obsoletes: rhc-cartridge-10gen-mms-agent-0.1
+
 Requires: stickshift-abstract
 Requires: cartridge-mongodb-2.0
 Requires: pymongo

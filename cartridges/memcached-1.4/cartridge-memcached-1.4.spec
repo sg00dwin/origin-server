@@ -12,6 +12,8 @@ Source0: %{name}-%{version}.tar.gz
 BuildRoot:    %(mktemp -ud %{_tmppath}/%{name}-%{version}-%{release}-XXXXXX)
 BuildArch: noarch
 
+Obsoletes: rhc-cartridge-memcached-1.4
+
 Requires: rubygem(stickshift-node)
 Requires: stickshift-abstract
 Requires: memcached

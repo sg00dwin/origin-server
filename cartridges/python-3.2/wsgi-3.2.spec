@@ -1,13 +1,15 @@
 %define cartridgedir %{_libexecdir}/stickshift/cartridges/python-2.6
 
 Summary:   Provides python-wsgi-3.2 support
-Name:      cartridge-wsgi-3.2
+Name:      cartridge-python-3.2
 Version:   0.89.4
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   ASL 2.0
 URL:       http://openshift.redhat.com
 Source0:   %{name}-%{version}.tar.gz
+
+Obsoletes: rhc-cartridge-wsgi-3.2
 
 BuildRoot: %(mktemp -ud %{_tmppath}/%{name}-%{version}-%{release}-XXXXXX)
 BuildRequires: git

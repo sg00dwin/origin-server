@@ -12,6 +12,8 @@ Source0: %{name}-%{version}.tar.gz
 BuildRoot:    %(mktemp -ud %{_tmppath}/%{name}-%{version}-%{release}-XXXXXX)
 BuildArch: noarch
 
+Obsoletes: rhc-cartridge-phpmyadmin-3.4
+
 Requires: stickshift-abstract
 Requires: rubygem(stickshift-node)
 Requires: phpMyAdmin

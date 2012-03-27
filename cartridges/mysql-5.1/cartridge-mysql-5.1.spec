@@ -14,6 +14,8 @@ BuildRoot:    %(mktemp -ud %{_tmppath}/%{name}-%{version}-%{release}-XXXXXX)
 BuildRequires: git
 BuildArch: noarch
 
+Obsoletes: rhc-cartridge-mysql-5.1
+
 Requires: stickshift-abstract
 Requires: mysql-server
 Requires: mysql-devel
