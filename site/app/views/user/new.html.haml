@@ -17,13 +17,10 @@
           = recaptcha_tags :ssl => true 
       .control-group
         By signing up you agree to the 
-        %a{:href => '/app/legal/site_terms'} 
-          Terms of Service 
+        = link_to 'Terms of Service', legal_site_terms_path
         and the
-        %a{:href => '/app/legal/openshift_privacy'} 
-          Privacy Policy
+        = link_to 'Privacy Policy', legal_openshift_privacy_path
       .form-actions
         = form.commit_button 'Sign Up', :button_html => {:class => 'btn'}
         or
-        %a{:href => '/app/login'} sign in if you have an account
-            
+        = link_to 'sign in if you have an account', login_path
