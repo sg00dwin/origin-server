@@ -11,7 +11,10 @@ When /^a scaled (.+) application is created$/ do |app_type|
   # Create our app via the curl -s api:
   # Replace when the REST API libraries are complete
   rhc_create_domain(@app)
-  run("curl -s -o /tmp/rhc/json_response_#{@app.name}_#{@app.namespace}.json -k -H 'Accept: application/json' --user '#{@app.login}:fakepw' https://localhost/broker/rest/domains/#{@app.namespace}/applications -X POST -d name=#{@app.name} -d cartridge=#{app_type} -d scale=true")
+  command = "curl -s -o /tmp/rhc/json_response_#{@app.name}_#{@app.namespace}.json -k -H 'Accept: application/json' --user '#{@app.login}:fakepw' https://localhost/broker/rest/domains/#{@app.namespace}/applications -X POST -d name=#{@app.name} -d cartridge=#{app_type} -d scale=true"
+
+  exit_code = runcon command, 'unconfined_u', 'unconfined_r', 'unconfined_t'
+  raise "Could not create scaled app.  Exit code: #{exit_code}.  Json debug: /tmp/rhc/json_response_#{@app.name}_#{@app.namespace}.json" unless exit_code == 0
   fp = File.open("/tmp/rhc/json_response_#{@app.name}_#{@app.namespace}.json")
   json_string = fp.read
   $logger.debug("json string: #{json_string}")
