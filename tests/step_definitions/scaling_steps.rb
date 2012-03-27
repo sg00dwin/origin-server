@@ -14,6 +14,7 @@ When /^a scaled (.+) application is created$/ do |app_type|
   run("curl -s -o /tmp/rhc/json_response_#{@app.name}_#{@app.namespace}.json -k -H 'Accept: application/json' --user '#{@app.login}:fakepw' https://localhost/broker/rest/domains/#{@app.namespace}/applications -X POST -d name=#{@app.name} -d cartridge=#{app_type} -d scale=true")
   fp = File.open("/tmp/rhc/json_response_#{@app.name}_#{@app.namespace}.json")
   json_string = fp.read
+  $logger.debug("json string: #{json_string}")
   app_info = JSON.parse(json_string)
   @app.uid = app_info['data']['uuid']
   fp.close
@@ -36,11 +37,12 @@ Then /^the gear member will( not)? be UP$/ do |negate|
 end
 
 Then /^(\d+) gears will be in the cluster$/ do |count|
-  $logger.debug(`============ GEAR CSV ================`)
+  $logger.debug('============ GEAR CSV ================')
   $logger.debug(`/usr/bin/curl -s -H 'Host: #{@app.name}-#{@app.namespace}.dev.rhcloud.com' -s 'http://localhost/haproxy-status/;csv'`)
-  $logger.debug(`============ GEAR CSV END ============`)
+  $logger.debug('============ GEAR CSV END ============')
   gear_count = `/usr/bin/curl -s -H 'Host: #{@app.name}-#{@app.namespace}.dev.rhcloud.com' -s 'http://localhost/haproxy-status/;csv' | grep -c "express,gear"`
-  gear_count.to_i == count.to_i
+  $logger.debug("Gear count: #{gear_count.to_i} should be #{count.to_i}")
+  raise "Gear counts do not match: #{gear_count.to_i} should be #{count.to_i}" unless gear_count.to_i == count.to_i
 end
 
 Then /^the php-5.3 health\-check will( not)? be successful$/ do |negate|
