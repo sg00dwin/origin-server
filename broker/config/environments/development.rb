@@ -85,7 +85,7 @@ Broker::Application.configure do
   # SS Config
   config.ss = {
     :domain_suffix => "dev.rhcloud.com",
-    :default_max_gears => 5,
+    :default_max_gears => 3,
 
     :dns => {
       :bind => {
