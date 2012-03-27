@@ -3,7 +3,7 @@
 
 Summary:   Li site components
 Name:      rhc-site
-Version:   0.89.5
+Version:   0.89.6
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -117,6 +117,9 @@ rm -rf %{buildroot}
 /bin/touch %{sitedir}/log/production.log
 
 %changelog
+* Mon Mar 26 2012 Dan McPherson <dmcphers@redhat.com> 0.89.6-1
+- 
+
 * Mon Mar 26 2012 Dan McPherson <dmcphers@redhat.com> 0.89.5-1
 - Add treetop for good measure (ccoleman@redhat.com)
 - Update site.spec to take a dependency at build and runtime on rubygem-mail
