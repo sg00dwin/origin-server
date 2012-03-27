@@ -1,13 +1,13 @@
 # mash config file
 
-[libra-rhel-5.7]
+[libra-rhel-5.8]
 rpm_path = %(arch)s/Packages
 repodata_path = %(arch)s/
 source_path = source/SRPMS
 debuginfo = True
 #multilib = True
 #multilib_method = devel
-tag = libra-rhel-5.7
+tag = libra-rhel-5.8
 inherit = True
 strict_keys = True
 #keys = 97A1071F, E8E40FDE, 57BBCCBA, D22E77F2, 4EBFC273, 0B86274E, 6DF2196F, DF9B0AE9
