@@ -135,7 +135,7 @@ class LegacyBrokerController < ApplicationController
          return
        end
        if not cloud_user.applications.empty?
-         cloud_user.application.each do |app|
+         cloud_user.applications.each do |app|
            if app.domain.uuid == domain.uuid
              @reply.resultIO << "Cannot remove namespace #{@namespace}. Remove existing app(s) first: "
              @reply.resultIO << cloud_user.applications.map{|a| a.name}.join("\n")
