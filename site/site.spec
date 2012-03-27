@@ -3,7 +3,7 @@
 
 Summary:   Li site components
 Name:      rhc-site
-Version:   0.89.2
+Version:   0.89.3
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -111,6 +111,9 @@ rm -rf %{buildroot}
 /bin/touch %{sitedir}/log/production.log
 
 %changelog
+* Mon Mar 26 2012 Dan McPherson <dmcphers@redhat.com> 0.89.3-1
+- 
+
 * Mon Mar 26 2012 Dan McPherson <dmcphers@redhat.com> 0.89.2-1
 - remove missed "preview" tag from Management Console header (johnp@redhat.com)
 - Whitelist allowable options to getting_started_external_controller
