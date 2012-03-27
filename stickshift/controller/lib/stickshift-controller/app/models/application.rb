@@ -83,7 +83,7 @@ class Application < StickShift::Cartridge
       cinst = ComponentInstance::find_component_in_cart(prof, self, comp_name, self.get_name_prefix)
       raise StickShift::NodeException.new("Cannot find component '#{comp_name}' in app #{self.name}.", "-101", result_io) if cinst.nil?
       comp,profile,cart = cinst.get_component_definition(self)
-      raise StickShift::UserException.new("#{dep} already embedded in '#{@name}'", 101) if comp.depends.include? feature
+      raise StickShift::UserException.new("#{feature} already embedded in '#{@name}'", 101) if comp.depends.include? feature
       fcart = self.framework
       conn = StickShift::Connection.new("#{feature}-web-#{fcart}")
       conn.components = ["proxy/#{feature}", "web/#{fcart}"]
@@ -150,9 +150,10 @@ Configure-Order: [\"proxy/#{framework}\", \"proxy/haproxy-1.4\"]
       cinst = ComponentInstance::find_component_in_cart(prof, self, comp_name, self.get_name_prefix)
       raise StickShift::NodeException.new("Cannot find component '#{comp_name}' in app #{self.name}.", "-101", result_io) if cinst.nil?
       comp,profile,cart = cinst.get_component_definition(self)
-      raise StickShift::UserException.new("#{dep} already embedded in '#{@name}'", 101) if comp.depends.include? feature
+      raise StickShift::UserException.new("#{feature} not embedded in '#{@name}', try adding it first", 101) if not comp.depends.include? feature
       comp.depends.delete(feature)
     else
+      raise StickShift::UserException.new("#{feature} not embedded in '#{@name}', try adding it first", 101) if not self.requires_feature.include? feature
       self.requires_feature.delete feature
     end
   end
