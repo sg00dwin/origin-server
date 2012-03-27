@@ -8,10 +8,10 @@ include AppHelper
 
 When /^a scaled (.+) application is created$/ do |app_type|
   @app = TestApp.create_unique(app_type)
-  # Create our app via the curl api:
+  # Create our app via the curl -s api:
   # Replace when the REST API libraries are complete
   rhc_create_domain(@app)
-  run("curl -o /tmp/rhc/json_response_#{@app.name}_#{@app.namespace}.json -k -H 'Accept: application/json' --user '#{@app.login}:fakepw' https://localhost/broker/rest/domains/#{@app.namespace}/applications -X POST -d name=#{@app.name} -d cartridge=#{app_type} -d scale=true")
+  run("curl -s -o /tmp/rhc/json_response_#{@app.name}_#{@app.namespace}.json -k -H 'Accept: application/json' --user '#{@app.login}:fakepw' https://localhost/broker/rest/domains/#{@app.namespace}/applications -X POST -d name=#{@app.name} -d cartridge=#{app_type} -d scale=true")
   fp = File.open("/tmp/rhc/json_response_#{@app.name}_#{@app.namespace}.json")
   json_string = fp.read
   app_info = JSON.parse(json_string)
@@ -22,7 +22,7 @@ end
 Then /^the haproxy-status page will( not)? be responding$/ do |negate|
   good_status = negate ? 1 : 0
 
-  command = "/usr/bin/curl -H 'Host: #{@app.name}-#{@app.namespace}.dev.rhcloud.com' -s 'http://localhost/haproxy-status/;csv' | /bin/grep -q -e '^stats,FRONTEND'"
+  command = "/usr/bin/curl -s -H 'Host: #{@app.name}-#{@app.namespace}.dev.rhcloud.com' -s 'http://localhost/haproxy-status/;csv' | /bin/grep -q -e '^stats,FRONTEND'"
   exit_status = runcon command, 'unconfined_u', 'unconfined_r', 'unconfined_t'
   exit_status.should == good_status
 end
@@ -30,20 +30,23 @@ end
 Then /^the gear member will( not)? be UP$/ do |negate|
   good_status = negate ? 1 : 0
 
-  command = "/usr/bin/curl -H 'Host: #{@app.name}-#{@app.namespace}.dev.rhcloud.com' -s 'http://localhost/haproxy-status/;csv' | awk -F',' '/express,gear/{ if($18!=\"UP\") exit 1  }'"
+  command = "/usr/bin/curl -s -H 'Host: #{@app.name}-#{@app.namespace}.dev.rhcloud.com' -s 'http://localhost/haproxy-status/;csv' | awk -F',' '/express,gear/{ if($18!=\"UP\") exit 1  }'"
   exit_status = runcon command, 'unconfined_u', 'unconfined_r', 'unconfined_t'
   exit_status.should == good_status
 end
 
 Then /^(\d+) gears will be in the cluster$/ do |count|
-  gear_count = `/usr/bin/curl -H 'Host: #{@app.name}-#{@app.namespace}.dev.rhcloud.com' -s 'http://localhost/haproxy-status/;csv' | grep -c "express,gear"`
+  $logger.debug(`============ GEAR CSV ================`)
+  $logger.debug(`/usr/bin/curl -s -H 'Host: #{@app.name}-#{@app.namespace}.dev.rhcloud.com' -s 'http://localhost/haproxy-status/;csv'`)
+  $logger.debug(`============ GEAR CSV END ============`)
+  gear_count = `/usr/bin/curl -s -H 'Host: #{@app.name}-#{@app.namespace}.dev.rhcloud.com' -s 'http://localhost/haproxy-status/;csv' | grep -c "express,gear"`
   gear_count.to_i == count.to_i
 end
 
 Then /^the php-5.3 health\-check will( not)? be successful$/ do |negate|
   good_status = negate ? 1 : 0
 
-  command = "/usr/bin/curl -H 'Host: #{@app.name}-#{@app.namespace}.dev.rhcloud.com' -s 'http://localhost/health_check.php' | grep -q -e '^1$'"
+  command = "/usr/bin/curl -s -H 'Host: #{@app.name}-#{@app.namespace}.dev.rhcloud.com' -s 'http://localhost/health_check.php' | grep -q -e '^1$'"
   exit_status = runcon command, 'unconfined_u', 'unconfined_r', 'unconfined_t'
   exit_status.should == good_status
 end
@@ -75,6 +78,4 @@ end
 When /^(\d+) concurrent http connections are generated for (\d+) seconds$/ do |concurrent, seconds|
   cmd = "ab -H 'Host: #{@app.name}-#{@app.namespace}.dev.rhcloud.com' -c #{concurrent} -t #{seconds} http://localhost/ > /tmp/rhc/http_load_test_#{@app.name}_#{@app.namespace}.txt"
   exit_status = runcon cmd, 'unconfined_u', 'unconfined_r', 'unconfined_t'
-  puts exit_status
-  exit_status
 end
