@@ -1,17 +1,15 @@
 require 'test_helper'
 
 class ProductControllerTest < ActionController::TestCase
-  test "express" do
-    get :express
+  
+  test "should show overview" do
+    get :overview
     assert_response :success
   end
 
-  test "express with confirm email" do
-    session[:confirm_flow] = true
-    get :express
-    assert_redirected_to login_path
-    assert_not_nil flash[:notice]
-    assert_nil session[:confirm_flow]
+  test "should show getting started" do
+    get :getting_started
+    assert_response :success
   end
 
 end

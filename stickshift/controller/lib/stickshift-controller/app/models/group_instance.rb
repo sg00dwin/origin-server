@@ -48,14 +48,23 @@ class GroupInstance < StickShift::UserModel
   def add_gear(app)
     gear = Gear.new(app, self)
     #FIXME: backward compat: first gears UUID = app.uuid
-    gear.uuid = app.uuid if not app.scalable
+    if app.scalable
+      # Override/set gear's uuid with app's uuid if its a scalable app w/ the
+      # proxy component.
+      if self.component_instances.include? "@@app/comp-proxy/cart-haproxy-1.4"
+        gear.uuid = app.uuid
+      end
+    else
+      # For non scalable app's, gear's uuid is the app uuid.
+      gear.uuid = app.uuid
+    end
     create_result = gear.create
     unless create_result.exitcode == 0
       raise NodeException.new("Unable to create gear on node", "-100", create_result)
     end
     self.gears << gear
     if app.scalable
-      app.add_dns(gear.name, app.user.namespace, gear.get_proxy.get_public_hostname)
+      app.add_dns(gear.name, app.domain.namespace, gear.get_proxy.get_public_hostname)
     end
     app.add_node_settings([gear])
     return [create_result, gear]

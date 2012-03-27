@@ -49,7 +49,7 @@ do
     chown root:root "$dst"
     chmod 0644 "$dst"
     chcon --reference="$xlate" "$dst"
-    if [ "$xlate" != "OPENSHIFT_APP_UUID" -a "$xlate" != "OPENSHIFT_APP_NAME" -a "$xlate" != "OPENSHIFT_APP_DNS" ]; then
+    if [ "$xlate" != "OPENSHIFT_APP_UUID" -a "$xlate" != "OPENSHIFT_APP_NAME" -a "$xlate" != "OPENSHIFT_APP_DNS" -a "$xlate" != "OPENSHIFT_APP_DIR" ]; then
       TRANSLATE_GEAR_VARS="$xlate $dst ${TRANSLATE_GEAR_VARS}"
       echo "export TRANSLATE_GEAR_VARS='${TRANSLATE_GEAR_VARS}'" > TRANSLATE_GEAR_VARS
       chown root:root TRANSLATE_GEAR_VARS
@@ -59,5 +59,15 @@ do
     fi
   fi
 done
+
+# Fixup for re-exposing APP_DIR from a previous run
+if [ -e TRANSLATE_GEAR_VARS ]; then
+  if [ -f OPENSHIFT_GEAR_DIR -a \! -f OPENSHIFT_APP_DIR ]; then
+    sed -e 's/OPENSHIFT_GEAR_DIR/OPENSHIFT_APP_DIR/g' OPENSHIFT_GEAR_DIR > OPENSHIFT_APP_DIR
+    chown root:root OPENSHIFT_APP_DIR
+    chmod 0644 OPENSHIFT_APP_DIR
+    chcon --reference=OPENSHIFT_GEAR_DIR OPENSHIFT_APP_DIR
+  fi
+fi
 
 exit 0

@@ -109,7 +109,7 @@ module Express
           cmd += " --named '#{app.name}'" if app.name
           cmd += " --with-quota-blocks '#{quota_blocks}'" if quota_blocks
           cmd += " --with-quota-files '#{quota_files}'" if quota_files
-          cmd += " --with-namespace '#{app.user.namespace}'"
+          cmd += " --with-namespace '#{app.domain.namespace}'"
           mcoll_reply = execute_direct(@@C_CONTROLLER, 'app-create', cmd)
           result = parse_result(mcoll_reply)
           if result.exitcode == 129 && has_uid_or_gid?(app.gear.uid) # Code to indicate uid already taken
@@ -396,8 +396,7 @@ module Express
         orig_uid = app.gear.uid
 
         log_debug "DEBUG: Moving app '#{app.name}' with uuid #{app.gear.uuid} from #{source_container.id} to #{destination_container.id}"
-        
-        url = "http://#{app.name}-#{app.user.namespace}.#{Rails.configuration.ss[:domain_suffix]}"
+        url = "http://#{app.name}-#{app.domain.namespace}.#{Rails.configuration.ss[:domain_suffix]}"
         
         reply = ResultIO.new
         leave_stopped = false
@@ -625,7 +624,7 @@ module Express
         rpc_client = rpc_exec_direct('libra')
         result = nil
         begin
-          Rails.logger.debug "DEBUG: rpc_client.custom_request('set_district', #{mc_args.inspect}, #{@id}, {'identity' => #{@id}})"
+          Rails.logger.debug "DEBUG: rpc_client.custom_request('set_district', #{mc_args.inspect}, @id, {'identity' => @id})"
           result = rpc_client.custom_request('set_district', mc_args, @id, {'identity' => @id})
           Rails.logger.debug "DEBUG: #{result.inspect}"
         ensure
@@ -721,7 +720,7 @@ module Express
           rpc_client = rpc_exec_direct('libra')
           result = nil
           begin
-            Rails.logger.debug "DEBUG: rpc_client.custom_request('cartridge_do', #{mc_args.inspect}, #{@id}, {'identity' => #{@id}})"
+            Rails.logger.debug "DEBUG: rpc_client.custom_request('cartridge_do', mc_args.inspect, @id, {'identity' => @id})"
             result = rpc_client.custom_request('cartridge_do', mc_args, @id, {'identity' => @id})
             Rails.logger.debug "DEBUG: #{result.inspect}" if log_debug_output
           ensure
@@ -735,7 +734,7 @@ module Express
         
         mcoll_result = mcoll_reply[0]
         output = nil
-        if (mcoll_result && defined? mcoll_result.results && mcoll_result.results.has_key?(:data))
+        if (mcoll_result && (defined? mcoll_result.results) && !mcoll_result.results[:data].nil?)
           output = mcoll_result.results[:data][:output]
           result.exitcode = mcoll_result.results[:data][:exitcode]
         else
@@ -856,12 +855,13 @@ module Express
       end
       
       def run_cartridge_command(framework, app, gear, command, arg=nil, allow_move=true)
-        arguments = "'#{gear.name}' '#{app.user.namespace}' '#{gear.uuid}'"
+
+        arguments = "'#{gear.name}' '#{app.domain.namespace}' '#{gear.uuid}'"
         arguments += " '#{arg}'" if arg
 
         if allow_move
-          Nurture.application(app.user.login, app.user.uuid, app.name, app.user.namespace, framework, command, app.uuid)
-          Apptegic.application(app.user.login, app.user.uuid, app.name, app.user.namespace, framework, command, app.uuid)
+          Nurture.application(app.user.login, app.user.uuid, app.name, app.domain.namespace, framework, command, app.uuid)
+          Apptegic.application(app.user.login, app.user.uuid, app.name, app.domain.namespace, framework, command, app.uuid)
         end
         
         result = execute_direct(framework, command, arguments)
@@ -872,8 +872,8 @@ module Express
             @id = e.server_identity
             Rails.logger.debug "DEBUG: Changing server identity of '#{gear.name}' from '#{gear.server_identity}' to '#{@id}'"
             dns_service = StickShift::DnsService.instance
-            dns_service.deregister_application(app.name, app.user.namespace)
-            dns_service.register_application(app.name, app.user.namespace, get_public_hostname)
+            dns_service.deregister_application(app.name, app.domain.namespace)
+            dns_service.register_application(app.name, app.domain.namespace, get_public_hostname)
             dns_service.publish
             gear.server_identity = @id
             app.save
@@ -1082,29 +1082,23 @@ module Express
       end
 
       def self.execute_parallel_jobs_impl(handle)
-        id_list = handle.keys
-        id_list.each { |id| 
-          begin
-            job_list = handle[id]
-            options = ApplicationContainerProxy.rpc_options
-            rpc_client = rpcclient('libra', :options => options)
-            # mc_args = { :joblist => JSON.generate(job_list) }
-            mc_args = { :joblist => job_list }
-            mcoll_reply = rpc_client.custom_request('execute_parallel', mc_args, id, {'identity' => id})
-            rpc_client.disconnect
-            if mcoll_reply and mcoll_reply.length>0
-              mcoll_reply = mcoll_reply[0]
+        begin
+          options = ApplicationContainerProxy.rpc_options
+          rpc_client = rpcclient('libra', :options => options)
+          mc_args = handle.clone
+          rpc_client.custom_request('execute_parallel', mc_args, nil, {'identity' => handle.keys}).each { |mcoll_reply|
+            if mcoll_reply.results[:statuscode] == 0              
               output = mcoll_reply.results[:data][:output]
               exitcode = mcoll_reply.results[:data][:exitcode]
-              Rails.logger.debug("DEBUG: Output of parallel execute: #{output}, status: #{exitcode}")
-              handle[id] = output if exitcode==0
+              sender = mcoll_reply.results[:sender]
+              Rails.logger.debug("DEBUG: Output of parallel execute: #{output}, exitcode: #{exitcode}, from: #{sender}")
+              handle[sender] = output if exitcode == 0
             end
-          ensure
-            rpc_client.disconnect
-          end
-        }
+          }
+        ensure
+          rpc_client.disconnect
+        end
       end
-      
     end
   end
 end

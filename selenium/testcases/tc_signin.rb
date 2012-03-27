@@ -1,8 +1,4 @@
 require 'openshift/selenium_test_case'
-require 'openshift/express/dialogs'
-require 'openshift/express/navbars'
-require 'openshift/express/pages'
-require 'openshift/express/forms'
 
 class Signin < OpenShift::SeleniumTestCase
 
@@ -11,15 +7,12 @@ class Signin < OpenShift::SeleniumTestCase
     @home.open
   end
 
-  def test_signin_dialog_errors
+  def test_signin_errors
     # Submit with no inputs
-    open_dialog(:signin){ |signin|
-      signin.submit
-      # Make sure both errors exist and are correct
-      [ :login, :password ].each do |field|
-        assert_dialog_error(signin,:label,field,[:required_field])
-      end
-    }
+    @login_page.open
+    @login_page.submit
+
+    assert @login_page.login_form.in_error?(:password)
 
     ## Try an invalid login
     ## TODO: not possible on a dev env.  create a way to reproduce "bad logins"
@@ -35,13 +28,11 @@ class Signin < OpenShift::SeleniumTestCase
 
     # Try a valid login
     signin
-    assert_redirected_to '/app/platform'
+    assert_redirected_to '/app/console/application_types'
 
-    # Make sure that we're greeted
-    assert_match "Greetings, #{@valid_credentials[:email]}!", @navbar.text(@navbar.link(:greeting))
-
+    # FIXME: when navbar functionality is restored click the logout link instead
     # Log out and make sure we're redirected
-    @navbar.click(:signout)
-    assert_redirected_to '/app/login'
+    signout
+    assert_redirected_to '/app/'
   end
 end

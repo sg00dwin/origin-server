@@ -8,12 +8,6 @@ class EmbCartController < BaseController
     domain_id = params[:domain_id]
     id = params[:application_id]
     Rails.logger.debug "Getting cartridges for application #{id} under domain #{domain_id}"
-    if @cloud_user.nil?
-      @reply = RestReply.new(:not_found)
-      @reply.messages.push(Message.new(:error, "User #{@login} not found", 99))
-      respond_with @reply, :status => @reply.status
-      return
-    end
     application = Application.find(@cloud_user,id)
     if application.nil?
       @reply = RestReply.new(:not_found)
@@ -39,12 +33,6 @@ class EmbCartController < BaseController
     application_id = params[:application_id]
     id = params[:id]
     Rails.logger.debug "Getting cartridge #{id} for application #{application_id} under domain #{domain_id}"
-    if @cloud_user.nil?
-      @reply = RestReply.new(:not_found)
-      @reply.messages.push(Message.new(:error, "User #{@login} not found", 99))
-      respond_with @reply, :status => @reply.status
-      return
-    end
     application = Application.find(@cloud_user,application_id)
     if application.nil?
       @reply = RestReply.new(:not_found)

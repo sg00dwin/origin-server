@@ -35,28 +35,45 @@ module Express
           return check_broker_key(login, password)
         else
           unless Rails.configuration.auth[:integrated]
-            {:username => login, :auth_method => :login}
+            token = {:username => login, :auth_method => :login}
           else
-            return check_login(request, login, password)
+            token = check_login(request, login, password)
           end
         end
+        Rails.logger.debug "Adding user #{login}...inside authenticate"
+        cloud_user = CloudUser.find login
+        if cloud_user.nil?
+           cloud_user = CloudUser.new(login)
+           cloud_user.save
+        end
+        return token
       end
       
       def login(request, params, cookies)
         data = JSON.parse(params['json_data'])
-
+        token = nil
         username = nil
         if params['broker_auth_key'] && params['broker_auth_iv']
-          return check_broker_key(params['broker_auth_key'],params['broker_auth_iv'])
+          token = check_broker_key(params['broker_auth_key'],params['broker_auth_iv'])
         else
+          login = data['rhlogin']
           unless Rails.configuration.auth[:integrated]
-            {:username => data['rhlogin'], :auth_method => :login}
+            token = {:username => data['rhlogin'], :auth_method => :login}
           else
-            login = data['rhlogin']
             password = params['password']
-            return check_login(request, login, password)
+            token =  check_login(request, login, password)
           end
         end
+        if token
+          username = token[:username]
+          Rails.logger.debug "Adding user #{username}...inside login"
+          cloud_user = CloudUser.find username
+          if cloud_user.nil?
+            cloud_user = CloudUser.new(username)
+            cloud_user.save
+          end
+        end
+        return token
       end
       
       private
@@ -93,7 +110,7 @@ module Express
             end
             check_access(roles)
             rhlogin = login
-          rescue StickShift::AccessDeniedException
+          #rescue StickShift::AccessDeniedException
           end
         end
         

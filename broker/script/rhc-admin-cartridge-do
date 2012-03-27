@@ -2,62 +2,71 @@
 
 require 'rubygems'
 require 'getoptlong'
-require 'mcollective'
 
-include MCollective::RPC
+def usage
+    puts <<USAGE
+== Synopsis
 
-options = rpcoptions do |parser, options|
-    parser.define_head "Control libra agent"
-    parser.banner = "Usage: rhc-admin-cartridge-do [options]"
+rhc-admin-cartridge-do: Run cartridge hooks
 
-    parser.on('-a', '--action ACTION', 'Action to call') do |action|
-      options[:action] = action
-    end
+== Usage
 
-    parser.on('-f', '--cartridge CARTRIDGE', "Cartridge (e.g. php-5.3)") do |cartridge|
-      options[:cartridge] = cartridge
-    end
+rhc-admin-cartridge-do OPTIONS
 
-    parser.on('-n', '--app APP', 'Application name') do |app_name|
-      options[:app_name] = app_name
-    end
+Options:
+-l|--rhlogin <rhlogin>
+    Red Hat login (RHN or OpenShift login with OpenShift Express access) (required)
+-a|--app     <application>
+    Application name  (alphanumeric) (required)
+-c|--command <command>
+    (start|stop|force-stop|restart|status|destroy) (required)
+-f|--cartridge
+    Cartridge
+-t|--timeout
+    timeout
+-h|--help
+    Show Usage info
+USAGE
+end
 
-    parser.on('-l', '--rhlogin RHLOGIN', 'Account to act on') do |rhlogin|
-      options[:rhlogin] = rhlogin
-    end
+opts = GetoptLong.new(
+    ["--rhlogin",          "-l", GetoptLong::REQUIRED_ARGUMENT],
+    ["--app",              "-a", GetoptLong::REQUIRED_ARGUMENT],    
+    ["--command",          "-c", GetoptLong::REQUIRED_ARGUMENT],
+    ["--cartridge",        "-f", GetoptLong::REQUIRED_ARGUMENT],
+    ["--timeout",          "-t", GetoptLong::REQUIRED_ARGUMENT],
+    ["--help",             "-h", GetoptLong::NO_ARGUMENT]
+)
+
+args = {}
+begin
+    opts.each{ |k,v| args[k]=v }
+rescue GetoptLong::Error => e
+    usage
+    exit -100
+end
+
+login    = args["--rhlogin"]
+app_name = args["--app"]
+command  = args['--command']
+cartridge  = args['--cartridge']
+timeout  = args['--timeout']
+
+if login.nil? or app_name.nil? or command.nil? or cartridge.nil? or args["--help"]
+  usage
+  exit 1
 end
 
 require "/var/www/stickshift/broker/config/environment"
 
-unless options.include?(:action)
-    puts "Specify action"
-    exit 1
-end
-
-unless options.include?(:cartridge) || options[:action] != 'configure'
-    puts "You need to specify a cartridge for configure"
-    exit 1
-end
-
-unless options.include?(:app_name)
-    puts "Specify app name"
-    exit 1
-end
-
-unless options.include?(:rhlogin)
-    puts "Specify rhlogin"
-    exit 1
-end
-
 # Set the MCollective options
-if options[:timeout] && options[:timeout] < 30
-    options[:timeout] = 30
+if timeout
+  Rails.configuration.rpc_opts[:timeout] = timeout.to_i 
 end
 
-#Rails.configuration.rpc_opts = options
-user = CloudUser.find(options[:rhlogin])
-app  = Application.find(user,options[:app_name])
-reply = app.container.send(:run_cartridge_command, options[:cartridge], app, options[:action], nil, false)
+user = CloudUser.find(login)
+app  = Application.find(user, app_name)
+reply = app.container.send(:run_cartridge_command, cartridge, app, app.gear, command, nil, false)
 
 puts "DEBUG OUTPUT:\n#{reply.debugIO.string}\n" unless reply.debugIO.string.empty?
 puts "ERROR OUTPUT:\n#{reply.errorIO.string}\n" unless reply.errorIO.string.empty?

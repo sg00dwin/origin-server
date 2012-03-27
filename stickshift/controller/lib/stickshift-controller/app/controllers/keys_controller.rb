@@ -4,14 +4,8 @@ class KeysController < BaseController
   include LegacyBrokerHelper
   #GET /user/keys
   def index
-    if(@cloud_user.nil?)
-      @reply = RestReply.new(:not_found)
-      @reply.messages.push(Message.new(:error, "User #{@login} not found", 99))
-      respond_with @reply, :status => @reply.status
-    return
-    end
     ssh_keys = Array.new
-    unless @cloud_user.ssh_keys.nil?
+    unless @cloud_user.ssh_keys.nil? 
       @cloud_user.ssh_keys.each do |name, key|
         ssh_key = RestKey.new(name, key["key"], key["type"])
         ssh_keys.push(ssh_key)
@@ -24,12 +18,6 @@ class KeysController < BaseController
   #GET /user/keys/<id>
   def show
     id = params[:id]
-    if @cloud_user.nil? or @cloud_user.ssh_keys.nil?
-      @reply = RestReply.new(:not_found)
-      @reply.messages.push(Message.new(:error, "User #{@login} not found", 99))
-      respond_with @reply, :status => @reply.status
-    return
-    end
     if @cloud_user.ssh_keys
       @cloud_user.ssh_keys.each do |key_name, key|
         if key_name == id
@@ -52,13 +40,6 @@ class KeysController < BaseController
     type = params[:type]
     
     Rails.logger.debug "Creating key name:#{name} type:#{type} for user #{@login}"
-
-    if(@cloud_user.nil?)
-      @reply = RestReply.new(:not_found)
-      @reply.messages.push(Message.new(:error, "User #{@login} not found", 99))
-      respond_with @reply, :status => @reply.status
-    return
-    end
 
     key = Key.new(name, type, content)
     if key.invalid?
@@ -104,17 +85,6 @@ class KeysController < BaseController
     type = params[:type]
     
     Rails.logger.debug "Updating key name:#{id} type:#{type} for user #{@login}"
-
-    if(@cloud_user.nil?)
-      @reply = RestReply.new(:not_found)
-      @reply.messages.push(Message.new(:error, "User #{@login} not found", 99))
-      respond_with(@reply) do |format|
-        format.xml { render :xml => @reply, :status => @reply.status }
-        format.json { render :json => @reply, :status => @reply.status }
-      end
-    return
-    end
-
     key = Key.new(id, type, content)
     if key.invalid?
       @reply = RestReply.new(:unprocessable_entity)
@@ -166,17 +136,6 @@ class KeysController < BaseController
   #DELETE /user/keys/<id>
   def destroy
     id = params[:id]
-
-    if(@cloud_user.nil?)
-      @reply = RestReply.new(:not_found)
-      @reply.messages.push(Message.new(:error, "User #{@login} not found", 99))
-      respond_with(@reply) do |format|
-        format.xml { render :xml => @reply, :status => @reply.status }
-        format.json { render :json => @reply, :status => @reply.status }
-      end
-    return
-    end
-
     if @cloud_user.ssh_keys.nil? or not @cloud_user.ssh_keys.has_key?(id)
       @reply = RestReply.new(:not_found)
       @reply.messages.push(Message.new(:error, "SSH key with name #{id} not found for user #{@login}", 118))

@@ -1,223 +1,218 @@
 RedHatCloud::Application.routes.draw do
 
-  scope Rails.configuration.app_scope do
-    # Map all the actions on the home controller
+  # The priority is based upon order of creation:
+  # first created -> highest priority.
 
-    # The priority is based upon order of creation:
-    # first created -> highest priority.
+  # Legacy redirects
+  match 'access/express(/:request)' => app_redirect('express')
+  match 'access/flex(/:request)' => app_redirect('flex')
+  match 'features' => app_redirect('platform'), :as => 'features'
+  match 'power' => app_redirect('platform')
+  match 'about' => app_redirect('platform'), :as => 'about'
+  match 'express' => app_redirect('platform'), :as => 'express'
+  match 'flex' => app_redirect('platform'), :as => 'flex'
+  match 'flex_redirect' => app_redirect('flex'), :as => 'flex_redirect'
+  match 'email_confirm_flex' => app_redirect {|p, req| "email_confirm?#{req.query_string}"}
+  match 'email_confirm_express' => app_redirect {|p, req| "email_confirm?#{req.query_string}"}
+  match 'user/new' => app_redirect('account/new'), :via => [:get]
+  match 'user/new/flex' => app_redirect('account/new'), :via => [:get]
+  match 'user/new/express' => app_redirect('account/new'), :via => [:get]
+  match 'user/complete' => app_redirect('account/complete'), :via => [:get]
 
-    # Legacy redirects
-    match 'access/express(/:request)', :to => redirect('/app/express')
-    match 'access/flex(/:request)', :to => redirect('/app/flex')
-    match 'features', :to => redirect('/app/platform'), :as => 'features'
-    match 'power', :to => redirect('/app/platform')
-    match 'about', :to => redirect('/app/platform'), :as => 'about'
-    match 'express', :to => redirect('/app/platform'), :as => 'express'
-    match 'flex', :to => redirect('/app/platform'), :as => 'flex'
-    match 'flex_redirect', :to => redirect('/app/flex'), :as => 'flex_redirect'
-    match 'email_confirm_flex' => redirect {|p, req| "/app/email_confirm?#{req.query_string}"}
-    match 'email_confirm_express' => redirect {|p, req| "/app/email_confirm?#{req.query_string}"}
-    match 'user/new' => redirect('/app/account/new'), :via => [:get]
-    match 'user/new/flex' => redirect('/app/account/new'), :via => [:get]
-    match 'user/new/express' => redirect('/app/account/new'), :via => [:get]
-    match 'user/complete' => redirect('/app/account/complete'), :via => [:get]
+  #Marketing site
+  match 'getting_started' => 'product#getting_started', :as => 'getting_started'
+  match 'getting_started/express' => app_redirect('getting_started')
+  match 'getting_started/flex' => app_redirect('getting_started')
+  match 'getting_started_external/:registration_referrer' => 'getting_started_external#show'
+  match 'platform' => 'product#overview', :as => 'product_overview'
+  match 'partners/join' => 'partner#join', :as=> 'join_partner'
 
-    #Marketing site
-    match 'getting_started' => 'product#getting_started', :as => 'getting_started'
-    match 'getting_started/express', :to => redirect('/app/getting_started')
-    match 'getting_started/flex', :to => redirect('/app/getting_started')
-    match 'getting_started_external/:registration_referrer' => 'getting_started_external#show'
-    match 'platform' => 'product#overview', :as => 'product_overview'
-    match 'partners/join' => 'partner#join', :as=> 'join_partner'
+  # Buzz
+  match 'twitter_latest_tweet' => 'twitter#latest_tweet'
+  match 'twitter_latest_retweets' => 'twitter#latest_retweets'
 
-    # Buzz
-    match 'twitter_latest_tweet' => 'twitter#latest_tweet'
-    match 'twitter_latest_retweets' => 'twitter#latest_retweets'
+  resource :account,
+           :controller => "user",
+           :only => [:new, :create, :show] do
+    get :complete, :on => :member
+  end
+  # preserve legacy support for this path
+  match 'user/create/external' => 'user#create_external', :via => [:post]
 
-    resource :account,
-             :controller => "user",
-             :only => [:new, :create, :show] do
-      get :complete, :on => :member
+  scope '/account' do
+    resource :password,
+             :controller => "password" do
+      match 'edit' => 'password#update', :via => :put
+      member do
+        get :reset
+        get :success
+      end
     end
-    # preserve legacy support for this path
-    match 'user/create/external' => 'user#create_external', :via => [:post]
+#    resource :express_domains,
+#             :controller => "express_domain" do
+#      match 'edit_namespace' => 'express_domain#account_update', :via => :put
+#      match 'edit_sshkey' => 'express_domain#account_update', :via => :put
+#      match 'edit_namespace' => 'express_domain#edit_namespace', :via => :get
+#      match 'edit_sshkey' => 'express_domain#edit_sshkey', :via => :get
+#    end
+#    resource :express_sshkeys,
+#             :controller => "express_ssh_keys" do
+#      match 'add_sshkey' => 'express_ssh_keys#add_sshkey', :via => :get
+#      match 'add_sshkey' => 'express_ssh_keys#create', :via => :post
+#      match 'edit_sshkey/:key_name' => 'express_ssh_keys#edit_sshkey', :via => :get
+#      match 'edit_sshkey' => 'express_ssh_keys#create', :via => :put
+#      match 'delete_sshkey/:key_name' => 'express_ssh_keys#delete_sshkey', :via => :delete
+#    end
 
-    scope '/account' do
-      resource :password,
-               :controller => "password" do
-        match 'edit' => 'password#update', :via => :put
-        member do
-          get :reset
-          get :success
-        end
-      end
-      resource :express_domains,
-               :controller => "express_domain" do
-        match 'edit_namespace' => 'express_domain#account_update', :via => :put
-        match 'edit_sshkey' => 'express_domain#account_update', :via => :put
-        match 'edit_namespace' => 'express_domain#edit_namespace', :via => :get
-        match 'edit_sshkey' => 'express_domain#edit_sshkey', :via => :get
-      end
-      resource :express_sshkeys,
-               :controller => "express_ssh_keys" do
-        match 'add_sshkey' => 'express_ssh_keys#add_sshkey', :via => :get
-        match 'add_sshkey' => 'express_ssh_keys#create', :via => :post
-        match 'edit_sshkey/:key_name' => 'express_ssh_keys#edit_sshkey', :via => :get
-        match 'edit_sshkey' => 'express_ssh_keys#create', :via => :put
-        match 'delete_sshkey/:key_name' => 'express_ssh_keys#delete_sshkey', :via => :delete
-      end
+    resource :domain, :only => [:new, :create, :edit, :update]
+    resources :keys, :only => [:new, :create, :destroy]
+  end
 
-      resource :domain, :only => [:new, :create, :edit, :update]
-      resources :keys, :only => [:new, :create, :destroy]
-    end
-
-    # deprecated, move to :account
-    #resource :user,
-    #         :path => :account,
-    #         :as => "web_user",
-    #         :controller => "user"
-    
-    # legacy routes
-    #match 'user' => 'user#new', :as => :user, :via => [:get]
-    #match 'user' => 'user#show', :via => :get
-
-    # deprecated, use :password
-    #match 'user/request_password_reset_form' => 'user#request_password_reset_form', :via => [:get], :as => 'new_password'
-    #match 'user/request_password_reset_success' => 'user#request_password_reset_success', :via => [:get]
-    #match 'user/request_password_reset' => redirect() 'user#request_password_reset', :via => [:post]
-    match 'user/reset_password' => redirect {|p, req| "/app/account/password/reset?#{req.query_string}"}, :via => [:get]
-    match 'email_confirm' => 'email_confirm#confirm'
-    match 'email_confirm_external/:registration_referrer' => 'email_confirm#confirm_external'
-    
-    #match 'user/change_password' => 'user#change_password', :via => [:post]
-
-    match 'user' => redirect('/app/account/new'), :via => [:get]
-
-    resource :terms,
-             :as => "terms",
-             :controller => "terms",
-             :path_names => { :new => 'accept' },
-             :only => [:new, :create]
-
-    match 'legal/acceptance_terms' => 'terms#acceptance_terms', :as => 'acceptance_terms'
-
-    match 'video/:name' => 'video#show', :as => 'video'
-
-    match 'legal' => 'legal#show'
-    match 'legal/site_terms' => 'legal#site_terms'
-    match 'legal/services_agreement' => 'legal#services_agreement'
-    match 'legal/acceptable_use' => 'legal#acceptable_use'
-    match 'legal/openshift_privacy' => 'legal#openshift_privacy'
-    match 'legal/opensource_disclaimer' => 'legal#opensource_disclaimer'
-
-    # suggest we consolidate login/logout onto a session controller
-    resource :login,
-             :controller => "login",
-             :only => [:show, :create]
-    match 'login/flex' => 'login#show_flex', :via => [:get]
-    match 'login/express' => 'login#show_express', :via => [:get]
-
-    resource :logout,
-             :controller => "logout",
-             :only => [:show]
-    match 'logout/flex' => 'logout#show_flex', :via => [:get]
-    match 'logout/express' => 'logout#show_express', :via => [:get]
-
-    resources :partners,
-              :controller => "partner",
-              :only => [:show, :index]
-
-    resource :express_domain,
-             :controller => "express_domain",
-             :as => "express_domains",
-             :only => [:new, :create]
+  # deprecated, move to :account
+  #resource :user,
+  #         :path => :account,
+  #         :as => "web_user",
+  #         :controller => "user"
   
-    resource  :express_app,
-              :controller => "express_app",
-              :as => "express_apps",
-              :only => [:new, :create]
+  # legacy routes
+  #match 'user' => 'user#new', :as => :user, :via => [:get]
+  #match 'user' => 'user#show', :via => :get
 
-    scope '/console' do
-      match 'help' => 'console#help', :via => :get, :as => 'console_help'
+  # deprecated, use :password
+  #match 'user/request_password_reset_form' => 'user#request_password_reset_form', :via => [:get], :as => 'new_password'
+  #match 'user/request_password_reset_success' => 'user#request_password_reset_success', :via => [:get]
+  #match 'user/request_password_reset' => redirect() 'user#request_password_reset', :via => [:post]
+  match 'user/reset_password' => app_redirect {|p, req| "account/password/reset?#{req.query_string}"}, :via => [:get]
+  match 'email_confirm' => 'email_confirm#confirm'
+  match 'email_confirm_external/:registration_referrer' => 'email_confirm#confirm_external'
+  
+  #match 'user/change_password' => 'user#change_password', :via => [:post]
 
-      resources :application_types, :only => [:show, :index], :id => /[^\/]+/
-      resources :applications,
-                :controller => "applications" do 
-        resources :cartridges,
-                  :controller => "cartridges",
-                  :only => [:show, :create, :index], :id => /[^\/]+/
-        resources :cartridge_types, :only => [:show, :index], :id => /[^\/]+/
-        member do
-          get :delete
-          get :get_started
-        end
+  match 'user' => app_redirect('account/new'), :via => [:get]
+
+  resource :terms,
+           :as => "terms",
+           :controller => "terms",
+           :path_names => { :new => 'accept' },
+           :only => [:new, :create]
+
+  match 'legal/acceptance_terms' => 'terms#acceptance_terms', :as => 'acceptance_terms'
+
+  match 'video/:name' => 'video#show', :as => 'video'
+
+  match 'legal' => 'legal#show'
+  match 'legal/site_terms' => 'legal#site_terms'
+  match 'legal/services_agreement' => 'legal#services_agreement'
+  match 'legal/acceptable_use' => 'legal#acceptable_use'
+  match 'legal/openshift_privacy' => 'legal#openshift_privacy'
+  match 'legal/opensource_disclaimer' => 'legal#opensource_disclaimer'
+
+  # suggest we consolidate login/logout onto a session controller
+  resource :login,
+           :controller => "login",
+           :only => [:show, :create]
+  match 'login/flex' => 'login#show_flex', :via => [:get]
+  match 'login/express' => 'login#show_express', :via => [:get]
+
+  resource :logout,
+           :controller => "logout",
+           :only => [:show]
+  match 'logout/flex' => 'logout#show_flex', :via => [:get]
+  match 'logout/express' => 'logout#show_express', :via => [:get]
+
+  resources :partners,
+            :controller => "partner",
+            :only => [:show, :index]
+
+#  resource :express_domain,
+#           :controller => "express_domain",
+#           :as => "express_domains",
+#           :only => [:new, :create]
+#
+#  resource  :express_app,
+#            :controller => "express_app",
+#            :as => "express_apps",
+#            :only => [:new, :create]
+
+  scope '/console' do
+    match 'help' => 'console#help', :via => :get, :as => 'console_help'
+
+    resources :application_types, :only => [:show, :index], :id => /[^\/]+/
+    resources :applications,
+              :controller => "applications" do 
+      resources :cartridges,
+                :controller => "cartridges",
+                :only => [:show, :create, :index], :id => /[^\/]+/
+      resources :cartridge_types, :only => [:show, :index], :id => /[^\/]+/
+      member do
+        get :delete
+        get :get_started
       end
     end
+  end
 
-    match 'console' => 'console#index', :via => :get
-    match 'new_application' => 'application_types#index', :via => :get
+  match 'console' => 'console#index', :via => :get
+  match 'new_application' => 'application_types#index', :via => :get
 
-    resources :express_ssh_keys
+#  resources :express_ssh_keys
+#
+#  match 'express_ssh_key_delete' => 'express_ssh_keys#destroy', :via => [:post]
+#  match 'express_app_delete' => 'express_app#destroy', :via => [:post]
+#  match 'control_panel' => 'control_panel#index', :as => 'control_panel'
+#  match 'dashboard' => 'control_panel#index', :as => 'dashboard'
+#  match 'control_panel/apps' => 'express_app#list', :as => 'list_apps'
+  
+  unless Rails.env.production?
+    match 'styleguide/:action' => 'styleguide'
+    match 'styleguide' => 'styleguide#index'
+  end
 
-    match 'express_ssh_key_delete' => 'express_ssh_keys#destroy', :via => [:post]
-    match 'express_app_delete' => 'express_app#destroy', :via => [:post]
-    match 'control_panel' => 'control_panel#index', :as => 'control_panel'
-    match 'dashboard' => 'control_panel#index', :as => 'dashboard'
-    match 'control_panel/apps' => 'express_app#list', :as => 'list_apps'
-    
-    unless Rails.env.production?
-      match 'styleguide/:action' => 'styleguide'
-      match 'styleguide' => 'styleguide#index'
-    end
+  # Sample resource route with options:
+  #   resources :products do
+  #     member do
+  #       get 'short'
+  #       post 'toggle'
+  #     end
+  #
+  #     collection do
+  #       get 'sold'
+  #     end
+  #   end
 
-    # Sample resource route with options:
-    #   resources :products do
-    #     member do
-    #       get 'short'
-    #       post 'toggle'
-    #     end
-    #
-    #     collection do
-    #       get 'sold'
-    #     end
-    #   end
+  # Sample resource route with sub-resources:
+  #   resources :products do
+  #     resources :comments, :sales
+  #     resource :seller
+  #   end
 
-    # Sample resource route with sub-resources:
-    #   resources :products do
-    #     resources :comments, :sales
-    #     resource :seller
-    #   end
+  # Sample resource route with more complex sub-resources
+  #   resources :products do
+  #     resources :comments
+  #     resources :sales do
+  #       get 'recent', :on => :collection
+  #     end
+  #   end
 
-    # Sample resource route with more complex sub-resources
-    #   resources :products do
-    #     resources :comments
-    #     resources :sales do
-    #       get 'recent', :on => :collection
-    #     end
-    #   end
+  # Sample resource route within a namespace:
+  #   namespace :admin do
+  #     # Directs /admin/products/* to Admin::ProductsController
+  #     # (app/controllers/admin/products_controller.rb)
+  #     resources :products
+  #   end
 
-    # Sample resource route within a namespace:
-    #   namespace :admin do
-    #     # Directs /admin/products/* to Admin::ProductsController
-    #     # (app/controllers/admin/products_controller.rb)
-    #     resources :products
-    #   end
+  # You can have the root of your site routed with "root"getting_started
+  # just remember to delete public/index.html.
+  root :to => "home#index"
 
-    # You can have the root of your site routed with "root"getting_started
-    # just remember to delete public/index.html.
-    root :to => "home#index"
+  # See how all your routes lay out with "rake routes"
 
-    # See how all your routes lay out with "rake routes"
-
-    # This is a legacy wild controller route that's not recommended for RESTful applications.
-    # Note: This route will make all actions in every controller accessible via GET requests.
-    # match ':controller(/:action(/:id(.:format)))'
+  # This is a legacy wild controller route that's not recommended for RESTful applications.
+  # Note: This route will make all actions in every controller accessible via GET requests.
+  # match ':controller(/:action(/:id(.:format)))'
 
 
-    scope '/status' do
-      match '/(:id)(.:format)', :to => StatusApp
-      match '/sync/(:host)', :to => StatusApp, :constraints => {:host => /[0-z\.-]+/}
-    end
-    #mount StatusApp => '/status',
+  scope '/status' do
+    match '/(:id)(.:format)' => StatusApp
+    match '/sync/(:host)' => StatusApp, :constraints => {:host => /[0-z\.-]+/}
   end
 end

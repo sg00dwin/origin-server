@@ -5,7 +5,7 @@
 
 Summary:        Cloud Development Controller
 Name:           rubygem-%{gemname}
-Version:        0.7.1
+Version:        0.7.3
 Release:        1%{?dist}
 Group:          Development/Languages
 License:        ASL 2.0
@@ -75,6 +75,95 @@ rm -rf %{buildroot}
 %{ruby_sitelib}/%{gemname}.rb
 
 %changelog
+* Mon Mar 26 2012 Dan McPherson <dmcphers@redhat.com> 0.7.3-1
+- Updating gem versions (dmcphers@redhat.com)
+- Fix for bugs# 807045, 807061 (rpenta@redhat.com)
+- Fix destroy domain (rpenta@redhat.com)
+
+* Mon Mar 26 2012 Dan McPherson <dmcphers@redhat.com> 0.7.2-1
+- Updating gem versions (dmcphers@redhat.com)
+- make code a little more readable (dmcphers@redhat.com)
+- Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
+  (rchopra@redhat.com)
+- consumed_gears fix while domain create (rchopra@redhat.com)
+- Merge branch 'master' of git1.ops.rhcloud.com:/srv/git/li (rpenta@redhat.com)
+- Fix for bug# 806814 (rpenta@redhat.com)
+- handle empty application case better (dmcphers@redhat.com)
+- bugfix (kraman@gmail.com)
+- fix for older rhc cli tools (lnader@redhat.com)
+- Bug 804872 - [rest-api] node_profile needs to be supported so users can pick
+  their gear size during app creation (lnader@redhat.com)
+- Bug 804872 - [rest-api] node_profile needs to be supported so users can pick
+  their gear size during app creation (lnader@redhat.com)
+- Bug 804872 - [rest-api] node_profile needs to be supported so users can pick
+  their gear size during app creation (lnader@redhat.com)
+- Bug 805963 Bug 798933 (lnader@redhat.com)
+- Bug 806045 - [REST API] Domain misses the rhc-domain property
+  (lnader@redhat.com)
+- Merge branch 'master' of git1.ops.rhcloud.com:/srv/git/li (lnader@redhat.com)
+- Hack to get jenkins client embed working  - not go to a new gear. Colocation
+  doesn't do anything ... workaround it. (ramr@redhat.com)
+- Merge branch 'master' of git1.ops.rhcloud.com:/srv/git/li (lnader@redhat.com)
+- Connection establishment needs to be done for both the web and proxy tiers.
+  Fix connection issue where haproxy doesn't get connections to mysql.
+  (ramr@redhat.com)
+- Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
+  (rchopra@redhat.com)
+- add dependency to proxy component for scalable apps (rchopra@redhat.com)
+- Merge branch 'master' of git1.ops.rhcloud.com:/srv/git/li (lnader@redhat.com)
+- removed user delete (lnader@redhat.com)
+- Merge branch 'master' of li-master:/srv/git/li (ramr@redhat.com)
+- Set the haproxy's gear for a scalable app to be the uuid of the app. Makes
+  stuff a lot more simpler and allows git clone to work for scalable apps.
+  (ramr@redhat.com)
+- Reverse the order for deconfigure so that the framework ain't called first
+  and makes app destroy fail badly. (ramr@redhat.com)
+- Merge branch 'compass', removed conflicting JS file (ccoleman@redhat.com)
+- fixed bug in legacy broker (lnader@redhat.com)
+- Use RakeBaseURI for stickshift broker - ensures that broker is running
+  identically as production Remove app_scope from all configuration
+  (ccoleman@redhat.com)
+- fixed broken build (rchopra@redhat.com)
+- merged conflicts with master (lnader@redhat.com)
+- Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
+  (rchopra@redhat.com)
+- configure order fix. bar haproxy/jenkins/diy as scalable frameworks. bar all
+  carts except mysql for embedding in scalable apps. (rchopra@redhat.com)
+- group mcollective calls (dmcphers@redhat.com)
+- Merge branch 'master' of git1.ops.rhcloud.com:/srv/git/li (lnader@redhat.com)
+- Merge branch 'master' of li-master:/srv/git/li (ramr@redhat.com)
+- Fix test_user_ssh_keys (rpenta@redhat.com)
+- Merge branch 'master' of git1.ops.rhcloud.com:/srv/git/li (lnader@redhat.com)
+- US1876 (lnader@redhat.com)
+- Merge branch 'master' of git1.ops.rhcloud.com:/srv/git/li (lnader@redhat.com)
+- Merge branch 'master' of li-master:/srv/git/li (ramr@redhat.com)
+- fix configure order. code for scaleup/scaledown. (rchopra@redhat.com)
+- US1876 (lnader@redhat.com)
+- i before an e -- framework before the haproxy -- configure hook of the
+  framework should run first. (ramr@redhat.com)
+- Allow removal of last ssh key for the domain (rpenta@redhat.com)
+- Allow adding same ssh keys with different key-names (rpenta@redhat.com)
+- remove leading blank spaces in the key model (rpenta@redhat.com)
+- Merge branch 'master' of li-master:/srv/git/li (ramr@redhat.com)
+- fix connection issue for scalable apps - haproxy of proxy gear is now
+  connected to framework of the web gear (rchopra@redhat.com)
+- checkpoint : re-organize framework for scalable apps. can create scalable
+  app, cannot start/stop/scaleup/scaledown it yet. (rchopra@redhat.com)
+- Merge branch 'master' of li-master:/srv/git/li (ramr@redhat.com)
+- Remove haproxy from list of frameworks so that it can work as an embedded
+  service. (ramr@redhat.com)
+- code cleanup checkpoint 2 - fix gear dns entries being created for non-
+  scalable apps (rchopra@redhat.com)
+- code cleanup checkpoint for US2091. scalable apps may not work right now.
+  (rchopra@redhat.com)
+- Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
+  (rchopra@redhat.com)
+- new file remote_job capturing parallel node call infra (rchopra@redhat.com)
+- making haproxy work through broker (mmcgrath@redhat.com)
+- re-organize parallel job exec code (rchopra@redhat.com)
+- optimized mcollective calls for connectors is the default code path now
+  (rchopra@redhat.com)
+
 * Sat Mar 17 2012 Dan McPherson <dmcphers@redhat.com> 0.7.1-1
 - Updating gem versions (dmcphers@redhat.com)
 - bump spec numbers (dmcphers@redhat.com)

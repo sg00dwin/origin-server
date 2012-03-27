@@ -1,19 +1,14 @@
  class CloudUser < StickShift::UserModel
-  attr_accessor :login, :uuid, :system_ssh_keys, :env_vars, :ssh_keys, :namespace, :max_gears, :consumed_gears, :applications, :auth_method, :save_jobs 
+  attr_accessor :login, :uuid, :system_ssh_keys, :env_vars, :ssh_keys, :domains, :max_gears, :consumed_gears, :applications, :auth_method, :save_jobs 
   primary_key :login
   exclude_attributes :applications, :auth_method, :save_jobs
-  require_update_attributes :system_ssh_keys, :env_vars, :ssh_keys
-  private :login=, :uuid=, :namespace=, :save_jobs=
+  require_update_attributes :system_ssh_keys, :env_vars, :ssh_keys, :domains
+  private :login=, :uuid=, :save_jobs=
+
   DEFAULT_SSH_KEY_NAME = "default"
 
   validates_each :login do |record, attribute, val|
     record.errors.add(attribute, {:message => "Invalid characters found in login '#{val}' ", :exit_code => 107}) if val =~ /["\$\^<>\|%\/;:,\\\*=~]/
-  end
-
-  validates_each :namespace do |record, attribute, val|
-    if !(val =~ /\A[A-Za-z0-9]+\z/)
-      record.errors.add attribute, {:message => "Invalid namespace: #{val}", :exit_code => 106}
-    end
   end
 
   validates_each :ssh_keys do |record, attribute, val|
@@ -30,7 +25,7 @@
     end if val
   end
 
-  def initialize(login=nil, ssh=nil, namespace=nil, ssh_type=nil, key_name=nil)
+  def initialize(login=nil, ssh=nil, ssh_type=nil, key_name=nil)
     super()
     if not ssh.nil?
       ssh_type = "ssh-rsa" if ssh_type.to_s.strip.length == 0
@@ -41,8 +36,9 @@
       self.ssh_keys = {} unless self.ssh_keys
     end
     self.login = login
-    self.namespace = namespace
+    self.domains = []
     self.max_gears = Rails.configuration.ss[:default_max_gears]
+
     self.consumed_gears = 0
   end
 
@@ -53,13 +49,13 @@
       resultIO.append(create())
     end
     
-    if applications && save_jobs
-      gears = []
+    gears = []
+    tag = ""
+    if applications && !applications.empty? && save_jobs
       applications.each do |app|
         gears += app.gears
       end
 
-      tag = ""
       if save_jobs['removes']
         save_jobs['removes'].each do |action, values|
           handle = RemoteJob.create_parallel_job
@@ -88,14 +84,14 @@
               raise StickShift::NodeException.new("Error removing settings from gear: #{gear} with status: #{status} and output: #{output}", 143)
             end
           }
-          save_jobs['removes'].clear
         end
       end
     end
+    save_jobs['removes'].clear if save_jobs && save_jobs['removes']  
 
     super(@login)
     
-    if applications && save_jobs
+    if applications && !applications.empty? && save_jobs
       if save_jobs['adds']
         handle = RemoteJob.create_parallel_job
        
@@ -125,15 +121,19 @@
             raise StickShift::NodeException.new("Error adding settings to gear: #{gear} with status: #{status} and output: #{output}", 143)
           end
         }
-        save_jobs['adds'].clear
       end
     end
+    save_jobs['adds'].clear if save_jobs && save_jobs['adds']
 
     resultIO
   end
 
   def applications
     @applications
+  end
+  
+  def domains
+    @domains
   end
   
   def self.find_by_uuid(obj_type_of_uuid, uuid)
@@ -145,32 +145,54 @@
   def self.hash_to_obj(hash)
     apps = []
     if hash["apps"]
-      apps = []
       hash["apps"].each do |app_hash|
         app = Application.hash_to_obj(app_hash)
         apps.push(app)
       end
       hash.delete("apps")
     end
+    domains = []
+    if hash["domains"]
+      hash["domains"].each do |domain_hash|
+        domain = Domain.hash_to_obj(domain_hash)
+        domains.push(domain)
+      end
+      hash.delete("apps")
+    end
     user = super(hash)
+    user.applications = apps
     apps.each do |app|
       app.user = user
       app.reset_state
     end
-    user.applications = apps
+    
+    user.domains = domains
+    domains.each do |domain|
+      domain.user = user
+    end
     user
   end
   
   def delete
-    dns_service = StickShift::DnsService.instance
+    Rails.logger.debug "deleting user #{@login}"
     reply = ResultIO.new
     begin
-      dns_service.deregister_namespace(@namespace)      
-      dns_service.publish        
-    ensure
-      dns_service.close
+      if self.applications
+        self.applications.each do |app|
+          reply.append(app.cleanup_and_delete())
+        end
+      end
+      if self.domains
+        self.domains.each do |domain|
+          reply.append(domain.delete)
+        end
+      end
+    rescue Exception => e
+      Rails.logger.error "Failed to delete user #{self.login} #{e.message}"
+      Rails.logger.debug e.backtrace
+      raise StickShift::UserException.new("User deletion failed due to #{e.message}", 132, reply)
     end
-    reply.resultIO << "Namespace #{@namespace} deleted successfully.\n"
+    reply.resultIO << "User #{@login} deleted successfully.\n"
     super(@login)
     reply
   end
@@ -219,7 +241,8 @@
   def get_ssh_key
     raise StickShift::UserKeyException.new("ERROR: No ssh keys found for user #{self.login}", 
                                            123) if self.ssh_keys.nil? or not self.ssh_keys.kind_of?(Hash)
-    (self.ssh_keys.key?(CloudUser::DEFAULT_SSH_KEY_NAME)) ? self.ssh_keys[CloudUser::DEFAULT_SSH_KEY_NAME] : self.ssh_keys.keys[0]
+    key_name = (self.ssh_keys.key?(CloudUser::DEFAULT_SSH_KEY_NAME)) ? CloudUser::DEFAULT_SSH_KEY_NAME : self.ssh_keys.keys[0]
+    self.ssh_keys[key_name]
   end
  
   def add_env_var(key, value)
@@ -234,6 +257,7 @@
     add_save_job('removes', 'env_vars', [key])
   end
   
+=begin  
   def update_namespace(new_ns)
     old_ns = self.namespace
     reply = ResultIO.new
@@ -295,7 +319,7 @@
     notify_observers(:after_namespace_update)
     reply
   end
-  
+=end  
   private
   
   def add_save_job(section, object, value)
@@ -308,36 +332,27 @@
   def create
     resultIO = ResultIO.new
     notify_observers(:before_cloud_user_create)
-    dns_service = StickShift::DnsService.instance
     begin
       user = CloudUser.find(@login)
       if user
         #TODO Rework when we allow multiple domains per user
-        raise StickShift::UserException.new("User with login '#{@login}' already has a domain with namespace '#{user.namespace}'", 102, resultIO)
+        raise StickShift::UserException.new("User with login '#{@login}' already exists", 102, resultIO)
       end
 
-      raise StickShift::UserException.new("A namespace with name '#{namespace}' already exists", 103, resultIO) unless dns_service.namespace_available?(@namespace)
-
       begin
-        Rails.logger.debug "DEBUG: Attempting to add namespace '#{@namespace}' for user '#{@login}'"      
-        resultIO.debugIO << "Creating user entry login:#{@login} ssh:#{@ssh} namespace:#{@namespace}"
-        dns_service.register_namespace(@namespace)
+        Rails.logger.debug "DEBUG: Attempting to add user '#{@login}'"      
+        resultIO.debugIO << "Creating user entry login:#{@login}"
         @uuid = StickShift::Model.gen_uuid
-        dns_service.publish
         notify_observers(:cloud_user_create_success)   
       rescue Exception => e
         Rails.logger.debug e
         begin
-          #Rails.logger.debug "DEBUG: Attempting to remove namespace '#{@namespace}' after failure to add user '#{@login}'"        
-          #dns_service.deregister_namespace(@namespace)
-          #dns_service.publish
           notify_observers(:cloud_user_create_error)
         ensure
           raise
         end
       end
     ensure
-      dns_service.close
       notify_observers(:after_cloud_user_create)
     end
     resultIO

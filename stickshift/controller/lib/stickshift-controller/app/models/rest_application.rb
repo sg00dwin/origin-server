@@ -50,6 +50,12 @@ class RestApplication < StickShift::Model
         Param.new("event", "string", "event", "remove-alias"),
         Param.new("alias", "string", "The application alias to be removed")
       ]),
+      "SCALE_UP" => Link.new("Scale up application", "POST", "/domains/#{@domain_id}/applications/#{@name}/events", [
+        Param.new("event", "string", "event", "scale-up")
+      ]),
+      "SCALE_DOWN" => Link.new("Scale down application", "POST", "/domains/#{@domain_id}/applications/#{@name}/events", [
+        Param.new("event", "string", "event", "scale-down")
+      ]),
       "DELETE" => Link.new("Delete application", "DELETE", "/domains/#{@domain_id}/applications/#{@name}"),
       
       "ADD_CARTRIDGE" => Link.new("Add embedded cartridge", "POST", "/domains/#{@domain_id}/applications/#{@name}/cartridges",[

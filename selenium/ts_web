@@ -13,10 +13,6 @@ require 'rubygems'
 require 'openshift/base'
 require 'openshift/sauce_helper'
 require 'openshift/selenium_test_case'
-require 'openshift/express/dialogs'
-require 'openshift/express/navbars'
-require 'openshift/express/pages'
-require 'openshift/express/forms'
 
 require 'openshift/rest/pages'
 require 'openshift/rest/forms'
@@ -56,14 +52,10 @@ class TS_web
   def self.suite
     default_suites = {
       :home => Home.suite,
-      :dialogs => Dialogs.suite,
       :signin => Signin.suite,
       :reset => Reset.suite,
       :signup => Signup.suite,
       :header => Header.suite,
-      :express => Express.suite,
-      :flex => Flex.suite,
-      :console => ExpressConsole.suite,
       :rest_account => RestAccount.suite,
       :rest_console => RestConsole.suite
     }

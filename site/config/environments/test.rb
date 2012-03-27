@@ -36,7 +36,6 @@ RedHatCloud::Application.configure do
   ############################################
   # OpenShift Configuration Below this point #
   ############################################
-  config.app_scope = "app"
   config.integrated = false
   config.login = "/app/login"
   config.streamline = {
@@ -62,8 +61,5 @@ RedHatCloud::Application.configure do
 
   # base domain
   config.base_domain = 'dev.rhcloud.com'
-
-  # Used to disable Node.JS ONLY IN PRODUCTION. Will set false using a puppet.
-  config.node_js_enabled = true
 
 end

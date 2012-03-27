@@ -16,6 +16,7 @@ function print_help {
 
 function generate_ssh_keys {
     /bin/mkdir -p $APP_DIR/data/.ssh/
+    /bin/rm -f $APP_DIR/data/.ssh/haproxy_id_rsa $APP_DIR/data/.ssh/haproxy_id_rsa.pub
     /usr/bin/ssh-keygen -N '' -f $APP_DIR/data/.ssh/haproxy_id_rsa > /dev/null
 
     touch "$APP_DIR/data/.ssh/known_hosts"
@@ -133,6 +134,10 @@ public_key=$(cat $APP_DIR/data/.ssh/haproxy_id_rsa.pub | awk '{print $2}')
 add_ssh_key $public_key
 
 add_broker_auth_key
+
+#  Create a symlink to the gear's git directory.
+source_if_exists $APP_HOME/.env/OPENSHIFT_APP_NAME
+[ -f "$APP_HOME/git/${OPENSHIFT_APP_NAME}.git" ]  ||  ln -s $APP_HOME/git/$application.git $APP_HOME/git/${OPENSHIFT_APP_NAME}.git
 
 #
 # Create the core of the application

@@ -28,7 +28,6 @@ RedHatCloud::Application.configure do
   ############################################
   # OpenShift Configuration Below this point #
   ############################################
-  config.app_scope = "app"
   config.integrated = false
   config.login = "/app/login"
   config.streamline = {
@@ -61,7 +60,4 @@ RedHatCloud::Application.configure do
   # Max apps for express
   config.express_max_apps = 5
   
-  # Used to disable Node.JS ONLY IN PRODUCTION. Will set false using a puppet.
-  config.node_js_enabled = true
-
 end

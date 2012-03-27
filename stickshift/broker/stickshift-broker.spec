@@ -46,6 +46,7 @@ mkdir -p %{buildroot}%{_initddir}
 mkdir -p %{buildroot}%{_bindir}
 mkdir -p %{buildroot}%{htmldir}
 mkdir -p %{buildroot}%{brokerdir}
+mkdir -p %{buildroot}%{brokerdir}/httpd/root
 mkdir -p %{buildroot}%{brokerdir}/httpd/run
 mkdir -p %{buildroot}%{brokerdir}/httpd/logs
 mkdir -p %{buildroot}%{brokerdir}/httpd/conf
@@ -65,6 +66,7 @@ mkdir -p %{buildroot}%{_var}/lib/stickshift
 cp -r . %{buildroot}%{brokerdir}
 mv %{buildroot}%{brokerdir}/init.d/* %{buildroot}%{_initddir}
 ln -s %{brokerdir}/public %{buildroot}%{htmldir}/broker
+ln -s %{brokerdir}/public %{buildroot}%{brokerdir}/httpd/root/broker
 touch %{buildroot}%{brokerdir}/log/production.log
 touch %{buildroot}%{brokerdir}/log/development.log
 ln -sf /usr/lib64/httpd/modules %{buildroot}%{brokerdir}/httpd/modules

@@ -43,7 +43,7 @@ module MCollective
                   :license     => "GPLv2",
                   :version     => "0.1",
                   :url         => "https://engineering.redhat.com/trac/Libra",
-                  :timeout     => 60
+                  :timeout     => 240
 
       #
       # Simple echo method
@@ -248,25 +248,14 @@ module MCollective
       #
       # Executes a list of jobs parallely and returns their results embedded in args
       #
-      def execute_parallel_action
+      def execute_parallel_action        
         Log.instance.debug("execute_parallel_action call / request = #{request.pretty_inspect}")
         #validate :joblist, /\A[\w\+\/= \{\}\"@\-\.:\'\\\n~,_]+\z/
         #validate :joblist, :shellsafe
-        joblist_json = request[:joblist]
 
-        begin
-          # joblist = JSON.parse joblist_json
-          joblist = joblist_json
-        rescue Exception =>e
-          reply[:output] = e.message
-          reply[:exitcode] = 10
-          reply.fail! "execute_parallel_action failed.  Output #{e}"
-          return
-        end
-
+        joblist = request[config.identity]
         pidlist = []
         joblist.each { |parallel_job|
-          
           job = parallel_job[:job]
           cartridge = job[:cartridge]
           action = job[:action]
@@ -288,7 +277,7 @@ module MCollective
         }
         Log.instance.debug("execute_parallel_action call - 10 #{joblist}")
         reply[:output] = joblist
-        reply[:exitcode] = 0 
+        reply[:exitcode] = 0
       end
 
       def execute_parallel_job(cartridge, action, args)

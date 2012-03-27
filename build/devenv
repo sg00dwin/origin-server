@@ -295,6 +295,7 @@ class DevEnv < Thor
           exit 1
         elsif failures.length > 0
           idle_all_gears(hostname)
+          failures.reverse!
           puts "All Failures: #{failures.pretty_inspect}"
           ssh(hostname, "rm -rf /tmp/rhc; mkdir -p /tmp/rhc/junit")
           failures.each do |failure|

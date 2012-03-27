@@ -3,7 +3,7 @@
 
 Summary:   Provides embedded haproxy-1.4 support
 Name:      rhc-cartridge-haproxy-1.4
-Version:   0.7.1
+Version:   0.7.2
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   ASL 2.0
@@ -59,6 +59,7 @@ ln -s %{cartridgedir}/../../abstract/info/hooks/start %{buildroot}%{cartridgedir
 ln -s %{cartridgedir}/../../abstract-httpd/info/hooks/status %{buildroot}%{cartridgedir}/info/hooks/status
 ln -s %{cartridgedir}/../../abstract/info/hooks/stop %{buildroot}%{cartridgedir}/info/hooks/stop
 ln -s %{cartridgedir}/../../abstract/info/hooks/update-namespace %{buildroot}%{cartridgedir}/info/hooks/update-namespace
+ln -s %{cartridgedir}/../../abstract/info/hooks/remove-httpd-proxy %{buildroot}%{cartridgedir}/info/hooks/remove-httpd-proxy
 ln -s %{cartridgedir}/../../abstract/info/hooks/force-stop %{buildroot}%{cartridgedir}/info/hooks/force-stop
 ln -s %{cartridgedir}/../../abstract/info/hooks/add-alias %{buildroot}%{cartridgedir}/info/hooks/add-alias
 ln -s %{cartridgedir}/../../abstract/info/hooks/tidy %{buildroot}%{cartridgedir}/info/hooks/tidy
@@ -87,6 +88,48 @@ rm -rf %{buildroot}
 %doc %{cartridgedir}/LICENSE
 
 %changelog
+* Mon Mar 26 2012 Dan McPherson <dmcphers@redhat.com> 0.7.2-1
+- Fix bug -- exit not return. (ramr@redhat.com)
+- corrected autoscale parameters (mmcgrath@redhat.com)
+- Modified haproxy build.sh to call framework build.sh as well.
+  (mpatel@redhat.com)
+- Fix bugs to sync newly added gears and reload haproxy. (ramr@redhat.com)
+- Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
+  (mmcgrath@redhat.com)
+- Adding haproxy check (mmcgrath@redhat.com)
+- Adding sync gears to haproxy deploy. (mpatel@redhat.com)
+- Merge branch 'master' of li-master:/srv/git/li (ramr@redhat.com)
+- correcting some configure / deconfigure logic (mmcgrath@redhat.com)
+- Fix missing quote. (ramr@redhat.com)
+- Colocation hack for jenkins client -- need a better method to do this in the
+  descriptor. (ramr@redhat.com)
+- Fix bug w/ not removing app's vhost configs. (ramr@redhat.com)
+- Cleanup old code for git mirroring. (ramr@redhat.com)
+- Create a symlink for now if app named git directory doesn't exist so that git
+  clone works. (ramr@redhat.com)
+- Bug fix to update haproxy config in the right location. (ramr@redhat.com)
+- Fix ssh issue from haproxy to app gears. (ramr@redhat.com)
+- Bug fixes - pass parameters to basic book and setup correct perms.
+  (ramr@redhat.com)
+- Fix bug - exit 0 not return. (ramr@redhat.com)
+- Manage vhost entry for scalable applications. (ramr@redhat.com)
+- Bug fixes to get start app working + some cleanup in the ctl script.
+  (ramr@redhat.com)
+- Bug fixes for getting scalable apps running. (ramr@redhat.com)
+- Merge branch 'master' of li-master:/srv/git/li (ramr@redhat.com)
+- checkpoint : re-organize framework for scalable apps. can create scalable
+  app, cannot start/stop/scaleup/scaledown it yet. (rchopra@redhat.com)
+- Checkpoint work to allow haproxy to run standalone on a gear.
+  (ramr@redhat.com)
+- Checkpoint haproxy cartridge cleanup to just function as an embedded
+  cartridge. (ramr@redhat.com)
+- Move info to info.deprecated so as to clear the way for moving the
+  info_embedded back in place. haproxy is now switching over to run just
+  embedded (rather than as an application framework). (ramr@redhat.com)
+- making haproxy work through broker (mmcgrath@redhat.com)
+- Added haproxy embedded (mmcgrath@redhat.com)
+- Temporary commit to build (mmcgrath@redhat.com)
+
 * Sat Mar 17 2012 Dan McPherson <dmcphers@redhat.com> 0.7.1-1
 - bump spec numbers (dmcphers@redhat.com)
 - fix README (dmcphers@redhat.com)
