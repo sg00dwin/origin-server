@@ -16,6 +16,9 @@
     <hudson.plugins.openshift.OpenShiftBuilderTypeJobProperty>
       <builderType>python-2.6</builderType>
     </hudson.plugins.openshift.OpenShiftBuilderTypeJobProperty>
+    <hudson.plugins.openshift.OpenShiftBuilderTimeoutJobProperty>
+      <builderTimeout>60000</builderTimeout>
+    </hudson.plugins.openshift.OpenShiftBuilderTimeoutJobProperty>
   </properties>
   <scm class="hudson.plugins.git.GitSCM">
     <configVersion>2</configVersion>
