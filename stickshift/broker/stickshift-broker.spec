@@ -73,9 +73,6 @@ touch %{buildroot}%{brokerdir}/log/development.log
 ln -sf /usr/lib64/httpd/modules %{buildroot}%{brokerdir}/httpd/modules
 ln -sf /etc/httpd/conf/magic %{buildroot}%{brokerdir}/httpd/conf/magic
 mv %{buildroot}%{brokerdir}/httpd/000000_stickshift_proxy.conf %{buildroot}%{_sysconfdir}/httpd/conf.d/
-mv %{buildroot}%{brokerdir}/misc/stickshift-dbus.conf %{buildroot}%{_sysconfdir}/dbus-1/system.d/
-mv %{buildroot}%{brokerdir}/misc/oddjobd-ss-exec.conf %{buildroot}%{_sysconfdir}/oddjobd.conf.d/
-mv %{buildroot}%{brokerdir}/script/ss-exec-command %{buildroot}%{_bindir}
 %clean
 rm -rf $RPM_BUILD_ROOT
 
@@ -99,65 +96,22 @@ rm -rf $RPM_BUILD_ROOT
 %defattr(0640,root,root,0750)
 %{_initddir}/stickshift-broker
 %attr(0750,-,-) %{_initddir}/stickshift-broker
-%config(noreplace) %{_sysconfdir}/oddjobd.conf.d/oddjobd-ss-exec.conf 
-%config(noreplace) %{_sysconfdir}/dbus-1/system.d/stickshift-dbus.conf
-%attr(0700,-,-) %{_bindir}/ss-exec-command
 %attr(0755,-,-) %{_var}/lib/stickshift
 
 %post
 /bin/touch %{brokerdir}/log/production.log
-
-# Increase kernel semaphores to accomodate many httpds
-echo "kernel.sem = 250  32000 32  4096" >> /etc/sysctl.conf
-sysctl kernel.sem="250  32000 32  4096"
-
-# Move ephemeral port range to accommodate app proxies
-echo "net.ipv4.ip_local_port_range = 15000 35530" >> /etc/sysctl.conf
-sysctl net.ipv4.ip_local_port_range="15000 35530"
-
-# Increase the connection tracking table size
-echo "net.netfilter.nf_conntrack_max = 1048576" >> /etc/sysctl.conf
-sysctl net.netfilter.nf_conntrack_max=1048576
+/bin/touch %{brokerdir}/httpd/error_log
+/bin/touch %{brokerdir}/httpd/access_log
 
 #selinux updated
-#setsebool -P httpd_can_network_relay=1 httpd_can_network_connect=1
+setsebool -P httpd_can_network_relay=1 httpd_can_network_connect=1
 chcon -t httpd_sys_script_rw_t %{brokerdir}/httpd/run/
 chcon -R -t httpd_sys_script_rw_t %{brokerdir}/tmp
-chcon -t httpd_sys_script_ra_t %{brokerdir}/httpd/logs
-chcon -t httpd_sys_script_ra_t %{brokerdir}/log/*
-chcon -t httpd_exec_t `passenger-config --root`/agents/apache2/PassengerHelperAgent
+chcon -R -t httpd_log_t %{brokerdir}/httpd/logs
+chcon -R -t httpd_log_t %{brokerdir}/log
 
-##TODO: instructions for
-# Setup swap for devenv
-[ -f /.swap ] || ( /bin/dd if=/dev/zero of=/.swap bs=1024 count=1024000
-    /sbin/mkswap -f /.swap
-    /sbin/swapon /.swap
-    echo "/.swap swap   swap    defaults        0 0" >> /etc/fstab
-)
-
-# Increase max SSH connections and tries to 40
-perl -p -i -e "s/^#MaxSessions .*$/MaxSessions 40/" /etc/ssh/sshd_config
-perl -p -i -e "s/^#MaxStartups .*$/MaxStartups 40/" /etc/ssh/sshd_config
-
-rm -f %{brokerdir}/Gemfile.lock
-cd %{brokerdir} && bundle show 2>&1 > /dev/null ; cd -
-##End TODO
 systemctl --system daemon-reload
-
-service stickshift-broker restart
-service httpd restart
-service sshd restart
-service dbus restart
-service oddjobd restart
-chkconfig stickshift-broker on
-
-echo "Create a new mongodb is not already created"
-echo "Edit /etc/mongodb.conf and turn auth=true"
-
-echo "Create a new mongodb is not already created"
-echo "$ mongo"
-echo "> use stickshift_broker_dev"
-echo "> db.addUser(\"stickshift\", \"mooo\")"
+chkconfig stickshift-broker off
 
 %changelog
 * Fri Mar 09 2012 Krishna Raman <kraman@gmail.com> 0.6.1-1

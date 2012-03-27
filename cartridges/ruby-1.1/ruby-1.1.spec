@@ -1,7 +1,7 @@
 %define cartridgedir %{_libexecdir}/stickshift/cartridges/ruby-1.8
 
 Summary:   Provides ruby rack support running on Phusion Passenger
-Name:      cartridge-rack-1.1
+Name:      cartridge-ruby-1.1
 Version:   0.89.3
 Release:   1%{?dist}
 Group:     Development/Languages

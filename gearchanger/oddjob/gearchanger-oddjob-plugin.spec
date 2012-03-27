@@ -36,13 +36,10 @@ GearChanger plugin for oddjob based node/gear manager
 %prep
 %setup -q
 
+%clean
+rm -rf %{buildroot}                                
+
 %build
-
-%post
-/usr/sbin/semodule -i /var/lib/stickshift/stickshift.pp
-/usr/sbin/semanage fcontext -a -e /home /var/lib/stickshift
-/sbin/restorecon -R /var/lib/stickshift /usr/bin/ss-exec-command || :
-
 
 %install
 rm -rf %{buildroot}
@@ -58,21 +55,38 @@ ln -s %{geminstdir}/lib/%{gemname} %{buildroot}%{ruby_sitelib}
 ln -s %{geminstdir}/lib/%{gemname}.rb %{buildroot}%{ruby_sitelib}
 
 # move the selinux policy files into proper location
-mkdir -p /var/lib/stickshift
-cp %{buildroot}%{geminstdir}/selinux/* /var/lib/stickshift/.
-rm -rf %{buildroot}%{geminstdir}/selinux
+mkdir -p /usr/share/selinux/packages/rubygem-%{gemname}
+cp %{buildroot}%{geminstdir}/docs/examples/selinux/* /usr/share/selinux/packages/rubygem-%{gemname}/
 
+# move dbus/oddjob config files
+mkdir -p %{buildroot}%{_sysconfdir}/dbus-1/system.d/
+mkdir -p %{buildroot}%{_sysconfdir}/oddjobd.conf.d/
+cp %{buildroot}%{geminstdir}/docs/examples/stickshift-dbus.conf %{buildroot}%{_sysconfdir}/dbus-1/system.d/
+cp %{buildroot}%{geminstdir}/docs/examples/oddjobd-ss-exec.conf %{buildroot}%{_sysconfdir}/oddjobd.conf.d/
 
-%clean
-rm -rf %{buildroot}                                
+# Move the gem binaries to the standard filesystem location
+mkdir -p %{buildroot}%{_bindir}
+mv %{buildroot}%{gemdir}/bin/* %{buildroot}%{_bindir}
+rm -rf %{buildroot}%{gemdir}/bin
 
+%post
+pushd /usr/share/selinux/packages/rubygem-%{gemname}/
+make -f /usr/share/selinux/devel/Makefile
+popd
+/usr/sbin/semodule -i /usr/share/selinux/packages/rubygem-%{gemname}/gearchanger-oddjob.pp
+/usr/sbin/semanage fcontext -a -e /home /var/lib/stickshift
+/sbin/restorecon -R /var/lib/stickshift /usr/bin/ss-exec-command || :
+
+service dbus restart
+service oddjobd restart
 
 %postun
-/usr/sbin/semodule -r stickshift
+/usr/sbin/semodule -r gearchanger-oddjob
 /usr/sbin/semanage fcontext -d /var/lib/stickshift
 /sbin/restorecon -R /var/lib/stickshift /usr/bin/ss-exec-command || :
 
-
+service dbus restart
+service oddjobd restart
 
 %files
 %defattr(-,root,root,-)
@@ -82,6 +96,10 @@ rm -rf %{buildroot}
 %{gemdir}/gems/%{gemname}-%{version}
 %{gemdir}/cache/%{gemname}-%{version}.gem
 %{gemdir}/specifications/%{gemname}-%{version}.gemspec
+
+%config(noreplace) %{_sysconfdir}/oddjobd.conf.d/oddjobd-ss-exec.conf
+%config(noreplace) %{_sysconfdir}/dbus-1/system.d/stickshift-dbus.conf
+%attr(0700,-,-) %{_bindir}/ss-exec-command
 
 %files -n ruby-%{gemname}
 %{ruby_sitelib}/%{gemname}

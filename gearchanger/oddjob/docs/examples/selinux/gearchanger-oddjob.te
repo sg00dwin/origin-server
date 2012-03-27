@@ -1,4 +1,4 @@
-policy_module(stickshift, 1.0)
+policy_module(gearchanger-oddjob, 1.0)
 
 type stickshift_t;
 type stickshift_exec_t;
