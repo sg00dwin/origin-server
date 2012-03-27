@@ -3,7 +3,7 @@
 
 Summary:   Li site components
 Name:      rhc-site
-Version:   0.89.6
+Version:   0.89.7
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -117,6 +117,19 @@ rm -rf %{buildroot}
 /bin/touch %{sitedir}/log/production.log
 
 %changelog
+* Tue Mar 27 2012 Dan McPherson <dmcphers@redhat.com> 0.89.7-1
+- Fixes help links tests (ffranz@redhat.com)
+- blacklist haproxy from the cartridge view for now (johnp@redhat.com)
+- set error classes on username and password field if base error comes in
+  (johnp@redhat.com)
+- [sauce] fix error class assignment when creating app (johnp@redhat.com)
+- Unit tests for help links so when they break we know (ccoleman@redhat.com)
+- Fixed hard coded /app links in form (fotios@redhat.com)
+- Fixed odd quotation in terms_controller (fotios@redhat.com)
+- Fix for BZ806939: Login form password length validation (fotios@redhat.com)
+- Delete .gitignore from public/javascripts (ccoleman@redhat.com)
+- Clean up and refine overview and getting started (ccoleman@redhat.com)
+
 * Mon Mar 26 2012 Dan McPherson <dmcphers@redhat.com> 0.89.6-1
 - 
 
