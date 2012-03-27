@@ -173,8 +173,8 @@ class ApplicationsController < BaseController
         respond_with @reply, :status => @reply.status
         return
       end
-      application.stop
-      application.start
+      # application.stop
+      # application.start
       
       app = RestApplication.new(application, domain_id)
       @reply = RestReply.new( :created, "application", app)
