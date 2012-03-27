@@ -36,7 +36,7 @@ module StickShift
         get_user(user_id)
       when "Application"
         get_app(user_id, id)
-       when "Domain"
+      when "Domain"
         get_domain(user_id, id)
       when "ApplicationTemplate"
         find_application_template(id)
@@ -281,7 +281,7 @@ module StickShift
           app_hash = app
           break
         end
-      end
+      end if hash["apps"]
       app_hash_to_ret(app_hash)
     end
   
@@ -302,7 +302,7 @@ module StickShift
           domain_hash = domain
           break
         end
-      end
+      end if hash["domains"]
       domain_hash_to_ret(domain_hash)
     end
   
@@ -355,7 +355,7 @@ module StickShift
     end
 
     def delete_user(user_id)
-      remove({ "_id" => user_id, "$where" => "(this.consumed_gears == 0) && (this.domains.length == 0)"})
+      remove({ "_id" => user_id, "$or" => [{"domains" => {"$exists" => true, "$size" => 0}}, {"domains" => {"$exists" => false}}], "$where" => "this.consumed_gears == 0"})
     end
 
     def delete_app(user_id, id)

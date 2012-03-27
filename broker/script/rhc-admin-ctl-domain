@@ -109,7 +109,7 @@ else
     exit 1
   end
   reply.resultIO << "RHLogin: #{user.login}\n"
-  reply.resultIO << "Namespace: #{user.namespace}\n"
+  reply.resultIO << "Namespace: #{user.domains.first.namespace}\n"
   reply.resultIO << "SSH keys:\n"
   user.ssh_keys.each do |name,key|
     reply.resultIO << "\t#{name}:\n#{key}\n\n"
