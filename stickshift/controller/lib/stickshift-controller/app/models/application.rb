@@ -57,7 +57,6 @@ class Application < StickShift::Cartridge
     
     if template.nil?
       if self.scalable
-        raise StickShift::NodeException("Scalable app cannot be of type #{UNSCALABLE_FRAMEWORKS.join(' ')}", "-100", ResultIO.new) if UNSCALABLE_FRAMEWORKS.include? framework
         descriptor_hash = YAML.load(template_scalable_app(app_name, framework))
         from_descriptor(descriptor_hash)
         self.proxy_cartridge = "haproxy-1.4"
@@ -252,6 +251,9 @@ Configure-Order: [\"proxy/#{framework}\", \"proxy/haproxy-1.4\"]
     gears_created = []
     begin
       elaborate_descriptor()
+      if self.scalable
+        raise StickShift::UserException.new("Scalable app cannot be of type #{UNSCALABLE_FRAMEWORKS.join(' ')}", "108", result_io) if UNSCALABLE_FRAMEWORKS.include? framework
+      end
       user.applications << self
       Rails.logger.debug "Creating gears"
       group_instances.uniq.each do |ginst|
@@ -1008,7 +1010,7 @@ Configure-Order: [\"proxy/#{framework}\", \"proxy/haproxy-1.4\"]
     
     raise StickShift::UserException.new("#{dep} already embedded in '#{@name}'", 101) if self.embedded.include? dep
     if self.scalable
-      raise StickShift::UserException.new("#{dep} cannot be embedded in scalable app '#{@name}'", 101) if not SCALABLE_EMBEDDED_CARTS.include? dep
+      raise StickShift::UserException.new("#{dep} cannot be embedded in scalable app '#{@name}'", 108) if not SCALABLE_EMBEDDED_CARTS.include? dep
     end
     add_to_requires_feature(dep)
     begin
