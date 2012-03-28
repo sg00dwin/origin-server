@@ -4,10 +4,8 @@
   {"name": "ImageMagick"},
   {"name": "libjpeg",
    "note": "Koji see libjpeg-turbo"},
-  {"name": "maven3",
-   "note": "Provided by build maven3-3.0.3-4.noarch in the li repo should be refactored to use https://brewweb.devel.redhat.com/packageinfo?packageID=2107"
-  },
   {"name": "mysql"},
+  {"name": "rubygem-nokogiri"},
   {"name": "perl"},
   {"name": "rhc-cartridge-jbossas-7",
    "note": "Progress -- https://fedoraproject.org/wiki/JBossAS7#Current_progress"
