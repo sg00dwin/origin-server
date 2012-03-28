@@ -3,7 +3,7 @@
 
 Summary:   Li broker components
 Name:      rhc-broker
-Version:   0.89.4
+Version:   0.89.5
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -85,6 +85,12 @@ rm -rf $RPM_BUILD_ROOT
 /bin/touch %{brokerdir}/log/production.log
 
 %changelog
+* Wed Mar 28 2012 Dan McPherson <dmcphers@redhat.com> 0.89.5-1
+- Updating gem versions (dmcphers@redhat.com)
+- cosmetics in debug statement; fix for broken cartridge configure not getting
+  a deconfigure but two destroys instead (rchopra@redhat.com)
+- Bug 807654 (dmcphers@redhat.com)
+
 * Tue Mar 27 2012 Dan McPherson <dmcphers@redhat.com> 0.89.4-1
 - Updating gem versions (dmcphers@redhat.com)
 - fixed refs to user.namespace (lnader@redhat.com)
