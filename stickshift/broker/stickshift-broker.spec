@@ -29,6 +29,7 @@ Requires:  rubygem(multimap)
 Requires:  rubygem(stickshift-controller)
 Requires:  rubygem(stickshift-node)
 Requires:  stickshift-abstract
+Releases:  selinux-policy-targeted
 
 BuildArch: noarch
 
