@@ -3,7 +3,7 @@
 source /etc/stickshift/stickshift-node.conf
 source ${CARTRIDGE_BASE_PATH}/abstract/info/lib/util
 
-export STOPTIMEOUT=10
+export STOPTIMEOUT=20
 
 # Import Environment Variables
 for f in ~/.env/*
@@ -57,7 +57,7 @@ stop() {
             TIMEOUT="$STOPTIMEOUT"
             while [ $TIMEOUT -gt 0 ] && [ -f "$HAPROXY_PID" ]; do
                 /bin/kill -0 "$pid" >/dev/null 2>&1 || break
-                sleep 1
+                sleep .5
                 let TIMEOUT=${TIMEOUT}-1
             done
         fi

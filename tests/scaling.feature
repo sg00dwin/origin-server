@@ -5,7 +5,7 @@ Feature: Scaling Verification Tests
     And an accepted node
     When a scaled <type> application is created
     Then the haproxy-status page will be responding
-    And the gear member will be UP
+    And the gear members will be UP
     And the <type> health-check will be successful
     And 1 gears will be in the cluster
     When a gear is added
@@ -29,7 +29,7 @@ Feature: Scaling Verification Tests
     And an accepted node
     When a scaled <type> application is created
     Then the haproxy-status page will be responding
-    And the gear member will be UP
+    And the gear members will be UP
    And the <type> health-check will be successful
     When haproxy_ctld_daemon is started
     Then haproxy_ctld is running
