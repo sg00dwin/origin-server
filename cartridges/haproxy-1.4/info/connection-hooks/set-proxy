@@ -68,4 +68,4 @@ rm -f /tmp/haproxy.cfg
 
 uuid=$3
 setup_user_vars
-run_as_user "app_ctl.sh restart"
+run_as_user "app_ctl.sh reload"
