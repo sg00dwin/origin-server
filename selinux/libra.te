@@ -1,4 +1,4 @@
-policy_module(libra,1.1.11)
+policy_module(libra,1.1.12)
 
 ########################################
 #
@@ -97,7 +97,7 @@ corenet_tcp_connect_all_ports(libra_net_t)
 #
 # libra general local policy
 #
-allow libra_app_domain self:process { setcurrent getattr fork getpgid setpgid setrlimit setsched signal_perms ptrace getsched execmem };
+allow libra_app_domain self:process { setcurrent getattr fork getpgid setpgid setrlimit setsched signal_perms getsched execmem };
 dontaudit libra_app_domain self:process getcap;
 
 allow libra_app_domain self:msgq create_msgq_perms;
@@ -122,6 +122,8 @@ manage_fifo_files_pattern(libra_domain, libra_file_type, libra_file_type)
 manage_files_pattern(libra_domain, libra_file_type, libra_file_type)
 manage_lnk_files_pattern(libra_domain, libra_file_type, libra_file_type)
 manage_sock_files_pattern(libra_domain, libra_file_type, libra_file_type)
+allow libra_domain libra_file_type:file execmod;
+
 files_var_lib_filetrans(libra_domain, libra_var_lib_t, { dir file sock_file } )
 files_read_var_lib_symlinks(libra_app_domain)
 allow libra_domain libra_var_lib_t:dir_file_class_set { relabelfrom relabelto };
@@ -473,6 +475,9 @@ mta_dontaudit_read_spool_symlinks(libra_mail_t)
 
 userdom_dontaudit_use_user_ptys(libra_mail_t)
 
+allow libra_domain self:process ptrace;
+allow libra_domain libra_app_domain:process ptrace;
+
 allow sshd_t libra_domain:process { transition dyntransition };
 libra_search_lib(sshd_t)
 dontaudit sshd_t self:capability sys_admin;
@@ -502,7 +507,7 @@ allow libra_app_domain libra_rw_file_t:dir_file_class_set { relabelfrom relabelt
 #
 # rpm, yum, debuginfo-install
 # traceroute, iptables, iptables-multi
-# dmesg, tcpdump, mtr
+# dmesg, tcpdump, mtr, ip
 # su, sudo, denyhosts
 #
 

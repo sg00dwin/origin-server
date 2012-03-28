@@ -56,9 +56,9 @@ class Gear < StickShift::UserModel
     r
   end
   
-  def deconfigure(comp_inst)
+  def deconfigure(comp_inst, force=false)
     r = ResultIO.new
-    return r unless self.configured_components.include?(comp_inst.name)    
+    return r unless self.configured_components.include?(comp_inst.name) or force
     r.append get_proxy.deconfigure_cartridge(app,self,comp_inst.parent_cart_name)
     self.configured_components.delete(comp_inst.name)
     r

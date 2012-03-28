@@ -89,25 +89,44 @@ function restart() {
 }
 
 
+function _reload_haproxy_service() {
+    [ -n "$1" ]  &&  zopts="-sf $1"
+    /usr/sbin/haproxy -f $OPENSHIFT_HOMEDIR/haproxy-1.4/conf/haproxy.cfg ${zopts} > /dev/null 2>&1
+
+}
+
+function backgrounded_reload() {
+    set -x
+    [ -f $HAPROXY_PID ]  &&  zpid=$( /bin/cat "${HAPROXY_PID}" )
+    i=0
+    while (! _reload_haproxy_service "$zpid" )  && [ $i -lt 60 ]; do
+        sleep 1
+        i=$(($i + 1))
+    done
+
+    wait_to_start
+}
+
 reload() {
     if ! isrunning; then
        start
     else
-        [ -f $HAPROXY_PID ]  &&  zpid=$( /bin/cat "${HAPROXY_PID}" )
-        [ -n "$zpid" ]       &&  zopts="-sf $zpid"
-        echo "Reloading haproxy gracefully without service interruption" 1>&2
-        /usr/sbin/haproxy -f $OPENSHIFT_HOMEDIR/haproxy-1.4/conf/haproxy.cfg ${zopts} > /dev/null 2>&1
+       echo "Reloading haproxy gracefully without service interruption" 1>&2
+       echo "    - reload is being done in the background ..." 1>&2
+       nohup "$0" backgrounded-reload > /tmp/haproxy-reload.log 2>&1 &
+       # wait_to_start
     fi
     #haproxy_ctld_daemon restart > /dev/null 2>&1
 }
 
 
 case "$1" in
-    start)               start          ;;
-    graceful-stop|stop)  stop           ;;
-    restart)             restart        ;;
-    graceful|reload)     reload         ;;
-    force-stop)          pkill haproxy  ;;
+    start)               start               ;;
+    graceful-stop|stop)  stop                ;;
+    restart)             restart             ;;
+    graceful|reload)     reload              ;;
+    backgrounded-reload) backgrounded_reload ;;
+    force-stop)          pkill haproxy       ;;
     status)              print_running_processes ;;
     # FIXME:  status should just report on haproxy not all the user's processes.
 esac
