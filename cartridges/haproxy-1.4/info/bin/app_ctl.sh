@@ -34,6 +34,15 @@ isrunning() {
     return 1
 }
 
+function wait_to_start() {
+   ep=$(grep "listen express" $OPENSHIFT_HOMEDIR/haproxy-1.4/conf/haproxy.cfg | sed 's#listen\s*express\s*\(.*\)#\1#')
+   i=0
+   while ( ! curl "http://$ep/haproxy-status/;csv" &> /dev/null )  && [ $i -lt 10 ]; do
+       sleep 1
+       i=$(($i + 1))
+   done
+}
+
 start() {
     set_app_state started
     if ! isrunning
@@ -43,6 +52,8 @@ start() {
     else
         echo "Haproxy already running" 1>&2
     fi
+
+    wait_to_start
 }
 
 
@@ -72,6 +83,12 @@ stop() {
 }
 
 
+function restart() {
+   stop || pkill haproxy || :
+   start
+}
+
+
 reload() {
     if ! isrunning; then
        start
@@ -86,10 +103,11 @@ reload() {
 
 
 case "$1" in
-    start)                   start          ;;
-    graceful-stop|stop)      stop           ;;
-    restart|graceful|reload) reload         ;;
-    force-stop)              pkill haproxy  ;;
-    status)                  print_running_processes ;;
+    start)               start          ;;
+    graceful-stop|stop)  stop           ;;
+    restart)             restart        ;;
+    graceful|reload)     reload         ;;
+    force-stop)          pkill haproxy  ;;
+    status)              print_running_processes ;;
     # FIXME:  status should just report on haproxy not all the user's processes.
 esac
