@@ -2,7 +2,7 @@
 
 Summary:   Provides python-wsgi-3.2 support
 Name:      rhc-cartridge-wsgi-3.2
-Version:   0.89.3
+Version:   0.89.4
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   ASL 2.0
@@ -107,6 +107,9 @@ rm -rf %{buildroot}
 %doc %{cartridgedir}/LICENSE
 
 %changelog
+* Tue Mar 27 2012 Dan McPherson <dmcphers@redhat.com> 0.89.4-1
+- bug 807260 (wdecoste@localhost.localdomain)
+
 * Mon Mar 26 2012 Dan McPherson <dmcphers@redhat.com> 0.89.3-1
 - Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
   (rmillner@redhat.com)

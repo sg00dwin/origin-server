@@ -61,7 +61,7 @@ app_uuid = args["--app_uuid"]
 target_server_identity = args['--target_server_identity']
 destination_district_uuid = args['--destination_district_uuid']
 node_profile = args['--node_profile']
-allow_change_district = false unless args['--allow_change_district']
+allow_change_district = args['--allow_change_district'] ? true : false
 timeout  = args['--timeout']
 
 if args["--help"]
@@ -103,7 +103,7 @@ unless app
   puts "ERROR: Application not found: #{app_uuid ? app_uuid : app_name}"
 end
 
-url = "http://#{app.name}-#{app.user.namespace}.#{Rails.configuration.ss[:domain_suffix]}"
+url = "http://#{app.name}-#{app.domain.namespace}.#{Rails.configuration.ss[:domain_suffix]}"
 
 puts "URL: #{url}"
 puts "Login: #{app.user.login}"

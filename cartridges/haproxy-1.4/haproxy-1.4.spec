@@ -3,7 +3,7 @@
 
 Summary:   Provides embedded haproxy-1.4 support
 Name:      rhc-cartridge-haproxy-1.4
-Version:   0.7.2
+Version:   0.7.3
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   ASL 2.0
@@ -88,6 +88,10 @@ rm -rf %{buildroot}
 %doc %{cartridgedir}/LICENSE
 
 %changelog
+* Tue Mar 27 2012 Dan McPherson <dmcphers@redhat.com> 0.7.3-1
+- Make ssh less chatty (rmillner@redhat.com)
+- bug 807260 (wdecoste@localhost.localdomain)
+
 * Mon Mar 26 2012 Dan McPherson <dmcphers@redhat.com> 0.7.2-1
 - Fix bug -- exit not return. (ramr@redhat.com)
 - corrected autoscale parameters (mmcgrath@redhat.com)

@@ -2,7 +2,7 @@
 
 Summary:   Provides mod_perl support
 Name:      rhc-cartridge-perl-5.10
-Version:   0.20.2
+Version:   0.20.3
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   ASL 2.0
@@ -104,6 +104,9 @@ rm -rf $RPM_BUILD_ROOT
 %doc %{cartridgedir}/LICENSE
 
 %changelog
+* Tue Mar 27 2012 Dan McPherson <dmcphers@redhat.com> 0.20.3-1
+- bug 807260 (wdecoste@localhost.localdomain)
+
 * Mon Mar 26 2012 Dan McPherson <dmcphers@redhat.com> 0.20.2-1
 - README: removed disable_cpan_tests section, added enable_cpan_tests section
   (tdawson@redhat.com)

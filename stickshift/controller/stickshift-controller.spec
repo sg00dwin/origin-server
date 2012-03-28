@@ -5,7 +5,7 @@
 
 Summary:        Cloud Development Controller
 Name:           rubygem-%{gemname}
-Version:        0.7.3
+Version:        0.7.4
 Release:        1%{?dist}
 Group:          Development/Languages
 License:        ASL 2.0
@@ -75,6 +75,27 @@ rm -rf %{buildroot}
 %{ruby_sitelib}/%{gemname}.rb
 
 %changelog
+* Tue Mar 27 2012 Dan McPherson <dmcphers@redhat.com> 0.7.4-1
+- Updating gem versions (dmcphers@redhat.com)
+- Merge branch 'master' of git1.ops.rhcloud.com:/srv/git/li (lnader@redhat.com)
+- bug 805997 and 806004 (lnader@redhat.com)
+- Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
+  (rchopra@redhat.com)
+- bug fixes 807136, 807144. Also stop/start is not called on app create now.
+  (rchopra@redhat.com)
+- Merge branch 'master' of git1.ops.rhcloud.com:/srv/git/li (lnader@redhat.com)
+- Merge branch 'master' of git1.ops.rhcloud.com:/srv/git/li (rpenta@redhat.com)
+- New unit tests and fixes for mongo datastore (rpenta@redhat.com)
+- removed GET link (lnader@redhat.com)
+- Merge branch 'master' of git1.ops.rhcloud.com:/srv/git/li (lnader@redhat.com)
+- Fix for bugz 807171 - cannot remove jenkins-client from scaled app and
+  cleanup errors, using incorrect variable names. (ramr@redhat.com)
+- BugzID 806298 (kraman@gmail.com)
+- Merge branch 'master' of git1.ops.rhcloud.com:/srv/git/li (lnader@redhat.com)
+- Merge branch 'master' of git1.ops.rhcloud.com:/srv/git/li (lnader@redhat.com)
+- require authentication before being able to access these controllers
+  (lnader@redhat.com)
+
 * Mon Mar 26 2012 Dan McPherson <dmcphers@redhat.com> 0.7.3-1
 - Updating gem versions (dmcphers@redhat.com)
 - Fix for bugs# 807045, 807061 (rpenta@redhat.com)
