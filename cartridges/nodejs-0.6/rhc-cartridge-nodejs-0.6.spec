@@ -2,7 +2,7 @@
 
 Summary:   Provides Node-0.6 support
 Name:      rhc-cartridge-nodejs-0.6
-Version:   0.4.2
+Version:   0.4.3
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   ASL 2.0
@@ -102,6 +102,9 @@ rm -rf %{buildroot}
 %doc %{cartridgedir}/LICENSE
 
 %changelog
+* Tue Mar 27 2012 Dan McPherson <dmcphers@redhat.com> 0.4.3-1
+- bug 807260 (wdecoste@localhost.localdomain)
+
 * Mon Mar 26 2012 Dan McPherson <dmcphers@redhat.com> 0.4.2-1
 - Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
   (rmillner@redhat.com)

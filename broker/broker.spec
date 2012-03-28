@@ -3,7 +3,7 @@
 
 Summary:   Li broker components
 Name:      rhc-broker
-Version:   0.89.3
+Version:   0.89.4
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -85,6 +85,12 @@ rm -rf $RPM_BUILD_ROOT
 /bin/touch %{brokerdir}/log/production.log
 
 %changelog
+* Tue Mar 27 2012 Dan McPherson <dmcphers@redhat.com> 0.89.4-1
+- Updating gem versions (dmcphers@redhat.com)
+- fixed refs to user.namespace (lnader@redhat.com)
+- change default max gears to 3 (dmcphers@redhat.com)
+- BugzID 806298 (kraman@gmail.com)
+
 * Mon Mar 26 2012 Dan McPherson <dmcphers@redhat.com> 0.89.3-1
 - Updating gem versions (dmcphers@redhat.com)
 

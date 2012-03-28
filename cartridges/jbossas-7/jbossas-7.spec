@@ -2,7 +2,7 @@
 
 Summary:   Provides JBossAS7 support
 Name:      rhc-cartridge-jbossas-7
-Version:   0.89.2
+Version:   0.89.3
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   ASL 2.0
@@ -125,6 +125,9 @@ rm -rf %{buildroot}
 %config(noreplace) %{cartridgedir}/info/configuration/
 
 %changelog
+* Tue Mar 27 2012 Dan McPherson <dmcphers@redhat.com> 0.89.3-1
+- bug 807260 (wdecoste@localhost.localdomain)
+
 * Mon Mar 26 2012 Dan McPherson <dmcphers@redhat.com> 0.89.2-1
 - US2003 - added external_port (bdecoste@gmail.com)
 - US2003 (bdecoste@gmail.com)

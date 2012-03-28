@@ -103,7 +103,7 @@ unless app
   puts "ERROR: Application not found: #{app_uuid ? app_uuid : app_name}"
 end
 
-url = "http://#{app.name}-#{app.user.namespace}.#{Rails.configuration.ss[:domain_suffix]}"
+url = "http://#{app.name}-#{app.domain.namespace}.#{Rails.configuration.ss[:domain_suffix]}"
 
 puts "URL: #{url}"
 puts "Login: #{app.user.login}"
