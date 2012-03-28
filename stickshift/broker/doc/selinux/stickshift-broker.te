@@ -1,0 +1,12 @@
+policy_module(stickshift-broker, 1.0)
+require {        
+	type httpd_exec_t;
+        type httpd_t;
+        type unconfined_t;
+        type stickshift_t;
+}
+
+allow httpd_t self:capability sys_resource;
+allow httpd_t self:capability { fowner fsetid };
+allow httpd_t self:process setexec;
+allow unconfined_t stickshift_t:process transition;

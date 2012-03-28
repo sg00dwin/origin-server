@@ -29,7 +29,7 @@ Requires:  rubygem(multimap)
 Requires:  rubygem(stickshift-controller)
 Requires:  rubygem(stickshift-node)
 Requires:  stickshift-abstract
-Releases:  selinux-policy-targeted
+Requires:  selinux-policy-targeted
 
 BuildArch: noarch
 
@@ -64,6 +64,7 @@ mkdir -p %{buildroot}%{_sysconfdir}/oddjobd.conf.d
 mkdir -p %{buildroot}%{_sysconfdir}/dbus-1/system.d
 mkdir -p %{buildroot}%{_bindir}
 mkdir -p %{buildroot}%{_var}/lib/stickshift
+mkdir -p %{buildroot}/usr/share/selinux/packages/%{name}
 
 cp -r . %{buildroot}%{brokerdir}
 mv %{buildroot}%{brokerdir}/init.d/* %{buildroot}%{_initddir}
@@ -74,6 +75,8 @@ touch %{buildroot}%{brokerdir}/log/development.log
 ln -sf /usr/lib64/httpd/modules %{buildroot}%{brokerdir}/httpd/modules
 ln -sf /etc/httpd/conf/magic %{buildroot}%{brokerdir}/httpd/conf/magic
 mv %{buildroot}%{brokerdir}/httpd/000000_stickshift_proxy.conf %{buildroot}%{_sysconfdir}/httpd/conf.d/
+cp %{buildroot}%{brokerdir}/doc/selinux/stickshift-broker.te %{buildroot}/usr/share/selinux/packages/%{name}/
+
 %clean
 rm -rf $RPM_BUILD_ROOT
 
@@ -99,6 +102,8 @@ rm -rf $RPM_BUILD_ROOT
 %attr(0750,-,-) %{_initddir}/stickshift-broker
 %attr(0755,-,-) %{_var}/lib/stickshift
 
+/usr/share/selinux/packages/%{name}/
+
 %post
 /bin/touch %{brokerdir}/log/production.log
 /bin/touch %{brokerdir}/httpd/error_log
@@ -113,6 +118,23 @@ chcon -R -t httpd_log_t %{brokerdir}/log
 
 systemctl --system daemon-reload
 chkconfig stickshift-broker off
+
+pushd /usr/share/selinux/packages/stickshift-broker
+make -f /usr/share/selinux/devel/Makefile
+popd
+/usr/sbin/semodule -i /usr/share/selinux/packages/stickshift-broker/stickshift-broker.pp
+
+/usr/sbin/semodule -d passenger
+/sbin/fixfiles -R rubygem-passenger restore
+/sbin/fixfiles -R mod_passenger restore
+/sbin/restorecon -R -v /var/run
+
+%postun
+/usr/sbin/semodule -r stickshift-broker
+/usr/sbin/semodule -e passenger
+/sbin/fixfiles -R rubygem-passenger restore
+/sbin/fixfiles -R mod_passenger restore
+/sbin/restorecon -R -v /var/run
 
 %changelog
 * Fri Mar 09 2012 Krishna Raman <kraman@gmail.com> 0.6.1-1
