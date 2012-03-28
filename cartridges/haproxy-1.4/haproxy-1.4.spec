@@ -3,7 +3,7 @@
 
 Summary:   Provides embedded haproxy-1.4 support
 Name:      rhc-cartridge-haproxy-1.4
-Version:   0.7.3
+Version:   0.7.4
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   ASL 2.0
@@ -88,6 +88,15 @@ rm -rf %{buildroot}
 %doc %{cartridgedir}/LICENSE
 
 %changelog
+* Wed Mar 28 2012 Dan McPherson <dmcphers@redhat.com> 0.7.4-1
+- Bug fixes to get reload done in the background and retry for 1 minute until
+  the gear's DNS entry is available. (ramr@redhat.com)
+- Fix restart to do a stop + start and wait on start for haproxy to become
+  available. (ramr@redhat.com)
+- further hardening of the scaling bits (mmcgrath@redhat.com)
+- Merge branch 'master' into scale_testing (mmcgrath@redhat.com)
+- fixing geardown event (mmcgrath@redhat.com)
+
 * Tue Mar 27 2012 Dan McPherson <dmcphers@redhat.com> 0.7.3-1
 - Make ssh less chatty (rmillner@redhat.com)
 - bug 807260 (wdecoste@localhost.localdomain)
