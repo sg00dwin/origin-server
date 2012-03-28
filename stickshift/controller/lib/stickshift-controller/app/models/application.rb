@@ -152,7 +152,6 @@ Configure-Order: [\"proxy/#{framework}\", \"proxy/haproxy-1.4\"]
       raise StickShift::UserException.new("#{feature} not embedded in '#{@name}', try adding it first", 101) if not comp.depends.include? feature
       comp.depends.delete(feature)
     else
-      raise StickShift::UserException.new("#{feature} not embedded in '#{@name}', try adding it first", 101) if not self.requires_feature.include? feature
       self.requires_feature.delete feature
     end
   end
