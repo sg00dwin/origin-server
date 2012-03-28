@@ -5,7 +5,7 @@
 
 Summary:        Uplift plugin for BIND service
 Name:           rubygem-%{gemname}
-Version:        0.7.1
+Version:        0.7.2
 Release:        1%{?dist}
 Group:          Development/Languages
 License:        ASL 2.0
@@ -62,11 +62,16 @@ gem install --local --install-dir %{buildroot}%{gemdir} --force %{gemname}-%{ver
 ln -s %{geminstdir}/lib/%{gemname} %{buildroot}%{ruby_sitelib}
 ln -s %{geminstdir}/lib/%{gemname}.rb %{buildroot}%{ruby_sitelib}
 
+# Add documents/examples
+mkdir -p %{buildroot}%{_docdir}/%{name}-%{version}/
+cp -r doc/* %{buildroot}%{_docdir}/%{name}-%{version}/
+
 %clean
 rm -rf %{buildroot}                                
 
 %files
 %defattr(-,root,root,-)
+%doc %{_docdir}/%{name}-%{version}
 %dir %{geminstdir}
 %doc %{geminstdir}/Gemfile
 %{gemdir}/doc/%{gemname}-%{version}
@@ -79,3 +84,6 @@ rm -rf %{buildroot}
 %{ruby_sitelib}/%{gemname}.rb
 
 %changelog
+* Wed Mar 28 2012 Mark Lamourine <mlamouri@redhat.com>
+- new package built with tito
+- Added docs and examples to RPM
