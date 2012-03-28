@@ -56,7 +56,7 @@ class ApplicationController < ActionController::Base
     session[:login_workflow] = nil
     session[:workflow] = nil
     if (wf)
-      Rails.logger.debug "Redirecting to workflow: #{wf}"
+      logger.debug "Redirecting to workflow: #{wf}"
       redirect_to wf
       return true
     else
@@ -73,7 +73,7 @@ class ApplicationController < ActionController::Base
       # If we're integrated, let's log out of SSO on behalf of the user
       uri = URI.join( Rails.configuration.streamline[:host], Rails.configuration.streamline[:logout_url] )
       https = Net::HTTP.new( uri.host, uri.port )
-      Rails.logger.debug "Integrated logout, use SSL"
+      logger.debug "Integrated logout, use SSL"
       https.use_ssl = true
       # TODO: Need to figure out where CAs are so we can do something like:
       #   http://goo.gl/QLFFC
@@ -88,17 +88,17 @@ class ApplicationController < ActionController::Base
       start_time = Time.now
       res = https.start{ |http| http.request(req) }
       end_time = Time.now
-      Rails.logger.debug "Response from Streamline took (#{uri.path}): #{(end_time - start_time)*1000} ms"
-      Rails.logger.debug "Status received: #{res.code}"
-      Rails.logger.debug "-------------------"
-      Rails.logger.debug res.header.to_yaml
-      Rails.logger.debug "-------------------"
+      logger.debug "Response from Streamline took (#{uri.path}): #{(end_time - start_time)*1000} ms"
+      logger.debug "Status received: #{res.code}"
+      logger.debug "-------------------"
+      logger.debug res.header.to_yaml
+      logger.debug "-------------------"
 
       unless 302 == res.code.to_i
-        Rails.logger.debug "Unexpected HTTP status from logout: #{res.code}"
+        logger.debug "Unexpected HTTP status from logout: #{res.code}"
       end
     end
-    Rails.logger.debug "Removing current SSO cookie value of '#{cookies[:rh_sso]}'"
+    logger.debug "Removing current SSO cookie value of '#{cookies[:rh_sso]}'"
     cookies.delete :rh_sso, :domain => cookie_domain
   end
   
@@ -159,32 +159,33 @@ class ApplicationController < ActionController::Base
     # automatically for the user
     access_type = CloudAccess::EXPRESS
     if !user.has_access?(access_type) and !user.has_requested?(access_type)
-      Rails.logger.info "User #{user.rhlogin} is missing access.  Requesting access..."
+      logger.info "User #{user.rhlogin} is missing access.  Requesting access..."
       user.request_access(access_type)
       if user.errors.length > 0
-        Rails.logger.error "Auto-request access for user #{user.rhlogin} failed"
+        logger.error "Auto-request access for user #{user.rhlogin} failed"
       else
-        Rails.logger.info "Access request successful for user #{user.rhlogin}"
+        logger.info "Access request successful for user #{user.rhlogin}"
         user.refresh_roles(true)
       end
     end
 
     unless user.has_access?(access_type)
-      Rails.logger.debug "Notifying user about pending account access"
+      logger.debug "Notifying user about pending account access"
       flash[:notice] = "Note: We are still working on getting your access setup..."
     end
   end
 
   def check_credentials
     # If this is a logout request, pass through
-    Rails.logger.debug "Checking for logout request"
+    logger.debug "[check_credentials] Check login state"
+    logger.debug "  Checking for logout request"
     return if request.path =~ /logout/
 
-    Rails.logger.debug "Not a logout request, checking for cookie"
+    logger.debug "  Not a logout request, checking for cookie"
     rh_sso = cookies[:rh_sso]
-    Rails.logger.debug "rh_sso cookie = '#{rh_sso}'"
+    logger.debug "  rh_sso cookie = #{rh_sso.inspect}"
 
-    if rh_sso
+    if rh_sso.present?
       # redirect to https if they have rh_sso but are on http:// for some reason
       # Note: doesn't work because rh_sso is a secure cookie
       #if request.protocol == 'http://'
@@ -192,11 +193,12 @@ class ApplicationController < ActionController::Base
       #end
     else
       if logged_in?
+        logger.debug "  User is logged in, but has no rh_sso cookie.  Log them out"
         redirect_to_logout
         return
       elsif params[:controller] != 'login'
         # Clear out login workflow since they didn't login.  Otherwise might get pushed into a workflow on later login.
-        #Rails.logger.debug "Clearing out login_workflow since user didn't actually login"
+        #logger.debug "Clearing out login_workflow since user didn't actually login"
         session[:login_workflow] = nil
         return
       else
@@ -205,30 +207,30 @@ class ApplicationController < ActionController::Base
     end
 
     if logged_in?
-      Rails.logger.debug "User has an authenticated session"
+      logger.debug "  User has an authenticated session"
       if session[:ticket] != rh_sso
-        Rails.logger.debug "Session ticket does not match current ticket - logging out"
+        logger.debug "  Session ticket does not match current ticket - logging out"
         redirect_to_logout 
         return
       else
-        Rails.logger.debug "Session ticket matches current ticket"
+        logger.debug "  Session ticket matches current ticket"
 
         # Handle access requests - if terms have been accepted
         request_access(session[:user]) if logged_in_with_terms?
         ensure_valid_ticket
       end
     else
-      Rails.logger.debug "User does not have a authenticated session"
-      Rails.logger.debug "Looking up user based on rh_sso ticket"
+      logger.debug "  User does not have a authenticated session"
+      logger.debug "  Looking up user based on rh_sso ticket"
       user = WebUser.find_by_ticket(rh_sso)
       if user
-        Rails.logger.debug "Found #{user}. Authenticating session"
+        logger.debug "  Found #{user}. Authenticating session"
         session[:user] = user
         user.establish_terms
         session[:ticket] = rh_sso
 
         if user.terms.length > 0
-          Rails.logger.debug "User #{user} has terms to accept."
+          logger.debug "  User #{user} has terms to accept."
           redirect_to new_terms_path and return
         else
           session[:login] = user.rhlogin
@@ -252,11 +254,11 @@ class ApplicationController < ActionController::Base
       diff = Time.now.to_i - ts
 
       if (diff > reverify_interval)
-        Rails.logger.debug "ticket_verified timestamp has expired, checking ticket: #{session[:ticket]}"
+        logger.debug "ticket_verified timestamp has expired, checking ticket: #{session[:ticket]}"
 
         user = WebUser.find_by_ticket(session[:ticket])
         if !user || session[:login] != user.rhlogin
-          Rails.logger.debug "SSO ticket no longer valid, logging out!"
+          logger.debug "SSO ticket no longer valid, logging out!"
           redirect_to_logout
         end
 
@@ -281,9 +283,9 @@ class ApplicationController < ActionController::Base
   end
 
   def require_login
-    Rails.logger.debug 'Login required'
+    logger.debug 'Login required'
     if !session[:login]
-      Rails.logger.debug "Session contents: #{session.inspect}"
+      logger.debug "Session contents: #{session.inspect}"
       redirect_path = url_for :controller => self.controller_name, 
                               :action => self.action_name,
                               :only_path => true
@@ -292,18 +294,18 @@ class ApplicationController < ActionController::Base
   end
 
   def require_user
-    Rails.logger.debug 'User required'
+    logger.debug 'User required'
 
     @userinfo = ExpressUserinfo.new :rhlogin => session[:login],
     				    :ticket => session[:ticket]
     # We have to have userinfo for the control panel to work
     # so if we can't establish the user's info, try again
     3.times do
-      Rails.logger.debug 'Trying to establish'
+      logger.debug 'Trying to establish'
       @userinfo.establish
-      Rails.logger.debug 'Errors'
-      Rails.logger.debug @userinfo.errors.inspect
-      Rails.logger.debug @userinfo.errors.length 
+      logger.debug 'Errors'
+      logger.debug @userinfo.errors.inspect
+      logger.debug @userinfo.errors.length 
       break if @userinfo.errors.length < 1
     end
   
@@ -323,25 +325,25 @@ class ApplicationController < ActionController::Base
   
   # Block all access to a controller
   def deny_access
-    Rails.logger.debug 'Access denied to this controller'
+    logger.debug 'Access denied to this controller'
     redirect_to root_path
   end
   
   def sauce_testing?
     retval = false
     if Rails.env.development?
-      Rails.logger.debug "------"
-      Rails.logger.debug "Checking for Sauce testing credentials"
-      Rails.logger.debug request.cookies.to_yaml
+      logger.debug "------"
+      logger.debug "Checking for Sauce testing credentials"
+      logger.debug request.cookies.to_yaml
 
       key = 'sauce_testing'
-      Rails.logger.debug "cookie: #{request.cookies[key]}"
+      logger.debug "cookie: #{request.cookies[key]}"
       retval = true if (request.cookies[key] == 'true')
 
-      Rails.logger.debug "------"
+      logger.debug "------"
     end
 
-    Rails.logger.debug "========== TESTING ===========" if retval
+    logger.debug "========== TESTING ===========" if retval
     retval
   end
 end

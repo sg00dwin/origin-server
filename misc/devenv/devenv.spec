@@ -8,7 +8,7 @@
 
 Summary:   Dependencies for OpenShift development
 Name:      rhc-devenv
-Version:   0.89.1
+Version:   0.89.3
 Release:   1%{?dist}
 Group:     Development/Libraries
 License:   GPLv2
@@ -281,6 +281,16 @@ cp -f %{devenvdir}/puppet-private.pem /var/lib/puppet/ssl/private_keys/localhost
 %{policydir}/*
 
 %changelog
+* Tue Mar 27 2012 Dan McPherson <dmcphers@redhat.com> 0.89.3-1
+- Merge branch 'master' of git1.ops.rhcloud.com:/srv/git/li (lnader@redhat.com)
+- added clean up utility (lnader@redhat.com)
+
+* Mon Mar 26 2012 Dan McPherson <dmcphers@redhat.com> 0.89.2-1
+- Merge branch 'master' of git1.ops.rhcloud.com:/srv/git/li (lnader@redhat.com)
+- Broker and site in devenv should use RackBaseURI and be relative to content
+  Remove broker/site app_scope (ccoleman@redhat.com)
+- US1876 (lnader@redhat.com)
+
 * Sat Mar 17 2012 Dan McPherson <dmcphers@redhat.com> 0.89.1-1
 - bump spec numbers (dmcphers@redhat.com)
 - use proper comments in named.conf (markllama@redhat.com)

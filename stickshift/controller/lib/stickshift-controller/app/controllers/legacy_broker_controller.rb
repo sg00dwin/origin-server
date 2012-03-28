@@ -112,21 +112,19 @@ class LegacyBrokerController < ApplicationController
     if @req.alter
       
       Rails.logger.debug "Updating namespace for domain #{domain.uuid} from #{domain.namespace} to #{@req.namespace}"
-      #FIXME: Either this needs to be removed or user should pass key name to alter
 
-      @reply.append cloud_user.update_ssh_key(@req.ssh, @req.key_type, CloudUser::DEFAULT_SSH_KEY_NAME) if @req.ssh
       raise StickShift::UserException.new("The supplied namespace '#{@req.namespace}' is not allowed", 106) if StickShift::ApplicationContainerProxy.blacklisted? @req.namespace   
       begin
         domain.namespace = @req.namespace     
         @reply.append domain.save
-      rescue 
-       Rail.logger.error "Failed to update domain #{domain.uuid} from #{domain.namespace} to #{@req.namespace} #{e.message}"
-       Rail.logger.error e.backtrace
+      rescue Exception => e 
+       Rails.logger.error "Failed to update domain #{domain.uuid} from #{domain.namespace} to #{@req.namespace} #{e.message}"
+       Rails.logger.error e.backtrace
        raise
       end
 
       if @req.ssh
-        cloud_user.update_ssh_key(@req.ssh, @req.key_type, CloudUser::DEFAULT_SSH_KEY_NAME)
+        cloud_user.update_ssh_key(@req.ssh, @req.key_type, @req.key_name)
         cloud_user.save
       end
     elsif @req.delete
@@ -137,7 +135,7 @@ class LegacyBrokerController < ApplicationController
          return
        end
        if not cloud_user.applications.empty?
-         cloud_user.application.each do |app|
+         cloud_user.applications.each do |app|
            if app.domain.uuid == domain.uuid
              @reply.resultIO << "Cannot remove namespace #{@namespace}. Remove existing app(s) first: "
              @reply.resultIO << cloud_user.applications.map{|a| a.name}.join("\n")
@@ -314,9 +312,6 @@ class LegacyBrokerController < ApplicationController
     
     app = get_app_from_request(user)    
     check_cartridge_type(@req.cartridge, "embedded")
-    if @req.action != "configure" and !app.requires_feature.include?(@req.cartridge)
-      raise StickShift::UserException.new("#{@req.cartridge} not embedded in '#{app.name}', try adding it first", 101)
-    end
 
     Rails.logger.debug "DEBUG: Performing action '#{@req.action}'"    
     case @req.action
@@ -380,13 +375,19 @@ class LegacyBrokerController < ApplicationController
   end
   
   def authenticate
-    auth = StickShift::AuthService.instance.login(request, params, cookies)
+    begin
+      auth = StickShift::AuthService.instance.login(request, params, cookies)
   
-    if auth  
-      @login = auth[:username]
-      @auth_method = auth[:auth_method]
-    end
-    unless @login
+      if auth  
+        @login = auth[:username]
+        @auth_method = auth[:auth_method]
+      end
+      unless @login
+        @reply.resultIO << "Invalid user credentials"
+        @reply.exitcode = 97
+        render :json => @reply, :status => :unauthorized
+      end
+    rescue StickShift::AccessDeniedException
       @reply.resultIO << "Invalid user credentials"
       @reply.exitcode = 97
       render :json => @reply, :status => :unauthorized

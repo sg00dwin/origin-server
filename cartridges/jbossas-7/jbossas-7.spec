@@ -2,7 +2,7 @@
 
 Summary:   Provides JBossAS7 support
 Name:      rhc-cartridge-jbossas-7
-Version:   0.89.1
+Version:   0.89.3
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   ASL 2.0
@@ -125,6 +125,24 @@ rm -rf %{buildroot}
 %config(noreplace) %{cartridgedir}/info/configuration/
 
 %changelog
+* Tue Mar 27 2012 Dan McPherson <dmcphers@redhat.com> 0.89.3-1
+- bug 807260 (wdecoste@localhost.localdomain)
+
+* Mon Mar 26 2012 Dan McPherson <dmcphers@redhat.com> 0.89.2-1
+- US2003 - added external_port (bdecoste@gmail.com)
+- US2003 (bdecoste@gmail.com)
+- Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
+  (rmillner@redhat.com)
+- Add sync_gears script to abstract and make available in server cartridges
+  (rmillner@redhat.com)
+- Merge branch 'master' of li-master:/srv/git/li (ramr@redhat.com)
+- Rename connector type to gear endpoint info (from ssh). (ramr@redhat.com)
+- Work for publishing ssh endpoint information from all cartridges as well as
+  cleanup the multiple copies of publish http and git (now ssh) information.
+  (ramr@redhat.com)
+- use resource limits to determine jboss heap size with placeholders for larger
+  sizes (dmcphers@redhat.com)
+
 * Sat Mar 17 2012 Dan McPherson <dmcphers@redhat.com> 0.89.1-1
 - bump spec numbers (dmcphers@redhat.com)
 

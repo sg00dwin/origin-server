@@ -287,41 +287,18 @@ class DevEnv < Thor
         retry_threshold += 6 unless options.exclude_internal?
         retry_threshold += 2 unless options.exclude_verification?
         retry_threshold += 6 if options.include_web?
+        
+        failures.uniq!
 
-        if failures.length > retry_threshold
-          download_artifacts hostname
-          exit 1
-        elsif failures.length > 0
-          idle_all_gears(hostname)
-          failures.uniq!
-          failures.reverse!
-          puts "All Failures: #{failures.pretty_inspect}"
-          ssh(hostname, "rm -rf /tmp/rhc; mkdir -p /tmp/rhc/junit")
-          failures.each do |failure|
-            title = failure[0]
-            cmd = failure[1]
-            num_retries = 2
-            (1..num_retries).each do |i|
-              puts "Retry attempt #{i} for: #{title}"
-              output, exit_code = run_ssh(hostname, title, cmd)
-              if exit_code != 0
-                if i == num_retries
-                  download_artifacts hostname
-                  exit exit_code
-                else
-                  ssh(hostname, "rm -rf /tmp/rhc; mkdir -p /tmp/rhc/junit")
-                end
-              else
-                break
-              end
-            end
+        begin
+          if failures.length > 0 && failures.length <= retry_threshold 
+            idle_all_gears(hostname)
+            retry_test_failures(hostname, failures, 2)
           end
+          validate_instance(hostname)
+        ensure
+          download_artifacts hostname
         end
-
-        validate_instance(hostname)
-
-        # Download the successful artifacts
-        download_artifacts hostname
 
         if options.official?
           image_id = image_id ? image_id : instance.image_id
@@ -347,6 +324,29 @@ class DevEnv < Thor
       end
     end
     
+    def retry_test_failures(hostname, failures, num_retries=1)
+      failures.reverse!
+      puts "All Failures: #{failures.pretty_inspect}"
+      ssh(hostname, "rm -rf /tmp/rhc; mkdir -p /tmp/rhc/junit")
+      failures.each do |failure|
+        title = failure[0]
+        cmd = failure[1]
+        (1..num_retries).each do |i|
+          puts "Retry attempt #{i} for: #{title}"
+          output, exit_code = run_ssh(hostname, title, cmd)
+          if exit_code != 0
+            if i == num_retries
+              exit exit_code
+            else
+              ssh(hostname, "rm -rf /tmp/rhc; mkdir -p /tmp/rhc/junit")
+            end
+          else
+            break
+          end
+        end
+      end
+    end
+
     def build_and_install(package_name, build_dir)
       remove_dir '/tmp/tito/'
       FileUtils.mkdir_p '/tmp/tito/'
@@ -427,8 +427,7 @@ class DevEnv < Thor
     options.verbose? ? @@log.level = Logger::DEBUG : @@log.level = Logger::ERROR
 
     # Establish a new connection
-    conn = connect
-    conn = conn.regions[options.region] unless (options.region?nil)
+    conn = connect(options.region)
 
     image = nil
     if options.build_clean_ami || options.install_from_source || options.install_from_local_source
@@ -583,8 +582,7 @@ class DevEnv < Thor
     options.verbose? ? @@log.level = Logger::DEBUG : @@log.level = Logger::ERROR
 
     # Get the hostname from a tag lookup or assume it's SSH accessible directly
-    conn = connect
-    conn = conn.regions[options.region] unless (options.region?nil)
+    conn = connect(options.region)
     hostname = options.tag? ? find_instance(conn, name, true).dns_name : name
 
     ssh_path=File.expand_path(File.dirname(__FILE__)) + "/ssh-override"
@@ -634,8 +632,7 @@ class DevEnv < Thor
 
   def terminate(tag)
     options.verbose? ? @@log.level = Logger::DEBUG : @@log.level = Logger::ERROR
-    conn = connect
-    conn = conn.regions[options.region] unless (options.region?nil)
+    conn = connect(options.region)
     instance = find_instance(conn, tag, true)
     terminate_instance(instance, true) if instance
   end
@@ -663,8 +660,7 @@ class DevEnv < Thor
     end
 
     # Get the latest devenv image and create a new instance
-    conn = connect
-    conn = conn.regions[options.region] unless (options.region?nil)
+    conn = connect(options.region)
     if options.use_stage_image?
       filter = DEVENV_STAGE_WILDCARD
     elsif options.use_clean_image?
@@ -796,13 +792,44 @@ END
   def test(tag)
     options.verbose? ? @@log.level = Logger::DEBUG : @@log.level = Logger::ERROR
 
-    conn = connect
-    conn = conn.regions[options.region] unless (options.region?nil)
+    conn = connect(options.region)
 
     instance = find_instance(conn, tag, true)
     hostname = instance.dns_name
 
     test_instance(tag, hostname, instance, conn, options)
+  end
+
+  desc "sanity_check TAG", "Runs a set of sanity check tests on a tagged instance"
+  method_option :verbose, :type => :boolean, :desc => "Enable verbose logging"
+  method_option :region, :required => false, :desc => "Amazon region override (default us-east-1)"
+  def sanity_check(tag)
+    options.verbose? ? @@log.level = Logger::DEBUG : @@log.level = Logger::ERROR
+
+    conn = connect(options.region)
+
+    instance = find_instance(conn, tag, true)
+    hostname = instance.dns_name
+
+    threads = []
+    failures = []
+    add_ssh_cmd_to_threads(hostname, threads, failures, "Broker Unit", "cd li-test/broker; rake test")
+    site_titles = ["Site Unit:Units"]
+    site_cmds = ["cd li-test/site; rake test:units"]
+    add_ssh_cmd_to_threads(hostname, threads, failures, site_titles, site_cmds)
+    add_ssh_cmd_to_threads(hostname, threads, failures, "StickShift Node Unit", "cd li-test/stickshift/node; rake test")
+    add_ssh_cmd_to_threads(hostname, threads, failures, "StickShift Broker Unit", "cd li-test/stickshift/broker; rake test")
+    add_ssh_cmd_to_threads(hostname, threads, failures, "Sanity", "cucumber -f html --out /tmp/rhc/sanity.html -f progress -t @sanity li-test/tests/")
+
+    threads.each do |t|
+      t.join
+    end
+
+    unless failures.empty?
+      failures.uniq!
+      retry_test_failures(hostname, failures, 1)
+    end
+    validate_instance(hostname)
   end
 
   desc "setup_multi_node_broker", "Sets up verifier as a multi-node broker"

@@ -3,7 +3,7 @@
 
 Summary:   Li broker components
 Name:      rhc-broker
-Version:   0.89.1
+Version:   0.89.4
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -85,6 +85,39 @@ rm -rf $RPM_BUILD_ROOT
 /bin/touch %{brokerdir}/log/production.log
 
 %changelog
+* Tue Mar 27 2012 Dan McPherson <dmcphers@redhat.com> 0.89.4-1
+- Updating gem versions (dmcphers@redhat.com)
+- fixed refs to user.namespace (lnader@redhat.com)
+- change default max gears to 3 (dmcphers@redhat.com)
+- BugzID 806298 (kraman@gmail.com)
+
+* Mon Mar 26 2012 Dan McPherson <dmcphers@redhat.com> 0.89.3-1
+- Updating gem versions (dmcphers@redhat.com)
+
+* Mon Mar 26 2012 Dan McPherson <dmcphers@redhat.com> 0.89.2-1
+- Updating gem versions (dmcphers@redhat.com)
+- 806473 (dmcphers@redhat.com)
+- Merge branch 'master' of git1.ops.rhcloud.com:/srv/git/li (lnader@redhat.com)
+- parallelize mcollective calls for parallel jobs (dmcphers@redhat.com)
+- Merge branch 'master' of git1.ops.rhcloud.com:/srv/git/li (lnader@redhat.com)
+- Merge branch 'compass', removed conflicting JS file (ccoleman@redhat.com)
+- Broker and site in devenv should use RackBaseURI and be relative to content
+  Remove broker/site app_scope (ccoleman@redhat.com)
+- merged conflicts with master (lnader@redhat.com)
+- group mcollective calls (dmcphers@redhat.com)
+- Merge branch 'master' of git1.ops.rhcloud.com:/srv/git/li (lnader@redhat.com)
+- US1876 (lnader@redhat.com)
+- Fix for bug# 804029 (rpenta@redhat.com)
+- Update stickshift gemfiles to new rack versions, remove multimap which is no
+  longer required by rack (versions before .7 had a dependency, it has since
+  been inlined) (ccoleman@redhat.com)
+- Merge branch 'rack' (ccoleman@redhat.com)
+- code cleanup checkpoint for US2091. scalable apps may not work right now.
+  (rchopra@redhat.com)
+- Update rack dependencies (ccoleman@redhat.com)
+- Update rack to 1.3 (ccoleman@redhat.com)
+- keep around OPENSHIFT_APP_DNS (dmcphers@redhat.com)
+
 * Sat Mar 17 2012 Dan McPherson <dmcphers@redhat.com> 0.89.1-1
 - Updating gem versions (dmcphers@redhat.com)
 - bump spec numbers (dmcphers@redhat.com)

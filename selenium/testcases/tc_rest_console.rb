@@ -27,8 +27,8 @@ class RestConsole < OpenShift::Rest::TestCase
     app_types_page = @rest_console.application_types_page
     @rest_console.open
     app_type_buttons = app_types_page.find_create_buttons
-    app_type = app_types_page.get_app_type(app_type_buttons[0])
-    app_type_buttons[0].click
+    app_type = app_types_page.get_app_type(app_type_buttons[1])
+    app_type_buttons[1].click
 
     assert_redirected_to "#{app_types_page.path}/#{app_type}"
     app_name = generate_app_name
@@ -39,7 +39,7 @@ class RestConsole < OpenShift::Rest::TestCase
     form.set_value(:namespace, @login)
     form.submit
 
-    get_started_page.wait(30)
+    get_started_page.wait(90)
 
     app_link = get_started_page.find_app_link
     href = app_link.attribute('href')

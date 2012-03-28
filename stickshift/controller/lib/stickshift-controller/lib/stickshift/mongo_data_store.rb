@@ -36,7 +36,7 @@ module StickShift
         get_user(user_id)
       when "Application"
         get_app(user_id, id)
-       when "Domain"
+      when "Domain"
         get_domain(user_id, id)
       when "ApplicationTemplate"
         find_application_template(id)
@@ -281,7 +281,7 @@ module StickShift
           app_hash = app
           break
         end
-      end
+      end if hash["apps"]
       app_hash_to_ret(app_hash)
     end
   
@@ -302,7 +302,7 @@ module StickShift
           domain_hash = domain
           break
         end
-      end
+      end if hash["domains"]
       domain_hash_to_ret(domain_hash)
     end
   
@@ -336,9 +336,10 @@ module StickShift
     def add_app(user_id, id, app_attrs)
       app_attrs_to_internal(app_attrs)
       hash = find_and_modify({ :query => { "_id" => user_id, "apps.name" => { "$ne" => id }, 
-             "$where" => "this.consumed_gears < this.max_gears"},
+             "$where" => "(this.consumed_gears < this.max_gears) && (this.domains.length > 0)"},
              :update => { "$push" => { "apps" => app_attrs }, "$inc" => { "consumed_gears" => 1 }} })
-      raise StickShift::UserException.new("#{user_id} has already reached the application limit", 104) if hash == nil
+      raise StickShift::UserException.new("Failed: Either application limit has already reached or " +
+                                          "domain doesn't exist for '#{user_id}'", 104) if hash == nil
     end
     
     def put_domain(user_id, id, domain_attrs)
@@ -349,12 +350,12 @@ module StickShift
     def add_domain(user_id, id, domain_attrs)
       domain_attrs_to_internal(domain_attrs)
       hash = find_and_modify({ :query => { "_id" => user_id, "domains.uuid" => { "$ne" => id }},
-             :update => { "$push" => { "domains" => domain_attrs }, "$inc" => { "consumed_gears" => 1 }} })
+             :update => { "$push" => { "domains" => domain_attrs } } })
       #raise StickShift::UserException.new("#{user_id} has already reached the domain limit", 104) if hash == nil
     end
 
     def delete_user(user_id)
-      remove({ "_id" => user_id })
+      remove({ "_id" => user_id, "$or" => [{"domains" => {"$exists" => true, "$size" => 0}}, {"domains" => {"$exists" => false}}], "$where" => "this.consumed_gears == 0"})
     end
 
     def delete_app(user_id, id)

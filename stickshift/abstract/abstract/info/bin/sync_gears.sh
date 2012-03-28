@@ -7,7 +7,7 @@ do
 done
 
 # Defaults for sync-gears.  Override these in .env from the configure script
-[ -z "$OPENSHIFT_SYNC_GEARS_DIRS" ] && OPENSHIFT_SYNC_GEARS_DIRS=( "repo" "node_modules" "virtenv" ".m2" ".openshift" "deployments" "perl5lib" "phplib" )
+[ -z "$OPENSHIFT_SYNC_GEARS_DIRS" ] && OPENSHIFT_SYNC_GEARS_DIRS=( "repo" "node_modules" "virtenv" "../.m2" ".openshift" "deployments" "perl5lib" "phplib" )
 [ -z "$OPENSHIFT_SYNC_GEARS_PRE" ] && OPENSHIFT_SYNC_GEARS_PRE=('ctl_all stop')
 [ -z "$OPENSHIFT_SYNC_GEARS_POST" ] && OPENSHIFT_SYNC_GEARS_POST=('deploy.sh' 'ctl_all start' 'post_deploy.sh')
 declare -ax OPENSHIFT_SYNC_GEARS_DIRS OPENSHIFT_SYNC_GEARS_PRE OPENSHIFT_SYNC_GEARS_POST

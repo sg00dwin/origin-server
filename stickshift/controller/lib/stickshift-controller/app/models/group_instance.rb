@@ -12,6 +12,7 @@ class GroupInstance < StickShift::UserModel
     self.group_name = groupname
     self.reused_by = []
     self.gears = []
+    self.node_profile = app.node_profile
   end
 
   def merge_inst(ginst)

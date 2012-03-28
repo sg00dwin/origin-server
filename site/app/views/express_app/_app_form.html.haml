@@ -1,5 +1,0 @@
-= semantic_form_for @app, :remote => true do |form|
-  = form.input :app_name, :label => 'Title'
-  = form.input :cartridge, :as => :select, :collection => @cartlist, :label => 'Type'
-  = form.buttons do
-    = form.commit_button :button_html => { :class => 'button', :value => 'Add' }

@@ -30,7 +30,7 @@ class ArtifactHash < Hash
     @url_prototype = url_prototype
     
     @seeds = seeds
-    @seeds.each {|s| populate(s['name']) }
+    @seeds.each {|s| self[s['name']] }
   end
 
   def [](key)
@@ -42,10 +42,11 @@ class ArtifactHash < Hash
   def populate(key)
     build_id = build = nil
     provides = []
+    query_key =  key.include?('(') ?  key.sub(/(.*)\((.*)\)/, '\1-\2') : key
     @tags.each {|t|
-      exec = LATEST_PKG % [@command, t, key]
+      exec = LATEST_PKG % [@command, t, query_key]
       pkg = `#{exec}`.strip.squeeze(' ')
-      $logger.debug("#{exec} => <#{pkg}>")
+      $logger.debug("#{exec} => <#{pkg}>") if not pkg.empty?
       if pkg && ! pkg.empty?
         fields = pkg.split
         build = fields[0]
@@ -68,7 +69,7 @@ class ArtifactHash < Hash
       end
     }
 
-    artifact = Struct::Artifact.new(key, build_id, build, @command, @url_prototype, find_note(key))
+    artifact = Struct::Artifact.new(key, build_id, build, @command, @url_prototype, find_note(query_key))
     super_store(key, artifact)
     provides.uniq.each {|rpm|
       a = Struct::Artifact.new(rpm, build_id, build, @command, @url_prototype, find_note(rpm))

@@ -2,7 +2,7 @@
 
 Summary:   StickShift common cartridge components
 Name:      stickshift-abstract
-Version:   0.7.1
+Version:   0.7.2
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   ASL 2.0
@@ -46,6 +46,33 @@ rm -rf $RPM_BUILD_ROOT
 %post
 
 %changelog
+* Mon Mar 26 2012 Dan McPherson <dmcphers@redhat.com> 0.7.2-1
+- Fix path to directory. (mpatel@redhat.com)
+- Fix bugs to sync newly added gears and reload haproxy. (ramr@redhat.com)
+- Array handling fix for sync gear script. (mpatel@redhat.com)
+- No longer needed this variable (rmillner@redhat.com)
+- sync gear fixes. (mpatel@redhat.com)
+- Add code to read from gear registry. (mpatel@redhat.com)
+- Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
+  (rmillner@redhat.com)
+- Set +x perms on sync_gears (rmillner@redhat.com)
+- Add sync_gears script to abstract and make available in server cartridges
+  (rmillner@redhat.com)
+- Bug fixes - pass parameters to basic book and setup correct perms.
+  (ramr@redhat.com)
+- Bug fix - pass parameters to setup basic hook. (ramr@redhat.com)
+- Checkpoint work to allow haproxy to run standalone on a gear.
+  (ramr@redhat.com)
+- Renamed publish-ssh-endpoint to publish-gear-endpoint. (ramr@redhat.com)
+- Print gear name in addition to the ssh information - format is the same as a
+  scp remote directory path. (ramr@redhat.com)
+- Work for publishing ssh endpoint information from all cartridges as well as
+  cleanup the multiple copies of publish http and git (now ssh) information.
+  (ramr@redhat.com)
+- use -h instead of -d (dmcphers@redhat.com)
+- fix update_namespace to use CREATE_APP_SYMLINKS (dmcphers@redhat.com)
+- keep around OPENSHIFT_APP_DNS (dmcphers@redhat.com)
+
 * Sat Mar 17 2012 Dan McPherson <dmcphers@redhat.com> 0.7.1-1
 - bump spec numbers (dmcphers@redhat.com)
 - USER_APP_NAME -> APP_NAME (dmcphers@redhat.com)

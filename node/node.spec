@@ -2,7 +2,7 @@
 
 Summary:       Multi-tenant cloud management system node tools
 Name:          rhc-node
-Version:       0.89.1
+Version:       0.89.2
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -262,6 +262,35 @@ fi
 /lib64/security/pam_libra.so
 
 %changelog
+* Mon Mar 26 2012 Dan McPherson <dmcphers@redhat.com> 0.89.2-1
+- The link is failing in actual stage testing. (rmillner@redhat.com)
+- 806473 (dmcphers@redhat.com)
+- Needed to explicitly copy the string object since its modified in place later
+  (rmillner@redhat.com)
+- Fix application symlinks if they refer to the old paths.
+  (rmillner@redhat.com)
+- Add the rhc-app-gear-xlate script back in (rmillner@redhat.com)
+- Start migrate 2.0.7a to fix migration issues after production.
+  (rmillner@redhat.com)
+- The APP_DIR file needed to be retained.  Re-exposing it.
+  (rmillner@redhat.com)
+- Putting it back in to maintain a little longer. Revert "The app to gear
+  variable migration is no longer needed." (rmillner@redhat.com)
+- parallelize mcollective calls for parallel jobs (dmcphers@redhat.com)
+- The app to gear variable migration is no longer needed. (rmillner@redhat.com)
+- base 2.0.8 migration (dmcphers@redhat.com)
+- group mcollective calls (dmcphers@redhat.com)
+- 7000 too low, builds break (mmcgrath@redhat.com)
+- correcting resource_limits syntax error (mmcgrath@redhat.com)
+- merge (mmcgrath@redhat.com)
+- Further optimization. (mpatel@redhat.com)
+- use resource limits to determine jboss heap size with placeholders for larger
+  sizes (dmcphers@redhat.com)
+- Adding a default cfs_quota (mmcgrath@redhat.com)
+- keep around OPENSHIFT_APP_DNS (dmcphers@redhat.com)
+- Updating migration script to not change li/libra paths in user files
+  (kraman@gmail.com)
+
 * Sat Mar 17 2012 Dan McPherson <dmcphers@redhat.com> 0.89.1-1
 - bump spec numbers (dmcphers@redhat.com)
 - USER_APP_NAME -> APP_NAME (dmcphers@redhat.com)

@@ -3,7 +3,7 @@
 
 Summary:   Li site components
 Name:      rhc-site
-Version:   0.89.1
+Version:   0.89.7
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -40,6 +40,9 @@ BuildRequires: rubygem-sinatra
 BuildRequires: rubygem-tilt
 BuildRequires: rubygem-sqlite3
 
+BuildRequires: rubygem-mail
+BuildRequires: rubygem-treetop
+
 Requires:  rhc-common
 Requires:  rhc-server-common
 Requires:  httpd
@@ -63,6 +66,9 @@ Requires:  js
 Requires:  ruby-sqlite3
 Requires:  rubygem-sqlite3
 Requires:  rubygem-sinatra
+
+Requires:  rubygem-mail
+Requires:  rubygem-treetop
 
 BuildArch: noarch
 
@@ -111,6 +117,236 @@ rm -rf %{buildroot}
 /bin/touch %{sitedir}/log/production.log
 
 %changelog
+* Tue Mar 27 2012 Dan McPherson <dmcphers@redhat.com> 0.89.7-1
+- Fixes help links tests (ffranz@redhat.com)
+- blacklist haproxy from the cartridge view for now (johnp@redhat.com)
+- set error classes on username and password field if base error comes in
+  (johnp@redhat.com)
+- [sauce] fix error class assignment when creating app (johnp@redhat.com)
+- Unit tests for help links so when they break we know (ccoleman@redhat.com)
+- Fixed hard coded /app links in form (fotios@redhat.com)
+- Fixed odd quotation in terms_controller (fotios@redhat.com)
+- Fix for BZ806939: Login form password length validation (fotios@redhat.com)
+- Delete .gitignore from public/javascripts (ccoleman@redhat.com)
+- Clean up and refine overview and getting started (ccoleman@redhat.com)
+
+* Mon Mar 26 2012 Dan McPherson <dmcphers@redhat.com> 0.89.6-1
+- 
+
+* Mon Mar 26 2012 Dan McPherson <dmcphers@redhat.com> 0.89.5-1
+- Add treetop for good measure (ccoleman@redhat.com)
+- Update site.spec to take a dependency at build and runtime on rubygem-mail
+  (not being pulled in by dependency tree of existing rails packages in build
+  env, so build fails) (ccoleman@redhat.com)
+
+* Mon Mar 26 2012 Dan McPherson <dmcphers@redhat.com> 0.89.4-1
+- 
+
+* Mon Mar 26 2012 Dan McPherson <dmcphers@redhat.com> 0.89.3-1
+- 
+
+* Mon Mar 26 2012 Dan McPherson <dmcphers@redhat.com> 0.89.2-1
+- remove missed "preview" tag from Management Console header (johnp@redhat.com)
+- Whitelist allowable options to getting_started_external_controller
+  (ccoleman@redhat.com)
+- Clean up markup on appcelerator page (ccoleman@redhat.com)
+- Update getting started page to be more attractive, include link to console.
+  (ccoleman@redhat.com)
+- Fixed merge problem related to app/models/express_cartlist.rb
+  (ffranz@redhat.com)
+- Removed deprecated node_js_enabled copnfiguration (ffranz@redhat.com)
+- Properly clear application list at beginning of each unit test
+  (ccoleman@redhat.com)
+- remove all of the .to_delete files (johnp@redhat.com)
+- fix OS disclaimer page merge issue (johnp@redhat.com)
+- remove express models and tests (johnp@redhat.com)
+- Removing legacy express code (fotios@redhat.com)
+- Removed/changed references to express in current console (fotios@redhat.com)
+- OS disclaimer - fix nodejs license (johnp@redhat.com)
+- Clean applications at beginning of application controller test cases
+  (ccoleman@redhat.com)
+- Revert with_domain behavior to previous, add additional methods for tests
+  that do or don't need a domain object.  Ensure cleanup in rest_api_tests is
+  consistent. (ccoleman@redhat.com)
+- Bug 806763 - Change order of rendering of form errors to be before hints
+  (ccoleman@redhat.com)
+- Bug 806785 - Reset SSO and session when password reset link received Treat
+  empty rh_sso cookie as nil rh_sso cookie Remove Rails. prefix from controller
+  logging (ccoleman@redhat.com)
+- Remove development log from site build (ccoleman@redhat.com)
+- Off by one media query errors cause footer columns to be wrong on ipad
+  (ccoleman@redhat.com)
+- Reorder application types to put node.js at the top (ccoleman@redhat.com)
+- No lift-counter needed on the home page (ccoleman@redhat.com)
+- Fix Overpass font to use correct Bold style, add OverpassNormal for old
+  behavior Revert brand logo to use text, temporary fixes for narrow screens
+  Update layout to use counter standard 'lift-counter' Add page titles to most
+  pages, fixup markup to be consistent Remove .ribbon-content everywhere.
+  (ccoleman@redhat.com)
+- Bug 806145 - Removed lurking text. (ccoleman@redhat.com)
+- Remove old console message (ccoleman@redhat.com)
+- Tone down buzz section at small resolutions (ccoleman@redhat.com)
+- Checkin default avatar (ccoleman@redhat.com)
+- Add last vestiges of JS generation (ccoleman@redhat.com)
+- Bug 806198 - Bow to public pressure, show distinct auth links based on state
+  (ccoleman@redhat.com)
+- Merge branch 'master' of git1.ops.rhcloud.com:/srv/git/li (lnader@redhat.com)
+- Bug 806026 - Revert iframe fix now that getting_started embedded videos are
+  gone (ccoleman@redhat.com)
+- Bug 805685 - Comment out link temporarily (ccoleman@redhat.com)
+- User is not consistently being taken to console after login, because
+  http_referrer isn't changed on redirects.  Pass destination as a redirectUrl
+  parameter, stop using session variable. (ccoleman@redhat.com)
+- Generate CSS and JS during build of site rpm, using bundle exec and
+  barista/compass (ccoleman@redhat.com)
+- Merge branch 'master' of git1.ops.rhcloud.com:/srv/git/li (lnader@redhat.com)
+- Merge branch 'master' of git1.ops.rhcloud.com:/srv/git/li (lnader@redhat.com)
+- Support generic URL redirection based on the Rack SCRIPT_NAME
+  (ccoleman@redhat.com)
+- Getting started headlines (ffranz@redhat.com)
+- Removed the last references to Flex from site codebase (ffranz@redhat.com)
+- Fixed product controller functional tests (ffranz@redhat.com)
+- Merge branch 'master' of git1.ops.rhcloud.com:/srv/git/li (lnader@redhat.com)
+- Merge branch 'compass', removed conflicting JS file (ccoleman@redhat.com)
+- merged with master (lnader@redhat.com)
+- Add default barista config to autogenerate in development mode, and make
+  production mode route directly Delete old JS files Delete previously
+  generated JS files Fixup all stylesheet and javascript urls to be relative
+  (ccoleman@redhat.com)
+- Trying to fix broken tests (unable to reproduce), using setup_integrated
+  instead of with_domain (ffranz@redhat.com)
+- merge with master (lnader@redhat.com)
+- Move overpass to app/stylesheets Remove generated CSS from public/stylesheets
+  Remove deprecated projekktor_maccaco file (ccoleman@redhat.com)
+- Broker and site in devenv should use RackBaseURI and be relative to content
+  Remove broker/site app_scope (ccoleman@redhat.com)
+- OS disclaimer - fix up licenses and links; remove redundant listings
+  (johnp@redhat.com)
+- Compass automatically generates stylesheets from app/stylesheets to
+  tmp/stylesheets in dev mode, and Rack serves content from both of them in
+  development and production. (ccoleman@redhat.com)
+- prun some of the -devel packages and subpackages (johnp@redhat.com)
+- Revert gemfile.lock back to earlier version (accidental commit)
+  (ccoleman@redhat.com)
+- Merge branch 'master' of git1.ops.rhcloud.com:/srv/git/li (lnader@redhat.com)
+- Merge branch 'master' of git1.ops.rhcloud.com:/srv/git/li (ffranz@redhat.com)
+- Merge branch 'master' of git1.ops.rhcloud.com:/srv/git/li (lnader@redhat.com)
+- Removed references to Flex on site codebase, some tests may break
+  (ffranz@redhat.com)
+- Bad require left around (ccoleman@redhat.com)
+- Compass initial code (ccoleman@redhat.com)
+- Merge branch 'master' of git1.ops.rhcloud.com:/srv/git/li (lnader@redhat.com)
+- Merge branch 'master' of git1.ops.rhcloud.com:/srv/git/li (rpenta@redhat.com)
+- Fix test cases in site/test/functional/keys_controller_test.rb
+  (rpenta@redhat.com)
+- -1 is not the same as .1, fix bad site gemfile (ccoleman@redhat.com)
+- Merge branch 'master' of git1.ops.rhcloud.com:/srv/git/li (rpenta@redhat.com)
+- Fix key create/destroy tests in site/test/integration/rest_api_test.rb
+  (rpenta@redhat.com)
+- Merge branch 'master' of git1.ops.rhcloud.com:/srv/git/li (ffranz@redhat.com)
+- Add dependency on compass to Gem (ccoleman@redhat.com)
+- Site needs an RPM dependency on rubygem-compass for CSS generation
+  (ccoleman@redhat.com)
+- Fixes 803654 (ffranz@redhat.com)
+- Removed references to Flex on site codebase (ffranz@redhat.com)
+- add initial list of open source packages to disclaimer page
+  (johnp@redhat.com)
+- Merge branch 'master' of git1.ops.rhcloud.com:/srv/git/li (lnader@redhat.com)
+- Removed references to Flex on site codebase (ffranz@redhat.com)
+- US1876 (lnader@redhat.com)
+- Update to haml 3.1, must use new AMI (ccoleman@redhat.com)
+- add initial opensource disclaimer page, links and route (johnp@redhat.com)
+- Removed Flex from some pages (ffranz@redhat.com)
+- Redirect /user/new to /account/new, replace flex login sequence with generic
+  sequence (ccoleman@redhat.com)
+- Fix failing unit tests now that flex pages have been removed.
+  (ccoleman@redhat.com)
+- Improved spacing on getting started page (ffranz@redhat.com)
+- Merge branch 'master' of git1.ops.rhcloud.com:/srv/git/li (ffranz@redhat.com)
+- Added Node.js on several marketing pages (ffranz@redhat.com)
+- Use with_domain on Cart type controller vs setup_integrated (better cleanup)
+  (ccoleman@redhat.com)
+- Remove extra spaces which cause warnings (ccoleman@redhat.com)
+- merge (mmcgrath@redhat.com)
+- Update stickshift gemfiles to new rack versions, remove multimap which is no
+  longer required by rack (versions before .7 had a dependency, it has since
+  been inlined) (ccoleman@redhat.com)
+- Merge branch 'rack' (ccoleman@redhat.com)
+- Added redirect for legacy routes (ffranz@redhat.com)
+- Merge branch 'master' of git1.ops.rhcloud.com:/srv/git/li (ffranz@redhat.com)
+- Removed Flex from top header nav links (ffranz@redhat.com)
+- Fixes for BZ804845 and BZ803679 (fotios@redhat.com)
+- Update rack dependencies (ccoleman@redhat.com)
+- Update rack to 1.3 (ccoleman@redhat.com)
+- Remove overly aggressive site rack dependency (should be open)
+  (ccoleman@redhat.com)
+- Merge branch 'dev/clayton/login' (ccoleman@redhat.com)
+- Remove excess puts (ccoleman@redhat.com)
+- check to see if conflicts and requires are available (johnp@redhat.com)
+- Update login parameter in unit tests (ccoleman@redhat.com)
+- Don't generate urls to the confirmation pages for flex/express - go only to
+  confirm (ccoleman@redhat.com)
+- Merge remote-tracking branch 'origin/master' into dev/clayton/login
+  (ccoleman@redhat.com)
+- Fix login tests to use new param (ccoleman@redhat.com)
+- Testing flex confirmation redirects, more tests of email confirmation
+  (ccoleman@redhat.com)
+- Adding a default cfs_quota (mmcgrath@redhat.com)
+- Redirect old /app/user/new/flex|express paths, fix unit tests
+  (ccoleman@redhat.com)
+- renamed haproxy (mmcgrath@redhat.com)
+- Fix broken keys controller tests (ccoleman@redhat.com)
+- fix for help-inline msg on _form.html.haml (sgoodwin@redhat.com)
+- fix 803995 (sgoodwin@redhat.com)
+- error msg display fix 803995 (sgoodwin@redhat.com)
+- Bug 798128 (sgoodwin@redhat.com)
+- Fix warning (ccoleman@redhat.com)
+- Add more debugger logging to streamline for auth failures, fix problem with
+  parameter names in login controller. (ccoleman@redhat.com)
+- Merge branch 'master' into dev/clayton/login (ccoleman@redhat.com)
+- Add new methods to streamline_mock (ccoleman@redhat.com)
+- Combine confirmation and success messages into a single form, remove old
+  signin form, and fix redirection of new user to prefill email address.
+  (ccoleman@redhat.com)
+- Remove dead password code and views, everything moved to app/views/password
+  and app/controllers/password_controller.rb (ccoleman@redhat.com)
+- Redirect old password reset links to new password reset links
+  (ccoleman@redhat.com)
+- Autofocus on signin flow (ccoleman@redhat.com)
+- Refresh login flow with updated code to streamline, clean up error text.
+  (ccoleman@redhat.com)
+- Add link to return to main page after reset (ccoleman@redhat.com)
+- Cleanup email confirmation and signup controllers for better flow.
+  (ccoleman@redhat.com)
+- nav additions coming over from original _navbar (sgoodwin@redhat.com)
+- fix header backgrounds, ie8 and chrome logo issues (sgoodwin@redhat.com)
+- Display errors using formtastic, make login model driven
+  (ccoleman@redhat.com)
+- New forms are active everywhere (ccoleman@redhat.com)
+- bug #802354 - disable details button for jenkins server (johnp@redhat.com)
+- Bug 803854 - Remove https (ccoleman@redhat.com)
+- Bug 790695 - User guide link broken (ccoleman@redhat.com)
+- Bug 804177 - icons missing, visually unaligned (ccoleman@redhat.com)
+- Merge branch 'master' into dev/clayton/login (ccoleman@redhat.com)
+- More cookies hacking, no success, give up and admin defeat.
+  (ccoleman@redhat.com)
+- Round out some remaining tests. Slight tweaks to behavior of :cookie_domain
+  => :current Comment out unit tests related to cookies until I can debug
+  (ccoleman@redhat.com)
+- Fix duplicate constant error by making status site autoload
+  (ccoleman@redhat.com)
+- Merge branch 'master' into login (ccoleman@redhat.com)
+- Remove useless file (ccoleman@redhat.com)
+- Dealing with complexities of cookie handling in functional tests, whittling
+  down dead code. (ccoleman@redhat.com)
+- Additional tests, support referrer redirection (ccoleman@redhat.com)
+- Merge branch 'master' into login (ccoleman@redhat.com)
+- Further cleaning up login flow (ccoleman@redhat.com)
+- Add more unit tests for cookie behavior (ccoleman@redhat.com)
+- Incremental testing (ccoleman@redhat.com)
+- Add configurable cookie domain for rh_sso (allow site to work outside of
+  .redhat.com) Begin simplifying login flow (ccoleman@redhat.com)
+
 * Sat Mar 17 2012 Dan McPherson <dmcphers@redhat.com> 0.89.1-1
 - bump spec numbers (dmcphers@redhat.com)
 - Capitalization of node.js (ccoleman@redhat.com)

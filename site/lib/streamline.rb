@@ -275,6 +275,7 @@ module Streamline
     errors.clear
     http_post(@@email_confirm_url, confirm_args, false) do |json|
       Rails.logger.debug "Confirmation response #{json.inspect}"
+      Rails.logger.debug "  Ticket #{@ticket}"
       if json['emailAddress']
         # success
       elsif json['errors'] and json['errors'][0] == 'user_already_registered'
