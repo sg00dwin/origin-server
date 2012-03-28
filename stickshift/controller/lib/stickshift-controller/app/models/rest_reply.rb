@@ -21,6 +21,10 @@ class RestReply < StickShift::Model
   
   def to_xml(options={})
     options[:tag_name] = "response"
+    if not self.data.kind_of?Enumerable
+      new_data = self.data
+      self.data = [new_data]
+    end
     super(options)
   end
 end
