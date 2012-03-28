@@ -88,4 +88,5 @@ end
 When /^(\d+) concurrent http connections are generated for (\d+) seconds$/ do |concurrent, seconds|
   cmd = "ab -H 'Host: #{@app.name}-#{@app.namespace}.dev.rhcloud.com' -c #{concurrent} -t #{seconds} http://localhost/ > /tmp/rhc/http_load_test_#{@app.name}_#{@app.namespace}.txt"
   exit_status = runcon cmd, 'unconfined_u', 'unconfined_r', 'unconfined_t'
+  raise "load test failed.  Exit code: #{exit_status}" unless exit_status == 0
 end

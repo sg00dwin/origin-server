@@ -34,7 +34,7 @@ Feature: Scaling Verification Tests
     When haproxy_ctld_daemon is started
     Then haproxy_ctld is running
     And 1 gears will be in the cluster
-    When 15 concurrent http connections are generated for 90 seconds
+    When 10 concurrent http connections are generated for 90 seconds
     Then 2 gears will be in the cluster
     When the application is destroyed
     Then the application should not be accessible
