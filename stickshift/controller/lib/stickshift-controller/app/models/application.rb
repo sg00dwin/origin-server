@@ -152,7 +152,6 @@ Configure-Order: [\"proxy/#{framework}\", \"proxy/haproxy-1.4\"]
       raise StickShift::UserException.new("#{feature} not embedded in '#{@name}', try adding it first", 101) if not comp.depends.include? feature
       comp.depends.delete(feature)
     else
-      raise StickShift::UserException.new("#{feature} not embedded in '#{@name}', try adding it first", 101) if not self.requires_feature.include? feature
       self.requires_feature.delete feature
     end
   end
@@ -427,7 +426,6 @@ Configure-Order: [\"proxy/#{framework}\", \"proxy/haproxy-1.4\"]
           rescue Exception=>e
           end
           r.append process_cartridge_commands(r.cart_commands)
-          # self.save
         end
       rescue Exception => e
         Rails.logger.debug e.message
@@ -435,24 +433,25 @@ Configure-Order: [\"proxy/#{framework}\", \"proxy/haproxy-1.4\"]
         
         successful_gears = []
         successful_gears = e.message[:successful].map{|g| g[:gear]} if e.message[:successful]
+        failed_gears = []
+        failed_gears = e.message[:failed].map{|g| g[:gear]} if e.message[:failed]
         gear_exception = e.message[:exception]        
 
         #remove failed component from all gears
         run_on_gears(successful_gears, reply, false) do |gear, r|
           r.append gear.deconfigure(comp_inst)
           r.append process_cartridge_commands(r.cart_commands)
-          #self.save
         end
-        
-        #remove failed cartridge dependency
-        self.requires_feature.delete(comp_inst.parent_cart_name)
-        #self.save
+        run_on_gears(failed_gears, reply, false) do |gear, r|
+          r.append gear.deconfigure(comp_inst, true)
+          r.append process_cartridge_commands(r.cart_commands)
+        end
         
         #destroy any unused gears
-        run_on_gears(nil, reply, false) do |gear, r|
+        run_on_gears(group_inst.gears, reply, false) do |gear, r|
           r.append gear.destroy if gear.configured_components.length == 0
-          #self.save
         end
+        group_inst.gears.delete_if { |gear| gear.configured_components.length == 0 }
 
         self.save
         exceptions << gear_exception

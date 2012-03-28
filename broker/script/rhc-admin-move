@@ -61,7 +61,7 @@ app_uuid = args["--app_uuid"]
 target_server_identity = args['--target_server_identity']
 destination_district_uuid = args['--destination_district_uuid']
 node_profile = args['--node_profile']
-allow_change_district = false unless args['--allow_change_district']
+allow_change_district = args['--allow_change_district'] ? true : false
 timeout  = args['--timeout']
 
 if args["--help"]

@@ -17,7 +17,8 @@ module OpenShift
       end
     end
 
-    def connect
+    def connect(region=nil)
+      conn = nil
       begin
         # Parse the credentials
         config = ParseConfig.new(File.expand_path("~/.awscred"))
@@ -33,7 +34,7 @@ module OpenShift
         )
 
         # Return the AMZ connection
-        AWS::EC2.new
+        conn = AWS::EC2.new
       rescue StandardError => e
         puts <<-eos
           Couldn't access credentials in ~/.awscred
@@ -45,6 +46,9 @@ module OpenShift
         puts e
         raise "Error - no credentials"
       end
+          
+      conn = conn.regions[region] if region
+      conn
     end
 
     def get_version(package)

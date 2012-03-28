@@ -32,12 +32,22 @@ Then /^the haproxy-status page will( not)? be responding$/ do |negate|
   exit_status.should == good_status
 end
 
-Then /^the gear member will( not)? be UP$/ do |negate|
-  good_status = negate ? 1 : 0
+Then /^the gear members will be (UP|DOWN)$/ do |state|
+  found = nil
+  csv = `/usr/bin/curl -s -H 'Host: #{@app.name}-#{@app.namespace}.dev.rhcloud.com' -s 'http://localhost/haproxy-status/;csv'`
+  $logger.debug('============ GEAR CSV ================')
+  $logger.debug(csv)
+  $logger.debug('============ GEAR CSV END ============')
 
-  command = "/usr/bin/curl -s -H 'Host: #{@app.name}-#{@app.namespace}.dev.rhcloud.com' -s 'http://localhost/haproxy-status/;csv' | awk -F',' '/express,gear/{ if($18!=\"UP\") exit 1  }'"
-  exit_status = runcon command, 'unconfined_u', 'unconfined_r', 'unconfined_t'
-  exit_status.should == good_status
+  csv.split.each do | haproxy_worker |
+    worker_attrib_array = haproxy_worker.split(',')
+    if worker_attrib_array[17] and worker_attrib_array[1].to_s.start_with?('gear') and worker_attrib_array[17].to_s.start_with?(state)
+      found = 1
+    elsif worker_attrib_array[17] and worker_attrib_array[1].start_with?('gear') and (not worker_attrib_array[17].start_with?(state))
+      raise "Gear member found: #{worker_attrib_array[1]} but was not #{state}: #{worker_attrib_array[17]}"
+    end
+  end
+  raise "Could not find any gears" unless found
 end
 
 Then /^(\d+) gears will be in the cluster$/ do |count|
@@ -88,4 +98,5 @@ end
 When /^(\d+) concurrent http connections are generated for (\d+) seconds$/ do |concurrent, seconds|
   cmd = "ab -H 'Host: #{@app.name}-#{@app.namespace}.dev.rhcloud.com' -c #{concurrent} -t #{seconds} http://localhost/ > /tmp/rhc/http_load_test_#{@app.name}_#{@app.namespace}.txt"
   exit_status = runcon cmd, 'unconfined_u', 'unconfined_r', 'unconfined_t'
+  raise "load test failed.  Exit code: #{exit_status}" unless exit_status == 0
 end
