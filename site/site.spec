@@ -3,7 +3,7 @@
 
 Summary:   Li site components
 Name:      rhc-site
-Version:   0.89.8
+Version:   0.89.9
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -117,6 +117,9 @@ rm -rf %{buildroot}
 /bin/touch %{sitedir}/log/production.log
 
 %changelog
+* Wed Mar 28 2012 Dan McPherson <dmcphers@redhat.com> 0.89.9-1
+- 
+
 * Wed Mar 28 2012 Dan McPherson <dmcphers@redhat.com> 0.89.8-1
 - correct links and remove duplicates in opensource dislaimer page
   (johnp@redhat.com)
