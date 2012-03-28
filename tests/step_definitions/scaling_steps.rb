@@ -35,7 +35,7 @@ end
 Then /^the gear member will( not)? be UP$/ do |negate|
   good_status = negate ? 1 : 0
 
-  command = "/usr/bin/curl -s -H 'Host: #{@app.name}-#{@app.namespace}.dev.rhcloud.com' -s 'http://localhost/haproxy-status/;csv' | awk -F',' '/express,gear/{ if($18!=\"UP\") exit 1  }'"
+  command = "/usr/bin/curl -s -H 'Host: #{@app.name}-#{@app.namespace}.dev.rhcloud.com' -s 'http://localhost/haproxy-status/;csv' | awk -F',' '/express,gear/{ print $0; if($18!~\"UP\") exit 1  }'"
   exit_status = runcon command, 'unconfined_u', 'unconfined_r', 'unconfined_t'
   exit_status.should == good_status
 end
