@@ -3,7 +3,7 @@
 
 Summary:   Li site components
 Name:      rhc-site
-Version:   0.89.7
+Version:   0.89.9
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -117,6 +117,17 @@ rm -rf %{buildroot}
 /bin/touch %{sitedir}/log/production.log
 
 %changelog
+* Wed Mar 28 2012 Dan McPherson <dmcphers@redhat.com> 0.89.9-1
+- 
+
+* Wed Mar 28 2012 Dan McPherson <dmcphers@redhat.com> 0.89.8-1
+- correct links and remove duplicates in opensource dislaimer page
+  (johnp@redhat.com)
+- Fixes 807063 (ffranz@redhat.com)
+- Added logged in user information to console header (ffranz@redhat.com)
+- when embedding cart put server output in an escaped pre tag
+  (johnp@redhat.com)
+
 * Tue Mar 27 2012 Dan McPherson <dmcphers@redhat.com> 0.89.7-1
 - Fixes help links tests (ffranz@redhat.com)
 - blacklist haproxy from the cartridge view for now (johnp@redhat.com)
