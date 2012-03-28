@@ -55,8 +55,8 @@ ln -s %{geminstdir}/lib/%{gemname} %{buildroot}%{ruby_sitelib}
 ln -s %{geminstdir}/lib/%{gemname}.rb %{buildroot}%{ruby_sitelib}
 
 # move the selinux policy files into proper location
-mkdir -p /usr/share/selinux/packages/rubygem-%{gemname}
-cp %{buildroot}%{geminstdir}/docs/examples/selinux/* /usr/share/selinux/packages/rubygem-%{gemname}/
+mkdir -p %{buildroot}/usr/share/selinux/packages/rubygem-%{gemname}
+cp %{buildroot}%{geminstdir}/docs/examples/selinux/* %{buildroot}/usr/share/selinux/packages/rubygem-%{gemname}/
 
 # move dbus/oddjob config files
 mkdir -p %{buildroot}%{_sysconfdir}/dbus-1/system.d/
@@ -100,6 +100,7 @@ service oddjobd restart
 %config(noreplace) %{_sysconfdir}/oddjobd.conf.d/oddjobd-ss-exec.conf
 %config(noreplace) %{_sysconfdir}/dbus-1/system.d/stickshift-dbus.conf
 %attr(0700,-,-) %{_bindir}/ss-exec-command
+/usr/share/selinux/packages/rubygem-%{gemname}
 
 %files -n ruby-%{gemname}
 %{ruby_sitelib}/%{gemname}
