@@ -232,14 +232,14 @@ WAIT=1
 while [ 1 -eq $WAIT ] ; do fgrep "[initandlisten] waiting for connections" /var/log/mongodb/mongodb.log && WAIT=$? ; echo $WAIT ; sleep 1 ; done
 mongo localhost/stickshift_broker_dev --eval "db.addUser(\"stickshift\", \"mooo\")"
 
+DIR="$( cd -P "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+${DIR}/build.sh
+
 #setup uplift-bind-plugin selinux policy
 mkdir -p /usr/share/selinux/packages/rubygem-uplift-bind-plugin
 cp /usr/lib/ruby/gems/1.8/gems/uplift-bind-plugin-*/doc/examples/dhcpnamedforward.* /usr/share/selinux/packages/rubygem-uplift-bind-plugin/
 pushd /usr/share/selinux/packages/rubygem-uplift-bind-plugin/ && make -f /usr/share/selinux/devel/Makefile ; popd
 semodule -i /usr/share/selinux/packages/rubygem-uplift-bind-plugin/dhcpnamedforward.pp
-
-DIR="$( cd -P "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-${DIR}/build.sh
 
 # preserve the existing named config
 if [ ! -f /etc/named.conf.orig ]

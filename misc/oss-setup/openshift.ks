@@ -126,6 +126,9 @@ rubygem-swingshift-mongo-plugin
 rubygem-uplift-bind-plugin
 rubygem-gearchanger-oddjob-plugin
 
+mongodb 
+mongodb-server
+
 %end
 
 %post
@@ -449,16 +452,13 @@ if [ -f /etc/PackageKit/CommandNotFound.conf ]; then
   sed -i -e 's/^SoftwareSourceSearch=true/SoftwareSourceSearch=false/' /etc/PackageKit/CommandNotFound.conf
 fi
 
-# preserve the existing named config
-if [ ! -f /etc/named.conf.orig ]
-then
-  mv /etc/named.conf /etc/named.conf.orig
-fi
+echo "initialize mongodb"
+service mongod start
 
-# install the local server named
-cp /usr/lib/ruby/gems/1.8/gems/uplift-bind-plugin-*/doc/examples/named.conf /etc/named.conf
-chown root:named /etc/named.conf
-/usr/bin/chcon system_u:object_r:named_conf_t:s0 -v /etc/named.conf
+#wait for "[initandlisten] waiting for connections"
+WAIT=1
+while [ 1 -eq $WAIT ] ; do fgrep "[initandlisten] waiting for connections" /var/log/mongodb/mongodb.log && WAIT=$? ; echo "Waiting for mongo to initialize ...\n" ; tail -5 /var/log/mongodb/mongodb.log ; sleep 1 ; done
+mongo localhost/stickshift_broker_dev --eval "db.addUser(\"stickshift\", \"mooo\")"
 
 # get the first resolver from /etc/resolv.conf
 FORWARDER=`grep nameserver /etc/resolv.conf | head -1 | cut -d' ' -f2`
@@ -479,17 +479,44 @@ EOF
 
 echo "Final setup"
 
+# Increase kernel semaphores to accomodate many httpds
+echo "kernel.sem = 250  32000 32  4096" >> /etc/sysctl.conf
+sysctl kernel.sem="250  32000 32  4096"
+
+# Move ephemeral port range to accommodate app proxies
+echo "net.ipv4.ip_local_port_range = 15000 35530" >> /etc/sysctl.conf
+sysctl net.ipv4.ip_local_port_range="15000 35530"
+
+# Increase the connection tracking table size
+echo "net.netfilter.nf_conntrack_max = 1048576" >> /etc/sysctl.conf
+sysctl net.netfilter.nf_conntrack_max=1048576
+
+# Increase max SSH connections and tries to 40
+perl -p -i -e "s/^#MaxSessions .*$/MaxSessions 40/" /etc/ssh/sshd_config
+perl -p -i -e "s/^#MaxStartups .*$/MaxStartups 40/" /etc/ssh/sshd_config
+
+chkconfig mongod on
+perl -p -i -e "s/^#auth = .*$/auth = true/" /etc/mongodb.conf
+
 echo "setup stickshift plugins in broker"
 sed -i -e "s/^# Add plugin gems here/# Add plugin gems here\ngem 'swingshift-mongo-plugin'\ngem 'uplift-bind-plugin'\ngem 'crankcase-mongo-plugin'\ngem 'gearchanger-oddjob-plugin'\n/" /var/www/stickshift/broker/Gemfile
 
-echo "sleeping 5.."
-sleep 5
-
 echo "setup bind-plugin selinux policy"
-mkdir /usr/share/selinux/packages/rubygem-uplift-bind-plugin
+mkdir -p /usr/share/selinux/packages/rubygem-uplift-bind-plugin
 cp /usr/lib/ruby/gems/1.8/gems/uplift-bind-plugin-*/doc/examples/dhcpnamedforward.* /usr/share/selinux/packages/rubygem-uplift-bind-plugin/
 pushd /usr/share/selinux/packages/rubygem-uplift-bind-plugin/ && make -f /usr/share/selinux/devel/Makefile ; popd
-/usr/sbin/semodule -i /usr/share/selinux/packages/rubygem-uplift-bind-plugin/dhcpnamedforward.pp
+semodule -i /usr/share/selinux/packages/rubygem-uplift-bind-plugin/dhcpnamedforward.pp
+
+# preserve the existing named config
+if [ ! -f /etc/named.conf.orig ]
+then
+  mv /etc/named.conf /etc/named.conf.orig
+fi
+
+# install the local server named
+cp /usr/lib/ruby/gems/1.8/gems/uplift-bind-plugin-*/doc/examples/named.conf /etc/named.conf
+chown root:named /etc/named.conf
+/usr/bin/chcon system_u:object_r:named_conf_t:s0 -v /etc/named.conf
 
 echo "copy example.com. keys in place for bind"
 mkdir -p /var/named
@@ -520,6 +547,20 @@ prepend domain-name-servers 127.0.0.1 ;
 EOF
 
 cp /usr/lib/ruby/gems/1.8/gems/uplift-bind-plugin-*/doc/examples/dhclient-up-hooks /etc/dhcp/dhclient-up-hooks
+
+echo "Set resource limits"
+cat <<EOF > /etc/stickshift/resource_limits.conf
+#
+# Apache bandwidth limit
+# 
+apache_bandwidth="all 500000"
+apache_maxconnection="all 20"
+apache_bandwidtherror="510"
+#
+# Apache rotatelogs tuning
+rotatelogs_interval=86400
+rotatelogs_format="-%Y%m%d-%H%M%S-%Z"
+EOF
 
 sed -i -e 's/Generic release/Fedora Remix/g' /etc/fedora-release /etc/issue
 
