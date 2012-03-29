@@ -562,6 +562,46 @@ rotatelogs_interval=86400
 rotatelogs_format="-%Y%m%d-%H%M%S-%Z"
 EOF
 
+sed -i -e "s/^# Add plugin gems here/# Add plugin gems here\ngem 'swingshift-mongo-plugin'\ngem 'uplift-bind-plugin'\ngem 'crankcase-mongo-plugin'\ngem 'gearchanger-oddjob-plugin'\n/" /var/www/stickshift/broker/Gemfile
+pushd /var/www/stickshift/broker/ && rm -f Gemfile.lock && bundle show && chown apache:apache Gemfile.lock && popd
+
+mkdir -p /var/www/stickshift/broker/config/environments/plugin-config
+
+echo "require File.expand_path('../plugin-config/swingshift-mongo-plugin.rb', __FILE__)" >> /var/www/stickshift/broker/config/environments/development.rb
+cat <<EOF > /var/www/stickshift/broker/config/environments/plugin-config/swingshift-mongo-plugin.rb
+Broker::Application.configure do
+  config.auth = {
+    :salt => "ClWqe5zKtEW4CJEMyjzQ",
+    
+    # Replica set example: [[<host-1>, <port-1>], [<host-2>, <port-2>], ...]
+    :mongo_replica_sets => false,
+    :mongo_host_port => ["localhost", 27017],
+  
+    :mongo_user => "stickshift",
+    :mongo_password => "mooo",
+    :mongo_db => "stickshift_broker_dev",
+    :mongo_collection => "auth_user"
+  }
+end
+EOF
+
+cp -n /usr/lib/ruby/gems/1.8/gems/uplift-bind-plugin-*/doc/examples/Kexample.com.* /var/named
+KEY=$( grep Key: /var/named/Kexample.com.*.private | cut -d' ' -f 2 )
+echo "require File.expand_path('../plugin-config/uplift-bind-plugin.rb', __FILE__)" >> /var/www/stickshift/broker/config/environments/development.rb
+cat <<EOF > /var/www/stickshift/broker/config/environments/plugin-config/uplift-bind-plugin.rb
+Broker::Application.configure do
+  config.dns = {
+    :server => "127.0.0.1",
+    :port => 53,
+    :keyname => "example.com",
+    :keyvalue => "${KEY}",
+    :zone => "example.com"
+  }
+end
+EOF
+
+chkconfig stickshift-broker on
+
 sed -i -e 's/Generic release/Fedora Remix/g' /etc/fedora-release /etc/issue
 
 %end

@@ -110,14 +110,8 @@ rm -rf $RPM_BUILD_ROOT
 /bin/touch %{brokerdir}/httpd/access_log
 
 #selinux updated
-setsebool -P httpd_can_network_relay=1 httpd_can_network_connect=1
-chcon -t httpd_sys_script_rw_t %{brokerdir}/httpd/run/
-chcon -R -t httpd_sys_script_rw_t %{brokerdir}/tmp
-chcon -R -t httpd_log_t %{brokerdir}/httpd/logs
-chcon -R -t httpd_log_t %{brokerdir}/log
-
 systemctl --system daemon-reload
-chkconfig stickshift-broker off
+chkconfig stickshift-broker on
 
 pushd /usr/share/selinux/packages/stickshift-broker
 make -f /usr/share/selinux/devel/Makefile
@@ -129,9 +123,18 @@ popd
 /sbin/fixfiles -R mod_passenger restore
 /sbin/restorecon -R -v /var/run
 
+semanage -i - <<_EOF
+boolean -m --on httpd_can_network_connect
+boolean -m --on httpd_can_network_relay
+fcontext -a -t httpd_var_run_t '%{brokerdir}/httpd/run(/.?'
+fcontext -a -t httpd_tmp_t '%{brokerdir}/httpd/run(/.?'
+fcontext -a -t httpd_log_t '%{brokerdir}/httpd/logs(/.?'
+fcontext -a -t httpd_log_t '%{brokerdir}/log(/.?'
+_EOF
+semodule -i /usr/share/selinux/packages/stickshift-broker/stickshift-broker.pp -d passenger
+
 %postun
-/usr/sbin/semodule -r stickshift-broker
-/usr/sbin/semodule -e passenger
+/usr/sbin/semodule -e passenger -r stickshift-broker
 /sbin/fixfiles -R rubygem-passenger restore
 /sbin/fixfiles -R mod_passenger restore
 /sbin/restorecon -R -v /var/run
