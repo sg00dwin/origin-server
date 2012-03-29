@@ -1397,9 +1397,9 @@ private
         iv, token = StickShift::AuthService.instance.generate_broker_key(self)
         iv = Base64::encode64(iv)
         token = Base64::encode64(token)
-        self.user.add_save_job('adds', 'broker_auth_keys', [self, iv, token])
+        self.user.add_save_job('adds', 'broker_auth_keys', [self.uuid, iv, token])
       when "BROKER_KEY_REMOVE"
-        self.user.add_save_job('removes', 'broker_auth_keys', [self])
+        self.user.add_save_job('removes', 'broker_auth_keys', [self.uuid])
       end
     end
     if user.save_jobs

@@ -86,13 +86,10 @@
                 end
               when 'broker_auth_keys'
                 values.each do |value|
-                  app = value[0]
-                  app.gears.each do |app_gear|
-                    if gear.uuid == app_gear.uuid
-                      job = gear.broker_auth_key_job_remove
-                      RemoteJob.add_parallel_job(exec_handle, tag, gear, job)
-                      break
-                    end
+                  app_uuid = value[0]
+                  if app_uuid == gear.app.uuid
+                    job = gear.broker_auth_key_job_remove
+                    RemoteJob.add_parallel_job(exec_handle, tag, gear, job)
                   end
                 end
               end
@@ -134,15 +131,12 @@
               end
             when 'broker_auth_keys'
               values.each do |value|
-                app = value[0]
-                app.gears.each do |app_gear|
-                  if gear.uuid == app_gear.uuid
-                    iv = value[1]
-                    token = value[2]
-                    job = gear.broker_auth_key_job_add(iv, token)
-                    RemoteJob.add_parallel_job(exec_handle, tag, gear, job)
-                    break
-                  end
+                app_uuid = value[0]
+                if app_uuid == gear.app.uuid
+                  iv = value[1]
+                  token = value[2]
+                  job = gear.broker_auth_key_job_add(iv, token)
+                  RemoteJob.add_parallel_job(exec_handle, tag, gear, job)
                 end
               end
             end
