@@ -35,19 +35,20 @@ def mongo_migrate
   users.each do |user|
     puts "Processing user #{user['login']}"
     namespace = user["namespace"]
-
-    uuid = StickShift::Model.gen_uuid
-    domain = {"uuid" => uuid, "namespace"  => namespace}
-    user["domains"] = [domain]
-    if user["apps"]
-      user["apps"].each do |app|
-        app["domain"] = domain
-        app.delete("optimize")
+    if namespace
+      uuid = StickShift::Model.gen_uuid
+      domain = {"uuid" => uuid, "namespace"  => namespace}
+      user["domains"] = [domain]
+      if user["apps"]
+        user["apps"].each do |app|
+          app["domain"] = domain
+          app.delete("optimize") if app["optimize"]
+        end
       end
+      user.delete("namespace")
+      puts "User #{user}"
+      $coll.update({ "_id" => user["login"] }, user)
     end
-    user.delete("namespace")
-    puts "User #{user}"
-    $coll.update({ "_id" => user["login"] }, user)
    end
 end
 
