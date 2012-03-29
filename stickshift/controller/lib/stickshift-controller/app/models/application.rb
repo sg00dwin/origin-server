@@ -845,8 +845,6 @@ Configure-Order: [\"proxy/#{framework}\", \"proxy/haproxy-1.4\"]
   
   def add_broker_key
     iv, token = StickShift::AuthService.instance.generate_broker_key(self)
-    #iv = Base64::encode64(iv).gsub("\n", '')
-    #token = Base64::encode64(token).gsub("\n", '')
     iv = Base64::encode64(iv)
     token = Base64::encode64(token)
     
@@ -1396,9 +1394,12 @@ private
         key = command_item[:args][0]
         self.user.remove_env_var(key)
       when "BROKER_KEY_ADD"
-        add_broker_key
+        iv, token = StickShift::AuthService.instance.generate_broker_key(self)
+        iv = Base64::encode64(iv)
+        token = Base64::encode64(token)
+        self.user.add_save_job('adds', 'broker_auth_keys', [self, iv, token])
       when "BROKER_KEY_REMOVE"
-        remove_broker_key
+        self.user.add_save_job('removes', 'broker_auth_keys', [self])
       end
     end
     if user.save_jobs
