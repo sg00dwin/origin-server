@@ -961,3 +961,31 @@ body.simple {
     padding-left: 0;
   }
 }
+
+/* Overview specific styles */
+.overview {
+  ol li {
+    margin-bottom: 10px;
+  }
+
+  #intro {
+    text-align: justify;
+    img {
+      float: right;
+      margin: -20px 40px 0;
+    }
+  }
+  
+  #scale {
+    text-align: justify;
+    img {
+      float: right;
+      margin: 0px 20px 20px 40px;
+    }
+  }
+
+  #arch { 
+    clear: both;
+  }
+}
+
