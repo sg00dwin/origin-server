@@ -395,8 +395,12 @@ module StickShift
     end
     
     def delete_domain(user_id, id)
-      update({ "_id" => user_id, "domains.uuid" => id },
-             { "$pull" => { "domains" => {"uuid" => id }}})
+      hash = find_and_modify({ :query => { "_id" => user_id, "domains.uuid" => id,
+                               "$or" => [{"apps" => {"$exists" => true, "$size" => 0}}, 
+                                         {"apps" => {"$exists" => false}}] },
+                               :update => { "$pull" => { "domains" => {"uuid" => id } } }})
+      raise StickShift::UserException.new("Could not delete domain." +
+                                          "Domain has valid applications.", 136) if hash == nil
     end
 
     def domain_attrs_to_internal(domain_attrs)
