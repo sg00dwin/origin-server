@@ -6,6 +6,25 @@ require 'pty'
 
 include AppHelper
 
+def gear_up?(hostname, state='UP')
+  csv = `/usr/bin/curl -s -H 'Host: #{hostname}' -s 'http://localhost/haproxy-status/;csv'`
+  $logger.debug('============ GEAR CSV ================')
+  $logger.debug(csv)
+  $logger.debug('============ GEAR CSV END ============')
+  csv.split.each do | haproxy_worker |
+
+    worker_attrib_array = haproxy_worker.split(',')
+    max_wait = 24 # 2 minutes
+    i = 0
+    if worker_attrib_array[17] and worker_attrib_array[1].to_s.start_with?('gear') and worker_attrib_array[17].to_s.start_with?(state)
+      $logger.debug("Found: #{worker_attrib_array[1]} - #{worker_attrib_array[17]}")
+      return 0
+    end
+  end
+  $logger.debug("No gears found")
+  return 1
+end
+
 When /^a scaled (.+) application is created$/ do |app_type|
   @app = TestApp.create_unique(app_type)
   # Create our app via the curl -s api:
@@ -34,20 +53,15 @@ end
 
 Then /^the gear members will be (UP|DOWN)$/ do |state|
   found = nil
-  csv = `/usr/bin/curl -s -H 'Host: #{@app.name}-#{@app.namespace}.dev.rhcloud.com' -s 'http://localhost/haproxy-status/;csv'`
-  $logger.debug('============ GEAR CSV ================')
-  $logger.debug(csv)
-  $logger.debug('============ GEAR CSV END ============')
 
-  csv.split.each do | haproxy_worker |
-    worker_attrib_array = haproxy_worker.split(',')
-    if worker_attrib_array[17] and worker_attrib_array[1].to_s.start_with?('gear') and worker_attrib_array[17].to_s.start_with?(state)
-      found = 1
-    elsif worker_attrib_array[17] and worker_attrib_array[1].start_with?('gear') and (not worker_attrib_array[17].start_with?(state))
-      raise "Gear member found: #{worker_attrib_array[1]} but was not #{state}: #{worker_attrib_array[17]}"
-    end
+  max_wait = 24 # 2 minutes
+  i = 0
+  while gear_up?("#{@app.name}-#{@app.namespace}.dev.rhcloud.com", state) != 0 and i <= max_wait
+    $logger.debug("loop #{i}")
+    i = i + 1
+    sleep 5
   end
-  raise "Could not find any gears" unless found
+  raise "Could not find valid gear" if i >= max_wait
 end
 
 Then /^(\d+) gears will be in the cluster$/ do |count|
