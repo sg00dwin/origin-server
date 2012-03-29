@@ -187,6 +187,10 @@ class DevEnv < Thor
         end
       end
     end
+    
+    def setup_test_dir(hostname)
+      ssh(hostname, "rm -rf /tmp/rhc; mkdir -p /tmp/rhc/junit")
+    end
 
     def test_instance(tag, hostname, instance, conn, options, image_id=nil)
       begin
@@ -195,6 +199,8 @@ class DevEnv < Thor
         end
         
         idle_all_gears(hostname) unless options.official?
+        
+        setup_test_dir(hostname)
 
         threads = []
         failures = []
@@ -327,7 +333,7 @@ class DevEnv < Thor
     def retry_test_failures(hostname, failures, num_retries=1)
       failures.reverse!
       puts "All Failures: #{failures.pretty_inspect}"
-      ssh(hostname, "rm -rf /tmp/rhc; mkdir -p /tmp/rhc/junit")
+      setup_test_dir(hostname)
       failures.each do |failure|
         title = failure[0]
         cmd = failure[1]
@@ -338,7 +344,7 @@ class DevEnv < Thor
             if i == num_retries
               exit exit_code
             else
-              ssh(hostname, "rm -rf /tmp/rhc; mkdir -p /tmp/rhc/junit")
+              setup_test_dir(hostname)
             end
           else
             break
