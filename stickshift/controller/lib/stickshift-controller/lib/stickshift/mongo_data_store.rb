@@ -317,13 +317,29 @@ module StickShift
     def put_user(user_id, changed_user_attrs)
       changed_user_attrs.delete("apps")
       changed_user_attrs.delete("domains")
-      update({ "_id" => user_id }, { "$set" => changed_user_attrs })
+      changed_user_attrs.delete("consumed_gears")
+      ngears = changed_user_attrs["add_gears"]
+      ngears = ngears.to_i if ngears
+      changed_user_attrs.delete("add_gears")
+
+      if ngears && (ngears > 0)
+        hash = find_and_modify({ :query => { "_id" => user_id, "$where" => "this.consumed_gears < this.max_gears" },
+                                 :update => { "$set" => changed_user_attrs, "$inc" => { "consumed_gears" => ngears } }})
+        raise StickShift::UserException.new("Application limit has reached for '#{user_id}'", 104) if hash == nil
+      elsif ngears && (ngears < 0)
+        hash = find_and_modify({ :query => { "_id" => user_id, "$where" => "this.consumed_gears > 0" },
+                                 :update => { "$set" => changed_user_attrs, "$inc" => { "consumed_gears" => ngears } }})
+        raise StickShift::UserException.new("Application gears already at zero for '#{user_id}'", 135) if hash == nil
+      else
+        update({ "_id" => user_id }, { "$set" => changed_user_attrs })
+      end
     end
     
     def add_user(user_id, user_attrs)
       user_attrs["_id"] = user_id
       user_attrs.delete("apps")
       user_attrs.delete("domains")
+      user_attrs.delete("add_gears")
       insert(user_attrs)
       user_attrs.delete("_id")
     end
@@ -336,8 +352,8 @@ module StickShift
     def add_app(user_id, id, app_attrs)
       app_attrs_to_internal(app_attrs)
       hash = find_and_modify({ :query => { "_id" => user_id, "apps.name" => { "$ne" => id }, 
-             "$where" => "(this.consumed_gears < this.max_gears) && (this.domains.length > 0)"},
-             :update => { "$push" => { "apps" => app_attrs }, "$inc" => { "consumed_gears" => 1 }} })
+             "$where" => "(this.consumed_gears <= this.max_gears) && (this.domains.length > 0)"},
+             :update => { "$push" => { "apps" => app_attrs } } })
       raise StickShift::UserException.new("Failed: Either application limit has already reached or " +
                                           "domain doesn't exist for '#{user_id}'", 104) if hash == nil
     end
@@ -355,12 +371,13 @@ module StickShift
     end
 
     def delete_user(user_id)
-      remove({ "_id" => user_id, "$or" => [{"domains" => {"$exists" => true, "$size" => 0}}, {"domains" => {"$exists" => false}}], "$where" => "this.consumed_gears == 0"})
+      remove({ "_id" => user_id, "$or" => [{"domains" => {"$exists" => true, "$size" => 0}}, 
+             {"domains" => {"$exists" => false}}], "$where" => "this.consumed_gears == 0"})
     end
 
     def delete_app(user_id, id)
       update({ "_id" => user_id, "apps.name" => id},
-             { "$pull" => { "apps" => {"name" => id }}, "$inc" => { "consumed_gears" => -1 }})
+             { "$pull" => { "apps" => {"name" => id }}})
     end
 
     def app_attrs_to_internal(app_attrs)
@@ -378,7 +395,7 @@ module StickShift
     end
     
     def delete_domain(user_id, id)
-      update({ "_id" => user_id, "domains.uuid" => id},
+      update({ "_id" => user_id, "domains.uuid" => id },
              { "$pull" => { "domains" => {"uuid" => id }}})
     end
 
