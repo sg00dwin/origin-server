@@ -1,6 +1,7 @@
 require 'timeout'
 require 'fileutils'
 require 'open3'
+require 'benchmark'
 
 module CommandHelper
   def run_stdout(cmd)
@@ -75,9 +76,19 @@ module CommandHelper
     return exit_code
   end
 
+  def log_event(str)
+    $perfmon_logger.info "#{Thread.current} #{str}"
+  end
+
   def rhc_create_domain(app)
     rhc_do('rhc_create_domain') do
-      exit_code = run("#{$rhc_domain_script} create -n #{app.namespace} -l #{app.login} -p fakepw -d")
+
+      exit_code = 0
+      time = Benchmark.realtime do 
+        exit_code = run("#{$rhc_domain_script} create -n #{app.namespace} -l #{app.login} -p fakepw -d")
+      end
+      log_event "#{time} CREATE_DOMAIN #{app.namespace} #{app.login}"
+
       app.create_domain_code = exit_code
       return exit_code == 0
     end
@@ -103,7 +114,10 @@ module CommandHelper
       old_file = app.file
       app.file = "#{$temp}/#{new_namespace}.json"
       FileUtils.mv old_file, app.file
-      run("#{$rhc_domain_script} alter -n #{new_namespace} -l #{app.login} -p fakepw -d").should == 0
+      time = Benchmark.realtime do 
+        run("#{$rhc_domain_script} alter -n #{new_namespace} -l #{app.login} -p fakepw -d").should == 0
+      end
+      log_event "#{time} UPDATE_DOMAIN #{new_namespace} #{app.login}"
       app.persist
     end
   end
@@ -112,14 +126,20 @@ module CommandHelper
     rhc_do('rhc_snapshot') do
       app.snapshot="/tmp/#{app.name}-#{app.namespace}.tar.gz"
       FileUtils.rm_rf app.snapshot
-      run("#{$rhc_app_script} snapshot save -l #{app.login} -a #{app.name} -f '#{app.snapshot}' -p fakepw -d").should == 0
+      time = Benchmark.realtime do 
+        run("#{$rhc_app_script} snapshot save -l #{app.login} -a #{app.name} -f '#{app.snapshot}' -p fakepw -d").should == 0
+      end
+      log_event "#{time} CREATE_SNAPSHOT #{app.name} #{app.snapshot} #{app.login}"
       app.persist
     end
   end
 
   def rhc_restore(app)
     rhc_do('rhc_restore') do
-      run("#{$rhc_app_script} snapshot restore -l #{app.login} -a #{app.name} -f '#{app.snapshot}' -p fakepw -d").should == 0
+      time = Benchmark.realtime do 
+        run("#{$rhc_app_script} snapshot restore -l #{app.login} -a #{app.name} -f '#{app.snapshot}' -p fakepw -d").should == 0
+      end
+      log_event "#{time} RESTORE_SNAPSHOT #{app.name} #{app.snapshot} #{app.login}"
     end
   end
 
@@ -140,7 +160,11 @@ module CommandHelper
       end
 
       output_buffer = []
-      exit_code = run(cmd, output_buffer)
+      exit_code = 0
+      time = Benchmark.realtime do 
+        exit_code = run(cmd, output_buffer)
+      end
+      log_event "#{time} CREATE_APP #{app.name} #{app.type} #{app.login}"
 
       # Update the application uid from the command output
       app.update_uid(output_buffer[0])
@@ -157,7 +181,11 @@ module CommandHelper
 
   def rhc_embed_add(app, type)
     rhc_do('rhc_embed_add') do
-      result = run_stdout("#{$rhc_app_script} cartridge add -l #{app.login} -a #{app.name} -p fakepw -c #{type} -d")
+      result = nil
+      time = Benchmark.realtime do 
+        result = run_stdout("#{$rhc_app_script} cartridge add -l #{app.login} -a #{app.name} -p fakepw -c #{type} -d")
+      end
+      log_event "#{time} ADD_EMBED_CART #{app.name} #{type} #{app.login}"
       if type.start_with?('mysql-')
         app.mysql_hostname = /^Connection URL: mysql:\/\/(.*)\/$/.match(result)[1]
         app.mysql_user = /^ +Root User: (.*)$/.match(result)[1]
@@ -179,7 +207,10 @@ module CommandHelper
   def rhc_embed_remove(app, type)
     rhc_do('rhc_embed_remove') do
       puts app.name
-      run("#{$rhc_app_script} cartridge remove -l #{app.login} -a #{app.name} -p fakepw -c #{type} -d").should == 0
+      time = Benchmark.realtime do 
+        run("#{$rhc_app_script} cartridge remove -l #{app.login} -a #{app.name} -p fakepw -c #{type} -d").should == 0
+      end
+      log_event "#{time} REMOVE_EMBED_CART #{app.name} #{type} #{app.login}"
       app.mysql_hostname = nil
       app.mysql_user = nil
       app.mysql_password = nil
@@ -192,41 +223,71 @@ module CommandHelper
 
   def rhc_ctl_stop(app)
     rhc_do('rhc_ctl_stop') do
-      run("#{$rhc_app_script} stop -l #{app.login} -a #{app.name} -p fakepw -d").should == 0
-      run("#{$rhc_app_script} status -l #{app.login} -a #{app.name} -p fakepw  | grep '#{app.get_stop_string}'").should == 0
+      time = Benchmark.realtime do 
+        run("#{$rhc_app_script} stop -l #{app.login} -a #{app.name} -p fakepw -d").should == 0
+      end
+      log_event "#{time} STOP_APP #{app.name} #{app.login}"
+      time = Benchmark.realtime do 
+        run("#{$rhc_app_script} status -l #{app.login} -a #{app.name} -p fakepw  | grep '#{app.get_stop_string}'").should == 0
+      end
+      log_event "#{time} STATUS_APP #{app.name} #{app.login}"
     end
   end
 
   def rhc_add_alias(app)
     rhc_do('rhc_add_alias') do
-      run("#{$rhc_app_script} add-alias -l #{app.login} -a #{app.name} -p fakepw --alias '#{app.name}-#{app.namespace}.example.com' -d").should == 0
+      time = Benchmark.realtime do 
+        run("#{$rhc_app_script} add-alias -l #{app.login} -a #{app.name} -p fakepw --alias '#{app.name}-#{app.namespace}.example.com' -d").should == 0
+      end
+      log_event "#{time} ADD_ALIAS #{app.name} #{app.login}"
     end
   end
 
   def rhc_remove_alias(app)
     rhc_do('rhc_remove_alias') do
-      run("#{$rhc_app_script} remove-alias -l #{app.login} -a #{app.name} -p fakepw --alias '#{app.name}-#{app.namespace}.example.com' -d").should == 0
+      time = Benchmark.realtime do 
+        run("#{$rhc_app_script} remove-alias -l #{app.login} -a #{app.name} -p fakepw --alias '#{app.name}-#{app.namespace}.example.com' -d").should == 0
+      end
+      log_event "#{time} REMOVE_ALIAS #{app.name} #{app.login}"
     end
   end
 
   def rhc_ctl_start(app)
     rhc_do('rhc_ctl_start') do
-      run("#{$rhc_app_script} start -l #{app.login} -a #{app.name} -p fakepw -d").should == 0
-      run("#{$rhc_app_script} status -l #{app.login} -a #{app.name} -p fakepw | grep '#{app.get_stop_string}'").should == 1
+      time = Benchmark.realtime do 
+        run("#{$rhc_app_script} start -l #{app.login} -a #{app.name} -p fakepw -d").should == 0
+      end
+      log_event "#{time} START_APP #{app.name} #{app.login}"
+      time = Benchmark.realtime do 
+        run("#{$rhc_app_script} status -l #{app.login} -a #{app.name} -p fakepw | grep '#{app.get_stop_string}'").should == 1
+      end
+      log_event "#{time} STOP_APP #{app.name} #{app.login}"
     end
   end
 
   def rhc_ctl_restart(app)
     rhc_do('rhc_ctl_restart') do
-      run("#{$rhc_app_script} restart -l #{app.login} -a #{app.name} -p fakepw -d").should == 0
-      run("#{$rhc_app_script} status -l #{app.login} -a #{app.name} -p fakepw | grep '#{app.get_stop_string}'").should == 1
+      time = Benchmark.realtime do 
+        run("#{$rhc_app_script} restart -l #{app.login} -a #{app.name} -p fakepw -d").should == 0
+      end
+      log_event "#{time} RESTART_APP #{app.name} #{app.login}"
+      time = Benchmark.realtime do 
+        run("#{$rhc_app_script} status -l #{app.login} -a #{app.name} -p fakepw | grep '#{app.get_stop_string}'").should == 1
+      end
+      log_event "#{time} STATUS_APP #{app.name} #{app.login}"
     end
   end
 
   def rhc_ctl_destroy(app, use_hosts=true)
     rhc_do('rhc_ctl_destroy') do
-      run("#{$rhc_app_script} destroy -l #{app.login} -a #{app.name} -p fakepw -b -d").should == 0
-      run("#{$rhc_app_script} status -l #{app.login} -a #{app.name} -p fakepw | grep 'does not exist'").should == 0
+      time = Benchmark.realtime do 
+        run("#{$rhc_app_script} destroy -l #{app.login} -a #{app.name} -p fakepw -b -d").should == 0
+      end
+      log_event "#{time} DESTROY_APP #{app.name} #{app.login}"
+      time = Benchmark.realtime do 
+        run("#{$rhc_app_script} status -l #{app.login} -a #{app.name} -p fakepw | grep 'does not exist'").should == 0
+      end
+      log_event "#{time} STATUS_APP #{app.name} #{app.login}"
       run("sed -i '/#{app.name}-#{app.namespace}.dev.rhcloud.com/d' /etc/hosts") if use_hosts
       FileUtils.rm_rf app.repo
       FileUtils.rm_rf app.file
