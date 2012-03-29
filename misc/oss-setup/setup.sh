@@ -199,6 +199,10 @@ chkconfig sshd on
 service sshd start
 lokkit --service=ssh
 
+yum remove -y stickshift-* rubygem-stickshift* cartridge-*
+rm -rf /usr/libexec/stickshift /var/lib/stickshift /var/www/stickshift /etc/stickshift /usr/share/selinux/packages/rubygem-gearchanger-oddjob-plugin /usr/share/selinux/packages/rubygem-uplift-bind-plugin /usr/share/selinux/packages/stickshift-broker
+semodule -r gearchanger-oddjob dhcpnamedforward stickshift-broker
+
 # Increase kernel semaphores to accomodate many httpds
 echo "kernel.sem = 250  32000 32  4096" >> /etc/sysctl.conf
 sysctl kernel.sem="250  32000 32  4096"

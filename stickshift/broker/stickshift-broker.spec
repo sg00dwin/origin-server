@@ -106,8 +106,9 @@ rm -rf $RPM_BUILD_ROOT
 
 %post
 /bin/touch %{brokerdir}/log/production.log
-/bin/touch %{brokerdir}/httpd/error_log
-/bin/touch %{brokerdir}/httpd/access_log
+/bin/touch %{brokerdir}/log/development.log
+/bin/touch %{brokerdir}/httpd/logs/error_log
+/bin/touch %{brokerdir}/httpd/logs/access_log
 
 #selinux updated
 systemctl --system daemon-reload
@@ -126,12 +127,16 @@ popd
 semanage -i - <<_EOF
 boolean -m --on httpd_can_network_connect
 boolean -m --on httpd_can_network_relay
-fcontext -a -t httpd_var_run_t '%{brokerdir}/httpd/run(/.?'
-fcontext -a -t httpd_tmp_t '%{brokerdir}/httpd/run(/.?'
-fcontext -a -t httpd_log_t '%{brokerdir}/httpd/logs(/.?'
-fcontext -a -t httpd_log_t '%{brokerdir}/log(/.?'
+fcontext -a -t httpd_var_run_t '%{brokerdir}/httpd/run(/.*)?'
+fcontext -a -t httpd_tmp_t '%{brokerdir}/tmp(/.*)?'
+fcontext -a -t httpd_log_t '%{brokerdir}/httpd/logs(/.*)?'
+fcontext -a -t httpd_log_t '%{brokerdir}/log(/.*)?'
 _EOF
 semodule -i /usr/share/selinux/packages/stickshift-broker/stickshift-broker.pp -d passenger
+
+chcon -R -t httpd_log_t %{brokerdir}/httpd/logs %{brokerdir}/log
+chcon -R -t httpd_tmp_t %{brokerdir}/httpd/run
+chcon -R -t httpd_var_run_t %{brokerdir}/httpd/run
 
 %postun
 /usr/sbin/semodule -e passenger -r stickshift-broker

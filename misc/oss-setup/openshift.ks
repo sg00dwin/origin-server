@@ -6,7 +6,7 @@ selinux --enforcing
 firewall --enabled --service=mdns
 xconfig --startxonboot
 part / --size 6120  --fstype ext4 --ondisk sda
-services --enabled=NetworkManager --disabled=network,sshd
+services --enabled=network,sshd --disabled=NetworkManager
 
 repo --name=fedora --mirrorlist=http://mirrors.fedoraproject.org/mirrorlist?repo=fedora-$releasever&arch=$basearch
 repo --name=updates --mirrorlist=http://mirrors.fedoraproject.org/mirrorlist?repo=updates-released-f$releasever&arch=$basearch
@@ -66,6 +66,8 @@ repo --name=passenger --baseurl=http://passenger.stealthymonkeys.com/fedora/$rel
 -evolution-NetworkManager    
 -evolution-help    
 -ibus-gnome3
+vim
+emacs
 
 # Explicitly specified here:
 # <notting> walters: because otherwise dependency loops cause yum issues.
@@ -100,6 +102,9 @@ generic-logos
 generic-release-notes
 
 #stickshift
+tig
+git
+rhc
 stickshift-broker
 
 cartridge-10gen-mms-agent-0.1
@@ -397,14 +402,16 @@ fi
 %end
 
 %post
+
 # cleanup rpmdb to allow non-matching host and chroot RPM versions
 rm -f /var/lib/rpm/__db*
 
 echo "Starting Kickstart Post"
-PATH=/sbin:/usr/sbin:/bin:/usr/bin
-export PATH
+export PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin
 
 cat >> /etc/rc.d/init.d/livesys << EOF
+export PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin
+
 # disable screensaver locking
 cat >> /usr/share/glib-2.0/schemas/org.gnome.desktop.screensaver.gschema.override << FOE
 [org.gnome.desktop.screensaver]
@@ -452,16 +459,31 @@ if [ -f /etc/PackageKit/CommandNotFound.conf ]; then
   sed -i -e 's/^SoftwareSourceSearch=true/SoftwareSourceSearch=false/' /etc/PackageKit/CommandNotFound.conf
 fi
 
+EOF
+
+cat <<EOF > /etc/rc.d/init.d/livesys-late-openshift
+#!/bin/bash
+#
+# live: Late init script for live image
+#
+# chkconfig: 345 99 01
+# description: Late init script for configuring image
+
 echo "initialize mongodb"
 service mongod start
 
 #wait for "[initandlisten] waiting for connections"
 WAIT=1
-while [ 1 -eq $WAIT ] ; do fgrep "[initandlisten] waiting for connections" /var/log/mongodb/mongodb.log && WAIT=$? ; echo "Waiting for mongo to initialize ...\n" ; tail -5 /var/log/mongodb/mongodb.log ; sleep 1 ; done
-mongo localhost/stickshift_broker_dev --eval "db.addUser(\"stickshift\", \"mooo\")"
+while [ 1 -eq \$WAIT ] ; do /bin/fgrep "[initandlisten] waiting for connections" /var/log/mongodb/mongodb.log && WAIT=\$? ; echo "Waiting for mongo to initialize ...\n" ; tail -5 /var/log/mongodb/mongodb.log ; sleep 1 ; done
+/usr/bin/mongo localhost/stickshift_broker_dev --eval "db.addUser(\"stickshift\", \"mooo\")"
+
+mkdir -p /home/liveuser/.openshift/
+echo "libra_server=localhost" > /home/liveuser/.openshift/express.conf
+chown liveuser:liveuser /home/liveuser/.openshift/express.conf
+chmod og+rw /home/liveuser/.openshift/express.conf
 
 # get the first resolver from /etc/resolv.conf
-FORWARDER=`grep nameserver /etc/resolv.conf | head -1 | cut -d' ' -f2`
+FORWARDER=\`grep nameserver /etc/resolv.conf | head -1 | cut -d' ' -f2\`
 
 # insert localhost before the first nameserver line
 sed -i -e '1,/nameserver/ { /nameserver/ i\
@@ -469,12 +491,13 @@ nameserver 127.0.0.1
 }' /etc/resolv.conf
 
 # Set up the initial forwarder
-echo "forwarders { ${FORWARDER} ; } ;" > /var/named/forwarders.conf
+echo "forwarders { \${FORWARDER} ; } ;" > /var/named/forwarders.conf
 
 # set SELinux label for forwarders file
 /sbin/restorecon -v /var/named/forwarders.conf
 
 grep -l NM_CONTROLLED /etc/sysconfig/network-scripts/ifcfg-* | xargs perl -p -i -e '/NM_CONTROLLED/ && s/yes/no/i'
+
 EOF
 
 echo "Final setup"
@@ -529,6 +552,7 @@ cat <<EOF > /var/named/example.com.key
     secret "${KEY}" ;
   } ;
 EOF
+
 /sbin/restorecon -v /var/named/example.com.key
 
 mkdir -p /var/named/dynamic
@@ -601,7 +625,23 @@ end
 EOF
 
 chkconfig stickshift-broker on
+chkconfig httpd on
 
-sed -i -e 's/Generic release/Fedora Remix/g' /etc/fedora-release /etc/issue
+cat <<EOF > /etc/sysconfig/network-scripts/ifcfg-eth0
+DEVICE=eth0
+BOOTPROTO=dhcp
+ONBOOT=yes
+EOF
 
+# Setup swap for devenv
+[ -f /.swap ] || ( /bin/dd if=/dev/zero of=/.swap bs=1024 count=1024000
+    /sbin/mkswap -f /.swap
+    /sbin/swapon /.swap
+    echo "/.swap swap   swap    defaults        0 0" >> /etc/fstab
+)
+
+chkconfig oddjobd on
+chmod 755 /etc/rc.d/init.d/livesys-late-openshift
+/sbin/restorecon /etc/rc.d/init.d/livesys-late-openshift
+/sbin/chkconfig --add livesys-late-openshift
 %end
