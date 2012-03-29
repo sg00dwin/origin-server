@@ -1,4 +1,4 @@
-policy_module(libra,1.1.12)
+policy_module(libra,1.1.13)
 
 ########################################
 #
@@ -97,8 +97,7 @@ corenet_tcp_connect_all_ports(libra_net_t)
 #
 # libra general local policy
 #
-allow libra_app_domain self:process { setcurrent getattr fork getpgid setpgid setrlimit setsched signal_perms getsched execmem };
-dontaudit libra_app_domain self:process getcap;
+allow libra_app_domain self:process { setcurrent getcap getattr fork getpgid setpgid setrlimit setfscreate setsched signal_perms getsched execmem };
 
 allow libra_app_domain self:msgq create_msgq_perms;
 allow libra_app_domain self:shm create_shm_perms;
@@ -198,6 +197,9 @@ libs_exec_lib_files(libra_app_domain)
 libs_exec_ld_so(libra_app_domain)
 
 logging_send_syslog_msg(libra_app_domain)
+
+selinux_validate_context(libra_app_domain)
+
 logging_inherit_append_all_logs(libra_app_domain)
 
 init_dontaudit_read_utmp(libra_app_domain)

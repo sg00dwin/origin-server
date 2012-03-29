@@ -1,6 +1,6 @@
 Summary:       SELinux policy for OpenShift nodes
 Name:          rhc-selinux
-Version:       0.89.2
+Version:       0.89.3
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -46,6 +46,13 @@ rm -rf %{buildroot}
 %attr(0640,-,-) %{_datadir}/selinux/packages/libra.pp
 
 %changelog
+* Wed Mar 28 2012 Dan McPherson <dmcphers@redhat.com> 0.89.3-1
+- Fixes to make sed warnings go aways.  Allow libra domains to setfscreatecon
+  (dwalsh@redhat.com)
+- Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
+  (dwalsh@redhat.com)
+- Allow libra domains to use badly built libraries (dwalsh@redhat.com)
+
 * Mon Mar 26 2012 Dan McPherson <dmcphers@redhat.com> 0.89.2-1
 - /var/lib is a symbolic link and libra domains need to be able to read it
   (dwalsh@redhat.com)

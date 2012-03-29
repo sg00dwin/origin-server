@@ -42,6 +42,7 @@ def mongo_migrate
     if user["apps"]
       user["apps"].each do |app|
         app["domain"] = domain
+        app.delete("optimize")
       end
     end
     user.delete("namespace")
