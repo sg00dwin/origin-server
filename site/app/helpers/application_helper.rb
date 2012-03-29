@@ -90,6 +90,10 @@ module ApplicationHelper
     end
   end
 
+  def wrap_long_string(text, max_width = 150)
+    (text.length < max_width) ? text : text.scan(/.{1,#{max_width}}/).join("<wbr>")
+  end
+
   def newsletter_signup_url
     'http://makara.nurturehq.com/makara/newsletter_signup.html'
   end
