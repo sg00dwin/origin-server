@@ -68,4 +68,9 @@ rm -f /tmp/haproxy.cfg
 
 uuid=$3
 setup_user_vars
-run_as_user "app_ctl.sh reload"
+{
+   echo "$0: reloading haproxy for application $1 - uuid $uuid ... "
+   # set -x
+   run_as_user "app_ctl.sh reload"
+} >> /var/log/haproxy-debug.log 2>&1
+
