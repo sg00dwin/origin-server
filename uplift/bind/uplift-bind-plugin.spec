@@ -5,7 +5,7 @@
 
 Summary:        Uplift plugin for BIND service
 Name:           rubygem-%{gemname}
-Version:        0.7.2
+Version:        0.7.3
 Release:        1%{?dist}
 Group:          Development/Languages
 License:        ASL 2.0
@@ -84,6 +84,9 @@ rm -rf %{buildroot}
 %{ruby_sitelib}/%{gemname}.rb
 
 %changelog
+* Fri Mar 30 2012 Krishna Raman <kraman@gmail.com> 0.7.3-1
+- Renaming for open-source release
+
 * Wed Mar 28 2012 Mark Lamourine <mlamouri@redhat.com>
 - new package built with tito
 - Added docs and examples to RPM
