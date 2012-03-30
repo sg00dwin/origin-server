@@ -1,4 +1,4 @@
-policy_module(libra,1.1.13)
+policy_module(libra,1.1.14)
 
 ########################################
 #
@@ -426,6 +426,7 @@ application_domain(libra_cgroup_read_t, libra_cgroup_read_exec_t)
 # libra_cgroup_read local policy
 #
 
+allow libra_cgroup_read_t self:process { getattr signal_perms };
 allow libra_cgroup_read_t self:fifo_file rw_fifo_file_perms;
 allow libra_cgroup_read_t self:unix_stream_socket create_stream_socket_perms;
 allow libra_cgroup_read_t libra_initrc_t:fifo_file rw_inherited_fifo_file_perms;
@@ -522,3 +523,5 @@ kernel_search_vm_sysctl(libra_t)
 kernel_read_vm_sysctls(libra_app_t)
 kernel_search_vm_sysctl(libra_app_t)
 netutils_domtrans_ping(libra_t)
+netutils_kill_ping(libra_t)
+netutils_signal_ping(libra_t)

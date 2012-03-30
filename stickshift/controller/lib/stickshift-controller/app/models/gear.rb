@@ -25,12 +25,16 @@ class Gear < StickShift::UserModel
       self.container = StickShift::ApplicationContainerProxy.find_available(self.node_profile)
       self.server_identity = self.container.id
       self.uid = self.container.reserve_uid
-      return self.container.create(app,self)
+      ret = self.container.create(app,self)
+      self.app.ngears += 1
+      return ret
     end
   end
 
   def destroy
-    get_proxy.destroy(app,self)
+    ret = get_proxy.destroy(app,self)
+    self.app.ngears -= 1
+    return ret
   end
   
   def expose_port(comp_inst)
@@ -148,6 +152,12 @@ class Gear < StickShift::UserModel
     job
   end
   
+  def broker_auth_key_job_add(iv, token)
+    args = "--with-app-uuid '#{app.uuid}' --with-container-uuid '#{uuid}' -i '#{iv}' -t '#{token}'"
+    job = RemoteJob.new('stickshift-node', 'broker-auth-key-add', args)
+    job
+  end
+  
   def env_var_job_remove(key)
     args = "--with-app-uuid '#{app.uuid}' --with-container-uuid '#{uuid}' -k '#{key}'"
     job = RemoteJob.new('stickshift-node', 'env-var-remove', args)
@@ -158,6 +168,12 @@ class Gear < StickShift::UserModel
     args = "--with-app-uuid '#{app.uuid}' --with-container-uuid '#{uuid}' -s '#{ssh_key}'"
     args += " -m '-#{ssh_key_comment}'" if ssh_key_comment
     job = RemoteJob.new('stickshift-node', 'authorized-ssh-key-remove', args)
+    job
+  end
+  
+  def broker_auth_key_job_remove()
+    args = "--with-app-uuid '#{app.uuid}' --with-container-uuid '#{uuid}'"
+    job = RemoteJob.new('stickshift-node', 'broker-auth-key-remove', args)
     job
   end
   

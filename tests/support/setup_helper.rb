@@ -47,6 +47,13 @@ module SetupHelper
         "#{$$} #{severity} #{datetime}: #{msg}\n"
     end
 
+    # Setup performance monitor logger
+    $perfmon_logger = Logger.new(File.join($temp, "perfmon.log"))
+    $perfmon_logger.level = Logger::INFO
+    $perfmon_logger.formatter = proc do |severity, datetime, progname, msg|
+        "#{$$} #{datetime}: #{msg}\n"
+    end
+
     # Setup the default keys if necessary
     FileUtils.cp $test_pub_key, $libra_pub_key if !File.exists?($libra_pub_key)
     FileUtils.cp $test_priv_key, $libra_priv_key if !File.exists?($libra_priv_key)

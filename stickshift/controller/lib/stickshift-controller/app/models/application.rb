@@ -5,7 +5,7 @@ class Application < StickShift::Cartridge
                 :state, :group_instance_map, :comp_instance_map, :conn_endpoints_list,
                 :domain, :group_override_map, :working_comp_inst_hash,
                 :working_group_inst_hash, :configure_order, :start_order,
-                :scalable, :proxy_cartridge, :init_git_url, :node_profile
+                :scalable, :proxy_cartridge, :init_git_url, :node_profile, :ngears
   primary_key :name
   exclude_attributes :user, :comp_instance_map, :group_instance_map, 
                 :working_comp_inst_hash, :working_group_inst_hash,
@@ -54,6 +54,7 @@ class Application < StickShift::Cartridge
     self.creation_time = DateTime::now().strftime
     self.uuid = uuid || StickShift::Model.gen_uuid
     self.scalable = will_scale
+    self.ngears = 0
     
     if template.nil?
       if self.scalable
@@ -235,6 +236,7 @@ Configure-Order: [\"proxy/#{framework}\", \"proxy/haproxy-1.4\"]
   # Saves the application object in the datastore
   def save
     super(user.login)
+    self.ngears = 0
   end
   
   # Deletes the application object from the datastore
@@ -835,8 +837,6 @@ Configure-Order: [\"proxy/#{framework}\", \"proxy/haproxy-1.4\"]
   
   def add_broker_key
     iv, token = StickShift::AuthService.instance.generate_broker_key(self)
-    #iv = Base64::encode64(iv).gsub("\n", '')
-    #token = Base64::encode64(token).gsub("\n", '')
     iv = Base64::encode64(iv)
     token = Base64::encode64(token)
     
@@ -1386,9 +1386,12 @@ private
         key = command_item[:args][0]
         self.user.remove_env_var(key)
       when "BROKER_KEY_ADD"
-        add_broker_key
+        iv, token = StickShift::AuthService.instance.generate_broker_key(self)
+        iv = Base64::encode64(iv)
+        token = Base64::encode64(token)
+        self.user.add_save_job('adds', 'broker_auth_keys', [self.uuid, iv, token])
       when "BROKER_KEY_REMOVE"
-        remove_broker_key
+        self.user.add_save_job('removes', 'broker_auth_keys', [self.uuid])
       end
     end
     if user.save_jobs
