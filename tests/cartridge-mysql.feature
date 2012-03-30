@@ -1,4 +1,5 @@
 @internals
+@node
 Feature: MySQL Application Sub-Cartridge
   
   Scenario Outline: Create Delete one application with a MySQL database

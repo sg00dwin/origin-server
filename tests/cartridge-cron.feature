@@ -1,4 +1,5 @@
 @internals
+@node
 Feature: cron Embedded Cartridge
 
   Scenario Outline: Add Remove cron to one application

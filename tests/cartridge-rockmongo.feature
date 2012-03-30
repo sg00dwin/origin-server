@@ -1,4 +1,5 @@
 @internals
+@node
 Feature: rockmongo Embedded Cartridge
 
   Scenario Outline: Add remove rockmongo to one application

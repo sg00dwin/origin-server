@@ -1,4 +1,5 @@
 @internals
+@node
 Feature: PYTHON Application
 
   # runcon -u ?? -r system_r -t libra_initrc_t

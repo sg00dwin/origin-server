@@ -11,6 +11,7 @@ def gear_up?(hostname, state='UP')
   $logger.debug('============ GEAR CSV ================')
   $logger.debug(csv)
   $logger.debug('============ GEAR CSV END ============')
+  found = 1
   csv.split.each do | haproxy_worker |
 
     worker_attrib_array = haproxy_worker.split(',')
@@ -18,11 +19,13 @@ def gear_up?(hostname, state='UP')
     i = 0
     if worker_attrib_array[17] and worker_attrib_array[1].to_s.start_with?('gear') and worker_attrib_array[17].to_s.start_with?(state)
       $logger.debug("Found: #{worker_attrib_array[1]} - #{worker_attrib_array[17]}")
-      return 0
+      found = 0
+    elsif worker_attrib_array[17] and worker_attrib_array[1].to_s.start_with?('gear') and not worker_attrib_array[17].to_s.start_with?(state)
+      return 1
     end
   end
   $logger.debug("No gears found")
-  return 1
+  return found
 end
 
 When /^a scaled (.+) application is created$/ do |app_type|
@@ -39,6 +42,7 @@ When /^a scaled (.+) application is created$/ do |app_type|
   run("echo '127.0.0.1 #{@app.name}-#{@app.namespace}.dev.rhcloud.com  # Added by cucumber' >> /etc/hosts")
   $logger.debug("json string: #{json_string}")
   app_info = JSON.parse(json_string)
+  raise "Could not create application: #{app_info['messages'][0]['text']}" unless app_info['status'] == 'created'
   @app.uid = app_info['data']['uuid']
   fp.close
 end
@@ -54,7 +58,7 @@ end
 Then /^the gear members will be (UP|DOWN)$/ do |state|
   found = nil
 
-  max_wait = 24 # 2 minutes
+  max_wait = 40 # 2 minutes
   i = 0
   while gear_up?("#{@app.name}-#{@app.namespace}.dev.rhcloud.com", state) != 0 and i <= max_wait
     $logger.debug("loop #{i}")
@@ -65,12 +69,19 @@ Then /^the gear members will be (UP|DOWN)$/ do |state|
 end
 
 Then /^(\d+) gears will be in the cluster$/ do |count|
-  sleep 2
-  $logger.debug('============ GEAR CSV ================')
-  $logger.debug(`/usr/bin/curl -s -H 'Host: #{@app.name}-#{@app.namespace}.dev.rhcloud.com' -s 'http://localhost/haproxy-status/;csv'`)
-  $logger.debug('============ GEAR CSV END ============')
-  gear_count = `/usr/bin/curl -s -H 'Host: #{@app.name}-#{@app.namespace}.dev.rhcloud.com' -s 'http://localhost/haproxy-status/;csv' | grep -c "express,gear"`
-  $logger.debug("Gear count: #{gear_count.to_i} should be #{count.to_i}")
+  max_wait = 30
+  i = 0
+  gear_count = 0
+  while gear_count.to_i != count.to_i and i <= max_wait
+    i = i + 1
+    sleep 4
+
+    $logger.debug("============ GEAR CSV (#{i})) ============")
+    $logger.debug(`/usr/bin/curl -s -H 'Host: #{@app.name}-#{@app.namespace}.dev.rhcloud.com' -s 'http://localhost/haproxy-status/;csv'`)
+    $logger.debug('============ GEAR CSV END ============')
+    gear_count = `/usr/bin/curl -s -H 'Host: #{@app.name}-#{@app.namespace}.dev.rhcloud.com' -s 'http://localhost/haproxy-status/;csv' | grep -c "express,gear"`
+    $logger.debug("Gear count: #{gear_count.to_i} should be #{count.to_i}")
+  end
   raise "Gear counts do not match: #{gear_count.to_i} should be #{count.to_i}" unless gear_count.to_i == count.to_i
 end
 

@@ -1,4 +1,5 @@
 @internals
+@node
 Feature: phpMyAdmin Embedded Cartridge
 
   Scenario Outline: Add Remove phpMyAdmin to one application

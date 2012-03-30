@@ -1082,6 +1082,26 @@ module Express
       end
 
       def self.execute_parallel_jobs_impl(handle)
+        handle.each { |id, job_list|
+          begin
+            options = ApplicationContainerProxy.rpc_options
+            rpc_client = rpcclient('libra', :options => options)
+            mc_args = { id => job_list }
+            mcoll_reply = rpc_client.custom_request('execute_parallel', mc_args, id, {'identity' => id})
+            rpc_client.disconnect
+            if mcoll_reply and mcoll_reply.length > 0
+              mcoll_reply = mcoll_reply[0]
+              output = mcoll_reply.results[:data][:output]
+              exitcode = mcoll_reply.results[:data][:exitcode]
+              Rails.logger.debug("DEBUG: Output of parallel execute: #{output}, status: #{exitcode}")
+              handle[id] = output if exitcode == 0
+            end
+          ensure
+            rpc_client.disconnect
+          end
+        }
+#TODO Identity doesn't really seem to handle multiple
+=begin
         begin
           options = ApplicationContainerProxy.rpc_options
           rpc_client = rpcclient('libra', :options => options)
@@ -1098,6 +1118,7 @@ module Express
         ensure
           rpc_client.disconnect
         end
+=end
       end
     end
   end

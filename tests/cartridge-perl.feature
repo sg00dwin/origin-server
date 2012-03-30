@@ -1,4 +1,5 @@
 @internals
+@node
 Feature: PERL Application
 
   # runcon -u ?? -r system_r -t libra_initrc_t

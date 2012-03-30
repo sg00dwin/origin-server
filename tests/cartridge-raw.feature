@@ -1,4 +1,5 @@
 @internals
+@node
 Feature: Raw Application
 
   # runcon -u ?? -r system_r -t libra_initrc_t

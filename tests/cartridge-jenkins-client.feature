@@ -1,4 +1,5 @@
 @internals
+@node
 Feature: Jenkins Client Embedded Cartridge
 
   Scenario Outline: Add Jenkins Client to one application without Jenkins server available

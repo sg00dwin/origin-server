@@ -226,8 +226,10 @@ class Release < Thor
       if tag_base =~ /^.*rhel-(\d)\.(\d)$/
         pkg_suffix = "el#{$1}_#{$2}"
       else
-        pkg_suffix = "el6_1"
+        pkg_suffix = "el6_2"
       end
+      
+      pkg_suffix = "el5" if pkg_suffix == "el5_8"
   
       # Check the Brew installation
       `brew --help`

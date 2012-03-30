@@ -8,7 +8,7 @@
 
 Summary:   Dependencies for OpenShift development
 Name:      rhc-devenv
-Version:   0.89.4
+Version:   0.89.5
 Release:   1%{?dist}
 Group:     Development/Libraries
 License:   GPLv2
@@ -281,6 +281,9 @@ cp -f %{devenvdir}/puppet-private.pem /var/lib/puppet/ssl/private_keys/localhost
 %{policydir}/*
 
 %changelog
+* Thu Mar 29 2012 Dan McPherson <dmcphers@redhat.com> 0.89.5-1
+- remove old sdk_check (dmcphers@redhat.com)
+
 * Wed Mar 28 2012 Dan McPherson <dmcphers@redhat.com> 0.89.4-1
 - Scaling commands are really expensive. Ex: jboss takes 3:30 to scale.
   Increase the broker timeout so that they can show successful completion.

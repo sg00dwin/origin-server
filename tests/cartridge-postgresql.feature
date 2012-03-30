@@ -1,4 +1,5 @@
 @internals
+@node
 Feature: PostgreSQL Application Sub-Cartridge
   
   Scenario Outline: Create Delete one application with a PostgreSQL database
