@@ -6,16 +6,7 @@ $:.unshift('/var/www/stickshift/broker')
 require 'config/environment'
 
 # Configurable params
-$config = {
-  # Mongo params
-  :replica_set => true,
-  # Replica set example: [[<host-1>, <port-1>], [<host-2>, <port-2>], ...]
-  :host_port => [["localhost", 27017]],
-  :user       => "libra",
-  :password   => "momo",
-  :db         => "openshift_broker_dev",
-  :collection => "user"
-}
+$config = Rails::configuration.ss[:datastore][:mongo]
 
 def mongo_connect
   if $config[:replica_set]
@@ -27,7 +18,7 @@ def mongo_connect
   end
   db = con.db($config[:db])
   db.authenticate($config[:user], $config[:password])
-  $coll = con.db($config[:db]).collection($config[:collection])
+  $coll = con.db($config[:db]).collection($config[:collections][:user])
 end
 
 def mongo_migrate
