@@ -1,6 +1,5 @@
  class CloudUser < StickShift::UserModel
-  attr_accessor :login, :uuid, :system_ssh_keys, :env_vars, :ssh_keys, :domains, :max_gears, :consumed_gears, :applications, :auth_method, :save_jobs, :add_gears
-  #FIXME: purge add_gears and introduce gear.save(cloud_user_obj)
+  attr_accessor :login, :uuid, :system_ssh_keys, :env_vars, :ssh_keys, :domains, :max_gears, :consumed_gears, :applications, :auth_method, :save_jobs
   primary_key :login
   exclude_attributes :applications, :auth_method, :save_jobs
   require_update_attributes :system_ssh_keys, :env_vars, :ssh_keys, :domains
@@ -41,13 +40,6 @@
     self.max_gears = Rails.configuration.ss[:default_max_gears]
 
     self.consumed_gears = 0
-    self.add_gears = 0
-  end
-
-  def update_consumed_gears(num_gears=1)
-    self.add_gears = num_gears
-    self.save
-    self.add_gears = 0
   end
 
   def save

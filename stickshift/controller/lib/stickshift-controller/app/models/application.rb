@@ -5,7 +5,7 @@ class Application < StickShift::Cartridge
                 :state, :group_instance_map, :comp_instance_map, :conn_endpoints_list,
                 :domain, :group_override_map, :working_comp_inst_hash,
                 :working_group_inst_hash, :configure_order, :start_order,
-                :scalable, :proxy_cartridge, :init_git_url, :node_profile
+                :scalable, :proxy_cartridge, :init_git_url, :node_profile, :ngears
   primary_key :name
   exclude_attributes :user, :comp_instance_map, :group_instance_map, 
                 :working_comp_inst_hash, :working_group_inst_hash,
@@ -54,6 +54,7 @@ class Application < StickShift::Cartridge
     self.creation_time = DateTime::now().strftime
     self.uuid = uuid || StickShift::Model.gen_uuid
     self.scalable = will_scale
+    self.ngears = 0
     
     if template.nil?
       if self.scalable
@@ -235,6 +236,7 @@ Configure-Order: [\"proxy/#{framework}\", \"proxy/haproxy-1.4\"]
   # Saves the application object in the datastore
   def save
     super(user.login)
+    self.ngears = 0
   end
   
   # Deletes the application object from the datastore
@@ -257,7 +259,6 @@ Configure-Order: [\"proxy/#{framework}\", \"proxy/haproxy-1.4\"]
       user.applications << self
       Rails.logger.debug "Creating gears"
       group_instances.uniq.each do |ginst|
-        user.update_consumed_gears
         create_result, new_gear = ginst.add_gear(self)
         result_io.append create_result
       end
@@ -294,7 +295,6 @@ Configure-Order: [\"proxy/#{framework}\", \"proxy/haproxy-1.4\"]
     self.class.notify_observers(:before_application_destroy, {:application => self, :reply => reply})
     s,f = run_on_gears(nil, reply, false) do |gear, r|
       r.append gear.destroy
-      user.update_consumed_gears(-1)
       group_instance = self.group_instance_map[gear.group_instance_name]
       group_instance.gears.delete(gear)
       self.save
@@ -327,7 +327,6 @@ Configure-Order: [\"proxy/#{framework}\", \"proxy/haproxy-1.4\"]
     raise StickShift::NodeException.new("Cannot find #{comp_name} in app #{self.name}.", "-101", result_io) if cinst.nil?
     ginst = self.group_instance_map[cinst.group_instance_name]
     raise StickShift::NodeException.new("Cannot find group #{cinst.group_instance_name} for #{comp_name} in app #{self.name}.", "-101", result_io) if ginst.nil?
-    user.update_consumed_gears
     result, new_gear = ginst.add_gear(self)
     result_io.append result
     result_io.append self.configure_dependencies
@@ -366,7 +365,6 @@ Configure-Order: [\"proxy/#{framework}\", \"proxy/haproxy-1.4\"]
     }
 
     result_io.append gear.destroy
-    user.update_consumed_gears(-1)
     ginst.gears.delete gear
 
     # inform anyone who needs to know that this gear is no more
@@ -401,10 +399,7 @@ Configure-Order: [\"proxy/#{framework}\", \"proxy/haproxy-1.4\"]
       end
       
       run_on_gears(group_inst.gears, reply, false) do |gear, r|
-        if gear.configured_components.length == 0
-          r.append gear.destroy 
-          user.update_consumed_gears(-1)
-        end
+        r.append gear.destroy if gear.configured_components.length == 0
         # self.save        
       end
       group_inst.gears.delete_if { |gear| gear.configured_components.length == 0 }
@@ -456,10 +451,7 @@ Configure-Order: [\"proxy/#{framework}\", \"proxy/haproxy-1.4\"]
         
         #destroy any unused gears
         run_on_gears(group_inst.gears, reply, false) do |gear, r|
-          if gear.configured_components.length == 0
-            r.append gear.destroy
-            user.update_consumed_gears(-1)
-          end
+          r.append gear.destroy if gear.configured_components.length == 0
         end
         group_inst.gears.delete_if { |gear| gear.configured_components.length == 0 }
 

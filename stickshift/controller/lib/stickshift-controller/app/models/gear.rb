@@ -25,12 +25,16 @@ class Gear < StickShift::UserModel
       self.container = StickShift::ApplicationContainerProxy.find_available(self.node_profile)
       self.server_identity = self.container.id
       self.uid = self.container.reserve_uid
-      return self.container.create(app,self)
+      ret = self.container.create(app,self)
+      self.app.ngears += 1
+      return ret
     end
   end
 
   def destroy
-    get_proxy.destroy(app,self)
+    ret = get_proxy.destroy(app,self)
+    self.app.ngears -= 1
+    return ret
   end
   
   def expose_port(comp_inst)
