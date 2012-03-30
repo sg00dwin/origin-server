@@ -5,7 +5,7 @@
 
 Summary:        Cloud Development Controller
 Name:           rubygem-%{gemname}
-Version:        0.7.6
+Version:        0.7.7
 Release:        1%{?dist}
 Group:          Development/Languages
 License:        ASL 2.0
@@ -75,6 +75,17 @@ rm -rf %{buildroot}
 %{ruby_sitelib}/%{gemname}.rb
 
 %changelog
+* Thu Mar 29 2012 Dan McPherson <dmcphers@redhat.com> 0.7.7-1
+- Updating gem versions (dmcphers@redhat.com)
+- Fix for bug# 806814 (rpenta@redhat.com)
+- Merge branch 'master' of git1.ops.rhcloud.com:/srv/git/li (rpenta@redhat.com)
+- One more fix for bug# 807559 (rpenta@redhat.com)
+- perf improvement (dmcphers@redhat.com)
+- batch adding broker auth key (dmcphers@redhat.com)
+- Fix for bug# 807045 (rpenta@redhat.com)
+- Fix for bug# 807559 (rpenta@redhat.com)
+- Fix internal server errors in applications controller (rpenta@redhat.com)
+
 * Wed Mar 28 2012 Dan McPherson <dmcphers@redhat.com> 0.7.6-1
 - Updating gem versions (dmcphers@redhat.com)
 - Merge branch 'master' of git1.ops.rhcloud.com:/srv/git/li (lnader@redhat.com)
