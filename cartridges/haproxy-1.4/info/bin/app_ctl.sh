@@ -103,7 +103,7 @@ function backgrounded_reload() {
     [ -f $HAPROXY_PID ]  &&  zpid=$( /bin/cat "${HAPROXY_PID}" )
     i=0
     echo "`date`: reload attempt #$((i+1)) ... "
-    while (! _reload_haproxy_service "$zpid" )  && [ $i -lt 60 ]; do
+    while (! _reload_haproxy_service "$zpid" )  && [ $i -lt 120 ]; do
         sleep 2
         i=$(($i + 1))
         echo "`date`: reload attempt #$((i+1)) ... "

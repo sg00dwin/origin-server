@@ -58,7 +58,7 @@ end
 Then /^the gear members will be (UP|DOWN)$/ do |state|
   found = nil
 
-  max_wait = 30 # 2 minutes
+  max_wait = 40 # 2 minutes
   i = 0
   while gear_up?("#{@app.name}-#{@app.namespace}.dev.rhcloud.com", state) != 0 and i <= max_wait
     $logger.debug("loop #{i}")
