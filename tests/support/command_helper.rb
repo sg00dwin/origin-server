@@ -129,7 +129,7 @@ module CommandHelper
       time = Benchmark.realtime do 
         run("#{$rhc_app_script} snapshot save -l #{app.login} -a #{app.name} -f '#{app.snapshot}' -p fakepw -d").should == 0
       end
-      log_event "#{time} CREATE_SNAPSHOT #{app.name} #{app.snapshot} #{app.login}"
+      log_event "#{time} CREATE_SNAPSHOT #{app.name} #{app.login}"
       app.persist
     end
   end
@@ -139,7 +139,7 @@ module CommandHelper
       time = Benchmark.realtime do 
         run("#{$rhc_app_script} snapshot restore -l #{app.login} -a #{app.name} -f '#{app.snapshot}' -p fakepw -d").should == 0
       end
-      log_event "#{time} RESTORE_SNAPSHOT #{app.name} #{app.snapshot} #{app.login}"
+      log_event "#{time} RESTORE_SNAPSHOT #{app.name} #{app.login}"
     end
   end
 
