@@ -1,7 +1,7 @@
 %define cartridgedir %{_libexecdir}/stickshift/cartridges/embedded/postgresql-8.4
 
 Name: cartridge-postgresql-8.4
-Version: 0.6.1
+Version: 0.6.2
 Release: 1%{?dist}
 Summary: Embedded postgresql support for express
 
@@ -74,6 +74,9 @@ rm -rf $RPM_BUILD_ROOT
 %doc %{cartridgedir}/LICENSE
 
 %changelog
+* Fri Mar 30 2012 Krishna Raman <kraman@gmail.com> 0.6.2-1
+- Renaming for open-source release
+
 * Sat Mar 17 2012 Dan McPherson <dmcphers@redhat.com> 0.6.1-1
 - bump spec numbers (dmcphers@redhat.com)
 
