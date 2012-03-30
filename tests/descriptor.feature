@@ -1,5 +1,5 @@
-
 @verify
+@broker
 Feature: Descriptor parsing and elaboration tests
 
   Scenario: Descriptor parsing
