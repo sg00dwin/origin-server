@@ -1,7 +1,7 @@
 %define cartridgedir %{_libexecdir}/stickshift/cartridges/embedded/10gen-mms-agent-0.1
 
 Name: cartridge-10gen-mms-agent-0.1
-Version: 1.7.1
+Version: 1.7.2
 Release: 1%{?dist}
 Summary: Embedded 10gen MMS agent for performance monitoring of MondoDB
 
@@ -52,6 +52,9 @@ rm -rf $RPM_BUILD_ROOT
 %doc %{cartridgedir}/LICENSE
 
 %changelog
+* Fri Mar 30 2012 Krishna Raman <kraman@gmail.com> 1.7.2-1
+- Renaming for open-source release
+
 * Sat Mar 17 2012 Dan McPherson <dmcphers@redhat.com> 1.7.1-1
 - bump spec numbers (dmcphers@redhat.com)
 
