@@ -1,4 +1,5 @@
-@verify
+#@verify
+@node
 Feature: Scaling Verification Tests
   Scenario Outline: Scale App
     Given the libra client tools
