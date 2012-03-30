@@ -2,7 +2,7 @@
 %define frameworkdir %{_libexecdir}/stickshift/cartridges/mysql-5.1
 
 Name: cartridge-mysql-5.1
-Version: 0.23.2
+Version: 0.23.3
 Release: 1%{?dist}
 Summary: Provides embedded mysql support
 
@@ -73,6 +73,9 @@ rm -rf $RPM_BUILD_ROOT
 %doc %{cartridgedir}/LICENSE
 
 %changelog
+* Fri Mar 30 2012 Krishna Raman <kraman@gmail.com> 0.23.3-1
+- Renaming for open-source release
+
 * Mon Mar 26 2012 Dan McPherson <dmcphers@redhat.com> 0.23.2-1
 - Merge branch 'master' of li-master:/srv/git/li (ramr@redhat.com)
 - Show inter-gear connection url for scaled applications. (ramr@redhat.com)
