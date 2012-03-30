@@ -1,4 +1,5 @@
 @internals
+@node
 Feature: Jenkins Application
 
    Scenario: Create Delete one Jenkins Application

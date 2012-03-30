@@ -104,7 +104,7 @@ function backgrounded_reload() {
     i=0
     echo "`date`: reload attempt #$((i+1)) ... "
     while (! _reload_haproxy_service "$zpid" )  && [ $i -lt 60 ]; do
-        sleep 1
+        sleep 2
         i=$(($i + 1))
         echo "`date`: reload attempt #$((i+1)) ... "
     done
