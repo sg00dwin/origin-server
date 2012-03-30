@@ -2,7 +2,7 @@
 
 Summary:   Provides jenkins-1.4 support
 Name:      cartridge-jenkins-1.4
-Version:   0.89.2
+Version:   0.89.3
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   ASL 2.0
@@ -79,6 +79,9 @@ rm -rf %{buildroot}
 %doc %{cartridgedir}/LICENSE
 
 %changelog
+* Fri Mar 30 2012 Krishna Raman <kraman@gmail.com> 0.89.3-1
+- Renaming for open-source release
+
 * Mon Mar 26 2012 Dan McPherson <dmcphers@redhat.com> 0.89.2-1
 - Bug 804892 (dmcphers@redhat.com)
 
