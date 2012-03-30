@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    stickshift-controller (0.7.6)
+    stickshift-controller (0.7.7)
       activesupport
       stickshift-common
       json
