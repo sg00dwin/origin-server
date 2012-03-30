@@ -1,4 +1,5 @@
 @verify
+@broker
 Feature: Cartridge Verification Tests
   Scenario Outline: Application Creation
     Given the libra client tools

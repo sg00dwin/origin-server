@@ -1,5 +1,6 @@
 #@verify
 @node
+@broker
 Feature: Scaling Verification Tests
   Scenario Outline: Scale App
     Given the libra client tools
