@@ -13,25 +13,7 @@ Feature: phpMyAdmin Embedded Cartridge
     And the phpmyadmin directory will exist
     And phpmyadmin log files will exist
     And the phpmyadmin control script will exist
-    When I deconfigure phpmyadmin
-    Then a phpmyadmin http proxy file will not exist
-    And a phpmyadmin httpd will not be running
-    And the phpmyadmin directory will not exist
-    And phpmyadmin log files will not exist
-    And the phpmyadmin control script will not exist
 
-  Scenarios: Add Remove phpMyAdmin to one Application Scenarios
-    |type|
-    |php|
-
-
-  Scenario Outline: Stop Start Restart phpMyAdmin
-    Given an accepted node
-    And a new guest account
-    And a new <type> application
-    And a new mysql database
-    And a new phpmyadmin
-    And phpmyadmin is running
     When I stop phpmyadmin
     Then a phpmyadmin httpd will not be running
     And phpmyadmin is stopped
@@ -40,6 +22,13 @@ Feature: phpMyAdmin Embedded Cartridge
     When I restart phpmyadmin
     Then a phpmyadmin httpd will be running
 
-  Scenarios: Stop Start Restart phpMyAdmin scenarios
+    When I deconfigure phpmyadmin
+    Then a phpmyadmin http proxy file will not exist
+    And a phpmyadmin httpd will not be running
+    And the phpmyadmin directory will not exist
+    And phpmyadmin log files will not exist
+    And the phpmyadmin control script will not exist
+
+  Scenarios: Add Remove phpMyAdmin to one Application Scenarios
     |type|
     |php|
