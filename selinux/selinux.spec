@@ -1,6 +1,6 @@
 Summary:       SELinux policy for OpenShift nodes
 Name:          rhc-selinux
-Version:       0.90.0
+Version:       0.90.1
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -46,6 +46,9 @@ rm -rf %{buildroot}
 %attr(0640,-,-) %{_datadir}/selinux/packages/libra.pp
 
 %changelog
+* Sat Mar 31 2012 Dan McPherson <dmcphers@redhat.com> 0.90.1-1
+- bump spec numbers (dmcphers@redhat.com)
+
 * Thu Mar 29 2012 Dan McPherson <dmcphers@redhat.com> 0.89.4-1
 - Allow libra instances to kill the ping command, this is required since we are
   now allowing users to run ping, need to allow them to kill it.
