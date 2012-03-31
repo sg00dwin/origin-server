@@ -2,7 +2,7 @@
 
 Summary:   Provides Node-0.6 support
 Name:      rhc-cartridge-nodejs-0.6
-Version:   0.4.3
+Version:   0.5.0
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   ASL 2.0

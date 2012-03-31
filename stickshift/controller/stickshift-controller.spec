@@ -5,7 +5,7 @@
 
 Summary:        Cloud Development Controller
 Name:           rubygem-%{gemname}
-Version:        0.7.7
+Version:        0.8.0
 Release:        1%{?dist}
 Group:          Development/Languages
 License:        ASL 2.0

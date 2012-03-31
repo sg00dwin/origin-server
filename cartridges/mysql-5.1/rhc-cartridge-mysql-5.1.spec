@@ -2,7 +2,7 @@
 %define frameworkdir %{_libexecdir}/stickshift/cartridges/mysql-5.1
 
 Name: rhc-cartridge-mysql-5.1
-Version: 0.23.2
+Version: 0.24.0
 Release: 1%{?dist}
 Summary: Provides embedded mysql support
 
