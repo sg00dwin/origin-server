@@ -3,7 +3,7 @@
 
 Summary:   Li site components
 Name:      rhc-site
-Version:   0.90.0
+Version:   0.90.1
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -117,6 +117,12 @@ rm -rf %{buildroot}
 /bin/touch %{sitedir}/log/production.log
 
 %changelog
+* Sat Mar 31 2012 Dan McPherson <dmcphers@redhat.com> 0.90.1-1
+- bump spec numbers (dmcphers@redhat.com)
+- Updates all links to docs for the new version that doesnt have Express on the
+  URLs (ffranz@redhat.com)
+- Fixes 807985 (ffranz@redhat.com)
+
 * Thu Mar 29 2012 Dan McPherson <dmcphers@redhat.com> 0.89.10-1
 - check to see if domain is being updated (johnp@redhat.com)
 - mitigate race condition due to multiple domain support on the backend
