@@ -13,18 +13,7 @@ Feature: PHP Application
     And a php application git repo will exist
     And a php application source tree will exist
     And a php application httpd will be running 
-    And php application log files will exist
-    When I deconfigure the php application
-    Then a php application http proxy file will not exist
-    And a php application git repo will not exist
-    And a php application source tree will not exist
-    And a php application httpd will not be running
-
-  Scenario: Stop Start a PHP Application
-    Given an accepted node
-    And a new guest account
-    And a new php application
-    And the php application is running
+ 
     When I stop the php application
     Then the php application will not be running
     And a php application httpd will not be running
@@ -32,24 +21,20 @@ Feature: PHP Application
     When I start the php application
     Then the php application will be running
     And a php application httpd will be running
+    And php application log files will exist
 
-  Scenario: Add Remove Alias a PHP Application
-    Given an accepted node
-    And a new guest account
-    And a new php application
-    And the php application is running
-    When I add-alias the php application
-    Then the php application will be aliased
-    When I remove-alias the php application
-    Then the php application will not be aliased 
-    
-
-  Scenario: Enable Disable Proxy a PHP Application
-    Given an accepted node
-    And a new guest account
-    And a new php application
-    And the php application is running
     When I expose-port the php application
     Then the php application will be exposed
     When I conceal-port the php application
     Then the php application will not be exposed
+
+    When I add-alias the php application
+    Then the php application will be aliased
+    When I remove-alias the php application
+    Then the php application will not be aliased 
+ 
+    When I deconfigure the php application
+    Then a php application http proxy file will not exist
+    And a php application git repo will not exist
+    And a php application source tree will not exist
+    And a php application httpd will not be running
