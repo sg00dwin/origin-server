@@ -3,7 +3,7 @@
 
 Summary:   Provides embedded haproxy-1.4 support
 Name:      rhc-cartridge-haproxy-1.4
-Version:   0.8.1
+Version:   0.7.5
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   ASL 2.0
@@ -15,6 +15,7 @@ BuildRequires: git
 Requires:  stickshift-abstract
 Requires:  haproxy
 Requires:  rubygem-daemons
+Requires:  rubygem-rest-client
 
 BuildArch: noarch
 
@@ -88,10 +89,6 @@ rm -rf %{buildroot}
 %doc %{cartridgedir}/LICENSE
 
 %changelog
-* Sat Mar 31 2012 Dan McPherson <dmcphers@redhat.com> 0.8.1-1
-- bump spec numbers (dmcphers@redhat.com)
-- enabling scaling tests, raising timeout limits (mmcgrath@redhat.com)
-
 * Thu Mar 29 2012 Dan McPherson <dmcphers@redhat.com> 0.7.5-1
 - Adding new 'node' tests (mmcgrath@redhat.com)
 - Bug fix (use stats in lieu of express) + add some debug info.
