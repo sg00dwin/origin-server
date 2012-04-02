@@ -1062,21 +1062,16 @@ module Express
 
       def self.get_all_gears_impl
         gear_map = {}
-        begin
-          options = ApplicationContainerProxy.rpc_options
-          rpc_client = rpcclient('libra', :options => options)
-          mc_args = { :gear_map => {} }
-          rpc_client.custom_request('get_all_gears', mc_args, nil).each { |response|
-            if response.results[:statuscode] == 0
-              sub_gear_map = response.results[:data][:output]
-              sender = response.results[:sender]
+        rpc_exec('libra') do |client|
+          client.get_all_gears(:gear_map => {}) do |response|
+            if response[:body][:statuscode] == 0
+              sub_gear_map = response[:body][:data][:output]
+              sender = response[:senderid]
               sub_gear_map.each { |k,v|
                 gear_map[k] = "[#{sender}, uid:#{v}]"
               }
             end
-          }
-        ensure
-          rpc_client.disconnect
+          end
         end
         gear_map
       end
