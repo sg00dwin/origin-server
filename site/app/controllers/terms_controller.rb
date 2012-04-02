@@ -4,8 +4,6 @@ require 'recaptcha'
 
 class TermsController < SiteController
 
-  before_filter :new_forms, :only => [:new_terms, :new, :acceptance_terms]
-
   def new
     new_terms
   end
