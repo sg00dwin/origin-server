@@ -1,0 +1,85 @@
+- content_for :page_title, 'Under the Hood'
+
+%h1.ribbon Under the Hood
+
+%section
+  %p
+    OpenShift is made of many different Open Source software components working in harmony to power your apps.  We provide a helpful list of them below.
+
+  .row
+    .span8
+      %ul.link_list
+        %li
+          .link
+            = link_to "Crank Case", "#"
+          .link_desc User Management Component
+        %li
+          .link
+            = link_to "Gear Changer", "#"
+          .link_desc Short description to come
+        %li
+          .link
+            = link_to "RHC", "#"
+          .link_desc Command-line client tools
+        %li
+          .link
+            = link_to "StickShift", "#"
+          .link_desc Provides API
+        %li
+          .link
+            = link_to "SwingShift", "#"
+          .link_desc Provides user authentication
+        %li
+          .link
+            = link_to "Uplift", "#"
+          .link_desc DNS Management component
+    .span4.info-ribbon
+      %h2 Test Drive
+      %p
+        Get all the components preconfigured in a bootable disk image.
+        = take_action "#", "Start Download", ""
+      %p
+        Once you got it, you can
+        = link_to "run it as a virtual guest", "#"
+        ,
+        = link_to "boot it from a LiveCD", "#"
+        , or
+        = link_to "boot it from a USB stick", "#"
+      %p
+        Then, we suggest you read the
+        = link_to "live image documentation", "#"
+        for instructions on what to do after you boot.
+      .well
+        %h3 Important Information
+        This image contains software from Fedora 16.  Corresponding source packages for such software are available at
+        = link_to "http://koji.fedoraproject.org/koji", "http://koji.fedoraproject.org/koji"
+  .row
+    .span12
+      %h3 Cartridges
+      %p
+        Cartridges provide various middleware components and add functionality to other cartridges.
+  .row
+    .span4
+      %strong Web Frameworks
+      %ul.cart-list
+        %li
+          = link_to "JBossAS Cartridge", "#"
+    .span4
+      %strong Database and Related
+      %ul.cart-list
+        %li
+          = link_to "10Gen MMS Cartridge", "#"
+    .span4
+      %strong Other Cartridges
+      %ul.cart-list
+        %li
+          = link_to "Cron Cartridge", "#"
+  .row
+    .span11.well
+      %h3 Important Information
+      %p
+        These are some of the projects that are used to create Red Hat's OpenShift Platform-as-a-Service (PaaS), but are not necessarily the versions of code currently used for OpenShift. Red Hat and OpenShift are trademarks of Red Hat, Inc., registered in the United States and other countries. Red Hat's offering of the code for your downloading, use, modification, or distribution is not a grant of a trademark license to OpenShift or any other Red Hat trademark.
+      %p
+        The components listed above are under the
+        = link_to "Apache Software License 2.0", "http://www.apache.org/licenses/LICENSE-2.0.html"
+        , except with cartridges listed with a specific license.  See project pages for full text of each project's license.
