@@ -1,7 +1,7 @@
 %define cartridgedir %{_libexecdir}/stickshift/cartridges/embedded/phpmyadmin-3.4
 
 Name: cartridge-phpmyadmin-3.4
-Version: 0.11.2
+Version: 0.11.3
 Release: 1%{?dist}
 Summary: Embedded phpMyAdmin support for express
 
@@ -61,6 +61,9 @@ rm -rf $RPM_BUILD_ROOT
 %doc %{cartridgedir}/LICENSE
 
 %changelog
+* Mon Apr 02 2012 Krishna Raman <kraman@gmail.com> 0.11.3-1
+- 
+
 * Fri Mar 30 2012 Krishna Raman <kraman@gmail.com> 0.11.2-1
 - Renaming for open-source release
 
