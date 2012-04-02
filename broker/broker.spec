@@ -3,7 +3,7 @@
 
 Summary:   Li broker components
 Name:      rhc-broker
-Version:   0.90.1
+Version:   0.90.2
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -92,6 +92,14 @@ rm -rf $RPM_BUILD_ROOT
 /bin/touch %{brokerdir}/log/production.log
 
 %changelog
+* Mon Apr 02 2012 Krishna Raman <kraman@gmail.com> 0.90.2-1
+- Updating dependencies to match new package names (kraman@gmail.com)
+- Merge remote-tracking branch 'origin/dev/kraman/US2048' (kraman@gmail.com)
+- added rhc-admin-ctl-user (twiest@redhat.com)
+- Adding m-collective and oddjob gearchanger plugins (kraman@gmail.com)
+- Added mongo and streamline swingshift plugins (kraman@gmail.com)
+- Creating dynect plugin (kraman@gmail.com)
+
 * Sat Mar 31 2012 Dan McPherson <dmcphers@redhat.com> 0.90.1-1
 - Updating gem versions (dmcphers@redhat.com)
 - bump spec numbers (dmcphers@redhat.com)
