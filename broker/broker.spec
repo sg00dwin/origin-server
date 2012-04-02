@@ -24,6 +24,11 @@ Requires:  rubygem-stickshift-controller
 Requires:  rubygem-bson_ext
 Requires:  rubygem-rest-client
 Requires:  rubygem-thread-dump
+Requires:  rubygem-swingshift-streamline-plugin
+Requires:  rubygem-uplift-dynect-plugin
+Requires:  rubygem-gearchanger-m-collective-plugin
+Requires:  rubygem-crankcase-mongo-plugin
+
 
 BuildArch: noarch
 
