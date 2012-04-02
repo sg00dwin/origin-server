@@ -1,7 +1,7 @@
 %define cartridgedir %{_libexecdir}/stickshift/cartridges/embedded/mongodb-2.0
 
 Name: cartridge-mongodb-2.0
-Version: 0.17.2
+Version: 0.17.3
 Release: 1%{?dist}
 Summary: Embedded mongodb support for OpenShift
 
@@ -56,6 +56,9 @@ rm -rf $RPM_BUILD_ROOT
 %doc %{cartridgedir}/LICENSE
 
 %changelog
+* Mon Apr 02 2012 Krishna Raman <kraman@gmail.com> 0.17.3-1
+- 
+
 * Fri Mar 30 2012 Krishna Raman <kraman@gmail.com> 0.17.2-1
 - Renaming for open-source release
 
