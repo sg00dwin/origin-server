@@ -5,7 +5,7 @@
 
 Summary:        GearChanger plugin for m-colective service
 Name:           rubygem-%{gemname}
-Version:        0.7.4
+Version:        0.7.5
 Release:        1%{?dist}
 Group:          Development/Languages
 License:        ASL 2.0
@@ -70,6 +70,12 @@ rm -rf %{buildroot}
 %{ruby_sitelib}/%{gemname}.rb
 
 %changelog
+* Mon Apr 02 2012 Krishna Raman <kraman@gmail.com> 0.7.5-1
+- 1) changes to fix remote job creation to work for express as well as
+  stickshift.  2) adding resource_limits.conf file to stickshift node.  3)
+  adding implementations of generating remote job objects in mcollective
+  application container proxy (abhgupta@redhat.com)
+
 * Fri Mar 30 2012 Krishna Raman <kraman@gmail.com> 0.7.4-1
 - Renaming for open-source release
 
