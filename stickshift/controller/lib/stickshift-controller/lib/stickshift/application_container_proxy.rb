@@ -186,5 +186,11 @@ module StickShift
     
     def get_execute_connector_job(app, gear, cart, connector_name, input_args)
     end
+
+    def get_broker_auth_key_add_job(app, gear, iv, token)
+    end
+  
+    def get_broker_auth_key_remove_job(app, gear)
+    end
   end
 end

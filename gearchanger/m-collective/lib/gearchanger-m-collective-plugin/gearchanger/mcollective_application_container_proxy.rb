@@ -353,6 +353,51 @@ module GearChanger
         mcoll_reply = execute_direct(cart, 'update-namespace', "#{app.name} #{new_ns} #{old_ns} #{app.uuid}")
         parse_result(mcoll_reply)
       end
+
+      def get_env_var_add_job(app, gear, key, value)
+        args = "--with-app-uuid '#{app.uuid}' --with-container-uuid '#{gear.uuid}' -k '#{key}' -v '#{value}'"
+        job = RemoteJob.new('stickshift-node', 'env-var-add', args)
+        job
+      end
+      
+      def get_env_var_remove_job(app, gear, key)
+        args = "--with-app-uuid '#{app.uuid}' --with-container-uuid '#{gear.uuid}' -k '#{key}'"
+        job = RemoteJob.new('stickshift-node', 'env-var-remove', args)
+        job
+      end
+  
+      def get_add_authorized_ssh_key_job(app, gear, ssh_key, key_type=nil, comment=nil)
+        args = "--with-app-uuid '#{app.uuid}' --with-container-uuid '#{gear.uuid}' -s '#{ssh_key}'"
+        args += " -t '#{key_type}'" if key_type
+        args += " -m '-#{comment}'" if comment
+        job = RemoteJob.new('stickshift-node', 'authorized-ssh-key-add', args)
+        job
+      end
+      
+      def get_remove_authorized_ssh_key_job(app, gear, ssh_key, comment=nil)
+        args = "--with-app-uuid '#{app.uuid}' --with-container-uuid '#{gear.uuid}' -s '#{ssh_key}'"
+        args += " -m '-#{comment}'" if comment
+        job = RemoteJob.new('stickshift-node', 'authorized-ssh-key-remove', args)
+        job
+      end
+
+      def get_broker_auth_key_add_job(app, gear, iv, token)
+        args = "--with-app-uuid '#{app.uuid}' --with-container-uuid '#{gear.uuid}' -i '#{iv}' -t '#{token}'"
+        job = RemoteJob.new('stickshift-node', 'broker-auth-key-add', args)
+        job
+      end
+  
+      def get_broker_auth_key_remove_job(app, gear)
+        args = "--with-app-uuid '#{app.uuid}' --with-container-uuid '#{gear.uuid}'"
+        job = RemoteJob.new('stickshift-node', 'broker-auth-key-remove', args)
+        job
+      end
+
+      def get_execute_connector_job(app, gear, cart, connector_name, input_args)
+        args = "--gear-uuid '#{gear.uuid}' --cart-name '#{cart}' --hook-name '#{connector_name}' " + input_args.join(" ")
+        job = RemoteJob.new('stickshift-node', 'connector-execute', args)
+        job
+      end
       
       def move_app(app, destination_container, destination_district_uuid=nil, allow_change_district=false, node_profile=nil)
         source_container = app.container

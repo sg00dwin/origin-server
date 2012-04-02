@@ -533,6 +533,18 @@ module GearChanger
       job
     end
 
+    def get_broker_auth_key_add_job(app, gear, iv, token)
+      args = "--with-app-uuid '#{app.uuid}' --with-container-uuid '#{gear.uuid}' -i '#{iv}' -t '#{token}'"
+      job = RemoteJob.new('stickshift', 'broker-auth-key-add', args)
+      job
+    end
+
+    def get_broker_auth_key_remove_job(app, gear)
+      args = "--with-app-uuid '#{app.uuid}' --with-container-uuid '#{gear.uuid}'"
+      job = RemoteJob.new('stickshift', 'broker-auth-key-remove', args)
+      job
+    end
+
     def get_execute_connector_job(app, gear, cart, connector_name, input_args)
       args = "--gear-uuid '#{gear.uuid}' --cart-name '#{cart}' --hook-name '#{connector_name}' " + input_args.join(" ")
       job = RemoteJob.new('stickshift', 'connector-execute', args)

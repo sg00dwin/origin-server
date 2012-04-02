@@ -153,8 +153,7 @@ class Gear < StickShift::UserModel
   end
   
   def broker_auth_key_job_add(iv, token)
-    args = "--with-app-uuid '#{app.uuid}' --with-container-uuid '#{uuid}' -i '#{iv}' -t '#{token}'"
-    job = RemoteJob.new('stickshift-node', 'broker-auth-key-add', args)
+    job = get_proxy.get_broker_auth_key_add_job(app, self, iv, token)
     job
   end
   
@@ -169,8 +168,7 @@ class Gear < StickShift::UserModel
   end
   
   def broker_auth_key_job_remove()
-    args = "--with-app-uuid '#{app.uuid}' --with-container-uuid '#{uuid}'"
-    job = RemoteJob.new('stickshift-node', 'broker-auth-key-remove', args)
+    job = get_proxy.get_broker_auth_key_remove_job(app, self)
     job
   end
   
