@@ -2,7 +2,7 @@
 
 Summary:   Provides post proxy httpd support
 Name:      cartridge-www-dynamic-2.2
-Version:   0.1.2
+Version:   0.1.3
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   ASL 2.0
@@ -89,6 +89,9 @@ rm -rf $RPM_BUILD_ROOT
 %doc %{cartridgedir}/LICENSE
 
 %changelog
+* Mon Apr 02 2012 Krishna Raman <kraman@gmail.com> 0.1.3-1
+- 
+
 * Fri Mar 30 2012 Krishna Raman <kraman@gmail.com> 0.1.2-1
 - Renaming for open-source release
 
