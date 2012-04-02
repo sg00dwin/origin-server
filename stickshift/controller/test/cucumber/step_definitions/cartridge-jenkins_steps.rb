@@ -1,3 +1,13 @@
+require 'rubygems'
+require 'fileutils'
+require 'json'
+require 'logger'
+require 'open4'
+require 'pp'
+require 'rest-client'
+
+include AppHelper
+
 $cartridge_root ||= "/usr/libexec/stickshift/cartridges"
 $jenkins_version = "jenkins-1.4"
 $jenkins_cartridge = "#{$cartridge_root}/#{$jenkins_version}"
@@ -316,4 +326,92 @@ Then /^the jenkins daemon log files will( not)? exist$/ do |negate|
       file_exists.should be_false "file #{file_path} should not exist and does"
     end
   end
+end
+
+When /^I configure a hello_world diy application with jenkins enabled$/ do
+    @app = TestApp.create_unique('diy-0.1', 'diy')
+    if rhc_create_domain(@app)
+      @diy_app = rhc_create_app(@app, false, '--enable-jenkins --timeout=120')
+    else
+      raise "Failed to create domain: #{@app}"
+    end
+
+    output = `awk </tmp/rhc/cucumber.log '/^Job URL: / {print $3} /^Jenkins /,/^Note: / {if ($0 ~ /^ *User: /) print $2; if ($0 ~ /^ *Password: /) print $2;}'`.split("\n")
+    @jenkins_user = output[-3]
+    @jenkins_password = output[-2]
+    @jenkins_url = output[-1]
+    $logger.debug "@jenkins_url = #{@jenkins_url}\n@jenkins_user = #{@jenkins_user}\n@jenkins_password = #{@jenkins_password}"
+
+    @jenkins_job_command = "curl -ksS -X GET #{@jenkins_url}api/json --user '#{@jenkins_user}:#{@jenkins_password}'"
+    $logger.debug "@jenkins_job_command = #{@jenkins_job_command}"
+
+    response = `#{@jenkins_job_command}`
+    $logger.debug "@jenkins_job_command response = [#{response}]"
+
+    job = JSON.parse(response)
+
+    job.should_not be_nil
+    job['name'].should be == 'diy-build', "#{job['name']} not equal to diy-build"
+    job['color'].should be == 'grey', "job #{job['name']} has already been run."
+end
+
+When /^I push an update to the diy application$/ do
+    output = `awk </tmp/rhc/cucumber.log '/^git url:.*diy.git.$/ {print $3}'`.split("\n")
+    @diy_git_url = output[-1]
+
+    FileUtils.rm_rf 'diy' if File.exists? 'diy'
+    status = Open4::popen4("git clone #{@diy_git_url} diy") do |pid, stdin, stdout, stderr|
+      $logger.debug "git clone: #{stdout.read}"
+      $logger.info  "git clone: #{stderr.read}"
+    end
+    status.to_s.should be == "0"
+
+    current = Dir.pwd
+    begin
+      Dir.chdir "diy"
+      `sed -ie 's/Place your application here/Jenkins Builder Testing/' diy/index.html`
+
+      status = Open4::popen4("git commit -a -m 'push to force build'") do |pid, stdin, stdout, stderr|
+        $logger.debug "git commit: #{stdout.read}"
+        $logger.info  "git commit: #{stderr.read}"
+      end
+      status.to_s.should be == "0"
+
+      status = Open4::popen4("git push") do |pid, stdin, stdout, stderr|
+        $logger.debug "git push: #{stdout.read}"
+        $logger.info  "git push: #{stderr.read}"
+      end
+      status.to_s.should be == "0"
+    rescue => e
+      $logger.error "Unexpected exception: #{e.message}\n#{e.backtrace.join("\n")}"
+      raise e
+    ensure
+      Dir.chdir current
+      # todo: uncomment when done with development
+      # FileUtils.rm_rf 'diy'
+    end
+end
+
+Then /^the application will be updated$/ do
+    # wait for ball to change blue...
+    delay = 20
+    begin
+      sleep 1
+      delay -= 1
+
+      response = `#{@jenkins_job_command}`
+      $logger.debug "@jenkins_job_command response = #{delay}[#{response}]"
+
+      job = JSON.parse(response)
+    end while job['color'] != 'blue' && 0 < delay
+    job['color'].should be == 'blue' 
+
+    path = "/var/lib/stickshift/#{@app.name}-#{@app.namespace}/#{@app.name}/runtime/repo/#{@app.name}/index.html"
+    $logger.debug "jenkins built application path = #{path}"
+    `grep 'Jenkins Builder Testing' "#{path}"`
+    $?.to_s.should be == "0"
+end
+
+Then /^I deconfigure the diy application with jenkins enabled$/ do
+    rhc_ctl_destroy(@app, false)
 end
