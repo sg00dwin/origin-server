@@ -1,7 +1,7 @@
 %define cartridgedir %{_libexecdir}/stickshift/cartridges/embedded/postgresql-8.4
 
 Name: cartridge-postgresql-8.4
-Version: 0.6.2
+Version: 0.6.3
 Release: 1%{?dist}
 Summary: Embedded postgresql support for express
 
@@ -74,6 +74,11 @@ rm -rf $RPM_BUILD_ROOT
 %doc %{cartridgedir}/LICENSE
 
 %changelog
+* Mon Apr 02 2012 Krishna Raman <kraman@gmail.com> 0.6.3-1
+- Merge remote-tracking branch 'origin/dev/kraman/US2048' (kraman@gmail.com)
+- Fix for bugz 808013 - Use a postgres data template for speeding up and
+  working around initdb issues and don't use initdb. (ramr@redhat.com)
+
 * Fri Mar 30 2012 Krishna Raman <kraman@gmail.com> 0.6.2-1
 - Renaming for open-source release
 
