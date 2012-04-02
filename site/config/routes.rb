@@ -107,6 +107,10 @@ RedHatCloud::Application.routes.draw do
   match 'legal/openshift_privacy' => 'legal#openshift_privacy'
   match 'legal/opensource_disclaimer' => 'legal#opensource_disclaimer'
 
+  match 'opensource' => 'opensource#index'
+  match 'opensource/download' => 'opensource#download'
+
+
   # suggest we consolidate login/logout onto a session controller
   resource :login,
            :controller => "login",
