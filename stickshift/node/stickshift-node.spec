@@ -90,6 +90,12 @@ rm -rf %{buildroot}
 %post
 echo "/usr/bin/ss-trap-user" >> /etc/shells
 
+# copying this file in the post hook so that this file can be replaced by rhc-node
+# copy this file only if it doesn't already exist
+if ! [ -f /etc/stickshift/resource_limits.conf ]; then
+  cp -f /etc/stickshift/resource_limits.template /etc/stickshift/resource_limits.conf
+fi
+
 %changelog
 * Sat Mar 31 2012 Dan McPherson <dmcphers@redhat.com> 0.8.1-1
 - Updating gem versions (dmcphers@redhat.com)
@@ -264,4 +270,3 @@ echo "/usr/bin/ss-trap-user" >> /etc/shells
   installed cartridges and get descriptors (kraman@gmail.com)
 - change state machine dep (dmcphers@redhat.com)
 - move the rest of the controller tests into broker (dmcphers@redhat.com)
-

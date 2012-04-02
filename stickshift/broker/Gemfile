@@ -11,6 +11,8 @@ gem 'open4'
 gem 'stickshift-node'
 gem 'stickshift-controller'
 
+# Add plugin gems here
+
 # Bundle edge Rails instead:
 # gem 'rails', :git => 'git://github.com/rails/rails.git'
 
@@ -37,3 +39,5 @@ group :development, :test do
   # The require part from http://tinyurl.com/3pf68ho
   gem 'mocha', :require => nil
 end
+
+

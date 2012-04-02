@@ -37,18 +37,15 @@ class BaseController < ActionController::Base
     end
     begin
       auth = StickShift::AuthService.instance.authenticate(request, login, password)
-      if auth
-        @login = auth[:username]
-        @auth_method = auth[:auth_method]      
-      else
-        request_http_basic_authentication
-      end
+      @login = auth[:username]
+      @auth_method = auth[:auth_method]      
 
-      unless @login
-        request_http_basic_authentication
-      end
-    
+      Rails.logger.debug "Adding user #{@login}...inside base_controller"
       @cloud_user = CloudUser.find @login
+      if @cloud_user.nil?
+        @cloud_user = CloudUser.new(@login)
+        @cloud_user.save
+      end
       @cloud_user.auth_method = @auth_method unless @cloud_user.nil?
     rescue StickShift::AccessDeniedException
       request_http_basic_authentication

@@ -37,33 +37,10 @@ Broker::Application.configure do
   # OpenShift Configuration Below this point #
   ############################################
   # SS Config
+  
   config.ss = {
-    :domain_suffix => "rhcloud.com",
-    :default_max_gears => 3,
-
-    :auth => {
-      :salt => "ClWqe5zKtEW4CJEMyjzQ",
-      :mongo => {
-        :replica_set => false,
-        # Replica set example: [[<host-1>, <port-1>], [<host-2>, <port-2>], ...]
-        :host_port => ["localhost", 27017],
-
-        :user => "stickshift",
-        :password => "mooo",
-        :db => "stickshift_broker_dev",
-        :collections => {:user => "auth_user"}
-      }
-    },
-
-    :dns => {
-      :bind => {
-        :server => "127.0.0.1",
-        :port => 53,
-        :keyname => "rhcloud.com",
-        :keyvalue => "H6NDDnTbNpcBrUM5c4BJtohyK2uuZ5Oi6jxg3ME+RJsNl5Wl2B87oL12YxWUR3Gp7FdZQojTKBSfs5ZjghYxGw==",
-        :zone => "rhcloud.com"
-      }
-    },
+    :domain_suffix => "example.com",
+    :default_max_gears => 5,
 
     :datastore => {
       :mongo => {

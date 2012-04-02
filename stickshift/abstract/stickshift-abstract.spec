@@ -12,6 +12,7 @@ Source0:   stickshift-abstract-%{version}.tar.gz
 BuildRoot: %(mktemp -ud %{_tmppath}/%{name}-%{version}-%{release}-XXXXXX)
 
 BuildArch: noarch
+Requires: git
 
 %description
 This contains the common function used while building cartridges.

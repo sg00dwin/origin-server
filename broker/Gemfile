@@ -11,6 +11,7 @@ gem 'rack'
 gem 'open4'
 gem 'regin'
 gem 'stickshift-controller'
+gem 'uplift-dynect-plugin'
 gem 'rest-client'
 gem 'thread-dump'
 

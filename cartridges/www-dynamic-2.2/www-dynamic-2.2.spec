@@ -1,13 +1,15 @@
 %define cartridgedir %{_libexecdir}/stickshift/cartridges/www-dynamic-2.2
 
 Summary:   Provides post proxy httpd support
-Name:      rhc-cartridge-www-dynamic-2.2
-Version:   0.1.1
+Name:      cartridge-www-dynamic-2.2
+Version:   0.1.2
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   ASL 2.0
 URL:       http://openshift.redhat.com
 Source0:   %{name}-%{version}.tar.gz
+
+Obsoletes: rhc-cartridge-www-dynamic-2.2
 
 BuildRoot: %(mktemp -ud %{_tmppath}/%{name}-%{version}-%{release}-XXXXXX)
 BuildRequires: git
@@ -87,3 +89,6 @@ rm -rf $RPM_BUILD_ROOT
 %doc %{cartridgedir}/LICENSE
 
 %changelog
+* Fri Mar 30 2012 Krishna Raman <kraman@gmail.com> 0.1.2-1
+- Renaming for open-source release
+

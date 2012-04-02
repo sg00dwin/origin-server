@@ -483,8 +483,8 @@ Configure-Order: [\"proxy/#{framework}\", \"proxy/haproxy-1.4\"]
         connector_name = conn.from_connector.name
         cart = pub_inst.parent_cart_name
         input_args = [appname, self.domain.namespace, gear.uuid]
-        args = "--gear-uuid '#{gear.uuid}' --cart-name '#{cart}' --hook-name '#{connector_name}' " + input_args.join(" ")
-        job = RemoteJob.new('stickshift-node', 'connector-execute', args)
+        
+        job = gear.get_execute_connector_job(cart, connector_name, input_args)
         RemoteJob.add_parallel_job(exec_handle, tag, gear, job)
       }
       pub_out = []
@@ -504,8 +504,8 @@ Configure-Order: [\"proxy/#{framework}\", \"proxy/haproxy-1.4\"]
         connector_name = conn.to_connector.name
         cart = sub_inst.parent_cart_name
         input_args = [appname, self.domain.namespace, gear.uuid, input_to_subscriber]
-        args = "--gear-uuid '#{gear.uuid}' --cart-name '#{cart}' --hook-name '#{connector_name}' " + input_args.join(" ")
-        job = RemoteJob.new('stickshift-node', 'connector-execute', args)
+        
+        job = gear.get_execute_connector_job(cart, connector_name, input_args)
         RemoteJob.add_parallel_job(exec_handle, tag, gear, job)
       }
       # we dont care about subscriber's output/status

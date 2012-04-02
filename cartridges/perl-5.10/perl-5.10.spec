@@ -1,13 +1,15 @@
 %define cartridgedir %{_libexecdir}/stickshift/cartridges/perl-5.10
 
 Summary:   Provides mod_perl support
-Name:      rhc-cartridge-perl-5.10
+Name:      cartridge-perl-5.10
 Version:   0.21.1
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   ASL 2.0
 URL:       http://openshift.redhat.com
 Source0:   %{name}-%{version}.tar.gz
+
+Obsoletes: rhc-cartridge-perl-5.10
 
 BuildRoot: %(mktemp -ud %{_tmppath}/%{name}-%{version}-%{release}-XXXXXX)
 BuildRequires: git
@@ -106,6 +108,8 @@ rm -rf $RPM_BUILD_ROOT
 %changelog
 * Sat Mar 31 2012 Dan McPherson <dmcphers@redhat.com> 0.21.1-1
 - bump spec numbers (dmcphers@redhat.com)
+* Fri Mar 30 2012 Krishna Raman <kraman@gmail.com> 0.20.4-1
+- Renaming for open-source release
 
 * Tue Mar 27 2012 Dan McPherson <dmcphers@redhat.com> 0.20.3-1
 - bug 807260 (wdecoste@localhost.localdomain)

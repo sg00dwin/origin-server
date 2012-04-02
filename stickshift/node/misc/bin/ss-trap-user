@@ -8,6 +8,7 @@ import glob
 import base64
 import commands
 import re
+import selinux
 
 commands_map = {
     "git-receive-pack": "/usr/bin/git-receive-pack",
@@ -171,5 +172,14 @@ if __name__ == '__main__':
 
         allargs = [thearg]
 
-    os.execv(cmd, [cmd] + allargs)
-    sys.exit(1)
+    runcon = '/usr/bin/runcon'
+
+    target_context = 'system_u:system_r:stickshift_t:s0'
+    actual_context = selinux.getcon()[1]
+    # Confirm nothing fishy is going on
+    if target_context != actual_context:
+        os.execv(runcon, [runcon, target_context, cmd] + allargs)
+        sys.exit(1)
+    else:
+        os.execv(cmd, [cmd] + allargs)
+        sys.exit(1)

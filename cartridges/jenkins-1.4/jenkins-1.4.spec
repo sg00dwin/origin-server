@@ -1,13 +1,15 @@
 %define cartridgedir %{_libexecdir}/stickshift/cartridges/jenkins-1.4
 
 Summary:   Provides jenkins-1.4 support
-Name:      rhc-cartridge-jenkins-1.4
+Name:      cartridge-jenkins-1.4
 Version:   0.90.1
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   ASL 2.0
 URL:       http://openshift.redhat.com
 Source0:   %{name}-%{version}.tar.gz
+
+Obsoletes: rhc-cartridge-jenkins-1.4
 
 BuildRoot: %(mktemp -ud %{_tmppath}/%{name}-%{version}-%{release}-XXXXXX)
 BuildRequires: git
@@ -79,6 +81,8 @@ rm -rf %{buildroot}
 %changelog
 * Sat Mar 31 2012 Dan McPherson <dmcphers@redhat.com> 0.90.1-1
 - bump spec numbers (dmcphers@redhat.com)
+* Fri Mar 30 2012 Krishna Raman <kraman@gmail.com> 0.89.3-1
+- Renaming for open-source release
 
 * Mon Mar 26 2012 Dan McPherson <dmcphers@redhat.com> 0.89.2-1
 - Bug 804892 (dmcphers@redhat.com)
