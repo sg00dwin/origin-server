@@ -51,19 +51,12 @@ Feature: Application Performance Tests
     When the application is aliased
     When the application is unaliased
     When the application namespace is updated
-    Then the application should be accessible
     When I snapshot the application
-    Then the application should be accessible
     When I restore the application
-    Then the application should be accessible
     When the application is started
-    Then the application should be accessible
     When the application is stopped
-    Then the application should not be accessible
     When the application is restarted
-    Then the application should be accessible
     When the application is destroyed
-    Then the application should not be accessible
 
   Scenarios: Application Scenarios
     |     type     |

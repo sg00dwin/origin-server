@@ -1,0 +1,265 @@
+#!/usr/bin/env ruby
+require 'rubygems'
+require 'gnuplot'
+require 'getoptlong'
+require 'fileutils'
+
+def p_usage
+  puts <<USAGE
+Usage: #{$0}
+  Process and aggregate the performance monitor log
+
+    -f|--file    Performance monitor log file path (required)
+    -t|--type    Application framework 
+    -e|--top     Top expensive operations
+    -p|--plot    Generates GNU plot output (default file: 'outfile')
+    -o|--outfile Writes output to the given file
+    -a|--avg     Average elapsed time (default)
+    -l|--min     Minimum elapsed time
+    -m|--max     Maximum elapsed time
+    -h|--help    Show usage info
+
+USAGE
+exit 255
+end
+
+$app_hash = {
+      # "Thread-id" => { "user" => { "app-name" => "app-type" } }
+           }
+$res = {
+        "setup" => {},
+      #   "CREATE_DOMAIN" => { "avg" => nil, "min" => nil, "max" => nil },
+      #   "UPDATE_DOMAIN" => { "avg" => nil, "min" => nil, "max" => nil }
+      # }
+      # For each app type
+      # "app-type"=> { 
+      #   "CREATE_APP" => { "avg" => nil, "min"=> nil, "max"=> nil },
+      #   "START_APP"  => { "avg" => nil, "min"=> nil, "max"=> nil },
+      #   "STOP_APP"   => { "avg" => nil, "min"=> nil, "max"=> nil },
+      #   "RESTART_APP"  => { "avg" => nil, "min"=> nil, "max"=> nil },
+      #   "DESTROY_APP"  => { "avg" => nil, "min"=> nil, "max"=> nil },
+      #   "STATUS_APP" => { "avg" => nil, "min"=> nil, "max"=> nil },
+      #
+      #   "ADD_EMBED_CART"   => { 
+      #                         "cart-type" => { "avg" => nil, "min"=> nil, "max"=> nil },
+      #                         }
+      #   "REMOVE_EMBED_CART"=> { 
+      #                         "cart-type" => { "avg" => nil, "min"=> nil, "max"=> nil },
+      #                         }
+      #   "CREATE_SNAPSHOT"  => { "avg" => nil, "min"=> nil, "max"=> nil },
+      #   "RESTORE_SNAPSHOT" => { "avg" => nil, "min"=> nil, "max"=> nil },
+      #   "ADD_ALIAS"        => { "avg" => nil, "min"=> nil, "max"=> nil },
+      #   "REMOVE_ALIAS"     => { "avg" => nil, "min"=> nil, "max"=> nil },
+      # }
+      }
+
+begin
+  opts = GetoptLong.new(
+                        ["--file", "-f", GetoptLong::REQUIRED_ARGUMENT],
+                        ["--type", "-t", GetoptLong::REQUIRED_ARGUMENT],
+                        ["--top", "-e", GetoptLong::REQUIRED_ARGUMENT],
+                        ["--plot", "-p", GetoptLong::NO_ARGUMENT],
+                        ["--outfile", "-o", GetoptLong::REQUIRED_ARGUMENT],
+                        ["--avg", "-a", GetoptLong::NO_ARGUMENT],
+                        ["--min", "-l", GetoptLong::NO_ARGUMENT],
+                        ["--max", "-m", GetoptLong::NO_ARGUMENT],
+                        ["--help", "-h", GetoptLong::NO_ARGUMENT]
+                       )
+  opt = {}
+  opts.each do |o, a|
+    opt[o[2..-1]] = a.to_s
+  end
+rescue Exception => e
+  puts e.message
+  p_usage
+end
+
+if !opt['file'] || opt['help'] ||
+   (opt['top'] && opt['plot']) 
+  p_usage
+end
+
+
+$type = opt['type'] || nil
+$plot = opt['plot'] || nil
+$ofile = opt['outfile'] || nil
+$ofile = 'outfile' if $plot && !$ofile
+$top = opt['top'] || nil
+
+$rtm = 'avg'
+if opt['min']
+  $rtm = 'min'
+elsif opt['max']
+  $rtm = 'max'
+end
+
+$base_dir = "/tmp/rhc"
+$pm_file = "#{$base_dir}/perfmon_copy"
+$pm_top = "#{$base_dir}/perfmon_top"
+
+def update_app_hash(tid, user, app_name, app_type)
+  $app_hash[tid] = {} unless $app_hash[tid]
+  $app_hash[tid][user] = {} unless $app_hash[tid][user]
+  $app_hash[tid][user][app_name] = app_type
+end
+
+def get_app_type(tid, user, app_name)
+  $app_hash[tid][user][app_name]
+end
+
+def update_tm(res, tm)
+  res['cnt'] = 0   unless res['cnt']
+  res['min'] = 999 unless res['min']
+  res['max'] = 0.0 unless res['max']
+  res['tot'] = 0.0 unless res['tot']
+
+  tm = (tm.to_f * 100).round.to_f / 100
+  res['tot'] += tm
+  res['cnt'] += 1
+  res['min'] = tm if tm < res['min']
+  res['max'] = tm if tm > res['max']
+  res['avg'] = res['tot'] / res['cnt']
+  res['avg'] = (res['avg'] * 100).round.to_f / 100
+end
+
+def print_tm
+  out = ""
+  tout = ""
+  $res.each do |k1, v1|
+    if $type && ($type != k1)
+      next
+    end
+    out += "#{k1} : \n"
+    v1.each do |k2, v2|
+      out += "\t#{k2} : #{v2[$rtm]}\n"
+      tout += "#{k1} #{k2} : #{v2[$rtm]}\n"
+    end if v1  
+  end
+  if $top
+    f = File.open($pm_top, "w")
+    f.write(tout)
+    f.close
+    out = `sort -rn -k4 #{$pm_top} | head -n #{$top}`
+  end
+  if $ofile
+    f = File.open($ofile, 'w')
+    f.write(out)
+    f.close
+  else
+    puts out
+  end
+end
+
+
+def genGnu(outfile, param="avg")
+  io = ""
+  Gnuplot::Plot.new( io ) do |plot|
+    doPlot(plot, outfile, param)
+  end
+  f = File.open(outfile, "w")
+  f.write(io)
+  f.close
+end
+
+
+def doPlot(plot, outfile, param)
+  if $type
+    data = $res[$type]
+  else
+    data = $res
+  end
+  
+  plot.boxwidth "0.2 absolute"
+  plot.style "fill solid 1.00 border -1"
+  plot.style "data histograms"
+  plot.xtics "border in scale 1,0.5 nomirror rotate -45 offset character 0, 0, 0"
+  plot.title  "Openshift Performance Run"
+  plot.arbitrary_lines << "set grid"
+  plot.arbitrary_lines << "set ylabel \"Time (seconds)-->\""
+  plot.arbitrary_lines << "set xlabel \"Frameworks-->\""
+  x = []
+  ylist = {}
+  count =0
+  data.each do |cart, cart_data|
+    x.push(cart)
+    cart_data.each { |action, action_data|
+      newBar = ylist[action] || []
+      if $type
+        newBar[count] = action_data
+      else
+        newBar[count] = action_data[param] || 0.0
+      end
+      ylist[action] = newBar
+    }
+    count += 1
+  end
+  ylist.each { |barname, bar|
+    bardup = bar.dup
+    count = 0
+    bardup.each { |elem| 
+      bar[count] = 0.0 if elem.nil?
+      count += 1
+    }
+    plot.data << Gnuplot::DataSet.new( [x, bar] ) do |ds|
+      ds.using = "2:xtic(1) t '#{barname}'"
+    end
+  }
+end
+
+begin
+  FileUtils.rm_rf $pm_file if File.exists?($pm_file)
+  FileUtils.mkdir_p $base_dir if not File.exists?($base_dir)
+
+  file = File.new($pm_file, "w")
+  IO.foreach(opt['file']) do |line| 
+    dt = line.split("#<Thread:")
+    file.write(dt[1])
+  end
+  file.close
+
+  IO.foreach($pm_file) do |line|
+    dt = line.split(" ")
+    tid = dt[0]
+    tm = dt[1]
+    op = dt[2]
+    app_name = dt[3]
+
+    case op
+    when "CREATE_DOMAIN", "UPDATE_DOMAIN"
+      $res['setup'][op] = {} unless $res['setup'][op]
+      update_tm($res['setup'][op], tm)
+    when "CREATE_APP"
+      app_type = dt[4]
+      user = dt[5]
+      $res[app_type] = {} unless $res[app_type]
+      $res[app_type][op] = {} unless $res[app_type][op]
+      update_tm($res[app_type][op], tm)
+      update_app_hash(tid, user, app_name, app_type)
+    when "ADD_EMBED_CART", "REMOVE_EMBED_CART"
+      cart_type = dt[4]
+      user = dt[5]
+      app_type = get_app_type(tid, user, app_name)
+      if app_type.nil?
+        puts "Couldn't find Application type for thread-id #{tid}, app_name #{app_name}"
+        break
+      else
+        op = op + "_" + cart_type
+        $res[app_type][op] = {} unless $res[app_type][op]
+        update_tm($res[app_type][op], tm)
+      end
+    else
+      user = dt[4]
+      app_type = get_app_type(tid, user, app_name)
+      $res[app_type][op] = {} unless $res[app_type][op]
+      update_tm($res[app_type][op], tm)
+    end
+  end
+
+  if $plot
+    genGnu($ofile, $rtm)
+  else
+    print_tm
+  end
+rescue Exception => e
+  puts e.message
+end
