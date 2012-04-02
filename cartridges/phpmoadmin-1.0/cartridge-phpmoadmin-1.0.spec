@@ -1,7 +1,7 @@
 %define cartridgedir %{_libexecdir}/stickshift/cartridges/embedded/phpmoadmin-1.0
 
 Name: cartridge-phpmoadmin-1.0
-Version: 0.8.2
+Version: 0.8.3
 Release: 1%{?dist}
 Summary: Embedded phpMoAdmin support for express
 
@@ -57,6 +57,9 @@ rm -rf $RPM_BUILD_ROOT
 %doc %{cartridgedir}/LICENSE
 
 %changelog
+* Mon Apr 02 2012 Krishna Raman <kraman@gmail.com> 0.8.3-1
+- 
+
 * Fri Mar 30 2012 Krishna Raman <kraman@gmail.com> 0.8.2-1
 - Renaming for open-source release
 
