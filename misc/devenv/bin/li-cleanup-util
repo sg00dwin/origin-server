@@ -2,29 +2,46 @@
 require 'rubygems'
 require '/var/www/stickshift/broker/config/environment'
 
-opts = GetoptLong.new(["--namespace",  "-n", GetoptLong::REQUIRED_ARGUMENT])
-opt = {}
-opts.each do |o, a|
-    opt[o[2..-1]] = a.to_s
+opts = GetoptLong.new(
+    ["--user",             "-u", GetoptLong::REQUIRED_ARGUMENT],
+    ["--all",              "-a", GetoptLong::NO_ARGUMENT]
+)
+
+args = {}
+begin
+    opts.each{ |k,v| args[k]=v }
+rescue GetoptLong::Error => e
+    usage
+    exit -100
 end
 
-$dns = Express::Broker::DnsService.new
 
-def users_delete
+
+def delete_all_users
   ds = StickShift::MongoDataStore.new
-
   users = ds.find_all("CloudUser")
   users.each do |user|
-    cloud_user = CloudUser.find(user['login'])
-    cloud_user.delete
+    delete_user((user['login']))
   end if users
 end
 
-if opt['namespace']
-  $dns.deregister_namespace(opt['namespace'])
-else 
-  users_delete
+def delete_user(login)
+  puts "deleting user #{login}"
+  begin
+    cloud_user = CloudUser.find(login)
+    cloud_user.delete
+  rescue Exception => e
+    puts "failed to delete user #{} #{e.message}"
+  end
 end
 
-$dns.publish
-$dns.close
+if args["--user"]
+  delete_user(args["--user"])
+elsif args["--all"]
+  delete_all_users
+else
+  puts "You must use --user to delete a specific user or --all to delete all users"
+  exit 1
+end
+
+

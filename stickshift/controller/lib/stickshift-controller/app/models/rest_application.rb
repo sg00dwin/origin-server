@@ -1,5 +1,5 @@
 class RestApplication < StickShift::Model
-  attr_accessor :framework, :creation_time, :uuid, :embedded, :aliases, :name, :links, :domain_id
+  attr_accessor :framework, :creation_time, :uuid, :embedded, :aliases, :name, :links, :domain_id, :git_url, :app_url
   include LegacyBrokerHelper
   
   def initialize(app, domain_id)
@@ -10,6 +10,9 @@ class RestApplication < StickShift::Model
     self.aliases = app.aliases || Array.new
     self.embedded = app.embedded
     self.domain_id = domain_id
+    
+    self.git_url = "ssh://#{@uuid}@#{@name}-#{@domain_id}.#{Rails.configuration.ss[:domain_suffix]}/~/git/#{@name}.git/"
+    self.app_url = "http://#{@name}-#{@domain_id}.#{Rails.configuration.ss[:domain_suffix]}/"
 
     cart_type = "embedded"
     cache_key = "cart_list_#{cart_type}"

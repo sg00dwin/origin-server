@@ -17,7 +17,6 @@ class RestUser < StickShift::Model
     end
     
     @links = {
-      "GET" => Link.new("Get user information", "GET", "/user"),
       "LIST_KEYS" => Link.new("Get SSH keys", "GET", "/user/keys"),
       "ADD_KEY" => Link.new("Add new SSH key", "POST", "/user/keys", [
         Param.new("name", "string", "Name of the application"),

@@ -8,7 +8,7 @@
 
 Summary:   Dependencies for OpenShift development
 Name:      rhc-devenv
-Version:   0.89.3
+Version:   0.89.4
 Release:   1%{?dist}
 Group:     Development/Libraries
 License:   GPLv2
@@ -377,8 +377,12 @@ zcat /usr/share/drupal6/sites/default/openshift-dump.gz | mysql -u root
 
 %changelog
 
-* Wed Mar 27 2012 Anderson Silva <ansilva@redhat.com> 0.89.3-1
+* Wed Mar 27 2012 Anderson Silva <ansilva@redhat.com> 0.89.4-1
 - add drupal6
+
+* Tue Mar 27 2012 Dan McPherson <dmcphers@redhat.com> 0.89.3-1
+- Merge branch 'master' of git1.ops.rhcloud.com:/srv/git/li (lnader@redhat.com)
+- added clean up utility (lnader@redhat.com)
 
 * Mon Mar 26 2012 Dan McPherson <dmcphers@redhat.com> 0.89.2-1
 - Merge branch 'master' of git1.ops.rhcloud.com:/srv/git/li (lnader@redhat.com)

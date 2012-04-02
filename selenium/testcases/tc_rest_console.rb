@@ -27,8 +27,8 @@ class RestConsole < OpenShift::Rest::TestCase
     app_types_page = @rest_console.application_types_page
     @rest_console.open
     app_type_buttons = app_types_page.find_create_buttons
-    app_type = app_types_page.get_app_type(app_type_buttons[0])
-    app_type_buttons[0].click
+    app_type = app_types_page.get_app_type(app_type_buttons[1])
+    app_type_buttons[1].click
 
     assert_redirected_to "#{app_types_page.path}/#{app_type}"
     app_name = generate_app_name
