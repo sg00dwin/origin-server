@@ -2,7 +2,7 @@
 
 Summary:   Provides diy support
 Name:      cartridge-diy-0.1
-Version:   0.24.1
+Version:   0.24.2
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   ASL 2.0
@@ -95,6 +95,9 @@ rm -rf %{buildroot}
 %doc %{cartridgedir}/LICENSE
 
 %changelog
+* Mon Apr 02 2012 Krishna Raman <kraman@gmail.com> 0.24.2-1
+- Merge remote-tracking branch 'origin/dev/kraman/US2048' (kraman@gmail.com)
+
 * Sat Mar 31 2012 Dan McPherson <dmcphers@redhat.com> 0.24.1-1
 - bump spec numbers (dmcphers@redhat.com)
 * Fri Mar 30 2012 Krishna Raman <kraman@gmail.com> 0.23.4-1
