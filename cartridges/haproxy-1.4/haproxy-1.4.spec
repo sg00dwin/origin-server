@@ -3,7 +3,7 @@
 
 Summary:   Provides embedded haproxy-1.4 support
 Name:      rhc-cartridge-haproxy-1.4
-Version:   0.7.6
+Version:   0.7.7
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   ASL 2.0
@@ -89,6 +89,10 @@ rm -rf %{buildroot}
 %doc %{cartridgedir}/LICENSE
 
 %changelog
+* Tue Apr 03 2012 Mike McGrath <mmcgrath@redhat.com> 0.7.7-1
+- test commit (mmcgrath@redhat.com)
+- Update spec to require rest-client (jhonce@redhat.com)
+
 * Tue Apr 03 2012 Mike McGrath <mmcgrath@redhat.com>
 - Update spec to require rest-client (jhonce@redhat.com)
 
