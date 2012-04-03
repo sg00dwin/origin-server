@@ -195,6 +195,10 @@ function _openshift_heading(&$vars) {
     $type = $node->type;
     $title = $node->title;
   }
+  elseif ($item['path'] == 'comment/reply/%' && $item['page_arguments'] && $item['page_arguments'][0]) {
+    $node = $item['page_arguments'][0];
+    $type = $node->type;
+  }
   elseif ($item['link_path']) {
     $type = $item['link_path'];
     if ($item['title_callback']) {
@@ -217,6 +221,8 @@ function _openshift_heading(&$vars) {
   case 'idea': $heading = "Vote on Features"; break;
   case 'poll':
   case 'polls': $heading = "Polls"; break;
+  case 'wiki_page':
+  case 'wikis': $heading = "Open Source Wiki"; break;
   case 'discussion':
   case 'groups':
   case 'group': $heading = "Forums"; break;
