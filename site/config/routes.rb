@@ -154,6 +154,10 @@ RedHatCloud::Application.routes.draw do
   match 'console' => 'console#index', :via => :get
   match 'new_application' => 'application_types#index', :via => :get
 
+  resources   :download, 
+              :controller => 'download',
+              :only => [:show]
+
 #  resources :express_ssh_keys
 #
 #  match 'express_ssh_key_delete' => 'express_ssh_keys#destroy', :via => [:post]
