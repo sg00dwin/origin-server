@@ -8,7 +8,7 @@
 
 Summary:   Dependencies for OpenShift development
 Name:      rhc-devenv
-Version:   0.91.3
+Version:   0.91.4
 Release:   1%{?dist}
 Group:     Development/Libraries
 License:   GPLv2
@@ -376,6 +376,9 @@ zcat /usr/share/drupal6/sites/default/openshift-dump.gz | mysql -u root
 %{policydir}/*
 
 %changelog
+* Tue Apr 03 2012 Mike McGrath <mmcgrath@redhat.com> 0.91.4-1
+- misc/devenv/devenv.spec: Missed some renamed packages (whearn@redhat.com)
+
 * Tue Apr 03 2012 Mike McGrath <mmcgrath@redhat.com> 0.91.3-1
 - Merge branch 'master' of git:/srv/git/li (whearn@redhat.com)
 - misc/devenv/devenv.spec - Updated to reflect new package names
