@@ -282,6 +282,9 @@ function openshift_preprocess_node(&$vars) {
   
   // Theme the links appended to each discussion node.
   _openshift_theme_subscription_links($vars['links']);
+  
+  // FIXME replace with better integration with drupal site nav and taxonomies
+  $vars['heading'] = _openshift_heading($vars);
 }
 
 function _openshift_theme_subscription_links(&$links) {

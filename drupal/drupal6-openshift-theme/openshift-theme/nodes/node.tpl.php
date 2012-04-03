@@ -1,8 +1,7 @@
 <div id="node-<?php print $node->nid; ?>" class="<?php print $node->type; ?> node<?php if ($sticky) { print ' sticky'; } ?><?php if (!$status) { print ' node-unpublished'; } ?>">
 
-<?php //print theme('user_picture', $node); ?>
-  <?php if ($heading != $title) :?>
-    <h2><?php print $title ?></h2>
+  <?php if ($title != $heading): ?>
+  <h2><?php print $title ?></h2>
   <?php endif; ?>
 
   <?php if ($submitted): ?>
