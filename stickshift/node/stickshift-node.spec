@@ -5,7 +5,7 @@
 
 Summary:        Cloud Development Node
 Name:           rubygem-%{gemname}
-Version:        0.7.3
+Version:        0.8.1
 Release:        1%{?dist}
 Group:          Development/Languages
 License:        ASL 2.0
@@ -91,6 +91,14 @@ rm -rf %{buildroot}
 echo "/usr/bin/ss-trap-user" >> /etc/shells
 
 %changelog
+* Sat Mar 31 2012 Dan McPherson <dmcphers@redhat.com> 0.8.1-1
+- Updating gem versions (dmcphers@redhat.com)
+- bump spec numbers (dmcphers@redhat.com)
+
+* Wed Mar 28 2012 Dan McPherson <dmcphers@redhat.com> 0.7.4-1
+- Updating gem versions (dmcphers@redhat.com)
+- merge with master (lnader@redhat.com)
+
 * Tue Mar 27 2012 Dan McPherson <dmcphers@redhat.com> 0.7.3-1
 - Updating gem versions (dmcphers@redhat.com)
 - Fix for bugz 807376 - haproxy shows up twice in embedded cartridge list.

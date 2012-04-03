@@ -1,4 +1,5 @@
 @internals
+@node
 Feature: MongoDB Application Sub-Cartridge
   
   Scenario Outline: Create Delete one application with a MongoDB database
@@ -12,6 +13,18 @@ Feature: MongoDB Application Sub-Cartridge
     And the mongodb control script will exist
     And the mongodb daemon will be running
     And the mongodb admin user will have access
+
+    When I stop the mongodb database
+    Then the mongodb daemon will not be running
+    And the mongodb daemon is stopped
+
+    When I start the mongodb database
+    Then the mongodb daemon will be running
+
+    When I restart the mongodb database
+    Then the mongodb daemon will be running
+    And the mongodb daemon pid will be different
+
     When I deconfigure the mongodb database
     Then the mongodb daemon will not be running
     And the mongodb database will not exist
@@ -20,25 +33,5 @@ Feature: MongoDB Application Sub-Cartridge
     And the mongodb directory will not exist
 
   Scenarios: Create Delete Application With Database Scenarios
-    |type|
-    |php|
-
-  Scenario Outline: Stop Start Restart a MongoDB database
-    Given an accepted node
-    And a new guest account
-    And a new <type> application
-    And a new mongodb database
-    And the mongodb daemon is running
-    When I stop the mongodb database
-    Then the mongodb daemon will not be running
-    And the mongodb daemon is stopped
-    When I start the mongodb database
-    Then the mongodb daemon will be running
-    When I restart the mongodb database
-    Then the mongodb daemon will be running
-    And the mongodb daemon pid will be different
-    And I deconfigure the mongodb database
-
-  Scenarios: Stop Start Restart a MongoDB database scenarios
     |type|
     |php|

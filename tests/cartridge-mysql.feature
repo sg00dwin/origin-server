@@ -1,4 +1,5 @@
 @internals
+@node
 Feature: MySQL Application Sub-Cartridge
   
   Scenario Outline: Create Delete one application with a MySQL database
@@ -12,6 +13,17 @@ Feature: MySQL Application Sub-Cartridge
     And the mysql control script will exist
     And the mysql daemon will be running
     And the admin user will have access
+
+    When I stop the mysql database
+    Then the mysql daemon will not be running
+
+    When I start the mysql database
+    Then the mysql daemon will be running
+
+    When I restart the mysql database
+    Then the mysql daemon will be running
+    And the mysql daemon pid will be different
+
     When I deconfigure the mysql database
     Then the mysql daemon will not be running
     And the mysql database will not exist
@@ -22,23 +34,3 @@ Feature: MySQL Application Sub-Cartridge
   Scenarios: Create Delete Application With Database Scenarios
     |type|
     |php|
-    
-  Scenario Outline: Stop Start Restart a MySQL database
-    Given an accepted node
-    And a new guest account
-    And a new <type> application
-    And a new mysql database
-    And the mysql daemon is running
-    When I stop the mysql database
-    Then the mysql daemon will not be running
-    When I start the mysql database
-    Then the mysql daemon will be running
-    When I restart the mysql database
-    Then the mysql daemon will be running
-    And the mysql daemon pid will be different
-    And I deconfigure the mysql database
-
-  Scenarios: Stop Start Restart a MySQL database scenarios
-    |type|
-    |php|
-

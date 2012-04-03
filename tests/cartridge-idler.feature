@@ -1,4 +1,5 @@
 @internals
+@node
 Feature: Idler
 
   # runcon -u ?? -r system_r -t libra_initrc_t

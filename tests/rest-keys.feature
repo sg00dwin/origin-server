@@ -244,7 +244,9 @@ Feature: keys
     And I accept "<format>"
     When I send a POST request to "/user/keys" with the following:"name=cucumber&type=ssh-rsa&content=XYZ123"
     Then the response should be "201"
-    When I send a POST request to "/user/keys" with the following:"name=cucumber&type=ssh-rsa&content=XYZ123"
+    When I send a POST request to "/user/keys" with the following:"name=cucumber&type=ssh-rsa&content=XYZ1234"
+    Then the response should be "409"
+    When I send a POST request to "/user/keys" with the following:"name=cucumberX&type=ssh-rsa&content=XYZ123"
     Then the response should be "409"
     
     Scenarios:

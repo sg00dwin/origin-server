@@ -3,7 +3,7 @@
 
 Summary:   Li site components
 Name:      rhc-site
-Version:   0.89.7
+Version:   0.90.1
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -117,6 +117,34 @@ rm -rf %{buildroot}
 /bin/touch %{sitedir}/log/production.log
 
 %changelog
+* Sat Mar 31 2012 Dan McPherson <dmcphers@redhat.com> 0.90.1-1
+- bump spec numbers (dmcphers@redhat.com)
+- Updates all links to docs for the new version that doesnt have Express on the
+  URLs (ffranz@redhat.com)
+- Fixes 807985 (ffranz@redhat.com)
+
+* Thu Mar 29 2012 Dan McPherson <dmcphers@redhat.com> 0.89.10-1
+- check to see if domain is being updated (johnp@redhat.com)
+- mitigate race condition due to multiple domain support on the backend
+  (johnp@redhat.com)
+- Fixes 807985 (ffranz@redhat.com)
+- Merge branch 'master' of git1.ops.rhcloud.com:/srv/git/li (ffranz@redhat.com)
+- Fixes 806763 and 802699 (ffranz@redhat.com)
+- more fixes to gear size UI (johnp@redhat.com)
+- add the gear size option to the create app view (johnp@redhat.com)
+- Fixes 798128 (ffranz@redhat.com)
+
+* Wed Mar 28 2012 Dan McPherson <dmcphers@redhat.com> 0.89.9-1
+- 
+
+* Wed Mar 28 2012 Dan McPherson <dmcphers@redhat.com> 0.89.8-1
+- correct links and remove duplicates in opensource dislaimer page
+  (johnp@redhat.com)
+- Fixes 807063 (ffranz@redhat.com)
+- Added logged in user information to console header (ffranz@redhat.com)
+- when embedding cart put server output in an escaped pre tag
+  (johnp@redhat.com)
+
 * Tue Mar 27 2012 Dan McPherson <dmcphers@redhat.com> 0.89.7-1
 - Fixes help links tests (ffranz@redhat.com)
 - blacklist haproxy from the cartridge view for now (johnp@redhat.com)

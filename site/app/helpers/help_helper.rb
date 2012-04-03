@@ -3,7 +3,8 @@ module HelpHelper
   # Given a relative path within the user guide, display the topic
   def user_guide_topic_url(topic)
     locale = 'en-US'
-    "https://docs.redhat.com/docs/#{locale}/OpenShift_Express/2.0/html/User_Guide/#{topic}"
+    # "https://docs.redhat.com/docs/#{locale}/OpenShift_Express/2.0/html/User_Guide/#{topic}" # new docs after removing express
+    "http://docs.redhat.com/docs/#{locale}/OpenShift/2.0/html/User_Guide/#{topic}"
   end
 
   def ssh_key_user_guide_topic_url
@@ -11,7 +12,7 @@ module HelpHelper
   end
   
   def manage_app_cli_user_guide_topic_url
-    user_guide_topic_url 'chap-User_Guide-OpenShift_Express_Command_Line_Interface.html'
+    user_guide_topic_url 'chap-User_Guide-OpenShift_Command_Line_Interface.html'
   end
 
   def deploy_hook_user_guide_topic_url
@@ -19,7 +20,7 @@ module HelpHelper
   end
 
   def add_domains_user_guide_topic_url
-    user_guide_topic_url 'chap-User_Guide-OpenShift_Express_Command_Line_Interface.html#sect-User_Guide-Working_With_Domains'
+    user_guide_topic_url 'chap-User_Guide-OpenShift_Command_Line_Interface.html#sect-User_Guide-Working_With_Domains'
   end
   
   def manage_cartridges_user_guide_topic_url
@@ -27,7 +28,7 @@ module HelpHelper
   end
   
   def git_user_guide_topic_url
-    user_guide_topic_url 'sect-User_Guide-OpenShift_Express_Web_Interface-Editing_and_Deploying_Applications.html'
+    user_guide_topic_url 'sect-User_Guide-OpenShift_Web_Interface-Editing_and_Deploying_Applications.html'
   end
   
   def install_cli_knowledge_base_url
@@ -89,13 +90,13 @@ module HelpHelper
   def console_help_links
     [
       {:href => user_guide_url,
-       :name => 'OpenShift Express User Guide'},
+       :name => 'OpenShift User Guide'},
       {:href => install_cli_knowledge_base_url,
-       :name => 'Installing OpenShift Express client tools on Mac OSX, Linux, and Windows'},
+       :name => 'Installing OpenShift client tools on Mac OSX, Linux, and Windows'},
       {:href => rails_quickstart_guide_url,
-       :name => 'Ruby on Rails Express Quickstart Guide'},
+       :name => 'Ruby on Rails Quickstart Guide'},
       {:href => community_base_url('kb/kb-e1018-how-can-i-add-jboss-modules-to-an-express-app'),
-       :name => 'How can I add JBoss modules to an Express App'},
+       :name => 'How can I add JBoss modules to an OpenShift App'},
       {:href => sync_git_with_remote_repo_knowledge_base_url,
        :name => 'Sync your OpenShift repo with an existing Git repo'}
     ]

@@ -6,16 +6,7 @@ $:.unshift('/var/www/stickshift/broker')
 require 'config/environment'
 
 # Configurable params
-$config = {
-  # Mongo params
-  :replica_set => true,
-  # Replica set example: [[<host-1>, <port-1>], [<host-2>, <port-2>], ...]
-  :host_port => [["localhost", 27017]],
-  :user       => "libra",
-  :password   => "momo",
-  :db         => "openshift_broker_dev",
-  :collection => "user"
-}
+$config = Rails::configuration.ss[:datastore][:mongo]
 
 def mongo_connect
   if $config[:replica_set]
@@ -27,28 +18,37 @@ def mongo_connect
   end
   db = con.db($config[:db])
   db.authenticate($config[:user], $config[:password])
-  $coll = con.db($config[:db]).collection($config[:collection])
+  $coll = con.db($config[:db]).collection($config[:collections][:user])
 end
 
 def mongo_migrate
   users = $coll.find()
   users.each do |user|
     puts "Processing user #{user['login']}"
-    namespace = user["namespace"]
-
-    uuid = StickShift::Model.gen_uuid
-    domain = {"uuid" => uuid, "namespace"  => namespace}
-    user["domains"] = [domain]
+    if not user["namespace"].nil?
+      uuid = StickShift::Model.gen_uuid
+      domain = {"uuid" => uuid, "namespace"  => user["namespace"]}
+      user["domains"] = [domain]
+      user.delete("namespace")
+    end
     if user["apps"]
       user["apps"].each do |app|
-        app["domain"] = domain
+        app["domain"] = user["domains"][0] if app["domain"].nil?
+        app.delete("optimize") if not app["optimize"].nil?
+        if app["group_instances"]
+          app["group_instances"].each do |gi|
+            gi['gears'].each do |gear|
+              gear['name']=app['name'] if gear['name'].nil? and not app['scalable']
+            end
+          end
+        end
       end
     end
-    user.delete("namespace")
     puts "User #{user}"
     $coll.update({ "_id" => user["login"] }, user)
-   end
+  end
 end
+
 
 mongo_connect
 puts "User migration Started"

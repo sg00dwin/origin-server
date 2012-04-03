@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    stickshift-controller (0.7.4)
+    stickshift-controller (0.8.1)
       activesupport
       stickshift-common
       json
@@ -16,7 +16,7 @@ GEM
     activesupport (3.0.10)
     bson (1.5.2)
     builder (2.1.2)
-    stickshift-common (0.7.2)
+    stickshift-common (0.8.1)
       activemodel
       json
       mongo

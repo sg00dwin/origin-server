@@ -1,4 +1,5 @@
 @verify
+@broker
 Feature: Last Access Updater
   Scenario: Application Creation
     Given the libra client tools

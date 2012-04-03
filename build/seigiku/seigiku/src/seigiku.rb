@@ -16,7 +16,7 @@ $brew_url = "https://brewweb.devel.redhat.com/buildinfo?buildID=%d"
 $koji_url = "http://koji.fedoraproject.org/koji/buildinfo?buildID=%d"
 
 # RHEL-6.2-build
-$brew_tags = %w{f11-import-s390x-build it-eng-rhel-6-build cloud-ruby-rhel-6-candidate rhel-6-libra-build libra-rhel-6.2-build libra-rhel-6.2-candidate}
+$brew_tags = %w{f11-import-s390x-build it-eng-rhel-6-build cloud-ruby-rhel-6-candidate rhel-6-libra-build libra-rhel-6.2-build libra-rhel-6.2-candidate libra-maven-rhel-6.2-candidate}
 $koji_tags = %w{f16-build f16-updates-testing}
 
 ##
@@ -31,8 +31,8 @@ class Seigiku
 
     seeds = JSON.parse(File.read(seed_file))
 
-    @koji_artifacts = KojiArtifactHash.new($koji_tags, seeds)
     @brew_artifacts = BrewArtifactHash.new($brew_tags, seeds)
+    @koji_artifacts = KojiArtifactHash.new($koji_tags, seeds)
 
     @black_list = JSON.parse(File.read(black_file))
   end
@@ -47,9 +47,9 @@ class Seigiku
       end
     }
 
-    specfiles.each {|f|
-      print_specfile_table(f)
-    }
+#    specfiles.each {|f|
+#      print_specfile_table(f)
+#    }
     
     specfiles
   end
@@ -66,12 +66,10 @@ class Seigiku
     specfiles.each {|spec| rpms.merge(spec['requires'])}
     
     rpms.each {|rpm|
-      puts "|| #{rpm} || #{@brew_artifacts[rpm]['build_name']} || #{@koji_artifacts[rpm]['build_name']} || #{@koji_artifacts[rpm].note} ||" 
+      puts "|| {{{#{rpm}}}} || {{{#{@brew_artifacts[rpm]['build_name']}}}} || {{{#{@koji_artifacts[rpm]['build_name']}}}} || #{@koji_artifacts[rpm].note} ||" 
     }
   end
   
-  private
-
   def bold_italic(word)
     "**//#{word}//**"
   end
@@ -80,7 +78,7 @@ class Seigiku
   def process_specfile(input)
     specfile = Specfile.new(input)
 
-    specfile['requires'].sort.each {|rpm|
+    specfile['requires'].each {|rpm|
       @brew_artifacts[rpm]
       @koji_artifacts[rpm]
     }
@@ -119,7 +117,7 @@ class Seigiku
       koji_cell = @koji_artifacts[rpm].to_url
       koji_cell = koji_cell ? "[#{koji_cell} #{@koji_artifacts[rpm]['build_name']}]": ""
 
-      puts "|| #{rpm} || #{review_needed} || #{brew_cell} || #{koji_cell} || #{@koji_artifacts[rpm].note} ||"
+      puts "|| {{{#{rpm}}}} || #{review_needed} || #{brew_cell} || #{koji_cell} || #{@koji_artifacts[rpm].note} ||"
     }
     puts "|||||||||| **Last Updated** #{Time.new.inspect}||"
   end
@@ -127,12 +125,16 @@ class Seigiku
 
 end
 
-home_dir = '/home/jhonce/Projects/li/'
+home_dir = '/home/jhonce/Projects/li.0203/'
 specfiles = []
 prg = Seigiku.new(home_dir + "build/seigiku/seed_list.json", home_dir + "build/seigiku/black_list.json")
 specfiles.concat(prg.start(home_dir))
 #specfiles.concat(prg.start('/home/jhonce/Projects/li/build/seigiku'))
 specfiles.concat(prg.start("/home/jhonce/Projects/os-client-tools"))
+
+specfiles.sort.each {|s|
+  prg.print_specfile_table(s)
+}
 
 prg.print_rpm_table(specfiles)
 

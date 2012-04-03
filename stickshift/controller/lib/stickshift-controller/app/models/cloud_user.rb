@@ -1,5 +1,5 @@
  class CloudUser < StickShift::UserModel
-  attr_accessor :login, :uuid, :system_ssh_keys, :env_vars, :ssh_keys, :domains, :max_gears, :consumed_gears, :applications, :auth_method, :save_jobs 
+  attr_accessor :login, :uuid, :system_ssh_keys, :env_vars, :ssh_keys, :domains, :max_gears, :consumed_gears, :applications, :auth_method, :save_jobs
   primary_key :login
   exclude_attributes :applications, :auth_method, :save_jobs
   require_update_attributes :system_ssh_keys, :env_vars, :ssh_keys, :domains
@@ -76,6 +76,14 @@
                   job = gear.env_var_job_remove(env_var_key)
                   RemoteJob.add_parallel_job(exec_handle, tag, gear, job)
                 end
+              when 'broker_auth_keys'
+                values.each do |value|
+                  app_uuid = value[0]
+                  if app_uuid == gear.app.uuid
+                    job = gear.broker_auth_key_job_remove
+                    RemoteJob.add_parallel_job(exec_handle, tag, gear, job)
+                  end
+                end
               end
             end
           }
@@ -112,6 +120,16 @@
                 env_var_value = value[1]
                 job = gear.env_var_job_add(env_var_key, env_var_value)
                 RemoteJob.add_parallel_job(exec_handle, tag, gear, job)
+              end
+            when 'broker_auth_keys'
+              values.each do |value|
+                app_uuid = value[0]
+                if app_uuid == gear.app.uuid
+                  iv = value[1]
+                  token = value[2]
+                  job = gear.broker_auth_key_job_add(iv, token)
+                  RemoteJob.add_parallel_job(exec_handle, tag, gear, job)
+                end
               end
             end
           end
@@ -257,77 +275,14 @@
     add_save_job('removes', 'env_vars', [key])
   end
   
-=begin  
-  def update_namespace(new_ns)
-    old_ns = self.namespace
-    reply = ResultIO.new
-    return reply if old_ns == new_ns
-    self.namespace = new_ns
-    
-    notify_observers(:before_namespace_update)
-    dns_service = StickShift::DnsService.instance
-    
-    begin
-      raise StickShift::UserException.new("A namespace with name '#{new_ns}' already exists", 103) unless dns_service.namespace_available?(new_ns)
-      
-      dns_service.register_namespace(new_ns)
-      dns_service.deregister_namespace(old_ns)
-  
-      applications.each do |app|
-        Rails.logger.debug "DEBUG: Updating namespaces for app: #{app.name}"
-        dns_service.deregister_application(app.name, old_ns)
-        public_hostname = app.container.get_public_hostname
-        dns_service.register_application(app.name, new_ns, public_hostname)
-      end
-      
-      update_namespace_failures = []
-      applications.each do |app|
-        Rails.logger.debug "DEBUG: Updating namespace for app: #{app.name}"
-        result = app.update_namespace(new_ns, old_ns)
-        update_namespace_failures.push(app.name) unless result
-      end
-
-      if update_namespace_failures.empty?
-        dns_service.publish
-        notify_observers(:namespace_update_success)
-      else
-        notify_observers(:namespace_update_error)
-        raise StickShift::NodeException.new("Error updating apps: #{update_namespace_failures.pretty_inspect.chomp}.  Updates will not be completed until all apps can be updated successfully.  If the problem persists please contact support.",143)
-      end
-    rescue StickShift::SSException => e
-      raise
-    rescue Exception => e
-      Rails.logger.debug "DEBUG: Exception caught updating namespace: #{e.message}"
-      Rails.logger.debug e.backtrace
-      raise StickShift::SSException.new("An error occurred updating the namespace.  If the problem persists please contact support.",1)
-    ensure
-      dns_service.close
-    end
-    
-    applications.each do |app|
-      app.embedded.each_key do |framework|
-        if app.embedded[framework].has_key?('info')
-          info = app.embedded[framework]['info']
-          info.gsub!(/-#{old_ns}.#{Rails.configuration.ss[:domain_suffix]}/, "-#{new_ns}.#{Rails.configuration.ss[:domain_suffix]}")
-          app.embedded[framework]['info'] = info
-        end
-      end
-      app.save
-    end
-    
-    reply.append self.save
-    notify_observers(:after_namespace_update)
-    reply
-  end
-=end  
-  private
-  
   def add_save_job(section, object, value)
     self.save_jobs = {} unless self.save_jobs
     self.save_jobs[section] = {} unless self.save_jobs[section]
     self.save_jobs[section][object] = [] unless self.save_jobs[section][object]
     self.save_jobs[section][object] << value
   end
+
+  private
   
   def create
     resultIO = ResultIO.new

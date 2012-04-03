@@ -5,7 +5,7 @@
 
 Summary:        Cloud Development Controller
 Name:           rubygem-%{gemname}
-Version:        0.7.4
+Version:        0.8.1
 Release:        1%{?dist}
 Group:          Development/Languages
 License:        ASL 2.0
@@ -75,6 +75,40 @@ rm -rf %{buildroot}
 %{ruby_sitelib}/%{gemname}.rb
 
 %changelog
+* Sat Mar 31 2012 Dan McPherson <dmcphers@redhat.com> 0.8.1-1
+- Updating gem versions (dmcphers@redhat.com)
+- bump spec numbers (dmcphers@redhat.com)
+
+* Thu Mar 29 2012 Dan McPherson <dmcphers@redhat.com> 0.7.7-1
+- Updating gem versions (dmcphers@redhat.com)
+- Fix for bug# 806814 (rpenta@redhat.com)
+- Merge branch 'master' of git1.ops.rhcloud.com:/srv/git/li (rpenta@redhat.com)
+- One more fix for bug# 807559 (rpenta@redhat.com)
+- perf improvement (dmcphers@redhat.com)
+- batch adding broker auth key (dmcphers@redhat.com)
+- Fix for bug# 807045 (rpenta@redhat.com)
+- Fix for bug# 807559 (rpenta@redhat.com)
+- Fix internal server errors in applications controller (rpenta@redhat.com)
+
+* Wed Mar 28 2012 Dan McPherson <dmcphers@redhat.com> 0.7.6-1
+- Updating gem versions (dmcphers@redhat.com)
+- Merge branch 'master' of git1.ops.rhcloud.com:/srv/git/li (lnader@redhat.com)
+- bugs 805960 and 805980 (lnader@redhat.com)
+
+* Wed Mar 28 2012 Dan McPherson <dmcphers@redhat.com> 0.7.5-1
+- Updating gem versions (dmcphers@redhat.com)
+- Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
+  (rmillner@redhat.com)
+- Haproxy is no longer a framework, its embedded. (rmillner@redhat.com)
+- Bug 807543 - Keys with the same content can be added in website console.
+  (lnader@redhat.com)
+- cosmetics in debug statement; fix for broken cartridge configure not getting
+  a deconfigure but two destroys instead (rchopra@redhat.com)
+- undo raising exception if removing feature from requires_feature and it does
+  not exist in requires_feature list (rchopra@redhat.com)
+- fix for bug#807236 (rchopra@redhat.com)
+- better messaging. bug# 807144 (rchopra@redhat.com)
+
 * Tue Mar 27 2012 Dan McPherson <dmcphers@redhat.com> 0.7.4-1
 - Updating gem versions (dmcphers@redhat.com)
 - Merge branch 'master' of git1.ops.rhcloud.com:/srv/git/li (lnader@redhat.com)

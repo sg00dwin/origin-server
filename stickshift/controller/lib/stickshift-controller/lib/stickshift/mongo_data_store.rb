@@ -317,6 +317,8 @@ module StickShift
     def put_user(user_id, changed_user_attrs)
       changed_user_attrs.delete("apps")
       changed_user_attrs.delete("domains")
+      changed_user_attrs.delete("consumed_gears")
+
       update({ "_id" => user_id }, { "$set" => changed_user_attrs })
     end
     
@@ -330,14 +332,34 @@ module StickShift
 
     def put_app(user_id, id, app_attrs)
       app_attrs_to_internal(app_attrs)
-      update({ "_id" => user_id, "apps.name" => id}, { "$set" => { "apps.$" => app_attrs }} )
+      ngears = app_attrs["ngears"]
+      ngears = ngears.to_i
+      app_attrs.delete("ngears")
+
+      if ngears > 0
+        hash = find_and_modify({ :query => { "_id" => user_id, "apps.name" => id,
+               "$where" => "(this.consumed_gears + #{ngears}) <= this.max_gears"},
+               :update => { "$set" => { "apps.$" => app_attrs }, "$inc" => { "consumed_gears" => ngears}}})
+        raise StickShift::UserException.new("Application limit has reached for '#{user_id}'", 104) if hash == nil
+      elsif ngears < 0
+        hash = find_and_modify({ :query => { "_id" => user_id, "apps.name" => id,
+               "$where" => "this.consumed_gears - #{ngears} >= 0"},
+               :update => { "$set" => { "apps.$" => app_attrs }, "$inc" => { "consumed_gears" => ngears}}})
+        raise StickShift::UserException.new("Application gears already at zero for '#{user_id}'", 135) if hash == nil
+      else
+        update({ "_id" => user_id, "apps.name" => id}, { "$set" => { "apps.$" => app_attrs }} )
+      end
     end
 
     def add_app(user_id, id, app_attrs)
       app_attrs_to_internal(app_attrs)
-      hash = find_and_modify({ :query => { "_id" => user_id, "apps.name" => { "$ne" => id }, 
-             "$where" => "(this.consumed_gears < this.max_gears) && (this.domains.length > 0)"},
-             :update => { "$push" => { "apps" => app_attrs }, "$inc" => { "consumed_gears" => 1 }} })
+      ngears = app_attrs["ngears"]
+      ngears = ngears.to_i
+      app_attrs.delete("ngears")
+
+      hash = find_and_modify({ :query => { "_id" => user_id, "apps.name" => { "$ne" => id }, "domains" => {"$exists" => true}, 
+             "$where" => "((this.consumed_gears + #{ngears}) <= this.max_gears) && (this.domains.length > 0)"},
+             :update => { "$push" => { "apps" => app_attrs }, "$inc" => { "consumed_gears" => ngears }} })
       raise StickShift::UserException.new("Failed: Either application limit has already reached or " +
                                           "domain doesn't exist for '#{user_id}'", 104) if hash == nil
     end
@@ -355,12 +377,13 @@ module StickShift
     end
 
     def delete_user(user_id)
-      remove({ "_id" => user_id, "$or" => [{"domains" => {"$exists" => true, "$size" => 0}}, {"domains" => {"$exists" => false}}], "$where" => "this.consumed_gears == 0"})
+      remove({ "_id" => user_id, "$or" => [{"domains" => {"$exists" => true, "$size" => 0}}, 
+             {"domains" => {"$exists" => false}}], "$where" => "this.consumed_gears == 0"})
     end
 
     def delete_app(user_id, id)
       update({ "_id" => user_id, "apps.name" => id},
-             { "$pull" => { "apps" => {"name" => id }}, "$inc" => { "consumed_gears" => -1 }})
+             { "$pull" => { "apps" => {"name" => id }}})
     end
 
     def app_attrs_to_internal(app_attrs)
@@ -378,8 +401,12 @@ module StickShift
     end
     
     def delete_domain(user_id, id)
-      update({ "_id" => user_id, "domains.uuid" => id},
-             { "$pull" => { "domains" => {"uuid" => id }}})
+      hash = find_and_modify({ :query => { "_id" => user_id, "domains.uuid" => id,
+                               "$or" => [{"apps" => {"$exists" => true, "$size" => 0}}, 
+                                         {"apps" => {"$exists" => false}}] },
+                               :update => { "$pull" => { "domains" => {"uuid" => id } } }})
+      raise StickShift::UserException.new("Could not delete domain." +
+                                          "Domain has valid applications.", 136) if hash == nil
     end
 
     def domain_attrs_to_internal(domain_attrs)

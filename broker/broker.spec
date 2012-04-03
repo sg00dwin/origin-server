@@ -3,7 +3,7 @@
 
 Summary:   Li broker components
 Name:      rhc-broker
-Version:   0.89.4
+Version:   0.90.1
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -54,6 +54,7 @@ mv %{buildroot}%{brokerdir}/script/rhc-admin-move %{buildroot}/%{_bindir}
 mv %{buildroot}%{brokerdir}/script/rhc-admin-ctl-district %{buildroot}/%{_bindir}
 mv %{buildroot}%{brokerdir}/script/rhc-admin-ctl-template %{buildroot}/%{_bindir}
 mv %{buildroot}%{brokerdir}/script/rhc-admin-user-vip %{buildroot}/%{_bindir}
+mv %{buildroot}%{brokerdir}/script/rhc-admin-ctl-user %{buildroot}/%{_bindir}
 mv %{buildroot}%{brokerdir}/script/rhc-admin-chk %{buildroot}/%{_bindir}
 
 %clean
@@ -80,11 +81,31 @@ rm -rf $RPM_BUILD_ROOT
 %attr(0750,-,-) %{_bindir}/rhc-admin-ctl-district
 %attr(0750,-,-) %{_bindir}/rhc-admin-ctl-template
 %attr(0750,-,-) %{_bindir}/rhc-admin-user-vip
+%attr(0750,-,-) %{_bindir}/rhc-admin-ctl-user
 
 %post
 /bin/touch %{brokerdir}/log/production.log
 
 %changelog
+* Sat Mar 31 2012 Dan McPherson <dmcphers@redhat.com> 0.90.1-1
+- Updating gem versions (dmcphers@redhat.com)
+- bump spec numbers (dmcphers@redhat.com)
+
+* Fri Mar 30 2012 Dan McPherson <dmcphers@redhat.com> 0.89.8-1
+- Bug 807568 (dmcphers@redhat.com)
+
+* Thu Mar 29 2012 Dan McPherson <dmcphers@redhat.com> 0.89.7-1
+- Updating gem versions (dmcphers@redhat.com)
+
+* Wed Mar 28 2012 Dan McPherson <dmcphers@redhat.com> 0.89.6-1
+- Updating gem versions (dmcphers@redhat.com)
+
+* Wed Mar 28 2012 Dan McPherson <dmcphers@redhat.com> 0.89.5-1
+- Updating gem versions (dmcphers@redhat.com)
+- cosmetics in debug statement; fix for broken cartridge configure not getting
+  a deconfigure but two destroys instead (rchopra@redhat.com)
+- Bug 807654 (dmcphers@redhat.com)
+
 * Tue Mar 27 2012 Dan McPherson <dmcphers@redhat.com> 0.89.4-1
 - Updating gem versions (dmcphers@redhat.com)
 - fixed refs to user.namespace (lnader@redhat.com)

@@ -2,7 +2,6 @@ class LoginController < SiteController
 
   layout 'simple'
 
-  before_filter :new_forms, :only => [:show]
   before_filter :check_referrer, :only => :show
 
   def check_referrer

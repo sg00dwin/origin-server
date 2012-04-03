@@ -1,6 +1,7 @@
 require 'rubygems'
 require 'open3'
 require 'logger'
+require 'pp'
 
 ##
 # Container to cache spec file information
@@ -40,12 +41,29 @@ class Specfile < Hash
     info = read_from_command(INFO_QUERY % spec_file)
     info.each { |l|
       fields = l.split(':')
-      k = fields[0].strip.downcase
-      v = fields[1]
-      if ! has_key?(k)
-        store(k, v)
+      begin
+        k = fields[0].strip.downcase
+        v = fields[1]
+        if ! has_key?(k)
+          store(k, v)
+        end
+      rescue Exception => e
+        $stderr.puts "processing of field #{fields.inspect} from #{spec_file}: #{e.inspect}"  
       end
     }
+  end
+
+  def <=>(o)
+    return case
+      when self['name'].nil? && ! o['name'].nil?
+        1
+      when ! self['name'].nil? && o['name'].nil?
+        -1
+      when self['name'].nil? && o['name'].nil?
+        0
+      else
+        self['name'] <=> o['name']
+      end
   end
 
   private

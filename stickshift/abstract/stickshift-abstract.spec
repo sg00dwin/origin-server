@@ -2,7 +2,7 @@
 
 Summary:   StickShift common cartridge components
 Name:      stickshift-abstract
-Version:   0.7.2
+Version:   0.8.1
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   ASL 2.0
@@ -46,6 +46,9 @@ rm -rf $RPM_BUILD_ROOT
 %post
 
 %changelog
+* Sat Mar 31 2012 Dan McPherson <dmcphers@redhat.com> 0.8.1-1
+- bump spec numbers (dmcphers@redhat.com)
+
 * Mon Mar 26 2012 Dan McPherson <dmcphers@redhat.com> 0.7.2-1
 - Fix path to directory. (mpatel@redhat.com)
 - Fix bugs to sync newly added gears and reload haproxy. (ramr@redhat.com)

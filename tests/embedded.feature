@@ -1,4 +1,5 @@
 @verify
+@broker
 Feature: Embedded Cartridge Verification Tests
 
   Scenario: Embedded Usage

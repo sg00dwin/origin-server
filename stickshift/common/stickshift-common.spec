@@ -5,7 +5,7 @@
 
 Summary:        Cloud Development Common
 Name:           rubygem-%{gemname}
-Version:        0.7.2
+Version:        0.8.1
 Release:        1%{?dist}
 Group:          Development/Languages
 License:        ASL 2.0
@@ -69,6 +69,9 @@ rm -rf %{buildroot}
 %{ruby_sitelib}/%{gemname}.rb
 
 %changelog
+* Sat Mar 31 2012 Dan McPherson <dmcphers@redhat.com> 0.8.1-1
+- bump spec numbers (dmcphers@redhat.com)
+
 * Mon Mar 26 2012 Dan McPherson <dmcphers@redhat.com> 0.7.2-1
 - re-organize parallel job exec code (rchopra@redhat.com)
 

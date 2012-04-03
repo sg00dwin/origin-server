@@ -5,7 +5,7 @@ class Application < StickShift::Cartridge
                 :state, :group_instance_map, :comp_instance_map, :conn_endpoints_list,
                 :domain, :group_override_map, :working_comp_inst_hash,
                 :working_group_inst_hash, :configure_order, :start_order,
-                :scalable, :proxy_cartridge, :init_git_url, :node_profile
+                :scalable, :proxy_cartridge, :init_git_url, :node_profile, :ngears
   primary_key :name
   exclude_attributes :user, :comp_instance_map, :group_instance_map, 
                 :working_comp_inst_hash, :working_group_inst_hash,
@@ -14,7 +14,7 @@ class Application < StickShift::Cartridge
 
   APP_NAME_MAX_LENGTH = 32
   NAMESPACE_MAX_LENGTH = 16
-  UNSCALABLE_FRAMEWORKS = ["haproxy-1.4", "jenkins-1.4", "diy-0.1"]
+  UNSCALABLE_FRAMEWORKS = ["jenkins-1.4", "diy-0.1"]
   SCALABLE_EMBEDDED_CARTS = ["mysql-5.1", "jenkins-client-1.4"]
   
   validate :extended_validator
@@ -54,6 +54,7 @@ class Application < StickShift::Cartridge
     self.creation_time = DateTime::now().strftime
     self.uuid = uuid || StickShift::Model.gen_uuid
     self.scalable = will_scale
+    self.ngears = 0
     
     if template.nil?
       if self.scalable
@@ -235,6 +236,7 @@ Configure-Order: [\"proxy/#{framework}\", \"proxy/haproxy-1.4\"]
   # Saves the application object in the datastore
   def save
     super(user.login)
+    self.ngears = 0
   end
   
   # Deletes the application object from the datastore
@@ -426,7 +428,6 @@ Configure-Order: [\"proxy/#{framework}\", \"proxy/haproxy-1.4\"]
           rescue Exception=>e
           end
           r.append process_cartridge_commands(r.cart_commands)
-          # self.save
         end
       rescue Exception => e
         Rails.logger.debug e.message
@@ -434,24 +435,25 @@ Configure-Order: [\"proxy/#{framework}\", \"proxy/haproxy-1.4\"]
         
         successful_gears = []
         successful_gears = e.message[:successful].map{|g| g[:gear]} if e.message[:successful]
+        failed_gears = []
+        failed_gears = e.message[:failed].map{|g| g[:gear]} if e.message[:failed]
         gear_exception = e.message[:exception]        
 
         #remove failed component from all gears
         run_on_gears(successful_gears, reply, false) do |gear, r|
           r.append gear.deconfigure(comp_inst)
           r.append process_cartridge_commands(r.cart_commands)
-          #self.save
         end
-        
-        #remove failed cartridge dependency
-        self.requires_feature.delete(comp_inst.parent_cart_name)
-        #self.save
+        run_on_gears(failed_gears, reply, false) do |gear, r|
+          r.append gear.deconfigure(comp_inst, true)
+          r.append process_cartridge_commands(r.cart_commands)
+        end
         
         #destroy any unused gears
-        run_on_gears(nil, reply, false) do |gear, r|
+        run_on_gears(group_inst.gears, reply, false) do |gear, r|
           r.append gear.destroy if gear.configured_components.length == 0
-          #self.save
         end
+        group_inst.gears.delete_if { |gear| gear.configured_components.length == 0 }
 
         self.save
         exceptions << gear_exception
@@ -835,8 +837,6 @@ Configure-Order: [\"proxy/#{framework}\", \"proxy/haproxy-1.4\"]
   
   def add_broker_key
     iv, token = StickShift::AuthService.instance.generate_broker_key(self)
-    #iv = Base64::encode64(iv).gsub("\n", '')
-    #token = Base64::encode64(token).gsub("\n", '')
     iv = Base64::encode64(iv)
     token = Base64::encode64(token)
     
@@ -1386,9 +1386,12 @@ private
         key = command_item[:args][0]
         self.user.remove_env_var(key)
       when "BROKER_KEY_ADD"
-        add_broker_key
+        iv, token = StickShift::AuthService.instance.generate_broker_key(self)
+        iv = Base64::encode64(iv)
+        token = Base64::encode64(token)
+        self.user.add_save_job('adds', 'broker_auth_keys', [self.uuid, iv, token])
       when "BROKER_KEY_REMOVE"
-        remove_broker_key
+        self.user.add_save_job('removes', 'broker_auth_keys', [self.uuid])
       end
     end
     if user.save_jobs

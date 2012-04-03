@@ -125,7 +125,7 @@ class Domain < StickShift::UserModel
         app.embedded.each_key do |framework|
           if app.embedded[framework].has_key?('info')
             info = app.embedded[framework]['info']
-            info.gsub!(/-#{old_namespace}.#{Rails.configuration.cdk[:domain_suffix]}/, "-#{self.namespace}.#{Rails.configuration.cdk[:domain_suffix]}")
+            info.gsub!(/-#{old_namespace}.#{Rails.configuration.ss[:domain_suffix]}/, "-#{self.namespace}.#{Rails.configuration.ss[:domain_suffix]}")
             app.embedded[framework]['info'] = info
           end
         end

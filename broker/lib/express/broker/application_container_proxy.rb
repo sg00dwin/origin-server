@@ -720,7 +720,7 @@ module Express
           rpc_client = rpc_exec_direct('libra')
           result = nil
           begin
-            Rails.logger.debug "DEBUG: rpc_client.custom_request('cartridge_do', mc_args.inspect, @id, {'identity' => @id})"
+            Rails.logger.debug "DEBUG: rpc_client.custom_request('cartridge_do', #{mc_args.inspect}, @id, {'identity' => @id})"
             result = rpc_client.custom_request('cartridge_do', mc_args, @id, {'identity' => @id})
             Rails.logger.debug "DEBUG: #{result.inspect}" if log_debug_output
           ensure
@@ -1062,26 +1062,41 @@ module Express
 
       def self.get_all_gears_impl
         gear_map = {}
-        begin
-          options = ApplicationContainerProxy.rpc_options
-          rpc_client = rpcclient('libra', :options => options)
-          mc_args = { :gear_map => {} }
-          rpc_client.custom_request('get_all_gears', mc_args, nil).each { |response|
-            if response.results[:statuscode] == 0
-              sub_gear_map = response.results[:data][:output]
-              sender = response.results[:sender]
+        rpc_exec('libra') do |client|
+          client.get_all_gears(:gear_map => {}) do |response|
+            if response[:body][:statuscode] == 0
+              sub_gear_map = response[:body][:data][:output]
+              sender = response[:senderid]
               sub_gear_map.each { |k,v|
                 gear_map[k] = "[#{sender}, uid:#{v}]"
               }
             end
-          }
-        ensure
-          rpc_client.disconnect
+          end
         end
         gear_map
       end
 
       def self.execute_parallel_jobs_impl(handle)
+        handle.each { |id, job_list|
+          begin
+            options = ApplicationContainerProxy.rpc_options
+            rpc_client = rpcclient('libra', :options => options)
+            mc_args = { id => job_list }
+            mcoll_reply = rpc_client.custom_request('execute_parallel', mc_args, id, {'identity' => id})
+            rpc_client.disconnect
+            if mcoll_reply and mcoll_reply.length > 0
+              mcoll_reply = mcoll_reply[0]
+              output = mcoll_reply.results[:data][:output]
+              exitcode = mcoll_reply.results[:data][:exitcode]
+              Rails.logger.debug("DEBUG: Output of parallel execute: #{output}, status: #{exitcode}")
+              handle[id] = output if exitcode == 0
+            end
+          ensure
+            rpc_client.disconnect
+          end
+        }
+#TODO Identity doesn't really seem to handle multiple
+=begin
         begin
           options = ApplicationContainerProxy.rpc_options
           rpc_client = rpcclient('libra', :options => options)
@@ -1098,6 +1113,7 @@ module Express
         ensure
           rpc_client.disconnect
         end
+=end
       end
     end
   end

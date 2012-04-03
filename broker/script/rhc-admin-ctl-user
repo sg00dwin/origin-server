@@ -1,0 +1,105 @@
+#!/usr/bin/env ruby
+
+require 'getoptlong'
+
+def usage
+    puts <<USAGE
+== Synopsis
+
+#{File.basename $0}: Control user settings.
+
+== Notes
+
+  *** WARNING *** WARNING *** WARNING *** WARNING ***
+
+  Cloud SDK currently has an odd behavior that makes
+  this script somewhat dangerous.
+
+  DO NOT USE THIS SCRIPT TO MODIFY A LOT OF USERS AT ONCE!
+
+  Please see US1963 in Rally for details.
+
+  *** WARNING *** WARNING *** WARNING *** WARNING ***
+
+== Usage
+
+#{File.basename $0} OPTIONS
+
+Options:
+  -l|--rhlogin <rhlogin>
+    Red Hat login (RHN or OpenShift login with OpenShift Express access) (required)
+  -g|--setgears <number>
+    Set the number of gears for a user to this value
+  -h|--help
+    Show Usage info
+
+Examples:
+  List the current user settings with:
+    #{File.basename $0} -l bob@redhat.com
+
+  Set the number of gears a user has with:
+    #{File.basename $0} -l bob@redhat.com -g 10
+USAGE
+end
+
+opts = GetoptLong.new(
+    ["--rhlogin",          "-l", GetoptLong::REQUIRED_ARGUMENT],
+    ["--setgears",         "-g", GetoptLong::REQUIRED_ARGUMENT],
+    ["--help",             "-h", GetoptLong::NO_ARGUMENT]
+)
+
+args = {}
+begin
+    opts.each{ |k,v| args[k]=v }
+rescue GetoptLong::Error => e
+    usage
+    exit -100
+end
+
+login = args["--rhlogin"]
+gears = args["--setgears"].to_i if args["--setgears"]
+
+if login.nil? or args["--help"]
+    usage
+    exit 1
+end
+
+# this require is here to not load the environment simply to display help
+require '/var/www/stickshift/broker/config/environment'
+puts
+puts
+
+user = CloudUser::find(login)
+
+if user.nil?
+    puts "Error: User '#{login}' not found"
+    exit 5
+end
+
+if gears.nil?
+    # The user only wants to list the current number of gears
+    puts "User #{login} has #{user.max_gears} gears."
+    puts
+    exit 0
+end
+
+if user.max_gears == gears
+    puts "User already has max_gears set to #{user.max_gears}"
+    exit 0
+end
+
+# The user wants to set the current number of gears
+puts "User #{login} had #{user.max_gears} gears. Changing max_gears to #{gears} gears."
+user.max_gears=gears
+result = user.save
+
+if result.exitcode != 0
+    puts "An error occurred saving the user."
+    exit 6
+end
+
+# reload user with new settings
+user = CloudUser::find(login)
+puts
+puts "User #{login} now has #{user.max_gears} gears."
+puts

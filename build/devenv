@@ -187,6 +187,10 @@ class DevEnv < Thor
         end
       end
     end
+    
+    def setup_test_dir(hostname)
+      ssh(hostname, "rm -rf /tmp/rhc; mkdir -p /tmp/rhc/junit")
+    end
 
     def test_instance(tag, hostname, instance, conn, options, image_id=nil)
       begin
@@ -195,6 +199,8 @@ class DevEnv < Thor
         end
         
         idle_all_gears(hostname) unless options.official?
+        
+        setup_test_dir(hostname)
 
         threads = []
         failures = []
@@ -214,6 +220,10 @@ class DevEnv < Thor
 
         unless options.exclude_verification?
           add_ssh_cmd_to_threads(hostname, threads, failures, "Verification", "cucumber -f html --out /tmp/rhc/verfication.html -f progress -t @verify li-test/tests/")
+        end
+
+        if options.include_cucumber
+          add_ssh_cmd_to_threads(hostname, threads, failures, "#{options.include_cucumber}", "cucumber -f html --out /tmp/rhc/#{options.include_cucumber}.html -f progress -t @#{options.include_cucumber} li-test/tests/")
         end
 
         if options.include_web?
@@ -290,39 +300,15 @@ class DevEnv < Thor
         
         failures.uniq!
 
-        if failures.length > retry_threshold
-          download_artifacts hostname
-          exit 1
-        elsif failures.length > 0
-          idle_all_gears(hostname)
-          failures.reverse!
-          puts "All Failures: #{failures.pretty_inspect}"
-          ssh(hostname, "rm -rf /tmp/rhc; mkdir -p /tmp/rhc/junit")
-          failures.each do |failure|
-            title = failure[0]
-            cmd = failure[1]
-            num_retries = 2
-            (1..num_retries).each do |i|
-              puts "Retry attempt #{i} for: #{title}"
-              output, exit_code = run_ssh(hostname, title, cmd)
-              if exit_code != 0
-                if i == num_retries
-                  download_artifacts hostname
-                  exit exit_code
-                else
-                  ssh(hostname, "rm -rf /tmp/rhc; mkdir -p /tmp/rhc/junit")
-                end
-              else
-                break
-              end
-            end
+        begin
+          if failures.length > 0 && failures.length <= retry_threshold 
+            idle_all_gears(hostname)
+            retry_test_failures(hostname, failures, 2)
           end
+          validate_instance(hostname)
+        ensure
+          download_artifacts hostname
         end
-
-        validate_instance(hostname)
-
-        # Download the successful artifacts
-        download_artifacts hostname
 
         if options.official?
           image_id = image_id ? image_id : instance.image_id
@@ -348,6 +334,29 @@ class DevEnv < Thor
       end
     end
     
+    def retry_test_failures(hostname, failures, num_retries=1)
+      failures.reverse!
+      puts "All Failures: #{failures.pretty_inspect}"
+      setup_test_dir(hostname)
+      failures.each do |failure|
+        title = failure[0]
+        cmd = failure[1]
+        (1..num_retries).each do |i|
+          puts "Retry attempt #{i} for: #{title}"
+          output, exit_code = run_ssh(hostname, title, cmd)
+          if exit_code != 0
+            if i == num_retries
+              exit exit_code
+            else
+              setup_test_dir(hostname)
+            end
+          else
+            break
+          end
+        end
+      end
+    end
+
     def build_and_install(package_name, build_dir)
       remove_dir '/tmp/tito/'
       FileUtils.mkdir_p '/tmp/tito/'
@@ -428,8 +437,7 @@ class DevEnv < Thor
     options.verbose? ? @@log.level = Logger::DEBUG : @@log.level = Logger::ERROR
 
     # Establish a new connection
-    conn = connect
-    conn = conn.regions[options.region] unless (options.region?nil)
+    conn = connect(options.region)
 
     image = nil
     if options.build_clean_ami || options.install_from_source || options.install_from_local_source
@@ -584,8 +592,7 @@ class DevEnv < Thor
     options.verbose? ? @@log.level = Logger::DEBUG : @@log.level = Logger::ERROR
 
     # Get the hostname from a tag lookup or assume it's SSH accessible directly
-    conn = connect
-    conn = conn.regions[options.region] unless (options.region?nil)
+    conn = connect(options.region)
     hostname = options.tag? ? find_instance(conn, name, true).dns_name : name
 
     ssh_path=File.expand_path(File.dirname(__FILE__)) + "/ssh-override"
@@ -635,8 +642,7 @@ class DevEnv < Thor
 
   def terminate(tag)
     options.verbose? ? @@log.level = Logger::DEBUG : @@log.level = Logger::ERROR
-    conn = connect
-    conn = conn.regions[options.region] unless (options.region?nil)
+    conn = connect(options.region)
     instance = find_instance(conn, tag, true)
     terminate_instance(instance, true) if instance
   end
@@ -664,8 +670,7 @@ class DevEnv < Thor
     end
 
     # Get the latest devenv image and create a new instance
-    conn = connect
-    conn = conn.regions[options.region] unless (options.region?nil)
+    conn = connect(options.region)
     if options.use_stage_image?
       filter = DEVENV_STAGE_WILDCARD
     elsif options.use_clean_image?
@@ -788,6 +793,7 @@ END
   method_option :official, :type => :boolean, :desc => "For official use.  Send emails, etc."
   method_option :exclude_internal, :type => :boolean, :desc => "Exclude running unit and internal tests"
   method_option :exclude_verification, :type => :boolean, :desc => "Exclude running verification tests"
+  method_option :include_cucumber, :required => false, :desc => "Include a specific cucumber test (verify, internal, node, api, etc)"
   method_option :include_web, :type => :boolean, :desc => "Include running Selenium tests"
   method_option :sauce_username, :required => false, :desc => "Sauce Labs username (default '#{SAUCE_USER}')"
   method_option :sauce_access_key, :required => false, :desc => "Sauce Labs access key (default '#{SAUCE_SECRET}')"
@@ -797,13 +803,44 @@ END
   def test(tag)
     options.verbose? ? @@log.level = Logger::DEBUG : @@log.level = Logger::ERROR
 
-    conn = connect
-    conn = conn.regions[options.region] unless (options.region?nil)
+    conn = connect(options.region)
 
     instance = find_instance(conn, tag, true)
     hostname = instance.dns_name
 
     test_instance(tag, hostname, instance, conn, options)
+  end
+
+  desc "sanity_check TAG", "Runs a set of sanity check tests on a tagged instance"
+  method_option :verbose, :type => :boolean, :desc => "Enable verbose logging"
+  method_option :region, :required => false, :desc => "Amazon region override (default us-east-1)"
+  def sanity_check(tag)
+    options.verbose? ? @@log.level = Logger::DEBUG : @@log.level = Logger::ERROR
+
+    conn = connect(options.region)
+
+    instance = find_instance(conn, tag, true)
+    hostname = instance.dns_name
+
+    threads = []
+    failures = []
+    add_ssh_cmd_to_threads(hostname, threads, failures, "Broker Unit", "cd li-test/broker; rake test")
+    site_titles = ["Site Unit:Units"]
+    site_cmds = ["cd li-test/site; rake test:units"]
+    add_ssh_cmd_to_threads(hostname, threads, failures, site_titles, site_cmds)
+    add_ssh_cmd_to_threads(hostname, threads, failures, "StickShift Node Unit", "cd li-test/stickshift/node; rake test")
+    add_ssh_cmd_to_threads(hostname, threads, failures, "StickShift Broker Unit", "cd li-test/stickshift/broker; rake test")
+    add_ssh_cmd_to_threads(hostname, threads, failures, "Sanity", "cucumber -f html --out /tmp/rhc/sanity.html -f progress -t @sanity li-test/tests/")
+
+    threads.each do |t|
+      t.join
+    end
+
+    unless failures.empty?
+      failures.uniq!
+      retry_test_failures(hostname, failures, 1)
+    end
+    validate_instance(hostname)
   end
 
   desc "setup_multi_node_broker", "Sets up verifier as a multi-node broker"
@@ -860,7 +897,14 @@ END
       inside('../os-client-tools') do
         temp_commit
 
-        `rm -rf /tmp/tito/; pushd express; tito build --rpm --test; popd; sudo rpm -Uvh --force /tmp/tito/noarch/rhc-*;rm -rf /tmp/tito/; mkdir -p /tmp/tito`
+        puts "building rhc-rest"
+        `rm -rf /tmp/tito/; pushd rhc-rest; tito build --rpm --test; popd;`
+        puts "installing rhc-rest"
+        `sudo rpm -Uvh --force /tmp/tito/noarch/rhc-rest-*; rm -rf /tmp/tito/`
+        puts "building rhc"
+        `pushd express; tito build --rpm --test; popd;`
+        puts "installing rhc"
+        `sudo rpm -Uvh --force /tmp/tito/noarch/rhc-*; rm -rf /tmp/tito; mkdir -p /tmp/tito`
 
         reset_temp_commit
 

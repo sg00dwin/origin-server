@@ -115,9 +115,11 @@ class LegacyBrokerController < ApplicationController
 
       raise StickShift::UserException.new("The supplied namespace '#{@req.namespace}' is not allowed", 106) if StickShift::ApplicationContainerProxy.blacklisted? @req.namespace   
       begin
-        domain.namespace = @req.namespace     
-        @reply.append domain.save
-      rescue Exception => e 
+        if domain.namespace != @req.namespace
+          domain.namespace = @req.namespace     
+          @reply.append domain.save
+        end
+      rescue Exception => e
        Rails.logger.error "Failed to update domain #{domain.uuid} from #{domain.namespace} to #{@req.namespace} #{e.message}"
        Rails.logger.error e.backtrace
        raise
@@ -238,9 +240,9 @@ class LegacyBrokerController < ApplicationController
         rescue Exception => e
           Rails.logger.error "failed to create application #{app.name} #{e.message}"
           Rails.logger.debug e.backtrace
+          @reply.append app.deconfigure_dependencies
+          @reply.append app.destroy
           if app.persisted?
-            @reply.append app.deconfigure_dependencies
-            @reply.append app.destroy
             app.delete
           end
           raise

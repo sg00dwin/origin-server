@@ -80,17 +80,14 @@ observe_setup_var_lib_file $APP_HOME/.psql_history
 observe_setup_var_lib_file $APP_HOME/.pgpass
 
 #
-# Initialize database
-#
-/bin/su -s /bin/sh "$uuid" -c "/usr/bin/initdb --pgdata=\"$PSQL_DIR/data\" --auth='ident'" || error "Failed to initialize db" 124
-
-#
-# Overlay default configuration files.
+# Overlay default configuration files and extract the template data.
 #
 pushd "$PSQL_DIR" > /dev/null
-mkdir data/pg_log
-chmod go-rwx data/pg_log
-chown $user_id.$group_id data/pg_log/ || error "Failed to chown pg_log directory. Please contact support" 126
+observe_setup_var_lib_dir "$PSQL_DIR"
+tar -zxf $CART_INFO_DIR/configuration/data/pgdata-template.tar.gz -C data/
+#mkdir data/pg_log
+#chmod go-rwx data/pg_log
+chown -R $user_id.$group_id data/ || error "Failed to chown data/ directory. Please contact support" 126
 observe_setup_var_lib_dir "$PSQL_DIR"
 sed "s,RHC_PSQLDIR,$PSQL_DIR," $CART_ETC_DIR/postgresql.conf > $PSQL_DIR/data/postgresql.conf
 sed -i "s,RHC_BIND_ADDR,$IP," $PSQL_DIR/data/postgresql.conf
@@ -98,9 +95,16 @@ cp -f $CART_ETC_DIR/pg_hba.conf $PSQL_DIR/data/pg_hba.conf
 popd > /dev/null
 
 #
-# Start postgres and initialize database
+# Start postgres
 #
 start_postgresql
+
+#
+# Create user/role for uuid and initialize database.
+#
+PGPASSWORD=admin psql -h $IP -U admin postgres -c "CREATE USER \"$uuid\" with SUPERUSER CREATEDB CREATEROLE;"  || error "Failed to create database user $uuid" 124
+# Alternatively try: /bin/su -s /bin/sh "$uuid"  \
+#     -c "/usr/bin/createuser -d -r -s  -h $IP -U admin $uuid"
 /bin/su -s /bin/sh "$uuid" -c "/usr/bin/createdb \"$application\"" || error "Failed to create default database" 125
 
 # Generate a password with no o's O's or 0's
@@ -127,7 +131,7 @@ echo "$IP:5432:*:admin:$password" > $APP_HOME/.pgpass
 chmod 0400 $APP_HOME/.pgpass
 
 ## Setup user
-/bin/su -s /bin/sh "$uuid" -c "/usr/bin/psql -d postgres -c \"CREATE USER admin WITH SUPERUSER PASSWORD '$password';\"" || error "Failed to create database or admin user for ${application}" 188
+/bin/su -s /bin/sh "$uuid" -c "/usr/bin/psql -d postgres -c \"ALTER USER admin PASSWORD '$password';\"" || error "Failed to create admin user for ${application}" 188
 
 
 client_result ""

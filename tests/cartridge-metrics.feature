@@ -1,4 +1,5 @@
 @internals
+@node
 Feature: metrics Embedded Cartridge
 
   Scenario Outline: Add Remove metrics to one application

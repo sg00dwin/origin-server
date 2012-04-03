@@ -2,7 +2,6 @@ class PasswordController < ApplicationController
   layout 'simple'
 
   before_filter :require_login, :only => [:edit, :update]
-  before_filter :new_forms
 
   def new
     user_params = params[:web_user] || params
