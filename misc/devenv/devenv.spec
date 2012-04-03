@@ -21,14 +21,14 @@ Requires:  rhc-node
 Requires:  rhc-site
 Requires:  rhc-broker
 Requires:  cartridge-php-5.3
-Requires:  cartridge-wsgi-3.2
-Requires:  cartridge-rack-1.1
+Requires:  cartridge-python-3.2
+Requires:  cartridge-ruby-1.1
 Requires:  cartridge-jbossas-7
 Requires:  cartridge-perl-5.10
 Requires:  cartridge-mysql-5.1
 Requires:  cartridge-phpmyadmin-3.4
 Requires:  cartridge-jenkins-1.4
-Requires:  cartridge-raw-0.1
+Requires:  cartridge-diy-0.1
 Requires:  cartridge-jenkins-client-1.4
 Requires:  cartridge-metrics-0.1
 Requires:  cartridge-mongodb-2.0
