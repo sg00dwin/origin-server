@@ -1,0 +1,17 @@
+<?php
+/**
+* Implementation of hook_form_alter()
+*/
+function custom_forms_form_alter(&$form, $form_state, $form_id) {  
+  switch ($form_id) {
+    case 'user_profile_form':
+      if(user_access('administer users')) {
+        $form['account']['mail']['#access'] = FALSE;
+        $form['account']['pass']['#access'] = FALSE;
+      }
+      else {
+        $form['account']['#access'] = FALSE;
+      }
+      break;
+  }
+}

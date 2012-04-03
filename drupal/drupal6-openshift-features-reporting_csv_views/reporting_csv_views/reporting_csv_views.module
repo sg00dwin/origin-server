@@ -1,0 +1,3 @@
+<?php
+
+include_once('reporting_csv_views.features.inc');

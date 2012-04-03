@@ -1,0 +1,29 @@
+/*
+// Hacky overrides to clean up the front page
+// by Hylke 
+*/
+.views-field {
+  padding: 8px !important;
+  padding-left: 14px !important;
+  border-bottom: 1px solid #ccc !important;
+}
+
+.views-field a {
+  font-size: 13px !important;
+}
+
+.views-table th.views-field {
+  background-color: white !important;
+}
+
+.views-field-created {
+  text-align: right;
+}
+
+.views-field-created em {
+  font-style: normal;
+}
+
+li.user {
+  margin-right: 40px !important;
+}

@@ -1,0 +1,41 @@
+<?php
+
+
+
+/**
+ * Wrap comment form button in a permissions setting and only display for users that
+ * belong to the current group.
+ */
+function og_comment_perms_preprocess_comment_wrapper(&$variables) {
+	$do = og_comment_perms_do();
+	if ($do->perm == 'post') return;
+	if ($do->perm == 'join') {
+		// Add our link to the bottom and display none our box.
+		$variables['content'] .= t('You need to !join this group before you can reply to this thread.', array('!join' => l(t('join'), 'modals/nojs/join/'. $do->group->nid, array('query' => drupal_get_destination(), 'attributes' => array('class' => 'ctools-use-modal ctools-modal-join-modal-box')))));
+		$variables['content'] .= '<style>.box { display: none; }</style>';
+	}
+}
+
+function og_comment_perms_do() {
+	$do = new stdClass;
+	$do->perm = 'post';
+	if($group = og_get_group_context()) {
+		// Establish our permissioni
+		if (user_is_logged_in()) {
+			if (og_is_group_member($group)) {
+				$do->perm = 'post';
+			}
+			// They are logged in so they need to join this group
+			// before they can make posts.
+			else {
+				$do->perm = 'join';
+			}
+		}
+		else {
+			// Need to login before they do anything else.
+			$do->perm = 'login';
+		}
+		$do->group = $group;
+	}
+	return $do;
+}

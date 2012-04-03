@@ -1,0 +1,36 @@
+Rename left menu block from "Commuinty Navigation" to "Community" in UI
+Change name of root page to "Overview" and add it to the "Community Navigation" menu
+Change order of items in sites/all/modules/features/user_profile/user_profile.context.inc, search/navigation swapped
+Changed order of fields in blog view - moved name to top, removed prefix on name, moved date to second top, removed image and title, then changed comments suffix from "comments >" to "Comments (" and ")"
+Changed text of read blog link to "Read More" (removed >)
+Move badge in comments to second row (after name), moved field in comments view
+Updated view of videos to have the 'Post Date' field set to rewrite to: <span class="creator">By [name]</span> <span class="divider">/</span> <span class="created">[created]</span> 
+Updated view of videos to set post date format to 'l, F j, Y' to match
+Blogs
+
+Changes for marketing team
+  Changed URLs of MongoDB page to be relative
+
+Changes for future
+  Add taxonomy_role and views_datasource modules
+  Enable a vocabulary for videos
+  Create a JSON view for videos that shows only those tagged with console_help (can be made more generic)
+ 
+Todo:
+  extract video vocabulary into a module 
+
+Setup information:
+1) Running against OpenShift server
+  settings.php should contain $conf['openshift_url'] = 'https://<hostname>', where <hostname is an openshift server with a copy of the latest theme.  OpenShift developers can start an EC2 instance and replace this URL.
+
+2) Running without OpenShift server
+  no config required, CSS will not be "up to date"
+
+To generate a point in time CSS from OpenShift:
+  echo "/* This content is generated */" > css/site.css
+  cat ~/code/li/site/public/stylesheets/common.css >> css/site.css
+  cat ~/code/li/site/public/stylesheets/site.css >> css/site.css
+
+  Some links may not work.
+
+
