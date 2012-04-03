@@ -8,7 +8,7 @@
 
 Summary:   Dependencies for OpenShift development
 Name:      rhc-devenv
-Version:   0.91.1
+Version:   0.91.3
 Release:   1%{?dist}
 Group:     Development/Libraries
 License:   GPLv2
@@ -376,6 +376,30 @@ zcat /usr/share/drupal6/sites/default/openshift-dump.gz | mysql -u root
 %{policydir}/*
 
 %changelog
+* Tue Apr 03 2012 Mike McGrath <mmcgrath@redhat.com> 0.91.3-1
+- Merge branch 'master' of git:/srv/git/li (whearn@redhat.com)
+- misc/devenv/devenv.spec - Updated to reflect new package names
+  (whearn@redhat.com)
+- Modify passengerprestart URL to warm up the rails apps in the devenv
+  (ccoleman@redhat.com)
+- devenv: adding drupal6-* (ansilva@redhat.com)
+- devenv.spec master merge (ansilva@redhat.com)
+- fix conflict (ansilva@redhat.com)
+- instead of chmod 777 /tmp, using setfacl for apache and mysql
+  (ansilva@redhat.com)
+- fix permission on development.rb (ansilva@redhat.com)
+- added enable-sso.sh script and tweak on /tmp (ansilva@redhat.com)
+- adding htaccess file for drupal and bind mysql to 127.0.0.1
+  (ansilva@redhat.com)
+- post processing for drupal mysql dependencies (ansilva@redhat.com)
+- added small note to devenv.spec about mysql work around (ansilva@redhat.com)
+- added new rpm for devenv mysql dump handling (ansilva@redhat.com)
+- Revert "add mysql user to namespace.d exception" (ansilva@redhat.com)
+- add mysql user to namespace.d exception (ansilva@redhat.com)
+- fix devenv.spec typo (ansilva@redhat.com)
+- update devenv.spec for drupal6 (ansilva@redhat.com)
+- update devenv with drupal6 (ansilva@redhat.com)
+
 * Mon Apr 2 2012 Anderson Silva <ansilva@redhat.com> 0.91.1-1
 - add drupal6 (ansilva@redhat.com)
 
