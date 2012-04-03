@@ -26,7 +26,7 @@ module Crankcase
     end
      
     def self.instance
-      StickShift::MongoDataStore.new
+      Crankcase::MongoDataStore.new
     end
 
     def find(obj_type, user_id, id)

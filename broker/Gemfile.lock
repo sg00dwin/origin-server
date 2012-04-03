@@ -38,9 +38,15 @@ GEM
     bson (1.5.2)
     builder (2.1.2)
     crack (0.1.8)
+    crankcase-mongo-plugin (0.7.3)
+      json
+      stickshift-controller
     dnsruby (1.53)
     erubis (2.6.6)
       abstract
+    gearchanger-m-collective-plugin (0.7.4)
+      json
+      stickshift-controller
     httparty (0.7.4)
       crack
     i18n (0.5.0)
@@ -95,11 +101,17 @@ GEM
       state_machine
       stickshift-common
     stomp (1.1.8)
+    swingshift-streamline-plugin (0.7.3)
+      json
+      stickshift-controller
     thor (0.14.6)
     thread-dump (0.0.5)
     treetop (1.4.10)
       polyglot
     tzinfo (0.3.26)
+    uplift-dynect-plugin (0.7.2)
+      json
+      stickshift-controller
     uuidtools (2.1.1)
     xml-simple (1.0.12)
 
@@ -108,6 +120,8 @@ PLATFORMS
 
 DEPENDENCIES
   aws-sdk
+  crankcase-mongo-plugin
+  gearchanger-m-collective-plugin
   json
   mocha
   mongo
@@ -119,5 +133,7 @@ DEPENDENCIES
   rest-client
   stickshift-controller
   stomp
+  swingshift-streamline-plugin
   thread-dump
+  uplift-dynect-plugin
   xml-simple

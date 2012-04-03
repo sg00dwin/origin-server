@@ -1,7 +1,5 @@
 require 'mcollective'
 require 'openshift'
-require 'express/broker/nurture'
-require 'express/broker/apptegic'
 require 'open-uri'
 
 include MCollective::RPC
