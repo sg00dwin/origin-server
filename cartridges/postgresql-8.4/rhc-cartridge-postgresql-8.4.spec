@@ -1,7 +1,7 @@
 %define cartridgedir %{_libexecdir}/stickshift/cartridges/embedded/postgresql-8.4
 
 Name: rhc-cartridge-postgresql-8.4
-Version: 0.6.1
+Version: 0.6.2
 Release: 1%{?dist}
 Summary: Embedded postgresql support for express
 
@@ -72,6 +72,10 @@ rm -rf $RPM_BUILD_ROOT
 %doc %{cartridgedir}/LICENSE
 
 %changelog
+* Tue Apr 03 2012 Mike McGrath <mmcgrath@redhat.com>
+- Fix for bugz 808013 - Use a postgres data template for speeding up and
+  working around initdb issues and don't use initdb. (ramr@redhat.com)
+
 * Sat Mar 17 2012 Dan McPherson <dmcphers@redhat.com> 0.6.1-1
 - bump spec numbers (dmcphers@redhat.com)
 
