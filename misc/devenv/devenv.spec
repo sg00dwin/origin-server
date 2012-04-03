@@ -8,7 +8,7 @@
 
 Summary:   Dependencies for OpenShift development
 Name:      rhc-devenv
-Version:   0.91.5
+Version:   0.91.6
 Release:   1%{?dist}
 Group:     Development/Libraries
 License:   GPLv2
@@ -376,6 +376,12 @@ zcat /usr/share/drupal6/sites/default/openshift-dump.gz | mysql -u root
 %{policydir}/*
 
 %changelog
+* Tue Apr 03 2012 Mike McGrath <mmcgrath@redhat.com> 0.91.6-1
+- Add a simple drupal setup script that makes it easy to get a few common
+  operations completed on a local env. (ccoleman@redhat.com)
+- Make default devenv drupal settings be server neutral, with SSO disabled
+  enable-sso.sh should enable SSO for drupal (ccoleman@redhat.com)
+
 * Tue Apr 03 2012 Mike McGrath <mmcgrath@redhat.com> 0.91.5-1
 - misc/devenv/devenv.spec: Forgot raw->diy (whearn@redhat.com)
 
