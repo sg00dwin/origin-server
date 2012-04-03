@@ -275,13 +275,6 @@ class ApplicationController < ActionController::Base
 
   private
 
-  def new_forms
-    @new_forms_enabled = true
-  end
-  def new_forms?
-    @new_forms_enabled
-  end
-
   def require_login
     logger.debug 'Login required'
     if !session[:login]

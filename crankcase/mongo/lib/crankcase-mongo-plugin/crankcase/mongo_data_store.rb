@@ -357,7 +357,7 @@ module Crankcase
       ngears = ngears.to_i
       app_attrs.delete("ngears")
 
-      hash = find_and_modify({ :query => { "_id" => user_id, "apps.name" => { "$ne" => id }, 
+      hash = find_and_modify({ :query => { "_id" => user_id, "apps.name" => { "$ne" => id }, "domains" => {"$exists" => true}, 
              "$where" => "((this.consumed_gears + #{ngears}) <= this.max_gears) && (this.domains.length > 0)"},
              :update => { "$push" => { "apps" => app_attrs }, "$inc" => { "consumed_gears" => ngears }} })
       raise StickShift::UserException.new("Failed: Either application limit has already reached or " +

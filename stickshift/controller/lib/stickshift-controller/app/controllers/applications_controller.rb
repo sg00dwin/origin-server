@@ -159,11 +159,11 @@ class ApplicationsController < BaseController
             return
         end
       rescue Exception => e
+        Rails.logger.debug e.message
+        Rails.logger.debug e.backtrace.inspect
+        application.deconfigure_dependencies
+        application.destroy
         if application.persisted?
-          Rails.logger.debug e.message
-          Rails.logger.debug e.backtrace.inspect
-          application.deconfigure_dependencies
-          application.destroy
           application.delete
         end
     

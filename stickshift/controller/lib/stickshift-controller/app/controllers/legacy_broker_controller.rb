@@ -240,9 +240,9 @@ class LegacyBrokerController < ApplicationController
         rescue Exception => e
           Rails.logger.error "failed to create application #{app.name} #{e.message}"
           Rails.logger.debug e.backtrace
+          @reply.append app.deconfigure_dependencies
+          @reply.append app.destroy
           if app.persisted?
-            @reply.append app.deconfigure_dependencies
-            @reply.append app.destroy
             app.delete
           end
           raise
