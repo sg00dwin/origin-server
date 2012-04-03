@@ -3,7 +3,7 @@
 
 Summary:   Li site components
 Name:      rhc-site
-Version:   0.90.1
+Version:   0.90.2
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -117,6 +117,16 @@ rm -rf %{buildroot}
 /bin/touch %{sitedir}/log/production.log
 
 %changelog
+* Tue Apr 03 2012 Mike McGrath <mmcgrath@redhat.com> 0.90.2-1
+- Add mts-bottom-transparent image for small forms page (edirsh@redhat.com)
+- Remove the embedded model object as it is no longer used
+  (ccoleman@redhat.com)
+- Remove new_forms filter as all output should use new forms
+  (ccoleman@redhat.com)
+- Merge branch 'master' of git1.ops.rhcloud.com:/srv/git/li (ffranz@redhat.com)
+- Fixes 808679 (ffranz@redhat.com)
+- [ui] only show gear size if there is more than one option (johnp@redhat.com)
+
 * Sat Mar 31 2012 Dan McPherson <dmcphers@redhat.com> 0.90.1-1
 - bump spec numbers (dmcphers@redhat.com)
 - Updates all links to docs for the new version that doesnt have Express on the
