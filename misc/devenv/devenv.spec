@@ -28,7 +28,7 @@ Requires:  cartridge-perl-5.10
 Requires:  cartridge-mysql-5.1
 Requires:  cartridge-phpmyadmin-3.4
 Requires:  cartridge-jenkins-1.4
-Requires:  cartridge-raw-0.1
+Requires:  cartridge-diy-0.1
 Requires:  cartridge-jenkins-client-1.4
 Requires:  cartridge-metrics-0.1
 Requires:  cartridge-mongodb-2.0
