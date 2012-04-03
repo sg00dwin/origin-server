@@ -21,8 +21,8 @@ Requires:  rhc-node
 Requires:  rhc-site
 Requires:  rhc-broker
 Requires:  cartridge-php-5.3
-Requires:  cartridge-wsgi-3.2
-Requires:  cartridge-rack-1.1
+Requires:  cartridge-python-3.2
+Requires:  cartridge-ruby-1.1
 Requires:  cartridge-jbossas-7
 Requires:  cartridge-perl-5.10
 Requires:  cartridge-mysql-5.1
