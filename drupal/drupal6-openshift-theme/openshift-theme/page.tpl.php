@@ -13,19 +13,12 @@
     <?php 
       // reference CSS files directly from openshift
       //print_r(end(menu_get_active_trail()));
-      $css_host = variable_get('openshift_url', NULL);
-      if ($css_host) {
-        $css_host .= '/app';
+      global $base_url;
     ?>
-      <link type="image/png" rel="shortcut icon" href="<?php print $css_host; ?>/images/favicon-32.png">
-      <link type="text/css" rel="stylesheet" href="<?php print $css_host; ?>/stylesheets/common.css"></link>
-      <link type="text/css" rel="stylesheet" href="<?php print $css_host; ?>/stylesheets/site.css"></link>
-<?php } else { 
-        $css_host = $base_path . drupal_get_path('theme', 'openshift');
-    ?>
-      <link type="image/png" rel="shortcut icon" href="<?php print $css_host; ?>/images/favicon-32.png">
-      <link type="text/css" rel="stylesheet" href="<?php print $css_host; ?>/css/site.css"></link>
-    <?php } ?>
+    <link type="image/png" rel="shortcut icon" href="/app/images/favicon-32.png"></link>
+    <link type="text/css" rel="stylesheet" href="/app/stylesheets/overpass.css"></link>
+    <link type="text/css" rel="stylesheet" href="/app/stylesheets/common.css"></link>
+    <link type="text/css" rel="stylesheet" href="/app/stylesheets/site.css"></link>
 	  <?php print $styles; ?>
 	  <?php print $scripts; ?>
     <meta content='' name='description'>
@@ -43,12 +36,12 @@
             <?php
             global $user;
 
-            if ( $user->uid ) { 
-       	      $login_url = variable_get('redhat_sso_login_url', NULL);
-              print '<a class="btn btn-small" href="https://openshift.redhat.com/app/console">Manage Your Apps</a> ';
-              print '<a class="btn btn-small" href="'. base_path() .'logout">Sign Out</a>';
+            if ( $user->uid ) {
+       	      $logout_url = variable_get('redhat_sso_logout_url', $base_url . '/logout');
+              print '<a class="btn btn-small" href="/app/console">Manage Your Apps</a> ';
+              print '<a class="btn btn-small" href="'. $logout_url .'">Sign Out</a>';
             } else {
-       	      $login_url = variable_get('redhat_sso_login_url', NULL);
+       	      $login_url = variable_get('redhat_sso_login_url', $base_url . '/user');
               print '<a class="btn btn-small" href="'. $login_url .'">Sign in to participate</a>';
             }
             ?>
@@ -60,17 +53,17 @@
         <div class="navbar">
           <div class="container">
             <div class="brand">
-              <a href="https://openshift.redhat.com">
+              <a href="/">
                 <div class="brand-image"></div>
-                <div class="brand-text"></div>
+                <div class="brand-text"><strong>Open</strong>Shift</div>
               </a>
             </div>
             <ul class="nav">
-              <li><a href="https://openshift.redhat.com/app/platform"><span>Learn More</span></a></li>
-              <li><a href="https://openshift.redhat.com/app/getting_started"><span>Get Started</span></a></li>
+              <li><a href="/app/platform"><span>Learn More</span></a></li>
+              <li><a href="/app/getting_started"><span>Get Started</span></a></li>
               <li class="divider">&nbsp;</li>
-              <li><a href="https://openshift.redhat.com/app/console"><span>Console</span></a></li>
-              <li class="active"><a href="https://www.redhat.com/openshift/community"><span>Community</span></a></li>
+              <li><a href="/app/console"><span>Console</span></a></li>
+              <li class="active"><a href="<?php print $base_url ?>"><span>Community</span></a></li>
             </ul>
           </div>
         </div>
@@ -143,8 +136,8 @@
                 <h3>News</h3>
               </header>
               <ul class="unstyled">
-                <li><a href="https://www.redhat.com/openshift/forums/news-and-announcements">Announcements</a></li>
-                <li><a href="https://www.redhat.com/openshift/blogs">Blog</a></li>
+                <li><a href="<?php print $base_url; ?>/forums/news-and-announcements">Announcements</a></li>
+                <li><a href="<?php print $base_url; ?>/blogs">Blog</a></li>
                 <li><a href="http://www.twitter.com/#!/openshift">Twitter</a></li>
               </ul>
             </div>
@@ -153,8 +146,8 @@
                 <h3>Community</h3>
               </header>
               <ul class="unstyled">
-                <li><a href="https://www.redhat.com/openshift/forums/">Forum</a></li>
-                <li><a href="https://openshift.redhat.com/app/partners">Partner Program</a></li>
+                <li><a href="<?php print $base_url; ?>/forums/">Forum</a></li>
+                <li><a href="/app/partners">Partner Program</a></li>
                 <li><a href="http://webchat.freenode.net/?randomnick=1&amp;channels=openshift&amp;uio=d4">IRC Channel</a></li>
                 <li><a href="mailto:openshift@redhat.com">Feedback</a></li>
               </ul>
@@ -164,8 +157,8 @@
                 <h3>Legal</h3>
               </header>
               <ul class="unstyled">
-                <li><a href="https://openshift.redhat.com/app/legal">Legal</a></li>
-                <li><a href="https://openshift.redhat.com/app/legal/openshift_privacy">Privacy Policy</a></li>
+                <li><a href="/app/legal">Legal</a></li>
+                <li><a href="/app/legal/openshift_privacy">Privacy Policy</a></li>
                 <li><a href="https://access.redhat.com/security/team/contact/">Security</a></li>
               </ul>
             </div>
@@ -174,7 +167,7 @@
                 <h3>Help</h3>
               </header>
               <ul class="unstyled">
-                <li><a href="http://www.redhat.com/openshift/faq">FAQ</a></li>
+                <li><a href="<?php print $base_url; ?>/faq">FAQ</a></li>
                 <li><a href="mailto:openshift@redhat.com">Contact</a></li>
               </ul>
             </div>
@@ -183,7 +176,7 @@
         </div>     
         <section id='copyright'>
         <div class='container'>
-        <img src="<?php print $css_host; ?>/images/redhat.png" alt="Red Hat">
+        <img src="/app/images/redhat.png" alt="Red Hat">
           <div class="pull-right">Copyright &copy; 2012 Red Hat, Inc.</div>
         </div>
       </section>
