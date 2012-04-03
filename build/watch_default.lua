@@ -39,47 +39,46 @@ settings = {
 }
 
 rsync_defaults = {"-vuzt", "--chmod=ug+rwX"}
-default_delay = 0.2
 rails = {
-  delay= default_delay,
+  delay= 0.2,
   rsyncOps= rsync_defaults,
   exclude= "log/**, tmp/**, httpd/**",
 }
 rpm = {
-  delay= default_delay,
+  delay= 0.2,
   rsyncOps= rsync_defaults,
   exclude= "*.spec",
 }
 
 -- Actual sync definitions
 
-sync{ default.rsync, rails,
+sync{ rails, default.rsync,
   source= sourcedir .. "/site",
   target= "verifier:/var/www/stickshift/site",
 }
 
-sync{ default.rsync, rails,
+sync{ rails, default.rsync,
   source= sourcedir .. "/broker",
   target= "verifier:/var/www/stickshift/broker",
 }
 
-sync { default.rsync, rpm,
+sync { rpm, default.rsync,
   source= sourcedir .. "/server-common",
   target= "verifier:/usr/lib/ruby/site_ruby/1.8",
 }
 
 drupal_modules = {
-  ['theme']       = 'themes/openshift-theme',
-  ['redhat_sso']  = 'modules/custom/redhat_sso',
+  ['theme/openshift-theme']       = 'themes/openshift-theme',
+  ['redhat_sso/redhat_sso']  = 'modules/custom/redhat_sso',
 }
 for source, destination in pairs(drupal_modules) do
-  sync{ default.rsync, rpm,
+  sync{ rpm, default.rsync,
     source= sourcedir .. "/drupal/drupal6-openshift-" .. source,
     target= "verifier:/etc/drupal6/all/" .. destination,
   }
 end
 
-sync{ default.rsync, rpm,
+sync{ rpm, default.rsync,
   source= sourcedir .. "/misc/devenv/etc/drupal6",
   target= "verifier:/etc/drupal6"
 }
