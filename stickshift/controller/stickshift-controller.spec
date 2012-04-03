@@ -5,7 +5,7 @@
 
 Summary:        Cloud Development Controller
 Name:           rubygem-%{gemname}
-Version:        0.8.1
+Version:        0.8.2
 Release:        1%{?dist}
 Group:          Development/Languages
 License:        ASL 2.0
@@ -75,6 +75,16 @@ rm -rf %{buildroot}
 %{ruby_sitelib}/%{gemname}.rb
 
 %changelog
+* Tue Apr 03 2012 Mike McGrath <mmcgrath@redhat.com> 0.8.2-1
+- Updating gem versions (mmcgrath@redhat.com)
+- dont restart jboss on scale-up/down (bdecoste@gmail.com)
+- During app creation, if save record to mongo fails cleanup the app properly.
+  (rpenta@redhat.com)
+- Check for domain existence before adding app info to mongo
+  (rpenta@redhat.com)
+- Fix for bugz 808671 - altering domain fails after embedding a cartridge.
+  Sigh, this renaming has left a lot of loose ends. (ramr@redhat.com)
+
 * Sat Mar 31 2012 Dan McPherson <dmcphers@redhat.com> 0.8.1-1
 - Updating gem versions (dmcphers@redhat.com)
 - bump spec numbers (dmcphers@redhat.com)
