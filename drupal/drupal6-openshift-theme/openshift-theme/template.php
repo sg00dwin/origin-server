@@ -220,7 +220,10 @@ function _openshift_heading(&$vars) {
   case 'discussion':
   case 'groups':
   case 'group': $heading = "Forums"; break;
-  case 'documents': $heading = "Documents"; break; // no title for some reason
+  case 'documentation': $heading = "Documentation"; break; // no title for some reason
+  case 'calendar':
+  case 'event':
+  case 'events': $heading = "Events"; break; // no title for some reason
   case 'kb': $heading = "Knowledge Base"; break; // no title for some reason
   case 'blogs': // no title for some reason
   case 'blog': $heading = "Blogs"; break;

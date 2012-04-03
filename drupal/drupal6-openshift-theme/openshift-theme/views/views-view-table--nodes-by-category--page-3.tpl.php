@@ -16,8 +16,6 @@
  */
 ?>
 
-<h2>Documentation</h2>
-
 <?php if (user_access('create document content')): ?>
 <div class="new-post-button">
 <p>Do you have a document that could be useful to the OpenShift community? Upload it for review! If approved, we will post it here.</p>

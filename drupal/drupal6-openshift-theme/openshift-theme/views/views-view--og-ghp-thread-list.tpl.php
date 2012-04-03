@@ -52,7 +52,7 @@ if(module_exists('og_comment_perms')) {
 	href="<?php print base_path(); ?>node/add/discussion/<?php print $forum['alias']; ?>?gids[]=<?php print $forum['nid']; ?>">Post
 New Thread</a></div>
 <?php elseif ($do->perm == 'join'): ?>
-<div><?php print t('You need to !join this group before you can post a new thread.', array('!join' => l(t('join'), 'og/subscribe/'. $do->group->nid, array('attributes' => array('class' => 'ctools-use-modal ctools-modal-join-modal-box'))))); ?></div>
+<div><?php print t('You need to !join this group before you can post a new thread.', array('!join' => l(t('join'), 'og/subscribe/'. $do->group->nid))); ?></div>
 <?php elseif (!$user->uid): ?>
 <div><?php print t('You need to !login before you can post a new thread.', array('!login' => l(t('login'), variable_get('redhat_sso_login_url')))); ?></div>
 <?php endif; ?></div>

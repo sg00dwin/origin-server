@@ -33,7 +33,6 @@
     <meta content='width=device-width, initial-scale=1.0' name='viewport'>
     <meta name="csrf-param" content="authenticity_token"/>
     <meta name="csrf-token" content="+CyXrdA5MZFVwLks73ibMfRiwRE+ixICENvvHms1Exk="/>
-    <meta name="viewport" content="width=1100" />
   </head>
   <body class='community'>
     <header>
@@ -46,10 +45,11 @@
 
             if ( $user->uid ) { 
        	      $login_url = variable_get('redhat_sso_login_url', NULL);
-              print '<a class="btn btn-small" href="'. base_path() .'logout">Sign out</a>';
+              print '<a class="btn btn-small" href="https://openshift.redhat.com/app/console">Manage Your Apps</a> ';
+              print '<a class="btn btn-small" href="'. base_path() .'logout">Sign Out</a>';
             } else {
        	      $login_url = variable_get('redhat_sso_login_url', NULL);
-              print '<a class="btn btn-small" href="'. $login_url .'">Sign in</a>';
+              print '<a class="btn btn-small" href="'. $login_url .'">Sign in to participate</a>';
             }
             ?>
           </div>
@@ -66,10 +66,10 @@
               </a>
             </div>
             <ul class="nav">
-              <li><a href="https://openshift.redhat.com/app/platform"><span>Overview</span></a></li>
-              <li><a href="https://openshift.redhat.com/app/express"><span>Express</span></a></li>
+              <li><a href="https://openshift.redhat.com/app/platform"><span>Learn More</span></a></li>
+              <li><a href="https://openshift.redhat.com/app/getting_started"><span>Get Started</span></a></li>
               <li class="divider">&nbsp;</li>
-              <li><a href="https://openshift.redhat.com/app/flex"><span>Flex</span></a></li>
+              <li><a href="https://openshift.redhat.com/app/console"><span>Console</span></a></li>
               <li class="active"><a href="https://www.redhat.com/openshift/community"><span>Community</span></a></li>
             </ul>
           </div>
@@ -154,7 +154,7 @@
               </header>
               <ul class="unstyled">
                 <li><a href="https://www.redhat.com/openshift/forums/">Forum</a></li>
-                <li><a href="/app/partners">Partner Program</a></li>
+                <li><a href="https://openshift.redhat.com/app/partners">Partner Program</a></li>
                 <li><a href="http://webchat.freenode.net/?randomnick=1&amp;channels=openshift&amp;uio=d4">IRC Channel</a></li>
                 <li><a href="mailto:openshift@redhat.com">Feedback</a></li>
               </ul>
@@ -164,8 +164,8 @@
                 <h3>Legal</h3>
               </header>
               <ul class="unstyled">
-                <li><a href="/app/legal">Legal</a></li>
-                <li><a href="/app/legal/openshift_privacy">Privacy Policy</a></li>
+                <li><a href="https://openshift.redhat.com/app/legal">Legal</a></li>
+                <li><a href="https://openshift.redhat.com/app/legal/openshift_privacy">Privacy Policy</a></li>
                 <li><a href="https://access.redhat.com/security/team/contact/">Security</a></li>
               </ul>
             </div>
