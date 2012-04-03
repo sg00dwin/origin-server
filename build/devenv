@@ -575,7 +575,7 @@ class DevEnv < Thor
         build_and_install(package_name, build_dir)
       end
     end
-    run("yum update -y --exclude='rhc-devenv' --disablerepo=\\* --enablerepo=li rhc-* rubygem-stickshift-*", :verbose => options.verbose?)
+    run("yum update -y --exclude='rhc-devenv' --disablerepo=\\* --enablerepo=li rhc-* rubygem-stickshift-* rubygem-gearchanger-* rubygem-uplift-* rubygem-crankcase-* rubygem-swingshift-*", :verbose => options.verbose?)
     run("service mcollective restart; service libra-broker restart; service libra-site restart", :verbose => options.verbose?)
   end
 
@@ -608,7 +608,7 @@ class DevEnv < Thor
 
     if !options.skip_build?
       puts "Performing remote install...."
-      output, exit_code = ssh(hostname, "set -e; #{options.clean_metadata? ? 'yum clean metadata; ' : ''}rm -rf li-working os-client-tools-working; git clone li li-working;#{has_client ? ' git clone os-client-tools os-client-tools-working;' : ''} pushd li-working; build/devenv update#{options.verbose? ? ' --verbose' : ''}#{options.clean_metadata? ? ' --include_stale' : ''} 2>&1; popd; rm -rf li-working os-client-tools-working; #{options.clean_metadata? ? "yum update -y --exclude='rhc-devenv' rhc-* rubygem-stickshift-*; " : ''}", 600, true)
+      output, exit_code = ssh(hostname, "set -e; #{options.clean_metadata? ? 'yum clean metadata; ' : ''}rm -rf li-working os-client-tools-working; git clone li li-working;#{has_client ? ' git clone os-client-tools os-client-tools-working;' : ''} pushd li-working; build/devenv update#{options.verbose? ? ' --verbose' : ''}#{options.clean_metadata? ? ' --include_stale' : ''} 2>&1; popd; rm -rf li-working os-client-tools-working; #{options.clean_metadata? ? "yum update -y --exclude='rhc-devenv' rhc-* rubygem-stickshift-*  rubygem-gearchanger-* rubygem-uplift-* rubygem-crankcase-* rubygem-swingshift-*; " : ''}", 600, true)
       if exit_code != 0
         puts "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
         puts "Build failed!  Exiting."
