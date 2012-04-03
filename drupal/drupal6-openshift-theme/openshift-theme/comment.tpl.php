@@ -11,9 +11,9 @@ $do = og_comment_perms_do();
     </td>
     <td class="comment-content">
 
-      <?php if ($comment->new) : ?>
-        <span class="new"><?php print drupal_ucfirst($new) ?></span>
-      <?php endif; ?>
+      <?php /* if ($comment->new) : ?>
+        <span class="new pull-right"><?php print drupal_ucfirst($new) ?></span>
+      <?php endif;*/ ?>
 
       <?php //print theme('user_picture', $comment); ?>
 
