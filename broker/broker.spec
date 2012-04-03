@@ -3,7 +3,7 @@
 
 Summary:   Li broker components
 Name:      rhc-broker
-Version:   0.90.1
+Version:   0.90.2
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -87,6 +87,12 @@ rm -rf $RPM_BUILD_ROOT
 /bin/touch %{brokerdir}/log/production.log
 
 %changelog
+* Tue Apr 03 2012 Mike McGrath <mmcgrath@redhat.com> 0.90.2-1
+- Updating gem versions (mmcgrath@redhat.com)
+- custom request does not take multiple nodes very well, fix for bug#806375
+  (rchopra@redhat.com)
+- added rhc-admin-ctl-user (twiest@redhat.com)
+
 * Sat Mar 31 2012 Dan McPherson <dmcphers@redhat.com> 0.90.1-1
 - Updating gem versions (dmcphers@redhat.com)
 - bump spec numbers (dmcphers@redhat.com)
