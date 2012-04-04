@@ -1,41 +1,44 @@
+:css
+  .description { font-size: 13pt; line-height: 14pt; margin: 5px 0 13px; }
+  .action-call { font-weight: bold; margin: 10px 0 10px; }
+  .info-ribbon p { font-size: 12pt; line-height: 14pt; }
+  p { font-size: 12pt; line-height: 14pt; }
+  ul.link_list { list-style-type: none; }
+  .link_list { font-size: 15pt; line-height: 18pt;}
+  .link_list li { margin-top: 1em; }
+
 - content_for :page_title, 'Under the Hood'
 
 %h1.ribbon Under the Hood
 
 %section
-  %p
+  .description
     OpenShift is made of many different Open Source software components working in harmony to power your apps.  We provide a helpful list of them below.
 
   .row
     .span6
       %ul.link_list
         %li
-          .link
-            = link_to "Crank Case", "#"
+          = link_to "Crank Case", "#"
           .link_desc User Management Component
         %li
-          .link
-            = link_to "Gear Changer", "#"
+          = link_to "Gear Changer", "#"
           .link_desc Short description to come
         %li
-          .link
-            = link_to "RHC", "#"
+          = link_to "RHC", "#"
           .link_desc Command-line client tools
         %li
-          .link
-            = link_to "StickShift", "#"
+          = link_to "StickShift", "#"
           .link_desc Provides API
         %li
-          .link
-            = link_to "SwingShift", "#"
+          = link_to "SwingShift", "#"
           .link_desc Provides user authentication
         %li
-          .link
-            = link_to "Uplift", "#"
+          = link_to "Uplift", "#"
           .link_desc DNS Management component
     .span5.info-ribbon
       %h2 Test Drive
-      %p
+      .description
         Get all the components preconfigured in a bootable disk image.
       - if logged_in?
         - download = Download.find('remix')
@@ -55,8 +58,9 @@
         for instructions on what to do after you boot.
       .well
         %h3 Important Information
-        This image contains software from Fedora 16.  Corresponding source packages for such software are available at
-        = link_to "http://koji.fedoraproject.org/koji", "http://koji.fedoraproject.org/koji"
+        %p
+          This image contains software from Fedora 16.  Corresponding source packages for such software are available at
+          = link_to "http://koji.fedoraproject.org/koji", "http://koji.fedoraproject.org/koji"
   .row
     .span12
       %h3 Cartridges
