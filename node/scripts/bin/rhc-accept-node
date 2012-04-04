@@ -14,10 +14,10 @@ RESOURCE_LIMITS_FILE=${RESOURCE_LIMITS_FILE:=${LIBRA_CONF_DIR}/resource_limits.c
 # Control variables.  Override for testing
 #
 DEFAULT_SEBOOL_LIST="httpd_can_network_connect:on"
-DEFAULT_PACKAGES="rhc-common rhc-node rhc-selinux 
-                  cartridge-rack-1.1 
-                  cartridge-wsgi-3.2
-                  cartridge-php-5.3"
+DEFAULT_PACKAGES="rhc-common rhc-node rhc-selinux "
+#                  cartridge-rack-1.1 
+#                  cartridge-wsgi-3.2
+#                  cartridge-php-5.3"
 DEFAULT_SERVICES="mcollective cgconfig cgred httpd"
 DEFAULT_MINSEM=512
 
