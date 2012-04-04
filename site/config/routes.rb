@@ -160,7 +160,7 @@ RedHatCloud::Application.routes.draw do
 
   resources   :download, 
               :controller => 'download',
-              :only => [:show]
+              :only => [:show,:index]
 
 #  resources :express_ssh_keys
 #

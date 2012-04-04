@@ -37,7 +37,11 @@
       %h2 Test Drive
       %p
         Get all the components preconfigured in a bootable disk image.
-        = take_action "#", "Start Download", ""
+        - if logged_in?
+          - download = Download.find('remix')
+          = take_action download_path(download), download.name
+        - else
+          = take_action download_index_path, "Start Download"
       %p
         Once you got it, you can
         = link_to "run it as a virtual guest", "#"
