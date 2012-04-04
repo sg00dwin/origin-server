@@ -511,6 +511,43 @@ h1.ribbon {
   h1.ribbon { @include ribbon_gutters($gridGutterWidthLarge); }
 } }
 
+// Information ribbon
+.info-ribbon {
+  background-color: rgba(52, 52, 52, 1);
+  color: white;
+  display: inline-block;
+  padding: 5px $gridGutterWidth 0 5px; /* right margin set by ribbon */
+
+  min-width: 30%;
+
+  @media (max-width: 480px) { left: -20px; }
+  @media (max-width: 767px) { right: -20px;  }
+  @media (min-width: 768px) and (max-width: 979px) { right: -30px; }
+  @media (min-width: 980px) and (max-width: 1199px) { right: -38px; }
+  @media (min-width: 1200px) { right: -40px; }
+
+  @media (min-width: 768px) {
+    float: right;
+    @include ribbon(black, $leftStrut: false, $rightStrut: true);
+  }
+
+  @media (max-width: 767px) {
+    padding-left: 30px;
+    padding-bottom: 1em;
+  }
+
+  h1, h2, h3, h4 {
+    color: white;
+  }
+}
+
+.info-ribbon .well {
+  color: black;
+
+  h1, h2, h3, h4 {
+    color: black;
+  }
+}
 
 // Main content containers, rows, columns
 .row-content > .row { background-color: $belowNavColumnBackgroundColor; }
