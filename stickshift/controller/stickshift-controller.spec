@@ -5,7 +5,7 @@
 
 Summary:        Cloud Development Controller
 Name:           rubygem-%{gemname}
-Version:        0.8.2
+Version:        0.8.3
 Release:        1%{?dist}
 Group:          Development/Languages
 License:        ASL 2.0
@@ -75,6 +75,10 @@ rm -rf %{buildroot}
 %{ruby_sitelib}/%{gemname}.rb
 
 %changelog
+* Wed Apr 04 2012 Mike McGrath <mmcgrath@redhat.com> 0.8.3-1
+- Updating gem versions (mmcgrath@redhat.com)
+- test commit (mmcgrath@redhat.com)
+
 * Tue Apr 03 2012 Mike McGrath <mmcgrath@redhat.com> 0.8.2-1
 - Updating gem versions (mmcgrath@redhat.com)
 - dont restart jboss on scale-up/down (bdecoste@gmail.com)
