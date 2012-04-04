@@ -66,17 +66,45 @@
 
         ![OpenShift Scaling](/app/images/overview-scaling.png)
 
+  .row
+    .span6
+      :markdown
+        ## Under the Hood.
+
+        OpenShift by Red Hat is built on all open-source technologies (we are the leading open source company after all).  A decade of enhancements in these technologies contributed by the open source community has resulted in a set of rock-solid, bullet-proof, super-secure, and high-performing technology components that make OpenShift the best PaaS in the business.
+
+        ![OpenShift architecture diagram](/app/images/overview-architecture.png)
+
+        OpenShift is built on a foundation of Red Hat Enterprise Linux (RHEL).  Beyond being the leading and most respected Linux distro, RHEL provides some key capabilities that allow OpenShift to be stable, responsive, performant and secure. OpenShift leverages the multitenency and security models within RHEL to provide fine-grained and trusted control over the compute and storage resources available to any single OpenShift application.  SELinux allows OpenShift to "firewall" one user's application from another in order to insure security and survivability.  Taking a "multi-tenant in the OS" approach vs. a "multi-tenant hypervisor" approach allows OpenShift to scale resources much more quickly so that your application will never lack the horsepower that it needs.
+
+        Add on top of RHEL, a full selection of open source Languages, Frameworks, and Middleware combined with a "Cartridge" approach that allows users to very easily select the components that their applications need whether it is a NoSQL datastore or a Business Intelligence analytics engine.  For full details on the OpenShift technical architecture see this link <Arch Overview on Community if it is going to be there>.
+
+    .span5.info-ribbon
+      %h2 Test Drive
+      %p
+        Get all the components preconfigured in a bootable disk image.
+      - if logged_in?
+        - download = Download.find('remix')
+        = take_action download_path(download), download.name
+      - else
+        = take_action download_index_path, "Start Download"
+      %p
+        Once you got it, you can
+        = link_to "run it as a virtual guest", "#"
+        ,
+        = link_to "boot it from a LiveCD", "#"
+        , or
+        = link_to "boot it from a USB stick", "#"
+      %p
+        Then, we suggest you read the
+        = link_to "live image documentation", "#"
+        for instructions on what to do after you boot.
+      .well
+        %h3 Important Information
+        This image contains software from Fedora 16.  Corresponding source packages for such software are available at
+        = link_to "http://koji.fedoraproject.org/koji", "http://koji.fedoraproject.org/koji"
+
   :markdown
-    ## Under the Hood.
-
-    OpenShift by Red Hat is built on all open-source technologies (we are the leading open source company after all).  A decade of enhancements in these technologies contributed by the open source community has resulted in a set of rock-solid, bullet-proof, super-secure, and high-performing technology components that make OpenShift the best PaaS in the business.
-
-    ![OpenShift architecture diagram](/app/images/overview-architecture.png)
-
-    OpenShift is built on a foundation of Red Hat Enterprise Linux (RHEL).  Beyond being the leading and most respected Linux distro, RHEL provides some key capabilities that allow OpenShift to be stable, responsive, performant and secure. OpenShift leverages the multitenency and security models within RHEL to provide fine-grained and trusted control over the compute and storage resources available to any single OpenShift application.  SELinux allows OpenShift to "firewall" one user's application from another in order to insure security and survivability.  Taking a "multi-tenant in the OS" approach vs. a "multi-tenant hypervisor" approach allows OpenShift to scale resources much more quickly so that your application will never lack the horsepower that it needs.
-
-    Add on top of RHEL, a full selection of open source Languages, Frameworks, and Middleware combined with a "Cartridge" approach that allows users to very easily select the components that their applications need whether it is a NoSQL datastore or a Business Intelligence analytics engine.  For full details on the OpenShift technical architecture see this link <Arch Overview on Community if it is going to be there>.
-
     ## Easy-peasy
 
     The design and componentry of OpenShift really result in one thing for Developers:  Ease of Use without Worries.  OpenShift's mission is to make your job easier by taking care of all the messy IT aspects of app development and allowing you to focus on your job: Coding your Application and servicing your customers.
