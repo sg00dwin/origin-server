@@ -1,0 +1,15 @@
+#!/usr/bin/env ruby
+
+require 'rubygems'
+
+$:.unshift('/var/www/stickshift/broker')
+require 'config/environment'
+
+users = CloudUser.find_all(nil)
+users.each do |user|
+  user.applications.each do |app| 
+    puts("User: #{user.name}  App: #{app.name}")
+    app.elaborate_descriptor
+  end
+  user.save
+end
