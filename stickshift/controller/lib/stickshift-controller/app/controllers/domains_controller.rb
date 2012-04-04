@@ -32,7 +32,7 @@ class DomainsController < BaseController
 
   # POST /domains
   def create
-    namespace = params[:namespace]
+    namespace = params[:id]
     Rails.logger.debug "Creating domain with namespace #{namespace}"
 
     domain = Domain.new(namespace, @cloud_user)
@@ -83,7 +83,7 @@ class DomainsController < BaseController
   # PUT /domains/<id>
   def update
     id = params[:id]
-    new_namespace = params[:namespace]
+    new_namespace = params[:domain_id]
     domain = get_domain(id)
 
     if not domain or not domain.hasAccess?@cloud_user
