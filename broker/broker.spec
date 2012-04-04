@@ -92,6 +92,12 @@ rm -rf $RPM_BUILD_ROOT
 /bin/touch %{brokerdir}/log/production.log
 
 %changelog
+* Tue Apr 03 2012 Mike McGrath <mmcgrath@redhat.com> 0.90.2-1
+- Updating gem versions (mmcgrath@redhat.com)
+- custom request does not take multiple nodes very well, fix for bug#806375
+  (rchopra@redhat.com)
+- added rhc-admin-ctl-user (twiest@redhat.com)
+
 * Mon Apr 02 2012 Krishna Raman <kraman@gmail.com> 0.90.2-1
 - Updating dependencies to match new package names (kraman@gmail.com)
 - Merge remote-tracking branch 'origin/dev/kraman/US2048' (kraman@gmail.com)

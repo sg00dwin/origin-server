@@ -8,7 +8,7 @@
 
 Summary:   Dependencies for OpenShift development
 Name:      rhc-devenv
-Version:   0.91.3
+Version:   0.91.6
 Release:   1%{?dist}
 Group:     Development/Libraries
 License:   GPLv2
@@ -376,8 +376,18 @@ zcat /usr/share/drupal6/sites/default/openshift-dump.gz | mysql -u root
 %{policydir}/*
 
 %changelog
-* Mon Apr 02 2012 Krishna Raman <kraman@gmail.com> 0.91.2-1
-- Updating dependencies to match new package names (kraman@gmail.com)
+* Tue Apr 03 2012 Mike McGrath <mmcgrath@redhat.com> 0.91.6-1
+- Add a simple drupal setup script that makes it easy to get a few common
+  operations completed on a local env. (ccoleman@redhat.com)
+- Make default devenv drupal settings be server neutral, with SSO disabled
+  enable-sso.sh should enable SSO for drupal (ccoleman@redhat.com)
+
+* Tue Apr 03 2012 Mike McGrath <mmcgrath@redhat.com> 0.91.5-1
+- misc/devenv/devenv.spec: Forgot raw->diy (whearn@redhat.com)
+
+* Tue Apr 03 2012 Mike McGrath <mmcgrath@redhat.com> 0.91.4-1
+- misc/devenv/devenv.spec: Missed some renamed packages (whearn@redhat.com)
+
 * Tue Apr 03 2012 Mike McGrath <mmcgrath@redhat.com> 0.91.3-1
 - Merge branch 'master' of git:/srv/git/li (whearn@redhat.com)
 - misc/devenv/devenv.spec - Updated to reflect new package names
@@ -401,6 +411,9 @@ zcat /usr/share/drupal6/sites/default/openshift-dump.gz | mysql -u root
 - fix devenv.spec typo (ansilva@redhat.com)
 - update devenv.spec for drupal6 (ansilva@redhat.com)
 - update devenv with drupal6 (ansilva@redhat.com)
+
+* Mon Apr 02 2012 Krishna Raman <kraman@gmail.com> 0.91.2-1
+- Updating dependencies to match new package names (kraman@gmail.com)
 
 * Mon Apr 2 2012 Anderson Silva <ansilva@redhat.com> 0.91.1-1
 - add drupal6 (ansilva@redhat.com)

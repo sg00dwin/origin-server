@@ -38,29 +38,48 @@ settings = {
   nodaemon = true,
 }
 
-sync{
-  default.rsync,
+rsync_defaults = {"-vuzt", "--chmod=ug+rwX"}
+rails = {
   delay= 0.2,
+  rsyncOps= rsync_defaults,
+  exclude= "log/**, tmp/**, httpd/**",
+}
+rpm = {
+  delay= 0.2,
+  rsyncOps= rsync_defaults,
+  exclude= "*.spec",
+}
+
+-- Actual sync definitions
+
+sync{ rails, default.rsync,
   source= sourcedir .. "/site",
   target= "verifier:/var/www/stickshift/site",
-  rsyncOps={"-vuzt", "--chmod=ug+rwX"},
-  exclude= "site/log/**, site/tmp/**, site/httpd/**",
 }
 
-sync{
-  default.rsync,
-  delay= 0.2,
+sync{ rails, default.rsync,
   source= sourcedir .. "/broker",
   target= "verifier:/var/www/stickshift/broker",
-  rsyncOps={"-vuzt", "--chmod=ug+rwX"},
-  exclude= "broker/log/**, broker/tmp/**, broker/httpd/**"
 }
 
-sync{
-  default.rsync,
-  delay= 0.2,
+sync { rpm, default.rsync,
   source= sourcedir .. "/server-common",
   target= "verifier:/usr/lib/ruby/site_ruby/1.8",
-  rsyncOps={"-vuzt", "--chmod=ug+rwX"},
-  exclude= "*.spec"
 }
+
+drupal_modules = {
+  ['theme/openshift-theme']       = 'themes/openshift-theme',
+  ['redhat_sso/redhat_sso']  = 'modules/custom/redhat_sso',
+}
+for source, destination in pairs(drupal_modules) do
+  sync{ rpm, default.rsync,
+    source= sourcedir .. "/drupal/drupal6-openshift-" .. source,
+    target= "verifier:/etc/drupal6/all/" .. destination,
+  }
+end
+
+sync{ rpm, default.rsync,
+  source= sourcedir .. "/misc/devenv/etc/drupal6",
+  target= "verifier:/etc/drupal6"
+}
+

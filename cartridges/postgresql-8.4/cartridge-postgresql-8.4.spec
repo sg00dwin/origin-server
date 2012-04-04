@@ -74,6 +74,15 @@ rm -rf $RPM_BUILD_ROOT
 %doc %{cartridgedir}/LICENSE
 
 %changelog
+* Tue Apr 03 2012 Mike McGrath <mmcgrath@redhat.com> 0.6.3-1
+- test commit (mmcgrath@redhat.com)
+- Fix for bugz 808013 - Use a postgres data template for speeding up and
+  working around initdb issues and don't use initdb. (ramr@redhat.com)
+
+* Tue Apr 03 2012 Mike McGrath <mmcgrath@redhat.com>
+- Fix for bugz 808013 - Use a postgres data template for speeding up and
+  working around initdb issues and don't use initdb. (ramr@redhat.com)
+
 * Mon Apr 02 2012 Krishna Raman <kraman@gmail.com> 0.6.3-1
 - Merge remote-tracking branch 'origin/dev/kraman/US2048' (kraman@gmail.com)
 - Fix for bugz 808013 - Use a postgres data template for speeding up and
