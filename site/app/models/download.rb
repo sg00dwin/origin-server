@@ -8,7 +8,7 @@ class Download
   attr_accessor :id, :name, :location
   attr_accessor :type, :size, :filename
 
-  DEFAULT_LOCATION = File.join(Rails.root,'public','files')
+  DEFAULT_LOCATION = 'http://mirror.openshift.com/pub/'
 
   def initialize(attributes={})
     attributes[:location] ||= DEFAULT_LOCATION
@@ -32,7 +32,8 @@ class Download
       :name => 'StickShift Fedora Remix',
       :filename => 'fedora_remix.iso',
       :type => 'application/x-iso9660-image',
-      :size => 1102053376
+      :size => 1102053376,
+      :location => File.join(DEFAULT_LOCATION,%w(fedora-remix 16 x86_64))
     }
   ]
 
