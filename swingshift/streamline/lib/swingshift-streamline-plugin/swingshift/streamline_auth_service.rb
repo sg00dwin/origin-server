@@ -8,10 +8,12 @@ require 'stickshift-common'
 
 module SwingShift
     class StreamlineAuthService < StickShift::AuthService
-      service_base_url = defined?(Rails) ? Rails.configuration.auth[:auth_service][:host] + Rails.configuration.auth[:auth_service][:base_url] : ""
-      @@login_url = URI.parse(service_base_url + "/login.html")
-      @@roles_url = URI.parse(service_base_url + "/cloudVerify.html")
-      @@user_info_url = URI.parse(service_base_url + "/userInfo.html")
+      def initialize
+        service_base_url = defined?(Rails) ? Rails.configuration.auth[:auth_service][:host] + Rails.configuration.auth[:auth_service][:base_url] : ""
+        @@login_url = URI.parse(service_base_url + "/login.html")
+        @@roles_url = URI.parse(service_base_url + "/cloudVerify.html")
+        @@user_info_url = URI.parse(service_base_url + "/userInfo.html")
+      end
       
       def generate_broker_key(app)
         cipher = OpenSSL::Cipher::Cipher.new("aes-256-cbc")                                                                                                                                                                 
