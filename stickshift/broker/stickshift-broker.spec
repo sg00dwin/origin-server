@@ -30,6 +30,7 @@ Requires:  rubygem(stickshift-controller)
 Requires:  rubygem(stickshift-node)
 Requires:  stickshift-abstract
 Requires:  selinux-policy-targeted
+Requires:  policycoreutils-python
 
 BuildArch: noarch
 
