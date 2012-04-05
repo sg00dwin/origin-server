@@ -8,7 +8,7 @@ class PasswordControllerTest < ActionController::TestCase
 
   test "should get too short password error" do
     return unless Rails.configuration.integrated
-    setup_session
+    setup_user
     form = get_post_form
     form[:password]='short'
     post(:update, {:web_user => form})
@@ -19,7 +19,7 @@ class PasswordControllerTest < ActionController::TestCase
 
   test "should get password must match error" do
     return unless Rails.configuration.integrated
-    setup_session
+    setup_user
     form = get_post_form
     form[:password]='doesntmatch'
     post(:update, {:web_user => form})

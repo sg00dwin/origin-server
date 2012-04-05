@@ -10,6 +10,7 @@ require 'exception'
 #
 module Streamline
   include ErrorCodes
+
   attr_accessor :rhlogin, :ticket, :roles, :terms
 
   # Raised when the reset token has already been used
@@ -25,9 +26,15 @@ module Streamline
     end
   end
 
-  service_base_url = defined?(Rails) ? Rails.configuration.streamline[:host] + Rails.configuration.streamline[:base_url] : ""
+  service_base_url = if defined?(Rails)
+    @@service_url = URI.parse(Rails.configuration.streamline[:host] + Rails.configuration.streamline[:base_url])
+    @@service_url.to_s
+  else
+    ""
+  end
 
   @@login_url = URI.parse(service_base_url + "/login.html")
+  @@logout_url = URI.parse(service_base_url + "/../sso/logout.html")
   @@register_url = URI.parse(service_base_url + "/registration.html")
 
   @@request_access_url = URI.parse(service_base_url + "/requestAccess.html")
@@ -110,6 +117,29 @@ module Streamline
   rescue Streamline::StreamlineException
     errors.add(:base, I18n.t(:service_error, :scope => :streamline))
     false
+  end
+
+  def logout
+    return unless @ticket
+
+    # Make the request
+    req = Net::HTTP::Get.new( uri.path )
+    req['Cookie'] = "rh_sso=#{@ticket}"
+
+    # Create the request
+    # Add timing code
+    start_time = Time.now
+    res = new_http.start{ |http| http.request(req) }
+    end_time = Time.now
+    Rails.logger.debug "Response from Streamline took (#{uri.path}): #{(end_time - start_time)*1000} ms"
+    Rails.logger.debug "Status received: #{res.code}"
+    Rails.logger.debug "-------------------"
+    Rails.logger.debug res.header.to_yaml
+    Rails.logger.debug "-------------------"
+
+    unless 302 == res.code.to_i
+      Rails.logger.debug "Unexpected HTTP status from logout: #{res.code}"
+    end
   end
 
   # Return a valid single signon cookie
@@ -368,22 +398,24 @@ module Streamline
     not roles.include?('cloud_access_1') and roles.include?('cloud_access_request_1')
   end
 
+  def new_http
+    http = Net::HTTP.new(@@service_url.host, @@service_url.port)
+    http.use_ssl = true
+    http.verify_mode = OpenSSL::SSL::VERIFY_NONE
+    http
+  end
 
   def http_post(url, args={}, raise_exception_on_error=true)
     begin
-      req = Net::HTTP::Post.new(url.path + (url.query ? ('?' + url.query) : ''))
+      req = Net::HTTP::Post.new(url.request_uri)
       req.set_form_data(args)
 
       # Include the ticket as a cookie if present
       req.add_field('Cookie', "rh_sso=#{@ticket}") if @ticket
 
-      http = Net::HTTP.new(url.host, url.port)
-      http.use_ssl = true
-      http.verify_mode = OpenSSL::SSL::VERIFY_NONE
-
       # Add timing code
       start_time = Time.now
-      res = http.start {|http| http.request(req)}
+      res = new_http.start {|http| http.request(req)}
       end_time = Time.now
       Rails.logger.debug "Response from Streamline took (#{url.path}): #{(end_time - start_time)*1000} ms"
 
