@@ -69,6 +69,10 @@ class WebUser
     false
   end
 
+  def accepted_terms?
+    terms && terms.empty?
+  end
+
   #
   # Lookup a user by the SSO ticket
   #
@@ -76,10 +80,7 @@ class WebUser
     user = WebUser.new(:ticket => ticket)
     user.establish
 
-    if user.rhlogin
-      return user
-    else
-      return nil
-    end
+    raise AccessDeniedException unless user.rhlogin
+    user
   end
 end

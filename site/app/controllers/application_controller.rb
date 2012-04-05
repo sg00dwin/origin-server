@@ -1,6 +1,5 @@
 class ApplicationController < ActionController::Base
   protect_from_forgery
-  before_filter :check_credentials
 
   rescue_from AccessDeniedException, :with => :redirect_to_logout
   rescue_from 'ActiveResource::ConnectionError' do |e|
@@ -10,10 +9,13 @@ class ApplicationController < ActionController::Base
     end
     raise e
   end
+  def redirect_to_logout
+    #FIXME: Check whether an exception was thrown and log it to simplify error conditions
+    redirect_to logout_path
+  end
 
   def handle_unverified_request
-    super
-    redirect_to_logout
+    raise AccessDeniedException
   end
 
   def set_no_cache
@@ -22,86 +24,26 @@ class ApplicationController < ActionController::Base
     response.headers["Expires"] = "Fri, 01 Jan 1990 00:00:00 GMT"
   end
 
-  def setup_user_session(user)
-    session[:login] = user.rhlogin
-    session[:user] = user
-  end
-
-  def session_user
-    user = session[:user]
-    if user
-      user.errors.clear
-    end
-    return user
-  end
-
+  #FIXME: rename to be authenticated?
   def logged_in?
-    return session[:login] ||
-          (session[:user] && (params[:controller] == 'terms' || params[:controller] == 'legal'))
+    session_user.present?
   end
 
-  def logged_in_with_terms?
-    return session[:login]
+  def terms_redirect
+    redirect = session[:terms_redirect]
+    session[:terms_redirect] = nil
+    redirect || default_after_login_redirect
   end
-  
-  def workflow_redirect    
-    wf = nil
-    # login_workflow is only honored if you are logged in
-    if logged_in?
-      wf = session[:login_workflow]
-    else
-      wf = session[:workflow]
-    end
-    # Clear out workflow even if nothing happens.  Otherwise might get pushed into a workflow on later login.
-    session[:login_workflow] = nil
-    session[:workflow] = nil
-    if (wf)
-      logger.debug "Redirecting to workflow: #{wf}"
-      redirect_to wf
-      return true
-    else
-      return false
-    end
+  def terms_redirect=(redirect)
+    session[:terms_redirect] = redirect
   end
-  
-  def workflow
-    return session[:workflow] || session[:login_workflow]
-  end
-  
-  def reset_sso       
-    if Rails.configuration.integrated and cookies[:rh_sso]
-      # If we're integrated, let's log out of SSO on behalf of the user
-      uri = URI.join( Rails.configuration.streamline[:host], Rails.configuration.streamline[:logout_url] )
-      https = Net::HTTP.new( uri.host, uri.port )
-      logger.debug "Integrated logout, use SSL"
-      https.use_ssl = true
-      # TODO: Need to figure out where CAs are so we can do something like:
-      #   http://goo.gl/QLFFC
-      https.verify_mode = OpenSSL::SSL::VERIFY_NONE
 
-      # Make the request
-      req = Net::HTTP::Get.new( uri.path )
-      req['Cookie'] = "rh_sso=#{cookies[:rh_sso]}"
-
-      # Create the request
-      # Add timing code
-      start_time = Time.now
-      res = https.start{ |http| http.request(req) }
-      end_time = Time.now
-      logger.debug "Response from Streamline took (#{uri.path}): #{(end_time - start_time)*1000} ms"
-      logger.debug "Status received: #{res.code}"
-      logger.debug "-------------------"
-      logger.debug res.header.to_yaml
-      logger.debug "-------------------"
-
-      unless 302 == res.code.to_i
-        logger.debug "Unexpected HTTP status from logout: #{res.code}"
-      end
-    end
+  def reset_sso
+    session_user.logout if session_user
     logger.debug "Removing current SSO cookie value of '#{cookies[:rh_sso]}'"
     cookies.delete :rh_sso, :domain => cookie_domain
   end
-  
+
   # The domain that the user's cookie should be stored under
   def cookie_domain
     domain = Rails.configuration.streamline[:cookie_domain] || 'redhat.com'
@@ -113,215 +55,126 @@ class ApplicationController < ActionController::Base
     end
   end
 
-  def redirect_to_logout
-    redirect_to logout_path and return
-  end
-  
-  def setup_login_workflow(referrer, remote_request)
-    unless workflow
-      if referrer 
-        if remote_request
-          session[:login_workflow] = referrer.to_s
-        else
-          if referrer.path =~ /^\/app\/user\/?/
-            session[:login_workflow] = express_path
-          elsif referrer.path =~ /^\/app\/login\/?/
-            session[:login_workflow] = express_path
-          elsif !(referrer.path =~ /^\/app\/?$/)
-            if referrer.scheme == 'http'
-              session[:login_workflow] = 'https' + referrer.to_s[referrer.scheme.length..-1]
-            else
-              session[:login_workflow] = referrer.to_s
-            end
-          end
-        end
-      end
-      unless workflow
-        session[:login_workflow] = default_logged_in_redirect
-      end
-    end
-  end
-  
-  def default_logged_in_redirect
-    @default_login_workflow || console_path
-  end
-
   def remote_request?(referrer)
-    return referrer.host && ((request.host != referrer.host) || !referrer.path.start_with?('/app'))
+    referrer.host && (
+      (request.host != referrer.host) || !referrer.path.start_with?('/app')
+    )
   end
 
-  def request_access(user)
-    # Now check for access to Express which represents access
-    # to all of OpenShift now.  At this point, the user
-    # has accepted all the OpenShift terms and should already
-    # have access.  If the user doesn't have the cloud_access_1
-    # role or the cloud_access_request_1 role, request access
-    # automatically for the user
-    access_type = CloudAccess::EXPRESS
-    if !user.has_access?(access_type) and !user.has_requested?(access_type)
-      logger.info "User #{user.rhlogin} is missing access.  Requesting access..."
-      user.request_access(access_type)
-      if user.errors.length > 0
-        logger.error "Auto-request access for user #{user.rhlogin} failed"
-      else
-        logger.info "Access request successful for user #{user.rhlogin}"
-        user.refresh_roles(true)
-      end
-    end
-
-    unless user.has_access?(access_type)
-      logger.debug "Notifying user about pending account access"
-      flash[:notice] = "Note: We are still working on getting your access setup..."
-    end
+  #
+  # Return true if the user has logged in at least once to OpenShift.
+  #
+  def previously_logged_in?
+    cookies[:prev_login] ? true : false
   end
 
-  def check_credentials
-    # If this is a logout request, pass through
-    logger.debug "[check_credentials] Check login state"
-    logger.debug "  Checking for logout request"
-    return if request.path =~ /logout/
-
-    logger.debug "  Not a logout request, checking for cookie"
-    rh_sso = cookies[:rh_sso]
-    logger.debug "  rh_sso cookie = #{rh_sso.inspect}"
-
-    if rh_sso.present?
-      # redirect to https if they have rh_sso but are on http:// for some reason
-      # Note: doesn't work because rh_sso is a secure cookie
-      #if request.protocol == 'http://'
-      #  redirect_to 'https://' + request.url[request.protocol.length..-1]
-      #end
-    else
-      if logged_in?
-        logger.debug "  User is logged in, but has no rh_sso cookie.  Log them out"
-        redirect_to_logout
-        return
-      elsif params[:controller] != 'login'
-        # Clear out login workflow since they didn't login.  Otherwise might get pushed into a workflow on later login.
-        #logger.debug "Clearing out login_workflow since user didn't actually login"
-        session[:login_workflow] = nil
-        return
-      else
-        return
-      end
-    end
-
-    if logged_in?
-      logger.debug "  User has an authenticated session"
-      if session[:ticket] != rh_sso
-        logger.debug "  Session ticket does not match current ticket - logging out"
-        redirect_to_logout 
-        return
-      else
-        logger.debug "  Session ticket matches current ticket"
-
-        # Handle access requests - if terms have been accepted
-        request_access(session[:user]) if logged_in_with_terms?
-        ensure_valid_ticket
-      end
-    else
-      logger.debug "  User does not have a authenticated session"
-      logger.debug "  Looking up user based on rh_sso ticket"
-      user = WebUser.find_by_ticket(rh_sso)
-      if user
-        logger.debug "  Found #{user}. Authenticating session"
-        session[:user] = user
-        user.establish_terms
-        session[:ticket] = rh_sso
-
-        if user.terms.length > 0
-          logger.debug "  User #{user} has terms to accept."
-          redirect_to new_terms_path and return
-        else
-          session[:login] = user.rhlogin
-          session[:ticket_verified] = Time.now.to_i
-        end
-
-        # Handle access requests
-        request_access(user)
-      end
-    end
+  def new_forms
+    true
+  end
+  def new_forms?
+    true
   end
 
-  def ensure_valid_ticket
-    # don't re-verify logout requests
-    return if request.path =~ /logout/
+  #FIXME: rename to be authenticated_user to imply the model object this retrieves
+  # 
+  # Return the currently authenticated user or nil if no such user exists
+  #
+  def session_user
+    @authenticated_user ||= user_from_session
+    @authenticated_user.errors.clear if @authenticated_user #FIXME: this should be unnecessary because controllers can clean it up
+    @authenticated_user
+  end
 
+  #
+  # Verify that the rh_sso cookie matches the ticket, and that the ticket is still valid.
+  # Refresh the ticket if possible, otherwise raise AccessDeniedException.
+  #
+  def validate_ticket
+    sso_cookie = cookies[:rh_sso]
+    ticket = session[:ticket]
+
+    if sso_cookie && sso_cookie != ticket
+      logger.debug "  Session ticket does not match current ticket - logging out"
+      raise AccessDeniedException
+    end
+
+    login = session[:login]
     reverify_interval = Rails.configuration.sso_verify_interval
 
-    if session[:login] && reverify_interval > 0
+    if login && reverify_interval > 0
       ts = session[:ticket_verified] || 0
       diff = Time.now.to_i - ts
 
       if (diff > reverify_interval)
         logger.debug "ticket_verified timestamp has expired, checking ticket: #{session[:ticket]}"
 
-        user = WebUser.find_by_ticket(session[:ticket])
-        if !user || session[:login] != user.rhlogin
-          logger.debug "SSO ticket no longer valid, logging out!"
-          redirect_to_logout
+        user = WebUser.find_by_ticket(ticket)
+        if !user || login != user.rhlogin
+          logger.debug "SSO ticket no longer matches user, logging out!"
+          raise AccessDeniedException
         end
 
         # ticket is valid, set a new timestamp
         session[:ticket_verified] = Time.now.to_i
       end
     end
+    true
   end
 
-  # Detect previous login
-  def previously_logged_in?
-    cookies[:prev_login] ? true : false
+  #
+  # Return true if the user can access OpenShift resources.  Otherwise, the user is redirected or
+  # sees an error page.  Callers should not call redirect_to or render if false is returned.
+  #
+  def validate_user
+    user = session_user
+
+    if session[:terms] # terms are only checked once per session
+      true
+    elsif user.accepted_terms?
+      if user.entitled?
+        session[:terms] = true
+        true
+      else
+        if user.waiting_for_entitle?
+          logger.warn "Notifying user about pending account access"
+          flash[:notice] = "Note: We are still working on getting your access setup..."
+          #FIXME: redirect to a page indicating that they don't have access yet
+          render 'access/pending.html.haml'
+        else
+          logger.error "Auto-request access for user #{user.rhlogin} failed, #{user.errors}"
+          #FIXME: display a page indicating to the user that an error occurred while requesting access
+          render 'access/error.html.haml'
+        end
+        false
+      end
+    else
+      logger.debug "Has terms to accept"
+      terms_redirect = after_login_redirect
+      redirect_to new_terms_path
+      false
+    end
   end
 
-  private
-
+  #
+  # Use with before_filter to ensure that a user is properly authenticated prior to accessing
+  # a controller action.
+  #
   def require_login
     logger.debug 'Login required'
-    if !session[:login]
-      logger.debug "Session contents: #{session.inspect}"
-      redirect_path = url_for :controller => self.controller_name, 
-                              :action => self.action_name,
-                              :only_path => true
-      redirect_to login_path(:redirectUrl => redirect_path)
-    end
+    logger.debug "Session contents: #{session.inspect}"
+
+    return redirect_to login_path(:redirectUrl => after_login_redirect) unless logged_in?
+
+    validate_ticket
+    validate_user
   end
 
-  def require_user
-    logger.debug 'User required'
-
-    @userinfo = ExpressUserinfo.new :rhlogin => session[:login],
-    				    :ticket => session[:ticket]
-    # We have to have userinfo for the control panel to work
-    # so if we can't establish the user's info, try again
-    3.times do
-      logger.debug 'Trying to establish'
-      @userinfo.establish
-      logger.debug 'Errors'
-      logger.debug @userinfo.errors.inspect
-      logger.debug @userinfo.errors.length 
-      break if @userinfo.errors.length < 1
-    end
-  
-    # If we really can't establish, at least let the user
-    # know, so it's somewhat less confusing
-    if @userinfo.errors.length > 0
-      err = @userinfo.errors[:base][0]
-
-      # only show the page if it's an "unknown" error
-      # TODO: use something other than string comparison to detect
-      if err == I18n.t(:unknown)
-        flash[:error] = err
-        render :no_info and return
-      end
-    end
-  end
-  
   # Block all access to a controller
   def deny_access
     logger.debug 'Access denied to this controller'
     redirect_to root_path
   end
-  
+
   def sauce_testing?
     retval = false
     if Rails.env.development?
@@ -339,4 +192,52 @@ class ApplicationController < ActionController::Base
     logger.debug "========== TESTING ===========" if retval
     retval
   end
+
+  protected
+    #
+    # Set a user object on the session
+    #
+    def user_to_session(user)
+      session[:ticket] = user.ticket
+      session[:login] = user.rhlogin
+      session[:ticket_verified] ||= Time.now.to_i
+      user
+    end
+
+    #
+    # The URL or path that this controller should redirect to after login.
+    #
+    def default_after_login_redirect
+      @default_login_workflow || console_path
+    end
+
+    #
+    # Return the appropriate URL to return to after a successful login. Subclasses may
+    # override to return values that are specific to their method
+    #
+    def after_login_redirect
+      begin
+        url_for :controller => self.controller_name,
+          :action => self.action_name,
+          :only_path => true
+      rescue ActionController::RoutingError
+        logger.debug "No route matches, using default console route"
+        default_after_login_redirect
+      end
+    end
+
+
+  private
+    #
+    # Retrieve a user object from the session
+    #
+    def user_from_session
+      if session[:login]
+        WebUser.new(:rhlogin => session[:login], :ticket => session[:ticket])
+      elsif cookies[:rh_sso]
+        user_to_session(WebUser.find_by_ticket(cookies[:rh_sso]))
+      else
+        nil
+      end
+    end
 end
