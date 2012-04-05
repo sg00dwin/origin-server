@@ -38,13 +38,13 @@ GEM
     bson (1.5.2)
     builder (2.1.2)
     crack (0.1.8)
-    crankcase-mongo-plugin (0.7.3)
+    crankcase-mongo-plugin (0.7.4)
       json
       stickshift-controller
     dnsruby (1.53)
     erubis (2.6.6)
       abstract
-    gearchanger-m-collective-plugin (0.7.4)
+    gearchanger-m-collective-plugin (0.7.5)
       json
       stickshift-controller
     httparty (0.7.4)
@@ -93,7 +93,7 @@ GEM
       json
       mongo
       rack
-    stickshift-controller (0.8.2)
+    stickshift-controller (0.8.3)
       activesupport
       dnsruby
       json
@@ -101,7 +101,7 @@ GEM
       state_machine
       stickshift-common
     stomp (1.1.8)
-    swingshift-streamline-plugin (0.7.3)
+    swingshift-streamline-plugin (0.7.4)
       json
       stickshift-controller
     thor (0.14.6)
@@ -109,7 +109,7 @@ GEM
     treetop (1.4.10)
       polyglot
     tzinfo (0.3.26)
-    uplift-dynect-plugin (0.7.2)
+    uplift-dynect-plugin (0.7.3)
       json
       stickshift-controller
     uuidtools (2.1.1)

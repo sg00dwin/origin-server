@@ -1120,9 +1120,9 @@ module GearChanger
 
       def self.execute_parallel_jobs_impl(handle)
         handle.each { |id, job_list|
+          options = MCollectiveApplicationContainerProxy.rpc_options
+          rpc_client = rpcclient('libra', :options => options)
           begin
-            options = ApplicationContainerProxy.rpc_options
-            rpc_client = rpcclient('libra', :options => options)
             mc_args = { id => job_list }
             mcoll_reply = rpc_client.custom_request('execute_parallel', mc_args, id, {'identity' => id})
             rpc_client.disconnect
