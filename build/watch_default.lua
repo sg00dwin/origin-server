@@ -75,6 +75,12 @@ sync { rpm, default.rsync,
 drupal_modules = {
   ['theme/openshift-theme']       = 'themes/openshift-theme',
   ['redhat_sso/redhat_sso']  = 'modules/custom/redhat_sso',
+  ['redhat_frontpage/redhat_frontpage']  = 'modules/custom/redhat_frontpage',
+  ['redhat_events/redhat_events']  = 'modules/custom/redhat_events',
+  ['features-forums/forums']  = 'modules/features/forums',
+  ['features-community_wiki/community_wiki']  = 'modules/features/community_wiki',
+  ['features-blogs/blogs']  = 'modules/features/blogs',
+  ['features-user_profile/user_profile']  = 'modules/features/user_profile',
 }
 for source, destination in pairs(drupal_modules) do
   sync{ rpm, default.rsync,
