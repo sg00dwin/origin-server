@@ -12,8 +12,16 @@
 	  <title><?php print $head_title; ?></title>
     <?php 
       // reference CSS files directly from openshift
-      //print_r(end(menu_get_active_trail()));
+//print_r(end(menu_get_active_trail()));
       global $base_url;
+      if (empty($column_left)) {
+        if (empty($column_right)) { $layout = 'none'; }
+        else { $layout = 'right'; }
+      }
+      else {
+        if (empty($column_right)) { $layout = 'left'; }
+        else { $layout = 'both'; }
+      }
     ?>
     <link type="image/png" rel="shortcut icon" href="/app/images/favicon-32.png"></link>
     <link type="text/css" rel="stylesheet" href="/app/stylesheets/overpass.css"></link>
@@ -59,11 +67,14 @@
               </a>
             </div>
             <ul class="nav">
-              <li><a href="/app/platform"><span>Learn More</span></a></li>
-              <li><a href="/app/getting_started"><span>Get Started</span></a></li>
-              <li class="divider">&nbsp;</li>
-              <li><a href="/app/console"><span>Console</span></a></li>
-              <li class="active"><a href="<?php print $base_url ?>"><span>Community</span></a></li>
+                <?php $i = 0; foreach( $primary_links as $key=>$link) {
+                if ($i++ == 2) {
+                  print '<li class="divider">&nbsp;</li>';
+                }
+                $link['options']['html'] = TRUE;
+              ?>
+                <li class="<?php print strpos($key,'active-trail') ? "active" : ""; ?>"><?php print l("<span>" . $link['title'] . "</span>", $link['href'], $link['options']); ?></li>
+              <?php } ?>
             </ul>
           </div>
         </div>
@@ -86,17 +97,37 @@
     <div id="content" class="section-striped">
       <div class="container"><div class="row-content">
       <div class='row row-flush-right'>
-        <?php if ($column_right) :?>
+        <?php if ($layout == 'left') :?>
           <div class="column-nav lift-less grid-wrapper">
             <nav class="span3">
               <div class="gutter-right">
-                <?php print $column_right; ?>
+                <?php print $column_left; ?>
               </div>
             </nav>
           </div>
-        <?php endif; ?>
           <div class="column-content lift grid-wrapper">
-            <div class="span<?php print $column_right ? '9' : '12' ?> span-flush-right">
+            <div class="span9 span-flush-right">
+
+        <?php elseif ($layout == 'both') :?>
+          <div class="column-nav lift-less grid-wrapper">
+            <nav class="span3">
+              <div class="gutter-right">
+                <?php print $column_left; ?>
+              </div>
+            </nav>
+          </div>
+          <div class="column-content lift grid-wrapper">
+            <div class="span6 span-flush-right">
+
+        <?php elseif ($layout == 'right') :?>
+          <div class="column-content lift grid-wrapper">
+            <div class="span9 span-flush-right">
+
+        <?php elseif ($layout == 'none') :?>
+          <div class="column-content lift grid-wrapper">
+            <div class="span12 span-flush-right">
+        <?php endif; ?>
+
             <?php if ($heading) :?>
               <h1 class="ribbon">
                 <div class="ribbon-content"><?php print $heading; ?></div>
@@ -119,9 +150,21 @@
             <?php endif; ?>
             <?php print $content_prefix; ?>
             <?php print $content; ?>
-            <?php print $content_suffix; ?>
-            
+
             </section>
+            <?php print $content_suffix; ?>
+         </div>
+
+        <?php if ($layout == 'both' || $layout == 'right') :?>
+          <div class="column-nav lift-less grid-wrapper">
+            <div class="span3">
+              <div class="gutter-right">
+                <?php print $column_right; ?>
+              </div>
+            </div>
+          </div>
+        <?php endif; ?>
+
           </div>
         </div>
       </div>

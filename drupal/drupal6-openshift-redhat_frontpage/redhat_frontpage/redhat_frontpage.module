@@ -2,7 +2,7 @@
 
 function redhat_frontpage_menu() {
 
-  $items['home'] = array(
+  $items['community'] = array(
     'page callback' => redhat_frontpage,
     'access callback' => TRUE,
     'type' => MENU_NORMAL_ITEM,
