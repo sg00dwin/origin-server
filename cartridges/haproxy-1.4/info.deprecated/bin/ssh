@@ -1,5 +1,0 @@
-#!/bin/bash
-# SSH wrapper to specify right config and other files
-mkdir -p "$OPENSHIFT_DATA_DIR/.ssh/"
-touch "$OPENSHIFT_DATA_DIR/.ssh/config"
-/usr/bin/ssh -o 'StrictHostKeyChecking=no' -o "UserKnownHostsFile=$OPENSHIFT_DATA_DIR/.ssh/known_hosts" -F "$OPENSHIFT_DATA_DIR/.ssh/config" -i ${OPENSHIFT_DATA_DIR}/.ssh/haproxy_id_rsa $@
