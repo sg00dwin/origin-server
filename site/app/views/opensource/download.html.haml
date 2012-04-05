@@ -1,44 +1,45 @@
 :css
-  .description { font-size: 13pt; line-height: 14pt; margin: 5px 0 13px; }
   .action-call { font-weight: bold; margin: 10px 0 10px; }
-  .info-ribbon p { font-size: 12pt; line-height: 14pt; }
-  p { font-size: 12pt; line-height: 14pt; }
-  ul.link_list { list-style-type: none; }
-  .link_list { font-size: 15pt; line-height: 18pt;}
-  .link_list li { margin-top: 1em; }
 
 - content_for :page_title, 'Under the Hood'
 
 %h1.ribbon Under the Hood
 
 %section
-  .description
+  %p.larger
     OpenShift is made of many different Open Source software components working in harmony to power your apps.  We provide a helpful list of them below.
 
   .row
     .span6
-      %ul.link_list
+      %ul.unstyled
         %li
-          = link_to "Crank Case", "#"
-          .link_desc User Management Component
+          %h3
+            = link_to "Crank Case", "#{openshift_github_path}/crank_case", :class => "external", :target => "_blank"
+            .link_desc User Management Component
         %li
-          = link_to "Gear Changer", "#"
-          .link_desc Short description to come
+          %h3
+            = link_to "Gear Changer", "#{openshift_github_path}/gear_changer", :class => "external", :target => "_blank"
+            .link_desc Short description to come
         %li
-          = link_to "RHC", "#"
-          .link_desc Command-line client tools
+          %h3
+            = link_to "RHC", "#{openshift_github_path}/os-client-tools", :class => "external", :target => "_blank"
+            .link_desc Command-line client tools
         %li
-          = link_to "StickShift", "#"
-          .link_desc Provides API
+          %h3
+            = link_to "StickShift", "#{openshift_github_path}/openshift/stickshift", :class => "external", :target => "_blank"
+            .link_desc Provides API
         %li
-          = link_to "SwingShift", "#"
-          .link_desc Provides user authentication
+          %h3
+            = link_to "SwingShift", "#{openshift_github_path}/swingshift", :class => "external", :target => "_blank"
+            .link_desc Provides user authentication
         %li
-          = link_to "Uplift", "#"
-          .link_desc DNS Management component
+          %h3
+            = link_to "Uplift", "#{openshift_github_path}/uplift", :class => "external", :target => "_blank"
+            .link_desc DNS Management component
+
     .span5.info-ribbon
       %h2 Test Drive
-      .description
+      %p.larger
         Get all the components preconfigured in a bootable disk image.
       - if logged_in?
         - download = Download.find('remix')
@@ -69,19 +70,19 @@
   .row
     .span4
       %strong Web Frameworks
-      %ul.cart-list
+      %ul.link-list
         %li
-          = link_to "JBossAS Cartridge", "#"
+          = link_to "JBossAS Cartridge", "#", :class => "external", :target => "_blank"
     .span4
       %strong Database and Related
-      %ul.cart-list
+      %ul.link-list
         %li
-          = link_to "10Gen MMS Cartridge", "#"
+          = link_to "10Gen MMS Cartridge", "#", :class => "external", :target => "_blank"
     .span4
       %strong Other Cartridges
-      %ul.cart-list
+      %ul.link-list
         %li
-          = link_to "Cron Cartridge", "#"
+          = link_to "Cron Cartridge", "#", :class => "external", :target => "_blank"
   .row
     .span11.well
       %h3 Important Information
@@ -89,5 +90,5 @@
         These are some of the projects that are used to create Red Hat's OpenShift Platform-as-a-Service (PaaS), but are not necessarily the versions of code currently used for OpenShift. Red Hat and OpenShift are trademarks of Red Hat, Inc., registered in the United States and other countries. Red Hat's offering of the code for your downloading, use, modification, or distribution is not a grant of a trademark license to OpenShift or any other Red Hat trademark.
       %p
         The components listed above are under the
-        = link_to "Apache Software License 2.0", "http://www.apache.org/licenses/LICENSE-2.0.html"
+        = link_to "Apache Software License 2.0", "http://www.apache.org/licenses/LICENSE-2.0.html", :class => "external", :target => "_blank"
         , except with cartridges listed with a specific license.  See project pages for full text of each project's license.
