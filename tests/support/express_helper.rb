@@ -1,6 +1,6 @@
 require '/var/www/stickshift/broker/config/environment'
 
-Dir.glob("../stickshift/controller/test/cucumber/support/*").each { |helper|
+Dir.glob(File.dirname(__FILE__) + "/../../stickshift/controller/test/cucumber/support/*").each { |helper|
   # exclude any stickshift specific helpers or those that are being overridden in express
   require helper unless [].include? File.basename(helper)
 }
