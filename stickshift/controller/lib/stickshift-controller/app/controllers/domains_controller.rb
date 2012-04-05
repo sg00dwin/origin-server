@@ -32,7 +32,7 @@ class DomainsController < BaseController
 
   # POST /domains
   def create
-    namespace = params[:namespace]
+    namespace = params[:id]
     Rails.logger.debug "Creating domain with namespace #{namespace}"
 
     domain = Domain.new(namespace, @cloud_user)
@@ -52,7 +52,7 @@ class DomainsController < BaseController
 
     if not Domain.namespace_available?(namespace)
       @reply = RestReply.new(:unprocessable_entity)
-      @reply.messages.push(Message.new(:error, "Namespace '#{namespace}' is already in use. Please choose another.", 103, "namespace"))
+      @reply.messages.push(Message.new(:error, "Namespace '#{namespace}' is already in use. Please choose another.", 103, "id"))
       respond_with @reply, :status => @reply.status
     return
     end
@@ -80,10 +80,10 @@ class DomainsController < BaseController
     respond_with @reply, :status => @reply.status
   end
 
-  # PUT /domains/<id>
+  # PUT /domains/<existing_id>
   def update
-    id = params[:id]
-    new_namespace = params[:namespace]
+    id = params[:existing_id]
+    new_namespace = params[:id]
     domain = get_domain(id)
 
     if not domain or not domain.hasAccess?@cloud_user

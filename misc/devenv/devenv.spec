@@ -8,7 +8,7 @@
 
 Summary:   Dependencies for OpenShift development
 Name:      rhc-devenv
-Version:   0.91.6
+Version:   0.91.7
 Release:   1%{?dist}
 Group:     Development/Libraries
 License:   GPLv2
@@ -358,8 +358,12 @@ cp -f %{devenvdir}/puppet-private.pem /var/lib/puppet/ssl/private_keys/localhost
 # Add user nagios_monitor to wheel group for running rpm, dmesg, su, and sudo
 /usr/bin/gpasswd nagios_monitor wheel
 
-# Pouplate Drupal Database 
+# Populate Drupal Database 
 zcat /usr/share/drupal6/sites/default/openshift-dump.gz | mysql -u root
+
+# Make the webserver use hsts - BZ801848
+echo "Header set Strict-Transport-Security \"max-age=15768000\"" > /etc/httpd/conf.d/hsts.conf
+echo "Header append Strict-Transport-Security includeSubDomains" >> /etc/httpd/conf.d/hsts.conf
 
 %files
 %defattr(-,root,root,-)
@@ -376,6 +380,9 @@ zcat /usr/share/drupal6/sites/default/openshift-dump.gz | mysql -u root
 %{policydir}/*
 
 %changelog
+* Thu Apr 05 2012 Tim Kramer <tkramer@redhat.com> 0.91.7-1
+- Added hsts to Apache for Bugzilla 801848
+
 * Tue Apr 03 2012 Mike McGrath <mmcgrath@redhat.com> 0.91.6-1
 - Add a simple drupal setup script that makes it easy to get a few common
   operations completed on a local env. (ccoleman@redhat.com)

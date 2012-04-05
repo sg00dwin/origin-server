@@ -113,6 +113,8 @@ class RestApiTest < ActiveSupport::TestCase
     key = Key.new :raw_content => 'ssh-rsa key', :name => 'default', :as => @user
     assert key.save
     assert key.errors.empty?
+    key.messages = nil
+    key.id = nil
 
     keys = Key.find :all, :as => @user
     assert_equal 'ssh-rsa', keys[0].type
@@ -128,13 +130,13 @@ class RestApiTest < ActiveSupport::TestCase
     setup_domain
     domains = Domain.find :all, :as => @user
     assert_equal 1, domains.length
-    assert_equal "#{@ts}", domains[0].namespace
+    assert_equal "#{@ts}", domains[0].name
   end
 
   def test_domains_first
     setup_domain
     domain = Domain.first(:as => @user)
-    assert_equal "#{@ts}", domain.namespace
+    assert_equal "#{@ts}", domain.name
   end
 
   def test_domain_exists_error
@@ -144,34 +146,34 @@ class RestApiTest < ActiveSupport::TestCase
     assert !domain2.save
     assert domain2.errors[:name].is_a? Array
     assert domain2.errors[:name][0].is_a? String
-    assert domain2.errors[:name][0].include? 'Namespace'
+    assert domain2.errors[:name][0].include?('Name'), domain2.errors[:name][0]
   end
 
   def test_domains_update
     setup_domain
     domains = Domain.find :all, :as => @user
     assert_equal 1, domains.length
-    assert_equal "#{@ts}", domains[0].namespace
+    assert_equal "#{@ts}", domains[0].name
 
     d = domains[0]
     assert !d.changed?
     assert_equal "#{@ts}", d.id
 
     # change name twice to make sure id doesn't change
-    d.namespace = "notsaved"
+    d.name = "notsaved"
     assert d.changed?
-    assert_equal "#{@ts}", d.id
-    d.namespace = "#{@ts.reverse}"
-    assert_equal "#{@ts}", d.id
+    assert_equal "#{@ts}", d.to_param
+    d.name = "#{@ts.reverse}"
+    assert_equal "#{@ts}", d.to_param
 
-    assert d.save
+    assert d.save, d.errors.inspect
     assert !d.changed?
-    # make sure id == the current name
-    assert_equal "#{@ts.reverse}", d.id
+    # make sure the param value == the current name
+    assert_equal "#{@ts.reverse}", d.to_param
 
     domains = Domain.find :all, :as => @user
     assert_equal 1, domains.length
-    assert_equal "#{@ts.reverse}", domains[0].namespace
+    assert_equal "#{@ts.reverse}", domains[0].name
 
     #cleanup
     domains.each {|d| d.destroy_recursive}

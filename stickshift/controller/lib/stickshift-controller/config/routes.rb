@@ -13,6 +13,9 @@ Rails.application.routes.draw do
     resources :cartridges, :only => [:index, :show], :constraints => { :id => /standalone|embedded/ }
     resources :application_template
     resources :estimates, :constraints => { :id => /[\w]+/ }, :only => [:index, :show]
+
+    # Allow restful update of the domain name via the standard id parameter
+    match "domains/:existing_id" => "domains#update", :via => :put, :existing_id => /[A-Za-z0-9]+/
     resources :domains, :constraints => { :id => /[A-Za-z0-9]+/ } do
       resources :applications, :constraints => { :id => /[\w]+/ } do
         resource :descriptor, :only => [:show]

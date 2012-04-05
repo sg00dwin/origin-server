@@ -62,6 +62,11 @@ sync{ rails, default.rsync,
   target= "verifier:/var/www/stickshift/broker",
 }
 
+sync{ rails, default.rsync,
+  source= sourcedir .. "/stickshift/controller/lib/stickshift-controller",
+  target= "verifier:/usr/lib/ruby/site_ruby/1.8/stickshift-controller",
+}
+
 sync { rpm, default.rsync,
   source= sourcedir .. "/server-common",
   target= "verifier:/usr/lib/ruby/site_ruby/1.8",

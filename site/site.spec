@@ -3,7 +3,7 @@
 
 Summary:   Li site components
 Name:      rhc-site
-Version:   0.90.3
+Version:   0.90.5
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -117,6 +117,20 @@ rm -rf %{buildroot}
 /bin/touch %{sitedir}/log/production.log
 
 %changelog
+* Wed Apr 04 2012 Mike McGrath <mmcgrath@redhat.com> 0.90.5-1
+- modified file download to use mirror.openshift.com (fotios@redhat.com)
+- make sure download link is a child of the containing element
+  (johnp@redhat.com)
+- Added download link to opensource page (fotios@redhat.com)
+
+* Wed Apr 04 2012 Mike McGrath <mmcgrath@redhat.com> 0.90.4-1
+- Revert deletion of embedded until the deserialization problem can be fixed
+  (ccoleman@redhat.com)
+- add basic content and layout to opensource download page (johnp@redhat.com)
+- add routes, controller and view for opensource download page
+  (johnp@redhat.com)
+- US2118: Fedora remix download support (fotios@redhat.com)
+
 * Tue Apr 03 2012 Mike McGrath <mmcgrath@redhat.com> 0.90.3-1
 - Logo was missing from the simple header layouts (ccoleman@redhat.com)
 

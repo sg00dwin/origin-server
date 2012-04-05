@@ -215,15 +215,15 @@ class DevEnv < Thor
         end
 
         unless options.exclude_internal?
-          add_ssh_cmd_to_threads(hostname, threads, failures, "Internal", "cucumber -f html --out /tmp/rhc/internals.html -f progress -t @internals li-test/tests/")
+          add_ssh_cmd_to_threads(hostname, threads, failures, "Internal", "cd li-test/tests; cp -n ../stickshift/controller/test/cucumber/*.feature . ; cucumber -f html --out /tmp/rhc/internals.html -f progress -t @internals .")
         end
 
         unless options.exclude_verification?
-          add_ssh_cmd_to_threads(hostname, threads, failures, "Verification", "cucumber -f html --out /tmp/rhc/verfication.html -f progress -t @verify li-test/tests/")
+          add_ssh_cmd_to_threads(hostname, threads, failures, "Verification", "cd li-test/tests; cp -n ../stickshift/controller/test/cucumber/*.feature . ; cucumber -f html --out /tmp/rhc/verfication.html -f progress -t @verify .")
         end
 
         if options.include_cucumber
-          add_ssh_cmd_to_threads(hostname, threads, failures, "#{options.include_cucumber}", "cucumber -f html --out /tmp/rhc/#{options.include_cucumber}.html -f progress -t @#{options.include_cucumber} li-test/tests/")
+          add_ssh_cmd_to_threads(hostname, threads, failures, "#{options.include_cucumber}", "cd li-test/tests; cp -n ../stickshift/controller/test/cucumber/*.feature . ; cucumber -f html --out /tmp/rhc/#{options.include_cucumber}.html -f progress -t @#{options.include_cucumber} .")
         end
 
         if options.include_web?
@@ -982,3 +982,4 @@ END
 end
 
 DevEnv.start
+
