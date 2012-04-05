@@ -2,12 +2,14 @@
 
 function redhat_frontpage_menu() {
 
-  $items['community'] = array(
+  $item = array(
     'page callback' => redhat_communitypage,
     'access callback' => TRUE,
     'type' => MENU_NORMAL_ITEM,
     'title' => "Welcome to OpenShift",
   );
+  $items['<front>'] = $item;
+  $items['home'] = $item;
   return $items;
 }
 

@@ -12,8 +12,9 @@
 	  <title><?php print $head_title; ?></title>
     <?php 
       // reference CSS files directly from openshift
-print_r(end(menu_get_active_trail()));
+      //print_r(end(menu_get_active_trail()));
       global $base_url;
+      global $base_root;
       if (empty($sidebar_left)) {
         if (empty($sidebar_right)) { $layout = 'none'; }
         else { $layout = 'right'; }
@@ -72,8 +73,10 @@ print_r(end(menu_get_active_trail()));
                   print '<li class="divider">&nbsp;</li>';
                 }
                 $link['options']['html'] = TRUE;
+                $href = $link['href'];
+                $href = preg_replace('/^https:\/\/\//', '../', $href);
               ?>
-                <li class="<?php print strpos($key,'active-trail') ? "active" : ""; ?>"><?php print l("<span>" . $link['title'] . "</span>", $link['href'], $link['options']); ?></li>
+                <li class="<?php print strpos($key,'active-trail') ? "active" : ""; ?>"><?php print l("<span>" . $link['title'] . "</span>", $href, $link['options']); ?></li>
               <?php } ?>
             </ul>
           </div>

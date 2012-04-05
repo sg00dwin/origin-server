@@ -56,17 +56,17 @@ function user_profile_context_default_contexts() {
   $context->reactions = array(
     'block' => array(
       'blocks' => array(
+        'menu_block-1' => array(
+          'module' => 'menu_block',
+          'delta' => 1,
+          'region' => 'sidebar_left',
+          'weight' => 0,
+        ),
         'search-0' => array(
           'module' => 'search',
           'delta' => 0,
           'region' => 'sidebar_left',
           'weight' => 0,
-        ),
-        'menu-menu-community-navigation' => array(
-          'module' => 'menu',
-          'delta' => 'menu-community-navigation',
-          'region' => 'sidebar_left',
-          'weight' => 1,
         ),
         'og-0' => array(
           'module' => 'og',
@@ -141,17 +141,17 @@ function user_profile_context_default_contexts() {
   $context->reactions = array(
     'block' => array(
       'blocks' => array(
+        'menu_block-1' => array(
+          'module' => 'menu_block',
+          'delta' => 1,
+          'region' => 'sidebar_left',
+          'weight' => 0,
+        ),
         'search-0' => array(
           'module' => 'search',
           'delta' => 0,
           'region' => 'sidebar_left',
           'weight' => 0,
-        ),
-        'menu-menu-community-navigation' => array(
-          'module' => 'menu',
-          'delta' => 'menu-community-navigation',
-          'region' => 'sidebar_left',
-          'weight' => 1,
         ),
         'views-user_profile_box-block_1' => array(
           'module' => 'views',
@@ -215,17 +215,17 @@ function user_profile_context_default_contexts() {
   $context->reactions = array(
     'block' => array(
       'blocks' => array(
+        'menu_block-1' => array(
+          'module' => 'menu_block',
+          'delta' => 1,
+          'region' => 'sidebar_left',
+          'weight' => 0,
+        ),
         'search-0' => array(
           'module' => 'search',
           'delta' => 0,
           'region' => 'sidebar_left',
           'weight' => 0,
-        ),
-        'menu-menu-community-navigation' => array(
-          'module' => 'menu',
-          'delta' => 'menu-community-navigation',
-          'region' => 'sidebar_left',
-          'weight' => 1,
         ),
         'views-promotion_view-block_1' => array(
           'module' => 'views',
