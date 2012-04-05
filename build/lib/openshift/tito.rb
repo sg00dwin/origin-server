@@ -2,6 +2,10 @@ require 'fileutils'
 
 RUBYGEM_STICKSHIFT_REGEX = /^rubygem-stickshift-([\w]+)-\d+/
 STICKSHIFT_ABSTRACT_REGEX = /^stickshift-(abstract)-\d+/
+RUBYGEM_SWINGSHIFT_STREAMLINE_REGEX = /^rubygem-swingshift-streamline-plugin-\d+/
+RUBYGEM_CRANKCASE_MONGO_REGEX = /^rubygem-crankcase-mongo-plugin-\d+/
+RUBYGEM_UPLIFT_DYNECT_REGEX = /^rubygem-uplift-dynect-plugin-\d+/
+RUBYGEM_GEARCHANGER_MCOLLECTIVE_REGEX = /^rubygem-gearchanger-m-collective-plugin-\d+/
 CARTRIDGE_REGEX = /^rhc-(cartridge-[\w-]+\d+[\.\d+]*)-\d+\.\d+\.\d+-/
 RHC_REGEX = /^rhc-([\w-]+)-\d+/
 DEVENV_REGEX = /^rhc-devenv-\d+/
@@ -18,6 +22,14 @@ module OpenShift
           "stickshift/#{$1}"
         elsif package =~ STICKSHIFT_ABSTRACT_REGEX
           "stickshift/abstract"
+        elsif package =~ RUBYGEM_SWINGSHIFT_STREAMLINE_REGEX
+          "swingshift/streamline"
+        elsif package =~ RUBYGEM_CRANKCASE_MONGO_REGEX
+          "crankcase/mongo"
+        elsif package =~ RUBYGEM_UPLIFT_DYNECT_REGEX
+          "uplift/dynect"
+        elsif package =~ RUBYGEM_GEARCHANGER_MCOLLECTIVE_REGEX
+          "gearchanger/m-collective"
         elsif package =~ CARTRIDGE_REGEX
           "cartridges/" + $1['cartridge-'.length..-1]
         elsif package =~ RHC_REGEX
@@ -88,6 +100,18 @@ module OpenShift
         elsif package =~ STICKSHIFT_ABSTRACT_REGEX
           current_package = "stickshift-abstract"
           current_sync_dir = "stickshift/abstract"
+        elsif package =~ RUBYGEM_SWINGSHIFT_STREAMLINE_REGEX
+          current_package = "rubygem-swingshift-streamline-plugin"
+          current_sync_dir = "swingshift/streamline"
+        elsif package =~ RUBYGEM_CRANKCASE_MONGO_REGEX
+          current_package = "rubygem-crankcase-mongo-plugin"
+          current_sync_dir = "crankcase/mongo"
+        elsif package =~ RUBYGEM_UPLIFT_DYNECT_REGEX
+          current_package = "rubygem-uplift-dynect-plugin"
+          current_sync_dir = "uplift/dynect"
+        elsif package =~ RUBYGEM_GEARCHANGER_MCOLLECTIVE_REGEX
+          current_package = "rubygem-gearchanger-m-collective-plugin"
+          current_sync_dir = "gearchanger/m-collective"
         elsif package =~ CARTRIDGE_REGEX
           dir_name = $1['cartridge-'.length..-1]
           current_package = "rhc-cartridge-#{dir_name}"
