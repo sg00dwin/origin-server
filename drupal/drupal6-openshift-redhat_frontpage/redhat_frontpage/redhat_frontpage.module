@@ -3,16 +3,16 @@
 function redhat_frontpage_menu() {
 
   $items['community'] = array(
-    'page callback' => redhat_frontpage,
+    'page callback' => redhat_communitypage,
     'access callback' => TRUE,
     'type' => MENU_NORMAL_ITEM,
+    'title' => "Welcome to OpenShift",
   );
   return $items;
 }
 
-function redhat_frontpage(){
+function redhat_communitypage(){
   global $user;
-  drupal_add_css(drupal_get_path('module', 'redhat_frontpage') . '/frontpage.css');
   $content = '';
 
   $view = views_get_view('forum_views');

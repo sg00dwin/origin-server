@@ -12,14 +12,14 @@
 	  <title><?php print $head_title; ?></title>
     <?php 
       // reference CSS files directly from openshift
-//print_r(end(menu_get_active_trail()));
+print_r(end(menu_get_active_trail()));
       global $base_url;
-      if (empty($column_left)) {
-        if (empty($column_right)) { $layout = 'none'; }
+      if (empty($sidebar_left)) {
+        if (empty($sidebar_right)) { $layout = 'none'; }
         else { $layout = 'right'; }
       }
       else {
-        if (empty($column_right)) { $layout = 'left'; }
+        if (empty($sidebar_right)) { $layout = 'left'; }
         else { $layout = 'both'; }
       }
     ?>
@@ -101,7 +101,7 @@
           <div class="column-nav lift-less grid-wrapper">
             <nav class="span3">
               <div class="gutter-right">
-                <?php print $column_left; ?>
+                <?php print $sidebar_left; ?>
               </div>
             </nav>
           </div>
@@ -112,7 +112,7 @@
           <div class="column-nav lift-less grid-wrapper">
             <nav class="span3">
               <div class="gutter-right">
-                <?php print $column_left; ?>
+                <?php print $sidebar_left; ?>
               </div>
             </nav>
           </div>
@@ -159,7 +159,7 @@
           <div class="column-nav lift-less grid-wrapper">
             <div class="span3">
               <div class="gutter-right">
-                <?php print $column_right; ?>
+                <?php print $sidebar_right; ?>
               </div>
             </div>
           </div>
