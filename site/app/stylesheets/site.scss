@@ -514,7 +514,7 @@ h1.ribbon {
 // Information ribbon
 .info-ribbon {
   background-color: rgba(52, 52, 52, 1);
-  color: white;
+  color: #DADADA;
   display: inline-block;
   padding: 5px $gridGutterWidth 0 5px; /* right margin set by ribbon */
 
@@ -537,8 +537,11 @@ h1.ribbon {
   }
 
   h1, h2, h3, h4 {
-    color: white;
+    color: #DADADA;
   }
+
+  a:link { color: #EB0011; }
+  a:visited { color: #EB0011; }
 }
 
 .info-ribbon .well {

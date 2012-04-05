@@ -4,6 +4,6 @@ class OpensourceController < SiteController
   end
 
   def download
-
+    @openshift_github_path = "https://github.com/openshift"
   end
 end
