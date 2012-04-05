@@ -9,12 +9,28 @@ module CommandHelper
     $logger.info("Running: #{cmd}")
 
     exit_code = -1
-    output = nil
+    output = ""
+    pid, stdin, stdout, stderr = nil, nil, nil, nil    
 
     # Don't let a command run more than 5 minutes
     Timeout::timeout(500) do
-      output = `#{cmd} 2>&1`
-      exit_code = $?.exitstatus
+      Bundler.with_clean_env {
+              pid, stdin, stdout, stderr = Open4::popen4("#{cmd} 2>&1")
+              stdin.close
+              ignored, status = Process::waitpid2 pid
+              exit_code = status.exitstatus
+      }
+    end
+
+    # Do this to avoid cartridges that might hold open stdout
+    begin
+      Timeout::timeout(5) do
+        while (line = stdout.gets)
+          output << line
+        end
+      end
+    rescue Timeout::Error
+      $logger.debug("WARNING - stdout read timed out")
     end
 
     $logger.error("(#{$$}): Execution failed #{cmd} with exit_code: #{exit_code.to_s} and output:\n #{output}") if exit_code != 0
@@ -25,15 +41,12 @@ module CommandHelper
   def run(cmd, outbuf=[], retries=0)
     $logger.info("Running: #{cmd}")
 
-    #exit_code = -1
-    #output = nil
-
     exit_code = -1
+    output = ""
     pid, stdin, stdout, stderr = nil, nil, nil, nil
+
     # Don't let a command run more than 5 minutes
     Timeout::timeout(500) do
-      #output = `#{cmd} 2>&1`
-      #exit_code = $?.exitstatus
       Bundler.with_clean_env {
               pid, stdin, stdout, stderr = Open4::popen4("#{cmd} 2>&1")
               stdin.close
@@ -42,7 +55,18 @@ module CommandHelper
       }
     end
 
-    $logger.debug("Output:\n#{stdout}")
+    # Do this to avoid cartridges that might hold open stdout
+    begin
+      Timeout::timeout(5) do
+        while (line = stdout.gets)
+          output << line
+        end
+      end
+    rescue Timeout::Error
+      $logger.debug("WARNING - stdout read timed out")
+    end
+
+    $logger.debug("Output:\n#{output}")
 
     if exit_code != 0
       $logger.error("(#{$$}): Execution failed #{cmd} with exit_code: #{exit_code.to_s}")
@@ -56,7 +80,7 @@ module CommandHelper
 
     # append the buffers if an array container is provided
     if outbuf
-      outbuf << stdout
+      outbuf << output
     end
 
     return exit_code
