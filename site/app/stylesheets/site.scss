@@ -492,6 +492,12 @@ body.signup {
   &:hover, &:active { color: $ribbonColor; text-decoration: none; }
 }
 
+// external links get a northeast arrow to indicate they are external
+a.external:after { content: " \279A"; }
+
+// make font larger
+.larger {font-size: 123%;}
+
 // Standard header with ribbon
 h1.ribbon {
   background-color: $ribbonColor;
