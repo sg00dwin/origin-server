@@ -1,4 +1,4 @@
-policy_module(libra,1.1.14)
+policy_module(libra,1.1.15)
 
 ########################################
 #
@@ -242,6 +242,7 @@ oddjob_dontaudit_rw_fifo_file(libra_app_domain)
 gen_require(`
 	type sshd_devpts_t;
 	type ptmx_t;
+	type crontab_t;
 	type sshd_t;
 	role system_r;
 	role unconfined_r;
@@ -327,6 +328,7 @@ kernel_dontaudit_request_load_module(domain)
 cron_role(system_r, libra_app_domain)
 allow system_cronjob_t libra_app_domain:process transition;
 allow libra_app_domain system_cronjob_t:process sigchld;
+dontaudit crontab_t sshd_devpts_t:chr_file { read write };
 
 ########################################
 #
@@ -511,7 +513,7 @@ allow libra_app_domain libra_rw_file_t:dir_file_class_set { relabelfrom relabelt
 # rpm, yum, debuginfo-install
 # traceroute, iptables, iptables-multi
 # dmesg, tcpdump, mtr, ip
-# su, sudo, denyhosts
+# su, sudo, denyhosts, chsh, chfn
 #
 
 # Remove the following once sshd gets fixed.

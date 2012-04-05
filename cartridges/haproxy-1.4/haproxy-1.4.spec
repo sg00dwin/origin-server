@@ -95,15 +95,15 @@ rm -rf %{buildroot}
 - test commit (mmcgrath@redhat.com)
 - Update spec to require rest-client (jhonce@redhat.com)
 
+* Tue Apr 03 2012 Mike McGrath <mmcgrath@redhat.com>
+- Update spec to require rest-client (jhonce@redhat.com)
+
 * Mon Apr 02 2012 Krishna Raman <kraman@gmail.com> 0.7.7-1
 - Merge remote-tracking branch 'origin/dev/kraman/US2048' (kraman@gmail.com)
 - Update spec to require rest-client (jhonce@redhat.com)
 - Automatic commit of package [rhc-cartridge-haproxy-1.4] release [0.8.1-1].
   (dmcphers@redhat.com)
 - bump spec numbers (dmcphers@redhat.com)
-
-* Tue Apr 03 2012 Mike McGrath <mmcgrath@redhat.com>
-- Update spec to require rest-client (jhonce@redhat.com)
 
 * Fri Mar 30 2012 Krishna Raman <kraman@gmail.com> 0.7.6-1
 - Renaming for open-source release
