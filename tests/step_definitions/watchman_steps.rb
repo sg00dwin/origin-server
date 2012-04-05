@@ -1,4 +1,4 @@
-load 'li-test/node/scripts/bin/rhc-watchman'
+load '../node/scripts/bin/rhc-watchman'
 
 Given /^a Watchman object using "([^"]*)" and "([^"]*)"$/ do |log, epoch|
   class Watchman1 < Watchman

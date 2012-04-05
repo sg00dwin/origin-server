@@ -39,4 +39,5 @@ gem 'thread-dump'
 group :development, :test do
   # The require part from http://tinyurl.com/3pf68ho
   gem 'mocha', :require => nil
+  gem 'cucumber'
 end
