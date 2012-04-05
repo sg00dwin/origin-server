@@ -1,8 +1,0 @@
-= form_for :express_domain, :url => edit_namespace_express_domains_path, :html => {:class => 'form-inline', :method => :put } do |f|
-  = f.hidden_field :dom_action, :value => "#{dom_action}"
-  = f.hidden_field :form_type, :value => 'namespace'
-  .input-prepend-append
-    %span.add-on-first> http://applicationname-
-    = f.text_field :namespace, :autofocus => true
-    %span.add-on-last> .rhcloud.com
-  = f.submit "Save", :class => 'btn btn-primary', :style => 'vertical-align: top'
