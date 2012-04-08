@@ -1,4 +1,3 @@
-./Gemfile.lock
 ./site.spec
 ./config.ru
 ./public/
@@ -6,6 +5,7 @@
 ./config/environments/
 ./config/initializers/secret_token.rb
 ./config/initializers/recaptcha.rb
+./config/initializers/status_app.rb
 ./log/
 ./tmp/
 ./app/subsites/
@@ -19,6 +19,7 @@
 ./app/controllers/logout_
 ./app/controllers/opensource_
 ./app/controllers/partner_
+./app/controllers/password_
 ./app/controllers/product_
 ./app/controllers/site_
 ./app/controllers/styleguide_
@@ -106,3 +107,4 @@
 ./.opensource_include
 ./.sass-cache
 ./README
+./Gemfile.lock
