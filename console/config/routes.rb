@@ -1,9 +1,8 @@
-Console::Engine.routes.draw do
+Rails.application.routes.draw do
 
   resource :account,
            :controller => "user",
            :only => [:show] do
-    get :complete, :on => :member
   end
 
   scope '/account' do
@@ -29,6 +28,4 @@ Console::Engine.routes.draw do
   end
 
   match 'console' => 'console#index', :via => :get
-  match 'new_application' => 'application_types#index', :via => :get
-
 end
