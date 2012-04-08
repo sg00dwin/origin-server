@@ -1,6 +1,3 @@
-# Sample localization file for English. Add more files in this directory for other locales.
-# See http://github.com/svenfuchs/rails-i18n/tree/master/rails%2Flocale for starting points.
-
 en:
   unknown: 'A system error has occurred.  If the problem persists, please contact Red Hat support.'
 
@@ -40,25 +37,6 @@ en:
       access/express_request:
        terms_accepted: "Accept Terms?"
 
-  express_api:
-    errors:
-      unauthorized: "Authorization problem. Please check that your password is correct."
-      app_unavailable: "We couldn't verify that your app was successfully created. It may have been created but be unavailable. Please check back in a bit to see if your app was created or not."
-      timeout: "We're sorry, this operation has timed out. It is possible that it was successfully completed, but we are unable to verify it."
-    messages:
-      domain_create: "Congratulations! You successfully created your domain"
-      domain_update: "Congratulations! You successfully updated your domain"
-      domain_update_ssh: "Congratulations! You successfully updated your ssh key"
-      app_available: "Congratulations! Your app is live!"
-      app_created: "Congratulations! Your app has been created. It may be a few minutes before it is live."
-      app_deleted: "Your app has been successfully deleted"
-
-  rest_api:
-    errors:
-      '116': 'Type is required and cannot be blank.'
-      '121': 'You have already saved this public key with a different name. Provide a different key here.'
-
   recaptcha:
     errors:
       incorrect-captcha-sol: "Captcha text didn't match"
-      
