@@ -1,8 +1,0 @@
-%section.main
-  %header
-    %h1 
-      What's Next?
-    
-  .content
-    %p
-      Check your inbox for an email with a validation link. Click on the link to complete the registration process.
