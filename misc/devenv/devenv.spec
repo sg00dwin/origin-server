@@ -8,7 +8,7 @@
 
 Summary:   Dependencies for OpenShift development
 Name:      rhc-devenv
-Version:   0.91.7
+Version:   0.91.8
 Release:   1%{?dist}
 Group:     Development/Libraries
 License:   GPLv2
@@ -380,6 +380,30 @@ echo "Header append Strict-Transport-Security includeSubDomains" >> /etc/httpd/c
 %{policydir}/*
 
 %changelog
+* Mon Apr 09 2012 Mike McGrath <mmcgrath@redhat.com> 0.91.8-1
+- Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
+  (mmcgrath@redhat.com)
+- Merge branch 'master' of li-master:/srv/git/li (ramr@redhat.com)
+- Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
+  (mmcgrath@redhat.com)
+- Add required drupal modules to master (ccoleman@redhat.com)
+- Syncing jobs for jenkins (mmcgrath@redhat.com)
+- Bug fix to get li-cleanup-util working. (ramr@redhat.com)
+- Merge remote-tracking branch 'origin/master' (kraman@gmail.com)
+- devenv/iptables: set the connlimit for port 80 and 443 to match what's in STG
+  / PROD per mmcgrath (twiest@redhat.com)
+- Merge remote-tracking branch 'origin/master' into dev/kraman/US2048
+  (kraman@gmail.com)
+- Tweaked the version number (tkramer@redhat.com)
+- devenv - Added hsts to Apache - Apr 5 2012 (tkramer@redhat.com)
+- Merge remote-tracking branch 'origin/master' (kraman@gmail.com)
+- Merge remote-tracking branch 'origin/master' (kraman@gmail.com)
+- Fixing dependencies for python, ruby, diy in devenv spec (kraman@gmail.com)
+- Merge remote-tracking branch 'origin/master' (kraman@gmail.com)
+- Automatic commit of package [rhc-devenv] release [0.91.2-1].
+  (kraman@gmail.com)
+- Updating dependencies to match new package names (kraman@gmail.com)
+
 * Thu Apr 05 2012 Tim Kramer <tkramer@redhat.com> 0.91.7-1
 - Added hsts to Apache for Bugzilla 801848
 
