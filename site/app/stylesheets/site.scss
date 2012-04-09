@@ -20,6 +20,7 @@
 @import "variables";
 @import "bootstrap/variables";
 @import "bootstrap/mixins";
+@import "mixins";
 @import "ribbon";
 
 @import "site/navbar";
@@ -492,11 +493,6 @@ body.signup {
   &:hover, &:active { color: $ribbonColor; text-decoration: none; }
 }
 
-// external links get a northeast arrow to indicate they are external
-a.external:after { content: " \279A"; }
-
-// make font larger
-.larger {font-size: 123%;}
 
 // Standard header with ribbon
 h1.ribbon {
@@ -526,11 +522,11 @@ h1.ribbon {
 
   min-width: 30%;
 
-  @media (max-width: 480px) { left: -20px; }
-  @media (max-width: 767px) { right: -20px;  }
-  @media (min-width: 768px) and (max-width: 979px) { right: -30px; }
-  @media (min-width: 980px) and (max-width: 1199px) { right: -38px; }
-  @media (min-width: 1200px) { right: -40px; }
+  @media (max-width: 480px) { left: -$gridGutterWidthPhone; }
+  @media (max-width: 767px) { right: -$gridGutterWidthTablet;  }
+  @media (min-width: 768px) and (max-width: 979px) { right: -$gridGutterWidth; }
+  @media (min-width: 980px) and (max-width: 1199px) { right: -$gridGutterWidth; }
+  @media (min-width: 1200px) { right: $gridGutterWidthLarge; }
 
   @media (min-width: 768px) {
     float: right;
@@ -673,11 +669,10 @@ h1.ribbon {
 
 @media (max-width: 767px) {
   /* FIXME: May be a better way to handle this */
-  .container .row-content .column-nav { 
-    margin: 0 -20px; 
-    padding: 0 20px; 
+  .container .row-content .column-nav,
+  .container .row-content .info-ribbon {
+    @include expand_for_phone();
   }
-
   .nav-location { display: none; }
 }
 
@@ -740,7 +735,7 @@ body > header {
 @media (max-width: 767px) {
   body > header {
     background: #191919 url($transparentNoiseImageData) repeat; 
-    min-height: 300px;
+    //min-height: 300px;
   }
 }
 
@@ -841,13 +836,14 @@ body.home {
   }
 }
 
+
 @media (max-width: 767px) {
   body.home  > header {
     background: #191919 url($transparentNoiseImageData) repeat; 
   }
 
   .home .messaging {
-    margin: 0;
+    margin: 20px 0;
   }
 
   .home #buzz {
@@ -860,6 +856,12 @@ body.home {
       margin: 0;
       padding: 30px $gridGutterWidthTablet 40px;
     }
+  }
+}
+
+@media (max-width: 480px) {
+  .home .messaging {
+    margin: 10px 0;
   }
 }
 
