@@ -989,3 +989,51 @@ body.simple {
   }
 }
 
+/* Outage notification */
+#outage_notification {
+  background: $ribbonFoldColor;
+  color: white;
+
+  h2 {
+    color: inherit;
+    font-size: 16px;
+    line-height: 16px;
+    padding: 11px 0;
+  }
+  pre {
+    background: inherit;
+    color: inherit;
+    border: none;
+    font-family: $baseFontFamily;
+    padding: 10px 0;
+  }
+/*
+  #outage_toggle {
+    display: inline-block;
+    position: absolute;
+    bottom: -24px;
+    left: 0;
+    background: inherit;
+    font-size: 14px;
+    font-weight: bold;
+    padding: 5px 15px;
+
+    &:active {
+      outline: none;
+      border: none;
+    }
+  }
+*/
+}
+@media (max-width: 767px) {
+  #outage_notification {
+    width: 100%;
+    h2 {
+      display: none;
+    }
+    pre {
+      margin: 0 auto;
+      width: 100%;
+    }
+  }
+}
