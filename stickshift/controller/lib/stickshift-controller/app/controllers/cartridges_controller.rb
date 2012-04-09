@@ -19,7 +19,7 @@ class CartridgesController < BaseController
         Application.get_available_cartridges(cart_type)
       end
       carts.each do |cart|
-        cartridge = RestCartridge.new(cart_type, cart)
+        cartridge = RestCartridge.new(cart_type, cart, nil, get_url)
         cartridges.push(cartridge)
       end
     end
@@ -31,7 +31,7 @@ class CartridgesController < BaseController
         Application.get_available_cartridges(cart_type)
       end
       carts.each do |cart|
-        cartridge = RestCartridge.new(cart_type, cart)
+        cartridge = RestCartridge.new(cart_type, cart, nil, get_url)
         cartridges.push(cartridge)
       end
     end

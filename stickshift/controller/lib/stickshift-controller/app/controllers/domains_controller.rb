@@ -7,7 +7,7 @@ class DomainsController < BaseController
     Rails.logger.debug "Getting domains for user #{@cloud_user.login}"
     Rails.logger.debug @cloud_user.domains
     @cloud_user.domains.each do |domain|
-      domains.push(RestDomain.new(domain))
+      domains.push(RestDomain.new(domain, get_url))
     end
     @reply = RestReply.new(:ok, "domains", domains)
     respond_with @reply, :status => @reply.status
@@ -20,7 +20,7 @@ class DomainsController < BaseController
     domain = get_domain(id)
     if domain and domain.hasAccess?(@cloud_user)
       Rails.logger.debug "Found domain #{id}"
-      domain = RestDomain.new(domain)
+      domain = RestDomain.new(domain, get_url)
       @reply = RestReply.new(:ok, "domain", domain)
       respond_with @reply, :status => @reply.status
     else
@@ -75,7 +75,7 @@ class DomainsController < BaseController
     return
     end
 
-    domain = RestDomain.new(domain)
+    domain = RestDomain.new(domain, get_url)
     @reply = RestReply.new(:created, "domain", domain)
     respond_with @reply, :status => @reply.status
   end
@@ -146,7 +146,7 @@ class DomainsController < BaseController
     return
     end
     @cloud_user = CloudUser.find(@login)
-    domain = RestDomain.new(domain)
+    domain = RestDomain.new(domain, get_url)
     @reply = RestReply.new(:ok, "domain", domain)
 
     respond_with(@reply) do |format|

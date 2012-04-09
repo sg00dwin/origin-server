@@ -73,7 +73,7 @@ class AppEventsController < BaseController
     end
     
     application = Application.find(@cloud_user, id)
-    app = RestApplication.new(application, domain_id)
+    app = RestApplication.new(application, get_url)
     @reply = RestReply.new(:ok, "application", app)
     message = Message.new("INFO", "Added #{event} to application #{id}")
     @reply.messages.push(message)

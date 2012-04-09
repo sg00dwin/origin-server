@@ -3,7 +3,7 @@ class ApplicationTemplateController < BaseController
   before_filter :authenticate
   
   def index
-    templates = ApplicationTemplate.find_all.map{|t| RestApplicationTemplate.new(t)}
+    templates = ApplicationTemplate.find_all.map{|t| RestApplicationTemplate.new(t, get_url)}
     @reply = RestReply.new(:ok, "application_templates", templates)
     respond_with @reply, :status => @reply.status
   end
@@ -12,10 +12,10 @@ class ApplicationTemplateController < BaseController
     id_or_tag = params[:id]
     template = ApplicationTemplate.find(id_or_tag)
     unless template.nil?
-      @reply = RestReply.new(:ok, "application_template", RestApplicationTemplate.new(template))
+      @reply = RestReply.new(:ok, "application_template", RestApplicationTemplate.new(template, get_url))
       respond_with @reply, :status => @reply.status
     else
-      templates = ApplicationTemplate.find_all(id_or_tag).map{|t| RestApplicationTemplate.new(t)}
+      templates = ApplicationTemplate.find_all(id_or_tag).map{|t| RestApplicationTemplate.new(t, get_url)}
       @reply = RestReply.new(:ok, "application_templates", templates)
       respond_with @reply, :status => @reply.status
     end

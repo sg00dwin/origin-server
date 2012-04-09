@@ -4,7 +4,7 @@ class EstimatesController < BaseController
 
   # GET /estimates
   def index
-    @reply = RestReply.new(:ok, "estimates", RestEstimates.new)
+    @reply = RestReply.new(:ok, "estimates", RestEstimates.new(get_url))
     respond_with @reply, :status => @reply.status
   end
 
