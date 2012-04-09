@@ -54,6 +54,7 @@ class GroupInstance < StickShift::UserModel
       # proxy component.
       if self.component_instances.include? "@@app/comp-proxy/cart-haproxy-1.4"
         gear.uuid = app.uuid
+        gear.name = app.name
       end
     else
       # For non scalable app's, gear's uuid is the app uuid.
