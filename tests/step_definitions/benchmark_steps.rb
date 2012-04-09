@@ -42,6 +42,7 @@ def create_scaled_app_via_rest_api(app, ngears)
   restapicall = "curl -s -o /tmp/rhc/json_response_#{app.name}_#{app.namespace}.json -k -H 'Accept: application/json' --user '#{app.login}:fakepw' https://localhost/broker/rest/domains/#{app.namespace}/applications -X POST -d name=#{app.name} -d cartridge=#{app.type}"
 
   command = "#{restapicall} -d scale=true"
+  $logger.debug("Creating scaled #{app.type} app - #{command}")
   app.create_app_code = runcon command, 'unconfined_u', 'unconfined_r', 'unconfined_t'
   if app.create_app_code != 0
     raise "Could not create scaled app.  Exit code: #{app.create_app_code}.  Json debug: /tmp/rhc/json_response_#{app.name}_#{app.namespace}.json"
@@ -50,6 +51,7 @@ def create_scaled_app_via_rest_api(app, ngears)
   while ngears > 1 do
     ngears -= 1
     command = "#{restapicall} -d event=scale-up"
+    $logger.debug("Scaling up #{app.type} app - #{command}")
     exit_code = runcon command, 'unconfined_u', 'unconfined_r', 'unconfined_t'
     if exit_code != 0
        raise "Could not scale up application.  Exit code: #{exit_code}.  Json debug: /tmp/rhc/json_response_#{app.name}_#{app.namespace}.json"
