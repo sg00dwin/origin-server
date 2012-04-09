@@ -143,7 +143,7 @@ $update_free_access = FALSE;
  * It is not allowed to have a trailing slash; Drupal will add it
  * for you.
  */
-$base_url = '/drupal';  // NO trailing slash!
+//$base_url = '/drupal';  // NO trailing slash!
 
 /**
  * PHP settings:
