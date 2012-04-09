@@ -97,7 +97,7 @@ class DomainsController < BaseController
     end
     if domain and not domain.hasFullAccess?@cloud_user
       @reply = RestReply.new(:forbidden)
-      @reply.messages.push(message = Message.new(:error, "You do not have permission to modify this domain", 131))
+      @reply.messages.push(message = Message.new(:error, "You do not have permission to modify this domain", 132))
       respond_with(@reply) do |format|
         format.xml { render :xml => @reply, :status => @reply.status }
         format.json { render :json => @reply, :status => @reply.status }
@@ -178,7 +178,7 @@ class DomainsController < BaseController
 
     if domain and not domain.hasFullAccess?@cloud_user
       @reply = RestReply.new(:forbidden)
-      @reply.messages.push(message = Message.new(:error, "You do not have permission to delete this domain", 131))
+      @reply.messages.push(message = Message.new(:error, "You do not have permission to delete this domain", 132))
       respond_with(@reply) do |format|
         format.xml { render :xml => @reply, :status => @reply.status }
         format.json { render :json => @reply, :status => @reply.status }
