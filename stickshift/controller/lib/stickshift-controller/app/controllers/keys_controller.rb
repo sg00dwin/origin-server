@@ -7,7 +7,7 @@ class KeysController < BaseController
     ssh_keys = Array.new
     unless @cloud_user.ssh_keys.nil? 
       @cloud_user.ssh_keys.each do |name, key|
-        ssh_key = RestKey.new(name, key["key"], key["type"])
+        ssh_key = RestKey.new(name, key["key"], key["type"], get_url)
         ssh_keys.push(ssh_key)
       end
     end
@@ -21,7 +21,7 @@ class KeysController < BaseController
     if @cloud_user.ssh_keys
       @cloud_user.ssh_keys.each do |key_name, key|
         if key_name == id
-          @reply = RestReply.new(:ok, "key", RestKey.new(key_name, key["key"], key["type"]))
+          @reply = RestReply.new(:ok, "key", RestKey.new(key_name, key["key"], key["type"], get_url))
           respond_with @reply, :status => @reply.status
         return
         end
@@ -82,7 +82,7 @@ class KeysController < BaseController
     begin
       @cloud_user.add_ssh_key(name, content, type)
       @cloud_user.save
-      ssh_key = RestKey.new(name, @cloud_user.ssh_keys[name]["key"], @cloud_user.ssh_keys[name]["type"])
+      ssh_key = RestKey.new(name, @cloud_user.ssh_keys[name]["key"], @cloud_user.ssh_keys[name]["type"], get_url)
       @reply = RestReply.new(:created, "key", ssh_key)
       @reply.messages.push(Message.new(:info, "Created SSH key #{name} for user #{@login}"))
       respond_with @reply, :status => @reply.status
@@ -132,7 +132,7 @@ class KeysController < BaseController
     begin
       @cloud_user.update_ssh_key(content, type, id)
       @cloud_user.save
-      ssh_key = RestKey.new(id, @cloud_user.ssh_keys[id]["key"], @cloud_user.ssh_keys[id]["type"])
+      ssh_key = RestKey.new(id, @cloud_user.ssh_keys[id]["key"], @cloud_user.ssh_keys[id]["type"], get_url)
       @reply = RestReply.new(:ok, "key", ssh_key)
       @reply.messages.push(Message.new(:info, "Updated SSH key with name #{id} for user #{@login}"))
       respond_with(@reply) do |format|

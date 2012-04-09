@@ -5,8 +5,7 @@ Feature: domains
   I want to List, Create, Retrieve, Update and Delete domains
   
   Scenario Outline: List domains
-    Given a new guest account
-    And I am a valid user
+    Given a new user
     And I accept "<format>"
     When I send a POST request to "/domains" with the following:"namespace=cucumber<random>"
     Then the response should be "201"
@@ -19,8 +18,7 @@ Feature: domains
      | XML | 
      
   Scenario Outline: Create domain
-    Given a new guest account
-    And I am a valid user
+    Given a new user
     And I accept "<format>"
     When I send a POST request to "/domains" with the following:"namespace=cucumber<random>"
     Then the response should be "201"
@@ -32,8 +30,7 @@ Feature: domains
      | XML | 
      
   Scenario Outline: Create domain with blank, missing, too long and invalid namespace
-    Given a new guest account
-    And I am a valid user
+    Given a new user
     And I accept "<format>"
     When I send a POST request to "/domains" with the following:"namespace="
     Then the response should be "422"
@@ -54,8 +51,7 @@ Feature: domains
      | XML | 
      
   Scenario Outline: Retrieve domain
-    Given a new guest account
-    And I am a valid user
+    Given a new user
     And I accept "<format>"
     When I send a POST request to "/domains" with the following:"namespace=cucumber<random>"
     Then the response should be "201"
@@ -69,8 +65,7 @@ Feature: domains
      | XML | 
      
   Scenario Outline: Retrieve non-existent domain
-    Given a new guest account
-    And I am a valid user
+    Given a new user
     And I accept "<format>"
     When I send a GET request to "/domains/cucumber<random>"
     Then the response should be "404"
@@ -82,8 +77,7 @@ Feature: domains
      | XML | 
      
   Scenario Outline: Update domain
-    Given a new guest account
-    And I am a valid user
+    Given a new user
     And I accept "<format>"
     When I send a POST request to "/domains" with the following:"namespace=cucumber<random>"
     Then the response should be "201"
@@ -97,8 +91,7 @@ Feature: domains
      | XML | 
      
   Scenario Outline: Update domain with blank, missing, too long and invalid namespace
-    Given a new guest account
-    And I am a valid user
+    Given a new user
     And I accept "<format>"
     When I send a POST request to "/domains" with the following:"namespace=cucumber<random>"
     Then the response should be "201"
@@ -124,8 +117,7 @@ Feature: domains
      | XML | 
      
   Scenario Outline: Update non-existent domain
-    Given a new guest account
-    And I am a valid user
+    Given a new user
     And I accept "<format>"
     When I send a POST request to "/domains" with the following:"namespace=cucumber<random>"
     Then the response should be "201"
@@ -139,8 +131,7 @@ Feature: domains
      | XML | 
      
   Scenario Outline: Update domain with applications
-    Given a new guest account
-    And I am a valid user
+    Given a new user
     And I accept "<format>"
     When I send a POST request to "/domains" with the following:"namespace=cucumber<random>"
     Then the response should be "201"
@@ -158,13 +149,14 @@ Feature: domains
      
      
   Scenario Outline: Update the domain of another user
-    Given a new guest account
-    And I am a valid user
+    Given a new user
     And I accept "<format>"
     When I send a POST request to "/domains" with the following:"namespace=cucumber<random>"
     Then the response should be "201"
-    Given a new guest account
-    And I am a valid user
+    Given a new user
+
+    When I send a GET request to "/domains/cucumber<random>"
+    Then the response should be "404"
     When I send a PUT request to "/domains/cucumber<random>" with the following:"namespace=cucumberX<random>"
     Then the response should be "404"
     And the error message should have "severity=error&exit_code=127"
@@ -176,8 +168,7 @@ Feature: domains
      
      
   Scenario Outline: Delete domain
-    Given a new guest account
-    And I am a valid user
+    Given a new user
     And I accept "<format>"
     When I send a POST request to "/domains" with the following:"namespace=cucumber<random>"
     Then the response should be "201"
@@ -192,8 +183,7 @@ Feature: domains
      | XML |
       
   Scenario Outline: Delete non-existent domain
-    Given a new guest account
-    And I am a valid user
+    Given a new user
     And I accept "<format>"
     When I send a POST request to "/domains" with the following:"namespace=cucumber<random>"
     Then the response should be "201"
@@ -207,13 +197,12 @@ Feature: domains
      | XML |   
      
   Scenario Outline: Delete domain of another user
-    Given a new guest account
-    And I am a valid user
+    Given a new user
     And I accept "<format>"
     When I send a POST request to "/domains" with the following:"namespace=cucumber<random>"
     Then the response should be "201"
-    Given a new guest account
-    And I am a valid user
+    Given a new user
+
     When I send a DELETE request to "/domains/cucumber<random>"
     Then the response should be "404"
     
@@ -223,8 +212,7 @@ Feature: domains
      | XML |  
      
   Scenario Outline: Delete domain with existing applications
-    Given a new guest account
-    And I am a valid user
+    Given a new user
     And I accept "<format>"
     When I send a POST request to "/domains" with the following:"namespace=cucumber<random>"
     Then the response should be "201"
@@ -242,8 +230,7 @@ Feature: domains
      | XML | 
      
   Scenario Outline: Force Delete domain with existing applications
-    Given a new guest account
-    And I am a valid user
+    Given a new user
     And I accept "<format>"
     When I send a POST request to "/domains" with the following:"namespace=cucumber<random>"
     Then the response should be "201"
@@ -258,8 +245,7 @@ Feature: domains
      | XML | 
      
   Scenario Outline: Create more than one domain
-    Given a new guest account
-    And I am a valid user
+    Given a new user
     And I accept "<format>"
     When I send a POST request to "/domains" with the following:"namespace=cucumber<random>"
     Then the response should be "201"
@@ -274,8 +260,7 @@ Feature: domains
      | XML | 
      
   Scenario Outline: Create duplicate domain
-    Given a new guest account
-    And I am a valid user
+    Given a new user
     And I accept "<format>"
     When I send a POST request to "/domains" with the following:"namespace=cucumber<random>"
     Then the response should be "201"

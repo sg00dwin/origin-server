@@ -1258,6 +1258,19 @@ Configure-Order: [\"proxy/#{framework}\", \"proxy/haproxy-1.4\"]
     deleted_components_list
   end
   
+  # Get path for checking application health
+  # @return [String]
+  def health_check_path
+    case self.framework_cartridge
+      when 'php'
+        page = 'health_check.php'
+      when 'perl'
+        page = 'health_check.pl'
+      else
+        page = 'health'
+    end
+  end
+  
 private
 
   def cleanup_deleted_components
