@@ -19,6 +19,7 @@ class RestApiTest < ActiveSupport::TestCase
     end
 
     Domain.any_instance.expects(:check_duplicate_domain).returns(false)
+
     with_unique_user
   end
   def teardown
