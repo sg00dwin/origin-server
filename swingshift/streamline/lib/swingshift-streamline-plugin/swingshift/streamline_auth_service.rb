@@ -36,6 +36,7 @@ module SwingShift
           return check_broker_key(login, password)
         else
           unless Rails.configuration.auth[:integrated]
+            raise StickShift::AccessDeniedException if login.nil? or login.empty?
             token = {:username => login, :auth_method => :login}
           else
             token = check_login(request, login, password)
@@ -53,6 +54,7 @@ module SwingShift
         else
           login = data['rhlogin']
           unless Rails.configuration.auth[:integrated]
+            raise StickShift::AccessDeniedException if data['rhlogin'].nil? or data['rhlogin'].empty?
             token = {:username => data['rhlogin'], :auth_method => :login}
           else
             password = params['password']
