@@ -849,13 +849,15 @@ END
   def setup_multi_node_broker
     options.verbose? ? @@log.level = Logger::DEBUG : @@log.level = Logger::ERROR
 
-    internal_hostname = get_internal_hostname("verifier")
-    ssh("verifier", "sed -i 's,^plugin.amqp.host.*=.*,plugin.amqp.host=#{internal_hostname},' /etc/mcollective/client.cfg;" \
-                  "sed -i 's,^plugin.amqp.host.*=.*,plugin.amqp.host=#{internal_hostname},' /etc/mcollective/server.cfg;" \
-                  "sed -i 's,^ssl-cert-name.*=.*,ssl-cert-name=#{internal_hostname},' /etc/qpidd.conf;" \
-                  "sed -i 's,^server_id.*=.*,server_id=#{internal_hostname},' /etc/stickshift/devenv/qpid/make-certs.sh;" \
-                  "sed -i 's,^owner_domain_name.*=.*,owner_domain_name=#{internal_hostname},' /etc/stickshift/devenv/qpid/make-certs.sh;" \
+    #internal_hostname = get_internal_hostname("verifier")
+    internal_ip = get_private_ip("verifier")
+    ssh("verifier", "sed -i 's,^plugin.amqp.host.*=.*,plugin.amqp.host=#{internal_ip},' /etc/mcollective/client.cfg;" \
+                  "sed -i 's,^plugin.amqp.host.*=.*,plugin.amqp.host=#{internal_ip},' /etc/mcollective/server.cfg;" \
+                  "sed -i 's,^ssl-cert-name.*=.*,ssl-cert-name=#{internal_ip},' /etc/qpidd.conf;" \
+                  "sed -i 's,^server_id.*=.*,server_id=#{internal_ip},' /etc/stickshift/devenv/qpid/make-certs.sh;" \
+                  "sed -i 's,^owner_domain_name.*=.*,owner_domain_name=#{internal_ip},' /etc/stickshift/devenv/qpid/make-certs.sh;" \
                   "sed -i 's,^#-A,-A,' /etc/sysconfig/iptables;" \
+                  "sed -i 's,^BROKER_HOST.*=.*,BROKER_HOST=#{internal_ip},' /etc/stickshift/stickshift-node.conf;" \
                   "pushd /etc/stickshift/devenv/qpid/ > /dev/null;" \
                   "./make-certs.sh;" \
                   "/bin/cp test/client_db/* /etc/qpid/pki/client_db/; /bin/cp test/server_db/* /etc/qpid/pki/server_db/;" \
@@ -878,11 +880,10 @@ END
     puts `pushd /tmp > /dev/null; rm -rf /tmp/test; scp -r verifier:/etc/stickshift/devenv/qpid/test/ .; scp -r test/client_db/* #{hostname}:/etc/qpid/pki/client_db/; scp -r test/server_db/* #{hostname}:/etc/qpid/pki/server_db/; popd > /dev/null`
     puts `pushd /tmp > /dev/null; rm -rf /tmp/clients; scp -r verifier:/etc/mcollective/ssl/clients/ .; scp -r clients/* #{hostname}:/etc/mcollective/ssl/clients/; popd > /dev/null`
 
-    ssh(hostname, "sed -i 's,^plugin.amqp.host.*=.*,plugin.amqp.host=#{internal_hostname},' /etc/mcollective/server.cfg;" \
-                  "sed -i 's,^ssl-cert-name.*=.*,ssl-cert-name=#{internal_hostname},' /etc/qpidd.conf;" \
+    ssh(hostname, "sed -i 's,^plugin.amqp.host.*=.*,plugin.amqp.host=#{internal_ip},' /etc/mcollective/server.cfg;" \
                   "restorecon -R /etc/qpid/pki/; chmod +r /etc/qpid/pki/client_db/* /etc/qpid/pki/server_db/*;" \
                   "sed -i 's,^BROKER_HOST.*=.*,BROKER_HOST=#{internal_ip},' /etc/stickshift/stickshift-node.conf;" \
-                  "service qpidd restart; service mcollective restart", 240)
+                  "service qpidd stop; service mcollective restart", 240)
 
     puts ssh("verifier", "mc-ping")
   end
