@@ -81,6 +81,17 @@ Broker::Application.configure do
     :apptegic_secret => "4DC5A0AA-48AE-9287-5F66-9A73E14B6E31",
     :apptegic_dataset => "test"
   }
+
+  config.datastore = {
+    :replica_set => true,
+    # Replica set example: [[<host-1>, <port-1>], [<host-2>, <port-2>], ...]
+    :host_port => [["localhost", 27017]],
+        
+    :user => "libra",
+    :password => "momo",
+    :db => "openshift_broker_dev",
+    :collections => {:user => "user", :district => "district", :application_template => "template"}
+  }
   
   # SS Config
   config.ss = {
@@ -96,19 +107,6 @@ Broker::Application.configure do
         :zone => "example.com"
       }
     },
-
-    :datastore => {
-      :mongo => {
-        :replica_set => true,
-        # Replica set example: [[<host-1>, <port-1>], [<host-2>, <port-2>], ...]
-        :host_port => [["localhost", 27017]],
-        
-        :user => "libra",
-        :password => "momo",
-        :db => "openshift_broker_dev",
-        :collections => {:user => "user", :district => "district", :application_template => "template"}
-      }
-    }
   }
 
 end
