@@ -76,10 +76,6 @@ RedHatCloud::Application.routes.draw do
   match 'legal/openshift_privacy' => 'legal#openshift_privacy'
   match 'legal/opensource_disclaimer' => 'legal#opensource_disclaimer'
 
-  match 'opensource' => 'opensource#index'
-  match 'opensource/download' => 'opensource#download'
-
-
   # suggest we consolidate login/logout onto a session controller
   resource :login,
            :controller => "login",
@@ -117,9 +113,15 @@ RedHatCloud::Application.routes.draw do
   match 'console' => 'console#index', :via => :get
   match 'new_application' => 'application_types#index', :via => :get
 
-  resources   :download, 
-              :controller => 'download',
-              :only => [:show,:index]
+  unless Rails.env.production?
+    # TODO: Remove conditional when we go live with OpenSource OpenShift
+    match 'opensource' => 'opensource#index'
+    match 'opensource/download' => 'opensource#download'
+
+    resources   :download,
+                :controller => 'download',
+                :only => [:show,:index]
+  end
 
   unless Rails.env.production?
     match 'styleguide/:action' => 'styleguide'
