@@ -27,6 +27,10 @@ rm -rf %{buildroot}
 mkdir -p %{buildroot}%{cartdir}
 cp -rv abstract %{buildroot}%{cartdir}/
 cp -rv abstract-httpd %{buildroot}%{cartdir}/
+cp -rv LICENSE %{buildroot}%{cartdir}/abstract
+cp -rv COPYRIGHT %{buildroot}%{cartdir}/abstract
+cp -rv LICENSE %{buildroot}%{cartdir}/abstract-httpd
+cp -rv COPYRIGHT %{buildroot}%{cartdir}/abstract-httpd
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -43,6 +47,11 @@ rm -rf $RPM_BUILD_ROOT
 %attr(0755,-,-) %{_libexecdir}/stickshift/cartridges/abstract/info/lib/
 %attr(0750,-,-) %{_libexecdir}/stickshift/cartridges/abstract/info/connection-hooks/
 %{_libexecdir}/stickshift/cartridges/abstract/info
+%doc %{_libexecdir}/stickshift/cartridges/abstract/COPYRIGHT
+%doc %{_libexecdir}/stickshift/cartridges/abstract/LICENSE
+%doc %{_libexecdir}/stickshift/cartridges/abstract-httpd/COPYRIGHT
+%doc %{_libexecdir}/stickshift/cartridges/abstract-httpd/LICENSE
+
 
 %post
 
