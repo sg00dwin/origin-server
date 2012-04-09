@@ -65,7 +65,7 @@ class GroupInstance < StickShift::UserModel
       raise NodeException.new("Unable to create gear on node", "-100", create_result)
     end
     self.gears << gear
-    if app.scalable
+    if app.scalable and not self.component_instances.include? "@@app/comp-proxy/cart-haproxy-1.4"
       app.add_dns(gear.name, app.domain.namespace, gear.get_proxy.get_public_hostname)
     end
     app.add_node_settings([gear])
