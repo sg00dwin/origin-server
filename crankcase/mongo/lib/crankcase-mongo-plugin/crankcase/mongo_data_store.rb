@@ -13,7 +13,7 @@ module Crankcase
       if access_info != nil
         # no-op
       elsif defined? Rails
-        access_info = Rails.application.config.ss[:datastore][:mongo]
+        access_info = Rails.application.config.datastore
       else
         raise Exception.new("Mongo DataStore service is not inilialized")
       end
