@@ -5,7 +5,7 @@
 
 Summary:        Cloud Development Node
 Name:           rubygem-%{gemname}
-Version:        0.8.1
+Version:        0.8.2
 Release:        1%{?dist}
 Group:          Development/Languages
 License:        ASL 2.0
@@ -97,6 +97,17 @@ if ! [ -f /etc/stickshift/resource_limits.conf ]; then
 fi
 
 %changelog
+* Mon Apr 09 2012 Mike McGrath <mmcgrath@redhat.com> 0.8.2-1
+- Updating gem versions (mmcgrath@redhat.com)
+- Merge remote-tracking branch 'origin/dev/kraman/US2048' (kraman@gmail.com)
+- 1) changes to fix remote job creation to work for express as well as
+  stickshift.  2) adding resource_limits.conf file to stickshift node.  3)
+  adding implementations of generating remote job objects in mcollective
+  application container proxy (abhgupta@redhat.com)
+- fixing ss-trap-user to run in correct selinux context (kraman@gmail.com)
+- Fixing cartridge-info executable used by OSS code (kraman@gmail.com)
+- Adding m-collective and oddjob gearchanger plugins (kraman@gmail.com)
+
 * Sat Mar 31 2012 Dan McPherson <dmcphers@redhat.com> 0.8.1-1
 - Updating gem versions (dmcphers@redhat.com)
 - bump spec numbers (dmcphers@redhat.com)
