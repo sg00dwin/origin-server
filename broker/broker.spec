@@ -3,7 +3,7 @@
 
 Summary:   Li broker components
 Name:      rhc-broker
-Version:   0.90.4
+Version:   0.90.5
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -92,6 +92,28 @@ rm -rf $RPM_BUILD_ROOT
 /bin/touch %{brokerdir}/log/production.log
 
 %changelog
+* Mon Apr 09 2012 Mike McGrath <mmcgrath@redhat.com> 0.90.5-1
+- Updating gem versions (mmcgrath@redhat.com)
+- cleaning up location of datatstore configuration (kraman@gmail.com)
+- Updating gemfile.lock (kraman@gmail.com)
+- Merge remote-tracking branch 'origin/master' into dev/kraman/US2048
+  (kraman@gmail.com)
+- Bunping gem version in Gemfile.lock Fix rename issue in application container
+  proxy (kraman@gmail.com)
+- moving bulk of the cucumber tests under stickshift and making changes so that
+  tests can be run both on devenv with express  as well as with opensource
+  pieces on the fedora image (abhgupta@redhat.com)
+- Merge remote-tracking branch 'origin/master' (kraman@gmail.com)
+- Merge remote-tracking branch 'origin/master' (kraman@gmail.com)
+- Bug fixes after initial merge of OSS packages (kraman@gmail.com)
+- Automatic commit of package [rhc-broker] release [0.90.2-1].
+  (kraman@gmail.com)
+- Updating dependencies to match new package names (kraman@gmail.com)
+- Merge remote-tracking branch 'origin/dev/kraman/US2048' (kraman@gmail.com)
+- Adding m-collective and oddjob gearchanger plugins (kraman@gmail.com)
+- Added mongo and streamline swingshift plugins (kraman@gmail.com)
+- Creating dynect plugin (kraman@gmail.com)
+
 * Wed Apr 04 2012 Mike McGrath <mmcgrath@redhat.com> 0.90.4-1
 - Updating gem versions (mmcgrath@redhat.com)
 
