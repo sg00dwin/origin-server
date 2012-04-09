@@ -33,7 +33,7 @@ module StatsHelper
       # And finally compute the variance - we don't compute the standard
       # deviation in here every time but just do it once at the very end.
       # Standard deviation is just the square root of the variance anyway.
-      @variance = (@deltaMsquare)/(@cnt - 1) if @cnt > 1 
+      @variance = (@deltaMsquare)/(@cnt - 1) if @cnt > 1
 
       # Check if value's a min/max value.
       @max = val if val > @max
@@ -99,7 +99,7 @@ module StatsHelper
       puts @@data
     end
   end
-    
+
 end
 
 World(StatsHelper)
