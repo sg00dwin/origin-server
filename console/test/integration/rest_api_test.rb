@@ -1,8 +1,24 @@
 require 'test_helper'
 
 class RestApiTest < ActiveSupport::TestCase
+  include ActiveSupport::Testing::Isolation
 
   def setup
+    #
+    # Integration tests are designed to run against the 
+    # production OpenShift service by default.  To change
+    # this, update ~/.openshift/api.yaml to point to a
+    # different server.
+    #
+    config = RestApi::Configuration.activate(:external)
+    if config[:authorization] == :passthrough
+      puts "Passthrough"
+      puts config.pretty_inspect
+      @user = RestApi::Authorization.new config[:login], nil, config[:password]
+      puts @user.pretty_inspect
+    end
+
+    Domain.any_instance.expects(:check_duplicate_domain).returns(false)
     with_unique_user
   end
   def teardown
@@ -14,7 +30,7 @@ class RestApiTest < ActiveSupport::TestCase
   #
   def with_unique_user
     setup_api
-    @user = RestApi::Authorization.new "rest-api-test-#{uuid}@test1.com"
+    @user ||= RestApi::Authorization.new "rest-api-test-#{uuid}@test1.com"
   end
 
   def test_key_get_all
@@ -181,7 +197,9 @@ class RestApiTest < ActiveSupport::TestCase
   end
 
   def test_domain_delete
-    setup_domain
+    RestApi.debug do
+      setup_domain
+    end
     # we can only have one domain so delete it and restore it
     items = Domain.find :all, :as => @user
     domain = items[0]
