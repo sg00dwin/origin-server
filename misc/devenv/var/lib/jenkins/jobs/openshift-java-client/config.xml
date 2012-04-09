@@ -23,7 +23,7 @@
         <string>uploadpack</string>
         <string>git-upload-pack</string>
         <string>url</string>
-        <string>https://github.com/adietish/openshift-java-client.git</string>
+        <string>https://github.com/bdecoste/openshift-java-client/</string>
         <string>tagopt</string>
         <string></string>
       </org.spearce.jgit.transport.RemoteConfig>
@@ -59,10 +59,9 @@
   </triggers>
   <concurrentBuild>false</concurrentBuild>
   <rootModule>
-    <groupId>org.jboss.tools.openshift.express</groupId>
-    <artifactId>org.jboss.tools.openshift.express.client</artifactId>
+    <groupId>com.openshift.express</groupId>
+    <artifactId>openshift-java-client</artifactId>
   </rootModule>
-  <rootPOM>org.jboss.tools.openshift.express.client/pom.xml</rootPOM>
   <aggregatorStyleBuild>true</aggregatorStyleBuild>
   <incrementalBuild>false</incrementalBuild>
   <usePrivateRepository>false</usePrivateRepository>
