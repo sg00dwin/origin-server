@@ -3,7 +3,7 @@ class RestEstimates < StickShift::Model
  
   def initialize
     self.links = {
-      "GET_APPLICATION" => Link.new("Get application estimate", "GET", "/estimates/application", [
+      "GET_ESTIMATE" => Link.new("Get application estimate", "GET", URI::join(url, "estimates/application"), [
         Param.new("descriptor", "string", "application requirements")
       ]) 
     }

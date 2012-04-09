@@ -19,7 +19,7 @@ class EmbCartController < BaseController
     cartridges = Array.new
     unless application.embedded.nil?
       application.embedded.each do |key, value|
-        cartridge = RestCartridge.new("embedded", key, id, domain_id)
+        cartridge = RestCartridge.new("embedded", key, application, get_url)
         cartridges.push(cartridge)
       end
     end
@@ -45,7 +45,7 @@ class EmbCartController < BaseController
     unless application.embedded.nil?
       application.embedded.each do |key, value|
         if key == id
-          cartridge = RestCartridge.new("embedded", key, application_id, domain_id)
+          cartridge = RestCartridge.new("embedded", key, application, get_url)
           @reply = RestReply.new(:ok, "cartridge", cartridge)
           respond_with @reply, :status => @reply.status
           return
@@ -132,7 +132,7 @@ class EmbCartController < BaseController
     unless application.embedded.nil?
       application.embedded.each do |key, value|
         if key == name
-          cartridge = RestCartridge.new("embedded", key, id, domain_id)
+          cartridge = RestCartridge.new("embedded", key, application, get_url)
           @reply = RestReply.new(:created, "cartridge", cartridge)
           message = Message.new(:info, "Added #{name} to application #{id}")
           @reply.messages.push(message)
@@ -192,7 +192,7 @@ class EmbCartController < BaseController
     end
       
     application = Application.find(@cloud_user, id)
-    app = RestApplication.new(application, domain_id)
+    app = RestApplication.new(application, get_url)
     @reply = RestReply.new(:ok, "application", app)
     message = Message.new(:info, "Removed #{cartridge} from application #{id}")
     @reply.messages.push(message)
