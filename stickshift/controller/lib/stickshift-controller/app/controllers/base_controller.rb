@@ -1,17 +1,16 @@
 class BaseController < ActionController::Base
   respond_to :json, :xml
-    
   def show
     links = {
-      "API" => Link.new("API entry point", "GET", "/api"),
-      "GET_USER" => Link.new("Get user information", "GET", "/user"),      
-      "LIST_DOMAINS" => Link.new("List domains", "GET", "/domains"),
-      "ADD_DOMAIN" => Link.new("Create new domain", "POST", "/domains", [
+      "API" => Link.new("API entry point", "GET", URI::join(get_url, "api")),
+      "GET_USER" => Link.new("Get user information", "GET", URI::join(get_url, "user")),      
+      "LIST_DOMAINS" => Link.new("List domains", "GET", URI::join(get_url, "domains")),
+      "ADD_DOMAIN" => Link.new("Create new domain", "POST", URI::join(get_url, "domains"), [
         Param.new("namespace", "string", "Name of the domain")
       ]),
-      "LIST_CARTRIDGES" => Link.new("List cartridges", "GET", "/cartridges"),
-      "LIST_TEMPLATES" => Link.new("List application templates", "GET", "/application_template"),
-      "GET_ESTIMATES" => Link.new("List available estimates", "GET" , "/estimates")
+      "LIST_CARTRIDGES" => Link.new("List cartridges", "GET", URI::join(get_url, "cartridges")),
+      "LIST_TEMPLATES" => Link.new("List application templates", "GET", URI::join(get_url, "application_template")),
+      "LIST_ESTIMATES" => Link.new("List available estimates", "GET" , URI::join(get_url, "estimates"))
     }
     
     @reply = RestReply.new(:ok, "links", links)
@@ -54,5 +53,12 @@ class BaseController < ActionController::Base
   
   def rest_replies_url(*args)
     return "/broker/rest/api"
+  end
+  
+  def get_url
+    #Rails.logger.debug "Request URL: #{request.url}"
+    url = URI::join(request.url, "/broker/rest/")
+    #Rails.logger.debug "Request URL: #{url.to_s}"
+    return url.to_s
   end
 end

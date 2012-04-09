@@ -103,6 +103,9 @@ rm -rf $RPM_BUILD_ROOT
 %attr(0750,-,-) %{_initddir}/stickshift-broker
 %attr(0755,-,-) %{_var}/lib/stickshift
 
+%doc %{brokerdir}/COPYRIGHT
+%doc %{brokerdir}/LICENSE
+
 /usr/share/selinux/packages/%{name}/
 
 %post
