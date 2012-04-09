@@ -3,7 +3,7 @@
 
 Summary:   Li site components
 Name:      rhc-site
-Version:   0.90.5
+Version:   0.90.6
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -117,6 +117,38 @@ rm -rf %{buildroot}
 /bin/touch %{sitedir}/log/production.log
 
 %changelog
+* Mon Apr 09 2012 Mike McGrath <mmcgrath@redhat.com> 0.90.6-1
+- Simplify some styles on the opensource page, correct some phone/tablet layout
+  issues. (ccoleman@redhat.com)
+- Attached images list removed from Community Wiki using CSS display none
+  (ffranz@redhat.com)
+- restrict opensource download routes to dev instance (johnp@redhat.com)
+- add all cart links to page (johnp@redhat.com)
+- Add timing and parent branch removal Better comments in the change section
+  Branch pruning and empty merge filtering Add password controller to
+  exclusion, begin tidying opensource.sh up for final status. Indicate how many
+  files will be preserved (ccoleman@redhat.com)
+- Create draft file for creating open source engine on console
+  (ccoleman@redhat.com)
+- move generic css to site so everyone can use it (johnp@redhat.com)
+- restyle opensource download page and add perliminary links (johnp@redhat.com)
+- Fix infinite recursion in find_or_create_resource_for by inlining method
+  React to changes from domain :name to domain :id   Remove legacy code
+  referencing old :namespace attributes   Replace all references to domain
+  :namespace with domain :name   Make custom_id in RestApi::Base override
+  :to_param instead of :id     Clean up unit tests to reflect this change - .id
+  and .name will now both show updates   Create new id alias methods to provide
+  legacy support for the getter key.destroy works on the first key - update the
+  test to check that (ccoleman@redhat.com)
+- ActiveResource association support was not working, and when attributes with
+  dashes are returned from REST API they throw a NameError.  Fix by sanitizing
+  resource class names for ActiveResource autodeserialization before invoked
+  (use a monkey patch on ActiveResource::Base) (ccoleman@redhat.com)
+- better layout for opensource download page (johnp@redhat.com)
+- tweak layout for download page (johnp@redhat.com)
+- example of using the info-ribbon class (johnp@redhat.com)
+- add a info-ribbon class to site.scss (johnp@redhat.com)
+
 * Wed Apr 04 2012 Mike McGrath <mmcgrath@redhat.com> 0.90.5-1
 - modified file download to use mirror.openshift.com (fotios@redhat.com)
 - make sure download link is a child of the containing element
