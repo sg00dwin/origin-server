@@ -14,27 +14,27 @@
       %ul.unstyled
         %li
           %h3
-            = link_to "Crank Case", "#{openshift_github_path}/crank_case", :class => "external", :target => "_blank"
+            = link_to "Crank Case", "#{@openshift_github_path}/crank_case", :class => "external", :target => "_blank"
             .link_desc User Management Component
         %li
           %h3
-            = link_to "Gear Changer", "#{openshift_github_path}/gear_changer", :class => "external", :target => "_blank"
+            = link_to "Gear Changer", "#{@openshift_github_path}/gear_changer", :class => "external", :target => "_blank"
             .link_desc Short description to come
         %li
           %h3
-            = link_to "RHC", "#{openshift_github_path}/os-client-tools", :class => "external", :target => "_blank"
+            = link_to "RHC", "#{@openshift_github_path}/os-client-tools", :class => "external", :target => "_blank"
             .link_desc Command-line client tools
         %li
           %h3
-            = link_to "StickShift", "#{openshift_github_path}/openshift/stickshift", :class => "external", :target => "_blank"
+            = link_to "StickShift", "#{@openshift_github_path}/openshift/stickshift", :class => "external", :target => "_blank"
             .link_desc Provides API
         %li
           %h3
-            = link_to "SwingShift", "#{openshift_github_path}/swingshift", :class => "external", :target => "_blank"
+            = link_to "SwingShift", "#{@openshift_github_path}/swingshift", :class => "external", :target => "_blank"
             .link_desc Provides user authentication
         %li
           %h3
-            = link_to "Uplift", "#{openshift_github_path}/uplift", :class => "external", :target => "_blank"
+            = link_to "Uplift", "#{@openshift_github_path}/uplift", :class => "external", :target => "_blank"
             .link_desc DNS Management component
 
     .span5.info-ribbon
@@ -70,19 +70,45 @@
   .row
     .span4
       %strong Web Frameworks
-      %ul.link-list
+      %ul
         %li
-          = link_to "JBossAS Cartridge", "#", :class => "external", :target => "_blank"
+          = link_to "JBossAS Cartridge", "#{@openshift_github_path}/jboss_cartridge", :class => "external", :target => "_blank"
+        %li
+          = link_to "Node.js Cartridge", "#{@openshift_github_path}/node_js_cartridge", :class => "external", :target => "_blank"
+        %li
+          = link_to "PHP Cartridge", "#{@openshift_github_path}/php_cartidge", :class => "external", :target => "_blank"
+        %li
+          = link_to "Perl Cartridge", "#{@openshift_github_path}/perl_cartridge", :class => "external", :target => "_blank"
+        %li
+          = link_to "Python Cartridge", "#{@openshift_github_path}/python_cartridge", :class => "external", :target => "_blank"
+        %li
+          = link_to "Ruby Cartridge", "#{@openshift_github_path}/ruby_cartridge", :class => "external", :target => "_blank"
     .span4
       %strong Database and Related
-      %ul.link-list
+      %ul
         %li
-          = link_to "10Gen MMS Cartridge", "#", :class => "external", :target => "_blank"
+          = link_to "10Gen MMS Cartridge", "#{@openshift_github_path}/10gen_mms_cartridge", :class => "external", :target => "_blank"
+        %li
+          = link_to "MondgoDB Cartridge", "#{@openshift_github_path}/mondgodb_cartridge", :class => "external", :target => "_blank"
+        %li
+          = link_to "MySQL Cartridge", "#{@openshift_github_path}/mysql_cartridge", :class => "external", :target => "_blank"
+        %li
+          = link_to "PHPMyAdmin Cartridge", "#{@openshift_github_path}/phpmyadmin_cartridge", :class => "external", :target => "_blank"
+        %li
+          = link_to "PostgreSQL Cartridge", "#{@openshift_github_path}/postgresql_cartridge", :class => "external", :target => "_blank"
+        %li
+          = link_to "Rockmongo Cartridge", "#{@openshift_github_path}/rockmongo_cartridge", :class => "external", :target => "_blank"
     .span4
       %strong Other Cartridges
-      %ul.link-list
+      %ul
         %li
-          = link_to "Cron Cartridge", "#", :class => "external", :target => "_blank"
+          = link_to "Cron Cartridge", "#{@openshift_github_path}/cron_cartridge", :class => "external", :target => "_blank"
+        %li
+          = link_to "Jenkins Server Cartridge", "#{@openshift_github_path}/jenkins_server_cartridge", :class => "external", :target => "_blank"
+        %li
+          = link_to "Jenkins Client Cartridge", "#{@openshift_github_path}/jenkins_client_cartridge", :class => "external", :target => "_blank"
+        %li
+          = link_to "Metrics Cartridge", "#{@openshift_github_path}/metrics_cartridge", :class => "external", :target => "_blank"
   .row
     .span11.well
       %h3 Important Information
