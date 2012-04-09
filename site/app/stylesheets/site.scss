@@ -718,7 +718,7 @@ body > header {
 }
 
 .messaging {
-  margin: 55px 0;
+  margin: 30px 0 45px;
   
   .primary {
     margin-bottom: 10px;
@@ -731,11 +731,9 @@ body > header {
   h1, h2 { color: white; }
 }
 
-
 @media (max-width: 767px) {
   body > header {
     background: #191919 url($transparentNoiseImageData) repeat; 
-    //min-height: 300px;
   }
 }
 
@@ -799,6 +797,10 @@ body.home {
 	    center bottom, 
 	    center bottom;
 		}
+}
+
+.home .messaging {
+  margin: 55px 0;
 }
 
 .home .learn li img {

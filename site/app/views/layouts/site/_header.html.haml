@@ -32,8 +32,8 @@
         -[  ["Learn More", product_overview_path],
             ["Get Started", getting_started_path],
             "&nbsp;",
-            ["Console", console_path],
-            ["Community", community_url] ].each do |link|
+            ["Developers", developers_path],
+            ["Community", community_path] ].each do |link|
           - if link.class.name == "String"
             %li.divider!= link.to_s
           -else
