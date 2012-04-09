@@ -5,7 +5,7 @@
 
 Summary:        SwingShift plugin for streamline auth service
 Name:           rubygem-%{gemname}
-Version:        0.7.4
+Version:        0.7.5
 Release:        1%{?dist}
 Group:          Development/Languages
 License:        ASL 2.0
@@ -70,6 +70,13 @@ rm -rf %{buildroot}
 %{ruby_sitelib}/%{gemname}.rb
 
 %changelog
+* Mon Apr 09 2012 Mike McGrath <mmcgrath@redhat.com> 0.7.5-1
+- raise access denied exception when recieving empty user login in devenv.
+  Bugz(811015) (kraman@gmail.com)
+- Test build process (kraman@gmail.com)
+- Additonal fixes:        - streamline auth (kraman@gmail.com)
+- Bug fixes after initial merge of OSS packages (kraman@gmail.com)
+
 * Mon Apr 02 2012 Krishna Raman <kraman@gmail.com> 0.7.4-1
 - 
 
