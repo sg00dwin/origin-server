@@ -135,10 +135,6 @@ add_ssh_key $public_key
 
 add_broker_auth_key
 
-#  Create a symlink to the gear's git directory.
-source_if_exists $APP_HOME/.env/OPENSHIFT_APP_NAME
-[ -f "$APP_HOME/git/${OPENSHIFT_APP_NAME}.git" ]  ||  ln -s $APP_HOME/git/$application.git $APP_HOME/git/${OPENSHIFT_APP_NAME}.git
-
 #
 # Create the core of the application
 #
@@ -164,7 +160,8 @@ export IP2=`embedded_find_open_ip $uid "$APP_HOME"`
 echo "export OPENSHIFT_HAPROXY_STATUS_IP='$IP'" > "$APP_HOME/.env/OPENSHIFT_HAPROXY_STATUS_IP"
 $CART_INFO_DIR/bin/deploy_httpd_config.sh $application $uuid $IP
 mkdir -p $APP_HOME/.openshift
-chown ${uuid} $APP_HOME/.openshift $HAPROXY_DIR/run/
+chown ${uuid} $APP_HOME/.openshift $HAPROXY_DIR/run/ $HAPROXY_DIR/logs/ $HAPROXY_DIR/sessions
+observe_setup_var_lib_dir "$HAPROXY_DIR"
 
 # Alter PATH so that the haproxy app_ctl.sh script is called.
 sed -i "s#export \s*PATH=#export PATH=$CART_INFO_DIR/bin/:#" $APP_HOME/.env/PATH
