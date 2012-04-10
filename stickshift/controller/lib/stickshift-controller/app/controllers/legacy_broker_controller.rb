@@ -100,6 +100,7 @@ class LegacyBrokerController < ApplicationController
     cloud_user = CloudUser.find(@login)
     cloud_user.auth_method = @auth_method unless cloud_user.nil?
     domain = get_domain(cloud_user, @req.namespace)
+    domain = cloud_user.domains.first if not domain
     
     if (!domain or not domain.hasFullAccess?(cloud_user)) && (@req.alter || @req.delete)
       Rails.logger.debug "Cannot alter or remove namespace #{@req.namespace}. Namspace does not exist.\n"
