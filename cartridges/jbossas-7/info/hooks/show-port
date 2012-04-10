@@ -36,15 +36,15 @@ import_env_vars
 proxy_port=$(show_proxy_port $uuid "$OPENSHIFT_INTERNAL_IP:$OPENSHIFT_INTERNAL_PORT")
 ret=$?
 if [ $ret -ne 0 ]; then
-  client_error "$proxy_port"
-  exit $ret
+  client_result "No proxy ports defined"
+  exit 0
 fi
 
 cluster_port=$(find_next_proxy_port $uuid "$OPENSHIFT_INTERNAL_IP:$OPENSHIFT_JBOSS_CLUSTER_PORT")
 ret=$?
 if [ $ret -ne 0 ]; then
-  client_error "$cluster_port"
-  exit $ret
+  client_result "No proxy ports defined"
+  exit 0
 fi
 
 cart_data "PROXY_HOST=$OPENSHIFT_GEAR_DNS"
