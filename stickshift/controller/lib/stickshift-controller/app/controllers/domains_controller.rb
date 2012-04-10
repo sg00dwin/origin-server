@@ -57,12 +57,12 @@ class DomainsController < BaseController
     return
     end
 
-    # if not @cloud_user.domains.empty?
-    #   @reply = RestReply.new(:conflict)
-    #   @reply.messages.push(Message.new(:error, "User already has a domain associated. Update the domain to modify.", 102))
-    #   respond_with @reply, :status => @reply.status
-    # return
-    # end
+    if not @cloud_user.domains.empty?
+      @reply = RestReply.new(:conflict)
+      @reply.messages.push(Message.new(:error, "User already has a domain associated. Update the domain to modify.", 102))
+      respond_with @reply, :status => @reply.status
+      return
+    end
 
     begin
       domain.save

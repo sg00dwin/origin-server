@@ -1,4 +1,4 @@
-require 'test_helper'
+require File.expand_path('../../test_helper', __FILE__)
 
 # Define a test class to mixin the module
 class StreamlineTester

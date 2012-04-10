@@ -3,7 +3,7 @@
 
 Summary:   Li site components
 Name:      rhc-site
-Version:   0.90.8
+Version:   0.90.10
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -117,6 +117,23 @@ rm -rf %{buildroot}
 /bin/touch %{sitedir}/log/production.log
 
 %changelog
+* Tue Apr 10 2012 Mike McGrath <mmcgrath@redhat.com> 0.90.10-1
+- test commit (mmcgrath@redhat.com)
+
+* Tue Apr 10 2012 Mike McGrath <mmcgrath@redhat.com> 0.90.9-1
+- Change requires for all test/units so that 'ruby test/unit/xxx.rb' runs the
+  test (ccoleman@redhat.com)
+- Bug 804018 - display a proper 404 when resources are not found   Until
+  multiple domain support lands we were using Domain.first - this returns nil
+  when an item exists.  Most .find methods that load a specific resource throw
+  an exception.  We should be doing the same until multidomain lands (and after
+  multidomain lands we should be looking up domains via id).  For now, use
+  Domain.find :one, which was created to throw if there is no domain.  Updated
+  unit tests.  Added rescue_from to ApplicationController, and added a note
+  about Rails 3.1 (which will allow render :status => 404 instead of a more
+  complicated output).  Controller should handle exceptions before redirecting
+  (ccoleman@redhat.com)
+
 * Tue Apr 10 2012 Mike McGrath <mmcgrath@redhat.com> 0.90.8-1
 - Revert "Merged login changes" (fotios@redhat.com)
 - fix vars in opensource download view (johnp@redhat.com)
