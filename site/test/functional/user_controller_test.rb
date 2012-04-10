@@ -53,19 +53,19 @@ class UserControllerTest < ActionController::TestCase
 
   test "should get success on post" do
     post(:create, {:web_user => get_post_form})
-    assert assigns(:user).errors.empty?
+    assert (assigns(:user).errors.reject{|k,v| v.nil?}).empty?
     assert_response :success
   end
 
   test "should ignore captcha non-integrated environment" do
-    Rails.configuration.expects(:integrated).never
-    @controller.expects(:verify_recaptcha).once
+    Rails.configuration.expects(:integrated).returns(false)
+    @controller.expects(:verify_recaptcha).never
     post(:create, {:web_user => {}})
     assert_response :success
   end
 
   test "should ignore captcha secret supplied" do
-    Rails.configuration.expects(:integrated).never
+    Rails.configuration.expects(:integrated).returns(true)
     Rails.configuration.expects(:captcha_secret).returns('123')
     @controller.expects(:verify_recaptcha).never
     post(:create, {:web_user => {}, :captcha_secret => '123'})
@@ -73,14 +73,14 @@ class UserControllerTest < ActionController::TestCase
   end
 
   test "should have captcha checked" do
-    Rails.configuration.expects(:integrated).never
+    Rails.configuration.expects(:integrated).returns(true)
     @controller.expects(:verify_recaptcha).returns(true)
     post(:create, {:web_user => {}})
     assert_response :success
   end
 
 	test "should have captcha check fail" do
-		Rails.configuration.expects(:integrated).never
+		Rails.configuration.expects(:integrated).returns(true)
 		@controller.expects(:verify_recaptcha).returns(false)
 		post(:create, {:web_user => {}})
 
@@ -91,7 +91,7 @@ class UserControllerTest < ActionController::TestCase
 		post(:create, {:web_user => get_post_form.merge({:cloud_access_choice => CloudAccess::EXPRESS})})
 
 		assert_equal 'express', assigns(:product)
-    assert_response :success
+		assert_response :success
 	end
 
   test "should register user from external" do
@@ -125,7 +125,7 @@ class UserControllerTest < ActionController::TestCase
     assert assigns(:user)
     assert session[:promo_code] == "promo1"
 
-    assert_response :success, @response.pretty_inspect
+    assert_response :success
   end
 
   def get_post_form
