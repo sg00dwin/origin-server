@@ -5,7 +5,7 @@
 
 Summary:        Cloud Development Controller
 Name:           rubygem-%{gemname}
-Version:        0.8.4
+Version:        0.8.5
 Release:        1%{?dist}
 Group:          Development/Languages
 License:        ASL 2.0
@@ -75,6 +75,13 @@ rm -rf %{buildroot}
 %{ruby_sitelib}/%{gemname}.rb
 
 %changelog
+* Mon Apr 09 2012 Mike McGrath <mmcgrath@redhat.com> 0.8.5-1
+- Updating gem versions (mmcgrath@redhat.com)
+- updated tests changed namespace to id (lnader@redhat.com)
+- dont register dns for haproxy gear twice over (rchopra@redhat.com)
+- Merge branch 'master' of git1.ops.rhcloud.com:/srv/git/li (rpenta@redhat.com)
+- Fix for bug# 807513 (rpenta@redhat.com)
+
 * Mon Apr 09 2012 Mike McGrath <mmcgrath@redhat.com> 0.8.4-1
 - Updating gem versions (mmcgrath@redhat.com)
 - Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
