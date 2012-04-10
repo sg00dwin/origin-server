@@ -2,7 +2,7 @@
 
 Summary:   StickShift common cartridge components
 Name:      stickshift-abstract
-Version:   0.8.2
+Version:   0.8.3
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   ASL 2.0
@@ -56,6 +56,9 @@ rm -rf $RPM_BUILD_ROOT
 %post
 
 %changelog
+* Tue Apr 10 2012 Adam Miller <admiller@redhat.com> 0.8.3-1
+- Return in a way that broker can manage. (rmillner@redhat.com)
+
 * Mon Apr 09 2012 Mike McGrath <mmcgrath@redhat.com> 0.8.2-1
 - Add LICENSE and COPYRIGHT files to stickshift-abstract Add LICENSE and
   COPYRIGHT files to stickshift-broker (jhonce@redhat.com)
