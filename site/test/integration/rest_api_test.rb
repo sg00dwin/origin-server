@@ -86,7 +86,7 @@ class RestApiTest < ActiveSupport::TestCase
   end
 
   def test_key_create_without_domain
-    domain = Domain.first(:as => @user)
+    domain = Domain.first :as => @user
     domain.destroy_recursive if domain
 
     key = Key.new :raw_content => 'ssh-rsa key', :name => 'default', :as => @user
@@ -135,13 +135,13 @@ class RestApiTest < ActiveSupport::TestCase
 
   def test_domains_first
     setup_domain
-    domain = Domain.first(:as => @user)
+    domain = Domain.find :one, :as => @user
     assert_equal "#{@ts}", domain.name
   end
 
   def test_domain_exists_error
     setup_domain
-    domain = Domain.first(:as => @user)
+    domain = Domain.find :one, :as => @user
     domain2 = Domain.new :name => domain.name, :as => @user
     assert !domain2.save
     assert domain2.errors[:name].is_a? Array
@@ -199,7 +199,7 @@ class RestApiTest < ActiveSupport::TestCase
 
   def test_domains_applications
     setup_domain
-    domain = Domain.first(:as => @user)
+    domain = Domain.find :one, :as => @user
 
     app1 = Application.new :name => 'app1', :cartridge => 'php-5.3', :as => @user
     app2 = Application.new :name => 'app2', :cartridge => 'php-5.3', :as => @user
@@ -224,7 +224,7 @@ class RestApiTest < ActiveSupport::TestCase
 
   def test_domains_applications_delete
     setup_domain
-    domain = Domain.first(:as => @user)
+    domain = Domain.find :one, :as => @user
 
     items = domain.applications
     orig_num_apps = items.length
@@ -250,7 +250,7 @@ class RestApiTest < ActiveSupport::TestCase
 
   def test_domain_reload
     setup_domain
-    domain = Domain.first :as => @user
+    domain = Domain.find :one, :as => @user
     oldname = domain.name
     domain.name = 'foo'
     assert_equal 'foo', domain.name
