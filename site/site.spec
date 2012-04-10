@@ -3,7 +3,7 @@
 
 Summary:   Li site components
 Name:      rhc-site
-Version:   0.90.7
+Version:   0.90.8
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -117,6 +117,17 @@ rm -rf %{buildroot}
 /bin/touch %{sitedir}/log/production.log
 
 %changelog
+* Tue Apr 10 2012 Mike McGrath <mmcgrath@redhat.com> 0.90.8-1
+- Revert "Merged login changes" (fotios@redhat.com)
+- fix vars in opensource download view (johnp@redhat.com)
+- css fix added for 802640, ie bug and rearrangement of font family order
+  (sgoodwin@redhat.com)
+- Merge branch 'master' of git1.ops.rhcloud.com:/srv/git/li (ffranz@redhat.com)
+- Fixes 811146 (ffranz@redhat.com)
+- refactor gear_size_profile and node profile to gear_profile
+  (johnp@redhat.com)
+- fix github urls to agreed upon path for OpenSource repos (johnp@redhat.com)
+
 * Tue Apr 10 2012 Mike McGrath <mmcgrath@redhat.com> 0.90.7-1
 - Merged login changes (fotios@redhat.com)
 

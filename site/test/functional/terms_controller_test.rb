@@ -4,19 +4,11 @@ class TermsControllerTest < ActionController::TestCase
   test "show accept terms unauthenticated" do
     get :new
     assert_redirected_to login_path
+    assert_equal new_terms_path, session[:login_workflow]
   end
 
-  test "redirect to legal site terms when none to accept" do
-    setup_user
-    get :new
-    assert_redirected_to legal_site_terms_path
-  end
-
-  test "show terms" do
-    setup_user
-    user = WebUser.new
-    user.terms = ['1']
-    @controller.expects(:session_user).returns(user)
+  test "show accept terms" do
+    setup_session
     get :new
     assert_response :success
   end
@@ -24,6 +16,7 @@ class TermsControllerTest < ActionController::TestCase
   test "accept terms unauthenticated" do
     post :create
     assert_redirected_to login_path
+    assert_equal new_terms_path, session[:login_workflow]
   end
 
   test "accept terms with streamline errors" do
@@ -42,51 +35,39 @@ class TermsControllerTest < ActionController::TestCase
   end
 
   test "accept terms but already accepted" do
-    setup_user
-    user = @controller.session_user
+    setup_session
+    user = session[:user]
     user.terms=[]
     user.expects(:accept_terms).never    
     post :create
     assert_equal 0, assigns(:term).errors.length
-    assert_redirected_to console_path
+    assert_redirected_to root_path
   end
 
   test "accept terms successfully" do
-    setup_user
-    user = @controller.session_user
+    setup_session
+    user = session[:user]
     user.terms = [{'termId' => '1', 'termUrl' => 'localhost'}]
     user.expects(:accept_terms).once
     post :create
     assert_equal 0, assigns(:term).errors.length
-    assert_redirected_to console_path
+    assert_redirected_to root_path
   end
 
   test "accept terms successfully with workflow" do
-    setup_user
-    @controller.terms_redirect = account_path
-    user = @controller.session_user
+    setup_session
+    session[:login_workflow] = login_path
+    user = session[:user]
     user.terms = [{'termId' => '1', 'termUrl' => 'localhost'}]
     user.expects(:accept_terms).once
     post :create
     assert_equal 0, assigns(:term).errors.length
-    assert_redirected_to account_path
-  end
-
-  test "accept terms successfully with external workflow" do
-    setup_user
-    url = 'http://external.url/to-something' 
-    @controller.terms_redirect = url
-    user = @controller.session_user
-    user.terms = [{'termId' => '1', 'termUrl' => 'localhost'}]
-    user.expects(:accept_terms).once
-    post :create
-    assert_equal 0, assigns(:term).errors.length
-    assert_redirected_to url
+    assert_redirected_to login_path
   end
 
   test "show acceptance terms" do
-    setup_user
-    user = @controller.session_user
+    setup_session
+    user = session[:user]
     user.terms = [{'termId' => '1', 'termUrl' => 'localhost'}]
     get :acceptance_terms
     assert_equal 0, assigns(:term).errors.length
@@ -94,7 +75,7 @@ class TermsControllerTest < ActionController::TestCase
   end
 
   test "verify auto-access doesn't fire before accepting terms" do
-    setup_user
+    setup_session
 
     # Remove the key that denotes terms acceptance
     session.delete(:login)

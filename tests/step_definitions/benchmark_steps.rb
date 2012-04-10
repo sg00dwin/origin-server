@@ -39,9 +39,13 @@ end
 
 def create_scaled_app_via_rest_api(app, ngears)
   # Replace when the REST API libraries are complete
-  restapicall = "curl -s -o /tmp/rhc/json_response_#{app.name}_#{app.namespace}.json -k -H 'Accept: application/json' --user '#{app.login}:fakepw' https://localhost/broker/rest/domains/#{app.namespace}/applications -X POST -d name=#{app.name} -d cartridge=#{app.type}"
+  outf = "/tmp/rhc/json_response_#{app.name}_#{app.namespace}.json"
+  hdrs = "-H 'Accept: application/json' --user '#{app.login}:fakepw' -X POST"
+  app_ns_uri = "https://localhost/broker/rest/domains/#{app.namespace}"
+  cr_uri = "#{app_ns_uri}/applications"
+  cr_params = "-d name=#{app.name} -d cartridge=#{app.type} -d scale=true"
 
-  command = "#{restapicall} -d scale=true"
+  command = "curl -k -s -o #{outf} -k #{hdrs} #{cr_uri} #{cr_params}"
   $logger.debug("Creating scaled #{app.type} app - #{command}")
   app.create_app_code = runcon command, 'unconfined_u', 'unconfined_r', 'unconfined_t'
   if app.create_app_code != 0
@@ -50,7 +54,12 @@ def create_scaled_app_via_rest_api(app, ngears)
 
   while ngears > 1 do
     ngears -= 1
-    command = "#{restapicall} -d event=scale-up"
+
+    outf = "/tmp/rhc/json_response_scaleup_#{app.name}_#{app.namespace}.json"
+    up_uri = "#{app_ns_uri}/applications/#{app.name}/events"
+    up_params = "-d event=scale-up"
+
+    command = "curl -k -s -o #{outf} #{hdrs} #{up_uri} #{up_params}"
     $logger.debug("Scaling up #{app.type} app - #{command}")
     exit_code = runcon command, 'unconfined_u', 'unconfined_r', 'unconfined_t'
     if exit_code != 0
@@ -63,7 +72,7 @@ end
 
 
 def benchmark_app_creation(type, tag, zapps, repeat_n=1, scaled=false, ngears=1)
-  measures = StatMeasures.new(type, tag)
+  measures = StatMeasures.new(type, tag, ngears)
   app_options = '--no-dns --nogit'
   nfailed = 0
   idx = 0

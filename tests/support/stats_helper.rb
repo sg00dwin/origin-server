@@ -3,12 +3,13 @@ require 'singleton'
 
 module StatsHelper
   class StatMeasures
-    attr_accessor :type, :name, :cnt, :total, :mean, :variance, :deltaMsquare,
-                  :min, :max;
+    attr_accessor :type, :name, :gearcnt, :cnt, :total, :mean, :variance,
+                  :deltaMsquare, :min, :max;
 
-    def initialize(type, name)
+    def initialize(type, name, ngears)
       @type = type
       @name = name
+      @gearcnt = ngears
       @cnt, @total, @mean, @variance, @deltaMsquare = 0, 0, 0.0, 0.0, 0.0
       @min, @max = 2**30 - 1, 0.0
     end
@@ -42,24 +43,25 @@ module StatsHelper
 
     def raw
       stddev = Math.sqrt(@variance)
-      return "#{@type},#{@mean},#{@min},#{@max},#{stddev},#{@cnt},#{@total}\n"
+      return "#{@type},#{@gearcnt},#{@mean},#{@min},#{@max},#{stddev},#{@cnt},#{@total}\n"
     end
 
     def headings
-      h  = "App Type      Avg secs\t Misc (Min, Max, StdDev, Count, Sum)     \n"
-      h += "------------  --------\t ----------------------------------------\n"
+      h  = "App Type    Gears  Avg secs  (    Min,    Max, StdDev, Count,        Sum)\n"
+      h += "----------  -----  --------  --------------------------------------------\n"
       return h
     end
 
     def metrics
-      avg = "%4.2f" % @mean
-      zmin = "%4.2f" % @min
-      zmax = "%4.2f" % @max
-      stddev = "%3.2f" % Math.sqrt(@variance)
-      cnt = "%6d" % @cnt
-      tot = "%8.2f" % @total
-      misc = "#{zmin}, #{zmax}, #{stddev}, #{cnt}, #{tot}"
-      return "%12.12s" % @type + "  #{avg}\t (#{misc})\n"
+      ngears = "%5.5s" % @gearcnt.to_s
+      avg = "%8.8s" % ("%4.2f" % @mean).to_s
+      zmin = "%7.7s" % ("%4.2f" % @min).to_s
+      zmax = "%7.7s" % ("%4.2f" % @max).to_s
+      stddev = "%7.7s" % ("%4.2f" % Math.sqrt(@variance)).to_s
+      cnt = "%6.6s" % @cnt.to_s
+      tot = "%11.11s" % ("%8.2f" % @total).to_s
+      misc = "#{zmin},#{zmax},#{stddev},#{cnt},#{tot}"
+      return ("%10.10s" % @type) + "  #{ngears}  #{avg}  (#{misc})\n"
     end
 
   end

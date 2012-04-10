@@ -5,7 +5,7 @@
 
 Summary:        Cloud Development Controller
 Name:           rubygem-%{gemname}
-Version:        0.8.8
+Version:        0.8.10
 Release:        1%{?dist}
 Group:          Development/Languages
 License:        ASL 2.0
@@ -75,6 +75,20 @@ rm -rf %{buildroot}
 %{ruby_sitelib}/%{gemname}.rb
 
 %changelog
+* Tue Apr 10 2012 Adam Miller <admiller@redhat.com> 0.8.10-1
+- Updating gem versions (admiller@redhat.com)
+- Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
+  (admiller@redhat.com)
+- Fix for bug# 809467 (rpenta@redhat.com)
+
+* Tue Apr 10 2012 Adam Miller <admiller@redhat.com> 0.8.9-1
+- Updating gem versions (admiller@redhat.com)
+- Merge branch 'master' of git1.ops.rhcloud.com:/srv/git/li (rpenta@redhat.com)
+- Fix REST domain cucumber tests (rpenta@redhat.com)
+- bug 810475 (bdecoste@gmail.com)
+- Bugz 810931. Changing REST API params and Application structure to accept
+  gear_profile instead of node_profile (kraman@gmail.com)
+
 * Tue Apr 10 2012 Mike McGrath <mmcgrath@redhat.com> 0.8.8-1
 - Updating gem versions (mmcgrath@redhat.com)
 - BugzID 811141. Fixed spelling (kraman@gmail.com)
