@@ -1,4 +1,4 @@
-policy_module(libra,1.1.15)
+policy_module(libra,1.1.16)
 
 ########################################
 #
@@ -212,6 +212,7 @@ miscfiles_dontaudit_setattr_fonts_cache_dirs(libra_app_domain)
 mta_dontaudit_read_spool_symlinks(libra_app_domain)
 
 term_dontaudit_search_ptys(libra_app_domain)
+term_use_ptmx(libra_app_domain)
 
 userdom_dontaudit_search_admin_dir(libra_app_domain)
 
