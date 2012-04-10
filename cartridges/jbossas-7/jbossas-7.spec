@@ -2,7 +2,7 @@
 
 Summary:   Provides JBossAS7 support
 Name:      cartridge-jbossas-7
-Version:   0.90.2
+Version:   0.90.3
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   ASL 2.0
@@ -127,6 +127,11 @@ rm -rf %{buildroot}
 %config(noreplace) %{cartridgedir}/info/configuration/
 
 %changelog
+* Tue Apr 10 2012 Mike McGrath <mmcgrath@redhat.com> 0.90.3-1
+- test commits (mmcgrath@redhat.com)
+- Return in a way that broker can manage. (rmillner@redhat.com)
+- bug 810349 (wdecoste@localhost.localdomain)
+
 * Mon Apr 02 2012 Krishna Raman <kraman@gmail.com> 0.90.2-1
 - Merge remote-tracking branch 'origin/dev/kraman/US2048' (kraman@gmail.com)
 - Automatic commit of package [rhc-cartridge-jbossas-7] release [0.90.1-1].
