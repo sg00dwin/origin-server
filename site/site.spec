@@ -3,7 +3,7 @@
 
 Summary:   Li site components
 Name:      rhc-site
-Version:   0.90.6
+Version:   0.90.7
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -117,6 +117,9 @@ rm -rf %{buildroot}
 /bin/touch %{sitedir}/log/production.log
 
 %changelog
+* Tue Apr 10 2012 Mike McGrath <mmcgrath@redhat.com> 0.90.7-1
+- Merged login changes (fotios@redhat.com)
+
 * Mon Apr 09 2012 Mike McGrath <mmcgrath@redhat.com> 0.90.6-1
 - Simplify some styles on the opensource page, correct some phone/tablet layout
   issues. (ccoleman@redhat.com)
