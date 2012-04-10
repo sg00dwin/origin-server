@@ -2,7 +2,7 @@
 
 Summary:   Provides JBossAS7 support
 Name:      cartridge-jbossas-7
-Version:   0.90.3
+Version:   0.90.4
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   ASL 2.0
@@ -127,6 +127,9 @@ rm -rf %{buildroot}
 %config(noreplace) %{cartridgedir}/info/configuration/
 
 %changelog
+* Tue Apr 10 2012 Mike McGrath <mmcgrath@redhat.com> 0.90.4-1
+- Test commit (mmcgrath@redhat.com)
+
 * Tue Apr 10 2012 Mike McGrath <mmcgrath@redhat.com> 0.90.3-1
 - test commits (mmcgrath@redhat.com)
 - Return in a way that broker can manage. (rmillner@redhat.com)
