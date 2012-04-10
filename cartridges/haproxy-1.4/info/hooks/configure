@@ -15,17 +15,17 @@ function print_help {
 }
 
 function generate_ssh_keys {
-    /bin/mkdir -p $APP_DIR/data/.ssh/
-    /bin/rm -f $APP_DIR/data/.ssh/haproxy_id_rsa $APP_DIR/data/.ssh/haproxy_id_rsa.pub
-    /usr/bin/ssh-keygen -N '' -f $APP_DIR/data/.ssh/haproxy_id_rsa > /dev/null
+    /bin/mkdir -p $HAPROXY_DIR/.ssh/
+    /bin/rm -f $HAPROXY_DIR/.ssh/haproxy_id_rsa $HAPROXY_DIR/.ssh/haproxy_id_rsa.pub
+    /usr/bin/ssh-keygen -N '' -f $HAPROXY_DIR/.ssh/haproxy_id_rsa > /dev/null
 
-    touch "$APP_DIR/data/.ssh/known_hosts"
-    touch "$APP_DIR/data/.ssh/config"
-    /bin/chown root.$uuid -R "$APP_DIR/data/.ssh/"
-    chmod 0750 "$APP_DIR/data/.ssh/"
-    chmod 0640 "$APP_DIR/data/.ssh/haproxy_id_rsa" "$APP_DIR/data/.ssh/haproxy_id_rsa.pub"
-    chmod 0660 "$APP_DIR/data/.ssh/config" "$APP_DIR/data/.ssh/known_hosts"
-    observe_setup_var_lib_dir "$APP_DIR/data/.ssh/"
+    touch "$HAPROXY_DIR/.ssh/known_hosts"
+    touch "$HAPROXY_DIR/.ssh/config"
+    /bin/chown root.$uuid -R "$HAPROXY_DIR/.ssh/"
+    chmod 0750 "$HAPROXY_DIR/.ssh/"
+    chmod 0640 "$HAPROXY_DIR/.ssh/haproxy_id_rsa" "$HAPROXY_DIR/.ssh/haproxy_id_rsa.pub"
+    chmod 0660 "$HAPROXY_DIR/.ssh/config" "$HAPROXY_DIR/.ssh/known_hosts"
+    observe_setup_var_lib_dir "$HAPROXY_DIR/.ssh/"
 }
 
 function setup_haproxy_as_a_service() {
@@ -124,13 +124,15 @@ stop_app
 
 CART_INFO_DIR=${CARTRIDGE_BASE_PATH}/embedded/haproxy-1.4/info
 
+export HAPROXY_DIR="$APP_HOME/$CART_NAME-$CART_VERSION"
+
 
 #
 # Generate key pair
 #
 generate_ssh_keys
 
-public_key=$(cat $APP_DIR/data/.ssh/haproxy_id_rsa.pub | awk '{print $2}')
+public_key=$(cat $HAPROXY_DIR/.ssh/haproxy_id_rsa.pub | awk '{print $2}')
 add_ssh_key $public_key
 
 add_broker_auth_key
@@ -138,9 +140,6 @@ add_broker_auth_key
 #
 # Create the core of the application
 #
-
-export HAPROXY_DIR="$APP_HOME/$CART_NAME-$CART_VERSION"
-
 mkdir -p "$HAPROXY_DIR"
 pushd "$HAPROXY_DIR" > /dev/null
 mkdir -p conf conf.d logs run sessions
