@@ -211,7 +211,7 @@ class DevEnv < Thor
           site_cmds = ["cd li-test/site; rake test:units", "cd li-test/site; rake test:functionals", "cd li-test/site; rake test:integration"]
           add_ssh_cmd_to_threads(hostname, threads, failures, site_titles, site_cmds)
           add_ssh_cmd_to_threads(hostname, threads, failures, "StickShift Node Unit", "cd li-test/stickshift/node; rake test")
-          add_ssh_cmd_to_threads(hostname, threads, failures, "StickShift Broker Unit", "cd li-test/stickshift/broker; rake test")
+          #add_ssh_cmd_to_threads(hostname, threads, failures, "StickShift Broker Unit", "cd li-test/stickshift/broker; rake test")
         end
 
         unless options.exclude_internal?
@@ -829,7 +829,7 @@ END
     site_cmds = ["cd li-test/site; rake test:units"]
     add_ssh_cmd_to_threads(hostname, threads, failures, site_titles, site_cmds)
     add_ssh_cmd_to_threads(hostname, threads, failures, "StickShift Node Unit", "cd li-test/stickshift/node; rake test")
-    add_ssh_cmd_to_threads(hostname, threads, failures, "StickShift Broker Unit", "cd li-test/stickshift/broker; rake test")
+    #add_ssh_cmd_to_threads(hostname, threads, failures, "StickShift Broker Unit", "cd li-test/stickshift/broker; rake test")
     add_ssh_cmd_to_threads(hostname, threads, failures, "Sanity", "cucumber -f html --out /tmp/rhc/sanity.html -f progress -t @sanity li-test/tests/")
 
     threads.each do |t|
