@@ -21,7 +21,7 @@ $selinux_role = nil
 $selinux_type = nil
 
 # User registration flag and script
-$registration_required = true
+$registration_required = false
 $user_register_script = "/usr/bin/ss-register-user"
 
 #
