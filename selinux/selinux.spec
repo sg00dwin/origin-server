@@ -1,6 +1,6 @@
 Summary:       SELinux policy for OpenShift nodes
 Name:          rhc-selinux
-Version:       0.90.2
+Version:       0.90.3
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -46,6 +46,9 @@ rm -rf %{buildroot}
 %attr(0640,-,-) %{_datadir}/selinux/packages/libra.pp
 
 %changelog
+* Tue Apr 10 2012 Mike McGrath <mmcgrath@redhat.com> 0.90.3-1
+- Allow libra domains to use ptmx device (dwalsh@redhat.com)
+
 * Mon Apr 09 2012 Mike McGrath <mmcgrath@redhat.com> 0.90.2-1
 - Dontaudit leaked sshd_devpts_t to crontab_t. add chsh and chfn to programs
   that libra instances should not be allowed to execute (dwalsh@redhat.com)
