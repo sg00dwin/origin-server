@@ -34,31 +34,26 @@ class LoginController < SiteController
   end
 
   def create
-    @redirectUrl = params[:redirectUrl]
+    @redirectUrl = params[:redirectUrl] || default_logged_in_redirect
     user_params = params[:web_user] || params
 
     @user = WebUser.new
     if @user.authenticate(user_params[:rhlogin], user_params[:password])
-
-      user_to_session(@user)
+      session[:login] = @user.rhlogin
+      session[:ticket] = @user.ticket
+      session[:user] = @user
+      session[:ticket_verified] = Time.now.to_i
 
       set_previous_login_detection
       cookies[:rh_sso] = domain_cookie_opts(:value => @user.ticket)
 
-      if validate_user
-        logger.debug "Authenticated with ticket #{cookies[:rh_sso]}, redirecting"
-        redirect_to after_login_redirect
-      end
-
+      logger.debug "Authenticated with cookie #{cookies[:rh_sso]} redirecting to #{@redirectUrl}"
+      redirect_to @redirectUrl
     else
       logger.debug "Authentication failed"
       @user.rhlogin = user_params[:rhlogin] #preserve user login for next request
       render :show
     end
-  end
-
-  def after_login_redirect
-    @redirectUrl || default_after_login_redirect
   end
 
   # Helper to apply common defaults to cookie options

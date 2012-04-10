@@ -1,0 +1,18 @@
+-# file: About OpenShift page
+
+- content_for :page_title do
+  What is OpenShift?
+
+= render 'shared/pageheader', :product => 'openshift', :title => 'What is OpenShift?', :subtitle => 'A Portfolio of Cloud Services'
+
+#page.container_24
+  #main_content.grid_22
+    
+    %h2 What is OpenShift?
+
+    %p.about
+      OpenShift is a portfolio of free, portable cloud services that enable you to create custom environments for deploying applications across multiple platforms, languages and clouds.
+      
+    = link_to 'Learn More >', '/faq/what-is-libra', :class => 'more'
+  
+  .clear
