@@ -1,7 +1,7 @@
 %define cartridgedir %{_libexecdir}/stickshift/cartridges/embedded/postgresql-8.4
 
 Name: cartridge-postgresql-8.4
-Version: 0.6.4
+Version: 0.6.5
 Release: 1%{?dist}
 Summary: Embedded postgresql support for express
 
@@ -74,6 +74,9 @@ rm -rf $RPM_BUILD_ROOT
 %doc %{cartridgedir}/LICENSE
 
 %changelog
+* Tue Apr 10 2012 Mike McGrath <mmcgrath@redhat.com> 0.6.5-1
+- Test commit (mmcgrath@redhat.com)
+
 * Tue Apr 10 2012 Mike McGrath <mmcgrath@redhat.com> 0.6.4-1
 - test commits (mmcgrath@redhat.com)
 - Return in a way that broker can manage. (rmillner@redhat.com)
