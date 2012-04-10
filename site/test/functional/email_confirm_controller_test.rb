@@ -3,7 +3,7 @@ require 'test_helper'
 class EmailConfirmControllerTest < ActionController::TestCase
 
   def setup
-    setup_user
+    setup_session
   end
 
   test "no parameters should error" do

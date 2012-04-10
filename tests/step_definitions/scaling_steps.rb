@@ -107,8 +107,9 @@ When /^a gear is (added|removed)$/ do |action|
   raise "Gear #{action} failed: #{ssh_cmd} exited with code #{exit_code}" unless exit_code == 0
 end
 
-When /^haproxy_ctld_daemon is started$/ do
-  ssh_cmd = "ssh -t #{@app.uid}@#{@app.hostname} 'rhcsh haproxy_ctld_daemon start'"
+When /^haproxy_ctld_daemon is (started|stopped)$/ do | action |
+  ssh_cmd = "ssh -t #{@app.uid}@#{@app.hostname} 'rhcsh haproxy_ctld_daemon start'" if action == "started"
+  ssh_cmd = "ssh -t #{@app.uid}@#{@app.hostname} 'rhcsh haproxy_ctld_daemon stop'" if action == "stopped"
 
   exit_code = runcon ssh_cmd, 'unconfined_u', 'unconfined_r', 'unconfined_t'
   raise "Could not start haproxy_ctld_daemon.  Exit code: #{exit_code}" unless exit_code == 0
