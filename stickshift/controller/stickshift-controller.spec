@@ -5,7 +5,7 @@
 
 Summary:        Cloud Development Controller
 Name:           rubygem-%{gemname}
-Version:        0.8.6
+Version:        0.8.7
 Release:        1%{?dist}
 Group:          Development/Languages
 License:        ASL 2.0
@@ -75,6 +75,10 @@ rm -rf %{buildroot}
 %{ruby_sitelib}/%{gemname}.rb
 
 %changelog
+* Tue Apr 10 2012 Mike McGrath <mmcgrath@redhat.com> 0.8.7-1
+- Updating gem versions (mmcgrath@redhat.com)
+- This was breaking the build (mmcgrath@redhat.com)
+
 * Tue Apr 10 2012 Mike McGrath <mmcgrath@redhat.com> 0.8.6-1
 - Updating gem versions (mmcgrath@redhat.com)
 - disabling registration_required. (mmcgrath@redhat.com)
