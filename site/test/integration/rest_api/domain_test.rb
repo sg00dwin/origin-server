@@ -27,8 +27,8 @@ class RestApiDomainTest < ActiveSupport::TestCase
     domain = Domain.find :one, :as => @user
     domain2 = Domain.new :name => domain.name, :as => @user
     assert !domain2.save
-    assert domain2.errors[:name].is_a? Array
-    assert domain2.errors[:name][0].is_a? String
+    assert domain2.errors[:name].is_a?(Array), domain2.errors.inspect
+    assert domain2.errors[:name][0].is_a?(String), domain2.errors.inspect
     assert domain2.errors[:name][0].include?('Name'), domain2.errors[:name][0]
   end
 
