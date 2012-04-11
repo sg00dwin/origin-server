@@ -130,6 +130,8 @@ Requires:  drupal6-freelinking
 Requires:  drupal6-mediawiki_filter
 Requires:  drupal6-context_menu_block
 Requires:  drupal6-block_class
+Requires:  drupal6-diff
+Requires:  drupal6-image
 Requires:  drupal6-openshift-custom_forms
 Requires:  drupal6-openshift-features-blogs
 Requires:  drupal6-openshift-features-forums
