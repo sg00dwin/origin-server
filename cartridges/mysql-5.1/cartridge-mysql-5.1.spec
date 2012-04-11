@@ -2,7 +2,7 @@
 %define frameworkdir %{_libexecdir}/stickshift/cartridges/mysql-5.1
 
 Name: cartridge-mysql-5.1
-Version: 0.24.2
+Version: 0.24.5
 Release: 1%{?dist}
 Summary: Provides embedded mysql support
 
@@ -73,6 +73,22 @@ rm -rf $RPM_BUILD_ROOT
 %doc %{cartridgedir}/LICENSE
 
 %changelog
+* Tue Apr 10 2012 Mike McGrath <mmcgrath@redhat.com> 0.24.5-1
+- removed test commits (mmcgrath@redhat.com)
+
+* Tue Apr 10 2012 Mike McGrath <mmcgrath@redhat.com> 0.24.4-1
+- Test commit (mmcgrath@redhat.com)
+
+* Tue Apr 10 2012 Mike McGrath <mmcgrath@redhat.com> 0.24.3-1
+- test commits (mmcgrath@redhat.com)
+- Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
+  (rmillner@redhat.com)
+- Return in a way that broker can manage. (rmillner@redhat.com)
+- Fix for bugz 809567 - snapshot and restore for scalable apps - use the dns
+  name on the control/haproxy gear. (ramr@redhat.com)
+- Fix for bugz 809567 and also for 809554 - snapshot and restore for scalable
+  apps. (ramr@redhat.com)
+
 * Mon Apr 02 2012 Krishna Raman <kraman@gmail.com> 0.24.2-1
 - Merge remote-tracking branch 'origin/dev/kraman/US2048' (kraman@gmail.com)
 - Automatic commit of package [rhc-cartridge-mysql-5.1] release [0.24.1-1].
