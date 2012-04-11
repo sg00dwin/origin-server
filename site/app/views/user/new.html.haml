@@ -4,7 +4,7 @@
   = semantic_form_for @user, :url => account_path, :simple => true, :html => {:class => 'form-horizontal'} do |form|
     %input{:type => "hidden", :name => "redirectUrl", :value => (defined?(@redirectUrl) ? @redirectUrl : '/app/user/complete') }
     = form.hidden_field :cloud_access_choice, :value => CloudAccess::EXPRESS
-    = form.semantic_errors :captcha
+    = form.semantic_errors
     = form.inputs do
       = form.input :email_address, :input_html => { :type => 'email', :class => 'input-xlarge', :placeholder => 'Enter a valid email address', :autofocus => true }
       = form.input :password, :input_html => { :class => 'input-xlarge', :autocomplete => 'off', :placeholder => 'At least 6 characters', :maxlength => '50' }
@@ -13,15 +13,11 @@
       - if @user.promo_code.nil?
         .control-group
           .controls
-            =link_to 'Have a promo code to enter?', new_account_path(:web_user => {:promo_code => ' '})
+            =link_to 'Have a promo code to enter?', new_account_path(:web_user => {:promo_code => ' '}), :style => 'font-size: 14px;'
       - else
         = form.input :promo_code, :label => 'Promotional Code', :required => false, :input_html => { :class => 'input-xlarge' }
 
-      .control-group
-        %label.control-label(for="recaptcha_response_field")
-          Are you human?
-        .controls.recaptcha
-          = recaptcha_tags :ssl => true
+      = input_recaptcha(:errors => @user.errors[:captcha])
 
       .control-group
         By signing up you agree to the 
