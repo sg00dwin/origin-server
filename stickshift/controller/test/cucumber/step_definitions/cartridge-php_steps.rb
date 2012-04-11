@@ -29,7 +29,8 @@ When /^I configure a php application$/ do
     'namespace' => namespace
   }
   command = $php_config_format % [app_name, namespace, account_name]
-  runcon command,  $selinux_user, $selinux_role, $selinux_type
+  exitcode = runcon command,  $selinux_user, $selinux_role, $selinux_type
+  raise "Non zero exit code: #{exitcode}" unless exitcode == 0
 end
 
 Then /^a php application http proxy file will( not)? exist$/ do | negate |
