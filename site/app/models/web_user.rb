@@ -53,7 +53,7 @@ class WebUser
                             :if => on_scopes(:save, :change_password)
 
   def initialize(attributes = {})
-    attributes.each do |name, value|
+    (attributes || {}).each do |name, value|
       send("#{name}=", value)
     end
 
