@@ -516,6 +516,7 @@ grep -l NM_CONTROLLED /etc/sysconfig/network-scripts/ifcfg-* | xargs perl -p -i 
 su -c "/usr/bin/ss-register-user -u admin -p admin"
 
 
+su -c "/usr/bin/ss-register-user -u admin -p admin"
 EOF
 
 echo "Final setup"
@@ -679,6 +680,21 @@ chkconfig oddjobd on
 chmod 755 /etc/rc.d/init.d/livesys-late-openshift
 /sbin/restorecon /etc/rc.d/init.d/livesys-late-openshift
 /sbin/chkconfig --add livesys-late-openshift
+
+mkdir -p /home/liveuser/.config/autostart
+chown -R liveuser:liveuser /home/liveuser/.config
+echo <<EOF > /home/liveuser/.config/autostart/openshift.desktop
+[Desktop Entry]
+Type=Application
+Exec=/usr/bin/firefox http://www.openshift.com
+Hidden=false
+X-GNOME-Autostart-enabled=true
+Name[en_US]=Openshift
+Name=Openshift
+Comment[en_US]=Openshift
+Comment=Openshift
+EOF
+
 %end
 
 %post
