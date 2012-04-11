@@ -5,7 +5,7 @@
 
 Summary:        Cloud Development Controller
 Name:           rubygem-%{gemname}
-Version:        0.8.11
+Version:        0.8.12
 Release:        1%{?dist}
 Group:          Development/Languages
 License:        ASL 2.0
@@ -75,6 +75,12 @@ rm -rf %{buildroot}
 %{ruby_sitelib}/%{gemname}.rb
 
 %changelog
+* Tue Apr 10 2012 Mike McGrath <mmcgrath@redhat.com> 0.8.12-1
+- Updating gem versions (mmcgrath@redhat.com)
+- Fix domain controller errors and related cucumber tests (rpenta@redhat.com)
+- Merge branch 'master' of git1.ops.rhcloud.com:/srv/git/li (rpenta@redhat.com)
+- Fix for bug# 811139 (rpenta@redhat.com)
+
 * Tue Apr 10 2012 Adam Miller <admiller@redhat.com> 0.8.11-1
 - Updating gem versions (admiller@redhat.com)
 - Adding checks to prevent creation of multiple domains for a user
