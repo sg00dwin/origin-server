@@ -37,7 +37,8 @@
             global $user;
 
             if ( $user->uid ) {
-       	      $logout_url = variable_get('redhat_sso_logout_url', $base_url . '/logout');
+              $logout_url = variable_get('redhat_sso_logout_url', $base_url . '/logout');
+              $logout_url .= '?then=' . urlencode(drupal_get_path_alias(request_uri()));
               print '<a class="btn btn-small" href="/app/console">Manage Your Apps</a> ';
               print '<a class="btn btn-small" href="'. $logout_url .'">Sign Out</a>';
             } else {
