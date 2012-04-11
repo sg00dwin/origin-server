@@ -23,10 +23,10 @@ class RestApiDomainTest < ActiveSupport::TestCase
   end
 
   def test_domain_exists_error
-    RestApi::Base.debug { setup_domain }
+    setup_domain
     domain = Domain.find :one, :as => @user
     domain2 = Domain.new :name => domain.name, :as => @user
-    RestApi::Base.debug { assert !domain2.save }
+    assert !domain2.save
     assert domain2.errors[:name].is_a?(Array), domain2.errors.inspect
     assert domain2.errors[:name][0].is_a?(String), domain2.errors.inspect
     assert domain2.errors[:name][0].include?('Name'), domain2.errors[:name][0]
