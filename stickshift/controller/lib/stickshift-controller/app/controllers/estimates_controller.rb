@@ -67,7 +67,7 @@ class EstimatesController < BaseController
         Rails.logger.error e
         Rails.logger.debug e.backtrace.inspect
         @reply = RestReply.new(:internal_server_error)
-        message = Message.new(:error, "Failed to estimate gear usage of the application due to: #{e.message}", 131)
+        message = Message.new(:error, "Failed to estimate gear usage of the application.", 131)
         @reply.messages.push(message)
       end
     end
