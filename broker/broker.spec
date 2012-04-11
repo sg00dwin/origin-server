@@ -33,6 +33,7 @@ Requires:  rubygem-trollop
 Requires:  rubygem-cucumber
 Requires:  rubygem-gherkin
 Requires:  rubygem(ruby-prof)
+Requires:  rubygem-ruby-prof
 
 
 BuildArch: noarch
