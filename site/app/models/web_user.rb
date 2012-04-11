@@ -1,10 +1,10 @@
-require 'streamline'
-
 class WebUser
   include ActiveModel::Validations
   include ActiveModel::Conversion
   include ActiveModel::Serialization
   extend ActiveModel::Naming
+
+  require_dependency 'streamline'
 
   # Include the correct streamline implementation
   if Rails.configuration.integrated

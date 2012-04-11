@@ -123,7 +123,7 @@ module Streamline
     return unless @ticket
 
     # Make the request
-    req = Net::HTTP::Get.new( uri.path )
+    req = Net::HTTP::Get.new( @@logout_url.request_uri )
     req['Cookie'] = "rh_sso=#{@ticket}"
 
     # Create the request
@@ -131,7 +131,7 @@ module Streamline
     start_time = Time.now
     res = new_http.start{ |http| http.request(req) }
     end_time = Time.now
-    Rails.logger.debug "Response from Streamline took (#{uri.path}): #{(end_time - start_time)*1000} ms"
+    Rails.logger.debug "Response from Streamline (#{@@logout_url.request_uri}) took: #{(end_time - start_time)*1000} ms"
     Rails.logger.debug "Status received: #{res.code}"
     Rails.logger.debug "-------------------"
     Rails.logger.debug res.header.to_yaml
