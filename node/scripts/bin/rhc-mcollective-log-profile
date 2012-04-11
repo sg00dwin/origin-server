@@ -62,6 +62,7 @@ rescue Interrupt
 end
 
 
+printf("\n")
 printf("%8s: %6s: %s\n", "msec", "calls", "Action")
 printf("%8s: %6s: %s\n", "--------", "------", "--------------------")
 sprof=profile.sort_by {|key, value| value}
