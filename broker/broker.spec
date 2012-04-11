@@ -32,6 +32,7 @@ Requires:  rubygem-term-ansicolor
 Requires:  rubygem-trollop
 Requires:  rubygem-cucumber
 Requires:  rubygem-gherkin
+Requires:  rubygem(ruby-prof)
 
 
 BuildArch: noarch

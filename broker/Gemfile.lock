@@ -98,6 +98,7 @@ GEM
     rdoc (3.7)
     regin (0.3.7)
     rest-client (1.6.1)
+    ruby-prof (0.10.7)
     state_machine (1.1.2)
     stickshift-common (0.8.1)
       activemodel

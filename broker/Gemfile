@@ -17,6 +17,7 @@ gem 'swingshift-streamline-plugin'
 gem 'gearchanger-m-collective-plugin'
 gem 'rest-client'
 gem 'thread-dump'
+gem 'ruby-prof'
 
 # Bundle edge Rails instead:
 # gem 'rails', :git => 'git://github.com/rails/rails.git'
