@@ -5,8 +5,7 @@ Feature: keys
   I want to List, Create, Retrieve, Update and Delete keys
   
   Scenario Outline: List keys
-    Given a new guest account
-    And I am a valid user
+    Given a new user
     And I accept "<format>"
     When I send a GET request to "/user/keys"
     Then the response should be "200"
@@ -17,8 +16,7 @@ Feature: keys
      | XML | 
     
   Scenario Outline: Create key
-    Given a new guest account
-    And I am a valid user
+    Given a new user
     And I accept "<format>"
     When I send a POST request to "/user/keys" with the following:"name=cucumber&type=ssh-rsa&content=XYZ123567"
     Then the response should be "201"
@@ -31,8 +29,7 @@ Feature: keys
 
 
   Scenario Outline: Create key with with blank, missing and invalid content
-    Given a new guest account
-    And I am a valid user
+    Given a new user
     And I accept "<format>"
     When I send a POST request to "/user/keys" with the following:"name=cucumber&type=ssh-rsa&content=XYZ123=567[dfhhfl]"
     Then the response should be "422"
@@ -50,8 +47,7 @@ Feature: keys
      | XML | 
 
   Scenario Outline: Create key with with blank, missing, too long and invalid name
-    Given a new guest account
-    And I am a valid user
+    Given a new user
     And I accept "<format>"
     When I send a POST request to "/user/keys" with the following:"name=cucum?*ber&type=ssh-rsa&content=XYZ123"
     Then the response should be "422"
@@ -72,8 +68,7 @@ Feature: keys
      | XML | 
  
   Scenario Outline: Create key with blank, missing and invalid type
-    Given a new guest account
-    And I am a valid user
+    Given a new user
     And I accept "<format>"
     When I send a POST request to "/user/keys" with the following:"name=cucumber&type=ssh-xyz&content=XYZ123567"
     Then the response should be "422"
@@ -91,8 +86,7 @@ Feature: keys
      | XML | 
      
   Scenario Outline: Retrieve key
-    Given a new guest account
-    And I am a valid user
+    Given a new user
     And I accept "<format>"
     When I send a POST request to "/user/keys" with the following:"name=cucumber&type=ssh-rsa&content=XYZ123"
     Then the response should be "201"
@@ -106,8 +100,7 @@ Feature: keys
      | XML | 
      
   Scenario Outline: Retrieve non-existent key
-    Given a new guest account
-    And I am a valid user
+    Given a new user
     And I accept "<format>"
     When I send a GET request to "/user/keys/cucumber"
     Then the response should be "404"
@@ -119,8 +112,7 @@ Feature: keys
      | XML | 
   
   Scenario Outline: Update key
-    Given a new guest account
-    And I am a valid user
+    Given a new user
     And I accept "<format>"
     When I send a POST request to "/user/keys" with the following:"name=cucumber&type=ssh-rsa&content=XYZ123"
     Then the response should be "201"
@@ -135,8 +127,7 @@ Feature: keys
     
 
   Scenario Outline: Update key with with blank, missing and invalid content
-    Given a new guest account
-    And I am a valid user
+    Given a new user
     And I accept "<format>"
     When I send a POST request to "/user/keys" with the following:"name=cucumber&type=ssh-rsa&content=XYZ123"
     Then the response should be "201"
@@ -159,8 +150,7 @@ Feature: keys
      | XML | 
     
   Scenario Outline: Update key with blank, missing and invalid type
-    Given a new guest account
-    And I am a valid user
+    Given a new user
     And I accept "<format>"
     When I send a POST request to "/user/keys" with the following:"name=cucumber&type=ssh-rsa&content=XYZ123"
     Then the response should be "201"
@@ -183,8 +173,7 @@ Feature: keys
      | XML | 
     
   Scenario Outline: Update non-existent key
-    Given a new guest account
-    And I am a valid user
+    Given a new user
     And I accept "<format>"
     When I send a PUT request to "/user/keys/cucumber1" with the following:"type=ssh-rsa&content=ABC890"
     Then the response should be "404"
@@ -196,8 +185,7 @@ Feature: keys
      | XML | 
     
   Scenario Outline: Delete key
-    Given a new guest account
-    And I am a valid user
+    Given a new user
     And I accept "<format>"
     When I send a POST request to "/user/keys" with the following:"name=cucumber&type=ssh-rsa&content=XYZ123"
     Then the response should be "201"
@@ -212,8 +200,7 @@ Feature: keys
      | XML | 
     
   Scenario Outline: Delete last key
-    Given a new guest account
-    And I am a valid user
+    Given a new user
     And I accept "<format>"
     When I send a POST request to "/user/keys" with the following:"name=cucumber&type=ssh-rsa&content=XYZ123"
     Then the response should be "201"
@@ -226,8 +213,7 @@ Feature: keys
      | XML | 
     
   Scenario Outline: Delete non-existent key
-    Given a new guest account
-    And I am a valid user
+    Given a new user
     And I accept "<format>"
     When I send a DELETE request to "/user/keys/cucumber"
     Then the response should be "404"
@@ -239,8 +225,7 @@ Feature: keys
      | XML | 
     
   Scenario Outline: Create duplicate key
-    Given a new guest account
-    And I am a valid user
+    Given a new user
     And I accept "<format>"
     When I send a POST request to "/user/keys" with the following:"name=cucumber&type=ssh-rsa&content=XYZ123"
     Then the response should be "201"

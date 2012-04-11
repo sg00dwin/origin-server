@@ -1,4 +1,4 @@
-require 'test_helper'
+require File.expand_path('../../test_helper', __FILE__)
 
 # some representative IPs
 LOCALHOST = "127.0.0.1"

@@ -1,4 +1,4 @@
-require 'test_helper'
+require File.expand_path('../../test_helper', __FILE__)
 
 class LoginFlowsTest < ActionDispatch::IntegrationTest
   
@@ -23,7 +23,7 @@ class LoginFlowsTest < ActionDispatch::IntegrationTest
   # Make sure unauthenticated users can get to basic pages
   test "browse unauthenticated pages" do
     
-    ['/', '/login', '/account/new', '/account/password/new', '/partners'].each do |url|
+    ['/', '/login', '/account/new', '/account/password/new'].each do |url|
       get url, nil, {'SCRIPT_NAME' => '/app'}
       assert_response :success, "Requesting #{url}"
     end

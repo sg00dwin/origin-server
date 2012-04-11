@@ -188,9 +188,9 @@ module CommandHelper
     end
   end
 
-  def rhc_create_app(app, use_hosts=true)
+  def rhc_create_app(app, use_hosts=true, misc_opts='')
     rhc_do('rhc_create_app') do
-      cmd = "#{$rhc_app_script} create -l #{app.login} -a #{app.name} -r #{app.repo} -t #{app.type} -p #{app.password} -d"
+      cmd = "#{$rhc_app_script} create -l #{app.login} -a #{app.name} -r #{app.repo} -t #{app.type} -p #{app.password} #{misc_opts} -d"
 
       # Short circuit DNS to speed up the tests by adding a host entry and skipping the DNS validation
       if use_hosts

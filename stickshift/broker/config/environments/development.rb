@@ -41,19 +41,6 @@ Broker::Application.configure do
   config.ss = {
     :domain_suffix => "example.com",
     :default_max_gears => 5,
-
-    :datastore => {
-      :mongo => {
-        :replica_set => false,
-        # Replica set example: [[<host-1>, <port-1>], [<host-2>, <port-2>], ...]
-        :host_port => ["localhost", 27017],
-
-        :user => "stickshift",
-        :password => "mooo",
-        :db => "stickshift_broker_dev",
-        :collections => {:user => "user"}
-      }
-    }
   }
 
 end

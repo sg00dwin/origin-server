@@ -4,7 +4,7 @@ class Link < StickShift::Model
   def initialize(rel, method, href, required_params=nil, optional_params=nil)
     self.rel = rel
     self.method = method
-    self.href = href
+    self.href = href.to_s
     self.required_params = required_params || Array.new
     self.optional_params = optional_params || Array.new
   end

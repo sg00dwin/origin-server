@@ -20,7 +20,7 @@ class ApplicationsController < BaseController
     if not applications.nil? 
       applications.each do |application|
         if application.domain.uuid = domain.uuid
-          app = RestApplication.new(application, domain_id)
+          app = RestApplication.new(application, get_url)
           apps.push(app)
         end
       end
@@ -51,7 +51,7 @@ class ApplicationsController < BaseController
       @reply.messages.push(message)
       respond_with @reply, :status => @reply.status
     else
-      app = RestApplication.new(application, domain_id)
+      app = RestApplication.new(application, get_url)
       @reply = RestReply.new(:ok, "application", app)
       respond_with @reply, :status => @reply.status
     end
@@ -72,11 +72,16 @@ class ApplicationsController < BaseController
     
     app_name = params[:name]
     cartridge = params[:cartridge]
-    scale = params[:scale]
-    scale = false if scale.nil? or scale=="false"
-    scale = true if scale=="true"
+    scale_str = params[:scale]
+    
+    if not scale_str.nil? and scale_str.upcase == "TRUE"
+      scale = true
+    else
+      scale = false
+    end
+
     template_id = params[:template]
-    node_profile = params[:node_profile]
+    node_profile = params[:gear_profile]
     if not node_profile 
       node_profile = "small"
     else
@@ -176,7 +181,7 @@ class ApplicationsController < BaseController
       # application.stop
       # application.start
       
-      app = RestApplication.new(application, domain_id)
+      app = RestApplication.new(application, get_url)
       @reply = RestReply.new( :created, "application", app)
       message = Message.new(:info, "Application #{application.name} was created.")
       @reply.messages.push(message)
@@ -229,7 +234,7 @@ class ApplicationsController < BaseController
     rescue Exception => e
       Rails.logger.error "Failed to Delete application #{id}: #{e.message}"
       @reply = RestReply.new(:internal_server_error)
-      message = Message.new(:error, "Failed to delete application #{app_name} due to:#{e.message}", e.code) 
+      message = Message.new(:error, "Failed to delete application #{id} due to:#{e.message}", e.code) 
       @reply.messages.push(message)
       respond_with(@reply) do |format|
          format.xml { render :xml => @reply, :status => @reply.status }

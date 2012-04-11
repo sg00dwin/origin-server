@@ -17,10 +17,6 @@
           <description></description>
           <defaultValue>false</defaultValue>
         </hudson.model.StringParameterDefinition>
-      </parameterDefinitions>
-    </hudson.model.ParametersDefinitionProperty>
-    <hudson.model.ParametersDefinitionProperty>
-      <parameterDefinitions>
         <hudson.model.StringParameterDefinition>
           <name>INSTALL_FROM_SOURCE</name>
           <description></description>

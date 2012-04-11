@@ -3,7 +3,7 @@
 
 Summary:   Li site components
 Name:      rhc-site
-Version:   0.90.5
+Version:   0.90.11
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -117,6 +117,73 @@ rm -rf %{buildroot}
 /bin/touch %{sitedir}/log/production.log
 
 %changelog
+* Tue Apr 10 2012 Mike McGrath <mmcgrath@redhat.com> 0.90.11-1
+- Temporarily disable test_domain_exists_error in domain_test.rb to allow AMI
+  to build clean (ccoleman@redhat.com)
+
+* Tue Apr 10 2012 Mike McGrath <mmcgrath@redhat.com> 0.90.10-1
+- test commit (mmcgrath@redhat.com)
+
+* Tue Apr 10 2012 Mike McGrath <mmcgrath@redhat.com> 0.90.9-1
+- Change requires for all test/units so that 'ruby test/unit/xxx.rb' runs the
+  test (ccoleman@redhat.com)
+- Bug 804018 - display a proper 404 when resources are not found   Until
+  multiple domain support lands we were using Domain.first - this returns nil
+  when an item exists.  Most .find methods that load a specific resource throw
+  an exception.  We should be doing the same until multidomain lands (and after
+  multidomain lands we should be looking up domains via id).  For now, use
+  Domain.find :one, which was created to throw if there is no domain.  Updated
+  unit tests.  Added rescue_from to ApplicationController, and added a note
+  about Rails 3.1 (which will allow render :status => 404 instead of a more
+  complicated output).  Controller should handle exceptions before redirecting
+  (ccoleman@redhat.com)
+
+* Tue Apr 10 2012 Mike McGrath <mmcgrath@redhat.com> 0.90.8-1
+- Revert "Merged login changes" (fotios@redhat.com)
+- fix vars in opensource download view (johnp@redhat.com)
+- css fix added for 802640, ie bug and rearrangement of font family order
+  (sgoodwin@redhat.com)
+- Merge branch 'master' of git1.ops.rhcloud.com:/srv/git/li (ffranz@redhat.com)
+- Fixes 811146 (ffranz@redhat.com)
+- refactor gear_size_profile and node profile to gear_profile
+  (johnp@redhat.com)
+- fix github urls to agreed upon path for OpenSource repos (johnp@redhat.com)
+
+* Tue Apr 10 2012 Mike McGrath <mmcgrath@redhat.com> 0.90.7-1
+- Merged login changes (fotios@redhat.com)
+
+* Mon Apr 09 2012 Mike McGrath <mmcgrath@redhat.com> 0.90.6-1
+- Simplify some styles on the opensource page, correct some phone/tablet layout
+  issues. (ccoleman@redhat.com)
+- Attached images list removed from Community Wiki using CSS display none
+  (ffranz@redhat.com)
+- restrict opensource download routes to dev instance (johnp@redhat.com)
+- add all cart links to page (johnp@redhat.com)
+- Add timing and parent branch removal Better comments in the change section
+  Branch pruning and empty merge filtering Add password controller to
+  exclusion, begin tidying opensource.sh up for final status. Indicate how many
+  files will be preserved (ccoleman@redhat.com)
+- Create draft file for creating open source engine on console
+  (ccoleman@redhat.com)
+- move generic css to site so everyone can use it (johnp@redhat.com)
+- restyle opensource download page and add perliminary links (johnp@redhat.com)
+- Fix infinite recursion in find_or_create_resource_for by inlining method
+  React to changes from domain :name to domain :id   Remove legacy code
+  referencing old :namespace attributes   Replace all references to domain
+  :namespace with domain :name   Make custom_id in RestApi::Base override
+  :to_param instead of :id     Clean up unit tests to reflect this change - .id
+  and .name will now both show updates   Create new id alias methods to provide
+  legacy support for the getter key.destroy works on the first key - update the
+  test to check that (ccoleman@redhat.com)
+- ActiveResource association support was not working, and when attributes with
+  dashes are returned from REST API they throw a NameError.  Fix by sanitizing
+  resource class names for ActiveResource autodeserialization before invoked
+  (use a monkey patch on ActiveResource::Base) (ccoleman@redhat.com)
+- better layout for opensource download page (johnp@redhat.com)
+- tweak layout for download page (johnp@redhat.com)
+- example of using the info-ribbon class (johnp@redhat.com)
+- add a info-ribbon class to site.scss (johnp@redhat.com)
+
 * Wed Apr 04 2012 Mike McGrath <mmcgrath@redhat.com> 0.90.5-1
 - modified file download to use mirror.openshift.com (fotios@redhat.com)
 - make sure download link is a child of the containing element

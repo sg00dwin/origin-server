@@ -5,10 +5,9 @@ Feature: applications
   I want to List, Create, Retrieve, Start, Stop, Restart, Force-stop and Delete applications
   
   Scenario Outline: List applications
-    Given a new guest account
-    And I am a valid user
+    Given a new user
     And I accept "<format>"
-    When I send a POST request to "/domains" with the following:"namespace=cucumber<random>"
+    When I send a POST request to "/domains" with the following:"id=cucumber<random>"
     Then the response should be "201"
     When I send a POST request to "/domains/cucumber<random>/applications" with the following:"name=app&cartridge=php-5.3"
     Then the response should be "201"
@@ -24,10 +23,9 @@ Feature: applications
 
     
   Scenario Outline: Create application
-    Given a new guest account
-    And I am a valid user
+    Given a new user
     And I accept "<format>"
-    When I send a POST request to "/domains" with the following:"namespace=cucumber<random>"
+    When I send a POST request to "/domains" with the following:"id=cucumber<random>"
     Then the response should be "201"
     When I send a POST request to "/domains/cucumber<random>/applications" with the following:"name=app&cartridge=php-5.3"
     Then the response should be "201"
@@ -41,10 +39,9 @@ Feature: applications
      | XML | 
 
   Scenario Outline: Create application with blank, missing, too long and invalid name
-    Given a new guest account
-    And I am a valid user
+    Given a new user
     And I accept "<format>"
-    When I send a POST request to "/domains" with the following:"namespace=cucumber<random>"
+    When I send a POST request to "/domains" with the following:"id=cucumber<random>"
     Then the response should be "201"
     When I send a POST request to "/domains/cucumber<random>/applications" with the following:"name=&cartridge=php-5.3"
     Then the response should be "422"
@@ -65,10 +62,9 @@ Feature: applications
      | XML | 
 
   Scenario Outline: Retrieve application
-    Given a new guest account
-    And I am a valid user
+    Given a new user
     And I accept "<format>"
-    When I send a POST request to "/domains" with the following:"namespace=cucumber<random>"
+    When I send a POST request to "/domains" with the following:"id=cucumber<random>"
     Then the response should be "201"
     When I send a POST request to "/domains/cucumber<random>/applications" with the following:"name=app&cartridge=php-5.3"
     Then the response should be "201"
@@ -84,10 +80,9 @@ Feature: applications
      | XML | 
 
   Scenario Outline: Start application
-    Given a new guest account
-    And I am a valid user
+    Given a new user
     And I accept "<format>"
-    When I send a POST request to "/domains" with the following:"namespace=cucumber<random>"
+    When I send a POST request to "/domains" with the following:"id=cucumber<random>"
     Then the response should be "201"
     When I send a POST request to "/domains/cucumber<random>/applications" with the following:"name=app&cartridge=php-5.3"
     Then the response should be "201"
@@ -102,10 +97,9 @@ Feature: applications
      | XML | 
 
   Scenario Outline: Stop application
-    Given a new guest account
-    And I am a valid user
+    Given a new user
     And I accept "<format>"
-    When I send a POST request to "/domains" with the following:"namespace=cucumber<random>"
+    When I send a POST request to "/domains" with the following:"id=cucumber<random>"
     Then the response should be "201"
     When I send a POST request to "/domains/cucumber<random>/applications" with the following:"name=app&cartridge=php-5.3"
     Then the response should be "201"
@@ -120,10 +114,9 @@ Feature: applications
      | XML | 
 
   Scenario Outline: Restart application
-    Given a new guest account
-    And I am a valid user
+    Given a new user
     And I accept "<format>"
-    When I send a POST request to "/domains" with the following:"namespace=cucumber<random>"
+    When I send a POST request to "/domains" with the following:"id=cucumber<random>"
     Then the response should be "201"
     When I send a POST request to "/domains/cucumber<random>/applications" with the following:"name=app&cartridge=php-5.3"
     Then the response should be "201"
@@ -138,10 +131,9 @@ Feature: applications
      | XML | 
 
   Scenario Outline: Force-stop application
-    Given a new guest account
-    And I am a valid user
+    Given a new user
     And I accept "<format>"
-    When I send a POST request to "/domains" with the following:"namespace=cucumber<random>"
+    When I send a POST request to "/domains" with the following:"id=cucumber<random>"
     Then the response should be "201"
     When I send a POST request to "/domains/cucumber<random>/applications" with the following:"name=app&cartridge=php-5.3"
     Then the response should be "201"
@@ -156,10 +148,9 @@ Feature: applications
      | XML | 
 
   Scenario Outline: Add and remove application alias
-    Given a new guest account
-    And I am a valid user
+    Given a new user
     And I accept "<format>"
-    When I send a POST request to "/domains" with the following:"namespace=cucumber<random>"
+    When I send a POST request to "/domains" with the following:"id=cucumber<random>"
     Then the response should be "201"
     When I send a POST request to "/domains/cucumber<random>/applications" with the following:"name=app&cartridge=php-5.3"
     Then the response should be "201"
@@ -178,10 +169,9 @@ Feature: applications
      | XML | 
   
   Scenario Outline: Delete application
-    Given a new guest account
-    And I am a valid user
+    Given a new user
     And I accept "<format>"
-    When I send a POST request to "/domains" with the following:"namespace=cucumber<random>"
+    When I send a POST request to "/domains" with the following:"id=cucumber<random>"
     Then the response should be "201"
     When I send a POST request to "/domains/cucumber<random>/applications" with the following:"name=app&cartridge=php-5.3"
     Then the response should be "201"
@@ -196,10 +186,9 @@ Feature: applications
      | XML | 
 
   Scenario Outline: Create duplicate application
-    Given a new guest account
-    And I am a valid user
+    Given a new user
     And I accept "<format>"
-    When I send a POST request to "/domains" with the following:"namespace=cucumber<random>"
+    When I send a POST request to "/domains" with the following:"id=cucumber<random>"
     Then the response should be "201"
     When I send a POST request to "/domains/cucumber<random>/applications" with the following:"name=app&cartridge=php-5.3"
     Then the response should be "201"
@@ -215,10 +204,9 @@ Feature: applications
      | XML | 
 
   Scenario Outline: Create application with invalid, blank or missing cartridge
-    Given a new guest account
-    And I am a valid user
+    Given a new user
     And I accept "<format>"
-    When I send a POST request to "/domains" with the following:"namespace=cucumber<random>"
+    When I send a POST request to "/domains" with the following:"id=cucumber<random>"
     Then the response should be "201"
     When I send a POST request to "/domains/cucumber<random>/applications" with the following:"name=app&cartridge=bogus"
     Then the response should be "422"
@@ -238,10 +226,9 @@ Feature: applications
      | XML | 
 
   Scenario Outline: Retrieve or delete a non-existent application
-    Given a new guest account
-    And I am a valid user
+    Given a new user
     And I accept "<format>"
-    When I send a POST request to "/domains" with the following:"namespace=cucumber<random>"
+    When I send a POST request to "/domains" with the following:"id=cucumber<random>"
     Then the response should be "201"
     When I send a GET request to "/domains/cucumber<random>/applications/app"
     Then the response should be "404"
@@ -249,17 +236,15 @@ Feature: applications
     When I send a DELETE request to "/domains/cucumber<random>/applications/app"
     Then the response should be "404"
     And the error message should have "severity=error&exit_code=101"
-
     Scenarios:
      | format | 
      | JSON | 
      | XML | 
 
   Scenario Outline: Retrieve application descriptor
-    Given a new guest account
-    And I am a valid user
+    Given a new user
     And I accept "<format>"
-    When I send a POST request to "/domains" with the following:"namespace=cucumber<random>"
+    When I send a POST request to "/domains" with the following:"id=cucumber<random>"
     Then the response should be "201"
     When I send a POST request to "/domains/cucumber<random>/applications" with the following:"name=app&cartridge=php-5.3"
     Then the response should be "201"
@@ -276,10 +261,9 @@ Feature: applications
      | XML | 
 
   Scenario Outline: Stop and Start embedded cartridge
-    Given a new guest account
-    And I am a valid user
+    Given a new user
     And I accept "<format>"
-    When I send a POST request to "/domains" with the following:"namespace=cucumber<random>"
+    When I send a POST request to "/domains" with the following:"id=cucumber<random>"
     Then the response should be "201"
     When I send a POST request to "/domains/cucumber<random>/applications" with the following:"name=app&cartridge=php-5.3"
     Then the response should be "201"
@@ -300,10 +284,9 @@ Feature: applications
      | XML | 
 
   Scenario Outline: Restart embedded cartridge
-    Given a new guest account
-    And I am a valid user
+    Given a new user
     And I accept "<format>"
-    When I send a POST request to "/domains" with the following:"namespace=cucumber<random>"
+    When I send a POST request to "/domains" with the following:"id=cucumber<random>"
     Then the response should be "201"
     When I send a POST request to "/domains/cucumber<random>/applications" with the following:"name=app&cartridge=php-5.3"
     Then the response should be "201"  
@@ -324,10 +307,9 @@ Feature: applications
      | XML | 
 
   Scenario Outline: Remove embedded cartridge
-    Given a new guest account
-    And I am a valid user
+    Given a new user
     And I accept "<format>"
-    When I send a POST request to "/domains" with the following:"namespace=cucumber<random>"
+    When I send a POST request to "/domains" with the following:"id=cucumber<random>"
     Then the response should be "201"
     When I send a POST request to "/domains/cucumber<random>/applications" with the following:"name=app&cartridge=php-5.3"
     Then the response should be "201"

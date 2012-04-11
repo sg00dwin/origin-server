@@ -760,6 +760,7 @@ Configure-Order: [\"proxy/#{framework}\", \"proxy/haproxy-1.4\"]
     reply = ResultIO.new
     self.comp_instance_map.each do |comp_inst_name, comp_inst|
       next if !dependency.nil? and (comp_inst.parent_cart_name != dependency)
+      next if comp_inst.name == "@@app"
 
       group_inst = self.group_instance_map[comp_inst.group_instance_name]
       s,f = run_on_gears(group_inst.gears, reply, false) do |gear, r|
@@ -775,6 +776,7 @@ Configure-Order: [\"proxy/#{framework}\", \"proxy/haproxy-1.4\"]
     reply = ResultIO.new
     self.comp_instance_map.each do |comp_inst_name, comp_inst|
       next if !dependency.nil? and (comp_inst.parent_cart_name != dependency)
+      next if comp_inst.name == "@@app"
 
       group_inst = self.group_instance_map[comp_inst.group_instance_name]
       s,f = run_on_gears(group_inst.gears, reply, false) do |gear, r|
@@ -789,6 +791,10 @@ Configure-Order: [\"proxy/#{framework}\", \"proxy/haproxy-1.4\"]
     reply = ResultIO.new
     self.comp_instance_map.each do |comp_inst_name, comp_inst|
       next if !dependency.nil? and (comp_inst.parent_cart_name != dependency)
+      next if comp_inst.name == "@@app"
+
+      Rails.logger.debug( comp_inst.inspect )
+      Rails.logger.debug( "\n" )
 
       group_inst = self.group_instance_map[comp_inst.group_instance_name]
       s,f = run_on_gears(group_inst.gears, reply, false) do |gear, r|
@@ -952,8 +958,16 @@ Configure-Order: [\"proxy/#{framework}\", \"proxy/haproxy-1.4\"]
     updated = false
     begin
       result = self.container.update_namespace(self, self.framework, new_ns, old_ns)
-      process_cartridge_commands(result.cart_commands)
-      updated = result.exitcode == 0
+      if result.is_a?(Array)
+# result is an Array of Gear when the domain is altered with a scalable app. There are no cart commands for a domain alter for scalable or non-scalable apps. So doing nothing here.
+        result.each { |r|
+#          process_cartridge_commands(r.cart_commands)
+          updated = 0
+        }
+      else
+        process_cartridge_commands(result.cart_commands)
+        updated = result.exitcode == 0
+      end
     rescue Exception => e
       Rails.logger.debug "Exception caught updating namespace #{e.message}"
       Rails.logger.debug "DEBUG: Exception caught updating namespace #{e.message}"
@@ -1256,6 +1270,19 @@ Configure-Order: [\"proxy/#{framework}\", \"proxy/haproxy-1.4\"]
     deleted_components_list = []
     self.comp_instance_map.each { |k,v| deleted_components_list << k if self.working_comp_inst_hash[k].nil?  }
     deleted_components_list
+  end
+  
+  # Get path for checking application health
+  # @return [String]
+  def health_check_path
+    case self.framework_cartridge
+      when 'php'
+        page = 'health_check.php'
+      when 'perl'
+        page = 'health_check.pl'
+      else
+        page = 'health'
+    end
   end
   
 private

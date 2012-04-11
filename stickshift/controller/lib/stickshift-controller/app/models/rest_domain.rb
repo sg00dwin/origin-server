@@ -2,7 +2,7 @@ class RestDomain < StickShift::Model
   attr_accessor :id, :suffix, :links
   include LegacyBrokerHelper
   
-  def initialize(domain)
+  def initialize(domain, url)
     self.id = domain.namespace
     self.suffix = Rails.application.config.ss[:domain_suffix] 
 
@@ -11,23 +11,19 @@ class RestDomain < StickShift::Model
     end
     
     self.links = {
-      "GET" => Link.new("Get domain", "GET", "/domains/#{id}"),
-      "LIST_APPLICATIONS" => Link.new("List applications", "GET", "/domains/#{id}/applications"),
-      "ADD_APPLICATION" => Link.new("Create new application", "POST", "/domains/#{id}/applications", [
-        Param.new("name", "string", "Name of the application"),
-        Param.new("cartridge", "string", "framework-type, e.g: php-5.3", carts)
-      ], [
+      "GET" => Link.new("Get domain", "GET", URI::join(url, "domains/#{id}")),
+      "LIST_APPLICATIONS" => Link.new("List applications", "GET", URI::join(url, "domains/#{id}/applications")),
+      "ADD_APPLICATION" => Link.new("Create new application", "POST", URI::join(url, "domains/#{id}/applications"), 
+        [Param.new("name", "string", "Name of the application")], 
+        [OptionalParam.new("cartridge", "string", "framework-type, e.g: php-5.3", carts),
+        OptionalParam.new("template", "string", "UUID of the application template"),
         OptionalParam.new("scale", "boolean", "Mark application as scalable", [true, false], false),
-        OptionalParam.new("node_profile", "string", "The size of the gear", ["small", "micro", "medium", "large", "exlarge", "jumbo"], "small")
+        OptionalParam.new("gear_profile", "string", "The size of the gear", ["small", "micro", "medium", "large", "exlarge", "jumbo"], "small")
       ]),
-      "ADD_APPLICATION_FROM_TEMPLATE" => Link.new("Create new application", "POST", "/domains/#{id}/applications", [
-        Param.new("name", "string", "Name of the application"),
-        Param.new("template", "string", "UUID of the application template")
+      "UPDATE" => Link.new("Update domain", "PUT", URI::join(url, "domains/#{id}"),[
+        Param.new("id", "string", "Name of the domain")
       ]),
-      "UPDATE" => Link.new("Update domain", "PUT", "/domains/#{id}",[
-        Param.new("domain_id", "string", "Name of the domain")
-      ]),
-      "DELETE" => Link.new("Delete domain", "DELETE", "/domains/#{id}",nil,[
+      "DELETE" => Link.new("Delete domain", "DELETE", URI::join(url, "domains/#{id}"),nil,[
         OptionalParam.new("force", "boolean", "Force delete domain.  i.e. delete any applications under this domain", [true, false], false)
       ])
     }

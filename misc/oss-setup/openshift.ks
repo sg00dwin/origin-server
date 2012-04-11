@@ -591,6 +591,23 @@ pushd /var/www/stickshift/broker/ && rm -f Gemfile.lock && bundle show && chown 
 
 mkdir -p /var/www/stickshift/broker/config/environments/plugin-config
 
+echo "require File.expand_path('../plugin-config/crankcase-mongo-plugin.rb', __FILE__)" >> /var/www/stickshift/broker/config/environments/development.rb
+cat <<EOF > /var/www/stickshift/broker/config/environments/plugin-config/crankcase-mongo-plugin.rb
+Broker::Application.configure do
+  config.datastore = {
+    :replica_set => false,
+    # Replica set example: [[<host-1>, <port-1>], [<host-2>, <port-2>], ...]
+    :host_port => ["localhost", 27017],
+
+    :user => "stickshift",
+    :password => "mooo",
+    :db => "stickshift_broker_dev",
+    :collections => {:user => "user"}
+  }
+end
+EOF
+
+
 echo "require File.expand_path('../plugin-config/swingshift-mongo-plugin.rb', __FILE__)" >> /var/www/stickshift/broker/config/environments/development.rb
 cat <<EOF > /var/www/stickshift/broker/config/environments/plugin-config/swingshift-mongo-plugin.rb
 Broker::Application.configure do

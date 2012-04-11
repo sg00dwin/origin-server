@@ -25,7 +25,8 @@ RedHatCloud::Application.routes.draw do
   match 'getting_started/flex' => app_redirect('getting_started')
   match 'getting_started_external/:registration_referrer' => 'getting_started_external#show'
   match 'platform' => 'product#overview', :as => 'product_overview'
-  match 'partners/join' => 'partner#join', :as=> 'join_partner'
+  #match 'partners/join' => 'partner#join', :as=> 'join_partner'
+  match 'partners' => app_redirect('platform')
 
   # Buzz
   match 'twitter_latest_tweet' => 'twitter#latest_tweet'
@@ -76,10 +77,6 @@ RedHatCloud::Application.routes.draw do
   match 'legal/openshift_privacy' => 'legal#openshift_privacy'
   match 'legal/opensource_disclaimer' => 'legal#opensource_disclaimer'
 
-  match 'opensource' => 'opensource#index'
-  match 'opensource/download' => 'opensource#download'
-
-
   # suggest we consolidate login/logout onto a session controller
   resource :login,
            :controller => "login",
@@ -93,9 +90,9 @@ RedHatCloud::Application.routes.draw do
   match 'logout/flex' => 'logout#show_flex', :via => [:get]
   match 'logout/express' => 'logout#show_express', :via => [:get]
 
-  resources :partners,
-            :controller => "partner",
-            :only => [:show, :index]
+  #resources :partners,
+  #          :controller => "partner",
+  #          :only => [:show, :index]
 
   scope '/console' do
     match 'help' => 'console#help', :via => :get, :as => 'console_help'
@@ -117,9 +114,15 @@ RedHatCloud::Application.routes.draw do
   match 'console' => 'console#index', :via => :get
   match 'new_application' => 'application_types#index', :via => :get
 
-  resources   :download, 
-              :controller => 'download',
-              :only => [:show,:index]
+  unless Rails.env.production?
+    # TODO: Remove conditional when we go live with OpenSource OpenShift
+    match 'opensource' => 'opensource#index'
+    match 'opensource/download' => 'opensource#download'
+
+    resources   :download,
+                :controller => 'download',
+                :only => [:show,:index]
+  end
 
   unless Rails.env.production?
     match 'styleguide/:action' => 'styleguide'

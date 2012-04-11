@@ -7,7 +7,7 @@ class DomainsController < BaseController
     Rails.logger.debug "Getting domains for user #{@cloud_user.login}"
     Rails.logger.debug @cloud_user.domains
     @cloud_user.domains.each do |domain|
-      domains.push(RestDomain.new(domain))
+      domains.push(RestDomain.new(domain, get_url))
     end
     @reply = RestReply.new(:ok, "domains", domains)
     respond_with @reply, :status => @reply.status
@@ -20,7 +20,7 @@ class DomainsController < BaseController
     domain = get_domain(id)
     if domain and domain.hasAccess?(@cloud_user)
       Rails.logger.debug "Found domain #{id}"
-      domain = RestDomain.new(domain)
+      domain = RestDomain.new(domain, get_url)
       @reply = RestReply.new(:ok, "domain", domain)
       respond_with @reply, :status => @reply.status
     else
@@ -41,9 +41,11 @@ class DomainsController < BaseController
       Rails.logger.error "Domain is not valid"
       @reply = RestReply.new(:unprocessable_entity)
       domain.errors.keys.each do |key|
+        field = key
+        field = "id" if key == "namespace"
         error_messages = domain.errors.get(key)
         error_messages.each do |error_message|
-          @reply.messages.push(Message.new(:error, error_message[:message], error_message[:exit_code], key))
+          @reply.messages.push(Message.new(:error, error_message[:message], error_message[:exit_code], field))
         end
       end
       respond_with @reply, :status => @reply.status
@@ -57,12 +59,12 @@ class DomainsController < BaseController
     return
     end
 
-    # if not @cloud_user.domains.empty?
-    #   @reply = RestReply.new(:conflict)
-    #   @reply.messages.push(Message.new(:error, "User already has a domain associated. Update the domain to modify.", 102))
-    #   respond_with @reply, :status => @reply.status
-    # return
-    # end
+    if not @cloud_user.domains.empty?
+      @reply = RestReply.new(:conflict)
+      @reply.messages.push(Message.new(:error, "User already has a domain associated. Update the domain to modify.", 102))
+      respond_with @reply, :status => @reply.status
+      return
+    end
 
     begin
       domain.save
@@ -75,7 +77,7 @@ class DomainsController < BaseController
     return
     end
 
-    domain = RestDomain.new(domain)
+    domain = RestDomain.new(domain, get_url)
     @reply = RestReply.new(:created, "domain", domain)
     respond_with @reply, :status => @reply.status
   end
@@ -97,7 +99,7 @@ class DomainsController < BaseController
     end
     if domain and not domain.hasFullAccess?@cloud_user
       @reply = RestReply.new(:forbidden)
-      @reply.messages.push(message = Message.new(:error, "You do not have permission to modify this domain", 131))
+      @reply.messages.push(message = Message.new(:error, "You do not have permission to modify this domain", 132))
       respond_with(@reply) do |format|
         format.xml { render :xml => @reply, :status => @reply.status }
         format.json { render :json => @reply, :status => @reply.status }
@@ -109,7 +111,7 @@ class DomainsController < BaseController
 
     if not Domain.namespace_available?(new_namespace)
       @reply = RestReply.new(:unprocessable_entity)
-      @reply.messages.push(Message.new(:error, "Namespace '#{new_namespace}' already in use. Please choose another.", 103, "namespace"))
+      @reply.messages.push(Message.new(:error, "Namespace '#{new_namespace}' already in use. Please choose another.", 103, "id"))
       respond_with @reply, :status => @reply.status  do |format|
         format.xml { render :xml => @reply, :status => @reply.status }
         format.json { render :json => @reply, :status => @reply.status }
@@ -121,9 +123,11 @@ class DomainsController < BaseController
     if domain.invalid?
       @reply = RestReply.new(:unprocessable_entity)
       domain.errors.keys.each do |key|
+        field = key
+        field = "id" if key == "namespace"
         error_messages = domain.errors.get(key)
         error_messages.each do |error_message|
-          @reply.messages.push(Message.new(:error, error_message[:message], error_message[:exit_code], key))
+          @reply.messages.push(Message.new(:error, error_message[:message], error_message[:exit_code], field))
         end
       end
       respond_with(@reply) do |format|
@@ -146,7 +150,7 @@ class DomainsController < BaseController
     return
     end
     @cloud_user = CloudUser.find(@login)
-    domain = RestDomain.new(domain)
+    domain = RestDomain.new(domain, get_url)
     @reply = RestReply.new(:ok, "domain", domain)
 
     respond_with(@reply) do |format|
@@ -178,7 +182,7 @@ class DomainsController < BaseController
 
     if domain and not domain.hasFullAccess?@cloud_user
       @reply = RestReply.new(:forbidden)
-      @reply.messages.push(message = Message.new(:error, "You do not have permission to delete this domain", 131))
+      @reply.messages.push(message = Message.new(:error, "You do not have permission to delete this domain", 132))
       respond_with(@reply) do |format|
         format.xml { render :xml => @reply, :status => @reply.status }
         format.json { render :json => @reply, :status => @reply.status }

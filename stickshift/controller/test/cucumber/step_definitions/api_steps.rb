@@ -26,9 +26,9 @@ After do |scenario|
   @random = nil
 end
 
-Given /^I am a valid user$/ do
-
-  @username = @account['accountname']
+Given /^a new user$/ do
+  @random = rand(10000)
+  @username = "rest-test-#{@random}"
   @password = "xyz123"
   
   register_user(@username, @password) if $registration_required
@@ -217,7 +217,6 @@ end
 
 def sub_random(value)
   if value and value.include? "<random>"
-    @random = rand(1000) unless @random
     value = value.sub("<random>", @random.to_s)
   end
   return value

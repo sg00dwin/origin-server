@@ -72,7 +72,7 @@ class Gear < StickShift::UserModel
     get_proxy.execute_connector(app, self, comp_inst.parent_cart_name, connector_name, input_args)
   end
   
-  def get_execute_connector_job
+  def get_execute_connector_job(cart, connector_name, input_args)
     get_proxy.get_execute_connector_job(app, self, cart, connector_name, input_args)
   end
 

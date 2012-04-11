@@ -11,7 +11,7 @@ class UserController < BaseController
       return
     end
     
-    @reply = RestReply.new(:ok, "user", RestUser.new(@cloud_user))
+    @reply = RestReply.new(:ok, "user", RestUser.new(@cloud_user, get_url))
     respond_with @reply, :status => @reply.status
   end
 end
