@@ -41,9 +41,11 @@ class DomainsController < BaseController
       Rails.logger.error "Domain is not valid"
       @reply = RestReply.new(:unprocessable_entity)
       domain.errors.keys.each do |key|
+        field = key
+        field = "id" if key == "namespace"
         error_messages = domain.errors.get(key)
         error_messages.each do |error_message|
-          @reply.messages.push(Message.new(:error, error_message[:message], error_message[:exit_code], key))
+          @reply.messages.push(Message.new(:error, error_message[:message], error_message[:exit_code], field))
         end
       end
       respond_with @reply, :status => @reply.status
@@ -52,7 +54,7 @@ class DomainsController < BaseController
 
     if not Domain.namespace_available?(namespace)
       @reply = RestReply.new(:unprocessable_entity)
-      @reply.messages.push(Message.new(:error, "Namespace '#{namespace}' is already in use. Please choose another.", 103, "namespace"))
+      @reply.messages.push(Message.new(:error, "Namespace '#{namespace}' is already in use. Please choose another.", 103, "id"))
       respond_with @reply, :status => @reply.status
     return
     end
@@ -109,7 +111,7 @@ class DomainsController < BaseController
 
     if not Domain.namespace_available?(new_namespace)
       @reply = RestReply.new(:unprocessable_entity)
-      @reply.messages.push(Message.new(:error, "Namespace '#{new_namespace}' already in use. Please choose another.", 103, "namespace"))
+      @reply.messages.push(Message.new(:error, "Namespace '#{new_namespace}' already in use. Please choose another.", 103, "id"))
       respond_with @reply, :status => @reply.status  do |format|
         format.xml { render :xml => @reply, :status => @reply.status }
         format.json { render :json => @reply, :status => @reply.status }
@@ -121,9 +123,11 @@ class DomainsController < BaseController
     if domain.invalid?
       @reply = RestReply.new(:unprocessable_entity)
       domain.errors.keys.each do |key|
+        field = key
+        field = "id" if key == "namespace"
         error_messages = domain.errors.get(key)
         error_messages.each do |error_message|
-          @reply.messages.push(Message.new(:error, error_message[:message], error_message[:exit_code], key))
+          @reply.messages.push(Message.new(:error, error_message[:message], error_message[:exit_code], field))
         end
       end
       respond_with(@reply) do |format|
