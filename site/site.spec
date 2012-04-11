@@ -3,7 +3,7 @@
 
 Summary:   Li site components
 Name:      rhc-site
-Version:   0.90.13
+Version:   0.90.14
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -117,6 +117,11 @@ rm -rf %{buildroot}
 /bin/touch %{sitedir}/log/production.log
 
 %changelog
+* Wed Apr 11 2012 Adam Miller <admiller@redhat.com> 0.90.14-1
+- Bug 804849; Improve styling of outage notification to match new branding
+  (edirsh@redhat.com)
+- Better integrate illustrations in overview page (edirsh@redhat.com)
+
 * Wed Apr 11 2012 Adam Miller <admiller@redhat.com> 0.90.13-1
 - Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
   (mmcgrath@redhat.com)
