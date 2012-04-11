@@ -109,5 +109,12 @@ Broker::Application.configure do
     },
   }
 
+
+  # Profiler config
+#  config.profile = {
+#    :type => 'flat',
+#    :min_percent => 0
+#  }
+
 end
 

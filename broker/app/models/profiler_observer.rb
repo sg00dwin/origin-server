@@ -12,7 +12,8 @@ class ProfilerObserver < ActiveModel::Observer
 
 
   def profile_start(call_name, tag=nil)
-    if Rails.configuration.profile_enable
+    cfg=Rails.configuration.profile
+    if not cfg.nil?
       if not RubyProf.running?
         RubyProf.start
       end
@@ -20,10 +21,12 @@ class ProfilerObserver < ActiveModel::Observer
   end
 
   def profile_stop(call_name, tag=nil)
-    if Rails.configuration.profile_enable
+    cfg=Rails.configuration.profile
+
+    if not cfg.nil?
       if RubyProf.running?
         result = RubyProf.stop
-        case Rails.configuration.profile_type
+        case cfg[:type]
         when "flat"
           printer=RubyProf::FlatPrinter
           printext="txt"
@@ -47,9 +50,9 @@ class ProfilerObserver < ActiveModel::Observer
         printer.new(result)
 
         timestamp=Time.now.strftime('%Y-%m-%d-%H-%M-%S')
-        outfile=File.join(Dir.tmpdir, '#{call_name}-#{tag}-#{Rails.configuration.profile_type}-#{timestamp}.#{printext}')
+        outfile=File.join(Dir.tmpdir, '#{call_name}-#{tag}-#{cfg[:type]}-#{timestamp}.#{printext}')
         File.open(outfile, 'wb') do |file|
-          printer.print(outfile, :min_percent=>Rails.configuration.profile_min_percent)
+          printer.print(outfile, :min_percent=>cfg[:min_percent])
         end
 
       end
