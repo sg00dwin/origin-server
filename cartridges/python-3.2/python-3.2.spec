@@ -2,7 +2,7 @@
 
 Summary:   Provides python-wsgi-3.2 support
 Name:      cartridge-python-3.2
-Version:   0.90.2
+Version:   0.90.3
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   ASL 2.0
@@ -109,6 +109,9 @@ rm -rf %{buildroot}
 %doc %{cartridgedir}/LICENSE
 
 %changelog
+* Wed Apr 11 2012 Adam Miller <admiller@redhat.com> 0.90.3-1
+- Fix for bugz 810366 - custom env var for python cartridge. (ramr@redhat.com)
+
 * Mon Apr 02 2012 Krishna Raman <kraman@gmail.com> 0.90.2-1
 - Merge remote-tracking branch 'origin/dev/kraman/US2048' (kraman@gmail.com)
 
