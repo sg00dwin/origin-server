@@ -1,0 +1,70 @@
+#!/usr/bin/env ruby
+
+#
+# Read mcollective log on stdin, measure calls and report back a
+# calling profile.
+#
+# Stderr will show each call as its processed (time in ms)
+#
+# Stdout will show the profile summary
+#
+# ex: Follow the log through a single transaction
+# tail -f /var/log/mcollective.log | rhc-mcollective-log-profile
+# (and hit ctrl-c when done)
+#
+# ex: Parse a whole log
+# rhc-mcollective-log-profile < /var/log/mcollective.log
+#
+
+require 'rubygems'
+require 'date'
+
+profile={}
+ncalls={}
+
+start_time=nil
+action_type=nil
+action_call=nil
+
+begin
+  while line=STDIN.gets do
+    if line =~ /^D, \[(.*) \#\d+\] DEBUG .* (\w+) call \/ request =/
+      start_time=DateTime.parse(Regexp.last_match[1]).strftime('%Q').to_i
+      action_type=Regexp.last_match[2]
+      action_call=nil
+    elsif line =~ /:action=>"(.*)"\,/
+      action_call=Regexp.last_match[1]
+    elsif line =~ /^D, \[(.*) \#\d+\] DEBUG .* (\w+) (?: ERROR )*\(\d+\)/
+      end_time=DateTime.parse(Regexp.last_match[1]).strftime('%Q').to_i
+      end_action_type=Regexp.last_match[2]
+      
+      duration = end_time - start_time
+      
+      if profile[action_call].nil?
+        profile[action_call]=duration
+      else
+        profile[action_call]=profile[action_call]+duration
+      end
+
+      if ncalls[action_call].nil?
+        ncalls[action_call]=1
+      else
+        ncalls[action_call]=ncalls[action_call]+1
+      end
+
+      
+      $stderr.puts "#{action_type}: #{duration} : #{action_call}"
+      start_time=nil
+      action_type=nil
+    end
+  end
+rescue Interrupt
+end
+
+
+printf("%8s: %6s: %s\n", "msec", "calls", "Action")
+printf("%8s: %6s: %s\n", "--------", "------", "--------------------")
+sprof=profile.sort_by {|key, value| value}
+sprof.each do |pair|
+  printf("%8d: %6d: %s\n", pair[1], ncalls[pair[0]], pair[0])
+end
