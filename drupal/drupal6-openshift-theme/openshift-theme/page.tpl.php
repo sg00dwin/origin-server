@@ -147,7 +147,6 @@
               </header>
               <ul class="unstyled">
                 <li><a href="<?php print $base_url; ?>/forums/">Forum</a></li>
-                <li><a href="/app/partners">Partner Program</a></li>
                 <li><a href="http://webchat.freenode.net/?randomnick=1&amp;channels=openshift&amp;uio=d4">IRC Channel</a></li>
                 <li><a href="mailto:openshift@redhat.com">Feedback</a></li>
               </ul>

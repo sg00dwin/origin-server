@@ -25,7 +25,8 @@ RedHatCloud::Application.routes.draw do
   match 'getting_started/flex' => app_redirect('getting_started')
   match 'getting_started_external/:registration_referrer' => 'getting_started_external#show'
   match 'platform' => 'product#overview', :as => 'product_overview'
-  match 'partners/join' => 'partner#join', :as=> 'join_partner'
+  #match 'partners/join' => 'partner#join', :as=> 'join_partner'
+  match 'partners' => app_redirect('platform')
 
   # Buzz
   match 'twitter_latest_tweet' => 'twitter#latest_tweet'
@@ -89,9 +90,9 @@ RedHatCloud::Application.routes.draw do
   match 'logout/flex' => 'logout#show_flex', :via => [:get]
   match 'logout/express' => 'logout#show_express', :via => [:get]
 
-  resources :partners,
-            :controller => "partner",
-            :only => [:show, :index]
+  #resources :partners,
+  #          :controller => "partner",
+  #          :only => [:show, :index]
 
   scope '/console' do
     match 'help' => 'console#help', :via => :get, :as => 'console_help'

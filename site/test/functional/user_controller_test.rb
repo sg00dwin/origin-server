@@ -1,5 +1,4 @@
-require 'test_helper'
-require 'yaml'
+require File.expand_path('../../test_helper', __FILE__)
 
 class UserControllerTest < ActionController::TestCase
   test "should get new unauthorized" do

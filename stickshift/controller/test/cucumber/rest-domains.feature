@@ -251,8 +251,7 @@ Feature: domains
     Then the response should be "201"
     And the response should be a "domain" with attributes "id=cucumber<random>"
     When I send a POST request to "/domains" with the following:"id=cucumberX<random>"
-    Then the response should be "201"
-    And the response should be a "domain" with attributes "id=cucumberX<random>"
+    Then the response should be "409"
     
     Scenarios:
      | format | 

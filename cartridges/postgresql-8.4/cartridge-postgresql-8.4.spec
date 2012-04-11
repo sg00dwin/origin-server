@@ -1,7 +1,7 @@
 %define cartridgedir %{_libexecdir}/stickshift/cartridges/embedded/postgresql-8.4
 
 Name: cartridge-postgresql-8.4
-Version: 0.6.3
+Version: 0.6.6
 Release: 1%{?dist}
 Summary: Embedded postgresql support for express
 
@@ -74,6 +74,20 @@ rm -rf $RPM_BUILD_ROOT
 %doc %{cartridgedir}/LICENSE
 
 %changelog
+* Tue Apr 10 2012 Mike McGrath <mmcgrath@redhat.com> 0.6.6-1
+- removed test commits (mmcgrath@redhat.com)
+
+* Tue Apr 10 2012 Mike McGrath <mmcgrath@redhat.com> 0.6.5-1
+- Test commit (mmcgrath@redhat.com)
+
+* Tue Apr 10 2012 Mike McGrath <mmcgrath@redhat.com> 0.6.4-1
+- test commits (mmcgrath@redhat.com)
+- Return in a way that broker can manage. (rmillner@redhat.com)
+- Merge remote-tracking branch 'origin/master' (kraman@gmail.com)
+- Automatic commit of package [rhc-cartridge-postgresql-8.4] release [0.6.3-1].
+  (mmcgrath@redhat.com)
+- test commit (mmcgrath@redhat.com)
+
 * Tue Apr 03 2012 Mike McGrath <mmcgrath@redhat.com> 0.6.3-1
 - test commit (mmcgrath@redhat.com)
 - Fix for bugz 808013 - Use a postgres data template for speeding up and

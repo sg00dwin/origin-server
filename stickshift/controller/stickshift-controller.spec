@@ -5,7 +5,7 @@
 
 Summary:        Cloud Development Controller
 Name:           rubygem-%{gemname}
-Version:        0.8.8
+Version:        0.8.12
 Release:        1%{?dist}
 Group:          Development/Languages
 License:        ASL 2.0
@@ -75,6 +75,33 @@ rm -rf %{buildroot}
 %{ruby_sitelib}/%{gemname}.rb
 
 %changelog
+* Tue Apr 10 2012 Mike McGrath <mmcgrath@redhat.com> 0.8.12-1
+- Updating gem versions (mmcgrath@redhat.com)
+- Fix domain controller errors and related cucumber tests (rpenta@redhat.com)
+- Merge branch 'master' of git1.ops.rhcloud.com:/srv/git/li (rpenta@redhat.com)
+- Fix for bug# 811139 (rpenta@redhat.com)
+
+* Tue Apr 10 2012 Adam Miller <admiller@redhat.com> 0.8.11-1
+- Updating gem versions (admiller@redhat.com)
+- Adding checks to prevent creation of multiple domains for a user
+  (kraman@gmail.com)
+- Fix for Bug# 807513 (rpenta@redhat.com)
+- Partial fix for 806401 (kraman@gmail.com)
+
+* Tue Apr 10 2012 Adam Miller <admiller@redhat.com> 0.8.10-1
+- Updating gem versions (admiller@redhat.com)
+- Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
+  (admiller@redhat.com)
+- Fix for bug# 809467 (rpenta@redhat.com)
+
+* Tue Apr 10 2012 Adam Miller <admiller@redhat.com> 0.8.9-1
+- Updating gem versions (admiller@redhat.com)
+- Merge branch 'master' of git1.ops.rhcloud.com:/srv/git/li (rpenta@redhat.com)
+- Fix REST domain cucumber tests (rpenta@redhat.com)
+- bug 810475 (bdecoste@gmail.com)
+- Bugz 810931. Changing REST API params and Application structure to accept
+  gear_profile instead of node_profile (kraman@gmail.com)
+
 * Tue Apr 10 2012 Mike McGrath <mmcgrath@redhat.com> 0.8.8-1
 - Updating gem versions (mmcgrath@redhat.com)
 - BugzID 811141. Fixed spelling (kraman@gmail.com)

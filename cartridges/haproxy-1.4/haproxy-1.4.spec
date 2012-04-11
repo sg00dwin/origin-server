@@ -3,7 +3,7 @@
 
 Summary:   Provides embedded haproxy-1.4 support
 Name:      cartridge-haproxy-1.4
-Version:   0.7.7
+Version:   0.7.8
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   ASL 2.0
@@ -91,6 +91,21 @@ rm -rf %{buildroot}
 %doc %{cartridgedir}/LICENSE
 
 %changelog
+* Tue Apr 10 2012 Mike McGrath <mmcgrath@redhat.com> 0.7.8-1
+- Merge branch 'master' of li-master:/srv/git/li (ramr@redhat.com)
+- Fix for bugz 809567 and also for 809554 - snapshot and restore for scalable
+  apps. (ramr@redhat.com)
+- enable auto scaling by default (mmcgrath@redhat.com)
+- Remove link (no longer needed) as stickshift code has changed to use app name
+  for the first gear in a scaled app. (ramr@redhat.com)
+- Merge branch 'master' of li-master:/srv/git/li (ramr@redhat.com)
+- re-ordered changelog chronologically (mlamouri@redhat.com)
+- Cleanup old deprecated directory. (ramr@redhat.com)
+- Merge remote-tracking branch 'origin/master' (kraman@gmail.com)
+- Automatic commit of package [rhc-cartridge-haproxy-1.4] release [0.7.7-1].
+  (mmcgrath@redhat.com)
+- test commit (mmcgrath@redhat.com)
+
 * Tue Apr 03 2012 Mike McGrath <mmcgrath@redhat.com> 0.7.7-1
 - test commit (mmcgrath@redhat.com)
 - Update spec to require rest-client (jhonce@redhat.com)

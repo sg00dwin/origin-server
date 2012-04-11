@@ -1,5 +1,4 @@
-require 'test_helper'
-require 'cgi'
+require File.expand_path('../../test_helper', __FILE__)
 
 class LogoutControllerTest < ActionController::TestCase
   test "should get index" do

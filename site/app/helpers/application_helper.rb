@@ -90,6 +90,10 @@ module ApplicationHelper
     end
   end
 
+  def upgrade_in_rails_31
+    raise "Code needs upgrade for rails 3.1+" if Rails.version[0..3] != '3.0.'
+  end
+
   def wrap_long_string(text, max_width = 150)
     (text.length < max_width) ? text : text.scan(/.{1,#{max_width}}/).join("<wbr>")
   end

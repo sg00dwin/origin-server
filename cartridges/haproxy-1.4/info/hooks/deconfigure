@@ -65,10 +65,10 @@ kill `cat ${HAPROXY_DIR}/run/haproxy.pid`
 confirm_pid_gone "${HAPROXY_DIR}/run/haproxy.pid"
 
 # Remove haproxy dir. This MUST be after stopping haproxy as the CTL script relies on these.
+rm -rf $HAPROXY_DIR/.ssh
 runcon -l s0-s0:c0.c1023 rm -rf "$HAPROXY_DIR"
 
 rm -rf ${APP_HOME}/.openshift
-rm -rf $APP_DIR/data/.ssh/haproxy_id_rsa $APP_DIR/data/.ssh/haproxy_id_rsa.pub
 rm -f /etc/httpd/conf.d/stickshift/${uuid}_${namespace}_${application}/000000_haproxy.conf
 
 if [ "$application" != "$OPENSHIFT_APP_NAME" ]; then

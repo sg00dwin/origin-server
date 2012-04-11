@@ -6,7 +6,7 @@ RUBYGEM_SWINGSHIFT_STREAMLINE_REGEX = /^rubygem-swingshift-streamline-plugin-\d+
 RUBYGEM_CRANKCASE_MONGO_REGEX = /^rubygem-crankcase-mongo-plugin-\d+/
 RUBYGEM_UPLIFT_DYNECT_REGEX = /^rubygem-uplift-dynect-plugin-\d+/
 RUBYGEM_GEARCHANGER_MCOLLECTIVE_REGEX = /^rubygem-gearchanger-m-collective-plugin-\d+/
-CARTRIDGE_REGEX = /^rhc-(cartridge-[\w-]+\d+[\.\d+]*)-\d+\.\d+\.\d+-/
+CARTRIDGE_REGEX = /^(cartridge-[\w-]+\d+[\.\d+]*)-\d+\.\d+\.\d+-/
 RHC_REGEX = /^rhc-([\w-]+)-\d+/
 DEVENV_REGEX = /^rhc-devenv-\d+/
 
