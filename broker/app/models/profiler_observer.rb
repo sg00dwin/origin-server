@@ -62,7 +62,7 @@ class ProfilerObserver < ActiveModel::Observer
         Rails.logger.debug("ProfilerObserver::profile_stop: writing #{cfg[:type]} report in #{outfile}")
         printer.new(result)
         File.open(outfile, 'wb') do |file|
-          printer.print(outfile, :min_percent=>cfg[:min_percent])
+          printer.print(file, :min_percent=>cfg[:min_percent])
         end
 
       end
