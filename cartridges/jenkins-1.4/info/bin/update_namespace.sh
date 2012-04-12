@@ -28,7 +28,7 @@ setup_user_vars
 echo "export JENKINS_URL='https://${application}-${new_namespace}.${CLOUD_DOMAIN}/'" > $APP_HOME/.env/JENKINS_URL
 . $APP_HOME/.env/OPENSHIFT_INTERNAL_IP
 . $APP_HOME/.env/OPENSHIFT_INTERNAL_PORT
-export JENKINS_URL="https://$OPENSHIFT_INTERNAL_IP:$OPENSHIFT_INTERNAL_PORT"
+. $APP_HOME/.env/JENKINS_URL
 . $APP_HOME/.env/JENKINS_USERNAME
 . $APP_HOME/.env/JENKINS_PASSWORD
 . $APP_HOME/.env/OPENSHIFT_DATA_DIR
@@ -48,7 +48,10 @@ then
     sed -i "s/-${old_namespace}.${CLOUD_DOMAIN}/-${new_namespace}.${CLOUD_DOMAIN}/g" $APP_DIR/data/hudson.tasks.Mailer.xml
 fi
 
-if ! out=$(run_as_user "$CART_INFO_DIR/bin/jenkins_reload" 2>&1)
+url=`echo "${JENKINS_URL}" | sed "s/${new_namespace}/${old_namespace}/g"`
+out=`run_as_user "$CART_INFO_DIR/bin/jenkins_reload ${JENKINS_USERNAME} ${JENKINS_PASSWORD} ${url}" 2>&1`
+
+if ! out=302
 then
     # An error occurred reloading jenkins configuration
     client_message ""
