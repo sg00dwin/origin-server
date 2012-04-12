@@ -34,7 +34,7 @@ proxy_port=$(show_proxy_port $uuid "$OPENSHIFT_INTERNAL_IP:$OPENSHIFT_INTERNAL_P
 ret=$?
 if [ $ret -ne 0 ]; then
   client_result "No proxy ports defined"
-  exit 1
+  exit 0
 fi
 
 cluster_port=$(find_next_proxy_port $uuid "$OPENSHIFT_INTERNAL_IP:$OPENSHIFT_JBOSS_CLUSTER_PORT")
