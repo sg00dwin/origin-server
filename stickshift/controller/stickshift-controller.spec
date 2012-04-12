@@ -5,7 +5,7 @@
 
 Summary:        Cloud Development Controller
 Name:           rubygem-%{gemname}
-Version:        0.8.13
+Version:        0.8.14
 Release:        1%{?dist}
 Group:          Development/Languages
 License:        ASL 2.0
@@ -75,6 +75,14 @@ rm -rf %{buildroot}
 %{ruby_sitelib}/%{gemname}.rb
 
 %changelog
+* Thu Apr 12 2012 Mike McGrath <mmcgrath@redhat.com> 0.8.14-1
+- Updating gem versions (mmcgrath@redhat.com)
+- Check the output of show-port rather than its exit code.
+  (rmillner@redhat.com)
+- Added timing info to runcon (mmcgrath@redhat.com)
+- Temporary commit to build (mmcgrath@redhat.com)
+- php testing efficiencies (mmcgrath@redhat.com)
+
 * Wed Apr 11 2012 Adam Miller <admiller@redhat.com> 0.8.13-1
 - Updating gem versions (admiller@redhat.com)
 - Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
