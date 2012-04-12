@@ -2,7 +2,7 @@
 %define frameworkdir %{_libexecdir}/stickshift/cartridges/mysql-5.1
 
 Name: cartridge-mysql-5.1
-Version: 0.24.6
+Version: 0.24.7
 Release: 1%{?dist}
 Summary: Provides embedded mysql support
 
@@ -73,6 +73,9 @@ rm -rf $RPM_BUILD_ROOT
 %doc %{cartridgedir}/LICENSE
 
 %changelog
+* Wed Apr 11 2012 Adam Miller <admiller@redhat.com> 0.24.7-1
+- no ports defined now exits 1 (mmcgrath@redhat.com)
+
 * Wed Apr 11 2012 Adam Miller <admiller@redhat.com> 0.24.6-1
 - Relying on being able to send back appropriate output to the broker on a
   failure and we are using return codes inside the script.
