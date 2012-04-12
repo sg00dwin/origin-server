@@ -1,5 +1,4 @@
 StickShift::DataStore.provider=Express::Broker::MongoDataStore
-ProfilerObserver.instance
 ApplicationObserver.instance
 CloudUserObserver.instance
 
