@@ -280,7 +280,7 @@ module CommandHelper
   def rhc_add_alias(app)
     rhc_do('rhc_add_alias') do
       time = Benchmark.realtime do 
-        run("#{$rhc_app_script} add-alias -l #{app.login} -a #{app.name} -p #{app.password} --alias '#{app.name}-#{app.namespace}.example.com' -d").should == 0
+        run("#{$rhc_app_script} add-alias -l #{app.login} -a #{app.name} -p #{app.password} --alias '#{app.name}-#{app.namespace}.#{$alias_domain}' -d").should == 0
       end
       log_event "#{time} ADD_ALIAS #{app.name} #{app.login}"
     end
@@ -289,7 +289,7 @@ module CommandHelper
   def rhc_remove_alias(app)
     rhc_do('rhc_remove_alias') do
       time = Benchmark.realtime do 
-        run("#{$rhc_app_script} remove-alias -l #{app.login} -a #{app.name} -p #{app.password} --alias '#{app.name}-#{app.namespace}.example.com' -d").should == 0
+        run("#{$rhc_app_script} remove-alias -l #{app.login} -a #{app.name} -p #{app.password} --alias '#{app.name}-#{app.namespace}.#{$alias_domain}' -d").should == 0
       end
       log_event "#{time} REMOVE_ALIAS #{app.name} #{app.login}"
     end

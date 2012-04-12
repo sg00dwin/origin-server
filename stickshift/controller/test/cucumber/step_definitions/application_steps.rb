@@ -133,7 +133,7 @@ When /^I restore the application$/ do
 end
 
 Then /^the application should respond to the alias$/ do
-  @app.is_accessible?(false, 120, "#{@app.name}-#{@app.namespace}.example.com").should be_true
+  @app.is_accessible?(false, 120, "#{@app.name}-#{@app.namespace}.#{$alias_domain}").should be_true
 end
 
 Then /^the applications should be accessible?$/ do
