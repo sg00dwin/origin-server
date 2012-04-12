@@ -2,7 +2,7 @@
 
 Summary:   Provides ruby rack support running on Phusion Passenger
 Name:      cartridge-ruby-1.1
-Version:   0.90.2
+Version:   0.90.3
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   ASL 2.0
@@ -122,6 +122,9 @@ rm -rf %{buildroot}
 %doc %{cartridgedir}/LICENSE
 
 %changelog
+* Thu Apr 12 2012 Mike McGrath <mmcgrath@redhat.com>
+- Temporary commit to build (mmcgrath@redhat.com)
+
 * Mon Apr 02 2012 Krishna Raman <kraman@gmail.com> 0.90.2-1
 - Merge remote-tracking branch 'origin/dev/kraman/US2048' (kraman@gmail.com)
 
