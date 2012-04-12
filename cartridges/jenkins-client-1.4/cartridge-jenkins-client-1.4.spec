@@ -1,7 +1,7 @@
 %define cartridgedir %{_libexecdir}/stickshift/cartridges/embedded/jenkins-client-1.4
 
 Name: cartridge-jenkins-client-1.4
-Version: 0.25.1
+Version: 0.25.2
 Release: 1%{?dist}
 Summary: Embedded jenkins client support for express 
 Group: Network/Daemons
@@ -56,6 +56,9 @@ rm -rf $RPM_BUILD_ROOT
 %doc %{cartridgedir}/LICENSE
 
 %changelog
+* Thu Apr 12 2012 Mike McGrath <mmcgrath@redhat.com> 0.25.2-1
+- release bump for tag uniqueness (mmcgrath@redhat.com)
+
 * Thu Apr 12 2012 Mike McGrath <mmcgrath@redhat.com> 0.24.3-1
 - bug 811509 (bdecoste@gmail.com)
 
