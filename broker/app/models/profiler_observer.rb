@@ -3,31 +3,33 @@ class ProfilerObserver < ActiveModel::Observer
 
 
   def before_application_create(data)
-    profile_start("application_create", data[:application])
+    profile_start("application_create", data[:application].name)
   end
 
   def after_application_create(data)
-    profile_stop("application_create", data[:application])
+    profile_stop("application_create", data[:application].name)
   end
 
 
   def profile_start(call_name, call_tag="")
-    Rails.logger.debug("ProfilerObserver::profile_start: #{call_name} #{call_tag}")
-    cfg=Rails.configuration.profile
-    if not cfg.nil?
+    begin
+      Rails.logger.debug("ProfilerObserver::profile_start: #{call_name} #{call_tag}")
+      cfg=Rails.configuration.profile
       Rails.logger.debug("ProfilerObserver::profile_start: Profile is configured")
       if not RubyProf.running?
         Rails.logger.debug("ProfilerObserver::profile_start: RubyProf was stopped. Running.")
         RubyProf.start
       end
+    rescue NoMethodError
     end
   end
 
-  def profile_stop(call_name, call_tag="")
-    Rails.logger.debug("ProfilerObserver::profile_stop: #{call_name} #{call_tag}")
 
-    cfg=Rails.configuration.profile
-    if not cfg.nil?
+  def profile_stop(call_name, call_tag="")
+    begin
+      Rails.logger.debug("ProfilerObserver::profile_stop: #{call_name} #{call_tag}")
+      cfg=Rails.configuration.profile
+
       Rails.logger.debug("ProfilerObserver::profile_stop: Profile is configured")
       if RubyProf.running?
         Rails.logger.debug("ProfilerObserver::profile_stop: RubyProf was running.  Stopping.")
@@ -65,6 +67,7 @@ class ProfilerObserver < ActiveModel::Observer
 
       end
     end
+  rescue NoMethodError
   end
 
 end
