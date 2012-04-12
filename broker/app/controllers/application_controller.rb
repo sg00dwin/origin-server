@@ -1,6 +1,6 @@
 class ApplicationController < ActionController::Base
-  before_filter :profile_start, :store_user_agent
-  after_filter  :profile_stop
+  before_filter :profiler_start, :store_user_agent
+  after_filter  :profiler_stop
   
   @@outage_notification_file = '/etc/stickshift/express_outage_notification.txt'  
   
@@ -25,13 +25,14 @@ class ApplicationController < ActionController::Base
   end
 
 
-  def profile_start
+  def profiler_start
     begin
-      Rails.logger.debug("ProfilerObserver::profile_start")
-      cfg=Rails.configuration.profile
-      Rails.logger.debug("ProfilerObserver::profile_start: Profile is configured")
+      cfg=Rails.configuration.profiler
       if not RubyProf.running?
-        Rails.logger.debug("ProfilerObserver::profile_start: RubyProf was stopped. Running.")
+        Rails.logger.debug("ApplicationController::profiler_start: RubyProf starting.")
+        if cfg[:squash_threads]
+          RubyProf::exclude_threads = Thread.list.collect { |th| th if th != Thread.current }
+        end
         RubyProf.start
       end
     rescue NoMethodError
@@ -39,14 +40,12 @@ class ApplicationController < ActionController::Base
   end
 
 
-  def profile_stop
+  def profiler_stop
     begin
-      Rails.logger.debug("ProfilerObserver::profile_stop")
-      cfg=Rails.configuration.profile
+      cfg=Rails.configuration.profiler
 
-      Rails.logger.debug("ProfilerObserver::profile_stop: Profile is configured")
       if RubyProf.running?
-        Rails.logger.debug("ProfilerObserver::profile_stop: RubyProf was running.  Stopping.")
+        Rails.logger.debug("ApplicationController::profiler_stop: RubyProf stopping.")
         result = RubyProf.stop
 
         case cfg[:type]
@@ -73,10 +72,11 @@ class ApplicationController < ActionController::Base
         timestamp=Time.now.strftime('%Y-%m-%d-%H-%M-%S')
         outfile=File.join(Dir.tmpdir, "#{timestamp}-#{cfg[:type]}.#{printext}")
 
-        Rails.logger.debug("ProfilerObserver::profile_stop: writing #{cfg[:type]} report in #{outfile}")
+        Rails.logger.debug("ApplicationController::profiler_stop: writing #{cfg[:type]} report in #{outfile}")
         p=printer.new(result)
+
         File.open(outfile, 'wb') do |f|
-          p.print(f, :min_percent=>cfg[:min_percent])
+          p.print(f, cfg)
         end
 
       end
