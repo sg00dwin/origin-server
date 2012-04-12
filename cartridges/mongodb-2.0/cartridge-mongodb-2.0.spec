@@ -1,7 +1,7 @@
 %define cartridgedir %{_libexecdir}/stickshift/cartridges/embedded/mongodb-2.0
 
 Name: cartridge-mongodb-2.0
-Version: 0.17.7
+Version: 0.17.8
 Release: 1%{?dist}
 Summary: Embedded mongodb support for OpenShift
 
@@ -56,6 +56,9 @@ rm -rf $RPM_BUILD_ROOT
 %doc %{cartridgedir}/LICENSE
 
 %changelog
+* Wed Apr 11 2012 Adam Miller <admiller@redhat.com> 0.17.8-1
+- no ports defined now exits 1 (mmcgrath@redhat.com)
+
 * Wed Apr 11 2012 Adam Miller <admiller@redhat.com> 0.17.7-1
 - Relying on being able to send back appropriate output to the broker on a
   failure and we are using return codes inside the script.
