@@ -11,21 +11,31 @@ class ProfilerObserver < ActiveModel::Observer
   end
 
 
-  def profile_start(call_name, tag=nil)
+  def profile_start(call_name, call_tag="")
+    Rails.logger.debug("ProfilerObserver::profile_start: #{call_name} #{call_tag}")
     cfg=Rails.configuration.profile
     if not cfg.nil?
+      Rails.logger.debug("ProfilerObserver::profile_start: Profile is configured")
       if not RubyProf.running?
+        Rails.logger.debug("ProfilerObserver::profile_start: RubyProf was stopped. Running.")
         RubyProf.start
       end
     end
   end
 
-  def profile_stop(call_name, tag=nil)
-    cfg=Rails.configuration.profile
+  def profile_stop(call_name, call_tag="")
+    Rails.logger.debug("ProfilerObserver::profile_stop: #{call_name} #{call_tag}")
 
+    cfg=Rails.configuration.profile
     if not cfg.nil?
+      Rails.logger.debug("ProfilerObserver::profile_stop: Profile is configured")
       if RubyProf.running?
+        Rails.logger.debug("ProfilerObserver::profile_stop: RubyProf was running.  Stopping.")
         result = RubyProf.stop
+
+        timestamp=Time.now.strftime('%Y-%m-%d-%H-%M-%S')
+        outfile=File.join(Dir.tmpdir, '#{call_name}-#{call_tag}-#{cfg[:type]}-#{timestamp}.#{printext}')
+
         case cfg[:type]
         when "flat"
           printer=RubyProf::FlatPrinter
@@ -47,10 +57,8 @@ class ProfilerObserver < ActiveModel::Observer
           printext="txt"
         end
 
+        Rails.logger.debug("ProfilerObserver::profile_stop: writing #{cfg[:type]} report in #{outfile}")
         printer.new(result)
-
-        timestamp=Time.now.strftime('%Y-%m-%d-%H-%M-%S')
-        outfile=File.join(Dir.tmpdir, '#{call_name}-#{tag}-#{cfg[:type]}-#{timestamp}.#{printext}')
         File.open(outfile, 'wb') do |file|
           printer.print(outfile, :min_percent=>cfg[:min_percent])
         end
