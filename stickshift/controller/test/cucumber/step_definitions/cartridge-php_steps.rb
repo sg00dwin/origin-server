@@ -133,7 +133,7 @@ Given /^a new php application$/ do
     'name' => app_name
   }
   command = $php_config_format % [app_name, namespace, account_name]
-  exitcode = runcon command,  $selinux_user, $selinux_role, $selinux_type
+  exitcode = runcon command,  $selinux_user, $selinux_role, $selinux_type, nil, 10
   raise "Non zero exit code: #{exitcode}" unless exitcode == 0
 
 end
@@ -143,7 +143,7 @@ When /^I deconfigure the php application$/ do
   namespace = @app['namespace']
   app_name = @app['name']
   command = $php_deconfig_format % [app_name, namespace, account_name]
-  exitcode = runcon command,  $selinux_user, $selinux_role, $selinux_type
+  exitcode = runcon command,  $selinux_user, $selinux_role, $selinux_type, nil, 10
   raise "Non zero exit code: #{exitcode}" unless exitcode == 0
 end
 
@@ -163,19 +163,19 @@ Given /^the php application is (running|stopped)$/ do | start_state |
 
   # check
   status_command = $php_status_format %  [app_name, namespace, account_name]
-  exit_status = runcon status_command, $selinux_user, $selinux_role, $selinux_type
+  exit_status = runcon status_command, $selinux_user, $selinux_role, $selinux_type, nil, 2
 
   if exit_status != good_exit
     # fix it
     fix_command = "#{$php_hooks}/%s %s %s %s" % [fix_action, app_name, namespace, account_name]
-    exit_status = runcon fix_command, $selinux_user, $selinux_role, $selinux_type
+    exit_status = runcon fix_command, $selinux_user, $selinux_role, $selinux_type, nil, 2
     if exit_status != 0
       raise "Unable to %s for %s %s %s" % [fix_action, app_name, namespace, account_name]
     end
     sleep 5
     
     # check exit status
-    exit_status = runcon status_command, $selinux_user, $selinux_role, $selinux_type
+    exit_status = runcon status_command, $selinux_user, $selinux_role, $selinux_type, nil, 2
     if exit_status != good_exit
       raise "Received bad status after %s for %s %s %s" % [fix_action, app_name, namespace, account_name]
     end
@@ -190,7 +190,7 @@ When /^I (add-alias|remove-alias) the php application$/ do |action|
   server_alias = "#{@app['name']}-#{@account['accountname']}.example.com"
 
   command = "#{$php_hooks}/%s %s %s %s %s" % [action, app_name, namespace, account_name, server_alias]
-  exit_status = runcon command, $selinux_user, $selinux_role, $selinux_type
+  exit_status = runcon command, $selinux_user, $selinux_role, $selinux_type, nil, 10
   if exit_status != 0
     raise "Unable to %s for %s %s %s %s" % [action, app_name, namespace, account_name, server_alias]
   end
@@ -202,7 +202,7 @@ When /^I (expose-port|conceal-port) the php application$/ do |action|
   app_name = @app['name']
 
   command = "#{$php_hooks}/%s %s %s %s" % [action, app_name, namespace, account_name]
-  exit_status = runcon command, $selinux_user, $selinux_role, $selinux_type
+  exit_status = runcon command, $selinux_user, $selinux_role, $selinux_type, nil, 10
   if exit_status != 0
     raise "Unable to %s for %s %s %s" % [action, app_name, namespace, account_name]
   end
@@ -214,7 +214,7 @@ When /^I (start|stop) the php application$/ do |action|
   app_name = @app['name']
 
   command = "#{$php_hooks}/%s %s %s %s" % [action, app_name, namespace, account_name]
-  exit_status = runcon command, $selinux_user, $selinux_role, $selinux_type
+  exit_status = runcon command, $selinux_user, $selinux_role, $selinux_type, nil, 10
   if exit_status != 0
     raise "Unable to %s for %s %s %s" % [action, app_name, namespace, account_name]
   end
@@ -248,6 +248,6 @@ Then /^the php application will( not)? be running$/ do | negate |
   good_status = negate ? 0 : 0
 
   command = "#{$php_hooks}/status %s %s %s" % [app_name, namespace, account_name]
-  exit_status = runcon command, $selinux_user, $selinux_role, $selinux_type
+  exit_status = runcon command, $selinux_user, $selinux_role, $selinux_type, nil, 10
   exit_status.should == good_status
 end

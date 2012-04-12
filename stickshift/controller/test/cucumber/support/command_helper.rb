@@ -108,7 +108,7 @@ module CommandHelper
     $logger.debug("Command run: #{fullcmd}")
     $logger.debug("Output:\n#{output}")
     $logger.debug("Exit Code: #{exit_code}")
-    $logger.debug("Time limit: #{time_limit_sec}s Actual: #{execute_time}s") if time_limit_sec != 600
+    $logger.debug("Time limit: #{time_limit_sec}s Actual: #{execute_time}s") if time_limit_sec
     # append the buffers if an array container is provided
     if outbuf
       outbuf << output
