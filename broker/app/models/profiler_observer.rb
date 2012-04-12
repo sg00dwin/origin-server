@@ -35,9 +35,6 @@ class ProfilerObserver < ActiveModel::Observer
         Rails.logger.debug("ProfilerObserver::profile_stop: RubyProf was running.  Stopping.")
         result = RubyProf.stop
 
-        timestamp=Time.now.strftime('%Y-%m-%d-%H-%M-%S')
-        outfile=File.join(Dir.tmpdir, "#{call_name}-#{call_tag}-#{cfg[:type]}-#{timestamp}.#{printext}")
-
         case cfg[:type]
         when "flat"
           printer=RubyProf::FlatPrinter
@@ -58,6 +55,9 @@ class ProfilerObserver < ActiveModel::Observer
           printer=RubyProf::FlatPrinter
           printext="txt"
         end
+
+        timestamp=Time.now.strftime('%Y-%m-%d-%H-%M-%S')
+        outfile=File.join(Dir.tmpdir, "#{call_name}-#{call_tag}-#{cfg[:type]}-#{timestamp}.#{printext}")
 
         Rails.logger.debug("ProfilerObserver::profile_stop: writing #{cfg[:type]} report in #{outfile}")
         printer.new(result)
