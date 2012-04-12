@@ -8,7 +8,7 @@
 
 Summary:   Dependencies for OpenShift development
 Name:      rhc-devenv
-Version:   0.91.9
+Version:   0.91.10
 Release:   1%{?dist}
 Group:     Development/Libraries
 License:   GPLv2
@@ -388,6 +388,10 @@ echo "Header append Strict-Transport-Security includeSubDomains" >> /etc/httpd/c
 %{policydir}/*
 
 %changelog
+* Wed Apr 11 2012 Adam Miller <admiller@redhat.com> 0.91.10-1
+- two more drupal6-modules to devenv.spec (ansilva@redhat.com)
+- Added wiki module dependencies for drupal6 (ansilva@redhat.com)
+
 * Wed Apr 11 2012 Anderson Silva <ansilva@redhat.com> 0.91.9-1
 - Added wiki module dependencies for drupal6 (ansilva@redhat.com)
 * Mon Apr 09 2012 Mike McGrath <mmcgrath@redhat.com> 0.91.8-1

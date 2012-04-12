@@ -1,7 +1,7 @@
 %define cartridgedir %{_libexecdir}/stickshift/cartridges/embedded/postgresql-8.4
 
 Name: cartridge-postgresql-8.4
-Version: 0.6.6
+Version: 0.6.9
 Release: 1%{?dist}
 Summary: Embedded postgresql support for express
 
@@ -74,6 +74,19 @@ rm -rf $RPM_BUILD_ROOT
 %doc %{cartridgedir}/LICENSE
 
 %changelog
+* Thu Apr 12 2012 Mike McGrath <mmcgrath@redhat.com> 0.6.9-1
+- This was done to allow a cucumber test to continue to work.  The test will be
+  fixed in a subsequent commit. Revert "no ports defined now exits 1"
+  (rmillner@redhat.com)
+
+* Wed Apr 11 2012 Adam Miller <admiller@redhat.com> 0.6.8-1
+- no ports defined now exits 1 (mmcgrath@redhat.com)
+
+* Wed Apr 11 2012 Adam Miller <admiller@redhat.com> 0.6.7-1
+- Relying on being able to send back appropriate output to the broker on a
+  failure and we are using return codes inside the script.
+  (rmillner@redhat.com)
+
 * Tue Apr 10 2012 Mike McGrath <mmcgrath@redhat.com> 0.6.6-1
 - removed test commits (mmcgrath@redhat.com)
 

@@ -87,7 +87,7 @@ module CommandHelper
   end
 
   # run a command in an alternate SELinux context, if provided
-  def runcon(cmd, user=nil, role=nil, type=nil, outbuf=nil)
+  def runcon(cmd, user=nil, role=nil, type=nil, outbuf=nil, time_limit_sec=600)
     if user.nil? and role.nil? and type.nil?
       exit_code = run cmd, outbuf
       return exit_code
@@ -99,12 +99,16 @@ module CommandHelper
     prefix += (' -t ' + type) if type
     fullcmd = prefix + " " + cmd
 
+    time_start = Time.now
     output = `#{fullcmd} 2>&1`
     exit_code = $?.exitstatus
+    execute_time = Time.now - time_start
+    raise "Time limit reached.  Limit: #{time_limit_sec}s Actual: #{execute_time}s" if execute_time > time_limit_sec
 
     $logger.debug("Command run: #{fullcmd}")
     $logger.debug("Output:\n#{output}")
     $logger.debug("Exit Code: #{exit_code}")
+    $logger.debug("Time limit: #{time_limit_sec}s Actual: #{execute_time}s") if time_limit_sec
     # append the buffers if an array container is provided
     if outbuf
       outbuf << output

@@ -3,7 +3,7 @@
 
 Summary:   Li broker components
 Name:      rhc-broker
-Version:   0.90.17
+Version:   0.90.20
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -28,6 +28,10 @@ Requires:  rubygem-swingshift-streamline-plugin
 Requires:  rubygem-uplift-dynect-plugin
 Requires:  rubygem-gearchanger-m-collective-plugin
 Requires:  rubygem-crankcase-mongo-plugin
+Requires:  rubygem-term-ansicolor
+Requires:  rubygem-trollop
+Requires:  rubygem-cucumber
+Requires:  rubygem-gherkin
 
 
 BuildArch: noarch
@@ -92,6 +96,17 @@ rm -rf $RPM_BUILD_ROOT
 /bin/touch %{brokerdir}/log/production.log
 
 %changelog
+* Wed Apr 11 2012 Adam Miller <admiller@redhat.com> 0.90.20-1
+- Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
+  (mmcgrath@redhat.com)
+- test commit (mmcgrath@redhat.com)
+
+* Wed Apr 11 2012 Adam Miller <admiller@redhat.com> 0.90.19-1
+- fixing gemfile.lock (mmcgrath@redhat.com)
+
+* Wed Apr 11 2012 Adam Miller <admiller@redhat.com> 0.90.18-1
+- Updating gem versions (admiller@redhat.com)
+
 * Tue Apr 10 2012 Mike McGrath <mmcgrath@redhat.com> 0.90.17-1
 - Updating gem versions (mmcgrath@redhat.com)
 
