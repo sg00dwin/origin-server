@@ -3,7 +3,7 @@
 
 Summary:   Provides embedded haproxy-1.4 support
 Name:      cartridge-haproxy-1.4
-Version:   0.7.8
+Version:   0.8.1
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   ASL 2.0

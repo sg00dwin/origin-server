@@ -2,7 +2,7 @@
 
 Summary:   Provides post proxy httpd support
 Name:      cartridge-www-dynamic-2.2
-Version:   0.1.3
+Version:   0.2.1
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   ASL 2.0

@@ -2,7 +2,7 @@
 
 Summary:   Provides php-5.3 support
 Name:      cartridge-php-5.3
-Version:   0.90.2
+Version:   0.91.1
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   ASL 2.0

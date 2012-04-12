@@ -8,7 +8,7 @@
 
 Summary:   Dependencies for OpenShift development
 Name:      rhc-devenv
-Version:   0.91.10
+Version:   0.92.1
 Release:   1%{?dist}
 Group:     Development/Libraries
 License:   GPLv2
