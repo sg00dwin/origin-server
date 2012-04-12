@@ -5,7 +5,7 @@
 
 Summary:        Uplift plugin for Dynect DNS service
 Name:           rubygem-%{gemname}
-Version:        0.8.1
+Version:        0.8.2
 Release:        1%{?dist}
 Group:          Development/Languages
 License:        ASL 2.0
@@ -77,6 +77,9 @@ rm -rf %{buildroot}
 %{ruby_sitelib}/%{gemname}.rb
 
 %changelog
+* Thu Apr 12 2012 Mike McGrath <mmcgrath@redhat.com> 0.8.2-1
+- release bump for tag uniqueness (mmcgrath@redhat.com)
+
 * Mon Apr 09 2012 Mike McGrath <mmcgrath@redhat.com> 0.7.4-1
 - Touch readme to get uplift a-building. (ramr@redhat.com)
 
