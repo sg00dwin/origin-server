@@ -8,7 +8,7 @@
 
 Summary:   Dependencies for OpenShift development
 Name:      rhc-devenv
-Version:   0.91.8
+Version:   0.91.10
 Release:   1%{?dist}
 Group:     Development/Libraries
 License:   GPLv2
@@ -124,6 +124,14 @@ Requires:  drupal6-views_bonus
 Requires:  drupal6-views_customfield
 Requires:  drupal6-vote_up_down
 Requires:  drupal6-votingapi
+Requires:  drupal6-wikitools
+Requires:  drupal6-prepopulate
+Requires:  drupal6-freelinking
+Requires:  drupal6-mediawiki_filter
+Requires:  drupal6-context_menu_block
+Requires:  drupal6-block_class
+Requires:  drupal6-diff
+Requires:  drupal6-image
 Requires:  drupal6-openshift-custom_forms
 Requires:  drupal6-openshift-features-blogs
 Requires:  drupal6-openshift-features-forums
@@ -380,6 +388,12 @@ echo "Header append Strict-Transport-Security includeSubDomains" >> /etc/httpd/c
 %{policydir}/*
 
 %changelog
+* Wed Apr 11 2012 Adam Miller <admiller@redhat.com> 0.91.10-1
+- two more drupal6-modules to devenv.spec (ansilva@redhat.com)
+- Added wiki module dependencies for drupal6 (ansilva@redhat.com)
+
+* Wed Apr 11 2012 Anderson Silva <ansilva@redhat.com> 0.91.9-1
+- Added wiki module dependencies for drupal6 (ansilva@redhat.com)
 * Mon Apr 09 2012 Mike McGrath <mmcgrath@redhat.com> 0.91.8-1
 - Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
   (mmcgrath@redhat.com)

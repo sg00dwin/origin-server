@@ -38,7 +38,7 @@ GEM
     bson (1.5.2)
     builder (2.1.2)
     crack (0.1.8)
-    crankcase-mongo-plugin (0.7.5)
+    crankcase-mongo-plugin (0.7.6)
       json
       stickshift-controller
     cucumber (0.9.0)
@@ -104,7 +104,7 @@ GEM
       json
       mongo
       rack
-    stickshift-controller (0.8.12)
+    stickshift-controller (0.8.13)
       activesupport
       dnsruby
       json

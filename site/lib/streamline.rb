@@ -228,9 +228,6 @@ module Streamline
         }
         http_post(@@request_password_reset_url, args, false) do |json|
           Rails.logger.debug "Password reset request #{json.inspect}"
-          if json['errors']
-            errors.add(:base, I18n.t(:service_error, :scope => :streamline))
-          end
         end
         errors.empty?
       end

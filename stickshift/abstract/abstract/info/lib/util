@@ -87,7 +87,7 @@ function create_env_uservars_script {
 #!/bin/bash -e
 
 # Setup user Environment Variables
-for f in `ls $APP_HOME/.env/.uservars/`; do
+for f in \$(ls $APP_HOME/.env/.uservars/); do
     n=\$(echo "\$f" | sed 's/[^A-Za-z0-9_]/_/g')
     export \$n=\$(cat "$APP_HOME/.env/.uservars/\$f")
 done
@@ -122,6 +122,10 @@ function create_standard_repo_dir_env_var {
 
 function create_standard_path_env_var {
     echo "export PATH=$CART_INFO_DIR/bin/:$CARTRIDGE_BASE_PATH/abstract-httpd/info/bin/:$CARTRIDGE_BASE_PATH/abstract/info/bin/:$PATH" > $APP_HOME/.env/PATH
+}
+
+function create_custom_uservars_var {
+    echo "$2" > "$APP_HOME/.env/.uservars/$1"
 }
 
 function create_standard_app_dirs {

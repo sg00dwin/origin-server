@@ -29,7 +29,8 @@ When /^I configure a php application$/ do
     'namespace' => namespace
   }
   command = $php_config_format % [app_name, namespace, account_name]
-  runcon command,  $selinux_user, $selinux_role, $selinux_type
+  exitcode = runcon command,  $selinux_user, $selinux_role, $selinux_type
+  raise "Non zero exit code: #{exitcode}" unless exitcode == 0
 end
 
 Then /^a php application http proxy file will( not)? exist$/ do | negate |
@@ -132,7 +133,9 @@ Given /^a new php application$/ do
     'name' => app_name
   }
   command = $php_config_format % [app_name, namespace, account_name]
-  runcon command, $selinux_user, $selinux_role, $selinux_type
+  exitcode = runcon command,  $selinux_user, $selinux_role, $selinux_type
+  raise "Non zero exit code: #{exitcode}" unless exitcode == 0
+
 end
 
 When /^I deconfigure the php application$/ do
@@ -140,7 +143,8 @@ When /^I deconfigure the php application$/ do
   namespace = @app['namespace']
   app_name = @app['name']
   command = $php_deconfig_format % [app_name, namespace, account_name]
-  runcon command,  $selinux_user, $selinux_role, $selinux_type
+  exitcode = runcon command,  $selinux_user, $selinux_role, $selinux_type
+  raise "Non zero exit code: #{exitcode}" unless exitcode == 0
 end
 
 Given /^the php application is (running|stopped)$/ do | start_state |
@@ -190,7 +194,6 @@ When /^I (add-alias|remove-alias) the php application$/ do |action|
   if exit_status != 0
     raise "Unable to %s for %s %s %s %s" % [action, app_name, namespace, account_name, server_alias]
   end
-  sleep 5
 end
 
 When /^I (expose-port|conceal-port) the php application$/ do |action|
@@ -203,7 +206,6 @@ When /^I (expose-port|conceal-port) the php application$/ do |action|
   if exit_status != 0
     raise "Unable to %s for %s %s %s" % [action, app_name, namespace, account_name]
   end
-  sleep 5
 end
 
 When /^I (start|stop) the php application$/ do |action|
@@ -216,7 +218,6 @@ When /^I (start|stop) the php application$/ do |action|
   if exit_status != 0
     raise "Unable to %s for %s %s %s" % [action, app_name, namespace, account_name]
   end
-  sleep 5
 end
 
 Then /^the php application will( not)? be aliased$/ do | negate |

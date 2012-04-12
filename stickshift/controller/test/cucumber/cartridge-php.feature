@@ -5,8 +5,7 @@ Feature: PHP Application
   # runcon -u ?? -r system_r -t libra_initrc_t
 
   Scenario: Create Delete one PHP Application
-    Given an accepted node
-    And a new guest account
+    Given a new guest account
     And the guest account has no application installed
     When I configure a php application
     Then a php application http proxy file will exist

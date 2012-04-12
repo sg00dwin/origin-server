@@ -3,7 +3,7 @@
 
 Summary:   Li site components
 Name:      rhc-site
-Version:   0.90.11
+Version:   0.90.15
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -117,6 +117,29 @@ rm -rf %{buildroot}
 /bin/touch %{sitedir}/log/production.log
 
 %changelog
+* Wed Apr 11 2012 Adam Miller <admiller@redhat.com> 0.90.15-1
+- fix for ie9 background-image bug and newsletter link lighten
+  (sgoodwin@redhat.com)
+
+* Wed Apr 11 2012 Adam Miller <admiller@redhat.com> 0.90.14-1
+- Bug 804849; Improve styling of outage notification to match new branding
+  (edirsh@redhat.com)
+- Better integrate illustrations in overview page (edirsh@redhat.com)
+
+* Wed Apr 11 2012 Adam Miller <admiller@redhat.com> 0.90.13-1
+- Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
+  (mmcgrath@redhat.com)
+- Test commit (mmcgrath@redhat.com)
+
+* Wed Apr 11 2012 Adam Miller <admiller@redhat.com> 0.90.12-1
+- Remove debugging logic - it hath served its purpose (ccoleman@redhat.com)
+- Merge branch 'dev/clayton/partners' (ccoleman@redhat.com)
+- Reenable domain test (ccoleman@redhat.com)
+- Remove partners from UI.  Footer in community as well (ccoleman@redhat.com)
+- Bug 802634 - Improve the display of the search button on the Help page to
+  make it clear it can be clicked, use styles from community.
+  (ccoleman@redhat.com)
+
 * Tue Apr 10 2012 Mike McGrath <mmcgrath@redhat.com> 0.90.11-1
 - Temporarily disable test_domain_exists_error in domain_test.rb to allow AMI
   to build clean (ccoleman@redhat.com)

@@ -13,12 +13,12 @@ module ApplicationHelper
         ensure
           f.close
         end
-        notification << content_tag(:pre,contents) unless contents.nil?
+        notification << content_tag(:pre,contents, {:class => 'span9'}) unless contents.nil?
       end
     end
     
     if notification.length > 0
-      content_tag(:div, "<h2>Outage Notification</h2>" + notification, {:id => 'outage_notification'}, false)
+      content_tag(:div, "<div class='container'><h2 class='span2'>Outage Notification</h2>" + notification + "</div>", {:id => 'outage_notification'}, false)
     else
       nil
     end

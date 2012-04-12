@@ -1,4 +1,4 @@
-policy_module(libra,1.1.16)
+policy_module(libra,1.1.17)
 
 ########################################
 #
@@ -97,7 +97,7 @@ corenet_tcp_connect_all_ports(libra_net_t)
 #
 # libra general local policy
 #
-allow libra_app_domain self:process { setcurrent getcap getattr fork getpgid setpgid setrlimit setfscreate setsched signal_perms getsched execmem };
+allow libra_app_domain self:process { setcurrent getcap getattr fork getpgid setpgid setrlimit setfscreate setsched signal_perms getsched execmem execstack };
 
 allow libra_app_domain self:msgq create_msgq_perms;
 allow libra_app_domain self:shm create_shm_perms;

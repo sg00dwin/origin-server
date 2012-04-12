@@ -9,7 +9,9 @@ class ApplicationController < ActionController::Base
     end
     raise e
   end
-  rescue_from 'ActiveResource::ResourceNotFound' do
+
+  rescue_from 'ActiveResource::ResourceNotFound' do |exception|
+    logger.debug exception.backtrace.join("\n")
     upgrade_in_rails_31 # FIXME: Switch to render :status => 404
     render :file => "#{Rails.root}/public/404.html", :status => 404, :layout => false
   end
