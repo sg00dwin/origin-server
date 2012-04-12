@@ -117,6 +117,7 @@ body.signup {
 }
 
 .section-striped {
+  background-color: #e5e5e5;
   background: -moz-repeating-linear-gradient(-70deg, $lightStripesColor, $lightStripesColor 6px, $lightStripesAltColor 9px, $lightStripesAltColor 15px, $lightStripesColor 18px) repeat scroll 0 0 $lightStripesBackground;
   background: -webkit-repeating-linear-gradient(-70deg, $lightStripesColor, $lightStripesColor 6px, $lightStripesAltColor 9px, $lightStripesAltColor 15px, $lightStripesColor 18px) repeat scroll 0 0 $lightStripesBackground;
   background: repeating-linear-gradient(-70deg, $lightStripesColor, $lightStripesColor 6px, $lightStripesAltColor 9px, $lightStripesAltColor 15px, $lightStripesColor 18px) repeat scroll 0 0 $lightStripesBackground;
