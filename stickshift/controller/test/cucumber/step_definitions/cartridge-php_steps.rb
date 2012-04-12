@@ -235,7 +235,7 @@ Then /^the php application will( not)? be exposed$/ do | negate |
 
   good_status = negate ? 1 : 0
 
-  command = "#{$php_hooks}/show-port %s %s %s" % [app_name, namespace, account_name]
+  command = "#{$php_hooks}/show-port %s %s %s | /bin/grep -q PROXY_PORT" % [app_name, namespace, account_name]
   exit_status = runcon command, 'unconfined_u', 'unconfined_r', 'unconfined_t'
   exit_status.should == good_status
 end
