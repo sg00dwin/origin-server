@@ -111,10 +111,10 @@ Broker::Application.configure do
 
 
   # Profiler config
-#  config.profile = {
+#  config.profiler = {
 #    :type => 'flat',
 #    :min_percent => 0,
-#    :squash_threads -> true
+#    :squash_threads => true
 #  }
 
 end

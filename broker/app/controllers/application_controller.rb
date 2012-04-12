@@ -35,6 +35,7 @@ class ApplicationController < ActionController::Base
           Thread.list.each do |th|
             et << th if th != Thread.current
           end
+          Rails.logger.debug("ApplicationController::profiler_start: Squashing threads: #{et}")
           RubyProf::exclude_threads = et
         end
         RubyProf.start
@@ -51,6 +52,8 @@ class ApplicationController < ActionController::Base
       if RubyProf.running?
         Rails.logger.debug("ApplicationController::profiler_stop: RubyProf stopping.")
         result = RubyProf.stop
+
+        RubyProf::exclude_threads = nil
 
         case cfg[:type]
         when "flat"
