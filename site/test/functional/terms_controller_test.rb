@@ -16,7 +16,7 @@ class TermsControllerTest < ActionController::TestCase
     setup_user
     user = WebUser.new
     user.terms = ['1']
-    @controller.expects(:session_user).returns(user)
+    @controller.expects(:session_user).at_least_once.returns(user)
     get :new
     assert_response :success
   end
@@ -27,14 +27,12 @@ class TermsControllerTest < ActionController::TestCase
   end
 
   test "accept terms with streamline errors" do
-    @controller.expects(:check_credentials)
-
     # Override the returned user with one that has errors
     # to simulate a failure
     user = WebUser.new
     user.terms = ['1']
     user.errors.add(:base, "test")
-    @controller.expects(:session_user).returns(user)
+    @controller.expects(:session_user).at_least_once.returns(user)
 
     post(:create, {}, {:user => user})
     assert_equal 1, assigns(:term).errors.length
@@ -87,7 +85,7 @@ class TermsControllerTest < ActionController::TestCase
   test "show acceptance terms" do
     setup_user
     user = @controller.session_user
-    user.terms = [{'termId' => '1', 'termUrl' => 'localhost'}]
+    user.terms = [{'termId' => '1', 'termUrl' => 'localhost', 'termTitle' => 'title'}]
     get :acceptance_terms
     assert_equal 0, assigns(:term).errors.length
     assert_response :success
