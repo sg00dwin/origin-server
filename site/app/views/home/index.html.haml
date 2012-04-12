@@ -42,14 +42,19 @@
         .span6
           %ul.news.unstyled
             %li
+              = link_to opensource_community_url, :class => 'link-tile' do
+                %h4 OpenShift is Open Source!
+                %p The core components of OpenShift &mdash; StickShift, GearChanger, and the rest &mdash; are now public and open source. Hit the Open Source page in our community to download our Fedora Remix image or browse the source on GitHub.
+            %li
+              = link_to console_path, :class => 'link-tile' do
+                %h4 The new console just got a makeover
+                %p The recently introduced console has gotten updated with our new OpenShift look.  Try it out today in your favorite browser &mdash; we hope you like it!
+            %li
               = link_to openshift_blog_url, :class => 'link-tile' do
                 %h4 Want to keep up to date?
                 %p Keep up to date with the latest news and announcements from the OpenShift team. Our team is constantly bringing you the latest advice and tutorials.
-            %li
-              = link_to console_path, :class => 'link-tile' do
-                %h4 Try out the new console
-                %p The new console is out of preview and ready to help you build your apps in the cloud. We'll be adding lots more features to the console, so check back frequently!
-            %li
+
+            -#%li
               = link_to events_url, :class => 'link-tile' do
                 %h4 Meet the OpenShift team
                 %p We're in your area - check out the event list and join us!

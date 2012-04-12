@@ -1,0 +1,42 @@
+#footer-nav
+  .container
+    .row
+      .span3.link-column
+        %header
+          %h3= link_to 'Developers', developers_url
+        %ul.unstyled
+          %li= link_to 'What is OpenShift?', product_overview_path
+          %li= link_to 'Get Started', getting_started_path
+          %li= link_to 'User Guide', user_guide_url
+          %li= link_to 'FAQ', faq_url
+
+      .span3.link-column
+        %header
+          %h3= link_to 'Community', community_url
+        %ul.unstyled
+          %li= link_to 'Blog', openshift_blog_url
+          %li= link_to 'Forum', forums_url
+          %li= link_to 'IRC Channel', irc_web_url
+          %li= link_to 'Feedback', mailto_openshift_url
+
+      .span3.link-column
+        %header
+          %h3= link_to 'Get Involved', get_involved_url
+        %ul.unstyled
+          %li= link_to 'Open Source', opensource_community_url
+          %li= link_to 'Get the Bits', opensource_download_path
+          %li= link_to 'Make it Better', get_involved_developers_url
+
+      .span3.link-column
+        %header
+          %h3= link_to 'Legal', legal_path
+        %ul.unstyled
+          %li= link_to 'Terms of Service', legal_site_terms_path
+          %li= link_to 'Privacy Policy', legal_openshift_privacy_path
+          %li= link_to 'Security', 'https://access.redhat.com/security/team/contact/'
+          %li= link_to 'Open Source Disclaimer', legal_opensource_disclaimer_path
+
+%section#copyright
+  .container
+    %img{ :src => "/app/images/redhat.png", :alt => "Red Hat" }
+    .pull-right Copyright &copy; 2011 Red Hat, Inc.
