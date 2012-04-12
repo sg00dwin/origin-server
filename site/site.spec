@@ -3,7 +3,7 @@
 
 Summary:   Li site components
 Name:      rhc-site
-Version:   0.90.15
+Version:   0.90.16
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -117,6 +117,15 @@ rm -rf %{buildroot}
 /bin/touch %{sitedir}/log/production.log
 
 %changelog
+* Thu Apr 12 2012 Mike McGrath <mmcgrath@redhat.com> 0.90.16-1
+- Unit tests for domains controller   Remove old :namespace error output in
+  form   Make errors on domain correct for case when an error exists
+  (ccoleman@redhat.com)
+- Bug 811847 - Bad refactor, domain :edit not showing up (ccoleman@redhat.com)
+- Fixes 807565 (ffranz@redhat.com)
+- Merge branch 'master' of git1.ops.rhcloud.com:/srv/git/li (ffranz@redhat.com)
+- Fixes 807565 (ffranz@redhat.com)
+
 * Wed Apr 11 2012 Adam Miller <admiller@redhat.com> 0.90.15-1
 - fix for ie9 background-image bug and newsletter link lighten
   (sgoodwin@redhat.com)
