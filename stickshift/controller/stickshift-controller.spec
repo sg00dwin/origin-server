@@ -5,7 +5,7 @@
 
 Summary:        Cloud Development Controller
 Name:           rubygem-%{gemname}
-Version:        0.9.1
+Version:        0.9.2
 Release:        1%{?dist}
 Group:          Development/Languages
 License:        ASL 2.0
@@ -75,6 +75,10 @@ rm -rf %{buildroot}
 %{ruby_sitelib}/%{gemname}.rb
 
 %changelog
+* Thu Apr 12 2012 Mike McGrath <mmcgrath@redhat.com> 0.9.2-1
+- Updating gem versions (mmcgrath@redhat.com)
+- release bump for tag uniqueness (mmcgrath@redhat.com)
+
 * Thu Apr 12 2012 Mike McGrath <mmcgrath@redhat.com> 0.8.14-1
 - Updating gem versions (mmcgrath@redhat.com)
 - Check the output of show-port rather than its exit code.
