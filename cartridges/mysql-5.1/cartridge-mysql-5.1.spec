@@ -2,7 +2,7 @@
 %define frameworkdir %{_libexecdir}/stickshift/cartridges/mysql-5.1
 
 Name: cartridge-mysql-5.1
-Version: 0.25.1
+Version: 0.25.2
 Release: 1%{?dist}
 Summary: Provides embedded mysql support
 
@@ -73,6 +73,9 @@ rm -rf $RPM_BUILD_ROOT
 %doc %{cartridgedir}/LICENSE
 
 %changelog
+* Thu Apr 12 2012 Mike McGrath <mmcgrath@redhat.com> 0.25.2-1
+- release bump for tag uniqueness (mmcgrath@redhat.com)
+
 * Thu Apr 12 2012 Mike McGrath <mmcgrath@redhat.com> 0.24.8-1
 - This was done to allow a cucumber test to continue to work.  The test will be
   fixed in a subsequent commit. Revert "no ports defined now exits 1"
