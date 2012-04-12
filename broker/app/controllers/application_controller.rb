@@ -31,7 +31,11 @@ class ApplicationController < ActionController::Base
       if not RubyProf.running?
         Rails.logger.debug("ApplicationController::profiler_start: RubyProf starting.")
         if cfg[:squash_threads]
-          RubyProf::exclude_threads = Thread.list.collect { |th| th if th != Thread.current }
+          et=[]
+          Thread.list.each do |th|
+            et << th if th != Thread.current
+          end
+          RubyProf::exclude_threads = et
         end
         RubyProf.start
       end
