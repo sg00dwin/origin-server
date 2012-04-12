@@ -3,7 +3,7 @@
 
 Summary:   Li site components
 Name:      rhc-site
-Version:   0.91.1
+Version:   0.91.2
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -117,6 +117,13 @@ rm -rf %{buildroot}
 /bin/touch %{sitedir}/log/production.log
 
 %changelog
+* Thu Apr 12 2012 Mike McGrath <mmcgrath@redhat.com> 0.91.2-1
+- release bump for tag uniqueness (mmcgrath@redhat.com)
+- Merge branch '0412dev' (sgoodwin@redhat.com)
+- include fallback background color for ie since it doesn't support css3 linear
+  gradients (sgoodwin@redhat.com)
+- Update preview agreement to remove flex (ccoleman@redhat.com)
+
 * Thu Apr 12 2012 Mike McGrath <mmcgrath@redhat.com> 0.90.16-1
 - Unit tests for domains controller   Remove old :namespace error output in
   form   Make errors on domain correct for case when an error exists
