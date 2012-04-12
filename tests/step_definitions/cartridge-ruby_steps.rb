@@ -29,7 +29,7 @@ When /^I configure a ruby application$/ do
     'namespace' => namespace
   }
   command = $ruby_config_format % [app_name, namespace, account_name]
-  exitcode = runcon command,  $selinux_user, $selinux_role, $selinux_type, nil, 10
+  exitcode = runcon command,  $selinux_user, $selinux_role, $selinux_type, nil, 20
   raise "Non zero exit code: #{exitcode}" unless exitcode == 0
 end
 
@@ -133,7 +133,7 @@ Given /^a new ruby application$/ do
     'name' => app_name
   }
   command = $ruby_config_format % [app_name, namespace, account_name]
-  exitcode = runcon command, $selinux_user, $selinux_role, $selinux_type, nil, 10
+  exitcode = runcon command, $selinux_user, $selinux_role, $selinux_type, nil, 20
   raise "Non zero exit code: #{exitcode}" unless exitcode == 0
 end
 
@@ -142,7 +142,7 @@ When /^I deconfigure the ruby application$/ do
   namespace = @app['namespace']
   app_name = @app['name']
   command = $ruby_deconfig_format % [app_name, namespace, account_name]
-  exitcode = runcon command,  $selinux_user, $selinux_role, $selinux_type, nil, 15
+  exitcode = runcon command,  $selinux_user, $selinux_role, $selinux_type, nil, 20
   raise "Non zero exit code: #{exitcode}" unless exitcode == 0
 end
 
@@ -187,7 +187,7 @@ When /^I (start|stop) the ruby application$/ do |action|
   app_name = @app['name']
 
   command = "#{$ruby_hooks}/%s %s %s %s" % [action, app_name, namespace, account_name]
-  exit_status = runcon command, $selinux_user, $selinux_role, $selinux_type, nil, 10
+  exit_status = runcon command, $selinux_user, $selinux_role, $selinux_type, nil, 20
   if exit_status != 0
     raise "Unable to %s for %s %s %s" % [action, app_name, namespace, account_name]
   end
