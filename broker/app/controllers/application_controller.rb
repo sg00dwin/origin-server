@@ -35,8 +35,6 @@ class ApplicationController < ActionController::Base
           Thread.list.each do |th|
             et << th if th != Thread.current
           end
-          Rails.logger.debug("ApplicationController::profiler_start: Squashing threads: " +
-                             (et.map { |t| t.object_id }).join(', '))
           RubyProf::exclude_threads = et
         end
         RubyProf.start
@@ -53,6 +51,10 @@ class ApplicationController < ActionController::Base
       if RubyProf.running?
         Rails.logger.debug("ApplicationController::profiler_stop: RubyProf stopping.")
         result = RubyProf.stop
+
+        if cfg[:squash_threads]
+          result.threads.delete_if { |key, value| key != Thread.current.object_id }
+        end
 
         RubyProf::exclude_threads = nil
 
