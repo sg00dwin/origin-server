@@ -221,7 +221,7 @@
         </div>     
         <section id='copyright'>
         <div class='container'>
-        <img src="/app/images/redhat.png" alt="Red Hat">
+          <a href="https://www.redhat.com/"><img src="/app/images/redhat.png" alt="Red Hat"></a>
           <div class="pull-right">Copyright &copy; 2012 Red Hat, Inc.</div>
         </div>
       </section>
