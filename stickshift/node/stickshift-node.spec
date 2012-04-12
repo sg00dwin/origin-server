@@ -5,7 +5,7 @@
 
 Summary:        Cloud Development Node
 Name:           rubygem-%{gemname}
-Version:        0.9.1
+Version:        0.9.2
 Release:        1%{?dist}
 Group:          Development/Languages
 License:        ASL 2.0
@@ -97,6 +97,10 @@ if ! [ -f /etc/stickshift/resource_limits.conf ]; then
 fi
 
 %changelog
+* Thu Apr 12 2012 Mike McGrath <mmcgrath@redhat.com> 0.9.2-1
+- Updating gem versions (mmcgrath@redhat.com)
+- release bump for tag uniqueness (mmcgrath@redhat.com)
+
 * Mon Apr 09 2012 Mike McGrath <mmcgrath@redhat.com> 0.8.2-1
 - Updating gem versions (mmcgrath@redhat.com)
 - Merge remote-tracking branch 'origin/dev/kraman/US2048' (kraman@gmail.com)
