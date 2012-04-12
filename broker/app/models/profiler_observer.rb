@@ -36,7 +36,7 @@ class ProfilerObserver < ActiveModel::Observer
         result = RubyProf.stop
 
         timestamp=Time.now.strftime('%Y-%m-%d-%H-%M-%S')
-        outfile=File.join(Dir.tmpdir, '#{call_name}-#{call_tag}-#{cfg[:type]}-#{timestamp}.#{printext}')
+        outfile=File.join(Dir.tmpdir, "#{call_name}-#{call_tag}-#{cfg[:type]}-#{timestamp}.#{printext}")
 
         case cfg[:type]
         when "flat"
