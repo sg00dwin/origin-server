@@ -23,13 +23,14 @@ class ActiveSupport::TestCase
     @request.cookies['rh_sso'] = '123'
     @request.env['HTTPS'] = 'on'
   end
+
   # Create a new, unique user
   def unique_user
     id = new_uuid
     WebUser.new :email_address=>"app_test1#{id}@test1.com", :rhlogin=>"app_test1#{id}@test1.com"
   end
   def uuid
-    @ts ||= new_uuid 
+    @ts ||= new_uuid
   end
   def new_uuid
     "#{Time.now.to_i}#{gen_small_uuid[0,6]}"
