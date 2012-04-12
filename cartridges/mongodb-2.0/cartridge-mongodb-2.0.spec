@@ -1,7 +1,7 @@
 %define cartridgedir %{_libexecdir}/stickshift/cartridges/embedded/mongodb-2.0
 
 Name: cartridge-mongodb-2.0
-Version: 0.17.8
+Version: 0.17.9
 Release: 1%{?dist}
 Summary: Embedded mongodb support for OpenShift
 
@@ -56,6 +56,11 @@ rm -rf $RPM_BUILD_ROOT
 %doc %{cartridgedir}/LICENSE
 
 %changelog
+* Thu Apr 12 2012 Mike McGrath <mmcgrath@redhat.com> 0.17.9-1
+- This was done to allow a cucumber test to continue to work.  The test will be
+  fixed in a subsequent commit. Revert "no ports defined now exits 1"
+  (rmillner@redhat.com)
+
 * Wed Apr 11 2012 Adam Miller <admiller@redhat.com> 0.17.8-1
 - no ports defined now exits 1 (mmcgrath@redhat.com)
 
