@@ -2,7 +2,7 @@
 
 Summary:   StickShift common cartridge components
 Name:      stickshift-abstract
-Version:   0.8.9
+Version:   0.8.10
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   ASL 2.0
@@ -56,6 +56,9 @@ rm -rf $RPM_BUILD_ROOT
 %post
 
 %changelog
+* Wed Apr 11 2012 Adam Miller <admiller@redhat.com> 0.8.10-1
+- no ports defined now exits 1 (mmcgrath@redhat.com)
+
 * Wed Apr 11 2012 Adam Miller <admiller@redhat.com> 0.8.9-1
 - Fix for #811347. CURL command format error (kraman@gmail.com)
 
