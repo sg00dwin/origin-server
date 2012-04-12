@@ -111,10 +111,18 @@ Broker::Application.configure do
 
 
   # Profiler config
+  # See ruby-prof documentationf or more info
+  # :type     Type of report file: flat (defualt), graph, graph_html, call_tree, call_stack
+  # :measure  Measured property: proc (default), wall, cpu, alloc, mem, gc_runs, gc_time
+  # :sqash_threads  Only profile the current thread (def true)
+  # :squash_runtime Don't report extremely common ruby runtime library calls
+  # :min_percent    Only report calls above this percentage
 #  config.profiler = {
-#    :type => 'flat',
+#    :type => 'call_tree',
+#    :measure => 'wall',
 #    :min_percent => 0,
-#    :squash_threads => true
+#    :squash_threads => true,
+#    :squash_runtime => true
 #  }
 
 end

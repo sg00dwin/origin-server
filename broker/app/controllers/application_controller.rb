@@ -30,6 +30,7 @@ class ApplicationController < ActionController::Base
       cfg=Rails.configuration.profiler
       if not RubyProf.running?
         Rails.logger.debug("ApplicationController::profiler_start: RubyProf starting.")
+
         if cfg[:squash_threads]
           et=[]
           Thread.list.each do |th|
@@ -37,7 +38,28 @@ class ApplicationController < ActionController::Base
           end
           RubyProf::exclude_threads = et
         end
+
+        case cfg[:measure]
+        when "proc"
+          RubyProf.measure_mode = RubyProf::PROCESS_TIME
+        when "wall"
+          RubyProf.measure_mode = RubyProf::WALL_TIME
+        when "cpu"
+          RubyProf.measure_mode = RubyProf::CPU_TIME
+        when "alloc"
+          RubyProf.measure_mode = RubyProf::ALLOCATIONS
+        when "mem"
+          RubyProf.measure_mode = RubyProf::MEMORY
+        when "gc_runs"
+          RubyProf.measure_mode = RubyProf::GC_RUNS
+        when "gc_time"
+          RubyProf.measure_mode = RubyProf::GC_TIME
+        else
+          RubyProf.measure_mode = RubyProf::PROCESS_TIME
+        end
+
         RubyProf.start
+
       end
     rescue NoMethodError
     end
@@ -51,12 +73,15 @@ class ApplicationController < ActionController::Base
       if RubyProf.running?
         Rails.logger.debug("ApplicationController::profiler_stop: RubyProf stopping.")
         result = RubyProf.stop
+        RubyProf::exclude_threads = nil
 
         if cfg[:squash_threads]
           result.threads.delete_if { |key, value| key != Thread.current.object_id }
         end
 
-        RubyProf::exclude_threads = nil
+        if cfg[:squash_runtime]
+          result.eliminate_methods!([/^(Array|Hash|Kernel|Symbol|String|Exception|Fixnum|Class|NilClass|Proc)\#/])
+        end
 
         case cfg[:type]
         when "flat"
