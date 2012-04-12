@@ -3,7 +3,7 @@
 
 Summary:   Li broker components
 Name:      rhc-broker
-Version:   0.90.4
+Version:   0.90.20
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -92,6 +92,77 @@ rm -rf $RPM_BUILD_ROOT
 /bin/touch %{brokerdir}/log/production.log
 
 %changelog
+* Wed Apr 11 2012 Adam Miller <admiller@redhat.com> 0.90.20-1
+- Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
+  (mmcgrath@redhat.com)
+- test commit (mmcgrath@redhat.com)
+
+* Wed Apr 11 2012 Adam Miller <admiller@redhat.com> 0.90.19-1
+- fixing gemfile.lock (mmcgrath@redhat.com)
+
+* Wed Apr 11 2012 Adam Miller <admiller@redhat.com> 0.90.18-1
+- Updating gem versions (admiller@redhat.com)
+
+* Tue Apr 10 2012 Mike McGrath <mmcgrath@redhat.com> 0.90.17-1
+- Updating gem versions (mmcgrath@redhat.com)
+
+* Tue Apr 10 2012 Mike McGrath <mmcgrath@redhat.com> 0.90.16-1
+- removed test commits (mmcgrath@redhat.com)
+
+* Tue Apr 10 2012 Mike McGrath <mmcgrath@redhat.com> 0.90.15-1
+- Test commit (mmcgrath@redhat.com)
+
+* Tue Apr 10 2012 Mike McGrath <mmcgrath@redhat.com> 0.90.14-1
+- 
+
+* Tue Apr 10 2012 Mike McGrath <mmcgrath@redhat.com> 0.90.13-1
+- test commits (mmcgrath@redhat.com)
+
+* Tue Apr 10 2012 Adam Miller <admiller@redhat.com> 0.90.12-1
+- Updating gem versions (admiller@redhat.com)
+
+* Tue Apr 10 2012 Adam Miller <admiller@redhat.com> 0.90.11-1
+- Updating gem versions (admiller@redhat.com)
+- Updating gem versions (admiller@redhat.com)
+
+* Tue Apr 10 2012 Mike McGrath <mmcgrath@redhat.com> 0.90.10-1
+- updating gemfile.lock (mmcgrath@redhat.com)
+
+* Tue Apr 10 2012 Mike McGrath <mmcgrath@redhat.com> 0.90.9-1
+- Updating gem versions (mmcgrath@redhat.com)
+
+* Tue Apr 10 2012 Mike McGrath <mmcgrath@redhat.com> 0.90.8-1
+- Updating gem versions (mmcgrath@redhat.com)
+
+* Tue Apr 10 2012 Mike McGrath <mmcgrath@redhat.com> 0.90.7-1
+- Updating gem versions (mmcgrath@redhat.com)
+
+* Mon Apr 09 2012 Mike McGrath <mmcgrath@redhat.com> 0.90.6-1
+- Updating gem versions (mmcgrath@redhat.com)
+- Updating gem versions (kraman@gmail.com)
+
+* Mon Apr 09 2012 Mike McGrath <mmcgrath@redhat.com> 0.90.5-1
+- Updating gem versions (mmcgrath@redhat.com)
+- cleaning up location of datatstore configuration (kraman@gmail.com)
+- Updating gemfile.lock (kraman@gmail.com)
+- Merge remote-tracking branch 'origin/master' into dev/kraman/US2048
+  (kraman@gmail.com)
+- Bunping gem version in Gemfile.lock Fix rename issue in application container
+  proxy (kraman@gmail.com)
+- moving bulk of the cucumber tests under stickshift and making changes so that
+  tests can be run both on devenv with express  as well as with opensource
+  pieces on the fedora image (abhgupta@redhat.com)
+- Merge remote-tracking branch 'origin/master' (kraman@gmail.com)
+- Merge remote-tracking branch 'origin/master' (kraman@gmail.com)
+- Bug fixes after initial merge of OSS packages (kraman@gmail.com)
+- Automatic commit of package [rhc-broker] release [0.90.2-1].
+  (kraman@gmail.com)
+- Updating dependencies to match new package names (kraman@gmail.com)
+- Merge remote-tracking branch 'origin/dev/kraman/US2048' (kraman@gmail.com)
+- Adding m-collective and oddjob gearchanger plugins (kraman@gmail.com)
+- Added mongo and streamline swingshift plugins (kraman@gmail.com)
+- Creating dynect plugin (kraman@gmail.com)
+
 * Wed Apr 04 2012 Mike McGrath <mmcgrath@redhat.com> 0.90.4-1
 - Updating gem versions (mmcgrath@redhat.com)
 

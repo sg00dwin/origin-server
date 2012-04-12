@@ -5,7 +5,7 @@
 
 Summary:        Crankcase plugin for MongoDB
 Name:           rubygem-%{gemname}
-Version:        0.7.4
+Version:        0.7.6
 Release:        1%{?dist}
 Group:          Development/Languages
 License:        ASL 2.0
@@ -70,6 +70,16 @@ rm -rf %{buildroot}
 %{ruby_sitelib}/%{gemname}.rb
 
 %changelog
+* Wed Apr 11 2012 Adam Miller <admiller@redhat.com> 0.7.6-1
+- fix mongo put_app where ngears < 0; dont save an app after
+  deconfigure/destroy if it has not persisted, because the destroy might have
+  been called for a failure upon save (rchopra@redhat.com)
+
+* Mon Apr 09 2012 Mike McGrath <mmcgrath@redhat.com> 0.7.5-1
+- cleaning up location of datatstore configuration (kraman@gmail.com)
+- Merge remote-tracking branch 'origin/master' (kraman@gmail.com)
+- Bug fixes after initial merge of OSS packages (kraman@gmail.com)
+
 * Mon Apr 02 2012 Krishna Raman <kraman@gmail.com> 0.7.4-1
 - 
 

@@ -13,7 +13,7 @@ module Crankcase
       if access_info != nil
         # no-op
       elsif defined? Rails
-        access_info = Rails.application.config.ss[:datastore][:mongo]
+        access_info = Rails.application.config.datastore
       else
         raise Exception.new("Mongo DataStore service is not inilialized")
       end
@@ -343,7 +343,7 @@ module Crankcase
         raise StickShift::UserException.new("Application limit has reached for '#{user_id}'", 104) if hash == nil
       elsif ngears < 0
         hash = find_and_modify({ :query => { "_id" => user_id, "apps.name" => id,
-               "$where" => "this.consumed_gears - #{ngears} >= 0"},
+               "$where" => "this.consumed_gears + #{ngears} >= 0"},
                :update => { "$set" => { "apps.$" => app_attrs }, "$inc" => { "consumed_gears" => ngears}}})
         raise StickShift::UserException.new("Application gears already at zero for '#{user_id}'", 135) if hash == nil
       else

@@ -2,7 +2,7 @@
 
 Summary:       Multi-tenant cloud management system node tools
 Name:          rhc-node
-Version:       0.90.4
+Version:       0.90.5
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -262,6 +262,10 @@ fi
 /lib64/security/pam_libra.so
 
 %changelog
+* Tue Apr 10 2012 Mike McGrath <mmcgrath@redhat.com> 0.90.5-1
+- Bug fix for 809567 to use OPENSHIFT_DB_GEAR_DNS to access mysql from haproxy
+  gear. (ramr@redhat.com)
+
 * Wed Apr 04 2012 Mike McGrath <mmcgrath@redhat.com> 0.90.4-1
 - temporary disabling of these package checks (mmcgrath@redhat.com)
 

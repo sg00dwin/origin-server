@@ -40,7 +40,7 @@ module OpenShift
       return output
     end
 
-    def scp_to(hostname, local, remote, timeout=60, num_tries=1)
+    def scp_to(hostname, local, remote, timeout=15, num_tries=5)
       log.debug "(scp_to: timeout = #{timeout}) / local = '#{local}' remote = '#{remote}'"
       output = ""
       begin
@@ -58,6 +58,7 @@ module OpenShift
               sleep 10
             end
           }
+        sleep 5
         end
       rescue Timeout::Error
         log.error "SCP command '#{scp_cmd}' timed out"

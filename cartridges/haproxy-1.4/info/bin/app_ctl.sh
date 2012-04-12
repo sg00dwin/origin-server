@@ -51,7 +51,7 @@ start() {
     if ! isrunning
     then
         /usr/sbin/haproxy -f $OPENSHIFT_HOMEDIR/haproxy-1.4/conf/haproxy.cfg > /dev/null 2>&1
-        #haproxy_ctld_daemon start > /dev/null 2>&1
+        haproxy_ctld_daemon start > /dev/null 2>&1
     else
         echo "Haproxy already running" 1>&2
     fi
@@ -62,7 +62,7 @@ start() {
 
 stop() {
     set_app_state stopped
-    #haproxy_ctld_daemon stop > /dev/null 2>&1
+    haproxy_ctld_daemon stop > /dev/null 2>&1
     if [ -f $HAPROXY_PID ]; then
         pid=$( /bin/cat "${HAPROXY_PID}" )
         /bin/kill $pid
@@ -124,7 +124,7 @@ reload() {
        echo "`date`: bg-reload started ... pid=$!, status=$?" >> /tmp/haproxy-reload.log
        # wait_to_start
     fi
-    #haproxy_ctld_daemon restart > /dev/null 2>&1
+    haproxy_ctld_daemon restart > /dev/null 2>&1
 }
 
 

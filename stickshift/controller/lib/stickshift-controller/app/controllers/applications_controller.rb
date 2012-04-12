@@ -81,7 +81,7 @@ class ApplicationsController < BaseController
     end
 
     template_id = params[:template]
-    node_profile = params[:node_profile]
+    node_profile = params[:gear_profile]
     if not node_profile 
       node_profile = "small"
     else

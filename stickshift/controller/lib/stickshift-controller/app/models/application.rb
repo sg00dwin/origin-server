@@ -297,8 +297,8 @@ Configure-Order: [\"proxy/#{framework}\", \"proxy/haproxy-1.4\"]
       r.append gear.destroy
       group_instance = self.group_instance_map[gear.group_instance_name]
       group_instance.gears.delete(gear)
-      self.save
     end
+    self.save if self.persisted?
           
     f.each do |data|
       Rails.logger.debug("Unable to clean up application on gear #{data[:gear]} due to exception #{data[:exception].message}")
@@ -559,15 +559,13 @@ Configure-Order: [\"proxy/#{framework}\", \"proxy/haproxy-1.4\"]
           run_on_gears(group_inst.gears, reply, false) do |gear, r|
             r.append gear.deconfigure(comp_inst)
             r.append process_cartridge_commands(r.cart_commands)
-            # self.save
           end
         rescue  Exception => e
-          self.save
           # raise e
         end
       end
     end
-    self.save
+    self.save if self.persisted?
     self.class.notify_observers(:after_application_deconfigure, {:application => self, :reply => reply})
     reply
   end
@@ -760,6 +758,7 @@ Configure-Order: [\"proxy/#{framework}\", \"proxy/haproxy-1.4\"]
     reply = ResultIO.new
     self.comp_instance_map.each do |comp_inst_name, comp_inst|
       next if !dependency.nil? and (comp_inst.parent_cart_name != dependency)
+      next if comp_inst.name == "@@app"
 
       group_inst = self.group_instance_map[comp_inst.group_instance_name]
       s,f = run_on_gears(group_inst.gears, reply, false) do |gear, r|
@@ -775,6 +774,7 @@ Configure-Order: [\"proxy/#{framework}\", \"proxy/haproxy-1.4\"]
     reply = ResultIO.new
     self.comp_instance_map.each do |comp_inst_name, comp_inst|
       next if !dependency.nil? and (comp_inst.parent_cart_name != dependency)
+      next if comp_inst.name == "@@app"
 
       group_inst = self.group_instance_map[comp_inst.group_instance_name]
       s,f = run_on_gears(group_inst.gears, reply, false) do |gear, r|
@@ -789,6 +789,10 @@ Configure-Order: [\"proxy/#{framework}\", \"proxy/haproxy-1.4\"]
     reply = ResultIO.new
     self.comp_instance_map.each do |comp_inst_name, comp_inst|
       next if !dependency.nil? and (comp_inst.parent_cart_name != dependency)
+      next if comp_inst.name == "@@app"
+
+      Rails.logger.debug( comp_inst.inspect )
+      Rails.logger.debug( "\n" )
 
       group_inst = self.group_instance_map[comp_inst.group_instance_name]
       s,f = run_on_gears(group_inst.gears, reply, false) do |gear, r|
@@ -952,8 +956,16 @@ Configure-Order: [\"proxy/#{framework}\", \"proxy/haproxy-1.4\"]
     updated = false
     begin
       result = self.container.update_namespace(self, self.framework, new_ns, old_ns)
-      process_cartridge_commands(result.cart_commands)
-      updated = result.exitcode == 0
+      if result.is_a?(Array)
+# result is an Array of Gear when the domain is altered with a scalable app. There are no cart commands for a domain alter for scalable or non-scalable apps. So doing nothing here.
+        result.each { |r|
+#          process_cartridge_commands(r.cart_commands)
+          updated = 0
+        }
+      else
+        process_cartridge_commands(result.cart_commands)
+        updated = result.exitcode == 0
+      end
     rescue Exception => e
       Rails.logger.debug "Exception caught updating namespace #{e.message}"
       Rails.logger.debug "DEBUG: Exception caught updating namespace #{e.message}"

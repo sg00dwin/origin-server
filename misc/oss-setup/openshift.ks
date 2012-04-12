@@ -454,6 +454,22 @@ AutomaticLoginEnable=True
 AutomaticLogin=liveuser
 FOE
 
+mkdir -p /home/liveuser/.config/autostart
+cat <<FOE > /home/liveuser/.config/autostart/openshift.desktop
+[Desktop Entry]
+Type=Application
+Exec=/usr/bin/firefox file:///var/www/html/getting_started.html
+Hidden=false
+X-GNOME-Autostart-enabled=true
+Name[en_US]=Openshift
+Name=Openshift
+Comment[en_US]=Openshift
+Comment=Openshift
+FOE
+chown -R liveuser:liveuser /home/liveuser
+chown -R liveuser:liveuser /home/liveuser/.config
+
+
 # Turn off PackageKit-command-not-found while uninstalled
 if [ -f /etc/PackageKit/CommandNotFound.conf ]; then
   sed -i -e 's/^SoftwareSourceSearch=true/SoftwareSourceSearch=false/' /etc/PackageKit/CommandNotFound.conf
@@ -497,6 +513,8 @@ echo "forwarders { \${FORWARDER} ; } ;" > /var/named/forwarders.conf
 /sbin/restorecon -v /var/named/forwarders.conf
 
 grep -l NM_CONTROLLED /etc/sysconfig/network-scripts/ifcfg-* | xargs perl -p -i -e '/NM_CONTROLLED/ && s/yes/no/i'
+su -c "/usr/bin/ss-register-user -u admin -p admin"
+
 
 EOF
 
@@ -591,6 +609,23 @@ pushd /var/www/stickshift/broker/ && rm -f Gemfile.lock && bundle show && chown 
 
 mkdir -p /var/www/stickshift/broker/config/environments/plugin-config
 
+echo "require File.expand_path('../plugin-config/crankcase-mongo-plugin.rb', __FILE__)" >> /var/www/stickshift/broker/config/environments/development.rb
+cat <<EOF > /var/www/stickshift/broker/config/environments/plugin-config/crankcase-mongo-plugin.rb
+Broker::Application.configure do
+  config.datastore = {
+    :replica_set => false,
+    # Replica set example: [[<host-1>, <port-1>], [<host-2>, <port-2>], ...]
+    :host_port => ["localhost", 27017],
+
+    :user => "stickshift",
+    :password => "mooo",
+    :db => "stickshift_broker_dev",
+    :collections => {:user => "user"}
+  }
+end
+EOF
+
+
 echo "require File.expand_path('../plugin-config/swingshift-mongo-plugin.rb', __FILE__)" >> /var/www/stickshift/broker/config/environments/development.rb
 cat <<EOF > /var/www/stickshift/broker/config/environments/plugin-config/swingshift-mongo-plugin.rb
 Broker::Application.configure do
@@ -644,4 +679,236 @@ chkconfig oddjobd on
 chmod 755 /etc/rc.d/init.d/livesys-late-openshift
 /sbin/restorecon /etc/rc.d/init.d/livesys-late-openshift
 /sbin/chkconfig --add livesys-late-openshift
+%end
+
+%post
+cat <<EOF > /var/www/html/getting_started.html
+<!DOCTYPE html>
+<html class=" js flexbox canvas canvastext webgl no-touch geolocation postmessage websqldatabase indexeddb hashchange history draganddrop websockets rgba hsla multiplebgs backgroundsize borderimage borderradius boxshadow textshadow opacity cssanimations csscolumns cssgradients cssreflections csstransforms csstransforms3d csstransitions fontface localstorage sessionstorage webworkers applicationcache" lang="en"><!--<![endif]--><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta charset="utf-8">
+<meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible">
+<title>
+OpenShift by Red Hat
+|
+Get Started
+</title>
+<meta content="" name="description">
+<meta content="" name="author">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<link href="https://openshift.redhat.com/app/images/favicon-32.png" rel="shortcut icon" type="image/png">
+<link href="https://openshift.redhat.com/app/stylesheets/overpass.css" media="all" rel="stylesheet" type="text/css">
+<script src="https://openshift.redhat.com/app/javascripts/modernizr.min.js" type="text/javascript"></script>
+<link href="https://openshift.redhat.com/app/stylesheets/common.css" media="all" rel="stylesheet" type="text/css">
+<link href="https://openshift.redhat.com/app/stylesheets/site.css" media="all" rel="stylesheet" type="text/css">
+
+<style></style></head>
+<body class="product getting_started hasGoogleVoiceExt">
+
+<header>
+<div class="section-top" id="top">
+<div class="container">
+<div class="pull-left">
+</div>
+<div class="pull-right login">
+</div>
+</div>
+</div>
+<nav class="section-nav lift-counter" id="nav">
+<div class="navbar">
+	<div class="messaging messaging-home">
+		<div class="container">
+			<div class="primary headline">
+			</div>
+			<div class="secondary">
+			</div>
+		</div>
+	</div>
+</div>
+</nav>
+
+</header>
+<div class="section-striped" id="content">
+<div class="container">
+<div class="row-content">
+<div class="row row-flush-right">
+<div class="column-content lift-less grid-wrapper">
+<div class="span12 span-flush-right">
+
+<h1 class="ribbon">About this Fedora remix</h1>
+<section id="intro">
+This Fedora remix contains all the Open-source components that power Openshift. Source code and documentation for these components is available at https://github.com/openshift<br/><br/>
+The image contains 5 sets of components:
+<ol>
+	<li><a href="https://github.com/openshift/stickshift">StickShift</a>: Provides a PaaS API framework and plugin architecture to build a cloud</li>
+	<li><a href="https://github.com/openshift/crankcase">Crankcase</a>: Plugins that provide different persistence layers for application metadata. Eg: Mongo, s3 etc.</li>
+	<li><a href="https://github.com/openshift/gearchanger">Gearchanger</a>: Plugins that provide different broker-gear communication mechanisms.</li>
+	<li><a href="https://github.com/openshift/uplift">Uplift</a>: Plugins that provide different DNS management engines.</li>
+	<li><a href="https://github.com/openshift/swingshift">Swingshift</a>: Plugins that provide integration with different authentication schemes.</li>
+	<li><a href="https://github.com/openshift/cartridges">Cartridges</a>: Provides management wrappers around software runtimes that will be enabled in both this runtime and the service offering.</li>	
+</ol>
+</section>
+
+<h1 class="ribbon">Get Started with the Fedora remix</h1>
+<section id="create_domain_name">
+<h3>1. Create a domain name</h3>
+<p>
+Using your OpenShift login and password, call rhc domain create to create a unique domain name for your applications.<br/>
+<pre><b>Note:</b> A login with the username 'admin' and password 'admin' has been created for you.</pre>
+</p><pre>$ rhc domain create -n mydomain -l admin
+Password: admin
+</pre>
+<p></p>
+<aside>
+<p>
+OpenShift domain names make up part of your app's url. They are also unique across all OpenShift users, so choose wisely, and be creative!
+</p>
+</aside>
+<aside>
+<p>
+The <code>rhc domain create</code> command will create a configuration file - &lt;your home directory&gt;/.openshift/express.conf - which sets up a default login.
+</p>
+</aside>
+</section>
+<section class="topic" id="create_application">
+<h3>2. Create your first application</h3>
+<p>
+Now you can create an application.
+</p><pre>$ rhc app create -a myapp -t php-5.3
+Password: admin</pre>
+<p></p>
+<p>
+This will create a remote git repository for your application, and clone it locally in your current directory.
+</p>
+<aside>
+<p>
+OpenShift offers many application stacks. Run <code>rhc app create -h</code> to see all of your options.
+</p>
+</aside>
+<aside>
+<p>
+Your application's domain name will be &lt;your app name&gt;-&lt;your domain name&gt;.example.com. So, the application created by the example commands would be located at myapp-mydomain.example.com
+</p>
+</aside>
+<aside>
+<a href="http://www.youtube.com/watch?v=p83Cx6s_q1U" class="action-more" target="_blank">Creating an application video walkthrough</a>
+</aside>
+</section>
+<section class="topic" id="publish">
+<h3>3. Make a change, publish</h3>
+<p>
+As we all know, getting an application running is only the first step. Now you are on the road to making it your own.  Here's an example for
+the php framework.
+</p>
+<pre>$ cd myapp
+$ vim php/index.php
+(Make a change...  :wq)
+$ git commit -a -m "My first change"
+$ git push
+</pre>
+<p>
+Use whichever IDE or editor works best for you. Chances are, it'll have git support. Even if it doesn't, you're just two simple commands away from glory!
+</p>
+<p>
+Now, check your URL - your change will be live.
+</p>
+<p><a href="http://www.youtube.com/watch?v=H9rMgKCoW3w" class="action-more" target="_blank">Deploying an application video walkthrough</a></p>
+<aside>
+<p>
+Checkout these great guides for deploying popular frameworks on OpenShift:
+</p><ul>
+<li><a href="https://www.redhat.com/openshift/blogs/deploying-turbogears2-python-web-framework-using-express">TurboGears2 Python framework</a></li>
+<li><a href="https://www.redhat.com/openshift/blogs/deploying-a-pyramid-application-in-a-virtual-python-wsgi-environment-on-red-hat-openshift-expr">Pyramid Python framework</a></li>
+<li><a href="https://www.redhat.com/openshift/sites/default/files/documents/RHOS_Express_Getting_Started_w_Drupal.pdf">Drupal</a></li>
+<li><a href="https://www.redhat.com/openshift/sites/default/files/documents/RHOS_Express_Getting_Started_w_MediaWiki.pdf">MediaWiki</a></li>
+</ul>
+<p></p>
+</aside>
+</section>
+<section class="topic" id="next_steps">
+<h3>5. Next steps</h3>
+<p>
+While this has gotten you started, there is a lot more information out there to really get you going.  Check out the following pages for videos, blogs, and tutorials:
+</p><ul>
+<li><a href="https://www.redhat.com/openshift/community/videos">Videos</a></li>
+<li><a href="http://docs.redhat.com/docs/en-US/OpenShift/2.0/html/User_Guide/index.html">Technical Documentation</a></li>
+<li><a href="https://www.redhat.com/openshift/community/forums/">Support Forums</a></li>
+</ul>
+<p></p>
+</section>
+<section><a href="https://openshift.redhat.com/app/account/new" class="action-call "><div>Ready to scale in the cloud?</div><div class="highlight">Sign up now</div><div class="highlight-arrow">&gt;</div></a></section>
+
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<footer>
+<div id="footer-nav">
+<div class="container">
+<div class="row">
+<div class="span3 link-column">
+<header>
+<h3>News</h3>
+</header>
+<ul class="unstyled">
+<li><a href="https://www.redhat.com/openshift/forums/news-and-announcements">Announcements</a></li>
+<li><a href="https://www.redhat.com/openshift/blogs">Blog</a></li>
+<li><a href="http://www.twitter.com/#!/openshift">Twitter</a></li>
+</ul>
+</div>
+<div class="span3 link-column">
+<header>
+<h3>Community</h3>
+</header>
+<ul class="unstyled">
+<li><a href="https://www.redhat.com/openshift/community/forums/">Forum</a></li>
+<li><a href="https://openshift.redhat.com/app/partners">Partner Program</a></li>
+<li><a href="http://webchat.freenode.net/?randomnick=1&channels=openshift&uio=d4">IRC Channel</a></li>
+<li><a href="mailto:openshift@redhat.com">Feedback</a></li>
+</ul>
+</div>
+<div class="span3 link-column">
+<header>
+<h3>Legal</h3>
+</header>
+<ul class="unstyled">
+<li><a href="https://openshift.redhat.com/app/legal">Legal</a></li>
+<li><a href="https://openshift.redhat.com/app/legal/openshift_privacy">Privacy Policy</a></li>
+<li><a href="https://access.redhat.com/security/team/contact/">Security</a></li>
+<li><a href="https://openshift.redhat.com/app/legal/opensource_disclaimer">Open Source Disclaimer</a></li>
+</ul>
+</div>
+<div class="span3 link-column">
+<header>
+<h3>Help</h3>
+</header>
+<ul class="unstyled">
+<li><a href="https://www.redhat.com/openshift/community/faq">FAQ</a></li>
+<li><a href="mailto:openshift@redhat.com">Contact</a></li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+<section id="copyright">
+<div class="container">
+<img alt="Red Hat" src="https://openshift.redhat.com/app/images/redhat.png">
+<div class="pull-right">Copyright © 2011 Red Hat, Inc.</div>
+</div>
+</section>
+
+</footer>
+<script src="https://openshift.redhat.com/app/javascripts/jquery.min.js" type="text/javascript"></script>
+<script src="https://openshift.redhat.com/app/javascripts/rails.js" type="text/javascript"></script>
+<script src="https://openshift.redhat.com/app/javascripts/plugins.js" type="text/javascript"></script>
+<script src="https://openshift.redhat.com/app/javascripts/jquery.cookie.js" type="text/javascript"></script>
+<script src="https://openshift.redhat.com/app/javascripts/jquery.validate.min.js" type="text/javascript"></script>
+<script src="https://openshift.redhat.com/app/javascripts/form.js" type="text/javascript"></script>
+<script src="https://openshift.redhat.com/app/javascripts/script.js" type="text/javascript"></script>
+</body></html>
+EOF
+chown apache:apache /var/www/html/getting_started.html
+chmod a+r /var/www/html/getting_started.html
+restorecon /var/www/html/getting_started.html
 %end

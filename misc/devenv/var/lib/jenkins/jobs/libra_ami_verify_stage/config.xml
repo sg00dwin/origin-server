@@ -57,7 +57,7 @@ then
 fi
 echo $excludes
 # Run the image tests
-build/devenv test devenv-stage_verifier_${BUILD_NUMBER} --terminate --official $excludes</command>
+build/devenv test devenv-stage_verifier_${BUILD_NUMBER} --official --terminate $excludes</command>
     </hudson.tasks.Shell>
   </builders>
   <publishers>

@@ -87,7 +87,7 @@ function uuid_to_portset {
   uid=`id -u $uuid`
   if [ $? -ne 0 ]; then
     echo "Cannot resolve uuid" 1>&2
-    exit 5
+    return 5
   fi
   uid_to_portset $uid
 }
@@ -97,7 +97,7 @@ function uuid_to_portrange {
   uid=`id -u $uuid`
   if [ $? -ne 0 ]; then
     echo "Cannot resolve uuid" 1>&2
-    exit 5
+    return 5
   fi
   uid_to_portrange $uid
 }
@@ -124,7 +124,8 @@ function find_next_proxy_port {
       proxy_cmd setproxy "$proxy_port" "$target"
       retv=$?
       if [ $retv != 0 ]; then
-        exit 67
+        echo "Failed to add proxy port"
+        return 67
       fi
       echo "$proxy_port"
       return 0
@@ -135,7 +136,7 @@ function find_next_proxy_port {
     fi
   done
   echo "All ports are taken, cannot add more"
-  exit 67
+  return 67
 }
 
 function remove_proxy_port {
@@ -169,7 +170,7 @@ function show_proxy_port {
     fi
   done
   echo "Failed to find proxy."
-  exit 1
+  return 1
 }
 
 function remove_all_proxy_ports {

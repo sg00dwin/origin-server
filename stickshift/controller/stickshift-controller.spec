@@ -5,7 +5,7 @@
 
 Summary:        Cloud Development Controller
 Name:           rubygem-%{gemname}
-Version:        0.8.3
+Version:        0.8.13
 Release:        1%{?dist}
 Group:          Development/Languages
 License:        ASL 2.0
@@ -75,6 +75,110 @@ rm -rf %{buildroot}
 %{ruby_sitelib}/%{gemname}.rb
 
 %changelog
+* Wed Apr 11 2012 Adam Miller <admiller@redhat.com> 0.8.13-1
+- Updating gem versions (admiller@redhat.com)
+- Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
+  (mmcgrath@redhat.com)
+- added exit code check (mmcgrath@redhat.com)
+- fix mongo put_app where ngears < 0; dont save an app after
+  deconfigure/destroy if it has not persisted, because the destroy might have
+  been called for a failure upon save (rchopra@redhat.com)
+- Bug fix: 809467 (rpenta@redhat.com)
+
+* Tue Apr 10 2012 Mike McGrath <mmcgrath@redhat.com> 0.8.12-1
+- Updating gem versions (mmcgrath@redhat.com)
+- Fix domain controller errors and related cucumber tests (rpenta@redhat.com)
+- Merge branch 'master' of git1.ops.rhcloud.com:/srv/git/li (rpenta@redhat.com)
+- Fix for bug# 811139 (rpenta@redhat.com)
+
+* Tue Apr 10 2012 Adam Miller <admiller@redhat.com> 0.8.11-1
+- Updating gem versions (admiller@redhat.com)
+- Adding checks to prevent creation of multiple domains for a user
+  (kraman@gmail.com)
+- Fix for Bug# 807513 (rpenta@redhat.com)
+- Partial fix for 806401 (kraman@gmail.com)
+
+* Tue Apr 10 2012 Adam Miller <admiller@redhat.com> 0.8.10-1
+- Updating gem versions (admiller@redhat.com)
+- Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
+  (admiller@redhat.com)
+- Fix for bug# 809467 (rpenta@redhat.com)
+
+* Tue Apr 10 2012 Adam Miller <admiller@redhat.com> 0.8.9-1
+- Updating gem versions (admiller@redhat.com)
+- Merge branch 'master' of git1.ops.rhcloud.com:/srv/git/li (rpenta@redhat.com)
+- Fix REST domain cucumber tests (rpenta@redhat.com)
+- bug 810475 (bdecoste@gmail.com)
+- Bugz 810931. Changing REST API params and Application structure to accept
+  gear_profile instead of node_profile (kraman@gmail.com)
+
+* Tue Apr 10 2012 Mike McGrath <mmcgrath@redhat.com> 0.8.8-1
+- Updating gem versions (mmcgrath@redhat.com)
+- BugzID 811141. Fixed spelling (kraman@gmail.com)
+
+* Tue Apr 10 2012 Mike McGrath <mmcgrath@redhat.com> 0.8.7-1
+- Updating gem versions (mmcgrath@redhat.com)
+- This was breaking the build (mmcgrath@redhat.com)
+
+* Tue Apr 10 2012 Mike McGrath <mmcgrath@redhat.com> 0.8.6-1
+- Updating gem versions (mmcgrath@redhat.com)
+- disabling registration_required. (mmcgrath@redhat.com)
+
+* Mon Apr 09 2012 Mike McGrath <mmcgrath@redhat.com> 0.8.5-1
+- Updating gem versions (mmcgrath@redhat.com)
+- updated tests changed namespace to id (lnader@redhat.com)
+- dont register dns for haproxy gear twice over (rchopra@redhat.com)
+- Merge branch 'master' of git1.ops.rhcloud.com:/srv/git/li (rpenta@redhat.com)
+- Fix for bug# 807513 (rpenta@redhat.com)
+
+* Mon Apr 09 2012 Mike McGrath <mmcgrath@redhat.com> 0.8.4-1
+- Updating gem versions (mmcgrath@redhat.com)
+- Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
+  (rchopra@redhat.com)
+- gearname is the appname for haproxy gear in scalable apps. NOTE : this
+  checkin assumes that haproxy can nicely re-use the framework's httpd
+  (rchopra@redhat.com)
+- Merge branch 'master' of li-master:/srv/git/li (ramr@redhat.com)
+- bug fix in absolute URLs (lnader@redhat.com)
+- Merge branch 'master' of li-master:/srv/git/li (ramr@redhat.com)
+- moving ruby, rockmongo, and phpmoadmin cartridge tests back under express as
+  these cartridges will not be made available to stickshift
+  (abhgupta@redhat.com)
+- corrected error code (lnader@redhat.com)
+- Merge branch 'master' of git1.ops.rhcloud.com:/srv/git/li (lnader@redhat.com)
+- fixed get_execute_connector_job signature (wdecoste@localhost.localdomain)
+- REST API absolute URLs (lnader@redhat.com)
+- Add miscellaneous options to app creation (used in benchmarking app creation
+  to turn off git+dns). (ramr@redhat.com)
+- Merge remote-tracking branch 'origin/master' into dev/kraman/US2048
+  (kraman@gmail.com)
+- Add a new direct route to stickshift to allow domain updates to provide the
+  old :id attribute instead of having to send a new attribute Return 'id' as
+  the attribute for namespace errors Add stickshift directory to the watch
+  synchronization folder (ccoleman@redhat.com)
+- fixing command_helper that was causing a couple of verification cucumber
+  tests to fail (abhgupta@redhat.com)
+- moving bulk of the cucumber tests under stickshift and making changes so that
+  tests can be run both on devenv with express  as well as with opensource
+  pieces on the fedora image (abhgupta@redhat.com)
+- Merge branch 'master' of git1.ops.rhcloud.com:/srv/git/li (rpenta@redhat.com)
+- Changes: - For domain object, 'namespace' will be referred as 'id' in the
+  REST api. - For application object, 'namespace' will be referred as
+  'domain_id' in the REST api (rpenta@redhat.com)
+- let deconfigure failure not stop the app destroy (rchopra@redhat.com)
+- Merge remote-tracking branch 'origin/master' (kraman@gmail.com)
+- Merge remote-tracking branch 'origin/master' (kraman@gmail.com)
+- Merge remote-tracking branch 'origin/dev/kraman/US2048' (kraman@gmail.com)
+- 1) changes to fix remote job creation to work for express as well as
+  stickshift.  2) adding resource_limits.conf file to stickshift node.  3)
+  adding implementations of generating remote job objects in mcollective
+  application container proxy (abhgupta@redhat.com)
+- Moving user creating into authenticate method instead of auth_service
+  (kraman@gmail.com)
+- Pulling parallel job changes into stickshift (kraman@gmail.com)
+- Adding m-collective and oddjob gearchanger plugins (kraman@gmail.com)
+- Created Crankcase Mongo plugin (kraman@gmail.com)
+
 * Wed Apr 04 2012 Mike McGrath <mmcgrath@redhat.com> 0.8.3-1
 - Updating gem versions (mmcgrath@redhat.com)
 - test commit (mmcgrath@redhat.com)

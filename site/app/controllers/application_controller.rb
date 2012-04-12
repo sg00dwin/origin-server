@@ -11,6 +11,12 @@ class ApplicationController < ActionController::Base
     raise e
   end
 
+  rescue_from 'ActiveResource::ResourceNotFound' do |exception|
+    logger.debug exception.backtrace.join("\n")
+    upgrade_in_rails_31 # FIXME: Switch to render :status => 404
+    render :file => "#{Rails.root}/public/404.html", :status => 404, :layout => false
+  end
+
   def handle_unverified_request
     super
     redirect_to_logout
@@ -338,5 +344,9 @@ class ApplicationController < ActionController::Base
 
     logger.debug "========== TESTING ===========" if retval
     retval
+  end
+
+  def upgrade_in_rails_31
+    raise "Code needs upgrade for rails 3.1+" if Rails.version[0..3] != '3.0.'
   end
 end

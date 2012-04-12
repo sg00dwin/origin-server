@@ -18,7 +18,7 @@ end
 
 
 def delete_all_users
-  ds = StickShift::MongoDataStore.new
+  ds = StickShift::DataStore.instance
   users = ds.find_all("CloudUser")
   users.each do |user|
     delete_user((user['login']))
