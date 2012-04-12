@@ -32,7 +32,7 @@ begin
       start_time=DateTime.parse(Regexp.last_match[1]).strftime('%Q').to_i
       action_type=Regexp.last_match[2]
       action_call=nil
-    elsif line =~ /:action=>"(.*)"\,/
+    elsif line =~ /:action=>"(.*)"/
       action_call=Regexp.last_match[1]
     elsif line =~ /^D, \[(.*) \#\d+\] DEBUG .* (\w+) (?: ERROR )*\(\d+\)/
       end_time=DateTime.parse(Regexp.last_match[1]).strftime('%Q').to_i
@@ -63,7 +63,7 @@ end
 
 
 printf("\n")
-printf("%8s: %6s: %s\n", "msec", "calls", "Action")
+printf("%8s: %6s: %s\n", "tot msec", " calls", "      action        ")
 printf("%8s: %6s: %s\n", "--------", "------", "--------------------")
 sprof=profile.sort_by {|key, value| value}
 sprof.reverse.each do |pair|
