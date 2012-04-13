@@ -16,6 +16,7 @@ Requires:       ruby(abi) = 1.8
 Requires:       rubygems
 Requires:       rubygem(activemodel)
 Requires:       rubygem(highline)
+Requires:       rubygem(cucumber)
 Requires:       rubygem(json_pure)
 Requires:       rubygem(mocha)
 Requires:       rubygem(parseconfig)

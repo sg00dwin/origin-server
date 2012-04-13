@@ -181,9 +181,9 @@ if [ ! -e ~/brew/jenkins-1.409.3-1.2.noarch.rpm ] ; then
   yum install -y ~/brew/jenkins-1.409.3-1.2.noarch.rpm
 fi
 
-if [ ! -e ~/brew/jenkins-plugin-openshift-0.4.25-1.el6_2.x86_64.rpm ] ; then
-  echo "Downloading jenkins-plugin-openshift from BREW [https://brewweb.devel.redhat.com/buildinfo?buildID=201832]"
-  wget -O ~/brew/jenkins-plugin-openshift-0.4.25-1.el6_2.x86_64.rpm http://download.devel.redhat.com/brewroot/packages/jenkins-plugin-openshift/0.4.25/1.el6_2/x86_64/jenkins-plugin-openshift-0.4.25-1.el6_2.x86_64.rpm
+if [ ! -e ~/brew/jenkins-plugin-openshift-0.5.13-0.el6_2.x86_64.rpm ] ; then
+  echo "Downloading jenkins-plugin-openshift from BREW [https://brewweb.devel.redhat.com/buildinfo?buildID=209034]"
+  wget -O ~/brew/jenkins-plugin-openshift-0.5.13-0.el6_2.x86_64.rpm http://download.devel.redhat.com/brewroot/packages/jenkins-plugin-openshift/0.5.13/0.el6_2/x86_64/jenkins-plugin-openshift-0.5.13-0.el6_2.x86_64.rpm
 fi
 
 FOO=`yum search 'mod_passenger' 2>&1 | grep "No match"`

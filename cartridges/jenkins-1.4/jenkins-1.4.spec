@@ -28,6 +28,10 @@ Provides jenkins cartridge to openshift nodes
 
 %build
 
+%post
+service jenkins stop
+chkconfig jenkins off
+
 %install
 rm -rf %{buildroot}
 mkdir -p %{buildroot}%{cartridgedir}

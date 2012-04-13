@@ -34,8 +34,6 @@ class EmailConfirmController < SiteController
     elsif @user.confirm_email(key, email) #sets errors
       reset_sso
       reset_session
-      session[:confirm_flow] = true #FIXME should not be needed when user flow check is simplified
-      session[:confirm_login] = email #FIXME should not be needed when user flow check is simplified
       redirect_to redirect_path and return
     end
 

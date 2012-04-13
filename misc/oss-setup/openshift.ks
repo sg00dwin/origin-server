@@ -109,21 +109,21 @@ stickshift-broker
 
 cartridge-10gen-mms-agent-0.1
 cartridge-cron-1.4
-cartridge-haproxy-1.4
+#cartridge-haproxy-1.4
 cartridge-jbossas-7
-#cartridge-jenkins-1.4
-#cartridge-jenkins-client-1.4
+cartridge-jenkins-1.4
+cartridge-jenkins-client-1.4
 cartridge-mongodb-2.0
 cartridge-mysql-5.1
 cartridge-nodejs-0.6
 cartridge-perl-5.10
 cartridge-php-5.3
-cartridge-phpmoadmin-1.0
+#cartridge-phpmoadmin-1.0
 cartridge-phpmyadmin-3.4
-cartridge-postgresql-8.4
-cartridge-ruby-1.1
+#cartridge-postgresql-8.4
+#cartridge-ruby-1.1
 cartridge-diy-0.1
-cartridge-rockmongo-1.1
+#cartridge-rockmongo-1.1
 cartridge-python-3.2
 
 rubygem-crankcase-mongo-plugin
@@ -516,6 +516,7 @@ grep -l NM_CONTROLLED /etc/sysconfig/network-scripts/ifcfg-* | xargs perl -p -i 
 su -c "/usr/bin/ss-register-user -u admin -p admin"
 
 
+su -c "/usr/bin/ss-register-user -u admin -p admin"
 EOF
 
 echo "Final setup"
@@ -668,6 +669,12 @@ BOOTPROTO=dhcp
 ONBOOT=yes
 EOF
 
+cat <<EOF > /etc/sysconfig/network-scripts/ifcfg-p2p1
+DEVICE=p2p1
+BOOTPROTO=dhcp
+ONBOOT=yes
+EOF
+
 # Setup swap for devenv
 [ -f /.swap ] || ( /bin/dd if=/dev/zero of=/.swap bs=1024 count=1024000
     /sbin/mkswap -f /.swap
@@ -679,6 +686,21 @@ chkconfig oddjobd on
 chmod 755 /etc/rc.d/init.d/livesys-late-openshift
 /sbin/restorecon /etc/rc.d/init.d/livesys-late-openshift
 /sbin/chkconfig --add livesys-late-openshift
+
+mkdir -p /home/liveuser/.config/autostart
+chown -R liveuser:liveuser /home/liveuser/.config
+echo <<EOF > /home/liveuser/.config/autostart/openshift.desktop
+[Desktop Entry]
+Type=Application
+Exec=/usr/bin/firefox http://www.openshift.com
+Hidden=false
+X-GNOME-Autostart-enabled=true
+Name[en_US]=Openshift
+Name=Openshift
+Comment[en_US]=Openshift
+Comment=Openshift
+EOF
+
 %end
 
 %post
@@ -910,5 +932,5 @@ While this has gotten you started, there is a lot more information out there to 
 EOF
 chown apache:apache /var/www/html/getting_started.html
 chmod a+r /var/www/html/getting_started.html
-restorecon /var/www/html/getting_started.html
+/sbin/restorecon /var/www/html/getting_started.html
 %end

@@ -187,7 +187,7 @@ When /^I (add-alias|remove-alias) the php application$/ do |action|
   account_name = @account['accountname']
   namespace = @app['namespace']
   app_name = @app['name']
-  server_alias = "#{@app['name']}-#{@account['accountname']}.example.com"
+  server_alias = "#{@app['name']}-#{@account['accountname']}.#{$alias_domain}"
 
   command = "#{$php_hooks}/%s %s %s %s %s" % [action, app_name, namespace, account_name, server_alias]
   exit_status = runcon command, $selinux_user, $selinux_role, $selinux_type, nil, 10
@@ -197,15 +197,15 @@ When /^I (add-alias|remove-alias) the php application$/ do |action|
 end
 
 When /^I (expose-port|conceal-port) the php application$/ do |action|
-  account_name = @account['accountname']
-  namespace = @app['namespace']
-  app_name = @app['name']
-
-  command = "#{$php_hooks}/%s %s %s %s" % [action, app_name, namespace, account_name]
-  exit_status = runcon command, $selinux_user, $selinux_role, $selinux_type, nil, 10
-  if exit_status != 0
-    raise "Unable to %s for %s %s %s" % [action, app_name, namespace, account_name]
-  end
+#  account_name = @account['accountname']
+#  namespace = @app['namespace']
+#  app_name = @app['name']
+#
+#  command = "#{$php_hooks}/%s %s %s %s" % [action, app_name, namespace, account_name]
+#  exit_status = runcon command, $selinux_user, $selinux_role, $selinux_type, nil, 10
+#  if exit_status != 0
+#    raise "Unable to %s for %s %s %s" % [action, app_name, namespace, account_name]
+#  end
 end
 
 When /^I (start|stop) the php application$/ do |action|
@@ -223,21 +223,21 @@ end
 Then /^the php application will( not)? be aliased$/ do | negate |
   good_status = negate ? 1 : 0
 
-  command = "/usr/bin/curl -H 'Host: #{@app['name']}-#{@account['accountname']}.example.com' -s http://localhost/health_check.php | /bin/grep -q -e '^1$'"
+  command = "/usr/bin/curl -H 'Host: #{@app['name']}-#{@account['accountname']}.#{$alias_domain}' -s http://localhost/health_check.php | /bin/grep -q -e '^1$'"
   exit_status = runcon command, 'unconfined_u', 'unconfined_r', 'unconfined_t'
   exit_status.should == good_status
 end
 
 Then /^the php application will( not)? be exposed$/ do | negate |
-  account_name = @account['accountname']
-  namespace = @app['namespace']
-  app_name = @app['name']
-
-  good_status = negate ? 1 : 0
-
-  command = "#{$php_hooks}/show-port %s %s %s | /bin/grep -q PROXY_PORT" % [app_name, namespace, account_name]
-  exit_status = runcon command, 'unconfined_u', 'unconfined_r', 'unconfined_t'
-  exit_status.should == good_status
+#  account_name = @account['accountname']
+#  namespace = @app['namespace']
+#  app_name = @app['name']
+#
+#  good_status = negate ? 1 : 0
+#
+#  command = "#{$php_hooks}/show-port %s %s %s | /bin/grep -q PROXY_PORT" % [app_name, namespace, account_name]
+#  exit_status = runcon command, 'unconfined_u', 'unconfined_r', 'unconfined_t'
+#  exit_status.should == good_status
 end
 
 Then /^the php application will( not)? be running$/ do | negate |

@@ -42,7 +42,7 @@ rsync_defaults = {"-vuzt", "--chmod=ug+rwX"}
 rails = {
   delay= 0.2,
   rsyncOps= rsync_defaults,
-  exclude= "log/**, tmp/**, httpd/**",
+  exclude= "log, log/**, tmp, tmp/**, httpd, httpd/**",
 }
 rpm = {
   delay= 0.2,
@@ -94,3 +94,7 @@ sync{ rpm, default.rsync,
   target= "verifier:/etc/drupal6"
 }
 
+sync{ rpm, default.rsync,
+  source= sourcedir .. "/misc/devenv/etc/httpd",
+  target= "verifier:/etc/httpd"
+}

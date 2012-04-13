@@ -403,22 +403,6 @@ function forums_views_default_views() {
     'weight' => '0',
     'name' => 'primary-links',
   ));
-  $handler = $view->new_display('page', 'Page', 'page_1');
-  $handler->override_option('path', 'og');
-  $handler->override_option('menu', array(
-    'type' => 'none',
-    'title' => '',
-    'description' => '',
-    'weight' => 0,
-    'name' => 'navigation',
-  ));
-  $handler->override_option('tab_options', array(
-    'type' => 'none',
-    'title' => '',
-    'description' => '',
-    'weight' => 0,
-    'name' => 'navigation',
-  ));
 
   $views[$view->name] = $view;
 
