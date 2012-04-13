@@ -179,50 +179,57 @@
           <div class="row">
             <div class="span3 link-column">
               <header>
-                <h3>News</h3>
+                <h3><a href="/community/developers">Developers</a></h3>
               </header>
               <ul class="unstyled">
-                <li><a href="<?php print $base_url; ?>/forums/news-and-announcements">Announcements</a></li>
-                <li><a href="<?php print $base_url; ?>/blogs">Blog</a></li>
-                <li><a href="http://www.twitter.com/#!/openshift">Twitter</a></li>
+                <li><a href="/app/platform">What is OpenShift?</a></li>
+                <li><a href="/app/getting_started">Get Started</a></li>
+                <li><a href="http://docs.redhat.com/docs/en-US/OpenShift/2.0/html/User_Guide/index.html">User Guide</a></li>
+                <li><a href="/community/faq">FAQ</a></li>
               </ul>
             </div>
             <div class="span3 link-column">
               <header>
-                <h3>Community</h3>
+                <h3><a href="http://www.redhat.com/openshift/community">Community</a></h3>
               </header>
               <ul class="unstyled">
-                <li><a href="<?php print $base_url; ?>/forums/">Forum</a></li>
+                <li><a href="https://www.redhat.com/openshift/blogs">Blog</a></li>
+                <li><a href="/community/forums/">Forum</a></li>
                 <li><a href="http://webchat.freenode.net/?randomnick=1&amp;channels=openshift&amp;uio=d4">IRC Channel</a></li>
                 <li><a href="mailto:openshift@redhat.com">Feedback</a></li>
               </ul>
             </div>
             <div class="span3 link-column">
               <header>
-                <h3>Legal</h3>
+                <h3><a href="/community/get-involved">Get Involved</a></h3>
               </header>
               <ul class="unstyled">
-                <li><a href="/app/legal">Legal</a></li>
-                <li><a href="/app/legal/openshift_privacy">Privacy Policy</a></li>
-                <li><a href="https://access.redhat.com/security/team/contact/">Security</a></li>
+                <li><a href="/community/open-source">Open Source</a></li>
+                <li><a href="/app/opensource/download">Get the Bits</a></li>
+                <li><a href="/community/developers/get-involved">Make it Better</a></li>
+                <li><a href="https://github.com/openshift">OpenShift on GitHub</a></li>
               </ul>
             </div>
             <div class="span3 link-column">
               <header>
-                <h3>Help</h3>
+                <h3><a href="/app/legal">Legal</a></h3>
               </header>
               <ul class="unstyled">
-                <li><a href="<?php print $base_url; ?>/faq">FAQ</a></li>
-                <li><a href="mailto:openshift@redhat.com">Contact</a></li>
+                <li><a href="/app/legal/site_terms">Terms of Service</a></li>
+                <li><a href="/app/legal/openshift_privacy">Privacy Policy</a></li>
+                <li><a href="https://access.redhat.com/security/team/contact/">Security</a></li>
+                <li><a href="/app/legal/opensource_disclaimer">Open Source Disclaimer</a></li>
               </ul>
             </div>
           </div>
-          </div>
-        </div>     
-        <section id='copyright'>
-        <div class='container'>
-          <a href="https://www.redhat.com/"><img src="/app/images/redhat.png" alt="Red Hat"></a>
-          <div class="pull-right">Copyright &copy; 2012 Red Hat, Inc.</div>
+        </div>
+      </div>
+      <section id="copyright">
+        <div class="container">
+          <a href="https://www.redhat.com/">
+            <img src="/app/images/redhat.png" alt="Red Hat">
+          </a>
+          <div class="pull-right">Copyright &copy; 2011 Red Hat, Inc.</div>
         </div>
       </section>
     </footer>
