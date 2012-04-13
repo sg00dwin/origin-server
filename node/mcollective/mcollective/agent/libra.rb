@@ -115,20 +115,16 @@ module MCollective
       def migrate_action
         Log.instance.debug("migrate_action call / request = #{request.pretty_inspect}")
         validate :uuid, /^[a-zA-Z0-9]+$/
-        validate :application, /^[a-zA-Z0-9]+$/
-        validate :app_type, /^.+$/
         validate :version, /^.+$/
         validate :namespace, /^.+$/  
         uuid = request[:uuid]
-        app_name = request[:application]
-        old_app_type = request[:app_type]
         namespace = request[:namespace]
         version = request[:version]
         output = ""
         exitcode = 0
         begin
           require "#{File.dirname(__FILE__)}/migrate-#{version}"
-          output, exitcode = LibraMigration::migrate(uuid, app_name, old_app_type, namespace, version)
+          output, exitcode = LibraMigration::migrate(uuid, namespace, version)
         rescue LoadError => e
           exitcode = 127
           output += "Migration version not supported: #{version}\n"

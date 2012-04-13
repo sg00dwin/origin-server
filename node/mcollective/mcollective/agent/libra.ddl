@@ -77,30 +77,14 @@ action "set_district", :description => "run a cartridge action" do
            :display_as => "Exit Code"
 end
 
-action "migrate", :description => "run a cartridge action" do
+action "migrate", :description => "migrate a gear" do
     display :always
 
     input :uuid,
-        :prompt         => "Application uuid",
-        :description    => "Application uuid",
+        :prompt         => "Gear uuid",
+        :description    => "Gear uuid",
         :type           => :string,
         :validation     => '^[a-zA-Z0-9]+$',
-        :optional       => false,
-        :maxlength      => 32
-
-    input :application,
-        :prompt         => "Application Name",
-        :description    => "Name of an application",
-        :type           => :string,
-        :validation     => '^[a-zA-Z0-9]+$',
-        :optional       => false,
-        :maxlength      => 32
-        
-    input :app_type,
-        :prompt         => "Application Type",
-        :description    => "Type of application",
-        :type           => :string,
-        :validation     => '^.+$',
         :optional       => false,
         :maxlength      => 32
         

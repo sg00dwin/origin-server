@@ -13,49 +13,62 @@ WORK_DIR = '/tmp/rhc/migration'
 STDOUT.sync, STDERR.sync = true
 
 #
-#  Migrate the specified app
+#  Migrate the specified gear
 #
-def migrate_app(rhlogin, app_name)
-  migrate_cmd = "#{__FILE__} --rhlogin '#{rhlogin}' --migrate-app '#{app_name}'"
+def migrate_gear(rhlogin, app_name, gear_uuid)
+  migrate_cmd = "#{__FILE__} --rhlogin '#{rhlogin}' --migrate-gear '#{gear_uuid}' --app-name '#{app_name}'"
   out = StringIO.new
-  out << "Migrating app on node with: #{migrate_cmd}\n"
+  out << "Migrating gear on node with: #{migrate_cmd}\n"
   migrated = false
   begin
     user = CloudUser.find(rhlogin)
     if user
-      app  = Application.find(user, app_name)
+      app = Application.find(user, app_name)
       if app
-        uuid = app.gear.uuid
-        framework = app.framework
-        server_identity = app.gear.server_identity
-        begin
-          Timeout::timeout(360) do
-            Express::Broker::ApplicationContainerProxy.rpc_exec('libra', server_identity) do |client|
-              client.migrate(:uuid => uuid,
-                             :application => app_name,
-                             :app_type => framework,
-                             :namespace => user.namespace,
-                             :version => '2.0.7a') do |response|
-                exit_code = response[:body][:data][:exitcode]
-                output = response[:body][:data][:output]
-                if (output.length > 0)
-                  out << "Migrate on node output: #{output}\n"
-                end
-                if exit_code != 0
-                  out << "Migrate on node exit code: #{exit_code}\n"
-                  raise "Failed migrating app. Rerun with: #{migrate_cmd}"
-                else
-                  #migrated = redeploy_httpd_proxy(app, out)
-                  migrated = true
-                  if migrated
-                    restart_app(app, out)
+        gear = nil
+        app.gears.each do |app_gear|
+          if app_gear.uuid == gear_uuid
+            gear = app_gear
+            break
+          end
+        end
+        if gear
+          server_identity = app.gear.server_identity
+          begin
+            Timeout::timeout(360) do
+              GearChanger::MCollectiveApplicationContainerProxy.rpc_exec('libra', server_identity) do |client|
+                client.migrate(:uuid => gear_uuid,
+                               :namespace => app.domain.namespace,
+                               :version => '2.0.10') do |response|
+                  exit_code = response[:body][:data][:exitcode]
+                  output = response[:body][:data][:output]
+                  if (output.length > 0)
+                    out << "Migrate on node output: #{output}\n"
+                  end
+                  if exit_code != 0
+                    out << "Migrate on node exit code: #{exit_code}\n"
+                    raise "Failed migrating gear. Rerun with: #{migrate_cmd}"
+                  else
+                    redeploy_httpd_proxy(gear, out)
+                    migrated = true
+                    if migrated
+                      gear.configured_components.each do |comp_name|
+                        if comp_name == '@@app/cart-jenkins-1.4'
+                          component = app.comp_instance_map[comp_name]
+                          restart_component(gear, component, out)
+                        end
+                      end
+                    end
                   end
                 end
               end
             end
+          rescue Timeout::Error
+            raise "Command '#{migrate_cmd}' timed out"
           end
-        rescue Timeout::Error
-          raise "Command '#{migrate_cmd}' timed out"
+        else
+          out << "WARNING: Gear not found with uuid #{gear_uuid} for app '#{app_name}' and user '#{rhlogin}'\n"
+          migrated = true
         end
       else
         raise "App not found: #{app_name}"
@@ -70,9 +83,9 @@ def migrate_app(rhlogin, app_name)
   out.string
 end
 
-def restart_app(app, out)
+def restart_component(gear, component, out)
   leave_stopped = false
-  reply = app.container.status(app, app.gear, app.framework)
+  reply = gear.status(component)
   reply.cart_commands.each do |command_item|
     case command_item[:command]
     when "ATTR"
@@ -90,81 +103,69 @@ def restart_app(app, out)
   end
   unless leave_stopped
     begin
-      out << "Stopping app '#{app.name}' with uuid '#{app.gear.uuid}' on node '#{app.gear.server_identity}'\n"
-      reply.append app.container.stop(app, app.gear, app.framework)
+      out << "Stopping gear '#{gear.name}' with uuid '#{gear.uuid}' on node '#{gear.server_identity}'\n"
+      reply.append gear.stop(component)
     rescue Exception => e
-      out << "WARNING: Error stopping app '#{app.name}' with uuid '#{app.gear.uuid}' on node '#{app.gear.server_identity}': #{e.message}\n"
+      out << "WARNING: Error stopping gear '#{gear.name}' with uuid '#{gear.uuid}' on node '#{gear.server_identity}': #{e.message}\n"
     end
     begin
-      out << "Force stopping app '#{app.name}' with uuid '#{app.gear.uuid}' on node '#{app.gear.server_identity}'\n"
-      reply.append app.container.force_stop(app, app.gear, app.framework)
+      out << "Force stopping gear '#{gear.name}' with uuid '#{gear.uuid}' on node '#{gear.server_identity}'\n"
+      reply.append gear.force_stop(component)
     rescue Exception => e
-      out << "WARNING: Error force stopping app '#{app.name}' with uuid '#{app.gear.uuid}' on node '#{app.gear.server_identity}': #{e.message}\n"
+      out << "WARNING: Error force stopping gear '#{gear.name}' with uuid '#{gear.uuid}' on node '#{gear.server_identity}': #{e.message}\n"
     end
     num_tries = 2
     (1..num_tries).each do |i|
-      out << "Restarting app '#{app.name}' with uuid '#{app.gear.uuid}' on node '#{app.gear.server_identity}'\n"
+      out << "Restarting gear '#{gear.name}' with uuid '#{gear.uuid}' on node '#{gear.server_identity}'\n"
       begin
-        reply.append app.container.restart(app, app.gear, app.framework)
+        reply.append gear.restart(component)
         break
       rescue Exception => e
         if i == num_tries
-          out << "Failed to restart '#{app.name}' with uuid '#{app.gear.uuid}' on node '#{app.gear.server_identity}' after #{num_tries} tries with exception: #{e.message}\n"
+          out << "Failed to restart '#{gear.name}' with uuid '#{gear.uuid}' on node '#{gear.server_identity}' after #{num_tries} tries with exception: #{e.message}\n"
           raise
         end
       end
-    end
-    
+    end    
   else
-    out << "Leaving app stopped '#{app.name}' with uuid '#{app.gear.uuid}' on node '#{app.gear.server_identity}'\n"
+    out << "Leaving gear stopped '#{gear.name}' with uuid '#{gear.uuid}' on node '#{gear.server_identity}'\n"
   end
   out << "RESTART DEBUG OUTPUT:\n#{reply.debugIO.string}\n" unless reply.debugIO.string.empty?
   out << "RESTART ERROR OUTPUT:\n#{reply.errorIO.string}\n" unless reply.errorIO.string.empty?
 end
 
-def redeploy_httpd_proxy(app, out)
-  redeployed = false
-  out << "Redeploying httpd proxy for '#{app.name}' with uuid '#{app.gear.uuid}' on node #{app.gear.server_identity}\n"
-  reply = app.container.send(:run_cartridge_command, app.framework, app, app.gear, 'deploy-httpd-proxy', nil, false)
+def redeploy_httpd_proxy(gear, out)
+  gear.configured_components.each do |comp_name|
+    component = gear.app.comp_instance_map[comp_name]
+    out << "Redeploying httpd proxy for '#{component.parent_cart_name}' on gear '#{gear.name}' with uuid '#{gear.uuid}' on node #{gear.server_identity}\n"
+    embedded = gear.app.embedded.include?(component.parent_cart_name)
+    reply = gear.app.container.send(:run_cartridge_command, (embedded ? "embedded/" : '') + component.parent_cart_name, gear.app, gear, 'deploy-httpd-proxy', nil, false)
 
-  out << "DEPLOY_HTTP_PROXY DEBUG OUTPUT:\n#{reply.debugIO.string}\n" unless reply.debugIO.string.empty?
-  out << "DEPLOY_HTTP_PROXY ERROR OUTPUT:\n#{reply.errorIO.string}\n" unless reply.errorIO.string.empty?
-
-  if reply.exitcode != 0
-    out << "Deploy httpd proxy on node exit code: #{reply.exitcode}\n"
-    raise "Failed deploying httpd proxy for app '#{app.name}' with uuid '#{app.gear.uuid}' on node '#{app.gear.server_identity}'"
-  else
-    deployed_httpd_proxy_success = true
-    app.embedded.each do |cart, cart_info|
-      out << "Deploying httpd proxy for embedded #{cart} for '#{app.name}' with uuid '#{app.gear.uuid}' on node #{app.gear.server_identity}\n"
-      reply = app.container.send(:run_cartridge_command, "embedded/" + cart, app, app.gear, "deploy-httpd-proxy", nil, false)
-      out << "DEPLOY_HTTP_PROXY DEBUG OUTPUT:\n#{reply.debugIO.string}\n" unless reply.debugIO.string.empty?
-      out << "DEPLOY_HTTP_PROXY ERROR OUTPUT:\n#{reply.errorIO.string}\n" unless reply.errorIO.string.empty?
-      if reply.exitcode != 0
-        out << "Deploy httpd proxy for cart: #{cart} on node exit code: #{reply.exitcode}\n"
-        deployed_httpd_proxy_success = false
-      end
+    out << "DEPLOY_HTTP_PROXY DEBUG OUTPUT:\n#{reply.debugIO.string}\n" unless reply.debugIO.string.empty?
+    out << "DEPLOY_HTTP_PROXY ERROR OUTPUT:\n#{reply.errorIO.string}\n" unless reply.errorIO.string.empty?
+    
+    if reply.exitcode != 0
+      out << "Deploy httpd proxy for cart: #{component.parent_cart_name} on node exit code: #{reply.exitcode}\n"
+      raise "Failed deploying httpd proxy for gear '#{gear.name}' with uuid '#{gear.uuid}' on node '#{gear.server_identity}'"
     end
-    raise "Failed deploying httpd proxy for app '#{app.name}' with uuid '#{app.gear.uuid}' on node '#{app.gear.server_identity}'" unless deployed_httpd_proxy_success
-    unless app.aliases.nil?
-      app.aliases.each do |server_alias|
-        out << "Adding alias '#{server_alias}' for '#{app.name}' with uuid '#{app.gear.uuid}' on node #{app.gear.server_identity}\n"
-        reply = app.container.add_alias(app, app.gear, app.framework, server_alias)
-        out << "ADD_ALIAS DEBUG OUTPUT:\n#{reply.debugIO.string}\n" unless reply.debugIO.string.empty?
-        out << "ADD_ALIAS ERROR OUTPUT:\n#{reply.errorIO.string}\n" unless reply.errorIO.string.empty?
-        if reply.exitcode != 0
-          out << "Add alias on node exit code: #{reply.exitcode}\n"
-          raise "Failed adding alias #{server_alias} for app '#{app.name}' with uuid '#{app.gear.uuid}' on node '#{app.gear.server_identity}'"
-        end
-      end
-    end
-    redeployed = true
   end
-  return redeployed
+    
+  unless gear.app.aliases.nil?
+    gear.app.aliases.each do |server_alias|
+      out << "Adding alias '#{server_alias}' for '#{gear.name}' with uuid '#{gear.uuid}' on node #{gear.server_identity}\n"
+      reply = gear.add_alias(server_alias)
+      out << "ADD_ALIAS DEBUG OUTPUT:\n#{reply.debugIO.string}\n" unless reply.debugIO.string.empty?
+      out << "ADD_ALIAS ERROR OUTPUT:\n#{reply.errorIO.string}\n" unless reply.errorIO.string.empty?
+      if reply.exitcode != 0
+        out << "Add alias on node exit code: #{reply.exitcode}\n"
+        raise "Failed adding alias #{server_alias} for gear '#{gear.name}' with uuid '#{gear.uuid}' on node '#{gear.server_identity}'"
+      end
+    end
+  end
 end
 
 #
-# Migrate applications between 2.0.7 and 2.0.7a
+# Migrate applications between 2.0.9 and 2.0.10
 #
 def migrate(continue=false, target_server_identity=nil)
   start_time = Time.now.to_i
@@ -183,10 +184,10 @@ def migrate(continue=false, target_server_identity=nil)
     users = CloudUser.find_all(nil)
   end
   all_rhlogins_length = users.length
-  app_cnt = 0
+  gear_cnt = 0
   puts "RHLogins.length: #{all_rhlogins_length.to_s}"
   
-  node_to_apps = {}
+  node_to_gears = {}
   node_to_users = {}
   ds_queues = []
   users.each_with_index do |user, index|
@@ -199,23 +200,25 @@ def migrate(continue=false, target_server_identity=nil)
   ds_queues.each do |users|
     ds_threads << Thread.new do
       users.each do |user|
-        puts "Gathering apps for user: #{user.login} with uuid: #{user.uuid}"
+        puts "Gathering gears for user: #{user.login} with uuid: #{user.uuid}"
         apps = user.applications
         apps.each do |app|
-          app_name = app.name
-          if app.gear
-            server_identity = app.gear.server_identity
-            if (!target_server_identity || (server_identity == target_server_identity))
-              mutex.synchronize do
-                node_to_apps[server_identity] = [] unless node_to_apps[server_identity]
-                node_to_users[server_identity] = [] unless node_to_users[server_identity]
-                node_to_apps[server_identity] << {:name => app_name, :app => app}
-                node_to_users[server_identity] << user
-                app_cnt += 1
+          gears = app.gears
+          if gears && !gears.empty?
+            gears.each do |gear|
+              server_identity = gear.server_identity
+              if (!target_server_identity || (server_identity == target_server_identity))
+                mutex.synchronize do
+                  node_to_gears[server_identity] = [] unless node_to_gears[server_identity]
+                  node_to_users[server_identity] = [] unless node_to_users[server_identity]
+                  node_to_gears[server_identity] << gear
+                  node_to_users[server_identity] << user
+                  gear_cnt += 1
+                end
               end
             end
           else
-            puts "ERROR: Gear not found for app: '#{app_name}' of user #{user.login}"
+            puts "ERROR: Gear not found for app: '#{app.name}' of user #{user.login}"
           end
         end
       end
@@ -225,37 +228,37 @@ def migrate(continue=false, target_server_identity=nil)
     t.join
   end
 
-  app_cnts = []
+  gear_cnts = []
   thread_groups = []
-  node_to_apps.each do |server_identity, apps|
+  node_to_gears.each do |server_identity, gears|
     if thread_groups.length < MAX_THREADS
-      thread_groups << [{server_identity => apps}]
-      app_cnts << apps.length
+      thread_groups << [{server_identity => gears}]
+      gear_cnts << gears.length
     else
       min_pos = 0
-      min = app_cnts[0]
-      app_cnts.each_with_index do |cnt, index|
+      min = gear_cnts[0]
+      gear_cnts.each_with_index do |cnt, index|
         if cnt < min
           min = cnt
           min_pos = index
         end
       end
-      thread_groups[min_pos] << {server_identity => apps}
-      app_cnts[min_pos] += apps.length
+      thread_groups[min_pos] << {server_identity => gears}
+      gear_cnts[min_pos] += gears.length
     end
   end
-  node_to_apps = nil
+  node_to_gears = nil
   
   puts "#####################################################"
-  puts 'Application Counts Per Thread:'
-  puts app_cnts.pretty_inspect
+  puts 'Gear Counts Per Thread:'
+  puts gear_cnts.pretty_inspect
   puts "#####################################################"
   
   thread_groups.each do |thread_group|
-    thread_group.each do |node_to_apps|
-      node_to_apps.each do |server_identity, apps|
-        write_node_to_file(server_identity, apps, node_to_users) unless continue
-        node_to_apps[server_identity] = nil
+    thread_group.each do |node_to_gears|
+      node_to_gears.each do |server_identity, gears|
+        write_node_to_file(server_identity, gears, node_to_users) unless continue
+        node_to_gears[server_identity] = nil
       end
     end
   end
@@ -266,8 +269,8 @@ def migrate(continue=false, target_server_identity=nil)
   node_threads = []
   thread_groups.each do |thread_group|
     node_threads << Thread.new do
-      thread_group.each do |node_to_apps|
-        node_to_apps.each do |server_identity, apps|
+      thread_group.each do |node_to_gears|
+        node_to_gears.each do |server_identity, gears|
           migrate_node(server_identity, continue)
         end
       end
@@ -289,9 +292,9 @@ def migrate(continue=false, target_server_identity=nil)
   puts "#####################################################"
   puts "Summary:"
   puts "# of users: #{all_rhlogins_length}"
-  puts "# of apps: #{app_cnt}"
+  puts "# of gears: #{gear_cnt}"
   puts "# of failures: #{@failures.length}"
-  puts "Application counts per thread: #{app_cnts.pretty_inspect}"
+  puts "Gear counts per thread: #{gear_cnts.pretty_inspect}"
 
   end_time = Time.now.to_i
   total_time = end_time-start_time
@@ -299,19 +302,17 @@ def migrate(continue=false, target_server_identity=nil)
   puts "#####################################################"
 end
 
-def write_node_to_file(server_identity, apps, node_to_users)
+def write_node_to_file(server_identity, gears, node_to_users)
   f = migrate_file_path(server_identity)
-  puts "Writing #{apps.length} apps for node #{server_identity} to file #{f}"
+  puts "Writing #{gears.length} gears for node #{server_identity} to file #{f}"
   users = node_to_users[server_identity]
   FileUtils.mkdir_p WORK_DIR
   FileUtils.rm_f f
   FileUtils.touch f
-  apps.each_with_index do |app_hash, index|
-    app = app_hash[:app]
-    app_name = app_hash[:name]
+  gears.each_with_index do |gear, index|
     user = users[index]
     rhlogin = user.login
-    migrate_on_node_args = "#{app.gear.server_identity},#{app.gear.uuid},#{rhlogin},#{app_name}"
+    migrate_on_node_args = "#{gear.server_identity},#{gear.uuid},#{gear.name},#{gear.app.name},#{rhlogin}"
     append_to_file(f, migrate_on_node_args)
   end
 end
@@ -329,7 +330,7 @@ def migrate_file_path(server_identity)
 end
 
 def migrate_node(server_identity, continue)
-  puts "Migrating apps on node #{server_identity}"
+  puts "Migrating gears on node #{server_identity}"
   error_file = error_file_path(server_identity)
   FileUtils.rm_f error_file unless continue
   FileUtils.touch error_file
@@ -364,17 +365,18 @@ def migrate_from_file(file)
     if line && !line.empty?
       params = line.chomp.split(',')
       server_identity = params[0] 
-      uuid = params[1]
-      rhlogin = params[2]
+      gear_uuid = params[1]
+      gear_name = params[2]
       app_name = params[3]
-      migrate_on_node_cmd = "#{__FILE__} --rhlogin '#{rhlogin}' --migrate-app '#{app_name}'"
+      rhlogin = params[4]
+      migrate_on_node_cmd = "#{__FILE__} --rhlogin '#{rhlogin}' --migrate-gear '#{gear_uuid}' --app-name '#{app_name}'"
       error_file = error_file_path(server_identity)
       log_file = log_file_path(server_identity)
-      append_to_file(log_file,  "Migrating app '#{app_name}' with uuid '#{uuid}' on node '#{server_identity}' for user: #{rhlogin}")
+      append_to_file(log_file,  "Migrating app '#{app_name}' gear '#{gear_name}' with uuid '#{gear_uuid}' on node '#{server_identity}' for user: #{rhlogin}")
       num_tries = 2
       (1..num_tries).each do |i|
         begin
-          output = migrate_app(rhlogin, app_name)
+          output = migrate_gear(rhlogin, app_name, gear_uuid)
           append_to_file(log_file, output)
           break
         rescue Exception => e
@@ -450,9 +452,10 @@ def p_usage
 Usage: #{$0}
 
   --rhlogin rhlogin                    User rhlogin
-  --migrate-app app_name               App name of the single app to migrate 
+  --migrate-gear gear_uuid             Gear uuid of the single gear to migrate
+  --app-name app_name                  App name of the gear to migrate
   --migrate-node server_identity       Server identity of the node to migrate
-  --migrate-file file                  File containing the apps to migrate
+  --migrate-file file                  File containing the gears to migrate
   --continue                           Flag indicating to continue a previous migration
 
 USAGE
@@ -462,7 +465,8 @@ end
 begin
   opts = GetoptLong.new(
     ["--rhlogin", GetoptLong::REQUIRED_ARGUMENT],
-    ["--migrate-app", GetoptLong::REQUIRED_ARGUMENT],
+    ["--migrate-gear", GetoptLong::REQUIRED_ARGUMENT],
+    ["--app-name", GetoptLong::REQUIRED_ARGUMENT],
     ["--migrate-node", GetoptLong::REQUIRED_ARGUMENT],
     ["--migrate-file", GetoptLong::REQUIRED_ARGUMENT],
     ["--continue", GetoptLong::NO_ARGUMENT],
@@ -485,11 +489,11 @@ require 'config/environment'
 
 if opt['migrate-file']
   migrate_from_file(opt['migrate-file'])
-elsif opt['migrate-app']
-  if opt['rhlogin']
-    puts migrate_app(opt['rhlogin'], opt['migrate-app'])
+elsif opt['migrate-gear']
+  if opt['rhlogin'] && opt['app-name']
+    puts migrate_gear(opt['rhlogin'], opt['app-name'], opt['migrate-gear'])
   else
-    puts "--rhlogin is required with --migrate-app"
+    puts "--rhlogin and --app-name is required with --migrate-gear"
   end
 elsif opt['migrate-node']
   migrate_file = migrate_file_path(opt['migrate-node'])
