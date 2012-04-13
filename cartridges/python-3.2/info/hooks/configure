@@ -78,6 +78,8 @@ create_standard_network_env_vars
 create_standard_repo_dir_env_var
 create_standard_path_env_var
 
+create_custom_uservars_var PYTHON_EGG_CACHE "$APP_DIR/.python-eggs/"
+
 #
 # Start the server
 #

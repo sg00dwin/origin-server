@@ -1,10 +1,10 @@
-require 'streamline'
-
 class WebUser
   include ActiveModel::Validations
   include ActiveModel::Conversion
   include ActiveModel::Serialization
   extend ActiveModel::Naming
+
+  require_dependency 'streamline'
 
   # Include the correct streamline implementation
   if Rails.configuration.integrated
@@ -53,7 +53,7 @@ class WebUser
                             :if => on_scopes(:save, :change_password)
 
   def initialize(attributes = {})
-    attributes.each do |name, value|
+    (attributes || {}).each do |name, value|
       send("#{name}=", value)
     end
 
@@ -69,6 +69,10 @@ class WebUser
     false
   end
 
+  def accepted_terms?
+    terms && terms.empty?
+  end
+
   #
   # Lookup a user by the SSO ticket
   #
@@ -76,10 +80,7 @@ class WebUser
     user = WebUser.new(:ticket => ticket)
     user.establish
 
-    if user.rhlogin
-      return user
-    else
-      return nil
-    end
+    raise AccessDeniedException unless user.rhlogin
+    user
   end
 end

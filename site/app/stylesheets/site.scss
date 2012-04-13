@@ -115,8 +115,10 @@ body.signup {
     padding-bottom: 30px;
   }
 }
+.simple .section-nav { padding-bottom: 0; }
 
 .section-striped {
+  background-color: #e5e5e5;
   background: -moz-repeating-linear-gradient(-70deg, $lightStripesColor, $lightStripesColor 6px, $lightStripesAltColor 9px, $lightStripesAltColor 15px, $lightStripesColor 18px) repeat scroll 0 0 $lightStripesBackground;
   background: -webkit-repeating-linear-gradient(-70deg, $lightStripesColor, $lightStripesColor 6px, $lightStripesAltColor 9px, $lightStripesAltColor 15px, $lightStripesColor 18px) repeat scroll 0 0 $lightStripesBackground;
   background: repeating-linear-gradient(-70deg, $lightStripesColor, $lightStripesColor 6px, $lightStripesAltColor 9px, $lightStripesAltColor 15px, $lightStripesColor 18px) repeat scroll 0 0 $lightStripesBackground;
@@ -716,6 +718,27 @@ body > header {
     repeat;
 }
 
+
+.ie9 body.home > header {
+	background: #191919 url($transparentNoiseImageData);
+  background-image:
+    url('../images/diagonals-top.png'),
+	  url('../images/mts.png'), 
+	  url('../images/stars.png'),
+	  url($transparentNoiseImageData);
+  background-repeat:
+  	no-repeat,
+  	no-repeat,
+    repeat,
+    repeat;
+  background-position:
+  	right bottom,
+	  center bottom,
+	  center bottom, 
+	  center bottom;
+  }
+
+
 .messaging {
   margin: 55px 0;
   
@@ -799,6 +822,8 @@ body.home {
 	    center bottom;
 		}
 }
+
+
 
 .home .learn li img {
 	float:left;
@@ -959,5 +984,81 @@ body.simple {
 @media (max-width: 480px) {
   body.simple .form-actions {
     padding-left: 0;
+  }
+}
+
+/* Overview specific styles */
+.overview {
+  ol li {
+    margin-bottom: 10px;
+  }
+
+  #intro {
+    text-align: justify;
+    img {
+      float: right;
+      margin: -20px 40px 0;
+    }
+  }
+  
+  #scale {
+    text-align: justify;
+    img {
+      float: right;
+      margin: 0px 20px 20px 40px;
+    }
+  }
+
+  #arch { 
+    clear: both;
+  }
+}
+
+/* Outage notification */
+#outage_notification {
+  background: $ribbonFoldColor;
+  color: white;
+
+  h2 {
+    color: inherit;
+    font-size: 16px;
+    line-height: 16px;
+    padding: 11px 0;
+  }
+  pre {
+    background: inherit;
+    color: inherit;
+    border: none;
+    font-family: $baseFontFamily;
+    padding: 10px 0;
+  }
+/*
+  #outage_toggle {
+    display: inline-block;
+    position: absolute;
+    bottom: -24px;
+    left: 0;
+    background: inherit;
+    font-size: 14px;
+    font-weight: bold;
+    padding: 5px 15px;
+
+    &:active {
+      outline: none;
+      border: none;
+    }
+  }
+*/
+}
+@media (max-width: 767px) {
+  #outage_notification {
+    width: 100%;
+    h2 {
+      display: none;
+    }
+    pre {
+      margin: 0 auto;
+      width: 100%;
+    }
   }
 }

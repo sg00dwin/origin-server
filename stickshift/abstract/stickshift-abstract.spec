@@ -2,7 +2,7 @@
 
 Summary:   StickShift common cartridge components
 Name:      stickshift-abstract
-Version:   0.8.7
+Version:   0.9.2
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   ASL 2.0
@@ -56,6 +56,32 @@ rm -rf $RPM_BUILD_ROOT
 %post
 
 %changelog
+* Thu Apr 12 2012 Mike McGrath <mmcgrath@redhat.com> 0.9.2-1
+- release bump for tag uniqueness (mmcgrath@redhat.com)
+
+* Thu Apr 12 2012 Mike McGrath <mmcgrath@redhat.com> 0.8.11-1
+- This was done to allow a cucumber test to continue to work.  The test will be
+  fixed in a subsequent commit. Revert "no ports defined now exits 1"
+  (rmillner@redhat.com)
+
+* Wed Apr 11 2012 Adam Miller <admiller@redhat.com> 0.8.10-1
+- no ports defined now exits 1 (mmcgrath@redhat.com)
+
+* Wed Apr 11 2012 Adam Miller <admiller@redhat.com> 0.8.9-1
+- Fix for #811347. CURL command format error (kraman@gmail.com)
+
+* Wed Apr 11 2012 Adam Miller <admiller@redhat.com> 0.8.8-1
+- Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
+  (rmillner@redhat.com)
+- Relying on being able to send back appropriate output to the broker on a
+  failure and we are using return codes inside the script.
+  (rmillner@redhat.com)
+- Use a return rather than an exit so the calling script can clean up output
+  for broker. (rmillner@redhat.com)
+- Merge branch 'master' of li-master:/srv/git/li (ramr@redhat.com)
+- Bug fix to expand directory at run-time + add function to save custom
+  uservars. (ramr@redhat.com)
+
 * Tue Apr 10 2012 Mike McGrath <mmcgrath@redhat.com> 0.8.7-1
 - removed test commits (mmcgrath@redhat.com)
 

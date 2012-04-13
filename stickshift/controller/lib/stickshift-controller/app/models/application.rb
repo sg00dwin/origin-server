@@ -297,8 +297,8 @@ Configure-Order: [\"proxy/#{framework}\", \"proxy/haproxy-1.4\"]
       r.append gear.destroy
       group_instance = self.group_instance_map[gear.group_instance_name]
       group_instance.gears.delete(gear)
-      self.save
     end
+    self.save if self.persisted?
           
     f.each do |data|
       Rails.logger.debug("Unable to clean up application on gear #{data[:gear]} due to exception #{data[:exception].message}")
@@ -559,15 +559,13 @@ Configure-Order: [\"proxy/#{framework}\", \"proxy/haproxy-1.4\"]
           run_on_gears(group_inst.gears, reply, false) do |gear, r|
             r.append gear.deconfigure(comp_inst)
             r.append process_cartridge_commands(r.cart_commands)
-            # self.save
           end
         rescue  Exception => e
-          self.save
           # raise e
         end
       end
     end
-    self.save
+    self.save if self.persisted?
     self.class.notify_observers(:after_application_deconfigure, {:application => self, :reply => reply})
     reply
   end

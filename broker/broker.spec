@@ -3,7 +3,7 @@
 
 Summary:   Li broker components
 Name:      rhc-broker
-Version:   0.90.17
+Version:   0.91.5
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -28,6 +28,10 @@ Requires:  rubygem-swingshift-streamline-plugin
 Requires:  rubygem-uplift-dynect-plugin
 Requires:  rubygem-gearchanger-m-collective-plugin
 Requires:  rubygem-crankcase-mongo-plugin
+Requires:  rubygem-term-ansicolor
+Requires:  rubygem-trollop
+Requires:  rubygem-cucumber
+Requires:  rubygem-gherkin
 
 
 BuildArch: noarch
@@ -92,6 +96,35 @@ rm -rf $RPM_BUILD_ROOT
 /bin/touch %{brokerdir}/log/production.log
 
 %changelog
+* Thu Apr 12 2012 Mike McGrath <mmcgrath@redhat.com> 0.91.5-1
+- release bump for mongo (mmcgrath@redhat.com)
+
+* Thu Apr 12 2012 Mike McGrath <mmcgrath@redhat.com> 0.91.4-1
+- test commit (mmcgrath@redhat.com)
+
+* Thu Apr 12 2012 Mike McGrath <mmcgrath@redhat.com> 0.91.3-1
+- gemfile bumps (mmcgrath@redhat.com)
+
+* Thu Apr 12 2012 Mike McGrath <mmcgrath@redhat.com> 0.91.2-1
+- Updating gem versions (mmcgrath@redhat.com)
+- release bump for tag uniqueness (mmcgrath@redhat.com)
+
+* Thu Apr 12 2012 Mike McGrath <mmcgrath@redhat.com> 0.90.21-1
+- Updating gem versions (mmcgrath@redhat.com)
+- added additional required rubygems (mmcgrath@redhat.com)
+- added rubygem-term-ansicolor dep (mmcgrath@redhat.com)
+
+* Wed Apr 11 2012 Adam Miller <admiller@redhat.com> 0.90.20-1
+- Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
+  (mmcgrath@redhat.com)
+- test commit (mmcgrath@redhat.com)
+
+* Wed Apr 11 2012 Adam Miller <admiller@redhat.com> 0.90.19-1
+- fixing gemfile.lock (mmcgrath@redhat.com)
+
+* Wed Apr 11 2012 Adam Miller <admiller@redhat.com> 0.90.18-1
+- Updating gem versions (admiller@redhat.com)
+
 * Tue Apr 10 2012 Mike McGrath <mmcgrath@redhat.com> 0.90.17-1
 - Updating gem versions (mmcgrath@redhat.com)
 

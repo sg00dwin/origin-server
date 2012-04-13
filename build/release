@@ -345,6 +345,20 @@ class Release < Thor
         else
           puts "Couldn't find ../os-client-tools/express.  Skipping build client gem step."
         end
+
+        # Build the rest-client
+        if File.exists?('../os-client-tools/rhc-rest')
+          inside(File.expand_path(File.dirname(File.expand_path(__FILE__)) + "/../../os-client-tools/rhc-rest")) do
+            unless run('rake build', :verbose => options.verbose?)
+              puts "ERROR - client gem building failed"
+              exit 1
+            end
+          end
+          puts "Done"
+        else
+          puts "Couldn't find ../os-client-tools/rhc-rest.  Skipping build rhc-rest gem step."
+        end
+
       end
 
       puts "Syncing RPMs to repo..."
@@ -354,6 +368,7 @@ class Release < Thor
       end
       
       unless skip_gem
+        # sync rhc gem
         puts "Syncing client gem to repo..."
         if File.exists?('../os-client-tools/express')
           unless run("#{rsync} ../os-client-tools/express/pkg/*.gem #{repo}/#{mash_config}/client/gems/", :verbose => options.verbose?)
@@ -363,6 +378,18 @@ class Release < Thor
           puts "Done"
         else
           puts "Couldn't find ../os-client-tools/express.  Skipping rsync client gem step."
+        end
+
+        # sync rhc-rest gem
+        puts "Syncing rhc-rest gem to repo..."
+        if File.exists?('../os-client-tools/rhc-rest')
+          unless run("#{rsync} ../os-client-tools/rhc-rest/pkg/*.gem #{repo}/#{mash_config}/client/gems/", :verbose => options.verbose?)
+            puts "ERROR - Gem sync failed."
+            exit 1
+          end
+          puts "Done"
+        else
+          puts "Couldn't find ../os-client-tools/rhc-rest.  Skipping rsync client gem step."
         end
       end
   

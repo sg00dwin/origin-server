@@ -104,7 +104,10 @@ def update_app_hash(tid, user, app_name, app_type)
 end
 
 def get_app_type(tid, user, app_name)
-  $app_hash[tid][user][app_name]
+  if $app_hash[tid] && $app_hash[tid][user]
+    return $app_hash[tid][user][app_name]
+  end
+  return nil
 end
 
 def update_tm(res, tm)
@@ -241,7 +244,6 @@ begin
       app_type = get_app_type(tid, user, app_name)
       if app_type.nil?
         puts "Couldn't find Application type for thread-id #{tid}, app_name #{app_name}"
-        break
       else
         op = op + "_" + cart_type
         $res[app_type][op] = {} unless $res[app_type][op]
@@ -250,8 +252,12 @@ begin
     else
       user = dt[4]
       app_type = get_app_type(tid, user, app_name)
-      $res[app_type][op] = {} unless $res[app_type][op]
-      update_tm($res[app_type][op], tm)
+      if app_type.nil?
+        puts "Couldn't find Application type for thread-id #{tid}, app_name #{app_name}"
+      else
+        $res[app_type][op] = {} unless $res[app_type][op]
+        update_tm($res[app_type][op], tm)
+      end
     end
   end
 

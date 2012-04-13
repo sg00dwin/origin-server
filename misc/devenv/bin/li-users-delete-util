@@ -2,32 +2,36 @@
 require 'rubygems'
 require '/var/www/stickshift/broker/config/environment'
 
-opts = GetoptLong.new(["--namespace",  "-n", GetoptLong::REQUIRED_ARGUMENT])
+def p_usage
+    puts <<USAGE
+Usage: #{$0}
+Utility to cleanup user record from mongo and also deregister namespace
+
+  -n|--namespace Only delete given namespace (optional)                
+  -h|--help      Show Usage info
+
+USAGE
+exit 255
+end
+
+opts = GetoptLong.new(["--namespace",  "-n", GetoptLong::REQUIRED_ARGUMENT],
+                      ["--help",  "-h", GetoptLong::NO_ARGUMENT])
 opt = {}
 opts.each do |o, a|
     opt[o[2..-1]] = a.to_s
 end
 
-$dns = Express::Broker::DnsService.new
+p_usage if opt['help']
 
-def users_delete
-  ds = StickShift::MongoDataStore.new
-
-  users = ds.find_all("CloudUser")
+if opt['namespace']
+  dns = Uplift::DynectPlugin.new
+  dns.deregister_namespace(opt['namespace'])
+  dns.publish
+  dns.close
+else 
+  users = CloudUser.find_all(nil)
   users.each do |user|
-    user['apps'].each do |app_info|
-      $dns.deregister_application(app_info['name'], user['namespace'])
-    end if user['apps']
-    $dns.deregister_namespace(user['namespace'])
-    ds.delete("CloudUser", user['login'])
+    user.delete
   end if users
 end
 
-if opt['namespace']
-  $dns.deregister_namespace(opt['namespace'])
-else 
-  users_delete
-end
-
-$dns.publish
-$dns.close

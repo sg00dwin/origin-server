@@ -8,7 +8,7 @@
 
 Summary:   Dependencies for OpenShift development
 Name:      rhc-devenv
-Version:   0.91.8
+Version:   0.92.3
 Release:   1%{?dist}
 Group:     Development/Libraries
 License:   GPLv2
@@ -124,6 +124,14 @@ Requires:  drupal6-views_bonus
 Requires:  drupal6-views_customfield
 Requires:  drupal6-vote_up_down
 Requires:  drupal6-votingapi
+Requires:  drupal6-wikitools
+Requires:  drupal6-prepopulate
+Requires:  drupal6-freelinking
+Requires:  drupal6-mediawiki_filter
+Requires:  drupal6-context_menu_block
+Requires:  drupal6-block_class
+Requires:  drupal6-diff
+Requires:  drupal6-image
 Requires:  drupal6-openshift-custom_forms
 Requires:  drupal6-openshift-features-blogs
 Requires:  drupal6-openshift-features-forums
@@ -222,17 +230,17 @@ usermod -G libra_user jenkins
 chown -R jenkins:jenkins /var/lib/jenkins
 
 # Allow Apache to connect to Jenkins port 8081
-/usr/sbin/setsebool -P httpd_can_network_connect=on || :
+getsebool httpd_can_network_connect | grep -q -e 'on$' || /usr/sbin/setsebool -P httpd_can_network_connect=on || :
 
 # Allow polyinstantiation to work
-/usr/sbin/setsebool -P allow_polyinstantiation=on || :
+getsebool allow_polyinstantiation | grep -q -e 'on$' || /usr/sbin/setsebool -P allow_polyinstantiation=on || :
 
 # Allow httpd to relay
-/usr/sbin/setsebool -P httpd_can_network_relay=on || :
+getsebool httpd_can_network_relay | grep -q -e 'on$' || /usr/sbin/setsebool -P httpd_can_network_relay=on || :
 
 # Add policy for developement environment
 cd %{policydir} ; make -f ../devel/Makefile
-semodule -i dhcpnamedforward.pp
+semodule -l | grep -q dhcpnamedforward || semodule -i dhcpnamedforward.pp
 cd
 
 
@@ -254,6 +262,7 @@ crontab -u root %{devenvdir}/crontab
 
 # enable disk quotas
 /usr/bin/rhc-init-quota
+ls -lZ /var/aquota.user  | grep -q var_t && ( quotaoff /var && restorecon /var/aquota.user && quotaon /var )
 
 # Setup swap for devenv
 [ -f /.swap ] || ( /bin/dd if=/dev/zero of=/.swap bs=1024 count=1024000
@@ -331,8 +340,8 @@ service libra-watchman start || :
 
 # Populate mcollective certs
 cd /etc/mcollective/ssl/clients
-openssl genrsa -out mcollective-private.pem 1024
-openssl rsa -in mcollective-private.pem -out mcollective-public.pem -outform PEM -pubout
+openssl genrsa -out mcollective-private.pem 1024 2> /dev/null
+openssl rsa -in mcollective-private.pem -out mcollective-public.pem -outform PEM -pubout 2> /dev/null
 chown libra_passenger:root mcollective-private.pem
 chmod 460 mcollective-private.pem
 cd
@@ -359,7 +368,7 @@ cp -f %{devenvdir}/puppet-private.pem /var/lib/puppet/ssl/private_keys/localhost
 /usr/bin/gpasswd nagios_monitor wheel
 
 # Populate Drupal Database 
-zcat /usr/share/drupal6/sites/default/openshift-dump.gz | mysql -u root
+echo "select count(*) from users;" | mysql -u root libra > /dev/null 2>&1 || zcat /usr/share/drupal6/sites/default/openshift-dump.gz | mysql -u root
 
 # Make the webserver use hsts - BZ801848
 echo "Header set Strict-Transport-Security \"max-age=15768000\"" > /etc/httpd/conf.d/hsts.conf
@@ -380,6 +389,19 @@ echo "Header append Strict-Transport-Security includeSubDomains" >> /etc/httpd/c
 %{policydir}/*
 
 %changelog
+* Thu Apr 12 2012 Mike McGrath <mmcgrath@redhat.com> 0.92.3-1
+- Merge branch 'master' of git1.ops.rhcloud.com:/srv/git/li (rpenta@redhat.com)
+- Fix li-users-delete-util script (rpenta@redhat.com)
+
+* Thu Apr 12 2012 Mike McGrath <mmcgrath@redhat.com> 0.92.2-1
+- release bump for tag uniqueness (mmcgrath@redhat.com)
+
+* Wed Apr 11 2012 Adam Miller <admiller@redhat.com> 0.91.10-1
+- two more drupal6-modules to devenv.spec (ansilva@redhat.com)
+- Added wiki module dependencies for drupal6 (ansilva@redhat.com)
+
+* Wed Apr 11 2012 Anderson Silva <ansilva@redhat.com> 0.91.9-1
+- Added wiki module dependencies for drupal6 (ansilva@redhat.com)
 * Mon Apr 09 2012 Mike McGrath <mmcgrath@redhat.com> 0.91.8-1
 - Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
   (mmcgrath@redhat.com)
