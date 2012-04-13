@@ -105,7 +105,7 @@ class ApplicationController < ActionController::Base
         end
 
         timestamp=Time.now.strftime('%Y-%m-%d-%H-%M-%S')
-        outfile=File.join(Dir.tmpdir, "#{timestamp}-#{cfg[:type]}.#{printext}")
+        outfile=File.join(Dir.tmpdir, "profiler-#{cfg[:measure]}-#{cfg[:type]}-#{timestamp}.#{printext}")
 
         Rails.logger.debug("ApplicationController::profiler_stop: writing #{cfg[:type]} report in #{outfile}")
         p=printer.new(result)
