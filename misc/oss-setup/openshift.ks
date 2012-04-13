@@ -120,7 +120,7 @@ cartridge-perl-5.10
 cartridge-php-5.3
 #cartridge-phpmoadmin-1.0
 cartridge-phpmyadmin-3.4
-cartridge-postgresql-8.4
+#cartridge-postgresql-8.4
 #cartridge-ruby-1.1
 cartridge-diy-0.1
 #cartridge-rockmongo-1.1
