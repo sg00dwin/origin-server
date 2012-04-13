@@ -28,7 +28,7 @@ module UserHelper
   end
 
   def register_user(login, password)
-    command = run("#{$user_register_script} -u #{login} -p #{password}") 
+    command = "#{$user_register_script} -u #{login} -p #{password}"
   
     pid, stdin, stdout, stderr = nil, nil, nil, nil
     Bundler.with_clean_env {

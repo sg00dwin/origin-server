@@ -5,8 +5,7 @@ Feature: RUBY Application
   # runcon -u ?? -r system_r -t libra_initrc_t
 
   Scenario: Create Delete one RUBY Application
-    Given an accepted node
-    And a new guest account
+    Given a new guest account
     And the guest account has no application installed
 
     When I configure a ruby application

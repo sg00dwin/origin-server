@@ -2,7 +2,7 @@
 
 Summary:   Provides jenkins-1.4 support
 Name:      cartridge-jenkins-1.4
-Version:   0.90.2
+Version:   0.91.2
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   ASL 2.0
@@ -27,6 +27,10 @@ Provides jenkins cartridge to openshift nodes
 %setup -q
 
 %build
+
+%post
+service jenkins stop
+chkconfig jenkins off
 
 %install
 rm -rf %{buildroot}
@@ -79,6 +83,12 @@ rm -rf %{buildroot}
 %doc %{cartridgedir}/LICENSE
 
 %changelog
+* Thu Apr 12 2012 Mike McGrath <mmcgrath@redhat.com> 0.91.2-1
+- release bump for tag uniqueness (mmcgrath@redhat.com)
+
+* Thu Apr 12 2012 Mike McGrath <mmcgrath@redhat.com> 0.90.3-1
+- bug 810206 (wdecoste@localhost.localdomain)
+
 * Mon Apr 02 2012 Krishna Raman <kraman@gmail.com> 0.90.2-1
 - Merge remote-tracking branch 'origin/dev/kraman/US2048' (kraman@gmail.com)
 - Automatic commit of package [rhc-cartridge-jenkins-1.4] release [0.90.1-1].

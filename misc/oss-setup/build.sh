@@ -1,7 +1,7 @@
 #!/bin/bash
 
 yum remove -y stickshift-* rubygem-stickshift* cartridge-*
-rm -rf /usr/libexec/stickshift/cartridges/*
+rm -rf /usr/libexec/stickshift/cartridges/* /var/www/stickshift/broker/*
 cd ~/
 
 cd ~/li
@@ -31,6 +31,12 @@ for i in `ls` ; do cd ~/li/cartridges/$i ; tito build --test --rpm >/dev/null ; 
 createrepo /tmp/tito/noarch
 
 yum -y --skip-broken install /tmp/tito/noarch/rhc-*.rpm  /tmp/tito/noarch/rubygem-*.rpm /tmp/tito/noarch/stickshift-broker*.rpm /tmp/tito/noarch/stickshift-abstract*.rpm /tmp/tito/noarch/cartridge-* ~/brew/jenkins-plugin-openshift-*.rpm 
+
+echo "setup bind-plugin selinux policy"
+mkdir -p /usr/share/selinux/packages/rubygem-uplift-bind-plugin
+cp /usr/lib/ruby/gems/1.8/gems/uplift-bind-plugin-*/doc/examples/dhcpnamedforward.* /usr/share/selinux/packages/rubygem-uplift-bind-plugin/
+pushd /usr/share/selinux/packages/rubygem-uplift-bind-plugin/ && make -f /usr/share/selinux/devel/Makefile ; popd
+semodule -i /usr/share/selinux/packages/rubygem-uplift-bind-plugin/dhcpnamedforward.pp
 
 sed -i -e "s/^# Add plugin gems here/# Add plugin gems here\ngem 'swingshift-mongo-plugin'\ngem 'uplift-bind-plugin'\ngem 'crankcase-mongo-plugin'\ngem 'gearchanger-oddjob-plugin'\n/" /var/www/stickshift/broker/Gemfile
 pushd /var/www/stickshift/broker/ && rm -f Gemfile.lock && bundle show && chown apache:apache Gemfile.lock && popd
@@ -66,6 +72,22 @@ Broker::Application.configure do
     :keyname => "example.com",
     :keyvalue => "${KEY}",
     :zone => "example.com"
+  }
+end
+EOF
+
+echo "require File.expand_path('../plugin-config/crankcase-mongo-plugin.rb', __FILE__)" >> /var/www/stickshift/broker/config/environments/development.rb
+cat <<EOF > /var/www/stickshift/broker/config/environments/plugin-config/crankcase-mongo-plugin.rb
+Broker::Application.configure do
+  config.datastore = {
+    :replica_set => false,
+    # Replica set example: [[<host-1>, <port-1>], [<host-2>, <port-2>], ...]
+    :host_port => ["localhost", 27017],
+
+    :user => "stickshift",
+    :password => "mooo",
+    :db => "stickshift_broker_dev",
+    :collections => {:user => "user"}
   }
 end
 EOF

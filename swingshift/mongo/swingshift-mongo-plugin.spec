@@ -5,7 +5,7 @@
 
 Summary:        SwingShift plugin for mongo auth service
 Name:           rubygem-%{gemname}
-Version:        0.7.4
+Version:        0.8.1
 Release:        1%{?dist}
 Group:          Development/Languages
 License:        ASL 2.0

@@ -10,6 +10,7 @@ gem 'regin'
 gem 'open4'
 gem 'stickshift-node'
 gem 'stickshift-controller'
+gem 'rest-client'
 
 # Add plugin gems here
 
@@ -38,6 +39,7 @@ gem 'stickshift-controller'
 group :development, :test do
   # The require part from http://tinyurl.com/3pf68ho
   gem 'mocha', :require => nil
+  gem 'cucumber'
 end
 
 

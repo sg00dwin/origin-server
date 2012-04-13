@@ -21,8 +21,11 @@ $selinux_role = nil
 $selinux_type = nil
 
 # User registration flag and script
-$registration_required = false
+$registration_required = true
 $user_register_script = "/usr/bin/ss-register-user"
+
+#Alternate domain suffix for use in alias commands
+$alias_domain = "foobar.com"
 
 #
 # Old RHC Client scripts

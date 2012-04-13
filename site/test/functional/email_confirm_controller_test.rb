@@ -3,7 +3,7 @@ require File.expand_path('../../test_helper', __FILE__)
 class EmailConfirmControllerTest < ActionController::TestCase
 
   def setup
-    setup_session
+    setup_user
   end
 
   test "no parameters should error" do

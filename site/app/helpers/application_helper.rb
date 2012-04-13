@@ -13,12 +13,12 @@ module ApplicationHelper
         ensure
           f.close
         end
-        notification << content_tag(:pre,contents) unless contents.nil?
+        notification << content_tag(:pre,contents, {:class => 'span9'}) unless contents.nil?
       end
     end
     
     if notification.length > 0
-      content_tag(:div, "<h2>Outage Notification</h2>" + notification, {:id => 'outage_notification'}, false)
+      content_tag(:div, "<div class='container'><h2 class='span2'>Outage Notification</h2>" + notification + "</div>", {:id => 'outage_notification'}, false)
     else
       nil
     end
@@ -31,30 +31,30 @@ module ApplicationHelper
         return product
       end
     end
-    return ''
+    ''
   end
-  
-  # Check if user is logged in or not
-  def logged_in?
-    return controller.logged_in?
-  end
-  
+
   # Check for user access
   def has_access?(product)
     false
     if controller.logged_in?
       case product
         when :express
-          session[:user].has_access?(CloudAccess::EXPRESS)
+          session_user.entitled?
       end
     end
   end
-  
+
+  # Check if user is logged in or not
+  def logged_in?
+    controller.logged_in?
+  end
+
   # Detect previous login
   def previously_logged_in?
     controller.previously_logged_in?
   end
-  
+
   # localized video URL
   def local_video_url(video)
     vid = local_video(video)

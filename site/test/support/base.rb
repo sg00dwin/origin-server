@@ -4,13 +4,21 @@ require 'streamline'
 
 class ActiveSupport::TestCase
 
-  def setup_session(role='')
-    session[:login] = 'tester'
-    session[:user] = WebUser.new
+  def setup_user(unique=false)
+    @user = WebUser.new :email_address=>"app_test1#{unique ? uuid : ''}@test1.com", :rhlogin=>"app_test1#{unique ? uuid : ''}@test1.com"
+
+    session[:login] = @user.login
     session[:ticket] = '123'
+
     @request.cookies['rh_sso'] = '123'
     @request.env['HTTPS'] = 'on'
-    session[:user].roles.push(role) unless role.empty?
+  end
+  def user_to_session(user)
+    session[:login] = user.login
+    session[:user] = user
+    session[:ticket] = user.ticket || '123'
+    @request.cookies['rh_sso'] = session[:ticket]
+    @request.env['HTTPS'] = 'on'
   end
 
   def expects_integrated

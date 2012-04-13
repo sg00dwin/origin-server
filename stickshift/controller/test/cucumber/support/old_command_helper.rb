@@ -124,13 +124,13 @@ module OldCommandHelper
 
   def rhc_add_alias_old(app)
     rhc_do('rhc_add_alias_old') do
-      run("#{$ctl_app_script} -l #{app.login} -a #{app.name} -p #{app.password} -c add-alias --alias '#{app.name}-#{app.namespace}.example.com' -d").should == 0
+      run("#{$ctl_app_script} -l #{app.login} -a #{app.name} -p #{app.password} -c add-alias --alias '#{app.name}-#{app.namespace}.#{$alias_domain}' -d").should == 0
     end
   end
 
   def rhc_remove_alias_old(app)
     rhc_do('rhc_remove_alias_old') do
-      run("#{$ctl_app_script} -l #{app.login} -a #{app.name} -p #{app.password} -c remove-alias --alias '#{app.name}-#{app.namespace}.example.com' -d").should == 0
+      run("#{$ctl_app_script} -l #{app.login} -a #{app.name} -p #{app.password} -c remove-alias --alias '#{app.name}-#{app.namespace}.#{$alias_domain}' -d").should == 0
     end
   end
 

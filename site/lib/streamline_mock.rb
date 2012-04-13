@@ -4,11 +4,6 @@
 module StreamlineMock
   attr_accessor :rhlogin, :ticket, :roles, :terms
 
-  def initialize
-    @roles = []
-    @terms = []
-  end
-
   #
   # Establish the user state based on the current ticket
   #
@@ -21,11 +16,11 @@ module StreamlineMock
   end
 
   def terms
-    @terms
+    @terms ||= []
   end
 
   def roles
-    @roles
+    @roles ||= []
   end
 
   #
@@ -101,6 +96,9 @@ module StreamlineMock
     end
   end
 
+  def logout
+  end
+
   def streamline_cookie
     "rh_sso=#{@ticket}"
   end
@@ -121,22 +119,17 @@ module StreamlineMock
   # Request access to a cloud solution
   #
   def request_access(solution)
-    # Check if this is an integrated environment
-    unless Rails.configuration.integrated
-      Rails.logger.warn("Non integrated environment - adding role")
-      @roles << CloudAccess.auth_role(solution)
-      return
-    end
+    @roles << CloudAccess.auth_role(solution)
   end
 
   #
   # Whether the user is authorized for a given cloud solution
   #
   def has_access?(solution)
-    unless @rhlogin == 'allaccess+test@redhat.com'
-      !@roles.index(CloudAccess.auth_role(solution)).nil?
-    else
+    if @rhlogin == 'allaccess+test@redhat.com'
       true
+    else
+      !@roles.index(CloudAccess.auth_role(solution)).nil?
     end
   end
 
@@ -144,18 +137,31 @@ module StreamlineMock
   # Whether the user has already requested access for a given cloud solution
   #
   def has_requested?(solution)
-    unless @rhlogin == 'allaccess+test@redhat.com'
-      !@roles.index(CloudAccess.req_role(solution)).nil?
-    else
+    if @rhlogin == 'allaccess+test@redhat.com'
       false
+    else
+      !@roles.index(CloudAccess.req_role(solution)).nil?
     end
   end
 
   def entitled?
-    has_access(CloudAccess::EXPRESS)
+    return true if @rhlogin == 'allaccess+test@redhat.com'
+
+    return true if roles.include?('cloud_access_1')
+    if roles.include?('cloud_access_request_1')
+      false
+    else
+      refresh_roles(true)
+      true
+    end
   end
 
   def waiting_for_entitle?
-    has_requested(CloudAccess::EXPRESS)
+    if @rhlogin == 'allaccess+test@redhat.com'
+      true
+    else
+      not roles.include?('cloud_access_1') and roles.include?('cloud_access_request_1')
+    end
   end
 end
+

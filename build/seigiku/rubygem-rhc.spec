@@ -5,7 +5,7 @@
 
 Summary:       OpenShift Express Client Tools
 Name:          rubygem-%{gemname}
-Version:       0.83.9
+Version:       0.84.1
 Release:       1%{?dist}
 Group:         Development/Tools
 License:       MIT
