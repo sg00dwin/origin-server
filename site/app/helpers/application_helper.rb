@@ -31,30 +31,30 @@ module ApplicationHelper
         return product
       end
     end
-    return ''
+    ''
   end
-  
-  # Check if user is logged in or not
-  def logged_in?
-    return controller.logged_in?
-  end
-  
+
   # Check for user access
   def has_access?(product)
     false
     if controller.logged_in?
       case product
         when :express
-          session[:user].has_access?(CloudAccess::EXPRESS)
+          session_user.entitled?
       end
     end
   end
-  
+
+  # Check if user is logged in or not
+  def logged_in?
+    controller.logged_in?
+  end
+
   # Detect previous login
   def previously_logged_in?
     controller.previously_logged_in?
   end
-  
+
   # localized video URL
   def local_video_url(video)
     vid = local_video(video)

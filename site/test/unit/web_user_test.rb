@@ -18,9 +18,12 @@ class WebUserTest < ActiveSupport::TestCase
   end
 
   test "find by ticket" do
-    login = "jdoe"
-    WebUser.any_instance.expects(:establish)
-    user = WebUser.find_by_ticket("1234")
+    assert WebUser.find_by_ticket("1234")
+  end
+
+  test "find by ticket throws" do
+    WebUser.any_instance.stubs(:establish) { @rhlogin = nil }
+    assert_raise(AccessDeniedException) { WebUser.find_by_ticket("1234") }
   end
 
   test "login and rhlogin are identical" do

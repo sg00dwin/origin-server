@@ -26,6 +26,7 @@
     ?>
     <link type="image/png" rel="shortcut icon" href="/app/images/favicon-32.png"></link>
     <link type="text/css" rel="stylesheet" href="/app/stylesheets/overpass.css"></link>
+    <script src="/app/javascripts/modernizr.min.js" type="text/javascript"></script>
     <link type="text/css" rel="stylesheet" href="/app/stylesheets/common.css"></link>
     <link type="text/css" rel="stylesheet" href="/app/stylesheets/site.css"></link>
 	  <?php print $styles; ?>
@@ -46,7 +47,8 @@
             global $user;
 
             if ( $user->uid ) {
-       	      $logout_url = variable_get('redhat_sso_logout_url', $base_url . '/logout');
+              $logout_url = variable_get('redhat_sso_logout_url', $base_url . '/logout');
+              $logout_url .= '?then=' . urlencode(drupal_get_path_alias(request_uri()));
               print '<a class="btn btn-small" href="/app/console">Manage Your Apps</a> ';
               print '<a class="btn btn-small" href="'. $logout_url .'">Sign Out</a>';
             } else {

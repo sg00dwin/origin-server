@@ -1,10 +1,10 @@
 class LogoutController < SiteController
   def show
-    @redirectUrl = params[:redirectUrl] || root_path
+    redirect = params[:then] || params[:redirectUrl] || root_path
 
     reset_sso
     reset_session
 
-    redirect_to @redirectUrl
+    redirect_to redirect
   end
 end

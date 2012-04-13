@@ -1,7 +1,7 @@
 %define cartridgedir %{_libexecdir}/stickshift/cartridges/embedded/cron-1.4
 
 Name: cartridge-cron-1.4
-Version: 0.4.3
+Version: 0.5.2
 Release: 1%{?dist}
 Summary: Embedded cron support for express
 
@@ -80,6 +80,9 @@ rm -rf $RPM_BUILD_ROOT
 %doc %{cartridgedir}/LICENSE
 
 %changelog
+* Thu Apr 12 2012 Mike McGrath <mmcgrath@redhat.com> 0.5.2-1
+- release bump for tag uniqueness (mmcgrath@redhat.com)
+
 * Mon Apr 02 2012 Krishna Raman <kraman@gmail.com> 0.4.3-1
 - 
 

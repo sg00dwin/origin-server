@@ -42,13 +42,6 @@ class LoginControllerTest < ActionController::TestCase
     #assert_equal assigns(:user).ticket, cookies['rh_sso'] #FIXME: broken, can't get cookie
   end
 
-  test "should clear sso" do
-    @request.cookies['rh_sso'] = 'test'
-    assert cookies['rh_sso']
-    get :show
-    assert_nil cookies['rh_sso']
-  end
-
   test "login should fail" do
     post :create, {:login => ''}
     assert assigns(:user)

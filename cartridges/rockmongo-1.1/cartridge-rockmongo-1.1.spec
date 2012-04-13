@@ -1,7 +1,7 @@
 %define cartridgedir %{_libexecdir}/stickshift/cartridges/embedded/rockmongo-1.1
 
 Name: cartridge-rockmongo-1.1
-Version: 1.7.3
+Version: 1.8.2
 Release: 1%{?dist}
 Summary: Embedded RockMongo support for OpenShift
 
@@ -56,6 +56,9 @@ rm -rf $RPM_BUILD_ROOT
 %doc %{cartridgedir}/LICENSE
 
 %changelog
+* Thu Apr 12 2012 Mike McGrath <mmcgrath@redhat.com> 1.8.2-1
+- release bump for tag uniqueness (mmcgrath@redhat.com)
+
 * Mon Apr 02 2012 Krishna Raman <kraman@gmail.com> 1.7.3-1
 - 
 
