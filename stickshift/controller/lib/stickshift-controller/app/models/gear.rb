@@ -32,8 +32,8 @@ class Gear < StickShift::UserModel
   end
 
   def destroy
-    ret = get_proxy.destroy(app,self)
     self.app.ngears -= 1
+    ret = get_proxy.destroy(app,self)
     return ret
   end
   
