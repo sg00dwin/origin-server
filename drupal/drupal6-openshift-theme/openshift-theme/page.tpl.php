@@ -17,6 +17,7 @@
     ?>
     <link type="image/png" rel="shortcut icon" href="/app/images/favicon-32.png"></link>
     <link type="text/css" rel="stylesheet" href="/app/stylesheets/overpass.css"></link>
+    <script src="/app/javascripts/modernizr.min.js" type="text/javascript"></script>
     <link type="text/css" rel="stylesheet" href="/app/stylesheets/common.css"></link>
     <link type="text/css" rel="stylesheet" href="/app/stylesheets/site.css"></link>
 	  <?php print $styles; ?>
