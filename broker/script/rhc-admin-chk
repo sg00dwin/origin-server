@@ -43,13 +43,20 @@ users = CloudUser.find_all(nil)
 
 mongo_hash = {}
 users.each { |user|
+  gear_count = 0
   user.applications.each { |app|
     app.group_instances.uniq.each { |gi|
       gi.gears.each { |gear|
+        gear_count += 1
         mongo_hash[gear.uuid] = app.name
       }
     }
   }
+  if user.consumed_gears != gear_count
+    print "FAIL - user #{user.login} has a mismatch in consumed gears (#{user.consumed_gears}) and actual gears (#{gear_count})!\n"
+  else
+    print "OK - user #{user.login} has consumed_gears equal to actual gears (#{gear_count})!\n" if verbose
+  end
 }
 
 node_hash = StickShift::ApplicationContainerProxy.get_all_gears
