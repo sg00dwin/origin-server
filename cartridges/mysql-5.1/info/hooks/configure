@@ -174,6 +174,7 @@ create database \`${dbname}\` DEFAULT CHARACTER SET utf8 DEFAULT COLLATE utf8_ge
 echo "                                  
 delete from user;
 grant all on *.* to 'admin'@'$IP' identified by '$password' with grant option;
+grant all on *.* to 'admin'@'localhost' identified by '$password' with grant option;
 flush privileges;" | mysql -u root -S "${MYSQL_DIR}/socket/mysql.sock" mysql > /dev/null || error "Failed to setup initial root user" 187
 
 mysql_ip="$IP"

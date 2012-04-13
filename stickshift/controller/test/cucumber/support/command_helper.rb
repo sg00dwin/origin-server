@@ -375,7 +375,7 @@ module CommandHelper
 
     proclist = outstrings.collect { |line|
       match = line.match(ps_pattern)
-      match and (match[1] if match[2] == cmd_name)
+      match and (match[1] if (match[2] == cmd_name || match[2].end_with?("/#{cmd_name}")))
     }.compact
 
     found = proclist ? proclist.size : 0
