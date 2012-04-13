@@ -8,7 +8,7 @@
 
 Summary:   Dependencies for OpenShift development
 Name:      rhc-devenv
-Version:   0.92.2
+Version:   0.92.3
 Release:   1%{?dist}
 Group:     Development/Libraries
 License:   GPLv2
@@ -388,6 +388,10 @@ echo "Header append Strict-Transport-Security includeSubDomains" >> /etc/httpd/c
 %{policydir}/*
 
 %changelog
+* Thu Apr 12 2012 Mike McGrath <mmcgrath@redhat.com> 0.92.3-1
+- Merge branch 'master' of git1.ops.rhcloud.com:/srv/git/li (rpenta@redhat.com)
+- Fix li-users-delete-util script (rpenta@redhat.com)
+
 * Thu Apr 12 2012 Mike McGrath <mmcgrath@redhat.com> 0.92.2-1
 - release bump for tag uniqueness (mmcgrath@redhat.com)
 
