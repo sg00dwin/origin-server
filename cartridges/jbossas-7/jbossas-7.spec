@@ -2,7 +2,7 @@
 
 Summary:   Provides JBossAS7 support
 Name:      cartridge-jbossas-7
-Version:   0.90.7
+Version:   0.91.2
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   ASL 2.0
@@ -127,6 +127,14 @@ rm -rf %{buildroot}
 %config(noreplace) %{cartridgedir}/info/configuration/
 
 %changelog
+* Thu Apr 12 2012 Mike McGrath <mmcgrath@redhat.com> 0.91.2-1
+- release bump for tag uniqueness (mmcgrath@redhat.com)
+
+* Thu Apr 12 2012 Mike McGrath <mmcgrath@redhat.com> 0.90.8-1
+- This was done to allow a cucumber test to continue to work.  The test will be
+  fixed in a subsequent commit. Revert "no ports defined now exits 1"
+  (rmillner@redhat.com)
+
 * Wed Apr 11 2012 Adam Miller <admiller@redhat.com> 0.90.7-1
 - no ports defined now exits 1 (mmcgrath@redhat.com)
 

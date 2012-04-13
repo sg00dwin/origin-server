@@ -5,7 +5,7 @@
 
 Summary:        Crankcase plugin for MongoDB
 Name:           rubygem-%{gemname}
-Version:        0.7.6
+Version:        0.8.3
 Release:        1%{?dist}
 Group:          Development/Languages
 License:        ASL 2.0
@@ -70,6 +70,12 @@ rm -rf %{buildroot}
 %{ruby_sitelib}/%{gemname}.rb
 
 %changelog
+* Thu Apr 12 2012 Mike McGrath <mmcgrath@redhat.com> 0.8.3-1
+- test commit (mmcgrath@redhat.com)
+
+* Thu Apr 12 2012 Mike McGrath <mmcgrath@redhat.com> 0.8.2-1
+- release bump for tag uniqueness (mmcgrath@redhat.com)
+
 * Wed Apr 11 2012 Adam Miller <admiller@redhat.com> 0.7.6-1
 - fix mongo put_app where ngears < 0; dont save an app after
   deconfigure/destroy if it has not persisted, because the destroy might have
