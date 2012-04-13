@@ -1,4 +1,4 @@
-policy_module(libra,1.1.17)
+policy_module(libra,1.1.18)
 
 ########################################
 #
@@ -241,6 +241,10 @@ oddjob_dontaudit_rw_fifo_file(libra_app_domain)
 #
 
 gen_require(`
+        type httpd_t;
+        type httpd_log_t;
+	type httpd_exec_t;
+	type httpd_rotatelogs_exec_t;
 	type sshd_devpts_t;
 	type ptmx_t;
 	type crontab_t;
@@ -251,6 +255,12 @@ gen_require(`
 	type rpm_script_t;
 	type puppet_t;
 	type puppet_tmp_t;
+	attribute exec_type;
+	type sendmail_t;
+	attribute domain;
+	type quota_t;
+	type quota_db_t;
+        type system_cronjob_t;
 ')
  
 allow unconfined_usertype self:process dyntransition;
@@ -292,17 +302,6 @@ dontaudit libra_app_domain libra_initrc_t:socket_class_set { read write };
 #
 # generic policy 
 #
-
-require {
-	type httpd_exec_t;
-	type httpd_rotatelogs_exec_t;
-	attribute exec_type;
-	type sendmail_t;
-	attribute domain;
-	type quota_t;
-	type quota_db_t;
-        type system_cronjob_t;
-}
 
 allow libra_app_domain httpd_exec_t:file entrypoint;
 dontaudit libra_app_domain exec_type:file getattr;
@@ -397,10 +396,6 @@ corecmd_bin_entry_type(libra_app_domain)
 userdom_use_inherited_user_ptys(libra_app_domain)
 
 gpg_entry_type(libra_app_domain)
-
-require {
-        type httpd_t;
-}
 
 ##########
 # Used for development or when the li controller is running outside
@@ -519,6 +514,7 @@ allow libra_app_domain libra_rw_file_t:dir_file_class_set { relabelfrom relabelt
 
 # Remove the following once sshd gets fixed.
 dontaudit libra_domain self:process dyntransition;
+dontaudit libra_domain httpd_log_t:lnk_file read_lnk_file_perms;
 
 allow libra_domain libra_app_domain:process transition;
 kernel_read_vm_sysctls(libra_t)
