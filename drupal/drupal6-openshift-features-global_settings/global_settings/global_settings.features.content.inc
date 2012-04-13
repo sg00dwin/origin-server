@@ -50,7 +50,7 @@ function global_settings_content_default_fields() {
     'list_default' => 1,
     'description_field' => '0',
     'widget' => array(
-      'file_extensions' => 'pdf',
+      'file_extensions' => 'pdf htm html',
       'file_path' => 'documents',
       'progress_indicator' => 'bar',
       'max_filesize_per_file' => '',
@@ -137,6 +137,78 @@ function global_settings_content_default_fields() {
       'description' => '',
       'type' => 'text_textfield',
       'module' => 'text',
+    ),
+  );
+
+  // Exported field: field_kb_attachment
+  $fields['knowledge_base-field_kb_attachment'] = array(
+    'field_name' => 'field_kb_attachment',
+    'type_name' => 'knowledge_base',
+    'display_settings' => array(
+      'label' => array(
+        'format' => 'above',
+        'exclude' => 0,
+      ),
+      'teaser' => array(
+        'format' => 'default',
+        'exclude' => 0,
+      ),
+      'full' => array(
+        'format' => 'default',
+        'exclude' => 0,
+      ),
+      '4' => array(
+        'format' => 'default',
+        'exclude' => 0,
+      ),
+      '2' => array(
+        'format' => 'default',
+        'exclude' => 0,
+      ),
+      '3' => array(
+        'format' => 'default',
+        'exclude' => 0,
+      ),
+      'token' => array(
+        'format' => 'default',
+        'exclude' => 0,
+      ),
+    ),
+    'widget_active' => '1',
+    'type' => 'filefield',
+    'required' => '0',
+    'multiple' => '0',
+    'module' => 'filefield',
+    'active' => '1',
+    'list_field' => '0',
+    'list_default' => 1,
+    'description_field' => '0',
+    'widget' => array(
+      'file_extensions' => 'txt doc odt pdf png jpeg gz zip jpg gif',
+      'file_path' => '',
+      'progress_indicator' => 'bar',
+      'max_filesize_per_file' => '10M',
+      'max_filesize_per_node' => '',
+      'insert' => 0,
+      'insert_styles' => array(
+        'auto' => 0,
+        'link' => 0,
+        'image' => 0,
+        'imagecache_blog_author_image_30x30' => 0,
+        'imagecache_blog_author_image_80x80' => 0,
+        'imagecache_blog_insert_image' => 0,
+        'imagecache_user_image_large_80x80' => 0,
+        'imagecache_user_image_medium_40x40' => 0,
+        'imagecache_user_image_small_20x20' => 0,
+      ),
+      'insert_default' => 'auto',
+      'insert_class' => '',
+      'insert_width' => '',
+      'label' => 'Attachment',
+      'weight' => '44',
+      'description' => '',
+      'type' => 'filefield_widget',
+      'module' => 'filefield',
     ),
   );
 
@@ -559,6 +631,7 @@ function global_settings_content_default_fields() {
   // Translatables
   // Included for use with string extractors like potx.
   t('Applies to');
+  t('Attachment');
   t('Code');
   t('File');
   t('Image');

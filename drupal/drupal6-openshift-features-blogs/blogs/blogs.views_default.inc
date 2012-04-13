@@ -800,8 +800,10 @@ function blogs_views_default_views() {
         'text' => '',
         'make_link' => 0,
         'path' => '',
+        'absolute' => 0,
         'link_class' => '',
         'alt' => '',
+        'rel' => '',
         'prefix' => '',
         'suffix' => '',
         'target' => '',
@@ -816,12 +818,16 @@ function blogs_views_default_views() {
       'empty' => '',
       'hide_empty' => 0,
       'empty_zero' => 0,
+      'hide_alter_empty' => 1,
       'set_precision' => FALSE,
       'precision' => 0,
       'decimal' => '.',
       'separator' => ',',
+      'format_plural' => 0,
+      'format_plural_singular' => '1',
+      'format_plural_plural' => '@count',
       'prefix' => '',
-      'suffix' => ' comments >',
+      'suffix' => ' comments',
       'exclude' => 1,
       'id' => 'comment_count',
       'table' => 'node_comment_statistics',
@@ -835,11 +841,13 @@ function blogs_views_default_views() {
       'label' => 'Read Full Post',
       'alter' => array(
         'alter_text' => 1,
-        'text' => 'Read full blog post >',
+        'text' => 'Read more',
         'make_link' => 0,
         'path' => '',
+        'absolute' => 0,
         'link_class' => '',
         'alt' => '',
+        'rel' => '',
         'prefix' => '',
         'suffix' => '',
         'target' => '',
@@ -854,6 +862,7 @@ function blogs_views_default_views() {
       'empty' => '',
       'hide_empty' => 0,
       'empty_zero' => 0,
+      'hide_alter_empty' => 1,
       'link_to_node' => 1,
       'exclude' => 0,
       'id' => 'nid',
@@ -936,6 +945,7 @@ function blogs_views_default_views() {
       'relationship' => 'none',
     ),
   ));
+  $handler->override_option('header', '<a href="/openshift/community/blogs/feed"><img src="/openshift/sites/all/themes/redhat2/images/rss-icon.gif" align="right" /></a>');
   $handler->override_option('use_pager', '1');
   $handler->override_option('path', 'blogs');
   $handler->override_option('menu', array(
@@ -1041,11 +1051,13 @@ function blogs_views_default_views() {
       'label' => 'Post date',
       'alter' => array(
         'alter_text' => 1,
-        'text' => 'Posted [created] by [name]',
+        'text' => '<span class="creator">By [name]</span> <span class="divider">/</span> <span class="created">[created]</span>',
         'make_link' => 0,
         'path' => '',
+        'absolute' => 0,
         'link_class' => '',
         'alt' => '',
+        'rel' => '',
         'prefix' => '',
         'suffix' => '',
         'target' => '',
@@ -1060,8 +1072,9 @@ function blogs_views_default_views() {
       'empty' => '',
       'hide_empty' => 0,
       'empty_zero' => 0,
+      'hide_alter_empty' => 1,
       'date_format' => 'custom',
-      'custom_date_format' => 'j F Y',
+      'custom_date_format' => 'l, F j Y',
       'exclude' => 0,
       'id' => 'created',
       'table' => 'node',
@@ -1277,7 +1290,7 @@ function blogs_views_default_views() {
     'weight' => 0,
     'name' => 'navigation',
   ));
-  $handler = $view->new_display('page', 'Documents', 'page_3');
+  $handler = $view->new_display('page', 'Documentation', 'page_3');
   $handler->override_option('relationships', array());
   $handler->override_option('fields', array(
     'title' => array(
@@ -1427,9 +1440,9 @@ function blogs_views_default_views() {
       'relationship' => 'none',
     ),
   ));
-  $handler->override_option('title', 'Documents');
+  $handler->override_option('title', '');
   $handler->override_option('header', '');
-  $handler->override_option('path', 'documents');
+  $handler->override_option('path', 'documentation');
   $handler->override_option('menu', array(
     'type' => 'none',
     'title' => '',

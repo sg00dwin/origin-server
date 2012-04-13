@@ -3,7 +3,7 @@
 function redhat_frontpage_menu() {
 
   $item = array(
-    'page callback' => redhat_communitypage,
+    'page callback' => redhat_frontpage,
     'access callback' => TRUE,
     'type' => MENU_NORMAL_ITEM,
     'title' => "Welcome to OpenShift",
@@ -13,7 +13,7 @@ function redhat_frontpage_menu() {
   return $items;
 }
 
-function redhat_communitypage(){
+function redhat_frontpage(){
   global $user;
   $content = '';
 
