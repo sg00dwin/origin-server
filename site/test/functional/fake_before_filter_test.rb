@@ -40,8 +40,7 @@ class FakeBeforeFilterTest < ActionController::TestCase
   def login
     setup_user
     @controller.stubs(:session_user).returns(@user)
-    @controller.expects(:logged_in?).returns(true)
-    @user.expects(:establish_terms)
+    @controller.expects(:logged_in?).at_least_once.returns(true)
   end
 
   def accept_terms
@@ -60,6 +59,7 @@ class FakeBeforeFilterTest < ActionController::TestCase
 
   test 'logged in but not accepted terms' do
     login
+    @user.expects(:terms).at_least_once.returns([1,2])
     make_request
 
     assert_redirected_to  new_terms_path
