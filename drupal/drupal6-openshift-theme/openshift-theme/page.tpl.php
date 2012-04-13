@@ -14,6 +14,15 @@
       // reference CSS files directly from openshift
       //print_r(end(menu_get_active_trail()));
       global $base_url;
+      global $base_root;
+      if (empty($sidebar_left)) {
+        if (empty($sidebar_right)) { $layout = 'none'; }
+        else { $layout = 'right'; }
+      }
+      else {
+        if (empty($sidebar_right)) { $layout = 'left'; }
+        else { $layout = 'both'; }
+      }
     ?>
     <link type="image/png" rel="shortcut icon" href="/app/images/favicon-32.png"></link>
     <link type="text/css" rel="stylesheet" href="/app/stylesheets/overpass.css"></link>
@@ -61,11 +70,16 @@
               </a>
             </div>
             <ul class="nav">
-              <li><a href="/app/platform"><span>Learn More</span></a></li>
-              <li><a href="/app/getting_started"><span>Get Started</span></a></li>
-              <li class="divider">&nbsp;</li>
-              <li><a href="/app/console"><span>Console</span></a></li>
-              <li class="active"><a href="<?php print $base_url ?>"><span>Community</span></a></li>
+                <?php $i = 0; foreach( $primary_links as $key=>$link) {
+                if ($i++ == 2) {
+                  print '<li class="divider">&nbsp;</li>';
+                }
+                $link['options']['html'] = TRUE;
+                $href = $link['href'];
+                $href = preg_replace('/^https:\/\/\//', '../', $href);
+              ?>
+                <li class="<?php print strpos($key,'active-trail') ? "active" : ""; ?>"><?php print l("<span>" . $link['title'] . "</span>", $href, $link['options']); ?></li>
+              <?php } ?>
             </ul>
           </div>
         </div>
@@ -88,17 +102,37 @@
     <div id="content" class="section-striped">
       <div class="container"><div class="row-content">
       <div class='row row-flush-right'>
-        <?php if ($column_right) :?>
+        <?php if ($layout == 'left') :?>
           <div class="column-nav lift-less grid-wrapper">
             <nav class="span3">
               <div class="gutter-right">
-                <?php print $column_right; ?>
+                <?php print $sidebar_left; ?>
               </div>
             </nav>
           </div>
-        <?php endif; ?>
           <div class="column-content lift grid-wrapper">
-            <div class="span<?php print $column_right ? '9' : '12' ?> span-flush-right">
+            <div class="span9 span-flush-right">
+
+        <?php elseif ($layout == 'both') :?>
+          <div class="column-nav lift-less grid-wrapper">
+            <nav class="span3">
+              <div class="gutter-right">
+                <?php print $sidebar_left; ?>
+              </div>
+            </nav>
+          </div>
+          <div class="column-content lift grid-wrapper">
+            <div class="span6 span-flush-right">
+
+        <?php elseif ($layout == 'right') :?>
+          <div class="column-content lift grid-wrapper">
+            <div class="span9 span-flush-right">
+
+        <?php elseif ($layout == 'none') :?>
+          <div class="column-content lift grid-wrapper">
+            <div class="span12 span-flush-right">
+        <?php endif; ?>
+
             <?php if ($heading) :?>
               <h1 class="ribbon">
                 <div class="ribbon-content"><?php print $heading; ?></div>
@@ -121,9 +155,21 @@
             <?php endif; ?>
             <?php print $content_prefix; ?>
             <?php print $content; ?>
-            <?php print $content_suffix; ?>
-            
+
             </section>
+            <?php print $content_suffix; ?>
+         </div>
+
+        <?php if ($layout == 'both' || $layout == 'right') :?>
+          <div class="column-nav lift-less grid-wrapper">
+            <div class="span3">
+              <div class="gutter-right">
+                <?php print $sidebar_right; ?>
+              </div>
+            </div>
+          </div>
+        <?php endif; ?>
+
           </div>
         </div>
       </div>
@@ -135,50 +181,57 @@
           <div class="row">
             <div class="span3 link-column">
               <header>
-                <h3>News</h3>
+                <h3><a href="/community/developers">Developers</a></h3>
               </header>
               <ul class="unstyled">
-                <li><a href="<?php print $base_url; ?>/forums/news-and-announcements">Announcements</a></li>
-                <li><a href="<?php print $base_url; ?>/blogs">Blog</a></li>
-                <li><a href="http://www.twitter.com/#!/openshift">Twitter</a></li>
+                <li><a href="/app/platform">What is OpenShift?</a></li>
+                <li><a href="/app/getting_started">Get Started</a></li>
+                <li><a href="http://docs.redhat.com/docs/en-US/OpenShift/2.0/html/User_Guide/index.html">User Guide</a></li>
+                <li><a href="/community/faq">FAQ</a></li>
               </ul>
             </div>
             <div class="span3 link-column">
               <header>
-                <h3>Community</h3>
+                <h3><a href="http://www.redhat.com/openshift/community">Community</a></h3>
               </header>
               <ul class="unstyled">
-                <li><a href="<?php print $base_url; ?>/forums/">Forum</a></li>
+                <li><a href="https://www.redhat.com/openshift/blogs">Blog</a></li>
+                <li><a href="/community/forums/">Forum</a></li>
                 <li><a href="http://webchat.freenode.net/?randomnick=1&amp;channels=openshift&amp;uio=d4">IRC Channel</a></li>
                 <li><a href="mailto:openshift@redhat.com">Feedback</a></li>
               </ul>
             </div>
             <div class="span3 link-column">
               <header>
-                <h3>Legal</h3>
+                <h3><a href="/community/get-involved">Get Involved</a></h3>
               </header>
               <ul class="unstyled">
-                <li><a href="/app/legal">Legal</a></li>
-                <li><a href="/app/legal/openshift_privacy">Privacy Policy</a></li>
-                <li><a href="https://access.redhat.com/security/team/contact/">Security</a></li>
+                <li><a href="/community/open-source">Open Source</a></li>
+                <li><a href="/app/opensource/download">Get the Bits</a></li>
+                <li><a href="/community/developers/get-involved">Make it Better</a></li>
+                <li><a href="https://github.com/openshift">OpenShift on GitHub</a></li>
               </ul>
             </div>
             <div class="span3 link-column">
               <header>
-                <h3>Help</h3>
+                <h3><a href="/app/legal">Legal</a></h3>
               </header>
               <ul class="unstyled">
-                <li><a href="<?php print $base_url; ?>/faq">FAQ</a></li>
-                <li><a href="mailto:openshift@redhat.com">Contact</a></li>
+                <li><a href="/app/legal/site_terms">Terms of Service</a></li>
+                <li><a href="/app/legal/openshift_privacy">Privacy Policy</a></li>
+                <li><a href="https://access.redhat.com/security/team/contact/">Security</a></li>
+                <li><a href="/app/legal/opensource_disclaimer">Open Source Disclaimer</a></li>
               </ul>
             </div>
           </div>
-          </div>
-        </div>     
-        <section id='copyright'>
-        <div class='container'>
-        <img src="/app/images/redhat.png" alt="Red Hat">
-          <div class="pull-right">Copyright &copy; 2012 Red Hat, Inc.</div>
+        </div>
+      </div>
+      <section id="copyright">
+        <div class="container">
+          <a href="https://www.redhat.com/">
+            <img src="/app/images/redhat.png" alt="Red Hat">
+          </a>
+          <div class="pull-right">Copyright &copy; 2011 Red Hat, Inc.</div>
         </div>
       </section>
     </footer>

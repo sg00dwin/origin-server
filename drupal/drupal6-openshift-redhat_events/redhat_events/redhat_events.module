@@ -12,7 +12,6 @@ function redhat_events_menu() {
 
 function redhat_events_page(){
 
-  $content = '<h2>Openshift Events</h2>';
   $content .= "<ul class='forum-navigation-links'>";
 
   $sort = $_GET['sort'];

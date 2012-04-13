@@ -40,67 +40,68 @@
   .row
     .span6
       %section#rhel.install
-        %h4 Red Hat Enterprise Linux or Fedora
-        .hero-unit.prereqs
+        .well.prereqs
+          %h3 Red Hat Enterprise Linux or Fedora
           %h5 Prerequisites
           %ul
             %li RHEL 6 and up or Fedora 14 and up.
             %li Root or sudoer access
-        %ol
-          %li
-            Download the express repo file
-            = link_to 'openshift.repo', "https://openshift.redhat.com/app/repo/openshift.repo"
-          %li
-            Move the openshift.repo file to your /etc/yum.repos.d/ directory.
-            %pre
-              $ sudo mv ~/Downloads/openshift.repo /etc/yum.repos.d/
-            Replace '~/Downloads/openshift.repo' with the location to which you saved the repo file.
-          %li
-            Install the client tools:
-            %pre $ sudo yum install rhc
-
-          %aside
-            %p
-              The <code>sudo</code> command will only work if your user is listed in the sudoers file. For more information on setting up sudo, see <a href="http://www.gratisoft.us/sudo/sudo.html">http://www.gratisoft.us/sudo/sudo.html</a>.
-            %p
-              As an alternative to <code>sudo</code>, you can activate a root terminal with the <code>su</code> command and the root password. In that case, omit <code>sudo</code> from the given commands. Don't forget to close your root terminal when you're done!
+          %hr
+          %ol
+            %li
+              %p.larger Download the express repo file #{link_to 'openshift.repo', "https://openshift.redhat.com/app/repo/openshift.repo"}
+            %li
+              %p.larger Move the openshift.repo file to your /etc/yum.repos.d/ directory.
+              %pre
+                $ sudo mv ~/Downloads/openshift.repo /etc/yum.repos.d/
+              %p Replace '~/Downloads/openshift.repo' with the location to which you saved the repo file.
+            %li
+              %p.larger Install the client tools:
+              %pre $ sudo yum install rhc
+              
+              %hr
+              %p
+                The <code>sudo</code> command will only work if your user is listed in the sudoers file. For more information on setting up sudo, see <a href="http://www.gratisoft.us/sudo/sudo.html">http://www.gratisoft.us/sudo/sudo.html</a>.
+              %p
+                As an alternative to <code>sudo</code>, you can activate a root terminal with the <code>su</code> command and the root password. In that case, omit <code>sudo</code> from the given commands. Don't forget to close your root terminal when you're done!
 
       %section#other_nix.install
-        %h4 Other Linuxes
-        .hero-unit.prereqs
+        .well.prereqs
+          %h3 Other Linuxes
           %h5 Prerequisites
           %ul
             %li Root access
             %li Ruby 1.8 or higher installed or available to be installed
-        %ol
-          %li
-            Install the required packages: git, ruby, rubygems, and the Ruby 1.8 development package.
-          %li
-            Install the gem:
-            %pre $ su -c 'gem install rhc' 
+          %hr
+          %ol
+            %li
+              %p.larger Install the required packages: git, ruby, rubygems, and the Ruby 1.8 development package.
+            %li
+              %p.larger Install the gem:
+              %pre $ su -c 'gem install rhc' 
     .span6
       %section#mac.install
-        %h4 Mac
-        .hero-unit.prereqs
+        .well.prereqs
+          %h3 Mac
           %h5 Prerequisites
           %ul
+            %li Root access
             %li
               = link_to 'Full Xcode Suite', 'http://developer.apple.com/xcode'
               &ndash; or &ndash;
-            %li
               = link_to 'git for OS X', 'http://code.google.com/p/git-osx-installer/'
-
-        %ol
-          %li
-            Install the gem:
-            %pre
-              :preserve
-                $ sudo gem install json_pure
-                $ sudo gem install rhc
+          %hr
+          %ol
+            %li
+              %p.larger Install the gem:
+              %pre
+                :preserve
+                  $ sudo gem install json_pure
+                  $ sudo gem install rhc
 
       %section#win.install
-        %h4 Windows
-        .hero-unit.prereqs
+        .well.prereqs
+          %h3 Windows
           %h5 Prerequisites
           %ul
             %li
@@ -113,15 +114,16 @@
                 %li make
                 %li gcc
                 %li git
-        %ol
-          %li
-            Download and extract rubygems from <a href="http://rubyforge.org/projects/rubygems">http://rubyforge.org/projects/rubygems</a>
-          %li
-            From within cygwin run:
-            %pre $ ruby &lt;path_to_extracted_rubygems&gt;/setup.rb install
-          %li
-            Install the gem:
-            %pre $ gem install rhc
+          %hr
+          %ol
+            %li
+              %p.larger Download and extract rubygems from <a href="http://rubyforge.org/projects/rubygems">http://rubyforge.org/projects/rubygems</a>
+            %li
+              %p.larger From within cygwin run:
+              %pre $ ruby &lt;path_to_extracted_rubygems&gt;/setup.rb install
+            %li
+              %p.larger Install the gem:
+              %pre $ gem install rhc
 
     .span12
       = link_to 'Installing OpenShift client tools video walkthrough', local_video_url('express_client_tools'), :class => 'action-more'

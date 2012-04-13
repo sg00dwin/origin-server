@@ -2,17 +2,19 @@
 
 function redhat_frontpage_menu() {
 
-  $items['home'] = array(
+  $item = array(
     'page callback' => redhat_frontpage,
     'access callback' => TRUE,
     'type' => MENU_NORMAL_ITEM,
+    'title' => "Welcome to OpenShift",
   );
+  $items['<front>'] = $item;
+  $items['home'] = $item;
   return $items;
 }
 
 function redhat_frontpage(){
   global $user;
-  drupal_add_css(drupal_get_path('module', 'redhat_frontpage') . '/frontpage.css');
   $content = '';
 
   $view = views_get_view('forum_views');

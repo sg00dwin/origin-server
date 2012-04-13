@@ -11,10 +11,9 @@ function front_page_views_default_views() {
   $view->name = 'faq_frontpage';
   $view->description = '';
   $view->tag = '';
-  $view->view_php = '';
   $view->base_table = 'node';
-  $view->is_cacheable = FALSE;
-  $view->api_version = 2;
+  $view->core = 0;
+  $view->api_version = '2';
   $view->disabled = FALSE; /* Edit this to true to make a default view disabled initially */
   $handler = $view->new_display('default', 'Defaults', 'default');
   $handler->override_option('fields', array(
@@ -105,6 +104,20 @@ function front_page_views_default_views() {
       'field' => 'type',
       'relationship' => 'none',
     ),
+    'status' => array(
+      'operator' => '=',
+      'value' => '1',
+      'group' => '0',
+      'exposed' => FALSE,
+      'expose' => array(
+        'operator' => FALSE,
+        'label' => '',
+      ),
+      'id' => 'status',
+      'table' => 'node',
+      'field' => 'status',
+      'relationship' => 'none',
+    ),
   ));
   $handler->override_option('access', array(
     'type' => 'none',
@@ -122,10 +135,9 @@ function front_page_views_default_views() {
   $view->name = 'forum_views';
   $view->description = '';
   $view->tag = '';
-  $view->view_php = '';
   $view->base_table = 'node';
-  $view->is_cacheable = FALSE;
-  $view->api_version = 2;
+  $view->core = 0;
+  $view->api_version = '2';
   $view->disabled = FALSE; /* Edit this to true to make a default view disabled initially */
   $handler = $view->new_display('default', 'Defaults', 'default');
   $handler->override_option('fields', array(
@@ -465,11 +477,11 @@ function front_page_views_default_views() {
       'field' => 'uid_touch',
       'validate_user_argument_type' => 'uid',
       'validate_user_roles' => array(
-        '2' => 0,
-        '3' => 0,
-        '15' => 0,
-        '5' => 0,
-        '4' => 0,
+        2 => 0,
+        3 => 0,
+        15 => 0,
+        5 => 0,
+        4 => 0,
       ),
       'relationship' => 'none',
       'default_options_div_prefix' => '',
@@ -493,8 +505,8 @@ function front_page_views_default_views() {
       'validate_argument_node_access' => 0,
       'validate_argument_nid_type' => 'nid',
       'validate_argument_vocabulary' => array(
-        '2' => 0,
-        '1' => 0,
+        2 => 0,
+        1 => 0,
       ),
       'validate_argument_type' => 'tid',
       'validate_argument_transform' => 0,
@@ -536,7 +548,7 @@ function front_page_views_default_views() {
   $handler->override_option('access', array(
     'type' => 'role',
     'role' => array(
-      '3' => 3,
+      3 => 3,
     ),
   ));
   $handler->override_option('cache', array(

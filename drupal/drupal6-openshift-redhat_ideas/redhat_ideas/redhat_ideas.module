@@ -13,7 +13,6 @@ function redhat_ideas_menu() {
 }
 
 function redhat_ideas_page() {
-  $content = '<h2>Vote on Features</h2>';
   $content .= views_embed_view('Ideas', 'block_1');
   $content .= '<br />';
   $content .= views_embed_view('Ideas', 'block_2');

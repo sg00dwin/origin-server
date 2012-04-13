@@ -114,15 +114,11 @@ RedHatCloud::Application.routes.draw do
   match 'console' => 'console#index', :via => :get
   match 'new_application' => 'application_types#index', :via => :get
 
-  unless Rails.env.production?
-    # TODO: Remove conditional when we go live with OpenSource OpenShift
-    match 'opensource' => 'opensource#index'
-    match 'opensource/download' => 'opensource#download'
-
-    resources   :download,
-                :controller => 'download',
-                :only => [:show,:index]
-  end
+  match 'opensource' => 'opensource#index'
+  match 'opensource/download' => 'opensource#download'
+  resources   :download,
+              :controller => 'download',
+              :only => [:show,:index]
 
   unless Rails.env.production?
     match 'styleguide/:action' => 'styleguide'

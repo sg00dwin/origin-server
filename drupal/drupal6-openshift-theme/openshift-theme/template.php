@@ -186,6 +186,8 @@ function openshift_pager($tags = array(), $limit = 10, $element = 0, $parameters
  * aren't parented).
  */
 function _openshift_heading(&$vars) {
+  $page_title = $vars['title'];
+  //print "<!-- page_title: ".$page_title."-->";
   $item = end(menu_get_active_trail());
   if ($vars['forum']['new-topic']) {
     $type = 'discussion';
@@ -194,6 +196,7 @@ function _openshift_heading(&$vars) {
     $node = $item['page_arguments'][0];
     $type = $node->type;
     $title = $node->title;
+    //print "<!-- title from node: ".$title."-->";
   }
   elseif ($item['path'] == 'comment/reply/%' && $item['page_arguments'] && $item['page_arguments'][0]) {
     $node = $item['page_arguments'][0];
@@ -201,19 +204,22 @@ function _openshift_heading(&$vars) {
   }
   elseif ($item['link_path']) {
     $type = $item['link_path'];
-    if ($item['title_callback']) {
+    /*if ($item['title_callback']) {
       $arguments = $item['title_arguments'];
       if (is_array($arguments)) {
         $title = call_user_func_array($item['title_callback'], $arguments);
       }
     }
+    if (empty($title)) {*/
+    $title = $page_title;
     if (empty($title)) {
       $title = $item['title'];
     }
+    print "<!-- title from link_path: ".$title."-->";
   }
   //FIXME: forums doesn't have a type, is this something we can detect via view config?
   elseif ($item['href'] == '<front>') {
-    $type = 'groups';
+    $type = 'openshift';
   }
   switch ($type) {
   case 'home': $heading = "Overview"; break;
@@ -227,6 +233,7 @@ function _openshift_heading(&$vars) {
   case 'groups':
   case 'group': $heading = "Forums"; break;
   case 'documentation': $heading = "Documentation"; break; // no title for some reason
+  case 'community': $heading = "Welcome to OpenShift"; break; // override the default link title
   case 'calendar':
   case 'event':
   case 'events': $heading = "Events"; break; // no title for some reason
@@ -238,6 +245,7 @@ function _openshift_heading(&$vars) {
   default:
     $heading = $title;
   }
+  //print "<!-- final heading: ".$heading."-->";
   return $heading;
 }
 

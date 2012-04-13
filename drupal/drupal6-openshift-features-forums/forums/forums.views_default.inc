@@ -390,17 +390,17 @@ function forums_views_default_views() {
   $handler = $view->new_display('page', 'Page', 'page');
   $handler->override_option('path', 'forums');
   $handler->override_option('menu', array(
-    'type' => 'default tab',
-    'title' => 'Groups',
+    'type' => 'none',
+    'title' => 'Forums',
     'description' => '',
-    'weight' => '0',
-    'name' => 'navigation',
+    'weight' => 0,
+    'name' => 'primary-links',
   ));
   $handler->override_option('tab_options', array(
-    'type' => 'normal',
-    'title' => 'Groups',
+    'type' => 'none',
+    'title' => 'Forums',
     'description' => '',
-    'weight' => '0',
+    'weight' => 0,
     'name' => 'primary-links',
   ));
 
