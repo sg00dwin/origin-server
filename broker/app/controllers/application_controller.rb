@@ -80,7 +80,7 @@ class ApplicationController < ActionController::Base
         end
 
         if cfg[:squash_runtime]
-          result.eliminate_methods!([/^(Array|Hash|Kernel|Symbol|String|Exception|Fixnum|Class|NilClass|Proc)\#/])
+          result.eliminate_methods!([/^(Array|Hash|Kernel|Symbol|String|Exception|Fixnum|Class|NilClass|Proc|Range)\#/])
         end
 
         case cfg[:type]
