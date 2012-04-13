@@ -49,7 +49,7 @@ def migrate_gear(rhlogin, app_name, gear_uuid)
                     out << "Migrate on node exit code: #{exit_code}\n"
                     raise "Failed migrating gear. Rerun with: #{migrate_cmd}"
                   else
-                    redeploy_httpd_proxy(gear, out)
+                    #redeploy_httpd_proxy(gear, out)
                     migrated = true
                     if migrated
                       gear.configured_components.each do |comp_name|
