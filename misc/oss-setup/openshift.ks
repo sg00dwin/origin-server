@@ -7,6 +7,7 @@ firewall --enabled --service=mdns
 xconfig --startxonboot
 part / --size 6120  --fstype ext4 --ondisk sda
 services --enabled=network,sshd --disabled=NetworkManager
+bootloader --append="biosdevname=0"
 
 repo --name=fedora --mirrorlist=http://mirrors.fedoraproject.org/mirrorlist?repo=fedora-$releasever&arch=$basearch
 repo --name=updates --mirrorlist=http://mirrors.fedoraproject.org/mirrorlist?repo=updates-released-f$releasever&arch=$basearch
@@ -669,11 +670,11 @@ BOOTPROTO=dhcp
 ONBOOT=yes
 EOF
 
-cat <<EOF > /etc/sysconfig/network-scripts/ifcfg-p2p1
-DEVICE=p2p1
-BOOTPROTO=dhcp
-ONBOOT=yes
-EOF
+#cat <<EOF > /etc/sysconfig/network-scripts/ifcfg-p2p1
+#DEVICE=p2p1
+#BOOTPROTO=dhcp
+#ONBOOT=yes
+#EOF
 
 # Setup swap for devenv
 [ -f /.swap ] || ( /bin/dd if=/dev/zero of=/.swap bs=1024 count=1024000
