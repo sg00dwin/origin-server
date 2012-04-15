@@ -1,18 +1,11 @@
 Rails.application.routes.draw do
 
-  resource :account,
-           :controller => "user",
-           :only => [:show] do
-  end
-
-  scope '/account' do
-    resource :domain, :only => [:new, :create, :edit, :update]
-    resources :keys, :only => [:new, :create, :destroy]
-  end
-
   scope '/console' do
+
+    # Help
     match 'help' => 'console#help', :via => :get, :as => 'console_help'
 
+    # Application specific resources
     resources :application_types, :only => [:show, :index], :id => /[^\/]+/
     resources :applications,
               :controller => "applications" do 
@@ -25,7 +18,20 @@ Rails.application.routes.draw do
         get :get_started
       end
     end
+
+    # Account specific resources
+    resource :account,
+             :controller => "user",
+             :only => [:show]
+
+    scope '/account' do
+      resource :domain, :only => [:new, :create, :edit, :update]
+      resources :keys, :only => [:new, :create, :destroy]
+    end
+
   end
 
   match 'console' => 'console#index', :via => :get
+
+  root :to => app_redirect('console')
 end
