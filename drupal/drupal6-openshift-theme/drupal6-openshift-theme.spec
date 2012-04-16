@@ -5,7 +5,7 @@
 %global drupal_themename    openshift-theme
 
 Name:           drupal6-%{drupal_themename}
-Version:        3.0.1
+Version:        3.0.2
 Release:        1%{?dist}
 Summary:        Red Hat Openshift theme for Drupal %{drupal_release}
 
@@ -44,6 +44,9 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
+* Mon Apr 16 2012 Anderson Silva <ansilva@redhat.com> 3.0.2-1
+- new package built with tito
+
 * Tue Apr 16 2012 Anderson Silva <ansilva@redhat.com> - 3.0.1-1
 - update version
 
