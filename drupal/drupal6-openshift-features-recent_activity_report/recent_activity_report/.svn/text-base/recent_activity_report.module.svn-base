@@ -1,0 +1,14 @@
+<?php
+
+function recent_activity_report_menu() {
+  $items['admin/reports/recent'] = array(
+    'title' => 'Recent Activity',
+    'page callback' => drupal_goto,
+    'page arguments' => array('admin/reports/recent_activity'),
+    'access callback' => user_access('access administration pages'),
+    'type' => MENU_NORMAL_ITEM,
+  );
+  return $items;
+}
+
+include_once('recent_activity_report.features.inc');
