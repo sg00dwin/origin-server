@@ -20,7 +20,7 @@ Openshift Red Hat Custom SSO Module for Drupal6
 
 
 %prep
-%setup -qn %{name}
+%setup -q
 # Remove empty index.html and others
 find -size 0 | xargs rm -f
 
