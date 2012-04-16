@@ -11,7 +11,7 @@ Summary:        Red Hat Openshift theme for Drupal %{drupal_release}
 
 Group:          Applications/Publishing
 License:        GPLv2+ and GPL+ or MIT
-Source0:        %{drupal_themename}-%{drupal_release}.x-%{version}.tar.gz
+Source0:        %{name}-%{version}.tar.gz
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 BuildArch:      noarch
 Requires:       drupal6
@@ -20,7 +20,7 @@ Requires:       drupal6
 Red Hat Openshift Drupal Theme
 
 %prep
-%setup -qn %{drupal_themename}
+%setup -q
 # Remove empty index.html and others
 find -size 0 | xargs rm -f
 
