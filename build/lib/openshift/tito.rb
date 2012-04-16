@@ -62,6 +62,14 @@ module OpenShift
             package_name = "stickshift-abstract"
           elsif file.start_with?('stickshift')
             package_name = "rubygem-stickshift-#{name}"
+          elsif file.start_with?('swingshift/streamline/')
+            package_name = "rubygem-swingshift-streamline-plugin"
+          elsif file.start_with?('crankcase/mongo/')
+            package_name = "rubygem-crankcase-mongo-plugin"
+          elsif file.start_with?('uplift/dynect/')
+            package_name = "rubygem-uplift-dynect-plugin"
+          elsif file.start_with?('gearchanger/m-collective/')
+            package_name = "rubygem-gearchanger-m-collective-plugin"
           else
             package_name = "rhc-#{name}"
           end
