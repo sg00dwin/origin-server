@@ -20,7 +20,7 @@ Openshift Red Hat Custom Blog Feature for Drupal6
 
 
 %prep
-%setup -qn %{modname}
+%setup -q
 # Remove empty index.html and others
 find -size 0 | xargs rm -f
 
