@@ -10,7 +10,7 @@ Release: 1%{?dist}
 Summary: Openshift Red Hat Custom Reporting CSV Views Feature for Drupal6
 Group:   Applications/Publishing
 License: GPLv2+
-Source0: %{modname}-%{drupal_release}.x-%{version}.tar.gz
+Source0: %{name}-%{version}.tar.gz
 BuildArch: noarch
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 Requires:  drupal6, drupal6-votingapi, drupal6-og
@@ -20,7 +20,7 @@ Openshift Red Hat Custom Reporting CSV Views Feature for Drupal6
 
 
 %prep
-%setup -qn %{modname}
+%setup -q
 # Remove empty index.html and others
 find -size 0 | xargs rm -f
 
