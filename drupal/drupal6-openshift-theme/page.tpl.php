@@ -12,7 +12,7 @@
 	  <title><?php print $head_title; ?></title>
     <?php 
       // reference CSS files directly from openshift
-      //print_r(end(menu_get_active_trail()));
+      //print_r(menu_get_active_trail());
       global $base_url;
       global $base_root;
       if (empty($sidebar_left)) {
@@ -84,17 +84,7 @@
           </div>
         </div>
 
-        <?php if ( ! $user->uid ) :?>
-        <div class="messaging">
-          <div class="container">
-            <div class="primary headline">
-              Join the
-              <strong>OpenShift Community</strong>
-            </div>
-            <div class="secondary">This is the place to learn and engage with OpenShift users and developers. Sign in to participate</div>
-          </div>
-        </div>
-        <?php endif; ?>
+        <?php print $messaging; ?>
 
       </div>
     </header>
