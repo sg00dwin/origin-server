@@ -28,8 +28,10 @@ def usage
 Options:
   -l|--rhlogin <rhlogin>
     Red Hat login (RHN or OpenShift login with OpenShift Express access) (required)
-  -g|--setgears <number>
-    Set the number of gears for a user to this value
+  -g|--setmaxgears <number>
+    Set the maximum number of gears a user is allowed to use
+  --setconsumedgears <number>
+    Set the number of gears a user has consumed (use carefully)
   -h|--help
     Show Usage info
 
@@ -37,14 +39,50 @@ Examples:
   List the current user settings with:
     #{File.basename $0} -l bob@redhat.com
 
-  Set the number of gears a user has with:
+  Set the maximum number of gears a user is allowed to use with:
     #{File.basename $0} -l bob@redhat.com -g 10
 USAGE
 end
 
+def set_max_gears(user, maxgears)
+    if user.max_gears == maxgears
+        puts "User already has max_gears set to #{user.max_gears}"
+        return
+    end
+
+    print "Setting max_gears to #{maxgears}... "
+    user.max_gears=maxgears
+    result = user.save
+    puts "Done."
+
+    if result.exitcode != 0
+        puts "An error occurred saving the user."
+        exit 6
+    end
+end
+
+def set_consumed_gears(user, consumedgears)
+    if user.consumed_gears == consumedgears
+        puts "User already has consumed_gears set to #{user.consumed_gears}"
+        return
+    end
+
+    print "Setting consumed_gears to #{consumedgears}... "
+    db = Crankcase::MongoDataStore.instance
+    result = db.update({ "_id" => user.login }, { "$set" => {'consumed_gears' => consumedgears} })
+    puts "Done."
+
+    # TODO: figure out what a correct return code is
+    #if result != 0
+    #    puts "An error occurred saving the user."
+    #    exit 6
+    #end
+end
+
 opts = GetoptLong.new(
     ["--rhlogin",          "-l", GetoptLong::REQUIRED_ARGUMENT],
-    ["--setgears",         "-g", GetoptLong::REQUIRED_ARGUMENT],
+    ["--setmaxgears",      "-g", GetoptLong::REQUIRED_ARGUMENT],
+    ["--setconsumedgears", GetoptLong::REQUIRED_ARGUMENT],
     ["--help",             "-h", GetoptLong::NO_ARGUMENT]
 )
 
@@ -57,7 +95,8 @@ rescue GetoptLong::Error => e
 end
 
 login = args["--rhlogin"]
-gears = args["--setgears"].to_i if args["--setgears"]
+maxgears = args["--setmaxgears"].to_i if args["--setmaxgears"]
+consumedgears = args["--setconsumedgears"].to_i if args["--setconsumedgears"]
 
 if login.nil? or args["--help"]
     usage
@@ -76,30 +115,28 @@ if user.nil?
     exit 5
 end
 
-if gears.nil?
-    # The user only wants to list the current number of gears
-    puts "User #{login} has #{user.max_gears} gears."
+changed_user = false
+
+unless maxgears.nil?
+    set_max_gears(user, maxgears)
+    changed_user = true
+end
+
+unless consumedgears.nil?
+    set_consumed_gears(user, consumedgears)
+    changed_user = true
+end
+
+if changed_user
+    # reload user with new settings
+    user = CloudUser::find(login)
     puts
-    exit 0
+    puts
 end
 
-if user.max_gears == gears
-    puts "User already has max_gears set to #{user.max_gears}"
-    exit 0
-end
-
-# The user wants to set the current number of gears
-puts "User #{login} had #{user.max_gears} gears. Changing max_gears to #{gears} gears."
-user.max_gears=gears
-result = user.save
-
-if result.exitcode != 0
-    puts "An error occurred saving the user."
-    exit 6
-end
-
-# reload user with new settings
-user = CloudUser::find(login)
+# print out the user's current settings
+puts "User #{user.login}:"
+puts "     consumed gears: #{user.consumed_gears}"
+puts "          max gears: #{user.max_gears}"
 puts
-puts "User #{login} now has #{user.max_gears} gears."
 puts
