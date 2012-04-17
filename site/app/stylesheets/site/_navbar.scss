@@ -103,6 +103,10 @@
   }
 }
 
+.section-nav > .navbar:last-child {
+  margin-bottom: 20px;
+}
+
 @media (max-width: 767px) {
   .navbar {
     padding-top: 15px;
