@@ -74,7 +74,7 @@ module OpenShift
           elsif file.start_with?('gearchanger/m-collective/')
             package_name = "rubygem-gearchanger-m-collective-plugin"
           elsif file.start_with?('drupal')
-            package_name = "drupal6-openshift-#{name}"
+            package_name = "drupal6-openshift--{name}"
           else
             package_name = "rhc-#{name}"
           end
@@ -134,7 +134,7 @@ module OpenShift
           current_package = "rhc-#{dir_name}"
           current_sync_dir = dir_name
         elsif package =~ DRUPAL_REGEX
-          dir_name $1
+          dir_name = $1
           current_package = "drupal6-openshift-#{dir_name}"
           current_sync_dir = dir_name
         elsif package =~ /---------------------/
