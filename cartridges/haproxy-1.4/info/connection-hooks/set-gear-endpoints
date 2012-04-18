@@ -31,10 +31,10 @@ function register_gear_endpoint() {
     [ $# -lt 2 ]  &&  return 1
 
     #  Add gear endpoint to registry if it doesn't already exist.
-    if ! grep "$2" "$HAPROXY_GEAR_REGISTRY" > /dev/null 2>&1; then
+    if ! grep "$1" "$HAPROXY_GEAR_REGISTRY" > /dev/null 2>&1; then
         echo "$2" >> "$HAPROXY_GEAR_REGISTRY"
         if [ -f "$FRAMEWORK_INFO_DIR/bin/sync_gears.sh" ]; then
-            run_as_user "$FRAMEWORK_INFO_DIR/bin/sync_gears.sh $2"
+            run_as_user "$FRAMEWORK_INFO_DIR/bin/sync_gears.sh $1"
         fi
     fi
 
@@ -43,15 +43,11 @@ function register_gear_endpoint() {
 
 
 function unregister_gear_endpoint() {
-    [ $# -lt 2 ]  &&  return 1
+    [ $# -lt 1 ]  &&  return 1
 
     #  Check if the gear endpoint registry entry exists.
-    if grep "$2" "$HAPROXY_GEAR_REGISTRY" > /dev/null 2>&1; then
-        sed -i "/$2.*/d" "$HAPROXY_GEAR_REGISTRY"
-        # tmpf=/tmp/gear-registry.db.$$
-        # sed "/$2.*/d" "$HAPROXY_GEAR_REGISTRY"  > "$tmpf"
-        # cat "$tmpf" > "$HAPROXY_GEAR_REGISTRY"
-        # rm -f /tmp/gear-registry.db.$$
+    if grep "$1" "$HAPROXY_GEAR_REGISTRY" > /dev/null 2>&1; then
+        sed -i "/$1.*/d" "$HAPROXY_GEAR_REGISTRY"
     fi
 }
 
@@ -88,21 +84,23 @@ FRAMEWORK_INFO_DIR=${CARTRIDGE_BASE_PATH}/$OPENSHIFT_GEAR_TYPE/info
 declare -A curr_endpoints
 
 #  Remove the first 3 args and process all the remaining args of the form
-#  key=value. The values are the 'scp-like' endpoints for each gear.
+#  key=value. The values contain 'scp-like' endpoints + dns name for each gear.
 kvargs=$(echo "${@:4}" | tr -d "\n" )
 for arg in $kvargs; do
-    ep=$(echo "$arg" | cut -f 2 -d '=' | tr -d "'")
-    gear_name=gear-$(echo "$ep" | cut -f 2 -d '@' | cut -f 1 -d '.')
-    curr_endpoints[$gear_name]="$ep"
-    register_gear_endpoint "$gear_name" "$ep"  ||  :
+    zinfo=$(echo "$arg" | cut -f 2 -d '=' | tr -d "'")
+    zarr=(${zinfo//;/ })
+    ep=${zarr[0]}
+    curr_endpoints[$ep]="$zinfo"
+    register_gear_endpoint "$ep" "$zinfo"  ||  :
 done
 
 # Get a list of all the registered endpoints and remove the endpoints which
 # are not in the current set.
-for gear_ep in $(get_registered_endpoints); do
-    gear_name=gear-$(echo "$gear_ep" | cut -f 2 -d '@' | cut -f 1 -d '.')
-    if [ -z "${curr_endpoints[$gear_name]}" ]; then
-        unregister_gear_endpoint "$gear_name" "$gear_ep"  ||  :
+for zinfo in $(get_registered_endpoints); do
+    zarr=(${zinfo//;/ })
+    ep=${zarr[0]}
+    if [ -z "${curr_endpoints[$ep]}" ]; then
+        unregister_gear_endpoint "$ep" "$zinfo"  ||  :
     fi
 done
 
