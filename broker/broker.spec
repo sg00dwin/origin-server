@@ -3,7 +3,7 @@
 
 Summary:   Li broker components
 Name:      rhc-broker
-Version:   0.91.5
+Version:   0.91.6
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -98,6 +98,46 @@ rm -rf $RPM_BUILD_ROOT
 /bin/touch %{brokerdir}/log/production.log
 
 %changelog
+* Wed Apr 18 2012 Adam Miller <admiller@redhat.com> 0.91.6-1
+- 1) removing cucumber gem dependency from express broker. 2) moved ruby
+  related cucumber tests back into express. 3) fixed issue with broker
+  Gemfile.lock file where ruby-prof was not specified in the dependency
+  section. 4) copying cucumber features into li-test/tests automatically within
+  the devenv script. 5) fixing ctl status script that used ps to list running
+  processes to specify the user. 6) fixed tidy.sh script to not display error
+  on fedora stickshift. (abhgupta@redhat.com)
+- rhc-admin-ctl-user: added ability to set vip status (twiest@redhat.com)
+- rhc-admin-ctl-user: updated to be able to set consumed gears as well.
+  (twiest@redhat.com)
+- typos (rmillner@redhat.com)
+- Clean up some of the help text. (rmillner@redhat.com)
+- Had to move profiler to ActionController::Base (rmillner@redhat.com)
+- Add range to runtime squash (rmillner@redhat.com)
+- Add measurement type to file name. (rmillner@redhat.com)
+- Add measurement type and description in config (rmillner@redhat.com)
+- It seems like most of our threads come in during processing.  Delete them
+  after the fact from the report. (rmillner@redhat.com)
+- Just print the thread IDs (rmillner@redhat.com)
+- Add log for thread handling.  Fix config entry. (rmillner@redhat.com)
+- Dont pack nils into the exclude_threads array. (rmillner@redhat.com)
+- Clean up methods. Add thread squash. Pass whole cfg to printer.
+  (rmillner@redhat.com)
+- Profiler moved into the app controller. (rmillner@redhat.com)
+- Move profiling into the controller filter. (rmillner@redhat.com)
+- Used the wrong variable (rmillner@redhat.com)
+- Variable was being defined lower in the code. (rmillner@redhat.com)
+- Use double quotes for var expansion (rmillner@redhat.com)
+- Catch nomethod in case theres no profiler config. (rmillner@redhat.com)
+- Add debug logging to the profiler calls (rmillner@redhat.com)
+- Add an instance of the profiler to the broker startup (rmillner@redhat.com)
+- The rubygem(foo) dependency is missing from ruby-prof. (rmillner@redhat.com)
+- changed configuration block for profiler. (rmillner@redhat.com)
+- Add observer for profiling of specific events. (rmillner@redhat.com)
+- Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
+  (rchopra@redhat.com)
+- admin chk script to check mismatch between consumed_gears and actual gears
+  for each user (rchopra@redhat.com)
+
 * Thu Apr 12 2012 Mike McGrath <mmcgrath@redhat.com> 0.91.5-1
 - release bump for mongo (mmcgrath@redhat.com)
 
