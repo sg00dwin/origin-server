@@ -8,7 +8,7 @@
 
 Summary:   Dependencies for OpenShift development
 Name:      rhc-devenv
-Version:   0.92.5
+Version:   0.92.6
 Release:   1%{?dist}
 Group:     Development/Libraries
 License:   GPLv2
@@ -389,6 +389,9 @@ echo "Header append Strict-Transport-Security includeSubDomains" >> /etc/httpd/c
 %{policydir}/*
 
 %changelog
+* Wed Apr 18 2012 Dan McPherson <dmcphers@redhat.com> 0.92.6-1
+- Add geshi to enablement script (ccoleman@redhat.com)
+
 * Wed Apr 18 2012 Dan McPherson <dmcphers@redhat.com> 0.92.5-1
 - BZ785050 Removed mod_autoindex and supporting bits    tkramer  04 18 2012
   (tkramer@redhat.com)
