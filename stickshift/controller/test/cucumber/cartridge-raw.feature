@@ -2,8 +2,6 @@
 @node
 Feature: Raw Application
 
-  # runcon -u ?? -r system_r -t libra_initrc_t
-
   Scenario: Create Delete one Raw Application
     Given an accepted node
     And a new guest account
@@ -15,4 +13,4 @@ Feature: Raw Application
     When I deconfigure the raw application
     And a raw application git repo will not exist
     And a raw application source tree will not exist
-    
+

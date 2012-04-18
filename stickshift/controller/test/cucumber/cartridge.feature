@@ -10,7 +10,6 @@ Feature: Cartridge Verification Tests
   Scenarios: Application Creation Scenarios
     | app_count |     type     |
     |     1     |  php-5.3     |
-    |     1     |  ruby-1.8    |
     |     1     |  jbossas-7   |
     |     1     |  nodejs-0.6  |
     |     1     |  jenkins-1.4 |
@@ -65,7 +64,6 @@ Feature: Cartridge Verification Tests
   Scenarios: Application Tidy Scenarios
     |      type     |
     |   php-5.3     |
-    |   ruby-1.8    |
     |   jbossas-7   |
     |   nodejs-0.6  |
 
@@ -77,7 +75,6 @@ Feature: Cartridge Verification Tests
   Scenarios: Application Destroying Scenarios
     |      type     |
     |   php-5.3     |
-    |   ruby-1.8    |
     |   jbossas-7   |
     |   nodejs-0.6  |
     |   jenkins-1.4 |

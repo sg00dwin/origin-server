@@ -63,7 +63,7 @@ class DevEnv < Thor
 
     def update_remote_tests(hostname)
       print "Updating remote tests..."
-      ssh(hostname, "rm -rf /root/li-test; cd /root/li; git archive --prefix li-test/ --format=tar HEAD | (cd /root && tar --warning=no-timestamp -xf -); mkdir -p /tmp/rhc/junit")
+      ssh(hostname, "rm -rf /root/li-test; cd /root/li; git archive --prefix li-test/ --format=tar HEAD | (cd /root && tar --warning=no-timestamp -xf -); cp -n /root/li-test/stickshift/controller/test/cucumber/*.feature /root/li-test/tests/. ; mkdir -p /tmp/rhc/junit")
       puts "Done"
     end
     
@@ -81,7 +81,7 @@ class DevEnv < Thor
       scp_to(hostname, "/tmp/li-test.tar", "~/", 600, 10)
       puts "Done"
       puts "Extracting tests on remote instance: #{hostname}"
-      ssh(hostname, 'set -e; rm -rf li-test; tar -xf li-test.tar; mkdir -p /tmp/rhc/junit', 120)
+      ssh(hostname, 'set -e; rm -rf li-test; tar -xf li-test.tar; cp -n /root/li-test/stickshift/controller/test/cucumber/*.feature /root/li-test/tests/. ; mkdir -p /tmp/rhc/junit', 120)
       puts "Done"
     end
 
@@ -215,15 +215,15 @@ class DevEnv < Thor
         end
 
         unless options.exclude_internal?
-          add_ssh_cmd_to_threads(hostname, threads, failures, "Internal", "cd li-test/tests; cp -n ../stickshift/controller/test/cucumber/*.feature . ; cucumber -f html --out /tmp/rhc/internals.html -f progress -t @internals .")
+          add_ssh_cmd_to_threads(hostname, threads, failures, "Internal", "cucumber -f html --out /tmp/rhc/internals.html -f progress -t @internals li-test/tests")
         end
 
         unless options.exclude_verification?
-          add_ssh_cmd_to_threads(hostname, threads, failures, "Verification", "cd li-test/tests; cp -n ../stickshift/controller/test/cucumber/*.feature . ; cucumber -f html --out /tmp/rhc/verfication.html -f progress -t @verify .")
+          add_ssh_cmd_to_threads(hostname, threads, failures, "Verification", "cucumber -f html --out /tmp/rhc/verfication.html -f progress -t @verify li-test/tests")
         end
 
         if options.include_cucumber
-          add_ssh_cmd_to_threads(hostname, threads, failures, "#{options.include_cucumber}", "cd li-test/tests; cp -n ../stickshift/controller/test/cucumber/*.feature . ; cucumber -f html --out /tmp/rhc/#{options.include_cucumber}.html -f progress -t @#{options.include_cucumber} .")
+          add_ssh_cmd_to_threads(hostname, threads, failures, "#{options.include_cucumber}", "cucumber -f html --out /tmp/rhc/#{options.include_cucumber}.html -f progress -t @#{options.include_cucumber} li-test/tests")
         end
 
         if options.include_web?
@@ -983,4 +983,3 @@ END
 end
 
 DevEnv.start
-

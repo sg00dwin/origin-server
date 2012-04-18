@@ -1,9 +1,10 @@
 require 'active_support'
-require '/var/www/stickshift/broker/config/environment'
+require $dns_helper_module
 
 module AppHelper
   class TestApp
     include ActiveSupport::JSON
+    include DnsHelper
 
     # The regex to parse the ssh output from the create app results
     SSH_OUTPUT_PATTERN = %r|ssh://([^@]+)@([^/]+)|
@@ -75,7 +76,7 @@ module AppHelper
     end
 
     def reserved?
-      return (!StickShift::DnsService.instance.namespace_available?(@namespace) or File.exists?(@file))
+      return (!namespace_available?(@namespace) or File.exists?(@file))
     end
 
     def has_domain?

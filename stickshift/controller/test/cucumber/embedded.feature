@@ -7,6 +7,7 @@ Feature: Embedded Cartridge Verification Tests
     And an accepted node
     When 1 php-5.3 applications are created
     Then the applications should be accessible
+
     Given an existing php-5.3 application without an embedded cartridge
     When the embedded mysql-5.1 cartridge is added
     And the embedded phpmyadmin-3.4 cartridge is added
@@ -17,6 +18,7 @@ Feature: Embedded Cartridge Verification Tests
     When the embedded phpmyadmin-3.4 cartridge is removed
     And the embedded mysql-5.1 cartridge is removed
     Then the application should be accessible
+
     When the embedded mongodb-2.0 cartridge is added
     And the embedded rockmongo-1.1 cartridge is added
     And the embedded cron-1.4 cartridge is added
@@ -26,9 +28,11 @@ Feature: Embedded Cartridge Verification Tests
     And the embedded mongodb-2.0 cartridge is removed
     And the embedded cron-1.4 cartridge is removed
     And the embedded metrics-0.1 cartridge is removed
+
     And the embedded postgresql-8.4 cartridge is added
     And the embedded postgresql-8.4 cartridge is removed
     Then the application should be accessible
+
     When the application is destroyed
     Then the application should not be accessible
 
@@ -44,4 +48,4 @@ Feature: Embedded Cartridge Verification Tests
   #  Then the application should be accessible
   #  When the application is destroyed
   #  Then the application should not be accessible
-    
+  

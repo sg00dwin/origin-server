@@ -7,6 +7,7 @@
         = link_to session[:login], "console", :class => 'btn btn-small'
         = link_to 'Sign out', logout_path, :class => 'btn btn-small'
       -# The signin link is always present so we can cache the page
+      = link_to "Status", status_path, :title => 'Track open issues on the OpenShift status page', :class => 'btn btn-small btn-warning', :style => 'display:none;', :id => 'outage'
       - if logged_in?
         = link_to "Manage Your Apps", console_path, :class => 'btn btn-small'
         = link_to "Sign Out", logout_path, :class => 'btn btn-small'

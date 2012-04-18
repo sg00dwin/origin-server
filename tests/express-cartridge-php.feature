@@ -2,6 +2,12 @@
 @node
 Feature: PHP Application
 
+# This feature has the expose/conceal/show port carved out of the cartridge-php.feature 
+# since these are express-ONLY features as of now
+# When we support these features on the opensource side as well, we should merge this section back
+
+  # runcon -u ?? -r system_r -t libra_initrc_t
+
   Scenario: Create Delete one PHP Application
     Given a new guest account
     And the guest account has no application installed
@@ -11,20 +17,11 @@ Feature: PHP Application
     And a php application source tree will exist
     And a php application httpd will be running 
  
-    When I stop the php application
-    Then the php application will not be running
-    And a php application httpd will not be running
-    And the php application is stopped
-    When I start the php application
-    Then the php application will be running
-    And a php application httpd will be running
-    And php application log files will exist
+    When I expose-port the php application
+    Then the php application will be exposed
+    When I conceal-port the php application
+    Then the php application will not be exposed
 
-    When I add-alias the php application
-    Then the php application will be aliased
-    When I remove-alias the php application
-    Then the php application will not be aliased 
- 
     When I deconfigure the php application
     Then a php application http proxy file will not exist
     And a php application git repo will not exist
