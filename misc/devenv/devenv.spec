@@ -8,7 +8,7 @@
 
 Summary:   Dependencies for OpenShift development
 Name:      rhc-devenv
-Version:   0.92.3
+Version:   0.92.4
 Release:   1%{?dist}
 Group:     Development/Libraries
 License:   GPLv2
@@ -389,6 +389,25 @@ echo "Header append Strict-Transport-Security includeSubDomains" >> /etc/httpd/c
 %{policydir}/*
 
 %changelog
+* Wed Apr 18 2012 Adam Miller <admiller@redhat.com> 0.92.4-1
+- Fixed mod_autoindex 04 18 2012 (tkramer@redhat.com)
+- BZ785050 Removed mod_autoindex and options  04 17 2012  second change
+  (tkramer@redhat.com)
+- Removed mod_autoindex for  BZ785050 - testing in devenv (tkramer@redhat.com)
+- Merge remote-tracking branch 'origin/master' into dev/fotios/login
+  (ccoleman@redhat.com)
+- Added some speed improvements to devenv rpm (mmcgrath@redhat.com)
+- attempt to fix /var issues (mmcgrath@redhat.com)
+- Merge branch 'master' into dev/fotios/login (ccoleman@redhat.com)
+- Ensure staging settings are syntactically correct (ccoleman@redhat.com)
+- Switch to /community (ccoleman@redhat.com)
+- Move Drupal to /community (ccoleman@redhat.com)
+- Automatic commit of package [rhc-devenv] release [0.91.8-1].
+  (mmcgrath@redhat.com)
+- Add required drupal modules to master (ccoleman@redhat.com)
+- Syncing jobs for jenkins (mmcgrath@redhat.com)
+- Bug fix to get li-cleanup-util working. (ramr@redhat.com)
+
 * Thu Apr 12 2012 Mike McGrath <mmcgrath@redhat.com> 0.92.3-1
 - Merge branch 'master' of git1.ops.rhcloud.com:/srv/git/li (rpenta@redhat.com)
 - Fix li-users-delete-util script (rpenta@redhat.com)
