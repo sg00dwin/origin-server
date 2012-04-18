@@ -28,10 +28,12 @@ def usage
 Options:
   -l|--rhlogin <rhlogin>
     Red Hat login (RHN or OpenShift login with OpenShift Express access) (required)
-  -g|--setmaxgears <number>
+  --setmaxgears <number>
     Set the maximum number of gears a user is allowed to use
   --setconsumedgears <number>
     Set the number of gears a user has consumed (use carefully)
+  --setvip (true|false)
+    Set the vip status of the user
   -h|--help
     Show Usage info
 
@@ -40,8 +42,16 @@ Examples:
     #{File.basename $0} -l bob@redhat.com
 
   Set the maximum number of gears a user is allowed to use with:
-    #{File.basename $0} -l bob@redhat.com -g 10
+    #{File.basename $0} -l bob@redhat.com --setmaxgears 10
 USAGE
+end
+
+class String
+    def to_b()
+        return true if self.to_s.strip =~ /^(true|t|yes|y|1)$/i
+
+        return false
+    end
 end
 
 def set_max_gears(user, maxgears)
@@ -79,10 +89,28 @@ def set_consumed_gears(user, consumedgears)
     #end
 end
 
+def set_vip(user, vip)
+    if user.vip == vip
+        puts "User already has vip set to #{user.vip}"
+        return
+    end
+
+    print "Setting vip to #{vip}... "
+    user.vip = vip
+    result = user.save
+    puts "Done."
+
+    if result.exitcode != 0
+        puts "An error occurred saving the user."
+        exit 6
+    end
+end
+
 opts = GetoptLong.new(
     ["--rhlogin",          "-l", GetoptLong::REQUIRED_ARGUMENT],
-    ["--setmaxgears",      "-g", GetoptLong::REQUIRED_ARGUMENT],
+    ["--setmaxgears",      GetoptLong::REQUIRED_ARGUMENT],
     ["--setconsumedgears", GetoptLong::REQUIRED_ARGUMENT],
+    ["--setvip",           GetoptLong::REQUIRED_ARGUMENT],
     ["--help",             "-h", GetoptLong::NO_ARGUMENT]
 )
 
@@ -97,6 +125,7 @@ end
 login = args["--rhlogin"]
 maxgears = args["--setmaxgears"].to_i if args["--setmaxgears"]
 consumedgears = args["--setconsumedgears"].to_i if args["--setconsumedgears"]
+vip = args["--setvip"].to_b if args["--setvip"]
 
 if login.nil? or args["--help"]
     usage
@@ -127,6 +156,11 @@ unless consumedgears.nil?
     changed_user = true
 end
 
+unless vip.nil?
+    set_vip(user, vip)
+    changed_user = true
+end
+
 if changed_user
     # reload user with new settings
     user = CloudUser::find(login)
@@ -138,5 +172,6 @@ end
 puts "User #{user.login}:"
 puts "     consumed gears: #{user.consumed_gears}"
 puts "          max gears: #{user.max_gears}"
+puts "         vip status: #{user.vip}"
 puts
 puts
