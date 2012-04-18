@@ -78,19 +78,19 @@ class StatusApp < Sinatra::Base
     end
   end
 
+  # copied from ActionView::Helpers::JavascriptHelper
+  JS_ESCAPE_MAP = {
+    '\\' => '\\\\',
+    '</' => '<\/',
+    "\r\n" => '\n',
+    "\n" => '\n',
+    "\r" => '\n',
+    '"' => '\\"',
+    "'" => "\\'"
+  } unless defined? JS_ESCAPE_MAP #unattractive trap for redefinition
+
   helpers do
     include Rack::Utils
-
-    # copied from ActionView::Helpers::JavascriptHelper
-    JS_ESCAPE_MAP = {
-      '\\' => '\\\\',
-      '</' => '<\/',
-      "\r\n" => '\n',
-      "\n" => '\n',
-      "\r" => '\n',
-      '"' => '\\"',
-      "'" => "\\'"
-    }
 
     if "ruby".encoding_aware?
       JS_ESCAPE_MAP["\342\200\250".force_encoding('UTF-8').encode!] = '&#x2028;'
