@@ -92,7 +92,7 @@ function rules_by_category_rules_defaults() {
             '#settings' => array(
               'to' => 'kshaw@redhat.com',
               'from' => '',
-              'subject' => 'Node deleted from Openshift Community',
+              'subject' => 'Node deleted from the Openshift community',
               'message' => 'Node [node:nid] with title [node:title] has been deleted from the Openshift community site by [user:mail]
 
 [node:node-body]',

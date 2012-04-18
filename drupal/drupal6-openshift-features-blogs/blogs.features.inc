@@ -60,7 +60,7 @@ function blogs_node_info() {
     'author' => array(
       'name' => t('Author'),
       'module' => 'features',
-      'description' => t('Holds author information for Red Hat employees who will be publishing to the blog.  This content type does not hold information for regular community users.'),
+      'description' => t('Holds author information for members who will be publishing to the blog.  This content type does not hold information for regular community users.'),
       'has_title' => '1',
       'title_label' => t('Author Name'),
       'has_body' => '1',

@@ -18,7 +18,7 @@ function global_settings_node_info() {
     'document' => array(
       'name' => t('Document'),
       'module' => 'features',
-      'description' => t('A document is a file containing information about Express and/or Flex that may be downloaded.'),
+      'description' => t('A document is a file containing information about OpenShift that may be downloaded.'),
       'has_title' => '1',
       'title_label' => t('Title'),
       'has_body' => '0',

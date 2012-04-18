@@ -9,7 +9,7 @@ function user_profile_views_default_views() {
   // Exported view: user_profile_box
   $view = new view;
   $view->name = 'user_profile_box';
-  $view->description = 'Shows profile images and biographical information for display in the right column.';
+  $view->description = 'Shows profile images and biographical information for display in the appropriate column.';
   $view->tag = '';
   $view->view_php = '';
   $view->base_table = 'users';
