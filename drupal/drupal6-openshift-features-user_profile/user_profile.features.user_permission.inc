@@ -484,6 +484,7 @@ function user_profile_user_default_permissions() {
     'roles' => array(
       '0' => 'administrator',
       '1' => 'moderator',
+      '2' => 'page author',
     ),
   );
 
@@ -672,6 +673,7 @@ function user_profile_user_default_permissions() {
     'roles' => array(
       '0' => 'administrator',
       '1' => 'moderator',
+      '2' => 'page author',
     ),
   );
 
@@ -776,6 +778,7 @@ function user_profile_user_default_permissions() {
     'name' => 'edit any page content',
     'roles' => array(
       '0' => 'administrator',
+      '1' => 'page author',
     ),
   );
 

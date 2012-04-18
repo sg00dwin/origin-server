@@ -21,5 +21,10 @@ function user_profile_user_default_roles() {
     'name' => 'authenticated user',
   );
 
+  // Exported role: page author
+  $roles['page author'] = array(
+    'name' => 'page author',
+  );
+
   return $roles;
 }
