@@ -1,29 +1,6 @@
 require 'net/geoip'
 
 module ApplicationHelper
-  # Checks for an outage notification
-  def outage_notification
-    notification = ''
-    ['/etc/stickshift/outage_notification.txt', '/etc/stickshift/express_outage_notification.txt'].each do |file|
-      if File.exists? file
-        contents = nil
-        f = File.open file
-        begin
-          contents = f.read
-        ensure
-          f.close
-        end
-        notification << content_tag(:pre,contents, {:class => 'span9'}) unless contents.nil?
-      end
-    end
-    
-    if notification.length > 0
-      content_tag(:div, "<div class='container'><h2 class='span2'>Outage Notification</h2>" + notification + "</div>", {:id => 'outage_notification'}, false)
-    else
-      nil
-    end
-  end
-  
   # Which product is the current page referring to?
   def get_product(controller, action)
     ['express'].each do |product|
@@ -142,4 +119,7 @@ module ApplicationHelper
     link_to "openshift@redhat.com", mailto_openshift_url
   end
 
+  def status_jsonp_url(id)
+    status_js_path :id => id
+  end
 end
