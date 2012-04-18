@@ -5,7 +5,7 @@
 %global drupal_themename    openshift-theme
 
 Name:           drupal6-%{drupal_themename}
-Version:        3.0.3
+Version:        3.0.4
 Release:        1%{?dist}
 Summary:        Red Hat Openshift theme for Drupal %{drupal_release}
 
@@ -44,6 +44,9 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
+* Wed Apr 18 2012 Dan McPherson <dmcphers@redhat.com> 3.0.4-1
+- Touch all drupal modules to ensure a build. (ccoleman@redhat.com)
+
 * Wed Apr 18 2012 Adam Miller <admiller@redhat.com> 3.0.3-1
 - Bug 813613 (ccoleman@redhat.com)
 - Abstract out messaging and handle navbar bottom margin a bit cleaner
