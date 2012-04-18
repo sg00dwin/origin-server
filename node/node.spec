@@ -2,7 +2,7 @@
 
 Summary:       Multi-tenant cloud management system node tools
 Name:          rhc-node
-Version:       0.91.2
+Version:       0.91.3
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -265,6 +265,20 @@ fi
 /lib64/security/pam_libra.so
 
 %changelog
+* Wed Apr 18 2012 Adam Miller <admiller@redhat.com> 0.91.3-1
+- Added check to not idle stopped application (jhonce@redhat.com)
+- Caught in the middle of a log message. (rmillner@redhat.com)
+- Add cartridge name to the profile output (rmillner@redhat.com)
+- Cleanup output (rmillner@redhat.com)
+- Add the mcollective-log-profile command to specfile (rmillner@redhat.com)
+- add a spare blank line to pretty up output. (rmillner@redhat.com)
+- Print the call profile most expensive first. (rmillner@redhat.com)
+- Add the mcollective call profiler. (rmillner@redhat.com)
+- bug 808544 (dmcphers@redhat.com)
+- Merge branch 'master' of li-master:/srv/git/li (ramr@redhat.com)
+- Add libevent and libevent-devel to list of packages to install.
+  (ramr@redhat.com)
+
 * Thu Apr 12 2012 Mike McGrath <mmcgrath@redhat.com> 0.91.2-1
 - release bump for tag uniqueness (mmcgrath@redhat.com)
 
