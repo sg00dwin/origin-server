@@ -346,19 +346,6 @@ class Release < Thor
           puts "Couldn't find ../os-client-tools/express.  Skipping build client gem step."
         end
 
-        # Build the rest-client
-        if File.exists?('../os-client-tools/rhc-rest')
-          inside(File.expand_path(File.dirname(File.expand_path(__FILE__)) + "/../../os-client-tools/rhc-rest")) do
-            unless run('rake build', :verbose => options.verbose?)
-              puts "ERROR - client gem building failed"
-              exit 1
-            end
-          end
-          puts "Done"
-        else
-          puts "Couldn't find ../os-client-tools/rhc-rest.  Skipping build rhc-rest gem step."
-        end
-
       end
 
       puts "Syncing RPMs to repo..."
