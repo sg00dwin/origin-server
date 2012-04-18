@@ -2,7 +2,7 @@
 
 Summary:   StickShift common cartridge components
 Name:      stickshift-abstract
-Version:   0.9.2
+Version:   0.9.3
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   ASL 2.0
@@ -56,6 +56,16 @@ rm -rf $RPM_BUILD_ROOT
 %post
 
 %changelog
+* Wed Apr 18 2012 Adam Miller <admiller@redhat.com> 0.9.3-1
+- 1) removing cucumber gem dependency from express broker. 2) moved ruby
+  related cucumber tests back into express. 3) fixed issue with broker
+  Gemfile.lock file where ruby-prof was not specified in the dependency
+  section. 4) copying cucumber features into li-test/tests automatically within
+  the devenv script. 5) fixing ctl status script that used ps to list running
+  processes to specify the user. 6) fixed tidy.sh script to not display error
+  on fedora stickshift. (abhgupta@redhat.com)
+- Fixes to run tests on OSS code (kraman@gmail.com)
+
 * Thu Apr 12 2012 Mike McGrath <mmcgrath@redhat.com> 0.9.2-1
 - release bump for tag uniqueness (mmcgrath@redhat.com)
 
