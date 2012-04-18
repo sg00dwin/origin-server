@@ -136,7 +136,7 @@ module OpenShift
         elsif package =~ DRUPAL_REGEX
           dir_name = $1
           current_package = "drupal6-openshift-#{dir_name}"
-          current_sync_dir = "drupal6-openshift-#{dir_name}"
+          current_sync_dir = "drupal/drupal6-openshift-#{dir_name}"
         elsif package =~ /---------------------/
           if current_package
             update_sync_history(current_package, current_package_contents, current_sync_dir, sync_dirs)
