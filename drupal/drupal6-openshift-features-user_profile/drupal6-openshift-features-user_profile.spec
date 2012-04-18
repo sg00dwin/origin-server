@@ -5,7 +5,7 @@
 %global modname             user_profile
 
 Name:    drupal%{drupal_release}-openshift-features-%{modname}
-Version: 1.0.1
+Version: 1.0.2
 Release: 1%{?dist}
 Summary: Openshift Red Hat Custom User Profile Feature for Drupal6
 Group:   Applications/Publishing
@@ -41,6 +41,9 @@ rm -rf $RPM_BUILD_ROOT
 %{drupal_modules}/%{modname}
 
 %changelog
+* Wed Apr 18 2012 Dan McPherson <dmcphers@redhat.com> 1.0.2-1
+- new package built with tito
+
 * Mon Apr 16 2012 Anderson Silva <ansilva@redhat.com> - 1.0.1-1
 - update version 
 
