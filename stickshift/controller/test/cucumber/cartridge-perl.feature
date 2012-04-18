@@ -2,8 +2,6 @@
 @node
 Feature: PERL Application
 
-  # runcon -u ?? -r system_r -t libra_initrc_t
-
   Scenario: Create Delete one PERL Application
     Given an accepted node
     And a new guest account

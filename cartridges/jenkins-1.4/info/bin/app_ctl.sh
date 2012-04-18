@@ -115,7 +115,7 @@ case "$1" in
             echo "Application '${OPENSHIFT_GEAR_NAME}' is either stopped or inaccessible"
             exit 0
         fi
-        print_running_processes
+        print_user_running_processes `id -u`
         exit 0
     ;;
 esac

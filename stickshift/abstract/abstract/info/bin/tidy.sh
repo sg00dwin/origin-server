@@ -18,7 +18,10 @@ client_message "Emptying log dir: ${OPENSHIFT_LOG_DIR}"
 rm -rf ${OPENSHIFT_LOG_DIR}* ${OPENSHIFT_LOG_DIR}.[^.]*
 
 client_message "Emptying tmp dir: ${OPENSHIFT_TMP_DIR}"
-rm -rf ${OPENSHIFT_TMP_DIR}* ${OPENSHIFT_TMP_DIR}.[^.]*
+rm -rf ${OPENSHIFT_TMP_DIR}* ${OPENSHIFT_TMP_DIR}.[^.]* 2>/dev/null
+if [ $? -eq 1 ]; then
+    client_message "Failed to empty tmp dir: ${OPENSHIFT_TMP_DIR}"
+fi
 
 if [ -d ${OPENSHIFT_GEAR_DIR}tmp/ ]
 then

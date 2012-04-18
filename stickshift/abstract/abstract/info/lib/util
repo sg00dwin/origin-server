@@ -424,11 +424,20 @@ function translate_env_vars {
   done
 }
 
-function print_running_processes {
+function print_all_running_processes {
     echo ""
     echo "Running Processes:"
     echo ""
     ps -eFCvx
+    echo ""
+}
+
+function print_user_running_processes {
+    myuserid=$1
+    echo ""
+    echo "Running Processes:"
+    echo ""
+    ps -FCvx -U ${myuserid}
     echo ""
 }
 

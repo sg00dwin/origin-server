@@ -9,28 +9,12 @@ module CommandHelper
     $logger.info("Running: #{cmd}")
 
     exit_code = -1
-    output = ""
-    pid, stdin, stdout, stderr = nil, nil, nil, nil    
+    output = nil
 
     # Don't let a command run more than 5 minutes
     Timeout::timeout(500) do
-      Bundler.with_clean_env {
-              pid, stdin, stdout, stderr = Open4::popen4("#{cmd} 2>&1")
-              stdin.close
-              ignored, status = Process::waitpid2 pid
-              exit_code = status.exitstatus
-      }
-    end
-
-    # Do this to avoid cartridges that might hold open stdout
-    begin
-      Timeout::timeout(5) do
-        while (line = stdout.gets)
-          output << line
-        end
-      end
-    rescue Timeout::Error
-      $logger.debug("WARNING - stdout read timed out")
+      output = `#{cmd} 2>&1`
+      exit_code = $?.exitstatus
     end
 
     $logger.error("(#{$$}): Execution failed #{cmd} with exit_code: #{exit_code.to_s} and output:\n #{output}") if exit_code != 0
@@ -42,28 +26,12 @@ module CommandHelper
     $logger.info("Running: #{cmd}")
 
     exit_code = -1
-    output = ""
-    pid, stdin, stdout, stderr = nil, nil, nil, nil
+    output = nil
 
     # Don't let a command run more than 5 minutes
     Timeout::timeout(500) do
-      Bundler.with_clean_env {
-              pid, stdin, stdout, stderr = Open4::popen4("#{cmd} 2>&1")
-              stdin.close
-              ignored, status = Process::waitpid2 pid
-              exit_code = status.exitstatus
-      }
-    end
-
-    # Do this to avoid cartridges that might hold open stdout
-    begin
-      Timeout::timeout(5) do
-        while (line = stdout.gets)
-          output << line
-        end
-      end
-    rescue Timeout::Error
-      $logger.debug("WARNING - stdout read timed out")
+      output = `#{cmd} 2>&1`
+      exit_code = $?.exitstatus
     end
 
     $logger.debug("Output:\n#{output}")

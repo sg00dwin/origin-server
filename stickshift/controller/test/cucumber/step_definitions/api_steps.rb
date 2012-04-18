@@ -1,8 +1,7 @@
 require 'rubygems'
 require 'rest_client'
 require 'nokogiri'
-#require '/var/www/stickshift/broker/lib/express/broker/dns_service'
-require '/var/www/stickshift/broker/config/environment'
+#require '/var/www/stickshift/broker/config/environment'
 require 'logger'
 
 @random = nil
@@ -11,18 +10,8 @@ Before do
 end
 
 After do |scenario|
-  dns_service = StickShift::DnsService.instance
-
   domains = ["cucumber#{@random}", "cucumberX#{@random}", "cucumberY#{@random}", "app-cucumber#{@random}"]
-  domains.each do |domain|
-    yes = dns_service.namespace_available?(domain)
-    if !yes
-    #puts "deregistering #{domain}"
-    dns_service.deregister_namespace(domain)
-    end
-  end
-  dns_service.publish
-  dns_service.close
+  remove_dns_entries(domains)
   @random = nil
 end
 
