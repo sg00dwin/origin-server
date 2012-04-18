@@ -9,7 +9,7 @@ RUBYGEM_GEARCHANGER_MCOLLECTIVE_REGEX = /^rubygem-gearchanger-m-collective-plugi
 CARTRIDGE_REGEX = /^(cartridge-[\w-]+\d+[\.\d+]*)-\d+\.\d+\.\d+-/
 RHC_REGEX = /^rhc-([\w-]+)-\d+/
 DEVENV_REGEX = /^rhc-devenv-\d+/
-DRUPAL_REGEX = /^drupal6-openshift-([\w]+)-\d+/
+DRUPAL_REGEX = /^drupal6-openshift-([\w-]+)-\d+/
 
 module OpenShift
   module Tito
@@ -74,7 +74,7 @@ module OpenShift
           elsif file.start_with?('gearchanger/m-collective/')
             package_name = "rubygem-gearchanger-m-collective-plugin"
           elsif file.start_with?('drupal')
-            package_name = "drupal6-openshift-#{name}"
+            package_name = name
           else
             package_name = "rhc-#{name}"
           end
