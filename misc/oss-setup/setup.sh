@@ -1,189 +1,191 @@
 #!/bin/bash
 
+repodir="~"
+
 yum install -y vim git wget tito ruby rubygems java-1.6.0-openjdk jpackage-utils java-1.6.0-openjdk-devel emacs fedora-kickstarts livecd-tools tig
 
-if [ ! -d ~/li ]; then
-  git clone git:/srv/git/li.git ~/li
+if [ ! -d ${repodir}/li ]; then
+  git clone git:/srv/git/li.git ${repodir}/li
 else
-  pushd ~/li
+  pushd ${repodir}/li
   git stash
   git pull --rebase
   git stash pop
   popd
 fi
 
-if [ ! -d ~/jenkins-cloud ]; then
-  git clone git:/srv/git/jenkins-cloud.git ~/jenkins-cloud
+if [ ! -d ${repodir}/jenkins-cloud ]; then
+  git clone git:/srv/git/jenkins-cloud.git ${repodir}/jenkins-cloud
 fi
 
-if [ ! -d ~/os-client-tools ]; then
-  git clone git://github.com/openshift/os-client-tools.git ~/os-client-tools
+if [ ! -d ${repodir}/os-client-tools ]; then
+  git clone git://github.com/openshift/os-client-tools.git ${repodir}/os-client-tools
 fi
 
-mkdir -p ~/brew
+mkdir -p ${repodir}/brew
 mkdir -p /tmp/tito
-pushd ~/brew
+pushd ${repodir}/brew
 
 FOO=`yum search 'rubygem-mongo' 2>&1 | grep "No match"`
 if [ "xx" != "x${FOO}x" ] ; then
   echo "Downloading rubygem(bson) from BREW [https://brewweb.devel.redhat.com/buildinfo?buildID=194826]"
-  wget -O ~/brew/rubygem-bson-1.5.2-1.el6_2.noarch.rpm http://download.devel.redhat.com/brewroot/packages/rubygem-bson/1.5.2/1.el6_2/noarch/rubygem-bson-1.5.2-1.el6_2.noarch.rpm
-  yum install -y ~/brew/rubygem-bson-1.5.2-1.el6_2.noarch.rpm
+  wget -O ${repodir}/brew/rubygem-bson-1.5.2-1.el6_2.noarch.rpm http://download.devel.redhat.com/brewroot/packages/rubygem-bson/1.5.2/1.el6_2/noarch/rubygem-bson-1.5.2-1.el6_2.noarch.rpm
+  yum install -y ${repodir}/brew/rubygem-bson-1.5.2-1.el6_2.noarch.rpm
 
   echo "Downloading rubygem(mongo) from BREW [https://brewweb.devel.redhat.com/buildinfo?buildID=194827]"
-  wget -O ~/brew/rubygem-mongo-1.5.2-2.el6_2.noarch.rpm http://download.devel.redhat.com/brewroot/packages/rubygem-mongo/1.5.2/2.el6_2/noarch/rubygem-mongo-1.5.2-2.el6_2.noarch.rpm
-  yum install -y ~/brew/rubygem-mongo-1.5.2-2.el6_2.noarch.rpm
+  wget -O ${repodir}/brew/rubygem-mongo-1.5.2-2.el6_2.noarch.rpm http://download.devel.redhat.com/brewroot/packages/rubygem-mongo/1.5.2/2.el6_2/noarch/rubygem-mongo-1.5.2-2.el6_2.noarch.rpm
+  yum install -y ${repodir}/brew/rubygem-mongo-1.5.2-2.el6_2.noarch.rpm
 fi
 
 FOO=`yum search 'rubygem-bson_ext' 2>&1 | grep "No match"`
 if [ "xx" != "x${FOO}x" ] ; then
   echo "Downloading rubygem(bson_ext) from BREW [https://brewweb.devel.redhat.com/buildinfo?buildID=196476]"
-  wget -O ~/brew/rubygem-bson_ext-1.5.2-1.el6_2.x86_64.rpm http://download.devel.redhat.com/brewroot/packages/rubygem-bson_ext/1.5.2/1.el6_2/x86_64/rubygem-bson_ext-1.5.2-1.el6_2.x86_64.rpm
-  yum install -y ~/brew/rubygem-bson_ext-1.5.2-1.el6_2.x86_64.rpm
+  wget -O ${repodir}/brew/rubygem-bson_ext-1.5.2-1.el6_2.x86_64.rpm http://download.devel.redhat.com/brewroot/packages/rubygem-bson_ext/1.5.2/1.el6_2/x86_64/rubygem-bson_ext-1.5.2-1.el6_2.x86_64.rpm
+  yum install -y ${repodir}/brew/rubygem-bson_ext-1.5.2-1.el6_2.x86_64.rpm
 fi
 
 FOO=`yum search 'rubygem-thread-dump' 2>&1 | grep "No match"`
 if [ "xx" != "x${FOO}x" ] ; then
   echo "Downloading rubygem(thread-dump) from BREW [https://brewweb.devel.redhat.com/buildinfo?buildID=196395]"
-  wget -O ~/brew/rubygem-thread-dump-0.0.5-88.noarch.rpm http://download.devel.redhat.com/brewroot/packages/rubygem-thread-dump/0.0.5/88/noarch/rubygem-thread-dump-0.0.5-88.noarch.rpm
-  yum install -y ~/brew/rubygem-thread-dump-0.0.5-88.noarch.rpm
+  wget -O ${repodir}/brew/rubygem-thread-dump-0.0.5-88.noarch.rpm http://download.devel.redhat.com/brewroot/packages/rubygem-thread-dump/0.0.5/88/noarch/rubygem-thread-dump-0.0.5-88.noarch.rpm
+  yum install -y ${repodir}/brew/rubygem-thread-dump-0.0.5-88.noarch.rpm
 fi
 
 FOO=`yum search 'jboss-as7' 2>&1 | grep "No match"`
 if [ "xx" != "x${FOO}x" ] ; then
   echo "Downloading jboss-as7 from BREW [https://brewweb.devel.redhat.com/buildinfo?buildID=200847]"
-  wget -O ~/brew/jboss-as7-7.1.0.Final-5.noarch.rpm http://download.devel.redhat.com/brewroot/packages/jboss-as7/7.1.0.Final/5/noarch/jboss-as7-7.1.0.Final-5.noarch.rpm
-  yum install -y ~/brew/jboss-as7-7.1.0.Final-5.noarch.rpm
+  wget -O ${repodir}/brew/jboss-as7-7.1.0.Final-5.noarch.rpm http://download.devel.redhat.com/brewroot/packages/jboss-as7/7.1.0.Final/5/noarch/jboss-as7-7.1.0.Final-5.noarch.rpm
+  yum install -y ${repodir}/brew/jboss-as7-7.1.0.Final-5.noarch.rpm
 fi
 
 FOO=`yum search 'jboss-as7-modules' 2>&1 | grep "No match"`
 if [ "xx" != "x${FOO}x" ] ; then
   echo "Downloading jboss-as7-modules from BREW [https://brewweb.devel.redhat.com/buildinfo?buildID=200849]"
-  wget -O ~/brew/jboss-as7-modules-7.1.0.Final-2.noarch.rpm http://download.devel.redhat.com/brewroot/packages/jboss-as7-modules/7.1.0.Final/2/noarch/jboss-as7-modules-7.1.0.Final-2.noarch.rpm
-  yum install -y ~/brew/jboss-as7-modules-7.1.0.Final-2.noarch.rpm
+  wget -O ${repodir}/brew/jboss-as7-modules-7.1.0.Final-2.noarch.rpm http://download.devel.redhat.com/brewroot/packages/jboss-as7-modules/7.1.0.Final/2/noarch/jboss-as7-modules-7.1.0.Final-2.noarch.rpm
+  yum install -y ${repodir}/brew/jboss-as7-modules-7.1.0.Final-2.noarch.rpm
 fi
 
 FOO=`yum search 'nodejs' 2>&1 | grep "No match"`
 if [ "xx" != "x${FOO}x" ] ; then
   echo "Downloading nodejs from BREW [https://brewweb.devel.redhat.com/buildinfo?buildID=200892]"
-  wget -O ~/brew/nodejs-0.6.11-1.el6_2.x86_64.rpm http://download.devel.redhat.com/brewroot/packages/nodejs/0.6.11/1.el6_2/x86_64/nodejs-0.6.11-1.el6_2.x86_64.rpm
-  yum install -y ~/brew/nodejs-0.6.11-1.el6_2.x86_64.rpm
+  wget -O ${repodir}/brew/nodejs-0.6.11-1.el6_2.x86_64.rpm http://download.devel.redhat.com/brewroot/packages/nodejs/0.6.11/1.el6_2/x86_64/nodejs-0.6.11-1.el6_2.x86_64.rpm
+  yum install -y ${repodir}/brew/nodejs-0.6.11-1.el6_2.x86_64.rpm
 fi
 
 FOO=`yum search 'nodejs-node-static' 2>&1 | grep "No match"`
 if [ "xx" != "x${FOO}x" ] ; then
   echo "Downloading nodejs-node-static from BREW [https://brewweb.devel.redhat.com/buildinfo?buildID=199176]"
-  wget -O ~/brew/nodejs-node-static-0.5.9-1.el6_2.noarch.rpm http://download.devel.redhat.com/brewroot/packages/nodejs-node-static/0.5.9/1.el6_2/noarch/nodejs-node-static-0.5.9-1.el6_2.noarch.rpm
-  yum install -y ~/brew/nodejs-node-static-0.5.9-1.el6_2.noarch.rpm
+  wget -O ${repodir}/brew/nodejs-node-static-0.5.9-1.el6_2.noarch.rpm http://download.devel.redhat.com/brewroot/packages/nodejs-node-static/0.5.9/1.el6_2/noarch/nodejs-node-static-0.5.9-1.el6_2.noarch.rpm
+  yum install -y ${repodir}/brew/nodejs-node-static-0.5.9-1.el6_2.noarch.rpm
 fi
 
 FOO=`yum search 'nodejs-async' 2>&1 | grep "No match"`
 if [ "xx" != "x${FOO}x" ] ; then
   echo "Downloading nodejs-async from BREW [https://brewweb.devel.redhat.com/buildinfo?buildID=199174]"
-  wget -O ~/brew/nodejs-async-0.1.16-1.el6_2.noarch.rpm http://download.devel.redhat.com/brewroot/packages/nodejs-async/0.1.16/1.el6_2/noarch/nodejs-async-0.1.16-1.el6_2.noarch.rpm
-  yum install -y ~/brew/nodejs-async-0.1.16-1.el6_2.noarch.rpm
+  wget -O ${repodir}/brew/nodejs-async-0.1.16-1.el6_2.noarch.rpm http://download.devel.redhat.com/brewroot/packages/nodejs-async/0.1.16/1.el6_2/noarch/nodejs-async-0.1.16-1.el6_2.noarch.rpm
+  yum install -y ${repodir}/brew/nodejs-async-0.1.16-1.el6_2.noarch.rpm
 fi
 
 FOO=`yum search 'nodejs-traverse' 2>&1 | grep "No match"`
 if [ "xx" != "x${FOO}x" ] ; then
   echo "Downloading nodejs-traverse from BREW [https://brewweb.devel.redhat.com/buildinfo?buildID=199042]"
-  wget -O ~/brew/nodejs-traverse-0.5.2-1.el6_2.noarch.rpm http://download.devel.redhat.com/brewroot/packages/nodejs-traverse/0.5.2/1.el6_2/noarch/nodejs-traverse-0.5.2-1.el6_2.noarch.rpm
-  yum install -y ~/brew/nodejs-traverse-0.5.2-1.el6_2.noarch.rpm
+  wget -O ${repodir}/brew/nodejs-traverse-0.5.2-1.el6_2.noarch.rpm http://download.devel.redhat.com/brewroot/packages/nodejs-traverse/0.5.2/1.el6_2/noarch/nodejs-traverse-0.5.2-1.el6_2.noarch.rpm
+  yum install -y ${repodir}/brew/nodejs-traverse-0.5.2-1.el6_2.noarch.rpm
 fi
 
 FOO=`yum search 'nodejs-hashish' 2>&1 | grep "No match"`
 if [ "xx" != "x${FOO}x" ] ; then
   echo "Downloading nodejs-hashish from BREW [https://brewweb.devel.redhat.com/buildinfo?buildID=199245]"
-  wget -O ~/brew/nodejs-hashish-0.0.4-2.el6_2.noarch.rpm http://download.devel.redhat.com/brewroot/packages/nodejs-hashish/0.0.4/2.el6_2/noarch/nodejs-hashish-0.0.4-2.el6_2.noarch.rpm
-  yum install -y ~/brew/nodejs-hashish-0.0.4-2.el6_2.noarch.rpm
+  wget -O ${repodir}/brew/nodejs-hashish-0.0.4-2.el6_2.noarch.rpm http://download.devel.redhat.com/brewroot/packages/nodejs-hashish/0.0.4/2.el6_2/noarch/nodejs-hashish-0.0.4-2.el6_2.noarch.rpm
+  yum install -y ${repodir}/brew/nodejs-hashish-0.0.4-2.el6_2.noarch.rpm
 fi
 
 FOO=`yum search 'nodejs-mysql' 2>&1 | grep "No match"`
 if [ "xx" != "x${FOO}x" ] ; then
   echo "Downloading nodejs-mysql from BREW [https://brewweb.devel.redhat.com/buildinfo?buildID=199238]"
-  wget -O ~/brew/nodejs-mysql-0.9.5-2.el6_2.noarch.rpm http://download.devel.redhat.com/brewroot/packages/nodejs-mysql/0.9.5/2.el6_2/noarch/nodejs-mysql-0.9.5-2.el6_2.noarch.rpm
-  yum install -y ~/brew/nodejs-mysql-0.9.5-2.el6_2.noarch.rpm
+  wget -O ${repodir}/brew/nodejs-mysql-0.9.5-2.el6_2.noarch.rpm http://download.devel.redhat.com/brewroot/packages/nodejs-mysql/0.9.5/2.el6_2/noarch/nodejs-mysql-0.9.5-2.el6_2.noarch.rpm
+  yum install -y ${repodir}/brew/nodejs-mysql-0.9.5-2.el6_2.noarch.rpm
 fi
 
 FOO=`yum search 'nodejs-mongodb' 2>&1 | grep "No match"`
 if [ "xx" != "x${FOO}x" ] ; then
   echo "Downloading nodejs-mongodb from BREW [https://brewweb.devel.redhat.com/buildinfo?buildID=199036]"
-  wget -O ~/brew/nodejs-mongodb-0.9.9.1-1.el6_2.noarch.rpm http://download.devel.redhat.com/brewroot/packages/nodejs-mongodb/0.9.9.1/1.el6_2/noarch/nodejs-mongodb-0.9.9.1-1.el6_2.noarch.rpm
-  yum install -y ~/brew/nodejs-mongodb-0.9.9.1-1.el6_2.noarch.rpm
+  wget -O ${repodir}/brew/nodejs-mongodb-0.9.9.1-1.el6_2.noarch.rpm http://download.devel.redhat.com/brewroot/packages/nodejs-mongodb/0.9.9.1/1.el6_2/noarch/nodejs-mongodb-0.9.9.1-1.el6_2.noarch.rpm
+  yum install -y ${repodir}/brew/nodejs-mongodb-0.9.9.1-1.el6_2.noarch.rpm
 fi
 
 FOO=`yum search 'nodejs-generic-pool' 2>&1 | grep "No match"`
 if [ "xx" != "x${FOO}x" ] ; then
   echo "Downloading nodejs-generic-pool from BREW [https://brewweb.devel.redhat.com/buildinfo?buildID=199034]"
-  wget -O ~/brew/nodejs-generic-pool-1.0.9-1.el6_2.noarch.rpm http://download.devel.redhat.com/brewroot/packages/nodejs-generic-pool/1.0.9/1.el6_2/noarch/nodejs-generic-pool-1.0.9-1.el6_2.noarch.rpm
-  yum install -y ~/brew/nodejs-generic-pool-1.0.9-1.el6_2.noarch.rpm
+  wget -O ${repodir}/brew/nodejs-generic-pool-1.0.9-1.el6_2.noarch.rpm http://download.devel.redhat.com/brewroot/packages/nodejs-generic-pool/1.0.9/1.el6_2/noarch/nodejs-generic-pool-1.0.9-1.el6_2.noarch.rpm
+  yum install -y ${repodir}/brew/nodejs-generic-pool-1.0.9-1.el6_2.noarch.rpm
 fi
 
 FOO=`yum search 'nodejs-pg' 2>&1 | grep "No match"`
 if [ "xx" != "x${FOO}x" ] ; then
   echo "Downloading nodejs-pg from BREW [https://brewweb.devel.redhat.com/buildinfo?buildID=199041]"
-  wget -O ~/brew/nodejs-pg-0.6.10-1.el6_2.x86_64.rpm http://download.devel.redhat.com/brewroot/packages/nodejs-pg/0.6.10/1.el6_2/x86_64/nodejs-pg-0.6.10-1.el6_2.x86_64.rpm
-  yum install -y ~/brew/nodejs-pg-0.6.10-1.el6_2.x86_64.rpm
+  wget -O ${repodir}/brew/nodejs-pg-0.6.10-1.el6_2.x86_64.rpm http://download.devel.redhat.com/brewroot/packages/nodejs-pg/0.6.10/1.el6_2/x86_64/nodejs-pg-0.6.10-1.el6_2.x86_64.rpm
+  yum install -y ${repodir}/brew/nodejs-pg-0.6.10-1.el6_2.x86_64.rpm
 fi
 
 FOO=`yum search 'nodejs-qs' 2>&1 | grep "No match"`
 if [ "xx" != "x${FOO}x" ] ; then
   echo "Downloading nodejs-qs from BREW [https://brewweb.devel.redhat.com/buildinfo?buildID=199179]"
-  wget -O ~/brew/nodejs-qs-0.4.2-1.el6_2.noarch.rpm http://download.devel.redhat.com/brewroot/packages/nodejs-qs/0.4.2/1.el6_2/noarch/nodejs-qs-0.4.2-1.el6_2.noarch.rpm
-  yum install -y ~/brew/nodejs-qs-0.4.2-1.el6_2.noarch.rpm
+  wget -O ${repodir}/brew/nodejs-qs-0.4.2-1.el6_2.noarch.rpm http://download.devel.redhat.com/brewroot/packages/nodejs-qs/0.4.2/1.el6_2/noarch/nodejs-qs-0.4.2-1.el6_2.noarch.rpm
+  yum install -y ${repodir}/brew/nodejs-qs-0.4.2-1.el6_2.noarch.rpm
 fi
 
 FOO=`yum search 'nodejs-mime' 2>&1 | grep "No match"`
 if [ "xx" != "x${FOO}x" ] ; then
   echo "Downloading nodejs-mime from BREW [https://brewweb.devel.redhat.com/buildinfo?buildID=199175]"
-  wget -O ~/brew/nodejs-mime-1.2.5-1.el6_2.noarch.rpm  http://download.devel.redhat.com/brewroot/packages/nodejs-mime/1.2.5/1.el6_2/noarch/nodejs-mime-1.2.5-1.el6_2.noarch.rpm
-  yum install -y ~/brew/nodejs-mime-1.2.5-1.el6_2.noarch.rpm
+  wget -O ${repodir}/brew/nodejs-mime-1.2.5-1.el6_2.noarch.rpm  http://download.devel.redhat.com/brewroot/packages/nodejs-mime/1.2.5/1.el6_2/noarch/nodejs-mime-1.2.5-1.el6_2.noarch.rpm
+  yum install -y ${repodir}/brew/nodejs-mime-1.2.5-1.el6_2.noarch.rpm
 fi
 
 FOO=`yum search 'nodejs-formidable' 2>&1 | grep "No match"`
 if [ "xx" != "x${FOO}x" ] ; then
   echo "Downloading nodejs-formidable from BREW [https://brewweb.devel.redhat.com/buildinfo?buildID=199177]"
-  wget -O ~/brew/nodejs-formidable-1.0.9-1.el6_2.noarch.rpm http://download.devel.redhat.com/brewroot/packages/nodejs-formidable/1.0.9/1.el6_2/noarch/nodejs-formidable-1.0.9-1.el6_2.noarch.rpm
-  yum install -y ~/brew/nodejs-formidable-1.0.9-1.el6_2.noarch.rpm
+  wget -O ${repodir}/brew/nodejs-formidable-1.0.9-1.el6_2.noarch.rpm http://download.devel.redhat.com/brewroot/packages/nodejs-formidable/1.0.9/1.el6_2/noarch/nodejs-formidable-1.0.9-1.el6_2.noarch.rpm
+  yum install -y ${repodir}/brew/nodejs-formidable-1.0.9-1.el6_2.noarch.rpm
 fi
 
 FOO=`yum search 'nodejs-mkdirp' 2>&1 | grep "No match"`
 if [ "xx" != "x${FOO}x" ] ; then
   echo "Downloading nodejs-mkdirp from BREW [https://brewweb.devel.redhat.com/buildinfo?buildID=200894]"
-  wget -O ~/brew/nodejs-mkdirp-0.3.0-2.el6_2.noarch.rpm http://download.devel.redhat.com/brewroot/packages/nodejs-mkdirp/0.3.0/2.el6_2/noarch/nodejs-mkdirp-0.3.0-2.el6_2.noarch.rpm
-  yum install -y ~/brew/nodejs-mkdirp-0.3.0-2.el6_2.noarch.rpm
+  wget -O ${repodir}/brew/nodejs-mkdirp-0.3.0-2.el6_2.noarch.rpm http://download.devel.redhat.com/brewroot/packages/nodejs-mkdirp/0.3.0/2.el6_2/noarch/nodejs-mkdirp-0.3.0-2.el6_2.noarch.rpm
+  yum install -y ${repodir}/brew/nodejs-mkdirp-0.3.0-2.el6_2.noarch.rpm
 fi
 
 FOO=`yum search 'nodejs-connect' 2>&1 | grep "No match"`
 if [ "xx" != "x${FOO}x" ] ; then
   echo "Downloading nodejs-connect from BREW [https://brewweb.devel.redhat.com/buildinfo?buildID=199172]"
-  wget -O ~/brew/nodejs-connect-1.8.5-1.el6_2.noarch.rpm http://download.devel.redhat.com/brewroot/packages/nodejs-connect/1.8.5/1.el6_2/noarch/nodejs-connect-1.8.5-1.el6_2.noarch.rpm
-  yum install -y ~/brew/nodejs-connect-1.8.5-1.el6_2.noarch.rpm
+  wget -O ${repodir}/brew/nodejs-connect-1.8.5-1.el6_2.noarch.rpm http://download.devel.redhat.com/brewroot/packages/nodejs-connect/1.8.5/1.el6_2/noarch/nodejs-connect-1.8.5-1.el6_2.noarch.rpm
+  yum install -y ${repodir}/brew/nodejs-connect-1.8.5-1.el6_2.noarch.rpm
 fi
 
 FOO=`yum search 'nodejs-express' 2>&1 | grep "No match"`
 if [ "xx" != "x${FOO}x" ] ; then
   echo "Downloading nodejs-express from BREW [https://brewweb.devel.redhat.com/buildinfo?buildID=199239]"
-  wget -O ~/brew/nodejs-express-2.5.8-2.el6_2.noarch.rpm http://download.devel.redhat.com/brewroot/packages/nodejs-express/2.5.8/2.el6_2/noarch/nodejs-express-2.5.8-2.el6_2.noarch.rpm
-  yum install -y ~/brew/nodejs-express-2.5.8-2.el6_2.noarch.rpm
+  wget -O ${repodir}/brew/nodejs-express-2.5.8-2.el6_2.noarch.rpm http://download.devel.redhat.com/brewroot/packages/nodejs-express/2.5.8/2.el6_2/noarch/nodejs-express-2.5.8-2.el6_2.noarch.rpm
+  yum install -y ${repodir}/brew/nodejs-express-2.5.8-2.el6_2.noarch.rpm
 fi
 
 FOO=`yum search 'mms-agent' 2>&1 | grep "No match"`
 if [ "xx" != "x${FOO}x" ] ; then
   echo "Downloading mms-agent from BREW [https://brewweb.devel.redhat.com/buildinfo?buildID=192484]"
-  wget -O ~/brew/mms-agent-1.3.7-3.el6_2.noarch.rpm http://download.devel.redhat.com/brewroot/packages/mms-agent/1.3.7/3.el6_2/noarch/mms-agent-1.3.7-3.el6_2.noarch.rpm
-  yum install -y ~/brew/mms-agent-1.3.7-3.el6_2.noarch.rpm
+  wget -O ${repodir}/brew/mms-agent-1.3.7-3.el6_2.noarch.rpm http://download.devel.redhat.com/brewroot/packages/mms-agent/1.3.7/3.el6_2/noarch/mms-agent-1.3.7-3.el6_2.noarch.rpm
+  yum install -y ${repodir}/brew/mms-agent-1.3.7-3.el6_2.noarch.rpm
 fi
 
-if [ ! -e ~/brew/jenkins-1.409.3-1.2.noarch.rpm ] ; then
+if [ ! -e ${repodir}/brew/jenkins-1.409.3-1.2.noarch.rpm ] ; then
   echo "Downloading jenkins from BREW [https://brewweb.devel.redhat.com/buildinfo?buildID=186859]"
-  wget -O ~/brew/jenkins-1.409.3-1.2.noarch.rpm http://download.devel.redhat.com/brewroot/packages/jenkins/1.409.3/1.2/noarch/jenkins-1.409.3-1.2.noarch.rpm
-  yum install -y ~/brew/jenkins-1.409.3-1.2.noarch.rpm
+  wget -O ${repodir}/brew/jenkins-1.409.3-1.2.noarch.rpm http://download.devel.redhat.com/brewroot/packages/jenkins/1.409.3/1.2/noarch/jenkins-1.409.3-1.2.noarch.rpm
+  yum install -y ${repodir}/brew/jenkins-1.409.3-1.2.noarch.rpm
 fi
 
-if [ ! -e ~/brew/jenkins-plugin-openshift-0.5.13-0.el6_2.x86_64.rpm ] ; then
+if [ ! -e ${repodir}/brew/jenkins-plugin-openshift-0.5.13-0.el6_2.x86_64.rpm ] ; then
   echo "Downloading jenkins-plugin-openshift from BREW [https://brewweb.devel.redhat.com/buildinfo?buildID=209034]"
-  wget -O ~/brew/jenkins-plugin-openshift-0.5.13-0.el6_2.x86_64.rpm http://download.devel.redhat.com/brewroot/packages/jenkins-plugin-openshift/0.5.13/0.el6_2/x86_64/jenkins-plugin-openshift-0.5.13-0.el6_2.x86_64.rpm
+  wget -O ${repodir}/brew/jenkins-plugin-openshift-0.5.13-0.el6_2.x86_64.rpm http://download.devel.redhat.com/brewroot/packages/jenkins-plugin-openshift/0.5.13/0.el6_2/x86_64/jenkins-plugin-openshift-0.5.13-0.el6_2.x86_64.rpm
 fi
 
 FOO=`yum search 'mod_passenger' 2>&1 | grep "No match"`
