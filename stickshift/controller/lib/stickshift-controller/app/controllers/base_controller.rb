@@ -1,5 +1,8 @@
 class BaseController < ActionController::Base
   respond_to :json, :xml
+  API_VERSION = "1.0"
+  SUPPORTED_API_VERSIONS = ["1.0"]
+  
   def show
     links = {
       "API" => Link.new("API entry point", "GET", URI::join(get_url, "api")),
@@ -60,5 +63,26 @@ class BaseController < ActionController::Base
     url = URI::join(request.url, "/broker/rest/")
     #Rails.logger.debug "Request URL: #{url.to_s}"
     return url.to_s
+  end
+  
+  def check_version
+    request.headers.each do |key, value|
+      Rails.logger.debug "Key: #{key} value:#{value}"
+    end 
+    $requested_api_version = request.headers['X_API_VERSION'] 
+    if not $requested_api_version
+      $requested_api_version = API_VERSION
+    end
+    
+    if not SUPPORTED_API_VERSIONS.include?$requested_api_version
+      $requested_api_version = API_VERSION
+      @reply = RestReply.new(:not_acceptable)
+      @reply.messages.push(message = Message.new(:error, "Requested API version #{$requested_api_version} is not supported.  Supported versions are #{SUPPORTED_API_VERSIONS.join(",")}"))
+      respond_with(@reply) do |format|
+        format.xml { render :xml => @reply, :status => @reply.status }
+        format.json { render :json => @reply, :status => @reply.status }
+      end
+      return
+    end
   end
 end

@@ -1,6 +1,6 @@
 class ApplicationTemplateController < BaseController
   respond_to :xml, :json
-  before_filter :authenticate
+  before_filter :authenticate, :check_version
   
   def index
     templates = ApplicationTemplate.find_all.map{|t| RestApplicationTemplate.new(t, get_url)}
