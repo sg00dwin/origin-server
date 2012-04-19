@@ -1,19 +1,18 @@
 <?php
 $do = og_comment_perms_do();
 ?>
-
 <div class="comment<?php print ($comment->new) ? ' comment-new' : ''; print ' '. $status; print ' '. $zebra; ?>">
 
-  <table>
-  <tr>
-    <td class="comment-author">
-      <?php print views_embed_view('user_profile_box', 'block_2', $comment->uid); ?>
-    </td>
-    <td class="comment-content">
 
-      <?php /* if ($comment->new) : ?>
-        <span class="new pull-right"><?php print drupal_ucfirst($new) ?></span>
-      <?php endif;*/ ?>
+    <div class="comment-author clearfix">
+      <?php print views_embed_view('user_profile_box', 'block_2', $comment->uid); ?>
+      
+    </div>
+    
+    <div class="comment-content">
+      <?php if ($comment->new) : ?>
+        <span class="new"><?php print drupal_ucfirst($new) ?></span>
+      <?php endif; ?>
 
       <?php //print theme('user_picture', $comment); ?>
 
@@ -36,8 +35,6 @@ $do = og_comment_perms_do();
           <?php print $links ?>
         <?php endif; ?>
       <?php endif; ?>
-    </td>
-  </tr>
-  </table>
+		</div>
   
 </div>

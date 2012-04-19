@@ -58,8 +58,7 @@
 //echo '</pre>';
 $do = og_comment_perms_do();
 ?>
-<div id="node-<?php print $node->nid; ?>" class="node node-og-group-post<?php if ($sticky) { print ' sticky'; } ?><?php if (!$status) { print ' node-unpublished'; } ?>">
-  <div class="thread-header">Thread</div>
+<div id="node-<?php print $node->nid; ?>" class="thread node node-og-group-post<?php if ($sticky) { print ' sticky'; } ?><?php if (!$status) { print ' node-unpublished'; } ?>">
 
   <?php if ($forum) { ?>
     <ul class="forum-navigation-links">
@@ -68,27 +67,30 @@ $do = og_comment_perms_do();
     </ul><?php
   } ?>
 
-  <h2><a href="<?php print $node_url ?>" title="<?php print $title ?>"><?php print $title ?></a></h2>
-  
-  <?php print theme('user_picture', $node); ?>
+<div class="clearfix" id="thread-intro">
+	<?php print theme('user_picture', $node); ?>
 
-  <div class="meta">
+  <h2><?php print $title ?></h2>
+  
+
+  <div class="meta thread-author">
   <?php if ($submitted): ?>
     <div class="submitted">
       <?php
-      print 'Started by ' . theme('username', $node) . ' on ' . format_date($created, $type='custom', $format = 'F j, Y');
+      print '<span>by <strong>' . theme('username', $node) . '</strong> on </span>' . format_date($created, $type='custom', $format = 'F j, Y');
       ?>
     </div>
   <?php endif; ?>
-  
+
   <?php print views_embed_view('user_profile_box', 'block_3', $node->uid); ?>
 
   <?php if ($terms): ?>
     <div class="terms terms-inline"><?php print $terms ?></div>
   <?php endif;?>
   </div>
+</div><!-- /thread-intro -->
 
-  <div class="content">
+  <div id="thread-text" class="content">
     <?php print $content ?>
   </div>
   <?php if ($do->perm == 'post'): ?>
