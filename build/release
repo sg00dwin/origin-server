@@ -37,9 +37,37 @@ class Release < Thor
         version = /(Version: )(.*)/.match(File.read("stickshift/common/stickshift-common.spec"))[2].strip
         nv = next_version(version)
         run("/bin/sed -i 's,stickshift-common (.*,stickshift-common (#{nv}),' broker/Gemfile.lock", :verbose => verbose)
-        run("/bin/sed -i 's,stickshift-common (.*,stickshift-common (#{nv}),' stickshift/controller/Gemfile.lock", :verbose => verbose)
+        #run("/bin/sed -i 's,stickshift-common (.*,stickshift-common (#{nv}),' stickshift/controller/Gemfile.lock", :verbose => verbose)
         run("/bin/sed -i 's,stickshift-common (.*,stickshift-common (#{nv}),' stickshift/broker/Gemfile.lock", :verbose => verbose)
         run("/bin/sed -i 's,stickshift-common (.*,stickshift-common (#{nv}),' stickshift/node/Gemfile.lock", :verbose => verbose)
+        gem_updates = true
+      end
+      
+      if build_dirs.include?("crankcase/mongo")
+        version = /(Version: )(.*)/.match(File.read("crankcase/mongo/crankcase-mongo-plugin.spec"))[2].strip
+        nv = next_version(version)
+        run("/bin/sed -i 's,crankcase-mongo-plugin (.*,crankcase-mongo-plugin (#{nv}),' broker/Gemfile.lock", :verbose => verbose)
+        gem_updates = true
+      end
+      
+      if build_dirs.include?("gearchanger/m-collective")
+        version = /(Version: )(.*)/.match(File.read("gearchanger/m-collective/gearchanger-m-collective-plugin.spec"))[2].strip
+        nv = next_version(version)
+        run("/bin/sed -i 's,gearchanger-m-collective-plugin (.*,gearchanger-m-collective-plugin (#{nv}),' broker/Gemfile.lock", :verbose => verbose)
+        gem_updates = true
+      end
+
+      if build_dirs.include?("swingshift/streamline")
+        version = /(Version: )(.*)/.match(File.read("swingshift/streamline/swingshift-streamline-plugin.spec"))[2].strip
+        nv = next_version(version)
+        run("/bin/sed -i 's,swingshift-streamline-plugin (.*,swingshift-streamline-plugin (#{nv}),' broker/Gemfile.lock", :verbose => verbose)
+        gem_updates = true
+      end
+      
+      if build_dirs.include?("uplift/dynect")
+        version = /(Version: )(.*)/.match(File.read("uplift/dynect/uplift-dynect-plugin.spec"))[2].strip
+        nv = next_version(version)
+        run("/bin/sed -i 's,uplift-dynect-plugin (.*,uplift-dynect-plugin (#{nv}),' broker/Gemfile.lock", :verbose => verbose)
         gem_updates = true
       end
       
@@ -47,7 +75,7 @@ class Release < Thor
         version = /(Version: )(.*)/.match(File.read("stickshift/controller/stickshift-controller.spec"))[2].strip
         nv = next_version(version)
         run("/bin/sed -i 's,stickshift-controller (.*,stickshift-controller (#{nv}),' broker/Gemfile.lock", :verbose => verbose)
-        run("/bin/sed -i 's,stickshift-controller (.*,stickshift-controller (#{nv}),' stickshift/controller/Gemfile.lock", :verbose => verbose)
+        #run("/bin/sed -i 's,stickshift-controller (.*,stickshift-controller (#{nv}),' stickshift/controller/Gemfile.lock", :verbose => verbose)
         run("/bin/sed -i 's,stickshift-controller (.*,stickshift-controller (#{nv}),' stickshift/broker/Gemfile.lock", :verbose => verbose)
         gem_updates = true
       end
@@ -63,7 +91,7 @@ class Release < Thor
       if gem_updates
         branch = get_branch
         if push_changes
-          run("git add broker/Gemfile.lock stickshift/controller/Gemfile.lock stickshift/node/Gemfile.lock stickshift/broker/Gemfile.lock; git commit -m 'Updating gem versions'; git push origin #{branch}", :verbose => options.verbose?)
+          run("git add broker/Gemfile.lock stickshift/node/Gemfile.lock stickshift/broker/Gemfile.lock; git commit -m 'Updating gem versions'; git push origin #{branch}", :verbose => options.verbose?)
           build_dirs = get_build_dirs
         end
       end

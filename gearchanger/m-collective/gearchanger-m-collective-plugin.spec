@@ -31,7 +31,7 @@ Provides:       ruby(%{gemname}) = %version
 GearChanger plugin for m-colective based node/gear manager
 
 %description -n ruby-%{gemname}
-GearChanger plugin for m-colective based node/gear manager
+GearChanger plugin for m-collective based node/gear manager
 
 %prep
 %setup -q

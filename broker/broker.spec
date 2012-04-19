@@ -3,7 +3,7 @@
 
 Summary:   Li broker components
 Name:      rhc-broker
-Version:   0.91.6
+Version:   0.91.7
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -98,6 +98,9 @@ rm -rf $RPM_BUILD_ROOT
 /bin/touch %{brokerdir}/log/production.log
 
 %changelog
+* Wed Apr 18 2012 Dan McPherson <dmcphers@redhat.com> 0.91.7-1
+- fixing controller Gemfile.lock in build/release (admiller@redhat.com)
+
 * Wed Apr 18 2012 Adam Miller <admiller@redhat.com> 0.91.6-1
 - 1) removing cucumber gem dependency from express broker. 2) moved ruby
   related cucumber tests back into express. 3) fixed issue with broker
