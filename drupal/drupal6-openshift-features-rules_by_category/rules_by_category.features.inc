@@ -22,7 +22,7 @@ function rules_by_category_rules_defaults() {
           '0' => array(
             '#type' => 'action',
             '#settings' => array(
-              'to' => 'kshaw@redhat.com',
+              'to' => 'kshaw@redhat.com,nduong@redhat.com',
               'from' => '',
               'subject' => 'Comment deleted from openshift community site',
               'message' => 'A user with the email [:global:user-mail] has deleted the following comment from node [node:nid] :
@@ -90,7 +90,7 @@ function rules_by_category_rules_defaults() {
             ),
             '#name' => 'rules_action_mail',
             '#settings' => array(
-              'to' => 'kshaw@redhat.com',
+              'to' => 'kshaw@redhat.com,nduong@redhat.com',
               'from' => '',
               'subject' => 'Node deleted from Openshift Community',
               'message' => 'Node [node:nid] with title [node:title] has been deleted from the Openshift community site by [user:mail]
