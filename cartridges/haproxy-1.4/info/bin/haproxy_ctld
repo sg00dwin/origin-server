@@ -6,11 +6,71 @@ require 'getoptlong'
 
 @check_interval=3
 
+CONFIG_VALIDATION_CHECK_INTERVAL=300
+HAPROXY_CONF_DIR=File.join(ENV['OPENSHIFT_HOMEDIR'], "haproxy-1.4", "conf")
+GEAR_REGISTRY_DB=File.join(HAPROXY_CONF_DIR, "gear-registry.db")
+HAPROXY_CONFIG=File.join(HAPROXY_CONF_DIR, "haproxy.cfg")
+
 class Haproxy_attr
     attr_accessor :pxname,:svname,:qcur,:qmax,:scur,:smax,:slim,:stot,:bin,:bout,:dreq,:dresp,:ereq,:econ,:eresp,:wretr,:wredis,:status,:weight,:act,:bck,:chkfail,:chkremove,:lastchg,:removetime,:qlimit,:pid,:iid,:sid,:throttle,:lbtot,:tracked,:type,:rate,:rate_lim,:rate_max,:check_status,:check_code,:check_duration,:hrsp_1xx,:hrsp_2xx,:hrsp_3xx,:hrsp_4xx,:hrsp_5xx,:hrsp_other,:hanafail,:req_rate,:req_rate_max,:req_tot,:cli_abrt,:srv_abrt
 
     def initialize(line)
         (@pxname,@svname,@qcur,@qmax,@scur,@smax,@slim,@stot,@bin,@bout,@dreq,@dresp,@ereq,@econ,@eresp,@wretr,@wredis,@status,@weight,@act,@bck,@chkfail,@chkremove,@lastchg,@removetime,@qlimit,@pid,@iid,@sid,@throttle,@lbtot,@tracked,@type,@rate,@rate_lim,@rate_max,@check_status,@check_code,@check_duration,@hrsp_1xx,@hrsp_2xx,@hrsp_3xx,@hrsp_4xx,@hrsp_5xx,@hrsp_other,@hanafail,@req_rate,@req_rate_max,@req_tot,@cli_abrt,@srv_abrt) = line.split(',')
+    end
+end
+
+class HaproxyUtils
+    @@log = Logger.new("#{ENV['OPENSHIFT_LOG_DIR']}/validate_config.log")
+    def self.parse_gear_registry_info(ginfo)
+        gbits = ginfo.split(";")
+        uuid = gbits[0].split("@")[0]
+        ipaddr = gbits[0].split("@")[1].split(":")[0]
+        return [gbits[1], uuid, ipaddr]
+    end
+
+    def self.get_gear_ipaddress(gdns, ipaddr)
+        gip = ipaddr
+        begin
+            s = TCPSocket.new gdns, 80
+            gip = s.addr.last
+        rescue Exception => ex
+            @@log.error("Unable to get gear's IP address for #{gdns}: #{ex.message} - using default #{ipaddr}")
+        end
+        return gip
+    end
+
+    def self.repair_configuration(gdns, uuid, oldipaddr, newipaddr, debug=nil)
+        return false  if oldipaddr == newipaddr  # Don't do unneccessary work.
+
+        @@log.debug("GEAR_INFO - repair: Repairing gear registry - #{gdns} now resolves to #{newipaddr} (was #{oldipaddr}) ...") if debug
+        cfgdata = File.readlines(GEAR_REGISTRY_DB)
+        cfgdata.map! {|line| line.gsub(/#{uuid}\@[0-9.]+:/, "#{uuid}@#{newipaddr}:") }
+        File.open(GEAR_REGISTRY_DB, "w") {|file| file.puts cfgdata}
+        @@log.info("GEAR_INFO - repair: Repaired gear registry - #{gdns} now resolves to #{newipaddr} (was #{oldipaddr})")
+
+        gear_name = gdns.split(".")[0]
+        @@log.debug("GEAR_INFO - validate: Repairing haproxy config - #{gdns} now resolves to #{newipaddr} (was #{oldipaddr}) ...") if debug
+        hacfgdata = File.readlines(HAPROXY_CONFIG)
+        hacfgdata.map! {|line| line.gsub(/\s*server\s*gear-#{gear_name}\s*[0-9.]+:/, "    server gear-#{gear_name} #{newipaddr}:") }
+        File.open(HAPROXY_CONFIG, "w") {|file| file.puts hacfgdata}
+        @@log.info("GEAR_INFO - repair: Repaired haproxy config - #{gdns} now resolves to #{newipaddr} (was #{oldipaddr})")
+        return true
+    end
+
+    def self.validate_configuration(debug=nil)
+        cfg=File.open(GEAR_REGISTRY_DB).read
+        cfg.gsub!(/\r\n?/, "\n")
+        cfg.each_line do |line|
+            gentry = line.delete("\n")
+            gdns, uuid, ipaddr = HaproxyUtils.parse_gear_registry_info(gentry)
+            gearip = HaproxyUtils.get_gear_ipaddress(gdns, ipaddr)
+
+            @@log.debug("GEAR_INFO - validate: Verifying gear #{gdns} resolves to #{ipaddr} for uuid=#{uuid} ... ") if debug
+            if ipaddr != gearip
+                @@log.info("GEAR_INFO - validate: Repairing configuration to use IP address #{gearip} for gear #{gdns} ...")
+                HaproxyUtils.repair_configuration(gdns, uuid, ipaddr, gearip)
+            end
+        end
     end
 end
 
@@ -163,7 +223,6 @@ class Haproxy
         end
     end
 
-
     def stats()
         @status
     end
@@ -228,8 +287,13 @@ elsif opt['down']
 end
 
 ha=Haproxy.new("/tmp/stats")
+last_cfg_check_time=0
 while true
     ha.refresh()
     ha.check_capacity(opt['debug'])
     sleep @check_interval
+    if (Time.now - last_cfg_check_time).to_i > CONFIG_VALIDATION_CHECK_INTERVAL
+        last_cfg_check_time = Time.now
+        HaproxyUtils.validate_configuration()
+    end
 end
