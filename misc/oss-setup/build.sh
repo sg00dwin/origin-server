@@ -1,38 +1,75 @@
-#!/bin/bash
+#!/bin/bash -x
 
-repodir="~"
+control_c()
+{
+  echo -en "\n*** Exiting ***\n"
+  exit $?
+}
+ 
+# trap keyboard interrupt (control-c)
+trap control_c SIGINT
 
-sudo yum remove -y stickshift-* rubygem-stickshift* cartridge-*
-rm -rf /usr/libexec/stickshift/cartridges/* /var/www/stickshift/broker/*
-cd ${repodir}/
+repodir=$HOME
+prod_build=0
+build_only=0
+mkdir -p ${repodir}/brew ${repodir}/tito
+cd ${repodir}
 
 cd ${repodir}/li
 find * | grep "\._" | xargs rm -f
-rm -rf /tmp/tito/*
+
+if [ "x${prod_build}x" == "x0x" ] ; then
+  test_build=" --test ";
+else
+  test_build=""
+fi
+
+rm -rf ${repodir}/tito/*
+cd ${repodir}/os-client-tools/rhc-rest
+sudo tito build $test_build --srpm --output=${repodir}/tito
 
 cd ${repodir}/os-client-tools/express
-tito build --test --srpm --output=$HOME/tito
+sudo tito build $test_build --srpm --output=${repodir}/tito
 
-cd ~/li
-find * | grep "\._" | xargs rm -f
+cd ${repodir}/li/stickshift
+for i in `ls`; do cd $i && sudo tito build $test_build --srpm --output=${repodir}/tito ; cd - ; done
 
-rm -rf ~/tito/*
-cd ~/li/stickshift
-for i in `ls`; do cd $i && sudo tito build --test --srpm --output=$HOME/tito ; cd - ; done
+cd ${repodir}/li/uplift/bind        && sudo tito build $test_build --srpm --output=${repodir}/tito ; cd -
+cd ${repodir}/li/swingshift/mongo   && sudo tito build $test_build --srpm --output=${repodir}/tito ; cd -
+cd ${repodir}/li/gearchanger/oddjob && sudo tito build $test_build --srpm --output=${repodir}/tito ; cd -
+cd ${repodir}/li/crankcase/mongo    && sudo tito build $test_build --srpm --output=${repodir}/tito ; cd -
 
-cd ~/li/uplift/bind        && sudo tito build --test --srpm --output=$HOME/tito ; cd -
-cd ~/li/swingshift/mongo   && sudo tito build --test --srpm --output=$HOME/tito ; cd -
-cd ~/li/gearchanger/oddjob && sudo tito build --test --srpm --output=$HOME/tito ; cd -
-cd ~/li/crankcase/mongo    && sudo tito build --test --srpm --output=$HOME/tito ; cd -
+cd ${repodir}/li/cartridges
+for i in 10gen-mms-agent-0.1 cron-1.4 diy-0.1 jbossas-7 jenkins-1.4 jenkins-client-1.4 mongodb-2.0 mysql-5.1 nodejs-0.6 perl-5.10 php-5.3 phpmyadmin-3.4 python-3.2 ruby-1.1 ; do 
+  cd ${repodir}/li/cartridges/$i; 
+  sudo tito build $test_build --srpm --output=${repodir}/tito;
+done
 
-cd ~/li/cartridges
-for i in 10gen-mms-agent-0.1 cron-1.4 diy-0.1 jbossas-7 jenkins-1.4 jenkins-client-1.4 mongodb-2.0 mysql-5.1 nodejs-0.6 perl-5.10 php-5.3 phpmyadmin-3.4 python-3.2 ruby-1.1 ; do cd ~/li/cartridges/$i ; sudo tito build --test --srpm --output=$HOME/tito ; done
+sudo bash -c "cat <<EOF > /etc/yum.repos.d/ss.repo
+[SS]
+name = ss
+baseurl = file:///${repodir}/tito
+enabled = 1
 
-rm -f ~/tito/*.tar.gz
-mock -r fedora-16-x86_64 --resultdir=$HOME/tito/rpms/"%(dist)s"/"%(target_arch)s"/ ~/tito/*.src.rpm
-createrepo $HOME/tito/rpms/fc16/x86_64
+[SSBrew]
+name = ssb
+baseurl = file:///${repodir}/brew
+enabled = 1
+EOF"
 
-sudo yum -y --skip-broken install //home/kraman/tito/rpms/fc16/x86_64/rhc-*.rpm  //home/kraman/tito/rpms/fc16/x86_64/rubygem-*.rpm //home/kraman/tito/rpms/fc16/x86_64/stickshift-broker*.rpm //home/kraman/tito/rpms/fc16/x86_64/stickshift-abstract*.rpm //home/kraman/tito/rpms/fc16/x86_64/cartridge-* ${repodir}/brew/jenkins-plugin-openshift-*.rpm 
+rm -f ${repodir}/tito/*.tar.gz
+mock -r fedora-16-x86_64 --resultdir=${repodir}/tito/rpms/"%(dist)s"/"%(target_arch)s"/ ${repodir}/tito/*.src.rpm
+createrepo ${repodir}/tito/rpms/fc16/x86_64
+
+if [ "x${build_only}x" == "x1x" ] ; then
+  exit 0;
+fi
+
+sudo yum remove -y stickshift-* rubygem-stickshift* cartridge-*
+rm -rf /usr/libexec/stickshift/cartridges/* /var/www/stickshift/broker/*
+sudo yum -y --skip-broken install ${repodir}/tito/rpms/fc16/x86_64/rhc-*.rpm              ${repodir}/tito/rpms/fc16/x86_64/rubygem-*.rpm \
+                                  ${repodir}/tito/rpms/fc16/x86_64/stickshift-broker*.rpm ${repodir}/tito/rpms/fc16/x86_64/stickshift-abstract*.rpm \
+                                  ${repodir}/tito/rpms/fc16/x86_64/cartridge-*            ${repodir}/brew/jenkins-plugin-openshift-*.rpm 
 
 echo "setup bind-plugin selinux policy"
 sudo mkdir -p /usr/share/selinux/packages/rubygem-uplift-bind-plugin
@@ -64,19 +101,19 @@ end
 EOF'
 
 sudo cp -n /usr/lib/ruby/gems/1.8/gems/uplift-bind-plugin-*/doc/examples/Kexample.com.* /var/named
-KEY=$( grep Key: /var/named/Kexample.com.*.private | cut -d' ' -f 2 )
+KEY=$( sudo bash -c "grep Key: /var/named/Kexample.com.*.private" | cut -d' ' -f 2 )
 sudo bash -c "echo \"require File.expand_path('../plugin-config/uplift-bind-plugin.rb', __FILE__)\" >> /var/www/stickshift/broker/config/environments/development.rb"
-sudo bash -c 'cat <<EOF > /var/www/stickshift/broker/config/environments/plugin-config/uplift-bind-plugin.rb
+sudo bash -c "cat <<EOF > /var/www/stickshift/broker/config/environments/plugin-config/uplift-bind-plugin.rb
 Broker::Application.configure do
   config.dns = {
-    :server => "127.0.0.1",
+    :server => '127.0.0.1',
     :port => 53,
-    :keyname => "example.com",
-    :keyvalue => "${KEY}",
-    :zone => "example.com"
+    :keyname => 'example.com',
+    :keyvalue => '${KEY}',
+    :zone => 'example.com'
   }
 end
-EOF'
+EOF"
 
 sudo bash -c "echo \"require File.expand_path('../plugin-config/crankcase-mongo-plugin.rb', __FILE__)\" >> /var/www/stickshift/broker/config/environments/development.rb"
 sudo bash -c 'cat <<EOF > /var/www/stickshift/broker/config/environments/plugin-config/crankcase-mongo-plugin.rb
