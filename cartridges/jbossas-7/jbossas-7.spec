@@ -95,8 +95,18 @@ ln -s %{cartridgedir}/../abstract/info/bin/sync_gears.sh %{buildroot}%{cartridge
 # - remove the previous version if it's no longer valid
 # - install the new version with an increased priority
 # - set the new version as the default to be safe
+
+%if 0%{?rhel}
 alternatives --install /etc/alternatives/maven-3.0 maven-3.0 /usr/share/java/apache-maven-3.0.3 100
 alternatives --set maven-3.0 /usr/share/java/apache-maven-3.0.3
+%endif
+
+%if 0%{?fedora}
+alternatives --remove maven-3.0 /usr/share/java/apache-maven-3.0.3
+alternatives --install /etc/alternatives/maven-3.0 maven-3.0 /usr/share/maven 102
+alternatives --set maven-3.0 /usr/share/maven
+%endif
+
 alternatives --remove jbossas-7.0 /opt/jboss-as-7.0.2.Final
 alternatives --install /etc/alternatives/jbossas-7 jbossas-7 /opt/jboss-as-7.1.0.Final 102
 alternatives --set jbossas-7 /opt/jboss-as-7.1.0.Final
