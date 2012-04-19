@@ -77,6 +77,7 @@ drupal_modules = {
   ['redhat_sso']  = 'modules/custom/redhat_sso',
   ['redhat_frontpage']  = 'modules/custom/redhat_frontpage',
   ['redhat_events']  = 'modules/custom/redhat_events',
+  ['redhat_acquia']  = 'modules/custom/redhat_acquia',
   ['features-forums']  = 'modules/features/forums',
   ['features-community_wiki']  = 'modules/features/community_wiki',
   ['features-blogs']  = 'modules/features/blogs',
