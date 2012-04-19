@@ -88,20 +88,24 @@ module Uplift
     end
 
     def deregister_application(app_name, namespace)
-      # delete the CNAME record for the application in the domain
-      fqdn = "#{app_name}-#{namespace}.#{@domain_suffix}"
-
-      # We know we only have one CNAME per app, so look it up
-      # We need it for the delete
-      # should be an error if there's not exactly one answer
-      current = dns.query(fqdn, 'CNAME')
-      cnamevalue = current.answer[0].rdata.to_s        
-
-      # enable updates with key
-      dns.tsig = @keyname, @keyvalue
-      update = Dnsruby::Update.new(@zone)
-      update_response = update.delete(fqdn, 'CNAME', cnamevalue)
-      send_response = dns.send_message(update)
+      begin
+        # delete the CNAME record for the application in the domain
+        fqdn = "#{app_name}-#{namespace}.#{@domain_suffix}"
+  
+        # We know we only have one CNAME per app, so look it up
+        # We need it for the delete
+        # should be an error if there's not exactly one answer
+        current = dns.query(fqdn, 'CNAME')
+        cnamevalue = current.answer[0].rdata.to_s        
+  
+        # enable updates with key
+        dns.tsig = @keyname, @keyvalue
+        update = Dnsruby::Update.new(@zone)
+        update_response = update.delete(fqdn, 'CNAME', cnamevalue)
+        send_response = dns.send_message(update)
+      rescue Dnsruby::NXDomain
+        logger.debug "DEBUG: BIND: Could not find CNAME for #{fqdn} to delete"
+      end
     end
 
     def publish
