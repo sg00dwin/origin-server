@@ -4,15 +4,16 @@ require 'logger'
 #
 # Define global variables
 #
-$domain = "dev.rhcloud.com"
 $temp = "/tmp/rhc"
 
 $client_config = "/etc/openshift/express.conf"
 
-# 
-# Get the domain from the rails application configuration
-#
-$domain = Rails.application.config.ss[:domain_suffix]
+ 
+# Use the domain from the rails application configuration
+$domain = "example.com"
+
+# Set the dns helper module
+$dns_helper_module = File.dirname(__FILE__) + "/dns_helper.rb"
 
 # oddjob service name and selinux context (specify nil if no alternate context is being used)
 $gear_update_plugin_service = "oddjobd"
@@ -24,7 +25,7 @@ $selinux_type = nil
 $registration_required = true
 $user_register_script = "/usr/bin/ss-register-user"
 
-#Alternate domain suffix for use in alias commands
+# Alternatie domain suffix for use in alias commands
 $alias_domain = "foobar.com"
 
 #

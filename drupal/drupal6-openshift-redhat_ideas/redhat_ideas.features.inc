@@ -8,7 +8,7 @@ function redhat_ideas_node_info() {
     'idea' => array(
       'name' => t('Idea'),
       'module' => 'features',
-      'description' => t('Used to crowd source openshift features. '),
+      'description' => t('Used to crowd source OpenShift features. '),
       'has_title' => '1',
       'title_label' => t('Title'),
       'has_body' => '1',

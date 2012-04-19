@@ -33,7 +33,7 @@
   %h2 From the command line
   %p
     If you'd like to use our powerful command line client, the steps below will get you installed 
-    and running in just minutes.
+    and running in minutes.
 
 %section#install_client_tools
   %h3 1. Install the client tools
@@ -56,9 +56,13 @@
                 $ sudo mv ~/Downloads/openshift.repo /etc/yum.repos.d/
               %p Replace '~/Downloads/openshift.repo' with the location to which you saved the repo file.
             %li
+              %p.larger (RHEL 6.2 only) If you are using RHN Classic, you may need to add the RHEL 6.2 Optional Channel in order to install the 'rubygems' package.
+              %pre
+                $ sudo rhn-channel --add --channel=rhel-x86_64-server-optional-6
+            %li
               %p.larger Install the client tools:
               %pre $ sudo yum install rhc
-              
+
               %hr
               %p
                 The <code>sudo</code> command will only work if your user is listed in the sudoers file. For more information on setting up sudo, see <a href="http://www.gratisoft.us/sudo/sudo.html">http://www.gratisoft.us/sudo/sudo.html</a>.

@@ -41,23 +41,12 @@ GEM
     crankcase-mongo-plugin (0.8.3)
       json
       stickshift-controller
-    cucumber (0.9.0)
-      builder (~> 2.1.2)
-      diff-lcs (~> 1.1.2)
-      gherkin (~> 2.2.2)
-      json (>= 1.1.9)
-      term-ansicolor (~> 1.0.5)
-    diff-lcs (1.1.2)
     dnsruby (1.53)
     erubis (2.6.6)
       abstract
     gearchanger-m-collective-plugin (0.8.2)
       json
       stickshift-controller
-    gherkin (2.2.4)
-      json (>= 1.1.9)
-      term-ansicolor (~> 1.0.5)
-      trollop (~> 1.15)
     httparty (0.7.4)
       crack
     i18n (0.5.0)
@@ -98,13 +87,14 @@ GEM
     rdoc (3.7)
     regin (0.3.7)
     rest-client (1.6.1)
+    ruby-prof (0.10.7)
     state_machine (1.1.2)
     stickshift-common (0.8.1)
       activemodel
       json
       mongo
       rack
-    stickshift-controller (0.9.2)
+    stickshift-controller (0.9.3)
       activesupport
       dnsruby
       json
@@ -115,12 +105,10 @@ GEM
     swingshift-streamline-plugin (0.8.2)
       json
       stickshift-controller
-    term-ansicolor (1.0.7)
     thor (0.14.6)
     thread-dump (0.0.5)
     treetop (1.4.10)
       polyglot
-    trollop (1.16.2)
     tzinfo (0.3.26)
     uplift-dynect-plugin (0.8.2)
       json
@@ -134,7 +122,6 @@ PLATFORMS
 DEPENDENCIES
   aws-sdk
   crankcase-mongo-plugin
-  cucumber
   gearchanger-m-collective-plugin
   json
   mocha
@@ -145,6 +132,7 @@ DEPENDENCIES
   rails (~> 3.0.10)
   regin
   rest-client
+  ruby-prof
   stickshift-controller
   stomp
   swingshift-streamline-plugin

@@ -1,5 +1,5 @@
 name = "Community Wiki"
-description = "A wiki suitable for community usage"
+description = "A wiki suitable for OpenShift community usage"
 core = "6.x"
 package = "Features"
 version = "6.x-1.0"

@@ -3,7 +3,7 @@
 
 Summary:   Provides embedded haproxy-1.4 support
 Name:      cartridge-haproxy-1.4
-Version:   0.8.2
+Version:   0.8.3
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   ASL 2.0
@@ -91,6 +91,16 @@ rm -rf %{buildroot}
 %doc %{cartridgedir}/LICENSE
 
 %changelog
+* Wed Apr 18 2012 Adam Miller <admiller@redhat.com> 0.8.3-1
+- 1) removing cucumber gem dependency from express broker. 2) moved ruby
+  related cucumber tests back into express. 3) fixed issue with broker
+  Gemfile.lock file where ruby-prof was not specified in the dependency
+  section. 4) copying cucumber features into li-test/tests automatically within
+  the devenv script. 5) fixing ctl status script that used ps to list running
+  processes to specify the user. 6) fixed tidy.sh script to not display error
+  on fedora stickshift. (abhgupta@redhat.com)
+- bug 811509 (bdecoste@gmail.com)
+
 * Thu Apr 12 2012 Mike McGrath <mmcgrath@redhat.com> 0.8.2-1
 - release bump for tag uniqueness (mmcgrath@redhat.com)
 

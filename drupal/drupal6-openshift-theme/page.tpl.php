@@ -43,9 +43,10 @@
         <div class="container">
           <div class="pull-left"><a href="http://makara.nurturehq.com/makara/newsletter_signup.html">Sign up for the newsletter</a></div>
           <div class="pull-right login">
+            <a title="Track open issues on the OpenShift status page" style="display:none;" id="outage" class="btn btn-small btn-warning" href="/app/status">Status</a>
             <?php
             global $user;
-
+            
             if ( $user->uid ) {
               $logout_url = variable_get('redhat_sso_logout_url', $base_url . '/logout');
               $logout_url .= '?then=' . urlencode(drupal_get_path_alias(request_uri()));
@@ -267,6 +268,7 @@
     height="1" width="1" border="0" alt="" /></noscript><!--/DO NOT REMOVE/-->
     <!-- End SiteCatalyst code version: H.23.3. -->
     </div>
+    <script src="/app/status/status.js?id=outage" type="text/javascript"></script>
   </body>
 <?php print $closure; ?>
 </script>

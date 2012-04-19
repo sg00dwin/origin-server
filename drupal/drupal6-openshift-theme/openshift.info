@@ -1,6 +1,6 @@
 ; $Id: $
 name = OpenShift
-description = Theme for the OpenShift community
+description = Theme for OpenShift
 version = 3.0
 core = 6.x
 engine = phptemplate

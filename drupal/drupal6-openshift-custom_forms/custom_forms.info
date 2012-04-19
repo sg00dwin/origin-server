@@ -1,6 +1,6 @@
 ; $Id
 name = Custom Forms
-description = Alters some forms for use on the Red Hat Cloud Community
+description = Alters some forms for use on the Openshift Community
 core = 6.x
 package = Custom
 version = VERSION

@@ -36,7 +36,7 @@ function forums_context_default_contexts() {
   $context->disabled = FALSE; /* Edit this to true to make a default context disabled initially */
   $context->api_version = 3;
   $context->name = 'express-title-bar';
-  $context->description = 'Displays the Express title bar if the user is in that section';
+  $context->description = 'Displays the OpenShift title bar if the user is in that section';
   $context->tag = '';
   $context->conditions = array(
     'path' => array(

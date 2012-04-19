@@ -1,6 +1,33 @@
-; $Id
-name = Redhat Acquia
-description = Various hooks and overrides for cloud forums
-core = 6.x
-package = Custom
-version = VERSION
+<?php
+
+function redhat_acquia_menu() {
+  $items['admin/reports/open-statistics'] = array(
+    'title' => 'OpenShift Statistics',
+    'page callback' => redhat_acquia_statistics_page_view,
+    'access callback' => user_access('access administration pages'),
+    'type' => MENU_NORMAL_ITEM,
+  );
+  return $items;
+}
+
+function redhat_acquia_statistics_page_view() {
+  $forums = db_result(db_query('SELECT COUNT(nid) FROM {node} WHERE type = "%s"', 'discussion'));
+  $blogs = db_result(db_query('SELECT COUNT(nid) FROM {node} WHERE type = "%s"', 'blog'));
+  $kbs = db_result(db_query('SELECT COUNT(nid) FROM {node} WHERE type = "%s"', 'knowledge_base'));
+  $videos = db_result(db_query('SELECT COUNT(nid) FROM {node} WHERE type = "%s"', 'video'));
+  $comments = db_result(db_query('SELECT COUNT(cid) FROM {comments}'));
+  $users = db_result(db_query('SELECT COUNT(uid) FROM {users}'));
+  
+  $list = array(
+    "Forum Posts: $forums",
+    "Comments: $comments",
+    "Knowledge Base Items: $kbs",
+    "Videos: $videos",
+    "Blogs: $blogs",
+    "Users: $users",
+  );
+  
+  $statistics = theme_item_list($list);
+  
+  return $statistics;
+}

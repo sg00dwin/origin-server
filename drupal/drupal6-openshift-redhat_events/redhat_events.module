@@ -6,7 +6,7 @@ function redhat_events_menu() {
     'access callback' => TRUE,
     'type' => MENU_NORMAL_ITEM,
   );
-  
+
   return $items;
 }
 
@@ -20,21 +20,21 @@ function redhat_events_page(){
   }
   if ($sort != 'country'){
     $content .= "<li><a href='events?sort=country'>View By Country</a></li>";
-  }  
+  }
   if ($sort != 'date'){
     $content .= "<li><a href='events'>View By Date</a></li>";
   }
   if ($sort != 'calendar'){
     $content .= "<li><a href='calendar'>Calendar View</a></li>";
-  }  
+  }
   $content .= "</ul>";
-  
+
   if ($sort == 'country'){
     $content .= views_embed_view('event_view', 'block_2');
   }
   elseif ($sort == 'date'){
     $content .= views_embed_view('event_view', 'block_1');
-  }  
+  }
   return $content;
 
 }

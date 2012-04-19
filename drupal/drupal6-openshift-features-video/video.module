@@ -6,7 +6,7 @@ function video_menu() {
     'access callback' => TRUE,
     'type' => MENU_NORMAL_ITEM,
   );
-  
+
   return $items;
 }
 
@@ -15,8 +15,8 @@ function redhat_videos_page(){
     $content .= views_embed_view('nodes_by_category', 'page_5');
   } else {
     $content .= views_embed_view('nodes_by_category', 'page_2');
-  }  
+  }
   return $content;
-} 
+}
 
 include_once('video.features.inc');

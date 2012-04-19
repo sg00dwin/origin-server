@@ -1,1 +1,1 @@
-export OPENSHIFT_GEAR_DIR='misc/watchman/ce75b31cef35409291df123261aa97c4'
+export OPENSHIFT_GEAR_DIR='/root/li-test/tests/misc/watchman/ce75b31cef35409291df123261aa97c4'

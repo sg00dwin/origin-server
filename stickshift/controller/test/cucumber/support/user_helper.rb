@@ -1,4 +1,4 @@
-require '/var/www/stickshift/broker/config/environment'
+#require '/var/www/stickshift/broker/config/environment'
 
 module UserHelper
   #
@@ -15,7 +15,8 @@ module UserHelper
       chars = ("1".."9").to_a
       namespace = "unit" + Array.new(8, '').collect{chars[rand(chars.size)]}.join
       login = "cucumber-test+#{namespace}@example.com"
-      has_txt = !StickShift::DnsService.instance.namespace_available?(namespace)
+      #has_txt = !StickShift::DnsService.instance.namespace_available?(namespace)
+      has_txt = namespace_available?(namespace)
 
       unless has_txt or reserved_usernames.index(login)
         result[:login] = login
@@ -29,14 +30,7 @@ module UserHelper
 
   def register_user(login, password)
     command = "#{$user_register_script} -u #{login} -p #{password}"
-  
-    pid, stdin, stdout, stderr = nil, nil, nil, nil
-    Bundler.with_clean_env {
-            pid, stdin, stdout, stderr = Open4::popen4(command)
-            stdin.close
-            ignored, status = Process::waitpid2 pid
-            exitcode = status.exitstatus
-        }
+    run command
   end
 
 end

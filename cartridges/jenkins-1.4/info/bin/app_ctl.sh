@@ -98,7 +98,7 @@ case "$1" in
     reload)
         if isrunning
         then
-            if ! out=$(jenkins_reload 2>&1)
+            if ! out=$(jenkins_reload "${JENKINS_USERNAME}" "${JENKINS_PASSWORD}" "${JENKINS_URL}" 2>&1)
             then
                 # An error occurred reloading jenkins configuration
                 echo "Could not reload Jenkins server '${OPENSHIFT_GEAR_NAME}' configuration:" 1>&2
@@ -115,7 +115,7 @@ case "$1" in
             echo "Application '${OPENSHIFT_GEAR_NAME}' is either stopped or inaccessible"
             exit 0
         fi
-        print_running_processes
+        print_user_running_processes `id -u`
         exit 0
     ;;
 esac

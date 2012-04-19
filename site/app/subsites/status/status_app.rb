@@ -11,6 +11,7 @@ class StatusApp < Sinatra::Base
   configure do
     set :views, File.join(STATUS_APP_ROOT,'views')
     set :synced, false
+    set :sessions, false
   end
 
   before do
@@ -48,40 +49,81 @@ class StatusApp < Sinatra::Base
     @open = Issue.is_open
     status = header
     content_type 'text/javascript'
-    cache_control 'no-cache'
-    :javascript
-    <<-eos 
-      var div = "                               \
-        <div class='status #{status[:class]}'>  \
-          <a href='/app/status'>                \
-    #{status[:message]}                 \
-          </a> \
-        </div>" ;
-      div = div.replace(/^\s+|\s+$/g, '');
-      div = div.replace(/\s+/g, ' ');
-      document.write(div);
-    eos
+    expires 60*5, :public
+    if params[:id].present?
+      if params[:always] or @open.present?
+        :javascript
+        <<-EOS
+          var el = document.getElementById('#{escape_javascript(params[:id])}');
+          if (el) {
+            el.innerHTML = '#{escape_javascript(status[:message])}';
+            el.className += ' #{escape_javascript(status[:class])}';
+            el.style.display = '';
+          }
+        EOS
+      end
+    else
+      :javascript
+      <<-EOS 
+        var div = "                               \
+          <div class='status #{status[:class]}'>  \
+            <a href='/app/status'>                \
+      #{status[:message]}                 \
+            </a> \
+          </div>" ;
+        div = div.replace(/^\s+|\s+$/g, '');
+        div = div.replace(/\s+/g, ' ');
+        document.write(div);
+      EOS
+    end
   end
 
+  # copied from ActionView::Helpers::JavascriptHelper
+  JS_ESCAPE_MAP = {
+    '\\' => '\\\\',
+    '</' => '<\/',
+    "\r\n" => '\n',
+    "\n" => '\n',
+    "\r" => '\n',
+    '"' => '\\"',
+    "'" => "\\'"
+  } unless defined? JS_ESCAPE_MAP #unattractive trap for redefinition
+
   helpers do
+    include Rack::Utils
+
+    if "ruby".encoding_aware?
+      JS_ESCAPE_MAP["\342\200\250".force_encoding('UTF-8').encode!] = '&#x2028;'
+    else
+      JS_ESCAPE_MAP["\342\200\250"] = '&#x2028;'
+    end
+    def escape_javascript(javascript)
+      if javascript
+        result = javascript.gsub(/(\\|<\/|\r\n|\342\200\250|[\n\r"'])/u) {|match| JS_ESCAPE_MAP[match] }
+        javascript.html_safe? ? result.html_safe : result
+      else
+        ''
+      end
+    end
+
     def header
       case @open.length
       when 0
         {
           :class => '',
-          :message => 'No known issues',
+          :message => 'No open issues',
           :short => 'OK'
         }
       when 1
         {
           :class => 'error',
-          :message => '1 known issue',
+          :message => '1 open issue',
           :short => '1'
         }
       else
         {
           :class => 'error',
-          :message => "#{@open.length} known issues",
+          :message => "#{@open.length} open issues",
           :short => @open.length
         }
       end
