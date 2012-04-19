@@ -61,7 +61,7 @@
   <builders>
     <hudson.tasks.Shell>
       <command># Build and install HEAD for the integration tests
-build/devenv launch libra_check_${BUILD_NUMBER} --verifier
+build/devenv launch libra_check_${BUILD_NUMBER} --verifier --instance_type m1.large
 build/devenv sync libra_check_${BUILD_NUMBER} --tag --clean_metadata
 
 # Run the &apos;verification&apos; tests to test higher level components

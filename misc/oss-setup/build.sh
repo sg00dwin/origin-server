@@ -1,36 +1,38 @@
 #!/bin/bash
 
+repodir="~"
+
 yum remove -y stickshift-* rubygem-stickshift* cartridge-*
 rm -rf /usr/libexec/stickshift/cartridges/* /var/www/stickshift/broker/*
-cd ~/
+cd ${repodir}/
 
-cd ~/li
+cd ${repodir}/li
 find * | grep "\._" | xargs rm -f
 rm -rf /tmp/tito/*
 
-cd ~/os-client-tools/express
+cd ${repodir}/os-client-tools/express
 tito build --test --rpm > /dev/null
 
-cd ~/li/stickshift
+cd ${repodir}/li/stickshift
 for i in `ls`; do cd $i && tito build --test --rpm >/dev/null ; cd - ; done
 
-cd ~/li/uplift
+cd ${repodir}/li/uplift
 for i in `ls`; do cd $i && tito build --test --rpm >/dev/null ; cd - ; done
 
-cd ~/li/swingshift
+cd ${repodir}/li/swingshift
 for i in `ls`; do cd $i && tito build --test --rpm >/dev/null ; cd - ; done
 
-cd ~/li/crankcase
+cd ${repodir}/li/crankcase
 for i in `ls`; do cd $i && tito build --test --rpm >/dev/null ; cd - ; done
 
-cd ~/li/gearchanger
+cd ${repodir}/li/gearchanger
 for i in `ls`; do cd $i && tito build --test --rpm >/dev/null ; cd - ; done
 
-cd ~/li/cartridges
-for i in `ls` ; do cd ~/li/cartridges/$i ; tito build --test --rpm >/dev/null ; done
+cd ${repodir}/li/cartridges
+for i in `ls` ; do cd ${repodir}/li/cartridges/$i ; tito build --test --rpm >/dev/null ; done
 createrepo /tmp/tito/noarch
 
-yum -y --skip-broken install /tmp/tito/noarch/rhc-*.rpm  /tmp/tito/noarch/rubygem-*.rpm /tmp/tito/noarch/stickshift-broker*.rpm /tmp/tito/noarch/stickshift-abstract*.rpm /tmp/tito/noarch/cartridge-* ~/brew/jenkins-plugin-openshift-*.rpm 
+yum -y --skip-broken install /tmp/tito/noarch/rhc-*.rpm  /tmp/tito/noarch/rubygem-*.rpm /tmp/tito/noarch/stickshift-broker*.rpm /tmp/tito/noarch/stickshift-abstract*.rpm /tmp/tito/noarch/cartridge-* ${repodir}/brew/jenkins-plugin-openshift-*.rpm 
 
 echo "setup bind-plugin selinux policy"
 mkdir -p /usr/share/selinux/packages/rubygem-uplift-bind-plugin

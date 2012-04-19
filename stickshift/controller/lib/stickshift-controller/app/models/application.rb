@@ -953,20 +953,21 @@ Configure-Order: [\"proxy/#{framework}\", \"proxy/haproxy-1.4\"]
   end
   
   def update_namespace(new_ns, old_ns)
-    updated = false
+    updated = true
     begin
       result = self.container.update_namespace(self, self.framework, new_ns, old_ns)
       if result.is_a?(Array)
 # result is an Array of Gear when the domain is altered with a scalable app. There are no cart commands for a domain alter for scalable or non-scalable apps. So doing nothing here.
         result.each { |r|
 #          process_cartridge_commands(r.cart_commands)
-          updated = 0
+          updated = updated and (r.exitcode == 0)
         }
       else
-        process_cartridge_commands(result.cart_commands)
+        #process_cartridge_commands(result.cart_commands)
         updated = result.exitcode == 0
       end
     rescue Exception => e
+      updated = false
       Rails.logger.debug "Exception caught updating namespace #{e.message}"
       Rails.logger.debug "DEBUG: Exception caught updating namespace #{e.message}"
       Rails.logger.debug e.backtrace

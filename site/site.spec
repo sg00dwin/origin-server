@@ -3,7 +3,7 @@
 
 Summary:   Li site components
 Name:      rhc-site
-Version:   0.91.2
+Version:   0.91.3
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -117,6 +117,72 @@ rm -rf %{buildroot}
 /bin/touch %{sitedir}/log/production.log
 
 %changelog
+* Wed Apr 18 2012 Adam Miller <admiller@redhat.com> 0.91.3-1
+- Status app now causing warning on redefinition in test - hack around it
+  (ccoleman@redhat.com)
+- Bug 813616 - Instruct users about the optional RHEL 6.2 channel for getting
+  'rubygems' (ccoleman@redhat.com)
+- Bug 813613 (ccoleman@redhat.com)
+- Abstract out messaging and handle navbar bottom margin a bit cleaner
+  (ccoleman@redhat.com)
+- Fix domain controller failures, bonehead move. (ccoleman@redhat.com)
+- new console prototype pages for reference (sgoodwin@redhat.com)
+- Fixed image overflow at small sizes in product overview page.
+  (edirsh@redhat.com)
+- Update getting started page to be a "bit" prettier (ccoleman@redhat.com)
+- Merge branch 'master' into dev/clayton/community_urls (ccoleman@redhat.com)
+- Enable Jenkins as an app (ccoleman@redhat.com)
+- Fix fake_before_filter_test, add pending/error access request pages
+  (ccoleman@redhat.com)
+- Merge remote-tracking branch 'origin/master' into dev/fotios/login
+  (ccoleman@redhat.com)
+- Add GitHub link to footer (ccoleman@redhat.com)
+- Link the redhat image to https://www.redhat.com/ (ccoleman@redhat.com)
+- Enable the opensource and download controllers for production
+  (ccoleman@redhat.com)
+- First stab at new navigation / footer layout (ccoleman@redhat.com)
+- Remove old layout files (ccoleman@redhat.com)
+- Merge branch 'master' into dev/clayton/community_urls (ccoleman@redhat.com)
+- Fix two test changes (ccoleman@redhat.com)
+- Merged some test improvements made upstream (ccoleman@redhat.com)
+- Merge branch 'master' into dev/fotios/login (ccoleman@redhat.com)
+- Get terms controller test passing (ccoleman@redhat.com)
+- Center the signup terms to balance the page (ccoleman@redhat.com)
+- Move AccessDeniedException to an appropriate place, ensure it is autoloaded,
+  fix syntactical vagueness in unit test (ccoleman@redhat.com)
+- Minor reorganization (ccoleman@redhat.com)
+- Switch to a much cleaner recaptcha and give the promo code an extra few
+  pixels. (ccoleman@redhat.com)
+- Remove sso cookie reset from login page (ccoleman@redhat.com)
+- Make promo code suggestion simpler (ccoleman@redhat.com)
+- Simple pages are wasting too much vertical space on the header
+  (ccoleman@redhat.com)
+- Allow the community theme to return to the current location after logout
+  (ccoleman@redhat.com)
+- Allow streamline to be dynamically reloaded when it changes Fix logout flow
+  to use standard streamline config (ccoleman@redhat.com)
+- Updated test_helper.rb to match latest changes from master Merged
+  application_controller (ccoleman@redhat.com)
+- Automatic commit of package [rhc-site] release [0.90.6-1].
+  (mmcgrath@redhat.com)
+- Simplify some styles on the opensource page, correct some phone/tablet layout
+  issues. (ccoleman@redhat.com)
+- Attached images list removed from Community Wiki using CSS display none
+  (ffranz@redhat.com)
+- restrict opensource download routes to dev instance (johnp@redhat.com)
+- add all cart links to page (johnp@redhat.com)
+- Add timing and parent branch removal Better comments in the change section
+  Branch pruning and empty merge filtering Add password controller to
+  exclusion, begin tidying opensource.sh up for final status. Indicate how many
+  files will be preserved (ccoleman@redhat.com)
+- Create draft file for creating open source engine on console
+  (ccoleman@redhat.com)
+- Tweak headers down except on home page, change header to point to the
+  developers link. (ccoleman@redhat.com)
+- Update forum_list view with menu fix Make relative URLs work from menus Minor
+  CSS tweaks to community. (ccoleman@redhat.com)
+- Merged login changes (fotios@redhat.com)
+
 * Thu Apr 12 2012 Mike McGrath <mmcgrath@redhat.com> 0.91.2-1
 - release bump for tag uniqueness (mmcgrath@redhat.com)
 - Merge branch '0412dev' (sgoodwin@redhat.com)

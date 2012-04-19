@@ -10,6 +10,9 @@ $haproxy_config_format = "#{$haproxy_config} %s %s %s"
 $haproxy_deconfig = $haproxy_hooks + "/deconfigure"
 $haproxy_deconfig_format = "#{$haproxy_deconfig} %s %s %s"
 
+# Hack to ensure haproxy_ctld_daemon continues to work
+ENV['BUNDLE_GEMFILE'] = nil
+
 When /^I configure haproxy$/ do
   account_name = @account['accountname']
   namespace = @app['namespace']

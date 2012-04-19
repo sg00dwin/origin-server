@@ -2,7 +2,7 @@
 %define frameworkdir %{_libexecdir}/stickshift/cartridges/mysql-5.1
 
 Name: cartridge-mysql-5.1
-Version: 0.25.2
+Version: 0.25.3
 Release: 1%{?dist}
 Summary: Provides embedded mysql support
 
@@ -73,6 +73,11 @@ rm -rf $RPM_BUILD_ROOT
 %doc %{cartridgedir}/LICENSE
 
 %changelog
+* Wed Apr 18 2012 Adam Miller <admiller@redhat.com> 0.25.3-1
+- bug 808544 (dmcphers@redhat.com)
+- Changes to get gearchanger-oddjob selinux and misc other changes to configure
+  embedded carts succesfully (kraman@gmail.com)
+
 * Thu Apr 12 2012 Mike McGrath <mmcgrath@redhat.com> 0.25.2-1
 - release bump for tag uniqueness (mmcgrath@redhat.com)
 

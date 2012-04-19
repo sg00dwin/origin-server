@@ -2,8 +2,6 @@
 @node
 Feature: PHP Application
 
-  # runcon -u ?? -r system_r -t libra_initrc_t
-
   Scenario: Create Delete one PHP Application
     Given a new guest account
     And the guest account has no application installed
@@ -21,11 +19,6 @@ Feature: PHP Application
     Then the php application will be running
     And a php application httpd will be running
     And php application log files will exist
-
-    When I expose-port the php application
-    Then the php application will be exposed
-    When I conceal-port the php application
-    Then the php application will not be exposed
 
     When I add-alias the php application
     Then the php application will be aliased

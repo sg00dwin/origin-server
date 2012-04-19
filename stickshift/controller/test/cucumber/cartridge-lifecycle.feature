@@ -12,7 +12,6 @@ Feature: Cartridge Lifecycle Verification Tests
     |     1     |  php-5.3     |
     |     1     |  python-2.6  |
     |     1     |  perl-5.10   |
-    |     1     |  ruby-1.8    |
     |     1     |  jbossas-7   |
     |     1     |  nodejs-0.6  |
     |     1     |  jenkins-1.4 |
@@ -38,7 +37,6 @@ Feature: Cartridge Lifecycle Verification Tests
     |   php-5.3     |
     |   python-2.6  |
     |   perl-5.10   |
-    |   ruby-1.8    |
     |   jbossas-7   |
     |   nodejs-0.6  |
 
@@ -52,7 +50,6 @@ Feature: Cartridge Lifecycle Verification Tests
     |   php-5.3     |
     |   python-2.6  |
     |   perl-5.10   |
-    |   ruby-1.8    |
     |   jbossas-7   |
     |   nodejs-0.6  |
     |   jenkins-1.4 |
@@ -67,7 +64,6 @@ Feature: Cartridge Lifecycle Verification Tests
     |   php-5.3     |
     |   python-2.6  |
     |   perl-5.10   |
-    |   ruby-1.8    |
     |   jbossas-7   |
     |   nodejs-0.6  |
     |   jenkins-1.4 |
@@ -82,7 +78,6 @@ Feature: Cartridge Lifecycle Verification Tests
     |   php-5.3     |
     |   python-2.6  |
     |   perl-5.10   |
-    |   ruby-1.8    |
     |   jbossas-7 |
     |   nodejs-0.6  |
     |   jenkins-1.4 |
@@ -97,7 +92,6 @@ Feature: Cartridge Lifecycle Verification Tests
     |   php-5.3     |
     |   python-2.6  |
     |   perl-5.10   |
-    |   ruby-1.8    |
     |   jbossas-7   |
     |   nodejs-0.6  |
     |   jenkins-1.4 |

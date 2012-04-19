@@ -2,7 +2,7 @@
 
 Summary:   Provides mod_perl support
 Name:      cartridge-perl-5.10
-Version:   0.22.2
+Version:   0.22.3
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   ASL 2.0
@@ -106,6 +106,9 @@ rm -rf $RPM_BUILD_ROOT
 %doc %{cartridgedir}/LICENSE
 
 %changelog
+* Wed Apr 18 2012 Adam Miller <admiller@redhat.com> 0.22.3-1
+- bug 811509 (bdecoste@gmail.com)
+
 * Thu Apr 12 2012 Mike McGrath <mmcgrath@redhat.com> 0.22.2-1
 - release bump for tag uniqueness (mmcgrath@redhat.com)
 

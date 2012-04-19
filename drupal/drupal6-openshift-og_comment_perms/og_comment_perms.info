@@ -1,0 +1,6 @@
+; $Id
+name = OG Comment Permissions
+description = Adds permissions on comment forms to force a user to join a group before posting.
+core = 6.x
+package = Custom
+version = VERSION

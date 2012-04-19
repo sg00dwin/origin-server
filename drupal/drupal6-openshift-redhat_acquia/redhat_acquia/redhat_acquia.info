@@ -1,6 +1,0 @@
-; $Id
-name = Redhat Acquia
-description = Various hooks and overrides for cloud forums
-core = 6.x
-package = Custom
-version = VERSION

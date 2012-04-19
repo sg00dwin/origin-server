@@ -1,7 +1,0 @@
-; $Id$
-name = Modals
-description = Miscellaneous forms and actions that are wrapped in popups utlizing the ctools library.
-core = 6.x
-version = VERSION
-dependencies[] = ctools
-package = Custom

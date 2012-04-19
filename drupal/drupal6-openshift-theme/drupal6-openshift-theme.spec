@@ -5,13 +5,13 @@
 %global drupal_themename    openshift-theme
 
 Name:           drupal6-%{drupal_themename}
-Version:        3.0
+Version:        3.0.4
 Release:        1%{?dist}
 Summary:        Red Hat Openshift theme for Drupal %{drupal_release}
 
 Group:          Applications/Publishing
 License:        GPLv2+ and GPL+ or MIT
-Source0:        %{drupal_themename}-%{drupal_release}.x-%{version}.tar.gz
+Source0:        %{name}-%{version}.tar.gz
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 BuildArch:      noarch
 Requires:       drupal6
@@ -20,7 +20,7 @@ Requires:       drupal6
 Red Hat Openshift Drupal Theme
 
 %prep
-%setup -qn %{drupal_themename}
+%setup -q
 # Remove empty index.html and others
 find -size 0 | xargs rm -f
 
@@ -44,6 +44,20 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
+* Wed Apr 18 2012 Dan McPherson <dmcphers@redhat.com> 3.0.4-1
+- Touch all drupal modules to ensure a build. (ccoleman@redhat.com)
+
+* Wed Apr 18 2012 Adam Miller <admiller@redhat.com> 3.0.3-1
+- Bug 813613 (ccoleman@redhat.com)
+- Abstract out messaging and handle navbar bottom margin a bit cleaner
+  (ccoleman@redhat.com)
+
+* Mon Apr 16 2012 Anderson Silva <ansilva@redhat.com> 3.0.2-1
+- new package built with tito
+
+* Tue Apr 16 2012 Anderson Silva <ansilva@redhat.com> - 3.0.1-1
+- update version
+
 * Tue Mar 20 2012 Anderson Silva <ansilva@redhat.com> - 3.0-1
 - Openshif new theme 
 

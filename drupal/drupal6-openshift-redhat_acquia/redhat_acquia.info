@@ -1,0 +1,6 @@
+; $Id
+name = Redhat Acquia
+description = Various hooks and overrides for OpenShift forums
+core = 6.x
+package = Custom
+version = VERSION

@@ -1,0 +1,80 @@
+#!/usr/bin/env ruby
+
+#
+# Read mcollective log on stdin, measure calls and report back a
+# calling profile.
+#
+# Stderr will show each call as its processed (time in ms)
+#
+# Stdout will show the profile summary
+#
+# ex: Follow the log through a single transaction
+# tail -f /var/log/mcollective.log | rhc-mcollective-log-profile
+# (and hit ctrl-c when done)
+#
+# ex: Parse a whole log
+# rhc-mcollective-log-profile < /var/log/mcollective.log
+#
+
+require 'rubygems'
+require 'date'
+
+profile={}
+ncalls={}
+
+start_time=nil
+action_type=nil
+action_call=nil
+
+begin
+  while line=STDIN.gets do
+    if line =~ /^D, \[(.*) \#\d+\] DEBUG .* (\w+) call \/ request =/
+      start_time=DateTime.parse(Regexp.last_match[1]).strftime('%Q').to_i
+      action_type=Regexp.last_match[2]
+      action_call=nil
+      action_cart=nil
+    elsif line =~ /:action=>"(.*)"/
+      action_call=Regexp.last_match[1]
+    elsif line =~ /:cartridge=>"(.*)"/
+      action_cart=Regexp.last_match[1]
+    elsif line =~ /^D, \[(.*) \#\d+\] DEBUG .* (\w+) (?: ERROR )*\(\d+\)/
+      end_time=DateTime.parse(Regexp.last_match[1]).strftime('%Q').to_i
+      end_action_type=Regexp.last_match[2]
+      
+      if not start_time.nil?
+        duration = end_time - start_time
+
+        profname = "#{action_call}"
+        if action_cart
+          profname = "#{action_cart} #{profname}"
+        end
+
+        if profile[profname].nil?
+          profile[profname]=duration
+        else
+          profile[profname]=profile[profname]+duration
+        end
+
+        if ncalls[profname].nil?
+          ncalls[profname]=1
+        else
+          ncalls[profname]=ncalls[profname]+1
+        end
+
+        $stderr.puts "#{action_type}: #{duration} : #{profname}"
+      end
+      start_time=nil
+      action_type=nil
+    end
+  end
+rescue Interrupt
+end
+
+
+printf("\n")
+printf("%8s: %6s: %s\n", "tot msec", " calls", "      action        ")
+printf("%8s: %6s: %s\n", "--------", "------", "--------------------")
+sprof=profile.sort_by {|key, value| value}
+sprof.reverse.each do |pair|
+  printf("%8d: %6d: %s\n", pair[1], ncalls[pair[0]], pair[0])
+end

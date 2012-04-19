@@ -2,8 +2,6 @@
 @node
 Feature: Node.js Application
 
-  # runcon -u ?? -r system_r -t libra_initrc_t
-
   Scenario: Create Delete one Node Application
     Given an accepted node
     And a new guest account
@@ -32,4 +30,3 @@ Feature: Node.js Application
     When I start the nodejs application
     Then the nodejs application will be running
     And a node process will be running
-

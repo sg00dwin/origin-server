@@ -30,6 +30,11 @@ function print_idled {
     done
 }
 
+function get_state {
+    source "/var/lib/stickshift/$1/.env/OPENSHIFT_RUNTIME_DIR"
+    cat $OPENSHIFT_RUNTIME_DIR/.state
+}
+
 function is_idled {
     appid=$1
 
@@ -43,9 +48,13 @@ function is_idled {
         return $FALSE
     fi
 
-    source "/var/lib/stickshift/${appid}/.env/OPENSHIFT_RUNTIME_DIR"
-    _test=`cat $OPENSHIFT_RUNTIME_DIR/.state`
+    _test=`get_state $appid`
     return `test idle = "$_test"`
+}
+
+function is_stopped {
+    _test=`get_state $1`
+    return `test stopped = "$_test"`
 }
 
 while getopts 'u:dl' OPTION
@@ -74,12 +83,10 @@ then
 fi
 
 source "/var/lib/stickshift/${uuid}/.env/OPENSHIFT_GEAR_DIR"
-[ -f "/var/lib/stickshift/${uuid}/.env/OPENSHIFT_RUNTIME_DIR" ] && source "/var/lib/stickshift/${uuid}/.env/OPENSHIFT_RUNTIME_DIR"
-: ${OPENSHIFT_RUNTIME_DIR:=$OPENSHIFT_GEAR_DIR/runtime}
+source "/var/lib/stickshift/${uuid}/.env/OPENSHIFT_RUNTIME_DIR"
 
-if is_idled "$uuid"
-then
-    exit 0 # app is already idled, nothing to do
+if `is_idled "$uuid"` || `is_stopped "$uuid"` ; then
+    exit 0 # app is already idled or stopped, nothing to do
 fi
 
 sed -i "s/ ProxyPass/ #ProxyPass/g" "/etc/httpd/conf.d/stickshift/${uuid}"*.conf

@@ -15,6 +15,7 @@ When /^(\d+) (.+) applications are created OLD$/ do |app_count, type|
   # Create our domain and apps
   @apps = app_count.to_i.times.collect do
     app = TestApp.create_unique(type)
+    register_user(app.login, app.password) if $registration_required
     if rhc_create_domain_old(app)
       rhc_create_app_old(app)
     end

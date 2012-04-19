@@ -5,7 +5,7 @@
 
 Summary:        Cloud Development Controller
 Name:           rubygem-%{gemname}
-Version:        0.9.2
+Version:        0.9.3
 Release:        1%{?dist}
 Group:          Development/Languages
 License:        ASL 2.0
@@ -16,6 +16,7 @@ Requires:       ruby(abi) = 1.8
 Requires:       rubygems
 Requires:       rubygem(activemodel)
 Requires:       rubygem(highline)
+Requires:       rubygem(cucumber)
 Requires:       rubygem(json_pure)
 Requires:       rubygem(mocha)
 Requires:       rubygem(parseconfig)
@@ -75,6 +76,28 @@ rm -rf %{buildroot}
 %{ruby_sitelib}/%{gemname}.rb
 
 %changelog
+* Wed Apr 18 2012 Adam Miller <admiller@redhat.com> 0.9.3-1
+- 1) removing cucumber gem dependency from express broker. 2) moved ruby
+  related cucumber tests back into express. 3) fixed issue with broker
+  Gemfile.lock file where ruby-prof was not specified in the dependency
+  section. 4) copying cucumber features into li-test/tests automatically within
+  the devenv script. 5) fixing ctl status script that used ps to list running
+  processes to specify the user. 6) fixed tidy.sh script to not display error
+  on fedora stickshift. (abhgupta@redhat.com)
+- Expanded jenkins automated testing (jhonce@redhat.com)
+- Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
+  (mmcgrath@redhat.com)
+- fixing haproxy gem error (mmcgrath@redhat.com)
+- Merge branch 'master' of git1.ops.rhcloud.com:/srv/git/li (rpenta@redhat.com)
+- Update application ngears before calling gear destroy so that even if destroy
+  op fails, we update consumed_gears properly. (rpenta@redhat.com)
+- removing some unconfined_t's (mmcgrath@redhat.com)
+- Added cucumber as a development dependency Disabled show/concel port tests in
+  OSS code (kraman@gmail.com)
+- Changes to get gearchanger-oddjob selinux and misc other changes to configure
+  embedded carts succesfully (kraman@gmail.com)
+- Fixes to run tests on OSS code (kraman@gmail.com)
+
 * Thu Apr 12 2012 Mike McGrath <mmcgrath@redhat.com> 0.9.2-1
 - Updating gem versions (mmcgrath@redhat.com)
 - release bump for tag uniqueness (mmcgrath@redhat.com)

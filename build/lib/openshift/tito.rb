@@ -9,6 +9,7 @@ RUBYGEM_GEARCHANGER_MCOLLECTIVE_REGEX = /^rubygem-gearchanger-m-collective-plugi
 CARTRIDGE_REGEX = /^(cartridge-[\w-]+\d+[\.\d+]*)-\d+\.\d+\.\d+-/
 RHC_REGEX = /^rhc-([\w-]+)-\d+/
 DEVENV_REGEX = /^rhc-devenv-\d+/
+DRUPAL_REGEX = /^drupal6-openshift-([\w-]+)-\d+/
 
 module OpenShift
   module Tito
@@ -34,6 +35,8 @@ module OpenShift
           "cartridges/" + $1['cartridge-'.length..-1]
         elsif package =~ RHC_REGEX
           $1
+        elsif package =~ DRUPAL_REGEX
+          "drupal/drupal6-openshift-#{$1}"
         end
       end.compact
       client_path = nil
@@ -62,6 +65,16 @@ module OpenShift
             package_name = "stickshift-abstract"
           elsif file.start_with?('stickshift')
             package_name = "rubygem-stickshift-#{name}"
+          elsif file.start_with?('swingshift/streamline/')
+            package_name = "rubygem-swingshift-streamline-plugin"
+          elsif file.start_with?('crankcase/mongo/')
+            package_name = "rubygem-crankcase-mongo-plugin"
+          elsif file.start_with?('uplift/dynect/')
+            package_name = "rubygem-uplift-dynect-plugin"
+          elsif file.start_with?('gearchanger/m-collective/')
+            package_name = "rubygem-gearchanger-m-collective-plugin"
+          elsif file.start_with?('drupal')
+            package_name = name
           else
             package_name = "rhc-#{name}"
           end
@@ -120,6 +133,10 @@ module OpenShift
           dir_name = $1
           current_package = "rhc-#{dir_name}"
           current_sync_dir = dir_name
+        elsif package =~ DRUPAL_REGEX
+          dir_name = $1
+          current_package = "drupal6-openshift-#{dir_name}"
+          current_sync_dir = "drupal/drupal6-openshift-#{dir_name}"
         elsif package =~ /---------------------/
           if current_package
             update_sync_history(current_package, current_package_contents, current_sync_dir, sync_dirs)
