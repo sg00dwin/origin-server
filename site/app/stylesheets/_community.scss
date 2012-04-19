@@ -18,6 +18,10 @@
   > div { margin-bottom: 15px; }
   .block-stats { clear: both; }
 }
+.column-nav .picture img {
+  max-width: 35px;
+  max-height: 35px;
+}
 
 .links > a,
 .links > span { 
