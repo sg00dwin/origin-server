@@ -40,6 +40,8 @@ Provides wsgi support to OpenShift
 rm -rf git_template
 cp -r template/ git_template/
 cd git_template
+git config --global user.email "builder@example.com"
+git config --global user.name "Template builder"
 git init
 git add -f .
 git commit -m 'Creating template'
