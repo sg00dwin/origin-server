@@ -1,0 +1,86 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<project>
+  <actions/>
+  <description></description>
+  <logRotator>
+    <daysToKeep>10</daysToKeep>
+    <numToKeep>10</numToKeep>
+    <artifactDaysToKeep>10</artifactDaysToKeep>
+    <artifactNumToKeep>10</artifactNumToKeep>
+  </logRotator>
+  <keepDependencies>false</keepDependencies>
+  <properties>
+    <hudson.model.ParametersDefinitionProperty>
+      <parameterDefinitions>
+        <hudson.model.StringParameterDefinition>
+          <name>exclude_internal</name>
+          <description></description>
+          <defaultValue>true</defaultValue>
+        </hudson.model.StringParameterDefinition>
+        <hudson.model.StringParameterDefinition>
+          <name>exclude_verification</name>
+          <description></description>
+          <defaultValue>true</defaultValue>
+        </hudson.model.StringParameterDefinition>
+        <hudson.model.StringParameterDefinition>
+          <name>include_web</name>
+          <description></description>
+          <defaultValue>false</defaultValue>
+        </hudson.model.StringParameterDefinition>
+        <hudson.model.StringParameterDefinition>
+          <name>use_stage_image</name>
+          <description></description>
+          <defaultValue>false</defaultValue>
+        </hudson.model.StringParameterDefinition>
+      </parameterDefinitions>
+    </hudson.model.ParametersDefinitionProperty>
+  </properties>
+  <scm class="hudson.scm.NullSCM"/>
+  <canRoam>true</canRoam>
+  <disabled>true</disabled>
+  <blockBuildWhenDownstreamBuilding>false</blockBuildWhenDownstreamBuilding>
+  <blockBuildWhenUpstreamBuilding>false</blockBuildWhenUpstreamBuilding>
+  <triggers class="vector"/>
+  <concurrentBuild>false</concurrentBuild>
+  <customWorkspace>jobs/libra_ami/workspace</customWorkspace>
+  <builders>
+    <hudson.tasks.Shell>
+      <command>launch_params=&quot;&quot;
+if [ &quot;$use_stage_image&quot; == &quot;true&quot; ]
+then
+launch_params=$launch_params&quot; --use_stage_image&quot;
+fi
+echo $launch_params
+
+# Launch a test instance
+build/devenv launch devenv_benchmark_${BUILD_NUMBER} --verifier $launch_params
+
+# Disable charlie (this could take more than 24 hours)
+
+
+excludes=&quot;&quot;
+if [ &quot;$include_web&quot; == &quot;true&quot; ]
+then
+    excludes=$excludes&quot; --include_web&quot;
+fi
+if [ &quot;$exclude_internal&quot; == &quot;true&quot; ]
+then
+    excludes=$excludes&quot; --exclude_internal&quot;
+fi
+if [ &quot;$exclude_verification&quot; == &quot;true&quot; ]
+then
+    excludes=$excludes&quot; --exclude_verification&quot;
+fi
+echo $excludes
+# Run the image tests
+build/devenv test devenv_benchmark_${BUILD_NUMBER} --include-cucumber=benchmark --disable-charlie --terminate $excludes</command>
+    </hudson.tasks.Shell>
+  </builders>
+  <publishers>
+    <hudson.tasks.ArtifactArchiver>
+      <artifacts>rhc/log/*</artifacts>
+      <latestOnly>false</latestOnly>
+    </hudson.tasks.ArtifactArchiver>
+  </publishers>
+  <buildWrappers/>
+</project>

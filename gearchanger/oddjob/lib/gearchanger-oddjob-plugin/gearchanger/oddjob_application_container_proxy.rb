@@ -260,7 +260,15 @@ module GearChanger
     end
 
     def update_namespace(app, cart, new_ns, old_ns)
-      #FIXME
+      if app.scalable
+        app.gears.each { |gear|
+          reply = exec_command(cart, 'update-namespace', "#{gear.name} #{new_ns} #{old_ns} #{gear.uuid}")
+          parse_result(reply)
+        }
+      else
+        reply = exec_command(cart, 'update-namespace', "#{app.name} #{new_ns} #{old_ns} #{app.uuid}")
+        parse_result(reply)
+      end
     end
 
     def framework_carts

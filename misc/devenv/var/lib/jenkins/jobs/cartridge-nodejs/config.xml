@@ -2,12 +2,6 @@
 <project>
   <actions/>
   <description></description>
-  <logRotator>
-    <daysToKeep>10</daysToKeep>
-    <numToKeep>10</numToKeep>
-    <artifactDaysToKeep>10</artifactDaysToKeep>
-    <artifactNumToKeep>10</artifactNumToKeep>
-  </logRotator>
   <keepDependencies>false</keepDependencies>
   <properties/>
   <scm class="hudson.plugins.git.GitSCM">
@@ -48,36 +42,19 @@
     <excludedUsers></excludedUsers>
     <skipTag>false</skipTag>
   </scm>
-  <canRoam>true</canRoam>
+  <assignedNode>DevEnv</assignedNode>
+  <canRoam>false</canRoam>
   <disabled>true</disabled>
   <blockBuildWhenDownstreamBuilding>false</blockBuildWhenDownstreamBuilding>
   <blockBuildWhenUpstreamBuilding>false</blockBuildWhenUpstreamBuilding>
-  <triggers class="vector">
-    <hudson.triggers.SCMTrigger>
-      <spec>*/15 * * * *</spec>
-    </hudson.triggers.SCMTrigger>
-  </triggers>
+  <triggers class="vector"/>
   <concurrentBuild>false</concurrentBuild>
   <builders>
     <hudson.tasks.Shell>
-      <command># Build and install HEAD for the integration tests
-build/devenv launch libra_check_${BUILD_NUMBER} --verifier --instance_type m1.large
-build/devenv sync libra_check_${BUILD_NUMBER} --tag --clean_metadata
-
-# Run the &apos;verification&apos; tests to test higher level components
-build/devenv test libra_check_${BUILD_NUMBER} --terminate</command>
+      <command>cp -n stickshift/controller/test/cucumber/*.feature tests
+cucumber tests/cartridge-nodejs.feature</command>
     </hudson.tasks.Shell>
   </builders>
-  <publishers>
-    <hudson.tasks.ArtifactArchiver>
-      <artifacts>rhc/log/*</artifacts>
-      <latestOnly>false</latestOnly>
-    </hudson.tasks.ArtifactArchiver>
-    <hudson.tasks.Mailer>
-      <recipients>libra-devel@redhat.com</recipients>
-      <dontNotifyEveryUnstableBuild>true</dontNotifyEveryUnstableBuild>
-      <sendToIndividuals>false</sendToIndividuals>
-    </hudson.tasks.Mailer>
-  </publishers>
+  <publishers/>
   <buildWrappers/>
 </project>

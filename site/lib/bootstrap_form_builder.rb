@@ -84,7 +84,7 @@ class BootstrapFormBuilder < Formtastic::SemanticFormBuilder
     return nil if full_errors.blank?
     #html_options[:class] ||= "errors"
     template.content_tag(:ul, html_options) do
-      Formtastic::Util.html_safe(full_errors.map { |error| template.content_tag(:li, Formtastic::Util.html_safe(error)) }.join)
+      Formtastic::Util.html_safe(full_errors.map { |error| template.content_tag(:li, error) }.join)
     end
   end
 
@@ -106,7 +106,7 @@ class BootstrapFormBuilder < Formtastic::SemanticFormBuilder
   def error_list(errors, options = {}) #:nodoc:
     return super unless new_forms_enabled?
     error_class = options[:error_class] || default_inline_error_class
-    template.content_tag(:p, Formtastic::Util.html_safe(errors.join(' ').untaint), :class => error_class)
+    template.content_tag(:p, errors.join(' ').untaint, :class => error_class)
   end
 
   # change from li to div.control-group, move hints/errors into the input block

@@ -85,7 +85,7 @@ fi
 source "/var/lib/stickshift/${uuid}/.env/OPENSHIFT_GEAR_DIR"
 source "/var/lib/stickshift/${uuid}/.env/OPENSHIFT_RUNTIME_DIR"
 
-if [ `is_idled "$uuid"` -o `is_stopped "$uuid"` ]; then
+if `is_idled "$uuid"` || `is_stopped "$uuid"` ; then
     exit 0 # app is already idled or stopped, nothing to do
 fi
 

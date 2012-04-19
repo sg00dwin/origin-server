@@ -2,29 +2,8 @@
 <project>
   <actions/>
   <description></description>
-  <logRotator>
-    <daysToKeep>10</daysToKeep>
-    <numToKeep>10</numToKeep>
-    <artifactDaysToKeep>10</artifactDaysToKeep>
-    <artifactNumToKeep>10</artifactNumToKeep>
-  </logRotator>
   <keepDependencies>false</keepDependencies>
-  <properties>
-    <hudson.model.ParametersDefinitionProperty>
-      <parameterDefinitions>
-        <hudson.model.StringParameterDefinition>
-          <name>BUILD_CLEAN_AMI</name>
-          <description></description>
-          <defaultValue>false</defaultValue>
-        </hudson.model.StringParameterDefinition>
-        <hudson.model.StringParameterDefinition>
-          <name>INSTALL_FROM_SOURCE</name>
-          <description></description>
-          <defaultValue>false</defaultValue>
-        </hudson.model.StringParameterDefinition>
-      </parameterDefinitions>
-    </hudson.model.ParametersDefinitionProperty>
-  </properties>
+  <properties/>
   <scm class="hudson.plugins.git.GitSCM">
     <configVersion>1</configVersion>
     <remoteRepositories>
@@ -63,44 +42,34 @@
     <excludedUsers></excludedUsers>
     <skipTag>false</skipTag>
   </scm>
-  <canRoam>true</canRoam>
+  <assignedNode>DevEnv</assignedNode>
+  <canRoam>false</canRoam>
   <disabled>true</disabled>
-  <blockBuildWhenDownstreamBuilding>true</blockBuildWhenDownstreamBuilding>
+  <blockBuildWhenDownstreamBuilding>false</blockBuildWhenDownstreamBuilding>
   <blockBuildWhenUpstreamBuilding>false</blockBuildWhenUpstreamBuilding>
-  <authToken>libra1</authToken>
   <triggers class="vector"/>
-  <concurrentBuild>true</concurrentBuild>
+  <concurrentBuild>false</concurrentBuild>
   <builders>
     <hudson.tasks.Shell>
-      <command>if [ &quot;$BUILD_CLEAN_AMI&quot; == &quot;true&quot; ]
-then
-  build/devenv build devenv ${BUILD_NUMBER} --register --official --terminate --build_clean_ami
-elif [ &quot;$INSTALL_FROM_SOURCE&quot; == &quot;true&quot; ]
-then
-  build/devenv build devenv ${BUILD_NUMBER} --register --official --terminate --install_from_source
-else
-  build/devenv build devenv ${BUILD_NUMBER} --register --official --terminate
-fi</command>
+      <command>set -e
+yum --disablerepo=\* --enablerepo=li clean metadata &amp;&amp; yum --disablerepo=\* --enablerepo=li -y update
+
+build/devenv update
+
+ls -lZ /var/aquota.user  | grep -q var_t &amp;&amp; ( quotaoff /var &amp;&amp; restorecon /var/aquota.user &amp;&amp; quotaon /var )
+
+echo DONE</command>
     </hudson.tasks.Shell>
   </builders>
   <publishers>
-    <hudson.tasks.ArtifactArchiver>
-      <artifacts>rhc/log/*</artifacts>
-      <latestOnly>false</latestOnly>
-    </hudson.tasks.ArtifactArchiver>
     <hudson.tasks.BuildTrigger>
-      <childProjects>jenkins_update</childProjects>
+      <childProjects>cartridge-10gen-mms-agent, cartridge-cron, cartridge-haproxy, cartridge-jbossas, cartridge-jenkins-client, cartridge-mongodb, cartridge-mysql, cartridge-nodejs, cartridge-perl, cartridge-php, cartridge-phpmoadmin, cartridge-phpmyadmin, cartridge-postgresql, cartridge-python, cartridge-raw, cartridge-rockmongo, cartridge-ruby, site-unit-tests, broker-unit-test</childProjects>
       <threshold>
         <name>SUCCESS</name>
         <ordinal>0</ordinal>
         <color>BLUE</color>
       </threshold>
     </hudson.tasks.BuildTrigger>
-    <hudson.tasks.Mailer>
-      <recipients>libra-devel@redhat.com</recipients>
-      <dontNotifyEveryUnstableBuild>true</dontNotifyEveryUnstableBuild>
-      <sendToIndividuals>false</sendToIndividuals>
-    </hudson.tasks.Mailer>
   </publishers>
   <buildWrappers/>
 </project>

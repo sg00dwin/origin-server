@@ -73,6 +73,11 @@ class DevEnv < Thor
       puts "Done"
     end
 
+    def disable_charlie(hostname)
+      puts "Disabling automatic shutdown on remote instance: #{hostname}"
+      ssh(hostname, "echo HOURS=9999 > /etc/charlie.conf", 240)
+    end
+
     def scp_remote_tests(hostname)
       puts "Archiving local changes..."
       `git archive --prefix li-test/ HEAD --output /tmp/li-test.tar`
@@ -197,6 +202,8 @@ class DevEnv < Thor
         unless options.official?
           use_private_ip(hostname)
         end
+
+        disable_charlie(hostname) if options.disable_charlie?
         
         idle_all_gears(hostname) unless options.official?
         
@@ -796,6 +803,7 @@ END
   method_option :exclude_internal, :type => :boolean, :desc => "Exclude running unit and internal tests"
   method_option :exclude_verification, :type => :boolean, :desc => "Exclude running verification tests"
   method_option :include_cucumber, :required => false, :desc => "Include a specific cucumber test (verify, internal, node, api, etc)"
+  method_option :disable_charlie, :type => :boolean, :desc=> "Disable idle shutdown timer on dev instance (charlie)"
   method_option :include_web, :type => :boolean, :desc => "Include running Selenium tests"
   method_option :sauce_username, :required => false, :desc => "Sauce Labs username (default '#{SAUCE_USER}')"
   method_option :sauce_access_key, :required => false, :desc => "Sauce Labs access key (default '#{SAUCE_SECRET}')"
