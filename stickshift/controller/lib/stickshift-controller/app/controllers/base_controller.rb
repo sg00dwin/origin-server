@@ -1,5 +1,6 @@
 class BaseController < ActionController::Base
   respond_to :json, :xml
+  before_filter :check_version, :only => :show
   API_VERSION = "1.0"
   SUPPORTED_API_VERSIONS = ["1.0"]
   
@@ -66,9 +67,9 @@ class BaseController < ActionController::Base
   end
   
   def check_version
-    request.headers.each do |key, value|
-      Rails.logger.debug "Key: #{key} value:#{value}"
-    end 
+    #request.headers.each do |key, value|
+    #  Rails.logger.debug "Key: #{key} value:#{value}"
+    #end 
     $requested_api_version = request.headers['X_API_VERSION'] 
     if not $requested_api_version
       $requested_api_version = API_VERSION
