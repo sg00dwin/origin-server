@@ -76,10 +76,8 @@
                   print '<li class="divider">&nbsp;</li>';
                 }
                 $link['options']['html'] = TRUE;
-                $href = $link['href'];
-                $href = preg_replace('/^https:\/\/\//', '../', $href);
               ?>
-                <li class="<?php print strpos($key,'active-trail') ? "active" : ""; ?>"><?php print l("<span>" . $link['title'] . "</span>", $href, $link['options']); ?></li>
+                <li class="<?php print strpos($key,'active-trail') ? "active" : ""; ?>"><?php print l("<span>" . $link['title'] . "</span>", $link['href'], $link['options']); ?></li>
               <?php } ?>
             </ul>
           </div>
