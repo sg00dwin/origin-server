@@ -159,7 +159,7 @@ export IP2=`embedded_find_open_ip $uid "$APP_HOME"`
 echo "export OPENSHIFT_HAPROXY_STATUS_IP='$IP'" > "$APP_HOME/.env/OPENSHIFT_HAPROXY_STATUS_IP"
 $CART_INFO_DIR/bin/deploy_httpd_config.sh $application $uuid $IP
 mkdir -p $APP_HOME/.openshift
-chown ${uuid} $APP_HOME/.openshift $HAPROXY_DIR/run/ $HAPROXY_DIR/logs/ $HAPROXY_DIR/sessions
+chown ${uuid} $APP_HOME/.openshift $HAPROXY_DIR/run/ $HAPROXY_DIR/logs/ $HAPROXY_DIR/sessions $HAPROXY_DIR/conf/gear-registry.db
 observe_setup_var_lib_dir "$HAPROXY_DIR"
 
 # Alter PATH so that the haproxy app_ctl.sh script is called.

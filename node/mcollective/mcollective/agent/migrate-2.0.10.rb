@@ -1,5 +1,6 @@
 require 'rubygems'
 require 'fileutils'
+require 'socket'
 require 'parseconfig'
 require 'pp'
 require File.dirname(__FILE__) + "/migrate-util"
@@ -31,6 +32,16 @@ module LibraMigration
       cartridge_dir = "#{cartridge_root_dir}/#{gear_type}"
 
       env_echos = []
+
+      if File.exists?("#{gear_home}/haproxy-1.4/conf/gear-registry.db")
+        ipaddr = IPSocket.getaddress(Socket.gethostname)
+        registry_db = "#{gear_home}/haproxy-1.4/conf/gear-registry.db"
+        Util.execute_script("chown #{uuid} #{registry_db}")
+        #  Be careful of the slashes here, replace_in_file generates and runs a
+        #  sed command, so need an extra set to escape 'em slashes.
+        Util.replace_in_file(registry_db, "\\\(.*\\\)\\@\\\(.*\\\):\\\(.*\\\)",
+                             "\\1@#{ipaddr}:\\3;\\2")
+      end
 
       env_echos.each do |env_echo|
         echo_output, echo_exitcode = Util.execute_script(env_echo)

@@ -28,8 +28,10 @@ fi
 STDOUTS=()   # Set of outputs
 EXITCODES=() # Set of exit codes
 
-for gear in "${GEARSET[@]}"
+for zinfo in "${GEARSET[@]}"
 do
+  zarr=(${zinfo//;/ })
+  gear=${zarr[0]}
   arr=(${gear//:/ })
   sshcmd="ssh ${arr[0]}"
   echo "SSH_CMD: ${sshcmd}"
