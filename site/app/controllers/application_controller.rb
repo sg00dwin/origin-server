@@ -218,6 +218,13 @@ class ApplicationController < ActionController::Base
     end
 
     #
+    # The URL a user is taken to after signup
+    #
+    def default_after_signup_redirect
+      console_path
+    end
+
+    #
     # Return the appropriate URL to return to after a successful login. Subclasses may
     # override to return values that are specific to their method
     #
