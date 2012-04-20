@@ -134,14 +134,16 @@ module OpenShift
     end
 
     def find_instance(conn, name, use_tag=false)
-      conn.instances.each do |i|
+      if use_tag
+        instances = conn.instances.filter('tag-key', 'Name').filter('tag-value', name)
+      else
+        instances = conn.instances.filter('dns-name', name)
+      end
+      instances.each do |i|
         if (instance_status(i) != :terminated)
-          if (use_tag and i.tags["Name"] == name) or
-             (!use_tag and i.dns_name == name)
-            puts "Found instance #{i.id}"
-            block_until_available(i)
-            return i
-          end
+          puts "Found instance #{i.id}"
+          block_until_available(i)
+          return i
         end
       end
 
