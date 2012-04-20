@@ -24,7 +24,11 @@ class EmailConfirmController < SiteController
     key = params[:key]
     email = params[:emailAddress]
 
-    redirect_path ||= login_path(:email_address => email)
+    redirect_path ||=
+      login_path(
+        :email_address => email,
+        :redirect => default_after_signup_redirect
+      )
 
     @user = WebUser.new
 

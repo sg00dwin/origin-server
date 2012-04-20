@@ -30,4 +30,10 @@ class EmailConfirmControllerTest < ActionController::TestCase
     assert assigns(:user).errors.empty? # stub method added none
     assert_template :error
   end
+
+  test "success redirect to console" do
+    WebUser.any_instance.expects(:confirm_email).returns(true)
+    get :confirm, :key => 'test', :emailAddress => 'test'
+    assert_redirected_to login_path(:email_address => 'test', :redirect => console_path)
+  end
 end
