@@ -103,6 +103,7 @@ module ActionController
             next if k[0..6] == 'action_'
             next if k == '_'
             v = '[hidden]' if k == 'PASSENGER_CONNECT_PASSWORD'
+            v = '[hidden]' if k == 'HTTP_AUTHORIZATION'
             infohdrs[k.to_s]=v.to_s
           end
           infoparams = {}
