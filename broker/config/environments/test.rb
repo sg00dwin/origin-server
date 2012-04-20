@@ -100,4 +100,13 @@ Broker::Application.configure do
     :default_max_gears => 3,
   }
 
+  # Profiler config
+#  config.profiler = {
+#    :type => 'call_tree',
+#    :measure => 'wall',
+#    :min_percent => 0,
+#    :squash_threads => true,
+#    :squash_runtime => true
+#  }
+
 end
