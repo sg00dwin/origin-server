@@ -104,7 +104,7 @@ module Uplift
         update_response = update.delete(fqdn, 'CNAME', cnamevalue)
         send_response = dns.send_message(update)
       rescue Dnsruby::NXDomain
-        logger.debug "DEBUG: BIND: Could not find CNAME for #{fqdn} to delete"
+        Rails.logger.debug "DEBUG: BIND: Could not find CNAME for #{fqdn} to delete"
       end
     end
 

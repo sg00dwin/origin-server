@@ -957,13 +957,15 @@ Configure-Order: [\"proxy/#{framework}\", \"proxy/haproxy-1.4\"]
     begin
       result = self.container.update_namespace(self, self.framework, new_ns, old_ns)
       if result.is_a?(Array)
-# result is an Array of Gear when the domain is altered with a scalable app. There are no cart commands for a domain alter for scalable or non-scalable apps. So doing nothing here.
+        # result is an Array of Gear when the domain is altered with a scalable app. 
+        # There are no cart commands for a domain alter for scalable app. So doing nothing here.
         result.each { |r|
 #          process_cartridge_commands(r.cart_commands)
           updated = updated and (r.exitcode == 0)
         }
       else
-        #process_cartridge_commands(result.cart_commands)
+        # For a jenkins app (jenkins is non-scalable), the JENKINS_URL environment variable is updated
+        process_cartridge_commands(result.cart_commands)
         updated = result.exitcode == 0
       end
     rescue Exception => e
