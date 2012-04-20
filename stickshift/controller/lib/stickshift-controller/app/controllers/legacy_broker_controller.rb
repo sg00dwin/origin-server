@@ -2,6 +2,7 @@ class LegacyBrokerController < ApplicationController
   layout nil
   before_filter :validate_request, :process_notification
   before_filter :authenticate, :except => :cart_list_post
+  rescue_from Exception, :with => :exception_handler
   include LegacyBrokerHelper
   
   def user_info_post
