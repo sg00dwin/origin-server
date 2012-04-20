@@ -50,10 +50,10 @@ class UserControllerTest < ActionController::TestCase
     assert_response :success
   end
 
-  test "should get success on post" do
+  test "should get redirect on post" do
     post(:create, {:web_user => get_post_form})
     assert assigns(:user).errors.empty?
-    assert_response :success
+    assert_redirected_to complete_account_path
   end
 
   test "should ignore captcha non-integrated environment" do
@@ -90,7 +90,7 @@ class UserControllerTest < ActionController::TestCase
 		post(:create, {:web_user => get_post_form.merge({:cloud_access_choice => CloudAccess::EXPRESS})})
 
 		assert_equal 'express', assigns(:product)
-    assert_response :success
+    assert_redirected_to complete_account_path
 	end
 
   test "should register user from external" do
@@ -124,7 +124,7 @@ class UserControllerTest < ActionController::TestCase
     assert assigns(:user)
     assert session[:promo_code] == "promo1"
 
-    assert_response :success, @response.pretty_inspect
+    assert_redirected_to complete_account_path
   end
 
   def get_post_form
