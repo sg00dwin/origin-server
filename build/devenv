@@ -81,6 +81,25 @@ class DevEnv < Thor
       ssh(hostname, "echo HOURS=9999 > /etc/charlie.conf", 240)
     end
 
+    def broker_profiler(hostname, enable=true)
+      puts "Setting broker profile enable: #{enable}"
+      f=Tempfile.open('fixbroker')
+      begin
+        if enable
+          f.puts '/config.profiler = {/,/}/ { s/\#//g; }'
+        else
+          f.puts '/config.profiler = {/,/}/ { s/\#//g; s/^/#/; }'
+        end
+        f.close
+        scp_to(hostname, f.path, "/tmp/fixbroker.sed", 600, 10)
+        ssh(hostname, "sed -i -f /tmp/fixbroker.sed /var/www/stickshift/broker/config/environments/development.rb", 240)
+        ssh(hostname, "/sbin/service libra-broker restart", 240)
+      ensure
+        f.close
+        f.unlink
+      end
+    end
+
     def scp_remote_tests(hostname)
       puts "Archiving local changes..."
       `git archive --prefix li-test/ HEAD --output /tmp/li-test.tar`
@@ -214,6 +233,8 @@ class DevEnv < Thor
         
         setup_test_dir(hostname)
 
+        broker_profiler(hostname) if options.profile_broker?
+
         threads = []
         failures = []
 
@@ -342,6 +363,8 @@ class DevEnv < Thor
           idle_all_gears(hostname)
           use_public_ip(hostname, options.public_hostname?)
         end
+
+        broker_profiler(hostname, enable=false) if options.profile_broker?
 
         puts "Done"
 
@@ -811,6 +834,7 @@ END
   method_option :exclude_verification, :type => :boolean, :desc => "Exclude running verification tests"
   method_option :include_cucumber, :required => false, :desc => "Include a specific cucumber test (verify, internal, node, api, etc)"
   method_option :disable_charlie, :type => :boolean, :desc=> "Disable idle shutdown timer on dev instance (charlie)"
+  method_option :profile_broker, :type => :boolean, :desc=> "Enable profiling code on broker"
   method_option :include_web, :type => :boolean, :desc => "Include running Selenium tests"
   method_option :sauce_username, :required => false, :desc => "Sauce Labs username (default '#{SAUCE_USER}')"
   method_option :sauce_access_key, :required => false, :desc => "Sauce Labs access key (default '#{SAUCE_SECRET}')"
