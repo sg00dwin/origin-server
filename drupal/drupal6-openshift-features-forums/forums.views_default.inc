@@ -11,10 +11,9 @@ function forums_views_default_views() {
   $view->name = 'forum_list';
   $view->description = 'Forum directory';
   $view->tag = '';
-  $view->view_php = '';
   $view->base_table = 'node';
-  $view->is_cacheable = FALSE;
-  $view->api_version = 2;
+  $view->core = 0;
+  $view->api_version = '2';
   $view->disabled = FALSE; /* Edit this to true to make a default view disabled initially */
   $handler = $view->new_display('default', 'Defaults', 'default');
   $handler->override_option('fields', array(
@@ -273,6 +272,25 @@ function forums_views_default_views() {
         'button' => 'Expose',
       ),
     ),
+    'title' => array(
+      'operator' => '!=',
+      'value' => 'Flex',
+      'group' => '0',
+      'exposed' => FALSE,
+      'expose' => array(
+        'operator' => FALSE,
+        'label' => '',
+        'optional' => FALSE,
+      ),
+      'case' => 1,
+      'id' => 'title',
+      'table' => 'node',
+      'field' => 'title',
+      'override' => array(
+        'button' => 'Override',
+      ),
+      'relationship' => 'none',
+    ),
   ));
   $handler->override_option('access', array(
     'type' => 'none',
@@ -411,10 +429,9 @@ function forums_views_default_views() {
   $view->name = 'knowledge_base';
   $view->description = 'Displays a listing of knowledge base nodes.';
   $view->tag = '';
-  $view->view_php = '';
   $view->base_table = 'node';
-  $view->is_cacheable = FALSE;
-  $view->api_version = 2;
+  $view->core = 0;
+  $view->api_version = '2';
   $view->disabled = FALSE; /* Edit this to true to make a default view disabled initially */
   $handler = $view->new_display('default', 'Defaults', 'default');
   $handler->override_option('fields', array(
@@ -686,10 +703,9 @@ function forums_views_default_views() {
   $view->name = 'og_ghp_thread_list';
   $view->description = 'A list of threads';
   $view->tag = '';
-  $view->view_php = '';
   $view->base_table = 'node';
-  $view->is_cacheable = FALSE;
-  $view->api_version = 2;
+  $view->core = 0;
+  $view->api_version = '2';
   $view->disabled = FALSE; /* Edit this to true to make a default view disabled initially */
   $handler = $view->new_display('default', 'Defaults', 'default');
   $handler->override_option('fields', array(
@@ -1044,9 +1060,9 @@ print $data->node_comment_statistics_last_comment_uid;
       'validate_argument_type' => 'tid',
       'validate_user_argument_type' => 'uid',
       'validate_user_roles' => array(
-        '2' => 0,
-        '3' => 0,
-        '4' => 0,
+        2 => 0,
+        3 => 0,
+        4 => 0,
       ),
       'default_options_div_prefix' => '',
       'validate_argument_transform' => 0,
@@ -1138,10 +1154,9 @@ print $data->node_comment_statistics_last_comment_uid;
   $view->name = 'promotion_view';
   $view->description = 'This view displays the most recent promotion.';
   $view->tag = '';
-  $view->view_php = '';
   $view->base_table = 'node';
-  $view->is_cacheable = FALSE;
-  $view->api_version = 2;
+  $view->core = 0;
+  $view->api_version = '2';
   $view->disabled = FALSE; /* Edit this to true to make a default view disabled initially */
   $handler = $view->new_display('default', 'Defaults', 'default');
   $handler->override_option('fields', array(
@@ -1303,30 +1318,11 @@ print $data->node_comment_statistics_last_comment_uid;
   $view->name = 'threads_by_popularity';
   $view->description = 'This view contains blocks for showing recent threads, threads by highest number of points, and threads by most page views.';
   $view->tag = '';
-  $view->view_php = '';
   $view->base_table = 'node';
-  $view->is_cacheable = FALSE;
-  $view->api_version = 2;
+  $view->core = 0;
+  $view->api_version = '2';
   $view->disabled = FALSE; /* Edit this to true to make a default view disabled initially */
   $handler = $view->new_display('default', 'Defaults', 'default');
-  $handler->override_option('relationships', array(
-    'votingapi_cache' => array(
-      'label' => 'Vote results',
-      'required' => 1,
-      'votingapi' => array(
-        'value_type' => 'points',
-        'tag' => 'vote',
-        'function' => 'sum',
-      ),
-      'id' => 'votingapi_cache',
-      'table' => 'node',
-      'field' => 'votingapi_cache',
-      'override' => array(
-        'button' => 'Override',
-      ),
-      'relationship' => 'none',
-    ),
-  ));
   $handler->override_option('fields', array(
     'nid' => array(
       'label' => '',
@@ -1598,13 +1594,6 @@ print $data->node_comment_statistics_last_comment_uid;
       'relationship' => 'votingapi_cache',
     ),
   ));
-  $handler->override_option('arguments', array(
-    'group_nid' => array(
-      'id' => 'group_nid',
-      'table' => 'og_ancestry',
-      'field' => 'group_nid',
-    ),
-  ));
   $handler->override_option('filters', array(
     'created' => array(
       'operator' => '>',
@@ -1658,7 +1647,6 @@ print $data->node_comment_statistics_last_comment_uid;
   $handler->override_option('block_description', '');
   $handler->override_option('block_caching', -1);
   $handler = $view->new_display('block', 'Recent Threads', 'block_2');
-  $handler->override_option('relationships', array());
   $handler->override_option('fields', array(
     'nid' => array(
       'label' => '',
@@ -1917,7 +1905,6 @@ print $data->node_comment_statistics_last_comment_uid;
   $handler->override_option('block_description', '');
   $handler->override_option('block_caching', -1);
   $handler = $view->new_display('block', 'Active Threads', 'block_3');
-  $handler->override_option('relationships', array());
   $handler->override_option('fields', array(
     'nid' => array(
       'label' => '',
@@ -2157,7 +2144,6 @@ print $data->node_comment_statistics_last_comment_uid;
   $handler->override_option('block_description', '');
   $handler->override_option('block_caching', -1);
   $handler = $view->new_display('block', 'Recent Threads by Group', 'block_4');
-  $handler->override_option('relationships', array());
   $handler->override_option('fields', array(
     'nid' => array(
       'label' => '',
@@ -2390,9 +2376,9 @@ print $data->node_comment_statistics_last_comment_uid;
       'field' => 'group_nid',
       'validate_user_argument_type' => 'uid',
       'validate_user_roles' => array(
-        '2' => 0,
-        '3' => 0,
-        '4' => 0,
+        2 => 0,
+        3 => 0,
+        4 => 0,
       ),
       'override' => array(
         'button' => 'Use default',
@@ -2420,8 +2406,8 @@ print $data->node_comment_statistics_last_comment_uid;
       'validate_argument_node_access' => 0,
       'validate_argument_nid_type' => 'nid',
       'validate_argument_vocabulary' => array(
-        '2' => 0,
-        '1' => 0,
+        2 => 0,
+        1 => 0,
       ),
       'validate_argument_type' => 'tid',
       'validate_argument_transform' => 0,
@@ -2462,7 +2448,6 @@ print $data->node_comment_statistics_last_comment_uid;
   $handler->override_option('block_description', '');
   $handler->override_option('block_caching', -1);
   $handler = $view->new_display('block', 'Recent Threads by User', 'block_5');
-  $handler->override_option('relationships', array());
   $handler->override_option('fields', array(
     'title' => array(
       'label' => '',
@@ -2712,9 +2697,9 @@ print $data->node_comment_statistics_last_comment_uid;
       'field' => 'uid',
       'validate_user_argument_type' => 'uid',
       'validate_user_roles' => array(
-        '2' => 0,
-        '3' => 0,
-        '4' => 0,
+        2 => 0,
+        3 => 0,
+        4 => 0,
       ),
       'override' => array(
         'button' => 'Use default',
@@ -2741,8 +2726,8 @@ print $data->node_comment_statistics_last_comment_uid;
       'validate_argument_node_access' => 0,
       'validate_argument_nid_type' => 'nid',
       'validate_argument_vocabulary' => array(
-        '2' => 0,
-        '1' => 0,
+        2 => 0,
+        1 => 0,
       ),
       'validate_argument_type' => 'tid',
       'validate_argument_transform' => 0,
@@ -2927,10 +2912,9 @@ print $data->node_comment_statistics_last_comment_uid;
   $view->name = 'unique_users_per_thread';
   $view->description = 'This view counts the number of unique users participating in a forum thread.  It\'s embedded in the forum list.';
   $view->tag = '';
-  $view->view_php = '';
   $view->base_table = 'node';
-  $view->is_cacheable = FALSE;
-  $view->api_version = 2;
+  $view->core = 0;
+  $view->api_version = '2';
   $view->disabled = FALSE; /* Edit this to true to make a default view disabled initially */
   $handler = $view->new_display('default', 'Defaults', 'default');
   $handler->override_option('fields', array(
@@ -2985,10 +2969,10 @@ print $data->node_comment_statistics_last_comment_uid;
       'field' => 'nid',
       'validate_user_argument_type' => 'uid',
       'validate_user_roles' => array(
-        '2' => 0,
-        '3' => 0,
-        '6' => 0,
-        '5' => 0,
+        2 => 0,
+        3 => 0,
+        6 => 0,
+        5 => 0,
       ),
       'relationship' => 'none',
       'default_options_div_prefix' => '',
@@ -3011,8 +2995,8 @@ print $data->node_comment_statistics_last_comment_uid;
       'validate_argument_node_access' => 0,
       'validate_argument_nid_type' => 'nid',
       'validate_argument_vocabulary' => array(
-        '1' => 0,
-        '2' => 0,
+        1 => 0,
+        2 => 0,
       ),
       'validate_argument_type' => 'tid',
       'validate_argument_transform' => 0,
@@ -3044,10 +3028,9 @@ print $data->node_comment_statistics_last_comment_uid;
   $view->name = 'user_icon_from_uid';
   $view->description = 'Displays a user\'s icon.  Takes a UID as an argument.';
   $view->tag = '';
-  $view->view_php = '';
   $view->base_table = 'users';
-  $view->is_cacheable = FALSE;
-  $view->api_version = 2;
+  $view->core = 0;
+  $view->api_version = '2';
   $view->disabled = FALSE; /* Edit this to true to make a default view disabled initially */
   $handler = $view->new_display('default', 'Defaults', 'default');
   $handler->override_option('fields', array(
@@ -3105,9 +3088,9 @@ print $data->node_comment_statistics_last_comment_uid;
       'field' => 'uid',
       'validate_user_argument_type' => 'uid',
       'validate_user_roles' => array(
-        '2' => 0,
-        '3' => 0,
-        '4' => 0,
+        2 => 0,
+        3 => 0,
+        4 => 0,
       ),
       'override' => array(
         'button' => 'Override',
@@ -3134,8 +3117,8 @@ print $data->node_comment_statistics_last_comment_uid;
       'validate_argument_node_access' => 0,
       'validate_argument_nid_type' => 'nid',
       'validate_argument_vocabulary' => array(
-        '2' => 0,
-        '1' => 0,
+        2 => 0,
+        1 => 0,
       ),
       'validate_argument_type' => 'tid',
       'validate_argument_transform' => 0,

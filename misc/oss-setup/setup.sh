@@ -316,18 +316,4 @@ rotatelogs_interval=86400
 rotatelogs_format="-%Y%m%d-%H%M%S-%Z"
 EOF
 
-mkdir -p /tmp/tito/noarch /root/brew
-createrepo /tmp/tito/noarch
-createrepo /root/brew
 
-cat <<EOF > /etc/yum.repos.d/ss.repo
-[SS]
-name = ss
-baseurl = file:///tmp/tito/noarch
-enabled = 1
-
-[SSBrew]
-name = ssb
-baseurl = file:///root/brew
-enabled = 1
-EOF

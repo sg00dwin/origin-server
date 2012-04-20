@@ -131,6 +131,8 @@ popd
 semanage -i - <<_EOF
 boolean -m --on httpd_can_network_connect
 boolean -m --on httpd_can_network_relay
+boolean -m --on httpd_read_user_content
+boolean -m --on httpd_enable_homedirs
 fcontext -a -t httpd_var_run_t '%{brokerdir}/httpd/run(/.*)?'
 fcontext -a -t httpd_tmp_t '%{brokerdir}/tmp(/.*)?'
 fcontext -a -t httpd_log_t '%{brokerdir}/httpd/logs(/.*)?'

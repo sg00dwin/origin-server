@@ -31,8 +31,7 @@ class HaproxyUtils
     def self.get_gear_ipaddress(gdns, ipaddr)
         gip = ipaddr
         begin
-            s = TCPSocket.new gdns, 80
-            gip = s.addr.last
+            gip = IPSocket.getaddress(gdns)
         rescue Exception => ex
             @@log.error("Unable to get gear's IP address for #{gdns}: #{ex.message} - using default #{ipaddr}")
         end

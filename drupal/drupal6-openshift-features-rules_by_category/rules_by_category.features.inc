@@ -6,32 +6,171 @@
 function rules_by_category_rules_defaults() {
   return array(
     'rules' => array(
-      'rules_email_when_comment_deleted' => array(
+      'rules_feature_completed' => array(
         '#type' => 'rule',
-        '#set' => 'event_comment_delete',
-        '#label' => 'Email when comment deleted',
+        '#set' => 'event_node_update',
+        '#label' => 'Feature Completed',
         '#active' => 1,
         '#weight' => '0',
         '#categories' => array(
-          '0' => 'delete',
+          '0' => 'Completed Feature',
           'rules_by_category' => 'rules_by_category',
         ),
         '#status' => 'default',
-        '#conditions' => array(),
+        '#conditions' => array(
+          '0' => array(
+            '#type' => 'condition',
+            '#settings' => array(
+              'field_name' => 'field_state',
+              '#argument map' => array(
+                'node' => 'node',
+                'node_unchanged' => 'node_unchanged',
+              ),
+            ),
+            '#name' => 'content_rules_field_changed',
+            '#info' => array(
+              'label' => 'Updated content\'s field \'field_state\' has been changed',
+              'arguments' => array(
+                'node' => array(
+                  'type' => 'node',
+                  'label' => 'Content containing changes',
+                ),
+                'node_unchanged' => array(
+                  'type' => 'node',
+                  'label' => 'Content not containing changes',
+                ),
+              ),
+              'module' => 'CCK',
+            ),
+            '#weight' => 0,
+          ),
+          '1' => array(
+            '#weight' => 0,
+            '#info' => array(
+              'label' => 'Updated content\'s field \'field_state\' has value',
+              'arguments' => array(
+                'node' => array(
+                  'type' => 'node',
+                  'label' => 'Content',
+                ),
+              ),
+              'eval input' => array(
+                '0' => 'code',
+                '1' => 'value|0|value',
+              ),
+              'module' => 'CCK',
+            ),
+            '#name' => 'content_rules_field_has_value',
+            '#settings' => array(
+              'field_name' => 'field_state',
+              '#argument map' => array(
+                'node' => 'node',
+              ),
+              'value' => array(
+                '0' => array(
+                  'value' => 'Completed',
+                ),
+              ),
+              'code' => '',
+              'vars' => array(),
+              '#eval input' => array(
+                'token_rules_input_evaluator' => array(
+                  'code' => array(
+                    '0' => ':global',
+                  ),
+                  'value|0|value' => array(
+                    '0' => ':global',
+                  ),
+                ),
+              ),
+            ),
+            '#type' => 'condition',
+          ),
+        ),
         '#actions' => array(
           '0' => array(
+            '#weight' => 0,
+            '#info' => array(
+              'label' => 'Execute custom PHP code',
+              'module' => 'PHP',
+              'eval input' => array(
+                '0' => 'code',
+              ),
+            ),
+            '#name' => 'rules_action_custom_php',
+            '#settings' => array(
+              'code' => 'send_feature_complete_email($node);',
+              'vars' => array(
+                '0' => 'node',
+              ),
+              '#eval input' => array(
+                'token_rules_input_evaluator' => array(
+                  'code' => array(
+                    '0' => ':global',
+                  ),
+                ),
+              ),
+            ),
+            '#type' => 'action',
+          ),
+        ),
+        '#version' => 6003,
+      ),
+      'rules_comment_on_faq_or_kb' => array(
+        '#type' => 'rule',
+        '#set' => 'event_comment_insert',
+        '#label' => 'Comment on FAQ or KB',
+        '#active' => 1,
+        '#weight' => '0',
+        '#categories' => array(
+          '0' => 'comment',
+          '1' => 'rules_by_category',
+        ),
+        '#status' => 'default',
+        '#conditions' => array(
+          '0' => array(
+            '#weight' => 0,
+            '#info' => array(
+              'label' => 'Commented content is FAQ or Knowledge Base',
+              'arguments' => array(
+                'node' => array(
+                  'type' => 'node',
+                  'label' => 'Content',
+                ),
+              ),
+              'module' => 'Node',
+            ),
+            '#name' => 'rules_condition_content_is_type',
+            '#settings' => array(
+              'type' => array(
+                'faq' => 'faq',
+                'knowledge_base' => 'knowledge_base',
+              ),
+              '#argument map' => array(
+                'node' => 'node',
+              ),
+            ),
+            '#type' => 'condition',
+          ),
+        ),
+        '#actions' => array(
+          '0' => array(
+            '#weight' => 0,
             '#type' => 'action',
             '#settings' => array(
-              'to' => 'kshaw@redhat.com,nduong@redhat.com',
+              'to' => 'kshaw@redhat.com,snathan@redhat.com,nduong@redhat.com',
               'from' => '',
-              'subject' => 'Comment deleted from openshift community site',
-              'message' => 'A user with the email [:global:user-mail] has deleted the following comment from node [node:nid] :
+              'subject' => 'New comment posted on a [node:type-name] Content type',
+              'message' => 'Hello, 
+
+A user has posted the following comment to the [node:type-name] titled [node:title].  
 
 [comment:comment-body]',
               '#eval input' => array(
                 'token_rules_input_evaluator' => array(
                   'subject' => array(
-                    '0' => ':global',
+                    '0' => 'node',
+                    '1' => ':global',
                   ),
                   'message' => array(
                     '0' => 'comment',
@@ -58,15 +197,14 @@ function rules_by_category_rules_defaults() {
                 '3' => 'to',
               ),
             ),
-            '#weight' => 0,
           ),
         ),
         '#version' => 6003,
       ),
-      'rules_email_when_node_deleted' => array(
+      'rules_email_when_comment_deleted' => array(
         '#type' => 'rule',
-        '#set' => 'event_node_delete',
-        '#label' => 'Email when node deleted',
+        '#set' => 'event_comment_delete',
+        '#label' => 'Email when comment deleted',
         '#active' => 1,
         '#weight' => '0',
         '#categories' => array(
@@ -90,9 +228,56 @@ function rules_by_category_rules_defaults() {
             ),
             '#name' => 'rules_action_mail',
             '#settings' => array(
-              'to' => 'kshaw@redhat.com,nduong@redhat.com',
+              'to' => 'kshaw@redhat.com,snathan@redhat.com,nduong@redhat.com',
               'from' => '',
-              'subject' => 'Node deleted from the Openshift community',
+              'subject' => 'Comment deleted from openshift community site',
+              'message' => 'A user with the email [:global:user-mail] has deleted the following comment from node [node:nid] :
+
+[comment:comment-body]',
+              '#eval input' => array(
+                'token_rules_input_evaluator' => array(
+                  'subject' => array(
+                    '0' => ':global',
+                  ),
+                  'message' => array(
+                    '0' => 'comment',
+                    '1' => 'node',
+                    '2' => ':global',
+                  ),
+                  'from' => array(
+                    '0' => ':global',
+                  ),
+                  'to' => array(
+                    '0' => ':global',
+                  ),
+                ),
+              ),
+            ),
+            '#type' => 'action',
+          ),
+        ),
+        '#version' => 6003,
+      ),
+      'rules_email_when_node_deleted' => array(
+        '#type' => 'rule',
+        '#set' => 'event_node_delete',
+        '#label' => 'Email when node deleted',
+        '#active' => 1,
+        '#weight' => '0',
+        '#categories' => array(
+          '0' => 'delete',
+          'rules_by_category' => 'rules_by_category',
+        ),
+        '#status' => 'default',
+        '#conditions' => array(),
+        '#actions' => array(
+          '0' => array(
+            '#weight' => 0,
+            '#type' => 'action',
+            '#settings' => array(
+              'to' => 'kshaw@redhat.com,snathan@redhat.com,nduong@redhat.com',
+              'from' => '',
+              'subject' => 'Node deleted from Openshift Community',
               'message' => 'Node [node:nid] with title [node:title] has been deleted from the Openshift community site by [user:mail]
 
 [node:node-body]',
@@ -115,7 +300,17 @@ function rules_by_category_rules_defaults() {
                 ),
               ),
             ),
-            '#type' => 'action',
+            '#name' => 'rules_action_mail',
+            '#info' => array(
+              'label' => 'Send a mail to an arbitrary mail address',
+              'module' => 'System',
+              'eval input' => array(
+                '0' => 'subject',
+                '1' => 'message',
+                '2' => 'from',
+                '3' => 'to',
+              ),
+            ),
           ),
         ),
         '#version' => 6003,

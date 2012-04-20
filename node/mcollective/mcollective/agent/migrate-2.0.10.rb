@@ -16,6 +16,34 @@ module LibraMigration
     val
   end
 
+  def self.convert_haproxy_registry_line(ginfo)
+    gbits = ginfo.split(";")
+    return ginfo if gbits.length > 1
+
+    # Need to do a conversion.
+    uuid = gbits[0].split("@")[0]
+    gdns = gbits[0].split("@")[1].split(":")[0]
+    gdir = gbits[0].split("@")[1].split(":")[1]
+    ipaddr = gdns
+    begin
+      ipaddr = IPSocket.getaddress(gdns)
+    rescue
+    end
+    "#{uuid}@#{ipaddr}:#{gdir};#{gdns}"
+  end
+
+  def self.migrate_haproxy_configuration(uuid, gear_home)
+    registry_db = "#{gear_home}/haproxy-1.4/conf/gear-registry.db"
+    Util.execute_script("chown #{uuid} #{registry_db}")
+    cfgdata = ""
+    regdata = File.readlines(registry_db)
+    regdata.map! { |data| data.gsub(/\r\n?/, "\n") }
+    regdata.each do |line|
+      cfgdata += convert_haproxy_registry_line(line.delete("\n")) + "\n"
+    end
+    File.open(registry_db, "w") { |file| file.puts cfgdata }
+  end
+
   def self.migrate(uuid, namespace, version)
 
     libra_home = '/var/lib/stickshift' #node_config.get_value('libra_dir')
@@ -34,13 +62,7 @@ module LibraMigration
       env_echos = []
 
       if File.exists?("#{gear_home}/haproxy-1.4/conf/gear-registry.db")
-        ipaddr = IPSocket.getaddress(Socket.gethostname)
-        registry_db = "#{gear_home}/haproxy-1.4/conf/gear-registry.db"
-        Util.execute_script("chown #{uuid} #{registry_db}")
-        #  Be careful of the slashes here, replace_in_file generates and runs a
-        #  sed command, so need an extra set to escape 'em slashes.
-        Util.replace_in_file(registry_db, "\\\(.*\\\)\\@\\\(.*\\\):\\\(.*\\\)",
-                             "\\1@#{ipaddr}:\\3;\\2")
+        migrate_haproxy_configuration(uuid, gear_home)
       end
 
       env_echos.each do |env_echo|

@@ -14,7 +14,7 @@ function recent_activity_report_views_default_views() {
   $view->base_table = 'node';
   $view->core = 0;
   $view->api_version = '2';
-  $view->disabled = FALSE; /* Edit this to true to make the default view disabled initially */
+  $view->disabled = FALSE; /* Edit this to true to make a default view disabled initially */
   $handler = $view->new_display('default', 'Defaults', 'default');
   $handler->override_option('relationships', array(
     'votingapi_cache' => array(

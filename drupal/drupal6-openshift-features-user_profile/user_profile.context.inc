@@ -120,6 +120,7 @@ function user_profile_context_default_contexts() {
   t('Displays blocks for users who are logged in.');
 
   $export['user-logged-in'] = $context;
+
   $context = new stdClass;
   $context->disabled = FALSE; /* Edit this to true to make a default context disabled initially */
   $context->api_version = 3;
@@ -261,5 +262,127 @@ function user_profile_context_default_contexts() {
   t('Displays blocks for anonymous uses.');
 
   $export['user-logged-out'] = $context;
+
+  # Make Forum link active
+  $context = new stdClass;
+  $context->disabled = FALSE; /* Edit this to true to make a default context disabled initially */
+  $context->api_version = 3;
+  $context->name = 'menu-active-forum';
+  $context->description = '';
+  $context->tag = '';
+  $context->conditions = array(
+    'path' => array(
+      'values' => array(
+        'forums' => 'forums',
+        'forums/*' => 'forums/*',
+        'og' => 'og',
+        'og/*' => 'og/*',
+        'node/add/discussion/*' => 'node/add/discussion/*',
+      ),
+    ),
+  );
+  $context->reactions = array(
+    'menu' => 'node/1',
+  );
+  $context->condition_mode = 0;
+  $export[$context->name] = $context;
+
+  # Make FAQ menu item active
+  $context = new stdClass;
+  $context->disabled = FALSE; /* Edit this to true to make a default context disabled initially */
+  $context->api_version = 3;
+  $context->name = 'menu-active-faq';
+  $context->description = '';
+  $context->tag = '';
+  $context->conditions = array(
+    'node' => array(
+      'values' => array(
+        'faq' => 'faq',
+      ),
+      'options' => array(
+        'node_form' => '1',
+      ),
+    ),
+    'path' => array(
+      'values' => array(
+        'faq/express-faq' => 'faq/express-faq',
+        'faq/openshift-community-faq' => 'faq/openshift-community-faq',
+      ),
+    ),
+  );
+  $context->reactions = array(
+    'menu' => 'faq',
+  );
+  $context->condition_mode = 0;
+  $export[$context->name] = $context;
+
+  # Make KB menu item active
+  $context = new stdClass;
+  $context->disabled = FALSE; /* Edit this to true to make a default context disabled initially */
+  $context->api_version = 3;
+  $context->name = 'menu-active-kb';
+  $context->description = '';
+  $context->tag = '';
+  $context->conditions = array(
+    'node' => array(
+      'values' => array(
+        'knowledge_base' => 'knowledge_base',
+      ),
+      'options' => array(
+        'node_form' => '1',
+      ),
+    ),
+  );
+  $context->reactions = array(
+    'menu' => 'kb',
+  );
+  $context->condition_mode = 0;
+  $export[$context->name] = $context;
+
+
+  # Make Blog menu item active
+  $context = new stdClass;
+  $context->disabled = FALSE; /* Edit this to true to make a default context disabled initially */
+  $context->api_version = 3;
+  $context->name = 'menu-active-blogs';
+  $context->description = '';
+  $context->tag = '';
+  $context->conditions = array(
+    'node' => array(
+      'values' => array(
+        'author' => 'author',
+        'blog' => 'blog',
+      ),
+      'options' => array(
+        'node_form' => '1',
+      ),
+    ),
+  );
+  $context->reactions = array(
+    'menu' => 'blogs',
+  );
+  $context->condition_mode = 0;
+  $export[$context->name] = $context;
+
+
+  $context = new stdClass;
+  $context->disabled = FALSE; /* Edit this to true to make a default context disabled initially */
+  $context->api_version = 3;
+  $context->name = 'menu-active-events';
+  $context->description = '';
+  $context->tag = '';
+  $context->conditions = array(
+    'path' => array(
+      'values' => array(
+        'calendar' => 'calendar',
+      ),
+    ),
+  );
+  $context->reactions = array(
+    'menu' => 'events',
+  );
+  $context->condition_mode = 0;
+  $export[$context->name] = $context;
+
   return $export;
 }

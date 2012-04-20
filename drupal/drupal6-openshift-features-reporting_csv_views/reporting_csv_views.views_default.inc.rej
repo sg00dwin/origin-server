@@ -1,0 +1,15 @@
+--- reporting_csv_views.views_default.inc
++++ reporting_csv_views.views_default.inc
+@@ -11,10 +11,9 @@
+   $view->name = 'reporting_csv_comments';
+   $view->description = '';
+   $view->tag = '';
+-  $view->view_php = '';
+   $view->base_table = 'comments';
+-  $view->is_cacheable = FALSE;
+-  $view->api_version = 2;
++  $view->core = 0;
++  $view->api_version = '2';
+   $view->disabled = FALSE; /* Edit this to true to make a default view disabled initially */
+   $handler = $view->new_display('default', 'Defaults', 'default');
+   $handler->override_option('relationships', array(

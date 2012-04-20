@@ -11,10 +11,9 @@ function user_profile_views_default_views() {
   $view->name = 'user_profile_box';
   $view->description = 'Shows profile images and biographical information for display in the appropriate column.';
   $view->tag = '';
-  $view->view_php = '';
   $view->base_table = 'users';
-  $view->is_cacheable = FALSE;
-  $view->api_version = 2;
+  $view->core = 0;
+  $view->api_version = '2';
   $view->disabled = FALSE; /* Edit this to true to make a default view disabled initially */
   $handler = $view->new_display('default', 'Defaults', 'default');
   $handler->override_option('fields', array(
@@ -574,16 +573,17 @@ function user_profile_views_default_views() {
       ),
       'empty' => '',
       'hide_empty' => 0,
+      'hide_alter_empty' => 1,
       'empty_zero' => 0,
       'value' => '<?php
 $full_name =  $data->profile_values_profile_first_name_value .\' \'. $data->profile_values_profile_last_name_value;
 $clean_name = trim(strip_tags($full_name));
 $company = $data->profile_values_profile_company_value;
 if (!empty($clean_name) && !empty($company)) {
-  print $clean_name .\', \'. $company;
+  print check_plain($clean_name) .\', \'. check_plain($company);
 } else {
-  print $clean_name;
-  print $company;
+  print check_plain($clean_name);
+  print check_plain($company);
 }
 ?>',
       'exclude' => 0,

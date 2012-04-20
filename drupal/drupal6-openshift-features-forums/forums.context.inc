@@ -5,6 +5,7 @@
  */
 function forums_context_default_contexts() {
   $export = array();
+
   $context = new stdClass;
   $context->disabled = FALSE; /* Edit this to true to make a default context disabled initially */
   $context->api_version = 3;
@@ -30,8 +31,8 @@ function forums_context_default_contexts() {
   // Translatables
   // Included for use with string extractors like potx.
   t('Displays the default title bar');
-
   $export['default-title-bar'] = $context;
+
   $context = new stdClass;
   $context->disabled = FALSE; /* Edit this to true to make a default context disabled initially */
   $context->api_version = 3;
@@ -59,8 +60,8 @@ function forums_context_default_contexts() {
   // Translatables
   // Included for use with string extractors like potx.
   t('Displays the Express title bar if the user is in that section');
-
   $export['express-title-bar'] = $context;
+
   $context = new stdClass;
   $context->disabled = FALSE; /* Edit this to true to make a default context disabled initially */
   $context->api_version = 3;
@@ -88,8 +89,8 @@ function forums_context_default_contexts() {
   // Translatables
   // Included for use with string extractors like potx.
   t('Displays the Flex title bar if the user is in that section');
-
   $export['flex-title-bar'] = $context;
+
   $context = new stdClass;
   $context->disabled = FALSE; /* Edit this to true to make a default context disabled initially */
   $context->api_version = 3;
@@ -117,7 +118,7 @@ function forums_context_default_contexts() {
   // Translatables
   // Included for use with string extractors like potx.
   t('Displays the News and Announcements title bar if the user is in that section');
-
   $export['news-and-announcements-title-bar'] = $context;
+
   return $export;
 }
