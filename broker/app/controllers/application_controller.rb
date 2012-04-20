@@ -1,4 +1,5 @@
 require 'fileutils'
+require 'zlib'
 
 module ActionController
   class Base
@@ -91,41 +92,58 @@ module ActionController
           end
 
           timestamp=@profiler_start_time.strftime('%Y-%m-%d-%H-%M-%S')
-          reportfile=File.join(@@profiler_dir, "profiler-#{cfg[:measure]}-#{cfg[:type]}-#{timestamp}.#{printext}")
-          infofile=File.join(@@profiler_dir, "profiler-info-#{timestamp}.json")
+          reportfile=File.join(@@profiler_dir, "profiler-#{cfg[:measure]}-#{cfg[:type]}-#{timestamp}.#{printext}.gz")
+          infofile=File.join(@@profiler_dir, "profiler-info-#{timestamp}.json.gz")
 
           Rails.logger.debug("ApplicationController::profiler_stop: writing #{cfg[:type]} report in #{reportfile}, info in #{infofile}")
-          p=printer.new(result)
+
+          infohdrs = {}
+          request.headers.each do |k, v|
+            next if k[0..4] == 'rack.'
+            next if k[0..6] == 'action_'
+            next if k == '_'
+            v = '[hidden]' if k == 'PASSENGER_CONNECT_PASSWORD'
+            infohdrs[k.to_s]=v.to_s
+          end
+          infoparams = {}
+          params.each do |k, v|
+            v = '[hidden]' if k == 'password'
+            if k == 'json_data'
+              begin
+                infoparams[k.to_s]=JSON.parse(v)
+              rescue
+              end
+            else
+              infoparams[k.to_s]=v.to_s
+            end
+          end
+          infoout = {
+            :TIMESTAMP   => @profiler_start_time.to_s,
+            :TIMESTAMP_F => @profiler_start_time.to_f,
+            :DURATION    => duration.to_f,
+            :ENDSTAMP    => (@profiler_start_time + duration).to_s,
+            :ENDSTAMP_F  => (@profiler_start_time + duration).to_f,
+            :HOST        => request.host.to_s,
+            :DOMAIN      => request.domain.to_s,
+            :FORMAT      => request.format.to_s,
+            :METHOD      => request.method.to_s,
+            :HEADERS     => infohdrs,
+            :PARAMS      => infoparams,
+            :PORT        => request.port.to_s,
+            :PROTOCOL    => request.protocol.to_s,
+            :QUERY_STR   => request.query_string.to_s,
+            :REMOTE_IP   => request.remote_ip.to_s,
+            :URL         => request.url.to_s
+          }
 
           FileUtils.mkdir_p(@@profiler_dir)
 
-          File.open(infofile, 'wb') do |f|
-            infohdrs = {}
-            request.headers.each do |k, v|
-              infohdrs[k.to_s]=v.to_s
-            end
-            infoout = {
-              :TIMESTAMP   => @profiler_start_time.to_s,
-              :TIMESTAMP_F => @profiler_start_time.to_f,
-              :DURATION    => duration.to_f,
-              :ENDSTAMP    => (@profiler_start_time + duration).to_s,
-              :ENDSTAMP_F  => (@profiler_start_time + duration).to_f,
-              :HOST        => request.host.to_s,
-              :DOMAIN      => request.domain.to_s,
-              :FORMAT      => request.format.to_s,
-              :METHOD      => request.method.to_s,
-              :HEADERS     => infohdrs,
-              :PORT        => request.port.to_s,
-              :PROTOCOL    => request.protocol.to_s,
-              :QUERY_STR   => request.query_string.to_s,
-              :REMOTE_IP   => request.remote_ip.to_s,
-              :URL         => request.url.to_s
-            }
-
-            f.puts(infoout.to_json)
+          Zlib::GzipWriter.open(infofile) do |f|
+            f.puts(JSON.pretty_generate(infoout))
           end
 
-          File.open(reportfile, 'wb') do |f|
+          p=printer.new(result)
+          Zlib::GzipWriter.open(reportfile) do |f|
             p.print(f, cfg)
           end
 
