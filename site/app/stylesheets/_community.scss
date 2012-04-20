@@ -38,7 +38,7 @@
 }
 
 .community textarea {
-  width: auto;
+  width: 100%;
 }
 
 .community form {
@@ -84,7 +84,7 @@
   padding-top: 0; 
 
   .submitted {
-    margin-top: -25px;
+    margin-top: -20px;
     font-style: italic;
   }
 }
@@ -313,6 +313,26 @@ html.js fieldset.collapsible .fieldset-wrapper {
  	vertical-align: bottom;
  	margin: 0;
  }
+.community .meta .view-user-profile-box div.view div.views-hide-hover, 
+.community .meta .view-user-profile-box div.view:hover div.views-hide {
+  display: inline-block;
+  position: relative;
+  z-index: 200;
+}
+.community .meta .view-user-profile-box .views-admin-links {
+	background: #fff;
+	border:0;
+	}
+.community div.view div.views-admin-links-hover a, .community div.view div.views-admin-links:hover a {
+    color: red;
+}
+.community div.view div.views-hide {
+    display: none;
+    float: right;
+}
+div.view:hover div.views-hide {
+    margin-top: 0 !important;
+}
 .community .meta .view-user-profile-box > div {
 	border: 1px solid #666;
 	color: #efefef;
@@ -332,7 +352,7 @@ html.js fieldset.collapsible .fieldset-wrapper {
 .comment-content {
 	border: 1px solid #ddd;
 	padding: 20px 25px;
-	margin: 0;
+	margin: 5px 0;
 	overflow: hidden;
 }
 .b-edge {
@@ -358,9 +378,9 @@ html.js fieldset.collapsible .fieldset-wrapper {
 .thread-intro {
 	padding-bottom: 8px;
 }
-.thread-text {
+#thread-text {
 	padding: 20px;
-	margin-bottom: 10px;
+	margin: 10px 0;
 	background-color: #f0f0f0;
 }
 .posting {
@@ -378,6 +398,6 @@ html.js fieldset.collapsible .fieldset-wrapper {
 /* Wiki pages */
 #toc { float: right; background: #eee; border: 1px solid #ddd; margin-left: 15px; margin-bottom: 15px; }
 #toc td { font-size: 90%; }
-#toc td ul { list-style: none; margin: 0 0 0 9px; }
+#toc td ul { list-style: none; margin: 0 0 9px 9px; }
 
 

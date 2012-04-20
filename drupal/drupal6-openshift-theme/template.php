@@ -288,7 +288,7 @@ function openshift_breadcrumb($breadcrumb) {
   if (!empty($breadcrumb) && count($breadcrumb) > 2) {
     //array_unshift($breadcrumb, "<a href='http://openshift.redhat.com/app' class='active'>OpenShift</a>");
     array_shift($breadcrumb);
-    return '<div class="breadcrumb">' . implode('<span class="divider">&gt;</span>', $breadcrumb) . '</div>';
+    return '<div class="breadcrumb">' . implode('<span class="divider"> /</span>', $breadcrumb) . '</div>';
   }
 }
 
