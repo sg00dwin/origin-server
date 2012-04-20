@@ -37,13 +37,11 @@ isrunning() {
 function wait_to_start() {
    ep=$(grep "listen stats" $OPENSHIFT_HOMEDIR/haproxy-1.4/conf/haproxy.cfg | sed 's#listen\s*stats\s*\(.*\)#\1#')
    i=0
-   echo "`date`: started check #$((i+1)) ... "
    while ( ! curl "http://$ep/haproxy-status/;csv" &> /dev/null )  && [ $i -lt 10 ]; do
        sleep 1
        i=$(($i + 1))
-       echo "`date`: started check #$((i+1)) ... "
+       echo "`date`: Retrying haproxy-status check - attempt #$((i+1)) ... "
    done
-   echo "`date`: number of checks to wait for start = $((i+1)) "
 }
 
 start() {
@@ -98,18 +96,15 @@ function _reload_haproxy_service() {
 
 }
 
-function backgrounded_reload() {
-    set -x
+function _reload_service() {
     [ -f $HAPROXY_PID ]  &&  zpid=$( /bin/cat "${HAPROXY_PID}" )
     i=0
-    echo "`date`: reload attempt #$((i+1)) ... "
     while (! _reload_haproxy_service "$zpid" )  && [ $i -lt 120 ]; do
         sleep 2
         i=$(($i + 1))
-        echo "`date`: reload attempt #$((i+1)) ... "
+        echo "`date`: Retrying haproxy service reload - attempt #$((i+1)) ... "
     done
 
-    echo "`date`: Check if started? Number of attempts = $((i+1))"
     wait_to_start
 }
 
@@ -117,11 +112,8 @@ reload() {
     if ! isrunning; then
        start
     else
-       echo "Gracefully reloading haproxy without service interruption" 1>&2
-       echo "    - reload is being done in the background ..." 1>&2
-       echo "`date`: starting bg-reload for uuid $OPENSHIFT_GEAR_UUID ..." > /tmp/haproxy-reload.log
-       nohup "$0" backgrounded-reload >> /tmp/haproxy-reload.log 2>&1 &
-       echo "`date`: bg-reload started ... pid=$!, status=$?" >> /tmp/haproxy-reload.log
+       echo "`date`: Gracefully reloading haproxy without service interruption" 1>&2
+       _reload_service
        # wait_to_start
     fi
     haproxy_ctld_daemon restart > /dev/null 2>&1
@@ -133,7 +125,6 @@ case "$1" in
     graceful-stop|stop)  stop                ;;
     restart)             restart             ;;
     graceful|reload)     reload              ;;
-    backgrounded-reload) backgrounded_reload ;;
     force-stop)          pkill haproxy       ;;
     status)              print_running_processes `id -u` ;;
     # FIXME:  status should just report on haproxy not all the user's processes.
