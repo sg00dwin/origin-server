@@ -110,7 +110,7 @@ class DevEnv < Thor
       scp_from(hostname, "/var/www/stickshift/broker/httpd/logs/error_log", "rhc/log/broker_error_log.log")
       scp_from(hostname, "/var/www/stickshift/broker/log/development.log", "rhc/log")
       scp_from(hostname, "/var/www/stickshift/broker/log/test.log", "rhc/log/broker_test.log")
-      scp_from(hostname, "/var/log/mcollective.log", "rhc/log")
+      scp_from(hostname, "/var/log/mcollective.*", "rhc/log")
       scp_from(hostname, "/var/www/stickshift/broker/log/mcollective-client.log", "rhc/log")
       scp_from(hostname, "/var/log/httpd/access_log", "rhc/log/system_access_log.log")
       scp_from(hostname, "/var/log/httpd/error_log", "rhc/log/system_error_log.log")
