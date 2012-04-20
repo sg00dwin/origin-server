@@ -48,21 +48,4 @@ then
     sed -i "s/-${old_namespace}.${CLOUD_DOMAIN}/-${new_namespace}.${CLOUD_DOMAIN}/g" $APP_DIR/data/hudson.tasks.Mailer.xml
 fi
 
-url=`echo "${JENKINS_URL}" | sed "s/${new_namespace}/${old_namespace}/g"`
-out=`run_as_user "$CART_INFO_DIR/bin/jenkins_reload ${JENKINS_USERNAME} ${JENKINS_PASSWORD} ${url}" 2>&1`
-
-if ! out=302
-then
-    # An error occurred reloading jenkins configuration
-    client_message ""
-    client_message "Could not reload Jenkins server '${application}' configuration:"
-    client_message "   $out"
-    client_message "This might be expected if '${application}' isn't running."
-    client_message "Otherwise you might need to reload it with 'rhc app reload -a ${application}'"
-    client_message "or by using the Jenkins interface:"
-    client_message "https://${application}-${new_namespace}.${CLOUD_DOMAIN}/manage"
-    client_message ""
-fi
-
 add_env_var "JENKINS_URL=https://${application}-${new_namespace}.${CLOUD_DOMAIN}/"
-
