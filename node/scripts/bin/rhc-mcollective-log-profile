@@ -24,47 +24,53 @@ ncalls={}
 
 start_time=nil
 action_type=nil
-action_call=nil
+action_call=[]
+action_cart=[]
+nactions=0
 
 begin
   while line=STDIN.gets do
     if line =~ /^D, \[(.*) \#\d+\] DEBUG .* (\w+) call \/ request =/
       start_time=DateTime.parse(Regexp.last_match[1]).strftime('%Q').to_i
       action_type=Regexp.last_match[2]
-      action_call=nil
-      action_cart=nil
+      action_call=[]
+      action_cart=[]
+      nactions=0
     elsif line =~ /:action=>"(.*)"/
-      action_call=Regexp.last_match[1]
+      action_call << Regexp.last_match[1]
+      nactions = nactions + 1
     elsif line =~ /:cartridge=>"(.*)"/
-      action_cart=Regexp.last_match[1]
+      action_cart << Regexp.last_match[1]
     elsif line =~ /^D, \[(.*) \#\d+\] DEBUG .* (\w+) (?: ERROR )*\(\d+\)/
       end_time=DateTime.parse(Regexp.last_match[1]).strftime('%Q').to_i
       end_action_type=Regexp.last_match[2]
-      
-      if not start_time.nil?
-        duration = end_time - start_time
+      nactions = nactions - 1
 
-        profname = "#{action_call}"
-        if action_cart
-          profname = "#{action_cart} #{profname}"
+      if nactions == 0
+        if not start_time.nil?
+          duration = (end_time - start_time)/action_cart.length.to_f
+
+          while action_cart.length > 0
+            profname = "#{action_cart.pop} #{action_call.pop}"
+
+            if profile[profname].nil?
+              profile[profname]=duration
+            else
+              profile[profname]=profile[profname]+duration
+            end
+
+            if ncalls[profname].nil?
+              ncalls[profname]=1
+            else
+              ncalls[profname]=ncalls[profname]+1
+            end
+
+            $stderr.puts "#{action_type}: #{duration} : #{profname}"
+          end
         end
-
-        if profile[profname].nil?
-          profile[profname]=duration
-        else
-          profile[profname]=profile[profname]+duration
-        end
-
-        if ncalls[profname].nil?
-          ncalls[profname]=1
-        else
-          ncalls[profname]=ncalls[profname]+1
-        end
-
-        $stderr.puts "#{action_type}: #{duration} : #{profname}"
+        start_time=nil
+        action_type=nil
       end
-      start_time=nil
-      action_type=nil
     end
   end
 rescue Interrupt
