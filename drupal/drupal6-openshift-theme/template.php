@@ -272,9 +272,11 @@ function _openshift_heading(&$vars) {
   case 'calendar':
   case 'event':
   case 'events': $heading = "Events"; break; // no title for some reason
+  case 'knowledge_base':
   case 'kb': $heading = "Knowledge Base"; break; // no title for some reason
   case 'blogs': // no title for some reason
   case 'blog': $heading = "Blogs"; break;
+  case 'faq': $heading = "Frequently Asked Questions"; break;
   case 'videos': // no title for some reason
   case 'video': $heading = "Videos"; break;
   default:
