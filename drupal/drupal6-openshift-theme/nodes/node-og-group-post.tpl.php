@@ -95,7 +95,7 @@ $do = og_comment_perms_do();
   </div>
   <?php if ($do->perm == 'post'): ?>
   
-  <div class="new-post-button"><a class="btn" href="#comment-form-title">Reply to Thread</a></div>
+  <div class="new-post-button"><a class="btn" href="#comment-form">Reply to Thread</a></div>
   <?php endif; ?>
   
   
