@@ -80,30 +80,20 @@
   margin-bottom: 20px;
 }
 
-.comment-content .links,
-.node > .links {
-  margin-top: 10px;
-  text-transform: uppercase;
-  font-weight: bold;
-}
-
 .comment { 
-  margin-bottom: 20px; 
-  padding-top: 8px; 
+  margin-bottom: 0; 
+  padding-top: 0; 
 
   .submitted {
-    margin-top: 10px;
+    margin-top: -25px;
     font-style: italic;
   }
 }
 .comment > table td { vertical-align: top; }
 .comment .comment-author {
   .views-row {
-    padding: 10px; 
-    width: 170px;
-    margin-right: 10px;
-    margin-top: 5px;
-    background-color: rgb(239, 239, 239);
+    padding:0; 
+    margin:0;
   }
   .views-field-phpcode {
     clear: both;
@@ -112,15 +102,38 @@
     font-style: italic;
     margin-top: 5px;
   }
+  p {
+  	margin: 0 0 7px 0;
+  }
+  .views-field-phpcode {
+    clear: none;
+  }
+  .views-field-value {
+    color: #777777;
+    font-style: normal;
+	}
 }
 
+.views-field-name,
+.views-field-phpcode,
+.views-field-value,
+.views-field-phpcode-1 {
+	margin-left: 60px;
+}
+.views-field-name {
+	font-size: 16px;
+	font-weight: bold;
+}
+.community .thread .thread-author .views-field-name {
+	font-size: inherit;
+}
 .column-content .picture img {
   border: 4px solid #000;
 }
 
 .view-user-profile-box .badge { 
   display: inline-block; 
-  padding: 0 3px;
+  padding: 0 4px;
   color: #fff; 
   text-transform: uppercase; 
   font-size: 11px; 
@@ -286,8 +299,59 @@ html.js fieldset.collapsible .fieldset-wrapper {
 		padding: 0 5px;
 		}
 }
+
+/* thread author */
+.community .thread .thread-author .submitted {
+	float: left;
+	margin-right: 10px;
+	font-style: normal;
+}
+.community .thread .thread-author .submitted span {
+	color: #333;
+}
+.community .meta .view-user-profile-box div {
+ 	display: inline-block;
+ 	vertical-align: bottom;
+ 	margin: 0;
+ }
+.community .meta .view-user-profile-box > div {
+	border: 1px solid #666;
+	color: #efefef;
+	font-size: 11px;
+	background:#666;
+	white-space: nowrap;
+}
+.community .thread .links {
+	font-weight: normal;
+}
+.community .thread .links a {
+	text-transform: capitalize;
+}
+.community .thread .addthis_button {
+	float: right;
+}
+.comment-content {
+	border: 1px solid #ddd;
+	padding: 20px 25px;
+	margin: 0;
+	overflow: hidden;
+}
+.b-edge {
+  border-color: #DFDFDF transparent;
+  border-style: solid;
+  border-width: 0.4em 0 0 0.4em;
+  margin-bottom: 30px;
+  position: relative;
+}
 .thread {
 	margin-bottom: 70px;
+}
+.community .thread .picture {
+	float: right;
+}
+.community .thread  h2 {
+	color: inherit;
+	font-weight: bold;
 }
 .thread-author .rank {
 	float: none;
@@ -310,6 +374,7 @@ html.js fieldset.collapsible .fieldset-wrapper {
 .thread-actions li {
 	margin-right: 40px;
 }
+
 
 /* Wiki pages */
 #toc { float: right; background: #eee; border: 1px solid #ddd; margin-left: 15px; margin-bottom: 15px; }
