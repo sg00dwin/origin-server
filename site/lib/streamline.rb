@@ -223,7 +223,7 @@ module Streamline
     if args.is_a? String
       if valid? :reset_password
         args = {
-          :login => @email_address,
+          :login => @rhlogin,
           :url => args
         }
         http_post(@@request_password_reset_url, args, false) do |json|
@@ -246,7 +246,7 @@ module Streamline
 
   def complete_reset_password(token)
     args = {
-      :login => @email_address,
+      :login => @rhlogin,
       :token => token
     }
     http_post(@@reset_password_url, args, false) do |json|

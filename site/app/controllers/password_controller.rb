@@ -5,18 +5,19 @@ class PasswordController < ApplicationController
 
   def new
     user_params = params[:web_user] || params
-    @user = WebUser.new(:email_address => user_params[:email_address])
+    @user = WebUser.new(:login => user_params[:login])
   end
 
   # This function makes the first request to send an email with a token
   def create
-    @user = WebUser.new(:email_address => params[:web_user][:email_address])
+    @user = WebUser.new(:login => params[:web_user][:login])
 
-    if @user.request_password_reset(reset_password_url)
-      redirect_to success_password_path
-    else
-      render :action => :new
+    return render :new unless @user.valid? :reset_password
+
+    unless @user.request_password_reset(reset_password_url)
+      logger.debug "Errors while resetting password #{@user.errors.inspect}"
     end
+    redirect_to success_password_path
   end
 
   def success
@@ -45,7 +46,7 @@ class PasswordController < ApplicationController
   end
 
   def edit_with_token
-    @user = WebUser.new :email_address => params[:email]
+    @user = WebUser.new :login => params[:email]
     @token ||= params[:token] #when reset is integrated
     render :action => :edit, :layout => 'console'
   end

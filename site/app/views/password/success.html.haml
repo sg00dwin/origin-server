@@ -7,6 +7,13 @@
     An email has been sent to you containing instructions on how to reset your password.
     The link in the email will allow you to change your password.
 
-  %p If you do not receive an email within a few minutes, check your Spam folder to ensure it was not incorrectly moved. If you don't receive an email, contact us at #{link_to_account_mailto} or on #{link_to_irc}.
+  %p 
+    If you do not receive an email within a few minutes, check the following:
+  %ul
+    %li That you entered the correct email address
+    %li That your mail provider did not move the email from noreply@redhat.com into a Spam folder
+
+  %p
+    If you still do not receive an email, contact us at #{link_to_account_mailto} or on #{link_to_irc}.
 
   %p= link_to '« Back to the main page', root_path

@@ -25,19 +25,23 @@ class WebUser
   attr_accessor :token, :old_password
 
   # expose the rhlogin field as login
-  def login() rhlogin end
+  alias_attribute :login, :rhlogin
+
+  validates :login, 
+            :presence => true,
+            :if => on_scopes(:reset_password)
 
   validates_format_of :email_address,
                       :with => /^[-a-z0-9_+\.]+\@([-a-z0-9]+\.)+[a-z0-9]{2,4}$/i,
                       :message => 'Invalid email address',
-                      :if => on_scopes(:save, :reset_password)
+                      :if => on_scopes(:save)
 
   # Requires Ruby 1.9 for lookbehind
   #validates_format_of :email_address,
   #                    :with => /(?<!(ir|cu|kp|sd|sy))$/i,
   #                    :message => 'We can not accept emails from the following top level domains: .ir, .cu, .kp, .sd, .sy'
 
-  validates_each :email_address, :if => on_scopes(:save, :reset_password) do |record, attr, value|
+  validates_each :email_address, :if => on_scopes(:save) do |record, attr, value|
     if value =~ /\.(ir|cu|kp|sd|sy)$/i
       record.errors.add attr, 'We can not accept emails from the following top level domains: .ir, .cu, .kp, .sd, .sy'
     end
