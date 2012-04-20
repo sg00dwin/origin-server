@@ -78,9 +78,9 @@ end
 
 
 printf("\n")
-printf("%8s: %6s: %s\n", "tot msec", " calls", "      action        ")
-printf("%8s: %6s: %s\n", "--------", "------", "--------------------")
+printf("%8s: %6s: %8s: %s\n", "tot msec", " calls", "   avg  ", "      action        ")
+printf("%8s: %6s: %8s: %s\n", "--------", "------", "--------", "--------------------")
 sprof=profile.sort_by {|key, value| value}
 sprof.reverse.each do |pair|
-  printf("%8d: %6d: %s\n", pair[1], ncalls[pair[0]], pair[0])
+  printf("%8d: %6d: %8d: %s\n", pair[1], ncalls[pair[0]], pair[1]/ncalls[pair[0]], pair[0])
 end
