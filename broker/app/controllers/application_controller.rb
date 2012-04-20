@@ -4,6 +4,8 @@ module ActionController
     before_filter :profiler_start
     after_filter  :profiler_stop
 
+    @@profiler_dir = "/var/tmp"
+
 
     def profiler_start
       begin
@@ -38,6 +40,7 @@ module ActionController
             RubyProf.measure_mode = RubyProf::PROCESS_TIME
           end
 
+          @profiler_start_time = Time.now
           RubyProf.start
 
         end
@@ -53,6 +56,7 @@ module ActionController
         if RubyProf.running?
           Rails.logger.debug("ApplicationController::profiler_stop: RubyProf stopping.")
           result = RubyProf.stop
+          duration = Time.now - @profiler_start_time
           RubyProf::exclude_threads = nil
 
           if cfg[:squash_threads]
@@ -84,13 +88,40 @@ module ActionController
             printext="txt"
           end
 
-          timestamp=Time.now.strftime('%Y-%m-%d-%H-%M-%S')
-          outfile=File.join(Dir.tmpdir, "profiler-#{cfg[:measure]}-#{cfg[:type]}-#{timestamp}.#{printext}")
+          timestamp=@profiler_start_time.strftime('%Y-%m-%d-%H-%M-%S')
+          reportfile=File.join(@@profiler_dir, "profiler-#{cfg[:measure]}-#{cfg[:type]}-#{timestamp}.#{printext}")
+          infofile=File.join(@@profiler_dir, "profiler-info-#{timestamp}.json")
 
-          Rails.logger.debug("ApplicationController::profiler_stop: writing #{cfg[:type]} report in #{outfile}")
+          Rails.logger.debug("ApplicationController::profiler_stop: writing #{cfg[:type]} report in #{outfile}, info in #{infofile}")
           p=printer.new(result)
 
-          File.open(outfile, 'wb') do |f|
+          File.open(infofile, 'wb') do |f|
+            infohdrs = {}
+            request.headers.each do |k, v|
+              infohdrs[k.to_s]=v.to_s
+            end
+            infoout = {
+              :TIMESTAMP   => @profiler_start_time.to_s,
+              :TIMESTAMP_F => @profiler_start_time.to_f,
+              :DURATION    => duration.to_f,
+              :ENDSTAMP    => (@profiler_start_time + duration).to_s,
+              :ENDSTAMP_F  => (@profiler_start_time + duration).to_f,
+              :HOST        => request.host.to_s,
+              :DOMAIN      => request.domain.to_s,
+              :FORMAT      => request.format.to_s,
+              :METHOD      => request.method.to_s,
+              :HEADERS     => infohdrs,
+              :PORT        => request.port.to_s,
+              :PROTOCOL    => request.protocol.to_s,
+              :QUERY_STR   => request.query_string.to_s,
+              :REMOTE_IP   => request.remote_ip.to_s,
+              :URL         => request.url.to_s
+            }
+
+            f.puts(infoout.to_json)
+          end
+
+          File.open(reportfile, 'wb') do |f|
             p.print(f, cfg)
           end
 
