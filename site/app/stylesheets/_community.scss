@@ -18,6 +18,10 @@
   > div { margin-bottom: 15px; }
   .block-stats { clear: both; }
 }
+.column-nav .picture img {
+  max-width: 35px;
+  max-height: 35px;
+}
 
 .links > a,
 .links > span { 
@@ -307,6 +311,9 @@ html.js fieldset.collapsible .fieldset-wrapper {
 	margin-right: 40px;
 }
 
-
+/* Wiki pages */
+#toc { float: right; background: #eee; border: 1px solid #ddd; margin-left: 15px; margin-bottom: 15px; }
+#toc td { font-size: 90%; }
+#toc td ul { list-style: none; margin: 0 0 9px 9px; }
 
 

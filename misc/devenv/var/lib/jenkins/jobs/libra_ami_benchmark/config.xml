@@ -55,9 +55,6 @@ echo $launch_params
 # Launch a test instance
 build/devenv launch devenv_benchmark_${BUILD_NUMBER} --verifier $launch_params
 
-# Disable charlie (this could take more than 24 hours)
-
-
 excludes=&quot;&quot;
 if [ &quot;$include_web&quot; == &quot;true&quot; ]
 then
@@ -73,7 +70,8 @@ then
 fi
 echo $excludes
 # Run the image tests
-build/devenv test devenv_benchmark_${BUILD_NUMBER} --include-cucumber=benchmark --disable-charlie --terminate $excludes</command>
+build/devenv test devenv_benchmark_${BUILD_NUMBER} --include-cucumber=benchmark --disable-charlie --terminate $excludes
+</command>
     </hudson.tasks.Shell>
   </builders>
   <publishers>
