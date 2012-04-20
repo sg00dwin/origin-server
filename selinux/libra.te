@@ -165,7 +165,7 @@ domain_use_interactive_fds(libra_app_domain)
 domain_dontaudit_read_all_domains_state(libra_app_domain)
 
 # Disabled for now, doesn't exist in our current policy -- mmcgrath
-#fs_read_hugetlbfs_files(libra_app_domain)
+fs_rw_hugetlbfs_files(libra_app_domain)
 fs_dontaudit_rw_anon_inodefs_files(libra_app_domain)
 fs_search_tmpfs(libra_app_domain)
 fs_getattr_xattr_fs(libra_app_domain)
