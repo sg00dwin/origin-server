@@ -12,7 +12,7 @@ class PasswordController < ApplicationController
   def create
     @user = WebUser.new(:login => params[:web_user][:login])
 
-    return render :new unless @user.valid? :reset_password
+    render :new and return unless @user.valid? :reset_password
 
     unless @user.request_password_reset(reset_password_url)
       logger.debug "Errors while resetting password #{@user.errors.inspect}"
