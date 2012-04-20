@@ -97,7 +97,7 @@ class BaseController < ActionController::Base
     if not SUPPORTED_API_VERSIONS.include?$requested_api_version
       @reply = RestReply.new(:not_acceptable)
       @reply.messages.push(message = Message.new(:error, "Requested API version #{$requested_api_version} is not supported.  Supported versions are #{SUPPORTED_API_VERSIONS.join(",")}"))
-            $requested_api_version = API_VERSION
+      $requested_api_version = API_VERSION
       respond_with(@reply) do |format|
         format.xml { render :xml => @reply, :status => @reply.status }
         format.json { render :json => @reply, :status => @reply.status }
