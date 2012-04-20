@@ -129,6 +129,7 @@
 }
 .community .thread .thread-author .views-field-name {
 	font-size: inherit;
+	padding: 0 4px 0 1px;
 }
 .column-content .picture img,
 .community .field_author_image_fid {
@@ -327,7 +328,7 @@ html.js fieldset.collapsible .fieldset-wrapper {
 .community div.view div.views-admin-links {
     font-size: xx-small;
     margin-right: 0;
-    margin-top: -20px;
+    margin-top: -10px;
     float: right;
 }
 .community .meta .view-user-profile-box .views-admin-links {
@@ -342,7 +343,7 @@ html.js fieldset.collapsible .fieldset-wrapper {
     float: right;
 }
 .community div.view:hover div.views-hide {
-    margin-top: -20px;
+    margin-top: -10px;
 }
 .community .meta .view-user-profile-box > div {
 	border: 1px solid #666;
