@@ -1,10 +1,12 @@
+require 'fileutils'
+
 module ActionController
   class Base
 
     before_filter :profiler_start
     after_filter  :profiler_stop
 
-    @@profiler_dir = "/var/tmp"
+    @@profiler_dir = "/tmp/broker-profiler"
 
 
     def profiler_start
@@ -92,8 +94,10 @@ module ActionController
           reportfile=File.join(@@profiler_dir, "profiler-#{cfg[:measure]}-#{cfg[:type]}-#{timestamp}.#{printext}")
           infofile=File.join(@@profiler_dir, "profiler-info-#{timestamp}.json")
 
-          Rails.logger.debug("ApplicationController::profiler_stop: writing #{cfg[:type]} report in #{outfile}, info in #{infofile}")
+          Rails.logger.debug("ApplicationController::profiler_stop: writing #{cfg[:type]} report in #{reportfile}, info in #{infofile}")
           p=printer.new(result)
+
+          FileUtils.mkdir_p(@@profiler_dir)
 
           File.open(infofile, 'wb') do |f|
             infohdrs = {}
