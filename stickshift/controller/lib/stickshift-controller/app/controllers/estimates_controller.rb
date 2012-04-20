@@ -1,6 +1,6 @@
 class EstimatesController < BaseController
   respond_to :xml, :json
-  before_filter :authenticate
+  before_filter :authenticate, :check_version
 
   # GET /estimates
   def index

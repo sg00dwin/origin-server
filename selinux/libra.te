@@ -1,4 +1,4 @@
-policy_module(libra,1.1.19)
+policy_module(libra,1.1.18)
 
 ########################################
 #
@@ -79,7 +79,6 @@ corenet_tcp_connect_mongod_port(libra_net_domain)
 corenet_tcp_connect_munin_port(libra_net_domain)
 corenet_tcp_connect_pop_port(libra_net_domain)
 corenet_udp_bind_generic_port(libra_net_domain)
-corenet_tcp_bind_memcache_port(libra_net_domain)
 corenet_tcp_bind_jboss_management_port(libra_net_domain)
 corenet_tcp_bind_jboss_debug_port(libra_net_domain)
 corenet_tcp_bind_mongod_port(libra_net_domain)
@@ -165,7 +164,8 @@ dev_dontaudit_getattr_all_chr_files(libra_app_domain)
 domain_use_interactive_fds(libra_app_domain)
 domain_dontaudit_read_all_domains_state(libra_app_domain)
 
-fs_read_hugetlbfs_files(libra_app_domain)
+# Disabled for now, doesn't exist in our current policy -- mmcgrath
+#fs_read_hugetlbfs_files(libra_app_domain)
 fs_dontaudit_rw_anon_inodefs_files(libra_app_domain)
 fs_search_tmpfs(libra_app_domain)
 fs_getattr_xattr_fs(libra_app_domain)

@@ -16,6 +16,9 @@ class DevEnv < Thor
   include OpenShift::Amazon
   include OpenShift::SauceLabs
 
+  @@SSH_TIMEOUT = 4800
+  @@SSH_TIMEOUT_OVERRIDES = { "benchmark" => 172800 }
+
   no_tasks do
     def sync_repo(repo_name, hostname, ssh_path)
       temp_commit
@@ -119,8 +122,8 @@ class DevEnv < Thor
       puts "Done"
     end
 
-    def run_ssh(hostname, title, cmd)
-      output, code = ssh(hostname, cmd, 4800, true)
+    def run_ssh(hostname, title, cmd, timeout=@@SSH_TIMEOUT)
+      output, code = ssh(hostname, cmd, timeout, true)
       puts <<-eos
 
 
@@ -169,14 +172,14 @@ class DevEnv < Thor
       puts "Done"
     end
 
-    def add_ssh_cmd_to_threads(hostname, threads, failures, titles, cmds)
+    def add_ssh_cmd_to_threads(hostname, threads, failures, titles, cmds, timeout=@@SSH_TIMEOUT)
       titles = [titles] if titles.kind_of?(String)
       cmds = [cmds] if cmds.kind_of?(String)
       threads << Thread.new do
         multi = cmds.length > 1
         cmds.each_with_index do |cmd, index|
           title = titles[index]
-          output, exit_code = run_ssh(hostname, title, cmd)
+          output, exit_code = run_ssh(hostname, title, cmd, timeout)
           if exit_code != 0
             if output.include?("Failing Scenarios:") && output =~ /cucumber li-test\/tests\/.*\.feature:\d+/
               output.lines.each do |line|
@@ -230,7 +233,9 @@ class DevEnv < Thor
         end
 
         if options.include_cucumber
-          add_ssh_cmd_to_threads(hostname, threads, failures, "#{options.include_cucumber}", "cucumber -f html --out /tmp/rhc/#{options.include_cucumber}.html -f progress -t @#{options.include_cucumber} li-test/tests")
+          timeout=@@SSH_TIMEOUT
+          timeout = @@SSH_TIMEOUT_OVERRIDES[options.include_cucumber] if not @@SSH_TIMEOUT_OVERRIDES[options.include_cucumber].nil?
+          add_ssh_cmd_to_threads(hostname, threads, failures, "#{options.include_cucumber}", "cucumber -f html --out /tmp/rhc/#{options.include_cucumber}.html -f progress -t @#{options.include_cucumber} li-test/tests", timeout)
         end
 
         if options.include_web?
@@ -343,7 +348,7 @@ class DevEnv < Thor
       end
     end
     
-    def retry_test_failures(hostname, failures, num_retries=1)
+    def retry_test_failures(hostname, failures, num_retries=1, timeout=@@SSH_TIMEOUT)
       failures.reverse!
       puts "All Failures: #{failures.pretty_inspect}"
       setup_test_dir(hostname)
@@ -352,7 +357,7 @@ class DevEnv < Thor
         cmd = failure[1]
         (1..num_retries).each do |i|
           puts "Retry attempt #{i} for: #{title}"
-          output, exit_code = run_ssh(hostname, title, cmd)
+          output, exit_code = run_ssh(hostname, title, cmd, timeout)
           if exit_code != 0
             if i == num_retries
               exit exit_code

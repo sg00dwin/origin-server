@@ -1,13 +1,14 @@
 class RestReply < StickShift::Model
-  attr_accessor :version, :status, :type, :data, :messages
-  API_VERSION = "1.0"
+  attr_accessor :version, :status, :type, :data, :messages, :supported_api_versions
+
   
   def initialize(status=nil, type=nil, data=nil)
     self.status = status
     self.type = type
     self.data = data
     self.messages = []
-    self.version = API_VERSION
+    self.version = $requested_api_version
+    self.supported_api_versions = BaseController::SUPPORTED_API_VERSIONS
   end
   
   def process_result_io(result_io)

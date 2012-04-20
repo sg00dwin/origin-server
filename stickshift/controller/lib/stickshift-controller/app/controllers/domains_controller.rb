@@ -1,6 +1,6 @@
 class DomainsController < BaseController
   respond_to :xml, :json
-  before_filter :authenticate
+  before_filter :authenticate, :check_version
   # GET /domains
   def index
     domains = Array.new

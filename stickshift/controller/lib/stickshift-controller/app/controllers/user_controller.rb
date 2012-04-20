@@ -1,6 +1,6 @@
 class UserController < BaseController
   respond_to :json, :xml
-  before_filter :authenticate
+  before_filter :authenticate, :check_version
   
   # GET /user
   def show

@@ -1,6 +1,6 @@
 class ApplicationsController < BaseController
   respond_to :xml, :json
-  before_filter :authenticate
+  before_filter :authenticate, :check_version
   include LegacyBrokerHelper
   
   # GET /domains/[domain id]/applications
@@ -10,7 +10,7 @@ class ApplicationsController < BaseController
      if not domain or not domain.hasAccess?(@cloud_user)
        Rails.logger.debug "Domain #{domain_id}"
       @reply = RestReply.new(:not_found)
-      @reply.messages.push(message = Message.new(:error, "Domain #{id} not found.", 127))
+      @reply.messages.push(message = Message.new(:error, "Domain #{domain_id} not found.", 127))
       respond_with @reply, :status => @reply.status
       return
     end
@@ -206,7 +206,7 @@ class ApplicationsController < BaseController
      if not domain or not domain.hasAccess?(@cloud_user)
       Rails.logger.debug "Domain #{domain_id}"
       @reply = RestReply.new(:not_found)
-      @reply.messages.push(message = Message.new(:error, "Domain #{id} not found.", 127))
+      @reply.messages.push(message = Message.new(:error, "Domain #{domain_id} not found.", 127))
       respond_with(@reply) do |format|
         format.xml { render :xml => @reply, :status => @reply.status }
         format.json { render :json => @reply, :status => @reply.status }
