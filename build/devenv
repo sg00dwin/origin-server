@@ -9,6 +9,8 @@ require 'lib/openshift'
 require 'pp'
 require 'yaml'
 
+include FileUtils
+
 class DevEnv < Thor
   include Thor::Actions
   include OpenShift::Tito
@@ -27,15 +29,45 @@ class DevEnv < Thor
       branch = get_branch
 
       puts "Synchronizing local changes from branch #{branch} for repo #{repo_name}..."
-      run("export GIT_SSH=#{ssh_path}; #{branch == 'origin/master' ? "git push -q root@#{hostname}:/root/#{repo_name} master:master --tags --force; " : ''}git push -q root@#{hostname}:/root/#{repo_name} #{branch}:master --tags --force", :verbose => options.verbose?)
+      ssh(hostname, %{export GIT_DIR=/root/#{repo_name}; git log ^HEAD || ( mkdir -p /root/#{repo_name} && cd /root/#{repo_name} && git init-db --bare)}, 15)
+      exitcode = run(%{
+#######
+# Start shell code
+export GIT_SSH=#{ssh_path}
+#{branch == 'origin/master' ? "git push -q root@#{hostname}:/root/#{repo_name} master:master --tags --force; " : ''}
+git push -q root@#{hostname}:/root/#{repo_name} #{branch}:master --tags --force
+      
+#######
+# End shell code
+}, :verbose => options.verbose?)
+
       update_remote_tests(hostname) if repo_name == 'li'
       puts "Done"
 
       reset_temp_commit
     end
+    
+    def sync_sibling_repo(repo_name, repo_dir, hostname, ssh_path)
+      exists = File.exists?(repo_dir) 
+      inside(repo_dir) do
+        sync_repo(repo_name, hostname, ssh_path)
+      end if exists
+      exists
+    end
 
     def init_repo(hostname)
-      ssh(hostname, "rm -rf /root/li; git clone --bare git://git1.ops.rhcloud.com/li.git/ /root/li", 120)
+      git_clone_commands = ''
+      SIBLING_REPOS.each do |repo_info|
+        repo_name = repo_info[0]
+        repo_dir = repo_info[1]
+        if File.exists?(repo_dir)
+          git_clone_commands += "rm -rf /root/#{repo_name}; git clone --bare git://github.com/openshift/#{repo_name}.git /root/#{repo_name}; " 
+        end
+      end
+      ssh(hostname, %{
+rm -rf /root/li; git clone --bare git://git1.ops.rhcloud.com/li.git/ /root/li
+#{git_clone_commands}
+}, 120)
     end
 
     def temp_commit
@@ -66,7 +98,24 @@ class DevEnv < Thor
 
     def update_remote_tests(hostname)
       print "Updating remote tests..."
-      ssh(hostname, "rm -rf /root/li-test; cd /root/li; git archive --prefix li-test/ --format=tar HEAD | (cd /root && tar --warning=no-timestamp -xf -); cp -n /root/li-test/stickshift/controller/test/cucumber/*.feature /root/li-test/tests/. ; mkdir -p /tmp/rhc/junit")
+      repo_dirs = ['/root/li']
+      SIBLING_REPOS.each do |repo_info|
+        repo_name = repo_info[0]
+        repo_dir = repo_info[1]
+        if File.exists?(repo_dir)
+          repo_dirs << ["/root/#{repo_name}"]
+        end
+      end
+      git_archive_commands = ''
+      repo_dirs.each do |repo_dir|
+        git_archive_commands += "pushd #{repo_dir} > /dev/null; git archive --prefix li-test/ --format=tar HEAD | (cd /root && tar --warning=no-timestamp -xf -); popd > /dev/null; "
+      end
+      ssh(hostname, %{
+rm -rf /root/li-test
+#{git_archive_commands}
+cp -n /root/li-test/stickshift/controller/test/cucumber/*.feature /root/li-test/tests/.  
+mkdir -p /tmp/rhc/junit
+})
       puts "Done"
     end
     
@@ -102,7 +151,21 @@ class DevEnv < Thor
 
     def scp_remote_tests(hostname)
       puts "Archiving local changes..."
-      `git archive --prefix li-test/ HEAD --output /tmp/li-test.tar`
+      FileUtils.rm_rf '/tmp/li-test'
+      repo_dirs = ['.']
+      SIBLING_REPOS.each do |repo_info|
+        repo_name = repo_info[0]
+        repo_dir = repo_info[1]
+        if File.exists?(repo_dir)
+          repo_dirs << repo_dir
+        end
+      end
+      repo_dirs.each do |repo_dir|
+        inside(repo_dir) do
+          `git archive --prefix li-test/ --format=tar HEAD | (cd /tmp && tar --warning=no-timestamp -xf -)`
+        end
+      end
+      `cd /tmp/ && tar -cvf /tmp/li-test.tar li-test`
       puts "Done"
       puts "Copying tests to remote instance: #{hostname}"
       scp_to(hostname, "/tmp/li-test.tar", "~/", 600, 10)
@@ -470,10 +533,16 @@ class DevEnv < Thor
   method_option :build_clean_ami, :required => false, :desc => "Indicates whether to start from a base RHEL image"
   method_option :install_from_source, :required => false, :desc => "Indicates whether to build based off origin/master"
   method_option :install_from_local_source, :required => false, :desc => "Indicates whether to build based on your local source"
-  method_option :skip_verify, :required => false, :desc => "Skip running tests to verify the build"
+  method_option :skip_verify, :type => :boolean, :desc => "Skip running tests to verify the build"
+  method_option :instance_type, :required => false, :desc => "Amazon machine type override (default m1.medium)"
 
   def build(name, build_num)
     options.verbose? ? @@log.level = Logger::DEBUG : @@log.level = Logger::ERROR
+    
+    # Override the machine type to launch if necessary
+    if options[:instance_type]
+      $amz_options[:instance_type] = options[:instance_type]
+    end
 
     # Establish a new connection
     conn = connect(options.region)
@@ -540,7 +609,13 @@ class DevEnv < Thor
           cmd = 'set -e; sh li-devenv.sh candidate --install_build_prereqs'
           output += ssh(hostname, cmd, 600)
           init_repo(hostname)
-          sync_repo('li', hostname, File.expand_path(File.dirname(__FILE__)) + "/ssh-override")
+          ssh_path = File.expand_path(File.dirname(__FILE__)) + "/ssh-override"
+          sync_repo('li', hostname, ssh_path)
+          SIBLING_REPOS.each do |repo_info|
+            repo_name = repo_info[0]
+            repo_dir = repo_info[1]
+            sync_sibling_repo(repo_name, repo_dir, hostname, ssh_path)
+          end
           print "Performing clean install from local source..."
           cmd = 'set -e; sh li-devenv.sh candidate --install_from_local_source'
         else
@@ -635,19 +710,50 @@ class DevEnv < Thor
     hostname = options.tag? ? find_instance(conn, name, true).dns_name : name
 
     ssh_path=File.expand_path(File.dirname(__FILE__)) + "/ssh-override"
+
     sync_repo('li', hostname, ssh_path)
 
-    has_client = File.exists?('../os-client-tools')
+    avail_sibling_repo_names = []
 
-    if has_client
-      inside('../os-client-tools') do
-        sync_repo('os-client-tools', hostname, ssh_path)
-      end
+    SIBLING_REPOS.each do |repo_info|
+      repo_name = repo_info[0]
+      repo_dir = repo_info[1]
+      exists = sync_sibling_repo(repo_name, repo_dir, hostname, ssh_path)
+      avail_sibling_repo_names.push(repo_name) if exists
+    end
+
+    clone_commands = ''
+    working_dirs = ''
+    avail_sibling_repo_names.each do |repo_name|
+      working_dirs += "#{repo_name}-working "
+      clone_commands += "git clone #{repo_name} #{repo_name}-working; "
     end
 
     if !options.skip_build?
       puts "Performing remote install...."
-      output, exit_code = ssh(hostname, "set -e; #{options.clean_metadata? ? 'yum clean metadata; ' : ''}rm -rf li-working os-client-tools-working; git clone li li-working;#{has_client ? ' git clone os-client-tools os-client-tools-working;' : ''} pushd li-working; build/devenv update#{options.verbose? ? ' --verbose' : ''}#{options.clean_metadata? ? ' --include_stale' : ''} 2>&1; popd; rm -rf li-working os-client-tools-working; #{options.clean_metadata? ? "yum update -y --exclude='rhc-devenv' rhc-* rubygem-stickshift-*  rubygem-gearchanger-* rubygem-uplift-* rubygem-crankcase-* rubygem-swingshift-*; " : ''}", 600, true)
+      output, exit_code = ssh(hostname, %{
+##################
+# Start shell code
+
+set -e
+#{options.clean_metadata? ? 'yum clean metadata' : ''}
+rm -rf li-working #{working_dirs}
+
+#{clone_commands}
+
+# li repo
+git clone li li-working
+
+pushd li-working && build/devenv update#{options.verbose? ? ' --verbose' : ''} #{options.clean_metadata? ? ' --include_stale' : ''} 2>&1
+popd
+
+rm -rf li-working #{working_dirs}
+#{options.clean_metadata? ? "yum update -y --exclude='rhc-devenv' rhc-* rubygem-stickshift-*  rubygem-gearchanger-* rubygem-uplift-* rubygem-crankcase-* rubygem-swingshift-*; " : ''}
+
+# End shell code
+################
+}, 600, true)
+
       if exit_code != 0
         puts "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
         puts "Build failed!  Exiting."
@@ -939,13 +1045,9 @@ END
       inside('../os-client-tools') do
         temp_commit
 
-        puts "building rhc-rest"
-        `rm -rf /tmp/tito/; pushd rhc-rest; tito build --rpm --test; popd;`
-        puts "installing rhc-rest"
-        `sudo rpm -Uvh --force /tmp/tito/noarch/rhc-rest-*; rm -rf /tmp/tito/`
-        puts "building rhc"
+        puts "building rhc..."
         `pushd express; tito build --rpm --test; popd;`
-        puts "installing rhc"
+        puts "installing rhc..."
         `sudo rpm -Uvh --force /tmp/tito/noarch/rhc-*; rm -rf /tmp/tito; mkdir -p /tmp/tito`
 
         reset_temp_commit

@@ -277,10 +277,9 @@ perl -p -i -e "s/^#MaxStartups .*$/MaxStartups 40/" /etc/ssh/sshd_config
 
 # Setup an empty git repository to allow code transfer
 mkdir -p /root/li
-#mkdir -p /root/stickshift
 git init --bare /root/li
 git init --bare /root/os-client-tools
-#git init --bare /root/stickshift
+git init --bare /root/crankcase
 
 # create a submodule repo for the tests
 git init /root/submodule_test_repo

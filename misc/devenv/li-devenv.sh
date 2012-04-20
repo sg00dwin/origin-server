@@ -83,19 +83,7 @@ function install_build_requires {
   done
 }
 
-if [ "$2" == "--install_from_source" ] || [ "$2" == "--install_from_local_source" ]
-then
-  mkdir -p  /tmp/tito
-  rm -rf /root/li-working
-  if [ "$2" == "--install_from_source" ]
-  then
-    git clone git://git1.ops.rhcloud.com/li.git/ /root/li-working
-  else
-    git clone /root/li /root/li-working
-  fi  
-  rm -rf /root/os-client-tools
-  git clone https://github.com/openshift/os-client-tools.git /root/os-client-tools
-  pushd /root/li-working > /dev/null
+function find_and_build_specs {
   for x in `find -name *.spec`
   do
     dir=`dirname $x`
@@ -103,22 +91,58 @@ then
     then
       install_build_requires "$x"
       pushd $dir > /dev/null
-	  tito build --test --rpm
-	  popd > /dev/null
+        tito build --test --rpm
+      popd > /dev/null
+    fi
+  done
+}
+
+if [ "$2" == "--install_from_source" ] || [ "$2" == "--install_from_local_source" ]
+then
+  mkdir -p /tmp/tito
+  rm -rf /root/li-working
+  if [ "$2" == "--install_from_source" ]
+  then
+    git clone git://git1.ops.rhcloud.com/li.git/ /root/li-working
+  else
+    git clone /root/li /root/li-working
+  fi
+
+  github_repos=( crankcase os-client-tools)
+
+  if ! [ "$2" == "--install_from_local_source" ]
+  then
+    for repo_name in "${github_repos[@]}"
+    do
+      rm -rf /root/$repo_name
+      git clone https://github.com/openshift/$repo_name.git /root/$repo_name
+    done
+  fi
+
+  pushd /root/li-working > /dev/null
+  find_and_build_specs
+  for repo_name in "${github_repos[@]}"
+  do
+    if [ -d /root/$repo_name ]
+    then
+      pushd /root/$repo_name > /dev/null
+        find_and_build_specs
+      popd > /dev/null
     fi
   done
   cp /tmp/tito/x86_64/*.rpm /tmp/tito/noarch/
-  pushd /root/os-client-tools/express > /dev/null
-    install_build_requires "client.spec"
-    tito build --test --rpm
-  popd > /dev/null
   yum localinstall -y /tmp/tito/noarch/*.rpm
   build/devenv write_sync_history
   popd > /dev/null
-  rm -rf /root/os-client-tools
-  rm -rf /root/li-working
-  rm -rf /tmp/tito
-  git init --bare /root/os-client-tools
+  for repo_name in "${github_repos[@]}"
+  do
+    rm -rf /root/$repo_name
+  done
+  rm -rf /root/li-working /tmp/tito
+  for repo_name in "${github_repos[@]}"
+  do
+    git init --bare /root/$repo_name  
+  done
 elif [ "$2" == "--install_build_prereqs" ]
 then
   yum -y install git tito

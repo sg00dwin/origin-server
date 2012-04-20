@@ -18,9 +18,13 @@ class Release < Thor
   no_tasks do
     def git_pull
       run("git pull", :verbose => options.verbose?)
-      if File.exists?('../os-client-tools')
-        inside('../os-client-tools') do
-          run("git pull", :verbose => options.verbose?)
+      SIBLING_REPOS.each do |repo_info|
+        repo_name = repo_info[0]
+        repo_dir = repo_info[1]
+        if File.exists?(repo_dir)
+          inside(repo_dir) do
+            run("git pull", :verbose => options.verbose?)
+          end
         end
       end
     end
@@ -30,62 +34,73 @@ class Release < Thor
       version[0..last_index_of_dot] + (version[last_index_of_dot+1..-1].to_i + 1).to_s
     end
     
+    def get_version(file)
+      version = /Version: *(.*)/.match(File.read(file))[1].strip
+    end
+    
+    def update_gemfile_version(spec_file, gem_name, gemfile)
+      version = get_version(spec_file)
+      nv = next_version(version)
+      run("/bin/sed -i 's,#{gem_name} (.*,#{gem_name} (#{nv}),' #{gemfile}", :verbose => verbose)
+      gem_updates = true
+    end
+    
     def get_updated_build_dirs(verbose, push_changes=false)
-      build_dirs = get_build_dirs
       gem_updates = false
-      if build_dirs.include?("stickshift/common")
-        version = /(Version: )(.*)/.match(File.read("stickshift/common/stickshift-common.spec"))[2].strip
-        nv = next_version(version)
-        run("/bin/sed -i 's,stickshift-common (.*,stickshift-common (#{nv}),' broker/Gemfile.lock", :verbose => verbose)
-        #run("/bin/sed -i 's,stickshift-common (.*,stickshift-common (#{nv}),' stickshift/controller/Gemfile.lock", :verbose => verbose)
-        run("/bin/sed -i 's,stickshift-common (.*,stickshift-common (#{nv}),' stickshift/broker/Gemfile.lock", :verbose => verbose)
-        run("/bin/sed -i 's,stickshift-common (.*,stickshift-common (#{nv}),' stickshift/node/Gemfile.lock", :verbose => verbose)
-        gem_updates = true
-      end
       
-      if build_dirs.include?("crankcase/mongo")
-        version = /(Version: )(.*)/.match(File.read("crankcase/mongo/crankcase-mongo-plugin.spec"))[2].strip
-        nv = next_version(version)
-        run("/bin/sed -i 's,crankcase-mongo-plugin (.*,crankcase-mongo-plugin (#{nv}),' broker/Gemfile.lock", :verbose => verbose)
-        gem_updates = true
-      end
-      
-      if build_dirs.include?("gearchanger/m-collective")
-        version = /(Version: )(.*)/.match(File.read("gearchanger/m-collective/gearchanger-m-collective-plugin.spec"))[2].strip
-        nv = next_version(version)
-        run("/bin/sed -i 's,gearchanger-m-collective-plugin (.*,gearchanger-m-collective-plugin (#{nv}),' broker/Gemfile.lock", :verbose => verbose)
-        gem_updates = true
-      end
+      all_packages = get_packages
+      build_dirs = get_build_dirs
 
-      if build_dirs.include?("swingshift/streamline")
-        version = /(Version: )(.*)/.match(File.read("swingshift/streamline/swingshift-streamline-plugin.spec"))[2].strip
-        nv = next_version(version)
-        run("/bin/sed -i 's,swingshift-streamline-plugin (.*,swingshift-streamline-plugin (#{nv}),' broker/Gemfile.lock", :verbose => verbose)
-        gem_updates = true
-      end
-      
-      if build_dirs.include?("uplift/dynect")
-        version = /(Version: )(.*)/.match(File.read("uplift/dynect/uplift-dynect-plugin.spec"))[2].strip
-        nv = next_version(version)
-        run("/bin/sed -i 's,uplift-dynect-plugin (.*,uplift-dynect-plugin (#{nv}),' broker/Gemfile.lock", :verbose => verbose)
-        gem_updates = true
-      end
-      
-      if build_dirs.include?("stickshift/controller") || build_dirs.include?("stickshift/common")
-        version = /(Version: )(.*)/.match(File.read("stickshift/controller/stickshift-controller.spec"))[2].strip
-        nv = next_version(version)
-        run("/bin/sed -i 's,stickshift-controller (.*,stickshift-controller (#{nv}),' broker/Gemfile.lock", :verbose => verbose)
-        #run("/bin/sed -i 's,stickshift-controller (.*,stickshift-controller (#{nv}),' stickshift/controller/Gemfile.lock", :verbose => verbose)
-        run("/bin/sed -i 's,stickshift-controller (.*,stickshift-controller (#{nv}),' stickshift/broker/Gemfile.lock", :verbose => verbose)
-        gem_updates = true
-      end
-      
-      if build_dirs.include?("stickshift/node") || build_dirs.include?("stickshift/common")
-        version = /(Version: )(.*)/.match(File.read("stickshift/node/stickshift-node.spec"))[2].strip
-        nv = next_version(version)
-        run("/bin/sed -i 's,stickshift-node (.*,stickshift-node (#{nv}),' stickshift/node/Gemfile.lock", :verbose => verbose)
-        run("/bin/sed -i 's,stickshift-node (.*,stickshift-node (#{nv}),' stickshift/broker/Gemfile.lock", :verbose => verbose)
-        gem_updates = true
+      build_dirs.each do |build_info|
+        package_name = build_info[0]
+        build_dir = build_info[1]
+        spec_file = build_info[2]
+
+        if package_name == 'rubygem-stickshift-common'
+          update_gemfile_version(spec_file, 'stickshift-common', "broker/Gemfile.lock")
+          update_gemfile_version(spec_file, 'stickshift-common', "#{build_dir}/../broker/Gemfile.lock")
+          update_gemfile_version(spec_file, 'stickshift-common', "#{build_dir}/../node/Gemfile.lock")
+          gem_updates = true
+        end
+
+        if package_name == 'rubygem-stickshift-controller' || package_name == 'rubygem-stickshift-common'
+          pkg = all_packages['rubygem-stickshift-controller']
+          build_dir = pkg[0]
+          spec_file = pkg[1]
+          update_gemfile_version(spec_file, 'stickshift-controller', "broker/Gemfile.lock")
+          update_gemfile_version(spec_file, 'stickshift-controller', "#{build_dir}/../broker/Gemfile.lock")
+          gem_updates = true
+        end
+
+        if package_name == 'rubygem-stickshift-node' || package_name == 'rubygem-stickshift-common'
+          pkg = all_packages['rubygem-stickshift-node']
+          build_dir = pkg[0]
+          spec_file = pkg[1]
+          update_gemfile_version(spec_file, 'stickshift-node', "#{build_dir}/Gemfile.lock")
+          update_gemfile_version(spec_file, 'stickshift-node', "#{build_dir}/../broker/Gemfile.lock")
+          gem_updates = true
+        end
+
+        if package_name == 'rubygem-crankcase-mongo-plugin'
+          update_gemfile_version(spec_file, 'crankcase-mongo-plugin', "broker/Gemfile.lock")
+          gem_updates = true
+        end
+
+        if package_name == 'rubygem-gearchanger-m-collective-plugin'
+          update_gemfile_version(spec_file, 'gearchanger-m-collective-plugin', "broker/Gemfile.lock")
+          gem_updates = true
+        end
+
+        if package_name == 'rubygem-swingshift-streamline-plugin'
+          update_gemfile_version(spec_file, 'swingshift-streamline-plugin', "broker/Gemfile.lock")
+          gem_updates = true
+        end
+
+        if package_name == 'rubygem-uplift-dynect-plugin'
+          update_gemfile_version(spec_file, 'uplift-dynect-plugin', "broker/Gemfile.lock")
+          gem_updates = true
+        end
+
       end
       
       if gem_updates
@@ -102,7 +117,10 @@ class Release < Thor
   desc "check", "Check the directories that need to be released"
   def check
     git_pull
-    puts "Changes detected in the following directories: #{get_build_dirs.pretty_inspect}"
+    build_dir_list = get_build_dirs.map do |build_info|
+      build_info[1]
+    end
+    puts "Changes detected in the following directories: #{build_dir_list.pretty_inspect}"
   end
   
   desc "update_gem_versions", "Update the gem versions for gems going to be released"
@@ -158,7 +176,8 @@ class Release < Thor
     
     build_dirs = get_updated_build_dirs(options.verbose?, true)
 
-    build_dirs.each do |build_dir|
+    build_dirs.each do |build_info|
+      build_dir = build_info[1]
       inside(File.expand_path("../#{build_dir}", File.dirname(__FILE__))) do
         puts "Releasing #{build_dir}"
 
@@ -287,22 +306,22 @@ class Release < Thor
           package.strip!
   
           nvr_regex = /(.*)-(\d+)\.(\d+)\.(\d+)-?(\d)?/
+          all_packages = get_packages
   
           # Check for the supplied NVR value (e.g. 0.45.1)
           if nvr_regex.match(package)
+            pkg = $1 
             # Confirm the package is valid
             nvr_package = nil
-            if package =~ /^rhc-(\d)/
-              if File.exists?('../os-client-tools')
-                inside('../os-client-tools') do
-                  nvr_package = `git tag | grep #{package} | tail -n1`.chomp
-                end
-              else            
-                puts "Couldn't find ../os-client-tools."
-                exit 1
+            build_info = all_packages[pkg]
+            if build_info
+              build_dir = build_info[0]
+              inside(build_dir) do
+                nvr_package = `git tag | grep #{package} | tail -n1`.chomp
               end
             else
-              nvr_package = `git tag | grep #{package} | tail -n1`.chomp
+              puts "Couldn't find '#{pkg}' on local system.  You probably don't have one of these repos #{SIBLING_REPOS}"
+              exit 1
             end
   
             unless nvr_package.empty?
@@ -314,17 +333,15 @@ class Release < Thor
           else
             # No NVR was specified - lookup the latest
             tags = []
-            if package == 'rhc'
-              if File.exists?('../os-client-tools')
-                inside('../os-client-tools') do
-                  tags = `git tag | grep -e rhc-[0-9]`.chomp.split("\n")
-                end
-              else            
-                puts "Couldn't find ../os-client-tools."
-                exit 1
+            build_info = all_packages[package]
+            if build_info
+              build_dir = build_info[0]
+              inside(build_dir) do
+                tags = `git tag | grep #{package}-[0-9]`.chomp.split("\n")
               end
             else
-              tags = `git tag | grep #{package}-`.chomp.split("\n")
+              puts "Couldn't find '#{package}' on local system.  You probably don't have one of these repos #{SIBLING_REPOS}"
+              exit 1
             end
   
             # Sort the tags by NVR and take the last entry
@@ -393,18 +410,6 @@ class Release < Thor
           puts "Done"
         else
           puts "Couldn't find ../os-client-tools/express.  Skipping rsync client gem step."
-        end
-
-        # sync rhc-rest gem
-        puts "Syncing rhc-rest gem to repo..."
-        if File.exists?('../os-client-tools/rhc-rest')
-          unless run("#{rsync} ../os-client-tools/rhc-rest/pkg/*.gem #{repo}/#{mash_config}/client/gems/", :verbose => options.verbose?)
-            puts "ERROR - Gem sync failed."
-            exit 1
-          end
-          puts "Done"
-        else
-          puts "Couldn't find ../os-client-tools/rhc-rest.  Skipping rsync client gem step."
         end
       end
   
