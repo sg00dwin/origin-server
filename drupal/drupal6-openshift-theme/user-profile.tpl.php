@@ -1,3 +1,4 @@
+<?php drupal_set_title(strip_email($account->name) . " | OpenShift by Red Hat"); ?>
 <div id="profile">
   <h2><?php $account->uid === $user->uid ? print 'Your Profile' : print 'User Profile' ?></h2>
   <?php if ($account->uid === $user->uid): ?>

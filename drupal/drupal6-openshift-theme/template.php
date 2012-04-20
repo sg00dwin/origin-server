@@ -40,7 +40,7 @@ function openshift_preprocess_page(&$vars) {
   // Setup variables to display the correct banners on node/add/discussion pages.
   if (arg(0) == 'node' && arg(1) == 'add' && arg(2) == 'discussion') {
     switch (arg(3)) {
-      case 'express':
+      case 'openshift':
         $vars['forum']['new-topic'] = TRUE;
         break;
       case 'flex':
@@ -315,9 +315,9 @@ function openshift_preprocess_node(&$vars) {
   $forum = $path_parts[2];
 
   switch ($forum) {
-    case 'express':
-      $vars['forum']['id'] = 'express';
-      $vars['forum']['title'] = 'Express Forum';
+    case 'openshift':
+      $vars['forum']['id'] = 'openshift';
+      $vars['forum']['title'] = 'OpenShift Forum';
       break;
     case 'flex':
       $vars['forum']['id'] = 'flex';
@@ -454,6 +454,12 @@ function openshift_preprocess_search_block_form(&$vars) {
 
   // Collect all form elements to print entire form
   $vars['search_form'] = implode($vars['search']);
+}
+
+function openshift_preprocess_search_result(&$vars) {
+  if ($vars['type'] == 'user'){
+    $vars['title'] = strip_email($vars['title']);
+  }
 }
 
 function openshift_filter_tips($tips, $long = FALSE, $extra = '') {
@@ -606,8 +612,8 @@ function openshift_preprocess_views_view(&$vars) {
     switch ($path) {
       case 'node/1':
       	$vars['forum']['nid'] = '1';
-      	$vars['forum']['alias'] = 'express';
-        $vars['forum']['heading'] = 'Express';
+      	$vars['forum']['alias'] = 'openshift';
+        $vars['forum']['heading'] = 'OpenShift';
         $vars['forum']['description'] = _openshift_get_group_description(arg(1));
         break;
       case 'node/2':

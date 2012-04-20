@@ -120,6 +120,7 @@ function user_profile_context_default_contexts() {
   t('Displays blocks for users who are logged in.');
 
   $export['user-logged-in'] = $context;
+
   $context = new stdClass;
   $context->disabled = FALSE; /* Edit this to true to make a default context disabled initially */
   $context->api_version = 3;
@@ -284,6 +285,7 @@ function user_profile_context_default_contexts() {
     'menu' => 'node/1',
   );
   $context->condition_mode = 0;
+  $export[$context->name] = $context;
 
   # Make FAQ menu item active
   $context = new stdClass;
@@ -312,6 +314,7 @@ function user_profile_context_default_contexts() {
     'menu' => 'faq',
   );
   $context->condition_mode = 0;
+  $export[$context->name] = $context;
 
   # Make KB menu item active
   $context = new stdClass;
@@ -334,6 +337,7 @@ function user_profile_context_default_contexts() {
     'menu' => 'kb',
   );
   $context->condition_mode = 0;
+  $export[$context->name] = $context;
 
 
   # Make Blog menu item active
@@ -358,6 +362,27 @@ function user_profile_context_default_contexts() {
     'menu' => 'blogs',
   );
   $context->condition_mode = 0;
+  $export[$context->name] = $context;
+
+
+  $context = new stdClass;
+  $context->disabled = FALSE; /* Edit this to true to make a default context disabled initially */
+  $context->api_version = 3;
+  $context->name = 'menu-active-events';
+  $context->description = '';
+  $context->tag = '';
+  $context->conditions = array(
+    'path' => array(
+      'values' => array(
+        'calendar' => 'calendar',
+      ),
+    ),
+  );
+  $context->reactions = array(
+    'menu' => 'events',
+  );
+  $context->condition_mode = 0;
+  $export[$context->name] = $context;
 
   return $export;
 }
