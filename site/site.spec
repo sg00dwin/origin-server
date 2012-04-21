@@ -3,7 +3,7 @@
 
 Summary:   Li site components
 Name:      rhc-site
-Version:   0.91.3
+Version:   0.91.4
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -117,6 +117,87 @@ rm -rf %{buildroot}
 /bin/touch %{sitedir}/log/production.log
 
 %changelog
+* Sat Apr 21 2012 Dan McPherson <dmcphers@redhat.com> 0.91.4-1
+- Added styles for the ToC of wiki pages (ffranz@redhat.com)
+- minor spacing changes in community forum (sgoodwin@redhat.com)
+- Tests mildly out of sync with controllers in bug 814835 (ccoleman@redhat.com)
+- Merge branch 'dev0420' (sgoodwin@redhat.com)
+- community pages - ui css changes (sgoodwin@redhat.com)
+- Reads better this way (ccoleman@redhat.com)
+- Bug 814835 - Password reset should not expose whether the user has an account
+  (ccoleman@redhat.com)
+- isolate column-content div only (sgoodwin@redhat.com)
+- Merge branch 'dev0420' (sgoodwin@redhat.com)
+- community comments changes (sgoodwin@redhat.com)
+- Bug 808657 - Users who signup should be taken to the console after their
+  first login (ccoleman@redhat.com)
+- Merge branch 'master' of git1.ops.rhcloud.com:/srv/git/li (ffranz@redhat.com)
+- Bug 814575 - Developers link is missing (ccoleman@redhat.com)
+- minor edit to go along with forum changes (sgoodwin@redhat.com)
+- Reformat forum thread and comments (sgoodwin@redhat.com)
+- Added styles for the ToC of wiki pages (ffranz@redhat.com)
+- Fix cartridge tests to use new assigns names (ccoleman@redhat.com)
+- Merge branch 'dev/clayton/console-branding' (ccoleman@redhat.com)
+- Added styles for the ToC of wiki pages (ffranz@redhat.com)
+- Lots of cleanup of getting started and next steps (ccoleman@redhat.com)
+- community forum layout changes and remove input box-shadow from console
+  (sgoodwin@redhat.com)
+- comment out visual blocks which we don't have any data for yet
+  (johnp@redhat.com)
+- [security] do not call html_safe on error messages (johnp@redhat.com)
+- Prevent pictures in left nav from getting too big (ccoleman@redhat.com)
+- Merge branch 'master' into dev/clayton/console-branding (ccoleman@redhat.com)
+- Give Jenkins some info and a link to a help page (ccoleman@redhat.com)
+- minor edits (sgoodwin@redhat.com)
+- Help documents update (ccoleman@redhat.com)
+- Tweaks to console help (ccoleman@redhat.com)
+- Fixes duplicate arrows for external links on wiki (ffranz@redhat.com)
+- more merge fixes (johnp@redhat.com)
+- fix merge issues (johnp@redhat.com)
+- update my applications page to dark console ui (johnp@redhat.com)
+- Remove section help (ccoleman@redhat.com)
+- Revert changes to console help, update footer sections to be cleaner
+  (ccoleman@redhat.com)
+- Unbreak layout for J5 (ccoleman@redhat.com)
+- A few less styles, some slightly cleaner grid behavior for help
+  (ccoleman@redhat.com)
+- Other dark_layout page, a few color tweaks for readability on get started
+  page.  Fix remaining styleguides (ccoleman@redhat.com)
+- Alternate dark_layout implementation, change #console-panel to .section-
+  console and .row-console to be consistent with site (ccoleman@redhat.com)
+- Update links on homepage to new features this sprint (ccoleman@redhat.com)
+- update cartridge_type selection and addition styles (johnp@redhat.com)
+- style dark layout closer to mockups (johnp@redhat.com)
+- style application details page (johnp@redhat.com)
+- add dark_layout to console and have the applications::show controller use it
+  (johnp@redhat.com)
+- update breadcrumb helper to add delimiters and an active class
+  (johnp@redhat.com)
+- Restore color overrides on form errors that were lost during _custom.css
+  normalization (ccoleman@redhat.com)
+- add breadcrumbs helper and content_for block to the layout (johnp@redhat.com)
+- fix styling on create app page (johnp@redhat.com)
+- Abstract out messaging and handle navbar bottom margin a bit cleaner
+  (ccoleman@redhat.com)
+- fix link color and dropdown arrow position (johnp@redhat.com)
+- fix up dropdown style a bit more (johnp@redhat.com)
+- remove import to nonexitant file (johnp@redhat.com)
+- minor position edits and class change on get started (sgoodwin@redhat.com)
+- Remove console-transition (ccoleman@redhat.com)
+- Some basic stuff to verify that the styles were properly merged
+  (ccoleman@redhat.com)
+- Merge branch 'dev/clayton/console-branding' of git:/srv/git/li into
+  dev/clayton/console-branding (ccoleman@redhat.com)
+- Switch to using common.scss for console, mostly refactored
+  (ccoleman@redhat.com)
+- Move stuff moved out of _custom.scss (ccoleman@redhat.com)
+- make header more like mockups (johnp@redhat.com)
+- Moving stuff out of custom.scss (ccoleman@redhat.com)
+- Split out buttons (ccoleman@redhat.com)
+- add dropdown user menu to user's login in header (johnp@redhat.com)
+- upgrade to jquery-1.7.2 and add bootstrap-dropdown.js dropdown menu widget
+  (johnp@redhat.com)
+
 * Wed Apr 18 2012 Adam Miller <admiller@redhat.com> 0.91.3-1
 - Status app now causing warning on redefinition in test - hack around it
   (ccoleman@redhat.com)
