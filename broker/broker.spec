@@ -3,7 +3,7 @@
 
 Summary:   Li broker components
 Name:      rhc-broker
-Version:   0.91.7
+Version:   0.91.8
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -98,6 +98,17 @@ rm -rf $RPM_BUILD_ROOT
 /bin/touch %{brokerdir}/log/production.log
 
 %changelog
+* Sat Apr 21 2012 Dan McPherson <dmcphers@redhat.com> 0.91.8-1
+- Updating gem versions (dmcphers@redhat.com)
+- Updating gem versions (dmcphers@redhat.com)
+- Add profiler to test rails configuration. (rmillner@redhat.com)
+- Also scrub out http auth header from REST calls. (rmillner@redhat.com)
+- Clean up the info output.  Gzip the output files since they are huge.
+  (rmillner@redhat.com)
+- We only have perms to write into /tmp.  Still had a reference to outfile.
+  (rmillner@redhat.com)
+- Add info file with request and timestamp information. (rmillner@redhat.com)
+
 * Wed Apr 18 2012 Dan McPherson <dmcphers@redhat.com> 0.91.7-1
 - fixing controller Gemfile.lock in build/release (admiller@redhat.com)
 
