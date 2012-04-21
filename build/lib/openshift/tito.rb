@@ -7,7 +7,7 @@ SIBLING_REPOS = [['crankcase', '../crankcase'],
                  ['os-client-tools', '/var/lib/jenkins/jobs/os-client-tools/workspace']]
   
 PACKAGE_REGEX = /^([\w-]*)-\d+\.\d+\.\d+-\d+\.\..*:$/
-IGNORE_PACKAGES = ['stickshift-broker']
+IGNORE_PACKAGES = ['stickshift-broker', 'rubygem-gearchanger-oddjob-plugin', 'rubygem-swingshift-mongo-plugin', 'rubygem-uplift-bind-plugin']
 
 module OpenShift
   module Tito
@@ -20,9 +20,9 @@ module OpenShift
       packages.split("\n").collect do |package|
         if package =~ PACKAGE_REGEX
           pkg = $1
-          #unless IGNORE_PACKAGES.include?(pkg)
+          unless IGNORE_PACKAGES.include?(pkg)
             build_dirs << [pkg, all_packages[pkg][0], all_packages[pkg][1]]
-          #end
+          end
         end
       end
       SIBLING_REPOS.each do |repo_info|
@@ -33,9 +33,9 @@ module OpenShift
           packages.split("\n").collect do |package|
             if package =~ PACKAGE_REGEX
               pkg = $1
-              #unless IGNORE_PACKAGES.include?(pkg)
+              unless IGNORE_PACKAGES.include?(pkg)
                 build_dirs << [pkg, all_packages[pkg][0], all_packages[pkg][1]]
-              #end
+              end
             end
           end
         end
