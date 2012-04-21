@@ -1,7 +1,7 @@
 %define cartridgedir %{_libexecdir}/stickshift/cartridges/embedded/metrics-0.1
 
 Name: cartridge-metrics-0.1
-Version: 0.12.3
+Version: 0.12.4
 Release: 1%{?dist}
 Summary: Embedded metrics support for express
 
@@ -51,6 +51,11 @@ rm -rf $RPM_BUILD_ROOT
 %{cartridgedir}/info/manifest.yml
 
 %changelog
+* Sat Apr 21 2012 Dan McPherson <dmcphers@redhat.com> 0.12.4-1
+- forcing builds (dmcphers@redhat.com)
+- moved a little too much (dmcphers@redhat.com)
+- moving our os code (dmcphers@redhat.com)
+
 * Thu Apr 12 2012 Mike McGrath <mmcgrath@redhat.com> 0.12.2-1
 - release bump for tag uniqueness (mmcgrath@redhat.com)
 
