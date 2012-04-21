@@ -8,7 +8,7 @@
 
 Summary:   Dependencies for OpenShift development
 Name:      rhc-devenv
-Version:   0.92.6
+Version:   0.92.7
 Release:   1%{?dist}
 Group:     Development/Libraries
 License:   GPLv2
@@ -388,6 +388,17 @@ echo "Header append Strict-Transport-Security includeSubDomains" >> /etc/httpd/c
 %{policydir}/*
 
 %changelog
+* Sat Apr 21 2012 Dan McPherson <dmcphers@redhat.com> 0.92.7-1
+- moving to github prep (dmcphers@redhat.com)
+- Update jenkins backup (rmillner@redhat.com)
+- Drupal updates based on latest changes (ccoleman@redhat.com)
+- Add all required modules (ccoleman@redhat.com)
+- Minor tweaks to benchmark job. (rmillner@redhat.com)
+- Update the Jenkins job list for the remaining new tasks and re-run sync.
+  (rmillner@redhat.com)
+- Add libra_ami_benchmark job and run the jenkins sync. (rmillner@redhat.com)
+- use m1.large for libra_check (dmcphers@redhat.com)
+
 * Wed Apr 18 2012 Dan McPherson <dmcphers@redhat.com> 0.92.6-1
 - Add geshi to enablement script (ccoleman@redhat.com)
 
