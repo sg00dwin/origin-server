@@ -5,7 +5,7 @@
 %global modname             community_wiki
 
 Name:    drupal%{drupal_release}-openshift-features-%{modname}
-Version: 1.0.3
+Version: 1.0.4
 Release: 1%{?dist}
 Summary: Openshift Red Hat Community Wiki Feature for Drupal6
 Group:   Applications/Publishing
@@ -41,6 +41,10 @@ rm -rf $RPM_BUILD_ROOT
 %{drupal_modules}/%{modname}
 
 %changelog
+* Sat Apr 21 2012 Dan McPherson <dmcphers@redhat.com> 1.0.4-1
+- Added a few more details to the community_wiki drupal feature
+  (ffranz@redhat.com)
+
 * Wed Apr 18 2012 Dan McPherson <dmcphers@redhat.com> 1.0.3-1
 - Touch all drupal modules to ensure a build. (ccoleman@redhat.com)
 
