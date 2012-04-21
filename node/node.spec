@@ -2,7 +2,7 @@
 
 Summary:       Multi-tenant cloud management system node tools
 Name:          rhc-node
-Version:       0.91.3
+Version:       0.91.4
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -265,6 +265,19 @@ fi
 /lib64/security/pam_libra.so
 
 %changelog
+* Sat Apr 21 2012 Dan McPherson <dmcphers@redhat.com> 0.91.4-1
+- Switch to Time module and add beginning and ent time parsing.
+  (rmillner@redhat.com)
+- Add command line options. (rmillner@redhat.com)
+- Bug fix - handle cases when migration is run multiple times.
+  (ramr@redhat.com)
+- Add average call time (rmillner@redhat.com)
+- Account for all of the calls in a parallel execution by taking the whole
+  execute time and dividing it up among each call.  Its not perfectly accurate,
+  but its good enough with the data at hand. (rmillner@redhat.com)
+- Migrate old haproxy registries to new format (ramr@redhat.com)
+- Corrected test BZ814024 (jhonce@redhat.com)
+
 * Wed Apr 18 2012 Adam Miller <admiller@redhat.com> 0.91.3-1
 - Added check to not idle stopped application (jhonce@redhat.com)
 - Caught in the middle of a log message. (rmillner@redhat.com)
