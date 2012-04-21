@@ -41,7 +41,6 @@ git push -q root@#{hostname}:/root/#{repo_name} #{branch}:master --tags --force
 # End shell code
 }, :verbose => options.verbose?)
 
-      update_remote_tests(hostname) if repo_name == 'li'
       puts "Done"
 
       reset_temp_commit
@@ -721,6 +720,7 @@ mkdir -p /tmp/rhc/junit
       exists = sync_sibling_repo(repo_name, repo_dir, hostname, ssh_path)
       avail_sibling_repo_names.push(repo_name) if exists
     end
+    update_remote_tests(hostname)
 
     clone_commands = ''
     working_dirs = ''
