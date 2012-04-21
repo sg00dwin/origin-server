@@ -5,7 +5,7 @@
 
 Summary:        GearChanger plugin for m-colective service
 Name:           rubygem-%{gemname}
-Version:        0.8.4
+Version:        0.8.5
 Release:        1%{?dist}
 Group:          Development/Languages
 License:        ASL 2.0
