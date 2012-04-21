@@ -18,6 +18,34 @@
 
 require 'rubygems'
 require 'date'
+require 'optparse'
+
+options = {}
+OptionParser.new do |opts|
+  opts.banner = "Usage: rhc-mcollective-log-profile [options] < mcollective.log"
+
+  options[:verbose] = false
+  opts.on( '-v', '--[no-]verbose', 'Output per call measurements' ) do |v|
+    options[:verbose] = true
+  end
+
+
+  options[:start] = false
+  opts.on( '-s', '--start TIME', 'Parse events starting no earlier than this time' ) do |ts|
+    options[:start]=DateTime.parse(ts)
+  end
+
+  options[:end] = false
+  opts.on( '-e', '--end TIME', 'Parse events ending no later than this time' ) do |ts|
+    options[:end]=DateTime.parse(ts)
+  end
+
+  opts.on_tail( '-h', '--help', 'Show help text' ) do
+    puts opts
+    exit
+  end
+end.parse!
+
 
 profile={}
 ncalls={}
@@ -32,7 +60,11 @@ begin
   while line=STDIN.gets do
     if line =~ /^D, \[(.*) \#\d+\] DEBUG .* (\w+) call \/ request =/
       start_time=DateTime.parse(Regexp.last_match[1]).strftime('%Q').to_i
-      action_type=Regexp.last_match[2]
+      if start_time < options[:start]
+        action_type=Regexp.last_match[2]
+      else
+        start_time = nil
+      end
       action_call=[]
       action_cart=[]
       nactions=0
@@ -65,7 +97,7 @@ begin
               ncalls[profname]=ncalls[profname]+1
             end
 
-            $stderr.puts "#{action_type}: #{duration} : #{profname}"
+            $stderr.puts "#{action_type}: #{duration} : #{profname}" if options[:verbose]
           end
         end
         start_time=nil
