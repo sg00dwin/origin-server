@@ -16,8 +16,7 @@
 # rhc-mcollective-log-profile < /var/log/mcollective.log
 #
 
-require 'rubygems'
-require 'date'
+require 'time'
 require 'optparse'
 
 options = {}
@@ -26,18 +25,18 @@ OptionParser.new do |opts|
 
   options[:verbose] = false
   opts.on( '-v', '--[no-]verbose', 'Output per call measurements' ) do |v|
-    options[:verbose] = true
+    options[:verbose] = v
   end
 
 
-  options[:start] = false
+  options[:start_time] = false
   opts.on( '-s', '--start TIME', 'Parse events starting no earlier than this time' ) do |ts|
-    options[:start]=DateTime.parse(ts)
+    options[:start_time]=Time.parse(ts)
   end
 
-  options[:end] = false
+  options[:end_time] = false
   opts.on( '-e', '--end TIME', 'Parse events ending no later than this time' ) do |ts|
-    options[:end]=DateTime.parse(ts)
+    options[:end_time]=Time.parse(ts)
   end
 
   opts.on_tail( '-h', '--help', 'Show help text' ) do
@@ -59,12 +58,8 @@ nactions=0
 begin
   while line=STDIN.gets do
     if line =~ /^D, \[(.*) \#\d+\] DEBUG .* (\w+) call \/ request =/
-      start_time=DateTime.parse(Regexp.last_match[1]).strftime('%Q').to_i
-      if start_time < options[:start]
-        action_type=Regexp.last_match[2]
-      else
-        start_time = nil
-      end
+      start_time=Time.parse(Regexp.last_match[1])
+      action_type=Regexp.last_match[2]
       action_call=[]
       action_cart=[]
       nactions=0
@@ -74,30 +69,35 @@ begin
     elsif line =~ /:cartridge=>"(.*)"/
       action_cart << Regexp.last_match[1]
     elsif line =~ /^D, \[(.*) \#\d+\] DEBUG .* (\w+) (?: ERROR )*\(\d+\)/
-      end_time=DateTime.parse(Regexp.last_match[1]).strftime('%Q').to_i
+      end_time=Time.parse(Regexp.last_match[1])
       end_action_type=Regexp.last_match[2]
       nactions = nactions - 1
 
       if nactions == 0
         if not start_time.nil?
-          duration = (end_time - start_time)/action_cart.length.to_f
+          unless ( (options[:start_time] and (start_time < options[:start_time])) or
+                   (options[:end_time] and (end_time > options[:end_time])) )
+            
+            duration = (end_time - start_time)/action_cart.length.to_f
 
-          while action_cart.length > 0
-            profname = "#{action_cart.pop} #{action_call.pop}"
+            while action_cart.length > 0
+              profname = "#{action_cart.pop} #{action_call.pop}"
+              
+              if profile[profname].nil?
+                profile[profname]=duration
+              else
+                profile[profname]=profile[profname]+duration
+              end
 
-            if profile[profname].nil?
-              profile[profname]=duration
-            else
-              profile[profname]=profile[profname]+duration
+              if ncalls[profname].nil?
+                ncalls[profname]=1
+              else
+                ncalls[profname]=ncalls[profname]+1
+              end
+              
+              $stderr.puts "#{action_type}: #{duration * 1000} : #{profname}" if options[:verbose]
+
             end
-
-            if ncalls[profname].nil?
-              ncalls[profname]=1
-            else
-              ncalls[profname]=ncalls[profname]+1
-            end
-
-            $stderr.puts "#{action_type}: #{duration} : #{profname}" if options[:verbose]
           end
         end
         start_time=nil
@@ -114,5 +114,5 @@ printf("%8s: %6s: %8s: %s\n", "tot msec", " calls", "   avg  ", "      action   
 printf("%8s: %6s: %8s: %s\n", "--------", "------", "--------", "--------------------")
 sprof=profile.sort_by {|key, value| value}
 sprof.reverse.each do |pair|
-  printf("%8d: %6d: %8d: %s\n", pair[1], ncalls[pair[0]], pair[1]/ncalls[pair[0]], pair[0])
+  printf("%8d: %6d: %8d: %s\n", (pair[1] * 1000).to_i, ncalls[pair[0]], ((1000 * pair[1])/ncalls[pair[0]]).to_i, pair[0])
 end
