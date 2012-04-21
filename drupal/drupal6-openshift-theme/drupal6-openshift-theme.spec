@@ -5,7 +5,7 @@
 %global drupal_themename    openshift-theme
 
 Name:           drupal6-%{drupal_themename}
-Version:        3.0.4
+Version:        3.0.5
 Release:        1%{?dist}
 Summary:        Red Hat Openshift theme for Drupal %{drupal_release}
 
@@ -44,6 +44,19 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
+* Sat Apr 21 2012 Dan McPherson <dmcphers@redhat.com> 3.0.5-1
+- Merge commits dd5326df1f0d5bf05d51aeaae0cc4c457ba45816..ab1d91739634c80b3a9db
+  5f468e5ceb277824c7d. Did not merge all of the changes made to core code -
+  those are upstream and we can't integrate those directly.
+  (ccoleman@redhat.com)
+- Drupal updates based on latest changes (ccoleman@redhat.com)
+- community comments changes (sgoodwin@redhat.com)
+- Simplify link generation to reflect that Drupal can't handle server relative
+  menu urls (ccoleman@redhat.com)
+- Reformat forum thread and comments (sgoodwin@redhat.com)
+- community forum layout changes and remove input box-shadow from console
+  (sgoodwin@redhat.com)
+
 * Wed Apr 18 2012 Dan McPherson <dmcphers@redhat.com> 3.0.4-1
 - Touch all drupal modules to ensure a build. (ccoleman@redhat.com)
 
