@@ -1,7 +1,7 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <project>
   <actions/>
-  <description></description>
+  <description>Run the benchmark tasks on the most recent dev or stg AMI.  This set of tests can take from 20 to 30 hours to complete.</description>
   <logRotator>
     <daysToKeep>10</daysToKeep>
     <numToKeep>10</numToKeep>
@@ -13,22 +13,12 @@
     <hudson.model.ParametersDefinitionProperty>
       <parameterDefinitions>
         <hudson.model.StringParameterDefinition>
-          <name>exclude_internal</name>
-          <description></description>
-          <defaultValue>true</defaultValue>
-        </hudson.model.StringParameterDefinition>
-        <hudson.model.StringParameterDefinition>
-          <name>exclude_verification</name>
-          <description></description>
-          <defaultValue>true</defaultValue>
-        </hudson.model.StringParameterDefinition>
-        <hudson.model.StringParameterDefinition>
-          <name>include_web</name>
+          <name>use_stage_image</name>
           <description></description>
           <defaultValue>false</defaultValue>
         </hudson.model.StringParameterDefinition>
         <hudson.model.StringParameterDefinition>
-          <name>use_stage_image</name>
+          <name>profile_broker</name>
           <description></description>
           <defaultValue>false</defaultValue>
         </hudson.model.StringParameterDefinition>
@@ -55,22 +45,15 @@ echo $launch_params
 # Launch a test instance
 build/devenv launch devenv_benchmark_${BUILD_NUMBER} --verifier $launch_params
 
-excludes=&quot;&quot;
-if [ &quot;$include_web&quot; == &quot;true&quot; ]
+test_params=&quot;&quot;
+if [ &quot;$profile_broker&quot; == &quot;true&quot; ]
 then
-    excludes=$excludes&quot; --include_web&quot;
+test_params=$test_params&quot; --profile-broker&quot;
 fi
-if [ &quot;$exclude_internal&quot; == &quot;true&quot; ]
-then
-    excludes=$excludes&quot; --exclude_internal&quot;
-fi
-if [ &quot;$exclude_verification&quot; == &quot;true&quot; ]
-then
-    excludes=$excludes&quot; --exclude_verification&quot;
-fi
-echo $excludes
+echo $test_params
+
 # Run the image tests
-build/devenv test devenv_benchmark_${BUILD_NUMBER} --include-cucumber=benchmark --disable-charlie --terminate $excludes
+build/devenv test devenv_benchmark_${BUILD_NUMBER} --exclude_internal --exclude_verification --include-cucumber=benchmark --disable-charlie --terminate $test_params
 </command>
     </hudson.tasks.Shell>
   </builders>

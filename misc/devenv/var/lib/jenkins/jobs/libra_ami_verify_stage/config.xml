@@ -37,10 +37,11 @@
   <blockBuildWhenUpstreamBuilding>false</blockBuildWhenUpstreamBuilding>
   <triggers class="vector"/>
   <concurrentBuild>false</concurrentBuild>
+  <customWorkspace>jobs/libra_ami_stage/workspace</customWorkspace>
   <builders>
     <hudson.tasks.Shell>
       <command># Launch a test instance
-build/devenv launch devenv-stage_verifier_${BUILD_NUMBER} --use_stage_image --verifier
+build/devenv launch devenv-stage_verifier_${BUILD_NUMBER} --use_stage_image --verifier --instance_type m1.large
 
 excludes=&quot;&quot;
 if [ &quot;$include_web&quot; == &quot;true&quot; ]
@@ -72,5 +73,4 @@ build/devenv test devenv-stage_verifier_${BUILD_NUMBER} --official --terminate $
     </hudson.tasks.Mailer>
   </publishers>
   <buildWrappers/>
-  <customWorkspace>jobs/libra_ami_stage/workspace</customWorkspace>
 </project>

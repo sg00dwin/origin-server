@@ -37,10 +37,11 @@
   <blockBuildWhenUpstreamBuilding>false</blockBuildWhenUpstreamBuilding>
   <triggers class="vector"/>
   <concurrentBuild>false</concurrentBuild>
+  <customWorkspace>jobs/libra_ami/workspace</customWorkspace>
   <builders>
     <hudson.tasks.Shell>
       <command># Launch a test instance
-build/devenv launch devenv_verifier_${BUILD_NUMBER} --verifier
+build/devenv launch devenv_verifier_${BUILD_NUMBER} --verifier --instance_type m1.large
 
 excludes=&quot;&quot;
 if [ &quot;$include_web&quot; == &quot;true&quot; ]
@@ -72,5 +73,4 @@ build/devenv test devenv_verifier_${BUILD_NUMBER} --official --terminate $exclud
     </hudson.tasks.Mailer>
   </publishers>
   <buildWrappers/>
-  <customWorkspace>jobs/libra_ami/workspace</customWorkspace>
 </project>
