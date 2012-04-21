@@ -1,6 +1,6 @@
 Summary:       SELinux policy for OpenShift nodes
 Name:          rhc-selinux
-Version:       0.91.3
+Version:       0.91.4
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -46,6 +46,9 @@ rm -rf %{buildroot}
 %attr(0640,-,-) %{_datadir}/selinux/packages/libra.pp
 
 %changelog
+* Sat Apr 21 2012 Dan McPherson <dmcphers@redhat.com> 0.91.4-1
+- Added fix to libra selinux as per dwalsh (admiller@redhat.com)
+
 * Wed Apr 18 2012 Adam Miller <admiller@redhat.com> 0.91.3-1
 - dontaudit httpd starting as libra_t trying to read the httpd_log_t link file
   (dwalsh@redhat.com)
