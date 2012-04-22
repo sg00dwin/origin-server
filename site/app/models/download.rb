@@ -29,7 +29,7 @@ class Download
   files = [
     {
       :id => 'remix',
-      :name => 'StickShift Fedora Remix',
+      :name => 'Fedora Remix Image',
       :filename => 'fedora_remix.iso',
       :type => 'application/x-iso9660-image',
       :size => 1102053376,
