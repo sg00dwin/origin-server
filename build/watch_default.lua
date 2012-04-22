@@ -42,7 +42,7 @@ rsync_defaults = {"-vuzt", "--chmod=ug+rwX"}
 rails = {
   delay= 0.2,
   rsyncOps= rsync_defaults,
-  exclude= "log, log/**, tmp, tmp/**, httpd, httpd/**",
+  exclude= {"log", "tmp", "httpd"},
 }
 rpm = {
   delay= 0.2,
