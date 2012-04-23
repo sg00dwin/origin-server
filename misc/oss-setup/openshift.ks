@@ -5,14 +5,14 @@ auth --useshadow --enablemd5
 selinux --enforcing
 firewall --enabled --service=mdns
 xconfig --startxonboot
-part / --size 6120  --fstype ext4 --ondisk sda
+part / --size 4096  --fstype ext4 --ondisk sda
 services --enabled=network,sshd --disabled=NetworkManager
 bootloader --append="biosdevname=0"
 
 repo --name=fedora --mirrorlist=http://mirrors.fedoraproject.org/mirrorlist?repo=fedora-$releasever&arch=$basearch
 repo --name=updates --mirrorlist=http://mirrors.fedoraproject.org/mirrorlist?repo=updates-released-f$releasever&arch=$basearch
-repo --name=brew --baseurl=file:///root/brew
-repo --name=stickshift --baseurl=file:///tmp/tito/noarch
+repo --name=brew --baseurl=file:///home/kraman/brew
+repo --name=stickshift --baseurl=file:///home/kraman/tito/rpms/fc16/x86_64
 repo --name=passenger --baseurl=http://passenger.stealthymonkeys.com/fedora/$releasever/$basearch
 
 %packages
@@ -106,6 +106,7 @@ generic-release-notes
 tig
 git
 rhc
+rhc-rest
 stickshift-broker
 
 cartridge-10gen-mms-agent-0.1
@@ -122,7 +123,7 @@ cartridge-php-5.3
 #cartridge-phpmoadmin-1.0
 cartridge-phpmyadmin-3.4
 #cartridge-postgresql-8.4
-#cartridge-ruby-1.1
+cartridge-ruby-1.1
 cartridge-diy-0.1
 #cartridge-rockmongo-1.1
 cartridge-python-3.2
@@ -740,9 +741,9 @@ Get Started
 <div class="column-content lift-less grid-wrapper">
 <div class="span12 span-flush-right">
 
-<h1 class="ribbon">About this Fedora remix</h1>
+<h1 class="ribbon">About this Openshift Origin</h1>
 <section id="intro">
-This Fedora remix contains all the Open-source components that power Openshift. Source code and documentation for these components is available at https://github.com/openshift<br/><br/>
+This Openshift Origin remix contains all the Open-source components that power Openshift. Source code and documentation for these components is available at https://github.com/openshift<br/><br/>
 The image contains 5 sets of components:
 <ol>
 	<li><a href="https://github.com/openshift/stickshift">StickShift</a>: Provides a PaaS API framework and plugin architecture to build a cloud</li>
@@ -753,7 +754,7 @@ The image contains 5 sets of components:
 </ol>
 </section>
 
-<h1 class="ribbon">Get Started with the Fedora remix</h1>
+<h1 class="ribbon">Get Started with the Openshift Origin</h1>
 <section id="create_domain_name">
 <h3>1. Create a domain name</h3>
 <p>

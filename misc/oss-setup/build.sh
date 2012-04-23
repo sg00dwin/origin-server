@@ -10,12 +10,15 @@ control_c()
 trap control_c SIGINT
 
 repodir=$HOME
-prod_build=0
+prod_build=1
 build_only=0
 mkdir -p ${repodir}/brew ${repodir}/tito
 cd ${repodir}
 
 cd ${repodir}/li
+find * | grep "\._" | xargs rm -f
+
+cd ${repodir}/crankcase
 find * | grep "\._" | xargs rm -f
 
 if [ "x${prod_build}x" == "x0x" ] ; then
@@ -26,22 +29,23 @@ fi
 
 rm -rf ${repodir}/tito/*
 cd ${repodir}/os-client-tools/rhc-rest
-sudo tito build $test_build --srpm --output=${repodir}/tito
+tito build $test_build --srpm --output=${repodir}/tito
 
 cd ${repodir}/os-client-tools/express
-sudo tito build $test_build --srpm --output=${repodir}/tito
+tito build $test_build --srpm --output=${repodir}/tito
 
-cd ${repodir}/li/stickshift
-for i in `ls`; do cd $i && sudo tito build $test_build --srpm --output=${repodir}/tito ; cd - ; done
+cd ${repodir}/crankcase/stickshift
+for i in `ls`; do cd $i && tito build $test_build --srpm --output=${repodir}/tito ; cd - ; done
 
-cd ${repodir}/li/uplift/bind        && sudo tito build $test_build --srpm --output=${repodir}/tito ; cd -
-cd ${repodir}/li/swingshift/mongo   && sudo tito build $test_build --srpm --output=${repodir}/tito ; cd -
-cd ${repodir}/li/gearchanger/oddjob && sudo tito build $test_build --srpm --output=${repodir}/tito ; cd -
+cd ${repodir}/crankcase/uplift/bind        && tito build $test_build --srpm --output=${repodir}/tito ; cd -
+cd ${repodir}/crankcase/swingshift/mongo   && tito build $test_build --srpm --output=${repodir}/tito ; cd -
+cd ${repodir}/crankcase/gearchanger/oddjob && tito build $test_build --srpm --output=${repodir}/tito ; cd -
+cd ${repodir}/crankcase/crankcase/mongo    && tito build $test_build --srpm --output=${repodir}/tito ; cd -
 
-cd ${repodir}/li/cartridges
+cd ${repodir}/crankcase/cartridges
 for i in 10gen-mms-agent-0.1 cron-1.4 diy-0.1 jbossas-7 jenkins-1.4 jenkins-client-1.4 mongodb-2.0 mysql-5.1 nodejs-0.6 perl-5.10 php-5.3 phpmyadmin-3.4 python-3.2 ruby-1.1 ; do 
-  cd ${repodir}/li/cartridges/$i; 
-  sudo tito build $test_build --srpm --output=${repodir}/tito;
+  cd ${repodir}/crankcase/cartridges/$i; 
+  tito build $test_build --srpm --output=${repodir}/tito;
 done
 
 sudo bash -c "cat <<EOF > /etc/yum.repos.d/ss.repo
@@ -65,7 +69,7 @@ if [ "x${build_only}x" == "x1x" ] ; then
 fi
 
 sudo yum remove -y stickshift-* rubygem-stickshift* cartridge-*
-rm -rf /usr/libexec/stickshift/cartridges/* /var/www/stickshift/broker/*
+sudo rm -rf /usr/libexec/stickshift/cartridges/* /var/www/stickshift/broker/*
 sudo yum -y --skip-broken install ${repodir}/tito/rpms/fc16/x86_64/rhc-*.rpm              ${repodir}/tito/rpms/fc16/x86_64/rubygem-*.rpm \
                                   ${repodir}/tito/rpms/fc16/x86_64/stickshift-broker*.rpm ${repodir}/tito/rpms/fc16/x86_64/stickshift-abstract*.rpm \
                                   ${repodir}/tito/rpms/fc16/x86_64/cartridge-*            ${repodir}/brew/jenkins-plugin-openshift-*.rpm 
