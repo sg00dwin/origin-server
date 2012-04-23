@@ -858,8 +858,8 @@ rm -rf li-working #{working_dirs}
       if options.init_repo?
         print "Initializing git repo for syncing..."
         init_repo(hostname)
-        update_remote_tests(instance.dns_name)
         puts "Done"
+        update_remote_tests(instance.dns_name)
       else
         scp_remote_tests(hostname)
       end
