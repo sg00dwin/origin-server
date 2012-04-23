@@ -15,12 +15,12 @@
         %dl
           %dt.headline= link_to "StickShift", crankcase_source_path_url('stickshift'), :class => "external", :target => "_blank"
           %dd Central service exposing a REST API for consumers and coordinating with the application container.
-          %dt.headline= link_to "GearChanger", crankcase_source_path_url('gearchanger'), :class => "external", :target => "_blank"
-          %dd FIXME
+          %dt.headline= link_to "Messaging System", crankcase_source_path_url('gearchanger'), :class => "external", :target => "_blank"
+          %dd Communication pipeline between StickShift and each application container.
           %dt.headline= link_to "User Authentication",  crankcase_source_path_url('swingshift'), :class => "external", :target => "_blank"
           %dd A pluggable user authentication component with a default MongoDB implementation.
-          %dt.headline= link_to "Uplift", crankcase_source_path_url('uplift'), :class => "external", :target => "_blank"
-          %dd DNS registration and management component.
+          %dt.headline= link_to "Domain Name Management", crankcase_source_path_url('uplift'), :class => "external", :target => "_blank"
+          %dd A BIND implementation of DNS registration and management.
 
       %dt.headline= link_to "Command Line Client", client_tools_url, :class => "external", :target => "_blank"
       %dd 
