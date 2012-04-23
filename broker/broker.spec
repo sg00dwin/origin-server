@@ -3,7 +3,7 @@
 
 Summary:   Li broker components
 Name:      rhc-broker
-Version:   0.91.8
+Version:   0.91.9
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -95,6 +95,13 @@ rm -rf $RPM_BUILD_ROOT
 /bin/touch %{brokerdir}/log/production.log
 
 %changelog
+* Mon Apr 23 2012 Adam Miller <admiller@redhat.com> 0.91.9-1
+- Updating gem versions (admiller@redhat.com)
+- Remove references to rhc-admin-user-vip. (rmillner@redhat.com)
+- rhc-admin-ctl-user provides the same ability. (rmillner@redhat.com)
+- move crankcase mongo datastore (dmcphers@redhat.com)
+- Temporary commit to build (dmcphers@redhat.com)
+
 * Sat Apr 21 2012 Dan McPherson <dmcphers@redhat.com> 0.91.8-1
 - Updating gem versions (dmcphers@redhat.com)
 - Updating gem versions (dmcphers@redhat.com)
