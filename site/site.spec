@@ -3,7 +3,7 @@
 
 Summary:   Li site components
 Name:      rhc-site
-Version:   0.91.4
+Version:   0.91.5
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -117,6 +117,20 @@ rm -rf %{buildroot}
 /bin/touch %{sitedir}/log/production.log
 
 %changelog
+* Mon Apr 23 2012 Adam Miller <admiller@redhat.com> 0.91.5-1
+- Change #console-head to .console-head for selectivity fix
+  (ccoleman@redhat.com)
+- Fix breadcrumbs on lots of console pages, add blue add cart button to app
+  details page (ccoleman@redhat.com)
+- max-widths off by one Replace console-panel with section-console (may change
+  selectivity) (ccoleman@redhat.com)
+- Fix warning on applications index page (ccoleman@redhat.com)
+- Split out urls for git/opensource into their own file to reduce
+  application_helper size Remove unused _pageheader file Switch order of page
+  title - current page title comes first, then the generic 'Openshift by
+  redhat' message Improve text on index.html.haml page Changes to opensource
+  download page to reflect new structure of page (ccoleman@redhat.com)
+
 * Sat Apr 21 2012 Dan McPherson <dmcphers@redhat.com> 0.91.4-1
 - Added styles for the ToC of wiki pages (ffranz@redhat.com)
 - minor spacing changes in community forum (sgoodwin@redhat.com)
