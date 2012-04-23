@@ -8,7 +8,7 @@
 
 Summary:   Dependencies for OpenShift development
 Name:      rhc-devenv
-Version:   0.92.9
+Version:   0.92.10
 Release:   1%{?dist}
 Group:     Development/Libraries
 License:   GPLv2
@@ -394,6 +394,14 @@ echo "Header append Strict-Transport-Security includeSubDomains" >> /etc/httpd/c
 %{policydir}/*
 
 %changelog
+* Mon Apr 23 2012 Adam Miller <admiller@redhat.com> 0.92.10-1
+- Merge branch 'master' of git1.ops.rhcloud.com:/srv/git/li
+  (tdawson@redhat.com)
+- li-devenv.sh: changed epel servers to be real names (tdawson@redhat.com)
+- li-devenv.sh: fixed epel repo basearch (tdawson@redhat.com)
+- li-devenv.sh: fixed epel repo (tdawson@redhat.com)
+- li-devenv.sh: Changed epel to point to our mirror (tdawson@redhat.com)
+
 * Mon Apr 23 2012 Adam Miller <admiller@redhat.com> 0.92.9-1
 - dont reuse the same vars! (dmcphers@redhat.com)
 - devenv.spec add drupal6-media_youku (ansilva@redhat.com)
