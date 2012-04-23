@@ -1,7 +1,7 @@
 %define cartridgedir %{_libexecdir}/stickshift/cartridges/embedded/rockmongo-1.1
 
 Name: cartridge-rockmongo-1.1
-Version: 1.8.4
+Version: 1.8.5
 Release: 1%{?dist}
 Summary: Embedded RockMongo support for OpenShift
 
@@ -55,6 +55,9 @@ rm -rf $RPM_BUILD_ROOT
 %doc %{cartridgedir}/LICENSE
 
 %changelog
+* Mon Apr 23 2012 Adam Miller <admiller@redhat.com> 1.8.5-1
+- remove php-devel as a dependency : for help in Zend work (rchopra@redhat.com)
+
 * Sat Apr 21 2012 Dan McPherson <dmcphers@redhat.com> 1.8.4-1
 - forcing builds (dmcphers@redhat.com)
 - moved a little too much (dmcphers@redhat.com)
