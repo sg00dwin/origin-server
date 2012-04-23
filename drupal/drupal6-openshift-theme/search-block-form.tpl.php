@@ -32,7 +32,7 @@
  * @see template_preprocess_search_block_form()
  */
 ?>
-<form action="/openshift/community/home" method="post" accept-charset="UTF-8">
+<form action="/community/home" method="post" accept-charset="UTF-8">
   <div class="row">
     <div class="search-row">
       <input name="search_block_form" class="input-small search-query">
