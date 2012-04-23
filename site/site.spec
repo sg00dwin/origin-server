@@ -3,7 +3,7 @@
 
 Summary:   Li site components
 Name:      rhc-site
-Version:   0.91.5
+Version:   0.91.6
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -117,6 +117,18 @@ rm -rf %{buildroot}
 /bin/touch %{sitedir}/log/production.log
 
 %changelog
+* Mon Apr 23 2012 Adam Miller <admiller@redhat.com> 0.91.6-1
+- Disable Jenkins because upstream bugs could not be fixed.
+  (ccoleman@redhat.com)
+- Merge branch 'dev0423' (sgoodwin@redhat.com)
+- revised button styles, search field focus (sgoodwin@redhat.com)
+- Mark's suggestions (ccoleman@redhat.com)
+- Better opensource links and descriptions (ccoleman@redhat.com)
+- Update to LiveCd with kraman's agreement (ccoleman@redhat.com)
+- Reorder items in user_profile_box to work better with Steve's styling
+  (ccoleman@redhat.com)
+- Touch up blog theme prior to ship (ccoleman@redhat.com)
+
 * Mon Apr 23 2012 Adam Miller <admiller@redhat.com> 0.91.5-1
 - Change #console-head to .console-head for selectivity fix
   (ccoleman@redhat.com)
