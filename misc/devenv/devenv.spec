@@ -8,7 +8,7 @@
 
 Summary:   Dependencies for OpenShift development
 Name:      rhc-devenv
-Version:   0.92.8
+Version:   0.92.9
 Release:   1%{?dist}
 Group:     Development/Libraries
 License:   GPLv2
@@ -394,6 +394,10 @@ echo "Header append Strict-Transport-Security includeSubDomains" >> /etc/httpd/c
 %{policydir}/*
 
 %changelog
+* Mon Apr 23 2012 Adam Miller <admiller@redhat.com> 0.92.9-1
+- dont reuse the same vars! (dmcphers@redhat.com)
+- devenv.spec add drupal6-media_youku (ansilva@redhat.com)
+
 * Mon Apr 23 2012 Adam Miller <admiller@redhat.com> 0.92.8-1
 - adding deploy key to ami (dmcphers@redhat.com)
 
