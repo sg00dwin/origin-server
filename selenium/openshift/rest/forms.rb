@@ -32,12 +32,17 @@ module OpenShift
       end
 
       def in_error?(field_name)
+        # check the field and the field error for an error class
+        field = @fields[field_name]
+        return true if xpath_exists?("//*[@id='#{field}' and contains(@class, 'error')]")
+
+        # some elements may set the error on their control-group so we check that
+        # for an error class
         error_field_name = :"#{field_name}_error"
         field = @fields[error_field_name]
-        if field.nil?
-          field = @fields[field_name]
-        end
-        xpath_exists?("//*[@id='#{field}' and contains(@class, 'error')]")
+        return xpath_exists?("//*[@id='#{field}' and contains(@class, 'error')]") unless field.nil?
+
+        return false
       end
 
       def error_message(field)

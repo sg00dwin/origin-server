@@ -17,7 +17,7 @@ class RestAccount < OpenShift::Rest::TestCase
     form = @rest_account.domain_form
     assert !form.in_error?(:namespace)
     form.submit
-    @rest_account.domain_page.wait
+    # should be an instant client side error so don't wait for domain page
     assert form.in_error?(:namespace)
   end
 
@@ -75,7 +75,8 @@ class RestAccount < OpenShift::Rest::TestCase
     assert !form.in_error?(:namespace)
     form.set_value(:namespace, "")
     form.submit
-    @rest_account.domain_page.wait
+
+    # should be instant client side validation error so don't wait for page
     assert form.in_error?(:namespace)
 
     # try to edit with an invalid namespace
