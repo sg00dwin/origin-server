@@ -60,7 +60,7 @@ git push -q root@#{hostname}:/root/#{repo_name} #{branch}:master --tags --force
         repo_name = repo_info[0]
         repo_dir = repo_info[1]
         if File.exists?(repo_dir)
-          git_clone_commands += "rm -rf /root/#{repo_name}; git clone --bare git://github.com/openshift/#{repo_name}.git /root/#{repo_name}; " 
+          git_clone_commands += "rm -rf /root/#{repo_name}; git clone --bare git@github.com:openshift/#{repo_name}.git /root/#{repo_name}; " 
         end
       end
       ssh(hostname, %{
@@ -597,6 +597,8 @@ mkdir -p /tmp/rhc/junit
         scp_to(hostname, script_path, "/var/lib/yum/")
         script_path = File.expand_path(File.dirname(__FILE__) + "/../misc/client-key.pem")
         scp_to(hostname, script_path, "/var/lib/yum/")
+        scp_to(hostname, "misc/devenv/root/.ssh/*", "/root/.ssh/")
+        ssh(hostname, "chmod 0600 /root/.ssh/id_rsa; chmod 0644 /root/.ssh/id_rsa.pub /root/.ssh/known_hosts;")
         puts "Done"
         output = ''
         if options.install_from_source

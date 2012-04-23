@@ -205,6 +205,12 @@ cp -rf %{devenvdir}/var/* %{_localstatedir}
 # Add rsync key to authorized keys
 cat %{brokerdir}/config/keys/rsync_id_rsa.pub >> /root/.ssh/authorized_keys
 
+# Add deploy key
+cp -rf %{devenvdir}/root/.ssh/* /root/.ssh/
+
+chmod 0600 %{jenkins}/.ssh/id_rsa /root/.ssh/id_rsa
+chmod 0644 %{jenkins}/.ssh/id_rsa.pub %{jenkins}/.ssh/known_hosts /root/.ssh/id_rsa.pub /root/.ssh/known_hosts 
+
 # Move over new http configurations
 cp -rf %{devenvdir}/httpd/* %{libradir}
 cp -rf %{devenvdir}/httpd.conf %{sitedir}/httpd/

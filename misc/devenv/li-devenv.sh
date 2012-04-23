@@ -115,7 +115,7 @@ then
     for repo_name in "${github_repos[@]}"
     do
       rm -rf /root/$repo_name
-      git clone https://github.com/openshift/$repo_name.git /root/$repo_name
+      git clone git@github.com:openshift/$repo_name.git /root/$repo_name
     done
   fi
 
