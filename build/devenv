@@ -751,9 +751,9 @@ rm -rf li-working #{working_dirs}
 # li repo
 git clone li li-working
 
-pushd li-working 
+pushd li-working > /dev/null
   build/devenv update#{options.verbose? ? ' --verbose' : ''} #{options.clean_metadata? ? ' --include_stale' : ''} 2>&1
-popd
+popd > /dev/null
 
 rm -rf li-working #{working_dirs}
 #{options.clean_metadata? ? "yum update -y --exclude='rhc-devenv' rhc-* rubygem-stickshift-*  rubygem-gearchanger-* rubygem-uplift-* rubygem-swingshift-*; " : ''}
