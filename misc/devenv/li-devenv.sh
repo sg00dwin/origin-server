@@ -2,7 +2,7 @@ echo "nameserver 4.2.2.2" >> /etc/resolv.conf
 
 #rpm -Uhv http://download.fedora.redhat.com/pub/epel/6/x86_64/epel-release-6-5.noarch.rpm
 #rpm -Uhv http://download.fedoraproject.org/pub/epel/6/x86_64/epel-release-6-5.noarch.rpm
-cat > /etc/yum.repos.d/li.repo <<EOF
+cat > /etc/yum.repos.d/epel.repo <<EOF
 [epel]
 name=Extra Packages for Enterprise Linux 6 - $basearch
 baseurl=http://stg.openshift.redhat.com/mirror/epel/6/$basearch
