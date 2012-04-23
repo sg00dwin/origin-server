@@ -78,7 +78,7 @@ def set_consumed_gears(user, consumedgears)
     end
 
     print "Setting consumed_gears to #{consumedgears}... "
-    db = Crankcase::MongoDataStore.instance
+    db = StickShift::MongoDataStore.instance
     result = db.update({ "_id" => user.login }, { "$set" => {'consumed_gears' => consumedgears} })
     puts "Done."
 

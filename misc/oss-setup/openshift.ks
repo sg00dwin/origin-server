@@ -763,7 +763,6 @@ This Fedora remix contains all the Open-source components that power Openshift. 
 The image contains 5 sets of components:
 <ol>
 	<li><a href="https://github.com/openshift/stickshift">StickShift</a>: Provides a PaaS API framework and plugin architecture to build a cloud</li>
-	<li><a href="https://github.com/openshift/crankcase">Crankcase</a>: Plugins that provide different persistence layers for application metadata. Eg: Mongo, s3 etc.</li>
 	<li><a href="https://github.com/openshift/gearchanger">Gearchanger</a>: Plugins that provide different broker-gear communication mechanisms.</li>
 	<li><a href="https://github.com/openshift/uplift">Uplift</a>: Plugins that provide different DNS management engines.</li>
 	<li><a href="https://github.com/openshift/swingshift">Swingshift</a>: Plugins that provide integration with different authentication schemes.</li>
