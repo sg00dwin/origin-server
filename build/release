@@ -18,12 +18,13 @@ class Release < Thor
   no_tasks do
     def git_pull
       run("git pull", :verbose => options.verbose?)
-      SIBLING_REPOS.each do |repo_info|
-        repo_name = repo_info[0]
-        repo_dir = repo_info[1]
-        if File.exists?(repo_dir)
-          inside(repo_dir) do
-            run("git pull", :verbose => options.verbose?)
+      SIBLING_REPOS.each do |repo_name, repo_dirs|
+        repo_dirs.each do |repo_dir|
+          if File.exists?(repo_dir)
+            inside(repo_dir) do
+              run("git pull", :verbose => options.verbose?)
+            end
+            break
           end
         end
       end
