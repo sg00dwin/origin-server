@@ -25,6 +25,10 @@ def migrate_gear(rhlogin, app_name, gear_uuid)
     if user
       app = Application.find(user, app_name)
       if app
+        if !app.scalable
+          out << "App '#{app_name}' not a scalable app, no migration needed\n"
+          return out.string
+        end
         gear = nil
         app.gears.each do |app_gear|
           if app_gear.uuid == gear_uuid
