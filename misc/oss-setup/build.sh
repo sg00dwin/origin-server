@@ -37,7 +37,6 @@ for i in `ls`; do cd $i && sudo tito build $test_build --srpm --output=${repodir
 cd ${repodir}/li/uplift/bind        && sudo tito build $test_build --srpm --output=${repodir}/tito ; cd -
 cd ${repodir}/li/swingshift/mongo   && sudo tito build $test_build --srpm --output=${repodir}/tito ; cd -
 cd ${repodir}/li/gearchanger/oddjob && sudo tito build $test_build --srpm --output=${repodir}/tito ; cd -
-cd ${repodir}/li/crankcase/mongo    && sudo tito build $test_build --srpm --output=${repodir}/tito ; cd -
 
 cd ${repodir}/li/cartridges
 for i in 10gen-mms-agent-0.1 cron-1.4 diy-0.1 jbossas-7 jenkins-1.4 jenkins-client-1.4 mongodb-2.0 mysql-5.1 nodejs-0.6 perl-5.10 php-5.3 phpmyadmin-3.4 python-3.2 ruby-1.1 ; do 
@@ -77,7 +76,7 @@ sudo cp /usr/lib/ruby/gems/1.8/gems/uplift-bind-plugin-*/doc/examples/dhcpnamedf
 pushd /usr/share/selinux/packages/rubygem-uplift-bind-plugin/ && sudo make -f /usr/share/selinux/devel/Makefile ; popd
 sudo semodule -i /usr/share/selinux/packages/rubygem-uplift-bind-plugin/dhcpnamedforward.pp
 
-sudo sed -i -e "s/^# Add plugin gems here/# Add plugin gems here\ngem 'swingshift-mongo-plugin'\ngem 'uplift-bind-plugin'\ngem 'crankcase-mongo-plugin'\ngem 'gearchanger-oddjob-plugin'\n/" /var/www/stickshift/broker/Gemfile
+sudo sed -i -e "s/^# Add plugin gems here/# Add plugin gems here\ngem 'swingshift-mongo-plugin'\ngem 'uplift-bind-plugin'\ngem 'gearchanger-oddjob-plugin'\n/" /var/www/stickshift/broker/Gemfile
 sudo bash -c "cd /var/www/stickshift/broker/ && rm -f Gemfile.lock && bundle show && chown apache:apache Gemfile.lock"
 
 sudo mkdir -p /var/www/stickshift/broker/config/environments/plugin-config
@@ -115,21 +114,6 @@ Broker::Application.configure do
 end
 EOF"
 
-sudo bash -c "echo \"require File.expand_path('../plugin-config/crankcase-mongo-plugin.rb', __FILE__)\" >> /var/www/stickshift/broker/config/environments/development.rb"
-sudo bash -c 'cat <<EOF > /var/www/stickshift/broker/config/environments/plugin-config/crankcase-mongo-plugin.rb
-Broker::Application.configure do
-  config.datastore = {
-    :replica_set => false,
-    # Replica set example: [[<host-1>, <port-1>], [<host-2>, <port-2>], ...]
-    :host_port => ["localhost", 27017],
-
-    :user => "stickshift",
-    :password => "mooo",
-    :db => "stickshift_broker_dev",
-    :collections => {:user => "user"}
-  }
-end
-EOF'
 
 sudo chkconfig stickshift-broker on
 sudo service stickshift-broker restart

@@ -127,7 +127,6 @@ cartridge-diy-0.1
 #cartridge-rockmongo-1.1
 cartridge-python-3.2
 
-rubygem-crankcase-mongo-plugin
 rubygem-swingshift-mongo-plugin
 rubygem-uplift-bind-plugin
 rubygem-gearchanger-oddjob-plugin
@@ -542,7 +541,7 @@ chkconfig mongod on
 perl -p -i -e "s/^#auth = .*$/auth = true/" /etc/mongodb.conf
 
 echo "setup stickshift plugins in broker"
-sed -i -e "s/^# Add plugin gems here/# Add plugin gems here\ngem 'swingshift-mongo-plugin'\ngem 'uplift-bind-plugin'\ngem 'crankcase-mongo-plugin'\ngem 'gearchanger-oddjob-plugin'\n/" /var/www/stickshift/broker/Gemfile
+sed -i -e "s/^# Add plugin gems here/# Add plugin gems here\ngem 'swingshift-mongo-plugin'\ngem 'uplift-bind-plugin'\ngem 'gearchanger-oddjob-plugin'\n/" /var/www/stickshift/broker/Gemfile
 
 echo "setup bind-plugin selinux policy"
 mkdir -p /usr/share/selinux/packages/rubygem-uplift-bind-plugin
@@ -606,26 +605,10 @@ rotatelogs_interval=86400
 rotatelogs_format="-%Y%m%d-%H%M%S-%Z"
 EOF
 
-sed -i -e "s/^# Add plugin gems here/# Add plugin gems here\ngem 'swingshift-mongo-plugin'\ngem 'uplift-bind-plugin'\ngem 'crankcase-mongo-plugin'\ngem 'gearchanger-oddjob-plugin'\n/" /var/www/stickshift/broker/Gemfile
+sed -i -e "s/^# Add plugin gems here/# Add plugin gems here\ngem 'swingshift-mongo-plugin'\ngem 'uplift-bind-plugin'\ngem 'gearchanger-oddjob-plugin'\n/" /var/www/stickshift/broker/Gemfile
 pushd /var/www/stickshift/broker/ && rm -f Gemfile.lock && bundle show && chown apache:apache Gemfile.lock && popd
 
 mkdir -p /var/www/stickshift/broker/config/environments/plugin-config
-
-echo "require File.expand_path('../plugin-config/crankcase-mongo-plugin.rb', __FILE__)" >> /var/www/stickshift/broker/config/environments/development.rb
-cat <<EOF > /var/www/stickshift/broker/config/environments/plugin-config/crankcase-mongo-plugin.rb
-Broker::Application.configure do
-  config.datastore = {
-    :replica_set => false,
-    # Replica set example: [[<host-1>, <port-1>], [<host-2>, <port-2>], ...]
-    :host_port => ["localhost", 27017],
-
-    :user => "stickshift",
-    :password => "mooo",
-    :db => "stickshift_broker_dev",
-    :collections => {:user => "user"}
-  }
-end
-EOF
 
 
 echo "require File.expand_path('../plugin-config/swingshift-mongo-plugin.rb', __FILE__)" >> /var/www/stickshift/broker/config/environments/development.rb

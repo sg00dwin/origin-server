@@ -27,7 +27,6 @@ Requires:  rubygem-thread-dump
 Requires:  rubygem-swingshift-streamline-plugin
 Requires:  rubygem-uplift-dynect-plugin
 Requires:  rubygem-gearchanger-m-collective-plugin
-Requires:  rubygem-crankcase-mongo-plugin
 #Requires:  rubygem-term-ansicolor
 #Requires:  rubygem-trollop
 #Requires:  rubygem-cucumber

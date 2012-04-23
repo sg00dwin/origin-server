@@ -690,7 +690,7 @@ mkdir -p /tmp/rhc/junit
         build_and_install(package_name, build_dir)
       end
     end
-    run("yum update -y --exclude='rhc-devenv' --disablerepo=\\* --enablerepo=li rhc-* rubygem-stickshift-* rubygem-gearchanger-* rubygem-uplift-* rubygem-crankcase-* rubygem-swingshift-*", :verbose => options.verbose?)
+    run("yum update -y --exclude='rhc-devenv' --disablerepo=\\* --enablerepo=li rhc-* rubygem-stickshift-* rubygem-gearchanger-* rubygem-uplift-* rubygem-swingshift-*", :verbose => options.verbose?)
     run("service mcollective restart; service libra-broker restart; service libra-site restart", :verbose => options.verbose?)
   end
 
@@ -750,7 +750,7 @@ pushd li-working && build/devenv update#{options.verbose? ? ' --verbose' : ''} #
 popd
 
 rm -rf li-working #{working_dirs}
-#{options.clean_metadata? ? "yum update -y --exclude='rhc-devenv' rhc-* rubygem-stickshift-*  rubygem-gearchanger-* rubygem-uplift-* rubygem-crankcase-* rubygem-swingshift-*; " : ''}
+#{options.clean_metadata? ? "yum update -y --exclude='rhc-devenv' rhc-* rubygem-stickshift-*  rubygem-gearchanger-* rubygem-uplift-* rubygem-swingshift-*; " : ''}
 
 # End shell code
 ################

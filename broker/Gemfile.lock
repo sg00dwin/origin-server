@@ -38,9 +38,6 @@ GEM
     bson (1.5.2)
     builder (2.1.2)
     crack (0.1.8)
-    crankcase-mongo-plugin (0.8.8)
-      json
-      stickshift-controller
     dnsruby (1.53)
     erubis (2.6.6)
       abstract
@@ -121,7 +118,6 @@ PLATFORMS
 
 DEPENDENCIES
   aws-sdk
-  crankcase-mongo-plugin
   gearchanger-m-collective-plugin
   json
   mocha
