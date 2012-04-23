@@ -412,12 +412,19 @@ html.js fieldset.collapsible .fieldset-wrapper {
 .community .geshifilter pre {
 	border:0;
 	}
-.community .node-blog .author-bio-box {
-  border-bottom: 1px solid #111;
-	}
 .community .node-blog > h2+p {
 	margin: 0;
 	}
+.community .blog-metadata {
+  margin-bottom: 15px;
+  color: #999;
+  div {
+    display: inline;
+  }
+  .author-bio-box  {
+    .author-bio { display: none; }
+  }
+}
 	
 
 /* Community search */

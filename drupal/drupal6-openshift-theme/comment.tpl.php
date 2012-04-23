@@ -13,7 +13,7 @@ $do = og_comment_perms_do();
     
     <div class="comment-content">
       <?php if ($comment->new) : ?>
-        <span class="new"><?php print drupal_ucfirst($new) ?></span>
+        <span class="label new pull-right"><?php print drupal_ucfirst($new) ?></span>
       <?php endif; ?>
 
       <?php //print theme('user_picture', $comment); ?>
