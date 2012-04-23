@@ -17,7 +17,6 @@ Obsoletes: rhc-cartridge-phpmoadmin-1.0
 Requires: stickshift-abstract
 Requires: rubygem(stickshift-node)
 Requires: cartridge-mongodb-2.0
-Requires: php-devel
 
 %description
 Provides rhc phpMoAdmin cartridge support

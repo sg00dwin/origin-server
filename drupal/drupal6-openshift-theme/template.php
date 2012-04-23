@@ -12,6 +12,23 @@
 // Add the CSS for the vote up/down module on all pages.
 // This eliminates a bug with AJAX comments and vote up/down not working together.
 
+function openshift_theme() {
+  return array(
+    'comment_form' => array('arguments' => array(
+      'form' => NULL,
+      'edit' => NULL,
+    ))
+  );
+}
+
+function openshift_comment_form($form, $edit) {
+  global $user;
+  if ($user->uid && (empty($edit['cid']) || !user_access('administer comments'))) {
+    $form['_author'] = NULL;
+  }
+  return drupal_render($form);
+}
+
 function openshift_imagecache($presetname, $path, $alt = '', $title = '', $attributes = NULL, $getsize = TRUE) {
 	/* Begin Override */
 	// Don't display a user's email address in the ALT tag.
