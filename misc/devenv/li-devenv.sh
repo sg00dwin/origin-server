@@ -1,8 +1,23 @@
 echo "nameserver 4.2.2.2" >> /etc/resolv.conf
 
 #rpm -Uhv http://download.fedora.redhat.com/pub/epel/6/x86_64/epel-release-6-5.noarch.rpm
-rpm -Uhv http://download.fedoraproject.org/pub/epel/6/x86_64/epel-release-6-5.noarch.rpm
+#rpm -Uhv http://download.fedoraproject.org/pub/epel/6/x86_64/epel-release-6-5.noarch.rpm
+cat > /etc/yum.repos.d/li.repo <<EOF
+[epel]
+name=Extra Packages for Enterprise Linux 6 - $basearch
+baseurl=http://stg.openshift.redhat.com/mirror/epel/6/$basearch
+failovermethod=priority
+enabled=1
+gpgcheck=0
 
+[epel-testing]
+name=Extra Packages for Enterprise Linux 6 - Testing - $basearch
+baseurl=http://stg.openshift.redhat.com/mirror/epel/testing/6/$basearch
+failovermethod=priority
+enabled=0
+gpgcheck=0
+
+EOF
 #sed -i s/sslverify=1/sslverify=0/g /etc/yum.repos.d/rh-cloud.repo
 
 cat > /etc/yum.repos.d/li.repo <<EOF
