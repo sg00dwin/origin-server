@@ -5,14 +5,16 @@ echo "nameserver 4.2.2.2" >> /etc/resolv.conf
 cat > /etc/yum.repos.d/epel.repo <<EOF
 [epel]
 name=Extra Packages for Enterprise Linux 6 - \$basearch
-baseurl=http://stg.openshift.redhat.com/mirror/epel/6/\$basearch
+baseurl=http://mirror1.stg.rhcloud.com/mirror/epel/6/\$basearch/
+        http://mirror2.stg.rhcloud.com/mirror/epel/6/\$basearch/
 failovermethod=priority
 enabled=1
 gpgcheck=0
 
 [epel-testing]
 name=Extra Packages for Enterprise Linux 6 - Testing - \$basearch
-baseurl=http://stg.openshift.redhat.com/mirror/epel/testing/6/\$basearch
+baseurl=http://mirror1.stg.rhcloud.com/mirror/epel/testing/6/\$basearch/
+        http://mirror2.stg.rhcloud.com/mirror/epel/testing/6/\$basearch/
 failovermethod=priority
 enabled=0
 gpgcheck=0
