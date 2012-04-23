@@ -283,7 +283,6 @@ perl -p -i -e "s/^#MaxSessions .*$/MaxSessions 40/" /etc/ssh/sshd_config
 perl -p -i -e "s/^#MaxStartups .*$/MaxStartups 40/" /etc/ssh/sshd_config
 
 # Setup an empty git repository to allow code transfer
-mkdir -p /root/li
 git init --bare /root/li
 git init --bare /root/os-client-tools
 git init --bare /root/crankcase
