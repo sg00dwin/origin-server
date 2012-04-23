@@ -10,7 +10,7 @@ control_c()
 trap control_c SIGINT
 
 repodir=$HOME
-prod_build=1
+prod_build=0
 build_only=0
 mkdir -p ${repodir}/brew ${repodir}/tito
 cd ${repodir}
@@ -118,6 +118,21 @@ Broker::Application.configure do
 end
 EOF"
 
+sudo bash -c "echo \"require File.expand_path('../plugin-config/crankcase-mongo-plugin.rb', __FILE__)\" >> /var/www/stickshift/broker/config/environments/development.rb"
+sudo bash -c 'cat <<EOF > /var/www/stickshift/broker/config/environments/plugin-config/crankcase-mongo-plugin.rb
+Broker::Application.configure do
+  config.datastore = {
+    :replica_set => false,
+    # Replica set example: [[<host-1>, <port-1>], [<host-2>, <port-2>], ...]
+    :host_port => ["localhost", 27017],
+
+    :user => "stickshift",
+    :password => "mooo",
+    :db => "stickshift_broker_dev",
+    :collections => {:user => "user"}
+  }
+end
+EOF'
 
 sudo chkconfig stickshift-broker on
 sudo service stickshift-broker restart
