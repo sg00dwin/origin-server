@@ -5,7 +5,7 @@
 %global drupal_themename    openshift-theme
 
 Name:           drupal6-%{drupal_themename}
-Version:        3.0.6
+Version:        3.0.7
 Release:        1%{?dist}
 Summary:        Red Hat Openshift theme for Drupal %{drupal_release}
 
@@ -44,6 +44,10 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
+* Mon Apr 23 2012 Adam Miller <admiller@redhat.com> 3.0.7-1
+- Automatic commit of package [drupal6-openshift-theme] release [3.0.6-1].
+  (admiller@redhat.com)
+
 * Mon Apr 23 2012 Adam Miller <admiller@redhat.com> 3.0.6-1
 - Reorder items in user_profile_box to work better with Steve's styling
   (ccoleman@redhat.com)
