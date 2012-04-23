@@ -5,7 +5,7 @@
 
 Summary:        GearChanger plugin for m-colective service
 Name:           rubygem-%{gemname}
-Version:        0.8.6
+Version:        0.8.7
 Release:        1%{?dist}
 Group:          Development/Languages
 License:        ASL 2.0
@@ -70,6 +70,10 @@ rm -rf %{buildroot}
 %{ruby_sitelib}/%{gemname}.rb
 
 %changelog
+* Mon Apr 23 2012 Adam Miller <admiller@redhat.com> 0.8.7-1
+- move_gear for scalable apps... needs more testing, but doesnt break existing
+  code (rchopra@redhat.com)
+
 * Sat Apr 21 2012 Dan McPherson <dmcphers@redhat.com> 0.8.6-1
 - forcing builds (dmcphers@redhat.com)
 
