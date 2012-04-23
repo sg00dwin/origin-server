@@ -3,7 +3,7 @@
 
 Summary:   Li broker components
 Name:      rhc-broker
-Version:   0.91.8
+Version:   0.91.10
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -27,7 +27,6 @@ Requires:  rubygem-thread-dump
 Requires:  rubygem-swingshift-streamline-plugin
 Requires:  rubygem-uplift-dynect-plugin
 Requires:  rubygem-gearchanger-m-collective-plugin
-Requires:  rubygem-crankcase-mongo-plugin
 #Requires:  rubygem-term-ansicolor
 #Requires:  rubygem-trollop
 #Requires:  rubygem-cucumber
@@ -64,7 +63,6 @@ mv %{buildroot}%{brokerdir}/script/rhc-admin-cartridge-do %{buildroot}/%{_bindir
 mv %{buildroot}%{brokerdir}/script/rhc-admin-move %{buildroot}/%{_bindir}
 mv %{buildroot}%{brokerdir}/script/rhc-admin-ctl-district %{buildroot}/%{_bindir}
 mv %{buildroot}%{brokerdir}/script/rhc-admin-ctl-template %{buildroot}/%{_bindir}
-mv %{buildroot}%{brokerdir}/script/rhc-admin-user-vip %{buildroot}/%{_bindir}
 mv %{buildroot}%{brokerdir}/script/rhc-admin-ctl-user %{buildroot}/%{_bindir}
 mv %{buildroot}%{brokerdir}/script/rhc-admin-chk %{buildroot}/%{_bindir}
 
@@ -91,13 +89,23 @@ rm -rf $RPM_BUILD_ROOT
 %attr(0750,-,-) %{_bindir}/rhc-admin-move
 %attr(0750,-,-) %{_bindir}/rhc-admin-ctl-district
 %attr(0750,-,-) %{_bindir}/rhc-admin-ctl-template
-%attr(0750,-,-) %{_bindir}/rhc-admin-user-vip
 %attr(0750,-,-) %{_bindir}/rhc-admin-ctl-user
 
 %post
 /bin/touch %{brokerdir}/log/production.log
 
 %changelog
+* Mon Apr 23 2012 Adam Miller <admiller@redhat.com> 0.91.10-1
+- Updating gem versions (admiller@redhat.com)
+- BugzID 814007. Added protect_from_forgery (kraman@gmail.com)
+
+* Mon Apr 23 2012 Adam Miller <admiller@redhat.com> 0.91.9-1
+- Updating gem versions (admiller@redhat.com)
+- Remove references to rhc-admin-user-vip. (rmillner@redhat.com)
+- rhc-admin-ctl-user provides the same ability. (rmillner@redhat.com)
+- move crankcase mongo datastore (dmcphers@redhat.com)
+- Temporary commit to build (dmcphers@redhat.com)
+
 * Sat Apr 21 2012 Dan McPherson <dmcphers@redhat.com> 0.91.8-1
 - Updating gem versions (dmcphers@redhat.com)
 - Updating gem versions (dmcphers@redhat.com)

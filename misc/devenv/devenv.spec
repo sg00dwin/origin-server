@@ -8,7 +8,7 @@
 
 Summary:   Dependencies for OpenShift development
 Name:      rhc-devenv
-Version:   0.92.8
+Version:   0.92.9
 Release:   1%{?dist}
 Group:     Development/Libraries
 License:   GPLv2
@@ -79,14 +79,17 @@ Requires:  drupal6-admin_menu
 Requires:  drupal6-advanced-help
 Requires:  drupal6-ajax_poll
 Requires:  drupal6-better_formats
+Requires:  drupal6-block_class
 Requires:  drupal6-calendar
 Requires:  drupal6-cck
 Requires:  drupal6-comment_bonus_api
 Requires:  drupal6-context
+Requires:  drupal6-context_menu_block
 Requires:  drupal6-ctools
 Requires:  drupal6-custom_breadcrumbs
 Requires:  drupal6-date
 Requires:  drupal6-devel
+Requires:  drupal6-diff
 Requires:  drupal6-eazylaunch
 Requires:  drupal6-emfield
 Requires:  drupal6-faq
@@ -94,44 +97,27 @@ Requires:  drupal6-features
 Requires:  drupal6-filefield
 Requires:  drupal6-fivestar
 Requires:  drupal6-flag
+Requires:  drupal6-freelinking
 Requires:  drupal6-geshifilter
 Requires:  drupal6-homebox
+Requires:  drupal6-image
+Requires:  drupal6-image_resize_filter
 Requires:  drupal6-imageapi
 Requires:  drupal6-imagecache
 Requires:  drupal6-imagecache_profiles
 Requires:  drupal6-imagefield
-Requires:  drupal6-image_resize_filter
 Requires:  drupal6-insert
 Requires:  drupal6-jquery_ui-lib
 Requires:  drupal6-link
 Requires:  drupal6-markdown
 Requires:  drupal6-media_vimeo
 Requires:  drupal6-media_youtube
+Requires:  drupal6-media_youku
+Requires:  drupal6-mediawiki_filter
 Requires:  drupal6-menu_block
 Requires:  drupal6-messaging
 Requires:  drupal6-notifications
 Requires:  drupal6-og
-Requires:  drupal6-pathauto
-Requires:  drupal6-rules
-Requires:  drupal6-stringoverrides
-Requires:  drupal6-token
-Requires:  drupal6-user_badges
-Requires:  drupal6-userpoints
-Requires:  drupal6-userpoints_votingapi
-Requires:  drupal6-vertical_tabs
-Requires:  drupal6-views
-Requires:  drupal6-views_bonus
-Requires:  drupal6-views_customfield
-Requires:  drupal6-vote_up_down
-Requires:  drupal6-votingapi
-Requires:  drupal6-wikitools
-Requires:  drupal6-prepopulate
-Requires:  drupal6-freelinking
-Requires:  drupal6-mediawiki_filter
-Requires:  drupal6-context_menu_block
-Requires:  drupal6-block_class
-Requires:  drupal6-diff
-Requires:  drupal6-image
 Requires:  drupal6-openshift-custom_forms
 Requires:  drupal6-openshift-features-blogs
 Requires:  drupal6-openshift-features-forums
@@ -149,6 +135,21 @@ Requires:  drupal6-openshift-redhat_frontpage
 Requires:  drupal6-openshift-redhat_ideas
 Requires:  drupal6-openshift-redhat_sso
 Requires:  drupal6-openshift-theme
+Requires:  drupal6-pathauto
+Requires:  drupal6-prepopulate
+Requires:  drupal6-rules
+Requires:  drupal6-stringoverrides
+Requires:  drupal6-token
+Requires:  drupal6-user_badges
+Requires:  drupal6-userpoints
+Requires:  drupal6-userpoints_votingapi
+Requires:  drupal6-vertical_tabs
+Requires:  drupal6-views
+Requires:  drupal6-views_bonus
+Requires:  drupal6-views_customfield
+Requires:  drupal6-vote_up_down
+Requires:  drupal6-votingapi
+Requires:  drupal6-wikitools
 
 BuildArch: noarch
 
@@ -282,7 +283,6 @@ perl -p -i -e "s/^#MaxSessions .*$/MaxSessions 40/" /etc/ssh/sshd_config
 perl -p -i -e "s/^#MaxStartups .*$/MaxStartups 40/" /etc/ssh/sshd_config
 
 # Setup an empty git repository to allow code transfer
-mkdir -p /root/li
 git init --bare /root/li
 git init --bare /root/os-client-tools
 git init --bare /root/crankcase
@@ -394,6 +394,10 @@ echo "Header append Strict-Transport-Security includeSubDomains" >> /etc/httpd/c
 %{policydir}/*
 
 %changelog
+* Mon Apr 23 2012 Adam Miller <admiller@redhat.com> 0.92.9-1
+- dont reuse the same vars! (dmcphers@redhat.com)
+- devenv.spec add drupal6-media_youku (ansilva@redhat.com)
+
 * Mon Apr 23 2012 Adam Miller <admiller@redhat.com> 0.92.8-1
 - adding deploy key to ami (dmcphers@redhat.com)
 

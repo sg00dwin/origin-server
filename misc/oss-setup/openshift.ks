@@ -5,14 +5,14 @@ auth --useshadow --enablemd5
 selinux --enforcing
 firewall --enabled --service=mdns
 xconfig --startxonboot
-part / --size 6120  --fstype ext4 --ondisk sda
+part / --size 4096  --fstype ext4 --ondisk sda
 services --enabled=network,sshd --disabled=NetworkManager
 bootloader --append="biosdevname=0"
 
 repo --name=fedora --mirrorlist=http://mirrors.fedoraproject.org/mirrorlist?repo=fedora-$releasever&arch=$basearch
 repo --name=updates --mirrorlist=http://mirrors.fedoraproject.org/mirrorlist?repo=updates-released-f$releasever&arch=$basearch
-repo --name=brew --baseurl=file:///root/brew
-repo --name=stickshift --baseurl=file:///tmp/tito/noarch
+repo --name=brew --baseurl=file:///home/kraman/brew
+repo --name=stickshift --baseurl=file:///home/kraman/tito/rpms/fc16/x86_64
 repo --name=passenger --baseurl=http://passenger.stealthymonkeys.com/fedora/$releasever/$basearch
 
 %packages
@@ -106,6 +106,7 @@ generic-release-notes
 tig
 git
 rhc
+rhc-rest
 stickshift-broker
 
 cartridge-10gen-mms-agent-0.1
@@ -122,12 +123,11 @@ cartridge-php-5.3
 #cartridge-phpmoadmin-1.0
 cartridge-phpmyadmin-3.4
 #cartridge-postgresql-8.4
-#cartridge-ruby-1.1
+cartridge-ruby-1.1
 cartridge-diy-0.1
 #cartridge-rockmongo-1.1
 cartridge-python-3.2
 
-rubygem-crankcase-mongo-plugin
 rubygem-swingshift-mongo-plugin
 rubygem-uplift-bind-plugin
 rubygem-gearchanger-oddjob-plugin
@@ -542,7 +542,7 @@ chkconfig mongod on
 perl -p -i -e "s/^#auth = .*$/auth = true/" /etc/mongodb.conf
 
 echo "setup stickshift plugins in broker"
-sed -i -e "s/^# Add plugin gems here/# Add plugin gems here\ngem 'swingshift-mongo-plugin'\ngem 'uplift-bind-plugin'\ngem 'crankcase-mongo-plugin'\ngem 'gearchanger-oddjob-plugin'\n/" /var/www/stickshift/broker/Gemfile
+sed -i -e "s/^# Add plugin gems here/# Add plugin gems here\ngem 'swingshift-mongo-plugin'\ngem 'uplift-bind-plugin'\ngem 'gearchanger-oddjob-plugin'\n/" /var/www/stickshift/broker/Gemfile
 
 echo "setup bind-plugin selinux policy"
 mkdir -p /usr/share/selinux/packages/rubygem-uplift-bind-plugin
@@ -606,26 +606,10 @@ rotatelogs_interval=86400
 rotatelogs_format="-%Y%m%d-%H%M%S-%Z"
 EOF
 
-sed -i -e "s/^# Add plugin gems here/# Add plugin gems here\ngem 'swingshift-mongo-plugin'\ngem 'uplift-bind-plugin'\ngem 'crankcase-mongo-plugin'\ngem 'gearchanger-oddjob-plugin'\n/" /var/www/stickshift/broker/Gemfile
+sed -i -e "s/^# Add plugin gems here/# Add plugin gems here\ngem 'swingshift-mongo-plugin'\ngem 'uplift-bind-plugin'\ngem 'gearchanger-oddjob-plugin'\n/" /var/www/stickshift/broker/Gemfile
 pushd /var/www/stickshift/broker/ && rm -f Gemfile.lock && bundle show && chown apache:apache Gemfile.lock && popd
 
 mkdir -p /var/www/stickshift/broker/config/environments/plugin-config
-
-echo "require File.expand_path('../plugin-config/crankcase-mongo-plugin.rb', __FILE__)" >> /var/www/stickshift/broker/config/environments/development.rb
-cat <<EOF > /var/www/stickshift/broker/config/environments/plugin-config/crankcase-mongo-plugin.rb
-Broker::Application.configure do
-  config.datastore = {
-    :replica_set => false,
-    # Replica set example: [[<host-1>, <port-1>], [<host-2>, <port-2>], ...]
-    :host_port => ["localhost", 27017],
-
-    :user => "stickshift",
-    :password => "mooo",
-    :db => "stickshift_broker_dev",
-    :collections => {:user => "user"}
-  }
-end
-EOF
 
 
 echo "require File.expand_path('../plugin-config/swingshift-mongo-plugin.rb', __FILE__)" >> /var/www/stickshift/broker/config/environments/development.rb
@@ -757,21 +741,20 @@ Get Started
 <div class="column-content lift-less grid-wrapper">
 <div class="span12 span-flush-right">
 
-<h1 class="ribbon">About this Fedora remix</h1>
+<h1 class="ribbon">About this Openshift Origin LiveCD</h1>
 <section id="intro">
-This Fedora remix contains all the Open-source components that power Openshift. Source code and documentation for these components is available at https://github.com/openshift<br/><br/>
+This Openshift Origin remix contains all the Open-source components that power Openshift. Source code and documentation for these components is available at https://github.com/openshift<br/><br/>
 The image contains 5 sets of components:
 <ol>
-	<li><a href="https://github.com/openshift/stickshift">StickShift</a>: Provides a PaaS API framework and plugin architecture to build a cloud</li>
-	<li><a href="https://github.com/openshift/crankcase">Crankcase</a>: Plugins that provide different persistence layers for application metadata. Eg: Mongo, s3 etc.</li>
-	<li><a href="https://github.com/openshift/gearchanger">Gearchanger</a>: Plugins that provide different broker-gear communication mechanisms.</li>
-	<li><a href="https://github.com/openshift/uplift">Uplift</a>: Plugins that provide different DNS management engines.</li>
-	<li><a href="https://github.com/openshift/swingshift">Swingshift</a>: Plugins that provide integration with different authentication schemes.</li>
-	<li><a href="https://github.com/openshift/cartridges">Cartridges</a>: Provides management wrappers around software runtimes that will be enabled in both this runtime and the service offering.</li>	
+	<li><a href="https://github.com/openshift/crankcase/tree/master/stickshift">Broker</a>: Central service exposing a REST API for consumers and coordinating with the application containers (known as nodes).</li>
+	<li><a href="https://github.com/openshift/crankcase/tree/master/gearchanger">Messaging System</a>: Communication pipeline between StickShift and each node.</li>
+	<li><a href="https://github.com/openshift/crankcase/tree/master/swingshift">User Authentication</a>: A pluggable user authentication component with a default MongoDB implementation.</li>
+	<li><a href="https://github.com/openshift/crankcase/tree/master/uplift">Domain Name Management</a>: Plugins that provide different DNS management engines.</li>
+	<li><a href="https://github.com/openshift/crankcase/tree/master/cartridges">Cartridges</a>: Provides management wrappers around software runtimes that will be enabled in both this runtime and the service offering.</li>	
 </ol>
 </section>
 
-<h1 class="ribbon">Get Started with the Fedora remix</h1>
+<h1 class="ribbon">Get Started with the Openshift Origin</h1>
 <section id="create_domain_name">
 <h3>1. Create a domain name</h3>
 <p>

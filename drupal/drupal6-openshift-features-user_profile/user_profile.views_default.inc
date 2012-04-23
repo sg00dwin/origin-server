@@ -764,6 +764,56 @@ if (!empty($clean_name) && !empty($company)) {
         'button' => 'Use default',
       ),
     ),
+    'phpcode_1' => array(
+      'label' => '',
+      'alter' => array(
+        'alter_text' => 0,
+        'text' => '',
+        'make_link' => 0,
+        'path' => '',
+        'link_class' => '',
+        'alt' => '',
+        'prefix' => '',
+        'suffix' => '',
+        'target' => '',
+        'help' => '',
+        'trim' => 0,
+        'max_length' => '',
+        'word_boundary' => 1,
+        'ellipsis' => 1,
+        'html' => 0,
+        'strip_tags' => 0,
+      ),
+      'empty' => '',
+      'hide_empty' => 0,
+      'empty_zero' => 0,
+      'value' => '<?php
+switch ($data->user_badges_badges_name){
+  case \'Community Member\':
+    print \'<div class="badge member">2M</div>\';
+    break;
+  case \'Accomplished\':
+    print \'<div class="badge accomplished">3A</div>\';
+    break;
+  case \'Pro\':
+    print \'<div class="badge pro">4P</div>\';
+    break;
+  case \'Expert\':
+    print \'<div class="badge expert">5E</div>\';
+    break;
+  default:
+    print \'<div class="badge newbie">1N</div>\';
+}
+?>',
+      'exclude' => 0,
+      'id' => 'phpcode_1',
+      'table' => 'customfield',
+      'field' => 'phpcode',
+      'override' => array(
+        'button' => 'Use default',
+      ),
+      'relationship' => 'none',
+    ),
     'name' => array(
       'label' => '',
       'alter' => array(
@@ -798,6 +848,49 @@ if (!empty($clean_name) && !empty($company)) {
       'override' => array(
         'button' => 'Use default',
       ),
+    ),
+    'phpcode' => array(
+      'label' => '',
+      'alter' => array(
+        'alter_text' => 0,
+        'text' => '',
+        'make_link' => 0,
+        'path' => '',
+        'link_class' => '',
+        'alt' => '',
+        'prefix' => '',
+        'suffix' => '',
+        'target' => '',
+        'help' => '',
+        'trim' => 0,
+        'max_length' => '',
+        'word_boundary' => 1,
+        'ellipsis' => 1,
+        'html' => 0,
+        'strip_tags' => 0,
+      ),
+      'empty' => '',
+      'hide_empty' => 0,
+      'empty_zero' => 0,
+      'value' => '<?php
+$full_name =  $data->profile_values_profile_first_name_value .\' \'. $data->profile_values_profile_last_name_value;
+$clean_name = trim(strip_tags($full_name));
+$company = $data->profile_values_profile_company_value;
+if (!empty($clean_name) && !empty($company)) {
+  print $clean_name .\', \'. $company;
+} else {
+  print $clean_name;
+  print $company;
+}
+?>',
+      'exclude' => 0,
+      'id' => 'phpcode',
+      'table' => 'customfield',
+      'field' => 'phpcode',
+      'override' => array(
+        'button' => 'Use default',
+      ),
+      'relationship' => 'none',
     ),
     'value_2' => array(
       'label' => '',
@@ -898,49 +991,6 @@ if (!empty($clean_name) && !empty($company)) {
         'button' => 'Use default',
       ),
     ),
-    'phpcode' => array(
-      'label' => '',
-      'alter' => array(
-        'alter_text' => 0,
-        'text' => '',
-        'make_link' => 0,
-        'path' => '',
-        'link_class' => '',
-        'alt' => '',
-        'prefix' => '',
-        'suffix' => '',
-        'target' => '',
-        'help' => '',
-        'trim' => 0,
-        'max_length' => '',
-        'word_boundary' => 1,
-        'ellipsis' => 1,
-        'html' => 0,
-        'strip_tags' => 0,
-      ),
-      'empty' => '',
-      'hide_empty' => 0,
-      'empty_zero' => 0,
-      'value' => '<?php
-$full_name =  $data->profile_values_profile_first_name_value .\' \'. $data->profile_values_profile_last_name_value;
-$clean_name = trim(strip_tags($full_name));
-$company = $data->profile_values_profile_company_value;
-if (!empty($clean_name) && !empty($company)) {
-  print $clean_name .\', \'. $company;
-} else {
-  print $clean_name;
-  print $company;
-}
-?>',
-      'exclude' => 0,
-      'id' => 'phpcode',
-      'table' => 'customfield',
-      'field' => 'phpcode',
-      'override' => array(
-        'button' => 'Use default',
-      ),
-      'relationship' => 'none',
-    ),
     'value' => array(
       'label' => '',
       'alter' => array(
@@ -1000,56 +1050,6 @@ if (!empty($clean_name) && !empty($company)) {
       'id' => 'name_1',
       'table' => 'user_badges_badges',
       'field' => 'name',
-      'override' => array(
-        'button' => 'Use default',
-      ),
-      'relationship' => 'none',
-    ),
-    'phpcode_1' => array(
-      'label' => '',
-      'alter' => array(
-        'alter_text' => 0,
-        'text' => '',
-        'make_link' => 0,
-        'path' => '',
-        'link_class' => '',
-        'alt' => '',
-        'prefix' => '',
-        'suffix' => '',
-        'target' => '',
-        'help' => '',
-        'trim' => 0,
-        'max_length' => '',
-        'word_boundary' => 1,
-        'ellipsis' => 1,
-        'html' => 0,
-        'strip_tags' => 0,
-      ),
-      'empty' => '',
-      'hide_empty' => 0,
-      'empty_zero' => 0,
-      'value' => '<?php
-switch ($data->user_badges_badges_name){
-  case \'Community Member\':
-    print \'<div class="badge member">2M</div>\';
-    break;
-  case \'Accomplished\':
-    print \'<div class="badge accomplished">3A</div>\';
-    break;
-  case \'Pro\':
-    print \'<div class="badge pro">4P</div>\';
-    break;
-  case \'Expert\':
-    print \'<div class="badge expert">5E</div>\';
-    break;
-  default:
-    print \'<div class="badge newbie">1N</div>\';
-}
-?>',
-      'exclude' => 0,
-      'id' => 'phpcode_1',
-      'table' => 'customfield',
-      'field' => 'phpcode',
       'override' => array(
         'button' => 'Use default',
       ),

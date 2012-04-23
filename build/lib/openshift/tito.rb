@@ -1,12 +1,10 @@
 require 'fileutils'
 
 DEVENV_REGEX = /^rhc-devenv-\d+/
-SIBLING_REPOS = [['crankcase', '../crankcase'],
-                 ['crankcase', '/var/lib/jenkins/jobs/crankcase/workspace'],
-                 ['os-client-tools', '../os-client-tools'],
-                 ['os-client-tools', '/var/lib/jenkins/jobs/os-client-tools/workspace']]
+SIBLING_REPOS = {'crankcase' => ['../crankcase-working', '../crankcase', '/var/lib/jenkins/jobs/crankcase/workspace'],
+                 'os-client-tools' => ['../os-client-tools-working', '../os-client-tools', '/var/lib/jenkins/jobs/os-client-tools/workspace']}
   
-PACKAGE_REGEX = /^([\w-]*)-\d+\.\d+\.\d+-\d+\.\..*:$/
+PACKAGE_REGEX = /^([\w\.-]*)-\d+\.\d+\.\d+-\d+\.\..*:$/
 IGNORE_PACKAGES = ['stickshift-broker', 'rubygem-gearchanger-oddjob-plugin', 'rubygem-swingshift-mongo-plugin', 'rubygem-uplift-bind-plugin']
 
 module OpenShift
@@ -25,18 +23,19 @@ module OpenShift
           end
         end
       end
-      SIBLING_REPOS.each do |repo_info|
-        repo_name = repo_info[0]
-        repo_dir = repo_info[1]
-        if File.exists?(repo_dir)
-          packages = `cd #{repo_dir} && tito report --untagged-commits`
-          packages.split("\n").collect do |package|
-            if package =~ PACKAGE_REGEX
-              pkg = $1
-              unless IGNORE_PACKAGES.include?(pkg)
-                build_dirs << [pkg, all_packages[pkg][0], all_packages[pkg][1]]
+      SIBLING_REPOS.each do |repo_name, repo_dirs|
+        repo_dirs.each do |repo_dir|
+          if File.exists?(repo_dir)
+            packages = `cd #{repo_dir} && tito report --untagged-commits`
+            packages.split("\n").collect do |package|
+              if package =~ PACKAGE_REGEX
+                pkg = $1
+                unless IGNORE_PACKAGES.include?(pkg)
+                  build_dirs << [pkg, all_packages[pkg][0], all_packages[pkg][1]]
+                end
               end
             end
+            break
           end
         end
       end
@@ -78,23 +77,24 @@ module OpenShift
       current_package = nil
       current_sync_dir = nil
       sync_dirs.compact!
-      SIBLING_REPOS.each do |repo_info|
-        repo_name = repo_info[0]
-        repo_dir = repo_info[1]
-        if File.exists?(repo_dir)
-          packages = `cd #{repo_dir} && tito report --untagged-commits`
-          packages.split("\n").collect do |package|
-            if package =~ PACKAGE_REGEX
-              pkg = $1
-              unless IGNORE_PACKAGES.include?(pkg)
-                current_package = pkg
-                current_sync_dir = all_packages[pkg][0]
+      SIBLING_REPOS.each do |repo_name, repo_dirs|
+        repo_dirs.each do |repo_dir|
+          if File.exists?(repo_dir)
+            packages = `cd #{repo_dir} && tito report --untagged-commits`
+            packages.split("\n").collect do |package|
+              if package =~ PACKAGE_REGEX
+                pkg = $1
+                unless IGNORE_PACKAGES.include?(pkg)
+                  current_package = pkg
+                  current_sync_dir = all_packages[pkg][0]
+                end
               end
+              current_package_contents += package if current_sync_dir
             end
-            current_package_contents += package if current_sync_dir
+            update_sync_history(current_package, current_package_contents, current_sync_dir, sync_dirs) if current_package
+            sync_dirs.compact!
+            break
           end
-          update_sync_history(current_package, current_package_contents, current_sync_dir, sync_dirs) if current_package
-          sync_dirs.compact!
         end
       end
       sync_dirs
@@ -123,11 +123,12 @@ module OpenShift
     def get_packages
       packages = {}
       dirs = ['.']
-      SIBLING_REPOS.each do |repo_info|
-        repo_name = repo_info[0]
-        repo_dir = repo_info[1]
-        if File.exists?(repo_dir)
-          dirs << repo_dir
+      SIBLING_REPOS.each do |repo_name, repo_dirs|
+        repo_dirs.each do |repo_dir|
+          if File.exists?(repo_dir)
+            dirs << repo_dir
+            break
+          end
         end
       end
       dirs.each do |repo_dir|

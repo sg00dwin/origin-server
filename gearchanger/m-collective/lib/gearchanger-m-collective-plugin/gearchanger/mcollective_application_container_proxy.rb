@@ -404,7 +404,203 @@ module GearChanger
         job
       end
       
+
+      def move_scalable_app(app, destination_container, destination_district_uuid=nil, allow_change_district=false, node_profile=nil)
+        all_gears = app.gears
+        all_gears.each { |gear|
+          move_gear(app, gear, destination_container, destination_district_uuid, allow_change_district, node_profile) if gear.server_identity != destination_container.id
+        }
+        unless app.aliases.nil?
+          app.aliases.each do |server_alias|
+            reply.append destination_container.send(:run_cartridge_command, app.framework, app, app.gear, "add-alias", server_alias, false)
+          end
+        end
+
+        app.start_order.each do |ci_name|
+          cinst = app.comp_instance_map[ci_name]
+          cart = cinst.parent_cart_name
+          idle, leave_stopped = state_map[ci_name]
+          unless leave_stopped
+            log_debug "DEBUG: Starting cartridge '#{cart}' in '#{app.name}' after move on #{destination_container.id}"
+            reply.append destination_container.send(:run_cartridge_command, cart, app, gear, "start", nil, false)
+          end
+        end
+
+        app.recreate_dns
+      end
+
+      def move_gear(app, gear, destination_container, destination_district_uuid, allow_change_district, node_profile)
+        gear.node_profile = node_profile if node_profile
+
+        # resolve destination_container according to district
+        destination_container, destination_district_uuid, keep_uid = resolve_destination(app, gear, destination_container, destination_district_uuid, allow_change_district)
+
+        source_container = gear.container
+        # get the state of all cartridges
+        state_map = {}
+        quota_blocks = nil
+        quota_files = nil
+        gi = app.group_instance_map[gear.group_instance_name]
+        gi.component_instances.each { |ci_name|
+          cinst = app.comp_instance_map[ci_name]
+          cart = cinst.parent_cart_name
+          idle,leave_stopped, quota_blocks, quota_files = get_cart_status(app, gear, cart)
+          state_map[ci_name] = [idle,leave_stopped]
+          # stop the cartridge if it needs to
+          unless leave_stopped
+            log_debug "DEBUG: Stopping existing app cartridge '#{cart}' before moving"
+            do_with_retry('stop') do
+              reply.append source_container.stop(app, gear, cart)
+            end
+          end
+          # execute pre_move
+          if embedded_carts.include? cart
+            log_debug "DEBUG: Performing cartridge level pre-move for embedded #{cart} for '#{app.name}' on #{source_container.id}"
+            reply.append source_container.send(:run_cartridge_command, "embedded/" + cart, app, gear, "pre-move", nil, false)
+          end
+        }
+
+        # rsync gear with destination container
+        rsync_destination_container(app, gear, destination_container, destination_district_uuid, quota_blocks, quota_files, keep_uid)
+
+        # now execute hooks on the new nest of the components
+        gi.component_instances.each { |ci_name|
+          cinst = app.comp_instance_map[ci_name]
+          cart = cinst.parent_cart_name
+          idle, leave_stopped = state_map[ci_name]
+          if framework_carts.include? cart
+            log_debug "DEBUG: Performing cartridge level move for '#{cart}' on #{destination_container.id}"
+            reply.append destination_container.send(:run_cartridge_command, cart, app, gear, "move", idle ? '--idle' : nil, false)
+          else
+            log_debug "DEBUG: Performing cartridge level move for embedded #{cart} for '#{app.name}' on #{destination_container.id}"
+            embedded_reply = destination_container.send(:run_cartridge_command, "embedded/" + cart, app, gear, "move", nil, false)
+            component_details = embedded_reply.appInfoIO.string
+            unless component_details.empty?
+              app.set_embedded_cart_info(cart, component_details)
+            end
+            reply.append embedded_reply
+            unless keep_uid
+              log_debug "DEBUG: Performing cartridge level post-move for embedded #{cart} for '#{app.name}' on #{destination_container.id}"
+              reply.append destination_container.send(:run_cartridge_command, "embedded/" + cart, app, gear, "post-move", nil, false)
+            end
+          end
+        }
+        log_debug "DEBUG: Fixing DNS and mongo for gear '#{gear.name}' after move"
+        log_debug "DEBUG: Changing server identity of '#{gear.name}' from '#{source_container.id}' to '#{destination_container.id}'"
+        gear.server_identity = destination_container.id
+        gear.container = destination_container
+        if app.scalable and not gear.component_instances.include? "haproxy-1.4"
+          dns = StickShift::DnsService.instance
+          begin
+            dns.deregister_application(gear.name, app.domain.namespace)
+            public_hostname = destination_container.get_public_hostname
+            dns.register_application(gear.name, app.domain.namespace, public_hostname)
+            dns.publish
+          ensure
+            dns.close
+          end
+        end
+      end
+
+      def resolve_destination(app, gear, destination_container, destination_district_uuid, allow_change_district)
+        source_container = gear.container
+        source_district_uuid = source_container.get_district_uuid
+        if destination_container.nil?
+          unless allow_change_district
+            if destination_district_uuid && destination_district_uuid != source_district_uuid
+              raise StickShift::UserException.new("Error moving app.  Cannot change district from '#{source_district_uuid}' to '#{destination_district_uuid}' without allow_change_district flag.", 1)
+            else
+              destination_district_uuid = source_district_uuid unless source_district_uuid == 'NONE'
+            end
+          end
+          destination_container = MCollectiveApplicationContainerProxy.find_available_impl(app.gear.node_profile, destination_district_uuid)
+          log_debug "DEBUG: Destination container: #{destination_container.id}"
+          destination_district_uuid = destination_container.get_district_uuid
+        else
+          if destination_district_uuid
+            log_debug "DEBUG: Destination district uuid '#{destination_district_uuid}' is being ignored in favor of destination container #{destination_container.id}"
+          end
+          destination_district_uuid = destination_container.get_district_uuid
+          unless allow_change_district || (source_district_uuid == destination_district_uuid)
+            raise StickShift::UserException.new("Resulting move would change districts from '#{source_district_uuid}' to '#{destination_district_uuid}'", 1)
+          end
+        end
+        
+        log_debug "DEBUG: Source district uuid: #{source_district_uuid}"
+        log_debug "DEBUG: Destination district uuid: #{destination_district_uuid}"
+        keep_uid = destination_district_uuid == source_district_uuid && destination_district_uuid && destination_district_uuid != 'NONE'
+        log_debug "DEBUG: District unchanged keeping uid" if keep_uid
+
+        if source_container.id == destination_container.id
+          raise StickShift::UserException.new("Error moving app.  Old and new servers are the same: #{source_container.id}", 1)
+        end
+        return [destination_container, destination_district_uuid, keep_uid]
+      end
+
+      def rsync_destination_container(app, gear, destination_container, destination_district_uuid, quota_blocks, quota_files, keep_uid)
+        source_container = gear.container
+        unless keep_uid
+          gear.uid = destination_container.reserve_uid(destination_district_uuid)
+          log_debug "DEBUG: Reserved uid '#{gear.uid}' on district: '#{destination_district_uuid}'"
+        end
+        log_debug "DEBUG: Creating new account for gear '#{gear.name}' on #{destination_container.id}"
+        reply.append destination_container.create(app, gear, quota_blocks, quota_files)
+
+        orig_uid = gear.uid
+        log_debug "DEBUG: Moving content for app '#{app.name}', gear '#{gear.name}' to #{destination_container.id}"
+        log_debug `eval \`ssh-agent\`; ssh-add /var/www/stickshift/broker/config/keys/rsync_id_rsa; ssh -o StrictHostKeyChecking=no -A root@#{source_container.get_ip_address} "rsync -aA#{(gear.uid && gear.uid == orig_uid) ? 'X' : ''} -e 'ssh -o StrictHostKeyChecking=no' /var/lib/stickshift/#{gear.uuid}/ root@#{destination_container.get_ip_address}:/var/lib/stickshift/#{gear.uuid}/"`
+        if $?.exitstatus != 0
+          raise StickShift::NodeException.new("Error moving app '#{app.name}', gear '#{gear.name}' from #{source_container.id} to #{destination_container.id}", 143)
+        end
+      end
+
+      def get_cart_status(app, gear, cart_name)
+        source_container = gear.container
+        leave_stopped = false
+        idle = false
+        quota_blocks = nil
+        quota_files = nil
+        log_debug "DEBUG: Getting existing app '#{app.name}' status before moving"
+        do_with_retry('status') do
+          result = source_container.status(app, app.gear, cart_name)
+          result.cart_commands.each do |command_item|
+            case command_item[:command]
+            when "ATTR"
+              key = command_item[:args][0]
+              value = command_item[:args][1]
+              if key == 'status'
+                case value
+                when "ALREADY_STOPPED"
+                  leave_stopped = true
+                when "ALREADY_IDLED"
+                  leave_stopped = true
+                  idle = true
+                end
+              elsif key == 'quota_blocks'
+                quota_blocks = value
+              elsif key == 'quota_files'
+                quota_files = value
+              end
+            end
+            reply.append result
+          end
+        end
+
+        if idle
+          log_debug "DEBUG: App '#{app.name}' was idle"
+        elsif leave_stopped
+          log_debug "DEBUG: App '#{app.name}' was stopped"
+        else
+          log_debug "DEBUG: App '#{app.name}' was running"
+        end
+
+        return [idle, leave_stopped, quota_blocks, quota_files]
+      end
+
       def move_app(app, destination_container, destination_district_uuid=nil, allow_change_district=false, node_profile=nil)
+        if app.scalable
+          return move_scalable_app(app, destination_container, destination_district_uuid, allow_change_district, node_profile)
+        end
         source_container = app.container
 
         if node_profile

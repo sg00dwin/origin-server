@@ -38,13 +38,10 @@ GEM
     bson (1.5.2)
     builder (2.1.2)
     crack (0.1.8)
-    crankcase-mongo-plugin (0.8.8)
-      json
-      stickshift-controller
     dnsruby (1.53)
     erubis (2.6.6)
       abstract
-    gearchanger-m-collective-plugin (0.8.6)
+    gearchanger-m-collective-plugin (0.8.7)
       json
       stickshift-controller
     httparty (0.7.4)
@@ -89,12 +86,12 @@ GEM
     rest-client (1.6.1)
     ruby-prof (0.10.7)
     state_machine (1.1.2)
-    stickshift-common (0.8.5)
+    stickshift-common (0.8.6)
       activemodel
       json
       mongo
       rack
-    stickshift-controller (0.9.7)
+    stickshift-controller (0.9.9)
       activesupport
       dnsruby
       json
@@ -121,7 +118,6 @@ PLATFORMS
 
 DEPENDENCIES
   aws-sdk
-  crankcase-mongo-plugin
   gearchanger-m-collective-plugin
   json
   mocha
