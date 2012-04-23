@@ -751,7 +751,8 @@ rm -rf li-working #{working_dirs}
 # li repo
 git clone li li-working
 
-pushd li-working && build/devenv update#{options.verbose? ? ' --verbose' : ''} #{options.clean_metadata? ? ' --include_stale' : ''} 2>&1
+pushd li-working 
+  build/devenv update#{options.verbose? ? ' --verbose' : ''} #{options.clean_metadata? ? ' --include_stale' : ''} 2>&1
 popd
 
 rm -rf li-working #{working_dirs}
