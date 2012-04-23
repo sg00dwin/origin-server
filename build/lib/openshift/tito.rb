@@ -2,8 +2,10 @@ require 'fileutils'
 
 DEVENV_REGEX = /^rhc-devenv-\d+/
 SIBLING_REPOS = [['crankcase', '../crankcase'],
+                 ['crankcase', '../crankcase-working'],
                  ['crankcase', '/var/lib/jenkins/jobs/crankcase/workspace'],
                  ['os-client-tools', '../os-client-tools'],
+                 ['os-client-tools', '../os-client-tools-working'],
                  ['os-client-tools', '/var/lib/jenkins/jobs/os-client-tools/workspace']]
   
 PACKAGE_REGEX = /^([\w-]*)-\d+\.\d+\.\d+-\d+\.\..*:$/
