@@ -8,7 +8,7 @@
 
 Summary:   Dependencies for OpenShift development
 Name:      rhc-devenv
-Version:   0.92.7
+Version:   0.92.8
 Release:   1%{?dist}
 Group:     Development/Libraries
 License:   GPLv2
@@ -394,6 +394,9 @@ echo "Header append Strict-Transport-Security includeSubDomains" >> /etc/httpd/c
 %{policydir}/*
 
 %changelog
+* Mon Apr 23 2012 Adam Miller <admiller@redhat.com> 0.92.8-1
+- adding deploy key to ami (dmcphers@redhat.com)
+
 * Sat Apr 21 2012 Dan McPherson <dmcphers@redhat.com> 0.92.7-1
 - moving to github prep (dmcphers@redhat.com)
 - Update jenkins backup (rmillner@redhat.com)
