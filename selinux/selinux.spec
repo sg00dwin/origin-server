@@ -1,6 +1,6 @@
 Summary:       SELinux policy for OpenShift nodes
 Name:          rhc-selinux
-Version:       0.91.4
+Version:       0.91.5
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -46,6 +46,10 @@ rm -rf %{buildroot}
 %attr(0640,-,-) %{_datadir}/selinux/packages/libra.pp
 
 %changelog
+* Mon Apr 23 2012 Adam Miller <admiller@redhat.com> 0.91.5-1
+- Allow libra domains to ask the kernel about what ipc mechanisms are available
+  (dwalsh@redhat.com)
+
 * Sat Apr 21 2012 Dan McPherson <dmcphers@redhat.com> 0.91.4-1
 - Added fix to libra selinux as per dwalsh (admiller@redhat.com)
 
