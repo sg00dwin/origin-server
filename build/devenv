@@ -56,11 +56,12 @@ git push -q root@#{hostname}:/root/#{repo_name} #{branch}:master --tags --force
 
     def init_repo(hostname)
       git_clone_commands = ''
-      SIBLING_REPOS.each do |repo_info|
-        repo_name = repo_info[0]
-        repo_dir = repo_info[1]
-        if File.exists?(repo_dir)
-          git_clone_commands += "rm -rf /root/#{repo_name}; git clone --bare git@github.com:openshift/#{repo_name}.git /root/#{repo_name}; " 
+      SIBLING_REPOS.each do |repo_name, repo_dirs|
+        repo_dirs.each do |repo_dir|
+          if File.exists?(repo_dir)
+            git_clone_commands += "rm -rf /root/#{repo_name}; git clone --bare git@github.com:openshift/#{repo_name}.git /root/#{repo_name}; "
+            break 
+          end
         end
       end
       ssh(hostname, %{
@@ -98,11 +99,12 @@ rm -rf /root/li; git clone --bare git://git1.ops.rhcloud.com/li.git/ /root/li
     def update_remote_tests(hostname)
       print "Updating remote tests..."
       repo_dirs = ['/root/li']
-      SIBLING_REPOS.each do |repo_info|
-        repo_name = repo_info[0]
-        repo_dir = repo_info[1]
-        if File.exists?(repo_dir)
-          repo_dirs << ["/root/#{repo_name}"]
+      SIBLING_REPOS.each do |repo_name, repo_dirs|
+        repo_dirs.each do |repo_dir|
+          if File.exists?(repo_dir)
+            repo_dirs << ["/root/#{repo_name}"]
+            break
+          end
         end
       end
       git_archive_commands = ''
@@ -152,11 +154,12 @@ mkdir -p /tmp/rhc/junit
       puts "Archiving local changes..."
       FileUtils.rm_rf '/tmp/li-test'
       repo_dirs = ['.']
-      SIBLING_REPOS.each do |repo_info|
-        repo_name = repo_info[0]
-        repo_dir = repo_info[1]
-        if File.exists?(repo_dir)
-          repo_dirs << repo_dir
+      SIBLING_REPOS.each do |repo_name, repo_dirs|
+        repo_dirs.each do |repo_dir|
+          if File.exists?(repo_dir)
+            repo_dirs << repo_dir
+            break
+          end
         end
       end
       repo_dirs.each do |repo_dir|
@@ -612,10 +615,10 @@ mkdir -p /tmp/rhc/junit
           init_repo(hostname)
           ssh_path = File.expand_path(File.dirname(__FILE__)) + "/ssh-override"
           sync_repo('li', hostname, ssh_path)
-          SIBLING_REPOS.each do |repo_info|
-            repo_name = repo_info[0]
-            repo_dir = repo_info[1]
-            sync_sibling_repo(repo_name, repo_dir, hostname, ssh_path)
+          SIBLING_REPOS.each do |repo_name, repo_dirs|
+            repo_dirs.each do |repo_dir|
+              break if sync_sibling_repo(repo_name, repo_dir, hostname, ssh_path)
+            end
           end
           print "Performing clean install from local source..."
           cmd = 'set -e; sh li-devenv.sh candidate --install_from_local_source'
@@ -716,11 +719,13 @@ mkdir -p /tmp/rhc/junit
 
     avail_sibling_repo_names = []
 
-    SIBLING_REPOS.each do |repo_info|
-      repo_name = repo_info[0]
-      repo_dir = repo_info[1]
-      exists = sync_sibling_repo(repo_name, repo_dir, hostname, ssh_path)
-      avail_sibling_repo_names.push(repo_name) if exists
+    SIBLING_REPOS.each do |repo_name, repo_dirs|
+      repo_dirs.each do |repo_dir|
+        if sync_sibling_repo(repo_name, repo_dir, hostname, ssh_path)
+          avail_sibling_repo_names.push(repo_name)
+          break
+        end
+      end
     end
     update_remote_tests(hostname)
 
@@ -746,7 +751,8 @@ rm -rf li-working #{working_dirs}
 # li repo
 git clone li li-working
 
-pushd li-working && build/devenv update#{options.verbose? ? ' --verbose' : ''} #{options.clean_metadata? ? ' --include_stale' : ''} 2>&1
+pushd li-working 
+  build/devenv update#{options.verbose? ? ' --verbose' : ''} #{options.clean_metadata? ? ' --include_stale' : ''} 2>&1
 popd
 
 rm -rf li-working #{working_dirs}
