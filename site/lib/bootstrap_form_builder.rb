@@ -119,9 +119,13 @@ class BootstrapFormBuilder < Formtastic::SemanticFormBuilder
     options[:as]     ||= default_input_type(method, options)
 
     html_class = [ options[:as], (options[:required] ? :required : :optional), 'control-group' ] #changed
-    html_class << 'error' if has_errors?(method, options)
 
     wrapper_html = options.delete(:wrapper_html) || {}
+    if has_errors?(method, options)
+      html_class << 'error'
+
+      wrapper_html[:"data-server-error"] = "server-error"
+    end
     wrapper_html[:id]  ||= generate_html_id(method)
     wrapper_html[:class] = (html_class << wrapper_html[:class]).flatten.compact.join(' ')
 

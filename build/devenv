@@ -98,17 +98,17 @@ rm -rf /root/li; git clone --bare git://git1.ops.rhcloud.com/li.git/ /root/li
 
     def update_remote_tests(hostname)
       print "Updating remote tests..."
-      repo_dirs = ['/root/li']
+      all_repo_dirs = ['/root/li']
       SIBLING_REPOS.each do |repo_name, repo_dirs|
         repo_dirs.each do |repo_dir|
           if File.exists?(repo_dir)
-            repo_dirs << ["/root/#{repo_name}"]
+            all_repo_dirs << ["/root/#{repo_name}"]
             break
           end
         end
       end
       git_archive_commands = ''
-      repo_dirs.each do |repo_dir|
+      all_repo_dirs.each do |repo_dir|
         git_archive_commands += "pushd #{repo_dir} > /dev/null; git archive --prefix li-test/ --format=tar HEAD | (cd /root && tar --warning=no-timestamp -xf -); popd > /dev/null; "
       end
       ssh(hostname, %{
@@ -153,16 +153,16 @@ mkdir -p /tmp/rhc/junit
     def scp_remote_tests(hostname)
       puts "Archiving local changes..."
       FileUtils.rm_rf '/tmp/li-test'
-      repo_dirs = ['.']
+      all_repo_dirs = ['.']
       SIBLING_REPOS.each do |repo_name, repo_dirs|
         repo_dirs.each do |repo_dir|
           if File.exists?(repo_dir)
-            repo_dirs << repo_dir
+            all_repo_dirs << repo_dir
             break
           end
         end
       end
-      repo_dirs.each do |repo_dir|
+      all_repo_dirs.each do |repo_dir|
         inside(repo_dir) do
           `git archive --prefix li-test/ --format=tar HEAD | (cd /tmp && tar --warning=no-timestamp -xf -)`
         end
@@ -751,9 +751,9 @@ rm -rf li-working #{working_dirs}
 # li repo
 git clone li li-working
 
-pushd li-working 
+pushd li-working > /dev/null
   build/devenv update#{options.verbose? ? ' --verbose' : ''} #{options.clean_metadata? ? ' --include_stale' : ''} 2>&1
-popd
+popd > /dev/null
 
 rm -rf li-working #{working_dirs}
 #{options.clean_metadata? ? "yum update -y --exclude='rhc-devenv' rhc-* rubygem-stickshift-*  rubygem-gearchanger-* rubygem-uplift-* rubygem-swingshift-*; " : ''}

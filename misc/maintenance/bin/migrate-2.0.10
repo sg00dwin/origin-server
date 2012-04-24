@@ -25,6 +25,10 @@ def migrate_gear(rhlogin, app_name, gear_uuid)
     if user
       app = Application.find(user, app_name)
       if app
+        if !app.scalable and !app.comp_instance_map.keys.include? "@@app/cart-jenkins-1.4"
+          out << "App '#{app_name}' not scalable/jenkins app, no migration needed\n"
+          return out.string
+        end
         gear = nil
         app.gears.each do |app_gear|
           if app_gear.uuid == gear_uuid

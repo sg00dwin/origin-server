@@ -741,16 +741,16 @@ Get Started
 <div class="column-content lift-less grid-wrapper">
 <div class="span12 span-flush-right">
 
-<h1 class="ribbon">About this Openshift Origin</h1>
+<h1 class="ribbon">About this Openshift Origin LiveCD</h1>
 <section id="intro">
 This Openshift Origin remix contains all the Open-source components that power Openshift. Source code and documentation for these components is available at https://github.com/openshift<br/><br/>
 The image contains 5 sets of components:
 <ol>
-	<li><a href="https://github.com/openshift/stickshift">StickShift</a>: Provides a PaaS API framework and plugin architecture to build a cloud</li>
-	<li><a href="https://github.com/openshift/gearchanger">Gearchanger</a>: Plugins that provide different broker-gear communication mechanisms.</li>
-	<li><a href="https://github.com/openshift/uplift">Uplift</a>: Plugins that provide different DNS management engines.</li>
-	<li><a href="https://github.com/openshift/swingshift">Swingshift</a>: Plugins that provide integration with different authentication schemes.</li>
-	<li><a href="https://github.com/openshift/cartridges">Cartridges</a>: Provides management wrappers around software runtimes that will be enabled in both this runtime and the service offering.</li>	
+	<li><a href="https://github.com/openshift/crankcase/tree/master/stickshift">Broker</a>: Central service exposing a REST API for consumers and coordinating with the application containers (known as nodes).</li>
+	<li><a href="https://github.com/openshift/crankcase/tree/master/gearchanger">Messaging System</a>: Communication pipeline between StickShift and each node.</li>
+	<li><a href="https://github.com/openshift/crankcase/tree/master/swingshift">User Authentication</a>: A pluggable user authentication component with a default MongoDB implementation.</li>
+	<li><a href="https://github.com/openshift/crankcase/tree/master/uplift">Domain Name Management</a>: Plugins that provide different DNS management engines.</li>
+	<li><a href="https://github.com/openshift/crankcase/tree/master/cartridges">Cartridges</a>: Provides management wrappers around software runtimes that will be enabled in both this runtime and the service offering.</li>	
 </ol>
 </section>
 

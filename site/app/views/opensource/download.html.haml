@@ -1,26 +1,26 @@
 :css
   .action-call { font-weight: bold; margin: 10px 0 10px; }
 
-- content_for :page_title, 'OpenShift Origins Source Code'
+- content_for :page_title, 'OpenShift Origin Source Code'
 
-%h1.ribbon OpenShift Origins Source Code
-%p OpenShift runs on many different open source software components and we have made those publicly available under the OpenShift Origins project name.  The list below describes each component with links to the official GitHub repository.
+%h1.ribbon OpenShift Origin Source Code
+%p OpenShift runs on many different open source software components and we have made those publicly available under the OpenShift Origin project name.  The list below describes each component with links to the official GitHub repository.
 
 %section.row
   .span6
     %dl.larger
       %dt.headline= link_to "Server", crankcase_url, :class => "external", :target => "_blank"
       %dd 
-        %p The server components that make up OpenShift Origins are collectively known as CrankCase. The source is divided into the following areas:
+        %p The server components that make up OpenShift Origin are collectively known as CrankCase. The source is divided into the following areas:
         %dl
-          %dt.headline= link_to "StickShift", crankcase_url, :class => "external", :target => "_blank"
-          %dd Central service exposing a REST API for consumers and coordinating with the application container.
-          %dt.headline= link_to "GearChanger", crankcase_url, :class => "external", :target => "_blank"
-          %dd FIXME
-          %dt.headline= link_to "User Authentication", crankcase_url, :class => "external", :target => "_blank"
+          %dt.headline= link_to "Broker", crankcase_source_path_url('stickshift'), :class => "external", :target => "_blank"
+          %dd Central service exposing a REST API for consumers and coordinating with the application containers (known as nodes).
+          %dt.headline= link_to "Messaging System", crankcase_source_path_url('gearchanger'), :class => "external", :target => "_blank"
+          %dd Communication pipeline between StickShift and each node.
+          %dt.headline= link_to "User Authentication",  crankcase_source_path_url('swingshift'), :class => "external", :target => "_blank"
           %dd A pluggable user authentication component with a default MongoDB implementation.
-          %dt.headline= link_to "Uplift", crankcase_url, :class => "external", :target => "_blank"
-          %dd DNS registration and management component.
+          %dt.headline= link_to "Domain Name Management", crankcase_source_path_url('uplift'), :class => "external", :target => "_blank"
+          %dd A BIND implementation of DNS registration and management.
 
       %dt.headline= link_to "Command Line Client", client_tools_url, :class => "external", :target => "_blank"
       %dd 
@@ -29,8 +29,8 @@
           %code rhc
           connects to OpenShift via our REST API and can be downloaded as a RubyGem.
 
-      %dt.headline Web Management Console
-      %dd
+      -#%dt.headline Web Management Console
+      -#%dd
         %p
           %em Coming soon
 

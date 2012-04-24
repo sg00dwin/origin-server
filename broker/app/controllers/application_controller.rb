@@ -158,6 +158,7 @@ end
 
 class ApplicationController < ActionController::Base
   before_filter :store_user_agent
+  protect_from_forgery
   
   @@outage_notification_file = '/etc/stickshift/express_outage_notification.txt'  
   

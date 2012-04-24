@@ -36,7 +36,7 @@
   .view-user-profile-box { margin-bottom: 20px; }
 }
 
-.community textarea, .community input {
+.community textarea {
   width: 100%;
 }
 
@@ -85,7 +85,6 @@
   padding-top: 0; 
 
   .submitted {
-    margin-top: -20px;
     font-style: italic;
   }
 }
@@ -136,12 +135,19 @@
   border: 4px solid #000;
 }
 
-.view-user-profile-box .badge { 
-  display: inline-block; 
-  padding: 0 4px;
-  color: #fff; 
-  text-transform: uppercase; 
-  font-size: 11px; 
+.view-user-profile-box {
+  .picture img {
+    max-width: 40px;
+    max-height: 40px;
+  }
+  .badge { 
+    display: inline-block; 
+    padding: 0 4px;
+    color: #fff; 
+    text-transform: uppercase; 
+    font-size: 11px; 
+    float: right;
+  }
 }
 .badge.newbie { background-color: #89aa00; }
 .badge.member { background-color: #fc6b00; }
@@ -266,7 +272,6 @@ html.js fieldset.collapsible .fieldset-wrapper {
 .submitted {
 	font-style: italic;
 	color: #b0b0b0;
-	float: right;
 }
 .comment-text {
 	border: 1px solid #ddd;
@@ -412,12 +417,19 @@ html.js fieldset.collapsible .fieldset-wrapper {
 .community .geshifilter pre {
 	border:0;
 	}
-.community .node-blog .author-bio-box {
-  border-bottom: 1px solid #111;
-	}
 .community .node-blog > h2+p {
 	margin: 0;
 	}
+.community .blog-metadata {
+  margin-bottom: 15px;
+  color: #999;
+  div {
+    display: inline;
+  }
+  .author-bio-box  {
+    .author-bio { display: none; }
+  }
+}
 	
 
 /* Community search */

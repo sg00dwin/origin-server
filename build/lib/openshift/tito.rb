@@ -4,7 +4,7 @@ DEVENV_REGEX = /^rhc-devenv-\d+/
 SIBLING_REPOS = {'crankcase' => ['../crankcase-working', '../crankcase', '/var/lib/jenkins/jobs/crankcase/workspace'],
                  'os-client-tools' => ['../os-client-tools-working', '../os-client-tools', '/var/lib/jenkins/jobs/os-client-tools/workspace']}
   
-PACKAGE_REGEX = /^([\w-]*)-\d+\.\d+\.\d+-\d+\.\..*:$/
+PACKAGE_REGEX = /^([\w\.-]*)-\d+\.\d+\.\d+-\d+\.\..*:$/
 IGNORE_PACKAGES = ['stickshift-broker', 'rubygem-gearchanger-oddjob-plugin', 'rubygem-swingshift-mongo-plugin', 'rubygem-uplift-bind-plugin']
 
 module OpenShift
