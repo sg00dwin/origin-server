@@ -3,7 +3,7 @@
 
 Summary:   Li site components
 Name:      rhc-site
-Version:   0.91.6
+Version:   0.91.7
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -117,6 +117,9 @@ rm -rf %{buildroot}
 /bin/touch %{sitedir}/log/production.log
 
 %changelog
+* Tue Apr 24 2012 Adam Miller <admiller@redhat.com> 0.91.7-1
+- sync error handling client side and server side (johnp@redhat.com)
+
 * Mon Apr 23 2012 Adam Miller <admiller@redhat.com> 0.91.6-1
 - Disable Jenkins because upstream bugs could not be fixed.
   (ccoleman@redhat.com)
