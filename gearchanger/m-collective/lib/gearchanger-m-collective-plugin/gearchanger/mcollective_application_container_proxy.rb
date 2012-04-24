@@ -408,9 +408,11 @@ module GearChanger
       
 
       def move_scalable_app(app, destination_container, destination_district_uuid=nil, allow_change_district=false, node_profile=nil)
+        reply = ResultIO.new
         all_gears = app.gears
+        state_map = {}
         all_gears.each { |gear|
-          move_gear(app, gear, destination_container, destination_district_uuid, allow_change_district, node_profile) if gear.server_identity != destination_container.id
+          reply.append move_gear(app, gear, destination_container, destination_district_uuid, allow_change_district, node_profile, state_map) if gear.server_identity != destination_container.id
         }
         unless app.aliases.nil?
           app.aliases.each do |server_alias|
@@ -429,9 +431,12 @@ module GearChanger
         end
 
         app.recreate_dns
+        app.execute_connections
+        reply
       end
 
-      def move_gear(app, gear, destination_container, destination_district_uuid, allow_change_district, node_profile)
+      def move_gear(app, gear, destination_container, destination_district_uuid, allow_change_district, node_profile, state_map)
+        reply = ResultIO.new
         gear.node_profile = node_profile if node_profile
 
         # resolve destination_container according to district
@@ -439,7 +444,6 @@ module GearChanger
 
         source_container = gear.container
         # get the state of all cartridges
-        state_map = {}
         quota_blocks = nil
         quota_files = nil
         gi = app.group_instance_map[gear.group_instance_name]
@@ -448,6 +452,13 @@ module GearChanger
           cart = cinst.parent_cart_name
           idle,leave_stopped, quota_blocks, quota_files = get_cart_status(app, gear, cart)
           state_map[ci_name] = [idle,leave_stopped]
+        }
+
+        app.start_order.reverse.each { |ci_name|
+          next if not gi.component_instances.include? ci_name
+          cinst = app.comp_instance_map[ci_name]
+          cart = cinst.parent_cart_name
+          idle, leave_stopped = state_map[ci_name]
           # stop the cartridge if it needs to
           unless leave_stopped
             log_debug "DEBUG: Stopping existing app cartridge '#{cart}' before moving"
@@ -486,12 +497,18 @@ module GearChanger
               reply.append destination_container.send(:run_cartridge_command, "embedded/" + cart, app, gear, "post-move", nil, false)
             end
           end
+          if app.scalable and not cart.include? app.proxy_cartridge
+            begin
+              reply.append gear.expose_port(cinst)
+            rescue Exception=>e
+            end
+          end
         }
         log_debug "DEBUG: Fixing DNS and mongo for gear '#{gear.name}' after move"
         log_debug "DEBUG: Changing server identity of '#{gear.name}' from '#{source_container.id}' to '#{destination_container.id}'"
         gear.server_identity = destination_container.id
         gear.container = destination_container
-        if app.scalable and not gear.component_instances.include? "haproxy-1.4"
+        if app.scalable and not gear.component_instances.include? app.proxy_cartridge
           dns = StickShift::DnsService.instance
           begin
             dns.deregister_application(gear.name, app.domain.namespace)
@@ -502,6 +519,7 @@ module GearChanger
             dns.close
           end
         end
+        reply
       end
 
       def resolve_destination(app, gear, destination_container, destination_district_uuid, allow_change_district)
