@@ -654,19 +654,15 @@ BOOTPROTO=dhcp
 ONBOOT=yes
 EOF
 
-#cat <<EOF > /etc/sysconfig/network-scripts/ifcfg-p2p1
-#DEVICE=p2p1
-#BOOTPROTO=dhcp
-#ONBOOT=yes
-#EOF
-
-# Setup swap for devenv
+# Setup swap for VM
 [ -f /.swap ] || ( /bin/dd if=/dev/zero of=/.swap bs=1024 count=1024000
     /sbin/mkswap -f /.swap
     /sbin/swapon /.swap
     echo "/.swap swap   swap    defaults        0 0" >> /etc/fstab
 )
 
+echo 'AcceptEnv GIT_SSH' >> /etc/ssh/sshd_config
+ln -s /usr/bin/sssh /usr/bin/rhcsh
 chkconfig oddjobd on
 chmod 755 /etc/rc.d/init.d/livesys-late-openshift
 /sbin/restorecon /etc/rc.d/init.d/livesys-late-openshift
