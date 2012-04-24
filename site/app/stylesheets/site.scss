@@ -526,27 +526,22 @@ h1.ribbon {
 
 // Information ribbon
 .info-ribbon {
-  background-color: rgba(52, 52, 52, 1);
+  background-color: #343434;
   color: #DADADA;
   display: inline-block;
-  padding: 5px $gridGutterWidth 0 5px; /* right margin set by ribbon */
+  padding: 25px 38px 15px 5px; /* right margin set by ribbon */
+  margin:0 -70px 0 0;
 
-  min-width: 30%;
+//  min-width: 30%;
 
   @media (max-width: 480px) { left: -$gridGutterWidthPhone; }
-  @media (max-width: 767px) { right: -$gridGutterWidthTablet;  }
-  @media (min-width: 768px) and (max-width: 979px) { right: -$gridGutterWidth; }
-  @media (min-width: 980px) and (max-width: 1199px) { right: -$gridGutterWidth; }
+  @media (min-width: 768px) and (max-width: 979px) { right: 40px; }
+  @media (min-width: 980px) and (max-width: 1199px) { right: 32px; }
   @media (min-width: 1200px) { right: $gridGutterWidthLarge; }
 
   @media (min-width: 768px) {
     float: right;
     @include ribbon(black, $leftStrut: false, $rightStrut: true);
-  }
-
-  @media (max-width: 767px) {
-    padding-left: 30px;
-    padding-bottom: 1em;
   }
 
   h1, h2, h3, h4 {
