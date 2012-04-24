@@ -131,16 +131,18 @@ module OpenShift
           sleep (ENV['SAUCE_SLEEP_ON_FAILURE'] || 0).to_i
         end
 
+        # always make sure we clear the session
+        signout
+
         @driver.quit
 
         unless OpenShift::SeleniumTestCase.local?
           set_meta(session_id, {:passed => @test_passed})
         end
       end
-      
       super
     end
-    
+
     def get_name
       if self.respond_to? :name
         return self.name
