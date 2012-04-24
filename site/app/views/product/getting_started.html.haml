@@ -131,6 +131,7 @@
 
     .span12
       = link_to 'Read the Getting Started guide for more installation help', getting_started_guide_url, :class => 'action-more'
+      %br
       = link_to 'Installing OpenShift client tools video walkthrough', local_video_url('express_client_tools'), :class => 'action-more'
 
 %section#create_domain_name
@@ -190,16 +191,7 @@
   %p
     Now, check your URL - your change will be live.
 
-  %p= link_to 'Deploying an application video walkthrough', local_video_url('express_deploy'), :class => 'action-more', :target => '_blank'
-
-  %aside
-    %p
-      Checkout these great guides for deploying popular frameworks on OpenShift:
-      %ul
-        %li= link_to 'TurboGears2 Python framework', 'https://www.redhat.com/openshift/blogs/deploying-turbogears2-python-web-framework-using-express'
-        %li= link_to 'Pyramid Python framework', 'https://www.redhat.com/openshift/blogs/deploying-a-pyramid-application-in-a-virtual-python-wsgi-environment-on-red-hat-openshift-expr'
-        %li= link_to 'Drupal', 'https://www.redhat.com/openshift/sites/default/files/documents/RHOS_Express_Getting_Started_w_Drupal.pdf'
-        %li= link_to 'MediaWiki', 'https://www.redhat.com/openshift/sites/default/files/documents/RHOS_Express_Getting_Started_w_MediaWiki.pdf'
+  %p= link_to 'Check out these great guides for deploying popular frameworks', developers_get_started_path, :class => 'action-more'
 
 %section#next_steps.topic
   %h3 5. Next steps

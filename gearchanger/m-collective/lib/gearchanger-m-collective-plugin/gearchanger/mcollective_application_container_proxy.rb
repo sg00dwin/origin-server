@@ -348,11 +348,13 @@ module GearChanger
       end
       
       def update_namespace(app, cart, new_ns, old_ns)
+        res = []
         if app.scalable
           app.gears.each { |gear|
             mcoll_reply = execute_direct(cart, 'update-namespace', "#{gear.name} #{new_ns} #{old_ns} #{gear.uuid}")
-            parse_result(mcoll_reply)
+            res << parse_result(mcoll_reply)
           }
+          res
         else
           mcoll_reply = execute_direct(cart, 'update-namespace', "#{app.name} #{new_ns} #{old_ns} #{app.uuid}")
           parse_result(mcoll_reply)
@@ -650,7 +652,12 @@ module GearChanger
         log_debug "DEBUG: Source district uuid: #{source_district_uuid}"
         log_debug "DEBUG: Destination district uuid: #{destination_district_uuid}"
         keep_uid = destination_district_uuid == source_district_uuid && destination_district_uuid && destination_district_uuid != 'NONE'
-        log_debug "DEBUG: District unchanged keeping uid" if keep_uid
+        if keep_uid
+          unless app.gear.uid
+            raise StickShift::SSException.new("Gear '#{app.gear.uuid}' does not have a uid set!", 1)
+          end
+          log_debug "DEBUG: District unchanged keeping uid"
+        end
 
         if source_container.id == destination_container.id
           raise StickShift::UserException.new("Error moving app.  Old and new servers are the same: #{source_container.id}", 1)

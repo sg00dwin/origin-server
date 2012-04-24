@@ -181,10 +181,10 @@
             </div>
             <div class="span3 link-column">
               <header>
-                <h3><a href="http://www.redhat.com/openshift/community">Community</a></h3>
+                <h3><a href="/community">Community</a></h3>
               </header>
               <ul class="unstyled">
-                <li><a href="https://www.redhat.com/openshift/blogs">Blog</a></li>
+                <li><a href="/community/blogs">Blog</a></li>
                 <li><a href="/community/forums/">Forum</a></li>
                 <li><a href="http://webchat.freenode.net/?randomnick=1&amp;channels=openshift&amp;uio=d4">IRC Channel</a></li>
                 <li><a href="mailto:openshift@redhat.com">Feedback</a></li>

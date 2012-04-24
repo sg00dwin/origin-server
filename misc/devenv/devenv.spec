@@ -136,6 +136,7 @@ Requires:  drupal6-openshift-redhat_ideas
 Requires:  drupal6-openshift-redhat_sso
 Requires:  drupal6-openshift-theme
 Requires:  drupal6-pathauto
+Requires:  drupal6-path_redirect
 Requires:  drupal6-prepopulate
 Requires:  drupal6-rules
 Requires:  drupal6-stringoverrides

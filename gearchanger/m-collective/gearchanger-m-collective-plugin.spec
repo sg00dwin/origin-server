@@ -5,7 +5,7 @@
 
 Summary:        GearChanger plugin for m-colective service
 Name:           rubygem-%{gemname}
-Version:        0.8.7
+Version:        0.8.8
 Release:        1%{?dist}
 Group:          Development/Languages
 License:        ASL 2.0
@@ -70,6 +70,11 @@ rm -rf %{buildroot}
 %{ruby_sitelib}/%{gemname}.rb
 
 %changelog
+* Tue Apr 24 2012 Adam Miller <admiller@redhat.com> 0.8.8-1
+- Merge branch 'master' of git1.ops.rhcloud.com:/srv/git/li (rpenta@redhat.com)
+- gearchanger-mcollective: fix update namespace for scalable apps
+  (rpenta@redhat.com)
+
 * Mon Apr 23 2012 Adam Miller <admiller@redhat.com> 0.8.7-1
 - move_gear for scalable apps... needs more testing, but doesnt break existing
   code (rchopra@redhat.com)

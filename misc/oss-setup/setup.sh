@@ -326,3 +326,6 @@ rotatelogs_format=\"-%Y%m%d-%H%M%S-%Z\"
 EOF
 "
 
+sudo fgrep GIT_SSH /etc/ssh/sshd_config
+if [ $? -eq 1 ] ; then sudo bash -c "echo 'AcceptEnv GIT_SSH' >> /etc/ssh/sshd_config" && sudo service sshd restart; fi
+ln -sf /usr/bin/sssh /usr/bin/rhcsh

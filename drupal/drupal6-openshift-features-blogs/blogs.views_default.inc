@@ -945,7 +945,7 @@ function blogs_views_default_views() {
       'relationship' => 'none',
     ),
   ));
-  $handler->override_option('header', '<a href="/openshift/community/blogs/feed"><img src="/openshift/sites/all/themes/redhat2/images/rss-icon.gif" align="right" /></a>');
+  $handler->override_option('header', '<a href="/community/blogs/feed"><img src="/community/sites/all/themes/redhat2/images/rss-icon.gif" align="right" /></a>');
   $handler->override_option('use_pager', '1');
   $handler->override_option('path', 'blogs');
   $handler->override_option('menu', array(

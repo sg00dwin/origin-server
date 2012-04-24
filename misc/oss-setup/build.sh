@@ -10,7 +10,7 @@ control_c()
 trap control_c SIGINT
 
 repodir=$HOME
-prod_build=1
+prod_build=0
 build_only=0
 mkdir -p ${repodir}/brew ${repodir}/tito
 cd ${repodir}
