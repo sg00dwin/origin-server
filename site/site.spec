@@ -3,7 +3,7 @@
 
 Summary:   Li site components
 Name:      rhc-site
-Version:   0.91.7
+Version:   0.91.8
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -117,6 +117,17 @@ rm -rf %{buildroot}
 /bin/touch %{sitedir}/log/production.log
 
 %changelog
+* Tue Apr 24 2012 Adam Miller <admiller@redhat.com> 0.91.8-1
+- Improved responsiveness for dropdown navbar (ffranz@redhat.com)
+- Improved responsiveness for dropdown navbar (ffranz@redhat.com)
+- Fixes #815261 (ffranz@redhat.com)
+- Merge branch 'dev0424' (sgoodwin@redhat.com)
+- Tighten up opensource download page (sgoodwin@redhat.com)
+- Fixes #815698 by handling invalid constant names; rest api auto detects proxy
+  (ffranz@redhat.com)
+- Bug 814573 - Fix up lots of links to www.redhat.com/openshift/community
+  (ccoleman@redhat.com)
+
 * Tue Apr 24 2012 Adam Miller <admiller@redhat.com> 0.91.7-1
 - sync error handling client side and server side (johnp@redhat.com)
 
