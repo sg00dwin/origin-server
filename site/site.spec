@@ -3,7 +3,7 @@
 
 Summary:   Li site components
 Name:      rhc-site
-Version:   0.91.10
+Version:   0.91.11
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -117,6 +117,10 @@ rm -rf %{buildroot}
 /bin/touch %{sitedir}/log/production.log
 
 %changelog
+* Wed Apr 25 2012 Adam Miller <admiller@redhat.com> 0.91.11-1
+- Merge branch 'dev0425' (sgoodwin@redhat.com)
+- event section styles added (sgoodwin@redhat.com)
+
 * Wed Apr 25 2012 Adam Miller <admiller@redhat.com> 0.91.10-1
 - Create a stub logo invoice (ccoleman@redhat.com)
 - Bug 815173 - Set header in drupal to force IE edge mode in devenv.   Ensure
