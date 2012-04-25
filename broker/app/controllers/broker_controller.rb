@@ -37,13 +37,14 @@ class BrokerController < ApplicationController
         else
           render :json => generate_result_json("Unknown json key found: #{key}", nil, 1), :status => :bad_request and return nil
       end
-    end
+    end if data
     data
   end
 
   def nurture_post
     begin
       # Parse the incoming data
+      raise Exception.new("Required params 'app_uuid', 'action' not found") unless params['json_data']
       data = parse_json_data(params['json_data'])
       return unless data
       action = data['action']
