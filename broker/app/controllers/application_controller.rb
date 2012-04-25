@@ -13,40 +13,43 @@ module ActionController
     def profiler_start
       begin
         cfg=Rails.configuration.profiler
-        if not RubyProf.running?
-          Rails.logger.debug("ApplicationController::profiler_start: RubyProf starting.")
-
-          if cfg[:squash_threads]
-            et=[]
-            Thread.list.each do |th|
-              et << th if th != Thread.current
-            end
-            RubyProf::exclude_threads = et
-          end
-
-          case cfg[:measure]
-          when "proc"
-            RubyProf.measure_mode = RubyProf::PROCESS_TIME
-          when "wall"
-            RubyProf.measure_mode = RubyProf::WALL_TIME
-          when "cpu"
-            RubyProf.measure_mode = RubyProf::CPU_TIME
-          when "alloc"
-            RubyProf.measure_mode = RubyProf::ALLOCATIONS
-          when "mem"
-            RubyProf.measure_mode = RubyProf::MEMORY
-          when "gc_runs"
-            RubyProf.measure_mode = RubyProf::GC_RUNS
-          when "gc_time"
-            RubyProf.measure_mode = RubyProf::GC_TIME
-          else
-            RubyProf.measure_mode = RubyProf::PROCESS_TIME
-          end
-
-          @profiler_start_time = Time.now
-          RubyProf.start
-
+        if RubyProf.running?
+          Rails.logger.debug("ApplicationController::profiler_start: Discarding old RubyProf run.")
+          badresult=RubyProf.stop
         end
+          
+        Rails.logger.debug("ApplicationController::profiler_start: RubyProf starting.")
+
+        if cfg[:squash_threads]
+          et=[]
+          Thread.list.each do |th|
+            et << th if th != Thread.current
+          end
+          RubyProf::exclude_threads = et
+        end
+
+        case cfg[:measure]
+        when "proc"
+          RubyProf.measure_mode = RubyProf::PROCESS_TIME
+        when "wall"
+          RubyProf.measure_mode = RubyProf::WALL_TIME
+        when "cpu"
+          RubyProf.measure_mode = RubyProf::CPU_TIME
+        when "alloc"
+          RubyProf.measure_mode = RubyProf::ALLOCATIONS
+        when "mem"
+          RubyProf.measure_mode = RubyProf::MEMORY
+        when "gc_runs"
+          RubyProf.measure_mode = RubyProf::GC_RUNS
+        when "gc_time"
+          RubyProf.measure_mode = RubyProf::GC_TIME
+        else
+          RubyProf.measure_mode = RubyProf::PROCESS_TIME
+        end
+
+        @profiler_start_time = Time.now
+        RubyProf.start
+
       rescue NoMethodError
       end
     end
