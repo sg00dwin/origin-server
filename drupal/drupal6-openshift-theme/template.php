@@ -53,6 +53,7 @@ function openshift_imagecache($presetname, $path, $alt = '', $title = '', $attri
 function openshift_preprocess_page(&$vars) {
 
   //menu_set_active_menu_name('community_navigation');
+  //drupal_set_header('X-UA-Compatible', 'IE=edge,chrome=1');
 
   // Setup variables to display the correct banners on node/add/discussion pages.
   if (arg(0) == 'node' && arg(1) == 'add' && arg(2) == 'discussion') {
@@ -267,7 +268,7 @@ function _openshift_heading(&$vars) {
     if (empty($title)) {
       $title = $item['title'];
     }
-    print "<!-- title from link_path: ".$title."-->";
+    //print "<!-- title from link_path: ".$title."-->";
   }
   //FIXME: forums doesn't have a type, is this something we can detect via view config?
   elseif ($item['href'] == '<front>') {
