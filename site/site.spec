@@ -3,7 +3,7 @@
 
 Summary:   Li site components
 Name:      rhc-site
-Version:   0.91.9
+Version:   0.91.10
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -117,6 +117,14 @@ rm -rf %{buildroot}
 /bin/touch %{sitedir}/log/production.log
 
 %changelog
+* Wed Apr 25 2012 Adam Miller <admiller@redhat.com> 0.91.10-1
+- Create a stub logo invoice (ccoleman@redhat.com)
+- Bug 815173 - Set header in drupal to force IE edge mode in devenv.   Ensure
+  that status messages won't be shown for N-1 compat with site   Update
+  copyright colors to be black background   Update copyright date
+  (ccoleman@redhat.com)
+- Fixes #816081 (ffranz@redhat.com)
+
 * Tue Apr 24 2012 Adam Miller <admiller@redhat.com> 0.91.9-1
 - Links to live cd Navbar tweaks to fit in small spaces Remove "new" tag on
   node.js (ccoleman@redhat.com)
