@@ -120,5 +120,13 @@ module OpenShift
       	@submit = "//input[@id='application_submit']"
       end
     end
+
+    class ApplicationDeleteForm < Form
+      def initialize(page,id)
+        super(page,id)
+
+        @submit = "//input[@id='application_submit']"
+      end
+    end
   end
 end

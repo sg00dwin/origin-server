@@ -91,6 +91,19 @@ module OpenShift
       end
     end
 
+    class ApplicationDetails < Page
+      attr_accessor :application_delete_form
+
+      def initialize(page, path)
+        super
+        @application_delete_form = OpenShift::Rest::ApplicationDeleteForm.new(page, 'application_delete')
+      end
+
+      def find_delete_button
+        @page.find_elements(:xpath => "//a[contains(@href, '/delete')]")[0]
+      end
+    end
+
     class ApplicationTypes < Page
       def initialize(page, path)
         super
@@ -119,6 +132,20 @@ module OpenShift
       def initialize(page, path)
         super
       end
+
+      ##
+      # get_app_name - take an anchor element and determines the application
+      # name from the restful href path
+      def get_app_name(link)
+        href = link.attribute(:href)
+
+        path_components = href.split('/')
+        path_components[-1]
+      end
+
+      def find_app_buttons
+        @page.find_elements(:xpath => "//a[starts-with(@href, '/app/console/applications/')]")
+      end
     end
 
     class GetStartedPage < Page
@@ -133,7 +160,8 @@ module OpenShift
 
     class Console < Page
       attr_accessor :domain_form, :app_form, :application_types_page,
-                    :applications_page, :application_create_form
+                    :applications_page, :application_details_page,
+                    :application_create_form
 
       def initialize(page, path)
         super
@@ -141,6 +169,7 @@ module OpenShift
         @application_types_page = ApplicationTypes.new(page, "#{path}/application_types")
         @applications_page = Applications.new(page, "#{path}/applications")
         @application_create_form = ApplicationCreateForm.new(page, 'application')
+        @application_details_page = ApplicationDetails.new(page, "#{path}/applications")
 
         add_redirect(@application_types_page.path)
         add_redirect(@applications_page.path)
