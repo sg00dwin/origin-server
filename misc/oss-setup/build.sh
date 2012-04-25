@@ -10,7 +10,7 @@ control_c()
 trap control_c SIGINT
 
 repodir=$HOME
-prod_build=0
+prod_build=1
 build_only=0
 mkdir -p ${repodir}/brew ${repodir}/tito
 cd ${repodir}
@@ -22,9 +22,9 @@ cd ${repodir}/crankcase
 find * | grep "\._" | xargs rm -f
 
 if [ "x${prod_build}x" == "x0x" ] ; then
-  test_build=" --test ";
+  test_build=" --test --rpm ";
 else
-  test_build=""
+  test_build=" --srpm"
 fi
 
 rm -rf ${repodir}/tito/*
@@ -35,17 +35,17 @@ cd ${repodir}/os-client-tools/express
 tito build $test_build --srpm --output=${repodir}/tito
 
 cd ${repodir}/crankcase/stickshift
-for i in `ls`; do cd $i && tito build $test_build --srpm --output=${repodir}/tito ; cd - ; done
+for i in `ls`; do cd $i && tito build $test_build --output=${repodir}/tito ; cd - ; done
 
-cd ${repodir}/crankcase/uplift/bind        && tito build $test_build --srpm --output=${repodir}/tito ; cd -
-cd ${repodir}/crankcase/swingshift/mongo   && tito build $test_build --srpm --output=${repodir}/tito ; cd -
-cd ${repodir}/crankcase/gearchanger/oddjob && tito build $test_build --srpm --output=${repodir}/tito ; cd -
-cd ${repodir}/crankcase/crankcase/mongo    && tito build $test_build --srpm --output=${repodir}/tito ; cd -
+cd ${repodir}/crankcase/uplift/bind        && tito build $test_build --output=${repodir}/tito ; cd -
+cd ${repodir}/crankcase/swingshift/mongo   && tito build $test_build --output=${repodir}/tito ; cd -
+cd ${repodir}/crankcase/gearchanger/oddjob && tito build $test_build --output=${repodir}/tito ; cd -
+cd ${repodir}/crankcase/crankcase/mongo    && tito build $test_build --output=${repodir}/tito ; cd -
 
 cd ${repodir}/crankcase/cartridges
 for i in 10gen-mms-agent-0.1 cron-1.4 diy-0.1 jbossas-7 jenkins-1.4 jenkins-client-1.4 mongodb-2.0 mysql-5.1 nodejs-0.6 perl-5.10 php-5.3 phpmyadmin-3.4 python-3.2 ruby-1.1 ; do 
   cd ${repodir}/crankcase/cartridges/$i; 
-  tito build $test_build --srpm --output=${repodir}/tito;
+  tito build $test_build --output=${repodir}/tito;
 done
 
 sudo bash -c "cat <<EOF > /etc/yum.repos.d/ss.repo
@@ -60,8 +60,14 @@ baseurl = file:///${repodir}/brew
 enabled = 1
 EOF"
 
-rm -f ${repodir}/tito/*.tar.gz
-mock -r fedora-16-x86_64 --resultdir=${repodir}/tito/rpms/"%(dist)s"/"%(target_arch)s"/ ${repodir}/tito/*.src.rpm
+if [ "x${prod_build}x" == "x1x" ] ; then
+  rm -f ${repodir}/tito/*.tar.gz
+  mock -r fedora-16-x86_64 --resultdir=${repodir}/tito/rpms/"%(dist)s"/"%(target_arch)s"/ ${repodir}/tito/*.src.rpm
+else
+  mkdir -p ${repodir}/tito/rpms/fc16/x86_64/
+  cp ${repodir}/tito/noarch/*.rpm ${repodir}/tito/rpms/fc16/x86_64/
+fi
+
 createrepo ${repodir}/tito/rpms/fc16/x86_64
 
 if [ "x${build_only}x" == "x1x" ] ; then

@@ -5,12 +5,13 @@ auth --useshadow --enablemd5
 selinux --enforcing
 firewall --enabled --service=mdns
 xconfig --startxonboot
-part / --size 4096  --fstype ext4 --ondisk sda
+part / --size 6000  --fstype ext4 --ondisk sda
 services --enabled=network,sshd --disabled=NetworkManager
 bootloader --append="biosdevname=0"
 
 repo --name=fedora --mirrorlist=http://mirrors.fedoraproject.org/mirrorlist?repo=fedora-$releasever&arch=$basearch
 repo --name=updates --mirrorlist=http://mirrors.fedoraproject.org/mirrorlist?repo=updates-released-f$releasever&arch=$basearch
+#repo --name=updates --baseurl=file:///build/update_repo
 repo --name=brew --baseurl=file:///home/kraman/brew
 repo --name=stickshift --baseurl=file:///home/kraman/tito/rpms/fc16/x86_64
 repo --name=passenger --baseurl=http://passenger.stealthymonkeys.com/fedora/$releasever/$basearch
@@ -106,7 +107,6 @@ generic-release-notes
 tig
 git
 rhc
-rhc-rest
 stickshift-broker
 
 cartridge-10gen-mms-agent-0.1
@@ -467,9 +467,42 @@ Name=Openshift
 Comment[en_US]=Openshift
 Comment=Openshift
 FOE
+cat <<FOE > /home/liveuser/.config/autostart/terminal.desktop
+[Desktop Entry]
+Type=Application
+Exec=/usr/bin/gnome-terminal
+Hidden=false
+X-GNOME-Autostart-enabled=true
+Name[en_US]=Terminal
+Name=Terminal
+Comment[en_US]=Terminal
+Comment=Terminal
+FOE
 chown -R liveuser:liveuser /home/liveuser
 chown -R liveuser:liveuser /home/liveuser/.config
 
+cat <<FOE > /home/liveuser/SOURCES.txt
+A complete machine-readable copy of the source code corresponding to
+certain portions of the accompanying software is available from Red
+Hat on request. To obtain such source code, send a check or money
+order in the amount of US$10.00 along with a copy of this offer to:
+
+Legal Affairs 
+c/o Richard Fontana
+Red Hat, Inc.
+314 Littleton Road
+Westford, MA 01886 USA
+
+Please provide an email address and a telephone number so that we may
+contact you should we have any questions concerning fulfillment of
+your order. This offer is open to any third party in receipt of this
+information and shall expire three years following the date of the
+most recent distribution of the accompanying software by Red Hat.
+
+Corresponding source packages for components of this software that are
+taken from Fedora 16 are also available at
+http://koji.fedoraproject.org/koji/.
+FOE
 
 # Turn off PackageKit-command-not-found while uninstalled
 if [ -f /etc/PackageKit/CommandNotFound.conf ]; then
