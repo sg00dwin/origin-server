@@ -54,18 +54,18 @@ git push -q root@#{hostname}:/root/#{repo_name} #{branch}:master --tags --force
       exists
     end
 
-    def init_repo(hostname)
+    def init_repo(hostname, stage=false)
       git_clone_commands = ''
       SIBLING_REPOS.each do |repo_name, repo_dirs|
         repo_dirs.each do |repo_dir|
-          if File.exists?(repo_dir)
-            git_clone_commands += "rm -rf /root/#{repo_name}; git clone --bare git@github.com:openshift/#{repo_name}.git /root/#{repo_name}; "
-            break 
+          if File.exists?(repo_dir) || stage
+            git_clone_commands += "rm -rf /root/#{repo_name}; git clone --bare git@github.com:openshift/#{repo_name}.git /root/#{repo_name}; #{stage ? "cd /root/#{repo_name}; git checkout stage; " : ""}"
+            break
           end
         end
       end
       ssh(hostname, %{
-rm -rf /root/li; git clone --bare git://git1.ops.rhcloud.com/li.git/ /root/li
+rm -rf /root/li; git clone --bare git://git1.ops.rhcloud.com/li.git/ /root/li; #{stage ? "cd /root/li; git checkout stage; " : ""}
 #{git_clone_commands}
 }, 120)
     end
@@ -151,30 +151,37 @@ mkdir -p /tmp/rhc/junit
     end
 
     def scp_remote_tests(hostname)
-      puts "Archiving local changes..."
-      FileUtils.rm_rf '/tmp/li-test'
-      all_repo_dirs = ['.']
-      SIBLING_REPOS.each do |repo_name, repo_dirs|
-        repo_dirs.each do |repo_dir|
-          if File.exists?(repo_dir)
-            all_repo_dirs << repo_dir
-            break
+      branch = get_granch
+      if branch == "stage"
+        init_repo(hostname, true)
+        update_remote_tests(hostname)
+      else
+        puts "Archiving local changes..."
+        FileUtils.rm_rf '/tmp/li-test'
+        all_repo_dirs = ['.']
+        SIBLING_REPOS.each do |repo_name, repo_dirs|
+          repo_dirs.each do |repo_dir|
+            if File.exists?(repo_dir)
+              all_repo_dirs << repo_dir
+              break
+            end
           end
         end
-      end
-      all_repo_dirs.each do |repo_dir|
-        inside(repo_dir) do
-          `git archive --prefix li-test/ --format=tar HEAD | (cd /tmp && tar --warning=no-timestamp -xf -)`
+        all_repo_dirs.each do |repo_dir|
+          inside(repo_dir) do
+            `git archive --prefix li-test/ --format=tar HEAD | (cd /tmp && tar --warning=no-timestamp -xf -)`
+          end
         end
+        `cd /tmp/ && tar -cvf /tmp/li-test.tar li-test`
+        puts "Done"
+        puts "Copying tests to remote instance: #{hostname}"
+        scp_to(hostname, "/tmp/li-test.tar", "~/", 600, 10)
+        puts "Done"
+        puts "Extracting tests on remote instance: #{hostname}"
+        ssh(hostname, 'set -e; rm -rf li-test; tar -xf li-test.tar; cp -n /root/li-test/stickshift/controller/test/cucumber/*.feature /root/li-test/tests/. ; mkdir -p /tmp/rhc/junit', 120)
+        puts "Done"
       end
-      `cd /tmp/ && tar -cvf /tmp/li-test.tar li-test`
-      puts "Done"
-      puts "Copying tests to remote instance: #{hostname}"
-      scp_to(hostname, "/tmp/li-test.tar", "~/", 600, 10)
-      puts "Done"
-      puts "Extracting tests on remote instance: #{hostname}"
-      ssh(hostname, 'set -e; rm -rf li-test; tar -xf li-test.tar; cp -n /root/li-test/stickshift/controller/test/cucumber/*.feature /root/li-test/tests/. ; mkdir -p /tmp/rhc/junit', 120)
-      puts "Done"
+      
     end
 
     def repo_path(dir='')
