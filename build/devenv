@@ -151,7 +151,7 @@ mkdir -p /tmp/rhc/junit
     end
 
     def scp_remote_tests(hostname)
-      branch = get_granch
+      branch = get_branch
       if branch == "stage"
         init_repo(hostname, true)
         update_remote_tests(hostname)
