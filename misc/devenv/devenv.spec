@@ -8,7 +8,7 @@
 
 Summary:   Dependencies for OpenShift development
 Name:      rhc-devenv
-Version:   0.92.11
+Version:   0.92.12
 Release:   1%{?dist}
 Group:     Development/Libraries
 License:   GPLv2
@@ -395,6 +395,12 @@ echo "Header append Strict-Transport-Security includeSubDomains" >> /etc/httpd/c
 %{policydir}/*
 
 %changelog
+* Wed Apr 25 2012 Adam Miller <admiller@redhat.com> 0.92.12-1
+- Bug 815173 - Set header in drupal to force IE edge mode in devenv.   Ensure
+  that status messages won't be shown for N-1 compat with site   Update
+  copyright colors to be black background   Update copyright date
+  (ccoleman@redhat.com)
+
 * Tue Apr 24 2012 Adam Miller <admiller@redhat.com> 0.92.11-1
 - make sure og_actions is enabled for druple (johnp@redhat.com)
 - Bug 815668 (dmcphers@redhat.com)
