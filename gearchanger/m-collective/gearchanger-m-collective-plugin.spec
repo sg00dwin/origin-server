@@ -5,7 +5,7 @@
 
 Summary:        GearChanger plugin for m-colective service
 Name:           rubygem-%{gemname}
-Version:        0.8.8
+Version:        0.8.9
 Release:        1%{?dist}
 Group:          Development/Languages
 License:        ASL 2.0
@@ -70,6 +70,12 @@ rm -rf %{buildroot}
 %{ruby_sitelib}/%{gemname}.rb
 
 %changelog
+* Tue Apr 24 2012 Adam Miller <admiller@redhat.com> 0.8.9-1
+- Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
+  (rchopra@redhat.com)
+- bug fixes in move_scalable_app (rchopra@redhat.com)
+- throw error with no uid found on move (dmcphers@redhat.com)
+
 * Tue Apr 24 2012 Adam Miller <admiller@redhat.com> 0.8.8-1
 - Merge branch 'master' of git1.ops.rhcloud.com:/srv/git/li (rpenta@redhat.com)
 - gearchanger-mcollective: fix update namespace for scalable apps

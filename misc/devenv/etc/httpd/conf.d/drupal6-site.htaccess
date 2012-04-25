@@ -22,6 +22,9 @@ ErrorDocument 404 /index.php
   ErrorDocument 404 "The requested file favicon.ico was not found.
 </Files>
 
+BrowserMatch MSIE ie
+Header set X-UA-Compatible "IE=Edge,chrome=1" env=ie
+
 # Set the default handler.
 DirectoryIndex index.php
 

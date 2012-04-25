@@ -44,15 +44,12 @@
     - else
       = take_action download_index_path, "Start Download"
     %p
-      Once you got it, you can
-      = link_to "run it as a virtual guest", "#"
-      ,
-      = link_to "boot it from a LiveCD", "#"
-      , or
-      = link_to "boot it from a USB stick", "#"
+      Once you got it, you can #{link_to "run it as a virtual guest", livecd_wiki_url('boot_vm')},
+      #{link_to "boot it from a LiveCD", livecd_wiki_url('boot_livecd')}, or
+      #{link_to "boot it from a USB stick", livecd_wiki_url('boot_usb')}.
     %p
       Then, we suggest you read the
-      = link_to "live image documentation", "#"
+      = link_to "live image documentation", livecd_wiki_url('next_steps')
       for instructions on what to do after you boot.
     .well
       %h4 Important Information
@@ -87,7 +84,7 @@
       %li
         = link_to "10Gen MMS Cartridge", crankcase_source_path_url('cartridges/10gen-mms-agent-0.1'), :class => "external", :target => "_blank"
       %li
-        = link_to "MondgoDB Cartridge", crankcase_source_path_url('cartridges/mongodb-2.0'), :class => "external", :target => "_blank"
+        = link_to "MongoDB Cartridge", crankcase_source_path_url('cartridges/mongodb-2.0'), :class => "external", :target => "_blank"
       %li
         = link_to "MySQL Cartridge", crankcase_source_path_url('cartridges/mysql-5.1'), :class => "external", :target => "_blank"
       %li

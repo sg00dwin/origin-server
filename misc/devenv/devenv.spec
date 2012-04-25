@@ -8,7 +8,7 @@
 
 Summary:   Dependencies for OpenShift development
 Name:      rhc-devenv
-Version:   0.92.10
+Version:   0.92.11
 Release:   1%{?dist}
 Group:     Development/Libraries
 License:   GPLv2
@@ -395,6 +395,11 @@ echo "Header append Strict-Transport-Security includeSubDomains" >> /etc/httpd/c
 %{policydir}/*
 
 %changelog
+* Tue Apr 24 2012 Adam Miller <admiller@redhat.com> 0.92.11-1
+- make sure og_actions is enabled for druple (johnp@redhat.com)
+- Bug 815668 (dmcphers@redhat.com)
+- devenv.spec adding drupal6-path_redirect (ansilva@redhat.com)
+
 * Mon Apr 23 2012 Adam Miller <admiller@redhat.com> 0.92.10-1
 - Merge branch 'master' of git1.ops.rhcloud.com:/srv/git/li
   (tdawson@redhat.com)

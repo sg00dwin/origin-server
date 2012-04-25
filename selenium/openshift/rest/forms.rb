@@ -34,15 +34,7 @@ module OpenShift
       def in_error?(field_name)
         # check the field and the field error for an error class
         field = @fields[field_name]
-        return true if xpath_exists?("//*[@id='#{field}' and contains(@class, 'error')]")
-
-        # some elements may set the error on their control-group so we check that
-        # for an error class
-        error_field_name = :"#{field_name}_error"
-        field = @fields[error_field_name]
-        return xpath_exists?("//*[@id='#{field}' and contains(@class, 'error')]") unless field.nil?
-
-        return false
+        xpath_exists?("//*[@id='#{field}']/ancestor::div[contains(@class, 'control-group')][1][contains(@class, 'error')]")
       end
 
       def error_message(field)
@@ -70,8 +62,7 @@ module OpenShift
       def initialize(page,id)
         super(page,id)
         @fields = {
-          :namespace => "domain_name",
-          :namespace_error => "domain_name_group"
+          :namespace => "domain_name"
         }
 
       	@submit = "//input[@id='domain_submit']"
@@ -103,9 +94,7 @@ module OpenShift
         super(page,id)
         @fields = {
           :name => "key_name",
-          :name_error => "key_name_input",
-          :key => "key_raw_content",
-          :key_error => "key_raw_content_input"
+          :key => "key_raw_content"
         }
 
       	@submit = "//input[@id='key_submit']"
@@ -129,6 +118,14 @@ module OpenShift
         }
 
       	@submit = "//input[@id='application_submit']"
+      end
+    end
+
+    class ApplicationDeleteForm < Form
+      def initialize(page,id)
+        super(page,id)
+
+        @submit = "//input[@id='application_submit']"
       end
     end
   end

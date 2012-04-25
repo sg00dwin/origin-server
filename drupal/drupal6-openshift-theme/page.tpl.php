@@ -220,7 +220,7 @@
           <a href="https://www.redhat.com/">
             <img src="/app/images/redhat.png" alt="Red Hat">
           </a>
-          <div class="pull-right">Copyright &copy; 2011 Red Hat, Inc.</div>
+          <div class="pull-right">Copyright &copy; 2012 Red Hat, Inc.</div>
         </div>
       </section>
     </footer>
@@ -266,7 +266,9 @@
     height="1" width="1" border="0" alt="" /></noscript><!--/DO NOT REMOVE/-->
     <!-- End SiteCatalyst code version: H.23.3. -->
     </div>
+    <div style="display:none;"> <?php # FIXME remove after sprint 10 ?>
     <script src="/app/status/status.js?id=outage" type="text/javascript"></script>
+    </div>
   </body>
 <?php print $closure; ?>
 </script>
