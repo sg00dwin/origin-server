@@ -3,7 +3,7 @@
 
 Summary:   Li broker components
 Name:      rhc-broker
-Version:   0.91.15
+Version:   0.91.16
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -95,6 +95,12 @@ rm -rf $RPM_BUILD_ROOT
 /bin/touch %{brokerdir}/log/production.log
 
 %changelog
+* Wed Apr 25 2012 Adam Miller <admiller@redhat.com> 0.91.16-1
+- Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
+  (rmillner@redhat.com)
+- Found bug in profiler code when theres an exception from legacy controller.
+  (rmillner@redhat.com)
+
 * Wed Apr 25 2012 Adam Miller <admiller@redhat.com> 0.91.15-1
 - Updating gem versions (admiller@redhat.com)
 - Merge branch 'master' of git1.ops.rhcloud.com:/srv/git/li (rpenta@redhat.com)
