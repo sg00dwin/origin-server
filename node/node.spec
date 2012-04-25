@@ -2,7 +2,7 @@
 
 Summary:       Multi-tenant cloud management system node tools
 Name:          rhc-node
-Version:       0.91.4
+Version:       0.91.5
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -265,6 +265,9 @@ fi
 /lib64/security/pam_libra.so
 
 %changelog
+* Wed Apr 25 2012 Adam Miller <admiller@redhat.com> 0.91.5-1
+- Fix for bug# 815609 (rpenta@redhat.com)
+
 * Sat Apr 21 2012 Dan McPherson <dmcphers@redhat.com> 0.91.4-1
 - Switch to Time module and add beginning and ent time parsing.
   (rmillner@redhat.com)
