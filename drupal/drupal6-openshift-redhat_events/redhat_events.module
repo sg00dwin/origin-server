@@ -12,7 +12,7 @@ function redhat_events_menu() {
 
 function redhat_events_page(){
 
-  $content .= "<ul class='forum-navigation-links'>";
+  $content = "<ul class='forum-navigation-links'>";
 
   $sort = $_GET['sort'];
   if (!$sort) {
