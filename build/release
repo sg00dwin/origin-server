@@ -121,11 +121,17 @@ class Release < Thor
 
   desc "check", "Check the directories that need to be released"
   def check
-    git_pull
-    build_dir_list = get_build_dirs.map do |build_info|
-      build_info[1]
+    branch = get_branch
+    orig_branches = checkout_branch(branch)
+    begin
+      git_pull
+      build_dir_list = get_build_dirs.map do |build_info|
+        build_info[1]
+      end
+      puts "Changes detected in the following directories: #{build_dir_list.pretty_inspect}"
+    ensure
+      reset_orig_branches(orig_branches)
     end
-    puts "Changes detected in the following directories: #{build_dir_list.pretty_inspect}"
   end
   
   desc "update_gem_versions", "Update the gem versions for gems going to be released"
@@ -175,51 +181,59 @@ class Release < Thor
     unless run("klist | grep REDHAT.COM@REDHAT.COM", :verbose => options.verbose?)
       puts "ERROR - you need to kinit first"; exit 1
     end
-     
-    # Update the repo
-    git_pull
+
+    branch = get_branch
+    orig_branches = checkout_branch(branch)
+    begin
+
+      # Update the repo
+      git_pull
     
-    build_dirs = get_updated_build_dirs(options.verbose?, true)
+      build_dirs = get_updated_build_dirs(options.verbose?, true)
 
-    build_dirs.each do |build_info|
-      build_dir = build_info[1]
-      inside(File.expand_path("../#{build_dir}", File.dirname(__FILE__))) do
-        puts "Releasing #{build_dir}"
+      build_dirs.each do |build_info|
+        build_dir = build_info[1]
+        inside(File.expand_path("../#{build_dir}", File.dirname(__FILE__))) do
+          puts "Releasing #{build_dir}"
 
-        # Cleanup any tito data
-        unless run("rm -rf #{options.temp_dir}/tito/cvswork/", :verbose => options.verbose?)
-          puts "ERROR - tito temp cleanup failed"; exit 1
+          # Cleanup any tito data
+          unless run("rm -rf #{options.temp_dir}/tito/cvswork/", :verbose => options.verbose?)
+            puts "ERROR - tito temp cleanup failed"; exit 1
+          end
+
+          # Tag the package and push the tags
+          unless run("tito tag --accept-auto-changelog", :verbose => options.verbose?)
+            puts "ERROR - tito tagging failed"; exit 1
+            exit 1
+          end
+
+          branch = get_branch
+          unless run("git pull && git push origin #{branch} && git push --tags", :verbose => options.verbose?)
+            puts "ERROR - tito tag push failed"; exit 1
+          end
+
+          # Detect which tito command is available
+          `tito release --help`
+          cmd_exit = $?.exitstatus
+          if cmd_exit == 0
+            # The release command is supported - use it
+            tito_cmd = "tito release brew < #{options.temp_dir}/answerfile"
+          else
+            raise "Your version of tito is no longer supported after the Brew migration to git"
+          end
+
+          # Build the RPM in brew
+          run("echo -e 'y\nn' > #{options.temp_dir}/answerfile", :verbose => options.verbose?)
+          unless run(tito_cmd, :verbose => options.verbose?)
+            puts "ERROR - tito cvs release failed"
+          end
+          puts "Done"
         end
-
-        # Tag the package and push the tags
-        unless run("tito tag --accept-auto-changelog", :verbose => options.verbose?)
-          puts "ERROR - tito tagging failed"; exit 1
-          exit 1
-        end
-
-        branch = get_branch
-        unless run("git pull && git push origin #{branch} && git push --tags", :verbose => options.verbose?)
-          puts "ERROR - tito tag push failed"; exit 1
-        end
-
-        # Detect which tito command is available
-        `tito release --help`
-        cmd_exit = $?.exitstatus
-        if cmd_exit == 0
-          # The release command is supported - use it
-          tito_cmd = "tito release brew < #{options.temp_dir}/answerfile"
-        else
-          raise "Your version of tito is no longer supported after the Brew migration to git"
-        end
-
-        # Build the RPM in brew
-        run("echo -e 'y\nn' > #{options.temp_dir}/answerfile", :verbose => options.verbose?)
-        unless run(tito_cmd, :verbose => options.verbose?)
-          puts "ERROR - tito cvs release failed"
-        end
-        puts "Done"
       end
+    ensure
+      reset_orig_branches(orig_branches)
     end
+    
     if File.exists?("../jenkins-cloud")
       inside("../jenkins-cloud") do
         git_pull_output = `git pull`.chomp
@@ -241,14 +255,19 @@ class Release < Thor
   method_option :no_ami, :type => :boolean, :desc => "Indicates whether to not build an ami"
   method_option :source_ami, :type => :boolean, :desc => "Indicates whether to build a source ami"
   def sync
-    # do RHEL 6.x first
-    mash_and_rsync "libra-rhel-6.2", false, options
+    orig_branches = checkout_branch(options[:stage] || options.stage? ? "stage" : "master")
+    begin
+      # do RHEL 6.x first
+      mash_and_rsync "libra-rhel-6.2", false, options
 
-    # now RHEL 5.x, skipping rhc gem build/deploy
-    mash_and_rsync "libra-rhel-5.8", true, options
+      # now RHEL 5.x, skipping rhc gem build/deploy
+      mash_and_rsync "libra-rhel-5.8", true, options
 
-    unless options.no_ami?
-      create_ami options
+      unless options.no_ami?
+        create_ami options
+      end
+    ensure
+      reset_orig_branches(orig_branches)
     end
   end
   
@@ -256,40 +275,34 @@ class Release < Thor
   method_option :push_changes, :type => :boolean, :desc => "Push the changes to the current branch"
   method_option :verbose, :type => :boolean, :desc => "Enable verbose logging"
   def bump_minor_versions
-    run("git checkout master", :verbose => options.verbose?)
-    SIBLING_REPOS.each do |repo_name, repo_dirs|
-      repo_dirs.each do |repo_dir|
-        if File.exists?(repo_dir)
-          inside(repo_dir) do
-            run("git checkout master", :verbose => options.verbose?)
-          end
-          break
-        end
+    orig_branches = checkout_branch("master")
+    begin
+      all_packages = get_packages
+      IGNORE_PACKAGES.each do |package|
+        all_packages.delete(package)
       end
-    end
-    all_packages = get_packages
-    IGNORE_PACKAGES.each do |package|
-      all_packages.delete(package)
-    end
-    all_packages.each do |package_name, pkg|
-      build_dir = pkg[0]
-      spec_file = pkg[1]
-      version = get_version(spec_file)
-      new_version = next_minor_version(version)
-      run("/bin/sed -i 's,^Version:.*,Version: #{new_version},' #{spec_file}", :verbose => options.verbose?)
-    end
-    if options.push_changes?
-      run("git add *.spec; git commit -m 'bumping spec versions'; git push origin master", :verbose => options.verbose?)
-      SIBLING_REPOS.each do |repo_name, repo_dirs|
-        repo_dirs.each do |repo_dir|
-          if File.exists?(repo_dir)
-            inside(repo_dir) do
-              run("git add *.spec; git commit -m 'bumping spec versions'; git push origin master", :verbose => options.verbose?)
+      all_packages.each do |package_name, pkg|
+        build_dir = pkg[0]
+        spec_file = pkg[1]
+        version = get_version(spec_file)
+        new_version = next_minor_version(version)
+        run("/bin/sed -i 's,^Version:.*,Version: #{new_version},' #{spec_file}", :verbose => options.verbose?)
+      end
+      if options.push_changes?
+        run("git add *.spec; git commit -m 'bumping spec versions'; git push origin master", :verbose => options.verbose?)
+        SIBLING_REPOS.each do |repo_name, repo_dirs|
+          repo_dirs.each do |repo_dir|
+            if File.exists?(repo_dir)
+              inside(repo_dir) do
+                run("git add *.spec; git commit -m 'bumping spec versions'; git push origin master", :verbose => options.verbose?)
+              end
+              break
             end
-            break
           end
         end
       end
+    ensure
+      reset_orig_branches(orig_branches)
     end
   end
   
@@ -303,6 +316,39 @@ class Release < Thor
 
   # sync impl methods
   no_tasks do
+    def checkout_branch(branch="master")
+      orig_branch = get_branch
+      orig_branches = {}
+      if orig_branch != branch
+        orig_branches[FileUtils.pwd] = orig_branch
+        run("git checkout #{branch}")
+      end
+      SIBLING_REPOS.each do |repo_name, repo_dirs|
+        repo_dirs.each do |repo_dir|
+          if File.exists?(repo_dir)
+            inside(repo_dir) do
+              orig_branch = get_branch
+              if orig_branch != branch
+                orig_branches[repo_dir] = orig_branch
+                run("git checkout #{branch}")
+              end
+            end
+            break
+          end
+        end
+      end
+      orig_branches
+    end
+    
+    def reset_orig_branches(orig_branches)
+      orig_branches.each do |repo_dir, branch|
+        inside(repo_dir) do
+          run("git checkout #{branch}")
+        end
+      end
+    end
+    
+    
     def mash_and_rsync(tag_base, skip_gem, options)
       # Mash / RSync parameters
       mash_config = (options[:stage] || options.stage_all?) ? "#{tag_base}-stage" : "#{tag_base}-candidate"
