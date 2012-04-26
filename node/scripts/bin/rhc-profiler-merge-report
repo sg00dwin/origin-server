@@ -32,24 +32,52 @@ end
 
 
 class InfoMatchers
+  @@CARTRIDGES = ['php-5.3', 'ruby-1.8', 'python-2.6', 'perl-5.10', 'jbossas-7', 
+                  'nodejs-0.6', 'jenkins-1.4', 'diy-0.1']
+  @@LEGACY_ACTIONS = ['configure']
+  @@LEGACY_MATCH = Regexp.new('^legacy_(.*)_(.*)$')
 
-  @@CARTRIDGES=['php-5.3', 'ruby-1.8', 'python-2.6', 'perl-5.10', 'jbossas-7', 'nodejs-0.6', 'jenkins-1.4', 'diy-0.1']
-  @@LEGACY_ACTIONS=[]
-  @@REST_ACTIONS=[]
+  @@REST_ACTIONS = []
+  @@REST_MATCH = Regexp.new('^dontmatchmedude')
 
-  def initialize
-    
+  class Error < StandardError; end
+
+  # legacy_jenkins-1.4_configure
+  def initialize(filter)
+    if m = @@LEGACY_MATCH.match(filter)
+      @filter = legacy_filter(m[1], m[2])
+    elsif m = @@REST_MATCH.match(filter)
+      @filter = rest_filter()
+    else
+      raise Error, "Unknown filter: #{filter}"
+    end
   end
 
+  def to_hash
+    @filter
+  end
+
+  def self.filters
+    @@CARTRIDGES.product(@@LEGACY_ACTIONS).map { |f| "legacy_#{f[0]}_#{f[1]}" } +
+      @@REST_ACTIONS.map { |f| "rest_#{f}" }
+  end
 
   private
 
-  def legacy_filter(action, cartridge)
+  def legacy_filter(cartridge, action)
+    if not @@CARTRIDGES.include?(cartridge)
+      raise Error, "Unknown cartridge: #{cartridge}"
+    end
+
+    if not @@LEGACY_ACTIONS.include?(action)
+      raise Error, "Unknown action: #{action}"
+    end
+
     JSON.parse '{ "PARAMS": {"action": "cartridge_post", "controller": "legacy_broker", "json_data": { "cartridge": "' + cartridge + '", "action": "' + action + '" } } }'
   end
 
   def rest_filter()
-    
+    { "dontmatchmedude" => 1 }
   end
 
 end
@@ -134,9 +162,7 @@ class McollectiveLog
 
     def initialize(filename)
       @handle = File.open(filename) 
-      l = f.gets
-      m = @@STAMPMATCH.match(l)
-      @timestamp = Time.parse(m[1])
+      @timestamp = Time.parse(@@STAMPMATCH.match(@handle.gets)[1])
     end
 
     def <=>(other)
@@ -145,12 +171,12 @@ class McollectiveLog
 
   end
 
-  def initialize(lfiles)
+  def initialize(path)
     rfiles=[]
-    lfiles.each do |lfile|
+    Dir[File.join(path,@@GLOB)].each do |lfile|
       m = @@NAMEMATCH.match(File.basename(lfile))
       if not m.nil?
-        rfiles << McFile(lfile)
+        rfiles << McFile.new(lfile)
       end
     end
 
@@ -178,11 +204,6 @@ class McollectiveLog
         end
       end
     end
-    
-  end
-  
-  def self.myfiles(path)
-    Dir[File.join(path,@@GLOB)]
   end
 
 end
@@ -195,9 +216,14 @@ OptionParser.new do |opts|
     options[:verbose] = v
   end
 
-  options[:search] = 'jbossas-7_app_create'
-  opts.on('-s', '--search NAME', 'Search for this type of event') do |ts|
-    options[:search] = ts
+  options[:filter] = 'legacy_jbossas-7_configure'
+  opts.on('-f', '--filter NAME', 'filter for this type of event') do |ts|
+    begin
+      options[:filter] = InfoMatchers.new(ts)
+    rescue InfoMatchers::Error => e
+      puts e
+      exit 1
+    end
   end
 
   options[:dir] = "."
@@ -205,17 +231,20 @@ OptionParser.new do |opts|
     options[:dir] = dr
   end
 
+  opts.on('--filters', 'Display filters') do
+    puts "Filters..."
+    InfoMatchers.filters.each { |f| puts "     #{f}" }
+  end
+
 end.parse!
 
 
-McollectiveLogs.myfiles(options[:dir]).each do |testfile|
-  mclogs << McollectiveLog.new(testfile)
-end
+mcents = McollectiveLog.new(options[:dir]).entries
 
 
 InfoChunk.myfiles(options[:dir]).each do |testfile|
-  c = InfoChunk.new(testfile)
-  if c.include? {}
+  chunk = InfoChunk.new(testfile)
+  if chunk.include? options[:filter].to_hash
     puts testfile
   end
 end
