@@ -152,6 +152,16 @@ Requires:  drupal6-vote_up_down
 Requires:  drupal6-votingapi
 Requires:  drupal6-wikitools
 
+# Security RKHunter Requirements
+Requires:  rkhunter
+
+# Security OpenSCAP Requirements
+Requires:  openscap
+Requires:  openscap-content
+Requires:  openscap-extra-probes
+Requires:  openscap-python
+Requires:  openscap-utils
+
 BuildArch: noarch
 
 %description
