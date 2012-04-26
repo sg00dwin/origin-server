@@ -139,14 +139,11 @@ class McollectiveLog
   class Error < StandardError; end
     
   class McEntry
-    attr_accessor :type, :timestamp, :endstamp, :stampdivisor, :action_cart, :action_call
+    attr_accessor :type, :timestamp, :endstamp, :action_cart, :action_call
 
     def initialize(type, timestamp)
       @type = type
       @timestamp = Time.parse(timestamp)
-      @endstamp = nil
-      @action_cart = nil
-      @action_call = nil
     end
 
     def duration
@@ -209,26 +206,26 @@ class McollectiveLog
 end
 
 
-options = {}
+$options = {}
 OptionParser.new do |opts|
-  options[:verbose] = false
+  $options[:verbose] = false
   opts.on('-v', '--[no-]verbose', 'Output verbose run information') do |v|
-    options[:verbose] = v
+    $options[:verbose] = v
   end
 
-  options[:filter] = 'legacy_jbossas-7_configure'
+  $options[:filter] = 'legacy_jbossas-7_configure'
   opts.on('-f', '--filter NAME', 'filter for this type of event') do |ts|
     begin
-      options[:filter] = InfoMatchers.new(ts)
+      $options[:filter] = InfoMatchers.new(ts)
     rescue InfoMatchers::Error => e
       puts e
       exit 1
     end
   end
 
-  options[:dir] = "."
+  $options[:dir] = "."
   opts.on('-d', '--dir NAME', 'Search for files in this directory') do |dr|
-    options[:dir] = dr
+    $options[:dir] = dr
   end
 
   opts.on('--filters', 'Display filters') do
@@ -238,13 +235,18 @@ OptionParser.new do |opts|
 
 end.parse!
 
+if $options[:verbose]
+  $stderr.puts "Filter: #{$options[:filter]}"
+  $stderr.puts "Directory: #{$options[:dir]}"
+end
 
-mcents = McollectiveLog.new(options[:dir]).entries
+
+mcents = McollectiveLog.new($options[:dir]).entries
 
 
-InfoChunk.myfiles(options[:dir]).each do |testfile|
+InfoChunk.myfiles($options[:dir]).each do |testfile|
   chunk = InfoChunk.new(testfile)
-  if chunk.include? options[:filter].to_hash
+  if chunk.include? $options[:filter].to_hash
     puts testfile
   end
 end
