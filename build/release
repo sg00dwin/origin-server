@@ -183,7 +183,7 @@ class Release < Thor
     end
 
     branch = get_branch
-    orig_branches = checkout_branch(branch)
+    orig_branches = checkout_branch(branch, options.verbose?)
     begin
 
       # Update the repo
@@ -231,7 +231,7 @@ class Release < Thor
         end
       end
     ensure
-      reset_orig_branches(orig_branches)
+      reset_orig_branches(orig_branches, options.verbose?)
     end
     
     if File.exists?("../jenkins-cloud")
@@ -275,7 +275,7 @@ class Release < Thor
   method_option :push_changes, :type => :boolean, :desc => "Push the changes to the current branch"
   method_option :verbose, :type => :boolean, :desc => "Enable verbose logging"
   def bump_minor_versions
-    orig_branches = checkout_branch("master")
+    orig_branches = checkout_branch("master", options.verbose?)
     begin
       all_packages = get_packages
       IGNORE_PACKAGES.each do |package|
@@ -316,34 +316,48 @@ class Release < Thor
 
   # sync impl methods
   no_tasks do
-    def checkout_branch(branch="master")
+    def checkout_branch(branch="master", verbose=false)
+      puts "#######################"
+      puts "Operating on branch: #{branch}"
+      puts "#######################"
       orig_branch = get_branch
       orig_branches = {}
-      if orig_branch != branch
-        orig_branches[FileUtils.pwd] = orig_branch
-        run("git checkout #{branch}")
-      end
-      SIBLING_REPOS.each do |repo_name, repo_dirs|
-        repo_dirs.each do |repo_dir|
-          if File.exists?(repo_dir)
-            inside(repo_dir) do
-              orig_branch = get_branch
-              if orig_branch != branch
-                orig_branches[repo_dir] = orig_branch
-                run("git checkout #{branch}")
-              end
-            end
-            break
+      begin
+        if orig_branch != branch
+          orig_branches[FileUtils.pwd] = orig_branch
+          unless run("git checkout #{branch}", :verbose => verbose)
+            puts "Unable to checkout branch '#{branch}' for repo 'li'"
+            exit 1
           end
         end
+        SIBLING_REPOS.each do |repo_name, repo_dirs|
+          repo_dirs.each do |repo_dir|
+            if File.exists?(repo_dir)
+              inside(repo_dir) do
+                orig_branch = get_branch
+                if orig_branch != branch
+                  orig_branches[repo_dir] = orig_branch
+                  unless run("git checkout #{branch}", :verbose => verbose)
+                    puts "Unable to checkout branch '#{branch}' for repo '#{repo_name}'"
+                    exit 1
+                  end
+                end
+              end
+              break
+            end
+          end
+        end
+      rescue Exception => e
+        reset_orig_branches(orig_branches, verbose)
+        raise
       end
       orig_branches
     end
     
-    def reset_orig_branches(orig_branches)
+    def reset_orig_branches(orig_branches, verbose=false)
       orig_branches.each do |repo_dir, branch|
         inside(repo_dir) do
-          run("git checkout #{branch}")
+          run("git checkout #{branch}", :verbose => verbose)
         end
       end
     end
