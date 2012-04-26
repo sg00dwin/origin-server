@@ -54,18 +54,18 @@ git push -q root@#{hostname}:/root/#{repo_name} #{branch}:master --tags --force
       exists
     end
 
-    def init_repo(hostname, stage=false)
+    def init_repo(hostname, init_all=false)
       git_clone_commands = ''
       SIBLING_REPOS.each do |repo_name, repo_dirs|
         repo_dirs.each do |repo_dir|
-          if File.exists?(repo_dir) || stage
-            git_clone_commands += "rm -rf /root/#{repo_name}; git clone --bare git@github.com:openshift/#{repo_name}.git /root/#{repo_name}; #{stage ? "cd /root/#{repo_name}; git checkout stage; " : ""}"
+          if File.exists?(repo_dir) || init_all
+            git_clone_commands += "rm -rf /root/#{repo_name}; git clone --bare git@github.com:openshift/#{repo_name}.git /root/#{repo_name}; "
             break
           end
         end
       end
       ssh(hostname, %{
-rm -rf /root/li; git clone --bare git://git1.ops.rhcloud.com/li.git/ /root/li; #{stage ? "cd /root/li; git checkout stage; " : ""}
+rm -rf /root/li; git clone --bare git://git1.ops.rhcloud.com/li.git/ /root/li
 #{git_clone_commands}
 }, 120)
     end
@@ -96,7 +96,7 @@ rm -rf /root/li; git clone --bare git://git1.ops.rhcloud.com/li.git/ /root/li; #
       end
     end
 
-    def update_remote_tests(hostname)
+    def update_remote_tests(hostname, branch="")
       print "Updating remote tests..."
       all_repo_dirs = ['/root/li']
       SIBLING_REPOS.each do |repo_name, repo_dirs|
@@ -109,7 +109,7 @@ rm -rf /root/li; git clone --bare git://git1.ops.rhcloud.com/li.git/ /root/li; #
       end
       git_archive_commands = ''
       all_repo_dirs.each do |repo_dir|
-        git_archive_commands += "pushd #{repo_dir} > /dev/null; git archive --prefix li-test/ --format=tar HEAD | (cd /root && tar --warning=no-timestamp -xf -); popd > /dev/null; "
+        git_archive_commands += "pushd #{repo_dir} > /dev/null; git archive #{branch} --prefix li-test/ --format=tar HEAD | (cd /root && tar --warning=no-timestamp -xf -); popd > /dev/null; "
       end
       ssh(hostname, %{
 rm -rf /root/li-test
@@ -151,10 +151,9 @@ mkdir -p /tmp/rhc/junit
     end
 
     def scp_remote_tests(hostname)
-      branch = get_branch
       if FileUtils.pwd == "/var/lib/jenkins/jobs/libra_ami_stage/workspace" || FileUtils.pwd == "/var/lib/jenkins/jobs/libra_ami_verify_stage/workspace"
         init_repo(hostname, true)
-        update_remote_tests(hostname)
+        update_remote_tests(hostname, "stage")
       else
         puts "Archiving local changes..."
         FileUtils.rm_rf '/tmp/li-test'
