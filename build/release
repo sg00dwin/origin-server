@@ -228,6 +228,7 @@ class Release < Thor
 
   desc "sync", "Download a build from Brew (using Mash) and sync it to the OpenShift repos"
   method_option :stage, :type => :string, :desc => "Comma-delimited list of packages to sync.  Exclude NVR for latest versions.  (e.g. --stage='rhc, rhc-site-0.73.3-1')"
+  method_option :stage_all, :type => :boolean, :desc => "Tag all the latest packages for stage"
   method_option :clean_ami, :type => :boolean, :desc => "Indicates whether to build a clean ami"
   method_option :no_ami, :type => :boolean, :desc => "Indicates whether to not build an ami"
   method_option :source_ami, :type => :boolean, :desc => "Indicates whether to build a source ami"
@@ -255,12 +256,12 @@ class Release < Thor
   no_tasks do
     def mash_and_rsync(tag_base, skip_gem, options)
       # Mash / RSync parameters
-      mash_config = options[:stage] ? "#{tag_base}-stage" : "#{tag_base}-candidate"
+      mash_config = (options[:stage] || options[:stage_all]) ? "#{tag_base}-stage" : "#{tag_base}-candidate"
       repo_host = "mirror1.stg.rhcloud.com"
       repo_dir = "/export/gpxe/trees"
       repo = "#{repo_host}:#{repo_dir}"
       rsync = nil
-      if options[:stage]
+      if options[:stage] || options[:stage_all]
         rsync = "rsync -aHv --progress --no-g --omit-dir-times --chmod=Dug=rwX"
       else
         rsync = "rsync -aHv --delete-after --progress --no-g --omit-dir-times --chmod=Dug=rwX"
@@ -298,27 +299,40 @@ class Release < Thor
       end
   
       # See if we are doing a stage sync - if so, tag the packages listed
-      if options[:stage] and !options[:stage].empty?
-        options[:stage].split(",").each do |package|
-          package.strip!
-  
-          nvr_regex = /(.*)-(\d+)\.(\d+)\.(\d+)-?(\d)?/
-          all_packages = get_packages
-  
+      if (options[:stage] and !options[:stage].empty?) or options[:stage_all]
+
+        all_packages = get_packages
+        nvr_regex = /(.*)-(\d+)\.(\d+)\.(\d+)-?(\d)?/
+
+        packages = nil
+        if options[:stage]
+          packages = options[:stage].split(",").map do |package|
+            package.strip!
+            pkg = package
+            if nvr_regex.match(package)
+              pkg = $1
+            end
+            unless all_packages[pkg]
+              puts "Couldn't find '#{pkg}' on local system.  You probably don't have one of these repos #{SIBLING_REPOS}"
+              exit 1
+            end
+            package
+          end
+        else
+          packages = all_packages.keys
+          packages -= IGNORE_PACKAGES
+        end
+        
+        packages.each do |package|
           # Check for the supplied NVR value (e.g. 0.45.1)
           if nvr_regex.match(package)
             pkg = $1 
             # Confirm the package is valid
             nvr_package = nil
             build_info = all_packages[pkg]
-            if build_info
-              build_dir = build_info[0]
-              inside(build_dir) do
-                nvr_package = `git tag | grep #{package} | tail -n1`.chomp
-              end
-            else
-              puts "Couldn't find '#{pkg}' on local system.  You probably don't have one of these repos #{SIBLING_REPOS}"
-              exit 1
+            build_dir = build_info[0]
+            inside(build_dir) do
+              nvr_package = `git tag | grep #{package} | tail -n1`.chomp
             end
   
             unless nvr_package.empty?
@@ -331,14 +345,9 @@ class Release < Thor
             # No NVR was specified - lookup the latest
             tags = []
             build_info = all_packages[package]
-            if build_info
-              build_dir = build_info[0]
-              inside(build_dir) do
-                tags = `git tag | grep #{package}-[0-9]`.chomp.split("\n")
-              end
-            else
-              puts "Couldn't find '#{package}' on local system.  You probably don't have one of these repos #{SIBLING_REPOS}"
-              exit 1
+            build_dir = build_info[0]
+            inside(build_dir) do
+              tags = `git tag | grep #{package}-[0-9]`.chomp.split("\n")
             end
   
             # Sort the tags by NVR and take the last entry
