@@ -3,7 +3,7 @@
 
 Summary:   Li site components
 Name:      rhc-site
-Version: 0.92.0
+Version: 0.92.1
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -117,6 +117,13 @@ rm -rf %{buildroot}
 /bin/touch %{sitedir}/log/production.log
 
 %changelog
+* Thu Apr 26 2012 Adam Miller <admiller@redhat.com> 0.92.1-1
+- new loader image for console and css (sgoodwin@redhat.com)
+- bumping spec versions (admiller@redhat.com)
+- Update logo-24-inside to not have improper color saturation on firefox
+  (ccoleman@redhat.com)
+- Origin SRPMs on download page (ccoleman@redhat.com)
+
 * Wed Apr 25 2012 Adam Miller <admiller@redhat.com> 0.91.11-1
 - Merge branch 'dev0425' (sgoodwin@redhat.com)
 - event section styles added (sgoodwin@redhat.com)
