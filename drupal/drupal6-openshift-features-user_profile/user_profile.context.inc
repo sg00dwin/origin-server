@@ -384,5 +384,29 @@ function user_profile_context_default_contexts() {
   $context->condition_mode = 0;
   $export[$context->name] = $context;
 
+
+  # Make Wiki left nav active
+  $context = new stdClass;
+  $context->disabled = FALSE; /* Edit this to true to make a default context disabled initially */
+  $context->api_version = 3;
+  $context->name = 'menu-active-wiki-page';
+  $context->description = '';
+  $context->tag = '';
+  $context->conditions = array(
+    'node' => array(
+      'values' => array(
+        'wiki_page' => 'wiki_page',
+      ),
+      'options' => array(
+        'node_form' => '1',
+      ),
+    ),
+  );
+  $context->reactions = array(
+    'menu' => 'node/9475',
+  );
+  $context->condition_mode = 0;
+  $export[$context->name] = $context;
+
   return $export;
 }
