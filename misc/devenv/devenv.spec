@@ -405,6 +405,9 @@ echo "Header append Strict-Transport-Security includeSubDomains" >> /etc/httpd/c
 %{policydir}/*
 
 %changelog
+* Thu Apr 26 2012 Tim Kramer <tkramer@redhat.com)
+- Added security requirements for RKHunter and OpenSCAP
+
 * Thu Apr 26 2012 Adam Miller <admiller@redhat.com> 0.93.1-1
 - bumping spec versions (admiller@redhat.com)
 - Update enable-modules.sh (ccoleman@redhat.com)
