@@ -209,7 +209,6 @@
                 <li><a href="/app/legal/site_terms">Terms of Service</a></li>
                 <li><a href="/app/legal/openshift_privacy">Privacy Policy</a></li>
                 <li><a href="https://access.redhat.com/security/team/contact/">Security</a></li>
-                <li><a href="/app/legal/opensource_disclaimer">Open Source Disclaimer</a></li>
               </ul>
             </div>
           </div>
