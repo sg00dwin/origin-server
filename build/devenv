@@ -67,7 +67,7 @@ git push -q root@#{hostname}:/root/#{repo_name} #{branch}:master --tags --force
       ssh(hostname, %{
 rm -rf /root/li; git clone --bare git://git1.ops.rhcloud.com/li.git/ /root/li
 #{git_clone_commands}
-}, 120)
+}, 240)
     end
 
     def temp_commit
