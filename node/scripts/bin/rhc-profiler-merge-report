@@ -1,0 +1,221 @@
+#!/usr/bin/env ruby
+
+# Scan the provided directory for mcollective log files, profiler call
+# graphs and profiler info files.  Report back the set of call graphs
+# that pertain to a specific search matched in the info files and the
+# call cost from mcollective.
+
+require 'rubygems'
+require 'time'
+require 'optparse'
+require 'json'
+require 'zlib'
+
+
+# Hash deep_include? method from Stack Overflow
+# http://stackoverflow.com/questions/3826969
+# Thanks to the following contributors:
+#    Refactor http://stackoverflow.com/users/636053/refactor
+#    Oleg Keene http://stackoverflow.com/users/457846/oleg-keene
+#    Sam Stephens http://stackoverflow.com/users/372926/samstephens
+class Hash
+  def deep_include?(sub_hash)
+    sub_hash.keys.all? do |key|
+      self.has_key?(key) && if sub_hash[key].is_a?(Hash)
+        self[key].is_a?(Hash) && self[key].deep_include?(sub_hash[key])
+      else
+        self[key] == sub_hash[key]
+      end
+    end
+  end
+end
+
+
+class InfoMatchers
+
+  @@CARTRIDGES=['php-5.3', 'ruby-1.8', 'python-2.6', 'perl-5.10', 'jbossas-7', 'nodejs-0.6', 'jenkins-1.4', 'diy-0.1']
+  @@LEGACY_ACTIONS=[]
+  @@REST_ACTIONS=[]
+
+  def initialize
+    
+  end
+
+
+  private
+
+  def legacy_filter(action, cartridge)
+    JSON.parse '{ "PARAMS": {"action": "cartridge_post", "controller": "legacy_broker", "json_data": { "cartridge": "' + cartridge + '", "action": "' + action + '" } } }'
+  end
+
+  def rest_filter()
+    
+  end
+
+end
+
+
+
+class InfoChunk
+  attr_accessor :data, :stamp, :profile, :timestamp, :endstamp
+  
+  @@NAMEMATCH=Regexp.new('^profiler-info-([\d\-]+)\.json(\..*|)$')
+  @@GLOB="profiler-info-*.json*"
+
+  class Error < StandardError; end
+
+  def initialize(jfile)
+    if m = @@NAMEMATCH.match(File.basename(jfile))
+      @stamp = m[1]
+      exten = m[2]
+      @profile = File.join(File.dirname(jfile), "profiler-wall-call_tree-#{@stamp}.txt#{exten}")
+      case exten
+      when '.gz'
+        opener=Zlib::GzipReader
+      else
+        opener=File
+      end
+    else
+      raise Error, "File does not match pattern: '#{jfile}'"
+    end
+
+    opener.open(jfile) { |f| @data = JSON.parse f.read }
+
+    @timestamp = Time.parse(@data['TIMESTAMP'])
+    @endstamp = Time.parse(@data['ENDSTAMP'])
+  end
+
+  def include?(other)
+    @data.deep_include?(other)
+  end
+  
+  def self.myfiles(path)
+    Dir[File.join(path,@@GLOB)]
+  end
+  
+end
+
+
+class McollectiveLog
+  attr_accessor :entries
+
+  @@NAMEMATCH = Regexp.new('^mcollective\.log(\.\d+|)(\..*|)$')
+
+  @@REQBEGIN = Regexp.new('^D, \[(.*) \#\d+\] DEBUG .* (\w+) call \/ request =')
+  @@REQACTION = Regexp.new(':action=>"(.*)"')
+  @@REQCART = Regexp.new(':cartridge=>"(.*)"')
+  @@REQEND = Regexp.new('^D, \[(.*) \#\d+\] DEBUG .* (\w+) (?: ERROR )*\(\d+\)')
+
+  @@GLOB="mcollective.log*"
+
+  class Error < StandardError; end
+    
+  class McEntry
+    attr_accessor :type, :timestamp, :endstamp, :stampdivisor, :action_cart, :action_call
+
+    def initialize(type, timestamp)
+      @type = type
+      @timestamp = Time.parse(timestamp)
+      @endstamp = nil
+      @action_cart = nil
+      @action_call = nil
+    end
+
+    def duration
+      (@endstamp - @timestamp)
+    end
+  end
+
+
+  class McFile
+    attr_accessor :handle, :timestamp
+
+    @@STAMPMATCH = Regexp.new('\# Logfile created on (.*) by logger.rb')
+
+    def initialize(filename)
+      @handle = File.open(filename) 
+      l = f.gets
+      m = @@STAMPMATCH.match(l)
+      @timestamp = Time.parse(m[1])
+    end
+
+    def <=>(other)
+      @timestamp <=> other.timestamp
+    end
+
+  end
+
+  def initialize(lfiles)
+    rfiles=[]
+    lfiles.each do |lfile|
+      m = @@NAMEMATCH.match(File.basename(lfile))
+      if not m.nil?
+        rfiles << McFile(lfile)
+      end
+    end
+
+    @entries = []
+    tentries=[]
+
+    rfiles.sort.each do |rf|
+      f = rf.handle
+      while line = f.gets do
+        if (m = @@REQBEGIN.match(line))
+          tentries << McEntry.new(m[2], m[1])
+        elsif (m = @@REQACTION.match(line))
+          if not tentries[-1].action_call.nil?
+            tentries << tentries[-1].clone
+          end
+          tentries[-1].action_call = m[1]
+        elsif (m = @@REQCART.match(line))
+          if not tentries.last.action_cart.nil?
+            tentries << tentries[-1].clone
+          end
+          tentries.last.action_cart = m[1]
+        elsif (m = @@REQEND.match(line))
+          tentries.first.endstamp = Time.parse(m[1])
+          @entries << tentries.shift
+        end
+      end
+    end
+    
+  end
+  
+  def self.myfiles(path)
+    Dir[File.join(path,@@GLOB)]
+  end
+
+end
+
+
+options = {}
+OptionParser.new do |opts|
+  options[:verbose] = false
+  opts.on('-v', '--[no-]verbose', 'Output verbose run information') do |v|
+    options[:verbose] = v
+  end
+
+  options[:search] = 'jbossas-7_app_create'
+  opts.on('-s', '--search NAME', 'Search for this type of event') do |ts|
+    options[:search] = ts
+  end
+
+  options[:dir] = "."
+  opts.on('-d', '--dir NAME', 'Search for files in this directory') do |dr|
+    options[:dir] = dr
+  end
+
+end.parse!
+
+
+McollectiveLogs.myfiles(options[:dir]).each do |testfile|
+  mclogs << McollectiveLog.new(testfile)
+end
+
+
+InfoChunk.myfiles(options[:dir]).each do |testfile|
+  c = InfoChunk.new(testfile)
+  if c.include? {}
+    puts testfile
+  end
+end
