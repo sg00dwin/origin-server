@@ -144,8 +144,8 @@ class Release < Thor
   desc "release_jenkins_plugin", "Brew build the jenkins plugin"
   method_option :verbose, :type => :boolean, :desc => "Enable verbose logging"
   def release_jenkins_plugin(commit_message, committer_name="Dan McPherson", committer_email="dmcphers@redhat.com")
-    if File.exists?("../jenkins-cloud")
-      inside("../jenkins-cloud") do
+    if File.exists?("../jenkins-cloud-plugin")
+      inside("../jenkins-cloud-plugin") do
         run("git pull", :verbose => options.verbose?)
         exit unless run("mvn package -DskipTests", :verbose => options.verbose?)
       end
@@ -154,7 +154,7 @@ class Release < Thor
         exit unless run("rhpkg clone -b libra-rhel-6.2 jenkins-plugin-openshift", :verbose => options.verbose?)
       end
       inside("../jenkins-plugin-openshift/") do
-        FileUtils.cp "../jenkins-cloud/target/openshift.hpi", "./openshift.hpi"
+        FileUtils.cp "../jenkins-cloud-plugin/target/openshift.hpi", "./openshift.hpi"
         version = /^(Version: )(.*)/.match(File.read("jenkins-plugin-openshift.spec"))[2].strip
         nv = next_patch_version(version)
         run("sed -i 's/Version:.*#{version}.*/Version: #{nv}/' jenkins-plugin-openshift.spec", :verbose => options.verbose?)
@@ -166,7 +166,7 @@ class Release < Thor
         end
       end
     else
-      puts "Jenkins plugin not found at ../jenkins-cloud"
+      puts "Jenkins plugin not found at ../jenkins-cloud-plugin"
     end
   end
 
@@ -234,8 +234,8 @@ class Release < Thor
       reset_orig_branches(orig_branches, options.verbose?)
     end
     
-    if File.exists?("../jenkins-cloud")
-      inside("../jenkins-cloud") do
+    if File.exists?("../jenkins-cloud-plugin")
+      inside("../jenkins-cloud-plugin") do
         git_pull_output = `git pull`.chomp
         unless git_pull_output.include?("Already up-to-date.")
           puts ""
