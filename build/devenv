@@ -152,7 +152,7 @@ mkdir -p /tmp/rhc/junit
 
     def scp_remote_tests(hostname)
       branch = get_branch
-      if branch == "stage"
+      if FileUtils.pwd == "/var/lib/jenkins/jobs/libra_ami_stage/workspace" || FileUtils.pwd == "/var/lib/jenkins/jobs/libra_ami_verify_stage/workspace"
         init_repo(hostname, true)
         update_remote_tests(hostname)
       else
