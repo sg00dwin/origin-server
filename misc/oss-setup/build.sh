@@ -9,7 +9,7 @@ control_c()
 # trap keyboard interrupt (control-c)
 trap control_c SIGINT
 
-repodir=$HOME
+repodir=/build
 prod_build=1
 build_only=0
 mkdir -p ${repodir}/brew ${repodir}/tito
@@ -51,18 +51,22 @@ done
 sudo bash -c "cat <<EOF > /etc/yum.repos.d/ss.repo
 [SS]
 name = ss
-baseurl = file:///${repodir}/tito
+baseurl = file://${repodir}/tito/rpms/fc16/x86_64
+gpgcheck=0
 enabled = 1
 
 [SSBrew]
 name = ssb
-baseurl = file:///${repodir}/brew
+baseurl = file://${repodir}/brew
 enabled = 1
+gpgcheck=0
 EOF"
 
 if [ "x${prod_build}x" == "x1x" ] ; then
   rm -f ${repodir}/tito/*.tar.gz
+  sudo setenforce 0
   mock -r fedora-16-x86_64 --resultdir=${repodir}/tito/rpms/"%(dist)s"/"%(target_arch)s"/ ${repodir}/tito/*.src.rpm
+  sudo setenforce 1
 else
   mkdir -p ${repodir}/tito/rpms/fc16/x86_64/
   cp ${repodir}/tito/noarch/*.rpm ${repodir}/tito/rpms/fc16/x86_64/

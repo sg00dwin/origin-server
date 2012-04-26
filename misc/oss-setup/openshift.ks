@@ -10,10 +10,10 @@ services --enabled=network,sshd --disabled=NetworkManager
 bootloader --append="biosdevname=0"
 
 repo --name=fedora --mirrorlist=http://mirrors.fedoraproject.org/mirrorlist?repo=fedora-$releasever&arch=$basearch
-repo --name=updates --mirrorlist=http://mirrors.fedoraproject.org/mirrorlist?repo=updates-released-f$releasever&arch=$basearch
-#repo --name=updates --baseurl=file:///build/update_repo
-repo --name=brew --baseurl=file:///home/kraman/brew
-repo --name=stickshift --baseurl=file:///home/kraman/tito/rpms/fc16/x86_64
+#repo --name=updates --mirrorlist=http://mirrors.fedoraproject.org/mirrorlist?repo=updates-released-f$releasever&arch=$basearch
+repo --name=updates --baseurl=file:///build/update_repo
+repo --name=brew --baseurl=file:///build/brew
+repo --name=stickshift --baseurl=file:///build/tito/rpms/fc16/x86_64
 repo --name=passenger --baseurl=http://passenger.stealthymonkeys.com/fedora/$releasever/$basearch
 
 %packages

@@ -1,7 +1,9 @@
 #!/bin/bash
 
-repodir="~"
+if [ "x`id -u`x" == "x0x" ] ; then echo "Must be non root user" ; exit -1 ; fi
 
+repodir=/build
+sudo rm -f /etc/yum.repos.d/ss.repo
 sudo yum install -y vim git wget tito ruby rubygems java-1.6.0-openjdk jpackage-utils java-1.6.0-openjdk-devel emacs fedora-kickstarts livecd-tools tig
 
 if [ ! -d ${repodir}/li ]; then
@@ -246,12 +248,13 @@ WAIT=1
 while [ 1 -eq $WAIT ] ; do fgrep "[initandlisten] waiting for connections" /var/log/mongodb/mongodb.log && WAIT=$? ; echo $WAIT ; sleep 1 ; done
 mongo localhost/stickshift_broker_dev --eval "db.addUser(\"stickshift\", \"mooo\")"
 
-DIR="$( cd -P "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-${DIR}/build.sh
+usermod -a -G mock $USER
+
+./build.sh
 
 #setup uplift-bind-plugin selinux policy
 sudo bash -c "mkdir -p /usr/share/selinux/packages/rubygem-uplift-bind-plugin"
-sudo bach -c "cp /usr/lib/ruby/gems/1.8/gems/uplift-bind-plugin-*/doc/examples/dhcpnamedforward.* /usr/share/selinux/packages/rubygem-uplift-bind-plugin/"
+sudo bash -c "cp /usr/lib/ruby/gems/1.8/gems/uplift-bind-plugin-*/doc/examples/dhcpnamedforward.* /usr/share/selinux/packages/rubygem-uplift-bind-plugin/"
 sudo bash -c "pushd /usr/share/selinux/packages/rubygem-uplift-bind-plugin/ && make -f /usr/share/selinux/devel/Makefile ; popd"
 sudo semodule -i /usr/share/selinux/packages/rubygem-uplift-bind-plugin/dhcpnamedforward.pp
 
@@ -275,14 +278,14 @@ nameserver 127.0.0.1
 }' /etc/resolv.conf
 
 # Set up the initial forwarder
-suso bash -c "echo 'forwarders { ${FORWARDER} ; } ;' > /var/named/forwarders.conf"
+sudo bash -c "echo 'forwarders { ${FORWARDER} ; } ;' > /var/named/forwarders.conf"
 
 # set SELinux label for forwarders file
 sudo restorecon -v /var/named/forwarders.conf
 
 # copy example.com. keys in place
 sudo cp /usr/lib/ruby/gems/1.8/gems/uplift-bind-plugin-*/doc/examples/Kexample.com.* /var/named
-KEY=$( grep Key: /var/named/Kexample.com.*.private | cut -d' ' -f 2 )
+KEY=$( sudo bash -c "grep Key: /var/named/Kexample.com.*.private | cut -d' ' -f 2" )
 
 sudo bash -c "cat <<EOF > /var/named/example.com.key
   key example.com {
@@ -328,4 +331,4 @@ EOF
 
 sudo fgrep GIT_SSH /etc/ssh/sshd_config
 if [ $? -eq 1 ] ; then sudo bash -c "echo 'AcceptEnv GIT_SSH' >> /etc/ssh/sshd_config" && sudo service sshd restart; fi
-ln -sf /usr/bin/sssh /usr/bin/rhcsh
+sudo ln -sf /usr/bin/sssh /usr/bin/rhcsh
