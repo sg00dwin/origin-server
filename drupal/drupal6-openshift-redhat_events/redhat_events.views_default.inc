@@ -340,7 +340,7 @@ function redhat_events_views_default_views() {
     'type' => 'none',
   ));
   $handler->override_option('title', 'Calendar');
-  $handler->override_option('header', '<ul class=\'forum-navigation-links\'>
+  $handler->override_option('header', '<ul class=\'nav nav-pills\'>
 <li><a href=\'events?sort=country\'>View By Country</a></li>
 <li><a href=\'events\'>View By Date</a></li>
 </ul>');
