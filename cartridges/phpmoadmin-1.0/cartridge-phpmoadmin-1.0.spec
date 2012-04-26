@@ -1,7 +1,7 @@
 %define cartridgedir %{_libexecdir}/stickshift/cartridges/embedded/phpmoadmin-1.0
 
 Name: cartridge-phpmoadmin-1.0
-Version: 0.10.0
+Version: 0.10.1
 Release: 1%{?dist}
 Summary: Embedded phpMoAdmin support for express
 
@@ -56,6 +56,9 @@ rm -rf $RPM_BUILD_ROOT
 %doc %{cartridgedir}/LICENSE
 
 %changelog
+* Thu Apr 26 2012 Adam Miller <admiller@redhat.com> 0.10.1-1
+- bumping spec versions (admiller@redhat.com)
+
 * Mon Apr 23 2012 Adam Miller <admiller@redhat.com> 0.9.5-1
 - remove php-devel as a dependency : for help in Zend work (rchopra@redhat.com)
 
