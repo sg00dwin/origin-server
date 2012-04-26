@@ -5,7 +5,7 @@
 
 Summary:        GearChanger plugin for m-colective service
 Name:           rubygem-%{gemname}
-Version: 0.9.0
+Version: 0.9.1
 Release:        1%{?dist}
 Group:          Development/Languages
 License:        ASL 2.0
@@ -70,6 +70,9 @@ rm -rf %{buildroot}
 %{ruby_sitelib}/%{gemname}.rb
 
 %changelog
+* Thu Apr 26 2012 Adam Miller <admiller@redhat.com> 0.9.1-1
+- bumping spec versions (admiller@redhat.com)
+
 * Tue Apr 24 2012 Adam Miller <admiller@redhat.com> 0.8.9-1
 - Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
   (rchopra@redhat.com)
