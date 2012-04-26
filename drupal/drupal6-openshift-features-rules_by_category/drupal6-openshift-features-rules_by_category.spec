@@ -5,7 +5,7 @@
 %global modname             rules_by_category
 
 Name:    drupal%{drupal_release}-openshift-features-%{modname}
-Version: 1.1.0
+Version: 1.1.1
 Release: 1%{?dist}
 Summary: Openshift Red Hat Custom Rules by Category Feature for Drupal6
 Group:   Applications/Publishing
@@ -41,6 +41,9 @@ rm -rf $RPM_BUILD_ROOT
 %{drupal_modules}/%{modname}
 
 %changelog
+* Thu Apr 26 2012 Adam Miller <admiller@redhat.com> 1.1.1-1
+- bumping spec versions (admiller@redhat.com)
+
 * Sat Apr 21 2012 Dan McPherson <dmcphers@redhat.com> 1.0.4-1
 - Merge commits dd5326df1f0d5bf05d51aeaae0cc4c457ba45816..ab1d91739634c80b3a9db
   5f468e5ceb277824c7d. Did not merge all of the changes made to core code -
