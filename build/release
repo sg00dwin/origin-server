@@ -29,23 +29,31 @@ class Release < Thor
         end
       end
     end
-    
-    def next_version(version)
+
+    def next_patch_version(version)
       last_index_of_dot = version.rindex('.')
       version[0..last_index_of_dot] + (version[last_index_of_dot+1..-1].to_i + 1).to_s
     end
-    
+
+    def next_minor_version(version)
+      index_of_dot = version.index('.')
+      second_index_of_dot = version.index('.', index_of_dot + 1)
+      last_index_of_dot = version.rindex('.')
+      if version[last_index_of_dot+1..-1].to_i > 1
+        version[0..index_of_dot] + (version[index_of_dot + 1..second_index_of_dot].to_i + 1).to_s + ".0"
+      end
+    end
+
     def get_version(file)
       version = /Version: *(.*)/.match(File.read(file))[1].strip
     end
-    
+
     def update_gemfile_version(spec_file, gem_name, gemfile, verbose)
       version = get_version(spec_file)
-      nv = next_version(version)
+      nv = next_patch_version(version)
       run("/bin/sed -i 's,#{gem_name} (.*,#{gem_name} (#{nv}),' #{gemfile}", :verbose => verbose)
-      gem_updates = true
     end
-    
+
     def get_updated_build_dirs(verbose, push_changes=false)
       gem_updates = false
       
@@ -142,7 +150,7 @@ class Release < Thor
       inside("../jenkins-plugin-openshift/") do
         FileUtils.cp "../jenkins-cloud/target/openshift.hpi", "./openshift.hpi"
         version = /^(Version: )(.*)/.match(File.read("jenkins-plugin-openshift.spec"))[2].strip
-        nv = next_version(version)
+        nv = next_patch_version(version)
         run("sed -i 's/Version:.*#{version}.*/Version: #{nv}/' jenkins-plugin-openshift.spec", :verbose => options.verbose?)
         date = `date +'%a %b %d %Y'`.chomp
         puts "sed -i 's/%changelog.*/%changelog\\n* #{date} #{committer_name} <#{committer_email}> - #{nv}\\n- #{commit_message}/' jenkins-plugin-openshift.spec"
@@ -241,6 +249,45 @@ class Release < Thor
 
     unless options.no_ami?
       create_ami options
+    end
+  end
+  
+  desc "bump_minor_versions", "Bump the minor version in all specs > .1 patch level"
+  method_option :push_changes, :type => :boolean, :desc => "Push the changes to the current branch"
+  method_option :verbose, :type => :boolean, :desc => "Enable verbose logging"
+  def bump_minor_versions
+    SIBLING_REPOS.each do |repo_name, repo_dirs|
+      repo_dirs.each do |repo_dir|
+        if File.exists?(repo_dir)
+          inside(repo_dir) do
+            run("git checkout master", :verbose => options.verbose?)
+          end
+          break
+        end
+      end
+    end
+    all_packages = get_packages
+    IGNORE_PACKAGES.each do |package|
+      all_packages.delete(package)
+    end
+    all_packages.each do |package_name, pkg|
+      build_dir = pkg[0]
+      spec_file = pkg[1]
+      version = get_version(spec_file)
+      new_version = next_minor_version(version)
+      run("/bin/sed -i 's,^Version:.*,Version: #{new_version},' #{spec_file}", :verbose => options[:verbose])
+    end
+    if options[:push_changes]
+      SIBLING_REPOS.each do |repo_name, repo_dirs|
+        repo_dirs.each do |repo_dir|
+          if File.exists?(repo_dir)
+            inside(repo_dir) do
+              run("git add *.spec; git commit -m 'bumping spec versions'; git push origin master", :verbose => options.verbose?)
+            end
+            break
+          end
+        end
+      end
     end
   end
   
