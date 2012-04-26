@@ -256,6 +256,7 @@ class Release < Thor
   method_option :push_changes, :type => :boolean, :desc => "Push the changes to the current branch"
   method_option :verbose, :type => :boolean, :desc => "Enable verbose logging"
   def bump_minor_versions
+    run("git checkout master", :verbose => options.verbose?)
     SIBLING_REPOS.each do |repo_name, repo_dirs|
       repo_dirs.each do |repo_dir|
         if File.exists?(repo_dir)
@@ -275,9 +276,10 @@ class Release < Thor
       spec_file = pkg[1]
       version = get_version(spec_file)
       new_version = next_minor_version(version)
-      run("/bin/sed -i 's,^Version:.*,Version: #{new_version},' #{spec_file}", :verbose => options[:verbose])
+      run("/bin/sed -i 's,^Version:.*,Version: #{new_version},' #{spec_file}", :verbose => options.verbose?)
     end
-    if options[:push_changes]
+    if options.push_changes?
+      run("git add *.spec; git commit -m 'bumping spec versions'; git push origin master", :verbose => options.verbose?)
       SIBLING_REPOS.each do |repo_name, repo_dirs|
         repo_dirs.each do |repo_dir|
           if File.exists?(repo_dir)
@@ -303,12 +305,12 @@ class Release < Thor
   no_tasks do
     def mash_and_rsync(tag_base, skip_gem, options)
       # Mash / RSync parameters
-      mash_config = (options[:stage] || options[:stage_all]) ? "#{tag_base}-stage" : "#{tag_base}-candidate"
+      mash_config = (options[:stage] || options.stage_all?) ? "#{tag_base}-stage" : "#{tag_base}-candidate"
       repo_host = "mirror1.stg.rhcloud.com"
       repo_dir = "/export/gpxe/trees"
       repo = "#{repo_host}:#{repo_dir}"
       rsync = nil
-      if options[:stage] || options[:stage_all]
+      if options[:stage] || options.stage_all?
         rsync = "rsync -aHv --progress --no-g --omit-dir-times --chmod=Dug=rwX"
       else
         rsync = "rsync -aHv --delete-after --progress --no-g --omit-dir-times --chmod=Dug=rwX"
@@ -346,7 +348,7 @@ class Release < Thor
       end
   
       # See if we are doing a stage sync - if so, tag the packages listed
-      if (options[:stage] and !options[:stage].empty?) or options[:stage_all]
+      if (options[:stage] and !options[:stage].empty?) or options.stage_all?
 
         all_packages = get_packages
         nvr_regex = /(.*)-(\d+)\.(\d+)\.(\d+)-?(\d)?/
