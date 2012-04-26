@@ -8,7 +8,7 @@
 
 Summary:   Dependencies for OpenShift development
 Name:      rhc-devenv
-Version: 0.93.1
+Version: 0.93.2
 Release:   1%{?dist}
 Group:     Development/Libraries
 License:   GPLv2
@@ -405,6 +405,12 @@ echo "Header append Strict-Transport-Security includeSubDomains" >> /etc/httpd/c
 %{policydir}/*
 
 %changelog
+* Thu Apr 26 2012 Adam Miller <admiller@redhat.com> 0.93.2-1
+- Security - added info to change log for RKHunter and OpenSCAP  04 26 2012
+  (tkramer@redhat.com)
+- Security - Added two sections for security tools RKHunter and OpenSCAP 04 26
+  2012 (tkramer@redhat.com)
+
 * Thu Apr 26 2012 Tim Kramer <tkramer@redhat.com)
 - Added security requirements for RKHunter and OpenSCAP
 
