@@ -96,7 +96,7 @@ rm -rf /root/li; git clone --bare git://git1.ops.rhcloud.com/li.git/ /root/li
       end
     end
 
-    def update_remote_tests(hostname, branch="")
+    def update_remote_tests(hostname, branch=nil)
       print "Updating remote tests..."
       all_repo_dirs = ['/root/li']
       SIBLING_REPOS.each do |repo_name, repo_dirs|
@@ -109,7 +109,7 @@ rm -rf /root/li; git clone --bare git://git1.ops.rhcloud.com/li.git/ /root/li
       end
       git_archive_commands = ''
       all_repo_dirs.each do |repo_dir|
-        git_archive_commands += "pushd #{repo_dir} > /dev/null; git archive #{branch} --prefix li-test/ --format=tar HEAD | (cd /root && tar --warning=no-timestamp -xf -); popd > /dev/null; "
+        git_archive_commands += "pushd #{repo_dir} > /dev/null; git archive --prefix li-test/ --format=tar #{branch ? branch : 'HEAD'} | (cd /root && tar --warning=no-timestamp -xf -); popd > /dev/null; "
       end
       ssh(hostname, %{
 rm -rf /root/li-test
