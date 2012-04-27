@@ -37,7 +37,7 @@ def migrate_gear(rhlogin, app_name, gear_uuid)
           end
         end
         if gear
-          server_identity = app.gear.server_identity
+          server_identity = gear.server_identity
           begin
             Timeout::timeout(360) do
               GearChanger::MCollectiveApplicationContainerProxy.rpc_exec('libra', server_identity) do |client|

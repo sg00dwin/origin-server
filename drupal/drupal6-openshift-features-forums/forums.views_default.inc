@@ -1323,6 +1323,24 @@ print $data->node_comment_statistics_last_comment_uid;
   $view->api_version = '2';
   $view->disabled = FALSE; /* Edit this to true to make a default view disabled initially */
   $handler = $view->new_display('default', 'Defaults', 'default');
+  $handler->override_option('relationships', array(
+    'votingapi_cache' => array(
+      'label' => 'Vote results',
+      'required' => 1,
+      'votingapi' => array(
+        'value_type' => 'points',
+        'tag' => 'vote',
+        'function' => 'sum',
+      ),
+      'id' => 'votingapi_cache',
+      'table' => 'node',
+      'field' => 'votingapi_cache',
+      'override' => array(
+        'button' => 'Override',
+      ),
+      'relationship' => 'none',
+    ),
+  ));
   $handler->override_option('fields', array(
     'nid' => array(
       'label' => '',
@@ -1594,6 +1612,13 @@ print $data->node_comment_statistics_last_comment_uid;
       'relationship' => 'votingapi_cache',
     ),
   ));
+  $handler->override_option('arguments', array(
+    'group_nid' => array(
+      'id' => 'group_nid',
+      'table' => 'og_ancestry',
+      'field' => 'group_nid',
+    ),
+  ));
   $handler->override_option('filters', array(
     'created' => array(
       'operator' => '>',
@@ -1647,6 +1672,7 @@ print $data->node_comment_statistics_last_comment_uid;
   $handler->override_option('block_description', '');
   $handler->override_option('block_caching', -1);
   $handler = $view->new_display('block', 'Recent Threads', 'block_2');
+  $handler->override_option('relationships', array());
   $handler->override_option('fields', array(
     'nid' => array(
       'label' => '',
@@ -1905,6 +1931,7 @@ print $data->node_comment_statistics_last_comment_uid;
   $handler->override_option('block_description', '');
   $handler->override_option('block_caching', -1);
   $handler = $view->new_display('block', 'Active Threads', 'block_3');
+  $handler->override_option('relationships', array());
   $handler->override_option('fields', array(
     'nid' => array(
       'label' => '',
@@ -2144,6 +2171,7 @@ print $data->node_comment_statistics_last_comment_uid;
   $handler->override_option('block_description', '');
   $handler->override_option('block_caching', -1);
   $handler = $view->new_display('block', 'Recent Threads by Group', 'block_4');
+  $handler->override_option('relationships', array());
   $handler->override_option('fields', array(
     'nid' => array(
       'label' => '',
@@ -2448,6 +2476,7 @@ print $data->node_comment_statistics_last_comment_uid;
   $handler->override_option('block_description', '');
   $handler->override_option('block_caching', -1);
   $handler = $view->new_display('block', 'Recent Threads by User', 'block_5');
+  $handler->override_option('relationships', array());
   $handler->override_option('fields', array(
     'title' => array(
       'label' => '',
@@ -2834,15 +2863,17 @@ print $data->node_comment_statistics_last_comment_uid;
         'button' => 'Use default',
       ),
     ),
-    'created' => array(
+    'last_updated' => array(
       'label' => '',
       'alter' => array(
         'alter_text' => 0,
         'text' => '',
         'make_link' => 0,
         'path' => '',
+        'absolute' => 0,
         'link_class' => '',
         'alt' => '',
+        'rel' => '',
         'prefix' => '',
         'suffix' => '',
         'target' => '',
@@ -2857,16 +2888,17 @@ print $data->node_comment_statistics_last_comment_uid;
       'empty' => '',
       'hide_empty' => 0,
       'empty_zero' => 0,
+      'hide_alter_empty' => 1,
       'date_format' => 'time ago',
       'custom_date_format' => '1',
       'exclude' => 0,
-      'id' => 'created',
-      'table' => 'node',
-      'field' => 'created',
-      'relationship' => 'none',
+      'id' => 'last_updated',
+      'table' => 'node_comment_statistics',
+      'field' => 'last_updated',
       'override' => array(
         'button' => 'Use default',
       ),
+      'relationship' => 'none',
     ),
   ));
   $handler->override_option('sorts', array(
