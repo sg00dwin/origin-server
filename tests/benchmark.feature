@@ -54,9 +54,9 @@ Feature: Application Benchmark Tests
     |     type     |   num   |
     |  php-5.3     |   1     |
     |  php-5.3     |   4     |
-#    |  ruby-1.8    |   1     |
-#    |  python-2.6  |   1     |
-#    |  perl-5.10   |   1     |
+    |  ruby-1.8    |   1     |
+    |  python-2.6  |   1     |
+    |  perl-5.10   |   1     |
     |  jbossas-7   |   1     |
     |  jbossas-7   |   2     |
     |  jbossas-7   |   3     |
