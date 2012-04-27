@@ -39,9 +39,9 @@ Feature: Application Benchmark Tests
 #    |  jenkins-1.4 |
 #    |  diy-0.1     |
 
-  Scenario: Generate Monotonically Creating Applications Benchmark Report
-    Given an accepted node
-    Then generate the monotonically creating applications benchmark report
+#  Scenario: Generate Monotonically Creating Applications Benchmark Report
+#    Given an accepted node
+#    Then generate the monotonically creating applications benchmark report
 
 
   Scenario Outline: Scaled Application Creation
