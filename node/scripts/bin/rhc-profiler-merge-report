@@ -7,6 +7,7 @@
 
 require 'rubygems'
 require 'time'
+require 'date'
 require 'optparse'
 require 'json'
 require 'zlib'
@@ -34,7 +35,7 @@ end
 class InfoMatchers
   @@CARTRIDGES = ['php-5.3', 'ruby-1.8', 'python-2.6', 'perl-5.10', 'jbossas-7', 
                   'nodejs-0.6', 'jenkins-1.4', 'diy-0.1']
-  @@LEGACY_ACTIONS = ['configure']
+  @@LEGACY_ACTIONS = ['configure', 'deconfigure']
   @@LEGACY_MATCH = Regexp.new('^legacy_(.*)_(.*)$')
 
   @@REST_ACTIONS = []
@@ -44,7 +45,10 @@ class InfoMatchers
 
   # legacy_jenkins-1.4_configure
   def initialize(filter)
-    if m = @@LEGACY_MATCH.match(filter)
+    @filter_name = filter
+    if filter == "all"
+      @filter = {}
+    elsif m = @@LEGACY_MATCH.match(filter)
       @filter = legacy_filter(m[1], m[2])
     elsif m = @@REST_MATCH.match(filter)
       @filter = rest_filter()
@@ -53,12 +57,17 @@ class InfoMatchers
     end
   end
 
+  def to_s
+    @filter_name
+  end
+
   def to_hash
     @filter
   end
 
   def self.filters
-    @@CARTRIDGES.product(@@LEGACY_ACTIONS).map { |f| "legacy_#{f[0]}_#{f[1]}" } +
+    [ 'all' ] + 
+      @@CARTRIDGES.product(@@LEGACY_ACTIONS).map { |f| "legacy_#{f[0]}_#{f[1]}" } +
       @@REST_ACTIONS.map { |f| "rest_#{f}" }
   end
 
@@ -85,7 +94,7 @@ end
 
 
 class InfoChunk
-  attr_accessor :data, :stamp, :profile, :timestamp, :endstamp
+  attr_accessor :data, :stamp, :profile, :timestamp, :endstamp, :duration
   
   @@NAMEMATCH=Regexp.new('^profiler-info-([\d\-]+)\.json(\..*|)$')
   @@GLOB="profiler-info-*.json*"
@@ -109,8 +118,9 @@ class InfoChunk
 
     opener.open(jfile) { |f| @data = JSON.parse f.read }
 
-    @timestamp = Time.parse(@data['TIMESTAMP'])
-    @endstamp = Time.parse(@data['ENDSTAMP'])
+    @timestamp = Time.at(@data['TIMESTAMP_F'])
+    @endstamp = Time.at(@data['ENDSTAMP_F'])
+    @duration = @data['DURATION']
   end
 
   def include?(other)
@@ -143,23 +153,27 @@ class McollectiveLog
 
     def initialize(type, timestamp)
       @type = type
-      @timestamp = Time.parse(timestamp)
+      @timestamp = timestamp
     end
 
     def duration
-      (@endstamp - @timestamp)
+      @endstamp - @timestamp
     end
   end
 
 
   class McFile
-    attr_accessor :handle, :timestamp
+    attr_accessor :filename, :handle, :timestamp, :zone
 
     @@STAMPMATCH = Regexp.new('\# Logfile created on (.*) by logger.rb')
 
     def initialize(filename)
-      @handle = File.open(filename) 
-      @timestamp = Time.parse(@@STAMPMATCH.match(@handle.gets)[1])
+      @filename = filename
+      @handle = File.open(filename)
+
+      stamp=@@STAMPMATCH.match(@handle.gets)[1]
+      @timestamp = Time.parse(stamp)
+      @zone = DateTime.parse(stamp).strftime('%z')
     end
 
     def <=>(other)
@@ -184,23 +198,51 @@ class McollectiveLog
       f = rf.handle
       while line = f.gets do
         if (m = @@REQBEGIN.match(line))
-          tentries << McEntry.new(m[2], m[1])
+          tentries << McEntry.new(m[2], Time.parse(m[1] + " " + rf.zone))
         elsif (m = @@REQACTION.match(line))
-          if not tentries[-1].action_call.nil?
-            tentries << tentries[-1].clone
+          if not tentries.last.action_call.nil?
+            tentries << McEntry.new(tentries.last.type, tentries.last.timestamp)
           end
-          tentries[-1].action_call = m[1]
+          tentries.last.action_call = m[1]
         elsif (m = @@REQCART.match(line))
           if not tentries.last.action_cart.nil?
-            tentries << tentries[-1].clone
+            tentries << McEntry.new(tentries.last.type, tentries.last.timestamp)
           end
           tentries.last.action_cart = m[1]
         elsif (m = @@REQEND.match(line))
-          tentries.first.endstamp = Time.parse(m[1])
-          @entries << tentries.shift
+          if not tentries.first.nil?
+            tentries.first.endstamp = Time.parse(m[1] + " " + rf.zone)
+            @entries << tentries.shift
+          end
         end
       end
+      f.close
     end
+  end
+
+  def filter(timestamp, endstamp)
+    newinst = self.clone
+    newinst.entries = self.entries.select do |item|
+      ((item.timestamp >= timestamp ) and (item.endstamp <= endstamp))
+    end
+    newinst
+  end
+
+  def length
+    @entries.length
+  end
+
+  def report
+    results={}
+    @entries.each do |entry|
+      name = "#{entry.type} #{entry.action_cart} #{entry.action_call}"
+      if results[name].nil?
+        results[name]={:count => 0, :total => 0}
+      end
+      results[name][:count] += 1
+      results[name][:total] += entry.duration
+    end
+    results
   end
 
 end
@@ -213,7 +255,7 @@ OptionParser.new do |opts|
     $options[:verbose] = v
   end
 
-  $options[:filter] = 'legacy_jbossas-7_configure'
+  $options[:filter] = InfoMatchers.new('all')
   opts.on('-f', '--filter NAME', 'filter for this type of event') do |ts|
     begin
       $options[:filter] = InfoMatchers.new(ts)
@@ -241,12 +283,37 @@ if $options[:verbose]
 end
 
 
-mcents = McollectiveLog.new($options[:dir]).entries
+mcents = McollectiveLog.new($options[:dir])
+puts "Mcollective Events: #{mcents.length}" if $options[:verbose]
 
-
-InfoChunk.myfiles($options[:dir]).each do |testfile|
+InfoChunk.myfiles($options[:dir]).sort.each do |testfile|
   chunk = InfoChunk.new(testfile)
   if chunk.include? $options[:filter].to_hash
-    puts testfile
+    puts "---------------------------------------------------------------------------------------"
+    filtmatch = []
+    InfoMatchers.filters.each do |filt|
+      if filt != 'all'
+        if chunk.include? InfoMatchers.new(filt).to_hash
+          filtmatch << filt
+        end
+      end
+    end
+    puts "Filters: " + filtmatch.join(", ")
+
+    puts "Info file: #{testfile}"
+    puts "Call Graph: #{chunk.profile}"
+    puts "Duration: #{chunk.duration}"
+
+    mymcents = mcents.filter(chunk.timestamp, chunk.endstamp)
+    puts "Mcollective summary: #{mymcents.length} events"
+    if mymcents.length > 0
+      printf("%12s: %5s: %s\n", " Total (s) ", "  N  ", "           Event                          ")
+      printf("%12s: %5s: %s\n", "-----------", "-----", "------------------------------------------")
+
+      sprof = mymcents.report.sort_by {|key, value| value[:total]}
+      sprof.reverse.each do |profent|
+        printf("% 12.6f: %5d: %s\n", profent[1][:total], profent[1][:count], profent[0])
+      end
+    end
   end
 end
