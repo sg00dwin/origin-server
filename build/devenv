@@ -294,9 +294,6 @@ mkdir -p /tmp/rhc/junit
 
     def test_instance(tag, hostname, instance, conn, options, image_id=nil)
       begin
-        unless options.official?
-          use_private_ip(hostname)
-        end
 
         disable_charlie(hostname) if options.disable_charlie?
         
@@ -432,7 +429,6 @@ mkdir -p /tmp/rhc/junit
           end
         elsif !options.terminate?
           idle_all_gears(hostname)
-          use_public_ip(hostname, options.public_hostname?)
         end
 
         broker_profiler(hostname, enable=false) if options.profile_broker?
@@ -706,9 +702,6 @@ mkdir -p /tmp/rhc/junit
   desc "sync NAME", "Synchronize a local git repo with a remote DevEnv instance.  NAME should be ssh resolvable."
   method_option :tag, :type => :boolean, :desc => "NAME is an Amazon tag"
   method_option :verbose, :type => :boolean, :desc => "Enable verbose logging"
-  method_option :verifier, :type => :boolean, :desc => "Maintain verifier functionality (private IP setup)"
-  method_option :public_hostname, :type => :boolean, :default => false, :desc => "Embed the public hostname rather than the ssh hostname"
-  method_option :private_hostname, :type => :boolean, :default => false, :desc => "Embed the ssh hostname rather than the public hostname"
   method_option :skip_build, :type => :boolean, :desc => "Indicator to skip the rpm build/install"
   method_option :clean_metadata, :type => :boolean, :desc => "Cleans metadata before running yum commands"
   method_option :region, :required => false, :desc => "Amazon region override (default us-east-1)"
@@ -777,22 +770,6 @@ rm -rf li-working #{working_dirs}
       end
       puts "Done"
     end
-
-    # If this is a verifier, you'll need to reset the private ip setup on each sync
-    if options.verifier?
-      if options.public_hostname?
-        use_public_ip(hostname)
-      elsif options.private_hostname?
-        use_private_ip(hostname)
-      else
-        update_facts(hostname)
-      end
-    else
-      #use_public_ip(hostname)
-      update_facts(hostname)
-    end
-    
-    run_libra_data(hostname)
   end
 
   desc "terminate TAG", "Terminates the instance with the specified tag"
@@ -808,8 +785,6 @@ rm -rf li-working #{working_dirs}
 
   desc "launch NAME", "Launches the latest DevEnv instance, tagging with NAME"
   method_option :verifier, :type => :boolean, :desc => "Add verifier functionality (private IP setup and local tests)"
-  method_option :public_hostname, :type => :boolean, :default => false, :desc => "Embed the public hostname rather than the ssh hostname"
-  method_option :private_hostname, :type => :boolean, :default => false, :desc => "Embed the ssh hostname"
   method_option :use_stage_image, :type => :boolean, :desc => "Launch a stage DevEnv image"
   method_option :use_clean_image, :type => :boolean, :desc => "Launch a clean DevEnv image"
   method_option :verbose, :type => :boolean, :desc => "Enable verbose logging"
@@ -858,15 +833,9 @@ rm -rf li-working #{working_dirs}
     sleep 30
     puts "Done"
 
-    if options.verifier?
-      if options.public_hostname?
-        use_public_ip(hostname)
-      elsif options.private_hostname?
-        use_private_ip(hostname)
-      else
-        update_facts(hostname)
-      end
+    update_facts(hostname)
 
+    if options.verifier?
       if options.init_repo?
         print "Initializing git repo for syncing..."
         init_repo(hostname)
@@ -875,11 +844,7 @@ rm -rf li-working #{working_dirs}
       else
         scp_remote_tests(hostname)
       end
-    else
-      update_facts(hostname)
     end
-
-    run_libra_data(hostname)
 
     validate_instance(hostname)
 
@@ -929,7 +894,6 @@ END
       public_ip = instance.public_ip_address
       puts "Updating ~/.openshift/express.conf libra_server entry with public ip = #{public_ip}"
       `sed -i -e 's,^libra_server.*,libra_server=#{public_ip},' ~/.openshift/express.conf`
-      #use_public_ip(hostname, options.public_hostname?)
     end
 
     home_dir=File.join(ENV['HOME'], '.openshiftdev/home.d')

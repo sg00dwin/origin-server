@@ -12,22 +12,16 @@ module OpenShift
 
     def get_build_dirs
       # Figure out what needs to be built
-      packages = `tito report --untagged-commits`
+      li_repo = {'li' => [FileUtils.pwd]}
+      repos = li_repo.merge(SIBLING_REPOS)
+
       all_packages = get_packages
       build_dirs = []
-      packages.split("\n").collect do |package|
-        if package =~ PACKAGE_REGEX
-          pkg = $1
-          unless IGNORE_PACKAGES.include?(pkg)
-            build_dirs << [pkg, all_packages[pkg][0], all_packages[pkg][1]]
-          end
-        end
-      end
-      SIBLING_REPOS.each do |repo_name, repo_dirs|
+      repos.each do |repo_name, repo_dirs|
         repo_dirs.each do |repo_dir|
           if File.exists?(repo_dir)
             packages = `cd #{repo_dir} && tito report --untagged-commits`
-            packages.split("\n").collect do |package|
+            packages.split("\n").each do |package|
               if package =~ PACKAGE_REGEX
                 pkg = $1
                 unless IGNORE_PACKAGES.include?(pkg)
@@ -47,56 +41,42 @@ module OpenShift
       tito_report = `tito report --untagged-commits`
       current_package = nil
       FileUtils.mkdir_p "/tmp/devenv/sync/"
-      current_package_contents = ''
-      current_package = nil
-      current_sync_dir = nil
       sync_dirs = []
-      packages = tito_report.split("\n")
+      li_repo = {'li' => [FileUtils.pwd]}
+      repos = li_repo.merge(SIBLING_REPOS)
+      puts repos
       all_packages = get_packages
-      packages.each do |package|
-        if package =~ DEVENV_REGEX
-          puts "The devenv package has an update but isn't being installed."
-        elsif package =~ PACKAGE_REGEX
-          pkg = $1
-          unless IGNORE_PACKAGES.include?(pkg)
-            current_package = pkg
-            current_sync_dir = all_packages[current_package][0]
-          end
-        elsif package =~ /---------------------/
-          if current_package
-            update_sync_history(current_package, current_package_contents, current_sync_dir, sync_dirs)
-            current_package_contents = ''
-            current_package = nil
-            current_sync_dir = nil
-          end
-        end
-        current_package_contents += package if current_package
-      end
-      update_sync_history(current_package, current_package_contents, current_sync_dir, sync_dirs) if current_package
-      current_package_contents = ''
-      current_package = nil
-      current_sync_dir = nil
-      sync_dirs.compact!
-      SIBLING_REPOS.each do |repo_name, repo_dirs|
+      repos.each do |repo_name, repo_dirs|
+        current_package_contents = ''
+        current_package = nil
+        current_sync_dir = nil
         repo_dirs.each do |repo_dir|
           if File.exists?(repo_dir)
             packages = `cd #{repo_dir} && tito report --untagged-commits`
-            packages.split("\n").collect do |package|
-              if package =~ PACKAGE_REGEX
+            packages.split("\n").each do |package|
+              if package =~ DEVENV_REGEX
+                puts "The devenv package has an update but isn't being installed."
+              elsif package =~ PACKAGE_REGEX
                 pkg = $1
                 unless IGNORE_PACKAGES.include?(pkg)
                   current_package = pkg
                   current_sync_dir = all_packages[pkg][0]
                 end
+              elsif package =~ /---------------------/
+                if current_package
+                  update_sync_history(current_package, current_package_contents, current_sync_dir, sync_dirs)
+                  current_package_contents = ''
+                  current_package = nil
+                end
               end
-              current_package_contents += package if current_sync_dir
+              current_package_contents += package if current_package
             end
             update_sync_history(current_package, current_package_contents, current_sync_dir, sync_dirs) if current_package
-            sync_dirs.compact!
             break
           end
         end
       end
+      sync_dirs.compact!
       sync_dirs
     end
 

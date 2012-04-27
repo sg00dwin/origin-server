@@ -280,29 +280,23 @@ module OpenShift
       puts "Updating instance facts with private ip #{private_ip}"
       set_instance_ip(hostname, private_ip, private_ip)
     end
-    
-    def run_libra_data(hostname)
-      print "Running libra-data to set the public ip..."
-      ssh(hostname, "service libra-data start")
-      puts 'Done'
-    end
 
-    def use_public_ip(hostname, use_hostname=false)
+    def use_public_ip(hostname)
       dhostname = ssh(hostname, "wget -qO- http://169.254.169.254/latest/meta-data/public-hostname")
       public_ip = ssh(hostname, "wget -qO- http://169.254.169.254/latest/meta-data/public-ipv4")
-      public_ip = dhostname unless use_hostname
       puts "Updating instance facts with public ip #{public_ip} and hostname #{dhostname}"
-      set_instance_ip(hostname,public_ip,dhostname)
+      set_instance_ip(hostname, public_ip, dhostname)
     end
-    
+
     def get_internal_hostname(hostname)
       internal_hostname = ssh(hostname, "hostname")
       internal_hostname
     end
 
     def update_facts(hostname)
-      puts "Updating instance facts"
-      ssh(hostname, "sed -i \"s/.*PUBLIC_IP_OVERRIDE.*/#PUBLIC_IP_OVERRIDE=/g\" /etc/stickshift/stickshift-node.conf; sed -i \"s/.*PUBLIC_HOSTNAME_OVERRIDE.*/#PUBLIC_HOSTNAME_OVERRIDE=/g\" /etc/stickshift/stickshift-node.conf; /usr/libexec/mcollective/update_yaml.rb > /etc/mcollective/facts.yaml")
+      puts "Updating instance facts and running libra-data to set the public ip..."
+      ssh(hostname, "sed -i \"s/.*PUBLIC_IP_OVERRIDE.*/#PUBLIC_IP_OVERRIDE=/g\" /etc/stickshift/stickshift-node.conf; sed -i \"s/.*PUBLIC_HOSTNAME_OVERRIDE.*/#PUBLIC_HOSTNAME_OVERRIDE=/g\" /etc/stickshift/stickshift-node.conf; /usr/libexec/mcollective/update_yaml.rb > /etc/mcollective/facts.yaml; service libra-data start")
+      puts 'Done'
     end
     
     def set_instance_ip(hostname, ip, dhostname)
