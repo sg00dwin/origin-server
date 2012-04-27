@@ -41,7 +41,8 @@ class TermsController < SiteController
     @user = session_user
     @term = Term.new
     if @user
-      logger.debug "Accepting terms for user #{@user.pretty_inspect}"
+      # removed for now (undefined pretty_inspect)
+      # logger.debug "Accepting terms for user #{@user.pretty_inspect}"
 
       if !@user.roles.index('simple_authenticated')
         @show_captcha = true
