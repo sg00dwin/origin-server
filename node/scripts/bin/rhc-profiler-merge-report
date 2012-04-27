@@ -36,33 +36,29 @@ class InfoMatchers
   @@CARTRIDGES = ['php-5.3', 'ruby-1.8', 'python-2.6', 'perl-5.10', 'jbossas-7', 
                   'nodejs-0.6', 'jenkins-1.4', 'diy-0.1']
 
-  @@filters = nil
+  @@FILTERS =  {
+    'all'                   => {},
+    'legacy_user_info_post' => { "PARAMS" => { "controller" => "legacy_broker", "action" => "user_info_post" } },
+    'legacy_domain_post'    => { "PARAMS" => { "controller" => "legacy_broker", "action" => "domain_post" } },
+    'legacy_deconfigure'    => { "PARAMS" => { "controller" => "legacy_broker", "action" => "cartridge_post", "json_data" => { "action" => "deconfigure" } } },
+    'legacy_configure'      => { "PARAMS" => { "controller" => "legacy_broker", "action" => "cartridge_post", "json_data" => { "action" => "configure" } } },
+    'scale_up'              => { "PARAMS" => { "controller" => "app_events", "action" => "create", "event" => "scale-up" } },
+    'scale_down'            => { "PARAMS" => { "controller" => "app_events", "action" => "create", "event" => "scale-down" } },
+    'create'                => { "PARAMS" => { "controller" => "applications", "action" => "create" } },
+    'create_scaled'         => { "PARAMS" => { "controller" => "applications", "action" => "create", "scale" => "true" } } }
+  @@FILTERS.merge!(Hash[*@@CARTRIDGES.collect { |c| ["legacy_configure_#{c}",  
+                                                     { "PARAMS" => { "controller" => "legacy_broker", "action" => "cartridge_post", "json_data" => 
+                                                         { "action" => "configure", "cartridge"  => c } } } ] }.flatten])
+  @@FILTERS.merge!(Hash[*@@CARTRIDGES.collect { |c| ["create_#{c}",  { "PARAMS" => { "controller" => "applications", "action" => 
+                                                         "create", "cartridge" => c } }] }.flatten])
+  @@FILTERS.merge!(Hash[*@@CARTRIDGES.collect { |c| ["create_scaled_#{c}",  { "PARAMS" => { "controller" => "applications", "action" => 
+                                                         "create", "scale" => "true", "cartridge" => c } }] }.flatten])
+
 
   class Error < StandardError; end
 
   def initialize(filter)
     @filter=filter
-
-    if @@filters.nil?
-      @@filters = {
-        'all'                   => {},
-        'legacy_user_info_post' => { "PARAMS" => { "controller" => "legacy_broker", "action" => "user_info_post" } },
-        'legacy_domain_post'    => { "PARAMS" => { "controller" => "legacy_broker", "action" => "domain_post" } },
-        'legacy_deconfigure'    => { "PARAMS" => { "controller" => "legacy_broker", "action" => "cartridge_post", "json_data" => { "action" => "deconfigure" } } },
-        'legacy_configure'      => { "PARAMS" => { "controller" => "legacy_broker", "action" => "cartridge_post", "json_data" => { "action" => "configure" } } },
-        'scale_up'              => { "PARAMS" => { "controller" => "app_events", "action" => "create", "event" => "scale-up" } },
-        'scale_down'            => { "PARAMS" => { "controller" => "app_events", "action" => "create", "event" => "scale-down" } },
-        
-        'create'                => { "PARAMS" => { "controller" => "applications", "action" => "create" } },
-        'create_scaled'         => { "PARAMS" => { "controller" => "applications", "action" => "create", "scale" => "true" } } }
-      @@filters.merge!(Hash[*@@CARTRIDGES.collect { |c| ["legacy_configure_#{c}",  
-                                                        { "PARAMS" => { "controller" => "legacy_broker", "action" => "cartridge_post", "json_data" => 
-                                                            { "action" => "configure", "cartridge"  => c } } } ] }.flatten])
-      @@filters.merge!(Hash[*@@CARTRIDGES.collect { |c| ["create_#{c}",  { "PARAMS" => { "controller" => "applications", "action" => 
-                                                             "create", "cartridge" => c } }] }.flatten])
-      @@filters.merge!(Hash[*@@CARTRIDGES.collect { |c| ["create_scaled_#{c}",  { "PARAMS" => { "controller" => "applications", "action" => 
-                                                            "create", "scale" => "true", "cartridge" => c } }] }.flatten])
-    end
   end
 
   def to_s
@@ -70,11 +66,11 @@ class InfoMatchers
   end
 
   def to_hash
-    @@filters[@filter]
+    @@FILTERS[@filter]
   end
 
   def self.filters
-    @@filters.keys.sort
+    @@FILTERS.keys.sort
   end
 
 end
@@ -243,10 +239,10 @@ OptionParser.new do |opts|
     $options[:verbose] = v
   end
 
-  $options[:filter] = InfoMatchers.new('all')
-  opts.on('-f', '--filter NAME', 'filter for this type of event') do |ts|
+  $options[:filter] = []
+  opts.on('-f', '--filter NAME,NAME,...', Array, 'filter(s) to search events') do |ts|
     begin
-      $options[:filter] = InfoMatchers.new(ts)
+      $options[:filter] = ts.map { |t| InfoMatchers.new(t) }
     rescue InfoMatchers::Error => e
       puts e
       exit 1
@@ -270,13 +266,18 @@ if $options[:verbose]
   $stderr.puts "Directory: #{$options[:dir]}"
 end
 
+if $options[:filter].length == 0
+  $options[:filter] = [InfoMatchers.new('all')]
+end
 
 mcents = McollectiveLog.new($options[:dir])
 puts "Mcollective Events: #{mcents.length}" if $options[:verbose]
 
 InfoChunk.myfiles($options[:dir]).sort.each do |testfile|
   chunk = InfoChunk.new(testfile)
-  if chunk.include? $options[:filter].to_hash
+  matched = false
+  $options[:filter].each { |f| matched = true if chunk.include? f.to_hash }
+  if matched
     puts "---------------------------------------------------------------------------------------"
     filtmatch = []
     InfoMatchers.filters.each do |filt|
