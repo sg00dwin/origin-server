@@ -552,6 +552,10 @@ h1.ribbon {
   a:visited { color: #EB0011; }
 }
 
+.well {
+	background-color:$grayLighter;
+  @include box-shadow(0 1px 1px rgba(0, 0, 0, 0.15) inset);
+	}
 .info-ribbon .well {
   color: black;
 
