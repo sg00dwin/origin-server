@@ -1365,7 +1365,7 @@ module GearChanger
             rpc_client.disconnect
           end
         }
-#TODO Identity doesn't really seem to handle multiple
+#TODO Identity doesn't really seem to handle multiple until 1.3: http://projects.puppetlabs.com/issues/8466
 =begin
         begin
           options = MCollectiveApplicationContainerProxy.rpc_options
