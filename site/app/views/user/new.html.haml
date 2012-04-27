@@ -1,4 +1,7 @@
 - content_for :ribbon, 'Sign up for OpenShift'
+-# content_for :javascripts do
+  :javascript
+    jQuery('[data-unhide]').click(data_unhide);
 
 #new-user
   = semantic_form_for @user, :url => account_path, :simple => true, :html => {:class => 'form-horizontal'} do |form|
@@ -11,13 +14,14 @@
       = form.input :password_confirmation, :input_html => { :class => 'input-xlarge', :autocomplete => 'off', :placeholder => 'Enter it again', :maxlength => '50' }
 
       - if @user.promo_code.nil?
-        .control-group
+        .control-group{:'data-hide-parent' => '1'}
           .controls
-            =link_to 'Have a promo code to enter?', 
-              new_account_path(:web_user => {:promo_code => ' '}),
-              :style => 'font-size: 14px;', 
-              :title => "Don't worry if you don't have one - I never got one either"
-      - else
+            = link_to 'Have a promo code to enter?',
+                new_account_path(:web_user => {:promo_code => ' '}),
+                :style => 'font-size: 14px;',
+                :'data-unhide' => '#promo_code'
+
+      #promo_code{:class => @user.promo_code.nil? ? 'hidden' : ''}
         = form.input :promo_code, :label => 'Promotional Code', :required => false, :input_html => { :class => 'input-xlarge' }
 
     = form.inputs do

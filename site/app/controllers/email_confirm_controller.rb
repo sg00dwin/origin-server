@@ -26,6 +26,7 @@ class EmailConfirmController < SiteController
 
     redirect_path ||=
       login_path(
+        :confirm_signup => true,
         :email_address => email,
         :redirect => default_after_signup_redirect
       )

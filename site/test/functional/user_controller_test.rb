@@ -56,6 +56,12 @@ class UserControllerTest < ActionController::TestCase
     assert_redirected_to complete_account_path
   end
 
+  test "should get promo code redirect on post" do
+    post(:create, {:web_user => get_post_form.merge!(:promo_code => 'a')})
+    assert assigns(:user).errors.empty?
+    assert_redirected_to complete_account_path(:promo_code => 'a')
+  end
+
   test "should ignore captcha non-integrated environment" do
     Rails.configuration.expects(:integrated).never
     @controller.expects(:verify_recaptcha).once
@@ -124,7 +130,7 @@ class UserControllerTest < ActionController::TestCase
     assert assigns(:user)
     assert session[:promo_code] == "promo1"
 
-    assert_redirected_to complete_account_path
+    assert_redirected_to complete_account_path(:promo_code => 'promo1')
   end
 
   def get_post_form

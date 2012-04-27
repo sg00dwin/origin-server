@@ -52,7 +52,11 @@ RedHatCloud::Application.configure do
   }
   config.captcha_secret = 'secret'
   config.sso_verify_interval = 0
-  
+
+  # Promo code Email notification setup
+  config.email_from = 'OpenShift <noreply@openshift.redhat.com>'
+  config.marketing_mailing_list = 'Marketing Mailing List <jgurrero@redhat.com>'
+
   # Maximum number of apps
   config.express_max_apps = 5
   
