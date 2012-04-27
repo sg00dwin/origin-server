@@ -296,12 +296,12 @@ InfoChunk.myfiles($options[:dir]).sort.each do |testfile|
     mymcents = mcents.filter(chunk.timestamp, chunk.endstamp)
     puts "Mcollective summary: #{mymcents.length} events"
     if mymcents.length > 0
-      printf("%12s: %5s: %s\n", " Total (s) ", "  N  ", "           Event                          ")
-      printf("%12s: %5s: %s\n", "-----------", "-----", "------------------------------------------")
+      printf("%12s: %5s: %12s: %s\n", " Total (s) ", "  N  ", "  Avg (s)  ", "           Event                          ")
+      printf("%12s: %5s: %12s: %s\n", "-----------", "-----", "-----------", "------------------------------------------")
 
       sprof = mymcents.report.sort_by {|key, value| value[:total]}
       sprof.reverse.each do |profent|
-        printf("% 12.6f: %5d: %s\n", profent[1][:total], profent[1][:count], profent[0])
+        printf("% 12.6f: %5d: % 12.6f: %s\n", profent[1][:total], profent[1][:count], profent[1][:total]/profent[1][:count].to_f, profent[0])
       end
     end
   end
