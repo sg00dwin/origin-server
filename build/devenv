@@ -131,6 +131,12 @@ mkdir -p /tmp/rhc/junit
       ssh(hostname, "echo HOURS=9999 > /etc/charlie.conf", 240)
     end
 
+    def mcollective_logs(hostname)
+      puts "Keep all mcollective logs on remote instance: #{hostname}"
+      ssh(hostname, "echo keeplogs=9999 >> /etc/mcollective/server.cfg", 240)
+      ssh(hostname, "/sbin/service mcollective restart", 240)
+    end
+
     def broker_profiler(hostname, enable=true)
       puts "Setting broker profile enable: #{enable}"
       f=Tempfile.open('fixbroker')
@@ -297,6 +303,8 @@ mkdir -p /tmp/rhc/junit
 
         disable_charlie(hostname) if options.disable_charlie?
         
+        mcollective_logs(hostname) if options.mcollective_logs?
+
         idle_all_gears(hostname) unless options.official?
         
         setup_test_dir(hostname)
@@ -918,6 +926,7 @@ END
   method_option :exclude_verification, :type => :boolean, :desc => "Exclude running verification tests"
   method_option :include_cucumber, :required => false, :desc => "Include a specific cucumber test (verify, internal, node, api, etc)"
   method_option :disable_charlie, :type => :boolean, :desc=> "Disable idle shutdown timer on dev instance (charlie)"
+  method_option :mcollective_logs, :type => :boolean, :desc=> "Don't allow mcollective logs to be deleted on rotation"
   method_option :profile_broker, :type => :boolean, :desc=> "Enable profiling code on broker"
   method_option :include_web, :type => :boolean, :desc => "Include running Selenium tests"
   method_option :sauce_username, :required => false, :desc => "Sauce Labs username (default '#{SAUCE_USER}')"
