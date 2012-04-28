@@ -88,17 +88,9 @@ fi</command>
       <artifacts>rhc/log/*</artifacts>
       <latestOnly>false</latestOnly>
     </hudson.tasks.ArtifactArchiver>
-    <hudson.tasks.BuildTrigger>
-      <childProjects>jenkins_update</childProjects>
-      <threshold>
-        <name>SUCCESS</name>
-        <ordinal>0</ordinal>
-        <color>BLUE</color>
-      </threshold>
-    </hudson.tasks.BuildTrigger>
     <hudson.tasks.Mailer>
       <recipients>libra-devel@redhat.com</recipients>
-      <dontNotifyEveryUnstableBuild>true</dontNotifyEveryUnstableBuild>
+      <dontNotifyEveryUnstableBuild>false</dontNotifyEveryUnstableBuild>
       <sendToIndividuals>false</sendToIndividuals>
     </hudson.tasks.Mailer>
   </publishers>

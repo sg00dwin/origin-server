@@ -68,7 +68,7 @@ build/devenv test devenv-stage_verifier_${BUILD_NUMBER} --official --terminate $
     </hudson.tasks.ArtifactArchiver>
     <hudson.tasks.Mailer>
       <recipients>libra-devel@redhat.com</recipients>
-      <dontNotifyEveryUnstableBuild>true</dontNotifyEveryUnstableBuild>
+      <dontNotifyEveryUnstableBuild>false</dontNotifyEveryUnstableBuild>
       <sendToIndividuals>false</sendToIndividuals>
     </hudson.tasks.Mailer>
   </publishers>
