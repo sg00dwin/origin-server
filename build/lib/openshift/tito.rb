@@ -44,7 +44,6 @@ module OpenShift
       sync_dirs = []
       li_repo = {'li' => [FileUtils.pwd]}
       repos = li_repo.merge(SIBLING_REPOS)
-      puts repos
       all_packages = get_packages
       repos.each do |repo_name, repo_dirs|
         current_package_contents = ''
