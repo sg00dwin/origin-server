@@ -408,5 +408,29 @@ function user_profile_context_default_contexts() {
   $context->condition_mode = 0;
   $export[$context->name] = $context;
 
+
+  # Make Ideas left nav active
+  $context = new stdClass;
+  $context->disabled = FALSE; /* Edit this to true to make a default context disabled initially */
+  $context->api_version = 3;
+  $context->name = 'menu-active-ideas';
+  $context->description = '';
+  $context->tag = '';
+  $context->conditions = array(
+    'node' => array(
+      'values' => array(
+        'idea' => 'idea',
+      ),
+      'options' => array(
+        'node_form' => '1',
+      ),
+    ),
+  );
+  $context->reactions = array(
+    'menu' => 'ideas',
+  );
+  $context->condition_mode = 0;
+  $export[$context->name] = $context;
+
   return $export;
 }
