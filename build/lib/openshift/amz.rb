@@ -402,8 +402,26 @@ module OpenShift
             end
             if yday - launch_yday > 6
               # Tag the node to give people a heads up
+              log.info "Tagging old instances to terminate #{i.tags["Name"]}"
               add_tag(i, 'will-terminate')
-              log.info "Tagging old instances to terminate #{i.id}"
+            end
+          end
+        end
+      end
+    end
+    
+    def flag_old_qe_devenvs(conn)
+      AWS.memoize do
+        conn.instances.each do |i|
+          current_time = Time.new
+          if i.tags["Name"] =~ /^QE_/ && !(i.tags["Name"] =~ /preserve/)
+            if ((current_time - i.launch_time) > 43200) && current_time.hour > 13 && (instance_status(i) == :running)
+              log.info "Stopping qe instance #{i.id}"
+              i.stop
+            elsif ((current_time - i.launch_time) > 86400) && (instance_status(i) == :stopped)
+              # Tag the node to give people a heads up
+              log.info "Tagging qe instance to terminate #{i.tags["Name"]}"
+              add_tag(i, 'will-terminate')
             end
           end
         end

@@ -20,6 +20,7 @@ class Prune < Thor
       stop_untagged_instances(region)
       terminate_old_verifiers(region)
       flag_old_devenvs(region)
+      flag_old_qe_devenvs(region)
     end
   end
 
