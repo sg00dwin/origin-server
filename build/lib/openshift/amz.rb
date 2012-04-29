@@ -418,7 +418,7 @@ module OpenShift
             if ((current_time - i.launch_time) > 43200) && current_time.hour > 13 && (instance_status(i) == :running)
               log.info "Stopping qe instance #{i.id}"
               i.stop
-            elsif ((current_time - i.launch_time) > 86400) && (instance_status(i) == :stopped)
+            elsif ((current_time - i.launch_time) > 100800) && (instance_status(i) == :stopped)
               # Tag the node to give people a heads up
               log.info "Tagging qe instance to terminate #{i.tags["Name"]}"
               add_tag(i, 'will-terminate')
