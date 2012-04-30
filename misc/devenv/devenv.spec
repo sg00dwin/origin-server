@@ -8,7 +8,7 @@
 
 Summary:   Dependencies for OpenShift development
 Name:      rhc-devenv
-Version: 0.93.3
+Version: 0.93.4
 Release:   1%{?dist}
 Group:     Development/Libraries
 License:   GPLv2
@@ -406,6 +406,11 @@ chmod 0750 /usr/local/bin/openscap.sh
 # Create OpenScap crontab entry
 echo "0 11 * * * /usr/local/bin/openscap.sh" | /usr/bin/crontab
 
+# Remove all SUIDs
+
+# Remove all SGIDs
+
+
 # Add user nagios_monitor to wheel group for running rpm, dmesg, su, and sudo
 /usr/bin/gpasswd -a nagios_monitor wheel
 
@@ -431,6 +436,9 @@ echo "Header append Strict-Transport-Security includeSubDomains" >> /etc/httpd/c
 %{policydir}/*
 
 %changelog
+* Mon Apr 30 2012 Tim Kramer <tkramer@redhat.com> 0.93.4-1
+- Dropped in place holder for removal off all SGIDs and SUIDs  04 30 2012
+
 * Mon Apr 30 2012 Tim Kramer <tkramer@redhat.com> 0.93.3-1
 - Security - Added OpenScap cron tab entry and run script 04 30 2012
 - Security - Removed blank root passwd in shadow 04 30 2012
