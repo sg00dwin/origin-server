@@ -407,7 +407,7 @@ chmod 0750 /usr/local/bin/openscap.sh
 echo "0 11 * * * /usr/local/bin/openscap.sh" | /usr/bin/crontab
 
 # Add user nagios_monitor to wheel group for running rpm, dmesg, su, and sudo
-/usr/bin/gpasswd nagios_monitor wheel
+/usr/bin/gpasswd -a nagios_monitor wheel
 
 # Populate Drupal Database 
 echo "select count(*) from users;" | mysql -u root libra > /dev/null 2>&1 || zcat /usr/share/drupal6/sites/default/openshift-dump.gz | mysql -u root
