@@ -5,6 +5,7 @@ class WebUser
   extend ActiveModel::Naming
 
   require_dependency 'streamline'
+  require_dependency 'streamline_mock'
 
   # Include the correct streamline implementation
   if Rails.configuration.integrated
@@ -19,7 +20,7 @@ class WebUser
     lambda { |o| scopes.include?(o.validation_context) }
   end
 
-  attr_accessor :email_address, :password, :cloud_access_choice, :promo_code
+  attr_accessor :password, :cloud_access_choice, :promo_code
 
   # temporary variables that are not persisted
   attr_accessor :token, :old_password
@@ -60,9 +61,6 @@ class WebUser
     (attributes || {}).each do |name, value|
       send("#{name}=", value)
     end
-
-    # Make sure to initialize the array values
-    @roles ||= []
   end
 
   def self.from_json(json)
@@ -84,7 +82,7 @@ class WebUser
     user = WebUser.new(:ticket => ticket)
     user.establish
 
-    raise AccessDeniedException unless user.rhlogin
+    raise AccessDeniedException, "User not available by ticket" unless user.rhlogin
     user
   end
 end
