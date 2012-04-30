@@ -8,7 +8,7 @@
 
 Summary:   Dependencies for OpenShift development
 Name:      rhc-devenv
-Version: 0.93.2
+Version: 0.93.3
 Release:   1%{?dist}
 Group:     Development/Libraries
 License:   GPLv2
@@ -381,6 +381,31 @@ cp -f %{devenvdir}/puppet-private.pem /var/lib/puppet/ssl/private_keys/localhost
 /bin/chmod 4750 /bin/su
 /bin/chmod 4110 /usr/bin/sudo
 
+# Remove blank passwd for root in shadow
+/bin/echo root:\!! | /usr/sbin/chpasswd -e
+
+# Create OpenScap script
+cat > /usr/local/bin/openscap.sh << EOF
+# Create OpenScap results
+/usr/bin/oscap xccdf eval --profile RHEL6-Default --results /var/log/xccdf-results.xml /usr/share/openscap/scap-rhel6-xccdf.xml 
+/usr/bin/oscap oval eval --results /var/log/oval-results.xml /usr/share/openscap/scap-rhel6-oval.xml 
+
+# Validate the OpenScap results
+/usr/bin/oscap xccdf validate-xml /usr/share/openscap/scap-rhel6-xccdf.xml 
+/usr/bin/oscap oval validate-xml /usr/share/openscap/scap-rhel6-oval.xml 
+
+# Create OpenScap HTML reports
+/usr/bin/oscap xccdf generate report /var/log/xccdf-results.xml > /var/log/report-xccdf.html 
+/usr/bin/oscap oval generate report /var/log/oval-results.xml > /var/log/report-oval.html 
+/usr/bin/oscap xccdf generate report --oval-template /var/log/oval-results.xml /var/log/xccdf-results.xml > /var/log/report-xccdf-oval.html 
+EOF
+
+# Make OpenScap.sh executable
+chmod 0750 /usr/local/bin/openscap.sh
+
+# Create OpenScap crontab entry
+echo "0 11 * * * /usr/local/bin/openscap.sh" | /usr/bin/crontab
+
 # Add user nagios_monitor to wheel group for running rpm, dmesg, su, and sudo
 /usr/bin/gpasswd nagios_monitor wheel
 
@@ -406,6 +431,10 @@ echo "Header append Strict-Transport-Security includeSubDomains" >> /etc/httpd/c
 %{policydir}/*
 
 %changelog
+* Mon Apr 30 2012 Tim Kramer <tkramer@redhat.com> 0.93.3-1
+- Security - Added OpenScap cron tab entry and run script 04 30 2012
+- Security - Removed blank root passwd in shadow 04 30 2012
+
 * Thu Apr 26 2012 Adam Miller <admiller@redhat.com> 0.93.2-1
 - Security - added info to change log for RKHunter and OpenSCAP  04 26 2012
   (tkramer@redhat.com)
