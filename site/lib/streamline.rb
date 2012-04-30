@@ -55,12 +55,15 @@ module Streamline
   #
   # <b>DEPRECATED:</b> Use establish_roles
   def establish
+    old_rhlogin = @rhlogin
     http_post(@@roles_url) do |json|
       Rails.logger.debug "User role info: #{json.inspect}"
       @initialized_roles = true
       @roles = json['roles']
       @rhlogin = json['username']
     end
+    raise "Authenticated user #{old_rhlogin} does not match #{@rhlogin}" unless old_rhlogin.nil? || old_rhlogin == rhlogin
+    self
   end
 
   def establish_terms
@@ -74,11 +77,7 @@ module Streamline
   end
 
   def roles
-    unless @initialized_roles
-      old_rhlogin = @rhlogin
-      establish
-      raise "Authenticated user #{old_rhlogin} does not match #{@rhlogin}" unless old_rhlogin.nil? || old_rhlogin == rhlogin
-    end
+    establish unless @initialized_roles
     @roles
   end
 
