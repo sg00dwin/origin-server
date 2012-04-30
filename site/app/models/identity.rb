@@ -8,6 +8,10 @@ class Identity
     end
   end
 
+  def type_name
+    type == :openshift ? 'OpenShift' : type.to_s.titleize
+  end
+
   #
   # Return all of the identities associated with a user
   #
