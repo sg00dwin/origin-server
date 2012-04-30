@@ -365,6 +365,7 @@ function user_profile_context_default_contexts() {
   $export[$context->name] = $context;
 
 
+  # Make Events left navigation item active
   $context = new stdClass;
   $context->disabled = FALSE; /* Edit this to true to make a default context disabled initially */
   $context->api_version = 3;
@@ -372,9 +373,18 @@ function user_profile_context_default_contexts() {
   $context->description = '';
   $context->tag = '';
   $context->conditions = array(
+    'node' => array(
+      'values' => array(
+        'event' => 'event',
+      ),
+      'options' => array(
+        'node_form' => '1',
+      ),
+    ),
     'path' => array(
       'values' => array(
         'calendar' => 'calendar',
+        'calendar/*' => 'calendar/*',
       ),
     ),
   );
