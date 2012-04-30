@@ -525,4 +525,6 @@ netutils_domtrans_ping(libra_t)
 netutils_kill_ping(libra_t)
 netutils_signal_ping(libra_t)
 
-dontaudit libra_app_domain libra_var_lib_t:file_class_set audit_access;
+# This originally part of commit 39860d58ac3b6fad7462f2f9f88b5bc893854df7
+### Temporarily commenting out because it broke the libra_check build
+#dontaudit libra_app_domain libra_var_lib_t:file_class_set audit_access;
