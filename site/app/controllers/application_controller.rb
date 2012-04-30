@@ -251,7 +251,7 @@ class ApplicationController < ActionController::Base
       if session[:login]
         WebUser.new(:rhlogin => session[:login], :ticket => session[:ticket])
       elsif cookies[:rh_sso]
-        user_to_session(WebUser.find_by_ticket(cookies[:rh_sso]))
+        user_to_session(WebUser.find_by_ticket(cookies[:rh_sso])) rescue nil
       else
         nil
       end
