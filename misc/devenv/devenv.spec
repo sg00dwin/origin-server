@@ -151,6 +151,7 @@ Requires:  drupal6-views_customfield
 Requires:  drupal6-vote_up_down
 Requires:  drupal6-votingapi
 Requires:  drupal6-wikitools
+Requires:  drupal6-wysiwyg
 
 # Security RKHunter Requirements
 Requires:  rkhunter
