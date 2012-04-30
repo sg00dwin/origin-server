@@ -15,8 +15,8 @@ STDOUT.sync, STDERR.sync = true
 #
 #  Migrate the specified gear
 #
-def migrate_gear(rhlogin, app_name, gear_uuid)
-  migrate_cmd = "#{__FILE__} --rhlogin '#{rhlogin}' --migrate-gear '#{gear_uuid}' --app-name '#{app_name}'"
+def migrate_gear(rhlogin, app_name, gear_uuid, version)
+  migrate_cmd = "#{__FILE__} --rhlogin '#{rhlogin}' --migrate-gear '#{gear_uuid}' --app-name '#{app_name}' --version '#{version}'"
   out = StringIO.new
   out << "Migrating gear on node with: #{migrate_cmd}\n"
   migrated = false
@@ -25,10 +25,6 @@ def migrate_gear(rhlogin, app_name, gear_uuid)
     if user
       app = Application.find(user, app_name)
       if app
-        if !app.scalable and !app.comp_instance_map.keys.include? "@@app/cart-jenkins-1.4"
-          out << "App '#{app_name}' not scalable/jenkins app, no migration needed\n"
-          return out.string
-        end
         gear = nil
         app.gears.each do |app_gear|
           if app_gear.uuid == gear_uuid
@@ -43,7 +39,7 @@ def migrate_gear(rhlogin, app_name, gear_uuid)
               GearChanger::MCollectiveApplicationContainerProxy.rpc_exec('libra', server_identity) do |client|
                 client.migrate(:uuid => gear_uuid,
                                :namespace => app.domain.namespace,
-                               :version => '2.0.10') do |response|
+                               :version => version) do |response|
                   exit_code = response[:body][:data][:exitcode]
                   output = response[:body][:data][:output]
                   if (output.length > 0)
@@ -168,10 +164,7 @@ def redeploy_httpd_proxy(gear, out)
   end
 end
 
-#
-# Migrate applications between 2.0.9 and 2.0.10
-#
-def migrate(continue=false, target_server_identity=nil)
+def migrate(version, continue=false, target_server_identity=nil)
   start_time = Time.now.to_i
   puts "Getting all RHLogins..."
   users = []
@@ -261,7 +254,7 @@ def migrate(continue=false, target_server_identity=nil)
   thread_groups.each do |thread_group|
     thread_group.each do |node_to_gears|
       node_to_gears.each do |server_identity, gears|
-        write_node_to_file(server_identity, gears, node_to_users) unless continue
+        write_node_to_file(server_identity, gears, node_to_users, version) unless continue
         node_to_gears[server_identity] = nil
       end
     end
@@ -306,7 +299,7 @@ def migrate(continue=false, target_server_identity=nil)
   puts "#####################################################"
 end
 
-def write_node_to_file(server_identity, gears, node_to_users)
+def write_node_to_file(server_identity, gears, node_to_users, version)
   f = migrate_file_path(server_identity)
   puts "Writing #{gears.length} gears for node #{server_identity} to file #{f}"
   users = node_to_users[server_identity]
@@ -316,7 +309,7 @@ def write_node_to_file(server_identity, gears, node_to_users)
   gears.each_with_index do |gear, index|
     user = users[index]
     rhlogin = user.login
-    migrate_on_node_args = "#{gear.server_identity},#{gear.uuid},#{gear.name},#{gear.app.name},#{rhlogin}"
+    migrate_on_node_args = "#{gear.server_identity},#{gear.uuid},#{gear.name},#{gear.app.name},#{rhlogin},#{version}"
     append_to_file(f, migrate_on_node_args)
   end
 end
@@ -373,14 +366,15 @@ def migrate_from_file(file)
       gear_name = params[2]
       app_name = params[3]
       rhlogin = params[4]
-      migrate_on_node_cmd = "#{__FILE__} --rhlogin '#{rhlogin}' --migrate-gear '#{gear_uuid}' --app-name '#{app_name}'"
+      version = params[5]
+      migrate_on_node_cmd = "#{__FILE__} --rhlogin '#{rhlogin}' --migrate-gear '#{gear_uuid}' --app-name '#{app_name}' --version '#{version}'"
       error_file = error_file_path(server_identity)
       log_file = log_file_path(server_identity)
       append_to_file(log_file,  "Migrating app '#{app_name}' gear '#{gear_name}' with uuid '#{gear_uuid}' on node '#{server_identity}' for user: #{rhlogin}")
       num_tries = 2
       (1..num_tries).each do |i|
         begin
-          output = migrate_gear(rhlogin, app_name, gear_uuid)
+          output = migrate_gear(rhlogin, app_name, gear_uuid, version)
           append_to_file(log_file, output)
           break
         rescue Exception => e
@@ -473,6 +467,7 @@ begin
     ["--app-name", GetoptLong::REQUIRED_ARGUMENT],
     ["--migrate-node", GetoptLong::REQUIRED_ARGUMENT],
     ["--migrate-file", GetoptLong::REQUIRED_ARGUMENT],
+    ["--version", GetoptLong::REQUIRED_ARGUMENT],
     ["--continue", GetoptLong::NO_ARGUMENT],
     ["--help", "-h", GetoptLong::NO_ARGUMENT]
   )
@@ -494,38 +489,49 @@ require 'config/environment'
 if opt['migrate-file']
   migrate_from_file(opt['migrate-file'])
 elsif opt['migrate-gear']
-  if opt['rhlogin'] && opt['app-name']
-    puts migrate_gear(opt['rhlogin'], opt['app-name'], opt['migrate-gear'])
+  if opt['rhlogin'] && opt['app-name'] && opt['version']
+    puts migrate_gear(opt['rhlogin'], opt['app-name'], opt['migrate-gear'], opt['version'])
   else
-    puts "--rhlogin and --app-name is required with --migrate-gear"
+    puts "--rhlogin, --app-name, and --version is required with --migrate-gear"
+    exit 255
   end
 elsif opt['migrate-node']
-  migrate_file = migrate_file_path(opt['migrate-node'])
-  if opt['continue']
-    migrate(true, opt['migrate-node'])
-  elsif File.exists?(migrate_file)
-      puts <<-WARNING
+  if opt['version']
+    migrate_file = migrate_file_path(opt['migrate-node'])
+    if opt['continue']
+      migrate(opt['version'], true, opt['migrate-node'])
+    elsif File.exists?(migrate_file)
+        puts <<-WARNING
 !!!!!!!!!!!!!!!!!!!! EXISTING MIGRATION DATA FOUND !!!!!!!!!!!!!!!!!!!!
 Data from a previous migration exists at #{migrate_file}.  You must 
 either move/remove (Ex: rm #{migrate_file}) that data or pick up
-where it left off with '#{__FILE__} --migrate-node #{opt['migrate-node']} --continue'.
+where it left off with '#{__FILE__} --migrate-node #{opt['migrate-node']} --version '#{opt['version']}' --continue'.
 WARNING
-      exit 1
+        exit 1
+    else
+      migrate(opt['version'], false, opt['migrate-node'])
+    end
   else
-    migrate(false, opt['migrate-node'])
+    puts "--version is required with --migrate-node"
+    exit 255
   end
 else
-  if opt['continue']
-    migrate(true)
-  elsif File.exists?("/tmp/rhc/migration")
-    puts <<-WARNING
+  if opt['version']
+    if opt['continue']
+      migrate(opt['version'], true)
+    elsif File.exists?("/tmp/rhc/migration")
+      puts <<-WARNING
 !!!!!!!!!!!!!!!!!!!! EXISTING MIGRATION DATA FOUND !!!!!!!!!!!!!!!!!!!!
 Data from a previous migration exists at /tmp/rhc/migration.  You must 
 either move/remove (Ex: rm -rf /tmp/rhc/migration) that data or pick up
 where it left off with '#{__FILE__} --continue'.
 WARNING
-    exit 1
+      exit 1
+    else
+      migrate(opt['version'])
+    end
   else
-    migrate
+    puts "--version is required"
+    exit 255
   end
 end

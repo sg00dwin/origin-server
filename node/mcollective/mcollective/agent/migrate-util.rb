@@ -1,6 +1,6 @@
 require 'open4'
 
-module LibraMigration
+module OpenShiftMigration
   module Util
     def self.append_to_file(f, value)
       file = File.open(f, 'a')
