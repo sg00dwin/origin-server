@@ -1,9 +1,3 @@
-require 'cgi'
-require 'uri'
-require 'streamline_mock'
-require 'error_codes'
-require 'exception'
-
 #
 # This mixin encapsulates calls made back to the IT systems via
 # the streamline REST service.
@@ -11,11 +5,7 @@ require 'exception'
 module Streamline
   include ErrorCodes
 
-  attr_accessor :rhlogin, :ticket, :roles, :terms
-
-  # Raised when the reset token has already been used
-  class TokenExpired < Streamline::StreamlineException
-  end
+  attr_accessor :rhlogin, :ticket, :roles, :terms, :email_address
 
   class Cookie
     def initialize(*arguments)
@@ -66,6 +56,7 @@ module Streamline
   # <b>DEPRECATED:</b> Use establish_roles
   def establish
     http_post(@@roles_url) do |json|
+      Rails.logger.debug "User role info: #{json.inspect}"
       @initialized_roles = true
       @roles = json['roles']
       @rhlogin = json['username']
@@ -346,13 +337,17 @@ module Streamline
   # Get the user's email address
   #
   def establish_email_address
-    if !@email_address
+    unless @email_address
       user_info_args = {'login' => @rhlogin,
                         'secretKey' => Rails.configuration.streamline[:user_info_secret]}
       http_post(@@user_info_url, user_info_args) do |json|
         @email_address = json['emailAddress']
       end
     end
+    @email_address
+  end
+  def email_address
+    establish_email_address
   end
 
   #
@@ -508,4 +503,23 @@ module Streamline
     url.query = build_terms_query(terms)
     url
   end
+
+
+  class OpenShiftException < StandardError
+    attr :exit_code
+    def initialize(exit_code)
+      @exit_code = exit_code
+    end
+  end
+  class UserException < OpenShiftException; end
+  class UserValidationException < OpenShiftException; end
+  class StreamlineException < OpenShiftException
+    def initialize
+      @exit_code = 144
+    end
+  end
+  # Raised when the reset token has already been used
+  class TokenExpired < Streamline::StreamlineException
+  end
+
 end
