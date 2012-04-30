@@ -1,4 +1,4 @@
-policy_module(libra,1.1.20)
+policy_module(libra,1.1.19)
 
 ########################################
 #
@@ -524,5 +524,3 @@ kernel_search_vm_sysctl(libra_app_t)
 netutils_domtrans_ping(libra_t)
 netutils_kill_ping(libra_t)
 netutils_signal_ping(libra_t)
-
-dontaudit libra_app_domain libra_var_lib_t:file_class_set audit_access;
