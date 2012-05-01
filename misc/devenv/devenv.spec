@@ -407,14 +407,14 @@ chmod 0750 /usr/local/bin/openscap.sh
 echo "0 11 * * * /usr/local/bin/openscap.sh" | /usr/bin/crontab
 
 # Remove all SUIDs - tkramer - testing in devenv
-chmod -R u-s /tmp/passenger.1.0.*
-chmod u-s /tmp/passenger.1.0.1408/generation-0/backends
-chmod u-s /tmp/passenger.1.0.1609/generation-0/backends
-chmod u-s /tmp/passenger.1.0.7527/generation-0/backends
-chmod u-s /tmp/passenger.1.0.1456/generation-0/backends
-chmod u-s /tmp/passenger.1.0.1561/generation-0/backends
-chmod u-s /tmp/passenger.1.0.1367/generation-0/backends
-chmod u-s /tmp/passenger.1.0.7606/generation-0/backends
+#chmod -R u-s /tmp/passenger.1.0.*
+#chmod u-s /tmp/passenger.1.0.1408/generation-0/backends
+#chmod u-s /tmp/passenger.1.0.1609/generation-0/backends
+#chmod u-s /tmp/passenger.1.0.7527/generation-0/backends
+#chmod u-s /tmp/passenger.1.0.1456/generation-0/backends
+#chmod u-s /tmp/passenger.1.0.1561/generation-0/backends
+#chmod u-s /tmp/passenger.1.0.1367/generation-0/backends
+#chmod u-s /tmp/passenger.1.0.7606/generation-0/backends
 chmod u-s /usr/bin/staprun
 chmod u-s /usr/bin/chage
 chmod u-s /usr/bin/chfn
