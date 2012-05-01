@@ -55,14 +55,7 @@ module Streamline
   #
   # <b>DEPRECATED:</b> Use establish_roles
   def establish
-    old_rhlogin = @rhlogin
-    http_post(@@roles_url) do |json|
-      Rails.logger.debug "User role info: #{json.inspect}"
-      @initialized_roles = true
-      @roles = json['roles']
-      @rhlogin = json['username']
-    end
-    Rails.logger.debug "Authenticated user id #{old_rhlogin} being changed to #{@rhlogin}" unless old_rhlogin.nil? || old_rhlogin == rhlogin
+    roles
     self
   end
 
@@ -77,8 +70,13 @@ module Streamline
   end
 
   def roles
-    establish unless @initialized_roles
-    @roles
+    @roles ||= http_post(@@roles_url) do |json|
+      @rhlogin ||= json['username']
+      Rails.logger.warn "Role #{caller.join("\n  ")}"
+      Rails.logger.warn "Roles user #{json['username']} different than active #{rhlogin}" if rhlogin != json['username']
+
+      json['roles']
+    end
   end
 
   def refresh_roles(force=false)
@@ -90,7 +88,7 @@ module Streamline
       end
     end unless has_requested
     if has_requested
-      establish
+      roles
     end
   end
 
@@ -100,7 +98,10 @@ module Streamline
     @ticket = nil
     Rails.logger.debug "Authenticating user #{login}"
 
-    http_post(@@login_url, {:login => login, :password => password})
+    http_post(@@login_url, {:login => login, :password => password}) do |json|
+      @rhlogin = json['login']
+      @roles = json['roles']
+    end
     true
   rescue AccessDeniedException
     errors.add(:base, I18n.t(:login_error, :scope => :streamline))
@@ -119,17 +120,18 @@ module Streamline
 
     # Create the request
     # Add timing code
-    start_time = Time.now
-    res = new_http.start{ |http| http.request(req) }
-    end_time = Time.now
-    Rails.logger.debug "Response from Streamline (#{@@logout_url.request_uri}) took: #{(end_time - start_time)*1000} ms"
-    Rails.logger.debug "Status received: #{res.code}"
-    Rails.logger.debug "-------------------"
-    Rails.logger.debug res.header.to_yaml
-    Rails.logger.debug "-------------------"
+    ActiveSupport::Notifications.instrument("request.streamline", {
+      :uri => @@logout_url.request_uri,
+      :method => 'logout'
+    }) do |payload|
 
-    unless 302 == res.code.to_i
-      Rails.logger.debug "Unexpected HTTP status from logout: #{res.code}"
+      res = new_http.start{ |http| http.request(req) }
+      payload[:code] = res.code
+
+      unless 302 == res.code.to_i
+        Rails.logger.error "Streamline returned an unexpected response to logout"
+        Rails.logger.error res.to_yaml
+      end
     end
   end
 
@@ -394,6 +396,11 @@ module Streamline
     http
   end
 
+  @@f = ActionDispatch::Http::ParameterFilter.new(Rails.application.config.filter_parameters)
+  def f
+    @@f
+  end
+
   def http_post(url, args={}, raise_exception_on_error=true)
     begin
       req = Net::HTTP::Post.new(url.request_uri)
@@ -402,49 +409,53 @@ module Streamline
       # Include the ticket as a cookie if present
       req.add_field('Cookie', "rh_sso=#{@ticket}") if @ticket
 
-      # Add timing code
-      start_time = Time.now
-      res = new_http.start {|http| http.request(req)}
-      end_time = Time.now
-      Rails.logger.debug "Response from Streamline took (#{url.path}): #{(end_time - start_time)*1000} ms"
+      ActiveSupport::Notifications.instrument("request.streamline",
+        :uri => url.request_uri,
+        :method => caller[0][/`.*'/][1..-2],
+        :args => f.filter(args).inspect
+      ) do |payload|
 
-      case res
-      when Net::HTTPSuccess, Net::HTTPRedirection
-        Rails.logger.debug("POST Response code = #{res.code}")
+        res = new_http.start {|http| http.request(req)}
 
-        # Set the rh_sso cookie as the ticket
-        parse_ticket(res.get_fields('Set-Cookie'))
+        case res
+        when Net::HTTPSuccess, Net::HTTPRedirection
+          payload[:code] = res.code
 
-        # Parse and yield the body if a block is supplied
-        if res.body and !res.body.empty?
-          json = parse_body(res.body)
-          yield json if block_given?
+          # Set the rh_sso cookie as the ticket
+          parse_ticket(res.get_fields('Set-Cookie'))
+
+          # Parse and yield the body if a block is supplied
+          if res.body and !res.body.empty?
+            json = parse_body(res.body)
+            payload[:response] = json.inspect
+            yield json if block_given?
+          else
+            payload[:response] = '<empty>'
+            if raise_exception_on_error
+              raise Streamline::StreamlineException
+            else
+              errors.add(:base, I18n.t(:unknown))
+            end
+          end
+        when Net::HTTPForbidden, Net::HTTPUnauthorized
+          #Rails.logger.error "  Streamline rejected the request - #{res.code}"
+          #Rails.logger.error "  Response body:\n#{res.body}"
+          raise AccessDeniedException, "Streamline rejected the request (#{res.code})\n#{res.body}"
         else
-          Rails.logger.error "Empty response from streamline - #{res.code}"
+          Rails.logger.error "Streamline returned an unexpected response"
+          Rails.logger.error res.to_yaml
           if raise_exception_on_error
-            raise Streamline::StreamlineException
+            raise Streamline::StreamlineException, "Invalid HTTP response from streamline (#{res.code})\n#{res.body}"
           else
             errors.add(:base, I18n.t(:unknown))
           end
         end
-      when Net::HTTPForbidden, Net::HTTPUnauthorized
-        Rails.logger.error "Streamline rejected the request - #{res.code}"
-        Rails.logger.error "Response body:\n#{res.body}"
-        raise AccessDeniedException
-      else
-        Rails.logger.error "Invalid HTTP response from streamline - #{res.code}"
-        Rails.logger.error "Response body:\n#{res.body}"
-        if raise_exception_on_error
-          raise Streamline::StreamlineException
-        else
-          errors.add(:base, I18n.t(:unknown))
-        end
       end
+
     rescue AccessDeniedException, Streamline::UserValidationException, Streamline::StreamlineException
       raise
     rescue Exception => e
-      Rails.logger.error "Exception occurred while calling streamline - #{e.message}"
-      Rails.logger.error e, e.backtrace
+      Rails.logger.error "Exception occurred while calling streamline - #{e}\n  #{e.backtrace.join("\n  ")}"
       if raise_exception_on_error
         raise Streamline::StreamlineException
       else
@@ -501,6 +512,20 @@ module Streamline
     url
   end
 
+  protected
+    attr_writer :ticket, :email_address, :terms
+
+    #
+    # Prevent classes from changing an rhlogin once set
+    #
+    def rhlogin=(login)
+      raise "rhlogin cannot be changed once set" unless @rhlogin.nil?
+      @rhlogin = login
+    end
+end
+
+
+module Streamline
 
   class OpenShiftException < StandardError
     attr :exit_code
@@ -519,14 +544,4 @@ module Streamline
   class TokenExpired < Streamline::StreamlineException
   end
 
-  protected
-    attr_writer :ticket, :email_address, :terms
-
-    #
-    # Prevent classes from changing an rhlogin once set
-    #
-    def rhlogin=(login)
-      raise "rhlogin cannot be changed once set" unless @rhlogin.nil?
-      @rhlogin = login
-    end
 end

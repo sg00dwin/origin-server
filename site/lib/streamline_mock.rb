@@ -12,18 +12,18 @@ module StreamlineMock
   # Returns the login
   #
   def establish
-    Rails.logger.warn("Non integrated environment - passing through")
     @rhlogin ||= ticket || "openshift@redhat.com"
 
-    @roles = []
-    if @rhlogin.index '@'
-      @roles << "simple_authenticated"
-      @email_address = @rhlogin
-    else
-      @roles << "authenticated"
-      @email_address = "#{@rhlogin}@rhn.com"
+    unless @roles
+      @roles = []
+      if @rhlogin.index '@'
+        @roles << "simple_authenticated"
+        @email_address = @rhlogin
+      else
+        @roles << "authenticated"
+        @email_address = "#{@rhlogin}@rhn.com"
+      end
     end
-
     self
   end
 

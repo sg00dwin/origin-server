@@ -2,7 +2,7 @@ class ApplicationController < ActionController::Base
   protect_from_forgery
 
   rescue_from AccessDeniedException do |e|
-    logger.debug "#{e}\n  #{e.backtrace.join("\n  ")}"
+    logger.debug "Access denied: #{e}"
     redirect_to logout_path
   end
   rescue_from 'ActiveResource::ConnectionError' do |e|
@@ -19,7 +19,7 @@ class ApplicationController < ActionController::Base
   end
 
   def handle_unverified_request
-    raise AccessDeniedException
+    raise AccessDeniedException, "Request authenticity token does not match session #{session.inspect}"
   end
 
   def set_no_cache
@@ -98,8 +98,7 @@ class ApplicationController < ActionController::Base
     ticket = session[:ticket]
 
     if sso_cookie && sso_cookie != ticket
-      logger.debug "  Session ticket does not match current ticket - logging out"
-      raise AccessDeniedException
+      raise AccessDeniedException, "Session ticket #{ticket} does not match rh_sso cookie #{sso_cookie}"
     end
 
     login = session[:login]
@@ -114,8 +113,7 @@ class ApplicationController < ActionController::Base
 
         user = WebUser.find_by_ticket(ticket)
         if !user || login != user.rhlogin
-          logger.debug "SSO ticket no longer matches user, logging out!"
-          raise AccessDeniedException
+          raise AccessDeniedException, "SSO ticket user #{user.login} does not match active session #{login}"
         end
 
         # ticket is valid, set a new timestamp
@@ -165,7 +163,7 @@ class ApplicationController < ActionController::Base
   #
   def require_login
     logger.debug 'Login required'
-    logger.debug "Session contents: #{session.inspect}"
+    logger.debug "  Session contents: #{session.inspect}"
 
     return redirect_to login_path(:redirectUrl => after_login_redirect) unless logged_in?
 
@@ -205,7 +203,7 @@ class ApplicationController < ActionController::Base
       session[:ticket] = user.ticket
       session[:login] = user.rhlogin
       session[:ticket_verified] ||= Time.now.to_i
-      user
+      @authenticated_user = user
     end
 
     #
