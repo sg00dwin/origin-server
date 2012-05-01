@@ -485,6 +485,7 @@ allow sshd_t libra_domain:process { transition dyntransition };
 libra_search_lib(sshd_t)
 dontaudit sshd_t self:capability sys_admin;
 allow libra_domain sshd_t:process sigchld;
+dontaudit libra_domain sshd_t:key view;
 allow libra_domain sshd_t:unix_stream_socket connectto;
 allow libra_domain sshd_t:unix_dgram_socket write;
 allow sshd_t libra_domain:process { rlimitinh signal };
