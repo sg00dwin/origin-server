@@ -470,6 +470,12 @@ chmod 600 /boot/grub/grub.conf
 # Remove other read
 chmod 660 /var/run/rhc-watchman.pid
 
+# Make repos check with gpg
+sed 's/^gpgcheck=0/gpgcheck=1/' /etc/yum.repos.d/epel.repo > /etc/yum.repos.d/epel.tmp
+mv -f /etc/yum.repos.d/epel.tmp /etc/yum.repos.d/epel.repo
+sed 's/^gpgcheck=0/gpgcheck=1/' /etc/yum.repos.d/li.repo > /etc/yum.repos.d/li.tmp
+mv -f /etc/yum.repos.d/li.tmp /etc/yum.repos.d/li.repo
+
 # Add user nagios_monitor to wheel group for running rpm, dmesg, su, and sudo
 /usr/bin/gpasswd -a nagios_monitor wheel
 
@@ -499,6 +505,7 @@ echo "Header append Strict-Transport-Security includeSubDomains" >> /etc/httpd/c
 - Removed add SGIDs and SUIDs for testing 05 01 2012
 - Removed other readable to log files 05 01 2012
 - Removed other readable to grub 05 01 2012
+- Make li.repo and epel.repo to use gpgcheck - testing in devenv 05 01 2012
 
 * Mon Apr 30 2012 Tim Kramer <tkramer@redhat.com> 0.93.4-1
 - Dropped in place holder for removal off all SGIDs and SUIDs  04 30 2012
