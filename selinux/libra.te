@@ -465,7 +465,6 @@ mta_sendmail_domtrans(libra_app_domain, libra_mail_t)
 role system_r types libra_mail_t;
 
 allow libra_app_domain libra_mail_t:process { getattr signal signull sigkill };
-
 allow libra_mail_t libra_initrc_t:fifo_file rw_inherited_fifo_file_perms;
 dontaudit libra_mail_t sshd_devpts_t:chr_file { read write };
 
