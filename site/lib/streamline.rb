@@ -72,7 +72,6 @@ module Streamline
   def roles
     @roles ||= http_post(@@roles_url) do |json|
       @rhlogin ||= json['username']
-      Rails.logger.warn "Role #{caller.join("\n  ")}"
       Rails.logger.warn "Roles user #{json['username']} different than active #{rhlogin}" if rhlogin != json['username']
 
       json['roles']

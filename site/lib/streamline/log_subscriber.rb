@@ -17,9 +17,11 @@ module Streamline
 
       name = '%s (%.1fms)' % ['Streamline call', event.duration]
 
+      call = "#{color(event.payload.delete(:method), BOLD, true)} #{event.payload.delete(:uri)}"
+
       query = event.payload.map{ |k,v| "#{k}: #{color(v, BOLD, true)}" }.join(', ')
 
-      debug "  #{color(name, YELLOW, true)}  [ #{query} ]"
+      debug "  #{color(name, YELLOW, true)} #{call} [ #{query} ]"
     end
   end
 end

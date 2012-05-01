@@ -3,8 +3,6 @@ module Streamline
     module ControllerRuntime
       extend ActiveSupport::Concern
 
-      require_dependency 'streamline/log_subscriber'
-
       protected
 
       attr_internal :st_runtime
