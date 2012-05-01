@@ -32,8 +32,7 @@ class WebUserTest < ActiveSupport::TestCase
   end
 
   test "protect rhlogin" do
-    s = Class.new(Object) do
-      include Streamline
+    s = Class.new(Streamline::User) do
       def initialize(login)
         self.rhlogin = login
       end
@@ -48,8 +47,8 @@ class WebUserTest < ActiveSupport::TestCase
       s.set = "another"
     end
 
-    s = Class.new(Object) do
-      include StreamlineMock
+    s = Class.new(Streamline::User) do
+      include Streamline::Mock
       def initialize(login)
         self.rhlogin = login
       end

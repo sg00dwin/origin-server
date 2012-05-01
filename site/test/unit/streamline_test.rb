@@ -1,12 +1,11 @@
 require File.expand_path('../../test_helper', __FILE__)
 
 # Define a test class to mixin the module
-class StreamlineTester
+class StreamlineTester < Streamline::User
   include ActiveModel::Naming
   include ActiveModel::Validations
-  include Streamline
-  attr_accessor :password, :password_confirmation, :terms_accepted
 
+  attr_accessor :password, :password_confirmation, :terms_accepted
   # Make these items public for test purposes
   attr_writer :ticket, :terms, :email_address
 end

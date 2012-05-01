@@ -1,5 +1,5 @@
 module Streamline
-  module Base
+  class Base
 
     attr_accessor :email_address
     attr_reader :rhlogin, :ticket, :roles, :terms

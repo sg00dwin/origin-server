@@ -1,18 +1,11 @@
-class WebUser
+class WebUser < Streamline::User
   include ActiveModel::Validations
   include ActiveModel::Conversion
   include ActiveModel::Serialization
   extend ActiveModel::Naming
 
-  require_dependency 'streamline'
-  require_dependency 'streamline_mock'
-
-  # Include the correct streamline implementation
-  if Rails.configuration.integrated
-    include Streamline
-  else
-    include StreamlineMock
-  end
+  require_dependency 'streamline/mock'
+  include Streamline::Mock unless Rails.configuration.integrated
 
   # Helper to allow mulitple :on scopes to validators
   def self.on_scopes(*scopes)
