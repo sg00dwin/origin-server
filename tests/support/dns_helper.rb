@@ -6,9 +6,12 @@ module DnsHelper
   #
   # Utility functions for checking namespace availability and removing dns entries
   #
+
+  $dns_con = nil
+  
   def dns_service
-    if not @dns_con
-      @dns_con = Uplift::DynectPlugin.new({:end_point => "https://api2.dynect.net", 
+    if not $dns_con
+      $dns_con = Uplift::DynectPlugin.new({:end_point => "https://api2.dynect.net", 
                                            :customer_name => "demo-redhat",
                                            :user_name => "dev-rhcloud-user", 
                                            :password => "vo8zaijoN7Aecoo", 
@@ -16,7 +19,7 @@ module DnsHelper
                                            :zone => "rhcloud.com", 
                                            :log_file => "/dev/null"})
     end
-    @dns_con
+    $dns_con
   end
 
   def namespace_available?(namespace)
