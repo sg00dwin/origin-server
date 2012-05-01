@@ -21,10 +21,14 @@ class StatusApp < Sinatra::Base
       _log("Not synced")
       sync(sprintf(STATUS_APP_HOSTS[:template],STATUS_APP_HOSTS[:host]))
     end
-    # Prevent cookies from being set - only way to prevent middleware sets
-    env['action_dispatch.cookies'] = nil
   end
-  
+
+  after do
+    if session = env['rack.session']
+      session.instance_variable_set('@loaded', false)
+    end
+  end
+
   get '*/status' do
     @open = Issue.is_open
     @resolved = Issue.resolved.merge(Issue.year)
