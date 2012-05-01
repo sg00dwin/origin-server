@@ -15,7 +15,6 @@ class StatusApp < Sinatra::Base
   end
 
   before do
-    _log("Handing request")
     @base = URI.parse(request.path_info).path.split('/')[0..-2].join('/')
     if !settings.synced && Issue.all.empty?
       _log("Not synced")
@@ -24,6 +23,7 @@ class StatusApp < Sinatra::Base
   end
 
   after do
+    # Prevent the session cookie from being set for all requests
     if session = env['rack.session']
       session.instance_variable_set('@loaded', false)
     end
