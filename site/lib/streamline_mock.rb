@@ -39,7 +39,7 @@ module StreamlineMock
   #
   def establish_email_address
     @email_address ||=
-      if rhlogin.index '@'
+      if rhlogin.present? and rhlogin.index '@'
         @email_address = "#{@rhlogin}@rhn.com"
       else
         @email_address = @rhlogin
