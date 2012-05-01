@@ -4,9 +4,7 @@
 #
 module Streamline
   include ErrorCodes
-
-  attr_reader :rhlogin, :ticket, :roles, :terms
-  attr_accessor :email_address
+  include Streamline::Base
 
   class Cookie
     def initialize(*arguments)
@@ -89,13 +87,14 @@ module Streamline
 
   # Clears the current ticket and authenticates with streamline
   def authenticate(login, password)
-    self.rhlogin = login
-    @ticket = nil
+    rhlogin = login
+    ticket = nil
     Rails.logger.debug "Authenticating user #{login}"
 
     http_post(@@login_url, {:login => login, :password => password}) do |json|
       @rhlogin = json['login']
       @roles = json['roles']
+      @streamline_type = :simple if roles.include? 'simple_authenticated'
     end
     true
   rescue AccessDeniedException
@@ -506,17 +505,6 @@ module Streamline
     url.query = build_terms_query(terms)
     url
   end
-
-  protected
-    attr_writer :ticket, :email_address, :terms
-
-    #
-    # Prevent classes from changing an rhlogin once set
-    #
-    def rhlogin=(login)
-      raise "rhlogin cannot be changed once set" unless @rhlogin.nil?
-      @rhlogin = login
-    end
 end
 
 

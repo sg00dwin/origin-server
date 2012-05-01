@@ -3,8 +3,7 @@
 # for the streamline interface
 #
 module StreamlineMock
-  attr_reader :rhlogin, :ticket, :roles, :terms
-  attr_accessor :email_address
+  include Streamline::Base
 
   #
   # Establish the user state based on the current ticket
@@ -183,16 +182,5 @@ module StreamlineMock
       not roles.include?('cloud_access_1') and roles.include?('cloud_access_request_1')
     end
   end
-
-  protected
-    attr_writer :ticket, :email_address, :terms
-
-    #
-    # Prevent classes from changing an rhlogin once set
-    #
-    def rhlogin=(login)
-      raise "rhlogin cannot be changed once set" if @rhlogin.present? && login != @rhlogin
-      @rhlogin = login
-    end
 end
 
