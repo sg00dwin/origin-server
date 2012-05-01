@@ -109,6 +109,7 @@ module ActionController
             v = '[hidden]' if k == 'HTTP_AUTHORIZATION'
             infohdrs[k.to_s]=v.to_s
           end
+
           infoparams = {}
           params.each do |k, v|
             v = '[hidden]' if k == 'password'
@@ -121,6 +122,7 @@ module ActionController
               infoparams[k.to_s]=v.to_s
             end
           end
+
           infoout = {
             :TIMESTAMP   => @profiler_start_time.to_s,
             :TIMESTAMP_F => @profiler_start_time.to_f,
@@ -137,7 +139,9 @@ module ActionController
             :PROTOCOL    => request.protocol.to_s,
             :QUERY_STR   => request.query_string.to_s,
             :REMOTE_IP   => request.remote_ip.to_s,
-            :URL         => request.url.to_s
+            :URL         => request.url.to_s,
+            :STATUS      => response.status,
+            :CONTENT_TYPE => response.content_type
           }
 
           FileUtils.mkdir_p(@@profiler_dir)

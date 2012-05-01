@@ -123,14 +123,14 @@ module MCollective
         output = ""
         exitcode = 0
         begin
-          require "#{File.dirname(__FILE__)}/migrate-#{version}"
-          output, exitcode = LibraMigration::migrate(uuid, namespace, version)
+          require "#{File.dirname(__FILE__)}/migrate"
+          output, exitcode = OpenShiftMigration::migrate(uuid, namespace, version)
         rescue LoadError => e
           exitcode = 127
-          output += "Migration version not supported: #{version}\n"
+          output += "Migrate not supported.\n"
         rescue Exception => e
           exitcode = 1
-          output += "Application failed to migrate with exception: #{e.message}\n#{e.backtrace}\n"
+          output += "Gear failed to migrate with exception: #{e.message}\n#{e.backtrace}\n"
         end
         Log.instance.debug("migrate_action (#{exitcode})\n------\n#{output}\n------)")
 
