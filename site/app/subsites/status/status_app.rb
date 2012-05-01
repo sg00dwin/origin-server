@@ -21,6 +21,8 @@ class StatusApp < Sinatra::Base
       _log("Not synced")
       sync(sprintf(STATUS_APP_HOSTS[:template],STATUS_APP_HOSTS[:host]))
     end
+    # Prevent cookies from being set - only way to prevent middleware sets
+    env['action_dispatch.cookies'] = nil
   end
   
   get '*/status' do
