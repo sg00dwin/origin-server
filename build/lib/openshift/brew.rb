@@ -31,4 +31,5 @@ module OpenShift
 
       stage_candidates
     end
+  end
 end
