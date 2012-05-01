@@ -1,4 +1,4 @@
-policy_module(libra,1.1.20)
+policy_module(libra,1.1.21)
 
 ########################################
 #
@@ -147,7 +147,8 @@ allow libra_app_domain libra_var_lib_t:file entrypoint;
 
 
 kernel_read_system_state(libra_app_domain)
-kernel_read_network_state(libra_app_domain)
+kernel_dontaudit_search_network_state(libra_app_domain)
+#kernel_read_network_state(libra_app_domain)
 kernel_dontaudit_list_all_proc(libra_app_domain)
 kernel_dontaudit_list_all_sysctls(libra_app_domain)
 kernel_get_sysvipc_info(libra_app_domain)
