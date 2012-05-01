@@ -11,6 +11,10 @@ module Streamline
       @streamline_type || :full
     end
 
+    def initialize(opts={})
+      opts.each_pair { |k,v| send("#{k}=", v) }
+    end
+
     protected
       attr_writer :streamline_type
       attr_writer :ticket, :email_address, :terms

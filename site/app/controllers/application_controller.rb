@@ -194,7 +194,7 @@ class ApplicationController < ActionController::Base
     logger.debug "========== TESTING ===========" if retval
     retval
   end
-
+  
   protected
     #
     # Set a user object on the session
