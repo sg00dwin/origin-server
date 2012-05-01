@@ -408,6 +408,13 @@ echo "0 11 * * * /usr/local/bin/openscap.sh" | /usr/bin/crontab
 
 # Remove all SUIDs - tkramer - testing in devenv
 chmod -R u-s /tmp/passenger.1.0.*
+chmod u-s /tmp/passenger.1.0.1408/generation-0/backends
+chmod u-s /tmp/passenger.1.0.1609/generation-0/backends
+chmod u-s /tmp/passenger.1.0.7527/generation-0/backends
+chmod u-s /tmp/passenger.1.0.1456/generation-0/backends
+chmod u-s /tmp/passenger.1.0.1561/generation-0/backends
+chmod u-s /tmp/passenger.1.0.1367/generation-0/backends
+chmod u-s /tmp/passenger.1.0.7606/generation-0/backends
 chmod u-s /usr/bin/staprun
 chmod u-s /usr/bin/chage
 chmod u-s /usr/bin/chfn
@@ -458,8 +465,10 @@ chmod 660 /var/www/stickshift/broker/log/production.log
 chmod 660 /var/www/stickshift/broker/log/development.log
 
 # Make grub.conf readable only to user and group - not other - tkramer
-chmod 660 /boot/grub/grub.conf
+chmod 600 /boot/grub/grub.conf
 
+# Remove other read
+chmod 660 /var/run/rhc-watchman.pid
 
 # Add user nagios_monitor to wheel group for running rpm, dmesg, su, and sudo
 /usr/bin/gpasswd -a nagios_monitor wheel
