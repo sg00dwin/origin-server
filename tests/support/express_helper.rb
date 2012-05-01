@@ -1,7 +1,7 @@
 # Include the setup helper constants and then override them with express specific values
 # before requiring any other helper classes from under stickshift
 
-require File.dirname(__FILE__) + "/../../stickshift/controller/test/cucumber/support/setup_helper.rb"
+require File.dirname(__FILE__) + "/../../stickshift/controller/test/cucumber/support/00_setup_helper.rb"
 
 #
 # Override any express specific settings now
@@ -23,6 +23,8 @@ $selinux_user = "unconfined_u"
 $selinux_role = "system_r"
 $selinux_type = "libra_initrc_t"
 
+# Submodule repo directory for testing submodule addition test case
+$submodule_repo_dir = "/root/submodule_test_repo"
 
 #
 # require the rest of the stickshift helper modules now
@@ -30,7 +32,7 @@ $selinux_type = "libra_initrc_t"
 
 Dir.glob(File.dirname(__FILE__) + "/../../stickshift/controller/test/cucumber/support/*").each { |helper|
   # exclude any stickshift specific helpers or those that are being overridden in express
-  require helper unless ["dns_helper.rb"].include? File.basename(helper)
+  require helper unless ["00_setup_helper.rb", "dns_helper.rb"].include? File.basename(helper)
 }
 
 

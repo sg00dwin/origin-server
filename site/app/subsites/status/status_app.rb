@@ -15,14 +15,20 @@ class StatusApp < Sinatra::Base
   end
 
   before do
-    _log("Handing request")
     @base = URI.parse(request.path_info).path.split('/')[0..-2].join('/')
     if !settings.synced && Issue.all.empty?
       _log("Not synced")
       sync(sprintf(STATUS_APP_HOSTS[:template],STATUS_APP_HOSTS[:host]))
     end
   end
-  
+
+  after do
+    # Prevent the session cookie from being set for all requests
+    if session = env['rack.session']
+      session.instance_variable_set('@loaded', false)
+    end
+  end
+
   get '*/status' do
     @open = Issue.is_open
     @resolved = Issue.resolved.merge(Issue.year)
