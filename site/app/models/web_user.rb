@@ -71,6 +71,13 @@ class WebUser
     false
   end
 
+  def type
+    case
+    when simple_user?:  :openshift
+    else                :red_hat_network
+    end
+  end
+
   def accepted_terms?
     terms && terms.empty?
   end

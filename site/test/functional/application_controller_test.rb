@@ -111,4 +111,8 @@ class ApplicationControllerTest < ActionController::TestCase
     WebUser.expects(:find_by_ticket).raises(AccessDeniedException)
     @controller.send('user_from_session')
   end
+
+  test 'user_to_session stores user' do
+    #@controller.send('user_to_session')
+  end
 end

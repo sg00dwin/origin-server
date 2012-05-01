@@ -13,16 +13,7 @@ module StreamlineMock
   def establish
     @rhlogin ||= ticket || "openshift@redhat.com"
 
-    unless @roles
-      @roles = []
-      if @rhlogin.index '@'
-        @roles << "simple_authenticated"
-        @email_address = @rhlogin
-      else
-        @roles << "authenticated"
-        @email_address = "#{@rhlogin}@rhn.com"
-      end
-    end
+    set_fake_roles unless @roles
     self
   end
 
@@ -103,11 +94,13 @@ module StreamlineMock
 
   def authenticate(login, password)
     self.rhlogin = login
-    @ticket = nil
+    self.ticket = nil
     Rails.logger.debug "Authenticating user #{login}"
 
     if login.present? and password.present?
       @ticket = login
+      @rhlogin = login
+      set_fake_roles
       true
     else
       errors.add(:base, I18n.t(:login_error, :scope => :streamline))
@@ -182,5 +175,15 @@ module StreamlineMock
       not roles.include?('cloud_access_1') and roles.include?('cloud_access_request_1')
     end
   end
+
+  private
+    def set_fake_roles
+      @roles, @rhlogin = if @rhlogin.index '@'
+        @streamline_type = :simple
+        [["simple_authenticated"], @rhlogin]
+      else
+        [["authenticated"], "#{@rhlogin}@rhn.com"]
+      end
+    end
 end
 

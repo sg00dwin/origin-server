@@ -7,9 +7,12 @@ module Streamline
     def simple_user?
       streamline_type == :simple
     end
+    def streamline_type
+      @streamline_type || :full
+    end
 
     protected
-      attr_accessor :streamline_type
+      attr_writer :streamline_type
       attr_writer :ticket, :email_address, :terms
 
       def rhlogin=(login)

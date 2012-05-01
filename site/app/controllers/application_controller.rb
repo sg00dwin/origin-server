@@ -202,6 +202,7 @@ class ApplicationController < ActionController::Base
     def user_to_session(user)
       session[:ticket] = user.ticket
       session[:login] = user.rhlogin
+      session[:streamline_type] = user.streamline_type
       session[:ticket_verified] ||= Time.now.to_i
       @authenticated_user = user
     end
@@ -245,7 +246,7 @@ class ApplicationController < ActionController::Base
     #
     def user_from_session
       if session[:login]
-        WebUser.new(:rhlogin => session[:login], :ticket => session[:ticket])
+        WebUser.new(:rhlogin => session[:login], :ticket => session[:ticket], :streamline_type => session[:streamline_type])
       elsif cookies[:rh_sso]
         user_to_session(WebUser.find_by_ticket(cookies[:rh_sso])) rescue nil
       else
