@@ -40,9 +40,6 @@ module Streamline
   @@request_password_reset_url = URI.parse(service_base_url + '/resetPassword.html')
   @@reset_password_url = URI.parse(service_base_url + '/resetPasswordConfirmed.html')
 
-  def initialize
-  end
-
   def email_confirm_url(key, login)
     query = "key=#{key}&emailAddress=#{CGI::escape(login)}"
     URI.parse("#{@@email_confirm_url}?#{query}")
@@ -73,8 +70,7 @@ module Streamline
     @roles ||= http_post(@@roles_url) do |json|
       @rhlogin ||= json['username']
       Rails.logger.warn "Roles user #{json['username']} different than active #{rhlogin}" if rhlogin != json['username']
-
-      json['roles']
+      json['roles'] || []
     end
   end
 

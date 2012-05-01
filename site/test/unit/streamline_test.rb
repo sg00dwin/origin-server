@@ -22,8 +22,11 @@ class StreamlineTest < ActiveSupport::TestCase
   end
 
   def set_roles(roles)
-    eval "def @streamline.set_roles(roles); @roles=roles; end"
-    @streamline.set_roles roles
+    @streamline.instance_variable_set("@roles", roles)
+  end
+
+  def establish(roles, username=nil)
+    [roles, username, @streamline.expects(:http_post).yields({'roles' => roles, 'username' => username}).returns(roles)]
   end
 
   test "streamline urls" do
@@ -179,6 +182,13 @@ class StreamlineTest < ActiveSupport::TestCase
     assert !@streamline.errors.empty?
   end
 
+  test "role is loaded once" do
+    json = {"roles" => []}
+    @streamline.expects(:http_post).once.yields(json).returns(json['roles'])
+    assert_equal [], @streamline.roles
+    assert_equal [], @streamline.roles
+  end
+
   test "role has access" do
     @streamline.expects(:http_post).never
     set_roles [CloudAccess.auth_role(CloudAccess::EXPRESS)]
@@ -214,53 +224,64 @@ class StreamlineTest < ActiveSupport::TestCase
   end
 
   test "establish roles implicitly" do
-    roles = [CloudAccess.auth_role(CloudAccess::EXPRESS)]
-    json = {'roles' => roles, 'username' => 'test@example.com'}
-    @streamline.expects(:http_post).once.yields(json)
+    roles, username = establish([CloudAccess.auth_role(CloudAccess::EXPRESS)], 'test@example.com')
     assert_equal roles, @streamline.roles
     assert_equal roles, @streamline.roles # check for caching values
   end
 
   test "entitle checks roles implicitly" do
-    roles = [CloudAccess.auth_role(CloudAccess::EXPRESS)]
-    json = {'roles' => roles, 'username' => 'test@example.com'}
-    @streamline.expects(:http_post).once.yields(json)
+    roles, username = establish([CloudAccess.auth_role(CloudAccess::EXPRESS)], 'test@example.com')
     assert @streamline.entitled?
     assert @streamline.entitled? # check for caching value
   end
   
   test "entitle depends on req role" do
-    roles = [CloudAccess.req_role(CloudAccess::EXPRESS)]
-    json = {'roles' => roles, 'username' => 'test@example.com'}
-    @streamline.expects(:http_post).once.yields(json)
+    roles, username = establish([CloudAccess.req_role(CloudAccess::EXPRESS)], 'test@example.com')
     assert_equal false, @streamline.entitled?
     assert_equal false, @streamline.entitled? #check for caching value
   end
 
   test "waiting for entitle checks roles implicitly" do
-    roles = [CloudAccess.req_role(CloudAccess::EXPRESS)]
-    json = {'roles' => roles, 'username' => 'test@example.com'}
-    @streamline.expects(:http_post).once.yields(json)
+    roles, username = establish([CloudAccess.req_role(CloudAccess::EXPRESS)], 'test@example.com')
     assert @streamline.waiting_for_entitle?
     assert @streamline.waiting_for_entitle? # check for caching value
   end
 
   test "waiting for entitle false when role exists" do
-    roles = [CloudAccess.auth_role(CloudAccess::EXPRESS)]
-    json = {'roles' => roles, 'username' => 'test@example.com'}
-    @streamline.expects(:http_post).once.yields(json)
+    roles, username = establish([CloudAccess.auth_role(CloudAccess::EXPRESS)], 'test@example.com')
     assert_equal false, @streamline.waiting_for_entitle?
     assert_equal false, @streamline.waiting_for_entitle? # check for caching value
   end
 
   test "establish user" do
-    rhlogin = "test@example.com"
-    roles = ['authenticated']
-    json = {"username" => rhlogin, "roles" => roles}
-    @streamline.expects(:http_post).once.yields(json).returns(json)
-    @streamline.establish
-    assert_equal rhlogin, @streamline.rhlogin
+    roles, username = establish(['authenticated'], 'test@example.com')
+    Rails.logger.expects(:warn).never
+    assert_equal @streamline, @streamline.establish
+    assert_equal username, @streamline.rhlogin
     assert_equal roles, @streamline.roles
+  end
+
+  test "establish user warns on name change" do
+    user = states('user').starts_as('normal')
+
+    roles = ['authenticated']
+
+    @streamline.expects(:http_post).yields({
+      'roles' => roles, 
+      'username' => 'test@example.com'
+    }).returns(roles).when(user.is('normal'))
+    Rails.logger.expects(:warn).never.when(user.is('normal'))
+
+    @streamline.expects(:http_post).yields({
+      'roles' => roles, 
+      'username' => 'test2@example.com'
+    }).returns(roles).when(user.is('changed'))
+    Rails.logger.expects(:warn).once.when(user.is('changed'))
+
+    @streamline.establish
+    set_roles nil
+    user.become('changed')
+    @streamline.establish
   end
 
   test "get email address for user" do
