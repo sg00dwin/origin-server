@@ -1,6 +1,6 @@
 class Identity
 
-  attr_accessor :id, :type, :email
+  attr_accessor :id, :type, :email, :url
 
   def initialize(opts={})
     opts.each_pair do |k,v|
@@ -20,12 +20,18 @@ class Identity
     when user.roles.include?('simple_authenticated'):
       [Identity.new :id => user.login, :type => :openshift, :email => user.login]
     else
-      [Identity.new :id => user.rhlogin, :type => :red_hat_network, :email => user.email_address]
+      [Identity.new :id => user.rhlogin, :type => :red_hat_network, :email => user.email_address, :url => red_hat_account_url]
     end
   end
+
 
   include ActiveModel::Validations
   include ActiveModel::Conversion
   include ActiveModel::Serialization
   extend ActiveModel::Naming
+
+  private
+    class << self
+      include CommunityHelper
+    end
 end

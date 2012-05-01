@@ -1,7 +1,10 @@
 class ApplicationController < ActionController::Base
   protect_from_forgery
 
-  rescue_from AccessDeniedException, :with => :redirect_to_logout
+  rescue_from AccessDeniedException do |e|
+    logger.debug "#{e}\n  #{e.backtrace.join("\n  ")}"
+    redirect_to logout_path
+  end
   rescue_from 'ActiveResource::ConnectionError' do |e|
     if defined? e.response and defined? env and env
       env['broker.response'] = e.response.inspect
@@ -9,15 +12,10 @@ class ApplicationController < ActionController::Base
     end
     raise e
   end
-  rescue_from 'ActiveResource::ResourceNotFound' do |exception|
-    logger.debug exception.backtrace.join("\n")
+  rescue_from 'ActiveResource::ResourceNotFound' do |e|
+    logger.debug "#{e}\n  #{e.backtrace.join("\n  ")}"
     upgrade_in_rails_31 # FIXME: Switch to render :status => 404
     render :file => "#{Rails.root}/public/404.html", :status => 404, :layout => false
-  end
-
-  def redirect_to_logout
-    #FIXME: Check whether an exception was thrown and log it to simplify error conditions
-    redirect_to logout_path
   end
 
   def handle_unverified_request

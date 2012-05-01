@@ -30,4 +30,39 @@ class WebUserTest < ActiveSupport::TestCase
     user = WebUser.new(:rhlogin => 'bob')
     assert_equal user.rhlogin, user.login
   end
+
+  test "protect rhlogin" do
+    s = Class.new(Object) do
+      include Streamline
+      def initialize(login)
+        self.rhlogin = login
+      end
+      def set=(login)
+        self.rhlogin = login
+      end
+    end
+    s = s.new "test"
+    assert_equal "test", s.rhlogin
+
+    assert_raise RuntimeError do
+      s.set = "another"
+    end
+
+    s = Class.new(Object) do
+      include StreamlineMock
+      def initialize(login)
+        self.rhlogin = login
+      end
+      def set=(login)
+        self.rhlogin = login
+      end
+    end
+    s = s.new "test"
+
+    assert_equal "test", s.rhlogin
+
+    assert_raise RuntimeError do
+      s.set = "another"
+    end
+  end
 end

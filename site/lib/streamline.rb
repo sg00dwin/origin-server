@@ -5,7 +5,8 @@
 module Streamline
   include ErrorCodes
 
-  attr_accessor :rhlogin, :ticket, :roles, :terms, :email_address
+  attr_reader :rhlogin, :ticket, :roles, :terms
+  attr_accessor :email_address
 
   class Cookie
     def initialize(*arguments)
@@ -40,7 +41,6 @@ module Streamline
   @@reset_password_url = URI.parse(service_base_url + '/resetPasswordConfirmed.html')
 
   def initialize
-    @roles = []
   end
 
   def email_confirm_url(key, login)
@@ -62,7 +62,7 @@ module Streamline
       @roles = json['roles']
       @rhlogin = json['username']
     end
-    raise "Authenticated user #{old_rhlogin} does not match #{@rhlogin}" unless old_rhlogin.nil? || old_rhlogin == rhlogin
+    Rails.logger.debug "Authenticated user id #{old_rhlogin} being changed to #{@rhlogin}" unless old_rhlogin.nil? || old_rhlogin == rhlogin
     self
   end
 
@@ -96,10 +96,11 @@ module Streamline
 
   # Clears the current ticket and authenticates with streamline
   def authenticate(login, password)
+    self.rhlogin = login
     @ticket = nil
-    Rails.logger.debug 'authenticated user'
+    Rails.logger.debug "Authenticating user #{login}"
+
     http_post(@@login_url, {:login => login, :password => password})
-    @rhlogin = login
     true
   rescue AccessDeniedException
     errors.add(:base, I18n.t(:login_error, :scope => :streamline))
@@ -333,20 +334,17 @@ module Streamline
   end
 
   #
-  # Get the user's email address
+  # Get the user's email address.  Will raise on error
   #
-  def establish_email_address
-    unless @email_address
-      user_info_args = {'login' => @rhlogin,
-                        'secretKey' => Rails.configuration.streamline[:user_info_secret]}
-      http_post(@@user_info_url, user_info_args) do |json|
-        @email_address = json['emailAddress']
-      end
+  def load_email_address
+    user_info_args = {
+      'login' => @rhlogin,
+      'secretKey' => Rails.configuration.streamline[:user_info_secret]
+    }
+    http_post(@@user_info_url, user_info_args) do |json|
+      @email_address = json['emailAddress']
     end
     @email_address
-  end
-  def email_address
-    establish_email_address
   end
 
   #
@@ -521,4 +519,14 @@ module Streamline
   class TokenExpired < Streamline::StreamlineException
   end
 
+  protected
+    attr_writer :ticket, :email_address, :terms
+
+    #
+    # Prevent classes from changing an rhlogin once set
+    #
+    def rhlogin=(login)
+      raise "rhlogin cannot be changed once set" unless @rhlogin.nil?
+      @rhlogin = login
+    end
 end

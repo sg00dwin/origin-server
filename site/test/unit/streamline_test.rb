@@ -5,7 +5,10 @@ class StreamlineTester
   include ActiveModel::Naming
   include ActiveModel::Validations
   include Streamline
-  attr_accessor :email_address, :password, :password_confirmation, :terms_accepted
+  attr_accessor :password, :password_confirmation, :terms_accepted
+
+  # Make these items public for test purposes
+  attr_writer :ticket, :terms, :email_address
 end
 
 class StreamlineTest < ActiveSupport::TestCase
@@ -264,7 +267,7 @@ class StreamlineTest < ActiveSupport::TestCase
     email_address = 'test@example.com'
     json = {"emailAddress" => email_address}
     @streamline.expects(:http_post).once.yields(json)
-    @streamline.establish_email_address
+    assert_equal email_address, @streamline.load_email_address
     assert_equal email_address, @streamline.email_address
   end
 
