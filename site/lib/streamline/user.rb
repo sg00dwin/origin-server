@@ -1,6 +1,8 @@
 module Streamline
   class User < Streamline::Base
 
+    require_dependency "streamline"
+
     service_base_url = if defined?(Rails)
       @@service_url = URI.parse(Rails.configuration.streamline[:host] + Rails.configuration.streamline[:base_url])
       @@service_url.to_s
