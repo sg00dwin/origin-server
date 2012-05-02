@@ -2,7 +2,7 @@
 # This mixin module mocks the calls that are used
 # for the IT streamline application
 module StreamlineMock
-  attr_accessor :rhlogin, :ticket, :roles, :terms
+  attr_accessor :rhlogin, :ticket, :roles, :terms, :email_address
 
   #
   # Establish the user state based on the current ticket
@@ -11,23 +11,44 @@ module StreamlineMock
   #
   def establish
     Rails.logger.warn("Non integrated environment - passing through")
-    @roles << "simple_authenticated"
-    @rhlogin = "openshift@redhat.com"
+    @rhlogin ||= ticket || "openshift@redhat.com"
+
+    @roles = []
+    if @rhlogin.index '@'
+      @roles << "simple_authenticated"
+      @email_address = @rhlogin
+    else
+      @roles << "authority"
+      @email_address = "#{@rhlogin}@rhn.com"
+    end
+
+    self
   end
 
   def terms
-    @terms ||= []
+    @terms ||= establish_terms
   end
 
   def roles
-    @roles ||= []
+    establish unless @roles
+    @roles
   end
 
   #
   # Get the user's email address
   #
   def establish_email_address
-    @email_address = 'test@example.com'
+    @email_address ||=
+      if rhlogin.present? and rhlogin.index '@'
+        @email_address = "#{@rhlogin}@rhn.com"
+      else
+        @email_address = @rhlogin
+      end
+    #end
+    @email_address
+  end
+  def email_address
+    establish_email_address
   end
 
   def establish_terms
@@ -88,7 +109,7 @@ module StreamlineMock
   def authenticate(login, password)
     if login.present? and password.present?
       @rhlogin = login
-      @ticket = 'test'
+      @ticket = login
       true
     else
       errors.add(:base, I18n.t(:login_error, :scope => :streamline))

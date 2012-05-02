@@ -1332,7 +1332,7 @@ function user_profile_user_default_permissions() {
   $permissions['view revisions'] = array(
     'name' => 'view revisions',
     'roles' => array(
-      '0' => 'administrator',
+      '0' => 'authenticated user',
       '1' => 'moderator',
     ),
   );
@@ -1361,6 +1361,8 @@ function user_profile_user_default_permissions() {
     'name' => 'view vote up/down count on nodes',
     'roles' => array(
       '0' => 'administrator',
+      '1' => 'anonymous user',
+      '2' => 'authenticated user',
     ),
   );
 

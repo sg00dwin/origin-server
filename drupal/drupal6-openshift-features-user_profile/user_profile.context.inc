@@ -365,6 +365,7 @@ function user_profile_context_default_contexts() {
   $export[$context->name] = $context;
 
 
+  # Make Events left navigation item active
   $context = new stdClass;
   $context->disabled = FALSE; /* Edit this to true to make a default context disabled initially */
   $context->api_version = 3;
@@ -372,9 +373,18 @@ function user_profile_context_default_contexts() {
   $context->description = '';
   $context->tag = '';
   $context->conditions = array(
+    'node' => array(
+      'values' => array(
+        'event' => 'event',
+      ),
+      'options' => array(
+        'node_form' => '1',
+      ),
+    ),
     'path' => array(
       'values' => array(
         'calendar' => 'calendar',
+        'calendar/*' => 'calendar/*',
       ),
     ),
   );
@@ -404,6 +414,30 @@ function user_profile_context_default_contexts() {
   );
   $context->reactions = array(
     'menu' => 'node/9475',
+  );
+  $context->condition_mode = 0;
+  $export[$context->name] = $context;
+
+
+  # Make Ideas left nav active
+  $context = new stdClass;
+  $context->disabled = FALSE; /* Edit this to true to make a default context disabled initially */
+  $context->api_version = 3;
+  $context->name = 'menu-active-ideas';
+  $context->description = '';
+  $context->tag = '';
+  $context->conditions = array(
+    'node' => array(
+      'values' => array(
+        'idea' => 'idea',
+      ),
+      'options' => array(
+        'node_form' => '1',
+      ),
+    ),
+  );
+  $context->reactions = array(
+    'menu' => 'ideas',
   );
   $context->condition_mode = 0;
   $export[$context->name] = $context;

@@ -8,7 +8,7 @@
 
 Summary:   Dependencies for OpenShift development
 Name:      rhc-devenv
-Version: 0.93.2
+Version: 0.93.5
 Release:   1%{?dist}
 Group:     Development/Libraries
 License:   GPLv2
@@ -151,6 +151,7 @@ Requires:  drupal6-views_customfield
 Requires:  drupal6-vote_up_down
 Requires:  drupal6-votingapi
 Requires:  drupal6-wikitools
+Requires:  drupal6-wysiwyg
 
 # Security RKHunter Requirements
 Requires:  rkhunter
@@ -380,8 +381,107 @@ cp -f %{devenvdir}/puppet-private.pem /var/lib/puppet/ssl/private_keys/localhost
 /bin/chmod 4750 /bin/su
 /bin/chmod 4110 /usr/bin/sudo
 
+# Remove blank passwd for root in shadow
+/bin/echo root:\!! | /usr/sbin/chpasswd -e
+
+# Create OpenScap script
+cat > /usr/local/bin/openscap.sh << EOF
+# Create OpenScap results
+/usr/bin/oscap xccdf eval --profile RHEL6-Default --results /var/log/xccdf-results.xml /usr/share/openscap/scap-rhel6-xccdf.xml 
+/usr/bin/oscap oval eval --results /var/log/oval-results.xml /usr/share/openscap/scap-rhel6-oval.xml 
+
+# Validate the OpenScap results
+/usr/bin/oscap xccdf validate-xml /usr/share/openscap/scap-rhel6-xccdf.xml 
+/usr/bin/oscap oval validate-xml /usr/share/openscap/scap-rhel6-oval.xml 
+
+# Create OpenScap HTML reports
+/usr/bin/oscap xccdf generate report /var/log/xccdf-results.xml > /var/log/report-xccdf.html 
+/usr/bin/oscap oval generate report /var/log/oval-results.xml > /var/log/report-oval.html 
+/usr/bin/oscap xccdf generate report --oval-template /var/log/oval-results.xml /var/log/xccdf-results.xml > /var/log/report-xccdf-oval.html 
+EOF
+
+# Make OpenScap.sh executable
+chmod 0750 /usr/local/bin/openscap.sh
+
+# Create OpenScap crontab entry
+echo "0 11 * * * /usr/local/bin/openscap.sh" | /usr/bin/crontab
+
+# Remove all SUIDs - tkramer - testing in devenv
+#chmod -R u-s /tmp/passenger.1.0.*
+#chmod u-s /tmp/passenger.1.0.1408/generation-0/backends
+#chmod u-s /tmp/passenger.1.0.1609/generation-0/backends
+#chmod u-s /tmp/passenger.1.0.7527/generation-0/backends
+#chmod u-s /tmp/passenger.1.0.1456/generation-0/backends
+#chmod u-s /tmp/passenger.1.0.1561/generation-0/backends
+#chmod u-s /tmp/passenger.1.0.1367/generation-0/backends
+#chmod u-s /tmp/passenger.1.0.7606/generation-0/backends
+chmod u-s /usr/bin/staprun
+chmod u-s /usr/bin/chage
+chmod u-s /usr/bin/chfn
+chmod u-s /usr/bin/gpasswd
+chmod u-s /usr/bin/chsh
+chmod u-s /usr/bin/sudoedit
+chmod u-s /usr/bin/passwd
+chmod u-s /usr/bin/crontab
+chmod u-s /usr/bin/at
+chmod u-s /usr/bin/sudo
+chmod u-s /usr/bin/pkexec
+chmod u-s /usr/bin/newgrp
+chmod u-s /usr/libexec/polkit-1/polkit-agent-helper-1
+chmod u-s /usr/libexec/pt_chown
+chmod u-s /usr/libexec/openssh/ssh-keysign
+chmod u-s /usr/sbin/suexec
+chmod u-s /usr/sbin/userhelper
+chmod u-s /usr/sbin/usernetctl
+chmod u-s /bin/ping6
+chmod u-s /bin/mount
+chmod u-s /bin/su
+chmod u-s /bin/ping
+chmod u-s /bin/umount
+chmod u-s /sbin/pam_timestamp_check
+chmod u-s /sbin/unix_chkpwd
+chmod u-s /lib64/dbus-1/dbus-daemon-launch-helper
+
+# Remove all SGIDs - tkramer
+chmod g-s /var/cache/mock
+chmod g-s /var/lib/mock
+chmod g-s /usr/bin/ssh-agent
+chmod g-s /usr/bin/wall
+chmod g-s /usr/bin/screen
+chmod g-s /usr/bin/locate
+chmod g-s /usr/bin/lockfile
+chmod g-s /usr/bin/write
+chmod g-s /usr/libexec/utempter/utempter
+chmod g-s /usr/sbin/postqueue
+chmod g-s /usr/sbin/postdrop
+chmod g-s /bin/cgexec
+chmod g-s /sbin/netreport
+
+# Make log files readable only to user and group - not other - tkramer
+chmod 660 /var/www/stickshift/site/log/development.log
+chmod 660 /var/www/stickshift/site/log/production.log
+chmod 660 /var/www/stickshift/broker/log/mcollective-client.log
+chmod 660 /var/www/stickshift/broker/log/production.log
+chmod 660 /var/www/stickshift/broker/log/development.log
+
+# Make grub.conf readable only to user and group - not other - tkramer
+chmod 600 /boot/grub/grub.conf
+
+# Remove other read
+chmod 660 /var/run/rhc-watchman.pid
+
+# Make repos check with gpg
+sed 's/^gpgcheck=0/gpgcheck=1/' /etc/yum.repos.d/epel.repo > /etc/yum.repos.d/epel.tmp
+mv -f /etc/yum.repos.d/epel.tmp /etc/yum.repos.d/epel.repo
+sed 's/^gpgcheck=0/gpgcheck=1/' /etc/yum.repos.d/li.repo > /etc/yum.repos.d/li.tmp
+mv -f /etc/yum.repos.d/li.tmp /etc/yum.repos.d/li.repo
+
+# Turn off rsyslog compatibility check in OpenScap
+sed 's/rule-1125" selected="true/rule-1125" selected="false/' /usr/share/openscap/scap-rhel6-xccdf.xml > /usr/share/openscap/scap-rhel6-xccdf.xml.tmp
+mv -f /usr/share/openscap/scap-rhel6-xccdf.xml.tmp /usr/share/openscap/scap-rhel6-xccdf.xml
+
 # Add user nagios_monitor to wheel group for running rpm, dmesg, su, and sudo
-/usr/bin/gpasswd nagios_monitor wheel
+/usr/bin/gpasswd -a nagios_monitor wheel
 
 # Populate Drupal Database 
 echo "select count(*) from users;" | mysql -u root libra > /dev/null 2>&1 || zcat /usr/share/drupal6/sites/default/openshift-dump.gz | mysql -u root
@@ -405,6 +505,20 @@ echo "Header append Strict-Transport-Security includeSubDomains" >> /etc/httpd/c
 %{policydir}/*
 
 %changelog
+* Tue May 01 2012 Tim Kramer <tkramer@redhat.com> 0.93.5-1
+- Removed add SGIDs and SUIDs for testing 05 01 2012
+- Removed other readable to log files 05 01 2012
+- Removed other readable to grub 05 01 2012
+- Make li.repo and epel.repo to use gpgcheck - testing in devenv 05 01 2012
+- Remove rsyslog compatibility check out of OpenScap test 1125 05 01 2012
+
+* Mon Apr 30 2012 Tim Kramer <tkramer@redhat.com> 0.93.4-1
+- Dropped in place holder for removal off all SGIDs and SUIDs  04 30 2012
+
+* Mon Apr 30 2012 Tim Kramer <tkramer@redhat.com> 0.93.3-1
+- Security - Added OpenScap cron tab entry and run script 04 30 2012
+- Security - Removed blank root passwd in shadow 04 30 2012
+
 * Thu Apr 26 2012 Adam Miller <admiller@redhat.com> 0.93.2-1
 - Security - added info to change log for RKHunter and OpenSCAP  04 26 2012
   (tkramer@redhat.com)

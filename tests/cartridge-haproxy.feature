@@ -1,9 +1,7 @@
 @internals                                                                                                                                                                       
 @node
 Feature: HAProxy Application Sub-Cartridge
-
-# This has the same tests as cartridge-haproxy.feature and tests the frameworks that are express-ONLY
-
+  
   Scenario Outline: Create Delete one application with haproxy
     Given an accepted node
     And a new gear with namespace "ns1" and app name "app1"
@@ -29,7 +27,11 @@ Feature: HAProxy Application Sub-Cartridge
 
   Scenarios: Create Delete Application With Database Scenarios
     |type|
+    |php|
+    |python|
     |ruby|
+    |nodejs|
+    |perl|
     
 #  Scenario Outline: Stop Start Restart a MySQL database
 #    Given an accepted node

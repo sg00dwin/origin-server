@@ -18,27 +18,24 @@
         .row-console
           - if content_for? :full_layout
             .row.row-flush-right
+              .grid-wrapper.ribbon
+                .span12.span-flush-right
+                  - if content_for? :breadcrumbs
+                    %nav
+                      = yield :breadcrumbs
               .grid-wrapper
-                - if content_for? :breadcrumbs
-                  .ribbon
-                    .ribbon-content
-                      %nav
-                        = yield :breadcrumbs
                 = flashes
                 = yield
 
-          - elsif content_for? :breadcrumbs
-            .row.row-flush-right
-              .column-content.grid-wrapper
-                .ribbon
-                  .ribbon-content
-                    %nav
-                      = yield :breadcrumbs
-                .span12
-                  = flashes
-                  = yield
           - else
             .row.row-flush-right
+              .grid-wrapper.ribbon
+                .span12.span-flush-right
+                  - if content_for? :breadcrumbs
+                    %nav
+                      = yield :breadcrumbs
+                  - else
+                    &nbsp;
               .column-content.grid-wrapper
                 .span12
                   = flashes

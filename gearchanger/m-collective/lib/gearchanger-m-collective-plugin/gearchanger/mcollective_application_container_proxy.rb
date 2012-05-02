@@ -1236,15 +1236,18 @@ module GearChanger
       
       def self.rpc_find_available(node_profile=nil, district_uuid=nil, forceRediscovery=false)
         current_server, current_capacity = nil, nil
-        additional_filters = []
+        additional_filters = [{:fact => "active_capacity",
+                               :value => '100',
+                               :operator => "<"}]
+
         district_uuid = nil if district_uuid == 'NONE'
-        
+
         if node_profile
           additional_filters.push({:fact => "node_profile",
                                    :value => node_profile,
                                    :operator => "=="})
         end
-        
+
         if district_uuid
           additional_filters.push({:fact => "district_uuid",
                                    :value => district_uuid,
@@ -1253,24 +1256,29 @@ module GearChanger
                                    :value => true.to_s,
                                    :operator => "=="})
         else
-          additional_filters.push({:fact => "active_capacity",
-                                   :value => '100',
-                                   :operator => "<"})
           #TODO how do you filter on a fact not being set
           additional_filters.push({:fact => "district_uuid",
                                    :value => "NONE",
                                    :operator => "=="})
 
         end
-    
+
+        server_infos = []
         rpc_get_fact('active_capacity', nil, forceRediscovery, additional_filters) do |server, capacity|
-          Rails.logger.debug "Next server: #{server} active capacity: #{capacity}"
-          if !current_capacity || capacity.to_i < current_capacity.to_i
-            current_server = server
-            current_capacity = capacity
-          end
+          #Rails.logger.debug "Next server: #{server} active capacity: #{capacity}"
+          server_infos << [server, capacity.to_i]
+        end
+
+        unless server_infos.empty?
+          # Pick a random node amongst the best choices available
+          server_infos = server_infos.sort_by { |server_info| server_info[1] }
+          max_index = [server_infos.length, 8].min
+          server_info = server_infos[rand(max_index)]
+          current_server = server_info[0]
+          current_capacity = server_info[1]
           Rails.logger.debug "Current server: #{current_server} active capacity: #{current_capacity}"
         end
+
         return current_server, current_capacity
       end
       

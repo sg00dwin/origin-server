@@ -5,8 +5,6 @@ Version: 1.9.1
 Release: 1%{?dist}
 Summary: Embedded RockMongo support for OpenShift
 
-Obsoletes: rhc-cartridge-rockmongo-1.1
-
 Group: Applications/Internet
 License: ASL 2.0
 URL: http://openshift.redhat.com

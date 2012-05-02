@@ -18,7 +18,11 @@ $do = og_comment_perms_do();
 
       <?php //print theme('user_picture', $comment); ?>
 
+
+      <?php /* Hide the title if it exists in the body */
+        if (!empty($comment->subject) && strpos($content, $comment->subject) === false) { ?>
       <h3><?php print $title . $uid; ?></h3>
+        <?php } ?>
 
       <div class="content">
         <?php print $content ?>

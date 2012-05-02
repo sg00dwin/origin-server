@@ -1,4 +1,4 @@
-policy_module(libra,1.1.19)
+policy_module(libra,1.1.21)
 
 ########################################
 #
@@ -147,7 +147,8 @@ allow libra_app_domain libra_var_lib_t:file entrypoint;
 
 
 kernel_read_system_state(libra_app_domain)
-kernel_read_network_state(libra_app_domain)
+kernel_dontaudit_search_network_state(libra_app_domain)
+#kernel_read_network_state(libra_app_domain)
 kernel_dontaudit_list_all_proc(libra_app_domain)
 kernel_dontaudit_list_all_sysctls(libra_app_domain)
 kernel_get_sysvipc_info(libra_app_domain)
@@ -464,6 +465,7 @@ mta_base_mail_template(libra)
 mta_sendmail_domtrans(libra_app_domain, libra_mail_t)
 role system_r types libra_mail_t;
 
+allow libra_app_domain libra_mail_t:process { getattr signal signull sigkill };
 allow libra_mail_t libra_initrc_t:fifo_file rw_inherited_fifo_file_perms;
 dontaudit libra_mail_t sshd_devpts_t:chr_file { read write };
 
@@ -483,6 +485,7 @@ allow sshd_t libra_domain:process { transition dyntransition };
 libra_search_lib(sshd_t)
 dontaudit sshd_t self:capability sys_admin;
 allow libra_domain sshd_t:process sigchld;
+dontaudit libra_domain sshd_t:key view;
 allow libra_domain sshd_t:unix_stream_socket connectto;
 allow libra_domain sshd_t:unix_dgram_socket write;
 allow sshd_t libra_domain:process { rlimitinh signal };
@@ -524,3 +527,5 @@ kernel_search_vm_sysctl(libra_app_t)
 netutils_domtrans_ping(libra_t)
 netutils_kill_ping(libra_t)
 netutils_signal_ping(libra_t)
+
+

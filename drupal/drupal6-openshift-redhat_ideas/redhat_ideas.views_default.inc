@@ -255,7 +255,7 @@ function redhat_ideas_views_default_views() {
     'type' => 'none',
   ));
   $handler->override_option('header', '<p>View the current Feature Requests below, or submit a new one to the OpenShift team!</p>
-<div class="new-post-button"><a class="btn btn-create" href="/openshift/node/add/idea">Submit an Idea</a></div>
+<div class="new-post-button"><a class="btn btn-create" href="/community/node/add/idea">Submit an Idea</a></div>
 ');
   $handler->override_option('header_format', '2');
   $handler->override_option('header_empty', 1);

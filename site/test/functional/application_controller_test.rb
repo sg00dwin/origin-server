@@ -106,4 +106,9 @@ class ApplicationControllerTest < ActionController::TestCase
 #    assert_not_nil flash[:notice]
 #    assert_match(/access setup/, flash[:notice])
 #  end
+  test 'user_from_session handles exceptions' do
+    @request.cookies['rh_sso'] = "im_a_bad_cookie"
+    WebUser.expects(:find_by_ticket).raises(AccessDeniedException)
+    @controller.send('user_from_session')
+  end
 end
