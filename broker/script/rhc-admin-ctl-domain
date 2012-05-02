@@ -74,7 +74,7 @@ when "create"
     exit -1
   end
   
-  user = CloudUser.new(login, ssh, namespace)
+  user = CloudUser.new(login, ssh_key, namespace)
   reply.append user.save
   reply.resultIO << "Successfully created user.\n"
 when "update"
