@@ -8,7 +8,7 @@
 
 Summary:   Dependencies for OpenShift development
 Name:      rhc-devenv
-Version: 0.93.5
+Version: 0.93.6
 Release:   1%{?dist}
 Group:     Development/Libraries
 License:   GPLv2
@@ -467,9 +467,6 @@ chmod 660 /var/www/stickshift/broker/log/development.log
 # Make grub.conf readable only to user and group - not other - tkramer
 chmod 600 /boot/grub/grub.conf
 
-# Remove other read
-chmod 660 /var/run/rhc-watchman.pid
-
 # Make repos check with gpg
 sed 's/^gpgcheck=0/gpgcheck=1/' /etc/yum.repos.d/epel.repo > /etc/yum.repos.d/epel.tmp
 mv -f /etc/yum.repos.d/epel.tmp /etc/yum.repos.d/epel.repo
@@ -505,6 +502,9 @@ echo "Header append Strict-Transport-Security includeSubDomains" >> /etc/httpd/c
 %{policydir}/*
 
 %changelog
+* Wed May 02 2012 Tim Kramer <tkramer@redhat.com> 0.93.6-1
+- Removed the chmod of rhc-watchman.pid.  This needs to happen in the rhc-node rpm 05 02 2012
+
 * Tue May 01 2012 Tim Kramer <tkramer@redhat.com> 0.93.5-1
 - Removed add SGIDs and SUIDs for testing 05 01 2012
 - Removed other readable to log files 05 01 2012
