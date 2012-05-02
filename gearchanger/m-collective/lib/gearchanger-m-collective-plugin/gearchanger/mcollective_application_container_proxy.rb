@@ -1184,7 +1184,7 @@ module GearChanger
       def self.rpc_find_available(node_profile=nil, district_uuid=nil, forceRediscovery=false)
         current_server, current_capacity = nil, nil
         additional_filters = [{:fact => "active_capacity",
-                               :value => '101',
+                               :value => '100',
                                :operator => "<"}]
 
         district_uuid = nil if district_uuid == 'NONE'
