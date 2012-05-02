@@ -18,6 +18,7 @@
 lockfile=/var/lock/subsys/libra
 
 numparallel=5
+timeout=60
 
 # colors, use like: echo "${RED}FAILED!!!${NORM}"
 RED=$(echo -e "\033[31m")
@@ -193,7 +194,7 @@ start() {
     echo "Starting Libra Services: "
     echo
 
-    echo `libra_users` | xargs -d' ' -I{} -n 1 -P $numparallel /etc/init.d/libra startuser {}
+    echo `libra_users` | xargs -d' ' -I{} -n 1 -P $numparallel /usr/bin/timeout $timeout /etc/init.d/libra startuser {}
 
     echo -n "All Libra services started"
     [ $GROUP_RETVAL -eq 0 ] && touch ${lockfile}
@@ -206,7 +207,7 @@ stop() {
     echo "Stopping Libra Services: "
     echo
 
-    echo `libra_users` | xargs -d' ' -I{} -n 1 -P $numparallel /etc/init.d/libra stopuser {}
+    echo `libra_users` | xargs -d' ' -I{} -n 1 -P $numparallel /usr/bin/timeout $timeout /etc/init.d/libra stopuser {}
 
     echo -n "All Libra services stopped"
     [ $GROUP_RETVAL -eq 0 ] && touch ${lockfile}
@@ -220,7 +221,7 @@ restart() {
     echo "Restarting Libra Services: "
     echo
 
-    echo `libra_users` | xargs -d' ' -I{} -n 1 -P $numparallel /etc/init.d/libra restartuser {}
+    echo `libra_users` | xargs -d' ' -I{} -n 1 -P $numparallel /usr/bin/timeout $timeout /etc/init.d/libra restartuser {}
 
     echo -n "All Libra services restarted"
     [ $GROUP_RETVAL -eq 0 ] && touch ${lockfile}
