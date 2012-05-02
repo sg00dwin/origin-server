@@ -403,9 +403,6 @@ EOF
 # Make OpenScap.sh executable
 chmod 0750 /usr/local/bin/openscap.sh
 
-# Create OpenScap crontab entry
-echo "0 11 * * * /usr/local/bin/openscap.sh" | /usr/bin/crontab
-
 # Remove all SUIDs - tkramer - testing in devenv
 #chmod -R u-s /tmp/passenger.1.0.*
 #chmod u-s /tmp/passenger.1.0.1408/generation-0/backends
