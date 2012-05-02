@@ -576,13 +576,14 @@ h1.ribbon {
 // Column navigation
 .column-nav {
   background-color: $navColumnBackgroundColor;
-  color: #666;
+  color: #7a7b7c;
+  font-size:12px;
 
   label {
-    color: #666;
+    color: #6a6b6c;
   }
   a {
-    color: #999;
+    color: #babbbc;
   }
 
   .headline,
@@ -684,6 +685,10 @@ h1.ribbon {
     @include expand_for_phone();
   }
   .nav-location { display: none; }
+  
+  .column-nav .search-row {
+    margin-right: 0; /* correct ipad view */
+  }
 }
 
 /* Stacked navigations indent by 1 gutter each time */
