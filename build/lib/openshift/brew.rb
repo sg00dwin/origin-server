@@ -12,7 +12,7 @@ module OpenShift
     #   # => ["rhc-0.91.12-1.el6_2", "rhc-broker-0.91.18-1.el6_2"]
     #
     # Returns an array of brew package names
-    def get_packages_to_tag(source, target, date)
+    def get_packages_to_tag(source, target)
   
       stage_candidates = []
 
