@@ -410,17 +410,17 @@ module GearChanger
       def move_scalable_app(app, destination_container, destination_district_uuid=nil, allow_change_district=false, node_profile=nil)
         reply = ResultIO.new
         all_gears = app.gears
-        state_map = {}
         all_gears.each { |gear|
-          reply.append move_gear(app, gear, destination_container, destination_district_uuid, allow_change_district, node_profile, state_map) if gear.server_identity != destination_container.id
+          reply.append move_gear(app, gear, destination_container, destination_district_uuid, allow_change_district, node_profile) if gear.server_identity != destination_container.id
         }
-        unless app.aliases.nil?
-          app.aliases.each do |server_alias|
-            reply.append destination_container.send(:run_cartridge_command, app.framework, app, app.gear, "add-alias", server_alias, false)
-          end
-        end
+        reply
+      end
 
+      def move_gear_post(app, gear, state_map)
+        reply = ResultIO.new
+        gi = app.group_instance_map[gear.group_instance_name]
         app.start_order.each do |ci_name|
+          next if not gi.component_instances.include? ci_name
           cinst = app.comp_instance_map[ci_name]
           cart = cinst.parent_cart_name
           idle, leave_stopped = state_map[ci_name]
@@ -430,30 +430,38 @@ module GearChanger
           end
         end
 
-        app.recreate_dns
-        app.execute_connections
+        log_debug "DEBUG: Fixing DNS and mongo for gear '#{gear.name}' after move"
+        log_debug "DEBUG: Changing server identity of '#{gear.name}' from '#{source_container.id}' to '#{destination_container.id}'"
+        gear.server_identity = destination_container.id
+        gear.container = destination_container
+        if app.scalable and not gear.component_instances.include? app.proxy_cartridge
+          dns = StickShift::DnsService.instance
+          begin
+            dns.deregister_application(gear.name, app.domain.namespace)
+            public_hostname = destination_container.get_public_hostname
+            dns.register_application(gear.name, app.domain.namespace, public_hostname)
+            dns.publish
+          ensure
+            dns.close
+          end
+        end
+
+        if app.scalable and gear.component_instances.include? app.proxy_cartridge
+          unless app.aliases.nil?
+            app.aliases.each do |server_alias|
+              reply.append destination_container.send(:run_cartridge_command, app.framework, app, app.gear, "add-alias", server_alias, false)
+            end
+          end
+          app.recreate_dns
+        end
+
         reply
       end
 
-      def move_gear(app, gear, destination_container, destination_district_uuid, allow_change_district, node_profile, state_map)
+      def move_gear_pre(app, gear, state_map)
         reply = ResultIO.new
-        gear.node_profile = node_profile if node_profile
-
-        # resolve destination_container according to district
-        destination_container, destination_district_uuid, keep_uid = resolve_destination(app, gear, destination_container, destination_district_uuid, allow_change_district)
-
         source_container = gear.container
-        # get the state of all cartridges
-        quota_blocks = nil
-        quota_files = nil
         gi = app.group_instance_map[gear.group_instance_name]
-        gi.component_instances.each { |ci_name|
-          cinst = app.comp_instance_map[ci_name]
-          cart = cinst.parent_cart_name
-          idle,leave_stopped, quota_blocks, quota_files = get_cart_status(app, gear, cart)
-          state_map[ci_name] = [idle,leave_stopped]
-        }
-
         app.start_order.reverse.each { |ci_name|
           next if not gi.component_instances.include? ci_name
           cinst = app.comp_instance_map[ci_name]
@@ -472,12 +480,38 @@ module GearChanger
             reply.append source_container.send(:run_cartridge_command, "embedded/" + cart, app, gear, "pre-move", nil, false)
           end
         }
+        reply
+      end
+
+      def move_gear(app, gear, destination_container, destination_district_uuid, allow_change_district, node_profile)
+        reply = ResultIO.new
+        state_map = {}
+        gear.node_profile = node_profile if node_profile
+        orig_uid = gear.uid
+
+        # resolve destination_container according to district
+        destination_container, destination_district_uuid, keep_uid = resolve_destination(app, gear, destination_container, destination_district_uuid, allow_change_district)
+
+        source_container = gear.container
+        # get the state of all cartridges
+        quota_blocks = nil
+        quota_files = nil
+        gi = app.group_instance_map[gear.group_instance_name]
+        gi.component_instances.each do |ci_name|
+          cinst = app.comp_instance_map[ci_name]
+          cart = cinst.parent_cart_name
+          idle,leave_stopped, quota_blocks, quota_files = get_cart_status(app, gear, cart)
+          state_map[ci_name] = [idle,leave_stopped]
+        end
+
+        # pre-move
+        reply.append move_gear_pre(app, gear, state_map)
 
         # rsync gear with destination container
         rsync_destination_container(app, gear, destination_container, destination_district_uuid, quota_blocks, quota_files, keep_uid)
 
         # now execute hooks on the new nest of the components
-        gi.component_instances.each { |ci_name|
+        gi.component_instances.each do |ci_name|
           cinst = app.comp_instance_map[ci_name]
           cart = cinst.parent_cart_name
           idle, leave_stopped = state_map[ci_name]
@@ -503,23 +537,42 @@ module GearChanger
             rescue Exception=>e
             end
           end
-        }
-        log_debug "DEBUG: Fixing DNS and mongo for gear '#{gear.name}' after move"
-        log_debug "DEBUG: Changing server identity of '#{gear.name}' from '#{source_container.id}' to '#{destination_container.id}'"
-        gear.server_identity = destination_container.id
+        end 
+
+        # start the gears again and change DNS entry
+        begin
+          reply.append move_gear_post(app, gear, state_map)
+        rescue Exception => e
+	end
+
         gear.container = destination_container
-        if app.scalable and not gear.component_instances.include? app.proxy_cartridge
-          dns = StickShift::DnsService.instance
-          begin
-            dns.deregister_application(gear.name, app.domain.namespace)
-            public_hostname = destination_container.get_public_hostname
-            dns.register_application(gear.name, app.domain.namespace, public_hostname)
-            dns.publish
-          ensure
-            dns.close
-          end
-        end
+
+        move_gear_destroy_old(app, gear, keep_uid, orig_uid)
+
+        app.execute_connections
+
+        log_debug "Successfully moved '#{app.name}' with uuid '#{app.gear.uuid}' from '#{source_container.id}' to '#{destination_container.id}'"
         reply
+      end
+
+      def move_gear_destroy_old(app, gear, keep_uid, orig_uid)
+        source_container = gear.container
+        log_debug "DEBUG: Deconfiguring old app '#{app.name}' on #{source_container.id} after move"
+        begin
+          gi = app.group_instance_map[gear.group_instance_name]
+          gi.component_instances.each do |ci_name|
+            cinst = app.comp_instance_map[ci_name]
+            cart = cinst.parent_cart_name
+            begin
+              reply.append source_container.run_cartridge_command(cart, app, gear, "deconfigure", nil, false)
+            ensure
+              reply.append source_container.destroy(app, gear, keep_uid, orig_uid)
+            end
+          end
+        rescue Exception => e
+          log_debug "DEBUG: The application '#{app.name}' with uuid '#{app.gear.uuid}' is now moved to '#{source_container.id}' but not completely deconfigured from '#{destination_container.id}'"
+          raise
+        end
       end
 
       def resolve_destination(app, gear, destination_container, destination_district_uuid, allow_change_district)
@@ -582,7 +635,7 @@ module GearChanger
         quota_files = nil
         log_debug "DEBUG: Getting existing app '#{app.name}' status before moving"
         do_with_retry('status') do
-          result = source_container.status(app, app.gear, cart_name)
+          result = source_container.status(app, gear, cart_name)
           result.cart_commands.each do |command_item|
             case command_item[:command]
             when "ATTR"
