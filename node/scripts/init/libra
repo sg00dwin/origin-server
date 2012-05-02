@@ -18,7 +18,7 @@
 lockfile=/var/lock/subsys/libra
 
 numparallel=5
-timeout=60
+timeout=90
 
 # colors, use like: echo "${RED}FAILED!!!${NORM}"
 RED=$(echo -e "\033[31m")
