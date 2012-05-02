@@ -28,7 +28,8 @@ module Streamline
     end
   end
   # Raised when the reset token has already been used
-  class TokenExpired < Streamline::StreamlineException
-  end
+  class TokenExpired < Streamline::StreamlineException; end
+  # The user name or password is invalid
+  class AuthenticationDenied < Streamline::StreamlineException; end
 
 end

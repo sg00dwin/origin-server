@@ -73,6 +73,11 @@ module Streamline
       end
     end
 
+    def authenticate!(login, password)
+      authenticate(login, password) or raise Streamline::AuthenticationDenied
+      self
+    end
+
     # Clears the current ticket and authenticates with streamline
     def authenticate(login, password)
       rhlogin = login

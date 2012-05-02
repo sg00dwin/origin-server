@@ -64,4 +64,20 @@ class WebUserTest < ActiveSupport::TestCase
       s.set = "another"
     end
   end
+
+  test "get simple identity" do
+    user = WebUser.new.authenticate!('bob@bob.com', 'password')
+    identities = Identity.find(user)
+    assert_equal 1, identities.length
+    assert_equal :openshift, identities[0].type
+    assert_equal user.login, identities[0].id
+  end
+
+  test "get rhn identity" do
+    user = WebUser.new.authenticate!('bob', 'password')
+    identities = Identity.find(user)
+    assert_equal 1, identities.length
+    assert_equal :red_hat_network, identities[0].type
+    assert_equal user.login, identities[0].id
+  end
 end
