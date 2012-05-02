@@ -455,11 +455,11 @@ chmod g-s /bin/cgexec
 chmod g-s /sbin/netreport
 
 # Make log files readable only to user and group - not other - tkramer
-chmod 660 /var/www/stickshift/site/log/development.log
-chmod 660 /var/www/stickshift/site/log/production.log
-chmod 660 /var/www/stickshift/broker/log/mcollective-client.log
-chmod 660 /var/www/stickshift/broker/log/production.log
-chmod 660 /var/www/stickshift/broker/log/development.log
+# chmod 660 /var/www/stickshift/site/log/development.log
+# chmod 660 /var/www/stickshift/site/log/production.log
+# chmod 660 /var/www/stickshift/broker/log/mcollective-client.log
+# chmod 660 /var/www/stickshift/broker/log/production.log
+# chmod 660 /var/www/stickshift/broker/log/development.log
 
 # Make grub.conf readable only to user and group - not other - tkramer
 chmod 600 /boot/grub/grub.conf
