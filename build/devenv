@@ -28,7 +28,7 @@ class DevEnv < Thor
       # Get the current branch
       branch = get_branch
 
-      puts "Synchronizing local changes from branch #{branch} for repo #{repo_name}..."
+      puts "Synchronizing local changes from branch #{branch} for repo #{repo_name} from #{File.basename(FileUtils.pwd)}..."
       ssh(hostname, %{export GIT_DIR=/root/#{repo_name}; git log ^HEAD || ( mkdir -p /root/#{repo_name} && cd /root/#{repo_name} && git init-db --bare)}, 15)
       exitcode = run(%{
 #######
