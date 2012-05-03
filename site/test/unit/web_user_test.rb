@@ -30,4 +30,54 @@ class WebUserTest < ActiveSupport::TestCase
     user = WebUser.new(:rhlogin => 'bob')
     assert_equal user.rhlogin, user.login
   end
+
+  test "protect rhlogin" do
+    s = Class.new(Streamline::User) do
+      def initialize(login)
+        self.rhlogin = login
+      end
+      def set=(login)
+        self.rhlogin = login
+      end
+    end
+    s = s.new "test"
+    assert_equal "test", s.rhlogin
+
+    assert_raise RuntimeError do
+      s.set = "another"
+    end
+
+    s = Class.new(Streamline::User) do
+      include Streamline::Mock
+      def initialize(login)
+        self.rhlogin = login
+      end
+      def set=(login)
+        self.rhlogin = login
+      end
+    end
+    s = s.new "test"
+
+    assert_equal "test", s.rhlogin
+
+    assert_raise RuntimeError do
+      s.set = "another"
+    end
+  end
+
+  test "get simple identity" do
+    user = WebUser.new.authenticate!('bob@bob.com', 'password')
+    identities = Identity.find(user)
+    assert_equal 1, identities.length
+    assert_equal :openshift, identities[0].type
+    assert_equal user.login, identities[0].id
+  end
+
+  test "get rhn identity" do
+    user = WebUser.new.authenticate!('bob', 'password')
+    identities = Identity.find(user)
+    assert_equal 1, identities.length
+    assert_equal :red_hat_network, identities[0].type
+    assert_equal user.login, identities[0].id
+  end
 end

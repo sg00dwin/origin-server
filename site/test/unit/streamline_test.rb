@@ -1,11 +1,13 @@
 require File.expand_path('../../test_helper', __FILE__)
 
 # Define a test class to mixin the module
-class StreamlineTester
+class StreamlineTester < Streamline::User
   include ActiveModel::Naming
   include ActiveModel::Validations
-  include Streamline
-  attr_accessor :email_address, :password, :password_confirmation, :terms_accepted
+
+  attr_accessor :password, :password_confirmation, :terms_accepted
+  # Make these items public for test purposes
+  attr_writer :ticket, :terms, :email_address
 end
 
 class StreamlineTest < ActiveSupport::TestCase
@@ -19,8 +21,11 @@ class StreamlineTest < ActiveSupport::TestCase
   end
 
   def set_roles(roles)
-    eval "def @streamline.set_roles(roles); @roles=roles; end"
-    @streamline.set_roles roles
+    @streamline.instance_variable_set("@roles", roles)
+  end
+
+  def establish(roles, username=nil)
+    [roles, username, @streamline.expects(:http_post).yields({'roles' => roles, 'username' => username}).returns(roles)]
   end
 
   test "streamline urls" do
@@ -176,6 +181,13 @@ class StreamlineTest < ActiveSupport::TestCase
     assert !@streamline.errors.empty?
   end
 
+  test "role is loaded once" do
+    json = {"roles" => []}
+    @streamline.expects(:http_post).once.yields(json).returns(json['roles'])
+    assert_equal [], @streamline.roles
+    assert_equal [], @streamline.roles
+  end
+
   test "role has access" do
     @streamline.expects(:http_post).never
     set_roles [CloudAccess.auth_role(CloudAccess::EXPRESS)]
@@ -211,60 +223,71 @@ class StreamlineTest < ActiveSupport::TestCase
   end
 
   test "establish roles implicitly" do
-    roles = [CloudAccess.auth_role(CloudAccess::EXPRESS)]
-    json = {'roles' => roles, 'username' => 'test@example.com'}
-    @streamline.expects(:http_post).once.yields(json)
+    roles, username = establish([CloudAccess.auth_role(CloudAccess::EXPRESS)], 'test@example.com')
     assert_equal roles, @streamline.roles
     assert_equal roles, @streamline.roles # check for caching values
   end
 
   test "entitle checks roles implicitly" do
-    roles = [CloudAccess.auth_role(CloudAccess::EXPRESS)]
-    json = {'roles' => roles, 'username' => 'test@example.com'}
-    @streamline.expects(:http_post).once.yields(json)
+    roles, username = establish([CloudAccess.auth_role(CloudAccess::EXPRESS)], 'test@example.com')
     assert @streamline.entitled?
     assert @streamline.entitled? # check for caching value
   end
   
   test "entitle depends on req role" do
-    roles = [CloudAccess.req_role(CloudAccess::EXPRESS)]
-    json = {'roles' => roles, 'username' => 'test@example.com'}
-    @streamline.expects(:http_post).once.yields(json)
+    roles, username = establish([CloudAccess.req_role(CloudAccess::EXPRESS)], 'test@example.com')
     assert_equal false, @streamline.entitled?
     assert_equal false, @streamline.entitled? #check for caching value
   end
 
   test "waiting for entitle checks roles implicitly" do
-    roles = [CloudAccess.req_role(CloudAccess::EXPRESS)]
-    json = {'roles' => roles, 'username' => 'test@example.com'}
-    @streamline.expects(:http_post).once.yields(json)
+    roles, username = establish([CloudAccess.req_role(CloudAccess::EXPRESS)], 'test@example.com')
     assert @streamline.waiting_for_entitle?
     assert @streamline.waiting_for_entitle? # check for caching value
   end
 
   test "waiting for entitle false when role exists" do
-    roles = [CloudAccess.auth_role(CloudAccess::EXPRESS)]
-    json = {'roles' => roles, 'username' => 'test@example.com'}
-    @streamline.expects(:http_post).once.yields(json)
+    roles, username = establish([CloudAccess.auth_role(CloudAccess::EXPRESS)], 'test@example.com')
     assert_equal false, @streamline.waiting_for_entitle?
     assert_equal false, @streamline.waiting_for_entitle? # check for caching value
   end
 
   test "establish user" do
-    rhlogin = "test@example.com"
-    roles = ['authenticated']
-    json = {"username" => rhlogin, "roles" => roles}
-    @streamline.expects(:http_post).once.yields(json).returns(json)
-    @streamline.establish
-    assert_equal rhlogin, @streamline.rhlogin
+    roles, username = establish(['authenticated'], 'test@example.com')
+    Rails.logger.expects(:warn).never
+    assert_equal @streamline, @streamline.establish
+    assert_equal username, @streamline.rhlogin
     assert_equal roles, @streamline.roles
+  end
+
+  test "establish user warns on name change" do
+    user = states('user').starts_as('normal')
+
+    roles = ['authenticated']
+
+    @streamline.expects(:http_post).yields({
+      'roles' => roles, 
+      'username' => 'test@example.com'
+    }).returns(roles).when(user.is('normal'))
+    Rails.logger.expects(:warn).never.when(user.is('normal'))
+
+    @streamline.expects(:http_post).yields({
+      'roles' => roles, 
+      'username' => 'test2@example.com'
+    }).returns(roles).when(user.is('changed'))
+    Rails.logger.expects(:warn).once.when(user.is('changed'))
+
+    @streamline.establish
+    set_roles nil
+    user.become('changed')
+    @streamline.establish
   end
 
   test "get email address for user" do
     email_address = 'test@example.com'
     json = {"emailAddress" => email_address}
     @streamline.expects(:http_post).once.yields(json)
-    @streamline.establish_email_address
+    assert_equal email_address, @streamline.load_email_address
     assert_equal email_address, @streamline.email_address
   end
 
@@ -331,6 +354,24 @@ class StreamlineTest < ActiveSupport::TestCase
     @streamline.expects(:http_post).once
     assert_equal true, @streamline.authenticate("test1", "test1")
     assert_equal 0, @streamline.errors.length
+  end
+
+  test "authenticate full user" do
+    @streamline.expects(:http_post).once.yields({'roles' => ['simple_authenticated'], 'username' => 'test1'})
+    assert_equal true, @streamline.authenticate("test1", "test1")
+    assert_equal 0, @streamline.errors.length
+
+    assert_equal :simple, @streamline.streamline_type
+    assert @streamline.simple_user?
+  end
+
+  test "authenticate simple user" do
+    @streamline.expects(:http_post).once.yields({'roles' => ['authenticated'], 'username' => 'test1'})
+    assert_equal true, @streamline.authenticate("test1", "test1")
+    assert_equal 0, @streamline.errors.length
+
+    assert_equal :full, @streamline.streamline_type
+    assert !@streamline.simple_user?
   end
 
   test "get cookie" do

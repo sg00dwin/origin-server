@@ -24,6 +24,7 @@ class Issue < ActiveRecord::Base
 
   scope :resolved, :conditions => 'resolved_at IS NOT NULL', :order => 'resolved_at DESC'
   scope :is_open, :conditions => {:resolved_at => nil}, :order => 'resolved_at DESC'
+  scope :unresolved, :conditions => {:resolved_at => nil}, :order => 'resolved_at DESC'
 
   def self.year(year=nil)
     year ||= Date.today.year

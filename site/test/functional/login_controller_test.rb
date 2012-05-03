@@ -17,11 +17,11 @@ class LoginControllerTest < ActionController::TestCase
     rconf.streamline = old_streamline
   end
 
-  def integrated_user
-    {:rhlogin => 'ccoleman@redhat.com', :password => 'aoeuaoeu'}
+  def simple_user
+    {:rhlogin => 'test@example.com', :password => 'password'}
   end
 
-  def internal_user
+  def full_user
     {:rhlogin => 'test', :password => 'password'}
   end
 
@@ -33,12 +33,23 @@ class LoginControllerTest < ActionController::TestCase
     assert_template :show
   end
 
-  test "login" do
-    post :create, internal_user
+  test "login as simple user" do
+    post :create, simple_user
     assert assigns(:user)
     assert_redirected_to console_path
     assert_equal 'true', cookies['prev_login']
     assert_not_nil session[:ticket_verified]
+    assert_equal :simple, session[:streamline_type]
+    #assert_equal assigns(:user).ticket, cookies['rh_sso'] #FIXME: broken, can't get cookie
+  end
+
+  test "login as full user" do
+    post :create, full_user
+    assert assigns(:user)
+    assert_redirected_to console_path
+    assert_equal 'true', cookies['prev_login']
+    assert_not_nil session[:ticket_verified]
+    assert_equal :full, session[:streamline_type]
     #assert_equal assigns(:user).ticket, cookies['rh_sso'] #FIXME: broken, can't get cookie
   end
 
@@ -64,7 +75,7 @@ class LoginControllerTest < ActionController::TestCase
   end
 
   test "should allow redirectUrl param" do
-    post :create, internal_user.merge(:redirectUrl => new_application_path)
+    post :create, simple_user.merge(:redirectUrl => new_application_path)
     assert_redirected_to new_application_path
   end
 

@@ -21,8 +21,8 @@ Requires:  rhc-node
 Requires:  rhc-site
 Requires:  rhc-broker
 Requires:  cartridge-php-5.3
-Requires:  cartridge-python-3.2
-Requires:  cartridge-ruby-1.1
+Requires:  cartridge-python-2.6
+Requires:  cartridge-ruby-1.8
 Requires:  cartridge-jbossas-7
 Requires:  cartridge-perl-5.10
 Requires:  cartridge-mysql-5.1
@@ -403,9 +403,6 @@ EOF
 # Make OpenScap.sh executable
 chmod 0750 /usr/local/bin/openscap.sh
 
-# Create OpenScap crontab entry
-echo "0 11 * * * /usr/local/bin/openscap.sh" | /usr/bin/crontab
-
 # Remove all SUIDs - tkramer - testing in devenv
 #chmod -R u-s /tmp/passenger.1.0.*
 #chmod u-s /tmp/passenger.1.0.1408/generation-0/backends
@@ -458,11 +455,11 @@ chmod g-s /bin/cgexec
 chmod g-s /sbin/netreport
 
 # Make log files readable only to user and group - not other - tkramer
-chmod 660 /var/www/stickshift/site/log/development.log
-chmod 660 /var/www/stickshift/site/log/production.log
-chmod 660 /var/www/stickshift/broker/log/mcollective-client.log
-chmod 660 /var/www/stickshift/broker/log/production.log
-chmod 660 /var/www/stickshift/broker/log/development.log
+# chmod 660 /var/www/stickshift/site/log/development.log
+# chmod 660 /var/www/stickshift/site/log/production.log
+# chmod 660 /var/www/stickshift/broker/log/mcollective-client.log
+# chmod 660 /var/www/stickshift/broker/log/production.log
+# chmod 660 /var/www/stickshift/broker/log/development.log
 
 # Make grub.conf readable only to user and group - not other - tkramer
 chmod 600 /boot/grub/grub.conf

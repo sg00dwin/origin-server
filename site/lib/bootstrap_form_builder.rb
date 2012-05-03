@@ -29,7 +29,7 @@ class BootstrapFormBuilder < Formtastic::SemanticFormBuilder
   end
 
   def loading(*args)
-    template.image_tag('/app/images/loader.gif', :alt => 'Working...', 'data-loading' => 'true', :style => 'display: none;')
+    template.content_tag(:i, nil, :alt => 'Working...', 'data-loading' => 'true', :style => 'display: none;', :class => 'icon-loading' )
   end
 
   # override tag creation

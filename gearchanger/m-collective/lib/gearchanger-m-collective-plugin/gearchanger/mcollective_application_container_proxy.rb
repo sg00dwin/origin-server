@@ -13,6 +13,14 @@ module GearChanger
         @district = district
       end
       
+      def self.valid_gear_sizes_impl(user)    
+        if user.vip
+          return ["small", "medium"]
+        else
+          return ["small"]          
+        end
+      end
+      
       def self.find_available_impl(node_profile=nil, district_uuid=nil)
         district = nil
         if Rails.configuration.districts[:enabled] && (!district_uuid || district_uuid == 'NONE')  
