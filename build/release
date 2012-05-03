@@ -279,7 +279,8 @@ class Release < Thor
     stg_brew_tag = "libra-rhel-6.2-stage"
     cand_brew_tag = "libra-rhel-6.2-candidate"
     orig_branches = checkout_branch("master")
-    
+    git_pull
+
     if options[:after_date].nil? or options[:after_date].empty?
       puts "ERROR: No date paramter passed!"
       puts "Usage: build/release tag_external_pkgs_stg [--check] --after_date 1970-01-30"
@@ -289,15 +290,17 @@ class Release < Thor
     end
 
     if options.check?
-      puts "If this were run without --check, the following packages would be tagged into #{stg_brew_tag}:"
+      puts "### If this were run without --check, the following packages would be tagged into #{stg_brew_tag}:"
       external_pkgs_tag_stg.each { |pkg| puts pkg }
     else
-      puts "Tagging the following packages into #{stg_brew_tag}:"
+      puts "### Tagging the following packages into #{stg_brew_tag}:"
       external_pkgs_tag_stg.each do |pkg| 
         puts pkg 
         #FIXME - Uncomment when ready# puts `brew tag-pkg #{stg_brew_tag} #{pkg} --nowait`
       end
     end
+
+    reset_orig_branches(orig_branches)
   end
 
   desc "bump_minor_versions", "Bump the minor version in all specs > .1 patch level"
