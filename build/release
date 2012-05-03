@@ -9,7 +9,8 @@ require 'lib/openshift'
 class Release < Thor
   include Thor::Actions
   include OpenShift::Tito
-  
+  include OpenShift::Brew
+
   method_option :temp_dir, :type => :string, :default => '/tmp', :desc => "A location to write temporary files to"
   def initialize(*args)
     super(*args)
@@ -271,6 +272,27 @@ class Release < Thor
     end
   end
   
+  desc "tag_external_pkgs_stg", "Tag packages that are from external sources into the stage repo"
+  method_option :check, :type => :boolean, :desc => "Don't do anything yet, just show what would be done"
+  method_option :after_date, :type => :string, :desc => "After which date to check for obsoletes, should be last stg push (example: 1970-01-30)"
+  def tag_external_pkgs_stg
+    stg_brew_tag = "libra-rhel-6.2-stage"
+    cand_brew_tag = "libra-rhel-6.2-candidate"
+    orig_branches = checkout_branch("stage")
+    
+    external_pkgs_tag_stg = get_packages_to_tag(cand_brew_tag, stg_brew_tag, options[:after_date])
+
+    if options.check?
+      puts "If this were run without --check, the following packages would be tagged into #{stg_brew_tag}:"
+    else
+      puts "Tagging the following packages into #{stg_brew_tag}:"
+    end
+    external_pkgs_tag_stg.each { |pkg| puts pkg }
+
+    # FIXME - put actual brew tag command here
+
+  end
+
   desc "bump_minor_versions", "Bump the minor version in all specs > .1 patch level"
   method_option :push_changes, :type => :boolean, :desc => "Push the changes to the current branch"
   method_option :verbose, :type => :boolean, :desc => "Enable verbose logging"

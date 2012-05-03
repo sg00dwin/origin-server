@@ -5,6 +5,7 @@ require 'lib/openshift/ssh'
 require 'lib/openshift/tito'
 require 'lib/openshift/amz'
 require 'lib/openshift/sauce_labs'
+require 'lib/openshift/brew'
 
 # Force synchronous stdout
 STDOUT.sync, STDERR.sync = true
