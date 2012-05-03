@@ -26,20 +26,21 @@ module OpenShift
 
       # FIXME:  I'm open to suggestion about the awk, I just couldn't think of a
       #         more clean implementation to get only tagged lines and the pkg
-      source = `brew -q latest-pkg #{[source]} --all \
+      source_pkgs = `brew -q latest-pkg #{[source]} --all \
                                               | awk '{print $1}'`.split("\n")
-      target = `brew -q latest-pkg #{[target]} --all \
+      target_pkgs = `brew -q latest-pkg #{[target]} --all \
                                               | awk '{print $1}'`.split("\n")
 
       # Find which packages are new since last stage
-      source.each do | pkg |
+      source_pkgs.each do | pkg |
         stage_candidates.push( pkg ) unless target.include? pkg
       end
 
       # Find which packages belong to us
       stage_candidates.each do | stg_candidate_pkg |
         our_pkgs_names.each do | pkg, paths |
-          if stg_candidate_pkg =~ /#{pkg}-\d+\.\d+.*/
+          #if stg_candidate_pkg =~ /#{pkg}-\d+\.\d+.*/
+          if stg_candidate_pkg =~ /#{pkg}(-[^-]+-[^-]+$)/
             our_pkgs.push(stg_candidate_pkg)
           end
         end
@@ -51,19 +52,26 @@ module OpenShift
         # Special thanks to markllama, tdawson, and kwoodson for helping on this
         # little nugget - strips off the Version-Release from pkg build
         pkg_base_name = pkg.match(/(.*)(-[^-]+-[^-]+$)/)[1]
-
+        
         # FIXME - This takes forever to run because of the brew query for each
         #         candidate package. Not sure of a better way to fix just yet.
         brew_recent_activity = `brew list-history --tag=#{[source]} \
                                 --package=#{pkg_base_name} \
                                 --after=#{[date]}` unless our_pkgs.include? pkg
+        
+        # FIXME - hack to get around ruby fail
+        # For some reason ruby's ` ` operator is returning nil intermittently
+        # and I've run through enough command strings that it claimed to be nil
+        # to conclude that its just incorrect.
+        if brew_recent_activity.nil?
+          brew_recent_activity = "RUBY FAILS"
+        end
 
-        # Add to need_stage_tags unless it is one of ours, brew knows nothing
-        # about it and make sure there is recent activity in brew for the pkg
-        need_stage_tags.push( pkg ) \
-                unless our_pkgs.include? pkg \
-                      or ( ! brew_recent_activity.match(/GenericError/) \
-                      and brew_recent_activity.length > 1 )
+        # Add to need_stage_tags unless it is one of ours or if there's been no
+        # recent activity in brew
+        need_stage_tags.push( pkg ) unless brew_recent_activity.empty? \
+                                            or our_pkgs.include? pkg
+
       end
       
 
