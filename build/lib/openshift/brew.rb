@@ -1,4 +1,5 @@
-require 'build/lib/openshift/tito.rb'# FIXME - I think this is wrong 
+$:.unshift('build')
+require 'lib/openshift/tito.rb'
 
 module OpenShift
   module Brew
