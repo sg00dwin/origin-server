@@ -1,5 +1,7 @@
 #!/bin/bash
 
+pushd /usr/share/drupal6
+
 #Setup the administrative password to the default
 drush user-password admin --password="admin"
 
