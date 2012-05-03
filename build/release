@@ -272,21 +272,20 @@ class Release < Thor
     end
   end
   
-  desc "tag_external_pkgs_stg", "Tag packages that are from external sources into the stage repo"
+  desc "tag_external_pkgs_stg AFTER_DATE", "Tag packages that are from external sources into the stage repo since AFTER_DATE"
   method_option :check, :type => :boolean, :desc => "Don't do anything yet, just show what would be done"
-  method_option :after_date, :type => :string, :desc => "After which date to check for obsoletes, should be last stg push (example: 1970-01-30)"
-  def tag_external_pkgs_stg
+  def tag_external_pkgs_stg(after_date)
     stg_brew_tag = "libra-rhel-6.2-stage"
     cand_brew_tag = "libra-rhel-6.2-candidate"
     orig_branches = checkout_branch("master")
     git_pull
 
-    if options[:after_date].nil? or options[:after_date].empty?
+    if after_date.nil? or after_date.empty?
       puts "ERROR: No date paramter passed!"
-      puts "Usage: build/release tag_external_pkgs_stg [--check] --after_date 1970-01-30"
+      puts "Example: build/release tag_external_pkgs_stg 1970-01-30 [--check]"
       exit 1
     else
-      external_pkgs_tag_stg = get_packages_to_tag(cand_brew_tag, stg_brew_tag, options[:after_date])
+      external_pkgs_tag_stg = get_packages_to_tag(cand_brew_tag, stg_brew_tag, after_date)
     end
 
     if options.check?
@@ -296,7 +295,7 @@ class Release < Thor
       puts "### Tagging the following packages into #{stg_brew_tag}:"
       external_pkgs_tag_stg.each do |pkg| 
         puts pkg 
-        #FIXME - Uncomment when ready# puts `brew tag-pkg #{stg_brew_tag} #{pkg} --nowait`
+        `brew tag-pkg #{stg_brew_tag} #{pkg}`
       end
     end
 
