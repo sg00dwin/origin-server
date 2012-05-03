@@ -33,7 +33,7 @@ module OpenShift
 
       # Find which packages are new since last stage
       source_pkgs.each do | pkg |
-        stage_candidates.push( pkg ) unless target.include? pkg
+        stage_candidates.push( pkg ) unless target_pkgs.include? pkg
       end
 
       # Find which packages belong to us
@@ -71,13 +71,9 @@ module OpenShift
         # recent activity in brew
         need_stage_tags.push( pkg ) unless brew_recent_activity.empty? \
                                             or our_pkgs.include? pkg
-
       end
       
-
-
       need_stage_tags
     end
-  
   end
 end
