@@ -120,12 +120,6 @@ module GearChanger
           args['--with-quota-files'] = quota_files if quota_files
           args['--with-namespace'] = app.domain.namespace
           args['--with-uid'] = gear.uid if gear.uid
-          #cmd = "--with-app-uuid '#{app.uuid}' --with-container-uuid '#{gear.uuid}'"
-          #cmd += " -i '#{gear.uid}'" if gear.uid
-          #cmd += " --named '#{app.name}'" if app.name
-          #cmd += " --with-quota-blocks '#{quota_blocks}'" if quota_blocks
-          #cmd += " --with-quota-files '#{quota_files}'" if quota_files
-          #cmd += " --with-namespace '#{app.domain.namespace}'"
           mcoll_reply = execute_direct(@@C_CONTROLLER, 'app-create', args)
           result = parse_result(mcoll_reply)
           if result.exitcode == 129 && has_uid_or_gid?(app.gear.uid) # Code to indicate uid already taken
@@ -162,9 +156,6 @@ module GearChanger
         args['--with-ssh-key'] = ssh_key
         args['--with-ssh-key-type'] = key_type if key_type
         args['--with-ssh-key-comment'] = comment if comment
-        #cmd = "--with-app-uuid '#{app.uuid}' --with-container-uuid '#{gear.uuid}' -s '#{ssh_key}'"
-        #cmd += " -t '#{key_type}'" if key_type
-        #cmd += " -m '-#{message}'" if message
         result = execute_direct(@@C_CONTROLLER, 'authorized-ssh-key-add', args)
         parse_result(result)
       end
@@ -175,8 +166,6 @@ module GearChanger
         args['--with-container-uuid'] = gear.uuid
         args['--with-ssh-key'] = ssh_key
         args['--with-ssh-comment'] = comment if comment
-        #cmd = "--with-app-uuid '#{app.uuid}' --with-container-uuid '#{gear.uuid}' -s '#{ssh_key}'"
-        #cmd += " -m '-#{comment}'" if comment
         result = execute_direct(@@C_CONTROLLER, 'authorized-ssh-key-remove', args)
         parse_result(result)
       end
@@ -422,7 +411,6 @@ module GearChanger
         args['--with-container-uuid'] = gear.uuid
         args['--with-key'] = key
         args['--with-value'] = value
-        #args = "--with-app-uuid '#{app.uuid}' --with-container-uuid '#{gear.uuid}' -k '#{key}' -v '#{value}'"
         job = RemoteJob.new('stickshift-node', 'env-var-add', args)
         job
       end
@@ -432,7 +420,6 @@ module GearChanger
         args['--with-app-uuid'] = app.uuid
         args['--with-container-uuid'] = gear.uuid
         args['--with-key'] = key
-        #args = "--with-app-uuid '#{app.uuid}' --with-container-uuid '#{gear.uuid}' -k '#{key}'"
         job = RemoteJob.new('stickshift-node', 'env-var-remove', args)
         job
       end
@@ -444,9 +431,6 @@ module GearChanger
         args['--with-ssh-key'] = ssh_key
         args['--with-ssh-key-type'] = key_type if key_type
         args['--with-ssh-key-comment'] = comment if comment
-        #args = "--with-app-uuid '#{app.uuid}' --with-container-uuid '#{gear.uuid}' -s '#{ssh_key}'"
-        #args += " -t '#{key_type}'" if key_type
-        #args += " -m '-#{comment}'" if comment
         job = RemoteJob.new('stickshift-node', 'authorized-ssh-key-add', args)
         job
       end
@@ -457,8 +441,6 @@ module GearChanger
         args['--with-container-uuid'] = gear.uuid
         args['--with-ssh-key'] = ssh_key
         args['--with-ssh-comment'] = comment if comment
-        #args = "--with-app-uuid '#{app.uuid}' --with-container-uuid '#{gear.uuid}' -s '#{ssh_key}'"
-        #args += " -m '-#{comment}'" if comment
         job = RemoteJob.new('stickshift-node', 'authorized-ssh-key-remove', args)
         job
       end
@@ -469,7 +451,6 @@ module GearChanger
         args['--with-container-uuid'] = gear.uuid
         args['--with-iv'] = iv
         args['--with-token'] = token
-        #args = "--with-app-uuid '#{app.uuid}' --with-container-uuid '#{gear.uuid}' -i '#{iv}' -t '#{token}'"
         job = RemoteJob.new('stickshift-node', 'broker-auth-key-add', args)
         job
       end
@@ -478,7 +459,6 @@ module GearChanger
         args = Hash.new
         args['--with-app-uuid'] = app.uuid
         args['--with-container-uuid'] = gear.uuid
-        #args = "--with-app-uuid '#{app.uuid}' --with-container-uuid '#{gear.uuid}'"
         job = RemoteJob.new('stickshift-node', 'broker-auth-key-remove', args)
         job
       end
@@ -489,7 +469,6 @@ module GearChanger
         args['--cart-name'] = cart
         args['--hook-name'] = connector_name
         args['--input-args'] = input_args.join(" ")
-        #args = "--gear-uuid '#{gear.uuid}' --cart-name '#{cart}' --hook-name '#{connector_name}' " + input_args.join(" ")
         job = RemoteJob.new('stickshift-node', 'connector-execute', args)
         job
       end

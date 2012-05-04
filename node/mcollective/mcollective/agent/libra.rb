@@ -72,8 +72,10 @@ module MCollective
           container = StickShift::ApplicationContainer.new(uuid, uuid, uid, name, namespace, quota_blocks, quota_files)
           container.create
         rescue StickShift::UserCreationException => e
+          Log.instance.debug e.message
           return 129, e.message
         rescue Exception => e
+          Log.instance.debug e.message
           return -1, e.message
         else
           return 0, output
@@ -90,6 +92,7 @@ module MCollective
           container = StickShift::ApplicationContainer.new(app_uuid, uuid)
           container.destroy
         rescue Exception => e
+          Log.instance.debug e.message
           return -1, e.message
         else
           return 0, output
@@ -110,6 +113,7 @@ module MCollective
           container = StickShift::ApplicationContainer.new(uuid, uuid)
           container.user.add_ssh_key(ssh_key, key_type, comment)
         rescue Exception => e
+          Log.instance.debug e.message
           return -1, e.message
         else
           return 0, output
@@ -129,6 +133,7 @@ module MCollective
           container = StickShift::ApplicationContainer.new(uuid, uuid)
           container.user.remove_ssh_key(ssh_key, comment)
         rescue Exception => e
+          Log.instance.debug e.message
           return -1, e.message
         else
           return 0, output
@@ -148,6 +153,7 @@ module MCollective
           container = StickShift::ApplicationContainer.new(uuid, uuid)
           container.user.add_broker_auth(iv, token)
         rescue Exception => e
+          Log.instance.debug e.message
           return -1, e.message
         else
           return 0, output
@@ -165,6 +171,7 @@ module MCollective
           container = StickShift::ApplicationContainer.new(uuid, uuid)
           container.user.remove_broker_auth
         rescue Exception => e
+          Log.instance.debug e.message
           return -1, e.message
         else
           return 0, output
@@ -184,6 +191,7 @@ module MCollective
           container = StickShift::ApplicationContainer.new(uuid, uuid)
           container.user.add_env_var(key, value)
         rescue Exception => e
+          Log.instance.debug e.message
           return -1, e.message
         else
           return 0, output
@@ -201,6 +209,7 @@ module MCollective
           container = StickShift::ApplicationContainer.new(uuid, uuid)
           container.user.remove_env_var(key)
         rescue Exception => e
+          Log.instance.debug e.message
           return -1, e.message
         else
           return 0, output
@@ -217,6 +226,7 @@ module MCollective
         begin
           output = StickShift::Node.get_cartridge_list(list_descriptors, porcelain, false)
         rescue Exception => e
+          Log.instance.debug e.message
           return -1, e.message
         else
           return 0, output
