@@ -29,6 +29,8 @@ require 'rubygems'
 require 'open4'
 require 'pp'
 require 'json'
+require 'stickshift-node'
+require 'shellwords'
 
 module MCollective
   #
@@ -53,6 +55,217 @@ module MCollective
         reply[:msg] = request[:msg]
       end
 
+      def ss_app_create(cmd, args)
+        Log.instance.debug "COMMAND: #{cmd}"
+
+        app_uuid = args['--with-app-uuid']
+        uuid = args['--with-container-uuid']
+        uid = args['--with-uid']
+        uid = nil if uid && uid.empty?
+        quota_blocks = args['--with-quota-blocks']
+        quota_files = args['--with-quota-files']
+        name = args['--named']
+        namespace = args['--with-namespace']
+        
+        output = ""
+        begin
+          container = StickShift::ApplicationContainer.new(uuid, uuid, uid, name, namespace, quota_blocks, quota_files)
+          container.create
+        rescue StickShift::UserCreationException => e
+          return 129, e.message
+        rescue Exception => e
+          return -1, e.message
+        else
+          return 0, output
+        end
+      end
+
+      def ss_app_destroy(cmd, args)
+        Log.instance.debug "COMMAND: #{cmd}"
+        app_uuid = args['--with-app-uuid']
+        uuid = args['--with-container-uuid']
+        
+        output = ""
+        begin
+          container = StickShift::ApplicationContainer.new(app_uuid, uuid)
+          container.destroy
+        rescue Exception => e
+          return -1, e.message
+        else
+          return 0, output
+        end
+      end
+
+      def ss_authorized_ssh_key_add(cmd, args)
+        Log.instance.debug "COMMAND: #{cmd}"
+
+        uuid = args['--with-container-uuid']
+        app_uuid = args['--with-app-uuid']
+        ssh_key = args['--with-ssh-key']
+        key_type = args['--with-ssh-key-type']
+        comment = args['--with-ssh-key-comment']
+        
+        output = ""
+        begin
+          container = StickShift::ApplicationContainer.new(uuid, uuid)
+          container.user.add_ssh_key(ssh_key, key_type, comment)
+        rescue Exception => e
+          return -1, e.message
+        else
+          return 0, output
+        end
+      end
+
+      def ss_authorized_ssh_key_remove(cmd, args)
+        Log.instance.debug "COMMAND: #{cmd}"
+
+        uuid = args['--with-container-uuid']
+        app_uuid = args['--with-app-uuid']
+        ssh_key = args['--with-ssh-key']
+        comment = args['--with-ssh-comment']
+        
+        output = ""
+        begin
+          container = StickShift::ApplicationContainer.new(uuid, uuid)
+          container.user.remove_ssh_key(ssh_key, comment)
+        rescue Exception => e
+          return -1, e.message
+        else
+          return 0, output
+        end
+      end
+
+      def ss_broker_auth_key_add(cmd, args)
+        Log.instance.debug "COMMAND: #{cmd}"
+
+        uuid = args['--with-container-uuid']
+        app_uuid = args['--with-app-uuid']
+        iv = args['--with-iv']
+        token = args['--with-token']
+        
+        output = ""
+        begin
+          container = StickShift::ApplicationContainer.new(uuid, uuid)
+          container.user.add_broker_auth(iv, token)
+        rescue Exception => e
+          return -1, e.message
+        else
+          return 0, output
+        end
+      end
+
+      def ss_broker_auth_key_remove(cmd, args)
+        Log.instance.debug "COMMAND: #{cmd}"
+
+        uuid = args['--with-container-uuid']
+        app_uuid = args['--with-app-uuid']
+        
+        output = ""
+        begin
+          container = StickShift::ApplicationContainer.new(uuid, uuid)
+          container.user.remove_broker_auth
+        rescue Exception => e
+          return -1, e.message
+        else
+          return 0, output
+        end
+      end
+
+      def ss_env_var_add(cmd, args)
+        Log.instance.debug "COMMAND: #{cmd}"
+
+        uuid = args['--with-container-uuid']
+        app_uuid = args['--with-app-uuid']
+        key = args['--with-key']
+        value = args['--with-value']
+        
+        output = ""
+        begin
+          container = StickShift::ApplicationContainer.new(uuid, uuid)
+          container.user.add_env_var(key, value)
+        rescue Exception => e
+          return -1, e.message
+        else
+          return 0, output
+        end
+      end
+
+      def ss_env_var_remove(cmd, args)
+        Log.instance.debug "COMMAND: #{cmd}"
+
+        uuid = args['--with-container-uuid']
+        key = args['--with-key']
+        
+        output = ""
+        begin
+          container = StickShift::ApplicationContainer.new(uuid, uuid)
+          container.user.remove_env_var(key)
+        rescue Exception => e
+          return -1, e.message
+        else
+          return 0, output
+        end
+      end
+
+      def ss_cartridge_list(cmd, args)
+        Log.instance.debug "COMMAND: #{cmd}"
+
+        list_descriptors = true if args['--with-descriptors']
+        porcelain = true if args['--porcelain']
+
+        output = ""
+        begin
+          output = StickShift::Node.get_cartridge_list(list_descriptors, porcelain, false)
+        rescue Exception => e
+          return -1, e.message
+        else
+          return 0, output
+        end
+      end
+
+      def ss_connector_execute(cmd, args)
+        Log.instance.debug "COMMAND: #{cmd}"
+        gear_uuid = args['--gear-uuid']
+        cart_name = args['--cart-name']
+        hook_name = args['--hook-name']
+        input_args = args['--input-args']
+        
+        hook_path = "/usr/libexec/stickshift/cartridges/#{cart_name}/info/connection-hooks/#{hook_name}"
+        if File.exists? hook_path
+           pid, stdin, stdout, stderr = Open4::popen4ext(true, "#{hook_path} #{input_args} 2>&1")
+        else
+           raise Exception.new("Could not find #{hook_path}")
+        end
+        return pid, stdin, stdout, stderr
+      end
+
+      def handle_ss_cmd(action, args)
+        cmd = "ss-#{action}"
+        case action
+        when "app-create"
+          rc, output = ss_app_create(cmd, args)
+        when "app-destroy"
+          rc, output = ss_app_destroy(cmd, args)
+        when "authorized-ssh-key-add"
+          rc, output = ss_authorized_ssh_key_add(cmd, args)
+        when "authorized-ssh-key-remove"
+          rc, output = ss_authorized_ssh_key_remove(cmd, args)
+        when "broker-auth-key-add"
+          rc, output = ss_broker_auth_key_add(cmd, args)
+        when "broker-auth-key-remove"
+          rc, output = ss_broker_auth_key_remove(cmd, args)
+        when "env-var-add" 
+          rc, output = ss_env_var_add(cmd, args)
+        when "env-var-remove" 
+          rc, output = ss_env_var_remove(cmd, args)
+        when "cartridge-list"
+          rc, output = ss_cartridge_list(cmd, args)
+        else
+          return nil, nil
+        end
+        return rc, output
+      end
+
       #
       # Passes arguments to cartridge for use
       #
@@ -63,15 +276,25 @@ module MCollective
         validate :cartridge, :shellsafe
         validate :action, /\A(app-create|app-destroy|env-var-add|env-var-remove|broker-auth-key-add|broker-auth-key-remove|authorized-ssh-key-add|authorized-ssh-key-remove|configure|deconfigure|preconfigure|update-namespace|tidy|deploy-httpd-proxy|remove-httpd-proxy|move|pre-move|post-move|info|post-install|post-remove|pre-install|reload|restart|start|status|stop|force-stop|add-alias|remove-alias|threaddump|cartridge-list|expose-port|conceal-port|show-port|system-messages|connector-execute)\Z/
         validate :action, :shellsafe
-        validate :args, /\A[\w\+\/= \{\}\"@\-\.:;\'\\\n~,]+\z/
-        validate :args, :shellsafe
+        #validate :args, /\A[\w\+\/= \{\}\"@\-\.:;\'\\\n~,]+\z/
+        #validate :args, :shellsafe
         cartridge = request[:cartridge]
         action = request[:action]
         args = request[:args]
         pid, stdin, stdout, stderr = nil, nil, nil, nil
+        rc = nil
+        output = ""
         if cartridge == 'stickshift-node'
           cmd = "ss-#{action}"
-          pid, stdin, stdout, stderr = Open4::popen4("/usr/bin/runcon -l s0-s0:c0.c1023 #{cmd} #{args} 2>&1")
+          if action == 'connector-execute'
+            pid, stdin, stdout, stderr = ss_connector_execute(cmd, args)
+          else
+            rc, output = handle_ss_cmd(action, args)
+            reply[:output] = output
+            reply[:exitcode] = rc
+            reply.fail! "cartridge_do_action failed #{rc}.  Output #{output}" unless rc == 0
+            return 0
+          end
         else
           if File.exists? "/usr/libexec/stickshift/cartridges/#{cartridge}/info/hooks/#{action}"                
             pid, stdin, stdout, stderr = Open4::popen4ext(true, "/usr/bin/runcon -l s0-s0:c0.c1023 /usr/libexec/stickshift/cartridges/#{cartridge}/info/hooks/#{action} #{args} 2>&1")
@@ -256,15 +479,31 @@ module MCollective
           cartridge = job[:cartridge]
           action = job[:action]
           args = job[:args]
-          begin
-            pid, stdout, stderr = execute_parallel_job(cartridge, action, args)
-          rescue Exception =>e
-            parallel_job[:result_exit_code] = 127
-            parallel_job[:result_stdout] = e.message
-            parallel_job[:result_stderr] = e.message
-            next
+          if cartridge == 'stickshift-node' && action != 'connector-execute'
+            rc, output = handle_ss_cmd(action, args)
+            parallel_job[:result_exit_code] = rc
+            if rc == 0
+              parallel_job[:result_stdout] = output
+              parallel_job[:result_stderr] = ""
+            else
+              parallel_job[:result_stdout] = ""
+              parallel_job[:result_stderr] = output
+            end
+          else
+            begin
+              if cartridge == 'stickshift-node' && action == 'connector-execute'
+                pid, stdin, stdout, stderr = ss_connector_execute(action, args)
+              else
+                pid, stdout, stderr = execute_parallel_job(cartridge, action, args)
+              end
+            rescue Exception =>e
+              parallel_job[:result_exit_code] = 127
+              parallel_job[:result_stdout] = e.message
+              parallel_job[:result_stderr] = e.message
+              next
+            end
+            pidlist << [parallel_job, pid, stdout, stderr]
           end
-          pidlist << [parallel_job, pid, stdout, stderr]
         }
 
         pidlist.each { |reap_args|
@@ -278,7 +517,7 @@ module MCollective
 
       def execute_parallel_job(cartridge, action, args)
         pid, stdin, stdout, stderr = nil, nil, nil, nil
-        if cartridge == 'stickshift-node'
+        if cartridge == 'stickshift-node' && action == 'connector-execute'
           cmd = "ss-#{action}"
           pid, stdin, stdout, stderr = Open4::popen4("/usr/bin/runcon -l s0-s0:c0.c1023 #{cmd} #{args} 2>&1")
         else
