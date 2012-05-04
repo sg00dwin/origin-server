@@ -99,6 +99,7 @@ Requires:  drupal6-fivestar
 Requires:  drupal6-flag
 Requires:  drupal6-freelinking
 Requires:  drupal6-geshifilter
+Requires:  drupal6-geoip
 Requires:  drupal6-homebox
 Requires:  drupal6-image
 Requires:  drupal6-image_resize_filter
