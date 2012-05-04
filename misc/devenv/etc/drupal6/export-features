@@ -1,0 +1,48 @@
+#!/usr/bin/env ruby
+
+require 'tmpdir'
+
+$: << File.expand_path(File.dirname(__FILE__))
+
+base_dir = '/etc/drupal6/all/modules/features'
+
+features = Dir.entries(base_dir).select do |x|
+  File.directory? "#{base_dir}/#{x}" and not ['.','..'].include?(x)
+end
+
+puts 'Export drupal features to disk...'
+puts "  #{features.join(', ')}\n"
+Dir.chdir '/usr/share/drupal6' do
+  system("drush features-update -y #{features.join(' ')}")
+end
+
+zip = nil
+Dir.mktmpdir 'drushexport' do |working_dir|
+
+  puts 'Create archive of all features...'
+  Dir.foreach(base_dir) do |x|
+    next unless File.directory? "#{base_dir}/#{x}"
+    next if x == '.' || x == '..'
+
+    dest = "#{working_dir}/drupal/drupal6-openshift-features-#{x}"
+    #puts "Copy #{x} => #{dest}"
+    %x( mkdir -p #{dest} )
+    %x( cp -rf #{base_dir}/#{x}/* #{dest}/ )
+  end
+
+  Dir.chdir working_dir do
+    zip = "#{Dir.tmpdir}/export_#{Time.now.to_i}.tar.gz"
+    %( rm #{zip} )
+    puts ` tar cvzf #{zip} . `
+  end
+end
+
+puts <<-S
+exit 0
+Archive of features created:
+  #{zip}
+
+From your 'li' folder run the following command to apply these changes.
+
+scp verifier:#{zip} #{zip} && git diff --exit-code --quiet && tar xvzf #{zip}
+S
