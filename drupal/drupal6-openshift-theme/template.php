@@ -408,7 +408,7 @@ function openshift_button($element) {
   $class = 'btn';
   if ($id) {
     if (openshift_ends_with($id, '-submit')) {
-      $class .= ' btn';
+      $class .= ' btn-primary';
     }
     else if (openshift_ends_with($id, '-delete')) {
       $class .= ' btn-danger';

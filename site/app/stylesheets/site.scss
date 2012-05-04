@@ -574,10 +574,9 @@ h1.ribbon {
 .column-buzz a { color: $linkTextDarkBackground; }
 
 // Column navigation
-.column-nav {
+.column-nav { 
   background-color: $navColumnBackgroundColor;
   color: #7a7b7c;
-  font-size:12px;
 
   label {
     color: #6a6b6c;
@@ -686,7 +685,10 @@ h1.ribbon {
   }
   .nav-location { display: none; }
   
-  .column-nav .search-row {
+}
+
+@media (min-width: 768px) and (max-width: 980px) {
+	.column-nav .search-row {
     margin-right: 0; /* correct ipad view */
   }
 }
@@ -1026,4 +1028,5 @@ body.simple {
     }
   }
 }
+
 
