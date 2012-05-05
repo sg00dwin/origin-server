@@ -2,35 +2,26 @@ class DomainObserver < ActiveModel::Observer
   observe Domain
  
   def after_domain_create(domain)
-    # add nurture and apptegic
-    domains = []
-    user.domains.each do |domain|
-      domains.push(domain.namespace)
-    end
-    Express::Broker::Nurture.libra_contact(domain.user.login, domain.user.uuid, domains.join(", "), 'update')
-    Express::Broker::Apptegic.libra_contact(domain.user.login, domain.user.uuid, domains.join(", "), 'update')
+    Rails.logger.debug "In after domain create"
+    Rails.logger.debug "Sending updated domain info #{domain.namespace} to apptegic and nurture"
+    Express::Broker::Nurture.libra_contact(domain.user.login, domain.user.uuid, domain.namespace, 'update')
+    Express::Broker::Apptegic.libra_contact(domain.user.login, domain.user.uuid, domain.namespace, 'update')
     # if any of the above fail, it will result in the domain being deleted
   end
   
   def after_domain_update(domain)
-    # add nurture and apptegic
-    domains = []
-    user.domains.each do |domain|
-      domains.push(domain.namespace)
-    end
-    Express::Broker::Nurture.libra_contact(domain.user.login, domain.user.uuid, domains.join(", "), 'update')
-    Express::Broker::Apptegic.libra_contact(domain.user.login, domain.user.uuid, domains.join(", "), 'update')
+    Rails.logger.debug "In after domain update"
+    Rails.logger.debug "Sending updated domain info #{domain.namespace} to apptegic and nurture"
+    Express::Broker::Nurture.libra_contact(domain.user.login, domain.user.uuid, domain.namespace, 'update')
+    Express::Broker::Apptegic.libra_contact(domain.user.login, domain.user.uuid, domain.namespace, 'update')
     # if any of the above fail, it will result in the domain being deleted
   end
   
   def after_domain_destroy(domain)
-    # add nurture and apptegic
-    domains = []
-    user.domains.each do |domain|
-      domains.push(domain.namespace)
-    end
-    Express::Broker::Nurture.libra_contact(domain.user.login, domain.user.uuid, domains.join(", "), 'update')
-    Express::Broker::Apptegic.libra_contact(domain.user.login, domain.user.uuid, domains.join(", "), 'update')
+    Rails.logger.debug "In after domain destroy"
+    Rails.logger.debug "Sending updated domain info #{domain.namespace} to apptegic and nurture"
+    Express::Broker::Nurture.libra_contact(domain.user.login, domain.user.uuid, domain.namespace, 'update')
+    Express::Broker::Apptegic.libra_contact(domain.user.login, domain.user.uuid, domain.namespace, 'update')
     # if any of the above fail, it will result in the domain being deleted
   end
 
