@@ -512,53 +512,92 @@ module GearChanger
           state_map[ci_name] = [idle,leave_stopped]
         end
 
-        # pre-move
-        reply.append move_gear_pre(app, gear, state_map)
-
-        # rsync gear with destination container
-        rsync_destination_container(app, gear, destination_container, destination_district_uuid, quota_blocks, quota_files, keep_uid)
-
-        # now execute hooks on the new nest of the components
-        gi.component_instances.each do |ci_name|
-          cinst = app.comp_instance_map[ci_name]
-          cart = cinst.parent_cart_name
-          idle, leave_stopped = state_map[ci_name]
-          if framework_carts.include? cart
-            log_debug "DEBUG: Performing cartridge level move for '#{cart}' on #{destination_container.id}"
-            reply.append destination_container.send(:run_cartridge_command, cart, app, gear, "move", idle ? '--idle' : nil, false)
-          else
-            log_debug "DEBUG: Performing cartridge level move for embedded #{cart} for '#{app.name}' on #{destination_container.id}"
-            embedded_reply = destination_container.send(:run_cartridge_command, "embedded/" + cart, app, gear, "move", nil, false)
-            component_details = embedded_reply.appInfoIO.string
-            unless component_details.empty?
-              app.set_embedded_cart_info(cart, component_details)
-            end
-            reply.append embedded_reply
-            unless keep_uid
-              log_debug "DEBUG: Performing cartridge level post-move for embedded #{cart} for '#{app.name}' on #{destination_container.id}"
-              reply.append destination_container.send(:run_cartridge_command, "embedded/" + cart, app, gear, "post-move", nil, false)
-            end
-          end
-          if app.scalable and not cart.include? app.proxy_cartridge
-            begin
-              reply.append gear.expose_port(cinst)
-            rescue Exception=>e
-            end
-          end
-        end 
-
-        # start the gears again and change DNS entry
         begin
-          reply.append move_gear_post(app, gear, state_map)
-        rescue Exception => e
-	end
+          # pre-move
+          reply.append move_gear_pre(app, gear, state_map)
 
-        gear.container = destination_container
+          begin
+            # rsync gear with destination container
+            rsync_destination_container(app, gear, destination_container, destination_district_uuid, quota_blocks, quota_files, keep_uid)
+
+            # now execute 'move'/'expost-port' hooks on the new nest of the components
+            gi.component_instances.each do |ci_name|
+              cinst = app.comp_instance_map[ci_name]
+              cart = cinst.parent_cart_name
+              idle, leave_stopped = state_map[ci_name]
+              if framework_carts.include? cart
+                log_debug "DEBUG: Performing cartridge level move for '#{cart}' on #{destination_container.id}"
+                reply.append destination_container.send(:run_cartridge_command, cart, app, gear, "move", idle ? '--idle' : nil, false)
+              else
+                log_debug "DEBUG: Performing cartridge level move for embedded #{cart} for '#{app.name}' on #{destination_container.id}"
+                embedded_reply = destination_container.send(:run_cartridge_command, "embedded/" + cart, app, gear, "move", nil, false)
+                component_details = embedded_reply.appInfoIO.string
+                unless component_details.empty?
+                  app.set_embedded_cart_info(cart, component_details)
+                end
+                reply.append embedded_reply
+                unless keep_uid
+                  log_debug "DEBUG: Performing cartridge level post-move for embedded #{cart} for '#{app.name}' on #{destination_container.id}"
+                  reply.append destination_container.send(:run_cartridge_command, "embedded/" + cart, app, gear, "post-move", nil, false)
+                end
+              end
+              if app.scalable and not cart.include? app.proxy_cartridge
+                reply.append gear.expose_port(cinst)
+              end
+            end 
+
+            # start the gears again and change DNS entry
+            reply.append move_gear_post(app, gear, state_map)
+
+          rescue Exception =>e
+            gear.container = source_container
+            # remove-httpd-proxy of destination
+            log_debug "DEBUG: Moving failed.  Rolling back gear '#{gear.name}' '#{app.name}' with remove-httpd-proxy on '#{destination_container.id}'"
+            gi.component_instances.each do |ci_name|
+              cinst = app.comp_instance_map[ci_name]
+              cart = cinst.parent_cart_name
+              if framework_carts.include? cart
+                reply.append destination_container.send(:run_cartridge_command, cart, app, gear, "remove-httpd-proxy", nil, false)
+              end
+            end
+            # deconfigure destination
+            # destroy destination
+            log_debug "DEBUG: Moving failed.  Rolling back gear '#{gear.name}' in '#{app.name}' with destroy on '#{destination_container.id}'"
+            reply.append destination_container.destroy(app, gear, keep_uid)
+            raise
+          end
+        rescue Exception => e
+          # post_move source
+          begin
+            unless keep_uid
+              gi.component_instances.each do |ci_name|
+                cinst = app.comp_instance_map[ci_name]
+                cart = cinst.parent_cart_name
+                if embedded_carts.include? cart
+                  begin
+                    log_debug "DEBUG: Performing cartridge level post-move for embedded #{cart} for '#{app.name}' on #{source_container.id}"
+                    reply.append source_container.send(:run_cartridge_command, "embedded/" + cart, app, gear, "post-move", nil, false)
+                  rescue Exception => e
+                    log_error "ERROR: Error performing cartridge level post-move for embedded #{cart} for '#{app.name}' on #{source_container.id}: #{e.message}"
+                  end
+                end
+              end
+            end
+            # start source
+            if not leave_stopped
+              gi.component_instances.each do |ci_name|
+                cinst = app.comp_instance_map[ci_name]
+                cart = cinst.parent_cart_name
+                reply.append source_container.run_cartridge_command(cart, app, gear, "start", nil, false) if framework_carts.include? cart
+              end
+            end
+          ensure
+            raise
+          end
+        end
 
         move_gear_destroy_old(app, gear, keep_uid, orig_uid)
-
         app.execute_connections
-
         log_debug "Successfully moved '#{app.name}' with uuid '#{app.gear.uuid}' from '#{source_container.id}' to '#{destination_container.id}'"
         reply
       end
