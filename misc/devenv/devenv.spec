@@ -99,6 +99,7 @@ Requires:  drupal6-fivestar
 Requires:  drupal6-flag
 Requires:  drupal6-freelinking
 Requires:  drupal6-geshifilter
+Requires:  drupal6-geoip
 Requires:  drupal6-homebox
 Requires:  drupal6-image
 Requires:  drupal6-image_resize_filter
@@ -463,12 +464,6 @@ chmod g-s /sbin/netreport
 
 # Make grub.conf readable only to user and group - not other - tkramer
 chmod 600 /boot/grub/grub.conf
-
-# Make repos check with gpg
-sed 's/^gpgcheck=0/gpgcheck=1/' /etc/yum.repos.d/epel.repo > /etc/yum.repos.d/epel.tmp
-mv -f /etc/yum.repos.d/epel.tmp /etc/yum.repos.d/epel.repo
-sed 's/^gpgcheck=0/gpgcheck=1/' /etc/yum.repos.d/li.repo > /etc/yum.repos.d/li.tmp
-mv -f /etc/yum.repos.d/li.tmp /etc/yum.repos.d/li.repo
 
 # Turn off rsyslog compatibility check in OpenScap
 sed 's/rule-1125" selected="true/rule-1125" selected="false/' /usr/share/openscap/scap-rhel6-xccdf.xml > /usr/share/openscap/scap-rhel6-xccdf.xml.tmp

@@ -55,13 +55,13 @@ module MCollective
 
         args << "heartbeat:1"
 
-        amqp_options = "{" + args.join(", ") + "}"
+        amqp_options = "{#{args.join(', ')}}"
           
         @connection = nil
 
         begin
           @log.debug("Connecting to #{url},  #{amqp_options}")
-          @connection = Cqpid::Connection.new(url, amqp_options)
+          @connection = Cqpid::Connection.new((secure ? 'amqp:ssl:' : '') + url, amqp_options)
           @connection.open
         rescue StandardError => e
           @log.error("Initial connection failed... retrying")

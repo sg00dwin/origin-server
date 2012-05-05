@@ -58,7 +58,10 @@ module GearChanger
       end
       
       def get_available_cartridges
-        result = execute_direct(@@C_CONTROLLER, 'cartridge-list', "--porcelain --with-descriptors", false)
+        args = Hash.new
+        args['--porcelain'] = true
+        args['--with-descriptors'] = true
+        result = execute_direct(@@C_CONTROLLER, 'cartridge-list', args, false)
         result = parse_result(result)
         cart_data = JSON.parse(result.resultIO.string)
         cart_data.map! {|c| StickShift::Cartridge.new.from_descriptor(YAML.load(c))}
@@ -109,13 +112,15 @@ module GearChanger
       def create(app, gear, quota_blocks=nil, quota_files=nil)
         result = nil
         (1..10).each do |i|
-          cmd = "--with-app-uuid '#{app.uuid}' --with-container-uuid '#{gear.uuid}'"
-          cmd += " -i '#{gear.uid}'" if gear.uid
-          cmd += " --named '#{app.name}'" if app.name
-          cmd += " --with-quota-blocks '#{quota_blocks}'" if quota_blocks
-          cmd += " --with-quota-files '#{quota_files}'" if quota_files
-          cmd += " --with-namespace '#{app.domain.namespace}'"
-          mcoll_reply = execute_direct(@@C_CONTROLLER, 'app-create', cmd)
+          args = Hash.new
+          args['--with-app-uuid'] = app.uuid
+          args['--with-container-uuid'] = gear.uuid
+          args['--named'] = app.name if app.name
+          args['--with-quota-blocks'] = quota_blocks if quota_blocks
+          args['--with-quota-files'] = quota_files if quota_files
+          args['--with-namespace'] = app.domain.namespace
+          args['--with-uid'] = gear.uid if gear.uid
+          mcoll_reply = execute_direct(@@C_CONTROLLER, 'app-create', args)
           result = parse_result(mcoll_reply)
           if result.exitcode == 129 && has_uid_or_gid?(app.gear.uid) # Code to indicate uid already taken
             destroy(app, gear, true)
@@ -130,7 +135,10 @@ module GearChanger
       end
     
       def destroy(app, gear, keep_uid=false, uid=nil)
-        result = execute_direct(@@C_CONTROLLER, 'app-destroy', "--with-app-uuid '#{app.uuid}' --with-container-uuid '#{gear.uuid}'")
+        args = Hash.new
+        args['--with-app-uuid'] = app.uuid
+        args['--with-container-uuid'] = gear.uuid
+        result = execute_direct(@@C_CONTROLLER, 'app-destroy', args)
         result_io = parse_result(result)
         
         uid = gear.uid unless uid
@@ -141,38 +149,61 @@ module GearChanger
         return result_io
       end
 
-      def add_authorized_ssh_key(app, gear, ssh_key, key_type=nil, message=nil)
-        cmd = "--with-app-uuid '#{app.uuid}' --with-container-uuid '#{gear.uuid}' -s '#{ssh_key}'"
-        cmd += " -t '#{key_type}'" if key_type
-        cmd += " -m '-#{message}'" if message
-        result = execute_direct(@@C_CONTROLLER, 'authorized-ssh-key-add', cmd)
+      def add_authorized_ssh_key(app, gear, ssh_key, key_type=nil, comment=nil)
+        args = Hash.new
+        args['--with-app-uuid'] = app.uuid
+        args['--with-container-uuid'] = gear.uuid
+        args['--with-ssh-key'] = ssh_key
+        args['--with-ssh-key-type'] = key_type if key_type
+        args['--with-ssh-key-comment'] = comment if comment
+        result = execute_direct(@@C_CONTROLLER, 'authorized-ssh-key-add', args)
         parse_result(result)
       end
 
       def remove_authorized_ssh_key(app, gear, ssh_key, comment=nil)
-        cmd = "--with-app-uuid '#{app.uuid}' --with-container-uuid '#{gear.uuid}' -s '#{ssh_key}'"
-        cmd += " -m '-#{comment}'" if comment
-        result = execute_direct(@@C_CONTROLLER, 'authorized-ssh-key-remove', cmd)
+        args = Hash.new
+        args['--with-app-uuid'] = app.uuid
+        args['--with-container-uuid'] = gear.uuid
+        args['--with-ssh-key'] = ssh_key
+        args['--with-ssh-comment'] = comment if comment
+        result = execute_direct(@@C_CONTROLLER, 'authorized-ssh-key-remove', args)
         parse_result(result)
       end
 
       def add_env_var(app, gear, key, value)
-        result = execute_direct(@@C_CONTROLLER, 'env-var-add', "--with-app-uuid '#{app.uuid}' --with-container-uuid '#{gear.uuid}' -k '#{key}' -v '#{value}'")
+        args = Hash.new
+        args['--with-app-uuid'] = app.uuid
+        args['--with-container-uuid'] = gear.uuid
+        args['--with-key'] = key
+        args['--with-value'] = value
+        result = execute_direct(@@C_CONTROLLER, 'env-var-add', args)
         parse_result(result)
       end
       
       def remove_env_var(app, gear, key)
-        result = execute_direct(@@C_CONTROLLER, 'env-var-remove', "--with-app-uuid '#{app.uuid}' --with-container-uuid '#{gear.uuid}' -k '#{key}'")
+        args = Hash.new
+        args['--with-app-uuid'] = app.uuid
+        args['--with-container-uuid'] = gear.uuid
+        args['--with-key'] = key
+        result = execute_direct(@@C_CONTROLLER, 'env-var-remove', args)
         parse_result(result)
       end
     
       def add_broker_auth_key(app, gear, iv, token)
-        result = execute_direct(@@C_CONTROLLER, 'broker-auth-key-add', "--with-app-uuid '#{app.uuid}' --with-container-uuid '#{gear.uuid}' -i '#{iv}' -t '#{token}'")
+        args = Hash.new
+        args['--with-app-uuid'] = app.uuid
+        args['--with-container-uuid'] = gear.uuid
+        args['--with-iv'] = iv
+        args['--with-token'] = token
+        result = execute_direct(@@C_CONTROLLER, 'broker-auth-key-add', args)
         parse_result(result)
       end
     
       def remove_broker_auth_key(app, gear)
-        result = execute_direct(@@C_CONTROLLER, 'broker-auth-key-remove', "--with-app-uuid '#{app.uuid}' --with-container-uuid '#{gear.uuid}'")
+        args = Hash.new
+        args['--with-app-uuid'] = app.uuid
+        args['--with-container-uuid'] = gear.uuid
+        result = execute_direct(@@C_CONTROLLER, 'broker-auth-key-remove', args)
         parse_result(result)
       end
       
@@ -235,7 +266,12 @@ module GearChanger
       end
 
       def execute_connector(app, gear, cart, connector_name, input_args)
-        mcoll_reply = execute_direct(@@C_CONTROLLER, 'connector-execute', "--gear-uuid '#{gear.uuid}' --cart-name '#{cart}' --hook-name '#{connector_name}' " + input_args.join(" "))
+        args = Hash.new
+        args['--gear-uuid'] = gear.uuid
+        args['--cart-name'] = cart
+        args['--hook-name'] = connector_name
+        args['--input-args'] = input_args.join(" ")
+        mcoll_reply = execute_direct(@@C_CONTROLLER, 'connector-execute', args)
         if mcoll_reply and mcoll_reply.length>0
           mcoll_reply = mcoll_reply[0]
           output = mcoll_reply.results[:data][:output]
@@ -370,46 +406,69 @@ module GearChanger
       end
 
       def get_env_var_add_job(app, gear, key, value)
-        args = "--with-app-uuid '#{app.uuid}' --with-container-uuid '#{gear.uuid}' -k '#{key}' -v '#{value}'"
+        args = Hash.new
+        args['--with-app-uuid'] = app.uuid
+        args['--with-container-uuid'] = gear.uuid
+        args['--with-key'] = key
+        args['--with-value'] = value
         job = RemoteJob.new('stickshift-node', 'env-var-add', args)
         job
       end
       
       def get_env_var_remove_job(app, gear, key)
-        args = "--with-app-uuid '#{app.uuid}' --with-container-uuid '#{gear.uuid}' -k '#{key}'"
+        args = Hash.new
+        args['--with-app-uuid'] = app.uuid
+        args['--with-container-uuid'] = gear.uuid
+        args['--with-key'] = key
         job = RemoteJob.new('stickshift-node', 'env-var-remove', args)
         job
       end
   
       def get_add_authorized_ssh_key_job(app, gear, ssh_key, key_type=nil, comment=nil)
-        args = "--with-app-uuid '#{app.uuid}' --with-container-uuid '#{gear.uuid}' -s '#{ssh_key}'"
-        args += " -t '#{key_type}'" if key_type
-        args += " -m '-#{comment}'" if comment
+        args = Hash.new
+        args['--with-app-uuid'] = app.uuid
+        args['--with-container-uuid'] = gear.uuid
+        args['--with-ssh-key'] = ssh_key
+        args['--with-ssh-key-type'] = key_type if key_type
+        args['--with-ssh-key-comment'] = comment if comment
         job = RemoteJob.new('stickshift-node', 'authorized-ssh-key-add', args)
         job
       end
       
       def get_remove_authorized_ssh_key_job(app, gear, ssh_key, comment=nil)
-        args = "--with-app-uuid '#{app.uuid}' --with-container-uuid '#{gear.uuid}' -s '#{ssh_key}'"
-        args += " -m '-#{comment}'" if comment
+        args = Hash.new
+        args['--with-app-uuid'] = app.uuid
+        args['--with-container-uuid'] = gear.uuid
+        args['--with-ssh-key'] = ssh_key
+        args['--with-ssh-comment'] = comment if comment
         job = RemoteJob.new('stickshift-node', 'authorized-ssh-key-remove', args)
         job
       end
 
       def get_broker_auth_key_add_job(app, gear, iv, token)
-        args = "--with-app-uuid '#{app.uuid}' --with-container-uuid '#{gear.uuid}' -i '#{iv}' -t '#{token}'"
+        args = Hash.new
+        args['--with-app-uuid'] = app.uuid
+        args['--with-container-uuid'] = gear.uuid
+        args['--with-iv'] = iv
+        args['--with-token'] = token
         job = RemoteJob.new('stickshift-node', 'broker-auth-key-add', args)
         job
       end
   
       def get_broker_auth_key_remove_job(app, gear)
-        args = "--with-app-uuid '#{app.uuid}' --with-container-uuid '#{gear.uuid}'"
+        args = Hash.new
+        args['--with-app-uuid'] = app.uuid
+        args['--with-container-uuid'] = gear.uuid
         job = RemoteJob.new('stickshift-node', 'broker-auth-key-remove', args)
         job
       end
 
       def get_execute_connector_job(app, gear, cart, connector_name, input_args)
-        args = "--gear-uuid '#{gear.uuid}' --cart-name '#{cart}' --hook-name '#{connector_name}' " + input_args.join(" ")
+        args = Hash.new
+        args['--gear-uuid'] = gear.uuid
+        args['--cart-name'] = cart
+        args['--hook-name'] = connector_name
+        args['--input-args'] = input_args.join(" ")
         job = RemoteJob.new('stickshift-node', 'connector-execute', args)
         job
       end
@@ -1059,7 +1118,7 @@ module GearChanger
           end
           result
       end
-      
+
       def parse_result(mcoll_reply, app=nil, command=nil)
         result = ResultIO.new
         
