@@ -127,6 +127,7 @@ Requires:  drupal6-openshift-features-global_settings
 Requires:  drupal6-openshift-features-reporting_csv_views
 Requires:  drupal6-openshift-features-rules_by_category
 Requires:  drupal6-openshift-features-user_profile
+Requires:  drupal6-openshift-features-recent_activity_report
 Requires:  drupal6-openshift-features-video
 Requires:  drupal6-openshift-modals
 Requires:  drupal6-openshift-og_comment_perms
