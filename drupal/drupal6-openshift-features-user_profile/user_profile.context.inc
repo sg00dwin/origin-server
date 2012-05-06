@@ -67,7 +67,7 @@ function user_profile_context_default_contexts() {
           'module' => 'search',
           'delta' => 0,
           'region' => 'sidebar_left',
-          'weight' => 0,
+          'weight' => 1,
         ),
         'og-0' => array(
           'module' => 'og',
@@ -152,7 +152,7 @@ function user_profile_context_default_contexts() {
           'module' => 'search',
           'delta' => 0,
           'region' => 'sidebar_left',
-          'weight' => 0,
+          'weight' => 1,
         ),
         'views-user_profile_box-block_1' => array(
           'module' => 'views',
