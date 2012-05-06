@@ -6,47 +6,7 @@
 function community_wiki_user_default_permissions() {
   $permissions = array();
 
-  // Exported permission: create wiki_page content
-  $permissions['create wiki_page content'] = array(
-    'name' => 'create wiki_page content',
-    'roles' => array(
-      '0' => 'authenticated user',
-    ),
-  );
-
-  // Exported permission: delete any wiki_page content
-  $permissions['delete any wiki_page content'] = array(
-    'name' => 'delete any wiki_page content',
-    'roles' => array(
-      '0' => 'administrator',
-    ),
-  );
-
-  // Exported permission: delete own wiki_page content
-  $permissions['delete own wiki_page content'] = array(
-    'name' => 'delete own wiki_page content',
-    'roles' => array(
-      '0' => 'authenticated user',
-    ),
-  );
-
-  // Exported permission: edit any wiki_page content
-  $permissions['edit any wiki_page content'] = array(
-    'name' => 'edit any wiki_page content',
-    'roles' => array(
-      '0' => 'authenticated user',
-    ),
-  );
-
-  // Exported permission: edit own wiki_page content
-  $permissions['edit own wiki_page content'] = array(
-    'name' => 'edit own wiki_page content',
-    'roles' => array(
-      '0' => 'authenticated user',
-    ),
-  );
-
-    // Exported permission: attach images
+  // Exported permission: attach images
   $permissions['attach images'] = array(
     'name' => 'attach images',
     'roles' => array(
@@ -62,9 +22,25 @@ function community_wiki_user_default_permissions() {
     ),
   );
 
+  // Exported permission: create wiki_page content
+  $permissions['create wiki_page content'] = array(
+    'name' => 'create wiki_page content',
+    'roles' => array(
+      '0' => 'authenticated user',
+    ),
+  );
+
   // Exported permission: delete any images
   $permissions['delete any images'] = array(
     'name' => 'delete any images',
+    'roles' => array(
+      '0' => 'administrator',
+    ),
+  );
+
+  // Exported permission: delete any wiki_page content
+  $permissions['delete any wiki_page content'] = array(
+    'name' => 'delete any wiki_page content',
     'roles' => array(
       '0' => 'administrator',
     ),
@@ -78,6 +54,14 @@ function community_wiki_user_default_permissions() {
     ),
   );
 
+  // Exported permission: delete own wiki_page content
+  $permissions['delete own wiki_page content'] = array(
+    'name' => 'delete own wiki_page content',
+    'roles' => array(
+      '0' => 'authenticated user',
+    ),
+  );
+
   // Exported permission: edit any images
   $permissions['edit any images'] = array(
     'name' => 'edit any images',
@@ -86,9 +70,25 @@ function community_wiki_user_default_permissions() {
     ),
   );
 
+  // Exported permission: edit any wiki_page content
+  $permissions['edit any wiki_page content'] = array(
+    'name' => 'edit any wiki_page content',
+    'roles' => array(
+      '0' => 'authenticated user',
+    ),
+  );
+
   // Exported permission: edit own images
   $permissions['edit own images'] = array(
     'name' => 'edit own images',
+    'roles' => array(
+      '0' => 'authenticated user',
+    ),
+  );
+
+  // Exported permission: edit own wiki_page content
+  $permissions['edit own wiki_page content'] = array(
+    'name' => 'edit own wiki_page content',
     'roles' => array(
       '0' => 'authenticated user',
     ),
@@ -103,5 +103,5 @@ function community_wiki_user_default_permissions() {
     ),
   );
 
-return $permissions;
+  return $permissions;
 }

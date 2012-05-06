@@ -19,6 +19,3 @@ function community_wiki_node_info() {
   );
   return $items;
 }
-
-#function community_wiki_form() {
-#}
