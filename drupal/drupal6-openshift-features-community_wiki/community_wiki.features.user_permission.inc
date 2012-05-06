@@ -103,13 +103,5 @@ function community_wiki_user_default_permissions() {
     ),
   );
 
-  // Exported permission: view original images
-  $permissions['view revisions'] = array(
-    'name' => 'view revisions',
-    'roles' => array(
-      '0' => 'authenticated user',
-    ),
-  );
-
 return $permissions;
 }
