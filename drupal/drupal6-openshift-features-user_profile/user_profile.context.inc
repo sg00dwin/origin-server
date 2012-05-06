@@ -5,6 +5,7 @@
  */
 function user_profile_context_default_contexts() {
   $export = array();
+
   $context = new stdClass;
   $context->disabled = FALSE; /* Edit this to true to make a default context disabled initially */
   $context->api_version = 3;
@@ -31,8 +32,8 @@ function user_profile_context_default_contexts() {
     ),
   );
   $context->condition_mode = 0;
-
   $export['moderator-role'] = $context;
+
   $context = new stdClass;
   $context->disabled = FALSE; /* Edit this to true to make a default context disabled initially */
   $context->api_version = 3;
@@ -118,7 +119,6 @@ function user_profile_context_default_contexts() {
   // Translatables
   // Included for use with string extractors like potx.
   t('Displays blocks for users who are logged in.');
-
   $export['user-logged-in'] = $context;
 
   $context = new stdClass;
@@ -198,8 +198,8 @@ function user_profile_context_default_contexts() {
   // Translatables
   // Included for use with string extractors like potx.
   t('Displays blocks for users who are logged in and on the forums home page.');
-
   $export['user-logged-in-forums-home-page'] = $context;
+
   $context = new stdClass;
   $context->disabled = FALSE; /* Edit this to true to make a default context disabled initially */
   $context->api_version = 3;
@@ -226,7 +226,7 @@ function user_profile_context_default_contexts() {
           'module' => 'search',
           'delta' => 0,
           'region' => 'sidebar_left',
-          'weight' => 0,
+          'weight' => 1,
         ),
         'views-promotion_view-block_1' => array(
           'module' => 'views',

@@ -1160,6 +1160,7 @@ function user_profile_user_default_permissions() {
     'name' => 'upload files',
     'roles' => array(
       '0' => 'administrator',
+      '1' => 'doc content owner',
     ),
   );
 
@@ -1342,6 +1343,7 @@ function user_profile_user_default_permissions() {
     'name' => 'view uploaded files',
     'roles' => array(
       '0' => 'administrator',
+      '1' => 'doc content owner',
     ),
   );
 
@@ -1363,6 +1365,10 @@ function user_profile_user_default_permissions() {
       '0' => 'administrator',
       '1' => 'anonymous user',
       '2' => 'authenticated user',
+      '3' => 'blogger',
+      '4' => 'doc content owner',
+      '5' => 'moderator',
+      '6' => 'page author',
     ),
   );
 
