@@ -1,6 +1,6 @@
 Summary:       SELinux policy for OpenShift nodes
 Name:          rhc-selinux
-Version: 0.92.1
+Version: 0.92.2
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -46,6 +46,29 @@ rm -rf %{buildroot}
 %attr(0640,-,-) %{_datadir}/selinux/packages/libra.pp
 
 %changelog
+* Mon May 07 2012 Adam Miller <admiller@redhat.com> 0.92.2-1
+- revert previous commit 3f29dfed for now (dmcphers@redhat.com)
+- Dontaudit libra domains trying to create netlink_tcpdiag_sockets, executing
+  ss command causes this, and we have decided to allow libra instances to
+  execute ss (dwalsh@redhat.com)
+- Remove libra's ability to look at network state (dwalsh@redhat.com)
+- fix signull signal name (dwalsh@redhat.com)
+- fix signull signal name (dwalsh@redhat.com)
+- temporarily revert 27d63c03 that was failing libra_check build
+  (admiller@redhat.com)
+- Don't allow libra domains to look at sshd_t kernel keyrings
+  (dwalsh@redhat.com)
+- libra instances should be able to kill the mailer that they launch
+  (dwalsh@redhat.com)
+- Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
+  (dwalsh@redhat.com)
+- Revert "Allow libra to check the access on any file in libra_var_lib_t, this
+  allows us to check access on sock_file" (dwalsh@redhat.com)
+- temporarily reverted 39860d58ac3b6fad7462f2f9f88b5bc893854df7 to let
+  libra_check build succeed (admiller@redhat.com)
+- Allow libra to check the access on any file in libra_var_lib_t, this allows
+  us to check access on sock_file (dwalsh@redhat.com)
+
 * Thu Apr 26 2012 Adam Miller <admiller@redhat.com> 0.92.1-1
 - bumping spec versions (admiller@redhat.com)
 

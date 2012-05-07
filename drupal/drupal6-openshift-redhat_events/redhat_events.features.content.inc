@@ -293,7 +293,7 @@ function redhat_events_content_default_fields() {
     'todate' => 'optional',
     'repeat' => 0,
     'repeat_collapsed' => '',
-    'default_format' => 'medium',
+    'default_format' => 'redhat_events_date_format_medium',
     'widget' => array(
       'default_value' => 'blank',
       'default_value_code' => '',

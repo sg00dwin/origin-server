@@ -13,6 +13,14 @@ module GearChanger
         @district = district
       end
       
+      def self.valid_gear_sizes_impl(user)    
+        if user.vip
+          return ["small", "medium"]
+        else
+          return ["small"]          
+        end
+      end
+      
       def self.find_available_impl(node_profile=nil, district_uuid=nil)
         district = nil
         if Rails.configuration.districts[:enabled] && (!district_uuid || district_uuid == 'NONE')  
@@ -50,7 +58,10 @@ module GearChanger
       end
       
       def get_available_cartridges
-        result = execute_direct(@@C_CONTROLLER, 'cartridge-list', "--porcelain --with-descriptors", false)
+        args = Hash.new
+        args['--porcelain'] = true
+        args['--with-descriptors'] = true
+        result = execute_direct(@@C_CONTROLLER, 'cartridge-list', args, false)
         result = parse_result(result)
         cart_data = JSON.parse(result.resultIO.string)
         cart_data.map! {|c| StickShift::Cartridge.new.from_descriptor(YAML.load(c))}
@@ -101,13 +112,15 @@ module GearChanger
       def create(app, gear, quota_blocks=nil, quota_files=nil)
         result = nil
         (1..10).each do |i|
-          cmd = "--with-app-uuid '#{app.uuid}' --with-container-uuid '#{gear.uuid}'"
-          cmd += " -i '#{gear.uid}'" if gear.uid
-          cmd += " --named '#{app.name}'" if app.name
-          cmd += " --with-quota-blocks '#{quota_blocks}'" if quota_blocks
-          cmd += " --with-quota-files '#{quota_files}'" if quota_files
-          cmd += " --with-namespace '#{app.domain.namespace}'"
-          mcoll_reply = execute_direct(@@C_CONTROLLER, 'app-create', cmd)
+          args = Hash.new
+          args['--with-app-uuid'] = app.uuid
+          args['--with-container-uuid'] = gear.uuid
+          args['--named'] = app.name if app.name
+          args['--with-quota-blocks'] = quota_blocks if quota_blocks
+          args['--with-quota-files'] = quota_files if quota_files
+          args['--with-namespace'] = app.domain.namespace
+          args['--with-uid'] = gear.uid if gear.uid
+          mcoll_reply = execute_direct(@@C_CONTROLLER, 'app-create', args)
           result = parse_result(mcoll_reply)
           if result.exitcode == 129 && has_uid_or_gid?(app.gear.uid) # Code to indicate uid already taken
             destroy(app, gear, true)
@@ -122,7 +135,10 @@ module GearChanger
       end
     
       def destroy(app, gear, keep_uid=false, uid=nil)
-        result = execute_direct(@@C_CONTROLLER, 'app-destroy', "--with-app-uuid '#{app.uuid}' --with-container-uuid '#{gear.uuid}'")
+        args = Hash.new
+        args['--with-app-uuid'] = app.uuid
+        args['--with-container-uuid'] = gear.uuid
+        result = execute_direct(@@C_CONTROLLER, 'app-destroy', args)
         result_io = parse_result(result)
         
         uid = gear.uid unless uid
@@ -133,38 +149,61 @@ module GearChanger
         return result_io
       end
 
-      def add_authorized_ssh_key(app, gear, ssh_key, key_type=nil, message=nil)
-        cmd = "--with-app-uuid '#{app.uuid}' --with-container-uuid '#{gear.uuid}' -s '#{ssh_key}'"
-        cmd += " -t '#{key_type}'" if key_type
-        cmd += " -m '-#{message}'" if message
-        result = execute_direct(@@C_CONTROLLER, 'authorized-ssh-key-add', cmd)
+      def add_authorized_ssh_key(app, gear, ssh_key, key_type=nil, comment=nil)
+        args = Hash.new
+        args['--with-app-uuid'] = app.uuid
+        args['--with-container-uuid'] = gear.uuid
+        args['--with-ssh-key'] = ssh_key
+        args['--with-ssh-key-type'] = key_type if key_type
+        args['--with-ssh-key-comment'] = comment if comment
+        result = execute_direct(@@C_CONTROLLER, 'authorized-ssh-key-add', args)
         parse_result(result)
       end
 
       def remove_authorized_ssh_key(app, gear, ssh_key, comment=nil)
-        cmd = "--with-app-uuid '#{app.uuid}' --with-container-uuid '#{gear.uuid}' -s '#{ssh_key}'"
-        cmd += " -m '-#{comment}'" if comment
-        result = execute_direct(@@C_CONTROLLER, 'authorized-ssh-key-remove', cmd)
+        args = Hash.new
+        args['--with-app-uuid'] = app.uuid
+        args['--with-container-uuid'] = gear.uuid
+        args['--with-ssh-key'] = ssh_key
+        args['--with-ssh-comment'] = comment if comment
+        result = execute_direct(@@C_CONTROLLER, 'authorized-ssh-key-remove', args)
         parse_result(result)
       end
 
       def add_env_var(app, gear, key, value)
-        result = execute_direct(@@C_CONTROLLER, 'env-var-add', "--with-app-uuid '#{app.uuid}' --with-container-uuid '#{gear.uuid}' -k '#{key}' -v '#{value}'")
+        args = Hash.new
+        args['--with-app-uuid'] = app.uuid
+        args['--with-container-uuid'] = gear.uuid
+        args['--with-key'] = key
+        args['--with-value'] = value
+        result = execute_direct(@@C_CONTROLLER, 'env-var-add', args)
         parse_result(result)
       end
       
       def remove_env_var(app, gear, key)
-        result = execute_direct(@@C_CONTROLLER, 'env-var-remove', "--with-app-uuid '#{app.uuid}' --with-container-uuid '#{gear.uuid}' -k '#{key}'")
+        args = Hash.new
+        args['--with-app-uuid'] = app.uuid
+        args['--with-container-uuid'] = gear.uuid
+        args['--with-key'] = key
+        result = execute_direct(@@C_CONTROLLER, 'env-var-remove', args)
         parse_result(result)
       end
     
       def add_broker_auth_key(app, gear, iv, token)
-        result = execute_direct(@@C_CONTROLLER, 'broker-auth-key-add', "--with-app-uuid '#{app.uuid}' --with-container-uuid '#{gear.uuid}' -i '#{iv}' -t '#{token}'")
+        args = Hash.new
+        args['--with-app-uuid'] = app.uuid
+        args['--with-container-uuid'] = gear.uuid
+        args['--with-iv'] = iv
+        args['--with-token'] = token
+        result = execute_direct(@@C_CONTROLLER, 'broker-auth-key-add', args)
         parse_result(result)
       end
     
       def remove_broker_auth_key(app, gear)
-        result = execute_direct(@@C_CONTROLLER, 'broker-auth-key-remove', "--with-app-uuid '#{app.uuid}' --with-container-uuid '#{gear.uuid}'")
+        args = Hash.new
+        args['--with-app-uuid'] = app.uuid
+        args['--with-container-uuid'] = gear.uuid
+        result = execute_direct(@@C_CONTROLLER, 'broker-auth-key-remove', args)
         parse_result(result)
       end
       
@@ -227,7 +266,12 @@ module GearChanger
       end
 
       def execute_connector(app, gear, cart, connector_name, input_args)
-        mcoll_reply = execute_direct(@@C_CONTROLLER, 'connector-execute', "--gear-uuid '#{gear.uuid}' --cart-name '#{cart}' --hook-name '#{connector_name}' " + input_args.join(" "))
+        args = Hash.new
+        args['--gear-uuid'] = gear.uuid
+        args['--cart-name'] = cart
+        args['--hook-name'] = connector_name
+        args['--input-args'] = input_args.join(" ")
+        mcoll_reply = execute_direct(@@C_CONTROLLER, 'connector-execute', args)
         if mcoll_reply and mcoll_reply.length>0
           mcoll_reply = mcoll_reply[0]
           output = mcoll_reply.results[:data][:output]
@@ -362,46 +406,69 @@ module GearChanger
       end
 
       def get_env_var_add_job(app, gear, key, value)
-        args = "--with-app-uuid '#{app.uuid}' --with-container-uuid '#{gear.uuid}' -k '#{key}' -v '#{value}'"
+        args = Hash.new
+        args['--with-app-uuid'] = app.uuid
+        args['--with-container-uuid'] = gear.uuid
+        args['--with-key'] = key
+        args['--with-value'] = value
         job = RemoteJob.new('stickshift-node', 'env-var-add', args)
         job
       end
       
       def get_env_var_remove_job(app, gear, key)
-        args = "--with-app-uuid '#{app.uuid}' --with-container-uuid '#{gear.uuid}' -k '#{key}'"
+        args = Hash.new
+        args['--with-app-uuid'] = app.uuid
+        args['--with-container-uuid'] = gear.uuid
+        args['--with-key'] = key
         job = RemoteJob.new('stickshift-node', 'env-var-remove', args)
         job
       end
   
       def get_add_authorized_ssh_key_job(app, gear, ssh_key, key_type=nil, comment=nil)
-        args = "--with-app-uuid '#{app.uuid}' --with-container-uuid '#{gear.uuid}' -s '#{ssh_key}'"
-        args += " -t '#{key_type}'" if key_type
-        args += " -m '-#{comment}'" if comment
+        args = Hash.new
+        args['--with-app-uuid'] = app.uuid
+        args['--with-container-uuid'] = gear.uuid
+        args['--with-ssh-key'] = ssh_key
+        args['--with-ssh-key-type'] = key_type if key_type
+        args['--with-ssh-key-comment'] = comment if comment
         job = RemoteJob.new('stickshift-node', 'authorized-ssh-key-add', args)
         job
       end
       
       def get_remove_authorized_ssh_key_job(app, gear, ssh_key, comment=nil)
-        args = "--with-app-uuid '#{app.uuid}' --with-container-uuid '#{gear.uuid}' -s '#{ssh_key}'"
-        args += " -m '-#{comment}'" if comment
+        args = Hash.new
+        args['--with-app-uuid'] = app.uuid
+        args['--with-container-uuid'] = gear.uuid
+        args['--with-ssh-key'] = ssh_key
+        args['--with-ssh-comment'] = comment if comment
         job = RemoteJob.new('stickshift-node', 'authorized-ssh-key-remove', args)
         job
       end
 
       def get_broker_auth_key_add_job(app, gear, iv, token)
-        args = "--with-app-uuid '#{app.uuid}' --with-container-uuid '#{gear.uuid}' -i '#{iv}' -t '#{token}'"
+        args = Hash.new
+        args['--with-app-uuid'] = app.uuid
+        args['--with-container-uuid'] = gear.uuid
+        args['--with-iv'] = iv
+        args['--with-token'] = token
         job = RemoteJob.new('stickshift-node', 'broker-auth-key-add', args)
         job
       end
   
       def get_broker_auth_key_remove_job(app, gear)
-        args = "--with-app-uuid '#{app.uuid}' --with-container-uuid '#{gear.uuid}'"
+        args = Hash.new
+        args['--with-app-uuid'] = app.uuid
+        args['--with-container-uuid'] = gear.uuid
         job = RemoteJob.new('stickshift-node', 'broker-auth-key-remove', args)
         job
       end
 
       def get_execute_connector_job(app, gear, cart, connector_name, input_args)
-        args = "--gear-uuid '#{gear.uuid}' --cart-name '#{cart}' --hook-name '#{connector_name}' " + input_args.join(" ")
+        args = Hash.new
+        args['--gear-uuid'] = gear.uuid
+        args['--cart-name'] = cart
+        args['--hook-name'] = connector_name
+        args['--input-args'] = input_args.join(" ")
         job = RemoteJob.new('stickshift-node', 'connector-execute', args)
         job
       end
@@ -410,17 +477,17 @@ module GearChanger
       def move_scalable_app(app, destination_container, destination_district_uuid=nil, allow_change_district=false, node_profile=nil)
         reply = ResultIO.new
         all_gears = app.gears
-        state_map = {}
         all_gears.each { |gear|
-          reply.append move_gear(app, gear, destination_container, destination_district_uuid, allow_change_district, node_profile, state_map) if gear.server_identity != destination_container.id
+          reply.append move_gear(app, gear, destination_container, destination_district_uuid, allow_change_district, node_profile) if gear.server_identity != destination_container.id
         }
-        unless app.aliases.nil?
-          app.aliases.each do |server_alias|
-            reply.append destination_container.send(:run_cartridge_command, app.framework, app, app.gear, "add-alias", server_alias, false)
-          end
-        end
+        reply
+      end
 
+      def move_gear_post(app, gear, state_map)
+        reply = ResultIO.new
+        gi = app.group_instance_map[gear.group_instance_name]
         app.start_order.each do |ci_name|
+          next if not gi.component_instances.include? ci_name
           cinst = app.comp_instance_map[ci_name]
           cart = cinst.parent_cart_name
           idle, leave_stopped = state_map[ci_name]
@@ -430,30 +497,38 @@ module GearChanger
           end
         end
 
-        app.recreate_dns
-        app.execute_connections
+        log_debug "DEBUG: Fixing DNS and mongo for gear '#{gear.name}' after move"
+        log_debug "DEBUG: Changing server identity of '#{gear.name}' from '#{source_container.id}' to '#{destination_container.id}'"
+        gear.server_identity = destination_container.id
+        gear.container = destination_container
+        if app.scalable and not gear.component_instances.include? app.proxy_cartridge
+          dns = StickShift::DnsService.instance
+          begin
+            dns.deregister_application(gear.name, app.domain.namespace)
+            public_hostname = destination_container.get_public_hostname
+            dns.register_application(gear.name, app.domain.namespace, public_hostname)
+            dns.publish
+          ensure
+            dns.close
+          end
+        end
+
+        if app.scalable and gear.component_instances.include? app.proxy_cartridge
+          unless app.aliases.nil?
+            app.aliases.each do |server_alias|
+              reply.append destination_container.send(:run_cartridge_command, app.framework, app, app.gear, "add-alias", server_alias, false)
+            end
+          end
+          app.recreate_dns
+        end
+
         reply
       end
 
-      def move_gear(app, gear, destination_container, destination_district_uuid, allow_change_district, node_profile, state_map)
+      def move_gear_pre(app, gear, state_map)
         reply = ResultIO.new
-        gear.node_profile = node_profile if node_profile
-
-        # resolve destination_container according to district
-        destination_container, destination_district_uuid, keep_uid = resolve_destination(app, gear, destination_container, destination_district_uuid, allow_change_district)
-
         source_container = gear.container
-        # get the state of all cartridges
-        quota_blocks = nil
-        quota_files = nil
         gi = app.group_instance_map[gear.group_instance_name]
-        gi.component_instances.each { |ci_name|
-          cinst = app.comp_instance_map[ci_name]
-          cart = cinst.parent_cart_name
-          idle,leave_stopped, quota_blocks, quota_files = get_cart_status(app, gear, cart)
-          state_map[ci_name] = [idle,leave_stopped]
-        }
-
         app.start_order.reverse.each { |ci_name|
           next if not gi.component_instances.include? ci_name
           cinst = app.comp_instance_map[ci_name]
@@ -472,52 +547,138 @@ module GearChanger
             reply.append source_container.send(:run_cartridge_command, "embedded/" + cart, app, gear, "pre-move", nil, false)
           end
         }
+        reply
+      end
 
-        # rsync gear with destination container
-        rsync_destination_container(app, gear, destination_container, destination_district_uuid, quota_blocks, quota_files, keep_uid)
+      def move_gear(app, gear, destination_container, destination_district_uuid, allow_change_district, node_profile)
+        reply = ResultIO.new
+        state_map = {}
+        gear.node_profile = node_profile if node_profile
+        orig_uid = gear.uid
 
-        # now execute hooks on the new nest of the components
-        gi.component_instances.each { |ci_name|
+        # resolve destination_container according to district
+        destination_container, destination_district_uuid, keep_uid = resolve_destination(app, gear, destination_container, destination_district_uuid, allow_change_district)
+
+        source_container = gear.container
+        # get the state of all cartridges
+        quota_blocks = nil
+        quota_files = nil
+        gi = app.group_instance_map[gear.group_instance_name]
+        gi.component_instances.each do |ci_name|
           cinst = app.comp_instance_map[ci_name]
           cart = cinst.parent_cart_name
-          idle, leave_stopped = state_map[ci_name]
-          if framework_carts.include? cart
-            log_debug "DEBUG: Performing cartridge level move for '#{cart}' on #{destination_container.id}"
-            reply.append destination_container.send(:run_cartridge_command, cart, app, gear, "move", idle ? '--idle' : nil, false)
-          else
-            log_debug "DEBUG: Performing cartridge level move for embedded #{cart} for '#{app.name}' on #{destination_container.id}"
-            embedded_reply = destination_container.send(:run_cartridge_command, "embedded/" + cart, app, gear, "move", nil, false)
-            component_details = embedded_reply.appInfoIO.string
-            unless component_details.empty?
-              app.set_embedded_cart_info(cart, component_details)
-            end
-            reply.append embedded_reply
-            unless keep_uid
-              log_debug "DEBUG: Performing cartridge level post-move for embedded #{cart} for '#{app.name}' on #{destination_container.id}"
-              reply.append destination_container.send(:run_cartridge_command, "embedded/" + cart, app, gear, "post-move", nil, false)
-            end
-          end
-          if app.scalable and not cart.include? app.proxy_cartridge
-            begin
-              reply.append gear.expose_port(cinst)
-            rescue Exception=>e
-            end
-          end
-        }
-        log_debug "DEBUG: Fixing DNS and mongo for gear '#{gear.name}' after move"
-        log_debug "DEBUG: Changing server identity of '#{gear.name}' from '#{source_container.id}' to '#{destination_container.id}'"
-        gear.server_identity = destination_container.id
-        gear.container = destination_container
-        if app.scalable and not gear.component_instances.include? app.proxy_cartridge
-          dns = StickShift::DnsService.instance
+          idle,leave_stopped, quota_blocks, quota_files = get_cart_status(app, gear, cart)
+          state_map[ci_name] = [idle,leave_stopped]
+        end
+
+        begin
+          # pre-move
+          reply.append move_gear_pre(app, gear, state_map)
+
           begin
-            dns.deregister_application(gear.name, app.domain.namespace)
-            public_hostname = destination_container.get_public_hostname
-            dns.register_application(gear.name, app.domain.namespace, public_hostname)
-            dns.publish
-          ensure
-            dns.close
+            # rsync gear with destination container
+            rsync_destination_container(app, gear, destination_container, destination_district_uuid, quota_blocks, quota_files, keep_uid)
+
+            # now execute 'move'/'expost-port' hooks on the new nest of the components
+            gi.component_instances.each do |ci_name|
+              cinst = app.comp_instance_map[ci_name]
+              cart = cinst.parent_cart_name
+              idle, leave_stopped = state_map[ci_name]
+              if framework_carts.include? cart
+                log_debug "DEBUG: Performing cartridge level move for '#{cart}' on #{destination_container.id}"
+                reply.append destination_container.send(:run_cartridge_command, cart, app, gear, "move", idle ? '--idle' : nil, false)
+              else
+                log_debug "DEBUG: Performing cartridge level move for embedded #{cart} for '#{app.name}' on #{destination_container.id}"
+                embedded_reply = destination_container.send(:run_cartridge_command, "embedded/" + cart, app, gear, "move", nil, false)
+                component_details = embedded_reply.appInfoIO.string
+                unless component_details.empty?
+                  app.set_embedded_cart_info(cart, component_details)
+                end
+                reply.append embedded_reply
+                unless keep_uid
+                  log_debug "DEBUG: Performing cartridge level post-move for embedded #{cart} for '#{app.name}' on #{destination_container.id}"
+                  reply.append destination_container.send(:run_cartridge_command, "embedded/" + cart, app, gear, "post-move", nil, false)
+                end
+              end
+              if app.scalable and not cart.include? app.proxy_cartridge
+                reply.append gear.expose_port(cinst)
+              end
+            end 
+
+            # start the gears again and change DNS entry
+            reply.append move_gear_post(app, gear, state_map)
+
+          rescue Exception =>e
+            gear.container = source_container
+            # remove-httpd-proxy of destination
+            log_debug "DEBUG: Moving failed.  Rolling back gear '#{gear.name}' '#{app.name}' with remove-httpd-proxy on '#{destination_container.id}'"
+            gi.component_instances.each do |ci_name|
+              cinst = app.comp_instance_map[ci_name]
+              cart = cinst.parent_cart_name
+              if framework_carts.include? cart
+                reply.append destination_container.send(:run_cartridge_command, cart, app, gear, "remove-httpd-proxy", nil, false)
+              end
+            end
+            # deconfigure destination
+            # destroy destination
+            log_debug "DEBUG: Moving failed.  Rolling back gear '#{gear.name}' in '#{app.name}' with destroy on '#{destination_container.id}'"
+            reply.append destination_container.destroy(app, gear, keep_uid)
+            raise
           end
+        rescue Exception => e
+          # post_move source
+          begin
+            unless keep_uid
+              gi.component_instances.each do |ci_name|
+                cinst = app.comp_instance_map[ci_name]
+                cart = cinst.parent_cart_name
+                if embedded_carts.include? cart
+                  begin
+                    log_debug "DEBUG: Performing cartridge level post-move for embedded #{cart} for '#{app.name}' on #{source_container.id}"
+                    reply.append source_container.send(:run_cartridge_command, "embedded/" + cart, app, gear, "post-move", nil, false)
+                  rescue Exception => e
+                    log_error "ERROR: Error performing cartridge level post-move for embedded #{cart} for '#{app.name}' on #{source_container.id}: #{e.message}"
+                  end
+                end
+              end
+            end
+            # start source
+            if not leave_stopped
+              gi.component_instances.each do |ci_name|
+                cinst = app.comp_instance_map[ci_name]
+                cart = cinst.parent_cart_name
+                reply.append source_container.run_cartridge_command(cart, app, gear, "start", nil, false) if framework_carts.include? cart
+              end
+            end
+          ensure
+            raise
+          end
+        end
+
+        move_gear_destroy_old(app, gear, keep_uid, orig_uid)
+        app.execute_connections
+        log_debug "Successfully moved '#{app.name}' with uuid '#{app.gear.uuid}' from '#{source_container.id}' to '#{destination_container.id}'"
+        reply
+      end
+
+      def move_gear_destroy_old(app, gear, keep_uid, orig_uid)
+        reply = ResultIO.new
+        source_container = gear.container
+        log_debug "DEBUG: Deconfiguring old app '#{app.name}' on #{source_container.id} after move"
+        begin
+          gi = app.group_instance_map[gear.group_instance_name]
+          gi.component_instances.each do |ci_name|
+            cinst = app.comp_instance_map[ci_name]
+            cart = cinst.parent_cart_name
+            begin
+              reply.append source_container.run_cartridge_command(cart, app, gear, "deconfigure", nil, false)
+            ensure
+              reply.append source_container.destroy(app, gear, keep_uid, orig_uid)
+            end
+          end
+        rescue Exception => e
+          log_debug "DEBUG: The application '#{app.name}' with uuid '#{app.gear.uuid}' is now moved to '#{source_container.id}' but not completely deconfigured from '#{destination_container.id}'"
+          raise
         end
         reply
       end
@@ -558,6 +719,7 @@ module GearChanger
       end
 
       def rsync_destination_container(app, gear, destination_container, destination_district_uuid, quota_blocks, quota_files, keep_uid)
+        reply = ResultIO.new
         source_container = gear.container
         unless keep_uid
           gear.uid = destination_container.reserve_uid(destination_district_uuid)
@@ -572,9 +734,11 @@ module GearChanger
         if $?.exitstatus != 0
           raise StickShift::NodeException.new("Error moving app '#{app.name}', gear '#{gear.name}' from #{source_container.id} to #{destination_container.id}", 143)
         end
+        reply
       end
 
       def get_cart_status(app, gear, cart_name)
+        reply = ResultIO.new
         source_container = gear.container
         leave_stopped = false
         idle = false
@@ -582,7 +746,7 @@ module GearChanger
         quota_files = nil
         log_debug "DEBUG: Getting existing app '#{app.name}' status before moving"
         do_with_retry('status') do
-          result = source_container.status(app, app.gear, cart_name)
+          result = source_container.status(app, gear, cart_name)
           result.cart_commands.each do |command_item|
             case command_item[:command]
             when "ATTR"
@@ -618,9 +782,9 @@ module GearChanger
       end
 
       def move_app(app, destination_container, destination_district_uuid=nil, allow_change_district=false, node_profile=nil)
-        if app.scalable
-          return move_scalable_app(app, destination_container, destination_district_uuid, allow_change_district, node_profile)
-        end
+        #if app.scalable
+          #return move_scalable_app(app, destination_container, destination_district_uuid, allow_change_district, node_profile)
+        #end
         source_container = app.container
 
         if node_profile
@@ -998,7 +1162,7 @@ module GearChanger
           end
           result
       end
-      
+
       def parse_result(mcoll_reply, app=nil, command=nil)
         result = ResultIO.new
         
@@ -1183,15 +1347,18 @@ module GearChanger
       
       def self.rpc_find_available(node_profile=nil, district_uuid=nil, forceRediscovery=false)
         current_server, current_capacity = nil, nil
-        additional_filters = []
+        additional_filters = [{:fact => "active_capacity",
+                               :value => '100',
+                               :operator => "<"}]
+
         district_uuid = nil if district_uuid == 'NONE'
-        
+
         if node_profile
           additional_filters.push({:fact => "node_profile",
                                    :value => node_profile,
                                    :operator => "=="})
         end
-        
+
         if district_uuid
           additional_filters.push({:fact => "district_uuid",
                                    :value => district_uuid,
@@ -1200,24 +1367,29 @@ module GearChanger
                                    :value => true.to_s,
                                    :operator => "=="})
         else
-          additional_filters.push({:fact => "active_capacity",
-                                   :value => '100',
-                                   :operator => "<"})
           #TODO how do you filter on a fact not being set
           additional_filters.push({:fact => "district_uuid",
                                    :value => "NONE",
                                    :operator => "=="})
 
         end
-    
+
+        server_infos = []
         rpc_get_fact('active_capacity', nil, forceRediscovery, additional_filters) do |server, capacity|
-          Rails.logger.debug "Next server: #{server} active capacity: #{capacity}"
-          if !current_capacity || capacity.to_i < current_capacity.to_i
-            current_server = server
-            current_capacity = capacity
-          end
+          #Rails.logger.debug "Next server: #{server} active capacity: #{capacity}"
+          server_infos << [server, capacity.to_i]
+        end
+
+        unless server_infos.empty?
+          # Pick a random node amongst the best choices available
+          server_infos = server_infos.sort_by { |server_info| server_info[1] }
+          max_index = [server_infos.length, 8].min
+          server_info = server_infos[rand(max_index)]
+          current_server = server_info[0]
+          current_capacity = server_info[1]
           Rails.logger.debug "Current server: #{current_server} active capacity: #{current_capacity}"
         end
+
         return current_server, current_capacity
       end
       

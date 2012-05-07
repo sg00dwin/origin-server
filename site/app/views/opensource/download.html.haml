@@ -44,7 +44,7 @@
     - else
       = take_action download_index_path, "Start Download"
     %p
-      Once you got it, you can #{link_to "run it as a virtual guest", livecd_wiki_url('boot_vm')},
+      Once you've got it, you can #{link_to "run it as a virtual guest", livecd_wiki_url('boot_vm')},
       #{link_to "boot it from a LiveCD", livecd_wiki_url('boot_livecd')}, or
       #{link_to "boot it from a USB stick", livecd_wiki_url('boot_usb')}.
     %p
@@ -77,9 +77,9 @@
       %li
         = link_to "Perl Cartridge", crankcase_source_path_url('cartridges/perl-5.10'), :class => "external", :target => "_blank"
       %li
-        = link_to "Python Cartridge", crankcase_source_path_url('cartridges/python-3.2'), :class => "external", :target => "_blank"
+        = link_to "Python Cartridge", crankcase_source_path_url('cartridges/python-2.6'), :class => "external", :target => "_blank"
       %li
-        = link_to "Ruby Cartridge", crankcase_source_path_url('cartridges/ruby-1.1'), :class => "external", :target => "_blank"
+        = link_to "Ruby Cartridge", crankcase_source_path_url('cartridges/ruby-1.8'), :class => "external", :target => "_blank"
   .span4.link-column
     %h5 Database and Related
     %ul.unstyled

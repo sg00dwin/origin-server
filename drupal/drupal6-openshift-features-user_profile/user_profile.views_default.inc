@@ -274,10 +274,10 @@ function user_profile_views_default_views() {
       'field' => 'uid',
       'validate_user_argument_type' => 'uid',
       'validate_user_roles' => array(
-        '2' => 0,
-        '3' => 0,
-        '6' => 0,
-        '5' => 0,
+        2 => 0,
+        3 => 0,
+        6 => 0,
+        5 => 0,
       ),
       'override' => array(
         'button' => 'Override',
@@ -303,8 +303,8 @@ function user_profile_views_default_views() {
       'validate_argument_node_access' => 0,
       'validate_argument_nid_type' => 'nid',
       'validate_argument_vocabulary' => array(
-        '1' => 0,
-        '2' => 0,
+        1 => 0,
+        2 => 0,
       ),
       'validate_argument_type' => 'tid',
       'validate_argument_transform' => 0,
@@ -1076,8 +1076,8 @@ if (!empty($clean_name) && !empty($company)) {
       'field' => 'uid',
       'validate_user_argument_type' => 'uid',
       'validate_user_roles' => array(
-        '2' => 0,
-        '3' => 0,
+        2 => 0,
+        3 => 0,
       ),
       'override' => array(
         'button' => 'Use default',
@@ -1106,7 +1106,7 @@ if (!empty($clean_name) && !empty($company)) {
       'validate_argument_node_access' => 0,
       'validate_argument_nid_type' => 'nid',
       'validate_argument_vocabulary' => array(
-        '1' => 0,
+        1 => 0,
       ),
       'validate_argument_type' => 'tid',
       'validate_argument_transform' => 0,

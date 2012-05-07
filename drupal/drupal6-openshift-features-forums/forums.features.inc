@@ -16,9 +16,9 @@ function forums_ctools_plugin_api() {
 function forums_node_info() {
   $items = array(
     'discussion' => array(
-      'name' => t('Discussion'),
+      'name' => t('Forum Thread'),
       'module' => 'features',
-      'description' => '',
+      'description' => t('A conversation about a particular topic in the forum.'),
       'has_title' => '1',
       'title_label' => t('Thread Title'),
       'has_body' => '1',
@@ -27,9 +27,9 @@ function forums_node_info() {
       'help' => '',
     ),
     'group' => array(
-      'name' => t('Group'),
+      'name' => t('Forum'),
       'module' => 'features',
-      'description' => t('Use this to create a new group.'),
+      'description' => t('A discussion forum containing threads and comments.'),
       'has_title' => '1',
       'title_label' => t('Title'),
       'has_body' => '1',

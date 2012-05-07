@@ -5,7 +5,7 @@
 %global modname             redhat_events
 
 Name:    drupal%{drupal_release}-openshift-%{modname}
-Version: 1.1.1
+Version: 1.1.2
 Release: 1%{?dist}
 Summary: Openshift Red Hat Events Custom Module for Drupal6
 Group:   Applications/Publishing
@@ -41,6 +41,11 @@ rm -rf $RPM_BUILD_ROOT
 %{drupal_modules}/%{modname}
 
 %changelog
+* Mon May 07 2012 Adam Miller <admiller@redhat.com> 1.1.2-1
+- Merge events recent changes and user profile into code. (ccoleman@redhat.com)
+- Add more compact row layout (separators with , will collapse whitespace)
+  Update events module to export a new format. (ccoleman@redhat.com)
+
 * Thu Apr 26 2012 Adam Miller <admiller@redhat.com> 1.1.1-1
 - bumping spec versions (admiller@redhat.com)
 - Use nav-pills for the event navigation (ccoleman@redhat.com)

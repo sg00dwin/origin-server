@@ -69,15 +69,47 @@ class UserControllerTest < ActionController::TestCase
     assert_response :success
   end
 
-  test "should ignore captcha secret supplied" do
+  test "should render page" do
+    setup_user
+    get :show
+    assert_response :success
+    assert assigns(:user).email_address.present?
+    assert assigns(:identities).present?
+  end
+
+  test "should render captcha" do
+    get :new
+    assert_response :success
+    assert_select "#recaptcha_widget"
+  end
+
+  test "should render page without captcha when secret is present" do
+    get :new, {:web_user => {}, :captcha_secret => '123'}
+    assert_response :success
+    assert css_select("#recaptcha_widget").empty?
+  end
+
+  test "should ignore captcha when secret is correct" do
     Rails.configuration.expects(:integrated).never
-    Rails.configuration.expects(:captcha_secret).returns('123')
+    Rails.configuration.expects(:captcha_secret).at_least_once.returns('123')
     @controller.expects(:verify_recaptcha).never
     post(:create, {:web_user => {}, :captcha_secret => '123'})
     assert_response :success
+    assert_template :new
+    assert_equal '123', assigns(:captcha_secret)
+    assert assigns(:user).errors.present?
   end
 
-  test "should have captcha checked" do
+  test "should check captcha when secret is incorrect" do
+    Rails.configuration.expects(:captcha_secret).at_least_once.returns('123')
+    @controller.expects(:verify_recaptcha)
+    post(:create, {:web_user => {}, :captcha_secret => '321'})
+    assert_response :success
+    assert_template :new
+    assert_nil assigns(:captcha_secret)
+  end
+
+  test "should check captcha" do
     Rails.configuration.expects(:integrated).never
     @controller.expects(:verify_recaptcha).returns(true)
     post(:create, {:web_user => {}})
@@ -90,6 +122,7 @@ class UserControllerTest < ActionController::TestCase
 		post(:create, {:web_user => {}})
 
 		assert_equal "Captcha text didn't match", assigns(:user).errors[:captcha].to_s
+    assert_nil assigns(:captcha_secret)
 	end
 
 	test "should get success on post and choosing Express" do

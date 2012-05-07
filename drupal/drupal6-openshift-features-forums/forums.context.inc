@@ -59,7 +59,7 @@ function forums_context_default_contexts() {
 
   // Translatables
   // Included for use with string extractors like potx.
-  t('Displays the Express title bar if the user is in that section');
+  t('Displays the OpenShift title bar if the user is in that section');
   $export['express-title-bar'] = $context;
 
   $context = new stdClass;

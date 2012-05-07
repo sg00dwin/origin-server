@@ -1,7 +1,7 @@
 %define cartridgedir %{_libexecdir}/stickshift/cartridges/embedded/phpmoadmin-1.0
 
 Name: cartridge-phpmoadmin-1.0
-Version: 0.10.1
+Version: 0.10.2
 Release: 1%{?dist}
 Summary: Embedded phpMoAdmin support for express
 
@@ -11,8 +11,6 @@ URL: https://engineering.redhat.com/trac/Libra
 Source0: %{name}-%{version}.tar.gz
 BuildRoot:    %(mktemp -ud %{_tmppath}/%{name}-%{version}-%{release}-XXXXXX)
 BuildArch: noarch
-
-Obsoletes: rhc-cartridge-phpmoadmin-1.0
 
 Requires: stickshift-abstract
 Requires: rubygem(stickshift-node)
@@ -56,6 +54,9 @@ rm -rf $RPM_BUILD_ROOT
 %doc %{cartridgedir}/LICENSE
 
 %changelog
+* Mon May 07 2012 Adam Miller <admiller@redhat.com> 0.10.2-1
+- remove old obsoletes (dmcphers@redhat.com)
+
 * Thu Apr 26 2012 Adam Miller <admiller@redhat.com> 0.10.1-1
 - bumping spec versions (admiller@redhat.com)
 

@@ -28,7 +28,12 @@ module SwingShift
       
         public_key = OpenSSL::PKey::RSA.new(File.read('/var/www/stickshift/broker/config/keys/public.pem'), Rails.configuration.auth[:broker_auth_rsa_secret])
         encrypted_iv = public_key.public_encrypt(iv)
-        [encrypted_iv, encrypted_token]
+        
+        # Base64 encode the iv and token
+        encoded_iv = Base64::encode64(encrypted_iv)
+        encoded_token = Base64::encode64(encrypted_token)
+        
+        [encoded_iv, encoded_token]
       end
       
       def authenticate(request, login, password)

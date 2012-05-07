@@ -1,17 +1,11 @@
-class WebUser
+class WebUser < Streamline::User
   include ActiveModel::Validations
   include ActiveModel::Conversion
   include ActiveModel::Serialization
   extend ActiveModel::Naming
 
-  require_dependency 'streamline'
-
-  # Include the correct streamline implementation
-  if Rails.configuration.integrated
-    include Streamline
-  else
-    include StreamlineMock
-  end
+  require_dependency 'streamline/mock'
+  include Streamline::Mock unless Rails.configuration.integrated
 
   # Helper to allow mulitple :on scopes to validators
   def self.on_scopes(*scopes)
@@ -19,7 +13,7 @@ class WebUser
     lambda { |o| scopes.include?(o.validation_context) }
   end
 
-  attr_accessor :email_address, :password, :cloud_access_choice, :promo_code
+  attr_accessor :password, :cloud_access_choice, :promo_code
 
   # temporary variables that are not persisted
   attr_accessor :token, :old_password
@@ -60,9 +54,6 @@ class WebUser
     (attributes || {}).each do |name, value|
       send("#{name}=", value)
     end
-
-    # Make sure to initialize the array values
-    @roles ||= []
   end
 
   def self.from_json(json)
@@ -71,6 +62,13 @@ class WebUser
 
   def persisted?
     false
+  end
+
+  def type
+    case
+    when simple_user?:  :openshift
+    else                :red_hat_network
+    end
   end
 
   def accepted_terms?
@@ -84,7 +82,7 @@ class WebUser
     user = WebUser.new(:ticket => ticket)
     user.establish
 
-    raise AccessDeniedException unless user.rhlogin
+    raise AccessDeniedException, "User not available by ticket" unless user.rhlogin
     user
   end
 end

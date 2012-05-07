@@ -5,7 +5,7 @@
 %global drupal_themename    openshift-theme
 
 Name:           drupal6-%{drupal_themename}
-Version: 3.1.1
+Version: 3.1.2
 Release:        1%{?dist}
 Summary:        Red Hat Openshift theme for Drupal %{drupal_release}
 
@@ -44,6 +44,13 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
+* Mon May 07 2012 Adam Miller <admiller@redhat.com> 3.1.2-1
+- Add more compact row layout (separators with , will collapse whitespace)
+  Update events module to export a new format. (ccoleman@redhat.com)
+- Hide comment title if it exists in the comment body (ccoleman@redhat.com)
+- Updated requirements from legal regarding removal of opensource disclaimer
+  page and changes to language on download page. (ccoleman@redhat.com)
+
 * Thu Apr 26 2012 Adam Miller <admiller@redhat.com> 3.1.1-1
 - bumping spec versions (admiller@redhat.com)
 

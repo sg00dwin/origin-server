@@ -1,7 +1,10 @@
 class ApplicationController < ActionController::Base
   protect_from_forgery
 
-  rescue_from AccessDeniedException, :with => :redirect_to_logout
+  rescue_from AccessDeniedException do |e|
+    logger.debug "Access denied: #{e}"
+    redirect_to logout_path
+  end
   rescue_from 'ActiveResource::ConnectionError' do |e|
     if defined? e.response and defined? env and env
       env['broker.response'] = e.response.inspect
@@ -9,19 +12,14 @@ class ApplicationController < ActionController::Base
     end
     raise e
   end
-  rescue_from 'ActiveResource::ResourceNotFound' do |exception|
-    logger.debug exception.backtrace.join("\n")
+  rescue_from 'ActiveResource::ResourceNotFound' do |e|
+    logger.debug "#{e}\n  #{e.backtrace.join("\n  ")}"
     upgrade_in_rails_31 # FIXME: Switch to render :status => 404
     render :file => "#{Rails.root}/public/404.html", :status => 404, :layout => false
   end
 
-  def redirect_to_logout
-    #FIXME: Check whether an exception was thrown and log it to simplify error conditions
-    redirect_to logout_path
-  end
-
   def handle_unverified_request
-    raise AccessDeniedException
+    raise AccessDeniedException, "Request authenticity token does not match session #{session.inspect}"
   end
 
   def set_no_cache
@@ -100,8 +98,7 @@ class ApplicationController < ActionController::Base
     ticket = session[:ticket]
 
     if sso_cookie && sso_cookie != ticket
-      logger.debug "  Session ticket does not match current ticket - logging out"
-      raise AccessDeniedException
+      raise AccessDeniedException, "Session ticket #{ticket} does not match rh_sso cookie #{sso_cookie}"
     end
 
     login = session[:login]
@@ -116,8 +113,7 @@ class ApplicationController < ActionController::Base
 
         user = WebUser.find_by_ticket(ticket)
         if !user || login != user.rhlogin
-          logger.debug "SSO ticket no longer matches user, logging out!"
-          raise AccessDeniedException
+          raise AccessDeniedException, "SSO ticket user #{user.login} does not match active session #{login}"
         end
 
         # ticket is valid, set a new timestamp
@@ -167,7 +163,7 @@ class ApplicationController < ActionController::Base
   #
   def require_login
     logger.debug 'Login required'
-    logger.debug "Session contents: #{session.inspect}"
+    logger.debug "  Session contents: #{session.inspect}"
 
     return redirect_to login_path(:redirectUrl => after_login_redirect) unless logged_in?
 
@@ -198,7 +194,7 @@ class ApplicationController < ActionController::Base
     logger.debug "========== TESTING ===========" if retval
     retval
   end
-
+  
   protected
     #
     # Set a user object on the session
@@ -206,8 +202,9 @@ class ApplicationController < ActionController::Base
     def user_to_session(user)
       session[:ticket] = user.ticket
       session[:login] = user.rhlogin
+      session[:streamline_type] = user.streamline_type
       session[:ticket_verified] ||= Time.now.to_i
-      user
+      @authenticated_user = user
     end
 
     #
@@ -249,9 +246,9 @@ class ApplicationController < ActionController::Base
     #
     def user_from_session
       if session[:login]
-        WebUser.new(:rhlogin => session[:login], :ticket => session[:ticket])
+        WebUser.new(:rhlogin => session[:login], :ticket => session[:ticket], :streamline_type => session[:streamline_type])
       elsif cookies[:rh_sso]
-        user_to_session(WebUser.find_by_ticket(cookies[:rh_sso]))
+        user_to_session(WebUser.find_by_ticket(cookies[:rh_sso])) rescue nil
       else
         nil
       end

@@ -1,7 +1,7 @@
 %define cartridgedir %{_libexecdir}/stickshift/cartridges/embedded/metrics-0.1
 
 Name: cartridge-metrics-0.1
-Version: 0.13.1
+Version: 0.13.2
 Release: 1%{?dist}
 Summary: Embedded metrics support for express
 
@@ -11,8 +11,6 @@ URL: https://engineering.redhat.com/trac/Libra
 Source0: %{name}-%{version}.tar.gz
 BuildRoot:    %(mktemp -ud %{_tmppath}/%{name}-%{version}-%{release}-XXXXXX)
 BuildArch: noarch
-
-Obsoletes: rhc-cartridge-metrics-0.1
 
 Requires: stickshift-abstract
 Requires: rubygem(stickshift-node)
@@ -51,6 +49,9 @@ rm -rf $RPM_BUILD_ROOT
 %{cartridgedir}/info/manifest.yml
 
 %changelog
+* Mon May 07 2012 Adam Miller <admiller@redhat.com> 0.13.2-1
+- remove old obsoletes (dmcphers@redhat.com)
+
 * Thu Apr 26 2012 Adam Miller <admiller@redhat.com> 0.13.1-1
 - bumping spec versions (admiller@redhat.com)
 
