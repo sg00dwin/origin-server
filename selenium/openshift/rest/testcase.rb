@@ -2,6 +2,7 @@ require 'openshift/selenium_test_case'
 
 require 'openshift/rest/pages'
 require 'openshift/rest/forms'
+require 'openshift/rest/navbars'
 
 module OpenShift
   module Rest
