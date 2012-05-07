@@ -20,7 +20,7 @@ class Identity
     when user.simple_user?:
       [Identity.new :id => user.login, :type => :openshift, :email => user.login]
     else
-      [Identity.new :id => user.rhlogin, :type => :red_hat_network, :email => user.email_address, :url => red_hat_account_url]
+      [Identity.new :id => user.rhlogin, :type => :red_hat, :email => user.email_address, :url => red_hat_account_url]
     end
   end
 

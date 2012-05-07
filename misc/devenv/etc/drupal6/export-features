@@ -9,6 +9,7 @@ base_dir = '/etc/drupal6/all/modules/features'
 features = Dir.entries(base_dir).select do |x|
   File.directory? "#{base_dir}/#{x}" and not ['.','..'].include?(x)
 end
+features << 'redhat_events'
 
 puts 'Export drupal features to disk...'
 puts "  #{features.join(', ')}\n"
@@ -20,14 +21,21 @@ zip = nil
 Dir.mktmpdir 'drushexport' do |working_dir|
 
   puts 'Create archive of all features...'
+  targets = {}
   Dir.foreach(base_dir) do |x|
     next unless File.directory? "#{base_dir}/#{x}"
     next if x == '.' || x == '..'
 
     dest = "#{working_dir}/drupal/drupal6-openshift-features-#{x}"
-    #puts "Copy #{x} => #{dest}"
+    targets["#{base_dir}/#{x}"] = dest
+  end
+
+  puts 'Create archive of external features...'
+  targets["#{base_dir}/../custom/redhat_events"] = "#{working_dir}/drupal/drupal6-openshift-redhat_events"
+
+  targets.each_pair do |source,dest|
     %x( mkdir -p #{dest} )
-    %x( cp -rf #{base_dir}/#{x}/* #{dest}/ )
+    %x( cp -rf #{source}/* #{dest}/ )
   end
 
   Dir.chdir working_dir do

@@ -35,7 +35,8 @@ class LoginControllerTest < ActionController::TestCase
 
   test "login as simple user" do
     post :create, simple_user
-    assert assigns(:user)
+    assert user = assigns(:user)
+    assert !user.roles.empty?
     assert_redirected_to console_path
     assert_equal 'true', cookies['prev_login']
     assert_not_nil session[:ticket_verified]
@@ -45,7 +46,8 @@ class LoginControllerTest < ActionController::TestCase
 
   test "login as full user" do
     post :create, full_user
-    assert assigns(:user)
+    assert user = assigns(:user)
+    assert !user.roles.empty?
     assert_redirected_to console_path
     assert_equal 'true', cookies['prev_login']
     assert_not_nil session[:ticket_verified]

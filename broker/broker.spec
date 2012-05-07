@@ -3,7 +3,7 @@
 
 Summary:   Li broker components
 Name:      rhc-broker
-Version: 0.92.1
+Version: 0.92.2
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -95,6 +95,18 @@ rm -rf $RPM_BUILD_ROOT
 /bin/touch %{brokerdir}/log/production.log
 
 %changelog
+* Mon May 07 2012 Adam Miller <admiller@redhat.com> 0.92.2-1
+- Updating gem versions (admiller@redhat.com)
+- moving fix gear-uids to maintenance/bin area (rchopra@redhat.com)
+- fix gears that do not have their uids set - bug# 815406 (rchopra@redhat.com)
+- Fix for Bugz # 818255 (kraman@gmail.com)
+- Add response status to profiler info output. (rmillner@redhat.com)
+- Revert "Updating gem versions". Gem version already up to date.
+  (kraman@gmail.com)
+- Updating gem versions (kraman@gmail.com)
+- update gem versions (dmcphers@redhat.com)
+- fix for bug#816462 (rchopra@redhat.com)
+
 * Thu Apr 26 2012 Adam Miller <admiller@redhat.com> 0.92.1-1
 - Updating gem versions (admiller@redhat.com)
 - bumping spec versions (admiller@redhat.com)

@@ -77,7 +77,7 @@ class WebUserTest < ActiveSupport::TestCase
     user = WebUser.new.authenticate!('bob', 'password')
     identities = Identity.find(user)
     assert_equal 1, identities.length
-    assert_equal :red_hat_network, identities[0].type
+    assert_equal :red_hat, identities[0].type
     assert_equal user.login, identities[0].id
   end
 end

@@ -3,7 +3,7 @@
 
 Summary:   Li site components
 Name:      rhc-site
-Version: 0.92.1
+Version: 0.92.2
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -117,6 +117,105 @@ rm -rf %{buildroot}
 /bin/touch %{sitedir}/log/production.log
 
 %changelog
+* Mon May 07 2012 Adam Miller <admiller@redhat.com> 0.92.2-1
+- Fix failing test from renaming red hat network identity (ccoleman@redhat.com)
+- Update styles on terms controller, remove captcha there.
+  (ccoleman@redhat.com)
+- Change from 'red hat network' to 'red hat' terminology. (ccoleman@redhat.com)
+- Remove extra role establish call on login. (ccoleman@redhat.com)
+- Merge branch 'dev0430' (sgoodwin@redhat.com)
+- separate console button styles out from site into their own partial scss
+  (sgoodwin@redhat.com)
+- Merge events recent changes and user profile into code. (ccoleman@redhat.com)
+- pull duplicate style, add mixin box-shadow (sgoodwin@redhat.com)
+- more scss cleanup. button work, username dropdown and ribbon polish
+  (sgoodwin@redhat.com)
+- Merge branch 'master' of git:/srv/git/li into dev0430 (sgoodwin@redhat.com)
+- scss css cleanup (sgoodwin@redhat.com)
+- Failure during cartridge creation, tests not as good as we thought.
+  (ccoleman@redhat.com)
+- Simplify how we handle cart type models Prevent bad custom_ids from being
+  passed Fix bug with CartridgeType retrieval (ccoleman@redhat.com)
+- Prefix mappings were screwed up and breaking unit tests.  Now use
+  RestApi::Base.prefix everywhere (ccoleman@redhat.com)
+- new _buttons and _dropdowns partials for console and color corrected logo
+  (sgoodwin@redhat.com)
+- Merge branch 'master' of git:/srv/git/li into dev0430 (sgoodwin@redhat.com)
+- color scale added for console and change styleguide/console markup to bring
+  into alignment with latest (sgoodwin@redhat.com)
+- Remove duplicate slash from request URLs (ccoleman@redhat.com)
+- Instrument ActiveResource to logs (ccoleman@redhat.com)
+- Loading icon needs to be reinstated Update loading script
+  (ccoleman@redhat.com)
+- Add better association logic Allow objects to be passed to RestApi::Base
+  initialize method to handle belongs_to Add more assignment unit tests Ensure
+  change notifications are cleared by the save() command Remove unnecessary
+  check in domain save Test changes? more thoroughly (ccoleman@redhat.com)
+- Fix formatting of error messages when form is using input-prepends
+  (ccoleman@redhat.com)
+- Update community side nav-column font color/size and fix ipad search field
+  issue. Adjust console colors, center nav, breadcrumb and other minor visual
+  changes. (sgoodwin@redhat.com)
+- Package rename python(3.2 -> 2.6), ruby(1.1 -> 1.8) (kraman@gmail.com)
+- Merge branch 'dev/clayton/identity' (ccoleman@redhat.com)
+- Add passing status_app_test for null issues (ccoleman@redhat.com)
+- Use simple user to extract identity (ccoleman@redhat.com)
+- Fix styleguide (ccoleman@redhat.com)
+- Ensure exceptions are loaded optimistically for streamline
+  (ccoleman@redhat.com)
+- Ensure type is correctly loaded from session (ccoleman@redhat.com)
+- Refactor streamline into multiple objects that cleanly define usage Make
+  inheritance act normally Remove autoload of lib sub-directories (so that
+  Rails autoloading picks up module namespaces) (ccoleman@redhat.com)
+- Add a type attribute on streamline user (ccoleman@redhat.com)
+- Move attributes to Streamline::Base for resharing (ccoleman@redhat.com)
+- Merge branch 'master' into dev/clayton/identity (ccoleman@redhat.com)
+- Ensure status app cannot set session cookies, add tests.
+  (ccoleman@redhat.com)
+- Get tests to passing with better abstraction of name change logic and role
+  setting in streamline_test.rb (ccoleman@redhat.com)
+- Unit tests for status (ccoleman@redhat.com)
+- Ensure status app cannot set session cookies (ccoleman@redhat.com)
+- Status app should not set cookies (ccoleman@redhat.com)
+- Fix bugs with recording time of streamline calls (ccoleman@redhat.com)
+- Add streamline time tracing (ccoleman@redhat.com)
+- Make streamline attribute writers protected to prevent general access Prevent
+  rhlogin from being updated except by Streamline code Allow captcha_secret to
+  be provided on login URL for simpler login sequence in kiosks Change
+  establish_email_address to load_email_address Fine tune identity display on
+  account page to show link to RHN account page When access denied exception is
+  thrown write backtrace (ccoleman@redhat.com)
+- Fix unit test failure on nil test (ccoleman@redhat.com)
+- Centralize roles load logic (ccoleman@redhat.com)
+- Update identity to have better display name (ccoleman@redhat.com)
+- Add identity display to ui (ccoleman@redhat.com)
+- Bug 817627 - Prevent infinite redirect of users who have invalid rh_sso
+  tokens (ccoleman@redhat.com)
+- Add tests to handle infinite redirect bug (ccoleman@redhat.com)
+- Move accessors (squash) (ccoleman@redhat.com)
+- Refactor some of the establish scenarios to be cleaner (ccoleman@redhat.com)
+- Adjust margin settings for console at >767 widths, remove inadvertant btn
+  box-shadow default, center console nav per design, and a few other minor
+  tweaks to spacing in the console (sgoodwin@redhat.com)
+- Finish breadcrumb (ccoleman@redhat.com)
+- Alter head ribbon to use a simpler style of wrapping (ccoleman@redhat.com)
+- Start whittling console.scss down, fix ribbon to flush correctly
+  (ccoleman@redhat.com)
+- css tweeks (sgoodwin@redhat.com)
+- Add FireSASS support (ccoleman@redhat.com)
+- More aggressive gitignore (ccoleman@redhat.com)
+- Write expanded CSS in dev mode (ccoleman@redhat.com)
+- Rename to make a generic tracking file and tracking JS file Provide query
+  parameters for promo_code on emails Remove warnings on test runs Add test
+  cases for promo code redirect Make it so that a refresh is not required to
+  enter a promo code. Fix failures in test env on mailer. (ccoleman@redhat.com)
+- Community nav column is creating a white bar on iphone (ccoleman@redhat.com)
+- Removed mirror.openshift.com tests until it goes public (ffranz@redhat.com)
+- Fixes BZ 816797 (ffranz@redhat.com)
+- Remove 'by Red Hat' from site (ccoleman@redhat.com)
+- Updated requirements from legal regarding removal of opensource disclaimer
+  page and changes to language on download page. (ccoleman@redhat.com)
+
 * Thu Apr 26 2012 Adam Miller <admiller@redhat.com> 0.92.1-1
 - new loader image for console and css (sgoodwin@redhat.com)
 - bumping spec versions (admiller@redhat.com)
