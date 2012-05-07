@@ -233,6 +233,24 @@ module MCollective
         end
       end
 
+      def ss_app_state_show(cmd, args)
+        Log.instance.debug "COMMAND: #{cmd}"
+
+        container_uuid = args['--with-container-uuid']
+        app_uuid = args['--with-app-uuid']        
+        
+        output = ""
+        begin
+          container = StickShift::ApplicationContainer.new(app_uuid, container_uuid)
+          output = container.get_app_state()
+        rescue Exception => e
+          Log.instance.debug e.message
+          return -1, e.message
+        else
+          return 0, output
+        end
+      end
+
       def ss_connector_execute(cmd, args)
         Log.instance.debug "COMMAND: #{cmd}"
         gear_uuid = args['--gear-uuid']
@@ -270,6 +288,8 @@ module MCollective
           rc, output = ss_env_var_remove(cmd, args)
         when "cartridge-list"
           rc, output = ss_cartridge_list(cmd, args)
+        when "app-state-show"
+          rc, output = ss_app_state_show(cmd, args)
         else
           return nil, nil
         end
