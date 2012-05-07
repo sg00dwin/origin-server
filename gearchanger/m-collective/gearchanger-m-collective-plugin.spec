@@ -5,7 +5,7 @@
 
 Summary:        GearChanger plugin for m-colective service
 Name:           rubygem-%{gemname}
-Version: 0.9.2
+Version: 0.9.3
 Release:        1%{?dist}
 Group:          Development/Languages
 License:        ASL 2.0
@@ -70,6 +70,10 @@ rm -rf %{buildroot}
 %{ruby_sitelib}/%{gemname}.rb
 
 %changelog
+* Mon May 07 2012 Adam Miller <admiller@redhat.com> 0.9.3-1
+- adding mcollective call to fetch the application state from the .state file
+  on each gear (abhgupta@redhat.com)
+
 * Mon May 07 2012 Adam Miller <admiller@redhat.com> 0.9.2-1
 - disabling scalable application move through new code until its fully tested
   (rchopra@redhat.com)
