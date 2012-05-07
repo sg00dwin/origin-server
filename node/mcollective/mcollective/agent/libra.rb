@@ -286,8 +286,6 @@ module MCollective
         validate :cartridge, :shellsafe
         validate :action, /\A(app-create|app-destroy|env-var-add|env-var-remove|broker-auth-key-add|broker-auth-key-remove|authorized-ssh-key-add|authorized-ssh-key-remove|configure|deconfigure|preconfigure|update-namespace|tidy|deploy-httpd-proxy|remove-httpd-proxy|move|pre-move|post-move|info|post-install|post-remove|pre-install|reload|restart|start|status|stop|force-stop|add-alias|remove-alias|threaddump|cartridge-list|expose-port|conceal-port|show-port|system-messages|connector-execute)\Z/
         validate :action, :shellsafe
-        #validate :args, /\A[\w\+\/= \{\}\"@\-\.:;\'\\\n~,]+\z/
-        #validate :args, :shellsafe
         cartridge = request[:cartridge]
         action = request[:action]
         args = request[:args]
@@ -306,9 +304,10 @@ module MCollective
             return 0
           end
         else
+          validate :args, /\A[\w\+\/= \{\}\"@\-\.:;\'\\\n~,]+\z/
+          validate :args, :shellsafe
           if File.exists? "/usr/libexec/stickshift/cartridges/#{cartridge}/info/hooks/#{action}"                
             pid, stdin, stdout, stderr = Open4::popen4ext(true, "/usr/bin/runcon -l s0-s0:c0.c1023 /usr/libexec/stickshift/cartridges/#{cartridge}/info/hooks/#{action} #{args} 2>&1")
-            #pid, stdin, stdout, stderr = Open4::popen4("/usr/bin/runcon -l s0-s0:c0.c1023 /usr/libexec/stickshift/cartridges/#{cartridge}/info/hooks/#{action} #{args} 2>&1")
           elsif File.exists? "/usr/libexec/stickshift/cartridges/embedded/#{cartridge}/info/hooks/#{action}"                
             pid, stdin, stdout, stderr = Open4::popen4ext(true, "/usr/bin/runcon -l s0-s0:c0.c1023 /usr/libexec/stickshift/cartridges/embedded/#{cartridge}/info/hooks/#{action} #{args} 2>&1")
           else
