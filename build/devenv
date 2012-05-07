@@ -217,6 +217,7 @@ mkdir -p /tmp/rhc/junit
       scp_from(hostname, "/var/lib/stickshift/*/*/jbossas-7/standalone/tmp/*.log", "rhc/log")
       scp_from(hostname, "/tmp/rhc/benchmark.csv", "rhc/log")
       scp_from(hostname, "/tmp/broker-profiler/*", "rhc/log")
+      scp_from(hostname, "/tmp/rhc/*_coverage", "rhc/log")
       puts "Done"
     end
 
@@ -323,6 +324,10 @@ mkdir -p /tmp/rhc/junit
           add_ssh_cmd_to_threads(hostname, threads, failures, "StickShift Broker Unit", "cd li-test/stickshift/broker; rake test")
         end
 
+        if options.include_rcov?
+          add_ssh_cmd_to_threads(hostname, threads, failures, "StickShift Node Unit Coverage", "cd li-test/stickshift/node; rake rcov; rm -rf /tmp/rhc/node_coverage; cp -af coverage /tmp/rhc/node_coverage")
+        end
+
         unless options.exclude_internal?
           add_ssh_cmd_to_threads(hostname, threads, failures, "Internal", "cucumber -f html --out /tmp/rhc/internals.html -f progress -t @internals li-test/tests")
         end
@@ -408,6 +413,7 @@ mkdir -p /tmp/rhc/junit
         retry_threshold += 6 unless options.exclude_internal?
         retry_threshold += 2 unless options.exclude_verification?
         retry_threshold += 6 if options.include_web?
+        retry_threshold += 2 if options.include_coverage?
         
         failures.uniq!
 
@@ -541,6 +547,7 @@ mkdir -p /tmp/rhc/junit
   method_option :exclude_internal, :type => :boolean, :desc => "Exclude running unit and internal tests"
   method_option :exclude_verification, :type => :boolean, :desc => "Exclude running verification tests"
   method_option :include_web, :type => :boolean, :desc => "Include running Selenium tests"
+  method_option :include_rcov, :type => :boolean, :desc => "Include coverage analysis on unit tests"
   method_option :region, :required => false, :desc => "Amazon region override (default us-east-1)"
   method_option :build_clean_ami, :required => false, :desc => "Indicates whether to start from a base RHEL image"
   method_option :install_from_source, :required => false, :desc => "Indicates whether to build based off origin/master"
@@ -925,6 +932,7 @@ END
   method_option :exclude_internal, :type => :boolean, :desc => "Exclude running unit and internal tests"
   method_option :exclude_verification, :type => :boolean, :desc => "Exclude running verification tests"
   method_option :include_cucumber, :required => false, :desc => "Include a specific cucumber test (verify, internal, node, api, etc)"
+  method_option :include_rcov, :type => :boolean, :desc => "Include coverage analysis on unit tests"
   method_option :disable_charlie, :type => :boolean, :desc=> "Disable idle shutdown timer on dev instance (charlie)"
   method_option :mcollective_logs, :type => :boolean, :desc=> "Don't allow mcollective logs to be deleted on rotation"
   method_option :profile_broker, :type => :boolean, :desc=> "Enable profiling code on broker"
