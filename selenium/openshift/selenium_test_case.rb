@@ -90,6 +90,7 @@ module OpenShift
 
       @rest_console = OpenShift::Rest::Console.new(page, "#{base_url}/app/console")
       @rest_account = OpenShift::Rest::Account.new(page, "#{base_url}/app/account")
+      @signup = OpenShift::Rest::Signup.new(page, "#{base_url}/app/account/new")
     end
 
     def run(*args, &blk)

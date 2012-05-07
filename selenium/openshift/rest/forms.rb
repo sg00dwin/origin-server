@@ -128,5 +128,19 @@ module OpenShift
         @submit = "//input[@id='application_submit']"
       end
     end
+
+    class SignupForm < Form
+      def initialize(page,id)
+        super(page,id)
+        @fields = {
+          :name => "web_user_email_address",
+          :password => "web_user_password",
+          :confirm => "web_user_password_confirmation",
+          :recaptcha => "recaptcha_response_field"
+        }
+
+        @submit = "//input[@id='web_user_submit']"
+      end
+    end
   end
 end
