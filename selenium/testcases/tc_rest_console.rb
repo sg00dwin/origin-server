@@ -58,7 +58,6 @@ class RestConsole < OpenShift::Rest::TestCase
 
     app_type_buttons = find_app_type_buttons
     app_type_buttons.each_with_index do |item, index|
-      # TODO: delete first app if index > 3 so we don't hit limits
       delete_app 0 if index > 2
 
       # create all app types available
