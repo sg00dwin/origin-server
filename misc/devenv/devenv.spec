@@ -8,7 +8,7 @@
 
 Summary:   Dependencies for OpenShift development
 Name:      rhc-devenv
-Version: 0.93.6
+Version: 0.93.7
 Release:   1%{?dist}
 Group:     Development/Libraries
 License:   GPLv2
@@ -495,6 +495,52 @@ echo "Header append Strict-Transport-Security includeSubDomains" >> /etc/httpd/c
 %{policydir}/*
 
 %changelog
+* Mon May 07 2012 Adam Miller <admiller@redhat.com> 0.93.7-1
+- Restart httpd after adding users. (ccoleman@redhat.com)
+- Merge events recent changes and user profile into code. (ccoleman@redhat.com)
+- Ensure that recent_activity_report gets installed in devenv and update
+  revert-features to include community_wiki (ccoleman@redhat.com)
+- Merge branch 'master' of git1.ops.rhcloud.com:/srv/git/li (rpenta@redhat.com)
+- Enable journaling for mongo on devenv (rpenta@redhat.com)
+- added localrepo support for the tito builds to install only rhc-devenv
+  (admiller@redhat.com)
+- devenv.spec: add drupal6-geoip module (ansilva@redhat.com)
+- Security - removed gpgcheck since they are only signed for Production  05 04
+  2012 (tkramer@redhat.com)
+- Create a simple script that allows easy export of features from Drupal to
+  disk and back to a devenv. (ccoleman@redhat.com)
+- Fix devenv build break - use #!/bin/bash (ccoleman@redhat.com)
+- Add drupal revert and setup steps to be easier to run (ccoleman@redhat.com)
+- Package rename python(3.2 -> 2.6), ruby(1.1 -> 1.8) (kraman@gmail.com)
+- Security - removed the log perms changes (tkramer@redhat.com)
+- Security - Removed OpenScap crontab entry since it conflicted with the facts
+  creation. (tkramer@redhat.com)
+- Security - Removed chmod of rhc-watchman.pid - needs to be in rhc-node RPM
+  05 02 2012 (tkramer@redhat.com)
+- Security - changed OpenScap rsyslog compatibility check 1125 - tkramer 04 01
+  2012 (tkramer@redhat.com)
+- Added gpgcheck to li.repo and epel.repo testing in devenv
+  (tkramer@redhat.com)
+- Security - removed chmod on tmp passenger files for now 05 01 2012
+  (tkramer@redhat.com)
+- Security added more checks for SGIDs - tkramer 05 01 2012
+  (tkramer@redhat.com)
+- Security - removed SGIDs and SUIDs from all for devenv testing - removed
+  other read from log files and grub.conf - tkramer 05 01 2012
+  (tkramer@redhat.com)
+- SGID and SUID removal place holder for devenv testing  04 30 2012
+  (tkramer@redhat.com)
+- Fixed gpasswd error   04 30 2012 (tkramer@redhat.com)
+- OpenScap - Added OpenScap run script and crontab entry Also removed blank
+  passwd for root in shadow   04 30 2012 (tkramer@redhat.com)
+- Discovered problem where the benchmark task was using the libra_ami
+  workspace.  Also, clean out rhc logs from workspace to prevent accumulation
+  of large amounts of data. (rmillner@redhat.com)
+- devenv.spec: adding drupal6-wysiwyg (ansilva@redhat.com)
+- Run backup of jenkins configs after changing benchmark job.
+  (rmillner@redhat.com)
+- li-devenv.sh: added ruby193 repo, disabled (tdawson@redhat.com)
+
 * Wed May 02 2012 Tim Kramer <tkramer@redhat.com> 0.93.6-1
 - Removed the chmod of rhc-watchman.pid.  This needs to happen in the rhc-node rpm 05 02 2012
 
