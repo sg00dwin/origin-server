@@ -5,7 +5,7 @@
 %global modname             user_profile
 
 Name:    drupal%{drupal_release}-openshift-features-%{modname}
-Version: 1.1.1
+Version: 1.1.2
 Release: 1%{?dist}
 Summary: Openshift Red Hat Custom User Profile Feature for Drupal6
 Group:   Applications/Publishing
@@ -41,6 +41,18 @@ rm -rf $RPM_BUILD_ROOT
 %{drupal_modules}/%{modname}
 
 %changelog
+* Mon May 07 2012 Adam Miller <admiller@redhat.com> 1.1.2-1
+- Add content_permissions to user profile (ccoleman@redhat.com)
+- Merge events recent changes and user profile into code. (ccoleman@redhat.com)
+- Ensure search weight is lower (ccoleman@redhat.com)
+- Fix all remaining reversion default issues with features
+  (ccoleman@redhat.com)
+- Remaining drupal backport changes (ccoleman@redhat.com)
+- Unrequire eazylaunch (ccoleman@redhat.com)
+- Add additional active scope for user (ccoleman@redhat.com)
+- Add an ideas active context (ccoleman@redhat.com)
+- Update some features from drupal (ccoleman@redhat.com)
+
 * Thu Apr 26 2012 Adam Miller <admiller@redhat.com> 1.1.1-1
 - bumping spec versions (admiller@redhat.com)
 - Give wiki pages in the community the active menu item of community/open-
