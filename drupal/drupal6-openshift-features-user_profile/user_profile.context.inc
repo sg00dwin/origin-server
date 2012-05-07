@@ -9,6 +9,34 @@ function user_profile_context_default_contexts() {
   $context = new stdClass;
   $context->disabled = FALSE; /* Edit this to true to make a default context disabled initially */
   $context->api_version = 3;
+  $context->name = 'doc-owner-role';
+  $context->description = '';
+  $context->tag = '';
+  $context->conditions = array(
+    'user' => array(
+      'values' => array(
+        'doc content owner' => 'doc content owner',
+      ),
+    ),
+  );
+  $context->reactions = array(
+    'block' => array(
+      'blocks' => array(
+        'menu-menu-doc-owner-menu' => array(
+          'module' => 'menu',
+          'delta' => 'menu-doc-owner-menu',
+          'region' => 'sidebar_left',
+          'weight' => 0,
+        ),
+      ),
+    ),
+  );
+  $context->condition_mode = 0;
+  $export['doc-owner-role'] = $context;
+
+  $context = new stdClass;
+  $context->disabled = FALSE; /* Edit this to true to make a default context disabled initially */
+  $context->api_version = 3;
   $context->name = 'menu-active-blogs';
   $context->description = '';
   $context->tag = '';

@@ -281,6 +281,14 @@ function user_profile_user_default_permissions() {
     ),
   );
 
+  // Exported permission: administer redirects
+  $permissions['administer redirects'] = array(
+    'name' => 'administer redirects',
+    'roles' => array(
+      '0' => 'administrator',
+    ),
+  );
+
   // Exported permission: administer rules
   $permissions['administer rules'] = array(
     'name' => 'administer rules',
@@ -478,6 +486,12 @@ function user_profile_user_default_permissions() {
     ),
   );
 
+  // Exported permission: create newsletter content
+  $permissions['create newsletter content'] = array(
+    'name' => 'create newsletter content',
+    'roles' => array(),
+  );
+
   // Exported permission: create page content
   $permissions['create page content'] = array(
     'name' => 'create page content',
@@ -567,6 +581,12 @@ function user_profile_user_default_permissions() {
       '0' => 'administrator',
       '1' => 'moderator',
     ),
+  );
+
+  // Exported permission: delete any newsletter content
+  $permissions['delete any newsletter content'] = array(
+    'name' => 'delete any newsletter content',
+    'roles' => array(),
   );
 
   // Exported permission: delete any page content
@@ -665,6 +685,12 @@ function user_profile_user_default_permissions() {
       '0' => 'administrator',
       '1' => 'moderator',
     ),
+  );
+
+  // Exported permission: delete own newsletter content
+  $permissions['delete own newsletter content'] = array(
+    'name' => 'delete own newsletter content',
+    'roles' => array(),
   );
 
   // Exported permission: delete own page content
@@ -773,6 +799,12 @@ function user_profile_user_default_permissions() {
     ),
   );
 
+  // Exported permission: edit any newsletter content
+  $permissions['edit any newsletter content'] = array(
+    'name' => 'edit any newsletter content',
+    'roles' => array(),
+  );
+
   // Exported permission: edit any page content
   $permissions['edit any page content'] = array(
     'name' => 'edit any page content',
@@ -813,6 +845,243 @@ function user_profile_user_default_permissions() {
     'name' => 'edit faq',
     'roles' => array(
       '0' => 'administrator',
+    ),
+  );
+
+  // Exported permission: edit field_author
+  $permissions['edit field_author'] = array(
+    'name' => 'edit field_author',
+    'roles' => array(
+      '0' => 'administrator',
+      '1' => 'blogger',
+      '2' => 'doc content owner',
+      '3' => 'moderator',
+      '4' => 'page author',
+    ),
+  );
+
+  // Exported permission: edit field_author_image
+  $permissions['edit field_author_image'] = array(
+    'name' => 'edit field_author_image',
+    'roles' => array(
+      '0' => 'administrator',
+      '1' => 'blogger',
+      '2' => 'doc content owner',
+      '3' => 'moderator',
+      '4' => 'page author',
+    ),
+  );
+
+  // Exported permission: edit field_author_profession_title
+  $permissions['edit field_author_profession_title'] = array(
+    'name' => 'edit field_author_profession_title',
+    'roles' => array(
+      '0' => 'administrator',
+      '1' => 'blogger',
+      '2' => 'doc content owner',
+      '3' => 'moderator',
+      '4' => 'page author',
+    ),
+  );
+
+  // Exported permission: edit field_document_file
+  $permissions['edit field_document_file'] = array(
+    'name' => 'edit field_document_file',
+    'roles' => array(
+      '0' => 'administrator',
+      '1' => 'blogger',
+      '2' => 'doc content owner',
+      '3' => 'moderator',
+    ),
+  );
+
+  // Exported permission: edit field_event_categories
+  $permissions['edit field_event_categories'] = array(
+    'name' => 'edit field_event_categories',
+    'roles' => array(
+      '0' => 'administrator',
+      '1' => 'moderator',
+    ),
+  );
+
+  // Exported permission: edit field_event_city
+  $permissions['edit field_event_city'] = array(
+    'name' => 'edit field_event_city',
+    'roles' => array(
+      '0' => 'administrator',
+      '1' => 'moderator',
+    ),
+  );
+
+  // Exported permission: edit field_event_country
+  $permissions['edit field_event_country'] = array(
+    'name' => 'edit field_event_country',
+    'roles' => array(
+      '0' => 'administrator',
+      '1' => 'moderator',
+    ),
+  );
+
+  // Exported permission: edit field_event_online
+  $permissions['edit field_event_online'] = array(
+    'name' => 'edit field_event_online',
+    'roles' => array(
+      '0' => 'administrator',
+      '1' => 'moderator',
+    ),
+  );
+
+  // Exported permission: edit field_event_start_date
+  $permissions['edit field_event_start_date'] = array(
+    'name' => 'edit field_event_start_date',
+    'roles' => array(
+      '0' => 'administrator',
+      '1' => 'moderator',
+    ),
+  );
+
+  // Exported permission: edit field_event_state
+  $permissions['edit field_event_state'] = array(
+    'name' => 'edit field_event_state',
+    'roles' => array(
+      '0' => 'administrator',
+      '1' => 'moderator',
+    ),
+  );
+
+  // Exported permission: edit field_event_url
+  $permissions['edit field_event_url'] = array(
+    'name' => 'edit field_event_url',
+    'roles' => array(
+      '0' => 'administrator',
+      '1' => 'moderator',
+    ),
+  );
+
+  // Exported permission: edit field_image_upload
+  $permissions['edit field_image_upload'] = array(
+    'name' => 'edit field_image_upload',
+    'roles' => array(
+      '0' => 'administrator',
+      '1' => 'moderator',
+    ),
+  );
+
+  // Exported permission: edit field_kb_applies_to
+  $permissions['edit field_kb_applies_to'] = array(
+    'name' => 'edit field_kb_applies_to',
+    'roles' => array(
+      '0' => 'administrator',
+      '1' => 'moderator',
+    ),
+  );
+
+  // Exported permission: edit field_kb_attachment
+  $permissions['edit field_kb_attachment'] = array(
+    'name' => 'edit field_kb_attachment',
+    'roles' => array(
+      '0' => 'administrator',
+      '1' => 'doc content owner',
+      '2' => 'moderator',
+    ),
+  );
+
+  // Exported permission: edit field_kb_code
+  $permissions['edit field_kb_code'] = array(
+    'name' => 'edit field_kb_code',
+    'roles' => array(
+      '0' => 'administrator',
+      '1' => 'moderator',
+    ),
+  );
+
+  // Exported permission: edit field_kb_issue
+  $permissions['edit field_kb_issue'] = array(
+    'name' => 'edit field_kb_issue',
+    'roles' => array(
+      '0' => 'administrator',
+      '1' => 'moderator',
+    ),
+  );
+
+  // Exported permission: edit field_kb_resolution
+  $permissions['edit field_kb_resolution'] = array(
+    'name' => 'edit field_kb_resolution',
+    'roles' => array(
+      '0' => 'administrator',
+      '1' => 'moderator',
+    ),
+  );
+
+  // Exported permission: edit field_page_image
+  $permissions['edit field_page_image'] = array(
+    'name' => 'edit field_page_image',
+    'roles' => array(
+      '0' => 'administrator',
+      '1' => 'moderator',
+    ),
+  );
+
+  // Exported permission: edit field_promo_image
+  $permissions['edit field_promo_image'] = array(
+    'name' => 'edit field_promo_image',
+    'roles' => array(
+      '0' => 'administrator',
+      '1' => 'moderator',
+    ),
+  );
+
+  // Exported permission: edit field_promo_url
+  $permissions['edit field_promo_url'] = array(
+    'name' => 'edit field_promo_url',
+    'roles' => array(
+      '0' => 'administrator',
+      '1' => 'moderator',
+    ),
+  );
+
+  // Exported permission: edit field_state
+  $permissions['edit field_state'] = array(
+    'name' => 'edit field_state',
+    'roles' => array(
+      '0' => 'administrator',
+      '1' => 'moderator',
+    ),
+  );
+
+  // Exported permission: edit field_video_subtitle
+  $permissions['edit field_video_subtitle'] = array(
+    'name' => 'edit field_video_subtitle',
+    'roles' => array(
+      '0' => 'administrator',
+      '1' => 'moderator',
+    ),
+  );
+
+  // Exported permission: edit field_video_third_party
+  $permissions['edit field_video_third_party'] = array(
+    'name' => 'edit field_video_third_party',
+    'roles' => array(
+      '0' => 'administrator',
+      '1' => 'moderator',
+    ),
+  );
+
+  // Exported permission: edit field_video_thumbnail
+  $permissions['edit field_video_thumbnail'] = array(
+    'name' => 'edit field_video_thumbnail',
+    'roles' => array(
+      '0' => 'administrator',
+      '1' => 'moderator',
+    ),
+  );
+
+  // Exported permission: edit field_video_youku
+  $permissions['edit field_video_youku'] = array(
+    'name' => 'edit field_video_youku',
+    'roles' => array(
+      '0' => 'administrator',
+      '1' => 'moderator',
     ),
   );
 
@@ -868,6 +1137,12 @@ function user_profile_user_default_permissions() {
       '0' => 'administrator',
       '1' => 'moderator',
     ),
+  );
+
+  // Exported permission: edit own newsletter content
+  $permissions['edit own newsletter content'] = array(
+    'name' => 'edit own newsletter content',
+    'roles' => array(),
   );
 
   // Exported permission: edit own page content
@@ -1255,6 +1530,279 @@ function user_profile_user_default_permissions() {
   // Exported permission: view faq page
   $permissions['view faq page'] = array(
     'name' => 'view faq page',
+    'roles' => array(
+      '0' => 'administrator',
+      '1' => 'anonymous user',
+      '2' => 'authenticated user',
+      '3' => 'moderator',
+    ),
+  );
+
+  // Exported permission: view field_author
+  $permissions['view field_author'] = array(
+    'name' => 'view field_author',
+    'roles' => array(
+      '0' => 'administrator',
+      '1' => 'doc content owner',
+      '2' => 'moderator',
+    ),
+  );
+
+  // Exported permission: view field_author_image
+  $permissions['view field_author_image'] = array(
+    'name' => 'view field_author_image',
+    'roles' => array(
+      '0' => 'administrator',
+      '1' => 'doc content owner',
+      '2' => 'moderator',
+    ),
+  );
+
+  // Exported permission: view field_author_profession_title
+  $permissions['view field_author_profession_title'] = array(
+    'name' => 'view field_author_profession_title',
+    'roles' => array(
+      '0' => 'administrator',
+      '1' => 'anonymous user',
+      '2' => 'authenticated user',
+      '3' => 'doc content owner',
+      '4' => 'moderator',
+    ),
+  );
+
+  // Exported permission: view field_document_file
+  $permissions['view field_document_file'] = array(
+    'name' => 'view field_document_file',
+    'roles' => array(
+      '0' => 'administrator',
+      '1' => 'anonymous user',
+      '2' => 'authenticated user',
+      '3' => 'doc content owner',
+      '4' => 'moderator',
+    ),
+  );
+
+  // Exported permission: view field_event_categories
+  $permissions['view field_event_categories'] = array(
+    'name' => 'view field_event_categories',
+    'roles' => array(
+      '0' => 'administrator',
+      '1' => 'anonymous user',
+      '2' => 'authenticated user',
+      '3' => 'moderator',
+    ),
+  );
+
+  // Exported permission: view field_event_city
+  $permissions['view field_event_city'] = array(
+    'name' => 'view field_event_city',
+    'roles' => array(
+      '0' => 'administrator',
+      '1' => 'anonymous user',
+      '2' => 'authenticated user',
+      '3' => 'moderator',
+    ),
+  );
+
+  // Exported permission: view field_event_country
+  $permissions['view field_event_country'] = array(
+    'name' => 'view field_event_country',
+    'roles' => array(
+      '0' => 'administrator',
+      '1' => 'anonymous user',
+      '2' => 'authenticated user',
+      '3' => 'moderator',
+    ),
+  );
+
+  // Exported permission: view field_event_online
+  $permissions['view field_event_online'] = array(
+    'name' => 'view field_event_online',
+    'roles' => array(
+      '0' => 'administrator',
+      '1' => 'anonymous user',
+      '2' => 'authenticated user',
+      '3' => 'moderator',
+    ),
+  );
+
+  // Exported permission: view field_event_start_date
+  $permissions['view field_event_start_date'] = array(
+    'name' => 'view field_event_start_date',
+    'roles' => array(
+      '0' => 'administrator',
+      '1' => 'anonymous user',
+      '2' => 'authenticated user',
+      '3' => 'moderator',
+    ),
+  );
+
+  // Exported permission: view field_event_state
+  $permissions['view field_event_state'] = array(
+    'name' => 'view field_event_state',
+    'roles' => array(
+      '0' => 'administrator',
+      '1' => 'anonymous user',
+      '2' => 'authenticated user',
+      '3' => 'moderator',
+    ),
+  );
+
+  // Exported permission: view field_event_url
+  $permissions['view field_event_url'] = array(
+    'name' => 'view field_event_url',
+    'roles' => array(
+      '0' => 'administrator',
+      '1' => 'anonymous user',
+      '2' => 'authenticated user',
+      '3' => 'moderator',
+    ),
+  );
+
+  // Exported permission: view field_image_upload
+  $permissions['view field_image_upload'] = array(
+    'name' => 'view field_image_upload',
+    'roles' => array(
+      '0' => 'administrator',
+      '1' => 'anonymous user',
+      '2' => 'authenticated user',
+      '3' => 'moderator',
+    ),
+  );
+
+  // Exported permission: view field_kb_applies_to
+  $permissions['view field_kb_applies_to'] = array(
+    'name' => 'view field_kb_applies_to',
+    'roles' => array(
+      '0' => 'administrator',
+      '1' => 'anonymous user',
+      '2' => 'authenticated user',
+      '3' => 'moderator',
+    ),
+  );
+
+  // Exported permission: view field_kb_attachment
+  $permissions['view field_kb_attachment'] = array(
+    'name' => 'view field_kb_attachment',
+    'roles' => array(
+      '0' => 'administrator',
+      '1' => 'anonymous user',
+      '2' => 'authenticated user',
+      '3' => 'moderator',
+    ),
+  );
+
+  // Exported permission: view field_kb_code
+  $permissions['view field_kb_code'] = array(
+    'name' => 'view field_kb_code',
+    'roles' => array(
+      '0' => 'administrator',
+      '1' => 'anonymous user',
+      '2' => 'authenticated user',
+      '3' => 'moderator',
+    ),
+  );
+
+  // Exported permission: view field_kb_issue
+  $permissions['view field_kb_issue'] = array(
+    'name' => 'view field_kb_issue',
+    'roles' => array(
+      '0' => 'administrator',
+      '1' => 'anonymous user',
+      '2' => 'authenticated user',
+      '3' => 'moderator',
+    ),
+  );
+
+  // Exported permission: view field_kb_resolution
+  $permissions['view field_kb_resolution'] = array(
+    'name' => 'view field_kb_resolution',
+    'roles' => array(
+      '0' => 'administrator',
+      '1' => 'anonymous user',
+      '2' => 'authenticated user',
+      '3' => 'moderator',
+    ),
+  );
+
+  // Exported permission: view field_page_image
+  $permissions['view field_page_image'] = array(
+    'name' => 'view field_page_image',
+    'roles' => array(
+      '0' => 'administrator',
+      '1' => 'anonymous user',
+      '2' => 'authenticated user',
+      '3' => 'moderator',
+    ),
+  );
+
+  // Exported permission: view field_promo_image
+  $permissions['view field_promo_image'] = array(
+    'name' => 'view field_promo_image',
+    'roles' => array(
+      '0' => 'administrator',
+      '1' => 'anonymous user',
+      '2' => 'authenticated user',
+      '3' => 'moderator',
+    ),
+  );
+
+  // Exported permission: view field_promo_url
+  $permissions['view field_promo_url'] = array(
+    'name' => 'view field_promo_url',
+    'roles' => array(
+      '0' => 'administrator',
+      '1' => 'anonymous user',
+      '2' => 'authenticated user',
+      '3' => 'moderator',
+    ),
+  );
+
+  // Exported permission: view field_state
+  $permissions['view field_state'] = array(
+    'name' => 'view field_state',
+    'roles' => array(
+      '0' => 'administrator',
+      '1' => 'moderator',
+    ),
+  );
+
+  // Exported permission: view field_video_subtitle
+  $permissions['view field_video_subtitle'] = array(
+    'name' => 'view field_video_subtitle',
+    'roles' => array(
+      '0' => 'administrator',
+      '1' => 'anonymous user',
+      '2' => 'authenticated user',
+      '3' => 'moderator',
+    ),
+  );
+
+  // Exported permission: view field_video_third_party
+  $permissions['view field_video_third_party'] = array(
+    'name' => 'view field_video_third_party',
+    'roles' => array(
+      '0' => 'administrator',
+      '1' => 'anonymous user',
+      '2' => 'authenticated user',
+      '3' => 'moderator',
+    ),
+  );
+
+  // Exported permission: view field_video_thumbnail
+  $permissions['view field_video_thumbnail'] = array(
+    'name' => 'view field_video_thumbnail',
+    'roles' => array(
+      '0' => 'administrator',
+      '1' => 'anonymous user',
+      '2' => 'authenticated user',
+      '3' => 'moderator',
+    ),
+  );
+
+  // Exported permission: view field_video_youku
+  $permissions['view field_video_youku'] = array(
+    'name' => 'view field_video_youku',
     'roles' => array(
       '0' => 'administrator',
       '1' => 'anonymous user',
