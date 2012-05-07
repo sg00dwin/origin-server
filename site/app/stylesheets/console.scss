@@ -1,6 +1,50 @@
-/*
-  Draft CSS for the Management Console
-*/
+/* OPENSHIFT MANAGEMENT CONSOLE
+
+Color palette
+--------------------------------------------
+  0   0   0    000000     Black
+177 229 242    b1e5f2			Primary Blue
+ 54  53  52    363634     Primary Dark Gray
+ 77  79  83    4d4f53     Cool Gray 11
+154 155 156    9a9b9c     Cool Gray 7
+188 189 188    bcbdbc     Cool Gray 4
+224 225 221    e0e1dd     Cool Gray 1
+255 255 255    ffffff     White
+234   0  17    ea0011     Bright Red
+205  32  44    cd202c     Primary Red
+161   0  12    a1000c     Dark Red
+ 
+Grayscale based on 9a9b9c - Cool Gray 7 (light -> dark)
+---------------------------------------------------------------------------------------------------------------------------------
+ ________________________________________________                                ________________________________________________
+|                  Usage: FONTS                  |                              |              Usage: BACKGROUNDS               |
+	fafbfc	eaebec	dadbdc	cacbcc	babbbc	9a9b9c	8a8b8c	9a9b9c	7a7b7c	6a6b6c	5a5b5c	4a4b4c	3a3b3c	2a2b2c	1a1b1c	0a0b0c
+		1				2				3				4				5				6				7				8				9				10			11			12			13			14			15			16
+			f2f3f4	e2e3e4	d2d3d4	c2c3c4	b2b3b4																					525354	424344	323334	222324	121314
+				1.5			2.5			3.5			4.5			5.5																							11.5		12.5		13.5		14.5		15.5		
+----------------------------------------------------------------------------------------------------------------------------------
+---------------------------------------------------------------------------------------------------------------------------------- */
+
+// Defaults before partials
+// -----------------------------------------------------
+
+body {
+    font-family: "Helvetica Neue",Helvetica,"Liberation Sans",Arial,sans-serif;
+		font-weight: normal;
+    }
+h1,h2,h3,h4,h5,h6 {
+		color: #fafbfc;
+		}
+a {color:#7EABB6;}
+a:hover,a:active {color:#b1e5f2;}
+
+.label {
+	padding: 1px 3px 1px;
+	}
+
+
+// import partials 
+// ------------------------------------------------------
 
 @import "variables";
 @import "bootstrap/variables";
@@ -8,36 +52,57 @@
 @import "mixins";
 
 
-@import "bootstrap/dropdowns";
+@import "console/navbar";
+@import "console/help";
+@import "console/breadcrumbs";
+@import "console/ribbon";
+@import "console/buttons";
+
+
 
 .dropdown-menu {
-  background: black;
+	background-color: #444;
+  background-color:rgba(70, 70, 70, 0.75);
+  @include box-shadow(0 0 1px rgba(255, 255, 255, 0.25) inset);
   position: relative;
   min-width: 1px;
   float: none;
-}
-
+  border:none;
+  @include border-radius($radius: 0 0 3px 3px);
+  }
 .dropdown-menu a {
-  color: #b1e5f2;
+  color: #cacbcc;
 }
-
 .dropdown-menu > li > a:hover {
   border-radius: 0px;
-  background-color: #cd202c;
+  background-color: #5a5b5c;
+}
+.dropdown.open .dropdown-toggle {
+  color: #CACBCC;
+	background-color: #444;
+  background:rgba(70, 70, 70, 0.75) url("../images/console/arrow-down.png") 95% 1em no-repeat;
+  @include border-radius($radius: 3px 3px 0 0);
+  
+  &:hover, &:active {
+  	color: #fff;
+  }
+}
+.dropdown-toggle {
+	background-color: #444;
+  background:rgba(70, 70, 70, 0.25) url("../images/console/arrow-down.png") 95% 1em no-repeat;
+  padding: 3px 20px 3px 10px;
+  color: #CACBCC;
+  text-decoration: none !important;
+  display: inline-block;
+  @include box-shadow(0 1px rgba(255, 255, 255, 0.05) inset, 0 -1px rgba(255, 255, 255, 0.15) inset, 0 10px 20px rgba(255, 255, 255, 0.125) inset, 0 3px 1px rgba(0, 0, 0, 0.5) inset);
+  @include border-radius($radius: 3px);
+  
+  
+  &:hover, &:active {
+  	color: #fff;
+  }
 }
 
-
-@import "console/navbar";
-
-@import "console/help";
-
-@import "console/breadcrumbs";
-
-@import "console/ribbon";
-
-/*------------------------------------------------------
-	 Console specific styles
-	------------------------------------------------------ */
 
 .alert {
   word-wrap: break-word;
@@ -56,6 +121,7 @@
 	font-size: 250%;
 	margin-top: 20px;
 	}
+/* I think this is from initial console release and can be removed
 .app-block {
    background: #f0f0f0;
    margin-bottom: 15px;
@@ -71,6 +137,7 @@
 .app-block > .row > ul > li:last-child > a {
   margin-right: 10px;
   }
+*/
 .app-block h2 {
   word-wrap: break-word;
   }
@@ -79,30 +146,6 @@
 	background: transparent url('../images/loader-dark.gif') 0 0 no-repeat;
 	}
 
-/* OpenShift color palette
- -------------------------------------------------------------------
-  0   0   0    000000     Black
-177 229 242    b1e5f2			Primary Blue
- 54  53  52    363634     Primary Dark Gray
- 77  79  83    4d4f53     Cool Gray 11
-154 155 156    9a9b9c     Cool Gray 7
-188 189 188    bcbdbc     Cool Gray 4
-224 225 221    e0e1dd     Cool Gray 1
-255 255 255    ffffff     White
-234   0  17    ea0011     Bright Red
-205  32  44    cd202c     Primary Red
-161   0  12    a1000c     Dark Red
- ------------------------------------------------------------------- */
-
-
-/* changes to common */
-.label {
-	padding: 1px 3px 1px;
-	}
-body {
-    font-family: "Helvetica Neue",Helvetica,"Liberation Sans",Arial,sans-serif;
-		font-weight: normal;
-    }
 
 /* changes to bootstrap */
 @media (max-width: 480px) {
@@ -158,57 +201,6 @@ input::-webkit-input-placeholder, textarea::-webkit-input-placeholder {
 input:-moz-placeholder, textarea:-moz-placeholder {
  color: #777;
 	}
-	
-h1,h2,h3,h4,h5,h6 {
-		color: #e0e1dd;
-		}
-a,a:visited {
-	color:#7EABB6;
-	}
-a:hover,a:active {color:#8addf2;}
-
-
-.btn, 
-a.btn {
-	background-color: #4c4c4c;
-	background-image: -moz-linear-gradient(center top, #505050, #333 5%, #1f1f1f 100%, #333 100%);
-	color: #ccc;
-  line-height: 17px;
-	text-shadow: 0 -1px 1px #000000;
-	border-color: #010101;//rgba(255, 255, 255, 0.3) rgba(255, 255, 255, 0.3) rgba(255, 255, 255, 0.25) rgba(255, 255, 255, 0.25);
-}
-
-.btn:hover, 
-a.btn:hover {
-	color: #fff;
-	background-color: #4c4c4c;
-	background-image: -moz-linear-gradient(center top , #4c4c4c 10%, #333 100%, #4c4c4c 100%);
-}
-
-.btn:active {
-  color: rgba(0,0,0,0.5); // custom
-  border-color: rgba(255, 255, 255, 0.2) rgba(255, 255, 255, 0.2) rgba(255, 255, 255, 0.1) rgba(255, 255, 255, 0.1);
-}
-
-
-.btn-primary, a.btn-primary {
-  border-color: transparent;
-	background: #b1e5f2;
-	background-image: -moz-linear-gradient(center top , #94dbed 10%, #7CA1AA 100%, #94dbed 100%);
-	color: $grayDark;
-	text-shadow: 0 1px 0 #DFDFDF;
-}
-.btn-primary:hover, a.btn-primary:hover {
-	background-color: #85d6eb;
-	background-image: none;
-	color: $grayDark;
-	text-shadow: 0 1px 0 #DFDFDF;
-}
-.btn-primary:active, a.btn-primary:active {
-	border-color: rgba(5, 5, 5, 0.3) rgba(5, 5, 5, 0.35) rgba(5, 5, 5, 0.2) rgba(5, 5, 5, 0.15);
-	background-color: #b1e5f2;
-	@include box-shadow(none);
-}
 
 
 .well {
@@ -218,7 +210,7 @@ code, pre {
 	background-color: inherit;
   border: 1px dotted #444;
   border-radius: 0 0 0 0;
-  color: #AAA;
+  color: #babbbc;
 	}
 ol.wizard {
 	margin: 0 0 15px 5px;
@@ -260,6 +252,42 @@ ol.wizard li.active {
 ol.wizard li a {
 	color: inherit;
 	}
+	
+@media (max-width: 767px) {
+	ol.wizard {
+		display:block;
+		margin: 0 0 15px;
+		
+		li {
+			background-position: 0 -84;
+			background-repeat: no-repeat;
+    	display: inline-block;
+    	font-size: inherit;
+    	line-height: 25px;
+    	list-style-position: inside;
+    	list-style-type: none;
+    	margin: 0;
+    	padding:0 30px 10px 25px;
+    	
+    	span i {
+    		background:none;
+    		border:none;
+    		font-style:normal;
+    		font-weight:bold;
+    		height:35px;
+    		left:-20px;
+    		line-height:32px;
+    		position:absolute;
+    		text-align:center;
+    		top:center;
+    		width: 8px;
+    		top: -8px;
+    	}
+		}
+	}
+}
+
+
 #copyright {
 	color: #666;
 	min-height: 100px;
@@ -268,11 +296,11 @@ ol.wizard li a {
 
 .section-console {
   padding-top: 25px;
-  padding-bottom: 30px;
+  padding-bottom: 60px;
 }
 
 .section-console {
-	  background-color: #1d1d1d; 
+	  background-color: #1f1f1f; 
 	  background-image:
 	    url('../images/mts.png'), 
 	    -moz-repeating-linear-gradient(110deg, #1f1f1f 0px, #1e1e1e 10px, #1f1f1f 10px, #202020 20px);
@@ -294,7 +322,7 @@ ol.wizard li a {
 		}
 
 .ie9 .section-console {
-	background-color: #1d1d1d; 
+	background-color: #1f1f1f; 
 	  background-image:
 	    url('../images/mts.png');
 	  background-repeat:
@@ -313,8 +341,8 @@ figure {
 	}
 
 .console-head {
-	background: #1a1a1a;
-	border-bottom: 3px solid #1f1f1f;
+	background: #262626;
+	border-bottom: 3px solid #2f2f2f;
 	padding: 15px 0 10px 0;
 	margin: 0 -25px 0 5px;
 	}
@@ -347,7 +375,7 @@ figure {
     text-align: right;
 		}
 .console-head * {
-	color: #e0e1dd;
+	color: #dadbdc;
 	}
 
 #footer-nav {
@@ -355,14 +383,8 @@ figure {
 }
 
 .row-console > .row {
-  background: #010101;
-  background-image: -webkit-gradient(linear, center top, center bottom, from(#050505 88%), to(#010101));
-  background-image: -webkit-linear-gradient(top, #050505 88%, #010101);
-  background-image: -moz-linear-gradient(top, #050505 88%, #010101);
-  background-image: -o-linear-gradient(top, #050505 88%, #010101);
-  background-image: -ms-linear-gradient(top, #050505 88%, #010101);
-  background-image: linear-gradient(to bottom, #050505 88%, #010101);
-  color: #8f8f8f;
+  background: #000;
+  color: #babbbc;
 }
 
 .section-console-light .row-console > .row {
@@ -450,15 +472,15 @@ figure {
 		background-position: 0 -30px;
 		}
     .digest-bg {
-    	background-color: #1a1a1a;
-    	border-bottom: 3px solid #1f1f1f;
+    	background-color: #212121;
+    	border-bottom: 3px solid #2a2a2a;
     	margin: 0 -25px;
     	padding: 20px 25px;
     	}
 
 #app-list, #account-digest {
  margin-top: 0;
- color: #939598;
+ color: #babbbc;
 }
 .app-full-path {
 	color: #9a9b9c;
@@ -483,10 +505,13 @@ figure {
   tbody tr:hover th {
   	background-color:transparent;
   }
-  .line-item-title {
-  	margin-left: 15px;
-  }
-  .status {
+  
+}
+
+.line-item-title {
+	margin-left: 15px;
+}
+.status {
   	display: inline-block;
   	float: left;
   	height: 10px;
@@ -497,11 +522,7 @@ figure {
   .status-important {
   	background-color: #900;
   }
-}
-
-.btn-primary.btn-large {
-  text-transform: uppercase;
-}
+  
 
 .nav {
 	margin-bottom: 6px;
@@ -531,7 +552,7 @@ figure {
   font-size: 12px;
   }
   	.nav-pills.console-overview > li > a:hover {
-  		color: #1a1a1a;
+  		color: #212121;
   		/*background-color: #808184;*/
 		  background-color: #b1e5f2;
 		  background-image: -webkit-gradient(linear, left top, left bottom, from(#b1e5f2), to(#7ca1aa));
@@ -544,7 +565,7 @@ figure {
 
 .nav-pills.console-overview .active > a,
 .nav-pills.console-overview .active > a:hover {
-  color: #1a1a1a;
+  color: #212121;
   background-color: #808184;
   cursor: default;
   }
@@ -611,7 +632,7 @@ a.cap-link {
     padding: 8px 8px 8px 20px;
     position: relative;
     width: 130px;
-    color: #939598;
+    color: #9a9b9c;
     text-decoration: none;
     font-weight: 500;
     border-left: 2px solid transparent;
@@ -623,7 +644,7 @@ a.cap-link {
 			}
 		#app-cartridges header .add-cart-btn span.sprite {
 			background-position: 10px -50px;
-			background-color: #171717;
+			background-color: #1d1d1d;
 			width: 35px;
 			height: 35px;
 			position: absolute;
@@ -641,10 +662,10 @@ a.cap-link {
 	margin-right: 30px;
 	}
 section#app-cartridges .cartridge-block {
-	background-color: #171717;
+	background-color: #1d1d1d;
 		padding: 15px 0;
-		border-top: 3px solid #1f1f1f;
-		border-bottom: 3px solid #1f1f1f;
+		border-top: 3px solid #2a2a2a;
+		border-bottom: 3px solid #2a2a2a;
 		margin-top: 5px;
 		margin-bottom: 15px;
 	}
@@ -754,12 +775,12 @@ section#app-cartridges .cartridge-block {
 		border-bottom: 1px solid #222222;
 		}
 .section-console h6 {
-	color: #8f8f8f;
+	color: #9a9b9c;
  	font-weight: normal;
   }
 .data {
 	font-size: 125%;
-	color: #e0e1dd;
+	color: #eaebec;
 	}
 
 .tile {
@@ -802,11 +823,21 @@ section#app-cartridges .cartridge-block {
   cursor: default;
   }
 
-/* responsive widths */
+
+
+//	Responsive customizations
+//	-----------------------------------------------------
+
 @media (max-width: 480px) {
-.embedded .view-cart-details {
+	.embedded .view-cart-details {
     position: inherit;
     }
+  #my-apps .status {
+		position: static;
+		}
+	#my-apps li h2 {
+		float: none;
+		}
 }
 
 @media (max-width: 767px) {
@@ -844,46 +875,7 @@ section#app-cartridges .cartridge-block {
   #secondary {
   	margin: 0 30px;
   	}
-}
-	
-@media (min-width: 768px) and (max-width: 979px) {
-	.console-head {
-    margin-right: -15px;
-  }
-	.total-cost {
-		font-size: 23px;
-		}
-	.digest-bg {
-    margin-right: -15px;
-    margin-left: -15px;
-    }
-}
-
-@media (min-width: 980px) and (max-width: 1199px) {
-	.console-head {
-    margin-right: -23px;
-  }
-  .digest-bg {
-  	margin: 0 -23px;
-  }
-}	 
-
-@media (min-width: 1200px) {
-}
-
-/*	Responsive customizations
-	--------------------------------------------------------- */
-
-@media (max-width: 480px) {
-	#my-apps .status {
-		position: static;
-		}
-	#my-apps li h2 {
-		float: none;
-		}
-}
-@media (max-width: 767px) {
-	#my-apps li h2 {
+  #my-apps li h2 {
 		float: right;
 		}
 	section#console-mast .row ul.unstyled-flat li.span7.right { text-align: left; } 
@@ -902,20 +894,42 @@ section#app-cartridges .cartridge-block {
     font-size: inherit;
    	}
 }
+	
 @media (min-width: 768px) and (max-width: 979px) {
-	#my-apps li h2 {
+	.console-head {
+    margin-right: -15px;
+  }
+	.total-cost {
+		font-size: 23px;
+	}
+	.digest-bg {
+    margin-right: -15px;
+    margin-left: -15px;
+   }
+  #my-apps li h2 {
 		float: none;
-		}
+	}
 	#my-apps .status {
 		position: static;
-		}
+	}
+}
+
+@media (min-width: 980px) and (max-width: 1199px) {
+	.console-head {
+    margin-right: -23px;
+  }
+  .digest-bg {
+  	margin: 0 -23px;
+  }
+}	 
+
+@media (min-width: 1200px) {
 }
 @media (max-width: 979px) {
 }
 @media (min-width: 980px) {
 }
-@media (min-width: 1200px) {
-}
+
 
 .form-search {
   position: relative;

@@ -12,7 +12,6 @@
 
 .column-nav .view-threads-by-popularity .views-table {
   h4 { display: inline; color: #666; font-size: 13px; line-height: 18px; }
-  a { text-decoration: underline; }
   span.views-field-title { display: block; }
   > div { margin-bottom: 35px; }
   .block-stats { clear: both; }
@@ -155,13 +154,20 @@
 .badge.pro { background-color: #356fce; }
 .badge.expert { background-color: #a80f00; }
 
-.community .poll > .bar > .foreground {
-  background-color: $pollBarColor;
+.community .poll {
+	> .bar {
+		display:inline;
+		
+		> .foreground {
+  		background-color: $pollBarColor;
+		}
+	}	
 }
 
 .column-nav .poll {
   > .title {
     margin-bottom: 5px;
+    color: #fff;
   }
   > .text {
     margin-bottom: 2px;
@@ -412,7 +418,7 @@ html.js fieldset.collapsible .fieldset-wrapper {
 }
 
 
-/* Blog pages */
+/* Blog pages */ 
 
 .community .geshifilter pre {
 	border:0;

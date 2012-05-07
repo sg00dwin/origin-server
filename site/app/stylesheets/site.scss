@@ -574,15 +574,15 @@ h1.ribbon {
 .column-buzz a { color: $linkTextDarkBackground; }
 
 // Column navigation
-.column-nav {
+.column-nav { 
   background-color: $navColumnBackgroundColor;
-  color: #666;
+  color: #7a7b7c;
 
   label {
-    color: #666;
+    color: #6a6b6c;
   }
   a {
-    color: #999;
+    color: #babbbc;
   }
 
   .headline,
@@ -684,6 +684,13 @@ h1.ribbon {
     @include expand_for_phone();
   }
   .nav-location { display: none; }
+  
+}
+
+@media (min-width: 768px) and (max-width: 980px) {
+	.column-nav .search-row {
+    margin-right: 0; /* correct ipad view */
+  }
 }
 
 /* Stacked navigations indent by 1 gutter each time */
@@ -1021,4 +1028,5 @@ body.simple {
     }
   }
 }
+
 
