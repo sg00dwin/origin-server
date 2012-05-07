@@ -662,6 +662,7 @@ module GearChanger
       end
 
       def move_gear_destroy_old(app, gear, keep_uid, orig_uid)
+        reply = ResultIO.new
         source_container = gear.container
         log_debug "DEBUG: Deconfiguring old app '#{app.name}' on #{source_container.id} after move"
         begin
@@ -679,6 +680,7 @@ module GearChanger
           log_debug "DEBUG: The application '#{app.name}' with uuid '#{app.gear.uuid}' is now moved to '#{source_container.id}' but not completely deconfigured from '#{destination_container.id}'"
           raise
         end
+        reply
       end
 
       def resolve_destination(app, gear, destination_container, destination_district_uuid, allow_change_district)
@@ -717,6 +719,7 @@ module GearChanger
       end
 
       def rsync_destination_container(app, gear, destination_container, destination_district_uuid, quota_blocks, quota_files, keep_uid)
+        reply = ResultIO.new
         source_container = gear.container
         unless keep_uid
           gear.uid = destination_container.reserve_uid(destination_district_uuid)
@@ -731,9 +734,11 @@ module GearChanger
         if $?.exitstatus != 0
           raise StickShift::NodeException.new("Error moving app '#{app.name}', gear '#{gear.name}' from #{source_container.id} to #{destination_container.id}", 143)
         end
+        reply
       end
 
       def get_cart_status(app, gear, cart_name)
+        reply = ResultIO.new
         source_container = gear.container
         leave_stopped = false
         idle = false
@@ -777,9 +782,9 @@ module GearChanger
       end
 
       def move_app(app, destination_container, destination_district_uuid=nil, allow_change_district=false, node_profile=nil)
-        if app.scalable
-          return move_scalable_app(app, destination_container, destination_district_uuid, allow_change_district, node_profile)
-        end
+        #if app.scalable
+          #return move_scalable_app(app, destination_container, destination_district_uuid, allow_change_district, node_profile)
+        #end
         source_container = app.container
 
         if node_profile
