@@ -1,3 +1,5 @@
+#!/bin/bash
+
 echo "nameserver 4.2.2.2" >> /etc/resolv.conf
 
 #rpm -Uhv http://download.fedora.redhat.com/pub/epel/6/x86_64/epel-release-6-5.noarch.rpm
@@ -100,11 +102,12 @@ sslclientkey=/var/lib/yum/client-key.pem
 EOF
 
 # Install the 32 bit java before anything else
-yum update -y --exclude='rhc*'; yum -y install java-1.6.0-openjdk.i686 java-1.6.0-openjdk-devel.i686
+yum update -y --exclude='rhc*'
+yum -y install java-1.6.0-openjdk.i686 java-1.6.0-openjdk-devel.i686
 
 function install_build_requires {
   spec_file=$1
-  for s in `grep -e "^BuildRequires:" $spec_file`
+  for s in $(grep -e "^BuildRequires:" $spec_file)
   do
     if [[ $s =~ ^[a-z]+ ]]
     then
@@ -114,10 +117,10 @@ function install_build_requires {
 }
 
 function find_and_build_specs {
-  for x in `find -name *.spec`
+  for x in $(find -name *.spec)
   do
-    dir=`dirname $x`
-    if [ "$dir" != "./build/seigiku" -a "$dir" != "./stickshift/broker" ]
+    dir=$(dirname $x)
+    if [[ "$dir" != "./build/seigiku" && "$dir" != "./stickshift/broker" ]]
     then
       install_build_requires "$x"
       pushd $dir > /dev/null
@@ -127,20 +130,20 @@ function find_and_build_specs {
   done
 }
 
-if [ "$2" == "--install_from_source" ] || [ "$2" == "--install_from_local_source" ]
+if [[ "$2" == "--install_from_source" ]] || [[ "$2" == "--install_from_local_source" ]]
 then
   mkdir -p /tmp/tito
   rm -rf /root/li-working
-  if [ "$2" == "--install_from_source" ]
+  if [[ "$2" == "--install_from_source" ]]
   then
     git clone git://git1.ops.rhcloud.com/li.git/ /root/li-working
   else
     git clone /root/li /root/li-working
   fi
 
-  github_repos=( crankcase os-client-tools)
+  github_repos=( crankcase os-client-tools )
 
-  if ! [ "$2" == "--install_from_local_source" ]
+  if ! [[ "$2" == "--install_from_local_source" ]]
   then
     for repo_name in "${github_repos[@]}"
     do
@@ -160,9 +163,26 @@ then
       popd > /dev/null
     fi
   done
-  cp /tmp/tito/x86_64/*.rpm /tmp/tito/noarch/
-  yum localinstall -y /tmp/tito/noarch/*.rpm
+
+  yum -y install createrepo
+  mkdir /root/li-local/
+
+  cat > /etc/yum.repos.d/local.repo <<EOF
+[li-local]
+name=li-local
+baseurl=file:///root/li-local/
+enabled=0
+gpgcheck=0
+EOF
+
+  cp /tmp/tito/x86_64/*.rpm /root/li-local/
+  cp /tmp/tito/noarch/*.rpm /root/li-local/
+  createrepo /root/li-local/
+
+  yum -y install rhc-devenv --enablerepo=li-local
+
   build/devenv write_sync_history
+  
   popd > /dev/null
   for repo_name in "${github_repos[@]}"
   do

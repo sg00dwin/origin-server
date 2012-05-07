@@ -568,7 +568,7 @@ function redhat_events_views_default_views() {
   // Exported view: event_view
   $view = new view;
   $view->name = 'event_view';
-  $view->description = '';
+  $view->description = 'Events formatted by content';
   $view->tag = '';
   $view->base_table = 'node';
   $view->core = 6;
@@ -649,6 +649,50 @@ function redhat_events_views_default_views() {
       'table' => 'node',
       'field' => 'title',
       'relationship' => 'none',
+    ),
+    'field_event_online_value' => array(
+      'label' => '',
+      'alter' => array(
+        'alter_text' => 1,
+        'text' => 'Online',
+        'make_link' => 0,
+        'path' => '',
+        'absolute' => 0,
+        'link_class' => '',
+        'alt' => '',
+        'rel' => '',
+        'prefix' => '',
+        'suffix' => '',
+        'target' => '',
+        'help' => '',
+        'trim' => 0,
+        'max_length' => '',
+        'word_boundary' => 1,
+        'ellipsis' => 1,
+        'html' => 0,
+        'strip_tags' => 0,
+      ),
+      'empty' => '',
+      'hide_empty' => 1,
+      'empty_zero' => 0,
+      'hide_alter_empty' => 1,
+      'link_to_node' => 0,
+      'label_type' => 'none',
+      'format' => 'default',
+      'multiple' => array(
+        'group' => TRUE,
+        'multiple_number' => '',
+        'multiple_from' => '',
+        'multiple_reversed' => FALSE,
+      ),
+      'exclude' => 0,
+      'id' => 'field_event_online_value',
+      'table' => 'node_data_field_event_online',
+      'field' => 'field_event_online_value',
+      'relationship' => 'none',
+      'override' => array(
+        'button' => 'Override',
+      ),
     ),
     'field_event_city_value' => array(
       'label' => '',
@@ -732,47 +776,6 @@ function redhat_events_views_default_views() {
       'field' => 'field_event_state_value',
       'relationship' => 'none',
     ),
-    'field_event_online_value' => array(
-      'label' => '',
-      'alter' => array(
-        'alter_text' => 1,
-        'text' => 'Online',
-        'make_link' => 0,
-        'path' => '',
-        'absolute' => 0,
-        'link_class' => '',
-        'alt' => '',
-        'rel' => '',
-        'prefix' => '',
-        'suffix' => '',
-        'target' => '',
-        'help' => '',
-        'trim' => 0,
-        'max_length' => '',
-        'word_boundary' => 1,
-        'ellipsis' => 1,
-        'html' => 0,
-        'strip_tags' => 0,
-      ),
-      'empty' => '',
-      'hide_empty' => 1,
-      'empty_zero' => 0,
-      'hide_alter_empty' => 1,
-      'link_to_node' => 0,
-      'label_type' => 'none',
-      'format' => 'default',
-      'multiple' => array(
-        'group' => TRUE,
-        'multiple_number' => '',
-        'multiple_from' => '',
-        'multiple_reversed' => FALSE,
-      ),
-      'exclude' => 0,
-      'id' => 'field_event_online_value',
-      'table' => 'node_data_field_event_online',
-      'field' => 'field_event_online_value',
-      'relationship' => 'none',
-    ),
     'field_event_country_value' => array(
       'label' => '',
       'alter' => array(
@@ -842,7 +845,7 @@ function redhat_events_views_default_views() {
       'hide_alter_empty' => 1,
       'link_to_node' => 0,
       'label_type' => 'none',
-      'format' => 'short',
+      'format' => 'long',
       'multiple' => array(
         'multiple_number' => '',
         'multiple_from' => '',
@@ -859,53 +862,6 @@ function redhat_events_views_default_views() {
       'id' => 'field_event_start_date_value',
       'table' => 'node_data_field_event_start_date',
       'field' => 'field_event_start_date_value',
-      'relationship' => 'none',
-    ),
-    'field_event_end_date_value' => array(
-      'label' => '',
-      'alter' => array(
-        'alter_text' => 1,
-        'text' => '- [field_event_end_date_value]',
-        'make_link' => 0,
-        'path' => '',
-        'absolute' => 0,
-        'link_class' => '',
-        'alt' => '',
-        'rel' => '',
-        'prefix' => '',
-        'suffix' => '',
-        'target' => '',
-        'help' => '',
-        'trim' => 0,
-        'max_length' => '',
-        'word_boundary' => 1,
-        'ellipsis' => 1,
-        'html' => 0,
-        'strip_tags' => 0,
-      ),
-      'empty' => '',
-      'hide_empty' => 0,
-      'empty_zero' => 0,
-      'hide_alter_empty' => 1,
-      'link_to_node' => 0,
-      'label_type' => 'none',
-      'format' => 'short',
-      'multiple' => array(
-        'multiple_number' => '',
-        'multiple_from' => '',
-        'multiple_to' => '',
-        'group' => TRUE,
-      ),
-      'repeat' => array(
-        'show_repeat_rule' => '',
-      ),
-      'fromto' => array(
-        'fromto' => 'both',
-      ),
-      'exclude' => 0,
-      'id' => 'field_event_end_date_value',
-      'table' => 'node_data_field_event_end_date',
-      'field' => 'field_event_end_date_value',
       'relationship' => 'none',
     ),
   ));
@@ -1007,18 +963,19 @@ function redhat_events_views_default_views() {
   ));
   $handler->override_option('row_options', array(
     'inline' => array(
+      'field_event_online_value' => 'field_event_online_value',
       'field_event_city_value' => 'field_event_city_value',
       'field_event_state_value' => 'field_event_state_value',
-      'field_event_start_date_value' => 'field_event_start_date_value',
+      'field_event_country_value' => 'field_event_country_value',
       'field_event_end_date_value' => 'field_event_end_date_value',
     ),
     'separator' => '',
     'hide_empty' => 0,
   ));
-  $handler = $view->new_display('block', 'Block', 'block_1');
+  $handler = $view->new_display('block', 'Events by Date block', 'block_1');
   $handler->override_option('block_description', '');
   $handler->override_option('block_caching', -1);
-  $handler = $view->new_display('block', 'Block', 'block_2');
+  $handler = $view->new_display('block', 'Events by Country block', 'block_2');
   $handler->override_option('sorts', array(
     'field_event_country_value' => array(
       'order' => 'ASC',
@@ -1043,9 +1000,20 @@ function redhat_events_views_default_views() {
   $handler->override_option('style_options', array(
     'grouping' => 'field_event_country_value',
   ));
+  $handler->override_option('row_options', array(
+    'inline' => array(
+      'field_event_online_value' => 'field_event_online_value',
+      'field_event_city_value' => 'field_event_city_value',
+      'field_event_state_value' => 'field_event_state_value',
+      'field_event_country_value' => 'field_event_country_value',
+      'field_event_end_date_value' => 'field_event_end_date_value',
+    ),
+    'separator' => '',
+    'hide_empty' => 1,
+  ));
   $handler->override_option('block_description', '');
   $handler->override_option('block_caching', -1);
-  $handler = $view->new_display('block', 'Block', 'block_3');
+  $handler = $view->new_display('block', 'Front page Recent Events block', 'block_3');
   $handler->override_option('fields', array(
     'field_event_url_url' => array(
       'label' => 'URL',
@@ -1312,9 +1280,9 @@ function redhat_events_views_default_views() {
     'columns' => array(
       'field_event_url_url' => 'field_event_url_url',
       'title' => 'title',
-      'field_event_online_value' => 'field_event_online_value',
+      'field_event_online_value' => 'field_event_city_value',
       'field_event_city_value' => 'field_event_city_value',
-      'field_event_state_value' => 'field_event_state_value',
+      'field_event_state_value' => 'field_event_city_value',
       'field_event_start_date_value' => 'field_event_start_date_value',
     ),
     'info' => array(

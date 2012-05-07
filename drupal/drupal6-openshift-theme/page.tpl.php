@@ -227,7 +227,8 @@
     Copyright 1996-2011 Adobe, Inc. All Rights Reserved
     More info available at http://www.omniture.com -->
     <div id="oTags">
-    <script type="text/javascript" src="https://openshift.redhat.com/app/javascripts/omniture/s_code.js"></script>
+    <script type="text/javascript" src="/app/javascripts/tracking.js"></script>
+    <script type="text/javascript" src="/app/javascripts/omniture/s_code.js"></script>
     <script language="JavaScript" type="text/javascript"><!--
     /* You may give each page an identifying name, server, and channel on
     the next lines. */

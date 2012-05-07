@@ -5,7 +5,7 @@
 
 Summary:        GearChanger plugin for m-colective service
 Name:           rubygem-%{gemname}
-Version: 0.9.1
+Version: 0.9.2
 Release:        1%{?dist}
 Group:          Development/Languages
 License:        ASL 2.0
@@ -70,6 +70,26 @@ rm -rf %{buildroot}
 %{ruby_sitelib}/%{gemname}.rb
 
 %changelog
+* Mon May 07 2012 Adam Miller <admiller@redhat.com> 0.9.2-1
+- disabling scalable application move through new code until its fully tested
+  (rchopra@redhat.com)
+- Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
+  (rchopra@unused-32-116.sjc.redhat.com)
+- move_gear : handle failure cases and perform recovery
+  (rchopra@unused-32-116.sjc.redhat.com)
+- Cleanup. (mpatel@redhat.com)
+- Changes to make inline library calls for ss commands. (mpatel@redhat.com)
+- BugZ 817170. Add ability to get valid gear size options from the
+  ApplicationContainerProxy (kraman@gmail.com)
+- Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
+  (rchopra@redhat.com)
+- move_gear updates : gear move should work independent of move_scalable_app
+  (rchopra@redhat.com)
+- stop at 100 (dmcphers@redhat.com)
+- enforce 100 active capacity even in district and add some randomness around
+  which node to pick (dmcphers@redhat.com)
+- add comment (dmcphers@redhat.com)
+
 * Thu Apr 26 2012 Adam Miller <admiller@redhat.com> 0.9.1-1
 - bumping spec versions (admiller@redhat.com)
 

@@ -31,9 +31,7 @@
   <thead>
     <tr>
       <?php foreach ($header as $field => $label): ?>
-        <th class="views-field views-field-<?php print $fields[$field]; ?>">
-          <?php print $label; ?>
-        </th>
+        <th class="views-field views-field-<?php print $fields[$field]; ?>"><?php print $label; ?></th>
       <?php endforeach; ?>
     </tr>
   </thead>
@@ -42,9 +40,7 @@
     <?php foreach ($rows as $count => $row): ?>
       <tr class="<?php print implode(' ', $row_classes[$count]); ?>">
         <?php foreach ($row as $field => $content): ?>
-          <td class="views-field views-field-<?php print $fields[$field]; ?>">
-            <?php print $content; ?>
-          </td>
+          <td class="views-field views-field-<?php print $fields[$field]; ?>"><?php print $content; ?></td>
         <?php endforeach; ?>
       </tr>
     <?php endforeach; ?>

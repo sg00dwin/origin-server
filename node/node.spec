@@ -2,7 +2,7 @@
 
 Summary:       Multi-tenant cloud management system node tools
 Name:          rhc-node
-Version: 0.92.1
+Version: 0.92.2
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -266,6 +266,31 @@ fi
 /lib64/security/pam_libra.so
 
 %changelog
+* Mon May 07 2012 Adam Miller <admiller@redhat.com> 0.92.2-1
+- Cleanup. (mpatel@redhat.com)
+- Changes to make inline library calls for ss commands. (mpatel@redhat.com)
+- Notify when a start or stop times out. (rmillner@redhat.com)
+- Raise the timeout to compensate for heavy IO during system start dragging
+  start times out. (rmillner@redhat.com)
+- Add a 60 second timeout (3x measured cost of a couple of apps) on starting
+  any gear in the parallel gear start. (rmillner@redhat.com)
+- next generation migration (dmcphers@redhat.com)
+- Merge branch 'master' of git1.ops.rhcloud.com:/srv/git/li (rpenta@redhat.com)
+- Fix rhc-autoidler (rpenta@redhat.com)
+- Forgot to add rhc-profiler-merge-report to the specfile.
+  (rmillner@redhat.com)
+- Add average call time. (rmillner@redhat.com)
+- Filter function breaks unless the filter list is a static class global.
+  Allow a list of filters. (rmillner@redhat.com)
+- Rewrite filters and finish the filter set. (rmillner@redhat.com)
+- Fix mcollective log tracking.  Correct for missing timezone in mcollective
+  log entries.  Print report. (rmillner@redhat.com)
+- Make options global. (rmillner@redhat.com)
+- Fill out matcher class.  Change the mcollective log class so that it slurps
+  in the whole file set and produces a unified array of events.  This also
+  allows it to parse events that cross a log file. (rmillner@redhat.com)
+- profile correlator script. (rmillner@redhat.com)
+
 * Thu Apr 26 2012 Adam Miller <admiller@redhat.com> 0.92.1-1
 - bumping spec versions (admiller@redhat.com)
 
