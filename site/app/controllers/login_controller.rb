@@ -37,7 +37,7 @@ class LoginController < SiteController
     @user = WebUser.new
     if @user.authenticate(user_params[:rhlogin], user_params[:password])
 
-      @user.establish rescue logger.debug "Unable to establish user after login" #FIXME: authenticate should establish the unique id of the user
+      #@user.establish rescue logger.debug "Unable to establish user after login" #FIXME: authenticate should establish the unique id of the user
 
       user_to_session(@user)
 
