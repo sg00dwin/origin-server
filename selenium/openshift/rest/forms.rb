@@ -100,7 +100,7 @@ module OpenShift
       	@submit = "//input[@id='key_submit']"
 
         @cancel_path = '/app/account'
-        @loc_btn_cancel = "//a[@href='#{@cancel_path}']"
+        @loc_btn_cancel = "//a[@href='#{@cancel_path}'][contains(text(), 'Cancel')]"
       end
 
       def cancel
