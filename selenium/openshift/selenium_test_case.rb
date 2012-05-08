@@ -82,22 +82,15 @@ module OpenShift
       end
 
       @page    = page
-      #@home    = OpenShift::Express::Home.new(page, "#{base_url}/app")
-      #@express = OpenShift::Express::Express.new(page, "#{base_url}/app/express")
-      #@flex    = OpenShift::Express::Flex.new(page, "#{base_url}/app/flex")
-      #@express_console = OpenShift::Express::ExpressConsole.new(page, "#{base_url}/app/control_panel")
 
-      #@navbar  = OpenShift::Express::MainNav.new(page,'main_nav')
-      #@signin  = OpenShift::Express::Login.new(page,'signin')
-      #@reset   = OpenShift::Express::Reset.new(page,'reset_password')
-      #@signup  = OpenShift::Express::Signup.new(page,'signup')
-
+      @navbar  = OpenShift::Rest::MainNav.new(page,'main_nav')
       @home    = OpenShift::Rest::Home.new(page, "#{base_url}/app")
       @login_page = OpenShift::Rest::Login.new(page,"#{base_url}/app/login")
       @logout = Proc.new { @page.get "#{base_url}/app/logout"; wait_for_page "#{base_url}/app/" }
 
       @rest_console = OpenShift::Rest::Console.new(page, "#{base_url}/app/console")
       @rest_account = OpenShift::Rest::Account.new(page, "#{base_url}/app/account")
+      @signup = OpenShift::Rest::Signup.new(page, "#{base_url}/app/account/new")
     end
 
     def run(*args, &blk)

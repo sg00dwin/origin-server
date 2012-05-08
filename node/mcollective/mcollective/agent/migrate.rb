@@ -136,6 +136,28 @@ module OpenShiftMigration
           output += echo_output
         end
 
+        ctl_sh = "#{gear_dir}/#{gear_name}_ctl.sh"
+        output += "Migrating #{gear_name}_ctl.sh\n"
+        ctl_file = File.open(ctl_sh, 'w')
+        begin
+          ctl_file.puts <<EOF
+#!/bin/bash -e
+
+# Expose which cartridge created the ctl script
+export CARTRIDGE_TYPE="#{gear_type}"
+
+# Import Environment Variables
+for f in ~/.env/*
+do
+    . $f
+done
+
+app_ctl.sh $1
+EOF
+        ensure
+          ctl_file.close
+        end
+
       else
         exitcode = 127
         output += "Application not found to migrate: #{gear_home}\n"

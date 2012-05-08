@@ -15,7 +15,7 @@ rhc-admin-ctl-domain OPTIONS
 
 Options:
 -l|--rhlogin <rhlogin>
-    Red Hat login (RHN or OpenShift login with OpenShift Express access) (required)
+    Red Hat login (RHN or OpenShift login with OpenShift access) (required)
 -n|--namespace <Namespace>
     Namespace for application(s) (alphanumeric - max 16 chars) (required)
 -c|--command (create|update|delete|info)

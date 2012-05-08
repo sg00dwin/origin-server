@@ -21,7 +21,7 @@ class RestConsole < OpenShift::Rest::TestCase
   end
 
   def test_create_app_wizard
-    @login, pass = dummy_credentials
+    @login, pass, namespace = dummy_credentials
     signin(@login, pass)
 
     app_types_page = @rest_console.application_types_page
@@ -36,7 +36,7 @@ class RestConsole < OpenShift::Rest::TestCase
 
     form = @rest_console.application_create_form
     form.set_value(:name, app_name)
-    form.set_value(:namespace, @login)
+    form.set_value(:namespace, namespace)
     form.submit
 
     get_started_page.wait(90)
@@ -45,7 +45,7 @@ class RestConsole < OpenShift::Rest::TestCase
     href = app_link.attribute('href')
     uri = URI.parse(href)
 
-    assert uri.host.start_with? "#{app_name}-#{@login.downcase}"
+    assert uri.host.start_with? "#{app_name}-#{namespace.downcase}"
 
     app_link.click
 
@@ -53,18 +53,17 @@ class RestConsole < OpenShift::Rest::TestCase
   end
 
   def test_create_and_delete_apps
-    @login, pass = dummy_credentials
+    @login, pass, namespace = dummy_credentials
     signin(@login, pass)
 
     app_type_buttons = find_app_type_buttons
     app_type_buttons.each_with_index do |item, index|
-      # TODO: delete first app if index > 3 so we don't hit limits
       delete_app 0 if index > 2
 
       # create all app types available
       if index == 0
         # first one we need to create a namespace
-        create_app index, @login.downcase
+        create_app index, namespace.downcase
       else
         create_app index
       end

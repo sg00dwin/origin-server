@@ -173,8 +173,6 @@ module OpenShift
 
         add_redirect(@application_types_page.path)
         add_redirect(@applications_page.path)
-        #@domain_form = OpenShift::Express::DomainForm.new(page, "new_express_domain")
-       # @app_form = OpenShift::Express::AppForm.new(page, "new_express_app")
       end
     end
 
@@ -192,6 +190,15 @@ module OpenShift
 
       def click(css)
         @page.find_element(:css => css).click
+      end
+    end
+
+    class Signup < Page
+      attr_accessor :form
+
+      def initialize(page, path)
+        super
+        @form = SignupForm.new(page, 'signup')
       end
     end
   end

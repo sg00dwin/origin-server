@@ -15,7 +15,7 @@ rhc-admin-move OPTIONS
 
 Options:
 -l|--rhlogin <rhlogin>
-    Red Hat login (RHN or OpenShift login with OpenShift Express access)
+    Red Hat login (RHN or OpenShift login with OpenShift access)
 -a|--app     <application>
     Application name (alphanumeric)
 --app_uuid   <app_uuid>
