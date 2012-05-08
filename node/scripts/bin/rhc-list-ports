@@ -4,3 +4,4 @@
 
 /usr/sbin/lsof -iTCP -sTCP:LISTEN -P 2> /dev/null | /bin/awk '/LISTEN/{ print $9 }' | /bin/sort -u
 /usr/sbin/lsof -iTCP -sTCP:LISTEN -P 2> /dev/null | /bin/awk '/LISTEN/{ print $1" -> "$9 }' | /bin/sort -u 1>&2
+cat ./haproxy-1.4/conf/gear-registry.db | while read line; do echo "$line" | awk -F"@" '{ printf "SCALE%s", $1; }' ; done

@@ -3,7 +3,7 @@ class ApplicationController < ActionController::Base
 
   rescue_from AccessDeniedException do |e|
     logger.debug "Access denied: #{e}"
-    redirect_to logout_path
+    redirect_to logout_path :cause => e.message, :then => account_path
   end
   rescue_from 'ActiveResource::ConnectionError' do |e|
     if defined? e.response and defined? env and env

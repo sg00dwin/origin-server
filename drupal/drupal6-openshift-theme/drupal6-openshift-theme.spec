@@ -5,7 +5,7 @@
 %global drupal_themename    openshift-theme
 
 Name:           drupal6-%{drupal_themename}
-Version: 3.1.2
+Version: 3.1.3
 Release:        1%{?dist}
 Summary:        Red Hat Openshift theme for Drupal %{drupal_release}
 
@@ -44,6 +44,9 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
+* Mon May 07 2012 Adam Miller <admiller@redhat.com> 3.1.3-1
+- Add tracking.js to community (ccoleman@redhat.com)
+
 * Mon May 07 2012 Adam Miller <admiller@redhat.com> 3.1.2-1
 - Add more compact row layout (separators with , will collapse whitespace)
   Update events module to export a new format. (ccoleman@redhat.com)

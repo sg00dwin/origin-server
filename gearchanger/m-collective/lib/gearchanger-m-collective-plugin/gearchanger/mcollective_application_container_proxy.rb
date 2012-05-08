@@ -206,7 +206,16 @@ module GearChanger
         result = execute_direct(@@C_CONTROLLER, 'broker-auth-key-remove', args)
         parse_result(result)
       end
-      
+
+      def show_state(app, gear)
+        args = Hash.new
+        args['--with-app-uuid'] = app.uuid
+        args['--with-container-uuid'] = gear.uuid
+        result = execute_direct(@@C_CONTROLLER, 'app-state-show', args)
+        parse_result(result)
+      end
+
+
       def preconfigure_cartridge(app, gear, cart)
         if framework_carts.include? cart
           run_cartridge_command(cart, app, gear, "preconfigure")
@@ -470,6 +479,14 @@ module GearChanger
         args['--hook-name'] = connector_name
         args['--input-args'] = input_args.join(" ")
         job = RemoteJob.new('stickshift-node', 'connector-execute', args)
+        job
+      end
+
+      def get_show_state_job(app, gear)
+        args = Hash.new
+        args['--with-app-uuid'] = app.uuid
+        args['--with-container-uuid'] = gear.uuid
+        job = RemoteJob.new('stickshift-node', 'app-state-show', args)
         job
       end
       

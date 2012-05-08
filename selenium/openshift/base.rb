@@ -9,7 +9,7 @@ module OpenShift
       }
 
       @valid_credentials = {
-        :email => "flindiak+sauce_valid@redhat.com",
+        :email => "flindiaksauce_valid@redhat.com",
         :password => "Pa$$word1"
       }
     end

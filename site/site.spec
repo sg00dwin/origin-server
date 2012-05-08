@@ -3,7 +3,7 @@
 
 Summary:   Li site components
 Name:      rhc-site
-Version: 0.92.2
+Version: 0.92.3
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -117,6 +117,12 @@ rm -rf %{buildroot}
 /bin/touch %{sitedir}/log/production.log
 
 %changelog
+* Mon May 07 2012 Adam Miller <admiller@redhat.com> 0.92.3-1
+- add navbar tests back and add unique classes to links (johnp@redhat.com)
+- Fix bug 818391 - special code branch should have been removed when we fixed
+  bug 789786 (ccoleman@redhat.com)
+- shadowman icon for username association (sgoodwin@redhat.com)
+
 * Mon May 07 2012 Adam Miller <admiller@redhat.com> 0.92.2-1
 - Fix failing test from renaming red hat network identity (ccoleman@redhat.com)
 - Update styles on terms controller, remove captcha there.

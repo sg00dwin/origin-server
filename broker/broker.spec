@@ -3,7 +3,7 @@
 
 Summary:   Li broker components
 Name:      rhc-broker
-Version: 0.92.2
+Version: 0.92.3
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -95,6 +95,15 @@ rm -rf $RPM_BUILD_ROOT
 /bin/touch %{brokerdir}/log/production.log
 
 %changelog
+* Mon May 07 2012 Adam Miller <admiller@redhat.com> 0.92.3-1
+- Updating gem versions (admiller@redhat.com)
+- added exception handling and logging to apptegic and nurture calls
+  (lnader@redhat.com)
+- minor changes to domain observer (lnader@redhat.com)
+- Merge branch 'master' of git1.ops.rhcloud.com:/srv/git/li (lnader@redhat.com)
+- Bug 815554 (lnader@redhat.com)
+- added domain observer class (lnader@redhat.com)
+
 * Mon May 07 2012 Adam Miller <admiller@redhat.com> 0.92.2-1
 - Updating gem versions (admiller@redhat.com)
 - moving fix gear-uids to maintenance/bin area (rchopra@redhat.com)
