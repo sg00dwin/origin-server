@@ -1,4 +1,4 @@
-policy_module(libra,1.1.22)
+policy_module(libra,1.1.23)
 
 ########################################
 #
@@ -331,6 +331,8 @@ cron_role(system_r, libra_app_domain)
 allow system_cronjob_t libra_app_domain:process transition;
 allow libra_app_domain system_cronjob_t:process sigchld;
 dontaudit crontab_t sshd_devpts_t:chr_file { read write };
+dontaudit crontab_t libra_initrc_t:fifo_file { write read };
+fs_dontaudit_rw_anon_inodefs_files(crontab_t)
 
 ########################################
 #

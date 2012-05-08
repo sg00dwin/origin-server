@@ -61,11 +61,11 @@ module OpenShift
       end
 
       def edit_namespace_button
-        @page.find_element(:xpath => "//a[@href='/app/account/domain/edit']")
+        @page.find_element(:xpath => "//a[contains(@href, '/account/domain/edit')]")
       end
 
       def ssh_key_add_button
-        @page.find_element(:xpath => "//a[@href='/app/account/keys/new']")
+        @page.find_element(:xpath => "//a[contains(@href, '/account/keys/new')]")
       end
 
       def find_ssh_key_row(key_name)
@@ -124,7 +124,7 @@ module OpenShift
       end
 
       def find_create_buttons
-        @page.find_elements(:xpath => "//a[starts-with(@href, '/app/console/application_types/')]")
+        @page.find_elements(:xpath => "//a[contains(@href, '/console/application_types/')]")
       end
     end
 
@@ -144,13 +144,13 @@ module OpenShift
       end
 
       def find_app_buttons
-        @page.find_elements(:xpath => "//a[starts-with(@href, '/app/console/applications/')]")
+        @page.find_elements(:xpath => "//a[contains(@href, '/console/applications/')]")
       end
     end
 
     class GetStartedPage < Page
       def initialize(page, app_name)
-        super(page, "/app/console/applications/#{app_name}/get_started")
+        super(page, "#{@browser_url}/console/applications/#{app_name}/get_started")
       end
 
       def find_app_link

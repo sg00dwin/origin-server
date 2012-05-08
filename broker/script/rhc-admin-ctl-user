@@ -27,7 +27,7 @@ def usage
 
 Options:
   -l|--rhlogin <rhlogin>
-    Red Hat login (RHN or OpenShift login with OpenShift Express access) (required)
+    Red Hat login (RHN or OpenShift login with OpenShift access) (required)
   --setmaxgears <number>
     Set the maximum number of gears a user is allowed to use
   --setconsumedgears <number>

@@ -3,7 +3,7 @@
 
 Summary:   Li broker components
 Name:      rhc-broker
-Version: 0.92.3
+Version: 0.92.4
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -95,6 +95,10 @@ rm -rf $RPM_BUILD_ROOT
 /bin/touch %{brokerdir}/log/production.log
 
 %changelog
+* Tue May 08 2012 Adam Miller <admiller@redhat.com> 0.92.4-1
+- Updating gem versions (admiller@redhat.com)
+- Bug 819739 (dmcphers@redhat.com)
+
 * Mon May 07 2012 Adam Miller <admiller@redhat.com> 0.92.3-1
 - Updating gem versions (admiller@redhat.com)
 - added exception handling and logging to apptegic and nurture calls

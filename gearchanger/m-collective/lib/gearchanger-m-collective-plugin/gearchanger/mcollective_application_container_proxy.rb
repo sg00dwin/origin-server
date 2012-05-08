@@ -532,7 +532,7 @@ module GearChanger
           end
         end
 
-        if app.scalable and gi.component_instances.include? app.proxy_cartridge
+        if (not app.scalable) or (app.scalable and gi.component_instances.include? app.proxy_cartridge)
           unless app.aliases.nil?
             app.aliases.each do |server_alias|
               reply.append destination_container.send(:run_cartridge_command, app.framework, app, app.gear, "add-alias", server_alias, false)
@@ -606,19 +606,25 @@ module GearChanger
               cart = cinst.parent_cart_name
               next if cart==app.name
               idle, leave_stopped = state_map[ci_name]
-              if embedded_carts.include? cart and not cart.include? app.proxy_cartridge
-                log_debug "DEBUG: Performing cartridge level move for embedded #{cart} for '#{app.name}' on #{destination_container.id}"
-                embedded_reply = destination_container.send(:run_cartridge_command, "embedded/" + cart, app, gear, "move", nil, false)
-                component_details = embedded_reply.appInfoIO.string
-                unless component_details.empty?
-                  app.set_embedded_cart_info(cart, component_details)
+              if embedded_carts.include? cart 
+                if cart.include? app.proxy_cartridge
+                  log_debug "DEBUG: Performing cartridge level move for '#{cart}' on #{destination_container.id}"
+                  reply.append destination_container.send(:run_cartridge_command, cart, app, gear, "move", idle ? '--idle' : nil, false)
+                else
+                  log_debug "DEBUG: Performing cartridge level move for embedded #{cart} for '#{app.name}' on #{destination_container.id}"
+                  embedded_reply = destination_container.send(:run_cartridge_command, "embedded/" + cart, app, gear, "move", nil, false)
+                  component_details = embedded_reply.appInfoIO.string
+                  unless component_details.empty?
+                    app.set_embedded_cart_info(cart, component_details)
+                  end
+                  reply.append embedded_reply
+                  unless keep_uid
+                    log_debug "DEBUG: Performing cartridge level post-move for embedded #{cart} for '#{app.name}' on #{destination_container.id}"
+                    reply.append destination_container.send(:run_cartridge_command, "embedded/" + cart, app, gear, "post-move", nil, false)
+                  end
                 end
-                reply.append embedded_reply
-                unless keep_uid
-                  log_debug "DEBUG: Performing cartridge level post-move for embedded #{cart} for '#{app.name}' on #{destination_container.id}"
-                  reply.append destination_container.send(:run_cartridge_command, "embedded/" + cart, app, gear, "post-move", nil, false)
-                end
-              else
+              end
+              if framework_carts.include? cart
                 log_debug "DEBUG: Performing cartridge level move for '#{cart}' on #{destination_container.id}"
                 reply.append destination_container.send(:run_cartridge_command, cart, app, gear, "move", idle ? '--idle' : nil, false)
               end
