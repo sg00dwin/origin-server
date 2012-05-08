@@ -206,6 +206,10 @@ ini_set('url_rewriter.tags',        '');
 #   'site_name' => 'My Drupal site',
 #   'theme_default' => 'minnelli',
 #   'anonymous' => 'Visitor',
+
+$conf = array(
+  'smtp_library' => 'sites/all/modules/devel/devel.module',
+);
 /**
  * A custom theme can be set for the off-line page. This applies when the site
  * is explicitly set to off-line mode through the administration page or when
