@@ -31,7 +31,7 @@ class UsageModelTest < ActiveSupport::TestCase
     ues.each do |ue|
       ue.delete
     end
-    (1..2).each do |i|
+    2.times do
       ue = usage
       ue.save!
     end
