@@ -811,9 +811,9 @@ module GearChanger
       end
 
       def move_app(app, destination_container, destination_district_uuid=nil, allow_change_district=false, node_profile=nil)
-        #if app.scalable
-          #return move_scalable_app(app, destination_container, destination_district_uuid, allow_change_district, node_profile)
-        #end
+        if app.scalable
+          raise StickShift::UserException.new("Cannot move scalable app.", 1)
+        end
         source_container = app.container
 
         if node_profile
