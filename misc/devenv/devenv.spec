@@ -8,7 +8,7 @@
 
 Summary:   Dependencies for OpenShift development
 Name:      rhc-devenv
-Version: 0.93.7
+Version: 0.93.8
 Release:   1%{?dist}
 Group:     Development/Libraries
 License:   GPLv2
@@ -495,6 +495,11 @@ echo "Header append Strict-Transport-Security includeSubDomains" >> /etc/httpd/c
 %{policydir}/*
 
 %changelog
+* Tue May 08 2012 Adam Miller <admiller@redhat.com> 0.93.8-1
+- fixed make-certs.txt to have the correct hostname for qpid servers
+  (twiest@redhat.com)
+- SSO enable for drupal had errors (ccoleman@redhat.com)
+
 * Mon May 07 2012 Adam Miller <admiller@redhat.com> 0.93.7-1
 - Restart httpd after adding users. (ccoleman@redhat.com)
 - Merge events recent changes and user profile into code. (ccoleman@redhat.com)
