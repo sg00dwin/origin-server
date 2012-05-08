@@ -3,7 +3,7 @@
 
 Summary:   Li site components
 Name:      rhc-site
-Version: 0.92.3
+Version: 0.92.4
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -117,6 +117,15 @@ rm -rf %{buildroot}
 /bin/touch %{sitedir}/log/production.log
 
 %changelog
+* Tue May 08 2012 Adam Miller <admiller@redhat.com> 0.92.4-1
+- Make the delete button more subtle (ccoleman@redhat.com)
+- Merge branch 'cleanupscss' (sgoodwin@redhat.com)
+- button disabled/active changes (sgoodwin@redhat.com)
+- Reenable Jenkins from the UI (ccoleman@redhat.com)
+- Add an informational page on logout that informs the user that they have been
+  logged out and why.  Currently just takes the user back to the account page.
+  (ccoleman@redhat.com)
+
 * Mon May 07 2012 Adam Miller <admiller@redhat.com> 0.92.3-1
 - add navbar tests back and add unique classes to links (johnp@redhat.com)
 - Fix bug 818391 - special code branch should have been removed when we fixed
