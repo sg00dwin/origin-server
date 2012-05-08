@@ -34,8 +34,8 @@
           <div class="views-field views-field-pageviews sprite-icon-bg sprite-icon-views"><?php print format_plural($row['totalcount'], '1 View', '@count Views'); ?></div>
         </td>
         <td>
-          <div class="views-field views-field-picture" style="float: left; margin-right: 3px;"><?php print $last_comment_author_icon ?></div>
-          <div class="picture-right" style="margin-left: 20px;">
+          <div class="views-field views-field-picture"><?php print $last_comment_author_icon ?></div>
+          <div class="picture-right">
             <div class="views-field views-field-last-comment-name"><?php print $row['last_comment_name']; ?></div>
             <div class="views-field views-field-last-comment_timestamp sprite-icon-bg sprite-icon-timestamp""><?php print $row['last_comment_timestamp']; ?></div>
           </div>
