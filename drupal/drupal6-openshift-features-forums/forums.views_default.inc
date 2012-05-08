@@ -1098,6 +1098,7 @@ print $data->node_comment_statistics_last_comment_uid;
   $handler->override_option('cache', array(
     'type' => 'none',
   ));
+  $handler->override_option('css_class', 'forum-list-main');
   $handler->override_option('use_pager', '1');
   $handler->override_option('distinct', 0);
   $handler->override_option('style_plugin', 'table');
