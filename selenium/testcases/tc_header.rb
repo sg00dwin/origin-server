@@ -8,15 +8,15 @@ class Header < OpenShift::SeleniumTestCase
 
   def test_header_links
     @home.click(@home.items[:logo])
-    assert_redirected_to '/app/'
+    assert_redirected_to "#{@browser_url}/"
   end
 
   def test_navbar_links
     links = {
-      :learn_more => '/app/platform',
+      :learn_more => "#{@browser_url}/platform",
       :community => '/community/',
       :developers => '/community/developers',
-      :getting_started => '/app/getting_started'
+      :getting_started => "#{@browser_url}/getting_started"
     }
 
     links.each do |name,url|

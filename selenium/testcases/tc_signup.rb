@@ -55,7 +55,7 @@ class Signup < OpenShift::SeleniumTestCase
 
       # This should succeed
       :success => lambda{
-        assert_redirected_to('/app/user/complete')
+        assert_redirected_to('#{@browser_url}/user/complete')
       }
     }
 
