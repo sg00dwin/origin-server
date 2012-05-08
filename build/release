@@ -265,9 +265,6 @@ class Release < Thor
       mash_and_rsync "libra-rhel-5.8", true, options
 
       unless options.no_ami?
-        if get_build_dirs.map { |build_dir| build_dir[0] }.grep /rhc-devenv/
-          options[:cleam_ami] = true
-        end
         create_ami options
       end
     ensure
