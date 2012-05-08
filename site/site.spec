@@ -3,7 +3,7 @@
 
 Summary:   Li site components
 Name:      rhc-site
-Version: 0.92.4
+Version: 0.92.5
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -117,6 +117,11 @@ rm -rf %{buildroot}
 /bin/touch %{sitedir}/log/production.log
 
 %changelog
+* Tue May 08 2012 Adam Miller <admiller@redhat.com> 0.92.5-1
+- Merge branch 'devcomm' (sgoodwin@redhat.com)
+-  minor updates to the visual presentation of the forums threat list and blog
+  details views (sgoodwin@redhat.com)
+
 * Tue May 08 2012 Adam Miller <admiller@redhat.com> 0.92.4-1
 - Make the delete button more subtle (ccoleman@redhat.com)
 - Merge branch 'cleanupscss' (sgoodwin@redhat.com)
