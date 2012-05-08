@@ -5,7 +5,7 @@
 
 Summary:        GearChanger plugin for m-colective service
 Name:           rubygem-%{gemname}
-Version: 0.9.3
+Version: 0.9.4
 Release:        1%{?dist}
 Group:          Development/Languages
 License:        ASL 2.0
@@ -70,6 +70,14 @@ rm -rf %{buildroot}
 %{ruby_sitelib}/%{gemname}.rb
 
 %changelog
+* Tue May 08 2012 Adam Miller <admiller@redhat.com> 0.9.4-1
+- move_gear : run the framework move hook on haproxy even though it is an
+  embedded cart (rchopra@redhat.com)
+- prevent a scalable app from moving (rchopra@redhat.com)
+- Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
+  (rchopra@redhat.com)
+- final fixes for move_gear (rchopra@redhat.com)
+
 * Mon May 07 2012 Adam Miller <admiller@redhat.com> 0.9.3-1
 - adding mcollective call to fetch the application state from the .state file
   on each gear (abhgupta@redhat.com)
