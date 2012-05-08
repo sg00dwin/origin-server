@@ -61,7 +61,7 @@ module MCollective
         app_uuid = args['--with-app-uuid']
         uuid = args['--with-container-uuid']
         uid = args['--with-uid']
-        uid = nil if uid && uid.empty?
+        uid = nil if uid && uid.to_s.empty?
         quota_blocks = args['--with-quota-blocks']
         quota_files = args['--with-quota-files']
         name = args['--named']
