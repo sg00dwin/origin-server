@@ -1,6 +1,6 @@
 Summary:       SELinux policy for OpenShift nodes
 Name:          rhc-selinux
-Version: 0.92.2
+Version: 0.92.3
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -46,6 +46,10 @@ rm -rf %{buildroot}
 %attr(0640,-,-) %{_datadir}/selinux/packages/libra.pp
 
 %changelog
+* Tue May 08 2012 Adam Miller <admiller@redhat.com> 0.92.3-1
+- Dontaudit leaked file descriptors going to crontab_t command
+  (dwalsh@redhat.com)
+
 * Mon May 07 2012 Adam Miller <admiller@redhat.com> 0.92.2-1
 - revert previous commit 3f29dfed for now (dmcphers@redhat.com)
 - Dontaudit libra domains trying to create netlink_tcpdiag_sockets, executing
