@@ -11,10 +11,12 @@
 .views-field-group-name { display: inline; }
 
 .column-nav .view-threads-by-popularity .views-table {
-  h4 { display: inline; color: #666; font-size: 13px; line-height: 18px; }
-  span.views-field-title { display: block; }
-  > div { margin-bottom: 35px; }
-  .block-stats { clear: both; }
+  h4 { 
+    color: #666; 
+    font-size: 13px; 
+    line-height: 18px; 
+  }
+  > div { margin-bottom: 15px; }
 }
 .column-nav .picture img {
   max-width: 35px;
