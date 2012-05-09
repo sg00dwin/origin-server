@@ -325,7 +325,7 @@ mkdir -p /tmp/rhc/junit
         end
 
         if options.include_rcov?
-          add_ssh_cmd_to_threads(hostname, threads, failures, "StickShift Node Unit Coverage", "cd li-test/stickshift/node; rake rcov; rm -rf /tmp/rhc/node_coverage; cp -af coverage /tmp/rhc/node_coverage")
+          add_ssh_cmd_to_threads(hostname, threads, failures, "StickShift Node Unit Coverage", "cd li-test/stickshift/node; rake rcov; cp -av coverage /tmp/rhc/stickshift_node_coverage")
         end
 
         unless options.exclude_internal?
