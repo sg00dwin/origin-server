@@ -527,11 +527,7 @@ class Release < Thor
         exit 1
       end
       
-      mash_cmd_output.each do | line | 
-        if /rhc-devenv/.match line
-          rhc_devenv_found = true
-        end
-      end
+      rhc_devenv_found = mash_cmd_output.include?('rhc-devenv')
 
       # If createrepo understands --compress-type flag, it will create repodata in RHEL5-unfriendly format
       # recreate repo metadata if we are targeting RHEL5 and createrepo is sufficiently equipped
