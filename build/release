@@ -265,12 +265,7 @@ class Release < Thor
       mash_and_rsync "libra-rhel-5.8", true, options
 
       unless options.no_ami?
-        unless options.source_ami?
-          if rhc_devenv_found 
-            options[:clean_ami] = true
-          end
-        end
-        create_ami options
+        create_ami options rhc_devenv_found
       end
     ensure
       reset_orig_branches(orig_branches)
@@ -550,7 +545,7 @@ class Release < Thor
       puts "Syncing RPMs to repo..."
       #
       # Ugly bash hack to set the value of ruby's $? as well as get output to 
-      # terminal while mash runs.
+      # terminal while rsync runs.
       rsync_output = `_f() { #{rsync} #{options.temp_dir}/#{mash_config}/#{mash_config}/* #{repo}/#{mash_config}/ | tee /dev/tty; return ${PIPESTATUS[0]}; }; _f`
       if $? != 0
         puts "ERROR - RPM sync failed"
@@ -590,13 +585,20 @@ class Release < Thor
       rhc_devenv_found
     end
   
-    def create_ami(options)
+    def create_ami(options, dev_env_update=false)
       # Jenkins parameters
       proxy = "squid.corp.redhat.com:8080"
       jenkins = "https://ci.dev.openshift.redhat.com/jenkins"
       token = "libra1"
   
-      if options.stage?
+      if dev_env_update
+        puts "Kicking off AMI build..."
+        unless run("curl --insecure --proxy #{proxy} #{jenkins}/job/libra_ami/buildWithParameters?token=#{token}\\&BUILD_CLEAN_AMI=true\\&INSTALL_FROM_SOURCE=#{options.source_ami? ? "true" : "false"}", :verbose => options.verbose?)
+          puts "ERROR - Jenkins remote job invocation failed."
+          exit 1
+        end
+        puts "Done"
+      else if options.stage?
         puts "Kicking off stage verification..."
         unless run("curl --insecure --proxy #{proxy} #{jenkins}/job/libra_ami_stage/buildWithParameters?token=#{token}\\&BUILD_CLEAN_AMI=#{options.clean_ami? ? "true" : "false"}", :verbose => options.verbose?)
           puts "ERROR - Jenkins remote job invocation failed."
