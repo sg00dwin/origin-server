@@ -1,5 +1,4 @@
-policy_module(libra,1.1.24)
-# Requires selinux-policy-3.7.19-150.el6
+policy_module(libra,1.1.23)
 
 ########################################
 #
@@ -72,7 +71,6 @@ corenet_tcp_connect_virt_migration_port(libra_net_domain)
 corenet_tcp_connect_ssh_port(libra_net_domain)
 corenet_tcp_connect_jboss_management_port(libra_net_domain)
 corenet_tcp_connect_jboss_debug_port(libra_net_domain)
-corenet_tcp_connect_jboss_messaging_port(libra_net_domain)
 corenet_tcp_connect_memcache_port(libra_net_domain)
 corenet_tcp_connect_http_cache_port(libra_net_domain)
 corenet_tcp_connect_amqp_port(libra_net_domain)
@@ -82,7 +80,6 @@ corenet_tcp_connect_munin_port(libra_net_domain)
 corenet_tcp_connect_pop_port(libra_net_domain)
 corenet_udp_bind_generic_port(libra_net_domain)
 corenet_tcp_bind_jboss_management_port(libra_net_domain)
-corenet_tcp_bind_jboss_messaging_port(libra_net_domain)
 corenet_tcp_bind_jboss_debug_port(libra_net_domain)
 corenet_tcp_bind_mongod_port(libra_net_domain)
 corenet_tcp_connect_smtp_port(libra_net_domain)
