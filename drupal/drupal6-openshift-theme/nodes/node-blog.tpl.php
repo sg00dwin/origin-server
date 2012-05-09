@@ -1,4 +1,4 @@
-<div id="node-<?php print $node->nid; ?>" class="blog-post node<?php if ($sticky) { print ' sticky'; } ?><?php if (!$status) { print ' node-unpublished'; } ?> node-blog">
+<article id="node-<?php print $node->nid; ?>" class="blog-post node<?php if ($sticky) { print ' sticky'; } ?><?php if (!$status) { print ' node-unpublished'; } ?> node-blog">
 
 <h1 class="blog-title"><?php print $title; ?></h1>
 <div class="blog-metadata"><span class="created"><?php print readabledate($node->created); ?></span>
@@ -23,4 +23,4 @@ print views_embed_view('author_profile_box', 'block_1', $author_nid);
     <?php endif; ?>
   </div>
 
-</div>
+</article>
