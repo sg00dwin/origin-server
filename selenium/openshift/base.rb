@@ -35,7 +35,7 @@ module OpenShift
         @login_page.submit(login, password)
 
         await("logout link", 10) {
-          exists?("a[href='/app/logout']")
+          exists?("a.sign_out")
         }
     end
   end
@@ -130,11 +130,11 @@ module OpenShift
     end
 
     def wait_for_page(location, timeout=5)
-      uri = URI.parse(@page.current_url)
-      match = location.start_with?("http") ? #assume absolute URL
-        uri.to_s : uri.to_s.split(uri.host)[1]
-
       await("location: #{location}", timeout) {
+        uri = URI.parse(@page.current_url)
+        match = location.start_with?("http") ? #assume absolute URL
+          uri.to_s : uri.to_s.split(uri.host)[1]
+
         location == match
       }
     end

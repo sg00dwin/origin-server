@@ -2,7 +2,7 @@
 
 Summary:       Multi-tenant cloud management system node tools
 Name:          rhc-node
-Version: 0.92.3
+Version: 0.92.4
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -266,6 +266,9 @@ fi
 /lib64/security/pam_libra.so
 
 %changelog
+* Tue May 08 2012 Adam Miller <admiller@redhat.com> 0.92.4-1
+- Bug 819739 (dmcphers@redhat.com)
+
 * Mon May 07 2012 Adam Miller <admiller@redhat.com> 0.92.3-1
 - Migrate app ctl file. (rmillner@redhat.com)
 - adding mcollective call to fetch the application state from the .state file

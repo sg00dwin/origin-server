@@ -42,6 +42,8 @@ module OpenShift
         browser_url = "#{base_url}/app"
       end
 
+      @browser_url = browser_url
+
       if OpenShift::SeleniumTestCase.local?
         @driver = Selenium::WebDriver.for :firefox
         @driver.navigate.to browser_url
@@ -84,13 +86,13 @@ module OpenShift
       @page    = page
 
       @navbar  = OpenShift::Rest::MainNav.new(page,'main_nav')
-      @home    = OpenShift::Rest::Home.new(page, "#{base_url}/app")
-      @login_page = OpenShift::Rest::Login.new(page,"#{base_url}/app/login")
-      @logout = Proc.new { @page.get "#{base_url}/app/logout"; wait_for_page "#{base_url}/app/" }
+      @home    = OpenShift::Rest::Home.new(page, "#{browser_url}")
+      @login_page = OpenShift::Rest::Login.new(page,"#{browser_url}/login")
+      @logout = Proc.new { @page.get "#{browser_url}/logout"; wait_for_page "#{browser_url}/" }
 
-      @rest_console = OpenShift::Rest::Console.new(page, "#{base_url}/app/console")
-      @rest_account = OpenShift::Rest::Account.new(page, "#{base_url}/app/account")
-      @signup = OpenShift::Rest::Signup.new(page, "#{base_url}/app/account/new")
+      @rest_console = OpenShift::Rest::Console.new(page, "#{browser_url}/console")
+      @rest_account = OpenShift::Rest::Account.new(page, "#{browser_url}/account")
+      @signup = OpenShift::Rest::Signup.new(page, "#{browser_url}/account/new")
     end
 
     def run(*args, &blk)

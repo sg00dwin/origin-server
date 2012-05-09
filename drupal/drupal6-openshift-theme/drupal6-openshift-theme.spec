@@ -5,7 +5,7 @@
 %global drupal_themename    openshift-theme
 
 Name:           drupal6-%{drupal_themename}
-Version: 3.1.3
+Version: 3.1.4
 Release:        1%{?dist}
 Summary:        Red Hat Openshift theme for Drupal %{drupal_release}
 
@@ -44,6 +44,10 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
+* Tue May 08 2012 Adam Miller <admiller@redhat.com> 3.1.4-1
+-  minor updates to the visual presentation of the forums threat list and blog
+  details views (sgoodwin@redhat.com)
+
 * Mon May 07 2012 Adam Miller <admiller@redhat.com> 3.1.3-1
 - Add tracking.js to community (ccoleman@redhat.com)
 

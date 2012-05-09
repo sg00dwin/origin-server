@@ -28,9 +28,9 @@ class Signin < OpenShift::SeleniumTestCase
 
     # Try a valid login
     signin
-    assert_redirected_to '/app/console/application_types'
+    assert_redirected_to @rest_console.application_types_page.path
 
     @navbar.click_signout
-    assert_redirected_to '/app/'
+    assert_redirected_to "#{@browser_url}/"
   end
 end
