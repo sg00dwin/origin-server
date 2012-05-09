@@ -5,7 +5,7 @@
 %global modname             user_profile
 
 Name:    drupal%{drupal_release}-openshift-features-%{modname}
-Version: 1.1.2
+Version: 1.1.3
 Release: 1%{?dist}
 Summary: Openshift Red Hat Custom User Profile Feature for Drupal6
 Group:   Applications/Publishing
@@ -41,6 +41,12 @@ rm -rf $RPM_BUILD_ROOT
 %{drupal_modules}/%{modname}
 
 %changelog
+* Wed May 09 2012 Adam Miller <admiller@redhat.com> 1.1.3-1
+- Add a context for elements that should have the default left community menu
+  (ccoleman@redhat.com)
+- Bug 820098 - Allow authenticated users to upload documents, add some
+  additional guidelines. (ccoleman@redhat.com)
+
 * Mon May 07 2012 Adam Miller <admiller@redhat.com> 1.1.2-1
 - Add content_permissions to user profile (ccoleman@redhat.com)
 - Merge events recent changes and user profile into code. (ccoleman@redhat.com)

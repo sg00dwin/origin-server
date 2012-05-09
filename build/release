@@ -265,7 +265,7 @@ class Release < Thor
       mash_and_rsync "libra-rhel-5.8", true, options
 
       unless options.no_ami?
-        create_ami options rhc_devenv_found
+        create_ami(options, rhc_devenv_found)
       end
     ensure
       reset_orig_branches(orig_branches)
@@ -585,13 +585,13 @@ class Release < Thor
       rhc_devenv_found
     end
   
-    def create_ami(options, dev_env_update=false)
+    def create_ami(options, devenv_update=false)
       # Jenkins parameters
       proxy = "squid.corp.redhat.com:8080"
       jenkins = "https://ci.dev.openshift.redhat.com/jenkins"
       token = "libra1"
   
-      if dev_env_update
+      if devenv_update
         puts "Kicking off AMI build..."
         unless run("curl --insecure --proxy #{proxy} #{jenkins}/job/libra_ami/buildWithParameters?token=#{token}\\&BUILD_CLEAN_AMI=true\\&INSTALL_FROM_SOURCE=#{options.source_ami? ? "true" : "false"}", :verbose => options.verbose?)
           puts "ERROR - Jenkins remote job invocation failed."
