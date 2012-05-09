@@ -8,7 +8,7 @@
 
 Summary:   Dependencies for OpenShift development
 Name:      rhc-devenv
-Version: 0.93.8
+Version: 0.93.10
 Release:   1%{?dist}
 Group:     Development/Libraries
 License:   GPLv2
@@ -495,6 +495,13 @@ echo "Header append Strict-Transport-Security includeSubDomains" >> /etc/httpd/c
 %{policydir}/*
 
 %changelog
+* Wed May 09 2012 Adam Miller <admiller@redhat.com> 0.93.10-1
+- 
+
+* Wed May 09 2012 Adam Miller <admiller@redhat.com> 0.93.9-1
+- By default, drupal in the devenv should log notifications instead of emailing
+  them (ccoleman@redhat.com)
+
 * Tue May 08 2012 Adam Miller <admiller@redhat.com> 0.93.8-1
 - fixed make-certs.txt to have the correct hostname for qpid servers
   (twiest@redhat.com)

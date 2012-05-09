@@ -1,6 +1,0 @@
-- unless flash.empty?
-  #flash
-    - flash.each do |key, value|
-      - unless value.nil?
-        %div{ :class => alert_class_for(key) }
-          = value
