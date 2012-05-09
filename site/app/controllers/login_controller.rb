@@ -18,8 +18,12 @@ class LoginController < SiteController
 
   def valid_referrer(referrer)
     case
-    when referrer.path.starts_with?(login_path); nil
-    when referrer.path.starts_with?(reset_password_path); nil
+    when [
+      login_path,
+      reset_password_path,
+      new_account_path,
+      complete_account_path,
+    ].any? {|path| referrer.path.starts_with?(path) }: nil
     else referrer.to_s
     end
   end
