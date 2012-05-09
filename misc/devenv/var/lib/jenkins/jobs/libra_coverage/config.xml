@@ -1,7 +1,7 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <project>
   <actions/>
-  <description></description>
+  <description>Perform coverage analysis on unit tests for Libra.</description>
   <logRotator>
     <daysToKeep>10</daysToKeep>
     <numToKeep>10</numToKeep>
@@ -23,7 +23,7 @@
         <string>uploadpack</string>
         <string>git-upload-pack</string>
         <string>url</string>
-        <string>git://github.com/openshift/os-client-tools.git</string>
+        <string>git://git1.ops.rhcloud.com/li.git/</string>
         <string>tagopt</string>
         <string></string>
       </org.spearce.jgit.transport.RemoteConfig>
@@ -54,29 +54,30 @@
   <blockBuildWhenUpstreamBuilding>false</blockBuildWhenUpstreamBuilding>
   <triggers class="vector">
     <hudson.triggers.SCMTrigger>
-      <spec>*/15 * * * *</spec>
+      <spec>0 3 * * 2-6/2</spec>
     </hudson.triggers.SCMTrigger>
   </triggers>
   <concurrentBuild>false</concurrentBuild>
   <builders>
     <hudson.tasks.Shell>
-      <command></command>
+      <command># Build and install HEAD for the integration tests
+build/devenv launch libra_coverage_${BUILD_NUMBER} --verifier --instance_type m1.large
+build/devenv sync libra_coverage_${BUILD_NUMBER} --tag --clean_metadata
+
+# Run the &apos;verification&apos; tests to test higher level components
+build/devenv test libra_coverage_${BUILD_NUMBER} --exclude_internal --exclude_verification --include_rcov --terminate</command>
     </hudson.tasks.Shell>
   </builders>
   <publishers>
+    <hudson.tasks.ArtifactArchiver>
+      <artifacts>rhc/log/*, rhc/log/**/*</artifacts>
+      <latestOnly>false</latestOnly>
+    </hudson.tasks.ArtifactArchiver>
     <hudson.tasks.Mailer>
       <recipients>libra-devel@redhat.com</recipients>
       <dontNotifyEveryUnstableBuild>true</dontNotifyEveryUnstableBuild>
       <sendToIndividuals>false</sendToIndividuals>
     </hudson.tasks.Mailer>
-    <hudson.tasks.BuildTrigger>
-      <childProjects>libra_check, libra_coverage</childProjects>
-      <threshold>
-        <name>SUCCESS</name>
-        <ordinal>0</ordinal>
-        <color>BLUE</color>
-      </threshold>
-    </hudson.tasks.BuildTrigger>
   </publishers>
   <buildWrappers/>
 </project>
