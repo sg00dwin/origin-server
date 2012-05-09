@@ -259,12 +259,17 @@ class Release < Thor
     orig_branches = checkout_branch(options[:stage] || options.stage? ? "stage" : "master")
     begin
       # do RHEL 6.x first
-      mash_and_rsync "libra-rhel-6.2", false, options
+      rhc_devenv_found = mash_and_rsync "libra-rhel-6.2", false, options
 
       # now RHEL 5.x, skipping rhc gem build/deploy
       mash_and_rsync "libra-rhel-5.8", true, options
 
       unless options.no_ami?
+        unless options.source_ami?
+          if rhc_devenv_found 
+            options[:clean_ami] = true
+          end
+        end
         create_ami options
       end
     ensure
@@ -406,6 +411,9 @@ class Release < Thor
       else
         rsync = "rsync -aHv --delete-after --progress --no-g --omit-dir-times --chmod=Dug=rwX"
       end
+
+      # variable to keep track of if we've built a new rhc-devenv
+      rhc_devenv_found = false
   
       # derive pkg_suffix from tag_base
       if tag_base =~ /^.*rhel-(\d)\.(\d)$/
@@ -503,12 +511,28 @@ class Release < Thor
       puts "Running mash sync"
       mash_cmd = "/usr/bin/mash -o #{options.temp_dir}/#{mash_config} -c /etc/mash/li-mash.conf #{mash_config}"
       puts mash_cmd
-      run(mash_cmd, :verbose => options.verbose?)
-      unless run(mash_cmd, :verbose => options.verbose?)
+      ### FIXME - Comment this out until new patch is verified, then remove
+      #run(mash_cmd, :verbose => options.verbose?)
+      #unless run(mash_cmd, :verbose => options.verbose?)
+      #  puts "ERROR - mash sync failed"
+      #  exit 1
+      #end
+      #
+      # Ugly bash hack to set the value of ruby's $? as well as get output to 
+      # terminal while mash runs.
+      `_f() { #{mash_cmd} | tee /dev/tty; return ${PIPESTATUS[0]}; }; _f`
+      mash_cmd_output = `_f() { #{mash_cmd} | tee /dev/tty; return ${PIPESTATUS[0]}; }; _f`
+      if $? != 0
         puts "ERROR - mash sync failed"
         exit 1
       end
-  
+      
+      mash_cmd_output.each do | line | 
+        if /rhc-devenv/.match line
+          rhc_devenv_found = true
+        end
+      end
+
       # If createrepo understands --compress-type flag, it will create repodata in RHEL5-unfriendly format
       # recreate repo metadata if we are targeting RHEL5 and createrepo is sufficiently equipped
       if pkg_suffix =~ /^el5/
@@ -567,6 +591,7 @@ class Release < Thor
         end
         puts "Done"
       end
+      rhc_devenv_found
     end
   
     def create_ami(options)
