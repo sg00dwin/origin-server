@@ -21,7 +21,7 @@ function openshift_theme() {
   );
 }
 
-function openshift_comment_form($form, $edit) {
+function openshift_comment_form($form, $edit=array()) {
   global $user;
   if ($user->uid && (empty($edit['cid']) || !user_access('administer comments'))) {
     $form['_author'] = NULL;

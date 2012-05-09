@@ -1,8 +1,9 @@
-require 'rubygems'
+#require 'rubygems'
 #require 'sinatra'
 require 'webrick'
 require 'webrick/https'
 require 'openssl'
+require 'yaml'
 
 STATUS_APP_ROOT = File.expand_path(File.dirname(__FILE__))
 $LOAD_PATH << File.join(STATUS_APP_ROOT, 'lib')

@@ -27,6 +27,10 @@ module ApplicationHelper
     controller.logged_in?
   end
 
+  def logged_in_id
+    controller.session_user.login if controller.logged_in?
+  end
+
   # Detect previous login
   def previously_logged_in?
     controller.previously_logged_in?

@@ -99,10 +99,12 @@ class LoginControllerTest < ActionController::TestCase
     assert_equal new_application_url, assigns(:redirectUrl)
   end
 
-  test "should send login to default" do
-    @request.env['HTTP_REFERER'] = login_path
-    get :show
-    assert_nil assigns(:redirectUrl)
+  test "should send certain urls to default" do
+    [login_path, new_account_path, reset_password_path, complete_account_path].each do |path|
+      @request.env['HTTP_REFERER'] = path
+      get :show
+      assert_nil assigns(:redirectUrl)
+    end
   end
 
   test 'cookie domain can be external' do

@@ -957,6 +957,7 @@ function redhat_events_views_default_views() {
   $handler->override_option('cache', array(
     'type' => 'none',
   ));
+  $handler->override_option('css_class', 'event-listings');
   $handler->override_option('items_per_page', 0);
   $handler->override_option('style_options', array(
     'grouping' => '',
