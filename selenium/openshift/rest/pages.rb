@@ -124,7 +124,7 @@ module OpenShift
       end
 
       def find_create_buttons
-        @page.find_elements(:xpath => "//a[contains(@href, '/console/application_types/')]")
+        @page.find_elements(:xpath => "//div[contains(@class, 'application_type')]/a[contains(@href, '/console/application_types/')][contains(@class, 'btn')]")
       end
     end
 
@@ -144,7 +144,7 @@ module OpenShift
       end
 
       def find_app_buttons
-        @page.find_elements(:xpath => "//a[contains(@href, '/console/applications/')]")
+        @page.find_elements(:xpath => "//div[contains(@class, 'app-block')]//a[contains(@href, '/console/applications/')]")
       end
     end
 

@@ -1247,7 +1247,7 @@ function redhat_events_views_default_views() {
       'hide_alter_empty' => 1,
       'link_to_node' => 0,
       'label_type' => 'none',
-      'format' => 'default',
+      'format' => 'long',
       'multiple' => array(
         'multiple_number' => '',
         'multiple_from' => '',
