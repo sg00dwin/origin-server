@@ -2,7 +2,7 @@
 
 Summary:       Multi-tenant cloud management system node tools
 Name:          rhc-node
-Version: 0.92.4
+Version: 0.92.5
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -266,6 +266,11 @@ fi
 /lib64/security/pam_libra.so
 
 %changelog
+* Wed May 09 2012 Adam Miller <admiller@redhat.com> 0.92.5-1
+- Merge branch 'master' of git1.ops.rhcloud.com:/srv/git/li (rpenta@redhat.com)
+- Fix for 'empty? undefined for <uid>:Fixnum' during app create
+  (rpenta@redhat.com)
+
 * Tue May 08 2012 Adam Miller <admiller@redhat.com> 0.92.4-1
 - Bug 819739 (dmcphers@redhat.com)
 
