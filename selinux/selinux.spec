@@ -1,6 +1,6 @@
 Summary:       SELinux policy for OpenShift nodes
 Name:          rhc-selinux
-Version: 0.92.3
+Version: 0.92.4
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -46,6 +46,14 @@ rm -rf %{buildroot}
 %attr(0640,-,-) %{_datadir}/selinux/packages/libra.pp
 
 %changelog
+* Wed May 09 2012 Adam Miller <admiller@redhat.com> 0.92.4-1
+- Revert "Allow libra domains to communicate with jboss_messageing ports"
+  (dmcphers@redhat.com)
+- reverted yum update selinux in favor or proper spec file requires
+  (admiller@redhat.com)
+- Allow libra domains to communicate with jboss_messageing ports
+  (dwalsh@redhat.com)
+
 * Tue May 08 2012 Adam Miller <admiller@redhat.com> 0.92.3-1
 - Dontaudit leaked file descriptors going to crontab_t command
   (dwalsh@redhat.com)
