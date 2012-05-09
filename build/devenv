@@ -770,7 +770,7 @@ pushd li-working > /dev/null
 popd > /dev/null
 
 rm -rf li-working #{working_dirs}
-#{options.clean_metadata? ? "yum update -y --exclude='rhc-devenv' rhc-* rubygem-stickshift-*  rubygem-gearchanger-* rubygem-uplift-* rubygem-swingshift-* selinux-policy selinux-policy-targeted; " : ''}
+#{options.clean_metadata? ? "yum update -y --exclude='rhc-devenv' rhc-* rubygem-stickshift-*  rubygem-gearchanger-* rubygem-uplift-* rubygem-swingshift-*; " : ''}
 
 # End shell code
 ################

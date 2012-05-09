@@ -8,8 +8,8 @@ URL:           http://openshift.redhat.com
 Source0:       rhc-selinux-%{version}.tar.gz
 
 BuildRoot:     %(mktemp -ud %{_tmppath}/%{name}-%{version}-%{release}-XXXXXX)
-BuildRequires: selinux-policy >= 3.7.19-134
-Requires:      selinux-policy-targeted >= 3.7.19-134
+BuildRequires: selinux-policy >= 3.7.19-145
+Requires:      selinux-policy-targeted >= 3.7.19-145
 Requires(post):   /usr/sbin/semanage
 Requires(postun): /usr/sbin/semanage
 
