@@ -511,23 +511,11 @@ class Release < Thor
       puts "Running mash sync"
       mash_cmd = "/usr/bin/mash -o #{options.temp_dir}/#{mash_config} -c /etc/mash/li-mash.conf #{mash_config}"
       puts mash_cmd
-      ### FIXME - Comment this out until new patch is verified, then remove
-      #run(mash_cmd, :verbose => options.verbose?)
-      #unless run(mash_cmd, :verbose => options.verbose?)
-      #  puts "ERROR - mash sync failed"
-      #  exit 1
-      #end
-      #
-      # Ugly bash hack to set the value of ruby's $? as well as get output to 
-      # terminal while mash runs.
-      `_f() { #{mash_cmd} | tee /dev/tty; return ${PIPESTATUS[0]}; }; _f`
-      mash_cmd_output = `_f() { #{mash_cmd} | tee /dev/tty; return ${PIPESTATUS[0]}; }; _f`
-      if $? != 0
+      run(mash_cmd, :verbose => options.verbose?)
+      unless run(mash_cmd, :verbose => options.verbose?)
         puts "ERROR - mash sync failed"
         exit 1
       end
-      
-      rhc_devenv_found = mash_cmd_output.include?('rhc-devenv')
 
       # If createrepo understands --compress-type flag, it will create repodata in RHEL5-unfriendly format
       # recreate repo metadata if we are targeting RHEL5 and createrepo is sufficiently equipped
@@ -560,10 +548,22 @@ class Release < Thor
       end
 
       puts "Syncing RPMs to repo..."
-      unless run("#{rsync} #{options.temp_dir}/#{mash_config}/#{mash_config}/* #{repo}/#{mash_config}/", :verbose => options.verbose?)
-        puts "ERROR - RPM sync failed."
+      #
+      # Ugly bash hack to set the value of ruby's $? as well as get output to 
+      # terminal while mash runs.
+      rsync_output = `_f() { #{rsync} #{options.temp_dir}/#{mash_config}/#{mash_config}/* #{repo}/#{mash_config}/ | tee /dev/tty; return ${PIPESTATUS[0]}; }; _f`
+      if $? != 0
+        puts "ERROR - RPM sync failed"
         exit 1
       end
+      
+      rhc_devenv_found = rsync_output.include?('rhc-devenv')
+      
+      ### FIXME - Comment this out until new patch is verified, then remove
+      #unless run("#{rsync} #{options.temp_dir}/#{mash_config}/#{mash_config}/* #{repo}/#{mash_config}/", :verbose => options.verbose?)
+      #  puts "ERROR - RPM sync failed."
+      #  exit 1
+      #end
       
       unless skip_gem
         # sync rhc gem
