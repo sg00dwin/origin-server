@@ -2,10 +2,8 @@
 
 - content_for :page_title, 'Legal terms'
 
-%h1.ribbon
-  .ribbon-content Legal terms
-  .ribbon-left
-  
+%h1.ribbon Legal terms
+
 %section.content
   - @term.errors.each do |key, value|
     - if key == :base
