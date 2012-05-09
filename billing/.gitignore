@@ -1,5 +1,6 @@
+public/app
+vendor/*
 .bundle
-db/*.sqlite3
-log/*.log
-tmp/
-.sass-cache/
+log/*
+tmp/*
+public/stylesheets/.sass-cache/
