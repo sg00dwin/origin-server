@@ -8,7 +8,7 @@ users = CloudUser.find_all(nil)
 
 scalable_count = 0
 moved_count = 0
-failed_to_move_count = 0
+failed_to_move = []
 mysql_apps = []
 attempted_move = []
 users.each do |user|
@@ -31,7 +31,7 @@ users.each do |user|
               mysql_apps << [user.login, app.name]
             end
           rescue Exception=>e
-            failed_to_move_count += 1
+            failed_to_move << [user.login, app.name]
             print "Exception reported for app '#{app.name}' for user '#{user.login}' while fixing for runaway gear '#{app.gear.uuid}' : '#{e.message}'\n"
           end
         end
@@ -41,19 +41,23 @@ end
 
 print "Scalable apps (not touched) : #{scalable_count}\n"
 print "Total apps moved successfully : #{moved_count}\n"
-print "List of apps on which move was attempted :\n"
+print "List of apps on which move was attempted - #{attempted_move.length}\n"
 attempted_move.each do |app_info|
   ulogin, appname = app_info
   print "\t[user: #{ulogin}, appname: #{appname}]\n"
 end
 
-print "\nList of moved apps which have mysql on them -\n"
+print "\nList of moved apps which have mysql on them - #{mysql_apps.length}\n"
 mysql_apps.each do |app_info|
   ulogin, appname = app_info
   print "\t[user: #{ulogin}, appname: #{appname}]\n"
 end
 
-print "\nTotal apps that failed to move properly - #{failed_to_move_count}\n"
+print "\nTotal apps that failed to move properly - #{failed_to_move.length}\n"
+failed_to_move.each do |app_info|
+  ulogin, appname = app_info
+  print "\t[user: #{ulogin}, appname: #{appname}]\n"
+end
 
-exit (failed_to_move_count==0 ? 0 : 1)
+exit (failed_to_move.length==0 ? 0 : 1)
 
