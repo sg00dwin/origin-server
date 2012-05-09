@@ -571,6 +571,16 @@ module GearChanger
       end
 
       def move_gear(app, gear, destination_container, destination_district_uuid, allow_change_district, node_profile)
+        if app.scalable
+          gi = app.group_instance_map[gear.group_instance_name]
+          gi.component_instances.each do |ci_name|
+            cinst = app.comp_instance_map[ci_name]
+            cart = cinst.parent_cart_name
+            if cart==app.proxy_cartridge
+              raise StickShift::UserException.new("Cannot handle a scalable app's haproxy gear as of now. Not supported.", 1)
+            end
+          end
+        end
         reply = ResultIO.new
         state_map = {}
         gear.node_profile = node_profile if node_profile

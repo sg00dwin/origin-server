@@ -20,6 +20,8 @@ Options:
     Application name (alphanumeric)
 --app_uuid   <app_uuid>
     Application uuid
+--gear_uuid <gear_uuid>
+    Gear uuid to move, if app is a scalable application
 --destination_district_uuid <district_uuid>
     Destination district uuid
 -i|--target_server_identity <server_identity>
@@ -39,6 +41,7 @@ opts = GetoptLong.new(
     ["--rhlogin",          "-l", GetoptLong::REQUIRED_ARGUMENT],
     ["--app",              "-a", GetoptLong::REQUIRED_ARGUMENT],
     ["--app_uuid",               GetoptLong::REQUIRED_ARGUMENT],
+    ["--gear_uuid",        "-g", GetoptLong::REQUIRED_ARGUMENT],
     ["--destination_district_uuid", "-u", GetoptLong::REQUIRED_ARGUMENT],
     ["--target_server_identity", "-i", GetoptLong::REQUIRED_ARGUMENT],
     ["--node_profile",     "-p", GetoptLong::REQUIRED_ARGUMENT],
@@ -58,6 +61,7 @@ end
 login    = args["--rhlogin"]
 app_name = args["--app"]
 app_uuid = args["--app_uuid"]
+gear_uuid = args["--gear_uuid"]
 target_server_identity = args['--target_server_identity']
 destination_district_uuid = args['--destination_district_uuid']
 node_profile = args['--node_profile']
@@ -111,7 +115,24 @@ puts "App UUID: #{app.uuid}"
 
 destination_container = nil
 destination_container = StickShift::ApplicationContainerProxy.instance(target_server_identity) if target_server_identity
-reply = app.container.move_app(app, destination_container, destination_district_uuid, allow_change_district, node_profile)
+
+if app.scalable
+  if not gear_uuid
+    puts "ERROR: Application '#{app.name}' is a scalable app. Please provide the gear to move with --gear_uuid option. Available gears for this app are :\n"
+    app.gears.each { |g| puts "\t#{g.uuid}\n" }
+    exit 1
+  end
+  gear = nil
+  app.gears.each { |g| gear = g if g.uuid == gear_uuid }
+  if gear.nil?
+    puts "ERROR : Invalid gear uuid '#{gear_uuid}' for given app '#{app.name}'. Valid gear_uuids are :\n"
+    app.gears.each { |g| puts "\t#{g.uuid}\n" }
+    exit 1
+  end
+  reply = app.container.move_gear(app, gear, destination_district_uuid, allow_change_district, node_profile)
+else
+  reply = app.container.move_app(app, destination_container, destination_district_uuid, allow_change_district, node_profile)
+end
 
 puts "################# ADDITIONAL DEBUG OUTPUT #################\n#{reply.debugIO.string}\n" unless reply.debugIO.string.empty?
 puts "################# ADDITIONAL ERROR OUTPUT #################\n#{reply.errorIO.string}\n" unless reply.errorIO.string.empty?
