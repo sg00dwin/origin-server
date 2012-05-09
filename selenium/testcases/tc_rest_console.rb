@@ -46,10 +46,6 @@ class RestConsole < OpenShift::Rest::TestCase
     uri = URI.parse(href)
 
     assert uri.host.start_with? "#{app_name}-#{namespace.downcase}"
-
-    app_link.click
-
-    assert_redirected_to href
   end
 
   def test_create_and_delete_apps
@@ -62,6 +58,8 @@ class RestConsole < OpenShift::Rest::TestCase
 
       # create all app types available
       if index == 0
+        # skip jboss
+      elsif index == 1
         # first one we need to create a namespace
         create_app index, namespace.downcase
       else
@@ -129,9 +127,5 @@ class RestConsole < OpenShift::Rest::TestCase
       uri = URI.parse(href)
 
       assert uri.host.start_with? "#{app_name}-#{namespace}"
-
-      app_link.click
-
-      assert_redirected_to href
     end
 end
