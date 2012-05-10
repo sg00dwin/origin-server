@@ -9,7 +9,7 @@ class UsageModelTest < ActiveSupport::TestCase
     orig = usage
     ue = Usage.new
     ue.construct(orig.user_id, orig.gear_uuid, orig.gear_type,
-                 orig.action, orig.create_time, orig.destroy_time, orig.uuid)
+                 orig.create_time, orig.destroy_time, orig.uuid)
     ue.save!
     ue = Usage.find(orig.uuid)
     ue.updated_at = nil
@@ -83,8 +83,35 @@ class UsageModelTest < ActiveSupport::TestCase
   test "find usage by gear" do
     ue = usage
     ue.save!
-    ue = Usage.find_by_gear(ue.gear_uuid)
-    assert(ue != nil)
+    ue1 = Usage.find_by_gear(ue.gear_uuid)
+    assert(ue1 != nil)
+    ue1 = Usage.find_by_gear(ue.gear_uuid, ue.create_time)
+    assert(ue1 != nil)
+  end
+
+  test "find user usage summary" do
+    cur_tm = Time.now
+    ue1 = usage
+    ue1.gear_type = 'small'
+    ue1.create_time = cur_tm + 1
+    ue1.destroy_time = cur_tm + 101
+    ue1.save!
+    ue2 = usage
+    ue2.user_id = ue1.user_id
+    ue2.gear_type = 'small'
+    ue2.create_time = cur_tm + 501
+    ue2.destroy_time = cur_tm + 601
+    ue2.save!
+    ue3 = usage
+    ue3.user_id = ue1.user_id
+    ue3.gear_type = 'medium'
+    ue3.create_time = cur_tm + 201
+    ue3.destroy_time = cur_tm + 301
+    ue3.save!
+    expected_res = { 'small'  => { 'num_gears' => 2, 'consumed_time' => 200 },
+                     'medium' => { 'num_gears' => 1, 'consumed_time' => 100 } }
+    res = Usage.find_user_summary(ue1.user_id)
+    assert_equal(res, expected_res)
   end
 
   def usage
@@ -95,7 +122,6 @@ class UsageModelTest < ActiveSupport::TestCase
     obj.user_id = "user#{gen_uuid}"
     obj.gear_uuid = "gear#{gen_uuid}"
     obj.gear_type = 'small'
-    obj.action = 'create'
     obj.create_time = Time.now
     obj.destroy_time = nil
     obj.updated_at = nil

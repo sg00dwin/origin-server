@@ -5,17 +5,15 @@ require 'mongo_mapper'
 class Usage < StickShift::Model
   include MongoMapper::Document
 
-  VALID_ACTIONS = ['create', 'destroy']
   VALID_GEAR_TYPES = ['small', 'medium', 'large']
 
   key :uuid,         String, :required => true, :unique => true
   key :user_id,      String, :required => true
   key :gear_uuid,    String, :required => true
   key :gear_type,    String, :required => true, :in => VALID_GEAR_TYPES
-  key :action,       String, :required => true, :in => VALID_ACTIONS
   key :create_time,  Time,   :required => true
   key :destroy_time, Time,   :default => nil
-  attr_accessible :uuid, :user_id, :gear_uuid, :gear_type, :action, :create_time, :destroy_time
+  attr_accessible :uuid, :user_id, :gear_uuid, :gear_type, :create_time, :destroy_time
 
   timestamps!  # provides attribute updated_at
 
@@ -42,7 +40,7 @@ class Usage < StickShift::Model
     MongoMapper.connection[@db].authenticate(@user, @password) if @user
   end
   
-  def construct(user_id, gear_uuid, gear_type=nil, action=nil, 
+  def construct(user_id, gear_uuid, gear_type=nil,  
                 create_time=nil, destroy_time=nil, uuid=nil)
     self.uuid = uuid
     self.uuid = StickShift::Model.gen_uuid unless uuid
@@ -50,7 +48,6 @@ class Usage < StickShift::Model
     self.user_id = user_id
     self.gear_uuid = gear_uuid
     self.gear_type = gear_type
-    self.action = action
     self.create_time = create_time
     self.destroy_time = destroy_time
   end
@@ -76,8 +73,29 @@ class Usage < StickShift::Model
                                           {:create_time => {:$lte => end_time}} ]).all    
   end
 
-  def self.find_by_gear(gear_uuid)
-    where(:gear_uuid => gear_uuid).all
+  def self.find_by_gear(gear_uuid, create_time=nil)
+    unless create_time
+      where(:gear_uuid => gear_uuid).all
+    else
+      where(:gear_uuid => gear_uuid, :create_time => create_time).all
+    end
+  end
+
+  def self.find_user_summary(user_id)
+    usage_events = self.find_by_user(user_id)
+    res = {}
+    usage_events.each do |e|
+      res[e.gear_type] = {} unless res[e.gear_type]
+      res[e.gear_type]['num_gears'] = 0 unless res[e.gear_type]['num_gears']
+      res[e.gear_type]['num_gears'] += 1
+      res[e.gear_type]['consumed_time'] = 0 unless res[e.gear_type]['consumed_time']
+      unless e.destroy_time
+        res[e.gear_type]['consumed_time'] += Time.now - e.create_time
+      else
+        res[e.gear_type]['consumed_time'] += e.destroy_time - e.create_time
+      end
+    end
+    res
   end
 
   def self.find_all()
