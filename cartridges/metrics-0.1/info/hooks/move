@@ -22,15 +22,16 @@ done
 
 [ $# -eq 3 ] || print_help
 
+cartridge_type="metrics-0.1"
 namespace=`basename $2`
 application="$1"
 uuid=$3
 
 setup_basic_vars
 
-CART_INFO_DIR=$CARTRIDGE_BASE_PATH/embedded/metrics-0.1/info
+CART_INFO_DIR=$CARTRIDGE_BASE_PATH/embedded/$cartridge_type/info
 
-METRICS_DIR="$APP_HOME/metrics-0.1"
+METRICS_DIR=$(get_cartridge_instance_dir "$cartridge_type")
 observe_setup_var_lib_dir "$METRICS_DIR"
 
 METRICS_IP=`embedded_find_open_ip $uid $APP_HOME`

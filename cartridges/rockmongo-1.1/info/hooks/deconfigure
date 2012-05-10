@@ -21,13 +21,13 @@ done
 
 [ $# -eq 3 ] || print_help
 
+cartridge_type="rockmongo-1.1"
 source "/etc/stickshift/stickshift-node.conf"
 source ${CARTRIDGE_BASE_PATH}/abstract/info/lib/util
 
-app_type="rockmongo-1.1"
 setup_embedded_deconfigure "$1" $2 $3
 
-ROCKMONGO_DIR=`echo $APP_HOME/rockmongo-1.1 | tr -s /` # ensure that there aren't double /'s
+ROCKMONGO_DIR=$(get_cartridge_instance_dir "$cartridge_type")
 ROCKMONGO_CTL_SCRIPT="$ROCKMONGO_DIR/${application}_rockmongo_ctl.sh"
 
 #
