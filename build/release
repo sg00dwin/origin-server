@@ -31,30 +31,6 @@ class Release < Thor
       end
     end
 
-    def next_patch_version(version)
-      last_index_of_dot = version.rindex('.')
-      version[0..last_index_of_dot] + (version[last_index_of_dot+1..-1].to_i + 1).to_s
-    end
-
-    def next_minor_version(version)
-      index_of_dot = version.index('.')
-      second_index_of_dot = version.index('.', index_of_dot + 1)
-      last_index_of_dot = version.rindex('.')
-      if version[last_index_of_dot+1..-1].to_i > 1
-        version[0..index_of_dot] + (version[index_of_dot + 1..second_index_of_dot].to_i + 1).to_s + ".0"
-      end
-    end
-
-    def get_version(file)
-      version = /Version: *(.*)/.match(File.read(file))[1].strip
-    end
-
-    def update_gemfile_version(spec_file, gem_name, gemfile, verbose)
-      version = get_version(spec_file)
-      nv = next_patch_version(version)
-      run("/bin/sed -i 's,#{gem_name} (.*,#{gem_name} (#{nv}),' #{gemfile}", :verbose => verbose)
-    end
-
     def get_updated_build_dirs(verbose, push_changes=false)
       gem_updates = false
       
@@ -318,7 +294,10 @@ class Release < Thor
         spec_file = pkg[1]
         version = get_version(spec_file)
         new_version = next_minor_version(version)
-        run("/bin/sed -i 's,^Version:.*,Version: #{new_version},' #{spec_file}", :verbose => options.verbose?)
+        if new_version
+          run("/bin/sed -i 's,^Version:.*,Version: #{new_version},' #{spec_file}", :verbose => options.verbose?)
+        end
+        
       end
       if options.push_changes?
         run("git add *.spec; git commit -m 'bumping spec versions'; git push origin master", :verbose => options.verbose?)
