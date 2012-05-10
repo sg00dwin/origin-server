@@ -11,19 +11,19 @@ module OpenShift
     # source  - The source brew tag to lookup (example: libra-rhel-6.2-candidate)
     # target  - The target brew tag to lookup (example: libra-rhel-6.2-stage)
     # date    - Date since last stage: remove brew obsoletes (ex: 2012-04-15)
+    # include_internal - Boolean indicating whether to include internal packages
     #
     # Examples:
     #   get_packages_to_tag("libra-rhel-6.2-candidate", "libra-rhel-6.2-stage", "2012-04-15")
     #   # => ["rhc-0.91.12-1.el6_2", "rhc-broker-0.91.18-1.el6_2"]
     #
     # Returns an array of brew package names
-    def get_packages_to_tag(source, target, date)
+    def get_packages_to_tag(source, target, date, include_internal=false)
   
       stage_candidates = []   # store candidates from brew query
       need_stage_tags = []    # final set of packages that need tagging
       our_pkgs = []           # our packages w/ full version from brew query
-      our_pkgs_names = get_packages # <-- from Tito
-      
+      our_pkgs_names = include_internal ? {} : get_packages # <-- from Tito
 
       # FIXME:  I'm open to suggestion about the awk, I just couldn't think of a
       #         more clean implementation to get only tagged lines and the pkg

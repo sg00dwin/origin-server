@@ -272,9 +272,10 @@ class Release < Thor
     end
   end
   
-  desc "tag_external_pkgs_stg AFTER_DATE", "Tag packages that are from external sources into the stage repo since AFTER_DATE"
+  desc "tag_pkgs_stg AFTER_DATE", "Tag packages that are from external sources into the stage repo since AFTER_DATE"
   method_option :check, :type => :boolean, :desc => "Don't do anything yet, just show what would be done"
-  def tag_external_pkgs_stg(after_date)
+  method_option :include_internal, :type => :boolean, :desc => "Boolean indicating whether to include internal packages"
+  def tag_pkgs_stg(after_date)
     stg_brew_tag = "libra-rhel-6.2-stage"
     cand_brew_tag = "libra-rhel-6.2-candidate"
     orig_branches = checkout_branch("master")
@@ -285,7 +286,7 @@ class Release < Thor
       puts "Example: build/release tag_external_pkgs_stg 1970-01-30 [--check]"
       exit 1
     else
-      external_pkgs_tag_stg = get_packages_to_tag(cand_brew_tag, stg_brew_tag, after_date)
+      external_pkgs_tag_stg = get_packages_to_tag(cand_brew_tag, stg_brew_tag, after_date, options.include_internal?)
     end
 
     if options.check?
@@ -338,7 +339,7 @@ class Release < Thor
   end
   
   desc "build_ami", "Build an ami based on the current li repo"
-  method_option :stage, :type => :string, :desc => "Indicates whether to use the stage repo"
+  method_option :stage, :type => :boolean, :desc => "Indicates whether to use the stage repo"
   method_option :clean_ami, :type => :boolean, :desc => "Indicates whether to build a clean ami"
   method_option :source_ami, :type => :boolean, :desc => "Indicates whether to build a source ami"
   def build_ami
@@ -475,7 +476,7 @@ class Release < Thor
             build_info = all_packages[pkg]
             build_dir = build_info[0]
             inside(build_dir) do
-              nvr_package = `git tag | grep #{package} | tail -n1`.chomp
+              nvr_package = `git tag | grep ^#{package} | tail -n1`.chomp
             end
   
             unless nvr_package.empty?
@@ -490,7 +491,7 @@ class Release < Thor
             build_info = all_packages[package]
             build_dir = build_info[0]
             inside(build_dir) do
-              tags = `git tag | grep #{package}-[0-9]`.chomp.split("\n")
+              tags = `git tag | grep ^#{package}-[0-9]`.chomp.split("\n")
             end
   
             # Sort the tags by NVR and take the last entry
