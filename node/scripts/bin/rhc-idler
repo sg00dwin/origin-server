@@ -31,8 +31,8 @@ function print_idled {
 }
 
 function get_state {
-    source "/var/lib/stickshift/$1/.env/OPENSHIFT_GEAR_DIR"
-    cat $OPENSHIFT_GEAR_DIR/.state
+    source "/var/lib/stickshift/$1/.env/OPENSHIFT_HOMEDIR"
+    cat $OPENSHIFT_HOMEDIR/app/.state
 }
 
 function is_idled {
@@ -83,7 +83,7 @@ then
     print_help
 fi
 
-source "/var/lib/stickshift/${uuid}/.env/OPENSHIFT_GEAR_DIR"
+source "/var/lib/stickshift/${uuid}/.env/OPENSHIFT_HOMEDIR"
 
 if `is_idled "$uuid"` || `is_stopped "$uuid"` ; then
     exit 0 # app is already idled or stopped, nothing to do
@@ -103,7 +103,7 @@ service libra stopuser "${uuid}"
 
 # Disable
 # code copied from node/lib/util_ext
-runuser --shell /bin/sh "$uuid" -c "echo idle >$OPENSHIFT_GEAR_DIR/.state"
+runuser --shell /bin/sh "$uuid" -c "echo idle >$OPENSHIFT_HOMEDIR/app/.state"
 
 source "/var/lib/stickshift/${uuid}/.env/OPENSHIFT_RUN_DIR"
 touch "${OPENSHIFT_RUN_DIR}/stop_lock"

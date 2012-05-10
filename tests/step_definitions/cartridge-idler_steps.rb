@@ -18,18 +18,19 @@ $php_stop_format = "#{$php_stop_path} '%s' '%s' '%s'"
 $php_status_path = "#{$php_hooks}/status"
 $php_status_format = "#{$php_status_path} '%s' '%s' '%s'"
 
-$libra_httpd_conf_d ||= "/etc/httpd/conf.d/stickshift"
+$libra_httpd_conf_d ||= "/var/lib/stickshift/.httpd.d/"
 
 Given /^a new php_idler application$/ do
   account_name = @account['accountname']
-  app_name = 'app_idler'
-  namespace = 'ns_idler'
+  namespace = @account['namespace']
+  app_name = @account['appnames'][0]
   @app = {
     'namespace' => namespace,
     'name' => app_name
   }
   command = $php_config_format % [app_name, namespace, account_name]
-  runcon command, $selinux_user, $selinux_role, $selinux_type
+  exitcode = runcon command, $selinux_user, $selinux_role, $selinux_type, nil, 10
+  raise "Non zero exit code when creating php application: #{exitcode}" unless exitcode == 0
 end
 
 When /^I idle the php application$/ do

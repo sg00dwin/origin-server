@@ -33,10 +33,10 @@ fi
 source "/var/lib/stickshift/${uuid}/.env/OPENSHIFT_RUN_DIR"
 rm -f "${OPENSHIFT_RUN_DIR}/stop_lock"
 
-source "/var/lib/stickshift/${uuid}/.env/OPENSHIFT_GEAR_DIR"
+source "/var/lib/stickshift/${uuid}/.env/OPENSHIFT_HOMEDIR"
 
 # code copied from node/lib/util_ext
-runuser --shell /bin/sh "$uuid" -c "echo started >$OPENSHIFT_GEAR_DIR/.state"
+runuser --shell /bin/sh "$uuid" -c "echo started >$OPENSHIFT_HOMEDIR/app/.state"
 
 /sbin/service libra startuser "${uuid}"
 
