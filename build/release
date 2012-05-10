@@ -265,16 +265,17 @@ class Release < Thor
       mash_and_rsync "libra-rhel-5.8", true, options
 
       unless options.no_ami?
-        create_ami options rhc_devenv_found
+        create_ami(options, rhc_devenv_found)
       end
     ensure
       reset_orig_branches(orig_branches)
     end
   end
   
-  desc "tag_external_pkgs_stg AFTER_DATE", "Tag packages that are from external sources into the stage repo since AFTER_DATE"
+  desc "tag_pkgs_stg AFTER_DATE", "Tag packages that are from external sources into the stage repo since AFTER_DATE"
   method_option :check, :type => :boolean, :desc => "Don't do anything yet, just show what would be done"
-  def tag_external_pkgs_stg(after_date)
+  method_option :include_internal, :type => :boolean, :desc => "Boolean indicating whether to include internal packages"
+  def tag_pkgs_stg(after_date)
     stg_brew_tag = "libra-rhel-6.2-stage"
     cand_brew_tag = "libra-rhel-6.2-candidate"
     orig_branches = checkout_branch("master")
@@ -285,7 +286,7 @@ class Release < Thor
       puts "Example: build/release tag_external_pkgs_stg 1970-01-30 [--check]"
       exit 1
     else
-      external_pkgs_tag_stg = get_packages_to_tag(cand_brew_tag, stg_brew_tag, after_date)
+      external_pkgs_tag_stg = get_packages_to_tag(cand_brew_tag, stg_brew_tag, after_date, options.include_internal?)
     end
 
     if options.check?
@@ -338,7 +339,7 @@ class Release < Thor
   end
   
   desc "build_ami", "Build an ami based on the current li repo"
-  method_option :stage, :type => :string, :desc => "Indicates whether to use the stage repo"
+  method_option :stage, :type => :boolean, :desc => "Indicates whether to use the stage repo"
   method_option :clean_ami, :type => :boolean, :desc => "Indicates whether to build a clean ami"
   method_option :source_ami, :type => :boolean, :desc => "Indicates whether to build a source ami"
   def build_ami
@@ -475,7 +476,7 @@ class Release < Thor
             build_info = all_packages[pkg]
             build_dir = build_info[0]
             inside(build_dir) do
-              nvr_package = `git tag | grep #{package} | tail -n1`.chomp
+              nvr_package = `git tag | grep ^#{package} | tail -n1`.chomp
             end
   
             unless nvr_package.empty?
@@ -490,7 +491,7 @@ class Release < Thor
             build_info = all_packages[package]
             build_dir = build_info[0]
             inside(build_dir) do
-              tags = `git tag | grep #{package}-[0-9]`.chomp.split("\n")
+              tags = `git tag | grep ^#{package}-[0-9]`.chomp.split("\n")
             end
   
             # Sort the tags by NVR and take the last entry
@@ -585,33 +586,44 @@ class Release < Thor
       rhc_devenv_found
     end
   
-    def create_ami(options, dev_env_update=false)
+    def create_ami(options, devenv_update=false)
       # Jenkins parameters
       proxy = "squid.corp.redhat.com:8080"
       jenkins = "https://ci.dev.openshift.redhat.com/jenkins"
       token = "libra1"
   
-      if dev_env_update
-        puts "Kicking off AMI build..."
-        unless run("curl --insecure --proxy #{proxy} #{jenkins}/job/libra_ami/buildWithParameters?token=#{token}\\&BUILD_CLEAN_AMI=true\\&INSTALL_FROM_SOURCE=#{options.source_ami? ? "true" : "false"}", :verbose => options.verbose?)
-          puts "ERROR - Jenkins remote job invocation failed."
-          exit 1
+      if options.stage?
+        if devenv_update
+          puts "Kicking off AMI build..."
+          unless run("curl --insecure --proxy #{proxy} #{jenkins}/job/libra_ami_stage/buildWithParameters?token=#{token}\\&BUILD_CLEAN_AMI=true", :verbose => options.verbose?)
+            puts "ERROR - Jenkins remote job invocation failed."
+            exit 1
+          end
+          puts "Done"
+        else
+          puts "Kicking off stage verification..."
+          unless run("curl --insecure --proxy #{proxy} #{jenkins}/job/libra_ami_stage/buildWithParameters?token=#{token}\\&BUILD_CLEAN_AMI=#{options.clean_ami? ? "true" : "false"}", :verbose => options.verbose?)
+            puts "ERROR - Jenkins remote job invocation failed."
+            exit 1
+          end
+          puts "Done"
         end
-        puts "Done"
-      elsif options.stage?
-        puts "Kicking off stage verification..."
-        unless run("curl --insecure --proxy #{proxy} #{jenkins}/job/libra_ami_stage/buildWithParameters?token=#{token}\\&BUILD_CLEAN_AMI=#{options.clean_ami? ? "true" : "false"}", :verbose => options.verbose?)
-          puts "ERROR - Jenkins remote job invocation failed."
-          exit 1
-        end
-        puts "Done"
       else
-        puts "Kicking off AMI build..."
-        unless run("curl --insecure --proxy #{proxy} #{jenkins}/job/libra_ami/buildWithParameters?token=#{token}\\&BUILD_CLEAN_AMI=#{options.clean_ami? ? "true" : "false"}\\&INSTALL_FROM_SOURCE=#{options.source_ami? ? "true" : "false"}", :verbose => options.verbose?)
-          puts "ERROR - Jenkins remote job invocation failed."
-          exit 1
+        if devenv_update
+          puts "Kicking off AMI build..."
+          unless run("curl --insecure --proxy #{proxy} #{jenkins}/job/libra_ami/buildWithParameters?token=#{token}\\&BUILD_CLEAN_AMI=true\\&INSTALL_FROM_SOURCE=#{options.source_ami? ? "true" : "false"}", :verbose => options.verbose?)
+            puts "ERROR - Jenkins remote job invocation failed."
+            exit 1
+          end
+          puts "Done"
+        else
+          puts "Kicking off AMI build..."
+          unless run("curl --insecure --proxy #{proxy} #{jenkins}/job/libra_ami/buildWithParameters?token=#{token}\\&BUILD_CLEAN_AMI=#{options.clean_ami? ? "true" : "false"}\\&INSTALL_FROM_SOURCE=#{options.source_ami? ? "true" : "false"}", :verbose => options.verbose?)
+            puts "ERROR - Jenkins remote job invocation failed."
+            exit 1
+          end
+          puts "Done"
         end
-        puts "Done"
       end
     end
   end

@@ -5,7 +5,7 @@
 
 Summary:        GearChanger plugin for m-colective service
 Name:           rubygem-%{gemname}
-Version: 0.9.4
+Version: 0.9.5
 Release:        1%{?dist}
 Group:          Development/Languages
 License:        ASL 2.0
@@ -70,6 +70,15 @@ rm -rf %{buildroot}
 %{ruby_sitelib}/%{gemname}.rb
 
 %changelog
+* Wed May 09 2012 Adam Miller <admiller@redhat.com> 0.9.5-1
+- Bugz# 819984. Update gear dns entried when app namespace is updated
+  (kraman@gmail.com)
+- move_gear should not allow haproxy gear to be moved until the cartridge is
+  fixed. rhc-admin-move should filter scalable apps and act accordingly
+  (rchopra@redhat.com)
+- fix for bug#819074 - fix gears that have uids out of sync with district
+  (rchopra@redhat.com)
+
 * Tue May 08 2012 Adam Miller <admiller@redhat.com> 0.9.4-1
 - move_gear : run the framework move hook on haproxy even though it is an
   embedded cart (rchopra@redhat.com)
