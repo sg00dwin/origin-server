@@ -5,7 +5,7 @@
 %global drupal_themename    openshift-theme
 
 Name:           drupal6-%{drupal_themename}
-Version: 3.2.0
+Version: 3.2.1
 Release:        1%{?dist}
 Summary:        Red Hat Openshift theme for Drupal %{drupal_release}
 
@@ -44,6 +44,9 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
+* Thu May 10 2012 Adam Miller <admiller@redhat.com> 3.2.1-1
+- bumping spec versions (admiller@redhat.com)
+
 * Wed May 09 2012 Adam Miller <admiller@redhat.com> 3.1.5-1
 - Make forum thread list much simpler (ccoleman@redhat.com)
 - Remove extra title attributes from user profile (ccoleman@redhat.com)
