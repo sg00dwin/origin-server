@@ -161,9 +161,11 @@ module OpenShift
       index_of_dot = version.index('.')
       second_index_of_dot = version.index('.', index_of_dot + 1)
       last_index_of_dot = version.rindex('.')
+      next_minor_version = nil
       if version[last_index_of_dot+1..-1].to_i > 1
-        version[0..index_of_dot] + (version[index_of_dot + 1..second_index_of_dot].to_i + 1).to_s + ".0"
+        next_minor_version = version[0..index_of_dot] + (version[index_of_dot + 1..second_index_of_dot].to_i + 1).to_s + ".0"
       end
+      next_minor_version
     end
 
     def get_version(file)

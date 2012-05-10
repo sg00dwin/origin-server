@@ -837,12 +837,12 @@ module GearChanger
         destination_container = nil
         if destination_container.nil?
           if destination_district_uuid && destination_district_uuid != source_district_uuid
-            raise StickShift::UserException.new("Error moving app.  Cannot change district from '#{source_district_uuid}' to '#{destination_district_uuid}' without allow_change_district flag.", 1)
+            raise StickShift::UserException.new("Error moving app.  Cannot change district from '#{source_district_uuid}' to '#{destination_district_uuid}' without allow_change_district flag.", 1) unless allow_change_district
           else
             # destination_district_uuid = source_district_uuid unless source_district_uuid == 'NONE'
             all_districts = District::find_all
             all_districts.each { |dis|
-              if dis.uuid != source_district_uuid
+              if dis.uuid != source_district_uuid and app.gear.node_profile == dis.node_profile
                 destination_district_uuid = dis.uuid
                 break
               end
