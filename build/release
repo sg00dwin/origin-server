@@ -272,9 +272,10 @@ class Release < Thor
     end
   end
   
-  desc "tag_external_pkgs_stg AFTER_DATE", "Tag packages that are from external sources into the stage repo since AFTER_DATE"
+  desc "tag_pkgs_stg AFTER_DATE", "Tag packages that are from external sources into the stage repo since AFTER_DATE"
   method_option :check, :type => :boolean, :desc => "Don't do anything yet, just show what would be done"
-  def tag_external_pkgs_stg(after_date)
+  method_option :include_internal, :type => :boolean, :desc => "Boolean indicating whether to include internal packages"
+  def tag_pkgs_stg(after_date)
     stg_brew_tag = "libra-rhel-6.2-stage"
     cand_brew_tag = "libra-rhel-6.2-candidate"
     orig_branches = checkout_branch("master")
@@ -285,7 +286,7 @@ class Release < Thor
       puts "Example: build/release tag_external_pkgs_stg 1970-01-30 [--check]"
       exit 1
     else
-      external_pkgs_tag_stg = get_packages_to_tag(cand_brew_tag, stg_brew_tag, after_date)
+      external_pkgs_tag_stg = get_packages_to_tag(cand_brew_tag, stg_brew_tag, after_date, options.include_internal?)
     end
 
     if options.check?
