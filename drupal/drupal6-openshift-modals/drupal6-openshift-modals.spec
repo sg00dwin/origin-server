@@ -5,7 +5,7 @@
 %global modname             modals
 
 Name:    drupal%{drupal_release}-openshift-%{modname}
-Version: 1.1.1
+Version: 
 Release: 1%{?dist}
 Summary: Openshift Red Hat Modals Custom Module for Drupal6
 Group:   Applications/Publishing
