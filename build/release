@@ -591,27 +591,38 @@ class Release < Thor
       jenkins = "https://ci.dev.openshift.redhat.com/jenkins"
       token = "libra1"
   
-      if devenv_update
-        puts "Kicking off AMI build..."
-        unless run("curl --insecure --proxy #{proxy} #{jenkins}/job/libra_ami/buildWithParameters?token=#{token}\\&BUILD_CLEAN_AMI=true\\&INSTALL_FROM_SOURCE=#{options.source_ami? ? "true" : "false"}", :verbose => options.verbose?)
-          puts "ERROR - Jenkins remote job invocation failed."
-          exit 1
+      if options.stage?
+        if devenv_update
+          puts "Kicking off AMI build..."
+          unless run("curl --insecure --proxy #{proxy} #{jenkins}/job/libra_ami_stage/buildWithParameters?token=#{token}\\&BUILD_CLEAN_AMI=true", :verbose => options.verbose?)
+            puts "ERROR - Jenkins remote job invocation failed."
+            exit 1
+          end
+          puts "Done"
+        else
+          puts "Kicking off stage verification..."
+          unless run("curl --insecure --proxy #{proxy} #{jenkins}/job/libra_ami_stage/buildWithParameters?token=#{token}\\&BUILD_CLEAN_AMI=#{options.clean_ami? ? "true" : "false"}", :verbose => options.verbose?)
+            puts "ERROR - Jenkins remote job invocation failed."
+            exit 1
+          end
+          puts "Done"
         end
-        puts "Done"
-      elsif options.stage?
-        puts "Kicking off stage verification..."
-        unless run("curl --insecure --proxy #{proxy} #{jenkins}/job/libra_ami_stage/buildWithParameters?token=#{token}\\&BUILD_CLEAN_AMI=#{options.clean_ami? ? "true" : "false"}", :verbose => options.verbose?)
-          puts "ERROR - Jenkins remote job invocation failed."
-          exit 1
-        end
-        puts "Done"
       else
-        puts "Kicking off AMI build..."
-        unless run("curl --insecure --proxy #{proxy} #{jenkins}/job/libra_ami/buildWithParameters?token=#{token}\\&BUILD_CLEAN_AMI=#{options.clean_ami? ? "true" : "false"}\\&INSTALL_FROM_SOURCE=#{options.source_ami? ? "true" : "false"}", :verbose => options.verbose?)
-          puts "ERROR - Jenkins remote job invocation failed."
-          exit 1
+        if devenv_update
+          puts "Kicking off AMI build..."
+          unless run("curl --insecure --proxy #{proxy} #{jenkins}/job/libra_ami/buildWithParameters?token=#{token}\\&BUILD_CLEAN_AMI=true\\&INSTALL_FROM_SOURCE=#{options.source_ami? ? "true" : "false"}", :verbose => options.verbose?)
+            puts "ERROR - Jenkins remote job invocation failed."
+            exit 1
+          end
+          puts "Done"
+        else
+          puts "Kicking off AMI build..."
+          unless run("curl --insecure --proxy #{proxy} #{jenkins}/job/libra_ami/buildWithParameters?token=#{token}\\&BUILD_CLEAN_AMI=#{options.clean_ami? ? "true" : "false"}\\&INSTALL_FROM_SOURCE=#{options.source_ami? ? "true" : "false"}", :verbose => options.verbose?)
+            puts "ERROR - Jenkins remote job invocation failed."
+            exit 1
+          end
+          puts "Done"
         end
-        puts "Done"
       end
     end
   end
