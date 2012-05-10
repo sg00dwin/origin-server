@@ -5,7 +5,7 @@
 
 Summary:        GearChanger plugin for m-colective service
 Name:           rubygem-%{gemname}
-Version: 0.10.0
+Version: 0.10.1
 Release:        1%{?dist}
 Group:          Development/Languages
 License:        ASL 2.0
@@ -70,6 +70,11 @@ rm -rf %{buildroot}
 %{ruby_sitelib}/%{gemname}.rb
 
 %changelog
+* Thu May 10 2012 Adam Miller <admiller@redhat.com> 0.10.1-1
+- for runaway gears, make sure the move to a new district maintains the
+  node_profile (rchopra@redhat.com)
+- bumping spec versions (admiller@redhat.com)
+
 * Wed May 09 2012 Adam Miller <admiller@redhat.com> 0.9.5-1
 - Bugz# 819984. Update gear dns entried when app namespace is updated
   (kraman@gmail.com)

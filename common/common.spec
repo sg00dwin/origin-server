@@ -1,6 +1,6 @@
 Summary:   Common dependencies of the libra server and node
 Name:      rhc-common
-Version: 0.79.0
+Version: 0.79.1
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -45,6 +45,9 @@ rm -rf %{buildroot}
 /bin/chgrp libra_user /etc/mcollective/client.cfg
 
 %changelog
+* Thu May 10 2012 Adam Miller <admiller@redhat.com> 0.79.1-1
+- bumping spec versions (admiller@redhat.com)
+
 * Mon May 07 2012 Adam Miller <admiller@redhat.com> 0.78.2-1
 - Work with version 14.4 of qpid (dmcphers@redhat.com)
 
