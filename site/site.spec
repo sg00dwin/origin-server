@@ -3,7 +3,7 @@
 
 Summary:   Li site components
 Name:      rhc-site
-Version: 0.93.0
+Version: 0.93.1
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -117,6 +117,14 @@ rm -rf %{buildroot}
 /bin/touch %{sitedir}/log/production.log
 
 %changelog
+* Thu May 10 2012 Adam Miller <admiller@redhat.com> 0.93.1-1
+- Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
+  (admiller@redhat.com)
+- bumping spec versions (admiller@redhat.com)
+- Bug 818030 - Remove opensource disclaimer page (ccoleman@redhat.com)
+- Fix username dropdown-menu at responsive sizes, tweak wizard styles
+  (sgoodwin@redhat.com)
+
 * Wed May 09 2012 Adam Miller <admiller@redhat.com> 0.92.6-1
 - alignment issue fix on docs page (sgoodwin@redhat.com)
 - add error-client class to correct state handling on form submits
