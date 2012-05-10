@@ -5,7 +5,7 @@
 %global modname             og_comment_perms
 
 Name:    drupal%{drupal_release}-openshift-%{modname}
-Version: 
+Version: 1.2.0
 Release: 1%{?dist}
 Summary: Openshift Red Hat Organic Group Comment Custom Module for Drupal6
 Group:   Applications/Publishing
