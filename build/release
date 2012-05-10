@@ -476,7 +476,7 @@ class Release < Thor
             build_info = all_packages[pkg]
             build_dir = build_info[0]
             inside(build_dir) do
-              nvr_package = `git tag | grep #{package} | tail -n1`.chomp
+              nvr_package = `git tag | grep ^#{package} | tail -n1`.chomp
             end
   
             unless nvr_package.empty?
@@ -491,7 +491,7 @@ class Release < Thor
             build_info = all_packages[package]
             build_dir = build_info[0]
             inside(build_dir) do
-              tags = `git tag | grep #{package}-[0-9]`.chomp.split("\n")
+              tags = `git tag | grep ^#{package}-[0-9]`.chomp.split("\n")
             end
   
             # Sort the tags by NVR and take the last entry
