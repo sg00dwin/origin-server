@@ -339,7 +339,7 @@ class Release < Thor
   end
   
   desc "build_ami", "Build an ami based on the current li repo"
-  method_option :stage, :type => :string, :desc => "Indicates whether to use the stage repo"
+  method_option :stage, :type => :boolean, :desc => "Indicates whether to use the stage repo"
   method_option :clean_ami, :type => :boolean, :desc => "Indicates whether to build a clean ami"
   method_option :source_ami, :type => :boolean, :desc => "Indicates whether to build a source ami"
   def build_ami
