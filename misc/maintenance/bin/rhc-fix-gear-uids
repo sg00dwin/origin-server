@@ -23,6 +23,8 @@ no_error = true
 fail_summary = []
 cleanup_summary = []
 nil_summary = []
+numerify_uid_summary = []
+numerify_uid_fail_summary = []
 # now check
 mongo_hash.each { |gear_uuid,gear|
   if not node_hash.has_key? gear_uuid
@@ -32,7 +34,7 @@ mongo_hash.each { |gear_uuid,gear|
   old_value = gear.uid
   node_info = node_hash[gear_uuid]
   begin
-    g_uid = node_info.split("uid:")[1].split(']')[0]
+    g_uid = Integer(node_info.split("uid:")[1].split(']')[0])
   rescue Exception => e
     fail_summary << "FAILED to check gear #{gear_uuid} in app #{gear.app.uuid} because of exception : #{e.message}\n"
     next
@@ -53,6 +55,19 @@ mongo_hash.each { |gear_uuid,gear|
       fail_summary << msg
     end
   end
+  if gear.uid.class == String
+    begin
+      msg = "Gear '#{gear_uuid}' in app #{gear.app.uuid} for user '#{gear.app.user.login}', needs its uid converted from String to Integer..."
+      gear.uid = Integer(gear.uid)
+      app = gear.app
+      app.save
+      msg += "done.\n"
+      numerify_uid_summary << msg
+    rescue Exception =>e
+      msg += "failed. Because of #{e.message}\n"
+      numerify_uid_fail_summary << msg
+    end
+  end
 }
 
 exitstatus = 0
@@ -71,5 +86,17 @@ if fail_summary.length > 0
   print "The following gears needed a fix on their uid, but could not be fixed still:\n#{fail_summary.join("\n")}\n"
   exitstatus = 1
 end
+
+if numerify_uid_summary.length > 0
+  print "The following gears converted their uids from String to Integer and succeeded: \n#{numerify_uid_summary}\n"
+else
+  print "No gears required their uids to be converted from String to Integer!\n"
+end
+
+if numerify_uid_fail_summary.length > 0
+  print "The following gears converted their uids from String to Integer but FAILED: \n#{numerify_uid_fail_summary}\n"
+  exitstatus = 1
+end
+
 exit exitstatus
 
