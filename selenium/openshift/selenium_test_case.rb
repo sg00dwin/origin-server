@@ -42,7 +42,9 @@ module OpenShift
         browser_url = "#{base_url}/app"
       end
 
-      @browser_url = browser_url
+      # Make this global so we can compare relative URIs even
+      # if the app is not served from the root path
+      $browser_url = browser_url
 
       if OpenShift::SeleniumTestCase.local?
         @driver = Selenium::WebDriver.for :firefox
@@ -90,13 +92,13 @@ module OpenShift
       @page    = page
 
       @navbar  = OpenShift::Rest::MainNav.new(page,'main_nav')
-      @home    = OpenShift::Rest::Home.new(page, "#{browser_url}")
-      @login_page = OpenShift::Rest::Login.new(page,"#{browser_url}/login")
-      @logout = Proc.new { @page.get "#{browser_url}/logout"; wait_for_page "#{browser_url}/" }
+      @home    = OpenShift::Rest::Home.new(page, "/")
+      @login_page = OpenShift::Rest::Login.new(page,"/login")
+      @logout = Proc.new { @page.get "#{browser_url}/logout"; wait_for_page "/" }
 
-      @rest_console = OpenShift::Rest::Console.new(page, "#{browser_url}/console")
-      @rest_account = OpenShift::Rest::Account.new(page, "#{browser_url}/account")
-      @signup = OpenShift::Rest::Signup.new(page, "#{browser_url}/account/new")
+      @rest_console = OpenShift::Rest::Console.new(page, "/console")
+      @rest_account = OpenShift::Rest::Account.new(page, "/account")
+      @signup = OpenShift::Rest::Signup.new(page, "/account/new")
     end
 
     def run(*args, &blk)

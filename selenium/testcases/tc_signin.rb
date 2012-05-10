@@ -31,6 +31,6 @@ class Signin < OpenShift::SeleniumTestCase
     assert_redirected_to @rest_console.application_types_page.path
 
     @navbar.click_signout
-    assert_redirected_to "#{@browser_url}/"
+    assert_redirected_to "/"
   end
 end
