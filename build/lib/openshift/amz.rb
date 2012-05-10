@@ -51,22 +51,6 @@ module OpenShift
       conn
     end
 
-    def get_version(package)
-      yum_output = `yum info #{package}`
-
-      # Process the yum output to get a version
-      version = yum_output.split("\n").collect do |line|
-        line.split(":")[1].strip if line.start_with?("Version")
-      end.compact[-1]
-
-      # Process the yum output to get a release
-      release = yum_output.split("\n").collect do |line|
-        line.split(":")[1].strip if line.start_with?("Release")
-      end.compact[-1]
-
-      return "#{version}-#{release.split('.')[0]}"
-    end
-
     def check_update
       yum_output = `yum check-update rhc-*`
 
