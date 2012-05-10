@@ -294,7 +294,10 @@ class Release < Thor
         spec_file = pkg[1]
         version = get_version(spec_file)
         new_version = next_minor_version(version)
-        run("/bin/sed -i 's,^Version:.*,Version: #{new_version},' #{spec_file}", :verbose => options.verbose?)
+        if new_version
+          run("/bin/sed -i 's,^Version:.*,Version: #{new_version},' #{spec_file}", :verbose => options.verbose?)
+        end
+        
       end
       if options.push_changes?
         run("git add *.spec; git commit -m 'bumping spec versions'; git push origin master", :verbose => options.verbose?)
