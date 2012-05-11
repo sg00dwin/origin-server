@@ -81,6 +81,7 @@ GEM
       rdoc
       thor
     rake (0.8.7)
+    rcov (1.0.0)
     rdoc (3.7)
     regin (0.3.7)
     rest-client (1.6.1)
@@ -125,6 +126,7 @@ DEPENDENCIES
   open4
   parseconfig
   rack
+  rcov
   rails (~> 3.0.10)
   regin
   rest-client

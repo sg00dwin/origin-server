@@ -33,7 +33,7 @@ Requires:  rubygem-gearchanger-m-collective-plugin
 #Requires:  rubygem-gherkin
 Requires:  rubygem(ruby-prof)
 Requires:  rubygem-ruby-prof
-
+Requires:  rubygem-rcov
 
 BuildArch: noarch
 
