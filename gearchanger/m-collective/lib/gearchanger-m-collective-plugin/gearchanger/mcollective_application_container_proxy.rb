@@ -14,7 +14,7 @@ module GearChanger
       end
       
       def self.valid_gear_sizes_impl(user)    
-        if user.vip
+        if user.vip || user.auth_method == :broker_auth
           return ["small", "medium"]
         else
           return ["small"]          
