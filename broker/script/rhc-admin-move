@@ -129,7 +129,7 @@ if app.scalable
     app.gears.each { |g| puts "\t#{g.uuid}\n" }
     exit 1
   end
-  reply = app.container.move_gear(app, gear, destination_district_uuid, allow_change_district, node_profile)
+  reply = app.container.move_gear(app, gear, destination_container, destination_district_uuid, allow_change_district, node_profile)
 else
   reply = app.container.move_app(app, destination_container, destination_district_uuid, allow_change_district, node_profile)
 end

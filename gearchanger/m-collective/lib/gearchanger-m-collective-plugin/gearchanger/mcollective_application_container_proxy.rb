@@ -721,6 +721,7 @@ module GearChanger
 
       def resolve_destination(app, gear, destination_container, destination_district_uuid, allow_change_district)
         source_container = gear.container
+        source_container = gear.get_proxy if source_container.nil? 
         source_district_uuid = source_container.get_district_uuid
         if destination_container.nil?
           unless allow_change_district
