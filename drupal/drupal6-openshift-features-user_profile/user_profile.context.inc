@@ -186,6 +186,12 @@ function user_profile_context_default_contexts() {
         'node_form' => '1',
       ),
     ),
+    'views' => array(
+      'values' => array(
+        'Ideas' => 'Ideas',
+        'Ideas:page_1' => 'Ideas:page_1',
+      ),
+    ),
   );
   $context->reactions = array(
     'menu' => 'ideas',
