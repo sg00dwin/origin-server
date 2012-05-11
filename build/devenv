@@ -376,7 +376,7 @@ mkdir -p /tmp/rhc/junit
               "SAUCE_BROWSER" => sauce_browser,
               "SAUCE_BROWSER_VERSION" => sauce_browser_version,
               "SAUCE_SELENIUM_VERSION" => '2.18.0',
-              "SAUCE_BROWSER_URL" => "https://#{hostname}",
+              "SAUCE_BROWSER_URL" => "https://#{hostname}/app",
               "JENKINS_BUILD" => 'unofficial'
             }
             # If we passed a jenkins build like name, use that for the build number
