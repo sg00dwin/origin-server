@@ -406,14 +406,6 @@ EOF
 chmod 0750 /usr/local/bin/openscap.sh
 
 # Remove all SUIDs - tkramer - testing in devenv
-#chmod -R u-s /tmp/passenger.1.0.*
-#chmod u-s /tmp/passenger.1.0.1408/generation-0/backends
-#chmod u-s /tmp/passenger.1.0.1609/generation-0/backends
-#chmod u-s /tmp/passenger.1.0.7527/generation-0/backends
-#chmod u-s /tmp/passenger.1.0.1456/generation-0/backends
-#chmod u-s /tmp/passenger.1.0.1561/generation-0/backends
-#chmod u-s /tmp/passenger.1.0.1367/generation-0/backends
-#chmod u-s /tmp/passenger.1.0.7606/generation-0/backends
 chmod u-s /usr/bin/staprun
 chmod u-s /usr/bin/chage
 chmod u-s /usr/bin/chfn
@@ -456,13 +448,6 @@ chmod g-s /usr/sbin/postdrop
 chmod g-s /bin/cgexec
 chmod g-s /sbin/netreport
 
-# Make log files readable only to user and group - not other - tkramer
-# chmod 660 /var/www/stickshift/site/log/development.log
-# chmod 660 /var/www/stickshift/site/log/production.log
-# chmod 660 /var/www/stickshift/broker/log/mcollective-client.log
-# chmod 660 /var/www/stickshift/broker/log/production.log
-# chmod 660 /var/www/stickshift/broker/log/development.log
-
 # Make grub.conf readable only to user and group - not other - tkramer
 chmod 600 /boot/grub/grub.conf
 
@@ -480,6 +465,11 @@ echo "select count(*) from users;" | mysql -u root libra > /dev/null 2>&1 || zca
 echo "Header set Strict-Transport-Security \"max-age=15768000\"" > /etc/httpd/conf.d/hsts.conf
 echo "Header append Strict-Transport-Security includeSubDomains" >> /etc/httpd/conf.d/hsts.conf
 
+# Create place to drop proxy mod_cache files
+mkdir -p /srv/cache/mod_cache
+chmod 750 /srv/cache/mod_cache
+chown apache:apache /srv/cache/mod_cache
+
 %files
 %defattr(-,root,root,-)
 %attr(0666,-,-) %{brokerdir}/log/mcollective-client.log
@@ -495,6 +485,9 @@ echo "Header append Strict-Transport-Security includeSubDomains" >> /etc/httpd/c
 %{policydir}/*
 
 %changelog
+* Mon May 14 2012 Tim Kramer <tkramer@redhat.com>
+- Added mod_cache to the proxy server and supporting directory
+
 * Thu May 10 2012 Adam Miller <admiller@redhat.com> 0.94.1-1
 - bumping spec versions (admiller@redhat.com)
 
