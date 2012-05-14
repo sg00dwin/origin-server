@@ -1,6 +1,6 @@
 // Tracking code
 
-function trackAdWordsConversion(f, b, e){
+function trackAdWordsConversion(f, b, e) {
     var c = new Image();
     var g = location.protocol + "//www.googleadservices.com/pagead/conversion/" + f + "/?";
     var d = document.getElementsByTagName("script")[0];
@@ -10,7 +10,7 @@ function trackAdWordsConversion(f, b, e){
     c.style.borderStyle = "none";
     c.alt = "";
     if (e > 0) {
-        g += "value=" + e + "&"
+        g += "value=" + e + "&";
     }
     g += "label=" + b + "&guid=ON&script=0";
     g += "&url=" + encodeURIComponent(location.href);
@@ -18,7 +18,7 @@ function trackAdWordsConversion(f, b, e){
     d.parentNode.insertBefore(c, d);
 }
 
-function getParameterByName(name){
+function getParameterByName(name) {
   name = name.replace(/[\[]/, "\\\[").replace(/[\]]/, "\\\]");
   var regexS = "[\\?&]" + name + "=([^&#]*)";
   var regex = new RegExp(regexS);
@@ -29,7 +29,7 @@ function getParameterByName(name){
     return decodeURIComponent(results[1].replace(/\+/g, " "));
 }
 
-function CustomGATracker(){
+function customGATracker() {
     var url = location.pathname + location.search, promoCode, firstLogin, omniCode;
     if(typeof getParameterByName == "function"){
         promoCode = getParameterByName("promo_code");
@@ -64,7 +64,9 @@ function CustomGATracker(){
 }
 
 var _gaq = _gaq || [];
-CustomGATracker();
+if (typeof customGATracker == "function"){
+    customGATracker();
+}
 
 (function () {
     var ga = document.createElement('script');
