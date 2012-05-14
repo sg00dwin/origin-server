@@ -675,7 +675,7 @@ h1.ribbon {
         }
         > a {
           border: 0;
-          padding: 7px 10px;
+          padding: 7px 5px 7px 15px;
           background-image: none;
         }
       }
@@ -723,6 +723,16 @@ h1.ribbon {
 	}
 }
 
+@media (min-width: 767px) and (max-width: 980px) {
+	.column-nav {
+		.search-row {
+			.search-query {
+				margin-left: 8px;
+			}
+		}
+	}
+}
+
 @media (max-width: 767px) {
   /* FIXME: May be a better way to handle this */
   .container .row-content .column-nav,
@@ -733,11 +743,6 @@ h1.ribbon {
   
 }
 
-@media (min-width: 768px) and (max-width: 980px) {
-	.column-nav .search-row {
-    margin-right: 0; /* correct ipad view */
-  }
-}
 
 /* Stacked navigations indent by 1 gutter each time */
 .nav-stacked > li > .nav-stacked { margin-left: $gridGutterWidth/2; margin-bottom: 0; }
