@@ -396,7 +396,7 @@ mkdir -p /tmp/rhc/junit
               cmds = []
               titles = []
               #if filename =~ /^tc_(.*)\.rb$/
-              if filename == 'tc_(header).rb' # only run this test for now
+              if filename =~ /tc_(header)\.rb/ # only run this test for now
                 test = $1
                 cmds << "cd li-test/selenium; #{env_string} ruby ts_web #{test}"
                 titles << "Web Selenium (#{sauce_os} - #{sauce_browser} #{sauce_browser_version}) (#{test})"
