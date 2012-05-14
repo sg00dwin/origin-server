@@ -375,7 +375,7 @@ mkdir -p /tmp/rhc/junit
               "SAUCE_OS" => sauce_os,
               "SAUCE_BROWSER" => sauce_browser,
               "SAUCE_BROWSER_VERSION" => sauce_browser_version,
-              "SAUCE_SELENIUM_VERSION" => '2.18.0',
+              "SAUCE_SELENIUM_VERSION" => '2.7.0',
               "SAUCE_BROWSER_URL" => "https://#{hostname}/app",
               "JENKINS_BUILD" => 'unofficial'
             }
