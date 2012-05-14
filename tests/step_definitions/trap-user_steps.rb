@@ -40,6 +40,23 @@ When /^I request the logs via SSH$/ do
   }
 end
 
+Then /^I can obtain disk quota information via SSH$/ do
+  ssh_cmd = "ssh -t #{@app.uid}@#{@app.hostname} /usr/bin/quota"
+  buf=""
+  begin
+    stdout, stdin, pid = PTY.spawn ssh_cmd
+    Timeout::timeout(600) do
+      buf=stdout.read
+    end
+    # PTY.check(pid, true)
+    Process.kill("KILL", pid)
+  rescue PTY::ChildExited, Errno::ESRCH
+  end
+  if buf.index("Disk quotas for user #{@app.uid}").nil?
+    raise "Could not obtain disk quota information"
+  end
+end
+
 When /^I terminate the SSH log stream$/ do
   begin
     # check if the PID still exists

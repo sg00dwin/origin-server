@@ -15,3 +15,6 @@ Feature: Trap User Shell
     Then there will be no tail processes running in 5 seconds
     
     
+  Scenario: Access Quota
+    Given a new client created php-5.3 application
+    Then I can obtain disk quota information via SSH
