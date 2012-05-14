@@ -3,7 +3,7 @@
 
 Summary:   Li broker components
 Name:      rhc-broker
-Version: 0.92.5
+Version: 0.93.1
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -95,6 +95,10 @@ rm -rf $RPM_BUILD_ROOT
 /bin/touch %{brokerdir}/log/production.log
 
 %changelog
+* Thu May 10 2012 Adam Miller <admiller@redhat.com> 0.93.1-1
+- Updating gem versions (admiller@redhat.com)
+- bumping spec versions (admiller@redhat.com)
+
 * Wed May 09 2012 Adam Miller <admiller@redhat.com> 0.92.5-1
 - Updating gem versions (admiller@redhat.com)
 - move_gear should not allow haproxy gear to be moved until the cartridge is

@@ -131,9 +131,17 @@ module OpenShift
 
     def wait_for_page(location, timeout=5)
       await("location: #{location}", timeout) {
-        uri = URI.parse(@page.current_url)
-        match = location.start_with?("http") ? #assume absolute URL
-          uri.to_s : uri.to_s.split(uri.host)[1]
+
+        match = @page.current_url
+        if not location.start_with?("http") #assume not absolute URL
+          if match.start_with?($browser_url)
+            # remove the browser url to get the relative path
+            match = match[$browser_url.length..-1]
+          else
+            # just compare the path
+            match = URI.parse(match).path
+          end
+        end
 
         location == match
       }

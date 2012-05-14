@@ -14,7 +14,7 @@ module GearChanger
       end
       
       def self.valid_gear_sizes_impl(user)    
-        if user.vip
+        if user.vip || user.auth_method == :broker_auth
           return ["small", "medium"]
         else
           return ["small"]          
@@ -721,6 +721,7 @@ module GearChanger
 
       def resolve_destination(app, gear, destination_container, destination_district_uuid, allow_change_district)
         source_container = gear.container
+        source_container = gear.get_proxy if source_container.nil? 
         source_district_uuid = source_container.get_district_uuid
         if destination_container.nil?
           unless allow_change_district
@@ -837,12 +838,12 @@ module GearChanger
         destination_container = nil
         if destination_container.nil?
           if destination_district_uuid && destination_district_uuid != source_district_uuid
-            raise StickShift::UserException.new("Error moving app.  Cannot change district from '#{source_district_uuid}' to '#{destination_district_uuid}' without allow_change_district flag.", 1)
+            raise StickShift::UserException.new("Error moving app.  Cannot change district from '#{source_district_uuid}' to '#{destination_district_uuid}' without allow_change_district flag.", 1) unless allow_change_district
           else
             # destination_district_uuid = source_district_uuid unless source_district_uuid == 'NONE'
             all_districts = District::find_all
             all_districts.each { |dis|
-              if dis.uuid != source_district_uuid
+              if dis.uuid != source_district_uuid and app.gear.node_profile == dis.node_profile
                 destination_district_uuid = dis.uuid
                 break
               end

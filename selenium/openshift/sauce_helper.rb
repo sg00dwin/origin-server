@@ -154,7 +154,8 @@ module OpenShift
 
         print "Starting Sauce Connect..."
         # Create a command to spawn the jar file
-        cmd = "java -jar #{sauce_filename} -f #{ready_file} #{cfg.opts[:username]} #{cfg.opts[:access_key]}"
+        java_options = "-Djsse.enableSNIExtension=false" # bypasses java SSL issue
+        cmd = "java #{java_options} -jar #{sauce_filename} -f #{ready_file} #{cfg.opts[:username]} #{cfg.opts[:access_key]}"
 
         # Run the command
         `#{cmd} > /dev/null 2>&1 &`

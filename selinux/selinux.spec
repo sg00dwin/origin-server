@@ -1,6 +1,6 @@
 Summary:       SELinux policy for OpenShift nodes
 Name:          rhc-selinux
-Version: 0.92.4
+Version: 0.93.1
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -46,6 +46,9 @@ rm -rf %{buildroot}
 %attr(0640,-,-) %{_datadir}/selinux/packages/libra.pp
 
 %changelog
+* Thu May 10 2012 Adam Miller <admiller@redhat.com> 0.93.1-1
+- bumping spec versions (admiller@redhat.com)
+
 * Wed May 09 2012 Adam Miller <admiller@redhat.com> 0.92.4-1
 - Revert "Allow libra domains to communicate with jboss_messageing ports"
   (dmcphers@redhat.com)

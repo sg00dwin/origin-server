@@ -10,8 +10,13 @@ module OpenShift
         @expected_redirects = [path]
       end
 
+      def full_path
+        path = @path
+        path = $browser_url + path if not path.start_with?("http")
+      end
+
       def open
-        @page.get @path
+        @page.get full_path
         wait
       end
 
@@ -115,7 +120,7 @@ module OpenShift
       def get_app_type(link)
         href = link.attribute(:href)
 
-        if !href.start_with? "#{@path}/"
+        if !href.start_with? "#{full_path}/"
           raise "The link '#{href}' does not point to an application creation page"
         end
 
@@ -150,7 +155,7 @@ module OpenShift
 
     class GetStartedPage < Page
       def initialize(page, app_name)
-        super(page, "#{@browser_url}/console/applications/#{app_name}/get_started")
+        super(page, "/console/applications/#{app_name}/get_started")
       end
 
       def find_app_link

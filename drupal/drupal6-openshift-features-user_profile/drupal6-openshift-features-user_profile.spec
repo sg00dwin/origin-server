@@ -5,7 +5,7 @@
 %global modname             user_profile
 
 Name:    drupal%{drupal_release}-openshift-features-%{modname}
-Version: 1.1.3
+Version: 1.2.1
 Release: 1%{?dist}
 Summary: Openshift Red Hat Custom User Profile Feature for Drupal6
 Group:   Applications/Publishing
@@ -41,6 +41,9 @@ rm -rf $RPM_BUILD_ROOT
 %{drupal_modules}/%{modname}
 
 %changelog
+* Thu May 10 2012 Adam Miller <admiller@redhat.com> 1.2.1-1
+- bumping spec versions (admiller@redhat.com)
+
 * Wed May 09 2012 Adam Miller <admiller@redhat.com> 1.1.3-1
 - Add a context for elements that should have the default left community menu
   (ccoleman@redhat.com)

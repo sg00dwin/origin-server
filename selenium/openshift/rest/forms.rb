@@ -105,7 +105,7 @@ module OpenShift
 
       def cancel
         @page.find_element(:xpath => @loc_btn_cancel).click
-        wait_for_page "#{@browser_url}/#{@cancel_path}"
+        wait_for_page "#{@cancel_path}"
       end
     end
 

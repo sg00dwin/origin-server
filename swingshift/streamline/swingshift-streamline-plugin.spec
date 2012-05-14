@@ -5,7 +5,7 @@
 
 Summary:        SwingShift plugin for streamline auth service
 Name:           rubygem-%{gemname}
-Version: 0.9.2
+Version: 0.10.1
 Release:        1%{?dist}
 Group:          Development/Languages
 License:        ASL 2.0
@@ -70,6 +70,9 @@ rm -rf %{buildroot}
 %{ruby_sitelib}/%{gemname}.rb
 
 %changelog
+* Thu May 10 2012 Adam Miller <admiller@redhat.com> 0.10.1-1
+- bumping spec versions (admiller@redhat.com)
+
 * Mon May 07 2012 Adam Miller <admiller@redhat.com> 0.9.2-1
 - moving broker auth key and iv encoding/decoding both into the plugin
   (abhgupta@redhat.com)
