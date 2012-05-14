@@ -60,6 +60,41 @@ function user_profile_context_default_contexts() {
   $context = new stdClass;
   $context->disabled = FALSE; /* Edit this to true to make a default context disabled initially */
   $context->api_version = 3;
+  $context->name = 'menu-active-community';
+  $context->description = '';
+  $context->tag = '';
+  $context->conditions = array(
+    'node' => array(
+      'values' => array(
+        'author' => 'author',
+        'newsletter' => 'newsletter',
+        'poll' => 'poll',
+        'promotion_blocks' => 'promotion_blocks',
+      ),
+      'options' => array(
+        'node_form' => '1',
+      ),
+    ),
+    'user_page' => array(
+      'values' => array(
+        'form' => 'form',
+        'register' => 'register',
+        'view' => 'view',
+      ),
+      'options' => array(
+        'mode' => 'all',
+      ),
+    ),
+  );
+  $context->reactions = array(
+    'menu' => '<front>',
+  );
+  $context->condition_mode = 0;
+  $export['menu-active-community'] = $context;
+
+  $context = new stdClass;
+  $context->disabled = FALSE; /* Edit this to true to make a default context disabled initially */
+  $context->api_version = 3;
   $context->name = 'menu-active-events';
   $context->description = '';
   $context->tag = '';
@@ -149,6 +184,12 @@ function user_profile_context_default_contexts() {
       ),
       'options' => array(
         'node_form' => '1',
+      ),
+    ),
+    'views' => array(
+      'values' => array(
+        'Ideas' => 'Ideas',
+        'Ideas:page_1' => 'Ideas:page_1',
       ),
     ),
   );

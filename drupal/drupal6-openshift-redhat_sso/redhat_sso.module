@@ -110,6 +110,7 @@ function _redhat_sso_login() {
   try {
     // Read SSO cookie data.
     $rh_sso_cookie = $_COOKIE['rh_sso'];
+    watchdog('user info', $rh_sso_cookie);
 
     // Validate cookie and fetch user data.
     $rh_sso_cookie = explode('|', $rh_sso_cookie);
@@ -118,15 +119,17 @@ function _redhat_sso_login() {
       throw new Exception('SSO validation service failed: '. $response->error);
     }
     $user_data = json_decode($response->data);
+    //watchdog('user info', _devel_print_object($user_data));
 
     if (isset($user_data->username) && !empty($user_data->username)) {
+      $username = $user_data->username;
       // Is the username an email?  If not, we need to get the user's email.
-      if (valid_email_address($user_data->username) == TRUE) {
-        $email = $user_data->username;
+      if (valid_email_address($username) == TRUE) {
+        $email = $username;
       }
       else {
         // Retrieve the email from Red Hat.
-        $email = _redhat_get_email($user_data->username);
+        $email = _redhat_get_email($username);
         
         // Verify that we received a valid email.
         if (valid_email_address($email) == FALSE) {
@@ -134,7 +137,23 @@ function _redhat_sso_login() {
           return; // We don't have a valid email.  Don't login and don't register.
         }
       }
-      
+
+      $result = db_query('select u.uid as uid, u.name as name, u.mail as mail from {profile_values} as v, {profile_fields} as f, {users} as u where f.name = "profile_rhlogin" and v.value = "%s" and f.fid = v.fid and u.uid = v.uid order by u.uid asc', $username);
+      $uid = NULL;
+      while ($field = db_fetch_array($result)) {
+        watchdog('redhat_sso', 
+          'Login located user %name / %mail / %uid during username lookup',
+          array(
+            '%name' => $field['name'], 
+            '%mail' => $field['mail'], 
+            '%uid' => $field['uid'],
+          ),
+          WATCHDOG_NOTICE);
+        if ($uid == NULL) {
+          $uid = $field['uid'];
+        }
+      }
+
       // Determine if user exists to create account and/or log them in.
       if ($account = user_load(array('mail' => $email))) {
         // User already exists, just log in.
@@ -156,6 +175,24 @@ function _redhat_sso_login() {
 
         // TODO: Should application email user if accounts are maintained through Redhat.com?
         //_user_mail_notify('register_no_approval_required', $account);
+      }
+
+      $result = db_query("SELECT fid FROM {profile_fields} WHERE name = 'profile_rhlogin'");
+      if ($field = db_fetch_object($result)) {
+        db_query("DELETE FROM {profile_values} WHERE fid = %d AND uid = %d", $field->fid, $user->uid);
+        $insert = db_query("INSERT INTO {profile_values} (fid, uid, value) VALUES (%d, %d, '%s')", $field->fid, $user->uid, $username);
+
+        watchdog('user info', 'Inserted profile_rhlogin %value %result', array('%result' => $insert, '%value' => $username));
+      }
+
+      if (strcasecmp($user->uid, $uid) != 0) {
+        watchdog('redhat_sso', 
+          'Should use %uid, will use %actual',
+          array(
+            '%uid' => $uid,
+            '%actual' => $user->uid,
+          ),
+          WATCHDOG_NOTICE);
       }
 
       // Add SSO cookie to session, so we know it has been validated.

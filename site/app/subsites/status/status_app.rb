@@ -7,6 +7,9 @@ require 'models'
 require 'database'
 require 'helpers'
 
+require 'active_support/core_ext/string/encoding'
+require 'active_support/core_ext/string/output_safety'
+
 class StatusApp < Sinatra::Base
   configure do
     set :views, File.join(STATUS_APP_ROOT,'views')
@@ -22,10 +25,20 @@ class StatusApp < Sinatra::Base
     end
   end
 
+  module IgnoredCookies
+    def write(headers)
+      logger = defined?(Rails) ? Rails.logger : Logger.new(STDOUT)
+      logger.debug "  Cookies are disabled for this request by StatusApp::IgnoredCookies"
+    end
+  end
+
   after do
-    # Prevent the session cookie from being set for all requests
-    if session = env['rack.session']
-      session.instance_variable_set('@loaded', false)
+    #
+    # Rails aggressively sets cookies even when the content is publicly cached.  To prevent 
+    # cookies from being set by the status app while it is mounted inside 
+    #
+    if jar = env['action_dispatch.cookies']
+      jar.extend(IgnoredCookies) rescue _log("Cookies could not be protected from being written")
     end
   end
 

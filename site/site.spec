@@ -3,7 +3,7 @@
 
 Summary:   Li site components
 Name:      rhc-site
-Version: 0.92.2
+Version: 0.93.1
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -117,6 +117,62 @@ rm -rf %{buildroot}
 /bin/touch %{sitedir}/log/production.log
 
 %changelog
+* Thu May 10 2012 Adam Miller <admiller@redhat.com> 0.93.1-1
+- Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
+  (admiller@redhat.com)
+- bumping spec versions (admiller@redhat.com)
+- Bug 818030 - Remove opensource disclaimer page (ccoleman@redhat.com)
+- Fix username dropdown-menu at responsive sizes, tweak wizard styles
+  (sgoodwin@redhat.com)
+
+* Wed May 09 2012 Adam Miller <admiller@redhat.com> 0.92.6-1
+- alignment issue fix on docs page (sgoodwin@redhat.com)
+- add error-client class to correct state handling on form submits
+  (johnp@redhat.com)
+- Make forum thread list much simpler (ccoleman@redhat.com)
+- Make status ribbon be a bit cleaner in console (ccoleman@redhat.com)
+- Update logo invoice (ccoleman@redhat.com)
+- Bug 817447 - Feedback from david about getting started page
+  (ccoleman@redhat.com)
+- Bug 817892 - Grammar police are out in force (ccoleman@redhat.com)
+- CSS tweaks to bring content into better visual appearance, restore some minor
+  problems (ccoleman@redhat.com)
+- Cancel button on delete always returns user to application details page (more
+  consistent), fix logging bug, and terms page should use simpler title style.
+  (ccoleman@redhat.com)
+- Bug 820151 - Show the account information for jenkins on app creation,
+  refactor message passing on cart creation, remove layout/_flashes and replace
+  with simpler helper, ensure pages are flashing in the right spot, add a new
+  :info_pre flash type that renders with preformatted output (don't like the
+  name, but eh) (ccoleman@redhat.com)
+- Bug 819441 - Some account related paths should not be redirected back to
+  (ccoleman@redhat.com)
+- Bug 817907 - Really REALLY don't set cookies from status app.  Also fix
+  issues with starting status app in failure mode. (ccoleman@redhat.com)
+- Basic compact left navigation (ccoleman@redhat.com)
+- Simplify how the dropdown link is generated, use a view helper
+  (ccoleman@redhat.com)
+
+* Tue May 08 2012 Adam Miller <admiller@redhat.com> 0.92.5-1
+- Merge branch 'devcomm' (sgoodwin@redhat.com)
+-  minor updates to the visual presentation of the forums threat list and blog
+  details views (sgoodwin@redhat.com)
+
+* Tue May 08 2012 Adam Miller <admiller@redhat.com> 0.92.4-1
+- Make the delete button more subtle (ccoleman@redhat.com)
+- Merge branch 'cleanupscss' (sgoodwin@redhat.com)
+- button disabled/active changes (sgoodwin@redhat.com)
+- Reenable Jenkins from the UI (ccoleman@redhat.com)
+- Add an informational page on logout that informs the user that they have been
+  logged out and why.  Currently just takes the user back to the account page.
+  (ccoleman@redhat.com)
+
+* Mon May 07 2012 Adam Miller <admiller@redhat.com> 0.92.3-1
+- add navbar tests back and add unique classes to links (johnp@redhat.com)
+- Fix bug 818391 - special code branch should have been removed when we fixed
+  bug 789786 (ccoleman@redhat.com)
+- shadowman icon for username association (sgoodwin@redhat.com)
+
 * Mon May 07 2012 Adam Miller <admiller@redhat.com> 0.92.2-1
 - Fix failing test from renaming red hat network identity (ccoleman@redhat.com)
 - Update styles on terms controller, remove captcha there.

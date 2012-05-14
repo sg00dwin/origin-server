@@ -1,6 +1,6 @@
 Summary:       SELinux policy for OpenShift nodes
 Name:          rhc-selinux
-Version: 0.92.2
+Version: 0.93.1
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -8,8 +8,8 @@ URL:           http://openshift.redhat.com
 Source0:       rhc-selinux-%{version}.tar.gz
 
 BuildRoot:     %(mktemp -ud %{_tmppath}/%{name}-%{version}-%{release}-XXXXXX)
-BuildRequires: selinux-policy >= 3.7.19-134
-Requires:      selinux-policy-targeted >= 3.7.19-134
+BuildRequires: selinux-policy >= 3.7.19-145
+Requires:      selinux-policy-targeted >= 3.7.19-145
 Requires(post):   /usr/sbin/semanage
 Requires(postun): /usr/sbin/semanage
 
@@ -46,6 +46,21 @@ rm -rf %{buildroot}
 %attr(0640,-,-) %{_datadir}/selinux/packages/libra.pp
 
 %changelog
+* Thu May 10 2012 Adam Miller <admiller@redhat.com> 0.93.1-1
+- bumping spec versions (admiller@redhat.com)
+
+* Wed May 09 2012 Adam Miller <admiller@redhat.com> 0.92.4-1
+- Revert "Allow libra domains to communicate with jboss_messageing ports"
+  (dmcphers@redhat.com)
+- reverted yum update selinux in favor or proper spec file requires
+  (admiller@redhat.com)
+- Allow libra domains to communicate with jboss_messageing ports
+  (dwalsh@redhat.com)
+
+* Tue May 08 2012 Adam Miller <admiller@redhat.com> 0.92.3-1
+- Dontaudit leaked file descriptors going to crontab_t command
+  (dwalsh@redhat.com)
+
 * Mon May 07 2012 Adam Miller <admiller@redhat.com> 0.92.2-1
 - revert previous commit 3f29dfed for now (dmcphers@redhat.com)
 - Dontaudit libra domains trying to create netlink_tcpdiag_sockets, executing

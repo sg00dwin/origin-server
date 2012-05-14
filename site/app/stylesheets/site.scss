@@ -598,52 +598,89 @@ h1.ribbon {
     text-transform: uppercase;
     margin-top: 15px;
   }
-	.nav-list li a {
-	  border-top: 1px solid #212121;
-	  }
-	 	.nav-list > li:last-child a {
-	 		border-bottom: 1px solid #212121;
-	 		}
-	 		.nav-list ul > li:last-child a {
-	 			border-bottom: 0;
-	 			}
-	.nav-list li.expanded {
-	  border-bottom: 0;
-	  }
+
+
 	.gutter-right {
 		padding-right: 15px;
 		margin-bottom: 30px;
-		}
+	}
+
 	.nav-list {
 	  padding: 0;
 	  margin-bottom: 0;
-	  }
-	.nav-list > li > a,
-	.nav-list .nav-header {
-	  margin-left: -15px;
-	  margin-right: -15px;
-	  text-shadow: none;
-	  }
-	.nav-list > li > a {
-	  padding: 12px 15px;
-	  }
-	  .nav-list .nav-list > li > a {
-			padding-left: 30px;
-			}
-	.nav-list > li > a {
-		background: transparent url("../images/sprite-vert.png") right -157px no-repeat;
-		}
-		.nav-list > li > a:hover {	
-			background-color: #181818;
-			background-position: right -100px;
-			color: #fff;
-			}
-	.nav-list > .active > a,
-	.nav-list > li.active > a:hover {
-		background-color: #181818;
-		color: #fff;
-		background-position: right -43px;
-		}
+
+    > li {
+      > a {
+        border-top: 1px solid #212121;
+  	    padding: 12px 15px;
+
+    	  text-shadow: none;
+    		background: transparent url("../images/sprite-vert.png") right -157px no-repeat;
+
+        &:hover {
+          background-color: #181818;
+          background-position: right -100px;
+          color: #fff;
+        }
+      }
+      &:last-child > a {
+	 	    border-bottom: 1px solid #212121;
+      }
+
+      &.expanded > a {
+  	    border-bottom: 0;
+      }
+
+      &.active {
+        // should be overriden by :hover rule
+        > a.active-trail {
+          background-color: transparent;
+          &.active {
+            background-color: #181818;
+          }
+        }
+
+        > a,
+        > a:hover {
+          background-color: #181818;
+          color: #fff;
+          background-position: right -43px;
+
+        }
+        //.column-nav .nav-list > li.active > a
+        //.column-nav .nav-list > li.active > a.active-trail
+        //.column-nav .nav-list > li.active > a:hover
+      }
+
+      > ul.nav-list {
+        margin: 0 0 7px;
+      }
+    }
+
+    .nav-header {
+  	  text-shadow: none;
+    }
+
+    .nav-list {
+      padding-left: 8px;
+      margin: 0;
+
+      font-size: 12px;
+      line-height: 17px;
+
+      > li {
+
+        &:last-child a {
+          border-bottom: 0;
+        }
+        > a {
+          border: 0;
+          padding: 7px 10px;
+          background-image: none;
+        }
+      }
+    }
+  }
 
   .search-row {
   	position: relative;

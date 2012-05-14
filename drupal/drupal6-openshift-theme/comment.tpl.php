@@ -20,7 +20,7 @@ $do = og_comment_perms_do();
 
 
       <?php /* Hide the title if it exists in the body */
-        if (!empty($comment->subject) && strpos($content, $comment->subject) === false) { ?>
+        if (!empty($comment->subject) && strpos($content, check_plain($comment->subject)) === false) { ?>
       <h3><?php print $title . $uid; ?></h3>
         <?php } ?>
 

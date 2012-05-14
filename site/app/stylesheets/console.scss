@@ -217,15 +217,19 @@ ol.wizard {
 	display: block;
 	}
 ol.wizard li {
- background-position: 0 -84px;
-    background-repeat: no-repeat;
-    display: inline-block;
-    font-size: 115%;
-    line-height: 25px;
-    list-style-position: inside;
-    list-style-type: none;
-    margin: 0 60px 10px 0;
-    padding: 10px 0 10px 45px;
+ 	background-position: 0 -84px;
+  background-repeat: no-repeat;
+  display: inline-block;
+  font-size: 110%;
+  line-height: 25px;
+  list-style-position: inside;
+  list-style-type: none;
+  margin: 0 50px 10px 0;
+  padding: 10px 0 10px 45px;
+  
+  &:last-child {
+  	margin-right:0;
+  }
 }
 ol.wizard li span {
 	height: 40px;
@@ -237,13 +241,13 @@ ol.wizard li span {
 		background: #222;
     border-radius: 30px;
     font-style: normal;
-    height: 35px;
+    height: 33px;
     left: -51px;
-    line-height: 35px;
+    line-height: 33px;
     position: absolute;
     text-align: center;
     top: -13px;
-    width: 35px;
+    width: 33px;
     font-weight: bold;
 		}
 ol.wizard li.active {
@@ -359,6 +363,7 @@ figure {
   margin-left: 26px;
   font-size: 32px;
   font-weight:normal;
+  text-transform: capitalize;
 	}
 	.console-head .emblem {
 		}
@@ -522,7 +527,13 @@ figure {
   .status-important {
   	background-color: #900;
   }
-  
+#utility-nav .alert {
+  color: #333;
+
+  &:hover {
+    color: black;
+  }
+}
 
 .nav {
 	margin-bottom: 6px;
@@ -763,14 +774,10 @@ section#app-cartridges .cartridge-block {
 		margin: 0 0 3px 0;
 		text-transform: uppercase;
 		}
-	#secondary #assistance ul, #secondary #app-unique-info ul {
+	#secondary #assistance ul,
+  #secondary #app-unique-info ul {
 		margin-bottom: 25px;
 		}
-#secondary #app-unique-info {
-  border: 0;
-  margin-bottom: 50px;
-  padding: 0;
-  }	
 	#app-unique-info h5 {	
 		border-bottom: 1px solid #222222;
 		}

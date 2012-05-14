@@ -10,6 +10,7 @@ features = Dir.entries(base_dir).select do |x|
   File.directory? "#{base_dir}/#{x}" and not ['.','..'].include?(x)
 end
 features << 'redhat_events'
+features << 'redhat_ideas'
 
 puts 'Export drupal features to disk...'
 puts "  #{features.join(', ')}\n"
@@ -32,6 +33,7 @@ Dir.mktmpdir 'drushexport' do |working_dir|
 
   puts 'Create archive of external features...'
   targets["#{base_dir}/../custom/redhat_events"] = "#{working_dir}/drupal/drupal6-openshift-redhat_events"
+  targets["#{base_dir}/../custom/redhat_ideas"] = "#{working_dir}/drupal/drupal6-openshift-redhat_ideas"
 
   targets.each_pair do |source,dest|
     %x( mkdir -p #{dest} )

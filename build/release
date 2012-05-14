@@ -31,30 +31,6 @@ class Release < Thor
       end
     end
 
-    def next_patch_version(version)
-      last_index_of_dot = version.rindex('.')
-      version[0..last_index_of_dot] + (version[last_index_of_dot+1..-1].to_i + 1).to_s
-    end
-
-    def next_minor_version(version)
-      index_of_dot = version.index('.')
-      second_index_of_dot = version.index('.', index_of_dot + 1)
-      last_index_of_dot = version.rindex('.')
-      if version[last_index_of_dot+1..-1].to_i > 1
-        version[0..index_of_dot] + (version[index_of_dot + 1..second_index_of_dot].to_i + 1).to_s + ".0"
-      end
-    end
-
-    def get_version(file)
-      version = /Version: *(.*)/.match(File.read(file))[1].strip
-    end
-
-    def update_gemfile_version(spec_file, gem_name, gemfile, verbose)
-      version = get_version(spec_file)
-      nv = next_patch_version(version)
-      run("/bin/sed -i 's,#{gem_name} (.*,#{gem_name} (#{nv}),' #{gemfile}", :verbose => verbose)
-    end
-
     def get_updated_build_dirs(verbose, push_changes=false)
       gem_updates = false
       
@@ -259,22 +235,23 @@ class Release < Thor
     orig_branches = checkout_branch(options[:stage] || options.stage? ? "stage" : "master")
     begin
       # do RHEL 6.x first
-      mash_and_rsync "libra-rhel-6.2", false, options
+      rhc_devenv_found = mash_and_rsync "libra-rhel-6.2", false, options
 
       # now RHEL 5.x, skipping rhc gem build/deploy
       mash_and_rsync "libra-rhel-5.8", true, options
 
       unless options.no_ami?
-        create_ami options
+        create_ami(options, rhc_devenv_found)
       end
     ensure
       reset_orig_branches(orig_branches)
     end
   end
   
-  desc "tag_external_pkgs_stg AFTER_DATE", "Tag packages that are from external sources into the stage repo since AFTER_DATE"
+  desc "tag_pkgs_stg AFTER_DATE", "Tag packages that are from external sources into the stage repo since AFTER_DATE"
   method_option :check, :type => :boolean, :desc => "Don't do anything yet, just show what would be done"
-  def tag_external_pkgs_stg(after_date)
+  method_option :include_internal, :type => :boolean, :desc => "Boolean indicating whether to include internal packages"
+  def tag_pkgs_stg(after_date)
     stg_brew_tag = "libra-rhel-6.2-stage"
     cand_brew_tag = "libra-rhel-6.2-candidate"
     orig_branches = checkout_branch("master")
@@ -285,7 +262,7 @@ class Release < Thor
       puts "Example: build/release tag_external_pkgs_stg 1970-01-30 [--check]"
       exit 1
     else
-      external_pkgs_tag_stg = get_packages_to_tag(cand_brew_tag, stg_brew_tag, after_date)
+      external_pkgs_tag_stg = get_packages_to_tag(cand_brew_tag, stg_brew_tag, after_date, options.include_internal?)
     end
 
     if options.check?
@@ -317,7 +294,10 @@ class Release < Thor
         spec_file = pkg[1]
         version = get_version(spec_file)
         new_version = next_minor_version(version)
-        run("/bin/sed -i 's,^Version:.*,Version: #{new_version},' #{spec_file}", :verbose => options.verbose?)
+        if new_version
+          run("/bin/sed -i 's,^Version:.*,Version: #{new_version},' #{spec_file}", :verbose => options.verbose?)
+        end
+        
       end
       if options.push_changes?
         run("git add *.spec; git commit -m 'bumping spec versions'; git push origin master", :verbose => options.verbose?)
@@ -338,7 +318,7 @@ class Release < Thor
   end
   
   desc "build_ami", "Build an ami based on the current li repo"
-  method_option :stage, :type => :string, :desc => "Indicates whether to use the stage repo"
+  method_option :stage, :type => :boolean, :desc => "Indicates whether to use the stage repo"
   method_option :clean_ami, :type => :boolean, :desc => "Indicates whether to build a clean ami"
   method_option :source_ami, :type => :boolean, :desc => "Indicates whether to build a source ami"
   def build_ami
@@ -406,6 +386,9 @@ class Release < Thor
       else
         rsync = "rsync -aHv --delete-after --progress --no-g --omit-dir-times --chmod=Dug=rwX"
       end
+
+      # variable to keep track of if we've built a new rhc-devenv
+      rhc_devenv_found = false
   
       # derive pkg_suffix from tag_base
       if tag_base =~ /^.*rhel-(\d)\.(\d)$/
@@ -472,7 +455,7 @@ class Release < Thor
             build_info = all_packages[pkg]
             build_dir = build_info[0]
             inside(build_dir) do
-              nvr_package = `git tag | grep #{package} | tail -n1`.chomp
+              nvr_package = `git tag | grep ^#{package} | tail -n1`.chomp
             end
   
             unless nvr_package.empty?
@@ -487,7 +470,7 @@ class Release < Thor
             build_info = all_packages[package]
             build_dir = build_info[0]
             inside(build_dir) do
-              tags = `git tag | grep #{package}-[0-9]`.chomp.split("\n")
+              tags = `git tag | grep ^#{package}-[0-9]`.chomp.split("\n")
             end
   
             # Sort the tags by NVR and take the last entry
@@ -508,7 +491,7 @@ class Release < Thor
         puts "ERROR - mash sync failed"
         exit 1
       end
-  
+
       # If createrepo understands --compress-type flag, it will create repodata in RHEL5-unfriendly format
       # recreate repo metadata if we are targeting RHEL5 and createrepo is sufficiently equipped
       if pkg_suffix =~ /^el5/
@@ -540,10 +523,22 @@ class Release < Thor
       end
 
       puts "Syncing RPMs to repo..."
-      unless run("#{rsync} #{options.temp_dir}/#{mash_config}/#{mash_config}/* #{repo}/#{mash_config}/", :verbose => options.verbose?)
-        puts "ERROR - RPM sync failed."
+      #
+      # Ugly bash hack to set the value of ruby's $? as well as get output to 
+      # terminal while rsync runs.
+      rsync_output = `_f() { #{rsync} #{options.temp_dir}/#{mash_config}/#{mash_config}/* #{repo}/#{mash_config}/ | tee /dev/tty; return ${PIPESTATUS[0]}; }; _f`
+      if $? != 0
+        puts "ERROR - RPM sync failed"
         exit 1
       end
+      
+      rhc_devenv_found = rsync_output.include?('rhc-devenv')
+      
+      ### FIXME - Comment this out until new patch is verified, then remove
+      #unless run("#{rsync} #{options.temp_dir}/#{mash_config}/#{mash_config}/* #{repo}/#{mash_config}/", :verbose => options.verbose?)
+      #  puts "ERROR - RPM sync failed."
+      #  exit 1
+      #end
       
       unless skip_gem
         # sync rhc gem
@@ -567,28 +562,47 @@ class Release < Thor
         end
         puts "Done"
       end
+      rhc_devenv_found
     end
   
-    def create_ami(options)
+    def create_ami(options, devenv_update=false)
       # Jenkins parameters
       proxy = "squid.corp.redhat.com:8080"
       jenkins = "https://ci.dev.openshift.redhat.com/jenkins"
       token = "libra1"
   
       if options.stage?
-        puts "Kicking off stage verification..."
-        unless run("curl --insecure --proxy #{proxy} #{jenkins}/job/libra_ami_stage/buildWithParameters?token=#{token}\\&BUILD_CLEAN_AMI=#{options.clean_ami? ? "true" : "false"}", :verbose => options.verbose?)
-          puts "ERROR - Jenkins remote job invocation failed."
-          exit 1
+        if devenv_update
+          puts "Kicking off AMI build..."
+          unless run("curl --insecure --proxy #{proxy} #{jenkins}/job/libra_ami_stage/buildWithParameters?token=#{token}\\&BUILD_CLEAN_AMI=true", :verbose => options.verbose?)
+            puts "ERROR - Jenkins remote job invocation failed."
+            exit 1
+          end
+          puts "Done"
+        else
+          puts "Kicking off stage verification..."
+          unless run("curl --insecure --proxy #{proxy} #{jenkins}/job/libra_ami_stage/buildWithParameters?token=#{token}\\&BUILD_CLEAN_AMI=#{options.clean_ami? ? "true" : "false"}", :verbose => options.verbose?)
+            puts "ERROR - Jenkins remote job invocation failed."
+            exit 1
+          end
+          puts "Done"
         end
-        puts "Done"
       else
-        puts "Kicking off AMI build..."
-        unless run("curl --insecure --proxy #{proxy} #{jenkins}/job/libra_ami/buildWithParameters?token=#{token}\\&BUILD_CLEAN_AMI=#{options.clean_ami? ? "true" : "false"}\\&INSTALL_FROM_SOURCE=#{options.source_ami? ? "true" : "false"}", :verbose => options.verbose?)
-          puts "ERROR - Jenkins remote job invocation failed."
-          exit 1
+        if devenv_update
+          puts "Kicking off AMI build..."
+          unless run("curl --insecure --proxy #{proxy} #{jenkins}/job/libra_ami/buildWithParameters?token=#{token}\\&BUILD_CLEAN_AMI=true\\&INSTALL_FROM_SOURCE=#{options.source_ami? ? "true" : "false"}", :verbose => options.verbose?)
+            puts "ERROR - Jenkins remote job invocation failed."
+            exit 1
+          end
+          puts "Done"
+        else
+          puts "Kicking off AMI build..."
+          unless run("curl --insecure --proxy #{proxy} #{jenkins}/job/libra_ami/buildWithParameters?token=#{token}\\&BUILD_CLEAN_AMI=#{options.clean_ami? ? "true" : "false"}\\&INSTALL_FROM_SOURCE=#{options.source_ami? ? "true" : "false"}", :verbose => options.verbose?)
+            puts "ERROR - Jenkins remote job invocation failed."
+            exit 1
+          end
+          puts "Done"
         end
-        puts "Done"
       end
     end
   end

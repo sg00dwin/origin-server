@@ -61,7 +61,7 @@ module MCollective
         app_uuid = args['--with-app-uuid']
         uuid = args['--with-container-uuid']
         uid = args['--with-uid']
-        uid = nil if uid && uid.empty?
+        uid = nil if uid && uid.to_s.empty?
         quota_blocks = args['--with-quota-blocks']
         quota_files = args['--with-quota-files']
         name = args['--named']
@@ -233,6 +233,24 @@ module MCollective
         end
       end
 
+      def ss_app_state_show(cmd, args)
+        Log.instance.debug "COMMAND: #{cmd}"
+
+        container_uuid = args['--with-container-uuid']
+        app_uuid = args['--with-app-uuid']        
+        
+        output = ""
+        begin
+          container = StickShift::ApplicationContainer.new(app_uuid, container_uuid)
+          output = container.get_app_state()
+        rescue Exception => e
+          Log.instance.debug e.message
+          return -1, e.message
+        else
+          return 0, output
+        end
+      end
+
       def ss_connector_execute(cmd, args)
         Log.instance.debug "COMMAND: #{cmd}"
         gear_uuid = args['--gear-uuid']
@@ -270,6 +288,8 @@ module MCollective
           rc, output = ss_env_var_remove(cmd, args)
         when "cartridge-list"
           rc, output = ss_cartridge_list(cmd, args)
+        when "app-state-show"
+          rc, output = ss_app_state_show(cmd, args)
         else
           return nil, nil
         end
@@ -286,8 +306,6 @@ module MCollective
         validate :cartridge, :shellsafe
         validate :action, /\A(app-create|app-destroy|env-var-add|env-var-remove|broker-auth-key-add|broker-auth-key-remove|authorized-ssh-key-add|authorized-ssh-key-remove|configure|deconfigure|preconfigure|update-namespace|tidy|deploy-httpd-proxy|remove-httpd-proxy|move|pre-move|post-move|info|post-install|post-remove|pre-install|reload|restart|start|status|stop|force-stop|add-alias|remove-alias|threaddump|cartridge-list|expose-port|conceal-port|show-port|system-messages|connector-execute)\Z/
         validate :action, :shellsafe
-        #validate :args, /\A[\w\+\/= \{\}\"@\-\.:;\'\\\n~,]+\z/
-        #validate :args, :shellsafe
         cartridge = request[:cartridge]
         action = request[:action]
         args = request[:args]
@@ -306,9 +324,10 @@ module MCollective
             return 0
           end
         else
+          validate :args, /\A[\w\+\/= \{\}\"@\-\.:;\'\\\n~,]+\z/
+          validate :args, :shellsafe
           if File.exists? "/usr/libexec/stickshift/cartridges/#{cartridge}/info/hooks/#{action}"                
             pid, stdin, stdout, stderr = Open4::popen4ext(true, "/usr/bin/runcon -l s0-s0:c0.c1023 /usr/libexec/stickshift/cartridges/#{cartridge}/info/hooks/#{action} #{args} 2>&1")
-            #pid, stdin, stdout, stderr = Open4::popen4("/usr/bin/runcon -l s0-s0:c0.c1023 /usr/libexec/stickshift/cartridges/#{cartridge}/info/hooks/#{action} #{args} 2>&1")
           elsif File.exists? "/usr/libexec/stickshift/cartridges/embedded/#{cartridge}/info/hooks/#{action}"                
             pid, stdin, stdout, stderr = Open4::popen4ext(true, "/usr/bin/runcon -l s0-s0:c0.c1023 /usr/libexec/stickshift/cartridges/embedded/#{cartridge}/info/hooks/#{action} #{args} 2>&1")
           else

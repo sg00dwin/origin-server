@@ -5,7 +5,7 @@
 %global drupal_themename    openshift-theme
 
 Name:           drupal6-%{drupal_themename}
-Version: 3.1.2
+Version: 3.2.1
 Release:        1%{?dist}
 Summary:        Red Hat Openshift theme for Drupal %{drupal_release}
 
@@ -44,6 +44,25 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
+* Thu May 10 2012 Adam Miller <admiller@redhat.com> 3.2.1-1
+- bumping spec versions (admiller@redhat.com)
+
+* Wed May 09 2012 Adam Miller <admiller@redhat.com> 3.1.5-1
+- Make forum thread list much simpler (ccoleman@redhat.com)
+- Remove extra title attributes from user profile (ccoleman@redhat.com)
+- Use article element on blog posts (ccoleman@redhat.com)
+- Remove all titles from comments, including those that have escaped HTML
+  entities (ccoleman@redhat.com)
+- Avoid a warning message on template.php for altering comment form.
+  (ccoleman@redhat.com)
+
+* Tue May 08 2012 Adam Miller <admiller@redhat.com> 3.1.4-1
+-  minor updates to the visual presentation of the forums threat list and blog
+  details views (sgoodwin@redhat.com)
+
+* Mon May 07 2012 Adam Miller <admiller@redhat.com> 3.1.3-1
+- Add tracking.js to community (ccoleman@redhat.com)
+
 * Mon May 07 2012 Adam Miller <admiller@redhat.com> 3.1.2-1
 - Add more compact row layout (separators with , will collapse whitespace)
   Update events module to export a new format. (ccoleman@redhat.com)

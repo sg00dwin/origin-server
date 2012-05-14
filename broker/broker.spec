@@ -3,7 +3,7 @@
 
 Summary:   Li broker components
 Name:      rhc-broker
-Version: 0.92.2
+Version: 0.93.1
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -95,6 +95,29 @@ rm -rf $RPM_BUILD_ROOT
 /bin/touch %{brokerdir}/log/production.log
 
 %changelog
+* Thu May 10 2012 Adam Miller <admiller@redhat.com> 0.93.1-1
+- Updating gem versions (admiller@redhat.com)
+- bumping spec versions (admiller@redhat.com)
+
+* Wed May 09 2012 Adam Miller <admiller@redhat.com> 0.92.5-1
+- Updating gem versions (admiller@redhat.com)
+- move_gear should not allow haproxy gear to be moved until the cartridge is
+  fixed. rhc-admin-move should filter scalable apps and act accordingly
+  (rchopra@redhat.com)
+
+* Tue May 08 2012 Adam Miller <admiller@redhat.com> 0.92.4-1
+- Updating gem versions (admiller@redhat.com)
+- Bug 819739 (dmcphers@redhat.com)
+
+* Mon May 07 2012 Adam Miller <admiller@redhat.com> 0.92.3-1
+- Updating gem versions (admiller@redhat.com)
+- added exception handling and logging to apptegic and nurture calls
+  (lnader@redhat.com)
+- minor changes to domain observer (lnader@redhat.com)
+- Merge branch 'master' of git1.ops.rhcloud.com:/srv/git/li (lnader@redhat.com)
+- Bug 815554 (lnader@redhat.com)
+- added domain observer class (lnader@redhat.com)
+
 * Mon May 07 2012 Adam Miller <admiller@redhat.com> 0.92.2-1
 - Updating gem versions (admiller@redhat.com)
 - moving fix gear-uids to maintenance/bin area (rchopra@redhat.com)

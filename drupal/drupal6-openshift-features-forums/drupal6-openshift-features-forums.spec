@@ -5,7 +5,7 @@
 %global modname             forums
 
 Name:    drupal%{drupal_release}-openshift-features-%{modname}
-Version: 1.1.2
+Version: 1.2.2
 Release: 1%{?dist}
 Summary: Openshift Red Hat Custom Forums Feature for Drupal6
 Group:   Applications/Publishing
@@ -41,6 +41,15 @@ rm -rf $RPM_BUILD_ROOT
 %{drupal_modules}/%{modname}
 
 %changelog
+* Thu May 10 2012 Adam Miller <admiller@redhat.com> 1.2.2-1
+- 
+
+* Thu May 10 2012 Adam Miller <admiller@redhat.com> 1.2.1-1
+- bumping spec versions (admiller@redhat.com)
+
+* Wed May 09 2012 Adam Miller <admiller@redhat.com> 1.1.3-1
+- Add drupal css classes to two views (ccoleman@redhat.com)
+
 * Mon May 07 2012 Adam Miller <admiller@redhat.com> 1.1.2-1
 - Fix all remaining reversion default issues with features
   (ccoleman@redhat.com)

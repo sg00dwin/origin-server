@@ -2,7 +2,7 @@
 
 Summary:       Multi-tenant cloud management system node tools
 Name:          rhc-node
-Version: 0.92.2
+Version: 0.93.1
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -266,6 +266,24 @@ fi
 /lib64/security/pam_libra.so
 
 %changelog
+* Thu May 10 2012 Adam Miller <admiller@redhat.com> 0.93.1-1
+- bumping spec versions (admiller@redhat.com)
+
+* Wed May 09 2012 Adam Miller <admiller@redhat.com> 0.92.5-1
+- Merge branch 'master' of git1.ops.rhcloud.com:/srv/git/li (rpenta@redhat.com)
+- Fix for 'empty? undefined for <uid>:Fixnum' during app create
+  (rpenta@redhat.com)
+
+* Tue May 08 2012 Adam Miller <admiller@redhat.com> 0.92.4-1
+- Bug 819739 (dmcphers@redhat.com)
+
+* Mon May 07 2012 Adam Miller <admiller@redhat.com> 0.92.3-1
+- Migrate app ctl file. (rmillner@redhat.com)
+- adding mcollective call to fetch the application state from the .state file
+  on each gear (abhgupta@redhat.com)
+- Cleanup. (mpatel@redhat.com)
+- TA2025 (bdecoste@gmail.com)
+
 * Mon May 07 2012 Adam Miller <admiller@redhat.com> 0.92.2-1
 - Cleanup. (mpatel@redhat.com)
 - Changes to make inline library calls for ss commands. (mpatel@redhat.com)

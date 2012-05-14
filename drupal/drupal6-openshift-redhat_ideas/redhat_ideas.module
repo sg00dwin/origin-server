@@ -13,9 +13,18 @@ function redhat_ideas_menu() {
 }
 
 function redhat_ideas_page() {
+  global $base_url;
+  $content .= '<p>View the current feature requests below, browse our implemented ideas down below, or submit a new one to the OpenShift team!</p>
+<div class="new-post-button"><a class="btn btn-create" href="/community/node/add/idea">Submit an Idea</a></div>';
+  $content .= '<div class="row-fluid"><div class="span6"><h2>Top Ideas</h2>';
   $content .= views_embed_view('Ideas', 'block_1');
-  $content .= '<br />';
+  $content .= '</div><section class="span6"><h2>Recent Ideas</h2>';
+  $content .= views_embed_view('Ideas', 'block_3');
+  $content .= '</section></div>';
+  $content .= '<section>';
+  $content .= '<h2>Implemented Ideas</h2>';
   $content .= views_embed_view('Ideas', 'block_2');
+  $content .= '</section>';
   return $content;
 }
 

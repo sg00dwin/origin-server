@@ -889,9 +889,10 @@ function user_profile_user_default_permissions() {
     'name' => 'edit field_document_file',
     'roles' => array(
       '0' => 'administrator',
-      '1' => 'blogger',
-      '2' => 'doc content owner',
-      '3' => 'moderator',
+      '1' => 'authenticated user',
+      '2' => 'blogger',
+      '3' => 'doc content owner',
+      '4' => 'moderator',
     ),
   );
 
@@ -963,7 +964,8 @@ function user_profile_user_default_permissions() {
     'name' => 'edit field_image_upload',
     'roles' => array(
       '0' => 'administrator',
-      '1' => 'moderator',
+      '1' => 'authenticated user',
+      '2' => 'moderator',
     ),
   );
 

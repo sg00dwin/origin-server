@@ -5,7 +5,7 @@
 %global modname             redhat_sso
 
 Name:    drupal%{drupal_release}-openshift-%{modname}
-Version: 1.2.1
+Version: 1.3.1
 Release: 1%{?dist}
 Summary: Openshift Red Hat Custom SSO Module for Drupal6
 Group:   Applications/Publishing
@@ -41,6 +41,12 @@ rm -rf $RPM_BUILD_ROOT
 %{drupal_modules}/%{modname}
 
 %changelog
+* Thu May 10 2012 Adam Miller <admiller@redhat.com> 1.3.1-1
+- bumping spec versions (admiller@redhat.com)
+
+* Tue May 08 2012 Adam Miller <admiller@redhat.com> 1.2.2-1
+- Begin tracking unique user ids on login of drupal. (ccoleman@redhat.com)
+
 * Thu Apr 26 2012 Adam Miller <admiller@redhat.com> 1.2.1-1
 - bumping spec versions (admiller@redhat.com)
 

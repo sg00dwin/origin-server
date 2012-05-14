@@ -53,7 +53,7 @@ function global_settings_content_default_fields() {
       'file_extensions' => 'pdf htm html',
       'file_path' => 'documents',
       'progress_indicator' => 'bar',
-      'max_filesize_per_file' => '',
+      'max_filesize_per_file' => '2M',
       'max_filesize_per_node' => '',
       'insert' => 0,
       'insert_styles' => array(
@@ -72,7 +72,7 @@ function global_settings_content_default_fields() {
       'insert_width' => '',
       'label' => 'File',
       'weight' => '-4',
-      'description' => '',
+      'description' => 'We\'re always looking for contributions from the community - submit a file to the OpenShift developer center that will help other users out.  Only HTML and PDF files are allowed.  Once we approve your file, it\'ll be on the site for everyone to see!',
       'type' => 'filefield_widget',
       'module' => 'filefield',
     ),
