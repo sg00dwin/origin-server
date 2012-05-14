@@ -345,8 +345,7 @@ mkdir -p /tmp/rhc/junit
         if options.include_web?
 
           # check sauce quotas first
-          usage = sauce_usage options
-          puts "Sauce Labs Usage: #{usage[:percentage]}% (#{usage[:used]} minutes of #{usage[:quota]})"
+          usage = sauce_usage
 
           if usage[:percentage] > 95 && !options[:sauce_overage]
             puts "Refusing to run Sauce Labs tests due to quota overage considerations.  Run with --sauce_overage to override."
@@ -940,6 +939,15 @@ END
     puts "Public Hostname: #{hostname}"
     puts "Site URL:        https://#{hostname}"
     puts "Done"
+  end
+
+  desc "sauce_usage", "Prints out usage information for sauce tests"
+  method_option :sauce_username, :required => false, :desc => "Sauce Labs username (default '#{SAUCE_USER}')"
+  method_option :sauce_access_key, :required => false, :desc => "Sauce Labs access key (default '#{SAUCE_SECRET}')"
+  def sauce_usage
+    usage = super options
+    puts "Sauce Labs Usage: #{usage[:percentage]}% (#{usage[:used]} minutes of #{usage[:quota]})"
+    return usage
   end
 
   desc "test TAG", "Runs the tests on a tagged instance and downloads the results"
