@@ -179,6 +179,8 @@ fs_list_inotifyfs(libra_app_domain)
 fs_dontaudit_list_auto_mountpoints(libra_app_domain)
 fs_dontaudit_list_tmpfs(libra_app_domain)
 storage_dontaudit_getattr_fixed_disk_dev(libra_app_domain)
+storage_getattr_fixed_disk_dev(libra_app_domain)
+fs_get_xattr_fs_quotas(libra_app_domain)
 
 files_dontaudit_list_home(libra_app_domain)
 files_dontaudit_search_all_pids(libra_app_domain)
