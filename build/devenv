@@ -395,13 +395,13 @@ mkdir -p /tmp/rhc/junit
             Dir.foreach('selenium/testcases') do |filename|
               cmds = []
               titles = []
-              if filename =~ /^tc_(.*)\.rb$/
+              #if filename =~ /^tc_(.*)\.rb$/
+              if filename == 'tc_rest_account.rb' # only run this test for now
                 test = $1
                 cmds << "cd li-test/selenium; #{env_string} ruby ts_web #{test}"
                 titles << "Web Selenium (#{sauce_os} - #{sauce_browser} #{sauce_browser_version}) (#{test})"
               end
               add_ssh_cmd_to_threads(hostname, threads, failures, titles, cmds)
-              break # for now run only one test
             end
           end
         end
