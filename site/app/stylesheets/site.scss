@@ -698,7 +698,6 @@ h1.ribbon {
       border-radius: 3px;
       border-width: 0;
       background-color: #434343;
-      width: inherit;
       width: -moz-available;
       box-shadow: none;
     }
@@ -712,6 +711,16 @@ h1.ribbon {
       top: 1px;
     }
   }
+}
+
+@media (max-width: 767px) {
+	.column-nav {
+		.search-row {
+			.search-query {
+				margin-left: 0;
+			}
+		}
+	}
 }
 
 @media (max-width: 767px) {
