@@ -401,6 +401,7 @@ mkdir -p /tmp/rhc/junit
                 titles << "Web Selenium (#{sauce_os} - #{sauce_browser} #{sauce_browser_version}) (#{test})"
               end
               add_ssh_cmd_to_threads(hostname, threads, failures, titles, cmds)
+              break # for now run only one test
             end
           end
         end
