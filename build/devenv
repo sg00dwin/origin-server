@@ -353,6 +353,10 @@ mkdir -p /tmp/rhc/junit
             return
           end
 
+          # TODO: respect sauce username and access key settings
+          cmd = "service sauce-connect start"
+          run_ssh(hostname, "Start sauce connect tunnel", cmd, timeout)
+
           if options.sauce_os && options.sauce_browser && options.sauce_browser_version
             browsers = [[options.sauce_os, options.sauce_browser, options.sauce_browser_version]]
           else
@@ -427,6 +431,11 @@ mkdir -p /tmp/rhc/junit
           end
           validate_instance(hostname)
         ensure
+          if options.include_web?
+            cmd = "service sauce-connect stop"
+            run_ssh(hostname, "Stop sauce connect tunnel", cmd, timeout)
+          end
+
           download_artifacts hostname
         end
 
