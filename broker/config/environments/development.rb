@@ -90,7 +90,8 @@ Broker::Application.configure do
     :user => "libra",
     :password => "momo",
     :db => "openshift_broker_dev",
-    :collections => {:user => "user", :district => "district", :application_template => "template"}
+    :collections => {:user => "user", :district => "district", 
+                     :application_template => "template"}
   }
   
   # SS Config
