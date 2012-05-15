@@ -34,7 +34,7 @@ Requires:  rubygem-gearchanger-m-collective-plugin
 Requires:  rubygem(ruby-prof)
 Requires:  rubygem-ruby-prof
 Requires:  rubygem-rcov
-Requires:  rubygem-mongo_mapper
+#Requires:  rubygem-mongo_mapper
 
 BuildArch: noarch
 
