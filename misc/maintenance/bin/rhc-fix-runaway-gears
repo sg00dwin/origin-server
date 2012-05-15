@@ -29,7 +29,7 @@ users.each do |user|
         if ( (app.gear.uid < (source_district.max_uid - source_district.max_capacity)) or (app.gear.uid > source_district.max_uid) )
           begin
             attempted_move << [user.login, app.name]
-            app.gear.container.move_app_for_runaway_gear(app)
+            app.gear.container.move_app_for_runaway_gear(app, nil, source_district.node_profile)
             moved_count += 1
             if app.embedded.include? "mysql-5.1"
               mysql_apps << [user.login, app.name]
