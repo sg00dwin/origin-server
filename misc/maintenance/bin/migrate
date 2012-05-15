@@ -386,7 +386,7 @@ def migrate_from_file(file)
             if StickShift::DataStore.instance.find(Application.name, rhlogin, app_name)
               sleep 4
             else
-              append_to_file(log_file, "App '#{app_name}' no longer found in datastore with uuid '#{uuid}'.  Ignoring...")
+              append_to_file(log_file, "App '#{app_name}' no longer found in datastore with uuid '#{gear_uuid}'.  Ignoring...")
               break
             end
           end
