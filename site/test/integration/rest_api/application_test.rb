@@ -49,7 +49,6 @@ class RestApiApplicationTest < ActiveSupport::TestCase
     cart = Cartridge.new :name => 'php-5.3'
 
     assert groups = app.gear_groups
-    puts groups.inspect
 
     assert_equal 1, groups.length
     group = groups[0]
