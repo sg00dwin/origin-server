@@ -22,6 +22,7 @@ users.each do |user|
         print "ERROR : Application '#{app.name}' in user account '#{user.login}' does not have a valid gear"
         next
       end
+      print "."
       app.gear.get_proxy
       source_container = app.gear.container
       source_district_uuid = source_container.get_district_uuid
