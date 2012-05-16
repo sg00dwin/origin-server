@@ -115,8 +115,11 @@ module GearChanger
           args = Hash.new
           args['--with-app-uuid'] = app.uuid
           args['--with-container-uuid'] = gear.uuid
-          args['--named'] = gear.name if gear.name
-          args['--named'] = app.name if !gear.name && app.name
+          if app.scalable
+            args['--named'] = gear.name
+          else
+            args['--named'] = app.name
+          end
           args['--with-quota-blocks'] = quota_blocks if quota_blocks
           args['--with-quota-files'] = quota_files if quota_files
           args['--with-namespace'] = app.domain.namespace
