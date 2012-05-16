@@ -49,10 +49,10 @@ class District < StickShift::Model
   end
   
   def delete()
-    if server_identities.empty? && ((available_capacity + externally_reserved_uids_size) == max_capacity)
+    if server_identities.empty?
       StickShift::DataStore.instance.delete_district(@uuid)
     else
-      raise StickShift::SSException.new("Couldn't destroy district '#{uuid}' because it still contains applications and/or nodes")
+      raise StickShift::SSException.new("Couldn't destroy district '#{uuid}' because it still contains nodes")
     end
   end
   
