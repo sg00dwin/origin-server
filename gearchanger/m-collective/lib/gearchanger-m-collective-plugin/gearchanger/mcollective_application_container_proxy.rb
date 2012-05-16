@@ -1703,8 +1703,19 @@ module GearChanger
         unless server_infos.empty?
           # Pick a random node amongst the best choices available
           server_infos = server_infos.sort_by { |server_info| server_info[1] }
-          max_index = [server_infos.length, 8].min
-          server_info = server_infos[rand(max_index)]
+          if server_infos.first[1] < 80
+            # If any server is < 80 then only pick from servers with < 80
+            server_infos.delete_if { |server_info| server_info[1] >= 80 }
+          end
+          max_index = [server_infos.length, 4].min - 1
+          server_infos = server_infos.first(max_index + 1)
+          # Weight the servers with the most active_capacity the highest 
+          (0..max_index).each do |i|
+            (max_index - i).times do
+              server_infos << server_infos[i]
+            end
+          end
+          server_info = server_infos[rand(server_infos.length)]
           current_server = server_info[0]
           current_capacity = server_info[1]
           Rails.logger.debug "Current server: #{current_server} active capacity: #{current_capacity}"
