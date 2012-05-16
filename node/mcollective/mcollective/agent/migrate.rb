@@ -17,7 +17,7 @@ module OpenShiftMigration
   end
 
   def self.migrate(uuid, namespace, version)
-    if version == "2.0.11"
+    if version == "2.0.12"
       libra_home = '/var/lib/stickshift' #node_config.get_value('libra_dir')
       libra_server = get_config_value('BROKER_HOST')
       libra_domain = get_config_value('CLOUD_DOMAIN')
@@ -36,28 +36,6 @@ module OpenShiftMigration
         env_echos.each do |env_echo|
           echo_output, echo_exitcode = Util.execute_script(env_echo)
           output += echo_output
-        end
-
-        ctl_sh = "#{gear_dir}/#{gear_name}_ctl.sh"
-        output += "Migrating #{gear_name}_ctl.sh\n"
-        ctl_file = File.open(ctl_sh, 'w')
-        begin
-          ctl_file.puts <<EOF
-#!/bin/bash -e
-
-# Expose which cartridge created the ctl script
-export CARTRIDGE_TYPE="#{gear_type}"
-
-# Import Environment Variables
-for f in ~/.env/*
-do
-    . $f
-done
-
-app_ctl.sh $1
-EOF
-        ensure
-          ctl_file.close
         end
 
       else

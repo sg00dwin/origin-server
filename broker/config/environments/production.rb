@@ -75,6 +75,11 @@ Broker::Application.configure do
     }
   }
   
+  config.usage_tracking = {
+    :datastore_enabled => false,
+    :syslog_enabled => false
+  }
+  
   config.rpc_opts = {
     :disctimeout => 3,
     :timeout     => 60,
