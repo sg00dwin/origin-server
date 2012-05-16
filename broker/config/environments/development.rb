@@ -53,6 +53,10 @@ Broker::Application.configure do
     }
   }
   
+  config.usage_tracking = {
+    :enabled => false
+  }
+  
   config.rpc_opts = {
     :disctimeout => 3,
     :timeout     => 60,
@@ -62,13 +66,6 @@ Broker::Application.configure do
     :config      => "/etc/mcollective/client.cfg"
   }
 
-# Obsolete: replaced by mongo datastore  
-#  config.datastore = {
-#    :aws_key => "AKIAITDQ37BWZ5CKAORA",
-#    :aws_secret => "AypZx1Ez3JG3UFLIRs+oM6EuztoCVwGwWsVXasCo",
-#    :s3_bucket => "libra_dev"
-#  }
-  
   config.analytics = {
     :nurture_enabled => false,
     :nurture_username => "admin",

@@ -53,6 +53,10 @@ Broker::Application.configure do
     }
   }
   
+  config.usage_tracking = {
+    :enabled => false
+  }
+  
   config.rpc_opts = {
     :disctimeout => 3,
     :timeout     => 30,
