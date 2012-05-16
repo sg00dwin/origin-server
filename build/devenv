@@ -317,9 +317,10 @@ mkdir -p /tmp/rhc/junit
 
         unless options.exclude_internal?
           add_ssh_cmd_to_threads(hostname, threads, failures, "Broker Unit", "cd li-test/broker; rake test")
-          site_titles = ["Site Unit:Units", "Site Unit:Functionals", "Site Unit:Integration"]
-          site_cmds = ["cd li-test/site; rake test:units", "cd li-test/site; rake test:functionals", "cd li-test/site; rake test:integration"]
+          site_titles = ["Site Unit:Units", "Site Unit:Integration"]
+          site_cmds = ["cd li-test/site; rake test:units", "cd li-test/site; rake test:integration"]
           add_ssh_cmd_to_threads(hostname, threads, failures, site_titles, site_cmds)
+          add_ssh_cmd_to_threads(hostname, threads, failures, "Site Unit:Functionals", "cd li-test/site; rake test:functionals")
           add_ssh_cmd_to_threads(hostname, threads, failures, "StickShift Node Unit", "cd li-test/stickshift/node; rake test")
           add_ssh_cmd_to_threads(hostname, threads, failures, "StickShift Broker Unit", "cd li-test/stickshift/broker; rake test")
         end
@@ -331,11 +332,13 @@ mkdir -p /tmp/rhc/junit
         end
 
         unless options.exclude_internal?
-          add_ssh_cmd_to_threads(hostname, threads, failures, "Internal", "cucumber -f html --out /tmp/rhc/internals.html -f progress -t @internals li-test/tests")
+          add_ssh_cmd_to_threads(hostname, threads, failures, "Internal Group 1", "cucumber -f html --out /tmp/rhc/internals.html -f progress -t @internals1 li-test/tests")
+          add_ssh_cmd_to_threads(hostname, threads, failures, "Internal Group 2", "cucumber -f html --out /tmp/rhc/internals.html -f progress -t @internals2 li-test/tests")
         end
 
         unless options.exclude_verification?
-          add_ssh_cmd_to_threads(hostname, threads, failures, "Verification", "cucumber -f html --out /tmp/rhc/verfication.html -f progress -t @verify li-test/tests")
+          add_ssh_cmd_to_threads(hostname, threads, failures, "Verification Group 1", "cucumber -f html --out /tmp/rhc/verfication.html -f progress -t @verify1 li-test/tests")
+          add_ssh_cmd_to_threads(hostname, threads, failures, "Verification Group 2", "cucumber -f html --out /tmp/rhc/verfication.html -f progress -t @verify2 li-test/tests")
         end
 
         if options.include_cucumber
@@ -436,7 +439,7 @@ mkdir -p /tmp/rhc/junit
             run_ssh(hostname, "Stop sauce connect tunnel", cmd, timeout)
           end
 
-          download_artifacts hostname
+          download_artifacts hostname if options.terminate?
         end
 
         if options.official?
@@ -569,7 +572,7 @@ mkdir -p /tmp/rhc/junit
   method_option :install_from_source, :required => false, :desc => "Indicates whether to build based off origin/master"
   method_option :install_from_local_source, :required => false, :desc => "Indicates whether to build based on your local source"
   method_option :skip_verify, :type => :boolean, :desc => "Skip running tests to verify the build"
-  method_option :instance_type, :required => false, :desc => "Amazon machine type override (default m1.medium)"
+  method_option :instance_type, :required => false, :desc => "Amazon machine type override (default c1.medium)"
 
   def build(name, build_num)
     options.verbose? ? @@log.level = Logger::DEBUG : @@log.level = Logger::ERROR
@@ -824,7 +827,7 @@ rm -rf li-working #{working_dirs}
   method_option :express_server, :type => :boolean, :desc => "Set as express server in express.conf and leave on public_ip"
   method_option :ssh_config_verifier, :type => :boolean, :desc => "Set as verifier in .ssh/config"
   method_option :init_repo, :type => :boolean, :desc => "Initialize git repo for syncing and tests (requires --verifier)"
-  method_option :instance_type, :required => false, :desc => "Amazon machine type override (default m1.medium)"
+  method_option :instance_type, :required => false, :desc => "Amazon machine type override (default m1.large)"
   method_option :region, :required => false, :desc => "Amazon region override (default us-east-1)"
   method_option :image_name, :required => false, :desc => "AMI ID or DEVENV name to launch"
 
@@ -982,6 +985,7 @@ END
 
   desc "sanity_check TAG", "Runs a set of sanity check tests on a tagged instance"
   method_option :verbose, :type => :boolean, :desc => "Enable verbose logging"
+  method_option :include_site, :type => :boolean, :desc => "Include site tests"
   method_option :region, :required => false, :desc => "Amazon region override (default us-east-1)"
   def sanity_check(tag)
     options.verbose? ? @@log.level = Logger::DEBUG : @@log.level = Logger::ERROR
@@ -994,9 +998,12 @@ END
     threads = []
     failures = []
     add_ssh_cmd_to_threads(hostname, threads, failures, "Broker Unit", "cd li-test/broker; rake test")
-    site_titles = ["Site Unit:Units"]
-    site_cmds = ["cd li-test/site; rake test:units"]
-    add_ssh_cmd_to_threads(hostname, threads, failures, site_titles, site_cmds)
+    if options.include_site?
+      site_titles = ["Site Unit:Units", "Site Unit:Integration"]
+      site_cmds = ["cd li-test/site; rake test:units", "cd li-test/site; rake test:integration"]
+      add_ssh_cmd_to_threads(hostname, threads, failures, site_titles, site_cmds)
+      add_ssh_cmd_to_threads(hostname, threads, failures, "Site Unit:Functionals", "cd li-test/site; rake test:functionals")
+    end
     add_ssh_cmd_to_threads(hostname, threads, failures, "StickShift Node Unit", "cd li-test/stickshift/node; rake test")
     add_ssh_cmd_to_threads(hostname, threads, failures, "StickShift Broker Unit", "cd li-test/stickshift/broker; rake test")
     add_ssh_cmd_to_threads(hostname, threads, failures, "Sanity", "cucumber -f html --out /tmp/rhc/sanity.html -f progress -t @sanity li-test/tests/")

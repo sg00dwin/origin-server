@@ -6,7 +6,7 @@
 #
 # Blentz OpenShift images
 AMI = {"us-east-1" =>"ami-938c5dfa"}
-TYPE = "m1.medium"
+TYPE = "m1.large"
 KEY_PAIR = "libra"
 ZONE = 'us-east-1d'
 DEVENV_WILDCARD = "devenv_*"

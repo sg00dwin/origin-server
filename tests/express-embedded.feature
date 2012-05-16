@@ -1,4 +1,4 @@
-@verify
+@verify1
 @broker
 Feature: Embedded Cartridge Verification Tests
 

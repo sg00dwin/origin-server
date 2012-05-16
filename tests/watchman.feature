@@ -1,5 +1,7 @@
 
-@internals @watchman
+@internals
+@internals1
+@watchman
 @node
 Feature: Watchman Service
   Scenario Outline: Watchman monitoring misc applications
