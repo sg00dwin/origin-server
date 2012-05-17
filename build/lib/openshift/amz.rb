@@ -414,7 +414,7 @@ module OpenShift
         conn.instances.each do |i|
           current_time = Time.new
           if i.tags["Name"] =~ /^QE_/ && !(i.tags["Name"] =~ /preserve/)
-            if ((current_time - i.launch_time) > 43200) && current_time.hour > 13 && (instance_status(i) == :running)
+            if ((current_time - i.launch_time) > 57600) && (instance_status(i) == :running)
               log.info "Stopping qe instance #{i.id}"
               i.stop
             elsif ((current_time - i.launch_time) > 100800) && (instance_status(i) == :stopped)
