@@ -316,13 +316,9 @@ mkdir -p /tmp/rhc/junit
         failures = []
 
         unless options.exclude_internal?
-          add_ssh_cmd_to_threads(hostname, threads, failures, "Broker Unit", "cd li-test/broker; rake test")
-          site_titles = ["Site Unit:Units", "Site Unit:Integration"]
-          site_cmds = ["cd li-test/site; rake test:units", "cd li-test/site; rake test:integration"]
-          add_ssh_cmd_to_threads(hostname, threads, failures, site_titles, site_cmds)
-          add_ssh_cmd_to_threads(hostname, threads, failures, "Site Unit:Functionals", "cd li-test/site; rake test:functionals")
-          add_ssh_cmd_to_threads(hostname, threads, failures, "StickShift Node Unit", "cd li-test/stickshift/node; rake test")
-          add_ssh_cmd_to_threads(hostname, threads, failures, "StickShift Broker Unit", "cd li-test/stickshift/broker; rake test")
+          titles = ["Broker Unit", "Site Unit:Units", "StickShift Node Unit", "StickShift Broker Unit"]
+          cmds = ["cd li-test/broker; rake test", "cd li-test/site; rake test:units", "cd li-test/stickshift/node; rake test", "cd li-test/stickshift/broker; rake test"]
+          add_ssh_cmd_to_threads(hostname, threads, failures, titles, cmds)
         end
 
         if options.include_rcov?
@@ -337,8 +333,12 @@ mkdir -p /tmp/rhc/junit
         end
 
         unless options.exclude_verification?
+          titles = ["Site Unit:Functionals", "Site Unit:Integration"] 
+          cmds = ["cd li-test/site; rake test:functionals", "cd li-test/site; rake test:integration"]
+          add_ssh_cmd_to_threads(hostname, threads, failures, titles, cmds)
           add_ssh_cmd_to_threads(hostname, threads, failures, "Verification Group 1", "cucumber -f html --out /tmp/rhc/verfication.html -f progress -t @verify1 li-test/tests")
           add_ssh_cmd_to_threads(hostname, threads, failures, "Verification Group 2", "cucumber -f html --out /tmp/rhc/verfication.html -f progress -t @verify2 li-test/tests")
+          add_ssh_cmd_to_threads(hostname, threads, failures, "Verification Group 3", "cucumber -f html --out /tmp/rhc/verfication.html -f progress -t @verify3 li-test/tests")
         end
 
         if options.include_cucumber
@@ -419,7 +419,7 @@ mkdir -p /tmp/rhc/junit
 
         retry_threshold = 0
         retry_threshold += 6 unless options.exclude_internal?
-        retry_threshold += 2 unless options.exclude_verification?
+        retry_threshold += 8 unless options.exclude_verification?
         retry_threshold += 6 if options.include_web?
         retry_threshold += 2 if options.include_coverage?
         
