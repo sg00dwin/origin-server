@@ -150,7 +150,7 @@ module OpenShift
 
     def next_tito_version(version, commit_id)
       #version + "-1.git.#{commit_id}"
-      version + ".#{commit_id}"
+      version + ".1"
     end
 
     def next_patch_version(version)
