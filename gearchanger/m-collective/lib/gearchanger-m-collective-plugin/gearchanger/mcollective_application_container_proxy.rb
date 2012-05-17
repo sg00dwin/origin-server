@@ -214,16 +214,6 @@ module GearChanger
         result = execute_direct(@@C_CONTROLLER, 'app-state-show', args)
         parse_result(result)
       end
-
-
-      def preconfigure_cartridge(app, gear, cart)
-        if framework_carts.include? cart
-          run_cartridge_command(cart, app, gear, "preconfigure")
-        else
-          #no-op
-          ResultIO.new
-        end
-      end
       
       def configure_cartridge(app, gear, cart, template_git_url=nil)
         result_io = ResultIO.new
