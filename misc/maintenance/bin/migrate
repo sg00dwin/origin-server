@@ -301,9 +301,8 @@ def migrate(version, continue=false, target_server_identity=nil, migrate_positio
     puts ""
   end
 
-  nodes_to_gears.each do |server_identity, gears|
+  node_to_gears.each do |server_identity, gears|
     f = migrate_file_path(server_identity)
-    leftover_count = `wc -1 #{f}`.to_i
     if leftover_count > 0
       puts "!!!!!!!!!!WARNING!!!!!!!!!!!!!WARNING!!!!!!!!!!!!WARNING!!!!!!!!!!"
       puts "#{leftover_count} leftover gears found in migrate file: #{f}"
@@ -502,7 +501,7 @@ begin
     ["--migrate-file", GetoptLong::REQUIRED_ARGUMENT],
     ["--version", GetoptLong::REQUIRED_ARGUMENT],
     ["--num-migrators", GetoptLong::REQUIRED_ARGUMENT],
-    ["--migrator-position", GetoptLong::REQUIRED_ARGUMENT],
+    ["--migrate-position", GetoptLong::REQUIRED_ARGUMENT],
     ["--continue", GetoptLong::NO_ARGUMENT],
     ["--help", "-h", GetoptLong::NO_ARGUMENT]
   )
@@ -561,6 +560,16 @@ else
       end
       unless migrate_position
         puts "--migrate-position is required with --num-migrators"
+        exit 255
+      end
+      num_migrators = num_migrators.to_i
+      migrate_position = migrate_position.to_i
+      unless migrate_position > 0 && migrate_position < num_migrators
+        puts "migrate-position must be > 0 and < num_migrators"
+        exit 255
+      end
+      unless num_migrators > 0
+        puts "num_migrators must be > 0"
         exit 255
       end
     else
