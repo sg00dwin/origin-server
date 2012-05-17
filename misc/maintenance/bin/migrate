@@ -303,6 +303,7 @@ def migrate(version, continue=false, target_server_identity=nil, migrate_positio
 
   node_to_gears.each do |server_identity, gears|
     f = migrate_file_path(server_identity)
+    leftover_count = `wc -l #{f}`.to_i
     if leftover_count > 0
       puts "!!!!!!!!!!WARNING!!!!!!!!!!!!!WARNING!!!!!!!!!!!!WARNING!!!!!!!!!!"
       puts "#{leftover_count} leftover gears found in migrate file: #{f}"
