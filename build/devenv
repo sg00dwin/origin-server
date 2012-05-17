@@ -418,7 +418,7 @@ mkdir -p /tmp/rhc/junit
 
         retry_threshold = 0
         retry_threshold += 6 unless options.exclude_internal?
-        retry_threshold += 2 unless options.exclude_verification?
+        retry_threshold += 8 unless options.exclude_verification?
         retry_threshold += 6 if options.include_web?
         retry_threshold += 2 if options.include_coverage?
         
