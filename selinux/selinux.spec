@@ -1,6 +1,6 @@
 Summary:       SELinux policy for OpenShift nodes
 Name:          rhc-selinux
-Version: 0.93.2
+Version: 0.93.3
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -46,6 +46,9 @@ rm -rf %{buildroot}
 %attr(0640,-,-) %{_datadir}/selinux/packages/libra.pp
 
 %changelog
+* Thu May 17 2012 Adam Miller <admiller@redhat.com> 0.93.3-1
+- 
+
 * Thu May 17 2012 Adam Miller <admiller@redhat.com> 0.93.2-1
 - SELinux lines to allow use of the quota command. (rmillner@redhat.com)
 - Allow libra domains to communicate with jboss_messageing ports
