@@ -47,6 +47,7 @@ Requires:  rubygem-mechanize
 Requires:  rubygem-mocha
 Requires:  rubygem-rspec
 Requires:  rubygem-nokogiri
+Requires:  rubygem-rcov
 Requires:  charlie
 Requires:  pam
 Requires:  pam-devel

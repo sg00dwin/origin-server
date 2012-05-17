@@ -317,23 +317,28 @@ mkdir -p /tmp/rhc/junit
 
         unless options.exclude_internal?
           add_ssh_cmd_to_threads(hostname, threads, failures, "Broker Unit", "cd li-test/broker; rake test")
-          site_titles = ["Site Unit:Units", "Site Unit:Functionals", "Site Unit:Integration"]
-          site_cmds = ["cd li-test/site; rake test:units", "cd li-test/site; rake test:functionals", "cd li-test/site; rake test:integration"]
+          site_titles = ["Site Unit:Units", "Site Unit:Integration"]
+          site_cmds = ["cd li-test/site; rake test:units", "cd li-test/site; rake test:integration"]
           add_ssh_cmd_to_threads(hostname, threads, failures, site_titles, site_cmds)
+          add_ssh_cmd_to_threads(hostname, threads, failures, "Site Unit:Functionals", "cd li-test/site; rake test:functionals")
           add_ssh_cmd_to_threads(hostname, threads, failures, "StickShift Node Unit", "cd li-test/stickshift/node; rake test")
           add_ssh_cmd_to_threads(hostname, threads, failures, "StickShift Broker Unit", "cd li-test/stickshift/broker; rake test")
         end
 
         if options.include_rcov?
           add_ssh_cmd_to_threads(hostname, threads, failures, "StickShift Node Unit Coverage", "cd li-test/stickshift/node; rake rcov; cp -a coverage /tmp/rhc/stickshift_node_coverage")
+          add_ssh_cmd_to_threads(hostname, threads, failures, "Broker Unit and Functional Coverage", "cd li-test/broker; rake rcov; cp -a test/coverage /tmp/rhc/broker_coverage")
+          add_ssh_cmd_to_threads(hostname, threads, failures, "StickShift Broker Unit and Functional Coverage", "cd li-test/stickshift/broker; rake rcov; cp -a test/coverage /tmp/rhc/stickshift_broker_coverage")
         end
 
         unless options.exclude_internal?
-          add_ssh_cmd_to_threads(hostname, threads, failures, "Internal", "cucumber -f html --out /tmp/rhc/internals.html -f progress -t @internals li-test/tests")
+          add_ssh_cmd_to_threads(hostname, threads, failures, "Internal Group 1", "cucumber -f html --out /tmp/rhc/internals.html -f progress -t @internals1 li-test/tests")
+          add_ssh_cmd_to_threads(hostname, threads, failures, "Internal Group 2", "cucumber -f html --out /tmp/rhc/internals.html -f progress -t @internals2 li-test/tests")
         end
 
         unless options.exclude_verification?
-          add_ssh_cmd_to_threads(hostname, threads, failures, "Verification", "cucumber -f html --out /tmp/rhc/verfication.html -f progress -t @verify li-test/tests")
+          add_ssh_cmd_to_threads(hostname, threads, failures, "Verification Group 1", "cucumber -f html --out /tmp/rhc/verfication.html -f progress -t @verify1 li-test/tests")
+          add_ssh_cmd_to_threads(hostname, threads, failures, "Verification Group 2", "cucumber -f html --out /tmp/rhc/verfication.html -f progress -t @verify2 li-test/tests")
         end
 
         if options.include_cucumber
@@ -345,13 +350,16 @@ mkdir -p /tmp/rhc/junit
         if options.include_web?
 
           # check sauce quotas first
-          usage = sauce_usage options
-          puts "Sauce Labs Usage: #{usage[:percentage]}% (#{usage[:used]} minutes of #{usage[:quota]})"
+          usage = sauce_usage
 
           if usage[:percentage] > 95 && !options[:sauce_overage]
             puts "Refusing to run Sauce Labs tests due to quota overage considerations.  Run with --sauce_overage to override."
             return
           end
+
+          # TODO: respect sauce username and access key settings
+          cmd = "service sauce-connect start"
+          run_ssh(hostname, "Start sauce connect tunnel", cmd, timeout)
 
           if options.sauce_os && options.sauce_browser && options.sauce_browser_version
             browsers = [[options.sauce_os, options.sauce_browser, options.sauce_browser_version]]
@@ -375,7 +383,7 @@ mkdir -p /tmp/rhc/junit
               "SAUCE_OS" => sauce_os,
               "SAUCE_BROWSER" => sauce_browser,
               "SAUCE_BROWSER_VERSION" => sauce_browser_version,
-              "SAUCE_SELENIUM_VERSION" => '2.18.0',
+              "SAUCE_SELENIUM_VERSION" => '2.7.0',
               "SAUCE_BROWSER_URL" => "https://#{hostname}/app",
               "JENKINS_BUILD" => 'unofficial'
             }
@@ -399,8 +407,8 @@ mkdir -p /tmp/rhc/junit
                 test = $1
                 cmds << "cd li-test/selenium; #{env_string} ruby ts_web #{test}"
                 titles << "Web Selenium (#{sauce_os} - #{sauce_browser} #{sauce_browser_version}) (#{test})"
+                add_ssh_cmd_to_threads(hostname, threads, failures, titles, cmds)
               end
-              add_ssh_cmd_to_threads(hostname, threads, failures, titles, cmds)
             end
           end
         end
@@ -426,7 +434,12 @@ mkdir -p /tmp/rhc/junit
           end
           validate_instance(hostname)
         ensure
-          download_artifacts hostname
+          if options.include_web?
+            cmd = "service sauce-connect stop"
+            run_ssh(hostname, "Stop sauce connect tunnel", cmd, timeout)
+          end
+
+          download_artifacts hostname if options.terminate?
         end
 
         if options.official?
@@ -561,7 +574,7 @@ mkdir -p /tmp/rhc/junit
   method_option :install_from_source, :required => false, :desc => "Indicates whether to build based off origin/master"
   method_option :install_from_local_source, :required => false, :desc => "Indicates whether to build based on your local source"
   method_option :skip_verify, :type => :boolean, :desc => "Skip running tests to verify the build"
-  method_option :instance_type, :required => false, :desc => "Amazon machine type override (default m1.medium)"
+  method_option :instance_type, :required => false, :desc => "Amazon machine type override (default c1.medium)"
 
   def build(name, build_num)
     options.verbose? ? @@log.level = Logger::DEBUG : @@log.level = Logger::ERROR
@@ -816,7 +829,7 @@ rm -rf li-working #{working_dirs}
   method_option :express_server, :type => :boolean, :desc => "Set as express server in express.conf and leave on public_ip"
   method_option :ssh_config_verifier, :type => :boolean, :desc => "Set as verifier in .ssh/config"
   method_option :init_repo, :type => :boolean, :desc => "Initialize git repo for syncing and tests (requires --verifier)"
-  method_option :instance_type, :required => false, :desc => "Amazon machine type override (default m1.medium)"
+  method_option :instance_type, :required => false, :desc => "Amazon machine type override (default m1.large)"
   method_option :region, :required => false, :desc => "Amazon region override (default us-east-1)"
   method_option :image_name, :required => false, :desc => "AMI ID or DEVENV name to launch"
 
@@ -935,6 +948,15 @@ END
     puts "Done"
   end
 
+  desc "sauce_usage", "Prints out usage information for sauce tests"
+  method_option :sauce_username, :required => false, :desc => "Sauce Labs username (default '#{SAUCE_USER}')"
+  method_option :sauce_access_key, :required => false, :desc => "Sauce Labs access key (default '#{SAUCE_SECRET}')"
+  def sauce_usage
+    usage = super options
+    puts "Sauce Labs Usage: #{usage[:percentage]}% (#{usage[:used]} minutes of #{usage[:quota]})"
+    return usage
+  end
+
   desc "test TAG", "Runs the tests on a tagged instance and downloads the results"
   method_option :terminate, :type => :boolean, :desc => "Terminate the instance when finished"
   method_option :verbose, :type => :boolean, :desc => "Enable verbose logging"
@@ -965,6 +987,7 @@ END
 
   desc "sanity_check TAG", "Runs a set of sanity check tests on a tagged instance"
   method_option :verbose, :type => :boolean, :desc => "Enable verbose logging"
+  method_option :include_site, :type => :boolean, :desc => "Include site tests"
   method_option :region, :required => false, :desc => "Amazon region override (default us-east-1)"
   def sanity_check(tag)
     options.verbose? ? @@log.level = Logger::DEBUG : @@log.level = Logger::ERROR
@@ -977,9 +1000,12 @@ END
     threads = []
     failures = []
     add_ssh_cmd_to_threads(hostname, threads, failures, "Broker Unit", "cd li-test/broker; rake test")
-    site_titles = ["Site Unit:Units"]
-    site_cmds = ["cd li-test/site; rake test:units"]
-    add_ssh_cmd_to_threads(hostname, threads, failures, site_titles, site_cmds)
+    if options.include_site?
+      site_titles = ["Site Unit:Units", "Site Unit:Integration"]
+      site_cmds = ["cd li-test/site; rake test:units", "cd li-test/site; rake test:integration"]
+      add_ssh_cmd_to_threads(hostname, threads, failures, site_titles, site_cmds)
+      add_ssh_cmd_to_threads(hostname, threads, failures, "Site Unit:Functionals", "cd li-test/site; rake test:functionals")
+    end
     add_ssh_cmd_to_threads(hostname, threads, failures, "StickShift Node Unit", "cd li-test/stickshift/node; rake test")
     add_ssh_cmd_to_threads(hostname, threads, failures, "StickShift Broker Unit", "cd li-test/stickshift/broker; rake test")
     add_ssh_cmd_to_threads(hostname, threads, failures, "Sanity", "cucumber -f html --out /tmp/rhc/sanity.html -f progress -t @sanity li-test/tests/")

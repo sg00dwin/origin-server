@@ -1,4 +1,5 @@
-@internals                                                                                                                                                                       
+@internals
+@internals1                                                                                                                                                                  
 @node
 Feature: HAProxy Application Sub-Cartridge
   

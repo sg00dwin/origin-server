@@ -13,7 +13,7 @@ Given /^the user has (no|\d+) tail process(es)? running( in (\d+) seconds)?$/ do
 end
 
 Given /a running SSH log stream/ do
-  ssh_cmd = "ssh -t #{@app.uid}@#{@app.hostname} tail -f #{@app.name}/logs/\\*"
+  ssh_cmd = "ssh -o BatchMode=yes -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -t #{@app.uid}@#{@app.hostname} tail -f #{@app.name}/logs/\\*"
 
   stdout, stdin, pid = PTY.spawn ssh_cmd
 
@@ -30,7 +30,7 @@ Given /I wait (\d+) second(s)?$/ do |sec, ignore|
 end
 
 When /^I request the logs via SSH$/ do
-  ssh_cmd = "ssh -t #{@app.uid}@#{@app.hostname} tail -f #{@app.name}/logs/\\*"
+  ssh_cmd = "ssh  -o BatchMode=yes -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -t #{@app.uid}@#{@app.hostname} tail -f #{@app.name}/logs/\\*"
 
   stdout, stdin, pid = PTY.spawn ssh_cmd
 
@@ -38,6 +38,23 @@ When /^I request the logs via SSH$/ do
     :pid => pid,
     :stdout => stdout,
   }
+end
+
+Then /^I can obtain disk quota information via SSH$/ do
+  ssh_cmd = "ssh  -o BatchMode=yes -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -t #{@app.uid}@#{@app.hostname} /usr/bin/quota"
+  buf=""
+  begin
+    stdout, stdin, pid = PTY.spawn ssh_cmd
+    Timeout::timeout(600) do
+      buf=stdout.read
+    end
+    # PTY.check(pid, true)
+    Process.kill("KILL", pid)
+  rescue PTY::ChildExited, Errno::ESRCH
+  end
+  if buf.index("Disk quotas for user #{@app.uid}").nil?
+    raise "Could not obtain disk quota information"
+  end
 end
 
 When /^I terminate the SSH log stream$/ do

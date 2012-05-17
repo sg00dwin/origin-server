@@ -17,6 +17,7 @@ gem 'gearchanger-m-collective-plugin'
 gem 'rest-client'
 gem 'thread-dump'
 gem 'ruby-prof'
+#gem 'mongo_mapper'
 
 # Bundle edge Rails instead:
 # gem 'rails', :git => 'git://github.com/rails/rails.git'
@@ -43,4 +44,5 @@ gem 'ruby-prof'
 group :development, :test do
   # The require part from http://tinyurl.com/3pf68ho
   gem 'mocha', :require => nil
+  gem 'rcov', :require => nil
 end

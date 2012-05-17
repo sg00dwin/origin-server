@@ -4,7 +4,7 @@ Broker::Application.configure do
   # In the development environment your application's code is reloaded on
   # every request.  This slows down response time but is perfect for development
   # since you don't have to restart the webserver when you make code changes.
-  config.cache_classes = false
+  config.cache_classes = true
 
   # Log error messages when you accidentally call methods on nil.
   config.whiny_nils = true
@@ -53,6 +53,11 @@ Broker::Application.configure do
     }
   }
   
+  config.usage_tracking = {
+    :datastore_enabled => false,
+    :syslog_enabled => false
+  }
+  
   config.rpc_opts = {
     :disctimeout => 3,
     :timeout     => 60,
@@ -62,13 +67,6 @@ Broker::Application.configure do
     :config      => "/etc/mcollective/client.cfg"
   }
 
-# Obsolete: replaced by mongo datastore  
-#  config.datastore = {
-#    :aws_key => "AKIAITDQ37BWZ5CKAORA",
-#    :aws_secret => "AypZx1Ez3JG3UFLIRs+oM6EuztoCVwGwWsVXasCo",
-#    :s3_bucket => "libra_dev"
-#  }
-  
   config.analytics = {
     :nurture_enabled => false,
     :nurture_username => "admin",
@@ -90,7 +88,8 @@ Broker::Application.configure do
     :user => "libra",
     :password => "momo",
     :db => "openshift_broker_dev",
-    :collections => {:user => "user", :district => "district", :application_template => "template"}
+    :collections => {:user => "user", :district => "district", 
+                     :application_template => "template"}
   }
   
   # SS Config

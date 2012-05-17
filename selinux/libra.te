@@ -1,4 +1,5 @@
-policy_module(libra,1.1.23)
+policy_module(libra,1.1.24)
+# Requires selinux-policy-3.7.19-150.el6
 
 ########################################
 #
@@ -71,6 +72,7 @@ corenet_tcp_connect_virt_migration_port(libra_net_domain)
 corenet_tcp_connect_ssh_port(libra_net_domain)
 corenet_tcp_connect_jboss_management_port(libra_net_domain)
 corenet_tcp_connect_jboss_debug_port(libra_net_domain)
+corenet_tcp_connect_jboss_messaging_port(libra_net_domain)
 corenet_tcp_connect_memcache_port(libra_net_domain)
 corenet_tcp_connect_http_cache_port(libra_net_domain)
 corenet_tcp_connect_amqp_port(libra_net_domain)
@@ -80,6 +82,7 @@ corenet_tcp_connect_munin_port(libra_net_domain)
 corenet_tcp_connect_pop_port(libra_net_domain)
 corenet_udp_bind_generic_port(libra_net_domain)
 corenet_tcp_bind_jboss_management_port(libra_net_domain)
+corenet_tcp_bind_jboss_messaging_port(libra_net_domain)
 corenet_tcp_bind_jboss_debug_port(libra_net_domain)
 corenet_tcp_bind_mongod_port(libra_net_domain)
 corenet_tcp_connect_smtp_port(libra_net_domain)
@@ -176,6 +179,8 @@ fs_list_inotifyfs(libra_app_domain)
 fs_dontaudit_list_auto_mountpoints(libra_app_domain)
 fs_dontaudit_list_tmpfs(libra_app_domain)
 storage_dontaudit_getattr_fixed_disk_dev(libra_app_domain)
+storage_getattr_fixed_disk_dev(libra_app_domain)
+fs_get_xattr_fs_quotas(libra_app_domain)
 
 files_dontaudit_list_home(libra_app_domain)
 files_dontaudit_search_all_pids(libra_app_domain)

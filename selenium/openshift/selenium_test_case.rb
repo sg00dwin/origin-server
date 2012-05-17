@@ -78,10 +78,11 @@ module OpenShift
 
         caps[:name] = get_name
         caps[:build] = ENV['JENKINS_BUILD'] || 'unofficial'
-        # saucelabs defaults to version 2.6.0 which has a bug
-        # that causes windows tests to fail
-        # TODO: comment out when saucelabs upgrades their default
-        caps[:"selenium-version"] = "2.7.0"
+
+        caps[:"selenium-version"] = "2.7.0" if caps[:"selenium-version"].nil?
+        if ENV["SAUCE_SELENIUM_VERSION"]
+          caps[:"selenium-version"] = ENV["SAUCE_SELENIUM_VERSION"]
+        end
 
         @driver = Selenium::WebDriver.for(
           :remote,

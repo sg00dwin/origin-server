@@ -86,8 +86,6 @@ function mongo() {
 
 
 function help {
-# FIXME: Comment out quota for now - till the selinux policy is in place.
-# quota           list free space
     cat <<EOF
 Help menu: The following commands are available to help control your openshift
 application and environment.
@@ -102,6 +100,7 @@ ps              list running applications
 kill            kill running applications
 mysql           interactive MySQL shell
 mongo           interactive MongoDB shell
+quota           list disk usage
 
 EOF
 }

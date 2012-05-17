@@ -81,6 +81,7 @@ GEM
       rdoc
       thor
     rake (0.8.7)
+    rcov (1.0.0)
     rdoc (3.7)
     regin (0.3.7)
     rest-client (1.6.1)
@@ -126,6 +127,7 @@ DEPENDENCIES
   parseconfig
   rack
   rails (~> 3.0.10)
+  rcov
   regin
   rest-client
   ruby-prof

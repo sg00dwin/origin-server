@@ -1,4 +1,5 @@
 #@verify
+#@verify1
 @node
 @broker
 Feature: Scaling Verification Tests
