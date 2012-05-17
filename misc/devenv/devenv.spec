@@ -8,7 +8,7 @@
 
 Summary:   Dependencies for OpenShift development
 Name:      rhc-devenv
-Version: 0.94.2
+Version: 0.94.3
 Release:   1%{?dist}
 Group:     Development/Libraries
 License:   GPLv2
@@ -486,6 +486,9 @@ chown apache:apache /srv/cache/mod_cache
 %{policydir}/*
 
 %changelog
+* Thu May 17 2012 Adam Miller <admiller@redhat.com> 0.94.3-1
+- 
+
 * Thu May 17 2012 Adam Miller <admiller@redhat.com> 0.94.2-1
 - get tests running faster (dmcphers@redhat.com)
 - Add rcov to broker and as a dependency for devenv for build & test.
