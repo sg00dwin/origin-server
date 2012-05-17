@@ -564,8 +564,8 @@ else
       end
       num_migrators = num_migrators.to_i
       migrate_position = migrate_position.to_i
-      unless migrate_position > 0 && migrate_position < num_migrators
-        puts "migrate-position must be > 0 and < num_migrators"
+      unless migrate_position > 0 && migrate_position <= num_migrators
+        puts "migrate-position must be > 0 and <= num_migrators"
         exit 255
       end
       unless num_migrators > 0
