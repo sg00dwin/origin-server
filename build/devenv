@@ -795,7 +795,7 @@ rm -rf li-working #{working_dirs}
 
 # End shell code
 ################
-}, 600, true)
+}, 900, true)
 
       if exit_code != 0
         puts "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
