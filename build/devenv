@@ -195,29 +195,23 @@ mkdir -p /tmp/rhc/junit
 
     def download_artifacts(hostname)
       print "Downloading logs and screenshots..."
-      `mkdir -p rhc/log`
-      scp_from(hostname, "/tmp/rhc/*.log", "rhc/log")
-      scp_from(hostname, "/tmp/rhc/*.html", "rhc/log")
-      scp_from(hostname, "/var/www/stickshift/site/httpd/logs/access_log", "rhc/log/site_access_log.txt")
-      scp_from(hostname, "/var/www/stickshift/site/httpd/logs/error_log", "rhc/log/site_error_log.txt")
-      scp_from(hostname, "/var/www/stickshift/site/log/development.log", "rhc/log")
-      scp_from(hostname, "/var/www/stickshift/site/log/test.log", "rhc/log/site_test.log")
-      scp_from(hostname, "/var/www/stickshift/broker/httpd/logs/access_log", "rhc/log/broker_access_log.log")
-      scp_from(hostname, "/var/www/stickshift/broker/httpd/logs/error_log", "rhc/log/broker_error_log.log")
-      scp_from(hostname, "/var/www/stickshift/broker/log/development.log", "rhc/log")
-      scp_from(hostname, "/var/www/stickshift/broker/log/test.log", "rhc/log/broker_test.log")
-      scp_from(hostname, "/var/log/mcollective.*", "rhc/log")
-      scp_from(hostname, "/var/www/stickshift/broker/log/mcollective-client.log", "rhc/log")
-      scp_from(hostname, "/var/log/httpd/access_log", "rhc/log/system_access_log.log")
-      scp_from(hostname, "/var/log/httpd/error_log", "rhc/log/system_error_log.log")
-      scp_from(hostname, "/var/log/messages", "rhc/log/messages.log")
-      scp_from(hostname, "/var/log/dmesg", "rhc/log/messages.log")
-      scp_from(hostname, "/tmp/rhc/screenshots/", "rhc/log")
-      scp_from(hostname, "/root/li-test/selenium/output/*", "rhc/log")
-      scp_from(hostname, "/var/lib/stickshift/*/*/jbossas-7/standalone/tmp/*.log", "rhc/log")
+      
+      `rm -rf rhc/log; mkdir -p rhc/log/; pushd rhc/log > /dev/null; mkdir site broker mcollective system screenshots selenium jbossas broker-profiler coverage; popd > /dev/null`
+      scp_from(hostname, "/tmp/rhc/*", "rhc/log")
+      scp_from(hostname, "/var/www/stickshift/site/httpd/logs/*", "rhc/log/site")
+      scp_from(hostname, "/var/www/stickshift/site/log/*", "rhc/log/site")
+      scp_from(hostname, "/var/www/stickshift/broker/httpd/logs/*", "rhc/log/broker")
+      scp_from(hostname, "/var/www/stickshift/broker/log/*", "rhc/log/broker")
+      scp_from(hostname, "/var/log/mcollective.*", "rhc/log/mcollective")
+      scp_from(hostname, "/var/log/httpd/*", "rhc/log/system")
+      scp_from(hostname, "/var/log/messages", "rhc/log/system")
+      scp_from(hostname, "/var/log/dmesg", "rhc/log/system")
+      scp_from(hostname, "/tmp/rhc/screenshots/*", "rhc/log/screenshots")
+      scp_from(hostname, "/root/li-test/selenium/output/*", "rhc/log/selenium")
+      scp_from(hostname, "/var/lib/stickshift/*/*/jbossas-7/standalone/tmp/*.log", "rhc/log/jbossas")
       scp_from(hostname, "/tmp/rhc/benchmark.csv", "rhc/log")
-      scp_from(hostname, "/tmp/broker-profiler/*", "rhc/log")
-      scp_from(hostname, "/tmp/rhc/*_coverage", "rhc/log")
+      scp_from(hostname, "/tmp/broker-profiler/*", "rhc/log/broker-profiler")
+      scp_from(hostname, "/tmp/rhc/*_coverage", "rhc/log/coverage")
       puts "Done"
     end
 
