@@ -3,7 +3,7 @@
 
 Summary:   Li broker components
 Name:      rhc-broker
-Version: 0.93.2
+Version: 0.93.5
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -96,6 +96,18 @@ rm -rf $RPM_BUILD_ROOT
 /bin/touch %{brokerdir}/log/production.log
 
 %changelog
+* Fri May 18 2012 Adam Miller <admiller@redhat.com> 0.93.5-1
+- Updating gem versions (admiller@redhat.com)
+
+* Thu May 17 2012 Adam Miller <admiller@redhat.com> 0.93.4-1
+- 
+
+* Thu May 17 2012 Adam Miller <admiller@redhat.com> 0.93.3-1
+- Merge branch 'master' of git1.ops.rhcloud.com:/srv/git/li (rpenta@redhat.com)
+- Create db:test:prepare task so that we don't execute actual mongo_mapper rake
+  task which is trying to connect to 'test' db in mongo and that will fail due
+  to incorrect credentials. (rpenta@redhat.com)
+
 * Thu May 17 2012 Adam Miller <admiller@redhat.com> 0.93.2-1
 - Updating gem versions (admiller@redhat.com)
 - Enable usage modal code (rpenta@redhat.com)

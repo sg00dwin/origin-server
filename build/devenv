@@ -316,9 +316,22 @@ mkdir -p /tmp/rhc/junit
         failures = []
 
         unless options.exclude_internal?
-          titles = ["Broker Unit", "Site Unit:Units", "StickShift Node Unit", "StickShift Broker Unit"]
-          cmds = ["cd li-test/broker; rake test", "cd li-test/site; rake test:units", "cd li-test/stickshift/node; rake test", "cd li-test/stickshift/broker; rake test"]
+          titles = ["Broker Unit",
+                    "Site Unit:Units", 
+                    "StickShift Node Unit",
+                    "Internal Group 1"]
+          cmds = ["cd li-test/broker; rake test", 
+                  "cd li-test/site; rake test:units", 
+                  "cd li-test/stickshift/node; rake test",
+                  "cucumber -f html --out /tmp/rhc/internals1.html -f progress -t @internals1 li-test/tests"]
           add_ssh_cmd_to_threads(hostname, threads, failures, titles, cmds)
+      
+          titles = ["Internal Group 2",
+                    "StickShift Broker Unit"]
+          cmds = ["cucumber -f html --out /tmp/rhc/internals2.html -f progress -t @internals2 li-test/tests",
+                  "cd li-test/stickshift/broker; rake test"]
+          add_ssh_cmd_to_threads(hostname, threads, failures, titles, cmds)
+
         end
 
         if options.include_rcov?
@@ -327,18 +340,20 @@ mkdir -p /tmp/rhc/junit
           add_ssh_cmd_to_threads(hostname, threads, failures, "StickShift Broker Unit and Functional Coverage", "cd li-test/stickshift/broker; rake rcov; cp -a test/coverage /tmp/rhc/stickshift_broker_coverage")
         end
 
-        unless options.exclude_internal?
-          add_ssh_cmd_to_threads(hostname, threads, failures, "Internal Group 1", "cucumber -f html --out /tmp/rhc/internals.html -f progress -t @internals1 li-test/tests")
-          add_ssh_cmd_to_threads(hostname, threads, failures, "Internal Group 2", "cucumber -f html --out /tmp/rhc/internals.html -f progress -t @internals2 li-test/tests")
-        end
-
         unless options.exclude_verification?
-          titles = ["Site Unit:Functionals", "Site Unit:Integration"] 
-          cmds = ["cd li-test/site; rake test:functionals", "cd li-test/site; rake test:integration"]
+          titles = ["Site Unit:Functionals", 
+                    "Verification Group 1"] 
+          cmds = ["cd li-test/site; rake test:functionals", 
+                  "cucumber -f html --out /tmp/rhc/verfication1.html -f progress -t @verify1 li-test/tests"]
           add_ssh_cmd_to_threads(hostname, threads, failures, titles, cmds)
-          add_ssh_cmd_to_threads(hostname, threads, failures, "Verification Group 1", "cucumber -f html --out /tmp/rhc/verfication.html -f progress -t @verify1 li-test/tests")
-          add_ssh_cmd_to_threads(hostname, threads, failures, "Verification Group 2", "cucumber -f html --out /tmp/rhc/verfication.html -f progress -t @verify2 li-test/tests")
-          add_ssh_cmd_to_threads(hostname, threads, failures, "Verification Group 3", "cucumber -f html --out /tmp/rhc/verfication.html -f progress -t @verify3 li-test/tests")
+
+          add_ssh_cmd_to_threads(hostname, threads, failures, "Verification Group 2", "cucumber -f html --out /tmp/rhc/verfication2.html -f progress -t @verify2 li-test/tests")
+
+          titles = ["Verification Group 3",
+                    "Site Unit:Integration"]
+          cmds = ["cucumber -f html --out /tmp/rhc/verfication3.html -f progress -t @verify3 li-test/tests", 
+                  "cd li-test/site; rake test:integration"]
+          add_ssh_cmd_to_threads(hostname, threads, failures, titles, cmds)
         end
 
         if options.include_cucumber
@@ -795,7 +810,7 @@ rm -rf li-working #{working_dirs}
 
 # End shell code
 ################
-}, 600, true)
+}, 900, true)
 
       if exit_code != 0
         puts "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
