@@ -191,7 +191,6 @@ module Uplift
     end
     
     def dyn_create_cname_record(application, namespace, public_hostname, auth_token, retries=0)
-      #public_hostname = get_fact_direct('public_hostname')
       logger.debug "DEBUG: Public ip being configured '#{public_hostname}' to app '#{application}'"
       fqdn = "#{application}-#{namespace}.#{@domain_suffix}"
       # Create the CNAME record
