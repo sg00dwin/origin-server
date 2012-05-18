@@ -1,5 +1,5 @@
 #!/bin/bash
- 
+
 #. /etc/bashrc
 
 source /etc/init.d/functions 2> /dev/null
@@ -77,7 +77,11 @@ function mongo() {
    if echo "$@" | egrep "\-\-host|$OPENSHIFT_NOSQL_DB_HOST" > /dev/null; then
       hopt=""  #  Do not override if --host is passed.
    else
-      hopt="${OPENSHIFT_NOSQL_DB_HOST:-'127.0.0.1'}:${OPENSHIFT_NOSQL_DB_PORT:-27017}/admin"
+      if [ -n "$OPENSHIFT_NOSQL_DB_GEAR_DNS" ]; then
+         hopt="${OPENSHIFT_NOSQL_DB_GEAR_DNS:-'127.0.0.1'}:${OPENSHIFT_NOSQL_DB_PORT:-27017}/admin"
+      else
+         hopt="${OPENSHIFT_NOSQL_DB_HOST:-'127.0.0.1'}:${OPENSHIFT_NOSQL_DB_PORT:-27017}/admin"
+      fi
    fi
 
    /usr/bin/mongo ${hopt} ${uopt} ${popt} "$@"
