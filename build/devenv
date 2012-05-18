@@ -328,17 +328,17 @@ mkdir -p /tmp/rhc/junit
         end
 
         unless options.exclude_internal?
-          add_ssh_cmd_to_threads(hostname, threads, failures, "Internal Group 1", "cucumber -f html --out /tmp/rhc/internals.html -f progress -t @internals1 li-test/tests")
-          add_ssh_cmd_to_threads(hostname, threads, failures, "Internal Group 2", "cucumber -f html --out /tmp/rhc/internals.html -f progress -t @internals2 li-test/tests")
+          add_ssh_cmd_to_threads(hostname, threads, failures, "Internal Group 1", "cucumber -f html --out /tmp/rhc/internals1.html -f progress -t @internals1 li-test/tests")
+          add_ssh_cmd_to_threads(hostname, threads, failures, "Internal Group 2", "cucumber -f html --out /tmp/rhc/internals2.html -f progress -t @internals2 li-test/tests")
         end
 
         unless options.exclude_verification?
           titles = ["Site Unit:Functionals", "Site Unit:Integration"] 
           cmds = ["cd li-test/site; rake test:functionals", "cd li-test/site; rake test:integration"]
           add_ssh_cmd_to_threads(hostname, threads, failures, titles, cmds)
-          add_ssh_cmd_to_threads(hostname, threads, failures, "Verification Group 1", "cucumber -f html --out /tmp/rhc/verfication.html -f progress -t @verify1 li-test/tests")
-          add_ssh_cmd_to_threads(hostname, threads, failures, "Verification Group 2", "cucumber -f html --out /tmp/rhc/verfication.html -f progress -t @verify2 li-test/tests")
-          add_ssh_cmd_to_threads(hostname, threads, failures, "Verification Group 3", "cucumber -f html --out /tmp/rhc/verfication.html -f progress -t @verify3 li-test/tests")
+          add_ssh_cmd_to_threads(hostname, threads, failures, "Verification Group 1", "cucumber -f html --out /tmp/rhc/verfication1.html -f progress -t @verify1 li-test/tests")
+          add_ssh_cmd_to_threads(hostname, threads, failures, "Verification Group 2", "cucumber -f html --out /tmp/rhc/verfication2.html -f progress -t @verify2 li-test/tests")
+          add_ssh_cmd_to_threads(hostname, threads, failures, "Verification Group 3", "cucumber -f html --out /tmp/rhc/verfication3.html -f progress -t @verify3 li-test/tests")
         end
 
         if options.include_cucumber
