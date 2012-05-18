@@ -3,9 +3,9 @@
 
 Summary:   StickShift billing components
 Name:      stickshift-billing
-Version:   0.0.1
+Version:   0.0.2
 Release:   1%{?dist}
-Group:     Network/Daemons
+Group:     System Environment/Daemons
 License:   ASL 2.0
 URL:       http://openshift.redhat.com
 Source0:   stickshift-billing-%{version}.tar.gz
@@ -97,3 +97,6 @@ rm -rf $RPM_BUILD_ROOT
 #chkconfig stickshift-billing on
 
 %changelog
+* Fri May 18 2012 Ravi Sankar <rpenta@redhat.com> 0.0.2-1
+- new package built with tito
+
