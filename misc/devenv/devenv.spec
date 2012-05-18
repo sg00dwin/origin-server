@@ -46,6 +46,7 @@ Requires:  rubygem-cucumber
 Requires:  rubygem-mechanize
 Requires:  rubygem-mocha
 Requires:  rubygem-rspec
+Requires:  rubygem-webmock
 Requires:  rubygem-nokogiri
 Requires:  rubygem-rcov
 Requires:  charlie
