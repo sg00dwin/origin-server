@@ -3,12 +3,8 @@ class BillingEventsController < BaseController
 
   # POST /events
   def create
-    event_list_str = params[:event_id]
+    event_list = params[:event_id]
     
-    # validate the :event_id param input
-    
-    event_list = event_list_str[1..-2].split(',').collect! {|n| n.to_i}
-
     retval = "FAILED"
     begin
       event_list.each do |event_id|
