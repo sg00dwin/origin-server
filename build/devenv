@@ -289,8 +289,38 @@ mkdir -p /tmp/rhc/junit
       end
     end
     
-    def setup_test_dir(hostname)
-      ssh(hostname, "rm -rf /tmp/rhc; mkdir -p /tmp/rhc/junit")
+    def reset_test_dir(hostname, backup=false)
+      ssh(hostname, %{
+if [ -d /tmp/rhc ]
+then
+    if #{backup}
+    then
+        if `ls /tmp/rhc/run_* > /dev/null`
+        then
+            rm -rf /tmp/rhc_previous_runs
+            mkdir /tmp/rhc_previous_runs
+            mv /tmp/rhc/run_* /tmp/rhc_previous_runs
+        fi
+        for i in {1..100}
+        do
+            if ! [ -d /tmp/rhc_previous_runs/run_$i ]
+            then
+                mkdir /tmp/rhc/run_$i
+                mv /tmp/rhc/* /tmp/rhc/run_$i
+                break
+            fi
+        done
+        if `ls /tmp/rhc_previous_runs/run_* > /dev/null`
+        then
+            mv /tmp/rhc_previous_runs/run_* /tmp/rhc/
+            rm -rf /tmp/rhc_previous_runs
+        fi
+    else
+        rm -rf /tmp/rhc
+    fi
+fi
+mkdir -p /tmp/rhc/junit
+}, 120, true)
     end
 
     def test_instance(tag, hostname, instance, conn, options, image_id=nil)
@@ -302,7 +332,7 @@ mkdir -p /tmp/rhc/junit
 
         idle_all_gears(hostname) unless options.official?
         
-        setup_test_dir(hostname)
+        reset_test_dir(hostname)
 
         broker_profiler(hostname) if options.profile_broker?
 
@@ -479,7 +509,7 @@ mkdir -p /tmp/rhc/junit
     def retry_test_failures(hostname, failures, num_retries=1, timeout=@@SSH_TIMEOUT)
       failures.reverse!
       puts "All Failures: #{failures.pretty_inspect}"
-      setup_test_dir(hostname)
+      reset_test_dir(hostname, true)
       failures.each do |failure|
         title = failure[0]
         cmd = failure[1]
@@ -490,7 +520,7 @@ mkdir -p /tmp/rhc/junit
             if i == num_retries
               exit exit_code
             else
-              setup_test_dir(hostname)
+              reset_test_dir(hostname, true)
             end
           else
             break
