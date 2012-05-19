@@ -198,7 +198,8 @@ mkdir -p /tmp/rhc/junit
       ssh(hostname, %{
 if [ -d /tmp/rhc ]
 then
-      rm -rf /tmp/rhc/**/*_repo
+      find /tmp/rhc -type d -name *_repo -print0 | xargs -0 rm -rf
+      find /tmp/rhc -type f -name "*.json" -exec rm -f {} \;
 fi
 }, 120, true)
       `rm -rf rhc/log; mkdir -p rhc/log/; pushd rhc/log > /dev/null; mkdir -p site broker mcollective system screenshots selenium jbossas broker-profiler coverage; popd > /dev/null`
