@@ -195,13 +195,6 @@ mkdir -p /tmp/rhc/junit
 
     def download_artifacts(hostname)
       print "Downloading logs and screenshots..."
-      ssh(hostname, %{
-if [ -d /tmp/rhc ]
-then
-      find /tmp/rhc -type d -name *_repo -print0 | xargs -0 rm -rf
-      find /tmp/rhc -type f -name "*.json" -exec rm -f {} \;
-fi
-}, 120, true)
       `rm -rf rhc/log; mkdir -p rhc/log/; pushd rhc/log > /dev/null; mkdir -p site broker mcollective system screenshots selenium jbossas broker-profiler coverage; popd > /dev/null`
       scp_from(hostname, "/tmp/rhc/*", "rhc/log")
       scp_from(hostname, "/var/www/stickshift/site/httpd/logs/access_log", "rhc/log/site/access_log.log")
