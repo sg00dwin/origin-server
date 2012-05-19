@@ -97,6 +97,4 @@ rm -rf $RPM_BUILD_ROOT
 #chkconfig stickshift-billing on
 
 %changelog
-* Fri May 18 2012 Ravi Sankar <rpenta@redhat.com> 0.0.2-1
-- new package built with tito
 
