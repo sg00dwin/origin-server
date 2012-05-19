@@ -105,7 +105,7 @@ build/devenv test devenv_benchmark_${BUILD_NUMBER} --exclude_internal --exclude_
   </builders>
   <publishers>
     <hudson.tasks.ArtifactArchiver>
-      <artifacts>rhc/log/*</artifacts>
+      <artifacts>rhc/log/**</artifacts>
       <latestOnly>false</latestOnly>
     </hudson.tasks.ArtifactArchiver>
   </publishers>
