@@ -164,7 +164,7 @@ def redeploy_httpd_proxy(gear, out)
   end
 end
 
-def migrate(version, continue=false, target_server_identity=nil)
+def migrate(version, continue=false, target_server_identity=nil, migrate_position=1, num_migrators=1)
   start_time = Time.now.to_i
   puts "Getting all RHLogins..."
   users = []
@@ -185,7 +185,6 @@ def migrate(version, continue=false, target_server_identity=nil)
   puts "RHLogins.length: #{all_rhlogins_length.to_s}"
   
   node_to_gears = {}
-  node_to_users = {}
   ds_queues = []
   users.each_with_index do |user, index|
     queue_index = index % MAX_THREADS
@@ -207,10 +206,7 @@ def migrate(version, continue=false, target_server_identity=nil)
               if (!target_server_identity || (server_identity == target_server_identity))
                 mutex.synchronize do
                   node_to_gears[server_identity] = [] unless node_to_gears[server_identity]
-                  node_to_users[server_identity] = [] unless node_to_users[server_identity]
                   node_to_gears[server_identity] << gear
-                  node_to_users[server_identity] << user
-                  gear_cnt += 1
                 end
               end
             end
@@ -224,10 +220,25 @@ def migrate(version, continue=false, target_server_identity=nil)
   ds_threads.each do |t|
     t.join
   end
+  
+  position = migrate_position - 1
+  migrator_position_nodes = []
+  if num_migrators > 1
+    server_identities = node_to_gears.keys.sort 
+    server_identities.each_with_index do |server_identity, index|
+      if index == position
+        migrator_position_nodes << server_identity
+        position += num_migrators
+      else
+        node_to_gears.delete(server_identity)
+      end
+    end
+  end
 
   gear_cnts = []
   thread_groups = []
   node_to_gears.each do |server_identity, gears|
+    gear_cnt += gears.length
     if thread_groups.length < MAX_THREADS
       thread_groups << [{server_identity => gears}]
       gear_cnts << gears.length
@@ -247,20 +258,22 @@ def migrate(version, continue=false, target_server_identity=nil)
   node_to_gears = nil
   
   puts "#####################################################"
-  puts 'Gear Counts Per Thread:'
+  puts 'Gear counts per thread:'
   puts gear_cnts.pretty_inspect
+  if migrator_position_nodes
+    puts 'Nodes this migrator is handling:'
+    puts migrator_position_nodes.pretty_inspect
+  end
   puts "#####################################################"
   
   thread_groups.each do |thread_group|
     thread_group.each do |node_to_gears|
       node_to_gears.each do |server_identity, gears|
-        write_node_to_file(server_identity, gears, node_to_users, version) unless continue
+        write_node_to_file(server_identity, gears, version) unless continue
         node_to_gears[server_identity] = nil
       end
     end
   end
-  
-  node_to_users = nil
 
   @failures = []
   node_threads = []
@@ -277,6 +290,7 @@ def migrate(version, continue=false, target_server_identity=nil)
   node_threads.each do |t|
     t.join
   end
+  
   if @failures.length > 0
     puts "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
     puts "Failures:"
@@ -286,12 +300,26 @@ def migrate(version, continue=false, target_server_identity=nil)
     puts "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
     puts ""
   end
+
+  node_to_gears.each do |server_identity, gears|
+    f = migrate_file_path(server_identity)
+    leftover_count = `wc -l #{f}`.to_i
+    if leftover_count > 0
+      puts "!!!!!!!!!!WARNING!!!!!!!!!!!!!WARNING!!!!!!!!!!!!WARNING!!!!!!!!!!"
+      puts "#{leftover_count} leftover gears found in migrate file: #{f}"
+      puts "You can run with --continue to try again"
+      puts "!!!!!!!!!!WARNING!!!!!!!!!!!!!WARNING!!!!!!!!!!!!WARNING!!!!!!!!!!"
+      puts ""
+    end
+  end
+  
   puts "#####################################################"
   puts "Summary:"
   puts "# of users: #{all_rhlogins_length}"
   puts "# of gears: #{gear_cnt}"
   puts "# of failures: #{@failures.length}"
   puts "Gear counts per thread: #{gear_cnts.pretty_inspect}"
+  puts "Nodes migrated: #{migrator_position_nodes.pretty_inspect}"
 
   end_time = Time.now.to_i
   total_time = end_time-start_time
@@ -299,15 +327,14 @@ def migrate(version, continue=false, target_server_identity=nil)
   puts "#####################################################"
 end
 
-def write_node_to_file(server_identity, gears, node_to_users, version)
+def write_node_to_file(server_identity, gears, version)
   f = migrate_file_path(server_identity)
   puts "Writing #{gears.length} gears for node #{server_identity} to file #{f}"
-  users = node_to_users[server_identity]
   FileUtils.mkdir_p WORK_DIR
   FileUtils.rm_f f
   FileUtils.touch f
   gears.each_with_index do |gear, index|
-    user = users[index]
+    user = gear.app.user
     rhlogin = user.login
     migrate_on_node_args = "#{gear.server_identity},#{gear.uuid},#{gear.name},#{gear.app.name},#{rhlogin},#{version}"
     append_to_file(f, migrate_on_node_args)
@@ -454,6 +481,12 @@ Usage: #{$0}
   --app-name app_name                  App name of the gear to migrate
   --migrate-node server_identity       Server identity of the node to migrate
   --migrate-file file                  File containing the gears to migrate
+  --num-migrators num                  The total number of migrators to be run.  Each migrate-position will be a 
+                                       migrate-position of num-migrators.  All positions must to taken to migrate
+                                       all gears.  Ex: If you are going to run 2 migrators you would need to run:
+                                       ./migrate --version <version> --position 1 --num-migrators 2
+                                       ./migrate --version <version> --position 2 --num-migrators 2
+  --migrate-position position          Postion of this migrator (1 based) amongst the num of migrators (--num_migrators)
   --continue                           Flag indicating to continue a previous migration
 
 USAGE
@@ -468,6 +501,8 @@ begin
     ["--migrate-node", GetoptLong::REQUIRED_ARGUMENT],
     ["--migrate-file", GetoptLong::REQUIRED_ARGUMENT],
     ["--version", GetoptLong::REQUIRED_ARGUMENT],
+    ["--num-migrators", GetoptLong::REQUIRED_ARGUMENT],
+    ["--migrate-position", GetoptLong::REQUIRED_ARGUMENT],
     ["--continue", GetoptLong::NO_ARGUMENT],
     ["--help", "-h", GetoptLong::NO_ARGUMENT]
   )
@@ -517,8 +552,33 @@ WARNING
   end
 else
   if opt['version']
+    num_migrators = opt['num-migrators']
+    migrate_position = opt['migrate-position']
+    if num_migrators || migrate_position
+      unless num_migrators
+        puts "--num-migrators is required with --migrate-position"
+        exit 255
+      end
+      unless migrate_position
+        puts "--migrate-position is required with --num-migrators"
+        exit 255
+      end
+      num_migrators = num_migrators.to_i
+      migrate_position = migrate_position.to_i
+      unless migrate_position > 0 && migrate_position <= num_migrators
+        puts "migrate-position must be > 0 and <= num_migrators"
+        exit 255
+      end
+      unless num_migrators > 0
+        puts "num_migrators must be > 0"
+        exit 255
+      end
+    else
+      num_migrators = 1
+      migrate_position = 1
+    end
     if opt['continue']
-      migrate(opt['version'], true)
+      migrate(opt['version'], true, nil, migrate_position, num_migrators)
     elsif File.exists?("/tmp/rhc/migration")
       puts <<-WARNING
 !!!!!!!!!!!!!!!!!!!! EXISTING MIGRATION DATA FOUND !!!!!!!!!!!!!!!!!!!!
@@ -528,7 +588,7 @@ where it left off with '#{__FILE__} --continue'.
 WARNING
       exit 1
     else
-      migrate(opt['version'])
+      migrate(opt['version'], false, nil, migrate_position, num_migrators)
     end
   else
     puts "--version is required"

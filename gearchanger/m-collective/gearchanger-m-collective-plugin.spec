@@ -5,7 +5,7 @@
 
 Summary:        GearChanger plugin for m-colective service
 Name:           rubygem-%{gemname}
-Version: 0.10.1
+Version: 0.10.2
 Release:        1%{?dist}
 Group:          Development/Languages
 License:        ASL 2.0
@@ -70,6 +70,13 @@ rm -rf %{buildroot}
 %{ruby_sitelib}/%{gemname}.rb
 
 %changelog
+* Thu May 17 2012 Adam Miller <admiller@redhat.com> 0.10.2-1
+- remove preconfigure (dmcphers@redhat.com)
+- favor servers with capacity < 80 first followed by a weighted average
+  favoring emptier servers first (dmcphers@redhat.com)
+- Bugz 820902 (kraman@gmail.com)
+- fix for bug#811576 (rchopra@redhat.com)
+
 * Thu May 10 2012 Adam Miller <admiller@redhat.com> 0.10.1-1
 - for runaway gears, make sure the move to a new district maintains the
   node_profile (rchopra@redhat.com)

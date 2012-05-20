@@ -2,7 +2,7 @@
 
 Summary:       Multi-tenant cloud management system node tools
 Name:          rhc-node
-Version: 0.93.1
+Version: 0.93.2
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -266,6 +266,11 @@ fi
 /lib64/security/pam_libra.so
 
 %changelog
+* Thu May 17 2012 Adam Miller <admiller@redhat.com> 0.93.2-1
+- remove preconfigure (dmcphers@redhat.com)
+- reset migration for release 2.0.12 (dmcphers@redhat.com)
+- Add ability to run the quota command. (rmillner@redhat.com)
+
 * Thu May 10 2012 Adam Miller <admiller@redhat.com> 0.93.1-1
 - bumping spec versions (admiller@redhat.com)
 

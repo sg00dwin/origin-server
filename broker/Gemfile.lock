@@ -41,7 +41,7 @@ GEM
     dnsruby (1.53)
     erubis (2.6.6)
       abstract
-    gearchanger-m-collective-plugin (0.10.1)
+    gearchanger-m-collective-plugin (0.10.2)
       json
       stickshift-controller
     httparty (0.7.4)
@@ -57,9 +57,15 @@ GEM
     mocha (0.9.8)
     mongo (1.5.2)
       bson
+    mongo_mapper (0.11.1)
+      activemodel (~> 3.0)
+      activesupport (~> 3.0)
+      plucky (~> 0.4.0)
     nokogiri (1.4.3.1)
     open4 (1.3.0)
     parseconfig (0.5.2)
+    plucky (0.4.4)
+      mongo (~> 1.5)
     polyglot (0.2.5)
     rack (1.3.0)
     rack-mount (0.7.1)
@@ -87,12 +93,12 @@ GEM
     rest-client (1.6.1)
     ruby-prof (0.10.7)
     state_machine (1.1.2)
-    stickshift-common (0.10.1)
+    stickshift-common (0.10.2)
       activemodel
       json
       mongo
       rack
-    stickshift-controller (0.11.1)
+    stickshift-controller (0.11.3)
       activesupport
       dnsruby
       json
@@ -123,6 +129,7 @@ DEPENDENCIES
   json
   mocha
   mongo
+  mongo_mapper
   open4
   parseconfig
   rack

@@ -32,29 +32,9 @@ GEM
     arel (2.0.9)
     bson (1.5.2)
     builder (2.1.2)
-    stickshift-common (0.9.1)
-      activemodel
-      json
-      mongo
-      rack
-    stickshift-controller (0.10.4)
-      activesupport
-      stickshift-common
-      dnsruby
-      json
-      open4
-      state_machine
-    stickshift-node (0.10.4)
-      activemodel
-      stickshift-common
-      highline
-      json
-      parseconfig
-      state_machine
     dnsruby (1.53)
     erubis (2.6.6)
       abstract
-    highline (1.5.1)
     i18n (0.5.0)
     json (1.4.6)
     mail (2.3.0)
@@ -91,7 +71,20 @@ GEM
     rake (0.8.7)
     rdoc (3.7)
     regin (0.3.7)
+    rest-client (1.6.1)
+      mime-types (>= 1.16)
     state_machine (1.1.2)
+    stickshift-common (0.10.2)
+      activemodel
+      json
+      mongo
+    stickshift-controller (0.11.3)
+      activesupport (~> 3.0.10)
+      dnsruby
+      json (= 1.4.6)
+      open4
+      state_machine
+      stickshift-common
     thor (0.14.6)
     treetop (1.4.10)
       polyglot
@@ -102,14 +95,12 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
-  stickshift-controller
-  stickshift-node
   json
   mocha
   mongo
-  open4
   parseconfig
   rack
   rails (~> 3.0.10)
-  regin
+  rest-client
+  stickshift-controller
   xml-simple

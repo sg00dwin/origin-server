@@ -3,7 +3,7 @@
 
 Summary:   Li broker components
 Name:      rhc-broker
-Version: 0.93.1
+Version: 0.93.5
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -34,7 +34,7 @@ Requires:  rubygem-gearchanger-m-collective-plugin
 Requires:  rubygem(ruby-prof)
 Requires:  rubygem-ruby-prof
 Requires:  rubygem-rcov
-#Requires:  rubygem-mongo_mapper
+Requires:  rubygem-mongo_mapper
 
 BuildArch: noarch
 
@@ -96,6 +96,47 @@ rm -rf $RPM_BUILD_ROOT
 /bin/touch %{brokerdir}/log/production.log
 
 %changelog
+* Fri May 18 2012 Adam Miller <admiller@redhat.com> 0.93.5-1
+- Updating gem versions (admiller@redhat.com)
+
+* Thu May 17 2012 Adam Miller <admiller@redhat.com> 0.93.4-1
+- 
+
+* Thu May 17 2012 Adam Miller <admiller@redhat.com> 0.93.3-1
+- Merge branch 'master' of git1.ops.rhcloud.com:/srv/git/li (rpenta@redhat.com)
+- Create db:test:prepare task so that we don't execute actual mongo_mapper rake
+  task which is trying to connect to 'test' db in mongo and that will fail due
+  to incorrect credentials. (rpenta@redhat.com)
+
+* Thu May 17 2012 Adam Miller <admiller@redhat.com> 0.93.2-1
+- Updating gem versions (admiller@redhat.com)
+- Enable usage modal code (rpenta@redhat.com)
+- get tests running faster (dmcphers@redhat.com)
+- Re-include all OpenShift components in rcov run. (rmillner@redhat.com)
+- enable move_gear for scalable apps (rchopra@redhat.com)
+- add syslog for usage (dmcphers@redhat.com)
+- Bug 822186 (dmcphers@redhat.com)
+- usage tracking options (dmcphers@redhat.com)
+- Comment usage model (rpenta@redhat.com)
+- Until we install mongo_mapper, disable usage model unittests
+  (rpenta@redhat.com)
+- Until we get plucky 0.4.4 rpm, temporarily disable mongo_mapper in
+  broker.spec and ruby Gemfile (rpenta@redhat.com)
+- Resolve conflicts during Usage branch merge (rpenta@redhat.com)
+- fix build (dmcphers@redhat.com)
+- Add rcov to broker and as a dependency for devenv for build & test.
+  (rmillner@redhat.com)
+- restore rhc-admin-move to original form : accepts only apps (no gears) and
+  rejects scalable apps (rchopra@redhat.com)
+- fix for bug821003 (rchopra@redhat.com)
+- fix for bug#811576 (rchopra@redhat.com)
+- Add usage summary for user (rpenta@redhat.com)
+- Usage model changes (rpenta@redhat.com)
+- nit (dmcphers@redhat.com)
+- Initial version of Usage model: create/update/find/delete usage event in
+  mongo 'usages' collection (rpenta@redhat.com)
+- add a simple usage object (dmcphers@redhat.com)
+
 * Thu May 10 2012 Adam Miller <admiller@redhat.com> 0.93.1-1
 - Updating gem versions (admiller@redhat.com)
 - bumping spec versions (admiller@redhat.com)

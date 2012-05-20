@@ -8,7 +8,7 @@
 
 Summary:   Dependencies for OpenShift development
 Name:      rhc-devenv
-Version: 0.94.1
+Version: 0.94.3
 Release:   1%{?dist}
 Group:     Development/Libraries
 License:   GPLv2
@@ -46,6 +46,7 @@ Requires:  rubygem-cucumber
 Requires:  rubygem-mechanize
 Requires:  rubygem-mocha
 Requires:  rubygem-rspec
+Requires:  rubygem-webmock
 Requires:  rubygem-nokogiri
 Requires:  rubygem-rcov
 Requires:  charlie
@@ -486,6 +487,19 @@ chown apache:apache /srv/cache/mod_cache
 %{policydir}/*
 
 %changelog
+* Thu May 17 2012 Adam Miller <admiller@redhat.com> 0.94.3-1
+- 
+
+* Thu May 17 2012 Adam Miller <admiller@redhat.com> 0.94.2-1
+- get tests running faster (dmcphers@redhat.com)
+- Add rcov to broker and as a dependency for devenv for build & test.
+  (rmillner@redhat.com)
+- Removed proxy balance from express.conf 05 14 2012 (tkramer@redhat.com)
+- mod_cache added to devenv 05 14 2012 (tkramer@redhat.com)
+- Add a much improved ideas view and sub pages (ccoleman@redhat.com)
+- bypass java SSL issue by passing property jsse.enableSNIExtension=false
+  (johnp@redhat.com)
+
 * Mon May 14 2012 Tim Kramer <tkramer@redhat.com>
 - Added mod_cache to the proxy server and supporting directory
 

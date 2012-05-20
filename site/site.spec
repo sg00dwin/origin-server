@@ -3,7 +3,7 @@
 
 Summary:   Li site components
 Name:      rhc-site
-Version: 0.93.1
+Version: 0.93.2
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -117,6 +117,30 @@ rm -rf %{buildroot}
 /bin/touch %{sitedir}/log/production.log
 
 %changelog
+* Thu May 17 2012 Adam Miller <admiller@redhat.com> 0.93.2-1
+- Unit test now passes with bug 812060 fixed (ccoleman@redhat.com)
+- Bug 804937 - Update to use the correct exit code for the message
+  (ccoleman@redhat.com)
+- Remove puts (ccoleman@redhat.com)
+- Gear state (ccoleman@redhat.com)
+- Basic gear group code (ccoleman@redhat.com)
+- re enable mixin inputGridSystem-generate (sgoodwin@redhat.com)
+- Merge branch 'dev0510' (sgoodwin@redhat.com)
+- another tweak for search-query class (sgoodwin@redhat.com)
+- update to tracking.js (spurtell@redhat.com)
+- Merge branch 'master' of git:/srv/git/li (spurtell@redhat.com)
+- community search field fix for ipad/chrome width issue (sgoodwin@redhat.com)
+- More fixes for input field width sizing (sgoodwin@redhat.com)
+- Merge branch 'master' of git:/srv/git/li into dev0510 (sgoodwin@redhat.com)
+- Add helper to generate technologies page for dev center (ccoleman@redhat.com)
+- Make username drop menu position absolute at mobile sizes to enable topmost
+  position on open, Fix search field to use modified mixin inputGridSystem-
+  inputColumns and set have it's width set appropriate to grid. And a few other
+  minor visual mods... (sgoodwin@redhat.com)
+- Merge branch 'master' of git:/srv/git/li (spurtell@redhat.com)
+- Updated tracking.js with Google Analytcs and AdWords code
+  (spurtell@redhat.com)
+
 * Thu May 10 2012 Adam Miller <admiller@redhat.com> 0.93.1-1
 - Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
   (admiller@redhat.com)

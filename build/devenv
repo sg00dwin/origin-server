@@ -195,29 +195,25 @@ mkdir -p /tmp/rhc/junit
 
     def download_artifacts(hostname)
       print "Downloading logs and screenshots..."
-      `mkdir -p rhc/log`
-      scp_from(hostname, "/tmp/rhc/*.log", "rhc/log")
-      scp_from(hostname, "/tmp/rhc/*.html", "rhc/log")
-      scp_from(hostname, "/var/www/stickshift/site/httpd/logs/access_log", "rhc/log/site_access_log.txt")
-      scp_from(hostname, "/var/www/stickshift/site/httpd/logs/error_log", "rhc/log/site_error_log.txt")
-      scp_from(hostname, "/var/www/stickshift/site/log/development.log", "rhc/log")
-      scp_from(hostname, "/var/www/stickshift/site/log/test.log", "rhc/log/site_test.log")
-      scp_from(hostname, "/var/www/stickshift/broker/httpd/logs/access_log", "rhc/log/broker_access_log.log")
-      scp_from(hostname, "/var/www/stickshift/broker/httpd/logs/error_log", "rhc/log/broker_error_log.log")
-      scp_from(hostname, "/var/www/stickshift/broker/log/development.log", "rhc/log")
-      scp_from(hostname, "/var/www/stickshift/broker/log/test.log", "rhc/log/broker_test.log")
-      scp_from(hostname, "/var/log/mcollective.*", "rhc/log")
-      scp_from(hostname, "/var/www/stickshift/broker/log/mcollective-client.log", "rhc/log")
-      scp_from(hostname, "/var/log/httpd/access_log", "rhc/log/system_access_log.log")
-      scp_from(hostname, "/var/log/httpd/error_log", "rhc/log/system_error_log.log")
-      scp_from(hostname, "/var/log/messages", "rhc/log/messages.log")
-      scp_from(hostname, "/var/log/dmesg", "rhc/log/messages.log")
-      scp_from(hostname, "/tmp/rhc/screenshots/", "rhc/log")
-      scp_from(hostname, "/root/li-test/selenium/output/*", "rhc/log")
-      scp_from(hostname, "/var/lib/stickshift/*/*/jbossas-7/standalone/tmp/*.log", "rhc/log")
+      `rm -rf rhc/log; mkdir -p rhc/log/; pushd rhc/log > /dev/null; mkdir -p site broker mcollective system screenshots selenium jbossas broker-profiler coverage; popd > /dev/null`
+      scp_from(hostname, "/tmp/rhc/*", "rhc/log")
+      scp_from(hostname, "/var/www/stickshift/site/httpd/logs/access_log", "rhc/log/site/access_log.log")
+      scp_from(hostname, "/var/www/stickshift/site/httpd/logs/error_log", "rhc/log/site/error_log.log")
+      scp_from(hostname, "/var/www/stickshift/site/log/*", "rhc/log/site")
+      scp_from(hostname, "/var/www/stickshift/broker/httpd/logs/access_log", "rhc/log/broker/access_log.log")
+      scp_from(hostname, "/var/www/stickshift/broker/httpd/logs/error_log", "rhc/log/broker/error_log.log")
+      scp_from(hostname, "/var/www/stickshift/broker/log/*", "rhc/log/broker")
+      scp_from(hostname, "/var/log/mcollective.*", "rhc/log/mcollective")
+      scp_from(hostname, "/var/log/httpd/access_log", "rhc/log/system/access_log.log")
+      scp_from(hostname, "/var/log/httpd/error_log", "rhc/log/system/error_log.log")
+      scp_from(hostname, "/var/log/messages", "rhc/log/system/messages.log")
+      scp_from(hostname, "/var/log/dmesg", "rhc/log/system/dmesg.log")
+      scp_from(hostname, "/tmp/rhc/screenshots/*", "rhc/log/screenshots")
+      scp_from(hostname, "/root/li-test/selenium/output/*", "rhc/log/selenium")
+      scp_from(hostname, "/var/lib/stickshift/*/*/jbossas-7/standalone/tmp/*.log", "rhc/log/jbossas")
       scp_from(hostname, "/tmp/rhc/benchmark.csv", "rhc/log")
-      scp_from(hostname, "/tmp/broker-profiler/*", "rhc/log")
-      scp_from(hostname, "/tmp/rhc/*_coverage", "rhc/log")
+      scp_from(hostname, "/tmp/broker-profiler/*", "rhc/log/broker-profiler")
+      scp_from(hostname, "/tmp/rhc/*_coverage", "rhc/log/coverage")
       puts "Done"
     end
 
@@ -295,8 +291,41 @@ mkdir -p /tmp/rhc/junit
       end
     end
     
-    def setup_test_dir(hostname)
-      ssh(hostname, "rm -rf /tmp/rhc; mkdir -p /tmp/rhc/junit")
+    def reset_test_dir(hostname, backup=false)
+      ssh(hostname, %{
+if [ -d /tmp/rhc ]
+then
+    if #{backup}
+    then
+        if `ls /tmp/rhc/run_* > /dev/null 2>&1`
+        then
+            rm -rf /tmp/rhc_previous_runs
+            mkdir -p /tmp/rhc_previous_runs
+            mv /tmp/rhc/run_* /tmp/rhc_previous_runs
+        fi
+        if `ls /tmp/rhc/* > /dev/null 2>&1`
+        then
+            for i in {1..100}
+            do
+                if ! [ -d /tmp/rhc_previous_runs/run_$i ]
+                then
+                    mkdir -p /tmp/rhc_previous_runs/run_$i
+                    mv /tmp/rhc/* /tmp/rhc_previous_runs/run_$i
+                    break
+                fi
+            done
+        fi
+        if `ls /tmp/rhc_previous_runs/run_* > /dev/null 2>&1`
+        then
+            mv /tmp/rhc_previous_runs/run_* /tmp/rhc/
+            rm -rf /tmp/rhc_previous_runs
+        fi
+    else
+        rm -rf /tmp/rhc
+    fi
+fi
+mkdir -p /tmp/rhc/junit
+}, 120, true)
     end
 
     def test_instance(tag, hostname, instance, conn, options, image_id=nil)
@@ -308,7 +337,7 @@ mkdir -p /tmp/rhc/junit
 
         idle_all_gears(hostname) unless options.official?
         
-        setup_test_dir(hostname)
+        reset_test_dir(hostname)
 
         broker_profiler(hostname) if options.profile_broker?
 
@@ -316,13 +345,22 @@ mkdir -p /tmp/rhc/junit
         failures = []
 
         unless options.exclude_internal?
-          add_ssh_cmd_to_threads(hostname, threads, failures, "Broker Unit", "cd li-test/broker; rake test")
-          site_titles = ["Site Unit:Units", "Site Unit:Integration"]
-          site_cmds = ["cd li-test/site; rake test:units", "cd li-test/site; rake test:integration"]
-          add_ssh_cmd_to_threads(hostname, threads, failures, site_titles, site_cmds)
-          add_ssh_cmd_to_threads(hostname, threads, failures, "Site Unit:Functionals", "cd li-test/site; rake test:functionals")
-          add_ssh_cmd_to_threads(hostname, threads, failures, "StickShift Node Unit", "cd li-test/stickshift/node; rake test")
-          add_ssh_cmd_to_threads(hostname, threads, failures, "StickShift Broker Unit", "cd li-test/stickshift/broker; rake test")
+          titles = ["Broker Unit",
+                    "Site Unit:Units", 
+                    "StickShift Node Unit",
+                    "Internal Group 1"]
+          cmds = ["cd li-test/broker; rake test", 
+                  "cd li-test/site; rake test:units", 
+                  "cd li-test/stickshift/node; rake test",
+                  "cucumber -f html --out /tmp/rhc/internals1.html -f progress -t @internals1 li-test/tests"]
+          add_ssh_cmd_to_threads(hostname, threads, failures, titles, cmds)
+      
+          titles = ["Internal Group 2",
+                    "StickShift Broker Unit"]
+          cmds = ["cucumber -f html --out /tmp/rhc/internals2.html -f progress -t @internals2 li-test/tests",
+                  "cd li-test/stickshift/broker; rake test"]
+          add_ssh_cmd_to_threads(hostname, threads, failures, titles, cmds)
+
         end
 
         if options.include_rcov?
@@ -331,14 +369,20 @@ mkdir -p /tmp/rhc/junit
           add_ssh_cmd_to_threads(hostname, threads, failures, "StickShift Broker Unit and Functional Coverage", "cd li-test/stickshift/broker; rake rcov; cp -a test/coverage /tmp/rhc/stickshift_broker_coverage")
         end
 
-        unless options.exclude_internal?
-          add_ssh_cmd_to_threads(hostname, threads, failures, "Internal Group 1", "cucumber -f html --out /tmp/rhc/internals.html -f progress -t @internals1 li-test/tests")
-          add_ssh_cmd_to_threads(hostname, threads, failures, "Internal Group 2", "cucumber -f html --out /tmp/rhc/internals.html -f progress -t @internals2 li-test/tests")
-        end
-
         unless options.exclude_verification?
-          add_ssh_cmd_to_threads(hostname, threads, failures, "Verification Group 1", "cucumber -f html --out /tmp/rhc/verfication.html -f progress -t @verify1 li-test/tests")
-          add_ssh_cmd_to_threads(hostname, threads, failures, "Verification Group 2", "cucumber -f html --out /tmp/rhc/verfication.html -f progress -t @verify2 li-test/tests")
+          titles = ["Site Unit:Functionals", 
+                    "Verification Group 1"] 
+          cmds = ["cd li-test/site; rake test:functionals", 
+                  "cucumber -f html --out /tmp/rhc/verfication1.html -f progress -t @verify1 li-test/tests"]
+          add_ssh_cmd_to_threads(hostname, threads, failures, titles, cmds)
+
+          add_ssh_cmd_to_threads(hostname, threads, failures, "Verification Group 2", "cucumber -f html --out /tmp/rhc/verfication2.html -f progress -t @verify2 li-test/tests")
+
+          titles = ["Verification Group 3",
+                    "Site Unit:Integration"]
+          cmds = ["cucumber -f html --out /tmp/rhc/verfication3.html -f progress -t @verify3 li-test/tests", 
+                  "cd li-test/site; rake test:integration"]
+          add_ssh_cmd_to_threads(hostname, threads, failures, titles, cmds)
         end
 
         if options.include_cucumber
@@ -419,7 +463,7 @@ mkdir -p /tmp/rhc/junit
 
         retry_threshold = 0
         retry_threshold += 6 unless options.exclude_internal?
-        retry_threshold += 2 unless options.exclude_verification?
+        retry_threshold += 8 unless options.exclude_verification?
         retry_threshold += 6 if options.include_web?
         retry_threshold += 2 if options.include_coverage?
         
@@ -470,7 +514,7 @@ mkdir -p /tmp/rhc/junit
     def retry_test_failures(hostname, failures, num_retries=1, timeout=@@SSH_TIMEOUT)
       failures.reverse!
       puts "All Failures: #{failures.pretty_inspect}"
-      setup_test_dir(hostname)
+      reset_test_dir(hostname, true)
       failures.each do |failure|
         title = failure[0]
         cmd = failure[1]
@@ -481,7 +525,7 @@ mkdir -p /tmp/rhc/junit
             if i == num_retries
               exit exit_code
             else
-              setup_test_dir(hostname)
+              reset_test_dir(hostname, true)
             end
           else
             break
@@ -795,7 +839,7 @@ rm -rf li-working #{working_dirs}
 
 # End shell code
 ################
-}, 600, true)
+}, 900, true)
 
       if exit_code != 0
         puts "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"

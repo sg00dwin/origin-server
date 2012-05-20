@@ -1,6 +1,6 @@
 Summary:       SELinux policy for OpenShift nodes
 Name:          rhc-selinux
-Version: 0.93.1
+Version: 0.93.5
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -8,8 +8,8 @@ URL:           http://openshift.redhat.com
 Source0:       rhc-selinux-%{version}.tar.gz
 
 BuildRoot:     %(mktemp -ud %{_tmppath}/%{name}-%{version}-%{release}-XXXXXX)
-BuildRequires: selinux-policy >= 3.7.19-145
-Requires:      selinux-policy-targeted >= 3.7.19-145
+BuildRequires: selinux-policy >= 3.7.19-150
+Requires:      selinux-policy-targeted >= 3.7.19-150
 Requires(post):   /usr/sbin/semanage
 Requires(postun): /usr/sbin/semanage
 
@@ -46,6 +46,20 @@ rm -rf %{buildroot}
 %attr(0640,-,-) %{_datadir}/selinux/packages/libra.pp
 
 %changelog
+* Fri May 18 2012 Adam Miller <admiller@redhat.com> 0.93.5-1
+- 
+
+* Thu May 17 2012 Adam Miller <admiller@redhat.com> 0.93.4-1
+- bumped selinux-policy dep to match actual requirement (admiller@redhat.com)
+
+* Thu May 17 2012 Adam Miller <admiller@redhat.com> 0.93.3-1
+- 
+
+* Thu May 17 2012 Adam Miller <admiller@redhat.com> 0.93.2-1
+- SELinux lines to allow use of the quota command. (rmillner@redhat.com)
+- Allow libra domains to communicate with jboss_messageing ports
+  (dwalsh@redhat.com)
+
 * Thu May 10 2012 Adam Miller <admiller@redhat.com> 0.93.1-1
 - bumping spec versions (admiller@redhat.com)
 
