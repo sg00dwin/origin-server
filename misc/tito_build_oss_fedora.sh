@@ -58,7 +58,15 @@ f_sync() {
   cp $tito_working_dir/*.noarch.rpm $tito_working_dir/reposync/x86_64/
   cp $tito_working_dir/*.noarch.rpm $tito_working_dir/reposync/i386/
   printf "Syncing now ...\n"
-  # rsync
+  rsync -aHv \
+    --dry-run \
+    --delete-after \
+    --progress \
+    --no-g \
+    --omit-dir-times \
+    --chmod=Dug=rwX \
+    $tito_working_dir/reposync/* \
+    root@mirror1.prod.rhcloud.com:/srv/pub/crankcase/nightly/$mock_target/
   #scp $tito_working_dir/*.rpm $some_repo_somewhere ##<-- rsync would be better
   printf "Complete!\n"
 
@@ -151,7 +159,7 @@ that contains their .spec file:
 
 tito build \
           --builder mock \
-          --builder-arg mock\=$mock_target \
+          --builder-arg mock\=${mock_target}-${build_arch} \
           --rpm \
           --test \
           -o $tito_working_dir
