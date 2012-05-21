@@ -12,6 +12,8 @@ end
 
 class StreamlineTest < ActiveSupport::TestCase
 
+  setup { Rails.cache.clear }
+
   def setup
     @streamline = StreamlineTester.new
     @url = URI.parse("https://localhost/")
@@ -53,7 +55,7 @@ class StreamlineTest < ActiveSupport::TestCase
   end
 
   test "parse body" do
-    body = {"test", "test2"}.to_json
+    body = {"test" => "test2"}.to_json
     assert_not_nil @streamline.parse_body(body)
   end
 
@@ -286,9 +288,32 @@ class StreamlineTest < ActiveSupport::TestCase
   test "get email address for user" do
     email_address = 'test@example.com'
     json = {"emailAddress" => email_address}
-    @streamline.expects(:http_post).once.yields(json)
+    @streamline.expects(:http_post).once.yields(json).returns(email_address)
     assert_equal email_address, @streamline.load_email_address
     assert_equal email_address, @streamline.email_address
+  end
+
+  test "email address lookup is cached" do
+    s1 = StreamlineTester.new
+    s1.send(:rhlogin=, 'user1')
+    s1.expects(:http_post).once.returns('user1@user1.com')
+    assert_equal 'user1@user1.com', s1.load_email_address
+
+    s2 = StreamlineTester.new
+    s2.send(:rhlogin=, 'user1')
+    s2.expects(:http_post).never #comes from cache
+    assert_equal 'user1@user1.com', s2.load_email_address
+
+    s3 = StreamlineTester.new
+    s3.send(:rhlogin=, 'user2')
+    s3.expects(:http_post).once.returns('user2@user2.com')
+    assert_equal 'user2@user2.com', s3.load_email_address
+
+    Rails.cache.clear
+    s4 = StreamlineTester.new
+    s4.send(:rhlogin=, 'user1')
+    s4.expects(:http_post).once.returns('user1@user1.com') #cache was cleared
+    assert_equal 'user1@user1.com', s4.load_email_address
   end
 
   test "establish terms existing" do
