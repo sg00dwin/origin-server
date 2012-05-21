@@ -63,7 +63,7 @@ build/devenv test devenv-stage_verifier_${BUILD_NUMBER} --official --terminate $
   </builders>
   <publishers>
     <hudson.tasks.ArtifactArchiver>
-      <artifacts>rhc/log/*</artifacts>
+      <artifacts>rhc/log/**</artifacts>
       <latestOnly>false</latestOnly>
     </hudson.tasks.ArtifactArchiver>
     <hudson.tasks.Mailer>

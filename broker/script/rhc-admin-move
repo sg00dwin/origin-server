@@ -14,14 +14,10 @@ rhc-admin-move: Run cartridge hooks
 rhc-admin-move OPTIONS
 
 Options:
--l|--rhlogin <rhlogin>
-    Red Hat login (RHN or OpenShift login with OpenShift access)
--a|--app     <application>
-    Application name (alphanumeric)
---app_uuid   <app_uuid>
-    Application uuid
 --gear_uuid <gear_uuid>
     Gear uuid to move, if app is a scalable application
+--app_uuid   <app_uuid>
+    Application uuid that the gear belongs to (Optional argument)
 --destination_district_uuid <district_uuid>
     Destination district uuid
 -i|--target_server_identity <server_identity>
@@ -38,8 +34,6 @@ USAGE
 end
 
 opts = GetoptLong.new(
-    ["--rhlogin",          "-l", GetoptLong::REQUIRED_ARGUMENT],
-    ["--app",              "-a", GetoptLong::REQUIRED_ARGUMENT],
     ["--app_uuid",               GetoptLong::REQUIRED_ARGUMENT],
     ["--gear_uuid",        "-g", GetoptLong::REQUIRED_ARGUMENT],
     ["--destination_district_uuid", "-u", GetoptLong::REQUIRED_ARGUMENT],
@@ -58,8 +52,6 @@ rescue GetoptLong::Error => e
     exit -100
 end
 
-login    = args["--rhlogin"]
-app_name = args["--app"]
 app_uuid = args["--app_uuid"]
 gear_uuid = args["--gear_uuid"]
 target_server_identity = args['--target_server_identity']
@@ -73,19 +65,9 @@ if args["--help"]
   exit 1
 end
 
-unless app_name && login || app_uuid || gear_uuid
-    puts "ERROR: Specify app name (-a) and rhlogin (-l) or app uuid (--app_uuid) or gear uuid (--gear_uuid)"
-    exit 1
-end
-
-if app_uuid and app_name
-    puts "ERROR: you can't specify both app uuid and app name or rhlogin"
-    exit 1
-end
-
-if app_uuid and login
-    puts "ERROR: you can't specify both app uuid and rhlogin"
-    exit 1
+unless gear_uuid
+  puts "ERROR: Please specify gear_uuid for moving gear"
+  exit 1
 end
 
 require "/var/www/stickshift/broker/config/environment"
@@ -99,65 +81,52 @@ app = nil
 user = nil
 if (app_uuid)
   app  = Application.find_by_uuid(app_uuid)
-else 
-  if login && app_name
-    user = CloudUser.find(login)
-    app  = Application.find(user, app_name)
-  end
 end
 
-gear = nil
-if (gear_uuid)
-  gapp = nil
+def find_gear(guuid)
   users = CloudUser.find_all(nil)
   users.each do |u|
     u.applications.each do |a|
-      a.gears.each { |g|
-        if g.uuid == gear.uuid
-          gapp = a
-          gear = g
-          user = u
-          break
-        end
-      }
-      break if gapp
+      a.gears.each do |g|
+        return g if guuid == g.uuid
+      end
     end
-    break if gapp
   end
-  if gapp.nil? or gear.nil? or user.nil?
-    puts "Could not find gear with uuid '#{gear_uuid}'."
-    exit 1
-  end
-  if app and app.uuid!=gapp.uuid
-    puts "ERROR: Given gear '#{gear_uuid}' belongs to an app (user: #{gapp.user.login}, name: #{gapp.name}, uuid: #{gapp.uuid})  which is different from the given app (user: #{app.user.login}, name: #{app.name}, uuid: #{app.uuid}) !"
-    exit 1
-  end
-  app = gapp
+  return nil
 end
 
-unless app
-  puts "ERROR: Application not found: #{app_uuid ? app_uuid : app_name}"
+gear = nil
+app = nil
+if app_uuid
+  app = Application.find_by_uuid(app_uuid)
+  app.gears.each do |g|
+    if g.uuid == gear_uuid
+      gear = g
+      break
+    end
+  end
 end
+
+gear = find_gear(gear_uuid) if gear.nil?
+
+unless gear
+  puts "ERROR: Gear not found: #{gear_uuid}"
+  exit 1
+end
+
+app = gear.app
 
 url = "http://#{app.name}-#{app.domain.namespace}.#{Rails.configuration.ss[:domain_suffix]}"
 
 puts "URL: #{url}"
 puts "Login: #{app.user.login}"
 puts "App UUID: #{app.uuid}"
+puts "Gear UUID: #{gear.uuid}"
 
 destination_container = nil
 destination_container = StickShift::ApplicationContainerProxy.instance(target_server_identity) if target_server_identity
 
-if app.scalable
-  if not gear
-    puts "ERROR: Application '#{app.name}' is a scalable app. Please provide the gear to move with --gear_uuid option. Available gears for this app are :\n"
-    app.gears.each { |g| puts "\t#{g.uuid}\n" }
-    exit 1
-  end
-  reply = app.container.move_gear(app, gear, destination_container, destination_district_uuid, allow_change_district, node_profile)
-else
-  reply = app.container.move_app(app, destination_container, destination_district_uuid, allow_change_district, node_profile)
-end
+reply = app.container.move_gear(app, gear, destination_container, destination_district_uuid, allow_change_district, node_profile)
 
 puts "################# ADDITIONAL DEBUG OUTPUT #################\n#{reply.debugIO.string}\n" unless reply.debugIO.string.empty?
 puts "################# ADDITIONAL ERROR OUTPUT #################\n#{reply.errorIO.string}\n" unless reply.errorIO.string.empty?
