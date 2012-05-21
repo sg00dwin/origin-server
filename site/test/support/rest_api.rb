@@ -106,6 +106,23 @@ class ActiveSupport::TestCase
     @domain = @@domain
   end
 
+  def readable_app
+    @new_app ||= begin
+      app = Application.new(:name => "cart#{uuid}", :cartridge => 'ruby-1.8', :domain => @domain, :as => @user)
+      app.save!
+      app
+    end
+  end
+
+  def scalable_app
+    @scalable_app ||= begin
+      app = Application.new(:name => "#{uuid}", :scale => 'true', :cartridge => 'ruby-1.8', :domain => @domain, :as => @user)
+      app.save!
+      app
+    end
+  end
+
+
   def assert_attr_equal(o1, o2)
     unless o1 == o2
       assert o1, "#{o1} is not equal to #{o2}"
@@ -119,4 +136,3 @@ class ActiveSupport::TestCase
     end
   end
 end
-

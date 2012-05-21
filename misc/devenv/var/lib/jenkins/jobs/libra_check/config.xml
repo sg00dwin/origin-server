@@ -4,9 +4,9 @@
   <description></description>
   <logRotator>
     <daysToKeep>10</daysToKeep>
-    <numToKeep>10</numToKeep>
+    <numToKeep>50</numToKeep>
     <artifactDaysToKeep>10</artifactDaysToKeep>
-    <artifactNumToKeep>10</artifactNumToKeep>
+    <artifactNumToKeep>50</artifactNumToKeep>
   </logRotator>
   <keepDependencies>false</keepDependencies>
   <properties/>
