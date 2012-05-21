@@ -66,13 +66,19 @@ class WebUser < Streamline::User
 
   def type
     case
-    when simple_user?:  :openshift
-    else                :red_hat_network
+    when simple_user?
+      :openshift
+    else
+      :red_hat_network
     end
   end
 
   def accepted_terms?
     terms && terms.empty?
+  end
+
+  def cache_key
+    rhlogin
   end
 
   #
