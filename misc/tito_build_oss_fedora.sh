@@ -19,20 +19,42 @@ trap control_c SIGINT
 
 # "Global" variables
 sibling_dirs=( "os-client-tools" "crankcase" )
+sync_only=""
+remote_repo="mirror1.stg.rhcloud.com/libra"
 declare -a failed_builds
 declare -a failed_builds_paths
 
-# Slight sanity checking
-if [[ -n "$1" ]]; then
-  mock_target="$1"
-  tito_working_dir=/tmp/tito/build_oss_fedora/$1
-else
-  printf "ERROR: Invalid argument or no argument given\n"
-  cat <<EOF
-Usage: misc/tito_build_oss_fedora.sh mock_build_target
-    mock_build_target: mock config name, ex: fedora-16-x86_64
+function f_usage() {
+cat <<EOF
+Usage: misc/tito_build_oss_fedora.sh [options] [build_target]
+    options: build, sync
+    build_target: mock config name, ex: fedora-16-x86_64
 EOF
   exit 1
+}
+
+# Slight sanity checking
+if [[ -n "$1" ]]; then
+  if [[ "$1" == "sync" ]]; then
+    sync_only="true"
+  fi
+  if [[ -n "$2" ]]; then
+    mock_target="$2"
+    tito_working_dir=/tmp/tito/build_oss_fedora/$2
+    rsync_command="rsync --progress -avh $tito_working_dir $remote_repo"
+  else
+    printf "ERROR: Invalid argument or no argument given\n"
+    f_usage
+  fi
+else
+  f_usage
+fi
+
+if [[ -n "$sync_only" ]]; then
+  echo "SYNC ONLY: $tito_working_dir"
+  echo "$rsync_command"
+  # rsync command here
+  exit 0
 fi
 
 # check mock stuff 
@@ -106,7 +128,12 @@ tito build \
           -o $tito_working_dir
 
 ######NOTE: 
-### Do not run this script again as it will attempt to rebuild all packages
+### Do not run this script again with 'build' arg as it will attempt to 
+### rebuild all packages as well as overwrite all already built packages
+
+Once the individual builds are complete, they may be sync'd to the repo
+with the following command:
+$rsync_command
 EOF
 fi
 
