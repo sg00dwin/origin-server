@@ -326,14 +326,15 @@ module Streamline
     # Get the user's email address.  Will raise on error
     #
     def load_email_address
-      user_info_args = {
-        'login' => @rhlogin,
-        'secretKey' => Rails.configuration.streamline[:user_info_secret]
-      }
-      http_post(@@user_info_url, user_info_args) do |json|
-        @email_address = json['emailAddress']
+      @email_address = Rails.cache.fetch([Streamline::User.name, :email_by_login, @rhlogin], :expires_in => 5.minutes) do
+        user_info_args = {
+          'login' => @rhlogin,
+          'secretKey' => Rails.configuration.streamline[:user_info_secret]
+        }
+        http_post(@@user_info_url, user_info_args) do |json|
+          json['emailAddress']
+        end
       end
-      @email_address
     end
 
     #
