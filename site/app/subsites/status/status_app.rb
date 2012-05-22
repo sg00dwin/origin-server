@@ -47,6 +47,11 @@ class StatusApp < Sinatra::Base
     @resolved = Issue.resolved.merge(Issue.year)
     haml :index
   end
+  
+  get '*/status/status.json' do
+    content_type :json
+    { :open => Issue.is_open.includes(:updates), :resolved => Issue.resolved.includes(:updates).limit(5) }.to_json(:include => :updates)
+  end
 
   get '*/status/current.json' do
     content_type :json
