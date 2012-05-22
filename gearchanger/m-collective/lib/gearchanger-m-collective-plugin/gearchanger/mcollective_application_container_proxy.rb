@@ -552,16 +552,6 @@ module GearChanger
       end
 
       def move_gear(app, gear, destination_container, destination_district_uuid, allow_change_district, node_profile)
-        if app.scalable
-          gi = app.group_instance_map[gear.group_instance_name]
-          gi.component_instances.each do |ci_name|
-            cinst = app.comp_instance_map[ci_name]
-            cart = cinst.parent_cart_name
-            if cart==app.proxy_cartridge
-              raise StickShift::UserException.new("Cannot handle a scalable app's haproxy gear as of now. Not supported.", 1)
-            end
-          end
-        end
         reply = ResultIO.new
         state_map = {}
         gear.node_profile = node_profile if node_profile
@@ -683,7 +673,7 @@ module GearChanger
 
         move_gear_destroy_old(app, gear, keep_uid, orig_uid, source_container)
 
-        log_debug "Successfully moved '#{app.name}' with uuid '#{app.gear.uuid}' from '#{source_container.id}' to '#{destination_container.id}'"
+        log_debug "Successfully moved '#{app.name}' with gear uuid '#{gear.uuid}' from '#{source_container.id}' to '#{destination_container.id}'"
         reply
       end
 
@@ -692,18 +682,21 @@ module GearChanger
         log_debug "DEBUG: Deconfiguring old app '#{app.name}' on #{source_container.id} after move"
         begin
           gi = app.group_instance_map[gear.group_instance_name]
-          gi.component_instances.each do |ci_name|
+          # gi.component_instances.each do |ci_name|
+          app.configure_order.reverse.each do |ci_name|
+            next if not gi.component_instances.include? ci_name
             cinst = app.comp_instance_map[ci_name]
             cart = cinst.parent_cart_name
             next if cart==app.name
             begin
               reply.append source_container.run_cartridge_command(cart, app, gear, "deconfigure", nil, false)
-            ensure
-              reply.append source_container.destroy(app, gear, keep_uid, orig_uid)
+            rescue Exception => e
+              log_debug "DEBUG: The application '#{app.name}' with gear uuid '#{gear.uuid}' is now moved to '#{source_container.id}' but not completely deconfigured from '#{destination_container.id}'"
             end
           end
+          reply.append source_container.destroy(app, gear, keep_uid, orig_uid)
         rescue Exception => e
-          log_debug "DEBUG: The application '#{app.name}' with uuid '#{app.gear.uuid}' is now moved to '#{source_container.id}' but not completely deconfigured from '#{destination_container.id}'"
+          log_debug "DEBUG: The application '#{app.name}' with gear uuid '#{gear.uuid}' is now moved to '#{source_container.id}' but not completely deconfigured from '#{destination_container.id}'"
           raise
         end
         reply
@@ -748,6 +741,7 @@ module GearChanger
       def rsync_destination_container(app, gear, destination_container, destination_district_uuid, quota_blocks, quota_files, keep_uid)
         reply = ResultIO.new
         source_container = gear.container
+        orig_uid = gear.uid
         unless keep_uid
           gear.uid = destination_container.reserve_uid(destination_district_uuid)
           log_debug "DEBUG: Reserved uid '#{gear.uid}' on district: '#{destination_district_uuid}'"
@@ -755,7 +749,6 @@ module GearChanger
         log_debug "DEBUG: Creating new account for gear '#{gear.name}' on #{destination_container.id}"
         reply.append destination_container.create(app, gear, quota_blocks, quota_files)
 
-        orig_uid = gear.uid
         log_debug "DEBUG: Moving content for app '#{app.name}', gear '#{gear.name}' to #{destination_container.id}"
         log_debug `eval \`ssh-agent\`; ssh-add /var/www/stickshift/broker/config/keys/rsync_id_rsa; ssh -o StrictHostKeyChecking=no -A root@#{source_container.get_ip_address} "rsync -aA#{(gear.uid && gear.uid == orig_uid) ? 'X' : ''} -e 'ssh -o StrictHostKeyChecking=no' /var/lib/stickshift/#{gear.uuid}/ root@#{destination_container.get_ip_address}:/var/lib/stickshift/#{gear.uuid}/"`
         if $?.exitstatus != 0
