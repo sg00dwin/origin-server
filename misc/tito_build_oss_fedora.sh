@@ -19,7 +19,7 @@ trap f_ctrl_c SIGINT
 # "Global" variables
 sibling_dirs=( "os-client-tools" "crankcase" )
 sync_only=""
-remote_repo="mirror1.stg.rhcloud.com/libra"
+remote_repo_dir="mirror1.prod.rhcloud.com:/srv/pub/crankcase/nightly"
 declare -a failed_builds
 declare -a failed_builds_paths
 
@@ -66,8 +66,7 @@ f_sync() {
     --omit-dir-times \
     --chmod=Dug=rwX \
     $tito_working_dir/reposync/* \
-    root@mirror1.prod.rhcloud.com:/srv/pub/crankcase/nightly/$mock_target/
-  #scp $tito_working_dir/*.rpm $some_repo_somewhere ##<-- rsync would be better
+    root@$remote_repo_dir/$mock_target/
   printf "Complete!\n"
 
 }
