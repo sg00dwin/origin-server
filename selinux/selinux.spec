@@ -1,6 +1,6 @@
 Summary:       SELinux policy for OpenShift nodes
 Name:          rhc-selinux
-Version: 0.93.5
+Version: 0.93.6
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -46,6 +46,16 @@ rm -rf %{buildroot}
 %attr(0640,-,-) %{_datadir}/selinux/packages/libra.pp
 
 %changelog
+* Tue May 22 2012 Adam Miller <admiller@redhat.com> 0.93.6-1
+- Allow libra instances to send signals to mail agents that they may have
+  spawned (dwalsh@redhat.com)
+- Dontaudit libra domains looking at leaked kernel keyring, httpd wants to get
+  the parent gid of libra instances (dwalsh@redhat.com)
+- Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
+  (dwalsh@redhat.com)
+- Update libra instance to allow it to use all jboss ports  Including jabberd.
+  (dwalsh@redhat.com)
+
 * Fri May 18 2012 Adam Miller <admiller@redhat.com> 0.93.5-1
 - 
 

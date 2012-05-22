@@ -3,7 +3,7 @@
 
 Summary:   Li site components
 Name:      rhc-site
-Version: 0.93.2
+Version: 0.93.3
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -117,6 +117,17 @@ rm -rf %{buildroot}
 /bin/touch %{sitedir}/log/production.log
 
 %changelog
+* Tue May 22 2012 Adam Miller <admiller@redhat.com> 0.93.3-1
+- Add more information to the status app Update overview text with less
+  hyperbolic descriptions (ccoleman@redhat.com)
+- Bug 822936 - Remove old reference to express. (ccoleman@redhat.com)
+- Cache streamline email address loading per user to speed up my account page
+  (ccoleman@redhat.com)
+- Provide a tiered application view that shows cartridges organized by what
+  resources they share Expose Jenkins builds as an embedded component within a
+  cartridge Implement a unified cartridge / application type model with caching
+  (ccoleman@redhat.com)
+
 * Thu May 17 2012 Adam Miller <admiller@redhat.com> 0.93.2-1
 - Unit test now passes with bug 812060 fixed (ccoleman@redhat.com)
 - Bug 804937 - Update to use the correct exit code for the message

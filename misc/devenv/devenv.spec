@@ -8,7 +8,7 @@
 
 Summary:   Dependencies for OpenShift development
 Name:      rhc-devenv
-Version: 0.94.3
+Version: 0.94.4
 Release:   1%{?dist}
 Group:     Development/Libraries
 License:   GPLv2
@@ -487,6 +487,11 @@ chown apache:apache /srv/cache/mod_cache
 %{policydir}/*
 
 %changelog
+* Tue May 22 2012 Adam Miller <admiller@redhat.com> 0.94.4-1
+- sync jenkins settings with devenv (dmcphers@redhat.com)
+- improving jenkins artifacts (dmcphers@redhat.com)
+- add webmock to requires of devenv (dmcphers@redhat.com)
+
 * Thu May 17 2012 Adam Miller <admiller@redhat.com> 0.94.3-1
 - 
 

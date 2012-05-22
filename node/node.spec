@@ -2,7 +2,7 @@
 
 Summary:       Multi-tenant cloud management system node tools
 Name:          rhc-node
-Version: 0.93.2
+Version: 0.93.3
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -266,6 +266,17 @@ fi
 /lib64/security/pam_libra.so
 
 %changelog
+* Tue May 22 2012 Adam Miller <admiller@redhat.com> 0.93.3-1
+- Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
+  (rmillner@redhat.com)
+- EPEL updated mcollective and broke the build! forcing mcollective 1.1.2
+  (admiller@redhat.com)
+- Several types of log entries were missing exit records.  Synchronize to the
+  yaml serialization entry if we fall off an event. (rmillner@redhat.com)
+- The mcollective log profiler needs this log message to find the end of a
+  call. (rmillner@redhat.com)
+- Changes to connect to mongo on standalone gear. (mpatel@redhat.com)
+
 * Thu May 17 2012 Adam Miller <admiller@redhat.com> 0.93.2-1
 - remove preconfigure (dmcphers@redhat.com)
 - reset migration for release 2.0.12 (dmcphers@redhat.com)

@@ -5,7 +5,7 @@
 
 Summary:        GearChanger plugin for m-colective service
 Name:           rubygem-%{gemname}
-Version: 0.10.2
+Version: 0.10.3
 Release:        1%{?dist}
 Group:          Development/Languages
 License:        ASL 2.0
@@ -70,6 +70,11 @@ rm -rf %{buildroot}
 %{ruby_sitelib}/%{gemname}.rb
 
 %changelog
+* Tue May 22 2012 Adam Miller <admiller@redhat.com> 0.10.3-1
+- fix haproxy move gear to successfully rsync with correct permissions when
+  moving across district. more fixes with deconfigure on the old container
+  (rchopra@redhat.com)
+
 * Thu May 17 2012 Adam Miller <admiller@redhat.com> 0.10.2-1
 - remove preconfigure (dmcphers@redhat.com)
 - favor servers with capacity < 80 first followed by a weighted average
