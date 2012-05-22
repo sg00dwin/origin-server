@@ -8,7 +8,7 @@ URL:       http://openshift.redhat.com
 Source0:   rhc-common-%{version}.tar.gz
 
 BuildRoot: %(mktemp -ud %{_tmppath}/%{name}-%{version}-%{release}-XXXXXX)
-Requires:  mcollective-client
+Requires:  mcollective-client = 1.1.2
 Requires:  qpid-cpp-client
 Requires:  qpid-cpp-client-ssl
 Requires:  ruby-qmf
