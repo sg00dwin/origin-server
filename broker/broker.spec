@@ -3,7 +3,7 @@
 
 Summary:   Li broker components
 Name:      rhc-broker
-Version: 0.93.5
+Version: 0.93.6
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -96,6 +96,15 @@ rm -rf $RPM_BUILD_ROOT
 /bin/touch %{brokerdir}/log/production.log
 
 %changelog
+* Tue May 22 2012 Adam Miller <admiller@redhat.com> 0.93.6-1
+- Updating gem versions (admiller@redhat.com)
+- add usage observer (dmcphers@redhat.com)
+- move gear support for non-scalable apps (rchopra@redhat.com)
+- Fix for domain update admin script when user exists but does not own any
+  domains. Fix for domain info admin script when user exists but does not own
+  any domains. (kraman@gmail.com)
+- some performance tuning (dmcphers@redhat.com)
+
 * Fri May 18 2012 Adam Miller <admiller@redhat.com> 0.93.5-1
 - Updating gem versions (admiller@redhat.com)
 
