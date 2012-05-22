@@ -5,7 +5,7 @@
 
 Summary:        GearChanger plugin for m-colective service
 Name:           rubygem-%{gemname}
-Version: 0.10.3
+Version: 0.10.4
 Release:        1%{?dist}
 Group:          Development/Languages
 License:        ASL 2.0
@@ -70,6 +70,19 @@ rm -rf %{buildroot}
 %{ruby_sitelib}/%{gemname}.rb
 
 %changelog
+* Tue May 22 2012 Dan McPherson <dmcphers@redhat.com> 0.10.4-1
+- Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
+  (rmillner@redhat.com)
+- Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
+  (rmillner@redhat.com)
+- Merge branch 'master' into US2109 (rmillner@redhat.com)
+- Merge branch 'master' into US2109 (jhonce@redhat.com)
+- Bug fix use gear.name for scalable apps to match up passing the right name
+  down. (ramr@redhat.com)
+- Bugz 820902 (kraman@gmail.com)
+- fix for bug#811576 (rchopra@redhat.com)
+- Bug fixes for scalable apps + add some debug logging. (ramr@redhat.com)
+
 * Tue May 22 2012 Adam Miller <admiller@redhat.com> 0.10.3-1
 - fix haproxy move gear to successfully rsync with correct permissions when
   moving across district. more fixes with deconfigure on the old container
