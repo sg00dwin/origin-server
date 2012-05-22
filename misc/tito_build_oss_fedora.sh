@@ -145,10 +145,10 @@ do
 done
 
 if [[ -z $failed_builds ]]; then
-  printf "SUCCESS\n"
-
+  printf "Build: SUCCESS\n"
+  f_sync
 else
-  printf "FAILURE\nThe following packages failed to build:\n"
+  printf "Build: FAILURE\nThe following packages failed to build:\n"
   for f in ${failed_builds[@]}
   do
     printf "${f%.spec}\n"
