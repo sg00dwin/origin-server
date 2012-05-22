@@ -2,6 +2,24 @@ class ApplicationObserver < ActiveModel::Observer
   observe Application
 
   BUILDER_SUFFIX = "bldr"
+  
+  def track_gear_usage(data)
+    gear = data[:gear]
+    event = data[:event]
+    time = data[:time]
+    uuid = data[:uuid]
+    usage = nil
+    if event == UsageRecord::EVENTS[:begin]
+      usage = Usage.new
+      usage.construct(gear.app.user.login, gear.uuid, gear.node_profile, time, nil, uuid)
+    elsif event == UsageRecord::EVENTS[:end]
+      usage = Usage.find_latest_by_gear(gear.uuid)
+      if usage
+        usage.end_time = time
+      end
+    end
+    usage.save! if usage
+  end
 
   def before_application_create(data)
     application = data[:application]
