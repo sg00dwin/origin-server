@@ -32,8 +32,8 @@
     For a Developer to use OpenShift to take advantage of the power and elasticity of the Cloud, they need only do the following:
 
     1. Create an "Application" in OpenShift (With the command-line or via their IDE)
-    2. Code the application (whether in Vi, Eclipse, Orion or whatever)
-    3. Push the application code to OpenShift (again, with a command or from their IDE)
+    2. Code the application (in Vi, TextMate, Eclipse, Visual Studio, or whatever)
+    3. Push the application code to OpenShift (again, with the command-line or from their IDE)
 
     Here's an example of the command-line approach (in this case the application was already coded and resident in the github repository):
 
@@ -63,9 +63,9 @@
   :markdown
     ## Code anything.
 
-    OpenShift takes a No-Lock-In approach to PaaS by providing built-in support for Node.js, Ruby, Python, PHP, Perl, and Java (the standard in today's Enterprise).  In addition, OpenShift is extensible with a customizable cartridge functionality that allows enterprising developers to add any other language they wish.  We've seen everything from Clojure to Cobol running on OpenShift.  
+    OpenShift takes a No-Lock-In approach to PaaS by providing built-in support for Node.js, Ruby, Python, PHP, Perl, and Java (the standard in today's Enterprise). In addition, OpenShift is extensible with a customizable cartridge functionality that allows enterprising developers to add any other language they wish. We've seen everything from Clojure to Cobol running on OpenShift.
 
-    In addition to this flexible, no-lock-in, language approach, OpenShift supports all the popular frameworks that make a developer's life easier including everything from Spring, to Rails, to Play.  OpenShift is designed to allow Developers to work the way they want to work by giving them the languages, frameworks and tools they need for fast and easy application development.
+    In addition to this flexible, no-lock-in, language approach, OpenShift supports many of the popular frameworks that make a developer's life easier including frameworks ranging from Spring, to Rails, to Play. OpenShift is designed to allow Developers to work the way they want to work by giving them the languages, frameworks and tools they need for fast and easy application development.
     <!--![OpenShift Ecosystem Logos](/app/images/overview-ecosystem.png)-->
 
 %section#scale
@@ -73,32 +73,31 @@
   %h2 Blow the doors off your expectations
   = image_tag 'overview-scaling.png', :alt => 'OpenShift Scaling'
   :markdown
-    Once you have your application running in the Cloud, the next thing to worry about is how it is going to handle the massive amount of usage it gets when it goes viral.  Well, no worries here.  OpenShift has you covered.  
-    
-    OpenShift provides both automatic and manual scaling of the resources that are supporting your application so that it will be able to service any volume of activity that you can dream of.  This is one of the sweet benefits of OpenShift PaaS…  you don't need to worry about any infrastructure or middleware issues like administration, tuning, or scaling.  OpenShift handles this for you.  
+    Once you have your application running in the Cloud, the next thing to worry about is how it is going to handle the massive amount of usage it gets when it goes viral.  Well, no worries here.  OpenShift has you covered.
 
-    With Auto-Scaling, OpenShift can scale your application either Vertically by adding horsepower to the resources it is using, or Horizontally by adding additional instances of your application.  Both of these can happen automatically, or you can turn it on manually.  Either way, when your big idea takes off, OpenShift will allow it to soar.
+    OpenShift provides both automatic and manual scaling of the resources that are supporting your application such that, as usage increases, performance will not suffer. This is one of the sweet benefits of OpenShift PaaS… you don't need to worry about common  infrastructure or middleware issues like administration, tuning, or scaling. OpenShift handles this for you.
+
+    With Auto-Scaling, OpenShift can scale your application by adding additional instances of your application and enabling clustering. Alternatively, you can manually scale the amount of resources with which your application is deployed when needed.  When your big idea takes off, OpenShift will allow it to soar.
 
     <!--![OpenShift Scaling](images/overview-scaling.png)-->
-
 
 %section#arch
   :markdown
     ## Under the Hood.
 
-    OpenShift by Red Hat is built on all open-source technologies (we are the leading open source company after all).  A decade of enhancements in these technologies contributed by the open source community has resulted in a set of rock-solid, bullet-proof, super-secure, and high-performing technology components that make OpenShift the best PaaS in the business.
+    OpenShift by Red Hat is built on open-source technologies (we are one of the world's leading open source companies, after all). A decade of enhancements in these technologies contributed by the open source community has resulted in a set of very robust technology components that provide the inner-workings of the OpenShift PaaS.
+
+    OpenShift is built on a foundation of Red Hat Enterprise Linux (RHEL). Beyond being a leading and well respected Linux distro, RHEL provides some key capabilities that allow OpenShift to be stable, responsive, performant and secure. OpenShift leverages the multitenancy and security models within RHEL to provide fine-grained and trusted control over the compute and storage resources available to any single OpenShift application. SELinux allows OpenShift to "firewall" one user's application from another in order to insure security and survivability. Taking a "multi-tenant in the OS" approach vs. a "multi-tenant hypervisor" approach allows OpenShift to scale resources much more quickly so that your application will never lack the horsepower that it needs.
+
+    Add on top of RHEL, a full selection of open source Languages, Frameworks, and Middleware combined with a "Cartridge" approach that allows users to very easily select the components that their applications need whether it is a NoSQL datastore or a Business Intelligence analytics engine.
 
     <!--![OpenShift architecture diagram](images/overview-architecture.png)-->
 
-    OpenShift is built on a foundation of Red Hat Enterprise Linux (RHEL).  Beyond being the leading and most respected Linux distro, RHEL provides some key capabilities that allow OpenShift to be stable, responsive, performant and secure. OpenShift leverages the multitenancy and security models within RHEL to provide fine-grained and trusted control over the compute and storage resources available to any single OpenShift application.  SELinux allows OpenShift to "firewall" one user's application from another in order to insure security and survivability.  Taking a "multi-tenant in the OS" approach vs. a "multi-tenant hypervisor" approach allows OpenShift to scale resources much more quickly so that your application will never lack the horsepower that it needs.
-
-    Add on top of RHEL, a full selection of open source Languages, Frameworks, and Middleware combined with a "Cartridge" approach that allows users to very easily select the components that their applications need whether it is a NoSQL datastore or a Business Intelligence analytics engine.  
-    
   -# FIXME link to infrastructure For full details on the OpenShift technical architecture see this link <Arch Overview on Community if it is going to be there>.
   :markdown
     ## Easy-peasy
-
-    The design and componentry of OpenShift really result in one thing for Developers:  Ease of Use without Worries.  OpenShift's mission is to make your job easier by taking care of all the messy IT aspects of app development and allowing you to focus on your job: Coding your Application and servicing your customers.
+  
+    OpenShift is designed to provide one thing for Developers: Ease of Use without Worries. OpenShift's mission is to make your job easier by taking care of all the messy IT aspects of app development and allowing you to focus on your job: Coding your Application and satisfying your customers.
 
     <!--![OpenShift ease of use](/app/images/overview-ease-of-use.png)-->
 
