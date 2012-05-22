@@ -1,4 +1,4 @@
-policy_module(libra,1.1.25)
+policy_module(libra,1.1.26)
 # Requires selinux-policy-3.7.19-153.el6
 
 ########################################
@@ -299,6 +299,7 @@ allow libra_initrc_t libra_app_domain:process { getattr getsched setsched transi
 allow libra_app_domain libra_initrc_t:fd use;
 allow libra_app_domain libra_initrc_t:fifo_file rw_inherited_fifo_file_perms;
 allow libra_app_domain libra_initrc_t:process sigchld;
+dontaudit libra_app_domain libra_initrc_t:key view;
 dontaudit libra_app_domain libra_initrc_t:process signull;
 dontaudit libra_app_domain libra_initrc_t:socket_class_set { read write };
 
@@ -405,6 +406,7 @@ domain_dontaudit_read_all_domains_state(httpd_t)
 allow httpd_t self:capability sys_ptrace;
 
 dontaudit httpd_t libra_initrc_t:process signull;
+allow httpd_t libra_app_domain:process getpgid;
 
 type libra_cgroup_read_t;
 type libra_cgroup_read_exec_t;
