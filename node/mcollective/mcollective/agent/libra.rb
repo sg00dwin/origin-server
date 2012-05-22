@@ -320,6 +320,11 @@ module MCollective
             rc, output = handle_ss_cmd(action, args)
             reply[:output] = output
             reply[:exitcode] = rc
+            if rc == 0
+              Log.instance.debug("cartridge_do_action (#{rc})\n------\n#{output}\n------)")
+            else
+              Log.instance.debug("cartridge_do_action ERROR (#{rc})\n------\n#{output}\n------)")
+            end
             reply.fail! "cartridge_do_action failed #{rc}.  Output #{output}" unless rc == 0
             return 0
           end

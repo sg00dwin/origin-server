@@ -19,7 +19,8 @@ trap f_ctrl_c SIGINT
 # "Global" variables
 sibling_dirs=( "os-client-tools" "crankcase" )
 sync_only=""
-remote_repo="mirror1.stg.rhcloud.com/libra"
+remote_repo="mirror1.prod.rhcloud.com"
+remote_repo_dir="/srv/pub/crankcase/nightly"
 declare -a failed_builds
 declare -a failed_builds_paths
 
@@ -59,15 +60,19 @@ f_sync() {
   cp $tito_working_dir/*.noarch.rpm $tito_working_dir/reposync/i386/
   printf "Syncing now ...\n"
   rsync -aHv \
-    --dry-run \
     --delete-after \
     --progress \
     --no-g \
     --omit-dir-times \
     --chmod=Dug=rwX \
     $tito_working_dir/reposync/* \
-    root@mirror1.prod.rhcloud.com:/srv/pub/crankcase/nightly/$mock_target/
-  #scp $tito_working_dir/*.rpm $some_repo_somewhere ##<-- rsync would be better
+    root@$remote_repo:$remote_repo_dir/$mock_target/
+  ssh root@$remote_repo \
+    "cd $remote_repo_dir/$mock_target/SRPMS/ && createrepo --update ./"
+  ssh root@$remote_repo \
+    "cd $remote_repo_dir/$mock_target/i386/ && createrepo --update ./"
+  ssh root@$remote_repo \
+    "cd $remote_repo_dir/$mock_target/x86_64/ && createrepo --update ./"
   printf "Complete!\n"
 
 }

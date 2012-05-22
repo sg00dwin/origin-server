@@ -1,14 +1,14 @@
 %define htmldir %{_localstatedir}/www/html
-%define billingdir %{_localstatedir}/www/stickshift/billing
+%define billingdir %{_localstatedir}/www/rhc/billing
 
-Summary:   StickShift billing components
-Name:      stickshift-billing
+Summary:   Red Hat OpenShift billing components
+Name:      rhc-billing
 Version:   0.0.2
 Release:   1%{?dist}
 Group:     System Environment/Daemons
 License:   ASL 2.0
 URL:       http://openshift.redhat.com
-Source0:   stickshift-billing-%{version}.tar.gz
+Source0:   rhc-billing-%{version}.tar.gz
 
 BuildRoot: %(mktemp -ud %{_tmppath}/%{name}-%{version}-%{release}-XXXXXX)
 Requires:  httpd
@@ -21,14 +21,14 @@ Requires:  rubygem(bson_ext)
 Requires:  rubygem(rest-client)
 Requires:  rubygem(parseconfig)
 Requires:  rubygem(json)
-Requires:  rubygem(stickshift-controller)
+Requires:  rubygem(rhc-controller)
 Requires:  rubygem(passenger)
 Requires:  rubygem-passenger-native
 
 BuildArch: noarch
 
 %description
-This contains the billing 'controlling' components of StickShift.
+This contains the billing 'controlling' components of OpenShift.
 This includes the public APIs for the billing vendor.
 
 %prep
@@ -80,8 +80,8 @@ rm -rf $RPM_BUILD_ROOT
 
 # Uncomment once we want to enable billing service
 #%defattr(0640,root,root,0750)
-#%{_initddir}/stickshift-billing
-#%attr(0750,-,-) %{_initddir}/stickshift-billing
+#%{_initddir}/rhc-billing
+#%attr(0750,-,-) %{_initddir}/rhc-billing
 
 %doc %{billingdir}/COPYRIGHT
 %doc %{billingdir}/LICENSE
@@ -94,7 +94,7 @@ rm -rf $RPM_BUILD_ROOT
 
 # Uncomment once we want to enable billing service
 #systemctl --system daemon-reload
-#chkconfig stickshift-billing on
+#chkconfig rhc-billing on
 
 %changelog
 
