@@ -127,6 +127,7 @@ class McollectiveLog
   @@REQACTION = Regexp.new(':action=>"(.*)"')
   @@REQCART = Regexp.new(':cartridge=>"(.*)"')
   @@REQEND = Regexp.new('^D, \[(.*) \#\d+\] DEBUG .* (\w+) (?: ERROR )*\(\d+\)')
+  @@REQSERIALIZE = Regexp.new('^D, \[(.*) \#\d+\] DEBUG .* Serializing using yaml')
 
   @@GLOB="mcollective.log*"
 
@@ -197,6 +198,14 @@ class McollectiveLog
           if not tentries.first.nil?
             tentries.first.endstamp = Time.parse(m[1] + " " + rf.zone)
             @entries << tentries.shift
+          end
+        elsif (m = @@REQSERIALIZE.match(line))
+          if not tentries.first.nil?
+            tentries.each do |tent|
+              tent.endstamp=Time.parse(m[1] + " " + rf.zone)
+              @entries << tent
+            end
+            tentries=[]
           end
         end
       end
@@ -271,7 +280,7 @@ if $options[:filter].length == 0
 end
 
 mcents = McollectiveLog.new($options[:dir])
-puts "Mcollective Events: #{mcents.length}" if $options[:verbose]
+$stderr.puts "Mcollective Events: #{mcents.length}" if $options[:verbose]
 
 InfoChunk.myfiles($options[:dir]).sort.each do |testfile|
   chunk = InfoChunk.new(testfile)
