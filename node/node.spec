@@ -2,7 +2,7 @@
 
 Summary:       Multi-tenant cloud management system node tools
 Name:          rhc-node
-Version: 0.93.3
+Version: 0.93.4
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -266,6 +266,27 @@ fi
 /lib64/security/pam_libra.so
 
 %changelog
+* Tue May 22 2012 Dan McPherson <dmcphers@redhat.com> 0.93.4-1
+- Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
+  (rmillner@redhat.com)
+- Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
+  (rmillner@redhat.com)
+- Merge branch 'US2109' of ssh://git1.ops.rhcloud.com/srv/git/li into US2109
+  (rmillner@redhat.com)
+- migrate http proxy config (jhonce@redhat.com)
+- Merge branch 'master' into US2109 (rmillner@redhat.com)
+- Merge branch 'master' into US2109 (rmillner@redhat.com)
+- Merge branch 'master' into US2109 (jhonce@redhat.com)
+- Update idler code for new envars (jhonce@redhat.com)
+- Merge branch 'master' into US2109 (jhonce@redhat.com)
+- Merge branch 'master' into US2109 (jhonce@redhat.com)
+- Merge branch 'master' into US2109 (ramr@redhat.com)
+- Merge branch 'master' into US2109 (ramr@redhat.com)
+- Merge branch 'master' into US2109 (ramr@redhat.com)
+- Merge branch 'master' into US2109 (ramr@redhat.com)
+- Migrate state, repo and logs. (ramr@redhat.com)
+- Support new location for .state file (jhonce@redhat.com)
+
 * Tue May 22 2012 Adam Miller <admiller@redhat.com> 0.93.3-1
 - Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
   (rmillner@redhat.com)
