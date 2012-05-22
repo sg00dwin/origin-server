@@ -1,5 +1,5 @@
-policy_module(libra,1.1.24)
-# Requires selinux-policy-3.7.19-150.el6
+policy_module(libra,1.1.27)
+# Requires selinux-policy-3.7.19-153.el6
 
 ########################################
 #
@@ -70,6 +70,7 @@ corenet_tcp_connect_ftp_port(libra_net_domain)
 #/* These ports are the ephemeral ports needed for ftp */
 corenet_tcp_connect_virt_migration_port(libra_net_domain)
 corenet_tcp_connect_ssh_port(libra_net_domain)
+corenet_tcp_connect_jacorb_port(libra_net_domain)
 corenet_tcp_connect_jboss_management_port(libra_net_domain)
 corenet_tcp_connect_jboss_debug_port(libra_net_domain)
 corenet_tcp_connect_jboss_messaging_port(libra_net_domain)
@@ -80,12 +81,18 @@ corenet_tcp_connect_generic_port(libra_net_domain)
 corenet_tcp_connect_mongod_port(libra_net_domain)
 corenet_tcp_connect_munin_port(libra_net_domain)
 corenet_tcp_connect_pop_port(libra_net_domain)
+corenet_tcp_connect_pulseaudio_port(libra_net_domain)
+corenet_tcp_connect_smtp_port(libra_net_domain)
 corenet_udp_bind_generic_port(libra_net_domain)
+corenet_tcp_bind_http_cache_port(libra_app_domain)
+corenet_tcp_bind_jacorb_port(libra_net_domain)
 corenet_tcp_bind_jboss_management_port(libra_net_domain)
 corenet_tcp_bind_jboss_messaging_port(libra_net_domain)
 corenet_tcp_bind_jboss_debug_port(libra_net_domain)
 corenet_tcp_bind_mongod_port(libra_net_domain)
-corenet_tcp_connect_smtp_port(libra_net_domain)
+corenet_tcp_bind_mysqld_port(libra_app_domain)
+corenet_tcp_bind_pulseaudio_port(libra_net_domain)
+corenet_tcp_bind_postgresql_port(libra_net_domain)
 
 ssh_exec(libra_app_domain)
 cloudform_exec_mongod(libra_app_domain)
@@ -151,7 +158,6 @@ allow libra_app_domain libra_var_lib_t:file entrypoint;
 
 
 kernel_read_system_state(libra_app_domain)
-#kernel_dontaudit_search_network_state(libra_app_domain)
 kernel_read_network_state(libra_app_domain)
 kernel_dontaudit_list_all_proc(libra_app_domain)
 kernel_dontaudit_list_all_sysctls(libra_app_domain)
@@ -181,6 +187,8 @@ fs_dontaudit_list_tmpfs(libra_app_domain)
 storage_dontaudit_getattr_fixed_disk_dev(libra_app_domain)
 storage_getattr_fixed_disk_dev(libra_app_domain)
 fs_get_xattr_fs_quotas(libra_app_domain)
+fs_rw_inherited_tmpfs_files(libra_app_domain)
+fs_dontaudit_rw_anon_inodefs_files(libra_app_domain)
 
 files_dontaudit_list_home(libra_app_domain)
 files_dontaudit_search_all_pids(libra_app_domain)
@@ -191,13 +199,11 @@ files_dontaudit_list_var(libra_app_domain)
 files_dontaudit_getattr_lost_found_dirs(libra_app_domain)
 files_dontaudit_search_all_mountpoints(libra_app_domain)
 files_dontaudit_search_spool(libra_app_domain)
-# Uncomment when we have selinux-policy-3.7.19-134.el6
-# files_dontaudit_list_var(libra_app_domain)
+files_dontaudit_list_var(libra_app_domain)
 files_read_etc_files(libra_app_domain)
 files_exec_etc_files(libra_app_domain)
 files_read_usr_files(libra_app_domain)
 files_dontaudit_getattr_non_security_sockets(libra_app_domain)
-# Uncomment when we have selinux-policy-3.7.19-133.el6
 files_dontaudit_setattr_etc_runtime_files(libra_app_domain)
 
 libs_exec_lib_files(libra_app_domain)
@@ -231,10 +237,7 @@ apache_list_modules(libra_app_domain)
 apache_read_config(libra_app_domain)
 apache_search_config(libra_app_domain)
 apache_read_sys_content(libra_app_domain)
-corenet_tcp_bind_http_cache_port(libra_app_domain)
-apache_search_sys_scripts(libra_app_domain)
-# Will need to change to this when it becomes available in RHEL6.3 policy
-#apache_exec_sys_scripts(libra_app_domain)
+apache_exec_sys_script(libra_app_domain)
 
 apache_content_template(libra)
 domtrans_pattern(httpd_libra_script_t, libra_initrc_exec_t, libra_initrc_t)
@@ -251,7 +254,6 @@ gen_require(`
         type httpd_t;
         type httpd_log_t;
 	type httpd_exec_t;
-	type httpd_rotatelogs_exec_t;
 	type sshd_devpts_t;
 	type ptmx_t;
 	type crontab_t;
@@ -261,8 +263,6 @@ gen_require(`
 	attribute unconfined_usertype;
 	type rpm_script_t;
 	type puppet_t;
-	type puppet_tmp_t;
-	attribute exec_type;
 	type sendmail_t;
 	attribute domain;
 	type quota_t;
@@ -289,7 +289,7 @@ files_pid_filetrans(libra_initrc_t, libra_var_run_t, { file dir })
 domtrans_pattern(unconfined_usertype, libra_initrc_exec_t, libra_initrc_t)
 domtrans_pattern(rpm_script_t, libra_initrc_exec_t, libra_initrc_t)
 domtrans_pattern(puppet_t, libra_initrc_exec_t, libra_initrc_t)
-dontaudit domain puppet_tmp_t:file { read write };
+puppet_rw_tmp(domain)
 
 manage_dirs_pattern(libra_initrc_t, libra_log_t, libra_log_t)
 manage_files_pattern(libra_initrc_t, libra_log_t, libra_log_t)
@@ -299,11 +299,9 @@ allow libra_initrc_t libra_app_domain:process { getattr getsched setsched transi
 allow libra_app_domain libra_initrc_t:fd use;
 allow libra_app_domain libra_initrc_t:fifo_file rw_inherited_fifo_file_perms;
 allow libra_app_domain libra_initrc_t:process sigchld;
+dontaudit libra_app_domain libra_initrc_t:key view;
 dontaudit libra_app_domain libra_initrc_t:process signull;
 dontaudit libra_app_domain libra_initrc_t:socket_class_set { read write };
-
-# use this when available, see can_exec below MAL 20110422
-#apache_exec_rotatelogs(libra_app_domain)
 
 ########################################
 #
@@ -311,7 +309,7 @@ dontaudit libra_app_domain libra_initrc_t:socket_class_set { read write };
 #
 
 allow libra_app_domain httpd_exec_t:file entrypoint;
-dontaudit libra_app_domain exec_type:file getattr;
+corecmd_getattr_all_executables(libra_app_domain)
 ssh_dontaudit_search_user_home_dir(libra_app_domain)
 dontaudit sendmail_t libra_initrc_t:fifo_file { read write };
 dontaudit domain libra_app_domain:fifo_file { getattr write };
@@ -346,7 +344,6 @@ fs_dontaudit_rw_anon_inodefs_files(crontab_t)
 
 mysql_exec(libra_app_domain)
 mysql_safe_exec(libra_app_domain)
-corenet_tcp_bind_mysqld_port(libra_app_domain)
 mysql_search_db(libra_app_domain)
 allow libra_app_domain self:process setexec;
 
@@ -354,19 +351,7 @@ allow libra_app_domain self:process setexec;
 #
 # Postgresql support
 #
-require {
-	type postgresql_exec_t;
-	type tmpfs_t;
-}
-
-# Uncomment when we have selinux-policy-3.7.19-134.el6
-# fs_rw_inherited_tmpfs_files(libra_app_domain)
-# postgresql_exec(libra_app_domain)
-can_exec(libra_app_domain, postgresql_exec_t)
-corenet_tcp_bind_postgresql_port(libra_net_domain)
-# Do not allow open or create, just allow it to use inherited from kernel
-allow libra_app_domain tmpfs_t:file { read write };
-allow libra_app_domain anon_inodefs_t:file write;
+postgresql_exec(libra_app_domain)
 
 #########
 #
@@ -390,9 +375,7 @@ allow libra_app_domain libra_var_lib_t:file { execute execute_no_trans };
 #################################
 # Allow Log Rotation            #
 #################################
-# Allow libra users to run apache rotatelogs
-# replace with apache_exec_rotatelogs(libra_app_domain) when available MAL 20110422
-can_exec(libra_app_domain, httpd_rotatelogs_exec_t)
+apache_exec_rotatelogs(libra_app_domain)
 
 allow unconfined_usertype libra_app_domain:process transition;
 dontaudit unconfined_usertype libra_app_domain:process { noatsecure siginh rlimitinh };
@@ -423,6 +406,7 @@ domain_dontaudit_read_all_domains_state(httpd_t)
 allow httpd_t self:capability sys_ptrace;
 
 dontaudit httpd_t libra_initrc_t:process signull;
+allow httpd_t libra_app_domain:process getpgid;
 
 type libra_cgroup_read_t;
 type libra_cgroup_read_exec_t;
@@ -476,6 +460,15 @@ role system_r types libra_mail_t;
 allow libra_app_domain libra_mail_t:process { getattr signal signull sigkill };
 allow libra_mail_t libra_initrc_t:fifo_file rw_inherited_fifo_file_perms;
 dontaudit libra_mail_t sshd_devpts_t:chr_file { read write };
+
+######################################################
+# Remove once interface shows up in RHEL
+# mta_signal_user_agent(libra_app_domain)
+gen_require(`
+	attribute mta_user_agent;
+')
+allow libra_app_domain mta_user_agent:process signal;
+######################################################
 
 fs_dontaudit_rw_anon_inodefs_files(libra_mail_t)
 
@@ -535,5 +528,3 @@ kernel_search_vm_sysctl(libra_app_t)
 netutils_domtrans_ping(libra_t)
 netutils_kill_ping(libra_t)
 netutils_signal_ping(libra_t)
-
-
