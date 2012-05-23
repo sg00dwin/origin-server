@@ -72,3 +72,11 @@ function validate_run_as_user {
         exit 15
     fi
 }
+
+function enable_cgroups {
+    /sbin/service libra-cgroups startuser "$uuid" > /dev/null
+}
+
+function disable_cgroups {
+    /sbin/service libra-cgroups stopuser "$uuid" > /dev/null
+}
