@@ -80,7 +80,7 @@ Broker::Application.configure do
     :nurture_username => "admin",
     :nurture_password => "password",
     :nurture_url => "http://69.164.192.124:4500/",
-    
+
     :apptegic_enabled => false,
     :apptegic_url => "https://redhat.apptegic.com/httpreceiver",
     :apptegic_key => "redhat",
@@ -102,7 +102,7 @@ Broker::Application.configure do
   # SS Config
   config.ss = {
     :domain_suffix => "dev.rhcloud.com",
-    :default_max_gears => 3,
+    :default_max_gears => 3
   }
 
   # Profiler config
