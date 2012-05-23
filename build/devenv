@@ -142,7 +142,7 @@ mkdir -p /tmp/rhc/junit
       f=Tempfile.open('fixbroker')
       begin
         if enable
-          f.puts '/config.profiler = {/,/}/ { s/\#//g; }'
+          f.puts '/config.profiler = {/,/}/ ad  { s/\#//g; }'
         else
           f.puts '/config.profiler = {/,/}/ { s/\#//g; s/^/#/; }'
         end
@@ -208,6 +208,7 @@ mkdir -p /tmp/rhc/junit
       scp_from(hostname, "/var/log/httpd/error_log", "rhc/log/system/error_log.log")
       scp_from(hostname, "/var/log/messages", "rhc/log/system/messages.log")
       scp_from(hostname, "/var/log/dmesg", "rhc/log/system/dmesg.log")
+      scp_from(hostname, "/var/log/audit/audit.log", "rhc/log/system/audit.log")
       scp_from(hostname, "/tmp/rhc/screenshots/*", "rhc/log/screenshots")
       scp_from(hostname, "/root/li-test/selenium/output/*", "rhc/log/selenium")
       scp_from(hostname, "/var/lib/stickshift/*/*/jbossas-7/standalone/tmp/*.log", "rhc/log/jbossas")
