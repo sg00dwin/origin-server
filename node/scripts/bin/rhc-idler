@@ -83,6 +83,8 @@ then
     print_help
 fi
 
+# Get the libra_server
+source /etc/stickshift/stickshift-node.conf
 source "/var/lib/stickshift/${uuid}/.env/OPENSHIFT_HOMEDIR"
 
 if `is_idled "$uuid"` || `is_stopped "$uuid"` ; then
@@ -104,6 +106,9 @@ service libra stopuser "${uuid}"
 # Disable
 # code copied from node/lib/util_ext
 runuser --shell /bin/sh "$uuid" -c "echo idle >$OPENSHIFT_HOMEDIR/app/.state"
+
+# Report to apptegic/nurture
+curl -sk -d "json_data={\"app_uuid\":\"${uuid}\",\"action\":\"idle\"}" -X POST https://${BROKER_HOST}/broker/nurture >/dev/null 2>&1 &
 
 source "/var/lib/stickshift/${uuid}/.env/OPENSHIFT_RUN_DIR"
 touch "${OPENSHIFT_RUN_DIR}/stop_lock"
