@@ -6,6 +6,8 @@ require 'pty'
 
 include AppHelper
 
+SSH_OPTS="-o 'BatchMode=yes' -o 'StrictHostKeyChecking=no'"
+
 def gear_up?(hostname, state='UP')
   csv = `/usr/bin/curl -s -H 'Host: #{hostname}' -s 'http://localhost/haproxy-status/;csv'`
   $logger.debug('============ GEAR CSV ================')
@@ -95,9 +97,9 @@ end
 
 When /^a gear is (added|removed)$/ do |action|
   if action == "added"
-    ssh_cmd = "ssh -t #{@app.uid}@#{@app.hostname} 'rhcsh haproxy_ctld -u'"
+    ssh_cmd = "ssh #{SSH_OPTS} -t #{@app.uid}@#{@app.hostname} 'rhcsh haproxy_ctld -u'"
   elsif action == "removed"
-    ssh_cmd = "ssh -t #{@app.uid}@#{@app.hostname} 'rhcsh haproxy_ctld -d'"
+    ssh_cmd = "ssh #{SSH_OPTS} -t #{@app.uid}@#{@app.hostname} 'rhcsh haproxy_ctld -d'"
   else
     puts "Invalid gear action specified (must be added/removed)"
     exit 1
@@ -108,15 +110,15 @@ When /^a gear is (added|removed)$/ do |action|
 end
 
 When /^haproxy_ctld_daemon is (started|stopped)$/ do | action |
-  ssh_cmd = "ssh -t #{@app.uid}@#{@app.hostname} 'rhcsh haproxy_ctld_daemon start'" if action == "started"
-  ssh_cmd = "ssh -t #{@app.uid}@#{@app.hostname} 'rhcsh haproxy_ctld_daemon stop'" if action == "stopped"
+  ssh_cmd = "ssh #{SSH_OPTS} -t #{@app.uid}@#{@app.hostname} 'rhcsh haproxy_ctld_daemon start'" if action == "started"
+  ssh_cmd = "ssh #{SSH_OPTS} -t #{@app.uid}@#{@app.hostname} 'rhcsh haproxy_ctld_daemon stop'" if action == "stopped"
 
   exit_code = runcon ssh_cmd, 'unconfined_u', 'unconfined_r', 'unconfined_t'
   raise "Could not start haproxy_ctld_daemon.  Exit code: #{exit_code}" unless exit_code == 0
 end
 
 Then /^haproxy_ctld is running$/ do
-  ssh_cmd = "ssh -t #{@app.uid}@#{@app.hostname} 'rhcsh ps auxwww | grep -q haproxy_ctld'"
+  ssh_cmd = "ssh #{SSH_OPTS} -t #{@app.uid}@#{@app.hostname} 'rhcsh ps auxwww | grep -q haproxy_ctld'"
   exit_code = runcon ssh_cmd, 'unconfined_u', 'unconfined_r', 'unconfined_t'
   raise "haproxy_ctld is not running!" unless exit_code == 0
 end
