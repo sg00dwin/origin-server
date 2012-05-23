@@ -11,7 +11,7 @@ do
 done
 
 function welcome {
-    cat <<EOF
+    cat 1>&2 <<EOF
 
     Welcome to OpenShift shell
 

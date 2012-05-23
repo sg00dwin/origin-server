@@ -1,4 +1,10 @@
 require 'pty'
+require 'digest/md5'
+
+ssh = %{ssh -o BatchMode=yes \
+                 -o StrictHostKeyChecking=no \
+                 -t}
+
 
 Given /^the user has (no|\d+) tail process(es)? running( in (\d+) seconds)?$/ do |expect, ignore1, ignore2, timeout|
   # convert to integer
@@ -84,4 +90,39 @@ Then /^there will be (no|\d+) tail processes running( in (\d+) seconds)?$/ do |e
   sleep timeout
   pcount = num_procs @app.uid, "tail"
   pcount.should be == expect
+end
+
+Then /^I can run "([^\"]*)" with exit code: (\d+)/ do |cmd, code|
+  ssh_call = ssh + " #{@app.uid}@#{@app.hostname} " + cmd
+  exit_code = runcon ssh_call, 'unconfined_u', 'unconfined_r', 'unconfined_t'
+  raise "#{cmd} Failed with exit: #{exit_code} (expected #{code})" \
+    unless exit_code.to_i == code.to_i
+end
+
+Then /^I can use the rhcsh menus/ do
+  welcome_md5 = "ce7c4f0f3d14e6e01034b5b5e81a75b7"
+  help_md5 = "86b07610d595392edbe66f59d579c702"
+
+  # Check the welcome menu
+  outbuf = []
+  ssh_call = ssh + " #{@app.uid}@#{@app.hostname} " + "rhcsh true"
+  exit_code = runcon ssh_call, 'unconfined_u', 'unconfined_r', 'unconfined_t', outbuf
+  out = outbuf[0].split(/Connection to/)[0]
+  md5 = Digest::MD5.hexdigest(out)
+  $logger.debug("MD5sum check for welcome message:")
+  $logger.debug("was: #{md5} expected: #{welcome_md5}")
+  raise "md5sum of welcome message did not match.  Update: trap-user_steps.rb\n" +
+    "was: #{md5} expected: #{welcome_md5}" unless md5 == welcome_md5
+
+  # Check the help menu
+  outbuf = []
+  ssh_call = ssh + " #{@app.uid}@#{@app.hostname} " + "rhcsh help"
+  exit_code = runcon ssh_call, 'unconfined_u', 'unconfined_r', 'unconfined_t', outbuf
+  out = outbuf[0].split(/Connection to/)[0]
+  md5 = Digest::MD5.hexdigest(out)
+  $logger.debug("MD5sum check for help message:")
+  $logger.debug("was: #{md5} expected: help_md5")
+  raise "md5sum of help message did not match.  Update: trap-user_steps.rb\n" +
+    "was: #{md5} expected: #{help_md5}" unless md5 == help_md5
+
 end
