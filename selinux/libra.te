@@ -353,6 +353,12 @@ allow libra_app_domain self:process setexec;
 #
 postgresql_exec(libra_app_domain)
 
+########################################
+#
+# Node.js support
+#
+allow libra_app_domain anon_inodefs_t:file write;
+
 #########
 #
 # Allow binding to localhost for certain daemons
