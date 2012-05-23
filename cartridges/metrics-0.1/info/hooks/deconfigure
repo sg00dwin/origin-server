@@ -22,13 +22,13 @@ done
 
 [ $# -eq 3 ] || print_help
 
+cartridge_type="metrics-0.1"
 source "/etc/stickshift/stickshift-node.conf"
 source ${CARTRIDGE_BASE_PATH}/abstract/info/lib/util
 
-app_type="metrics-0.1"
 setup_embedded_deconfigure "$1" $2 $3
 
-METRICS_DIR=`echo $APP_HOME/metrics-0.1 | tr -s /` # ensure that there aren't double /'s
+METRICS_DIR=$(get_cartridge_instance_dir "$cartridge_type")
 METRICS_CTL_SCRIPT="$METRICS_DIR/${application}_metrics_ctl.sh"
 
 #

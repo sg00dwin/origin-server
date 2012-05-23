@@ -116,6 +116,7 @@ function check_selinux() {
         ITERS=0
         while [ $ITERS -le 10 ]
         do
+          ITERS=$(( $ITERS + 1 ))
 	  POLICY=`semodule -l | grep libra`
           XCODE=$?
           if [ $XCODE -eq 0 ]

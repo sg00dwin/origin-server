@@ -21,13 +21,13 @@ done
 
 [ $# -eq 3 ] || print_help
 
+cartridge_type="phpmoadmin-1.0"
 source "/etc/stickshift/stickshift-node.conf"
 source ${CARTRIDGE_BASE_PATH}/abstract/info/lib/util
 
-app_type="phpmoadmin-1.0"
 setup_embedded_deconfigure "$1" $2 $3
 
-PHPMOADMIN_DIR=`echo $APP_HOME/phpmoadmin-1.0 | tr -s /` # ensure that there aren't double /'s
+PHPMOADMIN_DIR=$(get_cartridge_instance_dir "$cartridge_type")
 PHPMOADMIN_CTL_SCRIPT="$PHPMOADMIN_DIR/${application}_phpmoadmin_ctl.sh"
 
 #

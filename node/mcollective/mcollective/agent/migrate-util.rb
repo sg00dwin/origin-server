@@ -38,6 +38,13 @@ module OpenShiftMigration
       return value
     end
     
+    def self.set_env_var_value(homedir, name, value)
+      envfile = File.join(homedir, ".env", name)
+      File.open(envfile, File::WRONLY|File::TRUNC|File::CREAT) do |file|
+        file.write "export #{name}='#{value}'"
+      end
+    end
+
     def self.file_to_string(file_path)
       file = File.open(file_path, "r")
       str = nil

@@ -33,21 +33,17 @@ fi
 source "/var/lib/stickshift/${uuid}/.env/OPENSHIFT_RUN_DIR"
 rm -f "${OPENSHIFT_RUN_DIR}/stop_lock"
 
-
-source "/var/lib/stickshift/${uuid}/.env/OPENSHIFT_GEAR_DIR"
-[ -f "/var/lib/stickshift/${uuid}/.env/OPENSHIFT_RUNTIME_DIR" ] && source "/var/lib/stickshift/${uuid}/.env/OPENSHIFT_RUNTIME_DIR"
-: ${OPENSHIFT_RUNTIME_DIR:=$OPENSHIFT_GEAR_DIR/runtime}
+source "/var/lib/stickshift/${uuid}/.env/OPENSHIFT_HOMEDIR"
 
 # code copied from node/lib/util_ext
-runuser --shell /bin/sh "$uuid" -c "echo started >$OPENSHIFT_RUNTIME_DIR/.state"
+runuser --shell /bin/sh "$uuid" -c "echo started >$OPENSHIFT_HOMEDIR/app/.state"
 
 /sbin/service libra startuser "${uuid}"
 
-# Enable proxy setup
-
-sed -i "s/#ProxyPass/ProxyPass/g" "/etc/httpd/conf.d/stickshift/${uuid}"*.conf
-
 HTTP_DIR=`dirname "/etc/httpd/conf.d/stickshift/${uuid}"*/00000_default.conf`
+
+# Enable proxy setup
+sed -i "s/#ProxyPass/ProxyPass/g" $HTTP_DIR/*.conf
 
 rm -f $HTTP_DIR/0000000000000_disabled.conf
 

@@ -1,7 +1,7 @@
 %define cartridgedir %{_libexecdir}/stickshift/cartridges/embedded/metrics-0.1
 
 Name: cartridge-metrics-0.1
-Version: 0.14.1
+Version: 0.14.2
 Release: 1%{?dist}
 Summary: Embedded metrics support for express
 
@@ -49,6 +49,11 @@ rm -rf $RPM_BUILD_ROOT
 %{cartridgedir}/info/manifest.yml
 
 %changelog
+* Tue May 22 2012 Dan McPherson <dmcphers@redhat.com> 0.14.2-1
+- Merge branch 'master' into US2109 (jhonce@redhat.com)
+- Merge branch 'master' into US2109 (jhonce@redhat.com)
+- Modify cartridges for typeless gear changes. (ramr@redhat.com)
+
 * Thu May 10 2012 Adam Miller <admiller@redhat.com> 0.14.1-1
 - bumping spec versions (admiller@redhat.com)
 

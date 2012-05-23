@@ -1,5 +1,6 @@
 #!/bin/bash -e
 
+cartridge_type="metrics-0.1"
 source "/etc/stickshift/stickshift-node.conf"
 source ${CARTRIDGE_BASE_PATH}/abstract/info/lib/util
 
@@ -19,7 +20,7 @@ validate_run_as_user
 
 export PHPRC="${OPENSHIFT_METRICS_GEAR_DIR}conf/php.ini"
 
-CART_CONF_DIR=${CARTRIDGE_BASE_PATH}/embedded/metrics-0.1/info/configuration/etc/conf
+CART_CONF_DIR=${CARTRIDGE_BASE_PATH}/embedded/$cartridge_type/info/configuration/etc/conf
 
 case "$1" in
     start)

@@ -115,7 +115,11 @@ module GearChanger
           args = Hash.new
           args['--with-app-uuid'] = app.uuid
           args['--with-container-uuid'] = gear.uuid
-          args['--named'] = app.name if app.name
+          if app.scalable
+            args['--named'] = gear.name
+          else
+            args['--named'] = app.name
+          end
           args['--with-quota-blocks'] = quota_blocks if quota_blocks
           args['--with-quota-files'] = quota_files if quota_files
           args['--with-namespace'] = app.domain.namespace
@@ -1621,6 +1625,7 @@ module GearChanger
             raise
           end
         end
+        Rails.logger.debug "DEBUG: Cartridge command #{framework}::#{command} exitcode = #{resultIO.exitcode}" 
         if resultIO.exitcode != 0
           resultIO.debugIO << "Cartridge return code: " + resultIO.exitcode.to_s
           begin

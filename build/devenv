@@ -545,7 +545,9 @@ mkdir -p /tmp/rhc/junit
           commit_id = `git log --pretty=format:%%H --max-count=1 %s" % .`
           spec_file_name = File.basename(spec_file)
           version = get_version(spec_file_name)
-          unless run("tito tag --accept-auto-changelog --use-version='#{next_tito_version(version, commit_id)}'; tito build --rpm --test", :verbose => options.verbose?)
+          next_version = next_tito_version(version, commit_id)
+          puts "current spec file version #{version} next version #{next_version}"
+          unless run("tito tag --accept-auto-changelog --use-version='#{next_version}'; tito build --rpm --test", :verbose => options.verbose?)
             FileUtils.rm_rf '/tmp/devenv/sync/'
             exit 1
           end

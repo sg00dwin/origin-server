@@ -1,7 +1,7 @@
 %define cartridgedir %{_libexecdir}/stickshift/cartridges/embedded/rockmongo-1.1
 
 Name: cartridge-rockmongo-1.1
-Version: 1.10.1
+Version: 1.10.2
 Release: 1%{?dist}
 Summary: Embedded RockMongo support for OpenShift
 
@@ -53,6 +53,11 @@ rm -rf $RPM_BUILD_ROOT
 %doc %{cartridgedir}/LICENSE
 
 %changelog
+* Tue May 22 2012 Dan McPherson <dmcphers@redhat.com> 1.10.2-1
+- Merge branch 'master' into US2109 (jhonce@redhat.com)
+- Merge branch 'master' into US2109 (jhonce@redhat.com)
+- Modify cartridges for typeless gear changes. (ramr@redhat.com)
+
 * Thu May 10 2012 Adam Miller <admiller@redhat.com> 1.10.1-1
 - bumping spec versions (admiller@redhat.com)
 

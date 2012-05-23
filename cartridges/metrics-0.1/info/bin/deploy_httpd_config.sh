@@ -1,5 +1,6 @@
 #!/bin/bash
 
+cartridge_type="metrics-0.1"
 source "/etc/stickshift/stickshift-node.conf"
 source "/etc/stickshift/resource_limits.conf"
 source ${CARTRIDGE_BASE_PATH}/abstract/info/lib/util
@@ -12,7 +13,7 @@ uuid="$2"
 IP="$3"
 
 APP_HOME="${GEAR_BASE_DIR}/$uuid"
-METRICS_DIR=`echo $APP_HOME/metrics-0.1 | tr -s /`
+METRICS_DIR=$(get_cartridge_instance_dir "$cartridge_type")
 
 cat <<EOF > "$METRICS_DIR/conf.d/stickshift.conf"
 ServerRoot "$METRICS_DIR"

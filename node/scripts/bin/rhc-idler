@@ -31,19 +31,20 @@ function print_idled {
 }
 
 function get_state {
-    source "/var/lib/stickshift/$1/.env/OPENSHIFT_RUNTIME_DIR"
-    cat $OPENSHIFT_RUNTIME_DIR/.state
+    source "/var/lib/stickshift/$1/.env/OPENSHIFT_HOMEDIR"
+    cat $OPENSHIFT_HOMEDIR/app/.state
 }
 
 function is_idled {
     appid=$1
 
-    if ! grep -q ' #ProxyPass' "/etc/httpd/conf.d/stickshift/${appid}"*.conf 2>/dev/null
+    HTTP_DIR=`dirname "/etc/httpd/conf.d/stickshift/${uuid}"*/00000_default.conf`
+    if ! grep -q ' #ProxyPass' $HTTP_DIR/*.conf 2>/dev/null
     then
         return $FALSE
     fi
 
-    if [ ! -f "/etc/httpd/conf.d/stickshift/${appid}"*/0000000000000_disabled.conf ]
+    if [ ! -f $HTTP_DIR/0000000000000_disabled.conf ]
     then
         return $FALSE
     fi
@@ -82,16 +83,15 @@ then
     print_help
 fi
 
-source "/var/lib/stickshift/${uuid}/.env/OPENSHIFT_GEAR_DIR"
-source "/var/lib/stickshift/${uuid}/.env/OPENSHIFT_RUNTIME_DIR"
+source "/var/lib/stickshift/${uuid}/.env/OPENSHIFT_HOMEDIR"
 
 if `is_idled "$uuid"` || `is_stopped "$uuid"` ; then
     exit 0 # app is already idled or stopped, nothing to do
 fi
 
-sed -i "s/ ProxyPass/ #ProxyPass/g" "/etc/httpd/conf.d/stickshift/${uuid}"*.conf
-
 HTTP_DIR=`dirname "/etc/httpd/conf.d/stickshift/${uuid}"*/00000_default.conf`
+sed -i "s/ ProxyPass/ #ProxyPass/g" $HTTP_DIR/*.conf
+
 
 cat > $HTTP_DIR/0000000000000_disabled.conf <<EOF
 Alias / /var/www/html/restorer.php/${uuid}/
@@ -103,7 +103,7 @@ service libra stopuser "${uuid}"
 
 # Disable
 # code copied from node/lib/util_ext
-runuser --shell /bin/sh "$uuid" -c "echo idle >$OPENSHIFT_RUNTIME_DIR/.state"
+runuser --shell /bin/sh "$uuid" -c "echo idle >$OPENSHIFT_HOMEDIR/app/.state"
 
 source "/var/lib/stickshift/${uuid}/.env/OPENSHIFT_RUN_DIR"
 touch "${OPENSHIFT_RUN_DIR}/stop_lock"
