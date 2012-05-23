@@ -1,6 +1,6 @@
 Summary:       SELinux policy for OpenShift nodes
 Name:          rhc-selinux
-Version: 0.93.6
+Version: 0.93.7
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -46,6 +46,9 @@ rm -rf %{buildroot}
 %attr(0640,-,-) %{_datadir}/selinux/packages/libra.pp
 
 %changelog
+* Tue May 22 2012 Adam Miller <admiller@redhat.com> 0.93.7-1
+- libra selinux policy now requires 3.7.19-153 targeted (admiller@redhat.com)
+
 * Tue May 22 2012 Adam Miller <admiller@redhat.com> 0.93.6-1
 - Allow libra instances to send signals to mail agents that they may have
   spawned (dwalsh@redhat.com)
