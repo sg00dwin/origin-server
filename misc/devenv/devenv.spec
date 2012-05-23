@@ -430,7 +430,7 @@ chmod u-s /usr/sbin/usernetctl
 chmod u-s /bin/ping6
 chmod u-s /bin/mount
 chmod u-s /bin/su
-chmod u-s /bin/ping
+# chmod u-s /bin/ping
 chmod u-s /bin/umount
 chmod u-s /sbin/pam_timestamp_check
 chmod u-s /sbin/unix_chkpwd
@@ -441,7 +441,7 @@ chmod g-s /var/cache/mock
 chmod g-s /var/lib/mock
 chmod g-s /usr/bin/ssh-agent
 chmod g-s /usr/bin/wall
-chmod g-s /usr/bin/screen
+# chmod g-s /usr/bin/screen
 chmod g-s /usr/bin/locate
 chmod g-s /usr/bin/lockfile
 chmod g-s /usr/bin/write
@@ -473,6 +473,9 @@ mkdir -p /srv/cache/mod_cache
 chmod 750 /srv/cache/mod_cache
 chown apache:apache /srv/cache/mod_cache
 
+# Prevent users from binding to real IP 10 address - BZ821940
+semanage node -a -t node_t -r s0:c1023 -M  255.0.0.0 -p ipv4 10.0.0.0
+
 %files
 %defattr(-,root,root,-)
 %attr(0666,-,-) %{brokerdir}/log/mcollective-client.log
@@ -488,6 +491,10 @@ chown apache:apache /srv/cache/mod_cache
 %{policydir}/*
 
 %changelog
+* Wed May 23 2012 Tim Kramer <tkramer@redhat.com>
+- Prevented sticky bit from being removed from screen and ping like in stg and prod (tkramer@redhat.com)
+- Prevent users from binding to real 10. IP - BZ821940 (tkramer@redhat.com)
+
 * Tue May 22 2012 Adam Miller <admiller@redhat.com> 0.94.4-1
 - sync jenkins settings with devenv (dmcphers@redhat.com)
 - improving jenkins artifacts (dmcphers@redhat.com)
