@@ -1,0 +1,11 @@
+#!/usr/bin/ruby
+
+$: << 'lib'
+
+require 'rubygems'
+require 'rake'
+
+require 'descriptors'
+require 'rest_extra'
+
+Dir.glob('tasks/*.rake').each { |r| import r }
