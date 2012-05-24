@@ -8,6 +8,11 @@ include AppHelper
 
 SSH_OPTS="-o 'BatchMode=yes' -o 'StrictHostKeyChecking=no'"
 
+def set_max_gears(num)
+  output = `rhc-admin-ctl-user --setmaxgears #{num} -l #{@app.login}`
+  raise "Failed to allocate #{num} gears for #{@app.login}" unless $?.success?
+end
+
 def gear_up?(hostname, state='UP')
   csv = `/usr/bin/curl -s -H 'Host: #{hostname}' -s 'http://localhost/haproxy-status/;csv'`
   $logger.debug('============ GEAR CSV ================')
@@ -46,6 +51,7 @@ When /^a scaled (.+) application is created$/ do |app_type|
   app_info = JSON.parse(json_string)
   raise "Could not create application: #{app_info['messages'][0]['text']}" unless app_info['status'] == 'created'
   @app.uid = app_info['data']['uuid']
+  set_max_gears(8)
   fp.close
 end
 
@@ -127,4 +133,25 @@ When /^(\d+) concurrent http connections are generated for (\d+) seconds$/ do |c
   cmd = "ab -H 'Host: #{@app.name}-#{@app.namespace}.dev.rhcloud.com' -c #{concurrent} -t #{seconds} http://localhost/ > /tmp/rhc/http_load_test_#{@app.name}_#{@app.namespace}.txt"
   exit_status = runcon cmd, 'unconfined_u', 'unconfined_r', 'unconfined_t'
   raise "load test failed.  Exit code: #{exit_status}" unless exit_status == 0
+end
+
+When /^mongo is added to the scaled app$/ do
+  rhc_embed_add(@app, "mongodb-2.0")
+end
+
+Then /^app should be able to connect to mongo$/ do
+  command  = "echo 'show dbs' | ssh #{SSH_OPTS} -t 2>/dev/null #{@app.uid}@#{@app.name}-#{@app.namespace}.dev.rhcloud.com rhcsh mongo | grep #{@app.name}"
+
+  max_retry = 10
+  i = 0
+  exit_status = run(command)
+
+  while exit_status != 0 and i <= max_retry
+    sleep 5
+    $logger.debug("retrying #{i}")
+    exit_status = run(command)
+    i = i + 1
+  end
+
+  exit_status.should == 0
 end

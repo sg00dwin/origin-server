@@ -3,7 +3,7 @@
 
 Summary:   Li broker components
 Name:      rhc-broker
-Version: 0.93.9
+Version: 0.93.10
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -58,6 +58,10 @@ ln -s %{brokerdir}/public %{buildroot}%{htmldir}/broker
 mkdir -p %{buildroot}%{brokerdir}/run
 mkdir -p %{buildroot}%{brokerdir}/log
 touch %{buildroot}%{brokerdir}/log/production.log
+
+mkdir -p %{buildroot}%{_localstatedir}/log/stickshift
+touch %{buildroot}%{_localstatedir}/log/stickshift/user_action.log
+
 mv %{buildroot}%{brokerdir}/script/rhc-admin-ctl-domain %{buildroot}/%{_bindir}
 mv %{buildroot}%{brokerdir}/script/rhc-admin-ctl-app %{buildroot}/%{_bindir}
 mv %{buildroot}%{brokerdir}/script/rhc-admin-cartridge-do %{buildroot}/%{_bindir}
@@ -74,6 +78,7 @@ rm -rf $RPM_BUILD_ROOT
 %files
 %defattr(0640,root,libra_user,0750)
 %attr(0666,-,-) %{brokerdir}/log/production.log
+%attr(0666,-,-) %{_localstatedir}/log/stickshift/user_action.log
 %config(noreplace) %{brokerdir}/config/environments/production.rb
 %config(noreplace) %{brokerdir}/config/keys/public.pem
 %config(noreplace) %{brokerdir}/config/keys/private.pem
@@ -96,8 +101,14 @@ rm -rf $RPM_BUILD_ROOT
 
 %post
 /bin/touch %{brokerdir}/log/production.log
+/bin/touch %{_localstatedir}/log/stickshift/user_action.log
 
 %changelog
+* Thu May 24 2012 Adam Miller <admiller@redhat.com> 0.93.10-1
+- Updating gem versions (admiller@redhat.com)
+- the pkg build bombed due to krb ticket timeout and the gems weren't updated,
+  fixing (admiller@redhat.com)
+
 * Wed May 23 2012 Adam Miller <admiller@redhat.com> 0.93.9-1
 - Updating gem versions (admiller@redhat.com)
 - add basic sync with billing vendor logic (dmcphers@redhat.com)

@@ -99,6 +99,11 @@ Broker::Application.configure do
     :collections => {:user => "user_test", :district => "district", :application_template => "template"}
   }
 
+  config.user_action_logging = {
+    :logging_enabled => true,
+    :log_filepath => "/var/log/stickshift/user_action.log"
+  }
+
   # SS Config
   config.ss = {
     :domain_suffix => "dev.rhcloud.com",
