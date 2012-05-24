@@ -113,6 +113,7 @@ cartridge-10gen-mms-agent-0.1
 cartridge-cron-1.4
 #cartridge-haproxy-1.4
 cartridge-jbossas-7
+cartridge-jbosseap-6.0
 cartridge-jenkins-1.4
 cartridge-jenkins-client-1.4
 cartridge-mongodb-2.0
