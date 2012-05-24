@@ -121,11 +121,11 @@ class LoginControllerTest < ActionController::TestCase
     end
   end
 
-  test 'cookie domain can depend on request' do
+  test 'cookie domain local is nil, can depend on request' do
     @request.host = 'a.test.domain.com'
     with_custom_config({:cookie_domain => :current}, false) do
       opts = @controller.domain_cookie_opts({})
-      assert_equal 'a.test.domain.com', opts[:domain]
+      assert_nil opts[:domain]
     end
   end
 

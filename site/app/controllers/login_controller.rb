@@ -6,7 +6,7 @@ class LoginController < SiteController
 
   def check_referrer
     if request.referer && request.referer != '/'
-      referrer = URI.parse(request.referer)
+      referrer = URI.parse(request.referer) rescue nil
       if remote_request? referrer
         logger.debug "Logging out user referred from: #{referrer.to_s}"
         reset_sso
@@ -18,12 +18,15 @@ class LoginController < SiteController
 
   def valid_referrer(referrer)
     case
+    when referrer.nil?
+      nil
     when [
       login_path,
       reset_password_path,
       new_account_path,
       complete_account_path,
-    ].any? {|path| referrer.path.starts_with?(path) }: nil
+    ].any? {|path| referrer.path.starts_with?(path) }
+      nil
     else referrer.to_s
     end
   end
@@ -66,8 +69,8 @@ class LoginController < SiteController
   # Helper to apply common defaults to cookie options
   def domain_cookie_opts(opts)
     {
-      :secure => true, 
-      :path => '/', 
+      :secure => true,
+      :path => '/',
       :domain => cookie_domain
     }.merge!(opts)
   end

@@ -1,6 +1,21 @@
 class ApplicationController < ActionController::Base
   protect_from_forgery
 
+  #before_filter :before_session
+  #after_filter :after_session
+
+  #def before_session 
+  #  key = Rails.application.config.session_options[:key]
+  #  value = request.cookies[key]
+    #value = Digest::SHA1.hexdigest(value)[0..7] unless value.nil?
+  #  logger.debug "Rack cookie hash #{env["rack.request.cookie_hash"].inspect}"
+  #  logger.debug "Session fingerprint: #{value || 'nil'} - contents #{session.inspect}"
+  #end
+
+  #def after_session
+  #  logger.debug "Contents after: #{session.inspect}"
+  #end
+
   rescue_from AccessDeniedException do |e|
     logger.debug "Access denied: #{e}"
     redirect_to logout_path :cause => e.message, :then => account_path
@@ -52,15 +67,13 @@ class ApplicationController < ActionController::Base
   def cookie_domain
     domain = Rails.configuration.streamline[:cookie_domain] || 'redhat.com'
     case domain
-    when :current; request.host
-    when :nil; nil
-    when nil; nil
+    when :current, :nil, nil then nil
     else (domain[0..0] == '.') ? domain : ".#{domain}"
     end
   end
 
   def remote_request?(referrer)
-    referrer.host && (
+    referrer.present? && referrer.host && (
       (request.host != referrer.host) || !referrer.path.start_with?('/app')
     )
   end

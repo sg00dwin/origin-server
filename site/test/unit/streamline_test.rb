@@ -399,21 +399,13 @@ class StreamlineTest < ActiveSupport::TestCase
     assert !@streamline.simple_user?
   end
 
-  test "get cookie" do
-    assert_nil @streamline.streamline_cookie
-
-    ticket = @streamline.ticket = 'abcdef'
-    cookie = @streamline.streamline_cookie
-    assert_equal 'rh_sso=abcdef', cookie.to_s
-  end
-
   test "authenticate fails" do
     @streamline.expects(:http_post).once.raises(AccessDeniedException.new)
     assert_equal false, @streamline.authenticate("test1", "test1")
     assert_equal 1, @streamline.errors.length
     assert_equal I18n.t(:login_error, :scope => :streamline), @streamline.errors[:base].first
   end
-  
+
   test "authenticate fails with http not found" do
     @streamline.expects(:http_post).once.raises(Streamline::StreamlineException.new)
     assert_equal false, @streamline.authenticate("test1", "test1")
