@@ -1,0 +1,7 @@
+{
+  "license": "apache2",
+  "version": "7.0.0",
+  "git": "git://github.com/openshift/kitchensink-example.git",
+  "description": "This quickstart shows off all the new features of Java EE 6, and makes a great starting point for your project.\n",
+  "website": "https://docs.jboss.org/author/display/AS71/Kitchensink+quickstart"
+}

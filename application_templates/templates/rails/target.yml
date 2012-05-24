@@ -1,0 +1,18 @@
+---
+:cost: 1
+:cartridge: ruby-1.8
+:tags:
+- :ruby
+- :rails
+- :framework
+:embed:
+- mysql-5.1
+:metadata:
+  :git: https://github.com/openshift/rails-example
+  :website: http://rubyonrails.org/
+  :version: 3.1.1
+  :license: :mit
+  :description: >
+    An open-source web framework that is optimized for programmer happiness and sustainable productivity.
+    It lets you write beautiful code by favoring convention over configuration
+:display_name: Ruby on Rails
