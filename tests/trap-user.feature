@@ -1,6 +1,6 @@
-@internals
-@internals2
-@node
+# @internals
+# @internals2
+# @node
 Feature: Trap User Shell
 
   As a system designer
