@@ -10,6 +10,7 @@ Feature: Last Access Updater
 
   Scenario: Application Access
     Given an existing php-5.3 application
+    Given I wait 5 seconds
     When the last access script is run
     Then the application last access file should be present
 
