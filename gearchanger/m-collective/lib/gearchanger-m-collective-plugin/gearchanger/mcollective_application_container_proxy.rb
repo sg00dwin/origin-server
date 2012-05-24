@@ -614,7 +614,11 @@ module GearChanger
                 reply.append destination_container.send(:run_cartridge_command, cart, app, gear, "move", idle ? '--idle' : nil, false)
               end
               if app.scalable and not cart.include? app.proxy_cartridge
-                reply.append destination_container.expose_port(app, gear, cinst.parent_cart_name)
+                begin
+                  reply.append destination_container.expose_port(app, gear, cinst.parent_cart_name)
+                rescue Exception=>e
+                  # just pass because some embedded cartridges do not have expose-port hook implemented (e.g. jenkins-client)
+                end
               end
             end 
 
