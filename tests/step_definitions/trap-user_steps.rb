@@ -3,7 +3,8 @@ require 'digest/md5'
 
 ssh = %{ssh -o BatchMode=yes \
                  -o StrictHostKeyChecking=no \
-                 -t}
+                 -t\
+                 -q}
 
 
 Given /^the user has (no|\d+) tail process(es)? running( in (\d+) seconds)?$/ do |expect, ignore1, ignore2, timeout|
@@ -118,7 +119,7 @@ Then /^I can use the rhcsh menus/ do
   outbuf = []
   ssh_call = ssh + " #{@app.uid}@#{@app.hostname} " + "rhcsh help"
   exit_code = runcon ssh_call, 'unconfined_u', 'unconfined_r', 'unconfined_t', outbuf
-  out = outbuf[0].split(/Connection to/)[0]
+  out = outbuf[0]
   md5 = Digest::MD5.hexdigest(out)
   $logger.debug("MD5sum check for help message:")
   $logger.debug("was: #{md5} expected: help_md5")
