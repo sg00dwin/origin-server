@@ -49,7 +49,6 @@ Requires:  rubygem-rspec
 Requires:  rubygem-webmock
 Requires:  rubygem-nokogiri
 Requires:  rubygem-rcov
-Requires:  rubygem-hydra
 Requires:  charlie
 Requires:  pam
 Requires:  pam-devel
