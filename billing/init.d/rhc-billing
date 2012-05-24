@@ -1,24 +1,24 @@
 #!/bin/bash
 #
-# stickshift-billing        Startup script for the StickShift Billing Service
+# rhc-billing        Startup script for the OpenShift Billing Service
 #
 # chkconfig: - 85 15
-# description: The StickShift billing service
+# description: The OpenShift billing service
 # processname: httpd
-# config: /var/www/stickshift/billing/httpd/broker.conf
-# config: /var/www/stickshift/billing/httpd
-# pidfile: /var/www/stickshift/billing/httpd/run/httpd.pid
+# config: /var/www/rhc/billing/httpd/broker.conf
+# config: /var/www/rhc/billing/httpd
+# pidfile: /var/www/rhc/billing/httpd/run/httpd.pid
 #
 ### BEGIN INIT INFO
 # Provides: httpd
 # Required-Start: $local_fs $remote_fs $network $named
 # Required-Stop: $local_fs $remote_fs $network
 # Should-Start: distcache
-# Short-Description: start and stop StickShift billing service
-# Description: The StickShift Billing Service
+# Short-Description: start and stop OpenShift billing service
+# Description: The OpenShift Billing Service
 ### END INIT INFO
 
-# Source function stickshiftry.
+# Source function rhc.
 . /etc/rc.d/init.d/functions
 
 # Start httpd in the C locale by default.
@@ -27,12 +27,12 @@ HTTPD_LANG=${HTTPD_LANG-"C"}
 # Path to the apachectl script, server binary, and short-form for messages.
 apachectl=/usr/sbin/apachectl
 httpd=${HTTPD-/usr/sbin/httpd}
-prog=stickshift-billing
-pidfile=${PIDFILE-/var/www/stickshift/billing/httpd/run/httpd.pid}
-lockfile=${LOCKFILE-/var/lock/subsys/stickshift-billing}
+prog=rhc-billing
+pidfile=${PIDFILE-/var/www/rhc/billing/httpd/run/httpd.pid}
+lockfile=${LOCKFILE-/var/lock/subsys/rhc-billing}
 RETVAL=0
 
-OPTIONS="-C 'Include /var/www/stickshift/billing/httpd/billing.conf' -f /var/www/stickshift/billing/httpd/httpd.conf"
+OPTIONS="-C 'Include /var/www/rhc/billing/httpd/billing.conf' -f /var/www/rhc/billing/httpd/httpd.conf"
 
 # The semantics of these two functions differ from the way apachectl does
 # things -- attempting to start while running is a failure, and shutdown

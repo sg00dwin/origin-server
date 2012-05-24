@@ -3,7 +3,7 @@
 
 Summary:   Red Hat OpenShift billing components
 Name:      rhc-billing
-Version:   0.0.2
+Version:   0.0.1
 Release:   1%{?dist}
 Group:     System Environment/Daemons
 License:   ASL 2.0
@@ -21,7 +21,7 @@ Requires:  rubygem(bson_ext)
 Requires:  rubygem(rest-client)
 Requires:  rubygem(parseconfig)
 Requires:  rubygem(json)
-Requires:  rubygem(rhc-controller)
+Requires:  rubygem(stickshift-controller)
 Requires:  rubygem(passenger)
 Requires:  rubygem-passenger-native
 
@@ -58,7 +58,6 @@ ln -s %{billingdir}/public %{buildroot}%{htmldir}/billing
 touch %{buildroot}%{billingdir}/log/production.log
 touch %{buildroot}%{billingdir}/log/development.log
 ln -sf /usr/lib64/httpd/modules %{buildroot}%{billingdir}/httpd/modules
-ln -sf /etc/httpd/conf/magic %{buildroot}%{billingdir}/httpd/conf/magic
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -97,4 +96,3 @@ rm -rf $RPM_BUILD_ROOT
 #chkconfig rhc-billing on
 
 %changelog
-

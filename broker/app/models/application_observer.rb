@@ -10,8 +10,7 @@ class ApplicationObserver < ActiveModel::Observer
     uuid = data[:uuid]
     usage = nil
     if event == UsageRecord::EVENTS[:begin]
-      usage = Usage.new
-      usage.construct(gear.app.user.login, gear.uuid, gear.node_profile, time, nil, uuid)
+      usage = Usage.new(gear.app.user.login, gear.uuid, gear.node_profile, time, nil, uuid)
     elsif event == UsageRecord::EVENTS[:end]
       usage = Usage.find_latest_by_gear(gear.uuid)
       if usage

@@ -1,5 +1,5 @@
 When /^the last access script is run$/ do
-  `/usr/bin/rhc-last-access`
+  run('/usr/bin/rhc-last-access')
 end
 
 Then /^the application last access file should be present$/ do

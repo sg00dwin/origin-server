@@ -114,12 +114,9 @@ module GearChanger
         (1..10).each do |i|
           args = Hash.new
           args['--with-app-uuid'] = app.uuid
+          args['--with-app-name'] = app.name
           args['--with-container-uuid'] = gear.uuid
-          if app.scalable
-            args['--named'] = gear.name
-          else
-            args['--named'] = app.name
-          end
+          args['--with-container-name'] = gear.name
           args['--with-quota-blocks'] = quota_blocks if quota_blocks
           args['--with-quota-files'] = quota_files if quota_files
           args['--with-namespace'] = app.domain.namespace

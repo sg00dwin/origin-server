@@ -7,7 +7,7 @@ def usage
     puts <<USAGE
 == Synopsis
 
-rhc-admin-move: Run cartridge hooks
+rhc-admin-move: Move an app from one node to another
 
 == Usage
 
