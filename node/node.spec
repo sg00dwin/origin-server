@@ -2,7 +2,7 @@
 
 Summary:       Multi-tenant cloud management system node tools
 Name:          rhc-node
-Version: 0.93.5
+Version: 0.93.6
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -266,6 +266,12 @@ fi
 /lib64/security/pam_libra.so
 
 %changelog
+* Wed May 23 2012 Adam Miller <admiller@redhat.com> 0.93.6-1
+- [mpatel+ramr] Fix issues where app_name is not the same as gear_name - fixups
+  for typeless gears. (ramr@redhat.com)
+- BZ824546 move nurture notification (jhonce@redhat.com)
+- fix for BZ: 824135 (mmcgrath@redhat.com)
+
 * Tue May 22 2012 Adam Miller <admiller@redhat.com> 0.93.5-1
 - ITERS was not incrementing.  This would run for ever if semodule call was
   failing. (rmillner@redhat.com)
