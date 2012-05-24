@@ -515,6 +515,14 @@ html.js fieldset.collapsible .fieldset-wrapper {
 		font-weight:bold;
 	}
 }
+
+@media (max-width: 480px) {
+	.community .blog-post > h1.blog-title {
+    font-size: 26px;
+    font-weight: bold;
+    line-height: 30px;
+	}
+}
 	
 
 /* Community search */

@@ -105,11 +105,12 @@
 	display:none;
 }
 .column-navbar .btn-navbar {
-  background-color: #070707;
+  background-color: #1f1f1f;
   background-image: none;
   //@include gradient-vertical($startColor: #282828, $endColor: #121212);
   display: none;
-  font-size: 13px;
+  font-size: 12px;
+  text-transform: uppercase;
   font-weight:normal;
   margin: 0 0 0 -20px;
   padding: 8px 20px;
@@ -146,6 +147,8 @@
 	.column-navbar {
 		background: #000;
 		display:block;
+		margin: 0 -20px;
+    padding:0 20px;
 		> h3 {
 			float:left;
 			color: #fff;
