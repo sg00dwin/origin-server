@@ -3,7 +3,7 @@
 
 Summary:   Li site components
 Name:      rhc-site
-Version: 0.93.4
+Version: 0.93.5
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -117,6 +117,9 @@ rm -rf %{buildroot}
 /bin/touch %{sitedir}/log/production.log
 
 %changelog
+* Wed May 23 2012 Adam Miller <admiller@redhat.com> 0.93.5-1
+- Adding application template support (fotioslindiakos@gmail.com)
+
 * Wed May 23 2012 Adam Miller <admiller@redhat.com> 0.93.4-1
 - Blank flashes are duly ignored (ccoleman@redhat.com)
 - Update cartridge link on getting started page to point to Platform Features
