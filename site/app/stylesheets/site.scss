@@ -109,11 +109,15 @@ body.signup {
   color: white;
   padding-bottom: 50px;
 }
-.section-nav.lift-counter {
-  padding-bottom: 90px;
-}
 .recaptcha table {
   table-layout: auto;
+}
+
+.section-nav.lift-counter {
+    padding-bottom: 90px;
+}
+.section-nav > .navbar:last-child {
+    margin-bottom: 20px;
 }
 
 @media (max-width: 767px) {
@@ -121,7 +125,8 @@ body.signup {
     padding-bottom: 20px;
   }
   .section-nav.lift-counter {
-    padding-bottom: 30px;
+    padding-bottom: 15px;
+    margin-bottom: -25px;
   }
 }
 .simple .section-nav { padding-bottom: 0; }
@@ -174,6 +179,9 @@ body.signup {
       text-transform: uppercase;
       font-size: 12px;
     }
+    > a.sign_out {
+    	float:right;
+    }
     > a:hover {
       text-decoration: none;
       color: white;
@@ -182,20 +190,47 @@ body.signup {
   > .login {
     padding: 4px 0;
   }
+  ul.pull-right {
+  	list-style-type:none;
+  	li {
+  		float:left;
+  	}
+  }
 }
 
 .section-top > .container > div.pull-left {
 	padding-right: 26px;
-	background: url("../images/sprite-vert.png") no-repeat scroll right -163px transparent;
+	padding-top: 8px;
+	background: url("../images/sprite-vert.png") no-repeat scroll right -161px transparent;
 	}
+
+@media (max-width: 480px) {
+	.section-top > .container > div.pull-left {
+		display: none;
+	}
+	.section-top > .container {
+		padding: 0;
+	}
+	.section-top > .container > div > a.sign_out {
+    float: none;
+	}
+	.section-top > .container > .login {
+		display: table;
+		width: 100%;
+		padding: 1px 0;
+		> a {
+			display: table-cell;
+			border-right: 1px solid black;
+			padding: 8px;		
+		}
+	}
+}
 
 // Central messaging content
 .messaging {
   clear: both;
-
   color: white;
   text-align: center;
-
   margin-bottom: 30px;
 
   .primary {
@@ -512,6 +547,7 @@ h1.ribbon {
   display: inline-block;
   padding: 5px $gridGutterWidth 5px 0; /* left margin set by ribbon */
   min-width: 30%;
+  margin-bottom: 25px;
   text-shadow: -1px -1px 0 rgba(0, 0, 0, 0.18);
   @include ribbon($ribbonFoldColor); 
 }
@@ -681,6 +717,12 @@ h1.ribbon {
       }
     }
   }
+  
+@media (max-width: 768px) {
+	.nav-list > li > a {
+    margin-left: 0;
+  }
+}
 
   .search-row {
   	position: relative;
@@ -758,11 +800,6 @@ h1.ribbon {
   background-color: $contentColumnBackgroundColor;
 }
 
-#copyright {
-  color: #888;
-  background-color: black;
-}
-
 /* Background */
 body > header {
   /* fallback */
@@ -813,6 +850,9 @@ body > header {
 @media (max-width: 767px) {
   body > header {
     background: #191919 url($transparentNoiseImageData) repeat; 
+  }
+  .messaging {
+  	margin-top:18px;
   }
 }
 
@@ -909,6 +949,13 @@ body.home {
   }
 }
 
+@media (min-width: 767px) {
+	.nav-collapse.collapse {
+    height: auto !important;
+    overflow: visible !important;
+  }
+}
+
 @media (min-width: 767px) and (max-width: 980px) {
 	.home #buzz .column-buzz {
   	margin-left:22px;
@@ -923,7 +970,7 @@ body.home {
   }
 
   .home .messaging {
-    margin: 20px 0;
+    margin: 10px 0 20px 0;
   }
 
   .home #buzz {
@@ -941,7 +988,7 @@ body.home {
 
 @media (max-width: 480px) {
   .home .messaging {
-    margin: 10px 0;
+    margin: 10px 0 15px 0;
   }
 }
 
@@ -957,11 +1004,6 @@ body.home {
       right bottom,
       center bottom;
   }
-}
-
-#nav { 
-  background-color: transparent;
-  background-image: none;
 }
 
 /* Simple page */

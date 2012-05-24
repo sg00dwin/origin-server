@@ -2,7 +2,6 @@
 
 /* This is site specific branding */
 .navbar {
-  /*margin-bottom: 30px;*/
   position: relative;
 
   .brand {
@@ -103,8 +102,63 @@
   }
 }
 
-.section-nav > .navbar:last-child {
-  margin-bottom: 20px;
+.column-navbar {
+	display:none;
+}
+.column-navbar .btn-navbar {
+  background-color: #070707;
+  background-image: none;
+  //@include gradient-vertical($startColor: #282828, $endColor: #121212);
+  background-repeat: repeat-x;
+  display: none;
+  font-size: 13px;
+  font-weight:normal;
+  margin: 0 20px 0;
+  padding: 8px 20px;
+  border:0;
+  color: #aaa;
+  overflow: hidden;
+  text-align:left;
+  text-shadow: -1px -1px 2px rgba(0, 0, 0, 0.25);
+  
+  &:hover {
+  	color:#eee;
+  	background-color:#4f4f4f;
+  	background-image:none;
+  	.icon-bar {
+    	background-color: #eee;
+    }
+  }
+  
+  .icon-bar {
+    background-color: #aaa;
+    border-radius: 1px 1px 1px 1px;
+    box-shadow: 0 1px 0 rgba(0, 0, 0, 0.25);
+    display: block;
+    height: 2px;
+    margin: 2px 0;
+    width: 38px;
+    float:right;
+    clear:both;   
+	}
+}
+
+@media (max-width:767px) {
+	.column-navbar {
+		background: #000;
+		display:block;
+		overflow: hidden;
+		margin: 0 -40px;
+		min-height: 32px;
+		> h3 {
+			float:left;
+			color: #fff;
+			margin: 8px 20px 0;
+		}
+		.btn-navbar {
+    	display: block;
+  	}
+	}
 }
 
 @media (max-width: 767px) {
@@ -115,10 +169,11 @@
     .brand {
       float: left;
       text-align: center;
+      font-size: 14px;
     }
 
     .nav {
-      margin-left: $logoWidth + 10px; 
+      margin-left: 95px; 
       margin-top: 5px; /* centers navigation text on the logo */
       width: inherit;
 
@@ -129,12 +184,19 @@
 
         > a {
           padding: 10px 0;
+      		font-size: 14px;
+      		font-weight: normal;
         }
       }
       > li.divider {
         display: none;
       }
     }
+    .brand-image {
+  	  background: url('../images/OSlogo57.png') center top no-repeat transparent;
+  	  height: 60px;
+  	  margin-bottom: 5px;
+  	}
   }
 }
 @media (min-width: 768px) {
@@ -153,7 +215,6 @@
       left: -50%;
       height: 125px;
     }
-
     .nav {
       margin-top: 20px; /* centers navigation text on the logo */
     }
@@ -166,6 +227,9 @@
     font-size: 11px;
   }
   .navbar {
+  	.navbar {
+			min-height: 90px;
+		}
     .brand {
       .brand-image {
         margin-bottom: 5px;
@@ -178,25 +242,11 @@
     }
     .nav > li > a {
       font-weight: normal;
+      font-size: 13px;
+      //padding: 5px 0;
     }
   }
 }
-
-@media (max-width: 480px) {
-	.navbar {
-		min-height: 90px;
-		
-		.nav {
-    	font-size: 12px;
-
-      li  > a {
-        padding: 5px 0;
-      }
-    }
-  }
-  
-}
-
 
 
 

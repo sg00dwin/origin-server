@@ -1,6 +1,15 @@
 .community .column-nav .gutter-right {
   padding-top: 28px;
 }
+@media (max-width: 767px) {
+	.community {
+		.column-nav {
+			.gutter-right {
+			  padding-top: 15px;
+			}
+		}
+	}
+}
 
 /* Drupal specific markup, we may want to wrap this with a top level selector on body.drupal or something */
 .views-field-rss { float: right; }
