@@ -60,6 +60,7 @@ class Release < Thor
 
         if package_name == 'rubygem-stickshift-controller'
           update_gemfile_version(spec_file, 'stickshift-controller', "broker/Gemfile.lock", verbose)
+          update_gemfile_version(spec_file, 'stickshift-controller', "billing/Gemfile.lock", verbose)
           update_gemfile_version(spec_file, 'stickshift-controller', "#{build_dir}/../broker/Gemfile.lock", verbose)
           gem_updates = true
         end
