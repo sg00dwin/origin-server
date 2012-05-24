@@ -3,7 +3,7 @@
 
 Summary:   Li site components
 Name:      rhc-site
-Version: 0.93.3
+Version: 0.93.4
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -117,6 +117,15 @@ rm -rf %{buildroot}
 /bin/touch %{sitedir}/log/production.log
 
 %changelog
+* Wed May 23 2012 Adam Miller <admiller@redhat.com> 0.93.4-1
+- Blank flashes are duly ignored (ccoleman@redhat.com)
+- Update cartridge link on getting started page to point to Platform Features
+  page. (ccoleman@redhat.com)
+- CSS cleanup of application header and application list, make headers share
+  CSS and degrade gracefully, and make application lists flush with the left
+  margin (ccoleman@redhat.com)
+- Unit test for gear state output (ccoleman@redhat.com)
+
 * Tue May 22 2012 Adam Miller <admiller@redhat.com> 0.93.3-1
 - Add more information to the status app Update overview text with less
   hyperbolic descriptions (ccoleman@redhat.com)
