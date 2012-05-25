@@ -3,7 +3,7 @@
 
 Summary:   Li broker components
 Name:      rhc-broker
-Version: 0.93.10
+Version: 0.93.15
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -104,6 +104,22 @@ rm -rf $RPM_BUILD_ROOT
 /bin/touch %{_localstatedir}/log/stickshift/user_action.log
 
 %changelog
+* Fri May 25 2012 Dan McPherson <dmcphers@redhat.com> 0.93.15-1
+- Updating gem versions (dmcphers@redhat.com)
+
+* Thu May 24 2012 Dan McPherson <dmcphers@redhat.com> 0.93.14-1
+- Updating gem versions (dmcphers@redhat.com)
+
+* Thu May 24 2012 Adam Miller <admiller@redhat.com> 0.93.13-1
+- Updating gem versions (admiller@redhat.com)
+
+* Thu May 24 2012 Adam Miller <admiller@redhat.com> 0.93.12-1
+- Updating gem versions (admiller@redhat.com)
+
+* Thu May 24 2012 Adam Miller <admiller@redhat.com> 0.93.11-1
+- Updating gem versions (admiller@redhat.com)
+- changes for US2255 - authentication ticket caching (abhgupta@redhat.com)
+
 * Thu May 24 2012 Adam Miller <admiller@redhat.com> 0.93.10-1
 - Updating gem versions (admiller@redhat.com)
 - the pkg build bombed due to krb ticket timeout and the gems weren't updated,

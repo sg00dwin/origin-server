@@ -3,7 +3,7 @@
 
 Summary:   Li site components
 Name:      rhc-site
-Version: 0.93.5
+Version: 0.93.6
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -117,6 +117,12 @@ rm -rf %{buildroot}
 /bin/touch %{sitedir}/log/production.log
 
 %changelog
+* Thu May 24 2012 Adam Miller <admiller@redhat.com> 0.93.6-1
+- Bug 824913 - Add helper code to filter certain parameter values from logged
+  hashes (instead of using Rails helper code that wasn't working)
+  (ccoleman@redhat.com)
+- New installation instructions on Windows (ffranz@redhat.com)
+
 * Wed May 23 2012 Adam Miller <admiller@redhat.com> 0.93.5-1
 - Adding application template support (fotioslindiakos@gmail.com)
 

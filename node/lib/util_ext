@@ -74,9 +74,10 @@ function validate_run_as_user {
 }
 
 function enable_cgroups {
-    /sbin/service libra-cgroups startuser "$uuid" > /dev/null
+    echo $cfs_quota > "/cgroup/all/libra/$uuid/cpu.cfs_quota_us"
 }
 
 function disable_cgroups {
-    /sbin/service libra-cgroups stopuser "$uuid" > /dev/null
+    export cfs_quota=$(cat "/cgroup/all/libra/$uuid/cpu.cfs_quota_us")
+    cat /cgroup/all/libra/$uuid/cpu.cfs_period_us  > "/cgroup/all/libra/$uuid/cpu.cfs_quota_us"
 }
