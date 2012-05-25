@@ -122,15 +122,6 @@ module Streamline
       end
     end
 
-    # Return a valid single signon cookie
-    def streamline_cookie
-      Cookie.new :rh_sso, @ticket, {
-        :secure => true,
-        :path => '/',
-        :domain => '.redhat.com'
-      } if @ticket
-    end
-
     def accept_terms
       Rails.logger.debug("Calling streamline to accept terms")
       errors.clear

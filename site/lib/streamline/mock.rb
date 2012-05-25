@@ -11,7 +11,7 @@ module Streamline
     # Returns the login
     #
     def establish
-      @rhlogin ||= ticket || "openshift@redhat.com"
+      @rhlogin ||= CGI.unescape(ticket) || "openshift@redhat.com"
 
       set_fake_roles unless @roles
       self
@@ -98,7 +98,7 @@ module Streamline
       Rails.logger.debug "Authenticating user #{login}"
 
       if login.present? and password.present?
-        @ticket = login
+        @ticket = CGI.escape(CGI.escape(login)) #double encode the ticket to avoid cookie issues
         @rhlogin = login
         set_fake_roles
         true
@@ -109,10 +109,6 @@ module Streamline
     end
 
     def logout
-    end
-
-    def streamline_cookie
-      "rh_sso=#{@ticket}"
     end
 
     #

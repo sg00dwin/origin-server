@@ -81,8 +81,11 @@ module OpenShiftMigration
 
     state_file = File.join(gear_home, gear_name, "runtime", ".state")
     app_state_file = File.join(app_dir, ".state")
-    FileUtils.mv state_file, app_state_file, :force => true  if File.exists? state_file
-    zpathlist.push app_state_file
+
+    if File.exists? state_file
+      FileUtils.mv state_file, app_state_file, :force => true
+      zpathlist.push app_state_file
+    end
 
     #  Move the old repo to the new location and create symlinks
     #  for compatibility to existing apps.

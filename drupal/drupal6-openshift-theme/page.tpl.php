@@ -92,12 +92,22 @@
       <div class="container"><div class="row-content">
       <div class='row row-flush-right'>
         <?php if ($layout == 'left') :?>
+      	<div class="column-navbar"> 
+        	<a data-toggle="collapse" data-target=".nav-collapse" class="btn btn-navbar">
+        	Navigate
+        	<span class="icon-bar"></span>
+        	<span class="icon-bar"></span>
+        	<span class="icon-bar"></span>
+        	</a>
+        </div>
           <div class="column-nav lift-less grid-wrapper">
+          <div class="nav-collapse collapse">
             <nav class="span3">
               <div class="gutter-right">
                 <?php print $sidebar_left; ?>
               </div>
             </nav>
+           </div>
           </div>
           <div class="column-content lift grid-wrapper">
             <div class="span9 span-flush-right">
@@ -168,7 +178,7 @@
       <div id="footer-nav">
         <div class="container">
           <div class="row">
-            <div class="span3 link-column">
+            <nav class="span3">
               <header>
                 <h3><a href="/community/developers">Developers</a></h3>
               </header>
@@ -178,8 +188,8 @@
                 <li><a href="http://docs.redhat.com/docs/en-US/OpenShift/2.0/html/User_Guide/index.html">User Guide</a></li>
                 <li><a href="/community/faq">FAQ</a></li>
               </ul>
-            </div>
-            <div class="span3 link-column">
+            </nav>
+            <nav class="span3">
               <header>
                 <h3><a href="/community">Community</a></h3>
               </header>
@@ -189,8 +199,8 @@
                 <li><a href="http://webchat.freenode.net/?randomnick=1&amp;channels=openshift&amp;uio=d4">IRC Channel</a></li>
                 <li><a href="mailto:openshift@redhat.com">Feedback</a></li>
               </ul>
-            </div>
-            <div class="span3 link-column">
+            </nav>
+            <nav class="span3">
               <header>
                 <h3><a href="/community/get-involved">Get Involved</a></h3>
               </header>
@@ -200,8 +210,8 @@
                 <li><a href="/community/developers/get-involved">Make it Better</a></li>
                 <li><a href="https://github.com/openshift">OpenShift on GitHub</a></li>
               </ul>
-            </div>
-            <div class="span3 link-column">
+            </nav>
+            <nav class="span3">
               <header>
                 <h3><a href="/app/legal">Legal</a></h3>
               </header>
@@ -210,7 +220,7 @@
                 <li><a href="/app/legal/openshift_privacy">Privacy Policy</a></li>
                 <li><a href="https://access.redhat.com/security/team/contact/">Security</a></li>
               </ul>
-            </div>
+            </nav>
           </div>
         </div>
       </div>
@@ -223,6 +233,9 @@
         </div>
       </section>
     </footer>
+    <script type="text/javascript" src="/app/javascripts/jquery-1.7.2.min.js"></script>
+    <script type="text/javascript" src="/app/javascripts/bootstrap-collapse.js"></script>
+    <script type="text/javascript" src="/app/javascripts/bootstrap-dropdown.js"></script>
     <!-- SiteCatalyst code version: H.23.3.
     Copyright 1996-2011 Adobe, Inc. All Rights Reserved
     More info available at http://www.omniture.com -->
