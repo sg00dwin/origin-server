@@ -47,7 +47,8 @@ module OpenShiftMigration
     if (not File.symlink? srcdir)  &&  (File.directory? srcdir)
       FileUtils.rm_f destdir  if (File.symlink? destdir)  ||  (not File.directory? destdir)
       FileUtils.mkdir_p destdir
-      FileUtils.mv Dir.glob("#{srcdir}/*"), destdir
+      Dir.entries(srcdir).each {|f| FileUtils.mv(File.join(srcdir, f), destdir) unless f == '.' || f == '..'}
+      #FileUtils.mv Dir.glob("#{srcdir}/*"), destdir
       FileUtils.rm_rf srcdir
     end
 
@@ -112,10 +113,26 @@ module OpenShiftMigration
       zpathlist.push gear_repo_dir
     end
 
+    gear_type = Util.get_env_var_value(gear_home, "OPENSHIFT_GEAR_TYPE")
+    cart_dir = File.join(gear_home, gear_type)
+    if gear_type == "mysql-5.1"
+      gnamedir = File.join(gear_home, gear_name)
+      if not File.symlink? gnamedir
+        FileUtils.mv File.join(gnamedir, "ci"), cart_dir, :verbose => true
+        FileUtils.mv File.join(gnamedir, gear_name + "_ctl.sh"),
+                               File.join(cart_dir), :verbose => true
+        FileUtils.rm_rf gnamedir
+        FileUtils.ln_sf gear_type, gnamedir
+      end
+      zpathlist.pop if zpathlist.include? gear_repo_dir
+    else
+      self.move_dir_and_symlink(File.join(gear_home, gear_name), cart_dir,
+                                gear_type)
+    end 
+
     self.secure_user_files(uuid, grp, 0750, mcs_level, zpathlist)
   end
 
-  #
   # 1) Save/Destroy current proxy configuration
   # 2) Deploy new proxy configuration
   def self.migrate_http_proxy(uuid, namespace, version,
