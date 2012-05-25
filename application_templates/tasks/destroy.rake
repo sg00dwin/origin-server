@@ -1,6 +1,6 @@
 #!/usr/bin/env ruby
 
-namespace :descriptors do
+namespace :templates do
   desc "Create scripts for destroying current templates"
   task :destroy do
     client = login
