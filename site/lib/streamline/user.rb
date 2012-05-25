@@ -243,13 +243,14 @@ module Streamline
     #
     # Register a new streamline user
     #
-    def register(confirm_url)
+    def register(confirm_url, promo_code=nil)
       register_args = {'emailAddress' => @email_address,
                        'password' => @password,
                        'passwordConfirmation' => @password,
                        'secretKey' => Rails.configuration.streamline[:register_secret],
                        'termsAccepted' => 'true',
                        'confirmationUrl' => confirm_url}
+      register_args['promoCode'] = promo_code if promo_code
 
       http_post(@@register_url, register_args, false) do |json|
         Rails.logger.debug "Registration response #{json.inspect}"

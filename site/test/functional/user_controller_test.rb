@@ -57,9 +57,10 @@ class UserControllerTest < ActionController::TestCase
   end
 
   test "should get promo code redirect on post" do
-    post(:create, {:web_user => get_post_form.merge!(:promo_code => 'a')})
+    WebUser.any_instance.expects(:register).with(anything, 'a_code').returns(true)
+    post(:create, {:web_user => get_post_form.merge!(:promo_code => 'a_code')})
     assert assigns(:user).errors.empty?
-    assert_redirected_to complete_account_path(:promo_code => 'a')
+    assert_redirected_to complete_account_path(:promo_code => 'a_code')
   end
 
   test "should ignore captcha non-integrated environment" do
