@@ -8,7 +8,7 @@
 
 Summary:   Dependencies for OpenShift development
 Name:      rhc-devenv
-Version: 0.94.6
+Version: 0.94.7
 Release:   1%{?dist}
 Group:     Development/Libraries
 License:   GPLv2
@@ -490,6 +490,10 @@ semanage node -a -t node_t -r s0:c1023 -M  255.0.0.0 -p ipv4 10.0.0.0
 %{policydir}/*
 
 %changelog
+* Thu May 24 2012 Adam Miller <admiller@redhat.com> 0.94.7-1
+- US2307 - removed eap from devenv.spec (bdecoste@gmail.com)
+- US2307 (bdecoste@gmail.com)
+
 * Wed May 23 2012 Adam Miller <admiller@redhat.com> 0.94.6-1
 - Broke the build (admiller@redhat.com)
 
