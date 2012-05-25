@@ -2,7 +2,7 @@
 
 Summary:       Multi-tenant cloud management system node tools
 Name:          rhc-node
-Version: 0.93.7
+Version: 0.93.8
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -266,6 +266,9 @@ fi
 /lib64/security/pam_libra.so
 
 %changelog
+* Thu May 24 2012 Adam Miller <admiller@redhat.com> 0.93.8-1
+- more efficient cgroup disabling method (mmcgrath@redhat.com)
+
 * Thu May 24 2012 Adam Miller <admiller@redhat.com> 0.93.7-1
 - Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
   (mmcgrath@redhat.com)
