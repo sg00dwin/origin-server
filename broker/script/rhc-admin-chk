@@ -41,8 +41,10 @@ require "/var/www/stickshift/broker/config/environment"
 
 no_error = true
 summary = []
-users = CloudUser.find_all(nil)
 
+node_hash = StickShift::ApplicationContainerProxy.get_all_gears
+
+users = CloudUser.find_all(nil)
 mongo_hash = {}
 users.each { |user|
   gear_count = 0
@@ -63,8 +65,6 @@ users.each { |user|
     print "OK - user #{user.login} has consumed_gears equal to actual gears (#{gear_count})!\n" if verbose
   end
 }
-
-node_hash = StickShift::ApplicationContainerProxy.get_all_gears
 
 # now check
 print "Checking application gears in respective nodes :\n" if verbose
