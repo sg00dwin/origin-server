@@ -31,9 +31,9 @@ module Streamline
     #
     def load_email_address
       @email_address = if rhlogin.present? and rhlogin.index '@'
-          @email_address = "#{@rhlogin}@rhn.com"
+          @email_address = "#{rhlogin}@rhn.com"
         else
-          @email_address = @rhlogin
+          @email_address = rhlogin
         end
     end
 
@@ -174,7 +174,7 @@ module Streamline
 
     private
       def set_fake_roles
-        @roles, @rhlogin = if @rhlogin.index '@'
+        @roles, @email_address = if @rhlogin.index '@'
           @streamline_type = :simple
           [["simple_authenticated"], @rhlogin]
         else
