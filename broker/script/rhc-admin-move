@@ -15,7 +15,7 @@ rhc-admin-move OPTIONS
 
 Options:
 --gear_uuid <gear_uuid>
-    Gear uuid to move, if app is a scalable application
+    Gear uuid to move
 --destination_district_uuid <district_uuid>
     Destination district uuid
 -i|--target_server_identity <server_identity>
