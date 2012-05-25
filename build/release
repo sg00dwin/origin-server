@@ -85,7 +85,7 @@ class Release < Thor
       if gem_updates
         if push_changes
           branch = get_branch
-          run("git add broker/Gemfile.lock; git commit -m 'Updating gem versions'; git push origin #{branch}", :verbose => options.verbose?)
+          run("git add broker/Gemfile.lock billing/Gemfile.lock ; git commit -m 'Updating gem versions'; git push origin #{branch}", :verbose => options.verbose?)
           inside('../crankcase') do
             branch = get_branch
             run("git add stickshift/node/Gemfile.lock stickshift/broker/Gemfile.lock; git commit -m 'Updating gem versions'; git push origin #{branch}", :verbose => options.verbose?)
