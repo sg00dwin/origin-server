@@ -3,7 +3,7 @@
 
 Summary:   Li broker components
 Name:      rhc-broker
-Version: 0.93.8
+Version: 0.93.13
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -58,12 +58,17 @@ ln -s %{brokerdir}/public %{buildroot}%{htmldir}/broker
 mkdir -p %{buildroot}%{brokerdir}/run
 mkdir -p %{buildroot}%{brokerdir}/log
 touch %{buildroot}%{brokerdir}/log/production.log
+
+mkdir -p %{buildroot}%{_localstatedir}/log/stickshift
+touch %{buildroot}%{_localstatedir}/log/stickshift/user_action.log
+
 mv %{buildroot}%{brokerdir}/script/rhc-admin-ctl-domain %{buildroot}/%{_bindir}
 mv %{buildroot}%{brokerdir}/script/rhc-admin-ctl-app %{buildroot}/%{_bindir}
 mv %{buildroot}%{brokerdir}/script/rhc-admin-cartridge-do %{buildroot}/%{_bindir}
 mv %{buildroot}%{brokerdir}/script/rhc-admin-move %{buildroot}/%{_bindir}
 mv %{buildroot}%{brokerdir}/script/rhc-admin-ctl-district %{buildroot}/%{_bindir}
 mv %{buildroot}%{brokerdir}/script/rhc-admin-ctl-template %{buildroot}/%{_bindir}
+mv %{buildroot}%{brokerdir}/script/rhc-admin-ctl-usage %{buildroot}/%{_bindir}
 mv %{buildroot}%{brokerdir}/script/rhc-admin-ctl-user %{buildroot}/%{_bindir}
 mv %{buildroot}%{brokerdir}/script/rhc-admin-chk %{buildroot}/%{_bindir}
 
@@ -73,6 +78,7 @@ rm -rf $RPM_BUILD_ROOT
 %files
 %defattr(0640,root,libra_user,0750)
 %attr(0666,-,-) %{brokerdir}/log/production.log
+%attr(0666,-,-) %{_localstatedir}/log/stickshift/user_action.log
 %config(noreplace) %{brokerdir}/config/environments/production.rb
 %config(noreplace) %{brokerdir}/config/keys/public.pem
 %config(noreplace) %{brokerdir}/config/keys/private.pem
@@ -90,12 +96,33 @@ rm -rf $RPM_BUILD_ROOT
 %attr(0750,-,-) %{_bindir}/rhc-admin-move
 %attr(0750,-,-) %{_bindir}/rhc-admin-ctl-district
 %attr(0750,-,-) %{_bindir}/rhc-admin-ctl-template
+%attr(0750,-,-) %{_bindir}/rhc-admin-ctl-usage
 %attr(0750,-,-) %{_bindir}/rhc-admin-ctl-user
 
 %post
 /bin/touch %{brokerdir}/log/production.log
+/bin/touch %{_localstatedir}/log/stickshift/user_action.log
 
 %changelog
+* Thu May 24 2012 Adam Miller <admiller@redhat.com> 0.93.13-1
+- Updating gem versions (admiller@redhat.com)
+
+* Thu May 24 2012 Adam Miller <admiller@redhat.com> 0.93.12-1
+- Updating gem versions (admiller@redhat.com)
+
+* Thu May 24 2012 Adam Miller <admiller@redhat.com> 0.93.11-1
+- Updating gem versions (admiller@redhat.com)
+- changes for US2255 - authentication ticket caching (abhgupta@redhat.com)
+
+* Thu May 24 2012 Adam Miller <admiller@redhat.com> 0.93.10-1
+- Updating gem versions (admiller@redhat.com)
+- the pkg build bombed due to krb ticket timeout and the gems weren't updated,
+  fixing (admiller@redhat.com)
+
+* Wed May 23 2012 Adam Miller <admiller@redhat.com> 0.93.9-1
+- Updating gem versions (admiller@redhat.com)
+- add basic sync with billing vendor logic (dmcphers@redhat.com)
+
 * Wed May 23 2012 Dan McPherson <dmcphers@redhat.com> 0.93.8-1
 - Updating gem versions (dmcphers@redhat.com)
 

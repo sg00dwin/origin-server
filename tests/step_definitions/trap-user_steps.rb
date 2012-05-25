@@ -1,9 +1,7 @@
 require 'pty'
 require 'digest/md5'
 
-ssh = %{ssh -o BatchMode=yes \
-                 -o StrictHostKeyChecking=no \
-                 -t}
+ssh = %{ssh -o BatchMode=yes -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -q }
 
 
 Given /^the user has (no|\d+) tail process(es)? running( in (\d+) seconds)?$/ do |expect, ignore1, ignore2, timeout|
@@ -19,7 +17,7 @@ Given /^the user has (no|\d+) tail process(es)? running( in (\d+) seconds)?$/ do
 end
 
 Given /a running SSH log stream/ do
-  ssh_cmd = "ssh -o BatchMode=yes -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -t #{@app.uid}@#{@app.hostname} tail -f #{@app.name}/logs/\\*"
+  ssh_cmd = ssh + "-t #{@app.uid}@#{@app.hostname} tail -f #{@app.name}/logs/\\*"
 
   stdout, stdin, pid = PTY.spawn ssh_cmd
 
@@ -36,7 +34,7 @@ Given /I wait (\d+) second(s)?$/ do |sec, ignore|
 end
 
 When /^I request the logs via SSH$/ do
-  ssh_cmd = "ssh  -o BatchMode=yes -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -t #{@app.uid}@#{@app.hostname} tail -f #{@app.name}/logs/\\*"
+  ssh_cmd = ssh + " #{@app.uid}@#{@app.hostname} tail -f #{@app.name}/logs/\\*"
 
   stdout, stdin, pid = PTY.spawn ssh_cmd
 
@@ -47,18 +45,10 @@ When /^I request the logs via SSH$/ do
 end
 
 Then /^I can obtain disk quota information via SSH$/ do
-  ssh_cmd = "ssh  -o BatchMode=yes -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -t #{@app.uid}@#{@app.hostname} /usr/bin/quota"
-  buf=""
-  begin
-    stdout, stdin, pid = PTY.spawn ssh_cmd
-    Timeout::timeout(600) do
-      buf=stdout.read
-    end
-    # PTY.check(pid, true)
-    Process.kill("KILL", pid)
-  rescue PTY::ChildExited, Errno::ESRCH
-  end
-  if buf.index("Disk quotas for user #{@app.uid}").nil?
+  outbuf=[]
+  ssh_call = ssh + " #{@app.uid}@#{@app.hostname} /usr/bin/quota"
+  exit_code = runcon ssh_call, 'unconfined_u', 'unconfined_r', 'unconfined_t', outbuf
+  if outbuf.join(" ").index("Disk quotas for user #{@app.uid}").nil?
     raise "Could not obtain disk quota information"
   end
 end
@@ -66,7 +56,7 @@ end
 When /^I terminate the SSH log stream$/ do
   begin
     # check if the PID still exists
-    Process.kill("TERM", @ssh_cmd[:pid])
+    Process.kill("INT", @ssh_cmd[:pid])
     exit_code = -1
 
     # Don't let a command run more than 5 minutes
@@ -99,29 +89,53 @@ Then /^I can run "([^\"]*)" with exit code: (\d+)/ do |cmd, code|
     unless exit_code.to_i == code.to_i
 end
 
-Then /^I can use the rhcsh menus/ do
+
+def run_pty_command(cmd, outbuf=[], timeout=600)
+  $logger.info("Running: #{cmd}")
+
+  output=''
+  begin
+    stdout, stdin, pid = PTY.spawn cmd
+    Timeout::timeout(timeout) do
+      output += stdout.read
+    end
+    $logger.error("Timeout reached for command: CMD: #{cmd}  PID: #{pid}")
+    Process.kill("KILL", pid)
+  rescue  PTY::ChildExited
+  end
+  ignored, status = Process::waitpid2 pid
+  exit_code = status.exitstatus
+  outbuf << output
+  $logger.debug("Output:\n#{output}")
+  return exit_code
+end
+
+Then /^I can get the rhcsh splash/ do
   welcome_md5 = "ce7c4f0f3d14e6e01034b5b5e81a75b7"
-  help_md5 = "86b07610d595392edbe66f59d579c702"
 
   # Check the welcome menu
   outbuf = []
-  ssh_call = ssh + " #{@app.uid}@#{@app.hostname} " + "rhcsh true"
-  exit_code = runcon ssh_call, 'unconfined_u', 'unconfined_r', 'unconfined_t', outbuf
+  ssh_call = ssh + "-t #{@app.uid}@#{@app.hostname} " + "rhcsh true"
+  exit_code = run_pty_command ssh_call, outbuf
   out = outbuf[0].split(/Connection to/)[0]
   md5 = Digest::MD5.hexdigest(out)
   $logger.debug("MD5sum check for welcome message:")
   $logger.debug("was: #{md5} expected: #{welcome_md5}")
   raise "md5sum of welcome message did not match.  Update: trap-user_steps.rb\n" +
     "was: #{md5} expected: #{welcome_md5}" unless md5 == welcome_md5
+end
+
+Then /^I can get the rhcsh help/ do
+  help_md5 = "86b07610d595392edbe66f59d579c702"
 
   # Check the help menu
   outbuf = []
-  ssh_call = ssh + " #{@app.uid}@#{@app.hostname} " + "rhcsh help"
-  exit_code = runcon ssh_call, 'unconfined_u', 'unconfined_r', 'unconfined_t', outbuf
-  out = outbuf[0].split(/Connection to/)[0]
+  ssh_call = ssh + "-t #{@app.uid}@#{@app.hostname} " + "rhcsh help"
+  exit_code = run_pty_command ssh_call, outbuf
+  out = outbuf[0]
   md5 = Digest::MD5.hexdigest(out)
   $logger.debug("MD5sum check for help message:")
-  $logger.debug("was: #{md5} expected: help_md5")
+  $logger.debug("was: #{md5} expected: #{help_md5}")
   raise "md5sum of help message did not match.  Update: trap-user_steps.rb\n" +
     "was: #{md5} expected: #{help_md5}" unless md5 == help_md5
 

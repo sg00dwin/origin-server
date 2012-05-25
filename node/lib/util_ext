@@ -72,3 +72,12 @@ function validate_run_as_user {
         exit 15
     fi
 }
+
+function enable_cgroups {
+    echo $cfs_quota > "/cgroup/all/libra/$uuid/cpu.cfs_quota_us"
+}
+
+function disable_cgroups {
+    export cfs_quota=$(cat "/cgroup/all/libra/$uuid/cpu.cfs_quota_us")
+    cat /cgroup/all/libra/$uuid/cpu.cfs_period_us  > "/cgroup/all/libra/$uuid/cpu.cfs_quota_us"
+}

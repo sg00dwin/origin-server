@@ -384,11 +384,6 @@ module Streamline
       http
     end
 
-    @@f = ActionDispatch::Http::ParameterFilter.new(Rails.application.config.filter_parameters)
-    def f
-      @@f
-    end
-
     def http_post(url, args={}, raise_exception_on_error=true)
       begin
         req = Net::HTTP::Post.new(url.request_uri)
@@ -400,7 +395,7 @@ module Streamline
         ActiveSupport::Notifications.instrument("request.streamline",
           :uri => url.request_uri,
           :method => caller[0][/`.*'/][1..-2],
-          :args => f.filter(args).inspect
+          :args => FilterHash.safe_values(args).inspect
         ) do |payload|
 
           res = new_http.start {|http| http.request(req)}

@@ -5,7 +5,7 @@
 %global modname             blogs
 
 Name:    drupal%{drupal_release}-openshift-features-%{modname}
-Version: 1.2.3
+Version: 1.2.4
 Release: 1%{?dist}
 Summary: Openshift Red Hat Custom Blog Feature for Drupal6
 Group:   Applications/Publishing
@@ -41,6 +41,9 @@ rm -rf $RPM_BUILD_ROOT
 %{drupal_modules}/%{modname}
 
 %changelog
+* Thu May 24 2012 Adam Miller <admiller@redhat.com> 1.2.4-1
+- Bug 822391 - Remove author from full view of blogs (ccoleman@redhat.com)
+
 * Tue May 22 2012 Dan McPherson <dmcphers@redhat.com> 1.2.3-1
 - Automatic commit of package [drupal6-openshift-features-blogs] release
   [1.2.2-1]. (admiller@redhat.com)

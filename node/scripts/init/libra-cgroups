@@ -219,7 +219,7 @@ startuser() {
     add_cgroup $NEWUSER
     if [ $? != 0 ]
     then
-	RETVAL=$?
+        RETVAL=$?
     fi
 
     set_cpu $NEWUSER
@@ -230,14 +230,14 @@ startuser() {
     # CHECK: don't trust old rules
     if ( cgroup_rule_exists $NEWUSER )
     then
-	delete_cgroup_rule $NEWUSER
+        delete_cgroup_rule $NEWUSER
     fi
     add_cgroup_rule $NEWUSER
     if [ $? != 0 ]
     then
-	RETVAL=$?
+        RETVAL=$?
     fi
-	
+
     if [ $RETVAL -eq 0 ]
     then
         echo_success
@@ -268,7 +268,7 @@ start() {
     # This won't scale forever, but works fine in the '100 or so' range
     for USERNAME in `libra_users`
     do
-	startuser $USERNAME
+        startuser $USERNAME
     done
 
     # kick the Cgroups rules daemon
@@ -294,7 +294,7 @@ stopuser() {
     echo -n "stopping cgroups for $DELUSER..."
 
     # kill any processes owned by these users
-    pkill -u $DELUSER
+    #pkill -u $DELUSER
     
     # remove the user's cgroup
     delete_cgroup $DELUSER
@@ -439,22 +439,22 @@ case "$1" in
   startuser)
     if (service cgconfig status >/dev/null)
     then
-	startuser $2
-	service cgred reload
+        startuser $2
+        service cgred reload
     else
-	RETVAL=1
-	echo "cgconfig service not running"
+        RETVAL=1
+        echo "cgconfig service not running"
     fi
     ;;
 
   stopuser)
     if (service cgconfig status >/dev/null)
     then
-	stopuser $2
-	service cgred reload
+        stopuser $2
+        service cgred reload
     else
-	RETVAL=1
-	echo "cgconfig service not running"
+        RETVAL=1
+        echo "cgconfig service not running"
     fi
     ;;
 

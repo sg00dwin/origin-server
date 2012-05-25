@@ -90,11 +90,16 @@ Broker::Application.configure do
     :db => "openshift_broker_dev",
     :collections => {:user => "user", :district => "district", :application_template => "template"}
   }
+
+  config.user_action_logging = {
+    :logging_enabled => true,
+    :log_filepath => "/var/log/stickshift/user_action.log"
+  }
   
   # SS Config
   config.ss = {
     :domain_suffix => "dev.rhcloud.com",
-    :default_max_gears => 3,
+    :default_max_gears => 3
   }
 
 end

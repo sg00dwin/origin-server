@@ -91,6 +91,11 @@ Broker::Application.configure do
     :collections => {:user => "user", :district => "district", 
                      :application_template => "template"}
   }
+
+  config.user_action_logging = {
+    :logging_enabled => true,
+    :log_filepath => "/var/log/stickshift/user_action.log"
+  }
   
   # SS Config
   config.ss = {
@@ -105,7 +110,7 @@ Broker::Application.configure do
         :keyvalue => "H6NDDnTbNpcBrUM5c4BJtohyK2uuZ5Oi6jxg3ME+RJsNl5Wl2B87oL12YxWUR3Gp7FdZQojTKBSfs5ZjghYxGw==",
         :zone => "example.com"
       }
-    },
+    }
   }
 
 
@@ -125,4 +130,3 @@ Broker::Application.configure do
 #  }
 
 end
-

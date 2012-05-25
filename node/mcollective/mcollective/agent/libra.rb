@@ -59,17 +59,19 @@ module MCollective
         Log.instance.debug "COMMAND: #{cmd}"
 
         app_uuid = args['--with-app-uuid']
-        uuid = args['--with-container-uuid']
+        gear_uuid = args['--with-container-uuid']
         uid = args['--with-uid']
         uid = nil if uid && uid.to_s.empty?
         quota_blocks = args['--with-quota-blocks']
         quota_files = args['--with-quota-files']
-        name = args['--named']
+        app_name = args['--with-app-name']
+        gear_name = args['--with-container-name']
         namespace = args['--with-namespace']
         
         output = ""
         begin
-          container = StickShift::ApplicationContainer.new(uuid, uuid, uid, name, namespace, quota_blocks, quota_files)
+          container = StickShift::ApplicationContainer.new(app_uuid, gear_uuid, uid, app_name, gear_name,
+                                                           namespace, quota_blocks, quota_files)
           container.create
         rescue StickShift::UserCreationException => e
           Log.instance.debug e.message

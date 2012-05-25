@@ -90,24 +90,15 @@
           %h5 Prerequisites
           %ul
             %li
-              %a(href="http://www.cygwin.com") Cygwin
+              %a(href="http://rubyinstaller.org/") RubyInstaller for Windows
             %li
-              The following optional cygwin components
-              %ul
-                %li openssh
-                %li ruby
-                %li make
-                %li gcc
-                %li git
+              %a(href="http://msysgit.github.com/") Git for Windows
+              or
+              %a(href="http://code.google.com/p/tortoisegit/") TortoiseGit
           %hr
           %ol
             %li
-              %p.larger Download and extract rubygems from <a href="http://rubyforge.org/projects/rubygems">http://rubyforge.org/projects/rubygems</a>
-            %li
-              %p.larger From within cygwin run:
-              %pre $ ruby &lt;path_to_extracted_rubygems&gt;/setup.rb install
-            %li
-              %p.larger Install the gem:
+              %p.larger From the Windows Command Prompt install the gem:
               %pre $ gem install rhc
 
       %section#mac.install
@@ -126,7 +117,6 @@
               %p.larger Install the gem:
               %pre
                 :preserve
-                  $ sudo gem install json_pure
                   $ sudo gem install rhc
 
     .span12

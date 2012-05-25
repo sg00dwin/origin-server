@@ -80,7 +80,7 @@ Broker::Application.configure do
     :nurture_username => "admin",
     :nurture_password => "password",
     :nurture_url => "http://69.164.192.124:4500/",
-    
+
     :apptegic_enabled => false,
     :apptegic_url => "https://redhat.apptegic.com/httpreceiver",
     :apptegic_key => "redhat",
@@ -99,10 +99,15 @@ Broker::Application.configure do
     :collections => {:user => "user_test", :district => "district", :application_template => "template"}
   }
 
+  config.user_action_logging = {
+    :logging_enabled => true,
+    :log_filepath => "/var/log/stickshift/user_action.log"
+  }
+
   # SS Config
   config.ss = {
     :domain_suffix => "dev.rhcloud.com",
-    :default_max_gears => 3,
+    :default_max_gears => 3
   }
 
   # Profiler config

@@ -14,7 +14,8 @@ Feature: Trap User Shell
     And I can run "true" with exit code: 0
     And I can run "java" with exit code: 0
     And I can run "scp" with exit code: 1
-    And I can use the rhcsh menus
+    And I can get the rhcsh splash
+    And I can get the rhcsh help
     When the application is destroyed
     Then the application should not be accessible
 
@@ -31,4 +32,6 @@ Feature: Trap User Shell
   Scenario: Access Quota
     Given a new client created php-5.3 application
     Then I can obtain disk quota information via SSH
+    When the application is destroyed
+    Then the application should not be accessible
 

@@ -43,7 +43,7 @@ cd ${repodir}/crankcase/gearchanger/oddjob && tito build $test_build --output=${
 cd ${repodir}/crankcase/crankcase/mongo    && tito build $test_build --output=${repodir}/tito ; cd -
 
 cd ${repodir}/crankcase/cartridges
-for i in 10gen-mms-agent-0.1 cron-1.4 diy-0.1 jbossas-7 jenkins-1.4 jenkins-client-1.4 mongodb-2.0 mysql-5.1 nodejs-0.6 perl-5.10 php-5.3 phpmyadmin-3.4 python-2.6 ruby-1.8 ; do 
+for i in 10gen-mms-agent-0.1 cron-1.4 diy-0.1 jbossas-7 jbosseap-6.0 jenkins-1.4 jenkins-client-1.4 mongodb-2.0 mysql-5.1 nodejs-0.6 perl-5.10 php-5.3 phpmyadmin-3.4 python-2.6 ruby-1.8 ; do 
   cd ${repodir}/crankcase/cartridges/$i; 
   tito build $test_build --output=${repodir}/tito;
 done

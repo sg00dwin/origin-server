@@ -7,9 +7,7 @@ class UsageModelTest < ActiveSupport::TestCase
 
   test "create and find usage event" do
     orig = usage
-    ue = Usage.new
-    ue.construct(orig.user_id, orig.gear_uuid, orig.gear_size,
-                 orig.begin_time, orig.end_time, orig.uuid)
+    ue = Usage.new(orig.login, orig.gear_uuid, orig.gear_size, orig.begin_time, orig.end_time, orig.uuid)
     ue.save!
     ue = Usage.find(orig.uuid)
     ue.updated_at = nil
@@ -42,7 +40,7 @@ class UsageModelTest < ActiveSupport::TestCase
   test "find all usage events by user" do
     ue = usage
     ue.save!
-    ue = Usage.find_by_user(ue.user_id)
+    ue = Usage.find_by_user(ue.login)
     assert(ue.length == 1)
   end
  
@@ -50,10 +48,10 @@ class UsageModelTest < ActiveSupport::TestCase
     ue1 = usage
     ue1.save!
     ue2 = usage
-    ue2.user_id = ue1.user_id
+    ue2.login = ue1.login
     ue2.begin_time = ue1.begin_time + 100
     ue2.save!
-    ue = Usage.find_by_user_after_time(ue1.user_id, ue1.begin_time + 10)
+    ue = Usage.find_by_user_after_time(ue1.login, ue1.begin_time + 10)
     assert(ue.length == 1)
   end
   
@@ -75,19 +73,19 @@ class UsageModelTest < ActiveSupport::TestCase
     ue1.end_time = cur_tm - 10
     ue1.save!
     ue2 = usage
-    ue2.user_id = ue1.user_id
+    ue2.login = ue1.login
     ue2.begin_time = cur_tm
     ue2.end_time = cur_tm + 100
     ue2.save!
     ue3 = usage
-    ue3.user_id = ue1.user_id
+    ue3.login = ue1.login
     ue3.begin_time = cur_tm + 200
     ue3.save!
-    ue = Usage.find_by_user_time_range(ue1.user_id, cur_tm + 10, cur_tm + 150)
+    ue = Usage.find_by_user_time_range(ue1.login, cur_tm + 10, cur_tm + 150)
     assert(ue.length == 1)
-    ue = Usage.find_by_user_time_range(ue1.user_id, cur_tm + 10, cur_tm + 250)
+    ue = Usage.find_by_user_time_range(ue1.login, cur_tm + 10, cur_tm + 250)
     assert(ue.length == 2)
-    ue = Usage.find_by_user_time_range(ue1.user_id, cur_tm -20, cur_tm + 10)
+    ue = Usage.find_by_user_time_range(ue1.login, cur_tm -20, cur_tm + 10)
     assert(ue.length == 2)
   end
 
@@ -108,33 +106,27 @@ class UsageModelTest < ActiveSupport::TestCase
     ue1.end_time = cur_tm + 101
     ue1.save!
     ue2 = usage
-    ue2.user_id = ue1.user_id
+    ue2.login = ue1.login
     ue2.gear_size = 'small'
     ue2.begin_time = cur_tm + 501
     ue2.end_time = cur_tm + 601
     ue2.save!
     ue3 = usage
-    ue3.user_id = ue1.user_id
+    ue3.login = ue1.login
     ue3.gear_size = 'medium'
     ue3.begin_time = cur_tm + 201
     ue3.end_time = cur_tm + 301
     ue3.save!
     expected_res = { 'small'  => { 'num_gears' => 2, 'consumed_time' => 200 },
                      'medium' => { 'num_gears' => 1, 'consumed_time' => 100 } }
-    res = Usage.find_user_summary(ue1.user_id)
+    res = Usage.find_user_summary(ue1.login)
     assert_equal(res, expected_res)
   end
 
   def usage
     uuid = "usage#{gen_uuid}"
-    obj = Usage.new
-    obj.uuid = uuid
+    obj = Usage.new("user#{gen_uuid}", "gear#{gen_uuid}", 'small', Time.now, nil, uuid)
     obj._id = uuid
-    obj.user_id = "user#{gen_uuid}"
-    obj.gear_uuid = "gear#{gen_uuid}"
-    obj.gear_size = 'small'
-    obj.begin_time = Time.now
-    obj.end_time = nil
     obj.updated_at = nil
     obj
   end

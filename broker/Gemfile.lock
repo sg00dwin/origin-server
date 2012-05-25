@@ -41,7 +41,7 @@ GEM
     dnsruby (1.53)
     erubis (2.6.6)
       abstract
-    gearchanger-m-collective-plugin (0.10.4)
+    gearchanger-m-collective-plugin (0.10.5)
       json
       stickshift-controller
     httparty (0.7.4)
@@ -98,7 +98,7 @@ GEM
       json
       mongo
       rack
-    stickshift-controller (0.11.6)
+    stickshift-controller (0.11.13)
       activesupport
       dnsruby
       json
@@ -106,7 +106,7 @@ GEM
       state_machine
       stickshift-common
     stomp (1.1.8)
-    swingshift-streamline-plugin (0.10.1)
+    swingshift-streamline-plugin (0.10.2)
       json
       stickshift-controller
     thor (0.14.6)
