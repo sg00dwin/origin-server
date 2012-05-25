@@ -345,24 +345,25 @@ module OpenShift
       AWS.memoize do
         build_name_to_verifiers = {}
         conn.instances.each do |i|
-          VERIFIER_REGEXS.each do |regex|
+          VERIFIER_REGEXS.each do |regex, opts|
             if i.tags["Name"] =~ regex
               build_name = $1
               build_num = $2
               build_name_to_verifiers[build_name] = [] unless build_name_to_verifiers[build_name]
-              build_name_to_verifiers[build_name] << [build_num, i]
+              build_name_to_verifiers[build_name] << [build_num, i, opts]
             end
           end
         end
         build_name_to_verifiers.each do |build_name, verifiers|
           unless verifiers.empty?
-            verifiers.sort!
+            verifiers = verifiers.sort_by {|verifier| verifier[0].to_i}
             verifiers.each_with_index do |verifier, index|
               build_num = verifier[0]
               i = verifier[1]
-              if index == verifiers.length - 1
-                unless Time.new - i.launch_time > 16200 #4.5 hours
-                  break
+              opts = verifier[2]
+              if (index == verifiers.length - 1) || opts[:multiple]
+                unless Time.new - i.launch_time > 16200 #4.5 hours  
+                  next
                 end
               end
               if instance_status(i) == :running || instance_status(i) == :stopped
