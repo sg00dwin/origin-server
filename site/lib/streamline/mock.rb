@@ -114,8 +114,8 @@ module Streamline
     #
     # Register a new streamline user
     #
-    def register(confirm_url)
-      Rails.logger.warn("Non integrated environment - passing through")
+    def register(confirm_url, promo_code=nil)
+      Rails.logger.warn("Non integrated environment - passing through #{promo_code}")
     end
 
     def confirm_email(key, email=@email_address)
