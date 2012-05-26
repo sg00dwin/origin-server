@@ -3,7 +3,7 @@
 
 Summary:   Li site components
 Name:      rhc-site
-Version: 0.93.6
+Version: 0.93.7
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -117,6 +117,24 @@ rm -rf %{buildroot}
 /bin/touch %{sitedir}/log/production.log
 
 %changelog
+* Fri May 25 2012 Adam Miller <admiller@redhat.com> 0.93.7-1
+- Bug 821103 - Send promo code to registration endpoint via streamline
+  (ccoleman@redhat.com)
+- Users were being logged in to the broker with the wrong rhlogin in non-
+  integrated mode (ccoleman@redhat.com)
+- Bug 811391 - Users with '+' in them can't stay logged in under non-integrated
+  environment (ccoleman@redhat.com)
+- Bug 822018 - Remove JS validation on domain create/edit forms for simplicity
+  (ccoleman@redhat.com)
+- Merge branch 'master' of git:/srv/git/li (sgoodwin@redhat.com)
+- auto merge conflict fixes to console.scss and console/_ribbon.scss Merge
+  branch 'mobileui' (sgoodwin@redhat.com)
+- status alert header msg fix, minor spacing and font-type changes
+  (sgoodwin@redhat.com)
+- fix horizontal scroll at <767, and adjustment tuning (sgoodwin@redhat.com)
+- css/markup to enable responsive nav for mobile views and lots of fine tuning
+  of ui components in both site and console (sgoodwin@redhat.com)
+
 * Thu May 24 2012 Adam Miller <admiller@redhat.com> 0.93.6-1
 - Bug 824913 - Add helper code to filter certain parameter values from logged
   hashes (instead of using Rails helper code that wasn't working)

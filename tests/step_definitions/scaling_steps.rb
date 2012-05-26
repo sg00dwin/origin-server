@@ -155,3 +155,18 @@ Then /^app should be able to connect to mongo$/ do
 
   exit_status.should == 0
 end
+
+When /^the haproxy-1.4 cartridge is removed$/ do
+  out = `curl -k -H 'Accept: application/json' --user '#{@app.login}:fakepw' https://localhost/broker/rest/domains/#{@app.namespace}/applications/#{@app.name}/cartridges/haproxy-1.4 -X DELETE`
+  out_obj = JSON.parse(out)
+  $rest_exit_code = out_obj["messages"][0]["exit_code"]
+end
+
+Then /^the operation is( not)? allowed$/ do |negate|
+  puts negate
+  if negate
+    $rest_exit_code.should == 101
+  else
+    $rest_exit_code.should == 0
+  end
+end

@@ -5,7 +5,7 @@
 
 Summary:        GearChanger plugin for m-colective service
 Name:           rubygem-%{gemname}
-Version: 0.10.5
+Version: 0.10.6
 Release:        1%{?dist}
 Group:          Development/Languages
 License:        ASL 2.0
@@ -70,6 +70,12 @@ rm -rf %{buildroot}
 %{ruby_sitelib}/%{gemname}.rb
 
 %changelog
+* Fri May 25 2012 Adam Miller <admiller@redhat.com> 0.10.6-1
+- Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
+  (rchopra@redhat.com)
+- fix bugs 824433 and 824040 and 824375 (rchopra@redhat.com)
+- fix for bug#824375 (rchopra@redhat.com)
+
 * Wed May 23 2012 Adam Miller <admiller@redhat.com> 0.10.5-1
 - [mpatel+ramr] Fix issues where app_name is not the same as gear_name - fixups
   for typeless gears. (ramr@redhat.com)

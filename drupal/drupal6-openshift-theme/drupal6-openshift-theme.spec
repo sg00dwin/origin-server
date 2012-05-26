@@ -5,7 +5,7 @@
 %global drupal_themename    openshift-theme
 
 Name:           drupal6-%{drupal_themename}
-Version: 3.2.2
+Version: 3.2.3
 Release:        1%{?dist}
 Summary:        Red Hat Openshift theme for Drupal %{drupal_release}
 
@@ -44,6 +44,11 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
+* Fri May 25 2012 Adam Miller <admiller@redhat.com> 3.2.3-1
+- Remove comment title permanently (ccoleman@redhat.com)
+- css/markup to enable responsive nav for mobile views and lots of fine tuning
+  of ui components in both site and console (sgoodwin@redhat.com)
+
 * Thu May 17 2012 Adam Miller <admiller@redhat.com> 3.2.2-1
 - community search field fix for ipad/chrome width issue (sgoodwin@redhat.com)
 

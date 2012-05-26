@@ -8,6 +8,10 @@ class StreamlineTester < Streamline::User
   attr_accessor :password, :password_confirmation, :terms_accepted
   # Make these items public for test purposes
   attr_writer :ticket, :terms, :email_address
+
+  def self.register_url
+    superclass.send(:class_variable_get, :@@register_url)
+  end
 end
 
 class StreamlineTest < ActiveSupport::TestCase
@@ -169,10 +173,35 @@ class StreamlineTest < ActiveSupport::TestCase
     @streamline.email_address = "test@example.com"
     @streamline.password = "password"
     json = {"emailAddress" => @streamline.email_address}
-    @streamline.expects(:http_post).once.yields(json)
+    args = json.merge({
+      'password' => @streamline.password,
+      'passwordConfirmation' => @streamline.password,
+      'secretKey' => Rails.configuration.streamline[:register_secret],
+      'termsAccepted' => 'true',
+      'confirmationUrl' => @url,
+    })
+    @streamline.expects(:http_post).with(StreamlineTester.register_url, args, false).once.yields(json)
     @streamline.register(@url)
     assert @streamline.errors.empty?
   end
+
+  test "register valid promo code" do
+    @streamline.email_address = "test@example.com"
+    @streamline.password = "password"
+    json = {"emailAddress" => @streamline.email_address}
+    args = json.merge({
+      'password' => @streamline.password,
+      'passwordConfirmation' => @streamline.password,
+      'secretKey' => Rails.configuration.streamline[:register_secret],
+      'termsAccepted' => 'true',
+      'promoCode' => 'promo_foo',
+      'confirmationUrl' => @url,
+    })
+    @streamline.expects(:http_post).with(StreamlineTester.register_url, args, false).once.yields(json)
+    @streamline.register(@url, 'promo_foo')
+    assert @streamline.errors.empty?
+  end
+
 
   test "register fail" do
     @streamline.email_address = "test@example.com"
