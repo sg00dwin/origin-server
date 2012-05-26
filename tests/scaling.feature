@@ -62,4 +62,4 @@ Feature: Scaling Verification Tests
   Scenarios: Scaled App Cartridges Scenarios
    | app_count |     type     |
    |     1     |  php-5.3     |
-                                                                                                                                                                                        64,4          Bot
+
