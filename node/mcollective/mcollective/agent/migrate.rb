@@ -185,6 +185,23 @@ module OpenShiftMigration
       return output
   end
 
+  def self.fix_dbhost_for_scaleable_apps(gear_home)
+    output = ""
+    dbhost_file = File.join(gear_home, ".env", ".uservars", "OPENSHIFT_DB_HOST")
+    dbgeardns_file = File.join(gear_home, ".env", ".uservars",
+                                 "OPENSHIFT_DB_GEAR_DNS")
+    if File.exists? dbgeardns_file
+      db_gear_dns = Util.file_to_string(dbgeardns_file).strip
+      if db_gear_dns.length > 0
+        dbhost = Util.file_to_string(dbhost_file).strip
+        Util.replace_in_file(dbhost_file, dbhost, db_gear_dns)
+        output += "Updated OPENSHIFT_DB_HOST to '#{db_gear_dns}'\n"
+      else
+        output += "!Warning! OPENSHIFT_DB_GEAR_DNS empty value for gear #{gear_home}"
+      end
+    end
+    return output
+  end
 
   def self.migrate(uuid, namespace, version)
     if version == "2.0.12"
@@ -213,6 +230,9 @@ module OpenShiftMigration
         end
 
         self.migrate_to_appdir(uuid, gear_home)
+
+        # Fix up incorrect DB_HOST setting for mysql added to scalable apps.
+        output += self.fix_dbhost_for_scaleable_apps(gear_home)
 
         env_echos.each do |env_echo|
           echo_output, echo_exitcode = Util.execute_script(env_echo)
