@@ -5,10 +5,11 @@
   ]
 
   local_scripts = [
-    #'jquery.min.js',     # Now loaded through CDN
-    'rails',              # Generic Rails to jQuery adapter
-    'plugins',            # Contains plugin for spinner and text overflow
-    'jquery.cookie.js',   # Needed when we set the cookie for whether the outage notification was seen
+    #'jquery.min.js',        # Now loaded through CDN
+    'rails',                 # Generic Rails to jQuery adapter
+    'plugins',               # Contains plugin for spinner and text overflow
+    'jquery.cookie.js',      # Needed when we set the cookie for whether the outage notification was seen
+    'bootstrap-dropdown.js',
 
     # Needed for validations
     'jquery.validate.min.js',
@@ -23,4 +24,3 @@
 
 -#  Append your own using content_for :javascripts
 = yield :javascripts
-

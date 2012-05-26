@@ -8,7 +8,7 @@
 
 Summary:   Dependencies for OpenShift development
 Name:      rhc-devenv
-Version: 0.94.7
+Version: 0.94.8
 Release:   1%{?dist}
 Group:     Development/Libraries
 License:   GPLv2
@@ -409,46 +409,44 @@ chmod 0750 /usr/local/bin/openscap.sh
 
 # Remove all SUIDs - tkramer - testing in devenv
 chmod u-s /usr/bin/staprun
-chmod u-s /usr/bin/chage
+# chmod u-s /usr/bin/chage
 chmod u-s /usr/bin/chfn
-chmod u-s /usr/bin/gpasswd
+# chmod u-s /usr/bin/gpasswd
 chmod u-s /usr/bin/chsh
 chmod u-s /usr/bin/sudoedit
-chmod u-s /usr/bin/passwd
-chmod u-s /usr/bin/crontab
-chmod u-s /usr/bin/at
+# chmod u-s /usr/bin/passwd
+# chmod u-s /usr/bin/crontab
+# chmod u-s /usr/bin/at
 chmod u-s /usr/bin/sudo
-chmod u-s /usr/bin/pkexec
-chmod u-s /usr/bin/newgrp
-chmod u-s /usr/libexec/polkit-1/polkit-agent-helper-1
-chmod u-s /usr/libexec/pt_chown
-chmod u-s /usr/libexec/openssh/ssh-keysign
-chmod u-s /usr/sbin/suexec
-chmod u-s /usr/sbin/userhelper
-chmod u-s /usr/sbin/usernetctl
+# chmod u-s /usr/bin/pkexec
+# chmod u-s /usr/bin/newgrp
+# chmod u-s /usr/libexec/polkit-1/polkit-agent-helper-1
+# chmod u-s /usr/libexec/pt_chown
+# chmod u-s /usr/libexec/openssh/ssh-keysign
+# chmod u-s /usr/sbin/suexec
+# chmod u-s /usr/sbin/userhelper
+# chmod u-s /usr/sbin/usernetctl
 chmod u-s /bin/ping6
 chmod u-s /bin/mount
-chmod u-s /bin/su
+# chmod u-s /bin/su
 # chmod u-s /bin/ping
 chmod u-s /bin/umount
-chmod u-s /sbin/pam_timestamp_check
+# chmod u-s /sbin/pam_timestamp_check
 chmod u-s /sbin/unix_chkpwd
-chmod u-s /lib64/dbus-1/dbus-daemon-launch-helper
+# chmod u-s /lib64/dbus-1/dbus-daemon-launch-helper
 
 # Remove all SGIDs - tkramer
-chmod g-s /var/cache/mock
-chmod g-s /var/lib/mock
-chmod g-s /usr/bin/ssh-agent
+# chmod g-s /usr/bin/ssh-agent
 chmod g-s /usr/bin/wall
 # chmod g-s /usr/bin/screen
 chmod g-s /usr/bin/locate
-chmod g-s /usr/bin/lockfile
-chmod g-s /usr/bin/write
-chmod g-s /usr/libexec/utempter/utempter
-chmod g-s /usr/sbin/postqueue
-chmod g-s /usr/sbin/postdrop
-chmod g-s /bin/cgexec
-chmod g-s /sbin/netreport
+# chmod g-s /usr/bin/lockfile
+# chmod g-s /usr/bin/write
+# chmod g-s /usr/libexec/utempter/utempter
+# chmod g-s /usr/sbin/postqueue
+# chmod g-s /usr/sbin/postdrop
+# chmod g-s /bin/cgexec
+# chmod g-s /sbin/netreport
 
 # Make grub.conf readable only to user and group - not other - tkramer
 chmod 600 /boot/grub/grub.conf
@@ -490,6 +488,11 @@ semanage node -a -t node_t -r s0:c1023 -M  255.0.0.0 -p ipv4 10.0.0.0
 %{policydir}/*
 
 %changelog
+* Fri May 25 2012 Adam Miller <admiller@redhat.com> 0.94.8-1
+- Security - put more sticky permissions back on files to match what is in STG
+  05 25 2012 (tkramer@redhat.com)
+- li-devenv.sh: adding the rhel63 repo (tdawson@redhat.com)
+
 * Thu May 24 2012 Adam Miller <admiller@redhat.com> 0.94.7-1
 - US2307 - removed eap from devenv.spec (bdecoste@gmail.com)
 - US2307 (bdecoste@gmail.com)

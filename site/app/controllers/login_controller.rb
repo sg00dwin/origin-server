@@ -69,8 +69,8 @@ class LoginController < SiteController
   # Helper to apply common defaults to cookie options
   def domain_cookie_opts(opts)
     {
-      :secure => true, 
-      :path => '/', 
+      :secure => true,
+      :path => '/',
       :domain => cookie_domain
     }.merge!(opts)
   end

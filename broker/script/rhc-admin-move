@@ -15,9 +15,7 @@ rhc-admin-move OPTIONS
 
 Options:
 --gear_uuid <gear_uuid>
-    Gear uuid to move, if app is a scalable application
---app_uuid   <app_uuid>
-    Application uuid that the gear belongs to (Optional argument)
+    Gear uuid to move
 --destination_district_uuid <district_uuid>
     Destination district uuid
 -i|--target_server_identity <server_identity>
@@ -34,7 +32,6 @@ USAGE
 end
 
 opts = GetoptLong.new(
-    ["--app_uuid",               GetoptLong::REQUIRED_ARGUMENT],
     ["--gear_uuid",        "-g", GetoptLong::REQUIRED_ARGUMENT],
     ["--destination_district_uuid", "-u", GetoptLong::REQUIRED_ARGUMENT],
     ["--target_server_identity", "-i", GetoptLong::REQUIRED_ARGUMENT],
@@ -52,7 +49,6 @@ rescue GetoptLong::Error => e
     exit -100
 end
 
-app_uuid = args["--app_uuid"]
 gear_uuid = args["--gear_uuid"]
 target_server_identity = args['--target_server_identity']
 destination_district_uuid = args['--destination_district_uuid']
@@ -79,42 +75,14 @@ end
 
 app = nil
 user = nil
-if (app_uuid)
-  app  = Application.find_by_uuid(app_uuid)
-end
-
-def find_gear(guuid)
-  users = CloudUser.find_all(nil)
-  users.each do |u|
-    u.applications.each do |a|
-      a.gears.each do |g|
-        return g if guuid == g.uuid
-      end
-    end
-  end
-  return nil
-end
-
 gear = nil
-app = nil
-if app_uuid
-  app = Application.find_by_uuid(app_uuid)
-  app.gears.each do |g|
-    if g.uuid == gear_uuid
-      gear = g
-      break
-    end
-  end
-end
 
-gear = find_gear(gear_uuid) if gear.nil?
+app,gear = Application.find_by_gear_uuid(gear_uuid)
 
-unless gear
+if gear.nil? or app.nil?
   puts "ERROR: Gear not found: #{gear_uuid}"
   exit 1
 end
-
-app = gear.app
 
 url = "http://#{app.name}-#{app.domain.namespace}.#{Rails.configuration.ss[:domain_suffix]}"
 

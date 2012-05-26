@@ -1,7 +1,7 @@
 #footer-nav
   .container
     .row
-      .span3.link-column
+      %nav.span3
         %header
           %h3= link_to 'Developers', developers_url
         %ul.unstyled
@@ -10,7 +10,7 @@
           %li= link_to 'User Guide', user_guide_url
           %li= link_to 'FAQ', faq_url
 
-      .span3.link-column
+      %nav.span3
         %header
           %h3= link_to 'Community', community_url
         %ul.unstyled
@@ -18,8 +18,9 @@
           %li= link_to 'Forum', forums_url
           %li= link_to 'IRC Channel', irc_web_url
           %li= link_to 'Feedback', mailto_openshift_url
+          %li= link_to "Newsletter Sign up", newsletter_signup_url, :class => 'visible-phone'
 
-      .span3.link-column
+      %nav.span3
         %header
           %h3= link_to 'Get Involved', get_involved_url
         %ul.unstyled
@@ -28,7 +29,7 @@
           %li= link_to 'Make it Better', get_involved_developers_url
           %li= link_to 'OpenShift on GitHub', openshift_github_url
 
-      .span3.link-column
+      %nav.span3
         %header
           %h3= link_to 'Legal', legal_path
         %ul.unstyled

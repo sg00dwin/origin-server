@@ -2,7 +2,7 @@
 
 Summary:       Multi-tenant cloud management system node tools
 Name:          rhc-node
-Version: 0.93.8
+Version: 0.93.9
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -266,6 +266,9 @@ fi
 /lib64/security/pam_libra.so
 
 %changelog
+* Fri May 25 2012 Adam Miller <admiller@redhat.com> 0.93.9-1
+- Bug 825207: Do not chown on nonexistent .state file (jhonce@redhat.com)
+
 * Thu May 24 2012 Adam Miller <admiller@redhat.com> 0.93.8-1
 - more efficient cgroup disabling method (mmcgrath@redhat.com)
 

@@ -22,24 +22,24 @@ users.each do |user|
         print "ERROR : Application '#{app.name}' in user account '#{user.login}' does not have a valid gear"
         next
       end
-      print "."
+      print "Checking application #{app.uuid}.."
       app.gear.get_proxy
       source_container = app.gear.container
       source_district_uuid = source_container.get_district_uuid
-        source_district = District::find(source_district_uuid)
-        if ( (app.gear.uid < (source_district.max_uid - source_district.max_capacity)) or (app.gear.uid > source_district.max_uid) )
-          begin
-            attempted_move << [user.login, app.name]
-            app.gear.container.move_app_for_runaway_gear(app, nil, source_district.node_profile)
-            moved_count += 1
-            if app.embedded.include? "mysql-5.1"
-              mysql_apps << [user.login, app.name]
-            end
-          rescue Exception=>e
-            failed_to_move << [user.login, app.name]
-            print "Exception reported for app '#{app.name}' for user '#{user.login}' while fixing for runaway gear '#{app.gear.uuid}' : '#{e.message}'\n"
+      source_district = District::find(source_district_uuid)
+      if ( (app.gear.uid < (source_district.max_uid - source_district.max_capacity)) or (app.gear.uid > source_district.max_uid) )
+        begin
+          attempted_move << [user.login, app.name]
+          app.gear.container.move_app_for_runaway_gear(app, nil, source_district.node_profile)
+          moved_count += 1
+          if app.embedded.include? "mysql-5.1"
+            mysql_apps << [user.login, app.name]
           end
+        rescue Exception=>e
+          failed_to_move << [user.login, app.name]
+          print "Exception reported for app '#{app.name}' for user '#{user.login}' while fixing for runaway gear '#{app.gear.uuid}' : '#{e.message}'\n"
         end
+      end
     end
   end
 end

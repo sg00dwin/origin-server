@@ -3,7 +3,7 @@
 
 Summary:   Li broker components
 Name:      rhc-broker
-Version: 0.93.13
+Version: 0.93.16
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -104,6 +104,22 @@ rm -rf $RPM_BUILD_ROOT
 /bin/touch %{_localstatedir}/log/stickshift/user_action.log
 
 %changelog
+* Fri May 25 2012 Adam Miller <admiller@redhat.com> 0.93.16-1
+- Updating gem versions (admiller@redhat.com)
+- better treatment - bug#817663 (rchopra@redhat.com)
+- clean help message (rchopra@redhat.com)
+- Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
+  (rchopra@redhat.com)
+- Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
+  (rchopra@redhat.com)
+- fix bugs 824433 and 824040 and 824375 (rchopra@redhat.com)
+
+* Fri May 25 2012 Dan McPherson <dmcphers@redhat.com> 0.93.15-1
+- Updating gem versions (dmcphers@redhat.com)
+
+* Thu May 24 2012 Dan McPherson <dmcphers@redhat.com> 0.93.14-1
+- Updating gem versions (dmcphers@redhat.com)
+
 * Thu May 24 2012 Adam Miller <admiller@redhat.com> 0.93.13-1
 - Updating gem versions (admiller@redhat.com)
 
