@@ -40,11 +40,7 @@ function ctl_all {
 
 function mysql() {
    #  Setup default options.
-   if [ -n "$OPENSHIFT_DB_GEAR_DNS" ]; then
-      hostopt="-h $OPENSHIFT_DB_GEAR_DNS"
-   else
-      [ -n "$OPENSHIFT_DB_HOST" ]  &&  hostopt="-h $OPENSHIFT_DB_HOST"
-   fi
+   [ -n "$OPENSHIFT_DB_HOST" ]  &&  hostopt="-h $OPENSHIFT_DB_HOST"
    portopt="-P ${OPENSHIFT_DB_PORT:-3306}"
    useropt="-u ${OPENSHIFT_DB_USERNAME:-'admin'}"
    passopt=--password="$OPENSHIFT_DB_PASSWORD"
