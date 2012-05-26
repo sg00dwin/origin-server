@@ -2,7 +2,7 @@
 
 Summary:       Multi-tenant cloud management system node tools
 Name:          rhc-node
-Version: 0.93.9
+Version: 0.93.10
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -266,6 +266,12 @@ fi
 /lib64/security/pam_libra.so
 
 %changelog
+* Fri May 25 2012 Dan McPherson <dmcphers@redhat.com> 0.93.10-1
+- US2109 Migration (jhonce@redhat.com)
+- Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
+  (rmillner@redhat.com)
+- BZ 825124, had the wrong variable name. (rmillner@redhat.com)
+
 * Fri May 25 2012 Adam Miller <admiller@redhat.com> 0.93.9-1
 - Bug 825207: Do not chown on nonexistent .state file (jhonce@redhat.com)
 
