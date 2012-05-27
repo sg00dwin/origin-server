@@ -43,7 +43,6 @@ BuildRequires: rubygem-sqlite3
 BuildRequires: rubygem-mail
 BuildRequires: rubygem-treetop
 
-Requires:  rhc-common
 Requires:  rhc-server-common
 Requires:  httpd
 Requires:  mod_ssl

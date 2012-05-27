@@ -283,7 +283,7 @@ then
   done
 elif [ "$2" == "--install_build_prereqs" ]
 then
-  yum -y install git tito
+  yum -y install git tito ruby rubygems rubygem-thor rubygem-parseconfig rubygem-json rubygem-aws-sdk
 else
   yum -y install rhc-devenv
 fi
