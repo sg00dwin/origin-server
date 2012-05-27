@@ -29,7 +29,7 @@ class DevEnv < Thor
       branch = get_branch
 
       puts "Synchronizing local changes from branch #{branch} for repo #{repo_name} from #{File.basename(FileUtils.pwd)}..."
-      ssh(hostname, %{export GIT_DIR=/root/#{repo_name}; git log ^HEAD || ( mkdir -p /root/#{repo_name} && cd /root/#{repo_name} && git init-db --bare)}, 15)
+      ssh(hostname, %{export GIT_DIR=/root/#{repo_name}; git log ^HEAD || ( mkdir -p /root/#{repo_name} && cd /root/#{repo_name} && git init-db --bare)})
       exitcode = run(%{
 #######
 # Start shell code
@@ -610,7 +610,7 @@ mkdir -p /tmp/rhc/junit
   def print_packages
     packages = get_packages
     packages_str = ""
-    packages.keys.each do |package_name|
+    packages.keys.sort.each do |package_name|
       packages_str += " #{package_name}"
     end
     puts packages_str
@@ -766,6 +766,12 @@ mkdir -p /tmp/rhc/junit
 
         manifest = rpm_manifest(hostname)
       end
+      
+      output = ssh(hostname, "yum list installed", 120)
+
+      puts "---------------- Installed Packages ---------------------"
+      puts output
+      puts "---------------------------------------------------------"
 
       image_id = nil
       if options.register?

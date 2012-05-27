@@ -116,45 +116,35 @@ sslclientkey=/var/lib/yum/client-key.pem
 EOF
 
 # Install the 32 bit java before anything else
-yum update -y --exclude='rhc*'
+yum update -y --exclude='rhc*' --exclude='mcollective*'
 yum -y install java-1.6.0-openjdk.i686 java-1.6.0-openjdk-devel.i686
 
-function install_build_requires {
-  spec_file=$1
-  requires=""
-  for s in $(grep -e "^BuildRequires:" $spec_file)
-  do
-    if [[ $s != "BuildRequires:" ]] && [[ $s =~ ^[A-Z|a-z]+ ]]
-    then
-      requires+=" $s"
-    fi
-  done
-  if [ -n "$requires" ]
-  then
-    yum install -y $requires
-  fi
-}
 
 function install_requires {
-  spec_file=$1
+  spec_file=$2
   requires=""
-  output=$1
+  output=$2
   IFS_BAK=$IFS
 IFS="
 "
-  for s in $(grep -e "^Requires:" $spec_file)
+  for s in $(grep -e "^$1:" $spec_file)
   do
     if ! [[ $s =~ "%{" ]]
     then
-      s=`echo ${s//Requires:/}`
+      s=`echo ${s//$1:/}`
       s=`echo ${s// /}`
       s=`echo ${s//(/-}`
       s=`echo ${s//)/}`
       s=`echo ${s//>=*/}`
       s=`echo ${s//=/-}`
       s=`echo ${s//,/ }`
-      if ! `contains_value "$s" "${@:2}"`
+      if [ -n "$3" ]
       then
+        if ! `contains_value "$s" "${@:3}"`
+        then
+          requires+=" $s"
+        fi
+      else
         requires+=" $s"
       fi
     fi
@@ -167,12 +157,14 @@ IFS="
 }
 
 function find_and_build_specs {
+  ignore_packages=(`build/devenv print_ignore_packages`)
   for x in $(find -name *.spec)
   do
-    dir=$(dirname $x)
-    if [[ "$dir" != "./build/seigiku" && "$dir" != "./stickshift/broker" ]]
+    package_name=`get_package_name $x`
+    if ! `contains_value "$package_name" "${ignore_packages[@]}"`
     then
-      install_build_requires "$x"
+      install_requires "BuildRequires" "$x"
+      dir=$(dirname $x)
       pushd $dir > /dev/null
         tito build --test --rpm
       popd > /dev/null
@@ -185,6 +177,20 @@ function contains_value {
   do 
     [[ "$v" = "$1" ]] && break
   done
+}
+
+function get_package_name {
+  name_grep=`grep -e "^Name:" $1`
+  name_grep_array=($name_grep)
+  package_name=${name_grep_array[1]}
+  if [[ $package_name =~ "%{gemname}" ]]
+  then
+    gemname_grep=`grep -e "%global gemname" $1`
+    gemname_grep_array=($gemname_grep)
+    gemname=${gemname_grep_array[2]}
+    package_name=`echo ${package_name//%\{gemname\}/$gemname}`
+  fi
+  echo "$package_name"
 }
 
 github_repos=( crankcase os-client-tools )
@@ -252,31 +258,20 @@ elif [[ "$2" == "--install_required_packages" ]]
 then
   pushd /root/li-working > /dev/null
     git checkout $branch
-    packages_str=`build/devenv print_packages`
-    packages=($packages_str)
-    ignore_packages_str=`build/devenv print_ignore_packages`
-    ignore_packages=($ignore_packages_str)
+    packages=(`build/devenv print_packages`)
+    ignore_packages=(`build/devenv print_ignore_packages`)
   popd > /dev/null
   for repo_name in "${repos[@]}"
   do
     pushd /root/$repo_name > /dev/null
       git checkout $branch
-	  for x in $(find -name *.spec)
-	  do
-	    name_grep=`grep -e "^Name:" $x`
-	    name_grep_array=($name_grep)
-	    package_name=${name_grep_array[1]}
-        if [[ $package_name =~ "%{gemname}" ]]
-        then
-          gemname_grep=`grep -e "%global gemname" $x`
-          gemname_grep_array=($gemname_grep)
-          gemname=${gemname_grep_array[2]}
-          package_name=`echo ${package_name//%\{gemname\}/$gemname}`
-        fi
+      for x in $(find -name *.spec)
+      do
+        package_name=`get_package_name $x`
         if ! `contains_value "$package_name" "${ignore_packages[@]}"`
 	    then
-	      install_build_requires "$x"
-	      install_requires "$x" "${packages[@]}"
+	      install_requires "BuildRequires" "$x"
+	      install_requires "Requires" "$x" "${packages[@]}"
 	    fi
 	  done
 	popd > /dev/null
