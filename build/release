@@ -317,7 +317,7 @@ class Release < Thor
       reset_orig_branches(orig_branches)
     end
   end
-  
+
   desc "build_ami", "Build an ami based on the current li repo"
   method_option :stage, :type => :boolean, :desc => "Indicates whether to use the stage repo"
   method_option :clean_ami, :type => :boolean, :desc => "Indicates whether to build a clean ami"
