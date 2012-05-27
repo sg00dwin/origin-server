@@ -3,7 +3,7 @@
 
 Summary:   Li site components
 Name:      rhc-site
-Version: 0.93.7
+Version: 0.93.8
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -116,6 +116,9 @@ rm -rf %{buildroot}
 /bin/touch %{sitedir}/log/production.log
 
 %changelog
+* Sun May 27 2012 Dan McPherson <dmcphers@redhat.com> 0.93.8-1
+- add base package concept (dmcphers@redhat.com)
+
 * Fri May 25 2012 Adam Miller <admiller@redhat.com> 0.93.7-1
 - Bug 821103 - Send promo code to registration endpoint via streamline
   (ccoleman@redhat.com)
