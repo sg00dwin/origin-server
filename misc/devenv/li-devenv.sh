@@ -129,15 +129,15 @@ IFS="
 "
   for s in $(grep -e "^$1:" $spec_file)
   do
+    s=`echo ${s//$1:/}`
+    s=`echo ${s// /}`
+    s=`echo ${s//(/-}`
+    s=`echo ${s//)/}`
+    s=`echo ${s//>=*/}`
+    s=`echo ${s//=/-}`
+    s=`echo ${s//,/ }`
     if ! [[ $s =~ "%{" ]]
     then
-      s=`echo ${s//$1:/}`
-      s=`echo ${s// /}`
-      s=`echo ${s//(/-}`
-      s=`echo ${s//)/}`
-      s=`echo ${s//>=*/}`
-      s=`echo ${s//=/-}`
-      s=`echo ${s//,/ }`
       if [ -n "$3" ]
       then
         if ! `contains_value "$s" "${@:3}"`
