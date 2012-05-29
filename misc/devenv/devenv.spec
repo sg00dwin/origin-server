@@ -214,6 +214,9 @@ rm -rf %{buildroot}
 gem install sauce --no-rdoc --no-ri
 gem install zip --no-rdoc --no-ri
 
+# Install hub for automatic pull request testing
+gem install hub --no-rdoc --no-ri
+
 # Move over all configs and scripts
 cp -rf %{devenvdir}/etc/* %{_sysconfdir}
 cp -rf %{devenvdir}/bin/* %{_bindir}
