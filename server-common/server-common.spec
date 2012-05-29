@@ -16,6 +16,7 @@ Requires:      rubygem-parseconfig
 Requires:      rubygem-json
 Requires:      rubygem-aws-sdk
 Requires:      rhc-common
+Requires(pre): shadow-utils
 
 Obsoletes:     rubygem-aws
 
@@ -48,10 +49,10 @@ rm -rf %{buildroot}
 %{ruby_sitelibdir}/openshift.rb
 
 %pre
-/usr/sbin/useradd libra_passenger -g libra_user \
-                                  -d /var/lib/passenger \
-                                  -r \
-                                  -s /sbin/nologin 2>&1 > /dev/null || :
+getent group libra_user >/dev/null || groupadd -r libra_user
+getent passwd libra_passenger || \
+    useradd -r -g libra_user -d /var/lib/passenger -s /sbin/nologin \
+    -c "libra_passenger" libra_passenger
 
 %changelog
 * Thu May 10 2012 Adam Miller <admiller@redhat.com> 0.90.1-1

@@ -12,6 +12,7 @@ Requires:  mcollective-client = 1.1.2
 Requires:  qpid-cpp-client
 Requires:  qpid-cpp-client-ssl
 Requires:  ruby-qmf
+Requires(pre):  shadow-utils
 
 BuildArch: noarch
 
@@ -39,7 +40,7 @@ rm -rf %{buildroot}
 %{_libexecdir}/mcollective/mcollective/connector/amqp.rb
 
 %pre
-/usr/sbin/groupadd -r libra_user 2>&1 || :
+getent group libra_user >/dev/null || groupadd -r libra_user
 
 %post
 /bin/chgrp libra_user /etc/mcollective/client.cfg
