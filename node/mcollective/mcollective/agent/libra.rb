@@ -31,6 +31,7 @@ require 'pp'
 require 'json'
 require 'stickshift-node'
 require 'shellwords'
+require 'facter'
 
 module MCollective
   #
@@ -412,10 +413,10 @@ module MCollective
 
         if exitcode == 0
           Facter.add(:district_uuid) do
-              setcode { uuid }
+            setcode { uuid }
           end
           Facter.add(:district_active) do
-              setcode { active }
+            setcode { active }
           end
         end
 

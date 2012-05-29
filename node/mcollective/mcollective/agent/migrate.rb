@@ -48,7 +48,6 @@ module OpenShiftMigration
       FileUtils.rm_f destdir  if (File.symlink? destdir)  ||  (not File.directory? destdir)
       FileUtils.mkdir_p destdir
       Dir.entries(srcdir).each {|f| FileUtils.mv(File.join(srcdir, f), destdir) unless f == '.' || f == '..'}
-      #FileUtils.mv Dir.glob("#{srcdir}/*"), destdir
       FileUtils.rm_rf srcdir
     end
 
@@ -79,6 +78,9 @@ module OpenShiftMigration
     self.move_dir_and_symlink(data_dir, app_data_dir, zoffset)
     Util.set_env_var_value(gear_home, "OPENSHIFT_DATA_DIR", app_data_dir)
     zpathlist.push app_data_dir
+
+    # Needed until quickstarts refactored to not use relative directories
+    FileUtils.ln_s 'app/data', File.join(gear_home, 'data'), :verbose => true
 
     state_file = File.join(gear_home, gear_name, "runtime", ".state")
     app_state_file = File.join(app_dir, ".state")
