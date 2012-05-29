@@ -1,0 +1,217 @@
+#!/usr/bin/ruby
+
+# Client script for submitting pull requests for testing
+# as well as updating the test results from Jenkins.
+#
+# This script requires that the 'hub' rubygem be installed
+# which provides the OAuth functionality as well as some
+# other core functionality.
+#
+# You should be able to install 'hub' with:
+#   sudo gem install hub
+#
+# This has to be manually run one time to establish an OAuth
+# ticket.  For OpenShift, the user to use is openshift-bot
+
+require 'rubygems'
+require 'hub'
+require 'pp'
+require 'net/https'
+require 'getoptlong'
+
+def usage
+    puts <<USAGE
+== Synopsis
+test_pull_requests: Automatically run tests on pull requests.
+
+== Usage
+test_pull_requests OPTIONS
+
+Options:
+-t|--test
+    Submit pull requests for testing.
+-u|--update <comment_id:jenkins_job_id:test_exit_code>
+    Update a specified pull request with the test results
+-h|--help
+    Show Usage info
+USAGE
+end
+
+opts = GetoptLong.new(
+    ["--test",             "-t", GetoptLong::OPTIONAL_ARGUMENT],
+    ["--update",           "-u", GetoptLong::REQUIRED_ARGUMENT],
+    ["--help",             "-h", GetoptLong::NO_ARGUMENT]
+)
+
+args = {}
+begin
+    opts.each{ |k,v| args[k]=v }
+rescue GetoptLong::Error => e
+    usage
+    exit -100
+end
+
+update    = args["--update"]
+test      = args["--test"]
+
+if args["--help"] or (!update and !test)
+  usage
+  exit 1
+end
+
+include Hub
+
+# Global configuration
+USER = "openshift"
+REPO = "crankcase"
+JOB_URI = "https://ci.dev.openshift.redhat.com/jenkins/job/test_pull_request"
+BUILD_URI = URI("#{JOB_URI}/buildWithParameters?token=libra1")
+JOB_PARAM_1 = "CRANKCASE_PULL_ID"
+JOB_PARAM_2 = "COMMENT_ID"
+TEAM_RH = "168397"
+TEST_PREFIX = "Test Results:"
+
+# Set proxy values to nil if you don't want to use a proxy
+#PROXY_HOST = 'file.rdu.redhat.com'
+#PROXY_PORT = 3128
+PROXY_HOST = nil
+PROXY_PORT = nil
+
+# Dynamically extend GitHubAPI to add methods that don't
+# require a local git project
+module Hub
+  class GitHubAPI
+    def list_pullrequests
+      res = get "https://api.github.com/repos/#{USER}/#{REPO}/pulls" 
+      res.error! unless res.success?
+      res.data
+    end
+
+    def get_comments issue_id
+      res = get "https://api.github.com/repos/#{USER}/#{REPO}/issues/%s/comments" % issue_id
+      res.error! unless res.success?
+      res.data
+    end
+
+    def add_comment issue_id, comment
+      params = { :body => comment }
+      res = post "https://api.github.com/repos/#{USER}/#{REPO}/issues/%s/comments" % [issue_id], params
+      res.error! unless res.success?
+      res.data
+    end
+
+    def update_comment comment_id, comment
+      params = { :body => comment }
+      res = post "https://api.github.com/repos/#{USER}/#{REPO}/issues/comments/%s" % [comment_id], params
+      res.error! unless res.success?
+      res.data
+    end
+
+    def is_reviewed? issue_id
+      res = get "https://api.github.com/repos/#{USER}/#{REPO}/issues/%s/comments" % issue_id
+      res.error! unless res.success?
+      is_reviewed = false
+      res.data.each do |comment|
+        if comment['body'] =~ /#{TEST_PREFIX}/
+          is_reviewed = true
+          break
+        end
+      end
+
+      return is_reviewed
+    end
+
+    # Verifies the user is part of Team Red Hat
+    def user_trusted? login
+      res = get "https://api.github.com/teams/#{TEAM_RH}/members/#{login}" % login
+      return res.success?
+    end
+
+  end
+end
+
+#
+# Creates a new Hub client
+#
+def create_client
+  @api_client ||= begin
+    config_file = ENV['HUB_CONFIG'] || '~/.config/hub'
+    file_store = GitHubAPI::FileStore.new File.expand_path(config_file)
+    file_config = GitHubAPI::Configuration.new file_store
+    GitHubAPI.new file_config, :app_url => 'https://ci.dev.openshift.redhat.com'
+  end
+end
+
+#
+# Submits all untested pull requests to Jenkins for testing
+#
+def test_pull_requests
+  @api_client.list_pullrequests.each do |req|
+    id = req['number']
+    login = req['user']['login']
+
+    # Skip if it's already been reviewed
+    if @api_client.is_reviewed? id
+      puts "Skipping pull request ##{id} - already being tested"
+      next
+    end
+
+    # Verify user is from the Red Hat Team
+    if @api_client.user_trusted? login
+      puts "User trusted #{login}"
+    else
+      puts "Skipping pull request ##{id} - user #{login} not on Team Red Hat"
+      next
+    end
+
+    # Comment on the pull request that it's under test review
+    print "Updating comments to mark request as tests pending..."
+    result = @api_client.add_comment id, "#{TEST_PREFIX} Pending..."
+    comment_id = result["id"]
+    puts "Done"
+
+    # Call Jenkins with the commit id
+    puts "Submitting Jenkins job for pull request ##{id}"
+    proxy = Net::HTTP::Proxy(PROXY_HOST, PROXY_PORT)
+    http_session = proxy.new(BUILD_URI.host, BUILD_URI.port)
+    http_session.use_ssl = true
+    http_session.verify_mode = OpenSSL::SSL::VERIFY_NONE
+    http_session.start do |http|
+      request = Net::HTTP::Get.new BUILD_URI.request_uri + "&#{JOB_PARAM_1}=#{id}&#{JOB_PARAM_2}=#{comment_id}"
+      response = http.request request
+      if response.code == '302'
+        puts "Test job successfully submitted"
+      end
+    end
+  end
+end
+
+#
+# Updates a comment with test results
+#
+def update_results comment_id, passed, job_id
+  result = passed ? "Passed" : "Failed" 
+  @api_client.update_comment comment_id, "#{TEST_PREFIX} #{result} - #{JOB_URI}/#{job_id}"
+  puts "Comment updated"
+end
+
+# Create a client no matter what
+create_client
+
+# Determine how the script was called
+if test
+  # Process all the pull requests for testing
+  puts "Updating pull requests..."
+  test_pull_requests
+  puts "Done"
+else
+  # Assume this was an update, parse out the update string
+  args = update.split(":")
+  comment_id = args[0]
+  job_id = args[1]
+  passed = args[2].to_i == 0
+
+  puts "Updating test result for comment - #{comment_id}, job - #{job_id}, result - #{passed}..."
+  update_results comment_id, passed, job_id
+  puts "Done"
+end
