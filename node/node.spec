@@ -2,7 +2,7 @@
 
 Summary:       Multi-tenant cloud management system node tools
 Name:          rhc-node
-Version: 0.93.10
+Version: 0.93.11
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -266,6 +266,13 @@ fi
 /lib64/security/pam_libra.so
 
 %changelog
+* Tue May 29 2012 Adam Miller <admiller@redhat.com> 0.93.11-1
+- Bug 820223 820338 820325 (dmcphers@redhat.com)
+- re-introduce ~/data in typeless gears (jhonce@redhat.com)
+- Security - Moved the disable of binding of ports on the real 10. address from
+  devenv.spec to rhc-ip-prep.sh so that it can make it into STG for testing
+  (tkramer@redhat.com)
+
 * Fri May 25 2012 Dan McPherson <dmcphers@redhat.com> 0.93.10-1
 - US2109 Migration (jhonce@redhat.com)
 - Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
