@@ -8,7 +8,7 @@
 
 Summary:   Dependencies for OpenShift development
 Name:      rhc-devenv
-Version: 0.94.9
+Version: 0.94.10
 Release:   1%{?dist}
 Group:     Development/Libraries
 License:   GPLv2
@@ -491,6 +491,13 @@ chown apache:apache /srv/cache/mod_cache
 %{policydir}/*
 
 %changelog
+* Tue May 29 2012 Adam Miller <admiller@redhat.com> 0.94.10-1
+- Adding automatic pull request support (mhicks@redhat.com)
+- Security - Moved the disable of binding of ports on the real 10. address from
+  devenv.spec to rhc-ip-prep.sh so that it can make it into STG for testing
+  (tkramer@redhat.com)
+- fix condition keeping jboss from being preinstalled (dmcphers@redhat.com)
+
 * Sun May 27 2012 Dan McPherson <dmcphers@redhat.com> 0.94.9-1
 - use ignore packages for the source build as well (dmcphers@redhat.com)
 - add base package concept (dmcphers@redhat.com)
