@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
 
-namespace :descriptors do
-  desc "Deploy an application based on template"
+namespace :templates do
+  desc "Deploy an application based on template from the broker"
   task :deploy do
     client = login
     templates = client.templates

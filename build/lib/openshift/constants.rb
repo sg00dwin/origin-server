@@ -13,14 +13,20 @@ DEVENV_WILDCARD = "devenv_*"
 DEVENV_STAGE_WILDCARD = "devenv-stage_*"
 DEVENV_CLEAN_WILDCARD = "devenv-clean_*"
 DEVENV_STAGE_CLEAN_WILDCARD = "devenv-stage-clean_*"
+DEVENV_BASE_WILDCARD = "devenv-base_*"
+DEVENV_STAGE_BASE_WILDCARD = "devenv-stage-base_*"
 DEVENV_AMI_WILDCARDS = {DEVENV_WILDCARD => {:keep => 2, :regex => /devenv_(\d*)/}, 
                         DEVENV_STAGE_WILDCARD => {:keep => 8, :regex => /devenv-stage_(\d*)/},
                         DEVENV_CLEAN_WILDCARD => {:keep => 1, :regex => /devenv-clean_(\d*)/},
-                        DEVENV_STAGE_CLEAN_WILDCARD => {:keep => 1, :regex => /devenv-stage-clean_(\d*)/}}
+                        DEVENV_STAGE_CLEAN_WILDCARD => {:keep => 1, :regex => /devenv-stage-clean_(\d*)/},
+                        DEVENV_BASE_WILDCARD => {:keep => 1, :regex => /devenv-base_(\d*)/},
+                        DEVENV_STAGE_BASE_WILDCARD => {:keep => 1, :regex => /devenv-stage-base_(\d*)/}}
 VERIFIER_REGEXS = {/^(devenv)_(\d+)$/ => {},
                    /^(devenv_verifier)_(\d+)$/ => {}, 
                    /^(devenv-stage)_(\d+)$/ => {}, 
-                   /^(devenv-stage_verifier)_(\d+)$/ => {}, 
+                   /^(devenv-stage_verifier)_(\d+)$/ => {},
+                   /^(devenv-base)_(\d+)$/ => {}, 
+                   /^(devenv-stage-base)_(\d+)$/ => {},
                    /^(libra_check)_(\d+)$/ => {},
                    /^(pull_request)_(\d+)$/ => {:multiple => true}, 
                    /^(broker_check)_(\d+)$/ => {}, 

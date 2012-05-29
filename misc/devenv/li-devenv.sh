@@ -116,27 +116,55 @@ sslclientkey=/var/lib/yum/client-key.pem
 EOF
 
 # Install the 32 bit java before anything else
-yum update -y --exclude='rhc*'
+yum update -y --exclude='rhc*' --exclude='mcollective*'
 yum -y install java-1.6.0-openjdk.i686 java-1.6.0-openjdk-devel.i686
 
-function install_build_requires {
-  spec_file=$1
-  for s in $(grep -e "^BuildRequires:" $spec_file)
+
+function install_requires {
+  spec_file=$2
+  requires=""
+  output=$2
+  IFS_BAK=$IFS
+IFS="
+"
+  for s in $(grep -e "^$1:" $spec_file)
   do
-    if [[ $s =~ ^[a-z]+ ]]
+    s=`echo ${s//$1:/}`
+    s=`echo ${s// /}`
+    s=`echo ${s//(/-}`
+    s=`echo ${s//)/}`
+    s=`echo ${s//>=*/}`
+    s=`echo ${s//=/-}`
+    s=`echo ${s//,/ }`
+    if ! [[ $s =~ "%{" ]]
     then
-      yum install -y $s
+      if [ -n "$3" ]
+      then
+        if ! `contains_value "$s" "${@:3}"`
+        then
+          requires+=" $s"
+        fi
+      else
+        requires+=" $s"
+      fi
     fi
   done
+  IFS=$IFS_BAK
+  if [ -n "$requires" ]
+  then
+    yum install -y $requires
+  fi
 }
 
 function find_and_build_specs {
+  ignore_packages=(`build/devenv print_ignore_packages`)
   for x in $(find -name *.spec)
   do
-    dir=$(dirname $x)
-    if [[ "$dir" != "./build/seigiku" && "$dir" != "./stickshift/broker" ]]
+    package_name=`get_package_name $x`
+    if ! `contains_value "$package_name" "${ignore_packages[@]}"`
     then
-      install_build_requires "$x"
+      install_requires "BuildRequires" "$x"
+      dir=$(dirname $x)
       pushd $dir > /dev/null
         tito build --test --rpm
       popd > /dev/null
@@ -144,35 +172,63 @@ function find_and_build_specs {
   done
 }
 
+function contains_value { 
+  for v in "${@:2}"
+  do 
+    [[ "$v" = "$1" ]] && break
+  done
+}
+
+function get_package_name {
+  name_grep=`grep -e "^Name:" $1`
+  name_grep_array=($name_grep)
+  package_name=${name_grep_array[1]}
+  if [[ $package_name =~ "%{gemname}" ]]
+  then
+    gemname_grep=`grep -e "%global gemname" $1`
+    gemname_grep_array=($gemname_grep)
+    gemname=${gemname_grep_array[2]}
+    package_name=`echo ${package_name//%\{gemname\}/$gemname}`
+  fi
+  echo "$package_name"
+}
+
+github_repos=( crankcase os-client-tools )
+repos=( crankcase os-client-tools li-working )
+
+branch="master"
+if [ "$1" == "stage" ]
+then
+  branch="stage"
+fi
+
+rm -rf /root/li-working
+
+if [[ "$2" == "--install_from_source" ]] || [[ "$2" == "--install_required_packages" ]]
+then
+  git clone git://git1.ops.rhcloud.com/li.git/ /root/li-working
+
+  for repo_name in "${github_repos[@]}"
+  do
+    rm -rf /root/$repo_name
+    git clone git@github.com:openshift/$repo_name.git /root/$repo_name
+  done
+elif [[ "$2" == "--install_from_local_source" ]]
+then
+  git clone /root/li /root/li-working
+fi
+
 if [[ "$2" == "--install_from_source" ]] || [[ "$2" == "--install_from_local_source" ]]
 then
+
   mkdir -p /tmp/tito
-  rm -rf /root/li-working
-  if [[ "$2" == "--install_from_source" ]]
-  then
-    git clone git://git1.ops.rhcloud.com/li.git/ /root/li-working
-  else
-    git clone /root/li /root/li-working
-  fi
 
-  github_repos=( crankcase os-client-tools )
-
-  if ! [[ "$2" == "--install_from_local_source" ]]
-  then
-    for repo_name in "${github_repos[@]}"
-    do
-      rm -rf /root/$repo_name
-      git clone git@github.com:openshift/$repo_name.git /root/$repo_name
-    done
-  fi
-
-  pushd /root/li-working > /dev/null
-  find_and_build_specs
-  for repo_name in "${github_repos[@]}"
+  for repo_name in "${repos[@]}"
   do
     if [ -d /root/$repo_name ]
     then
       pushd /root/$repo_name > /dev/null
+        git checkout $branch
         find_and_build_specs
       popd > /dev/null
     fi
@@ -194,22 +250,48 @@ EOF
   createrepo /root/li-local/
 
   yum -y install rhc-devenv --enablerepo=li-local
-
-  build/devenv write_sync_history
   
+  pushd /root/li-working > /dev/null
+    build/devenv write_sync_history
   popd > /dev/null
-  for repo_name in "${github_repos[@]}"
+elif [[ "$2" == "--install_required_packages" ]]
+then
+  pushd /root/li-working > /dev/null
+    git checkout $branch
+    packages=(`build/devenv print_packages`)
+    ignore_packages=(`build/devenv print_ignore_packages`)
+  popd > /dev/null
+  for repo_name in "${repos[@]}"
   do
-    rm -rf /root/$repo_name
-  done
-  rm -rf /root/li-working /tmp/tito
-  for repo_name in "${github_repos[@]}"
-  do
-    git init --bare /root/$repo_name  
+    pushd /root/$repo_name > /dev/null
+      git checkout $branch
+      for x in $(find -name *.spec)
+      do
+        package_name=`get_package_name $x`
+        if ! `contains_value "$package_name" "${ignore_packages[@]}"`
+	    then
+	      install_requires "BuildRequires" "$x"
+	      install_requires "Requires" "$x" "${packages[@]}"
+	    fi
+	  done
+	popd > /dev/null
   done
 elif [ "$2" == "--install_build_prereqs" ]
 then
-  yum -y install git tito
+  yum -y install git tito ruby rubygems rubygem-thor rubygem-parseconfig rubygem-json rubygem-aws-sdk
 else
   yum -y install rhc-devenv
+fi
+
+if [[ "$2" == "--install_from_source" ]] || [[ "$2" == "--install_from_local_source" ]] || [[ "$2" == "--install_required_packages" ]]
+then
+  rm -rf /root/li-working /tmp/tito
+  for repo_name in "${github_repos[@]}"
+  do
+    rm -rf /root/$repo_name
+    if ! [[ "$2" == "--install_required_packages" ]]
+    then
+      git init --bare /root/$repo_name
+    fi
+  done
 fi

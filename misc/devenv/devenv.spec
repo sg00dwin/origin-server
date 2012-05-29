@@ -8,7 +8,7 @@
 
 Summary:   Dependencies for OpenShift development
 Name:      rhc-devenv
-Version: 0.94.8
+Version: 0.94.9
 Release:   1%{?dist}
 Group:     Development/Libraries
 License:   GPLv2
@@ -488,6 +488,11 @@ semanage node -a -t node_t -r s0:c1023 -M  255.0.0.0 -p ipv4 10.0.0.0
 %{policydir}/*
 
 %changelog
+* Sun May 27 2012 Dan McPherson <dmcphers@redhat.com> 0.94.9-1
+- use ignore packages for the source build as well (dmcphers@redhat.com)
+- add base package concept (dmcphers@redhat.com)
+- add base package concept (dmcphers@redhat.com)
+
 * Fri May 25 2012 Adam Miller <admiller@redhat.com> 0.94.8-1
 - Security - put more sticky permissions back on files to match what is in STG
   05 25 2012 (tkramer@redhat.com)

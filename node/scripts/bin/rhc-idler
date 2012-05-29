@@ -38,7 +38,7 @@ function get_state {
 function is_idled {
     appid=$1
 
-    HTTP_DIR=`dirname "/etc/httpd/conf.d/stickshift/${uuid}"*/00000_default.conf`
+    HTTP_DIR=`dirname "/etc/httpd/conf.d/stickshift/${appid}"*/00000_default.conf`
     if ! grep -q ' #ProxyPass' $HTTP_DIR/*.conf 2>/dev/null
     then
         return $FALSE

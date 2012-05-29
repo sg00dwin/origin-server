@@ -50,30 +50,15 @@ def targets
   @targets ||= YAML.load_file(TARGETS)
 end
 
-def template_function(name)
-  # Shortcut to making filename
-  def newfile(name,type) "#{name}.#{type}" end
+def templates_dir
+  dir = 'templates'
+  Dir.mkdir dir unless File.directory?(dir)
+  dir
+end
 
-  # Parameters to pass to script
-  parameters = {
-    :command => 'add',
-    :descriptor => newfile(name,'yaml'),
-    :metadata => newfile(name,'json')
-  }
-
-  # Parameters from our targets.yml file
-  info = YAML.load_file(target_for(name))
-  parameters[:named] = info[:display_name]
-  parameters[:cost] = info[:cost]
-  parameters[:tags] = (info[:tags] || []).map{|x| x.to_s}.join(',')
-
-  # Parameters from metadata
-  File.open(metadata_for(name)) do |f|
-    metadata = JSON.parse(f.read)
-    parameters['git-url'] = metadata['git']
-  end
-
-  template_command(parameters)
+def application_templates
+  names = Dir.glob("#{templates_dir}/*/").map{|x| x.split('/').last}
+  names.map{|x| ApplicationTemplate.new(x)}
 end
 
 def template_command(params)
@@ -84,51 +69,83 @@ def template_command(params)
   cmd
 end
 
-def create_files(dir,name,opts)
-  dir = File.join(dir,name.to_s)
-  FileUtils.remove_entry_secure dir if File.directory?(dir)
-  Dir.mkdir dir
 
-  {:json => opts[:metadata], :yaml => opts[:descriptor]}.each do |ext,val|
-    file = File.join(dir,"#{name}.#{ext}")
-    File.open(file,'w') do |f|
-      f.puts val
+
+class ApplicationTemplate
+  attr_accessor :name, :dir
+
+  def initialize(name)
+    @name = name
+    @dir = dir_for(@name)
+  end
+
+  def target
+    file_for(:target)
+  end
+
+  def descriptor
+    file_for(:descriptor)
+  end
+
+  def metadata
+    file_for(:metadata)
+  end
+
+  def script
+    file_for(:script)
+  end
+
+  def save(type,data)
+    file = file_for(type)
+    mode = (type == :script ? 0644 : 0755)
+    File.open(file,'w',mode) do |f|
+      f.write data
     end
   end
-end
 
-def templates_dir
-  dir = 'templates'
-  Dir.mkdir dir unless File.directory?(dir)
-  dir
-end
+  def file_for(type)
+    filename = case type
+               when :target
+                 'target.yml'
+               when :descriptor
+                 'descriptor.yaml'
+               when :metadata
+                 'metadata.json'
+               when :script
+                 'create.sh'
+               else
+                 return nil
+               end
+    File.expand_path(File.join(@dir,filename))
+  end
 
-def applications
-  Dir.glob("#{templates_dir}/*/").map{|x| x.split('/').last}
-end
+  def template_function
+    # Parameters to pass to script
+    parameters = {
+      :command => 'add',
+      :descriptor => descriptor,
+      :metadata => metadata
+    }
 
-def descriptor_for(app)
-  File.join(dir_for(app),"descriptor.yaml")
-end
+    # Parameters from our targets.yml file
+    info = YAML.load_file(target)
+    parameters[:named] = info[:display_name]
+    parameters[:cost] = info[:cost]
+    parameters[:tags] = (info[:tags] || []).map{|x| x.to_s}.join(',')
 
-def descriptor_exists?(app)
-  File.exists?(descriptor_for(app))
-end
+    # Parameters from metadata
+    File.open(metadata) do |f|
+      data = JSON.parse(f.read)
+      parameters['git-url'] = data['git']
+    end
 
-def metadata_for(app)
-  File.join(dir_for(app),"metadata.json")
-end
+    template_command(parameters)
+  end
 
-def target_for(app)
-  File.join(dir_for(app),'target.yml')
-end
-
-def deploy_script_for(app)
-  File.join(dir_for(app),"create.sh")
-end
-
-def dir_for(app)
-  dir = File.join(templates_dir,app)
-  Dir.mkdir unless File.directory?(dir)
-  dir
+  private
+  def dir_for(app)
+    dir = File.join(templates_dir,app)
+    Dir.mkdir unless File.directory?(dir)
+    dir
+  end
 end

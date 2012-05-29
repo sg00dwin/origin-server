@@ -29,7 +29,7 @@ class DevEnv < Thor
       branch = get_branch
 
       puts "Synchronizing local changes from branch #{branch} for repo #{repo_name} from #{File.basename(FileUtils.pwd)}..."
-      ssh(hostname, %{export GIT_DIR=/root/#{repo_name}; git log ^HEAD || ( mkdir -p /root/#{repo_name} && cd /root/#{repo_name} && git init-db --bare)}, 15)
+      ssh(hostname, %{export GIT_DIR=/root/#{repo_name}; git log ^HEAD || ( mkdir -p /root/#{repo_name} && cd /root/#{repo_name} && git init-db --bare)})
       exitcode = run(%{
 #######
 # Start shell code
@@ -203,6 +203,7 @@ mkdir -p /tmp/rhc/junit
       scp_from(hostname, "/var/www/stickshift/broker/httpd/logs/access_log", "rhc/log/broker/access_log.log")
       scp_from(hostname, "/var/www/stickshift/broker/httpd/logs/error_log", "rhc/log/broker/error_log.log")
       scp_from(hostname, "/var/www/stickshift/broker/log/*", "rhc/log/broker")
+      scp_from(hostname, "/var/log/stickshift/user_action.log", "rhc/log/broker/user_action.log")
       scp_from(hostname, "/var/log/mcollective.*", "rhc/log/mcollective")
       scp_from(hostname, "/var/log/httpd/access_log", "rhc/log/system/access_log.log")
       scp_from(hostname, "/var/log/httpd/error_log", "rhc/log/system/error_log.log")
@@ -604,6 +605,25 @@ mkdir -p /tmp/rhc/junit
     say "Watching your development directories, hit CTRL+C to stop"
     run "lsyncd #{options.verbose? ? '-log all' : ''} #{config}"
   end
+  
+  desc "print_packages", "Print a space separated list of packages"
+  def print_packages
+    packages = get_packages
+    packages_str = ""
+    packages.keys.sort.each do |package_name|
+      packages_str += " #{package_name}"
+    end
+    puts packages_str
+  end
+  
+  desc "print_ignore_packages", "Print a space separated list of packages to ignore"
+  def print_ignore_packages
+    packages_str = ""
+    IGNORE_PACKAGES.each do |package_name|
+      packages_str += " #{package_name}"
+    end
+    puts packages_str
+  end
 
   desc "build NAME BUILD_NUM", "Build a new devenv AMI with the given NAME"
   method_option :register, :type => :boolean, :desc => "Register the instance"
@@ -620,6 +640,7 @@ mkdir -p /tmp/rhc/junit
   method_option :build_clean_ami, :required => false, :desc => "Indicates whether to start from a base RHEL image"
   method_option :install_from_source, :required => false, :desc => "Indicates whether to build based off origin/master"
   method_option :install_from_local_source, :required => false, :desc => "Indicates whether to build based on your local source"
+  method_option :install_required_packages, :required => false, :desc => "Create an instance with all the packages required by OpenShift"
   method_option :skip_verify, :type => :boolean, :desc => "Skip running tests to verify the build"
   method_option :instance_type, :required => false, :desc => "Amazon machine type override (default c1.medium)"
 
@@ -635,7 +656,7 @@ mkdir -p /tmp/rhc/junit
     conn = connect(options.region)
 
     image = nil
-    if options.build_clean_ami || options.install_from_source || options.install_from_local_source
+    if options.install_required_packages
       # Create a new builder instance
       if (options.region?nil)
         image = conn.images[AMI["us-east-1"]]
@@ -645,8 +666,16 @@ mkdir -p /tmp/rhc/junit
       else
         image = conn.images[AMI[options.region]]
       end
+    elsif options.build_clean_ami || options.install_from_source || options.install_from_local_source
+      # Get the latest devenv base image and create a new instance
+      if options.use_stage_repo?
+        filter = DEVENV_STAGE_BASE_WILDCARD
+      else
+        filter = DEVENV_BASE_WILDCARD
+      end
+      image = get_latest_ami(conn, filter)
     else
-      # Get the latest devenv image and create a new instance
+      # Get the latest devenv clean image and create a new instance
       if options.use_stage_repo?
         filter = DEVENV_STAGE_CLEAN_WILDCARD
       else
@@ -662,14 +691,11 @@ mkdir -p /tmp/rhc/junit
 
     begin
       manifest = nil
-      if options.build_clean_ami || options.install_from_source || options.install_from_local_source
-        # TODO - Remove this once nss is updated in RHEL 6.2
-        print "Running one yum update to get around RHEL 6.2 AMI problem..."
-        ssh(hostname, "yum update -y --exclude='rhc*'", 1800)
-        puts "Done"
-
+      if options.build_clean_ami || options.install_from_source || options.install_from_local_source || options.install_required_packages
         print "Updating all packages on the system..."
-        ssh(hostname, "yum update -y --exclude='rhc*'; yum -y install openssh-clients", 1800)
+        2.times do
+          ssh(hostname, "yum update -y --exclude='rhc*' --exclude='mcollective*'; yum -y install openssh-clients", 1800)
+        end
         puts "Done"
 
         if options.reboot?
@@ -690,13 +716,9 @@ mkdir -p /tmp/rhc/junit
         puts "Done"
         output = ''
         if options.install_from_source
-          cmd = 'set -e; sh li-devenv.sh candidate --install_build_prereqs'
-          output += ssh(hostname, cmd, 600)
           print "Performing clean install from source..."
           cmd = 'set -e; sh li-devenv.sh candidate --install_from_source'
         elsif options.install_from_local_source
-          cmd = 'set -e; sh li-devenv.sh candidate --install_build_prereqs'
-          output += ssh(hostname, cmd, 600)
           init_repo(hostname)
           ssh_path = File.expand_path(File.dirname(__FILE__)) + "/ssh-override"
           sync_repo('li', hostname, ssh_path)
@@ -707,6 +729,11 @@ mkdir -p /tmp/rhc/junit
           end
           print "Performing clean install from local source..."
           cmd = 'set -e; sh li-devenv.sh candidate --install_from_local_source'
+        elsif options.install_required_packages
+          print "Installing requires..."
+          cmd = "set -e; sh li-devenv.sh #{options.use_stage_repo? ? "stage" : "candidate"} --install_build_prereqs"
+          output += ssh(hostname, cmd, 600)
+          cmd = "set -e; sh li-devenv.sh #{options.use_stage_repo? ? "stage" : "candidate"} --install_required_packages"
         else
           print "Performing clean install with the latest code..."
           cmd = 'set -e ; sh ~/li-devenv.sh'
@@ -719,7 +746,7 @@ mkdir -p /tmp/rhc/junit
         puts output
         puts "---------------------------------------------------------"
 
-        validate_instance(hostname)
+        validate_instance(hostname) unless options.install_required_packages
 
         manifest = rpm_manifest(hostname)
 
@@ -728,13 +755,23 @@ mkdir -p /tmp/rhc/junit
         end
       else
         print "Updating all packages on the system..."
-        ssh(hostname, "yum clean metadata; yum update -y --exclude='rhc-devenv'; set -e; yum update -y --exclude='rhc-devenv' --disablerepo=\\* --enablerepo=li", 600)
+        output = ssh(hostname, "yum clean metadata; yum update -y --exclude='rhc-devenv'; set -e; yum update -y --exclude='rhc-devenv' --disablerepo=\\* --enablerepo=li", 600)
         puts "Done"
+
+        puts "------------------ Update Output ------------------------"
+        puts output
+        puts "---------------------------------------------------------"
 
         validate_instance(hostname)
 
         manifest = rpm_manifest(hostname)
       end
+      
+      output = ssh(hostname, "yum list installed", 120)
+
+      puts "---------------- Installed Packages ---------------------"
+      puts output
+      puts "---------------------------------------------------------"
 
       image_id = nil
       if options.register?
@@ -742,7 +779,7 @@ mkdir -p /tmp/rhc/junit
         image_id = image.id
       end
 
-      unless options.skip_verify?
+      unless options.skip_verify? || options.install_required_packages
         scp_remote_tests(hostname)
         test_instance(name + '_' + build_num, hostname, instance, conn, options, image_id)
       end
