@@ -77,11 +77,12 @@ body.signup {
 .section-top {
   background-color: $topBarBackgroundColor; 
   color: #888;
+  height: 35px;
 
   .container .btn {
     border-radius: 0;
     text-shadow: none;
-    //border: 0;
+    border: 0;
     box-shadow: none;
     color: #ccc;
     background: #333;
@@ -101,33 +102,36 @@ body.signup {
     }
   }
 }
-/*#nav {
-  background: $navBackgroundColor url($navBackgroundImage) repeat-x bottom left;
-}*/
+
 .section-nav {
   /*background-color: $navBackgroundColor; */
   color: white;
   padding-bottom: 50px;
+  
+  > .navbar:last-child {
+    margin-bottom: 20px;
+	}
 }
 .recaptcha table {
   table-layout: auto;
 }
 
+
 .section-nav.lift-counter {
     padding-bottom: 90px;
-    overflow: hidden;
-}
-.section-nav > .navbar:last-child {
-    margin-bottom: 20px;
 }
 
 @media (max-width: 767px) {
   .section-nav {
     padding-bottom: 20px;
+    
+    > .navbar:last-child {
+   		margin-bottom: 0;
+		}
   }
   .section-nav.lift-counter {
-    padding-bottom: 0;
-  }
+    padding-bottom: 15px;
+	}
 }
 .simple .section-nav { padding-bottom: 0; }
 
@@ -178,9 +182,11 @@ body.signup {
       color: $signupLinkColor;
       text-transform: uppercase;
       font-size: 12px;
+      float: left;
     }
     > a.sign_out {
     	float:right;
+    	margin-left: 3px;
     }
     > a:hover {
       text-decoration: none;
@@ -223,6 +229,7 @@ body.signup {
 			border:0;
 			padding: 8px;
 			background-color: #000;	
+			float:none;
 		}
 	}
 }
@@ -232,20 +239,26 @@ body.signup {
   clear: both;
   color: white;
   text-align: center;
-  margin-bottom: 30px;
+  margin: 30px 0 45px;
 
   .primary {
     font-size: 42px;
     line-height: 1em;
     text-transform: uppercase;
     color: white;
+    margin-bottom: 10px;
   }
 
   .secondary {
     font-size: 15px;
     line-height: 1.5em;
     color: white;
+    max-width: 790px;
+    margin: 0 auto;
+    font-family: $baseFontFamily;
   }
+  
+  h1, h2 { color: white; }
 }
 
 .video-box {
@@ -265,13 +278,15 @@ body.signup {
   }
 }
 
+
 @media (max-width: 767px) {
   .messaging {
     text-align: left;
-    margin-bottom: 10px;
+    margin: 10px 0;
 
     .primary {
       font-size: 20px;
+      margin-bottom: 5px;
     }
     .secondary {
       font-size: 13px;
@@ -380,6 +395,9 @@ body.signup {
   .action-call > div {
     padding: 0 $gridGutterWidthPhone;
   }
+  #nav .messaging + .action-call {
+  	margin: 0 auto 5px;
+	}
   #learn .action-call { 
     width: 100%;
     font-size: 13px;
@@ -831,27 +849,8 @@ body > header {
   }
 
 
-.messaging {
-  margin: 30px 0 45px;
-  
-  .primary {
-    margin-bottom: 10px;
-  }
-  .secondary {
-    max-width: 790px;
-    margin: 0 auto;
-    font-family: $baseFontFamily;
-  }
-  h1, h2 { color: white; }
-}
-
 @media (max-width: 767px) {
-  body > header {
-    background: #191919 url($transparentNoiseImageData) repeat; 
-  }
-  .messaging {
-  	margin-top:18px;
-  }
+
 }
 
 /* community background */
@@ -867,9 +866,6 @@ body.community > header {
 }
 
 @media (max-width: 767px) {
-  body.community > header {
-    background: #191919 url($transparentNoiseImageData) repeat; 
-  }
 }
 
 /* home-specific styles */
@@ -964,7 +960,16 @@ body.home {
 
 @media (max-width: 767px) {
   body.home  > header {
-    background: #191919 url($transparentNoiseImageData) repeat; 
+    background-color: #191919;
+    background-image: 
+    	url("../images/diagonals-top.png"),
+    	url($transparentNoiseImageData); 
+    background-repeat: 
+    	no-repeat,
+    	repeat;
+  	background-position: 
+    	right 150px,
+    	center bottom;
   }
 
   .home .messaging {
@@ -985,6 +990,18 @@ body.home {
 }
 
 @media (max-width: 480px) {
+  body.home > header {
+    background-color: #191919;
+    background-image: 
+    	url("../images/diagonals-top.png"),
+    	url($transparentNoiseImageData); 
+    background-repeat: 
+    	no-repeat,
+    	repeat;
+  	background-position: 
+    	right 200px,
+    	center bottom;
+  }
   .home .messaging {
     margin: 10px 0 15px 0;
   }
