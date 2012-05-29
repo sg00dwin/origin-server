@@ -470,8 +470,8 @@ mkdir -p /srv/cache/mod_cache
 chmod 750 /srv/cache/mod_cache
 chown apache:apache /srv/cache/mod_cache
 
-# Prevent users from binding to real IP 10 address - BZ821940
-semanage node -a -t node_t -r s0:c1023 -M  255.0.0.0 -p ipv4 10.0.0.0
+# Moved into the proper rhc-ip-prep.sh - Prevent users from binding to real IP 10 address - BZ821940
+#semanage node -a -t node_t -r s0:c1023 -M  255.0.0.0 -p ipv4 10.0.0.0
 
 %files
 %defattr(-,root,root,-)
