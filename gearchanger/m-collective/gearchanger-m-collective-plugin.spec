@@ -5,7 +5,7 @@
 
 Summary:        GearChanger plugin for m-colective service
 Name:           rubygem-%{gemname}
-Version: 0.10.6
+Version: 0.10.7
 Release:        1%{?dist}
 Group:          Development/Languages
 License:        ASL 2.0
@@ -70,6 +70,9 @@ rm -rf %{buildroot}
 %{ruby_sitelib}/%{gemname}.rb
 
 %changelog
+* Tue May 29 2012 Adam Miller <admiller@redhat.com> 0.10.7-1
+- dont call deconfigure on embedded cartridges (rchopra@redhat.com)
+
 * Fri May 25 2012 Adam Miller <admiller@redhat.com> 0.10.6-1
 - Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
   (rchopra@redhat.com)
