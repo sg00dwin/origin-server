@@ -32,7 +32,7 @@ function print_idled {
 
 function get_state {
     source "/var/lib/stickshift/$1/.env/OPENSHIFT_HOMEDIR"
-    cat $OPENSHIFT_HOMEDIR/app/.state
+    cat $OPENSHIFT_HOMEDIR/app-root/runtime/.state
 }
 
 function is_idled {
@@ -105,7 +105,7 @@ service libra stopuser "${uuid}"
 
 # Disable
 # code copied from node/lib/util_ext
-runuser --shell /bin/sh "$uuid" -c "echo idle >$OPENSHIFT_HOMEDIR/app/.state"
+runuser --shell /bin/sh "$uuid" -c "echo idle >$OPENSHIFT_HOMEDIR/app-root/runtime/.state"
 
 # Report to apptegic/nurture
 curl -sk -d "json_data={\"app_uuid\":\"${uuid}\",\"action\":\"idle\"}" -X POST https://${BROKER_HOST}/broker/nurture >/dev/null 2>&1 &
