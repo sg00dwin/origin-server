@@ -93,8 +93,8 @@ module OpenShiftMigration
     FileUtils.mkdir_p approot_runtime_dir
     ownerlist.push approot_runtime_dir
 
-    if File.exists? state_file
-      approot_runtime_state = File.join(approot_runtime_dir, ".state")
+    approot_runtime_state = File.join(approot_runtime_dir, ".state")
+    if (File.exists? state_file)  &&  (not File.exists? approot_runtime_state)
       FileUtils.mv state_file, approot_runtime_state, :force => true
       ownerlist.push approot_runtime_state
     end
