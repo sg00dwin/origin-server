@@ -159,7 +159,10 @@ module OpenShiftMigration
       if File.file?(proxy_conf) && File.directory?(proxy_conf_dir)
         # Don't overwrite backup files when migration is re-run
         target = File.join(target, "#{token}.tgz")
-        output += `tar zcf #{target} #{proxy_conf} #{proxy_conf_dir}` if not File.exist?(target)
+
+        FileUtils.cd http_conf_dir do |d|
+          output += `tar zcf #{target} #{token}.conf ./#{token}` if not File.exist?(target)
+        end
 
         # Some of this logic stolen from deploy-httpd-proxy
         # deploy-httpd-proxy hook gets confused because we're moving conf files around
@@ -180,6 +183,10 @@ module OpenShiftMigration
         if not File.exist? deploy_httpd_proxy
           deploy_httpd_proxy = File.join(cartridge_root_dir, 'abstract',
                                          'info', 'bin', 'deploy_httpd_proxy.sh')
+        end
+
+        FileUtils.cd http_conf_dir do |d|
+          output += `tar zxf #{target} ./#{token}/server_alias-*`
         end
 
         ENV['CART_INFO_DIR'] = File.join(cartridge_root_dir, gear_type, 'info')
