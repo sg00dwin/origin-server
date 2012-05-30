@@ -697,7 +697,9 @@ module GearChanger
             cart = cinst.parent_cart_name
             next if cart==app.name
             begin
-              reply.append source_container.run_cartridge_command(cart, app, gear, "deconfigure", nil, false)
+              if framework_carts.include? cart
+                reply.append source_container.run_cartridge_command(cart, app, gear, "deconfigure", nil, false)
+              end
             rescue Exception => e
               log_debug "DEBUG: The application '#{app.name}' with gear uuid '#{gear.uuid}' is now moved to '#{source_container.id}' but not completely deconfigured from '#{destination_container.id}'"
             end

@@ -2,7 +2,7 @@
 
 Summary:       Multi-tenant cloud management system node tools
 Name:          rhc-node
-Version: 0.93.11
+Version: 0.93.12
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -266,6 +266,13 @@ fi
 /lib64/security/pam_libra.so
 
 %changelog
+* Tue May 29 2012 Adam Miller <admiller@redhat.com> 0.93.12-1
+- Add migration code for previously created scalable apps - bugz 825077.
+  (ramr@redhat.com)
+- Fix for bugz 825077 - mysql added to a scalable app is not accessible via
+  environment variables. OPENSHIFT_DB_HOST is now set correctly.
+  (ramr@redhat.com)
+
 * Tue May 29 2012 Adam Miller <admiller@redhat.com> 0.93.11-1
 - Bug 820223 820338 820325 (dmcphers@redhat.com)
 - re-introduce ~/data in typeless gears (jhonce@redhat.com)

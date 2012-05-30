@@ -3,7 +3,7 @@
 
 Summary:   Li site components
 Name:      rhc-site
-Version: 0.93.8
+Version: 0.93.9
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -116,6 +116,11 @@ rm -rf %{buildroot}
 /bin/touch %{sitedir}/log/production.log
 
 %changelog
+* Tue May 29 2012 Adam Miller <admiller@redhat.com> 0.93.9-1
+- fine tuning position of ui at individual responsive breakpoints, correct
+  utility nav drop menu and alert status message presentation and other ui
+  tweaks (sgoodwin@redhat.com)
+
 * Sun May 27 2012 Dan McPherson <dmcphers@redhat.com> 0.93.8-1
 - add base package concept (dmcphers@redhat.com)
 
