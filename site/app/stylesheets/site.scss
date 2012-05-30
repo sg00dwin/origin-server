@@ -112,6 +112,7 @@ body.signup {
     margin-bottom: 20px;
 	}
 }
+
 .recaptcha table {
   table-layout: auto;
 }
@@ -130,7 +131,7 @@ body.signup {
 		}
   }
   .section-nav.lift-counter {
-    padding-bottom: 15px;
+    padding-bottom: 25px;
 	}
 }
 .simple .section-nav { padding-bottom: 0; }
@@ -396,7 +397,7 @@ body.signup {
     padding: 0 $gridGutterWidthPhone;
   }
   #nav .messaging + .action-call {
-  	margin: 0 auto 5px;
+  	margin: 20px auto 5px;
 	}
   #learn .action-call { 
     width: 100%;
