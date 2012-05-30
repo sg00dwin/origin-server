@@ -82,7 +82,7 @@ module OpenShiftMigration
     approot_data_dir = File.join(approot_dir, "data")
     zoffset = File.join("..", "app-root", "data")
     self.move_dir_and_symlink(data_dir, approot_data_dir, zoffset)
-    Util.set_env_var_value(gear_home, "OPENSHIFT_DATA_DIR", approot_data_dir)
+    Util.set_env_var_value(gear_home, "OPENSHIFT_DATA_DIR", approot_data_dir + "/")
     ownerlist.push approot_data_dir
 
     #  Handle moving ~/$GEAR_NAME/runtime/.state ===>  ~/app-root/runtime/.state
@@ -105,7 +105,7 @@ module OpenShiftMigration
       zoffset = File.join("..", "app-root", "runtime")
       self.move_dir_and_symlink(old_runtime_dir, approot_runtime_dir, zoffset)
       zpathlist.push old_runtime_dir
-      approot_runtime_repo_dir = File.join(approot_runtime_dir, "repo")
+      approot_runtime_repo_dir = File.join(approot_runtime_dir, "repo/")
       Util.set_env_var_value(gear_home, "OPENSHIFT_REPO_DIR",
                              approot_runtime_repo_dir)
     end
