@@ -571,9 +571,9 @@ module GearChanger
         gi.component_instances.each do |ci_name|
           cinst = app.comp_instance_map[ci_name]
           cart = cinst.parent_cart_name
-          next if cart==app.name
-          idle,leave_stopped, quota_blocks, quota_files = get_cart_status(app, gear, cart)
-          state_map[ci_name] = [idle,leave_stopped]
+          next if cart == app.name
+          idle, leave_stopped, quota_blocks, quota_files = get_cart_status(app, gear, cart)
+          state_map[ci_name] = [idle, leave_stopped]
         end
 
         begin
@@ -584,11 +584,11 @@ module GearChanger
             # rsync gear with destination container
             rsync_destination_container(app, gear, destination_container, destination_district_uuid, quota_blocks, quota_files, keep_uid)
 
-            # now execute 'move'/'expost-port' hooks on the new nest of the components
+            # now execute 'move'/'expose-port' hooks on the new nest of the components
             gi.component_instances.each do |ci_name|
               cinst = app.comp_instance_map[ci_name]
               cart = cinst.parent_cart_name
-              next if cart==app.name
+              next if cart == app.name
               idle, leave_stopped = state_map[ci_name]
               if embedded_carts.include? cart 
                 if app.scalable and cart.include? app.proxy_cartridge
@@ -634,7 +634,7 @@ module GearChanger
             gi.component_instances.each do |ci_name|
               cinst = app.comp_instance_map[ci_name]
               cart = cinst.parent_cart_name
-              next if cart==app.name
+              next if cart == app.name
               if framework_carts.include? cart
                 reply.append destination_container.send(:run_cartridge_command, cart, app, gear, "remove-httpd-proxy", nil, false)
               end
@@ -646,9 +646,9 @@ module GearChanger
             raise
           end
         rescue Exception => e
-          # post_move source
           begin
             unless keep_uid
+              # post_move source
               gi.component_instances.each do |ci_name|
                 cinst = app.comp_instance_map[ci_name]
                 cart = cinst.parent_cart_name
