@@ -32,8 +32,9 @@
   max-height: 35px;
 }
 
-.links > span { 
-  margin-right: 8px; 
+.links.inline a {
+  text-transform: capitalize;
+  margin-right: 30px;
 }
 
 .og-mission,
