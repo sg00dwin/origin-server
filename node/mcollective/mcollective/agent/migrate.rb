@@ -33,9 +33,12 @@ module OpenShiftMigration
     "s0:c#{tier},c#{ord + tier}"
   end
 
-  def self.secure_user_files(uuid, grp, perms, mcs_level, pathlist)
+  def self.secure_user_files(uuid, grp, perms, pathlist)
     FileUtils.chown_R uuid, grp, pathlist
     FileUtils.chmod_R perms, pathlist
+  end
+
+  def self.relabel_file_security_context(mcs_level, pathlist)
     %x[ chcon -t libra_var_lib_t -l #{mcs_level} -R #{pathlist.join " "} ]
   end
 
@@ -61,42 +64,51 @@ module OpenShiftMigration
 
   def self.migrate_to_appdir(uuid, gear_home)
     zpathlist = []
+    ownerlist = []
     grp = uuid
     mcs_level = self.get_mcs_level(uuid)
 
+    # Variables.
     gear_name = Util.get_env_var_value(gear_home, "OPENSHIFT_GEAR_NAME")
     app_name = Util.get_env_var_value(gear_home, "OPENSHIFT_APP_NAME")
+
+    # Gear and app-root dir.
     gear_dir = File.join(gear_home, gear_name)
-    app_dir = File.join(gear_home, "app")
+    approot_dir = File.join(gear_home, "app-root")
 
-    FileUtils.mkdir_p app_dir
-    zpathlist.push app_dir
+    FileUtils.mkdir_p approot_dir
+    zpathlist.push approot_dir
 
+    #  Handle moving ~/$GEAR_NAME/data ===>  ~/app-root/data
     data_dir = File.join(gear_home, gear_name, "data")
-    app_data_dir = File.join(app_dir, "data")
-    zoffset = File.join("..", "app", "data")
-    self.move_dir_and_symlink(data_dir, app_data_dir, zoffset)
-    Util.set_env_var_value(gear_home, "OPENSHIFT_DATA_DIR", app_data_dir)
-    zpathlist.push app_data_dir
+    approot_data_dir = File.join(approot_dir, "data")
+    zoffset = File.join("..", "app-root", "data")
+    self.move_dir_and_symlink(data_dir, approot_data_dir, zoffset)
+    Util.set_env_var_value(gear_home, "OPENSHIFT_DATA_DIR", approot_data_dir)
+    ownerlist.push approot_data_dir
 
-    # Needed until quickstarts refactored to not use relative directories
-    FileUtils.ln_s 'app/data', File.join(gear_home, 'data'), :verbose => true
-
+    #  Handle moving ~/$GEAR_NAME/runtime/.state ===>  ~/app-root/runtime/.state
     state_file = File.join(gear_home, gear_name, "runtime", ".state")
-    app_state_file = File.join(app_dir, ".state")
+    approot_runtime_dir = File.join(approot_dir, "runtime")
+    FileUtils.mkdir_p approot_runtime_dir
+    ownerlist.push approot_runtime_dir
 
     if File.exists? state_file
-      FileUtils.mv state_file, app_state_file, :force => true
-      zpathlist.push app_state_file
+      approot_runtime_state = File.join(approot_runtime_dir, ".state")
+      FileUtils.mv state_file, approot_runtime_state, :force => true
+      ownerlist.push approot_runtime_state
     end
 
     #  Move the old repo to the new location and create symlinks
     #  for compatibility to existing apps.
+    #  Handle moving ~/$GEAR_NAME/runtime/repo ===>  ~/app-root/runtime/repo
     old_runtime_dir = File.join(gear_home, gear_name, "runtime")
     if File.exists? old_runtime_dir
       old_runtime_repo_dir = File.join(old_runtime_dir, "repo")
-      app_repo_dir = File.join(app_dir, "repo")
-      self.move_dir_and_symlink(old_runtime_repo_dir, app_repo_dir)
+      approot_runtime_repo_dir = File.join(approot_runtime_dir, "repo")
+      zoffset = File.join("..", "..", "app-root", "runtime", "repo")
+      self.move_dir_and_symlink(old_runtime_repo_dir, approot_runtime_repo_dir, 
+                                zoffset)
       if REMOVE_GEAR_RUNTIME_DIR
         FileUtils.rm_f old_runtime_repo_dir
         self.remove_dir_if_empty(old_runtime_dir)
@@ -104,12 +116,14 @@ module OpenShiftMigration
         # If we want to keep the old runtime dir around.
         zpathlist.push old_runtime_repo_dir
       end
-      Util.set_env_var_value(gear_home, "OPENSHIFT_REPO_DIR", app_repo_dir)
+      Util.set_env_var_value(gear_home, "OPENSHIFT_REPO_DIR",
+                             approot_runtime_repo_dir)
     end
 
+    #  Handle linking ~/$GEAR_NAME/repo ===>  ~/app-root/runtime/repo
     gear_repo_dir = File.join(gear_home, gear_name, "repo")
     if (gear_name != app_name)  &&  (File.symlink? gear_repo_dir)
-      zoffset = File.join("..", "app", "repo")
+      zoffset = File.join("..", "app-root", "runtime", "repo")
       FileUtils.rm_f gear_repo_dir
       FileUtils.ln_sf zoffset, gear_repo_dir
       zpathlist.push gear_repo_dir
@@ -121,8 +135,7 @@ module OpenShiftMigration
       gnamedir = File.join(gear_home, gear_name)
       if not File.symlink? gnamedir
         FileUtils.mv File.join(gnamedir, "ci"), cart_dir, :verbose => true
-        FileUtils.mv File.join(gnamedir, gear_name + "_ctl.sh"),
-                               File.join(cart_dir), :verbose => true
+        FileUtils.mv Dir.glob(File.join(gnamedir, "*.sh")), cart_dir, :verbose => true
         FileUtils.rm_rf gnamedir
         FileUtils.ln_sf gear_type, gnamedir
       end
@@ -131,8 +144,11 @@ module OpenShiftMigration
       self.move_dir_and_symlink(File.join(gear_home, gear_name), cart_dir,
                                 gear_type)
     end 
+    zpathlist.push cart_dir
 
-    self.secure_user_files(uuid, grp, 0750, mcs_level, zpathlist)
+    #  Secure and relabel contexts.
+    self.secure_user_files(uuid, grp, 0750, ownerlist)
+    self.relabel_file_security_context(mcs_level, zpathlist)
   end
 
   # 1) Save/Destroy current proxy configuration
