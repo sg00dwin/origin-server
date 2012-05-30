@@ -6,8 +6,6 @@ require 'parseconfig'
 require 'pp'
 require File.dirname(__FILE__) + "/migrate-util"
 
-REMOVE_GEAR_RUNTIME_DIR = false
-
 module OpenShiftMigration
 
   def self.get_config_value(key)
@@ -103,32 +101,16 @@ module OpenShiftMigration
     #  for compatibility to existing apps.
     #  Handle moving ~/$GEAR_NAME/runtime/repo ===>  ~/app-root/runtime/repo
     old_runtime_dir = File.join(gear_home, gear_name, "runtime")
-    old_runtime_repo_dir = File.join(old_runtime_dir, "repo")
-    if (not File.symlink? old_runtime_dir)  &&  (not File.symlink? old_runtime_repo_dir)
+    if not File.symlink? old_runtime_dir
+      zoffset = File.join("..", "app-root", "runtime")
+      self.move_dir_and_symlink(old_runtime_dir, approot_runtime_dir, zoffset)
+      zpathlist.push old_runtime_dir
       approot_runtime_repo_dir = File.join(approot_runtime_dir, "repo")
-      zoffset = File.join("..", "..", "app-root", "runtime", "repo")
-      self.move_dir_and_symlink(old_runtime_repo_dir, approot_runtime_repo_dir, 
-                                zoffset)
-      if REMOVE_GEAR_RUNTIME_DIR
-        FileUtils.rm_f old_runtime_repo_dir
-        self.remove_dir_if_empty(old_runtime_dir)
-      else
-        # If we want to keep the old runtime dir around.
-        zpathlist.push old_runtime_repo_dir
-      end
       Util.set_env_var_value(gear_home, "OPENSHIFT_REPO_DIR",
                              approot_runtime_repo_dir)
     end
 
-    #  Handle linking ~/$GEAR_NAME/repo ===>  ~/app-root/runtime/repo
-    gear_repo_dir = File.join(gear_home, gear_name, "repo")
-    if (gear_name != app_name)  &&  (File.symlink? gear_repo_dir)
-      zoffset = File.join("..", "app-root", "runtime", "repo")
-      FileUtils.rm_f gear_repo_dir
-      FileUtils.ln_sf zoffset, gear_repo_dir
-      zpathlist.push gear_repo_dir
-    end
-
+    #  Handle moving ~/$GEAR_NAME ===>  ~/$CART_NAME
     gear_type = Util.get_env_var_value(gear_home, "OPENSHIFT_GEAR_TYPE")
     cart_dir = File.join(gear_home, gear_type)
     if gear_type == "mysql-5.1"
@@ -139,12 +121,19 @@ module OpenShiftMigration
         FileUtils.rm_rf gnamedir
         FileUtils.ln_sf gear_type, gnamedir
       end
-      zpathlist.pop if zpathlist.include? gear_repo_dir
     else
       self.move_dir_and_symlink(File.join(gear_home, gear_name), cart_dir,
                                 gear_type)
     end 
     zpathlist.push cart_dir
+
+    #  Handle linking ~/$CART_NAME/repo ===>  ~/app-root/runtime/repo
+    cart_repo_link = File.join(cart_dir, "repo")
+    if File.symlink? cart_repo_link
+      FileUtils.rm_f cart_repo_link
+      zoffset = File.join("..", "app-root", "runtime", "repo")
+      FileUtils.ln_sf zoffset, cart_repo_link
+    end
 
     #  Secure and relabel contexts.
     self.secure_user_files(uuid, grp, 0750, ownerlist)
@@ -179,6 +168,12 @@ module OpenShiftMigration
         FileUtils.remove_file(proxy_conf, :verbose => true)
         FileUtils.remove_dir(proxy_conf_dir, :verbose => true)
         FileUtils.makedirs(proxy_conf_dir, :verbose => true)
+
+        deploy_httpd_config = File.join(cartridge_root_dir, gear_type,
+                                        'info', 'bin', 'deploy_httpd_config.sh')
+        if File.exist? deploy_httpd_config
+           output += `#{deploy_httpd_config} #{gear_name} #{uuid} #{ip} 2>&1`
+        end
 
         deploy_httpd_proxy = File.join(cartridge_root_dir, gear_type,
                                        'info', 'bin', 'deploy_httpd_proxy.sh')
@@ -237,6 +232,8 @@ module OpenShiftMigration
 
         env_echos = []
 
+        self.migrate_to_appdir(uuid, gear_home)
+
         begin
           output += self.migrate_http_proxy(uuid, namespace, version,
                                             gear_name, gear_home, gear_type,
@@ -245,7 +242,6 @@ module OpenShiftMigration
           output += "\n#{e.message}\n#{e.backtrace}\n"
         end
 
-        self.migrate_to_appdir(uuid, gear_home)
 
         # Fix up incorrect DB_HOST setting for mysql added to scalable apps.
         output += self.fix_dbhost_for_scaleable_apps(gear_home)
