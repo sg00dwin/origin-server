@@ -473,15 +473,6 @@ module GearChanger
       end
       
 
-      def move_scalable_app(app, destination_container, destination_district_uuid=nil, allow_change_district=false, node_profile=nil)
-        reply = ResultIO.new
-        all_gears = app.gears
-        all_gears.each { |gear|
-          reply.append move_gear(app, gear, destination_container, destination_district_uuid, allow_change_district, node_profile) if gear.server_identity != destination_container.id
-        }
-        reply
-      end
-
       def move_gear_post(app, gear, destination_container, state_map)
         reply = ResultIO.new
         source_container = gear.container
@@ -542,6 +533,12 @@ module GearChanger
             do_with_retry('stop') do
               reply.append source_container.stop(app, gear, cart)
             end
+            if framework_carts.include? cart
+              log_debug "DEBUG: Force stopping existing app cartridge '#{cart}' before moving"
+              do_with_retry('force-stop') do
+                reply.append source_container.force_stop(app, gear, cart)
+              end
+            end
           end
           # execute pre_move
           if embedded_carts.include? cart 
@@ -571,9 +568,9 @@ module GearChanger
         gi.component_instances.each do |ci_name|
           cinst = app.comp_instance_map[ci_name]
           cart = cinst.parent_cart_name
-          next if cart==app.name
-          idle,leave_stopped, quota_blocks, quota_files = get_cart_status(app, gear, cart)
-          state_map[ci_name] = [idle,leave_stopped]
+          next if cart == app.name
+          idle, leave_stopped, quota_blocks, quota_files = get_cart_status(app, gear, cart)
+          state_map[ci_name] = [idle, leave_stopped]
         end
 
         begin
@@ -584,11 +581,11 @@ module GearChanger
             # rsync gear with destination container
             rsync_destination_container(app, gear, destination_container, destination_district_uuid, quota_blocks, quota_files, keep_uid)
 
-            # now execute 'move'/'expost-port' hooks on the new nest of the components
+            # now execute 'move'/'expose-port' hooks on the new nest of the components
             gi.component_instances.each do |ci_name|
               cinst = app.comp_instance_map[ci_name]
               cart = cinst.parent_cart_name
-              next if cart==app.name
+              next if cart == app.name
               idle, leave_stopped = state_map[ci_name]
               if embedded_carts.include? cart 
                 if app.scalable and cart.include? app.proxy_cartridge
@@ -634,9 +631,13 @@ module GearChanger
             gi.component_instances.each do |ci_name|
               cinst = app.comp_instance_map[ci_name]
               cart = cinst.parent_cart_name
-              next if cart==app.name
+              next if cart == app.name
               if framework_carts.include? cart
-                reply.append destination_container.send(:run_cartridge_command, cart, app, gear, "remove-httpd-proxy", nil, false)
+                begin
+                  reply.append destination_container.send(:run_cartridge_command, cart, app, gear, "remove-httpd-proxy", nil, false)
+                rescue Exception => e
+                  log_debug "DEBUG: Remove httpd proxy with cart '#{cart}' failed on '#{destination_container.id}'  - gear: '#{gear.name}', app: '#{app.name}'"
+                end
               end
             end
             # deconfigure destination
@@ -646,9 +647,9 @@ module GearChanger
             raise
           end
         rescue Exception => e
-          # post_move source
           begin
             unless keep_uid
+              # post_move source
               gi.component_instances.each do |ci_name|
                 cinst = app.comp_instance_map[ci_name]
                 cart = cinst.parent_cart_name
@@ -724,7 +725,7 @@ module GearChanger
               destination_district_uuid = source_district_uuid unless source_district_uuid == 'NONE'
             end
           end
-          destination_container = MCollectiveApplicationContainerProxy.find_available_impl(app.gear.node_profile, destination_district_uuid)
+          destination_container = MCollectiveApplicationContainerProxy.find_available_impl(gear.node_profile, destination_district_uuid)
           log_debug "DEBUG: Destination container: #{destination_container.id}"
           destination_district_uuid = destination_container.get_district_uuid
         else

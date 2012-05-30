@@ -18,6 +18,7 @@ require 'hub'
 require 'pp'
 require 'net/https'
 require 'getoptlong'
+require 'time'
 
 def usage
     puts <<USAGE
@@ -64,12 +65,17 @@ include Hub
 # Global configuration
 USER = "openshift"
 REPO = "crankcase"
-JOB_URI = "https://ci.dev.openshift.redhat.com/jenkins/job/test_pull_request"
+JENKINS = "https://ci.dev.openshift.redhat.com/jenkins"
+CHECK_URI = URI("#{JENKINS}/job/libra_check/lastCompletedBuild/api/json")
+JOB_URI = "#{JENKINS}/job/test_pull_request"
 BUILD_URI = URI("#{JOB_URI}/buildWithParameters?token=libra1")
+JOB_API_URI = URI("#{JENKINS}/job/test_pull_request/api/json")
 JOB_PARAM_1 = "CRANKCASE_PULL_ID"
 JOB_PARAM_2 = "COMMENT_ID"
 TEAM_RH = "168397"
 TEST_PREFIX = "Test Results:"
+WAITING_PREFIX = "Test Results: Waiting"
+RUNNING_PREFIX = "Test Results: Running"
 
 # Set proxy values to nil if you don't want to use a proxy
 #PROXY_HOST = 'file.rdu.redhat.com'
@@ -81,10 +87,16 @@ PROXY_PORT = nil
 # require a local git project
 module Hub
   class GitHubAPI
-    def list_pullrequests
+    def list_pull_requests
       res = get "https://api.github.com/repos/#{USER}/#{REPO}/pulls" 
       res.error! unless res.success?
       res.data
+    end
+
+    def is_mergeable? id
+      res = get "https://api.github.com/repos/#{USER}/#{REPO}/pulls/%s" % id
+      res.error! unless res.success?
+      res.data['mergeable']
     end
 
     def get_comments issue_id
@@ -101,24 +113,36 @@ module Hub
     end
 
     def update_comment comment_id, comment
+      $stderr.puts "Updating comment ##{comment_id} with #{comment}"
       params = { :body => comment }
       res = post "https://api.github.com/repos/#{USER}/#{REPO}/issues/comments/%s" % [comment_id], params
       res.error! unless res.success?
       res.data
     end
 
-    def is_reviewed? issue_id
-      res = get "https://api.github.com/repos/#{USER}/#{REPO}/issues/%s/comments" % issue_id
-      res.error! unless res.success?
-      is_reviewed = false
-      res.data.each do |comment|
-        if comment['body'] =~ /#{TEST_PREFIX}/
-          is_reviewed = true
-          break
+    #
+    # This method determines if the pull request has already been tested
+    # or is otherwise under review.  This could occur from the request being
+    # marked as tests pending or from a pass / fail result.
+    #
+    def is_reviewed? issue_id, issue_updated_at
+      get_comments(issue_id).each do |comment|
+        id = comment["id"]
+        case comment['body']
+          when /#{WAITING_PREFIX}/
+            # If it's waiting for the build, just return false
+            return false, id
+          when /#{RUNNING_PREFIX}/
+            # If the tests are already running, just return true
+            return true, id
+          when /#{TEST_PREFIX}/
+            # Otherwise, see if the test results need to be updated
+            comment_updated_at = Time.parse(comment["updated_at"])
+            return comment_updated_at > issue_updated_at, id
         end
       end
 
-      return is_reviewed
+      return false, nil
     end
 
     # Verifies the user is part of Team Red Hat
@@ -143,45 +167,104 @@ def create_client
 end
 
 #
-# Submits all untested pull requests to Jenkins for testing
+# Submits pull requests to Jenkins for testing
 #
 def test_pull_requests
-  @api_client.list_pullrequests.each do |req|
+  @api_client.list_pull_requests.each do |req|
     id = req['number']
     login = req['user']['login']
+    mergeable = @api_client.is_mergeable? id
+    req_updated_at = Time.parse(req["updated_at"])
+    $stderr.puts "Analyzing pull request ##{id}"
+
+    # Skip if it's not mergeable
+    $stderr.puts "Mergeable #{mergeable}"
+    next unless mergeable
 
     # Skip if it's already been reviewed
-    if @api_client.is_reviewed? id
-      puts "Skipping pull request ##{id} - already being tested"
-      next
-    end
+    reviewed, comment_id = @api_client.is_reviewed? id, req_updated_at
+    $stderr.puts "Pull request ##{id} - reviewed (#{reviewed} / comment #{comment_id})"
+    next if reviewed
 
     # Verify user is from the Red Hat Team
-    if @api_client.user_trusted? login
-      puts "User trusted #{login}"
-    else
-      puts "Skipping pull request ##{id} - user #{login} not on Team Red Hat"
-      next
-    end
+    next unless @api_client.user_trusted? login
 
-    # Comment on the pull request that it's under test review
-    print "Updating comments to mark request as tests pending..."
-    result = @api_client.add_comment id, "#{TEST_PREFIX} Pending..."
-    comment_id = result["id"]
-    puts "Done"
-
-    # Call Jenkins with the commit id
-    puts "Submitting Jenkins job for pull request ##{id}"
-    proxy = Net::HTTP::Proxy(PROXY_HOST, PROXY_PORT)
-    http_session = proxy.new(BUILD_URI.host, BUILD_URI.port)
-    http_session.use_ssl = true
-    http_session.verify_mode = OpenSSL::SSL::VERIFY_NONE
-    http_session.start do |http|
-      request = Net::HTTP::Get.new BUILD_URI.request_uri + "&#{JOB_PARAM_1}=#{id}&#{JOB_PARAM_2}=#{comment_id}"
-      response = http.request request
-      if response.code == '302'
-        puts "Test job successfully submitted"
+    # Only test if the build is passing
+    if is_build_passing?
+      unless comment_id
+        # Create an initial comment so Jenkins has an id to update
+        $stderr.puts "Creating an initial comment for Jenkins"
+        result = @api_client.add_comment id, "#{TEST_PREFIX} Submitting tests"
+        comment_id = result["id"]
       end
+
+      # Call Jenkins with the commit id
+      new_job_url = submit_jenkins_job id, comment_id
+
+      # Update that comment with the Jenkins information
+      result = @api_client.update_comment comment_id, "#{TEST_PREFIX} Running (#{new_job_url})"
+    else
+      # Comment that the pull request is waiting for the build to stabilize
+      result = @api_client.add_comment id, "#{TEST_PREFIX} Waiting for stable build"
+    end
+  end
+end
+
+def jenkins_session
+  proxy = Net::HTTP::Proxy(PROXY_HOST, PROXY_PORT)
+  http_session = proxy.new(CHECK_URI.host, CHECK_URI.port)
+  http_session.use_ssl = true
+  http_session.verify_mode = OpenSSL::SSL::VERIFY_NONE
+  http_session.start do |http|
+    yield http
+  end
+end
+
+def submit_jenkins_job pull_id, comment_id
+  # First, get the next jenkins build number
+  next_build_num = get_next_build
+
+  # Now submit the Jenkins job
+  jenkins_session do |http|
+    request = Net::HTTP::Get.new BUILD_URI.request_uri + "&#{JOB_PARAM_1}=#{pull_id}&#{JOB_PARAM_2}=#{comment_id}"
+    response = http.request request
+    if response.kind_of? Net::HTTPFound
+      $stderr.puts "Successfully submitted job for pull request ##{pull_id} and comment ##{comment_id}"
+
+      # Block until Jenkins actually increments the build number (this isn't transactional)
+      $stderr.puts "Now waiting until build number increments..."
+      while get_next_build == next_build_num
+        sleep 1
+      end
+
+      # Now you can safely return with the submission registered
+      return JOB_URI + "/#{next_build_num}/"
+    else
+      raise "Jenkins job submission failed for pull request #{pull_id}"
+    end
+  end
+end
+
+def is_build_passing?
+  jenkins_session do |http|
+    request = Net::HTTP::Get.new CHECK_URI.request_uri
+    response = http.request request
+    if response.kind_of? Net::HTTPSuccess
+      return JSON.parse(response.body)["result"] == "SUCCESS"
+    else
+      raise "Jenkins connection error"
+    end
+  end
+end
+
+def get_next_build
+  jenkins_session do |http|
+    request = Net::HTTP::Get.new JOB_API_URI.request_uri
+    response = http.request request
+    if response.kind_of? Net::HTTPSuccess
+      JSON.parse(response.body)["nextBuildNumber"].to_i
+    else
+      raise "Jenkins connection error"
     end
   end
 end
@@ -195,7 +278,7 @@ def update_results comment_id, passed, job_id
   puts "Comment updated"
 end
 
-# Create a client no matter what
+# Create the hub client
 create_client
 
 # Determine how the script was called
