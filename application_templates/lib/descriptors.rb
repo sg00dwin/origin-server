@@ -69,7 +69,11 @@ def template_command(params)
   cmd
 end
 
-
+def deploy_script
+  File.expand_path(
+    File.join(templates_dir,"deploy.rb")
+  )
+end
 
 class ApplicationTemplate
   attr_accessor :name, :dir
@@ -79,31 +83,31 @@ class ApplicationTemplate
     @dir = dir_for(@name)
   end
 
-  def target
-    file_for(:target)
+  def target(relative = false)
+    file_for(:target,relative)
   end
 
-  def descriptor
-    file_for(:descriptor)
+  def descriptor(relative = false)
+    file_for(:descriptor, relative)
   end
 
-  def metadata
-    file_for(:metadata)
+  def metadata(relative = false)
+    file_for(:metadata, relative)
   end
 
-  def script
-    file_for(:script)
+  def script(relative = false)
+    file_for(:script, relative)
   end
 
-  def save(type,data)
-    file = file_for(type)
+  def save(type,data,relative = false)
+    file = file_for(type,relative)
     mode = (type == :script ? 0644 : 0755)
     File.open(file,'w',mode) do |f|
       f.write data
     end
   end
 
-  def file_for(type)
+  def file_for(type,relative = false)
     filename = case type
                when :target
                  'target.yml'
@@ -116,22 +120,34 @@ class ApplicationTemplate
                else
                  return nil
                end
-    File.expand_path(File.join(@dir,filename))
+    if relative
+      filename
+    else
+      File.expand_path(File.join(@dir,filename))
+    end
   end
 
-  def template_function
+  def template_function(files = true, relative = true)
     # Parameters to pass to script
     parameters = {
       :command => 'add',
-      :descriptor => descriptor,
-      :metadata => metadata
     }
+
+    # Don't include files for when we're creating the devenv script
+    if files
+      parameters.merge!({
+        :descriptor => descriptor(relative),
+        :metadata => metadata(relative)
+      })
+    end
 
     # Parameters from our targets.yml file
     info = YAML.load_file(target)
-    parameters[:named] = info[:display_name]
-    parameters[:cost] = info[:cost]
-    parameters[:tags] = (info[:tags] || []).map{|x| x.to_s}.join(',')
+    parameters.merge!({
+      :named => info[:display_name],
+      :cost => info[:cost],
+      :tags => (info[:tags] || []).map{|x| x.to_s}.join(',')
+    })
 
     # Parameters from metadata
     File.open(metadata) do |f|
