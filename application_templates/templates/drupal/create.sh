@@ -1,1 +1,1 @@
-rhc-admin-ctl-template --named 'Drupal' --metadata 'drupal.json' --git-url 'git://github.com/openshift/drupal-example.git' --command 'add' --cost '1' --descriptor 'drupal.yaml' --tags 'php,drupal,wiki,framework'
+rhc-admin-ctl-template --cost '1' --git-url '' --tags 'php,drupal,wiki,framework' --descriptor 'descriptor.yaml' --command 'add' --metadata 'metadata.json' --named 'Drupal'
