@@ -7,10 +7,9 @@ namespace :descriptors do
     domain = client.domains.first
 
     unless domain
-      puts "Must have a domain to create applications...will only use existing descriptors"
+      puts "Must have a domain to create applications...exiting"
+      exit
     end
-
-    deploy_opts = {}
 
     application_templates.each do |template|
       name = template.name
@@ -29,8 +28,6 @@ namespace :descriptors do
       descriptor = template.descriptor
       if File.exists?(descriptor)
         puts "Descriptor already exists for #{name}...reusing"
-      elsif !domain
-        puts "No descriptor exists, and no domain exists, so we cannot create...skipping"
       else
         puts "Creating application #{name}"
 
@@ -60,26 +57,6 @@ namespace :descriptors do
 
       # Dump the metadata JSON
       template.save(:metadata,JSON.pretty_generate(opts[:metadata]))
-
-      # Save the create script
-      template.save(:script, template.template_function)
-
-      # Save script information for deploy script
-      to_save = {
-        name => {
-          :script => template.template_function(false),
-          :metadata => opts[:metadata],
-          :descriptor => YAML.load_file(template.descriptor)
-        }
-      }
-
-      deploy_opts.merge!(to_save)
-    end
-
-    FileUtils.cp "#{deploy_script}.template", deploy_script
-
-    File.open(deploy_script,'a') do |f|
-      f.write YAML.dump deploy_opts
     end
   end
 end
