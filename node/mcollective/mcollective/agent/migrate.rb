@@ -103,8 +103,8 @@ module OpenShiftMigration
     #  for compatibility to existing apps.
     #  Handle moving ~/$GEAR_NAME/runtime/repo ===>  ~/app-root/runtime/repo
     old_runtime_dir = File.join(gear_home, gear_name, "runtime")
-    if File.exists? old_runtime_dir
-      old_runtime_repo_dir = File.join(old_runtime_dir, "repo")
+    old_runtime_repo_dir = File.join(old_runtime_dir, "repo")
+    if (not File.symlink? old_runtime_dir)  &&  (not File.symlink? old_runtime_repo_dir)
       approot_runtime_repo_dir = File.join(approot_runtime_dir, "repo")
       zoffset = File.join("..", "..", "app-root", "runtime", "repo")
       self.move_dir_and_symlink(old_runtime_repo_dir, approot_runtime_repo_dir, 
