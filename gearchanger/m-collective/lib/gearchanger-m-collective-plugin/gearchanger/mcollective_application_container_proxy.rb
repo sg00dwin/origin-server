@@ -622,6 +622,20 @@ module GearChanger
             reply.append move_gear_post(app, gear, destination_container, state_map)
             app.elaborate_descriptor
             app.execute_connections
+            if app.scalable
+              # execute connections restart the haproxy service, so stop it explicitly if needed
+              app.start_order.reverse.each do |ci_name|
+                next if not gi.component_instances.include? ci_name
+                cinst = app.comp_instance_map[ci_name]
+                cart = cinst.parent_cart_name
+                next if cart==app.name
+                idle, leave_stopped = state_map[ci_name]
+                if leave_stopped and cart.include? app.proxy_cartridge
+                  log_debug "DEBUG: Explicitly stopping cartridge '#{cart}' in '#{app.name}' after move on #{destination_container.id}"
+                  reply.append destination_container.stop(app, gear, cart)
+                end
+              end
+            end
             app.save
 
           rescue Exception =>e
