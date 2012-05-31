@@ -32,7 +32,7 @@ __END__
 ---
 wordpress:
   :script: rhc-admin-ctl-template --command 'add' --named 'WordPress' --cost '1' --tags
-    'php,wordpress,blog,framework' --git-url 'git://github.com/openshift/wordpress-example.git'
+    'php,wordpress,blog,framework,experimental' --git-url 'git://github.com/openshift/wordpress-example.git'
   :metadata:
     :git_url: git://github.com/openshift/wordpress-example.git
     :git_project_url: http://github.com/openshift/wordpress-example
@@ -65,7 +65,7 @@ wordpress:
     Version: '0.0'
 drupal:
   :script: rhc-admin-ctl-template --command 'add' --named 'Drupal' --cost '1' --tags
-    'php,drupal,wiki,framework' --git-url 'git://github.com/openshift/drupal-example.git'
+    'php,drupal,wiki,framework,experimental' --git-url 'git://github.com/openshift/drupal-example.git'
   :metadata:
     :git_url: git://github.com/openshift/drupal-example.git
     :git_project_url: http://github.com/openshift/drupal-example
@@ -99,7 +99,7 @@ drupal:
     Version: '0.0'
 rails:
   :script: rhc-admin-ctl-template --command 'add' --named 'Ruby on Rails' --cost '1'
-    --tags 'ruby,rails,framework' --git-url 'git://github.com/openshift/rails-example.git'
+    --tags 'ruby,rails,framework,experimental' --git-url 'git://github.com/openshift/rails-example.git'
   :metadata:
     :git_url: git://github.com/openshift/rails-example.git
     :git_project_url: http://github.com/openshift/rails-example
@@ -133,7 +133,7 @@ rails:
     Version: '0.0'
 kitchensink:
   :script: rhc-admin-ctl-template --command 'add' --named 'Kitchensink Example' --cost
-    '1' --tags 'java,jboss,framework' --git-url 'git://github.com/openshift/kitchensink-example.git'
+    '1' --tags 'java,jboss,framework,experimental' --git-url 'git://github.com/openshift/kitchensink-example.git'
   :metadata:
     :git_url: git://github.com/openshift/kitchensink-example.git
     :git_project_url: http://github.com/openshift/kitchensink-example

@@ -6,6 +6,7 @@
 - :wordpress
 - :blog
 - :framework
+- :experimental
 :embed:
 - mysql-5.1
 :metadata:
