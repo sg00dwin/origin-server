@@ -2,7 +2,7 @@
 
 Summary:       Multi-tenant cloud management system node tools
 Name:          rhc-node
-Version: 0.93.12
+Version: 0.93.13
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -266,6 +266,20 @@ fi
 /lib64/security/pam_libra.so
 
 %changelog
+* Wed May 30 2012 Adam Miller <admiller@redhat.com> 0.93.13-1
+- Add support for http alias (jhonce@redhat.com)
+- Fix bugz 825792 -- OPENSHIFT_{DATA,REPO}_DIR needs a trailing /.
+  (ramr@redhat.com)
+- Typeless gears migration fixes for new app-root updates. (ramr@redhat.com)
+- Merge branch 'US2109' (rmillner@redhat.com)
+- Fix to make inline ss calls multithreaded. (mpatel@redhat.com)
+- Fix migrate rerun issues - check runtime/repo instead of runtime.
+  (ramr@redhat.com)
+- Bug fix to handle case when migrate is rerun. (ramr@redhat.com)
+- Migrate work for typeless gears. (ramr@redhat.com)
+- Merge branch 'master' into US2109 (rmillner@redhat.com)
+- TA2182 Latest location for .state file (jhonce@redhat.com)
+
 * Tue May 29 2012 Adam Miller <admiller@redhat.com> 0.93.12-1
 - Add migration code for previously created scalable apps - bugz 825077.
   (ramr@redhat.com)
