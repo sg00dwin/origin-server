@@ -1,1 +1,1 @@
-rhc-admin-ctl-template --cost '1' --git-url '' --tags 'ruby,rails,framework' --descriptor 'descriptor.yaml' --command 'add' --metadata 'metadata.json' --named 'Ruby on Rails'
+rhc-admin-ctl-template --command 'add' --descriptor 'descriptor.yaml' --metadata 'metadata.json' --named 'Ruby on Rails' --cost '1' --tags 'ruby,rails,framework' --git-url 'git://github.com/openshift/rails-example.git'

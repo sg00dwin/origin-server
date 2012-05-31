@@ -1,1 +1,1 @@
-rhc-admin-ctl-template --cost '1' --git-url '' --tags 'php,wordpress,blog,framework' --descriptor 'descriptor.yaml' --command 'add' --metadata 'metadata.json' --named 'WordPress'
+rhc-admin-ctl-template --command 'add' --descriptor 'descriptor.yaml' --metadata 'metadata.json' --named 'WordPress' --cost '1' --tags 'php,wordpress,blog,framework' --git-url 'git://github.com/openshift/wordpress-example.git'

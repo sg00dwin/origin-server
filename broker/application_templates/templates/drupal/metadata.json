@@ -1,8 +1,8 @@
 {
-  "version": 7.7,
-  "website": "http://drupal.org/",
   "git_url": "git://github.com/openshift/drupal-example.git",
-  "description": "An open source content management platform written in PHP powering millions of websites and applications. It is built, used, and supported by an active and diverse community of people around the world.\n",
+  "git_project_url": "http://github.com/openshift/drupal-example",
+  "website": "http://drupal.org/",
+  "version": 7.7,
   "license": "gpl2+",
-  "git_project_url": "http://github.com/openshift/drupal-example"
+  "description": "An open source content management platform written in PHP powering millions of websites and applications. It is built, used, and supported by an active and diverse community of people around the world.\n"
 }

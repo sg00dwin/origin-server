@@ -30,121 +30,131 @@ end
 
 __END__
 ---
-drupal:
+wordpress:
+  :script: rhc-admin-ctl-template --command 'add' --named 'WordPress' --cost '1' --tags
+    'php,wordpress,blog,framework' --git-url 'git://github.com/openshift/wordpress-example.git'
+  :metadata:
+    :git_url: git://github.com/openshift/wordpress-example.git
+    :git_project_url: http://github.com/openshift/wordpress-example
+    :website: http://wordpress.org
+    :version: 3.3.2
+    :license: :gpl2+
+    :description: ! 'A semantic personal publishing platform written in PHP with a
+      MySQL back end, focusing on aesthetics, web standards, and usability.
+
+'
   :descriptor:
-    Requires:
-    - php-5.3
-    - mysql-5.1
-    Name: drupal
-    Vendor: unknown
-    Subscribes:
-      doc-root:
-        Type: FILESYSTEM:doc-root
-        Required: false
-    Description: ""
-    Version: "0.0"
+    Display-Name: wordpress-0.0-noarch
+    Architecture: noarch
+    Name: wordpress
+    License: unknown
+    Description: ''
     Connections:
       mysql-5.1-php-5.3:
         Components:
         - php-5.3
         - mysql-5.1
-    Architecture: noarch
-    Display-Name: drupal-0.0-noarch
-    License: unknown
-  :metadata:
-    :version: 7.7
-    :website: http://drupal.org/
-    :git_url: git://github.com/openshift/drupal-example.git
-    :description: |
-      An open source content management platform written in PHP powering millions of websites and applications. It is built, used, and supported by an active and diverse community of people around the world.
-
-    :license: :"gpl2+"
-    :git_project_url: http://github.com/openshift/drupal-example
-  :script: rhc-admin-ctl-template --cost '1' --git-url '' --tags 'php,drupal,wiki,framework' --command 'add' --named 'Drupal'
-kitchensink:
-  :descriptor:
     Requires:
-    - jbossas-7
-    Name: kitchensink
-    Vendor: unknown
-    Subscribes:
-      doc-root:
-        Type: FILESYSTEM:doc-root
-        Required: false
-    Description: ""
-    Version: "0.0"
-    Architecture: noarch
-    Display-Name: kitchensink-0.0-noarch
-    License: unknown
-  :metadata:
-    :version: 7.0.0
-    :website: https://docs.jboss.org/author/display/AS71/Kitchensink+quickstart
-    :git_url: git://github.com/openshift/kitchensink-example.git
-    :description: |
-      This quickstart uses JBoss AS7 to show off all the new features of Java EE 6 and makes a great starting point for your Java project.
-
-    :license: :apache2
-    :git_project_url: http://github.com/openshift/kitchensink-example
-  :script: rhc-admin-ctl-template --cost '1' --git-url '' --tags 'java,jboss,framework' --command 'add' --named 'Kitchensink Example'
-rails:
-  :descriptor:
-    Requires:
-    - ruby-1.8
+    - php-5.3
     - mysql-5.1
-    Name: rails
-    Vendor: unknown
     Subscribes:
       doc-root:
-        Type: FILESYSTEM:doc-root
         Required: false
-    Description: ""
-    Version: "0.0"
+        Type: FILESYSTEM:doc-root
+    Vendor: unknown
+    Version: '0.0'
+drupal:
+  :script: rhc-admin-ctl-template --command 'add' --named 'Drupal' --cost '1' --tags
+    'php,drupal,wiki,framework' --git-url 'git://github.com/openshift/drupal-example.git'
+  :metadata:
+    :git_url: git://github.com/openshift/drupal-example.git
+    :git_project_url: http://github.com/openshift/drupal-example
+    :website: http://drupal.org/
+    :version: 7.7
+    :license: :gpl2+
+    :description: ! 'An open source content management platform written in PHP powering
+      millions of websites and applications. It is built, used, and supported by an
+      active and diverse community of people around the world.
+
+'
+  :descriptor:
+    Display-Name: drupal-0.0-noarch
+    Architecture: noarch
+    Name: drupal
+    License: unknown
+    Description: ''
+    Connections:
+      mysql-5.1-php-5.3:
+        Components:
+        - php-5.3
+        - mysql-5.1
+    Requires:
+    - php-5.3
+    - mysql-5.1
+    Subscribes:
+      doc-root:
+        Required: false
+        Type: FILESYSTEM:doc-root
+    Vendor: unknown
+    Version: '0.0'
+rails:
+  :script: rhc-admin-ctl-template --command 'add' --named 'Ruby on Rails' --cost '1'
+    --tags 'ruby,rails,framework' --git-url 'git://github.com/openshift/rails-example.git'
+  :metadata:
+    :git_url: git://github.com/openshift/rails-example.git
+    :git_project_url: http://github.com/openshift/rails-example
+    :website: http://rubyonrails.org/
+    :version: 3.1.1
+    :license: :mit
+    :description: ! 'An open source web framework for Ruby that is optimized for programmer
+      happiness and sustainable productivity. It lets you write beautiful code by
+      favoring convention over configuration.
+
+'
+  :descriptor:
+    Display-Name: rails-0.0-noarch
+    Architecture: noarch
+    Name: rails
+    License: unknown
+    Description: ''
     Connections:
       mysql-5.1-ruby-1.8:
         Components:
         - ruby-1.8
         - mysql-5.1
-    Architecture: noarch
-    Display-Name: rails-0.0-noarch
-    License: unknown
-  :metadata:
-    :version: 3.1.1
-    :website: http://rubyonrails.org/
-    :git_url: git://github.com/openshift/rails-example.git
-    :description: |
-      An open source web framework for Ruby that is optimized for programmer happiness and sustainable productivity. It lets you write beautiful code by favoring convention over configuration.
-
-    :license: :mit
-    :git_project_url: http://github.com/openshift/rails-example
-  :script: rhc-admin-ctl-template --cost '1' --git-url '' --tags 'ruby,rails,framework' --command 'add' --named 'Ruby on Rails'
-wordpress:
-  :descriptor:
     Requires:
-    - php-5.3
+    - ruby-1.8
     - mysql-5.1
-    Name: wordpress
-    Vendor: unknown
     Subscribes:
       doc-root:
-        Type: FILESYSTEM:doc-root
         Required: false
-    Description: ""
-    Version: "0.0"
-    Connections:
-      mysql-5.1-php-5.3:
-        Components:
-        - php-5.3
-        - mysql-5.1
-    Architecture: noarch
-    Display-Name: wordpress-0.0-noarch
-    License: unknown
+        Type: FILESYSTEM:doc-root
+    Vendor: unknown
+    Version: '0.0'
+kitchensink:
+  :script: rhc-admin-ctl-template --command 'add' --named 'Kitchensink Example' --cost
+    '1' --tags 'java,jboss,framework' --git-url 'git://github.com/openshift/kitchensink-example.git'
   :metadata:
-    :version: 3.3.2
-    :website: http://wordpress.org
-    :git_url: git://github.com/openshift/wordpress-example.git
-    :description: |
-      A semantic personal publishing platform written in PHP with a MySQL back end, focusing on aesthetics, web standards, and usability.
+    :git_url: git://github.com/openshift/kitchensink-example.git
+    :git_project_url: http://github.com/openshift/kitchensink-example
+    :website: https://docs.jboss.org/author/display/AS71/Kitchensink+quickstart
+    :version: 7.0.0
+    :license: :apache2
+    :description: ! 'This quickstart uses JBoss AS7 to show off all the new features
+      of Java EE 6 and makes a great starting point for your Java project.
 
-    :license: :"gpl2+"
-    :git_project_url: http://github.com/openshift/wordpress-example
-  :script: rhc-admin-ctl-template --cost '1' --git-url '' --tags 'php,wordpress,blog,framework' --command 'add' --named 'WordPress'
+'
+  :descriptor:
+    Display-Name: kitchensink-0.0-noarch
+    Architecture: noarch
+    Name: kitchensink
+    License: unknown
+    Description: ''
+    Requires:
+    - jbossas-7
+    Subscribes:
+      doc-root:
+        Required: false
+        Type: FILESYSTEM:doc-root
+    Vendor: unknown
+    Version: '0.0'

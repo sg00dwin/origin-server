@@ -152,7 +152,7 @@ class ApplicationTemplate
     # Parameters from metadata
     File.open(metadata) do |f|
       data = JSON.parse(f.read)
-      parameters['git-url'] = data['git']
+      parameters['git-url'] = data['git_url']
     end
 
     template_command(parameters)

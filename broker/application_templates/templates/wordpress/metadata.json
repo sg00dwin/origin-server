@@ -1,8 +1,8 @@
 {
-  "version": "3.3.2",
-  "website": "http://wordpress.org",
   "git_url": "git://github.com/openshift/wordpress-example.git",
-  "description": "A semantic personal publishing platform written in PHP with a MySQL back end, focusing on aesthetics, web standards, and usability.\n",
+  "git_project_url": "http://github.com/openshift/wordpress-example",
+  "website": "http://wordpress.org",
+  "version": "3.3.2",
   "license": "gpl2+",
-  "git_project_url": "http://github.com/openshift/wordpress-example"
+  "description": "A semantic personal publishing platform written in PHP with a MySQL back end, focusing on aesthetics, web standards, and usability.\n"
 }

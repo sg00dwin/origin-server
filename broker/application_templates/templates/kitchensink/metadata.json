@@ -1,8 +1,8 @@
 {
-  "version": "7.0.0",
-  "website": "https://docs.jboss.org/author/display/AS71/Kitchensink+quickstart",
   "git_url": "git://github.com/openshift/kitchensink-example.git",
-  "description": "This quickstart uses JBoss AS7 to show off all the new features of Java EE 6 and makes a great starting point for your Java project.\n",
+  "git_project_url": "http://github.com/openshift/kitchensink-example",
+  "website": "https://docs.jboss.org/author/display/AS71/Kitchensink+quickstart",
+  "version": "7.0.0",
   "license": "apache2",
-  "git_project_url": "http://github.com/openshift/kitchensink-example"
+  "description": "This quickstart uses JBoss AS7 to show off all the new features of Java EE 6 and makes a great starting point for your Java project.\n"
 }
