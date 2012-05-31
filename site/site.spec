@@ -3,7 +3,7 @@
 
 Summary:   Li site components
 Name:      rhc-site
-Version: 0.93.10
+Version: 0.93.11
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -116,6 +116,12 @@ rm -rf %{buildroot}
 /bin/touch %{sitedir}/log/production.log
 
 %changelog
+* Thu May 31 2012 Adam Miller <admiller@redhat.com> 0.93.11-1
+- 818653 (sgoodwin@redhat.com)
+- Stylized template information in applications list
+  (fotioslindiakos@gmail.com)
+- BZ826972: Fixing application template link (fotioslindiakos@gmail.com)
+
 * Wed May 30 2012 Adam Miller <admiller@redhat.com> 0.93.10-1
 - Added application_templates to site (fotioslindiakos@gmail.com)
 - Revert "Merge branch 'dev/fotios/descriptor'" (admiller@redhat.com)
