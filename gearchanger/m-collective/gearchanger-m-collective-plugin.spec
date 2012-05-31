@@ -5,7 +5,7 @@
 
 Summary:        GearChanger plugin for m-colective service
 Name:           rubygem-%{gemname}
-Version: 0.10.7
+Version: 0.10.8
 Release:        1%{?dist}
 Group:          Development/Languages
 License:        ASL 2.0
@@ -70,6 +70,12 @@ rm -rf %{buildroot}
 %{ruby_sitelib}/%{gemname}.rb
 
 %changelog
+* Wed May 30 2012 Adam Miller <admiller@redhat.com> 0.10.8-1
+- fix for bug#826424 - haproxy needs an explicit stop after execute connections
+  if it was stopped before already (rchopra@redhat.com)
+- updates to move_gear based on review by dmcphers (rchopra@redhat.com)
+- formatting fixes (dmcphers@redhat.com)
+
 * Tue May 29 2012 Adam Miller <admiller@redhat.com> 0.10.7-1
 - dont call deconfigure on embedded cartridges (rchopra@redhat.com)
 
