@@ -107,6 +107,7 @@ Requires:  drupal6-image
 Requires:  drupal6-image_resize_filter
 Requires:  drupal6-imageapi
 Requires:  drupal6-imagecache
+
 Requires:  drupal6-imagecache_profiles
 Requires:  drupal6-imagefield
 Requires:  drupal6-insert
@@ -475,6 +476,9 @@ chown apache:apache /srv/cache/mod_cache
 
 # Moved into the proper rhc-ip-prep.sh - Prevent users from binding to real IP 10 address - BZ821940
 #semanage node -a -t node_t -r s0:c1023 -M  255.0.0.0 -p ipv4 10.0.0.0
+
+# Deploy application templates - fotios
+/usr/bin/ruby /usr/lib/stickshift/broker/application_templates/templates/deploy.rb
 
 %files
 %defattr(-,root,root,-)
