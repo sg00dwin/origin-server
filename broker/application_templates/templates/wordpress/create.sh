@@ -1,0 +1,1 @@
+rhc-admin-ctl-template --cost '1' --git-url '' --tags 'php,wordpress,blog,framework' --descriptor 'descriptor.yaml' --command 'add' --metadata 'metadata.json' --named 'WordPress'

@@ -1,0 +1,8 @@
+{
+  "version": "3.1.1",
+  "website": "http://rubyonrails.org/",
+  "git_url": "git://github.com/openshift/rails-example.git",
+  "description": "An open source web framework for Ruby that is optimized for programmer happiness and sustainable productivity. It lets you write beautiful code by favoring convention over configuration.\n",
+  "license": "mit",
+  "git_project_url": "http://github.com/openshift/rails-example"
+}

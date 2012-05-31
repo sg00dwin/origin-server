@@ -1,0 +1,19 @@
+---
+:cost: 1
+:cartridge: php-5.3
+:tags:
+- :php
+- :wordpress
+- :blog
+- :framework
+:embed:
+- mysql-5.1
+:metadata:
+  :git_url: git://github.com/openshift/wordpress-example.git
+  :git_project_url: http://github.com/openshift/wordpress-example
+  :website: http://wordpress.org
+  :version: 3.3.2
+  :license: :gpl2+
+  :description: >
+    A semantic personal publishing platform written in PHP with a MySQL back end, focusing on aesthetics, web standards, and usability.
+:display_name: WordPress

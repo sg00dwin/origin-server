@@ -1,7 +1,0 @@
-{
-  "license": "gpl2+",
-  "version": "3.3.2",
-  "git": "git://github.com/openshift/wordpress-example.git",
-  "description": "A semantic personal publishing platform with a focus on aesthetics, web standards, and usability.\n",
-  "website": "http://wordpress.org"
-}

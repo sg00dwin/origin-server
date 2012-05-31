@@ -52,6 +52,8 @@ rm -rf %{buildroot}
 mkdir -p %{buildroot}%{_bindir}
 mkdir -p %{buildroot}%{htmldir}
 mkdir -p %{buildroot}%{brokerdir}
+mkdir -p %{buildroot}/usr/lib/stickshift/broker
+mv application_templates %{buildroot}/usr/lib/stickshift/broker
 cp -r . %{buildroot}%{brokerdir}
 ln -s %{brokerdir}/public %{buildroot}%{htmldir}/broker
 
@@ -98,6 +100,7 @@ rm -rf $RPM_BUILD_ROOT
 %attr(0750,-,-) %{_bindir}/rhc-admin-ctl-template
 %attr(0750,-,-) %{_bindir}/rhc-admin-ctl-usage
 %attr(0750,-,-) %{_bindir}/rhc-admin-ctl-user
+/usr/lib/stickshift/broker/application_templates
 
 %post
 /bin/touch %{brokerdir}/log/production.log

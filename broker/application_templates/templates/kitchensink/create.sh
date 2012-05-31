@@ -1,0 +1,1 @@
+rhc-admin-ctl-template --cost '1' --git-url '' --tags 'java,jboss,framework' --descriptor 'descriptor.yaml' --command 'add' --metadata 'metadata.json' --named 'Kitchensink Example'
