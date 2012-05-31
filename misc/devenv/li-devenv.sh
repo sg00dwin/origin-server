@@ -157,7 +157,9 @@ IFS="
 }
 
 function find_and_build_specs {
-  ignore_packages=(`build/devenv print_ignore_packages`)
+  pushd /root/li-working > /dev/null
+    ignore_packages=(`build/devenv print_ignore_packages`)
+  popd > /dev/null
   for x in $(find -name *.spec)
   do
     package_name=`get_package_name $x`
