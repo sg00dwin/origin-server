@@ -944,7 +944,7 @@ rm -rf li-working #{working_dirs}
       puts "No image name '#{options[:image_name]}' found!"
       exit(1)
     else
-      puts "Launching latest DevEnv instance #{ami.id}"
+      puts "Launching latest DevEnv instance #{ami.id} - #{ami.name}"
     end
     instance = launch_instance(ami, name)
     hostname = instance.dns_name
