@@ -3,7 +3,7 @@
 
 Summary:   Li site components
 Name:      rhc-site
-Version: 0.93.9
+Version: 0.93.10
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -116,6 +116,20 @@ rm -rf %{buildroot}
 /bin/touch %{sitedir}/log/production.log
 
 %changelog
+* Wed May 30 2012 Adam Miller <admiller@redhat.com> 0.93.10-1
+- Added application_templates to site (fotioslindiakos@gmail.com)
+- Revert "Merge branch 'dev/fotios/descriptor'" (admiller@redhat.com)
+- styling for application templates additions (sgoodwin@redhat.com)
+- Moved templates to their own row in the view (fotioslindiakos@gmail.com)
+- Added views for new application_templates (fotioslindiakos@gmail.com)
+- Merge branch 'dev0530' (sgoodwin@redhat.com)
+- fix for bz 820842 and enable outage status link display at view <768
+  (sgoodwin@redhat.com)
+- Fixes BZ 821103 (ffranz@redhat.com)
+- mostly css changes - adjustments to breadcrumb, headings, collapsed nav
+  order. haml change - add my account tab back into console default nav.
+  (sgoodwin@redhat.com)
+
 * Tue May 29 2012 Adam Miller <admiller@redhat.com> 0.93.9-1
 - fine tuning position of ui at individual responsive breakpoints, correct
   utility nav drop menu and alert status message presentation and other ui
