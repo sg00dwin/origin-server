@@ -3,7 +3,7 @@
 
 Summary:   Li site components
 Name:      rhc-site
-Version: 0.94.0
+Version: 0.94.1
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -116,6 +116,10 @@ rm -rf %{buildroot}
 /bin/touch %{sitedir}/log/production.log
 
 %changelog
+* Fri Jun 01 2012 Adam Miller <admiller@redhat.com> 0.94.1-1
+- bumping spec versions (admiller@redhat.com)
+- Fixed minor typo (fotioslindiakos@gmail.com)
+
 * Thu May 31 2012 Adam Miller <admiller@redhat.com> 0.93.12-1
 - Removed experimental tag from DIY cart (fotioslindiakos@gmail.com)
 - Added experimental label and adding spacing between multiple labels
