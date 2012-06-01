@@ -3,7 +3,7 @@
 
 Summary:   Li broker components
 Name:      rhc-broker
-Version: 0.94.0
+Version: 0.94.1
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -107,6 +107,16 @@ rm -rf $RPM_BUILD_ROOT
 /bin/touch %{_localstatedir}/log/stickshift/user_action.log
 
 %changelog
+* Fri Jun 01 2012 Adam Miller <admiller@redhat.com> 0.94.1-1
+- Updating gem versions (admiller@redhat.com)
+- bumping spec versions (admiller@redhat.com)
+- Added filtering to template profiling (fotioslindiakos@gmail.com)
+- Much more awesome profiling (fotioslindiakos@gmail.com)
+- Don't need to rotate logfile numbers since logger will just append nicely
+  (fotioslindiakos@gmail.com)
+- Created template profiling script (fotioslindiakos@gmail.com)
+- Updated template descriptors (fotioslindiakos@gmail.com)
+
 * Thu May 31 2012 Adam Miller <admiller@redhat.com> 0.93.22-1
 - Added experimental tag to templates (fotioslindiakos@gmail.com)
 
