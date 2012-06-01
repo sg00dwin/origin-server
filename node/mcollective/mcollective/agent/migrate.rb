@@ -186,7 +186,8 @@ module OpenShiftMigration
         end
 
         FileUtils.cd http_conf_dir do |d|
-          output += `tar zxf #{target} ./#{token}/server_alias-*`
+          output += `tar zxf #{target} ./#{token}/[a-z]*`
+          output += `tar zxf #{target} ./#{token}/000000_haproxy.conf`
         end
 
         ENV['CART_INFO_DIR'] = File.join(cartridge_root_dir, gear_type, 'info')

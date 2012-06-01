@@ -44,25 +44,28 @@ wordpress:
 
 '
   :descriptor:
+    Vendor: unknown
+    Requires:
+    - php-5.3
+    - mysql-5.1
     Display-Name: wordpress-0.0-noarch
-    Architecture: noarch
+    Version: '0.0'
     Name: wordpress
+    Subscribes:
+      doc-root:
+        Required: false
+        Type: FILESYSTEM:doc-root
     License: unknown
     Description: ''
+    Scaling:
+      Max: -1
+      Min: 1
+    Architecture: noarch
     Connections:
       mysql-5.1-php-5.3:
         Components:
         - php-5.3
         - mysql-5.1
-    Requires:
-    - php-5.3
-    - mysql-5.1
-    Subscribes:
-      doc-root:
-        Required: false
-        Type: FILESYSTEM:doc-root
-    Vendor: unknown
-    Version: '0.0'
 drupal:
   :script: rhc-admin-ctl-template --command 'add' --named 'Drupal' --cost '1' --tags
     'php,drupal,wiki,framework,experimental' --git-url 'git://github.com/openshift/drupal-example.git'
@@ -78,25 +81,28 @@ drupal:
 
 '
   :descriptor:
+    Vendor: unknown
+    Requires:
+    - php-5.3
+    - mysql-5.1
     Display-Name: drupal-0.0-noarch
-    Architecture: noarch
+    Version: '0.0'
     Name: drupal
+    Subscribes:
+      doc-root:
+        Required: false
+        Type: FILESYSTEM:doc-root
     License: unknown
     Description: ''
+    Scaling:
+      Max: -1
+      Min: 1
+    Architecture: noarch
     Connections:
       mysql-5.1-php-5.3:
         Components:
         - php-5.3
         - mysql-5.1
-    Requires:
-    - php-5.3
-    - mysql-5.1
-    Subscribes:
-      doc-root:
-        Required: false
-        Type: FILESYSTEM:doc-root
-    Vendor: unknown
-    Version: '0.0'
 rails:
   :script: rhc-admin-ctl-template --command 'add' --named 'Ruby on Rails' --cost '1'
     --tags 'ruby,rails,framework,experimental' --git-url 'git://github.com/openshift/rails-example.git'
@@ -112,25 +118,28 @@ rails:
 
 '
   :descriptor:
+    Vendor: unknown
+    Requires:
+    - ruby-1.8
+    - mysql-5.1
     Display-Name: rails-0.0-noarch
-    Architecture: noarch
+    Version: '0.0'
     Name: rails
+    Subscribes:
+      doc-root:
+        Required: false
+        Type: FILESYSTEM:doc-root
     License: unknown
     Description: ''
+    Scaling:
+      Max: -1
+      Min: 1
+    Architecture: noarch
     Connections:
       mysql-5.1-ruby-1.8:
         Components:
         - ruby-1.8
         - mysql-5.1
-    Requires:
-    - ruby-1.8
-    - mysql-5.1
-    Subscribes:
-      doc-root:
-        Required: false
-        Type: FILESYSTEM:doc-root
-    Vendor: unknown
-    Version: '0.0'
 kitchensink:
   :script: rhc-admin-ctl-template --command 'add' --named 'Kitchensink Example' --cost
     '1' --tags 'java,jboss,framework,experimental' --git-url 'git://github.com/openshift/kitchensink-example.git'
@@ -145,16 +154,19 @@ kitchensink:
 
 '
   :descriptor:
-    Display-Name: kitchensink-0.0-noarch
-    Architecture: noarch
-    Name: kitchensink
-    License: unknown
-    Description: ''
+    Vendor: unknown
     Requires:
     - jbossas-7
+    Display-Name: kitchensink-0.0-noarch
+    Version: '0.0'
+    Name: kitchensink
     Subscribes:
       doc-root:
         Required: false
         Type: FILESYSTEM:doc-root
-    Vendor: unknown
-    Version: '0.0'
+    License: unknown
+    Description: ''
+    Scaling:
+      Max: -1
+      Min: 1
+    Architecture: noarch

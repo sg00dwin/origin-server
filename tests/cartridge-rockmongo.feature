@@ -20,9 +20,11 @@ Feature: rockmongo Embedded Cartridge
 
     When I start rockmongo
     Then a rockmongo httpd will be running
+    And the rockmongo web console url will be accessible
 
     When I restart rockmongo
     Then a rockmongo httpd will be running
+    And the rockmongo web console url will be accessible
 
     When I deconfigure rockmongo
     Then a rockmongo http proxy file will not exist
