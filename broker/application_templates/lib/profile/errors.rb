@@ -24,6 +24,7 @@ class ServerError < RuntimeError
   def initialize
     super
     @timeout = 15*60
+    @wait = 20
     @msg = "Unable to get response from HTTP server"
   end
 end

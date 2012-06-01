@@ -1,30 +1,35 @@
 #!/usr/bin/env ruby
 
-require 'template_profile'
+require 'myprofile'
+require 'yaml'
 
-$logger = Logger.new(logfile('debug'))
+namespace :profile do
+  desc "Profile application template creation"
+  task :templates do
+    base = ENV['base'] || 'dev.rhcloud.com'
 
-desc "Profile application template creation"
-task :profile do
-  password = ask('Password: ',true)
-  client = login(password)
+    password = ask('Password: ',true)
+    client = login(password)
 
-  opts = {
-    :domain => client.domains.first,
-    :server => 'int.rhcloud.com'
-  }
+    opts = {
+      :domain => client.domains.first,
+      :url_base => base,
+      :tests => [:deploy,:nslookup,:check_http,:delete],
+    }
 
-  $logger.debug "Getting templates"
-  templates = client.templates
+    templates = client.templates
 
-  $logger.debug "Starting loop"
-  templates.each do |t|
-    host = YAML.load(t['descriptor_yaml'])['Name']
-    profile(opts.merge({
-      :template => t ,
-      :name => host,
-      :deploy_opts => {:template => t['uuid']},
-      :host => "%s-%s.%s" % [host,opts[:domain].id,opts[:server]]
-    }))
+    templates.each do |t|
+      type = YAML.load(t['descriptor_yaml'])['Name'].downcase.to_sym
+      name = (0...4).map{65.+(rand(25)).chr}.join
+
+      my_opts = opts.merge({
+        :template => t,
+        :name => name,
+        :type => type,
+        :deploy_opts => {:template => t['uuid']},
+      })
+      Profile.new(my_opts).run
+    end
   end
 end

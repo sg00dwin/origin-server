@@ -7,8 +7,8 @@ ensure
   system "stty echo"
 end
 
-def logfile(name = 'log')
-  dir = 'log'
-  Dir.mkdir dir unless File.directory?(dir)
-  File.join(dir,"#{name}.log")
+class String
+  def self.random(len = 8)
+    (0...len).map{65.+(rand(25)).chr}.join
+  end
 end
