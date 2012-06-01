@@ -27,24 +27,22 @@ fi
 printf "Running bugzilla query, this might take a few minutes ...\n"
 
 # Read in all the bugs into an array so we can hold them and create stats
-#while read bug
-#do
-#  echo $bug
-#  openshift_buglist+=( "$bug" )
-#done < 
 mapfile openshift_buglist < <( bugzilla query -p OpenShift \
   --bug_status='NEW,ASSIGNED,NEEDINFO,ON_DEV,MODIFIED,POST,ON_QA,REOPENED,VERIFIED' \
-  --outputformat='%{bug_id}:%{assigned_to}:%{priority}:%{bug_severity}:%{component}:%{bug_status}' )
+  --outputformat='%{bug_id}:%{assigned_to}:%{priority}:%{bug_severity}:%{component}:%{bug_status}:%{keywords}' )
 
 
 # Obtain a list of blocker bugs based on status and severity
 for b in "${openshift_buglist[@]}"
 do
-  b_stat="$(printf "$b" | cut -d: -f6)"
-  if [[ "$b_stat" =~ ^(NEW|ASSIGNED|MODIFIED|ON_DEV)$ ]]; then
-    b_sev="$(printf "$b" | cut -d: -f4)"
-    if [[ "$b_sev" =~ ^(unspecified|urgent|high|medium)$ ]]; then
-        blockers+=( "$b" )
+  b_kw="$(printf "$b" | cut -d: -f7)"
+  if [[ -z "$y" || "$y" =~ FutureFeature ]]; then
+    b_stat="$(printf "$b" | cut -d: -f6)"
+    if [[ "$b_stat" =~ ^(NEW|ASSIGNED|MODIFIED|ON_DEV)$ ]]; then
+      b_sev="$(printf "$b" | cut -d: -f4)"
+      if [[ "$b_sev" =~ ^(unspecified|urgent|high|medium)$ ]]; then
+          blockers+=( "$b" )
+      fi
     fi
   fi
 done
