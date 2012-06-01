@@ -6,7 +6,6 @@ require 'rhc-common'
 require 'rhc-rest'
 require 'yaml'
 require 'json'
-require 'highline/import'
 
 class Hash
   def method_missing(method, *params)
@@ -35,11 +34,11 @@ def destroy_app(app)
   }
 end
 
-def login
+def login(password = nil)
   @client ||= (
     libra_server = get_var('libra_server')
     rhlogin = get_var('default_rhlogin')
-    password = ask("Password:  ") { |q| q.echo = "*" }
+    password = ask("Password: ",true) unless password
 
     end_point = "https://#{libra_server}/broker/rest/api"
     Rhc::Rest::Client.new(end_point, rhlogin, password)

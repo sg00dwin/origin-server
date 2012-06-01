@@ -3,7 +3,7 @@
 
 Summary:   Li broker components
 Name:      rhc-broker
-Version: 0.93.20
+Version: 0.93.22
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -107,6 +107,12 @@ rm -rf $RPM_BUILD_ROOT
 /bin/touch %{_localstatedir}/log/stickshift/user_action.log
 
 %changelog
+* Thu May 31 2012 Adam Miller <admiller@redhat.com> 0.93.22-1
+- Added experimental tag to templates (fotioslindiakos@gmail.com)
+
+* Thu May 31 2012 Adam Miller <admiller@redhat.com> 0.93.21-1
+- Fixed application template git_url (fotioslindiakos@gmail.com)
+
 * Wed May 30 2012 Adam Miller <admiller@redhat.com> 0.93.20-1
 - Updating gem versions (admiller@redhat.com)
 - Moved templates into broker and updated broker.spec

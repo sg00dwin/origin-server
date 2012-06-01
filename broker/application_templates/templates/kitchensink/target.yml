@@ -5,6 +5,7 @@
 - :java
 - :jboss
 - :framework
+- :experimental
 :metadata:
   :git_url: git://github.com/openshift/kitchensink-example.git
   :git_project_url: http://github.com/openshift/kitchensink-example
