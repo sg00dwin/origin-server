@@ -5,7 +5,7 @@
 %global drupal_themename    openshift-theme
 
 Name:           drupal6-%{drupal_themename}
-Version: 3.2.3
+Version: 3.3.0
 Release:        1%{?dist}
 Summary:        Red Hat Openshift theme for Drupal %{drupal_release}
 

@@ -5,7 +5,7 @@
 
 Summary:        SwingShift plugin for streamline auth service
 Name:           rubygem-%{gemname}
-Version: 0.10.2
+Version: 0.11.0
 Release:        1%{?dist}
 Group:          Development/Languages
 License:        ASL 2.0
