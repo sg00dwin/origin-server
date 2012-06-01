@@ -5,6 +5,7 @@ $: << 'lib'
 require 'rubygems'
 require 'rake'
 
+require 'helpers'
 require 'descriptors'
 require 'rest_extra'
 
