@@ -2,7 +2,7 @@
 
 Summary:       Multi-tenant cloud management system node tools
 Name:          rhc-node
-Version: 0.94.0
+Version: 0.94.1
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -266,6 +266,12 @@ fi
 /lib64/security/pam_libra.so
 
 %changelog
+* Fri Jun 01 2012 Adam Miller <admiller@redhat.com> 0.94.1-1
+- bumping spec versions (admiller@redhat.com)
+- restore embedded cartridges when migrating (jhonce@redhat.com)
+- Fix for bugz 827564. Only list scaled gears if gear registry exists.
+  (ramr@redhat.com)
+
 * Wed May 30 2012 Adam Miller <admiller@redhat.com> 0.93.13-1
 - Add support for http alias (jhonce@redhat.com)
 - Fix bugz 825792 -- OPENSHIFT_{DATA,REPO}_DIR needs a trailing /.
