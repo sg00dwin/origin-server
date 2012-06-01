@@ -41,9 +41,8 @@ class TestResultSet
   end
 
   def finish
-    row = total.to_s(max_len)
-    puts "-"*row.length
-    puts row
+    puts "-" * results.map{|x| x.to_s(max_len).length}.max
+    puts total.to_s(max_len)
 
     errors = results.map{|r| r.result.msg }.compact
 

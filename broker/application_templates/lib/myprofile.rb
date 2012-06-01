@@ -22,6 +22,7 @@ class Profile
       send("#{k}=",v)
     end
 
+    @name    = String.random(5)
     @results = TestResultSet.new(tests)
     @host    = "%s-%s.%s" % [name,domain.id,url_base]
 
@@ -117,7 +118,7 @@ class Profile
 
   def run
     puts
-    puts "Testing #{host}"
+    puts "Testing %s (%s)" % [host,type.to_s]
     begin
       tests.each do |name|
         result = run_test(name)
