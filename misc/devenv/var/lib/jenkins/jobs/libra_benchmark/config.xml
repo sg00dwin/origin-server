@@ -3,9 +3,9 @@
   <actions/>
   <description>Run the benchmark tasks on the most recent dev or stg AMI.  This set of tests can take from 20 to 30 hours to complete.</description>
   <logRotator>
-    <daysToKeep>10</daysToKeep>
+    <daysToKeep>100</daysToKeep>
     <numToKeep>10</numToKeep>
-    <artifactDaysToKeep>10</artifactDaysToKeep>
+    <artifactDaysToKeep>100</artifactDaysToKeep>
     <artifactNumToKeep>10</artifactNumToKeep>
   </logRotator>
   <keepDependencies>false</keepDependencies>
