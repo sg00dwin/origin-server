@@ -287,13 +287,9 @@ fi
 
 if [[ "$2" == "--install_from_source" ]] || [[ "$2" == "--install_from_local_source" ]] || [[ "$2" == "--install_required_packages" ]]
 then
-  rm -rf /root/li-working /tmp/tito
-  for repo_name in "${github_repos[@]}"
+  rm -rf /tmp/tito
+  for repo_name in "${repos[@]}"
   do
     rm -rf /root/$repo_name
-    if ! [[ "$2" == "--install_required_packages" ]]
-    then
-      git init --bare /root/$repo_name
-    fi
   done
 fi

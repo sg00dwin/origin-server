@@ -29,14 +29,16 @@ class DevEnv < Thor
       branch = get_branch
 
       puts "Synchronizing local changes from branch #{branch} for repo #{repo_name} from #{File.basename(FileUtils.pwd)}..."
-      ssh(hostname, %{export GIT_DIR=/root/#{repo_name}; git log ^HEAD || ( mkdir -p /root/#{repo_name} && cd /root/#{repo_name} && git init-db --bare)})
+
+      init_repo(hostname, false)
+
       exitcode = run(%{
 #######
 # Start shell code
 export GIT_SSH=#{ssh_path}
 #{branch == 'origin/master' ? "git push -q root@#{hostname}:/root/#{repo_name} master:master --tags --force; " : ''}
 git push -q root@#{hostname}:/root/#{repo_name} #{branch}:master --tags --force
-      
+
 #######
 # End shell code
 }, :verbose => options.verbose?)
@@ -54,20 +56,20 @@ git push -q root@#{hostname}:/root/#{repo_name} #{branch}:master --tags --force
       exists
     end
 
-    def init_repo(hostname, init_all=false)
+    def init_repo(hostname, replace=true)
       git_clone_commands = ''
+      git_clone_commands += "if ! [ -d /root/li ]; then\n" unless replace
+      git_clone_commands += "rm -rf /root/li; git clone --bare git://git1.ops.rhcloud.com/li.git/ /root/li\n"
+      git_clone_commands += "fi\n" unless replace
       SIBLING_REPOS.each do |repo_name, repo_dirs|
         repo_dirs.each do |repo_dir|
-          if File.exists?(repo_dir) || init_all
-            git_clone_commands += "rm -rf /root/#{repo_name}; git clone --bare git@github.com:openshift/#{repo_name}.git /root/#{repo_name}; "
-            break
-          end
+          git_clone_commands += "if ! [ -d /root/#{repo_name} ]; then\n" unless replace
+          git_clone_commands += "rm -rf /root/#{repo_name}; git clone --bare git@github.com:openshift/#{repo_name}.git /root/#{repo_name};\n"
+          git_clone_commands += "fi\n" unless replace
+          break
         end
       end
-      ssh(hostname, %{
-rm -rf /root/li; git clone --bare git://git1.ops.rhcloud.com/li.git/ /root/li
-#{git_clone_commands}
-}, 240)
+      ssh(hostname, git_clone_commands, 240)
     end
 
     def temp_commit
@@ -158,7 +160,7 @@ mkdir -p /tmp/rhc/junit
 
     def scp_remote_tests(hostname)
       if FileUtils.pwd == "/var/lib/jenkins/jobs/libra_ami_stage/workspace" || FileUtils.pwd == "/var/lib/jenkins/jobs/libra_ami_verify_stage/workspace"
-        init_repo(hostname, true)
+        init_repo(hostname)
         update_remote_tests(hostname, "stage")
       else
         puts "Archiving local changes..."
@@ -912,7 +914,6 @@ rm -rf li-working #{working_dirs}
   method_option :verbose, :type => :boolean, :desc => "Enable verbose logging"
   method_option :express_server, :type => :boolean, :desc => "Set as express server in express.conf and leave on public_ip"
   method_option :ssh_config_verifier, :type => :boolean, :desc => "Set as verifier in .ssh/config"
-  method_option :init_repo, :type => :boolean, :desc => "Initialize git repo for syncing and tests (requires --verifier)"
   method_option :instance_type, :required => false, :desc => "Amazon machine type override (default m1.large)"
   method_option :region, :required => false, :desc => "Amazon region override (default us-east-1)"
   method_option :image_name, :required => false, :desc => "AMI ID or DEVENV name to launch"
@@ -958,14 +959,10 @@ rm -rf li-working #{working_dirs}
     update_facts(hostname)
 
     if options.verifier?
-      if options.init_repo?
-        print "Initializing git repo for syncing..."
-        init_repo(hostname)
-        puts "Done"
-        update_remote_tests(instance.dns_name)
-      else
-        scp_remote_tests(hostname)
-      end
+      print "Initializing git repo for syncing..."
+      init_repo(hostname)
+      puts "Done"
+      update_remote_tests(instance.dns_name)
     end
 
     validate_instance(hostname)

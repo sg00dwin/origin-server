@@ -302,11 +302,6 @@ ls -lZ /var/aquota.user  | grep -q var_t && ( quotaoff /var && restorecon /var/a
 perl -p -i -e "s/^#MaxSessions .*$/MaxSessions 40/" /etc/ssh/sshd_config
 perl -p -i -e "s/^#MaxStartups .*$/MaxStartups 40/" /etc/ssh/sshd_config
 
-# Setup an empty git repository to allow code transfer
-git init --bare /root/li
-git init --bare /root/os-client-tools
-git init --bare /root/crankcase
-
 # create a submodule repo for the tests
 git init /root/submodule_test_repo
 pushd /root/submodule_test_repo > /dev/null
