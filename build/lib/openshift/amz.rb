@@ -361,8 +361,9 @@ module OpenShift
               build_num = verifier[0]
               i = verifier[1]
               opts = verifier[2]
+              max_run_time = opts[:max_run_time] ? opts[:max_run_time] : 9000 #2.5 hours
               if (index == verifiers.length - 1) || opts[:multiple]
-                unless Time.new - i.launch_time > 16200 #4.5 hours  
+                unless Time.new - i.launch_time > max_run_time
                   next
                 end
               end
@@ -375,22 +376,7 @@ module OpenShift
         end
       end
     end
-    
-    def terminate_old_qe_verifiers(conn)
-      AWS.memoize do
-        conn.instances.each do |i|
-          QE_VERIFIER_REGEXS.each do |regex|
-            if i.tags["Name"] =~ regex
-              if (instance_status(i) == :running || instance_status(i) == :stopped) && (Time.new - i.launch_time > 43200) #12 hours
-                log.info "Terminating verifier #{i.id} - #{i.tags["Name"]}"
-                terminate_instance(i)
-              end
-            end
-          end
-        end
-      end
-    end
-    
+
     def flag_old_devenvs(conn)
       AWS.memoize do
         conn.instances.each do |i|
@@ -409,7 +395,7 @@ module OpenShift
         end
       end
     end
-    
+
     def flag_old_qe_devenvs(conn)
       AWS.memoize do
         conn.instances.each do |i|

@@ -89,7 +89,7 @@ fi
 echo $launch_params
 
 # Launch a test instance
-build/devenv launch devenv_benchmark_${BUILD_NUMBER} --verifier --instance_type $instance_type $launch_params
+build/devenv launch libra_benchmark_${BUILD_NUMBER} --verifier --instance_type $instance_type $launch_params
 
 test_params=&quot;&quot;
 if [ &quot;$profile_broker&quot; == &quot;true&quot; ]
@@ -99,7 +99,7 @@ fi
 echo $test_params
 
 # Run the image tests
-build/devenv test devenv_benchmark_${BUILD_NUMBER} --exclude_internal --exclude_verification --include-cucumber=benchmark --disable-charlie --mcollective-logs --terminate $test_params
+build/devenv test libra_benchmark_${BUILD_NUMBER} --exclude_internal --exclude_verification --include-cucumber=benchmark --disable-charlie --mcollective-logs --terminate $test_params
 </command>
     </hudson.tasks.Shell>
   </builders>

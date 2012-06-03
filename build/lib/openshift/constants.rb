@@ -28,13 +28,13 @@ VERIFIER_REGEXS = {/^(devenv)_(\d+)$/ => {},
                    /^(devenv-base)_(\d+)$/ => {}, 
                    /^(devenv-stage-base)_(\d+)$/ => {},
                    /^(libra_check)_(\d+)$/ => {},
-                   /^(libra_extended)_(\d+)$/ => {},
+                   /^(libra_benchmark)_(\d+)$/ => {:max_run_time => (60*60*24)},
+                   /^(libra_extended)_(\d+)$/ => {:max_run_time => (60*60*4)},
                    /^(pull_request)_(\d+)$/ => {:multiple => true}, 
                    /^(broker_check)_(\d+)$/ => {}, 
                    /^(node_check)_(\d+)$/ => {}, 
-                   /^(libra_web)_(\d+)$/ => {}, 
-                   /^(libra_coverage)_(\d+)$/ => {}}
-QE_VERIFIER_REGEXS = [/^pdevenv_.*$/]
+                   /^(libra_web)_(\d+)$/ => {:max_run_time => (60*60*3)}, 
+                   /^(libra_coverage)_(\d+)$/ => {:max_run_time => (60*60*1)}}
 TERMINATE_REGEX = /terminate|teminate|termiante/
 VERIFIED_TAG = "qe-ready"
 RSA = File.expand_path("~/.ssh/libra.pem")

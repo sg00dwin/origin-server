@@ -393,6 +393,7 @@ mkdir -p /tmp/rhc/junit
         
         if options.include_extended?
           add_ssh_cmd_to_threads(hostname, threads, failures, "REST API", "cucumber -f html --out /tmp/rhc/rest_api.html -f progress -t @api li-test/tests")
+          add_ssh_cmd_to_threads(hostname, threads, failures, "Extended", "cucumber -f html --out /tmp/rhc/extended.html -f progress -t @extended li-test/tests")
         end
 
         if options.include_cucumber
