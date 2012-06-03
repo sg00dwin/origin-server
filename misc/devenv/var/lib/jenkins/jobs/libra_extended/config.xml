@@ -9,22 +9,7 @@
     <artifactNumToKeep>10</artifactNumToKeep>
   </logRotator>
   <keepDependencies>false</keepDependencies>
-  <properties>
-    <hudson.model.ParametersDefinitionProperty>
-      <parameterDefinitions>
-        <hudson.model.StringParameterDefinition>
-          <name>BUILD_CLEAN_AMI</name>
-          <description></description>
-          <defaultValue>false</defaultValue>
-        </hudson.model.StringParameterDefinition>
-        <hudson.model.StringParameterDefinition>
-          <name>INSTALL_FROM_SOURCE</name>
-          <description></description>
-          <defaultValue>false</defaultValue>
-        </hudson.model.StringParameterDefinition>
-      </parameterDefinitions>
-    </hudson.model.ParametersDefinitionProperty>
-  </properties>
+  <properties/>
   <scm class="hudson.plugins.git.GitSCM">
     <configVersion>1</configVersion>
     <remoteRepositories>
@@ -65,22 +50,18 @@
   </scm>
   <canRoam>true</canRoam>
   <disabled>true</disabled>
-  <blockBuildWhenDownstreamBuilding>true</blockBuildWhenDownstreamBuilding>
+  <blockBuildWhenDownstreamBuilding>false</blockBuildWhenDownstreamBuilding>
   <blockBuildWhenUpstreamBuilding>false</blockBuildWhenUpstreamBuilding>
-  <authToken>libra1</authToken>
   <triggers class="vector"/>
-  <concurrentBuild>true</concurrentBuild>
+  <concurrentBuild>false</concurrentBuild>
   <builders>
     <hudson.tasks.Shell>
-      <command>if [ &quot;$BUILD_CLEAN_AMI&quot; == &quot;true&quot; ]
-then
-  build/devenv build devenv ${BUILD_NUMBER} --register --official --terminate --build_clean_ami --instance_type m1.large
-elif [ &quot;$INSTALL_FROM_SOURCE&quot; == &quot;true&quot; ]
-then
-  build/devenv build devenv ${BUILD_NUMBER} --register --official --terminate --install_from_source --instance_type m1.large
-else
-  build/devenv build devenv ${BUILD_NUMBER} --register --official --terminate --instance_type m1.large
-fi</command>
+      <command># Build and install HEAD for the integration tests
+build/devenv launch libra_extended_${BUILD_NUMBER} --verifier --instance_type m1.large
+build/devenv sync libra_extended_${BUILD_NUMBER} --tag --clean_metadata
+
+# Run the &apos;verification&apos; tests to test higher level components
+build/devenv test libra_extended_${BUILD_NUMBER} --terminate --exclude_internal --exclude_verification --include_extended</command>
     </hudson.tasks.Shell>
   </builders>
   <publishers>
@@ -88,17 +69,9 @@ fi</command>
       <artifacts>rhc/log/**</artifacts>
       <latestOnly>false</latestOnly>
     </hudson.tasks.ArtifactArchiver>
-    <hudson.tasks.BuildTrigger>
-      <childProjects>libra_coverage, libra_extended</childProjects>
-      <threshold>
-        <name>SUCCESS</name>
-        <ordinal>0</ordinal>
-        <color>BLUE</color>
-      </threshold>
-    </hudson.tasks.BuildTrigger>
     <hudson.tasks.Mailer>
       <recipients>libra-devel@redhat.com</recipients>
-      <dontNotifyEveryUnstableBuild>false</dontNotifyEveryUnstableBuild>
+      <dontNotifyEveryUnstableBuild>true</dontNotifyEveryUnstableBuild>
       <sendToIndividuals>false</sendToIndividuals>
     </hudson.tasks.Mailer>
   </publishers>

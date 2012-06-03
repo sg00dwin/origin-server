@@ -390,6 +390,10 @@ mkdir -p /tmp/rhc/junit
                   "cd li-test/site; rake test:integration"]
           add_ssh_cmd_to_threads(hostname, threads, failures, titles, cmds)
         end
+        
+        if options.include_extended
+          add_ssh_cmd_to_threads(hostname, threads, failures, "REST API", "cucumber -f html --out /tmp/rhc/rest_api.html -f progress -t @api li-test/tests")
+        end
 
         if options.include_cucumber
           timeout=@@SSH_TIMEOUT
@@ -472,7 +476,8 @@ mkdir -p /tmp/rhc/junit
         retry_threshold += 8 unless options.exclude_verification?
         retry_threshold += 6 if options.include_web?
         retry_threshold += 2 if options.include_coverage?
-        
+        retry_threshold += 8 if options.include_extended?
+
         failures.uniq!
 
         begin
@@ -638,6 +643,7 @@ mkdir -p /tmp/rhc/junit
   method_option :exclude_verification, :type => :boolean, :desc => "Exclude running verification tests"
   method_option :include_web, :type => :boolean, :desc => "Include running Selenium tests"
   method_option :include_rcov, :type => :boolean, :desc => "Include coverage analysis on unit tests"
+  method_option :include_extended, :type => :boolean, :desc => "Include extended tests"
   method_option :region, :required => false, :desc => "Amazon region override (default us-east-1)"
   method_option :build_clean_ami, :required => false, :desc => "Indicates whether to start from a base RHEL image"
   method_option :install_from_source, :required => false, :desc => "Indicates whether to build based off origin/master"
