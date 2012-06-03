@@ -391,7 +391,7 @@ mkdir -p /tmp/rhc/junit
           add_ssh_cmd_to_threads(hostname, threads, failures, titles, cmds)
         end
         
-        if options.include_extended
+        if options.include_extended?
           add_ssh_cmd_to_threads(hostname, threads, failures, "REST API", "cucumber -f html --out /tmp/rhc/rest_api.html -f progress -t @api li-test/tests")
         end
 
@@ -1052,6 +1052,7 @@ END
   method_option :exclude_verification, :type => :boolean, :desc => "Exclude running verification tests"
   method_option :include_cucumber, :required => false, :desc => "Include a specific cucumber test (verify, internal, node, api, etc)"
   method_option :include_rcov, :type => :boolean, :desc => "Include coverage analysis on unit tests"
+  method_option :include_extended, :type => :boolean, :desc => "Include extended tests"
   method_option :disable_charlie, :type => :boolean, :desc=> "Disable idle shutdown timer on dev instance (charlie)"
   method_option :mcollective_logs, :type => :boolean, :desc=> "Don't allow mcollective logs to be deleted on rotation"
   method_option :profile_broker, :type => :boolean, :desc=> "Enable profiling code on broker"
