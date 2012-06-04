@@ -5,7 +5,7 @@
 
 Summary:        GearChanger plugin for m-colective service
 Name:           rubygem-%{gemname}
-Version: 0.11.1
+Version: 0.11.2
 Release:        1%{?dist}
 Group:          Development/Languages
 License:        ASL 2.0
@@ -70,6 +70,10 @@ rm -rf %{buildroot}
 %{ruby_sitelib}/%{gemname}.rb
 
 %changelog
+* Mon Jun 04 2012 Adam Miller <admiller@redhat.com> 0.11.2-1
+- update migration for 2.0.13 and fix gear dns fixup with scaled apps
+  (dmcphers@redhat.com)
+
 * Fri Jun 01 2012 Adam Miller <admiller@redhat.com> 0.11.1-1
 - bumping spec versions (admiller@redhat.com)
 
