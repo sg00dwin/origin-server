@@ -43,6 +43,9 @@ BuildRequires: rubygem-sqlite3
 BuildRequires: rubygem-mail
 BuildRequires: rubygem-treetop
 
+BuildRequires: rubygem-net-http-persistent
+
+Requires:  rhc-common
 Requires:  rhc-server-common
 Requires:  httpd
 Requires:  mod_ssl
@@ -68,6 +71,8 @@ Requires:  rubygem-sinatra
 
 Requires:  rubygem-mail
 Requires:  rubygem-treetop
+
+Requires:  rubygem-net-http-persistent
 
 BuildArch: noarch
 
