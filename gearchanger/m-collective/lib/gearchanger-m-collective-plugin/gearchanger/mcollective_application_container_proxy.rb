@@ -1634,8 +1634,8 @@ module GearChanger
             @id = e.server_identity
             Rails.logger.debug "DEBUG: Changing server identity of '#{gear.name}' from '#{gear.server_identity}' to '#{@id}'"
             dns_service = StickShift::DnsService.instance
-            dns_service.deregister_application(app.name, app.domain.namespace)
-            dns_service.register_application(app.name, app.domain.namespace, get_public_hostname)
+            dns_service.deregister_application(gear.name, app.domain.namespace)
+            dns_service.register_application(gear.name, app.domain.namespace, get_public_hostname)
             dns_service.publish
             gear.server_identity = @id
             app.save
