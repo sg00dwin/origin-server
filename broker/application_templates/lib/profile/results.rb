@@ -37,11 +37,17 @@ class TestResultSet
   end
 
   def total
-    TestResult.new("TOTAL",results.map{|r| r.time}.inject{|sum,x| sum + x})
+    # Remove delete from total time
+    res = results.filter(:delete,true){|r| r.name}
+    # Get all times
+    times = res.map{|r| r.time}
+    # Get sum of times
+    total = times.inject{|sum,x| sum + x}
+    TestResult.new("TOTAL",total)
   end
 
   def finish
-    puts "-" * results.map{|x| x.to_s(max_len).length}.max
+    puts "-" * (results.map{|x| x.to_s(max_len).length}.max + 8) # Account for tab
     puts total.to_s(max_len)
 
     errors = results.map{|r| r.result.msg }.compact
