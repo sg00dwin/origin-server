@@ -35,7 +35,7 @@ end
 
 When /^I idle the php application$/ do
   account_name = @account['accountname']
-  run("/usr/bin/rhc-idler -u #{@account['accountname']}")
+  run_stdout("/usr/bin/rhc-idler -u #{@account['accountname']}")
 end
 
 Then /^the php application health\-check will( not)? be successful$/ do | negate |
@@ -46,4 +46,13 @@ Then /^the php application health\-check will( not)? be successful$/ do | negate
   command = "/usr/bin/curl -L -H 'Host: #{@app['name']}-#{@app['namespace']}.dev.rhcloud.com' -s http://localhost/health_check.php | /bin/grep -e '^1$'"
   exit_status = runcon command, 'unconfined_u', 'unconfined_r', 'unconfined_t'
   exit_status.should == good_status
+end
+
+Then /^record the active capacity$/ do
+  @app['active_capacity'] = `facter | grep active_capacity`.split(' ')[2].to_f
+end
+
+Then /^the active capacity has been reduced$/ do
+   current_capacity = `facter | grep active_capacity`.split(' ')[2].to_f
+   @app['active_capacity'].should be > current_capacity
 end

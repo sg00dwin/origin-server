@@ -54,11 +54,10 @@ def migrate_gear(rhlogin, app_name, gear_uuid, version)
                     migrated = true
                     if migrated
                       gear.configured_components.each do |comp_name|
-                        #Commented out jenkins check for Sprint 12
-                        #if comp_name == '@@app/cart-jenkins-1.4'
+                        if comp_name == '@@app/cart-jenkins-1.4'
                           component = app.comp_instance_map[comp_name]
                           restart_component(gear, component, out)
-                        #end
+                        end
                       end
                     end
                   end
@@ -105,32 +104,32 @@ def restart_component(gear, component, out)
   end
   unless leave_stopped
     begin
-      out << "Stopping gear '#{gear.name}' with uuid '#{gear.uuid}' on node '#{gear.server_identity}'\n"
+      out << "Stopping component '#{component.name}' on gear with uuid '#{gear.uuid}' on node '#{gear.server_identity}'\n"
       reply.append gear.stop(component)
     rescue Exception => e
-      out << "WARNING: Error stopping gear '#{gear.name}' with uuid '#{gear.uuid}' on node '#{gear.server_identity}': #{e.message}\n"
+      out << "WARNING: Error stopping component '#{component.name}' on gear with uuid '#{gear.uuid}' on node '#{gear.server_identity}': #{e.message}\n"
     end
     begin
-      out << "Force stopping gear '#{gear.name}' with uuid '#{gear.uuid}' on node '#{gear.server_identity}'\n"
+      out << "Force stopping component '#{component.name}' on gear with uuid '#{gear.uuid}' on node '#{gear.server_identity}'\n"
       reply.append gear.force_stop(component)
     rescue Exception => e
-      out << "WARNING: Error force stopping gear '#{gear.name}' with uuid '#{gear.uuid}' on node '#{gear.server_identity}': #{e.message}\n"
+      out << "WARNING: Error force stopping component '#{component.name}' on gear with uuid '#{gear.uuid}' on node '#{gear.server_identity}': #{e.message}\n"
     end
     num_tries = 2
     (1..num_tries).each do |i|
-      out << "Restarting gear '#{gear.name}' with uuid '#{gear.uuid}' on node '#{gear.server_identity}'\n"
+      out << "Restarting component '#{component.name}' on gear with uuid '#{gear.uuid}' on node '#{gear.server_identity}'\n"
       begin
         reply.append gear.restart(component)
         break
       rescue Exception => e
         if i == num_tries
-          out << "Failed to restart '#{gear.name}' with uuid '#{gear.uuid}' on node '#{gear.server_identity}' after #{num_tries} tries with exception: #{e.message}\n"
+          out << "Failed to restart component '#{component.name}' on gear with uuid '#{gear.uuid}' on node '#{gear.server_identity}' after #{num_tries} tries with exception: #{e.message}\n"
           raise
         end
       end
-    end    
+    end
   else
-    out << "Leaving gear stopped '#{gear.name}' with uuid '#{gear.uuid}' on node '#{gear.server_identity}'\n"
+    out << "Leaving component stopped '#{component.name}' on gear with uuid '#{gear.uuid}' on node '#{gear.server_identity}'\n"
   end
   out << "RESTART DEBUG OUTPUT:\n#{reply.debugIO.string}\n" unless reply.debugIO.string.empty?
   out << "RESTART ERROR OUTPUT:\n#{reply.errorIO.string}\n" unless reply.errorIO.string.empty?
@@ -262,7 +261,7 @@ def migrate(version, continue=false, target_server_identity=nil, migrate_positio
   puts "#####################################################"
   puts 'Gear counts per thread:'
   puts gear_cnts.pretty_inspect
-  if migrator_position_nodes
+  if !migrator_position_nodes.empty?
     puts 'Nodes this migrator is handling:'
     puts migrator_position_nodes.pretty_inspect
   end
@@ -321,7 +320,7 @@ def migrate(version, continue=false, target_server_identity=nil, migrate_positio
   puts "# of gears: #{gear_cnt}"
   puts "# of failures: #{@failures.length}"
   puts "Gear counts per thread: #{gear_cnts.pretty_inspect}"
-  puts "Nodes migrated: #{migrator_position_nodes.pretty_inspect}"
+  puts "Nodes migrated: #{migrator_position_nodes.pretty_inspect}" if !migrator_position_nodes.empty?
 
   end_time = Time.now.to_i
   total_time = end_time-start_time

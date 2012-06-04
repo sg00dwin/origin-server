@@ -61,5 +61,28 @@ module OpenShiftMigration
       exitcode = $?.exitstatus
       return output, exitcode
     end
+    
+    def self.get_mcs_level(uuid)
+      userinfo = Etc.getpwnam(uuid)
+      uid = userinfo.uid
+      setsize=1023
+      tier=setsize
+      ord=uid
+      while ord > tier
+        ord -= tier
+        tier -= 1
+      end
+      tier = setsize - tier
+      "s0:c#{tier},c#{ord + tier}"
+    end
+
+    def self.relabel_file_security_context(mcs_level, pathlist)
+      %x[ chcon -t libra_var_lib_t -l #{mcs_level} -R #{pathlist.join " "} ]
+    end
+
+    def self.remove_dir_if_empty(dirname)
+      Dir.rmdir dirname if (File.directory? dirname) && (Dir.entries(dirname) - %w[ . .. ]).empty?
+    end
+
   end
 end

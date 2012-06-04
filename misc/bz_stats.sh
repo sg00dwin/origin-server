@@ -35,13 +35,16 @@ mapfile openshift_buglist < <( bugzilla query -p OpenShift \
 # Obtain a list of blocker bugs based on status and severity
 for b in "${openshift_buglist[@]}"
 do
-  b_kw="$(printf "$b" | cut -d: -f7)"
-  if [[ -z "$y" || "$y" =~ FutureFeature ]]; then
-    b_stat="$(printf "$b" | cut -d: -f6)"
-    if [[ "$b_stat" =~ ^(NEW|ASSIGNED|MODIFIED|ON_DEV)$ ]]; then
-      b_sev="$(printf "$b" | cut -d: -f4)"
-      if [[ "$b_sev" =~ ^(unspecified|urgent|high|medium)$ ]]; then
-          blockers+=( "$b" )
+  b_comp="$(printf "$b" | cut -d: -f5)"
+  if [[ "$b_comp" =~ ^\[\'(Cartridges|Website|REST API|Command Line Interface|Broker|Cartridges)\'\]$ ]]; then
+    b_kw="$(printf "$b" | cut -d: -f7)"
+    if [[ ! "$b_kw" =~ FutureFeature ]]; then
+      b_stat="$(printf "$b" | cut -d: -f6)"
+      if [[ "$b_stat" =~ ^(NEW|ASSIGNED|MODIFIED|ON_DEV)$ ]]; then
+        b_sev="$(printf "$b" | cut -d: -f4)"
+        if [[ "$b_sev" =~ ^(unspecified|urgent|high|medium)$ ]]; then
+            blockers+=( "$b" )
+        fi
       fi
     fi
   fi
@@ -49,3 +52,8 @@ done
 
 printf "Total number of bugs: ${#openshift_buglist[@]}\n"
 printf "Total number of blockers: ${#blockers[@]}\n"
+
+printf "%s %s %s\n" \
+  "$(date +%Y-%m-%d)" \
+  "${#openshift_buglist[@]}" \
+  "${#blockers[@]}" >> /tmp/test_graphs
