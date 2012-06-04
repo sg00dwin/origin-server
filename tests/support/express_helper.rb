@@ -13,9 +13,9 @@ $dns_helper_module = File.dirname(__FILE__) + "/dns_helper"
 # Use the domain from the rails application configuration
 $domain = "dev.rhcloud.com"
 
-# user registration flag and script
+# user registration flag and script format, if any
 $registration_required = false
-$user_register_script = nil
+$user_register_script_format = nil
 
 # mcollective service and selinux context
 $gear_update_plugin_service = "mcollective"

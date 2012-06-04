@@ -17,6 +17,7 @@ Feature: PHP Application
     And a php application git repo will exist
     And a php application source tree will exist
     And a php application httpd will be running 
+    And the php file permissions are correct
  
     When I expose-port the php application
     Then the php application will be exposed
