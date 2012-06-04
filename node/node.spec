@@ -2,7 +2,7 @@
 
 Summary:       Multi-tenant cloud management system node tools
 Name:          rhc-node
-Version: 0.94.1
+Version: 0.94.2
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -266,6 +266,12 @@ fi
 /lib64/security/pam_libra.so
 
 %changelog
+* Mon Jun 04 2012 Adam Miller <admiller@redhat.com> 0.94.2-1
+- update migration for 2.0.13 and fix gear dns fixup with scaled apps
+  (dmcphers@redhat.com)
+- Improved exception handling (jhonce@redhat.com)
+- fix facter loop (jhonce@redhat.com)
+
 * Fri Jun 01 2012 Adam Miller <admiller@redhat.com> 0.94.1-1
 - bumping spec versions (admiller@redhat.com)
 - restore embedded cartridges when migrating (jhonce@redhat.com)
