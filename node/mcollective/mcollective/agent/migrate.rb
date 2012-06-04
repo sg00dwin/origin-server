@@ -246,8 +246,9 @@ module OpenShiftMigration
           output += self.migrate_http_proxy(uuid, namespace, version,
                                             gear_name, gear_home, gear_type,
                                             cartridge_root_dir)
-        rescue => e
+        rescue Exception => e
           output += "\n#{e.message}\n#{e.backtrace}\n"
+          raise
         end
 
 
