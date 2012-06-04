@@ -53,3 +53,7 @@ done
 printf "Total number of bugs: ${#openshift_buglist[@]}\n"
 printf "Total number of blockers: ${#blockers[@]}\n"
 
+printf "%s %s %s\n" \
+  "$(date +%Y-%m-%d)" \
+  "${#openshift_buglist[@]}" \
+  "${#blockers[@]}" >> /tmp/test_graphs
