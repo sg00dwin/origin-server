@@ -238,9 +238,6 @@ class Release < Thor
       # do RHEL 6.x first
       rhc_devenv_found = mash_and_rsync "libra-rhel-6.2", false, options
 
-      # now RHEL 5.x, skipping rhc gem build/deploy
-      mash_and_rsync "libra-rhel-5.8", true, options
-
       unless options.no_ami?
         create_ami(options, rhc_devenv_found)
       end
@@ -397,8 +394,6 @@ class Release < Thor
       else
         pkg_suffix = "el6_2"
       end
-      
-      pkg_suffix = "el5" if pkg_suffix == "el5_8"
   
       # Check the Brew installation
       `brew --help`
@@ -491,19 +486,6 @@ class Release < Thor
       unless run(mash_cmd, :verbose => options.verbose?)
         puts "ERROR - mash sync failed"
         exit 1
-      end
-
-      # If createrepo understands --compress-type flag, it will create repodata in RHEL5-unfriendly format
-      # recreate repo metadata if we are targeting RHEL5 and createrepo is sufficiently equipped
-      if pkg_suffix =~ /^el5/
-        `/usr/bin/createrepo -h | grep -q compress-type`
-        cmd_exit = $?.exitstatus
-        if cmd_exit == 0
-          repos = `/usr/bin/find #{options.temp_dir}/#{mash_config} -type d -name repodata | /bin/sed 's,/repodata$,,'`.chomp.split("\n")
-          repos.each do |repo_dir|
-            `/usr/bin/createrepo -s sha --compress-type bz2 #{repo_dir}`
-          end
-        end
       end
 
       unless skip_gem
