@@ -78,7 +78,7 @@ GEM
       activemodel
       json
       mongo
-    stickshift-controller (0.12.1)
+    stickshift-controller (0.11.3)
       activesupport (~> 3.0.10)
       dnsruby
       json (= 1.4.6)
@@ -86,6 +86,7 @@ GEM
       state_machine
       stickshift-common
     thor (0.14.6)
+    tlsmail (0.0.1)
     treetop (1.4.10)
       polyglot
     tzinfo (0.3.26)
@@ -103,4 +104,5 @@ DEPENDENCIES
   rails (~> 3.0.10)
   rest-client
   stickshift-controller
+  tlsmail
   xml-simple
