@@ -17,6 +17,8 @@ gem 'rdiscount'
 # Files for Barista (https://github.com/Sutto/barista)
 gem 'barista'
 
+gem 'net-http-persistent'
+
 # Bundle edge Rails instead:
 # gem 'rails', :git => 'git://github.com/rails/rails.git'
 

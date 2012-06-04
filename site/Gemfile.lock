@@ -71,6 +71,7 @@ GEM
     mime-types (1.16)
     mocha (0.9.8)
     multi_json (1.0.3)
+    net-http-persistent (2.3.2)
     nokogiri (1.4.3.1)
     parseconfig (0.5.2)
     polyglot (0.2.5)
@@ -124,6 +125,7 @@ DEPENDENCIES
   hpricot
   json
   mocha
+  net-http-persistent
   parseconfig
   rack
   rails (~> 3.0.10)
