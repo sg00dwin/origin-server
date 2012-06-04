@@ -3,7 +3,7 @@
 
 Summary:   Li site components
 Name:      rhc-site
-Version: 0.94.1
+Version: 0.94.2
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -121,6 +121,31 @@ rm -rf %{buildroot}
 /bin/touch %{sitedir}/log/production.log
 
 %changelog
+* Mon Jun 04 2012 Adam Miller <admiller@redhat.com> 0.94.2-1
+- Merge branch 'master' of git:/srv/git/li (sgoodwin@redhat.com)
+- css updates for labels, breadcrumbs, help section in console, blogs
+  (sgoodwin@redhat.com)
+- Merge branch 'net_http_persistent' (ccoleman@redhat.com)
+- Added detailed steps to the Getting Started page about installing cli on
+  windows (ffranz@redhat.com)
+- Reuse HTTP object more efficiently (ccoleman@redhat.com)
+- Keep local copy of gear_groups until Application.reload (ccoleman@redhat.com)
+- Merge branch 'master' into net_http_persistent (ccoleman@redhat.com)
+- Update index (ccoleman@redhat.com)
+- Update terminology to avoid "templates" being exposed to users.
+  (ccoleman@redhat.com)
+- Bug 826651 - Can't login to mock devenv with @ in login, use Base64 encoding
+  instead of CGI double encoding (ccoleman@redhat.com)
+- Pass all tests (ccoleman@redhat.com)
+- Merge branch 'master' into net_http_persistent (ccoleman@redhat.com)
+- Implement part of persistent local http connections (ccoleman@redhat.com)
+- Add net-http-persistent to site. (ccoleman@redhat.com)
+- Print a message when a user's cookie cannot be decoded (ccoleman@redhat.com)
+- Bug 822018 - Remove JS validation on domain create/edit forms for simplicity
+  (ccoleman@redhat.com)
+- Bug 811391 - Users with '+' in them can't stay logged in under non-integrated
+  environment (ccoleman@redhat.com)
+
 * Fri Jun 01 2012 Adam Miller <admiller@redhat.com> 0.94.1-1
 - bumping spec versions (admiller@redhat.com)
 - Fixed minor typo (fotioslindiakos@gmail.com)
