@@ -9,7 +9,7 @@
 			}
 		}
 	}
-}
+} 
 
 /* Drupal specific markup, we may want to wrap this with a top level selector on body.drupal or something */
 .views-field-rss { float: right; }
@@ -32,8 +32,9 @@
   max-height: 35px;
 }
 
-.links > span { 
-  margin-right: 8px; 
+.links.inline a {
+  text-transform: capitalize;
+  margin-right: 30px;
 }
 
 .og-mission,

@@ -5,7 +5,7 @@
 %global modname             forums
 
 Name:    drupal%{drupal_release}-openshift-features-%{modname}
-Version: 1.2.3
+Version: 1.3.1
 Release: 1%{?dist}
 Summary: Openshift Red Hat Custom Forums Feature for Drupal6
 Group:   Applications/Publishing
@@ -41,6 +41,9 @@ rm -rf $RPM_BUILD_ROOT
 %{drupal_modules}/%{modname}
 
 %changelog
+* Fri Jun 01 2012 Adam Miller <admiller@redhat.com> 1.3.1-1
+- bumping spec versions (admiller@redhat.com)
+
 * Tue May 22 2012 Dan McPherson <dmcphers@redhat.com> 1.2.3-1
 - Automatic commit of package [drupal6-openshift-features-forums] release
   [1.2.2-1]. (admiller@redhat.com)

@@ -1,0 +1,11 @@
+Use these scripts to create application templates.
+
+Process:
+1. Modify targets.yml in each templates/ folder for the required application
+2. Run 'rake descriptors:generate' to
+  1. Create applications on broker and download descriptor
+    - If the descriptor.yaml file does not exist
+  2. Create metadata.json file from metadata in targets.yml
+    - will always replace existing json file
+3. Run 'rake templates:create' to
+  1. Create templates based on all templates listed in templates.yml

@@ -2,7 +2,7 @@
 
 Summary:       Common dependencies of the OpenShift broker and site
 Name:          rhc-server-common
-Version: 0.90.1
+Version: 0.91.1
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -16,6 +16,7 @@ Requires:      rubygem-parseconfig
 Requires:      rubygem-json
 Requires:      rubygem-aws-sdk
 Requires:      rhc-common
+Requires(pre): shadow-utils
 
 Obsoletes:     rubygem-aws
 
@@ -48,12 +49,18 @@ rm -rf %{buildroot}
 %{ruby_sitelibdir}/openshift.rb
 
 %pre
-/usr/sbin/useradd libra_passenger -g libra_user \
-                                  -d /var/lib/passenger \
-                                  -r \
-                                  -s /sbin/nologin 2>&1 > /dev/null || :
+getent group libra_user >/dev/null || groupadd -r libra_user
+getent passwd libra_passenger || \
+    useradd -r -g libra_user -d /var/lib/passenger -s /sbin/nologin \
+    -c "libra_passenger" libra_passenger
 
 %changelog
+* Fri Jun 01 2012 Adam Miller <admiller@redhat.com> 0.91.1-1
+- bumping spec versions (admiller@redhat.com)
+
+* Tue May 29 2012 Adam Miller <admiller@redhat.com> 0.90.2-1
+- Bug 820223 820338 820325 (dmcphers@redhat.com)
+
 * Thu May 10 2012 Adam Miller <admiller@redhat.com> 0.90.1-1
 - fix up spec versions (dmcphers@redhat.com)
 - bumping spec versions (admiller@redhat.com)

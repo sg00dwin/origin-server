@@ -1,0 +1,337 @@
+#!/usr/bin/ruby
+
+# Client script for submitting pull requests for testing
+# as well as updating the test results from Jenkins.
+#
+# This script requires that the 'hub' rubygem be installed
+# which provides the OAuth functionality as well as some
+# other core functionality.
+#
+# You should be able to install 'hub' with:
+#   sudo gem install hub
+#
+# This has to be manually run one time to establish an OAuth
+# ticket.  For OpenShift, the user to use is openshift-bot
+
+require 'rubygems'
+require 'hub'
+require 'pp'
+require 'net/https'
+require 'getoptlong'
+require 'time'
+
+def usage
+    puts <<USAGE
+Usage: test_pull_requests [--help]
+
+This will process all the openshift pull requests and submit
+Jenkins tests for any mergeable pull requests
+
+Options:
+-h|--help
+    Show Usage info
+USAGE
+end
+
+opts = GetoptLong.new(
+    ["--help",             "-h", GetoptLong::NO_ARGUMENT]
+)
+
+args = {}
+begin
+    opts.each{ |k,v| args[k]=v }
+rescue GetoptLong::Error => e
+    usage
+    exit -100
+end
+
+if args["--help"]
+  usage
+  exit 1
+end
+
+include Hub
+
+# Global configuration
+USER = "openshift"
+REPO = "crankcase"
+TEAM_RH = "168397"
+
+# Comment string constants
+TEST_PREFIX = "Test Results:"
+WAITING_COMMENT = "#{TEST_PREFIX} Waiting for stable build"
+EVALUATING_COMMENT = "#{TEST_PREFIX} Evaluating for testing"
+SUBMITTING_COMMENT = "#{TEST_PREFIX} Submitting tests"
+EVALUATING_REGEX = /Test Results: Evaluating/
+WAITING_REGEX = /Test Results: Waiting/
+RUNNING_REGEX = /Test Results: Running \((.*)\)/
+
+# Set proxy values to nil if you don't want to use a proxy
+#PROXY_HOST = 'file.rdu.redhat.com'
+#PROXY_PORT = 3128
+PROXY_HOST = nil
+PROXY_PORT = nil
+
+# Dynamically extend GitHubAPI to add methods that don't
+# require a local git project
+module Hub
+  class GitHubAPI
+    def list_pull_requests
+      res = get "https://api.github.com/repos/#{USER}/#{REPO}/pulls" 
+      res.error! unless res.success?
+      res.data
+    end
+
+    def is_mergeable? id
+      res = get "https://api.github.com/repos/#{USER}/#{REPO}/pulls/%s" % id
+      res.error! unless res.success?
+      res.data['mergeable']
+    end
+
+    def get_comments issue_id
+      res = get "https://api.github.com/repos/#{USER}/#{REPO}/issues/%s/comments" % issue_id
+      res.error! unless res.success?
+      res.data
+    end
+
+    def add_comment issue_id, comment
+      params = { :body => comment }
+      res = post "https://api.github.com/repos/#{USER}/#{REPO}/issues/%s/comments" % [issue_id], params
+      res.error! unless res.success?
+      res.data
+    end
+
+    def update_comment comment_id, comment
+      $stderr.puts "Updating comment ##{comment_id} with #{comment}"
+      params = { :body => comment }
+      res = post "https://api.github.com/repos/#{USER}/#{REPO}/issues/comments/%s" % [comment_id], params
+      res.error! unless res.success?
+      res.data
+    end
+
+    # Verifies the user is part of Team Red Hat
+    def user_trusted? login
+      res = get "https://api.github.com/teams/#{TEAM_RH}/members/#{login}" % login
+      return res.success?
+    end
+
+    # Submit tests to Jenkins and update the comment
+    def submit_tests(id, comment_id)
+      # If the project is stable, submit the tests
+      build_url = JenkinsAPI.submit_jenkins_job id
+
+      # Update the comments to reflect the new tests running
+      update_comment comment_id, "#{TEST_PREFIX} Running (#{build_url})"
+    end
+
+    #
+    # Yields on the OpenShift bot comment with the test results.
+    # Creates a placeholder comment if none exist
+    #
+    def process_or_create_comment issue_id
+      bot_comment = nil
+
+      # See if we can find an existing bot comment
+      get_comments(issue_id).each do |comment|
+        id = comment["id"]
+        if comment['body'] =~ /#{TEST_PREFIX}/
+          bot_comment = comment
+          break
+        end
+      end
+
+      unless bot_comment
+        # No comment found, create a new one and yield to it
+        $stderr.puts "Creating placeholder comment"
+        bot_comment = add_comment issue_id, EVALUATING_COMMENT
+      end
+
+      yield bot_comment['id'], bot_comment['body'], Time.parse(bot_comment['updated_at'])
+    end
+
+
+    #
+    # Processes a specific pull request.  Manages the various comment
+    # states and will submit tests as necessary and update the comment
+    # with the results.  Tests will be resubmitted if the issue has
+    # been updated since the test have been run
+    #
+    def process_pull_request(id, updated_at)
+      # Find the bot comment for this pull request (or create one)
+      process_or_create_comment(id) do |comment_id, comment, comment_updated_at|
+        case comment
+          when EVALUATING_REGEX
+            # This is the state for a completely new comment
+            if JenkinsAPI.is_project_stable?
+              submit_tests id, comment_id
+            else
+              update_comment comment_id, WAITING_COMMENT
+            end
+          when WAITING_REGEX
+            # Only submit the tests if the project is stable
+            submit_tests id, comment_id if JenkinsAPI.is_project_stable?
+          when RUNNING_REGEX
+            # This state means that the tests are already running
+            # In this case we need to poll Jenkins to see if the build
+            # is finished
+
+            # Capture the build_url from the regex match
+            build_url = $1
+
+            # If the build is finished, update with the results
+            unless JenkinsAPI.is_build_running?(build_url)
+              result = JenkinsAPI.get_build_result(build_url)
+              update_comment comment_id, "#{TEST_PREFIX} #{result} (#{build_url})"
+            end
+          else
+            # This should match the state where the tests have already been
+            # run and have passed / failed.  If the issue has been updated,
+            # then re-run the tests
+            submit_tests id, comment_id if updated_at > comment_updated_at
+        end
+      end
+    end
+
+    #
+    # Processes a list of the valid pull requests that are mergeable
+    # and are submitted by a trusted user
+    #
+    def process_pull_requests
+      list_pull_requests.each do |req|
+        id = req['number']
+        $stderr.puts "Analyzing pull request ##{id}"
+
+        # Skip if it's not mergeable
+        mergeable = is_mergeable? id
+        $stderr.puts "Mergeable #{mergeable}"
+        next unless mergeable
+
+        # Verify user is from the Red Hat Team
+        login = req['user']['login']
+        trusted = user_trusted? login
+        $stderr.puts "#{login} trusted: #{trusted}"
+        next unless trusted
+
+        # Process the pull request
+        process_pull_request id, Time.parse(req["updated_at"])
+      end
+    end
+  end
+
+  #
+  # A class to encapsulate the Jenkins API interaction
+  #
+  class JenkinsAPI
+    JENKINS = "https://ci.dev.openshift.redhat.com/jenkins"
+    CHECK_URI = URI("#{JENKINS}/job/libra_check/lastCompletedBuild/api/json")
+    JOB_URI = "#{JENKINS}/job/test_pull_request"
+    BUILD_URI = URI("#{JOB_URI}/buildWithParameters?token=libra1")
+    JOB_API_URI = URI("#{JENKINS}/job/test_pull_request/api/json")
+    JOB_PARAM_1 = "CRANKCASE_PULL_ID"
+
+    def self.get_session
+      proxy = Net::HTTP::Proxy(PROXY_HOST, PROXY_PORT)
+      session = proxy.new(CHECK_URI.host, CHECK_URI.port)
+      session.use_ssl = true
+      session.verify_mode = OpenSSL::SSL::VERIFY_NONE
+      return session
+    end
+
+    def self.submit_jenkins_job pull_id
+      # First, get the next jenkins build number
+      next_build_num = get_next_build
+
+      # Now submit the Jenkins job
+      get_session.start do |http|
+        request = Net::HTTP::Get.new BUILD_URI.request_uri + "&#{JOB_PARAM_1}=#{pull_id}"
+        response = http.request request
+        if response.kind_of? Net::HTTPFound
+          $stderr.puts "Successfully submitted job for pull request ##{pull_id}"
+
+          # Block until Jenkins actually increments the build number (this isn't transactional)
+          $stderr.puts "Now waiting until build number increments..."
+          while get_next_build == next_build_num
+            sleep 1
+          end
+
+          # Now you can safely return with the submission registered
+          return JOB_URI + "/#{next_build_num}/"
+        else
+          raise "Jenkins job submission failed for pull request #{pull_id}"
+        end
+      end
+    end
+
+    def self.is_project_stable?
+      get_session.start do |http|
+        request = Net::HTTP::Get.new CHECK_URI.request_uri
+        response = http.request request
+        if response.kind_of? Net::HTTPSuccess
+          return JSON.parse(response.body)["result"] == "SUCCESS"
+        else
+          raise "Jenkins connection error"
+        end
+      end
+    end
+
+    def self.get_next_build
+      get_session.start do |http|
+        request = Net::HTTP::Get.new JOB_API_URI.request_uri
+        response = http.request request
+        if response.kind_of? Net::HTTPSuccess
+          JSON.parse(response.body)["nextBuildNumber"].to_i
+        else
+          raise "Jenkins connection error"
+        end
+      end
+    end
+
+    def self.to_api_url build_url
+      URI(build_url + "/api/json")
+    end
+
+    def self.is_build_running? build_url
+      get_session.start do |http|
+        request = Net::HTTP::Get.new to_api_url(build_url).request_uri
+        response = http.request request
+        if response.kind_of? Net::HTTPSuccess
+          return JSON.parse(response.body)["building"]
+        else
+          raise "Jenkins connection error"
+        end
+      end
+    end
+
+    def self.get_build_result build_url
+      get_session.start do |http|
+        request = Net::HTTP::Get.new to_api_url(build_url).request_uri
+        response = http.request request
+        if response.kind_of? Net::HTTPSuccess
+          job = JSON.parse(response.body)
+          return job["result"]
+        else
+          raise "Jenkins connection error"
+        end
+      end
+    end
+  end
+end
+
+#
+#
+# The main program script
+#
+#
+
+# Create a new Hub client
+@api_client ||= begin
+  config_file = ENV['HUB_CONFIG'] || '~/.config/hub'
+  file_store = GitHubAPI::FileStore.new File.expand_path(config_file)
+  file_config = GitHubAPI::Configuration.new file_store
+  GitHubAPI.new file_config, :app_url => 'https://ci.dev.openshift.redhat.com'
+end
+
+# Process all the pull requests for testing
+puts "Updating pull requests..."
+@api_client.process_pull_requests
+puts "Done"

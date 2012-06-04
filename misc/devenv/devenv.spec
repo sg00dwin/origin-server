@@ -8,7 +8,7 @@
 
 Summary:   Dependencies for OpenShift development
 Name:      rhc-devenv
-Version: 0.94.8
+Version: 0.95.1
 Release:   1%{?dist}
 Group:     Development/Libraries
 License:   GPLv2
@@ -107,6 +107,7 @@ Requires:  drupal6-image
 Requires:  drupal6-image_resize_filter
 Requires:  drupal6-imageapi
 Requires:  drupal6-imagecache
+
 Requires:  drupal6-imagecache_profiles
 Requires:  drupal6-imagefield
 Requires:  drupal6-insert
@@ -214,6 +215,9 @@ rm -rf %{buildroot}
 gem install sauce --no-rdoc --no-ri
 gem install zip --no-rdoc --no-ri
 
+# Install hub for automatic pull request testing
+gem install hub --no-rdoc --no-ri
+
 # Move over all configs and scripts
 cp -rf %{devenvdir}/etc/* %{_sysconfdir}
 cp -rf %{devenvdir}/bin/* %{_bindir}
@@ -297,11 +301,6 @@ ls -lZ /var/aquota.user  | grep -q var_t && ( quotaoff /var && restorecon /var/a
 # Increase max SSH connections and tries to 40
 perl -p -i -e "s/^#MaxSessions .*$/MaxSessions 40/" /etc/ssh/sshd_config
 perl -p -i -e "s/^#MaxStartups .*$/MaxStartups 40/" /etc/ssh/sshd_config
-
-# Setup an empty git repository to allow code transfer
-git init --bare /root/li
-git init --bare /root/os-client-tools
-git init --bare /root/crankcase
 
 # create a submodule repo for the tests
 git init /root/submodule_test_repo
@@ -470,8 +469,11 @@ mkdir -p /srv/cache/mod_cache
 chmod 750 /srv/cache/mod_cache
 chown apache:apache /srv/cache/mod_cache
 
-# Prevent users from binding to real IP 10 address - BZ821940
-semanage node -a -t node_t -r s0:c1023 -M  255.0.0.0 -p ipv4 10.0.0.0
+# Moved into the proper rhc-ip-prep.sh - Prevent users from binding to real IP 10 address - BZ821940
+#semanage node -a -t node_t -r s0:c1023 -M  255.0.0.0 -p ipv4 10.0.0.0
+
+# Deploy application templates - fotios
+/usr/bin/ruby /usr/lib/stickshift/broker/application_templates/templates/deploy.rb
 
 %files
 %defattr(-,root,root,-)
@@ -488,6 +490,29 @@ semanage node -a -t node_t -r s0:c1023 -M  255.0.0.0 -p ipv4 10.0.0.0
 %{policydir}/*
 
 %changelog
+* Fri Jun 01 2012 Adam Miller <admiller@redhat.com> 0.95.1-1
+- bumping spec versions (admiller@redhat.com)
+
+* Thu May 31 2012 Adam Miller <admiller@redhat.com> 0.94.12-1
+- fix libra_ami issue (dmcphers@redhat.com)
+- Updating pull request script to poll Jenkins (mhicks@redhat.com)
+
+* Wed May 30 2012 Adam Miller <admiller@redhat.com> 0.94.11-1
+- Added deploy script to devenv.spec (fotioslindiakos@gmail.com)
+- More automatic testing enhancements (mhicks@redhat.com)
+
+* Tue May 29 2012 Adam Miller <admiller@redhat.com> 0.94.10-1
+- Adding automatic pull request support (mhicks@redhat.com)
+- Security - Moved the disable of binding of ports on the real 10. address from
+  devenv.spec to rhc-ip-prep.sh so that it can make it into STG for testing
+  (tkramer@redhat.com)
+- fix condition keeping jboss from being preinstalled (dmcphers@redhat.com)
+
+* Sun May 27 2012 Dan McPherson <dmcphers@redhat.com> 0.94.9-1
+- use ignore packages for the source build as well (dmcphers@redhat.com)
+- add base package concept (dmcphers@redhat.com)
+- add base package concept (dmcphers@redhat.com)
+
 * Fri May 25 2012 Adam Miller <admiller@redhat.com> 0.94.8-1
 - Security - put more sticky permissions back on files to match what is in STG
   05 25 2012 (tkramer@redhat.com)

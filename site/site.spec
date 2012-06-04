@@ -3,7 +3,7 @@
 
 Summary:   Li site components
 Name:      rhc-site
-Version: 0.93.7
+Version: 0.94.1
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -121,6 +121,43 @@ rm -rf %{buildroot}
 /bin/touch %{sitedir}/log/production.log
 
 %changelog
+* Fri Jun 01 2012 Adam Miller <admiller@redhat.com> 0.94.1-1
+- bumping spec versions (admiller@redhat.com)
+- Fixed minor typo (fotioslindiakos@gmail.com)
+
+* Thu May 31 2012 Adam Miller <admiller@redhat.com> 0.93.12-1
+- Removed experimental tag from DIY cart (fotioslindiakos@gmail.com)
+- Added experimental label and adding spacing between multiple labels
+  (fotioslindiakos@gmail.com)
+
+* Thu May 31 2012 Adam Miller <admiller@redhat.com> 0.93.11-1
+- 818653 (sgoodwin@redhat.com)
+- Stylized template information in applications list
+  (fotioslindiakos@gmail.com)
+- BZ826972: Fixing application template link (fotioslindiakos@gmail.com)
+
+* Wed May 30 2012 Adam Miller <admiller@redhat.com> 0.93.10-1
+- Added application_templates to site (fotioslindiakos@gmail.com)
+- Revert "Merge branch 'dev/fotios/descriptor'" (admiller@redhat.com)
+- styling for application templates additions (sgoodwin@redhat.com)
+- Moved templates to their own row in the view (fotioslindiakos@gmail.com)
+- Added views for new application_templates (fotioslindiakos@gmail.com)
+- Merge branch 'dev0530' (sgoodwin@redhat.com)
+- fix for bz 820842 and enable outage status link display at view <768
+  (sgoodwin@redhat.com)
+- Fixes BZ 821103 (ffranz@redhat.com)
+- mostly css changes - adjustments to breadcrumb, headings, collapsed nav
+  order. haml change - add my account tab back into console default nav.
+  (sgoodwin@redhat.com)
+
+* Tue May 29 2012 Adam Miller <admiller@redhat.com> 0.93.9-1
+- fine tuning position of ui at individual responsive breakpoints, correct
+  utility nav drop menu and alert status message presentation and other ui
+  tweaks (sgoodwin@redhat.com)
+
+* Sun May 27 2012 Dan McPherson <dmcphers@redhat.com> 0.93.8-1
+- add base package concept (dmcphers@redhat.com)
+
 * Fri May 25 2012 Adam Miller <admiller@redhat.com> 0.93.7-1
 - Bug 821103 - Send promo code to registration endpoint via streamline
   (ccoleman@redhat.com)

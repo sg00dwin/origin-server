@@ -29,14 +29,16 @@ class DevEnv < Thor
       branch = get_branch
 
       puts "Synchronizing local changes from branch #{branch} for repo #{repo_name} from #{File.basename(FileUtils.pwd)}..."
-      ssh(hostname, %{export GIT_DIR=/root/#{repo_name}; git log ^HEAD || ( mkdir -p /root/#{repo_name} && cd /root/#{repo_name} && git init-db --bare)}, 15)
+
+      init_repo(hostname, false)
+
       exitcode = run(%{
 #######
 # Start shell code
 export GIT_SSH=#{ssh_path}
 #{branch == 'origin/master' ? "git push -q root@#{hostname}:/root/#{repo_name} master:master --tags --force; " : ''}
 git push -q root@#{hostname}:/root/#{repo_name} #{branch}:master --tags --force
-      
+
 #######
 # End shell code
 }, :verbose => options.verbose?)
@@ -54,20 +56,20 @@ git push -q root@#{hostname}:/root/#{repo_name} #{branch}:master --tags --force
       exists
     end
 
-    def init_repo(hostname, init_all=false)
+    def init_repo(hostname, replace=true)
       git_clone_commands = ''
+      git_clone_commands += "if ! [ -d /root/li ]; then\n" unless replace
+      git_clone_commands += "rm -rf /root/li; git clone --bare git://git1.ops.rhcloud.com/li.git/ /root/li\n"
+      git_clone_commands += "fi\n" unless replace
       SIBLING_REPOS.each do |repo_name, repo_dirs|
         repo_dirs.each do |repo_dir|
-          if File.exists?(repo_dir) || init_all
-            git_clone_commands += "rm -rf /root/#{repo_name}; git clone --bare git@github.com:openshift/#{repo_name}.git /root/#{repo_name}; "
-            break
-          end
+          git_clone_commands += "if ! [ -d /root/#{repo_name} ]; then\n" unless replace
+          git_clone_commands += "rm -rf /root/#{repo_name}; git clone --bare git@github.com:openshift/#{repo_name}.git /root/#{repo_name};\n"
+          git_clone_commands += "fi\n" unless replace
+          break
         end
       end
-      ssh(hostname, %{
-rm -rf /root/li; git clone --bare git://git1.ops.rhcloud.com/li.git/ /root/li
-#{git_clone_commands}
-}, 240)
+      ssh(hostname, git_clone_commands, 240)
     end
 
     def temp_commit
@@ -158,7 +160,7 @@ mkdir -p /tmp/rhc/junit
 
     def scp_remote_tests(hostname)
       if FileUtils.pwd == "/var/lib/jenkins/jobs/libra_ami_stage/workspace" || FileUtils.pwd == "/var/lib/jenkins/jobs/libra_ami_verify_stage/workspace"
-        init_repo(hostname, true)
+        init_repo(hostname)
         update_remote_tests(hostname, "stage")
       else
         puts "Archiving local changes..."
@@ -203,6 +205,7 @@ mkdir -p /tmp/rhc/junit
       scp_from(hostname, "/var/www/stickshift/broker/httpd/logs/access_log", "rhc/log/broker/access_log.log")
       scp_from(hostname, "/var/www/stickshift/broker/httpd/logs/error_log", "rhc/log/broker/error_log.log")
       scp_from(hostname, "/var/www/stickshift/broker/log/*", "rhc/log/broker")
+      scp_from(hostname, "/var/log/stickshift/user_action.log", "rhc/log/broker/user_action.log")
       scp_from(hostname, "/var/log/mcollective.*", "rhc/log/mcollective")
       scp_from(hostname, "/var/log/httpd/access_log", "rhc/log/system/access_log.log")
       scp_from(hostname, "/var/log/httpd/error_log", "rhc/log/system/error_log.log")
@@ -349,19 +352,27 @@ mkdir -p /tmp/rhc/junit
 
         unless options.exclude_internal?
           titles = ["Broker Unit",
-                    "Site Unit:Units", 
+                    "Broker Functional",
+                    "Broker Integration",
+                    "Site Unit", 
                     "StickShift Node Unit",
                     "Internal Group 1"]
-          cmds = ["cd li-test/broker; rake test", 
+          cmds = ["cd li-test/broker; rake test:units", 
+                  "cd li-test/broker; rake test:functionals",
+                  "cd li-test/broker; rake test:integration",
                   "cd li-test/site; rake test:units", 
                   "cd li-test/stickshift/node; rake test",
                   "cucumber -f html --out /tmp/rhc/internals1.html -f progress -t @internals1 li-test/tests"]
           add_ssh_cmd_to_threads(hostname, threads, failures, titles, cmds)
       
           titles = ["Internal Group 2",
-                    "StickShift Broker Unit"]
+                    "StickShift Broker Unit",
+                    "StickShift Broker Functional",
+                    "StickShift Broker Integration"]
           cmds = ["cucumber -f html --out /tmp/rhc/internals2.html -f progress -t @internals2 li-test/tests",
-                  "cd li-test/stickshift/broker; rake test"]
+                  "cd li-test/stickshift/broker; rake test:units",
+                  "cd li-test/stickshift/broker; rake test:functionals",
+                  "cd li-test/stickshift/broker; rake test:integration"]
           add_ssh_cmd_to_threads(hostname, threads, failures, titles, cmds)
 
         end
@@ -373,7 +384,7 @@ mkdir -p /tmp/rhc/junit
         end
 
         unless options.exclude_verification?
-          titles = ["Site Unit:Functionals", 
+          titles = ["Site Functional", 
                     "Verification Group 1"] 
           cmds = ["cd li-test/site; rake test:functionals", 
                   "cucumber -f html --out /tmp/rhc/verfication1.html -f progress -t @verify1 li-test/tests"]
@@ -382,10 +393,15 @@ mkdir -p /tmp/rhc/junit
           add_ssh_cmd_to_threads(hostname, threads, failures, "Verification Group 2", "cucumber -f html --out /tmp/rhc/verfication2.html -f progress -t @verify2 li-test/tests")
 
           titles = ["Verification Group 3",
-                    "Site Unit:Integration"]
+                    "Site Integration"]
           cmds = ["cucumber -f html --out /tmp/rhc/verfication3.html -f progress -t @verify3 li-test/tests", 
                   "cd li-test/site; rake test:integration"]
           add_ssh_cmd_to_threads(hostname, threads, failures, titles, cmds)
+        end
+        
+        if options.include_extended?
+          add_ssh_cmd_to_threads(hostname, threads, failures, "REST API", "cucumber -f html --out /tmp/rhc/rest_api.html -f progress -t @api li-test/tests")
+          add_ssh_cmd_to_threads(hostname, threads, failures, "Extended", "cucumber -f html --out /tmp/rhc/extended.html -f progress -t @extended li-test/tests")
         end
 
         if options.include_cucumber
@@ -469,7 +485,8 @@ mkdir -p /tmp/rhc/junit
         retry_threshold += 8 unless options.exclude_verification?
         retry_threshold += 6 if options.include_web?
         retry_threshold += 2 if options.include_coverage?
-        
+        retry_threshold += 8 if options.include_extended?
+
         failures.uniq!
 
         begin
@@ -604,6 +621,25 @@ mkdir -p /tmp/rhc/junit
     say "Watching your development directories, hit CTRL+C to stop"
     run "lsyncd #{options.verbose? ? '-log all' : ''} #{config}"
   end
+  
+  desc "print_packages", "Print a space separated list of packages"
+  def print_packages
+    packages = get_packages
+    packages_str = ""
+    packages.keys.sort.each do |package_name|
+      packages_str += " #{package_name}"
+    end
+    puts packages_str
+  end
+  
+  desc "print_ignore_packages", "Print a space separated list of packages to ignore"
+  def print_ignore_packages
+    packages_str = ""
+    IGNORE_PACKAGES.each do |package_name|
+      packages_str += " #{package_name}"
+    end
+    puts packages_str
+  end
 
   desc "build NAME BUILD_NUM", "Build a new devenv AMI with the given NAME"
   method_option :register, :type => :boolean, :desc => "Register the instance"
@@ -616,10 +652,12 @@ mkdir -p /tmp/rhc/junit
   method_option :exclude_verification, :type => :boolean, :desc => "Exclude running verification tests"
   method_option :include_web, :type => :boolean, :desc => "Include running Selenium tests"
   method_option :include_rcov, :type => :boolean, :desc => "Include coverage analysis on unit tests"
+  method_option :include_extended, :type => :boolean, :desc => "Include extended tests"
   method_option :region, :required => false, :desc => "Amazon region override (default us-east-1)"
   method_option :build_clean_ami, :required => false, :desc => "Indicates whether to start from a base RHEL image"
   method_option :install_from_source, :required => false, :desc => "Indicates whether to build based off origin/master"
   method_option :install_from_local_source, :required => false, :desc => "Indicates whether to build based on your local source"
+  method_option :install_required_packages, :required => false, :desc => "Create an instance with all the packages required by OpenShift"
   method_option :skip_verify, :type => :boolean, :desc => "Skip running tests to verify the build"
   method_option :instance_type, :required => false, :desc => "Amazon machine type override (default c1.medium)"
 
@@ -635,7 +673,7 @@ mkdir -p /tmp/rhc/junit
     conn = connect(options.region)
 
     image = nil
-    if options.build_clean_ami || options.install_from_source || options.install_from_local_source
+    if options.install_required_packages
       # Create a new builder instance
       if (options.region?nil)
         image = conn.images[AMI["us-east-1"]]
@@ -645,8 +683,16 @@ mkdir -p /tmp/rhc/junit
       else
         image = conn.images[AMI[options.region]]
       end
+    elsif options.build_clean_ami || options.install_from_source || options.install_from_local_source
+      # Get the latest devenv base image and create a new instance
+      if options.use_stage_repo?
+        filter = DEVENV_STAGE_BASE_WILDCARD
+      else
+        filter = DEVENV_BASE_WILDCARD
+      end
+      image = get_latest_ami(conn, filter)
     else
-      # Get the latest devenv image and create a new instance
+      # Get the latest devenv clean image and create a new instance
       if options.use_stage_repo?
         filter = DEVENV_STAGE_CLEAN_WILDCARD
       else
@@ -662,14 +708,11 @@ mkdir -p /tmp/rhc/junit
 
     begin
       manifest = nil
-      if options.build_clean_ami || options.install_from_source || options.install_from_local_source
-        # TODO - Remove this once nss is updated in RHEL 6.2
-        print "Running one yum update to get around RHEL 6.2 AMI problem..."
-        ssh(hostname, "yum update -y --exclude='rhc*'", 1800)
-        puts "Done"
-
+      if options.build_clean_ami || options.install_from_source || options.install_from_local_source || options.install_required_packages
         print "Updating all packages on the system..."
-        ssh(hostname, "yum update -y --exclude='rhc*'; yum -y install openssh-clients", 1800)
+        2.times do
+          ssh(hostname, "yum update -y --exclude='rhc*' --exclude='mcollective*'; yum -y install openssh-clients", 1800)
+        end
         puts "Done"
 
         if options.reboot?
@@ -690,13 +733,9 @@ mkdir -p /tmp/rhc/junit
         puts "Done"
         output = ''
         if options.install_from_source
-          cmd = 'set -e; sh li-devenv.sh candidate --install_build_prereqs'
-          output += ssh(hostname, cmd, 600)
           print "Performing clean install from source..."
           cmd = 'set -e; sh li-devenv.sh candidate --install_from_source'
         elsif options.install_from_local_source
-          cmd = 'set -e; sh li-devenv.sh candidate --install_build_prereqs'
-          output += ssh(hostname, cmd, 600)
           init_repo(hostname)
           ssh_path = File.expand_path(File.dirname(__FILE__)) + "/ssh-override"
           sync_repo('li', hostname, ssh_path)
@@ -707,6 +746,11 @@ mkdir -p /tmp/rhc/junit
           end
           print "Performing clean install from local source..."
           cmd = 'set -e; sh li-devenv.sh candidate --install_from_local_source'
+        elsif options.install_required_packages
+          print "Installing requires..."
+          cmd = "set -e; sh li-devenv.sh #{options.use_stage_repo? ? "stage" : "candidate"} --install_build_prereqs"
+          output += ssh(hostname, cmd, 600)
+          cmd = "set -e; sh li-devenv.sh #{options.use_stage_repo? ? "stage" : "candidate"} --install_required_packages"
         else
           print "Performing clean install with the latest code..."
           cmd = 'set -e ; sh ~/li-devenv.sh'
@@ -719,7 +763,7 @@ mkdir -p /tmp/rhc/junit
         puts output
         puts "---------------------------------------------------------"
 
-        validate_instance(hostname)
+        validate_instance(hostname) unless options.install_required_packages
 
         manifest = rpm_manifest(hostname)
 
@@ -728,13 +772,23 @@ mkdir -p /tmp/rhc/junit
         end
       else
         print "Updating all packages on the system..."
-        ssh(hostname, "yum clean metadata; yum update -y --exclude='rhc-devenv'; set -e; yum update -y --exclude='rhc-devenv' --disablerepo=\\* --enablerepo=li", 600)
+        output = ssh(hostname, "yum clean metadata; yum update -y --exclude='rhc-devenv'; set -e; yum update -y --exclude='rhc-devenv' --disablerepo=\\* --enablerepo=li", 600)
         puts "Done"
+
+        puts "------------------ Update Output ------------------------"
+        puts output
+        puts "---------------------------------------------------------"
 
         validate_instance(hostname)
 
         manifest = rpm_manifest(hostname)
       end
+      
+      output = ssh(hostname, "yum list installed", 120)
+
+      puts "---------------- Installed Packages ---------------------"
+      puts output
+      puts "---------------------------------------------------------"
 
       image_id = nil
       if options.register?
@@ -742,7 +796,7 @@ mkdir -p /tmp/rhc/junit
         image_id = image.id
       end
 
-      unless options.skip_verify?
+      unless options.skip_verify? || options.install_required_packages
         scp_remote_tests(hostname)
         test_instance(name + '_' + build_num, hostname, instance, conn, options, image_id)
       end
@@ -875,7 +929,6 @@ rm -rf li-working #{working_dirs}
   method_option :verbose, :type => :boolean, :desc => "Enable verbose logging"
   method_option :express_server, :type => :boolean, :desc => "Set as express server in express.conf and leave on public_ip"
   method_option :ssh_config_verifier, :type => :boolean, :desc => "Set as verifier in .ssh/config"
-  method_option :init_repo, :type => :boolean, :desc => "Initialize git repo for syncing and tests (requires --verifier)"
   method_option :instance_type, :required => false, :desc => "Amazon machine type override (default m1.large)"
   method_option :region, :required => false, :desc => "Amazon region override (default us-east-1)"
   method_option :image_name, :required => false, :desc => "AMI ID or DEVENV name to launch"
@@ -907,7 +960,7 @@ rm -rf li-working #{working_dirs}
       puts "No image name '#{options[:image_name]}' found!"
       exit(1)
     else
-      puts "Launching latest DevEnv instance #{ami.id}"
+      puts "Launching latest DevEnv instance #{ami.id} - #{ami.name}"
     end
     instance = launch_instance(ami, name)
     hostname = instance.dns_name
@@ -921,14 +974,10 @@ rm -rf li-working #{working_dirs}
     update_facts(hostname)
 
     if options.verifier?
-      if options.init_repo?
-        print "Initializing git repo for syncing..."
-        init_repo(hostname)
-        puts "Done"
-        update_remote_tests(instance.dns_name)
-      else
-        scp_remote_tests(hostname)
-      end
+      print "Initializing git repo for syncing..."
+      init_repo(hostname)
+      puts "Done"
+      update_remote_tests(instance.dns_name)
     end
 
     validate_instance(hostname)
@@ -1012,6 +1061,7 @@ END
   method_option :exclude_verification, :type => :boolean, :desc => "Exclude running verification tests"
   method_option :include_cucumber, :required => false, :desc => "Include a specific cucumber test (verify, internal, node, api, etc)"
   method_option :include_rcov, :type => :boolean, :desc => "Include coverage analysis on unit tests"
+  method_option :include_extended, :type => :boolean, :desc => "Include extended tests"
   method_option :disable_charlie, :type => :boolean, :desc=> "Disable idle shutdown timer on dev instance (charlie)"
   method_option :mcollective_logs, :type => :boolean, :desc=> "Don't allow mcollective logs to be deleted on rotation"
   method_option :profile_broker, :type => :boolean, :desc=> "Enable profiling code on broker"
@@ -1046,15 +1096,28 @@ END
 
     threads = []
     failures = []
-    add_ssh_cmd_to_threads(hostname, threads, failures, "Broker Unit", "cd li-test/broker; rake test")
     if options.include_site?
       site_titles = ["Site Unit:Units", "Site Unit:Integration"]
       site_cmds = ["cd li-test/site; rake test:units", "cd li-test/site; rake test:integration"]
       add_ssh_cmd_to_threads(hostname, threads, failures, site_titles, site_cmds)
       add_ssh_cmd_to_threads(hostname, threads, failures, "Site Unit:Functionals", "cd li-test/site; rake test:functionals")
     end
-    add_ssh_cmd_to_threads(hostname, threads, failures, "StickShift Node Unit", "cd li-test/stickshift/node; rake test")
-    add_ssh_cmd_to_threads(hostname, threads, failures, "StickShift Broker Unit", "cd li-test/stickshift/broker; rake test")
+    titles = ["Broker Unit",
+              "Broker Functional",
+              "Broker Integration",
+              "StickShift Broker Unit",
+              "StickShift Broker Functional",
+              "StickShift Broker Integration",
+              "StickShift Node Unit"]
+              
+    cmds = ["cd li-test/broker; rake test:units",
+            "cd li-test/broker; rake test:functionals",
+            "cd li-test/broker; rake test:integration",
+            "cd li-test/stickshift/broker; rake test:units",
+            "cd li-test/stickshift/broker; rake test:functionals",
+            "cd li-test/stickshift/broker; rake test:integration",
+            "cd li-test/stickshift/node; rake test"]
+    add_ssh_cmd_to_threads(hostname, threads, failures, titles, cmds)
     add_ssh_cmd_to_threads(hostname, threads, failures, "Sanity", "cucumber -f html --out /tmp/rhc/sanity.html -f progress -t @sanity li-test/tests/")
 
     threads.each do |t|

@@ -31,6 +31,7 @@ require 'pp'
 require 'json'
 require 'stickshift-node'
 require 'shellwords'
+require 'facter'
 
 module MCollective
   #
@@ -412,10 +413,10 @@ module MCollective
 
         if exitcode == 0
           Facter.add(:district_uuid) do
-              setcode { uuid }
+            setcode { uuid }
           end
           Facter.add(:district_active) do
-              setcode { active }
+            setcode { active }
           end
         end
 
@@ -500,6 +501,20 @@ module MCollective
         reply[:exitcode] = 0
       end
 
+
+      def handle_ss_job(parallel_job)
+        job = parallel_job[:job]
+        rc, output = handle_ss_cmd(job[:action], job[:args])
+        parallel_job[:result_exit_code] = rc
+        if rc == 0
+          parallel_job[:result_stdout] = output
+          parallel_job[:result_stderr] = ""
+        else
+          parallel_job[:result_stdout] = ""
+          parallel_job[:result_stderr] = output
+        end
+      end
+
       #
       # Executes a list of jobs parallely and returns their results embedded in args
       #
@@ -510,21 +525,14 @@ module MCollective
 
         joblist = request[config.identity]
         pidlist = []
+        inline_list = []
         joblist.each { |parallel_job|
           job = parallel_job[:job]
           cartridge = job[:cartridge]
           action = job[:action]
           args = job[:args]
           if cartridge == 'stickshift-node' && action != 'connector-execute'
-            rc, output = handle_ss_cmd(action, args)
-            parallel_job[:result_exit_code] = rc
-            if rc == 0
-              parallel_job[:result_stdout] = output
-              parallel_job[:result_stderr] = ""
-            else
-              parallel_job[:result_stdout] = ""
-              parallel_job[:result_stderr] = output
-            end
+            inline_list << parallel_job
           else
             begin
               if cartridge == 'stickshift-node' && action == 'connector-execute'
@@ -541,6 +549,22 @@ module MCollective
             pidlist << [parallel_job, pid, stdout, stderr]
           end
         }
+
+        # All the inline calls are made using multiple threads instead of processes
+        in_threads = []
+        inline_list.each do |parallel_job|
+          in_threads << Thread.new(parallel_job) do |pj|
+            begin
+              handle_ss_job(pj)
+            rescue Exception => e
+              pj[:result_exit_code] = 1
+              pj[:result_stdout] = e.message
+              pj[:result_stderr] = e.message
+              next
+            end
+          end
+        end
+        in_threads.each { |thr| thr.join }
 
         pidlist.each { |reap_args|
           pj, pid, sout, serr = reap_args

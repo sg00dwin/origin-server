@@ -2,7 +2,7 @@
 
 Summary:       Multi-tenant cloud management system node tools
 Name:          rhc-node
-Version: 0.93.9
+Version: 0.94.1
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -266,6 +266,46 @@ fi
 /lib64/security/pam_libra.so
 
 %changelog
+* Fri Jun 01 2012 Adam Miller <admiller@redhat.com> 0.94.1-1
+- bumping spec versions (admiller@redhat.com)
+- restore embedded cartridges when migrating (jhonce@redhat.com)
+- Fix for bugz 827564. Only list scaled gears if gear registry exists.
+  (ramr@redhat.com)
+
+* Wed May 30 2012 Adam Miller <admiller@redhat.com> 0.93.13-1
+- Add support for http alias (jhonce@redhat.com)
+- Fix bugz 825792 -- OPENSHIFT_{DATA,REPO}_DIR needs a trailing /.
+  (ramr@redhat.com)
+- Typeless gears migration fixes for new app-root updates. (ramr@redhat.com)
+- Merge branch 'US2109' (rmillner@redhat.com)
+- Fix to make inline ss calls multithreaded. (mpatel@redhat.com)
+- Fix migrate rerun issues - check runtime/repo instead of runtime.
+  (ramr@redhat.com)
+- Bug fix to handle case when migrate is rerun. (ramr@redhat.com)
+- Migrate work for typeless gears. (ramr@redhat.com)
+- Merge branch 'master' into US2109 (rmillner@redhat.com)
+- TA2182 Latest location for .state file (jhonce@redhat.com)
+
+* Tue May 29 2012 Adam Miller <admiller@redhat.com> 0.93.12-1
+- Add migration code for previously created scalable apps - bugz 825077.
+  (ramr@redhat.com)
+- Fix for bugz 825077 - mysql added to a scalable app is not accessible via
+  environment variables. OPENSHIFT_DB_HOST is now set correctly.
+  (ramr@redhat.com)
+
+* Tue May 29 2012 Adam Miller <admiller@redhat.com> 0.93.11-1
+- Bug 820223 820338 820325 (dmcphers@redhat.com)
+- re-introduce ~/data in typeless gears (jhonce@redhat.com)
+- Security - Moved the disable of binding of ports on the real 10. address from
+  devenv.spec to rhc-ip-prep.sh so that it can make it into STG for testing
+  (tkramer@redhat.com)
+
+* Fri May 25 2012 Dan McPherson <dmcphers@redhat.com> 0.93.10-1
+- US2109 Migration (jhonce@redhat.com)
+- Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
+  (rmillner@redhat.com)
+- BZ 825124, had the wrong variable name. (rmillner@redhat.com)
+
 * Fri May 25 2012 Adam Miller <admiller@redhat.com> 0.93.9-1
 - Bug 825207: Do not chown on nonexistent .state file (jhonce@redhat.com)
 

@@ -1,0 +1,23 @@
+---
+Vendor: unknown
+Requires:
+- php-5.3
+- mysql-5.1
+Display-Name: wordpress-0.0-noarch
+Version: "0.0"
+Name: wordpress
+Subscribes:
+  doc-root:
+    Required: false
+    Type: FILESYSTEM:doc-root
+License: unknown
+Description: ""
+Scaling:
+  Max: -1
+  Min: 1
+Architecture: noarch
+Connections:
+  mysql-5.1-php-5.3:
+    Components:
+    - php-5.3
+    - mysql-5.1

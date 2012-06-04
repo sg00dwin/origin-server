@@ -1,3 +1,4 @@
+require 'base64'
 #
 # This mixin module mocks the calls that are used
 # for the streamline interface
@@ -11,7 +12,7 @@ module Streamline
     # Returns the login
     #
     def establish
-      @rhlogin ||= CGI.unescape(ticket) || "openshift@redhat.com"
+      @rhlogin ||= Base64.decode64(ticket) || "openshift@redhat.com"
 
       set_fake_roles unless @roles
       self
@@ -98,7 +99,7 @@ module Streamline
       Rails.logger.debug "Authenticating user #{login}"
 
       if login.present? and password.present?
-        @ticket = CGI.escape(CGI.escape(login)) #double encode the ticket to avoid cookie issues
+        @ticket = Base64.encode64s(login)
         @rhlogin = login
         set_fake_roles
         true

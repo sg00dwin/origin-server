@@ -3,7 +3,7 @@
 
 Summary:   Li broker components
 Name:      rhc-broker
-Version: 0.93.16
+Version: 0.94.1
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -52,6 +52,8 @@ rm -rf %{buildroot}
 mkdir -p %{buildroot}%{_bindir}
 mkdir -p %{buildroot}%{htmldir}
 mkdir -p %{buildroot}%{brokerdir}
+mkdir -p %{buildroot}/usr/lib/stickshift/broker
+mv application_templates %{buildroot}/usr/lib/stickshift/broker
 cp -r . %{buildroot}%{brokerdir}
 ln -s %{brokerdir}/public %{buildroot}%{htmldir}/broker
 
@@ -98,12 +100,44 @@ rm -rf $RPM_BUILD_ROOT
 %attr(0750,-,-) %{_bindir}/rhc-admin-ctl-template
 %attr(0750,-,-) %{_bindir}/rhc-admin-ctl-usage
 %attr(0750,-,-) %{_bindir}/rhc-admin-ctl-user
+/usr/lib/stickshift/broker/application_templates
 
 %post
 /bin/touch %{brokerdir}/log/production.log
 /bin/touch %{_localstatedir}/log/stickshift/user_action.log
 
 %changelog
+* Fri Jun 01 2012 Adam Miller <admiller@redhat.com> 0.94.1-1
+- Updating gem versions (admiller@redhat.com)
+- bumping spec versions (admiller@redhat.com)
+- Added filtering to template profiling (fotioslindiakos@gmail.com)
+- Much more awesome profiling (fotioslindiakos@gmail.com)
+- Don't need to rotate logfile numbers since logger will just append nicely
+  (fotioslindiakos@gmail.com)
+- Created template profiling script (fotioslindiakos@gmail.com)
+- Updated template descriptors (fotioslindiakos@gmail.com)
+
+* Thu May 31 2012 Adam Miller <admiller@redhat.com> 0.93.22-1
+- Added experimental tag to templates (fotioslindiakos@gmail.com)
+
+* Thu May 31 2012 Adam Miller <admiller@redhat.com> 0.93.21-1
+- Fixed application template git_url (fotioslindiakos@gmail.com)
+
+* Wed May 30 2012 Adam Miller <admiller@redhat.com> 0.93.20-1
+- Updating gem versions (admiller@redhat.com)
+- Moved templates into broker and updated broker.spec
+  (fotioslindiakos@gmail.com)
+
+* Tue May 29 2012 Adam Miller <admiller@redhat.com> 0.93.19-1
+- Updating gem versions (admiller@redhat.com)
+- Updating gem versions (admiller@redhat.com)
+
+* Tue May 29 2012 Adam Miller <admiller@redhat.com> 0.93.18-1
+- Updating gem versions (admiller@redhat.com)
+
+* Fri May 25 2012 Dan McPherson <dmcphers@redhat.com> 0.93.17-1
+- Updating gem versions (dmcphers@redhat.com)
+
 * Fri May 25 2012 Adam Miller <admiller@redhat.com> 0.93.16-1
 - Updating gem versions (admiller@redhat.com)
 - better treatment - bug#817663 (rchopra@redhat.com)

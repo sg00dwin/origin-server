@@ -109,7 +109,7 @@ class Watchman
       return
     end
 
-    state_file = File.join(env[uuid][:OPENSHIFT_HOMEDIR], 'app', '.state')
+    state_file = File.join(env[uuid][:OPENSHIFT_HOMEDIR], 'app-root', 'runtime', '.state')
     if File.exists?(state_file)
       state = File.read(state_file)
       if 'idle' != state && 'stopped' != state

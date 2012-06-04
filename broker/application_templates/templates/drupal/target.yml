@@ -1,0 +1,22 @@
+---
+:cost: 1
+:cartridge: php-5.3
+:tags:
+- :php
+- :drupal
+- :wiki
+- :framework
+- :experimental
+:embed:
+- mysql-5.1
+:metadata:
+  :git_url: git://github.com/openshift/drupal-example.git
+  :git_project_url: http://github.com/openshift/drupal-example
+  :website: http://drupal.org/
+  :version: 7.7
+  :license: :gpl2+
+  :description: >
+    An open source content management platform written in PHP powering millions of websites and applications.
+    It is built, used, and supported by an active and diverse community of people around the world.
+:display_name: Drupal
+

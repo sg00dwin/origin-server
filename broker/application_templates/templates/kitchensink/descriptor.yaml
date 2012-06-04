@@ -1,0 +1,17 @@
+---
+Vendor: unknown
+Requires:
+- jbossas-7
+Display-Name: kitchensink-0.0-noarch
+Version: "0.0"
+Name: kitchensink
+Subscribes:
+  doc-root:
+    Required: false
+    Type: FILESYSTEM:doc-root
+License: unknown
+Description: ""
+Scaling:
+  Max: -1
+  Min: 1
+Architecture: noarch

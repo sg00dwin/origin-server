@@ -1,0 +1,17 @@
+---
+:cost: 1
+:cartridge: jbossas-7
+:tags:
+- :java
+- :jboss
+- :framework
+- :experimental
+:metadata:
+  :git_url: git://github.com/openshift/kitchensink-example.git
+  :git_project_url: http://github.com/openshift/kitchensink-example
+  :website: https://docs.jboss.org/author/display/AS71/Kitchensink+quickstart
+  :version: 7.0.0
+  :license: :apache2
+  :description: >
+    This quickstart uses JBoss AS7 to show off all the new features of Java EE 6 and makes a great starting point for your Java project.
+:display_name: Kitchensink Example
