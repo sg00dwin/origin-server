@@ -8,7 +8,7 @@
 
 Summary:   Dependencies for OpenShift development
 Name:      rhc-devenv
-Version: 0.95.1
+Version: 0.95.2
 Release:   1%{?dist}
 Group:     Development/Libraries
 License:   GPLv2
@@ -490,6 +490,17 @@ chown apache:apache /srv/cache/mod_cache
 %{policydir}/*
 
 %changelog
+* Mon Jun 04 2012 Adam Miller <admiller@redhat.com> 0.95.2-1
+- Update httpd.conf to enable proper logging of keepalive status
+  (ccoleman@redhat.com)
+- Merge branch 'master' into net_http_persistent (ccoleman@redhat.com)
+- test case improvements (dmcphers@redhat.com)
+- add variable max run time to instances (dmcphers@redhat.com)
+- add libra_extended (dmcphers@redhat.com)
+- stop requiring init_repo (dmcphers@redhat.com)
+- Merge branch 'master' into net_http_persistent (ccoleman@redhat.com)
+- Add keepalive to the devenv (ccoleman@redhat.com)
+
 * Fri Jun 01 2012 Adam Miller <admiller@redhat.com> 0.95.1-1
 - bumping spec versions (admiller@redhat.com)
 
