@@ -43,13 +43,13 @@
         .span6
           %ul.news.unstyled
             %li
+              = link_to application_types_path, :class => 'link-tile' do
+                %h4 Create real applications instantly
+                %p Building apps just got easier &mdash; we've got one click deploys of Drupal, Wordpress, the JBoss Kitchensink quickstart, and Ruby on Rails for you to try.  More coming soon!
+            %li
               = link_to opensource_community_url, :class => 'link-tile' do
                 %h4 OpenShift is Open Source
                 %p The components that power OpenShift are now available on GitHub and you can download our Fedora Remix image to try it out yourself.  The Open Source page has details on our process and how you can get involved.
-            %li
-              = link_to console_path, :class => 'link-tile' do
-                %h4 The console gets a makeover
-                %p We want the new console to be easy to use, easy to read, and easy to remember, so we're giving it the styling attention it deserves.  Check it out today.
             %li
               = link_to developers_url, :class => 'link-tile' do
                 %h4 Find answers in the Developer Center
