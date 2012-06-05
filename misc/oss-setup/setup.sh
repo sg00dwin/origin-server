@@ -74,6 +74,20 @@ if [ "xx" != "x${FOO}x" ] ; then
   sudo yum install -y ${repodir}/brew/jboss-as7-modules-7.1.0.Final-2.noarch.rpm
 fi
 
+FOO=`yum search 'jboss-eap6' 2>&1 | grep "No match"`
+if [ "xx" != "x${FOO}x" ] ; then
+  echo "Downloading jboss-eap6 from BREW [https://brewweb.devel.redhat.com/buildinfo?buildID=214789]"
+  wget -O ${repodir}/brew/jboss-eap6-6.0.0.Beta2-4.noarch.rpm http://download.devel.redhat.com/brewroot/packages/jboss-eap6/6.0.0.Beta2/4/noarch/jboss-eap6-6.0.0.Beta2-4.noarch.rpm 
+  sudo yum install -y ${repodir}/brew/jboss-eap6-6.0.0.Beta2-4.noarch.rpm 
+fi
+
+FOO=`yum search 'jboss-eap6-modules' 2>&1 | grep "No match"`
+if [ "xx" != "x${FOO}x" ] ; then
+  echo "Downloading jboss-eap6-modules from BREW [https://brewweb.devel.redhat.com/buildinfo?buildID=215426]"
+  wget -O ${repodir}/brew/jboss-eap6-modules-6.0.0.Beta2-2.noarch.rpm http://download.devel.redhat.com/brewroot/packages/jboss-eap6-modules/6.0.0.Beta2/2/noarch/jboss-eap6-modules-6.0.0.Beta2-2.noarch.rpm
+  sudo yum install -y ${repodir}/brew/jboss-eap6-modules-6.0.0.Beta2-2.noarch.rpm
+fi
+
 FOO=`yum search 'nodejs' 2>&1 | grep "No match"`
 if [ "xx" != "x${FOO}x" ] ; then
   echo "Downloading nodejs from BREW [https://brewweb.devel.redhat.com/buildinfo?buildID=200892]"

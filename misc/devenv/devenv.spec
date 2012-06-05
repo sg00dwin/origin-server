@@ -24,6 +24,7 @@ Requires:  cartridge-php-5.3
 Requires:  cartridge-python-2.6
 Requires:  cartridge-ruby-1.8
 Requires:  cartridge-jbossas-7
+Requires:  cartridge-jbosseap-6.0
 Requires:  cartridge-perl-5.10
 Requires:  cartridge-mysql-5.1
 Requires:  cartridge-phpmyadmin-3.4

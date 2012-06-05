@@ -63,7 +63,7 @@ echo DONE</command>
   </builders>
   <publishers>
     <hudson.tasks.BuildTrigger>
-      <childProjects>cartridge-10gen-mms-agent, cartridge-cron, cartridge-haproxy, cartridge-jbossas, cartridge-jenkins-client, cartridge-mongodb, cartridge-mysql, cartridge-nodejs, cartridge-perl, cartridge-php, cartridge-phpmoadmin, cartridge-phpmyadmin, cartridge-postgresql, cartridge-python, cartridge-raw, cartridge-rockmongo, cartridge-ruby, site-unit-tests, broker-unit-test</childProjects>
+      <childProjects>cartridge-10gen-mms-agent, cartridge-cron, cartridge-haproxy, cartridge-jbossas, cartridge-jbosseap, cartridge-jenkins-client, cartridge-mongodb, cartridge-mysql, cartridge-nodejs, cartridge-perl, cartridge-php, cartridge-phpmoadmin, cartridge-phpmyadmin, cartridge-postgresql, cartridge-python, cartridge-raw, cartridge-rockmongo, cartridge-ruby, site-unit-tests, broker-unit-test</childProjects>
       <threshold>
         <name>SUCCESS</name>
         <ordinal>0</ordinal>
