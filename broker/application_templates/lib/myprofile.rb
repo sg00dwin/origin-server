@@ -14,8 +14,9 @@ DEFAULT_WAIT = 10
 
 class Profile
   include MyLogger
-  attr_accessor :domain, :template, :deploy_opts, :host, :url_base
+  attr_accessor :domain, :template, :host, :url_base
   attr_accessor :name, :app, :tests, :results, :type
+  attr_accessor :opts
 
   def initialize(opts)
     opts.each do |k,v|
@@ -32,6 +33,10 @@ class Profile
     }).to_yaml
   end
 
+  def git_url
+    %{ssh://#{app.uuid}@#{host}/~/git/#{app.name}.git/}
+  end
+
   def start_func(msg)
     if @first
       @first = false
@@ -40,13 +45,40 @@ class Profile
   end
 
   def deploy
-    start_func("Deploying application #{name} with \n#{deploy_opts.to_yaml}")
+    start_func("Deploying application #{name} with \n#{opts[:deploy].to_yaml}")
     if domain
-      @app = domain.add_application(name,deploy_opts)
+      @app = domain.add_application(name,opts[:deploy])
       raise Success
     else
       raise NoCredentialsError
     end
+  end
+
+  def embed
+    carts = opts[:embed]
+    start_func("Embedding cartdriges: #{carts.join(',')}")
+    carts.each do |cart|
+      @app.add_cartridge(cart)
+    end
+    raise Success
+  end
+
+  def git
+    Dir.mktmpdir do |dir|
+      pwd = Dir.pwd
+
+      Dir.chdir(dir)
+      debug `git clone #{git_url} repo 2>&1`
+      Dir.chdir('repo')
+
+      debug `git remote add upstream -m master #{opts[:git]} 2>&1`
+      debug `git pull -s recursive -X theirs upstream master 2>&1`
+      debug `git push 2>&1`
+
+      Dir.chdir(pwd)
+    end
+
+    raise Success
   end
 
   def nslookup
@@ -102,7 +134,7 @@ class Profile
       return RestException.new(e.message)
     rescue Exception => e
       debug "Failure: #{e}: #{e.message}"
-      return UnknownException.new("#{e}: #{e.message}")
+      return UnknownException.new("#{e.class.name}: #{e.message}")
     end
   end
 

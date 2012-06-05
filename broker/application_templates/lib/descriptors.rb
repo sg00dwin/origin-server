@@ -1,5 +1,4 @@
 #!/usr/bin/env ruby
-$: << 'lib'
 
 require 'rubygems'
 require 'rhc-common'
@@ -32,17 +31,6 @@ def destroy_app(app)
   my_log("Destroying application #{app.name}..."){
     app.destroy
   }
-end
-
-def login(password = nil)
-  @client ||= (
-    libra_server = get_var('libra_server')
-    rhlogin = get_var('default_rhlogin')
-    password = ask("Password: ",true) unless password
-
-    end_point = "https://#{libra_server}/broker/rest/api"
-    Rhc::Rest::Client.new(end_point, rhlogin, password)
-  )
 end
 
 def targets
@@ -126,7 +114,7 @@ class ApplicationTemplate
     end
   end
 
-  def template_function(files = true, relative = true)
+  def template_opts(files = true, relative = true)
     # Parameters to pass to script
     parameters = {
       :command => 'add',
@@ -154,6 +142,11 @@ class ApplicationTemplate
       parameters['git-url'] = data['git_url']
     end
 
+    parameters
+  end
+
+  def template_function(files = true, relative = true)
+    parameters = template_opts(files,relative)
     template_command(parameters)
   end
 
