@@ -57,7 +57,7 @@ git push -q root@#{hostname}:/root/#{repo_name} #{branch}:master --tags --force
     end
 
     def init_repo(hostname, replace=true)
-      git_clone_commands = ''
+      git_clone_commands = "set -e\n "
       git_clone_commands += "if ! [ -d /root/li ]; then\n" unless replace
       git_clone_commands += "rm -rf /root/li; git clone --bare git://git1.ops.rhcloud.com/li.git/ /root/li\n"
       git_clone_commands += "fi\n" unless replace
@@ -69,7 +69,8 @@ git push -q root@#{hostname}:/root/#{repo_name} #{branch}:master --tags --force
           break
         end
       end
-      ssh(hostname, git_clone_commands, 240)
+      output, code = ssh(hostname, git_clone_commands, 240)
+      puts "#{output}"
     end
 
     def temp_commit
@@ -113,12 +114,14 @@ git push -q root@#{hostname}:/root/#{repo_name} #{branch}:master --tags --force
       all_repo_dirs.each do |repo_dir|
         git_archive_commands += "pushd #{repo_dir} > /dev/null; git archive --prefix li-test/ --format=tar #{branch ? branch : 'HEAD'} | (cd /root && tar --warning=no-timestamp -xf -); popd > /dev/null; "
       end
-      ssh(hostname, %{
+      output, code = ssh(hostname, %{
+set -e;
 rm -rf /root/li-test
 #{git_archive_commands}
 cp -n /root/li-test/stickshift/controller/test/cucumber/*.feature /root/li-test/tests/.  
 mkdir -p /tmp/rhc/junit
 })
+      puts "#{output}"
       puts "Done"
     end
     
