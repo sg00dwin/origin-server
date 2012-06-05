@@ -14,7 +14,7 @@ all_districts = District.find_all()
 all_districts.each do |dist|
   dist.max_capacity = MAX_CAPACITY
   dist.max_uid = MAX_UID
-  dist.available_uids.delete_if {|x| x > MAX_UID }
+  dist.available_uids.delete_if {|x| (x > MAX_UID or x < FIRST_UID) }
   dist.save
 end 
 
