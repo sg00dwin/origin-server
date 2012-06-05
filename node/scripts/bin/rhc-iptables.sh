@@ -5,8 +5,7 @@
 #
 
 UID_BEGIN=500
-# UID_END=12700   # Too large for port numbers
-UID_END=6499
+UID_END=8000                        # Large enough to cover the broker range
 NTABLE="rhc-user-table"             # Switchyard for app UID tables
 
 # Cross-app restrictions
@@ -24,7 +23,7 @@ UAPP_NM="25"
 
 # Rules for allowing a UID to access a proxy
 PORT_BEGIN=35531
-PORTS_PER_USER=5
+PORT_END=65535
 
 
 DEBUG=""
@@ -143,19 +142,10 @@ function uid_to_ip {
   echo "${h1}.${h2}.${h3}.${h4}"
 }
 
-function uid_to_portbegin {
-  echo $(($(($(($1-$UID_BEGIN))*$PORTS_PER_USER))+$PORT_BEGIN))
-}
 
-function uid_to_portend {
-  pbegin=`uid_to_portbegin $1`
-  echo $(( $pbegin + $PORTS_PER_USER - 1 ))
-}
-
-
-# Simpler INPUT rule to allow access to all proxy ports
+# INPUT rule to allow access to all proxy ports
 iptables -I INPUT 4 -p tcp \
-  -dport `uid_to_portbegin $UID_BEGIN`:`uid_to_portend $UID_END` \
+  -dport ${PORT_BEGIN}:${PORT_END} \
   -m state --state NEW \
   -j ACCEPT
 
