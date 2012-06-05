@@ -58,12 +58,6 @@ namespace :descriptors do
         destroy_app(app)
       end
 
-      # Dump the metadata JSON
-      template.save(:metadata,JSON.pretty_generate(opts[:metadata]))
-
-      # Save the create script
-      template.save(:script, template.template_function)
-
       # Save script information for deploy script
       to_save = {
         name => {

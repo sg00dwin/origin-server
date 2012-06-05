@@ -133,14 +133,9 @@ class ApplicationTemplate
     parameters.merge!({
       :named => info[:display_name],
       :cost => info[:cost],
-      :tags => (info[:tags] || []).map{|x| x.to_s}.join(',')
+      :tags => (info[:tags] || []).map{|x| x.to_s}.join(','),
+      'git-url' => info[:metadata][:git_url]
     })
-
-    # Parameters from metadata
-    File.open(metadata) do |f|
-      data = JSON.parse(f.read)
-      parameters['git-url'] = data['git_url']
-    end
 
     parameters
   end

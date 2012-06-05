@@ -36,19 +36,20 @@ class TestResultSet
     puts result.to_s(max_len)
   end
 
-  def total
+  def total(title,filter = nil,msg = nil)
     # Remove delete from total time
-    res = results.filter(:delete,true){|r| r.name}
+    res = filter ? results.filter(filter,true){|r| r.name} : results
     # Get all times
     times = res.map{|r| r.time}
     # Get sum of times
     total = times.inject{|sum,x| sum + x}
-    TestResult.new("TOTAL",total)
+    TestResult.new(title,total,msg)
   end
 
   def finish
     puts "-" * (results.map{|x| x.to_s(max_len).length}.max + 8) # Account for tab
-    puts total.to_s(max_len)
+    puts total("ACTIVE",[:delete,:nslookup],"without DNS or delete").to_s(max_len)
+    puts total("TOTAL").to_s(max_len)
 
     errors = results.map{|r| r.result.msg }.compact
 

@@ -1,1 +1,0 @@
-rhc-admin-ctl-template --command 'add' --descriptor 'descriptor.yaml' --metadata 'metadata.json' --named 'Kitchensink Example' --cost '1' --tags 'java,jboss,framework,experimental' --git-url 'git://github.com/openshift/kitchensink-example.git'
