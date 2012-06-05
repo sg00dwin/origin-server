@@ -9,73 +9,13 @@ MAX_UID=MAX_CAPACITY+FIRST_UID-1
 
 # Get all districts
 all_districts = District.find_all()
-all_districts_hash = {}
 
 # Fix max_capacity and max_uid
-puts "Fixing max_capacity, max_uid for all the districts"
 all_districts.each do |dist|
   dist.max_capacity = MAX_CAPACITY
   dist.max_uid = MAX_UID
-  dist.save
-  all_districts_hash[dist.uuid] = dist
-end if all_districts
-
-# Get all gears
-failures = []
-print "Getting all gears from all nodes.... this may take a while.."
-node_hash = StickShift::ApplicationContainerProxy.get_all_gears
-puts "done."
-
-
-if node_hash.nil?
-  puts "Could not gear information from all nodes."
-  exit 1
-end
-
-node_hash.each do |gear_uuid, node_info|
-  # Find gears having incorrect uid
-  g_uid = nil
-  begin
-    g_uid = Integer(node_info.split("uid:")[1].split(']')[0])
-  rescue Exception => e
-    failures << "FAILED to check gear #{gear_uuid} in app #{gear.app.uuid} because of exception : #{e.message}\n"
-    next
-  end
-  print "."
-  next if g_uid <= MAX_UID
-   
-  puts "Attempting to move gear #{gear_uuid}.."
-  # Move problematic gears to different district that has the same node_profile.
-  app, gear = Application.find_by_gear_uuid(gear_uuid)
-  g_dist_uuid = gear.get_proxy.get_district_uuid
-  g_dist = all_districts_hash[g_dist_uuid]
-  dest_dist = nil
-  all_districts.each do |dist|
-    if (dist.node_profile == g_dist.node_profile) && (dist.uuid != g_dist.uuid)
-      dest_dist = dist
-      break
-    end
-  end if all_districts  
-  failures << "FAILED to find destination district for gear #{gear_uuid}, node_profile #{g_dist.node_profile}\n" unless dest_dist
- 
-  puts "Moving gear #{gear_uuid} from district #{g_dist_uuid} to district #{dest_dist.uuid}" 
-  `rhc-admin-move -g #{gear_uuid} -u #{dest_dist.uuid} --allow_change_district` 
-  failures << "FAILED to move gear #{gear_uuid} to district #{dest_dist.uuid}\n" if $?.to_i != 0
-end 
-
-# Remove invalid uids from all districts
-all_districts.each do |dist|
   dist.available_uids.delete_if {|x| x > MAX_UID }
   dist.save
-end if all_districts
+end 
 
-
-if failures.length>0
-  puts "FAILED to fix all the gears -  "
-  puts failures.join("\n")
-else
-  puts "Successfully fixed districts."
-end
-
-exit failures.length
-
+exit 0
