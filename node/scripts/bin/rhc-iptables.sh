@@ -5,7 +5,7 @@
 #
 
 UID_BEGIN=500
-UID_END=8000                        # Large enough to cover the broker range
+UID_END=7000                        # Large enough to cover the broker range
 NTABLE="rhc-user-table"             # Switchyard for app UID tables
 
 # Cross-app restrictions
