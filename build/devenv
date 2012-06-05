@@ -70,7 +70,7 @@ git push -q root@#{hostname}:/root/#{repo_name} #{branch}:master --tags --force
         end
       end
       output, code = ssh(hostname, git_clone_commands, 240)
-      puts "#{output}"
+      puts output if code != 0
     end
 
     def temp_commit
@@ -121,7 +121,7 @@ rm -rf /root/li-test
 cp -n /root/li-test/stickshift/controller/test/cucumber/*.feature /root/li-test/tests/.  
 mkdir -p /tmp/rhc/junit
 })
-      puts "#{output}"
+      puts output if code != 0
       puts "Done"
     end
     
