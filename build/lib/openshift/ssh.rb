@@ -19,7 +19,9 @@ module OpenShift
           if exit_code == 0
             break
           elsif i == num_tries
-            puts "\nSSH failed to #{hostname} with exit_code: #{exit_code}  output: #{output}"
+            if exit_code != 255 || num_tries > 0 
+              puts "\nSSH failed to #{hostname} with exit_code: #{exit_code}  and output: #{output}"
+            end
           else
             sleep 10
           end
