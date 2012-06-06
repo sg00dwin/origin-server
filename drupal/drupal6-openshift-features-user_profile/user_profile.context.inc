@@ -26,7 +26,7 @@ function user_profile_context_default_contexts() {
           'module' => 'menu',
           'delta' => 'menu-doc-owner-menu',
           'region' => 'sidebar_left',
-          'weight' => 0,
+          'weight' => 30,
         ),
       ),
     ),
@@ -263,7 +263,7 @@ function user_profile_context_default_contexts() {
           'module' => 'menu',
           'delta' => 'menu-moderator-menu',
           'region' => 'sidebar_left',
-          'weight' => 0,
+          'weight' => 50,
         ),
       ),
     ),
@@ -274,15 +274,59 @@ function user_profile_context_default_contexts() {
   $context = new stdClass;
   $context->disabled = FALSE; /* Edit this to true to make a default context disabled initially */
   $context->api_version = 3;
+  $context->name = 'recent-changes-sidebar';
+  $context->description = '';
+  $context->tag = '';
+  $context->conditions = array(
+    'menu' => array(
+      'values' => array(
+        'documentation' => 'documentation',
+        'faq' => 'faq',
+        'kb' => 'kb',
+        'node/10295' => 'node/10295',
+        'node/10863' => 'node/10863',
+        'node/5085' => 'node/5085',
+        'node/5475' => 'node/5475',
+        'node/9435' => 'node/9435',
+        'node/9445' => 'node/9445',
+        'node/9515' => 'node/9515',
+        'node/9525' => 'node/9525',
+      ),
+    ),
+  );
+  $context->reactions = array(
+    'block' => array(
+      'blocks' => array(
+        'views-nodes_by_category-block_3' => array(
+          'module' => 'views',
+          'delta' => 'nodes_by_category-block_3',
+          'region' => 'sidebar_left',
+          'weight' => 20,
+        ),
+      ),
+    ),
+  );
+  $context->condition_mode = 0;
+  $export['recent-changes-sidebar'] = $context;
+
+  $context = new stdClass;
+  $context->disabled = FALSE; /* Edit this to true to make a default context disabled initially */
+  $context->api_version = 3;
   $context->name = 'user-logged-in';
   $context->description = 'Displays blocks for users who are logged in.';
   $context->tag = '';
   $context->conditions = array(
+    'menu' => array(
+      'values' => array(
+        '<front>' => '<front>',
+      ),
+    ),
     'path' => array(
       'values' => array(
-        '~admin' => '~admin',
-        '~admin/*' => '~admin/*',
-        '~forums' => '~forums',
+        '<front>' => '<front>',
+        'home' => 'home',
+        'user' => 'user',
+        'forums/*' => 'forums/*',
       ),
     ),
     'user' => array(
@@ -294,59 +338,11 @@ function user_profile_context_default_contexts() {
   $context->reactions = array(
     'block' => array(
       'blocks' => array(
-        'menu_block-1' => array(
-          'module' => 'menu_block',
-          'delta' => 1,
-          'region' => 'sidebar_left',
-          'weight' => 0,
-        ),
-        'search-0' => array(
-          'module' => 'search',
-          'delta' => 0,
-          'region' => 'sidebar_left',
-          'weight' => 1,
-        ),
-        'og-0' => array(
-          'module' => 'og',
-          'delta' => 0,
-          'region' => 'sidebar_left',
-          'weight' => 2,
-        ),
         'views-user_profile_box-block_1' => array(
           'module' => 'views',
           'delta' => 'user_profile_box-block_1',
           'region' => 'sidebar_left',
-          'weight' => 3,
-        ),
-        'views-promotion_view-block_1' => array(
-          'module' => 'views',
-          'delta' => 'promotion_view-block_1',
-          'region' => 'sidebar_left',
-          'weight' => 4,
-        ),
-        'poll-0' => array(
-          'module' => 'poll',
-          'delta' => 0,
-          'region' => 'sidebar_left',
-          'weight' => 5,
-        ),
-        'views-threads_by_popularity-block_1' => array(
-          'module' => 'views',
-          'delta' => 'threads_by_popularity-block_1',
-          'region' => 'sidebar_left',
-          'weight' => 6,
-        ),
-        'views-threads_by_popularity-block_3' => array(
-          'module' => 'views',
-          'delta' => 'threads_by_popularity-block_3',
-          'region' => 'sidebar_left',
-          'weight' => 7,
-        ),
-        'views-threads_by_popularity-block_2' => array(
-          'module' => 'views',
-          'delta' => 'threads_by_popularity-block_2',
-          'region' => 'sidebar_left',
-          'weight' => 8,
+          'weight' => 30,
         ),
       ),
     ),
@@ -370,66 +366,8 @@ function user_profile_context_default_contexts() {
         'forums' => 'forums',
       ),
     ),
-    'user' => array(
-      'values' => array(
-        'authenticated user' => 'authenticated user',
-      ),
-    ),
   );
-  $context->reactions = array(
-    'block' => array(
-      'blocks' => array(
-        'menu_block-1' => array(
-          'module' => 'menu_block',
-          'delta' => 1,
-          'region' => 'sidebar_left',
-          'weight' => 0,
-        ),
-        'search-0' => array(
-          'module' => 'search',
-          'delta' => 0,
-          'region' => 'sidebar_left',
-          'weight' => 1,
-        ),
-        'views-user_profile_box-block_1' => array(
-          'module' => 'views',
-          'delta' => 'user_profile_box-block_1',
-          'region' => 'sidebar_left',
-          'weight' => 2,
-        ),
-        'views-promotion_view-block_1' => array(
-          'module' => 'views',
-          'delta' => 'promotion_view-block_1',
-          'region' => 'sidebar_left',
-          'weight' => 3,
-        ),
-        'poll-0' => array(
-          'module' => 'poll',
-          'delta' => 0,
-          'region' => 'sidebar_left',
-          'weight' => 4,
-        ),
-        'views-threads_by_popularity-block_1' => array(
-          'module' => 'views',
-          'delta' => 'threads_by_popularity-block_1',
-          'region' => 'sidebar_left',
-          'weight' => 5,
-        ),
-        'views-threads_by_popularity-block_3' => array(
-          'module' => 'views',
-          'delta' => 'threads_by_popularity-block_3',
-          'region' => 'sidebar_left',
-          'weight' => 6,
-        ),
-        'views-threads_by_popularity-block_2' => array(
-          'module' => 'views',
-          'delta' => 'threads_by_popularity-block_2',
-          'region' => 'sidebar_left',
-          'weight' => 7,
-        ),
-      ),
-    ),
-  );
+  $context->reactions = array();
   $context->condition_mode = 1;
 
   // Translatables
@@ -443,10 +381,26 @@ function user_profile_context_default_contexts() {
   $context->name = 'user-logged-out';
   $context->description = 'Displays blocks for anonymous uses.';
   $context->tag = '';
+  $context->conditions = array();
+  $context->reactions = array();
+  $context->condition_mode = 0;
+
+  // Translatables
+  // Included for use with string extractors like potx.
+  t('Displays blocks for anonymous uses.');
+  $export['user-logged-out'] = $context;
+
+  $context = new stdClass;
+  $context->disabled = FALSE; /* Edit this to true to make a default context disabled initially */
+  $context->api_version = 3;
+  $context->name = 'viewing-hierarchy';
+  $context->description = '';
+  $context->tag = '';
   $context->conditions = array(
-    'user' => array(
+    'menu' => array(
       'values' => array(
-        'anonymous user' => 'anonymous user',
+        '<front>' => '<front>',
+        'node/9435' => 'node/9435',
       ),
     ),
   );
@@ -457,47 +411,54 @@ function user_profile_context_default_contexts() {
           'module' => 'menu_block',
           'delta' => 1,
           'region' => 'sidebar_left',
-          'weight' => 0,
-        ),
-        'search-0' => array(
-          'module' => 'search',
-          'delta' => 0,
-          'region' => 'sidebar_left',
-          'weight' => 1,
-        ),
-        'views-promotion_view-block_1' => array(
-          'module' => 'views',
-          'delta' => 'promotion_view-block_1',
-          'region' => 'sidebar_left',
-          'weight' => 2,
-        ),
-        'views-threads_by_popularity-block_1' => array(
-          'module' => 'views',
-          'delta' => 'threads_by_popularity-block_1',
-          'region' => 'sidebar_left',
-          'weight' => 3,
-        ),
-        'views-threads_by_popularity-block_3' => array(
-          'module' => 'views',
-          'delta' => 'threads_by_popularity-block_3',
-          'region' => 'sidebar_left',
-          'weight' => 4,
-        ),
-        'views-threads_by_popularity-block_2' => array(
-          'module' => 'views',
-          'delta' => 'threads_by_popularity-block_2',
-          'region' => 'sidebar_left',
-          'weight' => 5,
+          'weight' => -10,
         ),
       ),
     ),
   );
   $context->condition_mode = 0;
+  $export['viewing-hierarchy'] = $context;
 
-  // Translatables
-  // Included for use with string extractors like potx.
-  t('Displays blocks for anonymous uses.');
-  $export['user-logged-out'] = $context;
+  $context = new stdClass;
+  $context->disabled = FALSE; /* Edit this to true to make a default context disabled initially */
+  $context->api_version = 3;
+  $context->name = 'viewing-poll';
+  $context->description = '';
+  $context->tag = '';
+  $context->conditions = array(
+    'path' => array(
+      'values' => array(
+        'forums/*' => 'forums/*',
+        '<front>' => '<front>',
+        'ideas' => 'ideas',
+        'videos' => 'videos',
+        'ideas/*' => 'ideas/*',
+        'events' => 'events',
+        'events/*' => 'events/*',
+        'blogs' => 'blogs',
+        'get-involved' => 'get-involved',
+      ),
+    ),
+    'user' => array(
+      'values' => array(
+        'authenticated user' => 'authenticated user',
+      ),
+    ),
+  );
+  $context->reactions = array(
+    'block' => array(
+      'blocks' => array(
+        'poll-0' => array(
+          'module' => 'poll',
+          'delta' => 0,
+          'region' => 'sidebar_left',
+          'weight' => 20,
+        ),
+      ),
+    ),
+  );
+  $context->condition_mode = 1;
+  $export['viewing-poll'] = $context;
 
   return $export;
 }
