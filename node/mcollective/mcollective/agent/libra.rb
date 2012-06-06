@@ -408,7 +408,7 @@ module MCollective
         uuid = request[:uuid]
         active = request[:active]
 
-        output = `echo "#Do not modify manually!\nuuid='#{uuid}'\nactive='#{active}'" > /etc/stickshift/district.conf`
+        output = `echo "#Do not modify manually!\nuuid='#{uuid}'\nactive='#{active}'" > /var/lib/stickshift/district.conf`
         exitcode = $?.exitstatus
 
         if exitcode == 0

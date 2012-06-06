@@ -16,8 +16,5 @@ Requires:
 - php-5.3
 - mysql-5.1
 Subscribes:
-  doc-root:
-    Required: false
-    Type: FILESYSTEM:doc-root
 Architecture: noarch
 Name: wordpress
