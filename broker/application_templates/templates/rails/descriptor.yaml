@@ -16,5 +16,8 @@ Requires:
 - ruby-1.8
 - mysql-5.1
 Subscribes:
+  doc-root:
+    Required: false
+    Type: FILESYSTEM:doc-root
 Architecture: noarch
 Name: rails

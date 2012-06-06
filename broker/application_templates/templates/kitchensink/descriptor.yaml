@@ -8,6 +8,9 @@ License: unknown
 Display-Name: kitchensink-0.0-noarch
 Name: kitchensink
 Subscribes:
+  doc-root:
+    Required: false
+    Type: FILESYSTEM:doc-root
 Vendor: unknown
 Scaling:
   Max: -1

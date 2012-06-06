@@ -6,12 +6,13 @@ end
 
 When /^I add a new template named '([^\']*)' with dependencies: '([^\']*)' and git repository '([^\']*)' and tags '([^\']*)' consuming (\d+) gear and metadata '([^\']*)'$/ do |display_name, dependencies, git_url, tags, num_gears, metadata|
   dependencies = dependencies.split(",").map{ |dep| "  - #{dep}\n"}
-  output = `rhc-admin-ctl-template -c add -n "#{display_name}" -d "Requires: \n#{dependencies}\nSubscribes:\n" -g #{git_url} -t#{tags} --cost #{num_gears} -m '#{metadata}'`
+  output = `rhc-admin-ctl-template -c add -n "#{display_name}" -d "Requires: \n#{dependencies}\nSubscribes:\n  doc-root:\n    Type: \"FILESYSTEM:doc-root\"" -g #{git_url} -t#{tags} --cost #{num_gears} -m '#{metadata}'`
   @template_uuid = output.split(" ")[1]
 end
 
 When /^I add a new rails template$/ do
-  descriptor_yaml = "---\nDisplay-Name: rails-0.0-noarch\nArchitecture: noarch\nName: rails\nLicense: unknown\nDescription: ""\nConnections:\n  mysql-5.1-ruby-1.8:\n    Components:\n    - ruby-1.8\n    - mysql-5.1\nRequires:\n- ruby-1.8\n- mysql-5.1\nSubscribes:\nVendor: unknown\nVersion: \"0.0\"\n"
+  descriptor_yaml = "---\nDisplay-Name: rails-0.0-noarch\nArchitecture: noarch\nName: rails\nLicense: unknown\nDescription: ""\nConnections:\n  mysql-5.1-ruby-1.8:\n    Components:\n    - ruby-1.8\n    - mysql-5.1\nRequires:\n- ruby-1.8\n- mysql-5.1\nSubscribes:\n  doc-root:
+\n    Required: false\n    Type: FILESYSTEM:doc-root\nVendor: unknown\nVersion: \"0.0\"\n"
   metadata_json = '{ "license": "mit", "version": "3.1.1", "git": "https://github.com/openshift/rails-example", "description": "An open-source web framework that is optimized for programmer happiness and sustainable productivity. It lets you write beautiful code by favoring convention over configuration\n", "website": "http://rubyonrails.org/" }'
 
   File.open( "/tmp/descriptor.yaml", "w" ) { |f| f.write(descriptor_yaml) }

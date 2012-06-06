@@ -61,6 +61,9 @@ wordpress:
     - php-5.3
     - mysql-5.1
     Subscribes:
+      doc-root:
+        Required: false
+        Type: FILESYSTEM:doc-root
     Architecture: noarch
     Name: wordpress
 drupal:
@@ -95,6 +98,9 @@ drupal:
     - php-5.3
     - mysql-5.1
     Subscribes:
+      doc-root:
+        Required: false
+        Type: FILESYSTEM:doc-root
     Architecture: noarch
     Name: drupal
 rails:
@@ -129,6 +135,9 @@ rails:
     - ruby-1.8
     - mysql-5.1
     Subscribes:
+      doc-root:
+        Required: false
+        Type: FILESYSTEM:doc-root
     Architecture: noarch
     Name: rails
 kitchensink:
@@ -154,6 +163,9 @@ kitchensink:
     Display-Name: kitchensink-0.0-noarch
     Name: kitchensink
     Subscribes:
+      doc-root:
+        Required: false
+        Type: FILESYSTEM:doc-root
     Vendor: unknown
     Scaling:
       Max: -1
