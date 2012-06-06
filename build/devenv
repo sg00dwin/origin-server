@@ -69,8 +69,7 @@ git push -q root@#{hostname}:/root/#{repo_name} #{branch}:master --tags --force
           break
         end
       end
-      output, code = ssh(hostname, git_clone_commands, 240)
-      puts output if code != 0
+      ssh(hostname, git_clone_commands, 240, false, 10)
     end
 
     def temp_commit
@@ -114,14 +113,13 @@ git push -q root@#{hostname}:/root/#{repo_name} #{branch}:master --tags --force
       all_repo_dirs.each do |repo_dir|
         git_archive_commands += "pushd #{repo_dir} > /dev/null; git archive --prefix li-test/ --format=tar #{branch ? branch : 'HEAD'} | (cd /root && tar --warning=no-timestamp -xf -); popd > /dev/null; "
       end
-      output, code = ssh(hostname, %{
+      ssh(hostname, %{
 set -e;
 rm -rf /root/li-test
 #{git_archive_commands}
 cp -n /root/li-test/stickshift/controller/test/cucumber/*.feature /root/li-test/tests/.  
 mkdir -p /tmp/rhc/junit
-})
-      puts output if code != 0
+}, 60, false, 10)
       puts "Done"
     end
     
@@ -299,7 +297,7 @@ mkdir -p /tmp/rhc/junit
         end
       end
     end
-    
+
     def reset_test_dir(hostname, backup=false)
       ssh(hostname, %{
 if [ -d /tmp/rhc ]
