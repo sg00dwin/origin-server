@@ -119,7 +119,7 @@ rm -rf /root/li-test
 #{git_archive_commands}
 cp -n /root/li-test/stickshift/controller/test/cucumber/*.feature /root/li-test/tests/.  
 mkdir -p /tmp/rhc/junit
-}, 60, false, 10)
+}, 60, false, 2)
       puts "Done"
     end
     
