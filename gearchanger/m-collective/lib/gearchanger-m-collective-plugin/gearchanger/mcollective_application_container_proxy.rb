@@ -23,6 +23,7 @@ module GearChanger
       
       def self.find_available_impl(node_profile=nil, district_uuid=nil)
         district = nil
+        require_specific_district = !district_uuid.nil?
         if Rails.configuration.districts[:enabled] && (!district_uuid || district_uuid == 'NONE')  
           district = District.find_available(node_profile)
           if district
@@ -32,12 +33,12 @@ module GearChanger
             raise StickShift::NodeException.new("No district nodes available.  If the problem persists please contact Red Hat support.", 140)
           end
         end
-        current_server, current_capacity = rpc_find_available(node_profile, district_uuid)
-        Rails.logger.debug "CURRENT SERVER: #{current_server}"
+        current_server, current_capacity, preferred_district = rpc_find_available(node_profile, district_uuid, require_specific_district)
         if !current_server
-          current_server, current_capacity = rpc_find_available(node_profile, district_uuid, true)
-          Rails.logger.debug "CURRENT SERVER: #{current_server}"
+          current_server, current_capacity, preferred_district = rpc_find_available(node_profile, district_uuid, require_specific_district, true)
         end
+        district = preferred_district if preferred_district
+        Rails.logger.debug "CURRENT SERVER: #{current_server}"
         raise StickShift::NodeException.new("No nodes available.  If the problem persists please contact Red Hat support.", 140) unless current_server
         Rails.logger.debug "DEBUG: find_available_impl: current_server: #{current_server}: #{current_capacity}"
 
@@ -1674,7 +1675,7 @@ module GearChanger
         resultIO
       end
       
-      def self.rpc_find_available(node_profile=nil, district_uuid=nil, forceRediscovery=false)
+      def self.rpc_find_available(node_profile=nil, district_uuid=nil, require_specific_district=false, forceRediscovery=false)
         current_server, current_capacity = nil, nil
         additional_filters = [{:fact => "active_capacity",
                                :value => '100',
@@ -1709,7 +1710,7 @@ module GearChanger
           server_infos << [server, capacity.to_i]
         end
 
-        unless server_infos.empty?
+        if !server_infos.empty?
           # Pick a random node amongst the best choices available
           server_infos = server_infos.sort_by { |server_info| server_info[1] }
           if server_infos.first[1] < 80
@@ -1724,13 +1725,52 @@ module GearChanger
               server_infos << server_infos[i]
             end
           end
+        elsif district_uuid && !require_specific_district
+          # Well that didn't go to well.  They wanted a district.  Probably the most available one.  
+          # But it has no available nodes.  Falling back to a best available algorithm.  First
+          # Find the most available nodes and match to their districts.  Take out the almost
+          # full nodes if possible and return one of the nodes within a district with a lot of space. 
+          additional_filters = [{:fact => "active_capacity",
+                                 :value => '100',
+                                 :operator => "<"},
+                                {:fact => "district_uuid",
+                                 :value => "NONE",
+                                 :operator => "!="}]
+          
+          if node_profile
+            additional_filters.push({:fact => "node_profile",
+                                     :value => node_profile,
+                                     :operator => "=="})
+          end
+          districts = District.find_all
+          rpc_get_fact('active_capacity', nil, forceRediscovery, additional_filters) do |server, capacity|
+            districts.each do |district|
+              if district.server_identities.has_key?(server)
+                server_infos << [server, capacity.to_i, district]
+                break
+              end
+            end
+          end
+          unless server_infos.empty?
+            server_infos = server_infos.sort_by { |server_info| server_info[1] }
+            if server_infos.first[1] < 80
+              # If any server is < 80 then only pick from servers with < 80
+              server_infos.delete_if { |server_info| server_info[1] >= 80 }
+            end
+            server_infos = server_infos.sort_by { |server_info| server_info[2].available_capacity }
+            server_infos = server_infos.first(8)
+          end
+        end
+        current_district = nil
+        unless server_infos.empty?
           server_info = server_infos[rand(server_infos.length)]
           current_server = server_info[0]
           current_capacity = server_info[1]
+          current_district = server_info[2]
           Rails.logger.debug "Current server: #{current_server} active capacity: #{current_capacity}"
         end
 
-        return current_server, current_capacity
+        return current_server, current_capacity, current_district
       end
       
       def self.rpc_find_one(node_profile=nil)

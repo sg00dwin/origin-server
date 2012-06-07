@@ -7,7 +7,7 @@ require 'getoptlong'
 require 'stringio'
 
 RHLOGINS = nil #['rhlogin']
-MAX_THREADS = 10
+MAX_THREADS = 8
 WORK_DIR = '/tmp/rhc/migration'
 
 STDOUT.sync, STDERR.sync = true
@@ -36,7 +36,7 @@ def migrate_gear(rhlogin, app_name, gear_uuid, version)
           server_identity = gear.server_identity
           gear.node_profile = app.node_profile if gear.node_profile.nil?
           begin
-            Timeout::timeout(360) do
+            Timeout::timeout(240) do
               GearChanger::MCollectiveApplicationContainerProxy.rpc_exec('libra', server_identity) do |client|
                 client.migrate(:uuid => gear_uuid,
                                :namespace => app.domain.namespace,
