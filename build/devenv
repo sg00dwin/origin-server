@@ -62,12 +62,9 @@ git push -q root@#{hostname}:/root/#{repo_name} #{branch}:master --tags --force
       git_clone_commands += "rm -rf /root/li; git clone --bare git://git1.ops.rhcloud.com/li.git/ /root/li\n"
       git_clone_commands += "fi\n" unless replace
       SIBLING_REPOS.each do |repo_name, repo_dirs|
-        repo_dirs.each do |repo_dir|
-          git_clone_commands += "if ! [ -d /root/#{repo_name} ]; then\n" unless replace
-          git_clone_commands += "rm -rf /root/#{repo_name}; git clone --bare git@github.com:openshift/#{repo_name}.git /root/#{repo_name};\n"
-          git_clone_commands += "fi\n" unless replace
-          break
-        end
+        git_clone_commands += "if ! [ -d /root/#{repo_name} ]; then\n" unless replace
+        git_clone_commands += "rm -rf /root/#{repo_name}; git clone --bare git@github.com:openshift/#{repo_name}.git /root/#{repo_name};\n"
+        git_clone_commands += "fi\n" unless replace
       end
       ssh(hostname, git_clone_commands, 240, false, 10)
     end
