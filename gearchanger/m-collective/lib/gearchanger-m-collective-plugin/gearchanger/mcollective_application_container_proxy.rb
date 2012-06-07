@@ -518,7 +518,7 @@ module GearChanger
         reply
       end
 
-      def move_gear_pre(app, gear, state_map)
+      def move_gear_pre(app, gear, state_map, keep_uid)
         reply = ResultIO.new
         source_container = gear.container
         gi = app.group_instance_map[gear.group_instance_name]
@@ -542,7 +542,7 @@ module GearChanger
             end
           end
           # execute pre_move
-          if embedded_carts.include? cart 
+          if embedded_carts.include? cart and not keep_uid
             if (app.scalable and not cart.include? app.proxy_cartridge) or not app.scalable
               log_debug "DEBUG: Performing cartridge level pre-move for embedded #{cart} for '#{app.name}' on #{source_container.id}"
               reply.append source_container.send(:run_cartridge_command, "embedded/" + cart, app, gear, "pre-move", nil, false)
@@ -576,7 +576,7 @@ module GearChanger
 
         begin
           # pre-move
-          reply.append move_gear_pre(app, gear, state_map)
+          reply.append move_gear_pre(app, gear, state_map, keep_uid)
 
           begin
             # rsync gear with destination container
