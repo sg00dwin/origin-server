@@ -43,7 +43,7 @@ end
 # Count the number of git repos on this host
 #
 Facter.add(:git_repos) do
-    git_repos_count = Dir.glob("/var/lib/stickshift/**/git/*.git").count
+    git_repos_count = Dir.glob("/var/lib/stickshift/*/git/*.git").count
     setcode { git_repos_count }
 end
 

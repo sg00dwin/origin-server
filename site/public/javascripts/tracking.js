@@ -43,6 +43,20 @@ function customGATracker() {
     if(/app\/account\/complete/.test(url) && typeof trackAdWordsConversion == "function"){
         trackAdWordsConversion('1007064360', '3qfsCMjw0gIQqKqa4AM');
     }
+    if(/app\/pricing/.test(url)){
+        _gaq.push(['_setCustomVar', 4 ,'Viewed Pricing Page', 'Viewed Page', 1]);
+    }
+    if(/app\/opensource\/download/.test(url)){
+        try{
+            $('.action-call').live('click',function(e){
+                var url = $(this).attr("href");
+                category = 'Downloads';
+                _gat._getTrackerByName()._trackEvent(category, 'Origin', url, 0);
+                e.preventDefault();
+                setTimeout('document.location = "' + url + '"', 250);  
+            });
+        }catch(err){}
+    }
     if(firstLogin && firstLogin == "true"){
         _gaq.push(['_setCampaignTrack', false]);
     }
@@ -52,7 +66,7 @@ function customGATracker() {
         _gaq.push(['_setCustomVar', 1 ,'User Type', 'No Login', 1]);
     }
     if(promoCode && promoCode != ""){
-        _gaq.push(['_setCustomVar', 2 ,'Promo Code', promoCode , 1]);
+        _gaq.push(['_setCustomVar', 2 ,'Promo Code', promoCode , 3]);
     }
     if (/\/search\/node\//.test(url)){
         var newurl = url.replace("/node/", "?node=");
@@ -76,3 +90,19 @@ if (typeof customGATracker == "function"){
     var s = document.getElementsByTagName('script')[0];
     s.parentNode.insertBefore(ga, s);
 })();
+
+//KissInsights
+try{
+    if(!(navigator.userAgent.match(/iphone|android/i))){
+        var _kiq = _kiq || [];
+
+        (function () {
+            var ki = document.createElement('script');
+            ki.type = 'text/javascript';
+            ki.async = true;
+            ki.src = '//s3.amazonaws.com/ki.js/35352/7iu.js';
+            var s = document.getElementsByTagName('script')[0];
+            s.parentNode.insertBefore(ki, s);
+        })();
+    }
+}catch(err){}
