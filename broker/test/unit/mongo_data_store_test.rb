@@ -51,7 +51,7 @@ class MongoDataStoreTest < ActiveSupport::TestCase
     assert_equal(orig_available_capacity - 1 , d["available_capacity"])
     assert(!d["available_uids"].include?(uid))
     
-    (1..d["available_capacity"]).each do |i|  
+    (1..d["available_capacity"]).each do |i| 
       uid = ds.reserve_district_uid(uuid)
     end
     
@@ -195,12 +195,15 @@ class MongoDataStoreTest < ActiveSupport::TestCase
     ds = MongoDataStore.new
     type = gen_uuid
     assert(ds.obtain_distributed_lock(type, "1"))
-    assert(ds.obtain_distributed_lock(type, "1"))
+    assert(!ds.obtain_distributed_lock(type, "1"))
     assert(!ds.obtain_distributed_lock(type, "2"))
     ds.release_distributed_lock(type, "1")
     assert(ds.obtain_distributed_lock(type, "2"))
+    assert(ds.obtain_distributed_lock(type, "2", true))
+    ds.release_distributed_lock(type)
+    assert(ds.obtain_distributed_lock(type, "2"))
   end
-  
+
   def district
     uuid = gen_uuid
     district = {

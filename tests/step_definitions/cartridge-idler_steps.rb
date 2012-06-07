@@ -38,16 +38,6 @@ When /^I idle the php application$/ do
   run_stdout("/usr/bin/rhc-idler -u #{@account['accountname']}")
 end
 
-Then /^the php application health\-check will( not)? be successful$/ do | negate |
-  good_status = negate ? 1 : 0
-
-  # This command causes curl to hit the app, causing restorer to turn it back
-  # on and redirect.  Curl then follows that redirect.
-  command = "/usr/bin/curl -L -H 'Host: #{@app['name']}-#{@app['namespace']}.dev.rhcloud.com' -s http://localhost/health_check.php | /bin/grep -e '^1$'"
-  exit_status = runcon command, 'unconfined_u', 'unconfined_r', 'unconfined_t'
-  exit_status.should == good_status
-end
-
 Then /^record the active capacity$/ do
   @app['active_capacity'] = `facter | grep active_capacity`.split(' ')[2].to_f
 end
