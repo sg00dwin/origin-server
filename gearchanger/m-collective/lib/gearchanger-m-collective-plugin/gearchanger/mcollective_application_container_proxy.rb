@@ -23,7 +23,7 @@ module GearChanger
       
       def self.find_available_impl(node_profile=nil, district_uuid=nil)
         district = nil
-        require_exact_district_uuid = !district_uuid.nil?
+        require_specific_district = !district_uuid.nil?
         if Rails.configuration.districts[:enabled] && (!district_uuid || district_uuid == 'NONE')  
           district = District.find_available(node_profile)
           if district
@@ -33,9 +33,9 @@ module GearChanger
             raise StickShift::NodeException.new("No district nodes available.  If the problem persists please contact Red Hat support.", 140)
           end
         end
-        current_server, current_capacity, preferred_district = rpc_find_available(node_profile, district_uuid, require_exact_district_uuid)
+        current_server, current_capacity, preferred_district = rpc_find_available(node_profile, district_uuid, require_specific_district)
         if !current_server
-          current_server, current_capacity, preferred_district = rpc_find_available(node_profile, district_uuid, require_exact_district_uuid, true)
+          current_server, current_capacity, preferred_district = rpc_find_available(node_profile, district_uuid, require_specific_district, true)
         end
         district = preferred_district if preferred_district
         Rails.logger.debug "CURRENT SERVER: #{current_server}"
@@ -1675,7 +1675,7 @@ module GearChanger
         resultIO
       end
       
-      def self.rpc_find_available(node_profile=nil, district_uuid=nil, require_exact_district_uuid=false, forceRediscovery=false)
+      def self.rpc_find_available(node_profile=nil, district_uuid=nil, require_specific_district=false, forceRediscovery=false)
         current_server, current_capacity = nil, nil
         additional_filters = [{:fact => "active_capacity",
                                :value => '100',
@@ -1725,7 +1725,7 @@ module GearChanger
               server_infos << server_infos[i]
             end
           end
-        elsif district_uuid && !require_exact_district_uuid
+        elsif district_uuid && !require_specific_district
           # Well that didn't go to well.  They wanted a district.  Probably the most available one.  
           # But it has no available nodes.  Falling back to a best available algorithm.  First
           # Find the most available nodes and match to their districts.  Take out the almost
