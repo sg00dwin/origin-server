@@ -40,10 +40,17 @@
   <body class='community'>
     <header>
       <div id="top" class="section-top">
+      	
         <div class="container">
-          <div class="pull-left"><a href="http://makara.nurturehq.com/makara/newsletter_signup.html">Sign up for the newsletter</a></div>
+        	<a title="Track open issues on the OpenShift status page" style="display:none;" id="outage" class="btn btn-small btn-warning" href="/app/status">Status</a>
+          <div class="pull-left"><a href="http://makara.nurturehq.com/makara/newsletter_signup.html">Newsletter Sign Up</a></div>
           <div class="pull-right login">
-            <a title="Track open issues on the OpenShift status page" style="display:none;" id="outage" class="btn btn-small btn-warning" href="/app/status">Status</a>
+          
+          <form action="/community/home" method="post" accept-charset="UTF-8" id="search-top">
+             <input name="search_block_form" class="search-query" type="text" placeholder="SEARCH">
+             <button type="submit" class="search"></button>
+          </form>
+
             <?php
             global $user;
             
@@ -92,7 +99,7 @@
       <div class="container"><div class="row-content">
       <div class='row row-flush-right'>
         <?php if ($layout == 'left') :?>
-      	<div class="column-navbar"> 
+      	<div class="column-navbar">      	
         	<a data-toggle="collapse" data-target=".nav-collapse" class="btn btn-navbar">
         	Navigate
         	<span class="icon-bar"></span>
