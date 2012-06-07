@@ -96,7 +96,10 @@ Broker::Application.configure do
     :user => "libra",
     :password => "momo",
     :db => "openshift_broker_dev",
-    :collections => {:user => "user_test", :district => "district", :application_template => "template"}
+    :collections => {:user => "user_test", 
+                     :district => "district", 
+                     :application_template => "template",
+                     :distributed_lock => "distributed_lock"}
   }
 
   config.user_action_logging = {

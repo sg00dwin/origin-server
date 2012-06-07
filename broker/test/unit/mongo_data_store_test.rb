@@ -191,6 +191,16 @@ class MongoDataStoreTest < ActiveSupport::TestCase
     assert_equal(nil, d)
   end
   
+  test "distributed lock" do
+    ds = MongoDataStore.new
+    type = gen_uuid
+    assert(ds.obtain_distributed_lock(type, "1"))
+    assert(ds.obtain_distributed_lock(type, "1"))
+    assert(!ds.obtain_distributed_lock(type, "2"))
+    ds.release_distributed_lock(type, "1")
+    assert(ds.obtain_distributed_lock(type, "2"))
+  end
+  
   def district
     uuid = gen_uuid
     district = {
