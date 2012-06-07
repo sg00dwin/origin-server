@@ -12,3 +12,11 @@ else
 end
 MongoMapper.database = Rails.application.config.datastore[:db]
 MongoMapper.connection[Rails.application.config.datastore[:db]].authenticate(Rails.application.config.datastore[:user], Rails.application.config.datastore[:password]) if Rails.application.config.datastore[:user]
+  
+  
+db = StickShift::DataStore.instance.db
+distributed_lock_collection = db.collection(Rails.application.config.datastore[:collections][:distributed_lock])
+distributed_lock_collection.ensure_index([["type", Mongo::ASCENDING]], {:unique => true})
+
+#district_collection = db.collection(Rails.application.config.datastore[:collections][:district])
+#district_collection.ensure_index([["available_capacity", Mongo::ASCENDING]])
