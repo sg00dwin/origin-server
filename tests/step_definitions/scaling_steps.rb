@@ -93,10 +93,17 @@ Then /^(\d+) gears will be in the cluster$/ do |count|
   raise "Gear counts do not match: #{gear_count.to_i} should be #{count.to_i}" unless gear_count.to_i == count.to_i
 end
 
-Then /^the php-5.3 health\-check will( not)? be successful$/ do |negate|
+Then /^the (.*) health\-check will( not)? be successful$/ do |type, negate|
   good_status = negate ? 1 : 0
 
-  command = "/usr/bin/curl -s -H 'Host: #{@app.name}-#{@app.namespace}.dev.rhcloud.com' -s 'http://localhost/health_check.php' | grep -q -e '^1$'"
+  case type
+  when "php-5.3"
+    url='http://localhost/health_check.php'
+  else
+    url='http://localhost/health'
+  end
+
+  command = "/usr/bin/curl -s -H 'Host: #{@app.name}-#{@app.namespace}.dev.rhcloud.com' -s #{url} | grep -q -e '^1$'"
   exit_status = runcon command, 'unconfined_u', 'unconfined_r', 'unconfined_t'
   exit_status.should == good_status
 end
