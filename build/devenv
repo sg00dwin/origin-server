@@ -102,7 +102,7 @@ git push -q root@#{hostname}:/root/#{repo_name} #{branch}:master --tags --force
       print "Updating remote tests..."
       all_repo_dirs = ['/root/li']
       SIBLING_REPOS.each do |repo_name, repo_dirs|
-        all_repo_dirs << ["/root/#{repo_name}"]
+        all_repo_dirs << "/root/#{repo_name}"
       end
       git_archive_commands = ''
       all_repo_dirs.each do |repo_dir|
