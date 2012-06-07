@@ -97,6 +97,8 @@ Then /^the (.*) health\-check will( not)? be successful$/ do |type, negate|
   good_status = negate ? 1 : 0
 
   case type
+  when "php"
+    url='http://localhost/health_check.php'
   when "php-5.3"
     url='http://localhost/health_check.php'
   else
