@@ -5,7 +5,7 @@
 
 Summary:        GearChanger plugin for m-colective service
 Name:           rubygem-%{gemname}
-Version: 0.11.2
+Version: 0.11.3
 Release:        1%{?dist}
 Group:          Development/Languages
 License:        ASL 2.0
@@ -70,6 +70,16 @@ rm -rf %{buildroot}
 %{ruby_sitelib}/%{gemname}.rb
 
 %changelog
+* Fri Jun 08 2012 Adam Miller <admiller@redhat.com> 0.11.3-1
+- dont perform pre-move when moving within same district (rchopra@redhat.com)
+- Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
+  (rchopra@redhat.com)
+- fix move_gear on messaging about idle/running/stopped on a cartridge basis;
+  clean out fix-runaway; cleanout old move-app (rchopra@redhat.com)
+- name change (dmcphers@redhat.com)
+- add secondary algorithm more expensive algorithm for find available node
+  (dmcphers@redhat.com)
+
 * Mon Jun 04 2012 Adam Miller <admiller@redhat.com> 0.11.2-1
 - update migration for 2.0.13 and fix gear dns fixup with scaled apps
   (dmcphers@redhat.com)
