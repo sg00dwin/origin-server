@@ -86,6 +86,8 @@ create_standard_network_env_vars
 create_standard_repo_dir_env_var
 create_standard_path_env_var
 
+run_as_user "$CART_INFO_DIR/bin/zend_configure_filesystem.sh" || error "Failed to set filesystem in pam namespace" 121
+
 #
 # Start the server
 #
