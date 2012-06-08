@@ -3,7 +3,7 @@
 
 Summary:   Li site components
 Name:      rhc-site
-Version: 0.94.2
+Version: 0.94.3
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -121,6 +121,23 @@ rm -rf %{buildroot}
 /bin/touch %{sitedir}/log/production.log
 
 %changelog
+* Fri Jun 08 2012 Adam Miller <admiller@redhat.com> 0.94.3-1
+- Remove black bar from simple layout (ccoleman@redhat.com)
+- Updating jquery version to fix new bootstrap issue
+  (fotioslindiakos@gmail.com)
+- Fix JS error with reenabling the loading button (ccoleman@redhat.com)
+- Update the help link for the getting_started page (ccoleman@redhat.com)
+- Updated tracking.js with KissInsights integration, pricing page var, and
+  Origin download tracking (spurtell@redhat.com)
+- Made sure application_types index page works when no templates exist
+  (fotioslindiakos@gmail.com)
+- Add EAP metadata, clean up the creation pages a bit more, fix an empty box on
+  app creation. (ccoleman@redhat.com)
+- bz 827994 changes to next steps page, change experimental label to use just
+  default label style, remove label hover, add spacing in btw p + heading
+  (sgoodwin@redhat.com)
+- Updated gem info for rails 3.0.13 (admiller@redhat.com)
+
 * Mon Jun 04 2012 Adam Miller <admiller@redhat.com> 0.94.2-1
 - Merge branch 'master' of git:/srv/git/li (sgoodwin@redhat.com)
 - css updates for labels, breadcrumbs, help section in console, blogs
