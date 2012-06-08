@@ -38,10 +38,12 @@ Billing::Application.configure do
     :default_max_gears => 3,
     :plans => {
       :DekaShift => {
-        :max_gears => 3
+        :max_gears => 3,
+        :vip => false
       },
       :MegaShift => {
-        :max_gears => 16
+        :max_gears => 16,
+        :vip => true
       }
     }
   }
