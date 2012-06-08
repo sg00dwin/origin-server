@@ -8,7 +8,7 @@
 
 Summary:   Dependencies for OpenShift development
 Name:      rhc-devenv
-Version: 0.95.2
+Version: 0.95.3
 Release:   1%{?dist}
 Group:     Development/Libraries
 License:   GPLv2
@@ -492,6 +492,11 @@ chown apache:apache /srv/cache/mod_cache
 %{policydir}/*
 
 %changelog
+* Fri Jun 08 2012 Adam Miller <admiller@redhat.com> 0.95.3-1
+- added drupal6-openshift-features-community_wiki to devenv
+  (admiller@redhat.com)
+- US2307 - enable eap6 (bdecoste@gmail.com)
+
 * Mon Jun 04 2012 Adam Miller <admiller@redhat.com> 0.95.2-1
 - Update httpd.conf to enable proper logging of keepalive status
   (ccoleman@redhat.com)
