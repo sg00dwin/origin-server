@@ -93,12 +93,10 @@ Then /^(\d+) gears will be in the cluster$/ do |count|
   raise "Gear counts do not match: #{gear_count.to_i} should be #{count.to_i}" unless gear_count.to_i == count.to_i
 end
 
-Then /^the (.*) health\-check will( not)? be successful$/ do |type, negate|
+Then /^the ([\w\-\.]+) health\-check will( not)? be successful$/ do |type, negate|
   good_status = negate ? 1 : 0
 
   case type
-  when "php"
-    url='http://localhost/health_check.php'
   when "php-5.3"
     url='http://localhost/health_check.php'
   else
