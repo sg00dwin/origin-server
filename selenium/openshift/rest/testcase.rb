@@ -7,9 +7,6 @@ require 'openshift/rest/navbars'
 module OpenShift
   module Rest
     class TestCase < OpenShift::SeleniumTestCase
-      def setup
-        super
-      end
       private
 
       # helper method for creating a namespace

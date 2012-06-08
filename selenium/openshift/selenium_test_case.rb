@@ -8,6 +8,10 @@ require "selenium/client"
 require "selenium/webdriver"
 require "openshift/sauce_helper" unless $local_selenium
 
+require 'openshift/rest/pages'
+require 'openshift/rest/forms'
+require 'openshift/rest/navbars'
+
 module OpenShift
   class SeleniumTestCase < Test::Unit::TestCase
     include ::OpenShift::TestBase
@@ -48,6 +52,7 @@ module OpenShift
 
       if OpenShift::SeleniumTestCase.local?
         @driver = Selenium::WebDriver.for :firefox
+        @driver.manage.timeouts.implicit_wait = 3
         @driver.navigate.to browser_url
       else
         cfg = Sauce::Config.new()
