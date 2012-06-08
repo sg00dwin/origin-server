@@ -32,3 +32,17 @@ EOF
     send_email(to, subject, body, from, password)
   end
 end
+
+def enable_broker(event_params)
+  id_list = event_params[:event_id]
+  id_list.each do |event_id|
+    case event_id
+      when "101"
+        # account created.. get login and create a free account
+        max_gears = Rails.configuration.ss[:default_max_gears]
+        user = CloudUser.new(params[:userid])
+      when "105"
+    end
+  end
+end
+
