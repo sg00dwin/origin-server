@@ -1,4 +1,4 @@
-@extended
+# @extended
 
 Feature: Scaling Verification Tests
   Scenario Outline: AutoScale App
