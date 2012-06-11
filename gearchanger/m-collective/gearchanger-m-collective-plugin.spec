@@ -5,7 +5,7 @@
 
 Summary:        GearChanger plugin for m-colective service
 Name:           rubygem-%{gemname}
-Version: 0.11.3
+Version: 0.11.4
 Release:        1%{?dist}
 Group:          Development/Languages
 License:        ASL 2.0
@@ -70,6 +70,9 @@ rm -rf %{buildroot}
 %{ruby_sitelib}/%{gemname}.rb
 
 %changelog
+* Mon Jun 11 2012 Adam Miller <admiller@redhat.com> 0.11.4-1
+- optimize find available (dmcphers@redhat.com)
+
 * Fri Jun 08 2012 Adam Miller <admiller@redhat.com> 0.11.3-1
 - dont perform pre-move when moving within same district (rchopra@redhat.com)
 - Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
