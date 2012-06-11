@@ -74,6 +74,8 @@ Requires:  rubygem-treetop
 
 Requires:  rubygem-net-http-persistent
 
+Requires: rubygem-aws-sdk = 1.1.1
+
 BuildArch: noarch
 
 %description
