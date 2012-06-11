@@ -11,20 +11,29 @@ file_list=(
 )
 
 target_pam="/tmp/zend"
-
+restore=$1
 
 function create_links {
   for zpath in ${file_list[*]}; do
-    if [ ! -f $zpath ]; then
+    if [ ! -e $zpath ]; then
       echo "Path does not exist $zpath"
-      continue
+      if [ ! -h $zpath ]; then
+        continue
+      fi
     fi
     zdir=`dirname $zpath`
     zfile=`basename $zpath`
-    echo "Moving $zpath to $zdir/${zfile}_openshift_original"
-    mv $zpath $zdir/${zfile}_openshift_original
-    echo "Linking $zdir/$zfile to $target_pam/$zdir/$zfile"
-    ln -s $target_pam/$zdir/$zfile $zdir/$zfile
+    if [ "$restore" == "restore" ]; then
+      echo "Undoing Linking $zdir/$zfile to $target_pam/$zdir/$zfile"
+      rm -f $zdir/$zfile
+      echo "Undoing Moving $zpath to $zdir/${zfile}_openshift_original"
+      mv $zdir/${zfile}_openshift_original $zpath
+    else
+      echo "Moving $zpath to $zdir/${zfile}_openshift_original"
+      mv $zpath $zdir/${zfile}_openshift_original
+      echo "Linking $zdir/$zfile to $target_pam/$zdir/$zfile"
+      ln -s $target_pam/$zdir/$zfile $zdir/$zfile
+    fi
   done
 }
 
