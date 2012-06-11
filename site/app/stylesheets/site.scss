@@ -749,63 +749,57 @@ h1.ribbon {
   }
 }
 
-
-
  
 // Search input 
-
-#search-top input[type="text"] {
-    background: url(search-dark.png) no-repeat 10px 6px #333;
-    border: 0;
-    color: #ccc;
-    padding-left: 10px;
-    padding-right: 27px;
-    color: #ccc;
-    font-size: 12px;
-    font-family: $headerFontFamily;
-    width: 50px;
-    -webkit-box-shadow:0 1px 3px rgba(0, 0, 0, 0.2) inset;
-    -moz-box-shadow:0 1px 3px rgba(0, 0, 0, 0.2) inset;
-    box-shadow:0 1px 3px rgba(0, 0, 0, 0.2) inset;
-    -webkit-transition: all 0.5s ease 0s;
-    -moz-transition: all 0.5s ease 0s;
-    -o-transition: all 0.5s ease 0s;
-    transition: all 0.5s ease 0s;
-    }
-
-#search-top input[type="text"]:focus {
-    width: 200px;
-    background-color: #aaa;
-    color: #000;
-    font-size: inherit;
-    }
-
 
 #search-top {
 	position: relative;
 	text-align: right;
   margin: 0;
   float: left;
-
-  .search-query {
-    margin-bottom: 0;
-    border-radius: 0;
-    border-width: 0;
-    background-color: #434343;
-    box-shadow: none;
-    width: inherit;
-    width: -moz-available;
-  }
-  button.search {
-    right: 3px;
-    background: transparent url("../images/sprite-vert.png") 2px -228px no-repeat;
-    height: 25px;
-    width: 20px;
-    border: 0;
-    position: absolute;
-    top: 1px;
-  }
 }
+
+#search-top input[type="text"] {
+    //background: url("../images/sprite-vert.png") right -227px no-repeat #333;
+    background: #333;
+    border: 0;
+    border-radius: 0;
+    color: #ccc;
+    padding-left: 8px;
+    padding-right: 27px;
+    font-size: 12px;
+    font-family: $headerFontFamily;
+    width: 60px;
+    -webkit-transition: width 0.5s ease 0s;
+    -moz-transition: width 0.5s ease 0s;
+    -o-transition: width 0.5s ease 0s;
+    transition: width 0.5s ease 0s;
+}
+        
+#search-top button.search {
+    background: #333 url("../images/sprite-vert.png") 2px -227px no-repeat;
+    height: 26px;
+    width: 21px;
+    border: 0;
+    padding: 0;
+    margin: 0 -3 0 0;
+    position: absolute;
+    top: 0;
+    right: 3px;
+}
+   
+#search-top input[type="text"]:focus + button.search {
+	background: transparent url("../images/sprite-vert.png") 2px -293px no-repeat;
+}
+
+#search-top input[type="text"]:focus {
+  width: 200px;
+  //background: url("../images/sprite-vert.png") right -293px no-repeat #aaa;
+  background-color: #aaabac;
+  color: #000;
+  font-size: inherit;
+}
+ 
 
 @media (max-width: 767px) {
 	#search-top .search-query {
@@ -818,13 +812,22 @@ h1.ribbon {
 	#search-top {
 		margin: 3px 0 0 20px;
 	}
+	#search-top input[type="text"] {
+		background-color: transparent;
+	}
+	#search-top input[type="text"]:focus {
+		width: 125px;
+	}
+	#search-top button.search {
+		background-color: #000;
+	}
 }
 
-/*@media (min-width: 767px) and (max-width: 980px) {
-	#search-top .search-query {
-  	margin-left: 8px;
-  }
-}*/
+@media (max-width: 360px) {
+	#search-top input[type="text"]:focus {
+		width: 75px;
+	}
+}
 
 @media (max-width: 767px) {
   /* FIXME: May be a better way to handle this */
@@ -978,6 +981,10 @@ body.home {
     height: auto !important;
     overflow: visible !important;
   }
+}
+
+.ie8 .nav-collapse, ie8 .collapse, .ie7 .nav-collapse, ie7 .collapse {
+	overflow: visible !important;
 }
 
 @media (min-width: 767px) and (max-width: 980px) {

@@ -40,7 +40,6 @@
   <body class='community'>
     <header>
       <div id="top" class="section-top">
-      	
         <div class="container">
         	<a title="Track open issues on the OpenShift status page" style="display:none;" id="outage" class="btn btn-small btn-warning" href="/app/status">Status</a>
           <div class="pull-left"><a href="http://makara.nurturehq.com/makara/newsletter_signup.html">Newsletter Sign Up</a></div>
@@ -101,10 +100,12 @@
         <?php if ($layout == 'left') :?>
       	<div class="column-navbar">      	
         	<a data-toggle="collapse" data-target=".nav-collapse" class="btn btn-navbar">
-        	Navigate
+        	<span class="pull-left">Navigate</span>
+        	<span class="pull-right">
         	<span class="icon-bar"></span>
         	<span class="icon-bar"></span>
         	<span class="icon-bar"></span>
+        	</span>
         	</a>
         </div>
           <div class="column-nav lift-less grid-wrapper">
