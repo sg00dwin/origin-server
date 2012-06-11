@@ -3,7 +3,7 @@
 
 Summary:   Li site components
 Name:      rhc-site
-Version: 0.94.5
+Version: 0.94.6
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -121,6 +121,10 @@ rm -rf %{buildroot}
 /bin/touch %{sitedir}/log/production.log
 
 %changelog
+* Mon Jun 11 2012 Adam Miller <admiller@redhat.com> 0.94.6-1
+- remove requires aws-sdk, these apparently don't actually need it
+  (admiller@redhat.com)
+
 * Mon Jun 11 2012 Adam Miller <admiller@redhat.com> 0.94.5-1
 - need hard requires of rubygem-aws-sdk version for rhc-site spec file
   (admiller@redhat.com)
