@@ -30,11 +30,6 @@ GEM
       activesupport
     activesupport (3.0.13)
     arel (2.0.9)
-    aws-sdk (1.1.1)
-      httparty
-      json
-      nokogiri
-      uuidtools
     bson (1.5.2)
     builder (2.1.2)
     crack (0.1.8)
@@ -124,7 +119,6 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
-  aws-sdk
   gearchanger-m-collective-plugin
   json
   mocha
