@@ -48,7 +48,6 @@ function copy_fs_to_pam {
 }
 
 uid=`id -u`
-uid=$1
 if [ $uid -eq 0 ] ; then
  echo "Running as root..."
  create_links
