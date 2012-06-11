@@ -3,7 +3,7 @@
 
 Summary:   Li site components
 Name:      rhc-site
-Version: 0.94.7
+Version: 0.94.8
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -121,6 +121,13 @@ rm -rf %{buildroot}
 /bin/touch %{sitedir}/log/production.log
 
 %changelog
+* Mon Jun 11 2012 Adam Miller <admiller@redhat.com> 0.94.8-1
+- Update of spec file (admiller@redhat.com)
+- Display the current scale multiplier in the UI and add feature enablement
+  pages that allow users to understand how scaling is exposed. Add a build
+  feature enabler into the application overview page that lets users easily add
+  and remove Jenkins support to their application. (ccoleman@redhat.com)
+
 * Mon Jun 11 2012 Adam Miller <admiller@redhat.com> - 0.94.7-1
 - Display the current scale multiplier in the UI and add feature enablement
   pages that allow users to understand how scaling is exposed. Add a build
