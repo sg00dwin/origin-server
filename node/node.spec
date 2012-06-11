@@ -2,7 +2,7 @@
 
 Summary:       Multi-tenant cloud management system node tools
 Name:          rhc-node
-Version: 0.94.3
+Version: 0.94.4
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -266,6 +266,9 @@ fi
 /lib64/security/pam_libra.so
 
 %changelog
+* Mon Jun 11 2012 Adam Miller <admiller@redhat.com> 0.94.4-1
+- Security - added legal login banner to OpenShift shell (tkramer@redhat.com)
+
 * Fri Jun 08 2012 Adam Miller <admiller@redhat.com> 0.94.3-1
 - Proxy init script cleanup. (rmillner@redhat.com)
 - Fix glob to find git directories (jhonce@redhat.com)
