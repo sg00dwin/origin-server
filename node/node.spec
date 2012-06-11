@@ -2,7 +2,7 @@
 
 Summary:       Multi-tenant cloud management system node tools
 Name:          rhc-node
-Version: 0.94.2
+Version: 0.94.3
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -266,6 +266,16 @@ fi
 /lib64/security/pam_libra.so
 
 %changelog
+* Fri Jun 08 2012 Adam Miller <admiller@redhat.com> 0.94.3-1
+- Proxy init script cleanup. (rmillner@redhat.com)
+- Fix glob to find git directories (jhonce@redhat.com)
+- Bug 806468 /etc/stickshift/district.conf should be put under /var
+  (jhonce@redhat.com)
+- The exta rules are expensive and unnecessary; we will expand the ranger later
+  if its needed. (rmillner@redhat.com)
+- Needed a larger range allocated for iptables rules.  Also, the port to uid
+  mapping is no longer trivial. (rmillner@redhat.com)
+
 * Mon Jun 04 2012 Adam Miller <admiller@redhat.com> 0.94.2-1
 - update migration for 2.0.13 and fix gear dns fixup with scaled apps
   (dmcphers@redhat.com)

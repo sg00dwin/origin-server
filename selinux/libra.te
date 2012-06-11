@@ -1,4 +1,4 @@
-policy_module(libra,1.1.27)
+policy_module(libra,1.1.28)
 # Requires selinux-policy-3.7.19-153.el6
 
 ########################################
@@ -165,6 +165,8 @@ kernel_get_sysvipc_info(libra_app_domain)
 
 corecmd_exec_bin(libra_app_domain)
 corecmd_exec_shell(libra_app_domain)
+corecmd_dontaudit_exec_all_executables(libra_app_domain)
+# corecmd_dontaudit_read_all_executables(libra_app_domain)
 
 dev_list_sysfs(libra_app_domain)
 dev_read_rand(libra_app_domain)
@@ -268,6 +270,7 @@ gen_require(`
 	type quota_t;
 	type quota_db_t;
         type system_cronjob_t;
+	attribute exec_type;
 ')
  
 allow unconfined_usertype self:process dyntransition;
@@ -302,6 +305,7 @@ allow libra_app_domain libra_initrc_t:process sigchld;
 dontaudit libra_app_domain libra_initrc_t:key view;
 dontaudit libra_app_domain libra_initrc_t:process signull;
 dontaudit libra_app_domain libra_initrc_t:socket_class_set { read write };
+dontaudit libra_app_domain exec_type:file read;
 
 ########################################
 #
@@ -413,6 +417,7 @@ allow httpd_t self:capability sys_ptrace;
 
 dontaudit httpd_t libra_initrc_t:process signull;
 allow httpd_t libra_app_domain:process getpgid;
+allow httpd_t libra_initrc_t:process getpgid;
 
 type libra_cgroup_read_t;
 type libra_cgroup_read_exec_t;

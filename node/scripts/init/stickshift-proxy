@@ -1,11 +1,9 @@
-#!/bin/sh
+#!/bin/bash
 #
 # stickshift-proxy
 #
 # chkconfig:   345 85 15
-# description:  HAProxy is a free, very fast and reliable solution \
-#               offering high availability, load balancing, and \
-#               proxying for TCP and  HTTP-based applications
+# description: Stickshift proxy
 # processname: haproxy
 # config:      /etc/stickshift/stickshift-proxy.cfg
 # pidfile:     /var/run/stickshift-proxy.pid
@@ -19,22 +17,17 @@
 # Check that networking is up.
 [ "$NETWORKING" = "no" ] && exit 0
 
-exec="/usr/sbin/haproxy"
-prog=$(basename $exec)
+[ -e /etc/sysconfig/stickshift-proxy ] && source /etc/sysconfig/stickshift-proxy
 
-[ -e /etc/sysconfig/stickshift-proxy ] && . /etc/sysconfig/stickshift-proxy
-
+exec=/usr/sbin/haproxy
+prog=haproxy
 lockfile=/var/lock/subsys/stickshift-proxy
 pidfile=/var/run/stickshift-proxy.pid
 cfgfile=/var/lib/stickshift/.stickshift-proxy.d/stickshift-proxy.cfg
 
 
-check() {
-    $exec -c -V -f $cfgfile
-}
-
 getaddr() {
-  ip -4 addr show dev eth0 scope global | sed -r -n '/inet/ { s/^.*inet ([0-9\.]+).*/\1/; p }' | head -1
+    ip -4 addr show dev eth0 scope global | sed -r -n '/inet/ { s/^.*inet ([0-9\.]+).*/\1/; p }' | head -1
 }
 
 fixaddr() {
@@ -46,103 +39,103 @@ fixaddr() {
 
 rollcfg() {
   # If proxy is running, roll the configuration and block till done
-  if [ -f $lockfile ]; then
+    if [ -f $lockfile ]; then
 
-    $exec -c -q -f $cfgfile
-    if [ $? -ne 0 ]; then
-      echo "Error: Proxy configuration is corrupt."
-      return 1
+        $exec -c -q -f $cfgfile
+        if [ $? -ne 0 ]; then
+            echo "Error: Proxy configuration is corrupt."
+            return 1
+        fi
+
+        oldpid=$( cat $pidfile )
+
+        if ! [ "$(readlink /proc/$oldpid/exe)" == "$exec" -o "$(readlink /proc/$oldpid/exe)" == "$exec (deleted)" ]; then
+            echo "stickshift-proxy has crashed."
+            return 1
+        fi
+
+        $exec -D -f $cfgfile -p $pidfile -sf "$oldpid"
+        retv=$?
+        if [ $retv != 0 ]; then
+            echo "stickshift-proxy failed to start"
+            return 1
+        fi
+
+        while [ "$(readlink /proc/$oldpid/exe)" == "$exec" -o "$(readlink /proc/$oldpid/exe)" == "$exec (deleted)" ]; do
+            usleep 500000
+        done
+
+        newpid=$( cat $pidfile )
+        if [ $newpid == $oldpid ]; then
+            echo "stickshift-proxy failed to update"
+            return 1
+        fi
     fi
-
-    oldpid=$( cat $pidfile )
-
-    if ! [ "$(readlink /proc/$oldpid/exe)" == "$exec" -o "$(readlink /proc/$oldpid/exe)" == "$exec (deleted)" ]; then
-      echo "stickshift-proxy has crashed."
-      return 1
-    fi
-
-    $exec -D -f $cfgfile -p $pidfile -sf "$oldpid"
-    retv=$?
-    if [ $retv != 0 ]; then
-      echo "stickshift-proxy failed to start"
-      return 1
-    fi
-
-    while [ "$(readlink /proc/$oldpid/exe)" == "$exec" -o "$(readlink /proc/$oldpid/exe)" == "$exec (deleted)" ]; do
-      usleep 500000
-    done
-
-    newpid=$( cat $pidfile )
-    if [ $newpid == $oldpid ]; then
-      echo "stickshift-proxy failed to update"
-      return 1
-    fi
-  fi
-  return 0
+    return 0
 }
 
 
 lockwrap() {
-  lockfile ${cfgfile}.lock
-  oldsum=$( md5sum $cfgfile | awk '{ print $1 }' )
-  "$@"
-  retcode=$?
-  if [ $retcode != 0 ]; then
-    echo "Error: Bad proxy configuration."
-  else
-    newsum=$( md5sum $cfgfile | awk '{ print $1 }' )
-    if [ $oldsum != $newsum ]; then
-      rollcfg
-      retcode=$?
+    lockfile ${cfgfile}.lock
+    oldsum=$( md5sum $cfgfile | awk '{ print $1 }' )
+    "$@"
+    retcode=$?
+    if [ $retcode != 0 ]; then
+        echo "Error: Bad proxy configuration."
+    else
+        newsum=$( md5sum $cfgfile | awk '{ print $1 }' )
+        if [ $oldsum != $newsum ]; then
+            rollcfg
+            retcode=$?
+        fi
     fi
-  fi
-  rm -f ${cfgfile}.lock
-  return $retcode
+    rm -f ${cfgfile}.lock
+    return $retcode
 }
 
 setproxy() {
   # Set a proxy entry (either add or delete)
-  proxport="$1"
-  target="$2"
+    proxport="$1"
+    target="$2"
 
-  if ! [ "$proxport" -ge 16384 -a "$proxport" -le 65535 ]; then
-    echo "Proxy port must be an integer between 16384 and 65535"
-    return 1
-  fi
-
-  if [ "$target" == "delete" -o "$target" == "del" ]; then
-    sed -i -e '/^listen '"$proxport"':/,/^# End '"$proxport"':/ d' $cfgfile
-    return $?
-  fi
-
-  ipbytes=( $(echo "$target" | cut -f 1 -d : | sed -e 's/\./ /g') )
-  if [ ${#ipbytes[@]} -ne 4 ]; then
-    echo "Dest addr must be a valid IP address."
-    return 1
-  fi
-
-  for byt in "${ipbytes[@]}"; do
-    if ! [ "$byt" -ge 0 -a "$byt" -le 255 ]; then
-      echo "Dest addr must be a valid IP address."
-      return 1
+    if ! [ "$proxport" -ge 16384 -a "$proxport" -le 65535 ]; then
+        echo "Proxy port must be an integer between 16384 and 65535"
+        return 1
     fi
-  done
 
-  port=$(echo $target | cut -f 2 -d :)
-  if ! [ "$port" -ge 1 -a "$port" -le 65535 ]; then
-    echo "Dest port must be an integer between 16384 and 65535"
-    return 1
-  fi
+    if [ "$target" == "delete" -o "$target" == "del" ]; then
+        sed -i -e '/^listen '"$proxport"':/,/^# End '"$proxport"':/ d' $cfgfile
+        return $?
+    fi
 
-  if grep -q "^listen $proxport:$target" $cfgfile; then
-    return 0
-  fi
+    ipbytes=( $(echo "$target" | cut -f 1 -d : | sed -e 's/\./ /g') )
+    if [ ${#ipbytes[@]} -ne 4 ]; then
+        echo "Dest addr must be a valid IP address."
+        return 1
+    fi
 
-  baddr=$(getaddr)
+    for byt in "${ipbytes[@]}"; do
+        if ! [ "$byt" -ge 0 -a "$byt" -le 255 ]; then
+            echo "Dest addr must be a valid IP address."
+            return 1
+        fi
+    done
 
-  sed -i -e '/^listen '"$proxport"':/,/^# End '"$proxport"':/ d' $cfgfile
+    port=$(echo $target | cut -f 2 -d :)
+    if ! [ "$port" -ge 1 -a "$port" -le 65535 ]; then
+        echo "Dest port must be an integer between 16384 and 65535"
+        return 1
+    fi
 
-  cat <<EOF >> $cfgfile
+    if grep -q "^listen $proxport:$target" $cfgfile; then
+        return 0
+    fi
+
+    baddr=$(getaddr)
+
+    sed -i -e '/^listen '"$proxport"':/,/^# End '"$proxport"':/ d' $cfgfile
+
+    cat <<EOF >> $cfgfile
 listen $proxport:$target
     mode tcp
     bind $baddr:$proxport
@@ -150,52 +143,49 @@ listen $proxport:$target
 # End $proxport:$target
 EOF
 
-  return $?
+    return $?
 }
 
 setproxies() {
-  while [ "$1" ]; do
-    setproxy "$1" "$2"
-    if [ $? -ne 0 ]; then
-      echo "Error: Failed at $1 $2"
-      return 1
-    fi
-    shift; shift
-  done
-  return 0
+    while [ "$1" ]; do
+        setproxy "$1" "$2"
+        if [ $? -ne 0 ]; then
+            echo "Error: Failed at $1 $2"
+            return 1
+        fi
+        shift; shift
+    done
+    return 0
 }
 
 
 showproxies() {
-  sedexp=""
-  for proxport in "$@"; do
-    sedexp="${sedexp};"'s/^listen \('"$proxport"'\):\(.*\)$/\1 \2/'
-  done
-  sedexp="${sedexp}; T; p"
-  sed -n -e "${sedexp}" $cfgfile
-  return 0
+    sedexp=""
+    for proxport in "$@"; do
+        sedexp="${sedexp};"'s/^listen \('"$proxport"'\):\(.*\)$/\1 \2/'
+    done
+    sedexp="${sedexp}; T; p"
+    sed -n -e "${sedexp}" $cfgfile
+    return 0
 }
 
 start() {
     fixaddr
-    $exec -c -q -f $cfgfile
-    if [ $? -ne 0 ]; then
-        echo "Errors in configuration file, check with stickshift-proxy check."
+    if $exec -c -q -f $cfgfile; then
+        echo -n $"Starting stickshift-proxy: "
+        daemon --pidfile $pidfile $exec -D -f $cfgfile -p $pidfile
+        retval=$?
+        echo
+        [ $retval -eq 0 ] && touch $lockfile
+        return $retval
+    else
+        echo "Configuration error."
         return 1
     fi
- 
-    echo -n $"Starting stickshift-proxy: "
-    # start it up here, usually something like "daemon $exec"
-    daemon --pidfile $pidfile $exec -D -f $cfgfile -p $pidfile
-    retval=$?
-    echo
-    [ $retval -eq 0 ] && touch $lockfile
-    return $retval
 }
 
 stop() {
     echo -n $"Stopping stickshift-proxy: "
-    # stop it here, often "killproc $prog"
     killproc -p $pidfile $prog 
     retval=$?
     echo
@@ -204,51 +194,50 @@ stop() {
 }
 
 restart() {
-    $exec -c -q -f $cfgfile
-    if [ $? -ne 0 ]; then
-        echo "Errors in configuration file, check with stickshift-proxy check."
+    if $exec -c -q -f $cfgfile
+    then
+        stop
+        start
+    else
+        echo "Configuration error."
         return 1
     fi
-    stop
-    start
 }
 
 reload() {
-    $exec -c -q -f $cfgfile
-    if [ $? -ne 0 ]; then
-        echo "Errors in configuration file, check with stickshift-proxy check."
+    if $exec -c -q -f $cfgfile; then
+        echo -n $"Reloading stickshift-proxy: "
+        $exec -D -f $cfgfile -p $pidfile -sf $(cat $pidfile)
+        retval=$?
+        echo
+        return $retval
+    else
+        echo "Configuration error."
         return 1
-    fi
-    echo -n $"Reloading stickshift-proxy: "
-    $exec -D -f $cfgfile -p $pidfile -sf $(cat $pidfile)
-    retval=$?
-    echo
-    return $retval
-}
-
-force_reload() {
-    restart
-}
-
-fdr_status() {
-    status -p $pidfile $prog
+    fi  
 }
 
 case "$1" in
-    start|stop|restart|reload)
-        $1
+    start)
+        start
         ;;
-    force-reload)
-        force_reload
+    stop)
+        stop
         ;;
-    check)
-        check
+    restart)
+        restart
+        ;;
+    reload)
+        reload
         ;;
     status)
-        fdr_status
+        status -p $pidfile $prog
         ;;
     condrestart|try-restart)
-  	[ ! -f $lockfile ] || restart
+  	if [ -f $lockfile ] 
+        then
+            restart
+        fi
 	;;
     setproxy)
         shift
@@ -259,6 +248,6 @@ case "$1" in
         lockwrap showproxies "$@"
         ;;
     *)
-        echo $"Usage: $0 {start|stop|status|restart|try-restart|reload|force-reload|setproxy [proxport] [ip:port]|showproxy [proxport]}"
+        echo $"Usage: $0 {start|stop|status|restart|reload|setproxy [proxport] [ip:port]|showproxy [proxport]}"
         exit 2
 esac

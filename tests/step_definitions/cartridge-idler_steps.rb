@@ -33,11 +33,6 @@ Given /^a new php_idler application$/ do
   raise "Non zero exit code when creating php application: #{exitcode}" unless exitcode == 0
 end
 
-When /^I idle the php application$/ do
-  account_name = @account['accountname']
-  run_stdout("/usr/bin/rhc-idler -u #{@account['accountname']}")
-end
-
 Then /^the php application health\-check will( not)? be successful$/ do | negate |
   good_status = negate ? 1 : 0
 
@@ -46,6 +41,11 @@ Then /^the php application health\-check will( not)? be successful$/ do | negate
   command = "/usr/bin/curl -L -H 'Host: #{@app['name']}-#{@app['namespace']}.dev.rhcloud.com' -s http://localhost/health_check.php | /bin/grep -e '^1$'"
   exit_status = runcon command, 'unconfined_u', 'unconfined_r', 'unconfined_t'
   exit_status.should == good_status
+end
+
+When /^I idle the php application$/ do
+  account_name = @account['accountname']
+  run_stdout("/usr/bin/rhc-idler -u #{@account['accountname']}")
 end
 
 Then /^record the active capacity$/ do

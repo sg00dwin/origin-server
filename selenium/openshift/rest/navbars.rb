@@ -14,7 +14,7 @@ module OpenShift
       @@items = {
         :signin => 'a.sign_in',
         :signout => 'a.sign_out',
-        :user_dropdown => 'ul#identity a.dropdown-toggle',
+        :user_dropdown => 'ul#utility-nav a.dropdown-toggle',
 
         :learn_more => 'a.learn_more',
         :getting_started => 'a.getting_started',

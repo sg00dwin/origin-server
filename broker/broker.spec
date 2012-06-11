@@ -3,7 +3,7 @@
 
 Summary:   Li broker components
 Name:      rhc-broker
-Version: 0.94.2
+Version: 0.94.5
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -107,6 +107,29 @@ rm -rf $RPM_BUILD_ROOT
 /bin/touch %{_localstatedir}/log/stickshift/user_action.log
 
 %changelog
+* Mon Jun 11 2012 Adam Miller <admiller@redhat.com> 0.94.5-1
+- Updating gem versions (admiller@redhat.com)
+- Strip out the unnecessary gems from rcov reports and focus it on just the
+  OpenShift code. (rmillner@redhat.com)
+- move test collections to be separate (dmcphers@redhat.com)
+
+* Fri Jun 08 2012 Adam Miller <admiller@redhat.com> 0.94.4-1
+- Updating gem versions (admiller@redhat.com)
+- fix for bug#827635 (rchopra@redhat.com)
+
+* Fri Jun 08 2012 Adam Miller <admiller@redhat.com> 0.94.3-1
+- Updating gem versions (admiller@redhat.com)
+- use distributed lock from ctl-usage (dmcphers@redhat.com)
+- adding basic distributed locking mechanism (dmcphers@redhat.com)
+- Revert "BZ824124 remove unused doc_root connector" (jhonce@redhat.com)
+- BZ824124 remove unused doc_root connector (jhonce@redhat.com)
+- Updated gem info for rails 3.0.13 (admiller@redhat.com)
+- Template profiling  * Added active total time to  * Removed metadata and
+  individual create scripts  * Updated descriptors to ensure there were no
+  changes (fotioslindiakos@gmail.com)
+- Added ability to test git based templates (instead of descriptor based)
+  (fotioslindiakos@gmail.com)
+
 * Mon Jun 04 2012 Adam Miller <admiller@redhat.com> 0.94.2-1
 - Updating gem versions (admiller@redhat.com)
 

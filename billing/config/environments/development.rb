@@ -33,4 +33,18 @@ Billing::Application.configure do
   # Print deprecation notices to the stderr
   config.active_support.deprecation = :stderr
 
+  config.broker_enablement = {
+    :datastore_enabled => false,
+    :default_max_gears => 3,
+    :plans => {
+      :DekaShift => {
+        :max_gears => 3,
+        :vip => false
+      },
+      :MegaShift => {
+        :max_gears => 16,
+        :vip => true
+      }
+    }
+  }
 end
