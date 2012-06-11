@@ -3,7 +3,7 @@
 
 Summary:   Li broker components
 Name:      rhc-broker
-Version: 0.94.5
+Version: 0.94.6
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -107,6 +107,10 @@ rm -rf $RPM_BUILD_ROOT
 /bin/touch %{_localstatedir}/log/stickshift/user_action.log
 
 %changelog
+* Mon Jun 11 2012 Adam Miller <admiller@redhat.com> 0.94.6-1
+- remove requires aws-sdk, these apparently don't actually need it
+  (admiller@redhat.com)
+
 * Mon Jun 11 2012 Adam Miller <admiller@redhat.com> 0.94.5-1
 - Updating gem versions (admiller@redhat.com)
 - Strip out the unnecessary gems from rcov reports and focus it on just the
