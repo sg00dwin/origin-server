@@ -3,7 +3,7 @@
 
 Summary:   Li site components
 Name:      rhc-site
-Version: 0.94.3
+Version: 0.94.4
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -121,6 +121,10 @@ rm -rf %{buildroot}
 /bin/touch %{sitedir}/log/production.log
 
 %changelog
+* Mon Jun 11 2012 Adam Miller <admiller@redhat.com> 0.94.4-1
+- need hard requires of rubygem-aws-sdk version for rhc-site spec file
+  (admiller@redhat.com)
+
 * Fri Jun 08 2012 Adam Miller <admiller@redhat.com> 0.94.3-1
 - Remove black bar from simple layout (ccoleman@redhat.com)
 - Updating jquery version to fix new bootstrap issue
