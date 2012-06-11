@@ -16,7 +16,7 @@ BuildArch: noarch
 BuildRequires: git
 Requires: stickshift-abstract
 Requires: rubygem(stickshift-node)
-Requires: php-fcgi-zend-server
+Requires: zend-server-php-5.3
 Requires: mod_bw
 Requires: rubygem-builder
 Requires: php-pdo
