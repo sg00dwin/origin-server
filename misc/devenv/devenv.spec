@@ -492,6 +492,10 @@ chown apache:apache /srv/cache/mod_cache
 %{policydir}/*
 
 %changelog
+* Mon Jun 11 2012 Tim Kramer <tkramer@redhat.com>
+- added legal banner to motd (tkramer@redhat.com)
+- added legal banner to OpenShift shell rhcsh (tkramer@redhat.com)
+
 * Fri Jun 08 2012 Adam Miller <admiller@redhat.com> 0.95.3-1
 - added drupal6-openshift-features-community_wiki to devenv
   (admiller@redhat.com)
