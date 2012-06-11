@@ -23,7 +23,6 @@ BuildRequires: rubygem-recaptcha
 BuildRequires: rubygem-json
 BuildRequires: rubygem-stomp
 BuildRequires: rubygem-parseconfig
-BuildRequires: rubygem-aws-sdk = 1.1.1
 BuildRequires: rubygem-xml-simple
 BuildRequires: rubygem-haml
 BuildRequires: rubygem-compass
@@ -74,7 +73,6 @@ Requires:  rubygem-treetop
 
 Requires:  rubygem-net-http-persistent
 
-Requires: rubygem-aws-sdk = 1.1.1
 
 BuildArch: noarch
 
@@ -124,10 +122,6 @@ rm -rf %{buildroot}
 
 %changelog
 * Mon Jun 11 2012 Adam Miller <admiller@redhat.com> 0.94.5-1
-- need hard requires of rubygem-aws-sdk version for rhc-site spec file
-  (admiller@redhat.com)
-
-* Mon Jun 11 2012 Adam Miller <admiller@redhat.com> 0.94.4-1
 - need hard requires of rubygem-aws-sdk version for rhc-site spec file
   (admiller@redhat.com)
 
