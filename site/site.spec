@@ -23,7 +23,7 @@ BuildRequires: rubygem-recaptcha
 BuildRequires: rubygem-json
 BuildRequires: rubygem-stomp
 BuildRequires: rubygem-parseconfig
-BuildRequires: rubygem-aws-sdk
+BuildRequires: rubygem-aws-sdk = 1.1.1
 BuildRequires: rubygem-xml-simple
 BuildRequires: rubygem-haml
 BuildRequires: rubygem-compass
