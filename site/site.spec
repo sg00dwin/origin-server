@@ -3,7 +3,7 @@
 
 Summary:   Li site components
 Name:      rhc-site
-Version: 0.94.8
+Version: 0.94.9
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -121,6 +121,21 @@ rm -rf %{buildroot}
 /bin/touch %{sitedir}/log/production.log
 
 %changelog
+* Tue Jun 12 2012 Adam Miller <admiller@redhat.com> 0.94.9-1
+- explict height set on form fields and minor visual adjustment in console
+  (sgoodwin@redhat.com)
+- fix to force wrap long strings within table cells (sgoodwin@redhat.com)
+- Merge branch 'master' of git:/srv/git/li into searchmod (sgoodwin@redhat.com)
+- incorporate search field within header of site pages, reset headings to use
+  line-height instead of margin-bottom, reset /stylesheets/_type.scss to
+  bootstrap/_type.scss and merge customizations within so that we only use
+  single _type file, minor tinkerings and condensing of styles
+  (sgoodwin@redhat.com)
+- Merge branch 'master' of git:/srv/git/li into searchmod (sgoodwin@redhat.com)
+- Merge branch 'master' of git:/srv/git/li into searchmod (sgoodwin@redhat.com)
+- modifications to search in header within drupal pages (sgoodwin@redhat.com)
+- Initial incorporation of search within ui header (sgoodwin@redhat.com)
+
 * Mon Jun 11 2012 Adam Miller <admiller@redhat.com> 0.94.8-1
 - Update of spec file (admiller@redhat.com)
 - Display the current scale multiplier in the UI and add feature enablement
