@@ -91,7 +91,7 @@ name=Ruby193 Software Collection for RHEL6 - $basearch
 baseurl=https://mirror1.stg.rhcloud.com/libra/ruby193-rhel-6-${1-candidate}/\$basearch/
         https://mirror2.stg.rhcloud.com/libra/ruby193-rhel-6-${1-candidate}/\$basearch/
 failovermethod=priority
-enabled=0
+enabled=1
 gpgcheck=0
 gpgkey=https://mirror1.stg.rhcloud.com/libra/RPM-GPG-KEY-redhat-beta
 ggpkey=https://mirror1.stg.rhcloud.com/libra/RPM-GPG-KEY-redhat-release
