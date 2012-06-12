@@ -1,3 +1,6 @@
+require 'rubygems'
+require 'wddx'
+
 class BillingEventsController < BaseController
   respond_to :xml, :json
 
@@ -7,8 +10,8 @@ class BillingEventsController < BaseController
 #   Rails.logger.info("Request params: #{params.inspect}")
     begin
       event_list = params[:event_id]
-      if (event_list - BillingEvent::EVENTS.keys()).empty?
-        BillingEvent.handle_event(params)
+      if (event_list - Express::AriaBilling::Event::EVENTS.keys()).empty?
+        Express::AriaBilling::Event.handle_event(params)
         retval = "SUCCESS"
       else
         Rails.logger.error "ERROR: Received INVALID event, id: #{event_list}"
