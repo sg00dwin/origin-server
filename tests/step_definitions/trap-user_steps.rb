@@ -126,7 +126,7 @@ Then /^I can get the rhcsh splash/ do
 end
 
 Then /^I can get the rhcsh help/ do
-  help_md5 = "f0c25a563b57650ae136902b76b1ccc1"
+  help_md5 = "b99e7d8ca6158ac77514812389c9a970"
 
   # Check the help menu
   outbuf = []
