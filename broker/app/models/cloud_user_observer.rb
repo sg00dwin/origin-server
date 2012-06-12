@@ -3,6 +3,11 @@ class CloudUserObserver < ActiveModel::Observer
 
   def before_cloud_user_create(user)
     raise StickShift::UserException.new("Invalid characters in login '#{user.login}' found", 107) if user.login =~ /["\$\^<>\|%\/;:,\\\*=~]/
+
+    user.capabilities["gear_sizes"] = ["small"]
+    if not user.parent_user_login.nil?
+      user.capabilities["gear_sizes"] = [Rails.configuration.cloud9[:node_profile]] if user.parent_user_login == Rails.configuration.cloud9[:user_login]
+    end
   end
 
   def cloud_user_create_success(user)

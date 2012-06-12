@@ -64,8 +64,8 @@ may be ok if '#{uapp.name}#{BUILDER_SUFFIX}' was the builder of a previously des
       end
     end
     
-    if application.user.auth_method == :login and application.user.vip == false and not (application.node_profile.nil? or ["small"].include?(application.node_profile))
-      raise StickShift::UserException.new("Invalid Profile: #{application.node_profile}.  Must be: small", 1)
+    if application.user.auth_method == :login and not StickShift::ApplicationContainerProxy.valid_gear_sizes(application.user).include?(application.node_profile)
+      raise StickShift::UserException.new("Invalid Profile: #{application.node_profile}.  Must be: #{StickShift::ApplicationContainerProxy.valid_gear_sizes(application.user).join(", ")}", 1)
     end
   end
   
