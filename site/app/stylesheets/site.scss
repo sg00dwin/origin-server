@@ -8,8 +8,6 @@
 
   SASS 3.0 doesn't support inlining media queries - we need to upgrade
 
-  Navbar markup seems to be correct, but needs lots of love at smaller resolutions
-
   Continue to pull out variables
 
   Simplify login link behavior - lots of styles for fairly simple markup
@@ -71,37 +69,6 @@ a:hover, a:active { color: $ribbonColor; }
 // Temporary
 body.signup { 
   background-color: $navBackgroundColor; 
-}
-
-// Concrete sections of pages
-.section-top {
-  background-color: $topBarBackgroundColor; 
-  color: #888;
-  height: 35px;
-
-  .container .btn {
-    border-radius: 0;
-    text-shadow: none;
-    border: 0;
-    box-shadow: none;
-    color: #ccc;
-    background: #333;
-    margin-left: 2px;
-
-    &:hover, &:active {
-      background: #AAAAAA;
-      color: black;
-    }
-  }
-  > .container > .login > .btn-warning {
-    color: black;
-    background: $warningBackground;
-
-    &:hover, &:active {
-      background: darken($warningBackground, 30%);
-      color: white;
-    }
-  }
 }
 
 .section-nav {
@@ -177,55 +144,99 @@ body.signup {
 }
 
 // Top bar
-.section-top > .container {
-  > div {
-    padding: 6px 0;
-    > a {
-      color: $signupLinkColor;
-      text-transform: uppercase;
-      font-size: 12px;
-      float: left;
-    }
-    > a.sign_out {
-    	float:right;
-    	margin-left: 3px;
-    }
-    > a:hover {
-      text-decoration: none;
-      color: white;
-    }
-  }
-  > .login {
+.section-top {
+  background-color: $topBarBackgroundColor; 
+  color: #888;
+  //height: 35px;
+  
+  div div {
     padding: 4px 0;
   }
+  
+  div a {
+    color: $signupLinkColor;
+    text-transform: uppercase;
+    font-size: 12px;
+    float: left;
+    
+    &:hover {
+    text-decoration: none;
+    color: white;
+    }
+  }
+  
+  a.sign_out {
+  	float:right;
+  }
+  
   ul.pull-right {
   	list-style-type:none;
   	li {
   		float:left;
   	}
   }
-}
 
-.section-top > .container > div.pull-left {
+  .btn {
+    border-radius: 0;
+    text-shadow: none;
+    border: 0;
+    box-shadow: none;
+    color: #ccc;
+    background: #333;
+    margin-left: 2px;
+
+    &:hover, &:active {
+      background: #AAAAAA;
+      color: black;
+    }
+  }
+  
+  #outage {
+    color: black;
+    background: $warningBackground;
+    float: right;
+    margin: 4px 0 4px 2px;
+
+    &:hover, &:active {
+      background: darken($warningBackground, 30%);
+      color: white;
+    }
+  }
+  
+  div.pull-left {
 	padding-right: 26px;
 	padding-top: 8px;
 	background: url("../images/sprite-vert.png") no-repeat scroll right -161px transparent;
 	}
+}
+
+@media (max-width: 767px) {
+	.section-top {
+		#outage {
+			margin: 0 -20px;
+			display: block;
+			float: none;
+		}
+	}
+}
 
 @media (max-width: 480px) {
-	.section-top > .container > div.pull-left {
+	.section-top div.pull-left {
 		display: none;
 	}
-	.section-top > .container {
+	.section-top #outage {
+		margin: 0;
+	}
+	.section-top .container {
 		padding: 0;
 	}
-	.section-top > .container > div > a.sign_out {
+	.section-top div a.sign_out {
     float: none;
 	}
-	.section-top > .container > .login {
+	.section-top .login {
 		display: table;
 		width: 100%;
-		padding: 1px 0;
+		padding: 0;
 		> a {
 			display: table-cell;
 			border:0;
@@ -357,10 +368,14 @@ body.signup {
   &:before {
     content: '→ ';
     color: $takeActionHighlightBackground;
+    position: relative;
+    top: -3px;
   }
   &:hover:before {
     content: '→ ';
     color: $takeActionBackground;
+    position: relative;
+    top: -3px;
   }
 }
 
@@ -645,6 +660,7 @@ h1.ribbon {
     color: white; 
     text-transform: uppercase; 
     font-weight: bold;
+    margin-bottom: 8px;
   }
   .nav-location {
     font-size: 19px;
@@ -652,7 +668,6 @@ h1.ribbon {
     text-transform: uppercase;
     margin-top: 15px;
   }
-
 
 	.gutter-right {
 		padding-right: 15px;
@@ -701,9 +716,6 @@ h1.ribbon {
           background-position: right -43px;
 
         }
-        //.column-nav .nav-list > li.active > a
-        //.column-nav .nav-list > li.active > a.active-trail
-        //.column-nav .nav-list > li.active > a:hover
       }
 
       > ul.nav-list {
@@ -718,7 +730,6 @@ h1.ribbon {
     .nav-list {
       padding-left: 8px;
       margin: 0;
-
       font-size: 12px;
       line-height: 17px;
 
@@ -735,61 +746,88 @@ h1.ribbon {
       }
     }
   }
-  
+}
+
 @media (max-width: 768px) {
 	.nav-list > li > a {
     margin-left: 0;
   }
 }
 
-  .search-row {
-  	position: relative;
-  	text-align: right;
-		width: -moz-available;
-		margin-right: -15px;
-		margin-top: 30px;
+ 
+// Search input 
+#search-top {
+	position: relative;
+	text-align: right;
+  margin: 0;
+  float: left;
+  
+  button.search {
+    background: #333 url("../images/sprite-vert.png") 2px -227px no-repeat;
+    height: 26px;
+    width: 21px;
+    border: 0;
+    padding: 0;
+    margin: 0 -3 0 0;
+    position: absolute;
+    top: 0;
+    right: 3px;
+  }
+  
+  input[type="text"] {
+    background: #333;
+    border: 0;
+    border-radius: 0;
+    color: #ccc;
+    padding-left: 8px;
+    padding-right: 27px;
+    font-size: 12px;
+    font-family: $headerFontFamily;
+    width: 60px;
+    -webkit-transition: width 0.3s ease 0s;
+    -moz-transition: width 0.3s ease 0s;
+    -o-transition: width 0.3s ease 0s;
+    transition: width 0.3s ease 0s;
+    
+    &:focus {
+	    width: 200px;
+	    //background: url("../images/sprite-vert.png") right -293px no-repeat #aaa;
+	    background-color: #aaabac;
+	    color: #000;
+	    font-size: inherit;
+	    
+	    + button.search {
+		    background: transparent url("../images/sprite-vert.png") 2px -293px no-repeat;
+			}
+  	}
+  }
+} 
 
-    .search-query {
-      margin-left: 15px;
-      margin-bottom: 0;
-      padding-left: 13px;
-      padding-right: 30px;
-      color: #ccc;
-      border-radius: 3px;
-      border-width: 0;
-      background-color: #434343;
-      width: -moz-available;
-      box-shadow: none;
-    }
-    button.search {
-      right: 3px;
-      background: transparent url("../images/sprite-vert.png") 2px -228px no-repeat;
-      height: 25px;
-      width: 20px;
-      border: 0;
-      position: absolute;
-      top: 1px;
-    }
+@media (max-width: 767px) {
+	#search-top .search-query {
+  	margin-left: 0;
   }
 }
 
-@media (max-width: 767px) {
-	.column-nav {
-		.search-row {
-			.search-query {
-				margin-left: 0;
-			}
-		}
+@media (max-width: 480px) {
+	
+	#search-top {
+		margin: 3px 0 0 20px;
+	}
+	#search-top input[type="text"] {
+		background-color: transparent;
+	}
+	#search-top input[type="text"]:focus {
+		width: 125px;
+	}
+	#search-top button.search {
+		background-color: #000;
 	}
 }
 
-@media (min-width: 767px) and (max-width: 980px) {
-	.column-nav {
-		.search-row {
-			.search-query {
-				margin-left: 8px;
-			}
-		}
+@media (max-width: 360px) {
+	#search-top input[type="text"]:focus {
+		width: 75px;
 	}
 }
 
@@ -799,8 +837,9 @@ h1.ribbon {
   .container .row-content .info-ribbon {
     @include expand_for_phone();
   }
-  .nav-location { display: none; }
-  
+  .nav-location { 
+  	display: none;
+  }
 }
 
 
@@ -848,12 +887,8 @@ body > header {
 	  center bottom,
 	  center bottom, 
 	  center bottom;
-  }
-
-
-@media (max-width: 767px) {
-
 }
+
 
 /* community background */
 body.community > header {
@@ -867,8 +902,6 @@ body.community > header {
   background-position: center bottom;
 }
 
-@media (max-width: 767px) {
-}
 
 /* home-specific styles */
 body.home {
@@ -952,6 +985,10 @@ body.home {
   }
 }
 
+.ie8 .nav-collapse, ie8 .collapse, .ie7 .nav-collapse, ie7 .collapse {
+	overflow: visible !important; /* display column-nav */ 
+}
+
 @media (min-width: 767px) and (max-width: 980px) {
 	.home #buzz .column-buzz {
   	margin-left:22px;
@@ -1033,7 +1070,8 @@ body.simple {
     min-height: 0;
 
     .section-top { 
-      border-top: 7px solid #333; 
+      border-top: 7px solid #333;
+      background-color: transparent;
     }
   }
 
@@ -1128,6 +1166,7 @@ body.simple {
     clear: both;
   }
 }
+
 @media (max-width: 980px) {
  body.overview .column-content {
     img {

@@ -255,6 +255,17 @@ td.views-field-vud-node-widget {
   float: right;
 }
 
+/* Quick fixes to force wrap long strings within table cells */
+.table th, .table td {
+	max-width: 400px;
+}
+@media (max-width: 980px) {
+	.table th, .table td {
+		max-width: 250px;
+	}
+} 
+
+
 /* Ideas table generation doesn't generate separate divs because it is using the view Table layout */
 .view-Ideas .views-table .views-field-title {
   font-size: 13px;
