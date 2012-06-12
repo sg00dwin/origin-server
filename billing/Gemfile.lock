@@ -80,7 +80,7 @@ GEM
       activemodel
       json
       mongo
-    stickshift-controller (0.12.5)
+    stickshift-controller (0.12.6)
       activesupport (~> 3.0.13)
       dnsruby
       json (= 1.4.6)

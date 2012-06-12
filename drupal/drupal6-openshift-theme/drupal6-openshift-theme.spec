@@ -5,7 +5,7 @@
 %global drupal_themename    openshift-theme
 
 Name:           drupal6-%{drupal_themename}
-Version: 3.3.1
+Version: 3.3.2
 Release:        1%{?dist}
 Summary:        Red Hat Openshift theme for Drupal %{drupal_release}
 
@@ -44,6 +44,15 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
+* Tue Jun 12 2012 Adam Miller <admiller@redhat.com> 3.3.2-1
+- incorporate search field within header of site pages, reset headings to use
+  line-height instead of margin-bottom, reset /stylesheets/_type.scss to
+  bootstrap/_type.scss and merge customizations within so that we only use
+  single _type file, minor tinkerings and condensing of styles
+  (sgoodwin@redhat.com)
+- modifications to search in header within drupal pages (sgoodwin@redhat.com)
+- Initial incorporation of search within ui header (sgoodwin@redhat.com)
+
 * Fri Jun 01 2012 Adam Miller <admiller@redhat.com> 3.3.1-1
 - bumping spec versions (admiller@redhat.com)
 
