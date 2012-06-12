@@ -49,6 +49,8 @@ GEM
     open4 (1.3.0)
     parseconfig (0.5.2)
     polyglot (0.2.5)
+    pony (1.4)
+      mail (> 2.0)
     rack (1.3.0)
     rack-mount (0.7.1)
       rack
@@ -86,7 +88,6 @@ GEM
       state_machine
       stickshift-common
     thor (0.14.6)
-    tlsmail (0.0.1)
     treetop (1.4.10)
       polyglot
     tzinfo (0.3.26)
@@ -100,9 +101,9 @@ DEPENDENCIES
   mocha
   mongo
   parseconfig
+  pony
   rack
   rails (~> 3.0.13)
   rest-client
   stickshift-controller
-  tlsmail
   xml-simple
