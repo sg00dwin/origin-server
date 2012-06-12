@@ -9,6 +9,10 @@ Broker::Application.routes.draw do
   # Keep in mind you can assign values other than :controller and :action
   match 'nurture' => 'broker#nurture_post', :via => [:post]
 
+  scope "/billing/rest" do
+    resource :api, :only => [:show], :controller => :base
+    resources :events, :controller => :billing_events, :only => [:create]
+  end
   # Sample resource route with options:
   #   resources :products do
   #     member do

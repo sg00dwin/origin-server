@@ -99,6 +99,21 @@ Broker::Application.configure do
     :log_filepath => "/var/log/stickshift/user_action.log"
   }
   
+  config.broker_enablement = {
+    :datastore_enabled => false,
+    :default_max_gears => 3,
+    :plans => {
+      :FreeShift => {
+        :max_gears => 3,
+        :vip => false
+      },
+      :MegaShift => {
+        :max_gears => 16,
+        :vip => true
+      }
+    }
+  }
+
   # SS Config
   config.ss = {
     :domain_suffix => "dev.rhcloud.com",

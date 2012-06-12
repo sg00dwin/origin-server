@@ -17,6 +17,8 @@ gem 'rest-client'
 gem 'thread-dump'
 gem 'ruby-prof'
 gem 'mongo_mapper'
+gem 'wddx'
+gem 'pony'
 
 # Bundle edge Rails instead:
 # gem 'rails', :git => 'git://github.com/rails/rails.git'
