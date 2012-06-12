@@ -408,23 +408,30 @@ module MCollective
         uuid = request[:uuid]
         active = request[:active]
 
-        output = `echo "#Do not modify manually!\nuuid='#{uuid}'\nactive='#{active}'" > /var/lib/stickshift/district.conf`
-        exitcode = $?.exitstatus
+        begin
+          district_home = '/var/lib/stickshift/.settings'
+          FileUtils.mkdir_p(district_home)
 
-        if exitcode == 0
+          File.open(File.join(district_home, 'district.info'), 'w') { |f|
+            f.write("#Do not modify manually!\nuuid='#{uuid}'\nactive='#{active}'\n")
+          }
+
           Facter.add(:district_uuid) do
             setcode { uuid }
           end
           Facter.add(:district_active) do
             setcode { active }
           end
+
+          repy[:output] = "created/updated district #{uuid} with active = #{active}"
+          reply[:exitcode] = 0
+        rescue Exception => e
+          reply[:output] = e.message
+          reply[:exitcode] = 255
+          reply.fail! "set_district failed #{reply[:exitcode]}.  Output #{reply[:output]}" 
         end
 
-        Log.instance.debug("set_district (#{exitcode})\n------\n#{output}\n------)")
-
-        reply[:output] = output
-        reply[:exitcode] = exitcode
-        reply.fail! "set_district failed #{exitcode}.  Output #{output}" unless exitcode == 0
+        Log.instance.debug("set_district (#{reply[:exitcode]})\n------\n#{reply[:output]}\n------)")
       end
 
       #
