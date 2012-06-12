@@ -13,6 +13,16 @@ done
 function welcome {
     cat 1>&2 <<EOF
 
+    *********************************************************************
+
+    You are accessing a service that is for use only by authorized users.  
+    If you do not have authorization, discontinue use at once. 
+    Any use of the services is subject to the applicable terms of the 
+    agreement which can be found at: 
+    https://openshift.redhat.com/app/legal/services_agreement
+
+    *********************************************************************
+
     Welcome to OpenShift shell
 
     This shell will assist you in managing OpenShift applications.

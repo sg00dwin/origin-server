@@ -8,7 +8,7 @@
 
 Summary:   Dependencies for OpenShift development
 Name:      rhc-devenv
-Version: 0.95.3
+Version: 0.95.4
 Release:   1%{?dist}
 Group:     Development/Libraries
 License:   GPLv2
@@ -492,6 +492,14 @@ chown apache:apache /srv/cache/mod_cache
 %{policydir}/*
 
 %changelog
+* Mon Jun 11 2012 Adam Miller <admiller@redhat.com> 0.95.4-1
+- Added legal login banner to motd and rhcsh (tkramer@redhat.com)
+- Security - Added login banner to motd (tkramer@redhat.com)
+
+* Mon Jun 11 2012 Tim Kramer <tkramer@redhat.com>
+- added legal banner to motd (tkramer@redhat.com)
+- added legal banner to OpenShift shell rhcsh (tkramer@redhat.com)
+
 * Fri Jun 08 2012 Adam Miller <admiller@redhat.com> 0.95.3-1
 - added drupal6-openshift-features-community_wiki to devenv
   (admiller@redhat.com)

@@ -37,7 +37,7 @@ Billing::Application.configure do
     :datastore_enabled => false,
     :default_max_gears => 3,
     :plans => {
-      :DekaShift => {
+      :FreeShift => {
         :max_gears => 3,
         :vip => false
       },

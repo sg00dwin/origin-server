@@ -15,13 +15,17 @@ class ActiveSupport::TestCase
     RestApi::Base.prefix='/broker/rest/'
   end
   def setup_user(unique=false)
-    @user = WebUser.new :email_address=>"app_test1#{unique ? uuid : ''}@test1.com", :rhlogin=>"app_test1#{unique ? uuid : ''}@test1.com"
+    @user = WebUser.new :email_address=>"app_test1#{unique ? uuid : ''}@test1.com", :rhlogin=>"app_test1#{unique ? uuid : ''}@test1.com", :ticket => '1'
 
     session[:login] = @user.login
     session[:user] = @user
-    session[:ticket] = '123'
-    @request.cookies['rh_sso'] = '123'
+    session[:ticket] = @user.ticket
+    @request.cookies['rh_sso'] = @user.ticket
     @request.env['HTTPS'] = 'on'
+  end
+
+  def auth_headers
+   {'Cookie' => "rh_sso=#{@user.ticket}", 'Authorization' => "Basic #{::Base64.encode64s("#{@user.login}:#{@user.password}")}"}
   end
 
   # Create a new, unique user

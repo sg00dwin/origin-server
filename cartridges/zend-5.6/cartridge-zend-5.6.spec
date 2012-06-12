@@ -16,8 +16,7 @@ BuildArch: noarch
 BuildRequires: git
 Requires: stickshift-abstract
 Requires: rubygem(stickshift-node)
-Requires: php >= 5.3.2
-Requires: php < 5.4.0
+Requires: zend-server-php-5.3
 Requires: mod_bw
 Requires: rubygem-builder
 Requires: php-pdo
@@ -92,6 +91,9 @@ ln -s %{cartridgedir}/../abstract/info/connection-hooks/publish-http-url %{build
 ln -s %{cartridgedir}/../abstract/info/connection-hooks/set-db-connection-info %{buildroot}%{cartridgedir}/info/connection-hooks/set-db-connection-info
 ln -s %{cartridgedir}/../abstract/info/connection-hooks/set-nosql-db-connection-info %{buildroot}%{cartridgedir}/info/connection-hooks/set-nosql-db-connection-info
 ln -s %{cartridgedir}/../abstract/info/bin/sync_gears.sh %{buildroot}%{cartridgedir}/info/bin/sync_gears.sh
+
+%post
+sh %{cartridgedir}/info/bin/zend_configure_filesystem.sh
 
 %clean
 rm -rf %{buildroot}

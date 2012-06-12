@@ -695,13 +695,13 @@ module GearChanger
           end
         end
 
-        move_gear_destroy_old(app, gear, keep_uid, orig_uid, source_container)
+        move_gear_destroy_old(app, gear, keep_uid, orig_uid, source_container, destination_container)
 
         log_debug "Successfully moved '#{app.name}' with gear uuid '#{gear.uuid}' from '#{source_container.id}' to '#{destination_container.id}'"
         reply
       end
 
-      def move_gear_destroy_old(app, gear, keep_uid, orig_uid, source_container)
+      def move_gear_destroy_old(app, gear, keep_uid, orig_uid, source_container, destination_container)
         reply = ResultIO.new
         log_debug "DEBUG: Deconfiguring old app '#{app.name}' on #{source_container.id} after move"
         begin
@@ -717,12 +717,12 @@ module GearChanger
                 reply.append source_container.run_cartridge_command(cart, app, gear, "deconfigure", nil, false)
               end
             rescue Exception => e
-              log_debug "DEBUG: The application '#{app.name}' with gear uuid '#{gear.uuid}' is now moved to '#{source_container.id}' but not completely deconfigured from '#{destination_container.id}'"
+              log_debug "DEBUG: The application '#{app.name}' with gear uuid '#{gear.uuid}' is now moved to '#{destination_container.id}' but not completely deconfigured from '#{source_container.id}'"
             end
           end
           reply.append source_container.destroy(app, gear, keep_uid, orig_uid)
         rescue Exception => e
-          log_debug "DEBUG: The application '#{app.name}' with gear uuid '#{gear.uuid}' is now moved to '#{source_container.id}' but not completely deconfigured from '#{destination_container.id}'"
+          log_debug "DEBUG: The application '#{app.name}' with gear uuid '#{gear.uuid}' is now moved to '#{destination_container.id}' but not completely deconfigured from '#{source_container.id}'"
           raise
         end
         reply

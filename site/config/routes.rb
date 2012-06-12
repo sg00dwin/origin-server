@@ -97,12 +97,18 @@ RedHatCloud::Application.routes.draw do
     match 'help' => 'console#help', :via => :get, :as => 'console_help'
 
     resources :application_types, :only => [:show, :index], :id => /[^\/]+/
-    resources :applications,
-              :controller => "applications" do 
-      resources :cartridges,
-                :controller => "cartridges",
-                :only => [:show, :create, :index], :id => /[^\/]+/
+    resources :applications do
+      resources :cartridges, :only => [:show, :create, :index], :id => /[^\/]+/
       resources :cartridge_types, :only => [:show, :index], :id => /[^\/]+/
+
+      resource :building, :controller => :building, :id => /[^\/]+/, :only => [:show, :new, :destroy, :create] do
+        get :delete
+      end
+
+      resource :scaling, :controller => :scaling, :id => /[^\/]+/, :only => [:show, :new] do
+        get :delete
+      end
+
       member do
         get :delete
         get :get_started

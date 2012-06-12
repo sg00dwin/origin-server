@@ -111,7 +111,7 @@ def run_pty_command(cmd, outbuf=[], timeout=600)
 end
 
 Then /^I can get the rhcsh splash/ do
-  welcome_md5 = "ce7c4f0f3d14e6e01034b5b5e81a75b7"
+  welcome_md5 = "f0c25a563b57650ae136902b76b1ccc1"
 
   # Check the welcome menu
   outbuf = []
