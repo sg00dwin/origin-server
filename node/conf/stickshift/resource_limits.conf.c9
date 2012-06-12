@@ -3,17 +3,17 @@
 #
 # Standard Profile
 #
-node_profile=cloud9_high_density
+node_profile=c9
 
 #
 # Quotas: File system limits
 #
 quota_files=40000
-quota_blocks=524288 # 512MB.  1 block = 1024byte
+quota_blocks=1048576 # 1GB.  1 block = 1024byte
 
 # For no over commitment, should be memory_limit_in_bytes / (Total System Memory - 1G)
-max_apps=500
-max_active_apps=80
+max_apps=3072
+max_active_apps=3072
 
 # PAM - resource limits
 # limits_core
