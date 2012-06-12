@@ -45,9 +45,10 @@
           <div class="pull-left"><a href="http://makara.nurturehq.com/makara/newsletter_signup.html">Newsletter Sign Up</a></div>
           <div class="pull-right login">
           
-          <form action="/community/home" method="post" accept-charset="UTF-8" id="search-top">
-             <input name="search_block_form" class="search-query" type="text" placeholder="SEARCH">
-             <button type="submit" class="search"></button>
+          <form action="/community/search/node" method="get" id="search-top">
+             <input name="keys" class="search-query" type="text" placeholder="SEARCH">
+             <button type="submit" class="search" value="Search"></button>
+             <?php print $search['hidden']; ?>
           </form>
 
             <?php

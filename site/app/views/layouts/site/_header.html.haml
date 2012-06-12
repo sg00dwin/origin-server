@@ -1,13 +1,17 @@
 #top.section-top
   .container
+    = link_to "Status", status_path, :title => 'Track open issues on the OpenShift status page', :class => 'btn btn-small btn-warning', :style => 'display:none;', :id => 'outage'
     .pull-left
-      = link_to "Sign up for the newsletter", newsletter_signup_url
+      = link_to "Newsletter Sign Up", newsletter_signup_url
     .pull-right.login
+      %form#search-top{:action => "/community/search/node", :method => "get"}
+        %input.search-query{:name => "keys", :placeholder => "SEARCH", :type => "text"}
+          %button.search{:type => "submit", :value => "Search"}
+    
       -#if session[:login]
         = link_to session[:login], "console", :class => 'btn btn-small'
         = link_to 'Sign out', logout_path, :class => 'btn btn-small sign_out'
       -# The signin link is always present so we can cache the page
-      = link_to "Status", status_path, :title => 'Track open issues on the OpenShift status page', :class => 'btn btn-small btn-warning', :style => 'display:none;', :id => 'outage'
       - if logged_in?
         = link_to "Manage Your Apps", console_path, :class => 'btn btn-small'
         = link_to "Sign Out", logout_path, :class => 'btn btn-small sign_out'

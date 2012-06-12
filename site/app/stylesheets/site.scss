@@ -195,7 +195,7 @@ body.signup {
     color: black;
     background: $warningBackground;
     float: right;
-    margin: 4px 0 4px 4px;
+    margin: 4px 0 4px 2px;
 
     &:hover, &:active {
       background: darken($warningBackground, 30%);
@@ -368,10 +368,14 @@ body.signup {
   &:before {
     content: '→ ';
     color: $takeActionHighlightBackground;
+    position: relative;
+    top: -3px;
   }
   &:hover:before {
     content: '→ ';
     color: $takeActionBackground;
+    position: relative;
+    top: -3px;
   }
 }
 
@@ -656,6 +660,7 @@ h1.ribbon {
     color: white; 
     text-transform: uppercase; 
     font-weight: bold;
+    margin-bottom: 8px;
   }
   .nav-location {
     font-size: 19px;
@@ -751,32 +756,13 @@ h1.ribbon {
 
  
 // Search input 
-
 #search-top {
 	position: relative;
 	text-align: right;
   margin: 0;
   float: left;
-}
-
-#search-top input[type="text"] {
-    //background: url("../images/sprite-vert.png") right -227px no-repeat #333;
-    background: #333;
-    border: 0;
-    border-radius: 0;
-    color: #ccc;
-    padding-left: 8px;
-    padding-right: 27px;
-    font-size: 12px;
-    font-family: $headerFontFamily;
-    width: 60px;
-    -webkit-transition: width 0.5s ease 0s;
-    -moz-transition: width 0.5s ease 0s;
-    -o-transition: width 0.5s ease 0s;
-    transition: width 0.5s ease 0s;
-}
-        
-#search-top button.search {
+  
+  button.search {
     background: #333 url("../images/sprite-vert.png") 2px -227px no-repeat;
     height: 26px;
     width: 21px;
@@ -786,20 +772,36 @@ h1.ribbon {
     position: absolute;
     top: 0;
     right: 3px;
-}
-   
-#search-top input[type="text"]:focus + button.search {
-	background: transparent url("../images/sprite-vert.png") 2px -293px no-repeat;
-}
-
-#search-top input[type="text"]:focus {
-  width: 200px;
-  //background: url("../images/sprite-vert.png") right -293px no-repeat #aaa;
-  background-color: #aaabac;
-  color: #000;
-  font-size: inherit;
-}
- 
+  }
+  
+  input[type="text"] {
+    background: #333;
+    border: 0;
+    border-radius: 0;
+    color: #ccc;
+    padding-left: 8px;
+    padding-right: 27px;
+    font-size: 12px;
+    font-family: $headerFontFamily;
+    width: 60px;
+    -webkit-transition: width 0.3s ease 0s;
+    -moz-transition: width 0.3s ease 0s;
+    -o-transition: width 0.3s ease 0s;
+    transition: width 0.3s ease 0s;
+    
+    &:focus {
+	    width: 200px;
+	    //background: url("../images/sprite-vert.png") right -293px no-repeat #aaa;
+	    background-color: #aaabac;
+	    color: #000;
+	    font-size: inherit;
+	    
+	    + button.search {
+		    background: transparent url("../images/sprite-vert.png") 2px -293px no-repeat;
+			}
+  	}
+  }
+} 
 
 @media (max-width: 767px) {
 	#search-top .search-query {
@@ -984,7 +986,7 @@ body.home {
 }
 
 .ie8 .nav-collapse, ie8 .collapse, .ie7 .nav-collapse, ie7 .collapse {
-	overflow: visible !important;
+	overflow: visible !important; /* display column-nav */ 
 }
 
 @media (min-width: 767px) and (max-width: 980px) {
