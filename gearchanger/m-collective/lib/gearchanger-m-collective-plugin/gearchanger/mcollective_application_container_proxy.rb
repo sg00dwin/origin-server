@@ -16,6 +16,7 @@ module GearChanger
       def self.valid_gear_sizes_impl(user)
         default_gear_sizes = []
         capability_gear_sizes = []
+        
         capability_gear_sizes = user.capabilities['gear_sizes'] if user.capabilities.has_key?('gear_sizes')
 
         if user.vip || user.auth_method == :broker_auth

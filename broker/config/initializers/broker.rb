@@ -5,6 +5,9 @@ DomainObserver.instance
 #customizations to models
 require 'cloud_user_ext' 
 
+# Extend mcollective with express specific extensions
+require File.expand_path('../../lib/express/broker/mcollective_ext', File.dirname(__FILE__))
+
 if Rails.application.config.datastore[:replica_set]
   MongoMapper.connection = Mongo::ReplSetConnection.new(*Rails.application.config.datastore[:host_port] << {:read => :secondary})
 else
