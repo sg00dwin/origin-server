@@ -28,7 +28,7 @@ APACHE_PID_FILE=run/httpd.pid
 /usr/local/zend/bin/zdd.sh $1
 /usr/local/zend/bin/monitor-node.sh $1
 #starts apache
-app_ctl.sh $1
+httpd_ctl.sh $1
 /usr/local/zend/bin/scd.sh $1
 /usr/local/zend/bin/jqd.sh $1
 /usr/local/zend/bin/lighttpdctl.sh $1
