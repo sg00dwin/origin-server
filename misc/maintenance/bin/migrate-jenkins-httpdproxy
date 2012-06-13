@@ -46,7 +46,6 @@ def migrate_jenkins_gear(rhlogin, app_name, gear_uuid, version)
     else
       puts "ERROR: User not found: #{rhlogin}"
     end 
-    raise "Migrate on node failed.  Rerun with: #{migrate_cmd}" if !migrated
   rescue Exception => e
     raise "#{e.message}\n#{e.backtrace}\nOutput:\n"
   end
