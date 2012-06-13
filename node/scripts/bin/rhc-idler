@@ -13,6 +13,7 @@ function print_help {
     echo "Usage: $0"
     echo "  -u UUID       idles the app"
     echo "  -l            list all idled apps"
+    echo "  -n            don't restart httpd"
     exit 1
 }
 
@@ -67,6 +68,8 @@ case $OPTION in
     ;;
         l) list_idled="TRUE"
     ;;
+        n) no_httpd_restart="TRUE"
+    ;;
         ?) print_help
     ;;
 esac
@@ -99,7 +102,11 @@ cat > $HTTP_DIR/0000000000000_disabled.conf <<EOF
 Alias / /var/www/html/restorer.php/${uuid}/
 EOF
 
-service httpd graceful
+if [ -z "$no_httpd_restart" ]
+then
+    service httpd graceful
+fi
+
 
 service libra stopuser "${uuid}"
 
