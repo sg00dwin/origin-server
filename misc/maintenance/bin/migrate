@@ -54,7 +54,8 @@ def migrate_gear(rhlogin, app_name, gear_uuid, version)
                     migrated = true
                     if migrated
                       gear.configured_components.each do |comp_name|
-                        if comp_name == '@@app/cart-jenkins-1.4'
+                        if comp_name == '@@app/cart-jenkins-1.4' || 
+                           comp_name == '@@app/comp-proxy/cart-haproxy-1.4'
                           component = app.comp_instance_map[comp_name]
                           restart_component(gear, component, out)
                         end
