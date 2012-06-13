@@ -8,14 +8,14 @@
     section.pricing {
       table { 
         width: 100%; 
+        border-bottom: 4px solid #f8f8f8;
         th, td { text-align: center; }
         thead {
           th { vertical-align: top; padding: 15px 0; }
+          th:last-child { border-left: 10px solid white; }
           th.plan { 
             background-color: #f2f2f2; 
             text-align: center;
-            border-right: 10px solid white;
-            border-left: 10px solid white;
             width: 32%;
             p.description { font-size: 18px; font-weight: normal; }
             h4.price { font-size: 24px; }
@@ -31,18 +31,18 @@
             a.about { display: block; }
           }
           td:first-child { text-align: right; padding-right: 5px; }
-          td:last-child { text-align: left; padding-left: 5px; }
           td.key { font-size: 14px; }
           td.value { font-size: 20px; }
           tr:nth-child(odd) { 
             background-color: #f2f2f2; 
-            td.value { background-color: #ececec; border-right: 10px solid #f2f2f2; border-left: 10px solid #f2f2f2; }
+            td.value { background-color: #ececec; }
+            td:last-child { border-left: 10px solid #f2f2f2; }
           }
           tr:nth-child(even) { 
             background-color: #fff; 
-            td.value { background-color: #f9f9f9; border-right: 10px solid #fff; border-left: 10px solid #fff; }
+            td.value { background-color: #f9f9f9; }
+            td:last-child { border-left: 10px solid #fff; }
           }
-          tr:last-child { border-bottom: 3px solid #f8f8f8; }
         }
       }
     } 
@@ -61,14 +61,14 @@
           p.price { font-size: 24px; }
         }
         div.scenario {
+          background-color: #f2f2f2; 
           h5.title { font-size: 22px; padding-top: 20px; }
           p.content { padding: 15px 10px 0 10px; font-size: 11px; }
         }
-        div:nth-child(1) { background-color: #f2f2f2; }
-        div:nth-child(2) { background-color: #ccc; }
-        div:nth-child(3) { background-color: #999; }
-        div:nth-child(4) { 
-          background-color: #3f3f3f; 
+        div.item1 { background: #ccc url('/app/images/single_gear_bg.png') no-repeat left bottom; }
+        div.item2 { background: #999 url('/app/images/multi_gear_bg.png') no-repeat left bottom; }
+        div.item3 { 
+          background: #3f3f3f url('/app/images/lotsa_gears_bg.png') no-repeat left bottom; 
           color: white; 
           h5 { color: white; }
         }
@@ -78,12 +78,6 @@
     }
     section.faq {
       dl.faq {
-        -moz-column-count: 3;
-        -webkit-column-count: 3;
-        column-count: 3;
-        -moz-column-gap: 40px;
-        -webkit-column-gap: 40px;
-        column-gap: 40px;
         dt { padding-bottom: 5px; }
         dd { 
           padding-bottom: 20px; 
