@@ -1,4 +1,4 @@
-/* Pricing and plans pages */
+/* Pricing and plans pages */ 
 
 .community {
   article.pricing {
@@ -16,6 +16,7 @@
             text-align: center;
             border-right: 10px solid white;
             border-left: 10px solid white;
+            width: 32%;
             p.description { font-size: 18px; font-weight: normal; }
             h4.price { font-size: 24px; }
             h4.price.free { font-size: 36px; padding-bottom: 20px; }
@@ -84,7 +85,11 @@
         -webkit-column-gap: 40px;
         column-gap: 40px;
         dt { padding-bottom: 5px; }
-        dd { padding-bottom: 20px; margin-left: 0; }
+        dd { 
+          padding-bottom: 20px; 
+          margin-left: 0; 
+          table tr td { font-size: 12px; }
+        }
         dt, dd { font-size: 14px; }
       }
 
