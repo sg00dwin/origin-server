@@ -13,7 +13,7 @@ template_file_list=(
 "/usr/local/zend/etc/monitor_node.ini"
 "/usr/local/zend/etc/conf.d/ZendGlobalDirectives.ini"
 "/usr/local/zend/gui/application/data/zend-server.ini"
-"/usr/local/zend/etc/lighttpd.conf"
+"/usr/local/zend/gui/lighttpd/etc/lighttpd.conf"
 )
 
 target_pam="/tmp/zend"
@@ -38,9 +38,10 @@ function create_links {
       echo "Moving $zpath to $zdir/${zfile}_openshift_original"
       mv $zpath $zdir/${zfile}_openshift_original
       echo "Linking $zdir/$zfile to $target_pam/$zdir/$zfile"
-      ln -s $target_pam/$zdir/$zfile $zdir/$zfile
+      ln -s ${target_pam}${zdir}/$zfile $zdir/$zfile
     fi
   done
+  chmod +r /usr/local/zend/gui/application/data_openshift_original/zend-server-user.ini
 }
 
 function copy_fs_to_pam {
@@ -57,9 +58,9 @@ function copy_fs_to_pam {
       echo "File $zdir/${zfile}_openshift_original does not exist"
       continue
     fi
-    echo "Copying $zdir/${zfile}_openshift_original $target_location/$zdir/$zfile"
-    mkdir -p $target_location/$zdir
-    cp -rf $zdir/${zfile}_openshift_original $target_location/$zdir/$zfile
+    echo "Copying $zdir/${zfile}_openshift_original ${target_location}${zdir}/$zfile"
+    mkdir -p ${target_location}${zdir}
+    cp -rf $zdir/${zfile}_openshift_original ${target_location}${zdir}/$zfile
   done
   for zpath in ${template_file_list[*]}; do
     zdir=`dirname $zpath`

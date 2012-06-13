@@ -78,7 +78,7 @@ class BootstrapFormBuilder < Formtastic::SemanticFormBuilder
       #errors = Array(@object.errors[method.to_sym]).to_sentence
       #errors.present? ? array << [attribute, errors].join(" ") : array ||= []
     end
-    full_errors << @object.errors[:base]
+    full_errors << @object.errors[:base] unless html_options.delete(:not) == :base
     full_errors.flatten!
     full_errors.compact!
     return nil if full_errors.blank?

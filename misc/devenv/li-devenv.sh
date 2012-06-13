@@ -91,7 +91,7 @@ name=Ruby193 Software Collection for RHEL6 - $basearch
 baseurl=https://mirror1.stg.rhcloud.com/libra/ruby193-rhel-6-${1-candidate}/\$basearch/
         https://mirror2.stg.rhcloud.com/libra/ruby193-rhel-6-${1-candidate}/\$basearch/
 failovermethod=priority
-enabled=0
+enabled=1
 gpgcheck=0
 gpgkey=https://mirror1.stg.rhcloud.com/libra/RPM-GPG-KEY-redhat-beta
 ggpkey=https://mirror1.stg.rhcloud.com/libra/RPM-GPG-KEY-redhat-release
@@ -104,8 +104,8 @@ name= Red Hat Enterprise Linux Server 6.3 - $basearch
 baseurl=https://mirror1.stg.rhcloud.com/libra/rhel6.3/\$basearch/
         https://mirror2.stg.rhcloud.com/libra/rhel6.3/\$basearch/
 failovermethod=priority
-enabled=0
-gpgcheck=0
+enabled=1
+gpgcheck=1
 gpgkey=https://mirror1.stg.rhcloud.com/libra/RPM-GPG-KEY-redhat-beta
 ggpkey=https://mirror1.stg.rhcloud.com/libra/RPM-GPG-KEY-redhat-release
 sslverify=0
@@ -116,8 +116,9 @@ sslclientkey=/var/lib/yum/client-key.pem
 EOF
 
 # Install the 32 bit java before anything else
-yum update -y --exclude='rhc*' --exclude='mcollective*'
 yum -y install java-1.6.0-openjdk.i686 java-1.6.0-openjdk-devel.i686
+yum -y remove java-1.6.0-openjdk.x86_64
+yum update -y --exclude='rhc*' --exclude='mcollective*'
 
 
 function install_requires {

@@ -46,6 +46,16 @@ module OpenShiftMigration
           output += echo_output
         end
 
+        # Migration for HAProxy stats file
+        if File.exists?("#{gear_home}/haproxy-1.4")
+          Util.replace_in_file("#{gear_home}/haproxy-1.4/conf/haproxy.cfg",
+                               "stats socket /tmp/stats",
+                               "stats socket #{gear_home}/haproxy-1.4/run/stats")
+          Util.replace_in_file("#{gear_home}/haproxy-1.4/conf/haproxy.cfg.template",
+                               "stats socket /tmp/stats",
+                               "stats socket #{gear_home}/haproxy-1.4/run/stats")
+        end
+
       else
         exitcode = 127
         output += "Application not found to migrate: #{gear_home}\n"

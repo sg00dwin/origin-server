@@ -571,7 +571,7 @@ mkdir -p /tmp/rhc/junit
           FileUtils.mv file, "/tmp/tito/noarch/"
         }
         unless run("rpm -Uvh --force /tmp/tito/noarch/*.rpm", :verbose => options.verbose?)
-          unless run("rpm -e --justdb --nodeps #{package_name}; yum install -y /tmp/tito/noarch/*.rpm", :verbose => options.verbose?)
+          unless run("rpm -e --justdb --nodeps #{package_name}; yum --enablerepo=ruby193 install -y /tmp/tito/noarch/*.rpm", :verbose => options.verbose?)
             FileUtils.rm_rf '/tmp/devenv/sync/'
             exit 1
           end
@@ -766,7 +766,7 @@ mkdir -p /tmp/rhc/junit
         end
       else
         print "Updating all packages on the system..."
-        output = ssh(hostname, "yum clean metadata; yum update -y --exclude='rhc-devenv'; set -e; yum update -y --exclude='rhc-devenv' --disablerepo=\\* --enablerepo=li", 600)
+        output = ssh(hostname, "yum clean metadata; yum update -y --exclude='rhc-devenv'; set -e; yum update -y --exclude='rhc-devenv' --disablerepo=\\* --enablerepo=li --enable-repo=ruby193", 600)
         puts "Done"
 
         puts "------------------ Update Output ------------------------"
@@ -828,7 +828,7 @@ mkdir -p /tmp/rhc/junit
         build_and_install(package_name, build_dir, spec_file)
       end
     end
-    run("yum update -y --exclude='rhc-devenv' --disablerepo=\\* --enablerepo=li rhc-* cartridge-* rubygem-stickshift-* rubygem-gearchanger-* rubygem-uplift-* rubygem-swingshift-*", :verbose => options.verbose?)
+    run("yum update -y --exclude='rhc-devenv' --disablerepo=\\* --enablerepo=li --enablerepo=ruby193 rhc-* cartridge-* rubygem-stickshift-* rubygem-gearchanger-* rubygem-uplift-* rubygem-swingshift-*", :verbose => options.verbose?)
     run("service mcollective restart; service libra-broker restart; service libra-site restart", :verbose => options.verbose?)
   end
 
@@ -888,7 +888,7 @@ pushd li-working > /dev/null
 popd > /dev/null
 
 rm -rf li-working #{working_dirs}
-#{options.clean_metadata? ? "yum update -y --exclude='rhc-devenv' rhc-* cartridge-* rubygem-stickshift-* rubygem-gearchanger-* rubygem-uplift-* rubygem-swingshift-*; " : ''}
+#{options.clean_metadata? ? "yum update -y --enablerepo=ruby193 --exclude='rhc-devenv' rhc-* cartridge-* rubygem-stickshift-* rubygem-gearchanger-* rubygem-uplift-* rubygem-swingshift-*; " : ''}
 
 # End shell code
 ################
