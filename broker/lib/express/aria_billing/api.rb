@@ -20,53 +20,57 @@ module Express
         @usage_type = access_info[:usage_type]
       end
 
-      def self.userid_exists(user_id)
+      def self.instance
+        Express::AriaBilling::Api.new
+      end
+
+      def userid_exists(user_id)
         request = {
           'user_id' => user_id,
           'client_no' => @client_no,
           'auth_key' => @auth_key,
-          'rest_call' => "userid_exists",
+          'rest_call' => "userid_exists"
         }
         get_response(request)
       end
 
-      def self.get_acct_no_from_userid(user_id)
+      def get_acct_no_from_userid(user_id)
         request = {
           'user_id' => user_id,
           'client_no' => @client_no,
           'auth_key' => @auth_key,
-          'rest_call' => "get_acct_no_from_userid",
+          'rest_call' => "get_acct_no_from_userid"
         }
         #TODO: return only acct_no
         get_response(request)
       end
 
-      def self.record_usage(user_id=nil, acct_no=nil, 
+      def record_usage(user_id=nil, acct_no=nil, 
                             usage_type=@usage_type[:small], usage_units=1)
         raise Exception.new "user_id or acct_no must be valid" if !user_id && !acct_no
         request = {
           'usage_units' => usage_units,
-          'usage_date' => Time.now.strftime("%Y-%m-%d %H:%M:%S")
+          'usage_date' => Time.now.strftime("%Y-%m-%d %H:%M:%S"),
           'usage_type' => usage_type,
           'client_no' => @client_no,
           'auth_key' => @auth_key,
-          'rest_call' => "record_usage",
+          'rest_call' => "record_usage"
         }
         user_id ? request['userid']=user_id : request['acct_no']=acct_no
         get_response(request)
       end
 
-      def self.get_usage_history(acct_no, specified_usage_type_no=nil,
+      def get_usage_history(acct_no, specified_usage_type_no=nil,
                                  date_range_start=(Time.now-24*60*60).strftime("%Y-%m-%d"),
                                  date_range_end=Time.now.strftime("%Y-%m-%d"))
         request = {
           'acct_no' => acct_no,
           'specified_usage_type_no' => specified_usage_type_no,
           'date_range_start' => date_range_start,
-          'date_range_end' => date_range_end
+          'date_range_end' => date_range_end,
           'client_no' => @client_no,
           'auth_key' => @auth_key,
-          'rest_call' => "get_usage_history",
+          'rest_call' => "get_usage_history"
         }
         get_response(request)
       end

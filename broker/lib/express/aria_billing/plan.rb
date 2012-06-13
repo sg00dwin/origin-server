@@ -14,7 +14,11 @@ module Express
         @plans = access_info[:plans]
       end
 
-      def self.enable_broker(event_params)
+      def self.instance
+        Express::AriaBilling::Plan.new
+      end
+
+      def enable_broker(event_params)
         id_list = event_params[:event_id]
         user = CloudUser.find(event_params[:userid])
         plan_name = event_params[:plan_name]
