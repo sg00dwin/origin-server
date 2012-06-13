@@ -1070,7 +1070,14 @@ body.home {
   .home .messaging {
     margin: 10px 0 15px 0;
   }
+  .buzz-actions {
+    text-align: center;
+    .align-right {
+      text-align: center;
+    }
+  }
 }
+
 
 @media (min-width: 1107px) and (max-width: 1137px) {
   .home #buzz {
