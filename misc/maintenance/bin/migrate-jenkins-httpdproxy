@@ -70,22 +70,9 @@ def redeploy_jenkins_httpd_proxy(gear, out)
       end
     end
   end
-    
-  unless gear.app.aliases.nil?
-    gear.app.aliases.each do |server_alias|
-      out << "Adding alias '#{server_alias}' for '#{gear.name}' with uuid '#{gear.uuid}' on node #{gear.server_identity}\n"
-      reply = gear.add_alias(server_alias)
-      out << "ADD_ALIAS DEBUG OUTPUT:\n#{reply.debugIO.string}\n" unless reply.debugIO.string.empty?
-      out << "ADD_ALIAS ERROR OUTPUT:\n#{reply.errorIO.string}\n" unless reply.errorIO.string.empty?
-      if reply.exitcode != 0
-        out << "Add alias on node exit code: #{reply.exitcode}\n"
-        raise "Failed adding alias #{server_alias} for gear '#{gear.name}' with uuid '#{gear.uuid}' on node '#{gear.server_identity}'"
-      end
-    end
-  end
 end
 
-def migrate(version, continue=false, target_server_identity=nil, migrate_position=1, num_migrators=1)
+def migrate(version=1, continue=false, target_server_identity=nil, migrate_position=1, num_migrators=1)
   start_time = Time.now.to_i
   puts "Getting all RHLogins..."
   users = []
@@ -173,11 +160,6 @@ require 'config/environment'
 
 if opt['migrate-gear'] && opt['rhlogin'] && opt['app-name'] && opt['version']
   puts migrate_jenkins_gear(opt['rhlogin'], opt['app-name'], opt['migrate-gear'], opt['version'])
-else if opt['version']
-  puts migrate(opt['version'])
-else
-  puts "--rhlogin, --app-name, and --version is required with --migrate-gear"
-  exit 255
-end
-
+else 
+  puts migrate()
 end
