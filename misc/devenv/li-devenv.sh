@@ -104,8 +104,8 @@ name= Red Hat Enterprise Linux Server 6.3 - $basearch
 baseurl=https://mirror1.stg.rhcloud.com/libra/rhel6.3/\$basearch/
         https://mirror2.stg.rhcloud.com/libra/rhel6.3/\$basearch/
 failovermethod=priority
-enabled=0
-gpgcheck=0
+enabled=1
+gpgcheck=1
 gpgkey=https://mirror1.stg.rhcloud.com/libra/RPM-GPG-KEY-redhat-beta
 ggpkey=https://mirror1.stg.rhcloud.com/libra/RPM-GPG-KEY-redhat-release
 sslverify=0
