@@ -14,7 +14,6 @@ STDOUT.sync, STDERR.sync = true
 
 def migrate_jenkins_gear(rhlogin, app_name, gear_uuid, version)
   migrate_cmd = "#{__FILE__} --rhlogin '#{rhlogin}' --migrate-gear '#{gear_uuid}' --app-name '#{app_name}' --version '#{version}'"
-  out = StringIO.new
   puts "Migrating gear on node with: #{migrate_cmd}\n"
   migrated = false
   begin
@@ -34,9 +33,10 @@ def migrate_jenkins_gear(rhlogin, app_name, gear_uuid, version)
         end
         puts "Gear: #{gear}\n"
         if gear
-          redeploy_jenkins_httpd_proxy(gear, out)
+          redeploy_jenkins_httpd_proxy(gear)
+          migrated = true
         else
-          out << "WARNING: Gear not found with uuid #{gear_uuid} for app '#{app_name}' and user '#{rhlogin}'\n"
+          puts "WARNING: Gear not found with uuid #{gear_uuid} for app '#{app_name}' and user '#{rhlogin}'\n"
           migrated = true
         end
        
@@ -48,27 +48,29 @@ def migrate_jenkins_gear(rhlogin, app_name, gear_uuid, version)
     end 
     raise "Migrate on node failed.  Rerun with: #{migrate_cmd}" if !migrated
   rescue Exception => e
-    raise "#{e.message}\n#{e.backtrace}\nOutput:\n#{out.string}"
+    raise "#{e.message}\n#{e.backtrace}\nOutput:\n"
   end
-  out.string
 end
 
-def redeploy_jenkins_httpd_proxy(gear, out)
+def redeploy_jenkins_httpd_proxy(gear)
+  puts "redeploy_jenkins_httpd_proxy"
   gear.configured_components.each do |comp_name|
     component = gear.app.comp_instance_map[comp_name]
+    puts "component #{component} #{component.parent_cart_name}"
     if component.parent_cart_name == 'jenkins-1.4'
-      out << "Redeploying httpd proxy for '#{component.parent_cart_name}' on gear '#{gear.name}' with uuid '#{gear.uuid}' on node #{gear.server_identity}\n"
+      puts "Redeploying httpd proxy for '#{component.parent_cart_name}' on gear '#{gear.name}' with uuid '#{gear.uuid}' on node #{gear.server_identity}\n"
       embedded = gear.app.embedded.include?(component.parent_cart_name)
       reply = gear.app.container.send(:run_cartridge_command, (embedded ? "embedded/" : '') + component.parent_cart_name, gear.app, gear, 'deploy-httpd-proxy', nil, false)
   
-      out << "DEPLOY_HTTP_PROXY DEBUG OUTPUT:\n#{reply.debugIO.string}\n" unless reply.debugIO.string.empty?
-      out << "DEPLOY_HTTP_PROXY ERROR OUTPUT:\n#{reply.errorIO.string}\n" unless reply.errorIO.string.empty?
+#      puts "DEPLOY_HTTP_PROXY DEBUG OUTPUT:\n#{reply.debugIO.string}\n" unless reply.debugIO.string.empty?
+#      puts "DEPLOY_HTTP_PROXY ERROR OUTPUT:\n#{reply.errorIO.string}\n" unless reply.errorIO.string.empty?
       
       if reply.exitcode != 0
-        out << "Deploy httpd proxy for cart: #{component.parent_cart_name} on node exit code: #{reply.exitcode}\n"
+        puts "Deploy httpd proxy for cart: #{component.parent_cart_name} on node exit code: #{reply.exitcode}\n"
         raise "Failed deploying httpd proxy for gear '#{gear.name}' with uuid '#{gear.uuid}' on node '#{gear.server_identity}'"
       end
     end
+    puts "done"
   end
 end
 
@@ -100,24 +102,26 @@ def migrate(version=1, continue=false, target_server_identity=nil, migrate_posit
     ds_queues[queue_index].push(user)
   end
   ds_threads = []
-  mutex = Mutex.new
+#  mutex = Mutex.new
   ds_queues.each do |users|
-    ds_threads << Thread.new do
+    
+#    ds_threads << Thread.new do
       users.each do |user|
         puts "Gathering gears for user: #{user.login} with uuid: #{user.uuid}"
         apps = user.applications
         apps.each do |app|
           puts "Found app #{app.name}"
+#          puts "gears"
           gears = app.gears
-          if gears && !gears.empty?
+          if gears 
             gears.each do |gear|
-              puts "Found gear #{gear.name}"
+#              puts "Found gear #{gear.name}"
               migrate_jenkins_gear(user.login, app.name, gear.uuid, version)
             end
           else
             puts "ERROR: Gear not found for app: '#{app.name}' of user #{user.login}"
           end
-        end
+#        end
       end
     end
   end
@@ -159,7 +163,7 @@ $:.unshift('/var/www/stickshift/broker')
 require 'config/environment'
 
 if opt['migrate-gear'] && opt['rhlogin'] && opt['app-name'] && opt['version']
-  puts migrate_jenkins_gear(opt['rhlogin'], opt['app-name'], opt['migrate-gear'], opt['version'])
+  migrate_jenkins_gear(opt['rhlogin'], opt['app-name'], opt['migrate-gear'], opt['version'])
 else 
-  puts migrate()
+  migrate()
 end
