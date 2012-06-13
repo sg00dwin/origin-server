@@ -20,8 +20,8 @@ module Express
 
       def enable_broker(event_params)
         id_list = event_params[:event_id]
-        user = CloudUser.find(event_params[:userid])
-        plan_name = event_params[:plan_name]
+        user = CloudUser.find(event_params[:rhlogin])
+        plan_name = event_params[:plan_name] || "FreeShift"
         if plan_name == "FreeShift"
           limits = @plans[:FreeShift]
         elsif plan_name == "MegaShift"
@@ -33,11 +33,25 @@ module Express
           case event_id
             when "101"
               if user.nil?
-                user = CloudUser.new(params[:userid])
+                user = CloudUser.new(event_params[:rhlogin])
               end
               user.max_gears = limits[:max_gears]
               user.vip = limits[:vip]
               user.save
+              Rails.logger.debug("Completed new account creation '#{user.login}' with master plan name - '#{plan_name}'!")
+            when "105"
+              if user.nil?
+                Rails.logger.error("User not found : #{event_params[:userid]} on receiving event id '#{event_id}'")
+                break
+              end
+              if ["terminated", "suspended", "cancelled"].include? event_params[:status].downcase 
+                if user.consumed_gears > 0 or user.applications.length > 0
+                  Rails.logger.error("Error in account cancellation for account '#{user.login}'. Current consumption of gears is (#{user.consumed_gears}).")
+                  break
+                end
+                user.delete
+                Rails.logger.debug("Completed cancellation of account '#{user.login}'!")
+              end
             when "107"
               if user.nil?
                 Rails.logger.error("User not found : #{event_params[:userid]}")
@@ -46,10 +60,12 @@ module Express
               max_gears = limits[:max_gears]
               if max_gears < user.consumed_gears
                 Rails.logger.error("Error in plan change for account '#{user.login}'. New plan #{plan_name} needs max_gears to be #{max_gears}, but current consumption is more (#{user.consumed_gears}).")
+                break
               end
               user.max_gears = max_gears
               user.vip = limits[:vip]
               user.save
+              Rails.logger.debug("Completed master plan change for account '#{user.login}' to '#{plan_name}'!")
           end
         end
       end
