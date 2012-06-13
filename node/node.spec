@@ -2,7 +2,7 @@
 
 Summary:       Multi-tenant cloud management system node tools
 Name:          rhc-node
-Version: 0.94.6
+Version: 0.94.7
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -266,6 +266,14 @@ fi
 /lib64/security/pam_libra.so
 
 %changelog
+* Wed Jun 13 2012 Adam Miller <admiller@redhat.com> 0.94.7-1
+- BZ 830286.  Defer restarting httpd until the end of a set of applications.
+  (rmillner@redhat.com)
+- BZ827575.  Also allow existing applications to specify foreign channels in
+  deplist.txt. (rmillner@redhat.com)
+- BZ806468 Relocate/Rename district.conf (jhonce@redhat.com)
+- Modified name to c9 + change limits. (ramr@redhat.com)
+
 * Tue Jun 12 2012 Adam Miller <admiller@redhat.com> 0.94.6-1
 - Add cloud9.io high density node profile. (ramr@redhat.com)
 
