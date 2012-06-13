@@ -3,6 +3,8 @@ module Streamline
 
     attr_accessor :email_address
     attr_reader :rhlogin, :ticket, :roles, :terms
+    # expose the rhlogin field as login
+    alias_attribute :login, :rhlogin
 
     def simple_user?
       streamline_type == :simple

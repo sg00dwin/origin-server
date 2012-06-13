@@ -20,6 +20,11 @@
         <hudson.model.StringParameterDefinition>
           <name>INSTALL_FROM_SOURCE</name>
           <description></description>
+          <defaultValue>true</defaultValue>
+        </hudson.model.StringParameterDefinition>
+        <hudson.model.StringParameterDefinition>
+          <name>BUILD_UPDATE_AMI</name>
+          <description></description>
           <defaultValue>false</defaultValue>
         </hudson.model.StringParameterDefinition>
       </parameterDefinitions>
@@ -78,8 +83,12 @@ then
 elif [ &quot;$INSTALL_FROM_SOURCE&quot; == &quot;true&quot; ]
 then
   build/devenv build devenv ${BUILD_NUMBER} --register --official --terminate --install_from_source --instance_type m1.large
-else
+elif [ &quot;$BUILD_UPDATE_AMI&quit; == &quot;true&quot; ]
+then
   build/devenv build devenv ${BUILD_NUMBER} --register --official --terminate --instance_type m1.large
+else
+  printf &quot;ERROR: incorrect or insufficient build parameters\n&quot;
+  exit 1
 fi</command>
     </hudson.tasks.Shell>
   </builders>

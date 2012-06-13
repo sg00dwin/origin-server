@@ -39,8 +39,8 @@ class FakeBeforeFilterTest < ActionController::TestCase
 
   def login
     setup_user
-    @controller.stubs(:session_user).returns(@user)
-    @controller.expects(:logged_in?).at_least_once.returns(true)
+    @controller.stubs(:current_user).returns(@user)
+    @controller.expects(:user_signed_in?).at_least_once.returns(true)
   end
 
   def accept_terms

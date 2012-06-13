@@ -18,9 +18,6 @@ class WebUser < Streamline::User
   # temporary variables that are not persisted
   attr_accessor :token, :old_password
 
-  # expose the rhlogin field as login
-  alias_attribute :login, :rhlogin
-
   validates :login, 
             :presence => true,
             :if => on_scopes(:reset_password)
