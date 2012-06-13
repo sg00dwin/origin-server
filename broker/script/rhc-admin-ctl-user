@@ -34,6 +34,16 @@ Options:
     Set the number of gears a user has consumed (use carefully)
   --setvip (true|false)
     Set the vip status of the user
+  --addsubaccount <subaccount login>
+    The sub account to add to the rhlogin parent account
+  --removesubaccount <subaccount login>
+    The sub account to remove from the rhlogin parent account
+  --allowsubaccounts (true|false)
+    Add / Remove the capability to manage sub accounts 
+  --addgearsize <gearsize>
+    Add gearsize to the capability for this rhlogin user
+  --removegearsize <gearsize>
+    Remove gearsize from the capability for this rhlogin user
   -h|--help
     Show Usage info
 
@@ -106,11 +116,135 @@ def set_vip(user, vip)
     end
 end
 
+def allow_sub_accounts(user, allow)
+    user.capabilities_will_change!
+    if user.capabilities['subaccounts'] == allow
+        puts "User already has allowsubaccounts set to #{allow}"
+        return
+    end
+
+    print "Setting subaccounts capability to #{allow} for user #{user.login}... "
+    user.capabilities['subaccounts'] = allow
+    result = user.save
+    puts "Done."
+
+    if result.exitcode != 0
+        puts "An error occurred modifying the user capabilities."
+        exit 6
+    end
+end
+
+def add_sub_account(user, subaccount_login)
+    unless user.capabilities['subaccounts']
+        puts "User #{user.login} does not have the capability to manage sub accounts"
+        return
+    end
+
+    child_user = CloudUser::find(subaccount_login)
+    if not child_user.nil?
+        if child_user.parent_user_login == user.login
+            puts "Error: Subaccount for '#{subaccount_login}' already exists under #{user.login}"
+        elsif not child_user.parent_user_login.nil?
+            puts "Error: Subaccount for '#{subaccount_login}' already exists under #{child_user.parent_user_login}"
+        else
+            puts "Error: User '#{subaccount_login}' already exists"
+        end
+        exit 5
+    end
+    
+    print "Adding subaccount for #{subaccount_login} under #{user.login}... "
+    child_user = CloudUser.new(subaccount_login, nil, nil, nil, nil, user.login)
+    result = child_user.save
+    puts "Done."
+
+    if result.exitcode != 0
+        puts "An error occurred adding the sub account #{subaccount_login}."
+        exit 6
+    end
+end
+
+def remove_sub_account(user, subaccount_login)
+    unless user.capabilities['subaccounts']
+        puts "User #{user.login} does not have the capability to manage sub accounts"
+        return
+    end
+
+    child_user = CloudUser::find(subaccount_login)
+    if child_user.nil?
+        puts "Error: Sub Account User '#{subaccount_login}' not found"
+        exit 5
+    end
+    
+    if child_user.parent_user_login.nil? || (child_user.parent_user_login != user.login)
+        puts "Error: User '#{subaccount_login}' is not a sub account of #{user.login}"
+        exit 5
+    end
+    
+    print "Removing subaccount for #{child_user.login} under #{user.login}... "
+    result = child_user.delete
+    puts "Done."
+
+    if result.exitcode != 0
+        puts "An error occurred removing the sub account for #{subaccount_login}."
+        exit 6
+    end
+end
+
+def add_gear_size(user, gear_size)
+    print "Adding gear size #{gear_size} for user #{user.login}... "
+    gear_sizes = []
+    gear_sizes = user.capabilities['gear_sizes'] if user.capabilities.has_key?('gear_sizes')
+    
+    if gear_sizes.include?(gear_size)
+        puts "User #{user.login} already has gear size #{gear_size} in its capabilities."
+        return
+    end
+    
+    user.capabilities_will_change!
+    gear_sizes.push(gear_size)
+    user.capabilities['gear_sizes'] = gear_sizes
+    result = user.save
+    puts "Done."
+
+    if result.exitcode != 0
+        puts "An error occurred adding the gear size #{gear_size} to user #{user.login}."
+        exit 6
+    end
+end
+
+def remove_gear_size(user, gear_size)
+    print "Removing gear size #{gear_size} for user #{user.login}... "
+    gear_sizes = []
+    gear_sizes = user.capabilities['gear_sizes'] if user.capabilities.has_key?('gear_sizes')
+    
+    unless gear_sizes.include?(gear_size)
+        puts "User #{user.login} does not have gear size #{gear_size} in its capabilities."
+        return
+    end
+    
+    user.capabilities_will_change!
+    gear_sizes.delete(gear_size)
+    user.capabilities['gear_sizes'] = gear_sizes
+    result = user.save
+    puts "Done."
+
+    if result.exitcode != 0
+        puts "An error occurred removing the gear size #{gear_size} from user #{user.login}."
+        exit 6
+    end
+end
+
 opts = GetoptLong.new(
     ["--rhlogin",          "-l", GetoptLong::REQUIRED_ARGUMENT],
     ["--setmaxgears",      GetoptLong::REQUIRED_ARGUMENT],
     ["--setconsumedgears", GetoptLong::REQUIRED_ARGUMENT],
     ["--setvip",           GetoptLong::REQUIRED_ARGUMENT],
+    ["--listsubaccounts",  GetoptLong::NO_ARGUMENT],
+    ["--addsubaccount",    GetoptLong::REQUIRED_ARGUMENT],
+    ["--removesubaccount", GetoptLong::REQUIRED_ARGUMENT],
+    ["--allowsubaccounts", GetoptLong::REQUIRED_ARGUMENT],
+    ["--addgearsize",      GetoptLong::REQUIRED_ARGUMENT],
+    ["--removegearsize",   GetoptLong::REQUIRED_ARGUMENT],
     ["--help",             "-h", GetoptLong::NO_ARGUMENT]
 )
 
@@ -126,11 +260,17 @@ login = args["--rhlogin"]
 maxgears = args["--setmaxgears"].to_i if args["--setmaxgears"]
 consumedgears = args["--setconsumedgears"].to_i if args["--setconsumedgears"]
 vip = args["--setvip"].to_b if args["--setvip"]
+allowsubaccounts = args["--allowsubaccounts"].to_b if args["--allowsubaccounts"]
 
 if login.nil? or args["--help"]
     usage
     exit 1
 end
+
+account_to_add = args["--addsubaccount"]
+account_to_remove = args["--removesubaccount"]
+gear_size_to_add = args["--addgearsize"]
+gear_size_to_remove = args["--removegearsize"]
 
 # this require is here to not load the environment simply to display help
 require '/var/www/stickshift/broker/config/environment'
@@ -145,6 +285,7 @@ if user.nil?
 end
 
 changed_user = false
+subaccount_list = []
 
 unless maxgears.nil?
     set_max_gears(user, maxgears)
@@ -161,6 +302,41 @@ unless vip.nil?
     changed_user = true
 end
 
+unless allowsubaccounts.nil?
+    allow_sub_accounts(user, allowsubaccounts)
+    changed_user = true
+end
+
+unless account_to_add.nil?
+    add_sub_account(user, account_to_add)
+end
+
+unless account_to_remove.nil?
+    remove_sub_account(user, account_to_remove)
+end
+
+unless gear_size_to_add.nil?
+    if !(gear_size_to_add =~ /\A(jumbo|exlarge|large|medium|micro|small|c9)\z/)
+        puts "Gear size must be one of: (small|jumbo|exlarge|medium|large|micro|c9)"
+        exit 1
+    end
+    add_gear_size(user, gear_size_to_add)
+    changed_user = true
+end
+
+unless gear_size_to_remove.nil?
+    if !(gear_size_to_remove =~ /\A(jumbo|exlarge|large|medium|micro|small|c9)\z/)
+        puts "Gear size must be one of: (small|jumbo|exlarge|medium|large|micro|c9)"
+        exit 1
+    end
+    remove_gear_size(user, gear_size_to_remove)
+    changed_user = true
+end
+
+if args["--listsubaccounts"]
+    subaccount_list = CloudUser::find_subaccounts_by_parent_login(login)
+end
+
 if changed_user
     # reload user with new settings
     user = CloudUser::find(login)
@@ -170,8 +346,16 @@ end
 
 # print out the user's current settings
 puts "User #{user.login}:"
-puts "     consumed gears: #{user.consumed_gears}"
-puts "          max gears: #{user.max_gears}"
-puts "         vip status: #{user.vip}"
-puts
-puts
+puts "      consumed gears: #{user.consumed_gears}"
+puts "           max gears: #{user.max_gears}"
+puts "          vip status: #{user.vip}"
+puts "          gear sizes: #{user.capabilities['gear_sizes'].join(', ')}" if user.capabilities.has_key?('gear_sizes')
+puts "sub accounts allowed: #{user.capabilities['subaccounts']}" if user.capabilities.has_key?('subaccounts')
+puts 
+if args["--listsubaccounts"] and (not subaccount_list.nil?) and (not subaccount_list.empty?)
+    puts "Sub Accounts: #{subaccount_list.length}"
+    subaccount_list.each do |subaccount|
+        puts "     #{subaccount.login}"
+    end
+    puts
+end

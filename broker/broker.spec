@@ -35,6 +35,8 @@ Requires:  rubygem(ruby-prof)
 Requires:  rubygem-ruby-prof
 Requires:  rubygem-rcov
 Requires:  rubygem-mongo_mapper
+Requires:  rubygem-wddx
+Requires:  rubygem-pony
 
 BuildArch: noarch
 

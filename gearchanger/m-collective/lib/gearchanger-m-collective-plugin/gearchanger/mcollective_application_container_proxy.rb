@@ -13,11 +13,22 @@ module GearChanger
         @district = district
       end
       
-      def self.valid_gear_sizes_impl(user)    
+      def self.valid_gear_sizes_impl(user)
+        default_gear_sizes = []
+        capability_gear_sizes = []
+        
         if user.vip || user.auth_method == :broker_auth
-          return ["small", "medium"]
+          default_gear_sizes = ["small", "medium"]
         else
-          return ["small"]          
+          default_gear_sizes = ["small"]
+        end
+        
+        capability_gear_sizes = user.capabilities['gear_sizes'] if user.capabilities.has_key?('gear_sizes')
+        
+        if capability_gear_sizes.nil? or capability_gear_sizes.empty?
+          return default_gear_sizes
+        else
+          return capability_gear_sizes
         end
       end
       

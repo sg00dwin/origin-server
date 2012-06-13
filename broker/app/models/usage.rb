@@ -5,7 +5,7 @@ require 'mongo_mapper'
 class Usage < StickShift::Model
   include MongoMapper::Document
 
-  VALID_GEAR_SIZES = ['small', 'medium', 'large']
+  VALID_GEAR_SIZES = ['small', 'medium', 'large', 'c9']
 
   key :uuid,         String, :required => true, :unique => true
   key :login,        String, :required => true

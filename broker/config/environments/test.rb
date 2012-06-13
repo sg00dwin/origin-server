@@ -107,6 +107,34 @@ Broker::Application.configure do
     :log_filepath => "/var/log/stickshift/user_action.log"
   }
 
+  config.billing = {
+    :aria => {
+      :config => {
+        :url => "https://secure.current.stage.ariasystems.net/api/ws/api_ws_class_dispatcher.php",
+        :auth_key => "sRvjFqjSadu3AFB8jRAR3tqeH5Qf6XjW",
+        :client_no => 3754655
+      },
+      :usage_type => {
+        :small => 10014123,
+        :medium => 10014125,
+        :large => 10014127,
+        :xlarge => 10014151
+      },
+      :datastore_enabled => false,
+      :default_max_gears => 3,
+      :plans => {
+        :FreeShift => {
+          :max_gears => 3,
+          :vip => false
+        },
+        :MegaShift => {
+          :max_gears => 16,
+          :vip => true
+        }
+      }
+    }
+  }
+
   # SS Config
   config.ss = {
     :domain_suffix => "dev.rhcloud.com",
@@ -121,5 +149,11 @@ Broker::Application.configure do
 #    :squash_threads => true,
 #    :squash_runtime => true
 #  }
+
+  # Cloud9
+  config.cloud9 = {
+    :user_login => "c9",
+    :node_profile => "c9"
+  }
 
 end

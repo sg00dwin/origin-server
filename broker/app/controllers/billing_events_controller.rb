@@ -1,14 +1,15 @@
+
 class BillingEventsController < BaseController
   respond_to :xml, :json
 
-  # POST /events
+  # POST /billing/rest/events
   def create
     retval = "FAILED"
 #   Rails.logger.info("Request params: #{params.inspect}")
     begin
       event_list = params[:event_id]
-      if (event_list - ProvisioningEvents::EVENTS.keys()).empty?
-        ProvisioningEvents.handle_event(params)
+      if (event_list - Express::AriaBilling::Event::EVENTS.keys()).empty?
+        Express::AriaBilling::Event.handle_event(params)
         retval = "SUCCESS"
       else
         Rails.logger.error "ERROR: Received INVALID event, id: #{event_list}"
