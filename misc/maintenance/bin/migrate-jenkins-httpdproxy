@@ -62,16 +62,38 @@ def redeploy_jenkins_httpd_proxy(gear)
       embedded = gear.app.embedded.include?(component.parent_cart_name)
       reply = gear.app.container.send(:run_cartridge_command, (embedded ? "embedded/" : '') + component.parent_cart_name, gear.app, gear, 'deploy-httpd-proxy', nil, false)
   
-#      puts "DEPLOY_HTTP_PROXY DEBUG OUTPUT:\n#{reply.debugIO.string}\n" unless reply.debugIO.string.empty?
-#      puts "DEPLOY_HTTP_PROXY ERROR OUTPUT:\n#{reply.errorIO.string}\n" unless reply.errorIO.string.empty?
+      puts "DEPLOY_HTTP_PROXY DEBUG OUTPUT:\n#{reply.debugIO.string}\n" unless reply.debugIO.string.empty?
+      puts "DEPLOY_HTTP_PROXY ERROR OUTPUT:\n#{reply.errorIO.string}\n" unless reply.errorIO.string.empty?
       
       if reply.exitcode != 0
         puts "Deploy httpd proxy for cart: #{component.parent_cart_name} on node exit code: #{reply.exitcode}\n"
         raise "Failed deploying httpd proxy for gear '#{gear.name}' with uuid '#{gear.uuid}' on node '#{gear.server_identity}'"
       end
+      
+      restart_component(gear, component)
     end
     puts "done"
   end
+end
+
+def restart_component(gear, component)
+  reply = gear.status(component)
+  num_tries = 2
+  (1..num_tries).each do |i|
+    puts "Restarting component '#{component.name}' on gear with uuid '#{gear.uuid}' on node '#{gear.server_identity}'\n"
+    begin
+      reply.append gear.restart(component)
+      break
+    rescue Exception => e
+      if i == num_tries
+        puts "Failed to restart component '#{component.name}' on gear with uuid '#{gear.uuid}' on node '#{gear.server_identity}' after #{num_tries} tries with exception: #{e.message}\n"
+        raise
+      end
+    end
+  end
+ 
+  puts "RESTART DEBUG OUTPUT:\n#{reply.debugIO.string}\n" unless reply.debugIO.string.empty?
+  puts "RESTART ERROR OUTPUT:\n#{reply.errorIO.string}\n" unless reply.errorIO.string.empty?
 end
 
 def migrate(version=1, continue=false, target_server_identity=nil, migrate_position=1, num_migrators=1)
