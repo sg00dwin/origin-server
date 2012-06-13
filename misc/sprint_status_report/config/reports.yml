@@ -1,0 +1,25 @@
+---
+:blocked:
+  :title:     Blocked User Stories
+  :function:  :blocked
+
+:rejected:
+  :title:     Test Cases Needing QE Re-submission
+  :function:  :rejected
+  :sort_key:  :formatted_i_d
+
+:not_qe_ready:
+  :title:     User Stories Requiring Test Cases
+  :function:  :not_qe_ready
+  :day:       4
+  :sort_key:  :formatted_i_d
+
+:not_approved:
+  :title:     Test Cases Needing Development Approval
+  :function:  :not_approved
+  :day:       5
+
+:no_tasks:
+  :title:     User Stories Without Tasks
+  :function:  :needs_tasks
+  :day:       2

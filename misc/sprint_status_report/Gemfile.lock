@@ -1,0 +1,37 @@
+GEM
+  remote: http://rubygems.org/
+  specs:
+    builder (3.0.0)
+    coderay (1.0.6)
+    i18n (0.6.0)
+    kramdown (0.13.7)
+    mail (2.4.4)
+      i18n (>= 0.4.0)
+      mime-types (~> 1.16)
+      treetop (~> 1.4.8)
+    method_source (0.7.1)
+    mime-types (1.18)
+    polyglot (0.3.3)
+    pony (1.4)
+      mail (> 2.0)
+    pry (0.9.9.6)
+      coderay (~> 1.0.5)
+      method_source (~> 0.7.1)
+      slop (>= 2.4.4, < 3)
+    rally_rest_api (1.0.3)
+    ri_cal (0.8.8)
+    slop (2.4.4)
+    treetop (1.4.10)
+      polyglot
+      polyglot (>= 0.3.1)
+
+PLATFORMS
+  ruby
+
+DEPENDENCIES
+  builder
+  kramdown
+  pony
+  pry
+  rally_rest_api
+  ri_cal
