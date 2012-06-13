@@ -137,4 +137,10 @@ Broker::Application.configure do
 #    :squash_runtime => true
 #  }
 
+  # Cloud9
+  config.cloud9 = {
+    :user_login => "c9",
+    :node_profile => "c9"
+  }
+
 end

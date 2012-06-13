@@ -6,3 +6,8 @@ ActiveSupport.on_load(:action_controller) do
 end
 
 RestApi::LogSubscriber.attach_to :active_resource
+
+
+ActiveSupport.on_load(:action_controller) do
+  RestApi::Base.instantiate_observers
+end

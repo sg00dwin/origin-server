@@ -40,6 +40,12 @@ module OpenShiftMigration
           output += echo_output
         end
 
+        if File.exists?("#{gear_home}/.pearrc")
+          Util.execute_script("pear -c #{gear_home}/.pearrc config-set auto_discover 1")
+          echo_output, echo_exitcode = Util.execute_script("pear -c #{gear_home}/.pearrc config-set auto_discover 1")
+          output += echo_output
+        end
+
       else
         exitcode = 127
         output += "Application not found to migrate: #{gear_home}\n"

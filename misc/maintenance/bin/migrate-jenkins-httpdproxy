@@ -14,16 +14,15 @@ STDOUT.sync, STDERR.sync = true
 
 def migrate_jenkins_gear(rhlogin, app_name, gear_uuid, version)
   migrate_cmd = "#{__FILE__} --rhlogin '#{rhlogin}' --migrate-gear '#{gear_uuid}' --app-name '#{app_name}' --version '#{version}'"
-  out = StringIO.new
-  out << "Migrating gear on node with: #{migrate_cmd}\n"
+  puts "Migrating gear on node with: #{migrate_cmd}\n"
   migrated = false
   begin
     user = CloudUser.find(rhlogin)
     if user
       app = Application.find(user, app_name)
-      out << "App: #{app}\n"
+      puts "App: #{app}\n"
       if app
-        out << "Name: #{app.name} #{app.architecture} #{app.version} #{app.description} #{app.cart_data}\n"
+        puts "Name: #{app.name} #{app.architecture} #{app.version} #{app.description} #{app.cart_data}\n"
      
         gear = nil
         app.gears.each do |app_gear|
@@ -32,60 +31,71 @@ def migrate_jenkins_gear(rhlogin, app_name, gear_uuid, version)
             break
           end
         end
-        out << "Gear: #{gear}\n"
+        puts "Gear: #{gear}\n"
         if gear
-          redeploy_jenkins_httpd_proxy(gear, out)
+          redeploy_jenkins_httpd_proxy(gear)
+          migrated = true
         else
-          out << "WARNING: Gear not found with uuid #{gear_uuid} for app '#{app_name}' and user '#{rhlogin}'\n"
+          puts "WARNING: Gear not found with uuid #{gear_uuid} for app '#{app_name}' and user '#{rhlogin}'\n"
           migrated = true
         end
        
       else
-        raise "App not found: #{app_name}"
+        puts "ERROR: App not found: #{app_name}"
       end
     else
-      raise "User not found: #{rhlogin}"
+      puts "ERROR: User not found: #{rhlogin}"
     end 
-    raise "Migrate on node failed.  Rerun with: #{migrate_cmd}" if !migrated
   rescue Exception => e
-    raise "#{e.message}\n#{e.backtrace}\nOutput:\n#{out.string}"
+    raise "#{e.message}\n#{e.backtrace}\nOutput:\n"
   end
-  out.string
 end
 
-def redeploy_jenkins_httpd_proxy(gear, out)
+def redeploy_jenkins_httpd_proxy(gear)
+  puts "redeploy_jenkins_httpd_proxy"
   gear.configured_components.each do |comp_name|
     component = gear.app.comp_instance_map[comp_name]
+    puts "component #{component} #{component.parent_cart_name}"
     if component.parent_cart_name == 'jenkins-1.4'
-      out << "Redeploying httpd proxy for '#{component.parent_cart_name}' on gear '#{gear.name}' with uuid '#{gear.uuid}' on node #{gear.server_identity}\n"
+      puts "Redeploying httpd proxy for '#{component.parent_cart_name}' on gear '#{gear.name}' with uuid '#{gear.uuid}' on node #{gear.server_identity}\n"
       embedded = gear.app.embedded.include?(component.parent_cart_name)
       reply = gear.app.container.send(:run_cartridge_command, (embedded ? "embedded/" : '') + component.parent_cart_name, gear.app, gear, 'deploy-httpd-proxy', nil, false)
   
-      out << "DEPLOY_HTTP_PROXY DEBUG OUTPUT:\n#{reply.debugIO.string}\n" unless reply.debugIO.string.empty?
-      out << "DEPLOY_HTTP_PROXY ERROR OUTPUT:\n#{reply.errorIO.string}\n" unless reply.errorIO.string.empty?
+      puts "DEPLOY_HTTP_PROXY DEBUG OUTPUT:\n#{reply.debugIO.string}\n" unless reply.debugIO.string.empty?
+      puts "DEPLOY_HTTP_PROXY ERROR OUTPUT:\n#{reply.errorIO.string}\n" unless reply.errorIO.string.empty?
       
       if reply.exitcode != 0
-        out << "Deploy httpd proxy for cart: #{component.parent_cart_name} on node exit code: #{reply.exitcode}\n"
+        puts "Deploy httpd proxy for cart: #{component.parent_cart_name} on node exit code: #{reply.exitcode}\n"
         raise "Failed deploying httpd proxy for gear '#{gear.name}' with uuid '#{gear.uuid}' on node '#{gear.server_identity}'"
       end
+      
+      restart_component(gear, component)
     end
-  end
-    
-  unless gear.app.aliases.nil?
-    gear.app.aliases.each do |server_alias|
-      out << "Adding alias '#{server_alias}' for '#{gear.name}' with uuid '#{gear.uuid}' on node #{gear.server_identity}\n"
-      reply = gear.add_alias(server_alias)
-      out << "ADD_ALIAS DEBUG OUTPUT:\n#{reply.debugIO.string}\n" unless reply.debugIO.string.empty?
-      out << "ADD_ALIAS ERROR OUTPUT:\n#{reply.errorIO.string}\n" unless reply.errorIO.string.empty?
-      if reply.exitcode != 0
-        out << "Add alias on node exit code: #{reply.exitcode}\n"
-        raise "Failed adding alias #{server_alias} for gear '#{gear.name}' with uuid '#{gear.uuid}' on node '#{gear.server_identity}'"
-      end
-    end
+    puts "done"
   end
 end
 
-def migrate(version, continue=false, target_server_identity=nil, migrate_position=1, num_migrators=1)
+def restart_component(gear, component)
+  reply = gear.status(component)
+  num_tries = 2
+  (1..num_tries).each do |i|
+    puts "Restarting component '#{component.name}' on gear with uuid '#{gear.uuid}' on node '#{gear.server_identity}'\n"
+    begin
+      reply.append gear.restart(component)
+      break
+    rescue Exception => e
+      if i == num_tries
+        puts "Failed to restart component '#{component.name}' on gear with uuid '#{gear.uuid}' on node '#{gear.server_identity}' after #{num_tries} tries with exception: #{e.message}\n"
+        raise
+      end
+    end
+  end
+ 
+  puts "RESTART DEBUG OUTPUT:\n#{reply.debugIO.string}\n" unless reply.debugIO.string.empty?
+  puts "RESTART ERROR OUTPUT:\n#{reply.errorIO.string}\n" unless reply.errorIO.string.empty?
+end
+
+def migrate(version=1, continue=false, target_server_identity=nil, migrate_position=1, num_migrators=1)
   start_time = Time.now.to_i
   puts "Getting all RHLogins..."
   users = []
@@ -113,139 +123,29 @@ def migrate(version, continue=false, target_server_identity=nil, migrate_positio
     ds_queues[queue_index].push(user)
   end
   ds_threads = []
-  mutex = Mutex.new
+#  mutex = Mutex.new
   ds_queues.each do |users|
-    ds_threads << Thread.new do
+    
+#    ds_threads << Thread.new do
       users.each do |user|
         puts "Gathering gears for user: #{user.login} with uuid: #{user.uuid}"
         apps = user.applications
         apps.each do |app|
+          puts "Found app #{app.name}"
+#          puts "gears"
           gears = app.gears
-          if gears && !gears.empty?
+          if gears 
             gears.each do |gear|
-              server_identity = gear.server_identity
-              if (!target_server_identity || (server_identity == target_server_identity))
-                mutex.synchronize do
-                  node_to_gears[server_identity] = [] unless node_to_gears[server_identity]
-                  node_to_gears[server_identity] << gear
-                end
-              end
+#              puts "Found gear #{gear.name}"
+              migrate_jenkins_gear(user.login, app.name, gear.uuid, version)
             end
           else
             puts "ERROR: Gear not found for app: '#{app.name}' of user #{user.login}"
           end
-        end
+#        end
       end
     end
   end
-  ds_threads.each do |t|
-    t.join
-  end
-  
-  position = migrate_position - 1
-  migrator_position_nodes = []
-  if num_migrators > 1
-    server_identities = node_to_gears.keys.sort 
-    server_identities.each_with_index do |server_identity, index|
-      if index == position
-        migrator_position_nodes << server_identity
-        position += num_migrators
-      else
-        node_to_gears.delete(server_identity)
-      end
-    end
-  end
-
-  gear_cnts = []
-  thread_groups = []
-  node_to_gears.each do |server_identity, gears|
-    gear_cnt += gears.length
-    if thread_groups.length < MAX_THREADS
-      thread_groups << [{server_identity => gears}]
-      gear_cnts << gears.length
-    else
-      min_pos = 0
-      min = gear_cnts[0]
-      gear_cnts.each_with_index do |cnt, index|
-        if cnt < min
-          min = cnt
-          min_pos = index
-        end
-      end
-      thread_groups[min_pos] << {server_identity => gears}
-      gear_cnts[min_pos] += gears.length
-    end
-  end
-  node_to_gears = nil
-  
-  puts "#####################################################"
-  puts 'Gear counts per thread:'
-  puts gear_cnts.pretty_inspect
-  if !migrator_position_nodes.empty?
-    puts 'Nodes this migrator is handling:'
-    puts migrator_position_nodes.pretty_inspect
-  end
-  puts "#####################################################"
-  
-  thread_groups.each do |thread_group|
-    thread_group.each do |node_to_gears|
-      node_to_gears.each do |server_identity, gears|
-        write_node_to_file(server_identity, gears, version) unless continue
-        node_to_gears[server_identity] = nil
-      end
-    end
-  end
-
-  @failures = []
-  node_threads = []
-  thread_groups.each do |thread_group|
-    node_threads << Thread.new do
-      thread_group.each do |node_to_gears|
-        node_to_gears.each do |server_identity, gears|
-          migrate_node(server_identity, continue)
-        end
-      end
-    end
-  end
-
-  node_threads.each do |t|
-    t.join
-  end
-  
-  if @failures.length > 0
-    puts "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
-    puts "Failures:"
-    @failures.each do |failure|
-      puts failure
-    end
-    puts "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
-    puts ""
-  end
-
-  node_to_gears.each do |server_identity, gears|
-    f = migrate_file_path(server_identity)
-    leftover_count = `wc -l #{f}`.to_i
-    if leftover_count > 0
-      puts "!!!!!!!!!!WARNING!!!!!!!!!!!!!WARNING!!!!!!!!!!!!WARNING!!!!!!!!!!"
-      puts "#{leftover_count} leftover gears found in migrate file: #{f}"
-      puts "You can run with --continue to try again"
-      puts "!!!!!!!!!!WARNING!!!!!!!!!!!!!WARNING!!!!!!!!!!!!WARNING!!!!!!!!!!"
-      puts ""
-    end
-  end
-  
-  puts "#####################################################"
-  puts "Summary:"
-  puts "# of users: #{all_rhlogins_length}"
-  puts "# of gears: #{gear_cnt}"
-  puts "# of failures: #{@failures.length}"
-  puts "Gear counts per thread: #{gear_cnts.pretty_inspect}"
-  puts "Nodes migrated: #{migrator_position_nodes.pretty_inspect}" if !migrator_position_nodes.empty?
-
-  end_time = Time.now.to_i
-  total_time = end_time-start_time
-  puts "Total execution time: #{total_time.to_s}s"
-  puts "#####################################################"
 end
 
 def p_usage
@@ -283,11 +183,8 @@ end
 $:.unshift('/var/www/stickshift/broker')
 require 'config/environment'
 
-if opt['rhlogin'] && opt['app-name'] && opt['version']
-  puts migrate_jenkins_gear(opt['rhlogin'], opt['app-name'], opt['migrate-gear'], opt['version'])
-else
-  puts "--rhlogin, --app-name, and --version is required with --migrate-gear"
-  exit 255
+if opt['migrate-gear'] && opt['rhlogin'] && opt['app-name'] && opt['version']
+  migrate_jenkins_gear(opt['rhlogin'], opt['app-name'], opt['migrate-gear'], opt['version'])
+else 
+  migrate()
 end
-
-

@@ -143,6 +143,11 @@ Broker::Application.configure do
     }
   }
 
+  # Cloud9
+  config.cloud9 = {
+    :user_login => "c9",
+    :node_profile => "c9"
+  }
 
   # Profiler config
   # See ruby-prof documentation for more info

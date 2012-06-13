@@ -120,4 +120,10 @@ Broker::Application.configure do
     :default_max_gears => 3
   }
 
+  # Cloud9
+  config.cloud9 = {
+    :user_login => "c9",
+    :node_profile => "c9"
+  }
+
 end

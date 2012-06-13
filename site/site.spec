@@ -3,7 +3,7 @@
 
 Summary:   Li site components
 Name:      rhc-site
-Version: 0.94.9
+Version: 0.94.11
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -121,6 +121,21 @@ rm -rf %{buildroot}
 /bin/touch %{sitedir}/log/production.log
 
 %changelog
+* Wed Jun 13 2012 Adam Miller <admiller@redhat.com> 0.94.11-1
+- add text to getting started application page for JBoss Dev Studio
+  (johnp@redhat.com)
+- Merge branch 'master' of git:/srv/git/li (sgoodwin@redhat.com)
+- fix header spacing and such, change action-call on home (sgoodwin@redhat.com)
+
+* Tue Jun 12 2012 Adam Miller <admiller@redhat.com> 0.94.10-1
+- Modularize security helpers in application controller for better readability
+  and consistency with other security solutions. Provide a session level cache
+  for user domain info and listen for create/delete events.  Use the cache when
+  viewing pages, but not on update pages. (ccoleman@redhat.com)
+- Add :new tag to EAP (ccoleman@redhat.com)
+- Gemfile.lock no longer has dependencies on a few extra modules
+  (ccoleman@redhat.com)
+
 * Tue Jun 12 2012 Adam Miller <admiller@redhat.com> 0.94.9-1
 - explict height set on form fields and minor visual adjustment in console
   (sgoodwin@redhat.com)

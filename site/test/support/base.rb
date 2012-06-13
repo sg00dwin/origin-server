@@ -46,7 +46,7 @@ class ActiveSupport::TestCase
       @@once << symbol
       exit_block = yield block
       at_exit do
-        exit_block.call
+        exit_block.call if exit_block
       end
     end
   end
