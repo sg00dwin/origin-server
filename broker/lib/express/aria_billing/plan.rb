@@ -1,15 +1,27 @@
 module Express
   module AriaBilling
     class Plan
+      attr_accessor :plans
+
+      def initialize(access_info = nil)
+        if access_info != nil
+          # no-op
+        elsif defined? Rails
+          access_info = Rails.application.config.billing[:aria]
+        else
+          raise Exception.new("Aria Billing Plan is not inilialized")
+        end
+        @plans = access_info[:plans]
+      end
 
       def self.enable_broker(event_params)
         id_list = event_params[:event_id]
         user = CloudUser.find(event_params[:userid])
         plan_name = event_params[:plan_name]
         if plan_name == "FreeShift"
-          limits = Rails.configuration.ss[:FreeShift]
+          limits = @plans[:FreeShift]
         elsif plan_name == "MegaShift"
-          limits = Rails.configuration.ss[:MegaShift]
+          limits = @plans[:MegaShift]
         else
           Rails.logger.error("Unknown plan #{plan_name} for user '#{user.name}'")
         end

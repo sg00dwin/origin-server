@@ -1,5 +1,3 @@
-require 'rubygems'
-require 'wddx'
 
 class BillingEventsController < BaseController
   respond_to :xml, :json
