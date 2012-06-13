@@ -116,8 +116,9 @@ sslclientkey=/var/lib/yum/client-key.pem
 EOF
 
 # Install the 32 bit java before anything else
-yum update -y --exclude='rhc*' --exclude='mcollective*'
 yum -y install java-1.6.0-openjdk.i686 java-1.6.0-openjdk-devel.i686
+yum -y remove java-1.6.0-openjdk.x86_64
+yum update -y --exclude='rhc*' --exclude='mcollective*'
 
 
 function install_requires {
