@@ -25,7 +25,13 @@ module Express
       end
       
       # Temporary Hack
-      def create_fake_user(user_id)
+      def create_fake_user(user_id, plan_name = nil)
+        if plan_name
+          access_info = Rails.application.config.billing[:aria]
+          plan_id = access_info[:plans][plan_name][:plan_id]
+        else
+          plan_id = 10044931
+        end
         args = {
           'rest_call' => "create_acct_complete",
           'client_no' => @client_no,
@@ -34,7 +40,7 @@ module Express
           'alt_start_date' => nil,
           'client_acct_id' => nil,
           'status_cd' => 1,
-          'master_plan_no' => 10044931,
+          'master_plan_no' => plan_id,
           'master_plan_units' => 1,
           'supp_plans' => nil,
           'supp_plan_units' => nil,
@@ -121,6 +127,20 @@ module Express
         result = get_response(request)
         
         #TODO
+        result
+      end
+
+      def update_master_plan(acct_no, plan_name)
+        access_info = Rails.application.config.billing[:aria]
+        plan_id = access_info[:plans][plan_name][:plan_id]
+        request = {
+          'rest_call' => "update_master_plan",
+          'client_no' => @client_no,
+          'auth_key' => @auth_key,
+          'acct_no' => acct_no,
+          'master_plan_no' => plan_id
+        }
+        result = get_response(request)
         result
       end
 
