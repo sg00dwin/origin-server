@@ -10,9 +10,7 @@ class UserStory
   end
 
   def check_tags(target)
-    [tags].flatten.find do |x|
-      x.respond_to?(:name) && x.name == target
-    end.nil?
+    tags.map{|x| x.to_s }.include?(target)
   end
 
   def check_notes(regex)
@@ -37,5 +35,9 @@ class UserStory
 
   def check_project(name,match)
     (project.name =~ /^#{name}/).nil? != match
+  end
+
+  def output
+    puts "%s - %s - [%s]" % [formatted_i_d,schedule_state,tags.join(',')]
   end
 end

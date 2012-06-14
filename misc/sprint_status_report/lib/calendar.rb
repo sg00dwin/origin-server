@@ -4,7 +4,6 @@ require 'net/https'
 require 'uri'
 
 class SprintCalendar
-
   def initialize(path)
     @calendar = get_ical(path).first
     @dates = {}
@@ -54,7 +53,6 @@ class SprintCalendar
   def sprint_args
     args = {
       :name   => sprint_name,
-      :day    => (Date.today - start_date.dtstart.to_date).to_i + 1,
       :number => sprint_name.scan(/\d+/).first
     }
     [:start,:end,:dcut].each do |x|

@@ -38,8 +38,16 @@ module SprintReport
     end
   end
 
+  def print_title
+    "%s %s" % [title, (!sprint.nil? && first_day?) ? "(to be completed by end of day today)" : '']
+  end
+
   def required?
-    sprint.day >= day
+    sprint.days_until(day) <= 0
+  end
+
+  def first_day?
+    sprint.days_until(day) == 0
   end
 
   class Column

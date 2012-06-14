@@ -48,21 +48,22 @@ rhlogin = args["--rhlogin"]
 sync = args["--sync"]
 list = args["--list"]
 remove_sync_lock = args["--remove_sync_lock"]
-  
-unless sync || list || remove_sync_lock
-  puts "You must --list or --sync or --remove_sync_lock"
-  exit 1
-end
 
 if args["--help"]
   usage
   exit 1
 end
 
+unless sync || list || remove_sync_lock
+  puts "You must --list or --sync or --remove_sync_lock"
+  exit 1
+end
+
 require "/var/www/stickshift/broker/config/environment"
 
-def usage_time(usage_record, begin_time, end_time)
+def usage_time(billing_api, acct_no, usage_record, begin_time, end_time)
   if usage_record.sync_time
+    billing_api.get_usage_history(acct_no, billing_api.usage_type[usage_record.gear_size.to_sym], (usage_record.sync_time - 1).strftime("%Y-%m-%d"), date_range_end=Time.now.strftime("%Y-%m-%d"))
     if false # TODO aria_already_has_records?(usage_record.uuid, usage_record.sync_time)
       puts "WARNING: Usage data has already been sent to billing vendor but not removed from datastore usage.  Resetting begin_time to previous sync_time."
       begin_time = usage_record.sync_time
@@ -70,8 +71,19 @@ def usage_time(usage_record, begin_time, end_time)
       puts "WARNING: Billing vendor doesn't have the records.  Leaving begin_time from previous sync."
     end
   end
-  total_time = (end_time - begin_time) / 60 # minutes
+  total_time = (end_time - begin_time) / 3600 # hours
   total_time
+end
+
+def get_billing_user_acct_no(billing_api, user)
+  unless billing_api.userid_exists(user.uuid)
+    puts "User didn't exist"
+    # Temporary code until users are created up front
+    acct_no = billing_api.create_fake_user(user.uuid)
+  else
+    acct_no = billing_api.get_acct_no_from_userid(user.uuid)
+  end
+  acct_no
 end
 
 if remove_sync_lock
@@ -93,6 +105,7 @@ else
         users = CloudUser.find_all(nil)
       end
 
+      failures = []
       users.each do |user|
         if user.gear_usage_records && !user.gear_usage_records.empty?
           puts "\n#################"
@@ -104,7 +117,10 @@ else
             usage_records_by_gear[usage_record.gear_uuid] = [] unless usage_records_by_gear[usage_record.gear_uuid]
             usage_records_by_gear[usage_record.gear_uuid] << usage_record
           end
+          billing_api = Express::AriaBilling::Api.new
+          billing_acct_no = get_billing_user_acct_no(billing_api, user)
           if sync
+
             usage_records_by_gear.each do |gear_uuid, usage_records_for_gear|
               usage = nil
               usage_records_for_gear.each do |usage_record|
@@ -143,13 +159,22 @@ else
               end_time = now unless end_time
     
               usage_record = usage_records_for_gear.first
-              usage_time = usage_time(usage_record, begin_time, end_time)
+              usage_time = usage_time(billing_api, acct_no, usage_record, begin_time, end_time)
               puts "Saving sync_time before sending usage data to billing vendor."
               usage_record.sync_time = now
               usage_record.save
-              puts "Sending usage data (#{usage_time}m) to billing vendor."
+              puts "Sending usage data (#{usage_time}h) to billing vendor."
               # Send data to billing vendor
-              #if success
+              success = false
+              2.times do
+                if billing_api.record_usage(user.uuid, nil, billing_api.usage_type[usage_record.gear_size.to_sym], usage_time)
+                  success = true
+                  break
+                else
+                  sleep 1
+                end
+              end
+              if success
                 puts "Billing vendor returned success."
                 if usage_records_for_gear.length == 2 && usage_records_for_gear.last.event == UsageRecord::EVENTS[:end]
                   puts "Deleting ended usage record"
@@ -161,10 +186,11 @@ else
                   usage_record.sync_time = nil
                   usage_record.save
                 end
-              #else
-                #retry or wait till next cycle
-                #break
-              #end
+              else
+                puts "Billing vendor returned error."
+                failures << [user.login, gear_uuid]
+                break
+              end
             end
           elsif list
             usage_records_by_gear.each do |gear_uuid, usage_records_for_gear|
@@ -185,13 +211,21 @@ else
                 puts "Usage record continued."
                 end_time = now
               end
-              usage_time = usage_time(usage_records_for_gear.first, begin_time, end_time)
-              puts "Usage to send to billing vendor: #{usage_time}m"
+              usage_time = usage_time(billing_api, acct_no, usage_records_for_gear.first, begin_time, end_time)
+              puts "Usage to send to billing vendor: #{usage_time}h"
             end
           end
         else
           puts "Gear usage not found for user: #{user.login}"
         end
+      end
+      unless failures.empty?
+        puts "!!!!!!!!!!!!!!!!!!!FAILURES!!!!!!!!!!!!!!!!!!!!!!"
+        puts "<User>: <Gear UUID>"
+        failures.each do |failure|
+          puts "#{failure[0]}: #{failure[1]}"
+        end
+        puts "!!!!!!!!!!!!!!!!!END FAILURES!!!!!!!!!!!!!!!!!!!!"
       end
     ensure
       Express::Broker::DistributedLock.release_lock("sync_usage", hostname)

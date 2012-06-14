@@ -23,3 +23,8 @@
   :title:     User Stories Without Tasks
   :function:  :needs_tasks
   :day:       2
+
+:dcut:
+  :title:     User Stories to be Completed by DCUT
+  :function:  :not_dcut_complete
+  :day:       :dcut

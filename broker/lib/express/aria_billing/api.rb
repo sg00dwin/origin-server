@@ -23,6 +23,49 @@ module Express
       def self.instance
         Express::AriaBilling::Api.new
       end
+      
+      # Temporary Hack
+      def create_fake_user(user_id)
+        args = {
+          'rest_call' => "create_acct_complete",
+          'client_no' => @client_no,
+          'auth_key' => @auth_key,
+          'userid' => user_id,
+          'alt_start_date' => nil,
+          'client_acct_id' => nil,
+          'status_cd' => 1,
+          'master_plan_no' => 10044931,
+          'master_plan_units' => 1,
+          'supp_plans' => nil,
+          'supp_plan_units' => nil,
+          'first_name' => "Business",
+          'bill_first_name' => "Current",
+          'last_name' => "Center",
+          'bill_last_name' => "Test",
+          'company_name' => "ABC Inc",
+          'email' => "rpenta@redhat.com",
+          'bill_email' => "rpenta@redhat.com",
+          'address1' => "5365 Some Address",
+          'bill_address1' => "P.O. Box 2534",
+          'city' => "Some City",
+          'bill_city' => "Some other city",
+          'state_prov' => "NY",
+          'bill_state_prov' => "NY",
+          'postal_cd' => 11554,
+          'bill_postal_cd' => 11718,
+          'country' => "US",
+          'bill_country' => "US",
+          'password' => "testpassword321",
+          'pay_method' => 4
+        }
+        result = get_response(args)
+        #user_id = result.out_userid
+        acct_no = result.acct_no
+        if result.invoicing_error_code != 0 || result.error_code != 0
+          raise Exception.new "Failed to create fake user with error_code #{result.error_code.to_s} and invoicing_error_code #{result.invoicing_error_code.to_s}" if !user_id && !acct_no
+        end
+        acct_no
+      end
 
       def userid_exists(user_id)
         request = {
@@ -31,7 +74,8 @@ module Express
           'auth_key' => @auth_key,
           'rest_call' => "userid_exists"
         }
-        get_response(request)
+        result = get_response(request)
+        return result.error_code == 0
       end
 
       def get_acct_no_from_userid(user_id)
@@ -41,8 +85,9 @@ module Express
           'auth_key' => @auth_key,
           'rest_call' => "get_acct_no_from_userid"
         }
-        #TODO: return only acct_no
-        get_response(request)
+        result = get_response(request)
+        acct_no = result.acct_no
+        acct_no
       end
 
       def record_usage(user_id=nil, acct_no=nil, 
@@ -57,7 +102,8 @@ module Express
           'rest_call' => "record_usage"
         }
         user_id ? request['userid']=user_id : request['acct_no']=acct_no
-        get_response(request)
+        result = get_response(request)
+        return result.error_code == 0
       end
 
       def get_usage_history(acct_no, specified_usage_type_no=nil,
@@ -72,7 +118,10 @@ module Express
           'auth_key' => @auth_key,
           'rest_call' => "get_usage_history"
         }
-        get_response(request)
+        result = get_response(request)
+        
+        #TODO
+        result
       end
 
       private

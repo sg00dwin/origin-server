@@ -4,20 +4,55 @@ require 'user_story'
 
 class Sprint
   # Calendar related attributes
-  attr_accessor :name, :day, :number, :start, :end, :dcut, :calendar
+  attr_accessor :name, :number, :start, :end, :dcut, :calendar
   # Rally related attributes
   attr_accessor :rally, :workspace, :project, :rally_config
   # UserStory related attributes
   attr_accessor :stories, :processed, :results
   # Queries to run against US
-  attr_accessor :queries
+  #attr_accessor :queries
+  attr_accessor :debug
 
   def initialize(opts)
     opts.each do |k,v|
       send("#{k}=",v)
     end
+  end
 
-    @queries = {
+  def day
+    $date ||= Date.today # Allow overriding for testing
+    ($date - start.to_date + 1).to_i
+  end
+
+  def days_until(num)
+    (case num
+    when Symbol
+      send(num) - start - day + 1
+    when Integer
+      num - day
+    end).to_i
+  end
+
+  def show_days(report)
+    puts "%s - Starts on %s" % [report.title,report.day]
+    puts
+    (start..send(:end)).each do |x|
+      $date = x
+      req = case
+            when report.first_day?
+              "Start"
+            when report.required?
+              "  |  "
+            else
+              ''
+            end
+      puts "%s (%2d) - %s" % [x,day,req]
+    end
+    $date = Date.today
+  end
+
+  def queries
+    {
       :needs_tasks => {
         :function => lambda{|x| x.tasks.nil? }
       },
@@ -33,11 +68,22 @@ class Sprint
       },
       :approved => {
         :parent => :not_rejected,
-        :function => lambda{|x| !x.check_tags('TC-approved') }
+        :function => lambda{|x| x.check_tags('TC-approved') }
       },
       :rejected => {
         :parent => :qe_ready,
-        :function => lambda{|x| !x.check_tags('TC-rejected') }
+        :function => lambda{|x| x.check_tags('TC-rejected') }
+      },
+      :accepted   => {
+        :function => lambda{|x| x.schedule_state == "Accepted" }
+      },
+      :completed   => {
+        :parent   => :not_accepted,
+        :function => lambda{|x| x.schedule_state == "Completed" }
+      },
+      :not_dcut_complete => {
+        :parent   => :not_completed,
+        :function => lambda{|x| x.check_tags('os-DevCut')}
       }
     }
   end
@@ -99,7 +145,7 @@ class Sprint
       where = send(parent)
     end
 
-    unless processed[name]
+    unless !debug && processed[name]
       retval = where.partition do |x|
         query[:function].call(x)
       end
