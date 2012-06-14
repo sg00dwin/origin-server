@@ -84,12 +84,12 @@ module Express
         return result.error_code == 0
       end
 
-      def get_acct_no_from_userid(user_id)
+      def get_acct_no_from_user_id(user_id)
         request = {
           'user_id' => user_id,
           'client_no' => @client_no,
           'auth_key' => @auth_key,
-          'rest_call' => "get_acct_no_from_userid"
+          'rest_call' => "get_acct_no_from_user_id"
         }
         result = get_response(request)
         acct_no = result.acct_no
