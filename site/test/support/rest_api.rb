@@ -15,13 +15,15 @@ class ActiveSupport::TestCase
     RestApi::Base.prefix='/broker/rest/'
   end
   def setup_user(unique=false)
-    @user = WebUser.new :email_address=>"app_test1#{unique ? uuid : ''}@test1.com", :rhlogin=>"app_test1#{unique ? uuid : ''}@test1.com", :ticket => '1'
-
-    session[:login] = @user.login
-    session[:user] = @user
-    session[:ticket] = @user.ticket
-    @request.cookies['rh_sso'] = @user.ticket
+    set_user(WebUser.new :email_address=>"app_test1#{unique ? uuid : ''}@test1.com", :rhlogin=>"app_test1#{unique ? uuid : ''}@test1.com", :ticket => '1')
+  end
+  def set_user(user)
+    session[:login] = user.login
+    session[:user] = user
+    session[:ticket] = user.ticket
+    @request.cookies['rh_sso'] = user.ticket
     @request.env['HTTPS'] = 'on'
+    @user = user
   end
 
   def auth_headers
@@ -40,13 +42,17 @@ class ActiveSupport::TestCase
     "#{Time.now.to_i}#{gen_small_uuid[0,6]}"
   end
 
+  def set_domain(domain)
+    @domain = domain
+  end
+
   def setup_domain
-    @domain = Domain.new :name => "#{uuid}", :as => @user
-    unless @domain.save
-      puts @domain.errors.inspect
+    domain = Domain.new :name => "#{uuid}", :as => @user
+    unless domain.save
+      puts domain.errors.inspect
       fail 'Unable to create the initial domain, test cannot be run'
     end
-    @domain
+    set_domain(domain)
   end
 
   def cleanup_domain
@@ -110,20 +116,50 @@ class ActiveSupport::TestCase
     @domain = @@domain
   end
 
-  def readable_app
-    @new_app ||= begin
-      app = Application.new(:name => "cart#{uuid}", :cartridge => 'ruby-1.8', :domain => @domain, :as => @user)
-      app.save!
-      app
+  def setup_from_app(app)
+    set_domain Domain.new({:id => app.domain_id, :as => app.as}, true)
+    set_user app.as
+    app
+  end
+
+  def self.api_cache
+    @@cache ||= {}
+  end
+
+  def api_fetch(name, &block)
+    varname = "@#{name}_cached"
+    instance_variable_get(varname) || begin
+      created = if cached = self.class.api_cache[name]
+          block.call(cached) || cached
+        else
+          self.class.api_cache[name] = block.call(nil)
+        end
+      instance_variable_set(varname, created)
     end
   end
 
-  def scalable_app
-    @scalable_app ||= begin
-      app = Application.new(:name => "#{uuid}", :scale => 'true', :cartridge => 'ruby-1.8', :domain => @domain, :as => @user)
-      app.save!
-      app
+  def use_app(symbol, &block)
+    api_fetch(symbol) do |cached|
+      if cached
+        setup_from_app(cached)
+      else
+        with_unique_domain
+        app = yield block if block_given?
+        app ||= Application.new :name => uuid
+        app.as ||= @user
+        app.domain_id ||= @domain.id
+        app.save!
+        app
+      end
     end
+  end
+
+  def with_app
+    use_app(:readable_app) { Application.new({:name => "cart#{uuid}", :cartridge => 'ruby-1.8'}) }
+  end
+
+  def with_scalable_app
+    use_app(:scalable_app) { Application.new({:name => "cart#{uuid}", :cartridge => 'ruby-1.8', :scale => 'true'}) }
   end
 
 
