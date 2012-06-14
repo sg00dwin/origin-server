@@ -22,12 +22,11 @@ module Express
                  )
       end
 
-      def self.report_event(event_id, response)
+      def self.report_event(event_id, response, email_to)
         subject = "Aria Event Notification: #{event_id}"
-        from = "openshift.billing@gmail.com"
+        email_from = "openshift.billing@gmail.com"
         password = "vostok08"
-        to = "ariatesting@redhat.com"
-    #    to = "OpenShift-Orders@redhat.com"
+        email_to = "ariatesting@redhat.com"
 
         if response.kind_of?(String)
           body = response
@@ -37,7 +36,7 @@ module Express
         body += "#{k} = #{v}\n"
           end if response
         end
-        send_email(to, subject, body, from, password)
+        send_email(email_to, subject, body, email_from, password)
       end
     end
   end
