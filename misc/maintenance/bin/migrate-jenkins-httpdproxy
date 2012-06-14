@@ -55,21 +55,23 @@ def redeploy_jenkins_httpd_proxy(gear)
   puts "redeploy_jenkins_httpd_proxy"
   gear.configured_components.each do |comp_name|
     component = gear.app.comp_instance_map[comp_name]
-    puts "component #{component} #{component.parent_cart_name}"
-    if component.parent_cart_name == 'jenkins-1.4'
-      puts "Redeploying httpd proxy for '#{component.parent_cart_name}' on gear '#{gear.name}' with uuid '#{gear.uuid}' on node #{gear.server_identity}\n"
-      embedded = gear.app.embedded.include?(component.parent_cart_name)
-      reply = gear.app.container.send(:run_cartridge_command, (embedded ? "embedded/" : '') + component.parent_cart_name, gear.app, gear, 'deploy-httpd-proxy', nil, false)
-  
-      puts "DEPLOY_HTTP_PROXY DEBUG OUTPUT:\n#{reply.debugIO.string}\n" unless reply.debugIO.string.empty?
-      puts "DEPLOY_HTTP_PROXY ERROR OUTPUT:\n#{reply.errorIO.string}\n" unless reply.errorIO.string.empty?
-      
-      if reply.exitcode != 0
-        puts "Deploy httpd proxy for cart: #{component.parent_cart_name} on node exit code: #{reply.exitcode}\n"
-        raise "Failed deploying httpd proxy for gear '#{gear.name}' with uuid '#{gear.uuid}' on node '#{gear.server_identity}'"
+    if component
+      puts "component #{component} #{component.parent_cart_name}"
+      if component.parent_cart_name == 'jenkins-1.4'
+        puts "Redeploying httpd proxy for '#{component.parent_cart_name}' on gear '#{gear.name}' with uuid '#{gear.uuid}' on node #{gear.server_identity}\n"
+        embedded = gear.app.embedded.include?(component.parent_cart_name)
+        reply = gear.app.container.send(:run_cartridge_command, (embedded ? "embedded/" : '') + component.parent_cart_name, gear.app, gear, 'deploy-httpd-proxy', nil, false)
+    
+        puts "DEPLOY_HTTP_PROXY DEBUG OUTPUT:\n#{reply.debugIO.string}\n" unless reply.debugIO.string.empty?
+        puts "DEPLOY_HTTP_PROXY ERROR OUTPUT:\n#{reply.errorIO.string}\n" unless reply.errorIO.string.empty?
+        
+        if reply.exitcode != 0
+          puts "Deploy httpd proxy for cart: #{component.parent_cart_name} on node exit code: #{reply.exitcode}\n"
+          raise "Failed deploying httpd proxy for gear '#{gear.name}' with uuid '#{gear.uuid}' on node '#{gear.server_identity}'"
+        end
+        
+        restart_component(gear, component)
       end
-      
-      restart_component(gear, component)
     end
     puts "done"
   end
