@@ -30,7 +30,7 @@ function create_links {
     zdir=`dirname $zpath`
     zfile=`basename $zpath`
     if [ "$restore" == "restore" ]; then
-      echo "Undoing Linking $zdir/$zfile to $target_pam/$zdir/$zfile"
+      echo "Undoing Linking $zdir/$zfile to ${target_pam}${zdir}/$zfile"
       rm -f $zdir/$zfile
       echo "Undoing Moving $zpath to $zdir/${zfile}_openshift_original"
       mv $zdir/${zfile}_openshift_original $zpath
