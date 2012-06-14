@@ -43,7 +43,7 @@ function customGATracker() {
     if(/app\/account\/complete/.test(url) && typeof trackAdWordsConversion == "function"){
         trackAdWordsConversion('1007064360', '3qfsCMjw0gIQqKqa4AM');
     }
-    if(/app\/pricing/.test(url)){
+    if(/community\/pricing/.test(url)){
         _gaq.push(['_setCustomVar', 4 ,'Viewed Pricing Page', 'Viewed Page', 1]);
     }
     if(/app\/opensource\/download/.test(url)){
