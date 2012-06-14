@@ -2,37 +2,30 @@
 
 .community {
   article.pricing {
-    h2 { display: none; }
-    h3 { font-size: 32px; margin: 25px 0; }
-    h4 { font-size: 22px; margin: 15px 0; }
     section.pricing {
       table { 
         width: 100%; 
-        border-bottom: 4px solid #f8f8f8;
         th, td { text-align: center; }
         thead {
-          th { vertical-align: top; padding: 15px 0; }
-          th:last-child { border-left: 10px solid white; }
+          tr th:last-child { border-left: 10px solid white; }
           th.plan { 
             background-color: #f2f2f2; 
-            text-align: center;
-            width: 32%;
-            p.description { font-size: 18px; font-weight: normal; }
-            h4.price { font-size: 24px; }
-            h4.price.free { font-size: 36px; padding-bottom: 20px; }
+            width: 38%;
+            h1 { padding-top: 20px; }
+            h2.price.free { font-size: 210%; }
+            p.description { font-size: 16px; font-weight: normal; }
             p.price-details { font-size: 14px; font-weight: normal; }
-            h5.plan.disabled { font-size: 24px; padding-bottom: 20px; }
-            .action-call { font-family: Overpass,"Helvetica Neue",Helvetica,Arial,sans-serif; text-transform: capitalize; font-size: 24px; font-weight: normal; margin-left: auto; margin-right: auto; height: 2em; }
+            .action-call { margin-left: auto; margin-right: auto; margin-bottom: 15px; }
           }
         }
         tbody {
           td { 
-            height: 60px; 
+            height: 45px; 
             a.about { display: block; }
           }
-          td:first-child { text-align: right; padding-right: 5px; }
+          td:first-child { text-align: right; padding-right: 10px; }
           td.key { font-size: 14px; }
-          td.value { font-size: 20px; }
+          td.value { font-size: 16px; }
           tr:nth-child(odd) { 
             background-color: #f2f2f2; 
             td.value { background-color: #ececec; }
@@ -48,46 +41,51 @@
     } 
     section.gears {
       div.example {
+        display: -moz-box;  
+        display: -webkit-flex;
+        display: flex;
         width: 100%;
-        background-color: #f2f2f2; 
         div {
-          text-align: center;   
-          margin: 0;
-          width: 25%;
-          display: block;
-          float: left;
-          h5 { font-size: 18px; padding: 15px 0; }
-          p { font-size: 14px; }
-          p.price { font-size: 24px; }
+          text-align: center; 
+          padding: 15px 10px;
+          p.price { font-size: 20px; padding-top: 12px;}
         }
         div.scenario {
+          -webkit-box-flex: 1;
+          -moz-box-flex: 1;
+          flex: 1;
           background-color: #f2f2f2; 
-          h5.title { font-size: 22px; padding-top: 20px; }
-          p.content { padding: 15px 10px 0 10px; font-size: 11px; }
+          p.content { font-size: 11px; }
         }
-        div.item1 { background: #ccc url('/app/images/single_gear_bg.png') no-repeat left bottom; }
-        div.item2 { background: #999 url('/app/images/multi_gear_bg.png') no-repeat left bottom; }
-        div.item3 { 
+        div.example1 { background: #ccc url('/app/images/single_gear_bg.png') no-repeat left bottom; }
+        div.example2 { background: #999 url('/app/images/multi_gear_bg.png') no-repeat left bottom; }
+        div.example3 { 
           background: #3f3f3f url('/app/images/lotsa_gears_bg.png') no-repeat left bottom; 
           color: white; 
-          h5 { color: white; }
+          h3 { color: white; }
         }
       }
-      div.example:after { clear: both; }
-      div.example:before, div.example:after { content: ""; display: table; }
     }
     section.faq {
       dl.faq {
         dt { padding-bottom: 5px; }
         dd { 
-          padding-bottom: 20px; 
+          padding-bottom: 15px; 
           margin-left: 0; 
-          table tr td { font-size: 12px; }
         }
-        dt, dd { font-size: 14px; }
       }
 
     }
   }
 }
 
+@media (min-width: 480px) and (max-with: 767px) {
+  .community article.pricing section.gears div.example div {
+    padding: 15px 3px;
+  }
+}
+@media (max-width: 480px) {
+  .community article.pricing section.gears div.example { 
+    display: block; 
+  }
+}
