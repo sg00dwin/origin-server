@@ -42,7 +42,7 @@ function create_links {
     fi
   done
   chmod +r /usr/local/zend/gui/application/data_openshift_original/zend-server-user.ini
-  ln -s /usr/libexec/stickshift/cartridges/zend-5.6/info/bin/httpd_ctl.sh /usr/local/zend/bin/apachectl
+  ln -fs /usr/libexec/stickshift/cartridges/zend-5.6/info/bin/httpd_ctl.sh /usr/local/zend/bin/apachectl
 }
 
 function copy_fs_to_pam {
