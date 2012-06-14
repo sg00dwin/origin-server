@@ -40,6 +40,7 @@ Requires:  cartridge-postgresql-8.4
 Requires:  cartridge-cron-1.4
 Requires:  cartridge-haproxy-1.4
 Requires:  cartridge-nodejs-0.6
+Requires:  cartridge-ruby-1.9
 Requires:  qpid-cpp-server
 Requires:  qpid-cpp-server-ssl
 Requires:  puppet
