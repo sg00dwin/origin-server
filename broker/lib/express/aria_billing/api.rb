@@ -96,7 +96,7 @@ module Express
         acct_no
       end
 
-      def record_usage(user_id=nil, acct_no=nil, 
+      def record_usage(gear_uuid, sync_time, user_id=nil, acct_no=nil, 
                             usage_type=@usage_type[:small], usage_units=1)
         raise Exception.new "user_id or acct_no must be valid" if !user_id && !acct_no
         request = {
@@ -105,6 +105,8 @@ module Express
           'usage_type' => usage_type,
           'client_no' => @client_no,
           'auth_key' => @auth_key,
+          'qualifier_1' => gear_uuid,
+          'qualifier_2' => sync_time.to_i,
           'rest_call' => "record_usage"
         }
         user_id ? request['userid']=user_id : request['acct_no']=acct_no
@@ -125,9 +127,7 @@ module Express
           'rest_call' => "get_usage_history"
         }
         result = get_response(request)
-        
-        #TODO
-        result
+        result.data["usage_history_records"]
       end
 
       def update_master_plan(acct_no, plan_name)
