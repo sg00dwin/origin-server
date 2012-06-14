@@ -24,7 +24,7 @@ $sprint = Sprint.new({
 })
 
 dev = Report.new({
-  :reports => [:no_tasks,:blocked,:not_approved,:rejected],
+  :reports => [:no_tasks,:blocked,:not_approved,:rejected,:dcut],
   :summary_email => 'libra-devel@redhat.com'
 })
 

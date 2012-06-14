@@ -51,7 +51,7 @@ class Report
           :rows => rows
         }
       }
-      stats.data << {:name => hash[:data][:title], :count => rows.count}
+      stats.data << {:name => hash[:data][:title], :count => rows.count} if rows.count > 0
       hash
     end.compact
 
@@ -85,7 +85,7 @@ class Report
       r = t[:report]
       d = t[:data]
       str << ''
-      str << "### #{r.title}"
+      str << "### #{r.print_title}"
       str << ''
       str << "|---"
       str << "| %s" % d[:headings].join(" | ")
@@ -106,8 +106,8 @@ class Report
     data.each do |t|
       r = t[:report]
       d = t[:data]
-      str << r.title
-      str << "="*r.title.length
+      str << r.print_title
+      str << ("="*str.last.length)
       d[:rows].each do |row|
         str << row.join(' - ')
       end
