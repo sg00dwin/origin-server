@@ -1011,6 +1011,9 @@ module GearChanger
               end
             elsif line =~ /^CART_DATA: /
               result.data << line['CART_DATA: '.length..-1]
+            elsif line =~ /^CART_PROPERTIES: /
+              property = line['CART_PROPERTIES: '.length..-1].chomp.split('=')
+              result.cart_properties[property[0]] = property[1]
             elsif line =~ /^APP_INFO: /
               result.appInfoIO << line['APP_INFO: '.length..-1]
             elsif result.exitcode == 0
