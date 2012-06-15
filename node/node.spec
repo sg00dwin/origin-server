@@ -2,7 +2,7 @@
 
 Summary:       Multi-tenant cloud management system node tools
 Name:          rhc-node
-Version: 0.94.7
+Version: 0.94.8
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -266,6 +266,10 @@ fi
 /lib64/security/pam_libra.so
 
 %changelog
+* Thu Jun 14 2012 Adam Miller <admiller@redhat.com> 0.94.8-1
+- BZ829826 additionally made some performance enhancements (jhonce@redhat.com)
+- Migration for HAProxy stats socket file. (mpatel@redhat.com)
+
 * Wed Jun 13 2012 Adam Miller <admiller@redhat.com> 0.94.7-1
 - BZ 830286.  Defer restarting httpd until the end of a set of applications.
   (rmillner@redhat.com)
