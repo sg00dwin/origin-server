@@ -78,7 +78,24 @@ function homedir() {
 
 function userapps() {
     # USERNAME=$1
-    /bin/find `homedir $1` -maxdepth 2 -mindepth 2 -name "*_ctl.sh" 2> /dev/null
+    (
+        for env_var in `homedir $1`/.env/*_CTL_SCRIPT
+        do
+            source $env_var
+        done
+        for cmd in `awk 'BEGIN { for (a in ENVIRON) if (a ~ /DB_CTL_SCRIPT$/) print ENVIRON[a] }'`
+        do
+            echo "$cmd"
+        done
+        for cmd in `awk 'BEGIN { for (a in ENVIRON) if ((a ~ /_CTL_SCRIPT$/) && !(a ~ /DB_CTL_SCRIPT$/) && (a != "OPENSHIFT_GEAR_CTL_SCRIPT")) print ENVIRON[a] }'`
+        do
+            echo "$cmd"
+        done
+        for cmd in `awk 'BEGIN { for (a in ENVIRON) if (a == "OPENSHIFT_GEAR_CTL_SCRIPT") print ENVIRON[a] }'`
+        do
+            echo "$cmd"
+        done
+    )
 }
 
 function apptype() {
@@ -135,7 +152,7 @@ stopuser() {
     local OUTFILE=$(mktemp /var/run/stickshift/stickshift_init-stopuser-$1.XXXXXXXX)
     trap "return_terminate $1 $OUTFILE" USR1
     echo "Stopping $1..." >> $OUTFILE 2>&1
-    ( for APPNAME in `userapps $1`
+    ( for APPNAME in `userapps $1 | tac`
       do
           stopapp $1 $APPNAME >> $OUTFILE 2>&1
       done ) &
