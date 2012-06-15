@@ -5,7 +5,7 @@
 
 Summary:        GearChanger plugin for m-colective service
 Name:           rubygem-%{gemname}
-Version: 0.11.6
+Version: 0.11.7
 Release:        1%{?dist}
 Group:          Development/Languages
 License:        ASL 2.0
@@ -70,6 +70,10 @@ rm -rf %{buildroot}
 %{ruby_sitelib}/%{gemname}.rb
 
 %changelog
+* Fri Jun 15 2012 Adam Miller <admiller@redhat.com> 0.11.7-1
+- missed a save (dmcphers@redhat.com)
+- Bug 831884 (dmcphers@redhat.com)
+
 * Thu Jun 14 2012 Adam Miller <admiller@redhat.com> 0.11.6-1
 - Bug fixes for 812046 and 820651 (abhgupta@redhat.com)
 - Adding capabilities to cloud_user when it is created changes to admin script
