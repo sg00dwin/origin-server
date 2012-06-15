@@ -3,7 +3,7 @@
 
 Summary:   Li site components
 Name:      rhc-site
-Version: 0.94.12
+Version: 0.94.13
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -121,6 +121,10 @@ rm -rf %{buildroot}
 /bin/touch %{sitedir}/log/production.log
 
 %changelog
+* Fri Jun 15 2012 Adam Miller <admiller@redhat.com> 0.94.13-1
+- Bug 832290 - Publish remote access page (ccoleman@redhat.com)
+- Bug 827531 - Link to add cart page from getting started (ccoleman@redhat.com)
+
 * Thu Jun 14 2012 Adam Miller <admiller@redhat.com> 0.94.12-1
 - Add caching to drupal views and blocks for better performance.  Remove
   unnecessary sections from UI (ccoleman@redhat.com)
