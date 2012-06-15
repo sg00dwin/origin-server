@@ -2,7 +2,7 @@
 
 Summary:       Multi-tenant cloud management system node tools
 Name:          rhc-node
-Version: 0.94.8
+Version: 0.94.9
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -266,6 +266,10 @@ fi
 /lib64/security/pam_libra.so
 
 %changelog
+* Fri Jun 15 2012 Adam Miller <admiller@redhat.com> 0.94.9-1
+- BZ832261: Order app start scripts using the same logic as the start function
+  in util.  Explicitly reverse that order on stop. (rmillner@redhat.com)
+
 * Thu Jun 14 2012 Adam Miller <admiller@redhat.com> 0.94.8-1
 - BZ829826 additionally made some performance enhancements (jhonce@redhat.com)
 - Migration for HAProxy stats socket file. (mpatel@redhat.com)
