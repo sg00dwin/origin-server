@@ -123,7 +123,9 @@ function front_page_views_default_views() {
     'type' => 'none',
   ));
   $handler->override_option('cache', array(
-    'type' => 'none',
+    'type' => 'time',
+    'results_lifespan' => '3600',
+    'output_lifespan' => '3600',
   ));
   $handler->override_option('items_per_page', 5);
   $handler->override_option('style_plugin', 'table');
@@ -659,9 +661,14 @@ function front_page_views_default_views() {
       'relationship' => 'none',
     ),
   ));
+  $handler->override_option('cache', array(
+    'type' => 'time',
+    'results_lifespan' => '300',
+    'output_lifespan' => '300',
+  ));
   $handler->override_option('items_per_page', 5);
   $handler->override_option('block_description', '');
-  $handler->override_option('block_caching', -1);
+  $handler->override_option('block_caching', '-1');
 
   $views[$view->name] = $view;
 

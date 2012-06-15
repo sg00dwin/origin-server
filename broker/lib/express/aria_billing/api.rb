@@ -25,7 +25,13 @@ module Express
       end
       
       # Temporary Hack
-      def create_fake_user(user_id)
+      def create_fake_user(user_id, plan_name = nil)
+        if plan_name
+          access_info = Rails.application.config.billing[:aria]
+          plan_id = access_info[:plans][plan_name][:plan_id]
+        else
+          plan_id = 10044931
+        end
         args = {
           'rest_call' => "create_acct_complete",
           'client_no' => @client_no,
@@ -34,7 +40,7 @@ module Express
           'alt_start_date' => nil,
           'client_acct_id' => nil,
           'status_cd' => 1,
-          'master_plan_no' => 10044931,
+          'master_plan_no' => plan_id,
           'master_plan_units' => 1,
           'supp_plans' => nil,
           'supp_plan_units' => nil,
@@ -59,11 +65,11 @@ module Express
           'pay_method' => 4
         }
         result = get_response(args)
+        if result.invoicing_error_code != 0 || result.error_code != 0
+          raise Exception.new "Failed to create fake user with error_code #{result.error_code.to_s} and invoicing_error_code #{result.invoicing_error_code.to_s}"
+        end
         #user_id = result.out_userid
         acct_no = result.acct_no
-        if result.invoicing_error_code != 0 || result.error_code != 0
-          raise Exception.new "Failed to create fake user with error_code #{result.error_code.to_s} and invoicing_error_code #{result.invoicing_error_code.to_s}" if !user_id && !acct_no
-        end
         acct_no
       end
 
@@ -78,19 +84,20 @@ module Express
         return result.error_code == 0
       end
 
-      def get_acct_no_from_userid(user_id)
+      def get_acct_no_from_user_id(user_id)
         request = {
           'user_id' => user_id,
           'client_no' => @client_no,
           'auth_key' => @auth_key,
-          'rest_call' => "get_acct_no_from_userid"
+          'rest_call' => "get_acct_no_from_user_id"
         }
         result = get_response(request)
+        raise Exception.new "Failed to get acct_no with error code: #{result.error_code.to_s}" if result.error_code != 0
         acct_no = result.acct_no
         acct_no
       end
 
-      def record_usage(user_id=nil, acct_no=nil, 
+      def record_usage(gear_uuid, sync_time, user_id=nil, acct_no=nil, 
                             usage_type=@usage_type[:small], usage_units=1)
         raise Exception.new "user_id or acct_no must be valid" if !user_id && !acct_no
         request = {
@@ -99,6 +106,8 @@ module Express
           'usage_type' => usage_type,
           'client_no' => @client_no,
           'auth_key' => @auth_key,
+          'qualifier_1' => gear_uuid,
+          'qualifier_2' => sync_time.to_i,
           'rest_call' => "record_usage"
         }
         user_id ? request['userid']=user_id : request['acct_no']=acct_no
@@ -119,9 +128,22 @@ module Express
           'rest_call' => "get_usage_history"
         }
         result = get_response(request)
-        
-        #TODO
-        result
+        raise Exception.new "Failed to get usage history with error code: #{result.error_code.to_s}" if result.error_code != 0
+        result.data["usage_history_records"]
+      end
+
+      def update_master_plan(acct_no, plan_name)
+        access_info = Rails.application.config.billing[:aria]
+        plan_id = access_info[:plans][plan_name][:plan_id]
+        request = {
+          'rest_call' => "update_master_plan",
+          'client_no' => @client_no,
+          'auth_key' => @auth_key,
+          'acct_no' => acct_no,
+          'master_plan_no' => plan_id
+        }
+        result = get_response(request)
+        return result.error_code == 0
       end
 
       private

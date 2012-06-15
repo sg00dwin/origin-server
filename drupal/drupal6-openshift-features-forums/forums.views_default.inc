@@ -1132,6 +1132,11 @@ print $data->node_comment_statistics_last_comment_uid;
   ));
   $handler->override_option('sitename_title', FALSE);
   $handler = $view->new_display('page', 'Page', 'page_1');
+  $handler->override_option('cache', array(
+    'type' => 'time',
+    'results_lifespan' => '60',
+    'output_lifespan' => '60',
+  ));
   $handler->override_option('path', 'forums/%');
   $handler->override_option('menu', array(
     'type' => 'none',
@@ -1304,7 +1309,9 @@ print $data->node_comment_statistics_last_comment_uid;
     'type' => 'none',
   ));
   $handler->override_option('cache', array(
-    'type' => 'none',
+    'type' => 'time',
+    'results_lifespan' => '21600',
+    'output_lifespan' => '21600',
   ));
   $handler->override_option('items_per_page', 1);
   $handler->override_option('style_plugin', 'table');
@@ -1806,8 +1813,10 @@ print $data->node_comment_statistics_last_comment_uid;
         'text' => '',
         'make_link' => 0,
         'path' => '',
+        'absolute' => 0,
         'link_class' => '',
         'alt' => '',
+        'rel' => '',
         'prefix' => '',
         'suffix' => '',
         'target' => '',
@@ -1820,12 +1829,16 @@ print $data->node_comment_statistics_last_comment_uid;
         'strip_tags' => 0,
       ),
       'empty' => '',
-      'hide_empty' => 0,
-      'empty_zero' => 0,
+      'hide_empty' => 1,
+      'empty_zero' => 1,
+      'hide_alter_empty' => 1,
       'set_precision' => FALSE,
       'precision' => 0,
       'decimal' => '.',
       'separator' => ',',
+      'format_plural' => 1,
+      'format_plural_singular' => '1 reply',
+      'format_plural_plural' => '@count replies',
       'prefix' => '',
       'suffix' => '',
       'exclude' => 0,
@@ -1833,6 +1846,9 @@ print $data->node_comment_statistics_last_comment_uid;
       'table' => 'node_comment_statistics',
       'field' => 'comment_count',
       'relationship' => 'none',
+      'override' => array(
+        'button' => 'Use default',
+      ),
     ),
     'group_nid' => array(
       'label' => '',
@@ -1928,9 +1944,14 @@ print $data->node_comment_statistics_last_comment_uid;
       'relationship' => 'none',
     ),
   ));
+  $handler->override_option('cache', array(
+    'type' => 'time',
+    'results_lifespan' => '300',
+    'output_lifespan' => '-1',
+  ));
   $handler->override_option('title', 'Recent Threads');
   $handler->override_option('block_description', '');
-  $handler->override_option('block_caching', -1);
+  $handler->override_option('block_caching', '8');
   $handler = $view->new_display('block', 'Active Threads', 'block_3');
   $handler->override_option('relationships', array());
   $handler->override_option('fields', array(
@@ -2793,10 +2814,16 @@ print $data->node_comment_statistics_last_comment_uid;
       'relationship' => 'none',
     ),
   ));
+  $handler->override_option('cache', array(
+    'type' => 'time',
+    'results_lifespan' => '300',
+    'output_lifespan' => '300',
+  ));
   $handler->override_option('title', 'Recent Threads by User');
   $handler->override_option('block_description', '');
   $handler->override_option('block_caching', -1);
   $handler = $view->new_display('block', 'Front Page', 'block_6');
+  $handler->override_option('relationships', array());
   $handler->override_option('fields', array(
     'nid' => array(
       'label' => '',
@@ -2933,10 +2960,15 @@ print $data->node_comment_statistics_last_comment_uid;
       'relationship' => 'none',
     ),
   ));
+  $handler->override_option('cache', array(
+    'type' => 'time',
+    'results_lifespan' => '300',
+    'output_lifespan' => '-1',
+  ));
   $handler->override_option('title', 'Recent Threads');
   $handler->override_option('items_per_page', 5);
   $handler->override_option('block_description', '');
-  $handler->override_option('block_caching', -1);
+  $handler->override_option('block_caching', '1');
 
   $views[$view->name] = $view;
 
@@ -3045,14 +3077,16 @@ print $data->node_comment_statistics_last_comment_uid;
     'type' => 'none',
   ));
   $handler->override_option('cache', array(
-    'type' => 'none',
+    'type' => 'time',
+    'results_lifespan' => '1800',
+    'output_lifespan' => '1800',
   ));
   $handler->override_option('items_per_page', 0);
   $handler->override_option('distinct', 0);
   $handler->override_option('style_plugin', 'table');
   $handler = $view->new_display('block', 'Block', 'block_1');
   $handler->override_option('block_description', '');
-  $handler->override_option('block_caching', -1);
+  $handler->override_option('block_caching', '8');
 
   $views[$view->name] = $view;
 

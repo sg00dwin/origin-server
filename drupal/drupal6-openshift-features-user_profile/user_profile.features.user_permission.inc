@@ -422,6 +422,7 @@ function user_profile_user_default_permissions() {
     'name' => 'collapse format fieldset by default',
     'roles' => array(
       '0' => 'administrator',
+      '1' => 'authenticated user',
     ),
   );
 
@@ -430,6 +431,7 @@ function user_profile_user_default_permissions() {
     'name' => 'collapsible format selection',
     'roles' => array(
       '0' => 'administrator',
+      '1' => 'authenticated user',
     ),
   );
 
@@ -1345,6 +1347,7 @@ function user_profile_user_default_permissions() {
     'name' => 'show format selection for comments',
     'roles' => array(
       '0' => 'administrator',
+      '1' => 'authenticated user',
     ),
   );
 
@@ -1353,6 +1356,7 @@ function user_profile_user_default_permissions() {
     'name' => 'show format selection for nodes',
     'roles' => array(
       '0' => 'administrator',
+      '1' => 'authenticated user',
     ),
   );
 
@@ -1361,6 +1365,7 @@ function user_profile_user_default_permissions() {
     'name' => 'show format tips',
     'roles' => array(
       '0' => 'administrator',
+      '1' => 'authenticated user',
     ),
   );
 
@@ -1369,6 +1374,7 @@ function user_profile_user_default_permissions() {
     'name' => 'show more format tips link',
     'roles' => array(
       '0' => 'administrator',
+      '1' => 'authenticated user',
     ),
   );
 
