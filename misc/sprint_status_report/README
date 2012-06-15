@@ -4,10 +4,9 @@ Make sure to run `bundle install`, since this project needs a few gems we don't 
 
 Run
 ===
-  ruby -Ilib bin/process.rb
+  ./sprint_status_report
 
-This will drop you into a pry shell which lets you test the reports before sending them.
-(pry is a lot like irb, so you can do whatever you want to the objects or set variables)
+Use --help for more options
 
 Available Reports
 =================
@@ -18,20 +17,6 @@ The following reports are defined (with their default variables)
 * qe
   - Recipient: libra-qe@redhat.com
   - Will NOT send nag emails to US owners
-
-Available Functions
-===================
-In both functions, the arguments are optional and will override the defaults.
-
-Testing the Report
-------------------
-This command will print out the information the report will contain to your terminal
-  <report>.test_email([to],[nag])
-
-Sending the Report
-------------------
-This will email the default recipient (and US owners if nag is set or default)
-  <report>.send_email([to],[nag])
 
 Any problems
 ============

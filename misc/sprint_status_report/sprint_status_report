@@ -1,0 +1,157 @@
+#!/usr/bin/env ruby
+
+$LOAD_PATH.unshift(File.dirname(__FILE__) + '/lib') unless $LOAD_PATH.include?(File.dirname(__FILE__) + '/lib')
+
+require 'sprint'
+require 'report'
+require 'reports'
+
+require 'yaml'
+require 'commander/import'
+
+CONFIG_DIR = File.join(File.expand_path(File.dirname(__FILE__)),'/config')
+CAL_PATH='https://mail.corp.redhat.com/home/shadowman@redhat.com/OpenShift.ics'
+
+# Read Rally configuration file
+rally_config = YAML.load_file(File.join(CONFIG_DIR,'rally.yml'))
+
+# Define available report types
+reports_config = YAML.load_file(File.join(CONFIG_DIR,'reports.yml'))
+
+$report_types = {}
+reports_config.each do |name,args|
+  $report_types[name] = UserStoryReport.new(args)
+end
+
+say "Logging into Rally..."
+$sprint = Sprint.new({
+  :calendar => CAL_PATH,
+  :rally_config => rally_config
+})
+
+reports = {}
+say "Building available reports..."
+reports[:dev] = Report.new({
+  :reports => [:no_tasks,:blocked,:not_approved,:rejected,:dcut],
+  :summary_email => 'libra-devel@redhat.com'
+})
+
+reports[:qe] = Report.new({
+  :reports => [:not_qe_ready,:rejected],
+  :summary_email => 'libra-qe@redhat.com',
+  :nag_owners => false
+})
+
+#####
+# Commander stuff
+#####
+
+name="#{__FILE__}"
+
+program :name, "Sprint Status Notifier"
+program :version, "1.0.0"
+program :description, "A script to create sprint status notification emails"
+
+global_option "-r", "--report NAME" , "Available report types: %s"% reports.keys.join(', ')
+global_option "-s", "--send", "Actually send the report (we will test by default)"
+global_option "-t", "--to EMAIL", "Who to send the email to (overrides default for report)"
+global_option("-n","--nag [false]", "Nag the individual owners (overrides default overrides default for report)")
+global_option("-f","--file FILENAME", "Write output to a file (useful for testing email output)")
+global_option("-o","--once","Only run single report (does not prompt for multiple runs")
+
+command :run do |c|
+  c.syntax = "#{name} run"
+  c.description = "Run available reports"
+  c.action do |args,options|
+    report_name = options.report || choose("Report to run?",*reports.keys)
+
+    @args = {
+      :send => options.send || false,
+      :file => options.file
+    }
+
+    change_report(reports[report_name.to_sym],options)
+
+    while(1)
+      @args = to_boolean(@args,[:send,:nag])
+      say "\nRunning #{report_name} report with"
+      show_options
+
+      begin
+        if file = @args[:file]
+          old_stdout = $stdout
+          fh = File.open(file,'w')
+          $stdout = fh
+        end
+        @report.send_email(@args)
+      ensure
+        if fh
+          $stdout = old_stdout
+          fh.close
+        end
+      end
+      say "Done!"
+
+      break unless (!options.once && agree("Do something else (Y/N) ? "))
+
+      if agree("Change report? ")
+        say "Current report: #{report_name}"
+        val = choose("Report to run (ENTER for same)?",*[*reports.keys,''])
+        unless val == ''
+          if change_report(reports[val.to_sym],options)
+            say "Report Changed"
+            show_options
+          end
+        end
+      end
+
+      change_options if agree("Change any options? ")
+    end
+  end
+end
+
+def change_options
+  while(1)
+    show_options
+    key = choose("Option to change (ENTER when done):",*[*@args.keys,""])
+
+    break if key == ""
+    val = ask("Value (ENTER for default): ")
+
+    @args[key] = (val == "" ? nil : val)
+    @args = to_boolean(@args,[:send,:nag])
+  end
+end
+
+def change_report(new_report,options)
+  changed = (new_report != @report)
+  if changed
+    @report = new_report
+    @args.merge!({
+      :to  => (options.to  || @report.summary_email),
+      :nag => (options.nag || @report.nag_owners),
+    })
+  end
+  changed
+end
+
+def to_boolean(args,which)
+  # Change args to proper booleans
+  regex = /^(true|t|yes|y)$/i
+  which.each do |x|
+    val = args[x]
+    case val
+    when String
+      args[x] = (regex.match(val) ? true : false)
+    end
+  end
+  args
+end
+
+def show_options
+  @args.each do |k,v|
+    say "  %5s: %s \n" % [k.capitalize, (defined?(v) && !v.nil? ? v : "(default)")]
+  end
+end
+
+default_command :run

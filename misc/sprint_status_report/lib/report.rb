@@ -116,18 +116,22 @@ class Report
     str.join("\n")
   end
 
-  def test_email(to = summary_email, nag = nag_owners)
-    send_email(to,nag,false)
-  end
+  def send_email(args = {})
+    default_options = {
+      :to => summary_email,
+      :nag => nag_owners,
+      :send => false
+    }
 
-  def send_email(to = summary_email, nag = nag_owners, send = true)
+    args = default_options.merge(args)
+
     data = process
-    make_mail(to,$sprint.title(true),data,send)
+    make_mail(args[:to],$sprint.title(true),data,args[:send])
 
-    if nag
+    if args[:nag]
       offenders.each do |user|
         data = process(user)
-        make_mail(user,"Incomplete User Story #{$sprint.title(true)}",data,send)
+        make_mail(user,"Incomplete User Story #{$sprint.title(true)}",data,args[:send])
       end
     end
   end
@@ -136,9 +140,9 @@ class Report
     puts "#"*100
     puts "Creating mail to: #{to} (#{subject})"
     if send
-      puts "\t Sending"
+      print "\t Sending..."
       Pony.mail(:to => to, :subject => subject, :body => to_ascii(data), :html_body => to_kramdown(data).to_html)
-      puts "\t Done"
+      puts "Done"
     else
       puts to_ascii(data)
     end
