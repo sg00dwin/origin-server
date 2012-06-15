@@ -88,8 +88,8 @@ def set_consumed_gears(user, consumedgears)
     end
 
     print "Setting consumed_gears to #{consumedgears}... "
-    db = StickShift::MongoDataStore.instance
-    result = db.update({ "_id" => user.login }, { "$set" => {'consumed_gears' => consumedgears} })
+    ds = StickShift::MongoDataStore.instance
+    result = ds.update(ds.user_collection, { "_id" => user.login }, { "$set" => {'consumed_gears' => consumedgears} })
     puts "Done."
 
     # TODO: figure out what a correct return code is

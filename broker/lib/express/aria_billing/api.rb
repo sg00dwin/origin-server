@@ -65,11 +65,11 @@ module Express
           'pay_method' => 4
         }
         result = get_response(args)
+        if result.invoicing_error_code != 0 || result.error_code != 0
+          raise Exception.new "Failed to create fake user with error_code #{result.error_code.to_s} and invoicing_error_code #{result.invoicing_error_code.to_s}"
+        end
         #user_id = result.out_userid
         acct_no = result.acct_no
-        if result.invoicing_error_code != 0 || result.error_code != 0
-          raise Exception.new "Failed to create fake user with error_code #{result.error_code.to_s} and invoicing_error_code #{result.invoicing_error_code.to_s}" if !user_id && !acct_no
-        end
         acct_no
       end
 
@@ -92,6 +92,7 @@ module Express
           'rest_call' => "get_acct_no_from_user_id"
         }
         result = get_response(request)
+        raise Exception.new "Failed to get acct_no with error code: #{result.error_code.to_s}" if result.error_code != 0
         acct_no = result.acct_no
         acct_no
       end
@@ -127,6 +128,7 @@ module Express
           'rest_call' => "get_usage_history"
         }
         result = get_response(request)
+        raise Exception.new "Failed to get usage history with error code: #{result.error_code.to_s}" if result.error_code != 0
         result.data["usage_history_records"]
       end
 
@@ -141,7 +143,7 @@ module Express
           'master_plan_no' => plan_id
         }
         result = get_response(request)
-        result
+        return result.error_code == 0
       end
 
       private
