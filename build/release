@@ -60,7 +60,6 @@ class Release < Thor
 
         if package_name == 'rubygem-stickshift-controller'
           update_gemfile_version(spec_file, 'stickshift-controller', "broker/Gemfile.lock", verbose)
-          update_gemfile_version(spec_file, 'stickshift-controller', "billing/Gemfile.lock", verbose)
           update_gemfile_version(spec_file, 'stickshift-controller', "#{build_dir}/../broker/Gemfile.lock", verbose)
           gem_updates = true
         end
@@ -85,7 +84,7 @@ class Release < Thor
       if gem_updates
         if push_changes
           branch = get_branch
-          run("git add broker/Gemfile.lock billing/Gemfile.lock ; git commit -m 'Updating gem versions'; git push origin #{branch}", :verbose => options.verbose?)
+          run("git add broker/Gemfile.lock; git commit -m 'Updating gem versions'; git push origin #{branch}", :verbose => options.verbose?)
           inside('../crankcase') do
             branch = get_branch
             run("git add stickshift/node/Gemfile.lock stickshift/broker/Gemfile.lock; git commit -m 'Updating gem versions'; git push origin #{branch}", :verbose => options.verbose?)
