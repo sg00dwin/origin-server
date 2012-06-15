@@ -3,7 +3,7 @@
 
 Summary:   Li broker components
 Name:      rhc-broker
-Version: 0.94.10
+Version: 0.94.11
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -109,6 +109,33 @@ rm -rf $RPM_BUILD_ROOT
 /bin/touch %{_localstatedir}/log/stickshift/user_action.log
 
 %changelog
+* Thu Jun 14 2012 Adam Miller <admiller@redhat.com> 0.94.11-1
+- Updating gem versions (admiller@redhat.com)
+- search for existing usage before retrying (dmcphers@redhat.com)
+- Billing: Event notification changes (rpenta@redhat.com)
+- live without acct no for now (dmcphers@redhat.com)
+- api to change master plan. function test capturing enablement lifecycle
+  (rchopra@redhat.com)
+- use aria userid as user's uuid (rchopra@redhat.com)
+- usage work in progress (dmcphers@redhat.com)
+- Added integration tests to test sub-user functionality (kraman@gmail.com)
+- enable broker changes (rchopra@redhat.com)
+- Billing: fixes (rpenta@redhat.com)
+- Update broker Gemfile.lock (rpenta@redhat.com)
+- Merge branch 'master' of git1.ops.rhcloud.com:/srv/git/li (rpenta@redhat.com)
+- Adding Cloud 9 settings template to non-dev environment configs for Broker
+- Adding capabilities to cloud_user when it is created changes to admin script
+  to manage sub accounts and capabilities changes to Mcollective application
+  container proxy to include gear_sizes specified using capabilities for a user
+  Cloud 9 config added to development environment Added c9 gear profile to
+  district admin script changes to rhc-admil-ctl-user to validate input gear
+  size
+- Billing:Added Aria api (rpenta@redhat.com)
+- remove unnecessary files (rpenta@redhat.com)
+- Re-origanize aria billing helpers (rpenta@redhat.com)
+- Merge branch 'master' of git1.ops.rhcloud.com:/srv/git/li (rpenta@redhat.com)
+- Merge billing code into broker (rpenta@redhat.com)
+
 * Wed Jun 13 2012 Adam Miller <admiller@redhat.com> 0.94.10-1
 - Updating gem versions (admiller@redhat.com)
 

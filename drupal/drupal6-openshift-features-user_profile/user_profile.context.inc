@@ -326,6 +326,7 @@ function user_profile_context_default_contexts() {
         '<front>' => '<front>',
         'home' => 'home',
         'user' => 'user',
+        'user/*' => 'user/*',
         'forums/*' => 'forums/*',
       ),
     ),

@@ -21,16 +21,14 @@ class BillingEnablementTest < ActiveSupport::TestCase
       check_user_enablement(@user, 3, false)
 
       # upgrade master plan
-      result = api.update_master_plan(acct_no, :MegaShift)
-      assert(0, result.error_code)
+      assert(api.update_master_plan(acct_no, :MegaShift))
 
       # check in mongo about the plan upgraded
       check_user_enablement(@user, 16, true)
 
       # now restore the user back to FreeShift
       # downgrade master plan
-      result = api.update_master_plan(acct_no, :FreeShift)
-      assert(0, result.error_code)
+      assert(api.update_master_plan(acct_no, :FreeShift))
       
       # ensure the user has free account assigned only
       check_user_enablement(@user, 3, false)

@@ -5,7 +5,7 @@
 %global drupal_themename    openshift-theme
 
 Name:           drupal6-%{drupal_themename}
-Version: 3.3.2
+Version: 3.3.3
 Release:        1%{?dist}
 Summary:        Red Hat Openshift theme for Drupal %{drupal_release}
 
@@ -44,6 +44,10 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
+* Thu Jun 14 2012 Adam Miller <admiller@redhat.com> 3.3.3-1
+- Add caching to drupal views and blocks for better performance.  Remove
+  unnecessary sections from UI (ccoleman@redhat.com)
+
 * Tue Jun 12 2012 Adam Miller <admiller@redhat.com> 3.3.2-1
 - incorporate search field within header of site pages, reset headings to use
   line-height instead of margin-bottom, reset /stylesheets/_type.scss to
