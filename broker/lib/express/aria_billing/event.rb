@@ -44,7 +44,7 @@ Account Data
 -----------------------------------
 Client Number: #{h['client_no']}
 Aria PO#: #{h['transaction_id']}
-RHN Login: #{h['userid']}
+RHN Login: #{get_rhlogin(h)}
 MSG
       end
 
@@ -120,6 +120,18 @@ Supplemental Fields
 MSG
       end
 
+      def get_rhlogin(h)
+        begin
+          for i in 0..h['supp_field_name'].length-1 do
+            if h['supp_field_name'][i] == 'RHLogin'
+              return h['supp_field_value'][i]
+            end
+          end
+        rescue
+        end
+        return ''
+      end
+
       def self.handle_event(h)
         email_to = OPS_ORDER_TEAM_EMAIL
         h['event_id'].each do |ev|
@@ -164,6 +176,7 @@ MSG
 <html><body>#{get_header}
 #{get_account_data(h)}
 <b>#{get_account_contact(h)}</b>
+#{get_supplemental_fields(h)}
 #{get_events(h)}
 </body></html>
 MSG
@@ -188,6 +201,7 @@ MSG
 <html><body>#{get_header}
 #{get_account_data(h)}
 <b>#{get_detail_account_data(h)}</b>
+#{get_supplemental_fields(h)}
 #{get_events(h)}
 </body></html>
 MSG
@@ -198,6 +212,7 @@ MSG
 <html><body>#{get_header}
 #{get_account_data(h)}
 <b>#{get_supplemental_plans(h)}</b>
+#{get_supplemental_fields(h)}
 #{get_events(h)}
 </body></html>
 MSG
