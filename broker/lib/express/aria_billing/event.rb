@@ -120,7 +120,7 @@ Supplemental Fields
 MSG
       end
 
-      def get_rhlogin(h)
+      def self.get_rhlogin(h)
         begin
           for i in 0..h['supp_field_name'].length-1 do
             if h['supp_field_name'][i] == 'RHLogin'
