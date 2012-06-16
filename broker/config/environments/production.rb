@@ -139,11 +139,20 @@ Broker::Application.configure do
       :plans => {
         :FreeShift => {
           :max_gears => 3,
-          :vip => false
+          :vip => false,
+          :id => 10044929
         },
         :MegaShift => {
           :max_gears => 16,
-          :vip => true
+          :vip => true,
+          :id => 10044931
+        }
+      },
+      :supp_plans => {
+        :MegaShiftStorage => {
+          :parent_plan => :MegaShift,
+          :id => 10088295
+          #TBD
         }
       }
     }
