@@ -3,7 +3,7 @@
 
 Summary:   Li site components
 Name:      rhc-site
-Version: 0.94.13
+Version: 0.94.14
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -121,6 +121,19 @@ rm -rf %{buildroot}
 /bin/touch %{sitedir}/log/production.log
 
 %changelog
+* Mon Jun 18 2012 Adam Miller <admiller@redhat.com> 0.94.14-1
+- merge fix in pricing.scss (sgoodwin@redhat.com)
+- fix layout issues for bug 832926 (sgoodwin@redhat.com)
+- Minor wording of login placeholder (ccoleman@redhat.com)
+- Update helpers to fix broken link on get_started page for JBoss tools
+  (ccoleman@redhat.com)
+- Merge branch 'master' of git1.ops.rhcloud.com:/srv/git/li (ffranz@redhat.com)
+- Removed flexbox model styling form pricing page (spec still very unstable)
+  (ffranz@redhat.com)
+- Bug 819402 - Streamline sometimes returns 401 + specific service error, which
+  is not an AccessDeniedException scenario. (ccoleman@redhat.com)
+- minor spacing changes for lists and on the search input (sgoodwin@redhat.com)
+
 * Fri Jun 15 2012 Adam Miller <admiller@redhat.com> 0.94.13-1
 - Bug 832290 - Publish remote access page (ccoleman@redhat.com)
 - Bug 827531 - Link to add cart page from getting started (ccoleman@redhat.com)
