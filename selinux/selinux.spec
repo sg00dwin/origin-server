@@ -1,6 +1,6 @@
 Summary:       SELinux policy for OpenShift nodes
 Name:          rhc-selinux
-Version: 0.94.2
+Version: 0.94.3
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -46,6 +46,10 @@ rm -rf %{buildroot}
 %attr(0640,-,-) %{_datadir}/selinux/packages/libra.pp
 
 %changelog
+* Mon Jun 18 2012 Adam Miller <admiller@redhat.com> 0.94.3-1
+- Allow libra_mail_t to write/append inherited file descriptors so users could
+  do bash directrion of files (dwalsh@redhat.com)
+
 * Fri Jun 08 2012 Adam Miller <admiller@redhat.com> 0.94.2-1
 - Since bash command completions is flooding the logs with read/execute checks
   on lots of executables, we need to add dontaudit rules. (dwalsh@redhat.com)
