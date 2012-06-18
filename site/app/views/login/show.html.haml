@@ -8,7 +8,7 @@
     = f.semantic_errors
     = f.input :rhlogin,
               :label => 'Login',
-              :input_html => {:autofocus => @user.rhlogin.blank?, :placeholder => 'Your redhat.com or RHN account', :class => @user.errors[:base].present? ? 'error' : ''}
+              :input_html => {:autofocus => @user.rhlogin.blank?, :placeholder => 'OpenShift or Red Hat Network account', :class => @user.errors[:base].present? ? 'error' : ''}
     = f.input :password,
               :as => :password,
               :hint => link_to("Forgot your password?", new_password_path),

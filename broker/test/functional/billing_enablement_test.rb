@@ -14,7 +14,7 @@ class BillingEnablementTest < ActiveSupport::TestCase
   test "user billing plan lifecycle" do
     if @test_enabled
       api = Express::AriaBilling::Api.instance
-      acct_no = api.create_fake_user(@user.uuid, :FreeShift)
+      acct_no = api.create_fake_acct(@user.uuid, :FreeShift)
 
 
       # ensure the user has free account assigned only

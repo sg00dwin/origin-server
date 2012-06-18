@@ -52,11 +52,12 @@
           background-color: #f2f2f2; 
           p.content { font-size: 11px; }
         }
-        div.example1 { background: #ccc url('/app/images/single_gear_bg.png') no-repeat left bottom; }
-        div.example2 { background: #999 url('/app/images/multi_gear_bg.png') no-repeat left bottom; }
+        div.example1 { background: #ccc url('/app/images/single_gear_bg.png') no-repeat left bottom; width: 25%; }
+        div.example2 { background: #999 url('/app/images/multi_gear_bg.png') no-repeat left bottom; width: 25%; }
         div.example3 { 
           background: #3f3f3f url('/app/images/lotsa_gears_bg.png') no-repeat left bottom; 
           color: white; 
+          width: 25%; 
           h3 { color: white; }
         }
       }

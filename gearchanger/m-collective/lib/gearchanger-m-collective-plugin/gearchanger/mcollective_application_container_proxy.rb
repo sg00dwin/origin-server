@@ -268,6 +268,10 @@ module GearChanger
         rpc_get_fact_direct('ipaddress')
       end
       
+      def get_public_ip_address
+        rpc_get_fact_direct('public_ip')
+      end
+      
       def get_node_profile
         rpc_get_fact_direct('node_profile')
       end
@@ -567,6 +571,11 @@ module GearChanger
         # resolve destination_container according to district
         destination_container, destination_district_uuid, keep_uid = resolve_destination(app, gear, destination_container, destination_district_uuid, allow_change_district)
 
+        destination_node_profile = destination_container.get_node_profile
+        if app.scalable and source_container.get_node_profile != destination_node_profile
+          puts "Cannot change node_profile for a gear belonging to a scalable application. The destination container's node profile is #{destination_node_profile}, while the gear's node_profile is #{gear.node_profile}"
+        end
+
         source_container = gear.container
         # get the state of all cartridges
         quota_blocks = nil
@@ -642,6 +651,10 @@ module GearChanger
                   reply.append destination_container.stop(app, gear, cart)
                 end
               end
+            end
+            if gear.node_profile != destination_node_profile
+              log_debug "DEBUG: The gear's node profile changed from #{gear.node_profile} to #{destination_node_profile}"
+              gear.node_profile = destination_node_profile
             end
             app.save
 
