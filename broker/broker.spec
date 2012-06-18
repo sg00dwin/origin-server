@@ -3,7 +3,7 @@
 
 Summary:   Li broker components
 Name:      rhc-broker
-Version: 0.94.11
+Version: 0.94.13
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -109,6 +109,17 @@ rm -rf $RPM_BUILD_ROOT
 /bin/touch %{_localstatedir}/log/stickshift/user_action.log
 
 %changelog
+* Fri Jun 15 2012 Dan McPherson <dmcphers@redhat.com> 0.94.13-1
+- Updating gem versions (dmcphers@redhat.com)
+
+* Fri Jun 15 2012 Adam Miller <admiller@redhat.com> 0.94.12-1
+- Updating gem versions (admiller@redhat.com)
+- Merge branch 'master' of git1.ops.rhcloud.com:/srv/git/li (rpenta@redhat.com)
+- Bug 832500 (dmcphers@redhat.com)
+- billing error handling (dmcphers@redhat.com)
+- Billing: classify notification either order or people info
+  (rpenta@redhat.com)
+
 * Thu Jun 14 2012 Adam Miller <admiller@redhat.com> 0.94.11-1
 - Updating gem versions (admiller@redhat.com)
 - search for existing usage before retrying (dmcphers@redhat.com)

@@ -16,19 +16,14 @@ module GearChanger
       def self.valid_gear_sizes_impl(user)
         default_gear_sizes = []
         capability_gear_sizes = []
-        
-        if user.vip || user.auth_method == :broker_auth
-          default_gear_sizes = ["small", "medium"]
-        else
-          default_gear_sizes = ["small"]
-        end
-        
         capability_gear_sizes = user.capabilities['gear_sizes'] if user.capabilities.has_key?('gear_sizes')
-        
-        if capability_gear_sizes.nil? or capability_gear_sizes.empty?
-          return default_gear_sizes
-        else
+
+        if user.vip || user.auth_method == :broker_auth
+          return ["small", "medium"] | capability_gear_sizes
+        elsif !capability_gear_sizes.nil? and !capability_gear_sizes.empty?
           return capability_gear_sizes
+        else
+          return ["small"]
         end
       end
       
@@ -572,6 +567,11 @@ module GearChanger
         # resolve destination_container according to district
         destination_container, destination_district_uuid, keep_uid = resolve_destination(app, gear, destination_container, destination_district_uuid, allow_change_district)
 
+        destination_node_profile = destination_container.get_node_profile
+        if app.scalable and source_container.get_node_profile != destination_node_profile
+          puts "Cannot change node_profile for a gear belonging to a scalable application. The destination container's node profile is #{destination_node_profile}, while the gear's node_profile is #{gear.node_profile}"
+        end
+
         source_container = gear.container
         # get the state of all cartridges
         quota_blocks = nil
@@ -647,6 +647,10 @@ module GearChanger
                   reply.append destination_container.stop(app, gear, cart)
                 end
               end
+            end
+            if gear.node_profile != destination_node_profile
+              log_debug "DEBUG: The gear's node profile changed from #{gear.node_profile} to #{destination_node_profile}"
+              gear.node_profile = destination_node_profile
             end
             app.save
 
@@ -787,7 +791,7 @@ module GearChanger
         reply.append destination_container.create(app, gear, quota_blocks, quota_files)
 
         log_debug "DEBUG: Moving content for app '#{app.name}', gear '#{gear.name}' to #{destination_container.id}"
-        log_debug `eval \`ssh-agent\`; ssh-add /var/www/stickshift/broker/config/keys/rsync_id_rsa; ssh -o StrictHostKeyChecking=no -A root@#{source_container.get_ip_address} "rsync -aA#{(gear.uid && gear.uid == orig_uid) ? 'X' : ''} -e 'ssh -o StrictHostKeyChecking=no' /var/lib/stickshift/#{gear.uuid}/ root@#{destination_container.get_ip_address}:/var/lib/stickshift/#{gear.uuid}/"`
+        log_debug `eval \`ssh-agent\`; ssh-add /var/www/stickshift/broker/config/keys/rsync_id_rsa; ssh -o StrictHostKeyChecking=no -A root@#{source_container.get_ip_address} "rsync -aA#{(gear.uid && gear.uid == orig_uid) ? 'X' : ''} -e 'ssh -o StrictHostKeyChecking=no' /var/lib/stickshift/#{gear.uuid}/ root@#{destination_container.get_ip_address}:/var/lib/stickshift/#{gear.uuid}/"; ssh-agent -k`
         if $?.exitstatus != 0
           raise StickShift::NodeException.new("Error moving app '#{app.name}', gear '#{gear.name}' from #{source_container.id} to #{destination_container.id}", 143)
         end
