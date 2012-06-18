@@ -18,7 +18,7 @@ Requires:      rhc-common
 Requires:      rhc-selinux >= 0.84.7-1
 Requires:      git
 Requires:      libcgroup
-Requires:      mcollective = 1.1.2
+Requires:      mcollective
 Requires:      perl
 Requires:      ruby
 Requires:      rubygem-open4

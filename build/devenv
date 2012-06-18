@@ -571,6 +571,10 @@ mkdir -p /tmp/rhc/junit
     end
 
     def build_and_install(package_name, build_dir, spec_file)
+      if package_name.include? "origin" || package_name == "stickshift-broker"
+          puts "Skipping #{package_name}"
+          return
+      end
       remove_dir '/tmp/tito/'
       FileUtils.mkdir_p '/tmp/tito/'
       puts "Building in #{build_dir}"
