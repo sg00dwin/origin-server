@@ -5,7 +5,7 @@
 %global drupal_themename    openshift-theme
 
 Name:           drupal6-%{drupal_themename}
-Version: 3.3.4
+Version: 3.3.5
 Release:        1%{?dist}
 Summary:        Red Hat Openshift theme for Drupal %{drupal_release}
 
@@ -44,6 +44,9 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
+* Mon Jun 18 2012 Adam Miller <admiller@redhat.com> 3.3.5-1
+- 
+
 * Mon Jun 18 2012 Adam Miller <admiller@redhat.com> 3.3.4-1
 - Bug 820861 - Remove broken button from ideas page. (ccoleman@redhat.com)
 - Bug 807570 - Improve visual display of Youku videos (ccoleman@redhat.com)
