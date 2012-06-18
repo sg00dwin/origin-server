@@ -12,7 +12,7 @@
             background-color: #f2f2f2; 
             width: 38%;
             h1 { padding-top: 20px; }
-            h2.price.free { font-size: 210%; }
+            h2.price.free { font-size: 22px; }
             p.description { font-size: 16px; font-weight: normal; }
             p.price-details { font-size: 14px; font-weight: normal; }
             .action-call { margin-left: auto; margin-right: auto; margin-bottom: 15px; }
@@ -21,7 +21,7 @@
         tbody {
           td { 
             height: 45px; 
-            a.about { display: block; }
+            a.about { display: block; font-size: smaller; }
           }
           td:first-child { text-align: right; padding-right: 10px; }
           td.key { font-size: 14px; }
@@ -45,8 +45,7 @@
         width: 100%;
         div {
           text-align: center; 
-          padding: 15px 10px;
-          display: table-cell;
+          padding: 15px 3px;
           p.price { font-size: 20px; padding-top: 12px;}
         }
         div.scenario {
@@ -76,16 +75,45 @@
   }
 }
 
-table#attachments { display: none; }
-a.notifications_0, a.notifications_1, a.notifications_2 { display: none; }
+.ie7 .community article.pricing section.gears div.example div,
+.ie8 .community article.pricing section.gears div.example div { 
+  width: 25%;
+}
 
-@media (min-width: 480px) and (max-with: 767px) {
+table#attachments {
+  display: none; }
+
+a.notifications_0, a.notifications_1, a.notifications_2 {
+  display: none; }
+
+@media (min-width: 480px) {
   .community article.pricing section.gears div.example div {
-    padding: 15px 3px;
+    width: 25%;
+    display: table-cell;
   }
 }
 @media (max-width: 480px) {
-  .community article.pricing section.gears div.example { 
-    display: block; 
+  .community article.pricing section.gears div.example {
+    display: block !important; 
+  }
+  .community article.pricing section.pricing table thead th.plan h1 {
+    font-size: 15px;
+  }
+  .community article.pricing section.pricing table tbody td.key,
+  .community article.pricing section.pricing table tbody td.value,
+  .community article.pricing section.pricing table thead th.plan p.description,
+  .community article.pricing section.pricing table thead th.plan p.price-details,
+  .community article.pricing section.pricing table thead th.plan h2.price.free,
+  .community article.pricing section.pricing table thead th.plan h2,
+  .community article.pricing section.pricing table thead th.plan h3 {
+    font-size: inherit; 
+  }
+  .community article.pricing section.pricing table tbody tr:nth-child(odd) td:last-child,
+  .community article.pricing section.pricing table tbody tr:nth-child(even) td:last-child,
+  .community article.pricing section.pricing table thead tr th:last-child {
+      border-left: 1px solid #fff;
+  }
+  .action-call > div {
+    padding: 10px;
   }
 }

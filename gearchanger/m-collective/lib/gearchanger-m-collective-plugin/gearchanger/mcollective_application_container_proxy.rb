@@ -268,6 +268,10 @@ module GearChanger
         rpc_get_fact_direct('ipaddress')
       end
       
+      def get_public_ip_address
+        rpc_get_fact_direct('public_ip')
+      end
+      
       def get_node_profile
         rpc_get_fact_direct('node_profile')
       end
