@@ -27,8 +27,8 @@ EOF
 cat > /etc/yum.repos.d/li.repo <<EOF
 [li]
 name=Li repo for Enterprise Linux 6 - $basearch
-baseurl=https://mirror1.stg.rhcloud.com/libra/libra-rhel-6.2-${1-candidate}/\$basearch/
-        https://mirror2.stg.rhcloud.com/libra/libra-rhel-6.2-${1-candidate}/\$basearch/
+baseurl=https://mirror1.stg.rhcloud.com/libra/libra-rhel-6.3-${1-candidate}/\$basearch/
+        https://mirror2.stg.rhcloud.com/libra/libra-rhel-6.3-${1-candidate}/\$basearch/
 failovermethod=priority
 enabled=1
 gpgcheck=0
@@ -40,8 +40,8 @@ sslclientkey=/var/lib/yum/client-key.pem
 
 [li-source]
 name=Li repo for Enterprise Linux 6 - $basearch
-baseurl=https://mirror1.stg.rhcloud.com/libra/libra-rhel-6.2-${1-candidate}/source/SRPMS/
-        https://mirror2.stg.rhcloud.com/libra/libra-rhel-6.2-${1-candidate}/source/SRPMS/
+baseurl=https://mirror1.stg.rhcloud.com/libra/libra-rhel-6.3-${1-candidate}/source/SRPMS/
+        https://mirror2.stg.rhcloud.com/libra/libra-rhel-6.3-${1-candidate}/source/SRPMS/
 failovermethod=priority
 enabled=0
 gpgkey=https://mirror1.stg.rhcloud.com/libra/RPM-GPG-KEY-redhat-beta

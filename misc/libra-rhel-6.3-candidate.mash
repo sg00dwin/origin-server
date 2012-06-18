@@ -1,0 +1,11 @@
+# mash config file
+
+[libra-rhel-6.3-candidate]
+rpm_path = %(arch)s/Packages
+repodata_path = %(arch)s/
+source_path = source/SRPMS
+debuginfo = True
+tag = libra-rhel-6.3-candidate
+inherit = True
+strict_keys = false
+arches = x86_64

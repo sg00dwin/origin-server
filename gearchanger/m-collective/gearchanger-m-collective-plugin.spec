@@ -5,7 +5,7 @@
 
 Summary:        GearChanger plugin for m-colective service
 Name:           rubygem-%{gemname}
-Version: 0.11.8
+Version: 0.11.9
 Release:        1%{?dist}
 Group:          Development/Languages
 License:        ASL 2.0
@@ -70,6 +70,11 @@ rm -rf %{buildroot}
 %{ruby_sitelib}/%{gemname}.rb
 
 %changelog
+* Mon Jun 18 2012 Adam Miller <admiller@redhat.com> 0.11.9-1
+- created method in mcollective to fetch public ip of the node on which the
+  application gear lives (abhgupta@redhat.com)
+- fix for bug#827635 and bug#833019 (rchopra@redhat.com)
+
 * Fri Jun 15 2012 Dan McPherson <dmcphers@redhat.com> 0.11.8-1
 - Fix for bug 832393 (abhgupta@redhat.com)
 

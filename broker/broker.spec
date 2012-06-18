@@ -3,7 +3,7 @@
 
 Summary:   Li broker components
 Name:      rhc-broker
-Version: 0.94.13
+Version: 0.94.14
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -109,6 +109,18 @@ rm -rf $RPM_BUILD_ROOT
 /bin/touch %{_localstatedir}/log/stickshift/user_action.log
 
 %changelog
+* Mon Jun 18 2012 Adam Miller <admiller@redhat.com> 0.94.14-1
+- Updating gem versions (admiller@redhat.com)
+- Billing: Remove MegaShift plan in production.rb for safety
+  (rpenta@redhat.com)
+- Merge branch 'master' of git1.ops.rhcloud.com:/srv/git/li (rpenta@redhat.com)
+- Billing: minor fix (rpenta@redhat.com)
+- Billing: return supplemental field 'RHLogin' as userid (rpenta@redhat.com)
+- Billing: Unit tests for billing events (rpenta@redhat.com)
+- Billing: Added more aria api methods + some cleanup (rpenta@redhat.com)
+- Billing config: Added supplemental plan + name change: plan_id to id
+  (rpenta@redhat.com)
+
 * Fri Jun 15 2012 Dan McPherson <dmcphers@redhat.com> 0.94.13-1
 - Updating gem versions (dmcphers@redhat.com)
 

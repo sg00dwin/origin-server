@@ -171,4 +171,8 @@ client_result "   PhpMoAdmin Password: $OPENSHIFT_PHPMOADMIN_PASSWORD"
 client_result ""
 client_result "URL: https://$OPENSHIFT_GEAR_DNS/phpmoadmin/"
 
+cart_props "connection_url=https://$OPENSHIFT_GEAR_DNS/phpmoadmin/"
+cart_props "username=$OPENSHIFT_PHPMOADMIN_USERNAME"
+cart_props "password=$OPENSHIFT_PHPMOADMIN_PASSWORD"
+
 set_app_info "URL: https://$OPENSHIFT_GEAR_DNS/phpmoadmin/"
