@@ -392,29 +392,23 @@ module Streamline
 
           res = new_http.start {|http| http.request(req)}
 
+          payload[:code] = res.code
+          json = parse_body(res.body) if res.body && !res.body.empty?
+          payload[:response] = json.inspect
+          parse_ticket(res.get_fields('Set-Cookie'))
+
           case res
           when Net::HTTPSuccess, Net::HTTPRedirection
-            payload[:code] = res.code
-
-            # Set the rh_sso cookie as the ticket
-            parse_ticket(res.get_fields('Set-Cookie'))
-
-            # Parse and yield the body if a block is supplied
-            if res.body and !res.body.empty?
-              json = parse_body(res.body)
-              payload[:response] = json.inspect
-              yield json if block_given?
-            else
-              payload[:response] = '<empty>'
+            unless json
               if raise_exception_on_error
-                raise Streamline::StreamlineException
+                raise Streamline::StreamlineException, "No JSON in response"
               else
                 errors.add(:base, I18n.t(:unknown))
               end
             end
+            yield json if block_given?
           when Net::HTTPForbidden, Net::HTTPUnauthorized
-            #Rails.logger.error "  Streamline rejected the request - #{res.code}"
-            #Rails.logger.error "  Response body:\n#{res.body}"
+            raise Streamline::StreamlineException, "Server error" if json && json['errors'] && json['errors'].include?('service_error')
             raise AccessDeniedException, "Streamline rejected the request (#{res.code})\n#{res.body}"
           else
             Rails.logger.error "Streamline returned an unexpected response"
@@ -432,7 +426,7 @@ module Streamline
       rescue Exception => e
         Rails.logger.error "Exception occurred while calling streamline - #{e}\n  #{e.backtrace.join("\n  ")}"
         if raise_exception_on_error
-          raise Streamline::StreamlineException
+          raise Streamline::StreamlineException#, "Unable to communicate with streamline: #{$!}", $!.backtrace
         else
           errors.add(:base, I18n.t(:unknown))
         end

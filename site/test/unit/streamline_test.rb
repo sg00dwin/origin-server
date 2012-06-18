@@ -143,6 +143,28 @@ class StreamlineTest < ActiveSupport::TestCase
     }
   end
 
+  test "http call with 401 and service errors" do
+    res = Net::HTTPUnauthorized.new('', '401', '')
+    res.expects(:body).at_least_once.returns("{errors:['service_error']}")
+    Net::HTTP.any_instance.expects(:start).returns(res)
+
+    assert_raise(Streamline::StreamlineException) {
+      @streamline.http_post(@url)
+    }
+    assert @streamline.errors[:base].all?{ |s| s =~ (/system error has occurred./) }
+  end
+
+  test "http call with 401 and empty body" do
+    res = Net::HTTPUnauthorized.new('', '401', '')
+    res.expects(:body).at_least_once.returns("")
+    Net::HTTP.any_instance.expects(:start).returns(res)
+
+    assert_raise(AccessDeniedException) {
+      @streamline.http_post(@url)
+    }
+    assert @streamline.errors[:base].all?{ |s| s =~ (/system error has occurred./) }
+  end
+
   test "http call with bad body" do
     res = Net::HTTPSuccess.new('', '200', '')
     res.expects(:body).at_least_once.returns("{corrupt??#")
