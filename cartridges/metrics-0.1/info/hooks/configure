@@ -115,4 +115,6 @@ client_result "metrics 0.1 added."
 client_result ""
 client_result "URL: https://$OPENSHIFT_GEAR_DNS/metrics/"
 
+cart_props "connection_url=https://$OPENSHIFT_GEAR_DNS/metrics/"
+
 set_app_info "URL: https://$OPENSHIFT_GEAR_DNS/metrics/"
