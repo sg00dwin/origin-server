@@ -20,7 +20,7 @@ module Express
 
       def enable_broker(event_params)
         id_list = event_params[:event_id]
-        user = CloudUser.find(event_params[:rhlogin])
+        user = CloudUser.find_by_uuid("CloudUser", event_params[:userid])
         plan_name = event_params[:plan_name] || "FreeShift"
         if plan_name == "FreeShift"
           limits = @plans[:FreeShift]
@@ -33,7 +33,9 @@ module Express
           case event_id
             when "101"
               if user.nil?
-                user = CloudUser.new(event_params[:rhlogin])
+                Rails.logger.error("User not found : #{event_params[:userid]} on receiving event id '#{event_id}'")
+                break
+                user = CloudUser.new(event_params[:userid])
               end
               user.max_gears = limits[:max_gears]
               user.vip = limits[:vip]

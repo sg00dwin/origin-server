@@ -63,8 +63,17 @@ require "/var/www/stickshift/broker/config/environment"
 
 def usage_time(billing_api, acct_no, usage_record, begin_time, end_time)
   if usage_record.sync_time
-    billing_api.get_usage_history(acct_no, billing_api.usage_type[usage_record.gear_size.to_sym], (usage_record.sync_time - 1).strftime("%Y-%m-%d"), date_range_end=Time.now.strftime("%Y-%m-%d"))
-    if false # TODO aria_already_has_records?(usage_record.uuid, usage_record.sync_time)
+    found = false
+    usages = billing_api.get_usage_history(acct_no, billing_api.usage_type[usage_record.gear_size.to_sym])
+    usages.each do |usage|
+      gear_uuid = usage["qualifier_1"]
+      sync_time = usage["qualifier_2"]
+      if usage_record.sync_time.to_i == sync_time.to_i && usage_record.gear_uuid == gear_uuid
+        found = true
+        break
+      end
+    end
+    if found
       puts "WARNING: Usage data has already been sent to billing vendor but not removed from datastore usage.  Resetting begin_time to previous sync_time."
       begin_time = usage_record.sync_time
     else
@@ -81,7 +90,7 @@ def get_billing_user_acct_no(billing_api, user)
     # Temporary code until users are created up front
     acct_no = billing_api.create_fake_user(user.uuid)
   else
-    acct_no = billing_api.get_acct_no_from_userid(user.uuid)
+    acct_no = billing_api.get_acct_no_from_user_id(user.uuid)
   end
   acct_no
 end
@@ -99,7 +108,7 @@ else
           users = [user]
         else
           puts "User not found: #{rhlogin}"
-          exit 1  
+          exit 1
         end
       else
         users = CloudUser.find_all(nil)
@@ -148,7 +157,7 @@ else
               usage = nil
               begin_time = nil
               end_time = nil
-              now = Time.new
+              now = Time.now.utc
               usage_records_for_gear.each do |usage_record|
                 if usage_record.event == UsageRecord::EVENTS[:end]
                   end_time = usage_record.time
@@ -159,21 +168,22 @@ else
               end_time = now unless end_time
     
               usage_record = usage_records_for_gear.first
-              usage_time = usage_time(billing_api, acct_no, usage_record, begin_time, end_time)
+              ut = usage_time(billing_api, billing_acct_no, usage_record, begin_time, end_time)
               puts "Saving sync_time before sending usage data to billing vendor."
               usage_record.sync_time = now
               usage_record.save
-              puts "Sending usage data (#{usage_time}h) to billing vendor."
+              puts "Sending usage data (#{ut}h) to billing vendor."
               # Send data to billing vendor
               success = false
               2.times do
-                if billing_api.record_usage(user.uuid, nil, billing_api.usage_type[usage_record.gear_size.to_sym], usage_time)
+                if billing_api.record_usage(gear_uuid, usage_record.sync_time, user.uuid, nil, billing_api.usage_type[usage_record.gear_size.to_sym], ut)
                   success = true
                   break
                 else
                   sleep 1
                 end
               end
+              #TODO 
               if success
                 puts "Billing vendor returned success."
                 if usage_records_for_gear.length == 2 && usage_records_for_gear.last.event == UsageRecord::EVENTS[:end]
@@ -197,7 +207,7 @@ else
               puts "Collecting usage for gear: #{gear_uuid}"
               begin_time = nil
               end_time = nil
-              now = Time.new
+              now = Time.now.utc
               usage_records_for_gear.each do |usage_record|
                 if usage_record.event == UsageRecord::EVENTS[:end]
                   end_time = usage_record.time
@@ -211,8 +221,8 @@ else
                 puts "Usage record continued."
                 end_time = now
               end
-              usage_time = usage_time(billing_api, acct_no, usage_records_for_gear.first, begin_time, end_time)
-              puts "Usage to send to billing vendor: #{usage_time}h"
+              ut = usage_time(billing_api, billing_acct_no, usage_records_for_gear.first, begin_time, end_time)
+              puts "Usage to send to billing vendor: #{ut}h"
             end
           end
         else

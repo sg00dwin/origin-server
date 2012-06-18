@@ -117,11 +117,13 @@ Broker::Application.configure do
       :plans => {
         :FreeShift => {
           :max_gears => 3,
-          :vip => false
+          :vip => false,
+          :plan_id => 10044929
         },
         :MegaShift => {
           :max_gears => 16,
-          :vip => true
+          :vip => true,
+          :plan_id => 10044931
         }
       }
     }

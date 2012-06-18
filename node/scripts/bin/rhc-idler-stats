@@ -2,6 +2,7 @@
 
 from datetime import datetime
 from subprocess import Popen, PIPE
+from collections import defaultdict
 
 import optparse
 import os
@@ -32,7 +33,7 @@ def get_options():
 def proclist():
     ''' fetches a process list and their uids '''
     # returns lines of "uid cmd"
-    ret, out = run('/bin/ps axwo uid,args')
+    ret, out = run('/bin/ps axwo uid=,args=')
     arr = []
     for line in out:
         if line.strip() == '':
@@ -58,16 +59,15 @@ def is_idled(appid):
 
     return (appid in all_idled_apps)
 
+dict_uid_count=None
 def num_procs_with_uid(uid, proclist, opts):
     ''' return count of the number of apache or java processes associated with a given uid. '''
-    apache_re = re.compile("^(/usr/sbin/httpd).*(OPENSHIFT)")
-    java_re = re.compile("((bin/)?java).*(-server|-jar|daemonize)")
-
-    count = 0
-    for pdict in proclist:
-        if uid == pdict['uid']:
-            count += 1
-    return count
+    global dict_uid_count
+    if dict_uid_count == None:
+        dict_uid_count = defaultdict(int)
+        for d in proclist:
+          dict_uid_count[d['uid']] += 1
+    return dict_uid_count[uid]
 
 def user_list():
     ''' fetches a list of usernames and their uids '''

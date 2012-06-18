@@ -694,8 +694,13 @@ if (!empty($clean_name) && !empty($company)) {
     ),
   ));
   $handler->override_option('arguments', array());
+  $handler->override_option('cache', array(
+    'type' => 'time',
+    'results_lifespan' => '300',
+    'output_lifespan' => '300',
+  ));
   $handler->override_option('block_description', '');
-  $handler->override_option('block_caching', -1);
+  $handler->override_option('block_caching', '2');
   $handler = $view->new_display('block', 'Comment Profile Box', 'block_2');
   $handler->override_option('fields', array(
     'uid' => array(
@@ -1120,7 +1125,7 @@ if (!empty($clean_name) && !empty($company)) {
   ));
   $handler->override_option('filters', array());
   $handler->override_option('block_description', '');
-  $handler->override_option('block_caching', '2');
+  $handler->override_option('block_caching', '8');
   $handler = $view->new_display('block', 'Thread Author Badge', 'block_3');
   $handler->override_option('fields', array(
     'badge' => array(
@@ -1240,7 +1245,7 @@ switch ($data->user_badges_badges_name){
   ));
   $handler->override_option('filters', array());
   $handler->override_option('block_description', '');
-  $handler->override_option('block_caching', -1);
+  $handler->override_option('block_caching', '8');
 
   $views[$view->name] = $view;
 

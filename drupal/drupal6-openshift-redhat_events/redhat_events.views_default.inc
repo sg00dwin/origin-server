@@ -1270,6 +1270,11 @@ function redhat_events_views_default_views() {
       ),
     ),
   ));
+  $handler->override_option('cache', array(
+    'type' => 'time',
+    'results_lifespan' => '3600',
+    'output_lifespan' => '3600',
+  ));
   $handler->override_option('items_per_page', 5);
   $handler->override_option('style_plugin', 'table');
   $handler->override_option('style_options', array(
@@ -1323,7 +1328,7 @@ function redhat_events_views_default_views() {
     'hide_empty' => 0,
   ));
   $handler->override_option('block_description', '');
-  $handler->override_option('block_caching', -1);
+  $handler->override_option('block_caching', '8');
 
   $views[$view->name] = $view;
 

@@ -5,7 +5,7 @@
 
 Summary:        GearChanger plugin for m-colective service
 Name:           rubygem-%{gemname}
-Version: 0.11.5
+Version: 0.11.8
 Release:        1%{?dist}
 Group:          Development/Languages
 License:        ASL 2.0
@@ -70,6 +70,22 @@ rm -rf %{buildroot}
 %{ruby_sitelib}/%{gemname}.rb
 
 %changelog
+* Fri Jun 15 2012 Dan McPherson <dmcphers@redhat.com> 0.11.8-1
+- Fix for bug 832393 (abhgupta@redhat.com)
+
+* Fri Jun 15 2012 Adam Miller <admiller@redhat.com> 0.11.7-1
+- missed a save (dmcphers@redhat.com)
+- Bug 831884 (dmcphers@redhat.com)
+
+* Thu Jun 14 2012 Adam Miller <admiller@redhat.com> 0.11.6-1
+- Bug fixes for 812046 and 820651 (abhgupta@redhat.com)
+- Adding capabilities to cloud_user when it is created changes to admin script
+  to manage sub accounts and capabilities changes to Mcollective application
+  container proxy to include gear_sizes specified using capabilities for a user
+  Cloud 9 config added to development environment Added c9 gear profile to
+  district admin script changes to rhc-admil-ctl-user to validate input gear
+  size
+
 * Mon Jun 11 2012 Adam Miller <admiller@redhat.com> 0.11.5-1
 - fix for bug#830480 (rchopra@redhat.com)
 

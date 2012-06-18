@@ -31,7 +31,7 @@ function _redhat_sso_redirect() {
  * Implementation of hook_init().
  */
 function redhat_sso_init() {
-  variable_set('site_403', 'user/denied');
+  #variable_set('site_403', 'user/denied'); flushes variable cache, big no no
   if (_redhat_sso_is_sso_enabled()) {
      _redhat_sso_login_check();  
   }

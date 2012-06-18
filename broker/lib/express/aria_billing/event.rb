@@ -5,17 +5,17 @@ module Express
       EVENTS = {
         "101" => "Account created",
         "102" => "Account administrative contact modified",
+        "105" => "Account Status Changed",
         "107" => "Account master service plan modified",
         "110" => "Account supplemental service plan assigned",
         "112" => "Account supplemental service plan de-assigned",
         "114" => "Account supplemental service plan modified",
         "118" => "Account supplemental field value added event",
         "119" => "Account supplemental field value modified",
-        "120" => "Account supplemental field value deleted",
-        "341" => "Account Invoice fully paid",
-        "501" => "Account's unbilled usage value has crossed over client-defined MTD threshold value",
-        "503" => "Account's unbilled usage value has crossed over client-defined PTD threshold value"
+        "120" => "Account supplemental field value deleted"
       }
+      OPS_ORDER_TEAM_EMAIL='OpenShift-Orders@redhat.com'
+      OPS_PEOPLE_TEAM_EMAIL='customerdata-na@redhat.com'
 
       def self.get_header
         data = <<MSG
@@ -43,8 +43,8 @@ MSG
 Account Data
 -----------------------------------
 Client Number: #{h['client_no']}
-Aria Account Number: #{h['acct_no']} 
 Aria PO#: #{h['transaction_id']}
+RHN Login: #{h['userid']}
 MSG
       end
 
@@ -52,6 +52,7 @@ MSG
         data = <<MSG
 Sku: #{h['plan_name']}
 Qty: #{h['plan_units']}
+Status Code: #{h['status_cd']}
 Promo Code: #{h['promo_code']}
 MSG
       end
@@ -90,6 +91,7 @@ MSG
             supp_plans += "Supp Plan #{i+1} Number: #{h['supp_plan_no'][i]}\n"
             supp_plans += "Supp Plan #{i+1} Activation Date: #{h['supp_plan_activation_date'][i]}\n"
             supp_plans += "Supp Plan #{i+1} Units: #{h['supp_plan_units'][i]}\n"
+            supp_plans += "Supp Plan #{i+1} Termination Date: #{h['supp_plan_termination_date'][i]}\n"
           end 
         rescue
           # Ignore
@@ -118,20 +120,17 @@ Supplemental Fields
 MSG
       end
 
-      def self.get_account_contracts(h)
-        data = <<MSG
-Account Contracts
------------------------------------
-MSG
-      end
-
       def self.handle_event(h)
+        email_to = OPS_ORDER_TEAM_EMAIL
         h['event_id'].each do |ev|
           case ev.to_i
           when 101
             body = acct_create(h)
           when 102
             body = acct_contact(h)
+            email_to = OPS_PEOPLE_TEAM_EMAIL
+          when 105
+            body = acct_status(h)
           when 107
             body = acct_plans(h)
           when 110, 112, 114
@@ -142,7 +141,7 @@ MSG
             raise Exception.new "Invalid Event, id: #{ev}"
           end
           body.gsub!(/\n/, "<br/>")
-          Express::AriaBilling::Notification.report_event(ev, body) 
+          Express::AriaBilling::Notification.report_event(ev, body, email_to) 
         end
       end
      
@@ -151,9 +150,9 @@ MSG
 <html><body>#{get_header}
 <b>#{get_account_data(h)}
 #{get_detail_account_data(h)}
+#{get_supplemental_plans(h)}
 #{get_account_contact(h)}
 #{get_billing_data(h)}
-#{get_supplemental_plans(h)}
 #{get_supplemental_fields(h)}</b>
 #{get_events(h)}
 </body></html>
@@ -165,6 +164,20 @@ MSG
 <html><body>#{get_header}
 #{get_account_data(h)}
 <b>#{get_account_contact(h)}</b>
+#{get_events(h)}
+</body></html>
+MSG
+      end
+     
+      def self.acct_status(h)
+        body = <<MSG
+<html><body>#{get_header}
+#{get_account_data(h)}
+<b>#{get_detail_account_data(h)}</b>
+#{get_supplemental_plans(h)}
+#{get_account_contact(h)}
+#{get_billing_data(h)}
+#{get_supplemental_fields(h)}
 #{get_events(h)}
 </body></html>
 MSG
@@ -189,7 +202,7 @@ MSG
 </body></html>
 MSG
       end
-     
+
       def self.acct_supp_fields(h)
         body = <<MSG
 <html><body>#{get_header}

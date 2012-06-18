@@ -70,7 +70,7 @@ class Usage < StickShift::Model
       res[e.gear_size]['num_gears'] += 1
       res[e.gear_size]['consumed_time'] = 0 unless res[e.gear_size]['consumed_time']
       unless e.end_time
-        res[e.gear_size]['consumed_time'] += Time.now - e.begin_time
+        res[e.gear_size]['consumed_time'] += Time.now.utc - e.begin_time
       else
         res[e.gear_size]['consumed_time'] += e.end_time - e.begin_time
       end

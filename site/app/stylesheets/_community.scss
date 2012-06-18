@@ -42,7 +42,7 @@
   margin-bottom: 10px; 
 }
 
-.block { @include clearfix(); margin-bottom: 20px; }
+.block { margin-bottom: 25px; }
 .column-nav {
   .view-user-profile-box { margin-bottom: 20px; }
 }
@@ -226,15 +226,19 @@
 	}	
 }
 
-.column-nav .poll {
-  > .title {
+.column-nav {
+  .views-row {
     margin-bottom: 5px;
-    color: #fff;
   }
-  > .text {
-    margin-bottom: 2px;
+  .poll {
+    > .title {
+      margin-bottom: 5px;
+      color: #fff;
+    }
+    > .text {
+      margin-bottom: 2px;
+    }
   }
-
 }
 
 .kb-toggle {

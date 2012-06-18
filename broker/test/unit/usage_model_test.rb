@@ -125,7 +125,7 @@ class UsageModelTest < ActiveSupport::TestCase
 
   def usage
     uuid = "usage#{gen_uuid}"
-    obj = Usage.new("user#{gen_uuid}", "gear#{gen_uuid}", 'small', Time.now, nil, uuid)
+    obj = Usage.new("user#{gen_uuid}", "gear#{gen_uuid}", 'small', Time.now.utc, nil, uuid)
     obj._id = uuid
     obj.updated_at = nil
     obj

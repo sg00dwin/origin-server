@@ -3,7 +3,7 @@
 
 Summary:   Li site components
 Name:      rhc-site
-Version: 0.94.11
+Version: 0.94.13
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -121,6 +121,42 @@ rm -rf %{buildroot}
 /bin/touch %{sitedir}/log/production.log
 
 %changelog
+* Fri Jun 15 2012 Adam Miller <admiller@redhat.com> 0.94.13-1
+- Bug 832290 - Publish remote access page (ccoleman@redhat.com)
+- Bug 827531 - Link to add cart page from getting started (ccoleman@redhat.com)
+
+* Thu Jun 14 2012 Adam Miller <admiller@redhat.com> 0.94.12-1
+- Add caching to drupal views and blocks for better performance.  Remove
+  unnecessary sections from UI (ccoleman@redhat.com)
+- Improved gears background images (ffranz@redhat.com)
+- Merge branch 'master' of git1.ops.rhcloud.com:/srv/git/li (ffranz@redhat.com)
+- Pricing page styles and images (ffranz@redhat.com)
+- Add unit tests for and gracefully handle when cartridges are added without
+  metadata Speed up application and cartridge tests by reusing existing apps
+  (ccoleman@redhat.com)
+- updated URL of pricing page for custom tracking variable
+  (spurtell@redhat.com)
+- fix typos (sgoodwin@redhat.com)
+- Merge branch 'master' of git1.ops.rhcloud.com:/srv/git/li (ffranz@redhat.com)
+- More pricing page styling, gears background images (ffranz@redhat.com)
+- Show only a single error message when hit gear limit on creation.
+  (ccoleman@redhat.com)
+- Clean up cartridge layout at low resolutions (ccoleman@redhat.com)
+- Minor pricing page style adjustments (ffranz@redhat.com)
+- add test to make sure JBoss EAP comes befor JBoss AS (johnp@redhat.com)
+- make sure JBoss EAP comes before JBoss AS (johnp@redhat.com)
+- Added FAQ section content, styling (ffranz@redhat.com)
+- New separated file for pricing styles (ffranz@redhat.com)
+- remove space before parens in function call (johnp@redhat.com)
+- functional tests for sshkey cache (johnp@redhat.com)
+- make ssh urls and git show up only if the user has added their ssh key
+  (johnp@redhat.com)
+- add ssh_key caching (johnp@redhat.com)
+- add ssh url to application overview (johnp@redhat.com)
+- Merge branch 'master' of git:/srv/git/li (sgoodwin@redhat.com)
+- mobile ui tuning (sgoodwin@redhat.com)
+- Styling for the pricing page (ffranz@redhat.com)
+
 * Wed Jun 13 2012 Adam Miller <admiller@redhat.com> 0.94.11-1
 - add text to getting started application page for JBoss Dev Studio
   (johnp@redhat.com)

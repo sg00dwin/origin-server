@@ -37,19 +37,22 @@ def destroy_app(app)
 end
 
 
-def create_scaled_app_via_rest_api(app, ngears)
+def create_and_scale_app(app, ngears)
   # Replace when the REST API libraries are complete
   outf = "/tmp/rhc/json_response_#{app.name}_#{app.namespace}.json"
   hdrs = "-H 'Accept: application/json' --user '#{app.login}:fakepw' -X POST"
   app_ns_uri = "https://localhost/broker/rest/domains/#{app.namespace}"
   cr_uri = "#{app_ns_uri}/applications"
-  cr_params = "-d name=#{app.name} -d cartridge=#{app.type} -d scale=true"
+  cr_params = "-d name=#{app.name} -d cartridge=#{app.type}"
+  if ngears > 1
+    cr_params << " -d scale=true"
+  end
 
   command = "curl -k -s -o #{outf} -k #{hdrs} #{cr_uri} #{cr_params}"
-  $logger.debug("Creating scaled #{app.type} app - #{command}")
+  $logger.debug("Creating #{app.type} app - #{command}")
   app.create_app_code = runcon command, 'unconfined_u', 'unconfined_r', 'unconfined_t'
   if app.create_app_code != 0
-    raise "Could not create scaled app.  Exit code: #{app.create_app_code}.  Json debug: /tmp/rhc/json_response_#{app.name}_#{app.namespace}.json"
+    raise "Could not create app.  Exit code: #{app.create_app_code}.  Json debug: /tmp/rhc/json_response_#{app.name}_#{app.namespace}.json"
   end
 
   while ngears > 1 do
@@ -71,18 +74,13 @@ def create_scaled_app_via_rest_api(app, ngears)
 end
 
 
-def benchmark_app_creation(type, tag, zapps, repeat_n=1, scaled=false, ngears=1)
+def benchmark_app_creation(type, tag, zapps, repeat_n=1, ngears=1)
   measures = StatMeasures.new(type, tag, ngears)
-  app_options = '--no-dns --nogit'
   nfailed = 0
   idx = 0
   endidx = repeat_n * zapps.length
 
-  if scaled
-    $logger.debug("Benchmarking scaled app creation [#{type} #{tag}] ...")
-  else
-    $logger.debug("Benchmarking app creation [#{type} #{tag}] ...")
-  end
+  $logger.debug("Benchmarking app creation [#{type} #{tag} #{ngears}] ...")
 
   repeat_n.times do
     zapps.each do |app|
@@ -93,11 +91,7 @@ def benchmark_app_creation(type, tag, zapps, repeat_n=1, scaled=false, ngears=1)
         # Benchmark 'elapsed' times for app creation.
         idx += 1
         elapsed = Benchmark.realtime do
-          if scaled
-             app = create_scaled_app_via_rest_api(app, ngears)
-          else
-             app = rhc_create_app(app, true, app_options)
-          end
+          app = create_and_scale_app(app, ngears)
         end
 
         nfailed += 1  if app.create_app_code != 0
@@ -145,22 +139,13 @@ Then /^benchmark creating (.+) applications (\d+) times$/ do |type, n|
   end
 end
 
-Then /^benchmark creating (.+) applications monotonically with (\d+) samples$/ do |type, n|
-  ztag = "Monotonically Creating Applications"
-  nfail, @zapps = create_user_and_domains(type, n.to_i)
-  $logger.warn("#{nfail} failures creating users/domains!") if nfail > 0
-
-  nfail = benchmark_app_creation(type, ztag, @zapps)
-  $logger.warn("#{nfail} failures creating applications!") if nfail > 0
-end
-
 Then /^benchmark creating scaled (.+) applications with (\d+) gears (\d+) times/ do |type, gears, n|
   ztag = "Scaled Application Creation"
   nfail, @zapps = create_user_and_domains(type, 1, 20)
   if nfail > 0
     $logger.error("Failure creating user/domain")
   else
-    nfail = benchmark_app_creation(type, ztag, @zapps, n.to_i, true, gears.to_i)
+    nfail = benchmark_app_creation(type, ztag, @zapps, n.to_i, gears.to_i)
     $logger.warn("#{nfail} failures creating scaled applications!") if nfail > 0
   end
 end

@@ -18,11 +18,9 @@
 ?>
 
 <div class="<?php print $class; ?>">
-<?php if (!empty($title)) : ?>
-<?php endif; ?>
 
 <?php foreach ($rows as $count => $row): ?>
-  <div class="video <?php print implode(' ', $row_classes[$count]); ?> view-row">
+  <article class="video <?php print implode(' ', $row_classes[$count]); ?> view-row">
   <?php foreach ($row as $field_name => $value): ?>
     <?php if ($field_name == 'field_video_youku_duration'): ?>
       <?php
@@ -35,10 +33,15 @@
         <div class="<?php print $field_name; ?>"><?php print $seconds .' seconds'; ?></div><?php
       endif;
       ?>
+    <?php elseif ($field_name == 'created'): ?>
+      <div class="breadcrumb"><?php print $value; ?></div>
+    <?php elseif ($field_name == 'title'): ?>
+      <h2 class="<?php print $field_name; ?>"><?php print $value; ?></h2>
     <?php else: ?>
       <div class="<?php print $field_name; ?>"><?php print $value; ?></div>
     <?php endif; ?>
   <?php endforeach; ?>
-  </div>
+    <div></div>
+  </article>
 <?php endforeach; ?>
 </div>

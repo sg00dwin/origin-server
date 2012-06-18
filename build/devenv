@@ -766,7 +766,7 @@ mkdir -p /tmp/rhc/junit
         end
       else
         print "Updating all packages on the system..."
-        output = ssh(hostname, "yum clean metadata; yum update -y --exclude='rhc-devenv'; set -e; yum update -y --exclude='rhc-devenv' --disablerepo=\\* --enablerepo=li --enable-repo=ruby193", 600)
+        output = ssh(hostname, "yum clean metadata; yum update -y --exclude='rhc-devenv'; set -e; yum update -y --exclude='rhc-devenv' --disablerepo=\\* --enablerepo=li --enablerepo=ruby193", 600)
         puts "Done"
 
         puts "------------------ Update Output ------------------------"

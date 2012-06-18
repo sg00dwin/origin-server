@@ -10,7 +10,11 @@ class UserStory
   end
 
   def check_tags(target)
-    tags.map{|x| x.to_s }.include?(target)
+    if tags.nil?
+      false
+    else
+      tags.map{|x| x.to_s }.include?(target)
+    end
   end
 
   def check_notes(regex)
