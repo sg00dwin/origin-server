@@ -571,12 +571,12 @@ module GearChanger
         # resolve destination_container according to district
         destination_container, destination_district_uuid, keep_uid = resolve_destination(app, gear, destination_container, destination_district_uuid, allow_change_district)
 
+        source_container = gear.container
         destination_node_profile = destination_container.get_node_profile
         if app.scalable and source_container.get_node_profile != destination_node_profile
           puts "Cannot change node_profile for a gear belonging to a scalable application. The destination container's node profile is #{destination_node_profile}, while the gear's node_profile is #{gear.node_profile}"
         end
 
-        source_container = gear.container
         # get the state of all cartridges
         quota_blocks = nil
         quota_files = nil
@@ -732,7 +732,7 @@ module GearChanger
             cart = cinst.parent_cart_name
             next if cart==app.name
             begin
-              if framework_carts.include? cart
+              if framework_carts.include? cart or app.scalable
                 reply.append source_container.run_cartridge_command(cart, app, gear, "deconfigure", nil, false)
               end
             rescue Exception => e
