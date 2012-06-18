@@ -141,12 +141,12 @@ Broker::Application.configure do
           :max_gears => 3,
           :vip => false,
           :id => 10044929
-        },
-        :MegaShift => {
-          :max_gears => 16,
-          :vip => true,
-          :id => 10044931
         }
+#        :MegaShift => {
+#          :max_gears => 16,
+#          :vip => true,
+#          :id => 10044931
+#        }
       },
       :supp_plans => {
         :MegaShiftStorage => {
