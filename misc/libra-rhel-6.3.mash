@@ -1,0 +1,20 @@
+# mash config file
+
+[libra-rhel-6.3]
+rpm_path = %(arch)s/Packages
+repodata_path = %(arch)s/
+source_path = source/SRPMS
+debuginfo = True
+#multilib = True
+#multilib_method = devel
+tag = libra-rhel-6.3
+inherit = True
+strict_keys = True
+#keys = 97A1071F, E8E40FDE, 57BBCCBA, D22E77F2, 4EBFC273, 0B86274E, 6DF2196F, DF9B0AE9
+keys = F21541EB, FD431D51
+#repoviewurl = http://download.fedoraproject.org/pub/fedora/linux/development/14/%(arch)s/os/
+#repoviewtitle = "Fedora Branched - %(arch)s"
+arches = i386 x86_64
+#delta = True
+# Change distro_tags as fedora-release version gets bumped
+#distro_tags = cpe:/o:fedoraproject:fedora:14 rawhide
