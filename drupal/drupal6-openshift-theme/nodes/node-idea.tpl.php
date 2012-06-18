@@ -43,10 +43,6 @@ $do = og_comment_perms_do();
     <?php else: print $content ?>
     <?php endif; ?>
   </div>
-  <?php if ($do->perm == 'post'): ?>
-  
-  <div class="new-post-button"><a class="btn" href="#comment-form-title">Reply to Idea</a></div>
-  <?php endif; ?>
   
   
   <?php print $links; ?>
