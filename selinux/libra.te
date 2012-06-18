@@ -1,4 +1,4 @@
-policy_module(libra,1.1.28)
+policy_module(libra,1.1.29)
 # Requires selinux-policy-3.7.19-153.el6
 
 ########################################
@@ -484,6 +484,8 @@ allow libra_app_domain mta_user_agent:process signal;
 fs_dontaudit_rw_anon_inodefs_files(libra_mail_t)
 
 read_files_pattern(libra_mail_t, libra_var_lib_t, libra_var_lib_t)
+allow libra_mail_t libra_var_lib_t:file rw_inherited_file_perms;
+
 manage_files_pattern(libra_mail_t, libra_tmp_t, libra_tmp_t)
 
 mta_dontaudit_read_spool_symlinks(libra_mail_t)
