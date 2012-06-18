@@ -128,7 +128,7 @@ class Release < Thor
       end
       inside("..") do
         FileUtils.rm_rf "jenkins-plugin-openshift/"
-        exit unless run("rhpkg clone -b libra-rhel-6.2 jenkins-plugin-openshift", :verbose => options.verbose?)
+        exit unless run("rhpkg clone -b libra-rhel-6.3 jenkins-plugin-openshift", :verbose => options.verbose?)
       end
       inside("../jenkins-plugin-openshift/") do
         FileUtils.cp "../jenkins-cloud-plugin/target/openshift.hpi", "./openshift.hpi"
@@ -235,7 +235,7 @@ class Release < Thor
     orig_branches = checkout_branch(options[:stage] || options.stage? ? "stage" : "master")
     begin
       # do RHEL 6.x first
-      rhc_devenv_found = mash_and_rsync "libra-rhel-6.2", false, options
+      rhc_devenv_found = mash_and_rsync "libra-rhel-6.3", false, options
 
       unless options.no_ami?
         create_ami(options, rhc_devenv_found)
@@ -249,8 +249,8 @@ class Release < Thor
   method_option :check, :type => :boolean, :desc => "Don't do anything yet, just show what would be done"
   method_option :include_internal, :type => :boolean, :desc => "Boolean indicating whether to include internal packages"
   def tag_pkgs_stg(after_date)
-    stg_brew_tag = "libra-rhel-6.2-stage"
-    cand_brew_tag = "libra-rhel-6.2-candidate"
+    stg_brew_tag = "libra-rhel-6.3-stage"
+    cand_brew_tag = "libra-rhel-6.3-candidate"
     orig_branches = checkout_branch("master")
     git_pull
 
