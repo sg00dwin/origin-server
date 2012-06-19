@@ -1,6 +1,6 @@
 Summary:       SELinux policy for OpenShift nodes
 Name:          rhc-selinux
-Version: 0.94.3
+Version: 0.94.4
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -46,6 +46,10 @@ rm -rf %{buildroot}
 %attr(0640,-,-) %{_datadir}/selinux/packages/libra.pp
 
 %changelog
+* Tue Jun 19 2012 Adam Miller <admiller@redhat.com> 0.94.4-1
+- Some apps are checking if there is a ~/.ssh in the homedir
+  (dwalsh@redhat.com)
+
 * Mon Jun 18 2012 Adam Miller <admiller@redhat.com> 0.94.3-1
 - Allow libra_mail_t to write/append inherited file descriptors so users could
   do bash directrion of files (dwalsh@redhat.com)

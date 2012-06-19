@@ -253,11 +253,11 @@ module GearChanger
       end
       
       def get_capacity
-        rpc_get_fact_direct('capacity').to_i
+        rpc_get_fact_direct('capacity').to_f
       end
       
       def get_active_capacity
-        rpc_get_fact_direct('active_capacity').to_i
+        rpc_get_fact_direct('active_capacity').to_f
       end
       
       def get_district_uuid
@@ -1179,7 +1179,7 @@ module GearChanger
       def self.rpc_find_available(node_profile=nil, district_uuid=nil, require_specific_district=false, forceRediscovery=false)
         current_server, current_capacity = nil, nil
         additional_filters = [{:fact => "active_capacity",
-                               :value => forceRediscovery ? '100' : '80',
+                               :value => '100',
                                :operator => "<"}]
 
         district_uuid = nil if district_uuid == 'NONE'
@@ -1214,13 +1214,13 @@ module GearChanger
         server_infos = []
         rpc_get_fact('active_capacity', nil, forceRediscovery, additional_filters, rpc_opts) do |server, capacity|
           #Rails.logger.debug "Next server: #{server} active capacity: #{capacity}"
-          server_infos << [server, capacity.to_i]
+          server_infos << [server, capacity.to_f]
         end
 
         if !server_infos.empty?
           # Pick a random node amongst the best choices available
           server_infos = server_infos.sort_by { |server_info| server_info[1] }
-          if forceRediscovery && server_infos.first[1] < 80
+          if server_infos.first[1] < 80
             # If any server is < 80 then only pick from servers with < 80
             server_infos.delete_if { |server_info| server_info[1] >= 80 }
           end
@@ -1238,7 +1238,7 @@ module GearChanger
           # Find the most available nodes and match to their districts.  Take out the almost
           # full nodes if possible and return one of the nodes within a district with a lot of space. 
           additional_filters = [{:fact => "active_capacity",
-                                 :value => forceRediscovery ? '100' : '80',
+                                 :value => '100',
                                  :operator => "<"},
                                 {:fact => "district_active",
                                  :value => true.to_s,
@@ -1262,17 +1262,15 @@ module GearChanger
           rpc_get_fact('active_capacity', nil, forceRediscovery, additional_filters, rpc_opts) do |server, capacity|
             districts.each do |district|
               if district.server_identities.has_key?(server)
-                server_infos << [server, capacity.to_i, district]
+                server_infos << [server, capacity.to_f, district]
                 break
               end
             end
           end
           unless server_infos.empty?
-            if forceRediscovery
-              server_infos = server_infos.sort_by { |server_info| server_info[1] }
-              if server_infos.first[1] < 80
-                server_infos.delete_if { |server_info| server_info[1] >= 80 }
-              end
+            server_infos = server_infos.sort_by { |server_info| server_info[1] }
+            if server_infos.first[1] < 80
+              server_infos.delete_if { |server_info| server_info[1] >= 80 }
             end
             server_infos = server_infos.sort_by { |server_info| server_info[2].available_capacity }
             server_infos = server_infos.first(8)

@@ -4,7 +4,7 @@ require 'wddx'
 module Express
   module AriaBilling
     class Api
-      attr_accessor :ah, :url
+      attr_accessor :ah, :url, :usage_type
 
       def initialize(access_info=nil)
         if access_info != nil
@@ -15,6 +15,7 @@ module Express
           raise Exception.new("Aria Billing Api service is not inilialized")
         end
         @url = access_info[:config][:url]
+        @usage_type = access_info[:usage_type]
         @ah = Express::AriaBilling::ApiHelper.instance(access_info)
       end
 

@@ -1,4 +1,4 @@
-require 'test_helper'
+require 'test_billing_helper'
 
 
 class BillingEnablementTest < ActiveSupport::TestCase
@@ -18,35 +18,33 @@ class BillingEnablementTest < ActiveSupport::TestCase
 
 
       # ensure the user has free account assigned only
-      check_user_enablement(@user, 3, false)
+      check_user_enablement(3, false)
 
       # upgrade master plan
       assert(api.update_master_plan(acct_no, :MegaShift))
 
       # check in mongo about the plan upgraded
-      check_user_enablement(@user, 16, true)
+      check_user_enablement(16, true)
 
       # now restore the user back to FreeShift
       # downgrade master plan
       assert(api.update_master_plan(acct_no, :FreeShift))
       
       # ensure the user has free account assigned only
-      check_user_enablement(@user, 3, false)
+      check_user_enablement(3, false)
     end
   end
 
   def check_user_enablement(target_max_gears, target_vip)
-    current_max_gears = @user.max_gears
-    max_gears = current_max_gears
-    [0..10].each { |i|
-      @user = CloudUser.find(user.login)
-      max_gears = @user.max_gears
-      break unless  max_gears==current_max_gears
-      sleep(4)
-    }
-    assert(target_max_gears, max_gears)
+    user=nil
+    10.times do
+      user = CloudUser.find(@user.login)
+      break if user.max_gears==target_max_gears
+      sleep(6)
+    end
+    assert_equal(target_max_gears, user.max_gears)
     # ensure the user has target_vip status i.e. only small/medium gears allowed
-    assert(target_vip, @user.vip)
+    assert_equal(target_vip, user.vip)
   end
 
   def teardown

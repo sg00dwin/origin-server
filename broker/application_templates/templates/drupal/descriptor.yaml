@@ -1,23 +1,19 @@
 ---
+Architecture: noarch
 Connections:
   mysql-5.1-php-5.3:
     Components:
     - php-5.3
     - mysql-5.1
-Vendor: unknown
-License: unknown
+Description: ''
 Display-Name: drupal-0.0-noarch
-Description: ""
-Version: "0.0"
-Scaling:
-  Max: -1
-  Min: 1
+License: unknown
+Name: drupal
 Requires:
 - php-5.3
 - mysql-5.1
-Subscribes:
-  doc-root:
-    Required: false
-    Type: FILESYSTEM:doc-root
-Architecture: noarch
-Name: drupal
+Scaling:
+  Max: -1
+  Min: 1
+Vendor: unknown
+Version: '0.0'

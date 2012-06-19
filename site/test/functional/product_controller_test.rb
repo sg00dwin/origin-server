@@ -1,7 +1,13 @@
 require File.expand_path('../../test_helper', __FILE__)
 
 class ProductControllerTest < ActionController::TestCase
-  
+
+  test 'should be same origin protected' do
+    get :overview
+    assert_response :success
+    assert_equal 'SAMEORIGIN', @response.to_a[1]['X-Frame-Options'], @response.inspect
+  end
+
   test "should show overview" do
     get :overview
     assert_response :success

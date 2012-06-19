@@ -243,7 +243,7 @@ module Hub
 
       # Now submit the Jenkins job
       get_session.start do |http|
-        request = Net::HTTP::Get.new BUILD_URI.request_uri + "&#{JOB_PARAM_1}=#{pull_id}"
+        request = Net::HTTP::Get.new BUILD_URI.request_uri + "&#{JOB_PARAM_1}=#{pull_id}&cause=github+pull+request+#{pull_id}"
         response = http.request request
         if response.kind_of? Net::HTTPFound
           $stderr.puts "Successfully submitted job for pull request ##{pull_id}"

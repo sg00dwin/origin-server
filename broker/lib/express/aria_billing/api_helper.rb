@@ -123,7 +123,7 @@ module Express
           'qualifier_2' => sync_time.to_i,
           'rest_call' => "record_usage"
         }
-        user_id ? request['userid']=user_id : request['acct_no']=acct_no
+        user_id ? args['userid']=user_id : args['acct_no']=acct_no
         args
       end
 

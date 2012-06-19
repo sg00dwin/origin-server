@@ -5,7 +5,7 @@
 
 Summary:        GearChanger plugin for m-colective service
 Name:           rubygem-%{gemname}
-Version: 0.11.10
+Version: 0.11.11
 Release:        1%{?dist}
 Group:          Development/Languages
 License:        ASL 2.0
@@ -70,6 +70,12 @@ rm -rf %{buildroot}
 %{ruby_sitelib}/%{gemname}.rb
 
 %changelog
+* Tue Jun 19 2012 Adam Miller <admiller@redhat.com> 0.11.11-1
+- view active_capacity as a float (dmcphers@redhat.com)
+- fix for bug#833019 (rchopra@redhat.com)
+- really quit after finding out that move should not be allowed.
+  (rchopra@redhat.com)
+
 * Tue Jun 19 2012 Adam Miller <admiller@redhat.com> 0.11.10-1
 - fix for scalable app's embedded cartridge move. And fix for node_profile of
   destination container being different for scalable app (rchopra@redhat.com)

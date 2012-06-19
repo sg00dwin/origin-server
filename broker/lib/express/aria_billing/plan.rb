@@ -46,7 +46,8 @@ module Express
                 Rails.logger.error("User not found : #{event_params[:userid]} on receiving event id '#{event_id}'")
                 break
               end
-              if ["terminated", "suspended", "cancelled"].include? event_params[:status].downcase 
+              # Status Codes => -1:Suspended, -2:Cancelled, -3:Terminated
+              if ["-1", "-2", "-3"].include? event_params[:status_cd] 
                 if user.consumed_gears > 0 or user.applications.length > 0
                   Rails.logger.error("Error in account cancellation for account '#{user.login}'. Current consumption of gears is (#{user.consumed_gears}).")
                   break
