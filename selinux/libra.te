@@ -1,4 +1,4 @@
-policy_module(libra,1.1.29)
+policy_module(libra,1.1.30)
 # Requires selinux-policy-3.7.19-153.el6
 
 ########################################
@@ -314,6 +314,7 @@ dontaudit libra_app_domain exec_type:file read;
 
 allow libra_app_domain httpd_exec_t:file entrypoint;
 corecmd_getattr_all_executables(libra_app_domain)
+ssh_getattr_user_home_dir(libra_app_domain)
 ssh_dontaudit_search_user_home_dir(libra_app_domain)
 dontaudit sendmail_t libra_initrc_t:fifo_file { read write };
 dontaudit domain libra_app_domain:fifo_file { getattr write };
