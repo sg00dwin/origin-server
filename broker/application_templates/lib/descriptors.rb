@@ -50,7 +50,7 @@ end
 
 def template_command(params)
   cmd = "rhc-admin-ctl-template"
-  params.each do |key,val|
+  deep_sort(params).each do |key,val|
     cmd << " --%s '%s'" % [key,val.to_s]
   end
   cmd
@@ -89,8 +89,9 @@ class ApplicationTemplate
   def save(type,data,relative = false)
     file = file_for(type,relative)
     mode = (type == :script ? 0644 : 0755)
+    hash = YAML.load(data)
     File.open(file,'w',mode) do |f|
-      f.write data
+      f.write YAML.dump(deep_sort hash)
     end
   end
 

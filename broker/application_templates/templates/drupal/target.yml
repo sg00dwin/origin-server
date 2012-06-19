@@ -18,5 +18,7 @@
   :description: >
     An open source content management platform written in PHP powering millions of websites and applications.
     It is built, used, and supported by an active and diverse community of people around the world.
+  :credentials:
+  - :username: Admin
+    :password: OpenShiftAdmin
 :display_name: Drupal
-
