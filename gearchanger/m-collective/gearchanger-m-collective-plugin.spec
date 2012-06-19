@@ -5,7 +5,7 @@
 
 Summary:        GearChanger plugin for m-colective service
 Name:           rubygem-%{gemname}
-Version: 0.11.9
+Version: 0.11.10
 Release:        1%{?dist}
 Group:          Development/Languages
 License:        ASL 2.0
@@ -70,6 +70,10 @@ rm -rf %{buildroot}
 %{ruby_sitelib}/%{gemname}.rb
 
 %changelog
+* Tue Jun 19 2012 Adam Miller <admiller@redhat.com> 0.11.10-1
+- fix for scalable app's embedded cartridge move. And fix for node_profile of
+  destination container being different for scalable app (rchopra@redhat.com)
+
 * Mon Jun 18 2012 Adam Miller <admiller@redhat.com> 0.11.9-1
 - created method in mcollective to fetch public ip of the node on which the
   application gear lives (abhgupta@redhat.com)
