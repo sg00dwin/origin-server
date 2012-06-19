@@ -486,8 +486,8 @@ Usage: #{$0}
   --num-migrators num                  The total number of migrators to be run.  Each migrate-position will be a 
                                        migrate-position of num-migrators.  All positions must to taken to migrate
                                        all gears.  Ex: If you are going to run 2 migrators you would need to run:
-                                       ./migrate --version <version> --position 1 --num-migrators 2
-                                       ./migrate --version <version> --position 2 --num-migrators 2
+                                       ./rhc-admin-migrate --version <version> --position 1 --num-migrators 2
+                                       ./rhc-admin-migrate --version <version> --position 2 --num-migrators 2
   --migrate-position position          Postion of this migrator (1 based) amongst the num of migrators (--num_migrators)
   --continue                           Flag indicating to continue a previous migration
 
