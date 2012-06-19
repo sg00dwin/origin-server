@@ -37,7 +37,6 @@ User errors:
 132: Insufficient Access Rights
 133: Could not delete user
 134: Invalid node profile
-135: Could not decrement gears for the user, application gears already at zero.
 136: Could not delete domain, domain has valid applications.
 146: User has valid credentials but hasn't been granted access to Express yet.
 147: User has valid credentials but hasn't requested access to Express yet.
