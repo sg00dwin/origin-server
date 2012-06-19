@@ -143,7 +143,7 @@ class RestAccount < OpenShift::Rest::TestCase
     # we shorten key so split and check via regex
     cmp_key = @rest_account.find_ssh_key('default')
     cmp_key = cmp_key.split('..')
-    if cmp_key.length > 1:
+    if cmp_key.length > 1
       key_re = "(#{Regexp.quote(cmp_key[0])}).*(#{Regexp.quote(cmp_key[1])})$"
       assert_match /#{key_re}/, key
     else
@@ -173,7 +173,7 @@ class RestAccount < OpenShift::Rest::TestCase
     # we shorten key so split and check via regex
     cmp_key = @rest_account.find_ssh_key('default')
     cmp_key = cmp_key.split('..')
-    if cmp_key.length > 1:
+    if cmp_key.length > 1
       key_re = "(#{Regexp.quote(cmp_key[0])}).*(#{Regexp.quote(cmp_key[1])})$"
       assert_match /#{key_re}/, key
     else
@@ -192,7 +192,7 @@ class RestAccount < OpenShift::Rest::TestCase
       # we shorten key so split and check via regex
       cmp_key = @rest_account.find_ssh_key(name)
       cmp_key = cmp_key.split('..')
-      if cmp_key.length > 1:
+      if cmp_key.length > 1
         key_re = "(#{Regexp.quote(cmp_key[0])}).*(#{Regexp.quote(cmp_key[1])})$"
         assert_match /#{key_re}/, key
       else
