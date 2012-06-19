@@ -14,7 +14,7 @@ module OpenShift
       @@items = {
         :signin => 'a.sign_in',
         :signout => 'a.sign_out',
-        :user_dropdown => 'ul#utility-nav a.dropdown-toggle',
+        :user_dropdown => 'li.dropdown.username a.dropdown-toggle',
 
         :learn_more => 'a.learn_more',
         :getting_started => 'a.getting_started',
@@ -31,7 +31,11 @@ module OpenShift
       end
 
       def click_signout
-        @page.action.click(find_link(:user_dropdown)).click(find_link(:signout)).perform
+        find_link(:user_dropdown).click
+        await("Logout dropdown", 5) {
+          exists?(link(:signout))
+        }
+        @page.action.click(find_link(:signout)).perform
       end
 
       def find_link(element)

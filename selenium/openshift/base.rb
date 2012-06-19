@@ -19,7 +19,6 @@ module OpenShift
       count = 0;
       result = self.instance_variable_get(:@_result)
       results = result.instance_variable_get("@#{type}".to_sym)
-      
       results.each do |res| 
         count += 1 if res.test_name.start_with?(self.method_name)
       end
@@ -35,7 +34,7 @@ module OpenShift
         @login_page.submit(login, password)
 
         await("logout link", 10) {
-          exists?("a.sign_out")
+          exists?(".dropdown.username")
         }
     end
   end
