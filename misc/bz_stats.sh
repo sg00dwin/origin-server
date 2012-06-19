@@ -104,7 +104,7 @@ mapfile openshift_buglist < <( bugzilla query -p OpenShift \
 for b in "${openshift_buglist[@]}"
 do
   b_comp="$(printf "$b" | cut -d: -f5)"
-  if [[ "$b_comp" =~ ^\[\'(Cartridges|Website|REST API|Command Line Interface|Broker|Cartridges)\'\]$ ]]; then
+  if [[ "$b_comp" =~ ^(Cartridges|Website|REST API|Command Line Interface|Broker|Cartridges)$ ]]; then
     b_kw="$(printf "$b" | cut -d: -f7)"
     if [[ ! "$b_kw" =~ FutureFeature ]]; then
       b_stat="$(printf "$b" | cut -d: -f6)"
