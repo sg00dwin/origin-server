@@ -5,7 +5,7 @@ module OpenShift
       super
       @data = Hash.new{|hash,key|
         array = [('a'..'z'),('A'..'Z'),(0..9)].map{|a| a.to_a}.flatten
-        hash[key] = 10.times.map{array.choice}.join
+        hash[key] = 10.times.map{array.respond_to?(:choice) ? array.choice : array.sample}.join
       }
 
       @valid_credentials = {
