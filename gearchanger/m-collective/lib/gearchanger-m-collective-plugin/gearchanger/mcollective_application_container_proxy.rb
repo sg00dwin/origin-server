@@ -574,7 +574,8 @@ module GearChanger
         source_container = gear.container
         destination_node_profile = destination_container.get_node_profile
         if app.scalable and source_container.get_node_profile != destination_node_profile
-          puts "Cannot change node_profile for a gear belonging to a scalable application. The destination container's node profile is #{destination_node_profile}, while the gear's node_profile is #{gear.node_profile}"
+          log_debug "Cannot change node_profile for a gear belonging to a scalable application. The destination container's node profile is #{destination_node_profile}, while the gear's node_profile is #{gear.node_profile}"
+          raise StickShift::UserException.new("Error moving app.  Cannot change node profile.", 1)
         end
 
         # get the state of all cartridges
