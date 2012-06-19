@@ -34,6 +34,8 @@ Options:
     Set the number of gears a user has consumed (use carefully)
   --setvip (true|false)
     Set the vip status of the user
+  --listsubaccounts
+    List the subaccounts that have been created under this parent account (rhlogin)
   --addsubaccount <subaccount login>
     The sub account to add to the rhlogin parent account
   --removesubaccount <subaccount login>
