@@ -102,32 +102,10 @@ def redeploy_jenkins_httpd_proxy(gear)
           puts "Deploy httpd proxy for cart: #{component.parent_cart_name} on node exit code: #{reply.exitcode}\n"
           raise "Failed deploying httpd proxy for gear '#{gear.name}' with uuid '#{gear.uuid}' on node '#{gear.server_identity}'"
         end
-        
-        #restart_jenkins_component(gear, component)
       end
     end
     puts "done"
   end
-end
-
-def restart_jenkins_component(gear, component)
-  reply = gear.status(component)
-  num_tries = 2
-  (1..num_tries).each do |i|
-    puts "Restarting component '#{component.name}' on gear with uuid '#{gear.uuid}' on node '#{gear.server_identity}'\n"
-    begin
-      reply.append gear.restart(component)
-      break
-    rescue Exception => e
-      if i == num_tries
-        puts "Failed to restart component '#{component.name}' on gear with uuid '#{gear.uuid}' on node '#{gear.server_identity}' after #{num_tries} tries with exception: #{e.message}\n"
-        raise
-      end
-    end
-  end
- 
-  puts "RESTART DEBUG OUTPUT:\n#{reply.debugIO.string}\n" unless reply.debugIO.string.empty?
-  puts "RESTART ERROR OUTPUT:\n#{reply.errorIO.string}\n" unless reply.errorIO.string.empty?
 end
 
 def restart_component(gear, component, out)
