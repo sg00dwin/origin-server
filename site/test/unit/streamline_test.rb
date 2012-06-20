@@ -426,6 +426,45 @@ class StreamlineTest < ActiveSupport::TestCase
     assert_equal 1, @streamline.errors.length
   end
 
+  test "confirm simple email with emailAddress" do
+    @streamline.email_address = 'foo@foo.com'
+    @streamline.expects(:http_post).once.yields({'roles' => ['simple_authenticated'], 'emailAddress' => 'foo@foo.com'})
+    assert @streamline.confirm_email('key')
+    assert @streamline.errors.empty?
+  end
+
+  test "confirm simple email with login" do
+    @streamline.email_address = 'foo@foo.com'
+    @streamline.expects(:http_post).once.yields({'roles' => ['simple_authenticated'], 'login' => 'foo@foo.com'})
+    assert @streamline.confirm_email('key')
+    assert @streamline.errors.empty?
+  end
+
+  test "confirm simple email fails" do
+    @streamline.email_address = 'foo@foo.com'
+    @streamline.expects(:http_post).once.yields({'errors' => ['service_error']})
+    assert !@streamline.confirm_email('key')
+    assert_equal 1, @streamline.errors.length
+    assert @streamline.errors[:base].first =~ /system error has occurred/
+  end
+
+  test "confirm simple email fails with empty json" do
+    @streamline.email_address = 'foo@foo.com'
+    @streamline.expects(:http_post).once.yields({}).returns
+    assert !@streamline.confirm_email('key')
+    assert_equal 1, @streamline.errors.length
+    assert @streamline.errors[:base].first =~ /system error has occurred/
+  end
+
+  test "confirm simple email raise without email" do
+    assert_raise(RuntimeError) { @streamline.confirm_email('key') }
+  end
+  test "confirm simple email take email as argument" do
+    @streamline.expects(:http_post).once.yields({'roles' => ['simple_authenticated'], 'emailAddress' => 'foo@foo.com'})
+    assert @streamline.confirm_email('key', 'foo@foo.com')
+    assert @streamline.errors.empty?
+  end
+
   test "authenticate success" do
     @streamline.expects(:http_post).once
     assert_equal true, @streamline.authenticate("test1", "test1")
