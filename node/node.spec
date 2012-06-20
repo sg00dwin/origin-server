@@ -2,7 +2,7 @@
 
 Summary:       Multi-tenant cloud management system node tools
 Name:          rhc-node
-Version: 0.94.9
+Version: 0.94.10
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -266,6 +266,9 @@ fi
 /lib64/security/pam_libra.so
 
 %changelog
+* Wed Jun 20 2012 Adam Miller <admiller@redhat.com> 0.94.10-1
+- BZ 830286: Missing -n option (rmillner@redhat.com)
+
 * Fri Jun 15 2012 Adam Miller <admiller@redhat.com> 0.94.9-1
 - BZ832261: Order app start scripts using the same logic as the start function
   in util.  Explicitly reverse that order on stop. (rmillner@redhat.com)
