@@ -19,6 +19,15 @@ class BootstrapFormBuilder < Formtastic::SemanticFormBuilder
     true
   end
 
+  def current_layout
+    layout = template.controller.send(:_layout)
+    if layout.instance_of? String
+      layout
+    else
+      File.basename(layout.identifier).split('.').first
+    end
+  end
+
   # set the default css class
   def buttons(*args)
     return super unless new_forms_enabled?
@@ -29,7 +38,8 @@ class BootstrapFormBuilder < Formtastic::SemanticFormBuilder
   end
 
   def loading(*args)
-    template.content_tag(:i, nil, :alt => 'Working...', 'data-loading' => 'true', :style => 'display: none;', :class => 'icon-loading' )
+    image = template.instance_variable_get(:@loader_image) || template.image_path('loader.gif')
+    template.content_tag(:img, nil, :alt => 'Working...', 'data-loading' => 'true', :class => 'icon-loading', :style => 'display: none', :src => image)
   end
 
   # override tag creation
