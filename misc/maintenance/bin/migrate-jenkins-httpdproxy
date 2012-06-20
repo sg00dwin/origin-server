@@ -70,14 +70,14 @@ def redeploy_jenkins_httpd_proxy(gear)
           raise "Failed deploying httpd proxy for gear '#{gear.name}' with uuid '#{gear.uuid}' on node '#{gear.server_identity}'"
         end
         
-        restart_component(gear, component)
+        restart_jenkins_component(gear, component)
       end
     end
     puts "done"
   end
 end
 
-def restart_component(gear, component)
+def restart_jenkins_component(gear, component)
   reply = gear.status(component)
   num_tries = 2
   (1..num_tries).each do |i|
