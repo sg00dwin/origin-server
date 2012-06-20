@@ -3,7 +3,7 @@
 
 Summary:   Li site components
 Name:      rhc-site
-Version: 0.94.14
+Version: 0.94.15
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -121,6 +121,12 @@ rm -rf %{buildroot}
 /bin/touch %{sitedir}/log/production.log
 
 %changelog
+* Tue Jun 19 2012 Adam Miller <admiller@redhat.com> 0.94.15-1
+- Update homepage with EAP6 info (ccoleman@redhat.com)
+- BZ828116: Added logic for displaying credentials for applications created
+  from templates (fotios@redhat.com)
+- Update some of the cartridge text to be less verbose (ccoleman@redhat.com)
+
 * Mon Jun 18 2012 Adam Miller <admiller@redhat.com> 0.94.14-1
 - merge fix in pricing.scss (sgoodwin@redhat.com)
 - fix layout issues for bug 832926 (sgoodwin@redhat.com)

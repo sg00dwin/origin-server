@@ -1,4 +1,4 @@
-require 'test_helper'
+require 'test_billing_helper'
 
 class BillingEventsTest < ActiveSupport::TestCase
   def setup
@@ -13,40 +13,28 @@ class BillingEventsTest < ActiveSupport::TestCase
       acct_no = @api.create_fake_acct(userid, :FreeShift)
 
       # event: 102
-      result = @api.update_acct_contact(acct_no)
-      assert(result, true)
+      assert(@api.update_acct_contact(acct_no))
 
       # event: 105
-      result = @api.update_acct_status(acct_no, 0)
-      assert(result, true)
+      assert(@api.update_acct_status(acct_no, -1))
 
       # event: 107
-      result = @api.update_master_plan(acct_no, :MegaShift)
-      assert(result, true)
+      assert(@api.update_master_plan(acct_no, :MegaShift))
 
       # event: 110
-      result = @api.assign_supp_plan(acct_no, :MegaShiftStorage)
-      assert(result, true)
+      assert(@api.assign_supp_plan(acct_no, :MegaShiftStorage))
 
       # event: 114
-      result = @api.modify_supp_plan(acct_no, :MegaShiftStorage, 5)
-      assert(result, true)
+      assert(@api.modify_supp_plan(acct_no, :MegaShiftStorage, 5))
 
       # event: 112
-      result = @api.cancel_supp_plan(acct_no, :MegaShiftStorage)
-      assert(result, true)
-
-      # event: 120
-      result = @api.update_acct_supp_fields(acct_no, 'BillCounty', '')
-      assert(result, true)
+      assert(@api.cancel_supp_plan(acct_no, :MegaShiftStorage))
 
       # event: 118
-      result = @api.update_acct_supp_fields(acct_no, 'BillCounty', 'Mercury')
-      assert(result, true)
+      assert(@api.update_acct_supp_fields(acct_no, 'BillCounty', 'Mercury'))
 
       # event: 119
-      result = @api.update_acct_supp_fields(acct_no, 'BillCounty', 'Saturn')
-      assert(result, true)
+      assert(@api.update_acct_supp_fields(acct_no, 'BillCounty', 'Saturn'))
     end
   end
 end

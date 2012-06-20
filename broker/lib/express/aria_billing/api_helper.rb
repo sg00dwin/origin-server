@@ -30,8 +30,8 @@ module Express
           'master_plan_no' => get_plan_id(plan_name),
           'master_plan_units' => 1,
           'status_cd' => 1,
-          'supp_field_names' => "RHLogin|BillCounty|ShipCounty|OracleBillToAcctNo|OracleShipandEntitleToAcctNo",
-          'supp_field_values' => "#{user_id}|Venus|Pluto|13579|02468",
+          'supp_field_names' => "RHLogin",
+          'supp_field_values' => "#{user_id}",
           'first_name' => "Fname",
           'last_name' => "Lname",
           'company_name' => "Cname Inc",
@@ -123,7 +123,7 @@ module Express
           'qualifier_2' => sync_time.to_i,
           'rest_call' => "record_usage"
         }
-        user_id ? request['userid']=user_id : request['acct_no']=acct_no
+        user_id ? args['userid']=user_id : args['acct_no']=acct_no
         args
       end
 

@@ -11,8 +11,7 @@ module Express
         "112" => "Account supplemental service plan de-assigned",
         "114" => "Account supplemental service plan modified",
         "118" => "Account supplemental field value added event",
-        "119" => "Account supplemental field value modified",
-        "120" => "Account supplemental field value deleted"
+        "119" => "Account supplemental field value modified"
       }
       OPS_ORDER_TEAM_EMAIL='OpenShift-Orders@redhat.com'
       OPS_PEOPLE_TEAM_EMAIL='customerdata-na@redhat.com'
@@ -29,7 +28,7 @@ MSG
       def self.get_events(h)
         event_info = ""
         for i in 0..h['event_id'].length-1 do
-          event_info += "Event #{i+1} ID: #{h['event_id'][i]}\nEvent #{i+1} Label: #{h['event_label'][i]}\n"
+          event_info += "#{h['event_id'][i]}: #{h['event_label'][i]}\n"
         end
         data = <<MSG
 Events
@@ -44,7 +43,7 @@ Account Data
 -----------------------------------
 Client Number: #{h['client_no']}
 Aria PO#: #{h['transaction_id']}
-RHN Login: #{get_rhlogin(h)}
+#{get_supplemental_fields(h)}
 MSG
       end
 
@@ -87,11 +86,12 @@ MSG
         supp_plans = ""
         begin
           for i in 0..h['supp_plan_no'].length-1 do
-            supp_plans += "Supp Plan #{i+1} Name: #{h['supp_plan_name'][i]}\n"
-            supp_plans += "Supp Plan #{i+1} Number: #{h['supp_plan_no'][i]}\n"
-            supp_plans += "Supp Plan #{i+1} Activation Date: #{h['supp_plan_activation_date'][i]}\n"
-            supp_plans += "Supp Plan #{i+1} Units: #{h['supp_plan_units'][i]}\n"
-            supp_plans += "Supp Plan #{i+1} Termination Date: #{h['supp_plan_termination_date'][i]}\n"
+            supp_plans += "Supp Plan #{i+1}:"
+            supp_plans += "<dd> Name: #{h['supp_plan_name'][i]} </dd>"
+            supp_plans += "<dd> Number: #{h['supp_plan_no'][i]} </dd>" 
+            supp_plans += "<dd> Activation Date: #{h['supp_plan_activation_date'][i]} </dd>"
+            supp_plans += "<dd> Units: #{h['supp_plan_units'][i]} </dd>"
+            supp_plans += "<dd> Termination Date: #{h['supp_plan_termination_date'][i]} </dd>\n\n"
           end 
         rescue
           # Ignore
@@ -107,29 +107,12 @@ MSG
         supp_fields = ""
         begin
           for i in 0..h['supp_field_name'].length-1 do
-            supp_fields += "Supp Field #{i+1} Name: #{h['supp_field_name'][i]}\n"
-            supp_fields += "Supp Field #{i+1} Value: #{h['supp_field_value'][i]}\n"
+            supp_fields += "#{h['supp_field_name'][i]}: #{h['supp_field_value'][i]}\n"
           end 
         rescue
           # Ignore
         end
-        data = <<MSG
-Supplemental Fields
------------------------------------
-#{supp_fields}
-MSG
-      end
-
-      def self.get_rhlogin(h)
-        begin
-          for i in 0..h['supp_field_name'].length-1 do
-            if h['supp_field_name'][i] == 'RHLogin'
-              return h['supp_field_value'][i]
-            end
-          end
-        rescue
-        end
-        return ''
+        supp_fields
       end
 
       def self.handle_event(h)
@@ -142,12 +125,17 @@ MSG
             body = acct_contact(h)
             email_to = OPS_PEOPLE_TEAM_EMAIL
           when 105
-            body = acct_status(h)
+            # Status Codes => 1:Active, -1:Suspended, -2:Cancelled, -3:Terminated
+            if ["1", "-1", "-2", "-3"].include?(h['status_cd'])
+              body = acct_status(h)
+            else
+              next
+            end
           when 107
             body = acct_plans(h)
           when 110, 112, 114
             body = acct_supp_plans(h)
-          when 118, 119, 120
+          when 118, 119
             body = acct_supp_fields(h)
           else
             raise Exception.new "Invalid Event, id: #{ev}"
@@ -164,8 +152,7 @@ MSG
 #{get_detail_account_data(h)}
 #{get_supplemental_plans(h)}
 #{get_account_contact(h)}
-#{get_billing_data(h)}
-#{get_supplemental_fields(h)}</b>
+#{get_billing_data(h)}</b>
 #{get_events(h)}
 </body></html>
 MSG
@@ -176,7 +163,6 @@ MSG
 <html><body>#{get_header}
 #{get_account_data(h)}
 <b>#{get_account_contact(h)}</b>
-#{get_supplemental_fields(h)}
 #{get_events(h)}
 </body></html>
 MSG
@@ -190,7 +176,6 @@ MSG
 #{get_supplemental_plans(h)}
 #{get_account_contact(h)}
 #{get_billing_data(h)}
-#{get_supplemental_fields(h)}
 #{get_events(h)}
 </body></html>
 MSG
@@ -201,7 +186,6 @@ MSG
 <html><body>#{get_header}
 #{get_account_data(h)}
 <b>#{get_detail_account_data(h)}</b>
-#{get_supplemental_fields(h)}
 #{get_events(h)}
 </body></html>
 MSG
@@ -212,7 +196,6 @@ MSG
 <html><body>#{get_header}
 #{get_account_data(h)}
 <b>#{get_supplemental_plans(h)}</b>
-#{get_supplemental_fields(h)}
 #{get_events(h)}
 </body></html>
 MSG
@@ -221,8 +204,7 @@ MSG
       def self.acct_supp_fields(h)
         body = <<MSG
 <html><body>#{get_header}
-#{get_account_data(h)}
-<b>#{get_supplemental_fields(h)}</b>
+<b>#{get_account_data(h)}</b>
 #{get_events(h)}
 </body></html>
 MSG

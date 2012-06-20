@@ -3,7 +3,7 @@
 
 Summary:   Li broker components
 Name:      rhc-broker
-Version: 0.94.15
+Version: 0.94.16
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -69,6 +69,7 @@ touch %{buildroot}%{_localstatedir}/log/stickshift/user_action.log
 mv %{buildroot}%{brokerdir}/script/rhc-admin-ctl-domain %{buildroot}/%{_bindir}
 mv %{buildroot}%{brokerdir}/script/rhc-admin-ctl-app %{buildroot}/%{_bindir}
 mv %{buildroot}%{brokerdir}/script/rhc-admin-cartridge-do %{buildroot}/%{_bindir}
+mv %{buildroot}%{brokerdir}/script/rhc-admin-migrate %{buildroot}/%{_bindir}
 mv %{buildroot}%{brokerdir}/script/rhc-admin-move %{buildroot}/%{_bindir}
 mv %{buildroot}%{brokerdir}/script/rhc-admin-ctl-district %{buildroot}/%{_bindir}
 mv %{buildroot}%{brokerdir}/script/rhc-admin-ctl-template %{buildroot}/%{_bindir}
@@ -97,6 +98,7 @@ rm -rf $RPM_BUILD_ROOT
 %attr(0750,-,-) %{_bindir}/rhc-admin-chk
 %attr(0750,-,-) %{_bindir}/rhc-admin-ctl-app
 %attr(0750,-,-) %{_bindir}/rhc-admin-cartridge-do
+%attr(0750,-,-) %{_bindir}/rhc-admin-migrate
 %attr(0750,-,-) %{_bindir}/rhc-admin-move
 %attr(0750,-,-) %{_bindir}/rhc-admin-ctl-district
 %attr(0750,-,-) %{_bindir}/rhc-admin-ctl-template
@@ -109,6 +111,19 @@ rm -rf $RPM_BUILD_ROOT
 /bin/touch %{_localstatedir}/log/stickshift/user_action.log
 
 %changelog
+* Tue Jun 19 2012 Adam Miller <admiller@redhat.com> 0.94.16-1
+- Updating gem versions (admiller@redhat.com)
+- move migrate to the broker (dmcphers@redhat.com)
+- BugFix: 833372 (rpenta@redhat.com)
+- Billing:Fix record_usage api (rpenta@redhat.com)
+- Fix for bug#833331 (rpenta@redhat.com)
+- Merge branch 'master' of git1.ops.rhcloud.com:/srv/git/li (rpenta@redhat.com)
+- Billing: Fix broker enablement unit tests (rpenta@redhat.com)
+- BZ828116: Added logic for displaying credentials for applications created
+  from templates (fotios@redhat.com)
+- was missing listsubaccounts option in the usage info for rhc-admin-ctl-user
+  (abhgupta@redhat.com)
+
 * Tue Jun 19 2012 Adam Miller <admiller@redhat.com> 0.94.15-1
 - Updating gem versions (admiller@redhat.com)
 - Merge branch 'master' of git1.ops.rhcloud.com:/srv/git/li (rpenta@redhat.com)

@@ -42,7 +42,7 @@ class EmailConfirmController < SiteController
       redirect_to redirect_path and return
     end
 
-    logger.debug "Errors during confirmation #{@user.errors}"
+    logger.debug "  Errors during confirmation #{@user.errors.inspect}"
     render :error
   end
 end

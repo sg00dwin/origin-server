@@ -656,7 +656,10 @@ module GearChanger
             if gear.node_profile != destination_node_profile
               log_debug "DEBUG: The gear's node profile changed from #{gear.node_profile} to #{destination_node_profile}"
               gear.node_profile = destination_node_profile
-              app.node_profile = destination_node_profile if not app.scalable
+              if not app.scalable
+                app.node_profile = destination_node_profile 
+                gi.node_profile = destination_node_profile
+              end
             end
             app.save
 
@@ -735,7 +738,7 @@ module GearChanger
             next if cart==app.name
             begin
               if framework_carts.include? cart or app.scalable
-                reply.append source_container.run_cartridge_command(cart, app, gear, "deconfigure", nil, false)
+                reply.append source_container.run_cartridge_command(cart, app, gear, "deconfigure", nil, false) if not cart.include? "jenkins"
               end
             rescue Exception => e
               log_debug "DEBUG: The application '#{app.name}' with gear uuid '#{gear.uuid}' is now moved to '#{destination_container.id}' but not completely deconfigured from '#{source_container.id}'"

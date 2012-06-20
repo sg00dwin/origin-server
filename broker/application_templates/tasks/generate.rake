@@ -58,11 +58,14 @@ namespace :descriptors do
         destroy_app(app)
       end
 
+      opts[:metadata] =
+        opts[:metadata].inject({}){|h,(k,v)| h[k] = v.kind_of?(String) ? v.strip : v; h }
+
       # Save script information for deploy script
       to_save = {
         name => {
           :script => template.template_function(false),
-          :metadata => opts[:metadata],
+          :metadata => deep_sort(opts[:metadata]),
           :descriptor => YAML.load_file(template.descriptor)
         }
       }
@@ -73,7 +76,7 @@ namespace :descriptors do
     FileUtils.cp "#{deploy_script}.template", deploy_script
 
     File.open(deploy_script,'a') do |f|
-      f.write YAML.dump deploy_opts
+      f.write YAML.dump deep_sort(deploy_opts)
     end
   end
 end

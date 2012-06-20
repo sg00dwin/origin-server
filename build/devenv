@@ -490,6 +490,18 @@ mkdir -p /tmp/rhc/junit
           elsif failures.length > retry_threshold
             exit 1
           end
+
+          # These are special tests that cannot be written to work concurrently
+          # If they fail, the Test fails. Since they are running in isolation retries should not be required.
+          unless options.exclude_internal?
+            idle_all_gears(hostname)
+            output, exit_code = run_ssh(hostname, "Singletons",
+                "cucumber -f html --out /tmp/rhc/singletons.html -f progress -t @singleton li-test/tests",
+                timeout)
+
+            exit 1 if 0 != exit_code
+          end
+
           validate_instance(hostname)
         ensure
           if options.include_web?
