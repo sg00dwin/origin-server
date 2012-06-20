@@ -656,7 +656,10 @@ module GearChanger
             if gear.node_profile != destination_node_profile
               log_debug "DEBUG: The gear's node profile changed from #{gear.node_profile} to #{destination_node_profile}"
               gear.node_profile = destination_node_profile
-              app.node_profile = destination_node_profile if not app.scalable
+              if not app.scalable
+                app.node_profile = destination_node_profile 
+                gi.node_profile = destination_node_profile
+              end
             end
             app.save
 
