@@ -1,0 +1,699 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="744.09448819"
+   height="1052.3622047"
+   id="svg2"
+   version="1.1"
+   inkscape:version="0.48.1 r9760"
+   sodipodi:docname="Proposed_Push.svg">
+  <defs
+     id="defs4" />
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="0.49497475"
+     inkscape:cx="810.59306"
+     inkscape:cy="430.43445"
+     inkscape:document-units="px"
+     inkscape:current-layer="layer1"
+     showgrid="false"
+     showborder="false"
+     inkscape:window-width="1680"
+     inkscape:window-height="996"
+     inkscape:window-x="0"
+     inkscape:window-y="31"
+     inkscape:window-maximized="1" />
+  <metadata
+     id="metadata7">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1">
+    <rect
+       style="fill:#e0e1dd;fill-rule:evenodd;stroke:#000000;stroke-width:1.86048341px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       id="rect2985"
+       width="605.64783"
+       height="653.49243"
+       x="412.36404"
+       y="218.19807" />
+    <text
+       xml:space="preserve"
+       style="font-size:20px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
+       x="432.34525"
+       y="252.3214"
+       id="text2987"
+       sodipodi:linespacing="125%"><tspan
+         sodipodi:role="line"
+         id="tspan2989"
+         x="432.34525"
+         y="252.3214"
+         style="font-weight:bold">Metrics Gear</tspan></text>
+    <g
+       id="g3577"
+       transform="translate(-70.710678,10.101525)">
+      <rect
+         y="657.39246"
+         x="801.05096"
+         height="163.64471"
+         width="252.53813"
+         id="rect2991-0"
+         style="fill:#9a9b9c;fill-rule:evenodd;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" />
+      <text
+         sodipodi:linespacing="125%"
+         id="text2987-0-0"
+         y="687.07184"
+         x="811.05145"
+         style="font-size:20px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
+         xml:space="preserve"><tspan
+           style="font-weight:bold"
+           y="687.07184"
+           x="811.05145"
+           id="tspan2989-0-7"
+           sodipodi:role="line">Apache (REST API)</tspan></text>
+    </g>
+    <g
+       id="g3530"
+       transform="translate(-70.710678,10.101525)">
+      <rect
+         y="282.64978"
+         x="513.18134"
+         height="279.00275"
+         width="222.65509"
+         id="rect3170"
+         style="fill:#ffffff;fill-rule:evenodd;stroke:#000000;stroke-width:0.79033548px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" />
+      <text
+         sodipodi:linespacing="125%"
+         id="text3188"
+         y="306.8696"
+         x="529.31995"
+         style="font-size:20px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
+         xml:space="preserve"><tspan
+           y="306.8696"
+           x="529.31995"
+           id="tspan3190"
+           sodipodi:role="line">data/RRD</tspan><tspan
+           id="tspan3386"
+           y="331.8696"
+           x="529.31995"
+           sodipodi:role="line">  ./httpd_hits.rrd</tspan><tspan
+           id="tspan3388"
+           y="356.8696"
+           x="529.31995"
+           sodipodi:role="line">  ./php_hits.rrd</tspan><tspan
+           id="tspan3390"
+           y="381.8696"
+           x="529.31995"
+           sodipodi:role="line">  ./Gear_1_CPU.rrd</tspan><tspan
+           id="tspan3392"
+           y="406.8696"
+           x="529.31995"
+           sodipodi:role="line">  ./Gear_2_CPU.rrd</tspan></text>
+    </g>
+    <g
+       id="g3552"
+       transform="translate(-60.609153,12.121831)">
+      <rect
+         y="233.00853"
+         x="760.41028"
+         height="107.31605"
+         width="212.79669"
+         id="rect3170-1-7"
+         style="fill:#ffffff;fill-rule:evenodd;stroke:#000000;stroke-width:0.47918773px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" />
+      <text
+         sodipodi:linespacing="125%"
+         id="text3188-8-9"
+         y="269.0928"
+         x="770.76752"
+         style="font-size:20px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
+         xml:space="preserve"><tspan
+           id="tspan3376"
+           y="269.0928"
+           x="770.76752"
+           sodipodi:role="line">data/auth For auth</tspan><tspan
+           id="tspan3382"
+           y="294.0928"
+           x="770.76752"
+           sodipodi:role="line">cookie after OTP is</tspan><tspan
+           id="tspan3384"
+           y="319.0928"
+           x="770.76752"
+           sodipodi:role="line">hit</tspan></text>
+    </g>
+    <g
+       id="g3571"
+       transform="translate(-70.710678,10.101525)">
+      <rect
+         y="727.05078"
+         x="985.86664"
+         height="68.774879"
+         width="204.13531"
+         id="rect3283"
+         style="fill:#000000;fill-rule:evenodd;stroke:#000000;stroke-width:0.91548949px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" />
+      <text
+         sodipodi:linespacing="125%"
+         id="text2987-6-0"
+         y="750.53577"
+         x="997.61005"
+         style="font-size:20px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#ffffff;fill-opacity:1;stroke:none;font-family:Sans"
+         xml:space="preserve"><tspan
+           style="font-weight:bold;fill:#ffffff"
+           y="750.53577"
+           x="997.61005"
+           id="tspan2989-5-1"
+           sodipodi:role="line">Reverse Proxy</tspan><tspan
+           id="tspan3348"
+           style="font-weight:bold;fill:#ffffff"
+           y="775.53577"
+           x="997.61005"
+           sodipodi:role="line"> + Web Sockets</tspan></text>
+    </g>
+    <g
+       id="g3566"
+       transform="translate(-70.710678,10.101525)">
+      <rect
+         y="342.95975"
+         x="1644.2531"
+         height="156.11421"
+         width="289.45435"
+         id="rect3306"
+         style="fill:#e0e1dd;fill-rule:evenodd;stroke:#000000;stroke-width:0.44929716px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" />
+      <text
+         sodipodi:linespacing="125%"
+         id="text3316"
+         y="373.5397"
+         x="1658.6704"
+         style="font-size:20px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
+         xml:space="preserve"><tspan
+           style="font-weight:bold"
+           y="373.5397"
+           x="1658.6704"
+           id="tspan3318"
+           sodipodi:role="line">UI Console</tspan></text>
+    </g>
+    <g
+       id="g3559"
+       transform="translate(-70.710678,10.101525)">
+      <rect
+         y="366.19324"
+         x="1231.1006"
+         height="99.744423"
+         width="289.45435"
+         id="rect3306-9"
+         style="fill:#e0e1dd;fill-rule:evenodd;stroke:#000000;stroke-width:0.3591342px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" />
+      <text
+         sodipodi:linespacing="125%"
+         id="text3316-4"
+         y="396.77319"
+         x="1241.4773"
+         style="font-size:20px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
+         xml:space="preserve"><tspan
+           style="font-weight:bold"
+           y="396.77319"
+           x="1241.4773"
+           id="tspan3318-1"
+           sodipodi:role="line">Broker / Mcollective</tspan></text>
+      <text
+         sodipodi:linespacing="125%"
+         id="text3344"
+         y="426.06763"
+         x="1238.4469"
+         style="font-size:20px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
+         xml:space="preserve"><tspan
+           y="426.06763"
+           x="1238.4469"
+           id="tspan3346"
+           sodipodi:role="line">Generates OTP auth URL</tspan></text>
+    </g>
+    <g
+       id="g3582"
+       transform="translate(-70.710678,10.101525)">
+      <rect
+         y="628.09802"
+         x="440.42648"
+         height="200.4256"
+         width="252.53813"
+         id="rect2991"
+         style="fill:#9a9b9c;fill-rule:evenodd;stroke:#000000;stroke-width:1.10668898px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" />
+      <text
+         sodipodi:linespacing="125%"
+         id="text2987-0"
+         y="653.73688"
+         x="452.44727"
+         style="font-size:20px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
+         xml:space="preserve"><tspan
+           style="font-weight:bold"
+           y="653.73688"
+           x="452.44727"
+           id="tspan2989-0"
+           sodipodi:role="line">QPID + SSL</tspan></text>
+      <text
+         sodipodi:linespacing="125%"
+         id="text3352"
+         y="684.66663"
+         x="464.67014"
+         style="font-size:20px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
+         xml:space="preserve"><tspan
+           id="tspan3358"
+           y="684.66663"
+           x="464.67014"
+           sodipodi:role="line">Has agent / Daemon</tspan><tspan
+           id="tspan3364"
+           y="709.66663"
+           x="464.67014"
+           sodipodi:role="line">to write to data/RRD</tspan><tspan
+           id="tspan3366"
+           y="734.66663"
+           x="464.67014"
+           sodipodi:role="line" /><tspan
+           id="tspan3368"
+           y="759.66663"
+           x="464.67014"
+           sodipodi:role="line">Has interface for</tspan><tspan
+           id="tspan3370"
+           y="784.66663"
+           x="464.67014"
+           sodipodi:role="line">Apache to expose live</tspan><tspan
+           id="tspan3372"
+           y="809.66663"
+           x="464.67014"
+           sodipodi:role="line">data</tspan></text>
+    </g>
+    <g
+       id="g3522"
+       transform="translate(-70.710678,10.101525)">
+      <rect
+         y="250.70599"
+         x="-123.51672"
+         height="148.69273"
+         width="360.17053"
+         id="rect2985-1"
+         style="fill:#e0e1dd;fill-rule:evenodd;stroke:#000000;stroke-width:0.68437541px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" />
+      <text
+         sodipodi:linespacing="125%"
+         id="text2987-6"
+         y="287.34958"
+         x="-103.03555"
+         style="font-size:20px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
+         xml:space="preserve"><tspan
+           style="font-weight:bold"
+           y="287.34958"
+           x="-103.03555"
+           id="tspan2989-5"
+           sodipodi:role="line">HAPROXY Gear</tspan></text>
+      <text
+         sodipodi:linespacing="125%"
+         id="text3447"
+         y="312.93051"
+         x="-80.812202"
+         style="font-size:20px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
+         xml:space="preserve"><tspan
+           y="312.93051"
+           x="-80.812202"
+           id="tspan3449"
+           sodipodi:role="line">haproxy agent sends data to</tspan><tspan
+           id="tspan3451"
+           y="337.93051"
+           x="-80.812202"
+           sodipodi:role="line">qpid</tspan></text>
+    </g>
+    <g
+       id="g3504"
+       transform="translate(-70.710678,10.101525)">
+      <g
+         transform="translate(167.68533,-24.243661)"
+         id="g3141">
+        <rect
+           style="fill:#e0e1dd;fill-rule:evenodd;stroke:#000000;stroke-width:0.68437541px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+           id="rect2985-1-7-1"
+           width="360.17053"
+           height="148.69273"
+           x="-242.71475"
+           y="561.83295" />
+        <rect
+           style="fill:#e0e1dd;fill-rule:evenodd;stroke:#000000;stroke-width:0.68437541px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+           id="rect2985-1-7-1-7"
+           width="360.17053"
+           height="148.69273"
+           x="-266.9584"
+           y="541.62988" />
+        <rect
+           style="fill:#e0e1dd;fill-rule:evenodd;stroke:#000000;stroke-width:0.68437541px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+           id="rect2985-1-7"
+           width="360.17053"
+           height="148.69273"
+           x="-291.20206"
+           y="519.40649" />
+      </g>
+      <text
+         sodipodi:linespacing="125%"
+         id="text2987-6-5"
+         y="519.68469"
+         x="-115.15737"
+         style="font-size:20px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
+         xml:space="preserve"><tspan
+           style="font-weight:bold"
+           y="519.68469"
+           x="-115.15737"
+           id="tspan2989-5-7"
+           sodipodi:role="line">PHP Gears</tspan></text>
+      <text
+         sodipodi:linespacing="125%"
+         id="text3453"
+         y="545.26562"
+         x="-76.771591"
+         style="font-size:20px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
+         xml:space="preserve"><tspan
+           y="545.26562"
+           x="-76.771591"
+           id="tspan3455"
+           sodipodi:role="line">php agent sends data to qpid</tspan></text>
+    </g>
+    <g
+       id="g3514"
+       transform="translate(-70.710678,10.101525)">
+      <rect
+         y="824.47266"
+         x="-87.15123"
+         height="148.69273"
+         width="360.17053"
+         id="rect2985-1-74"
+         style="fill:#e0e1dd;fill-rule:evenodd;stroke:#000000;stroke-width:0.68437541px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" />
+      <text
+         sodipodi:linespacing="125%"
+         id="text2987-6-3"
+         y="861.11621"
+         x="-66.670059"
+         style="font-size:20px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
+         xml:space="preserve"><tspan
+           style="font-weight:bold"
+           y="861.11621"
+           x="-66.670059"
+           id="tspan2989-5-5"
+           sodipodi:role="line">Mongo Gear</tspan></text>
+      <text
+         sodipodi:linespacing="125%"
+         id="text3457"
+         y="888.71747"
+         x="-42.426407"
+         style="font-size:20px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
+         xml:space="preserve"><tspan
+           y="888.71747"
+           x="-42.426407"
+           id="tspan3459"
+           sodipodi:role="line">mongo agent sends data to</tspan><tspan
+           id="tspan3461"
+           y="913.71747"
+           x="-42.426407"
+           sodipodi:role="line">qpid</tspan></text>
+    </g>
+    <g
+       id="g3546"
+       transform="translate(-50.507627,12.121831)">
+      <rect
+         y="368.40384"
+         x="753.27631"
+         height="107.24634"
+         width="279.39703"
+         id="rect3170-1-7-1-5"
+         style="fill:#ffffff;fill-rule:evenodd;stroke:#000000;stroke-width:0.54889977px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" />
+      <text
+         sodipodi:linespacing="125%"
+         id="text3188-8-9-9-4"
+         y="398.56378"
+         x="771.95068"
+         style="font-size:20px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
+         xml:space="preserve"><tspan
+           id="tspan3498"
+           y="398.56378"
+           x="771.95068"
+           sodipodi:role="line">Logging: data/logs/</tspan><tspan
+           id="tspan3502"
+           y="423.56378"
+           x="771.95068"
+           sodipodi:role="line">Syncing: undetermined</tspan></text>
+    </g>
+    <text
+       xml:space="preserve"
+       style="font-size:20px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans;text-anchor:middle;text-align:center"
+       x="690.26111"
+       y="128.45758"
+       id="text2987-2"
+       sodipodi:linespacing="125%"><tspan
+         sodipodi:role="line"
+         id="tspan2989-1"
+         x="468.60974"
+         y="128.45758"
+         style="font-size:36px;font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-family:Liberation Sans;-inkscape-font-specification:Liberation Sans Bold;text-anchor:middle;text-align:center">Metrics and Logging Gear</tspan><tspan
+         sodipodi:role="line"
+         x="468.60974"
+         y="173.45758"
+         style="font-size:36px;font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-family:Liberation Sans;-inkscape-font-specification:Liberation Sans Bold;text-anchor:middle;text-align:center"
+         id="tspan3713">Tentative</tspan></text>
+    <path
+       style="fill:none;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       d="M 202.30862,844.10732 369.71581,783.85697"
+       id="path3615"
+       inkscape:connector-type="polyline"
+       inkscape:connector-curvature="0"
+       inkscape:connection-start="#g3514"
+       inkscape:connection-start-point="d4"
+       inkscape:connection-end="#g3582"
+       inkscape:connection-end-point="d4" />
+    <path
+       style="fill:none;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       d="m 214.43043,658.68411 155.28538,43.97242"
+       id="path3617"
+       inkscape:connector-type="polyline"
+       inkscape:connector-curvature="0"
+       inkscape:connection-start="#g3504"
+       inkscape:connection-start-point="d4"
+       inkscape:connection-end="#g3582"
+       inkscape:connection-end-point="d4" />
+    <path
+       style="fill:none;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       d="M 79.90695,409.50025 369.71581,638.59589"
+       id="path3619"
+       inkscape:connector-type="polyline"
+       inkscape:connector-curvature="0"
+       inkscape:connection-start="#g3522"
+       inkscape:connection-start-point="d4"
+       inkscape:connection-end="#g3582"
+       inkscape:connection-end-point="d4" />
+    <path
+       style="fill:none;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       d="m 514.90845,638.19955 12.54716,-66.4455"
+       id="path3621"
+       inkscape:connector-type="polyline"
+       inkscape:connector-curvature="0"
+       inkscape:connection-start="#g3582"
+       inkscape:connection-start-point="d4"
+       inkscape:connection-end="#g3530"
+       inkscape:connection-end-point="d4" />
+    <path
+       style="fill:none;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       d="m 622.25394,742.23027 108.08635,3.26814"
+       id="path3623"
+       inkscape:connector-type="polyline"
+       inkscape:connector-curvature="0"
+       inkscape:connection-start="#g3582"
+       inkscape:connection-start-point="d4"
+       inkscape:connection-end="#g3577"
+       inkscape:connection-end-point="d4" />
+    <path
+       style="fill:none;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       d="M 1160.3899,389.2167 912.59782,325.95293"
+       id="path3625"
+       inkscape:connector-type="polyline"
+       inkscape:connector-curvature="0"
+       inkscape:connection-start="#g3559"
+       inkscape:connection-start-point="d4"
+       inkscape:connection-end="#g3552"
+       inkscape:connection-end-point="d4" />
+    <path
+       style="fill:none;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       d="m 1573.5424,429.3839 -123.6981,-1.48245"
+       id="path3627"
+       inkscape:connector-type="polyline"
+       inkscape:connector-curvature="0"
+       inkscape:connection-start="#g3566"
+       inkscape:connection-start-point="d4"
+       inkscape:connection-end="#g3559"
+       inkscape:connection-end-point="d4" />
+    <path
+       style="fill:none;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       d="M 1573.5424,501.39654 1088.0393,737.15231"
+       id="path3629"
+       inkscape:connector-type="polyline"
+       inkscape:connector-curvature="0"
+       inkscape:connection-start="#g3566"
+       inkscape:connection-start-point="d4"
+       inkscape:connection-end="#g3571"
+       inkscape:connection-end-point="d4" />
+    <path
+       style="fill:none;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       d="M 622.25394,678.50592 730.45195,627.17303"
+       id="path3631"
+       inkscape:connector-type="polyline"
+       inkscape:connector-curvature="0"
+       inkscape:connection-start="#g3582"
+       inkscape:connection-start-point="d4"
+       inkscape:connection-end="#g3539"
+       inkscape:connection-end-point="d4" />
+    <path
+       style="fill:none;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       d="M 610.10294,638.19955 781.40341,487.77201"
+       id="path3633"
+       inkscape:connector-type="polyline"
+       inkscape:connector-curvature="0"
+       inkscape:connection-start="#g3582"
+       inkscape:connection-start-point="d4"
+       inkscape:connection-end="#g3546"
+       inkscape:connection-end-point="d4" />
+    <g
+       id="g3539"
+       transform="translate(-70.710678,10.101525)">
+      <rect
+         y="509.82516"
+         x="774.4895"
+         height="107.24634"
+         width="279.39703"
+         id="rect3170-1-7-1"
+         style="fill:#ffffff;fill-rule:evenodd;stroke:#000000;stroke-width:0.54889977px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" />
+      <text
+         sodipodi:linespacing="125%"
+         id="text3188-8-9-9"
+         y="539.98511"
+         x="793.16388"
+         style="font-size:20px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
+         xml:space="preserve"><tspan
+           id="tspan3384-9"
+           y="539.98511"
+           x="793.16388"
+           sodipodi:role="line">Optional: Live cache</tspan><tspan
+           id="tspan3443"
+           y="564.98511"
+           x="793.16388"
+           sodipodi:role="line">Store maybe 15 minutes</tspan><tspan
+           id="tspan3445"
+           y="589.98511"
+           x="793.16388"
+           sodipodi:role="line">of data</tspan></text>
+    </g>
+    <text
+       xml:space="preserve"
+       style="font-size:20px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
+       x="1587.9598"
+       y="409.90515"
+       id="text3635"
+       sodipodi:linespacing="125%"><tspan
+         sodipodi:role="line"
+         id="tspan3637"
+         x="1587.9598"
+         y="409.90515">Cross Domain Auth</tspan><tspan
+         sodipodi:role="line"
+         x="1587.9598"
+         y="434.90515"
+         id="tspan3639">Unique Token Maybe </tspan><tspan
+         sodipodi:role="line"
+         x="1587.9598"
+         y="459.90515"
+         id="tspan3705">CORS?</tspan></text>
+    <rect
+       style="fill:#e0e1dd;fill-rule:evenodd;stroke:#000000;stroke-width:1.55885088px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       id="rect2985-1-74-0"
+       width="763.35706"
+       height="363.99091"
+       x="341.59067"
+       y="921.88452" />
+    <text
+       xml:space="preserve"
+       style="font-size:20px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
+       x="361.63461"
+       y="958.09082"
+       id="text2987-6-3-3"
+       sodipodi:linespacing="125%"><tspan
+         sodipodi:role="line"
+         id="tspan2989-5-5-1"
+         x="361.63461"
+         y="958.09082"
+         style="font-weight:bold">Notes</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:20px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
+       x="385.87827"
+       y="983.67181"
+       id="text3683"
+       sodipodi:linespacing="125%"><tspan
+         sodipodi:role="line"
+         id="tspan3685"
+         x="385.87827"
+         y="983.67181">Requires each cartridge to implement an agent to send data</tspan><tspan
+         sodipodi:role="line"
+         x="385.87827"
+         y="1008.6718"
+         id="tspan3687" /><tspan
+         sodipodi:role="line"
+         x="385.87827"
+         y="1033.6719"
+         id="tspan3689">The qpid daemon requires an agent to write to rrd files</tspan><tspan
+         sodipodi:role="line"
+         x="385.87827"
+         y="1058.6719"
+         id="tspan3691" /><tspan
+         sodipodi:role="line"
+         x="385.87827"
+         y="1083.6719"
+         id="tspan3695">Rest API could have direct access to qpid and use web sockets for</tspan><tspan
+         sodipodi:role="line"
+         x="385.87827"
+         y="1108.6719"
+         id="tspan3699">live data</tspan><tspan
+         sodipodi:role="line"
+         x="385.87827"
+         y="1133.6719"
+         id="tspan3701" /><tspan
+         sodipodi:role="line"
+         x="385.87827"
+         y="1158.6719"
+         id="tspan3703">This same infrasturcutre *might* be able to be used for logging via</tspan><tspan
+         sodipodi:role="line"
+         x="385.87827"
+         y="1183.6719"
+         id="tspan3707">inotify</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:20px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
+       x="1149.5536"
+       y="104.8391"
+       id="text3709"
+       sodipodi:linespacing="125%"><tspan
+         sodipodi:role="line"
+         id="tspan3711"
+         x="1149.5536"
+         y="104.8391"
+         style="font-weight:bold">2012-06-20</tspan></text>
+  </g>
+</svg>
