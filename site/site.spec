@@ -3,7 +3,7 @@
 
 Summary:   Li site components
 Name:      rhc-site
-Version: 0.94.16
+Version: 0.94.17
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -121,6 +121,10 @@ rm -rf %{buildroot}
 /bin/touch %{sitedir}/log/production.log
 
 %changelog
+* Thu Jun 21 2012 Adam Miller <admiller@redhat.com> 0.94.17-1
+- Bug 820760 - Background animated images don't work, copy hidden source image
+  url (ccoleman@redhat.com)
+
 * Wed Jun 20 2012 Adam Miller <admiller@redhat.com> 0.94.16-1
 - BZ833654: Removed extra flashes if the string is blank (fotios@redhat.com)
 - Allow streamline to return login or emailAddress (as confirmation of email
