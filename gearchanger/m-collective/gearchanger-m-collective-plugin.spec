@@ -5,7 +5,7 @@
 
 Summary:        GearChanger plugin for m-colective service
 Name:           rubygem-%{gemname}
-Version: 0.11.11
+Version: 0.12.1
 Release:        1%{?dist}
 Group:          Development/Languages
 License:        ASL 2.0
@@ -70,6 +70,14 @@ rm -rf %{buildroot}
 %{ruby_sitelib}/%{gemname}.rb
 
 %changelog
+* Wed Jun 20 2012 Adam Miller <admiller@redhat.com> 0.12.1-1
+- bump_minor_versions for sprint 14 (admiller@redhat.com)
+
+* Wed Jun 20 2012 Adam Miller <admiller@redhat.com> 0.11.12-1
+- fix for bug#833690 - allow deconfigure of mysql, but not jenkins
+  (rchopra@redhat.com)
+- fix the gear_groups endpoint - bug#833019 (rchopra@redhat.com)
+
 * Tue Jun 19 2012 Adam Miller <admiller@redhat.com> 0.11.11-1
 - view active_capacity as a float (dmcphers@redhat.com)
 - fix for bug#833019 (rchopra@redhat.com)

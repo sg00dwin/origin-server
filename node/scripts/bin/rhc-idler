@@ -59,7 +59,7 @@ function is_stopped {
     return `test stopped = "$_test"`
 }
 
-while getopts 'u:dl' OPTION
+while getopts 'u:dln' OPTION
 do
 case $OPTION in
         u) uuid=$OPTARG

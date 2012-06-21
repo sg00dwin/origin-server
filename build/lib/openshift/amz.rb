@@ -37,7 +37,7 @@ module OpenShift
         conn = AWS::EC2.new
       rescue StandardError => e
         puts <<-eos
-          Couldn't access credentials in ~/.awscred
+          Couldn't access credentials in #{File.expand_path("~/.awscred")}
 
           Please create a file with the following format:
             AWSAccessKeyId=<ACCESS_KEY>
@@ -72,6 +72,21 @@ module OpenShift
       conn.images.with_owner(:self).
         filter("state", "available").
         filter("name", filter)
+    end
+    
+    def get_specific_public_ami(conn, filter_val)
+      if filter_val.start_with?("ami")
+        filter_param = "image-id"
+      else
+        filter_param = "name"
+      end 
+      AWS.memoize do
+        devenv_amis = conn.images.
+          filter("state", "available").
+          filter(filter_param, filter_val)
+        # Take the last DevEnv AMI - memoize saves a remote call
+        devenv_amis.to_a[0]
+      end
     end
     
     def get_specific_ami(conn, filter_val)
@@ -117,7 +132,7 @@ module OpenShift
       end
     end
 
-    def find_instance(conn, name, use_tag=false)
+    def find_instance(conn, name, use_tag=false, ssh_user="root")
       if use_tag
         instances = conn.instances.filter('tag-key', 'Name').filter('tag-value', name)
       else
@@ -126,7 +141,7 @@ module OpenShift
       instances.each do |i|
         if (instance_status(i) != :terminated)
           puts "Found instance #{i.id}"
-          block_until_available(i)
+          block_until_available(i, ssh_user)
           return i
         end
       end
@@ -175,7 +190,7 @@ module OpenShift
       end
     end
 
-    def launch_instance(image, name, max_retries = 1)
+    def launch_instance(image, name, max_retries = 1, ssh_user="root")
       log.info "Creating new instance..."
 
       # You may have to retry creating instances since Amazon
@@ -186,11 +201,10 @@ module OpenShift
       instance = image.run_instance($amz_options)
 
       begin
-          
         add_tag(instance, name, 10)
 
         # Block until the instance is accessible
-        block_until_available(instance)
+        block_until_available(instance, ssh_user)
 
         return instance
       rescue ScriptError => e
@@ -215,7 +229,7 @@ module OpenShift
       end
     end
 
-    def block_until_available(instance)
+    def block_until_available(instance, ssh_user="root")
       log.info "Waiting for instance to be available..."
       
       (0..12).each do
@@ -231,12 +245,12 @@ module OpenShift
 
       hostname = instance.dns_name
       (1..30).each do
-        break if can_ssh?(hostname)
+        break if can_ssh?(hostname, ssh_user)
         log.info "SSH access failed... retrying"
         sleep 5
       end
 
-      unless can_ssh?(hostname)
+      unless can_ssh?(hostname, ssh_user)
         terminate_instance(instance)
         raise ScriptError, "SSH availability timed out"
       end

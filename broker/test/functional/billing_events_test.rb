@@ -16,7 +16,7 @@ class BillingEventsTest < ActiveSupport::TestCase
       assert(@api.update_acct_contact(acct_no))
 
       # event: 105
-      assert(@api.update_acct_status(acct_no, 0))
+      assert(@api.update_acct_status(acct_no, -1))
 
       # event: 107
       assert(@api.update_master_plan(acct_no, :MegaShift))
@@ -29,9 +29,6 @@ class BillingEventsTest < ActiveSupport::TestCase
 
       # event: 112
       assert(@api.cancel_supp_plan(acct_no, :MegaShiftStorage))
-
-      # event: 120
-      assert(@api.update_acct_supp_fields(acct_no, 'BillCounty', ''))
 
       # event: 118
       assert(@api.update_acct_supp_fields(acct_no, 'BillCounty', 'Mercury'))

@@ -5,7 +5,7 @@
 %global modname             front_page
 
 Name:    drupal%{drupal_release}-openshift-features-%{modname}
-Version: 1.2.2
+Version: 1.3.1
 Release: 1%{?dist}
 Summary: Openshift Red Hat Custom Front Page Feature for Drupal6
 Group:   Applications/Publishing
@@ -41,6 +41,9 @@ rm -rf $RPM_BUILD_ROOT
 %{drupal_modules}/%{modname}
 
 %changelog
+* Wed Jun 20 2012 Adam Miller <admiller@redhat.com> 1.3.1-1
+- bump_minor_versions for sprint 14 (admiller@redhat.com)
+
 * Thu Jun 14 2012 Adam Miller <admiller@redhat.com> 1.2.2-1
 - Add caching to drupal views and blocks for better performance.  Remove
   unnecessary sections from UI (ccoleman@redhat.com)

@@ -1,6 +1,6 @@
 Summary:       SELinux policy for OpenShift nodes
 Name:          rhc-selinux
-Version: 0.94.4
+Version: 0.95.1
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -46,6 +46,9 @@ rm -rf %{buildroot}
 %attr(0640,-,-) %{_datadir}/selinux/packages/libra.pp
 
 %changelog
+* Wed Jun 20 2012 Adam Miller <admiller@redhat.com> 0.95.1-1
+- bump_minor_versions for sprint 14 (admiller@redhat.com)
+
 * Tue Jun 19 2012 Adam Miller <admiller@redhat.com> 0.94.4-1
 - Some apps are checking if there is a ~/.ssh in the homedir
   (dwalsh@redhat.com)

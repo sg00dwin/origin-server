@@ -8,4 +8,4 @@ debuginfo = True
 tag = libra-rhel-6.3-stage
 inherit = True
 strict_keys = false
-arches = x86_64
+arches = i386 x86_64

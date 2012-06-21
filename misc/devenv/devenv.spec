@@ -8,7 +8,7 @@
 
 Summary:   Dependencies for OpenShift development
 Name:      rhc-devenv
-Version: 0.95.9
+Version: 0.96.2
 Release:   1%{?dist}
 Group:     Development/Libraries
 License:   GPLv2
@@ -40,6 +40,7 @@ Requires:  cartridge-postgresql-8.4
 Requires:  cartridge-cron-1.4
 Requires:  cartridge-haproxy-1.4
 Requires:  cartridge-nodejs-0.6
+Requires:  cartridge-ruby-1.9
 Requires:  qpid-cpp-server
 Requires:  qpid-cpp-server-ssl
 Requires:  puppet
@@ -492,6 +493,12 @@ chown apache:apache /srv/cache/mod_cache
 %{policydir}/*
 
 %changelog
+* Thu Jun 21 2012 Adam Miller <admiller@redhat.com> 0.96.2-1
+- Enable (depend and install) ruby-1.9 cartridge. (ramr@redhat.com)
+
+* Wed Jun 20 2012 Adam Miller <admiller@redhat.com> 0.96.1-1
+- bump_minor_versions for sprint 14 (admiller@redhat.com)
+
 * Tue Jun 19 2012 Adam Miller <admiller@redhat.com> 0.95.9-1
 - Added pull request id when starting jenkins job (jhonce@redhat.com)
 

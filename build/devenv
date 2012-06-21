@@ -267,7 +267,7 @@ mkdir -p /tmp/rhc/junit
       puts "Done"
     end
 
-    def add_ssh_cmd_to_threads(hostname, threads, failures, titles, cmds, timeout=@@SSH_TIMEOUT)
+    def add_ssh_cmd_to_threads(hostname, threads, failures, titles, cmds, timeout=@@SSH_TIMEOUT, retry_individually=false)
       titles = [titles] if titles.kind_of?(String)
       cmds = [cmds] if cmds.kind_of?(String)
       threads << Thread.new do
@@ -278,9 +278,14 @@ mkdir -p /tmp/rhc/junit
           if exit_code != 0
             if output.include?("Failing Scenarios:") && output =~ /cucumber li-test\/tests\/.*\.feature:\d+/
               output.lines.each do |line|
-                if line =~ /cucumber li-test\/tests\/(.*\.feature):\d+/
+                if line =~ /cucumber li-test\/tests\/(.*\.feature):(\d+)/
                   test = $1
-                  failures.push(["#{title} (#{test})", "cucumber -f html --out /tmp/rhc/#{test}.html -f progress li-test/tests/#{test}"])
+                  scenario = $2
+                  if retry_individually
+                    failures.push(["#{title} (#{test}:#{scenario})", "cucumber -f html --out /tmp/rhc/#{test}_#{scenario}.html -f progress li-test/tests/#{test}:#{scenario}"])
+                  else
+                    failures.push(["#{title} (#{test})", "cucumber -f html --out /tmp/rhc/#{test}.html -f progress li-test/tests/#{test}"])
+                  end
                 end
               end
             else
@@ -394,7 +399,7 @@ mkdir -p /tmp/rhc/junit
         end
         
         if options.include_extended?
-          add_ssh_cmd_to_threads(hostname, threads, failures, "REST API", "cucumber -f html --out /tmp/rhc/rest_api.html -f progress -t @api li-test/tests")
+          add_ssh_cmd_to_threads(hostname, threads, failures, "REST API", "cucumber -f html --out /tmp/rhc/rest_api.html -f progress -t @api li-test/tests", @@SSH_TIMEOUT, true)
           add_ssh_cmd_to_threads(hostname, threads, failures, "Extended", "cucumber -f html --out /tmp/rhc/extended.html -f progress -t @extended li-test/tests")
         end
 
@@ -926,6 +931,156 @@ rm -rf li-working #{working_dirs}
     conn = connect(options.region)
     instance = find_instance(conn, tag, true)
     terminate_instance(instance, true) if instance
+  end
+
+  desc "build_origin NAME", "Launches the latest origin instance, tagging with NAME"
+  method_option :verbose, :type => :boolean, :desc => "Enable verbose logging"
+  method_option :launch_new, :type => :boolean, :required => false, :desc => "Launch a new instance?"
+  method_option :express_server, :type => :boolean, :desc => "Set as express server in express.conf and leave on public_ip"
+  method_option :ssh_config_verifier, :type => :boolean, :desc => "Set as verifier in .ssh/config"
+  method_option :instance_type, :required => false, :desc => "Amazon machine type override (default m1.medium)"
+  method_option :with_extras, :type => :string, :required => false, :desc => "Extra (brew) rpms to install"
+  method_option :build_cd, :type => :boolean, :required => false, :desc => "Build a livecd"
+  def build_origin(name)
+    options.verbose? ? @@log.level = Logger::DEBUG : @@log.level = Logger::ERROR
+
+    # Override the machine type to launch if necessary
+    if options[:instance_type]
+      $amz_options[:instance_type] = options[:instance_type]
+    else
+      $amz_options[:instance_type] = "m1.medium"
+    end
+
+    # Get the latest devenv image and create a new instance
+    conn = connect("us-east-1")
+    image_name = "ami-0316d86a"
+    ami = get_specific_public_ami(conn,image_name)
+    if ami.nil?
+      puts "No image name '#{image_name}' found!"
+      exit(1)
+    else
+      puts "Launching latest Fedora instance #{ami.id} - #{ami.name}"
+    end
+
+    if options[:with_extras]
+      unless File.exist? options[:with_extras]
+        puts "Dir containing extra rpms not found. Exiting."
+	exit
+      end
+    end
+
+    
+    $amz_options[:block_device_mappings] = {"/dev/sdb" => "ephemeral0"}
+    if options[:launch_new]
+      instance = launch_instance(ami, name, 1, "ec2-user")
+    else
+      instance = find_instance(conn, name, true, "ec2-user")
+    end
+    hostname = instance.dns_name
+    puts "Done"
+    puts "Hostname: #{hostname}"
+
+    ret = 0
+    out,ret = ssh(hostname, "su -c \"yum -y update\"", 60 * 10, true, 1, "ec2-user")
+    out,ret = ssh(hostname, "su -c \"yum install -y git vim rubygem-rake\"", 60 * 10, true, 1, "ec2-user") if ret == 0
+    out,ret = ssh(hostname, "su -c \"yum install -y git vim rubygem-rake\"", 60 * 10, true, 1, "ec2-user") if ret == 0
+    out,ret = ssh(hostname, "su -c \"umount -l /data ; /sbin/mke2fs /dev/xvdb && mkdir -p /data && mount /dev/xvdb /data && chown -R ec2-user:ec2-user /data/\"", 60 * 10, true, 1, "ec2-user") if ret == 0
+    out,ret = ssh(hostname, "cd /data && git clone https://github.com/openshift/crankcase.git /data/crankcase" , 60 * 10, true, 1, "ec2-user") if ret == 0
+    out,ret = ssh(hostname, "cd /data/crankcase && git checkout features/mcollective" , 60 * 10, true, 1, "ec2-user") if ret == 0
+
+    if ret != 0
+      puts "Exiting aith error code #{ret}"
+      exit ret
+    end
+    
+    if options[:with_extras]
+      if File.exist? options[:with_extras]
+        out,ret = ssh(hostname, "mkdir -p /data/crankcase/build/extras" , 60, true, 1, "ec2-user")
+        files = Dir.glob("#{options[:with_extras]}/*.rpm")
+        files.each do |file|
+          scp_to(hostname, file, "/data/crankcase/build/extras/", 60*10, 5, "ec2-user")
+        end
+      else
+        puts "Dir containing extra rpms not found. Exiting."
+	exit
+      end
+    end
+
+    out,ret = ssh(hostname, "su -c \"cd /data/crankcase/build/extras && yum install -y *.rpm\"", 60 * 20, true, 1 , "ec2-user")
+    out,ret = ssh(hostname, "cd /data/crankcase/build && rake build_setup", 60 * 20, true, 1 , "ec2-user") if ret == 0
+    out,ret = ssh(hostname, "cd /data/crankcase/build && rake devbroker", 60 * 20, true, 1 , "ec2-user") if ret == 0
+    out,ret = ssh(hostname, "cd /data && chown -R ec2-user:ec2-user *", 60 * 2,true,1 , "ec2-user") if ret == 0
+
+    if ret != 0
+      puts "Exiting with error code #{ret}"
+      exit ret
+    end
+
+    if options.ssh_config_verifier?
+      public_ip = instance.public_ip_address
+      ssh_config = "~/.ssh/config"
+      pem_file = File.expand_path("~/.ssh/libra.pem")
+      if not File.exist?(pem_file)
+        # copy it from local repo
+        cmd = "cp misc/libra.pem #{pem_file}"
+        puts cmd
+        system(cmd)
+        system("chmod 600 #{pem_file}")
+      end
+      config_file = File.expand_path(ssh_config)
+
+      config_template = <<END
+Host verifier
+  HostName 10.1.1.1
+  User      root
+  IdentityFile ~/.ssh/libra.pem
+END
+
+      if not FileTest.exists?(config_file)
+        puts "File '#{ssh_config}' does not exists, creating..."
+        system("touch #{ssh_config}")
+        cmd = "chmod 600 #{ssh_config}"
+        system(cmd)
+        file_mode = 'w'
+        File.open(config_file, file_mode) { |f| f.write(config_template) }
+      else
+        if not system("grep -n 'Host verifier' #{config_file}")
+          file_mode = 'a'
+          File.open(config_file, file_mode) { |f| f.write(config_template) }
+        end
+
+      end
+
+      line_num = `grep -n 'Host verifier' ~/.ssh/config`.chomp.split(':')[0]
+      puts "Updating ~/.ssh/config verifier entry with public ip = #{public_ip}"
+      (1..4).each do |i|
+        `sed -i -e '#{line_num.to_i + i}s,HostName.*,HostName #{public_ip},' ~/.ssh/config`
+      end
+    end
+
+    if options.express_server?
+      public_ip = instance.public_ip_address
+      puts "Updating ~/.openshift/express.conf libra_server entry with public ip = #{public_ip}"
+      `sed -i -e 's,^libra_server.*,libra_server=#{public_ip},' ~/.openshift/express.conf`
+    end
+
+    home_dir=File.join(ENV['HOME'], '.openshiftdev/home.d')
+    if File.exists?(home_dir)
+      Dir.glob(File.join(home_dir, '???*'), File::FNM_DOTMATCH).each {|file|
+        puts "Installing ~/#{File.basename(file)}"
+        scp_to(hostname, file, "~/", File.stat(file).mode, 10, "ec2-user")
+      }
+    end
+    
+    puts "Public IP:       #{instance.public_ip_address}"
+    puts "Public Hostname: #{hostname}"
+    puts "Site URL:        https://#{hostname}"
+
+    if options[:build_cd]
+      puts "Launching live-cd build..."
+      out,ret = ssh(hostname, "export PATH=/usr/local/bin:/bin:/usr/bin:/usr/local/sbin:/usr/sbin:/sbin:$PATH && cd /data/crankcase/build && rake devcd", 60 * 60 * 2,false,1 , "ec2-user")
+    end
+    puts "Done."
   end
 
   desc "launch NAME", "Launches the latest DevEnv instance, tagging with NAME"

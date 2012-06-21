@@ -3,7 +3,7 @@
 
 Summary:   Li site components
 Name:      rhc-site
-Version: 0.94.15
+Version: 0.95.2
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -121,6 +121,24 @@ rm -rf %{buildroot}
 /bin/touch %{sitedir}/log/production.log
 
 %changelog
+* Thu Jun 21 2012 Adam Miller <admiller@redhat.com> 0.95.2-1
+- fix eap url (bdecoste@gmail.com)
+- Bug 820760 - Background animated images don't work, copy hidden source image
+  url (ccoleman@redhat.com)
+
+* Wed Jun 20 2012 Adam Miller <admiller@redhat.com> 0.95.1-1
+- bump_minor_versions for sprint 14 (admiller@redhat.com)
+
+* Wed Jun 20 2012 Adam Miller <admiller@redhat.com> 0.94.16-1
+- BZ833654: Removed extra flashes if the string is blank (fotios@redhat.com)
+- Allow streamline to return login or emailAddress (as confirmation of email
+  login) (ccoleman@redhat.com)
+- Merge branch 'master' of git:/srv/git/li (sgoodwin@redhat.com)
+- css edits - fix for 832900 (sgoodwin@redhat.com)
+- Bug 830670 - Remove cartridge user guide link. (ccoleman@redhat.com)
+- Bug 825094 - Prevent clickjacking through use of X-Frame-Options: SAMEORIGIN
+  (ccoleman@redhat.com)
+
 * Tue Jun 19 2012 Adam Miller <admiller@redhat.com> 0.94.15-1
 - Update homepage with EAP6 info (ccoleman@redhat.com)
 - BZ828116: Added logic for displaying credentials for applications created

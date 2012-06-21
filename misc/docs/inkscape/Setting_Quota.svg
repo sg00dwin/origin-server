@@ -370,16 +370,16 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="0.7"
-     inkscape:cx="403.25883"
-     inkscape:cy="498.25142"
+     inkscape:cx="443.02189"
+     inkscape:cy="689.28636"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
-     inkscape:window-width="1680"
-     inkscape:window-height="1027"
-     inkscape:window-x="1680"
-     inkscape:window-y="0"
-     inkscape:window-maximized="1"
+     inkscape:window-width="1035"
+     inkscape:window-height="856"
+     inkscape:window-x="1889"
+     inkscape:window-y="424"
+     inkscape:window-maximized="0"
      showborder="false" />
   <metadata
      id="metadata7">
@@ -389,7 +389,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -449,7 +449,7 @@
     </g>
     <path
        style="fill:none;stroke:#000000;stroke-width:2;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;marker-end:url(#Arrow2Lend);display:inline"
-       d="m 357.09209,112.60287 5.86122,86.88334"
+       d="m 357.09209,112.60287 5.17697,86.88334"
        id="path3595"
        inkscape:connector-type="polyline"
        inkscape:connector-curvature="0"
@@ -459,52 +459,59 @@
        inkscape:connection-end-point="d4" />
     <g
        id="g5585">
-      <rect
-         y="199.48621"
-         x="12.409685"
-         height="154.39696"
-         width="711.50299"
-         id="rect3286"
-         style="fill:#bcbdbc;fill-rule:evenodd;stroke:#000000;stroke-width:2.01329184px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" />
-      <text
-         sodipodi:linespacing="125%"
-         id="text3260"
-         y="245.30342"
-         x="24.216034"
-         style="font-size:20px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
-         xml:space="preserve"><tspan
-           id="tspan3268"
+      <g
+         id="g3113">
+        <rect
+           style="fill:#bcbdbc;fill-rule:evenodd;stroke:#000000;stroke-width:2.27860284px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+           id="rect3286"
+           width="711.50299"
+           height="197.77097"
+           x="12.409685"
+           y="199.48621" />
+        <text
+           xml:space="preserve"
+           style="font-size:20px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
+           x="24.216034"
            y="245.30342"
-           x="24.216034"
-           sodipodi:role="line">Add 1-30G storage (In 1G increments)</tspan><tspan
-           id="tspan5559"
-           y="270.30344"
-           x="24.216034"
-           sodipodi:role="line" /><tspan
-           y="295.30344"
-           x="24.216034"
-           sodipodi:role="line"
-           id="tspan5545">Site: Application Overview -&gt; Cartridge - &gt; view current / editable</tspan><tspan
-           id="tspan5563"
-           y="320.30344"
-           x="24.216034"
-           sodipodi:role="line">CLI:</tspan><tspan
-           y="345.30344"
-           x="24.216034"
-           sodipodi:role="line"
-           id="tspan5547">rhc app cartridge change-storage - a foo -c php-5.3 --storage=10GB</tspan></text>
-      <text
-         sodipodi:linespacing="125%"
-         id="text3260-9"
-         y="218.52071"
-         x="22.246124"
-         style="font-size:20px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
-         xml:space="preserve"><tspan
-           style="font-weight:bold"
-           id="tspan3268-4"
-           y="218.52071"
+           id="text3260"
+           sodipodi:linespacing="125%"><tspan
+             sodipodi:role="line"
+             x="24.216034"
+             y="245.30342"
+             id="tspan3268">Add 1-30G storage (In 1G increments)</tspan><tspan
+             sodipodi:role="line"
+             x="24.216034"
+             y="270.30341"
+             id="tspan5559" /><tspan
+             id="tspan5545"
+             sodipodi:role="line"
+             x="24.216034"
+             y="295.30341">Site: Application Overview -&gt; Cartridge - &gt; view current / editable</tspan><tspan
+             sodipodi:role="line"
+             x="24.216034"
+             y="320.30341"
+             id="tspan5563">CLI:</tspan><tspan
+             id="tspan5547"
+             sodipodi:role="line"
+             x="24.216034"
+             y="345.30341">rhc app cartridge change-storage - a foo -c php-5.3 --storage=10GB</tspan><tspan
+             id="tspan3111"
+             sodipodi:role="line"
+             x="24.216034"
+             y="370.30341">rhc app info (to display the quota limits)</tspan></text>
+        <text
+           xml:space="preserve"
+           style="font-size:20px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
            x="22.246124"
-           sodipodi:role="line">CLI/Site</tspan></text>
+           y="218.52071"
+           id="text3260-9"
+           sodipodi:linespacing="125%"><tspan
+             sodipodi:role="line"
+             x="22.246124"
+             y="218.52071"
+             id="tspan3268-4"
+             style="font-weight:bold">CLI/Site</tspan></text>
+      </g>
     </g>
     <g
        id="g3583"
@@ -573,7 +580,15 @@
          sodipodi:role="line"
          id="tspan3386"
          x="581.42859"
-         y="-27.637819">2012-06-15</tspan></text>
+         y="-27.637819">2012-06-15</tspan><tspan
+         sodipodi:role="line"
+         x="581.42859"
+         y="-2.6378193"
+         id="tspan3152">Most up to date doc in li repo</tspan><tspan
+         sodipodi:role="line"
+         x="581.42859"
+         y="22.362181"
+         id="tspan3121">li/misc/docs/inkscape/Setting_Quota.svg</tspan></text>
     <text
        xml:space="preserve"
        style="font-size:20px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
@@ -585,7 +600,12 @@
          id="tspan3390"
          x="167.14285"
          y="-21.923532"
-         style="font-size:48px">Setting Quota</tspan></text>
+         style="font-size:48px">Setting Quota</tspan><tspan
+         sodipodi:role="line"
+         x="167.14285"
+         y="38.076466"
+         style="font-size:48px"
+         id="tspan3127">US2437</tspan></text>
     <g
        id="g3442"
        transform="translate(9.2349557,-0.13126183)">
@@ -683,7 +703,7 @@
     </g>
     <path
        style="fill:none;stroke:#000000;stroke-width:2;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;marker-end:url(#Arrow2Lend);display:inline"
-       d="m 369.86574,353.88316 2.40478,108.91127"
+       d="m 370.54792,397.25717 1.58184,65.53726"
        id="path3597"
        inkscape:connector-type="polyline"
        inkscape:connector-curvature="0"
@@ -714,52 +734,71 @@
     <g
        id="g3431-7"
        transform="translate(-289.25581,242.68733)">
-      <rect
-         y="743.14709"
-         x="150.7849"
-         height="217.34126"
-         width="932.65613"
-         id="rect3286-0-6"
-         style="fill:#bcbdbc;fill-rule:evenodd;stroke:#000000;stroke-width:2.73483324px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" />
-      <text
-         sodipodi:linespacing="125%"
-         id="text3274-9"
-         y="805.21936"
-         x="167.14285"
-         style="font-size:20px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
-         xml:space="preserve"><tspan
-           id="tspan3278-0"
+      <g
+         id="g3137">
+        <rect
+           style="fill:#bcbdbc;fill-rule:evenodd;stroke:#000000;stroke-width:3.13581967px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+           id="rect3286-0-6"
+           width="932.65613"
+           height="285.74762"
+           x="150.7849"
+           y="743.14709" />
+        <text
+           xml:space="preserve"
+           style="font-size:20px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
+           x="167.14285"
            y="805.21936"
-           x="167.14285"
-           sodipodi:role="line">Quota *USAGE* is not included as part of this design</tspan><tspan
-           y="830.21936"
-           x="167.14285"
-           sodipodi:role="line"
-           id="tspan5662" /><tspan
-           y="855.21936"
-           x="167.14285"
-           sodipodi:role="line"
-           id="tspan5664">rhc-admin-chk should have a test to confirm node quota matches what is stored in mongo</tspan><tspan
-           y="880.21936"
-           x="167.14285"
-           sodipodi:role="line"
-           id="tspan5666" /><tspan
-           y="905.21936"
-           x="167.14285"
-           sodipodi:role="line"
-           id="tspan5668">Gear Groups get different quotas but it impacts the gears themselves</tspan></text>
-      <text
-         sodipodi:linespacing="125%"
-         id="text3260-9-9-0"
-         y="768.9986"
-         x="166.25488"
-         style="font-size:20px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
-         xml:space="preserve"><tspan
-           style="font-weight:bold"
-           id="tspan3268-4-43-7"
-           y="768.9986"
+           id="text3274-9"
+           sodipodi:linespacing="125%"><tspan
+             sodipodi:role="line"
+             x="167.14285"
+             y="805.21936"
+             id="tspan3278-0">Quota *USAGE* is not included as part of this design</tspan><tspan
+             id="tspan5662"
+             sodipodi:role="line"
+             x="167.14285"
+             y="830.21936" /><tspan
+             id="tspan5664"
+             sodipodi:role="line"
+             x="167.14285"
+             y="855.21936">rhc-admin-chk should have a test to confirm node quota matches what is stored in mongo</tspan><tspan
+             id="tspan5666"
+             sodipodi:role="line"
+             x="167.14285"
+             y="880.21936" /><tspan
+             id="tspan5668"
+             sodipodi:role="line"
+             x="167.14285"
+             y="905.21936">Gear Groups get different quotas but it impacts the gears themselves.  This means that</tspan><tspan
+             id="tspan3129"
+             sodipodi:role="line"
+             x="167.14285"
+             y="930.21936">in an application that has a load balancer (tier 1), php apps (tier 2) and a database (tier 3)</tspan><tspan
+             id="tspan3131"
+             sodipodi:role="line"
+             x="167.14285"
+             y="955.21936">quotas could be set at a per tier level (tier 1 might have 2G, tier 2 might have 10).  Every</tspan><tspan
+             id="tspan3133"
+             sodipodi:role="line"
+             x="167.14285"
+             y="980.21936">gear at a given tier has the same amount of storage.  If I say tier 2 has 10G, every gear at</tspan><tspan
+             id="tspan3135"
+             sodipodi:role="line"
+             x="167.14285"
+             y="1005.2194">tier 2 has 10G and thus, if I have 4 gears at tier 2, I'd have 40G of total storage at tier 2.</tspan></text>
+        <text
+           xml:space="preserve"
+           style="font-size:20px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
            x="166.25488"
-           sodipodi:role="line">Additional:</tspan></text>
+           y="768.9986"
+           id="text3260-9-9-0"
+           sodipodi:linespacing="125%"><tspan
+             sodipodi:role="line"
+             x="166.25488"
+             y="768.9986"
+             id="tspan3268-4-43-7"
+             style="font-weight:bold">Additional:</tspan></text>
+      </g>
     </g>
   </g>
 </svg>

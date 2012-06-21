@@ -1,7 +1,7 @@
 %define cartridgedir %{_libexecdir}/stickshift/cartridges/embedded/metrics-0.1
 
 Name: cartridge-metrics-0.1
-Version: 0.15.2
+Version: 0.16.1
 Release: 1%{?dist}
 Summary: Embedded metrics support for express
 
@@ -49,6 +49,9 @@ rm -rf $RPM_BUILD_ROOT
 %{cartridgedir}/info/manifest.yml
 
 %changelog
+* Wed Jun 20 2012 Adam Miller <admiller@redhat.com> 0.16.1-1
+- bump_minor_versions for sprint 14 (admiller@redhat.com)
+
 * Mon Jun 18 2012 Adam Miller <admiller@redhat.com> 0.15.2-1
 - exposing urls and credentials for metrics, rockmongo, and phpmoadmin
   cartridges through the rest apis (abhgupta@redhat.com)

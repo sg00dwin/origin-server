@@ -50,7 +50,7 @@ def migrate_gear(rhlogin, app_name, gear_uuid, version)
                     out << "Migrate on node exit code: #{exit_code}\n"
                     raise "Failed migrating gear. Rerun with: #{migrate_cmd}"
                   else
-                    #redeploy_httpd_proxy(gear, out)
+                    redeploy_jenkins_httpd_proxy(gear)
                     migrated = true
                     if migrated
                       gear.configured_components.each do |comp_name|
@@ -83,6 +83,29 @@ def migrate_gear(rhlogin, app_name, gear_uuid, version)
     raise "#{e.message}\n#{e.backtrace}\nOutput:\n#{out.string}"
   end
   out.string
+end
+
+def redeploy_jenkins_httpd_proxy(gear)
+  puts "redeploy_jenkins_httpd_proxy"
+  gear.configured_components.each do |comp_name|
+    component = gear.app.comp_instance_map[comp_name]
+    if component
+      puts "component #{component} #{component.parent_cart_name}"
+      if component.parent_cart_name == 'jenkins-1.4'
+        puts "Redeploying httpd proxy for '#{component.parent_cart_name}' on gear '#{gear.name}' with uuid '#{gear.uuid}' on node #{gear.server_identity}\n"
+        reply = gear.app.container.send(:run_cartridge_command, component.parent_cart_name, gear.app, gear, 'deploy-httpd-proxy', nil, false)
+    
+        puts "DEPLOY_HTTP_PROXY DEBUG OUTPUT:\n#{reply.debugIO.string}\n" unless reply.debugIO.string.empty?
+        puts "DEPLOY_HTTP_PROXY ERROR OUTPUT:\n#{reply.errorIO.string}\n" unless reply.errorIO.string.empty?
+        
+        if reply.exitcode != 0
+          puts "Deploy httpd proxy for cart: #{component.parent_cart_name} on node exit code: #{reply.exitcode}\n"
+          raise "Failed deploying httpd proxy for gear '#{gear.name}' with uuid '#{gear.uuid}' on node '#{gear.server_identity}'"
+        end
+      end
+    end
+    puts "done"
+  end
 end
 
 def restart_component(gear, component, out)
