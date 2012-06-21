@@ -8,7 +8,7 @@
 
 Summary:   Dependencies for OpenShift development
 Name:      rhc-devenv
-Version: 0.95.9
+Version: 0.95.10
 Release:   1%{?dist}
 Group:     Development/Libraries
 License:   GPLv2
@@ -492,6 +492,12 @@ chown apache:apache /srv/cache/mod_cache
 %{policydir}/*
 
 %changelog
+* Thu Jun 21 2012 Adam Miller <admiller@redhat.com> 0.95.10-1
+- correction, RHUI has not updated to GA 6.3 - leaving our rhel63 repo in
+  (admiller@redhat.com)
+- removed ruby193 and rhel63 custom repos, ruby193 is for next sprint and
+  rhel63 is GA in RHUI now (admiller@redhat.com)
+
 * Tue Jun 19 2012 Adam Miller <admiller@redhat.com> 0.95.9-1
 - Added pull request id when starting jenkins job (jhonce@redhat.com)
 
