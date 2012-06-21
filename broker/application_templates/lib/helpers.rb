@@ -1,3 +1,5 @@
+require 'active_support'
+
 def ask(message, secret = false)
   print message
   system "stty -echo" if secret
