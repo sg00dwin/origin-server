@@ -35,7 +35,7 @@ GEM
     dnsruby (1.53)
     erubis (2.6.6)
       abstract
-    gearchanger-m-collective-plugin (0.11.12)
+    gearchanger-m-collective-plugin (0.12.1)
       json
       stickshift-controller
     i18n (0.5.0)
