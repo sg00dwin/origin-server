@@ -3,7 +3,7 @@
 
 Summary:   Li site components
 Name:      rhc-site
-Version: 0.95.0
+Version: 0.95.1
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -121,6 +121,9 @@ rm -rf %{buildroot}
 /bin/touch %{sitedir}/log/production.log
 
 %changelog
+* Wed Jun 20 2012 Adam Miller <admiller@redhat.com> 0.95.1-1
+- bump_minor_versions for sprint 14 (admiller@redhat.com)
+
 * Wed Jun 20 2012 Adam Miller <admiller@redhat.com> 0.94.16-1
 - BZ833654: Removed extra flashes if the string is blank (fotios@redhat.com)
 - Allow streamline to return login or emailAddress (as confirmation of email
