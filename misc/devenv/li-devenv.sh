@@ -91,7 +91,7 @@ name=Ruby193 Software Collection for RHEL6 - $basearch
 baseurl=https://mirror1.stg.rhcloud.com/libra/ruby193-rhel-6-${1-candidate}/\$basearch/
         https://mirror2.stg.rhcloud.com/libra/ruby193-rhel-6-${1-candidate}/\$basearch/
 failovermethod=priority
-enabled=1
+enabled=0
 gpgcheck=0
 gpgkey=https://mirror1.stg.rhcloud.com/libra/RPM-GPG-KEY-redhat-beta
 ggpkey=https://mirror1.stg.rhcloud.com/libra/RPM-GPG-KEY-redhat-release
@@ -104,7 +104,7 @@ name= Red Hat Enterprise Linux Server 6.3 - $basearch
 baseurl=https://mirror1.stg.rhcloud.com/libra/rhel6.3/\$basearch/
         https://mirror2.stg.rhcloud.com/libra/rhel6.3/\$basearch/
 failovermethod=priority
-enabled=1
+enabled=0
 gpgcheck=1
 gpgkey=https://mirror1.stg.rhcloud.com/libra/RPM-GPG-KEY-redhat-beta
 ggpkey=https://mirror1.stg.rhcloud.com/libra/RPM-GPG-KEY-redhat-release
