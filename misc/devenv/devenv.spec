@@ -8,7 +8,7 @@
 
 Summary:   Dependencies for OpenShift development
 Name:      rhc-devenv
-Version: 0.96.1
+Version: 0.96.2
 Release:   1%{?dist}
 Group:     Development/Libraries
 License:   GPLv2
@@ -493,6 +493,9 @@ chown apache:apache /srv/cache/mod_cache
 %{policydir}/*
 
 %changelog
+* Thu Jun 21 2012 Adam Miller <admiller@redhat.com> 0.96.2-1
+- Enable (depend and install) ruby-1.9 cartridge. (ramr@redhat.com)
+
 * Wed Jun 20 2012 Adam Miller <admiller@redhat.com> 0.96.1-1
 - bump_minor_versions for sprint 14 (admiller@redhat.com)
 
