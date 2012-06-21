@@ -1,7 +1,7 @@
 %define cartridgedir %{_libexecdir}/stickshift/cartridges/embedded/phpmoadmin-1.0
 
 Name: cartridge-phpmoadmin-1.0
-Version: 0.12.2
+Version: 0.13.0
 Release: 1%{?dist}
 Summary: Embedded phpMoAdmin support for express
 

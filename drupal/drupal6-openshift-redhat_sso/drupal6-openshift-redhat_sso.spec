@@ -5,7 +5,7 @@
 %global modname             redhat_sso
 
 Name:    drupal%{drupal_release}-openshift-%{modname}
-Version: 1.3.2
+Version: 1.4.0
 Release: 1%{?dist}
 Summary: Openshift Red Hat Custom SSO Module for Drupal6
 Group:   Applications/Publishing
