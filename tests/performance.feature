@@ -9,6 +9,7 @@ Feature: Application Performance Tests
     |     type     |
     |  php-5.3     |
     |  ruby-1.8    |
+    |  ruby-1.9    |
     |  python-2.6  |
     |  perl-5.10   |
     |  jbossas-7   |
@@ -39,6 +40,7 @@ Feature: Application Performance Tests
     |     type     |
     |  php-5.3     |
     |  ruby-1.8    |
+    |  ruby-1.9    |
     |  python-2.6  |
     |  perl-5.10   |
     |  jbossas-7   |
@@ -62,6 +64,7 @@ Feature: Application Performance Tests
     |     type     |
     |  php-5.3     |
     |  ruby-1.8    |
+    |  ruby-1.9    |
     |  python-2.6  |
     |  perl-5.10   |
     |  jbossas-7   |

@@ -5,14 +5,16 @@
     section.pricing {
       table { 
         width: 100%; 
+        margin-top: 20px;
         th, td { text-align: center; }
         thead {
           tr th:last-child { border-left: 10px solid white; }
           th.plan { 
             background-color: #f2f2f2; 
-            width: 38%;
-            h1 { padding-top: 20px; }
-            h2.price.free { font-size: 22px; }
+            width: 36%;
+            h1 { padding-top: 20px; margin-bottom: 5px; }
+            h2.price.free { font-size: 22px; margin-bottom: 10px; }
+            h3 { margin-bottom: 20px; }
             p.description { font-size: 16px; font-weight: normal; }
             p.price-details { font-size: 14px; font-weight: normal; }
             .action-call { margin-left: auto; margin-right: auto; margin-bottom: 15px; }
@@ -20,7 +22,7 @@
         }
         tbody {
           td { 
-            height: 45px; 
+            height: 48px; 
             a.about { display: block; font-size: smaller; }
           }
           td:first-child { text-align: right; padding-right: 10px; }

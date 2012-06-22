@@ -267,7 +267,7 @@ mkdir -p /tmp/rhc/junit
       puts "Done"
     end
 
-    def add_ssh_cmd_to_threads(hostname, threads, failures, titles, cmds, timeout=@@SSH_TIMEOUT)
+    def add_ssh_cmd_to_threads(hostname, threads, failures, titles, cmds, timeout=@@SSH_TIMEOUT, retry_individually=false)
       titles = [titles] if titles.kind_of?(String)
       cmds = [cmds] if cmds.kind_of?(String)
       threads << Thread.new do
@@ -278,9 +278,14 @@ mkdir -p /tmp/rhc/junit
           if exit_code != 0
             if output.include?("Failing Scenarios:") && output =~ /cucumber li-test\/tests\/.*\.feature:\d+/
               output.lines.each do |line|
-                if line =~ /cucumber li-test\/tests\/(.*\.feature):\d+/
+                if line =~ /cucumber li-test\/tests\/(.*\.feature):(\d+)/
                   test = $1
-                  failures.push(["#{title} (#{test})", "cucumber -f html --out /tmp/rhc/#{test}.html -f progress li-test/tests/#{test}"])
+                  scenario = $2
+                  if retry_individually
+                    failures.push(["#{title} (#{test}:#{scenario})", "cucumber -f html --out /tmp/rhc/#{test}_#{scenario}.html -f progress li-test/tests/#{test}:#{scenario}"])
+                  else
+                    failures.push(["#{title} (#{test})", "cucumber -f html --out /tmp/rhc/#{test}.html -f progress li-test/tests/#{test}"])
+                  end
                 end
               end
             else
@@ -394,7 +399,7 @@ mkdir -p /tmp/rhc/junit
         end
         
         if options.include_extended?
-          add_ssh_cmd_to_threads(hostname, threads, failures, "REST API", "cucumber -f html --out /tmp/rhc/rest_api.html -f progress -t @api li-test/tests")
+          add_ssh_cmd_to_threads(hostname, threads, failures, "REST API", "cucumber -f html --out /tmp/rhc/rest_api.html -f progress -t @api li-test/tests", @@SSH_TIMEOUT, true)
           add_ssh_cmd_to_threads(hostname, threads, failures, "Extended", "cucumber -f html --out /tmp/rhc/extended.html -f progress -t @extended li-test/tests")
         end
 

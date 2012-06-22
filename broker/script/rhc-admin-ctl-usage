@@ -85,10 +85,11 @@ def usage_time(billing_api, acct_no, usage_record, begin_time, end_time)
 end
 
 def get_billing_user_acct_no(billing_api, user)
+  puts "Aria userid: #{user.uuid}"
   unless billing_api.userid_exists(user.uuid)
     puts "User didn't exist"
     # Temporary code until users are created up front
-    acct_no = billing_api.create_fake_user(user.uuid)
+    acct_no = billing_api.create_fake_acct(user.uuid, :MegaShift)
   else
     acct_no = billing_api.get_acct_no_from_user_id(user.uuid)
   end

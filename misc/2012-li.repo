@@ -9,8 +9,8 @@ enabled=1
 gpgcheck=0
 gpgkey=https://mirror1.stg.rhcloud.com/libra/li/li-signing.asc
 sslverify=0
-sslclientcert=/var/lib/yum/client-cert.pem
-sslclientkey=/var/lib/yum/client-key.pem
+sslclientcert=/var/lib/yum/2012-libra-client-cert.pem
+sslclientkey=/var/lib/yum/2012-libra-client-key.pem
 
 [li-source]
 name=Li repo for Enterprise Linux 6 - $basearch
@@ -23,8 +23,8 @@ enabled=0
 gpgkey=https://mirror1.stg.rhcloud.com/libra/li-signing.asc
 gpgcheck=0
 sslverify=0
-sslclientcert=/var/lib/yum/client-cert.pem
-sslclientkey=/var/lib/yum/client-key.pem
+sslclientcert=/var/lib/yum/2012-libra-client-cert.pem
+sslclientkey=/var/lib/yum/2012-libra-client-key.pem
 
 [qpid]
 name=Qpid repo for Enterprise Linux 6 - $basearch
@@ -36,8 +36,8 @@ failovermethod=priority
 enabled=1
 gpgcheck=0
 sslverify=0
-sslclientcert=/var/lib/yum/client-cert.pem
-sslclientkey=/var/lib/yum/client-key.pem
+sslclientcert=/var/lib/yum/2012-libra-client-cert.pem
+sslclientkey=/var/lib/yum/2012-libra-client-key.pem
 
 [passenger]
 name=Passenger repo for Enterprise Linux 6
@@ -49,6 +49,7 @@ failovermethod=priority
 enabled=1
 gpgcheck=0
 sslverify=0
-sslclientcert=/var/lib/yum/client-cert.pem
-sslclientkey=/var/lib/yum/client-key.pem
+sslclientcert=/var/lib/yum/2012-libra-client-cert.pem
+sslclientkey=/var/lib/yum/2012-libra-client-key.pem
+
 
