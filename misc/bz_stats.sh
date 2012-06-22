@@ -47,8 +47,13 @@ if ! bugzilla -h &> /dev/null; then
 fi
 
 # Make sure gnuplot is installed
-if ! gnuplot --version &> /dev/null; then
+if gnuplot44 --version &> /dev/null; then
+  gnuplot_cmd="gnuplot44"
+elif gnuplot --version &> /dev/null; then
+  gnuplot_cmd="gnuplot"
+else
   printf "ERROR: gnuplot not found, please install the gnuplot package\n"
+  printf "\t\tIf you are running RHEL, please install gnuplot44 package\n"
 fi
 
 # parse options/args
@@ -127,7 +132,7 @@ printf "%s %s %s\n" \
   "${#openshift_buglist[@]}" \
   "${#blockers[@]}" >> $data_file
 
-gnuplot $display <<EOF
+$gnuplot_cmd $display <<EOF
 set term png
 set output "$graph_file"
 set key top left outside horizontal autotitle columnhead
