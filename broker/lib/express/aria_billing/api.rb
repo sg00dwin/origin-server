@@ -114,7 +114,7 @@ module Express
         wddx_response = send(request)
         response = WDDX.load(wddx_response)
         Rails.logger.debug "Aria Billing api response: #{response.inspect}"
-        if response.error_code != 0
+        if response.error_code != 0 && ret_output
           raise Express::AriaBilling::Exception.new "#{method_name} failed with error code: #{response.error_code}"
         end
         if ret_output
