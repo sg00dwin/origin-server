@@ -262,7 +262,9 @@ module Uplift
         while !success && retries < 5
           retries += 1
           begin
-            logger.debug "DEBUG: DYNECT handle temp redirect with path: #{url.path} and headers: #{headers.inspect} attempt: #{retries} sleep_time: #{sleep_time}"
+            logheaders = headers.clone
+            logheaders["Auth-Token"]="[hidden]"
+            logger.debug "DEBUG: DYNECT handle temp redirect with path: #{url.path} and headers: #{logheaders.inspect} attempt: #{retries} sleep_time: #{sleep_time}"
             resp, data = http.get(url.path, headers)
             case resp
             when Net::HTTPSuccess, Net::HTTPTemporaryRedirect
@@ -311,7 +313,9 @@ module Uplift
         #http.set_debug_output $stderr
         http.use_ssl = true
         begin
-          logger.debug "DEBUG: DYNECT has? with path: #{url.path} and headers: #{headers.inspect}"
+          logheaders = headers.clone
+          logheaders["Auth-Token"]="[hidden]"
+          logger.debug "DEBUG: DYNECT has? with path: #{url.path} and headers: #{logheaders.inspect}"
           resp, data = http.get(url.path, headers)
           case resp
           when Net::HTTPSuccess
@@ -358,7 +362,9 @@ module Uplift
         http.use_ssl = true
         json_data = JSON.generate(post_data);
         begin
-          logger.debug "DEBUG: DYNECT put/post with path: #{url.path} json data: #{json_data} and headers: #{headers.inspect}"
+          logheaders = headers.clone
+          logheaders["Auth-Token"]="[hidden]"
+          logger.debug "DEBUG: DYNECT put/post with path: #{url.path} json data: #{json_data} and headers: #{logheaders.inspect}"
           if put
             resp, data = http.put(url.path, json_data, headers)
           else
@@ -409,7 +415,9 @@ module Uplift
         #http.set_debug_output $stderr
         http.use_ssl = true
         begin
-          logger.debug "DEBUG: DYNECT delete with path: #{url.path} and headers: #{headers.inspect}"
+          logheaders = headers.clone
+          logheaders["Auth-Token"]="[hidden]"
+          logger.debug "DEBUG: DYNECT delete with path: #{url.path} and headers: #{logheaders.inspect}"
           resp, data = http.delete(url.path, headers)
           case resp
           when Net::HTTPSuccess
