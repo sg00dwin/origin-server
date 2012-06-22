@@ -8,4 +8,10 @@ class ProductController < SiteController
 
   def getting_started
   end
+
+  def not_found
+  end
+
+  def error
+  end
 end

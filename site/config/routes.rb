@@ -28,6 +28,10 @@ RedHatCloud::Application.routes.draw do
   #match 'partners/join' => 'partner#join', :as=> 'join_partner'
   match 'partners' => app_redirect('platform')
 
+  #Site not found
+  match 'not_found' => 'product#not_found'
+  match 'error' => 'product#error'
+
   # Buzz
   match 'twitter_latest_tweet' => 'twitter#latest_tweet'
   match 'twitter_latest_retweets' => 'twitter#latest_retweets'
