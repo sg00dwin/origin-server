@@ -1,7 +1,7 @@
 %define cartridgedir %{_libexecdir}/stickshift/cartridges/embedded/metrics-0.1
 
 Name: cartridge-metrics-0.1
-Version: 0.16.1
+Version: 0.16.2
 Release: 1%{?dist}
 Summary: Embedded metrics support for express
 
@@ -49,6 +49,9 @@ rm -rf $RPM_BUILD_ROOT
 %{cartridgedir}/info/manifest.yml
 
 %changelog
+* Sat Jun 23 2012 Dan McPherson <dmcphers@redhat.com> 0.16.2-1
+- new package built with tito
+
 * Wed Jun 20 2012 Adam Miller <admiller@redhat.com> 0.16.1-1
 - bump_minor_versions for sprint 14 (admiller@redhat.com)
 
