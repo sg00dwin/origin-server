@@ -1,5 +1,5 @@
 Name: bind-local
-Version:	0.9.1
+Version:	0.9.2
 Release:	1%{?dist}
 Summary:	Config for local named for test and development with Dynamic DNS
 Group:		Network/Daemons
@@ -202,6 +202,9 @@ fi
 
 
 %changelog
+* Sat Jun 23 2012 Dan McPherson <dmcphers@redhat.com> 0.9.2-1
+- 
+
 * Sat Jun 23 2012 Dan McPherson <dmcphers@redhat.com> 0.9.1-1
 - new package built with tito
 
