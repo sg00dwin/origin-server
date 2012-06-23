@@ -3,7 +3,7 @@
 
 Summary:   Li site components
 Name:      rhc-site
-Version: 0.95.2
+Version: 0.95.3
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -121,6 +121,9 @@ rm -rf %{buildroot}
 /bin/touch %{sitedir}/log/production.log
 
 %changelog
+* Sat Jun 23 2012 Dan McPherson <dmcphers@redhat.com> 0.95.3-1
+- new package built with tito
+
 * Thu Jun 21 2012 Adam Miller <admiller@redhat.com> 0.95.2-1
 - fix eap url (bdecoste@gmail.com)
 - Bug 820760 - Background animated images don't work, copy hidden source image
