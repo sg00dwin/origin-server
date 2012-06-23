@@ -2,7 +2,7 @@
 
 Summary:       Multi-tenant cloud management system node tools
 Name:          rhc-node
-Version: 0.95.1
+Version: 0.95.2
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -266,6 +266,9 @@ fi
 /lib64/security/pam_libra.so
 
 %changelog
+* Sat Jun 23 2012 Dan McPherson <dmcphers@redhat.com> 0.95.2-1
+- new package built with tito
+
 * Wed Jun 20 2012 Adam Miller <admiller@redhat.com> 0.95.1-1
 - bump_minor_versions for sprint 14 (admiller@redhat.com)
 - BZ834126 (jhonce@redhat.com)
