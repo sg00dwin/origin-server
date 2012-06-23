@@ -3,7 +3,7 @@
 
 Summary:   Li broker components
 Name:      rhc-broker
-Version: 0.95.2
+Version: 0.95.3
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -111,6 +111,9 @@ rm -rf $RPM_BUILD_ROOT
 /bin/touch %{_localstatedir}/log/stickshift/user_action.log
 
 %changelog
+* Sat Jun 23 2012 Dan McPherson <dmcphers@redhat.com> 0.95.3-1
+- new package built with tito
+
 * Thu Jun 21 2012 Adam Miller <admiller@redhat.com> 0.95.2-1
 - Updating gem versions (admiller@redhat.com)
 - Need to add active_support to templates rake script (fotios@redhat.com)
