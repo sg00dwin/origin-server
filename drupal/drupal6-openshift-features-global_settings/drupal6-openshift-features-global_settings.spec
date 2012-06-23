@@ -5,7 +5,7 @@
 %global modname             global_settings
 
 Name:    drupal%{drupal_release}-openshift-features-%{modname}
-Version: 1.2.1
+Version: 1.2.2
 Release: 1%{?dist}
 Summary: Openshift Red Hat Custom Forums Feature for Drupal6
 Group:   Applications/Publishing
@@ -41,6 +41,9 @@ rm -rf $RPM_BUILD_ROOT
 %{drupal_modules}/%{modname}
 
 %changelog
+* Sat Jun 23 2012 Dan McPherson <dmcphers@redhat.com> 1.2.2-1
+- new package built with tito
+
 * Thu May 10 2012 Adam Miller <admiller@redhat.com> 1.2.1-1
 - bumping spec versions (admiller@redhat.com)
 
