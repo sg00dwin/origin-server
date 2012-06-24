@@ -5,7 +5,7 @@
 %global modname             custom_forms
 
 Name:    drupal%{drupal_release}-openshift-%{modname}
-Version: 0.11.1
+Version: 0.11.0
 Release: 1%{?dist}
 Summary: Openshift Red Hat Custom Forms for Drupal6
 Group:   Applications/Publishing
