@@ -5,7 +5,7 @@
 %global modname             custom_forms
 
 Name:    drupal%{drupal_release}-openshift-%{modname}
-Version: 0.11.0
+Version: 0.11.1
 Release: 1%{?dist}
 Summary: Openshift Red Hat Custom Forms for Drupal6
 Group:   Applications/Publishing
@@ -41,6 +41,9 @@ rm -rf $RPM_BUILD_ROOT
 %{drupal_modules}/%{modname}
 
 %changelog
+* Sat Jun 23 2012 Dan McPherson <dmcphers@redhat.com> 0.11.1-1
+- new package built with tito
+
 * Thu May 10 2012 Adam Miller <admiller@redhat.com> 0.11.1-1
 - fix up spec versions (dmcphers@redhat.com)
 - bumping spec versions (admiller@redhat.com)
