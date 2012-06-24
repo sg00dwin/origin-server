@@ -3,7 +3,7 @@
 
 Summary:   Li site components
 Name:      rhc-site
-Version: 0.94.17
+Version: 0.94.18
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -121,6 +121,9 @@ rm -rf %{buildroot}
 /bin/touch %{sitedir}/log/production.log
 
 %changelog
+* Sat Jun 23 2012 Dan McPherson <dmcphers@redhat.com> 0.94.18-1
+- 
+
 * Sat Jun 23 2012 Dan McPherson <dmcphers@redhat.com> 0.94.17-1
 - new package built with tito
 
