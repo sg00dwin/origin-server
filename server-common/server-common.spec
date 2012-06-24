@@ -2,7 +2,7 @@
 
 Summary:       Common dependencies of the OpenShift broker and site
 Name:          rhc-server-common
-Version: 0.91.0
+Version: 0.91.1
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -55,6 +55,9 @@ getent passwd libra_passenger || \
     -c "libra_passenger" libra_passenger
 
 %changelog
+* Sat Jun 23 2012 Dan McPherson <dmcphers@redhat.com> 0.91.1-1
+- new package built with tito
+
 * Fri Jun 01 2012 Adam Miller <admiller@redhat.com> 0.91.1-1
 - bumping spec versions (admiller@redhat.com)
 
