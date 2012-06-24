@@ -5,7 +5,7 @@
 %global modname             front_page
 
 Name:    drupal%{drupal_release}-openshift-features-%{modname}
-Version: 1.3.2
+Version: 1.3.3
 Release: 1%{?dist}
 Summary: Openshift Red Hat Custom Front Page Feature for Drupal6
 Group:   Applications/Publishing
@@ -41,6 +41,9 @@ rm -rf $RPM_BUILD_ROOT
 %{drupal_modules}/%{modname}
 
 %changelog
+* Sat Jun 23 2012 Dan McPherson <dmcphers@redhat.com> 1.3.3-1
+- 
+
 * Sat Jun 23 2012 Dan McPherson <dmcphers@redhat.com> 1.3.2-1
 - new package built with tito
 
