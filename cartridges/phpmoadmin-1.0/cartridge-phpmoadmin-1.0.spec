@@ -1,7 +1,7 @@
 %define cartridgedir %{_libexecdir}/stickshift/cartridges/embedded/phpmoadmin-1.0
 
 Name: cartridge-phpmoadmin-1.0
-Version: 0.12.1
+Version: 0.12.2
 Release: 1%{?dist}
 Summary: Embedded phpMoAdmin support for express
 
@@ -54,6 +54,9 @@ rm -rf $RPM_BUILD_ROOT
 %doc %{cartridgedir}/LICENSE
 
 %changelog
+* Sat Jun 23 2012 Dan McPherson <dmcphers@redhat.com> 0.12.2-1
+- new package built with tito
+
 * Mon Jun 18 2012 Adam Miller <admiller@redhat.com> 0.12.2-1
 - exposing urls and credentials for metrics, rockmongo, and phpmoadmin
   cartridges through the rest apis (abhgupta@redhat.com)
