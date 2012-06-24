@@ -292,15 +292,13 @@ mkdir -p /tmp/rhc/junit
               failures.push([title, cmd])
             end
           end
-          puts "Still Running Tests (#{threads.length} threads):"
+          puts "Still Running Tests:"
           threads.each do |t|
             t[1].delete(title)
-            t[1].each do |title|
-              puts "   #{title}"
-            end
+            puts "   #{t[1]}" unless t[1].empty?
           end
         end
-      }, titles ]
+      }, Array.new(titles) ]
     end
 
     def reset_test_dir(hostname, backup=false)
