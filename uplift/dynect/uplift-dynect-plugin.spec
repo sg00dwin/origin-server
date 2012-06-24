@@ -5,7 +5,7 @@
 
 Summary:        Uplift plugin for Dynect DNS service
 Name:           rubygem-%{gemname}
-Version: 0.11.0
+Version: 0.11.1
 Release:        1%{?dist}
 Group:          Development/Languages
 License:        ASL 2.0
@@ -77,6 +77,9 @@ rm -rf %{buildroot}
 %{ruby_sitelib}/%{gemname}.rb
 
 %changelog
+* Sat Jun 23 2012 Dan McPherson <dmcphers@redhat.com> 0.11.1-1
+- new package built with tito
+
 * Fri Jun 01 2012 Adam Miller <admiller@redhat.com> 0.11.1-1
 - bumping spec versions (admiller@redhat.com)
 
