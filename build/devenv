@@ -1348,7 +1348,7 @@ END
         temp_commit
 
         puts "building rhc..."
-        `pushd express; tito build --rpm --test; popd;`
+        `tito build --rpm --test`
         puts "installing rhc..."
         `sudo rpm -Uvh --force /tmp/tito/noarch/rhc-*; rm -rf /tmp/tito; mkdir -p /tmp/tito`
 
