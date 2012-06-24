@@ -7,7 +7,7 @@ sudo rm -f /etc/yum.repos.d/ss.repo
 sudo yum install -y vim git wget tito ruby rubygems java-1.6.0-openjdk jpackage-utils java-1.6.0-openjdk-devel emacs fedora-kickstarts livecd-tools tig
 
 if [ ! -d ${repodir}/li ]; then
-  git clone git:/srv/git/li.git ${repodir}/li
+  git clone git@github.com:openshift/li.git ${repodir}/li
   git clone git@github.com:openshift/crankcase.git ${repodir}/crankcase
 else
   pushd ${repodir}/li
