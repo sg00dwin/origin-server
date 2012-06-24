@@ -117,7 +117,7 @@ mkdir -p /tmp/rhc/junit
     
     def idle_all_gears(hostname)
       puts "Idling all gears on remote instance: #{hostname}"
-      ssh(hostname, "for dir in /var/lib/stickshift/*; do if [ -d $dir ] && [ ! -h $dir ] ; then rhc-idler -u `basename $dir`; fi; done", 240)
+      ssh(hostname, "service mcollective restart; for dir in /var/lib/stickshift/*; do if [ -d $dir ] && [ ! -h $dir ] ; then rhc-idler -u `basename $dir`; fi; done", 240)
       puts "Done"
     end
 
@@ -270,7 +270,7 @@ mkdir -p /tmp/rhc/junit
     def add_ssh_cmd_to_threads(hostname, threads, failures, titles, cmds, timeout=@@SSH_TIMEOUT, retry_individually=false)
       titles = [titles] if titles.kind_of?(String)
       cmds = [cmds] if cmds.kind_of?(String)
-      threads << Thread.new do
+      threads << [ Thread.new {
         multi = cmds.length > 1
         cmds.each_with_index do |cmd, index|
           title = titles[index]
@@ -292,8 +292,15 @@ mkdir -p /tmp/rhc/junit
               failures.push([title, cmd])
             end
           end
+          puts "Still Running Tests (#{threads.length} threads):"
+          threads.each do |t|
+            t[1].delete(title)
+            t[1].each do |title|
+              puts "   #{title}"
+            end
+          end
         end
-      end
+      }, titles ]
     end
 
     def reset_test_dir(hostname, backup=false)
@@ -476,7 +483,7 @@ mkdir -p /tmp/rhc/junit
         end
 
         threads.each do |t|
-          t.join
+          t[0].join
         end
 
         retry_threshold = 0
@@ -1282,7 +1289,7 @@ END
     add_ssh_cmd_to_threads(hostname, threads, failures, "Sanity", "cucumber -f html --out /tmp/rhc/sanity.html -f progress -t @sanity li-test/tests/")
 
     threads.each do |t|
-      t.join
+      t[0].join
     end
 
     unless failures.empty?
