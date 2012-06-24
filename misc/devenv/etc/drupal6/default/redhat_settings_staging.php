@@ -4,7 +4,7 @@
  * Configuration key/value pairs for external Redhat services.
  */
 
-$streamline_host = 'https://10.196.215.67';
+$streamline_host = 'https://10.118.51.155';
 /**
  * If you have configured broker and site to generate cookies to
  * the current domain, comment out this line.

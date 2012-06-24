@@ -31,7 +31,7 @@ RedHatCloud::Application.configure do
   config.integrated = true
   config.login = "https://www.qa.redhat.com/wapps/streamline/login.html"
   config.streamline = {
-    :host => 'https://10.196.215.67',
+    :host => 'https://10.118.51.155',
     :base_url => '/wapps/streamline',
     :email_confirm_url => '/wapps/streamline/confirm.html',
     :lost_password_url => '/wapps/streamline/resetPassword.html',

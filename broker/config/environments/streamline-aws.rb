@@ -48,7 +48,7 @@ Broker::Application.configure do
     :broker_auth_secret => "EIvWT6u3lsvSRNRGZhhW8YcWMh5mUAlc32nZlRJPdJM=",
     :broker_auth_rsa_secret => "SJDIkdfhuISe3wrulhjvcKHJFDUeoi8gfcdnu8299dhc",
     :auth_service => {
-      :host => "https://10.196.215.67",
+      :host => "https://10.118.51.155",
       :base_url => "/wapps/streamline"
     }
   }
