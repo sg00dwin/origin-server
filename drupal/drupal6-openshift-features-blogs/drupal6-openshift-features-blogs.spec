@@ -5,7 +5,7 @@
 %global modname             blogs
 
 Name:    drupal%{drupal_release}-openshift-features-%{modname}
-Version: 1.3.1
+Version: 1.3.2
 Release: 1%{?dist}
 Summary: Openshift Red Hat Custom Blog Feature for Drupal6
 Group:   Applications/Publishing
@@ -41,6 +41,9 @@ rm -rf $RPM_BUILD_ROOT
 %{drupal_modules}/%{modname}
 
 %changelog
+* Sat Jun 23 2012 Dan McPherson <dmcphers@redhat.com> 1.3.2-1
+- new package built with tito
+
 * Thu Jun 14 2012 Adam Miller <admiller@redhat.com> 1.3.2-1
 - Add caching to drupal views and blocks for better performance.  Remove
   unnecessary sections from UI (ccoleman@redhat.com)
