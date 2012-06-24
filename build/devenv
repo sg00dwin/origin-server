@@ -295,7 +295,7 @@ mkdir -p /tmp/rhc/junit
           puts "Still Running Tests:"
           threads.each do |t|
             t[1].delete(title)
-            puts "   #{t[1]}" unless t[1].empty?
+            puts "   #{t[1].pretty_inspect}" unless t[1].empty?
           end
         end
       }, Array.new(titles) ]
