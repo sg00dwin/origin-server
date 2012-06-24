@@ -5,7 +5,7 @@
 
 Summary:        GearChanger plugin for m-colective service
 Name:           rubygem-%{gemname}
-Version: 0.11.11
+Version: 0.11.12
 Release:        1%{?dist}
 Group:          Development/Languages
 License:        ASL 2.0
@@ -70,6 +70,9 @@ rm -rf %{buildroot}
 %{ruby_sitelib}/%{gemname}.rb
 
 %changelog
+* Sat Jun 23 2012 Dan McPherson <dmcphers@redhat.com> 0.11.12-1
+- new package built with tito
+
 * Wed Jun 20 2012 Adam Miller <admiller@redhat.com> 0.11.12-1
 - fix for bug#833690 - allow deconfigure of mysql, but not jenkins
   (rchopra@redhat.com)
