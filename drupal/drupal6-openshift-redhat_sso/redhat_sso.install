@@ -22,6 +22,7 @@ function _redhat_sso_profile_field_remove($name, $remove_values=TRUE) {
 }
 
 function redhat_sso_install() {
+  variable_set('site_403', 'user/denied');
   _redhat_sso_profile_field_add( array(
     'title' => 'Red Hat login external ID',
     'name' => 'profile_rhlogin',

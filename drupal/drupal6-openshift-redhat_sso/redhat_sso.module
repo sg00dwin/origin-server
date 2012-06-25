@@ -9,7 +9,6 @@
  *
  */
 
-
 function redhat_sso_menu(){
   $items['user/denied'] = array(
     'type' => MENU_CALLBACK,
@@ -28,12 +27,12 @@ function _redhat_sso_redirect() {
 }
 
 /**
- * Implementation of hook_init().
+ * Implementation of hook_boot().  Authorization must take place
+ * before caching.
  */
-function redhat_sso_init() {
-  #variable_set('site_403', 'user/denied'); flushes variable cache, big no no
+function redhat_sso_boot() {
   if (_redhat_sso_is_sso_enabled()) {
-     _redhat_sso_login_check();  
+    _redhat_sso_login_check();  
   }
 }
 
@@ -58,10 +57,12 @@ function _redhat_sso_is_sso_enabled($admin_check = TRUE) {
 function _redhat_sso_logout_user() {
   global $user;
 
-  if (user_is_logged_in()) {
+  if (_redhat_user_logged_in()) {
     // Destroy sesssion.
     session_destroy();
 
+    # logout requires the full bootstrap
+    drupal_bootstrap(DRUPAL_BOOTSTRAP_FULL);
     // Log user out.
     $null = NULL;
     user_module_invoke('logout', $null, $user);
@@ -70,34 +71,43 @@ function _redhat_sso_logout_user() {
   }
 }
 
+function _redhat_user_logged_in() {
+  global $user;
+  return !!$user->uid;
+}
 
 /*
  * Checks if user needs to login via SSO or is already logged in.
  */
 function _redhat_sso_login_check() {
-  global $user;
 
-  // Ensure user is logged out if SSO cookie is not present.
-  if (!isset($_COOKIE['rh_sso']) && user_is_logged_in()) {
-    _redhat_sso_logout_user();
-  }
+  //print "check authenticated user\n";
 
   // Skip SSO service calls if SSO cookie already validated.
   if (isset($_SESSION['rh_sso'])) {
     if ($_SESSION['rh_sso'] == $_COOKIE['rh_sso']) {
+      watchdog('redhat_sso', 'User session rh_sso matches cookie rh_sso');
       return;
     }
     else {
       // SSO session data exists, but not synced with cookie data.
+      watchdog('redhat_sso', 'rh_sso in session does not match cookie');
       _redhat_sso_logout_user();
+      return;
     }
+  }
+  // Ensure user is logged out if SSO cookie is not present.
+  if (!isset($_COOKIE['rh_sso']) && _redhat_user_logged_in()) {
+    _redhat_sso_logout_user();
+    watchdog('redhat_sso', 'User is logged in but has no rh_sso cookie');
+    return; //?
   }
 
   // Check forcing login for entire site or if SSO cookie exists to auto login.
   if (isset($_COOKIE['rh_sso'])) {
+    watchdog('redhat_sso', 'rh_sso cookie set, log user in');
     _redhat_sso_login();
   }
-
 } // END _redhat_sso_login_check().
 
 
@@ -107,6 +117,8 @@ function _redhat_sso_login_check() {
 function _redhat_sso_login() {
   global $user;
 
+  # login requires the full bootstrap
+  drupal_bootstrap(DRUPAL_BOOTSTRAP_FULL);
   try {
     // Read SSO cookie data.
     $rh_sso_cookie = $_COOKIE['rh_sso'];
