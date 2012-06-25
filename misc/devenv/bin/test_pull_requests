@@ -22,7 +22,7 @@ require 'time'
 
 def usage
     puts <<USAGE
-Usage: test_pull_requests [--help]
+Usage: test_pull_requests [--help] [--config <file>]
 
 This will process all the openshift pull requests and submit
 Jenkins tests for any mergeable pull requests
@@ -30,32 +30,47 @@ Jenkins tests for any mergeable pull requests
 Options:
 -h|--help
     Show Usage info
+-c|--config <file>
+    JSON configuration file (default: crankcase configuration)
 USAGE
 end
 
 opts = GetoptLong.new(
-    ["--help",             "-h", GetoptLong::NO_ARGUMENT]
+    ["--help",             "-h", GetoptLong::NO_ARGUMENT],
+    ["--config",           "-c", GetoptLong::REQUIRED_ARGUMENT]
 )
 
 args = {}
 begin
-    opts.each{ |k,v| args[k]=v }
+    opts.each{ |k,v| args[k[2..-1].intern]=v }
 rescue GetoptLong::Error => e
     usage
     exit -100
 end
 
-if args["--help"]
+if args[:help]
   usage
   exit 1
 end
 
 include Hub
 
-# Global configuration
-USER = "openshift"
-REPO = "crankcase"
-TEAM_RH = "168397"
+Properties = if args.has_key?(:config) && args[:config]
+    JSON.parse(IO.read(args[:config]))
+else 
+    JSON.parse(%Q|
+      {
+        "user" : "openshift",
+        "repo" : "crankcase",
+        "team" : "168397",
+        "app_url" : "https://ci.dev.openshift.redhat.com",
+        "hub_config" : "~/.config/hub",
+        "proxy_host" : null,
+        "proxy_port" : null,
+	"project_name" : "test_pull_request"
+      }
+    |)
+end
 
 # Comment string constants
 TEST_PREFIX = "Test Results:"
@@ -66,37 +81,31 @@ EVALUATING_REGEX = /Test Results: Evaluating/
 WAITING_REGEX = /Test Results: Waiting/
 RUNNING_REGEX = /Test Results: Running \((.*)\)/
 
-# Set proxy values to nil if you don't want to use a proxy
-#PROXY_HOST = 'file.rdu.redhat.com'
-#PROXY_PORT = 3128
-PROXY_HOST = nil
-PROXY_PORT = nil
-
 # Dynamically extend GitHubAPI to add methods that don't
 # require a local git project
 module Hub
   class GitHubAPI
     def list_pull_requests
-      res = get "https://api.github.com/repos/#{USER}/#{REPO}/pulls" 
+      res = get "https://api.github.com/repos/#{Properties['user']}/#{Properties['repo']}/pulls" 
       res.error! unless res.success?
       res.data
     end
 
     def is_mergeable? id
-      res = get "https://api.github.com/repos/#{USER}/#{REPO}/pulls/%s" % id
+      res = get "https://api.github.com/repos/#{Properties['user']}/#{Properties['repo']}/pulls/%s" % id
       res.error! unless res.success?
       res.data['mergeable']
     end
 
     def get_comments issue_id
-      res = get "https://api.github.com/repos/#{USER}/#{REPO}/issues/%s/comments" % issue_id
+      res = get "https://api.github.com/repos/#{Properties['user']}/#{Properties['repo']}/issues/%s/comments" % issue_id
       res.error! unless res.success?
       res.data
     end
 
     def add_comment issue_id, comment
       params = { :body => comment }
-      res = post "https://api.github.com/repos/#{USER}/#{REPO}/issues/%s/comments" % [issue_id], params
+      res = post "https://api.github.com/repos/#{Properties['user']}/#{Properties['repo']}/issues/%s/comments" % [issue_id], params
       res.error! unless res.success?
       res.data
     end
@@ -104,14 +113,14 @@ module Hub
     def update_comment comment_id, comment
       $stderr.puts "Updating comment ##{comment_id} with #{comment}"
       params = { :body => comment }
-      res = post "https://api.github.com/repos/#{USER}/#{REPO}/issues/comments/%s" % [comment_id], params
+      res = post "https://api.github.com/repos/#{Properties['user']}/#{Properties['repo']}/issues/comments/%s" % [comment_id], params
       res.error! unless res.success?
       res.data
     end
 
     # Verifies the user is part of Team Red Hat
     def user_trusted? login
-      res = get "https://api.github.com/teams/#{TEAM_RH}/members/#{login}" % login
+      res = get "https://api.github.com/teams/#{Properties['team']}/members/#{login}" % login
       return res.success?
     end
 
@@ -224,13 +233,13 @@ module Hub
   class JenkinsAPI
     JENKINS = "https://ci.dev.openshift.redhat.com/jenkins"
     CHECK_URI = URI("#{JENKINS}/job/libra_check/lastCompletedBuild/api/json")
-    JOB_URI = "#{JENKINS}/job/test_pull_request"
+    JOB_URI = "#{JENKINS}/job/#{Properties["project_name"]}"
     BUILD_URI = URI("#{JOB_URI}/buildWithParameters?token=libra1")
-    JOB_API_URI = URI("#{JENKINS}/job/test_pull_request/api/json")
+    JOB_API_URI = URI("#{JENKINS}/job/#{Properties["project_name"]}/api/json")
     JOB_PARAM_1 = "CRANKCASE_PULL_ID"
 
     def self.get_session
-      proxy = Net::HTTP::Proxy(PROXY_HOST, PROXY_PORT)
+      proxy = Net::HTTP::Proxy(Properties['proxy_host'], Properties['proxy_port'])
       session = proxy.new(CHECK_URI.host, CHECK_URI.port)
       session.use_ssl = true
       session.verify_mode = OpenSSL::SSL::VERIFY_NONE
@@ -243,7 +252,7 @@ module Hub
 
       # Now submit the Jenkins job
       get_session.start do |http|
-        request = Net::HTTP::Get.new BUILD_URI.request_uri + "&#{JOB_PARAM_1}=#{pull_id}&cause=github+pull+request+#{pull_id}"
+        request = Net::HTTP::Get.new BUILD_URI.request_uri + "&#{JOB_PARAM_1}=#{pull_id}&cause=Github+pull+request+#{pull_id}"
         response = http.request request
         if response.kind_of? Net::HTTPFound
           $stderr.puts "Successfully submitted job for pull request ##{pull_id}"
@@ -325,10 +334,10 @@ end
 
 # Create a new Hub client
 @api_client ||= begin
-  config_file = ENV['HUB_CONFIG'] || '~/.config/hub'
+  config_file = ENV['HUB_CONFIG'] || Properties['hub_config']
   file_store = GitHubAPI::FileStore.new File.expand_path(config_file)
   file_config = GitHubAPI::Configuration.new file_store
-  GitHubAPI.new file_config, :app_url => 'https://ci.dev.openshift.redhat.com'
+  GitHubAPI.new file_config, :app_url => Properties['app_url']
 end
 
 # Process all the pull requests for testing
