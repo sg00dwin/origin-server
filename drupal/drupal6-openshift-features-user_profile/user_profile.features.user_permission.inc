@@ -1468,8 +1468,9 @@ function user_profile_user_default_permissions() {
     'name' => 'use advanced search',
     'roles' => array(
       '0' => 'administrator',
-      '1' => 'authenticated user',
-      '2' => 'moderator',
+      '1' => 'anonymous user',
+      '2' => 'authenticated user',
+      '3' => 'moderator',
     ),
   );
 
