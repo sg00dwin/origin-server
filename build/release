@@ -490,8 +490,8 @@ class Release < Thor
       unless skip_gem
         # Build the gem locally since it's not stored centrally like RPMs in Brew
         puts "Building client gem..."
-        if File.exists?('../os-client-tools/express')
-          inside(File.expand_path(File.dirname(File.expand_path(__FILE__)) + "/../../os-client-tools/express")) do
+        if File.exists?('../os-client-tools')
+          inside(File.expand_path(File.dirname(File.expand_path(__FILE__)) + "/../../os-client-tools")) do
             unless run('./build.sh', :verbose => options.verbose?)
               puts "ERROR - client gem building failed"
               exit 1
@@ -499,7 +499,7 @@ class Release < Thor
           end
           puts "Done"
         else
-          puts "Couldn't find ../os-client-tools/express.  Skipping build client gem step."
+          puts "Couldn't find ../os-client-tools.  Skipping build client gem step."
         end
 
       end
@@ -525,14 +525,14 @@ class Release < Thor
       unless skip_gem
         # sync rhc gem
         puts "Syncing client gem to repo..."
-        if File.exists?('../os-client-tools/express')
-          unless run("#{rsync} ../os-client-tools/express/pkg/*.gem #{repo}/#{mash_config}/client/gems/", :verbose => options.verbose?)
+        if File.exists?('../os-client-tools')
+          unless run("#{rsync} ../os-client-tools/pkg/*.gem #{repo}/#{mash_config}/client/gems/", :verbose => options.verbose?)
             puts "ERROR - Gem sync failed."
             exit 1
           end
           puts "Done"
         else
-          puts "Couldn't find ../os-client-tools/express.  Skipping rsync client gem step."
+          puts "Couldn't find ../os-client-tools.  Skipping rsync client gem step."
         end
       end
   
