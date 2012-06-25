@@ -1,11 +1,14 @@
+require File.expand_path('./nurture', File.dirname(__FILE__))
+require File.expand_path('./apptegic', File.dirname(__FILE__))
+
 module GearChanger
   class MCollectiveApplicationContainerProxy < StickShift::ApplicationContainerProxy
     alias :run_cartridge_command_old :run_cartridge_command
 
     def run_cartridge_command(framework, app, gear, command, arg=nil, allow_move=true)
       if allow_move
-        Nurture.application(app.user.login, app.user.uuid, app.name, app.domain.namespace, framework, command, app.uuid)
-        Apptegic.application(app.user.login, app.user.uuid, app.name, app.domain.namespace, framework, command, app.uuid)
+        Express::Broker::Nurture.application(app.user.login, app.user.uuid, app.name, app.domain.namespace, framework, command, app.uuid)
+        Express::Broker::Apptegic.application(app.user.login, app.user.uuid, app.name, app.domain.namespace, framework, command, app.uuid)
       end
       run_cartridge_command_old(framework, app, gear, command, arg=nil, allow_move=true)
     end

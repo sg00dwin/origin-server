@@ -150,6 +150,9 @@ then
     rmdir /etc/httpd/conf.d/stickshift.bak
 fi
 
+# To workaround mcollective 2.0 monkey patch to tmpdir
+chmod o+w /tmp
+
 # Enable proxy and fix if the config file is missing
 /sbin/chkconfig --add stickshift-proxy || :
 if ! [ -f /var/lib/stickshift/.stickshift-proxy.d/stickshift-proxy.cfg ]; then
