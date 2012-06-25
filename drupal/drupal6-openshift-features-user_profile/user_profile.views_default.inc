@@ -694,11 +694,6 @@ if (!empty($clean_name) && !empty($company)) {
     ),
   ));
   $handler->override_option('arguments', array());
-  $handler->override_option('cache', array(
-    'type' => 'time',
-    'results_lifespan' => '300',
-    'output_lifespan' => '300',
-  ));
   $handler->override_option('block_description', '');
   $handler->override_option('block_caching', '2');
   $handler = $view->new_display('block', 'Comment Profile Box', 'block_2');
