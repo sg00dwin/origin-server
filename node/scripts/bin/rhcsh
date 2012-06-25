@@ -71,6 +71,16 @@ function mysql() {
 }  #  End of  mysql  function.
 
 
+function psql() {
+    # The password should be contained in ~/.pgpass
+    PGDATABASE="$OPENSHIFT_APP_NAME" \
+        PGHOST="$OPENSHIFT_DB_HOST" \
+        PGPORT="${OPENSHIFT_DB_PORT:-5432}" \
+        PGUSER="${OPENSHIFT_DB_USERNAME:-'admin'}" \
+        /usr/bin/psql "$@"
+}  #  End of psql function.
+
+
 function mongo() {
    if test $# -gt 0; then
       uopt=""
@@ -110,6 +120,7 @@ ps              list running applications
 kill            kill running applications
 mysql           interactive MySQL shell
 mongo           interactive MongoDB shell
+psql            interactive PostgreSQL shell
 quota           list disk usage
 
 EOF
