@@ -6,7 +6,7 @@ User errors:
 101: An application with specified name does not exist and can not be operated on
 102: A user with login already exists
 103: The namespace already exists
-104: User's application limit has been reached
+104: User's gear limit has been reached
 105: Invalid appname
 106: Invalid namespace
 107: Invalid rhlogin
