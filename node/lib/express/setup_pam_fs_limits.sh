@@ -284,11 +284,11 @@ username=$1
 quota_blocks_custom=$2
 quota_files_custom=$3
 initialize
-if [ -n "$quota_blocks_custom" ]
+if [ -n "$quota_blocks_custom" ] && [ $quota_blocks_custom -gt $quota_blocks ]
 then
     quota_blocks=$quota_blocks_custom
 fi
-if [ -n "$quota_files_custom" ]
+if [ -n "$quota_files_custom" ] && [ $quota_files_custom -gt $quota_files ]
 then
     quota_files=$quota_files_custom
 fi
