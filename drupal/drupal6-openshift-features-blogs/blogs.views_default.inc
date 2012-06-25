@@ -544,7 +544,7 @@ function blogs_views_default_views() {
     'type' => 'none',
   ));
   $handler->override_option('title', 'Content');
-  $handler->override_option('header', '<a href="/openshift/blogs/feed"><img src="/openshift/sites/all/themes/redhat2/images/rss-icon.gif" align="right" /></a>');
+  $handler->override_option('header', '<a class="pull-right label label-feed" href="/community/blogs/feed">RSS</a>');
   $handler->override_option('header_format', '2');
   $handler->override_option('header_empty', 0);
   $handler->override_option('style_plugin', 'table');
@@ -951,7 +951,6 @@ function blogs_views_default_views() {
     ),
   ));
   $handler->override_option('title', 'OpenShift Blog');
-  $handler->override_option('header', '<a href="/community/blogs/feed"><img src="/community/sites/all/themes/redhat2/images/rss-icon.gif" align="right" /></a>');
   $handler->override_option('use_pager', '1');
   $handler->override_option('path', 'blogs');
   $handler->override_option('menu', array(
@@ -2373,6 +2372,7 @@ function blogs_views_default_views() {
     'output_lifespan' => '3600',
   ));
   $handler->override_option('title', 'Recent Changes');
+  $handler->override_option('header', '');
   $handler->override_option('empty', 'No other posts by this author.');
   $handler->override_option('empty_format', '1');
   $handler->override_option('items_per_page', 6);
