@@ -23,32 +23,29 @@
     //width: $logoWidth;
     margin-bottom: 11px;
   }
-  
+
   .brand > a {
     display: block;
     color: #fff;
     text-decoration:none;
-  }
+    > .brand-image {
+      @include transition(all 0.2s);
+    }
+    > .brand-text {
+    	border-bottom: 2px solid transparent;
+      padding-bottom: 2px;
+      color: white;
+      text-align: center;
+    }
 
-  .brand > a > .brand-image {
-    -moz-transition: all 0.2s;
-    -webkit-transition: all 0.2s;
-    transition: all 0.2s;
-  }
-
-  .brand > a:hover > .brand-image {
-    -moz-transform: rotate(-10deg);
-    -webkit-transform: rotate(-10deg);
-    transform: rotate(-10deg);
-  }
-  .brand > a > .brand-text {
-  	border-bottom: 2px solid transparent;
-    padding-bottom: 2px;
-    color: white;
-    text-align: center;
-  }
-  .brand > a:hover > .brand-text {
-  	border-bottom: 2px solid #EB0011;
+    &:hover {
+      > .brand-image {
+        @include transform(rotate(-10deg));
+      }
+      > .brand-text {
+      	border-bottom: 2px solid #EB0011;
+      }
+    }
   }
 
   .nav {
