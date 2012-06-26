@@ -11,21 +11,15 @@ include StatsHelper
 include Benchmark
 
 def create_user_and_domains(type, n, ngears=3)
-  nfailures = 0
   apps = n.times.collect do
     app = TestApp.create_unique(type)
-    begin
-      register_user(app.login, app.password) if $registration_required
-      rhc_create_domain(app)
-      change_max_gears_for_user(app.login, ngears) if ngears > 3
-    rescue Exception => ex
-      $logger.error("Failure creating user/domain - #{ex.message}")
-      nfailures += 1
-    end
+    register_user(app.login, app.password) if $registration_required
+    rhc_create_domain(app)
+    change_max_gears_for_user(app.login, ngears) if ngears > 3
     app
   end
 
-  return nfailures, apps
+  return apps
 end
 
 
@@ -55,6 +49,16 @@ def create_and_scale_app(app, ngears)
     raise "Could not create app.  Exit code: #{app.create_app_code}.  Json debug: /tmp/rhc/json_response_#{app.name}_#{app.namespace}.json"
   end
 
+  fp = File.open(outf)
+  json_string = fp.read
+  fp.close
+  $logger.debug("create json string: #{json_string}")
+  app_info = JSON.parse(json_string)
+  raise "Could not create application: #{app_info['messages'][0]['text']}" unless app_info['status'] == 'created'
+  app.uid = app_info['data']['uuid']
+
+  run("echo '127.0.0.1 #{app.name}-#{app.namespace}.dev.rhcloud.com  # Added by cucumber' >> /etc/hosts")
+
   while ngears > 1 do
     ngears -= 1
 
@@ -68,48 +72,42 @@ def create_and_scale_app(app, ngears)
     if exit_code != 0
        raise "Could not scale up application.  Exit code: #{exit_code}.  Json debug: /tmp/rhc/json_response_#{app.name}_#{app.namespace}.json"
     end
+
+    fp = File.open(outf)
+    json_string = fp.read
+    fp.close
+    $logger.debug("scale-up json string: #{json_string}")
+    app_info = JSON.parse(json_string)
+    raise "Could not create application: #{app_info['messages'][0]['text']}" unless app_info['status'] == 'ok'
+
   end
 
   return app
 end
 
 
-def benchmark_app_creation(type, tag, zapps, repeat_n=1, ngears=1)
+def benchmark_app_creation(type, tag, zapps, ngears=1)
   measures = StatMeasures.new(type, tag, ngears)
-  nfailed = 0
   idx = 0
-  endidx = repeat_n * zapps.length
+  endidx = zapps.length
 
   $logger.debug("Benchmarking app creation [#{type} #{tag} #{ngears}] ...")
 
-  repeat_n.times do
-    zapps.each do |app|
-      begin
-        # Cleanup any previously created app if repeating 'n' times.
-        destroy_app(app)
-
-        # Benchmark 'elapsed' times for app creation.
-        idx += 1
-        elapsed = Benchmark.realtime do
-          app = create_and_scale_app(app, ngears)
-        end
-
-        nfailed += 1  if app.create_app_code != 0
-        measures.add(elapsed)
-
-        pcntage = "%.2f" % ((idx * 100.0)/endidx)
-        $logger.debug("Progress: #{pcntage}% - #{idx}/#{endidx} ...")
-        $logger.debug("#{Time.now().to_f}, #{tag}, " + measures.raw)
-
-      rescue Exception => ex
-        nfailed += 1
-        $logger.error("Failure creating app or timing it - #{ex.message}")
-      end
+  zapps.each do |app|
+    # Benchmark 'elapsed' times for app creation.
+    idx += 1
+    elapsed = Benchmark.realtime do
+      app = create_and_scale_app(app, ngears)
     end
+
+    measures.add(elapsed)
+
+    pcntage = "%.2f" % ((idx * 100.0)/endidx)
+    $logger.debug("Progress: #{pcntage}% - #{idx}/#{endidx} ...")
+    $logger.debug("#{Time.now().to_f}, #{tag}, " + measures.raw)
   end
 
   StatsReport.instance.addstats(measures)
-  return nfailed
 end
 
 
@@ -130,24 +128,14 @@ end
 
 Then /^benchmark creating (.+) applications (\d+) times$/ do |type, n|
   ztag = "Application Creation"
-  nfail, @zapps = create_user_and_domains(type, 1)
-  if nfail > 0
-    $logger.error("Failure creating user/domain")
-  else
-    nfail = benchmark_app_creation(type, ztag, @zapps, n.to_i)
-    $logger.warn("#{nfail} failures creating applications!") if nfail > 0
-  end
+  @zapps = create_user_and_domains(type, n.to_i)
+  benchmark_app_creation(type, ztag, @zapps)
 end
 
 Then /^benchmark creating scaled (.+) applications with (\d+) gears (\d+) times/ do |type, gears, n|
   ztag = "Scaled Application Creation"
-  nfail, @zapps = create_user_and_domains(type, 1, 20)
-  if nfail > 0
-    $logger.error("Failure creating user/domain")
-  else
-    nfail = benchmark_app_creation(type, ztag, @zapps, n.to_i, gears.to_i)
-    $logger.warn("#{nfail} failures creating scaled applications!") if nfail > 0
-  end
+  @zapps = create_user_and_domains(type, n.to_i, gears.to_i + 2)
+  benchmark_app_creation(type, ztag, @zapps, gears.to_i)
 end
 
 When /^finally cleanup all applications that the benchmark created/ do
