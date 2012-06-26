@@ -17,8 +17,12 @@ module OpenShiftMigration
     val
   end
 
+  # Note: This method must be reentrant.  Meaning it should be able to 
+  # be called multiple times on the same gears.  Each time having failed 
+  # at any point and continue to pick up where it left off or make
+  # harmless changes the 2-n times around.
   def self.migrate(uuid, namespace, version)
-    if version == "2.0.13"
+    if version == "2.0.14"
       libra_home = '/var/lib/stickshift' #node_config.get_value('libra_dir')
       libra_server = get_config_value('BROKER_HOST')
       libra_domain = get_config_value('CLOUD_DOMAIN')
@@ -38,22 +42,6 @@ module OpenShiftMigration
         env_echos.each do |env_echo|
           echo_output, echo_exitcode = Util.execute_script(env_echo)
           output += echo_output
-        end
-
-        if File.exists?("#{gear_home}/.pearrc")
-          Util.execute_script("pear -c #{gear_home}/.pearrc config-set auto_discover 1")
-          echo_output, echo_exitcode = Util.execute_script("pear -c #{gear_home}/.pearrc config-set auto_discover 1")
-          output += echo_output
-        end
-
-        # Migration for HAProxy stats file
-        if File.exists?("#{gear_home}/haproxy-1.4")
-          Util.replace_in_file("#{gear_home}/haproxy-1.4/conf/haproxy.cfg",
-                               "stats socket /tmp/stats",
-                               "stats socket #{gear_home}/haproxy-1.4/run/stats")
-          Util.replace_in_file("#{gear_home}/haproxy-1.4/conf/haproxy.cfg.template",
-                               "stats socket /tmp/stats",
-                               "stats socket #{gear_home}/haproxy-1.4/run/stats")
         end
 
       else
