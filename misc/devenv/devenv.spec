@@ -117,6 +117,7 @@ Requires:  drupal6-jquery_ui-lib
 Requires:  drupal6-link
 Requires:  drupal6-markdown
 Requires:  drupal6-media_vimeo
+Requires:  drupal6-media_tudou
 Requires:  drupal6-media_youtube
 Requires:  drupal6-media_youku
 Requires:  drupal6-mediawiki_filter
