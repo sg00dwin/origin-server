@@ -47,10 +47,12 @@ class WebUser < Streamline::User
                             :message => 'Passwords must match',
                             :if => on_scopes(:save, :change_password)
 
-  def initialize(attributes = {})
-    (attributes || {}).each do |name, value|
-      send("#{name}=", value)
-    end
+  def initialize(attributes = nil)
+    mass_assign_attributes(attributes, false) if attributes
+  end
+
+  def assign_attributes(attributes)
+    mass_assign_attributes(attributes)
   end
 
   def self.from_json(json)
@@ -88,4 +90,15 @@ class WebUser < Streamline::User
     raise AccessDeniedException, "User not available by ticket" unless user.rhlogin
     user
   end
+
+  private
+    def mass_assign_attributes(attributes, protect=true)
+      attributes.each do |name, value|
+        next if protect && [:rhlogin, :login, :password,
+                 :ticket, :roles, :terms,
+                 :streamline_type, :email_address].include?(name.to_sym)
+        send("#{name}=", value)
+      end
+    end
+
 end

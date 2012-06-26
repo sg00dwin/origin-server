@@ -29,7 +29,9 @@ BuildRequires: rubygem-compass
 BuildRequires: rubygem-formtastic
 BuildRequires: rubygem-rack
 BuildRequires: rubygem-regin
+BuildRequires: rubygem-httparty
 BuildRequires: rubygem-rdiscount
+BuildRequires: rubygem-webmock
 BuildRequires: rubygem-barista
 
 BuildRequires: rubygem-mocha
@@ -61,7 +63,9 @@ Requires:  rubygem-compass
 Requires:  rubygem-recaptcha
 Requires:  rubygem-hpricot
 Requires:  rubygem-barista
+Requires:  rubygem-httparty
 Requires:  rubygem-rdiscount
+Requires:  rubygem-webmock
 Requires:  js
 # The following requires are for the status subsite
 Requires:  ruby-sqlite3

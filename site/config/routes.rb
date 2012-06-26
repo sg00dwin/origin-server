@@ -37,26 +37,40 @@ RedHatCloud::Application.routes.draw do
   match 'twitter_latest_retweets' => 'twitter#latest_retweets'
 
   resource :account,
-           :controller => "user",
+           :controller => :user,
            :only => [:new, :create, :show] do
-    get :complete, :on => :member
-  end
-  # preserve legacy support for this path
-  match 'user/create/external' => 'user#create_external', :via => [:post]
 
-  scope '/account' do
-    resource :password,
-             :controller => "password" do
+    get :complete, :on => :member
+
+    unless Rails.env.production?
+      resources :plans,   :only => :index do
+        resource :upgrade, :controller => :account_upgrades, :only => [:edit, :new] do
+          member do
+            post :show, :action => :upgrade
+            put :edit, :action => :update
+          end
+          resource :payment_method, :only => [:show, :new, :create]
+        end
+      end
+      resource :plan, :only => [:update, :show]
+    end
+
+    resource  :password, :controller => :password do
       match 'edit' => 'password#update', :via => :put
       member do
         get :reset
         get :success
       end
     end
+  end
 
+  scope :account do
     resource :domain, :only => [:new, :create, :edit, :update]
     resources :keys, :only => [:new, :create, :destroy]
   end
+
+  # preserve legacy support for this path
+  match 'user/create/external' => 'user#create_external', :via => [:post]
 
   match 'user/reset_password' => app_redirect {|p, req| "account/password/reset?#{req.query_string}"}, :via => [:get]
   match 'email_confirm' => 'email_confirm#confirm'

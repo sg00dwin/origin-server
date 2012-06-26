@@ -14,7 +14,7 @@ module Streamline
     def establish
       @rhlogin ||= Base64.decode64(ticket) || "openshift@redhat.com"
 
-      set_fake_roles unless @roles
+      set_fake_roles unless instance_variable_get(:@roles)
       self
     end
 
@@ -22,16 +22,16 @@ module Streamline
       @terms ||= establish_terms
     end
 
-    def roles
-      establish unless @roles
-      @roles
+    def roles!
+      establish
+      roles
     end
 
     #
     # Get the user's email address
     #
     def load_email_address
-      @email_address = if rhlogin.present? and rhlogin.index '@'
+      @email_address = if rhlogin.present? && !rhlogin.index('@')
           @email_address = "#{rhlogin}@rhn.com"
         else
           @email_address = rhlogin
@@ -179,6 +179,7 @@ module Streamline
           @streamline_type = :simple
           [["simple_authenticated"], @rhlogin]
         else
+          @streamline_type = :full
           [["authenticated"], "#{@rhlogin}@rhn.com"]
         end
       end

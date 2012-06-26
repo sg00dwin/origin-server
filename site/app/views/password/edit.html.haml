@@ -2,13 +2,13 @@
 
 %h1 Change your password
 
-= semantic_form_for @user, :url => edit_password_path, :simple => true, :html => {:method => :put, :class => 'form-inline'} do |f|
+= semantic_form_for @user, :url => edit_account_password_path, :simple => true, :html => {:method => :put, :class => 'form-inline'} do |f|
   %p When choosing a password we recommend using numbers, symbols, and upper and lower case letters for extra security.
   = f.inputs do
     - if @token.nil?
       = f.input :old_password, :required => true
       %p.forgot
-        = link_to("Forget your password?  Reset it now", new_password_path)
+        = link_to("Forget your password?  Reset it now", new_account_password_path)
     - else
       = hidden_field_tag 'token', @token
 

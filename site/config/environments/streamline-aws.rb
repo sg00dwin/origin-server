@@ -31,7 +31,7 @@ RedHatCloud::Application.configure do
   config.integrated = true
   config.login = "https://www.qa.redhat.com/wapps/streamline/login.html"
   config.streamline = {
-    :host => 'https://10.118.51.155',
+    :host => 'https://10.196.215.67',
     :base_url => '/wapps/streamline',
     :email_confirm_url => '/wapps/streamline/confirm.html',
     :lost_password_url => '/wapps/streamline/resetPassword.html',
@@ -44,10 +44,16 @@ RedHatCloud::Application.configure do
   config.captcha_secret = 'zvw5LiixMB0I4mjk06aR'
   config.sso_verify_interval = 60
 
+  # Aria API information
+  config.aria_uri = "https://secure.current.stage.ariasystems.net/api/ws/api_ws_class_dispatcher.php"
+  config.aria_auth_key = "sRvjFqjSadu3AFB8jRAR3tqeH5Qf6XjW"
+  config.aria_client_no = 3754655
+  config.aria_default_plan_no = 10044929
+
   # Promo code Email notification setup
   config.email_from = 'OpenShift <noreply@openshift.redhat.com>'
   config.marketing_mailing_list = 'Marketing Mailing List <jgurrero@redhat.com>'
-  
+
   # Express API base url
   config.express_api_url = 'https://localhost'
 

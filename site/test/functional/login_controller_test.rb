@@ -100,7 +100,7 @@ class LoginControllerTest < ActionController::TestCase
   end
 
   test "should send certain urls to default" do
-    [login_path, new_account_path, reset_password_path, complete_account_path].each do |path|
+    [login_path, new_account_path, reset_account_password_path, complete_account_path].each do |path|
       @request.env['HTTP_REFERER'] = path
       get :show
       assert_nil assigns(:redirectUrl)

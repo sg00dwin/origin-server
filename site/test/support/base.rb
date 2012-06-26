@@ -2,23 +2,26 @@ require 'mocha'
 require 'openshift'
 require 'streamline'
 
+require 'webmock/test_unit'
+WebMock.allow_net_connect!
+
 class ActiveSupport::TestCase
 
+  setup { $VERBOSE = nil }
+  teardown { $VERBOSE = false }
+
   def setup_user(unique=false)
-    @user = WebUser.new :email_address=>"app_test1#{unique ? uuid : ''}@test1.com", :rhlogin=>"app_test1#{unique ? uuid : ''}@test1.com"
-
-    session[:login] = @user.login
-    session[:ticket] = '123'
-
-    @request.cookies['rh_sso'] = '123'
-    @request.env['HTTPS'] = 'on'
+    @user = user_to_session(WebUser.new :email_address=>"app_test1#{unique ? uuid : ''}@test1.com", :rhlogin=>"app_test1#{unique ? uuid : ''}@test1.com")
   end
+
   def user_to_session(user)
     session[:login] = user.login
     session[:user] = user
     session[:ticket] = user.ticket || '123'
+    session[:streamline_type] = user.streamline_type
     @request.cookies['rh_sso'] = session[:ticket]
     @request.env['HTTPS'] = 'on'
+    user
   end
 
   def expects_integrated
