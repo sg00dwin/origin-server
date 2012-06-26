@@ -3,6 +3,12 @@ require 'net/http'
 require 'net/https'
 require 'uri'
 
+DEFAULT_DATES = {
+  :start  => 21,
+  :dcut   => 10,
+  :end    => 8    # This is relative to dcut
+}
+
 class SprintCalendar
   def initialize(path)
     @calendar = get_ical(path).first
@@ -35,19 +41,42 @@ class SprintCalendar
   end
 
   def start_date
-    get_date("Start Sprint",{:before => (Date.today + 1)})
+    date = get_date("Start Sprint",{:before => (Date.today + 1)})
+    if (Date.today - date.dtstart) > DEFAULT_DATES[:end]
+      say("Warning: Old Sprint found, estimating dates")
+      date.dtstart = date.dtstart + DEFAULT_DATES[:start] 
+      @old = true
+    end
+    date
   end
 
   def sprint_name
-    start_date.summary.scan(/Sprint \d+/).first
+    name = start_date.summary.scan(/Sprint \d+/).first
+    if @old
+      number = name.scan(/Sprint (\d+)/).first.first.to_i + 1
+      name = "Sprint #{number}" 
+    end
+    name
   end
 
   def end_date
-    get_date("End Sprint",{:after => start_date.dtstart, :count => 1})
+    if @old
+      d = start_date
+      d.dtstart = d.dtstart + DEFAULT_DATES[:end]
+      d
+    else
+      get_date("End Sprint",{:after => start_date.dtstart, :count => 1})
+    end
   end
 
   def dcut_date
-    get_date("dcut build",{:overlapping => [start_date.dtstart,end_date.dtstart] },:first)
+    if @old
+      d = start_date
+      d.dtstart = d.dtstart + DEFAULT_DATES[:dcut]
+      d
+    else
+      get_date("dcut build",{:overlapping => [start_date.dtstart,end_date.dtstart] },:first)
+    end
   end
 
   def sprint_args
@@ -55,7 +84,7 @@ class SprintCalendar
       :name   => sprint_name,
       :number => sprint_name.scan(/\d+/).first
     }
-    [:start,:end,:dcut].each do |x|
+    [:start,:dcut,:end].each do |x|
       args[x] = send("#{x}_date").dtstart.to_date
     end
     args
