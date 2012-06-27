@@ -68,7 +68,7 @@ Broker::Application.configure do
   
   config.rpc_opts = {
     :disctimeout => 2,
-    :timeout     => 60,
+    :timeout     => 180,
     :verbose     => false,
     :progress_bar=> false,
     :filter      => {"identity"=>[], "fact"=>[], "agent"=>[], "cf_class"=>[]},
