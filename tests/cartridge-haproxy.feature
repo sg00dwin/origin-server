@@ -30,7 +30,8 @@ Feature: HAProxy Application Sub-Cartridge
     |type|
     |php|
     |python|
-    |ruby|
+    |ruby-1.8|
+    |ruby-1.9|
     |nodejs|
     |perl|
     
