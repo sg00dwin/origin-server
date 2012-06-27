@@ -141,6 +141,15 @@ module Express
         }
       end
 
+      def get_acct_plans_all(acct_no)
+        {
+          'acct_no' => acct_no,
+          'client_no' => @client_no,
+          'auth_key' => @auth_key,
+          'rest_call' => "get_acct_plans_all"
+        }
+      end
+
       def update_master_plan(acct_no, plan_name,
                              num_plan_units=1, assignment_directive=2)
         {
