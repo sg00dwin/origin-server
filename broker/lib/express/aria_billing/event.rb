@@ -124,7 +124,11 @@ MSG
         rescue
           # Ignore
         end
-        supp_fields
+        data = <<MSG
+Supplemental Fields
+-----------------------------------
+#{supp_fields}
+MSG
       end
 
       def self.handle_event(h)
