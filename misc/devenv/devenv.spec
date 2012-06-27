@@ -473,8 +473,8 @@ mkdir -p /srv/cache/mod_cache
 chmod 750 /srv/cache/mod_cache
 chown apache:apache /srv/cache/mod_cache
 
-# Moved into the proper rhc-ip-prep.sh - Prevent users from binding to real IP 10 address - BZ821940
-#semanage node -a -t node_t -r s0:c1023 -M  255.0.0.0 -p ipv4 10.0.0.0
+# BZ835097 - remove o-x from tcpdump - was 755
+chmod 750 /usr/sbin/tcpdump
 
 # Deploy application templates - fotios
 /usr/bin/ruby /usr/lib/stickshift/broker/application_templates/templates/deploy.rb
@@ -494,6 +494,10 @@ chown apache:apache /srv/cache/mod_cache
 %{policydir}/*
 
 %changelog
+* Tue Jun 26 2012 Tim Kramer <tkramer@redhat.com>
+- Added BZ835097 remove other from tcpdump (tkramer@redhat.com)
+- Removed old comments on selinux for binding ports (tkramer@redhat.com)
+
 * Sat Jun 23 2012 Dan McPherson <dmcphers@redhat.com> 0.96.3-1
 - new package built with tito
 
