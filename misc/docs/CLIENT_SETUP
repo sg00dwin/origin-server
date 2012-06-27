@@ -1,6 +1,6 @@
 Clone the git repos:
 
-git clone git@github.com:openshift/li.git/
+git clone git@github.com:openshift/li.git
 
 -----------
 OS X Notes:

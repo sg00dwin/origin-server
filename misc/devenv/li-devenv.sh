@@ -209,7 +209,7 @@ rm -rf /root/li-working
 
 if [[ "$2" == "--install_from_source" ]] || [[ "$2" == "--install_required_packages" ]]
 then
-  git clone git@github.com:openshift/li.git/ /root/li-working
+  git clone git@github.com:openshift/li.git /root/li-working
 
   for repo_name in "${github_repos[@]}"
   do
