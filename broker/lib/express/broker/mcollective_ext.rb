@@ -10,7 +10,7 @@ module GearChanger
         Express::Broker::Nurture.application(app.user.login, app.user.uuid, app.name, app.domain.namespace, framework, command, app.uuid)
         Express::Broker::Apptegic.application(app.user.login, app.user.uuid, app.name, app.domain.namespace, framework, command, app.uuid)
       end
-      run_cartridge_command_old(framework, app, gear, command, arg=nil, allow_move=true)
+      run_cartridge_command_old(framework, app, gear, command, arg, allow_move)
     end
 
     class << self
