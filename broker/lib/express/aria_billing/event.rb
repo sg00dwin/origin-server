@@ -38,12 +38,23 @@ MSG
       end
       
       def self.get_account_data(h)
+        rhlogin = ""
+        begin
+          for i in 0..h['supp_field_name'].length-1 do
+            if h['supp_field_name'][i] == 'RHLogin'
+              rhlogin = h['supp_field_value'][i]
+              break
+            end
+          end
+        rescue
+          #Ignore
+        end
         data = <<MSG
 Account Data
 -----------------------------------
 Client Number: #{h['client_no']}
 Aria PO#: #{h['transaction_id']}
-#{get_supplemental_fields(h)}
+RHLogin: #{rhlogin}
 MSG
       end
 
@@ -107,12 +118,17 @@ MSG
         supp_fields = ""
         begin
           for i in 0..h['supp_field_name'].length-1 do
+            next if h['supp_field_name'][i] == 'RHLogin'  # skip RHLogin, already listed in Account Data section
             supp_fields += "#{h['supp_field_name'][i]}: #{h['supp_field_value'][i]}\n"
           end 
         rescue
           # Ignore
         end
-        supp_fields
+        data = <<MSG
+Supplemental Fields
+-----------------------------------
+#{supp_fields}
+MSG
       end
 
       def self.handle_event(h)
@@ -152,7 +168,8 @@ MSG
 #{get_detail_account_data(h)}
 #{get_supplemental_plans(h)}
 #{get_account_contact(h)}
-#{get_billing_data(h)}</b>
+#{get_billing_data(h)}
+#{get_supplemental_fields(h)}</b>
 #{get_events(h)}
 </body></html>
 MSG
@@ -163,6 +180,7 @@ MSG
 <html><body>#{get_header}
 #{get_account_data(h)}
 <b>#{get_account_contact(h)}</b>
+#{get_supplemental_fields(h)}
 #{get_events(h)}
 </body></html>
 MSG
@@ -176,6 +194,7 @@ MSG
 #{get_supplemental_plans(h)}
 #{get_account_contact(h)}
 #{get_billing_data(h)}
+#{get_supplemental_fields(h)}
 #{get_events(h)}
 </body></html>
 MSG
@@ -186,6 +205,7 @@ MSG
 <html><body>#{get_header}
 #{get_account_data(h)}
 <b>#{get_detail_account_data(h)}</b>
+#{get_supplemental_fields(h)}
 #{get_events(h)}
 </body></html>
 MSG
@@ -196,6 +216,7 @@ MSG
 <html><body>#{get_header}
 #{get_account_data(h)}
 <b>#{get_supplemental_plans(h)}</b>
+#{get_supplemental_fields(h)}
 #{get_events(h)}
 </body></html>
 MSG
@@ -204,7 +225,8 @@ MSG
       def self.acct_supp_fields(h)
         body = <<MSG
 <html><body>#{get_header}
-<b>#{get_account_data(h)}</b>
+#{get_account_data(h)}
+<b>#{get_supplemental_fields(h)}</b>
 #{get_events(h)}
 </body></html>
 MSG

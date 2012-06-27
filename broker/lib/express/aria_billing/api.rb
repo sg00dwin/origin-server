@@ -61,6 +61,11 @@ module Express
         result.data["usage_history_records"]
       end
 
+      def get_acct_plans_all(*args)
+        result = get_response(@ah.get_acct_plans_all(*args), __method__)
+        result.data["all_acct_plans"]
+      end
+
       def update_master_plan(*args)
         get_response_status(@ah.update_master_plan(*args), __method__)
       end
