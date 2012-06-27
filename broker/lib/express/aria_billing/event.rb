@@ -165,7 +165,7 @@ MSG
 #{get_supplemental_plans(h)}
 #{get_account_contact(h)}
 #{get_billing_data(h)}
-#{get_supplemental_fields}</b>
+#{get_supplemental_fields(h)}</b>
 #{get_events(h)}
 </body></html>
 MSG
@@ -176,7 +176,7 @@ MSG
 <html><body>#{get_header}
 #{get_account_data(h)}
 <b>#{get_account_contact(h)}</b>
-#{get_supplemental_fields}
+#{get_supplemental_fields(h)}
 #{get_events(h)}
 </body></html>
 MSG
@@ -190,7 +190,7 @@ MSG
 #{get_supplemental_plans(h)}
 #{get_account_contact(h)}
 #{get_billing_data(h)}
-#{get_supplemental_fields}
+#{get_supplemental_fields(h)}
 #{get_events(h)}
 </body></html>
 MSG
@@ -201,7 +201,7 @@ MSG
 <html><body>#{get_header}
 #{get_account_data(h)}
 <b>#{get_detail_account_data(h)}</b>
-#{get_supplemental_fields}
+#{get_supplemental_fields(h)}
 #{get_events(h)}
 </body></html>
 MSG
@@ -212,7 +212,7 @@ MSG
 <html><body>#{get_header}
 #{get_account_data(h)}
 <b>#{get_supplemental_plans(h)}</b>
-#{get_supplemental_fields}
+#{get_supplemental_fields(h)}
 #{get_events(h)}
 </body></html>
 MSG
@@ -222,7 +222,7 @@ MSG
         body = <<MSG
 <html><body>#{get_header}
 #{get_account_data(h)}
-<b>#{get_supplemental_fields}</b>
+<b>#{get_supplemental_fields(h)}</b>
 #{get_events(h)}
 </body></html>
 MSG
