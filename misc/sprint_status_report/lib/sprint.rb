@@ -60,7 +60,7 @@ class Sprint
         :function => lambda{|x| x.blocked == "true" }
       },
       :needs_qe => {
-        :function => lambda{|x| !x.design? && x.check_tags('no-qe') }
+        :function => lambda{|x| !x.design? && !x.check_tags('no-qe') }
       },
       :qe_ready => {
         :parent => :needs_qe,
