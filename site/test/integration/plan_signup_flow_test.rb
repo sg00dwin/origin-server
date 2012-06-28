@@ -12,9 +12,31 @@ class PlanSignupFlowTest < ActionDispatch::IntegrationTest
     {:first_name => 'Mike', :last_name => 'Smith'}
   end
 
+  def simple_user
+    {:web_user => {:rhlogin => 'test@test.com', :password => 'password'}}
+  end
+
   def login_simple_user
-    post '/login', {:web_user => {:rhlogin => 'test@test.com', :password => 'password'}}
+    post '/login', simple_user
     assert_response :redirect, @response.inspect
+  end
+
+  test 'anonymous without prev signin redirected to signup' do
+    get '/account/plans'
+    assert_response :success
+
+    post '/account/plans/megashift/upgrade'
+    assert_redirected_to new_account_path(:then => begin_account_plan_upgrade_path)
+  end
+
+  test 'anonymous with signin redirected to login' do
+    cookies[:prev_login] = true
+
+    get '/account/plans'
+    assert_response :success
+
+    post '/account/plans/megashift/upgrade'
+    assert_redirected_to login_path(:then => begin_account_plan_upgrade_path)
   end
 
   test 'user can signup' do

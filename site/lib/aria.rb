@@ -1,16 +1,15 @@
 module Aria
   require_dependency 'aria/errors'
   require_dependency 'aria/client'
+  require_dependency 'aria/user'
+  require_dependency 'aria/methods'
 
   def self.method_missing(method, *args, &block)
-    if client.respond_to?(method)
-      client.send(method, *args, &block)
+    if Module.respond_to?(method)
+      super
     else
-      raise NoMethodError
+      client.send(method, *args, &block)
     end
-  end
-  def self.respond_to?(method)
-    client.respond_to?(method) or super
   end
 
   private

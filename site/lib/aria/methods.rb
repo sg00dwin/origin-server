@@ -1,6 +1,11 @@
 module Aria
   module Methods
 
+    # Helper methods that force certain arguments on Aria methods and
+    # unwrap output.  These methods should not catch exceptions or
+    # perform complicated logic - they only exist to enforce certain 
+    # call behaviors.
+
     def available?(message='Aria is not available:')
       Aria.gen_random_string
       true
@@ -9,8 +14,20 @@ module Aria
       false
     end
 
+    def client_no
+      Rails.application.config.aria_client_no
+    end
+
     def default_plan_no
       Rails.application.config.aria_default_plan_no
+    end
+
+    def set_session(*args)
+      super.session_id
+    end
+
+    def userid_exists(user_id)
+      super(:user_id => user_id)
     end
 
     def get_client_plans_basic
@@ -26,6 +43,22 @@ module Aria
     end
     def get_supp_field_values(acct_no, field_name)
       super(:acct_no => acct_no, :field_name => field_name).supp_field_values || []
+    end
+
+    def set_reg_uss_config_params(set, *args)
+      opts = args.extract_options!
+      if args.length == 2
+        super(:set_name => set, :param_name => args[0], :param_val => args[1])
+      else
+        names = []
+        values = []
+        opts.each_pair do |k,v|
+          set_reg_uss_config_params(set, k, v) and next if k.to_s.include? '|' or v.to_s.include? '|'
+          names << k
+          values << v
+        end
+        super(:set_name => set, :param_name => names.join('|'), :param_val => values.join('|'))
+      end
     end
  end
 end

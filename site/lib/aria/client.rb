@@ -1,8 +1,6 @@
-
 module Aria
   class Client
     require_dependency 'aria/errors'
-
     include HTTParty
 
     config = Rails.application.config
@@ -14,23 +12,34 @@ module Aria
     default_params :auth_key => config.aria_auth_key
 
     def respond_to?(meth)
-      true
+      super
     end
 
     def method_missing(meth, *args, &block)
+      return super if Object.method_defined? meth
+
       options = args.extract_options!
       meth = meth.to_s
       raw = true if meth.sub!(/_raw$/, '')
 
-      resp = self.class.post('', :query => options.merge(:rest_call => meth))
+      raise ArgumentError, "Aria::Client#<method> requires no arguments, or a hash of options. Remove #{args.inspect}" unless args.empty?
 
-      raise Aria::InvalidMethod, meth if resp.code == 404 && resp.data && resp.data[:error_code] == -1
-      raise Aria::NotAvailable.new(resp) unless resp.code == 200
-      error_code = resp.data.error_code
-      raise Aria::Errors[error_code].new(resp) if Aria::Errors[error_code]
-      raise Aria::Error.new(resp) unless error_code == 0
+      ActiveSupport::Notifications.instrument("request.aria",
+        :uri => self.class.base_uri,
+        :method => meth
+      ) do |payload|
 
-      (yield(resp.data, resp) if block_given?) or raw ? resp : resp.data
+        resp = self.class.post('', :query => { :rest_call => meth }, :body => options)
+
+        raise Aria::InvalidMethod, meth if resp.code == 404 && resp.data && resp.data[:error_code] == -1
+        payload[:code] = resp.code
+        raise Aria::NotAvailable.new(resp) unless resp.code == 200
+        payload[:error_code] = error_code = resp.data.error_code
+        raise Aria::Errors[error_code].new(resp) if Aria::Errors[error_code]
+        raise Aria::Error.new(resp) unless error_code == 0
+
+        (yield(resp.data, resp) if block_given?) or raw ? resp : resp.data
+      end
     end
 
     include Aria::Methods

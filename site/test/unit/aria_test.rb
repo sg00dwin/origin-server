@@ -10,14 +10,20 @@ class AriaTest < ActiveSupport::TestCase
   setup { WebMock.disable_net_connect! }
   teardown { WebMock.allow_net_connect! }
 
-  def stub_aria(method=nil)
+  def query_for(method, query=nil)
     config = Rails.application.config
-    stub_request(:post, config.aria_uri).
-      with(:query => {
-        :auth_key => config.aria_auth_key,
-        :client_no => config.aria_client_no.to_s,
-        :rest_call => method,
-      })
+    {
+      :auth_key => config.aria_auth_key,
+      :client_no => config.aria_client_no.to_s,
+      :rest_call => method.nil? ? nil : method.to_s,
+    }.merge(query || {})
+  end
+
+  def stub_aria(method=nil, params=nil, partial=false)
+    r = stub_request(:post, Rails.application.config.aria_uri)
+    q = query_for(method)
+    q = hash_including(q) if partial
+    r.with(:query => q, :body => params)
   end
   def error_wddx(code, message)
     {'error_code' => code, 'error_msg' => message}.to_wddx
@@ -28,6 +34,20 @@ class AriaTest < ActiveSupport::TestCase
   def resp(*args)
     opts = args.extract_options!
     {:status => 200, :body => args[0] || ok_wddx}.merge!(opts).merge!(:headers => {'Content-Type' => 'text/html;charset=UTF-8'}.merge(opts[:headers] || {}))
+  end
+
+  test 'should not respond to object or module methods on Aria' do
+    Aria.expects(:client).never
+    assert Aria.respond_to? :public_instance_methods
+    assert Aria.to_s
+  end
+
+  test 'should not respond to object methods on client' do
+    Aria::Client.expects(:post).never
+    c = Aria::Client.new
+    assert !c.respond_to?(:before_remove_const)
+    assert c.respond_to?(:to_s)
+    assert c.to_s
   end
 
   test 'should support indifferent access' do
@@ -86,7 +106,7 @@ class AriaTest < ActiveSupport::TestCase
   test 'should form a simple request' do
     stub_aria(:get_test).to_return(resp)
 
-    assert Aria.respond_to? :get_test
+    assert !Aria.respond_to?(:get_test)
 
     assert r = Aria.get_test
     assert_equal 0, r['error_code']
@@ -101,7 +121,7 @@ class AriaTest < ActiveSupport::TestCase
     a = Aria
     a.expects(:get_test).never
 
-    assert a.respond_to? :get_test_raw
+    assert !a.respond_to?(:get_test_raw)
     assert r = a.get_test_raw
     assert_equal 200, r.code
     assert_equal 0, r.data['error_code']
@@ -131,6 +151,16 @@ class AriaTest < ActiveSupport::TestCase
     assert e.to_s =~ /\(1000\)/
   end
 
+  test 'should have default_plan_no' do
+    assert Aria.default_plan_no.is_a? Fixnum
+    assert Aria.default_plan_no > 0
+  end
+
+  test 'should have client_no' do
+    assert Aria.client_no.is_a? Fixnum
+    assert Aria.client_no > 0
+  end
+
   test 'should raise ParameterMissing' do
     stub_aria(:get_test).to_return(resp(error_wddx(1010,'Missing required parameter')))
     e = assert_raise(Aria::MissingRequiredParameter){ Aria.get_test }
@@ -153,5 +183,44 @@ class AriaTest < ActiveSupport::TestCase
   test 'should raise invalid method on 404' do
     stub_aria(:get_test).to_return(resp(error_wddx(-1, 'Not attempted'), :status => 404 ))
     e = assert_raise(Aria::InvalidMethod){ Aria.get_test }
+  end
+
+  test 'should return false on create_account error' do
+    user = Object.new.extend(ActiveModel::Validations).extend(Aria::User)
+    user.expects(:login).returns('foo').at_least_once
+    Aria.expects(:create_acct_complete).raises(Aria::AuthenticationError)
+    assert !user.create_account
+    assert user.errors.length == 1
+    assert user.errors[:base][0] =~ /AuthenticationError/, user.errors.inspect
+  end
+
+  test 'should invoke create_acct_complete' do
+    stub_aria(:create_acct_complete, {
+      :supp_field_names => 'RHLogin',
+      :supp_field_values => 'foo',
+      :password => 'passw0rd',
+      :test_acct_ind => 1.to_s,
+      :status_cd => 0.to_s,
+      :master_plan_no => Rails.application.config.aria_default_plan_no.to_s,
+      :userid => Digest::MD5::hexdigest('foo'),
+    }).to_return(resp(ok_wddx))
+
+    user = Object.new.extend(ActiveModel::Validations).extend(Aria::User)
+    user.expects(:random_password).returns('passw0rd')
+    user.expects(:login).returns('foo').at_least_once
+    assert user.create_account
+    assert user.errors.empty?
+  end
+
+  test 'should throw when non hash passed' do
+    assert_raise(ArgumentError){ Aria.get_test 'hello' }
+  end
+
+  test 'billing info should init from billing details' do
+    attr = Aria::WDDX::Struct.new({'billing' => 'a', 'billing_city' => 'Houston', 'other' => '2'})
+    assert info = Aria::BillingInfo.from_account_details(attr)
+    assert_equal 'Houston', info.city
+    assert_equal({'city' => 'Houston'}, info.attributes)
+    assert_equal({'bill_city' => 'Houston'}, info.to_aria_attributes)
   end
 end

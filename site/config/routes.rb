@@ -44,12 +44,12 @@ RedHatCloud::Application.routes.draw do
 
     unless Rails.env.production?
       resources :plans,   :only => :index do
-        resource :upgrade, :controller => :account_upgrades, :only => [:edit, :new] do
-          member do
-            post :show, :action => :upgrade
-            put :edit, :action => :update
+        resource :upgrade, :controller => :account_upgrades, :only => [:edit, :new, :show] do
+          put  :edit, :action => :update, :on => :member
+
+          resource :payment_method, :only => [:show, :new, :create] do
+            get  :direct_post, :on => :member
           end
-          resource :payment_method, :only => [:show, :new, :create]
         end
       end
       resource :plan, :only => [:update, :show]

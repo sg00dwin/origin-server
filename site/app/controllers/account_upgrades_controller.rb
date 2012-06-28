@@ -1,4 +1,7 @@
-class AccountUpgradesController < SiteController
+class AccountUpgradesController < AccountController
+
+  before_filter :authenticate_user!, :except => :upgrade
+  before_filter :authenticate_user_for_upgrade!, :only => :upgrade
 
   rescue_from Aria::Error do |e|
     @message = case e
@@ -10,50 +13,61 @@ class AccountUpgradesController < SiteController
   end
 
   def new
+    @current_plan = Plan.new(:id => 'freeshift', :name => 'FreeShift')
+    @plan = Plan.new(:id => 'megashift', :name => 'MegaShift')
   end
 
   def create
   end
 
-  def upgrade
+  def show
     @user = current_user
     @user.streamline_type!
 
-    redirect_to edit_account_plan_upgrade_path and return unless @user.full_user?
+    @user.extend Aria::User
 
-    create_account
+    redirect_to edit_account_plan_upgrade_path and return unless @user.full_user? && @user.has_complete_account?
+    redirect_to account_plan_upgrade_payment_method_path and return unless @user.has_valid_payment_method?
+    redirect_to confirm_account_plan_upgrade_path
   end
 
   def edit
-    @user = current_user
-    @user.extend Streamline::FullUser
+    @full_user = current_user.full_user
+    @billing_info = current_user.extend(Aria::User).billing_info
+    @billing_info = Aria::BillingInfo.test if Rails.env.development? && @billing_info.zip.nil?
     # if user is full user, render as uneditable
   end
 
   def update
-    @user = current_user
-    @user.extend Streamline::FullUser
-    @user.assign_attributes(params[:web_user])
+    user_params = params[:streamline_full_user]
+    @full_user = Streamline::FullUser.new user_params
+    @billing_info = Aria::BillingInfo.new user_params[:aria_billing_info]
+    user = current_user
 
-    render :edit and return unless @user.promote
+    render :edit and return unless user.promote(@full_user)
 
-    create_account
+    user.extend Aria::User
+
+    begin
+      render :edit and return unless user.create_account(:billing_info => @billing_info)
+    rescue Aria::AccountExists
+      render :edit and return unless user.update_account(:billing_info => @billing_info)
+    end
+
+    redirect_to account_plan_upgrade_payment_method_path and return unless user.has_valid_payment_method?
+
+    redirect_to confirm_account_plan_upgrade_path
   end
 
   protected
-    def create_account
-      @user.extend Aria::User
-      unless @user.has_valid_account?
-        if @user.create_account
-          redirect_to account_plan_upgrade_payment_method_path
+    def authenticate_user_for_upgrade!
+      unless user_signed_in?
+        path = if previously_signed_in?
+          login_path(:then => account_plan_upgrade_path)
         else
-          render :error
+          new_account_path(:then => account_plan_upgrade_path)
         end
-        return
+        redirect_to path
       end
-
-      redirect_to account_plan_upgrade_payment_method_path and return unless @user.has_payment_method?
-
-      render :new
     end
 end

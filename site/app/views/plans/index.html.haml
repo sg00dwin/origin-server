@@ -1,0 +1,6 @@
+- content_for :title, 'Select a plan'
+
+- @plans.each do |plan|
+  %h2= plan.name
+  = link_to "Select", account_plan_upgrade_path(plan), :class => 'btn'
+
