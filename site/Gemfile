@@ -12,6 +12,9 @@ gem 'formtastic', '~> 1.2.3'
 gem 'rack'
 gem 'regin'
 gem 'rdiscount'
+gem 'httparty'
+gem 'wddx'
+gem 'crack'
 
 # Files for Barista (https://github.com/Sutto/barista)
 gem 'barista'
@@ -44,6 +47,7 @@ group :development, :test do
   # The require part from http://tinyurl.com/3pf68ho
   gem 'mocha', :require => nil
   gem 'hpricot'
+  gem 'webmock', '~> 1.6.4', :require => nil
 end
 
 gem 'sinatra', '1.2.6'

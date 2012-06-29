@@ -11,4 +11,4 @@
   - @user.errors.full_messages.each do |e|
     .alert= e
 
-  %p= link_to '« Reset your password again', new_password_path(:email_address => @user.email_address)
+  %p= link_to '« Reset your password again', new_account_password_path(:email_address => @user.email_address)

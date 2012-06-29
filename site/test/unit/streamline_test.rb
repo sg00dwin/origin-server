@@ -471,22 +471,34 @@ class StreamlineTest < ActiveSupport::TestCase
     assert_equal 0, @streamline.errors.length
   end
 
-  test "authenticate full user" do
+  test "authenticate unknown user" do
+    @streamline.expects(:http_post).once.yields({'roles' => ['foo'], 'username' => 'test1'})
+    assert_equal true, @streamline.authenticate("test1", "test1")
+    assert_equal 0, @streamline.errors.length
+
+    assert_nil @streamline.streamline_type
+    assert !@streamline.simple_user?
+    assert !@streamline.full_user?
+  end
+
+  test "authenticate simple user" do
     @streamline.expects(:http_post).once.yields({'roles' => ['simple_authenticated'], 'username' => 'test1'})
     assert_equal true, @streamline.authenticate("test1", "test1")
     assert_equal 0, @streamline.errors.length
 
     assert_equal :simple, @streamline.streamline_type
     assert @streamline.simple_user?
+    assert !@streamline.full_user?
   end
 
-  test "authenticate simple user" do
+  test "authenticate full user" do
     @streamline.expects(:http_post).once.yields({'roles' => ['authenticated'], 'username' => 'test1'})
     assert_equal true, @streamline.authenticate("test1", "test1")
     assert_equal 0, @streamline.errors.length
 
     assert_equal :full, @streamline.streamline_type
     assert !@streamline.simple_user?
+    assert @streamline.full_user?
   end
 
   test "authenticate fails" do

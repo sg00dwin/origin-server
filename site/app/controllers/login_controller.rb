@@ -22,7 +22,7 @@ class LoginController < SiteController
       nil
     when [
       login_path,
-      reset_password_path,
+      reset_account_password_path,
       new_account_path,
       complete_account_path,
     ].any? {|path| referrer.path.starts_with?(path) }

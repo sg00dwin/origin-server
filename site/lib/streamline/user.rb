@@ -53,11 +53,18 @@ module Streamline
     end
 
     def roles
-      @roles ||= http_post(@@roles_url) do |json|
+      super or roles!
+    end
+    def roles!
+      self.roles = http_post(@@roles_url) do |json|
         @rhlogin ||= json['username']
         Rails.logger.warn "Roles user #{json['username']} different than active #{rhlogin}" if rhlogin != json['username']
         json['roles'] || []
       end
+    end
+    def streamline_type!
+      roles!
+      streamline_type
     end
 
     def refresh_roles(force=false)
@@ -82,12 +89,11 @@ module Streamline
     def authenticate(login, password)
       rhlogin = login
       ticket = nil
-      Rails.logger.debug "Authenticating user #{login}"
+      Rails.logger.debug "  Authenticating user #{login}"
 
       http_post(@@login_url, {:login => login, :password => password}) do |json|
+        self.roles = json['roles']
         @rhlogin = json['login']
-        @roles = json['roles']
-        @streamline_type = :simple if roles.include? 'simple_authenticated'
       end
       true
     rescue AccessDeniedException

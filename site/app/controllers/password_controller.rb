@@ -14,17 +14,17 @@ class PasswordController < ApplicationController
 
     render :new and return unless @user.valid? :reset_password
 
-    unless @user.request_password_reset(reset_password_url)
+    unless @user.request_password_reset(reset_account_password_url)
       logger.debug "Errors while resetting password #{@user.errors.inspect}"
     end
-    redirect_to success_password_path
+    redirect_to success_account_password_path
   end
 
   def success
   end
 
   def show
-    redirect_to logged_in? ? edit_password_path : new_password_path
+    redirect_to logged_in? ? edit_account_password_path : new_account_password_path
   end
 
   def reset
