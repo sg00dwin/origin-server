@@ -208,7 +208,6 @@ fi
 %files
 %defattr(-,root,root,-)
 %attr(0640,-,-) %{_libexecdir}/mcollective/mcollective/agent/*
-%attr(0750,-,-) %{_libexecdir}/mcollective/update_yaml.rb
 %attr(0640,-,-) %{ruby_sitelibdir}/facter/libra.rb
 %attr(0750,-,-) %{_initddir}/libra
 %attr(0750,-,-) %{_initddir}/libra-data
