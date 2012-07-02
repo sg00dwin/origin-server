@@ -45,6 +45,7 @@ BuildRequires: rubygem-mail
 BuildRequires: rubygem-treetop
 
 BuildRequires: rubygem-net-http-persistent
+BuildRequires: rubygem-wddx
 
 Requires:  rhc-common
 Requires:  rhc-server-common
@@ -76,7 +77,7 @@ Requires:  rubygem-mail
 Requires:  rubygem-treetop
 
 Requires:  rubygem-net-http-persistent
-
+Requires:  rubygem-wddx
 
 BuildArch: noarch
 
