@@ -8,7 +8,7 @@
 
 Summary:   Dependencies for OpenShift development
 Name:      rhc-devenv
-Version: 0.96.3
+Version: 0.96.4
 Release:   1%{?dist}
 Group:     Development/Libraries
 License:   GPLv2
@@ -494,6 +494,18 @@ chmod 750 /usr/sbin/tcpdump
 %{policydir}/*
 
 %changelog
+* Mon Jul 02 2012 Adam Miller <admiller@redhat.com> 0.96.4-1
+- Merge pull request #13 from jwhonce/test_pull_request (jwhonce@gmail.com)
+- Merge pull request #9 from tkramer-rh/dev/tkramer/bug/835097
+  (jwhonce@gmail.com)
+- fix repo urls (dmcphers@redhat.com)
+- Refactor test_pull_requests to support multiple repos (jhonce@redhat.com)
+- Security - added BZ835097 and cleaned up old port binding comments
+  (tkramer@redhat.com)
+- devenv.spec: adding drupal6-media_tudou (ansilva@redhat.com)
+- update streamline ip (dmcphers@redhat.com)
+- use the official java client repo (dmcphers@redhat.com)
+
 * Tue Jun 26 2012 Tim Kramer <tkramer@redhat.com>
 - Added BZ835097 remove other from tcpdump (tkramer@redhat.com)
 - Removed old comments on selinux for binding ports (tkramer@redhat.com)
