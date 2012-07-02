@@ -1,0 +1,4 @@
+17:56:38,037 INFO  [org.jboss.modules] JBoss Modules version 1.0.2.GA
+17:56:38,458 INFO  [org.jboss.msc] JBoss MSC version 1.0.1.GA
+17:56:38,547 INFO  [org.jboss.as] JBoss AS 7.0.2.Final "Arc" starting
+17:56:39,705 INFO  [org.jboss.as.logging] Removing bootstrap log handlers

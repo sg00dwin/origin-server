@@ -1,0 +1,1 @@
+export PATH=/usr/libexec/li/cartridges/jbossas-7/info/bin/:/usr/libexec/stickshift/cartridges/abstract-httpd/info/bin/:/usr/libexec/stickshift/cartridges/abstract/info/bin/:/etc/alternatives/java_sdk_1.6.0/bin:/etc/alternatives/maven-3.0/bin:/sbin:/usr/sbin:/bin:/usr/bin

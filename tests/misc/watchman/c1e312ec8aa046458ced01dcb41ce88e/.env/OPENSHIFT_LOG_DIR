@@ -1,0 +1,1 @@
+export OPENSHIFT_LOG_DIR='/root/li-test/tests/misc/watchman/c1e312ec8aa046458ced01dcb41ce88e/app001/logs/'
