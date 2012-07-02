@@ -37,6 +37,15 @@ module OpenShiftMigration
         cartridge_root_dir = "/usr/libexec/stickshift/cartridges"
         cartridge_dir = "#{cartridge_root_dir}/#{gear_type}"
 
+        gear_crondir = "#{gear_home}/cron-1.4"
+        if File.exists?(gear_crondir)  &&  File.directory?(gear_crondir)
+          output += "Recreating cron-1.4/jobs symlink for #{gear_name} ..."
+          FileUtils.rm_f  "#{gear_crondir}/jobs"
+          FileUtils.ln_sf "../app-root/repo/.openshift/cron",
+                          "#{gear_crondir}/jobs"
+          output += " done."
+        end
+
         env_echos = []
 
         env_echos.each do |env_echo|
