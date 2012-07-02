@@ -2,7 +2,7 @@
 
 Summary:       Multi-tenant cloud management system node tools
 Name:          rhc-node
-Version: 0.95.2
+Version: 0.95.3
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -266,6 +266,13 @@ fi
 /lib64/security/pam_libra.so
 
 %changelog
+* Mon Jul 02 2012 Adam Miller <admiller@redhat.com> 0.95.3-1
+- Merge pull request #7 from rmillner/dev/rmillner/bug/827817
+  (rpenta@redhat.com)
+- update migration for 2.0.14 (dmcphers@redhat.com)
+- BZ 827817: Add interactive shell for PostgreSQL. (rmillner@redhat.com)
+- Bug 828126 (dmcphers@redhat.com)
+
 * Sat Jun 23 2012 Dan McPherson <dmcphers@redhat.com> 0.95.2-1
 - new package built with tito
 
