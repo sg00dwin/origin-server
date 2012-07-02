@@ -3,7 +3,7 @@
 
 Summary:   Li site components
 Name:      rhc-site
-Version: 0.95.4
+Version: 0.95.5
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -126,6 +126,10 @@ rm -rf %{buildroot}
 /bin/touch %{sitedir}/log/production.log
 
 %changelog
+* Mon Jul 02 2012 Adam Miller <admiller@redhat.com> 0.95.5-1
+- added rubygem-wddx to requires/buildrequires for site rpm
+  (admiller@redhat.com)
+
 * Mon Jul 02 2012 Adam Miller <admiller@redhat.com> 0.95.4-1
 - Updated omniture script to send stg data to correct report suites
   (spurtell@redhat.com)
