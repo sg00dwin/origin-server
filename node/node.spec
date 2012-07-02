@@ -24,6 +24,7 @@ Requires:      ruby
 Requires:      rubygem-open4
 Requires:      rubygem-parseconfig
 Requires:      rubygem-stickshift-node
+Requires:      rubygem-systemu
 Requires:      stickshift-abstract
 Requires:      mcollective-qpid-plugin
 Requires:      stickshift-mcollective-agent
