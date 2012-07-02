@@ -3,7 +3,7 @@
 
 Summary:   Li broker components
 Name:      rhc-broker
-Version: 0.95.4
+Version: 0.95.5
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -111,6 +111,26 @@ rm -rf $RPM_BUILD_ROOT
 /bin/touch %{_localstatedir}/log/stickshift/user_action.log
 
 %changelog
+* Mon Jul 02 2012 Adam Miller <admiller@redhat.com> 0.95.5-1
+- Updating gem versions (admiller@redhat.com)
+- Add the 180s timeout to devenv as well. (rmillner@redhat.com)
+- Merge pull request #14 from rmillner/dev/rmillner/bug/832747
+  (rpenta@redhat.com)
+- Merge pull request #15 from pravisankar/master (rpenta@redhat.com)
+- billing event changes (rpenta@redhat.com)
+- minor fix in billing events (rpenta@redhat.com)
+- Revert "Updating gem versions" (dmcphers@redhat.com)
+- Billing event changes: RHLogin info in account data section and add
+  supplemental fields to each event notification (rpenta@redhat.com)
+- Billing: Added get_acct_plans_all() api (rpenta@redhat.com)
+- Observing rpc timeouts of otherwise successful operations when there's a high
+  IO or CPU load.  The jbossas-7 configure hook takes 30 seconds on an
+  otherwise idle system; heavy IO can easily double or triple the cost of the
+  hook.  Making the timeout higher to compensate. (rmillner@redhat.com)
+- Updating gem versions (admiller@redhat.com)
+- update migration for 2.0.14 (dmcphers@redhat.com)
+- update streamline ip (dmcphers@redhat.com)
+
 * Sat Jun 23 2012 Dan McPherson <dmcphers@redhat.com> 0.95.4-1
 - Updating gem versions (dmcphers@redhat.com)
 
