@@ -5,7 +5,7 @@
 %global modname             forums
 
 Name:    drupal%{drupal_release}-openshift-features-%{modname}
-Version: 1.4.2
+Version: 1.4.3
 Release: 1%{?dist}
 Summary: Openshift Red Hat Custom Forums Feature for Drupal6
 Group:   Applications/Publishing
@@ -41,6 +41,11 @@ rm -rf $RPM_BUILD_ROOT
 %{drupal_modules}/%{modname}
 
 %changelog
+* Mon Jul 02 2012 Adam Miller <admiller@redhat.com> 1.4.3-1
+- Remove caching on user_profile_box query so that users don't get clobbered,
+  update permissions so everyone can advanced search, and remove forums ctools
+  hook. (ccoleman@redhat.com)
+
 * Sat Jun 23 2012 Dan McPherson <dmcphers@redhat.com> 1.4.2-1
 - new package built with tito
 
