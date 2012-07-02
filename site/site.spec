@@ -3,7 +3,7 @@
 
 Summary:   Li site components
 Name:      rhc-site
-Version: 0.95.3
+Version: 0.95.4
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -125,6 +125,18 @@ rm -rf %{buildroot}
 /bin/touch %{sitedir}/log/production.log
 
 %changelog
+* Mon Jul 02 2012 Adam Miller <admiller@redhat.com> 0.95.4-1
+- Updated omniture script to send stg data to correct report suites
+  (spurtell@redhat.com)
+- US2500 - Prototype aria billing in the site, includes massive chunks of new
+  code.  Adds aria client wrapper, config for connecting to aria, new
+  controllers, test cases, and should handle when the current system doesn't
+  have access to aria gracefully. (ccoleman@redhat.com)
+- Add requires for transitions, fix build break (ccoleman@redhat.com)
+- Bug 834727 - Use Compass helpers to get full browser support on rotating O
+  (ccoleman@redhat.com)
+- update streamline ip (dmcphers@redhat.com)
+
 * Sat Jun 23 2012 Dan McPherson <dmcphers@redhat.com> 0.95.3-1
 - new package built with tito
 
