@@ -1,11 +1,11 @@
 require File.expand_path('../../test_helper', __FILE__)
 
 # Define a test class to mixin the module
-class StreamlineTester < Streamline::User
+class StreamlineTester < Streamline::Base
   include ActiveModel::Naming
-  include ActiveModel::Validations
+  include Streamline::User
 
-  attr_accessor :password, :password_confirmation, :terms_accepted
+  attr_accessor :terms_accepted
   # Make these items public for test purposes
   attr_writer :ticket, :terms, :email_address
 
@@ -34,75 +34,71 @@ class StreamlineTest < ActiveSupport::TestCase
     [roles, username, @streamline.expects(:http_post).yields({'roles' => roles, 'username' => username}).returns(roles)]
   end
 
-  test "streamline urls" do
-    assert @streamline.email_confirm_url("abc123", "test@example.com").query
-  end
-
   test "parse ticket nil" do
-    @streamline.parse_ticket(nil)
+    @streamline.send(:parse_ticket, nil)
     assert_nil @streamline.ticket
   end
 
   test "parse ticket empty" do
-    @streamline.parse_ticket([])
+    @streamline.send(:parse_ticket, [])
     assert_nil @streamline.ticket
   end
 
   test "parse ticket" do
     cookies = ["rh_sso=#{@ticket}; Domain=.redhat.com; Path=/; Secure;"]
-    @streamline.parse_ticket(cookies)
+    @streamline.send(:parse_ticket, cookies)
     assert_equal @streamline.ticket, @ticket
   end
 
   test "parse body nil" do
-    assert_nil @streamline.parse_body(nil)
+    assert_nil @streamline.send(:parse_body, nil)
   end
 
   test "parse body" do
     body = {"test" => "test2"}.to_json
-    assert_not_nil @streamline.parse_body(body)
+    assert_not_nil @streamline.send(:parse_body, body)
   end
 
   test "parse body errors" do
     body = {'errors' => ['login_required']}.to_json
-    @streamline.parse_body(body)
+    @streamline.send(:parse_body, body)
   end
 
   test "build terms query nil" do
-    assert_nil @streamline.build_terms_query(nil)
+    assert_nil @streamline.send(:build_terms_query, nil)
   end
 
   test "build terms query" do
     terms = [{'termId' => 1, 'termUrl' => 'http://test'}, {'termId' => 2, 'termUrl' => 'http://test2'}]
-    assert_equal 'termIds=1&termIds=2', @streamline.build_terms_query(terms)
+    assert_equal 'termIds=1&termIds=2', @streamline.send(:build_terms_query, terms)
   end
 
   test "build terms url" do
     terms = ['1', '2']
-    url = @streamline.build_terms_url(terms)
+    url = @streamline.send(:build_terms_url, terms)
     assert url.to_s =~ /^http.*\?termIds=/
   end
 
   test "parse errors nil" do
-    @streamline.parse_json_errors(nil)
+    @streamline.send(:parse_json_errors, nil)
     assert @streamline.errors.empty?
   end
 
   test "parse errors empty" do
     json_errors = {}.to_json
-    @streamline.parse_json_errors(json_errors)
+    @streamline.send(:parse_json_errors, json_errors)
     assert @streamline.errors.empty?
   end
 
   test "parse errors empty array" do
     json_errors = {"errors" => []}
-    @streamline.parse_json_errors(json_errors)
+    @streamline.send(:parse_json_errors, json_errors)
     assert @streamline.errors.empty?
   end
 
   test "parse errors" do
     json_errors = {"errors" => ['email_required', 'user_already_registered']}
-    @streamline.parse_json_errors(json_errors)
+    @streamline.send(:parse_json_errors, json_errors)
     assert !@streamline.errors.empty?
     assert_equal 1, @streamline.errors.length
     assert_equal 2, @streamline.errors.full_messages.length
@@ -113,7 +109,7 @@ class StreamlineTest < ActiveSupport::TestCase
     res.expects(:body).at_least_once.returns('{}')
     Net::HTTP.any_instance.expects(:start).returns(res)
 
-    @streamline.http_post(@url)
+    @streamline.send(:http_post, @url)
   end
 
   test "http call redirect" do
@@ -121,7 +117,7 @@ class StreamlineTest < ActiveSupport::TestCase
     res.expects(:body).at_least_once.returns('{}')
     Net::HTTP.any_instance.expects(:start).returns(res)
 
-    @streamline.http_post(@url)
+    @streamline.send(:http_post, @url)
   end
 
   test "http call parsing ticket" do
@@ -130,7 +126,7 @@ class StreamlineTest < ActiveSupport::TestCase
     res.expects(:body).at_least_once.returns('{}')
     Net::HTTP.any_instance.expects(:start).returns(res)
 
-    @streamline.http_post(@url)
+    @streamline.send(:http_post, @url)
     assert_equal @streamline.ticket, @ticket
   end
 
@@ -139,7 +135,7 @@ class StreamlineTest < ActiveSupport::TestCase
     Net::HTTP.any_instance.expects(:start).returns(res)
 
     assert_raise(Streamline::StreamlineException) {
-      @streamline.http_post(@url)
+      @streamline.send(:http_post, @url)
     }
   end
 
@@ -149,7 +145,7 @@ class StreamlineTest < ActiveSupport::TestCase
     Net::HTTP.any_instance.expects(:start).returns(res)
 
     assert_raise(Streamline::StreamlineException) {
-      @streamline.http_post(@url)
+      @streamline.send(:http_post, @url)
     }
     assert @streamline.errors[:base].all?{ |s| s =~ (/system error has occurred./) }
   end
@@ -160,7 +156,7 @@ class StreamlineTest < ActiveSupport::TestCase
     Net::HTTP.any_instance.expects(:start).returns(res)
 
     assert_raise(AccessDeniedException) {
-      @streamline.http_post(@url)
+      @streamline.send(:http_post, @url)
     }
     assert @streamline.errors[:base].all?{ |s| s =~ (/system error has occurred./) }
   end
@@ -171,7 +167,7 @@ class StreamlineTest < ActiveSupport::TestCase
     Net::HTTP.any_instance.expects(:start).returns(res)
 
     assert_raise(Streamline::StreamlineException) {
-      @streamline.http_post(@url)
+      @streamline.send(:http_post, @url)
     }
 
     # Make sure something was written to the client log
@@ -184,7 +180,7 @@ class StreamlineTest < ActiveSupport::TestCase
     Net::HTTP.any_instance.expects(:start).returns(res)
 
     assert_raise(Streamline::StreamlineException) {
-      @streamline.http_post(@url)
+      @streamline.send(:http_post, @url)
     }
 
     # Make sure something was written to the client log
@@ -202,7 +198,7 @@ class StreamlineTest < ActiveSupport::TestCase
       'termsAccepted' => 'true',
       'confirmationUrl' => @url,
     })
-    @streamline.expects(:http_post).with(StreamlineTester.register_url, args, false).once.yields(json)
+    @streamline.expects(:http_post).with(@streamline.send(:register_url), args, false).once.yields(json)
     @streamline.register(@url)
     assert @streamline.errors.empty?
   end
@@ -219,7 +215,7 @@ class StreamlineTest < ActiveSupport::TestCase
       'promoCode' => 'promo_foo',
       'confirmationUrl' => @url,
     })
-    @streamline.expects(:http_post).with(StreamlineTester.register_url, args, false).once.yields(json)
+    @streamline.expects(:http_post).with(@streamline.send(:register_url), args, false).once.yields(json)
     @streamline.register(@url, 'promo_foo')
     assert @streamline.errors.empty?
   end
@@ -311,6 +307,14 @@ class StreamlineTest < ActiveSupport::TestCase
     assert_equal @streamline, @streamline.establish
     assert_equal username, @streamline.rhlogin
     assert_equal roles, @streamline.roles
+  end
+
+  test 'should check validators on password confirmation' do
+    @streamline.password = 'foobar'
+    @streamline.old_password = 'old'
+    @streamline.password_confirmation = 'bar'
+    assert !@streamline.valid?(:change_password)
+    assert @streamline.errors[:password].first =~ /match/, @streamline.errors.inspect
   end
 
   test "establish user warns on name change" do

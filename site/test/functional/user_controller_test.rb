@@ -57,14 +57,14 @@ class UserControllerTest < ActionController::TestCase
   end
 
   test "should get promo code redirect on post" do
-    WebUser.any_instance.expects(:register).with(anything, 'a_code').returns(true)
+    WebUser::Mock.any_instance.expects(:register).with(anything, 'a_code').returns(true)
     post(:create, {:web_user => get_post_form.merge!(:promo_code => 'a_code')})
     assert assigns(:user).errors.empty?
     assert_redirected_to complete_account_path(:promo_code => 'a_code')
   end
 
   test "should ignore captcha non-integrated environment" do
-    Rails.configuration.expects(:integrated).never
+    Rails.configuration.expects(:integrated).at_least_once.returns(false)
     @controller.expects(:verify_recaptcha).once
     post(:create, {:web_user => {}})
     assert_response :success
@@ -91,7 +91,7 @@ class UserControllerTest < ActionController::TestCase
   end
 
   test "should ignore captcha when secret is correct" do
-    Rails.configuration.expects(:integrated).never
+    Rails.configuration.expects(:integrated).at_least_once.returns(false)
     Rails.configuration.expects(:captcha_secret).at_least_once.returns('123')
     @controller.expects(:verify_recaptcha).never
     post(:create, {:web_user => {}, :captcha_secret => '123'})
@@ -111,6 +111,7 @@ class UserControllerTest < ActionController::TestCase
   end
 
   test "should check captcha" do
+    Rails.configuration.expects(:integrated).at_least_once.returns(false)
     Rails.configuration.expects(:integrated).never
     @controller.expects(:verify_recaptcha).returns(true)
     post(:create, {:web_user => {}})
@@ -118,7 +119,7 @@ class UserControllerTest < ActionController::TestCase
   end
 
 	test "should have captcha check fail" do
-		Rails.configuration.expects(:integrated).never
+    Rails.configuration.expects(:integrated).at_least_once.returns(false)
 		@controller.expects(:verify_recaptcha).returns(false)
 		post(:create, {:web_user => {}})
 
@@ -129,7 +130,7 @@ class UserControllerTest < ActionController::TestCase
 	test "should get success on post and choosing Express" do
 		post(:create, {:web_user => get_post_form.merge({:cloud_access_choice => CloudAccess::EXPRESS})})
 
-		assert_equal 'express', assigns(:product)
+		assert_equal 'openshift', assigns(:product)
     assert_redirected_to complete_account_path
 	end
 
@@ -161,8 +162,8 @@ class UserControllerTest < ActionController::TestCase
     form = get_post_form
     form[:promo_code]='promo1'
     post(:create, {:web_user => form})
-    assert assigns(:user)
-    assert session[:promo_code] == "promo1"
+    assert user = assigns(:user)
+    assert "promo1", user.promo_code
 
     assert_redirected_to complete_account_path(:promo_code => 'promo1')
   end

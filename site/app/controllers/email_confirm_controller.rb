@@ -24,21 +24,16 @@ class EmailConfirmController < SiteController
     key = params[:key]
     email = params[:emailAddress]
 
-    redirect_path ||=
-      login_path(
-        :confirm_signup => true,
-        :email_address => email,
-        :redirect => default_after_signup_redirect
-      )
-
     @user = WebUser.new
 
     if key.blank? or email.blank?
       @user.errors.add(:base, 'The confirmation link is not correct.  Please check that you copied the link correctly or try registering again.')
 
-    elsif @user.confirm_email(key, email) #sets errors
-      reset_sso
-      reset_session
+    elsif @user.confirm_email(key, email)
+      redirect_path ||= server_relative_uri(params[:then]) || default_after_signup_redirect
+
+      self.current_user = @user
+
       redirect_to redirect_path and return
     end
 

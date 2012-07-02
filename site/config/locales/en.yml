@@ -21,7 +21,7 @@ en:
     token_is_invalid: "This password reset request is no longer valid. This could be caused by the link being more than 24 hours old or it's already been used. Please try to reset your password again using the 'Sign in' form."
     terms_not_accepted: 'Terms must be accepted'
     service_error: 'A system error has occurred. If the problem persists, please contact Red Hat support.'
-    user_not_found: 'No existing account fot the given email address.'
+    user_not_found: 'No existing account for the given email address.'
     email_service_error: 'A system error has occurred.  If the problem persists, please contact Red Hat support.'
     waiting_for_access: 'We are setting up your account now.  You will receive an email when your account is opened.'
     already_requested_access: 'You have already requested access to this service.  You should expect an email when access is granted.'

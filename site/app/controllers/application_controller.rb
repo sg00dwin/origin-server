@@ -46,11 +46,14 @@ class ApplicationController < ActionController::Base
     )
   end
 
-  def new_forms
-    true
-  end
-  def new_forms?
-    true
+  def server_relative_uri(s)
+    uri = URI.parse(s).normalize
+    uri.path = nil if uri.path == '/'
+    uri.query = nil if uri.query == '?'
+    return nil unless uri.path.present? || uri.query.present?
+    URI::Generic.build([nil, nil, nil, nil, nil, uri.path, nil, uri.query.presence, nil]).to_s
+  rescue
+    nil
   end
 
   def sauce_testing?
