@@ -2,7 +2,7 @@
 
 Summary:       Multi-tenant cloud management system node tools
 Name:          rhc-node
-Version: 0.95.3
+Version: 0.95.4
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -271,6 +271,15 @@ fi
 /lib64/security/pam_libra.so
 
 %changelog
+* Tue Jul 03 2012 Adam Miller <admiller@redhat.com> 0.95.4-1
+- Taking out duplicate link. (mpatel@redhat.com)
+- Add missing systemu dependency. (mpatel@redhat.com)
+- Migration for bugz 837130. (ramr@redhat.com)
+- Remove duplicate file. (mpatel@redhat.com)
+- Add new dependencies. (mpatel@redhat.com)
+- Fixes. (mpatel@redhat.com)
+- WIP changes to support mcollective 2.0. (mpatel@redhat.com)
+
 * Mon Jul 02 2012 Adam Miller <admiller@redhat.com> 0.95.3-1
 - Merge pull request #7 from rmillner/dev/rmillner/bug/827817
   (rpenta@redhat.com)
