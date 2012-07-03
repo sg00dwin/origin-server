@@ -250,11 +250,14 @@ ln -s /usr/lib64/httpd/modules/ %{sitedir}/httpd/modules
 ln -s /usr/lib64/httpd/modules/ %{brokerdir}/httpd/modules
 
 # Ensure /tmp and /var/tmp aren't world usable
-chmod o-rwX /tmp /var/tmp
-setfacl -m u:libra_passenger:rwx /tmp
-setfacl -m u:jenkins:rwx /tmp
-setfacl -m u:apache:rwx /tmp
-setfacl -m u:mysql:rwx /tmp
+#chmod o-rwX /tmp /var/tmp
+#setfacl -m u:libra_passenger:rwx /tmp
+#setfacl -m u:jenkins:rwx /tmp
+#setfacl -m u:apache:rwx /tmp
+#setfacl -m u:mysql:rwx /tmp
+############# FIXME ############
+#### Dirty hack until there's a mcollective fix
+chmod o+rwX /tmp /var/tmp
 
 # Jenkins specific setup
 usermod -G libra_user jenkins
