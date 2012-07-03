@@ -3,7 +3,7 @@
 
 Summary:   Li broker components
 Name:      rhc-broker
-Version: 0.95.7
+Version: 0.95.8
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -111,6 +111,9 @@ rm -rf $RPM_BUILD_ROOT
 /bin/touch %{_localstatedir}/log/stickshift/user_action.log
 
 %changelog
+* Tue Jul 03 2012 Adam Miller <admiller@redhat.com> 0.95.8-1
+- fix typo for Gemfile.lock in broker (admiller@redhat.com)
+
 * Tue Jul 03 2012 Adam Miller <admiller@redhat.com> 0.95.7-1
 - Add missing systemu dependency. (mpatel@redhat.com)
 
