@@ -102,6 +102,7 @@ GEM
     swingshift-streamline-plugin (0.11.3)
       json
       stickshift-controller
+    systemu (1.2.0)
     thor (0.14.6)
     thread-dump (0.0.5)
     treetop (1.4.10)
@@ -134,6 +135,7 @@ DEPENDENCIES
   stickshift-controller
   stomp
   swingshift-streamline-plugin
+  systemu
   thread-dump
   uplift-dynect-plugin
   wddx
