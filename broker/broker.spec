@@ -3,7 +3,7 @@
 
 Summary:   Li broker components
 Name:      rhc-broker
-Version: 0.95.5
+Version: 0.95.6
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -111,6 +111,15 @@ rm -rf $RPM_BUILD_ROOT
 /bin/touch %{_localstatedir}/log/stickshift/user_action.log
 
 %changelog
+* Tue Jul 03 2012 Adam Miller <admiller@redhat.com> 0.95.6-1
+- Updating gem versions (admiller@redhat.com)
+- Fix broker Gemfile.lock to use correct plugin. (mpatel@redhat.com)
+- Fix the dependency to correct plugin. (mpatel@redhat.com)
+- Fix invalid args. (mpatel@redhat.com)
+- Fixes. (mpatel@redhat.com)
+- WIP changes to support mcollective 2.0. (mpatel@redhat.com)
+- Refactoring out express specific code from mcollective. (mpatel@redhat.com)
+
 * Mon Jul 02 2012 Adam Miller <admiller@redhat.com> 0.95.5-1
 - Updating gem versions (admiller@redhat.com)
 - Add the 180s timeout to devenv as well. (rmillner@redhat.com)
