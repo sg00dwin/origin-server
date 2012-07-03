@@ -89,7 +89,7 @@ mkdir -p %{buildroot}%{_localstatedir}/lib/stickshift/.httpd.d
 mkdir -p %{buildroot}%{_localstatedir}/lib/stickshift/.stickshift-proxy.d
 mkdir -p %{buildroot}/%{_sysconfdir}/httpd/conf.d/
 mkdir -p %{buildroot}/lib64/security/
-ln -s %{_localstatedir}/lib/stickshift/.httpd.d/ %{buildroot}/%{_sysconfdir}/httpd/conf.d/stickshift
+# ln -s %{_localstatedir}/lib/stickshift/.httpd.d/ %{buildroot}/%{_sysconfdir}/httpd/conf.d/stickshift
 
 cp -r lib %{buildroot}%{_libexecdir}/stickshift
 cp -r conf/httpd %{buildroot}%{_sysconfdir}
@@ -266,7 +266,7 @@ fi
 %attr(0644,-,-) %config(noreplace) %{_sysconfdir}/security/namespace.d/*
 %{_localstatedir}/www/html/restorer.php
 %attr(0750,root,root) %config(noreplace) %{_sysconfdir}/httpd/conf.d/000000_default.conf
-%attr(0640,root,root) %{_sysconfdir}/httpd/conf.d/stickshift
+#%attr(0640,root,root) %{_sysconfdir}/httpd/conf.d/stickshift
 %dir %attr(0755,root,root) %{_sysconfdir}/stickshift/skel
 /lib64/security/pam_libra.so
 
