@@ -8,7 +8,7 @@
 
 Summary:   Dependencies for OpenShift development
 Name:      rhc-devenv
-Version: 0.96.5
+Version: 0.96.6
 Release:   1%{?dist}
 Group:     Development/Libraries
 License:   GPLv2
@@ -497,6 +497,10 @@ chmod 750 /usr/sbin/tcpdump
 %{policydir}/*
 
 %changelog
+* Tue Jul 03 2012 Adam Miller <admiller@redhat.com> 0.96.6-1
+- dirty hack until mcollective patch is a viable option, /tmp/ is world
+  writeable for now (admiller@redhat.com)
+
 * Tue Jul 03 2012 Adam Miller <admiller@redhat.com> 0.96.5-1
 - WIP changes to support mcollective 2.0. (mpatel@redhat.com)
 
