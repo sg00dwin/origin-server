@@ -5,7 +5,7 @@
 
 Summary:        GearChanger plugin for m-colective service
 Name:           rubygem-%{gemname}
-Version: 0.12.4
+Version: 0.12.5
 Release:        1%{?dist}
 Group:          Development/Languages
 License:        ASL 2.0
@@ -70,6 +70,9 @@ rm -rf %{buildroot}
 %{ruby_sitelib}/%{gemname}.rb
 
 %changelog
+* Tue Jul 03 2012 Adam Miller <admiller@redhat.com> 0.12.5-1
+- Refactoring out express specific code from mcollective. (mpatel@redhat.com)
+
 * Mon Jul 02 2012 Adam Miller <admiller@redhat.com> 0.12.4-1
 - Revert "fix for bug# 796458" (rmillner@redhat.com)
 - fix for bug# 796458 (rpenta@redhat.com)
