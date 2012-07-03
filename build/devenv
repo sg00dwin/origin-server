@@ -731,7 +731,7 @@ mkdir -p /tmp/rhc/junit
       if options.build_clean_ami || options.install_from_source || options.install_from_local_source || options.install_required_packages
         print "Updating all packages on the system..."
         2.times do
-          ssh(hostname, "yum update -y --exclude='rhc*' --exclude='mcollective*'; yum -y install openssh-clients", 1800)
+          ssh(hostname, "yum update -y --exclude='rhc*'; yum -y install openssh-clients", 1800)
         end
         puts "Done"
 
