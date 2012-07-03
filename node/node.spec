@@ -2,7 +2,7 @@
 
 Summary:       Multi-tenant cloud management system node tools
 Name:          rhc-node
-Version: 0.95.4
+Version: 0.95.5
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -271,6 +271,9 @@ fi
 /lib64/security/pam_libra.so
 
 %changelog
+* Tue Jul 03 2012 Adam Miller <admiller@redhat.com> 0.95.5-1
+- Fix for bugz 837424 - typeless gears migration. (ramr@redhat.com)
+
 * Tue Jul 03 2012 Adam Miller <admiller@redhat.com> 0.95.4-1
 - Taking out duplicate link. (mpatel@redhat.com)
 - Add missing systemu dependency. (mpatel@redhat.com)
