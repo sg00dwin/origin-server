@@ -288,6 +288,22 @@ mkdir -p /tmp/rhc/junit
                   end
                 end
               end
+            elsif retry_individually && output.include?("Failure:") && output.include?("rake_test_loader")
+              output.lines.each do |line|
+                if line =~ /\A(test_\w+)\((\w+Test)\) \[\/*(.*?_test\.rb):(\d+)\]:/
+                  test_name = $1
+                  class_name = $2
+                  file_name = $3
+                  
+                  # determine if the first part of the command is a directory change 
+                  # if so, include that in the retry command
+                  chdir_command = ""
+                  if cmd =~ /\A(cd .+?; )/
+                    chdir_command = $1
+                  end
+                  failures.push(["#{class_name} (#{test_name})", "#{chdir_command} ruby -Ilib:test #{file_name} -n #{test_name}"])
+                end
+              end
             else
               failures.push([title, cmd])
             end
@@ -406,6 +422,18 @@ mkdir -p /tmp/rhc/junit
         if options.include_extended?
           add_ssh_cmd_to_threads(hostname, threads, failures, "REST API", "cucumber -f html --out /tmp/rhc/rest_api.html -f progress -t @api li-test/tests", @@SSH_TIMEOUT, true)
           add_ssh_cmd_to_threads(hostname, threads, failures, "Extended", "cucumber -f html --out /tmp/rhc/extended.html -f progress -t @extended li-test/tests")
+
+          titles = ["Broker Domain System"]
+          cmds = ["cd li-test/broker; rake domain_system_test"]
+          add_ssh_cmd_to_threads(hostname, threads, failures, titles, cmds, @@SSH_TIMEOUT, true)
+
+          titles = ["Broker Application System"]
+          cmds = ["cd li-test/broker; rake application_system_test"]
+          add_ssh_cmd_to_threads(hostname, threads, failures, titles, cmds, @@SSH_TIMEOUT, true)
+
+          titles = ["Broker Cartridge System"]
+          cmds = ["cd li-test/broker; rake cartridge_system_test"]
+          add_ssh_cmd_to_threads(hostname, threads, failures, titles, cmds, @@SSH_TIMEOUT, true)
         end
 
         if options.include_cucumber
