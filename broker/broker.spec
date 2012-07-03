@@ -26,7 +26,7 @@ Requires:  rubygem-rest-client
 Requires:  rubygem-thread-dump
 Requires:  rubygem-swingshift-streamline-plugin
 Requires:  rubygem-uplift-dynect-plugin
-Requires:  rubygem-gearchanger-m-collective-plugin
+Requires:  rubygem-gearchanger-mcollective-plugin
 #Requires:  rubygem-term-ansicolor
 #Requires:  rubygem-trollop
 #Requires:  rubygem-cucumber
