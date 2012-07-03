@@ -5,7 +5,7 @@ SIBLING_REPOS = {'crankcase' => ['../crankcase-working', '../crankcase-fork', '.
                  'os-client-tools' => ['../os-client-tools-working', '../os-client-tools-fork', '../os-client-tools', '/var/lib/jenkins/jobs/os-client-tools/workspace']}
   
 PACKAGE_REGEX = /^([\w\.-]*)-\d+\.\d+\.\d+-\d+\.\..*:$/
-IGNORE_PACKAGES = ['bind-local', 'rubygem-rhc', 'stickshift-broker', 'rubygem-gearchanger-oddjob-plugin', 'rubygem-swingshift-mongo-plugin', 'rubygem-uplift-bind-plugin', 'openshift-origin']
+IGNORE_PACKAGES = ['bind-local', 'rubygem-rhc', 'stickshift-broker', 'rubygem-gearchanger-oddjob-plugin', 'rubygem-swingshift-mongo-plugin', 'rubygem-uplift-bind-plugin', 'openshift-origin', 'openshift-origin-broker', 'openshift-origin-node']
 
 module OpenShift
   module Tito
