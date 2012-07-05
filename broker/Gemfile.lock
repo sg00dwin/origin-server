@@ -86,12 +86,12 @@ GEM
     rest-client (1.6.1)
     ruby-prof (0.10.7)
     state_machine (1.1.2)
-    stickshift-common (0.12.3)
+    stickshift-common (0.12.4)
       activemodel
       json
       mongo
       rack
-    stickshift-controller (0.13.4)
+    stickshift-controller (0.13.5)
       activesupport
       dnsruby
       json
