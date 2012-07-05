@@ -1,0 +1,1 @@
+export OPENSHIFT_GEAR_CTL_SCRIPT='/var/lib/stickshift/c1e312ec8aa046458ced01dcb41ce88e/app001/app001_ctl.sh'

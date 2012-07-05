@@ -15,12 +15,12 @@ class Watchman
 
   ##
   # monitor +message_file+ every +period+ seconds for cgroups kill messages
-  def initialize(message_file = '/var/log/messages', period = 10, daemon=true, epoch = DateTime.now, libra_var_lib = '/var/lib/stickshift')
+  def initialize(message_file = '/var/log/messages', period = 20, daemon=true, epoch = DateTime.now, libra_var_lib = '/var/lib/stickshift', retries = 10)
     @message_file = message_file
     @period_seconds = period
     @daemon = daemon
     @var_lib = libra_var_lib
-    @retries = 10
+    @retries = retries
 
     # Once the SDK has finer control over whether an application should be running or not this could be lifted.
     # Don't process any errors that occurred before we were started.
@@ -32,21 +32,34 @@ class Watchman
     @incidents = {}
 
     Syslog.open(File.basename($0), Syslog::LOG_PID, Syslog::LOG_DAEMON) unless Syslog.opened?
-    Syslog.info('Starting rhc-watchman')
+    Syslog.info("Starting rhc-watchman => delay: #{period}s, exception threshold: #{retries}")
   end
 
   def run()
     begin
       sleep @period_seconds
 
-      # pull in all environments to find new applications and incorporate any changes...
+      # pull in all running environments to find new applications and incorporate any changes...
       # todo add last_run logic to only read files when needed
       app_env = {}
+      total_count = 0
       Dir[@var_lib + '/*'].each {|app_path|
         app_uuid = File.basename(app_path)
-        app_env[app_uuid] = read_env(app_path) if app_uuid =~ /^[a-f0-9]{32}$/ 
+        if app_uuid =~ /^[a-f0-9]{32}$/
+          begin
+            # reduce load on node by skipping non-running apps
+            app_env[app_uuid] = read_env(app_path) if is_running? app_uuid
+          rescue Errno::ENOENT
+            # If state file is missing process application...
+            # we don't have sufficient information to look for stop_lock
+            app_env[app_uuid] = read_env(app_path)
+          end
+          total_count += 1
+        end
       }
       next if app_env.empty?
+      @period_seconds *= 3 if (total_count / app_env.length) > 2
+      Syslog.info("Running rhc-watchman => delay: #{@period_seconds}s, exception threshold: #{retries}")
 	
       # Read current message_file and troll for killed applications
       # todo dump incidents if message_file has rolled?
@@ -109,14 +122,12 @@ class Watchman
       return
     end
 
-    state_file = File.join(env[uuid][:OPENSHIFT_HOMEDIR], 'app-root', 'runtime', '.state')
-    if File.exists?(state_file)
-      state = File.read(state_file)
-      if 'idle' != state && 'stopped' != state
+    begin
+      if is_running? uuid
         `service libra restartuser #{uuid}`
         Syslog.info("watchman restarted user #{uuid}: application #{env[uuid][:OPENSHIFT_GEAR_NAME]}") 
       end
-    else
+    rescue Errno::ENOENT
       stop_lock = File.join(env[uuid][:OPENSHIFT_GEAR_DIR], 'run', 'stop_lock')
       if not File.exists?(stop_lock) 
         `service libra restartuser #{uuid}`
@@ -125,7 +136,6 @@ class Watchman
     end
   end
 
-  private
   def cache_incident(uuid, timestamp, env)
     if @incidents.has_key?(uuid) 
       if @incidents[uuid][:last_updated] < timestamp
@@ -138,6 +148,12 @@ class Watchman
       restart(uuid, env)
       @incidents[uuid] = {:last_updated => timestamp}
     end
+  end
+
+  def is_running? uuid
+    state_file = File.join(@var_lib, uuid, 'app-root', 'runtime', '.state')
+    state = File.read(state_file).chomp
+    not ('idle' == state || 'stopped' == state)
   end
 
   # Load environment variables into a hash

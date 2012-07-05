@@ -1,0 +1,145 @@
+2012/02/08 15:59:59,934 INFO  [org.jboss.as.connector.subsystems.datasources] (Controller Boot Thread) Deploying JDBC-compliant driver class org.h2.Driver (version 1.2)
+2012/02/08 15:59:59,942 INFO  [org.jboss.as.connector.subsystems.datasources] (Controller Boot Thread) Deploying non-JDBC-compliant driver class com.mysql.jdbc.Driver (version 5.1)
+2012/02/08 15:59:59,952 INFO  [org.jboss.as.connector.subsystems.datasources] (Controller Boot Thread) Deploying non-JDBC-compliant driver class org.postgresql.Driver (version 8.4)
+2012/02/08 15:59:59,980 INFO  [org.jboss.as.clustering.infinispan.subsystem] (Controller Boot Thread) Activating Infinispan subsystem.
+2012/02/08 16:00:00,092 INFO  [org.jboss.as.naming] (Controller Boot Thread) JBAS011800: Activating Naming Subsystem
+2012/02/08 16:00:00,109 INFO  [org.jboss.as.naming] (MSC service thread 1-4) JBAS011802: Starting Naming Service
+2012/02/08 16:00:00,114 INFO  [org.jboss.as.security] (Controller Boot Thread) Activating Security Subsystem
+2012/02/08 16:00:00,494 INFO  [org.jboss.as.ee] (Controller Boot Thread) Activating EE subsystem
+2012/02/08 16:00:00,515 INFO  [org.apache.catalina.core.AprLifecycleListener] (MSC service thread 1-3) The Apache Tomcat Native library which allows optimal performance in production environments was not found on the java.library.path: /usr/lib/jvm/java-1.6.0-openjdk-1.6.0.0.x86_64/jre/lib/amd64/server:/usr/lib/jvm/java-1.6.0-openjdk-1.6.0.0.x86_64/jre/lib/amd64:/usr/lib/jvm/java-1.6.0-openjdk-1.6.0.0.x86_64/jre/../lib/amd64:/usr/java/packages/lib/amd64:/usr/lib64:/lib64:/lib:/usr/lib
+2012/02/08 16:00:00,680 INFO  [org.apache.coyote.http11.Http11Protocol] (MSC service thread 1-4) Starting Coyote HTTP/1.1 on http--127.0.250.1-8080
+2012/02/08 16:00:00,728 INFO  [org.jboss.as.connector] (MSC service thread 1-4) Starting JCA Subsystem (JBoss IronJacamar 1.0.3.Final)
+2012/02/08 16:00:00,828 INFO  [org.jboss.as.connector.subsystems.datasources] (MSC service thread 1-3) Bound data source [java:jboss/datasources/ExampleDS]
+2012/02/08 16:00:01,425 INFO  [org.jboss.as.deployment] (MSC service thread 1-2) Started FileSystemDeploymentService for directory /var/lib/stickshift/322ba0e1f4cf4026a8bd29c06c2fbf59/app001/jbossas-7/standalone/deployments
+2012/02/08 16:00:01,459 INFO  [org.jboss.as] (Controller Boot Thread) JBoss AS 7.0.2.Final "Arc" started in 3605ms - Started 83 of 111 services (22 services are passive or on-demand)
+2012/02/08 16:00:01,513 INFO  [org.jboss.as.server.deployment] (MSC service thread 1-2) Starting deployment of "ROOT.war"
+2012/02/08 16:00:01,826 INFO  [org.jboss.as.jpa] (MSC service thread 1-4) added javax.persistence.api dependency to ROOT.war
+2012/02/08 16:00:03,541 INFO  [org.jboss.web] (MSC service thread 1-4) registering web context: 
+2012/02/08 16:00:03,609 INFO  [org.jboss.as.server.controller] (DeploymentScanner-threads - 2) Deployed "ROOT.war"
+2012/02/08 17:48:50,383 INFO  [org.jboss.as.connector.subsystems.datasources] (Controller Boot Thread) Deploying JDBC-compliant driver class org.h2.Driver (version 1.2)
+2012/02/08 17:48:50,390 INFO  [org.jboss.as.connector.subsystems.datasources] (Controller Boot Thread) Deploying non-JDBC-compliant driver class com.mysql.jdbc.Driver (version 5.1)
+2012/02/08 17:48:50,397 INFO  [org.jboss.as.connector.subsystems.datasources] (Controller Boot Thread) Deploying non-JDBC-compliant driver class org.postgresql.Driver (version 8.4)
+2012/02/08 17:48:50,422 INFO  [org.jboss.as.clustering.infinispan.subsystem] (Controller Boot Thread) Activating Infinispan subsystem.
+2012/02/08 17:48:50,582 INFO  [org.jboss.as.naming] (Controller Boot Thread) JBAS011800: Activating Naming Subsystem
+2012/02/08 17:48:50,595 INFO  [org.jboss.as.naming] (MSC service thread 1-1) JBAS011802: Starting Naming Service
+2012/02/08 17:48:50,606 INFO  [org.jboss.as.security] (Controller Boot Thread) Activating Security Subsystem
+2012/02/08 17:48:50,976 INFO  [org.apache.catalina.core.AprLifecycleListener] (MSC service thread 1-1) The Apache Tomcat Native library which allows optimal performance in production environments was not found on the java.library.path: /usr/lib/jvm/java-1.6.0-openjdk-1.6.0.0.x86_64/jre/lib/amd64/server:/usr/lib/jvm/java-1.6.0-openjdk-1.6.0.0.x86_64/jre/lib/amd64:/usr/lib/jvm/java-1.6.0-openjdk-1.6.0.0.x86_64/jre/../lib/amd64:/usr/java/packages/lib/amd64:/usr/lib64:/lib64:/lib:/usr/lib
+2012/02/08 17:48:50,982 INFO  [org.jboss.as.ee] (Controller Boot Thread) Activating EE subsystem
+2012/02/08 17:48:51,194 INFO  [org.apache.coyote.http11.Http11Protocol] (MSC service thread 1-3) Starting Coyote HTTP/1.1 on http--127.0.250.1-8080
+2012/02/08 17:48:51,251 INFO  [org.jboss.as.connector] (MSC service thread 1-2) Starting JCA Subsystem (JBoss IronJacamar 1.0.3.Final)
+2012/02/08 17:48:51,318 INFO  [org.jboss.as.connector.subsystems.datasources] (MSC service thread 1-4) Bound data source [java:jboss/datasources/ExampleDS]
+2012/02/08 17:48:51,817 INFO  [org.jboss.as.deployment] (MSC service thread 1-4) Started FileSystemDeploymentService for directory /var/lib/stickshift/322ba0e1f4cf4026a8bd29c06c2fbf59/app001/jbossas-7/standalone/deployments
+2012/02/08 17:48:51,912 INFO  [org.jboss.as] (Controller Boot Thread) JBoss AS 7.0.2.Final "Arc" started in 3598ms - Started 83 of 111 services (22 services are passive or on-demand)
+2012/02/08 17:48:51,967 INFO  [org.jboss.as.server.deployment] (MSC service thread 1-4) Starting deployment of "ROOT.war"
+2012/02/08 17:48:52,201 INFO  [org.jboss.as.jpa] (MSC service thread 1-2) added javax.persistence.api dependency to ROOT.war
+2012/02/08 17:48:52,693 INFO  [org.jboss.web] (MSC service thread 1-4) registering web context: 
+2012/02/08 17:48:52,733 INFO  [org.jboss.as.server.controller] (DeploymentScanner-threads - 2) Deployed "ROOT.war"
+2012/02/08 17:52:18,602 INFO  [org.apache.coyote.http11.Http11Protocol] (MSC service thread 1-3) Stopping Coyote HTTP/1.1 on http--127.0.250.1-8080
+2012/02/08 17:52:26,766 INFO  [org.jboss.as.connector.subsystems.datasources] (Controller Boot Thread) Deploying JDBC-compliant driver class org.h2.Driver (version 1.2)
+2012/02/08 17:52:26,775 INFO  [org.jboss.as.connector.subsystems.datasources] (Controller Boot Thread) Deploying non-JDBC-compliant driver class com.mysql.jdbc.Driver (version 5.1)
+2012/02/08 17:52:26,786 INFO  [org.jboss.as.connector.subsystems.datasources] (Controller Boot Thread) Deploying non-JDBC-compliant driver class org.postgresql.Driver (version 8.4)
+2012/02/08 17:52:26,814 INFO  [org.jboss.as.clustering.infinispan.subsystem] (Controller Boot Thread) Activating Infinispan subsystem.
+2012/02/08 17:52:26,922 INFO  [org.jboss.as.naming] (Controller Boot Thread) JBAS011800: Activating Naming Subsystem
+2012/02/08 17:52:26,935 INFO  [org.jboss.as.naming] (MSC service thread 1-3) JBAS011802: Starting Naming Service
+2012/02/08 17:52:26,941 INFO  [org.jboss.as.security] (Controller Boot Thread) Activating Security Subsystem
+2012/02/08 17:52:27,323 INFO  [org.apache.catalina.core.AprLifecycleListener] (MSC service thread 1-1) The Apache Tomcat Native library which allows optimal performance in production environments was not found on the java.library.path: /usr/lib/jvm/java-1.6.0-openjdk-1.6.0.0.x86_64/jre/lib/amd64/server:/usr/lib/jvm/java-1.6.0-openjdk-1.6.0.0.x86_64/jre/lib/amd64:/usr/lib/jvm/java-1.6.0-openjdk-1.6.0.0.x86_64/jre/../lib/amd64:/usr/java/packages/lib/amd64:/usr/lib64:/lib64:/lib:/usr/lib
+2012/02/08 17:52:27,352 INFO  [org.jboss.as.ee] (Controller Boot Thread) Activating EE subsystem
+2012/02/08 17:52:27,435 INFO  [org.apache.coyote.http11.Http11Protocol] (MSC service thread 1-4) Starting Coyote HTTP/1.1 on http--127.0.250.1-8080
+2012/02/08 17:52:27,574 INFO  [org.jboss.as.connector] (MSC service thread 1-3) Starting JCA Subsystem (JBoss IronJacamar 1.0.3.Final)
+2012/02/08 17:52:27,713 INFO  [org.jboss.as.connector.subsystems.datasources] (MSC service thread 1-2) Bound data source [java:jboss/datasources/ExampleDS]
+2012/02/08 17:52:28,227 INFO  [org.jboss.as.deployment] (MSC service thread 1-4) Started FileSystemDeploymentService for directory /var/lib/stickshift/322ba0e1f4cf4026a8bd29c06c2fbf59/app001/jbossas-7/standalone/deployments
+2012/02/08 17:52:28,250 INFO  [org.jboss.as] (Controller Boot Thread) JBoss AS 7.0.2.Final "Arc" started in 3655ms - Started 83 of 111 services (22 services are passive or on-demand)
+2012/02/08 17:54:02,678 INFO  [org.jboss.as.controller] (MSC service thread 1-4) Service status report
+   New missing/unsatisfied dependencies:
+      service jboss.data-source-config.java:jboss/datasources/ExampleDS (missing)
+
+2012/02/08 17:54:02,679 INFO  [org.jboss.as.controller] (MSC service thread 1-1) Service status report
+   New missing/unsatisfied dependencies:
+      service jboss.jndi-view.extension.registry (missing)
+
+2012/02/08 17:54:11,194 INFO  [org.jboss.as.connector.subsystems.datasources] (Controller Boot Thread) Deploying JDBC-compliant driver class org.h2.Driver (version 1.2)
+2012/02/08 17:54:11,203 INFO  [org.jboss.as.connector.subsystems.datasources] (Controller Boot Thread) Deploying non-JDBC-compliant driver class com.mysql.jdbc.Driver (version 5.1)
+2012/02/08 17:54:11,214 INFO  [org.jboss.as.connector.subsystems.datasources] (Controller Boot Thread) Deploying non-JDBC-compliant driver class org.postgresql.Driver (version 8.4)
+2012/02/08 17:54:11,238 INFO  [org.jboss.as.clustering.infinispan.subsystem] (Controller Boot Thread) Activating Infinispan subsystem.
+2012/02/08 17:54:11,397 INFO  [org.jboss.as.naming] (Controller Boot Thread) JBAS011800: Activating Naming Subsystem
+2012/02/08 17:54:11,410 INFO  [org.jboss.as.naming] (MSC service thread 1-4) JBAS011802: Starting Naming Service
+2012/02/08 17:54:11,415 INFO  [org.jboss.as.security] (Controller Boot Thread) Activating Security Subsystem
+2012/02/08 17:54:11,769 INFO  [org.jboss.as.ee] (Controller Boot Thread) Activating EE subsystem
+2012/02/08 17:54:11,805 INFO  [org.apache.catalina.core.AprLifecycleListener] (MSC service thread 1-2) The Apache Tomcat Native library which allows optimal performance in production environments was not found on the java.library.path: /usr/lib/jvm/java-1.6.0-openjdk-1.6.0.0.x86_64/jre/lib/amd64/server:/usr/lib/jvm/java-1.6.0-openjdk-1.6.0.0.x86_64/jre/lib/amd64:/usr/lib/jvm/java-1.6.0-openjdk-1.6.0.0.x86_64/jre/../lib/amd64:/usr/java/packages/lib/amd64:/usr/lib64:/lib64:/lib:/usr/lib
+2012/02/08 17:54:11,917 INFO  [org.apache.coyote.http11.Http11Protocol] (MSC service thread 1-2) Starting Coyote HTTP/1.1 on http--127.0.250.1-8080
+2012/02/08 17:54:12,004 INFO  [org.jboss.as.connector] (MSC service thread 1-3) Starting JCA Subsystem (JBoss IronJacamar 1.0.3.Final)
+2012/02/08 17:54:12,071 INFO  [org.jboss.as.connector.subsystems.datasources] (MSC service thread 1-3) Bound data source [java:jboss/datasources/ExampleDS]
+2012/02/08 17:54:12,752 INFO  [org.jboss.as.deployment] (MSC service thread 1-2) Started FileSystemDeploymentService for directory /var/lib/stickshift/322ba0e1f4cf4026a8bd29c06c2fbf59/app001/jbossas-7/standalone/deployments
+2012/02/08 17:54:12,772 INFO  [org.jboss.as] (Controller Boot Thread) JBoss AS 7.0.2.Final "Arc" started in 3566ms - Started 83 of 111 services (22 services are passive or on-demand)
+2012/02/08 17:54:51,422 INFO  [org.jboss.as.connector.subsystems.datasources] (Controller Boot Thread) Deploying JDBC-compliant driver class org.h2.Driver (version 1.2)
+2012/02/08 17:54:51,431 INFO  [org.jboss.as.connector.subsystems.datasources] (Controller Boot Thread) Deploying non-JDBC-compliant driver class com.mysql.jdbc.Driver (version 5.1)
+2012/02/08 17:54:51,441 INFO  [org.jboss.as.connector.subsystems.datasources] (Controller Boot Thread) Deploying non-JDBC-compliant driver class org.postgresql.Driver (version 8.4)
+2012/02/08 17:54:51,467 INFO  [org.jboss.as.clustering.infinispan.subsystem] (Controller Boot Thread) Activating Infinispan subsystem.
+2012/02/08 17:54:51,575 INFO  [org.jboss.as.naming] (Controller Boot Thread) JBAS011800: Activating Naming Subsystem
+2012/02/08 17:54:51,588 INFO  [org.jboss.as.naming] (MSC service thread 1-4) JBAS011802: Starting Naming Service
+2012/02/08 17:54:51,593 INFO  [org.jboss.as.security] (Controller Boot Thread) Activating Security Subsystem
+2012/02/08 17:54:51,989 INFO  [org.apache.catalina.core.AprLifecycleListener] (MSC service thread 1-1) The Apache Tomcat Native library which allows optimal performance in production environments was not found on the java.library.path: /usr/lib/jvm/java-1.6.0-openjdk-1.6.0.0.x86_64/jre/lib/amd64/server:/usr/lib/jvm/java-1.6.0-openjdk-1.6.0.0.x86_64/jre/lib/amd64:/usr/lib/jvm/java-1.6.0-openjdk-1.6.0.0.x86_64/jre/../lib/amd64:/usr/java/packages/lib/amd64:/usr/lib64:/lib64:/lib:/usr/lib
+2012/02/08 17:54:52,038 INFO  [org.jboss.as.ee] (Controller Boot Thread) Activating EE subsystem
+2012/02/08 17:54:52,148 INFO  [org.apache.coyote.http11.Http11Protocol] (MSC service thread 1-2) Starting Coyote HTTP/1.1 on http--127.0.250.1-8080
+2012/02/08 17:54:52,288 INFO  [org.jboss.as.connector] (MSC service thread 1-4) Starting JCA Subsystem (JBoss IronJacamar 1.0.3.Final)
+2012/02/08 17:54:52,355 INFO  [org.jboss.as.connector.subsystems.datasources] (MSC service thread 1-4) Bound data source [java:jboss/datasources/ExampleDS]
+2012/02/08 17:54:52,846 INFO  [org.jboss.as.deployment] (MSC service thread 1-1) Started FileSystemDeploymentService for directory /var/lib/stickshift/322ba0e1f4cf4026a8bd29c06c2fbf59/app001/jbossas-7/standalone/deployments
+2012/02/08 17:54:52,864 INFO  [org.jboss.as] (Controller Boot Thread) JBoss AS 7.0.2.Final "Arc" started in 3506ms - Started 83 of 111 services (22 services are passive or on-demand)
+2012/02/08 17:55:43,143 INFO  [org.jboss.as.controller] (MSC service thread 1-1) Service status report
+   New missing/unsatisfied dependencies:
+      service jboss.data-source-config.java:jboss/datasources/ExampleDS (missing)
+
+2012/02/08 17:55:43,144 INFO  [org.jboss.as.controller] (MSC service thread 1-4) Service status report
+   New missing/unsatisfied dependencies:
+      service jboss.jndi-view.extension.registry (missing)
+
+2012/02/08 17:55:52,273 INFO  [org.jboss.as.connector.subsystems.datasources] (Controller Boot Thread) Deploying JDBC-compliant driver class org.h2.Driver (version 1.2)
+2012/02/08 17:55:52,280 INFO  [org.jboss.as.connector.subsystems.datasources] (Controller Boot Thread) Deploying non-JDBC-compliant driver class com.mysql.jdbc.Driver (version 5.1)
+2012/02/08 17:55:52,287 INFO  [org.jboss.as.connector.subsystems.datasources] (Controller Boot Thread) Deploying non-JDBC-compliant driver class org.postgresql.Driver (version 8.4)
+2012/02/08 17:55:52,315 INFO  [org.jboss.as.clustering.infinispan.subsystem] (Controller Boot Thread) Activating Infinispan subsystem.
+2012/02/08 17:55:52,423 INFO  [org.jboss.as.naming] (Controller Boot Thread) JBAS011800: Activating Naming Subsystem
+2012/02/08 17:55:52,438 INFO  [org.jboss.as.naming] (MSC service thread 1-1) JBAS011802: Starting Naming Service
+2012/02/08 17:55:52,445 INFO  [org.jboss.as.security] (Controller Boot Thread) Activating Security Subsystem
+2012/02/08 17:55:52,836 INFO  [org.jboss.as.ee] (Controller Boot Thread) Activating EE subsystem
+2012/02/08 17:55:52,860 INFO  [org.apache.catalina.core.AprLifecycleListener] (MSC service thread 1-2) The Apache Tomcat Native library which allows optimal performance in production environments was not found on the java.library.path: /usr/lib/jvm/java-1.6.0-openjdk-1.6.0.0.x86_64/jre/lib/amd64/server:/usr/lib/jvm/java-1.6.0-openjdk-1.6.0.0.x86_64/jre/lib/amd64:/usr/lib/jvm/java-1.6.0-openjdk-1.6.0.0.x86_64/jre/../lib/amd64:/usr/java/packages/lib/amd64:/usr/lib64:/lib64:/lib:/usr/lib
+2012/02/08 17:55:53,088 INFO  [org.apache.coyote.http11.Http11Protocol] (MSC service thread 1-3) Starting Coyote HTTP/1.1 on http--127.0.250.1-8080
+2012/02/08 17:55:53,211 INFO  [org.jboss.as.connector] (MSC service thread 1-2) Starting JCA Subsystem (JBoss IronJacamar 1.0.3.Final)
+2012/02/08 17:55:53,285 INFO  [org.jboss.as.connector.subsystems.datasources] (MSC service thread 1-4) Bound data source [java:jboss/datasources/ExampleDS]
+2012/02/08 17:55:53,862 INFO  [org.jboss.as.deployment] (MSC service thread 1-2) Started FileSystemDeploymentService for directory /var/lib/stickshift/322ba0e1f4cf4026a8bd29c06c2fbf59/app001/jbossas-7/standalone/deployments
+2012/02/08 17:55:53,899 INFO  [org.jboss.as] (Controller Boot Thread) JBoss AS 7.0.2.Final "Arc" started in 3749ms - Started 83 of 111 services (22 services are passive or on-demand)
+2012/02/08 17:56:39,732 INFO  [org.jboss.as.connector.subsystems.datasources] (Controller Boot Thread) Deploying JDBC-compliant driver class org.h2.Driver (version 1.2)
+2012/02/08 17:56:39,740 INFO  [org.jboss.as.connector.subsystems.datasources] (Controller Boot Thread) Deploying non-JDBC-compliant driver class com.mysql.jdbc.Driver (version 5.1)
+2012/02/08 17:56:39,747 INFO  [org.jboss.as.connector.subsystems.datasources] (Controller Boot Thread) Deploying non-JDBC-compliant driver class org.postgresql.Driver (version 8.4)
+2012/02/08 17:56:39,774 INFO  [org.jboss.as.clustering.infinispan.subsystem] (Controller Boot Thread) Activating Infinispan subsystem.
+2012/02/08 17:56:39,883 INFO  [org.jboss.as.naming] (Controller Boot Thread) JBAS011800: Activating Naming Subsystem
+2012/02/08 17:56:39,898 INFO  [org.jboss.as.naming] (MSC service thread 1-3) JBAS011802: Starting Naming Service
+2012/02/08 17:56:39,907 INFO  [org.jboss.as.security] (Controller Boot Thread) Activating Security Subsystem
+2012/02/08 17:56:40,263 INFO  [org.jboss.as.ee] (Controller Boot Thread) Activating EE subsystem
+2012/02/08 17:56:40,355 INFO  [org.apache.catalina.core.AprLifecycleListener] (MSC service thread 1-1) The Apache Tomcat Native library which allows optimal performance in production environments was not found on the java.library.path: /usr/lib/jvm/java-1.6.0-openjdk-1.6.0.0.x86_64/jre/lib/amd64/server:/usr/lib/jvm/java-1.6.0-openjdk-1.6.0.0.x86_64/jre/lib/amd64:/usr/lib/jvm/java-1.6.0-openjdk-1.6.0.0.x86_64/jre/../lib/amd64:/usr/java/packages/lib/amd64:/usr/lib64:/lib64:/lib:/usr/lib
+2012/02/08 17:56:40,498 INFO  [org.apache.coyote.http11.Http11Protocol] (MSC service thread 1-3) Starting Coyote HTTP/1.1 on http--127.0.250.1-8080
+2012/02/08 17:56:40,629 INFO  [org.jboss.as.connector] (MSC service thread 1-1) Starting JCA Subsystem (JBoss IronJacamar 1.0.3.Final)
+2012/02/08 17:56:40,653 INFO  [org.jboss.as.connector.subsystems.datasources] (MSC service thread 1-1) Bound data source [java:jboss/datasources/ExampleDS]
+2012/02/08 17:56:41,169 INFO  [org.jboss.as.deployment] (MSC service thread 1-4) Started FileSystemDeploymentService for directory /var/lib/stickshift/322ba0e1f4cf4026a8bd29c06c2fbf59/app001/jbossas-7/standalone/deployments
+2012/02/08 17:56:41,195 INFO  [org.jboss.as] (Controller Boot Thread) JBoss AS 7.0.2.Final "Arc" started in 3556ms - Started 83 of 111 services (22 services are passive or on-demand)
+2012/02/08 17:56:41,299 INFO  [org.jboss.as.server.deployment] (MSC service thread 1-2) Starting deployment of "ROOT.war"
+2012/02/08 17:56:41,554 INFO  [org.jboss.as.jpa] (MSC service thread 1-1) added javax.persistence.api dependency to ROOT.war
+2012/02/08 17:56:42,073 INFO  [org.jboss.web] (MSC service thread 1-1) registering web context: 
+2012/02/08 17:56:42,110 INFO  [org.jboss.as.server.controller] (DeploymentScanner-threads - 2) Deployed "ROOT.war"
+2012/02/08 17:57:11,034 ERROR [org.apache.catalina.core.ContainerBase.[jboss.web].[default-host].[/].[HelloWorldServlet]] (http--127.0.250.1-8080-1) Servlet.service() for servlet HelloWorldServlet threw exception: java.lang.OutOfMemoryError: Java heap space
+	at HelloWorldServlet.doGet(HelloWorldServlet.java:16)	at javax.servlet.http.HttpServlet.service(HttpServlet.java:734) [jboss-servlet-api_3.0_spec-1.0.0.Final.jar:1.0.0.Final]
+	at javax.servlet.http.HttpServlet.service(HttpServlet.java:847) [jboss-servlet-api_3.0_spec-1.0.0.Final.jar:1.0.0.Final]
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:329) [jbossweb-7.0.1.Final.jar:7.0.2.Final]
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:248) [jbossweb-7.0.1.Final.jar:7.0.2.Final]
+	at org.apache.catalina.core.StandardWrapperValve.invoke(StandardWrapperValve.java:275) [jbossweb-7.0.1.Final.jar:7.0.2.Final]
+	at org.apache.catalina.core.StandardContextValve.invoke(StandardContextValve.java:161) [jbossweb-7.0.1.Final.jar:7.0.2.Final]
+	at org.jboss.as.web.security.SecurityContextAssociationValve.invoke(SecurityContextAssociationValve.java:139) [jboss-as-web-7.0.2.Final.jar:7.0.2.Final]
+	at org.jboss.as.web.NamingValve.invoke(NamingValve.java:57) [jboss-as-web-7.0.2.Final.jar:7.0.2.Final]
+	at org.apache.catalina.core.StandardHostValve.invoke(StandardHostValve.java:154) [jbossweb-7.0.1.Final.jar:7.0.2.Final]
+	at org.apache.catalina.valves.ErrorReportValve.invoke(ErrorReportValve.java:102) [jbossweb-7.0.1.Final.jar:7.0.2.Final]
+	at org.apache.catalina.core.StandardEngineValve.invoke(StandardEngineValve.java:109) [jbossweb-7.0.1.Final.jar:7.0.2.Final]
+	at org.apache.catalina.connector.CoyoteAdapter.service(CoyoteAdapter.java:362) [jbossweb-7.0.1.Final.jar:7.0.2.Final]
+	at org.apache.coyote.http11.Http11Processor.process(Http11Processor.java:877) [jbossweb-7.0.1.Final.jar:7.0.2.Final]
+	at org.apache.coyote.http11.Http11Protocol$Http11ConnectionHandler.process(Http11Protocol.java:667) [jbossweb-7.0.1.Final.jar:7.0.2.Final]
+	at org.apache.tomcat.util.net.JIoEndpoint$Worker.run(JIoEndpoint.java:952) [jbossweb-7.0.1.Final.jar:7.0.2.Final]
+	at java.lang.Thread.run(Thread.java:679) [:1.6.0_22]
+
