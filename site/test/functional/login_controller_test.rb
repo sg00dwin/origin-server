@@ -10,12 +10,15 @@ class LoginControllerTest < ActionController::TestCase
     {:rhlogin => 'test', :password => 'password'}
   end
 
-  test "should get index" do
+  test "should get form" do
     get :show
     #assert assigns(:redirectUrl)
     #assert assigns(:errorUrl)
     assert_response :success
     assert_template :show
+    assert_select('form input[name*=rhlogin]') do |elements|
+      assert_equal 'web_user[rhlogin]', elements[0]['name']
+    end
   end
 
   test "login as simple user" do

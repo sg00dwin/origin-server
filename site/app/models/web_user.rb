@@ -65,6 +65,10 @@ class WebUser < Streamline::Base
     user
   end
 
+  def self.model_name
+    ActiveModel::Name.new(WebUser)
+  end
+
   private
     def mass_assign_attributes(attributes, protect=true)
       attributes.each do |name, value|
