@@ -1,51 +1,29 @@
-class WebUser < Streamline::User
-  include ActiveModel::Validations
+class WebUser < Streamline::Base
   include ActiveModel::Conversion
   include ActiveModel::Serialization
   extend ActiveModel::Naming
 
   require_dependency 'streamline/mock'
-  include Streamline::Mock unless Rails.configuration.integrated
+  include Streamline::User
 
-  # Helper to allow mulitple :on scopes to validators
-  def self.on_scopes(*scopes)
-    scopes = scopes + [:create, :update, nil] if scopes.include? :save
-    lambda { |o| scopes.include?(o.validation_context) }
-  end
-
-  attr_accessor :password, :cloud_access_choice, :promo_code
+  attr_accessor :cloud_access_choice
 
   # temporary variables that are not persisted
-  attr_accessor :token, :old_password
+  attr_accessor :old_password
 
-  validates :login, 
-            :presence => true,
-            :if => on_scopes(:reset_password)
+  class << self
+    alias_method :new_orig, :new
 
-  validates_format_of :email_address,
-                      :with => /^[-a-z0-9_+\.]+\@([-a-z0-9]+\.)+[a-z0-9]{2,4}$/i,
-                      :message => 'Invalid email address',
-                      :if => on_scopes(:save)
-
-  # Requires Ruby 1.9 for lookbehind
-  #validates_format_of :email_address,
-  #                    :with => /(?<!(ir|cu|kp|sd|sy))$/i,
-  #                    :message => 'We can not accept emails from the following top level domains: .ir, .cu, .kp, .sd, .sy'
-
-  validates_each :email_address, :if => on_scopes(:save) do |record, attr, value|
-    if value =~ /\.(ir|cu|kp|sd|sy)$/i
-      record.errors.add attr, 'We can not accept emails from the following top level domains: .ir, .cu, .kp, .sd, .sy'
+    def new(attr=nil)
+      mock? ? WebUser::Mock.new_orig(attr) : new_orig(attr)
+    end
+    def mock?
+      !Rails.configuration.integrated
     end
   end
-
-  validates_length_of :password,
-                      :minimum => 6,
-                      :message => 'Passwords must be at least 6 characters',
-                      :if => on_scopes(:save, :change_password)
-
-  validates_confirmation_of :password,
-                            :message => 'Passwords must match',
-                            :if => on_scopes(:save, :change_password)
+  def mock?
+    self.class.mock?
+  end
 
   def initialize(attributes = nil)
     mass_assign_attributes(attributes, false) if attributes
@@ -72,10 +50,6 @@ class WebUser < Streamline::User
     end
   end
 
-  def accepted_terms?
-    terms && terms.empty?
-  end
-
   def cache_key
     rhlogin
   end
@@ -84,7 +58,7 @@ class WebUser < Streamline::User
   # Lookup a user by the SSO ticket
   #
   def self.find_by_ticket(ticket)
-    user = WebUser.new(:ticket => ticket)
+    user = new(:ticket => ticket)
     user.establish
 
     raise AccessDeniedException, "User not available by ticket" unless user.rhlogin
@@ -101,4 +75,17 @@ class WebUser < Streamline::User
       end
     end
 
+end
+
+class WebUser::Mock < WebUser
+  include Streamline::Mock
+  def self.mock?
+    true
+  end
+end
+
+class WebUser::Integrated < WebUser
+  def self.mock?
+    false
+  end
 end

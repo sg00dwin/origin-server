@@ -12,7 +12,7 @@ module Streamline
     # Returns the login
     #
     def establish
-      @rhlogin ||= Base64.decode64(ticket) || "openshift@redhat.com"
+      self.rhlogin ||= Base64.decode64(ticket) || "openshift@redhat.com"
 
       set_fake_roles unless instance_variable_get(:@roles)
       self

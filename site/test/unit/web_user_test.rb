@@ -18,11 +18,12 @@ class WebUserTest < ActiveSupport::TestCase
   end
 
   test "find by ticket" do
-    assert WebUser.find_by_ticket("1234")
+    assert u = WebUser.find_by_ticket("1234")
+    assert u.mock?
   end
 
   test "find by ticket throws" do
-    WebUser.any_instance.stubs(:establish) { @rhlogin = nil }
+    WebUser::Mock.any_instance.stubs(:establish) { self.rhlogin = nil }
     assert_raise(AccessDeniedException) { WebUser.find_by_ticket("1234") }
   end
 
@@ -32,7 +33,8 @@ class WebUserTest < ActiveSupport::TestCase
   end
 
   test "protect rhlogin" do
-    s = Class.new(Streamline::User) do
+    s = Class.new(Streamline::Base) do
+      include Streamline::User
       def initialize(login)
         self.rhlogin = login
       end
@@ -47,7 +49,8 @@ class WebUserTest < ActiveSupport::TestCase
       s.set = "another"
     end
 
-    s = Class.new(Streamline::User) do
+    s = Class.new(Streamline::Base) do
+      include Streamline::User
       include Streamline::Mock
       def initialize(login)
         self.rhlogin = login
@@ -64,6 +67,16 @@ class WebUserTest < ActiveSupport::TestCase
       s.set = "another"
     end
   end
+
+  test "should instantiate mock by default" do
+    assert WebUser.new.mock?
+    assert WebUser.mock?
+    assert !WebUser::Integrated.new.mock?
+    assert !WebUser::Integrated.mock?
+    assert WebUser::Mock.new.mock?
+    assert WebUser::Mock.mock?
+  end
+
 
   test "get simple identity" do
     user = WebUser.new.authenticate!('bob@bob.com', 'password')

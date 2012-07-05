@@ -111,10 +111,21 @@ module Secured
         end
       else
         logger.debug "Has terms to accept"
-        terms_redirect = after_login_redirect
+        self.terms_redirect = after_login_redirect
         redirect_to new_terms_path
         false
       end
+    end
+
+    def current_user=(user)
+      cookies.permanent[:prev_login] = true
+      cookies[:rh_sso] = {
+        :value => user.ticket,
+        :secure => true,
+        :path => '/',
+        :domain => sso_cookie_domain,
+      }
+      user_to_session(user)
     end
 
     #
@@ -125,7 +136,7 @@ module Secured
     #   before_filter :authenticate_user!
     #
     def authenticate_user!
-      logger.debug 'Login required'
+      logger.debug '  Login required'
       logger.debug "  Session contents: #{session.inspect}"
 
       return redirect_to login_path(:redirectUrl => after_login_redirect) unless user_signed_in?
@@ -147,11 +158,11 @@ module Secured
     def reset_sso
       current_user.logout if user_signed_in?
       logger.debug "  Removing current SSO cookie value of '#{cookies[:rh_sso]}'"
-      cookies.delete :rh_sso, :domain => cookie_domain
+      cookies.delete :rh_sso, :domain => sso_cookie_domain
     end
 
     # The domain that the user's cookie should be stored under
-    def cookie_domain
+    def sso_cookie_domain
       domain = Rails.configuration.streamline[:cookie_domain] || 'redhat.com'
       case domain
       when :current, :nil, nil then nil

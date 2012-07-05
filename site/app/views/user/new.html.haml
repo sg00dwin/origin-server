@@ -5,9 +5,8 @@
 
 #new-user
   = semantic_form_for @user, :url => account_path, :simple => true, :html => {:class => 'form-horizontal'} do |form|
-    %input{:type => "hidden", :name => "redirect", :value => @redirect }
+    %input{:type => "hidden", :name => "then", :value => @redirect }
     %input{:type => "hidden", :name => "captcha_secret", :value => @captcha_secret }
-    = form.hidden_field :cloud_access_choice, :value => CloudAccess::EXPRESS
     = form.semantic_errors
     = form.inputs do
       = form.input :email_address, :input_html => { :type => 'email', :class => 'input-xlarge', :placeholder => 'Enter a valid email address', :autofocus => true }

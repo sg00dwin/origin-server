@@ -4,7 +4,7 @@
 #login-form
   = semantic_form_for @user, :url => login_path, :html => {:class => 'form-horizontal'} do |f|
     - if @redirectUrl.present?
-      %input{:type => "hidden", :name => "redirectUrl", :value => @redirectUrl }
+      %input{:type => "hidden", :name => "then", :value => @redirectUrl }
     = f.semantic_errors
     = f.input :rhlogin,
               :label => 'Login',

@@ -39,18 +39,13 @@ RedHatCloud::Application.configure do
   # OpenShift Configuration Below this point #
   ############################################
   config.integrated = false
-  config.login = "/app/login"
   config.streamline = {
-    :host => 'https://localhost',
-    :base_url => '',
-    :email_confirm_url => '/confirm.html',
-    :lost_password_url => '/lostPassword.html',
-    :change_password_url => '/changePassword.html',
-    :login_url => '',
-    :logout_url => '',
+    :host => 'https://streamline-proxy1.ops.rhcloud.com',
+    :base_url => '/wapps/streamline',
     :register_secret => 'c0ldW1n3',
     :user_info_secret => 'sw33tl1Qu0r',
-    :cookie_domain => :nil
+    :cookie_domain => nil,
+    :timeout => 5
   }
   config.captcha_secret = 'secret'
   config.sso_verify_interval = 0

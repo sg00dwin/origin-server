@@ -2,21 +2,6 @@ require File.expand_path('../../test_helper', __FILE__)
 
 class LoginControllerTest < ActionController::TestCase
 
-  def with_custom_config(options={}, integrated=Rails.configuration.integrated, &block)
-    rconf = Rails.configuration
-    streamline = rconf.streamline
-    old_integrated = rconf.integrated
-    old_streamline = streamline.clone
-
-    rconf.integrated = integrated
-    streamline.merge!(options)
-
-    yield
-
-    rconf.integrated = old_integrated
-    rconf.streamline = old_streamline
-  end
-
   def simple_user
     {:rhlogin => 'test@example.com', :password => 'password'}
   end
@@ -81,6 +66,12 @@ class LoginControllerTest < ActionController::TestCase
     assert_redirected_to new_application_path
   end
 
+  test "should allow then param" do
+    post :create, simple_user.merge(:then => new_application_path)
+    assert_redirected_to new_application_path
+  end
+
+
   test "should ignore external referrer" do
     @request.env['HTTP_REFERER'] = 'http://external.com/test'
     get :show
@@ -105,53 +96,5 @@ class LoginControllerTest < ActionController::TestCase
       get :show
       assert_nil assigns(:redirectUrl)
     end
-  end
-
-  test 'cookie domain can be external' do
-    with_custom_config({:cookie_domain => '.test.com'}, false) do
-      opts = @controller.domain_cookie_opts({})
-      assert_equal '.test.com', opts[:domain]
-    end
-  end
-
-  test 'cookie domain can be loosely defined' do
-    with_custom_config({:cookie_domain => 'test.com'}, false) do
-      opts = @controller.domain_cookie_opts({})
-      assert_equal '.test.com', opts[:domain]
-    end
-  end
-
-  test 'cookie domain local is nil, can depend on request' do
-    @request.host = 'a.test.domain.com'
-    with_custom_config({:cookie_domain => :current}, false) do
-      opts = @controller.domain_cookie_opts({})
-      assert_nil opts[:domain]
-    end
-  end
-
-  test 'integrated default domain_cookie_opts' do
-    with_custom_config({:cookie_domain => nil}, false) do
-      opts = @controller.domain_cookie_opts({})
-      assert_equal '/', opts[:path]
-      assert_equal true, opts[:secure]
-      assert_equal '.redhat.com', opts[:domain]
-      assert_nil opts[:value]
-    end
-  end
-
-  test 'default domain_cookie_opts are overridden' do
-    opts = @controller.domain_cookie_opts({
-      :path => '/foo',
-      :secure => false,
-      :value => 'bar'
-    })
-    assert_equal '/foo', opts[:path]
-    assert_equal false, opts[:secure]
-    assert_equal 'bar', opts[:value]
-  end
-
-  test 'domain_cookie_opts with implied hash' do
-    opts = @controller.domain_cookie_opts(:value => 'foobar')
-    assert_equal 'foobar', opts[:value]
   end
 end

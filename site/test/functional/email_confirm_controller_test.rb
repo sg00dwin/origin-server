@@ -2,10 +2,6 @@ require File.expand_path('../../test_helper', __FILE__)
 
 class EmailConfirmControllerTest < ActionController::TestCase
 
-  def setup
-    setup_user
-  end
-
   test "no parameters should error" do
     get :confirm
     assert_template :error
@@ -22,7 +18,7 @@ class EmailConfirmControllerTest < ActionController::TestCase
   end
 
   test "streamline returns false is an error" do
-    WebUser.any_instance.expects(:confirm_email).returns(false)
+    WebUser::Mock.any_instance.expects(:confirm_email).returns(false)
 
     get :confirm, {:key => 'test', :emailAddress => 'test'}
 
@@ -32,8 +28,29 @@ class EmailConfirmControllerTest < ActionController::TestCase
   end
 
   test "success redirect to console" do
-    WebUser.any_instance.expects(:confirm_email).returns(true)
+    WebUser::Mock.any_instance.expects(:confirm_email).returns(true)
     get :confirm, :key => 'test', :emailAddress => 'test'
-    assert_redirected_to login_path(:email_address => 'test', :confirm_signup => true, :redirect => console_path)
+    assert_session_user assigns(:user)
+    assert_redirected_to console_path
+  end
+
+  test "should disallow external redirect" do
+    WebUser::Mock.any_instance.expects(:confirm_email).returns(true)
+    get :confirm, :key => 'test', :emailAddress => 'test', :then => 'http://www.google.com/foo'
+    assert_redirected_to '/foo'
+  end
+
+  test "should allow relative redirect" do
+    WebUser::Mock.any_instance.expects(:confirm_email).returns(true)
+    get :confirm, :key => 'test', :emailAddress => 'test', :then => '/foo'
+    assert_redirected_to '/foo'
+  end
+
+
+  test "confirming user redirects to console" do
+    get :confirm, :key => unconfirmed_user.token, :emailAddress => unconfirmed_user.email_address
+    assert_equal unconfirmed_user.ticket, cookies['rh_sso']
+    assert_session_user unconfirmed_user
+    assert_redirected_to console_path
   end
 end
