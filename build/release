@@ -68,6 +68,11 @@ class Release < Thor
           update_gemfile_version(spec_file, 'gearchanger-m-collective-plugin', "broker/Gemfile.lock", verbose)
           gem_updates = true
         end
+        
+        if package_name == 'rubygem-gearchanger-mcollective-plugin'
+          update_gemfile_version(spec_file, 'gearchanger-mcollective-plugin', "broker/Gemfile.lock", verbose)
+          gem_updates = true
+        end
 
         if package_name == 'rubygem-swingshift-streamline-plugin'
           update_gemfile_version(spec_file, 'swingshift-streamline-plugin', "broker/Gemfile.lock", verbose)
