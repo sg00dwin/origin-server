@@ -3,7 +3,7 @@
 
 Summary:   Li site components
 Name:      rhc-site
-Version: 0.95.5
+Version: 0.95.6
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -126,6 +126,23 @@ rm -rf %{buildroot}
 /bin/touch %{sitedir}/log/production.log
 
 %changelog
+* Thu Jul 05 2012 Adam Miller <admiller@redhat.com> 0.95.6-1
+- Ensure rails cache is cleared before tests and fix incorrect cache entries
+  (ccoleman@redhat.com)
+- Update cartridge type (ccoleman@redhat.com)
+- React to cartridge metadata by removing need for :framework category.
+  (ccoleman@redhat.com)
+- all css changes... align center footer when in mobile portrait display. set
+  app name and app url on same line when space allows, and set max-width with
+  text-overflow:ellipsis to address bz 832900 (sgoodwin@redhat.com)
+- Merge branch 'master' of github.com:openshift/li (sgoodwin@redhat.com)
+- Unable to log into site in devenv, changing mock implementation resulted in
+  form parameters being wrong. (ccoleman@redhat.com)
+- 834714 css fix (sgoodwin@redhat.com)
+- US2361 - Allow user to be automatically logged in after signup, and allow
+  redirect after signup back to originating page.  Add lots and lots and lots
+  of testing. (ccoleman@redhat.com)
+
 * Mon Jul 02 2012 Adam Miller <admiller@redhat.com> 0.95.5-1
 - added rubygem-wddx to requires/buildrequires for site rpm
   (admiller@redhat.com)
