@@ -9,6 +9,7 @@ class ActiveSupport::TestCase
 
   setup { $VERBOSE = nil }
   teardown { $VERBOSE = false }
+  setup { Rails.cache.clear }
 
   def setup_user(unique=false)
     @user = user_to_session(WebUser.new :email_address=>"app_test1#{unique ? uuid : ''}@test1.com", :rhlogin=>"app_test1#{unique ? uuid : ''}@test1.com")
