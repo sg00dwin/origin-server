@@ -98,27 +98,68 @@ rails:
     :git_project_url: http://github.com/openshift/rails-example
     :git_url: git://github.com/openshift/rails-example.git
     :license: :mit
-    :version: 3.1.1
+    :version: 3.2.6
     :website: http://rubyonrails.org/
   :descriptor:
     Architecture: noarch
+    Categories:
+    - cartridge
     Connections:
-      mysql-5.1-ruby-1.8:
+      mysql-5.1-ruby-1.9:
         Components:
-        - ruby-1.8
+        - ruby-1.9
         - mysql-5.1
     Description: ''
     Display-Name: rails-0.0-noarch
     License: unknown
+    License-Url: ''
     Name: rails
     Requires:
-    - ruby-1.8
+    - ruby-1.9
     - mysql-5.1
     Scaling:
       Max: -1
       Min: 1
     Vendor: unknown
     Version: '0.0'
+    Website: ''
+railstest:
+  :script: rhc-admin-ctl-template --command 'add' --cost '1' --git-url 'git://github.com/fotioslindiakos/rails-example.git'
+    --named 'Ruby on Rails (TEST)' --tags 'ruby,rails,framework,experimental'
+  :metadata:
+    :description: An open source web framework for Ruby that is optimized for programmer
+      happiness and sustainable productivity. It lets you write beautiful code by
+      favoring convention over configuration.
+    :git_project_url: http://github.com/fotioslindiakos/rails-example
+    :git_url: git://github.com/fotioslindiakos/rails-example.git
+    :license: :mit
+    :version: 3.2.6
+    :website: http://rubyonrails.org/
+  :descriptor:
+    Architecture: noarch
+    Cart-Data: !ruby/hash:BSON::OrderedHash {}
+    Categories:
+    - cartridge
+    Connections:
+      mysql-5.1-ruby-1.9:
+        Components:
+        - ruby-1.9
+        - mysql-5.1
+    Description: ''
+    Display-Name: railstest-0.0-noarch
+    Help-Topics: !ruby/hash:BSON::OrderedHash {}
+    License: unknown
+    License-Url: ''
+    Name: railstest
+    Requires:
+    - ruby-1.9
+    - mysql-5.1
+    Scaling:
+      Max: -1
+      Min: 1
+    Vendor: unknown
+    Version: '0.0'
+    Website: ''
 wordpress:
   :script: rhc-admin-ctl-template --command 'add' --cost '1' --git-url 'git://github.com/openshift/wordpress-example.git'
     --named 'WordPress' --tags 'php,wordpress,blog,framework,experimental'
