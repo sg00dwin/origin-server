@@ -102,8 +102,6 @@ rails:
     :website: http://rubyonrails.org/
   :descriptor:
     Architecture: noarch
-    Categories:
-    - cartridge
     Connections:
       mysql-5.1-ruby-1.9:
         Components:
@@ -112,7 +110,6 @@ rails:
     Description: ''
     Display-Name: rails-0.0-noarch
     License: unknown
-    License-Url: ''
     Name: rails
     Requires:
     - ruby-1.9
@@ -122,7 +119,6 @@ rails:
       Min: 1
     Vendor: unknown
     Version: '0.0'
-    Website: ''
 railstest:
   :script: rhc-admin-ctl-template --command 'add' --cost '1' --git-url 'git://github.com/fotioslindiakos/rails-example.git'
     --named 'Ruby on Rails (TEST)' --tags 'ruby,rails,framework,experimental'
@@ -137,9 +133,6 @@ railstest:
     :website: http://rubyonrails.org/
   :descriptor:
     Architecture: noarch
-    Cart-Data: !ruby/hash:BSON::OrderedHash {}
-    Categories:
-    - cartridge
     Connections:
       mysql-5.1-ruby-1.9:
         Components:
@@ -147,9 +140,7 @@ railstest:
         - mysql-5.1
     Description: ''
     Display-Name: railstest-0.0-noarch
-    Help-Topics: !ruby/hash:BSON::OrderedHash {}
     License: unknown
-    License-Url: ''
     Name: railstest
     Requires:
     - ruby-1.9
@@ -159,7 +150,6 @@ railstest:
       Min: 1
     Vendor: unknown
     Version: '0.0'
-    Website: ''
 wordpress:
   :script: rhc-admin-ctl-template --command 'add' --cost '1' --git-url 'git://github.com/openshift/wordpress-example.git'
     --named 'WordPress' --tags 'php,wordpress,blog,framework,experimental'
