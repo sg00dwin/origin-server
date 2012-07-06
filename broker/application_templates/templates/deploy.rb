@@ -32,24 +32,24 @@ __END__
 --- !omap 
 - drupal: 
     :descriptor: 
-      Requires: 
-      - php-5.3
-      - mysql-5.1
-      License: unknown
-      Vendor: unknown
       Connections: 
         mysql-5.1-php-5.3: 
           Components: 
           - php-5.3
           - mysql-5.1
-      Architecture: noarch
       Scaling: 
         Max: -1
         Min: 1
       Name: drupal
-      Description: ""
+      Architecture: noarch
+      License: unknown
       Version: "0.0"
       Display-Name: drupal-0.0-noarch
+      Vendor: unknown
+      Description: ""
+      Requires: 
+      - php-5.3
+      - mysql-5.1
     :script: rhc-admin-ctl-template --command 'add' --cost '1' --git-url 'git://github.com/openshift/drupal-example.git' --named 'Drupal' --tags 'php,drupal,wiki,framework,experimental'
     :metadata: !omap 
       - :credentials: 
@@ -63,18 +63,18 @@ __END__
       - :website: http://drupal.org/
 - kitchensink: 
     :descriptor: 
-      Requires: 
-      - jbossas-7
-      License: unknown
-      Vendor: unknown
-      Architecture: noarch
       Scaling: 
         Max: -1
         Min: 1
       Name: kitchensink
-      Description: ""
+      Architecture: noarch
+      License: unknown
       Version: "0.0"
       Display-Name: kitchensink-0.0-noarch
+      Vendor: unknown
+      Description: ""
+      Requires: 
+      - jbossas-7
     :script: rhc-admin-ctl-template --command 'add' --cost '1' --git-url 'git://github.com/openshift/kitchensink-example.git' --named 'Kitchensink Example' --tags 'java,jboss,framework,experimental'
     :metadata: !omap 
       - :description: This quickstart uses JBoss AS7 to show off all the new features of Java EE 6 and makes a great starting point for your Java project.
@@ -85,24 +85,24 @@ __END__
       - :website: https://docs.jboss.org/author/display/AS71/Kitchensink+quickstart
 - rails: 
     :descriptor: 
-      Requires: 
-      - ruby-1.8
-      - mysql-5.1
-      License: unknown
-      Vendor: unknown
       Connections: 
         mysql-5.1-ruby-1.8: 
           Components: 
           - ruby-1.8
           - mysql-5.1
-      Architecture: noarch
       Scaling: 
         Max: -1
         Min: 1
       Name: rails
-      Description: ""
+      Architecture: noarch
+      License: unknown
       Version: "0.0"
       Display-Name: rails-0.0-noarch
+      Vendor: unknown
+      Description: ""
+      Requires: 
+      - ruby-1.8
+      - mysql-5.1
     :script: rhc-admin-ctl-template --command 'add' --cost '1' --git-url 'git://github.com/openshift/rails-example.git' --named 'Ruby on Rails' --tags 'ruby,rails,framework,experimental'
     :metadata: !omap 
       - :description: An open source web framework for Ruby that is optimized for programmer happiness and sustainable productivity. It lets you write beautiful code by favoring convention over configuration.
@@ -135,24 +135,24 @@ __END__
       - :website: http://springframework.org/
 - wordpress: 
     :descriptor: 
-      Requires: 
-      - php-5.3
-      - mysql-5.1
-      License: unknown
-      Vendor: unknown
       Connections: 
         mysql-5.1-php-5.3: 
           Components: 
           - php-5.3
           - mysql-5.1
-      Architecture: noarch
       Scaling: 
         Max: -1
         Min: 1
       Name: wordpress
-      Description: ""
+      Architecture: noarch
+      License: unknown
       Version: "0.0"
       Display-Name: wordpress-0.0-noarch
+      Vendor: unknown
+      Description: ""
+      Requires: 
+      - php-5.3
+      - mysql-5.1
     :script: rhc-admin-ctl-template --command 'add' --cost '1' --git-url 'git://github.com/openshift/wordpress-example.git' --named 'WordPress' --tags 'php,wordpress,blog,framework,experimental'
     :metadata: !omap 
       - :credentials: 
