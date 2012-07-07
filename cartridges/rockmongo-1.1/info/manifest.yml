@@ -8,6 +8,16 @@ Provides:
   - "rockmongo"
 Requires:
 Conflicts:
+Cart-Data:
+  - Key: "username"
+    Type: cart_data
+    Description: "Admin user on rockmongo interface"
+  - Key: "password"
+    Type: cart_data
+    Description: "Password for admin user on rockmongo interface"
+  - Key: connection_url
+    Type: cart_data
+    Description: "RockMongo connection URL"
 Native-Requires:
 Architecture: noarch
 Reservations:
