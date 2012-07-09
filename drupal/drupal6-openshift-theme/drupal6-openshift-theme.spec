@@ -5,7 +5,7 @@
 %global drupal_themename    openshift-theme
 
 Name:           drupal6-%{drupal_themename}
-Version: 3.4.2
+Version: 3.4.3
 Release:        1%{?dist}
 Summary:        Red Hat Openshift theme for Drupal %{drupal_release}
 
@@ -44,6 +44,10 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
+* Mon Jul 09 2012 Dan McPherson <dmcphers@redhat.com> 3.4.3-1
+- At Legal's request, change the footer link for 'Terms of Service' to point to
+  the preview services agreement. (ccoleman@redhat.com)
+
 * Sat Jun 23 2012 Dan McPherson <dmcphers@redhat.com> 3.4.2-1
 - new package built with tito
 
