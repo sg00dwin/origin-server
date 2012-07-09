@@ -269,7 +269,6 @@ module Streamline
       register_args['promoCode'] = promo_code if promo_code
 
       http_post(register_url, register_args, false) do |json|
-        Rails.logger.debug "Registration response #{json.inspect}"
         if json['emailAddress']
           self.email_address = json['emailAddress']
           self.token = json['email_verification_token']
@@ -291,8 +290,6 @@ module Streamline
       }
       errors.clear
       http_post(email_confirm_url, confirm_args, false) do |json|
-        Rails.logger.debug "Confirmation response #{json.inspect}"
-        Rails.logger.debug "  Ticket #{@ticket}"
         if json['emailAddress'] or json['login']
           self.roles = json['roles']
           self.rhlogin = json['login']
