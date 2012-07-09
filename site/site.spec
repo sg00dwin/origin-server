@@ -3,7 +3,7 @@
 
 Summary:   Li site components
 Name:      rhc-site
-Version: 0.95.6
+Version: 0.95.7
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -126,6 +126,14 @@ rm -rf %{buildroot}
 /bin/touch %{sitedir}/log/production.log
 
 %changelog
+* Mon Jul 09 2012 Dan McPherson <dmcphers@redhat.com> 0.95.7-1
+- Add better debugging to session_trace in development mode, remove some
+  unnecessary trace statements (ccoleman@redhat.com)
+- Balance news and learn sections of the homepage with bottom margin
+  (ccoleman@redhat.com)
+- At Legal's request, change the footer link for 'Terms of Service' to point to
+  the preview services agreement. (ccoleman@redhat.com)
+
 * Thu Jul 05 2012 Adam Miller <admiller@redhat.com> 0.95.6-1
 - Ensure rails cache is cleared before tests and fix incorrect cache entries
   (ccoleman@redhat.com)
