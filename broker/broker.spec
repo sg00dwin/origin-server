@@ -3,7 +3,7 @@
 
 Summary:   Li broker components
 Name:      rhc-broker
-Version: 0.95.11
+Version: 0.95.12
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -111,6 +111,20 @@ rm -rf $RPM_BUILD_ROOT
 /bin/touch %{_localstatedir}/log/stickshift/user_action.log
 
 %changelog
+* Mon Jul 09 2012 Dan McPherson <dmcphers@redhat.com> 0.95.12-1
+- Updating gem versions (dmcphers@redhat.com)
+- Merge pull request #29 from abhgupta/abhgupta-dev (kraman@gmail.com)
+- Merge pull request #33 from fotioslindiakos/rails32_template
+  (ccoleman@redhat.com)
+- fixing libra_extended - bug in one of the newly added tests
+  (abhgupta@redhat.com)
+- Fixed deploy.rb (fotios@redhat.com)
+- Removed new metadata fields (fotios@redhat.com)
+- fix for bug#837574 - vip user cannot create medium gear (rchopra@redhat.com)
+- Adding test Rails template that points to my master branch for Rails
+  quickstart (fotios@redhat.com)
+- Modified Rails template to use Ruby 1.9 and Rails 3.2.6 (fotios@redhat.com)
+
 * Fri Jul 06 2012 Adam Miller <admiller@redhat.com> 0.95.11-1
 - Updating gem versions (admiller@redhat.com)
 
