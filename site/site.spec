@@ -3,7 +3,7 @@
 
 Summary:   Li site components
 Name:      rhc-site
-Version: 0.95.7
+Version: 0.95.8
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -126,6 +126,17 @@ rm -rf %{buildroot}
 /bin/touch %{sitedir}/log/production.log
 
 %changelog
+* Mon Jul 09 2012 Dan McPherson <dmcphers@redhat.com> 0.95.8-1
+- Merge pull request #36 from
+  smarterclayton/bugz_814025_prevent_external_redirect (ccoleman@redhat.com)
+- Merge branch 'sgoodwin-dev0506' (sgoodwin@redhat.com)
+- Multiple style related changes to address bugs or other issue
+  (sgoodwin@redhat.com)
+- new pre.cli styles within console (sgoodwin@redhat.com)
+- 838353 link fix (sgoodwin@redhat.com)
+- Bug 814025 Prevent external redirects on login, logout, and a few other
+  places (ccoleman@redhat.com)
+
 * Mon Jul 09 2012 Dan McPherson <dmcphers@redhat.com> 0.95.7-1
 - Add better debugging to session_trace in development mode, remove some
   unnecessary trace statements (ccoleman@redhat.com)
