@@ -54,7 +54,9 @@ class AppCartridgesTest < ActionDispatch::IntegrationTest
     request_via_redirect(:get, APP_CARTRIDGES_URL_FORMAT % [ns, "app1"], {}, @headers)
     assert_response :ok
     body = JSON.parse(@response.body)
-    assert_equal(body["data"].length, 0)
+    assert_equal(body["data"].length, 1)
+    assert_equal(body["data"][0]["name"], "php-5.3")
+    assert_equal(body["data"][0]["type"], "standalone")
 
     # query application cartridge info - without embedding cartridge
     request_via_redirect(:get, APP_CARTRIDGE_URL_FORMAT % [ns, "app1", "mysql-5.1"], {}, @headers)
@@ -70,9 +72,22 @@ class AppCartridgesTest < ActionDispatch::IntegrationTest
     request_via_redirect(:get, APP_CARTRIDGES_URL_FORMAT % [ns, "app1"], {}, @headers)
     assert_response :ok
     body = JSON.parse(@response.body)
-    assert_equal(body["data"].length, 1)
-    assert_equal(body["data"][0]["name"], "mysql-5.1")
-    assert_equal(body["data"][0]["type"], "embedded")
+    assert_equal(body["data"].length, 2)
+    
+    if body["data"][0]["name"] == "php-5.3"
+      php_index = 0
+      mysql_index = 1
+    elsif body["data"][0]["name"] == "mysql-5.1"
+      php_index = 1
+      mysql_index = 0
+    else
+      assert(false, "The cartridge list includes a cartridge other than php-5.3 and mysql-5.1")
+    end
+    
+    assert_equal(body["data"][php_index]["name"], "php-5.3")
+    assert_equal(body["data"][php_index]["type"], "standalone")
+    assert_equal(body["data"][mysql_index]["name"], "mysql-5.1")
+    assert_equal(body["data"][mysql_index]["type"], "embedded")
 
     # query application cartridge info after embedding mysql-5.1
     request_via_redirect(:get, APP_CARTRIDGE_URL_FORMAT % [ns, "app1", "mysql-5.1"], {}, @headers)
