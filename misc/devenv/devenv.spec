@@ -8,7 +8,7 @@
 
 Summary:   Dependencies for OpenShift development
 Name:      rhc-devenv
-Version: 0.96.8
+Version: 0.96.9
 Release:   1%{?dist}
 Group:     Development/Libraries
 License:   GPLv2
@@ -497,6 +497,9 @@ chmod 750 /usr/sbin/tcpdump
 %{policydir}/*
 
 %changelog
+* Mon Jul 09 2012 Dan McPherson <dmcphers@redhat.com> 0.96.9-1
+- split up build steps to tag and push first then release (dmcphers@redhat.com)
+
 * Fri Jul 06 2012 Adam Miller <admiller@redhat.com> 0.96.8-1
 - Change mcollective security to psk for now. (mpatel@redhat.com)
 
