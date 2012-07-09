@@ -69,6 +69,11 @@ class LoginControllerTest < ActionController::TestCase
     assert_redirected_to new_application_path
   end
 
+  test "should not allow external redirectUrl param" do
+    post :create, simple_user.merge(:redirectUrl => 'http://www.google.com/a_test_path')
+    assert_redirected_to '/a_test_path'
+  end
+
   test "should allow then param" do
     post :create, simple_user.merge(:then => new_application_path)
     assert_redirected_to new_application_path

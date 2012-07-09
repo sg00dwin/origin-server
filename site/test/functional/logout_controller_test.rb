@@ -39,4 +39,9 @@ class LogoutControllerTest < ActionController::TestCase
     get :show, {:then => getting_started_path}
     assert_redirected_to getting_started_path
   end
+
+  test 'should not redirect outside domain' do
+    get :show, {:then => 'http://www.google.com/a_test_page'}
+    assert_redirected_to '/a_test_page'
+  end
 end
