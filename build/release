@@ -170,47 +170,85 @@ class Release < Thor
 
       # Update the repo
       git_pull
-    
+
       build_dirs = get_updated_build_dirs(options.verbose?, true)
+      tag_failures = []
 
       build_dirs.each do |build_info|
         build_dir = build_info[1]
-        inside(File.expand_path("../#{build_dir}", File.dirname(__FILE__))) do
-          puts "Releasing #{build_dir}"
-
-          # Cleanup any tito data
-          unless run("rm -rf #{options.temp_dir}/tito/cvswork/", :verbose => options.verbose?)
-            puts "ERROR - tito temp cleanup failed"; exit 1
-          end
-
-          # Tag the package and push the tags
+        working_dir = File.expand_path("../#{build_dir}", File.dirname(__FILE__))
+        inside(working_dir) do
+          puts "Tagging #{build_dir}"
+          # Tag the package
           unless run("tito tag --accept-auto-changelog", :verbose => options.verbose?)
-            puts "ERROR - tito tagging failed"; exit 1
-            exit 1
-          end
-
-          branch = get_branch
-          unless run("git pull && git push origin #{branch} && git push --tags", :verbose => options.verbose?)
-            puts "ERROR - tito tag push failed"; exit 1
-          end
-
-          # Detect which tito command is available
-          `tito release --help`
-          cmd_exit = $?.exitstatus
-          if cmd_exit == 0
-            # The release command is supported - use it
-            tito_cmd = "tito release brew < #{options.temp_dir}/answerfile"
-          else
-            raise "Your version of tito is no longer supported after the Brew migration to git"
-          end
-
-          # Build the RPM in brew
-          run("echo -e 'y\nn' > #{options.temp_dir}/answerfile", :verbose => options.verbose?)
-          unless run(tito_cmd, :verbose => options.verbose?)
-            puts "ERROR - tito cvs release failed"
+            tag_failures << build_dir
           end
           puts "Done"
         end
+      end
+
+      tag_failures.each do |build_dir|
+        build_dirs.delete_if { build_info | build_info[1] == build_dir }
+      end
+
+      li_repo = {'li' => [FileUtils.pwd]}
+      repos = li_repo.merge(SIBLING_REPOS)
+      push_failures = ''
+      repos.each do |repo_name, repo_dirs|
+        repo_dirs.each do |repo_dir|
+          if File.exists?(repo_dir)
+            inside(repo_dir) do
+              puts "Pushing #{repo_dir}"
+              branch = get_branch
+              push_cmd = "git pull && git push origin #{branch} && git push --tags"
+              unless run(push_cmd, :verbose => options.verbose?)
+                push_failures += "pushd #{repo_dir} > dev/null; #{push_cmd}; popd > /dev/null;\n"
+              end
+            end
+            break
+          end
+        end
+      end
+
+      run("echo -e 'y\nn' > #{options.temp_dir}/answerfile", :verbose => options.verbose?)
+      tito_cmd = "tito release brew < #{options.temp_dir}/answerfile"
+      build_failures = ''
+      build_dirs.each do |build_info|
+        build_dir = build_info[1]
+        working_dir = File.expand_path("../#{build_dir}", File.dirname(__FILE__))
+        inside(working_dir) do
+          if push_failures.empty?
+            puts "Releasing #{build_dir}"
+
+            # Detect which tito command is available
+            `tito release --help`
+            cmd_exit = $?.exitstatus
+            raise "Your version of tito is no longer supported after the Brew migration to git" if cmd_exit != 0
+          end
+
+          # Build the RPM in brew
+          if push_failures.empty? && run(tito_cmd, :verbose => options.verbose?)
+            puts "Done"
+          else
+            build_failures += "pushd #{working_dir} > dev/null; #{tito_cmd}; popd > /dev/null;\n"
+          end
+        end
+      end
+      if !tag_failures.empty?
+        puts "************BEGIN TAG FAILURES****************"
+        puts "Note: Packages that failed to tag should continue to show up in build/release check"
+        puts tag_failures.pretty_inspect
+        puts "*************END TAG FAILURES*****************\n"
+      end
+      if !push_failures.empty?
+        puts "************BEGIN PUSH FAILURES****************"
+        puts push_failures
+        puts "*************END PUSH FAILURES*****************\n"
+      end
+      if !build_failures.empty?
+        puts "************BEGIN BUILD FAILURES****************"
+        puts build_failures
+        puts "*************END BUILD FAILURES*****************\n"
       end
     ensure
       reset_orig_branches(orig_branches, options.verbose?)
