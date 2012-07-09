@@ -176,7 +176,7 @@ Broker::Application.configure do
   config.gearchanger = {
     :rpc_options => {
         :disctimeout => 5,
-        :timeout => 60,
+        :timeout => 180,
         :verbose => false,
         :progress_bar => false,
         :filter => {"identity" => [], "fact" => [], "agent" => [], "cf_class" => []},
