@@ -3,7 +3,7 @@
 
 Summary:   Li broker components
 Name:      rhc-broker
-Version: 0.95.12
+Version: 0.95.13
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -111,6 +111,15 @@ rm -rf $RPM_BUILD_ROOT
 /bin/touch %{_localstatedir}/log/stickshift/user_action.log
 
 %changelog
+* Mon Jul 09 2012 Dan McPherson <dmcphers@redhat.com> 0.95.13-1
+- Merge pull request #30 from fabianofranz/master (ccoleman@redhat.com)
+- Merged application templates (contact@fabianofranz.com)
+- Regenerated springeap6/descriptor.yaml (contact@fabianofranz.com)
+- Adjusted broker/application_templates/templates/deploy.rb with YAML generated
+  by Ruby 1.9 (contact@fabianofranz.com)
+- Recreated deploy.rb for app templates (contact@fabianofranz.com)
+- Added Spring Framework on JBoss EAP6 template (contact@fabianofranz.com)
+
 * Mon Jul 09 2012 Dan McPherson <dmcphers@redhat.com> 0.95.12-1
 - Updating gem versions (dmcphers@redhat.com)
 - Merge pull request #29 from abhgupta/abhgupta-dev (kraman@gmail.com)
