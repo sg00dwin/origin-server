@@ -522,4 +522,16 @@ class StreamlineTest < ActiveSupport::TestCase
   test "cookie initializes" do
     assert_equal "hi=value", Streamline::Cookie.new("hi", "value").to_s
   end
+
+  test "rack should not escape rh_sso" do
+    headers = {}
+    Rack::Utils.set_cookie_header!(headers, 'rh_sso', '1+2')
+    assert_equal 'rh_sso=1+2', headers['Set-Cookie']
+  end
+
+  test "rack should escape all other cookies" do
+    headers = {}
+    Rack::Utils.set_cookie_header!(headers, 'foo', '1+2')
+    assert_equal 'foo=1%2B2', headers['Set-Cookie']
+  end
 end
