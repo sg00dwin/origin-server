@@ -1,5 +1,6 @@
 require File.expand_path('./nurture', File.dirname(__FILE__))
 require File.expand_path('./apptegic', File.dirname(__FILE__))
+require 'openshift'
 
 module GearChanger
   class MCollectiveApplicationContainerProxy < StickShift::ApplicationContainerProxy
@@ -15,25 +16,26 @@ module GearChanger
 
     class << self
       alias_method :valid_gear_sizes_impl_old, :valid_gear_sizes_impl
+      alias_method :blacklisted_in_impl_old?, :blacklisted_in_impl?
     end
 
     def self.valid_gear_sizes_impl(user)
-      default_gear_sizes = [] 
-      capability_gear_sizes = [] 
-           
-      if user.vip || user.auth_method == :broker_auth
-        default_gear_sizes = ["small", "medium"]
-      else 
-        default_gear_sizes = ["small"]
-      end  
-           
+      default_gear_sizes = []
+      capability_gear_sizes = []
+      
       capability_gear_sizes = user.capabilities['gear_sizes'] if user.capabilities.has_key?('gear_sizes')
-           
-      if capability_gear_sizes.nil? or capability_gear_sizes.empty?
-        return default_gear_sizes
-      else 
+
+      if user.vip || user.auth_method == :broker_auth
+        return ["small", "medium"] | capability_gear_sizes
+      elsif !capability_gear_sizes.nil? and !capability_gear_sizes.empty?
         return capability_gear_sizes
-      end  
-    end 
+      else
+        return ["small"]
+      end
+    end
+
+    def self.blacklisted_in_impl?(name)
+      OpenShift::Blacklist.in_blacklist?(name)
+    end
   end
 end
