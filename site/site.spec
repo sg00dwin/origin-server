@@ -3,7 +3,7 @@
 
 Summary:   Li site components
 Name:      rhc-site
-Version: 0.95.9
+Version: 0.95.10
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -126,6 +126,9 @@ rm -rf %{buildroot}
 /bin/touch %{sitedir}/log/production.log
 
 %changelog
+* Mon Jul 09 2012 Dan McPherson <dmcphers@redhat.com> 0.95.10-1
+- 
+
 * Mon Jul 09 2012 Dan McPherson <dmcphers@redhat.com> 0.95.9-1
 - Merge pull request #40 from
   smarterclayton/bugz_838428_users_intermittently_logged_out
