@@ -27,9 +27,8 @@
 @import "site/navbar";
 @import "community";
 
-/* move into core when the branding converges */
-a { color: $ribbonFoldColor; }
-a:hover, a:active { color: $ribbonColor; }
+a { color: $linkColorBlue; }
+a:hover, a:active { color: $linkColorBlueHover; }
 
 // type customizations by section
 .column-content {
@@ -385,9 +384,10 @@ body.signup {
 
 .action-more {
   font-size: 16px;
+  text-decoration: none !important;
   &:before {
     content: '→ ';
-    color: $takeActionHighlightBackground;
+    color: #006699;
     position: relative;
     top: -3px;
   }
@@ -637,8 +637,14 @@ h1.ribbon {
     color: #DADADA;
   }
 
-  a:link { color: #EB0011; }
-  a:visited { color: #EB0011; }
+  a:link,
+  a:visited { 
+    color: $linkColorBlueOnDark;
+    }
+  a:hover,
+  a:active {
+    color: $linkColorBlueHover;
+  }
 }
 
 .well {
@@ -647,6 +653,15 @@ h1.ribbon {
 	}
 .info-ribbon .well {
   color: black;
+  
+  a:link,
+  a:visited {
+    color: $linkColorBlue;
+  }
+  a:hover,
+  a:active {
+    color: $linkColorBlueHover;
+  }
 
   h1, h2, h3, h4 {
     color: black;
