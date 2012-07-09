@@ -3,7 +3,7 @@
 
 Summary:   Li site components
 Name:      rhc-site
-Version: 0.95.8
+Version: 0.95.9
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -126,6 +126,13 @@ rm -rf %{buildroot}
 /bin/touch %{sitedir}/log/production.log
 
 %changelog
+* Mon Jul 09 2012 Dan McPherson <dmcphers@redhat.com> 0.95.9-1
+- Merge pull request #40 from
+  smarterclayton/bugz_838428_users_intermittently_logged_out
+  (ccoleman@redhat.com)
+- Fix bug 838428 and random session logout issues caused by the session cookie
+  being unencoded. (ccoleman@redhat.com)
+
 * Mon Jul 09 2012 Dan McPherson <dmcphers@redhat.com> 0.95.8-1
 - Merge pull request #36 from
   smarterclayton/bugz_814025_prevent_external_redirect (ccoleman@redhat.com)
