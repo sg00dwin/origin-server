@@ -2,7 +2,7 @@ class LogoutController < SiteController
   layout 'simple'
 
   def show
-    @redirect = params[:then] || params[:redirectUrl] || root_path
+    @redirect = server_relative_uri(params[:then] || params[:redirectUrl] || root_path)
     @cause = params[:cause].presence
 
     reset_sso
@@ -10,8 +10,6 @@ class LogoutController < SiteController
   rescue Exception => e
     logger.warn "Exception in logout: #{e}\n#{e.backtrace.join("\n  ")}"
   ensure
-    if @cause.blank?
-      redirect_to @redirect
-    end
+    redirect_to @redirect if @cause.blank?
   end
 end

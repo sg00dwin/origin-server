@@ -79,9 +79,9 @@ class ApplicationControllerTest < ActionController::TestCase
     {
       '' => nil,
       ' ' => nil,
-      '/' => nil,
-      '/?' => nil,
-      '/?' => nil,
+      '/' => '/',
+      '/?' => '/',
+      '/?' => '/',
       '/foo?' => '/foo',
       '/foo?a=b' => '/foo?a=b',
       'http://www.google.com/foo?a=b' => '/foo?a=b',

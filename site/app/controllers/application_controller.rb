@@ -47,8 +47,9 @@ class ApplicationController < ActionController::Base
   end
 
   def server_relative_uri(s)
+    return nil unless s.present?
     uri = URI.parse(s).normalize
-    uri.path = nil if uri.path == '/'
+    #uri.path = nil if uri.path == '/'
     uri.query = nil if uri.query == '?'
     return nil unless uri.path.present? || uri.query.present?
     URI::Generic.build([nil, nil, nil, nil, nil, uri.path, nil, uri.query.presence, nil]).to_s

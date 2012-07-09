@@ -11,7 +11,7 @@ class LoginController < SiteController
   end
 
   def create
-    @redirectUrl = params[:then] || params[:redirectUrl]
+    @redirectUrl = server_relative_uri(params[:then] || params[:redirectUrl])
     user_params = params[:web_user] || params
 
     @user = WebUser.new
