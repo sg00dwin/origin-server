@@ -200,9 +200,9 @@ class Release < Thor
             inside(repo_dir) do
               puts "Pushing #{repo_dir}"
               branch = get_branch
-              push_cmd = "git pull && git push origin #{branch} && git push --tags"
+              push_cmd = "git fetch --tags && git pull && git push origin #{branch} && git push --tags"
               unless run(push_cmd, :verbose => options.verbose?)
-                push_failures += "pushd #{repo_dir} > dev/null; #{push_cmd}; popd > /dev/null;\n"
+                push_failures += "pushd #{repo_dir} > /dev/null; #{push_cmd}; popd > /dev/null;\n"
               end
             end
             break
@@ -230,7 +230,7 @@ class Release < Thor
           if push_failures.empty? && run(tito_cmd, :verbose => options.verbose?)
             puts "Done"
           else
-            build_failures += "pushd #{working_dir} > dev/null; #{tito_cmd}; popd > /dev/null;\n"
+            build_failures += "pushd #{working_dir} > /dev/null; #{tito_cmd}; popd > /dev/null;\n"
           end
         end
       end
