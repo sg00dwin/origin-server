@@ -150,6 +150,28 @@ railstest:
       Min: 1
     Vendor: unknown
     Version: '0.0'
+springeap6: 
+  :descriptor: 
+    Architecture: noarch
+    Description: ""
+    Display-Name: springeap6-0.0-noarch
+    License: unknown
+    Name: springeap6
+    Requires: 
+    - jbosseap-6.0
+    Scaling: 
+      Max: -1
+      Min: 1
+    Vendor: unknown
+    Version: "0.0"
+  :script: rhc-admin-ctl-template --command 'add' --cost '1' --git-url 'git://github.com/openshift/spring-eap6-quickstart.git' --named 'Spring Framework on JBoss EAP6' --tags 'java,jboss,framework,experimental'
+  :metadata: 
+    :description: This quickstart allows you to use Spring Framework on JBoss JBoss EAP 6.
+    :git_project_url: http://github.com/openshift/spring-eap6-quickstart
+    :git_url: git://github.com/openshift/spring-eap6-quickstart.git
+    :license: :apache2
+    :version: 3.1.1
+    :website: http://springframework.org/
 wordpress:
   :script: rhc-admin-ctl-template --command 'add' --cost '1' --git-url 'git://github.com/openshift/wordpress-example.git'
     --named 'WordPress' --tags 'php,wordpress,blog,framework,experimental'

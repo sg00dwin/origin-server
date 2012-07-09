@@ -1,0 +1,17 @@
+---
+:cost: 1
+:cartridge: jbosseap-6.0
+:tags:
+- :java
+- :jboss
+- :framework
+- :experimental
+:metadata:
+  :git_url: git://github.com/openshift/spring-eap6-quickstart.git
+  :git_project_url: http://github.com/openshift/spring-eap6-quickstart
+  :website: http://springframework.org/
+  :version: 3.1.1
+  :license: :apache2
+  :description: >
+    This quickstart allows you to use Spring Framework on JBoss JBoss EAP 6.
+:display_name: Spring Framework on JBoss EAP6
