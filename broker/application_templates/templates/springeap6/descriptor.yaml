@@ -1,13 +1,21 @@
----
-Architecture: noarch
-Description: ""
-Display-Name: springeap6-0.0-noarch
-License: unknown
-Name: springeap6
-Requires: 
-- jbosseap-6.0
-Scaling: 
-  Max: -1
-  Min: 1
-Vendor: unknown
-Version: "0.0"
+--- !omap 
+- Architecture: noarch
+- Cart-Data: !map:BSON::OrderedHash {}
+
+- Categories: 
+  - cartridge
+- Description: ""
+- Display-Name: springeap6-0.0-noarch
+- Help-Topics: !map:BSON::OrderedHash {}
+
+- License: unknown
+- License-Url: ""
+- Name: springeap6
+- Requires: 
+  - jbosseap-6.0
+- Scaling: 
+    Max: -1
+    Min: 1
+- Vendor: unknown
+- Version: "0.0"
+- Website: ""
