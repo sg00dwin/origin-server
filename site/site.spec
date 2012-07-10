@@ -3,7 +3,7 @@
 
 Summary:   Li site components
 Name:      rhc-site
-Version: 0.95.11
+Version: 0.95.12
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -126,6 +126,21 @@ rm -rf %{buildroot}
 /bin/touch %{sitedir}/log/production.log
 
 %changelog
+* Tue Jul 10 2012 Adam Miller <admiller@redhat.com> 0.95.12-1
+- Add tests to streamline to ensure parse failures are handled.
+  (ccoleman@redhat.com)
+- Merge pull request #51 from fabianofranz/master (ccoleman@redhat.com)
+- Bug 838800 - Update streamline address in drupal, make no cookies the default
+  (ccoleman@redhat.com)
+- Updated links to pricing page to point to full url (contact@fabianofranz.com)
+- Links to pricing page all over the website, related to BZ 837902
+  (contact@fabianofranz.com)
+- Merge pull request #46 from smarterclayton/aria_payment_methods
+  (ccoleman@redhat.com)
+- Get unit tests passing again (ccoleman@redhat.com)
+- Implement account payment specification and full account creation flow
+  (ccoleman@redhat.com)
+
 * Mon Jul 09 2012 Adam Miller <admiller@redhat.com> 0.95.11-1
 - Fix ordering test to be accurate with 1.8 ruby now lower.
   (ccoleman@redhat.com)
