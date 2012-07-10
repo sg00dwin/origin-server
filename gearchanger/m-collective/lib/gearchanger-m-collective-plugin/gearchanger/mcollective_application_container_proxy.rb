@@ -508,9 +508,8 @@ module GearChanger
         if app.scalable and not gi.component_instances.include? app.proxy_cartridge
           dns = StickShift::DnsService.instance
           begin
-            dns.deregister_application(gear.name, app.domain.namespace)
             public_hostname = destination_container.get_public_hostname
-            dns.register_application(gear.name, app.domain.namespace, public_hostname)
+            dns.modify_application(gear.name, app.domain.namespace, public_hostname)
             dns.publish
           ensure
             dns.close

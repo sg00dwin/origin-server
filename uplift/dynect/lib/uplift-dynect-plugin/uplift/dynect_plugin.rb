@@ -77,6 +77,11 @@ module Uplift
       delete_app_dns_entries(app_name, namespace, @auth_token, @@dyn_retries)    
     end
     
+    def modify_application(app_name, namespace, public_hostname)
+      login
+      modify_app_dns_entries(app_name, namespace, public_hostname, @auth_token, @@dyn_retries)
+    end
+    
     def publish
       dyn_publish(@auth_token, @@dyn_retries)
     end
@@ -170,6 +175,10 @@ module Uplift
     def create_app_dns_entries(app_name, namespace, public_hostname, auth_token, retries=2)
       dyn_create_cname_record(app_name, namespace, public_hostname, auth_token, retries)
     end
+    
+    def modify_app_dns_entries(app_name, namespace, public_hostname, auth_token, retries=2)
+      dyn_modify_cname_record(app_name, namespace, public_hostname, auth_token, retries)
+    end
 
     def dyn_do(method, retries=2)
       i = 0
@@ -197,6 +206,15 @@ module Uplift
       path = "CNAMERecord/#{@zone}/#{fqdn}/"
       record_data = { :rdata => { :cname => public_hostname }, :ttl => "60" }
       resp, data = dyn_post(path, record_data, auth_token, retries)
+    end
+
+    def dyn_modify_cname_record(application, namespace, public_hostname, auth_token, retries=0)
+      logger.debug "DEBUG: Public ip being modified '#{public_hostname}' to app '#{application}'"
+      fqdn = "#{application}-#{namespace}.#{@domain_suffix}"
+      # MOdify the CNAME record
+      path = "CNAMERecord/#{@zone}/#{fqdn}/"
+      record_data = { :rdata => { :cname => public_hostname }, :ttl => "60" }
+      resp, data = dyn_put(path, record_data, auth_token, retries)
     end
     
     def dyn_delete_cname_record(application, namespace, auth_token, retries=0)
