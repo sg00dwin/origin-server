@@ -34,7 +34,7 @@ Broker::Application.configure do
     :max_capacity => 6000, # Only used with district create.  Modify capacity through rhc-admin-ctl-district.
     :first_uid => 1000 # Can not modify after district is created.  Only affects new districts.
   }
-  
+
   config.dns = {
     :zone => "rhcloud.com",
     :dynect_customer_name => "demo-redhat",
@@ -42,22 +42,22 @@ Broker::Application.configure do
     :dynect_password => "vo8zaijoN7Aecoo",
     :dynect_url => "https://api2.dynect.net"
   }
-  
+
   config.auth = {
     :integrated => false,
     :broker_auth_secret => "EIvWT6u3lsvSRNRGZhhW8YcWMh5mUAlc32nZlRJPdJM=",
     :broker_auth_rsa_secret => "SJDIkdfhuISe3wrulhjvcKHJFDUeoi8gfcdnu8299dhc",
     :auth_service => {
-      :host => "https://www.redhat.com",
+      :host => "https://streamline-proxy1.ops.rhcloud.com",
       :base_url => "/wapps/streamline"
     }
   }
-  
+
   config.usage_tracking = {
     :datastore_enabled => true,
     :syslog_enabled => false
   }
-  
+
   config.rpc_opts = {
     :disctimeout => 2,
     :timeout     => 180,
@@ -72,7 +72,7 @@ Broker::Application.configure do
     :nurture_username => "admin",
     :nurture_password => "password",
     :nurture_url => "http://69.164.192.124:4500/",
-    
+
     :apptegic_enabled => false,
     :apptegic_url => "https://redhat.apptegic.com/httpreceiver",
     :apptegic_key => "redhat",
@@ -84,7 +84,7 @@ Broker::Application.configure do
     :replica_set => true,
     # Replica set example: [[<host-1>, <port-1>], [<host-2>, <port-2>], ...]
     :host_port => [["localhost", 27017]],
-        
+
     :user => "libra",
     :password => "momo",
     :db => "openshift_broker_dev",
@@ -98,7 +98,7 @@ Broker::Application.configure do
     :logging_enabled => true,
     :log_filepath => "/var/log/stickshift/user_action.log"
   }
-  
+
   config.billing = {
     :aria => {
       :config => {
