@@ -10,7 +10,7 @@ class ActiveSupport::TestCase
   #fixtures :all
 
   def setup_api
-    host = ENV['LIBRA_HOST'] || 'localhost'
+    host = ENV['RHC_SERVER'] || ENV['LIBRA_SERVER'] || 'localhost'
     RestApi::Base.site = "https://#{host}/broker/rest"
     RestApi::Base.prefix='/broker/rest/'
   end
