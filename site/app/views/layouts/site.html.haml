@@ -30,11 +30,15 @@
                     = yield :navigation
                 .column-content.lift.grid-wrapper
                   .span9.span-flush-right
+                    - if content_for? :title
+                      %h1.ribbon= yield :title
                     = flashes
                     = yield
               - else
                 .column-content.lift-less.grid-wrapper
                   .span12.span-flush-right
+                    - if content_for? :title
+                      %h1.ribbon= yield :title
                     = flashes
                     = yield
 

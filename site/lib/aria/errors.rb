@@ -20,8 +20,11 @@ module Aria
     # The server rejected the connection request, usually disallowed
     # through IP but also auth_key or client_no could be wrong.
     1004 => (AuthenticationError = Class.new(Error)),
+
     1009 => (AccountDoesNotExist = Class.new(Error)),
     1010 => (MissingRequiredParameter = Class.new(Error)),
+    1011 => (InvalidSession = Class.new(Error)),
+    5011 => (AccountExists = Class.new(Error)),
   }
 
   # The Aria account has no RHLogin, which means it was not properly created

@@ -387,6 +387,14 @@ module Streamline
       not roles.include?('cloud_access_1') and roles.include?('cloud_access_request_1')
     end
 
+    def full_user
+      Streamline::FullUser.new
+    end
+    def promote(user)
+      #user.errors.add(:base, 'Promotion is not implemented')
+      true
+    end
+
     protected
       def new_http
         Net::HTTP.new(service_base_url.host, service_base_url.port).tap do |http|

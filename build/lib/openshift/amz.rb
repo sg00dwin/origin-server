@@ -204,7 +204,7 @@ module OpenShift
         add_tag(instance, name, 10)
 
         # Block until the instance is accessible
-        block_until_available(instance, ssh_user)
+        block_until_available(instance, ssh_user, true)
 
         return instance
       rescue ScriptError => e
@@ -229,9 +229,9 @@ module OpenShift
       end
     end
 
-    def block_until_available(instance, ssh_user="root")
+    def block_until_available(instance, ssh_user="root", terminate_if_unavailable=false)
       log.info "Waiting for instance to be available..."
-      
+
       (0..12).each do
         break if instance_status(instance) == :running
         log.info "Instance isn't running yet... retrying"
@@ -239,8 +239,8 @@ module OpenShift
       end
 
       unless instance_status(instance) == :running
-        terminate_instance(instance)
-        raise ScriptError, "Timed out before instance was 'running'"
+        terminate_instance(instance) if terminate_if_unavailable
+        raise ScriptError, "Instance is not in a state of 'running'"
       end
 
       hostname = instance.dns_name

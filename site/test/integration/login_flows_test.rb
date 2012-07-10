@@ -100,7 +100,7 @@ class LoginFlowsTest < ActionDispatch::IntegrationTest
 
       get new_account_path
       assert_response :success
-      assert_select 'form#new_web_user'
+      assert_select 'form#new_user_form', {}, @response.inspect
 
       post account_path, {
         :captcha_secret => Rails.application.config.captcha_secret,

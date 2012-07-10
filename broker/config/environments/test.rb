@@ -56,7 +56,7 @@ Broker::Application.configure do
     :broker_auth_secret => "EIvWT6u3lsvSRNRGZhhW8YcWMh5mUAlc32nZlRJPdJM=",
     :broker_auth_rsa_secret => "SJDIkdfhuISe3wrulhjvcKHJFDUeoi8gfcdnu8299dhc",
     :auth_service => {
-      :host => "https://www.redhat.com",
+      :host => "https://streamline-proxy1.ops.rhcloud.com",
       :base_url => "/wapps/streamline"
     }
   }

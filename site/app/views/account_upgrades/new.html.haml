@@ -1,0 +1,11 @@
+%h1 Upgrade your plan
+
+= semantic_form_for :plan, :url => account_plan_path, :html => {:method => :put} do |f|
+  = f.hidden_field :id
+
+  %h2
+    Are you ready to upgrade your plan from #{@current_plan.name} to #{@plan.name}?
+
+  %p= link_to "Change your method of payment", new_account_plan_upgrade_payment_method_path
+
+  = submit_tag "Upgrade"
