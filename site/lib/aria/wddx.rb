@@ -53,6 +53,11 @@ module Aria
           nil
         end
       end
+
+      def attributes
+        @attributes
+      end
+
       def method_missing(meth, *args, &block)
         meth = meth.to_s
 

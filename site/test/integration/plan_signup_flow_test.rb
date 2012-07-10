@@ -9,12 +9,37 @@ class PlanSignupFlowTest < ActionDispatch::IntegrationTest
   end
 
   def user_params
-    {:first_name => 'Mike', :last_name => 'Smith'}
+    {:first_name => 'Mike', :last_name => 'Smith', :aria_billing_info => billing_params}
+  end
+  def billing_params
+    {:address1 => '1234 Someplace', :city => 'Somewhere', :state => 'TX', :country => 'US', :zip => '49345'}
+  end
+
+  def simple_user
+    {:web_user => {:rhlogin => uuid, :password => 'password'}}
   end
 
   def login_simple_user
-    post '/login', {:web_user => {:rhlogin => 'test@test.com', :password => 'password'}}
+    post '/login', simple_user
     assert_response :redirect, @response.inspect
+  end
+
+  test 'anonymous without prev signin redirected to signup' do
+    get '/account/plans'
+    assert_response :success
+
+    get '/account/plans/megashift/upgrade'
+    assert_redirected_to new_account_path(:then => account_plan_upgrade_path)
+  end
+
+  test 'anonymous with signin redirected to login' do
+    cookies[:prev_login] = true
+
+    get '/account/plans'
+    assert_response :success
+
+    get '/account/plans/megashift/upgrade'
+    assert_redirected_to login_path(:then => account_plan_upgrade_path)
   end
 
   test 'user can signup' do
@@ -23,13 +48,13 @@ class PlanSignupFlowTest < ActionDispatch::IntegrationTest
     get '/account/plans'
     assert_response :success
 
-    post '/account/plans/megashift/upgrade'
+    get '/account/plans/megashift/upgrade'
     assert_redirected_to '/account/plans/megashift/upgrade/edit'
 
     get '/account/plans/megashift/upgrade/edit'
     assert_response :success
 
-    put '/account/plans/megashift/upgrade/edit', :web_user => user_params
+    put '/account/plans/megashift/upgrade/edit', :streamline_full_user => user_params
     assert_redirected_to '/account/plans/megashift/upgrade/payment_method'
 
     get '/account/plans/megashift/upgrade/payment_method'

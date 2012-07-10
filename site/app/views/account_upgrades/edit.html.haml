@@ -1,0 +1,24 @@
+- content_for :title, 'Set Account Information'
+
+= semantic_form_for @full_user, :namespace => :upgrade_account, :url => edit_account_plan_upgrade_path, :html => {:method => :put, :class => 'form-horizontal'} do |f|
+  -#= f.inputs
+  = f.semantic_errors
+
+  = f.inputs 'Billing Information', :for => @billing_info do |b|
+    = b.semantic_errors
+
+    .control-group
+      .controls
+        %label.checkbox
+          = check_box_tag :same_as_user
+          My billing information is the same as my account information.
+
+    = b.input :address1
+    = b.input :address2
+    = b.input :address3
+    = b.input :city
+    = b.inputs :state, :country, :zip
+
+  = f.buttons do
+    = f.commit_button "Update my account"
+    = f.loading
