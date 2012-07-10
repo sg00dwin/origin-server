@@ -3,6 +3,45 @@ require 'rubygems'
 require 'yaml'
 require 'tempfile'
 require 'json'
+require 'bson'
+
+# This function compacts any hashes by promoting any keys with nil values
+class Hash
+  def compact
+    new_hash = {}
+    self.each do |k,v|
+      case
+      when v.respond_to?(:compact)
+        new_hash[k] = v.compact
+      when v.nil?
+        new_hash = k
+      else
+        new_hash[k] = v
+      end
+    end
+    new_hash
+  end
+end
+
+# The converts an OMAP into a proper hash
+module Enumerable
+  def to_h
+    inject({}) do |acc, element|
+      k,v = element;
+      acc[k] = case
+               when v.is_a?(BSON::OrderedHash)
+                 v.to_h
+               when v.is_a?(YAML::Omap)
+                 Hash[v.map do |key,val|
+                   [key,val.is_a?(Enumerable) ? val.to_h : val]
+                 end]
+               else
+                 v
+               end
+      acc
+    end.compact
+  end
+end
 
 templates = YAML.load(DATA)
 
@@ -11,6 +50,9 @@ templates.each do |name,opts|
     puts "Deploying #{name}"
     metadata_file = Tempfile.new('metadata')
     descriptor_file = Tempfile.new('descriptor')
+
+    # Fix the OMAP hash
+    opts = opts.to_h
 
     metadata_file.write JSON.pretty_generate(opts[:metadata])
     metadata_file.close
