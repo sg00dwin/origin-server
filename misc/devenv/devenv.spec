@@ -8,7 +8,7 @@
 
 Summary:   Dependencies for OpenShift development
 Name:      rhc-devenv
-Version: 0.96.9
+Version: 0.96.10
 Release:   1%{?dist}
 Group:     Development/Libraries
 License:   GPLv2
@@ -497,6 +497,11 @@ chmod 750 /usr/sbin/tcpdump
 %{policydir}/*
 
 %changelog
+* Tue Jul 10 2012 Adam Miller <admiller@redhat.com> 0.96.10-1
+- Bug 838800 - Update streamline address in drupal, make no cookies the default
+  (ccoleman@redhat.com)
+- Bug 838831 - Simplify enable/disable-sso for all teams (ccoleman@redhat.com)
+
 * Mon Jul 09 2012 Dan McPherson <dmcphers@redhat.com> 0.96.9-1
 - split up build steps to tag and push first then release (dmcphers@redhat.com)
 
