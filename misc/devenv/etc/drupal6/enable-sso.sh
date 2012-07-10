@@ -1,19 +1,13 @@
 #!/bin/bash
 
 echo "Enabling SSO for Broker..."
-pushd /var/www/stickshift/broker/config/environments/
-mv development.rb development.rb.orig
-cp streamline-aws.rb development.rb
-chown .libra_user development.rb
+sed -i 's/\:integrated => false/:integrated => true/' /var/www/stickshift/broker/config/environments/development.rb
 service libra-broker restart
-popd
+
 echo "Enabling SSO for Site..."
-pushd /var/www/stickshift/site/config/environments/
-mv development.rb development.rb.orig
-cp streamline-aws.rb development.rb
-chown .libra_user development.rb
+sed -i "s/config\.integrated\ \=\ false/config.integrated\ =\ true/" /var/www/stickshift/site/config/environments/development.rb
 service libra-site restart
-popd
+
 echo "Enabling SSO for Drupal..."
 pushd /etc/drupal6/default/
 mv redhat_settings.php redhat_settings.php.orig
