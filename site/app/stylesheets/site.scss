@@ -14,7 +14,6 @@
 
 */
 
-
 @import "compass/css3/transition";
 @import "compass/css3/transform";
 
@@ -381,22 +380,23 @@ body.signup {
     }
   }
 }
-
+ 
 .action-more {
   font-size: 16px;
-  text-decoration: none !important;
+  color: #bc000d;
+  text-decoration: none;
+  
   &:before {
     content: '→ ';
-    color: #006699;
     position: relative;
     top: -3px;
   }
-  &:hover:before {
-    content: '→ ';
-    color: $takeActionBackground;
-    position: relative;
-    top: -3px;
-  }
+}
+
+a.action-more:hover {
+  border-bottom: 1px solid;
+  text-decoration: none;
+  color: $openshiftBrightRed;
 }
 
 #learn .action-call { 
