@@ -5,7 +5,7 @@
 %global drupal_themename    openshift-theme
 
 Name:           drupal6-%{drupal_themename}
-Version: 3.4.3
+Version: 3.4.4
 Release:        1%{?dist}
 Summary:        Red Hat Openshift theme for Drupal %{drupal_release}
 
@@ -44,6 +44,11 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
+* Tue Jul 10 2012 Adam Miller <admiller@redhat.com> 3.4.4-1
+- Updated links to pricing page to point to full url (contact@fabianofranz.com)
+- Links to pricing page all over the website, related to BZ 837902
+  (contact@fabianofranz.com)
+
 * Mon Jul 09 2012 Dan McPherson <dmcphers@redhat.com> 3.4.3-1
 - At Legal's request, change the footer link for 'Terms of Service' to point to
   the preview services agreement. (ccoleman@redhat.com)
