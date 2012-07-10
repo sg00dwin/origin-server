@@ -1,7 +1,7 @@
 class AccountUpgradesController < AccountController
 
-  before_filter :authenticate_user!, :except => :upgrade
-  before_filter :authenticate_user_for_upgrade!, :only => :upgrade
+  before_filter :authenticate_user!, :except => :show
+  before_filter :authenticate_user_for_upgrade!, :only => :show
 
   rescue_from Aria::Error do |e|
     @message = case e
@@ -28,7 +28,7 @@ class AccountUpgradesController < AccountController
 
     redirect_to edit_account_plan_upgrade_path and return unless @user.full_user? && @user.has_complete_account?
     redirect_to account_plan_upgrade_payment_method_path and return unless @user.has_valid_payment_method?
-    redirect_to confirm_account_plan_upgrade_path
+    redirect_to new_account_plan_upgrade_path
   end
 
   def edit
@@ -56,7 +56,7 @@ class AccountUpgradesController < AccountController
 
     redirect_to account_plan_upgrade_payment_method_path and return unless user.has_valid_payment_method?
 
-    redirect_to confirm_account_plan_upgrade_path
+    redirect_to new_account_plan_upgrade_path
   end
 
   protected
