@@ -2,7 +2,7 @@
 
 Summary:       Multi-tenant cloud management system node tools
 Name:          rhc-node
-Version: 0.95.6
+Version: 0.95.7
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -271,6 +271,9 @@ fi
 /lib64/security/pam_libra.so
 
 %changelog
+* Tue Jul 10 2012 Adam Miller <admiller@redhat.com> 0.95.7-1
+- Remove unused methods from ddl. (mpatel@redhat.com)
+
 * Thu Jul 05 2012 Adam Miller <admiller@redhat.com> 0.95.6-1
 - Merge pull request #20 from jwhonce/BZ837066 (mmcgrath+openshift@redhat.com)
 - BZ837066 watchman inefficient (jhonce@redhat.com)
