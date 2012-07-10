@@ -42,14 +42,14 @@
                 %p Built on open technologies so you can take it with you.
         .span6
           %ul.news.unstyled
+            %li 
+              =link_to pricing_url, :class => 'link-tile' do
+                %h4 Announcing the first tier of OpenShift pricing
+                %p We're announcing OpenShift pricing for the first paid tier offering, along with our plan to continue a free offering like the one that developers are currently enjoying in the OpenShift Developer Preview.
             %li
               = link_to application_types_path, :class => 'link-tile' do
                 %h4 Build your apps with JBoss EAP 6
                 %p Market-leading open source enterprise platform for next-generation, highly transactional enterprise Java applications.  Build and deploy enterprise Java on OpenShift!
-            %li
-              = link_to application_types_path, :class => 'link-tile' do
-                %h4 Create real applications instantly
-                %p Building apps just got easier &mdash; we've got one click deploys of Drupal, Wordpress, the JBoss Kitchensink quickstart, and Ruby on Rails for you to try.  More coming soon!
             %li
               = link_to developers_url, :class => 'link-tile' do
                 %h4 Find answers in the Developer Center

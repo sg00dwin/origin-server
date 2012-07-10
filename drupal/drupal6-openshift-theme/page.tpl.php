@@ -192,10 +192,10 @@
                 <h3><a href="/community/developers">Developers</a></h3>
               </header>
               <ul class="unstyled">
-                <li><a href="/app/platform">What is OpenShift?</a></li>
                 <li><a href="/app/getting_started">Get Started</a></li>
                 <li><a href="http://docs.redhat.com/docs/en-US/OpenShift/2.0/html/User_Guide/index.html">User Guide</a></li>
                 <li><a href="/community/faq">FAQ</a></li>
+                <li><a href="/community/developers/pricing">Pricing</a></li>
               </ul>
             </nav>
             <nav class="span3">
