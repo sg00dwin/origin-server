@@ -3,7 +3,7 @@
 
 Summary:   Li site components
 Name:      rhc-site
-Version: 0.95.10
+Version: 0.95.11
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -126,6 +126,13 @@ rm -rf %{buildroot}
 /bin/touch %{sitedir}/log/production.log
 
 %changelog
+* Mon Jul 09 2012 Adam Miller <admiller@redhat.com> 0.95.11-1
+- Fix ordering test to be accurate with 1.8 ruby now lower.
+  (ccoleman@redhat.com)
+- Update Ruby 1.8.7 to fall further down the list, fix double HTML escaping of
+  descriptions (ccoleman@redhat.com)
+- Ensure cart metadata is not overwriting core values. (ccoleman@redhat.com)
+
 * Mon Jul 09 2012 Dan McPherson <dmcphers@redhat.com> 0.95.10-1
 - 
 
