@@ -23,7 +23,8 @@ module Streamline
   class UserException < OpenShiftException; end
   class UserValidationException < OpenShiftException; end
   class StreamlineException < OpenShiftException
-    def initialize
+    def initialize(message=nil)
+      super(message)
       @exit_code = 144
     end
   end

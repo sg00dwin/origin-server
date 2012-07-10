@@ -58,6 +58,10 @@ class StreamlineTest < ActiveSupport::TestCase
     body = {"test" => "test2"}.to_json
     assert_not_nil @streamline.send(:parse_body, body)
   end
+  
+  test "should raise when parse malformed JSON" do
+    assert_raise(StandardError){ @streamline.send(:parse_body, "{json: 'foo'") }
+  end
 
   test "parse body errors" do
     body = {'errors' => ['login_required']}.to_json
@@ -137,6 +141,28 @@ class StreamlineTest < ActiveSupport::TestCase
     assert_raise(Streamline::StreamlineException) {
       @streamline.send(:http_post, @url)
     }
+  end
+
+  test "http call with 200 and bad content" do
+    res = Net::HTTPSuccess.new('', '200', '')
+    res.expects(:body).at_least_once.returns("{")
+    Net::HTTP.any_instance.expects(:start).returns(res)
+
+    assert_raise(Streamline::StreamlineException) {
+      @streamline.send(:http_post, @url)
+    }
+    assert @streamline.errors[:base].all?{ |s| s =~ (/system error has occurred./) }
+  end
+
+  test "http call with 401 and bad content" do
+    res = Net::HTTPUnauthorized.new('', '401', '')
+    res.expects(:body).at_least_once.returns("<html></html>")
+    Net::HTTP.any_instance.expects(:start).returns(res)
+
+    assert_raise(AccessDeniedException) {
+      @streamline.send(:http_post, @url)
+    }
+    assert @streamline.errors[:base].all?{ |s| s =~ (/system error has occurred./) }
   end
 
   test "http call with 401 and service errors" do
