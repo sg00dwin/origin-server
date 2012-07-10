@@ -34,7 +34,7 @@ RedHatCloud::Application.configure do
     :base_url => '/wapps/streamline',
     :register_secret => 'c0ldW1n3',
     :user_info_secret => 'sw33tl1Qu0r',
-    :cookie_domain => nil,
+    :cookie_domain => :nil,
     :timeout => 5
   }
   config.captcha_secret = 'zvw5LiixMB0I4mjk06aR'
