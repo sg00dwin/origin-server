@@ -48,6 +48,7 @@ group :development, :test do
   gem 'mocha', :require => nil
   gem 'hpricot'
   gem 'webmock', '~> 1.6.4', :require => nil
+  gem 'rcov', :require => nil
 end
 
 gem 'sinatra', '1.2.6'
