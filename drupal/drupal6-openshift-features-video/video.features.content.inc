@@ -126,7 +126,9 @@ function video_content_default_fields() {
         'description' => 0,
       ),
       'providers' => array(
+        'tudou' => 'tudou',
         'vimeo' => 'vimeo',
+        'youku' => 'youku',
         'youtube' => 'youtube',
       ),
       'emthumb' => 0,
