@@ -126,10 +126,10 @@ function video_content_default_fields() {
         'description' => 0,
       ),
       'providers' => array(
-        'tudou' => 'tudou',
         'vimeo' => 'vimeo',
-        'youku' => 'youku',
         'youtube' => 'youtube',
+        'tudou' => 0,
+        'youku' => 0,
       ),
       'emthumb' => 0,
       'emthumb_label' => '',
@@ -147,9 +147,9 @@ function video_content_default_fields() {
         ),
       ),
       'default_value_php' => NULL,
-      'label' => 'Third Party Video',
+      'label' => 'Video',
       'weight' => '10',
-      'description' => 'Display a video from YouTube or Vimeo.  Other third party providers can be added with additional Drupal modules.',
+      'description' => 'Display a video from YouTube or Vimeo.  When uploading a video to these providers, be aware that users in China will not have access.  Use the "Video (China)" field to provide a suitable substitute for that market.  If no video is provided then Chinese users will get a blank link.  If you want the video to be for Chinese users primarily, leave this field blank and fill out "Video (China)".',
       'type' => 'emvideo_textfields',
       'module' => 'emvideo',
     ),
@@ -275,9 +275,10 @@ function video_content_default_fields() {
         'description' => 0,
       ),
       'providers' => array(
-        'vimeo' => 'vimeo',
+        'tudou' => 'tudou',
         'youku' => 'youku',
-        'youtube' => 'youtube',
+        'vimeo' => 0,
+        'youtube' => 0,
       ),
       'emthumb' => 0,
       'emthumb_label' => 'Youku Video  custom thumbnail',
@@ -288,11 +289,16 @@ function video_content_default_fields() {
       'emthumb_custom_title' => 0,
       'emthumb_store_local_thumbnail' => 1,
       'emthumb_start_collapsed' => 0,
-      'default_value' => NULL,
+      'default_value' => array(
+        '0' => array(
+          'embed' => '',
+          'value' => '',
+        ),
+      ),
       'default_value_php' => NULL,
-      'label' => 'Youku Video ',
+      'label' => 'Video (China)',
       'weight' => '31',
-      'description' => '',
+      'description' => 'Display a video from Tudou or YouKu that can be displayed to users in China.  If a video is to be displayed only in Chinese, it\'s acceptable to set the "Video" field empty while this field has content.',
       'type' => 'emvideo_textfields',
       'module' => 'emvideo',
     ),
@@ -301,9 +307,9 @@ function video_content_default_fields() {
   // Translatables
   // Included for use with string extractors like potx.
   t('Subtitle');
-  t('Third Party Video');
   t('Thumbnail');
-  t('Youku Video ');
+  t('Video');
+  t('Video (China)');
 
   return $fields;
 }
