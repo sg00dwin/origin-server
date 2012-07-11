@@ -20,6 +20,8 @@ class Hash
         begin
         if val.empty?
           val = v.class.new
+        elsif val.is_a?(Array) && val.length == 1
+          val = val.first
         end
         rescue
         end
@@ -66,27 +68,41 @@ module Enumerable
   end
 end
 
+# Create and return a temp file after writing the output of a function
+def to_temp_file(name)
+  returning(Tempfile.new(name)) do |file|
+    file.write yield(@opts[name].to_h.compact)
+    file.close
+    file
+  end
+end
+
 templates = YAML.load(DATA)
 
-templates.each do |name,opts|
+templates.each do |name,options|
   begin
     puts "Deploying #{name}"
-    metadata_file = Tempfile.new('metadata')
-    descriptor_file = Tempfile.new('descriptor')
 
     # Fix the OMAP hash
-    opts = opts.to_h
+    @opts = options.to_h.compact
 
-    metadata_file.write JSON.pretty_generate(opts[:metadata])
-    metadata_file.close
+    files = returning(Hash.new) do |hash|
+      {
+        :descriptor => "YAML.dump",
+        :metadata => "JSON.pretty_generate",
+      }.each do |file,cmd|
+          hash[file] = to_temp_file(file){|x| eval "%s(x)" % cmd }
+        end
+        hash
+    end
 
-    descriptor_file.write YAML.dump(opts[:descriptor])
-    descriptor_file.close
-
-    script = "#{opts[:script]} --descriptor '#{descriptor_file.path}' --metadata '#{metadata_file.path}' "
+    script = [
+      @opts[:script],
+      *files.map{|k,v| "--%s '%s'" % [k,v.path]}
+    ].join(' ')
     puts `#{script}`
   ensure
-    [metadata_file,descriptor_file].each do |f|
+    files.each do |name,f|
       f.close
       f.unlink
     end
