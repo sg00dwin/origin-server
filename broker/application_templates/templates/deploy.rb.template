@@ -3,25 +3,106 @@ require 'rubygems'
 require 'yaml'
 require 'tempfile'
 require 'json'
+require 'bson'
+
+# Courtesy of: http://as.rubyonrails.org/classes/Object.html#M000010
+def returning(value)
+  yield(value)
+  value
+end
+
+# This function compacts any hashes by promoting any keys with nil values
+class Hash
+  def compact
+    hash = returning({}) do |hash|
+      self.each do |k,v|
+        val = v.respond_to?(:compact) ? v.compact : v
+        begin
+        if val.empty?
+          val = v.class.new
+        elsif val.is_a?(Array) && val.length == 1
+          val = val.first
+        end
+        rescue
+        end
+        hash[k] = val
+      end
+    end
+
+    begin
+      if hash.values.compact.flatten.empty?
+        hash = hash.keys
+      end
+    rescue
+    end
+
+    hash
+  end
+end
+
+# The converts an OMAP into a proper hash
+module Enumerable
+  def to_h
+    inject({}) do |acc, element|
+      k,v = element;
+      acc[k] = case
+               when v.is_a?(BSON::OrderedHash)
+                 v.to_h
+               when v.is_a?(YAML::Omap)
+                 Hash[v.map do |key,val|
+                   new_val = val.is_a?(Enumerable) ? val.to_h : val
+                   # This ensures that if we have an empty object, we at least try to use the same type
+                   begin
+                     if new_val.empty?
+                       new_val = val.class.new
+                     end
+                   rescue
+                   end
+                   [key,new_val]
+                 end]
+               else
+                 v
+               end
+      acc
+    end
+  end
+end
+
+# Create and return a temp file after writing the output of a function
+def to_temp_file(name)
+  returning(Tempfile.new(name)) do |file|
+    file.write yield(@opts[name].to_h.compact)
+    file.close
+    file
+  end
+end
 
 templates = YAML.load(DATA)
 
-templates.each do |name,opts|
+templates.each do |name,options|
   begin
     puts "Deploying #{name}"
-    metadata_file = Tempfile.new('metadata')
-    descriptor_file = Tempfile.new('descriptor')
 
-    metadata_file.write JSON.pretty_generate(opts[:metadata])
-    metadata_file.close
+    # Fix the OMAP hash
+    @opts = options.to_h.compact
 
-    descriptor_file.write YAML.dump(opts[:descriptor])
-    descriptor_file.close
+    files = returning(Hash.new) do |hash|
+      {
+        :descriptor => "YAML.dump",
+        :metadata => "JSON.pretty_generate",
+      }.each do |file,cmd|
+          hash[file] = to_temp_file(file){|x| eval "%s(x)" % cmd }
+        end
+        hash
+    end
 
-    script = "#{opts[:script]} --descriptor '#{descriptor_file.path}' --metadata '#{metadata_file.path}' "
+    script = [
+      @opts[:script],
+      *files.map{|k,v| "--%s '%s'" % [k,v.path]}
+    ].join(' ')
     puts `#{script}`
   ensure
-    [metadata_file,descriptor_file].each do |f|
+    files.each do |name,f|
       f.close
       f.unlink
     end

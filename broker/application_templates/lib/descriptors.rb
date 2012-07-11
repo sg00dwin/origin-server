@@ -5,6 +5,7 @@ require 'rhc-common'
 require 'rhc-rest'
 require 'yaml'
 require 'json'
+require 'bson'
 
 class Hash
   def method_missing(method, *params)

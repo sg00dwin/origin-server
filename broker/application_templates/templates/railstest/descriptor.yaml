@@ -1,19 +1,27 @@
----
-Architecture: noarch
-Connections:
-  mysql-5.1-ruby-1.9:
-    Components:
-    - ruby-1.9
-    - mysql-5.1
-Description: ''
-Display-Name: railstest-0.0-noarch
-License: unknown
-Name: railstest
-Requires:
-- ruby-1.9
-- mysql-5.1
-Scaling:
-  Max: -1
-  Min: 1
-Vendor: unknown
-Version: '0.0'
+--- !omap 
+- Architecture: noarch
+- Cart-Data: !map:BSON::OrderedHash {}
+
+- Categories: 
+  - cartridge
+- Connections: 
+    mysql-5.1-ruby-1.9: 
+      Components: 
+      - ruby-1.9
+      - mysql-5.1
+- Description: ""
+- Display-Name: railstest-0.0-noarch
+- Help-Topics: !map:BSON::OrderedHash {}
+
+- License: unknown
+- License-Url: ""
+- Name: railstest
+- Requires: 
+  - ruby-1.9
+  - mysql-5.1
+- Scaling: 
+    Max: -1
+    Min: 1
+- Vendor: unknown
+- Version: "0.0"
+- Website: ""

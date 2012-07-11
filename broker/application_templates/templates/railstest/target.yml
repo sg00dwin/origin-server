@@ -6,6 +6,7 @@
 - :rails
 - :framework
 - :experimental
+- :in_development
 :embed:
 - mysql-5.1
 :metadata:
