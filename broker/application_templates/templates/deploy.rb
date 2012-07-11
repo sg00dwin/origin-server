@@ -5,21 +5,36 @@ require 'tempfile'
 require 'json'
 require 'bson'
 
+# Courtesy of: http://as.rubyonrails.org/classes/Object.html#M000010
+def returning(value)
+  yield(value)
+  value
+end
+
 # This function compacts any hashes by promoting any keys with nil values
 class Hash
   def compact
-    new_hash = {}
-    self.each do |k,v|
-      case
-      when v.respond_to?(:compact)
-        new_hash[k] = v.compact
-      when v.nil?
-        new_hash = k
-      else
-        new_hash[k] = v
+    hash = returning({}) do |hash|
+      self.each do |k,v|
+        val = v.respond_to?(:compact) ? v.compact : v
+        begin
+        if val.empty?
+          val = v.class.new
+        end
+        rescue
+        end
+        hash[k] = val
       end
     end
-    new_hash
+
+    begin
+      if hash.values.compact.flatten.empty?
+        hash = hash.keys
+      end
+    rescue
+    end
+
+    hash
   end
 end
 
@@ -33,13 +48,21 @@ module Enumerable
                  v.to_h
                when v.is_a?(YAML::Omap)
                  Hash[v.map do |key,val|
-                   [key,val.is_a?(Enumerable) ? val.to_h : val]
+                   new_val = val.is_a?(Enumerable) ? val.to_h : val
+                   # This ensures that if we have an empty object, we at least try to use the same type
+                   begin
+                     if new_val.empty?
+                       new_val = val.class.new
+                     end
+                   rescue
+                   end
+                   [key,new_val]
                  end]
                else
                  v
                end
       acc
-    end.compact
+    end
   end
 end
 
@@ -95,8 +118,8 @@ __END__
         - php-5.3
         - mysql-5.1
       - Scaling: 
-          Min: 1
           Max: -1
+          Min: 1
       - Vendor: unknown
       - Version: "0.0"
       - Website: ""
@@ -128,8 +151,8 @@ __END__
       - Requires: 
         - jbossas-7
       - Scaling: 
-          Min: 1
           Max: -1
+          Min: 1
       - Vendor: unknown
       - Version: "0.0"
       - Website: ""
@@ -164,8 +187,8 @@ __END__
         - ruby-1.9
         - mysql-5.1
       - Scaling: 
-          Min: 1
           Max: -1
+          Min: 1
       - Vendor: unknown
       - Version: "0.0"
       - Website: ""
@@ -200,8 +223,8 @@ __END__
         - ruby-1.9
         - mysql-5.1
       - Scaling: 
-          Min: 1
           Max: -1
+          Min: 1
       - Vendor: unknown
       - Version: "0.0"
       - Website: ""
@@ -230,8 +253,8 @@ __END__
       - Requires: 
         - jbosseap-6.0
       - Scaling: 
-          Min: 1
           Max: -1
+          Min: 1
       - Vendor: unknown
       - Version: "0.0"
       - Website: ""
@@ -266,8 +289,8 @@ __END__
         - php-5.3
         - mysql-5.1
       - Scaling: 
-          Min: 1
           Max: -1
+          Min: 1
       - Vendor: unknown
       - Version: "0.0"
       - Website: ""
