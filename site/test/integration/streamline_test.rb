@@ -18,8 +18,29 @@ class StreamlineTest < ActionDispatch::IntegrationTest
       assert_nil user.token
       assert user.ticket
       assert user.roles.include? 'simple_authenticated'
+
       user
     end
+  end
+
+  test 'should fail when a token is reused' do
+    user = new_user
+    assert user.register('/email_confirm')
+    assert user.token
+    assert_nil user.login
+    assert_nil user.ticket
+
+    assert user.roles.empty?
+    assert_nil user.ticket
+
+    token = user.token
+
+    assert user.confirm_email
+    assert user.errors.empty?
+    user.send(:token=, token)
+    assert !user.confirm_email
+    assert user.errors.length == 1
+    assert user.errors[:base][0] =~ /system error/i, "Bug in Streamline was generating an invalid failure.  If that has been fixed, this can be changed to show a more appropriate error (ticket expired)."
   end
 
   test 'should return token and accept it for confirmation' do

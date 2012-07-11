@@ -422,15 +422,16 @@ module Streamline
             res = new_http.start {|http| http.request(req)}
 
             payload[:code] = res.code
-            json = parse_body(res.body) if res.body && !res.body.empty?
+            json = parse_body(res.body) if res.body && !res.body.empty? rescue nil
             payload[:response] = json.inspect
+
             parse_ticket(res.get_fields('Set-Cookie'))
 
             case res
             when Net::HTTPSuccess, Net::HTTPRedirection
               unless json
                 if raise_exception_on_error
-                  raise Streamline::StreamlineException, "No JSON in response"
+                  raise Streamline::StreamlineException, "No JSON in response #{res.body rescue ''}"
                 else
                   errors.add(:base, I18n.t(:unknown))
                 end
