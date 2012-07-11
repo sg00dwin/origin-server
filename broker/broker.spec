@@ -37,6 +37,7 @@ Requires:  rubygem-rcov
 Requires:  rubygem-mongo_mapper
 Requires:  rubygem-wddx
 Requires:  rubygem-pony
+Requires:  mcollective-qpid-plugin
 
 BuildArch: noarch
 
