@@ -5,7 +5,7 @@
 %global modname             video
 
 Name:    drupal%{drupal_release}-openshift-features-%{modname}
-Version: 1.3.0
+Version: 1.3.1
 Release: 1%{?dist}
 Summary: Openshift Red Hat Custom Video Feature for Drupal6
 Group:   Applications/Publishing
@@ -41,6 +41,9 @@ rm -rf $RPM_BUILD_ROOT
 %{drupal_modules}/%{modname}
 
 %changelog
+* Wed Jul 11 2012 Adam Miller <admiller@redhat.com> 1.3.1-1
+- bump_minor_versions for sprint 15 (admiller@redhat.com)
+
 * Wed Jul 11 2012 Adam Miller <admiller@redhat.com> 1.2.4-1
 - Bug 814844 - Followup to previous commit, needed to redefine some labels and
   ensure that the layout shows up in both (ccoleman@redhat.com)
