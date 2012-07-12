@@ -10,9 +10,7 @@ namespace :descriptors do
       puts "Must have a domain to create applications...will only use existing descriptors"
     end
 
-    deploy_opts = {}
-
-    application_templates.each do |template|
+    deploy_opts = application_templates.map do |template|
       name = template.name
       puts "Checking template for #{name}"
       target = template.target
@@ -62,21 +60,24 @@ namespace :descriptors do
         opts[:metadata].inject({}){|h,(k,v)| h[k] = v.kind_of?(String) ? v.strip : v; h }
 
       # Save script information for deploy script
-      to_save = {
-        name => {
-          :script => template.template_function(false),
-          :metadata => deep_sort(opts[:metadata]),
-          :descriptor => YAML.load_file(template.descriptor)
-        }
-      }
+      desc = Hash[
+        YAML.load_file(template.descriptor).map do |k,v|
+          [k,v.is_a?(BSON::OrderedHash) ? {} : v]
+        end
+      ].to_yaml
 
-      deploy_opts.merge!(to_save)
-    end
+      {
+        :name => name,
+        :script => template.template_function(false),
+        :metadata => JSON.pretty_generate(opts[:metadata]),
+        :descriptor => desc
+      }
+    end.compact.sort_by{|x| x[:name] }
 
     FileUtils.cp "#{deploy_script}.template", deploy_script
 
     File.open(deploy_script,'a') do |f|
-      f.write YAML.dump deep_sort(deploy_opts)
+      f.write YAML.dump deploy_opts
     end
   end
 end
