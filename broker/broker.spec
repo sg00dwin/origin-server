@@ -3,7 +3,7 @@
 
 Summary:   Li broker components
 Name:      rhc-broker
-Version: 0.95.20
+Version: 0.95.21
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -112,6 +112,23 @@ rm -rf $RPM_BUILD_ROOT
 /bin/touch %{_localstatedir}/log/stickshift/user_action.log
 
 %changelog
+* Wed Jul 11 2012 Adam Miller <admiller@redhat.com> 0.95.21-1
+- Updating gem versions (admiller@redhat.com)
+- added mcollective-qpid-plugin as a dep to rhc-broker rpm
+  (admiller@redhat.com)
+- Merge pull request #55 from fotioslindiakos/bson_fix (ccoleman@redhat.com)
+- Merge pull request #54 from rmillner/dev/rmillner/bug/832747
+  (jwhonce@gmail.com)
+- More fixes for proper serialization (fotios@redhat.com)
+- Fixed serialization of nested hashes (fotios@redhat.com)
+- Regenerated descriptors with new code (fotios@redhat.com)
+- Added functions to deploy.rb to ensure it can parse the YAML::Omap properly
+  (fotios@redhat.com)
+- Added support to parse the BSON coming back from the broker
+  (fotios@redhat.com)
+- New rpc options created without using a large enough timeout.
+  (rmillner@redhat.com)
+
 * Wed Jul 11 2012 Adam Miller <admiller@redhat.com> 0.95.20-1
 - Updating gem versions (admiller@redhat.com)
 
