@@ -35,54 +35,41 @@
     If you'd like to use our powerful command line client, the steps below will get you installed 
     and running in minutes.
 
+  %p
+    The OpenShift client tools are packaged as a Ruby Gem.  To run OpenShift on your platform, you'll
+    need Ruby 1.8.7 or newer, the ability to install a gem (on Linux this will require root access),
+    and the Git version control tool.  More details are available about 
+    #{link_to "installing the client tools", getting_started_guide_url} in the Developer Center.
+
 %section#install_client_tools
   %h3 1. Install the client tools
   .row
     .span6
       %section#rhel.install
         .well.prereqs
-          %h3 Red Hat Enterprise Linux or Fedora
-          %h5 Prerequisites
-          %ul
-            %li Red Hat Enterprise Linux 6 or later or Fedora 14 or later.
-            %li Root or sudoer access
-          %hr
+          %h3 Fedora and Red Hat Enterprise Linux
           %ol
             %li
-              %p.larger Download the OpenShift repository file #{link_to 'openshift.repo', "https://openshift.redhat.com/app/repo/openshift.repo"}
-            %li
-              %p.larger Move the openshift.repo file to your <code>/etc/yum.repos.d/</code> directory.
+              %p.larger Install the OpenShift prerequisites via YUM
               %pre
-                $ sudo mv ~/Downloads/openshift.repo /etc/yum.repos.d/
-              %p Replace <code>~/Downloads/openshift.repo</code> with the location to which you saved the repo file.
-            %li
-              %p.larger (RHEL 6.2 only) If you are using RHN Classic, you may need to add the RHEL 6.2 Optional Channel in order to install the 'rubygems' package.
+                $ sudo yum install rubygems git
+              %hr
+              %p (RHEL 6.2 only) If you are using RHN Classic, you may need to add the RHEL 6.2 Optional Channel in order to install the 'rubygems' package.
               %pre
                 $ sudo rhn-channel --add --channel=rhel-x86_64-server-optional-6
             %li
-              %p.larger Install the client tools:
-              %pre $ sudo yum install rhc
-
-              %hr
-              %p
-                The <code>sudo</code> command will only work if your user is listed in the sudoers file. For more information on setting up sudo, see <a href="http://www.gratisoft.us/sudo/sudo.html">http://www.gratisoft.us/sudo/sudo.html</a>.
-              %p
-                As an alternative to <code>sudo</code>, you can activate a root terminal with the <code>su</code> command and the root password. In that case, omit <code>sudo</code> from the given commands. Don't forget to close your root terminal when you're done!
+              %p.larger Install the gem:
+              %pre $ sudo gem install rhc
 
       %section#other_nix.install
         .well.prereqs
           %h3 Other Linuxes
-          %h5 Prerequisites
-          %ul
-            %li Root access
-            %li Ruby 1.8 or higher installed or available to be installed
-          %hr
           %ol
             %li
-              %p.larger Install the required packages: git, ruby, rubygems, and the Ruby 1.8 development package.
+              %p.larger Install the required packages: Ruby 1.8.7 or newer, rubygems, and git
             %li
               %p.larger Install the gem:
-              %pre $ su -c 'gem install rhc' 
+              %pre $ sudo gem install rhc
     .span6
       %section#win.install
         .well.prereqs
@@ -128,35 +115,45 @@
                   $ sudo gem install rhc
 
     .span12
-      = link_to 'Read the Getting Started guide for more installation help', getting_started_guide_url, :class => 'action-more'
-      %br
-      = link_to 'Installing OpenShift client tools video walkthrough', local_video_url('express_client_tools'), :class => 'action-more'
+      %p= link_to 'Read the Getting Started guide for more installation help', getting_started_guide_url, :class => 'action-more'
+      %p.larger To update to the latest version of the client tools, use the gem update command:
+      %pre $ sudo gem update rhc
 
 %section#create_domain_name
-  %h3 2. Create a domain name
+  %h3 2. Setup your environment
   %p
-    Using your OpenShift login and password, run <code>rhc domain create</code> to create a unique namespace for your applications.
+    Using your OpenShift login and password, run <code>rhc setup</code> to connect to OpenShift and create a unique namespace for your applications.
 
-    %pre
-      :preserve
-        $ rhc domain create -n mydomain -l rhlogin
-        Password: (type... type... type...)
+  %pre
+    :preserve
+      $ rhc setup
+
+      Starting Interactive Setup for OpenShift's command line interface
+
+      We'll help get you setup with just a couple of questions.
+
+      To connect to openshift.redhat.com enter your OpenShift login (email or Red Hat login id):
+
+  %p 
+    The wizard will help you upload your SSH keys so you can communicate with Git, check to see if you are missing any required configuration, and then 
+    help you create a domain name.  On OpenShift, domain names make up part of your app's url. They are also unique across all OpenShift users so choose 
+    wisely and be creative!
 
   %aside
     %p
-      OpenShift domain names make up part of your app's url. They are also unique across all OpenShift users, so choose wisely, and be creative!
-  %aside
-    %p
-      The <code>rhc domain create</code> command will create a configuration file - &lt;your home directory&gt;/.openshift/express.conf - which sets up a default login.
+      When the wizard runs it creates a configuration file in &lt;your home directory&gt;/.openshift/express.conf which includes your login id.  If you 
+      ever need to set your machine up a second time, just run <code>rhc setup</code> again.
 
 %section#create_application.topic
   %h3 3. Create your first application
   %p
     Now you can create an application.
-    %pre
-      :preserve
-        $ rhc app create -a myapp -t php-5.3
-        Password: (type... type... type...)
+
+  %pre
+    :preserve
+      $ rhc app create -a myapp -t php-5.3
+      Password: (type... type... type...)
+
   %p
     This will create a remote git repository for your application, and clone it locally in your current directory.
   %aside
