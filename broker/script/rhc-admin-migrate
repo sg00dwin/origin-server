@@ -5,10 +5,23 @@ require 'thread'
 require 'thread-dump'
 require 'getoptlong'
 require 'stringio'
+require 'set'
 
 RHLOGINS = nil #['rhlogin']
 MAX_THREADS = 8
 WORK_DIR = '/tmp/rhc/migration'
+
+# For each of these sets:  nil implies all and empty implies none
+MIGRATION_CART_TYPES = [].to_set
+RESTART_CART_TYPES = ['jenkins-1.4'].to_set
+REDEPLOY_HTTPD_PROXY_CART_TYPES = [].to_set # Reploys on top of existing config.  Will not fixup renames.
+RECREATE_HTTPD_PROXY_CART_TYPES = [].to_set # Remove existing config and recreate including aliases.
+
+$all_cart_types = nil
+if MIGRATION_CART_TYPES && RESTART_CART_TYPES && REDEPLOY_HTTPD_PROXY_CART_TYPES && RECREATE_HTTPD_PROXY_CART_TYPES
+  $all_cart_types = Set.new
+  $all_cart_types = MIGRATION_CART_TYPES + RESTART_CART_TYPES + REDEPLOY_HTTPD_PROXY_CART_TYPES + RECREATE_HTTPD_PROXY_CART_TYPES
+end
 
 STDOUT.sync, STDERR.sync = true
 
@@ -19,7 +32,6 @@ def migrate_gear(rhlogin, app_name, gear_uuid, version)
   migrate_cmd = "#{__FILE__} --rhlogin '#{rhlogin}' --migrate-gear '#{gear_uuid}' --app-name '#{app_name}' --version '#{version}'"
   out = StringIO.new
   out << "Migrating gear on node with: #{migrate_cmd}\n"
-  migrated = false
   begin
     user = CloudUser.find(rhlogin)
     if user
@@ -37,31 +49,62 @@ def migrate_gear(rhlogin, app_name, gear_uuid, version)
           gear.node_profile = app.node_profile if gear.node_profile.nil?
           begin
             Timeout::timeout(240) do
-              GearChanger::MCollectiveApplicationContainerProxy.rpc_exec('libra', server_identity) do |client|
-                client.migrate(:uuid => gear_uuid,
-                               :namespace => app.domain.namespace,
-                               :version => version) do |response|
-                  exit_code = response[:body][:data][:exitcode]
-                  output = response[:body][:data][:output]
-                  if (output.length > 0)
-                    out << "Migrate on node output: #{output}\n"
+              output = ''
+              exit_code = 1
+              migrate = MIGRATION_CART_TYPES.nil? 
+              MIGRATION_CART_TYPES.each do |cart_name|
+                if gear.cartridges.include?(cart_name)
+                  migrate = true
+                  break
+                end
+              end unless migrate
+              if migrate
+                out << "Migrating on node...\n"
+                GearChanger::MCollectiveApplicationContainerProxy.rpc_exec('libra', server_identity) do |client|
+                  client.migrate(:uuid => gear_uuid,
+                                 :namespace => app.domain.namespace,
+                                 :version => version) do |response|
+                    exit_code = response[:body][:data][:exitcode]
+                    output = response[:body][:data][:output]
                   end
-                  if exit_code != 0
-                    out << "Migrate on node exit code: #{exit_code}\n"
-                    raise "Failed migrating gear. Rerun with: #{migrate_cmd}"
-                  else
-                    #redeploy_httpd_proxy(gear, out)
-                    #or if you need to remove the entire existing proxy config before you redeploy it run
-                    #remove_httpd_proxy(gear, out)
-                    #redeploy_httpd_proxy(gear, out)
-                    #redeploy_aliases(gear, out)
-                    migrated = true
-                    gear.configured_components.each do |comp_name|
-                      if comp_name == '@@app/cart-jenkins-1.4'
-                        component = app.comp_instance_map[comp_name]
-                        restart_component(gear, component, out)
-                      end
+                end
+              end
+              if (output.length > 0)
+                out << "Migrate on node output: #{output}\n"
+              end
+              if migrate && exit_code != 0
+                out << "Migrate on node exit code: #{exit_code}\n"
+                raise "Failed migrating gear. Rerun with: #{migrate_cmd}"
+              else
+                recreate_httpd_proxy = RECREATE_HTTPD_PROXY_CART_TYPES.nil?
+                redeploy_httpd_proxy = REDEPLOY_HTTPD_PROXY_CART_TYPES.nil?
+
+                if RECREATE_HTTPD_PROXY_CART_TYPES || REDEPLOY_HTTPD_PROXY_CART_TYPES
+                  RECREATE_HTTPD_PROXY_CART_TYPES.each do |cart_name|
+                    recreate_httpd_proxy = gear.cartridges.include?(cart_name)
+                    break if recreate_httpd_proxy
+                  end
+                  REDEPLOY_HTTPD_PROXY_CART_TYPES.each do |cart_name|
+                    redeploy_httpd_proxy = gear.cartridges.include?(cart_name)
+                    break if redeploy_httpd_proxy
+                  end unless redeploy_httpd_proxy
+                end unless recreate_httpd_proxy
+
+                remove_httpd_proxy(gear, out) if recreate_httpd_proxy
+                redeploy_httpd_proxy(gear, out) if recreate_httpd_proxy || redeploy_httpd_proxy
+                redeploy_aliases(gear, out) if recreate_httpd_proxy 
+
+                gear.configured_components.each do |comp_name|
+                  restart = RESTART_CART_TYPES.nil?
+                  RESTART_CART_TYPES.each do |cart_name|
+                    if comp_name =~ /\/cart-#{cart_name}\/?/
+                      restart = true
+                      break
                     end
+                  end unless restart
+                  if restart
+                    component = app.comp_instance_map[comp_name]
+                    restart_component(gear, component, out)
                   end
                 end
               end
@@ -71,15 +114,13 @@ def migrate_gear(rhlogin, app_name, gear_uuid, version)
           end
         else
           out << "WARNING: Gear not found with uuid #{gear_uuid} for app '#{app_name}' and user '#{rhlogin}'\n"
-          migrated = true
         end
       else
         raise "App not found: #{app_name}"
       end
     else
       raise "User not found: #{rhlogin}"
-    end 
-    raise "Migrate on node failed.  Rerun with: #{migrate_cmd}" if !migrated
+    end
   rescue Exception => e
     raise "#{e.message}\n#{e.backtrace}\nOutput:\n#{out.string}"
   end
@@ -215,11 +256,16 @@ def migrate(version, continue=false, target_server_identity=nil, migrate_positio
           gears = app.gears
           if gears && !gears.empty?
             gears.each do |gear|
-              server_identity = gear.server_identity
-              if (!target_server_identity || (server_identity == target_server_identity))
-                mutex.synchronize do
-                  node_to_gears[server_identity] = [] unless node_to_gears[server_identity]
-                  node_to_gears[server_identity] << gear
+              gear.cartridges.each do |cart_name|
+                if $all_cart_types.nil? || $all_cart_types.include?(cart_name) 
+                  server_identity = gear.server_identity
+                  if (!target_server_identity || (server_identity == target_server_identity))
+                    mutex.synchronize do
+                      node_to_gears[server_identity] = [] unless node_to_gears[server_identity]
+                      node_to_gears[server_identity] << gear
+                    end
+                  end
+                  break
                 end
               end
             end
