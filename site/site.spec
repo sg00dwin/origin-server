@@ -3,7 +3,7 @@
 
 Summary:   Li site components
 Name:      rhc-site
-Version: 0.96.0
+Version: 0.96.1
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -126,6 +126,9 @@ rm -rf %{buildroot}
 /bin/touch %{sitedir}/log/production.log
 
 %changelog
+* Wed Jul 11 2012 Adam Miller <admiller@redhat.com> 0.96.1-1
+- bump_minor_versions for sprint 15 (admiller@redhat.com)
+
 * Wed Jul 11 2012 Adam Miller <admiller@redhat.com> 0.95.13-1
 - Add more tests to verify filtering and behavior of application template
   methods and make the filtering apply after the objects have been type
