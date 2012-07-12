@@ -35,7 +35,7 @@ GEM
     dnsruby (1.53)
     erubis (2.6.6)
       abstract
-    gearchanger-mcollective-plugin (0.0.9)
+    gearchanger-mcollective-plugin (0.1.1)
       json
       stickshift-controller
     i18n (0.5.0)
@@ -86,12 +86,12 @@ GEM
     rest-client (1.6.1)
     ruby-prof (0.10.7)
     state_machine (1.1.2)
-    stickshift-common (0.12.4)
+    stickshift-common (0.13.1)
       activemodel
       json
       mongo
       rack
-    stickshift-controller (0.13.14)
+    stickshift-controller (0.14.1)
       activesupport
       dnsruby
       json
@@ -99,7 +99,7 @@ GEM
       state_machine
       stickshift-common
     stomp (1.1.8)
-    swingshift-streamline-plugin (0.11.3)
+    swingshift-streamline-plugin (0.12.1)
       json
       stickshift-controller
     systemu (1.2.0)
@@ -108,7 +108,7 @@ GEM
     treetop (1.4.10)
       polyglot
     tzinfo (0.3.26)
-    uplift-dynect-plugin (0.11.4)
+    uplift-dynect-plugin (0.12.1)
       json
       stickshift-controller
     wddx (0.4.1)
