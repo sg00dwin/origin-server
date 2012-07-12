@@ -5,7 +5,7 @@
 %global drupal_themename    openshift-theme
 
 Name:           drupal6-%{drupal_themename}
-Version: 3.5.0
+Version: 3.5.1
 Release:        1%{?dist}
 Summary:        Red Hat Openshift theme for Drupal %{drupal_release}
 
@@ -44,6 +44,9 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
+* Wed Jul 11 2012 Adam Miller <admiller@redhat.com> 3.5.1-1
+- bump_minor_versions for sprint 15 (admiller@redhat.com)
+
 * Tue Jul 10 2012 Adam Miller <admiller@redhat.com> 3.4.4-1
 - Updated links to pricing page to point to full url (contact@fabianofranz.com)
 - Links to pricing page all over the website, related to BZ 837902
