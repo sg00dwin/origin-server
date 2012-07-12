@@ -11,97 +11,35 @@ def returning(value)
   value
 end
 
-# This function compacts any hashes by promoting any keys with nil values
-class Hash
-  def compact
-    hash = returning({}) do |hash|
-      self.each do |k,v|
-        val = v.respond_to?(:compact) ? v.compact : v
-        begin
-        if val.empty?
-          val = v.class.new
-        elsif val.is_a?(Array) && val.length == 1
-          val = val.first
-        end
-        rescue
-        end
-        hash[k] = val
-      end
-    end
-
-    begin
-      if hash.values.compact.flatten.empty?
-        hash = hash.keys
-      end
-    rescue
-    end
-
-    hash
-  end
-end
-
-# The converts an OMAP into a proper hash
-module Enumerable
-  def to_h
-    inject({}) do |acc, element|
-      k,v = element;
-      acc[k] = case
-               when v.is_a?(BSON::OrderedHash)
-                 v.to_h
-               when v.is_a?(YAML::Omap)
-                 Hash[v.map do |key,val|
-                   new_val = val.is_a?(Enumerable) ? val.to_h : val
-                   # This ensures that if we have an empty object, we at least try to use the same type
-                   begin
-                     if new_val.empty?
-                       new_val = val.class.new
-                     end
-                   rescue
-                   end
-                   [key,new_val]
-                 end]
-               else
-                 v
-               end
-      acc
-    end
-  end
-end
-
-# Create and return a temp file after writing the output of a function
-def to_temp_file(name)
-  returning(Tempfile.new(name)) do |file|
-    file.write yield(@opts[name].to_h.compact)
-    file.close
-    file
-  end
-end
-
 templates = YAML.load(DATA)
 
-templates.each do |name,options|
+templates.each do |options|
   begin
+    name = options[:name]
     puts "Deploying #{name}"
 
-    # Fix the OMAP hash
-    @opts = options.to_h.compact
-
-    files = returning(Hash.new) do |hash|
-      {
-        :descriptor => "YAML.dump",
-        :metadata => "JSON.pretty_generate",
-      }.each do |file,cmd|
-          hash[file] = to_temp_file(file){|x| eval "%s(x)" % cmd }
+    # Create a hash of all files to include as options
+    files = Hash[
+      [:descriptor, :metadata ].map do |name|
+        file = returning(Tempfile.new(name)) do |file|
+          file.write options[name]
+          file.close
+          file
         end
-        hash
-    end
 
+        [name,file]
+      end
+    ]
+
+    # Create the script to run
     script = [
-      @opts[:script],
+      options[:script],
       *files.map{|k,v| "--%s '%s'" % [k,v.path]}
     ].join(' ')
+
     puts `#{script}`
   ensure
+    # Make sure all of the files are closed
     files.each do |name,f|
       f.close
       f.unlink
@@ -110,214 +48,244 @@ templates.each do |name,options|
 end
 
 __END__
---- !omap 
-- drupal: 
-    :descriptor: !omap 
-      - Architecture: noarch
-      - Cart-Data: !map:BSON::OrderedHash {}
-
-      - Categories: 
-        - cartridge
-      - Connections: 
-          mysql-5.1-php-5.3: 
-            Components: 
-            - php-5.3
-            - mysql-5.1
-      - Description: ""
-      - Display-Name: drupal-0.0-noarch
-      - Help-Topics: !map:BSON::OrderedHash {}
-
-      - License: unknown
-      - License-Url: ""
-      - Name: drupal
-      - Requires: 
+--- 
+- :descriptor: |
+    --- 
+    Name: drupal
+    Scaling: 
+      Max: -1
+      Min: 1
+    License-Url: ""
+    License: unknown
+    Help-Topics: {}
+    
+    Requires: 
+    - php-5.3
+    - mysql-5.1
+    Display-Name: drupal-0.0-noarch
+    Cart-Data: {}
+    
+    Connections: 
+      mysql-5.1-php-5.3: 
+        Components: 
         - php-5.3
         - mysql-5.1
-      - Scaling: 
-          Max: -1
-          Min: 1
-      - Vendor: unknown
-      - Version: "0.0"
-      - Website: ""
-    :script: rhc-admin-ctl-template --command 'add' --cost '1' --git-url 'git://github.com/openshift/drupal-example.git' --named 'Drupal' --tags 'php,drupal,wiki,framework,experimental'
-    :metadata: !omap 
-      - :credentials: 
-        - :username: Admin
-          :password: OpenShiftAdmin
-      - :description: An open source content management platform written in PHP powering millions of websites and applications. It is built, used, and supported by an active and diverse community of people around the world.
-      - :git_project_url: http://github.com/openshift/drupal-example
-      - :git_url: git://github.com/openshift/drupal-example.git
-      - :license: :"gpl2+"
-      - :version: 7.7
-      - :website: http://drupal.org/
-- kitchensink: 
-    :descriptor: !omap 
-      - Architecture: noarch
-      - Cart-Data: !map:BSON::OrderedHash {}
+    Version: "0.0"
+    Website: ""
+    Vendor: unknown
+    Categories: 
+    - cartridge
+    Description: ""
+    Architecture: noarch
 
-      - Categories: 
-        - cartridge
-      - Description: ""
-      - Display-Name: kitchensink-0.0-noarch
-      - Help-Topics: !map:BSON::OrderedHash {}
+  :script: rhc-admin-ctl-template --command 'add' --cost '1' --git-url 'git://github.com/openshift/drupal-example.git' --named 'Drupal' --tags 'php,drupal,wiki,framework,experimental'
+  :metadata: |-
+    {
+      "website": "http://drupal.org/",
+      "git_url": "git://github.com/openshift/drupal-example.git",
+      "license": "gpl2+",
+      "credentials": [
+        {
+          "username": "Admin",
+          "password": "OpenShiftAdmin"
+        }
+      ],
+      "version": 7.7,
+      "git_project_url": "http://github.com/openshift/drupal-example",
+      "description": "An open source content management platform written in PHP powering millions of websites and applications. It is built, used, and supported by an active and diverse community of people around the world."
+    }
+  :name: drupal
+- :descriptor: |
+    --- 
+    Name: kitchensink
+    Scaling: 
+      Max: -1
+      Min: 1
+    License-Url: ""
+    License: unknown
+    Help-Topics: {}
+    
+    Requires: 
+    - jbossas-7
+    Display-Name: kitchensink-0.0-noarch
+    Cart-Data: {}
+    
+    Version: "0.0"
+    Website: ""
+    Vendor: unknown
+    Categories: 
+    - cartridge
+    Description: ""
+    Architecture: noarch
 
-      - License: unknown
-      - License-Url: ""
-      - Name: kitchensink
-      - Requires: 
-        - jbossas-7
-      - Scaling: 
-          Max: -1
-          Min: 1
-      - Vendor: unknown
-      - Version: "0.0"
-      - Website: ""
-    :script: rhc-admin-ctl-template --command 'add' --cost '1' --git-url 'git://github.com/openshift/kitchensink-example.git' --named 'Kitchensink Example' --tags 'java,jboss,framework,experimental'
-    :metadata: !omap 
-      - :description: This quickstart uses JBoss AS7 to show off all the new features of Java EE 6 and makes a great starting point for your Java project.
-      - :git_project_url: http://github.com/openshift/kitchensink-example
-      - :git_url: git://github.com/openshift/kitchensink-example.git
-      - :license: :apache2
-      - :version: 7.0.0
-      - :website: https://docs.jboss.org/author/display/AS71/Kitchensink+quickstart
-- rails: 
-    :descriptor: !omap 
-      - Architecture: noarch
-      - Cart-Data: !map:BSON::OrderedHash {}
-
-      - Categories: 
-        - cartridge
-      - Connections: 
-          mysql-5.1-ruby-1.9: 
-            Components: 
-            - ruby-1.9
-            - mysql-5.1
-      - Description: ""
-      - Display-Name: rails-0.0-noarch
-      - Help-Topics: !map:BSON::OrderedHash {}
-
-      - License: unknown
-      - License-Url: ""
-      - Name: rails
-      - Requires: 
+  :script: rhc-admin-ctl-template --command 'add' --cost '1' --git-url 'git://github.com/openshift/kitchensink-example.git' --named 'Kitchensink Example' --tags 'java,jboss,framework,experimental'
+  :metadata: |-
+    {
+      "website": "https://docs.jboss.org/author/display/AS71/Kitchensink+quickstart",
+      "git_url": "git://github.com/openshift/kitchensink-example.git",
+      "license": "apache2",
+      "version": "7.0.0",
+      "git_project_url": "http://github.com/openshift/kitchensink-example",
+      "description": "This quickstart uses JBoss AS7 to show off all the new features of Java EE 6 and makes a great starting point for your Java project."
+    }
+  :name: kitchensink
+- :descriptor: |
+    --- 
+    Name: rails
+    Scaling: 
+      Max: -1
+      Min: 1
+    License-Url: ""
+    License: unknown
+    Help-Topics: {}
+    
+    Requires: 
+    - ruby-1.9
+    - mysql-5.1
+    Display-Name: rails-0.0-noarch
+    Cart-Data: {}
+    
+    Connections: 
+      mysql-5.1-ruby-1.9: 
+        Components: 
         - ruby-1.9
         - mysql-5.1
-      - Scaling: 
-          Max: -1
-          Min: 1
-      - Vendor: unknown
-      - Version: "0.0"
-      - Website: ""
-    :script: rhc-admin-ctl-template --command 'add' --cost '1' --git-url 'git://github.com/openshift/rails-example.git' --named 'Ruby on Rails' --tags 'ruby,rails,framework,experimental'
-    :metadata: !omap 
-      - :description: An open source web framework for Ruby that is optimized for programmer happiness and sustainable productivity. It lets you write beautiful code by favoring convention over configuration.
-      - :git_project_url: http://github.com/openshift/rails-example
-      - :git_url: git://github.com/openshift/rails-example.git
-      - :license: :mit
-      - :version: 3.2.6
-      - :website: http://rubyonrails.org/
-- railstest: 
-    :descriptor: !omap 
-      - Architecture: noarch
-      - Cart-Data: !map:BSON::OrderedHash {}
+    Version: "0.0"
+    Website: ""
+    Vendor: unknown
+    Categories: 
+    - cartridge
+    Description: ""
+    Architecture: noarch
 
-      - Categories: 
-        - cartridge
-      - Connections: 
-          mysql-5.1-ruby-1.9: 
-            Components: 
-            - ruby-1.9
-            - mysql-5.1
-      - Description: ""
-      - Display-Name: railstest-0.0-noarch
-      - Help-Topics: !map:BSON::OrderedHash {}
-
-      - License: unknown
-      - License-Url: ""
-      - Name: railstest
-      - Requires: 
+  :script: rhc-admin-ctl-template --command 'add' --cost '1' --git-url 'git://github.com/openshift/rails-example.git' --named 'Ruby on Rails' --tags 'ruby,rails,framework,experimental'
+  :metadata: |-
+    {
+      "website": "http://rubyonrails.org/",
+      "git_url": "git://github.com/openshift/rails-example.git",
+      "license": "mit",
+      "version": "3.2.6",
+      "git_project_url": "http://github.com/openshift/rails-example",
+      "description": "An open source web framework for Ruby that is optimized for programmer happiness and sustainable productivity. It lets you write beautiful code by favoring convention over configuration."
+    }
+  :name: rails
+- :descriptor: |
+    --- 
+    Name: railstest
+    Scaling: 
+      Max: -1
+      Min: 1
+    License-Url: ""
+    License: unknown
+    Help-Topics: {}
+    
+    Requires: 
+    - ruby-1.9
+    - mysql-5.1
+    Display-Name: railstest-0.0-noarch
+    Cart-Data: {}
+    
+    Connections: 
+      mysql-5.1-ruby-1.9: 
+        Components: 
         - ruby-1.9
         - mysql-5.1
-      - Scaling: 
-          Max: -1
-          Min: 1
-      - Vendor: unknown
-      - Version: "0.0"
-      - Website: ""
-    :script: rhc-admin-ctl-template --command 'add' --cost '1' --git-url 'git://github.com/fotioslindiakos/rails-example.git' --named 'Ruby on Rails (TEST)' --tags 'ruby,rails,framework,experimental,in_development'
-    :metadata: !omap 
-      - :description: An open source web framework for Ruby that is optimized for programmer happiness and sustainable productivity. It lets you write beautiful code by favoring convention over configuration.
-      - :git_project_url: http://github.com/fotioslindiakos/rails-example
-      - :git_url: git://github.com/fotioslindiakos/rails-example.git
-      - :license: :mit
-      - :version: 3.2.6
-      - :website: http://rubyonrails.org/
-- springeap6: 
-    :descriptor: !omap 
-      - Architecture: noarch
-      - Cart-Data: !map:BSON::OrderedHash {}
+    Version: "0.0"
+    Website: ""
+    Vendor: unknown
+    Categories: 
+    - cartridge
+    Description: ""
+    Architecture: noarch
 
-      - Categories: 
-        - cartridge
-      - Description: ""
-      - Display-Name: springeap6-0.0-noarch
-      - Help-Topics: !map:BSON::OrderedHash {}
+  :script: rhc-admin-ctl-template --command 'add' --cost '1' --git-url 'git://github.com/fotioslindiakos/rails-example.git' --named 'Ruby on Rails (TEST)' --tags 'ruby,rails,framework,experimental,in_development'
+  :metadata: |-
+    {
+      "website": "http://rubyonrails.org/",
+      "git_url": "git://github.com/fotioslindiakos/rails-example.git",
+      "license": "mit",
+      "version": "3.2.6",
+      "git_project_url": "http://github.com/fotioslindiakos/rails-example",
+      "description": "An open source web framework for Ruby that is optimized for programmer happiness and sustainable productivity. It lets you write beautiful code by favoring convention over configuration."
+    }
+  :name: railstest
+- :descriptor: |
+    --- 
+    Name: springeap6
+    Scaling: 
+      Max: -1
+      Min: 1
+    License-Url: ""
+    License: unknown
+    Help-Topics: {}
+    
+    Requires: 
+    - jbosseap-6.0
+    Display-Name: springeap6-0.0-noarch
+    Cart-Data: {}
+    
+    Version: "0.0"
+    Website: ""
+    Vendor: unknown
+    Categories: 
+    - cartridge
+    Description: ""
+    Architecture: noarch
 
-      - License: unknown
-      - License-Url: ""
-      - Name: springeap6
-      - Requires: 
-        - jbosseap-6.0
-      - Scaling: 
-          Max: -1
-          Min: 1
-      - Vendor: unknown
-      - Version: "0.0"
-      - Website: ""
-    :script: rhc-admin-ctl-template --command 'add' --cost '1' --git-url 'git://github.com/openshift/spring-eap6-quickstart.git' --named 'Spring Framework on JBoss EAP6' --tags 'java,jboss,framework,experimental'
-    :metadata: !omap 
-      - :description: This quickstart allows you to use Spring Framework on JBoss JBoss EAP 6.
-      - :git_project_url: http://github.com/openshift/spring-eap6-quickstart
-      - :git_url: git://github.com/openshift/spring-eap6-quickstart.git
-      - :license: :apache2
-      - :version: 3.1.1
-      - :website: http://springframework.org/
-- wordpress: 
-    :descriptor: !omap 
-      - Architecture: noarch
-      - Cart-Data: !map:BSON::OrderedHash {}
-
-      - Categories: 
-        - cartridge
-      - Connections: 
-          mysql-5.1-php-5.3: 
-            Components: 
-            - php-5.3
-            - mysql-5.1
-      - Description: ""
-      - Display-Name: wordpress-0.0-noarch
-      - Help-Topics: !map:BSON::OrderedHash {}
-
-      - License: unknown
-      - License-Url: ""
-      - Name: wordpress
-      - Requires: 
+  :script: rhc-admin-ctl-template --command 'add' --cost '1' --git-url 'git://github.com/openshift/spring-eap6-quickstart.git' --named 'Spring Framework on JBoss EAP6' --tags 'java,jboss,framework,experimental'
+  :metadata: |-
+    {
+      "website": "http://springframework.org/",
+      "git_url": "git://github.com/openshift/spring-eap6-quickstart.git",
+      "license": "apache2",
+      "version": "3.1.1",
+      "git_project_url": "http://github.com/openshift/spring-eap6-quickstart",
+      "description": "This quickstart allows you to use Spring Framework on JBoss JBoss EAP 6."
+    }
+  :name: springeap6
+- :descriptor: |
+    --- 
+    Name: wordpress
+    Scaling: 
+      Max: -1
+      Min: 1
+    License-Url: ""
+    License: unknown
+    Help-Topics: {}
+    
+    Requires: 
+    - php-5.3
+    - mysql-5.1
+    Display-Name: wordpress-0.0-noarch
+    Cart-Data: {}
+    
+    Connections: 
+      mysql-5.1-php-5.3: 
+        Components: 
         - php-5.3
         - mysql-5.1
-      - Scaling: 
-          Max: -1
-          Min: 1
-      - Vendor: unknown
-      - Version: "0.0"
-      - Website: ""
-    :script: rhc-admin-ctl-template --command 'add' --cost '1' --git-url 'git://github.com/openshift/wordpress-example.git' --named 'WordPress' --tags 'php,wordpress,blog,framework,experimental'
-    :metadata: !omap 
-      - :credentials: 
-        - :username: Admin
-          :password: OpenShiftAdmin
-      - :description: A semantic personal publishing platform written in PHP with a MySQL back end, focusing on aesthetics, web standards, and usability.
-      - :git_project_url: http://github.com/openshift/wordpress-example
-      - :git_url: git://github.com/openshift/wordpress-example.git
-      - :license: :"gpl2+"
-      - :version: 3.3.2
-      - :website: http://wordpress.org
+    Version: "0.0"
+    Website: ""
+    Vendor: unknown
+    Categories: 
+    - cartridge
+    Description: ""
+    Architecture: noarch
+
+  :script: rhc-admin-ctl-template --command 'add' --cost '1' --git-url 'git://github.com/openshift/wordpress-example.git' --named 'WordPress' --tags 'php,wordpress,blog,framework,experimental'
+  :metadata: |-
+    {
+      "website": "http://wordpress.org",
+      "git_url": "git://github.com/openshift/wordpress-example.git",
+      "license": "gpl2+",
+      "credentials": [
+        {
+          "username": "Admin",
+          "password": "OpenShiftAdmin"
+        }
+      ],
+      "version": "3.3.2",
+      "git_project_url": "http://github.com/openshift/wordpress-example",
+      "description": "A semantic personal publishing platform written in PHP with a MySQL back end, focusing on aesthetics, web standards, and usability."
+    }
+  :name: wordpress
