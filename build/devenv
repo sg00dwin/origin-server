@@ -944,6 +944,8 @@ popd > /dev/null
 rm -rf li-working #{working_dirs}
 #{options.clean_metadata? ? "yum update -y --enablerepo=ruby193 --exclude='rhc-devenv' rhc-* cartridge-* rubygem-stickshift-* rubygem-gearchanger-* rubygem-uplift-* rubygem-swingshift-*; " : ''}
 
+/bin/bash li-test/misc/devenv/li-devenv.sh --install_templates
+
 # End shell code
 ################
 }, 900, true)

@@ -1,5 +1,26 @@
 #!/bin/bash
 
+
+#### FIXME -- THIS IS A HACK AND SHOULD NOT STAY HERE LONG
+if [[ "$1" == "--install_templates" ]]
+then
+  # FIXME - templates stuff - destroy and create
+  #### This destroys the templates
+  query="db.template.find({},{'_id':true}).forEach(function(x){print(x['_id']);});"
+
+  while read uuid 
+  do
+    rhc-admin-ctl-template -c remove -u $uuid
+  done < <(mongo openshift_broker_dev --quiet --eval "$query")
+
+  #### This creates the templates
+  pushd /usr/lib/stickshift/broker/application_templates/
+    ruby templates/deploy.rb
+  popd
+  exit 0
+fi
+
+
 echo "nameserver 4.2.2.2" >> /etc/resolv.conf
 
 #rpm -Uhv http://download.fedora.redhat.com/pub/epel/6/x86_64/epel-release-6-5.noarch.rpm
@@ -294,3 +315,4 @@ then
     rm -rf /root/$repo_name
   done
 fi
+
