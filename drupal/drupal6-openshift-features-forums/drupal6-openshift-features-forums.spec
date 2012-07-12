@@ -5,7 +5,7 @@
 %global modname             forums
 
 Name:    drupal%{drupal_release}-openshift-features-%{modname}
-Version: 1.5.0
+Version: 1.5.1
 Release: 1%{?dist}
 Summary: Openshift Red Hat Custom Forums Feature for Drupal6
 Group:   Applications/Publishing
@@ -41,6 +41,9 @@ rm -rf $RPM_BUILD_ROOT
 %{drupal_modules}/%{modname}
 
 %changelog
+* Wed Jul 11 2012 Adam Miller <admiller@redhat.com> 1.5.1-1
+- bump_minor_versions for sprint 15 (admiller@redhat.com)
+
 * Mon Jul 02 2012 Adam Miller <admiller@redhat.com> 1.4.3-1
 - Remove caching on user_profile_box query so that users don't get clobbered,
   update permissions so everyone can advanced search, and remove forums ctools
