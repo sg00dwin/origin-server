@@ -57,9 +57,9 @@
 
       .row
         .span6
-          %p.gutter.action-more= link_to "Learn about OpenShift", product_overview_path
+          %p.gutter= link_to "Learn about OpenShift", product_overview_path, :class => 'action-more'
         .span6
-          %p.gutter.action-more= link_to "Read the OpenShift blog", openshift_blog_url
+          %p.gutter= link_to "Read the OpenShift blog", openshift_blog_url, :class => 'action-more'
   
   #buzz.section-base
     .container
