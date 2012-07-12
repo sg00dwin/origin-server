@@ -5,7 +5,7 @@
 %global modname             blogs
 
 Name:    drupal%{drupal_release}-openshift-features-%{modname}
-Version: 1.5.0
+Version: 1.5.1
 Release: 1%{?dist}
 Summary: Openshift Red Hat Custom Blog Feature for Drupal6
 Group:   Applications/Publishing
@@ -41,6 +41,9 @@ rm -rf $RPM_BUILD_ROOT
 %{drupal_modules}/%{modname}
 
 %changelog
+* Wed Jul 11 2012 Adam Miller <admiller@redhat.com> 1.5.1-1
+- bump_minor_versions for sprint 15 (admiller@redhat.com)
+
 * Mon Jul 02 2012 Adam Miller <admiller@redhat.com> 1.4.3-1
 - Bug 834725 - Remove blog RSS header from Recent Changes (ccoleman@redhat.com)
 
