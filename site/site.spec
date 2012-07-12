@@ -3,7 +3,7 @@
 
 Summary:   Li site components
 Name:      rhc-site
-Version: 0.95.12
+Version: 0.95.13
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -126,6 +126,19 @@ rm -rf %{buildroot}
 /bin/touch %{sitedir}/log/production.log
 
 %changelog
+* Wed Jul 11 2012 Adam Miller <admiller@redhat.com> 0.95.13-1
+- Add more tests to verify filtering and behavior of application template
+  methods and make the filtering apply after the objects have been type
+  converted (ccoleman@redhat.com)
+- Allow templates to be added which do not show up in production (the
+  :in_development / 'in_development' category/tag) (ccoleman@redhat.com)
+- Add an integration test specifically for the Streamline confirm twice failure
+  and rescue body errors so the ticket can be retrieved (ccoleman@redhat.com)
+- Merge pull request #50 from sg00dwin/master (ccoleman@redhat.com)
+- Merge branch 'master' of github.com:openshift/li (sgoodwin@redhat.com)
+- Visual edits and bug fix (sgoodwin@redhat.com)
+- merge into one file for _code.scss (sgoodwin@redhat.com)
+
 * Tue Jul 10 2012 Adam Miller <admiller@redhat.com> 0.95.12-1
 - Add tests to streamline to ensure parse failures are handled.
   (ccoleman@redhat.com)
