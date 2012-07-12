@@ -5,7 +5,7 @@
 %global modname             video
 
 Name:    drupal%{drupal_release}-openshift-features-%{modname}
-Version: 1.2.4
+Version: 1.3.0
 Release: 1%{?dist}
 Summary: Openshift Red Hat Custom Video Feature for Drupal6
 Group:   Applications/Publishing

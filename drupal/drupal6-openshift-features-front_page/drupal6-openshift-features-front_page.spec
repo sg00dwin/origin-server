@@ -5,7 +5,7 @@
 %global modname             front_page
 
 Name:    drupal%{drupal_release}-openshift-features-%{modname}
-Version: 1.3.3
+Version: 1.4.0
 Release: 1%{?dist}
 Summary: Openshift Red Hat Custom Front Page Feature for Drupal6
 Group:   Applications/Publishing

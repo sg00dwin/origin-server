@@ -1,6 +1,6 @@
 Summary:   Common dependencies of the libra server and node
 Name:      rhc-common
-Version: 0.80.3
+Version: 0.81.0
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
