@@ -5,7 +5,7 @@
 %global modname             video
 
 Name:    drupal%{drupal_release}-openshift-features-%{modname}
-Version: 1.2.3
+Version: 1.2.4
 Release: 1%{?dist}
 Summary: Openshift Red Hat Custom Video Feature for Drupal6
 Group:   Applications/Publishing
@@ -41,6 +41,12 @@ rm -rf $RPM_BUILD_ROOT
 %{drupal_modules}/%{modname}
 
 %changelog
+* Wed Jul 11 2012 Adam Miller <admiller@redhat.com> 1.2.4-1
+- Bug 814844 - Followup to previous commit, needed to redefine some labels and
+  ensure that the layout shows up in both (ccoleman@redhat.com)
+- Bug 814844 - Add Tudou media type to videos, ensures that tudou will get
+  enabled on new envs (ccoleman@redhat.com)
+
 * Sat Jun 23 2012 Dan McPherson <dmcphers@redhat.com> 1.2.3-1
 - 
 
