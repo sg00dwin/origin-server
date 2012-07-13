@@ -3,7 +3,7 @@
 
 Summary:   Li broker components
 Name:      rhc-broker
-Version: 0.95.21
+Version: 0.95.22
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -112,6 +112,9 @@ rm -rf $RPM_BUILD_ROOT
 /bin/touch %{_localstatedir}/log/stickshift/user_action.log
 
 %changelog
+* Fri Jul 13 2012 Adam Miller <admiller@redhat.com> 0.95.22-1
+- Fixing template generation (fotios@redhat.com)
+
 * Wed Jul 11 2012 Adam Miller <admiller@redhat.com> 0.95.21-1
 - Updating gem versions (admiller@redhat.com)
 - added mcollective-qpid-plugin as a dep to rhc-broker rpm
