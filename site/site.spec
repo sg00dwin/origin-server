@@ -3,7 +3,7 @@
 
 Summary:   Li site components
 Name:      rhc-site
-Version: 0.96.1
+Version: 0.96.2
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -126,6 +126,23 @@ rm -rf %{buildroot}
 /bin/touch %{sitedir}/log/production.log
 
 %changelog
+* Fri Jul 13 2012 Adam Miller <admiller@redhat.com> 0.96.2-1
+- Streamline fixed the confirm email bug in staging so that confirm can be done
+  twice. (ccoleman@redhat.com)
+- Merge pull request #65 from
+  smarterclayton/bug_839545_duplicate_text_in_template (ccoleman@redhat.com)
+- Bug 839545 - The provides element on a template should be coerced to an array
+  (ccoleman@redhat.com)
+- Merge pull request #60 from
+  smarterclayton/bug_839127_update_client_install_docs (ccoleman@redhat.com)
+- Merge pull request #59 from nhr/BZ838062r1 (ccoleman@redhat.com)
+- Bug 839127 - Update the client getting started documentation to be more gem
+  centric (cross platform) and link out to a new developer center page.
+  (ccoleman@redhat.com)
+- Building controller now differentiates between Jenkins server DNS delays and
+  other Jenkins client cartridge creation errors. Also revised/streamlined
+  cartridge save attempt logic (nhr@redhat.com)
+
 * Wed Jul 11 2012 Adam Miller <admiller@redhat.com> 0.96.1-1
 - bump_minor_versions for sprint 15 (admiller@redhat.com)
 
