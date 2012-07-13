@@ -815,7 +815,7 @@ mkdir -p /tmp/rhc/junit
         puts "---------------------------------------------------------"
 
         # FIXME - HACK TO MAKE SURE TEMPLATES ARE CREATED
-        inst_template_cmd = "/bin/bash li-devenv.sh --install_templates;"
+        inst_template_cmd = "set -e; /bin/bash li-devenv.sh --install_templates;"
         template_output = ssh(hostname, inst_template_cmd, 3600)
         puts "Done"
 
