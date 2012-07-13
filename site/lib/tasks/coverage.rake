@@ -5,7 +5,7 @@
 
 require 'fileutils'
 
-namespace :rcov do
+namespace :coverage do
 
   task :clean do
     rm_rf "test/coverage"
@@ -41,13 +41,13 @@ namespace :rcov do
 
   desc 'Coverage analysis of all tests'
   task :all => :clean do
-    Rake::Task["rcov:units"].invoke
-    Rake::Task["rcov:functionals"].invoke
-    Rake::Task["rcov:integrations"].invoke
+    Rake::Task["coverage:units"].invoke
+    Rake::Task["coverage:functionals"].invoke
+    Rake::Task["coverage:integrations"].invoke
   end
 
 end
  
-task :rcov do
-  Rake::Task["rcov:all"].invoke
+task :coverage do
+  Rake::Task["coverage:all"].invoke
 end
