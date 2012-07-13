@@ -2,7 +2,7 @@
 
 Summary:       Multi-tenant cloud management system node tools
 Name:          rhc-node
-Version: 0.95.7
+Version: 0.95.8
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -271,6 +271,9 @@ fi
 /lib64/security/pam_libra.so
 
 %changelog
+* Fri Jul 13 2012 Adam Miller <admiller@redhat.com> 0.95.8-1
+- Corrected check period (jhonce@redhat.com)
+
 * Tue Jul 10 2012 Adam Miller <admiller@redhat.com> 0.95.7-1
 - Remove unused methods from ddl. (mpatel@redhat.com)
 
