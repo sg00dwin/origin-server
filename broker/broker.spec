@@ -3,7 +3,7 @@
 
 Summary:   Li broker components
 Name:      rhc-broker
-Version: 0.96.1
+Version: 0.96.2
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -112,6 +112,12 @@ rm -rf $RPM_BUILD_ROOT
 /bin/touch %{_localstatedir}/log/stickshift/user_action.log
 
 %changelog
+* Fri Jul 13 2012 Adam Miller <admiller@redhat.com> 0.96.2-1
+- Updating gem versions (admiller@redhat.com)
+- update migration to 2.0.15 and add better config for migration
+  (dmcphers@redhat.com)
+- Fixing template generation (fotios@redhat.com)
+
 * Wed Jul 11 2012 Adam Miller <admiller@redhat.com> 0.96.1-1
 - Updating gem versions (admiller@redhat.com)
 - bump_minor_versions for sprint 15 (admiller@redhat.com)
