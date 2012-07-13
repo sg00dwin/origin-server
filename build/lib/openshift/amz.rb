@@ -132,7 +132,7 @@ module OpenShift
       end
     end
 
-    def find_instance(conn, name, use_tag=false, ssh_user="root")
+    def find_instance(conn, name, use_tag=false, block_until_available=true, ssh_user="root")
       if use_tag
         instances = conn.instances.filter('tag-key', 'Name').filter('tag-value', name)
       else
@@ -141,7 +141,7 @@ module OpenShift
       instances.each do |i|
         if (instance_status(i) != :terminated)
           puts "Found instance #{i.id}"
-          block_until_available(i, ssh_user)
+          block_until_available(i, ssh_user) if block_until_available
           return i
         end
       end

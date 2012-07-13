@@ -973,7 +973,7 @@ rm -rf li-working #{working_dirs}
   def terminate(tag)
     options.verbose? ? @@log.level = Logger::DEBUG : @@log.level = Logger::ERROR
     conn = connect(options.region)
-    instance = find_instance(conn, tag, true)
+    instance = find_instance(conn, tag, true, false)
     terminate_instance(instance, true) if instance
   end
 
@@ -1018,7 +1018,7 @@ rm -rf li-working #{working_dirs}
     if options[:launch_new]
       instance = launch_instance(ami, name, 1, "ec2-user")
     else
-      instance = find_instance(conn, name, true, "ec2-user")
+      instance = find_instance(conn, name, true, true, "ec2-user")
     end
     hostname = instance.dns_name
     puts "Done"
