@@ -8,7 +8,7 @@
 
 Summary:   Dependencies for OpenShift development
 Name:      rhc-devenv
-Version: 0.96.10
+Version: 0.96.11
 Release:   1%{?dist}
 Group:     Development/Libraries
 License:   GPLv2
@@ -497,6 +497,11 @@ chmod 750 /usr/sbin/tcpdump
 %{policydir}/*
 
 %changelog
+* Fri Jul 13 2012 Adam Miller <admiller@redhat.com> 0.96.11-1
+- quasi merge of changeset for template creation in devenv
+  (admiller@redhat.com)
+- Enable ssl security in mcollective. (mpatel@redhat.com)
+
 * Tue Jul 10 2012 Adam Miller <admiller@redhat.com> 0.96.10-1
 - Bug 838800 - Update streamline address in drupal, make no cookies the default
   (ccoleman@redhat.com)
