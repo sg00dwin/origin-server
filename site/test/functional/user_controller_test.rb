@@ -71,7 +71,7 @@ class UserControllerTest < ActionController::TestCase
   end
 
   test "should render page" do
-    setup_user
+    with_unique_user
     get :show
     assert_response :success
     assert assigns(:user).email_address.present?
