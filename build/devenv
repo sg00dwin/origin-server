@@ -25,14 +25,16 @@ class DevEnv < Thor
     def sync_repo(repo_name, hostname, ssh_path)
       temp_commit
 
-      # Get the current branch
-      branch = get_branch
+      begin
 
-      puts "Synchronizing local changes from branch #{branch} for repo #{repo_name} from #{File.basename(FileUtils.pwd)}..."
+        # Get the current branch
+        branch = get_branch
 
-      init_repo(hostname, false)
+        puts "Synchronizing local changes from branch #{branch} for repo #{repo_name} from #{File.basename(FileUtils.pwd)}..."
 
-      exitcode = run(%{
+        init_repo(hostname, false)
+
+        exitcode = run(%{
 #######
 # Start shell code
 export GIT_SSH=#{ssh_path}
@@ -43,9 +45,10 @@ git push -q root@#{hostname}:/root/#{repo_name} #{branch}:master --tags --force
 # End shell code
 }, :verbose => options.verbose?)
 
-      puts "Done"
-
-      reset_temp_commit
+        puts "Done"
+      ensure
+        reset_temp_commit
+      end
     end
     
     def sync_sibling_repo(repo_name, repo_dir, hostname, ssh_path)
@@ -782,7 +785,7 @@ mkdir -p /tmp/rhc/junit
         output = ''
         if options.install_from_source
           print "Performing clean install from source..."
-          cmd = 'set -e; sh li-devenv.sh candidate --install_from_source'
+          cmd = 'set -e; /bin/bash li-devenv.sh candidate --install_from_source'
         elsif options.install_from_local_source
           init_repo(hostname)
           ssh_path = File.expand_path(File.dirname(__FILE__)) + "/ssh-override"
@@ -793,15 +796,15 @@ mkdir -p /tmp/rhc/junit
             end
           end
           print "Performing clean install from local source..."
-          cmd = 'set -e; sh li-devenv.sh candidate --install_from_local_source'
+          cmd = 'set -e; /bin/bash li-devenv.sh candidate --install_from_local_source'
         elsif options.install_required_packages
           print "Installing requires..."
-          cmd = "set -e; sh li-devenv.sh #{options.use_stage_repo? ? "stage" : "candidate"} --install_build_prereqs"
+          cmd = "set -e; /bin/bash li-devenv.sh #{options.use_stage_repo? ? "stage" : "candidate"} --install_build_prereqs"
           output += ssh(hostname, cmd, 600)
-          cmd = "set -e; sh li-devenv.sh #{options.use_stage_repo? ? "stage" : "candidate"} --install_required_packages"
+          cmd = "set -e; /bin/bash li-devenv.sh #{options.use_stage_repo? ? "stage" : "candidate"} --install_required_packages"
         else
           print "Performing clean install with the latest code..."
-          cmd = 'set -e ; sh ~/li-devenv.sh'
+          cmd = 'set -e ; /bin/bash ~/li-devenv.sh'
           cmd += ' stage' if options.use_stage_repo?
         end
         output = ssh(hostname, cmd, 3600)
@@ -811,6 +814,16 @@ mkdir -p /tmp/rhc/junit
         puts output
         puts "---------------------------------------------------------"
 
+        # FIXME - HACK TO MAKE SURE TEMPLATES ARE CREATED
+        inst_template_cmd = "set -e; /bin/bash li-devenv.sh --install_templates;"
+        template_output = ssh(hostname, inst_template_cmd, 3600)
+        puts "Done"
+
+        puts "------------- Template Install Output -------------------"
+        puts template_output
+        puts "---------------------------------------------------------"
+        
+        
         validate_instance(hostname) unless options.install_required_packages
 
         manifest = rpm_manifest(hostname)
@@ -944,6 +957,8 @@ popd > /dev/null
 rm -rf li-working #{working_dirs}
 #{options.clean_metadata? ? "yum update -y --enablerepo=ruby193 --exclude='rhc-devenv' rhc-* cartridge-* rubygem-stickshift-* rubygem-gearchanger-* rubygem-uplift-* rubygem-swingshift-*; " : ''}
 
+/bin/bash li-test/misc/devenv/li-devenv.sh --install_templates
+
 # End shell code
 ################
 }, 900, true)
@@ -966,7 +981,7 @@ rm -rf li-working #{working_dirs}
   def terminate(tag)
     options.verbose? ? @@log.level = Logger::DEBUG : @@log.level = Logger::ERROR
     conn = connect(options.region)
-    instance = find_instance(conn, tag, true)
+    instance = find_instance(conn, tag, true, false)
     terminate_instance(instance, true) if instance
   end
 
@@ -1011,7 +1026,7 @@ rm -rf li-working #{working_dirs}
     if options[:launch_new]
       instance = launch_instance(ami, name, 1, "ec2-user")
     else
-      instance = find_instance(conn, name, true, "ec2-user")
+      instance = find_instance(conn, name, true, true, "ec2-user")
     end
     hostname = instance.dns_name
     puts "Done"
