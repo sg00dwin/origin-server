@@ -8,7 +8,7 @@
 
 Summary:   Dependencies for OpenShift development
 Name:      rhc-devenv
-Version: 0.97.1
+Version: 0.97.2
 Release:   1%{?dist}
 Group:     Development/Libraries
 License:   GPLv2
@@ -497,6 +497,10 @@ chmod 750 /usr/sbin/tcpdump
 %{policydir}/*
 
 %changelog
+* Fri Jul 13 2012 Adam Miller <admiller@redhat.com> 0.97.2-1
+- Enable ssl security in mcollective. (mpatel@redhat.com)
+- adding template recreation to the devenv sync (admiller@redhat.com)
+
 * Wed Jul 11 2012 Adam Miller <admiller@redhat.com> 0.97.1-1
 - bump_minor_versions for sprint 15 (admiller@redhat.com)
 
