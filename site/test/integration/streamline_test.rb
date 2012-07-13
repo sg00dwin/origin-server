@@ -37,10 +37,12 @@ class StreamlineTest < ActionDispatch::IntegrationTest
 
     assert user.confirm_email
     assert user.errors.empty?
+
+    user.send(:ticket=, nil)
     user.send(:token=, token)
-    assert !user.confirm_email
-    assert user.errors.length == 1
-    assert user.errors[:base][0] =~ /system error/i, "Bug in Streamline was generating an invalid failure.  If that has been fixed, this can be changed to show a more appropriate error (ticket expired)."
+    assert user.confirm_email
+    assert user.errors.empty?
+    assert_nil user.ticket
   end
 
   test 'should return token and accept it for confirmation' do
