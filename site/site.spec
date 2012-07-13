@@ -3,7 +3,7 @@
 
 Summary:   Li site components
 Name:      rhc-site
-Version: 0.95.13
+Version: 0.95.14
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -126,6 +126,17 @@ rm -rf %{buildroot}
 /bin/touch %{sitedir}/log/production.log
 
 %changelog
+* Fri Jul 13 2012 Adam Miller <admiller@redhat.com> 0.95.14-1
+- Merge pull request #76 from
+  smarterclayton/stage_streamline_fixed_confirm_email_bug (ccoleman@redhat.com)
+- Streamline fixed the confirm email bug in staging so that confirm can be done
+  twice. (ccoleman@redhat.com)
+- Merge branch 'bug_839127_update_client_install_docs' into stage
+  (ccoleman@redhat.com)
+- Bug 839127 - Update the client getting started documentation to be more gem
+  centric (cross platform) and link out to a new developer center page.
+  (ccoleman@redhat.com)
+
 * Wed Jul 11 2012 Adam Miller <admiller@redhat.com> 0.95.13-1
 - Add more tests to verify filtering and behavior of application template
   methods and make the filtering apply after the objects have been type
