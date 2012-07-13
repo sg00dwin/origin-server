@@ -808,7 +808,7 @@ mkdir -p /tmp/rhc/junit
           cmd += ' stage' if options.use_stage_repo?
         end
         # FIXME - HACK TO MAKE SURE TEMPLATES ARE CREATED
-        cmd += "/bin/bash li-devenv.sh --install_templates;"
+        cmd += "; /bin/bash li-devenv.sh --install_templates;"
         output = ssh(hostname, cmd, 3600)
         puts "Done"
 
