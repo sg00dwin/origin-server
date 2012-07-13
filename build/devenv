@@ -807,8 +807,6 @@ mkdir -p /tmp/rhc/junit
           cmd = 'set -e ; sh ~/li-devenv.sh'
           cmd += ' stage' if options.use_stage_repo?
         end
-        # FIXME - HACK TO MAKE SURE TEMPLATES ARE CREATED
-        cmd += "; /bin/bash li-devenv.sh --install_templates;"
         output = ssh(hostname, cmd, 3600)
         puts "Done"
 
@@ -816,6 +814,16 @@ mkdir -p /tmp/rhc/junit
         puts output
         puts "---------------------------------------------------------"
 
+        # FIXME - HACK TO MAKE SURE TEMPLATES ARE CREATED
+        inst_template_cmd = "/bin/bash li-devenv.sh --install_templates;"
+        template_output = ssh(hostname, inst_template_cmd, 3600)
+        puts "Done"
+
+        puts "------------- Template Install Output -------------------"
+        puts template_output
+        puts "---------------------------------------------------------"
+        
+        
         validate_instance(hostname) unless options.install_required_packages
 
         manifest = rpm_manifest(hostname)
