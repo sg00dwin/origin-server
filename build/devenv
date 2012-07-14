@@ -257,9 +257,16 @@ mkdir -p /tmp/rhc/junit
     def validate_instance(hostname)
       # Validate the node installation
       print "Validating instance..."
-      unless is_valid?(hostname)
-        puts "ERROR - instance is not valid"
-        exit 1
+      num_tries = 3
+      (1..num_tries).each |i| do
+        unless is_valid?(hostname)
+          if i == num_tries
+            puts "ERROR - instance is not valid"
+            exit 1
+          end
+        else
+          break
+        end
       end
       puts "Done"
     end

@@ -260,8 +260,12 @@ module OpenShift
 
     def is_valid?(hostname)
       @validation_output = ssh(hostname, '/usr/bin/rhc-accept-devenv')
-      log.info "Node Acceptance Output = #{@validation_output}"
-      @validation_output == "PASS"
+      if @validation_output == "PASS"
+        return true
+      else
+        puts "Node Acceptance Output = #{@validation_output}"
+        return false
+      end
     end
 
     def get_private_ip(hostname)
