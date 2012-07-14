@@ -80,12 +80,13 @@ def migrate_gear(rhlogin, app_name, gear_uuid, version)
                 redeploy_httpd_proxy = REDEPLOY_HTTPD_PROXY_CART_TYPES.nil?
 
                 if RECREATE_HTTPD_PROXY_CART_TYPES || REDEPLOY_HTTPD_PROXY_CART_TYPES
+                  gear_cartridges = gear.cartridges
                   RECREATE_HTTPD_PROXY_CART_TYPES.each do |cart_name|
-                    recreate_httpd_proxy = gear.cartridges.include?(cart_name)
+                    recreate_httpd_proxy = gear_cartridges.include?(cart_name)
                     break if recreate_httpd_proxy
                   end
                   REDEPLOY_HTTPD_PROXY_CART_TYPES.each do |cart_name|
-                    redeploy_httpd_proxy = gear.cartridges.include?(cart_name)
+                    redeploy_httpd_proxy = gear_cartridges.include?(cart_name)
                     break if redeploy_httpd_proxy
                   end unless redeploy_httpd_proxy
                 end unless recreate_httpd_proxy

@@ -359,6 +359,8 @@ mkdir -p /tmp/rhc/junit
 
     def test_instance(tag, hostname, instance, conn, options, image_id=nil)
       begin
+        
+        validate_instance(hostname)
 
         disable_charlie(hostname) if options.disable_charlie?
         
@@ -1306,6 +1308,8 @@ END
 
     instance = find_instance(conn, tag, true)
     hostname = instance.dns_name
+    
+    validate_instance(hostname)
 
     threads = []
     failures = []

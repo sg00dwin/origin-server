@@ -1,0 +1,36 @@
+#!/usr/bin/ruby
+
+output = `rhc-accept-node`
+exit_code = $?
+if exit_code != 0
+  puts "Accept Node Output: #{output}"
+  exit exit_code
+end
+
+output = `service libra-site status`
+exit_code = $?
+if exit_code != 0
+  puts "Site Status Output: #{output}"
+  exit exit_code
+end
+
+output = `service libra-broker status`
+exit_code = $?
+if exit_code != 0
+  puts "Broker Status Output: #{output}"
+  exit exit_code
+end
+
+status_code = `curl -s -w %{http_code} --output /dev/null --insecure https://localhost/app`
+if status_code != '200'
+  puts "Site returned a status code of #{status_code}"
+  exit 1
+end
+
+status_code = `curl -s -w %{http_code} --output /dev/null --user test:test --insecure  https://localhost/broker/rest/cartridges/standalone`
+if status_code != '200'
+  puts "Broker returned a status code of #{status_code}"
+  exit 1
+end
+
+puts 'PASS'

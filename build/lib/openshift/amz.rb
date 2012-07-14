@@ -259,7 +259,7 @@ module OpenShift
     end
 
     def is_valid?(hostname)
-      @validation_output = ssh(hostname, '/usr/bin/rhc-accept-node')
+      @validation_output = ssh(hostname, '/usr/bin/rhc-accept-devenv')
       log.info "Node Acceptance Output = #{@validation_output}"
       @validation_output == "PASS"
     end
