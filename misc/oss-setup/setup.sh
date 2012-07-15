@@ -27,8 +27,8 @@ if [ ! -d ${repodir}/jenkins-cloud ]; then
   git clone git:/srv/git/jenkins-cloud.git ${repodir}/jenkins-cloud
 fi
 
-if [ ! -d ${repodir}/os-client-tools ]; then
-  git clone git://github.com/openshift/os-client-tools.git ${repodir}/os-client-tools
+if [ ! -d ${repodir}/rhc ]; then
+  git clone git://github.com/openshift/rhc.git ${repodir}/rhc
 fi
 
 mkdir -p ${repodir}/brew

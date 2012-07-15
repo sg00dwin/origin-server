@@ -28,10 +28,10 @@ else
 fi
 
 rm -rf ${repodir}/tito/*
-cd ${repodir}/os-client-tools/rhc-rest
+cd ${repodir}/rhc/rhc-rest
 tito build $test_build --srpm --output=${repodir}/tito
 
-cd ${repodir}/os-client-tools/express
+cd ${repodir}/rhc/express
 tito build $test_build --srpm --output=${repodir}/tito
 
 cd ${repodir}/crankcase/stickshift

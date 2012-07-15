@@ -217,8 +217,8 @@ function get_package_name {
   echo "$package_name"
 }
 
-github_repos=( crankcase os-client-tools )
-repos=( crankcase os-client-tools li-working )
+github_repos=( crankcase rhc )
+repos=( crankcase rhc li-working )
 
 branch="master"
 if [ "$1" == "stage" ]

@@ -1406,8 +1406,8 @@ END
   def install_local_client
     options.verbose? ? @@log.level = Logger::DEBUG : @@log.level = Logger::ERROR
 
-    if File.exists?('../os-client-tools')
-      inside('../os-client-tools') do
+    if File.exists?('../rhc')
+      inside('../rhc') do
         temp_commit
 
         puts "building rhc..."
@@ -1420,7 +1420,7 @@ END
         puts "Done"
       end
     else
-      puts "Couldn't find ../os-client-tools."
+      puts "Couldn't find ../rhc."
     end
   end
 
