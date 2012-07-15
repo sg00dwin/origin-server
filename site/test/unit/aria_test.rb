@@ -6,7 +6,7 @@ require 'aria'
 # Mock tests only - should verify functionality of ActiveResource extensions
 # and simple server/client interactions via HttpMock
 #
-class AriaTest < ActiveSupport::TestCase
+class AriaUnitTest < ActiveSupport::TestCase
   setup { WebMock.disable_net_connect! }
   teardown { WebMock.allow_net_connect! }
 

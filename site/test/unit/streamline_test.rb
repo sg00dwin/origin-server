@@ -14,7 +14,7 @@ class StreamlineTester < Streamline::Base
   end
 end
 
-class StreamlineTest < ActiveSupport::TestCase
+class StreamlineUnitTest < ActiveSupport::TestCase
 
   setup { Rails.cache.clear }
 

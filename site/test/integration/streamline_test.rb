@@ -1,6 +1,6 @@
 require File.expand_path('../../test_helper', __FILE__)
 
-class StreamlineTest < ActionDispatch::IntegrationTest
+class StreamlineIntegrationTest < ActionDispatch::IntegrationTest
 
   def confirmed_user
     @@confirmed_user ||= begin
