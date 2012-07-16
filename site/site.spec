@@ -136,11 +136,12 @@ rm -rf %{buildroot}
 %exclude %{sitedir}/tmp/javascripts
 %exclude %{sitedir}/tmp/stylesheets
 
-%files static
-%{sitedir}/public
-
 %post
 /bin/touch %{sitedir}/log/production.log
+
+%files static
+%defattr(0640,root,libra_user,0750)
+%{sitedir}/public
 
 %changelog
 * Fri Jul 13 2012 Adam Miller <admiller@redhat.com> 0.96.2-1
