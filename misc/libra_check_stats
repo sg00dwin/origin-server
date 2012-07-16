@@ -1,0 +1,46 @@
+#!/usr/bin/env python
+#
+# libra_check_stats
+#
+# Statistics on currently in-history jenkins libra_check jobs
+#
+# NOTE: This needs to be run from within a shell environment with https_proxy
+#       set properly
+#
+# Adam Miller - <admiller@redhat.com>
+#
+# PEP8 - 2 space width 
+
+import urllib2
+import json
+
+num_withoutstatus = 0
+num_success = 0
+num_fail = 0
+
+
+fd = urllib2.urlopen("https://ci.dev.openshift.redhat.com/jenkins/job/libra_check/api/json")
+
+jobs_json = json.load(fd)
+
+for build in jobs_json[u'builds']:
+  bfd = urllib2.urlopen("%s/api/json" % build[u'url'])
+  build_json = json.load(bfd)
+
+  if build_json[u'result'] == "SUCCESS":
+    num_success = num_success + 1
+  elif build_json[u'result'] == "FAILURE":
+    num_fail = num_fail + 1
+  else:
+    # Negate jobs without status (terminated or still running)
+    num_withoutstatus = num_withoutstatus + 1
+
+#  print "%s - %s" % (build_json[u'number'],build_json[u'result'])
+  
+
+total_builds = len(jobs_json[u'builds']) - num_withoutstatus
+print "=== libra_check Stats: ==="
+print "Total builds: %d" % total_builds
+print "Num Fail: %d" % num_fail
+print "Num Success: %d" % num_success
+print "Success Rate: %2f" % (num_success / float(total_builds))
