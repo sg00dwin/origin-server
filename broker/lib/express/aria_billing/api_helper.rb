@@ -27,7 +27,7 @@ module Express
         {
           'userid' => user_id,
           'password' => "nopass786",
-          'master_plan_no' => get_plan_id(plan_name),
+          'master_plan_no' => get_plan_no(plan_name),
           'master_plan_units' => 1,
           'status_cd' => 1,
           'supp_field_names' => "RHLogin",
@@ -92,12 +92,12 @@ module Express
         }
       end
 
-      def get_user_id_from_acct_no(acct_no)
+      def get_userid_from_acct_no(acct_no)
         {
           'acct_no' => acct_no,
           'client_no' => @client_no,
           'auth_key' => @auth_key,
-          'rest_call' => "get_user_id_from_acct_no"
+          'rest_call' => "get_userid_from_acct_no"
         }
       end
 
@@ -149,12 +149,21 @@ module Express
           'rest_call' => "get_acct_plans_all"
         }
       end
+      
+      def get_acct_details_all(acct_no)
+        {
+          'acct_no' => acct_no,
+          'client_no' => @client_no,
+          'auth_key' => @auth_key,
+          'rest_call' => "get_acct_details_all"
+        }
+      end
 
       def update_master_plan(acct_no, plan_name,
                              num_plan_units=1, assignment_directive=2)
         {
           'acct_no' => acct_no,
-          'master_plan_no' => get_plan_id(plan_name),
+          'master_plan_no' => get_plan_no(plan_name),
           'num_plan_units' => num_plan_units,
           'assignment_directive' => assignment_directive,
           'client_no' => @client_no,
@@ -213,13 +222,23 @@ module Express
 
       private
 
-      def get_plan_id(plan_name=nil)
-        plan_id = @plans[:FreeShift][:id]
-        if plan_name
-          if @plans.include?(plan_name)
-            plan_id = @plans[plan_name][:id]
+      def get_plan_no(plan_id=nil)
+        plan_no = @plans[:freeshift][:plan_no]
+        if plan_id
+          if @plans.include?(plan_id)
+            plan_no = @plans[plan_id][:plan_no]
           else
-            raise Express::AriaBilling::Exception.new "Invalid Billing Plan name: #{plan_name}"
+            raise Express::AriaBilling::Exception.new "Invalid Billing Plan Id: #{plan_id}"
+          end
+        end
+        plan_no
+      end
+      
+      def get_plan_id_from_plan_no(plan_no)
+        plan_id = nil
+        @plans.each do |key, value|
+          if value[:plan_no] == plan_no
+            plan_id = key
           end
         end
         plan_id
@@ -229,7 +248,7 @@ module Express
         unless @supp_plans.include?(supp_plan_name)
           raise Express::AriaBilling::Exception.new "Invalid Billing Supplemental Plan name: #{supp_plan_name}"
         end
-        @supp_plans[supp_plan_name][:id]
+        @supp_plans[supp_plan_name][:plan_no]
       end
     end
   end
