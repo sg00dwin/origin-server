@@ -1,7 +1,7 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <project>
   <actions/>
-  <description>Build each github pull request and update github comment with results. Automation will not run if libra_check job is not in Success state.</description>
+  <description>Run devenv test against this commit</description>
   <logRotator>
     <daysToKeep>10</daysToKeep>
     <numToKeep>50</numToKeep>
@@ -33,7 +33,7 @@
         <string>uploadpack</string>
         <string>git-upload-pack</string>
         <string>url</string>
-        <string>git://git1.ops.rhcloud.com/li.git/</string>
+        <string>git@github.com:openshift/li.git</string>
         <string>tagopt</string>
         <string></string>
       </org.spearce.jgit.transport.RemoteConfig>
@@ -59,7 +59,7 @@
     <skipTag>false</skipTag>
   </scm>
   <canRoam>true</canRoam>
-  <disabled>false</disabled>
+  <disabled>true</disabled>
   <blockBuildWhenDownstreamBuilding>false</blockBuildWhenDownstreamBuilding>
   <blockBuildWhenUpstreamBuilding>false</blockBuildWhenUpstreamBuilding>
   <authToken>libra1</authToken>
@@ -67,25 +67,26 @@
   <concurrentBuild>true</concurrentBuild>
   <builders>
     <hudson.tasks.Shell>
-      <command>echo &quot;RUNNING for Pull Request: https://github.com/openshift/crankcase/pull/$CRANKCASE_PULL_ID&quot;
+      <command>echo &quot;RUNNING for Pull Request: https://github.com/openshift/os-client-tools/pull/$CRANKCASE_PULL_ID&quot;
 
 echo &quot;Updating comment id $COMMENT_ID&quot;
 
 # Build and install HEAD for the integration tests
-build/devenv launch pull_request_${BUILD_NUMBER} --verifier --instance_type m1.large
+build/devenv launch rhc_pull_request_${BUILD_NUMBER} --verifier --instance_type m1.large
 
-rm -rf li crankcase
+rm -rf li os-client-tools crankcase
 ln -s `pwd` li
 git clone git://github.com/openshift/crankcase.git
-pushd crankcase
-curl https://github.com/openshift/crankcase/pull/$CRANKCASE_PULL_ID.patch | git am
+git clone git://github.com/openshift/os-client-tools.git
+pushd os-client-tools
+curl https://github.com/openshift/os-client-tools/pull/$CRANKCASE_PULL_ID.patch | git am
 popd
 pushd li
 
-build/devenv sync pull_request_${BUILD_NUMBER} --tag --clean_metadata
+build/devenv sync rhc_pull_request_${BUILD_NUMBER} --tag --clean_metadata
 
 # Run the &apos;verification&apos; tests to test higher level components
-build/devenv test pull_request_${BUILD_NUMBER} --terminate
+build/devenv test rhc_pull_request_${BUILD_NUMBER} --terminate
 RESULT=$?</command>
     </hudson.tasks.Shell>
   </builders>

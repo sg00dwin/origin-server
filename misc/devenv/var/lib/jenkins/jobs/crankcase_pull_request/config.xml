@@ -1,15 +1,30 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <project>
   <actions/>
-  <description>This is a work in progress - see mmcgrath.  He&apos;s up to trouble!</description>
+  <description></description>
   <logRotator>
     <daysToKeep>10</daysToKeep>
-    <numToKeep>10</numToKeep>
+    <numToKeep>50</numToKeep>
     <artifactDaysToKeep>10</artifactDaysToKeep>
-    <artifactNumToKeep>10</artifactNumToKeep>
+    <artifactNumToKeep>50</artifactNumToKeep>
   </logRotator>
   <keepDependencies>false</keepDependencies>
-  <properties/>
+  <properties>
+    <hudson.model.ParametersDefinitionProperty>
+      <parameterDefinitions>
+        <hudson.model.StringParameterDefinition>
+          <name>CRANKCASE_PULL_ID</name>
+          <description></description>
+          <defaultValue></defaultValue>
+        </hudson.model.StringParameterDefinition>
+        <hudson.model.StringParameterDefinition>
+          <name>CRANKCASE_BRANCH</name>
+          <description></description>
+          <defaultValue>master</defaultValue>
+        </hudson.model.StringParameterDefinition>
+      </parameterDefinitions>
+    </hudson.model.ParametersDefinitionProperty>
+  </properties>
   <scm class="hudson.plugins.git.GitSCM">
     <configVersion>1</configVersion>
     <remoteRepositories>
@@ -52,20 +67,31 @@
   <disabled>true</disabled>
   <blockBuildWhenDownstreamBuilding>false</blockBuildWhenDownstreamBuilding>
   <blockBuildWhenUpstreamBuilding>false</blockBuildWhenUpstreamBuilding>
-  <triggers class="vector">
-    <hudson.triggers.SCMTrigger>
-      <spec>*/15 * * * *</spec>
-    </hudson.triggers.SCMTrigger>
-  </triggers>
-  <concurrentBuild>false</concurrentBuild>
+  <authToken>libra1</authToken>
+  <triggers class="vector"/>
+  <concurrentBuild>true</concurrentBuild>
   <builders>
     <hudson.tasks.Shell>
-      <command># Build and install HEAD for the integration tests
-build/devenv launch node_check_${BUILD_NUMBER} --verifier
-build/devenv sync node_check_${BUILD_NUMBER} --tag --clean_metadata
+      <command>echo &quot;RUNNING for Pull Request: https://github.com/openshift/crankcase/pull/$CRANKCASE_PULL_ID&quot;
+
+echo &quot;Updating comment id $COMMENT_ID&quot;
+
+# Build and install HEAD for the integration tests
+build/devenv launch crankcase_pull_request_${BUILD_NUMBER} --verifier --instance_type m1.large
+
+rm -rf li crankcase
+ln -s `pwd` li
+git clone git://github.com/openshift/crankcase.git
+pushd crankcase
+curl https://github.com/openshift/crankcase/pull/$CRANKCASE_PULL_ID.patch | git am
+popd
+pushd li
+
+build/devenv sync crankcase_pull_request_${BUILD_NUMBER} --tag --clean_metadata
 
 # Run the &apos;verification&apos; tests to test higher level components
-build/devenv test node_check_${BUILD_NUMBER} --exclude-internal --exclude-verification --include-cucumber=node --terminate</command>
+build/devenv test crankcase_pull_request_${BUILD_NUMBER} --terminate
+RESULT=$?</command>
     </hudson.tasks.Shell>
   </builders>
   <publishers>
@@ -73,11 +99,6 @@ build/devenv test node_check_${BUILD_NUMBER} --exclude-internal --exclude-verifi
       <artifacts>rhc/log/**</artifacts>
       <latestOnly>false</latestOnly>
     </hudson.tasks.ArtifactArchiver>
-    <hudson.tasks.Mailer>
-      <recipients>mmcgrath@redhat.com</recipients>
-      <dontNotifyEveryUnstableBuild>true</dontNotifyEveryUnstableBuild>
-      <sendToIndividuals>false</sendToIndividuals>
-    </hudson.tasks.Mailer>
   </publishers>
   <buildWrappers/>
 </project>
