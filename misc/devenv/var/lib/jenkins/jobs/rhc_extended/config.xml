@@ -9,27 +9,7 @@
     <artifactNumToKeep>10</artifactNumToKeep>
   </logRotator>
   <keepDependencies>false</keepDependencies>
-  <properties>
-    <hudson.model.ParametersDefinitionProperty>
-      <parameterDefinitions>
-        <hudson.model.StringParameterDefinition>
-          <name>BUILD_CLEAN_AMI</name>
-          <description></description>
-          <defaultValue>false</defaultValue>
-        </hudson.model.StringParameterDefinition>
-        <hudson.model.StringParameterDefinition>
-          <name>INSTALL_FROM_SOURCE</name>
-          <description></description>
-          <defaultValue>true</defaultValue>
-        </hudson.model.StringParameterDefinition>
-        <hudson.model.StringParameterDefinition>
-          <name>BUILD_UPDATE_AMI</name>
-          <description></description>
-          <defaultValue>false</defaultValue>
-        </hudson.model.StringParameterDefinition>
-      </parameterDefinitions>
-    </hudson.model.ParametersDefinitionProperty>
-  </properties>
+  <properties/>
   <scm class="hudson.plugins.git.GitSCM">
     <configVersion>1</configVersion>
     <remoteRepositories>
@@ -70,26 +50,18 @@
   </scm>
   <canRoam>true</canRoam>
   <disabled>true</disabled>
-  <blockBuildWhenDownstreamBuilding>true</blockBuildWhenDownstreamBuilding>
+  <blockBuildWhenDownstreamBuilding>false</blockBuildWhenDownstreamBuilding>
   <blockBuildWhenUpstreamBuilding>false</blockBuildWhenUpstreamBuilding>
-  <authToken>libra1</authToken>
   <triggers class="vector"/>
-  <concurrentBuild>true</concurrentBuild>
+  <concurrentBuild>false</concurrentBuild>
   <builders>
     <hudson.tasks.Shell>
-      <command>if [ &quot;$BUILD_CLEAN_AMI&quot; == &quot;true&quot; ]
-then
-  build/devenv build devenv ${BUILD_NUMBER} --register --official --terminate --build_clean_ami --instance_type m1.large
-elif [ &quot;$INSTALL_FROM_SOURCE&quot; == &quot;true&quot; ]
-then
-  build/devenv build devenv ${BUILD_NUMBER} --register --official --terminate --install_from_source --instance_type m1.large
-elif [ &quot;$BUILD_UPDATE_AMI&quit; == &quot;true&quot; ]
-then
-  build/devenv build devenv ${BUILD_NUMBER} --register --official --terminate --instance_type m1.large
-else
-  printf &quot;ERROR: incorrect or insufficient build parameters\n&quot;
-  exit 1
-fi</command>
+      <command># Build and install HEAD for the tests
+build/devenv launch rhc_extended_${BUILD_NUMBER} --verifier --instance_type m1.large
+build/devenv sync rhc_extended_${BUILD_NUMBER} --tag --clean_metadata
+
+# Run the &apos;verification&apos; tests to test higher level components
+build/devenv test rhc_extended_${BUILD_NUMBER} --terminate --include_extended=rhc</command>
     </hudson.tasks.Shell>
   </builders>
   <publishers>
@@ -97,17 +69,9 @@ fi</command>
       <artifacts>rhc/log/**</artifacts>
       <latestOnly>false</latestOnly>
     </hudson.tasks.ArtifactArchiver>
-    <hudson.tasks.BuildTrigger>
-      <childProjects>libra_coverage, broker_extended, runtime_extended, site_extended, rhc_extended</childProjects>
-      <threshold>
-        <name>SUCCESS</name>
-        <ordinal>0</ordinal>
-        <color>BLUE</color>
-      </threshold>
-    </hudson.tasks.BuildTrigger>
     <hudson.tasks.Mailer>
       <recipients>libra-devel@redhat.com</recipients>
-      <dontNotifyEveryUnstableBuild>false</dontNotifyEveryUnstableBuild>
+      <dontNotifyEveryUnstableBuild>true</dontNotifyEveryUnstableBuild>
       <sendToIndividuals>false</sendToIndividuals>
     </hudson.tasks.Mailer>
   </publishers>

@@ -56,12 +56,12 @@
   <concurrentBuild>false</concurrentBuild>
   <builders>
     <hudson.tasks.Shell>
-      <command># Build and install HEAD for the integration tests
-build/devenv launch libra_extended_${BUILD_NUMBER} --verifier --instance_type m1.large
-build/devenv sync libra_extended_${BUILD_NUMBER} --tag --clean_metadata
+      <command># Build and install HEAD for the tests
+build/devenv launch broker_extended_${BUILD_NUMBER} --verifier --instance_type m1.large
+build/devenv sync broker_extended_${BUILD_NUMBER} --tag --clean_metadata
 
 # Run the &apos;verification&apos; tests to test higher level components
-build/devenv test libra_extended_${BUILD_NUMBER} --terminate --exclude_internal --exclude_verification --include_extended</command>
+build/devenv test broker_extended_${BUILD_NUMBER} --terminate --include_extended=broker</command>
     </hudson.tasks.Shell>
   </builders>
   <publishers>
