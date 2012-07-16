@@ -31,6 +31,8 @@ RedHatCloud::Application.routes.draw do
   #Site not found
   match 'not_found' => 'product#not_found'
   match 'error' => 'product#error'
+  match 'console/not_found' => 'product#console_not_found'
+  match 'console/error' => 'product#console_error'
 
   # Buzz
   match 'twitter_latest_tweet' => 'twitter#latest_tweet'
