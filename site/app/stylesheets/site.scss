@@ -381,23 +381,27 @@ body.signup {
   }
 }
  
-.action-more {
+.action-more,
+.action-more a {
   font-size: 16px;
   color: #bc000d;
   text-decoration: none;
-  
-  &:before {
-    content: '→ ';
-    position: relative;
-    top: -3px;
-  }
+  display: inline;
 }
 
-a.action-more:hover {
-  border-bottom: 1px solid;
+.action-more:hover,
+.action-more a:hover {
   text-decoration: none;
+  border-bottom: 1px solid;
   color: $openshiftBrightRed;
 }
+
+.action-more:before {
+  content: '→ ';
+  position: relative;
+  top: -3px;
+}
+
 
 #learn .action-call { 
   margin-top: -1.3em; 
