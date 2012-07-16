@@ -121,37 +121,35 @@ Broker::Application.configure do
                   :xlarge => 10014151},
         :storage => {:gigabyte_hour => 10037755}
       },
-      :datastore_enabled => false,
-      :default_max_gears => 3,
+      :default_plan => :freeshift,
       :plans => {
         :freeshift => {
-          :max_gears => 3,
-          :vip => false,
           :plan_no => 10044929,
-          :name => "FreeShift"
+          :name => "FreeShift",
+          :capabilities => {
+            'max_gears' => 3,
+            'gear_sizes' => ["small"]
+          }
         },
         :megashift => {
-          :max_gears => 16,
-          :vip => true,
           :plan_no => 10044931,
-          :name => "MegaShift"
+          :name => "MegaShift",
+          :capabilities => {
+            'max_gears' => 16,
+            'gear_sizes' => ["small", "medium"],
+            'max_storage_per_gear' => 30 # 30GB
+          }
         }
       },
-      :supp_plans => {
-        :megashiftstorage => {
-          :parent_plan => :megashift,
-          :plan_no => 10088295,
-          :name => "MegaShiftStorage"
-          #TBD
-        }
-      }
+      :supp_plans => {}
     }
   }
 
   # SS Config
   config.ss = {
     :domain_suffix => "dev.rhcloud.com",
-    :default_max_gears => 3
+    :default_max_gears => 3,
+    :default_gear_size => "small"
   }
 
   # Profiler config
@@ -166,7 +164,11 @@ Broker::Application.configure do
   # Cloud9
   config.cloud9 = {
     :user_login => "c9",
-    :node_profile => "c9"
+    :capabilities => {
+      'gear_sizes' => ["c9"],
+      'subaccounts' => true,
+      'inherit_on_subaccounts' => ["gear_sizes"]
+    }
   }
 
   # mcollective configuration

@@ -32,8 +32,6 @@ Options:
     Set the maximum number of gears a user is allowed to use
   --setconsumedgears <number>
     Set the number of gears a user has consumed (use carefully)
-  --setvip (true|false)
-    Set the vip status of the user
   --listsubaccounts
     List the subaccounts that have been created under this parent account (rhlogin)
   --addsubaccount <subaccount login>
@@ -46,6 +44,8 @@ Options:
     Add gearsize to the capability for this rhlogin user
   --removegearsize <gearsize>
     Remove gearsize from the capability for this rhlogin user
+  --inheritgearsizes (true|false)
+    Allow / Disallow inheritance of rhlogin user gearsizes capability to sub accounts
   -h|--help
     Show Usage info
 
@@ -99,23 +99,6 @@ def set_consumed_gears(user, consumedgears)
     #    puts "An error occurred saving the user."
     #    exit 6
     #end
-end
-
-def set_vip(user, vip)
-    if user.vip == vip
-        puts "User already has vip set to #{user.vip}"
-        return
-    end
-
-    print "Setting vip to #{vip}... "
-    user.vip = vip
-    result = user.save
-    puts "Done."
-
-    if result.exitcode != 0
-        puts "An error occurred saving the user."
-        exit 6
-    end
 end
 
 def allow_sub_accounts(user, allow)
@@ -236,17 +219,41 @@ def remove_gear_size(user, gear_size)
     end
 end
 
+def inherit_on_subaccounts(user, allow, capability, cap_name)
+    user.capabilities['inherit_on_subaccounts'] = [] unless user.capabilities.has_key?('inherit_on_subaccounts')
+ 
+    if user.capabilities['inherit_on_subaccounts'].include?(capability) == allow
+        puts "User already has #{cap_name} inheritance set to #{allow}"
+        return
+    end
+
+    user.capabilities_will_change!
+    print "Setting #{cap_name} inheritance to #{allow} for user #{user.login}... "
+    if allow
+      user.capabilities['inherit_on_subaccounts'].push(capability)
+    else
+      user.capabilities['inherit_on_subaccounts'].delete(capability)
+    end
+    result = user.save
+    puts "Done."
+
+    if result.exitcode != 0
+        puts "An error occurred modifying the user capabilities."
+        exit 6
+    end
+end
+
 opts = GetoptLong.new(
     ["--rhlogin",          "-l", GetoptLong::REQUIRED_ARGUMENT],
     ["--setmaxgears",      GetoptLong::REQUIRED_ARGUMENT],
     ["--setconsumedgears", GetoptLong::REQUIRED_ARGUMENT],
-    ["--setvip",           GetoptLong::REQUIRED_ARGUMENT],
     ["--listsubaccounts",  GetoptLong::NO_ARGUMENT],
     ["--addsubaccount",    GetoptLong::REQUIRED_ARGUMENT],
     ["--removesubaccount", GetoptLong::REQUIRED_ARGUMENT],
     ["--allowsubaccounts", GetoptLong::REQUIRED_ARGUMENT],
     ["--addgearsize",      GetoptLong::REQUIRED_ARGUMENT],
     ["--removegearsize",   GetoptLong::REQUIRED_ARGUMENT],
+    ["--inheritgearsizes", GetoptLong::REQUIRED_ARGUMENT],
     ["--help",             "-h", GetoptLong::NO_ARGUMENT]
 )
 
@@ -261,8 +268,8 @@ end
 login = args["--rhlogin"]
 maxgears = args["--setmaxgears"].to_i if args["--setmaxgears"]
 consumedgears = args["--setconsumedgears"].to_i if args["--setconsumedgears"]
-vip = args["--setvip"].to_b if args["--setvip"]
 allowsubaccounts = args["--allowsubaccounts"].to_b if args["--allowsubaccounts"]
+inheritgearsizes = args["--inheritgearsizes"].to_b if args["--inheritgearsizes"]
 
 if login.nil? or args["--help"]
     usage
@@ -299,11 +306,6 @@ unless consumedgears.nil?
     changed_user = true
 end
 
-unless vip.nil?
-    set_vip(user, vip)
-    changed_user = true
-end
-
 unless allowsubaccounts.nil?
     allow_sub_accounts(user, allowsubaccounts)
     changed_user = true
@@ -335,6 +337,11 @@ unless gear_size_to_remove.nil?
     changed_user = true
 end
 
+unless inheritgearsizes.nil?
+    inherit_on_subaccounts(user, inheritgearsizes, 'gear_sizes', 'gearsizes')
+    changed_user = true
+end
+
 if args["--listsubaccounts"]
     subaccount_list = CloudUser::find_subaccounts_by_parent_login(login)
 end
@@ -350,9 +357,9 @@ end
 puts "User #{user.login}:"
 puts "      consumed gears: #{user.consumed_gears}"
 puts "           max gears: #{user.max_gears}"
-puts "          vip status: #{user.vip}"
 puts "          gear sizes: #{user.capabilities['gear_sizes'].join(', ')}" if user.capabilities.has_key?('gear_sizes')
 puts "sub accounts allowed: #{user.capabilities['subaccounts']}" if user.capabilities.has_key?('subaccounts')
+puts "  inherit gear sizes: #{user.capabilities['inherit_on_subaccounts'].include?('gear_sizes')}" if user.capabilities.has_key?('inherit_on_subaccounts')
 puts 
 if args["--listsubaccounts"] and (not subaccount_list.nil?) and (not subaccount_list.empty?)
     puts "Sub Accounts: #{subaccount_list.length}"

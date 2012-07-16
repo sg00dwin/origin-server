@@ -30,6 +30,23 @@ class ApplicationObserver < ActiveModel::Observer
     application = data[:application]
     reply = data[:reply]
 
+    unless application.node_profile
+      capabilities = application.user.get_capabilities
+      user_gear_sizes = []
+      user_gear_sizes = capabilities['gear_sizes'] if capabilities.has_key?('gear_sizes')
+      if user_gear_sizes.length == 1
+        application.node_profile = user_gear_sizes[0]
+      elsif user_gear_sizes.length > 1
+        if user_gear_sizes.include?(Rails.application.config.ss[:default_gear_size])
+          application.node_profile = Rails.application.config.ss[:default_gear_size]
+        else
+          application.node_profile = user_gear_sizes[0]
+        end
+      else
+        application.node_profile = Rails.application.config.ss[:default_gear_size]
+      end
+    end
+
     if application.name =~ /.+#{BUILDER_SUFFIX}$/
       reply.messageIO << "
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!

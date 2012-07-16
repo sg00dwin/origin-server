@@ -18,59 +18,8 @@ module Express
         Express::AriaBilling::Plan.new
       end
 
-      def enable_broker(event_params)
-        id_list = event_params[:event_id]
-        user = CloudUser.find_by_uuid("CloudUser", event_params[:userid])
-        plan_name = event_params[:plan_name] || "FreeShift"
-        if plan_name == "FreeShift"
-          limits = @plans[:freeshift]
-        elsif plan_name == "MegaShift"
-          limits = @plans[:megashift]
-        else
-          Rails.logger.error("Unknown plan #{plan_name} for user '#{user.name}'")
-        end
-        id_list.each do |event_id|
-          case event_id
-            when "101"
-              if user.nil?
-                Rails.logger.error("User not found : #{event_params[:userid]} on receiving event id '#{event_id}'")
-                break
-                user = CloudUser.new(event_params[:userid])
-              end
-              user.max_gears = limits[:max_gears]
-              user.vip = limits[:vip]
-              user.save
-              Rails.logger.debug("Completed new account creation '#{user.login}' with master plan name - '#{plan_name}'!")
-            when "105"
-              if user.nil?
-                Rails.logger.error("User not found : #{event_params[:userid]} on receiving event id '#{event_id}'")
-                break
-              end
-              # Status Codes => -1:Suspended, -2:Cancelled, -3:Terminated
-              if ["-1", "-2", "-3"].include? event_params[:status_cd] 
-                if user.consumed_gears > 0 or user.applications.length > 0
-                  Rails.logger.error("Error in account cancellation for account '#{user.login}'. Current consumption of gears is (#{user.consumed_gears}).")
-                  break
-                end
-                user.delete
-                Rails.logger.debug("Completed cancellation of account '#{user.login}'!")
-              end
-            when "107"
-              if user.nil?
-                Rails.logger.error("User not found : #{event_params[:userid]}")
-                break
-              end
-              max_gears = limits[:max_gears]
-              if max_gears < user.consumed_gears
-                Rails.logger.error("Error in plan change for account '#{user.login}'. New plan #{plan_name} needs max_gears to be #{max_gears}, but current consumption is more (#{user.consumed_gears}).")
-                break
-              end
-              user.max_gears = max_gears
-              user.vip = limits[:vip]
-              user.save
-              Rails.logger.debug("Completed master plan change for account '#{user.login}' to '#{plan_name}'!")
-          end
-        end
+      def valid_plan(plan_id)
+        @plans.keys.include?(plan_id)
       end
     end
   end
