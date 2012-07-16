@@ -381,144 +381,153 @@ mkdir -p /tmp/rhc/junit
 
         threads = []
         failures = []
-
-        unless options.exclude_internal?
-          titles = ["Broker Unit",
-                    "Broker Functional",
-                    "Broker Integration",
-                    "Site Unit", 
-                    "StickShift Node Unit",
-                    "Internal Group 1"]
-          cmds = ["cd li-test/broker; rake test:units", 
-                  "cd li-test/broker; rake test:functionals",
-                  "cd li-test/broker; rake test:integration",
-                  "cd li-test/site; rake test:units", 
-                  "cd li-test/stickshift/node; rake test",
-                  "cucumber -f html --out /tmp/rhc/internals1.html -f progress -t @internals1 li-test/tests"]
-          add_ssh_cmd_to_threads(hostname, threads, failures, titles, cmds)
-      
-          titles = ["Internal Group 2",
-                    "StickShift Broker Unit",
-                    "StickShift Broker Functional",
-                    "StickShift Broker Integration"]
-          cmds = ["cucumber -f html --out /tmp/rhc/internals2.html -f progress -t @internals2 li-test/tests",
-                  "cd li-test/stickshift/broker; rake test:units",
-                  "cd li-test/stickshift/broker; rake test:functionals",
-                  "cd li-test/stickshift/broker; rake test:integration"]
-          add_ssh_cmd_to_threads(hostname, threads, failures, titles, cmds)
-
-        end
-
-        if options.include_rcov?
-          add_ssh_cmd_to_threads(hostname, threads, failures, "StickShift Node Unit Coverage", "cd li-test/stickshift/node; rake rcov; cp -a coverage /tmp/rhc/stickshift_node_coverage")
-          add_ssh_cmd_to_threads(hostname, threads, failures, "Broker Unit and Functional Coverage", "cd li-test/broker; rake rcov; cp -a test/coverage /tmp/rhc/broker_coverage")
-          add_ssh_cmd_to_threads(hostname, threads, failures, "StickShift Broker Unit and Functional Coverage", "cd li-test/stickshift/broker; rake rcov; cp -a test/coverage /tmp/rhc/stickshift_broker_coverage")
-        end
-
-        unless options.exclude_verification?
-          titles = ["Site Functional", 
-                    "Verification Group 1"] 
-          cmds = ["cd li-test/site; rake test:functionals", 
-                  "cucumber -f html --out /tmp/rhc/verfication1.html -f progress -t @verify1 li-test/tests"]
-          add_ssh_cmd_to_threads(hostname, threads, failures, titles, cmds)
-
-          add_ssh_cmd_to_threads(hostname, threads, failures, "Verification Group 2", "cucumber -f html --out /tmp/rhc/verfication2.html -f progress -t @verify2 li-test/tests")
-
-          titles = ["Verification Group 3",
-                    "Site Integration"]
-          cmds = ["cucumber -f html --out /tmp/rhc/verfication3.html -f progress -t @verify3 li-test/tests", 
-                  "cd li-test/site; rake test:integration"]
-          add_ssh_cmd_to_threads(hostname, threads, failures, titles, cmds)
-        end
-        
-        if options.include_extended?
-          add_ssh_cmd_to_threads(hostname, threads, failures, "REST API", "cucumber -f html --out /tmp/rhc/rest_api.html -f progress -t @api li-test/tests", @@SSH_TIMEOUT, true)
-          add_ssh_cmd_to_threads(hostname, threads, failures, "Extended", "cucumber -f html --out /tmp/rhc/extended.html -f progress -t @extended li-test/tests")
-
-          titles = ["Broker Domain System"]
-          cmds = ["cd li-test/broker; rake domain_system_test"]
-          add_ssh_cmd_to_threads(hostname, threads, failures, titles, cmds, @@SSH_TIMEOUT, true)
-
-          titles = ["Broker Application System"]
-          cmds = ["cd li-test/broker; rake application_system_test"]
-          add_ssh_cmd_to_threads(hostname, threads, failures, titles, cmds, @@SSH_TIMEOUT, true)
-
-          titles = ["Broker Cartridge System"]
-          cmds = ["cd li-test/broker; rake cartridge_system_test"]
-          add_ssh_cmd_to_threads(hostname, threads, failures, titles, cmds, @@SSH_TIMEOUT, true)
-        end
-
-        if options.include_cucumber
-          timeout=@@SSH_TIMEOUT
-          timeout = @@SSH_TIMEOUT_OVERRIDES[options.include_cucumber] if not @@SSH_TIMEOUT_OVERRIDES[options.include_cucumber].nil?
-          add_ssh_cmd_to_threads(hostname, threads, failures, "#{options.include_cucumber}", "cucumber -f html --out /tmp/rhc/#{options.include_cucumber}.html -f progress -t @#{options.include_cucumber} li-test/tests", timeout)
-        end
-
-        if options.include_web?
-
-          # check sauce quotas first
-          usage = sauce_usage
-
-          if usage[:percentage] > 95 && !options[:sauce_overage]
-            puts "Refusing to run Sauce Labs tests due to quota overage considerations.  Run with --sauce_overage to override."
-            return
-          end
-
-          # TODO: respect sauce username and access key settings
-          cmd = "service sauce-connect start"
-          run_ssh(hostname, "Start sauce connect tunnel", cmd, timeout)
-
-          if options.sauce_os && options.sauce_browser && options.sauce_browser_version
-            browsers = [[options.sauce_os, options.sauce_browser, options.sauce_browser_version]]
+          
+        if options.include_extended
+          
+          case options.include_extended
+          when 'broker'
+            add_ssh_cmd_to_threads(hostname, threads, failures, "REST API", "cucumber -f html --out /tmp/rhc/rest_api.html -f progress -t @api li-test/tests", @@SSH_TIMEOUT, true)
+            titles = ["Broker Domain System"]
+            cmds = ["cd li-test/broker; rake domain_system_test"]
+            add_ssh_cmd_to_threads(hostname, threads, failures, titles, cmds, @@SSH_TIMEOUT, true)
+  
+            titles = ["Broker Application System"]
+            cmds = ["cd li-test/broker; rake application_system_test"]
+            add_ssh_cmd_to_threads(hostname, threads, failures, titles, cmds, @@SSH_TIMEOUT, true)
+  
+            titles = ["Broker Cartridge System"]
+            cmds = ["cd li-test/broker; rake cartridge_system_test"]
+            add_ssh_cmd_to_threads(hostname, threads, failures, titles, cmds, @@SSH_TIMEOUT, true)
+          when 'runtime'
+          when 'site'
+          when 'rhc'
           else
-            browsers = [['Windows 2003', 'firefox', ''],
-              ['Windows 2008', 'chrome', ''],
-              ['Windows 2008', 'iexplore', '9'],
-              ['Windows 2003', 'safari', '']]
-            # not working very well
-            browsers.delete_at(2)
-            browsers.delete_at(2)
+            puts "Not supported for extended: #{options.include_extended}"
           end
 
-          browsers.each do |browser|
-            sauce_os = browser[0]
-            sauce_browser = browser[1]
-            sauce_browser_version = browser[2]
-            sauce_opts = {
-              "SAUCE_USERNAME" => (options.sauce_username || 'openshift_ci'),
-              "SAUCE_ACCESS_KEY" => (options.sauce_access_key || '3d67e770-ce7d-482a-8c7f-07aec039d564'),
-              "SAUCE_OS" => sauce_os,
-              "SAUCE_BROWSER" => sauce_browser,
-              "SAUCE_BROWSER_VERSION" => sauce_browser_version,
-              "SAUCE_SELENIUM_VERSION" => '2.7.0',
-              "SAUCE_BROWSER_URL" => "https://#{hostname}/app",
-              "JENKINS_BUILD" => 'unofficial'
-            }
-            # If we passed a jenkins build like name, use that for the build number
-            if tag.start_with?('libra_') || tag.start_with?('devenv_') || tag.start_with?('devenv-')
-              sauce_opts['JENKINS_BUILD'] = tag
-            else
-              sauce_opts['SAUCE_USERNAME'] = options.sauce_username
-              sauce_opts['SAUCE_ACCESS_KEY'] = options.sauce_access_key
+        else
+
+          unless options.exclude_internal?
+            titles = ["Broker Unit",
+                      "Broker Functional",
+                      "Broker Integration",
+                      "Site Unit", 
+                      "StickShift Node Unit",
+                      "Internal Group 1"]
+            cmds = ["cd li-test/broker; rake test:units", 
+                    "cd li-test/broker; rake test:functionals",
+                    "cd li-test/broker; rake test:integration",
+                    "cd li-test/site; rake test:units", 
+                    "cd li-test/stickshift/node; rake test",
+                    "cucumber -f html --out /tmp/rhc/internals1.html -f progress -t @internals1 li-test/tests"]
+            add_ssh_cmd_to_threads(hostname, threads, failures, titles, cmds)
+      
+            titles = ["Internal Group 2",
+                      "StickShift Broker Unit",
+                      "StickShift Broker Functional",
+                      "StickShift Broker Integration"]
+            cmds = ["cucumber -f html --out /tmp/rhc/internals2.html -f progress -t @internals2 li-test/tests",
+                    "cd li-test/stickshift/broker; rake test:units",
+                    "cd li-test/stickshift/broker; rake test:functionals",
+                    "cd li-test/stickshift/broker; rake test:integration"]
+            add_ssh_cmd_to_threads(hostname, threads, failures, titles, cmds)
+
+          end
+
+          if options.include_rcov?
+            add_ssh_cmd_to_threads(hostname, threads, failures, "StickShift Node Unit Coverage", "cd li-test/stickshift/node; rake rcov; cp -a coverage /tmp/rhc/stickshift_node_coverage")
+            add_ssh_cmd_to_threads(hostname, threads, failures, "Broker Unit and Functional Coverage", "cd li-test/broker; rake rcov; cp -a test/coverage /tmp/rhc/broker_coverage")
+            add_ssh_cmd_to_threads(hostname, threads, failures, "StickShift Broker Unit and Functional Coverage", "cd li-test/stickshift/broker; rake rcov; cp -a test/coverage /tmp/rhc/stickshift_broker_coverage")
+          end
+
+          unless options.exclude_verification?
+            titles = ["Site Functional", 
+                      "Verification Group 1"] 
+            cmds = ["cd li-test/site; rake test:functionals", 
+                    "cucumber -f html --out /tmp/rhc/verfication1.html -f progress -t @verify1 li-test/tests"]
+            add_ssh_cmd_to_threads(hostname, threads, failures, titles, cmds)
+  
+            add_ssh_cmd_to_threads(hostname, threads, failures, "Verification Group 2", "cucumber -f html --out /tmp/rhc/verfication2.html -f progress -t @verify2 li-test/tests")
+  
+            titles = ["Verification Group 3",
+                      "Site Integration"]
+            cmds = ["cucumber -f html --out /tmp/rhc/verfication3.html -f progress -t @verify3 li-test/tests", 
+                    "cd li-test/site; rake test:integration"]
+            add_ssh_cmd_to_threads(hostname, threads, failures, titles, cmds)
+          end
+
+          if options.include_cucumber
+            timeout=@@SSH_TIMEOUT
+            timeout = @@SSH_TIMEOUT_OVERRIDES[options.include_cucumber] if not @@SSH_TIMEOUT_OVERRIDES[options.include_cucumber].nil?
+            add_ssh_cmd_to_threads(hostname, threads, failures, "#{options.include_cucumber}", "cucumber -f html --out /tmp/rhc/#{options.include_cucumber}.html -f progress -t @#{options.include_cucumber} li-test/tests", timeout)
+          end
+
+          if options.include_web?
+  
+            # check sauce quotas first
+            usage = sauce_usage
+  
+            if usage[:percentage] > 95 && !options[:sauce_overage]
+              puts "Refusing to run Sauce Labs tests due to quota overage considerations.  Run with --sauce_overage to override."
+              return
             end
-
-            env_string = sauce_opts.keys.map{|k| %Q(#{k}="#{sauce_opts[k]}")}.join(' ')
-
-            puts "Running Sauce tests with the following options:"
-            puts sauce_opts.to_yaml
-
-            Dir.foreach('selenium/testcases') do |filename|
-              cmds = []
-              titles = []
-              if filename =~ /^tc_(.*)\.rb$/
-                test = $1
-                cmds << "cd li-test/selenium; #{env_string} ruby ts_web #{test}"
-                titles << "Web Selenium (#{sauce_os} - #{sauce_browser} #{sauce_browser_version}) (#{test})"
-                add_ssh_cmd_to_threads(hostname, threads, failures, titles, cmds)
+  
+            # TODO: respect sauce username and access key settings
+            cmd = "service sauce-connect start"
+            run_ssh(hostname, "Start sauce connect tunnel", cmd, timeout)
+  
+            if options.sauce_os && options.sauce_browser && options.sauce_browser_version
+              browsers = [[options.sauce_os, options.sauce_browser, options.sauce_browser_version]]
+            else
+              browsers = [['Windows 2003', 'firefox', ''],
+                ['Windows 2008', 'chrome', ''],
+                ['Windows 2008', 'iexplore', '9'],
+                ['Windows 2003', 'safari', '']]
+              # not working very well
+              browsers.delete_at(2)
+              browsers.delete_at(2)
+            end
+  
+            browsers.each do |browser|
+              sauce_os = browser[0]
+              sauce_browser = browser[1]
+              sauce_browser_version = browser[2]
+              sauce_opts = {
+                "SAUCE_USERNAME" => (options.sauce_username || 'openshift_ci'),
+                "SAUCE_ACCESS_KEY" => (options.sauce_access_key || '3d67e770-ce7d-482a-8c7f-07aec039d564'),
+                "SAUCE_OS" => sauce_os,
+                "SAUCE_BROWSER" => sauce_browser,
+                "SAUCE_BROWSER_VERSION" => sauce_browser_version,
+                "SAUCE_SELENIUM_VERSION" => '2.7.0',
+                "SAUCE_BROWSER_URL" => "https://#{hostname}/app",
+                "JENKINS_BUILD" => 'unofficial'
+              }
+              # If we passed a jenkins build like name, use that for the build number
+              if tag.start_with?('libra_') || tag.start_with?('devenv_') || tag.start_with?('devenv-')
+                sauce_opts['JENKINS_BUILD'] = tag
+              else
+                sauce_opts['SAUCE_USERNAME'] = options.sauce_username
+                sauce_opts['SAUCE_ACCESS_KEY'] = options.sauce_access_key
+              end
+  
+              env_string = sauce_opts.keys.map{|k| %Q(#{k}="#{sauce_opts[k]}")}.join(' ')
+  
+              puts "Running Sauce tests with the following options:"
+              puts sauce_opts.to_yaml
+  
+              Dir.foreach('selenium/testcases') do |filename|
+                cmds = []
+                titles = []
+                if filename =~ /^tc_(.*)\.rb$/
+                  test = $1
+                  cmds << "cd li-test/selenium; #{env_string} ruby ts_web #{test}"
+                  titles << "Web Selenium (#{sauce_os} - #{sauce_browser} #{sauce_browser_version}) (#{test})"
+                  add_ssh_cmd_to_threads(hostname, threads, failures, titles, cmds)
+                end
               end
             end
           end
-        end
+        end          
 
         threads.each do |t|
           t[0].join
@@ -712,12 +721,12 @@ mkdir -p /tmp/rhc/junit
   method_option :exclude_verification, :type => :boolean, :desc => "Exclude running verification tests"
   method_option :include_web, :type => :boolean, :desc => "Include running Selenium tests"
   method_option :include_rcov, :type => :boolean, :desc => "Include coverage analysis on unit tests"
-  method_option :include_extended, :type => :boolean, :desc => "Include extended tests"
+  method_option :include_extended, :required => false, :desc => "Include extended tests"
   method_option :region, :required => false, :desc => "Amazon region override (default us-east-1)"
-  method_option :build_clean_ami, :required => false, :desc => "Indicates whether to start from a base RHEL image"
-  method_option :install_from_source, :required => false, :desc => "Indicates whether to build based off origin/master"
-  method_option :install_from_local_source, :required => false, :desc => "Indicates whether to build based on your local source"
-  method_option :install_required_packages, :required => false, :desc => "Create an instance with all the packages required by OpenShift"
+  method_option :build_clean_ami, :type => :boolean, :desc => "Indicates whether to start from a base RHEL image"
+  method_option :install_from_source, :type => :boolean, :desc => "Indicates whether to build based off origin/master"
+  method_option :install_from_local_source, :type => :boolean, :desc => "Indicates whether to build based on your local source"
+  method_option :install_required_packages, :type => :boolean, :desc => "Create an instance with all the packages required by OpenShift"
   method_option :skip_verify, :type => :boolean, :desc => "Skip running tests to verify the build"
   method_option :instance_type, :required => false, :desc => "Amazon machine type override (default c1.medium)"
 
@@ -733,7 +742,7 @@ mkdir -p /tmp/rhc/junit
     conn = connect(options.region)
 
     image = nil
-    if options.install_required_packages
+    if options.install_required_packages?
       # Create a new builder instance
       if (options.region?nil)
         image = conn.images[AMI["us-east-1"]]
@@ -743,7 +752,7 @@ mkdir -p /tmp/rhc/junit
       else
         image = conn.images[AMI[options.region]]
       end
-    elsif options.build_clean_ami || options.install_from_source || options.install_from_local_source
+    elsif options.build_clean_ami? || options.install_from_source? || options.install_from_local_source?
       # Get the latest devenv base image and create a new instance
       if options.use_stage_repo?
         filter = DEVENV_STAGE_BASE_WILDCARD
@@ -768,7 +777,7 @@ mkdir -p /tmp/rhc/junit
 
     begin
       manifest = nil
-      if options.build_clean_ami || options.install_from_source || options.install_from_local_source || options.install_required_packages
+      if options.build_clean_ami? || options.install_from_source? || options.install_from_local_source? || options.install_required_packages?
         print "Updating all packages on the system..."
         2.times do
           ssh(hostname, "yum update -y --exclude='rhc*'; yum -y install openssh-clients", 1800)
@@ -792,10 +801,10 @@ mkdir -p /tmp/rhc/junit
         ssh(hostname, "chmod 0600 /root/.ssh/id_rsa; chmod 0644 /root/.ssh/id_rsa.pub /root/.ssh/known_hosts;")
         puts "Done"
         output = ''
-        if options.install_from_source
+        if options.install_from_source?
           print "Performing clean install from source..."
           cmd = 'set -e; /bin/bash li-devenv.sh candidate --install_from_source'
-        elsif options.install_from_local_source
+        elsif options.install_from_local_source?
           init_repo(hostname)
           ssh_path = File.expand_path(File.dirname(__FILE__)) + "/ssh-override"
           sync_repo('li', hostname, ssh_path)
@@ -806,7 +815,7 @@ mkdir -p /tmp/rhc/junit
           end
           print "Performing clean install from local source..."
           cmd = 'set -e; /bin/bash li-devenv.sh candidate --install_from_local_source'
-        elsif options.install_required_packages
+        elsif options.install_required_packages?
           print "Installing requires..."
           cmd = "set -e; /bin/bash li-devenv.sh #{options.use_stage_repo? ? "stage" : "candidate"} --install_build_prereqs"
           output += ssh(hostname, cmd, 600)
@@ -833,11 +842,11 @@ mkdir -p /tmp/rhc/junit
         puts "---------------------------------------------------------"
         
         
-        validate_instance(hostname) unless options.install_required_packages
+        validate_instance(hostname) unless options.install_required_packages?
 
         manifest = rpm_manifest(hostname)
 
-        if options.register? && options.build_clean_ami
+        if options.register? && options.build_clean_ami?
           register_image(conn, instance, name + '-clean_' + build_num, manifest)
         end
       else
@@ -866,7 +875,7 @@ mkdir -p /tmp/rhc/junit
         image_id = image.id
       end
 
-      unless options.skip_verify? || options.install_required_packages
+      unless options.skip_verify? || options.install_required_packages?
         scp_remote_tests(hostname)
         test_instance(name + '_' + build_num, hostname, instance, conn, options, image_id)
       end
@@ -1283,7 +1292,7 @@ END
   method_option :exclude_verification, :type => :boolean, :desc => "Exclude running verification tests"
   method_option :include_cucumber, :required => false, :desc => "Include a specific cucumber test (verify, internal, node, api, etc)"
   method_option :include_rcov, :type => :boolean, :desc => "Include coverage analysis on unit tests"
-  method_option :include_extended, :type => :boolean, :desc => "Include extended tests"
+  method_option :include_extended, :required => false, :desc => "Include extended tests"
   method_option :disable_charlie, :type => :boolean, :desc=> "Disable idle shutdown timer on dev instance (charlie)"
   method_option :mcollective_logs, :type => :boolean, :desc=> "Don't allow mcollective logs to be deleted on rotation"
   method_option :profile_broker, :type => :boolean, :desc=> "Enable profiling code on broker"
