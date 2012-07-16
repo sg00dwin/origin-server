@@ -371,10 +371,12 @@ allow libra_app_domain anon_inodefs_t:file write;
 require {
     type ntpd_t;
     type postfix_master_t;
+    type mysqld_t;
 }
 
 mcs_socket_write_all_levels(ntpd_t)
 mcs_socket_write_all_levels(postfix_master_t)
+mcs_socket_write_all_levels(mysqld_t)
 
 #################################
 # Potentially dangerous configs #
