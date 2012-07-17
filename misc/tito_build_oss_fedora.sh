@@ -19,7 +19,7 @@ trap f_ctrl_c SIGINT
 # "Global" variables
 sibling_dirs=( "os-client-tools" "crankcase" )
 sync_only=""
-remote_repo="mirror1.prod.rhcloud.com"
+remote_repo="mirror1.ops.rhcloud.com"
 remote_repo_dir="/srv/pub/crankcase/nightly"
 declare -a failed_builds
 declare -a failed_builds_paths

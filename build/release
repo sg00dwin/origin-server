@@ -417,7 +417,7 @@ class Release < Thor
     def mash_and_rsync(tag_base, skip_gem, options)
       # Mash / RSync parameters
       mash_config = (options[:stage] || options.stage_all?) ? "#{tag_base}-stage" : "#{tag_base}-candidate"
-      repo_host = "mirror1.stg.rhcloud.com"
+      repo_host = "mirror1.ops.rhcloud.com"
       repo_dir = "/export/gpxe/trees"
       repo = "#{repo_host}:#{repo_dir}"
       rsync = nil
