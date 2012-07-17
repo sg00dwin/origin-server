@@ -92,12 +92,12 @@ module Express
         }
       end
 
-      def get_userid_from_acct_no(acct_no)
+      def get_user_id_from_acct_no(acct_no)
         {
           'acct_no' => acct_no,
           'client_no' => @client_no,
           'auth_key' => @auth_key,
-          'rest_call' => "get_userid_from_acct_no"
+          'rest_call' => "get_user_id_from_acct_no"
         }
       end
 

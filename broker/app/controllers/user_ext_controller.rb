@@ -1,5 +1,4 @@
 class UserExtController < UserController
-  include PlanHelper
   respond_to :xml, :json
   before_filter :authenticate, :check_version
 
@@ -32,8 +31,9 @@ class UserExtController < UserController
     new_plan = nil 
     #find requested plan
     Express::AriaBilling::Plan.instance.plans.each do |key, value|
-      if key == plan_id.downcase
+      if key == plan_id
         new_plan = value
+        break
       end
     end
     if new_plan.nil?
@@ -58,16 +58,18 @@ class UserExtController < UserController
       return
     end
     applications = @cloud_user.applications
-    applications.each do |app|
-      if app.node_profile != "small"
-        log_action(@request_id, @cloud_user.uuid, @cloud_user.login,"UPDATE_USER", false, "User '#{@login}' has gears that the new plan does not allow.")
-        @reply = RestReply.new(:unprocessable_entity)
-        @reply.messages.push(message = Message.new(:error, "User has gears that the new plan does not allow.", 154))
-        respond_with(@reply) do |format|
-          format.xml { render :xml => @reply, :status => @reply.status }
-          format.json { render :json => @reply, :status => @reply.status }
+    if applications
+      applications.each do |app|
+        if app.node_profile != "small" || app.node_profile != "c9"
+          log_action(@request_id, @cloud_user.uuid, @cloud_user.login,"UPDATE_USER", false, "User '#{@login}' has gears that the new plan does not allow.")
+          @reply = RestReply.new(:unprocessable_entity)
+          @reply.messages.push(message = Message.new(:error, "User has gears that the new plan does not allow.", 154))
+          respond_with(@reply) do |format|
+            format.xml { render :xml => @reply, :status => @reply.status }
+            format.json { render :json => @reply, :status => @reply.status }
+          end
+          return
         end
-        return
       end
     end
     aria = Express::AriaBilling::Api.instance

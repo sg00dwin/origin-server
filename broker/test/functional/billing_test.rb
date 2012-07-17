@@ -1,6 +1,6 @@
 require 'test_billing_helper'
 
-class BillingEnablementTest < ActiveSupport::TestCase
+class BillingTest < ActiveSupport::TestCase
   def setup
     @test_enabled = false
     # Create user locally first
@@ -73,6 +73,7 @@ class BillingEnablementTest < ActiveSupport::TestCase
   end
 
   def teardown
-    @user.delete
+    if @test_enabled 
+      @user.delete
   end
 end

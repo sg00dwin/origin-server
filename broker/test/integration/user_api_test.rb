@@ -10,7 +10,7 @@ class AccountApiTest < ActionDispatch::IntegrationTest
   def setup
     @test_enabled = false
     @random = gen_uuid[0..9]
-    @login = "testuser#{@random}"
+    @login = "t#{@random}"
     @headers = {}
     @headers["HTTP_AUTHORIZATION"] = "Basic " + Base64.encode64("#{@login}:password")
     @headers["HTTP_ACCEPT"] = "application/json"

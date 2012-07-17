@@ -42,8 +42,8 @@ module Express
         get_response_status(@ah.userid_exists(*args), __method__)
       end
 
-      def get_userid_from_acct_no(*args)
-        result = get_response(@ah.get_userid_from_acct_no(*args), __method__)
+      def get_user_id_from_acct_no(*args)
+        result = get_response(@ah.get_user_id_from_acct_no(*args), __method__)
         result.user_id
       end
 
