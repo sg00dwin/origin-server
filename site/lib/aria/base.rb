@@ -28,11 +28,15 @@ module Aria
       def rename_to_save(hash)
         @rename_to_save.each_pair{ |from, to| old = hash.delete from; hash[to] = old unless old.nil? } if @rename_to_save
       end
+      def supplemental?(key)
+        @supplemental and @supplemental.include?(key.to_sym)
+      end
       protected
         def account_prefix(opts)
           @from_prefix = opts[:from].to_s
           @to_prefix = opts[:to].to_s
           @rename_to_save = opts[:rename_to_save]
+          @supplemental = Array opts[:supplemental]
         end
         def attr_aria(*args)
           define_attribute_methods args.select{ |arg| arg.is_a? Symbol }
@@ -44,7 +48,11 @@ module Aria
     end
     def to_aria_attributes
       @attributes.inject({}) do |h,(k,v)|
-        h["#{self.class.to_prefix}#{k}"] = v
+        if self.class.supplemental?(k)
+          (h[:supplemental] ||= {})[k] = v
+        else
+          h["#{self.class.to_prefix}#{k}"] = v
+        end
         h
       end.tap{ |h| self.class.rename_to_save(h) }
     end

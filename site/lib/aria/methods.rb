@@ -38,6 +38,15 @@ module Aria
       super(:user_id => user_id).acct_no
     end
 
+    def create_acct_complete(params)
+      super encode_supplemental(params)
+    end
+
+    def update_acct_complete(acct_no, params)
+      params[:acct_no] = acct_no
+      super encode_supplemental(params, true)
+    end
+
     def get_acct_details_all(acct_no)
       super(:acct_no => acct_no)
     end
@@ -60,5 +69,21 @@ module Aria
         super(:set_name => set, :param_name => names.join('|'), :param_val => values.join('|'))
       end
     end
+
+    private
+      def encode_supplemental(params, update=false)
+        if supplemental = params.delete(:supplemental)
+          names, values = [], []
+          supplemental.each_pair do |k,v|
+            next if k.nil? || v.nil?
+            names << k.to_s.gsub(/\|/,'_')
+            values << v.to_s.gsub(/\|/,'_')
+          end
+          params[:supp_field_names] = names.join('|')
+          params[:supp_field_values] = values.join('|')
+          params[:supp_field_directives] = ([2] * values.length).join('|') if update
+        end
+        params
+      end
  end
 end
