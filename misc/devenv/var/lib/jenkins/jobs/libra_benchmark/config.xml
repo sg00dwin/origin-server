@@ -99,7 +99,7 @@ fi
 echo $test_params
 
 # Run the image tests
-build/devenv test libra_benchmark_${BUILD_NUMBER} --exclude_internal --exclude_verification --include-cucumber=benchmark --disable-charlie --mcollective-logs --terminate $test_params
+build/devenv test libra_benchmark_${BUILD_NUMBER} --include_cucumber=benchmark --disable-charlie --mcollective-logs --terminate $test_params
 </command>
     </hudson.tasks.Shell>
   </builders>

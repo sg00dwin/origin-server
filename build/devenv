@@ -403,130 +403,126 @@ mkdir -p /tmp/rhc/junit
           when 'rhc'
           else
             puts "Not supported for extended: #{options.include_extended}"
+            exit 1
+          end
+        elsif options.include_rcov?
+          add_ssh_cmd_to_threads(hostname, threads, failures, "StickShift Node Unit Coverage", "cd li-test/stickshift/node; rake rcov; cp -a coverage /tmp/rhc/stickshift_node_coverage")
+          add_ssh_cmd_to_threads(hostname, threads, failures, "Broker Unit and Functional Coverage", "cd li-test/broker; rake rcov; cp -a test/coverage /tmp/rhc/broker_coverage")
+          add_ssh_cmd_to_threads(hostname, threads, failures, "StickShift Broker Unit and Functional Coverage", "cd li-test/stickshift/broker; rake rcov; cp -a test/coverage /tmp/rhc/stickshift_broker_coverage")
+        elsif options.include_cucumber
+          timeout=@@SSH_TIMEOUT
+          timeout = @@SSH_TIMEOUT_OVERRIDES[options.include_cucumber] if not @@SSH_TIMEOUT_OVERRIDES[options.include_cucumber].nil?
+          add_ssh_cmd_to_threads(hostname, threads, failures, "#{options.include_cucumber}", "cucumber -f html --out /tmp/rhc/#{options.include_cucumber}.html -f progress -t @#{options.include_cucumber} li-test/tests", timeout)
+        elsif options.include_web?
+
+          # check sauce quotas first
+          usage = sauce_usage
+
+          if usage[:percentage] > 95 && !options[:sauce_overage]
+            puts "Refusing to run Sauce Labs tests due to quota overage considerations.  Run with --sauce_overage to override."
+            return
           end
 
+          # TODO: respect sauce username and access key settings
+          cmd = "service sauce-connect start"
+          run_ssh(hostname, "Start sauce connect tunnel", cmd, timeout)
+
+          if options.sauce_os && options.sauce_browser && options.sauce_browser_version
+            browsers = [[options.sauce_os, options.sauce_browser, options.sauce_browser_version]]
+          else
+            browsers = [['Windows 2003', 'firefox', ''],
+              ['Windows 2008', 'chrome', ''],
+              ['Windows 2008', 'iexplore', '9'],
+              ['Windows 2003', 'safari', '']]
+            # not working very well
+            browsers.delete_at(2)
+            browsers.delete_at(2)
+          end
+
+          browsers.each do |browser|
+            sauce_os = browser[0]
+            sauce_browser = browser[1]
+            sauce_browser_version = browser[2]
+            sauce_opts = {
+              "SAUCE_USERNAME" => (options.sauce_username || 'openshift_ci'),
+              "SAUCE_ACCESS_KEY" => (options.sauce_access_key || '3d67e770-ce7d-482a-8c7f-07aec039d564'),
+              "SAUCE_OS" => sauce_os,
+              "SAUCE_BROWSER" => sauce_browser,
+              "SAUCE_BROWSER_VERSION" => sauce_browser_version,
+              "SAUCE_SELENIUM_VERSION" => '2.7.0',
+              "SAUCE_BROWSER_URL" => "https://#{hostname}/app",
+              "JENKINS_BUILD" => 'unofficial'
+            }
+            # If we passed a jenkins build like name, use that for the build number
+            if tag.start_with?('libra_') || tag.start_with?('devenv_') || tag.start_with?('devenv-')
+              sauce_opts['JENKINS_BUILD'] = tag
+            else
+              sauce_opts['SAUCE_USERNAME'] = options.sauce_username
+              sauce_opts['SAUCE_ACCESS_KEY'] = options.sauce_access_key
+            end
+
+            env_string = sauce_opts.keys.map{|k| %Q(#{k}="#{sauce_opts[k]}")}.join(' ')
+
+            puts "Running Sauce tests with the following options:"
+            puts sauce_opts.to_yaml
+
+            Dir.foreach('selenium/testcases') do |filename|
+              cmds = []
+              titles = []
+              if filename =~ /^tc_(.*)\.rb$/
+                test = $1
+                cmds << "cd li-test/selenium; #{env_string} ruby ts_web #{test}"
+                titles << "Web Selenium (#{sauce_os} - #{sauce_browser} #{sauce_browser_version}) (#{test})"
+                add_ssh_cmd_to_threads(hostname, threads, failures, titles, cmds)
+              end
+            end
+          end
         else
 
-          unless options.exclude_internal?
+          unless options.exclude_broker?
             titles = ["Broker Unit",
                       "Broker Functional",
                       "Broker Integration",
-                      "Site Unit", 
-                      "StickShift Node Unit",
-                      "Internal Group 1"]
-            cmds = ["cd li-test/broker; rake test:units", 
-                    "cd li-test/broker; rake test:functionals",
-                    "cd li-test/broker; rake test:integration",
-                    "cd li-test/site; rake test:units", 
-                    "cd li-test/stickshift/node; rake test",
-                    "cucumber -f html --out /tmp/rhc/internals1.html -f progress -t @internals1 li-test/tests"]
-            add_ssh_cmd_to_threads(hostname, threads, failures, titles, cmds)
-      
-            titles = ["Internal Group 2",
                       "StickShift Broker Unit",
                       "StickShift Broker Functional",
                       "StickShift Broker Integration"]
-            cmds = ["cucumber -f html --out /tmp/rhc/internals2.html -f progress -t @internals2 li-test/tests",
+            cmds = ["cd li-test/broker; rake test:units", 
+                    "cd li-test/broker; rake test:functionals",
+                    "cd li-test/broker; rake test:integration",
                     "cd li-test/stickshift/broker; rake test:units",
                     "cd li-test/stickshift/broker; rake test:functionals",
                     "cd li-test/stickshift/broker; rake test:integration"]
             add_ssh_cmd_to_threads(hostname, threads, failures, titles, cmds)
-
           end
-
-          if options.include_rcov?
-            add_ssh_cmd_to_threads(hostname, threads, failures, "StickShift Node Unit Coverage", "cd li-test/stickshift/node; rake rcov; cp -a coverage /tmp/rhc/stickshift_node_coverage")
-            add_ssh_cmd_to_threads(hostname, threads, failures, "Broker Unit and Functional Coverage", "cd li-test/broker; rake rcov; cp -a test/coverage /tmp/rhc/broker_coverage")
-            add_ssh_cmd_to_threads(hostname, threads, failures, "StickShift Broker Unit and Functional Coverage", "cd li-test/stickshift/broker; rake rcov; cp -a test/coverage /tmp/rhc/stickshift_broker_coverage")
-          end
-
-          unless options.exclude_verification?
-            titles = ["Site Functional", 
-                      "Verification Group 1"] 
-            cmds = ["cd li-test/site; rake test:functionals", 
+          
+          unless options.exclude_runtime?
+            titles = ["Internal Group 1",
+                      "Verification Group 1,"]
+            cmds = ["cucumber -f html --out /tmp/rhc/internals1.html -f progress -t @internals1 li-test/tests",
                     "cucumber -f html --out /tmp/rhc/verfication1.html -f progress -t @verify1 li-test/tests"]
             add_ssh_cmd_to_threads(hostname, threads, failures, titles, cmds)
-  
-            add_ssh_cmd_to_threads(hostname, threads, failures, "Verification Group 2", "cucumber -f html --out /tmp/rhc/verfication2.html -f progress -t @verify2 li-test/tests")
-  
-            titles = ["Verification Group 3",
-                      "Site Integration"]
-            cmds = ["cucumber -f html --out /tmp/rhc/verfication3.html -f progress -t @verify3 li-test/tests", 
-                    "cd li-test/site; rake test:integration"]
+      
+            titles = ["Internal Group 2",
+                      "Verification Group 2"]
+            cmds = ["cucumber -f html --out /tmp/rhc/internals2.html -f progress -t @internals2 li-test/tests",
+                    "cucumber -f html --out /tmp/rhc/verfication2.html -f progress -t @verify2 li-test/tests"]
+            add_ssh_cmd_to_threads(hostname, threads, failures, titles, cmds)
+            
+            titles = ["Verification Group 3"]
+            cmds = ["cucumber -f html --out /tmp/rhc/verfication3.html -f progress -t @verify3 li-test/tests"]
             add_ssh_cmd_to_threads(hostname, threads, failures, titles, cmds)
           end
+          
+          unless options.exclude_site?
+            titles = ["Site Check"]
+            cmds = ["cd li-test/site; rake test:check"]
+            add_ssh_cmd_to_threads(hostname, threads, failures, titles, cmds)
+          end
+          
+          unless options.exclude_rhc?
 
-          if options.include_cucumber
-            timeout=@@SSH_TIMEOUT
-            timeout = @@SSH_TIMEOUT_OVERRIDES[options.include_cucumber] if not @@SSH_TIMEOUT_OVERRIDES[options.include_cucumber].nil?
-            add_ssh_cmd_to_threads(hostname, threads, failures, "#{options.include_cucumber}", "cucumber -f html --out /tmp/rhc/#{options.include_cucumber}.html -f progress -t @#{options.include_cucumber} li-test/tests", timeout)
           end
 
-          if options.include_web?
-  
-            # check sauce quotas first
-            usage = sauce_usage
-  
-            if usage[:percentage] > 95 && !options[:sauce_overage]
-              puts "Refusing to run Sauce Labs tests due to quota overage considerations.  Run with --sauce_overage to override."
-              return
-            end
-  
-            # TODO: respect sauce username and access key settings
-            cmd = "service sauce-connect start"
-            run_ssh(hostname, "Start sauce connect tunnel", cmd, timeout)
-  
-            if options.sauce_os && options.sauce_browser && options.sauce_browser_version
-              browsers = [[options.sauce_os, options.sauce_browser, options.sauce_browser_version]]
-            else
-              browsers = [['Windows 2003', 'firefox', ''],
-                ['Windows 2008', 'chrome', ''],
-                ['Windows 2008', 'iexplore', '9'],
-                ['Windows 2003', 'safari', '']]
-              # not working very well
-              browsers.delete_at(2)
-              browsers.delete_at(2)
-            end
-  
-            browsers.each do |browser|
-              sauce_os = browser[0]
-              sauce_browser = browser[1]
-              sauce_browser_version = browser[2]
-              sauce_opts = {
-                "SAUCE_USERNAME" => (options.sauce_username || 'openshift_ci'),
-                "SAUCE_ACCESS_KEY" => (options.sauce_access_key || '3d67e770-ce7d-482a-8c7f-07aec039d564'),
-                "SAUCE_OS" => sauce_os,
-                "SAUCE_BROWSER" => sauce_browser,
-                "SAUCE_BROWSER_VERSION" => sauce_browser_version,
-                "SAUCE_SELENIUM_VERSION" => '2.7.0',
-                "SAUCE_BROWSER_URL" => "https://#{hostname}/app",
-                "JENKINS_BUILD" => 'unofficial'
-              }
-              # If we passed a jenkins build like name, use that for the build number
-              if tag.start_with?('libra_') || tag.start_with?('devenv_') || tag.start_with?('devenv-')
-                sauce_opts['JENKINS_BUILD'] = tag
-              else
-                sauce_opts['SAUCE_USERNAME'] = options.sauce_username
-                sauce_opts['SAUCE_ACCESS_KEY'] = options.sauce_access_key
-              end
-  
-              env_string = sauce_opts.keys.map{|k| %Q(#{k}="#{sauce_opts[k]}")}.join(' ')
-  
-              puts "Running Sauce tests with the following options:"
-              puts sauce_opts.to_yaml
-  
-              Dir.foreach('selenium/testcases') do |filename|
-                cmds = []
-                titles = []
-                if filename =~ /^tc_(.*)\.rb$/
-                  test = $1
-                  cmds << "cd li-test/selenium; #{env_string} ruby ts_web #{test}"
-                  titles << "Web Selenium (#{sauce_os} - #{sauce_browser} #{sauce_browser_version}) (#{test})"
-                  add_ssh_cmd_to_threads(hostname, threads, failures, titles, cmds)
-                end
-              end
-            end
-          end
         end          
 
         threads.each do |t|
@@ -534,11 +530,13 @@ mkdir -p /tmp/rhc/junit
         end
 
         retry_threshold = 0
-        retry_threshold += 6 unless options.exclude_internal?
-        retry_threshold += 8 unless options.exclude_verification?
+        retry_threshold += 8 unless options.exclude_broker?
+        retry_threshold += 8 unless options.exclude_runtime?
+        retry_threshold += 8 unless options.exclude_site?
+        retry_threshold += 8 unless options.exclude_rhc?
         retry_threshold += 6 if options.include_web?
         retry_threshold += 2 if options.include_coverage?
-        retry_threshold += 8 if options.include_extended?
+        retry_threshold += 24 if options.include_extended
 
         failures.uniq!
 
@@ -552,7 +550,7 @@ mkdir -p /tmp/rhc/junit
 
           # These are special tests that cannot be written to work concurrently
           # If they fail, the Test fails. Since they are running in isolation retries should not be required.
-          unless options.exclude_internal?
+          unless options.exclude_runtime?
             idle_all_gears(hostname)
             output, exit_code = run_ssh(hostname, "Singletons",
                 "cucumber -f html --out /tmp/rhc/singletons.html -f progress -t @singleton li-test/tests",
@@ -717,8 +715,10 @@ mkdir -p /tmp/rhc/junit
   method_option :reboot, :type => :boolean, :desc => "Reboot the instance after updating"
   method_option :verbose, :type => :boolean, :desc => "Enable verbose logging"
   method_option :official, :type => :boolean, :desc => "For official use.  Send emails, etc."
-  method_option :exclude_internal, :type => :boolean, :desc => "Exclude running unit and internal tests"
-  method_option :exclude_verification, :type => :boolean, :desc => "Exclude running verification tests"
+  method_option :exclude_broker, :type => :boolean, :desc => "Exclude broker tests"
+  method_option :exclude_runtime, :type => :boolean, :desc => "Exclude runtime tests"
+  method_option :exclude_site, :type => :boolean, :desc => "Exclude site tests"
+  method_option :exclude_rhc, :type => :boolean, :desc => "Exclude rhc tests"
   method_option :include_web, :type => :boolean, :desc => "Include running Selenium tests"
   method_option :include_rcov, :type => :boolean, :desc => "Include coverage analysis on unit tests"
   method_option :include_extended, :required => false, :desc => "Include extended tests"
@@ -1288,8 +1288,10 @@ END
   method_option :terminate, :type => :boolean, :desc => "Terminate the instance when finished"
   method_option :verbose, :type => :boolean, :desc => "Enable verbose logging"
   method_option :official, :type => :boolean, :desc => "For official use.  Send emails, etc."
-  method_option :exclude_internal, :type => :boolean, :desc => "Exclude running unit and internal tests"
-  method_option :exclude_verification, :type => :boolean, :desc => "Exclude running verification tests"
+  method_option :exclude_broker, :type => :boolean, :desc => "Exclude broker tests"
+  method_option :exclude_runtime, :type => :boolean, :desc => "Exclude runtime tests"
+  method_option :exclude_site, :type => :boolean, :desc => "Exclude site tests"
+  method_option :exclude_rhc, :type => :boolean, :desc => "Exclude rhc tests"
   method_option :include_cucumber, :required => false, :desc => "Include a specific cucumber test (verify, internal, node, api, etc)"
   method_option :include_rcov, :type => :boolean, :desc => "Include coverage analysis on unit tests"
   method_option :include_extended, :required => false, :desc => "Include extended tests"
