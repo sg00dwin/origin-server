@@ -479,6 +479,20 @@ chown apache:apache /srv/cache/mod_cache
 # BZ835097 - remove o-x from tcpdump - was 755
 chmod 750 /usr/sbin/tcpdump
 
+# BZ834487 - remove o-x from /etc/stickshift/resource_limit files - was 644
+chmod 640 /etc/stickshift/resource_limits.conf.c9
+chmod 640 /etc/stickshift/resource_limits.conf.exlarge
+chmod 640 /etc/stickshift/resource_limits.conf.high_density
+chmod 640 /etc/stickshift/resource_limits.conf.jumbo
+chmod 640 /etc/stickshift/resource_limits.conf.large
+chmod 640 /etc/stickshift/resource_limits.conf.medium
+chmod 640 /etc/stickshift/resource_limits.conf.micro
+chmod 640 /etc/stickshift/resource_limits.conf.small
+chmod 640 /etc/stickshift/resource_limits.template
+
+# Remove Other rights from iptables-multi - was 755
+chmod 750 /sbin/iptables-multi
+
 # Deploy application templates - fotios
 /usr/bin/ruby /usr/lib/stickshift/broker/application_templates/templates/deploy.rb
 
@@ -497,6 +511,10 @@ chmod 750 /usr/sbin/tcpdump
 %{policydir}/*
 
 %changelog
+* Mon Jul 16 2012 Tim Kramer <tkramer@redhat.com>
+- BZ834487 - remove reource_limits permissions from Other (tkramer@redhat.com)
+- Remove permissions for iptables-multi from Other (tkramer@redhat.com)
+
 * Fri Jul 13 2012 Adam Miller <admiller@redhat.com> 0.97.2-1
 - Enable ssl security in mcollective. (mpatel@redhat.com)
 - adding template recreation to the devenv sync (admiller@redhat.com)
