@@ -120,20 +120,6 @@ sslverify=0
 sslclientcert=/var/lib/yum/client-cert.pem
 sslclientkey=/var/lib/yum/client-key.pem
 
-[rhel63]
-name= Red Hat Enterprise Linux Server 6.3 - $basearch
-baseurl=https://mirror1.ops.rhcloud.com/libra/rhel6.3/\$basearch/
-        https://mirror2.ops.rhcloud.com/libra/rhel6.3/\$basearch/
-failovermethod=priority
-enabled=1
-gpgcheck=1
-gpgkey=https://mirror1.ops.rhcloud.com/libra/RPM-GPG-KEY-redhat-beta
-ggpkey=https://mirror1.ops.rhcloud.com/libra/RPM-GPG-KEY-redhat-release
-sslverify=0
-sslclientcert=/var/lib/yum/client-cert.pem
-sslclientkey=/var/lib/yum/client-key.pem
-
-
 EOF
 
 # Install the 32 bit java before anything else
