@@ -18,8 +18,10 @@ class AccountApiTest < ActionDispatch::IntegrationTest
   end
   
   def teardown
-     cloud_user = CloudUser.find(@login)
-     cloud_user.delete
+    if @test_enabled
+      cloud_user = CloudUser.find(@login)
+      cloud_user.delete unless cloud_user.nil?
+    end
   end
   
   def test_user_show
