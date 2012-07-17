@@ -1352,7 +1352,7 @@ END
             "cd li-test/stickshift/broker; rake test:integration",
             "cd li-test/stickshift/node; rake test"]
     add_ssh_cmd_to_threads(hostname, threads, failures, titles, cmds)
-    add_ssh_cmd_to_threads(hostname, threads, failures, "Sanity", "cucumber -f html --out /tmp/rhc/sanity.html -f progress -t @sanity li-test/tests/")
+    add_ssh_cmd_to_threads(hostname, threads, failures, "Cucumber Sanity", "cucumber -f html --out /tmp/rhc/sanity.html -f progress -t @sanity li-test/tests/")
 
     threads.each do |t|
       t[0].join
@@ -1387,7 +1387,7 @@ END
                   "restorecon -R /etc/qpid/pki/; chmod +r /etc/qpid/pki/client_db/* /etc/qpid/pki/server_db/*;" \
                   "service iptables restart; service qpidd restart; service mcollective restart", 240)
 
-    puts ssh("verifier", "mc-ping")
+    puts ssh("verifier", "mco ping")
   end
 
   desc "add_multi_node_devenv", "Adds a node to a multi node devenv setup"
@@ -1407,7 +1407,7 @@ END
                   "sed -i 's,^BROKER_HOST.*=.*,BROKER_HOST=#{internal_ip},' /etc/stickshift/stickshift-node.conf;" \
                   "service qpidd stop; service mcollective restart", 240)
 
-    puts ssh("verifier", "mc-ping")
+    puts ssh("verifier", "mco ping")
   end
 
   desc "install_local_client", "Builds and installs the local client rpm (uses sudo)"

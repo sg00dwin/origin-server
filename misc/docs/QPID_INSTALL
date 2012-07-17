@@ -28,7 +28,7 @@
 
 5. Test by running (you should get at least one result)
 
-  mc-ping
+  mco ping
 
 6. You probably want to setup the client logger in /etc/mcollective/client.cfg
   logfile = /var/www/stickshift/broker/log/mcollective-client.log
