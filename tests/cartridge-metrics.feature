@@ -1,6 +1,5 @@
-@internals
-@internals1
-@node
+@runtime
+@runtime1
 Feature: metrics Embedded Cartridge
 
   Scenario Outline: Add Remove metrics to one application

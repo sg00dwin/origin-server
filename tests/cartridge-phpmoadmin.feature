@@ -1,6 +1,6 @@
 # Presently disabled, was giving jenkins errors and we're likely going to remove this feature in the very near future
-#@internals
-#@internals2
+#@runtime
+#@runtime2
 #Feature: phpMoAdmin Embedded Cartridge
 #
 #  Scenario Outline: Add Remove phpMoAdmin to one application

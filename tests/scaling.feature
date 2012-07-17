@@ -1,7 +1,5 @@
-#@verify
-#@verify1
-@node
-@broker
+#@runtime_verify
+#@runtime_verify1
 Feature: Scaling Verification Tests
   Scenario Outline: AutoScale App
     Given the libra client tools

@@ -1,6 +1,5 @@
-@verify
-@verify3
-@broker
+@runtime_verify
+@runtime_verify3
 Feature: Last Access Updater
   Scenario: Application Creation
     Given the libra client tools

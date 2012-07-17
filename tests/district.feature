@@ -1,6 +1,5 @@
-@internals
-@internals1
-@node
+@runtime
+@runtime1
 Feature: District Configuration
   Scenario: Write district file
     Given a district 1e920055ae134e7c9299f4ad8f12bd14 is active

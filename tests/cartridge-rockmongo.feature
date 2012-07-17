@@ -1,6 +1,5 @@
-@internals
-@internals1
-@node
+@runtime
+@runtime1
 Feature: rockmongo Embedded Cartridge
 
   Scenario Outline: Add remove rockmongo to one application

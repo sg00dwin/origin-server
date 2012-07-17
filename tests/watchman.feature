@@ -1,8 +1,6 @@
-
-@internals
-@internals1
+@runtime
+@runtime1
 @watchman
-@node
 Feature: Watchman Service
   Scenario Outline: Watchman monitoring misc applications
     Given a Watchman object using "<log_file>" and "<epoch>"

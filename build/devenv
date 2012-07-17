@@ -386,7 +386,7 @@ mkdir -p /tmp/rhc/junit
           
           case options.include_extended
           when 'broker'
-            add_ssh_cmd_to_threads(hostname, threads, failures, "REST API", "cucumber -f html --out /tmp/rhc/rest_api.html -f progress -t @api li-test/tests", @@SSH_TIMEOUT, true)
+            add_ssh_cmd_to_threads(hostname, threads, failures, "REST API", "cucumber -f html --out /tmp/rhc/rest_api.html -f progress -t @broker_api li-test/tests", @@SSH_TIMEOUT, true)
             titles = ["Broker Domain System"]
             cmds = ["cd li-test/broker; rake domain_system_test"]
             add_ssh_cmd_to_threads(hostname, threads, failures, titles, cmds, @@SSH_TIMEOUT, true)
@@ -401,6 +401,7 @@ mkdir -p /tmp/rhc/junit
           when 'runtime'
           when 'site'
           when 'rhc'
+            add_ssh_cmd_to_threads(hostname, threads, failures, "RHC Extended", "cucumber -f html --out /tmp/rhc/rhc_extended.html -f progress -t @rhc_extended li-test/tests", @@SSH_TIMEOUT, true)
           else
             puts "Not supported for extended: #{options.include_extended}"
             exit 1
@@ -485,31 +486,33 @@ mkdir -p /tmp/rhc/junit
                       "Broker Integration",
                       "StickShift Broker Unit",
                       "StickShift Broker Functional",
-                      "StickShift Broker Integration"]
+                      "StickShift Broker Integration",
+                      "Broker Cucumber"]
             cmds = ["cd li-test/broker; rake test:units", 
                     "cd li-test/broker; rake test:functionals",
                     "cd li-test/broker; rake test:integration",
                     "cd li-test/stickshift/broker; rake test:units",
                     "cd li-test/stickshift/broker; rake test:functionals",
-                    "cd li-test/stickshift/broker; rake test:integration"]
+                    "cd li-test/stickshift/broker; rake test:integration",
+                    "cucumber -f html --out /tmp/rhc/broker_cucumber.html -f progress -t @broker li-test/tests"]
             add_ssh_cmd_to_threads(hostname, threads, failures, titles, cmds)
           end
           
           unless options.exclude_runtime?
             titles = ["Internal Group 1",
                       "Verification Group 1,"]
-            cmds = ["cucumber -f html --out /tmp/rhc/internals1.html -f progress -t @internals1 li-test/tests",
-                    "cucumber -f html --out /tmp/rhc/verfication1.html -f progress -t @verify1 li-test/tests"]
+            cmds = ["cucumber -f html --out /tmp/rhc/runtime_cucumber_1.html -f progress -t @runtime1 li-test/tests",
+                    "cucumber -f html --out /tmp/rhc/runtime_verify_cucumber_1.html -f progress -t @runtime_verify1 li-test/tests"]
             add_ssh_cmd_to_threads(hostname, threads, failures, titles, cmds)
       
             titles = ["Internal Group 2",
                       "Verification Group 2"]
-            cmds = ["cucumber -f html --out /tmp/rhc/internals2.html -f progress -t @internals2 li-test/tests",
-                    "cucumber -f html --out /tmp/rhc/verfication2.html -f progress -t @verify2 li-test/tests"]
+            cmds = ["cucumber -f html --out /tmp/rhc/runtime_cucumber_2.html -f progress -t @runtime2 li-test/tests",
+                    "cucumber -f html --out /tmp/rhc/runtime_verify_cucumber_2.html -f progress -t @runtime_verify2 li-test/tests"]
             add_ssh_cmd_to_threads(hostname, threads, failures, titles, cmds)
             
             titles = ["Verification Group 3"]
-            cmds = ["cucumber -f html --out /tmp/rhc/verfication3.html -f progress -t @verify3 li-test/tests"]
+            cmds = ["cucumber -f html --out /tmp/rhc/runtime_verify_cucumber_2.html -f progress -t @runtime_verify3 li-test/tests"]
             add_ssh_cmd_to_threads(hostname, threads, failures, titles, cmds)
           end
           
@@ -1317,7 +1320,6 @@ END
 
   desc "sanity_check TAG", "Runs a set of sanity check tests on a tagged instance"
   method_option :verbose, :type => :boolean, :desc => "Enable verbose logging"
-  method_option :include_site, :type => :boolean, :desc => "Include site tests"
   method_option :region, :required => false, :desc => "Amazon region override (default us-east-1)"
   def sanity_check(tag)
     options.verbose? ? @@log.level = Logger::DEBUG : @@log.level = Logger::ERROR
@@ -1331,12 +1333,9 @@ END
 
     threads = []
     failures = []
-    if options.include_site?
-      site_titles = ["Site Unit:Units", "Site Unit:Integration"]
-      site_cmds = ["cd li-test/site; rake test:units", "cd li-test/site; rake test:integration"]
-      add_ssh_cmd_to_threads(hostname, threads, failures, site_titles, site_cmds)
-      add_ssh_cmd_to_threads(hostname, threads, failures, "Site Unit:Functionals", "cd li-test/site; rake test:functionals")
-    end
+    site_titles = ["Site Unit:Sanity"]
+    site_cmds = ["cd li-test/site; rake test:sanity"]
+    add_ssh_cmd_to_threads(hostname, threads, failures, site_titles, site_cmds)
     titles = ["Broker Unit",
               "Broker Functional",
               "Broker Integration",
@@ -1344,7 +1343,7 @@ END
               "StickShift Broker Functional",
               "StickShift Broker Integration",
               "StickShift Node Unit"]
-              
+
     cmds = ["cd li-test/broker; rake test:units",
             "cd li-test/broker; rake test:functionals",
             "cd li-test/broker; rake test:integration",
