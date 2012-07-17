@@ -1,4 +1,4 @@
-require 'test_billing_helper'
+require 'test_helper'
 
 class BillingEventsTest < ActiveSupport::TestCase
   def setup

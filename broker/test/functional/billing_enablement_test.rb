@@ -1,4 +1,4 @@
-require 'test_billing_helper'
+require 'test_helper'
 
 
 class BillingEnablementTest < ActiveSupport::TestCase
@@ -36,12 +36,12 @@ class BillingEnablementTest < ActiveSupport::TestCase
   end
 
   def check_user_enablement(target_max_gears, target_vip)
-    user=nil
-    10.times do
-      user = CloudUser.find(@user.login)
-      break if user.max_gears==target_max_gears
-      sleep(6)
-    end
+    # Settings should take affect immediately in the broker.  All changes should follow the pattern:
+    # Check the change is valid with the broker and indicate the intended change with the broker
+    # Call the billing provider to make the change
+    # On success update the broker that the change is made
+    user = CloudUser.find(@user.login)
+
     assert_equal(target_max_gears, user.max_gears)
     # ensure the user has target_vip status i.e. only small/medium gears allowed
     assert_equal(target_vip, user.vip)
