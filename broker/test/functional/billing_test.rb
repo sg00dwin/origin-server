@@ -75,5 +75,6 @@ class BillingTest < ActiveSupport::TestCase
   def teardown
     if @test_enabled 
       @user.delete
+    end
   end
 end
