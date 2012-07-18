@@ -11,7 +11,8 @@ class PlansController < AccountController
   end
 
   def update
-    @user = User.new({:login => current_user.login, :plan_id => params[:plan_id], :as => current_user}, true)
+    @plan = Plan.new params[:plan]
+    @user = User.new({:login => current_user.login, :plan_id => @plan.id, :as => current_user}, true)
     if @user.save
       redirect_to account_plan_path, :flash => {:success => 'upgraded'}
     else
