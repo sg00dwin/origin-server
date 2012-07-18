@@ -399,6 +399,21 @@ mkdir -p /tmp/rhc/junit
             cmds = ["cd li-test/broker; rake cartridge_system_test"]
             add_ssh_cmd_to_threads(hostname, threads, failures, titles, cmds, @@SSH_TIMEOUT, true)
           when 'runtime'
+            titles = ["Extended Runtime Group 1",
+                      "Runtime Verification Group 1,"]
+            cmds = ["cucumber -f junit --out /tmp/rhc/runtime_cucumber_1.xml -f progress -t @runtime1 li-test/tests",
+                    "cucumber -f junit --out /tmp/rhc/runtime_verify_cucumber_1.xml -f progress -t @runtime_verify1 li-test/tests"]
+            add_ssh_cmd_to_threads(hostname, threads, failures, titles, cmds)
+
+            titles = ["Extended Runtime Internal Group 2",
+                      "Runtime Verification Group 2"]
+            cmds = ["cucumber -f junit --out /tmp/rhc/runtime_cucumber_2.xml -f progress -t @runtime2 li-test/tests",
+                    "cucumber -f junit --out /tmp/rhc/runtime_verify_cucumber_2.xml -f progress -t @runtime_verify2 li-test/tests"]
+            add_ssh_cmd_to_threads(hostname, threads, failures, titles, cmds)
+
+            titles = ["Extended Runtime Verification Group 3"]
+            cmds = ["cucumber -f junit --out /tmp/rhc/runtime_verify_cucumber_2.xml -f progress -t @runtime_verify3 li-test/tests"]
+            add_ssh_cmd_to_threads(hostname, threads, failures, titles, cmds)
           when 'site'
             titles = ["Site Extended"]
             cmds = ["cd li-test/site; rake test:extended"]
@@ -502,21 +517,7 @@ mkdir -p /tmp/rhc/junit
           end
           
           unless options.exclude_runtime?
-            titles = ["Runtime Group 1",
-                      "Runtime Verification Group 1,"]
-            cmds = ["cucumber -f html --out /tmp/rhc/runtime_cucumber_1.html -f progress -t @runtime1 li-test/tests",
-                    "cucumber -f html --out /tmp/rhc/runtime_verify_cucumber_1.html -f progress -t @runtime_verify1 li-test/tests"]
-            add_ssh_cmd_to_threads(hostname, threads, failures, titles, cmds)
-      
-            titles = ["Runtime Internal Group 2",
-                      "Runtime Verification Group 2"]
-            cmds = ["cucumber -f html --out /tmp/rhc/runtime_cucumber_2.html -f progress -t @runtime2 li-test/tests",
-                    "cucumber -f html --out /tmp/rhc/runtime_verify_cucumber_2.html -f progress -t @runtime_verify2 li-test/tests"]
-            add_ssh_cmd_to_threads(hostname, threads, failures, titles, cmds)
-            
-            titles = ["Runtime Verification Group 3"]
-            cmds = ["cucumber -f html --out /tmp/rhc/runtime_verify_cucumber_2.html -f progress -t @runtime_verify3 li-test/tests"]
-            add_ssh_cmd_to_threads(hostname, threads, failures, titles, cmds)
+            # place holder for future unit tests...
           end
           
           unless options.exclude_site?
