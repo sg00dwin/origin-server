@@ -40,13 +40,6 @@ User errors:
 136: Could not delete domain, domain has valid applications.
 146: User has valid credentials but hasn't been granted access to Express yet.
 147: User has valid credentials but hasn't requested access to Express yet.
-150: A plan with specified id does not exist
-151: An account was not found for user
-152: Account status not active
-153: User has more consumed gears than the new plan allows.
-154: User has gears that the new plan does not allow.
-155: Error getting account information from billing provider
-156: Updating user plan on billing provider failed
 210: Can not override existing location for git repo
 211: Parent directory for git repo does not exist
 212: Could not find libra_id_rsa

@@ -9,13 +9,6 @@ Broker::Application.routes.draw do
   # Keep in mind you can assign values other than :controller and :action
   match 'nurture' => 'broker#nurture_post', :via => [:post]
 
-  scope "/rest" do
-    resource :user, :only => [:show, :update], :controller => :user_ext do
-      resources :keys, :controller => :keys, :constraints => { :id => /[\w]+/ } 
-    end
-    resources :plans, :only => [:index, :show]
-  end
-  
   scope "/billing/rest" do
     resource :api, :only => [:show], :controller => :base
     resources :events, :controller => :billing_events, :only => [:create]

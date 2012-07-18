@@ -1,5 +1,6 @@
 require 'test_helper'
 
+
 class BillingEnablementTest < ActiveSupport::TestCase
   def setup
     @test_enabled = false
@@ -7,28 +8,28 @@ class BillingEnablementTest < ActiveSupport::TestCase
     @user = CloudUser.new("aria_testuser_" + gen_uuid[0..9])
     @user.max_gears =0
     @user.save
-    @user_id = Digest::MD5::hexdigest(@user.login)
     super
   end
 
   test "user billing plan lifecycle" do
     if @test_enabled
       api = Express::AriaBilling::Api.instance
-      acct_no = api.create_fake_acct(@user_id, :freeshift)
+      acct_no = api.create_fake_acct(@user.uuid, :FreeShift)
+
 
       # ensure the user has free account assigned only
       check_user_enablement(3, false)
 
       # upgrade master plan
-      assert(api.update_master_plan(acct_no, :megashift))
+      assert(api.update_master_plan(acct_no, :MegaShift))
 
       # check in mongo about the plan upgraded
       check_user_enablement(16, true)
 
       # now restore the user back to FreeShift
       # downgrade master plan
-      assert(api.update_master_plan(acct_no, :freeshift))
-
+      assert(api.update_master_plan(acct_no, :FreeShift))
+      
       # ensure the user has free account assigned only
       check_user_enablement(3, false)
     end
