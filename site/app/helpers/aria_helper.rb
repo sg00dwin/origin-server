@@ -9,4 +9,5 @@ module AriaHelper
       Rails.application.config.aria_direct_post_uri
     end
   end
+
 end

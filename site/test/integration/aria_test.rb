@@ -30,8 +30,8 @@ class AriaIntegrationTest < ActionDispatch::IntegrationTest
 
     assert_equal 'Y', Aria.get_acct_details_all(user.acct_no).is_test_acct
     assert_equal user.rhlogin, user.send(:get_supplemental_value, 'rhlogin')
-    assert_equal '0', user.send(:get_supplemental_value, 'tax_exempt')
-    assert !user.tax_exempt?
+    #assert_equal '0', user.send(:get_supplemental_value, 'tax_exempt')
+    #assert !user.tax_exempt?
 
     assert user.has_valid_account?
     assert user.send(:has_account?)
@@ -51,13 +51,13 @@ class AriaIntegrationTest < ActionDispatch::IntegrationTest
     info.country = 'US'
     info.zip = 12345.to_s
     info.state = 'TX'
-    info.tax_exempt = 1
+    #info.tax_exempt = 1
     assert user.create_account(:billing_info => info), user.errors.inspect
     billing_info = user.billing_info
-    info.attributes.delete 'tax_exempt'
+    #info.attributes.delete 'tax_exempt'
     assert_equal info.attributes, billing_info.attributes
-    assert_equal 1, user.tax_exempt
-    assert user.tax_exempt?
+    #assert_equal 1, user.tax_exempt
+    #assert user.tax_exempt?
 
     # update
     methods.each do |m|
@@ -66,13 +66,13 @@ class AriaIntegrationTest < ActionDispatch::IntegrationTest
     info.country = 'FR'
     info.zip = 54321.to_s
     info.state = 'Loraine'
-    info.tax_exempt = 2
+    #info.tax_exempt = 2
     assert user.update_account(:billing_info => info), user.errors.inspect
     billing_info = user.billing_info
-    info.attributes.delete 'tax_exempt'
+    #info.attributes.delete 'tax_exempt'
     assert_equal info.attributes, billing_info.attributes
-    assert_equal 2, user.tax_exempt
-    assert user.tax_exempt?
+    #assert_equal 2, user.tax_exempt
+    #assert user.tax_exempt?
   end
 
   test 'should set direct post settings' do

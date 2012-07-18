@@ -21,10 +21,10 @@
 
     .control-group
       .controls
-        %label.checkbox
-          = b.input :tax_exempt, :as => :boolean,
-                    :label => 'I qualify for tax exempt status',
-                    :hint => 'To qualify for tax exempt status you must submit a certificate to Red Hat via link.  Upon reciept of your certificate we will refund your previous taxes to your credit card.'
+        %p
+          To qualify for tax exempt status you must submit a certificate to Red Hat.
+          Upon reciept of your certificate we will refund all previously paid taxes to 
+          your credit card. #{link_to "Learn more about filing for tax exempt status", tax_exempt_help_status, :target => '_blank', :class => 'external'}.
 
   = f.buttons do
     = f.commit_button "Update my account"

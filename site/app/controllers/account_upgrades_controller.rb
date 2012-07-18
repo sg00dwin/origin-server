@@ -27,7 +27,7 @@ class AccountUpgradesController < AccountController
 
     @user.plan_id = plan_id
 
-    logger.debug "@plan=#{@plan.inspect} @current_plan=#{@current_plan.inspect} @user=#{@user}"
+    logger.debug "@plan=#{@plan.inspect} @current_plan=#{@current_plan.inspect} @user=#{@user.inspect}"
     if @user.save
       redirect_to account_plan_path, :flash => {:success => 'upgraded'}
     else

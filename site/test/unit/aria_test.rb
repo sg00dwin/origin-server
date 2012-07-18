@@ -196,8 +196,8 @@ class AriaUnitTest < ActiveSupport::TestCase
 
   test 'should invoke create_acct_complete' do
     stub_aria(:create_acct_complete, {
-      :supp_field_values => 'foo|0',
-      :supp_field_names => 'rhlogin|tax_exempt',
+      :supp_field_values => 'foo',
+      :supp_field_names => 'rhlogin',
       :password => 'passw0rd',
       :test_acct_ind => 1.to_s,
       :status_cd => 0.to_s,
@@ -222,14 +222,14 @@ class AriaUnitTest < ActiveSupport::TestCase
     assert_equal 'Houston', info.city
     assert_equal({'city' => 'Houston'}, info.attributes)
     assert_equal({'bill_city' => 'Houston'}, info.to_aria_attributes)
-    assert_nil info.tax_exempt
-    assert !info.tax_exempt?
+    #assert_nil info.tax_exempt
+    #assert !info.tax_exempt?
   end
 
   test 'billing info should serialize supplemental fields' do
-    info = Aria::BillingInfo.new
-    info.tax_exempt = 1
-    assert_equal({:supplemental => {'tax_exempt' => 1}}, info.to_aria_attributes)
+    #info = Aria::BillingInfo.new
+    #info.tax_exempt = 1
+    #assert_equal({:supplemental => {'tax_exempt' => 1}}, info.to_aria_attributes)
   end
 
   test 'create_acct_complete should serialize supplemental fields' do

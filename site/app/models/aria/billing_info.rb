@@ -7,10 +7,6 @@ module Aria
               :state,
               :country,
               :zip,
-              # 0 or nil, not exempt
-              # 1, requested exemption
-              # 2, granted exemption
-              :tax_exempt,
               # questionable
               :first_name, :last_name
     # Rails 3.0 requires all define_attribute_method calls to be together
@@ -26,12 +22,11 @@ module Aria
                    :rename_to_save => {
                      'bill_zip' => 'bill_postal_cd',
                      'bill_state' => 'bill_state_prov',
-                   },
-                   :supplemental => :tax_exempt
+                   }
 
-    def tax_exempt?
-      tax_exempt.present? and tax_exempt.to_i > 0
-    end
+    #def tax_exempt?
+    #  tax_exempt.present? and tax_exempt.to_i > 0
+    #end
 
     def self.test
       new({

@@ -56,10 +56,12 @@ module Aria
     end
 
     def tax_exempt
-      @tax_exempt ||= (get_supplemental_value(:tax_exempt) || 0).to_i
+      # replace with call to get_tax_acct_status
+      #@tax_exempt ||= (get_supplemental_value(:tax_exempt) || 0).to_i
     end
     def tax_exempt?
-      tax_exempt > 0
+      # tax_exempt > 0
+      false
     end
 
     def create_account(opts=nil)
@@ -92,7 +94,7 @@ module Aria
       Aria.update_acct_complete(acct_no, params)
       @billing_info = nil
       @account_details = nil
-      @tax_exempt = nil
+      #@tax_exempt = nil
       true
     rescue Aria::Error => e
       errors.add(:base, e.to_s)
@@ -142,7 +144,7 @@ module Aria
           :master_plan_no => Aria.default_plan_no,
           :password => random_password,
           :test_acct_ind => Rails.application.config.aria_force_test_users ? 1 : 0,
-          :supplemental => {:rhlogin => login, :tax_exempt => 0},
+          :supplemental => {:rhlogin => login},
         })
       end
   end
