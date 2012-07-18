@@ -31,6 +31,19 @@ class Release < Thor
       end
     end
 
+    def fail_if_uncommitted_changes
+      raise "You have uncommited changes in the repository, cannot bump versions" unless run('git diff --quiet')
+      SIBLING_REPOS.each do |repo_name, repo_dirs| 
+        repo_dirs.each do |repo_dir| 
+          if File.exists?(repo_dir) 
+            inside(repo_dir) do 
+              raise "You have uncommited changes in #{repo_dir}, cannot bump versions" unless run('git diff --quiet')
+            end
+          end
+        end
+      end
+    end
+
     def get_updated_build_dirs(verbose, push_changes=false)
       gem_updates = false
       
@@ -323,12 +336,15 @@ class Release < Thor
   method_option :push_changes, :type => :boolean, :desc => "Push the changes to the current branch"
   method_option :verbose, :type => :boolean, :desc => "Enable verbose logging"
   def bump_minor_versions
+    fail_if_uncommited_changes
+
     orig_branches = checkout_branch("master", options.verbose?)
     begin
       all_packages = get_packages
       IGNORE_PACKAGES.each do |package|
         all_packages.delete(package)
       end
+
       all_packages.each do |package_name, pkg|
         build_dir = pkg[0]
         spec_file = pkg[1]
@@ -336,16 +352,16 @@ class Release < Thor
         new_version = next_minor_version(version)
         if new_version
           run("/bin/sed -i 's,^Version:.*,Version: #{new_version},' #{spec_file}", :verbose => options.verbose?)
+          inside(File.dirname(spec_file)){ run('rake version') } if package_name == 'rhc'
         end
-        
       end
       if options.push_changes?
-        run("git add *.spec; git commit -m 'bumping spec versions'; git push origin master", :verbose => options.verbose?)
+        run("git add .; git commit -m 'Bumping spec versions'; git push origin master", :verbose => options.verbose?)
         SIBLING_REPOS.each do |repo_name, repo_dirs|
           repo_dirs.each do |repo_dir|
             if File.exists?(repo_dir)
               inside(repo_dir) do
-                run("git add *.spec; git commit -m 'bumping spec versions'; git push origin master", :verbose => options.verbose?)
+                run("git add .; git commit -m 'Bumping spec versions'; git push origin master", :verbose => options.verbose?)
               end
               break
             end
