@@ -168,7 +168,7 @@ class Release < Thor
   desc "build", "Tag and build new RPMs for any changes"
   method_option :verbose, :type => :boolean, :desc => "Enable verbose logging"
   def build
-  
+
     unless run("if [ -n \"${http_proxy+x}\" ]; then exit 1; fi", :verbose => options.verbose?)
       puts "ERROR - you need to unset http_proxy first"; exit 1
     end
@@ -186,6 +186,7 @@ class Release < Thor
 
       build_dirs = get_updated_build_dirs(options.verbose?, true)
       tag_failures = []
+      requires_rebuild = []
 
       build_dirs.each do |build_info|
         build_dir = build_info[1]
@@ -193,14 +194,26 @@ class Release < Thor
         inside(working_dir) do
           puts "Tagging #{build_dir}"
           # Tag the package
-          unless run("tito tag --accept-auto-changelog", :verbose => options.verbose?)
+          if run("tito tag --accept-auto-changelog", :verbose => options.verbose?)
+            if File.basename(build_dir) == 'rhc'
+              unless run('TAG=`git tag -l --contains=HEAD` && rake version && git add . && git commit --amend -C HEAD && git tag -f $TAG', :verbose => options.verbose?)
+                if run('tito tag -u')
+                  puts '  Unable to rewrite the rhc version tag.  Successfully reverted the tito tag.'
+                  tag_failures << build_dir
+                else
+                  puts '  Unable to rewrite the rhc version tag, and unable to undo the tito tag.'
+                  requires_rebuild << build_dir
+                end
+              end
+            end
+          else
             tag_failures << build_dir
           end
           puts "Done"
         end
       end
 
-      tag_failures.each do |build_dir|
+      (tag_failures + requires_rebuild).each do |build_dir|
         build_dirs.delete_if { build_info | build_info[1] == build_dir }
       end
 
@@ -247,18 +260,25 @@ class Release < Thor
           end
         end
       end
-      if !tag_failures.empty?
+
+      unless requires_rebuild.empty?
+        puts "************BEGIN REQUIRES REBUILD****************"
+        puts "Note: These packages will need to be force built by hand."
+        puts requires_rebuild.pretty_inspect
+        puts "*************END REQUIRES REBUILD*****************\n"
+      end
+      unless tag_failures.empty?
         puts "************BEGIN TAG FAILURES****************"
         puts "Note: Packages that failed to tag should continue to show up in build/release check"
         puts tag_failures.pretty_inspect
         puts "*************END TAG FAILURES*****************\n"
       end
-      if !push_failures.empty?
+      unless push_failures.empty?
         puts "************BEGIN PUSH FAILURES****************"
         puts push_failures
         puts "*************END PUSH FAILURES*****************\n"
       end
-      if !build_failures.empty?
+      unless build_failures.empty?
         puts "************BEGIN BUILD FAILURES****************"
         puts build_failures
         puts "*************END BUILD FAILURES*****************\n"
