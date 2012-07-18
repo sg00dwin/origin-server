@@ -15,9 +15,24 @@ class AccountUpgradesController < AccountController
   def new
     @current_plan = Plan.new(:id => 'freeshift', :name => 'FreeShift')
     @plan = Plan.new(:id => 'megashift', :name => 'MegaShift')
+    @user = User.new
   end
 
   def create
+    plan_id = params[:plan][:id]
+
+    @user = User.find(:one, :as => current_user)
+    @plan = Plan.find plan_id
+    @current_plan = @user.plan
+
+    @user.plan_id = plan_id
+
+    logger.debug "@plan=#{@plan.inspect} @current_plan=#{@current_plan.inspect} @user=#{@user}"
+    if @user.save
+      redirect_to account_plan_path, :flash => {:success => 'upgraded'}
+    else
+      render :new
+    end
   end
 
   def show

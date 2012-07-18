@@ -196,8 +196,8 @@ class AriaUnitTest < ActiveSupport::TestCase
 
   test 'should invoke create_acct_complete' do
     stub_aria(:create_acct_complete, {
-      :supp_field_values => 'foo',
-      :supp_field_names => 'rhlogin',
+      :supp_field_values => 'foo|0',
+      :supp_field_names => 'rhlogin|tax_exempt',
       :password => 'passw0rd',
       :test_acct_ind => 1.to_s,
       :status_cd => 0.to_s,

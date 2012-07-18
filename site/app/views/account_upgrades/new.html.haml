@@ -1,6 +1,6 @@
 %h1 Upgrade your plan
 
-= semantic_form_for :plan, :url => account_plan_path, :html => {:method => :put} do |f|
+= semantic_form_for :plan, :url => account_plan_upgrade_path do |f|
   = f.hidden_field :id
 
   %h2

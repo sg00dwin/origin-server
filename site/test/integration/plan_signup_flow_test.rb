@@ -16,12 +16,13 @@ class PlanSignupFlowTest < ActionDispatch::IntegrationTest
   end
 
   def simple_user
-    {:web_user => {:rhlogin => uuid, :password => 'password'}}
+    @simple_user ||= {:web_user => {:rhlogin => uuid, :password => 'password'}}
   end
 
   def login_simple_user
     post '/login', simple_user
     assert_response :redirect, @response.inspect
+    simple_user
   end
 
   test 'anonymous without prev signin redirected to signup' do
@@ -43,7 +44,7 @@ class PlanSignupFlowTest < ActionDispatch::IntegrationTest
   end
 
   test 'user can signup' do
-    login_simple_user
+    user = login_simple_user
 
     get '/account/plans'
     assert_response :success
@@ -63,14 +64,19 @@ class PlanSignupFlowTest < ActionDispatch::IntegrationTest
     get '/account/plans/megashift/upgrade/payment_method/new'
     assert_response :success
 
+    user = WebUser.new(:rhlogin => user[:web_user][:rhlogin]).extend(Aria::User)
+    user.update_account :status_cd => 1
+
     #post 'pci' #PCI url
     #assert_redirected_to '/account/upgrade/megashift/new
 
     get '/account/plans/megashift/upgrade/new'
     assert_response :success
 
-    put '/account/plan', {:id => 'megashift'}
+    post '/account/plans/megashift/upgrade', {:plan => {:id => 'megashift'}}
     assert_redirected_to '/account/plan'
+
+    assert_equal 'megashift', User.find(:one, :as => user).plan_id
 
     get '/account/plan'
     assert_response :success

@@ -39,16 +39,12 @@ module Aria
     end
 
     def create_acct_complete(params)
-      p = encode_supplemental(params)
-      Rails.logger.debug "create_acct_complete #{p.inspect}"
-      super p
+      super encode_supplemental(params)
     end
 
     def update_acct_complete(acct_no, params)
       params[:acct_no] = acct_no
-      p = encode_supplemental(params, true)
-      Rails.logger.debug "create_acct_complete #{p.inspect}"
-      super p
+      super encode_supplemental(params, true)
     end
 
     def get_acct_details_all(acct_no)
@@ -78,7 +74,8 @@ module Aria
       def encode_supplemental(params, update=false)
         if supplemental = params.delete(:supplemental)
           names, values = [], []
-          supplemental.each_pair do |k,v|
+          supplemental.keys.sort.each do |k|
+            v = supplemental[k]
             next if k.nil? || v.nil?
             names << k.to_s.gsub(/\|/,'_')
             values << v.to_s.gsub(/\|/,'_')
