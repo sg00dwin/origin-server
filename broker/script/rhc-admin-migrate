@@ -8,7 +8,7 @@ require 'stringio'
 require 'set'
 
 RHLOGINS = nil #['rhlogin']
-MAX_THREADS = 8
+$max_threads = 8
 WORK_DIR = '/tmp/rhc/migration'
 
 # For each of these sets:  nil implies all and empty implies none
@@ -242,7 +242,7 @@ def migrate(version, continue=false, target_server_identity=nil, migrate_positio
   node_to_gears = {}
   ds_queues = []
   users.each_with_index do |user, index|
-    queue_index = index % MAX_THREADS
+    queue_index = index % $max_threads
     ds_queues[queue_index] = [] unless ds_queues[queue_index]
     ds_queues[queue_index].push(user)
   end
@@ -299,7 +299,7 @@ def migrate(version, continue=false, target_server_identity=nil, migrate_positio
   thread_groups = []
   node_to_gears.each do |server_identity, gears|
     gear_cnt += gears.length
-    if thread_groups.length < MAX_THREADS
+    if thread_groups.length < $max_threads
       thread_groups << [{server_identity => gears}]
       gear_cnts << gears.length
     else
@@ -314,8 +314,8 @@ def migrate(version, continue=false, target_server_identity=nil, migrate_positio
       thread_groups[min_pos] << {server_identity => gears}
       gear_cnts[min_pos] += gears.length
     end
+    node_to_gears[server_identity] = nil
   end
-  node_to_gears = nil
   
   puts "#####################################################"
   puts 'Gear counts per thread:'
@@ -547,6 +547,7 @@ Usage: #{$0}
                                        ./rhc-admin-migrate --version <version> --position 1 --num-migrators 2
                                        ./rhc-admin-migrate --version <version> --position 2 --num-migrators 2
   --migrate-position position          Postion of this migrator (1 based) amongst the num of migrators (--num_migrators)
+  --max-threads num                    Indicates the number of processing queues
   --continue                           Flag indicating to continue a previous migration
 
 USAGE
@@ -563,6 +564,7 @@ begin
     ["--version", GetoptLong::REQUIRED_ARGUMENT],
     ["--num-migrators", GetoptLong::REQUIRED_ARGUMENT],
     ["--migrate-position", GetoptLong::REQUIRED_ARGUMENT],
+    ["--max-threads", GetoptLong::REQUIRED_ARGUMENT],
     ["--continue", GetoptLong::NO_ARGUMENT],
     ["--help", "-h", GetoptLong::NO_ARGUMENT]
   )
@@ -580,6 +582,16 @@ end
 
 $:.unshift('/var/www/stickshift/broker')
 require 'config/environment'
+
+if opt['max_threads']
+  max_threads = opt['max_threads'].to_i
+  if max_threads < 50 && max_threads > 0
+    $max_threads = max_threads
+  else
+    puts "max_threads must be less than 50 and greater than 0"
+    exit 255
+  end
+end
 
 if opt['migrate-file']
   migrate_from_file(opt['migrate-file'])
