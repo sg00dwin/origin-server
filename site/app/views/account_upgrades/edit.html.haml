@@ -19,6 +19,13 @@
     = b.input :city
     = b.inputs :state, :country, :zip
 
+    .control-group
+      .controls
+        %label.checkbox
+          = b.input :tax_exempt, :as => :boolean,
+                    :label => 'I qualify for tax exempt status',
+                    :hint => 'To qualify for tax exempt status you must submit a certificate to Red Hat via link.  Upon reciept of your certificate we will refund your previous taxes to your credit card.'
+
   = f.buttons do
     = f.commit_button "Update my account"
     = f.loading

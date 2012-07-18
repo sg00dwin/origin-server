@@ -39,12 +39,16 @@ module Aria
     end
 
     def create_acct_complete(params)
-      super encode_supplemental(params)
+      p = encode_supplemental(params)
+      Rails.logger.debug "create_acct_complete #{p.inspect}"
+      super p
     end
 
     def update_acct_complete(acct_no, params)
       params[:acct_no] = acct_no
-      super encode_supplemental(params, true)
+      p = encode_supplemental(params, true)
+      Rails.logger.debug "create_acct_complete #{p.inspect}"
+      super p
     end
 
     def get_acct_details_all(acct_no)

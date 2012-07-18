@@ -142,7 +142,7 @@ module Aria
           :master_plan_no => Aria.default_plan_no,
           :password => random_password,
           :test_acct_ind => Rails.application.config.aria_force_test_users ? 1 : 0,
-          :supplemental => {:rhlogin => login},
+          :supplemental => {:rhlogin => login, :tax_exempt => 0},
         })
       end
   end

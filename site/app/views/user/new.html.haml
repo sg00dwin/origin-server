@@ -33,4 +33,4 @@
     .form-actions
       = form.commit_button 'Sign Up', :button_html => {:class => 'btn'}
       or
-      = link_to 'sign in if you have an account', login_path
+      = link_to 'sign in if you have an account', login_path(:then => @redirect)
