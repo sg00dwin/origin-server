@@ -17,7 +17,7 @@ f_ctrl_c() {
 trap f_ctrl_c SIGINT
 
 # "Global" variables
-sibling_dirs=( "os-client-tools" "crankcase" )
+sibling_dirs=( "rhc" "crankcase" )
 sync_only=""
 remote_repo="mirror1.prod.rhcloud.com"
 remote_repo_dir="/srv/pub/crankcase/nightly"

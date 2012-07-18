@@ -23,7 +23,7 @@
         <string>uploadpack</string>
         <string>git-upload-pack</string>
         <string>url</string>
-        <string>git://github.com/openshift/os-client-tools.git</string>
+        <string>git://github.com/openshift/rhc.git</string>
         <string>tagopt</string>
         <string></string>
       </org.spearce.jgit.transport.RemoteConfig>

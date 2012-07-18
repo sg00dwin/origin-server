@@ -130,7 +130,7 @@ specfiles = []
 prg = Seigiku.new(home_dir + "build/seigiku/seed_list.json", home_dir + "build/seigiku/black_list.json")
 specfiles.concat(prg.start(home_dir))
 #specfiles.concat(prg.start('/home/jhonce/Projects/li/build/seigiku'))
-specfiles.concat(prg.start("/home/jhonce/Projects/os-client-tools"))
+specfiles.concat(prg.start("/home/jhonce/Projects/rhc"))
 
 specfiles.sort.each {|s|
   prg.print_specfile_table(s)

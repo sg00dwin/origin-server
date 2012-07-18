@@ -2,7 +2,7 @@ require 'fileutils'
 
 DEVENV_REGEX = /^rhc-devenv-\d+/
 SIBLING_REPOS = {'crankcase' => ['../crankcase-working', '../crankcase-fork', '../crankcase', '/var/lib/jenkins/jobs/crankcase/workspace'],
-                 'os-client-tools' => ['../os-client-tools-working', '../os-client-tools-fork', '../os-client-tools', '/var/lib/jenkins/jobs/os-client-tools/workspace']}
+                 'rhc' => ['../rhc-working', '../rhc-fork', '../rhc', '/var/lib/jenkins/jobs/rhc/workspace']}
   
 PACKAGE_REGEX = /^([\w\.-]*)-\d+\.\d+\.\d+-\d+\.\..*:$/
 IGNORE_PACKAGES = ['bind-local', 'rubygem-rhc', 'stickshift-broker', 'rubygem-gearchanger-oddjob-plugin', 'rubygem-swingshift-mongo-plugin', 'rubygem-uplift-bind-plugin', 'openshift-origin', 'openshift-origin-broker', 'openshift-origin-node']
