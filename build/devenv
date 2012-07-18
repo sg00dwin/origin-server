@@ -292,9 +292,9 @@ mkdir -p /tmp/rhc/junit
                   test = $1
                   scenario = $2
                   if retry_individually
-                    failures.push(["#{title} (#{test}:#{scenario})", "cucumber -f html --out /tmp/rhc/#{test}_#{scenario}.html -f progress li-test/tests/#{test}:#{scenario}"])
+                    failures.push(["#{title} (#{test}:#{scenario})", "cucumber -f junit --out /tmp/rhc/cucumber_results -f progress li-test/tests/#{test}:#{scenario}"])
                   else
-                    failures.push(["#{title} (#{test})", "cucumber -f html --out /tmp/rhc/#{test}.html -f progress li-test/tests/#{test}"])
+                    failures.push(["#{title} (#{test})", "cucumber -f junit --out /tmp/rhc/cucumber_results -f progress li-test/tests/#{test}"])
                   end
                 end
               end
@@ -386,7 +386,7 @@ mkdir -p /tmp/rhc/junit
           
           case options.include_extended
           when 'broker'
-            add_ssh_cmd_to_threads(hostname, threads, failures, "REST API", "cucumber -f html --out /tmp/rhc/rest_api.html -f progress -t @broker_api li-test/tests", @@SSH_TIMEOUT, true)
+            add_ssh_cmd_to_threads(hostname, threads, failures, "REST API", "cucumber -f junit --out /tmp/rhc/cucumber_results -f progress -t @broker_api li-test/tests", @@SSH_TIMEOUT, true)
             titles = ["Broker Domain System"]
             cmds = ["cd li-test/broker; rake domain_system_test"]
             add_ssh_cmd_to_threads(hostname, threads, failures, titles, cmds, @@SSH_TIMEOUT, true)
@@ -399,27 +399,23 @@ mkdir -p /tmp/rhc/junit
             cmds = ["cd li-test/broker; rake cartridge_system_test"]
             add_ssh_cmd_to_threads(hostname, threads, failures, titles, cmds, @@SSH_TIMEOUT, true)
           when 'runtime'
-            titles = ["Extended Runtime Group 1",
-                      "Runtime Verification Group 1,"]
-            cmds = ["cucumber -f junit --out /tmp/rhc/runtime_cucumber_1.xml -f progress -t @runtime1 li-test/tests",
-                    "cucumber -f junit --out /tmp/rhc/runtime_verify_cucumber_1.xml -f progress -t @runtime_verify1 li-test/tests"]
+            titles = ["Extended Runtime Group 1"]
+            cmds = ["cucumber -f junit --out /tmp/rhc/cucumber_results -f progress -t @runtime_verify1 li-test/tests"]
             add_ssh_cmd_to_threads(hostname, threads, failures, titles, cmds)
 
-            titles = ["Extended Runtime Internal Group 2",
-                      "Runtime Verification Group 2"]
-            cmds = ["cucumber -f junit --out /tmp/rhc/runtime_cucumber_2.xml -f progress -t @runtime2 li-test/tests",
-                    "cucumber -f junit --out /tmp/rhc/runtime_verify_cucumber_2.xml -f progress -t @runtime_verify2 li-test/tests"]
+            titles = ["Extended Runtime Group 2"]
+            cmds = ["cucumber -f junit --out /tmp/rhc/cucumber_results -f progress -t @runtime_verify2 li-test/tests"]
             add_ssh_cmd_to_threads(hostname, threads, failures, titles, cmds)
 
-            titles = ["Extended Runtime Verification Group 3"]
-            cmds = ["cucumber -f junit --out /tmp/rhc/runtime_verify_cucumber_2.xml -f progress -t @runtime_verify3 li-test/tests"]
+            titles = ["Extended Runtime Group 3"]
+            cmds = ["cucumber -f junit --out /tmp/rhc/cucumber_results -f progress -t @runtime_verify3 li-test/tests"]
             add_ssh_cmd_to_threads(hostname, threads, failures, titles, cmds)
           when 'site'
             titles = ["Site Extended"]
             cmds = ["cd li-test/site; rake test:extended"]
             add_ssh_cmd_to_threads(hostname, threads, failures, titles, cmds)
           when 'rhc'
-            add_ssh_cmd_to_threads(hostname, threads, failures, "RHC Extended", "cucumber -f html --out /tmp/rhc/rhc_extended.html -f progress -t @rhc_extended li-test/tests", @@SSH_TIMEOUT, true)
+            add_ssh_cmd_to_threads(hostname, threads, failures, "RHC Extended", "cucumber -f junit --out /tmp/rhc/cucumber_results -f progress -t @rhc_extended li-test/tests", @@SSH_TIMEOUT, true)
           else
             puts "Not supported for extended: #{options.include_extended}"
             exit 1
@@ -431,7 +427,7 @@ mkdir -p /tmp/rhc/junit
         elsif options.include_cucumber
           timeout=@@SSH_TIMEOUT
           timeout = @@SSH_TIMEOUT_OVERRIDES[options.include_cucumber] if not @@SSH_TIMEOUT_OVERRIDES[options.include_cucumber].nil?
-          add_ssh_cmd_to_threads(hostname, threads, failures, "#{options.include_cucumber}", "cucumber -f html --out /tmp/rhc/#{options.include_cucumber}.html -f progress -t @#{options.include_cucumber} li-test/tests", timeout)
+          add_ssh_cmd_to_threads(hostname, threads, failures, "#{options.include_cucumber}", "cucumber -f junit --out /tmp/rhc/cucumber_results -f progress -t @#{options.include_cucumber} li-test/tests", timeout)
         elsif options.include_web?
 
           # check sauce quotas first
@@ -517,7 +513,13 @@ mkdir -p /tmp/rhc/junit
           end
           
           unless options.exclude_runtime?
-            # place holder for future unit tests...
+            titles = ["Runtime Group 1"]
+            cmds = ["cucumber -f junit --out /tmp/rhc/cucumber_results -f progress -t @runtime1 li-test/tests"]
+            add_ssh_cmd_to_threads(hostname, threads, failures, titles, cmds)
+
+            titles = ["Runtime Group 2"]
+            cmds = ["cucumber -f junit --out /tmp/rhc/cucumber_results -f progress -t @runtime2 li-test/tests"]
+            add_ssh_cmd_to_threads(hostname, threads, failures, titles, cmds)
           end
           
           unless options.exclude_site?
@@ -560,7 +562,7 @@ mkdir -p /tmp/rhc/junit
           unless options.exclude_runtime?
             idle_all_gears(hostname)
             output, exit_code = run_ssh(hostname, "Singletons",
-                "cucumber -f html --out /tmp/rhc/singletons.html -f progress -t @singleton li-test/tests",
+                "cucumber -f junit --out /tmp/rhc/cucumber_results -f progress -t @singleton li-test/tests",
                 timeout)
 
             exit 1 if 0 != exit_code
@@ -1348,7 +1350,7 @@ END
             "cd li-test/stickshift/broker; rake test:sanity",
             "cd li-test/stickshift/node; rake test"]
     add_ssh_cmd_to_threads(hostname, threads, failures, titles, cmds)
-    add_ssh_cmd_to_threads(hostname, threads, failures, "Cucumber Sanity", "cucumber -f html --out /tmp/rhc/cucumber_sanity.html -f progress -t @sanity li-test/tests/")
+    add_ssh_cmd_to_threads(hostname, threads, failures, "Cucumber Sanity", "cucumber -f junit --out /tmp/rhc/cucumber_results -f progress -t @sanity li-test/tests/")
 
     threads.each do |t|
       t[0].join
