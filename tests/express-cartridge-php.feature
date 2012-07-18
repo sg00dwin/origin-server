@@ -1,6 +1,5 @@
-@internals
-@internals2
-@node
+@runtime
+@runtime2
 Feature: PHP Application
 
 # This feature has the expose/conceal/show port carved out of the cartridge-php.feature 

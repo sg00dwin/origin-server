@@ -7,6 +7,29 @@ WebMock.allow_net_connect!
 
 class ActiveSupport::TestCase
 
+  def self.isolate(&block)
+    self.module_eval do
+      include ActiveSupport::Testing::Isolation
+      setup do
+        yield block
+      end
+    end
+  end
+
+  def self.uses_http_mock(sym=:always)
+    require 'active_resource/persistent_http_mock'
+    self.module_eval do
+      setup{ ActiveResource::HttpMock.enabled = true } unless sym == :sometimes
+      teardown do
+        ActiveResource::HttpMock.reset!
+        ActiveResource::HttpMock.enabled = false
+      end
+    end
+  end
+  def allow_http_mock
+    ActiveResource::HttpMock.enabled = true
+  end
+
   setup { $VERBOSE = nil }
   teardown { $VERBOSE = false }
   setup { Rails.cache.clear }

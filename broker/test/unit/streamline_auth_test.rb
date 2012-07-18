@@ -1,12 +1,12 @@
 require 'test_helper'
-require 'stickshift-controller'
 require 'mocha'
-require 'swingshift-streamline-plugin'
 
 module Rails
   def self.logger
     l = Mocha::Mock.new("logger")
-    l.expects(:debug)
+    l.stubs(:debug)
+    l.stubs(:info)
+    l.stubs(:add)
     l
   end
 end
@@ -44,6 +44,12 @@ class StreamlineAuthTest < ActiveSupport::TestCase
     # The cookie should still be present in the Rails cache
     cookie = Rails.cache.read("abcde")
     assert cookie.nil? == false
+  end
+
+  def teardown
+    Rails.configuration.auth[:integrated] = false
+    Rails.configuration.action_controller.perform_caching = false
+    Mocha::Mockery.instance.stubba.unstub_all
   end
 end
 

@@ -2,6 +2,12 @@
 <project>
   <actions/>
   <description></description>
+  <logRotator>
+    <daysToKeep>10</daysToKeep>
+    <numToKeep>10</numToKeep>
+    <artifactDaysToKeep>10</artifactDaysToKeep>
+    <artifactNumToKeep>10</artifactNumToKeep>
+  </logRotator>
   <keepDependencies>false</keepDependencies>
   <properties/>
   <scm class="hudson.plugins.git.GitSCM">
@@ -42,8 +48,7 @@
     <excludedUsers></excludedUsers>
     <skipTag>false</skipTag>
   </scm>
-  <assignedNode>DevEnv</assignedNode>
-  <canRoam>false</canRoam>
+  <canRoam>true</canRoam>
   <disabled>true</disabled>
   <blockBuildWhenDownstreamBuilding>false</blockBuildWhenDownstreamBuilding>
   <blockBuildWhenUpstreamBuilding>false</blockBuildWhenUpstreamBuilding>
@@ -51,25 +56,24 @@
   <concurrentBuild>false</concurrentBuild>
   <builders>
     <hudson.tasks.Shell>
-      <command>set -e
-yum --disablerepo=\* --enablerepo=li clean metadata &amp;&amp; yum --disablerepo=\* --enablerepo=li -y update
+      <command># Build and install HEAD for the tests
+build/devenv launch broker_extended_${BUILD_NUMBER} --verifier --instance_type m1.large
+build/devenv sync broker_extended_${BUILD_NUMBER} --tag --clean_metadata
 
-build/devenv update
-
-ls -lZ /var/aquota.user  | grep -q var_t &amp;&amp; ( quotaoff /var &amp;&amp; restorecon /var/aquota.user &amp;&amp; quotaon /var )
-
-echo DONE</command>
+# Run the &apos;verification&apos; tests to test higher level components
+build/devenv test broker_extended_${BUILD_NUMBER} --terminate --include_extended=broker</command>
     </hudson.tasks.Shell>
   </builders>
   <publishers>
-    <hudson.tasks.BuildTrigger>
-      <childProjects>cartridge-10gen-mms-agent, cartridge-cron, cartridge-haproxy, cartridge-jbossas, cartridge-jbosseap, cartridge-jenkins-client, cartridge-mongodb, cartridge-mysql, cartridge-nodejs, cartridge-perl, cartridge-php, cartridge-phpmoadmin, cartridge-phpmyadmin, cartridge-postgresql, cartridge-python, cartridge-raw, cartridge-rockmongo, cartridge-ruby, site-unit-tests, broker-unit-test</childProjects>
-      <threshold>
-        <name>SUCCESS</name>
-        <ordinal>0</ordinal>
-        <color>BLUE</color>
-      </threshold>
-    </hudson.tasks.BuildTrigger>
+    <hudson.tasks.ArtifactArchiver>
+      <artifacts>rhc/log/**</artifacts>
+      <latestOnly>false</latestOnly>
+    </hudson.tasks.ArtifactArchiver>
+    <hudson.tasks.Mailer>
+      <recipients>libra-devel@redhat.com</recipients>
+      <dontNotifyEveryUnstableBuild>true</dontNotifyEveryUnstableBuild>
+      <sendToIndividuals>false</sendToIndividuals>
+    </hudson.tasks.Mailer>
   </publishers>
   <buildWrappers/>
 </project>

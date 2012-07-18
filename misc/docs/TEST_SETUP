@@ -2,7 +2,7 @@
 that can be run from /root:
 
   Run all verification tests
-    cucumber --tags @verify li/tests/
+    cucumber --tags @runtime_verify li/tests/
 
   Run a specific test scenario (i.e. the one starting on line 55)
     cucumber li/tests/cartridge.feature:55

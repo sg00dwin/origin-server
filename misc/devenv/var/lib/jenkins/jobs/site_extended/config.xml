@@ -1,7 +1,7 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <project>
   <actions/>
-  <description>This is a work in progress - see mmcgrath.  He&apos;s up to trouble!</description>
+  <description></description>
   <logRotator>
     <daysToKeep>10</daysToKeep>
     <numToKeep>10</numToKeep>
@@ -52,20 +52,16 @@
   <disabled>true</disabled>
   <blockBuildWhenDownstreamBuilding>false</blockBuildWhenDownstreamBuilding>
   <blockBuildWhenUpstreamBuilding>false</blockBuildWhenUpstreamBuilding>
-  <triggers class="vector">
-    <hudson.triggers.SCMTrigger>
-      <spec>*/15 * * * *</spec>
-    </hudson.triggers.SCMTrigger>
-  </triggers>
+  <triggers class="vector"/>
   <concurrentBuild>false</concurrentBuild>
   <builders>
     <hudson.tasks.Shell>
-      <command># Build and install HEAD for the integration tests
-build/devenv launch node_check_${BUILD_NUMBER} --verifier
-build/devenv sync node_check_${BUILD_NUMBER} --tag --clean_metadata
+      <command># Build and install HEAD for the tests
+build/devenv launch site_extended_${BUILD_NUMBER} --verifier --instance_type m1.large
+build/devenv sync site_extended_${BUILD_NUMBER} --tag --clean_metadata
 
 # Run the &apos;verification&apos; tests to test higher level components
-build/devenv test node_check_${BUILD_NUMBER} --exclude-internal --exclude-verification --include-cucumber=node --terminate</command>
+build/devenv test site_extended_${BUILD_NUMBER} --terminate --include_extended=site</command>
     </hudson.tasks.Shell>
   </builders>
   <publishers>
@@ -74,7 +70,7 @@ build/devenv test node_check_${BUILD_NUMBER} --exclude-internal --exclude-verifi
       <latestOnly>false</latestOnly>
     </hudson.tasks.ArtifactArchiver>
     <hudson.tasks.Mailer>
-      <recipients>mmcgrath@redhat.com</recipients>
+      <recipients>libra-devel@redhat.com</recipients>
       <dontNotifyEveryUnstableBuild>true</dontNotifyEveryUnstableBuild>
       <sendToIndividuals>false</sendToIndividuals>
     </hudson.tasks.Mailer>

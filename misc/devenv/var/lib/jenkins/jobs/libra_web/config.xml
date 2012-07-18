@@ -66,7 +66,7 @@ build/devenv launch libra_web_${BUILD_NUMBER} --verifier
 build/devenv sync libra_web_${BUILD_NUMBER} --tag --clean_metadata
 
 # Run the web verification tests
-build/devenv test libra_web_${BUILD_NUMBER} --terminate --exclude_internal --exclude_verification --include_web</command>
+build/devenv test libra_web_${BUILD_NUMBER} --terminate --include_web</command>
     </hudson.tasks.Shell>
   </builders>
   <publishers>

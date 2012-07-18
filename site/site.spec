@@ -79,11 +79,20 @@ Requires:  rubygem-treetop
 Requires:  rubygem-net-http-persistent
 Requires:  rubygem-wddx
 
+Requires:  rhc-site-static
+
 BuildArch: noarch
+
+%package static
+Summary:   The static content for the OpenShift website
 
 %description
 This contains the OpenShift website which manages user authentication,
 authorization and also the workflows to request access.
+
+%description static
+Static files that can be used even if the OpenShift site is not installed,
+such as images, CSS, JavaScript, and HTML.
 
 %prep
 %setup -q
@@ -93,6 +102,8 @@ bundle exec compass compile
 rm -rf tmp/sass-cache
 bundle exec rake barista:brew
 rm log/development.log
+mv -f tmp/javascripts/* public/javascripts/
+mv -f tmp/stylesheets/* public/stylesheets/
 
 %install
 rm -rf %{buildroot}
@@ -121,9 +132,16 @@ rm -rf %{buildroot}
 %{htmldir}/app
 %config(noreplace) %{sitedir}/config/environments/production.rb
 %config(noreplace) %{sitedir}/app/subsites/status/config/hosts.yml
+%exclude %{sitedir}/public
+%exclude %{sitedir}/tmp/javascripts
+%exclude %{sitedir}/tmp/stylesheets
 
 %post
 /bin/touch %{sitedir}/log/production.log
+
+%files static
+%defattr(0640,root,libra_user,0750)
+%{sitedir}/public
 
 %changelog
 * Fri Jul 13 2012 Adam Miller <admiller@redhat.com> 0.96.2-1

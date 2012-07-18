@@ -1,5 +1,4 @@
-@node
-@broker
+
 Feature: Mongo standalone verification
   Scenario Outline: Mongo Scale App
     Given the libra client tools

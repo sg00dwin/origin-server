@@ -1,6 +1,6 @@
 require File.expand_path('../../test_helper', __FILE__)
 
-class AriaTest < ActionDispatch::IntegrationTest
+class AriaIntegrationTest < ActionDispatch::IntegrationTest
 
   test 'should correctly handle sessions' do
     user = (WebUser.new :rhlogin => new_uuid).extend Aria::User

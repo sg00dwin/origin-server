@@ -65,7 +65,7 @@ build/devenv launch libra_coverage_${BUILD_NUMBER} --verifier --instance_type m1
 build/devenv sync libra_coverage_${BUILD_NUMBER} --tag --clean_metadata
 
 # Run the &apos;verification&apos; tests to test higher level components
-build/devenv test libra_coverage_${BUILD_NUMBER} --exclude_internal --exclude_verification --include_rcov --terminate</command>
+build/devenv test libra_coverage_${BUILD_NUMBER} --include_rcov --terminate</command>
     </hudson.tasks.Shell>
   </builders>
   <publishers>

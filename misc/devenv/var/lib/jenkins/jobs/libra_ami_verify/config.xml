@@ -18,12 +18,22 @@
           <defaultValue>false</defaultValue>
         </hudson.model.StringParameterDefinition>
         <hudson.model.StringParameterDefinition>
-          <name>exclude_verification</name>
+          <name>exclude_broker</name>
           <description></description>
           <defaultValue>false</defaultValue>
         </hudson.model.StringParameterDefinition>
         <hudson.model.StringParameterDefinition>
-          <name>include_web</name>
+          <name>exclude_runtime</name>
+          <description></description>
+          <defaultValue>false</defaultValue>
+        </hudson.model.StringParameterDefinition>
+        <hudson.model.StringParameterDefinition>
+          <name>exclude_site</name>
+          <description></description>
+          <defaultValue>false</defaultValue>
+        </hudson.model.StringParameterDefinition>
+        <hudson.model.StringParameterDefinition>
+          <name>exclude_rhc</name>
           <description></description>
           <defaultValue>false</defaultValue>
         </hudson.model.StringParameterDefinition>
@@ -44,17 +54,21 @@
 build/devenv launch devenv_verifier_${BUILD_NUMBER} --verifier --instance_type m1.large
 
 excludes=&quot;&quot;
-if [ &quot;$include_web&quot; == &quot;true&quot; ]
+if [ &quot;$exclude_broker&quot; == &quot;true&quot; ]
 then
-    excludes=$excludes&quot; --include_web&quot;
+    excludes=$excludes&quot; --exclude_broker&quot;
 fi
-if [ &quot;$exclude_internal&quot; == &quot;true&quot; ]
+if [ &quot;$exclude_runtime&quot; == &quot;true&quot; ]
 then
-    excludes=$excludes&quot; --exclude_internal&quot;
+    excludes=$excludes&quot; --exclude_runtime&quot;
 fi
-if [ &quot;$exclude_verification&quot; == &quot;true&quot; ]
+if [ &quot;$exclude_site&quot; == &quot;true&quot; ]
 then
-    excludes=$excludes&quot; --exclude_verification&quot;
+    excludes=$excludes&quot; --exclude_site&quot;
+fi
+if [ &quot;$exclude_rhc&quot; == &quot;true&quot; ]
+then
+    excludes=$excludes&quot; --exclude_rhc&quot;
 fi
 echo $excludes
 # Run the image tests

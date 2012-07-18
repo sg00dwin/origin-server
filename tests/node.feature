@@ -1,6 +1,5 @@
-@internals
-@internals1
-@node
+@runtime
+@runtime1
 Feature: Account Management
   Scenario: Create One Account
     Given an accepted node
