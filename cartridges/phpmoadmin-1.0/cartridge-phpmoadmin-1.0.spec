@@ -1,7 +1,7 @@
 %define cartridgedir %{_libexecdir}/stickshift/cartridges/embedded/phpmoadmin-1.0
 
 Name: cartridge-phpmoadmin-1.0
-Version: 0.14.1
+Version: 0.14.2
 Release: 1%{?dist}
 Summary: Embedded phpMoAdmin support for express
 
@@ -54,6 +54,11 @@ rm -rf $RPM_BUILD_ROOT
 %doc %{cartridgedir}/LICENSE
 
 %changelog
+* Thu Jul 19 2012 Adam Miller <admiller@redhat.com> 0.14.2-1
+- Fixes for bugz 840030 - Apache blocks access to /icons. Remove these as
+  mod_autoindex has now been turned OFF (see bugz 785050 for more details).
+  (ramr@redhat.com)
+
 * Wed Jul 11 2012 Adam Miller <admiller@redhat.com> 0.14.1-1
 - bump_minor_versions for sprint 15 (admiller@redhat.com)
 
