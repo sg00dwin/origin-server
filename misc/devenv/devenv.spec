@@ -8,7 +8,7 @@
 
 Summary:   Dependencies for OpenShift development
 Name:      rhc-devenv
-Version: 0.97.2
+Version: 0.97.3
 Release:   1%{?dist}
 Group:     Development/Libraries
 License:   GPLv2
@@ -511,6 +511,25 @@ chmod 750 /sbin/iptables-multi
 %{policydir}/*
 
 %changelog
+* Thu Jul 19 2012 Adam Miller <admiller@redhat.com> 0.97.3-1
+- switch cucumber reporting to junit put cucumber xml results in one directory
+  (jhonce@redhat.com)
+- Update Dan's rhc_pull_request build file. (ccoleman@redhat.com)
+- Merge remote-tracking branch 'origin/master' into move_os-client-tools_to_rhc
+  (ccoleman@redhat.com)
+- Merge pull request #88 from ramr/master (smitram@gmail.com)
+- Merge pull request #84 from tkramer-rh/dev/tkramer/resource_limits
+  (admiller@redhat.com)
+- organize tests by team (dmcphers@redhat.com)
+- Add fixes to devenv for bugz 840030 - Apache blocks access to /icons. Remove
+  these as mod_autoindex has now been turned OFF (see bugz 785050 for more
+  details). (ramr@redhat.com)
+- add 4 separate extended tasks and remove libra_extended (dmcphers@redhat.com)
+- add cleanup for rhc and li pull requests (dmcphers@redhat.com)
+- Security - remove Other permissions from resource_limits and iptables-multi
+  (tkramer@redhat.com)
+- US2531 - Move os-client-tools to rhc (ccoleman@redhat.com)
+
 * Mon Jul 16 2012 Tim Kramer <tkramer@redhat.com>
 - BZ834487 - remove reource_limits permissions from Other (tkramer@redhat.com)
 - Remove permissions for iptables-multi from Other (tkramer@redhat.com)
