@@ -47,6 +47,8 @@ BuildRequires: rubygem-treetop
 BuildRequires: rubygem-net-http-persistent
 BuildRequires: rubygem-wddx
 
+BuildRequires: rubygem-rcov
+
 Requires:  rhc-common
 Requires:  rhc-server-common
 Requires:  httpd
@@ -80,6 +82,8 @@ Requires:  rubygem-net-http-persistent
 Requires:  rubygem-wddx
 
 Requires:  rhc-site-static
+
+Requires:  rubygem-rcov
 
 BuildArch: noarch
 
