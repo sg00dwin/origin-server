@@ -11,7 +11,7 @@ Feature: Trap User Shell
     Then I can run "ls / > /dev/null" with exit code: 0
     And I can run "this_should_fail" with exit code: 127
     And I can run "true" with exit code: 0
-    And I can run "java" with exit code: 0
+    And I can run "java -version" with exit code: 0
     And I can run "scp" with exit code: 1
     And I can get the rhcsh splash
     And I can get the rhcsh help
