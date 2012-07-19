@@ -3,7 +3,7 @@
 
 Summary:   Li site components
 Name:      rhc-site
-Version: 0.96.3
+Version: 0.96.4
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -148,6 +148,10 @@ rm -rf %{buildroot}
 %{sitedir}/public
 
 %changelog
+* Thu Jul 19 2012 Adam Miller <admiller@redhat.com> 0.96.4-1
+- added rubygem-rcov to Build/Requires for site to fix brew build breakage
+  (admiller@redhat.com)
+
 * Thu Jul 19 2012 Adam Miller <admiller@redhat.com> 0.96.3-1
 - Merge remote-tracking branch 'origin/master' into move_os-client-tools_to_rhc
   (ccoleman@redhat.com)
