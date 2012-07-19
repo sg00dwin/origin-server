@@ -3,7 +3,7 @@
 
 Summary:   Li broker components
 Name:      rhc-broker
-Version: 0.96.2
+Version: 0.96.3
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -112,6 +112,24 @@ rm -rf $RPM_BUILD_ROOT
 /bin/touch %{_localstatedir}/log/stickshift/user_action.log
 
 %changelog
+* Thu Jul 19 2012 Adam Miller <admiller@redhat.com> 0.96.3-1
+- Updating gem versions (admiller@redhat.com)
+- Bug 841032 (dmcphers@redhat.com)
+- Revert the following commit IDs because they broke the build
+  (admiller@redhat.com)
+- corrected syntax error in test (lnader@redhat.com)
+- Merge pull request #87 from lnader/master (rpenta@redhat.com)
+- broker sanity test reorg (dmcphers@redhat.com)
+- added checking to see if user is being downgraded (lnader@redhat.com)
+- incorporated changes from pull request review (lnader@redhat.com)
+- disable teardown when tests are disabled (lnader@redhat.com)
+- US2427: Broker add / change plan REST API (lnader@redhat.com)
+- Merge pull request #72 from fotioslindiakos/rhc_admin_ctl_template
+  (kraman@gmail.com)
+- add rhc-accept-devenv (dmcphers@redhat.com)
+- Added ability to remove templates by name or multiple uuids/names
+  (fotios@redhat.com)
+
 * Fri Jul 13 2012 Adam Miller <admiller@redhat.com> 0.96.2-1
 - Updating gem versions (admiller@redhat.com)
 - update migration to 2.0.15 and add better config for migration
