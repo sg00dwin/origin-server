@@ -2,7 +2,7 @@
 
 Summary:       Multi-tenant cloud management system node tools
 Name:          rhc-node
-Version: 0.96.2
+Version: 0.96.3
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -272,6 +272,9 @@ fi
 /lib64/security/pam_libra.so
 
 %changelog
+* Thu Jul 19 2012 Adam Miller <admiller@redhat.com> 0.96.3-1
+- add rhc-accept-devenv (dmcphers@redhat.com)
+
 * Fri Jul 13 2012 Adam Miller <admiller@redhat.com> 0.96.2-1
 - Merge pull request #71 from tkramer-rh/dev/tkramer/bug/831325
   (admiller@redhat.com)
