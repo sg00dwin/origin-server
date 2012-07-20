@@ -3,7 +3,7 @@
 
 Summary:   Li site components
 Name:      rhc-site
-Version: 0.96.2
+Version: 0.96.4
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -47,6 +47,8 @@ BuildRequires: rubygem-treetop
 BuildRequires: rubygem-net-http-persistent
 BuildRequires: rubygem-wddx
 
+BuildRequires: rubygem-rcov
+
 Requires:  rhc-common
 Requires:  rhc-server-common
 Requires:  httpd
@@ -80,6 +82,8 @@ Requires:  rubygem-net-http-persistent
 Requires:  rubygem-wddx
 
 Requires:  rhc-site-static
+
+Requires:  rubygem-rcov
 
 BuildArch: noarch
 
@@ -144,6 +148,41 @@ rm -rf %{buildroot}
 %{sitedir}/public
 
 %changelog
+* Thu Jul 19 2012 Adam Miller <admiller@redhat.com> 0.96.4-1
+- added rubygem-rcov to Build/Requires for site to fix brew build breakage
+  (admiller@redhat.com)
+
+* Thu Jul 19 2012 Adam Miller <admiller@redhat.com> 0.96.3-1
+- Merge remote-tracking branch 'origin/master' into move_os-client-tools_to_rhc
+  (ccoleman@redhat.com)
+- Removed invalid puts (ccoleman@redhat.com)
+- Move %%files static below %%post, give all static files the default
+  permissions (ccoleman@redhat.com)
+- Merge pull request #85 from smarterclayton/us2518_split_rpm_output_of_site
+  (contact@fabianofranz.com)
+- Merge pull request #68 from J5/master (ccoleman@redhat.com)
+- Add console layout helpers for steve's story (ccoleman@redhat.com)
+- Merge pull request #67 from sg00dwin/master (ccoleman@redhat.com)
+- Provide a rake task to delete pregenerated content in a devenv.  Run rake
+  assets:clean to make autogeneration work. (ccoleman@redhat.com)
+- US2518 - Split the RPM output of the site into a static subpackage that can
+  be installed and updated independently. (ccoleman@redhat.com)
+- Merge pull request #77 from smarterclayton/add_test_suite_tasks
+  (ccoleman@redhat.com)
+- US2531 - Move os-client-tools to rhc (ccoleman@redhat.com)
+- Fix remaining issue with mock reuse (wrapper class doesn't pass
+  http_without_mock to nested connection) (ccoleman@redhat.com)
+- Speed up tests by reswizzling http mock behavior (ccoleman@redhat.com)
+- refactor "rcov" rake task to "coverage" (johnp@redhat.com)
+- add rcov rake task for site (johnp@redhat.com)
+- Add new rake test:streamline, test:aria, and test:restapi wrappers for more
+  focused testing (ccoleman@redhat.com)
+- switch margin to baseLineHeight variable (sgoodwin@redhat.com)
+- Merge branch 'master' of github.com:openshift/li (sgoodwin@redhat.com)
+- revert class placement (sgoodwin@redhat.com)
+- switch to baseLineHeight (sgoodwin@redhat.com)
+- Visual adjustments several places (sgoodwin@redhat.com)
+
 * Fri Jul 13 2012 Adam Miller <admiller@redhat.com> 0.96.2-1
 - Streamline fixed the confirm email bug in staging so that confirm can be done
   twice. (ccoleman@redhat.com)

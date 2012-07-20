@@ -7,14 +7,13 @@ require 'getoptlong'
 require 'stringio'
 require 'set'
 
-RHLOGINS = nil #['rhlogin']
-MAX_THREADS = 8
+$max_threads = 8
 WORK_DIR = '/tmp/rhc/migration'
 
 # For each of these sets:  nil implies all and empty implies none
 MIGRATION_CART_TYPES = [].to_set
 RESTART_CART_TYPES = ['jenkins-1.4'].to_set
-REDEPLOY_HTTPD_PROXY_CART_TYPES = [].to_set # Reploys on top of existing config.  Will not fixup renames.
+REDEPLOY_HTTPD_PROXY_CART_TYPES = [].to_set # Deploys on top of existing config.  Will not fixup renames.
 RECREATE_HTTPD_PROXY_CART_TYPES = [].to_set # Remove existing config and recreate including aliases.
 
 $all_cart_types = nil
@@ -222,65 +221,37 @@ end
 def migrate(version, continue=false, target_server_identity=nil, migrate_position=1, num_migrators=1)
   start_time = Time.now.to_i
   puts "Getting all RHLogins..."
-  users = []
-  if RHLOGINS
-    RHLOGINS.each do |rhlogin|
-      user = CloudUser.find(rhlogin)
-      if user
-        users << user
-      else
-        puts "WARNING:  Couldn't find user: #{rhlogin}"
-      end
-    end
-  else
-    users = CloudUser.find_all(nil)
-  end
-  all_rhlogins_length = users.length
+  rhlogins_cnt = 0
   gear_cnt = 0
-  puts "RHLogins.length: #{all_rhlogins_length.to_s}"
-  
   node_to_gears = {}
-  ds_queues = []
-  users.each_with_index do |user, index|
-    queue_index = index % MAX_THREADS
-    ds_queues[queue_index] = [] unless ds_queues[queue_index]
-    ds_queues[queue_index].push(user)
-  end
-  ds_threads = []
-  mutex = Mutex.new
-  ds_queues.each do |users|
-    ds_threads << Thread.new do
-      users.each do |user|
-        puts "Gathering gears for user: #{user.login} with uuid: #{user.uuid}"
-        apps = user.applications
-        apps.each do |app|
-          gears = app.gears
-          if gears && !gears.empty?
-            gears.each do |gear|
-              gear.cartridges.each do |cart_name|
-                if $all_cart_types.nil? || $all_cart_types.include?(cart_name) 
-                  server_identity = gear.server_identity
-                  if (!target_server_identity || (server_identity == target_server_identity))
-                    mutex.synchronize do
-                      node_to_gears[server_identity] = [] unless node_to_gears[server_identity]
-                      node_to_gears[server_identity] << gear
-                    end
-                  end
-                  break
-                end
+  CloudUser.find_all(nil, {:with_gears => true}) {|hash|
+    user = CloudUser.hash_to_obj(hash)
+    rhlogins_cnt += 1
+    puts "Gathering gears for user: #{user.login} with uuid: #{user.uuid}"
+    apps = user.applications
+    apps.each do |app|
+      gears = app.gears
+      if gears && !gears.empty?
+        gears.each do |gear|
+          server_identity = gear.server_identity
+          if (!target_server_identity || (server_identity == target_server_identity))
+            gear.cartridges.each do |cart_name|
+              if $all_cart_types.nil? || $all_cart_types.include?(cart_name)
+                node_to_gears[server_identity] = [] unless node_to_gears[server_identity]
+                node_to_gears[server_identity] << {:server_identity => server_identity, :uuid => gear.uuid, :name => gear.name, :app_name => gear.app.name, :login => user.login}
+                gear_cnt += 1 
+                break
               end
             end
-          else
-            puts "ERROR: Gear not found for app: '#{app.name}' of user #{user.login}"
           end
         end
+      else
+        puts "ERROR: Gear not found for app: '#{app.name}' of user #{user.login}"
       end
     end
-  end
-  ds_threads.each do |t|
-    t.join
-  end
-  
+  }
+  puts "RHLogins.length: #{rhlogins_cnt.to_s}"
+
   position = migrate_position - 1
   migrator_position_nodes = []
   if num_migrators > 1
@@ -298,8 +269,7 @@ def migrate(version, continue=false, target_server_identity=nil, migrate_positio
   gear_cnts = []
   thread_groups = []
   node_to_gears.each do |server_identity, gears|
-    gear_cnt += gears.length
-    if thread_groups.length < MAX_THREADS
+    if thread_groups.length < $max_threads
       thread_groups << [{server_identity => gears}]
       gear_cnts << gears.length
     else
@@ -314,8 +284,8 @@ def migrate(version, continue=false, target_server_identity=nil, migrate_positio
       thread_groups[min_pos] << {server_identity => gears}
       gear_cnts[min_pos] += gears.length
     end
+    node_to_gears[server_identity] = nil
   end
-  node_to_gears = nil
   
   puts "#####################################################"
   puts 'Gear counts per thread:'
@@ -375,7 +345,7 @@ def migrate(version, continue=false, target_server_identity=nil, migrate_positio
   
   puts "#####################################################"
   puts "Summary:"
-  puts "# of users: #{all_rhlogins_length}"
+  puts "# of users: #{rhlogins_cnt}"
   puts "# of gears: #{gear_cnt}"
   puts "# of failures: #{@failures.length}"
   puts "Gear counts per thread: #{gear_cnts.pretty_inspect}"
@@ -394,9 +364,7 @@ def write_node_to_file(server_identity, gears, version)
   FileUtils.rm_f f
   FileUtils.touch f
   gears.each_with_index do |gear, index|
-    user = gear.app.user
-    rhlogin = user.login
-    migrate_on_node_args = "#{gear.server_identity},#{gear.uuid},#{gear.name},#{gear.app.name},#{rhlogin},#{version}"
+    migrate_on_node_args = "#{gear[:server_identity]},#{gear[:uuid]},#{gear[:name]},#{gear[:app_name]},#{gear[:login]},#{version}"
     append_to_file(f, migrate_on_node_args)
   end
 end
@@ -547,6 +515,7 @@ Usage: #{$0}
                                        ./rhc-admin-migrate --version <version> --position 1 --num-migrators 2
                                        ./rhc-admin-migrate --version <version> --position 2 --num-migrators 2
   --migrate-position position          Postion of this migrator (1 based) amongst the num of migrators (--num_migrators)
+  --max-threads num                    Indicates the number of processing queues
   --continue                           Flag indicating to continue a previous migration
 
 USAGE
@@ -563,6 +532,7 @@ begin
     ["--version", GetoptLong::REQUIRED_ARGUMENT],
     ["--num-migrators", GetoptLong::REQUIRED_ARGUMENT],
     ["--migrate-position", GetoptLong::REQUIRED_ARGUMENT],
+    ["--max-threads", GetoptLong::REQUIRED_ARGUMENT],
     ["--continue", GetoptLong::NO_ARGUMENT],
     ["--help", "-h", GetoptLong::NO_ARGUMENT]
   )
@@ -580,6 +550,16 @@ end
 
 $:.unshift('/var/www/stickshift/broker')
 require 'config/environment'
+
+if opt['max_threads']
+  max_threads = opt['max_threads'].to_i
+  if max_threads < 50 && max_threads > 0
+    $max_threads = max_threads
+  else
+    puts "max_threads must be less than 50 and greater than 0"
+    exit 255
+  end
+end
 
 if opt['migrate-file']
   migrate_from_file(opt['migrate-file'])

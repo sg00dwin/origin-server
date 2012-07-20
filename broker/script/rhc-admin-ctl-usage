@@ -15,8 +15,6 @@ rhc-admin-ctl-usage: Control usage
 rhc-admin-ctl-usage OPTIONS
 
 Options:
---rhlogin   <rhlogin>
-    RHLogin to control
 --sync
     Sync usage with the billing vendor
 --remove_sync_lock
@@ -29,7 +27,6 @@ USAGE
 end
 
 opts = GetoptLong.new(
-    ["--rhlogin",          "-l", GetoptLong::REQUIRED_ARGUMENT],
     ["--remove_sync_lock",       GetoptLong::NO_ARGUMENT],
     ["--list",                   GetoptLong::NO_ARGUMENT],
     ["--sync",                   GetoptLong::NO_ARGUMENT],
@@ -44,7 +41,6 @@ rescue GetoptLong::Error => e
     exit -100
 end
 
-rhlogin = args["--rhlogin"]
 sync = args["--sync"]
 list = args["--list"]
 remove_sync_lock = args["--remove_sync_lock"]
@@ -102,21 +98,9 @@ else
   hostname = Socket.gethostname
   if Express::Broker::DistributedLock.obtain_lock("sync_usage", hostname)
     begin
-      users = nil
-      if rhlogin
-        user = CloudUser.find(rhlogin)
-        if user
-          users = [user]
-        else
-          puts "User not found: #{rhlogin}"
-          exit 1
-        end
-      else
-        users = CloudUser.find_all(nil)
-      end
-
-      failures = []
-      users.each do |user|
+      CloudUser.find_all(nil, {:with_gear_usage => true}) {|hash|
+        user = CloudUser.hash_to_obj(hash)
+        failures = []
         if user.gear_usage_records && !user.gear_usage_records.empty?
           puts "\n#################"
           puts "User: #{user.login}"
@@ -229,7 +213,8 @@ else
         else
           puts "Gear usage not found for user: #{user.login}"
         end
-      end
+      }
+
       unless failures.empty?
         puts "!!!!!!!!!!!!!!!!!!!FAILURES!!!!!!!!!!!!!!!!!!!!!!"
         puts "<User>: <Gear UUID>"

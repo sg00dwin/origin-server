@@ -44,9 +44,9 @@ summary = []
 
 node_hash = StickShift::ApplicationContainerProxy.get_all_gears
 
-users = CloudUser.find_all(nil)
 mongo_hash = {}
-users.each { |user|
+CloudUser.find_all(nil) {|hash|
+  user = CloudUser.hash_to_obj(hash)
   gear_count = 0
   user.applications.each { |app|
     app.group_instances.uniq.each { |gi|
@@ -57,38 +57,38 @@ users.each { |user|
     }
   }
   if user.consumed_gears != gear_count
-    msg = "FAIL - user #{user.login} has a mismatch in consumed gears (#{user.consumed_gears}) and actual gears (#{gear_count})!\n"
-    print msg if verbose
+    msg = "FAIL - user #{user.login} has a mismatch in consumed gears (#{user.consumed_gears}) and actual gears (#{gear_count})!"
+    puts msg if verbose
     summary << msg
     no_error = false
   else
-    print "OK - user #{user.login} has consumed_gears equal to actual gears (#{gear_count})!\n" if verbose
+    puts "OK - user #{user.login} has consumed_gears equal to actual gears (#{gear_count})!" if verbose
   end
 }
 
 # now check
-print "Checking application gears in respective nodes :\n" if verbose
+puts "Checking application gears in respective nodes :" if verbose
 mongo_hash.each { |mk,mv|
   print "#{mk}...\t" if verbose
   if not node_hash.has_key? mk
     no_error = false
-    print "FAIL\n" if verbose
+    puts "FAIL" if verbose
     summary << "Gear #{mk} in #{mv} does not exist on any node"
   else
-    print "OK\n" if verbose
+    puts "OK" if verbose
   end
 }
 
 # now check reverse
-print "Checking node gears in application database:\n" if verbose
+puts "Checking node gears in application database:" if verbose
 node_hash.each { |nk, nv|
   print "#{nk}...\t" if verbose
   if not mongo_hash.has_key? nk
     no_error = false
-    print "FAIL\n" if verbose
+    puts "FAIL" if verbose
     summary << "Gear #{nk} exists on node #{nv} but does not exist in mongo database"
   else
-    print "OK\n" if verbose
+    puts "OK" if verbose
   end
 }
 

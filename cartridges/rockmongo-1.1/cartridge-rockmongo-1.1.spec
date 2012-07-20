@@ -1,7 +1,7 @@
 %define cartridgedir %{_libexecdir}/stickshift/cartridges/embedded/rockmongo-1.1
 
 Name: cartridge-rockmongo-1.1
-Version: 1.13.1
+Version: 1.13.2
 Release: 1%{?dist}
 Summary: Embedded RockMongo support for OpenShift
 
@@ -53,6 +53,11 @@ rm -rf $RPM_BUILD_ROOT
 %doc %{cartridgedir}/LICENSE
 
 %changelog
+* Thu Jul 19 2012 Adam Miller <admiller@redhat.com> 1.13.2-1
+- Fixes for bugz 840030 - Apache blocks access to /icons. Remove these as
+  mod_autoindex has now been turned OFF (see bugz 785050 for more details).
+  (ramr@redhat.com)
+
 * Wed Jul 11 2012 Adam Miller <admiller@redhat.com> 1.13.1-1
 - bump_minor_versions for sprint 15 (admiller@redhat.com)
 
