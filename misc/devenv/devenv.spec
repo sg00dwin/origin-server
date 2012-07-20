@@ -496,11 +496,16 @@ chmod 750 /sbin/iptables-multi
 # Deploy application templates - fotios
 /usr/bin/ruby /usr/lib/stickshift/broker/application_templates/templates/deploy.rb
 
+# Fix devenv log file ownership
+chown root:libra_user /var/www/stickshift/broker/log/development.log
+chown root:libra_user /var/www/stickshift/broker/log/mcollective-client.log
+chown root:libra_user /var/www/stickshift/site/log/development.log
+
 %files
 %defattr(-,root,root,-)
-%attr(0666,-,-) %{brokerdir}/log/mcollective-client.log
-%attr(0666,-,-) %{brokerdir}/log/development.log
-%attr(0666,-,-) %{sitedir}/log/development.log
+%attr(0660,-,-) %{brokerdir}/log/mcollective-client.log
+%attr(0660,-,-) %{brokerdir}/log/development.log
+%attr(0660,-,-) %{sitedir}/log/development.log
 %config(noreplace) %{jenkins}/jobs/*/*
 %{jenkins}/jobs/sync.rb
 %{devenvdir}
@@ -511,6 +516,9 @@ chmod 750 /sbin/iptables-multi
 %{policydir}/*
 
 %changelog
+* Fri Jul 20 2012 Tim Kramer <tkramer@redhat.com>
+- Fix log file permissions and ownership (tkramer@redhat.com)
+
 * Thu Jul 19 2012 Adam Miller <admiller@redhat.com> 0.97.3-1
 - switch cucumber reporting to junit put cucumber xml results in one directory
   (jhonce@redhat.com)
