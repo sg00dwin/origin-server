@@ -3,7 +3,7 @@
 
 Summary:   Li broker components
 Name:      rhc-broker
-Version: 0.96.4
+Version: 0.96.5
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -112,6 +112,21 @@ rm -rf $RPM_BUILD_ROOT
 /bin/touch %{_localstatedir}/log/stickshift/user_action.log
 
 %changelog
+* Fri Jul 20 2012 Adam Miller <admiller@redhat.com> 0.96.5-1
+- Updating gem versions (admiller@redhat.com)
+- Merge pull request #101 from lnader/master (rpenta@redhat.com)
+- fix typo (dmcphers@redhat.com)
+- Billing Rest API and bug 841058 (lnader@redhat.com)
+- Merge pull request #100 from pravisankar/dev/ravi/billing_fix_exception
+  (lnader@redhat.com)
+- Bug 841073 (dmcphers@redhat.com)
+- Added aria_billing.rb so that rails can *explicitly* pick up Aria::Billing::*
+  classes (rpenta@redhat.com)
+- Merge pull request #99 from tkramer-rh/dev/tkramer/broker/log_acl
+  (admiller@redhat.com)
+- Security - remove Other perms from production.log and user_action.log
+  (tkramer@redhat.com)
+
 * Thu Jul 19 2012 Adam Miller <admiller@redhat.com> 0.96.4-1
 - Updating gem versions (admiller@redhat.com)
 
