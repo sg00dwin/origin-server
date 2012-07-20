@@ -23,9 +23,9 @@ module Express
         user = CloudUser.find_by_uuid("CloudUser", event_params[:userid])
         plan_name = event_params[:plan_name] || "FreeShift"
         if plan_name == "FreeShift"
-          limits = @plans[:FreeShift]
+          limits = @plans[:freeshift]
         elsif plan_name == "MegaShift"
-          limits = @plans[:MegaShift]
+          limits = @plans[:megashift]
         else
           Rails.logger.error("Unknown plan #{plan_name} for user '#{user.name}'")
         end
