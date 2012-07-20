@@ -8,7 +8,7 @@
 
 Summary:   Dependencies for OpenShift development
 Name:      rhc-devenv
-Version: 0.97.3
+Version: 0.97.4
 Release:   1%{?dist}
 Group:     Development/Libraries
 License:   GPLv2
@@ -516,6 +516,9 @@ chown root:libra_user /var/www/stickshift/site/log/development.log
 %{policydir}/*
 
 %changelog
+* Fri Jul 20 2012 Adam Miller <admiller@redhat.com> 0.97.4-1
+- Security - fix log file permissions and ownership (tkramer@redhat.com)
+
 * Fri Jul 20 2012 Tim Kramer <tkramer@redhat.com>
 - Fix log file permissions and ownership (tkramer@redhat.com)
 
