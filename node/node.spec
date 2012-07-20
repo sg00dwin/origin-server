@@ -2,7 +2,7 @@
 
 Summary:       Multi-tenant cloud management system node tools
 Name:          rhc-node
-Version: 0.96.3
+Version: 0.96.4
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -272,6 +272,10 @@ fi
 /lib64/security/pam_libra.so
 
 %changelog
+* Fri Jul 20 2012 Adam Miller <admiller@redhat.com> 0.96.4-1
+- Merge branch 'master' of github.com:openshift/li (mmcgrath@redhat.com)
+- made init script more efficient (mmcgrath@redhat.com)
+
 * Thu Jul 19 2012 Adam Miller <admiller@redhat.com> 0.96.3-1
 - add rhc-accept-devenv (dmcphers@redhat.com)
 
