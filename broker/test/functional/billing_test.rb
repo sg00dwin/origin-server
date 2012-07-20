@@ -1,3 +1,5 @@
+require 'test_helper'
+
 class BillingTest < ActiveSupport::TestCase
   def setup
     @test_enabled = false
@@ -97,20 +99,19 @@ class BillingTest < ActiveSupport::TestCase
   
   test "update master plan to same plan" do
     if @test_enabled
-      #uncomment once the exception problem is resolved
-      #api = Express::AriaBilling::Api.instance
-      #acct_no = api.create_fake_acct(@user_id, :megashift)
-      #plans = api.get_acct_plans_all(acct_no)
-      #assert(plans.length == 1)
-      #current_plan = plans[0]
-      #assert_equal(current_plan["plan_name"], "MegaShift", "Current plan name #{current_plan["plan_name"]} expected MegaShift")
+      api = Express::AriaBilling::Api.instance
+      acct_no = api.create_fake_acct(@user_id, :megashift)
+      plans = api.get_acct_plans_all(acct_no)
+      assert(plans.length == 1)
+      current_plan = plans[0]
+      assert_equal(current_plan["plan_name"], "MegaShift", "Current plan name #{current_plan["plan_name"]} expected MegaShift")
       
-      #api.update_master_plan(acct_no, :megashift)
+      api.update_master_plan(acct_no, :megashift)
       
-      #plans = api.get_acct_plans_all(acct_no)
-      #assert(plans.length == 1)
-      #current_plan = plans[0]
-      #assert_equal(current_plan["plan_name"], "MegaShift", "Current plan name #{current_plan["plan_name"]} expected MegaShift")
+      plans = api.get_acct_plans_all(acct_no)
+      assert(plans.length == 1)
+      current_plan = plans[0]
+      assert_equal(current_plan["plan_name"], "MegaShift", "Current plan name #{current_plan["plan_name"]} expected MegaShift")
     end
   end
 
