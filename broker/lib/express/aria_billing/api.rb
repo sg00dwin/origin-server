@@ -72,11 +72,12 @@ module Express
       end
 
       def update_master_plan(*args)
-        #begin
-          get_response_status(@ah.update_master_plan(*args), __method__)
-        #rescue Express::AriaBilling::ErrorCodeException => ex
-        #  raise unless !ex.error_code.nil? and ex.error_code == "1034"
-        #end
+        begin
+          return get_response_status(@ah.update_master_plan(*args), __method__)
+        rescue Express::AriaBilling::ErrorCodeException => ex
+          raise if ex.error_code.to_s != "1034"
+        end
+        return true
       end
 
       def assign_supp_plan(*args)
@@ -129,14 +130,10 @@ module Express
         response = WDDX.load(wddx_response)
         Rails.logger.debug "Aria Billing api response: #{response.inspect}"
         if response.error_code != 0 
-          #raise Express::AriaBilling::ErrorCodeException.new("#{method_name} failed with error message: #{response.error_msg}", response.error_code)
-          raise Express::AriaBilling::Exception.new "#{method_name} failed with error code: #{response.error_code} #{response.error_msg}"
+          raise Express::AriaBilling::ErrorCodeException.new("#{method_name} failed with error message: #{response.error_msg}", response.error_code)
         end
-        if ret_output
-          return response
-        else
-          return response.error_code == 0
-        end
+        return response if ret_output
+        return true
       end
 
       def get_response_status(hash, method_name)
