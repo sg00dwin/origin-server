@@ -223,7 +223,10 @@ start() {
     echo "Starting Libra Services: "
     echo
 
-    echo `libra_users` | xargs -d' ' -I{} -n 1 -P $numparallel /usr/bin/timeout -s USR1 $timeout /etc/init.d/libra startuser {}
+    for uuid in `libra_users`
+    do
+        /bin/egrep -q -v "idle" /var/lib/stickshift/$uuid/app-root/runtime/.state && echo $uuid || echo "Skipping $uuid" 1>&2
+    done | xargs -I{} -n 1 -P $numparallel /usr/bin/timeout -s USR1 $timeout /etc/init.d/libra startuser {}
 
     echo -n "All Libra services started"
     [ $GROUP_RETVAL -eq 0 ] && touch ${lockfile}
@@ -236,7 +239,10 @@ stop() {
     echo "Stopping Libra Services: "
     echo
 
-    echo `libra_users` | xargs -d' ' -I{} -n 1 -P $numparallel /usr/bin/timeout -s USR1 $timeout /etc/init.d/libra stopuser {}
+    for uuid in `libra_users`
+    do
+        /bin/egrep -q -v "stopped|idle" /var/lib/stickshift/$uuid/app-root/runtime/.state && echo $uuid || echo "Skipping $uuid" 1>&2
+    done | xargs -I{} -n 1 -P $numparallel /usr/bin/timeout -s USR1 $timeout /etc/init.d/libra stopuser {}
 
     echo -n "All Libra services stopped"
     [ $GROUP_RETVAL -eq 0 ] && touch ${lockfile}
@@ -250,7 +256,10 @@ restart() {
     echo "Restarting Libra Services: "
     echo
 
-    echo `libra_users` | xargs -d' ' -I{} -n 1 -P $numparallel /usr/bin/timeout -s USR1 $timeout /etc/init.d/libra restartuser {}
+    for uuid in `libra_users`
+    do
+        /bin/egrep -q -v "idle|stopped" /var/lib/stickshift/$uuid/app-root/runtime/.state && echo $uuid || echo "Skipping $uuid" 1>&2
+    done | xargs -I{} -n 1 -P $numparallel /usr/bin/timeout -s USR1 $timeout /etc/init.d/libra restartuser {}
 
     echo -n "All Libra services restarted"
     [ $GROUP_RETVAL -eq 0 ] && touch ${lockfile}
@@ -263,7 +272,7 @@ case "$1" in
   start)
     start
     ;;
-  stop) 
+  stop)
     stop
     ;;
   restart|force-reload)
