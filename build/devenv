@@ -277,7 +277,7 @@ mkdir -p /tmp/rhc/junit
       puts "Done"
     end
 
-    def add_ssh_cmd_to_threads(hostname, threads, failures, titles, cmds, timeout=@@SSH_TIMEOUT, retry_individually=false)
+    def add_ssh_cmd_to_threads(hostname, threads, failures, titles, cmds, retry_individually=false, timeout=@@SSH_TIMEOUT)
       titles = [titles] if titles.kind_of?(String)
       cmds = [cmds] if cmds.kind_of?(String)
       threads << [ Thread.new {
@@ -379,55 +379,36 @@ mkdir -p /tmp/rhc/junit
 
         broker_profiler(hostname) if options.profile_broker?
 
-        threads = []
-        failures = []
-          
+        test_queues = [[], [], [], []]
+
         if options.include_extended
           
           case options.include_extended
           when 'broker'
-            add_ssh_cmd_to_threads(hostname, threads, failures, "REST API", "cucumber -f junit --out /tmp/rhc/cucumber_results -f progress -t @broker_api li-test/tests", @@SSH_TIMEOUT, true)
-            titles = ["Broker Domain System"]
-            cmds = ["cd li-test/broker; rake domain_system_test"]
-            add_ssh_cmd_to_threads(hostname, threads, failures, titles, cmds, @@SSH_TIMEOUT, true)
-  
-            titles = ["Broker Application System"]
-            cmds = ["cd li-test/broker; rake application_system_test"]
-            add_ssh_cmd_to_threads(hostname, threads, failures, titles, cmds, @@SSH_TIMEOUT, true)
-  
-            titles = ["Broker Cartridge System"]
-            cmds = ["cd li-test/broker; rake cartridge_system_test"]
-            add_ssh_cmd_to_threads(hostname, threads, failures, titles, cmds, @@SSH_TIMEOUT, true)
+            test_queues[0] << ["REST API", "cucumber -f junit --out /tmp/rhc/cucumber_results -f progress -t @broker_api li-test/tests", {:retry_individually => true}]
+            test_queues[1] << ["Broker Domain System", "cd li-test/broker; rake domain_system_test", {:retry_individually => true}]
+            test_queues[2] << ["Broker Application System", "cd li-test/broker; rake application_system_test", {:retry_individually => true}]
+            test_queues[3] << ["Broker Cartridge System", "cd li-test/broker; rake cartridge_system_test", {:retry_individually => true}]
           when 'runtime'
-            titles = ["Extended Runtime Group 1"]
-            cmds = ["cucumber -f junit --out /tmp/rhc/cucumber_results -f progress -t @runtime_verify1 li-test/tests"]
-            add_ssh_cmd_to_threads(hostname, threads, failures, titles, cmds)
-
-            titles = ["Extended Runtime Group 2"]
-            cmds = ["cucumber -f junit --out /tmp/rhc/cucumber_results -f progress -t @runtime_verify2 li-test/tests"]
-            add_ssh_cmd_to_threads(hostname, threads, failures, titles, cmds)
-
-            titles = ["Extended Runtime Group 3"]
-            cmds = ["cucumber -f junit --out /tmp/rhc/cucumber_results -f progress -t @runtime_verify3 li-test/tests"]
-            add_ssh_cmd_to_threads(hostname, threads, failures, titles, cmds)
+            test_queues[0] << ["Extended Runtime Group 1", "cucumber -f junit --out /tmp/rhc/cucumber_results -f progress -t @runtime_verify1 li-test/tests"]
+            test_queues[1] << ["Extended Runtime Group 2", "cucumber -f junit --out /tmp/rhc/cucumber_results -f progress -t @runtime_verify2 li-test/tests"]
+            test_queues[2] << ["Extended Runtime Group 3", "cucumber -f junit --out /tmp/rhc/cucumber_results -f progress -t @runtime_verify3 li-test/tests"]
           when 'site'
-            titles = ["Site Extended"]
-            cmds = ["cd li-test/site; rake test:extended"]
-            add_ssh_cmd_to_threads(hostname, threads, failures, titles, cmds)
+            test_queues[0] << ["Site Extended", "cd li-test/site; rake test:extended"]
           when 'rhc'
-            add_ssh_cmd_to_threads(hostname, threads, failures, "RHC Extended", "cucumber -f junit --out /tmp/rhc/cucumber_results -f progress -t @rhc_extended li-test/tests", @@SSH_TIMEOUT, true)
+            test_queues[0] << ["RHC Extended", "cucumber -f junit --out /tmp/rhc/cucumber_results -f progress -t @rhc_extended li-test/tests", {:retry_individually => true}]
           else
             puts "Not supported for extended: #{options.include_extended}"
             exit 1
           end
         elsif options.include_rcov?
-          add_ssh_cmd_to_threads(hostname, threads, failures, "StickShift Node Unit Coverage", "cd li-test/stickshift/node; rake rcov; cp -a coverage /tmp/rhc/stickshift_node_coverage")
-          add_ssh_cmd_to_threads(hostname, threads, failures, "Broker Unit and Functional Coverage", "cd li-test/broker; rake rcov; cp -a test/coverage /tmp/rhc/broker_coverage")
-          add_ssh_cmd_to_threads(hostname, threads, failures, "StickShift Broker Unit and Functional Coverage", "cd li-test/stickshift/broker; rake rcov; cp -a test/coverage /tmp/rhc/stickshift_broker_coverage")
+          test_queues[0] << ["StickShift Node Unit Coverage", "cd li-test/stickshift/node; rake rcov; cp -a coverage /tmp/rhc/stickshift_node_coverage"]
+          test_queues[1] << ["Broker Unit and Functional Coverage", "cd li-test/broker; rake rcov; cp -a test/coverage /tmp/rhc/broker_coverage"]
+          test_queues[2] << ["StickShift Broker Unit and Functional Coverage", "cd li-test/stickshift/broker; rake rcov; cp -a test/coverage /tmp/rhc/stickshift_broker_coverage"]
         elsif options.include_cucumber
-          timeout=@@SSH_TIMEOUT
+          timeout = @@SSH_TIMEOUT
           timeout = @@SSH_TIMEOUT_OVERRIDES[options.include_cucumber] if not @@SSH_TIMEOUT_OVERRIDES[options.include_cucumber].nil?
-          add_ssh_cmd_to_threads(hostname, threads, failures, "#{options.include_cucumber}", "cucumber -f junit --out /tmp/rhc/cucumber_results -f progress -t @#{options.include_cucumber} li-test/tests", timeout)
+          test_queues[0] << [options.include_cucumber, "cucumber -f junit --out /tmp/rhc/cucumber_results -f progress -t @#{options.include_cucumber} li-test/tests", {:timeout => timeout}]
         elsif options.include_web?
 
           # check sauce quotas first
@@ -481,71 +462,64 @@ mkdir -p /tmp/rhc/junit
             puts "Running Sauce tests with the following options:"
             puts sauce_opts.to_yaml
 
+            pos = 0
             Dir.foreach('selenium/testcases') do |filename|
-              cmds = []
-              titles = []
               if filename =~ /^tc_(.*)\.rb$/
                 test = $1
-                cmds << "cd li-test/selenium; #{env_string} ruby ts_web #{test}"
-                titles << "Web Selenium (#{sauce_os} - #{sauce_browser} #{sauce_browser_version}) (#{test})"
-                add_ssh_cmd_to_threads(hostname, threads, failures, titles, cmds)
+                test_queues[pos] << ["Web Selenium (#{sauce_os} - #{sauce_browser} #{sauce_browser_version}) (#{test})", "cd li-test/selenium; #{env_string} ruby ts_web #{test}"]
+                if pos == test_queues.length - 1
+                  pos = 0
+                else 
+                  pos += 1
+                end
               end
             end
           end
         else
 
           unless options.exclude_broker?
-            titles = ["Broker Unit",
-                      "Broker Functional",
-                      "Broker Integration",
-                      "StickShift Broker Unit",
-                      "StickShift Broker Functional",
-                      "StickShift Broker Integration",
-                      "Broker Cucumber"]
-            cmds = ["cd li-test/broker; rake test:units", 
-                    "cd li-test/broker; rake test:functionals",
-                    "cd li-test/broker; rake test:integration",
-                    "cd li-test/stickshift/broker; rake test:units",
-                    "cd li-test/stickshift/broker; rake test:functionals",
-                    "cd li-test/stickshift/broker; rake test:integration",
-                    "cucumber -f html --out /tmp/rhc/broker_cucumber.html -f progress -t @broker li-test/tests"]
-            add_ssh_cmd_to_threads(hostname, threads, failures, titles, cmds)
-          end
-          
-          unless options.exclude_runtime?
-            titles = ["Runtime Group 1"]
-            cmds = ["cucumber -f junit --out /tmp/rhc/cucumber_results -f progress -t @runtime1 li-test/tests"]
-            add_ssh_cmd_to_threads(hostname, threads, failures, titles, cmds)
+            test_queues[0] << ["Broker Unit", "cd li-test/broker; rake test:units"]
+            test_queues[1] << ["Broker Functional", "cd li-test/broker; rake test:functionals"]
+            test_queues[0] << ["Broker Integration", "cd li-test/broker; rake test:integration"]
+            test_queues[1] << ["StickShift Broker Functional", "cd li-test/stickshift/broker; rake test:functionals"]
+            test_queues[0] << ["StickShift Broker Integration", "cd li-test/stickshift/broker; rake test:integration"]
 
-            titles = ["Runtime Group 2"]
-            cmds = ["cucumber -f junit --out /tmp/rhc/cucumber_results -f progress -t @runtime2 li-test/tests"]
-            add_ssh_cmd_to_threads(hostname, threads, failures, titles, cmds)
+            test_queues[2] << ["StickShift Broker Unit", "cd li-test/stickshift/broker; rake test:units"]
+            test_queues[3] << ["Broker Cucumber", "cucumber -f html --out /tmp/rhc/broker_cucumber.html -f progress -t @broker li-test/tests"]
+          end
+
+          unless options.exclude_runtime?
+            test_queues[0] << ["Runtime Group 1", "cucumber -f junit --out /tmp/rhc/cucumber_results -f progress -t @runtime1 li-test/tests"]
+            test_queues[1] << ["Runtime Group 2", "cucumber -f junit --out /tmp/rhc/cucumber_results -f progress -t @runtime2 li-test/tests"]
+            test_queues[2] << ["Runtime Group 3", "cucumber -f junit --out /tmp/rhc/cucumber_results -f progress -t @runtime3 li-test/tests"]
+            test_queues[3] << ["Runtime Group 4", "cucumber -f junit --out /tmp/rhc/cucumber_results -f progress -t @runtime4 li-test/tests"]
           end
           
           unless options.exclude_site?
-            titles = ["Site Check"]
-            cmds = ["cd li-test/site; rake test:check"]
-            add_ssh_cmd_to_threads(hostname, threads, failures, titles, cmds)
+            test_queues[3] << ["Site Check", "cd li-test/site; rake test:check"]
           end
           
           unless options.exclude_rhc?
 
           end
 
+        end
+
+        threads = []
+        failures = []
+
+        retry_threshold = 0
+        test_queues.each do |test_queue|
+          test_queue.each do |test|
+            opts = test[2] || {}
+            retry_threshold += 8
+            add_ssh_cmd_to_threads(hostname, threads, failures, test[0], test[1], opts[:retry_individually], opts[:timeout] ? opts[:timeout] : @@SSH_TIMEOUT)
+          end
         end          
 
         threads.each do |t|
           t[0].join
         end
-
-        retry_threshold = 0
-        retry_threshold += 8 unless options.exclude_broker?
-        retry_threshold += 8 unless options.exclude_runtime?
-        retry_threshold += 8 unless options.exclude_site?
-        retry_threshold += 8 unless options.exclude_rhc?
-        retry_threshold += 6 if options.include_web?
-        retry_threshold += 2 if options.include_coverage?
-        retry_threshold += 24 if options.include_extended
 
         failures.uniq!
 

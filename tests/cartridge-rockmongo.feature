@@ -1,5 +1,5 @@
 @runtime
-@runtime1
+@runtime4
 Feature: rockmongo Embedded Cartridge
 
   Scenario Outline: Add remove rockmongo to one application

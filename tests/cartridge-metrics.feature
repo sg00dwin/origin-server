@@ -1,5 +1,5 @@
 @runtime
-@runtime1
+@runtime2
 Feature: metrics Embedded Cartridge
 
   Scenario Outline: Add Remove metrics to one application
