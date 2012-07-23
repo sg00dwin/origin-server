@@ -277,13 +277,17 @@ mkdir -p /tmp/rhc/junit
       puts "Done"
     end
 
-    def add_ssh_cmd_to_threads(hostname, threads, failures, titles, cmds, retry_individually=false, timeout=@@SSH_TIMEOUT)
-      titles = [titles] if titles.kind_of?(String)
-      cmds = [cmds] if cmds.kind_of?(String)
+    def add_ssh_cmd_to_threads(hostname, threads, failures, titles, cmds, retry_individually=false, timeouts=@@SSH_TIMEOUT)
+      titles = [titles] unless titles.kind_of?(Array)
+      cmds = [cmds] unless cmds.kind_of?(Array)
+      retry_individually = [retry_individually] unless retry_individually.kind_of? Array
+      timeouts = [timeouts] unless timeouts.kind_of? Array
       threads << [ Thread.new {
         multi = cmds.length > 1
         cmds.each_with_index do |cmd, index|
           title = titles[index]
+          retry_individ = retry_individually[index]
+          timeout = timeouts[index]
           output, exit_code = run_ssh(hostname, title, cmd, timeout)
           if exit_code != 0
             if output.include?("Failing Scenarios:") && output =~ /cucumber li-test\/tests\/.*\.feature:\d+/
@@ -291,14 +295,14 @@ mkdir -p /tmp/rhc/junit
                 if line =~ /cucumber li-test\/tests\/(.*\.feature):(\d+)/
                   test = $1
                   scenario = $2
-                  if retry_individually
+                  if retry_individ
                     failures.push(["#{title} (#{test}:#{scenario})", "cucumber -f junit --out /tmp/rhc/cucumber_results -f progress li-test/tests/#{test}:#{scenario}"])
                   else
                     failures.push(["#{title} (#{test})", "cucumber -f junit --out /tmp/rhc/cucumber_results -f progress li-test/tests/#{test}"])
                   end
                 end
               end
-            elsif retry_individually && output.include?("Failure:") && output.include?("rake_test_loader")
+            elsif retry_individ && output.include?("Failure:") && output.include?("rake_test_loader")
               output.lines.each do |line|
                 if line =~ /\A(test_\w+)\((\w+Test)\) \[\/*(.*?_test\.rb):(\d+)\]:/
                   test_name = $1
@@ -318,10 +322,15 @@ mkdir -p /tmp/rhc/junit
               failures.push([title, cmd])
             end
           end
-          puts "Still Running Tests:"
+
+          still_running_tests = ''
           threads.each do |t|
             t[1].delete(title)
-            puts "   #{t[1].pretty_inspect}" unless t[1].empty?
+            still_running_tests += "   #{t[1].pretty_inspect}" unless t[1].empty?
+          end
+          if still_running_tests.length > 0
+            puts "Still Running Tests:"
+            puts still_running_tests
           end
         end
       }, Array.new(titles) ]
@@ -489,16 +498,15 @@ mkdir -p /tmp/rhc/junit
           end
 
           unless options.exclude_runtime?
-            test_queues[0] << ["Runtime Group 1", "cucumber -f junit --out /tmp/rhc/cucumber_results -f progress -t @runtime1 li-test/tests"]
-            test_queues[1] << ["Runtime Group 2", "cucumber -f junit --out /tmp/rhc/cucumber_results -f progress -t @runtime2 li-test/tests"]
-            test_queues[2] << ["Runtime Group 3", "cucumber -f junit --out /tmp/rhc/cucumber_results -f progress -t @runtime3 li-test/tests"]
-            test_queues[3] << ["Runtime Group 4", "cucumber -f junit --out /tmp/rhc/cucumber_results -f progress -t @runtime4 li-test/tests"]
+            (1..4).each do |i|
+              test_queues[i-1] << ["Runtime Group #{i.to_s}", "cucumber -f junit --out /tmp/rhc/cucumber_results -f progress -t @runtime#{i.to_s} li-test/tests"]
+            end
           end
           
           unless options.exclude_site?
             test_queues[3] << ["Site Check", "cd li-test/site; rake test:check"]
           end
-          
+
           unless options.exclude_rhc?
 
           end
@@ -510,12 +518,20 @@ mkdir -p /tmp/rhc/junit
 
         retry_threshold = 0
         test_queues.each do |test_queue|
+          titles = []
+          cmds = []
+          retry_individually = []
+          timeouts = []
           test_queue.each do |test|
+            titles << test[0]
+            cmds << test[1]
             opts = test[2] || {}
+            retry_individually << opts[:retry_individually] ? true : false
+            timeouts << opts[:timeout] ? opts[:timeout] : @@SSH_TIMEOUT
             retry_threshold += 8
-            add_ssh_cmd_to_threads(hostname, threads, failures, test[0], test[1], opts[:retry_individually], opts[:timeout] ? opts[:timeout] : @@SSH_TIMEOUT)
           end
-        end          
+          add_ssh_cmd_to_threads(hostname, threads, failures, titles, cmds, retry_individually, timeouts)
+        end
 
         threads.each do |t|
           t[0].join
