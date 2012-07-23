@@ -1,6 +1,5 @@
-@runtime
-@runtime1
-@watchman
+@runtime_verify
+@runtime_verify1
 Feature: Watchman Service
   Scenario Outline: Watchman monitoring misc applications
     Given a Watchman object using "<log_file>" and "<epoch>"

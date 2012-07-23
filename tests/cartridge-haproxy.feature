@@ -1,5 +1,5 @@
 @runtime
-@runtime1
+@runtime3
 Feature: HAProxy Application Sub-Cartridge
   
   Scenario Outline: Create Delete one application with haproxy
