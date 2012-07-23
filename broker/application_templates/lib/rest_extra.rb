@@ -7,7 +7,7 @@ module Rhc
         url = @links['GET_DESCRIPTOR']['href']
         method =  @links['GET_DESCRIPTOR']['method']
         request = RestClient::Request.new(:url => url, :method => method, :headers => @@headers)
-        return send(request)
+        return request(request)
       end
     end
 
@@ -18,7 +18,7 @@ module Rhc
         url = @links['LIST_TEMPLATES']['href']
         method =  @links['LIST_TEMPLATES']['method']
         request = RestClient::Request.new(:url => url, :method => method, :headers => @@headers)
-        return send(request)
+        return request(request)
       end
     end
   end
