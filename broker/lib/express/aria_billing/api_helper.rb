@@ -111,7 +111,7 @@ module Express
       end
 
       def record_usage(gear_uuid, sync_time, user_id=nil, acct_no=nil, 
-                            usage_type=@usage_type[:small], usage_units=1)
+                            usage_type=@usage_type[:gear][:small], usage_units=1)
         raise Express::AriaBilling::Exception.new "user_id or acct_no must be valid" if !user_id && !acct_no
         args = {
           'usage_units' => usage_units,

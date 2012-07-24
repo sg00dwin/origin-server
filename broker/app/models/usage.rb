@@ -10,22 +10,25 @@ class Usage < StickShift::Model
   key :uuid,         String, :required => true, :unique => true
   key :login,        String, :required => true
   key :gear_uuid,    String, :required => true
-  key :gear_size,    String, :required => true, :in => VALID_GEAR_SIZES
   key :begin_time,   Time,   :required => true
   key :end_time,     Time,   :default => nil
-  attr_accessible :uuid, :login, :gear_uuid, :gear_size, :begin_time, :end_time
+  key :usage_type,   String, :required => true, :in => UsageRecord::USAGE_TYPES.values
+  key :gear_size,    String,                    :in => VALID_GEAR_SIZES
+  key :addtl_fs_gb,  Fixnum
+
+  attr_accessible :uuid, :login, :gear_uuid, :begin_time, :end_time, :gear_size, :addtl_fs_gb, :usage_type
 
   timestamps!  # provides attribute updated_at
 
-  def initialize(login, gear_uuid, gear_size=nil, begin_time=nil, end_time=nil, uuid=nil)
+  def initialize(login, gear_uuid, begin_time=nil, end_time=nil, uuid=nil, usage_type=nil)
     self.uuid = uuid
     self.uuid = StickShift::Model.gen_uuid unless uuid
     self._id = self.uuid
     self.login = login
     self.gear_uuid = gear_uuid
-    self.gear_size = gear_size
     self.begin_time = begin_time
     self.end_time = end_time
+    self.usage_type = usage_type
   end
 
   def self.find(uuid)

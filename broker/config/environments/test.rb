@@ -96,7 +96,7 @@ Broker::Application.configure do
     :user => "libra",
     :password => "momo",
     :db => "openshift_broker_dev",
-    :collections => {:user => "user_test", 
+    :collections => {:user => "user_test",
                      :district => "district_test", 
                      :application_template => "template_test",
                      :distributed_lock => "distributed_lock_test"}
@@ -115,10 +115,11 @@ Broker::Application.configure do
         :client_no => 3754655
       },
       :usage_type => {
-        :small => 10014123,
-        :medium => 10014125,
-        :large => 10014127,
-        :xlarge => 10014151
+        :gear => {:small => 10014123,
+                  :medium => 10014125,
+                  :large => 10014127,
+                  :xlarge => 10014151},
+        :storage => {:gigabyte_hour => 10037755}
       },
       :datastore_enabled => false,
       :default_max_gears => 3,

@@ -95,7 +95,7 @@ Broker::Application.configure do
     :nurture_password => "password",
     :nurture_url => "https://libra-makara.nurturehq.com/",
     
-    :apptegic_enabled => true,
+    :apptegic_enabled => false,
     :apptegic_url => "https://redhat.apptegic.com/httpreceiver",
     :apptegic_key => "redhat",
     :apptegic_secret => "4DC5A0AA-48AE-9287-5F66-9A73E14B6E31",
@@ -129,10 +129,11 @@ Broker::Application.configure do
         :client_no => 3754655
       },
       :usage_type => {
-        :small => 10014123,
-        :medium => 10014125,
-        :large => 10014127,
-        :xlarge => 10014151
+        :gear => {:small => 10014123,
+                  :medium => 10014125,
+                  :large => 10014127,
+                  :xlarge => 10014151},
+        :storage => {:gigabyte_hour => 10037755}
       },
       :datastore_enabled => false,
       :default_max_gears => 3,
