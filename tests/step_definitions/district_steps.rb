@@ -9,7 +9,7 @@ Given /^a district (.*) is active$/ do |uuid|
   # Clean up anything left over
   FileUtils.rm_f "/var/lib/stickshift/.settings/district.info"
   mc = rpcclient("stickshift", {:options => options})
-  reply = mc.set_district(:uuid => uuid, :active => 'true')                                            
+  reply = mc.set_district(:uuid => uuid, :active => 'true')
   reply[0][:data][:exitcode].should be == 0
 end
 
