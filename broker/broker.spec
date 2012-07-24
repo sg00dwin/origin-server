@@ -3,7 +3,7 @@
 
 Summary:   Li broker components
 Name:      rhc-broker
-Version: 0.96.5
+Version: 0.96.6
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -112,6 +112,13 @@ rm -rf $RPM_BUILD_ROOT
 /bin/touch %{_localstatedir}/log/stickshift/user_action.log
 
 %changelog
+* Tue Jul 24 2012 Adam Miller <admiller@redhat.com> 0.96.6-1
+- Updating gem versions (admiller@redhat.com)
+- Renamed 'send' calls to 'request' as per rhc change. (hripps@redhat.com)
+- Merge pull request #104 from pravisankar/dev/ravi/billing_fix_testcase
+  (lnader@redhat.com)
+- Fix billing functional test (rpenta@redhat.com)
+
 * Fri Jul 20 2012 Adam Miller <admiller@redhat.com> 0.96.5-1
 - Updating gem versions (admiller@redhat.com)
 - Merge pull request #101 from lnader/master (rpenta@redhat.com)
