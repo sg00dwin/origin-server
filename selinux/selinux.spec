@@ -1,6 +1,6 @@
 Summary:       SELinux policy for OpenShift nodes
 Name:          rhc-selinux
-Version: 0.96.2
+Version: 0.96.3
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -46,6 +46,9 @@ rm -rf %{buildroot}
 %attr(0640,-,-) %{_datadir}/selinux/packages/libra.pp
 
 %changelog
+* Tue Jul 24 2012 Adam Miller <admiller@redhat.com> 0.96.3-1
+- Lots of updates to quiet AVC's in audit logs (dwalsh@redhat.com)
+
 * Thu Jul 19 2012 Adam Miller <admiller@redhat.com> 0.96.2-1
 - Security open up selinux for mysqld binding to 127.0.0.1 (tkramer@redhat.com)
 
