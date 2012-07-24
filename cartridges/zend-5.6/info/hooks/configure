@@ -31,7 +31,6 @@ source ${CARTRIDGE_BASE_PATH}/abstract/info/lib/util
 setup_configure "$1" $2 $3 $4
 
 check_app_dir_doesnt_exist
-unobfuscate_app_home $uuid $namespace $application
 
 # Repo
 if [ ! -d $git_url ]; then
