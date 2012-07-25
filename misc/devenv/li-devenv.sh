@@ -28,16 +28,16 @@ echo "nameserver 4.2.2.2" >> /etc/resolv.conf
 cat > /etc/yum.repos.d/epel.repo <<EOF
 [epel]
 name=Extra Packages for Enterprise Linux 6 - \$basearch
-baseurl=http://mirror1.stg.rhcloud.com/mirror/epel/6/\$basearch/
-        http://mirror2.stg.rhcloud.com/mirror/epel/6/\$basearch/
+baseurl=http://mirror1.ops.rhcloud.com/mirror/epel/6/\$basearch/
+        http://mirror2.ops.rhcloud.com/mirror/epel/6/\$basearch/
 failovermethod=priority
 enabled=1
 gpgcheck=0
 
 [epel-testing]
 name=Extra Packages for Enterprise Linux 6 - Testing - \$basearch
-baseurl=http://mirror1.stg.rhcloud.com/mirror/epel/testing/6/\$basearch/
-        http://mirror2.stg.rhcloud.com/mirror/epel/testing/6/\$basearch/
+baseurl=http://mirror1.ops.rhcloud.com/mirror/epel/testing/6/\$basearch/
+        http://mirror2.ops.rhcloud.com/mirror/epel/testing/6/\$basearch/
 failovermethod=priority
 enabled=0
 gpgcheck=0
@@ -48,25 +48,25 @@ EOF
 cat > /etc/yum.repos.d/li.repo <<EOF
 [li]
 name=Li repo for Enterprise Linux 6 - $basearch
-baseurl=https://mirror1.stg.rhcloud.com/libra/libra-rhel-6.3-${1-candidate}/\$basearch/
-        https://mirror2.stg.rhcloud.com/libra/libra-rhel-6.3-${1-candidate}/\$basearch/
+baseurl=https://mirror1.ops.rhcloud.com/libra/libra-rhel-6.3-${1-candidate}/\$basearch/
+        https://mirror2.ops.rhcloud.com/libra/libra-rhel-6.3-${1-candidate}/\$basearch/
 failovermethod=priority
 enabled=1
 gpgcheck=0
-gpgkey=https://mirror1.stg.rhcloud.com/libra/RPM-GPG-KEY-redhat-beta
-ggpkey=https://mirror1.stg.rhcloud.com/libra/RPM-GPG-KEY-redhat-release
+gpgkey=https://mirror1.ops.rhcloud.com/libra/RPM-GPG-KEY-redhat-beta
+ggpkey=https://mirror1.ops.rhcloud.com/libra/RPM-GPG-KEY-redhat-release
 sslverify=0
 sslclientcert=/var/lib/yum/client-cert.pem
 sslclientkey=/var/lib/yum/client-key.pem
 
 [li-source]
 name=Li repo for Enterprise Linux 6 - $basearch
-baseurl=https://mirror1.stg.rhcloud.com/libra/libra-rhel-6.3-${1-candidate}/source/SRPMS/
-        https://mirror2.stg.rhcloud.com/libra/libra-rhel-6.3-${1-candidate}/source/SRPMS/
+baseurl=https://mirror1.ops.rhcloud.com/libra/libra-rhel-6.3-${1-candidate}/source/SRPMS/
+        https://mirror2.ops.rhcloud.com/libra/libra-rhel-6.3-${1-candidate}/source/SRPMS/
 failovermethod=priority
 enabled=0
-gpgkey=https://mirror1.stg.rhcloud.com/libra/RPM-GPG-KEY-redhat-beta
-ggpkey=https://mirror1.stg.rhcloud.com/libra/RPM-GPG-KEY-redhat-release
+gpgkey=https://mirror1.ops.rhcloud.com/libra/RPM-GPG-KEY-redhat-beta
+ggpkey=https://mirror1.ops.rhcloud.com/libra/RPM-GPG-KEY-redhat-release
 gpgcheck=0
 sslverify=0
 sslclientcert=/var/lib/yum/client-cert.pem
@@ -74,20 +74,20 @@ sslclientkey=/var/lib/yum/client-key.pem
 
 [qpid]
 name=Qpid repo for Enterprise Linux 6 - $basearch
-baseurl=https://mirror1.stg.rhcloud.com/libra/qpid/\$basearch/Packages/
-        https://mirror2.stg.rhcloud.com/libra/qpid/\$basearch/Packages/
+baseurl=https://mirror1.ops.rhcloud.com/libra/qpid/\$basearch/Packages/
+        https://mirror2.ops.rhcloud.com/libra/qpid/\$basearch/Packages/
 failovermethod=priority
 enabled=1
 gpgcheck=1
-gpgkey=https://mirror1.stg.rhcloud.com/libra/li-signing.asc
+gpgkey=https://mirror1.ops.rhcloud.com/libra/li-signing.asc
 sslverify=0
 sslclientcert=/var/lib/yum/client-cert.pem
 sslclientkey=/var/lib/yum/client-key.pem
 
 [passenger]
 name=Passenger repo for Enterprise Linux 6
-baseurl=https://mirror1.stg.rhcloud.com/libra/passenger
-        https://mirror2.stg.rhcloud.com/libra/passenger
+baseurl=https://mirror1.ops.rhcloud.com/libra/passenger
+        https://mirror2.ops.rhcloud.com/libra/passenger
 failovermethod=priority
 enabled=1
 gpgcheck=0
@@ -109,30 +109,16 @@ includepkgs=java-1.6.0-openjdk*
 
 [ruby193]
 name=Ruby193 Software Collection for RHEL6 - $basearch
-baseurl=https://mirror1.stg.rhcloud.com/libra/ruby193-rhel-6-${1-candidate}/\$basearch/
-        https://mirror2.stg.rhcloud.com/libra/ruby193-rhel-6-${1-candidate}/\$basearch/
+baseurl=https://mirror1.ops.rhcloud.com/libra/ruby193-rhel-6-${1-candidate}/\$basearch/
+        https://mirror2.ops.rhcloud.com/libra/ruby193-rhel-6-${1-candidate}/\$basearch/
 failovermethod=priority
 enabled=1
 gpgcheck=0
-gpgkey=https://mirror1.stg.rhcloud.com/libra/RPM-GPG-KEY-redhat-beta
-ggpkey=https://mirror1.stg.rhcloud.com/libra/RPM-GPG-KEY-redhat-release
+gpgkey=https://mirror1.ops.rhcloud.com/libra/RPM-GPG-KEY-redhat-beta
+ggpkey=https://mirror1.ops.rhcloud.com/libra/RPM-GPG-KEY-redhat-release
 sslverify=0
 sslclientcert=/var/lib/yum/client-cert.pem
 sslclientkey=/var/lib/yum/client-key.pem
-
-[rhel63]
-name= Red Hat Enterprise Linux Server 6.3 - $basearch
-baseurl=https://mirror1.stg.rhcloud.com/libra/rhel6.3/\$basearch/
-        https://mirror2.stg.rhcloud.com/libra/rhel6.3/\$basearch/
-failovermethod=priority
-enabled=1
-gpgcheck=1
-gpgkey=https://mirror1.stg.rhcloud.com/libra/RPM-GPG-KEY-redhat-beta
-ggpkey=https://mirror1.stg.rhcloud.com/libra/RPM-GPG-KEY-redhat-release
-sslverify=0
-sslclientcert=/var/lib/yum/client-cert.pem
-sslclientkey=/var/lib/yum/client-key.pem
-
 
 EOF
 
