@@ -57,10 +57,23 @@ end
 
 require "/var/www/stickshift/broker/config/environment"
 
+def usage_record_to_billing_usage_type(billing_api, usage_record)
+  billing_usage_type = nil
+  
+  case usage_record.usage_type
+  when UsageRecord::USAGE_TYPES[:gear_usage]
+    billing_usage_type = billing_api.usage_type[:gear][usage_record.gear_size.to_sym]
+  when UsageRecord::USAGE_TYPES[:addtl_fs_gb]
+    billing_usage_type = billing_api.usage_type[:storage][:gigabyte_hour]
+  else
+    raise "Usage type not supported: '#{usage_record.usage_type}'"
+  end
+end
+
 def usage_time(billing_api, acct_no, usage_record, begin_time, end_time)
   if usage_record.sync_time
     found = false
-    usages = billing_api.get_usage_history(acct_no, billing_api.usage_type[usage_record.gear_size.to_sym])
+    usages = billing_api.get_usage_history(acct_no, usage_record_to_billing_usage_type(billing_api, usage_record))
     usages.each do |usage|
       gear_uuid = usage["qualifier_1"]
       sync_time = usage["qualifier_2"]
@@ -85,7 +98,7 @@ def get_billing_user_acct_no(billing_api, user)
   unless billing_api.userid_exists(user.uuid)
     puts "User didn't exist"
     # Temporary code until users are created up front
-    acct_no = billing_api.create_fake_acct(user.uuid, :MegaShift)
+    acct_no = billing_api.create_fake_acct(user.uuid, :megashift)
   else
     acct_no = billing_api.get_acct_no_from_user_id(user.uuid)
   end
@@ -98,116 +111,131 @@ else
   hostname = Socket.gethostname
   if Express::Broker::DistributedLock.obtain_lock("sync_usage", hostname)
     begin
-      CloudUser.find_all(nil, {:with_gear_usage => true}) {|hash|
+      failures = []
+      CloudUser.find_all(nil, {:with_usage => true}) {|hash|
         user = CloudUser.hash_to_obj(hash)
-        failures = []
-        if user.gear_usage_records && !user.gear_usage_records.empty?
+        if user.usage_records && !user.usage_records.empty?
           puts "\n#################"
           puts "User: #{user.login}"
           puts "#################"
-          sorted_gear_usage = user.gear_usage_records.sort_by { |usage_record| usage_record.time }
-          usage_records_by_gear = {}
-          sorted_gear_usage.each do |usage_record|
-            usage_records_by_gear[usage_record.gear_uuid] = [] unless usage_records_by_gear[usage_record.gear_uuid]
-            usage_records_by_gear[usage_record.gear_uuid] << usage_record
+          sorted_usage = user.usage_records.sort_by { |usage_record| usage_record.time }
+          gear_usage_records_by_gear = {}
+          storage_usage_records_by_gear = {}
+          sorted_usage.each do |usage_record|
+            case usage_record.usage_type
+            when UsageRecord::USAGE_TYPES[:gear_usage]
+              gear_usage_records_by_gear[usage_record.gear_uuid] = [] unless gear_usage_records_by_gear[usage_record.gear_uuid]
+              gear_usage_records_by_gear[usage_record.gear_uuid] << usage_record
+            when UsageRecord::USAGE_TYPES[:addtl_fs_gb]
+              storage_usage_records_by_gear[usage_record.gear_uuid] = [] unless storage_usage_records_by_gear[usage_record.gear_uuid]
+              storage_usage_records_by_gear[usage_record.gear_uuid] << usage_record
+            end
           end
           billing_api = Express::AriaBilling::Api.new
           billing_acct_no = get_billing_user_acct_no(billing_api, user)
-          if sync
 
-            usage_records_by_gear.each do |gear_uuid, usage_records_for_gear|
-              usage = nil
-              usage_records_for_gear.each do |usage_record|
-                unless usage_record.event == UsageRecord::EVENTS[:continue]
-                  usage = Usage.find_latest_by_gear(usage_record.gear_uuid) unless usage
-                  if !usage && usage_record.event == UsageRecord::EVENTS[:begin]
-                    puts "WARNING: Usage not found in collection for new gear: #{usage_record.gear_uuid}"
-                    usage = Usage.new(user.login, usage_record.gear_uuid, usage_record.gear_size, usage_record.time, nil, usage_record.uuid)
-                  elsif usage
-                    if usage_record.event == UsageRecord::EVENTS[:end]
-                      puts "Setting end time for gear: #{usage.gear_uuid}"
-                      usage.end_time = usage_record.time
+          if sync
+            [gear_usage_records_by_gear, storage_usage_records_by_gear].each do |usage_records_by_gear|  
+              usage_records_by_gear.each do |gear_uuid, usage_records_for_gear|
+                usage = nil
+                usage_records_for_gear.each do |usage_record|
+                  unless usage_record.event == UsageRecord::EVENTS[:continue]
+                    usage = Usage.find_latest_by_gear(usage_record.gear_uuid) unless usage
+                    if !usage && usage_record.event == UsageRecord::EVENTS[:begin]
+                      puts "WARNING: Usage not found in collection for new gear: #{usage_record.gear_uuid}"
+                      usage = Usage.new(user.login, usage_record.gear_uuid, usage_record.time, nil, usage_record.uuid, usage_record.usage_type)
+                      usage.gear_size = usage_record.gear_size
+                      usage.addtl_fs_gb = usage_record.addtl_fs_gb
+                    elsif usage
+                      if usage_record.event == UsageRecord::EVENTS[:end]
+                        puts "Setting end time for gear: #{usage.gear_uuid}"
+                        usage.end_time = usage_record.time
+                      end
+                    else
+                      puts "ERROR: Usage not found in collection for gear: #{usage_record.gear_uuid}"
+                      exit 1
                     end
-                  else
-                    puts "ERROR: Usage not found in collection for gear: #{usage_record.gear_uuid}"
-                    exit 1
                   end
                 end
+                usage.save! if usage
               end
-              usage.save! if usage
             end
 
-            usage_records_by_gear.each do |gear_uuid, usage_records_for_gear|
-              puts "Collecting usage for gear: #{gear_uuid}"
-              usage = nil
-              begin_time = nil
-              end_time = nil
-              now = Time.now.utc
-              usage_records_for_gear.each do |usage_record|
-                if usage_record.event == UsageRecord::EVENTS[:end]
-                  end_time = usage_record.time
-                else
-                  begin_time = usage_record.time
+            [gear_usage_records_by_gear, storage_usage_records_by_gear].each do |usage_records_by_gear|
+              usage_records_by_gear.each do |gear_uuid, usage_records_for_gear|
+                usage = nil
+                begin_time = nil
+                end_time = nil
+                now = Time.now.utc
+                usage_records_for_gear.each do |usage_record|
+                  if usage_record.event == UsageRecord::EVENTS[:end]
+                    end_time = usage_record.time
+                  else
+                    begin_time = usage_record.time
+                  end
                 end
-              end
-              end_time = now unless end_time
+                end_time = now unless end_time
     
-              usage_record = usage_records_for_gear.first
-              ut = usage_time(billing_api, billing_acct_no, usage_record, begin_time, end_time)
-              puts "Saving sync_time before sending usage data to billing vendor."
-              usage_record.sync_time = now
-              usage_record.save
-              puts "Sending usage data (#{ut}h) to billing vendor."
-              # Send data to billing vendor
-              success = false
-              2.times do
-                if billing_api.record_usage(gear_uuid, usage_record.sync_time, user.uuid, nil, billing_api.usage_type[usage_record.gear_size.to_sym], ut)
-                  success = true
+                usage_record = usage_records_for_gear.first
+                puts "Collecting '#{usage_record.usage_type}' usage for gear: #{gear_uuid}"
+                ut = usage_time(billing_api, billing_acct_no, usage_record, begin_time, end_time)
+                puts "Saving sync_time before sending usage data to billing vendor."
+                usage_record.sync_time = now
+                usage_record.save
+                puts "Sending usage data (#{ut}h) to billing vendor."
+                # Send data to billing vendor
+                success = false
+                2.times do
+                  if billing_api.record_usage(gear_uuid, usage_record.sync_time, user.uuid, nil, usage_record_to_billing_usage_type(billing_api, usage_record), ut)
+                    success = true
+                    break
+                  else
+                    sleep 1
+                  end
+                end
+                #TODO 
+                if success
+                  puts "Billing vendor returned success."
+                  if usage_records_for_gear.length == 2 && usage_records_for_gear.last.event == UsageRecord::EVENTS[:end]
+                    puts "Deleting ended usage record"
+                    usage_record.delete_by_gear_uuid
+                  else
+                    puts "Continuing usage record."
+                    usage_record.event = UsageRecord::EVENTS[:continue]
+                    usage_record.time = now
+                    usage_record.sync_time = nil
+                    usage_record.save
+                  end
+                else
+                  puts "Billing vendor returned error."
+                  failures << [user.login, gear_uuid, usage_record.usage_type]
                   break
-                else
-                  sleep 1
                 end
-              end
-              #TODO 
-              if success
-                puts "Billing vendor returned success."
-                if usage_records_for_gear.length == 2 && usage_records_for_gear.last.event == UsageRecord::EVENTS[:end]
-                  puts "Deleting ended usage record"
-                  usage_record.delete_by_gear_uuid
-                else
-                  puts "Continuing usage record."
-                  usage_record.event = UsageRecord::EVENTS[:continue]
-                  usage_record.time = now
-                  usage_record.sync_time = nil
-                  usage_record.save
-                end
-              else
-                puts "Billing vendor returned error."
-                failures << [user.login, gear_uuid]
-                break
               end
             end
           elsif list
-            usage_records_by_gear.each do |gear_uuid, usage_records_for_gear|
-              puts "Collecting usage for gear: #{gear_uuid}"
-              begin_time = nil
-              end_time = nil
-              now = Time.now.utc
-              usage_records_for_gear.each do |usage_record|
-                if usage_record.event == UsageRecord::EVENTS[:end]
-                  end_time = usage_record.time
-                else
-                  begin_time = usage_record.time
+            [gear_usage_records_by_gear, storage_usage_records_by_gear].each do |usage_records_by_gear|
+              usage_records_by_gear.each do |gear_uuid, usage_records_for_gear|
+                begin_time = nil
+                end_time = nil
+                now = Time.now.utc
+                usage_records_for_gear.each do |usage_record|
+                  if usage_record.event == UsageRecord::EVENTS[:end]
+                    end_time = usage_record.time
+                  else
+                    begin_time = usage_record.time
+                  end
                 end
+                puts "Collecting '#{usage_records_for_gear.first.usage_type}' usage for gear: #{gear_uuid}"
+                if end_time
+                  puts "Usage record ended."
+                else
+                  puts "Usage record continued."
+                  end_time = now
+                end
+                ut = usage_time(billing_api, billing_acct_no, usage_records_for_gear.first, begin_time, end_time)
+                puts "Usage to send to billing vendor: #{ut}h"
               end
-              if end_time
-                puts "Usage record ended."
-              else
-                puts "Usage record continued."
-                end_time = now
-              end
-              ut = usage_time(billing_api, billing_acct_no, usage_records_for_gear.first, begin_time, end_time)
-              puts "Usage to send to billing vendor: #{ut}h"
             end
           end
         else
@@ -217,9 +245,8 @@ else
 
       unless failures.empty?
         puts "!!!!!!!!!!!!!!!!!!!FAILURES!!!!!!!!!!!!!!!!!!!!!!"
-        puts "<User>: <Gear UUID>"
         failures.each do |failure|
-          puts "#{failure[0]}: #{failure[1]}"
+          puts "User: #{failure[0]}   Gear UUID: #{failure[1]}   Usage Type: #{failure[1]}"
         end
         puts "!!!!!!!!!!!!!!!!!END FAILURES!!!!!!!!!!!!!!!!!!!!"
       end

@@ -57,8 +57,15 @@ module Express
       end
 
       def get_usage_history(*args)
-        result = get_response(@ah.get_usage_history(*args), __method__)
-        result.data["usage_history_records"]
+        usage_history = nil
+        begin
+          result = get_response(@ah.get_usage_history(*args), __method__)
+          usage_history = result.data["usage_history_records"]
+        rescue Express::AriaBilling::ErrorCodeException => e
+          raise if e.error_code.to_s != "1008"
+          usage_history = []
+        end
+        usage_history
       end
 
       def get_acct_plans_all(*args)
@@ -73,9 +80,9 @@ module Express
 
       def update_master_plan(*args)
         begin
-          return get_response_status(@ah.update_master_plan(*args), __method__)
-        rescue Express::AriaBilling::ErrorCodeException => ex
-          raise if ex.error_code.to_s != "1034"
+          get_response(@ah.update_master_plan(*args), __method__)
+        rescue Express::AriaBilling::ErrorCodeException => e
+          raise if e.error_code.to_s != "1034"
         end
         return true
       end
@@ -129,11 +136,14 @@ module Express
         wddx_response = send(request)
         response = WDDX.load(wddx_response)
         Rails.logger.debug "Aria Billing api response: #{response.inspect}"
-        if response.error_code != 0 
+        if response.error_code != 0 && ret_output
           raise Express::AriaBilling::ErrorCodeException.new("#{method_name} failed with error message: #{response.error_msg}", response.error_code)
         end
-        return response if ret_output
-        return true
+        if ret_output
+          return response
+        else
+          return response.error_code == 0
+        end
       end
 
       def get_response_status(hash, method_name)

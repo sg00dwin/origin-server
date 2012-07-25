@@ -3,16 +3,22 @@ class ApplicationObserver < ActiveModel::Observer
 
   BUILDER_SUFFIX = "bldr"
   
-  def track_gear_usage(data)
-    gear = data[:gear]
+  def track_usage(data)
+    gear_uuid = data[:gear_uuid]
+    login = data[:login]
     event = data[:event]
     time = data[:time]
     uuid = data[:uuid]
+    usage_type = data[:usage_type]
+    gear_size = data[:gear_size]
+    addtl_fs_gb = data[:addtl_fs_gb]
     usage = nil
     if event == UsageRecord::EVENTS[:begin]
-      usage = Usage.new(gear.app.user.login, gear.uuid, gear.node_profile, time, nil, uuid)
+      usage = Usage.new(login, gear_uuid, time, nil, uuid, usage_type)
+      usage.gear_size = gear_size if gear_size
+      usage.addtl_fs_gb = addtl_fs_gb if addtl_fs_gb 
     elsif event == UsageRecord::EVENTS[:end]
-      usage = Usage.find_latest_by_gear(gear.uuid)
+      usage = Usage.find_latest_by_gear(gear_uuid)
       if usage
         usage.end_time = time
       end
