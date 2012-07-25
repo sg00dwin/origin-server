@@ -208,7 +208,7 @@ def redeploy_aliases(gear, out)
     gear.app.aliases.each do |server_alias|
       out << "Adding alias '#{server_alias}' for '#{gear.name}' with uuid '#{gear.uuid}' on node #{gear.server_identity}\n"
       reply = gear.add_alias(server_alias)
-       out << "ADD_ALIAS DEBUG OUTPUT:\n#{reply.debugIO.string}\n" unless reply.debugIO.string.empty?
+      out << "ADD_ALIAS DEBUG OUTPUT:\n#{reply.debugIO.string}\n" unless reply.debugIO.string.empty?
       out << "ADD_ALIAS ERROR OUTPUT:\n#{reply.errorIO.string}\n" unless reply.errorIO.string.empty?
       if reply.exitcode != 0
         out << "Add alias on node exit code: #{reply.exitcode}\n"
