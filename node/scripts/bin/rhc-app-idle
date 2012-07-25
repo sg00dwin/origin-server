@@ -7,7 +7,7 @@ IDLE_FOR = ARGV[1].to_i
 LAST_ACCESS_DIR = '/var/lib/stickshift/.last_access'
 
 file_path = "#{LAST_ACCESS_DIR}/#{OPENSHIFT_GEAR_UUID}"
-exit 0 unless File.exists?(file_path)
+exit 6 unless File.exists?(file_path)
 
 File.open(file_path, 'r') do |file|
   last_access_time = file.read
