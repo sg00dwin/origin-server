@@ -4,8 +4,8 @@
       Components: 
       - php-5.3
       - mysql-5.1
-- Display-Name: cakephp-0.0-noarch
-- Name: cakephp
+- Display-Name: cakephptest-0.0-noarch
+- Name: cakephptest
 - Requires: 
   - php-5.3
   - mysql-5.1
