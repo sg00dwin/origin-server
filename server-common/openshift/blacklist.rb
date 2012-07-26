@@ -16,6 +16,10 @@ module OpenShift
             wise xnio
     )
 
+    def self.blacklist
+      NONO
+    end
+
     def self.in_blacklist?(field)
       NONO.include?(field.to_str.downcase)
     end

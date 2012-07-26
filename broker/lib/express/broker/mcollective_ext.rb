@@ -37,5 +37,10 @@ module GearChanger
     def self.blacklisted_in_impl?(name)
       OpenShift::Blacklist.in_blacklist?(name)
     end
+
+
+    def self.get_blacklisted_in_impl
+      OpenShift::Blacklist.blacklist
+    end
   end
 end
