@@ -8,7 +8,7 @@
 
 Summary:   Dependencies for OpenShift development
 Name:      rhc-devenv
-Version: 0.97.4
+Version: 0.97.5
 Release:   1%{?dist}
 Group:     Development/Libraries
 License:   GPLv2
@@ -516,6 +516,15 @@ chown root:libra_user /var/www/stickshift/site/log/development.log
 %{policydir}/*
 
 %changelog
+* Thu Jul 26 2012 Dan McPherson <dmcphers@redhat.com> 0.97.5-1
+- fix install from local source for crankcase (dmcphers@redhat.com)
+- add requires for rhc-site-static (dmcphers@redhat.com)
+- Merge pull request #90 from tdawson/mirror (dmcphers@redhat.com)
+- Security - kwoodsons change to pull puppet httpd and nagios_monitor out of
+  using PI (tkramer@redhat.com)
+- remove the rhel63 repository (tdawson@redhat.com)
+- replace mirror.stg and prod with mirror.ops (tdawson@redhat.com)
+
 * Fri Jul 20 2012 Adam Miller <admiller@redhat.com> 0.97.4-1
 - Security - fix log file permissions and ownership (tkramer@redhat.com)
 
