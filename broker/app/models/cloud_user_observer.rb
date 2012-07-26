@@ -4,10 +4,23 @@ class CloudUserObserver < ActiveModel::Observer
   def before_cloud_user_create(user)
     raise StickShift::UserException.new("Invalid characters in login '#{user.login}' found", 107) if user.login =~ /["\$\^<>\|%\/;:,\\\*=~]/
 
-    user.capabilities["gear_sizes"] = ["small"]
-    if not user.parent_user_login.nil?
-      user.capabilities["gear_sizes"] = [Rails.configuration.cloud9[:node_profile]] if user.parent_user_login == Rails.configuration.cloud9[:user_login]
+    capabilities = {}
+    if user.login == Rails.application.config.cloud9[:user_login]
+      user.capabilities = user.capabilities.merge(Rails.application.config.cloud9[:capabilities])
+      capabilities = user.capabilities
+    elsif user.parent_user_login
+      capabilities = user.get_capabilities
+    elsif user.plan_id 
+      raise StickShift::UserException.new("Specified plan_id does not exist", 150) if !Express::AriaBilling::Plan.instance.valid_plan(user.plan_id)
+      plan_details = Rails.application.config.billing[:aria][:plans][user.plan_id.to_sym]
+      user.capabilities = user.capabilities.merge(plan_details[:capabilities].dup)
+      capabilities = user.capabilities
+    else
+      user.capabilities['gear_sizes'] = [Rails.application.config.ss[:default_gear_size]] unless user.capabilities.has_key?('gear_sizes')
+      capabilities = user.capabilities
     end
+    user.max_gears = capabilities['max_gears'] if capabilities.has_key?('max_gears')
+    user.capabilities.delete('max_gears')
   end
 
   def cloud_user_create_success(user)

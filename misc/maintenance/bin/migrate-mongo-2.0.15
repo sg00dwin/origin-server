@@ -1,0 +1,49 @@
+#!/usr/bin/env ruby
+require 'rubygems'
+require 'mongo'
+$:.unshift('/var/www/stickshift/broker')
+require 'config/environment'
+
+# Configurable params
+$config = Rails.application.config.datastore
+
+def mongo_connect
+  if $config[:replica_set]
+    con = Mongo::ReplSetConnection.new(*$config[:host_port] \
+                                       << {:read => :secondary})
+  else
+    con = Mongo::Connection.new($config[:host_port][0], 
+                                $config[:host_port][1])
+  end
+  db = con.db($config[:db])
+  db.authenticate($config[:user], $config[:password])
+  $coll = con.db($config[:db]).collection($config[:collections][:user])
+end
+
+def mongo_migrate
+  users = $coll.find()
+  users.each do |user|
+    puts "Processing user #{user['login']}"
+    updates = {}
+    updates["$unset"] = { "vip" => 1 } if user.has_key?("vip")
+    if user["parent_user_login"].nil?
+      cap_changed = false
+      user["capabilities"] = {} unless user.has_key?("capabilities")
+      unless user["capabilities"].has_key?("gear_sizes")
+        user["capabilities"]["gear_sizes"] = ["small"]
+        cap_changed = true
+      end
+      if user.has_key?("vip") and user["vip"]
+        user["capabilities"]["gear_sizes"].push("medium")
+        cap_changed = true
+      end
+      updates["$set"] = { "capabilities" => user["capabilities"] } if cap_changed
+    end
+    $coll.update({"_id" => user["login"]}, updates) if !updates.empty?
+  end
+end
+
+mongo_connect
+puts "User migration Started"
+mongo_migrate
+puts "User migration Done!"

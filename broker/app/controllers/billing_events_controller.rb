@@ -7,7 +7,6 @@ class BillingEventsController < BillingController
     retval = "FAILED"
 #   Rails.logger.info("Request params: #{params.inspect}")
     begin
-      Express::AriaBilling::Plan.instance.enable_broker(params)
       event_list = params[:event_id]
       if (event_list - Express::AriaBilling::Event::EVENTS.keys()).empty?
         Express::AriaBilling::Event.handle_event(params)

@@ -5,7 +5,7 @@ class PlansController < BaseController
   def index
     plans = []
     Express::AriaBilling::Plan.instance.plans.each do |key, value|
-      plan = RestPlan.new(key, value[:name], value[:plan_no])
+      plan = RestPlan.new(key, value[:name], value[:plan_no], value[:capabilities])
       plans.push(plan)
     end
     @reply = RestReply.new(:ok, "plans", plans)
@@ -17,7 +17,7 @@ class PlansController < BaseController
     Express::AriaBilling::Plan.instance.plans.each do |key, value|
       Rails.logger.debug "plan #{key} #{value.inspect}"
       if key == id
-        plan = RestPlan.new(key, value[:name], value[:plan_no])
+        plan = RestPlan.new(key, value[:name], value[:plan_no], value[:capabilities])
         @reply = RestReply.new(:ok, "plan", plan)
         respond_with @reply, :status => @reply.status
       return

@@ -26,14 +26,12 @@ class UserApiTest < ActionDispatch::IntegrationTest
   
   def test_user_show
     if @test_enabled
-      api = Express::AriaBilling::Api.instance
-      user_id = Digest::MD5::hexdigest(@login)
-      acct_no = api.create_fake_acct(user_id, :freeshift)
       request_via_redirect(:get, USER_COLLECTION_URL, {}, @headers)
       assert_response :ok
       body = JSON.parse(@response.body)
       user = body["data"]
-      assert_equal(user["plan_id"], "freeshift")
+      assert_equal(user["plan_id"], nil)
+      assert_equal(user["usage_account_id"], nil)
       assert_equal(user["max_gears"], 3)
     end
   end
@@ -49,6 +47,7 @@ class UserApiTest < ActionDispatch::IntegrationTest
       body = JSON.parse(@response.body)
       user = body["data"]
       assert_equal(user["plan_id"], "megashift")
+      assert_not_equal(user["usage_account_id"], nil)
       assert_equal(user["max_gears"], 16)
       #assert plan changed in aria
       plans = api.get_acct_plans_all(acct_no)
@@ -68,6 +67,7 @@ class UserApiTest < ActionDispatch::IntegrationTest
       body = JSON.parse(@response.body)
       user = body["data"]
       assert_equal(user["plan_id"], "freeshift")
+      assert_not_equal(user["usage_account_id"], nil)
       assert_equal(user["max_gears"], 3)
       #assert plan changed in aria
       plans = api.get_acct_plans_all(acct_no)
@@ -92,7 +92,7 @@ class UserApiTest < ActionDispatch::IntegrationTest
   def test_user_downgrade_with_large_gears
     if @test_enabled
       cloud_user = CloudUser.new(@login)
-      cloud_user.vip = true
+      cloud_user.capabilities['gear_sizes'] = ["small", "medium"]
       cloud_user.save
       #create app with large gears
       request_via_redirect(:post, "/rest/domains", {:id=> @login[0..15]}, @headers)

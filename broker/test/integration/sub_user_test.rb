@@ -63,7 +63,11 @@ class SubUserTest < ActionDispatch::IntegrationTest
   end
 
   def test_c9_user_gear_setting
-    Rails.configuration.cloud9 = {:user_login => @username, :node_profile => "c9"}
+    Rails.configuration.cloud9 = {:user_login => @username,
+                                  :capabilities => {
+                                    'gear_sizes' => ["c9"],
+                                    'inherit_on_subaccounts' => ["gear_sizes"]
+                                  }}
     get "rest/domains.json", nil, @headers
     assert_equal 200, status
 
