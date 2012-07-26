@@ -81,3 +81,11 @@ function disable_cgroups {
     export cfs_quota=$(cat "/cgroup/all/libra/$uuid/cpu.cfs_quota_us")
     cat /cgroup/all/libra/$uuid/cpu.cfs_period_us  > "/cgroup/all/libra/$uuid/cpu.cfs_quota_us"
 }
+
+function enable_stale_detection {
+    rm -f "${APP_HOME}/.disable_stale"
+}
+
+function disable_stale_detection {
+    touch "${APP_HOME}/.disable_stale"
+}

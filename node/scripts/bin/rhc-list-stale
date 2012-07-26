@@ -11,6 +11,9 @@ for f in $(libra_users)
 do
     APPHOME=/var/lib/stickshift/$f
     if [ -d "$APPHOME" ]; then
+        # Is stale detection disabled
+        [ -e "${APPHOME}/.disable_stale" ] && continue
+
         # Determine if something was committed using the git objects directory
         objects_modified=$(find $APPHOME/git -name objects -mtime -$days)
         if [ -z "${objects_modified}" ]; then

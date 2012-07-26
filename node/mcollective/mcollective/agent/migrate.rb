@@ -37,6 +37,11 @@ module OpenShiftMigration
         cartridge_root_dir = "/usr/libexec/stickshift/cartridges"
         cartridge_dir = "#{cartridge_root_dir}/#{gear_type}"
 
+        # BZ 842977: Inhibit stale detection for mysql and mongodb gears
+        if ['mysql-5.1','mongodb-2.0'].include? gear_type
+          File.open("#{gear_home}/.disable_stale","w") {}
+        end
+
         env_echos = []
 
         env_echos.each do |env_echo|
