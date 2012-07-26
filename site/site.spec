@@ -4,7 +4,7 @@
 Summary:   Li site components
 Name:      rhc-site
 Version: 0.96.4
-Release:   2%{?dist}
+Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
 URL:       http://openshift.redhat.com
@@ -136,9 +136,6 @@ rm -rf %{buildroot}
 %{sitedir}/public
 
 %changelog
-* Thu Jul 26 2012 Troy Dawson <admiller@redhat.com> 0.96.4-2
-- Clean up the spec file.
-
 * Thu Jul 19 2012 Adam Miller <admiller@redhat.com> 0.96.4-1
 - added rubygem-rcov to Build/Requires for site to fix brew build breakage
   (admiller@redhat.com)
