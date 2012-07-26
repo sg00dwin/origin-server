@@ -225,6 +225,12 @@ then
 elif [[ "$2" == "--install_from_local_source" ]]
 then
   git clone /root/li /root/li-working
+  for repo_name in "${github_repos[@]}"
+  do
+    mv /root/$repo_name /root/${repo_name}_working
+    git clone /root/${repo_name}_working /root/$repo_name
+    rm -rf /root/${repo_name}_working
+  done
 fi
 
 if [[ "$2" == "--install_from_source" ]] || [[ "$2" == "--install_from_local_source" ]]
