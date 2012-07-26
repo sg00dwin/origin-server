@@ -1,0 +1,17 @@
+---
+:cost: 1
+:cartridge: python-2.6
+:tags:
+- :python
+- :django
+- :framework
+- :experimental
+:metadata:
+  :git_url: git://github.com/openshift/django-example.git
+  :git_project_url: http://github.com/openshift/django-example
+  :website: https://www.djangoproject.com/
+  :version: 1.4
+  :license: :bsd
+  :description: >
+    A high-level Python web framework that encourages rapid development and clean, pragmatic design.
+:display_name: Django

@@ -1,0 +1,11 @@
+--- !omap 
+- Connections: 
+    mysql-5.1-php-5.3: 
+      Components: 
+      - php-5.3
+      - mysql-5.1
+- Display-Name: cakephp-0.0-noarch
+- Name: cakephp
+- Requires: 
+  - php-5.3
+  - mysql-5.1
