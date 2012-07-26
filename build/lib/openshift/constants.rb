@@ -15,12 +15,16 @@ DEVENV_CLEAN_WILDCARD = "devenv-clean_*"
 DEVENV_STAGE_CLEAN_WILDCARD = "devenv-stage-clean_*"
 DEVENV_BASE_WILDCARD = "devenv-base_*"
 DEVENV_STAGE_BASE_WILDCARD = "devenv-stage-base_*"
+OSO_FEDORA_WILDCARD = "oso_fedora_*"
+OSO_RHEL_WILDCARD = "oso_rhel_*"
 DEVENV_AMI_WILDCARDS = {DEVENV_WILDCARD => {:keep => 2, :regex => /devenv_(\d*)/}, 
                         DEVENV_STAGE_WILDCARD => {:keep => 8, :regex => /devenv-stage_(\d*)/},
                         DEVENV_CLEAN_WILDCARD => {:keep => 1, :regex => /devenv-clean_(\d*)/},
                         DEVENV_STAGE_CLEAN_WILDCARD => {:keep => 1, :regex => /devenv-stage-clean_(\d*)/},
                         DEVENV_BASE_WILDCARD => {:keep => 1, :regex => /devenv-base_(\d*)/},
-                        DEVENV_STAGE_BASE_WILDCARD => {:keep => 1, :regex => /devenv-stage-base_(\d*)/}}
+                        DEVENV_STAGE_BASE_WILDCARD => {:keep => 1, :regex => /devenv-stage-base_(\d*)/},
+                        OSO_FEDORA_WILDCARD => {:keep => 1, :regex => /oso_fedora_(\d*)/},
+                        OSO_RHEL_WILDCARD => {:keep => 1, :regex => /oso_rhel_(\d*)/}}
 VERIFIER_REGEXS = {/^(devenv)_(\d+)$/ => {},
                    /^(devenv_verifier)_(\d+)$/ => {}, 
                    /^(devenv-stage)_(\d+)$/ => {}, 
@@ -28,6 +32,8 @@ VERIFIER_REGEXS = {/^(devenv)_(\d+)$/ => {},
                    /^(devenv-base)_(\d+)$/ => {}, 
                    /^(devenv-stage-base)_(\d+)$/ => {},
                    /^(libra_check)_(\d+)$/ => {},
+                   /^(oso_fedora)_(\d+)$/ => {},
+                   /^(oso_rhel)_(\d+)$/ => {},
                    /^(libra_benchmark)_(\d+)$/ => {:max_run_time => (60*60*24)},
                    /^(broker_extended)_(\d+)$/ => {:max_run_time => (60*60*4)},
                    /^(runtime_extended)_(\d+)$/ => {:max_run_time => (60*60*4)},
