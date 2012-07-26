@@ -38,7 +38,7 @@ VERIFIER_REGEXS = {/^(devenv)_(\d+)$/ => {},
                    /^(node_check)_(\d+)$/ => {}, 
                    /^(libra_web)_(\d+)$/ => {:max_run_time => (60*60*3)}, 
                    /^(libra_coverage)_(\d+)$/ => {:max_run_time => (60*60*1)}}
-TERMINATE_REGEX = /terminate|teminate|termiante/
+TERMINATE_REGEX = /terminate|teminate|termiante|terminatr/
 VERIFIED_TAG = "qe-ready"
 RSA = File.expand_path("~/.ssh/libra.pem")
 SAUCE_USER = "openshift_ci"
