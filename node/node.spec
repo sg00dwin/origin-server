@@ -55,10 +55,6 @@ Turns current host into a OpenShift managed node
 %setup -q
 
 %build
-for f in **/*.rb
-do
-  ruby -c $f
-done
 
 # Build pam_libra
 pwd
@@ -94,7 +90,6 @@ mkdir -p %{buildroot}/lib64/security/
 cp -r lib %{buildroot}%{_libexecdir}/stickshift
 cp -r conf/httpd %{buildroot}%{_sysconfdir}
 cp -r conf/stickshift %{buildroot}%{_sysconfdir}
-cp -r facter %{buildroot}%{ruby_sitelibdir}/facter
 cp -r mcollective %{buildroot}%{_libexecdir}
 cp -r namespace.d %{buildroot}%{_sysconfdir}/security
 cp scripts/bin/* %{buildroot}%{_bindir}
@@ -209,7 +204,6 @@ fi
 %files
 %defattr(-,root,root,-)
 %attr(0640,-,-) %{_libexecdir}/mcollective/mcollective/agent/*
-%attr(0640,-,-) %{ruby_sitelibdir}/facter/libra.rb
 %attr(0750,-,-) %{_initddir}/libra
 %attr(0750,-,-) %{_initddir}/libra-data
 %attr(0750,-,-) %{_initddir}/libra-cgroups
