@@ -50,11 +50,11 @@ Feature: Application Performance Tests
 
   Scenario Outline: Namespace Change, Application Alias, Sanpshot, Start, Stop, Restart and Destroy
     Given an existing <type> application
+    When I snapshot the application
+    When I restore the application
     When the application is aliased
     When the application is unaliased
     When the application namespace is updated
-    When I snapshot the application
-    When I restore the application
     When the application is started
     When the application is stopped
     When the application is restarted

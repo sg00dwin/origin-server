@@ -20,6 +20,7 @@ class DevEnv < Thor
 
   @@SSH_TIMEOUT = 4800
   @@SSH_TIMEOUT_OVERRIDES = { "benchmark" => 172800 }
+  @@CUCUMBER_OPTIONS = '--strict -f junit --out /tmp/rhc/cucumber_results -f progress'
 
   no_tasks do
     def sync_repo(repo_name, hostname, ssh_path)
@@ -282,6 +283,7 @@ mkdir -p /tmp/rhc/junit
       cmds = [cmds] unless cmds.kind_of?(Array)
       retry_individually = [retry_individually] unless retry_individually.kind_of? Array
       timeouts = [timeouts] unless timeouts.kind_of? Array
+      start_time = Time.new
       threads << [ Thread.new {
         multi = cmds.length > 1
         cmds.each_with_index do |cmd, index|
@@ -296,9 +298,9 @@ mkdir -p /tmp/rhc/junit
                   test = $1
                   scenario = $2
                   if retry_individ
-                    failures.push(["#{title} (#{test}:#{scenario})", "cucumber -f junit --out /tmp/rhc/cucumber_results -f progress li-test/tests/#{test}:#{scenario}"])
+                    failures.push(["#{title} (#{test}:#{scenario})", "cucumber #{@@CUCUMBER_OPTIONS} li-test/tests/#{test}:#{scenario}"])
                   else
-                    failures.push(["#{title} (#{test})", "cucumber -f junit --out /tmp/rhc/cucumber_results -f progress li-test/tests/#{test}"])
+                    failures.push(["#{title} (#{test})", "cucumber #{@@CUCUMBER_OPTIONS} li-test/tests/#{test}"])
                   end
                 end
               end
@@ -329,7 +331,8 @@ mkdir -p /tmp/rhc/junit
             still_running_tests += "   #{t[1].pretty_inspect}" unless t[1].empty?
           end
           if still_running_tests.length > 0
-            puts "Still Running Tests:"
+            mins, secs = (Time.new - start_time).abs.divmod(60)
+            puts "Still Running Tests (#{mins}m #{secs.to_i}s):"
             puts still_running_tests
           end
         end
@@ -394,18 +397,18 @@ mkdir -p /tmp/rhc/junit
           
           case options.include_extended
           when 'broker'
-            test_queues[0] << ["REST API", "cucumber -f junit --out /tmp/rhc/cucumber_results -f progress -t @broker_api li-test/tests", {:retry_individually => true}]
+            test_queues[0] << ["REST API", "cucumber #{@@CUCUMBER_OPTIONS} -t @broker_api li-test/tests", {:retry_individually => true}]
             test_queues[1] << ["Broker Domain System", "cd li-test/broker; rake domain_system_test", {:retry_individually => true}]
             test_queues[2] << ["Broker Application System", "cd li-test/broker; rake application_system_test", {:retry_individually => true}]
             test_queues[3] << ["Broker Cartridge System", "cd li-test/broker; rake cartridge_system_test", {:retry_individually => true}]
           when 'runtime'
-            test_queues[0] << ["Extended Runtime Group 1", "cucumber -f junit --out /tmp/rhc/cucumber_results -f progress -t @runtime_verify1 li-test/tests"]
-            test_queues[1] << ["Extended Runtime Group 2", "cucumber -f junit --out /tmp/rhc/cucumber_results -f progress -t @runtime_verify2 li-test/tests"]
-            test_queues[2] << ["Extended Runtime Group 3", "cucumber -f junit --out /tmp/rhc/cucumber_results -f progress -t @runtime_verify3 li-test/tests"]
+            test_queues[0] << ["Extended Runtime Group 1", "cucumber #{@@CUCUMBER_OPTIONS} -t @runtime_verify1 li-test/tests"]
+            test_queues[1] << ["Extended Runtime Group 2", "cucumber #{@@CUCUMBER_OPTIONS} -t @runtime_verify2 li-test/tests"]
+            test_queues[2] << ["Extended Runtime Group 3", "cucumber #{@@CUCUMBER_OPTIONS} -t @runtime_verify3 li-test/tests"]
           when 'site'
             test_queues[0] << ["Site Extended", "cd li-test/site; rake test:extended"]
           when 'rhc'
-            test_queues[0] << ["RHC Extended", "cucumber -f junit --out /tmp/rhc/cucumber_results -f progress -t @rhc_extended li-test/tests", {:retry_individually => true}]
+            test_queues[0] << ["RHC Extended", "cucumber #{@@CUCUMBER_OPTIONS} -t @rhc_extended li-test/tests", {:retry_individually => true}]
           else
             puts "Not supported for extended: #{options.include_extended}"
             exit 1
@@ -417,7 +420,7 @@ mkdir -p /tmp/rhc/junit
         elsif options.include_cucumber
           timeout = @@SSH_TIMEOUT
           timeout = @@SSH_TIMEOUT_OVERRIDES[options.include_cucumber] if not @@SSH_TIMEOUT_OVERRIDES[options.include_cucumber].nil?
-          test_queues[0] << [options.include_cucumber, "cucumber -f junit --out /tmp/rhc/cucumber_results -f progress -t @#{options.include_cucumber} li-test/tests", {:timeout => timeout}]
+          test_queues[0] << [options.include_cucumber, "cucumber #{@@CUCUMBER_OPTIONS} -t @#{options.include_cucumber} li-test/tests", {:timeout => timeout}]
         elsif options.include_web?
 
           # check sauce quotas first
@@ -494,12 +497,13 @@ mkdir -p /tmp/rhc/junit
             test_queues[0] << ["StickShift Broker Integration", "cd li-test/stickshift/broker; rake test:integration"]
 
             test_queues[2] << ["StickShift Broker Unit", "cd li-test/stickshift/broker; rake test:units"]
-            test_queues[3] << ["Broker Cucumber", "cucumber -f html --out /tmp/rhc/broker_cucumber.html -f progress -t @broker li-test/tests"]
+            test_queues[3] << ["Broker Cucumber", "cucumber --strict -f html --out /tmp/rhc/broker_cucumber.html -f progress -t @broker li-test/tests"]
           end
 
           unless options.exclude_runtime?
+            test_queues[0] << ["Runtime Unit", "cd li-test/stickshift/node; rake unit_test"]
             (1..4).each do |i|
-              test_queues[i-1] << ["Runtime Group #{i.to_s}", "cucumber -f junit --out /tmp/rhc/cucumber_results -f progress -t @runtime#{i.to_s} li-test/tests"]
+              test_queues[i-1] << ["Runtime Group #{i.to_s}", "cucumber #{@@CUCUMBER_OPTIONS} -t @runtime#{i.to_s} li-test/tests"]
             end
           end
           
@@ -552,7 +556,7 @@ mkdir -p /tmp/rhc/junit
           unless options.exclude_runtime?
             idle_all_gears(hostname)
             output, exit_code = run_ssh(hostname, "Singletons",
-                "cucumber -f junit --out /tmp/rhc/cucumber_results -f progress -t @singleton li-test/tests",
+                "cucumber #{@@CUCUMBER_OPTIONS} -t @singleton li-test/tests",
                 timeout)
 
             exit 1 if 0 != exit_code
@@ -1340,7 +1344,7 @@ END
             "cd li-test/stickshift/broker; rake test:sanity",
             "cd li-test/stickshift/node; rake test"]
     add_ssh_cmd_to_threads(hostname, threads, failures, titles, cmds)
-    add_ssh_cmd_to_threads(hostname, threads, failures, "Cucumber Sanity", "cucumber -f junit --out /tmp/rhc/cucumber_results -f progress -t @sanity li-test/tests/")
+    add_ssh_cmd_to_threads(hostname, threads, failures, "Cucumber Sanity", "cucumber #{@@CUCUMBER_OPTIONS} -t @sanity li-test/tests/")
 
     threads.each do |t|
       t[0].join
