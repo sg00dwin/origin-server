@@ -3,7 +3,7 @@
 
 Summary:   Li site components
 Name:      rhc-site
-Version: 0.96.4
+Version: 0.96.5
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -136,6 +136,11 @@ rm -rf %{buildroot}
 %{sitedir}/public
 
 %changelog
+* Thu Jul 26 2012 Dan McPherson <dmcphers@redhat.com> 0.96.5-1
+- site.spec: removing release changes (tdawson@redhat.com)
+- site.spec: clean up the spec file (tdawson@redhat.com)
+- add requires for rhc-site-static (dmcphers@redhat.com)
+
 * Thu Jul 19 2012 Adam Miller <admiller@redhat.com> 0.96.4-1
 - added rubygem-rcov to Build/Requires for site to fix brew build breakage
   (admiller@redhat.com)
