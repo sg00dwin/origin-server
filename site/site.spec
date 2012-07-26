@@ -4,19 +4,17 @@
 Summary:   Li site components
 Name:      rhc-site
 Version: 0.96.4
-Release:   1%{?dist}
+Release:   2%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
 URL:       http://openshift.redhat.com
 Source0:   rhc-site-%{version}.tar.gz
-
 BuildRoot: %(mktemp -ud %{_tmppath}/%{name}-%{version}-%{release}-XXXXXX)
 
 # Core dependencies to run the build steps
 BuildRequires: rubygem-bundler
 BuildRequires: rubygem-rake
 BuildRequires: js
-
 # Additional dependencies to satisfy the gems, listed in Gemfile order
 BuildRequires: rubygem-rails
 BuildRequires: rubygem-recaptcha
@@ -33,22 +31,16 @@ BuildRequires: rubygem-httparty
 BuildRequires: rubygem-rdiscount
 BuildRequires: rubygem-webmock
 BuildRequires: rubygem-barista
-
 BuildRequires: rubygem-mocha
 BuildRequires: rubygem-hpricot
-
 BuildRequires: rubygem-sinatra
 BuildRequires: rubygem-tilt
 BuildRequires: rubygem-sqlite3
-
 BuildRequires: rubygem-mail
 BuildRequires: rubygem-treetop
-
 BuildRequires: rubygem-net-http-persistent
 BuildRequires: rubygem-wddx
-
 BuildRequires: rubygem-rcov
-
 Requires:  rhc-common
 Requires:  rhc-server-common
 Requires:  httpd
@@ -74,27 +66,21 @@ Requires:  js
 Requires:  ruby-sqlite3
 Requires:  rubygem-sqlite3
 Requires:  rubygem-sinatra
-
 Requires:  rubygem-mail
 Requires:  rubygem-treetop
-
 Requires:  rubygem-net-http-persistent
 Requires:  rubygem-wddx
-
 Requires:  rhc-site-static
-
 Requires:  rubygem-rcov
-
 BuildArch: noarch
-
-%package static
-Summary:   The static content for the OpenShift website
-
-Requires: rhc-server-common
 
 %description
 This contains the OpenShift website which manages user authentication,
 authorization and also the workflows to request access.
+
+%package static
+Summary:   The static content for the OpenShift website
+Requires: rhc-server-common
 
 %description static
 Static files that can be used even if the OpenShift site is not installed,
@@ -126,6 +112,9 @@ touch %{buildroot}%{sitedir}/log/production.log
 %clean
 rm -rf %{buildroot}                                
 
+%post
+/bin/touch %{sitedir}/log/production.log
+
 %files
 %attr(0775,root,libra_user) %{sitedir}/app/subsites/status/db
 %attr(0664,root,libra_user) %config(noreplace) %{sitedir}/app/subsites/status/db/status.sqlite3
@@ -142,14 +131,14 @@ rm -rf %{buildroot}
 %exclude %{sitedir}/tmp/javascripts
 %exclude %{sitedir}/tmp/stylesheets
 
-%post
-/bin/touch %{sitedir}/log/production.log
-
 %files static
 %defattr(0640,root,libra_user,0750)
 %{sitedir}/public
 
 %changelog
+* Thu Jul 26 2012 Troy Dawson <admiller@redhat.com> 0.96.4-2
+- Clean up the spec file.
+
 * Thu Jul 19 2012 Adam Miller <admiller@redhat.com> 0.96.4-1
 - added rubygem-rcov to Build/Requires for site to fix brew build breakage
   (admiller@redhat.com)
