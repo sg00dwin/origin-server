@@ -3,7 +3,7 @@
 
 Summary:   Li broker components
 Name:      rhc-broker
-Version: 0.96.6
+Version: 0.96.7
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -112,6 +112,22 @@ rm -rf $RPM_BUILD_ROOT
 /bin/touch %{_localstatedir}/log/stickshift/user_action.log
 
 %changelog
+* Thu Jul 26 2012 Dan McPherson <dmcphers@redhat.com> 0.96.7-1
+- Updating gem versions (dmcphers@redhat.com)
+- Merge pull request #129 from rmillner/dev/rmillner/bugs/842977
+  (dmcphers@redhat.com)
+- Add mysql and mongodb type gears to migration. (rmillner@redhat.com)
+- Merge pull request #128 from nhr/templates (fotioslindiakos@gmail.com)
+- Fixed descriptors for test templates (hripps@redhat.com)
+- Merge pull request #124 from pravisankar/dev/ravi/story/2555
+  (kraman@gmail.com)
+- Merge pull request #126 from nhr/templates (fotioslindiakos@gmail.com)
+- Added templates for CakePHP and Django (hripps@redhat.com)
+- Remove 'vip' from user model and other scripts (rpenta@redhat.com)
+- Adding blacklisted words (kraman@gmail.com)
+- minor cleanup (dmcphers@redhat.com)
+- US2397 (dmcphers@redhat.com)
+
 * Tue Jul 24 2012 Adam Miller <admiller@redhat.com> 0.96.6-1
 - Updating gem versions (admiller@redhat.com)
 - Renamed 'send' calls to 'request' as per rhc change. (hripps@redhat.com)
