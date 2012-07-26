@@ -1,0 +1,19 @@
+---
+:cost: 1
+:cartridge: php-5.3
+:tags:
+- :php
+- :cakephp
+- :framework
+- :experimental
+:embed:
+- mysql-5.1
+:metadata:
+  :git_url: git://github.com/openshift/cakephp-example.git
+  :git_project_url: http://github.com/openshift/cakephp-example
+  :website: http://cakephp.org/
+  :version: 2.2.1
+  :license: :mit
+  :description: >
+    CakePHP is a rapid development framework for PHP which uses commonly known design patterns like Active Record, Association Data Mapping, Front Controller and MVC.
+:display_name: CakePHP

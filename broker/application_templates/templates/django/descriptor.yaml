@@ -1,0 +1,5 @@
+--- !omap 
+- Display-Name: django-0.0-noarch
+- Name: django
+- Requires: 
+  - python-2.6
