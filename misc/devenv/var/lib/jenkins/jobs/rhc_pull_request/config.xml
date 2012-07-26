@@ -69,19 +69,16 @@
     <hudson.tasks.Shell>
       <command>echo &quot;RUNNING for Pull Request: https://github.com/openshift/rhc/pull/$CRANKCASE_PULL_ID&quot;
 
-echo &quot;Updating comment id $COMMENT_ID&quot;
-
 # Build and install HEAD for the integration tests
 build/devenv launch rhc_pull_request_${BUILD_NUMBER} --verifier --instance_type m1.large
 
 rm -rf li rhc crankcase
-ln -s `pwd` li
 git clone git://github.com/openshift/crankcase.git
 git clone git://github.com/openshift/rhc.git
+
 pushd rhc
 curl https://github.com/openshift/rhc/pull/$CRANKCASE_PULL_ID.patch | git am
 popd
-pushd li
 
 build/devenv sync rhc_pull_request_${BUILD_NUMBER} --tag --clean_metadata
 
@@ -95,6 +92,11 @@ RESULT=$?</command>
       <artifacts>rhc/log/**</artifacts>
       <latestOnly>false</latestOnly>
     </hudson.tasks.ArtifactArchiver>
+    <hudson.tasks.junit.JUnitResultArchiver>
+      <testResults>rhc/log/**/*.xml</testResults>
+      <keepLongStdio>false</keepLongStdio>
+      <testDataPublishers/>
+    </hudson.tasks.junit.JUnitResultArchiver>
   </publishers>
   <buildWrappers/>
 </project>

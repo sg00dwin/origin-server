@@ -73,19 +73,17 @@
   <builders>
     <hudson.tasks.Shell>
       <command>echo &quot;RUNNING for Pull Request: https://github.com/openshift/crankcase/pull/$CRANKCASE_PULL_ID&quot;
-echo &quot;pwd `pwd`&quot;
-echo &quot;WORKSPACE $WORKSPACE&quot;
 
 # Build and install HEAD for the integration tests
 build/devenv launch crankcase_pull_request_${BUILD_NUMBER} --verifier --instance_type m1.large
 
-rm -rf li crankcase
-ln -s `pwd` li
+rm -rf li rhc crankcase
 git clone git://github.com/openshift/crankcase.git
+git clone git://github.com/openshift/rhc.git
+
 pushd crankcase
 curl https://github.com/openshift/crankcase/pull/$CRANKCASE_PULL_ID.patch | git am
 popd
-pushd li
 
 build/devenv sync crankcase_pull_request_${BUILD_NUMBER} --tag --clean_metadata
 
