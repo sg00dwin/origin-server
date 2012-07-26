@@ -101,7 +101,7 @@ module OpenShift
       stale_dirs
     end
 
-    def get_packages
+    def get_packages(include_subpackages=false)
       packages = {}
       dirs = ['.']
       SIBLING_REPOS.each do |repo_name, repo_dirs|
@@ -116,17 +116,40 @@ module OpenShift
         Dir.glob("#{repo_dir}/**/*.spec") do |file|
           unless file.start_with?('build/')
             build_dir = File.dirname(file)
-            package_name = /Name: *(.*)/.match(File.read(file))[1].strip
+            file_str = File.read(file)
+            package_name = /Name: *(.*)/.match(file_str)[1].strip
             while (package_name =~ /%\{([^\{\}]*)\}/)
-              var_name = $1
-              var_val = /%global *#{var_name} *(.*)/.match(File.read(file))[1].strip
-              package_name.gsub!("%{#{var_name}}", var_val)
+              package_name = replace_globals(package_name, file_str)
             end
             packages[package_name] = [build_dir, file]
+            parent_package_name = package_name
+            
+            if include_subpackages
+              package = /%package *(.*)/.match(file_str)
+              if package
+                package_name = package[1].strip
+                if package_name.start_with?('-n')
+                  package_name = package_name[2..-1]
+                else
+                  package_name = "#{parent_package_name}-#{package_name}"
+                end
+                package_name = replace_globals(package_name, file_str)
+                packages[package_name] = [build_dir, file]
+              end
+            end
           end
         end
       end
       packages
+    end
+    
+    def replace_globals(package_name, spec_str)
+      while (package_name =~ /%\{([^\{\}]*)\}/)
+        var_name = $1
+        var_val = /%global *#{var_name} *(.*)/.match(spec_str)[1].strip
+        package_name.gsub!("%{#{var_name}}", var_val)
+      end
+      package_name
     end
 
     def update_sync_history(current_package, current_package_contents, current_sync_dir, current_spec_file, sync_dirs)

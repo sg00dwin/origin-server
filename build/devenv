@@ -690,7 +690,7 @@ mkdir -p /tmp/rhc/junit
   
   desc "print_packages", "Print a space separated list of packages"
   def print_packages
-    packages = get_packages
+    packages = get_packages(true)
     packages_str = ""
     packages.keys.sort.each do |package_name|
       packages_str += " #{package_name}"
