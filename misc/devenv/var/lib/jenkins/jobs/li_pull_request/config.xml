@@ -72,13 +72,11 @@
 # Build and install HEAD for the integration tests
 build/devenv launch li_pull_request_${BUILD_NUMBER} --verifier --instance_type m1.large
 
-rm -rf li crankcase
-ln -s `pwd` li
+rm -rf li rhc crankcase
 git clone git://github.com/openshift/crankcase.git
+git clone git://github.com/openshift/rhc.git
 
 set +x
-echo &quot;Updating comment id $COMMENT_ID&quot;
-
 SECRET=`cat ~/.config/secret`
 curl --basic -u &quot;openshift-bot:$SECRET&quot; https://github.com/openshift/li/pull/$CRANKCASE_PULL_ID.patch | git am
 set -x
