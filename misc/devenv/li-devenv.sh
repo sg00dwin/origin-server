@@ -131,7 +131,6 @@ yum update -y --exclude='rhc*' --exclude='mcollective*'
 function install_requires {
   spec_file=$2
   requires=""
-  output=$2
   IFS_BAK=$IFS
 IFS="
 "

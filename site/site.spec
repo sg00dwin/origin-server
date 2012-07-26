@@ -90,6 +90,8 @@ BuildArch: noarch
 %package static
 Summary:   The static content for the OpenShift website
 
+Requires: rhc-server-common
+
 %description
 This contains the OpenShift website which manages user authentication,
 authorization and also the workflows to request access.
