@@ -8,7 +8,7 @@
 
 Summary:   Dependencies for OpenShift development
 Name:      rhc-devenv
-Version: 0.97.6
+Version: 0.97.7
 Release:   1%{?dist}
 Group:     Development/Libraries
 License:   GPLv2
@@ -516,6 +516,13 @@ chown root:libra_user /var/www/stickshift/site/log/development.log
 %{policydir}/*
 
 %changelog
+* Fri Jul 27 2012 Dan McPherson <dmcphers@redhat.com> 0.97.7-1
+- Merge pull request #137 from rmillner/dev/rmillner/bug/843337
+  (mrunalp@gmail.com)
+- Printing out the user names was confusing threaddump. (rmillner@redhat.com)
+- Merge pull request #133 from mrunalp/bugs/841681 (rmillner@redhat.com)
+- Fix for BZ841681. (mpatel@redhat.com)
+
 * Fri Jul 27 2012 Dan McPherson <dmcphers@redhat.com> 0.97.6-1
 - update scripts to support peer repos and same level (jhonce@redhat.com)
 
