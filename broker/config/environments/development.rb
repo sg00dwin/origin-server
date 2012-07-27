@@ -154,16 +154,6 @@ Broker::Application.configure do
     }
   }
 
-  # Cloud9
-  config.cloud9 = {
-    :user_login => "c9",
-    :capabilities => {
-      'gear_sizes' => ["c9"],
-      'subaccounts' => true,
-      'inherit_on_subaccounts' => ["gear_sizes"]
-    }
-  }
-
   # Profiler config
   # See ruby-prof documentation for more info
   # :type     Type of report file: flat (default), graph, graph_html, call_tree, call_stack

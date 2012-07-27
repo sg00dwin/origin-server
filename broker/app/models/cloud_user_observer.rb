@@ -5,10 +5,7 @@ class CloudUserObserver < ActiveModel::Observer
     raise StickShift::UserException.new("Invalid characters in login '#{user.login}' found", 107) if user.login =~ /["\$\^<>\|%\/;:,\\\*=~]/
 
     capabilities = {}
-    if user.login == Rails.application.config.cloud9[:user_login]
-      user.capabilities = user.capabilities.merge(Rails.application.config.cloud9[:capabilities])
-      capabilities = user.capabilities
-    elsif user.parent_user_login
+    if user.parent_user_login
       capabilities = user.get_capabilities
     elsif user.plan_id 
       raise StickShift::UserException.new("Specified plan_id does not exist", 150) if !Express::AriaBilling::Plan.instance.valid_plan(user.plan_id)

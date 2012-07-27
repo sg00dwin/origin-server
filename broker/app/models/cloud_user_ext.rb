@@ -6,7 +6,7 @@ class CloudUser < StickShift::UserModel
   end
 
   def get_capabilities
-    user_capabilities = self.capabilities
+    user_capabilities = self.capabilities.dup
     if self.parent_user_login
       parent_user = CloudUser.find(self.parent_user_login)
       parent_user.capabilities['inherit_on_subaccounts'].each do |cap|

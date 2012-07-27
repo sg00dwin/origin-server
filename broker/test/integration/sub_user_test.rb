@@ -62,24 +62,35 @@ class SubUserTest < ActionDispatch::IntegrationTest
     assert_equal 401, status
   end
 
-  def test_c9_user_gear_setting
-    Rails.configuration.cloud9 = {:user_login => @username,
-                                  :capabilities => {
-                                    'gear_sizes' => ["c9"],
-                                    'inherit_on_subaccounts' => ["gear_sizes"]
-                                  }}
+  def test_subaccount_inherit_gear_sizes
     get "rest/domains.json", nil, @headers
     assert_equal 200, status
 
+    `rhc-admin-ctl-user -l #{@username} --addgearsize c9`
     `rhc-admin-ctl-user -l #{@username} --allowsubaccounts true`
+    `rhc-admin-ctl-user -l #{@username} --inheritgearsizes true`
 
     @headers["X-Impersonate-User"] = "subuser#{@random}"
     get "rest/domains.json", nil, @headers
     assert_equal 200, status
 
     subuser = CloudUser.find "subuser#{@random}"
-    assert_equal 1, subuser.capabilities["gear_sizes"].size
-    assert_equal "c9", subuser.capabilities["gear_sizes"][0]
+    capabilities = subuser.get_capabilities
+    assert_equal 2, capabilities["gear_sizes"].size
+    assert_equal ["c9", "small"], capabilities["gear_sizes"].sort
+
+    `rhc-admin-ctl-user -l #{@username} --removegearsize c9`
+
+    subuser = CloudUser.find "subuser#{@random}"
+    capabilities = subuser.get_capabilities
+    assert_equal 1, capabilities["gear_sizes"].size
+    assert_equal "small", capabilities["gear_sizes"][0]
+
+    `rhc-admin-ctl-user -l #{@username} --inheritgearsizes false`
+
+    subuser = CloudUser.find "subuser#{@random}"
+    capabilities = subuser.get_capabilities
+    assert_equal false, capabilities.has_key?("gear_sizes")
   end
 
   def teardown

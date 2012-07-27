@@ -166,16 +166,6 @@ Broker::Application.configure do
     :default_gear_size => "small"
   }
 
-  # Cloud9
-  config.cloud9 = {
-    :user_login => "c9",
-    :capabilities => {
-      'gear_sizes' => ["c9"],
-      'subaccounts' => true,
-      'inherit_on_subaccounts' => ["gear_sizes"]
-    }
-  }
-
   config.gearchanger = {
     :rpc_options => {
         :disctimeout => 5,
