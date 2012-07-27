@@ -3,7 +3,7 @@
 
 Summary:   Li broker components
 Name:      rhc-broker
-Version: 0.96.9
+Version: 0.96.10
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -112,6 +112,16 @@ rm -rf $RPM_BUILD_ROOT
 /bin/touch %{_localstatedir}/log/stickshift/user_action.log
 
 %changelog
+* Fri Jul 27 2012 Dan McPherson <dmcphers@redhat.com> 0.96.10-1
+- Updating gem versions (dmcphers@redhat.com)
+- Merge pull request #139 from nhr/hiding_django (fotioslindiakos@gmail.com)
+- Setting Django template to 'in_development' (hripps@redhat.com)
+- Merge pull request #134 from pravisankar/dev/ravi/story/2555-cleanup
+  (kraman@gmail.com)
+- Fix for BugZ#843818: Add a template without '-t' parameter (tags) leads to an
+  error (kraman@gmail.com)
+- Added subaccount inheritance testcase and cloud9 cleanup (rpenta@redhat.com)
+
 * Fri Jul 27 2012 Dan McPherson <dmcphers@redhat.com> 0.96.9-1
 - Updating gem versions (dmcphers@redhat.com)
 
