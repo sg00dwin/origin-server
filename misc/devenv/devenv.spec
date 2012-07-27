@@ -8,7 +8,7 @@
 
 Summary:   Dependencies for OpenShift development
 Name:      rhc-devenv
-Version: 0.97.5
+Version: 0.97.6
 Release:   1%{?dist}
 Group:     Development/Libraries
 License:   GPLv2
@@ -516,6 +516,9 @@ chown root:libra_user /var/www/stickshift/site/log/development.log
 %{policydir}/*
 
 %changelog
+* Fri Jul 27 2012 Dan McPherson <dmcphers@redhat.com> 0.97.6-1
+- update scripts to support peer repos and same level (jhonce@redhat.com)
+
 * Thu Jul 26 2012 Dan McPherson <dmcphers@redhat.com> 0.97.5-1
 - fix install from local source for crankcase (dmcphers@redhat.com)
 - add requires for rhc-site-static (dmcphers@redhat.com)
