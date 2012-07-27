@@ -6,6 +6,7 @@
 - :django
 - :framework
 - :experimental
+- :in_development
 :metadata:
   :git_url: git://github.com/openshift/django-example.git
   :git_project_url: http://github.com/openshift/django-example
