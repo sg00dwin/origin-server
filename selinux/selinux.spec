@@ -1,6 +1,6 @@
 Summary:       SELinux policy for OpenShift nodes
 Name:          rhc-selinux
-Version: 0.96.3
+Version: 0.96.4
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -46,6 +46,10 @@ rm -rf %{buildroot}
 %attr(0640,-,-) %{_datadir}/selinux/packages/libra.pp
 
 %changelog
+* Fri Jul 27 2012 Dan McPherson <dmcphers@redhat.com> 0.96.4-1
+- Allow libra instances to create lnk_files in /tmp directory
+  (dwalsh@redhat.com)
+
 * Tue Jul 24 2012 Adam Miller <admiller@redhat.com> 0.96.3-1
 - Lots of updates to quiet AVC's in audit logs (dwalsh@redhat.com)
 
