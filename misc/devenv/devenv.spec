@@ -501,6 +501,13 @@ chown root:libra_user /var/www/stickshift/broker/log/development.log
 chown root:libra_user /var/www/stickshift/broker/log/mcollective-client.log
 chown root:libra_user /var/www/stickshift/site/log/development.log
 
+## For RKHUNTER to not use tmp any more
+# Added nagios_monitor user to match STG and PROD
+useradd nagios_monitor
+# Change /var/log/rkhunter perms
+chown -R root:nagios_monitor /var/log/rkhunter
+chmod -R 770 /var/log/rkhunter
+
 %files
 %defattr(-,root,root,-)
 %attr(0660,-,-) %{brokerdir}/log/mcollective-client.log
@@ -518,6 +525,8 @@ chown root:libra_user /var/www/stickshift/site/log/development.log
 %changelog
 * Fri Jul 27 2012 Dan McPherson <dmcphers@redhat.com> 0.97.6-1
 - update scripts to support peer repos and same level (jhonce@redhat.com)
+- Add user nagios_monitor to match other environments (tkramer@redhat.com) 
+- Security create root:nagios_monitor perms for /var/log/rkhunter (tkramer@redhat.com)
 
 * Thu Jul 26 2012 Dan McPherson <dmcphers@redhat.com> 0.97.5-1
 - fix install from local source for crankcase (dmcphers@redhat.com)
