@@ -109,6 +109,7 @@ when "add"
     exit -100
   end
 
+  tags = "" if tags.nil?
   tags = tags.split(",")
   template = ApplicationTemplate.new(display_name, descriptor.to_yaml, git_url, tags, gear_cost, metadata)
   template.save
