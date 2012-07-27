@@ -161,16 +161,6 @@ Broker::Application.configure do
 #    :squash_runtime => true
 #  }
 
-  # Cloud9
-  config.cloud9 = {
-    :user_login => "c9",
-    :capabilities => {
-      'gear_sizes' => ["c9"],
-      'subaccounts' => true,
-      'inherit_on_subaccounts' => ["gear_sizes"]
-    }
-  }
-
   # mcollective configuration
   config.gearchanger = {
     :rpc_options => {
