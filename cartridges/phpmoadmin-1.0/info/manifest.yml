@@ -4,7 +4,7 @@ Description: Cartridge packaging phpmoadmin
 Version: 1.0.0
 License: ASL 2.0
 Vendor:  phpmoadmin.com
-Website: www.phpmoadmin.com
+Website: http://www.phpmoadmin.com
 Cart-Data:
   - Key: "username"
     Type: cart_data
