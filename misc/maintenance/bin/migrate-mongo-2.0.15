@@ -25,8 +25,13 @@ def mongo_migrate
   users.each do |user|
     puts "Processing user #{user['login']}"
     updates = {}
-    updates["$unset"] = { "vip" => 1 } if user.has_key?("vip")
-    updates["$unset"] = { "gear_usage_records" => 1 } if user.has_key?("gear_usage_records")
+    if user.has_key?("vip") && user.has_key?("gear_usage_records")
+      updates["$unset"] = { "vip" => 1, "gear_usage_records" => 1 }
+    elsif user.has_key?("vip")
+      updates["$unset"] = { "vip" => 1 }
+    elsif user.has_key?("gear_usage_records")
+      updates["$unset"] = { "gear_usage_records" => 1 }
+    end
     if user["parent_user_login"].nil?
       cap_changed = false
       user["capabilities"] = {} unless user.has_key?("capabilities")
