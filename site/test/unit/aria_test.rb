@@ -23,7 +23,9 @@ class AriaUnitTest < ActiveSupport::TestCase
     r = stub_request(:post, Rails.application.config.aria_uri)
     q = query_for(method)
     q = hash_including(q) if partial
-    r.with(:query => q, :body => params)
+    r.with(:query => q, :body => params).with do |request|
+      request.headers['User-Agent'] == Rails.configuration.user_agent
+    end
   end
   def error_wddx(code, message)
     {'error_code' => code, 'error_msg' => message}.to_wddx
