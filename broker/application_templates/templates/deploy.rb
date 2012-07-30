@@ -171,46 +171,6 @@ __END__
   :name: rails
 - :descriptor: |
     --- 
-    Name: railstest
-    Scaling: 
-      Max: -1
-      Min: 1
-    License-Url: ""
-    License: unknown
-    Help-Topics: {}
-    
-    Requires: 
-    - ruby-1.9
-    - mysql-5.1
-    Display-Name: railstest-0.0-noarch
-    Cart-Data: {}
-    
-    Connections: 
-      mysql-5.1-ruby-1.9: 
-        Components: 
-        - ruby-1.9
-        - mysql-5.1
-    Version: "0.0"
-    Website: ""
-    Vendor: unknown
-    Categories: 
-    - cartridge
-    Description: ""
-    Architecture: noarch
-
-  :script: rhc-admin-ctl-template --command 'add' --cost '1' --git-url 'git://github.com/fotioslindiakos/rails-example.git' --named 'Ruby on Rails (TEST)' --tags 'ruby,rails,framework,experimental,in_development'
-  :metadata: |-
-    {
-      "website": "http://rubyonrails.org/",
-      "git_url": "git://github.com/fotioslindiakos/rails-example.git",
-      "license": "mit",
-      "version": "3.2.6",
-      "git_project_url": "http://github.com/fotioslindiakos/rails-example",
-      "description": "An open source web framework for Ruby that is optimized for programmer happiness and sustainable productivity. It lets you write beautiful code by favoring convention over configuration."
-    }
-  :name: railstest
-- :descriptor: |
-    --- 
     Name: springeap6
     Scaling: 
       Max: -1
