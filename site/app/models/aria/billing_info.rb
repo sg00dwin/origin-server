@@ -24,6 +24,10 @@ module Aria
                      'bill_state' => 'bill_state_prov',
                    }
 
+    #def tax_exempt?
+    #  tax_exempt.present? and tax_exempt.to_i > 0
+    #end
+
     def self.test
       new({
         :address1 => '12345 Happy Street',

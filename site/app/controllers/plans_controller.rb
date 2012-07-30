@@ -1,16 +1,16 @@
 class PlansController < AccountController
   def index
-    @plans = [Plan.new(:id => 'freeshift', :name => 'FreeShift'), Plan.new(:id => 'megashift', :name => 'MegaShift')]
+    @plans = Plan.all
   end
 
   def edit
   end
 
   def update
-    redirect_to account_plan_path, :flash => {:success => 'upgraded'}
   end
 
   def show
-    @plan = Plan.new(:id => 'freeshift', :name => 'FreeShift')
+    @user = User.find :one, :as => current_user
+    @plan = @user.plan
   end
 end

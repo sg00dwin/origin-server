@@ -18,7 +18,7 @@ module Aria
     end
 
     def has_valid_account?
-      values = Aria.get_supp_field_values(acct_no, 'RHLogin')
+      values = get_supplemental_values(:rhlogin)
       raise Aria::UserNoRHLogin, acct_no if values.empty?
       raise Aria::UserIdCollision, acct_no unless values.include?(login)
       true
@@ -55,6 +55,15 @@ module Aria
       nil
     end
 
+    def tax_exempt
+      # replace with call to get_tax_acct_status
+      #@tax_exempt ||= (get_supplemental_value(:tax_exempt) || 0).to_i
+    end
+    def tax_exempt?
+      # tax_exempt > 0
+      false
+    end
+
     def create_account(opts=nil)
       params = default_account_params
       opts.each_pair do |k,v|
@@ -74,7 +83,7 @@ module Aria
     end
 
     def update_account(opts)
-      params = {:acct_no => acct_no}
+      params = HashWithIndifferentAccess.new
       opts.each_pair do |k,v|
         if v.respond_to? :to_aria_attributes
           params.merge!(v.to_aria_attributes)
@@ -82,9 +91,10 @@ module Aria
           params[k] = v
         end
       end
-      Aria.update_acct_complete(params)
+      Aria.update_acct_complete(acct_no, params)
       @billing_info = nil
       @account_details = nil
+      #@tax_exempt = nil
       true
     rescue Aria::Error => e
       errors.add(:base, e.to_s)
@@ -101,6 +111,13 @@ module Aria
       end
       def random_password
         ActiveSupport::SecureRandom.base64(16)[0..12].gsub(/[^a-zA-Z0-9]/,'_') # Max allowed Aria limit
+      end
+
+      def get_supplemental_value(field)
+        get_supplemental_values(field).first
+      end
+      def get_supplemental_values(field)
+        Aria.get_supp_field_values(acct_no, field)
       end
 
       # Checks whether the basic Aria account exists, but not whether
@@ -121,15 +138,14 @@ module Aria
       end
 
       def default_account_params
-        {
+        HashWithIndifferentAccess.new({
           :userid => user_id,
           :status_cd => 0,
           :master_plan_no => Aria.default_plan_no,
           :password => random_password,
           :test_acct_ind => Rails.application.config.aria_force_test_users ? 1 : 0,
-          :supp_field_names => 'RHLogin',
-          :supp_field_values => login,
-        }
+          :supplemental => {:rhlogin => login},
+        })
       end
   end
 end

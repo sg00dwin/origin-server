@@ -149,6 +149,14 @@ class BootstrapFormBuilder < Formtastic::SemanticFormBuilder
     template.content_tag(:div, Formtastic::Util.html_safe(inline_input_for(method, options)), wrapper_html) #changed to move to basic_input_helper
   end
 
+  def parts(method, options, &block)
+    input_parts = (custom_inline_order[options[:as]] || inline_order).dup
+    input_parts = input_parts - [:errors, :hints] if options[:as] == :hidden
+    input_parts.map do |type|
+      (:input == type) ? yield : send(:"inline_#{type}_for", method, options)
+    end.compact.join("\n")
+  end
+
   # wrap contents in div.controls
   def basic_input_helper(form_helper_method, type, method, options) #:nodoc:
     return super unless new_forms_enabled?
@@ -161,17 +169,9 @@ class BootstrapFormBuilder < Formtastic::SemanticFormBuilder
     label_options[:class] ||= 'control-label'
     label_options[:for] ||= html_options[:id]
 
-    # begin changes - moved from input()
-    input_parts = (custom_inline_order[options[:as]] || inline_order).dup
-    input_parts = input_parts - [:errors, :hints] if options[:as] == :hidden
-
-    control_content = input_parts.map do |type|
-      if :input == type
-        send(respond_to?(form_helper_method) ? form_helper_method : :text_field, method, html_options)
-      else
-        send(:"inline_#{type}_for", method, options)
-      end
-    end.compact.join("\n")
+    control_content = parts(method, options) do
+      send(respond_to?(form_helper_method) ? form_helper_method : :text_field, method, html_options)
+    end
 
     label(method, label_options) <<
       template.content_tag(:div, Formtastic::Util.html_safe(control_content), {:class => 'controls'}) #added class
@@ -221,6 +221,10 @@ class BootstrapFormBuilder < Formtastic::SemanticFormBuilder
     label_options[:for] ||= html_options[:id]
     label(method, label_options) <<
       template.content_tag(:div, Formtastic::Util.html_safe(select_html), {:class => 'controls'})
+  end
+
+  def boolean_input(method, options)
+    parts(method, options){ super }
   end
 
   # remove the button wrapper

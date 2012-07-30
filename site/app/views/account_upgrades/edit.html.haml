@@ -19,6 +19,13 @@
     = b.input :city
     = b.inputs :state, :country, :zip
 
+    .control-group
+      .controls
+        %p
+          To qualify for tax exempt status you must submit a certificate to Red Hat.
+          Upon reciept of your certificate we will refund all previously paid taxes to 
+          your credit card. #{link_to "Learn more about filing for tax exempt status", tax_exempt_help_status, :target => '_blank', :class => 'external'}.
+
   = f.buttons do
     = f.commit_button "Update my account"
     = f.loading

@@ -196,8 +196,8 @@ class AriaUnitTest < ActiveSupport::TestCase
 
   test 'should invoke create_acct_complete' do
     stub_aria(:create_acct_complete, {
-      :supp_field_names => 'RHLogin',
       :supp_field_values => 'foo',
+      :supp_field_names => 'rhlogin',
       :password => 'passw0rd',
       :test_acct_ind => 1.to_s,
       :status_cd => 0.to_s,
@@ -222,5 +222,35 @@ class AriaUnitTest < ActiveSupport::TestCase
     assert_equal 'Houston', info.city
     assert_equal({'city' => 'Houston'}, info.attributes)
     assert_equal({'bill_city' => 'Houston'}, info.to_aria_attributes)
+    #assert_nil info.tax_exempt
+    #assert !info.tax_exempt?
+  end
+
+  test 'billing info should serialize supplemental fields' do
+    #info = Aria::BillingInfo.new
+    #info.tax_exempt = 1
+    #assert_equal({:supplemental => {'tax_exempt' => 1}}, info.to_aria_attributes)
+  end
+
+  test 'create_acct_complete should serialize supplemental fields' do
+    base = Class.new(Object){ def create_acct_complete(*args) has(*args) end }
+    a = Class.new(base){ include Aria::Methods }.new
+    a.expects(:has).with({
+      :supp_field_names => 'tax_exempt',
+      :supp_field_values => '1',
+    },nil)
+    a.create_acct_complete({:supplemental => {'tax_exempt' => 1}})
+  end
+
+  test 'update_acct_complete should serialize supplemental fields' do
+    base = Class.new(Object){ def update_acct_complete(*args) has(*args) end }
+    a = Class.new(base){ include Aria::Methods }.new
+    a.expects(:has).with({
+      :acct_no => 1,
+      :supp_field_names => 'tax_exempt',
+      :supp_field_values => '1',
+      :supp_field_directives => '2',
+    },nil)
+    a.update_acct_complete(1, {:supplemental => {'tax_exempt' => 1}})
   end
 end
