@@ -3,7 +3,7 @@
 
 Summary:   Li site components
 Name:      rhc-site
-Version: 0.96.5
+Version: 0.96.6
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -136,6 +136,22 @@ rm -rf %{buildroot}
 %{sitedir}/public
 
 %changelog
+* Mon Jul 30 2012 Dan McPherson <dmcphers@redhat.com> 0.96.6-1
+- Merge pull request #89 from smarterclayton/add_tax_exempt_model_attribute
+  (ccoleman@redhat.com)
+- Remove tax exemption for simplification of process. (ccoleman@redhat.com)
+- Have account_upgrade completion post to itself to simplify creation, move
+  some plan stuff, update tests to validate plan id from broker.
+  (ccoleman@redhat.com)
+- Ensure that the correct plan ID is pushed to the user object.
+  (ccoleman@redhat.com)
+- Add the necessary glue so that the checkbox for tax exemption shows up and
+  sets values on creation.  Also ensure that user accounts are created with the
+  default tax_exempt value of 0. (ccoleman@redhat.com)
+- Add a tax_exempt supplemental attribute in Aria for use by Ops team.  Value 0
+  means not tax exempt, value 1 means has requested exemption, value 2 means
+  user has been confirmed exempt (ccoleman@redhat.com)
+
 * Thu Jul 26 2012 Dan McPherson <dmcphers@redhat.com> 0.96.5-1
 - site.spec: removing release changes (tdawson@redhat.com)
 - site.spec: clean up the spec file (tdawson@redhat.com)
