@@ -258,8 +258,8 @@ module OpenShift
       log.info "Instance (#{hostname}) is accessible"
     end
 
-    def is_valid?(hostname)
-      @validation_output = ssh(hostname, '/usr/bin/rhc-accept-devenv')
+    def is_valid?(hostname, ssh_user="root")
+      @validation_output = ssh(hostname, '/usr/bin/rhc-accept-devenv', 60, false, 1, ssh_user)
       if @validation_output == "PASS"
         return true
       else
@@ -268,8 +268,8 @@ module OpenShift
       end
     end
 
-    def get_private_ip(hostname)
-      private_ip = ssh(hostname, "facter ipaddress")
+    def get_private_ip(hostname, ssh_user="root")
+      private_ip = ssh(hostname, "facter ipaddress", 60, false, 1, ssh_user)
       if !private_ip or private_ip.strip.empty?
         puts "EXITING - AMZ instance didn't return ipaddress fact"
         exit 0
@@ -277,34 +277,34 @@ module OpenShift
       private_ip
     end
     
-    def use_private_ip(hostname)
+    def use_private_ip(hostname, ssh_user="root")
       private_ip = get_private_ip(hostname)
       puts "Updating instance facts with private ip #{private_ip}"
-      set_instance_ip(hostname, private_ip, private_ip)
+      set_instance_ip(hostname, private_ip, private_ip, ssh_user)
     end
 
-    def use_public_ip(hostname)
-      dhostname = ssh(hostname, "wget -qO- http://169.254.169.254/latest/meta-data/public-hostname")
-      public_ip = ssh(hostname, "wget -qO- http://169.254.169.254/latest/meta-data/public-ipv4")
+    def use_public_ip(hostname, ssh_user="root")
+      dhostname = ssh(hostname, "wget -qO- http://169.254.169.254/latest/meta-data/public-hostname", 60, false, 1, ssh_user)
+      public_ip = ssh(hostname, "wget -qO- http://169.254.169.254/latest/meta-data/public-ipv4", 60, false, 1, ssh_user)
       puts "Updating instance facts with public ip #{public_ip} and hostname #{dhostname}"
-      set_instance_ip(hostname, public_ip, dhostname)
+      set_instance_ip(hostname, public_ip, dhostname, ssh_user)
     end
 
-    def get_internal_hostname(hostname)
-      internal_hostname = ssh(hostname, "hostname")
+    def get_internal_hostname(hostname, ssh_user="root")
+      internal_hostname = ssh(hostname, "hostname", 60, false, 1, ssh_user)
       internal_hostname
     end
 
-    def update_facts(hostname)
+    def update_facts(hostname, ssh_user="root")
       puts "Updating instance facts and running libra-data to set the public ip..."
-      ssh(hostname, "sed -i \"s/.*PUBLIC_IP_OVERRIDE.*/#PUBLIC_IP_OVERRIDE=/g\" /etc/stickshift/stickshift-node.conf; sed -i \"s/.*PUBLIC_HOSTNAME_OVERRIDE.*/#PUBLIC_HOSTNAME_OVERRIDE=/g\" /etc/stickshift/stickshift-node.conf; /usr/libexec/mcollective/update_yaml.rb /etc/mcollective/facts.yaml; service libra-data start")
+      ssh(hostname, "sed -i \"s/.*PUBLIC_IP_OVERRIDE.*/#PUBLIC_IP_OVERRIDE=/g\" /etc/stickshift/stickshift-node.conf; sed -i \"s/.*PUBLIC_HOSTNAME_OVERRIDE.*/#PUBLIC_HOSTNAME_OVERRIDE=/g\" /etc/stickshift/stickshift-node.conf; /usr/libexec/mcollective/update_yaml.rb /etc/mcollective/facts.yaml; service libra-data start", 60, false, 1, ssh_user)
       puts 'Done'
     end
     
-    def set_instance_ip(hostname, ip, dhostname)
+    def set_instance_ip(hostname, ip, dhostname, ssh_user="root")
       print "Updating the controller to use the ip '#{ip}'..."
       # Both calls below are needed to fix a race condition between ssh and libra-data start times
-      ssh(hostname, "sed -i \"s/.*PUBLIC_IP_OVERRIDE.*/PUBLIC_IP_OVERRIDE='#{ip}'/g\" /etc/stickshift/stickshift-node.conf; sed -i \"s/.*PUBLIC_HOSTNAME_OVERRIDE.*/PUBLIC_HOSTNAME_OVERRIDE='#{dhostname}'/g\" /etc/stickshift/stickshift-node.conf; /usr/libexec/mcollective/update_yaml.rb /etc/mcollective/facts.yaml")
+      ssh(hostname, "sed -i \"s/.*PUBLIC_IP_OVERRIDE.*/PUBLIC_IP_OVERRIDE='#{ip}'/g\" /etc/stickshift/stickshift-node.conf; sed -i \"s/.*PUBLIC_HOSTNAME_OVERRIDE.*/PUBLIC_HOSTNAME_OVERRIDE='#{dhostname}'/g\" /etc/stickshift/stickshift-node.conf; /usr/libexec/mcollective/update_yaml.rb /etc/mcollective/facts.yaml", 60, false, 1, ssh_user)
       puts 'Done'
     end
 

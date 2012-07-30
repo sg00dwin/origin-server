@@ -15,13 +15,6 @@ DEVENV_CLEAN_WILDCARD = "devenv-clean_*"
 DEVENV_STAGE_CLEAN_WILDCARD = "devenv-stage-clean_*"
 DEVENV_BASE_WILDCARD = "devenv-base_*"
 DEVENV_STAGE_BASE_WILDCARD = "devenv-stage-base_*"
-
-OSO_FEDORA_WILDCARD = "oso_fedora_*"
-OSO_FEDORA_STAGE_WILDCARD = "oso_fedora_stage_*"
-OSO_FEDORA_CLEAN_WILDCARD = "oso_fedora_clean_*"
-OSO_FEDORA_AMI = {"us-east-1" =>"ami-0316d86a"}
-
-OSO_RHEL_WILDCARD = "oso_rhel_*"
 FORK_AMI_WILDCARD = "fork_ami_*"
 DEVENV_AMI_WILDCARDS = {DEVENV_WILDCARD => {:keep => 2, :regex => /(devenv)_(\d*)/}, 
                         DEVENV_STAGE_WILDCARD => {:keep => 8, :regex => /(devenv-stage)_(\d*)/},
@@ -29,17 +22,13 @@ DEVENV_AMI_WILDCARDS = {DEVENV_WILDCARD => {:keep => 2, :regex => /(devenv)_(\d*
                         DEVENV_STAGE_CLEAN_WILDCARD => {:keep => 1, :regex => /(devenv-stage-clean)_(\d*)/},
                         DEVENV_BASE_WILDCARD => {:keep => 1, :regex => /(devenv-base)_(\d*)/},
                         DEVENV_STAGE_BASE_WILDCARD => {:keep => 1, :regex => /(devenv-stage-base)_(\d*)/},
-                        OSO_FEDORA_WILDCARD => {:keep => 1, :regex => /(oso_fedora)_(\d*)/},
-                        OSO_RHEL_WILDCARD => {:keep => 1, :regex => /(oso_rhel)_(\d*)/},
                         FORK_AMI_WILDCARD => {:keep => 50, :keep_per_sub_group => 1, :regex => /(fork_ami_.*)_(\d*)/}}
-VERIFIER_REGEXS = {/^(devenv)_(\d+)$/ => {},
+VERIFIER_REGEXS = {/^(devenv)_(\d+)$/ => {:multiple => true},
                    /^(devenv_verifier)_(\d+)$/ => {}, 
                    /^(devenv-stage)_(\d+)$/ => {}, 
                    /^(devenv-stage_verifier)_(\d+)$/ => {},
                    /^(devenv-base)_(\d+)$/ => {}, 
                    /^(devenv-stage-base)_(\d+)$/ => {},
-                   /^(oso_fedora)_(\d+)$/ => {},
-                   /^(oso_rhel)_(\d+)$/ => {},
                    /^(libra_benchmark)_(\d+)$/ => {:max_run_time => (60*60*24)},
                    /^(broker_extended)_(\d+)$/ => {:max_run_time => (60*60*4)},
                    /^(runtime_extended)_(\d+)$/ => {:max_run_time => (60*60*4)},

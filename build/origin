@@ -1,0 +1,274 @@
+#!/usr/bin/env ruby
+
+$: << File.expand_path(File.dirname(__FILE__))
+
+require 'rubygems'
+require 'thor'
+require 'fileutils'
+require 'origin_constants'
+require 'lib/openshift'
+require 'pp'
+require 'yaml'
+require 'builder'
+
+include FileUtils
+
+module Origin
+  class BuilderPlugin < StickShift::Builder
+    include OpenShift::BuilderHelper
+
+    desc "build_livecd NAME", "Launches the latest DevEnv instance, tagging with NAME"
+    method_option :verbose, :type => :boolean, :desc => "Enable verbose logging"
+    method_option :instance_type, :required => false, :desc => "Amazon machine type override (default m1.large)"
+    method_option :region, :required => false, :desc => "Amazon region override (default us-east-1)"
+    method_option :image_name, :required => false, :desc => "AMI ID or DEVENV name to launch"
+    method_option :terminate, :type => :boolean, :desc => "Terminate the instance on exit"
+    def build_livecd(name)
+      options.verbose? ? @@log.level = Logger::DEBUG : @@log.level = Logger::ERROR
+  
+      # Override the machine type to launch if necessary
+      $amz_options[:instance_type] = options[:instance_type] if options[:instance_type]
+  
+      # Get the latest devenv image and create a new instance
+      conn = connect(options[:region])
+      filter = DEVENV_WILDCARD
+      if options[:image_name]
+        filter = options[:image_name]
+        ami = get_specific_ami(conn, filter)
+      else
+        ami = get_latest_ami(conn, filter)
+      end
+  
+      if ami.nil?
+        puts "No image name '#{options[:image_name]}' found!"
+        exit(1)
+      else
+        puts "Launching latest Origin instance #{ami.id} - #{ami.name}"
+      end
+  
+      instance = launch_instance(ami, name)
+      hostname = instance.dns_name
+      puts "Done"
+      puts "Hostname: #{hostname}"
+  
+      begin
+        puts "Launching live-cd build..."
+        out, ret = ssh(hostname, "export PATH=/usr/local/bin:/bin:/usr/bin:/usr/local/sbin:/usr/sbin:/sbin:$PATH && cd /data/crankcase/build && rake devcd", 60 * 60 * 2, false, 1, "ec2-user")
+        puts "Done"
+      ensure
+        terminate_instance(instance) if options.terminate?
+      end
+    end
+
+
+
+
+    no_tasks do  
+      def download_artifacts(hostname)
+        print "Downloading logs and screenshots..."
+        `rm -rf rhc/log; mkdir -p rhc/log/; pushd rhc/log > /dev/null; mkdir -p broker mcollective system screenshots selenium jbossas broker-profiler coverage; popd > /dev/null`
+        scp_from(hostname, "/tmp/rhc/*", "rhc/log")
+        scp_from(hostname, "/var/www/stickshift/broker/httpd/logs/access_log", "rhc/log/broker/access_log.log")
+        scp_from(hostname, "/var/www/stickshift/broker/httpd/logs/error_log", "rhc/log/broker/error_log.log")
+        scp_from(hostname, "/var/www/stickshift/broker/log/*", "rhc/log/broker")
+        scp_from(hostname, "/var/log/stickshift/user_action.log", "rhc/log/broker/user_action.log")
+        scp_from(hostname, "/var/log/mcollective.*", "rhc/log/mcollective")
+        scp_from(hostname, "/var/log/httpd/access_log", "rhc/log/system/access_log.log")
+        scp_from(hostname, "/var/log/httpd/error_log", "rhc/log/system/error_log.log")
+        scp_from(hostname, "/var/log/yum.log", "rhc/log/system/yum.log")
+        scp_from(hostname, "/var/log/messages", "rhc/log/system/messages.log")
+        scp_from(hostname, "/var/log/dmesg", "rhc/log/system/dmesg.log")
+        scp_from(hostname, "/var/log/secure", "rhc/log/system/secure.log")
+        scp_from(hostname, "/var/log/audit/audit.log", "rhc/log/system/audit.log")
+        scp_from(hostname, "/var/lib/stickshift/*/*/jbossas-7/standalone/tmp/*.log", "rhc/log/jbossas")
+        scp_from(hostname, "/tmp/rhc/benchmark.csv", "rhc/log")
+        scp_from(hostname, "/tmp/broker-profiler/*", "rhc/log/broker-profiler")
+        scp_from(hostname, "/tmp/rhc/*_coverage", "rhc/log/coverage")
+        puts "Done"
+      end
+      
+      def validate_instance(hostname, num_tries=1)
+      end
+      
+      def update_remote_tests(hostname, branch=nil)
+      end
+      
+      def scp_remote_tests(hostname)
+      end
+      
+      def test_impl(tag, hostname, instance, conn, options, image_id=nil)
+        puts "test_impl - Not yet implemented"
+      end
+      
+      def update_impl(options)
+        puts "update_impl - Not yet implemented"
+      end
+  
+      def sync_impl(name, options)
+        # Get the hostname from a tag lookup or assume it's SSH accessible directly
+        conn = connect(options.region)
+        hostname = options.tag? ? find_instance(conn, name, true, true, "ec2-user").dns_name : name
+    
+        ssh_path=File.expand_path(File.dirname(__FILE__)) + "/ssh-override"
+    
+        puts "Creating mount"
+        out, ret = ssh(hostname, "su -c \"umount -l /data ; if [ ! -b /dev/xvdb ]; then /sbin/mke2fs /dev/xvdb; fi; mkdir -p /data && mount /dev/xvdb /data && chown -R ec2-user:ec2-user /data/\"", 60 * 10, true, 1, "ec2-user") 
+    
+        avail_sibling_repo_names = []
+        SIBLING_REPOS.each do |repo_name, repo_dirs|
+          repo_dirs.each do |repo_dir|
+            if sync_sibling_repo(repo_name, repo_dir, hostname, ssh_path, "/data", "ec2-user")
+              avail_sibling_repo_names.push(repo_name)
+              break
+            end
+          end
+        end
+        
+        clone_commands = ''
+        working_dirs = ''
+        avail_sibling_repo_names.each do |repo_name|
+          working_dirs += "#{repo_name}-working "
+          clone_commands += "git clone #{repo_name} #{repo_name}-working; "
+        end
+    
+        # This is not required since we have already synced the crankcase repository
+        # Instead we can just create a symlink for the tests in li-test/tests
+        #update_remote_tests(hostname)
+        out, ret = ssh(hostname, "cd /data; #{clone_commands}", 60 * 5, true, 2, "ec2-user") if ret == 0
+        out, ret = ssh(hostname, "mkdir -p ~/li-test; cd ~/li-test; ln -s /data/crankcase-working/stickshift/controller/test/cucumber tests; ln -s /data/crankcase-working/stickshift stickshift", 60, true, 1, "ec2-user")
+    
+        if !options.skip_build?
+          puts "Performing remote install...."
+    
+          out, ret = ssh(hostname, "cd /data/crankcase-working/build && rake devbroker", 60 * 20, true, 1, "ec2-user") if ret == 0
+          out, ret = ssh(hostname, "su -c \"cd /data && chown -R ec2-user:ec2-user *\"", 60 * 2, true, 1, "ec2-user") if ret == 0
+          puts "Restarting services..."
+          out, ret = ssh(hostname, "su -c \"/usr/bin/ss-setup-broker\"", 60 * 2, true, 2, "ec2-user") if ret == 0
+      
+          if ret != 0
+            puts "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
+            puts "Build failed!  Exiting."
+            puts out
+            puts "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
+            exit 1
+          end
+          puts "Done"
+        end
+      end
+  
+      def build_impl(name, build_num, options)
+        # Override the machine type to launch if necessary
+        $amz_options[:instance_type] = options[:instance_type] if options[:instance_type]
+    
+        if options[:extra_rpm_dir]
+          unless File.exist? options[:extra_rpm_dir]
+            puts "Dir containing extra rpms not found. Exiting."
+           	exit
+          end
+        end
+    
+        # Get the latest fedora image and create a new instance
+        region = options[:region].nil? ? "us-east-1" : options[:region]
+        image_name = AMI[region]
+        conn = connect(region)
+        $amz_options[:block_device_mappings] = {"/dev/sdb" => "ephemeral0"}
+    
+        ami = get_specific_public_ami(conn, image_name)
+        if ami.nil?
+          puts "No image name '#{image_name}' found!"
+          exit(1)
+        else
+          puts "Launching latest Fedora instance #{ami.id} - #{ami.name}"
+          instance = launch_instance(ami, name + "_" + build_num, 1, "ec2-user")
+        end
+        
+        hostname = instance.dns_name
+        puts "Done"
+        puts "Hostname: #{hostname}"
+    
+        ret, out = 0, nil
+        begin
+          puts "Starting yum update"
+          out, ret = ssh(hostname, "su -c \"yum -y update\"", 60 * 10, true, 1, "ec2-user")
+          puts "Installing git, vim, and rake"
+          out, ret = ssh(hostname, "su -c \"yum install -y git vim rubygem-rake\"", 60 * 10, true, 1, "ec2-user") if ret == 0
+          puts "Creating mount"
+          out, ret = ssh(hostname, "su -c \"umount -l /data ; if [ ! -b /dev/xvdb ]; then /sbin/mke2fs /dev/xvdb; fi; mkdir -p /data && mount /dev/xvdb /data && chown -R ec2-user:ec2-user /data/\"", 60 * 10, true, 1, "ec2-user") 
+          puts "Cloning / Updating crankcase repo"
+          out, ret = ssh(hostname, "if [ -d /data/crankcase ]; then cd /data/crankcase && git stash && git pull --rebase && git stash pop; else cd /data && git clone https://github.com/openshift/crankcase.git /data/crankcase; fi;" , 60 * 5, true, 1, "ec2-user") if ret == 0
+    
+          if ret != 0
+            puts "Exiting with error code #{ret}"
+            puts "Output: #{out}"
+            exit ret
+          end
+          
+          if options[:extra_rpm_dir]
+            out, ret = ssh(hostname, "mkdir -p /data/crankcase/build/extras" , 60, true, 1, "ec2-user")
+            files = Dir.glob("#{options[:extra_rpm_dir]}/*.rpm")
+            files.each do |file|
+              scp_to(hostname, file, "/data/crankcase/build/extras/", 60*10, 5, "ec2-user")
+            end
+      
+            out, ret = ssh(hostname, "su -c \"cd /data/crankcase/build/extras && yum install -y *.rpm\"", 60 * 20, true, 1, "ec2-user")
+          end
+      
+          puts "Running build_setup script..."
+          out, ret = ssh(hostname, "cd /data/crankcase/build && rake build_setup", 60 * 20, true, 1, "ec2-user") if ret == 0
+          puts "Running devbroker script..."
+          out, ret = ssh(hostname, "cd /data/crankcase/build && rake devbroker", 60 * 20, true, 1, "ec2-user") if ret == 0
+          out, ret = ssh(hostname, "su -c \"cd /data && chown -R ec2-user:ec2-user *\"", 60 * 2, true, 1, "ec2-user") if ret == 0
+          puts "Running ss-setup-broker script with the full path..."
+          out, ret = ssh(hostname, "su -c \"/usr/bin/ss-setup-broker\"", 60 * 10, true, 1, "ec2-user") if ret == 0
+      
+          if ret != 0
+            puts "Exiting with error code #{ret}"
+            puts "Output: #{out}"
+            exit ret
+          end
+    
+          image_id = nil
+          if options[:register]
+            manifest = rpm_manifest(hostname, "ec2-user")
+            image = register_image(conn, instance, name + '_' + build_num, manifest)
+            image_id = image.id
+          end
+    
+          unless options.skip_verify?
+            scp_remote_tests(hostname)
+            test_impl(name + '_' + build_num, hostname, instance, conn, options, image_id)
+          end
+          puts "Done."
+        ensure
+          terminate_instance(instance) if options.terminate?
+        end
+      end
+  
+      def sanity_check_impl(tag, hostname, instance, conn, options, image_id=nil)
+        threads = []
+        failures = []
+        titles = ["StickShift Broker Sanity",
+                  "StickShift Node Unit"]
+    
+        cmds = ["cd li-test/stickshift/broker; su -c \"rake test:sanity\"",
+                "cd li-test/stickshift/node; su -c \"rake unit_test\""]
+        add_ssh_cmd_to_threads(hostname, threads, failures, titles, cmds, false, @@SSH_TIMEOUT, "ec2-user")
+        add_ssh_cmd_to_threads(hostname, threads, failures, "Cucumber Sanity", "cucumber #{@@CUCUMBER_OPTIONS} -t @sanity li-test/tests/", false, @@SSH_TIMEOUT, "ec2-user")
+    
+        threads.each do |t|
+          t[0].join
+        end
+    
+        unless failures.empty?
+          failures.uniq!
+          retry_test_failures(hostname, failures, 1, @@SSH_TIMEOUT, "ec2-user")
+        end
+      end
+      
+      def update_facts_impl(hostname)
+        # Not required since this is handled by ss-setup-broker script
+      end
+    end # no_tasks end
+  end # class end
+end # module end
+Origin::BuilderPlugin.start
