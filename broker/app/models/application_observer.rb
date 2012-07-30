@@ -21,6 +21,7 @@ class ApplicationObserver < ActiveModel::Observer
       usage = Usage.find_latest_by_gear(gear_uuid)
       if usage
         usage.end_time = time
+        usage.usage_type = usage_type  #TODO can remove this after the 2.0.15 release
       end
     end
     usage.save! if usage
