@@ -53,4 +53,4 @@ runcon -l s0-s0:c0.c1023 rm -rf "$PHPMOADMIN_DIR"
 #
 rm -f /etc/httpd/conf.d/stickshift/${uuid}_${namespace}_${application}/phpmoadmin-1.0.conf || warning "Could not remove phpmoadmin apache definition" 156
 
-/sbin/service httpd configtest 2> /dev/null && /sbin/service httpd graceful || warning "Failed to restart master httpd, please contact support" 120
+${CARTRIDGE_BASE_PATH}/abstract/info/bin/httpd_singular graceful || warning "Failed to restart master httpd, please contact support" 120

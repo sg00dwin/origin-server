@@ -54,4 +54,4 @@ runcon -l s0-s0:c0.c1023 rm -rf "$METRICS_DIR"
 #
 rm -f /etc/httpd/conf.d/stickshift/${uuid}_${namespace}_${application}/metrics-0.1.conf || warning "Could not remove metrics apache definition" 156
 
-/sbin/service httpd configtest 2> /dev/null && /sbin/service httpd graceful || warning "Failed to restart master httpd, please contact support" 120
+${CARTRIDGE_BASE_PATH}/abstract/info/bin/httpd_singular graceful || warning "Failed to restart master httpd, please contact support" 120
