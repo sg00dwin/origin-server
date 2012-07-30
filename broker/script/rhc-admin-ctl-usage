@@ -93,14 +93,14 @@ def usage_time(billing_api, acct_no, usage_record, begin_time, end_time)
   total_time
 end
 
-def get_billing_user_acct_no(billing_api, user)
-  puts "Aria userid: #{user.uuid}"
-  unless billing_api.userid_exists(user.uuid)
+def get_billing_user_acct_no(billing_api, billing_user_id)
+  puts "Aria userid: #{billing_user_id}"
+  unless billing_api.userid_exists(billing_user_id)
     puts "User didn't exist"
     # Temporary code until users are created up front
-    acct_no = billing_api.create_fake_acct(user.uuid, :megashift)
+    acct_no = billing_api.create_fake_acct(billing_user_id, :megashift)
   else
-    acct_no = billing_api.get_acct_no_from_user_id(user.uuid)
+    acct_no = billing_api.get_acct_no_from_user_id(billing_user_id)
   end
   acct_no
 end
@@ -132,7 +132,8 @@ else
             end
           end
           billing_api = Express::AriaBilling::Api.new
-          billing_acct_no = get_billing_user_acct_no(billing_api, user)
+          billing_user_id = Digest::MD5::hexdigest(user.login)
+          billing_acct_no = get_billing_user_acct_no(billing_api, billing_user_id)
 
           if sync
             [gear_usage_records_by_gear, storage_usage_records_by_gear].each do |usage_records_by_gear|  
@@ -186,7 +187,7 @@ else
                 # Send data to billing vendor
                 success = false
                 2.times do
-                  if billing_api.record_usage(gear_uuid, usage_record.sync_time, user.uuid, nil, usage_record_to_billing_usage_type(billing_api, usage_record), ut)
+                  if billing_api.record_usage(gear_uuid, usage_record.sync_time, billing_user_id, nil, usage_record_to_billing_usage_type(billing_api, usage_record), ut)
                     success = true
                     break
                   else
