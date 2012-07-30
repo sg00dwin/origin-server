@@ -13,11 +13,6 @@
     <hudson.model.ParametersDefinitionProperty>
       <parameterDefinitions>
         <hudson.model.StringParameterDefinition>
-          <name>exclude_internal</name>
-          <description></description>
-          <defaultValue>false</defaultValue>
-        </hudson.model.StringParameterDefinition>
-        <hudson.model.StringParameterDefinition>
           <name>exclude_broker</name>
           <description></description>
           <defaultValue>false</defaultValue>
