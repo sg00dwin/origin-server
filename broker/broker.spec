@@ -3,7 +3,7 @@
 
 Summary:   Li broker components
 Name:      rhc-broker
-Version: 0.96.10
+Version: 0.96.11
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -112,6 +112,16 @@ rm -rf $RPM_BUILD_ROOT
 /bin/touch %{_localstatedir}/log/stickshift/user_action.log
 
 %changelog
+* Mon Jul 30 2012 Dan McPherson <dmcphers@redhat.com> 0.96.11-1
+- Updating gem versions (dmcphers@redhat.com)
+- Bug 844276 (dmcphers@redhat.com)
+- Merge pull request #58 from fotioslindiakos/remove_rails_test_template
+  (fotioslindiakos@gmail.com)
+- Removing Rails test template (fotios@redhat.com)
+- Bug 844286 (dmcphers@redhat.com)
+- switch from user uuid to MD5 for aria id (dmcphers@redhat.com)
+- Bug 844238 (dmcphers@redhat.com)
+
 * Fri Jul 27 2012 Dan McPherson <dmcphers@redhat.com> 0.96.10-1
 - Updating gem versions (dmcphers@redhat.com)
 - Merge pull request #139 from nhr/hiding_django (fotioslindiakos@gmail.com)
