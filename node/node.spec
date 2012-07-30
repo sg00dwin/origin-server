@@ -2,7 +2,7 @@
 
 Summary:       Multi-tenant cloud management system node tools
 Name:          rhc-node
-Version: 0.96.6
+Version: 0.96.7
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -272,6 +272,9 @@ fi
 /lib64/security/pam_libra.so
 
 %changelog
+* Mon Jul 30 2012 Dan McPherson <dmcphers@redhat.com> 0.96.7-1
+- Ruby version of rhc-accept-node from BZ 843106 (rmillner@redhat.com)
+
 * Thu Jul 26 2012 Dan McPherson <dmcphers@redhat.com> 0.96.6-1
 - Stand-alone mysql or mongodb gears disable stale detection.
   (rmillner@redhat.com)
