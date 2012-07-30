@@ -36,13 +36,6 @@ Broker::Application.configure do
   ############################################
   # OpenShift Configuration Below this point #
   ############################################
-  config.districts = {
-    :enabled => true,
-    :require_for_app_create => false,
-    :max_capacity => 6000, # Only used with district create.  Modify capacity through rhc-admin-ctl-district.
-    :first_uid => 1000 # Can not modify after district is created.  Only affects new districts.
-  }
-
   config.dns = {
     :zone => "rhcloud.com",
     :dynect_customer_name => "demo-redhat",
@@ -172,10 +165,10 @@ Broker::Application.configure do
         :config => "/etc/mcollective/client.cfg"
     },
     :districts => {
-        :enabled => false,
+        :enabled => true,
         :require_for_app_create => false,
-        :max_capacity => 6000, #Only used by district create
-        :first_uid => 1000
+        :max_capacity => 6000, # Only used with district create.  Modify capacity through rhc-admin-ctl-district.
+        :first_uid => 1000 # Can not modify after district is created.  Only affects new districts.
     },
     :node_profile_enabled => false
   }

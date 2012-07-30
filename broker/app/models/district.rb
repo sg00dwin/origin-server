@@ -10,11 +10,11 @@ class District < StickShift::Model
     self.uuid = StickShift::Model.gen_uuid
     self.creation_time = DateTime::now().strftime
     self.server_identities = {}
-    self.available_capacity = Rails.configuration.districts[:max_capacity]
+    self.available_capacity = Rails.configuration.gearchanger[:districts][:max_capacity]
     self.available_uids = []
-    self.available_uids.fill(0, Rails.configuration.districts[:max_capacity]) {|i| i+Rails.configuration.districts[:first_uid]}
-    self.max_uid = Rails.configuration.districts[:max_capacity] + Rails.configuration.districts[:first_uid] - 1
-    self.max_capacity = Rails.configuration.districts[:max_capacity]
+    self.available_uids.fill(0, Rails.configuration.gearchanger[:districts][:max_capacity]) {|i| i+Rails.configuration.gearchanger[:districts][:first_uid]}
+    self.max_uid = Rails.configuration.gearchanger[:districts][:max_capacity] + Rails.configuration.gearchanger[:districts][:first_uid] - 1
+    self.max_capacity = Rails.configuration.gearchanger[:districts][:max_capacity]
     self.externally_reserved_uids_size = 0
     self.active_server_identities_size = 0
     self.name = name
