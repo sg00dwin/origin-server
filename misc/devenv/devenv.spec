@@ -8,7 +8,7 @@
 
 Summary:   Dependencies for OpenShift development
 Name:      rhc-devenv
-Version: 0.97.7
+Version: 0.97.8
 Release:   1%{?dist}
 Group:     Development/Libraries
 License:   GPLv2
@@ -523,6 +523,15 @@ chmod -R 770 /var/log/rkhunter
 %{policydir}/*
 
 %changelog
+* Mon Jul 30 2012 Dan McPherson <dmcphers@redhat.com> 0.97.8-1
+- Allow drupal database to be dropped and recreated (ccoleman@redhat.com)
+- Bug 843313 - Max allowed packet preventing new devenv import.
+  (ccoleman@redhat.com)
+- Merge pull request #140 from tkramer-rh/dev/tkramer/rkhunter/out_of_tmp
+  (dmcphers@redhat.com)
+- Security - Add nagios_monitor to match other envs and change perms for
+  rkhunter log directory (tkramer@redhat.com)
+
 * Fri Jul 27 2012 Dan McPherson <dmcphers@redhat.com> 0.97.7-1
 - Merge pull request #137 from rmillner/dev/rmillner/bug/843337
   (mrunalp@gmail.com)
