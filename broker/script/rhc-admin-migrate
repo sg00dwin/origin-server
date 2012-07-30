@@ -14,12 +14,11 @@ WORK_DIR = '/tmp/rhc/migration'
 MIGRATION_CART_TYPES = ['mysql-5.1','mongodb-2.0'].to_set
 RESTART_CART_TYPES = ['jenkins-1.4'].to_set
 REDEPLOY_HTTPD_PROXY_CART_TYPES = [].to_set # Deploys on top of existing config.  Will not fixup renames.
-RECREATE_HTTPD_PROXY_CART_TYPES = [].to_set # Remove existing config and recreate including aliases.
 
 $all_cart_types = nil
-if MIGRATION_CART_TYPES && RESTART_CART_TYPES && REDEPLOY_HTTPD_PROXY_CART_TYPES && RECREATE_HTTPD_PROXY_CART_TYPES
+if MIGRATION_CART_TYPES && RESTART_CART_TYPES && REDEPLOY_HTTPD_PROXY_CART_TYPES
   $all_cart_types = Set.new
-  $all_cart_types = MIGRATION_CART_TYPES + RESTART_CART_TYPES + REDEPLOY_HTTPD_PROXY_CART_TYPES + RECREATE_HTTPD_PROXY_CART_TYPES
+  $all_cart_types = MIGRATION_CART_TYPES + RESTART_CART_TYPES + REDEPLOY_HTTPD_PROXY_CART_TYPES
 end
 
 STDOUT.sync, STDERR.sync = true
@@ -75,24 +74,19 @@ def migrate_gear(rhlogin, app_name, gear_uuid, version)
                 out << "Migrate on node exit code: #{exit_code}\n"
                 raise "Failed migrating gear. Rerun with: #{migrate_cmd}"
               else
-                recreate_httpd_proxy = RECREATE_HTTPD_PROXY_CART_TYPES.nil?
                 redeploy_httpd_proxy = REDEPLOY_HTTPD_PROXY_CART_TYPES.nil?
 
-                if RECREATE_HTTPD_PROXY_CART_TYPES || REDEPLOY_HTTPD_PROXY_CART_TYPES
+                if REDEPLOY_HTTPD_PROXY_CART_TYPES
                   gear_cartridges = gear.cartridges
-                  RECREATE_HTTPD_PROXY_CART_TYPES.each do |cart_name|
-                    recreate_httpd_proxy = gear_cartridges.include?(cart_name)
-                    break if recreate_httpd_proxy
-                  end
                   REDEPLOY_HTTPD_PROXY_CART_TYPES.each do |cart_name|
                     redeploy_httpd_proxy = gear_cartridges.include?(cart_name)
                     break if redeploy_httpd_proxy
                   end unless redeploy_httpd_proxy
-                end unless recreate_httpd_proxy
+                end
 
-                remove_httpd_proxy(gear, out) if recreate_httpd_proxy
-                redeploy_httpd_proxy(gear, out) if recreate_httpd_proxy || redeploy_httpd_proxy
-                redeploy_aliases(gear, out) if recreate_httpd_proxy 
+                #remove_httpd_proxy(gear, out)
+                redeploy_httpd_proxy(gear, out) if redeploy_httpd_proxy
+                #redeploy_aliases(gear, out)
 
                 gear.configured_components.each do |comp_name|
                   restart = RESTART_CART_TYPES.nil?
