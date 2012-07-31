@@ -589,8 +589,10 @@ mkdir -p /tmp/rhc/junit
         puts "Done"
 
       ensure
-        download_artifacts hostname if options.terminate?
-        terminate_instance(instance) if options.terminate?
+        if options.terminate?
+          download_artifacts(hostname)
+          terminate_instance(instance)
+        end
       end
     end
     
@@ -777,90 +779,95 @@ mkdir -p /tmp/rhc/junit
 
     begin
       manifest = nil
-      if options.build_clean_ami? || options.install_from_source? || options.install_from_local_source? || options.install_required_packages?
-        print "Updating all packages on the system..."
-        2.times do
-          ssh(hostname, "yum update -y --exclude='rhc*'; yum -y install openssh-clients", 1800)
-        end
-        puts "Done"
-
-        if options.reboot?
-          reboot(instance)
-        end
-
-        print "Uploading devenv script..."
-        script_path = File.expand_path(File.dirname(__FILE__) + "/../misc/devenv/li-devenv.sh")
-        scp_to(hostname, script_path, "~/")
-        puts "Done"
-        print "Uploading yum client certificates..."
-        script_path = File.expand_path(File.dirname(__FILE__) + "/../misc/client-cert.pem")
-        scp_to(hostname, script_path, "/var/lib/yum/")
-        script_path = File.expand_path(File.dirname(__FILE__) + "/../misc/client-key.pem")
-        scp_to(hostname, script_path, "/var/lib/yum/")
-        scp_to(hostname, "misc/devenv/root/.ssh/*", "/root/.ssh/")
-        ssh(hostname, "chmod 0600 /root/.ssh/id_rsa; chmod 0644 /root/.ssh/id_rsa.pub /root/.ssh/known_hosts;")
-        puts "Done"
-        output = ''
-        if options.install_from_source?
-          print "Performing clean install from source..."
-          cmd = 'set -e; /bin/bash li-devenv.sh candidate --install_from_source'
-        elsif options.install_from_local_source?
-          init_repo(hostname)
-          ssh_path = File.expand_path(File.dirname(__FILE__)) + "/ssh-override"
-          sync_repo('li', hostname, ssh_path)
-          SIBLING_REPOS.each do |repo_name, repo_dirs|
-            repo_dirs.each do |repo_dir|
-              break if sync_sibling_repo(repo_name, repo_dir, hostname, ssh_path)
-            end
+      begin
+        if options.build_clean_ami? || options.install_from_source? || options.install_from_local_source? || options.install_required_packages?
+          print "Updating all packages on the system..."
+          2.times do
+            ssh(hostname, "yum update -y --exclude='rhc*'; yum -y install openssh-clients", 1800)
           end
-          print "Performing clean install from local source..."
-          cmd = 'set -e; /bin/bash li-devenv.sh candidate --install_from_local_source'
-        elsif options.install_required_packages?
-          print "Installing requires..."
-          cmd = "set -e; /bin/bash li-devenv.sh #{options.use_stage_repo? ? "stage" : "candidate"} --install_build_prereqs"
-          output += ssh(hostname, cmd, 600)
-          cmd = "set -e; /bin/bash li-devenv.sh #{options.use_stage_repo? ? "stage" : "candidate"} --install_required_packages"
+          puts "Done"
+
+          if options.reboot?
+            reboot(instance)
+          end
+
+          print "Uploading devenv script..."
+          script_path = File.expand_path(File.dirname(__FILE__) + "/../misc/devenv/li-devenv.sh")
+          scp_to(hostname, script_path, "~/")
+          puts "Done"
+          print "Uploading yum client certificates..."
+          script_path = File.expand_path(File.dirname(__FILE__) + "/../misc/client-cert.pem")
+          scp_to(hostname, script_path, "/var/lib/yum/")
+          script_path = File.expand_path(File.dirname(__FILE__) + "/../misc/client-key.pem")
+          scp_to(hostname, script_path, "/var/lib/yum/")
+          scp_to(hostname, "misc/devenv/root/.ssh/*", "/root/.ssh/")
+          ssh(hostname, "chmod 0600 /root/.ssh/id_rsa; chmod 0644 /root/.ssh/id_rsa.pub /root/.ssh/known_hosts;")
+          puts "Done"
+          output = ''
+          if options.install_from_source?
+            print "Performing clean install from source..."
+            cmd = 'set -e; /bin/bash li-devenv.sh candidate --install_from_source'
+          elsif options.install_from_local_source?
+            init_repo(hostname)
+            ssh_path = File.expand_path(File.dirname(__FILE__)) + "/ssh-override"
+            sync_repo('li', hostname, ssh_path)
+            SIBLING_REPOS.each do |repo_name, repo_dirs|
+              repo_dirs.each do |repo_dir|
+                break if sync_sibling_repo(repo_name, repo_dir, hostname, ssh_path)
+              end
+            end
+            print "Performing clean install from local source..."
+            cmd = 'set -e; /bin/bash li-devenv.sh candidate --install_from_local_source'
+          elsif options.install_required_packages?
+            print "Installing requires..."
+            cmd = "set -e; /bin/bash li-devenv.sh #{options.use_stage_repo? ? "stage" : "candidate"} --install_build_prereqs"
+            output += ssh(hostname, cmd, 600)
+            cmd = "set -e; /bin/bash li-devenv.sh #{options.use_stage_repo? ? "stage" : "candidate"} --install_required_packages"
+          else
+            print "Performing clean install with the latest code..."
+            cmd = 'set -e ; /bin/bash ~/li-devenv.sh'
+            cmd += ' stage' if options.use_stage_repo?
+          end
+          output = ssh(hostname, cmd, 3600)
+          puts "Done"
+
+          puts "----------------- Install Output ------------------------"
+          puts output
+          puts "---------------------------------------------------------"
+
+          # FIXME - HACK TO MAKE SURE TEMPLATES ARE CREATED
+          inst_template_cmd = "set -e; /bin/bash li-devenv.sh --install_templates;"
+          template_output = ssh(hostname, inst_template_cmd, 3600)
+          puts "Done"
+
+          puts "------------- Template Install Output -------------------"
+          puts template_output
+          puts "---------------------------------------------------------"
+        
+        
+          validate_instance(hostname) unless options.install_required_packages?
+
+          manifest = rpm_manifest(hostname)
+
+          if options.register? && options.build_clean_ami?
+            register_image(conn, instance, name + '-clean_' + build_num, manifest)
+          end
         else
-          print "Performing clean install with the latest code..."
-          cmd = 'set -e ; /bin/bash ~/li-devenv.sh'
-          cmd += ' stage' if options.use_stage_repo?
+          print "Updating all packages on the system..."
+          output = ssh(hostname, "yum clean metadata; yum update -y --exclude='rhc-devenv'; set -e; yum update -y --exclude='rhc-devenv' --disablerepo=\\* --enablerepo=li --enablerepo=ruby193", 600)
+          puts "Done"
+
+          puts "------------------ Update Output ------------------------"
+          puts output
+          puts "---------------------------------------------------------"
+
+          validate_instance(hostname)
+
+          manifest = rpm_manifest(hostname)
         end
-        output = ssh(hostname, cmd, 3600)
-        puts "Done"
-
-        puts "----------------- Install Output ------------------------"
-        puts output
-        puts "---------------------------------------------------------"
-
-        # FIXME - HACK TO MAKE SURE TEMPLATES ARE CREATED
-        inst_template_cmd = "set -e; /bin/bash li-devenv.sh --install_templates;"
-        template_output = ssh(hostname, inst_template_cmd, 3600)
-        puts "Done"
-
-        puts "------------- Template Install Output -------------------"
-        puts template_output
-        puts "---------------------------------------------------------"
-        
-        
-        validate_instance(hostname) unless options.install_required_packages?
-
-        manifest = rpm_manifest(hostname)
-
-        if options.register? && options.build_clean_ami?
-          register_image(conn, instance, name + '-clean_' + build_num, manifest)
-        end
-      else
-        print "Updating all packages on the system..."
-        output = ssh(hostname, "yum clean metadata; yum update -y --exclude='rhc-devenv'; set -e; yum update -y --exclude='rhc-devenv' --disablerepo=\\* --enablerepo=li --enablerepo=ruby193", 600)
-        puts "Done"
-
-        puts "------------------ Update Output ------------------------"
-        puts output
-        puts "---------------------------------------------------------"
-
-        validate_instance(hostname)
-
-        manifest = rpm_manifest(hostname)
+      rescue SystemExit => e
+        download_artifacts(hostname) if options.terminate?
+        raise
       end
       
       output = ssh(hostname, "yum list installed", 120)
