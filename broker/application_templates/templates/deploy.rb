@@ -84,7 +84,7 @@ __END__
       "website": "http://cakephp.org/",
       "git_url": "git://github.com/openshift/cakephp-example.git",
       "license": "mit",
-      "version": 2.2.1,
+      "version": "2.2.1",
       "git_project_url": "http://github.com/openshift/cakephp-example",
       "description": "CakePHP is a rapid development framework for PHP which uses commonly known design patterns like Active Record, Association Data Mapping, Front Controller and MVC."
     }
