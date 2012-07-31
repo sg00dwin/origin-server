@@ -17,6 +17,9 @@ optparse = OptionParser.new { |opts|
 optparse.parse!
 
 
+$USERS = %x[grep ":libra guest:" /etc/passwd].split("\n")
+$TC_DATA = %x[tc clas show dev eth0].split("\n").grep(/parent/)
+$ALL_QUOTAS = %x[repquota -a].split("\n")
 
 $LIBRA_CONF_DIR="/etc/stickshift"
 $NODE_CONF_FILE=File.join($LIBRA_CONF_DIR, "/stickshift-node.conf")
@@ -241,13 +244,11 @@ def check_quotas
 end
 
 def check_users
-    users = %x[grep ":libra guest:" /etc/passwd].split("\n")
-    verbose("checking #{users.length} user accounts")
+    #users = %x[grep ":libra guest:" /etc/passwd].split("\n")
+    verbose("checking #{$USERS.length} user accounts")
     conf_dir_templ = "#{$LIMITS_CONF_DIR}/84-%s.conf"
     user_cgroup="/cgroup/all/libra/%s"
-    all_quotas = %x[repquota -a].split("\n")
-    tc_data = %x[tc clas show dev eth0].split("\n").grep(/parent/)
-    users.each { |user|
+    $USERS.each do |user|
         username,password,uid,gid,gecos,home_dir,shell = user.split(":")
         $ALL_USERS << username #store it so we can use it later
         #Test home dir
@@ -258,12 +259,17 @@ def check_users
         end
         if $TC_PASS
             hex_uid = uid.to_i.to_s(16)
-            tc_results = tc_data.grep(/1:#{hex_uid}/)
+            tc_results = $TC_DATA.grep(/1:#{hex_uid}/)
             do_fail("user #{username} must have 1 tc class entry: actual=#{tc_results.length}") if tc_results.length != 1
         end
 
-        do_fail("user #{username} does not have quotas imposed") unless all_quotas.grep(/#{username}/).length > 0
-    }
+        results = $ALL_QUOTAS.grep(/#{username}/)
+        if results.length == 0 ||
+           results[0].split[4].to_i == 0 ||
+           results[0].split[7].to_i == 0
+            do_fail("user #{username} does not have quotas imposed")
+        end
+    end
 
 end
 
