@@ -66,6 +66,19 @@ unless app
   exit 1
 end
 
+def check_user_response
+  begin
+    agree = gets.chomp
+    if agree != 'y'
+      puts "\n"
+      exit 217
+    end
+  rescue Interrupt
+    puts "\n"
+    exit 217
+  end
+end
+
 reply = ResultIO.new
 case command
 when "start"
@@ -88,16 +101,7 @@ when "force-destroy"
   WARNING
 
     print "Do you want to forcefully destroy this application (y/n): "
-    begin
-      agree = gets.chomp
-      if agree != 'y'
-        puts "\n"
-        exit 217
-      end
-    rescue Interrupt
-      puts "\n"
-      exit 217
-    end
+    check_user_response
   end
   
   begin
@@ -133,16 +137,7 @@ when "destroy"
   WARNING
 
     print "Do you want to destroy this application (y/n): "
-    begin
-      agree = gets.chomp
-      if agree != 'y'
-        puts "\n"
-        exit 217
-      end
-    rescue Interrupt
-      puts "\n"
-      exit 217
-    end
+    check_user_response
   end
   
   reply.append app.cleanup_and_delete
