@@ -121,7 +121,7 @@ mkdir -p /tmp/rhc/junit
     
     def idle_all_gears(hostname)
       puts "Idling all gears on remote instance: #{hostname}"
-      ssh(hostname, "service mcollective restart; for dir in /var/lib/stickshift/*; do if [ -d $dir ] && [ ! -h $dir ] ; then rhc-idler -u `basename $dir`; fi; done", 240)
+      ssh(hostname, "service mcollective restart; for dir in /var/lib/stickshift/*; do if [ -d $dir ] && [ ! -h $dir ] ; then rhc-idler -n -u `basename $dir`; fi; done; service httpd graceful", 240)
       puts "Done"
     end
 
@@ -552,14 +552,12 @@ mkdir -p /tmp/rhc/junit
           end
 
           # These are special tests that cannot be written to work concurrently
-          # If they fail, the Test fails. Since they are running in isolation retries should not be required.
           unless options.exclude_runtime?
             idle_all_gears(hostname)
-            output, exit_code = run_ssh(hostname, "Singletons",
-                "cucumber #{@@CUCUMBER_OPTIONS} -t @singleton li-test/tests",
-                timeout)
 
-            exit 1 if 0 != exit_code
+            singleton_queue = ['Singletons', "cucumber #{@@CUCUMBER_OPTIONS} -t @singleton li-test/tests"]
+            output, exit_code = run_ssh(hostname, singleton_queue[0], singleton_queue[1])
+            retry_test_failures(hostname, [singleton_queue], 2) if 0 != exit_code
           end
 
           validate_instance(hostname)
