@@ -1,5 +1,5 @@
-#@runtime_verify
-#@runtime_verify1
+#@runtime_extended
+#@runtime_extended1
 Feature: Scaling Verification Tests
   Scenario Outline: AutoScale App
     Given the libra client tools
