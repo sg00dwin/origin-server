@@ -62,10 +62,7 @@ ln -s %{brokerdir}/public %{buildroot}%{htmldir}/broker
 
 mkdir -p %{buildroot}%{brokerdir}/run
 mkdir -p %{buildroot}%{brokerdir}/log
-touch %{buildroot}%{brokerdir}/log/production.log
-
 mkdir -p %{buildroot}%{_localstatedir}/log/stickshift
-touch %{buildroot}%{_localstatedir}/log/stickshift/user_action.log
 
 mv %{buildroot}%{brokerdir}/script/rhc-admin-ctl-domain %{buildroot}/%{_bindir}
 mv %{buildroot}%{brokerdir}/script/rhc-admin-ctl-app %{buildroot}/%{_bindir}
@@ -83,8 +80,8 @@ rm -rf $RPM_BUILD_ROOT
 
 %files
 %defattr(0640,root,libra_user,0750)
-%attr(0660,-,-) %{brokerdir}/log/production.log
-%attr(0660,-,-) %{_localstatedir}/log/stickshift/user_action.log
+%ghost %{brokerdir}/log/production.log
+%ghost %{_localstatedir}/log/stickshift/user_action.log
 %config(noreplace) %{brokerdir}/config/environments/production.rb
 %config(noreplace) %{brokerdir}/config/keys/public.pem
 %config(noreplace) %{brokerdir}/config/keys/private.pem
