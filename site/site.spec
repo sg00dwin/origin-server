@@ -3,7 +3,7 @@
 
 Summary:   Li site components
 Name:      rhc-site
-Version: 0.96.6
+Version: 0.96.7
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -136,6 +136,25 @@ rm -rf %{buildroot}
 %{sitedir}/public
 
 %changelog
+* Tue Jul 31 2012 Adam Miller <admiller@redhat.com> 0.96.7-1
+- add custom forum only search; minor work of breadcrumb partials and spacing,
+  headings at <480px get small line-height (sgoodwin@redhat.com)
+- Merge pull request #151 from
+  smarterclayton/bug844231_user_gets_error_on_signup (contact@fabianofranz.com)
+- Merge pull request #150 from smarterclayton/captcha_can_be_nil
+  (contact@fabianofranz.com)
+- Merge pull request #145 from
+  smarterclayton/us2531_add_user_agent_to_console_requests
+  (ccoleman@redhat.com)
+- Bug 844231 - During signup, a user who has confirmed his email sees an error
+  message, instead of being taken to the signup confirm page.  This is because
+  streamline has different behavior if the user has confirmed their email.
+  (ccoleman@redhat.com)
+- Allow captcha to be set to nil to disable it. (ccoleman@redhat.com)
+- Fix functional tests (ccoleman@redhat.com)
+- Send a consistent user agent from the console to Aria, Streamline, and
+  broker. (ccoleman@redhat.com)
+
 * Mon Jul 30 2012 Dan McPherson <dmcphers@redhat.com> 0.96.6-1
 - Merge pull request #89 from smarterclayton/add_tax_exempt_model_attribute
   (ccoleman@redhat.com)
