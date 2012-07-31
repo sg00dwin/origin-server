@@ -48,6 +48,7 @@ User errors:
 155: Error getting account information from billing provider
 156: Updating user plan on billing provider failed
 157: Plan change not allowed for subaccount user
+158: Domain already exists for user
 210: Can not override existing location for git repo
 211: Parent directory for git repo does not exist
 212: Could not find libra_id_rsa
