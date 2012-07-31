@@ -566,8 +566,6 @@ mkdir -p /tmp/rhc/junit
             cmd = "service sauce-connect stop"
             run_ssh(hostname, "Stop sauce connect tunnel", cmd, timeout)
           end
-
-          download_artifacts hostname if options.terminate?
         end
 
         if options.official?
@@ -591,6 +589,7 @@ mkdir -p /tmp/rhc/junit
         puts "Done"
 
       ensure
+        download_artifacts hostname if options.terminate?
         terminate_instance(instance) if options.terminate?
       end
     end
