@@ -35,6 +35,19 @@ if(module_exists('og_comment_perms')) {
 }
 ?>
 
+
+<form action="/community/search/node" method="post" class="form-search custom-form-search">
+<input class="span6" placeholder="Search forums..." type="text" value="" name="keys" />
+<input type="submit" value="" name="op" class="btn btn-primary" title="Search OpenShift forums" alt="Search OpenShift forums" />
+<input type="hidden" value="<?php print drupal_get_token('search_form'); ?>" name="form_token" />
+<input type="hidden" value="search_form" id="edit-search-form" name="form_id" />
+<input type="hidden" name="type[discussion]" id="edit-discussion" value="discussion" />
+</form>
+
+<div class="search-help"><strong>Advanced options:</strong> quotes search for <strong>"exact phrase"</strong>, dash excludes a <strong>-keyword</strong>, OR matches any <strong>keyword OR term</strong></div>
+
+
+
 <?php if ($forum): ?>
 <div id="forum-header">
 <div class="forum-header-right pull-right">
@@ -42,21 +55,24 @@ if(module_exists('og_comment_perms')) {
     <li><a href="<?php print base_path(); ?>forums"><?php print t('Main List of Forums'); ?></a></li>
 </ul>
 </div>
-<div class="forum-header-left">
+<!--div class="forum-header-left">
 <div class="forum-header-hat">Forum</div>
-<h2><?php print $forum['heading']; ?> <?php print $forum['feed']; ?></h2>
+<h2><?php print $forum['heading']; ?></h2>
 <div class="forum-header-description"><?php print $forum['description']; ?></div>
-</div>
-<div class="forum-header-left" style="clear: both;"><?php if ($do->perm == 'post'): ?>
-<div class="new-post-button"><a class='btn'
+</div-->
+
+<div class="post-to-forum">
+<?php print $forum['feed']; ?>
+<?php if ($do->perm == 'post'): ?>
+<div class="new-post-button"><a class='action-more'
 	href="<?php print base_path(); ?>node/add/discussion/<?php print $forum['alias']; ?>?gids[]=<?php print $forum['nid']; ?>">Post
 New Thread</a></div>
 <?php elseif ($do->perm == 'join'): ?>
 <div><?php print t('You need to !join this group before you can post a new thread.', array('!join' => l(t('join'), 'og/subscribe/'. $do->group->nid))); ?></div>
 <?php elseif (!$user->uid): ?>
-<div><?php print t('You need to !login before you can post a new thread.', array('!login' => l(t('login'), variable_get('redhat_sso_login_url')))); ?></div>
+<div><?php print t('!Login to post a new thread.', array('!Login' => l(t('Login'), variable_get('redhat_sso_login_url')))); ?></div>
 <?php endif; ?></div>
-<div class="forum-header-right"><!-- Place holder for Pager --></div>
+<!--div class="forum-header-right"> Place holder for Pager </div-->
 </div>
 <?php endif; ?>
 
