@@ -2,7 +2,7 @@
 
 Summary:       Multi-tenant cloud management system node tools
 Name:          rhc-node
-Version: 0.96.7
+Version: 0.96.8
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -266,6 +266,9 @@ fi
 /lib64/security/pam_libra.so
 
 %changelog
+* Tue Jul 31 2012 Adam Miller <admiller@redhat.com> 0.96.8-1
+- Cleaning up m-collective from li repo (kraman@gmail.com)
+
 * Mon Jul 30 2012 Dan McPherson <dmcphers@redhat.com> 0.96.7-1
 - Ruby version of rhc-accept-node from BZ 843106 (rmillner@redhat.com)
 
