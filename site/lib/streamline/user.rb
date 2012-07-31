@@ -273,7 +273,10 @@ module Streamline
           self.email_address = json['emailAddress']
           self.token = json['email_verification_token']
         else
-          if errors.length == 0
+          if ['user_already_registered'] == json['errors']
+            # register ignores existing users
+            errors.clear
+          elsif errors.length == 0
             errors.add(:base, I18n.t(:unknown))
           end
         end

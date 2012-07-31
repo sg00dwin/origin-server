@@ -43,6 +43,10 @@ class StreamlineIntegrationTest < ActionDispatch::IntegrationTest
     assert user.confirm_email
     assert user.errors.empty?
     assert_nil user.ticket
+
+    # ensure that duplicate confirmation returns success
+    assert user.register('/email_confirm'), user.errors.inspect
+    assert user.errors.empty?
   end
 
   test 'should suppress duplicate registration' do
