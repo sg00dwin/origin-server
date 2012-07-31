@@ -45,6 +45,12 @@ class StreamlineIntegrationTest < ActionDispatch::IntegrationTest
     assert_nil user.ticket
   end
 
+  test 'should suppress duplicate registration' do
+    user = new_user
+    assert user.register('/email_confirm')
+    assert user.register('/email_confirm')
+  end
+
   test 'should return token and accept it for confirmation' do
     assert confirmed_user
 
