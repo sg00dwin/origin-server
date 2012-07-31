@@ -1,6 +1,7 @@
 require File.expand_path('../../test_helper', __FILE__)
 
 class UserControllerTest < ActionController::TestCase
+
   test "should get new unauthorized" do
     get :new
     assert_response :success
@@ -64,6 +65,7 @@ class UserControllerTest < ActionController::TestCase
   end
 
   test "should ignore captcha non-integrated environment" do
+    Rails.configuration.expects(:captcha_secret).at_least_once.returns('123')
     Rails.configuration.expects(:integrated).at_least_once.returns(false)
     @controller.expects(:verify_recaptcha).once
     post(:create, {:web_user => {}})
@@ -79,13 +81,22 @@ class UserControllerTest < ActionController::TestCase
   end
 
   test "should render captcha" do
+    Rails.configuration.expects(:captcha_secret).at_least_once.returns('123')
     get :new
     assert_response :success
     assert_select "#recaptcha_widget"
   end
 
   test "should render page without captcha when secret is present" do
+    Rails.configuration.expects(:captcha_secret).at_least_once.returns('123')
     get :new, {:web_user => {}, :captcha_secret => '123'}
+    assert_response :success
+    assert css_select("#recaptcha_widget").empty?
+  end
+
+  test "should render page without captcha when secret is nil" do
+    Rails.configuration.expects(:captcha_secret).at_least_once.returns(nil)
+    get :new, {:web_user => {}}
     assert_response :success
     assert css_select("#recaptcha_widget").empty?
   end
@@ -111,20 +122,28 @@ class UserControllerTest < ActionController::TestCase
   end
 
   test "should check captcha" do
+    Rails.configuration.expects(:captcha_secret).at_least_once.returns('123')
     Rails.configuration.expects(:integrated).at_least_once.returns(false)
-    Rails.configuration.expects(:integrated).never
     @controller.expects(:verify_recaptcha).returns(true)
     post(:create, {:web_user => {}})
     assert_response :success
   end
 
 	test "should have captcha check fail" do
+    Rails.configuration.expects(:captcha_secret).at_least_once.returns('123')
     Rails.configuration.expects(:integrated).at_least_once.returns(false)
 		@controller.expects(:verify_recaptcha).returns(false)
 		post(:create, {:web_user => {}})
 
 		assert_equal "Captcha text didn't match", assigns(:user).errors[:captcha].to_s
     assert_nil assigns(:captcha_secret)
+	end
+
+  test "should have captcha check succeed when secret is nil" do
+    Rails.configuration.expects(:captcha_secret).at_least_once.returns(nil)
+    Rails.configuration.expects(:integrated).at_least_once.returns(false)
+		post(:create, {:web_user => {}})
+    assert_response :success
 	end
 
 	test "should get success on post and choosing Express" do
@@ -135,6 +154,7 @@ class UserControllerTest < ActionController::TestCase
 	end
 
   test "should register user from external" do
+    Rails.configuration.expects(:captcha_secret).at_least_once.returns('secret')
     post(:create_external, {:json_data => '{"email_address":"tester@example.com","password":"pw1234"}', :captcha_secret => 'secret', :registration_referrer => 'appcelerator'})
     assert_response :success
   end

@@ -72,6 +72,14 @@ class ActiveSupport::TestCase
     end
   end
 
+  def with_config(name, value, &block)
+    old = Rails.configuration.send(:"#{name}")
+    Rails.configuration.send(:"#{name}=", value)
+    yield
+  ensure
+    Rails.configuration.send(:"#{name}=", old)
+  end
+
   def expects_integrated
     flunk 'Test requires integrated Streamline authentication' unless Rails.configuration.integrated
   end

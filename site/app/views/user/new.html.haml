@@ -22,7 +22,7 @@
       = form.input :promo_code, :label => 'Promotional Code', :required => false, :input_html => { :class => 'input-xlarge' }
 
   = form.inputs do
-    = input_recaptcha(:errors => @user.errors[:captcha]) unless @captcha_secret.present?
+    = input_recaptcha(:errors => @user.errors[:captcha]) unless controller.skip_captcha?
 
     .control-group.center
       By signing up you agree to the 
