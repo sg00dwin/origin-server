@@ -51,6 +51,46 @@ __END__
 --- 
 - :descriptor: |
     --- 
+    Name: cakephp
+    Scaling: 
+      Max: -1
+      Min: 1
+    License-Url: ""
+    License: unknown
+    Help-Topics: {}
+    
+    Requires: 
+    - php-5.3
+    - mysql-5.1
+    Display-Name: cakephp-0.0-noarch
+    Cart-Data: {}
+    
+    Connections: 
+      mysql-5.1-php-5.3: 
+        Components: 
+        - php-5.3
+        - mysql-5.1
+    Version: "0.0"
+    Website: ""
+    Vendor: unknown
+    Categories: 
+    - cartridge
+    Description: ""
+    Architecture: noarch
+
+  :script: rhc-admin-ctl-template --command 'add' --cost '1' --git-url 'git://github.com/openshift/cakephp-example.git' --named 'CakePHP' --tags 'php,cakephp,framework,experimental'
+  :metadata: |-
+    {
+      "website": "http://cakephp.org/",
+      "git_url": "git://github.com/openshift/cakephp-example.git",
+      "license": "mit",
+      "version": "2.2.1",
+      "git_project_url": "http://github.com/openshift/cakephp-example",
+      "description": "CakePHP is a rapid development framework for PHP which uses commonly known design patterns like Active Record, Association Data Mapping, Front Controller and MVC."
+    }
+  :name: cakephp
+- :descriptor: |
+    --- 
     Name: drupal
     Scaling: 
       Max: -1
