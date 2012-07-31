@@ -3,7 +3,7 @@
 
 Summary:   Li broker components
 Name:      rhc-broker
-Version: 0.96.11
+Version: 0.96.12
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -109,6 +109,22 @@ rm -rf $RPM_BUILD_ROOT
 /bin/touch %{_localstatedir}/log/stickshift/user_action.log
 
 %changelog
+* Tue Jul 31 2012 Adam Miller <admiller@redhat.com> 0.96.12-1
+- Updating gem versions (admiller@redhat.com)
+- Merge pull request #143 from kraman/dev/kraman/bugs/user_action_log
+  (abhgupta@redhat.com)
+- Merge pull request #147 from rajatchopra/master (dmcphers@redhat.com)
+- Merge pull request #144 from mrunalp/bugs/district_config_fix
+  (kraman@gmail.com)
+- merge user response code into a function (rchopra@redhat.com)
+- Fixed a typo in the CakePHP deployment metadata (hripps@redhat.com)
+- Added CakePHP to production app templates (hripps@redhat.com)
+- add a force-destroy option to rhc-admin-ctl-app. for bug#844490
+  (rchopra@redhat.com)
+- Remove duplicate district configuration. (mpatel@redhat.com)
+- Made user_action_log a ghost file so that new deployments dont wipe out the
+  logs. (kraman@gmail.com)
+
 * Mon Jul 30 2012 Dan McPherson <dmcphers@redhat.com> 0.96.11-1
 - Updating gem versions (dmcphers@redhat.com)
 - Bug 844276 (dmcphers@redhat.com)
