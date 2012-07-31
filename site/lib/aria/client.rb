@@ -3,13 +3,14 @@ module Aria
     require_dependency 'aria/errors'
     include HTTParty
 
-    config = Rails.application.config
+    config = Rails.configuration
 
     debug_output if ENV['ARIA_DEBUG']
     parser Aria::WDDX
     base_uri config.aria_uri
     default_params :client_no => config.aria_client_no
     default_params :auth_key => config.aria_auth_key
+    headers 'User-Agent' => config.user_agent
 
     def respond_to?(meth)
       super

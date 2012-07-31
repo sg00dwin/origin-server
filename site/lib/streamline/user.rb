@@ -400,7 +400,7 @@ module Streamline
         Net::HTTP.new(service_base_url.host, service_base_url.port).tap do |http|
           http.use_ssl = true
           http.verify_mode = OpenSSL::SSL::VERIFY_NONE
-          http.read_timeout = Rails.application.config.streamline[:timeout] || 5
+          http.read_timeout = Rails.application.config.streamline[:timeout] || 15
           http.set_debug_output($stdout) if ENV['STREAMLINE_DEBUG']
         end
       end
@@ -412,6 +412,7 @@ module Streamline
 
           # Include the ticket as a cookie if present
           req.add_field('Cookie', "rh_sso=#{@ticket}") if @ticket
+          req['User-Agent'] = Rails.configuration.user_agent
 
           ActiveSupport::Notifications.instrument("request.streamline",
             :uri => url.request_uri,

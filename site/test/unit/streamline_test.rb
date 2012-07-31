@@ -116,6 +116,15 @@ class StreamlineUnitTest < ActiveSupport::TestCase
     @streamline.send(:http_post, @url)
   end
 
+  test "sets user agent" do
+    res = Net::HTTPSuccess.new('', '200', '')
+    res.expects(:body).at_least_once.returns('{}')
+    Net::HTTP.any_instance.expects(:request).with do |req|
+      req['User-Agent'] == Rails.configuration.user_agent
+    end.returns(res)
+    @streamline.send(:http_post, @url)
+  end
+
   test "http call redirect" do
     res = Net::HTTPSuccess.new('', '302', '')
     res.expects(:body).at_least_once.returns('{}')
