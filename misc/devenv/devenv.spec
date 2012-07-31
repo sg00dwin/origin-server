@@ -8,7 +8,7 @@
 
 Summary:   Dependencies for OpenShift development
 Name:      rhc-devenv
-Version: 0.97.8
+Version: 0.97.9
 Release:   1%{?dist}
 Group:     Development/Libraries
 License:   GPLv2
@@ -523,6 +523,9 @@ chmod -R 770 /var/log/rkhunter
 %{policydir}/*
 
 %changelog
+* Tue Jul 31 2012 Adam Miller <admiller@redhat.com> 0.97.9-1
+- remove invalid option (dmcphers@redhat.com)
+
 * Mon Jul 30 2012 Dan McPherson <dmcphers@redhat.com> 0.97.8-1
 - Allow drupal database to be dropped and recreated (ccoleman@redhat.com)
 - Bug 843313 - Max allowed packet preventing new devenv import.
