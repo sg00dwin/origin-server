@@ -162,6 +162,7 @@
 	.views-field-last-comment_timestamp, 
 	.views-field-comment-count {
 		font-size:11px;
+		min-width: 100px;
 	}
 	
 	.picture-right {
@@ -170,6 +171,7 @@
 }
 #forum-header {
 	position:relative;
+	clear: both;
 	
 	.new-post-button {
 		position:absolute;
@@ -180,10 +182,42 @@
 .view-header {
 	margin-bottom: 10px;
 }
+.post-to-forum .feed-icon {
+  float: right;
+}
+.custom-form-search {
+  margin-bottom: 0;
+  position: relative;
+  overflow: hidden;
+  display: inline-block;
+  
+  input[type=text] {
+    margin: 0;
+  }
+  input[type=submit] {
+    margin: 0;
+    background: transparent url("../images/sprite-vert.png") right -292px no-repeat;
+    height: 26px;
+    padding: 0;
+    border: 0;
+    position: absolute;
+    right: 3px;
+    top: 0;
+    width: 25px;
+    box-shadow: none;
+  }
+}
+.search-help {
+  font-size: 11px;
+  margin: 5px 0 25px 0;
+}
 
 @media (max-width:767px) {
 	.forum-list-main .picture-right {
     clear: left;
+  }
+  .custom-form-search {
+    display: block;
   }
 }
 .community #comments .views-field-name {
