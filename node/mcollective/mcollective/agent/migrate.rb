@@ -41,6 +41,16 @@ module OpenShiftMigration
         if ['mysql-5.1','mongodb-2.0'].include? gear_type
           File.open("#{gear_home}/.disable_stale","w") {}
         end
+        
+        # BZ 844267: switch /jbossas-7/jbossas-7/standalone/deployments from a copy to a link to app-root/repo/deployments
+        if ['jbossas-7'].include? gear_type
+          FileUtils.rm_rf("#{gear_home}/jbossas-7/jbossas-7/standalone/deployments")
+          File.symlink("#{gear_home}/app-root/repo/deployments","#{gear_home}/jbossas-7/jbossas-7/standalone/deployments")
+        end
+        if ['jbosseap-6.0'].include? gear_type
+          FileUtils.rm_rf("#{gear_home}/jbosseap-6.0/jbosseap-6.0/standalone/deployments")
+          File.symlink("#{gear_home}/app-root/repo/deployments","#{gear_home}/jbosseap-6.0/jbosseap-6.0/standalone/deployments")
+        end
 
         env_echos = []
 
