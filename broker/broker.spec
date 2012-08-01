@@ -107,11 +107,13 @@ rm -rf $RPM_BUILD_ROOT
 %post
 if [ ! -f %{brokerdir}/log/production.log ]; then
   /bin/touch %{brokerdir}/log/production.log
+  chown root:libra_user %{brokerdir}/log/production.log
   chmod 660 %{brokerdir}/log/production.log
 fi
 
 if [ ! -f %{_localstatedir}/log/stickshift/user_action.log ]; then
   /bin/touch %{_localstatedir}/log/stickshift/user_action.log
+  chown root:libra_user %{_localstatedir}/log/stickshift/user_action.log
   chmod 660 %{_localstatedir}/log/stickshift/user_action.log
 fi
 
