@@ -3,7 +3,7 @@
 
 Summary:   Li broker components
 Name:      rhc-broker
-Version: 0.96.12
+Version: 0.96.13
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -116,6 +116,11 @@ if [ ! -f %{_localstatedir}/log/stickshift/user_action.log ]; then
 fi
 
 %changelog
+* Tue Jul 31 2012 Adam Miller <admiller@redhat.com> 0.96.13-1
+- Updating gem versions (admiller@redhat.com)
+- Fixing build - setting file permission for log files in the post section
+  explicitly (kraman@gmail.com)
+
 * Tue Jul 31 2012 Adam Miller <admiller@redhat.com> 0.96.12-1
 - Updating gem versions (admiller@redhat.com)
 - Merge pull request #143 from kraman/dev/kraman/bugs/user_action_log
