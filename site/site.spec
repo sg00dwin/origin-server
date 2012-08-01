@@ -3,7 +3,7 @@
 
 Summary:   Li site components
 Name:      rhc-site
-Version: 0.96.7
+Version: 0.96.8
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -136,6 +136,10 @@ rm -rf %{buildroot}
 %{sitedir}/public
 
 %changelog
+* Wed Aug 01 2012 Adam Miller <admiller@redhat.com> 0.96.8-1
+- css fix for 844916b (sgoodwin@redhat.com)
+- fix 844891 (sgoodwin@redhat.com)
+
 * Tue Jul 31 2012 Adam Miller <admiller@redhat.com> 0.96.7-1
 - add custom forum only search; minor work of breadcrumb partials and spacing,
   headings at <480px get small line-height (sgoodwin@redhat.com)
