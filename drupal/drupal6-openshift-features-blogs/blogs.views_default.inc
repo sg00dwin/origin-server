@@ -1280,6 +1280,8 @@ function blogs_views_default_views() {
   ));
   $handler->override_option('title', 'Videos');
   $handler->override_option('header', '');
+  $handler->override_option('items_per_page', 15);
+  $handler->override_option('use_pager', 'mini');
   $handler->override_option('path', 'youtubevideos');
   $handler->override_option('menu', array(
     'type' => 'none',
@@ -1851,6 +1853,8 @@ function blogs_views_default_views() {
   ));
   $handler->override_option('title', 'Videos');
   $handler->override_option('header', '');
+  $handler->override_option('items_per_page', 15);
+  $handler->override_option('use_pager', 'mini');
   $handler->override_option('path', 'youkuvideos');
   $handler->override_option('menu', array(
     'type' => 'none',
