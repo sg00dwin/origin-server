@@ -1,7 +1,7 @@
 %define cartridgedir %{_libexecdir}/stickshift/cartridges/embedded/phpmoadmin-1.0
 
 Name: cartridge-phpmoadmin-1.0
-Version: 0.14.3
+Version: 0.14.4
 Release: 1%{?dist}
 Summary: Embedded phpMoAdmin support for express
 
@@ -54,6 +54,10 @@ rm -rf $RPM_BUILD_ROOT
 %doc %{cartridgedir}/LICENSE
 
 %changelog
+* Tue Jul 31 2012 Adam Miller <admiller@redhat.com> 0.14.4-1
+- Move direct calls to httpd init script to httpd_singular locking script
+  (rmillner@redhat.com)
+
 * Mon Jul 30 2012 Dan McPherson <dmcphers@redhat.com> 0.14.3-1
 - Bug 843713 - URL to phpmoadmin is wrong (ccoleman@redhat.com)
 
