@@ -1,7 +1,7 @@
 %define cartridgedir %{_libexecdir}/stickshift/cartridges/embedded/metrics-0.1
 
 Name: cartridge-metrics-0.1
-Version: 0.17.2
+Version: 0.17.3
 Release: 1%{?dist}
 Summary: Embedded metrics support for express
 
@@ -49,6 +49,10 @@ rm -rf $RPM_BUILD_ROOT
 %{cartridgedir}/info/manifest.yml
 
 %changelog
+* Tue Jul 31 2012 Adam Miller <admiller@redhat.com> 0.17.3-1
+- Move direct calls to httpd init script to httpd_singular locking script
+  (rmillner@redhat.com)
+
 * Thu Jul 19 2012 Adam Miller <admiller@redhat.com> 0.17.2-1
 - Fixes for bugz 840030 - Apache blocks access to /icons. Remove these as
   mod_autoindex has now been turned OFF (see bugz 785050 for more details).
