@@ -41,6 +41,7 @@ BuildRequires: rubygem-treetop
 BuildRequires: rubygem-net-http-persistent
 BuildRequires: rubygem-wddx
 BuildRequires: rubygem-rcov
+BuildRequires: rubygem-ci_reporter
 Requires:  rhc-common
 Requires:  rhc-server-common
 Requires:  httpd
@@ -62,7 +63,6 @@ Requires:  rubygem-httparty
 Requires:  rubygem-rdiscount
 Requires:  rubygem-webmock
 Requires:  js
-# The following requires are for the status subsite
 Requires:  ruby-sqlite3
 Requires:  rubygem-sqlite3
 Requires:  rubygem-sinatra
@@ -70,8 +70,9 @@ Requires:  rubygem-mail
 Requires:  rubygem-treetop
 Requires:  rubygem-net-http-persistent
 Requires:  rubygem-wddx
-Requires:  rhc-site-static
 Requires:  rubygem-rcov
+Requires:  rubygem-ci_reporter
+Requires:  rhc-site-static
 BuildArch: noarch
 
 %description
