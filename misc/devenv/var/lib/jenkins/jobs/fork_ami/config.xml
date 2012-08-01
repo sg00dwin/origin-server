@@ -15,7 +15,7 @@
         <hudson.model.StringParameterDefinition>
           <name>FORK_ID</name>
           <description>The default fork id to use for all repos.
-Note:  If you only want to use a fork for 1 of the repos then use that &lt;REPO&gt;_FORK_ID instead.</description>
+Note:  If you only want to use a fork for 1 of the repos then use that ${REPO}_FORK_ID instead.</description>
           <defaultValue></defaultValue>
         </hudson.model.StringParameterDefinition>
         <hudson.model.StringParameterDefinition>
@@ -24,9 +24,19 @@ Note:  If you only want to use a fork for 1 of the repos then use that &lt;REPO&
           <defaultValue></defaultValue>
         </hudson.model.StringParameterDefinition>
         <hudson.model.StringParameterDefinition>
+          <name>LI_BRANCH</name>
+          <description>Branch to use for li fork</description>
+          <defaultValue>master</defaultValue>
+        </hudson.model.StringParameterDefinition>
+        <hudson.model.StringParameterDefinition>
           <name>CRANKCASE_FORK_ID</name>
           <description>The fork id to use for the crankcase repo.  Will use FORK_ID followed by &apos;openshift&apos; if not specified.</description>
           <defaultValue></defaultValue>
+        </hudson.model.StringParameterDefinition>
+        <hudson.model.StringParameterDefinition>
+          <name>CRANKCASE_BRANCH</name>
+          <description>Branch to use for crankcase fork</description>
+          <defaultValue>master</defaultValue>
         </hudson.model.StringParameterDefinition>
         <hudson.model.StringParameterDefinition>
           <name>RHC_FORK_ID</name>
@@ -34,8 +44,14 @@ Note:  If you only want to use a fork for 1 of the repos then use that &lt;REPO&
           <defaultValue></defaultValue>
         </hudson.model.StringParameterDefinition>
         <hudson.model.StringParameterDefinition>
+          <name>RHC_BRANCH</name>
+          <description>Branch to use for rhc fork</description>
+          <defaultValue>master</defaultValue>
+        </hudson.model.StringParameterDefinition>
+        <hudson.model.StringParameterDefinition>
           <name>AMI_POSTFIX</name>
-          <description>The postfix to add to the ami name =&gt; fork_ami_${AMI_POSTFIX}_${BUILD_NUMBER}</description>
+          <description>The postfix to add to the ami name =&gt; fork_ami_${AMI_POSTFIX}_${BUILD_NUMBER}
+Usually would be the feature name or something to indicate the purpose of the ami.  Only 1 ami per postfix is kept.</description>
           <defaultValue></defaultValue>
         </hudson.model.StringParameterDefinition>
       </parameterDefinitions>
@@ -137,9 +153,27 @@ else
 fi
 
 rm -rf li rhc crankcase
-git clone git@github.com:${CRANKCASE_FORK_ID}/crankcase.git
-git clone git@github.com:${RHC_FORK_ID}/rhc.git
 git clone git@github.com:${LI_FORK_ID}/li.git
+pushd li
+  if [ -n &quot;$LI_BRANCH&quot; ]
+  then
+    git checkout $LI_BRANCH
+  fi
+popd
+git clone git@github.com:${CRANKCASE_FORK_ID}/crankcase.git
+pushd crankcase
+  if [ -n &quot;$CRANKCASE_BRANCH&quot; ]
+  then
+    git checkout $CRANKCASE_BRANCH
+  fi
+popd
+git clone git@github.com:${RHC_FORK_ID}/rhc.git
+pushd rhc
+  if [ -n &quot;$RHC_BRANCH&quot; ]
+  then
+    git checkout $RHC_BRANCH
+  fi
+popd
 
 pushd li
   build/devenv build ${TAG_NAME} ${BUILD_NUMBER} --register --official --terminate --install_from_local_source --instance_type m1.large
@@ -148,11 +182,11 @@ popd</command>
   </builders>
   <publishers>
     <hudson.tasks.ArtifactArchiver>
-      <artifacts>rhc/log/**</artifacts>
+      <artifacts>li/rhc/log/**</artifacts>
       <latestOnly>false</latestOnly>
     </hudson.tasks.ArtifactArchiver>
     <hudson.tasks.junit.JUnitResultArchiver>
-      <testResults>rhc/log/**/*.xml</testResults>
+      <testResults>li/rhc/log/**/*.xml</testResults>
       <keepLongStdio>false</keepLongStdio>
       <testDataPublishers/>
     </hudson.tasks.junit.JUnitResultArchiver>
