@@ -3,7 +3,7 @@
 
 Summary:   Li broker components
 Name:      rhc-broker
-Version: 0.96.15
+Version: 0.96.16
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -118,6 +118,13 @@ if [ ! -f %{_localstatedir}/log/stickshift/user_action.log ]; then
 fi
 
 %changelog
+* Wed Aug 01 2012 Adam Miller <admiller@redhat.com> 0.96.16-1
+- Updating gem versions (admiller@redhat.com)
+- migration for BZ844267 (bdecoste@gmail.com)
+- Merge pull request #154 from mrunalp/bugs/remove_duplicate_district_model
+  (kraman@gmail.com)
+- Remove duplicate district model. (mpatel@redhat.com)
+
 * Tue Jul 31 2012 Dan McPherson <dmcphers@redhat.com> 0.96.15-1
 - Updating gem versions (dmcphers@redhat.com)
 
