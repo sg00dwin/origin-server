@@ -1,7 +1,7 @@
 %define cartridgedir %{_libexecdir}/stickshift/cartridges/embedded/rockmongo-1.1
 
 Name: cartridge-rockmongo-1.1
-Version: 1.13.3
+Version: 1.13.4
 Release: 1%{?dist}
 Summary: Embedded RockMongo support for OpenShift
 
@@ -53,6 +53,12 @@ rm -rf $RPM_BUILD_ROOT
 %doc %{cartridgedir}/LICENSE
 
 %changelog
+* Wed Aug 01 2012 Adam Miller <admiller@redhat.com> 1.13.4-1
+- Merge pull request #157 from rmillner/dev/rmillner/bug/843326
+  (rmillner@redhat.com)
+- Some frameworks (ex: mod_wsgi) need HTTPS set to notify the app that https
+  was used. (rmillner@redhat.com)
+
 * Tue Jul 31 2012 Adam Miller <admiller@redhat.com> 1.13.3-1
 - Move direct calls to httpd init script to httpd_singular locking script
   (rmillner@redhat.com)
