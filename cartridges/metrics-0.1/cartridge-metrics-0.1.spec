@@ -1,7 +1,7 @@
 %define cartridgedir %{_libexecdir}/stickshift/cartridges/embedded/metrics-0.1
 
 Name: cartridge-metrics-0.1
-Version: 0.17.3
+Version: 0.17.4
 Release: 1%{?dist}
 Summary: Embedded metrics support for express
 
@@ -49,6 +49,12 @@ rm -rf $RPM_BUILD_ROOT
 %{cartridgedir}/info/manifest.yml
 
 %changelog
+* Wed Aug 01 2012 Adam Miller <admiller@redhat.com> 0.17.4-1
+- Merge pull request #157 from rmillner/dev/rmillner/bug/843326
+  (rmillner@redhat.com)
+- Some frameworks (ex: mod_wsgi) need HTTPS set to notify the app that https
+  was used. (rmillner@redhat.com)
+
 * Tue Jul 31 2012 Adam Miller <admiller@redhat.com> 0.17.3-1
 - Move direct calls to httpd init script to httpd_singular locking script
   (rmillner@redhat.com)
