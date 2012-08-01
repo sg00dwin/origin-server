@@ -34,19 +34,31 @@ class Prune < Thor
         DEVENV_AMI_WILDCARDS.each do |wildcard, opts|
           num_to_keep = opts[:keep]
           regex = opts[:regex] 
+          num_to_keep_per_sub_group = opts[:keep_per_sub_group] ? opts[:keep_per_sub_group] : num_to_keep
           images = get_amis(region, wildcard)
           sorted_images = images.to_a.sort_by do |i|
             if i.name =~ regex
-              $1
+              $2
             else
               999_999_999
             end
           end
+          
+          groups = {}
+          sorted_images.each do |i|
+            if i.name =~ regex
+              group_name = $1
+              groups[group_name] = [] unless groups[group_name]
+              groups[group_name] << i
+            else
+              puts "WARNING: Not sure what to do with: #{i.name}"
+            end
+          end
 
-          if sorted_images.length > 0
-            sorted_images.pop if (sorted_images[-1].tags["Name"] != VERIFIED_TAG) # Never remove the very latest ami
+          groups.each do |group_name, group|
+            group.pop if (group[-1].tags["Name"] != VERIFIED_TAG) # Never remove the very latest ami
 
-            sorted_images.delete_if do |i|
+            group.delete_if do |i|
               if i.tags["Name"] != VERIFIED_TAG
                 puts "Removing non qe-ready AMI: #{i.name}"
                 i.deregister
@@ -57,7 +69,7 @@ class Prune < Thor
             end
 
             current_rhc_version = nil
-            sorted_images.reverse.delete_if do |i|
+            group.reverse.delete_if do |i|
               delete = false
               if i.description =~ /(-\d+\.\d+).\d+/
                 next_rhc_version = $1
@@ -72,14 +84,26 @@ class Prune < Thor
             end
 
             #remove the images we want to keep
-            sorted_images.pop(num_to_keep)
+            group.pop(num_to_keep_per_sub_group)
 
+            # Deregister the rest
+            group.each do |i| 
+              puts "Removing old AMI: #{i.name}"
+              i.deregister
+            end
+          end
+          
+          if opts[:keep_per_sub_group]
+            #remove the images we want to keep
+            sorted_images.pop(num_to_keep)
+      
             # Deregister the rest
             sorted_images.each do |i| 
               puts "Removing old AMI: #{i.name}"
               i.deregister
             end
           end
+
         end
       end
     end

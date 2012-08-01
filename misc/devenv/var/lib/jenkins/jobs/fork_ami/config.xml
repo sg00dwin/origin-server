@@ -1,0 +1,161 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<project>
+  <actions/>
+  <description>Build an ami from a fork(s) of the openshift source</description>
+  <logRotator>
+    <daysToKeep>10</daysToKeep>
+    <numToKeep>50</numToKeep>
+    <artifactDaysToKeep>10</artifactDaysToKeep>
+    <artifactNumToKeep>50</artifactNumToKeep>
+  </logRotator>
+  <keepDependencies>false</keepDependencies>
+  <properties>
+    <hudson.model.ParametersDefinitionProperty>
+      <parameterDefinitions>
+        <hudson.model.StringParameterDefinition>
+          <name>FORK_ID</name>
+          <description>The default fork id to use for all repos.
+Note:  If you only want to use a fork for 1 of the repos then use that &lt;REPO&gt;_FORK_ID instead.</description>
+          <defaultValue></defaultValue>
+        </hudson.model.StringParameterDefinition>
+        <hudson.model.StringParameterDefinition>
+          <name>LI_FORK_ID</name>
+          <description>The fork id to use for the li repo.  Will use FORK_ID followed by &apos;openshift&apos; if not specified.</description>
+          <defaultValue></defaultValue>
+        </hudson.model.StringParameterDefinition>
+        <hudson.model.StringParameterDefinition>
+          <name>CRANKCASE_FORK_ID</name>
+          <description>The fork id to use for the crankcase repo.  Will use FORK_ID followed by &apos;openshift&apos; if not specified.</description>
+          <defaultValue></defaultValue>
+        </hudson.model.StringParameterDefinition>
+        <hudson.model.StringParameterDefinition>
+          <name>RHC_FORK_ID</name>
+          <description>The fork id to use for the rhc repo.  Will use FORK_ID followed by &apos;openshift&apos; if not specified.</description>
+          <defaultValue></defaultValue>
+        </hudson.model.StringParameterDefinition>
+        <hudson.model.StringParameterDefinition>
+          <name>AMI_POSTFIX</name>
+          <description>The postfix to add to the ami name =&gt; fork_ami_${AMI_POSTFIX}_${BUILD_NUMBER}</description>
+          <defaultValue></defaultValue>
+        </hudson.model.StringParameterDefinition>
+      </parameterDefinitions>
+    </hudson.model.ParametersDefinitionProperty>
+  </properties>
+  <scm class="hudson.plugins.git.GitSCM">
+    <configVersion>1</configVersion>
+    <remoteRepositories>
+      <org.spearce.jgit.transport.RemoteConfig>
+        <string>origin</string>
+        <int>5</int>
+        <string>fetch</string>
+        <string>+refs/heads/*:refs/remotes/origin/*</string>
+        <string>receivepack</string>
+        <string>git-upload-pack</string>
+        <string>uploadpack</string>
+        <string>git-upload-pack</string>
+        <string>url</string>
+        <string>git@github.com:openshift/li.git</string>
+        <string>tagopt</string>
+        <string></string>
+      </org.spearce.jgit.transport.RemoteConfig>
+    </remoteRepositories>
+    <branches>
+      <hudson.plugins.git.BranchSpec>
+        <name>master</name>
+      </hudson.plugins.git.BranchSpec>
+    </branches>
+    <mergeOptions/>
+    <recursiveSubmodules>false</recursiveSubmodules>
+    <doGenerateSubmoduleConfigurations>false</doGenerateSubmoduleConfigurations>
+    <authorOrCommitter>false</authorOrCommitter>
+    <clean>false</clean>
+    <wipeOutWorkspace>false</wipeOutWorkspace>
+    <pruneBranches>false</pruneBranches>
+    <buildChooser class="hudson.plugins.git.util.DefaultBuildChooser"/>
+    <gitTool>Default</gitTool>
+    <submoduleCfg class="list"/>
+    <relativeTargetDir></relativeTargetDir>
+    <excludedRegions></excludedRegions>
+    <excludedUsers></excludedUsers>
+    <skipTag>false</skipTag>
+  </scm>
+  <canRoam>true</canRoam>
+  <disabled>true</disabled>
+  <blockBuildWhenDownstreamBuilding>false</blockBuildWhenDownstreamBuilding>
+  <blockBuildWhenUpstreamBuilding>false</blockBuildWhenUpstreamBuilding>
+  <authToken>libra1</authToken>
+  <triggers class="vector"/>
+  <concurrentBuild>true</concurrentBuild>
+  <builders>
+    <hudson.tasks.Shell>
+      <command>if [ -n &quot;$FORK_ID&quot; ]
+then
+  if [ -z &quot;$LI_FORK_ID&quot; ]
+  then
+    LI_FORK_ID=$FORK_ID
+  fi
+  if [ -z &quot;$CRANKCASE_FORK_ID&quot; ]
+  then
+    CRANKCASE_FORK_ID=$FORK_ID
+  fi
+  if [ -z &quot;$RHC_FORK_ID&quot; ]
+  then
+    RHC_FORK_ID=$FORK_ID
+  fi
+else
+  if [ -z &quot;$LI_FORK_ID&quot; ]
+  then
+    LI_FORK_ID=openshift
+  fi
+  if [ -z &quot;$CRANKCASE_FORK_ID&quot; ]
+  then
+    CRANKCASE_FORK_ID=openshift
+  fi
+  if [ -z &quot;$RHC_FORK_ID&quot; ]
+  then
+    RHC_FORK_ID=openshift
+  fi
+fi
+
+if [ -n &quot;$AMI_POSTFIX&quot; ]
+then
+  TAG_NAME=fork_ami_${AMI_POSTFIX}
+elif [ -n &quot;$FORK_ID&quot; ]
+then
+  TAG_NAME=fork_ami_${FORK_ID}
+elif [ -n &quot;$LI_FORK_ID&quot; ]
+then
+  TAG_NAME=fork_ami_${LI_FORK_ID}
+elif [ -n &quot;$CRANKCASE_FORK_ID&quot; ]
+then
+  TAG_NAME=fork_ami_${CRANKCASE_FORK_ID}
+elif [ -n &quot;$RHC_FORK_ID&quot; ]
+then
+  TAG_NAME=fork_ami_${RHC_FORK_ID}
+else
+  TAG_NAME=fork_ami_openshift
+fi
+
+rm -rf li rhc crankcase
+git clone git@github.com:${CRANKCASE_FORK_ID}/crankcase.git
+git clone git@github.com:${RHC_FORK_ID}/rhc.git
+git clone git@github.com:${LI_FORK_ID}/li.git
+
+pushd li
+  build/devenv build ${TAG_NAME} ${BUILD_NUMBER} --register --official --terminate --install_from_local_source --instance_type m1.large
+popd</command>
+    </hudson.tasks.Shell>
+  </builders>
+  <publishers>
+    <hudson.tasks.ArtifactArchiver>
+      <artifacts>rhc/log/**</artifacts>
+      <latestOnly>false</latestOnly>
+    </hudson.tasks.ArtifactArchiver>
+    <hudson.tasks.junit.JUnitResultArchiver>
+      <testResults>rhc/log/**/*.xml</testResults>
+      <keepLongStdio>false</keepLongStdio>
+      <testDataPublishers/>
+    </hudson.tasks.junit.JUnitResultArchiver>
+  </publishers>
+  <buildWrappers/>
+</project>

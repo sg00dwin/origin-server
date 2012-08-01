@@ -17,14 +17,16 @@ DEVENV_BASE_WILDCARD = "devenv-base_*"
 DEVENV_STAGE_BASE_WILDCARD = "devenv-stage-base_*"
 OSO_FEDORA_WILDCARD = "oso_fedora_*"
 OSO_RHEL_WILDCARD = "oso_rhel_*"
-DEVENV_AMI_WILDCARDS = {DEVENV_WILDCARD => {:keep => 2, :regex => /devenv_(\d*)/}, 
-                        DEVENV_STAGE_WILDCARD => {:keep => 8, :regex => /devenv-stage_(\d*)/},
-                        DEVENV_CLEAN_WILDCARD => {:keep => 1, :regex => /devenv-clean_(\d*)/},
-                        DEVENV_STAGE_CLEAN_WILDCARD => {:keep => 1, :regex => /devenv-stage-clean_(\d*)/},
-                        DEVENV_BASE_WILDCARD => {:keep => 1, :regex => /devenv-base_(\d*)/},
-                        DEVENV_STAGE_BASE_WILDCARD => {:keep => 1, :regex => /devenv-stage-base_(\d*)/},
-                        OSO_FEDORA_WILDCARD => {:keep => 1, :regex => /oso_fedora_(\d*)/},
-                        OSO_RHEL_WILDCARD => {:keep => 1, :regex => /oso_rhel_(\d*)/}}
+FORK_AMI_WILDCARD = "fork_ami_*"
+DEVENV_AMI_WILDCARDS = {DEVENV_WILDCARD => {:keep => 2, :regex => /(devenv)_(\d*)/}, 
+                        DEVENV_STAGE_WILDCARD => {:keep => 8, :regex => /(devenv-stage)_(\d*)/},
+                        DEVENV_CLEAN_WILDCARD => {:keep => 1, :regex => /(devenv-clean)_(\d*)/},
+                        DEVENV_STAGE_CLEAN_WILDCARD => {:keep => 1, :regex => /(devenv-stage-clean)_(\d*)/},
+                        DEVENV_BASE_WILDCARD => {:keep => 1, :regex => /(devenv-base)_(\d*)/},
+                        DEVENV_STAGE_BASE_WILDCARD => {:keep => 1, :regex => /(devenv-stage-base)_(\d*)/},
+                        OSO_FEDORA_WILDCARD => {:keep => 1, :regex => /(oso_fedora)_(\d*)/},
+                        OSO_RHEL_WILDCARD => {:keep => 1, :regex => /(oso_rhel)_(\d*)/},
+                        FORK_AMI_WILDCARD => {:keep => 50, :keep_per_sub_group => 1, :regex => /(fork_ami_.*)_(\d*)/}}
 VERIFIER_REGEXS = {/^(devenv)_(\d+)$/ => {:multiple => true},
                    /^(devenv_verifier)_(\d+)$/ => {}, 
                    /^(devenv-stage)_(\d+)$/ => {}, 
@@ -40,6 +42,7 @@ VERIFIER_REGEXS = {/^(devenv)_(\d+)$/ => {:multiple => true},
                    /^(site_extended)_(\d+)$/ => {:max_run_time => (60*60*4)},
                    /^(rhc_extended)_(\d+)$/ => {:max_run_time => (60*60*4)},
                    /(pull_request)_(\d+)$/ => {:multiple => true},
+                   /(fork_ami)_.*_(\d+)$/ => {:multiple => true},
                    /^(broker_check)_(\d+)$/ => {}, 
                    /^(node_check)_(\d+)$/ => {}, 
                    /^(libra_web)_(\d+)$/ => {:max_run_time => (60*60*3)}, 
