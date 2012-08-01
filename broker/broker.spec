@@ -105,8 +105,15 @@ rm -rf $RPM_BUILD_ROOT
 /usr/lib/stickshift/broker/application_templates
 
 %post
-/bin/touch %{brokerdir}/log/production.log
-/bin/touch %{_localstatedir}/log/stickshift/user_action.log
+if [ ! -f %{brokerdir}/log/production.log ]; then
+  /bin/touch %{brokerdir}/log/production.log
+  chmod 660 %{brokerdir}/log/production.log
+fi
+
+if [ ! -f %{_localstatedir}/log/stickshift/user_action.log ]; then
+  /bin/touch %{_localstatedir}/log/stickshift/user_action.log
+  chmod 660 %{_localstatedir}/log/stickshift/user_action.log
+fi
 
 %changelog
 * Tue Jul 31 2012 Adam Miller <admiller@redhat.com> 0.96.12-1
