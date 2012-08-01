@@ -2,7 +2,7 @@
 
 Summary:       Multi-tenant cloud management system node tools
 Name:          rhc-node
-Version: 0.96.8
+Version: 0.96.9
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -266,6 +266,10 @@ fi
 /lib64/security/pam_libra.so
 
 %changelog
+* Tue Jul 31 2012 Dan McPherson <dmcphers@redhat.com> 0.96.9-1
+- Move tc output to global and examine the quota output to ensure its really
+  enforcing. (rmillner@redhat.com)
+
 * Tue Jul 31 2012 Adam Miller <admiller@redhat.com> 0.96.8-1
 - Cleaning up m-collective from li repo (kraman@gmail.com)
 
