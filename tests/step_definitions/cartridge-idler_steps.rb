@@ -29,23 +29,33 @@ Given /^a new php_idler application$/ do
     'name' => app_name
   }
   command = $php_config_format % [app_name, namespace, account_name]
-  exitcode = runcon command, $selinux_user, $selinux_role, $selinux_type, nil, 10
-  raise "Non zero exit code when creating php application: #{exitcode}" unless exitcode == 0
+  exit_code = runcon command, $selinux_user, $selinux_role, $selinux_type, nil, 10
+  raise "Non zero exit code when creating php application: #{exit_code}" unless exit_code == 0
 end
 
 Then /^the php application health\-check will( not)? be successful$/ do | negate |
   good_status = negate ? 1 : 0
 
+  command = "/usr/bin/curl -L -H 'Host: #{@app['name']}-#{@app['namespace']}.dev.rhcloud.com' -s http://localhost/health_check.php | /bin/grep -e '^1$'"
+
   # This command causes curl to hit the app, causing restorer to turn it back
   # on and redirect.  Curl then follows that redirect.
-  command = "/usr/bin/curl -L -H 'Host: #{@app['name']}-#{@app['namespace']}.dev.rhcloud.com' -s http://localhost/health_check.php | /bin/grep -e '^1$'"
-  exit_status = runcon command, 'unconfined_u', 'unconfined_r', 'unconfined_t'
-  exit_status.should == good_status
+  retries = 60
+  while 0 < retries
+    exit_code = run command
+    break if exit_code == good_status
+    sleep 1
+    retries -= 1
+    $logger.info("Waiting for httpd graceful to finish. Retries left: #{retries}")
+  end
+
+  exit_code.should == good_status
 end
 
 When /^I idle the php application$/ do
   account_name = @account['accountname']
-  run_stdout("/usr/bin/rhc-idler -u #{@account['accountname']}")
+  exit_code = run("/usr/bin/rhc-idler -u #{@account['accountname']}")
+  raise "Non zero exit code when idling php application: #{exit_code}" unless exit_code == 0
 end
 
 Then /^record the active capacity$/ do

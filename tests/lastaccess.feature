@@ -1,5 +1,5 @@
-@runtime_verify
-@runtime_verify3
+@runtime_extended
+@runtime_extended3
 Feature: Last Access Updater
   Scenario: Application Creation
     Given the libra client tools
