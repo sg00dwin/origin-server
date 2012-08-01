@@ -2,7 +2,7 @@
 
 Summary:       Multi-tenant cloud management system node tools
 Name:          rhc-node
-Version: 0.96.9
+Version: 0.96.10
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -266,6 +266,12 @@ fi
 /lib64/security/pam_libra.so
 
 %changelog
+* Wed Aug 01 2012 Adam Miller <admiller@redhat.com> 0.96.10-1
+- Merge branch 'master' of https://github.com/openshift/li (bdecoste@gmail.com)
+- migration for BZ844267 (bdecoste@gmail.com)
+- BZ 844948: Medium gear gets same quota as small and large.
+  (rmillner@redhat.com)
+
 * Tue Jul 31 2012 Dan McPherson <dmcphers@redhat.com> 0.96.9-1
 - Move tc output to global and examine the quota output to ensure its really
   enforcing. (rmillner@redhat.com)
