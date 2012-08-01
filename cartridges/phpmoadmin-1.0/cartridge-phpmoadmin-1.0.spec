@@ -1,7 +1,7 @@
 %define cartridgedir %{_libexecdir}/stickshift/cartridges/embedded/phpmoadmin-1.0
 
 Name: cartridge-phpmoadmin-1.0
-Version: 0.14.4
+Version: 0.14.5
 Release: 1%{?dist}
 Summary: Embedded phpMoAdmin support for express
 
@@ -54,6 +54,12 @@ rm -rf $RPM_BUILD_ROOT
 %doc %{cartridgedir}/LICENSE
 
 %changelog
+* Wed Aug 01 2012 Adam Miller <admiller@redhat.com> 0.14.5-1
+- Merge pull request #157 from rmillner/dev/rmillner/bug/843326
+  (rmillner@redhat.com)
+- Some frameworks (ex: mod_wsgi) need HTTPS set to notify the app that https
+  was used. (rmillner@redhat.com)
+
 * Tue Jul 31 2012 Adam Miller <admiller@redhat.com> 0.14.4-1
 - Move direct calls to httpd init script to httpd_singular locking script
   (rmillner@redhat.com)
