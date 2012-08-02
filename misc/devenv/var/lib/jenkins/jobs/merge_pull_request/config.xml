@@ -69,7 +69,7 @@
     <skipTag>false</skipTag>
   </scm>
   <canRoam>true</canRoam>
-  <disabled>false</disabled>
+  <disabled>true</disabled>
   <blockBuildWhenDownstreamBuilding>false</blockBuildWhenDownstreamBuilding>
   <blockBuildWhenUpstreamBuilding>false</blockBuildWhenUpstreamBuilding>
   <authToken>libra1</authToken>
@@ -103,6 +103,7 @@ then
   popd
 fi
 
+
 pushd li
   build/devenv build merge_pull_request ${BUILD_NUMBER} --terminate --install_from_local_source --instance_type m1.large
 popd
@@ -120,14 +121,7 @@ fi
 if [ -n &quot;$RHC_PULL_ID&quot; ]
 then
   test_pull_requests --config /etc/openshift/test_pull_request.rhc --merge_pull_request $RHC_PULL_ID
-fi
-RESULT=$?</command>
-    </hudson.tasks.Shell>
-    <hudson.tasks.Shell>
-      <command>#!/bin/sh -e
-SECRET=`sed &apos;s/[][\.*^$/]/\\\\&amp;/g&apos; &lt;~/.config/secret`
-sed -i &quot;s/$SECRET/BLOCKED/g&quot; ../builds/$BUILD_NUMBER/log
-exit $RESULT</command>
+fi</command>
     </hudson.tasks.Shell>
   </builders>
   <publishers>
