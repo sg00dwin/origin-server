@@ -13,14 +13,9 @@
     <hudson.model.ParametersDefinitionProperty>
       <parameterDefinitions>
         <hudson.model.StringParameterDefinition>
-          <name>CRANKCASE_PULL_ID</name>
+          <name>PULL_ID</name>
           <description></description>
           <defaultValue></defaultValue>
-        </hudson.model.StringParameterDefinition>
-        <hudson.model.StringParameterDefinition>
-          <name>CRANKCASE_BRANCH</name>
-          <description></description>
-          <defaultValue>master</defaultValue>
         </hudson.model.StringParameterDefinition>
       </parameterDefinitions>
     </hudson.model.ParametersDefinitionProperty>
@@ -72,7 +67,7 @@
   <concurrentBuild>true</concurrentBuild>
   <builders>
     <hudson.tasks.Shell>
-      <command>echo &quot;RUNNING for Pull Request: https://github.com/openshift/crankcase/pull/$CRANKCASE_PULL_ID&quot;
+      <command>echo &quot;RUNNING for Pull Request: https://github.com/openshift/crankcase/pull/$PULL_ID&quot;
 
 # Build and install HEAD for the integration tests
 build/devenv launch crankcase_pull_request_${BUILD_NUMBER} --verifier --instance_type m1.large
@@ -82,7 +77,7 @@ git clone git://github.com/openshift/crankcase.git
 git clone git://github.com/openshift/rhc.git
 
 pushd crankcase
-curl https://github.com/openshift/crankcase/pull/$CRANKCASE_PULL_ID.patch | git am
+curl https://github.com/openshift/crankcase/pull/$PULL_ID.patch | git am
 popd
 
 build/devenv sync crankcase_pull_request_${BUILD_NUMBER} --tag --clean_metadata
