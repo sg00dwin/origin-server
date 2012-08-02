@@ -35,6 +35,8 @@ GEM
       coffee-script (~> 2.2)
     builder (2.1.2)
     chunky_png (1.2.0)
+    ci_reporter (1.7.0)
+      builder (>= 2.1.2)
     coffee-script (2.2.0)
       coffee-script-source
       execjs
@@ -89,6 +91,7 @@ GEM
       rdoc (~> 3.7)
       thor (~> 0.14.4)
     rake (0.8.7)
+    rcov (1.0.0)
     rdiscount (1.6.3.2)
     rdoc (3.7)
     recaptcha (0.3.1)
@@ -115,6 +118,7 @@ PLATFORMS
 
 DEPENDENCIES
   barista
+  ci_reporter
   compass
   crack
   formtastic (~> 1.2.3)
@@ -127,6 +131,7 @@ DEPENDENCIES
   parseconfig
   rack
   rails (~> 3.0.13)
+  rcov
   rdiscount
   recaptcha
   regin

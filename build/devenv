@@ -199,6 +199,7 @@ mkdir -p /tmp/rhc/junit
       scp_from(hostname, "/var/www/stickshift/site/httpd/logs/access_log", "rhc/log/site/access_log.log")
       scp_from(hostname, "/var/www/stickshift/site/httpd/logs/error_log", "rhc/log/site/error_log.log")
       scp_from(hostname, "/var/www/stickshift/site/log/*", "rhc/log/site")
+      scp_from(hostname, "/root/li-test/site/test/reports/*", "rhc/log/site/test/reports")
       scp_from(hostname, "/var/www/stickshift/broker/httpd/logs/access_log", "rhc/log/broker/access_log.log")
       scp_from(hostname, "/var/www/stickshift/broker/httpd/logs/error_log", "rhc/log/broker/error_log.log")
       scp_from(hostname, "/var/www/stickshift/broker/log/*", "rhc/log/broker")
@@ -506,9 +507,13 @@ mkdir -p /tmp/rhc/junit
               test_queues[i-1] << ["Runtime Group #{i.to_s}", "cucumber #{@@CUCUMBER_OPTIONS} -t @runtime#{i.to_s} li-test/tests"]
             end
           end
-          
+
           unless options.exclude_site?
-            test_queues[3] << ["Site Check", "cd li-test/site; rake test:check"]
+            test_queues[0] << ["Site Check Applications", "cd li-test/site; rake test:check:applications"]
+            test_queues[1].unshift ["Site Check Base", "cd li-test/site; rake test:check:base"]
+            test_queues[1] << ["Site Check Cartridges", "cd li-test/site; rake test:check:cartridges"]
+            test_queues[2] << ["Site Check Miscellaneous 1", "cd li-test/site; rake test:check:misc1"]
+            test_queues[3] << ["Site Check REST API Integration", "cd li-test/site; rake test:check:restapi_integration"]
           end
 
           unless options.exclude_rhc?
