@@ -5,7 +5,7 @@
 %global modname             blogs
 
 Name:    drupal%{drupal_release}-openshift-features-%{modname}
-Version: 1.5.2
+Version: 1.6.0
 Release: 1%{?dist}
 Summary: Openshift Red Hat Custom Blog Feature for Drupal6
 Group:   Applications/Publishing
