@@ -3,7 +3,7 @@
 
 Summary:   Li site components
 Name:      rhc-site
-Version: 0.97.1
+Version: 0.97.2
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -137,6 +137,12 @@ rm -rf %{buildroot}
 %{sitedir}/public
 
 %changelog
+* Thu Aug 02 2012 Adam Miller <admiller@redhat.com> 0.97.2-1
+- Merge pull request #162 from smarterclayton/use_ci_reporter_in_site
+  (ccoleman@redhat.com)
+- Bug 844845 - Parallelize site tests, add junit style XML output for reporting
+  to Jenkins (ccoleman@redhat.com)
+
 * Thu Aug 02 2012 Adam Miller <admiller@redhat.com> 0.97.1-1
 - bump_minor_versions for sprint 16 (admiller@redhat.com)
 
