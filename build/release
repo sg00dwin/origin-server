@@ -356,7 +356,7 @@ class Release < Thor
   method_option :push_changes, :type => :boolean, :desc => "Push the changes to the current branch"
   method_option :verbose, :type => :boolean, :desc => "Enable verbose logging"
   def bump_minor_versions
-    fail_if_uncommited_changes
+    fail_if_uncommitted_changes
 
     orig_branches = checkout_branch("master", options.verbose?)
     begin
