@@ -1,4 +1,4 @@
-policy_module(libra,1.1.35)
+policy_module(libra,1.1.36)
 
 ########################################
 #
@@ -158,6 +158,11 @@ rw_fifo_files_pattern(libra_app_domain, libra_var_lib_t, libra_var_lib_t)
 rw_sock_files_pattern(libra_app_domain, libra_var_lib_t, libra_var_lib_t)
 read_lnk_files_pattern(libra_app_domain, libra_var_lib_t, libra_var_lib_t)
 allow libra_app_domain libra_var_lib_t:file entrypoint;
+
+# Dontaudit libra domains trying to search other libra domains directories, 
+# this happens just when users are probing the system
+dontaudit libra_app_domain libra_var_lib_t:dir search_dir_perms
+;
 
 
 kernel_read_system_state(libra_app_domain)
