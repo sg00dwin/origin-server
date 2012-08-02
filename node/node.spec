@@ -31,6 +31,8 @@ Requires:      stickshift-mcollective-agent
 Requires:      quota
 Requires:      lsof
 Requires:      wget
+Requires:      nano
+Requires:      emacs-nox
 Requires:      oddjob
 Requires:      libjpeg-devel
 Requires:      libcurl-devel
