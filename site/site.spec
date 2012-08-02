@@ -3,7 +3,7 @@
 
 Summary:   Li site components
 Name:      rhc-site
-Version: 0.97.0
+Version: 0.97.1
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -136,6 +136,9 @@ rm -rf %{buildroot}
 %{sitedir}/public
 
 %changelog
+* Thu Aug 02 2012 Adam Miller <admiller@redhat.com> 0.97.1-1
+- bump_minor_versions for sprint 16 (admiller@redhat.com)
+
 * Wed Aug 01 2012 Adam Miller <admiller@redhat.com> 0.96.8-1
 - css fix for 844916b (sgoodwin@redhat.com)
 - fix 844891 (sgoodwin@redhat.com)
