@@ -144,6 +144,17 @@ module Hub
       res.error! unless res.success?
       res.data
     end
+    
+    def put url, params = nil
+      perform_request url, :Put do |req|
+        if params
+          req.body = JSON.dump params
+          req['Content-Type'] = 'application/json'
+        end
+        yield req if block_given?
+        req['Content-Length'] = req.body ? req.body.length : 0
+      end
+    end
 
     #
     # Yields on the OpenShift bot comment with the test results.
