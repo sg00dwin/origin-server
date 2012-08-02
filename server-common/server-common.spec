@@ -1,5 +1,3 @@
-%define ruby_sitelibdir            %(ruby -rrbconfig -e "puts Config::CONFIG['sitelibdir']")
-
 Summary:       Common dependencies of the OpenShift broker and site
 Name:          rhc-server-common
 Version: 0.93.1
@@ -10,43 +8,28 @@ URL:           http://openshift.redhat.com
 Source0:       rhc-server-common-%{version}.tar.gz
 
 BuildRoot:     %(mktemp -ud %{_tmppath}/%{name}-%{version}-%{release}-XXXXXX)
-BuildRequires: ruby
-Requires:      ruby >= 1.8.7
-Requires:      rubygem-parseconfig
-Requires:      rubygem-json
-Requires:      rubygem-aws-sdk
 Requires:      rhc-common
 Requires(pre): shadow-utils
-
-Obsoletes:     rubygem-aws
 
 BuildArch: noarch
 
 %description
-Provides the common dependencies for the OpenShift broker and site
+Provides the common group and user objects that secure the OpenShift broker and site.
 
 %prep
 %setup -q
 
 %build
-for f in openshift/*.rb
-do
-  ruby -c $f
-done
 
 %install
 rm -rf %{buildroot}
-mkdir -p %{buildroot}%{ruby_sitelibdir}
-cp -r openshift %{buildroot}%{ruby_sitelibdir}
-cp openshift.rb %{buildroot}%{ruby_sitelibdir}
+mkdir -p %{buildroot}
 
 %clean
 rm -rf %{buildroot}
 
 %files
 %defattr(-,root,root,-)
-%{ruby_sitelibdir}/openshift
-%{ruby_sitelibdir}/openshift.rb
 
 %pre
 getent group libra_user >/dev/null || groupadd -r libra_user

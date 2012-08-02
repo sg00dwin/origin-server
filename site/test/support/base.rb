@@ -1,5 +1,4 @@
 require 'mocha'
-require 'openshift'
 require 'streamline'
 
 require 'webmock/test_unit'
