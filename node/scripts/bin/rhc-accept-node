@@ -292,6 +292,7 @@ def check_app_dirs
         next if entry == 'lost+found'
         next if entry == 'last_access.log'
         next if File.symlink? File.join($GEAR_BASE_DIR,entry)
+        next unless File.directory? File.join($GEAR_BASE_DIR,entry)
         ind = copy_all_users.index(entry)
         if ind
           copy_all_users.delete_at(ind)
