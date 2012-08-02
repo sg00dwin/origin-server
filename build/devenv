@@ -194,7 +194,7 @@ mkdir -p /tmp/rhc/junit
 
     def download_artifacts(hostname)
       print "Downloading logs and screenshots..."
-      `rm -rf rhc/log; mkdir -p rhc/log/; pushd rhc/log > /dev/null; mkdir -p site broker mcollective system screenshots selenium jbossas broker-profiler coverage; popd > /dev/null`
+      `rm -rf rhc/log; mkdir -p rhc/log/; pushd rhc/log > /dev/null; mkdir -p site/test/reports broker mcollective system screenshots selenium jbossas broker-profiler coverage; popd > /dev/null`
       scp_from(hostname, "/tmp/rhc/*", "rhc/log")
       scp_from(hostname, "/var/www/stickshift/site/httpd/logs/access_log", "rhc/log/site/access_log.log")
       scp_from(hostname, "/var/www/stickshift/site/httpd/logs/error_log", "rhc/log/site/error_log.log")
