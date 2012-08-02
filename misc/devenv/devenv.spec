@@ -8,7 +8,7 @@
 
 Summary:   Dependencies for OpenShift development
 Name:      rhc-devenv
-Version: 0.98.0
+Version: 0.98.1
 Release:   1%{?dist}
 Group:     Development/Libraries
 License:   GPLv2
@@ -523,6 +523,10 @@ chmod -R 770 /var/log/rkhunter
 %{policydir}/*
 
 %changelog
+* Thu Aug 02 2012 Adam Miller <admiller@redhat.com> 0.98.1-1
+- bump_minor_versions for sprint 16 (admiller@redhat.com)
+- jenkins job updates (dmcphers@redhat.com)
+
 * Wed Aug 01 2012 Adam Miller <admiller@redhat.com> 0.97.10-1
 - add fork ami creation process and cleanup (dmcphers@redhat.com)
 
