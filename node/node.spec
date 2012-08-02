@@ -2,7 +2,7 @@
 
 Summary:       Multi-tenant cloud management system node tools
 Name:          rhc-node
-Version: 0.96.10
+Version: 0.96.11
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -266,6 +266,9 @@ fi
 /lib64/security/pam_libra.so
 
 %changelog
+* Thu Aug 02 2012 Adam Miller <admiller@redhat.com> 0.96.11-1
+- Filter for directories (rmillner@redhat.com)
+
 * Wed Aug 01 2012 Adam Miller <admiller@redhat.com> 0.96.10-1
 - Merge branch 'master' of https://github.com/openshift/li (bdecoste@gmail.com)
 - migration for BZ844267 (bdecoste@gmail.com)
