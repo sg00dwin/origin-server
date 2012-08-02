@@ -1,7 +1,7 @@
 %define cartridgedir %{_libexecdir}/stickshift/cartridges/embedded/rockmongo-1.1
 
 Name: cartridge-rockmongo-1.1
-Version: 1.14.0
+Version: 1.14.1
 Release: 1%{?dist}
 Summary: Embedded RockMongo support for OpenShift
 
@@ -53,6 +53,9 @@ rm -rf $RPM_BUILD_ROOT
 %doc %{cartridgedir}/LICENSE
 
 %changelog
+* Thu Aug 02 2012 Adam Miller <admiller@redhat.com> 1.14.1-1
+- bump_minor_versions for sprint 16 (admiller@redhat.com)
+
 * Wed Aug 01 2012 Adam Miller <admiller@redhat.com> 1.13.4-1
 - Merge pull request #157 from rmillner/dev/rmillner/bug/843326
   (rmillner@redhat.com)
