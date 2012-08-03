@@ -1,5 +1,4 @@
 require 'mocha'
-require 'openshift'
 require 'streamline'
 
 class ActiveSupport::TestCase
