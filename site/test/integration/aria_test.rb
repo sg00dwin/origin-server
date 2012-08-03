@@ -76,15 +76,11 @@ class AriaIntegrationTest < ActionDispatch::IntegrationTest
   end
 
   test 'should set direct post settings' do
-    set = Aria::PaymentMethod.set_mode_website_new_payment "https://openshift.redhat.com"
+    set = Aria::DirectPost.new('testplan', "https://example.com")
 
-    params = {}
-    Aria.get_reg_uss_config_params(:set_name => "direct_post_#{set}").out_reg_uss_config_params.each do |p|
-      params[p.param_name] = p.param_val
-    end
-
+    params = Aria.get_reg_uss_config_params("direct_post_#{set}")
     assert_equal({
-      'redirecturl' => 'https://openshift.redhat.com',
+      'redirecturl' => 'https://example.com',
       'do_cc_auth' => '1',
       'min_auth_threshold' => '0',
       'change_status_on_cc_auth_success' => '1',
@@ -92,6 +88,10 @@ class AriaIntegrationTest < ActionDispatch::IntegrationTest
       'change_status_on_cc_auth_failure' => '1',
       'status_on_cc_auth_failure' => '-1',
     }, params)
+
+    Aria::DirectPost.destroy(set)
+
+    assert Aria.get_reg_uss_config_params("direct_post_#{set}").empty?
   end
 
   test 'should get plan details' do

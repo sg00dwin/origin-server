@@ -13,8 +13,9 @@ class PaymentMethodsController < AccountController
     @user = current_user.extend Aria::User
 
     @payment_method = Rails.env.development? ? Aria::PaymentMethod.test : Aria::PaymentMethod.new
-
-    @payment_method.mode = Aria::PaymentMethod.set_mode_website_new_payment(direct_post_account_plan_upgrade_payment_method_url)
+    @payment_method.mode =
+      Aria::DirectPost.get_configured(params[:plan_id]) ||
+      Aria::DirectPost.new(params[:plan_id], direct_post_account_plan_upgrade_payment_method_url)
     @payment_method.session_id = @user.create_session
   end
 
