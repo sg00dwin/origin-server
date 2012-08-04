@@ -22,7 +22,7 @@ require 'time'
 
 def usage
     puts <<USAGE
-Usage: test_pull_requests [--help] [--config <file>] [--merge_pull_request <pull_number>]
+Usage: test_pull_requests [--help] [--config <file>] [--merge_pull_request <pull_id>]
 
 This will process all the openshift pull requests and submit
 Jenkins tests for any mergeable pull requests
@@ -30,8 +30,8 @@ Jenkins tests for any mergeable pull requests
 Options:
 -h|--help
     Show Usage info
---merge_pull_request <pull_number>
-    Takes the number of the pull request to merge and merges into master
+--merge_pull_request <pull_id>
+    Takes the id of the pull request to merge and merges into master
 -c|--config <file>
     JSON configuration file (default: crankcase configuration)
 USAGE
@@ -56,7 +56,7 @@ if args[:help]
   exit 1
 end
 
-merge_pull_number = args[:merge_pull_request] 
+merge_pull_id = args[:merge_pull_request] 
 
 include Hub
 
@@ -71,20 +71,44 @@ else
         "app_url" : "https://ci.dev.openshift.redhat.com",
         "hub_config" : "~/.config/hub",
         "proxy_host" : null,
-        "proxy_port" : null,
-	"project_name" : "test_pull_request"
+        "proxy_port" : null
       }
     |)
 end
 
-# Comment string constants
-TEST_PREFIX = "Test Results:"
-WAITING_COMMENT = "#{TEST_PREFIX} Waiting for stable build"
-EVALUATING_COMMENT = "#{TEST_PREFIX} Evaluating for testing"
-SUBMITTING_COMMENT = "#{TEST_PREFIX} Submitting tests"
-EVALUATING_REGEX = /Test Results: Evaluating/
-WAITING_REGEX = /Test Results: Waiting/
-RUNNING_REGEX = /Test Results: Running \((.*)\)/
+TEST_SETTINGS = {
+  :test_prefix => "Test Results:",
+  :waiting_comment => "Test Results: Waiting for stable build",
+  :evaluating_comment => "Test Results: Evaluating for testing",
+  :evaluating_regex => /Test Results: Evaluating/,
+  :waiting_regex => /Test Results: Waiting/,
+  :running_regex => /Test Results: Running \((.*)\)/,
+  :jenkins_project_name => "test_pull_requests",
+  :trigger_regex => /\[TEST\]/i
+}
+
+MERGE_TEST_SETTINGS = {
+  :test_prefix => "Merge Test Results:",
+  :waiting_comment => "Merge Test Results: Waiting for stable build",
+  :evaluating_comment => "Merge Test Results: Evaluating for testing",
+  :evaluating_regex => /Merge Test Results: Evaluating/,
+  :waiting_regex => /Merge Test Results: Waiting/,
+  :running_regex => /Merge Test Results: Running \((.*)\)/,
+  :jenkins_project_name => "merge_pull_request",
+  :trigger_regex => /\[MERGE\]/i
+}
+
+REPO_TO_PULL_ID_PARAM = {
+  'li' => 'LI_PULL_ID',
+  'crankcase' => 'CRANKCASE_PULL_ID',
+  'rhc' => 'RHC_PULL_ID' 
+}
+
+REPO_TO_PULL_REGEX = {
+  'li' => /https:\/\/github.com\/openshift\/li\/pull\/(\d+)/,
+  'crankcase' => /https:\/\/github.com\/openshift\/crankcase\/pull\/(\d+)/,
+  'rhc' => /https:\/\/github.com\/openshift\/rhc\/pull\/(\d+)/
+}
 
 # Dynamically extend GitHubAPI to add methods that don't
 # require a local git project
@@ -95,11 +119,16 @@ module Hub
       res.error! unless res.success?
       res.data
     end
-
-    def is_mergeable? id
+    
+    def get_pull_request id
       res = get "https://api.github.com/repos/#{Properties['user']}/#{Properties['repo']}/pulls/%s" % id
       res.error! unless res.success?
-      res.data['mergeable']
+      res.data
+    end
+
+    def is_mergeable? id
+      pull_request = get_pull_request id
+      pull_request['mergeable']
     end
 
     def get_comments issue_id
@@ -130,21 +159,33 @@ module Hub
     end
 
     # Submit tests to Jenkins and update the comment
-    def submit_tests(id, comment_id)
+    def submit_tests(repo_to_pull_id, comment_id, settings)
       # If the project is stable, submit the tests
-      build_url = JenkinsAPI.submit_jenkins_job id
+      build_url = JenkinsAPI.submit_jenkins_job(repo_to_pull_id, settings)
 
       # Update the comments to reflect the new tests running
-      update_comment comment_id, "#{TEST_PREFIX} Running (#{build_url})"
+      update_comment comment_id, "#{settings[:test_prefix]} Running (#{build_url})"
     end
     
-    def merge_pull_request(pull_number)
-      params = { :body => "Merged by openshift-bot" }
-      res = put "https://api.github.com/repos/#{Properties['user']}/#{Properties['repo']}/pulls/#{pull_number}/merge", params
-      res.error! unless res.success?
-      res.data
+    def merge_pull_request(pull_id, settings)
+      bot_comment = nil
+      get_comments(pull_id).each do |comment|
+        if comment['body'] =~ /#{settings[:test_prefix]}/
+          bot_comment = comment
+          break
+        end
+      end
+      pull_request = get_pull_request(pull_id)
+      if Time.parse(bot_comment['updated_at']) > Time.parse(pull_request['updated_at']) 
+        params = { :commit_message => "Merged by openshift-bot" }
+        res = put "https://api.github.com/repos/#{Properties['user']}/#{Properties['repo']}/pulls/#{pull_id}/merge", params
+        res.error! unless res.success?
+      else
+        update_comment pull_id, settings[:evaluating_comment]
+        raise "Pull request was updated after testing started!"
+      end
     end
-    
+
     def put url, params = nil
       perform_request url, :Put do |req|
         if params
@@ -160,13 +201,13 @@ module Hub
     # Yields on the OpenShift bot comment with the test results.
     # Creates a placeholder comment if none exist
     #
-    def process_or_create_comment issue_id
+    def process_or_create_comment(issue_id, settings)
       bot_comment = nil
 
       # See if we can find an existing bot comment
       get_comments(issue_id).each do |comment|
         id = comment["id"]
-        if comment['body'] =~ /#{TEST_PREFIX}/
+        if comment['body'] =~ /#{settings[:test_prefix]}/
           bot_comment = comment
           break
         end
@@ -175,12 +216,11 @@ module Hub
       unless bot_comment
         # No comment found, create a new one and yield to it
         $stderr.puts "Creating placeholder comment"
-        bot_comment = add_comment issue_id, EVALUATING_COMMENT
+        bot_comment = add_comment issue_id, settings[:evaluating_comment]
       end
 
       yield bot_comment['id'], bot_comment['body'], Time.parse(bot_comment['updated_at'])
     end
-
 
     #
     # Processes a specific pull request.  Manages the various comment
@@ -188,21 +228,40 @@ module Hub
     # with the results.  Tests will be resubmitted if the issue has
     # been updated since the test have been run
     #
-    def process_pull_request(id, updated_at)
+    def process_pull_request(req, settings)      
+      id = req['number']
+      updated_at = Time.parse(req["updated_at"])
+      repo_to_pull_id = {Properties['repo'] => id}
+
+      # Gather any dependencies from trusted users
+      get_comments(id).each do |comment|
+        REPO_TO_PULL_REGEX.each do |repo, regex|
+          if comment['body'] =~ regex
+            addtl_pull_id = $1
+            comment_login = comment['user']['login']
+            trusted = user_trusted? comment_login
+            $stderr.puts "#{comment_login} trusted: #{trusted}"
+            if trusted
+              repo_to_pull_id[repo] = addtl_pull_id
+            end
+          end
+        end
+      end
+
       # Find the bot comment for this pull request (or create one)
-      process_or_create_comment(id) do |comment_id, comment, comment_updated_at|
+      process_or_create_comment(id, settings) do |comment_id, comment, comment_updated_at|
         case comment
-          when EVALUATING_REGEX
+          when settings[:evaluating_regex]
             # This is the state for a completely new comment
             if JenkinsAPI.is_project_stable?
-              submit_tests id, comment_id
+              submit_tests repo_to_pull_id, comment_id, settings
             else
-              update_comment comment_id, WAITING_COMMENT
+              update_comment comment_id, settings[:waiting_comment]
             end
-          when WAITING_REGEX
+          when settings[:waiting_regex]
             # Only submit the tests if the project is stable
-            submit_tests id, comment_id if JenkinsAPI.is_project_stable?
-          when RUNNING_REGEX
+            submit_tests repo_to_pull_id, comment_id, settings if JenkinsAPI.is_project_stable?
+          when settings[:running_regex]
             # This state means that the tests are already running
             # In this case we need to poll Jenkins to see if the build
             # is finished
@@ -213,13 +272,13 @@ module Hub
             # If the build is finished, update with the results
             unless JenkinsAPI.is_build_running?(build_url)
               result = JenkinsAPI.get_build_result(build_url)
-              update_comment comment_id, "#{TEST_PREFIX} #{result} (#{build_url})"
+              update_comment comment_id, "#{settings[:test_prefix]} #{result} (#{build_url})"
             end
           else
             # This should match the state where the tests have already been
             # run and have passed / failed.  If the issue has been updated,
             # then re-run the tests
-            submit_tests id, comment_id if updated_at > comment_updated_at
+            submit_tests repo_to_pull_id, comment_id, settings if updated_at > comment_updated_at
         end
       end
     end
@@ -228,7 +287,8 @@ module Hub
     # Processes a list of the valid pull requests that are mergeable
     # and are submitted by a trusted user
     #
-    def process_pull_requests
+    def process_pull_requests(settings)
+      pull_requests = []
       list_pull_requests.each do |req|
         id = req['number']
         $stderr.puts "Analyzing pull request ##{id}"
@@ -242,10 +302,35 @@ module Hub
         login = req['user']['login']
         trusted = user_trusted? login
         $stderr.puts "#{login} trusted: #{trusted}"
-        next unless trusted
+        
+        # Has a merge or test been requested by a trusted user?
+        if trusted
+          if req['title'] =~ settings[:trigger_regex]
+            pull_requests << req
+            next
+          end
+        end
+        
+        get_comments(id).each do |comment|
+          if comment['body'] =~ settings[:trigger_regex]
+            comment_login = comment['user']['login']
+            trusted = user_trusted? comment_login
+            $stderr.puts "#{comment_login} trusted: #{trusted}"
+            if trusted
+              pull_requests << req
+              break
+            end
+          end
+        end
+      end
 
+      sorted_pull_requests = pull_requests.sort_by do |req|
+        Time.parse(req["updated_at"])
+      end
+
+      sorted_pull_requests.each do |req|
         # Process the pull request
-        process_pull_request id, Time.parse(req["updated_at"])
+        process_pull_request(req, settings)
       end
     end
   end
@@ -256,10 +341,7 @@ module Hub
   class JenkinsAPI
     JENKINS = "https://ci.dev.openshift.redhat.com/jenkins"
     CHECK_URI = URI("#{JENKINS}/job/libra_check/lastCompletedBuild/api/json")
-    JOB_URI = "#{JENKINS}/job/#{Properties["project_name"]}"
-    BUILD_URI = URI("#{JOB_URI}/buildWithParameters?token=libra1")
-    JOB_API_URI = URI("#{JENKINS}/job/#{Properties["project_name"]}/api/json")
-    JOB_PARAM_1 = "PULL_ID"
+    JOB_BASE_URI = "#{JENKINS}/job/"
 
     def self.get_session
       proxy = Net::HTTP::Proxy(Properties['proxy_host'], Properties['proxy_port'])
@@ -269,27 +351,34 @@ module Hub
       return session
     end
 
-    def self.submit_jenkins_job pull_id
+    def self.submit_jenkins_job repo_to_pull_id, settings
       # First, get the next jenkins build number
-      next_build_num = get_next_build
+      next_build_num = get_next_build(settings)
+      build_uri = URI(JOB_BASE_URI + settings[:jenkins_project_name] + "/buildWithParameters?token=libra1")
+
+      pull_id_params = ''
+      repo_to_pull_id.each do |repo, pull_id|
+        pull_id_param = REPO_TO_PULL_ID_PARAM[repo]
+        pull_id_params += "&#{pull_id_param}=#{pull_id}"
+      end
 
       # Now submit the Jenkins job
       get_session.start do |http|
-        request = Net::HTTP::Get.new BUILD_URI.request_uri + "&#{JOB_PARAM_1}=#{pull_id}&cause=Github+pull+request+#{pull_id}"
+        request = Net::HTTP::Get.new build_uri.request_uri + "#{pull_id_params}"
         response = http.request request
         if response.kind_of? Net::HTTPFound
-          $stderr.puts "Successfully submitted job for pull request ##{pull_id}"
+          $stderr.puts "Successfully submitted job for pull request"
 
           # Block until Jenkins actually increments the build number (this isn't transactional)
           $stderr.puts "Now waiting until build number increments..."
-          while get_next_build == next_build_num
+          while get_next_build(settings) == next_build_num
             sleep 1
           end
 
           # Now you can safely return with the submission registered
-          return JOB_URI + "/#{next_build_num}/"
+          return JOB_BASE_URI + settings[:jenkins_project_name] + "/#{next_build_num}/"
         else
-          raise "Jenkins job submission failed for pull request #{pull_id}"
+          raise "Jenkins job submission failed for pull request"
         end
       end
     end
@@ -306,9 +395,10 @@ module Hub
       end
     end
 
-    def self.get_next_build
+    def self.get_next_build(settings)
+      job_api_uri = URI("#{JENKINS}/job/#{settings[:jenkins_project_name]}/api/json")
       get_session.start do |http|
-        request = Net::HTTP::Get.new JOB_API_URI.request_uri
+        request = Net::HTTP::Get.new job_api_uri.request_uri
         response = http.request request
         if response.kind_of? Net::HTTPSuccess
           JSON.parse(response.body)["nextBuildNumber"].to_i
@@ -363,11 +453,12 @@ end
   GitHubAPI.new file_config, :app_url => Properties['app_url']
 end
 
-if merge_pull_number
-  @api_client.merge_pull_request merge_pull_number
+if merge_pull_id
+  @api_client.merge_pull_request merge_pull_id, MERGE_TEST_SETTINGS
 else
   # Process all the pull requests for testing
   puts "Updating pull requests..."
-  @api_client.process_pull_requests
+  @api_client.process_pull_requests TEST_SETTINGS
+  @api_client.process_pull_requests MERGE_TEST_SETTINGS
   puts "Done"
 end
