@@ -6,5 +6,4 @@
   "hub_config" : "~/.config/hub",
   "proxy_host" : null,
   "proxy_port" : null
-  "project_name" : "li_pull_request"
 }

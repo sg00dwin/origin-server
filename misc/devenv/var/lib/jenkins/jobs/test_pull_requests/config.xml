@@ -1,0 +1,105 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<project>
+  <actions/>
+  <description>Run job by hand to test a cross repo pushes.&#xd;
+Blank pull_id(s) will use master&#xd;
+</description>
+  <logRotator>
+    <daysToKeep>10</daysToKeep>
+    <numToKeep>50</numToKeep>
+    <artifactDaysToKeep>-1</artifactDaysToKeep>
+    <artifactNumToKeep>-1</artifactNumToKeep>
+  </logRotator>
+  <keepDependencies>false</keepDependencies>
+  <properties>
+    <hudson.model.ParametersDefinitionProperty>
+      <parameterDefinitions>
+        <hudson.model.StringParameterDefinition>
+          <name>CRANKCASE_PULL_ID</name>
+          <description></description>
+          <defaultValue></defaultValue>
+        </hudson.model.StringParameterDefinition>
+        <hudson.model.StringParameterDefinition>
+          <name>LI_PULL_ID</name>
+          <description></description>
+          <defaultValue></defaultValue>
+        </hudson.model.StringParameterDefinition>
+        <hudson.model.StringParameterDefinition>
+          <name>RHC_PULL_ID</name>
+          <description></description>
+          <defaultValue></defaultValue>
+        </hudson.model.StringParameterDefinition>
+      </parameterDefinitions>
+    </hudson.model.ParametersDefinitionProperty>
+  </properties>
+  <scm class="hudson.scm.NullSCM"/>
+  <canRoam>true</canRoam>
+  <disabled>false</disabled>
+  <blockBuildWhenDownstreamBuilding>false</blockBuildWhenDownstreamBuilding>
+  <blockBuildWhenUpstreamBuilding>false</blockBuildWhenUpstreamBuilding>
+  <triggers class="vector"/>
+  <concurrentBuild>true</concurrentBuild>
+  <builders>
+    <hudson.tasks.Shell>
+      <command># Build and install HEAD for the integration tests
+rm -rf li rhc crankcase
+
+git clone git@github.com:openshift/li.git
+git clone git://github.com/openshift/crankcase.git
+git clone git://github.com/openshift/rhc.git
+
+if [ -n &quot;$LI_PULL_ID&quot; ]; then
+  echo &quot;RUNNING for Pull Request: https://github.com/openshift/li/pull/$LI_PULL_ID&quot;
+  set +x
+  pushd li
+  SECRET=`cat ~/.config/secret`
+  curl --basic -u &quot;openshift-bot:$SECRET&quot; https://github.com/openshift/li/pull/$LI_PULL_ID.patch | git am
+  set -x
+  popd
+fi
+
+if [ -n &quot;$CRANKCASE_PULL_ID&quot; ]; then
+  echo &quot;RUNNING for Pull Request: https://github.com/openshift/crankcase/pull/$CRANKCASE_PULL_ID&quot;
+  pushd crankcase
+  curl https://github.com/openshift/crankcase/pull/$CRANKCASE_PULL_ID.patch | git am
+  popd
+fi
+
+if [ -n &quot;$RHC_PULL_ID&quot; ]; then
+  echo &quot;RUNNING for Pull Request: https://github.com/openshift/rhc/pull/$RHC_PULL_ID&quot;
+  pushd rhc
+  curl https://github.com/openshift/rhc/pull/$RHC_PULL_ID.patch | git am
+  popd
+fi
+
+pushd li
+build/devenv launch multi_pull_request_${BUILD_NUMBER} --verifier --instance_type m1.large
+build/devenv sync multi_pull_request_${BUILD_NUMBER} --tag --clean_metadata
+
+# Run the &apos;verification&apos; tests to test higher level components
+build/devenv test multi_pull_request_${BUILD_NUMBER} --terminate
+popd
+
+RESULT=$?
+</command>
+    </hudson.tasks.Shell>
+    <hudson.tasks.Shell>
+      <command>#!/bin/sh -e
+SECRET=`sed &apos;s/[][\.*^$/]/\\\\&amp;/g&apos; &lt;~/.config/secret`
+sed -i &quot;s/$SECRET/BLOCKED/g&quot; ../builds/$BUILD_NUMBER/log
+exit $RESULT</command>
+    </hudson.tasks.Shell>
+  </builders>
+  <publishers>
+    <hudson.tasks.ArtifactArchiver>
+      <artifacts>li/rhc/log/**</artifacts>
+      <latestOnly>false</latestOnly>
+    </hudson.tasks.ArtifactArchiver>
+    <hudson.tasks.junit.JUnitResultArchiver>
+      <testResults>li/rhc/log/**/*.xml</testResults>
+      <keepLongStdio>false</keepLongStdio>
+      <testDataPublishers/>
+    </hudson.tasks.junit.JUnitResultArchiver>
+  </publishers>
+  <buildWrappers/>
+</project>
