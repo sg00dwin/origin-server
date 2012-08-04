@@ -129,6 +129,14 @@ fi</command>
       <artifacts>li/rhc/log/**</artifacts>
       <latestOnly>false</latestOnly>
     </hudson.tasks.ArtifactArchiver>
+    <hudson.tasks.BuildTrigger>
+      <childProjects>libra_ami</childProjects>
+      <threshold>
+        <name>SUCCESS</name>
+        <ordinal>0</ordinal>
+        <color>BLUE</color>
+      </threshold>
+    </hudson.tasks.BuildTrigger>
     <hudson.tasks.junit.JUnitResultArchiver>
       <testResults>li/rhc/log/**/*.xml</testResults>
       <keepLongStdio>false</keepLongStdio>

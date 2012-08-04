@@ -110,6 +110,12 @@ REPO_TO_PULL_REGEX = {
   'rhc' => /https:\/\/github.com\/openshift\/rhc\/pull\/(\d+)/
 }
 
+ACTION_PREFIX      = "Action Required:"
+ACTION_REGEX       = /#{ACTION_PREFIX}/
+ACTION_NOT_MERGE   = "#{ACTION_PREFIX} Pull request cannot be automatically merged"
+ACTION_NOT_TEAM    = "#{ACTION_PREFIX} Please contact #openshift-dev to have this pull request manually reviewed and tested"
+ACTION_NOT_MASTER  = "#{ACTION_PREFIX} Only pull request(s) from master are automatically tested"
+
 # Dynamically extend GitHubAPI to add methods that don't
 # require a local git project
 module Hub
@@ -135,6 +141,12 @@ module Hub
       res = get "https://api.github.com/repos/#{Properties['user']}/#{Properties['repo']}/issues/%s/comments" % issue_id
       res.error! unless res.success?
       res.data
+    end
+
+    def delete_comment comment_id
+      $stderr.puts "Deleting comment ##{comment_id}"
+      res = delete "https://api.github.com/repos/#{Properties['user']}/#{Properties['repo']}/issues/comments/%s" % [comment_id]
+      res.error! unless res.success?
     end
 
     def add_comment issue_id, comment
@@ -176,7 +188,8 @@ module Hub
           break
         end
       end
-      if bot_comment.nil? || Time.parse(bot_comment['updated_at']) > Time.parse(pull_request['updated_at'])
+      raise "Can't merge pull request without running tests!" if bot_comment.nil?
+      if Time.parse(bot_comment['updated_at']) > Time.parse(pull_request['updated_at'])
         params = { :commit_message => "Merged by openshift-bot" }
         res = put "https://api.github.com/repos/#{Properties['user']}/#{Properties['repo']}/pulls/#{pull_id}/merge", params
         res.error! unless res.success?
@@ -196,21 +209,19 @@ module Hub
         req['Content-Length'] = req.body ? req.body.length : 0
       end
     end
+    
+    def delete url
+      perform_request url, :Delete do |req|
+        yield req if block_given?
+      end
+    end
 
     #
     # Yields on the OpenShift bot comment with the test results.
     # Creates a placeholder comment if none exist
     #
     def process_or_create_comment(issue_id, settings)
-      bot_comment = nil
-
-      # See if we can find an existing bot comment
-      get_comments(issue_id).each do |comment|
-        if comment['body'] =~ /#{settings[:test_prefix]}/
-          bot_comment = comment
-          break
-        end
-      end
+      bot_comment = get_comment_with_prefix(issue_id, settings[:test_prefix])
 
       unless bot_comment
         # No comment found, create a new one and yield to it
@@ -219,6 +230,49 @@ module Hub
       end
 
       yield bot_comment['id'], bot_comment['body'], Time.parse(bot_comment['updated_at'])
+    end
+    
+    #
+    # Creates or updates a comment with given prefix
+    #
+    def create_or_update_comment(issue_id, comment_prefix, comment)
+      bot_comment = get_comment_with_prefix(issue_id, comment_prefix)
+
+      if bot_comment
+        update_comment bot_comment['id'], comment
+      else
+        # No comment found, create a new one and yield to it
+        add_comment issue_id, comment
+      end
+
+    end
+    
+    #
+    # Creates or updates a comment with given prefix
+    #
+    def delete_comment_with_prefix(issue_id, comment_prefix)
+      bot_comment = get_comment_with_prefix(issue_id, comment_prefix)
+    
+      if bot_comment
+        delete_comment bot_comment['id']
+      end
+    end
+    
+    #
+    # Gets a comment with given prefix
+    #
+    def get_comment_with_prefix(issue_id, comment_prefix)
+      bot_comment = nil
+    
+      # See if we can find an existing bot comment
+      get_comments(issue_id).each do |comment|
+        if comment['body'] =~ /#{comment_prefix}/
+          bot_comment = comment
+          break
+        end
+      end
+    
+      bot_comment
     end
 
     #
@@ -247,37 +301,39 @@ module Hub
         end
       end
 
-      # Find the bot comment for this pull request (or create one)
-      process_or_create_comment(id, settings) do |comment_id, comment, comment_updated_at|
-        case comment
-          when settings[:evaluating_regex]
-            # This is the state for a completely new comment
-            if JenkinsAPI.is_project_stable?
-              submit_tests repo_to_pull_id, comment_id, settings
+      repo_to_pull_id.each do |repo, id|
+        # Find the bot comment for this pull request (or create one)
+        process_or_create_comment(id, settings) do |comment_id, comment, comment_updated_at|
+          case comment
+            when settings[:evaluating_regex]
+              # This is the state for a completely new comment
+              if JenkinsAPI.is_project_stable?
+                submit_tests repo_to_pull_id, comment_id, settings if Properties['repo'] == repo
+              else
+                update_comment comment_id, settings[:waiting_comment]
+              end
+            when settings[:waiting_regex]
+              # Only submit the tests if the project is stable
+              submit_tests repo_to_pull_id, comment_id, settings if (JenkinsAPI.is_project_stable? && Properties['repo'] == repo)
+            when settings[:running_regex]
+              # This state means that the tests are already running
+              # In this case we need to poll Jenkins to see if the build
+              # is finished
+
+              # Capture the build_url from the regex match
+              build_url = $1
+
+              # If the build is finished, update with the results
+              unless JenkinsAPI.is_build_running?(build_url)
+                result = JenkinsAPI.get_build_result(build_url)
+                update_comment comment_id, "#{settings[:test_prefix]} #{result} (#{build_url})"
+              end
             else
-              update_comment comment_id, settings[:waiting_comment]
-            end
-          when settings[:waiting_regex]
-            # Only submit the tests if the project is stable
-            submit_tests repo_to_pull_id, comment_id, settings if JenkinsAPI.is_project_stable?
-          when settings[:running_regex]
-            # This state means that the tests are already running
-            # In this case we need to poll Jenkins to see if the build
-            # is finished
-
-            # Capture the build_url from the regex match
-            build_url = $1
-
-            # If the build is finished, update with the results
-            unless JenkinsAPI.is_build_running?(build_url)
-              result = JenkinsAPI.get_build_result(build_url)
-              update_comment comment_id, "#{settings[:test_prefix]} #{result} (#{build_url})"
-            end
-          else
-            # This should match the state where the tests have already been
-            # run and have passed / failed.  If the issue has been updated,
-            # then re-run the tests
-            submit_tests repo_to_pull_id, comment_id, settings if updated_at > comment_updated_at
+              # This should match the state where the tests have already been
+              # run and have passed / failed.  If the issue has been updated,
+              # then re-run the tests
+              submit_tests repo_to_pull_id, comment_id, settings if (updated_at > comment_updated_at && Properties['repo'] == repo)
+          end
         end
       end
     end
@@ -295,18 +351,25 @@ module Hub
         # Skip if it's not mergeable
         mergeable = is_mergeable? id
         $stderr.puts "Mergeable #{mergeable}"
-        next unless mergeable
+        unless mergeable
+          create_or_update_comment(id, ACTION_PREFIX, ACTION_NOT_MERGE)
+          next
+        end
 
         # Verify user is from the Red Hat Team
         login = req['user']['login']
         trusted = user_trusted? login
         $stderr.puts "#{login} trusted: #{trusted}"
         
+        untrusted = false
         # Has a merge or test been requested by a trusted user?
-        if trusted
-          if req['title'] =~ settings[:trigger_regex]
+        if req['title'] =~ settings[:trigger_regex]
+          if trusted
+            delete_comment_with_prefix(id, ACTION_PREFIX)
             pull_requests << req
             next
+          else
+            create_or_update_comment(id, ACTION_PREFIX, ACTION_NOT_TEAM)
           end
         end
         
@@ -316,8 +379,11 @@ module Hub
             trusted = user_trusted? comment_login
             $stderr.puts "#{comment_login} trusted: #{trusted}"
             if trusted
+              delete_comment_with_prefix(id, ACTION_PREFIX)
               pull_requests << req
               break
+            else
+              create_or_update_comment(id, ACTION_PREFIX, ACTION_NOT_TEAM)
             end
           end
         end
@@ -339,7 +405,7 @@ module Hub
   #
   class JenkinsAPI
     JENKINS = "https://ci.dev.openshift.redhat.com/jenkins"
-    CHECK_URI = URI("#{JENKINS}/job/libra_check/lastCompletedBuild/api/json")
+    CHECK_URI = URI("#{JENKINS}/job/libra_ami/lastCompletedBuild/api/json")
     JOB_BASE_URI = "#{JENKINS}/job/"
 
     def self.get_session
