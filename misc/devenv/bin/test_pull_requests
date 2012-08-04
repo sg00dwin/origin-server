@@ -382,7 +382,7 @@ module Hub
     def self.get_next_build(settings)
       job_api_uri = URI("#{JENKINS}/job/#{settings[:jenkins_project_name]}/api/json")
       get_session.start do |http|
-        request = Net::HTTP::Get.new JOB_API_URI.request_uri
+        request = Net::HTTP::Get.new job_api_uri.request_uri
         response = http.request request
         if response.kind_of? Net::HTTPSuccess
           JSON.parse(response.body)["nextBuildNumber"].to_i
