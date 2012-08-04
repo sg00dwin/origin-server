@@ -74,11 +74,11 @@ if [ -n &quot;$RHC_PULL_ID&quot; ]; then
 fi
 
 pushd li
-build/devenv launch multi_pull_request_${BUILD_NUMBER} --verifier --instance_type m1.large
-build/devenv sync multi_pull_request_${BUILD_NUMBER} --tag --clean_metadata
+build/devenv launch test_pull_requests_${BUILD_NUMBER} --verifier --instance_type m1.large
+build/devenv sync test_pull_requests_${BUILD_NUMBER} --tag --clean_metadata
 
 # Run the &apos;verification&apos; tests to test higher level components
-build/devenv test multi_pull_request_${BUILD_NUMBER} --terminate
+build/devenv test test_pull_requests_${BUILD_NUMBER} --terminate
 popd
 
 RESULT=$?
