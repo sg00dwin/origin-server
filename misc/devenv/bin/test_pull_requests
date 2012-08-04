@@ -144,7 +144,7 @@ module Hub
     end
 
     def delete_comment comment_id
-      $stderr.puts "Deleting comment ##{issue_id}"
+      $stderr.puts "Deleting comment ##{comment_id}"
       res = delete "https://api.github.com/repos/#{Properties['user']}/#{Properties['repo']}/issues/comments/%s" % [comment_id]
       res.error! unless res.success?
     end
@@ -209,6 +209,12 @@ module Hub
         req['Content-Length'] = req.body ? req.body.length : 0
       end
     end
+    
+    def delete url
+      perform_request url, :Delete do |req|
+        yield req if block_given?
+      end
+    end
 
     #
     # Yields on the OpenShift bot comment with the test results.
@@ -233,7 +239,7 @@ module Hub
       bot_comment = get_comment_with_prefix(issue_id, comment_prefix)
 
       if bot_comment
-        update_comment issue_id, comment
+        update_comment bot_comment['id'], comment
       else
         # No comment found, create a new one and yield to it
         add_comment issue_id, comment
@@ -399,7 +405,7 @@ module Hub
   #
   class JenkinsAPI
     JENKINS = "https://ci.dev.openshift.redhat.com/jenkins"
-    CHECK_URI = URI("#{JENKINS}/job/libra_check/lastCompletedBuild/api/json")
+    CHECK_URI = URI("#{JENKINS}/job/libra_ami/lastCompletedBuild/api/json")
     JOB_BASE_URI = "#{JENKINS}/job/"
 
     def self.get_session
