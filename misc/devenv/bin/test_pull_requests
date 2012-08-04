@@ -119,11 +119,16 @@ module Hub
       res.error! unless res.success?
       res.data
     end
-
-    def is_mergeable? id
+    
+    def get_pull_request id
       res = get "https://api.github.com/repos/#{Properties['user']}/#{Properties['repo']}/pulls/%s" % id
       res.error! unless res.success?
-      res.data['mergeable']
+      res.data
+    end
+
+    def is_mergeable? id
+      pull_request = get_pull_request id
+      pull_request['mergeable']
     end
 
     def get_comments issue_id
@@ -163,10 +168,22 @@ module Hub
     end
     
     def merge_pull_request(pull_id, settings)
-      params = { :commit_message => "Merged by openshift-bot" }
-      res = put "https://api.github.com/repos/#{Properties['user']}/#{Properties['repo']}/pulls/#{pull_id}/merge", params
-      res.error! unless res.success?
-      res.data
+      bot_comment = nil
+      get_comments(pull_id).each do |comment|
+        if comment['body'] =~ /#{settings[:test_prefix]}/
+          bot_comment = comment
+          break
+        end
+      end
+      pull_request = get_pull_request(pull_id)
+      if Time.parse(bot_comment['updated_at']) > Time.parse(pull_request['updated_at']) 
+        params = { :commit_message => "Merged by openshift-bot" }
+        res = put "https://api.github.com/repos/#{Properties['user']}/#{Properties['repo']}/pulls/#{pull_id}/merge", params
+        res.error! unless res.success?
+      else
+        update_comment pull_id, settings[:evaluating_comment]
+        raise "Pull request was updated after testing started!"
+      end
     end
 
     def put url, params = nil
@@ -437,7 +454,7 @@ end
 end
 
 if merge_pull_id
-  @api_client.merge_pull_request merge_pull_id
+  @api_client.merge_pull_request merge_pull_id, MERGE_TEST_SETTINGS
 else
   # Process all the pull requests for testing
   puts "Updating pull requests..."
