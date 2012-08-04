@@ -105,9 +105,9 @@ REPO_TO_PULL_ID_PARAM = {
 }
 
 REPO_TO_PULL_REGEX = {
-  'li' => /https:\/\/github.com\/openshift\/li\/pull\/(\d)+/,
-  'crankcase' => /https:\/\/github.com\/openshift\/crankcase\/pull\/(\d)+/,
-  'rhc' => /https:\/\/github.com\/openshift\/rhc\/pull\/(\d)+/ 
+  'li' => /https:\/\/github.com\/openshift\/li\/pull\/(\d+)/,
+  'crankcase' => /https:\/\/github.com\/openshift\/crankcase\/pull\/(\d+)/,
+  'rhc' => /https:\/\/github.com\/openshift\/rhc\/pull\/(\d+)/
 }
 
 # Dynamically extend GitHubAPI to add methods that don't
@@ -226,7 +226,6 @@ module Hub
             $stderr.puts "#{comment_login} trusted: #{trusted}"
             if trusted
               repo_to_pull_id[repo] = addtl_pull_id
-              break
             end
           end
         end
