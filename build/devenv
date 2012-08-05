@@ -813,7 +813,7 @@ mkdir -p /tmp/rhc/junit
           output = ''
           if options.install_from_source?
             print "Performing clean install from source..."
-            cmd = 'set -e; /bin/bash li-devenv.sh candidate --install_from_source'
+            cmd = "set -e; /bin/bash li-devenv.sh #{options.use_stage_repo? ? "stage" : "candidate"} --install_from_source"
           elsif options.install_from_local_source?
             init_repo(hostname)
             ssh_path = File.expand_path(File.dirname(__FILE__)) + "/ssh-override"
@@ -824,7 +824,7 @@ mkdir -p /tmp/rhc/junit
               end
             end
             print "Performing clean install from local source..."
-            cmd = 'set -e; /bin/bash li-devenv.sh candidate --install_from_local_source'
+            cmd = "set -e; /bin/bash li-devenv.sh #{options.use_stage_repo? ? "stage" : "candidate"} --install_from_local_source"
           elsif options.install_required_packages?
             print "Installing requires..."
             cmd = "set -e; /bin/bash li-devenv.sh #{options.use_stage_repo? ? "stage" : "candidate"} --install_build_prereqs"

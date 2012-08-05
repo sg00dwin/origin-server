@@ -83,8 +83,10 @@ TEST_SETTINGS = {
   :evaluating_regex => /Test Results: Evaluating/,
   :waiting_regex => /Test Results: Waiting/,
   :running_regex => /Test Results: Running \((.*)\)/,
-  :branches => { 'stage'   => {:jenkins_project_name => "test_pull_requests_stage"},
-                 'master'  => {:jenkins_project_name => "test_pull_requests"} },
+  :branches => { 'stage'   => {:jenkins_project_name => "test_pull_requests_stage",
+                               :downstream_job => "libra_ami_stage"},
+                 'master'  => {:jenkins_project_name => "test_pull_requests",
+                               :downstream_job => "libra_ami"} },
   :trigger_regex => /\[TEST\]/i
 }
 
@@ -95,8 +97,10 @@ MERGE_TEST_SETTINGS = {
   :evaluating_regex => /Merge Test Results: Evaluating/,
   :waiting_regex => /Merge Test Results: Waiting/,
   :running_regex => /Merge Test Results: Running \((.*)\)/,
-  :branches => { 'stage'   => {:jenkins_project_name => "merge_pull_request_stage"},
-                 'master'  => {:jenkins_project_name => "merge_pull_request"} },
+  :branches => { 'stage'   => {:jenkins_project_name => "merge_pull_request_stage",
+                               :downstream_job => "libra_ami_stage"},
+                 'master'  => {:jenkins_project_name => "merge_pull_request",
+                               :downstream_job => "libra_ami"} },
   :trigger_regex => /\[MERGE\]/i
 }
 
@@ -312,14 +316,14 @@ module Hub
         case comment
           when settings[:evaluating_regex]
             # This is the state for a completely new comment
-            if JenkinsAPI.is_project_stable?
+            if JenkinsAPI.is_project_stable?(branch, settings)
               submit_tests repo_to_pull_id, branch, comment_id, settings
             else
               update_comment comment_id, settings[:waiting_comment]
             end
           when settings[:waiting_regex]
             # Only submit the tests if the project is stable
-            submit_tests repo_to_pull_id, branch, comment_id, settings if JenkinsAPI.is_project_stable?
+            submit_tests repo_to_pull_id, branch, comment_id, settings if JenkinsAPI.is_project_stable?(branch, settings)
           when settings[:running_regex]
             # This state means that the tests are already running
             # In this case we need to poll Jenkins to see if the build
@@ -329,8 +333,8 @@ module Hub
             build_url = $1
 
             # If the build is finished, update with the results
-            unless JenkinsAPI.is_build_running?(build_url)
-              result = JenkinsAPI.get_build_result(build_url)
+            unless JenkinsAPI.is_build_running?(build_url, branch, settings)
+              result = JenkinsAPI.get_build_result(build_url, branch, settings)
               update_comment comment_id, "#{settings[:test_prefix]} #{result} (#{build_url})"
             end
           else
@@ -416,18 +420,23 @@ module Hub
   #
   class JenkinsAPI
     JENKINS = "https://ci.dev.openshift.redhat.com/jenkins"
-    CHECK_URI = URI("#{JENKINS}/job/libra_ami/lastCompletedBuild/api/json")
     JOB_BASE_URI = "#{JENKINS}/job/"
+    
+    def downstream_job_uri(branch, settings)
+      job_name = settings[:branches][branch][:downstream_job]
+      URI("#{JENKINS}/job/#{job_name}/lastCompletedBuild/api/json")
+    end
 
-    def self.get_session
+    def self.get_session(branch, settings)
       proxy = Net::HTTP::Proxy(Properties['proxy_host'], Properties['proxy_port'])
-      session = proxy.new(CHECK_URI.host, CHECK_URI.port)
+      uri = downstream_job_uri(branch, settings)
+      session = proxy.new(uri.host, uri.port)
       session.use_ssl = true
       session.verify_mode = OpenSSL::SSL::VERIFY_NONE
       return session
     end
 
-    def self.submit_jenkins_job repo_to_pull_id, branch, settings
+    def self.submit_jenkins_job(repo_to_pull_id, branch, settings)
       # First, get the next jenkins build number
       next_build_num = get_next_build(branch, settings)
       build_uri = URI(JOB_BASE_URI + settings[:branches][branch][:jenkins_project_name] + "/buildWithParameters?token=libra1")
@@ -439,7 +448,7 @@ module Hub
       end
 
       # Now submit the Jenkins job
-      get_session.start do |http|
+      get_session(branch, settings).start do |http|
         request = Net::HTTP::Get.new build_uri.request_uri + "#{pull_id_params}"
         response = http.request request
         if response.kind_of? Net::HTTPFound
@@ -459,9 +468,10 @@ module Hub
       end
     end
 
-    def self.is_project_stable?
-      get_session.start do |http|
-        request = Net::HTTP::Get.new CHECK_URI.request_uri
+    def self.is_project_stable?(branch, settings)
+      get_session(branch, settings).start do |http|
+        uri = downstream_job_uri(branch, settings)
+        request = Net::HTTP::Get.new uri.request_uri
         response = http.request request
         if response.kind_of? Net::HTTPSuccess
           return JSON.parse(response.body)["result"] == "SUCCESS"
@@ -473,7 +483,7 @@ module Hub
 
     def self.get_next_build(branch, settings)
       job_api_uri = URI("#{JENKINS}/job/#{settings[:branches][branch][:jenkins_project_name]}/api/json")
-      get_session.start do |http|
+      get_session(branch, settings).start do |http|
         request = Net::HTTP::Get.new job_api_uri.request_uri
         response = http.request request
         if response.kind_of? Net::HTTPSuccess
@@ -488,8 +498,8 @@ module Hub
       URI(build_url + "/api/json")
     end
 
-    def self.is_build_running? build_url
-      get_session.start do |http|
+    def self.is_build_running?(build_url, branch, settings)
+      get_session(branch, settings).start do |http|
         request = Net::HTTP::Get.new to_api_url(build_url).request_uri
         response = http.request request
         if response.kind_of? Net::HTTPSuccess
@@ -500,8 +510,8 @@ module Hub
       end
     end
 
-    def self.get_build_result build_url
-      get_session.start do |http|
+    def self.get_build_result(build_url, branch, settings)
+      get_session(branch, settings).start do |http|
         request = Net::HTTP::Get.new to_api_url(build_url).request_uri
         response = http.request request
         if response.kind_of? Net::HTTPSuccess
