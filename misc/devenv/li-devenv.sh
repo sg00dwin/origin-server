@@ -172,11 +172,31 @@ function find_and_build_specs {
     package_name=`get_package_name $x`
     if ! `contains_value "$package_name" "${ignore_packages[@]}"`
     then
-      install_requires "BuildRequires" "$x"
       dir=$(dirname $x)
+      tagged=false
       pushd $dir > /dev/null
-        tito build --test --rpm
+        if $(git tag | grep "$package_name" > /dev/null 2>&1)
+        then
+          tagged=true
+        fi
       popd > /dev/null
+      if $tagged
+      then
+        echo "
+
+Building '${dir}'"
+
+        install_requires "BuildRequires" "$x"
+        pushd $dir > /dev/null
+          set -e
+          tito build --test --rpm
+          set +e
+        popd > /dev/null
+      else
+        echo "
+
+Skipping '${dir}' since it isn't tagged"
+      fi
     fi
   done
 }
@@ -192,13 +212,14 @@ function get_package_name {
   name_grep=`grep -e "^Name:" $1`
   name_grep_array=($name_grep)
   package_name=${name_grep_array[1]}
-  if [[ $package_name =~ "%{gemname}" ]]
-  then
-    gemname_grep=`grep -e "%global gemname" $1`
-    gemname_grep_array=($gemname_grep)
-    gemname=${gemname_grep_array[2]}
-    package_name=`echo ${package_name//%\{gemname\}/$gemname}`
-  fi
+  while [[ $package_name =~ %\{([^{]*)\} ]]
+  do
+    global_name=${BASH_REMATCH[1]}
+    global_grep=`grep -e "%global $global_name" $1`
+    global_grep_array=($global_grep)
+    global=${global_grep_array[2]}
+    package_name=`echo ${package_name//%\{$global_name\}/$global}`
+  done
   echo "$package_name"
 }
 
