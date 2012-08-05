@@ -212,13 +212,14 @@ function get_package_name {
   name_grep=`grep -e "^Name:" $1`
   name_grep_array=($name_grep)
   package_name=${name_grep_array[1]}
-  if [[ $package_name =~ "%{gemname}" ]]
-  then
-    gemname_grep=`grep -e "%global gemname" $1`
-    gemname_grep_array=($gemname_grep)
-    gemname=${gemname_grep_array[2]}
-    package_name=`echo ${package_name//%\{gemname\}/$gemname}`
-  fi
+  while [[ $package_name =~ %\{([^{]*)\} ]]
+  do
+    global_name=${BASH_REMATCH[1]}
+    global_grep=`grep -e "%global $global_name" $1`
+    global_grep_array=($global_grep)
+    global=${global_grep_array[2]}
+    package_name=`echo ${package_name//%\{$global_name\}/$global}`
+  done
   echo "$package_name"
 }
 
