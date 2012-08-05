@@ -83,7 +83,8 @@ TEST_SETTINGS = {
   :evaluating_regex => /Test Results: Evaluating/,
   :waiting_regex => /Test Results: Waiting/,
   :running_regex => /Test Results: Running \((.*)\)/,
-  :jenkins_project_name => "test_pull_requests",
+  :branches => { 'stage'   => {:jenkins_project_name => "test_pull_requests_stage"},
+                 'master'  => {:jenkins_project_name => "test_pull_requests"} },
   :trigger_regex => /\[TEST\]/i
 }
 
@@ -94,7 +95,8 @@ MERGE_TEST_SETTINGS = {
   :evaluating_regex => /Merge Test Results: Evaluating/,
   :waiting_regex => /Merge Test Results: Waiting/,
   :running_regex => /Merge Test Results: Running \((.*)\)/,
-  :jenkins_project_name => "merge_pull_request",
+  :branches => { 'stage'   => {:jenkins_project_name => "merge_pull_request_stage"},
+                 'master'  => {:jenkins_project_name => "merge_pull_request"} },
   :trigger_regex => /\[MERGE\]/i
 }
 
@@ -110,11 +112,16 @@ REPO_TO_PULL_REGEX = {
   'rhc' => /https:\/\/github.com\/openshift\/rhc\/pull\/(\d+)/
 }
 
-ACTION_PREFIX      = "Action Required:"
-ACTION_REGEX       = /#{ACTION_PREFIX}/
-ACTION_NOT_MERGE   = "#{ACTION_PREFIX} Pull request cannot be automatically merged"
-ACTION_NOT_TEAM    = "#{ACTION_PREFIX} Please contact #openshift-dev to have this pull request manually reviewed and tested"
-ACTION_NOT_MASTER  = "#{ACTION_PREFIX} Only pull request(s) from master are automatically tested"
+BRANCHES = {
+  'stage' => nil,
+  'master' => nil
+}
+
+ACTION_PREFIX              = "Action Required:"
+ACTION_REGEX               = /#{ACTION_PREFIX}/
+ACTION_NOT_MERGE           = "#{ACTION_PREFIX} Pull request cannot be automatically merged"
+ACTION_NOT_TEAM            = "#{ACTION_PREFIX} Please contact #openshift-dev to have this pull request manually reviewed and tested"
+ACTION_UNSUPPORTED_BRANCH  = "#{ACTION_PREFIX} Only pull request(s) from #{BRANCHES.keys.pretty_inspect.chomp} are handled by the openshift-bot"
 
 # Dynamically extend GitHubAPI to add methods that don't
 # require a local git project
@@ -171,9 +178,9 @@ module Hub
     end
 
     # Submit tests to Jenkins and update the comment
-    def submit_tests(repo_to_pull_id, comment_id, settings)
+    def submit_tests(repo_to_pull_id, branch, comment_id, settings)
       # If the project is stable, submit the tests
-      build_url = JenkinsAPI.submit_jenkins_job(repo_to_pull_id, settings)
+      build_url = JenkinsAPI.submit_jenkins_job(repo_to_pull_id, branch, settings)
 
       # Update the comments to reflect the new tests running
       update_comment comment_id, "#{settings[:test_prefix]} Running (#{build_url})"
@@ -238,7 +245,7 @@ module Hub
       bot_comment = get_comment_with_prefix(issue_id, comment_prefix)
 
       if bot_comment
-        update_comment bot_comment['id'], comment
+        update_comment bot_comment['id'], comment if bot_comment['body'] != comment
       else
         # No comment found, create a new one
         add_comment issue_id, comment
@@ -279,6 +286,7 @@ module Hub
     #
     def process_pull_request(req, settings)      
       id = req['number']
+      branch = req['base']['ref']
       updated_at = Time.parse(req["updated_at"])
       repo_to_pull_id = {Properties['repo'] => id}
 
@@ -303,13 +311,13 @@ module Hub
           when settings[:evaluating_regex]
             # This is the state for a completely new comment
             if JenkinsAPI.is_project_stable?
-              submit_tests repo_to_pull_id, comment_id, settings
+              submit_tests repo_to_pull_id, branch, comment_id, settings
             else
               update_comment comment_id, settings[:waiting_comment]
             end
           when settings[:waiting_regex]
             # Only submit the tests if the project is stable
-            submit_tests repo_to_pull_id, comment_id, settings if JenkinsAPI.is_project_stable?
+            submit_tests repo_to_pull_id, branch, comment_id, settings if JenkinsAPI.is_project_stable?
           when settings[:running_regex]
             # This state means that the tests are already running
             # In this case we need to poll Jenkins to see if the build
@@ -327,7 +335,7 @@ module Hub
             # This should match the state where the tests have already been
             # run and have passed / failed.  If the issue has been updated,
             # then re-run the tests
-            submit_tests repo_to_pull_id, comment_id, settings if updated_at > comment_updated_at
+            submit_tests repo_to_pull_id, branch, comment_id, settings if updated_at > comment_updated_at
         end
       end
     end
@@ -341,45 +349,52 @@ module Hub
       list_pull_requests.each do |req|
         id = req['number']
         $stderr.puts "Analyzing pull request ##{id}"
-
-        # Skip if it's not mergeable
-        mergeable = is_mergeable? id
-        $stderr.puts "Mergeable #{mergeable}"
-        unless mergeable
-          create_or_update_comment(id, ACTION_PREFIX, ACTION_NOT_MERGE)
-          next
-        end
-
-        # Verify user is from the Red Hat Team
-        login = req['user']['login']
-        trusted = user_trusted? login
-        $stderr.puts "#{login} trusted: #{trusted}"
         
-        untrusted = false
-        # Has a merge or test been requested by a trusted user?
-        if req['title'] =~ settings[:trigger_regex]
-          if trusted
-            delete_comment_with_prefix(id, ACTION_PREFIX)
-            pull_requests << req
+        branch = req['base']['ref']
+          
+        if BRANCHES.include?(branch)
+
+          # Skip if it's not mergeable
+          mergeable = is_mergeable? id
+          $stderr.puts "Mergeable #{mergeable}"
+          unless mergeable
+            create_or_update_comment(id, ACTION_PREFIX, ACTION_NOT_MERGE)
             next
-          else
-            create_or_update_comment(id, ACTION_PREFIX, ACTION_NOT_TEAM)
           end
-        end
-        
-        get_comments(id).each do |comment|
-          if comment['body'] =~ settings[:trigger_regex]
-            comment_login = comment['user']['login']
-            trusted = user_trusted? comment_login
-            $stderr.puts "#{comment_login} trusted: #{trusted}"
+
+          # Verify user is from the Red Hat Team
+          login = req['user']['login']
+          trusted = user_trusted? login
+          $stderr.puts "#{login} trusted: #{trusted}"
+
+          untrusted = false
+          # Has a merge or test been requested by a trusted user?
+          if req['title'] =~ settings[:trigger_regex]
             if trusted
               delete_comment_with_prefix(id, ACTION_PREFIX)
               pull_requests << req
-              break
+              next
             else
               create_or_update_comment(id, ACTION_PREFIX, ACTION_NOT_TEAM)
             end
           end
+
+          get_comments(id).each do |comment|
+            if comment['body'] =~ settings[:trigger_regex]
+              comment_login = comment['user']['login']
+              trusted = user_trusted? comment_login
+              $stderr.puts "#{comment_login} trusted: #{trusted}"
+              if trusted
+                delete_comment_with_prefix(id, ACTION_PREFIX)
+                pull_requests << req
+                break
+              else
+                create_or_update_comment(id, ACTION_PREFIX, ACTION_NOT_TEAM)
+              end
+            end
+          end
+        else
+          create_or_update_comment(id, ACTION_PREFIX, ACTION_UNSUPPORTED_BRANCH)
         end
       end
 
@@ -410,10 +425,10 @@ module Hub
       return session
     end
 
-    def self.submit_jenkins_job repo_to_pull_id, settings
+    def self.submit_jenkins_job repo_to_pull_id, branch, settings
       # First, get the next jenkins build number
-      next_build_num = get_next_build(settings)
-      build_uri = URI(JOB_BASE_URI + settings[:jenkins_project_name] + "/buildWithParameters?token=libra1")
+      next_build_num = get_next_build(branch, settings)
+      build_uri = URI(JOB_BASE_URI + settings[:branches][branch][:jenkins_project_name] + "/buildWithParameters?token=libra1")
 
       pull_id_params = ''
       repo_to_pull_id.each do |repo, pull_id|
@@ -430,12 +445,12 @@ module Hub
 
           # Block until Jenkins actually increments the build number (this isn't transactional)
           $stderr.puts "Now waiting until build number increments..."
-          while get_next_build(settings) == next_build_num
+          while get_next_build(branch, settings) == next_build_num
             sleep 1
           end
 
           # Now you can safely return with the submission registered
-          return JOB_BASE_URI + settings[:jenkins_project_name] + "/#{next_build_num}/"
+          return JOB_BASE_URI + settings[:branches][branch][:jenkins_project_name] + "/#{next_build_num}/"
         else
           raise "Jenkins job submission failed for pull request"
         end
@@ -454,8 +469,8 @@ module Hub
       end
     end
 
-    def self.get_next_build(settings)
-      job_api_uri = URI("#{JENKINS}/job/#{settings[:jenkins_project_name]}/api/json")
+    def self.get_next_build(branch, settings)
+      job_api_uri = URI("#{JENKINS}/job/#{settings[:branches][branch][:jenkins_project_name]}/api/json")
       get_session.start do |http|
         request = Net::HTTP::Get.new job_api_uri.request_uri
         response = http.request request

@@ -60,7 +60,7 @@
 build/devenv launch runtime_extended_${BUILD_NUMBER} --verifier --instance_type m1.large
 build/devenv sync runtime_extended_${BUILD_NUMBER} --tag --clean_metadata
 
-# Run the &apos;verification&apos; tests to test higher level components
+# Run the tests
 build/devenv test runtime_extended_${BUILD_NUMBER} --terminate --include_extended=runtime</command>
     </hudson.tasks.Shell>
   </builders>
