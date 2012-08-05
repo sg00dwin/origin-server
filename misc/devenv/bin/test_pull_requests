@@ -240,7 +240,7 @@ module Hub
       if bot_comment
         update_comment bot_comment['id'], comment
       else
-        # No comment found, create a new one and yield to it
+        # No comment found, create a new one
         add_comment issue_id, comment
       end
 
@@ -251,10 +251,7 @@ module Hub
     #
     def delete_comment_with_prefix(issue_id, comment_prefix)
       bot_comment = get_comment_with_prefix(issue_id, comment_prefix)
-    
-      if bot_comment
-        delete_comment bot_comment['id']
-      end
+      delete_comment bot_comment['id'] if bot_comment
     end
     
     #
