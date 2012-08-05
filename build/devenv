@@ -835,22 +835,14 @@ mkdir -p /tmp/rhc/junit
             cmd = 'set -e ; /bin/bash ~/li-devenv.sh'
             cmd += ' stage' if options.use_stage_repo?
           end
-          output = ssh(hostname, cmd, 3600)
+          output, exit_code = ssh(hostname, cmd, 3600, true)
           puts "Done"
 
           puts "----------------- Install Output ------------------------"
           puts output
           puts "---------------------------------------------------------"
-
-          # FIXME - HACK TO MAKE SURE TEMPLATES ARE CREATED
-          inst_template_cmd = "set -e; /bin/bash li-devenv.sh --install_templates;"
-          template_output = ssh(hostname, inst_template_cmd, 3600)
-          puts "Done"
-
-          puts "------------- Template Install Output -------------------"
-          puts template_output
-          puts "---------------------------------------------------------"
-        
+          
+          exit exit_code unless exit_code == 0
         
           validate_instance(hostname) unless options.install_required_packages?
 
@@ -861,12 +853,14 @@ mkdir -p /tmp/rhc/junit
           end
         else
           print "Updating all packages on the system..."
-          output = ssh(hostname, "yum clean metadata; yum update -y --exclude='rhc-devenv'; set -e; yum update -y --exclude='rhc-devenv' --disablerepo=\\* --enablerepo=li --enablerepo=ruby193", 600)
+          output, exit_code = ssh(hostname, "yum clean metadata; yum update -y --exclude='rhc-devenv'; set -e; yum update -y --exclude='rhc-devenv' --disablerepo=\\* --enablerepo=li --enablerepo=ruby193", 600, true)
           puts "Done"
 
           puts "------------------ Update Output ------------------------"
           puts output
           puts "---------------------------------------------------------"
+          
+          exit exit_code unless exit_code == 0
 
           validate_instance(hostname)
 

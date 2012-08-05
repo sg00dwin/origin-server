@@ -172,11 +172,31 @@ function find_and_build_specs {
     package_name=`get_package_name $x`
     if ! `contains_value "$package_name" "${ignore_packages[@]}"`
     then
-      install_requires "BuildRequires" "$x"
       dir=$(dirname $x)
+      tagged=false
       pushd $dir > /dev/null
-        tito build --test --rpm
+        if $(git tag | grep "$package_name" > /dev/null 2>&1)
+        then
+          tagged=true
+        fi
       popd > /dev/null
+      if $tagged
+      then
+        echo "
+
+Building '${dir}'"
+
+        install_requires "BuildRequires" "$x"
+        pushd $dir > /dev/null
+          set -e
+          tito build --test --rpm
+          set +e
+        popd > /dev/null
+      else
+        echo "
+
+Skipping '${dir}' since it isn't tagged"
+      fi
     fi
   done
 }
