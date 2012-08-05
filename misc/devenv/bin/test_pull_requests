@@ -187,9 +187,8 @@ module Hub
           bot_comment = comment
           break
         end
-      end
-      raise "Can't merge pull request without running tests!" if bot_comment.nil?
-      if Time.parse(bot_comment['updated_at']) > Time.parse(pull_request['updated_at'])
+      end 
+      if bot_comment.nil? || Time.parse(bot_comment['updated_at']) > Time.parse(pull_request['updated_at'])
         params = { :commit_message => "Merged by openshift-bot" }
         res = put "https://api.github.com/repos/#{Properties['user']}/#{Properties['repo']}/pulls/#{pull_id}/merge", params
         res.error! unless res.success?
@@ -301,39 +300,37 @@ module Hub
         end
       end
 
-      repo_to_pull_id.each do |repo, id|
-        # Find the bot comment for this pull request (or create one)
-        process_or_create_comment(id, settings) do |comment_id, comment, comment_updated_at|
-          case comment
-            when settings[:evaluating_regex]
-              # This is the state for a completely new comment
-              if JenkinsAPI.is_project_stable?
-                submit_tests repo_to_pull_id, comment_id, settings if Properties['repo'] == repo
-              else
-                update_comment comment_id, settings[:waiting_comment]
-              end
-            when settings[:waiting_regex]
-              # Only submit the tests if the project is stable
-              submit_tests repo_to_pull_id, comment_id, settings if (JenkinsAPI.is_project_stable? && Properties['repo'] == repo)
-            when settings[:running_regex]
-              # This state means that the tests are already running
-              # In this case we need to poll Jenkins to see if the build
-              # is finished
-
-              # Capture the build_url from the regex match
-              build_url = $1
-
-              # If the build is finished, update with the results
-              unless JenkinsAPI.is_build_running?(build_url)
-                result = JenkinsAPI.get_build_result(build_url)
-                update_comment comment_id, "#{settings[:test_prefix]} #{result} (#{build_url})"
-              end
+      # Find the bot comment for this pull request (or create one)
+      process_or_create_comment(id, settings) do |comment_id, comment, comment_updated_at|
+        case comment
+          when settings[:evaluating_regex]
+            # This is the state for a completely new comment
+            if JenkinsAPI.is_project_stable?
+              submit_tests repo_to_pull_id, comment_id, settings
             else
-              # This should match the state where the tests have already been
-              # run and have passed / failed.  If the issue has been updated,
-              # then re-run the tests
-              submit_tests repo_to_pull_id, comment_id, settings if (updated_at > comment_updated_at && Properties['repo'] == repo)
-          end
+              update_comment comment_id, settings[:waiting_comment]
+            end
+          when settings[:waiting_regex]
+            # Only submit the tests if the project is stable
+            submit_tests repo_to_pull_id, comment_id, settings if JenkinsAPI.is_project_stable?
+          when settings[:running_regex]
+            # This state means that the tests are already running
+            # In this case we need to poll Jenkins to see if the build
+            # is finished
+
+            # Capture the build_url from the regex match
+            build_url = $1
+
+            # If the build is finished, update with the results
+            unless JenkinsAPI.is_build_running?(build_url)
+              result = JenkinsAPI.get_build_result(build_url)
+              update_comment comment_id, "#{settings[:test_prefix]} #{result} (#{build_url})"
+            end
+          else
+            # This should match the state where the tests have already been
+            # run and have passed / failed.  If the issue has been updated,
+            # then re-run the tests
+            submit_tests repo_to_pull_id, comment_id, settings if updated_at > comment_updated_at
         end
       end
     end
