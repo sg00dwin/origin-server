@@ -195,12 +195,14 @@ module Hub
           break
         end
       end 
-      if bot_comment.nil? || Time.parse(bot_comment['updated_at']) > Time.parse(pull_request['updated_at'])
+      if bot_comment.nil? || Time.parse(bot_comment['updated_at']) >= Time.parse(pull_request['updated_at'])
         params = { :commit_message => "Merged by openshift-bot" }
         res = put "https://api.github.com/repos/#{Properties['user']}/#{Properties['repo']}/pulls/#{pull_id}/merge", params
         res.error! unless res.success?
-      else
-        update_comment pull_id, settings[:evaluating_comment]
+      elsif bot_comment
+        $stderr.puts "Comment updated time: #{bot_comment['updated_at']}"
+        $stderr.puts "Pull request updated time: #{pull_request['updated_at']}"
+        update_comment bot_comment['id'], settings[:evaluating_comment]
         raise "Pull request was updated after testing started!"
       end
     end
