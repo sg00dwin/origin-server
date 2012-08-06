@@ -255,4 +255,43 @@ class AriaUnitTest < ActiveSupport::TestCase
     },nil)
     a.update_acct_complete(1, {:supplemental => {'tax_exempt' => 1}})
   end
+
+  test 'direct_post should not generate names when not configured' do
+    Rails.configuration.expects(:aria_direct_post_name).at_least_once.returns(nil)
+    assert_nil Aria::DirectPost.get_configured
+    assert_nil Aria::DirectPost.get_configured('bar')
+  end
+
+  test 'direct_post should generate names when configured' do
+    Rails.configuration.expects(:aria_direct_post_name).at_least_once.returns('foo')
+    assert_equal 'foo', Aria::DirectPost.get_configured
+    assert_equal 'foo_bar', Aria::DirectPost.get_configured('bar')
+  end
+
+  test 'payment_method should initialize from account details' do
+    assert p = Aria::PaymentMethod.from_account_details(stub(
+      :pay_method => '1',
+      :attributes => {
+        :cc_expire_mm => '10',
+        :cc_expire_yyyy => '2015',
+        :cc_suffix => '1111'
+      }
+    ))
+    assert_equal '1111', p.cc_no
+    assert_equal '10', p.cc_exp_mm
+    assert_equal '2015', p.cc_exp_yyyy
+    assert p.persisted?
+  end
+
+  test 'payment_method is only persisted when account_details pay_method is 1' do
+    assert p = Aria::PaymentMethod.from_account_details(stub(
+      :pay_method => '0',
+      :attributes => {
+        :cc_expire_mm => '10',
+        :cc_expire_yyyy => '2015',
+        :cc_suffix => '1111'
+      }
+    ))
+    assert !p.persisted?
+  end
 end

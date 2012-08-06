@@ -8,6 +8,15 @@ class PlanSignupFlowTest < ActionDispatch::IntegrationTest
     open_session
   end
 
+  def test_credit_card
+    {
+      'cvv' => '111',
+      'cc_no' => '4111 1111 1111 1111',
+      'cc_exp_yyyy' => '2015',
+      'cc_exp_mm' => '12',
+    }
+  end
+
   def user_params
     {:first_name => 'Mike', :last_name => 'Smith', :aria_billing_info => billing_params}
   end
@@ -44,6 +53,8 @@ class PlanSignupFlowTest < ActionDispatch::IntegrationTest
   end
 
   test 'user can signup' do
+    Rails.configuration.expects(:aria_direct_post_name).at_least_once.returns(nil)
+
     user = login_simple_user
 
     get '/account/plans'
@@ -64,11 +75,22 @@ class PlanSignupFlowTest < ActionDispatch::IntegrationTest
     get '/account/plans/megashift/upgrade/payment_method/new'
     assert_response :success
 
-    user = WebUser.new(:rhlogin => user[:web_user][:rhlogin]).extend(Aria::User)
-    user.update_account :status_cd => 1
+    res = submit_form('form#payment_method', test_credit_card)
+    assert Net::HTTPRedirection === res, res.inspect
+    redirect = res['Location']
+    assert redirect.starts_with?(direct_create_account_plan_upgrade_payment_method_url), redirect
 
-    #post 'pci' #PCI url
-    #assert_redirected_to '/account/upgrade/megashift/new
+    get redirect
+    assert_redirected_to '/account/plans/megashift/upgrade/new'
+
+    # Do some direct checking here just to validate
+    user = WebUser.new(:rhlogin => user[:web_user][:rhlogin]).extend(Aria::User)
+    assert user.has_valid_payment_method?
+    assert payment_method = user.payment_method
+    assert payment_method.persisted?
+    assert payment_method.cc_no.ends_with?(test_credit_card['cc_no'][-4..-1])
+    assert_equal test_credit_card['cc_exp_yyyy'].to_i, payment_method.cc_exp_yyyy
+    assert_equal test_credit_card['cc_exp_mm'].to_i, payment_method.cc_exp_mm
 
     get '/account/plans/megashift/upgrade/new'
     assert_response :success
