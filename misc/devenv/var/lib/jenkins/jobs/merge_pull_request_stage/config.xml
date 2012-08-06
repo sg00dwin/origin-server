@@ -128,7 +128,7 @@ echo &quot;
 set -x
 
 pushd li
-  build/devenv build merge_pull_request ${BUILD_NUMBER} --terminate --install_from_local_source --instance_type m1.large --use_stage_repo
+  build/devenv build merge_pull_request_stage ${BUILD_NUMBER} --terminate --install_from_local_source --instance_type m1.large --use_stage_repo
 popd
 
 if [ -n &quot;$LI_PULL_ID&quot; ]
