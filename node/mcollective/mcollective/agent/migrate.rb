@@ -46,14 +46,20 @@ module OpenShiftMigration
         if ['jbossas-7'].include? gear_type
           FileUtils.rm_rf("#{gear_home}/jbossas-7/jbossas-7/standalone/deployments")
           File.symlink("#{gear_home}/app-root/repo/deployments","#{gear_home}/jbossas-7/jbossas-7/standalone/deployments")
-          sleep 15
-          FileUtils.rm_rf("#{gear_home}/jbossas-7/jbossas-7/standalone/deployments/*.war.*")
+          sleep 10
+          migrate_dir = Dir["#{gear_home}/jbossas-7/jbossas-7/standalone/deployments/*.*ar.*"]
+          migrate_dir.each do |filename|
+            FileUtils.rm_rf(filename)
+          end
         end
         if ['jbosseap-6.0'].include? gear_type
           FileUtils.rm_rf("#{gear_home}/jbosseap-6.0/jbosseap-6.0/standalone/deployments")
-          File.symlink("#{gear_home}/app-root/repo/deployments","#{gear_home}/jbosseap-6.0/jbosseap-6.0/standalone/deployments")
-          sleep 15
-          FileUtils.rm_rf("#{gear_home}/jbosseap-6.0/jbosseap-6.0/standalone/deployments/*.war.*")
+          File.symlink("#{gear_home}/app-root/repo/deployments","#{gear_home}/jbosseap-6.0/jbossas-7/standalone/deployments")
+          sleep 10
+          migrate_dir = Dir["#{gear_home}/jbosseap-6.0/jbosseap-6.0/standalone/deployments/*.*ar.*"]
+          migrate_dir.each do |filename|
+            FileUtils.rm_rf(filename)
+          end
         end
 
         env_echos = []
