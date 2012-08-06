@@ -121,7 +121,7 @@ mkdir -p /tmp/rhc/junit
     
     def idle_all_gears(hostname)
       puts "Idling all gears on remote instance: #{hostname}"
-      ssh(hostname, "service mcollective restart; for dir in /var/lib/stickshift/*; do if [ -d $dir ] && [ ! -h $dir ] ; then rhc-idler -n -u `basename $dir`; fi; done; service httpd graceful", 240)
+      ssh(hostname, "service mcollective restart; service stickshift-proxy restart; for dir in /var/lib/stickshift/*; do if [ -d $dir ] && [ ! -h $dir ] ; then rhc-idler -n -u `basename $dir`; fi; done; service httpd graceful", 240)
       puts "Done"
     end
 
@@ -259,15 +259,17 @@ mkdir -p /tmp/rhc/junit
     def validate_instance(hostname)
       # Validate the node installation
       print "Validating instance..."
-      num_tries = 3
+      num_tries = 5
+      restart_try = 2
       (1..num_tries).each do |i|
         unless is_valid?(hostname)
           if i == num_tries
             puts "ERROR - instance is not valid"
             exit 1
-          else
-            sleep 5
+          elsif i == restart_try
+            ssh(hostname, "service libra-broker restart; service libra-site restart", 60)
           end
+          sleep 5
         else
           break
         end
