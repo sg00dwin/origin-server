@@ -8,7 +8,7 @@
 
 Summary:   Dependencies for OpenShift development
 Name:      rhc-devenv
-Version: 0.97.10
+Version: 0.97.11
 Release:   1%{?dist}
 Group:     Development/Libraries
 License:   GPLv2
@@ -523,6 +523,12 @@ chmod -R 770 /var/log/rkhunter
 %{policydir}/*
 
 %changelog
+* Mon Aug 06 2012 Adam Miller <admiller@redhat.com> 0.97.11-1
+- more pull request testing (dmcphers@redhat.com)
+- Merge pull request #177 from danmcp/stage (openshift+bot@redhat.com)
+- syncing li-devenv.sh (dmcphers@redhat.com)
+- testing pull request (dmcphers@redhat.com)
+
 * Wed Aug 01 2012 Adam Miller <admiller@redhat.com> 0.97.10-1
 - add fork ami creation process and cleanup (dmcphers@redhat.com)
 
