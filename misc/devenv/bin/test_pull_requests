@@ -181,13 +181,18 @@ module Hub
     end
 
     # Submit tests to Jenkins and update the comment
-    def submit_tests(repo_to_pull_id, branch, comment_id, settings)
+    def submit_tests(repo_to_pull_id, base_repo, branch, comment_id, settings)
       # If the project is stable, submit the tests
       build_url = JenkinsAPI.submit_jenkins_job(repo_to_pull_id, branch, settings)
 
+      # Update the comments to reflect the new tests running
+      update_comment(comment_id, base_repo, "#{settings[:test_prefix]} Running (#{build_url})")
+
       repo_to_pull_id.each do |repo, pull_id|
-        # Update the comments to reflect the new tests running
-        update_comment(comment_id, repo, "#{settings[:test_prefix]} Running (#{build_url})")
+        next if repo == base_repo
+        process_or_create_comment(pull_id, repo, settings) do |comment_id, comment, comment_updated_at|
+          update_comment(comment_id, repo, "#{settings[:test_prefix]} Running (#{build_url})")
+        end
       end
     end
     
@@ -323,13 +328,13 @@ module Hub
           when settings[:evaluating_regex]
             # This is the state for a completely new comment
             if JenkinsAPI.is_project_stable?(branch, settings)
-              submit_tests(repo_to_pull_id, branch, comment_id, settings)
+              submit_tests(repo_to_pull_id, base_repo, branch, comment_id, settings)
             else
               updated_comment = settings[:waiting_comment]
             end
           when settings[:waiting_regex]
             # Only submit the tests if the project is stable
-            submit_tests repo_to_pull_id, branch, comment_id, settings if JenkinsAPI.is_project_stable?(branch, settings)
+            submit_tests(repo_to_pull_id, base_repo, branch, comment_id, settings) if JenkinsAPI.is_project_stable?(branch, settings)
           when settings[:running_regex]
             # This state means that the tests are already running
             # In this case we need to poll Jenkins to see if the build
@@ -347,15 +352,15 @@ module Hub
             # This should match the state where the tests have already been
             # run and have passed / failed.  If the issue has been updated,
             # then re-run the tests
-            submit_tests repo_to_pull_id, branch, comment_id, settings if updated_at > comment_updated_at
+            submit_tests(repo_to_pull_id, base_repo, branch, comment_id, settings) if updated_at > comment_updated_at
         end
         update_comment(comment_id, repo, updated_comment) if updated_comment
       end
       
       if updated_comment
-        REPOS.each do |repo|
+        repo_to_pull_id.each do |repo, pull_id|
           next if repo == base_repo
-          process_or_create_comment(id, repo, settings) do |comment_id, comment, comment_updated_at|
+          process_or_create_comment(pull_id, repo, settings) do |comment_id, comment, comment_updated_at|
             update_comment(comment_id, repo, updated_comment)
           end
         end
