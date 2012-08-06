@@ -22,7 +22,7 @@ require 'time'
 
 def usage
     puts <<USAGE
-Usage: test_pull_requests [--help] [--merge_pull_request <pull_id>] [--repo <repo>]
+Usage: test_pull_requests [--help] [--merge_pull_request <pull_id>] [--test_pull_request <pull_id>] [--repo <repo>]
 
 This will process all the openshift pull requests and submit
 Jenkins tests for any mergeable pull requests
@@ -32,6 +32,8 @@ Options:
     Show Usage info
 --merge_pull_request <pull_id>
     Takes the id of the pull request to merge and merges into master
+--test_merge_pull_request <pull_id>
+    Takes the id of the pull request to merge and makes sure the merge will succeed before actually merging
 --repo <repo>
     The repo of the pull request
 USAGE
@@ -40,6 +42,7 @@ end
 opts = GetoptLong.new(
     ["--help",               "-h", GetoptLong::NO_ARGUMENT],
     ["--merge_pull_request",       GetoptLong::REQUIRED_ARGUMENT],
+    ["--test_merge_pull_request",  GetoptLong::REQUIRED_ARGUMENT],
     ["--repo",                     GetoptLong::REQUIRED_ARGUMENT]
 )
 
@@ -57,6 +60,7 @@ if args[:help]
 end
 
 merge_pull_id = args[:merge_pull_request]
+test_merge_pull_id = args[:test_merge_pull_request]
 pull_id_repo = args[:repo]
 
 include Hub
@@ -212,6 +216,8 @@ module Hub
       bot_comment = get_comment_with_prefix(pull_id, repo, settings[:test_prefix])
       raise "Missing bot comment!" if bot_comment.nil?
       pull_request = get_pull_request(pull_id, repo)
+      mergeable = pull_request['mergeable']
+      raise "Pull request isn't mergeable!" unless mergeable
       pull_request_updated_at = pull_request['head']['repo']['updated_at'] 
       if Time.parse(bot_comment['updated_at']) >= Time.parse(pull_request_updated_at)
         build_url = settings[:running_regex].match(bot_comment['body'])[1] 
@@ -220,6 +226,22 @@ module Hub
         res = put "https://api.github.com/repos/#{OPENSHIFT_USER}/#{repo}/pulls/#{pull_id}/merge", params
         res.error! unless res.success?
       else
+        $stderr.puts "Comment updated time: #{bot_comment['updated_at']}"
+        $stderr.puts "Pull request updated time: #{pull_request_updated_at}"
+        update_comment(bot_comment['id'], repo, settings[:evaluating_comment])
+        raise "Pull request was updated after testing started!"
+      end
+    end
+    
+    def test_merge_pull_request(pull_id, repo, settings)
+      $stderr.puts "Test merging pull request ##{pull_id} for repo '#{repo}'"
+      bot_comment = get_comment_with_prefix(pull_id, repo, settings[:test_prefix])
+      raise "Missing bot comment!" if bot_comment.nil?
+      pull_request = get_pull_request(pull_id, repo)
+      mergeable = pull_request['mergeable']
+      raise "Pull request isn't mergeable!" unless mergeable
+      pull_request_updated_at = pull_request['head']['repo']['updated_at'] 
+      unless Time.parse(bot_comment['updated_at']) >= Time.parse(pull_request_updated_at)
         $stderr.puts "Comment updated time: #{bot_comment['updated_at']}"
         $stderr.puts "Pull request updated time: #{pull_request_updated_at}"
         update_comment(bot_comment['id'], repo, settings[:evaluating_comment])
@@ -280,7 +302,7 @@ module Hub
     #
     def delete_comment_with_prefix(issue_id, repo, comment_prefix)
       bot_comment = get_comment_with_prefix(issue_id, repo, comment_prefix)
-      delete_comment bot_comment['id'] if bot_comment
+      delete_comment(bot_comment['id'], repo) if bot_comment
     end
     
     #
@@ -588,6 +610,8 @@ end
 
 if merge_pull_id
   @api_client.merge_pull_request(merge_pull_id, pull_id_repo, MERGE_TEST_SETTINGS)
+elsif test_merge_pull_id
+  @api_client.test_merge_pull_request(test_merge_pull_id, pull_id_repo, MERGE_TEST_SETTINGS)
 else
   # Process all the pull requests for testing
   puts "Updating pull requests..."

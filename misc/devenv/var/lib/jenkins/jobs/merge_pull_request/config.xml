@@ -128,6 +128,24 @@ pushd li
   build/devenv build merge_pull_request ${BUILD_NUMBER} --terminate --install_from_local_source --instance_type m1.large
 popd
 
+# Make sure all the pull requests will merge cleanly
+if [ -n &quot;$LI_PULL_ID&quot; ]
+then
+  test_pull_requests --test_merge_pull_request $LI_PULL_ID --repo li
+fi
+
+if [ -n &quot;$CRANKCASE_PULL_ID&quot; ]
+then
+  test_pull_requests --test_merge_pull_request $CRANKCASE_PULL_ID --repo crankcase
+fi
+
+if [ -n &quot;$RHC_PULL_ID&quot; ]
+then
+  test_pull_requests --test_merge_pull_request $RHC_PULL_ID --repo rhc
+fi
+
+
+# Do the merge
 if [ -n &quot;$LI_PULL_ID&quot; ]
 then
   test_pull_requests --merge_pull_request $LI_PULL_ID --repo li
