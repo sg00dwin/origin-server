@@ -563,7 +563,7 @@ mkdir -p /tmp/rhc/junit
           end
 
           # These are special tests that cannot be written to work concurrently
-          unless options.exclude_runtime?
+          if options.include_extended
             idle_all_gears(hostname)
 
             singleton_queue = ['Singletons', "cucumber #{@@CUCUMBER_OPTIONS} -t @singleton li-test/tests"]
