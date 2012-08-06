@@ -265,6 +265,8 @@ mkdir -p /tmp/rhc/junit
           if i == num_tries
             puts "ERROR - instance is not valid"
             exit 1
+          else
+            sleep 5
           end
         else
           break

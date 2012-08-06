@@ -71,9 +71,9 @@ TEST_SETTINGS = {
   :test_prefix => "Test Results:",
   :waiting_comment => "Test Results: Waiting for stable build",
   :evaluating_comment => "Test Results: Evaluating for testing",
-  :evaluating_regex => /Test Results: Evaluating/,
-  :waiting_regex => /Test Results: Waiting/,
-  :running_regex => /Test Results: Running \((.*)\)/,
+  :evaluating_regex => /^Test Results: Evaluating/,
+  :waiting_regex => /^Test Results: Waiting/,
+  :running_regex => /^Test Results: Running \((.*)\)/,
   :branches => { 'stage'   => {:jenkins_project_name => "test_pull_requests_stage",
                                :downstream_job => "libra_ami_stage"},
                  'master'  => {:jenkins_project_name => "test_pull_requests",
@@ -85,9 +85,9 @@ MERGE_TEST_SETTINGS = {
   :test_prefix => "Merge Test Results:",
   :waiting_comment => "Merge Test Results: Waiting for stable build",
   :evaluating_comment => "Merge Test Results: Evaluating for testing",
-  :evaluating_regex => /Merge Test Results: Evaluating/,
-  :waiting_regex => /Merge Test Results: Waiting/,
-  :running_regex => /Merge Test Results: Running \((.*)\)/,
+  :evaluating_regex => /^Merge Test Results: Evaluating/,
+  :waiting_regex => /^Merge Test Results: Waiting/,
+  :running_regex => /^Merge Test Results: Running \((.*)\)/,
   :branches => { 'stage'   => {:jenkins_project_name => "merge_pull_request_stage",
                                :downstream_job => "libra_ami_stage"},
                  'master'  => {:jenkins_project_name => "merge_pull_request",
@@ -121,7 +121,7 @@ BRANCHES = {
 }
 
 ACTION_PREFIX              = "Action Required:"
-ACTION_REGEX               = /#{ACTION_PREFIX}/
+ACTION_REGEX               = /^#{ACTION_PREFIX}/
 ACTION_NOT_MERGE           = "#{ACTION_PREFIX} Pull request cannot be automatically merged"
 ACTION_NOT_TEAM            = "#{ACTION_PREFIX} Please contact #openshift-dev to have this pull request manually reviewed and tested"
 ACTION_UNSUPPORTED_BRANCH  = "#{ACTION_PREFIX} Only pull request(s) from #{BRANCHES.keys.pretty_inspect.chomp} are handled by the openshift-bot"
@@ -185,28 +185,24 @@ module Hub
       # If the project is stable, submit the tests
       build_url = JenkinsAPI.submit_jenkins_job(repo_to_pull_id, branch, settings)
 
+      comment = "#{settings[:test_prefix]} Running (#{build_url})"
+      
       # Update the comments to reflect the new tests running
-      update_comment(comment_id, base_repo, "#{settings[:test_prefix]} Running (#{build_url})")
+      update_comment(comment_id, base_repo, comment)
 
       repo_to_pull_id.each do |repo, pull_id|
         next if repo == base_repo
         process_or_create_comment(pull_id, repo, settings) do |comment_id, comment, comment_updated_at|
-          update_comment(comment_id, repo, "#{settings[:test_prefix]} Running (#{build_url})")
+          update_comment(comment_id, repo, comment)
         end
       end
     end
     
     def merge_pull_request(pull_id, repo, settings)
       $stderr.puts "Merging pull request ##{pull_id} for repo '#{repo}'"
-      pull_request = get_pull_request(pull_id, repo)
-      bot_comment = nil
-      get_comments(pull_id, repo).each do |comment|
-        if comment['body'] =~ /#{settings[:test_prefix]}/
-          bot_comment = comment
-          break
-        end
-      end
+      bot_comment = get_comment_with_prefix(pull_id, repo, settings[:test_prefix])
       raise "Missing bot comment!" if bot_comment.nil?
+      pull_request = get_pull_request(pull_id, repo)
       if Time.parse(bot_comment['updated_at']) >= Time.parse(pull_request['updated_at'])
         params = { :commit_message => "Merged by openshift-bot" }
         res = put "https://api.github.com/repos/#{OPENSHIFT_USER}/#{repo}/pulls/#{pull_id}/merge", params
@@ -283,7 +279,7 @@ module Hub
     
       # See if we can find an existing bot comment
       get_comments(issue_id, repo).each do |comment|
-        if comment['body'] =~ /#{comment_prefix}/ && (comment['user']['login'] == 'openshift-bot')
+        if comment['body'] =~ /^#{comment_prefix}/ && (comment['user']['login'] == 'openshift-bot')
           bot_comment = comment
           break
         end
@@ -354,7 +350,7 @@ module Hub
             # then re-run the tests
             submit_tests(repo_to_pull_id, base_repo, branch, comment_id, settings) if updated_at > comment_updated_at
         end
-        update_comment(comment_id, repo, updated_comment) if updated_comment
+        update_comment(comment_id, base_repo, updated_comment) if updated_comment
       end
       
       if updated_comment
