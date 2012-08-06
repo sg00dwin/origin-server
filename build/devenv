@@ -121,7 +121,7 @@ mkdir -p /tmp/rhc/junit
     
     def idle_all_gears(hostname)
       puts "Idling all gears on remote instance: #{hostname}"
-      ssh(hostname, "service mcollective restart; for dir in /var/lib/stickshift/*; do if [ -d $dir ] && [ ! -h $dir ] ; then rhc-idler -n -u `basename $dir`; fi; done; service httpd graceful", 240)
+      ssh(hostname, "service mcollective restart; service stickshift-proxy restart; for dir in /var/lib/stickshift/*; do if [ -d $dir ] && [ ! -h $dir ] ; then rhc-idler -n -u `basename $dir`; fi; done; service httpd graceful", 240)
       puts "Done"
     end
 
