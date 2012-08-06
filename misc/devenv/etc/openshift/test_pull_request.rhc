@@ -1,9 +1,0 @@
-{
-  "user" : "openshift",
-  "repo" : "rhc",
-  "team" : "168397",
-  "app_url" : "https://ci.dev.openshift.redhat.com",
-  "hub_config" : "~/.config/hub",
-  "proxy_host" : null,
-  "proxy_port" : null
-}

@@ -133,17 +133,17 @@ popd
 
 if [ -n &quot;$LI_PULL_ID&quot; ]
 then
-  test_pull_requests --config /etc/openshift/test_pull_request.li --merge_pull_request $LI_PULL_ID
+  test_pull_requests --merge_pull_request $LI_PULL_ID --repo li
 fi
 
 if [ -n &quot;$CRANKCASE_PULL_ID&quot; ]
 then
-  test_pull_requests --config /etc/openshift/test_pull_request.crankcase --merge_pull_request $CRANKCASE_PULL_ID
+  test_pull_requests --merge_pull_request $CRANKCASE_PULL_ID --repo crankcase
 fi
 
 if [ -n &quot;$RHC_PULL_ID&quot; ]
 then
-  test_pull_requests --config /etc/openshift/test_pull_request.rhc --merge_pull_request $RHC_PULL_ID
+  test_pull_requests --merge_pull_request $RHC_PULL_ID --repo rhc
 fi</command>
     </hudson.tasks.Shell>
   </builders>

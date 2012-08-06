@@ -22,7 +22,7 @@ require 'time'
 
 def usage
     puts <<USAGE
-Usage: test_pull_requests [--help] [--config <file>] [--merge_pull_request <pull_id>]
+Usage: test_pull_requests [--help] [--merge_pull_request <pull_id>] [--repo <repo>]
 
 This will process all the openshift pull requests and submit
 Jenkins tests for any mergeable pull requests
@@ -32,15 +32,15 @@ Options:
     Show Usage info
 --merge_pull_request <pull_id>
     Takes the id of the pull request to merge and merges into master
--c|--config <file>
-    JSON configuration file (default: crankcase configuration)
+--repo <repo>
+    The repo of the pull request
 USAGE
 end
 
 opts = GetoptLong.new(
     ["--help",               "-h", GetoptLong::NO_ARGUMENT],
     ["--merge_pull_request",       GetoptLong::REQUIRED_ARGUMENT],
-    ["--config",             "-c", GetoptLong::REQUIRED_ARGUMENT]
+    ["--repo",                     GetoptLong::REQUIRED_ARGUMENT]
 )
 
 args = {}
@@ -56,25 +56,16 @@ if args[:help]
   exit 1
 end
 
-merge_pull_id = args[:merge_pull_request] 
+merge_pull_id = args[:merge_pull_request]
+pull_id_repo = args[:repo]
 
 include Hub
 
-Properties = if args.has_key?(:config) && args[:config]
-    JSON.parse(IO.read(args[:config]))
-else 
-    JSON.parse(%Q|
-      {
-        "user" : "openshift",
-        "repo" : "crankcase",
-        "team" : "168397",
-        "app_url" : "https://ci.dev.openshift.redhat.com",
-        "hub_config" : "~/.config/hub",
-        "proxy_host" : null,
-        "proxy_port" : null
-      }
-    |)
-end
+PROXY_HOST = nil
+PROXY_PORT = nil
+APP_URL = "https://ci.dev.openshift.redhat.com"
+HUB_CONFIG = "~/.config/hub"
+OPENSHIFT_USER = "openshift"
 
 TEST_SETTINGS = {
   :test_prefix => "Test Results:",
@@ -104,6 +95,8 @@ MERGE_TEST_SETTINGS = {
   :trigger_regex => /\[MERGE\]/i
 }
 
+REPOS = ['li', 'crankcase', 'rhc']
+
 REPO_TO_PULL_ID_PARAM = {
   'li' => 'LI_PULL_ID',
   'crankcase' => 'CRANKCASE_PULL_ID',
@@ -114,6 +107,12 @@ REPO_TO_PULL_REGEX = {
   'li' => /https:\/\/github.com\/openshift\/li\/pull\/(\d+)/,
   'crankcase' => /https:\/\/github.com\/openshift\/crankcase\/pull\/(\d+)/,
   'rhc' => /https:\/\/github.com\/openshift\/rhc\/pull\/(\d+)/
+}
+
+REPO_TO_TEAM = {
+  'li' => "168397",
+  'crankcase' => "168397",
+  'rhc' => "168397"
 }
 
 BRANCHES = {
@@ -131,53 +130,53 @@ ACTION_UNSUPPORTED_BRANCH  = "#{ACTION_PREFIX} Only pull request(s) from #{BRANC
 # require a local git project
 module Hub
   class GitHubAPI
-    def list_pull_requests
-      res = get "https://api.github.com/repos/#{Properties['user']}/#{Properties['repo']}/pulls" 
+    def list_pull_requests(repo)
+      res = get "https://api.github.com/repos/#{OPENSHIFT_USER}/#{repo}/pulls" 
       res.error! unless res.success?
       res.data
     end
     
-    def get_pull_request id
-      res = get "https://api.github.com/repos/#{Properties['user']}/#{Properties['repo']}/pulls/%s" % id
+    def get_pull_request(id, repo)
+      res = get "https://api.github.com/repos/#{OPENSHIFT_USER}/#{repo}/pulls/%s" % id
       res.error! unless res.success?
       res.data
     end
 
-    def is_mergeable? id
-      pull_request = get_pull_request id
+    def is_mergeable?(id, repo)
+      pull_request = get_pull_request(id, repo)
       pull_request['mergeable']
     end
 
-    def get_comments issue_id
-      res = get "https://api.github.com/repos/#{Properties['user']}/#{Properties['repo']}/issues/%s/comments" % issue_id
+    def get_comments(issue_id, repo)
+      res = get "https://api.github.com/repos/#{OPENSHIFT_USER}/#{repo}/issues/%s/comments" % issue_id
       res.error! unless res.success?
       res.data
     end
 
-    def delete_comment comment_id
+    def delete_comment(comment_id, repo)
       $stderr.puts "Deleting comment ##{comment_id}"
-      res = delete "https://api.github.com/repos/#{Properties['user']}/#{Properties['repo']}/issues/comments/%s" % [comment_id]
+      res = delete "https://api.github.com/repos/#{OPENSHIFT_USER}/#{repo}/issues/comments/%s" % [comment_id]
       res.error! unless res.success?
     end
 
-    def add_comment issue_id, comment
+    def add_comment(issue_id, repo, comment)
       params = { :body => comment }
-      res = post "https://api.github.com/repos/#{Properties['user']}/#{Properties['repo']}/issues/%s/comments" % [issue_id], params
+      res = post "https://api.github.com/repos/#{OPENSHIFT_USER}/#{repo}/issues/%s/comments" % [issue_id], params
       res.error! unless res.success?
       res.data
     end
 
-    def update_comment comment_id, comment
+    def update_comment(comment_id, repo, comment)
       $stderr.puts "Updating comment ##{comment_id} with #{comment}"
       params = { :body => comment }
-      res = post "https://api.github.com/repos/#{Properties['user']}/#{Properties['repo']}/issues/comments/%s" % [comment_id], params
+      res = post "https://api.github.com/repos/#{OPENSHIFT_USER}/#{repo}/issues/comments/%s" % [comment_id], params
       res.error! unless res.success?
       res.data
     end
 
     # Verifies the user is part of Team Red Hat
-    def user_trusted? login
-      res = get "https://api.github.com/teams/#{Properties['team']}/members/#{login}"
+    def user_trusted?(login, repo)
+      res = get "https://api.github.com/teams/#{REPO_TO_TEAM[repo]}/members/#{login}"
       return res.success?
     end
 
@@ -186,27 +185,31 @@ module Hub
       # If the project is stable, submit the tests
       build_url = JenkinsAPI.submit_jenkins_job(repo_to_pull_id, branch, settings)
 
-      # Update the comments to reflect the new tests running
-      update_comment comment_id, "#{settings[:test_prefix]} Running (#{build_url})"
+      repo_to_pull_id.each do |repo, pull_id|
+        # Update the comments to reflect the new tests running
+        update_comment(comment_id, repo, "#{settings[:test_prefix]} Running (#{build_url})")
+      end
     end
     
-    def merge_pull_request(pull_id, settings)
-      pull_request = get_pull_request(pull_id)
+    def merge_pull_request(pull_id, repo, settings)
+      $stderr.puts "Merging pull request ##{pull_id} for repo '#{repo}'"
+      pull_request = get_pull_request(pull_id, repo)
       bot_comment = nil
-      get_comments(pull_id).each do |comment|
+      get_comments(pull_id, repo).each do |comment|
         if comment['body'] =~ /#{settings[:test_prefix]}/
           bot_comment = comment
           break
         end
-      end 
-      if bot_comment.nil? || Time.parse(bot_comment['updated_at']) >= Time.parse(pull_request['updated_at'])
+      end
+      raise "Missing bot comment!" if bot_comment.nil?
+      if Time.parse(bot_comment['updated_at']) >= Time.parse(pull_request['updated_at'])
         params = { :commit_message => "Merged by openshift-bot" }
-        res = put "https://api.github.com/repos/#{Properties['user']}/#{Properties['repo']}/pulls/#{pull_id}/merge", params
+        res = put "https://api.github.com/repos/#{OPENSHIFT_USER}/#{repo}/pulls/#{pull_id}/merge", params
         res.error! unless res.success?
-      elsif bot_comment
+      else
         $stderr.puts "Comment updated time: #{bot_comment['updated_at']}"
         $stderr.puts "Pull request updated time: #{pull_request['updated_at']}"
-        update_comment bot_comment['id'], settings[:evaluating_comment]
+        update_comment(bot_comment['id'], repo, settings[:evaluating_comment])
         raise "Pull request was updated after testing started!"
       end
     end
@@ -232,13 +235,13 @@ module Hub
     # Yields on the OpenShift bot comment with the test results.
     # Creates a placeholder comment if none exist
     #
-    def process_or_create_comment(issue_id, settings)
-      bot_comment = get_comment_with_prefix(issue_id, settings[:test_prefix])
+    def process_or_create_comment(issue_id, repo, settings)
+      bot_comment = get_comment_with_prefix(issue_id, repo, settings[:test_prefix])
 
       unless bot_comment
         # No comment found, create a new one and yield to it
         $stderr.puts "Creating placeholder comment"
-        bot_comment = add_comment issue_id, settings[:evaluating_comment]
+        bot_comment = add_comment(issue_id, repo, settings[:evaluating_comment])
       end
 
       yield bot_comment['id'], bot_comment['body'], Time.parse(bot_comment['updated_at'])
@@ -247,14 +250,14 @@ module Hub
     #
     # Creates or updates a comment with given prefix
     #
-    def create_or_update_comment(issue_id, comment_prefix, comment)
-      bot_comment = get_comment_with_prefix(issue_id, comment_prefix)
+    def create_or_update_comment(issue_id, repo, comment_prefix, comment)
+      bot_comment = get_comment_with_prefix(issue_id, repo, comment_prefix)
 
       if bot_comment
-        update_comment bot_comment['id'], comment if bot_comment['body'] != comment
+        update_comment(bot_comment['id'], repo, comment) if bot_comment['body'] != comment
       else
         # No comment found, create a new one
-        add_comment issue_id, comment
+        add_comment(issue_id, repo, comment)
       end
 
     end
@@ -262,20 +265,20 @@ module Hub
     #
     # Creates or updates a comment with given prefix
     #
-    def delete_comment_with_prefix(issue_id, comment_prefix)
-      bot_comment = get_comment_with_prefix(issue_id, comment_prefix)
+    def delete_comment_with_prefix(issue_id, repo, comment_prefix)
+      bot_comment = get_comment_with_prefix(issue_id, repo, comment_prefix)
       delete_comment bot_comment['id'] if bot_comment
     end
     
     #
     # Gets a comment with given prefix
     #
-    def get_comment_with_prefix(issue_id, comment_prefix)
+    def get_comment_with_prefix(issue_id, repo, comment_prefix)
       bot_comment = nil
     
       # See if we can find an existing bot comment
-      get_comments(issue_id).each do |comment|
-        if comment['body'] =~ /#{comment_prefix}/
+      get_comments(issue_id, repo).each do |comment|
+        if comment['body'] =~ /#{comment_prefix}/ && (comment['user']['login'] == 'openshift-bot')
           bot_comment = comment
           break
         end
@@ -293,16 +296,18 @@ module Hub
     def process_pull_request(req, settings)      
       id = req['number']
       branch = req['base']['ref']
+      base_repo = req['base']['repo']['name'] 
       updated_at = Time.parse(req["updated_at"])
-      repo_to_pull_id = {Properties['repo'] => id}
+      repo_to_pull_id = {base_repo => id}
 
       # Gather any dependencies from trusted users
-      get_comments(id).each do |comment|
+      get_comments(id, base_repo).each do |comment|
         REPO_TO_PULL_REGEX.each do |repo, regex|
+          next if repo == base_repo
           if comment['body'] =~ regex
             addtl_pull_id = $1
             comment_login = comment['user']['login']
-            trusted = user_trusted? comment_login
+            trusted = user_trusted?(comment_login, repo)
             $stderr.puts "#{comment_login} trusted: #{trusted}"
             if trusted
               repo_to_pull_id[repo] = addtl_pull_id
@@ -311,15 +316,16 @@ module Hub
         end
       end
 
+      updated_comment = nil
       # Find the bot comment for this pull request (or create one)
-      process_or_create_comment(id, settings) do |comment_id, comment, comment_updated_at|
+      process_or_create_comment(id, base_repo, settings) do |comment_id, comment, comment_updated_at|
         case comment
           when settings[:evaluating_regex]
             # This is the state for a completely new comment
             if JenkinsAPI.is_project_stable?(branch, settings)
-              submit_tests repo_to_pull_id, branch, comment_id, settings
+              submit_tests(repo_to_pull_id, branch, comment_id, settings)
             else
-              update_comment comment_id, settings[:waiting_comment]
+              updated_comment = settings[:waiting_comment]
             end
           when settings[:waiting_regex]
             # Only submit the tests if the project is stable
@@ -335,13 +341,23 @@ module Hub
             # If the build is finished, update with the results
             unless JenkinsAPI.is_build_running?(build_url, branch, settings)
               result = JenkinsAPI.get_build_result(build_url, branch, settings)
-              update_comment comment_id, "#{settings[:test_prefix]} #{result} (#{build_url})"
+              updated_comment = "#{settings[:test_prefix]} #{result} (#{build_url})"
             end
           else
             # This should match the state where the tests have already been
             # run and have passed / failed.  If the issue has been updated,
             # then re-run the tests
             submit_tests repo_to_pull_id, branch, comment_id, settings if updated_at > comment_updated_at
+        end
+        update_comment(comment_id, repo, updated_comment) if updated_comment
+      end
+      
+      if updated_comment
+        REPOS.each do |repo|
+          next if repo == base_repo
+          process_or_create_comment(id, repo, settings) do |comment_id, comment, comment_updated_at|
+            update_comment(comment_id, repo, updated_comment)
+          end
         end
       end
     end
@@ -352,55 +368,57 @@ module Hub
     #
     def process_pull_requests(settings)
       pull_requests = []
-      list_pull_requests.each do |req|
-        id = req['number']
-        $stderr.puts "Analyzing pull request ##{id}"
+      REPOS.each do |repo|
+        list_pull_requests(repo).each do |req|
+          id = req['number']
+          $stderr.puts "Analyzing pull request ##{id}"
         
-        branch = req['base']['ref']
+          branch = req['base']['ref']
           
-        if BRANCHES.include?(branch)
+          if BRANCHES.include?(branch)
 
-          # Skip if it's not mergeable
-          mergeable = is_mergeable? id
-          $stderr.puts "Mergeable #{mergeable}"
-          unless mergeable
-            create_or_update_comment(id, ACTION_PREFIX, ACTION_NOT_MERGE)
-            next
-          end
-
-          # Verify user is from the Red Hat Team
-          login = req['user']['login']
-          trusted = user_trusted? login
-          $stderr.puts "#{login} trusted: #{trusted}"
-
-          untrusted = false
-          # Has a merge or test been requested by a trusted user?
-          if req['title'] =~ settings[:trigger_regex]
-            if trusted
-              delete_comment_with_prefix(id, ACTION_PREFIX)
-              pull_requests << req
+            # Skip if it's not mergeable
+            mergeable = is_mergeable?(id, repo)
+            $stderr.puts "Mergeable #{mergeable}"
+            unless mergeable
+              create_or_update_comment(id, repo, ACTION_PREFIX, ACTION_NOT_MERGE)
               next
-            else
-              create_or_update_comment(id, ACTION_PREFIX, ACTION_NOT_TEAM)
             end
-          end
 
-          get_comments(id).each do |comment|
-            if comment['body'] =~ settings[:trigger_regex]
-              comment_login = comment['user']['login']
-              trusted = user_trusted? comment_login
-              $stderr.puts "#{comment_login} trusted: #{trusted}"
+            # Verify user is from the Red Hat Team
+            login = req['user']['login']
+            trusted = user_trusted?(login, repo)
+            $stderr.puts "#{login} trusted: #{trusted}"
+
+            untrusted = false
+            # Has a merge or test been requested by a trusted user?
+            if req['title'] =~ settings[:trigger_regex]
               if trusted
-                delete_comment_with_prefix(id, ACTION_PREFIX)
+                delete_comment_with_prefix(id, repo, ACTION_PREFIX)
                 pull_requests << req
-                break
+                next
               else
-                create_or_update_comment(id, ACTION_PREFIX, ACTION_NOT_TEAM)
+                create_or_update_comment(id, repo, ACTION_PREFIX, ACTION_NOT_TEAM)
               end
             end
+
+            get_comments(id, repo).each do |comment|
+              if comment['body'] =~ settings[:trigger_regex]
+                comment_login = comment['user']['login']
+                trusted = user_trusted?(comment_login, repo)
+                $stderr.puts "#{comment_login} trusted: #{trusted}"
+                if trusted
+                  delete_comment_with_prefix(id, repo, ACTION_PREFIX)
+                  pull_requests << req
+                  break
+                else
+                  create_or_update_comment(id, repo, ACTION_PREFIX, ACTION_NOT_TEAM)
+                end
+              end
+            end
+          else
+            create_or_update_comment(id, repo, ACTION_PREFIX, ACTION_UNSUPPORTED_BRANCH)
           end
-        else
-          create_or_update_comment(id, ACTION_PREFIX, ACTION_UNSUPPORTED_BRANCH)
         end
       end
 
@@ -422,13 +440,13 @@ module Hub
     JENKINS = "https://ci.dev.openshift.redhat.com/jenkins"
     JOB_BASE_URI = "#{JENKINS}/job/"
     
-    def downstream_job_uri(branch, settings)
+    def self.downstream_job_uri(branch, settings)
       job_name = settings[:branches][branch][:downstream_job]
       URI("#{JENKINS}/job/#{job_name}/lastCompletedBuild/api/json")
     end
 
     def self.get_session(branch, settings)
-      proxy = Net::HTTP::Proxy(Properties['proxy_host'], Properties['proxy_port'])
+      proxy = Net::HTTP::Proxy(PROXY_HOST, PROXY_PORT)
       uri = downstream_job_uri(branch, settings)
       session = proxy.new(uri.host, uri.port)
       session.use_ssl = true
@@ -533,14 +551,14 @@ end
 
 # Create a new Hub client
 @api_client ||= begin
-  config_file = ENV['HUB_CONFIG'] || Properties['hub_config']
+  config_file = ENV['HUB_CONFIG'] || HUB_CONFIG
   file_store = GitHubAPI::FileStore.new File.expand_path(config_file)
   file_config = GitHubAPI::Configuration.new file_store
-  GitHubAPI.new file_config, :app_url => Properties['app_url']
+  GitHubAPI.new file_config, :app_url => APP_URL
 end
 
 if merge_pull_id
-  @api_client.merge_pull_request merge_pull_id, MERGE_TEST_SETTINGS
+  @api_client.merge_pull_request(merge_pull_id, pull_id_repo, MERGE_TEST_SETTINGS)
 else
   # Process all the pull requests for testing
   puts "Updating pull requests..."
