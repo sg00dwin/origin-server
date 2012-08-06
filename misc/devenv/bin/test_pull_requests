@@ -83,6 +83,11 @@ TEST_SETTINGS = {
                                :downstream_job => "libra_ami_stage"},
                  'master'  => {:jenkins_project_name => "test_pull_requests",
                                :downstream_job => "libra_ami"} },
+  :repo_to_teams => {
+    'li' => ["168397"], # Team Red Hat
+    'crankcase' => ["168397"], # Team Red Hat
+    'rhc' => ["168397"] # Team Red Hat
+  },
   :trigger_regex => /\[TEST\]/i
 }
 
@@ -98,6 +103,11 @@ MERGE_TEST_SETTINGS = {
                                :downstream_job => "libra_ami_stage"},
                  'master'  => {:jenkins_project_name => "merge_pull_request",
                                :downstream_job => "libra_ami"} },
+  :repo_to_teams => {
+    'li' => ["202863", "175254"], # Team site, crankcase
+    'crankcase' => ["175254"], # Team crankcase
+    'rhc' => ["77593"] # Team rhc
+  },
   :trigger_regex => /\[MERGE\]/i
 }
 
@@ -115,22 +125,16 @@ REPO_TO_PULL_REGEX = {
   'rhc' => /https:\/\/github.com\/openshift\/rhc\/pull\/(\d+)/
 }
 
-REPO_TO_TEAM = {
-  'li' => "168397",
-  'crankcase' => "168397",
-  'rhc' => "168397"
-}
-
 BRANCHES = {
   'stage' => nil,
   'master' => nil
 }
 
-ACTION_PREFIX              = "Action Required:"
-ACTION_REGEX               = /^#{ACTION_PREFIX}/
-ACTION_NOT_MERGE           = "#{ACTION_PREFIX} Pull request cannot be automatically merged"
-ACTION_NOT_TEAM            = "#{ACTION_PREFIX} Please contact #openshift-dev to have this pull request manually reviewed and tested"
-ACTION_UNSUPPORTED_BRANCH  = "#{ACTION_PREFIX} Only pull request(s) from #{BRANCHES.keys.pretty_inspect.chomp} are handled by the openshift-bot"
+ACTION_PREFIX               = "Action Required:"
+ACTION_REGEX                = /^#{ACTION_PREFIX}/
+ACTION_NOT_MERGE            = "#{ACTION_PREFIX} Pull request cannot be automatically merged"
+ACTION_NOT_TEAM             = "#{ACTION_PREFIX} Please contact #openshift-dev to have this pull request manually reviewed and tested"
+ACTION_UNSUPPORTED_BRANCH   = "#{ACTION_PREFIX} Only pull request(s) from #{BRANCHES.keys.pretty_inspect.chomp} are handled by the openshift-bot"
 
 # Dynamically extend GitHubAPI to add methods that don't
 # require a local git project
@@ -181,9 +185,14 @@ module Hub
     end
 
     # Verifies the user is part of Team Red Hat
-    def user_trusted?(login, repo)
-      res = get "https://api.github.com/teams/#{REPO_TO_TEAM[repo]}/members/#{login}"
-      return res.success?
+    def user_trusted?(login, repo, settings)
+      trusted = false
+      settings[:repo_to_teams].each do |repo, team|
+        res = get "https://api.github.com/teams/#{team}/members/#{login}"
+        trusted = res.success?
+        break if trusted
+      end
+      trusted
     end
 
     # Submit tests to Jenkins and update the comment
@@ -342,7 +351,7 @@ module Hub
           if comment['body'] =~ regex
             addtl_pull_id = $1
             comment_login = comment['user']['login']
-            trusted = user_trusted?(comment_login, repo)
+            trusted = user_trusted?(comment_login, repo, settings)
             $stderr.puts "#{comment_login} trusted: #{trusted}"
             if trusted
               repo_to_pull_id[repo] = addtl_pull_id
@@ -381,17 +390,24 @@ module Hub
             end
         end
         if submit_test_job || updated_at > comment_updated_at
-          submit_tests(repo_to_pull_id, base_repo, branch, comment_id, settings)
+          trusted = true
+          # Make sure untrusted users with reviewed and tagged [merge/test]s don't make updates after the reviewer tags
+          if updated_at > comment_updated_at
+            login = req['user']['login']
+            trusted = user_trusted?(login, repo, settings)
+          end
+          if trusted
+            submit_tests(repo_to_pull_id, base_repo, branch, comment_id, settings)
+          else
+            create_or_update_comment(id, repo, ACTION_PREFIX, ACTION_NOT_TEAM)
+          end
         elsif updated_comment
           update_comment(comment_id, base_repo, updated_comment)
-        end
-      end
-      
-      if updated_comment
-        repo_to_pull_id.each do |repo, pull_id|
-          next if repo == base_repo
-          process_or_create_comment(pull_id, repo, settings) do |comment_id, comment, comment_updated_at|
-            update_comment(comment_id, repo, updated_comment)
+          repo_to_pull_id.each do |repo, pull_id|
+            next if repo == base_repo
+            process_or_create_comment(pull_id, repo, settings) do |comment_id, comment, comment_updated_at|
+              update_comment(comment_id, repo, updated_comment)
+            end
           end
         end
       end
@@ -420,9 +436,9 @@ module Hub
               next
             end
 
-            # Verify user is from the Red Hat Team
+            # Verify user is from a trusted team
             login = req['user']['login']
-            trusted = user_trusted?(login, repo)
+            trusted = user_trusted?(login, repo, settings)
             $stderr.puts "#{login} trusted: #{trusted}"
 
             untrusted = false
@@ -440,7 +456,7 @@ module Hub
             get_comments(id, repo).each do |comment|
               if comment['body'] =~ settings[:trigger_regex]
                 comment_login = comment['user']['login']
-                trusted = user_trusted?(comment_login, repo)
+                trusted = user_trusted?(comment_login, repo, settings)
                 $stderr.puts "#{comment_login} trusted: #{trusted}"
                 if trusted
                   delete_comment_with_prefix(id, repo, ACTION_PREFIX)
