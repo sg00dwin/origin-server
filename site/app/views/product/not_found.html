@@ -1,0 +1,65 @@
+<style type="text/css">
+#not_found {
+  min-height: 450px;
+  background-image: 
+    url('/app/images/panda404_color_400.png');
+  background-position: 
+    center top;
+  background-repeat: 
+    no-repeat;
+}
+@media  (max-width: 479px) {
+  #not_found {
+    background-image: 
+      url('/app/images/panda404_color_250.png');
+    min-height: 315px
+  }
+}
+@media (min-width: 480px) and (max-width: 767px) {
+  #not_found {
+    background-image: 
+      url('/app/images/panda404_color_300.png');
+    min-height: 375px
+  }
+}
+@media (min-width: 768px) and (max-width: 979px) {
+  #not_found {
+    background-image: 
+      url('/app/images/panda404_color_350.png');
+  }
+}
+
+.ribbon-content span {
+  font-size: 16px;
+  color: #700;
+  color: rgba(119, 0, 0, 0.7);
+  text-shadow: none;
+}
+</style>
+
+<h1 class="ribbon">
+  <div class="ribbon-content">Page not found <span>404</span></div>
+  <div class="ribbon-left"></div>
+</h1>
+
+<div class="row">
+  <div class="span6">
+<h2>The page you requested was not found.</h2>
+<div class="control-group">
+<div class="controls">
+<form style="margin-bottom: 36px" class="form-search">
+<input type="search" value="" />
+<input class="btn btn-primary" type="button" value="Search" />
+</form>
+</div>
+</div>
+<p><a href="http://openshift.redhat.com">Head over to our homepage.</a></p>
+<p><a href="mailto:openshift@redhat.com">Contact us</a> if you feel you have reached this page in error.
+</div><!-- /span -->
+
+<div class="span6">
+<div id="not_found">
+
+</div>
+</div><!-- /span -->
+</div><!-- /row -->
