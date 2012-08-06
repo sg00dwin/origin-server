@@ -382,12 +382,12 @@ module Hub
           # Make sure untrusted users with reviewed and tagged [merge/test]s don't make updates after the reviewer tags
           if updated_at > comment_updated_at
             login = req['user']['login']
-            trusted = user_trusted?(login, repo, settings)
+            trusted = user_trusted?(login, base_repo, settings)
           end
           if trusted
             submit_tests(repo_to_pull_id, base_repo, branch, comment_id, settings)
           else
-            create_or_update_comment(id, repo, ACTION_PREFIX, ACTION_NOT_TEAM)
+            create_or_update_comment(id, base_repo, ACTION_PREFIX, ACTION_NOT_TEAM)
           end
         elsif updated_comment
           update_comment(comment_id, base_repo, updated_comment)
