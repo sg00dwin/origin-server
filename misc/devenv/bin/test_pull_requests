@@ -74,6 +74,7 @@ TEST_SETTINGS = {
   :evaluating_regex => /^Test Results: Evaluating/,
   :waiting_regex => /^Test Results: Waiting/,
   :running_regex => /^Test Results: Running \((.*)\)/,
+  :allow_multiple => true,
   :branches => { 'stage'   => {:jenkins_project_name => "test_pull_requests_stage",
                                :downstream_job => "libra_ami_stage"},
                  'master'  => {:jenkins_project_name => "test_pull_requests",
@@ -88,6 +89,7 @@ MERGE_TEST_SETTINGS = {
   :evaluating_regex => /^Merge Test Results: Evaluating/,
   :waiting_regex => /^Merge Test Results: Waiting/,
   :running_regex => /^Merge Test Results: Running \((.*)\)/,
+  :allow_multiple => false,
   :branches => { 'stage'   => {:jenkins_project_name => "merge_pull_request_stage",
                                :downstream_job => "libra_ami_stage"},
                  'master'  => {:jenkins_project_name => "merge_pull_request",
@@ -182,6 +184,13 @@ module Hub
 
     # Submit tests to Jenkins and update the comment
     def submit_tests(repo_to_pull_id, base_repo, branch, comment_id, settings)
+      unless settings[:allow_multiple]
+        if JenkinsAPI.is_previous_build_running?(branch, settings)
+          $stderr.puts "Waiting for existing build to finish"
+          return
+        end
+      end
+      
       # If the project is stable, submit the tests
       build_url = JenkinsAPI.submit_jenkins_job(repo_to_pull_id, branch, settings)
 
@@ -203,13 +212,16 @@ module Hub
       bot_comment = get_comment_with_prefix(pull_id, repo, settings[:test_prefix])
       raise "Missing bot comment!" if bot_comment.nil?
       pull_request = get_pull_request(pull_id, repo)
-      if Time.parse(bot_comment['updated_at']) >= Time.parse(pull_request['updated_at'])
+      pull_request_updated_at = pull_request['head']['repo']['updated_at'] 
+      if Time.parse(bot_comment['updated_at']) >= Time.parse(pull_request_updated_at)
+        build_url = settings[:running_regex].match(bot_comment['body'])[1] 
+        update_comment(bot_comment['id'], repo, "#{settings[:test_prefix]} SUCCESS (#{build_url})")
         params = { :commit_message => "Merged by openshift-bot" }
         res = put "https://api.github.com/repos/#{OPENSHIFT_USER}/#{repo}/pulls/#{pull_id}/merge", params
         res.error! unless res.success?
       else
         $stderr.puts "Comment updated time: #{bot_comment['updated_at']}"
-        $stderr.puts "Pull request updated time: #{pull_request['updated_at']}"
+        $stderr.puts "Pull request updated time: #{pull_request_updated_at}"
         update_comment(bot_comment['id'], repo, settings[:evaluating_comment])
         raise "Pull request was updated after testing started!"
       end
@@ -298,7 +310,7 @@ module Hub
       id = req['number']
       branch = req['base']['ref']
       base_repo = req['base']['repo']['name'] 
-      updated_at = Time.parse(req["updated_at"])
+      updated_at = Time.parse(req['head']['repo']['updated_at'])
       repo_to_pull_id = {base_repo => id}
 
       # Gather any dependencies from trusted users
@@ -424,7 +436,7 @@ module Hub
       end
 
       sorted_pull_requests = pull_requests.sort_by do |req|
-        Time.parse(req["updated_at"])
+        Time.parse(req['head']['repo']['updated_at'])
       end
 
       sorted_pull_requests.each do |req|
@@ -515,6 +527,12 @@ module Hub
 
     def self.to_api_url build_url
       URI(build_url + "/api/json")
+    end
+    
+    def self.is_previous_build_running?(branch, settings)
+      build_num = get_next_build(branch, settings) - 1
+      build_url = JOB_BASE_URI + settings[:branches][branch][:jenkins_project_name] + "/#{build_num}/"
+      is_build_running?(build_url, branch, settings)
     end
 
     def self.is_build_running?(build_url, branch, settings)
