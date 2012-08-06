@@ -1,0 +1,55 @@
+= semantic_form_for :payment_method, :url => aria_direct_post_url, :html => {:class => 'form-horizontal', :id => 'payment_method'} do |f|
+  -# f.semantic_errors
+  = f.hidden_field :form_of_payment, :name => :formOfPayment
+  = f.hidden_field :session_id, :name => :inSessionID
+  = f.hidden_field :mode, :name => :mode
+  = f.hidden_field :client_no, :name => :client_no
+
+  = f.input :cc_no, :input_html => {:name => :cc_no, :autofocus => true}
+
+  .control-group
+    %label.control-label 
+      Expiration date
+      %abbr{:title => 'required'} * 
+    .controls
+      = select_month(payment_method.cc_exp_mm || Date.today.month, {:field_name => :cc_exp_mm,}, { :name => :cc_exp_mm, })
+      = select_year(payment_method.cc_exp_yyyy || Date.today.year, {:start_year => Date.today.year, :end_year => Date.today.year+10, :field_name => :cc_exp_yyyy, }, { :name => :cc_exp_yyyy, })
+
+  = f.input :cvv, :input_html => {:name => :cvv}
+
+  = f.buttons do
+    = link_to "Cancel", previous_url, :class => 'btn' if defined?(previous_url) && previous_url.present?
+    = f.commit_button "Save Payment"
+    = f.loading
+
+  -#TODO: needs error handling display on page
+  -#%iframe#payment_frame.hidden{:name => :payment_frame, :data => {'frame-url' => aria_direct_post_url(:params => 'serve_direct')}, :src => javascript_path('blank.html')}
+
+- content_for :javascripts do
+  :javascript
+    $(document).ready(function() {
+      var frame = $('#payment_frame');
+      if (frame.length == 0) return;
+      $('#payment_method')
+        .attr('target', 'payment_frame')
+        .attr('action', frame.attr('data-frame-url'))
+        .submit(function() {
+          var callback = false;
+          var form = this;
+          window['payment_method_complete'] = function(errors, next) {
+            if (form.finished) form.finished();
+            callback = true;
+            if (errors && errors.length > 0)
+              alert("Your payment cannot be processed because of errors.");
+            else {
+              window.location.href = next;
+            }
+          };
+          frame.load(function() {
+            setTimeout(function() {
+              if(callback) return;
+              alert('An error has occurred and your payment cannot be processed at this time.  Please try again later.')
+            }, 2000);
+          });
+        })
+    });

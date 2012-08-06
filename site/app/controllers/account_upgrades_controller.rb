@@ -13,9 +13,15 @@ class AccountUpgradesController < AccountController
   end
 
   def new
-    @current_plan = Plan.new(:id => 'freeshift', :name => 'FreeShift')
-    @plan = Plan.new(:id => 'megashift', :name => 'MegaShift')
-    @user = User.new
+    plan_id = params[:plan_id]
+
+    @user = User.find(:one, :as => current_user)
+    @plan = Plan.find plan_id
+    @current_plan = @user.plan
+    aria_user = current_user.extend(Aria::User)
+    @payment_method = aria_user.payment_method
+
+    render :unchanged if @plan == @current_plan
   end
 
   def create

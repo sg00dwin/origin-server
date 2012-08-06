@@ -1,0 +1,10 @@
+- content_for :title, "You are already on this plan"
+
+%h2 You are already subscribed to #{@plan.name}
+
+%section
+  %p Your method of payment is:
+  = render :partial => 'payment_methods/payment_method', :locals => {:payment_method => @payment_method}
+  %p= link_to "Change your payment method", edit_account_payment_method_path
+
+= link_to "Select a different plan", account_plans_path, :class => 'btn'
