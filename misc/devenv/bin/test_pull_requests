@@ -532,7 +532,17 @@ module Hub
     def self.is_previous_build_running?(branch, settings)
       build_num = get_next_build(branch, settings) - 1
       build_url = JOB_BASE_URI + settings[:branches][branch][:jenkins_project_name] + "/#{build_num}/"
-      is_build_running?(build_url, branch, settings)
+      get_session(branch, settings).start do |http|
+        request = Net::HTTP::Get.new to_api_url(build_url).request_uri
+        response = http.request request
+        if response.kind_of? Net::HTTPSuccess
+          return JSON.parse(response.body)["building"]
+        elsif response.kind_of? Net::HTTPNotFound
+          return false # maybe someone deleted the last build?
+        else
+          return true # assume it's running to avoid errors causing multiple builds to start
+        end
+      end
     end
 
     def self.is_build_running?(build_url, branch, settings)
