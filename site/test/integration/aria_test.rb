@@ -76,7 +76,7 @@ class AriaIntegrationTest < ActionDispatch::IntegrationTest
   end
 
   test 'should set direct post settings' do
-    set = Aria::DirectPost.new('testplan', "https://example.com")
+    set = Aria::DirectPost.create('testplan', "https://example.com")
 
     params = Aria.get_reg_uss_config_params("direct_post_#{set}")
     assert_equal({

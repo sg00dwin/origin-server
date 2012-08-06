@@ -3,13 +3,21 @@ module Aria
 
     class << self
 
-      def get_configured(plan_id)
-        "#{name_prefix}_#{plan_id}" if name_prefix.present?
+      def get_or_create(plan, url)
+        get_configured(plan) || create(plan, url)
       end
 
-      def new(plan_id, url)
+      def get_configured(plan=nil)
+        if name_prefix.present?
+          plan.nil? ? name_prefix : "#{name_prefix}_#{plan.is_a?(String) ? plan : plan.id}"
+        else
+          nil
+        end
+      end
+
+      def create(plan, url)
         prefix = name_prefix || `uname -n`.strip
-        name = "#{prefix}_#{plan_id}"
+        name = plan.nil? ? prefix : "#{prefix}_#{plan.is_a?(String) ? plan : plan.id}"
         Aria.set_reg_uss_config_params("direct_post_#{name}", {
           :redirecturl => url,
           :do_cc_auth => 1,
@@ -22,8 +30,10 @@ module Aria
         name
       end
 
-      def destroy(name)
+      def destroy(name=get_configured)
+        raise "Direct post is not configured, cannot delete" if name.nil?
         Aria.clear_reg_uss_config_params("direct_post_#{name}")
+        name
       end
 
       private
