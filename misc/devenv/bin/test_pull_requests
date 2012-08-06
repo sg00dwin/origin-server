@@ -332,17 +332,18 @@ module Hub
       updated_comment = nil
       # Find the bot comment for this pull request (or create one)
       process_or_create_comment(id, base_repo, settings) do |comment_id, comment, comment_updated_at|
+        submit_test_job = false
         case comment
           when settings[:evaluating_regex]
             # This is the state for a completely new comment
             if JenkinsAPI.is_project_stable?(branch, settings)
-              submit_tests(repo_to_pull_id, base_repo, branch, comment_id, settings)
+              submit_test_job = true
             else
               updated_comment = settings[:waiting_comment]
             end
           when settings[:waiting_regex]
             # Only submit the tests if the project is stable
-            submit_tests(repo_to_pull_id, base_repo, branch, comment_id, settings) if JenkinsAPI.is_project_stable?(branch, settings)
+            submit_test_job = true if JenkinsAPI.is_project_stable?(branch, settings)
           when settings[:running_regex]
             # This state means that the tests are already running
             # In this case we need to poll Jenkins to see if the build
@@ -356,13 +357,12 @@ module Hub
               result = JenkinsAPI.get_build_result(build_url, branch, settings)
               updated_comment = "#{settings[:test_prefix]} #{result} (#{build_url})"
             end
-          else
-            # This should match the state where the tests have already been
-            # run and have passed / failed.  If the issue has been updated,
-            # then re-run the tests
-            submit_tests(repo_to_pull_id, base_repo, branch, comment_id, settings) if updated_at > comment_updated_at
         end
-        update_comment(comment_id, base_repo, updated_comment) if updated_comment
+        if submit_test_job || updated_at > comment_updated_at
+          submit_tests(repo_to_pull_id, base_repo, branch, comment_id, settings)
+        elsif updated_comment
+          update_comment(comment_id, base_repo, updated_comment)
+        end
       end
       
       if updated_comment
