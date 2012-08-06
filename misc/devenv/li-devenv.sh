@@ -188,9 +188,7 @@ Building '${dir}'"
 
         install_requires "BuildRequires" "$x"
         pushd $dir > /dev/null
-          set -e
           tito build --test --rpm
-          set +e
         popd > /dev/null
       else
         echo "
