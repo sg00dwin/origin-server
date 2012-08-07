@@ -7,8 +7,9 @@ module Aria
               :state,
               :country,
               :zip,
-              # questionable
-              :first_name, :last_name
+              :first_name,
+              :middle_initial,
+              :last_name
     # Rails 3.0 requires all define_attribute_method calls to be together
 
     validates_presence_of :address1,
@@ -37,5 +38,11 @@ module Aria
         :zip => '10001',
       })
     end
+
+    protected
+      # A user without a billing address is invalid
+      def self.persisted?(details)
+        details.billing_address1.present?
+      end
   end
 end

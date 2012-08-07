@@ -44,7 +44,7 @@ module Aria
     end
 
     def self.from_account_details(details)
-      new(from_acct_details(details))
+      new(from_acct_details(details), persisted?(details))
     end
     def to_aria_attributes
       @attributes.inject({}) do |h,(k,v)|
@@ -63,6 +63,10 @@ module Aria
           h[k[from_prefix.length..-1]] = v if k.starts_with?(from_prefix)
           h
         end
+      end
+
+      def self.persisted?(details)
+        false
       end
 
     private

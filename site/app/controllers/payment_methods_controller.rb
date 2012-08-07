@@ -16,9 +16,10 @@ class PaymentMethodsController < AccountController
     if @payment_method.persisted?
       @previous_payment_method = @payment_method.dup
       @payment_method.cc_no = nil
-      @previous_url = new_account_plan_upgrade_path
-    elsif Rails.env.development?
-      @payment_method = Aria::PaymentMethod.test
+      @previous_url = ['Cancel', new_account_plan_upgrade_path]
+    else
+      @payment_method = Aria::PaymentMethod.test if Rails.env.development?
+      @previous_url = ['See other plans', account_plans_path]
     end
     @payment_method.mode = Aria::DirectPost.get_or_create(params[:plan_id], direct_create_account_plan_upgrade_payment_method_url)
     @payment_method.session_id = @user.create_session
@@ -39,7 +40,7 @@ class PaymentMethodsController < AccountController
     @user = current_user.extend Aria::User
     @payment_method = @user.payment_method
     @previous_payment_method = @payment_method.dup
-    @previous_url = account_path
+    @previous_url = ['Cancel', new_account_plan_upgrade_path]
     @payment_method.cc_no = nil
     @payment_method.mode = Aria::DirectPost.get_or_create(nil, direct_update_account_payment_method_url)
     @payment_method.session_id = @user.create_session

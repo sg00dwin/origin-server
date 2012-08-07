@@ -11,5 +11,5 @@
     = render :partial => 'payment_methods/payment_method', :locals => {:payment_method => @payment_method}
     %p= link_to "Change your payment method", new_account_plan_upgrade_payment_method_path
 
-  = link_to "Select a different plan", account_plans_path, :class => 'btn'
   = submit_tag "Upgrade", :class => 'btn btn-primary'
+  = link_to "Select a different plan", account_plans_path
