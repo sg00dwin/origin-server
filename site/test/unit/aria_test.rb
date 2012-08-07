@@ -219,11 +219,12 @@ class AriaUnitTest < ActiveSupport::TestCase
   end
 
   test 'billing info should init from billing details' do
-    attr = Aria::WDDX::Struct.new({'billing' => 'a', 'billing_city' => 'Houston', 'other' => '2'})
+    attr = Aria::WDDX::Struct.new({'billing' => 'a', 'billing_city' => 'Houston', 'billing_address1' => '1 test', 'other' => '2'})
     assert info = Aria::BillingInfo.from_account_details(attr)
+    assert info.persisted?
     assert_equal 'Houston', info.city
-    assert_equal({'city' => 'Houston'}, info.attributes)
-    assert_equal({'bill_city' => 'Houston'}, info.to_aria_attributes)
+    assert_equal({'city' => 'Houston', 'address1' => '1 test'}, info.attributes)
+    assert_equal({'bill_city' => 'Houston', 'bill_address1' => '1 test'}, info.to_aria_attributes)
     #assert_nil info.tax_exempt
     #assert !info.tax_exempt?
   end
