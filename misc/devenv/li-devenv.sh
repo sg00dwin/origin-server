@@ -120,6 +120,20 @@ sslverify=0
 sslclientcert=/var/lib/yum/client-cert.pem
 sslclientkey=/var/lib/yum/client-key.pem
 
+[Zend]
+name=Zend Server
+baseurl=http://mirror2.ops.rhcloud.com/mirror/zend/$basearch
+        http://mirror1.ops.rhcloud.com/mirror/zend/$basearch
+enabled=1
+gpgcheck=0
+
+[Zend_noarch]
+name=Zend Server - noarch
+baseurl=http://mirror2.ops.rhcloud.com/mirror/zend/noarch
+        http://mirror1.ops.rhcloud.com/mirror/zend/noarch
+enabled=1
+gpgcheck=0
+
 EOF
 
 # Install the 32 bit java before anything else
