@@ -85,6 +85,7 @@ mkdir -p %{buildroot}%{_localstatedir}/lib/stickshift/.httpd.d
 mkdir -p %{buildroot}%{_localstatedir}/lib/stickshift/.stickshift-proxy.d
 mkdir -p %{buildroot}/%{_sysconfdir}/httpd/conf.d/
 mkdir -p %{buildroot}/lib64/security/
+mkdir -p %{buildroot}/sandbox
 # ln -s %{_localstatedir}/lib/stickshift/.httpd.d/ %{buildroot}/%{_sysconfdir}/httpd/conf.d/stickshift
 
 cp -r lib %{buildroot}%{_libexecdir}/stickshift
@@ -265,6 +266,8 @@ fi
 #%attr(0640,root,root) %{_sysconfdir}/httpd/conf.d/stickshift
 %dir %attr(0755,root,root) %{_sysconfdir}/stickshift/skel
 /lib64/security/pam_libra.so
+%dir %attr(1777,root,root) /sandbox
+
 
 %changelog
 * Thu Aug 02 2012 Adam Miller <admiller@redhat.com> 0.97.1-1

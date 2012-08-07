@@ -22,7 +22,7 @@ if [ "$3" = 1 ]; then
         fi
 fi
 
-if [ "$1" == "/tmp" ] || [ "$1" == "/var/tmp" ]
+if [ "$1" == "/tmp" ] || [ "$1" == "/var/tmp" ] || [ "$1" == "/sandbox" ]
 then
     /bin/chown $4 $2
     uid=$(id -u "$4")
