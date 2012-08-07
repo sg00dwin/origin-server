@@ -2,7 +2,7 @@
 
 Summary:       Multi-tenant cloud management system node tools
 Name:          rhc-node
-Version: 0.96.13
+Version: 0.96.14
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -266,6 +266,10 @@ fi
 /lib64/security/pam_libra.so
 
 %changelog
+* Mon Aug 06 2012 Adam Miller <admiller@redhat.com> 0.96.14-1
+- Merge pull request #196 from bdecoste/stage (admiller@redhat.com)
+- touch .deployed in migrate (bdecoste@gmail.com)
+
 * Mon Aug 06 2012 Adam Miller <admiller@redhat.com> 0.96.13-1
 - remove *.war.* from deployments (bdecoste@gmail.com)
 
