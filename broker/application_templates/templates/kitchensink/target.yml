@@ -14,4 +14,4 @@
   :license: :apache2
   :description: >
     This quickstart uses JBoss AS7 to show off all the new features of Java EE 6 and makes a great starting point for your Java project.
-:display_name: Kitchensink Example
+:display_name: JavaEE Full Profile Example on JBoss
