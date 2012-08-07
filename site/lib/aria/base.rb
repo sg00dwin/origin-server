@@ -26,7 +26,7 @@ module Aria
     class << self
       attr_reader :from_prefix, :to_prefix
       def rename_to_save(hash)
-        @rename_to_save.each_pair{ |from, to| old = hash.delete from; hash[to] = old unless old.nil? } if @rename_to_save
+        @rename_to_save.each_pair{ |from, to| old = hash[from]; hash[to] = old unless old.nil? } if @rename_to_save
       end
       def supplemental?(key)
         @supplemental and @supplemental.include?(key.to_sym)

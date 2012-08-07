@@ -51,6 +51,7 @@ class AriaIntegrationTest < ActionDispatch::IntegrationTest
     info.country = 'US'
     info.zip = 12345.to_s
     info.state = 'TX'
+    info.middle_initial = 'P'
     #info.tax_exempt = 1
     assert user.create_account(:billing_info => info), user.errors.inspect
     billing_info = user.billing_info
@@ -66,6 +67,7 @@ class AriaIntegrationTest < ActionDispatch::IntegrationTest
     info.country = 'FR'
     info.zip = 54321.to_s
     info.state = 'Loraine'
+    info.middle_initial = 'M'
     #info.tax_exempt = 2
     assert user.update_account(:billing_info => info), user.errors.inspect
     billing_info = user.billing_info

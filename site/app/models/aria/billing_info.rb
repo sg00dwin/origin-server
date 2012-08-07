@@ -23,6 +23,7 @@ module Aria
                    :rename_to_save => {
                      'bill_zip' => 'bill_postal_cd',
                      'bill_state' => 'bill_state_prov',
+                     'bill_middle_initial' => 'bill_mi',
                    }
 
     #def tax_exempt?
