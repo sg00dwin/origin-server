@@ -162,7 +162,11 @@ module Hub
     end
 
     def is_mergeable?(id, repo)
+      # This call isn't reliable so make sure
       pull_request = get_pull_request(id, repo)
+      unless pull_request['mergeable']
+        pull_request = get_pull_request(id, repo)
+      end
       pull_request['mergeable']
     end
 
@@ -261,6 +265,8 @@ module Hub
       raise "Missing evaluated flag!" if evaluated_time.nil?
       pull_request = get_pull_request(pull_id, repo)
       mergeable = pull_request['mergeable']
+      # This call isn't reliable so make sure
+      mergeable = is_mergeable?(pull_id, repo) unless mergeable 
       raise "Pull request isn't mergeable!" unless mergeable
       pull_request_updated_at = Time.parse(pull_request['head']['repo']['updated_at']) 
       unless evaluated_time > pull_request_updated_at
