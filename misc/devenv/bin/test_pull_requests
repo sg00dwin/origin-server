@@ -263,7 +263,7 @@ module Hub
       mergeable = pull_request['mergeable']
       raise "Pull request isn't mergeable!" unless mergeable
       pull_request_updated_at = Time.parse(pull_request['head']['repo']['updated_at']) 
-      unless evaluated_time >= pull_request_updated_at
+      unless evaluated_time > pull_request_updated_at
         $stderr.puts "Evaluated time: #{evaluated_time}"
         $stderr.puts "Updated at: #{pull_request_updated_at}"
         raise "Pull request was updated after testing started!"
@@ -362,12 +362,17 @@ module Hub
       return nil
     end
     
-    def get_trusted_trigger_comment(pull_request, comments, settings)
-      trigger_comment = nil
-
+    def get_trusted_trigger_time(pull_request, comments, settings)
       login = pull_request['user']['login']
       updated_at = Time.parse(pull_request['head']['repo']['updated_at'])
       repo = pull_request['base']['repo']['name']
+        
+      if pull_request['title'] =~ settings[:trigger_regex] || pull_request['body'] =~ settings[:trigger_regex]
+        if user_trusted?(login, repo, settings)
+          evaluated_time = get_evaluated_time(comments)
+          return evaluated_time || Time.parse(pull_request['updated_at'])
+        end
+      end
 
       sort_comments!(comments)
 
@@ -375,9 +380,9 @@ module Hub
         if comment['body'] =~ settings[:trigger_regex]
           comment_login = comment['user']['login']
           if user_trusted?(comment_login, repo, settings)
-            if user_trusted?(login, repo, settings) || Time.parse(comment['updated_at']) > updated_at
-              trigger_comment = comment
-              break
+            trigger_comment_updated_at = Time.parse(comment['updated_at'])
+            if user_trusted?(login, repo, settings) || trigger_comment_updated_at > updated_at
+              return trigger_comment_updated_at
             end
           end
         end
@@ -449,7 +454,7 @@ module Hub
               $stderr.puts "Checking that evaluated times are still up to date"
               $stderr.puts "Evaluated time: #{evaluated_time}"
               $stderr.puts "Updated at: #{updated_at}"
-              if evaluated_time && evaluated_time >= updated_at
+              if evaluated_time && evaluated_time > updated_at
                 submit_test_job = true
                 repo_to_pull_request.each do |repo, sub_pull_request|
                   next if repo == base_repo 
@@ -464,13 +469,11 @@ module Hub
                   if sub_pull_evaluated_time && sub_pull_evaluated_time > sub_pull_request_updated_at
                     submit_test_job = true
                   else
-                    submit_test_job = false
                     resubmit_test_job = true
                     break
                   end
                 end
               else
-                submit_test_job = false
                 resubmit_test_job = true 
               end
             end
@@ -491,32 +494,38 @@ module Hub
             resubmit_test_job = true if JenkinsAPI.is_project_stable?(branch, settings)
         end
         if resubmit_test_job
-          trigger_comment = get_trusted_trigger_comment(req, comments, settings)
+          submit_test_job = false
+          trigger_updated_at = get_trusted_trigger_time(req, comments, settings)
           evaluated_time = get_evaluated_time(comments)
 
           $stderr.puts "Attempting to resubmit"
           $stderr.puts "Checking that we have an evaluated time and a trusted trigger comment"
           $stderr.puts "Evaluated time: #{evaluated_time}"
-          if trigger_comment
-            $stderr.puts "Trigger Updated at: #{Time.parse(trigger_comment['updated_at'])}"
+          if trigger_updated_at
+            $stderr.puts "Trigger Updated at: #{trigger_updated_at}"
           else
             $stderr.puts "Missing trusted trigger comment"
           end
-          if evaluated_time && trigger_comment
-            trigger_updated_at = Time.parse(trigger_comment['updated_at'])
-            if evaluated_time <= updated_at || evaluated_time <= trigger_updated_at
+          if evaluated_time && trigger_updated_at
+            if evaluated_time < updated_at || evaluated_time < trigger_updated_at
               submit_test_job = true
             end
 
             repo_to_pull_request.each do |repo, sub_pull_request|
-              next if repo == base_repo 
+              next if repo == base_repo
+
+              $stderr.puts "Checking evaluated time for sub pull request #{sub_pull_request['number']} for repo '#{repo}'"
               sub_pull_comments = get_comments(sub_pull_request['number'], repo)
               sub_pull_evaluated_time = get_evaluated_time(sub_pull_comments)
+              sub_pull_request_updated_at = Time.parse(sub_pull_request['head']['repo']['updated_at'])  
 
-              sub_pull_request_updated_at = Time.parse(sub_pull_request['head']['repo']['updated_at'])
+              $stderr.puts "Evaluated time: #{sub_pull_evaluated_time}"
+              $stderr.puts "Updated at: #{sub_pull_request_updated_at}"
+
               valid_trigger_comment = trigger_updated_at > sub_pull_request_updated_at
+              $stderr.puts "Has valid trigger comment: #{valid_trigger_comment}"
               if valid_trigger_comment
-                if !sub_pull_evaluated_time || sub_pull_evaluated_time <= sub_pull_request_updated_at
+                if !sub_pull_evaluated_time || sub_pull_evaluated_time < sub_pull_request_updated_at
                   submit_test_job = true
                 end
               else
@@ -637,10 +646,13 @@ module Hub
 
         if !settings[:allow_multiple] && $submitted_tests[settings[:name]] 
           if $submitted_tests[settings[:name]] == 1
-            skipped_count[settings[:name]] = 0 if skipped_count[settings[:name]].nil?
-            skipped_count[settings[:name]] += 1
-            create_or_update_comment(req['number'], req['base']['repo']['name'], settings[:test_prefix], settings[:queued_comment] % skipped_count[settings[:name]].to_s)
-            $stderr.puts "Pull ##{req['number']} in repo '#{req['base']['repo']['name']}' is at build position ##{skipped_count[settings[:name]]}"
+            bot_comment = get_comment_with_prefix(req['number'], req['base']['repo']['name'], settings[:test_prefix], comments)
+            if bot_comment && !(bot_comment['body'] =~ settings[:running_regex])
+              skipped_count[settings[:name]] = 0 if skipped_count[settings[:name]].nil?
+              skipped_count[settings[:name]] += 1
+              create_or_update_comment(req['number'], req['base']['repo']['name'], settings[:test_prefix], settings[:queued_comment] % skipped_count[settings[:name]].to_s)
+              $stderr.puts "Pull ##{req['number']} in repo '#{req['base']['repo']['name']}' is at build position ##{skipped_count[settings[:name]]}"
+            end
           else
             $submitted_tests[settings[:name]] = 1
           end
