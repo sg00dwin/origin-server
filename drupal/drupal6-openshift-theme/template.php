@@ -80,7 +80,7 @@ function openshift_preprocess_page(&$vars) {
   // surface the highest navigation node
   // FIXME replace with better integration with drupal site nav and taxonomies
   $vars['heading'] = _openshift_heading($vars);
-  $vars['messaging'] = _openshift_messaging($vars);
+  #$vars['messaging'] = _openshift_messaging($vars);
 
   _openshift_whitelist_css($vars);
 }
