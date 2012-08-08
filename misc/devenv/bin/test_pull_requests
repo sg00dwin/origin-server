@@ -141,9 +141,9 @@ ACTION_NOT_MERGE            = "#{ACTION_PREFIX} Pull request cannot be automatic
 ACTION_NOT_TEAM             = "#{ACTION_PREFIX} Please contact #openshift-dev to have this pull request manually reviewed and tested"
 ACTION_UNSUPPORTED_BRANCH   = "#{ACTION_PREFIX} Only pull request(s) from #{BRANCHES.keys.pretty_inspect.chomp} are handled by the openshift-bot"
 
-BOT_MARKER_REGEX = /^[EVALUATED]/,
-BOT_MARKER_UNTRUSTED = "[EVALUATED] Any changes made after this point must be re-approved",
-BOT_MARKER = "[EVALUATED]",
+BOT_MARKER_REGEX = /^[EVALUATED]/
+BOT_MARKER_UNTRUSTED = "[EVALUATED] Any changes made after this point must be re-approved"
+BOT_MARKER = "[EVALUATED]"
 
 # Dynamically extend GitHubAPI to add methods that don't
 # require a local git project
@@ -294,6 +294,8 @@ module Hub
         # No comment found, create a new one and yield to it
         $stderr.puts "Creating placeholder comment"
         bot_comment = add_comment(issue_id, repo, settings[:evaluating_comment])
+        # Add the evaluated marker
+        add_comment(issue_id, repo, BOT_MARKER)
       end
 
       yield bot_comment['id'], bot_comment['body'], Time.parse(bot_comment['updated_at'])
@@ -359,11 +361,11 @@ module Hub
       return nil
     end
     
-    def get_trusted_trigger_comment(pull_request, comments, settings, external_updated_at=nil)
+    def get_trusted_trigger_comment(pull_request, comments, settings)
       trigger_comment = nil
 
       login = pull_request['user']['login']
-      updated_at = external_updated_at ? external_updated_at : Time.parse(pull_request['head']['repo']['updated_at'])
+      updated_at = Time.parse(pull_request['head']['repo']['updated_at'])
       repo = pull_request['base']['repo']['name']
 
       sort_comments!(comments)
@@ -372,7 +374,7 @@ module Hub
         if comment['body'] =~ settings[:trigger_regex]
           comment_login = comment['user']['login']
           if user_trusted?(comment_login, repo, settings)
-            if (!external_updated_at && user_trusted?(login, repo, settings)) || Time.parse(comment['updated_at']) > updated_at
+            if user_trusted?(login, repo, settings) || Time.parse(comment['updated_at']) > updated_at
               trigger_comment = comment
               break
             end
@@ -439,7 +441,29 @@ module Hub
             end
           when settings[:waiting_regex]
             # Only submit the tests if the project is stable
-            submit_test_job = true if JenkinsAPI.is_project_stable?(branch, settings)
+            if JenkinsAPI.is_project_stable?(branch, settings) 
+              evaluated_time = get_evaluated_time(req, comments)
+              if evaluated_time && evaluated_time >= updated_at
+                submit_test_job = true
+                repo_to_pull_request.each do |repo, sub_pull_request|
+                  next if repo == base_repo 
+                  sub_pull_comments = get_comments(sub_pull_request['number'], repo)
+                  sub_pull_evaluated_time = get_evaluated_time(sub_pull_request, sub_pull_comments)
+  
+                  sub_pull_request_updated_at = Time.parse(sub_pull_request['head']['repo']['updated_at'])
+                  if sub_pull_evaluated_time && sub_pull_evaluated_time > sub_pull_request_updated_at
+                    submit_test_job = true
+                  else
+                    submit_test_job = false
+                    resubmit_test_job = true
+                    break
+                  end
+                end
+              else
+                submit_test_job = false
+                resubmit_test_job = true 
+              end
+            end
           when settings[:running_regex]
             # This state means that the tests are already running
             # In this case we need to poll Jenkins to see if the build
@@ -454,36 +478,45 @@ module Hub
               updated_comment = "#{settings[:test_prefix]} #{result} (#{build_url})"
             end
           else
-            submit_test_job = false
-            trigger_comment = get_trusted_trigger_comment(req, comments, settings)
-            evaluated_time = get_evaluated_time(req, comments)
+            resubmit_test_job = true if JenkinsAPI.is_project_stable?(branch, settings)
+        end
+        if resubmit_test_job
+          trigger_comment = get_trusted_trigger_comment(req, comments, settings)
+          evaluated_time = get_evaluated_time(req, comments)
 
-            if evaluated_time && trigger_comment
-              if evaluated_time <= updated_at || evaluated_time <= Time.parse(trigger_comment['updated_at'])
-                submit_test_job = true
-              end
-              
-              repo_to_pull_request.each do |repo, sub_pull_request|
-                next if repo == base_repo 
-                sub_pull_comments = get_comments(sub_pull_request['number'], repo)
-                sub_pull_evaluated_time = get_evaluated_time(sub_pull_request, sub_pull_comments)
-    
-                sub_pull_request_updated_at = Time.parse(sub_pull_request['head']['repo']['updated_at'])
-                external_trigger_comment = get_trusted_trigger_comment(req, comments, settings, sub_pull_request_updated_at)
-                if sub_pull_evaluated_time && external_trigger_comment
-                  if sub_pull_evaluated_time <= sub_pull_request_updated_at
-                    submit_test_job = true
-                  end
-                else
-                  create_or_update_comment(sub_pull_request['number'], repo, ACTION_PREFIX, ACTION_NOT_TEAM, sub_pull_comments)
-                  submit_test_job = false
-                  break
-                end
-              end
-            else
-              create_or_update_comment(id, base_repo, ACTION_PREFIX, ACTION_NOT_TEAM, comments)
-              submit_test_job = false
+          if evaluated_time && trigger_comment
+            trigger_updated_at = Time.parse(trigger_comment['updated_at'])
+            if evaluated_time <= updated_at || evaluated_time <= trigger_updated_at
+              submit_test_job = true
             end
+            
+            repo_to_pull_request.each do |repo, sub_pull_request|
+              next if repo == base_repo 
+              sub_pull_comments = get_comments(sub_pull_request['number'], repo)
+              sub_pull_evaluated_time = get_evaluated_time(sub_pull_request, sub_pull_comments)
+
+              sub_pull_request_updated_at = Time.parse(sub_pull_request['head']['repo']['updated_at'])
+              valid_trigger_comment = trigger_updated_at > sub_pull_request_updated_at
+              if valid_trigger_comment
+                if !sub_pull_evaluated_time || sub_pull_evaluated_time <= sub_pull_request_updated_at
+                  submit_test_job = true
+                end
+              else
+                create_or_update_comment(id, base_repo, ACTION_PREFIX, ACTION_NOT_TEAM, comments)
+                submit_test_job = false
+                break
+              end
+            end
+          else
+            create_or_update_comment(id, base_repo, ACTION_PREFIX, ACTION_NOT_TEAM, comments)
+            submit_test_job = false
+          end
+          if submit_test_job
+            repo_to_pull_request.each do |repo, pull_request|
+              add_comment(pull_request['number'], repo, BOT_MARKER)
+              create_or_update_comment(pull_request['number'], repo, settings[:test_prefix], settings[:waiting_comment])
+            end
+          end
         end
         if submit_test_job
           submit_tests(repo_to_pull_request, base_repo, branch, comment_id, settings)
@@ -491,9 +524,7 @@ module Hub
           update_comment(comment_id, base_repo, updated_comment)
           repo_to_pull_request.each do |repo, pull_request|
             next if repo == base_repo
-            process_or_create_comment(pull_request['number'], repo, settings) do |comment_id, comment, comment_updated_at|
-              update_comment(comment_id, repo, updated_comment)
-            end
+            create_or_update_comment(pull_request['number'], repo, settings[:test_prefix], updated_comment)
           end
         end
       end
