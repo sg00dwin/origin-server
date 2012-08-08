@@ -80,35 +80,8 @@ function openshift_preprocess_page(&$vars) {
   // surface the highest navigation node
   // FIXME replace with better integration with drupal site nav and taxonomies
   $vars['heading'] = _openshift_heading($vars);
-  #$vars['messaging'] = _openshift_messaging($vars);
 
   _openshift_whitelist_css($vars);
-}
-
-function _openshift_messaging(&$vars) {
-  $content;
-  if ( $vars['user']->uid ) {
-    return '';
-  }
-  $trail = menu_get_active_trail();
-  if (count($trail) > 1 && $trail[1]) {
-    $page = _openshift_page_arguments($trail[1]);
-    if ($page && $page->nid == 9435) {
-      $content =
-        '<div class="messaging"><div class="container">'.
-        '<div class="primary headline">Build on <strong>OpenShift</strong></div>' .
-        '<div class="secondary">Find the help you need in the Developer Center to launch your biggest ideas.</div>' .
-        '</div></div></div>';
-    }
-    elseif ($trail[1]['link_path'] == '<front>') {
-      $content =
-        '<div class="messaging"><div class="container">'.
-        '<div class="primary headline">Join the <strong>OpenShift Community</strong></div>' .
-        '<div class="secondary">This is the place to learn and engage with OpenShift users and developers. Sign in to participate</div>' .
-        '</div></div></div>';
-    }
-  }
-  return $content;
 }
 
 function _openshift_page_arguments($item) {
