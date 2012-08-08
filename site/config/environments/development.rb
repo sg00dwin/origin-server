@@ -42,11 +42,14 @@ RedHatCloud::Application.configure do
 
   # Aria API information
   config.aria_uri = "https://secure.current.stage.ariasystems.net/api/ws/api_ws_class_dispatcher.php"
-  config.aria_direct_post_uri = "https://secure.current.stage.ariasystems.net/api/direct_post.php"
   config.aria_auth_key = "sRvjFqjSadu3AFB8jRAR3tqeH5Qf6XjW"
   config.aria_client_no = 3754655
   config.aria_default_plan_no = 10044929
   config.aria_force_test_users = true
+  # Aria direct post configuration
+  config.aria_direct_post_uri = "https://secure.current.stage.ariasystems.net/api/direct_post.php"
+  config.aria_direct_post_name = nil#'website_new_payment'
+  config.aria_direct_post_redirect_base = nil#'https://openshift.redhat.com'
 
   # Promo code Email notification setup
   config.email_from = 'OpenShift <noreply@openshift.redhat.com>'
