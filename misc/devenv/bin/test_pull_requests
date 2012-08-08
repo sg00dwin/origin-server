@@ -462,8 +462,7 @@ module Hub
                   sub_pull_comments = get_comments(sub_pull_request['number'], repo)
                   sub_pull_evaluated_time = get_evaluated_time(sub_pull_comments)
                   sub_pull_request_updated_at = Time.parse(sub_pull_request['head']['repo']['updated_at'])
-                    
-                    
+
                   $stderr.puts "Evaluated time: #{sub_pull_evaluated_time}"
                   $stderr.puts "Updated at: #{sub_pull_request_updated_at}"
                   if sub_pull_evaluated_time && sub_pull_evaluated_time > sub_pull_request_updated_at
@@ -498,7 +497,7 @@ module Hub
           trigger_updated_at = get_trusted_trigger_time(req, comments, settings)
           evaluated_time = get_evaluated_time(comments)
 
-          $stderr.puts "Attempting to resubmit"
+          $stderr.puts "Checking whether we should resubmit"
           $stderr.puts "Checking that we have an evaluated time and a trusted trigger comment"
           $stderr.puts "Evaluated time: #{evaluated_time}"
           if trigger_updated_at
@@ -539,9 +538,23 @@ module Hub
             submit_test_job = false
           end
           if submit_test_job
+            # Make sure the BOT_MARKER is current
             repo_to_pull_request.each do |repo, pull_request|
-              add_comment(pull_request['number'], repo, BOT_MARKER)
-              create_or_update_comment(pull_request['number'], repo, settings[:test_prefix], settings[:waiting_comment])
+              pull_request_comments = nil
+              if repo == base_repo
+                pull_request_comments = comments
+              else
+                pull_request_comments = get_comments(pull_request['number'], repo)
+              end
+              test_prefix_comment = get_comment_with_prefix(pull_request['number'], repo, settings[:test_prefix], pull_request_comments)
+              if !test_prefix_comment || !(test_prefix_comment['body'] =~ settings[:waiting_regex])
+                create_or_update_comment(pull_request['number'], repo, settings[:test_prefix], settings[:waiting_comment], pull_request_comments)
+              end
+              pull_request_evaluated_time = get_evaluated_time(pull_request_comments)
+              pull_request_updated_at = Time.parse(pull_request['head']['repo']['updated_at'])
+              if !pull_request_evaluated_time || pull_request_evaluated_time < pull_request_updated_at
+                add_comment(pull_request['number'], repo, BOT_MARKER)
+              end
             end
           end
         end
