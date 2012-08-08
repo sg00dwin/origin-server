@@ -52,7 +52,11 @@ module Aria
     end
 
     def payment_method
-      nil
+      @payment_method ||= begin
+        Aria::PaymentMethod.from_account_details(account_details)
+      rescue AccountDoesNotExist
+        Aria::PaymentMethod.new
+      end
     end
 
     def tax_exempt

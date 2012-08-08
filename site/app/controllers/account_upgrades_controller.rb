@@ -13,9 +13,15 @@ class AccountUpgradesController < AccountController
   end
 
   def new
-    @current_plan = Plan.new(:id => 'freeshift', :name => 'FreeShift')
-    @plan = Plan.new(:id => 'megashift', :name => 'MegaShift')
-    @user = User.new
+    plan_id = params[:plan_id]
+
+    @user = User.find(:one, :as => current_user)
+    @plan = Plan.find plan_id
+    @current_plan = @user.plan
+    aria_user = current_user.extend(Aria::User)
+    @payment_method = aria_user.payment_method
+
+    render :unchanged if @plan == @current_plan
   end
 
   def create
@@ -48,21 +54,27 @@ class AccountUpgradesController < AccountController
 
   def edit
     @full_user = current_user.full_user
+    @full_user = Streamline::FullUser.test if !@full_user.persisted? && Rails.env.development?
+
     @billing_info = current_user.extend(Aria::User).billing_info
-    @billing_info = Aria::BillingInfo.test if Rails.env.development? && @billing_info.zip.nil?
+    logger.debug "billing #{@billing_info.inspect}"
+    copy_user_to_billing(@full_user, @billing_info) unless @billing_info.persisted?
+    logger.debug "billing #{@billing_info.inspect}"
     # if user is full user, render as uneditable
   end
 
   def update
     user_params = params[:streamline_full_user]
-    @full_user = Streamline::FullUser.new user_params
     @billing_info = Aria::BillingInfo.new user_params[:aria_billing_info]
     user = current_user
+    @full_user = user.full_user
 
-    render :edit and return unless user.promote(@full_user)
+    unless @full_user.persisted?
+      @full_user = Streamline::FullUser.new user_params
+      render :edit and return unless user.promote(@full_user)
+    end
 
     user.extend Aria::User
-
     begin
       render :edit and return unless user.create_account(:billing_info => @billing_info)
     rescue Aria::AccountExists
@@ -70,7 +82,6 @@ class AccountUpgradesController < AccountController
     end
 
     redirect_to account_plan_upgrade_payment_method_path and return unless user.has_valid_payment_method?
-
     redirect_to new_account_plan_upgrade_path
   end
 
@@ -84,5 +95,21 @@ class AccountUpgradesController < AccountController
         end
         redirect_to path
       end
+    end
+
+    def copy_user_to_billing(user, billing)
+      [:first_name, :last_name,
+       :address1, :address2, :address3,
+       :city, :state, :country, :zip
+      ].each{ |s| billing.send(:"#{s}=", user.send(s)) }
+      billing
+    end
+
+    def copy_user_to_billing(user, billing)
+      [:first_name, :last_name,
+       :address1, :address2, :address3,
+       :city, :state, :country, :zip
+      ].each{ |s| billing.send(:"#{s}=", user.send(s)) }
+      billing
     end
 end

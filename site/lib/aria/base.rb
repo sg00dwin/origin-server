@@ -26,7 +26,7 @@ module Aria
     class << self
       attr_reader :from_prefix, :to_prefix
       def rename_to_save(hash)
-        @rename_to_save.each_pair{ |from, to| old = hash.delete from; hash[to] = old unless old.nil? } if @rename_to_save
+        @rename_to_save.each_pair{ |from, to| old = hash[from]; hash[to] = old unless old.nil? } if @rename_to_save
       end
       def supplemental?(key)
         @supplemental and @supplemental.include?(key.to_sym)
@@ -44,7 +44,7 @@ module Aria
     end
 
     def self.from_account_details(details)
-      new(from_acct_details(details))
+      new(from_acct_details(details), persisted?(details))
     end
     def to_aria_attributes
       @attributes.inject({}) do |h,(k,v)|
@@ -63,6 +63,10 @@ module Aria
           h[k[from_prefix.length..-1]] = v if k.starts_with?(from_prefix)
           h
         end
+      end
+
+      def self.persisted?(details)
+        false
       end
 
     private

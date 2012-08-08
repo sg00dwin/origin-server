@@ -54,6 +54,17 @@ module Aria
       super(:acct_no => acct_no, :field_name => field_name).supp_field_values || []
     end
 
+    def get_reg_uss_config_params(set)
+      (super(:set_name => set)['out_reg_uss_config_params'] || []).inject({}) do |h, r|
+        h[r.param_name] = r.param_val
+        h
+      end
+    end
+
+    def clear_reg_uss_config_params(set)
+      super(:set_name => set)
+    end
+
     def set_reg_uss_config_params(set, *args)
       opts = args.extract_options!
       if args.length == 2

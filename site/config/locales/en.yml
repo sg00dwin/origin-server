@@ -63,4 +63,9 @@ en:
   recaptcha:
     errors:
       incorrect-captcha-sol: "Captcha text didn't match"
-      
+  
+  aria:
+    direct_post:
+      unknown: Your payment information could not be processed at this time.  Please contact the OpenShift team for support.
+      servercvvmissing: You must enter the security code associated with your card.  The security code is a three or four digit number (also known as the CVV, CVD, or CCV) usually displayed on the back of your card.
+      serveryoumustenterccnumber: Please enter the credit card number you wish to make payments with.

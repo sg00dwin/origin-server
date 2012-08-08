@@ -219,11 +219,12 @@ class AriaUnitTest < ActiveSupport::TestCase
   end
 
   test 'billing info should init from billing details' do
-    attr = Aria::WDDX::Struct.new({'billing' => 'a', 'billing_city' => 'Houston', 'other' => '2'})
+    attr = Aria::WDDX::Struct.new({'billing' => 'a', 'billing_city' => 'Houston', 'billing_address1' => '1 test', 'other' => '2'})
     assert info = Aria::BillingInfo.from_account_details(attr)
+    assert info.persisted?
     assert_equal 'Houston', info.city
-    assert_equal({'city' => 'Houston'}, info.attributes)
-    assert_equal({'bill_city' => 'Houston'}, info.to_aria_attributes)
+    assert_equal({'city' => 'Houston', 'address1' => '1 test'}, info.attributes)
+    assert_equal({'bill_city' => 'Houston', 'bill_address1' => '1 test'}, info.to_aria_attributes)
     #assert_nil info.tax_exempt
     #assert !info.tax_exempt?
   end
@@ -254,5 +255,44 @@ class AriaUnitTest < ActiveSupport::TestCase
       :supp_field_directives => '2',
     },nil)
     a.update_acct_complete(1, {:supplemental => {'tax_exempt' => 1}})
+  end
+
+  test 'direct_post should not generate names when not configured' do
+    Rails.configuration.expects(:aria_direct_post_name).at_least_once.returns(nil)
+    assert_nil Aria::DirectPost.get_configured
+    assert_nil Aria::DirectPost.get_configured('bar')
+  end
+
+  test 'direct_post should generate names when configured' do
+    Rails.configuration.expects(:aria_direct_post_name).at_least_once.returns('foo')
+    assert_equal 'foo', Aria::DirectPost.get_configured
+    assert_equal 'foo_bar', Aria::DirectPost.get_configured('bar')
+  end
+
+  test 'payment_method should initialize from account details' do
+    assert p = Aria::PaymentMethod.from_account_details(stub(
+      :pay_method => '1',
+      :attributes => {
+        :cc_expire_mm => '10',
+        :cc_expire_yyyy => '2015',
+        :cc_suffix => '1111'
+      }
+    ))
+    assert_equal '1111', p.cc_no
+    assert_equal '10', p.cc_exp_mm
+    assert_equal '2015', p.cc_exp_yyyy
+    assert p.persisted?
+  end
+
+  test 'payment_method is only persisted when account_details pay_method is 1' do
+    assert p = Aria::PaymentMethod.from_account_details(stub(
+      :pay_method => '0',
+      :attributes => {
+        :cc_expire_mm => '10',
+        :cc_expire_yyyy => '2015',
+        :cc_suffix => '1111'
+      }
+    ))
+    assert !p.persisted?
   end
 end
