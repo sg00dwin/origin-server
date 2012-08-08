@@ -72,8 +72,10 @@ HUB_CONFIG = "~/.config/hub"
 OPENSHIFT_USER = "openshift"
 
 TEST_SETTINGS = {
+  :name => "test",
   :test_prefix => "Test Results:",
   :waiting_comment => "Test Results: Waiting for stable build",
+  :queued_comment => "Test Results: Waiting: You are in the build queue at position: %s",
   :evaluating_comment => "Test Results: Evaluating for testing",
   :evaluating_regex => /^Test Results: Evaluating/,
   :waiting_regex => /^Test Results: Waiting/,
@@ -92,8 +94,10 @@ TEST_SETTINGS = {
 }
 
 MERGE_TEST_SETTINGS = {
+  :name => "merge",
   :test_prefix => "Merge Test Results:",
   :waiting_comment => "Merge Test Results: Waiting for stable build",
+  :queued_comment => "Merge Test Results: Waiting: You are in the build queue at position: %s",
   :evaluating_comment => "Merge Test Results: Evaluating for testing",
   :evaluating_regex => /^Merge Test Results: Evaluating/,
   :waiting_regex => /^Merge Test Results: Waiting/,
@@ -104,7 +108,7 @@ MERGE_TEST_SETTINGS = {
                  'master'  => {:jenkins_project_name => "merge_pull_request",
                                :downstream_job => "libra_ami"} },
   :repo_to_teams => {
-    'li' => ["175254", "202863"], # Team site, crankcase
+    'li' => ["175254", "202863"], # Team crankcase, site
     'crankcase' => ["175254"], # Team crankcase
     'rhc' => ["77593"] # Team rhc
   },
@@ -133,10 +137,13 @@ BRANCHES = {
 }
 
 ACTION_PREFIX               = "Action Required:"
-ACTION_REGEX                = /^#{ACTION_PREFIX}/
 ACTION_NOT_MERGE            = "#{ACTION_PREFIX} Pull request cannot be automatically merged"
 ACTION_NOT_TEAM             = "#{ACTION_PREFIX} Please contact #openshift-dev to have this pull request manually reviewed and tested"
 ACTION_UNSUPPORTED_BRANCH   = "#{ACTION_PREFIX} Only pull request(s) from #{BRANCHES.keys.pretty_inspect.chomp} are handled by the openshift-bot"
+
+BOT_MARKER_REGEX = /^[EVALUATED]/,
+BOT_MARKER_UNTRUSTED = "[EVALUATED] Any changes made after this point must be re-approved",
+BOT_MARKER = "[EVALUATED]",
 
 # Dynamically extend GitHubAPI to add methods that don't
 # require a local git project
@@ -189,37 +196,50 @@ module Hub
     # Verifies the user is part of Team Red Hat
     def user_trusted?(login, repo, settings)
       trusted = false
-      settings[:repo_to_teams].each do |repo, team|
-        res = get "https://api.github.com/teams/#{team}/members/#{login}"
-        trusted = res.success?
-        break if trusted
+      repo_setting_key = "#{repo}_#{settings[:name]}"
+      if $permissions[login]
+        trusted = $permissions[login][repo_setting_key] ? true : false
+      else
+        $permissions[login] = {}
+      end
+      if $permissions[login][repo_setting_key].nil?
+        settings[:repo_to_teams][repo].each do |team|
+          res = get "https://api.github.com/teams/#{team}/members/#{login}"
+          trusted = res.success?
+          break if trusted
+        end
+        $permissions[login][repo_setting_key] = trusted
       end
       trusted
     end
 
     # Submit tests to Jenkins and update the comment
-    def submit_tests(repo_to_pull_id, base_repo, branch, comment_id, settings)
+    def submit_tests(repo_to_pull_request, base_repo, branch, comment_id, settings)
       unless settings[:allow_multiple]
-        if JenkinsAPI.is_previous_build_running?(branch, settings)
+        if $submitted_tests[settings[:name]] || JenkinsAPI.is_previous_build_running?(branch, settings)
+          $submitted_tests[settings[:name]] = 1
           $stderr.puts "Waiting for existing build to finish"
           return
         end
       end
       
       # If the project is stable, submit the tests
-      build_url = JenkinsAPI.submit_jenkins_job(repo_to_pull_id, branch, settings)
+      build_url = JenkinsAPI.submit_jenkins_job(repo_to_pull_request, branch, settings)
 
       running_comment = "#{settings[:test_prefix]} Running (#{build_url})"
-      
+
       # Update the comments to reflect the new tests running
       update_comment(comment_id, base_repo, running_comment)
 
-      repo_to_pull_id.each do |repo, pull_id|
-        next if repo == base_repo
-        process_or_create_comment(pull_id, repo, settings) do |comment_id, comment, comment_updated_at|
-          update_comment(comment_id, repo, running_comment)
+      repo_to_pull_request.each do |repo, pull_request|
+        if repo != base_repo
+          process_or_create_comment(pull_request['number'], repo, settings) do |comment_id, comment, comment_updated_at|
+            update_comment(comment_id, repo, running_comment)
+          end
         end
       end
+
+      $submitted_tests[settings[:name]] = 0
     end
     
     def merge_pull_request(pull_id, repo, settings)
@@ -239,8 +259,8 @@ module Hub
       pull_request = get_pull_request(pull_id, repo)
       mergeable = pull_request['mergeable']
       raise "Pull request isn't mergeable!" unless mergeable
-      pull_request_updated_at = pull_request['head']['repo']['updated_at'] 
-      unless Time.parse(bot_comment['updated_at']) >= Time.parse(pull_request_updated_at)
+      pull_request_updated_at = Time.parse(pull_request['head']['repo']['updated_at']) 
+      unless Time.parse(bot_comment['updated_at']) >= pull_request_updated_at
         raise "Pull request was updated after testing started!"
       end
       bot_comment
@@ -299,6 +319,9 @@ module Hub
     #
     def delete_comment_with_prefix(issue_id, repo, comment_prefix, comments=nil)
       comment = get_comment_with_prefix(issue_id, repo, comment_prefix, comments)
+      if comment && comments
+        comments.delete_if { |c| c['id'] == comment['id'] }
+      end
       delete_comment(comment['id'], repo) if comment
     end
     
@@ -320,6 +343,51 @@ module Hub
 
       prefix_comment
     end
+    
+    def get_evaluated_time(pull_request, comments)
+      login = pull_request['user']['login']
+      updated_at = Time.parse(pull_request['head']['repo']['updated_at'])
+      repo = pull_request['base']['repo']['name']
+
+      sort_comments!(comments)
+
+      comments.each do |comment|
+        if comment['user']['login'] == 'openshift-bot' && comment['body'] =~ BOT_MARKER_REGEX
+          return Time.parse(comment['updated_at'])
+        end
+      end
+      return nil
+    end
+    
+    def get_trusted_trigger_comment(pull_request, comments, settings, external_updated_at=nil)
+      trigger_comment = nil
+
+      login = pull_request['user']['login']
+      updated_at = external_updated_at ? external_updated_at : Time.parse(pull_request['head']['repo']['updated_at'])
+      repo = pull_request['base']['repo']['name']
+
+      sort_comments!(comments)
+
+      comments.each do |comment|
+        if comment['body'] =~ settings[:trigger_regex]
+          comment_login = comment['user']['login']
+          if user_trusted?(comment_login, repo, settings)
+            if (!external_updated_at && user_trusted?(login, repo, settings)) || Time.parse(comment['updated_at']) > updated_at
+              trigger_comment = comment
+              break
+            end
+          end
+        end
+      end
+      return nil
+    end
+    
+    def sort_comments!(comments)
+      comments = comments.sort_by do |comment|
+        Time.parse(comment['updated_at'])
+      end
+      comments.reverse!
+    end
 
     #
     # Processes a specific pull request.  Manages the various comment
@@ -330,9 +398,9 @@ module Hub
     def process_pull_request(req, comments, settings)
       id = req['number']
       branch = req['base']['ref']
-      base_repo = req['base']['repo']['name'] 
+      base_repo = req['base']['repo']['name']
       updated_at = Time.parse(req['head']['repo']['updated_at'])
-      repo_to_pull_id = {base_repo => id}
+      repo_to_pull_request = {base_repo => req}
 
       # Gather any dependencies from trusted users
       comments.each do |comment|
@@ -343,7 +411,12 @@ module Hub
             comment_login = comment['user']['login']
             trusted = user_trusted?(comment_login, repo, settings)
             if trusted
-              repo_to_pull_id[repo] = addtl_pull_id
+              pull_request = get_pull_request(addtl_pull_id, repo)
+              if pull_request
+                repo_to_pull_request[repo] = pull_request
+              else
+                $stderr.puts "Pull ##{addtl_pull_id} not found in repo '#{repo}'"
+              end
             else
               $stderr.puts "User '#{comment_login}' not trusted"
             end
@@ -355,6 +428,7 @@ module Hub
       # Find the bot comment for this pull request (or create one)
       process_or_create_comment(id, base_repo, settings, comments) do |comment_id, comment, comment_updated_at|
         submit_test_job = false
+        resubmit_test_job = false
         case comment
           when settings[:evaluating_regex]
             # This is the state for a completely new comment
@@ -380,25 +454,44 @@ module Hub
               updated_comment = "#{settings[:test_prefix]} #{result} (#{build_url})"
             end
           else
-            submit_test_job = true if updated_at > comment_updated_at
+            submit_test_job = false
+            trigger_comment = get_trusted_trigger_comment(req, comments, settings)
+            evaluated_time = get_evaluated_time(req, comments)
+
+            if evaluated_time && trigger_comment
+              if evaluated_time <= updated_at || evaluated_time <= Time.parse(trigger_comment['updated_at'])
+                submit_test_job = true
+              end
+              
+              repo_to_pull_request.each do |repo, sub_pull_request|
+                next if repo == base_repo 
+                sub_pull_comments = get_comments(sub_pull_request['number'], repo)
+                sub_pull_evaluated_time = get_evaluated_time(sub_pull_request, sub_pull_comments)
+    
+                sub_pull_request_updated_at = Time.parse(sub_pull_request['head']['repo']['updated_at'])
+                external_trigger_comment = get_trusted_trigger_comment(req, comments, settings, sub_pull_request_updated_at)
+                if sub_pull_evaluated_time && external_trigger_comment
+                  if sub_pull_evaluated_time <= sub_pull_request_updated_at
+                    submit_test_job = true
+                  end
+                else
+                  create_or_update_comment(sub_pull_request['number'], repo, ACTION_PREFIX, ACTION_NOT_TEAM, sub_pull_comments)
+                  submit_test_job = false
+                  break
+                end
+              end
+            else
+              create_or_update_comment(id, base_repo, ACTION_PREFIX, ACTION_NOT_TEAM, comments)
+              submit_test_job = false
+            end
         end
         if submit_test_job
-          trusted = true
-          # Make sure untrusted users with reviewed and tagged [merge/test]s don't make updates after the reviewer tags
-          if updated_at > comment_updated_at
-            login = req['user']['login']
-            trusted = user_trusted?(login, base_repo, settings)
-          end
-          if trusted
-            submit_tests(repo_to_pull_id, base_repo, branch, comment_id, settings)
-          else
-            create_or_update_comment(id, base_repo, ACTION_PREFIX, ACTION_NOT_TEAM)
-          end
+          submit_tests(repo_to_pull_request, base_repo, branch, comment_id, settings)
         elsif updated_comment
           update_comment(comment_id, base_repo, updated_comment)
-          repo_to_pull_id.each do |repo, pull_id|
+          repo_to_pull_request.each do |repo, pull_request|
             next if repo == base_repo
-            process_or_create_comment(pull_id, repo, settings) do |comment_id, comment, comment_updated_at|
+            process_or_create_comment(pull_request['number'], repo, settings) do |comment_id, comment, comment_updated_at|
               update_comment(comment_id, repo, updated_comment)
             end
           end
@@ -423,47 +516,47 @@ module Hub
           
           if BRANCHES.include?(branch)
 
+            comments = nil
             # Skip if it's not mergeable
             mergeable = is_mergeable?(id, repo)
             $stderr.puts "Mergeable #{mergeable}"
-            unless mergeable
+            if mergeable
+              comments = get_comments(id, repo) if comments.nil?
+              delete_comment_with_prefix(id, repo, ACTION_NOT_MERGE, comments)
+            else
               create_or_update_comment(id, repo, ACTION_PREFIX, ACTION_NOT_MERGE)
               next
             end
 
             login = req['user']['login']
+            updated_at = Time.parse(req['head']['repo']['updated_at'])
 
-            comments = nil
             permission_denied = Array.new(SETTINGS.length, false)
-            added = Array.new(SETTINGS.length, false)
+            delete_action_comment = false
             # Has a merge or test been requested by a trusted user?
             SETTINGS.each_with_index do |settings, i|
-              if req['title'] =~ settings[:trigger_regex]
+              if req['title'] =~ settings[:trigger_regex] || req['body'] =~ settings[:trigger_regex]
                 if user_trusted?(login, repo, settings)
                   comments = get_comments(id, repo) if comments.nil?
-                  delete_comment_with_prefix(id, repo, ACTION_PREFIX, comments)
+                  delete_action_comment = true
                   pull_requests << [req, comments, settings]
                   permission_denied[i] = false
-                  added[i] = true
                   next
                 else
                   $stderr.puts "User '#{login}' not trusted"
                   permission_denied[i] = true
                 end
               end
-            end
 
-            SETTINGS.each_with_index do |settings, i|
-              next if added[i]
               comments = get_comments(id, repo) if comments.nil?
+              sort_comments!(comments)
               comments.each do |comment|
                 if comment['body'] =~ settings[:trigger_regex]
                   comment_login = comment['user']['login']
                   if user_trusted?(comment_login, repo, settings)
-                    delete_comment_with_prefix(id, repo, ACTION_PREFIX, comments)
+                    delete_action_comment = true
                     pull_requests << [req, comments, settings]
                     permission_denied[i] = false
-                    added[i] = true
                     break
                   else
                     $stderr.puts "User '#{comment_login}' not trusted"
@@ -472,7 +565,11 @@ module Hub
                 end
               end
             end
-            create_or_update_comment(id, repo, ACTION_PREFIX, ACTION_NOT_TEAM) if permission_denied.include? true
+            if permission_denied.include? true
+              create_or_update_comment(id, repo, ACTION_PREFIX, ACTION_NOT_TEAM, comments)
+            elsif delete_action_comment
+              delete_comment_with_prefix(id, repo, ACTION_PREFIX, comments)
+            end
           else
             create_or_update_comment(id, repo, ACTION_PREFIX, ACTION_UNSUPPORTED_BRANCH)
           end
@@ -483,9 +580,26 @@ module Hub
         Time.parse(req_info[0]['head']['repo']['updated_at'])
       end
 
+      skipped_count = {}
       sorted_pull_requests.each do |req_info|
         # Process the pull request
-        process_pull_request(req_info[0], req_info[1], req_info[2])
+        req = req_info[0]
+        comments = req_info[1]
+        settings = req_info[2]
+        if settings[:allow_multiple] || !$submitted_tests[settings[:name]]
+          process_pull_request(req, comments, settings)
+        end
+
+        if !settings[:allow_multiple] && $submitted_tests[settings[:name]] 
+          if $submitted_tests[settings[:name]] == 1
+            skipped_count[settings[:name]] = 0 if skipped_count[settings[:name]].nil?
+            skipped_count[settings[:name]] += 1
+            create_or_update_comment(req['number'], req['base']['repo']['name'], settings[:test_prefix], settings[:queued_comment] % skipped_count[settings[:name]].to_s)
+            $stderr.puts "Pull ##{req['number']} in repo '#{req['base']['repo']['name']}' is at build position ##{skipped_count[settings[:name]]}"
+          else
+            $submitted_tests[settings[:name]] = 1
+          end
+        end
       end
     end
   end
@@ -511,15 +625,15 @@ module Hub
       return session
     end
 
-    def self.submit_jenkins_job(repo_to_pull_id, branch, settings)
+    def self.submit_jenkins_job(repo_to_pull_request, branch, settings)
       # First, get the next jenkins build number
       next_build_num = get_next_build(branch, settings)
       build_uri = URI(JOB_BASE_URI + settings[:branches][branch][:jenkins_project_name] + "/buildWithParameters?token=libra1")
 
       pull_id_params = ''
-      repo_to_pull_id.each do |repo, pull_id|
+      repo_to_pull_request.each do |repo, pull_request|
         pull_id_param = REPO_TO_PULL_ID_PARAM[repo]
-        pull_id_params += "&#{pull_id_param}=#{pull_id}"
+        pull_id_params += "&#{pull_id_param}=#{pull_request['number']}"
       end
 
       # Now submit the Jenkins job
@@ -629,6 +743,9 @@ end
   file_config = GitHubAPI::Configuration.new file_store
   GitHubAPI.new file_config, :app_url => APP_URL
 end
+
+$permissions = {}
+$submitted_tests = {}
 
 if merge_pull_id
   @api_client.merge_pull_request(merge_pull_id, pull_id_repo, MERGE_TEST_SETTINGS)
