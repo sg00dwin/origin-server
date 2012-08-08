@@ -141,7 +141,7 @@ ACTION_NOT_MERGE            = "#{ACTION_PREFIX} Pull request cannot be automatic
 ACTION_NOT_TEAM             = "#{ACTION_PREFIX} Please contact #openshift-dev to have this pull request manually reviewed and tested"
 ACTION_UNSUPPORTED_BRANCH   = "#{ACTION_PREFIX} Only pull request(s) from #{BRANCHES.keys.pretty_inspect.chomp} are handled by the openshift-bot"
 
-BOT_MARKER_REGEX = /^[EVALUATED]/
+BOT_MARKER_REGEX = /^\[EVALUATED\]/
 BOT_MARKER_UNTRUSTED = "[EVALUATED] Any changes made after this point must be re-approved"
 BOT_MARKER = "[EVALUATED]"
 
@@ -254,13 +254,18 @@ module Hub
     
     def test_merge_pull_request(pull_id, repo, settings)
       $stderr.puts "Test merging pull request ##{pull_id} for repo '#{repo}'"
-      bot_comment = get_comment_with_prefix(pull_id, repo, settings[:test_prefix])
-      raise "Missing bot comment!" if bot_comment.nil?
+      comments = get_comments(pull_id, repo)
+      bot_comment = get_comment_with_prefix(pull_id, repo, settings[:test_prefix], comments)
+      raise "Missing '{settings[:test_prefix]}' comment!" if bot_comment.nil?
+      evaluated_time = get_evaluated_time(comments)
+      raise "Missing evaluated flag!" if evaluated_time.nil?
       pull_request = get_pull_request(pull_id, repo)
       mergeable = pull_request['mergeable']
       raise "Pull request isn't mergeable!" unless mergeable
       pull_request_updated_at = Time.parse(pull_request['head']['repo']['updated_at']) 
-      unless Time.parse(bot_comment['updated_at']) >= pull_request_updated_at
+      unless evaluated_time >= pull_request_updated_at
+        $stderr.puts "Evaluated time: #{evaluated_time}"
+        $stderr.puts "Updated at: #{pull_request_updated_at}"
         raise "Pull request was updated after testing started!"
       end
       bot_comment
@@ -346,11 +351,7 @@ module Hub
       prefix_comment
     end
     
-    def get_evaluated_time(pull_request, comments)
-      login = pull_request['user']['login']
-      updated_at = Time.parse(pull_request['head']['repo']['updated_at'])
-      repo = pull_request['base']['repo']['name']
-
+    def get_evaluated_time(comments)
       sort_comments!(comments)
 
       comments.each do |comment|
@@ -403,6 +404,8 @@ module Hub
       base_repo = req['base']['repo']['name']
       updated_at = Time.parse(req['head']['repo']['updated_at'])
       repo_to_pull_request = {base_repo => req}
+      
+      $stderr.puts "Processing pull request #{id} for repo '#{base_repo}'"
 
       # Gather any dependencies from trusted users
       comments.each do |comment|
@@ -442,15 +445,22 @@ module Hub
           when settings[:waiting_regex]
             # Only submit the tests if the project is stable
             if JenkinsAPI.is_project_stable?(branch, settings) 
-              evaluated_time = get_evaluated_time(req, comments)
+              evaluated_time = get_evaluated_time(comments)
+              $stderr.puts "Checking that evaluated times are still up to date"
+              $stderr.puts "Evaluated time: #{evaluated_time}"
+              $stderr.puts "Updated at: #{updated_at}"
               if evaluated_time && evaluated_time >= updated_at
                 submit_test_job = true
                 repo_to_pull_request.each do |repo, sub_pull_request|
                   next if repo == base_repo 
+                  $stderr.puts "Checking evaluated time for sub pull request #{sub_pull_request['number']} for repo '#{repo}'"
                   sub_pull_comments = get_comments(sub_pull_request['number'], repo)
-                  sub_pull_evaluated_time = get_evaluated_time(sub_pull_request, sub_pull_comments)
-  
+                  sub_pull_evaluated_time = get_evaluated_time(sub_pull_comments)
                   sub_pull_request_updated_at = Time.parse(sub_pull_request['head']['repo']['updated_at'])
+                    
+                    
+                  $stderr.puts "Evaluated time: #{sub_pull_evaluated_time}"
+                  $stderr.puts "Updated at: #{sub_pull_request_updated_at}"
                   if sub_pull_evaluated_time && sub_pull_evaluated_time > sub_pull_request_updated_at
                     submit_test_job = true
                   else
@@ -482,18 +492,26 @@ module Hub
         end
         if resubmit_test_job
           trigger_comment = get_trusted_trigger_comment(req, comments, settings)
-          evaluated_time = get_evaluated_time(req, comments)
+          evaluated_time = get_evaluated_time(comments)
 
+          $stderr.puts "Attempting to resubmit"
+          $stderr.puts "Checking that we have an evaluated time and a trusted trigger comment"
+          $stderr.puts "Evaluated time: #{evaluated_time}"
+          if trigger_comment
+            $stderr.puts "Trigger Updated at: #{Time.parse(trigger_comment['updated_at'])}"
+          else
+            $stderr.puts "Missing trusted trigger comment"
+          end
           if evaluated_time && trigger_comment
             trigger_updated_at = Time.parse(trigger_comment['updated_at'])
             if evaluated_time <= updated_at || evaluated_time <= trigger_updated_at
               submit_test_job = true
             end
-            
+
             repo_to_pull_request.each do |repo, sub_pull_request|
               next if repo == base_repo 
               sub_pull_comments = get_comments(sub_pull_request['number'], repo)
-              sub_pull_evaluated_time = get_evaluated_time(sub_pull_request, sub_pull_comments)
+              sub_pull_evaluated_time = get_evaluated_time(sub_pull_comments)
 
               sub_pull_request_updated_at = Time.parse(sub_pull_request['head']['repo']['updated_at'])
               valid_trigger_comment = trigger_updated_at > sub_pull_request_updated_at
@@ -519,6 +537,7 @@ module Hub
           end
         end
         if submit_test_job
+          delete_comment_with_prefix(id, base_repo, ACTION_PREFIX, comments)
           submit_tests(repo_to_pull_request, base_repo, branch, comment_id, settings)
         elsif updated_comment
           update_comment(comment_id, base_repo, updated_comment)
@@ -563,13 +582,11 @@ module Hub
             updated_at = Time.parse(req['head']['repo']['updated_at'])
 
             permission_denied = Array.new(SETTINGS.length, false)
-            delete_action_comment = false
             # Has a merge or test been requested by a trusted user?
             SETTINGS.each_with_index do |settings, i|
               if req['title'] =~ settings[:trigger_regex] || req['body'] =~ settings[:trigger_regex]
                 if user_trusted?(login, repo, settings)
                   comments = get_comments(id, repo) if comments.nil?
-                  delete_action_comment = true
                   pull_requests << [req, comments, settings]
                   permission_denied[i] = false
                   next
@@ -585,7 +602,6 @@ module Hub
                 if comment['body'] =~ settings[:trigger_regex]
                   comment_login = comment['user']['login']
                   if user_trusted?(comment_login, repo, settings)
-                    delete_action_comment = true
                     pull_requests << [req, comments, settings]
                     permission_denied[i] = false
                     break
@@ -598,8 +614,6 @@ module Hub
             end
             if permission_denied.include? true
               create_or_update_comment(id, repo, ACTION_PREFIX, ACTION_NOT_TEAM, comments)
-            elsif delete_action_comment
-              delete_comment_with_prefix(id, repo, ACTION_PREFIX, comments)
             end
           else
             create_or_update_comment(id, repo, ACTION_PREFIX, ACTION_UNSUPPORTED_BRANCH)
