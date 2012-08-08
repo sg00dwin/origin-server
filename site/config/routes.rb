@@ -24,9 +24,8 @@ RedHatCloud::Application.routes.draw do
   match 'getting_started/express' => app_redirect('getting_started')
   match 'getting_started/flex' => app_redirect('getting_started')
   match 'getting_started_external/:registration_referrer' => 'getting_started_external#show'
-  match 'platform' => 'product#overview', :as => 'product_overview'
-  #match 'partners/join' => 'partner#join', :as=> 'join_partner'
-  match 'partners' => app_redirect('platform')
+  match 'platform' => redirect('/community/paas')
+  match 'partners' => redirect('/community/paas')
 
   #Site not found
   match 'not_found' => 'product#not_found'
