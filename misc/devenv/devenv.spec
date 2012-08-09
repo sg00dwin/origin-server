@@ -506,7 +506,8 @@ chown -R root:nagios_monitor /var/log/rkhunter
 chmod -R 770 /var/log/rkhunter
 
 # Deploy application templates - fotios
-if ! $(/usr/bin/ruby /usr/lib/stickshift/broker/application_templates/templates/deploy.rb)
+/usr/bin/ruby /usr/lib/stickshift/broker/application_templates/templates/deploy.rb
+if [ $? -ne 0 ]
 then
   service mongod restart
   service libra-broker restart
