@@ -247,7 +247,7 @@ module Hub
         end
       end
 
-      $submitted_tests[settings[:name]] = true
+      $submitted_tests[settings[:name]] = true unless settings[:allow_multiple]
     end
     
     def merge_pull_request(pull_id, repo, settings)
@@ -533,7 +533,7 @@ module Hub
 
             # If the build is finished, update with the results
             if JenkinsAPI.is_build_running?(build_url, branch, settings)
-              $submitted_tests[settings[:name]] = true
+              $submitted_tests[settings[:name]] = true unless settings[:allow_multiple] 
             else
               result = JenkinsAPI.get_build_result(build_url, branch, settings)
               updated_comment = "#{settings[:test_prefix]} #{result} (#{build_url})"
