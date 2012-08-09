@@ -81,15 +81,16 @@ TEST_SETTINGS = {
   :evaluating_regex => /^Test Results: Evaluating/,
   :waiting_regex => /^Test Results: Waiting/,
   :running_regex => /^Test Results: Running \((.*)\)/,
+  :queued_regex => /^Test Results: Waiting: You are in the build queue at position: \d+/,
   :allow_multiple => true,
   :branches => { 'stage'   => {:jenkins_project_name => "test_pull_requests_stage",
                                :downstream_job => "libra_ami_stage"},
                  'master'  => {:jenkins_project_name => "test_pull_requests",
                                :downstream_job => "libra_ami"} },
   :repo_to_teams => {
-    'li' => ["168397"], # Team Red Hat
-    'crankcase' => ["168397"], # Team Red Hat
-    'rhc' => ["168397"] # Team Red Hat
+    'li' => ["168397", "175254", "202863"], # Team Red Hat, crankcase, site
+    'crankcase' => ["168397", "175254"], # Team Red Hat, crankcase
+    'rhc' => ["168397", "77593"] # Team Red Hat, rhc
   },
   :trigger_regex => /\[TEST\]/i
 }
@@ -104,6 +105,7 @@ MERGE_TEST_SETTINGS = {
   :evaluating_regex => /^Merge Test Results: Evaluating/,
   :waiting_regex => /^Merge Test Results: Waiting/,
   :running_regex => /^Merge Test Results: Running \((.*)\)/,
+  :queued_regex => /^Merge Test Results: Waiting: You are in the build queue at position: \d+/,
   :allow_multiple => false,
   :branches => { 'stage'   => {:jenkins_project_name => "merge_pull_request_stage",
                                :downstream_job => "libra_ami_stage"},
@@ -223,7 +225,7 @@ module Hub
     def submit_tests(repo_to_pull_request, base_repo, branch, comment_id, settings)
       unless settings[:allow_multiple]
         if $submitted_tests[settings[:name]] || JenkinsAPI.is_previous_build_running?(branch, settings)
-          $submitted_tests[settings[:name]] = 1
+          $submitted_tests[settings[:name]] = true
           $stderr.puts "Waiting for existing build to finish"
           return
         end
@@ -245,7 +247,7 @@ module Hub
         end
       end
 
-      $submitted_tests[settings[:name]] = 0
+      $submitted_tests[settings[:name]] = true unless settings[:allow_multiple]
     end
     
     def merge_pull_request(pull_id, repo, settings)
@@ -492,28 +494,32 @@ module Hub
           when settings[:waiting_regex]
             $stderr.puts "Waiting..."
             # Only submit the tests if the project is stable
-            if JenkinsAPI.is_project_stable?(branch, settings)
-              $stderr.puts "Checking that evaluated times are still up to date"
-              $stderr.puts "Evaluated time: #{evaluated_time}"
-              $stderr.puts "Updated at: #{updated_at}"
-              if evaluated_time && evaluated_time > updated_at
-                submit_test_job = true
-                repo_to_pull_request.each do |repo, sub_pull_request|
-                  next if repo == base_repo
-                  $stderr.puts "Checking evaluated time for sub pull request #{sub_pull_request['number']} for repo '#{repo}'"
-                  sub_pull_comments = get_comments(sub_pull_request['number'], repo)
-                  sub_pull_evaluated_time = get_evaluated_time(sub_pull_comments)
-                  sub_pull_request_updated_at = Time.parse(sub_pull_request['head']['repo']['updated_at'])
-        
-                  $stderr.puts "Evaluated time: #{sub_pull_evaluated_time}"
-                  $stderr.puts "Updated at: #{sub_pull_request_updated_at}"
-                  if !sub_pull_evaluated_time || sub_pull_evaluated_time < sub_pull_request_updated_at
-                    resubmit_test_job = true
-                    break
+            if JenkinsAPI.is_project_stable?(branch, settings) 
+              if !($submitted_tests[settings[:name]] && comment =~ settings[:queued_regex])
+                $stderr.puts "Checking that evaluated times are still up to date"
+                $stderr.puts "Evaluated time: #{evaluated_time}"
+                $stderr.puts "Updated at: #{updated_at}"
+                if evaluated_time && evaluated_time > updated_at
+                  submit_test_job = true
+                  repo_to_pull_request.each do |repo, sub_pull_request|
+                    next if repo == base_repo
+                    $stderr.puts "Checking evaluated time for sub pull request #{sub_pull_request['number']} for repo '#{repo}'"
+                    sub_pull_comments = get_comments(sub_pull_request['number'], repo)
+                    sub_pull_evaluated_time = get_evaluated_time(sub_pull_comments)
+                    sub_pull_request_updated_at = Time.parse(sub_pull_request['head']['repo']['updated_at'])
+          
+                    $stderr.puts "Evaluated time: #{sub_pull_evaluated_time}"
+                    $stderr.puts "Updated at: #{sub_pull_request_updated_at}"
+                    if !sub_pull_evaluated_time || sub_pull_evaluated_time < sub_pull_request_updated_at
+                      resubmit_test_job = true
+                      break
+                    end
                   end
+                else
+                  resubmit_test_job = true
                 end
               else
-                resubmit_test_job = true
+                $stderr.puts "Job is already queued"
               end
             end
           when settings[:running_regex]
@@ -526,7 +532,9 @@ module Hub
             build_url = $1
 
             # If the build is finished, update with the results
-            unless JenkinsAPI.is_build_running?(build_url, branch, settings)
+            if JenkinsAPI.is_build_running?(build_url, branch, settings)
+              $submitted_tests[settings[:name]] = true unless settings[:allow_multiple] 
+            else
               result = JenkinsAPI.get_build_result(build_url, branch, settings)
               updated_comment = "#{settings[:test_prefix]} #{result} (#{build_url})"
             end
@@ -538,19 +546,19 @@ module Hub
           submit_test_job = false
 
           $stderr.puts "Checking whether we should resubmit"
-          $stderr.puts "Checking that we have an evaluated time and a trusted trigger comment"
           $stderr.puts "Evaluated time: #{evaluated_time}"
           if trigger_updated_at
             $stderr.puts "Trigger Updated at: #{trigger_updated_at}"
           else
             $stderr.puts "Missing trusted trigger comment"
           end
-          if evaluated_time && trigger_updated_at
+          if trigger_updated_at
             # We already trust the primary pull request.  Just need to check whether the eval time is older than last update or last trusted trigger.
-            if evaluated_time < updated_at || evaluated_time < trigger_updated_at
+            if !evaluated_time || (evaluated_time < updated_at || evaluated_time < trigger_updated_at)
               submit_test_job = true
             end
 
+            # Check for any other reason to submit the test job.  And make sure non of the sub pull requests have new untrusted changes.
             repo_to_pull_request.each do |repo, sub_pull_request|
               next if repo == base_repo
 
@@ -682,17 +690,13 @@ module Hub
         process_pull_request(req, comments, settings)
 
         if !settings[:allow_multiple] && $submitted_tests[settings[:name]] 
-          if $submitted_tests[settings[:name]] == 1
-            comments = get_comments(req['number'], req['base']['repo']['name'])
-            bot_comment = get_comment_with_prefix(req['number'], req['base']['repo']['name'], settings[:test_prefix], comments)
-            if bot_comment && !(bot_comment['body'] =~ settings[:running_regex])
-              skipped_count[settings[:name]] = 0 if skipped_count[settings[:name]].nil?
-              skipped_count[settings[:name]] += 1
-              create_or_update_comment(req['number'], req['base']['repo']['name'], settings[:test_prefix], settings[:queued_comment] % skipped_count[settings[:name]].to_s, comments)
-              $stderr.puts "Pull ##{req['number']} in repo '#{req['base']['repo']['name']}' is at build position ##{skipped_count[settings[:name]]}"
-            end
-          else
-            $submitted_tests[settings[:name]] = 1
+          comments = get_comments(req['number'], req['base']['repo']['name'])
+          bot_comment = get_comment_with_prefix(req['number'], req['base']['repo']['name'], settings[:test_prefix], comments)
+          if bot_comment && !(bot_comment['body'] =~ settings[:running_regex])
+            skipped_count[settings[:name]] = 0 if skipped_count[settings[:name]].nil?
+            skipped_count[settings[:name]] += 1
+            create_or_update_comment(req['number'], req['base']['repo']['name'], settings[:test_prefix], settings[:queued_comment] % skipped_count[settings[:name]].to_s, comments)
+            $stderr.puts "Pull ##{req['number']} in repo '#{req['base']['repo']['name']}' is at build position ##{skipped_count[settings[:name]]}"
           end
         end
       end
