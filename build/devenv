@@ -141,7 +141,7 @@ mkdir -p /tmp/rhc/junit
       f=Tempfile.open('fixbroker')
       begin
         if enable
-          f.puts '/config.profiler = {/,/}/ ad  { s/\#//g; }'
+          f.puts '/config.profiler = {/,/}/ { s/\#//g; }'
         else
           f.puts '/config.profiler = {/,/}/ { s/\#//g; s/^/#/; }'
         end
