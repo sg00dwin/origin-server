@@ -1,17 +1,28 @@
 RedHatCloud::Application.routes.draw do
 
-  # The priority is based upon order of creation:
-  # first created -> highest priority.
+  community_paas = redirect('/community/paas')
+  get_started = redirect('/community/get-started')
+  open_source_download = redirect('/community/open-source/download-origin')
 
-  # Legacy redirects
-  match 'access/express(/:request)' => app_redirect('express')
-  match 'access/flex(/:request)' => app_redirect('flex')
-  match 'features' => app_redirect('platform'), :as => 'features'
-  match 'power' => app_redirect('platform')
-  match 'about' => app_redirect('platform'), :as => 'about'
-  match 'express' => app_redirect('platform'), :as => 'express'
-  match 'flex' => app_redirect('platform'), :as => 'flex'
-  match 'flex_redirect' => app_redirect('flex'), :as => 'flex_redirect'
+  # Legacy content redirects
+  match 'access/express(/:request)' => community_paas
+  match 'access/flex(/:request)' => community_paas
+  match 'features' => community_paas, :as => 'features'
+  match 'power' => community_paas
+  match 'about' => community_paas, :as => 'about'
+  match 'express' => community_paas, :as => 'express'
+  match 'flex' => community_paas, :as => 'flex'
+  match 'flex_redirect' => community_paas, :as => 'flex_redirect'
+  match 'platform' => community_paas
+  match 'partners' => community_paas
+
+  match 'getting_started' => get_started
+  match 'getting_started/express' => get_started
+  match 'getting_started/flex' => get_started
+
+  match 'getting_started_external/:registration_referrer' => 'getting_started_external#show'
+
+  # Legacy account creation paths
   match 'email_confirm_flex' => app_redirect {|p, req| "email_confirm?#{req.query_string}"}
   match 'email_confirm_express' => app_redirect {|p, req| "email_confirm?#{req.query_string}"}
   match 'user/new' => app_redirect('account/new'), :via => [:get]
@@ -19,16 +30,7 @@ RedHatCloud::Application.routes.draw do
   match 'user/new/express' => app_redirect('account/new'), :via => [:get]
   match 'user/complete' => app_redirect('account/complete'), :via => [:get]
 
-  #Marketing site
-  match 'getting_started' => 'product#getting_started', :as => 'getting_started'
-  match 'getting_started/express' => app_redirect('getting_started')
-  match 'getting_started/flex' => app_redirect('getting_started')
-  match 'getting_started_external/:registration_referrer' => 'getting_started_external#show'
-  match 'platform' => 'product#overview', :as => 'product_overview'
-  #match 'partners/join' => 'partner#join', :as=> 'join_partner'
-  match 'partners' => app_redirect('platform')
-
-  #Site not found
+  # Prototype not found pages
   match 'not_found' => 'product#not_found'
   match 'error' => 'product#error'
   match 'console/not_found' => 'product#console_not_found'
@@ -142,8 +144,8 @@ RedHatCloud::Application.routes.draw do
   match 'console' => 'console#index', :via => :get
   match 'new_application' => 'application_types#index', :via => :get
 
-  match 'opensource' => 'opensource#index'
-  match 'opensource/download' => 'opensource#download'
+  match 'opensource' => open_source_download
+  match 'opensource/download' => open_source_download
   resources   :download,
               :controller => 'download',
               :only => [:show,:index]
@@ -153,49 +155,7 @@ RedHatCloud::Application.routes.draw do
     match 'styleguide' => 'styleguide#index'
   end
 
-  # Sample resource route with options:
-  #   resources :products do
-  #     member do
-  #       get 'short'
-  #       post 'toggle'
-  #     end
-  #
-  #     collection do
-  #       get 'sold'
-  #     end
-  #   end
-
-  # Sample resource route with sub-resources:
-  #   resources :products do
-  #     resources :comments, :sales
-  #     resource :seller
-  #   end
-
-  # Sample resource route with more complex sub-resources
-  #   resources :products do
-  #     resources :comments
-  #     resources :sales do
-  #       get 'recent', :on => :collection
-  #     end
-  #   end
-
-  # Sample resource route within a namespace:
-  #   namespace :admin do
-  #     # Directs /admin/products/* to Admin::ProductsController
-  #     # (app/controllers/admin/products_controller.rb)
-  #     resources :products
-  #   end
-
-  # You can have the root of your site routed with "root"getting_started
-  # just remember to delete public/index.html.
   root :to => "product#index"
-
-  # See how all your routes lay out with "rake routes"
-
-  # This is a legacy wild controller route that's not recommended for RESTful applications.
-  # Note: This route will make all actions in every controller accessible via GET requests.
-  # match ':controller(/:action(/:id(.:format)))'
-
 
   scope '/status' do
     match '/(:base)(.:format)' => StatusApp, :as => 'status'

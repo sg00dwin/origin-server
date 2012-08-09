@@ -39,8 +39,10 @@ class LoginFlowsTest < ActionDispatch::IntegrationTest
       '/user/new' => '/app/account/new',
       '/user/new/flex' => '/app/account/new',
       '/user/new/express' => '/app/account/new',
-      '/express' => '/app/platform',
-      '/flex' => '/app/platform'
+      '/express' => '/community/paas',
+      '/flex' => '/community/paas',
+      '/platform' => '/community/paas',
+      '/getting_started' => '/community/get-started',
     }.each_pair do |url,to|
       get url, nil, {'SCRIPT_NAME' => '/app'}
       assert_redirected_to to, "Requesting #{url} => #{to}"
