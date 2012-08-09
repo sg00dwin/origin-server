@@ -1,8 +1,10 @@
 @benchmark
 Feature: Application Benchmark Tests
-  Scenario Outline: Application Creation
+  Scenario: Accepted Node
     Given the libra client tools
     And an accepted node
+
+  Scenario Outline: Application Creation
     Then benchmark creating <type> applications 10 times
     And finally cleanup all applications that the benchmark created
 
@@ -23,8 +25,6 @@ Feature: Application Benchmark Tests
     Then generate the application creation benchmark report
 
   Scenario Outline: Scaled Application Creation
-    Given the libra client tools
-    And an accepted node
     Then benchmark creating scaled <type> applications with <num> gears 10 times
     And finally cleanup all applications that the benchmark created
 
