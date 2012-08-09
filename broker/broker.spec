@@ -3,7 +3,7 @@
 
 Summary:   Li broker components
 Name:      rhc-broker
-Version: 0.97.1
+Version: 0.97.2
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -118,6 +118,15 @@ if [ ! -f %{_localstatedir}/log/stickshift/user_action.log ]; then
 fi
 
 %changelog
+* Thu Aug 09 2012 Adam Miller <admiller@redhat.com> 0.97.2-1
+- Updating gem versions (admiller@redhat.com)
+- allow non trusted users to add cross links as well as long as the trigger is
+  added after (dmcphers@redhat.com)
+- Merge pull request #183 from sosiouxme/master (openshift+bot@redhat.com)
+- Update kitchensink to have a better title. (ccoleman@redhat.com)
+- fix "JBoss JBoss" typo bz 843345 (lmeyer@redhat.com)
+- Remove ruby common code from rhc-server-common (ccoleman@redhat.com)
+
 * Thu Aug 02 2012 Adam Miller <admiller@redhat.com> 0.97.1-1
 - Updating gem versions (admiller@redhat.com)
 - bump_minor_versions for sprint 16 (admiller@redhat.com)
