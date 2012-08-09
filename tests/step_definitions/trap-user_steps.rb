@@ -7,18 +7,20 @@ ssh = %{ssh -o BatchMode=yes -o StrictHostKeyChecking=no -o UserKnownHostsFile=/
 Given /^the user has (no|\d+) tail process(es)? running( in (\d+) seconds)?$/ do |expect, ignore1, ignore2, timeout|
   # convert to integer
   expect = (expect == "no" ? 0 : expect.to_i)
-  timeout = timeout ? timeout.to_i : 0
-  sleep timeout
-  pcount = num_procs @app.uid, "tail"
+  timeout = timeout ? timeout.to_i : 1
 
-  if pcount != expect
-    raise Cucumber::Pending.new "failed given: expected #{expect}, actual #{pcount}" 
+  pcount = num_procs @app.uid, "tail"
+  StickShift::timeout(timeout) do
+    while pcount != expect
+      sleep 1
+      pcount = num_procs @app.uid, "tail"
+    end
   end
+  assert_equal pcount, expect, "Wrong number of tail processes" 
 end
 
 Given /a running SSH log stream/ do
   ssh_cmd = ssh + "-t #{@app.uid}@#{@app.hostname} tail -f #{@app.name}/logs/\\*"
-
   stdout, stdin, pid = PTY.spawn ssh_cmd
 
   @ssh_cmd = {
@@ -29,13 +31,8 @@ Given /a running SSH log stream/ do
 
 end
 
-Given /I wait (\d+) second(s)?$/ do |sec, ignore|
-  sleep(sec.to_i)
-end
-
 When /^I request the logs via SSH$/ do
   ssh_cmd = ssh + " #{@app.uid}@#{@app.hostname} tail -f #{@app.name}/logs/\\*"
-
   stdout, stdin, pid = PTY.spawn ssh_cmd
 
   @ssh_cmd = {
@@ -69,17 +66,7 @@ When /^I terminate the SSH log stream$/ do
   end
 
   outstring = @ssh_cmd[:stdout].read
-  $logger.debug("Standard Output:\n#{outstring}")
-end
-
-
-Then /^there will be (no|\d+) tail processes running( in (\d+) seconds)?$/ do |expect, ignore, timeout|
-  # convert to integer
-  expect = (expect == "no" ? 0 : expect.to_i)
-  timeout = timeout ? timeout.to_i : 0
-  sleep timeout
-  pcount = num_procs @app.uid, "tail"
-  pcount.should be == expect
+  $logger.info("Standard Output:\n#{outstring}")
 end
 
 Then /^I can run "([^\"]*)" with exit code: (\d+)/ do |cmd, code|
@@ -99,14 +86,18 @@ def run_pty_command(cmd, outbuf=[], timeout=600)
     Timeout::timeout(timeout) do
       output += stdout.read
     end
+
+    ignored, status = Process::waitpid2 pid
+    exit_code = status.exitstatus
+  rescue PTY::ChildExited
+    $logger.info("PTY::ChildExited CMD: #{cmd}")
+  rescue Timeout::ERROR
     $logger.error("Timeout reached for command: CMD: #{cmd}  PID: #{pid}")
     Process.kill("KILL", pid)
-  rescue  PTY::ChildExited
   end
-  ignored, status = Process::waitpid2 pid
-  exit_code = status.exitstatus
+
   outbuf << output
-  $logger.debug("Output:\n#{output}")
+  $logger.info("Output:\n#{output}")
   return exit_code
 end
 
@@ -119,10 +110,7 @@ Then /^I can get the rhcsh splash/ do
   exit_code = run_pty_command ssh_call, outbuf
   out = outbuf[0].split(/Connection to/)[0]
   md5 = Digest::MD5.hexdigest(out)
-  $logger.debug("MD5sum check for welcome message:")
-  $logger.debug("was: #{md5} expected: #{welcome_md5}")
-  raise "md5sum of welcome message did not match.  Update: trap-user_steps.rb\n" +
-    "was: #{md5} expected: #{welcome_md5}" unless md5 == welcome_md5
+  assert_equal md5, welcome_md5, '"md5sum of welcome message did not match.'
 end
 
 Then /^I can get the rhcsh help/ do
@@ -134,9 +122,5 @@ Then /^I can get the rhcsh help/ do
   exit_code = run_pty_command ssh_call, outbuf
   out = outbuf[0]
   md5 = Digest::MD5.hexdigest(out)
-  $logger.debug("MD5sum check for help message:")
-  $logger.debug("was: #{md5} expected: #{help_md5}")
-  raise "md5sum of help message did not match.  Update: trap-user_steps.rb\n" +
-    "was: #{md5} expected: #{help_md5}" unless md5 == help_md5
-
+  assert_equal md5, help_md5, "md5sum of help message did not match."
 end
