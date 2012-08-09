@@ -21,6 +21,7 @@ engine = phptemplate
 ;regions[header_left] = Header Left
 ;regions[header_right] = Header Right
 ;regions[header_menu] = Header Menu
+regions[messaging] = Messaging
 regions[title_bar] = Title Bar
 regions[content_prefix] = Content Prefix
 regions[content] = Content

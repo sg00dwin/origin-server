@@ -22,7 +22,7 @@ module OpenShiftMigration
   # at any point and continue to pick up where it left off or make
   # harmless changes the 2-n times around.
   def self.migrate(uuid, namespace, version)
-    if version == "2.0.15"
+    if version == "2.0.16"
       libra_home = '/var/lib/stickshift' #node_config.get_value('libra_dir')
       libra_server = get_config_value('BROKER_HOST')
       libra_domain = get_config_value('CLOUD_DOMAIN')
@@ -36,31 +36,6 @@ module OpenShiftMigration
         gear_type = Util.get_env_var_value(gear_home, "OPENSHIFT_GEAR_TYPE")
         cartridge_root_dir = "/usr/libexec/stickshift/cartridges"
         cartridge_dir = "#{cartridge_root_dir}/#{gear_type}"
-
-        # BZ 842977: Inhibit stale detection for mysql and mongodb gears
-        if ['mysql-5.1','mongodb-2.0'].include? gear_type
-          File.open("#{gear_home}/.disable_stale","w") {}
-        end
-        
-        # BZ 844267: switch /jbossas-7/jbossas-7/standalone/deployments from a copy to a link to app-root/repo/deployments
-        if ['jbossas-7'].include? gear_type
-          FileUtils.rm_rf("#{gear_home}/jbossas-7/jbossas-7/standalone/deployments")
-          File.symlink("#{gear_home}/app-root/repo/deployments","#{gear_home}/jbossas-7/jbossas-7/standalone/deployments")
-          sleep 10
-          migrate_dir = Dir["#{gear_home}/jbossas-7/jbossas-7/standalone/deployments/*.*ar.*"]
-          migrate_dir.each do |filename|
-            FileUtils.rm_rf(filename)
-          end
-        end
-        if ['jbosseap-6.0'].include? gear_type
-          FileUtils.rm_rf("#{gear_home}/jbosseap-6.0/jbosseap-6.0/standalone/deployments")
-          File.symlink("#{gear_home}/app-root/repo/deployments","#{gear_home}/jbosseap-6.0/jbossas-7/standalone/deployments")
-          sleep 10
-          migrate_dir = Dir["#{gear_home}/jbosseap-6.0/jbosseap-6.0/standalone/deployments/*.*ar.*"]
-          migrate_dir.each do |filename|
-            FileUtils.rm_rf(filename)
-          end
-        end
         
         env_echos = []
 

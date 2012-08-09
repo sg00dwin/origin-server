@@ -48,32 +48,32 @@ templates.each do |options|
 end
 
 __END__
---- 
+---
 - :descriptor: |
-    --- 
+    ---
     Name: cakephp
-    Scaling: 
+    Scaling:
       Max: -1
       Min: 1
     License-Url: ""
     License: unknown
     Help-Topics: {}
-    
-    Requires: 
+
+    Requires:
     - php-5.3
     - mysql-5.1
     Display-Name: cakephp-0.0-noarch
     Cart-Data: {}
-    
-    Connections: 
-      mysql-5.1-php-5.3: 
-        Components: 
+
+    Connections:
+      mysql-5.1-php-5.3:
+        Components:
         - php-5.3
         - mysql-5.1
     Version: "0.0"
     Website: ""
     Vendor: unknown
-    Categories: 
+    Categories:
     - cartridge
     Description: ""
     Architecture: noarch
@@ -90,30 +90,30 @@ __END__
     }
   :name: cakephp
 - :descriptor: |
-    --- 
+    ---
     Name: drupal
-    Scaling: 
+    Scaling:
       Max: -1
       Min: 1
     License-Url: ""
     License: unknown
     Help-Topics: {}
-    
-    Requires: 
+
+    Requires:
     - php-5.3
     - mysql-5.1
     Display-Name: drupal-0.0-noarch
     Cart-Data: {}
-    
-    Connections: 
-      mysql-5.1-php-5.3: 
-        Components: 
+
+    Connections:
+      mysql-5.1-php-5.3:
+        Components:
         - php-5.3
         - mysql-5.1
     Version: "0.0"
     Website: ""
     Vendor: unknown
-    Categories: 
+    Categories:
     - cartridge
     Description: ""
     Architecture: noarch
@@ -136,24 +136,24 @@ __END__
     }
   :name: drupal
 - :descriptor: |
-    --- 
+    ---
     Name: kitchensink
-    Scaling: 
+    Scaling:
       Max: -1
       Min: 1
     License-Url: ""
     License: unknown
     Help-Topics: {}
-    
-    Requires: 
+
+    Requires:
     - jbossas-7
     Display-Name: kitchensink-0.0-noarch
     Cart-Data: {}
-    
+
     Version: "0.0"
     Website: ""
     Vendor: unknown
-    Categories: 
+    Categories:
     - cartridge
     Description: ""
     Architecture: noarch
@@ -170,30 +170,30 @@ __END__
     }
   :name: kitchensink
 - :descriptor: |
-    --- 
+    ---
     Name: rails
-    Scaling: 
+    Scaling:
       Max: -1
       Min: 1
     License-Url: ""
     License: unknown
     Help-Topics: {}
-    
-    Requires: 
+
+    Requires:
     - ruby-1.9
     - mysql-5.1
     Display-Name: rails-0.0-noarch
     Cart-Data: {}
-    
-    Connections: 
-      mysql-5.1-ruby-1.9: 
-        Components: 
+
+    Connections:
+      mysql-5.1-ruby-1.9:
+        Components:
         - ruby-1.9
         - mysql-5.1
     Version: "0.0"
     Website: ""
     Vendor: unknown
-    Categories: 
+    Categories:
     - cartridge
     Description: ""
     Architecture: noarch
@@ -210,24 +210,24 @@ __END__
     }
   :name: rails
 - :descriptor: |
-    --- 
+    ---
     Name: springeap6
-    Scaling: 
+    Scaling:
       Max: -1
       Min: 1
     License-Url: ""
     License: unknown
     Help-Topics: {}
-    
-    Requires: 
+
+    Requires:
     - jbosseap-6.0
     Display-Name: springeap6-0.0-noarch
     Cart-Data: {}
-    
+
     Version: "0.0"
     Website: ""
     Vendor: unknown
-    Categories: 
+    Categories:
     - cartridge
     Description: ""
     Architecture: noarch
@@ -240,34 +240,34 @@ __END__
       "license": "apache2",
       "version": "3.1.1",
       "git_project_url": "http://github.com/openshift/spring-eap6-quickstart",
-      "description": "This quickstart allows you to use Spring Framework on JBoss JBoss EAP 6."
+      "description": "This quickstart allows you to use Spring Framework on JBoss EAP 6."
     }
   :name: springeap6
 - :descriptor: |
-    --- 
+    ---
     Name: wordpress
-    Scaling: 
+    Scaling:
       Max: -1
       Min: 1
     License-Url: ""
     License: unknown
     Help-Topics: {}
-    
-    Requires: 
+
+    Requires:
     - php-5.3
     - mysql-5.1
     Display-Name: wordpress-0.0-noarch
     Cart-Data: {}
-    
-    Connections: 
-      mysql-5.1-php-5.3: 
-        Components: 
+
+    Connections:
+      mysql-5.1-php-5.3:
+        Components:
         - php-5.3
         - mysql-5.1
     Version: "0.0"
     Website: ""
     Vendor: unknown
-    Categories: 
+    Categories:
     - cartridge
     Description: ""
     Architecture: noarch
