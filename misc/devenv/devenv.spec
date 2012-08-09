@@ -493,9 +493,6 @@ chmod 640 /etc/stickshift/resource_limits.template
 # Remove Other rights from iptables-multi - was 755
 chmod 750 /sbin/iptables-multi
 
-# Deploy application templates - fotios
-/usr/bin/ruby /usr/lib/stickshift/broker/application_templates/templates/deploy.rb
-
 # Fix devenv log file ownership
 chown root:libra_user /var/www/stickshift/broker/log/development.log
 chown root:libra_user /var/www/stickshift/broker/log/mcollective-client.log
@@ -507,6 +504,15 @@ useradd nagios_monitor
 # Change /var/log/rkhunter perms
 chown -R root:nagios_monitor /var/log/rkhunter
 chmod -R 770 /var/log/rkhunter
+
+# Deploy application templates - fotios
+if ! $(/usr/bin/ruby /usr/lib/stickshift/broker/application_templates/templates/deploy.rb)
+then
+  service mongod restart
+  service libra-broker restart
+  sleep 10
+  /usr/bin/ruby /usr/lib/stickshift/broker/application_templates/templates/deploy.rb
+fi
 
 %files
 %defattr(-,root,root,-)
