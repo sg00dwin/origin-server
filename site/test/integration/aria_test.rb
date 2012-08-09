@@ -29,9 +29,7 @@ class AriaIntegrationTest < ActionDispatch::IntegrationTest
     assert user.errors.empty?
 
     assert_equal 'Y', Aria.get_acct_details_all(user.acct_no).is_test_acct
-    assert_equal user.rhlogin, user.send(:get_supplemental_value, 'rhlogin')
-    #assert_equal '0', user.send(:get_supplemental_value, 'tax_exempt')
-    #assert !user.tax_exempt?
+    assert_equal user.rhlogin, Aria.get_supp_field_value(user.acct_no, :rhlogin)
 
     assert user.has_valid_account?
     assert user.send(:has_account?)

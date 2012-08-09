@@ -1,4 +1,6 @@
-class PlansController < AccountController
+class PlansController < ApplicationController
+  layout 'site'
+
   def index
     @plans = Aria::MasterPlan.all
     if user_signed_in?

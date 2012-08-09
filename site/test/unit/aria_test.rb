@@ -214,6 +214,14 @@ class AriaUnitTest < ActiveSupport::TestCase
     assert user.errors.empty?
   end
 
+  test 'get_acct_no_from_user_id is cacheable' do
+    Aria::Client.any_instance.expects(:invoke).once.
+      with(:get_acct_no_from_user_id, {:user_id => 'foo'}).
+      returns(Aria::WDDX::Struct.new({'acct_no' => '1'}))
+    assert_equal '1', Aria.cached.get_acct_no_from_user_id('foo')
+    assert_equal '1', Aria.cached.get_acct_no_from_user_id('foo')
+  end
+
   test 'should throw when non hash passed' do
     assert_raise(ArgumentError){ Aria.get_test 'hello' }
   end

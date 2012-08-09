@@ -1,4 +1,5 @@
 - content_for :title, 'Set Account Information'
+= plan_upgrade_steps 1
 
 = semantic_form_for @full_user, :namespace => :upgrade_account, :url => edit_account_plan_upgrade_path, :html => {:method => :put} do |f|
   -#= f.inputs
@@ -47,8 +48,8 @@
         = b.inputs :state, :country, :zip
 
         = f.buttons do
+          = link_to "Back to plans", account_plans_path, :class => 'btn'
           = f.commit_button "Update my account"
-          = link_to "See other plans", account_plans_path
           = f.loading
 
       .span4

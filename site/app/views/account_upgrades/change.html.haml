@@ -1,6 +1,8 @@
-- content_for :title, "Change Plan"
+- content_for :title, "Change your Plan"
 
-%h2 You are already subscribed to #{@plan.name}
+%h2 Are you sure you want to change from #{@current_plan.name} to #{@plan.name}?
+
+%p ... description of change ...
 
 .row
   %section.span6

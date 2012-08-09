@@ -50,8 +50,12 @@ module Aria
     def get_acct_details_all(acct_no)
       super(:acct_no => acct_no)
     end
+
     def get_supp_field_values(acct_no, field_name)
       super(:acct_no => acct_no, :field_name => field_name).supp_field_values || []
+    end
+    def get_supp_field_value(acct_no, field_name)
+      get_supp_field_values(acct_no, field_name).first
     end
 
     def get_reg_uss_config_params(set)

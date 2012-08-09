@@ -1,4 +1,4 @@
-class LogoutController < AccountController
+class LogoutController < ApplicationController
   layout 'simple'
 
   def show

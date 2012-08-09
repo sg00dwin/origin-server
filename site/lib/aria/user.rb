@@ -3,7 +3,7 @@ module Aria
     # mixins for Aria user integration
 
     def acct_no
-      @acct_no ||= Aria.get_acct_no_from_user_id(user_id)
+      @acct_no ||= Aria.cached.get_acct_no_from_user_id(user_id)
     end
 
     def create_session
@@ -18,7 +18,7 @@ module Aria
     end
 
     def has_valid_account?
-      values = get_supplemental_values(:rhlogin)
+      values = Aria.cached.get_supp_field_values(acct_no, :rhlogin)
       raise Aria::UserNoRHLogin, acct_no if values.empty?
       raise Aria::UserIdCollision, acct_no unless values.include?(login)
       true
@@ -61,7 +61,7 @@ module Aria
 
     def tax_exempt
       # replace with call to get_tax_acct_status
-      #@tax_exempt ||= (get_supplemental_value(:tax_exempt) || 0).to_i
+      #@tax_exempt ||= (Aria.get_supp_field_value(acct_no, :tax_exempt) || 0).to_i
     end
     def tax_exempt?
       # tax_exempt > 0
@@ -115,13 +115,6 @@ module Aria
       end
       def random_password
         ActiveSupport::SecureRandom.base64(16)[0..12].gsub(/[^a-zA-Z0-9]/,'_') # Max allowed Aria limit
-      end
-
-      def get_supplemental_value(field)
-        get_supplemental_values(field).first
-      end
-      def get_supplemental_values(field)
-        Aria.get_supp_field_values(acct_no, field)
       end
 
       # Checks whether the basic Aria account exists, but not whether

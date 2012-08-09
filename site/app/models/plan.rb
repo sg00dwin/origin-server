@@ -6,4 +6,8 @@ class Plan < RestApi::Base
     integer :plan_no
   end
   custom_id :id
+
+  def basic?
+    id == 'freeshift'
+  end
 end

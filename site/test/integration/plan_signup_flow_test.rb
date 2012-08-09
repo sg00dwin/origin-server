@@ -39,7 +39,7 @@ class PlanSignupFlowTest < ActionDispatch::IntegrationTest
     assert_response :success
 
     get '/account/plans/megashift/upgrade'
-    assert_redirected_to new_account_path(:then => account_plan_upgrade_path)
+    assert_redirected_to new_account_path(:then => account_plan_upgrade_path('megashift'))
   end
 
   test 'anonymous with signin redirected to login' do
@@ -49,7 +49,7 @@ class PlanSignupFlowTest < ActionDispatch::IntegrationTest
     assert_response :success
 
     get '/account/plans/megashift/upgrade'
-    assert_redirected_to login_path(:then => account_plan_upgrade_path)
+    assert_redirected_to login_path(:then => account_plan_upgrade_path('megashift'))
   end
 
   test 'user can signup' do
@@ -78,7 +78,7 @@ class PlanSignupFlowTest < ActionDispatch::IntegrationTest
     res = submit_form('form#payment_method', test_credit_card)
     assert Net::HTTPRedirection === res, res.inspect
     redirect = res['Location']
-    assert redirect.starts_with?(direct_create_account_plan_upgrade_payment_method_url), redirect
+    assert redirect.starts_with?(direct_create_account_plan_upgrade_payment_method_url('megashift')), redirect
 
     get redirect
     assert_redirected_to '/account/plans/megashift/upgrade/new'

@@ -41,7 +41,7 @@ RedHatCloud::Application.routes.draw do
   match 'twitter_latest_retweets' => 'twitter#latest_retweets'
 
   resource :account,
-           :controller => :user,
+           :controller => :account,
            :only => [:new, :create, :show] do
 
     get :complete, :on => :member
@@ -51,13 +51,26 @@ RedHatCloud::Application.routes.draw do
         resource :upgrade, :controller => :account_upgrades, :only => [:edit, :new, :create, :show] do
           put  :edit, :action => :update, :on => :member
 
-          resource :payment_method, :only => [:show, :new] do
-            get  :direct_create, :on => :member
+          resource :payment_method,
+                   :controller => :account_upgrade_payment_method,
+                   :only => [:show, :new, :edit] do
+            get :direct_create, :on => :member
+            get :direct_update, :on => :member
+          end
+          resource :billing_info,
+                   :controller => :account_upgrade_billing_info,
+                   :only => :edit do
+            put :edit, :action => :update, :on => :member
           end
         end
       end
       resource :payment_method, :only => [:edit] do
         get :direct_update, :on => :member
+      end
+      resource :billing_info,
+               :controller => :billing_info,
+               :only => :edit do
+        put :edit, :action => :update, :on => :member
       end
       resource :plan, :only => [:update, :show]
     end
@@ -76,8 +89,7 @@ RedHatCloud::Application.routes.draw do
     resources :keys, :only => [:new, :create, :destroy]
   end
 
-  # preserve legacy support for this path
-  match 'user/create/external' => 'user#create_external', :via => [:post]
+  match 'user/create/external' => 'account#create_external', :via => [:post]
 
   match 'user/reset_password' => app_redirect {|p, req| "account/password/reset?#{req.query_string}"}, :via => [:get]
   match 'email_confirm' => 'email_confirm#confirm'

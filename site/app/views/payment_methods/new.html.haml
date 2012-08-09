@@ -1,9 +1,0 @@
-- content_for :title, 'Provide your payment method'
-
-- if @previous_payment_method
-  %p Current method of payment
-  = render :partial => 'payment_method', :locals => {:payment_method => @previous_payment_method}
-
-  %p Enter your new credit card information to pay for your account:
-
-= render :partial => 'form', :locals => {:payment_method => @payment_method, :previous_url => @previous_url}

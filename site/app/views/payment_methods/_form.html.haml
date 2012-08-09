@@ -18,8 +18,8 @@
   = f.input :cvv, :input_html => {:name => :cvv}
 
   = f.buttons do
+    = link_to *previous_link
     = f.commit_button "Save Payment"
-    = link_to(*previous_url) if defined?(previous_url) && previous_url.is_a?(Array)
     = f.loading
 
   -#TODO: needs error handling display on page
