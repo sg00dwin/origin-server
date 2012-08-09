@@ -47,6 +47,7 @@ module SwingShift
             token = check_login(request, login, password)
           end
         end
+        raise StickShift::AccessDeniedException if token.nil? or token[:username].nil?
         return token
       end
       
@@ -66,6 +67,7 @@ module SwingShift
             token =  check_login(request, login, password)
           end
         end
+        raise StickShift::AccessDeniedException if token.nil? or token[:username].nil?
         return token
       end
       
