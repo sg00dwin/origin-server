@@ -119,4 +119,14 @@ class AriaIntegrationTest < ActionDispatch::IntegrationTest
   test 'should raise when method does not exist' do
     assert_raise(Aria::InvalidMethod){ Aria.get_not_a_real_method }
   end
+
+  test 'should provide combined master plans' do
+    assert aplans = Aria::MasterPlan.all(:as => WebUser.new(:rhlogin => 'test'))
+    assert aplans.length > 0
+    assert aplan = aplans[0]
+    assert aplan.description.is_a? String
+    assert aplan.max_gears.is_a? Fixnum
+    assert aplan.gear_sizes.kind_of? Array
+    assert aplan.gear_sizes.length > 0
+  end
 end if Aria.available?

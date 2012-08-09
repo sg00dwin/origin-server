@@ -15,8 +15,8 @@ class AccountUpgradesController < AccountController
   def new
     plan_id = params[:plan_id]
 
-    @user = User.find(:one, :as => current_user)
-    @plan = Plan.find plan_id
+    @user = User.find(:one,    :as => current_user)
+    @plan = Plan.find(plan_id, :as => current_user)
     @current_plan = @user.plan
     aria_user = current_user.extend(Aria::User)
     @payment_method = aria_user.payment_method
@@ -27,8 +27,8 @@ class AccountUpgradesController < AccountController
   def create
     plan_id = params[:plan][:id]
 
-    @user = User.find(:one, :as => current_user)
-    @plan = Plan.find plan_id
+    @user = User.find(:one,    :as => current_user)
+    @plan = Plan.find(plan_id, :as => current_user)
     @current_plan = @user.plan
 
     @user.plan_id = plan_id

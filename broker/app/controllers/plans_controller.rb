@@ -1,6 +1,7 @@
 class PlansController < BaseController
   respond_to :xml, :json
-  before_filter :authenticate, :check_version
+  before_filter :authenticate, :except => [:index, :show]
+  before_filter :check_version
   
   def index
     plans = []
