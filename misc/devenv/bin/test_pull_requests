@@ -76,6 +76,7 @@ TEST_SETTINGS = {
   :test_prefix => "Test Results:",
   :waiting_comment => "Test Results: Waiting for stable build",
   :queued_comment => "Test Results: Waiting: You are in the build queue at position: %s",
+  :being_queued_comment => "Test Results: Waiting: Determining build queue position",
   :evaluating_comment => "Test Results: Evaluating for testing",
   :evaluating_regex => /^Test Results: Evaluating/,
   :waiting_regex => /^Test Results: Waiting/,
@@ -98,6 +99,7 @@ MERGE_TEST_SETTINGS = {
   :test_prefix => "Merge Test Results:",
   :waiting_comment => "Merge Test Results: Waiting for stable build",
   :queued_comment => "Merge Test Results: Waiting: You are in the build queue at position: %s",
+  :being_queued_comment => "Merge Test Results: Waiting: Determining build queue position",
   :evaluating_comment => "Merge Test Results: Evaluating for testing",
   :evaluating_regex => /^Merge Test Results: Evaluating/,
   :waiting_regex => /^Merge Test Results: Waiting/,
@@ -305,8 +307,6 @@ module Hub
         # No comment found, create a new one and yield to it
         $stderr.puts "Creating placeholder comment"
         bot_comment = add_comment(issue_id, repo, settings[:evaluating_comment])
-        # Add the evaluated marker
-        add_comment(issue_id, repo, BOT_MARKER)
       end
 
       yield bot_comment['id'], bot_comment['body'], Time.parse(bot_comment['updated_at'])
@@ -358,7 +358,7 @@ module Hub
     end
     
     def get_evaluated_time(comments)
-      sort_comments!(comments)
+      comments = sort_comments(comments)
 
       comments.each do |comment|
         if comment['user']['login'] == 'openshift-bot' && comment['body'] =~ BOT_MARKER_REGEX
@@ -380,7 +380,7 @@ module Hub
         end
       end
 
-      sort_comments!(comments)
+      comments = sort_comments(comments)
 
       comments.each do |comment|
         if comment['body'] =~ settings[:trigger_regex]
@@ -396,11 +396,28 @@ module Hub
       return nil
     end
     
-    def sort_comments!(comments)
+    def sort_comments(comments)
       comments = comments.sort_by do |comment|
         Time.parse(comment['updated_at'])
       end
       comments.reverse!
+      comments
+    end
+
+    # Updates all the bot markers for the involved pull requests.  To be called after you have validated the tests should be kicked off again
+    def update_evaluated_markers(repo_to_pull_request, settings) 
+      repo_to_pull_request.each do |repo, pull_request|
+        pull_request_comments = get_comments(pull_request['number'], repo)
+        test_prefix_comment = get_comment_with_prefix(pull_request['number'], repo, settings[:test_prefix], pull_request_comments)
+        if !test_prefix_comment || !(test_prefix_comment['body'] =~ settings[:waiting_regex])
+          create_or_update_comment(pull_request['number'], repo, settings[:test_prefix], settings[:being_queued_comment], pull_request_comments)
+        end
+        pull_request_evaluated_time = get_evaluated_time(pull_request_comments)
+        pull_request_updated_at = Time.parse(pull_request['head']['repo']['updated_at'])
+        if !pull_request_evaluated_time || pull_request_evaluated_time < pull_request_updated_at
+          add_comment(pull_request['number'], repo, BOT_MARKER)
+        end
+      end
     end
 
     #
@@ -416,7 +433,10 @@ module Hub
       updated_at = Time.parse(req['head']['repo']['updated_at'])
       repo_to_pull_request = {base_repo => req}
       
-      $stderr.puts "Processing pull request #{id} for repo '#{base_repo}'"
+      $stderr.puts "****Processing '#{settings[:name]}' pull request #{id} for repo '#{base_repo}'"
+      
+      trigger_updated_at = get_trusted_trigger_time(req, comments, settings)
+      evaluated_time = get_evaluated_time(comments)
 
       # Gather any dependencies from trusted users
       comments.each do |comment|
@@ -426,7 +446,8 @@ module Hub
             addtl_pull_id = $1
             comment_login = comment['user']['login']
             trusted = user_trusted?(comment_login, repo, settings)
-            if trusted
+            # It's ok if the user is trusted or the trigger was added after the comment
+            if trusted || (trigger_updated_at && trigger_updated_at > Time.parse(comment['updated_at']))
               pull_request = get_pull_request(addtl_pull_id, repo)
               if pull_request
                 repo_to_pull_request[repo] = pull_request
@@ -447,42 +468,56 @@ module Hub
         resubmit_test_job = false
         case comment
           when settings[:evaluating_regex]
+            $stderr.puts "Evaluating..."
             # This is the state for a completely new comment
+
             if JenkinsAPI.is_project_stable?(branch, settings)
-              submit_test_job = true
+              # Make sure there is a trigger in place that is still later than the updated dates of each of the pull requests
+              if trigger_updated_at
+                repo_to_pull_request.each do |repo, pull_request|
+                  next if repo == base_repo
+                  if !user_trusted?(pull_request['user']['login'], repo, settings) && trigger_updated_at < Time.parse(pull_request['head']['repo']['updated_at'])
+                    create_or_update_comment(id, base_repo, ACTION_PREFIX, ACTION_NOT_TEAM, comments)
+                    break
+                  end
+                end
+                update_evaluated_markers(repo_to_pull_request, settings)
+                submit_test_job = true
+              else
+                create_or_update_comment(id, base_repo, ACTION_PREFIX, ACTION_NOT_TEAM, comments)
+              end
             else
               updated_comment = settings[:waiting_comment]
             end
           when settings[:waiting_regex]
+            $stderr.puts "Waiting..."
             # Only submit the tests if the project is stable
-            if JenkinsAPI.is_project_stable?(branch, settings) 
-              evaluated_time = get_evaluated_time(comments)
+            if JenkinsAPI.is_project_stable?(branch, settings)
               $stderr.puts "Checking that evaluated times are still up to date"
               $stderr.puts "Evaluated time: #{evaluated_time}"
               $stderr.puts "Updated at: #{updated_at}"
               if evaluated_time && evaluated_time > updated_at
                 submit_test_job = true
                 repo_to_pull_request.each do |repo, sub_pull_request|
-                  next if repo == base_repo 
+                  next if repo == base_repo
                   $stderr.puts "Checking evaluated time for sub pull request #{sub_pull_request['number']} for repo '#{repo}'"
                   sub_pull_comments = get_comments(sub_pull_request['number'], repo)
                   sub_pull_evaluated_time = get_evaluated_time(sub_pull_comments)
                   sub_pull_request_updated_at = Time.parse(sub_pull_request['head']['repo']['updated_at'])
-
+        
                   $stderr.puts "Evaluated time: #{sub_pull_evaluated_time}"
                   $stderr.puts "Updated at: #{sub_pull_request_updated_at}"
-                  if sub_pull_evaluated_time && sub_pull_evaluated_time > sub_pull_request_updated_at
-                    submit_test_job = true
-                  else
+                  if !sub_pull_evaluated_time || sub_pull_evaluated_time < sub_pull_request_updated_at
                     resubmit_test_job = true
                     break
                   end
                 end
               else
-                resubmit_test_job = true 
+                resubmit_test_job = true
               end
             end
           when settings[:running_regex]
+            $stderr.puts "Running..."
             # This state means that the tests are already running
             # In this case we need to poll Jenkins to see if the build
             # is finished
@@ -496,12 +531,11 @@ module Hub
               updated_comment = "#{settings[:test_prefix]} #{result} (#{build_url})"
             end
           else
+            $stderr.puts "Finished..."
             resubmit_test_job = true if JenkinsAPI.is_project_stable?(branch, settings)
         end
         if resubmit_test_job
           submit_test_job = false
-          trigger_updated_at = get_trusted_trigger_time(req, comments, settings)
-          evaluated_time = get_evaluated_time(comments)
 
           $stderr.puts "Checking whether we should resubmit"
           $stderr.puts "Checking that we have an evaluated time and a trusted trigger comment"
@@ -512,6 +546,7 @@ module Hub
             $stderr.puts "Missing trusted trigger comment"
           end
           if evaluated_time && trigger_updated_at
+            # We already trust the primary pull request.  Just need to check whether the eval time is older than last update or last trusted trigger.
             if evaluated_time < updated_at || evaluated_time < trigger_updated_at
               submit_test_job = true
             end
@@ -527,9 +562,11 @@ module Hub
               $stderr.puts "Evaluated time: #{sub_pull_evaluated_time}"
               $stderr.puts "Updated at: #{sub_pull_request_updated_at}"
 
+              # Make sure the trigger on the primary pull request is after the updated date of the sub pull request
+              # or the user of the sub pull request is trusted
               valid_trigger_comment = trigger_updated_at > sub_pull_request_updated_at
               $stderr.puts "Has valid trigger comment: #{valid_trigger_comment}"
-              if valid_trigger_comment
+              if valid_trigger_comment || user_trusted?(sub_pull_request['user']['login'], repo, settings)
                 if !sub_pull_evaluated_time || sub_pull_evaluated_time < sub_pull_request_updated_at
                   submit_test_job = true
                 end
@@ -544,24 +581,7 @@ module Hub
             submit_test_job = false
           end
           if submit_test_job
-            # Make sure the BOT_MARKER is current
-            repo_to_pull_request.each do |repo, pull_request|
-              pull_request_comments = nil
-              if repo == base_repo
-                pull_request_comments = comments
-              else
-                pull_request_comments = get_comments(pull_request['number'], repo)
-              end
-              test_prefix_comment = get_comment_with_prefix(pull_request['number'], repo, settings[:test_prefix], pull_request_comments)
-              if !test_prefix_comment || !(test_prefix_comment['body'] =~ settings[:waiting_regex])
-                create_or_update_comment(pull_request['number'], repo, settings[:test_prefix], settings[:waiting_comment], pull_request_comments)
-              end
-              pull_request_evaluated_time = get_evaluated_time(pull_request_comments)
-              pull_request_updated_at = Time.parse(pull_request['head']['repo']['updated_at'])
-              if !pull_request_evaluated_time || pull_request_evaluated_time < pull_request_updated_at
-                add_comment(pull_request['number'], repo, BOT_MARKER)
-              end
-            end
+            update_evaluated_markers(repo_to_pull_request, settings)
           end
         end
         if submit_test_job
@@ -625,7 +645,7 @@ module Hub
               end
 
               comments = get_comments(id, repo) if comments.nil?
-              sort_comments!(comments)
+              comments = sort_comments(comments)
               comments.each do |comment|
                 if comment['body'] =~ settings[:trigger_regex]
                   comment_login = comment['user']['login']
@@ -659,17 +679,16 @@ module Hub
         req = req_info[0]
         comments = req_info[1]
         settings = req_info[2]
-        if settings[:allow_multiple] || !$submitted_tests[settings[:name]]
-          process_pull_request(req, comments, settings)
-        end
+        process_pull_request(req, comments, settings)
 
         if !settings[:allow_multiple] && $submitted_tests[settings[:name]] 
           if $submitted_tests[settings[:name]] == 1
+            comments = get_comments(req['number'], req['base']['repo']['name'])
             bot_comment = get_comment_with_prefix(req['number'], req['base']['repo']['name'], settings[:test_prefix], comments)
             if bot_comment && !(bot_comment['body'] =~ settings[:running_regex])
               skipped_count[settings[:name]] = 0 if skipped_count[settings[:name]].nil?
               skipped_count[settings[:name]] += 1
-              create_or_update_comment(req['number'], req['base']['repo']['name'], settings[:test_prefix], settings[:queued_comment] % skipped_count[settings[:name]].to_s)
+              create_or_update_comment(req['number'], req['base']['repo']['name'], settings[:test_prefix], settings[:queued_comment] % skipped_count[settings[:name]].to_s, comments)
               $stderr.puts "Pull ##{req['number']} in repo '#{req['base']['repo']['name']}' is at build position ##{skipped_count[settings[:name]]}"
             end
           else
@@ -739,7 +758,8 @@ module Hub
         request = Net::HTTP::Get.new uri.request_uri
         response = http.request request
         if response.kind_of? Net::HTTPSuccess
-          return JSON.parse(response.body)["result"] == "SUCCESS"
+          result = JSON.parse(response.body)["result"]
+          return  result == "SUCCESS" || result == "UNSTABLE"
         else
           raise "Jenkins connection error"
         end
