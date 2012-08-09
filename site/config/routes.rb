@@ -95,11 +95,11 @@ RedHatCloud::Application.routes.draw do
 
   match 'video/:name' => 'video#show', :as => 'video'
 
-  match 'legal' => 'legal#show'
-  match 'legal/site_terms' => 'legal#site_terms'
-  match 'legal/services_agreement' => 'legal#services_agreement'
-  match 'legal/acceptable_use' => 'legal#acceptable_use'
-  match 'legal/openshift_privacy' => 'legal#openshift_privacy'
+  match 'legal' => redirect('/community/legal')
+  match 'legal/site_terms' => redirect('/community/legal/site_terms')
+  match 'legal/services_agreement' => redirect('/community/legal/services_agreement')
+  match 'legal/acceptable_use' => redirect('/community/legal/acceptable_use')
+  match 'legal/openshift_privacy' => redirect('/community/legal/openshift_privacy')
 
   # suggest we consolidate login/logout onto a session controller
   resource :login,
