@@ -79,13 +79,13 @@
     <hudson.tasks.Shell>
       <command>if [ &quot;$BUILD_CLEAN_AMI&quot; == &quot;true&quot; ]
 then
-  build/devenv build devenv ${BUILD_NUMBER} --register --official --terminate --build_clean_ami --instance_type m1.large
+  build/devenv build devenv ${BUILD_NUMBER} --register --official --build_clean_ami --terminate --instance_type m1.large
+elif [ &quot;$BUILD_UPDATE_AMI&quot; == &quot;true&quot; ]
+then
+  build/devenv build devenv ${BUILD_NUMBER} --register --official --terminate --instance_type m1.large
 elif [ &quot;$INSTALL_FROM_SOURCE&quot; == &quot;true&quot; ]
 then
   build/devenv build devenv ${BUILD_NUMBER} --register --official --terminate --install_from_source --instance_type m1.large
-elif [ &quot;$BUILD_UPDATE_AMI&quit; == &quot;true&quot; ]
-then
-  build/devenv build devenv ${BUILD_NUMBER} --register --official --terminate --instance_type m1.large
 else
   printf &quot;ERROR: incorrect or insufficient build parameters\n&quot;
   exit 1
@@ -105,6 +105,11 @@ fi</command>
         <color>BLUE</color>
       </threshold>
     </hudson.tasks.BuildTrigger>
+    <hudson.tasks.junit.JUnitResultArchiver>
+      <testResults>rhc/log/**/*.xml</testResults>
+      <keepLongStdio>false</keepLongStdio>
+      <testDataPublishers/>
+    </hudson.tasks.junit.JUnitResultArchiver>
     <hudson.tasks.Mailer>
       <recipients>libra-devel@redhat.com</recipients>
       <dontNotifyEveryUnstableBuild>false</dontNotifyEveryUnstableBuild>
