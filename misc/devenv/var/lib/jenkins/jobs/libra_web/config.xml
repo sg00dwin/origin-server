@@ -55,7 +55,7 @@
   <triggers class="vector">
     <org.jenkinsci.plugins.fstrigger.triggers.FolderContentTrigger>
       <spec>* */2 * * *</spec>
-      <path>/var/lib/jenkins/jobs/libra_check/workspace/site</path>
+      <path>/var/lib/jenkins/jobs/libra_ami/workspace/site</path>
     </org.jenkinsci.plugins.fstrigger.triggers.FolderContentTrigger>
   </triggers>
   <concurrentBuild>false</concurrentBuild>

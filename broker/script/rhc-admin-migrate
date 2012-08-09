@@ -11,7 +11,7 @@ $max_threads = 8
 WORK_DIR = '/tmp/rhc/migration'
 
 # For each of these sets:  nil implies all and empty implies none
-MIGRATION_CART_TYPES = ['mysql-5.1','mongodb-2.0','jbossas-7','jbosseap-6.0'].to_set
+MIGRATION_CART_TYPES = [].to_set
 RESTART_CART_TYPES = ['jenkins-1.4'].to_set
 REDEPLOY_HTTPD_PROXY_CART_TYPES = [].to_set # Deploys on top of existing config.  Will not fixup renames.
 
