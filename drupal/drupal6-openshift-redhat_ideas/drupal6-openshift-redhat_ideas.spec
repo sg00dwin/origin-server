@@ -5,7 +5,7 @@
 %global modname             redhat_ideas
 
 Name:    drupal%{drupal_release}-openshift-%{modname}
-Version: 1.4.1
+Version: 1.4.2
 Release: 1%{?dist}
 Summary: Openshift Red Hat Ideas Custom Module for Drupal6
 Group:   Applications/Publishing
@@ -41,6 +41,9 @@ rm -rf $RPM_BUILD_ROOT
 %{drupal_modules}/%{modname}
 
 %changelog
+* Thu Aug 09 2012 Adam Miller <admiller@redhat.com> 1.4.2-1
+- Adding feature request search field (sgoodwin@redhat.com)
+
 * Wed Jul 11 2012 Adam Miller <admiller@redhat.com> 1.4.1-1
 - bump_minor_versions for sprint 15 (admiller@redhat.com)
 
