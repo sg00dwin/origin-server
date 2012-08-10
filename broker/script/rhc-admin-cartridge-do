@@ -57,6 +57,13 @@ if login.nil? or app_name.nil? or command.nil? or cartridge.nil? or args["--help
   exit 1
 end
 
+if timeout
+  unless timeout =~ /^[0-9]+$/
+    puts "ERROR: Timeout must be a positive integer"
+    exit 1
+  end
+end
+
 require "/var/www/stickshift/broker/config/environment"
 
 # Set the MCollective options

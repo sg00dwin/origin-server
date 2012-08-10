@@ -846,7 +846,7 @@ mkdir -p /tmp/rhc/junit
 
           exit exit_code unless exit_code == 0
 
-          validate_instance(hostname, 10) unless options.install_required_packages?
+          validate_instance(hostname, 8) unless options.install_required_packages?
 
           manifest = rpm_manifest(hostname)
 
@@ -864,7 +864,7 @@ mkdir -p /tmp/rhc/junit
           
           exit exit_code unless exit_code == 0
 
-          validate_instance(hostname, 10)
+          validate_instance(hostname, 8)
 
           manifest = rpm_manifest(hostname)
         end
