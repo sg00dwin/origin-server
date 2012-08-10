@@ -121,7 +121,7 @@ class AriaIntegrationTest < ActionDispatch::IntegrationTest
   end
 
   test 'should provide combined master plans' do
-    assert plans = Aria::MasterPlan.all(:as => WebUser.new(:rhlogin => 'test'))
+    assert plans = Aria::MasterPlan.all
     assert plans.length > 0
     assert plan = plans[0]
     assert plan.description.is_a? String

@@ -1,6 +1,7 @@
 module Aria
   class MasterPlan < Plan
     self.element_name = 'plan'
+    allow_anonymous
 
     def description
       aria_plan.plan_desc

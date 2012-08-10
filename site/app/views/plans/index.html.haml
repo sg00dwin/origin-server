@@ -1,6 +1,29 @@
 - content_for :title, 'Select a plan'
-
-- @plans.each do |plan|
-  %h2= plan.name
-  = link_to "Select", account_plan_upgrade_path(plan), :class => 'btn'
-
+.row
+  .span6
+    .tile
+      .row-fluid
+        .span12
+          %b All plans come with
+      .row-fluid
+        .span6
+          %span.tile-copy-text First <b>three</b> gears for free<br />First-class management console<br />Basic monitoring with uptime alerts
+        .span6
+          %span.tile-copy-text Shared database for development<br />Choice of runtime environments<br />NSA-class security
+    = render :collection => @plans, :partial => 'plans/plan'
+  .span6
+    %p
+      %b What's a gear?<br />
+      A gear is a set of resources (memory, cpu, storage) that your application can use. You can add more gears to your application to scale it up. A small gear has 256MB of memory and can handle approximately 15 concurrent connections. A medium gear has 512MB of memory and can handle approximately 40 concurrent connections.
+    %p
+      %b Do I have to sign a contract?<br />
+      No contract is required - you can change or cancel your account any time.
+    %p
+      %b When am I billed?<br />
+      You'll be billed the monthly minimum at the beginning of your billing cycle, then you'll be billed for usage in your next bill.
+    %p
+      %b Does the monthly minimum count towards my usage?<br />
+      Yes.
+    %p
+      %b What's the difference between the different kinds of support?<br />
+      Phone support gives you access to our professional support by phone 24/7. E-mail support is handled by the same great, professional support staff, who are guaranteed to respond within 12 hours. Get support from the community by posting your question in the forums, where it can be handled by our staff or our great community.
