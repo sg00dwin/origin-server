@@ -8,7 +8,7 @@
 
 Summary:   Dependencies for OpenShift development
 Name:      rhc-devenv
-Version: 0.98.1
+Version: 0.98.2
 Release:   1%{?dist}
 Group:     Development/Libraries
 License:   GPLv2
@@ -493,9 +493,6 @@ chmod 640 /etc/stickshift/resource_limits.template
 # Remove Other rights from iptables-multi - was 755
 chmod 750 /sbin/iptables-multi
 
-# Deploy application templates - fotios
-/usr/bin/ruby /usr/lib/stickshift/broker/application_templates/templates/deploy.rb
-
 # Fix devenv log file ownership
 chown root:libra_user /var/www/stickshift/broker/log/development.log
 chown root:libra_user /var/www/stickshift/broker/log/mcollective-client.log
@@ -507,6 +504,16 @@ useradd nagios_monitor
 # Change /var/log/rkhunter perms
 chown -R root:nagios_monitor /var/log/rkhunter
 chmod -R 770 /var/log/rkhunter
+
+# Deploy application templates - fotios
+/usr/bin/ruby /usr/lib/stickshift/broker/application_templates/templates/deploy.rb
+if [ $? -ne 0 ]
+then
+  service mongod restart
+  service libra-broker restart
+  sleep 10
+  /usr/bin/ruby /usr/lib/stickshift/broker/application_templates/templates/deploy.rb
+fi
 
 %files
 %defattr(-,root,root,-)
@@ -523,6 +530,57 @@ chmod -R 770 /var/log/rkhunter
 %{policydir}/*
 
 %changelog
+* Thu Aug 09 2012 Adam Miller <admiller@redhat.com> 0.98.2-1
+- syncing jenkins config.xml (dmcphers@redhat.com)
+- remove libra check from configs (dmcphers@redhat.com)
+- allow non trusted users to add cross links as well as long as the trigger is
+  added after (dmcphers@redhat.com)
+- work around mergeable not being reliable (dmcphers@redhat.com)
+- testing pull requests (dmcphers@redhat.com)
+- testing pull requests (dmcphers@redhat.com)
+- testing pull requests (dmcphers@redhat.com)
+- testing pull requests (dmcphers@redhat.com)
+- testing pull requests (dmcphers@redhat.com)
+- Create sandbox directory with proper selinux policy and manage
+  polyinstantiation for it. (rmillner@redhat.com)
+- Merge pull request #192 from danmcp/master (openshift+bot@redhat.com)
+- make less calls to github (dmcphers@redhat.com)
+- added zend mirror repo (lnader@redhat.com)
+- don't add eval comment after merge failure (dmcphers@redhat.com)
+- don't add eval comment after merge failure (dmcphers@redhat.com)
+- be more restrictive about who can commit (dmcphers@redhat.com)
+- make sure all the commits will succeed before trying to merge
+  (dmcphers@redhat.com)
+- Make sure we retry immediately if code was updated mid run
+  (dmcphers@redhat.com)
+- work around stickshift proxy being dead (dmcphers@redhat.com)
+- don't allow multiple instances for merge pull request (dmcphers@redhat.com)
+- customize is previous build running (dmcphers@redhat.com)
+- make sure build status is upgraded correctly in pull request
+  (dmcphers@redhat.com)
+- fix merge issue with crankcase repo (dmcphers@redhat.com)
+- provide comments in all prereq pull requests (dmcphers@redhat.com)
+- testing pull requests (dmcphers@redhat.com)
+- allow install from source to work from stage (dmcphers@redhat.com)
+- fixing merge conditions (dmcphers@redhat.com)
+- add stage testing for pull requests (dmcphers@redhat.com)
+- minor cleanup (dmcphers@redhat.com)
+- limit cross reference reporting to 1 request (dmcphers@redhat.com)
+- handle all globals and not just gemname (dmcphers@redhat.com)
+- better error handling on builds (dmcphers@redhat.com)
+- add action required processing (dmcphers@redhat.com)
+- testing pull requests (dmcphers@redhat.com)
+- allow for nil bot comment (dmcphers@redhat.com)
+- dont allow merge if updated after comment (dmcphers@redhat.com)
+- few renames (dmcphers@redhat.com)
+- correct a few errors with cross references (dmcphers@redhat.com)
+- disable jenkins config (dmcphers@redhat.com)
+- reworking pull request testing (dmcphers@redhat.com)
+- update merge pull request script (dmcphers@redhat.com)
+- sync merge pull request job (dmcphers@redhat.com)
+- add merge method to test pull requests (dmcphers@redhat.com)
+- syncing jenkins jobs (dmcphers@redhat.com)
+
 * Thu Aug 02 2012 Adam Miller <admiller@redhat.com> 0.98.1-1
 - bump_minor_versions for sprint 16 (admiller@redhat.com)
 - jenkins job updates (dmcphers@redhat.com)

@@ -222,12 +222,13 @@
             </nav>
             <nav class="span3">
               <header>
-                <h3><a href="/app/legal">Legal</a></h3>
+                <h3><a href="/app/account">Account</a></h3>
               </header>
               <ul class="unstyled">
-                <li><a href="/app/legal/services_agreement">Terms of Service</a></li>
-                <li><a href="/app/legal/openshift_privacy">Privacy Policy</a></li>
+                <li><a href="/community/legal/services_agreement">Terms of Service</a></li>
+                <li><a href="/community/legal/openshift_privacy">Privacy Policy</a></li>
                 <li><a href="https://access.redhat.com/security/team/contact/">Security</a></li>
+                <li><a href="/community/developers/pricing">Plans</a></li>
               </ul>
             </nav>
           </div>

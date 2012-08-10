@@ -256,18 +256,16 @@ mkdir -p /tmp/rhc/junit
       return manifest
     end
 
-    def validate_instance(hostname)
+    def validate_instance(hostname, num_tries=1)
       # Validate the node installation
       print "Validating instance..."
-      num_tries = 5
-      restart_try = 2
       (1..num_tries).each do |i|
         unless is_valid?(hostname)
           if i == num_tries
             puts "ERROR - instance is not valid"
             exit 1
-          elsif i == restart_try
-            ssh(hostname, "service libra-broker restart; service libra-site restart", 60)
+          elsif i == 2
+            ssh(hostname, "service libra-broker restart; service libra-site restart; service httpd restart", 60)
           end
           sleep 5
         else
@@ -384,7 +382,7 @@ mkdir -p /tmp/rhc/junit
     def test_instance(tag, hostname, instance, conn, options, image_id=nil)
       begin
         
-        validate_instance(hostname)
+        validate_instance(hostname, 4)
 
         disable_charlie(hostname) if options.disable_charlie?
         
@@ -563,7 +561,7 @@ mkdir -p /tmp/rhc/junit
           end
 
           # These are special tests that cannot be written to work concurrently
-          if options.include_extended
+          if options.include_extended && 'runtime' == options.include_extended
             idle_all_gears(hostname)
 
             singleton_queue = ['Singletons', "cucumber #{@@CUCUMBER_OPTIONS} -t @singleton li-test/tests"]
@@ -571,7 +569,7 @@ mkdir -p /tmp/rhc/junit
             retry_test_failures(hostname, [singleton_queue], 2) if 0 != exit_code
           end
 
-          validate_instance(hostname)
+          validate_instance(hostname, 4)
         ensure
           if options.include_web?
             cmd = "service sauce-connect stop"
@@ -845,10 +843,10 @@ mkdir -p /tmp/rhc/junit
           puts "----------------- Install Output ------------------------"
           puts output
           puts "---------------------------------------------------------"
-          
+
           exit exit_code unless exit_code == 0
-        
-          validate_instance(hostname) unless options.install_required_packages?
+
+          validate_instance(hostname, 8) unless options.install_required_packages?
 
           manifest = rpm_manifest(hostname)
 
@@ -866,7 +864,7 @@ mkdir -p /tmp/rhc/junit
           
           exit exit_code unless exit_code == 0
 
-          validate_instance(hostname)
+          validate_instance(hostname, 8)
 
           manifest = rpm_manifest(hostname)
         end
@@ -1223,7 +1221,7 @@ END
       update_remote_tests(instance.dns_name)
     end
 
-    validate_instance(hostname)
+    validate_instance(hostname, 4)
 
     if options.ssh_config_verifier?
       public_ip = instance.public_ip_address

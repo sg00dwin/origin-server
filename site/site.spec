@@ -3,7 +3,7 @@
 
 Summary:   Li site components
 Name:      rhc-site
-Version: 0.97.2
+Version: 0.97.3
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -137,6 +137,29 @@ rm -rf %{buildroot}
 %{sitedir}/public
 
 %changelog
+* Thu Aug 09 2012 Adam Miller <admiller@redhat.com> 0.97.3-1
+- Merge pull request #206 from smarterclayton/us2583_move_learn_more_to_drupal
+  (openshift+bot@redhat.com)
+- Remove unused code, add tests to cover new redirections (ccoleman@redhat.com)
+- Move remaining openshift content in drupal (ccoleman@redhat.com)
+- Merge pull request #199 from sg00dwin/master (openshift+bot@redhat.com)
+- Point learn more to community (ccoleman@redhat.com)
+- Merge pull request #194 from smarterclayton/direct_post_config_tasks
+  (openshift+bot@redhat.com)
+- fix blog author photo 829774 (sgoodwin@redhat.com)
+- Middle initial is not serialized identically between create/update account.
+  (ccoleman@redhat.com)
+- Check persistence in unit tests (ccoleman@redhat.com)
+- Update account upgrade edit page to more closely resemble emily's mockups and
+  to reuse data (ccoleman@redhat.com)
+- The mother of all integration tests (ccoleman@redhat.com)
+- Flush out payment methods (ccoleman@redhat.com)
+- Adding feature request search field (sgoodwin@redhat.com)
+- Add direct payment edit paths, simplify logic and flow (ccoleman@redhat.com)
+- Provide rake tasks to set/clear direct post Aria configuration.
+  (ccoleman@redhat.com)
+- Remove ruby common code from rhc-server-common (ccoleman@redhat.com)
+
 * Thu Aug 02 2012 Adam Miller <admiller@redhat.com> 0.97.2-1
 - Merge pull request #162 from smarterclayton/use_ci_reporter_in_site
   (ccoleman@redhat.com)

@@ -2,7 +2,7 @@
 
 Summary:       Multi-tenant cloud management system node tools
 Name:          rhc-node
-Version: 0.97.1
+Version: 0.97.2
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -271,6 +271,21 @@ fi
 
 
 %changelog
+* Thu Aug 09 2012 Adam Miller <admiller@redhat.com> 0.97.2-1
+- allow non trusted users to add cross links as well as long as the trigger is
+  added after (dmcphers@redhat.com)
+- The sandbox config is also in node. (rmillner@redhat.com)
+- Restart proxy if its been stopped. (rmillner@redhat.com)
+- Need to set selinux perms for /sandbox (rmillner@redhat.com)
+- Create sandbox directory with proper selinux policy and manage
+  polyinstantiation for it. (rmillner@redhat.com)
+- remove *.war.* from deployments (bdecoste@gmail.com)
+- BZ 845332: Separate out configuration file management from the init script so
+  that systemd properly interprets the daemon restart. (rmillner@redhat.com)
+- remove *.war.* from deployments (bdecoste@gmail.com)
+- remove *.war.* from deployments (bdecoste@gmail.com)
+- Filter for directories (rmillner@redhat.com)
+
 * Thu Aug 02 2012 Adam Miller <admiller@redhat.com> 0.97.1-1
 - bump_minor_versions for sprint 16 (admiller@redhat.com)
 
