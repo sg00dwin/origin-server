@@ -395,27 +395,36 @@ mkdir -p /tmp/rhc/junit
         broker_profiler(hostname) if options.profile_broker?
 
         test_queues = [[], [], [], []]
+          
+        extended_tests = nil
+        if options.include_extended
+          extended_tests = []
+          extended_tests = options.include_extended.split(",").map do |extended_test|
+            extended_test.strip
+          end
+        end
 
         if options.include_extended
-          
-          case options.include_extended
-          when 'broker'
-            test_queues[0] << ["REST API", "cucumber #{@@CUCUMBER_OPTIONS} -t @broker_api li-test/tests", {:retry_individually => true}]
-            test_queues[1] << ["Broker Domain System", "cd li-test/broker; rake domain_system_test", {:retry_individually => true}]
-            test_queues[2] << ["Broker Application System", "cd li-test/broker; rake application_system_test", {:retry_individually => true}]
-            test_queues[3] << ["Broker Cartridge System", "cd li-test/broker; rake cartridge_system_test", {:retry_individually => true}]
-            test_queues[1] << ["StickShift Broker Unit Ext 1", "cd li-test/stickshift/broker; rake test:ss_unit_ext1", {:retry_individually => true}]
-          when 'runtime'
-            test_queues[0] << ["Extended Runtime Group 1", "cucumber #{@@CUCUMBER_OPTIONS} -t @runtime_extended1 li-test/tests"]
-            test_queues[1] << ["Extended Runtime Group 2", "cucumber #{@@CUCUMBER_OPTIONS} -t @runtime_extended2 li-test/tests"]
-            test_queues[2] << ["Extended Runtime Group 3", "cucumber #{@@CUCUMBER_OPTIONS} -t @runtime_extended3 li-test/tests"]
-          when 'site'
-            test_queues[0] << ["Site Extended", "cd li-test/site; rake test:extended"]
-          when 'rhc'
-            test_queues[0] << ["RHC Extended", "cucumber #{@@CUCUMBER_OPTIONS} -t @rhc_extended li-test/tests", {:retry_individually => true}]
-          else
-            puts "Not supported for extended: #{options.include_extended}"
-            exit 1
+          extended_tests.each do |extended_test|
+            case extended_test
+            when 'broker'
+              test_queues[0] << ["REST API", "cucumber #{@@CUCUMBER_OPTIONS} -t @broker_api li-test/tests", {:retry_individually => true}]
+              test_queues[1] << ["Broker Domain System", "cd li-test/broker; rake domain_system_test", {:retry_individually => true}]
+              test_queues[2] << ["Broker Application System", "cd li-test/broker; rake application_system_test", {:retry_individually => true}]
+              test_queues[3] << ["Broker Cartridge System", "cd li-test/broker; rake cartridge_system_test", {:retry_individually => true}]
+              test_queues[1] << ["StickShift Broker Unit Ext 1", "cd li-test/stickshift/broker; rake test:ss_unit_ext1", {:retry_individually => true}]
+            when 'runtime'
+              test_queues[0] << ["Extended Runtime Group 1", "cucumber #{@@CUCUMBER_OPTIONS} -t @runtime_extended1 li-test/tests"]
+              test_queues[1] << ["Extended Runtime Group 2", "cucumber #{@@CUCUMBER_OPTIONS} -t @runtime_extended2 li-test/tests"]
+              test_queues[2] << ["Extended Runtime Group 3", "cucumber #{@@CUCUMBER_OPTIONS} -t @runtime_extended3 li-test/tests"]
+            when 'site'
+              test_queues[0] << ["Site Extended", "cd li-test/site; rake test:extended"]
+            when 'rhc'
+              test_queues[0] << ["RHC Extended", "cucumber #{@@CUCUMBER_OPTIONS} -t @rhc_extended li-test/tests", {:retry_individually => true}]
+            else
+              puts "Not supported for extended: #{extended_test}"
+              exit 1
+            end
           end
         elsif options.include_rcov?
           test_queues[0] << ["StickShift Node Unit Coverage", "cd li-test/stickshift/node; rake rcov; cp -a coverage /tmp/rhc/stickshift_node_coverage"]
@@ -561,12 +570,22 @@ mkdir -p /tmp/rhc/junit
           end
 
           # These are special tests that cannot be written to work concurrently
-          if options.include_extended && 'runtime' == options.include_extended
-            idle_all_gears(hostname)
-
-            singleton_queue = ['Singletons', "cucumber #{@@CUCUMBER_OPTIONS} -t @singleton li-test/tests"]
-            output, exit_code = run_ssh(hostname, singleton_queue[0], singleton_queue[1])
-            retry_test_failures(hostname, [singleton_queue], 2) if 0 != exit_code
+          if options.include_extended
+            extended_tests.each do |extended_test|
+              case extended_test
+              when 'broker'
+              when 'runtime'
+                idle_all_gears(hostname)
+                singleton_queue = ['Singletons', "cucumber #{@@CUCUMBER_OPTIONS} -t @singleton li-test/tests"]
+                output, exit_code = run_ssh(hostname, singleton_queue[0], singleton_queue[1])
+                retry_test_failures(hostname, [singleton_queue], 2) if 0 != exit_code
+              when 'site'
+              when 'rhc'
+              else
+                puts "Not supported for extended: #{extended_test}"
+                exit 1
+              end
+            end
           end
 
           validate_instance(hostname, 4)
@@ -598,8 +617,10 @@ mkdir -p /tmp/rhc/junit
         puts "Done"
 
       ensure
-        if options.terminate?
+        if options.terminate? || options.official?
           download_artifacts(hostname)
+        end
+        if options.terminate?
           terminate_instance(instance)
         end
       end
@@ -846,7 +867,7 @@ mkdir -p /tmp/rhc/junit
 
           exit exit_code unless exit_code == 0
 
-          validate_instance(hostname, 8) unless options.install_required_packages?
+          validate_instance(hostname, 4) unless options.install_required_packages?
 
           manifest = rpm_manifest(hostname)
 
@@ -864,12 +885,12 @@ mkdir -p /tmp/rhc/junit
           
           exit exit_code unless exit_code == 0
 
-          validate_instance(hostname, 8)
+          validate_instance(hostname, 4)
 
           manifest = rpm_manifest(hostname)
         end
       rescue SystemExit => e
-        download_artifacts(hostname) if options.terminate?
+        download_artifacts(hostname) if options.terminate? || options.official?
         raise
       end
       
