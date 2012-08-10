@@ -154,7 +154,13 @@ BOT_MARKER = "[EVALUATED]"
 module Hub
   class GitHubAPI
     def list_pull_requests(repo)
-      res = get "https://api.github.com/repos/#{OPENSHIFT_USER}/#{repo}/pulls" 
+      res = get "https://api.github.com/repos/#{OPENSHIFT_USER}/#{repo}/pulls"
+      rate_limit_remaining = res.header['X-RateLimit-Remaining']
+      $stderr.puts "Rate limit remaining: #{rate_limit_remaining}"
+      if rate_limit_remaining.to_i < 100
+        $stderr.puts "WARNING: Skipping processing due to rate limit approaching!" 
+        exit 0
+      end
       res.error! unless res.success?
       res.data
     end
@@ -407,7 +413,7 @@ module Hub
     end
 
     # Updates all the bot markers for the involved pull requests.  To be called after you have validated the tests should be kicked off again
-    def update_evaluated_markers(repo_to_pull_request, settings) 
+    def update_evaluated_markers(repo_to_pull_request, trigger_updated_at, settings) 
       repo_to_pull_request.each do |repo, pull_request|
         pull_request_comments = get_comments(pull_request['number'], repo)
         test_prefix_comment = get_comment_with_prefix(pull_request['number'], repo, settings[:test_prefix], pull_request_comments)
@@ -416,7 +422,7 @@ module Hub
         end
         pull_request_evaluated_time = get_evaluated_time(pull_request_comments)
         pull_request_updated_at = Time.parse(pull_request['head']['repo']['updated_at'])
-        if !pull_request_evaluated_time || pull_request_evaluated_time < pull_request_updated_at
+        if !pull_request_evaluated_time || pull_request_evaluated_time < pull_request_updated_at || pull_request_evaluated_time < trigger_updated_at
           add_comment(pull_request['number'], repo, BOT_MARKER)
         end
       end
@@ -483,7 +489,7 @@ module Hub
                     break
                   end
                 end
-                update_evaluated_markers(repo_to_pull_request, settings)
+                update_evaluated_markers(repo_to_pull_request, trigger_updated_at, settings)
                 submit_test_job = true
               else
                 create_or_update_comment(id, base_repo, ACTION_PREFIX, ACTION_NOT_TEAM, comments)
@@ -589,7 +595,7 @@ module Hub
             submit_test_job = false
           end
           if submit_test_job
-            update_evaluated_markers(repo_to_pull_request, settings)
+            update_evaluated_markers(repo_to_pull_request, trigger_updated_at, settings)
           end
         end
         if submit_test_job
