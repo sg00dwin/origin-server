@@ -281,6 +281,7 @@ set -e
     
     if [ -n &quot;$QE_TESTS&quot; ]
     then
+      sed -i &quot;/${TAG_NAME}_.*/d&quot; ~/fork_ami_qe_test_queue
       echo &quot;${TAG_NAME}_${BUILD_NUMBER}=$QE_TESTS&quot; &gt;&gt; ~/fork_ami_qe_test_queue
     fi
 
