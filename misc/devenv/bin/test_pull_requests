@@ -180,6 +180,12 @@ module Hub
       pull_request['mergeable']
     end
 
+    def get_commits(id, repo)
+      res = get "https://api.github.com/repos/#{OPENSHIFT_USER}/#{repo}/pulls/%s/commits" % id
+      res.error! unless res.success?
+      res.data
+    end
+
     def get_comments(issue_id, repo)
       res = get "https://api.github.com/repos/#{OPENSHIFT_USER}/#{repo}/issues/%s/comments" % issue_id
       res.error! unless res.success?
@@ -438,10 +444,11 @@ module Hub
       id = req['number']
       branch = req['base']['ref']
       base_repo = req['base']['repo']['name']
+      login = req['user']['login']
       updated_at = Time.parse(req['head']['repo']['updated_at'])
       repo_to_pull_request = {base_repo => req}
       
-      $stderr.puts "****Processing '#{settings[:name]}' pull request #{id} for repo '#{base_repo}'"
+      $stderr.puts "****Processing '#{settings[:name]}' pull request #{id} for user '#{login}' in repo '#{base_repo}'"
       
       trigger_updated_at = get_trusted_trigger_time(req, comments, settings)
       evaluated_time = get_evaluated_time(comments)
