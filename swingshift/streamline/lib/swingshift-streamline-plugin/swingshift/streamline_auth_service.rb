@@ -124,14 +124,19 @@ module SwingShift
       def check_broker_key(key, iv)
         key = key.gsub(" ", "+")
         iv = iv.gsub(" ", "+")
-        encrypted_token = Base64::decode64(key)
-        cipher = OpenSSL::Cipher::Cipher.new("aes-256-cbc")
-        cipher.decrypt
-        cipher.key = OpenSSL::Digest::SHA512.new(Rails.configuration.auth[:broker_auth_secret]).digest
-        private_key = OpenSSL::PKey::RSA.new(File.read('config/keys/private.pem'), Rails.configuration.auth[:broker_auth_rsa_secret])
-        cipher.iv =  private_key.private_decrypt(Base64::decode64(iv))
-        json_token = cipher.update(encrypted_token)
-        json_token << cipher.final
+        begin
+          encrypted_token = Base64::decode64(key)
+          cipher = OpenSSL::Cipher::Cipher.new("aes-256-cbc")
+          cipher.decrypt
+          cipher.key = OpenSSL::Digest::SHA512.new(Rails.configuration.auth[:broker_auth_secret]).digest
+          private_key = OpenSSL::PKey::RSA.new(File.read('config/keys/private.pem'), Rails.configuration.auth[:broker_auth_rsa_secret])
+          cipher.iv =  private_key.private_decrypt(Base64::decode64(iv))
+          json_token = cipher.update(encrypted_token)
+          json_token << cipher.final
+        rescue => e
+          Rails.logger.error "Broker key authentication failed."
+          raise StickShift::AccessDeniedException.new
+        end
   
         token = JSON.parse(json_token)
         username = token['rhlogin']
