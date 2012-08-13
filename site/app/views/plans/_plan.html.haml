@@ -5,7 +5,7 @@
     .span7
       %h3
         #{plan.name}
-        - if !display_only && plan.id == current_plan.id
+        - if !display_only && plan == current_plan
           %span.tile-current-plan current plan
       %p= plan.description
       %ul
@@ -19,5 +19,5 @@
       %p
         %b Best for<br />
         %span.tile-copy-text Praesent et varius lectus. Sed consectetur ante eu mi sagittis a ultrices lacus ultrices.
-      - if !display_only && plan.id != current_plan.id
+      - if !display_only && plan != current_plan
         = link_to "Select", account_plan_upgrade_path(plan), :class => 'btn'
