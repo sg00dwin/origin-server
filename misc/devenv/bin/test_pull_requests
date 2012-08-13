@@ -173,13 +173,13 @@ module Hub
       res.data
     end
 
-    def is_mergeable?(id, repo)
+    def is_mergeable?(id, repo, num_tries=1)
       # This call isn't reliable so make sure
-      pull_request = get_pull_request(id, repo)
-      unless pull_request['mergeable']
+      (1..num_tries).each do |i|
         pull_request = get_pull_request(id, repo)
+        return true if pull_request['mergeable']
       end
-      pull_request['mergeable']
+      return false
     end
 
     def get_commits(id, repo)
@@ -284,7 +284,7 @@ module Hub
       pull_request = get_pull_request(pull_id, repo)
       mergeable = pull_request['mergeable']
       # This call isn't reliable so make sure
-      mergeable = is_mergeable?(pull_id, repo) unless mergeable 
+      mergeable = is_mergeable?(pull_id, repo, 2) unless mergeable 
       raise "Pull request isn't mergeable!" unless mergeable
       pull_request_updated_at = Time.parse(pull_request['head']['repo']['updated_at']) 
       unless evaluated_time > pull_request_updated_at
@@ -634,19 +634,27 @@ module Hub
           
           if BRANCHES.include?(branch)
 
+            login = req['user']['login']
+
             comments = nil
             # Skip if it's not mergeable
             mergeable = is_mergeable?(id, repo)
+            merge_id="#{repo}_#{id}_#{login}"
             $stderr.puts "Mergeable #{mergeable}"
             if mergeable
+              `sed -i "/#{merge_id}/d" ~/test_pull_request_not_mergable`
               comments = get_comments(id, repo) if comments.nil?
               delete_comment_with_prefix(id, repo, ACTION_NOT_MERGE, comments)
             else
-              create_or_update_comment(id, repo, ACTION_PREFIX, ACTION_NOT_MERGE)
+              `grep #{merge_id} ~/test_pull_request_not_mergable > /dev/null 2>&1`
+              if $? == 0
+                create_or_update_comment(id, repo, ACTION_PREFIX, ACTION_NOT_MERGE)
+              else
+                `echo "#{merge_id}" >> ~/test_pull_request_not_mergable`
+              end
               next
             end
 
-            login = req['user']['login']
             updated_at = Time.parse(req['head']['repo']['updated_at'])
 
             permission_denied = Array.new(SETTINGS.length, false)
