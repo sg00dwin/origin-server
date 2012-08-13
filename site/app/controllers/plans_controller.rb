@@ -1,6 +1,6 @@
 class PlansController < AccountController
   def index
-    @plans = Plan.all
+    @plans = Aria::MasterPlan.all
   end
 
   def edit

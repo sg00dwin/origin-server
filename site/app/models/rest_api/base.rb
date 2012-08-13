@@ -476,6 +476,13 @@ module RestApi
     end
 
     class << self
+      def allow_anonymous
+        @allow_anonymous = true
+      end
+      def allow_anonymous?
+        @allow_anonymous
+      end
+
       def get(custom_method_name, options = {}, call_options = {})
         connection(call_options).get(custom_method_collection_url(custom_method_name, options), headers)
       end
@@ -487,15 +494,23 @@ module RestApi
       # Make connection specific to the instance, and aware of user context
       #
       def connection(options = {}, refresh = false)
-        c = if defined?(@connection) || superclass == Object || superclass == ActiveResource::Base
+        c = shared_connection(options, refresh)
+        if options[:as]
+          UserAwareConnection.new(c, options[:as])
+        elsif allow_anonymous?
+          c
+        else
+          raise RestApi::MissingAuthorizationError
+        end
+      end
+
+      def shared_connection(options = {}, refresh = false)
+        if defined?(@connection) || superclass == Object || superclass == ActiveResource::Base
           @connection = update_connection(ActiveResource::PersistentConnection.new(site, format)) if refresh || @connection.nil?
           @connection
         else
-          superclass.connection(options, refresh)
+          superclass.shared_connection(options, refresh)
         end
-
-        raise MissingAuthorizationError unless options[:as]
-        UserAwareConnection.new(c, options[:as])
       end
 
       protected
@@ -565,9 +580,7 @@ module RestApi
     end
 
     protected
-
       def connection(refresh = false)
-        raise "All RestApi model classes must have the 'as' attribute set in order to make remote requests" unless as
         @connection = nil if refresh
         @connection ||= self.class.connection({:as => as})
       end
@@ -628,14 +641,6 @@ module RestApi
 
     def http
       @connection.send(:http)
-    end
-
-    #
-    # Changes made in commit https://github.com/rails/rails/commit/51f1f550dab47c6ec3dcdba7b153258e2a0feb69#activeresource/lib/active_resource/base.rb
-    # make GET consistent with other verbs (return response)
-    #
-    def get(path, headers = {})
-      with_auth { request(:get, path, build_request_headers(headers, :get, self.site.merge(path))) } #changed, remove .body at end, removed format decode
     end
   end
 
