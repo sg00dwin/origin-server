@@ -9,8 +9,11 @@
     <meta charset='utf-8'>
     <meta content='IE=edge,chrome=1' http-equiv='X-UA-Compatible'>
     <?php print $head; ?>
-	  <title><?php print $head_title; ?></title>
-    <?php 
+    <title><?php print $head_title; ?></title>
+    <?php if ($node && isset($node->field_search_meta_description) && $node->field_search_meta_description[0]) { ?>
+    <meta name="description" content="<?php print $node->field_search_meta_description[0]['safe']; ?>">
+    <?php }
+
       // reference CSS files directly from openshift
       //print_r(menu_get_active_trail());
       global $base_url;

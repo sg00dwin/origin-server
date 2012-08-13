@@ -14,3 +14,4 @@ rhc/
 .sass-cache
 site/.sass-cache/
 .*.swp
+._*

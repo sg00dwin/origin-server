@@ -1,4 +1,4 @@
-policy_module(libra,1.1.36)
+policy_module(libra,1.1.38)
 
 ########################################
 #
@@ -56,6 +56,29 @@ type libra_port_t;
 corenet_port(libra_port_t)
 corenet_reserved_port(libra_port_t)
 
+gen_require(`
+        type httpd_t;
+	type ping_t;
+        type httpd_log_t;
+	type httpd_exec_t;
+	type sshd_devpts_t;
+	type ptmx_t;
+	type crontab_t;
+	type sshd_t;
+	role system_r;
+	role unconfined_r;
+	attribute unconfined_usertype;
+	type rpm_script_t;
+	type puppet_t;
+	type sendmail_t;
+	attribute domain;
+	type quota_t;
+	type quota_db_t;
+        type system_cronjob_t;
+	attribute exec_type;
+	attribute file_type;
+')
+ 
 ########################################
 #
 # libra standard local policy
@@ -200,6 +223,7 @@ fs_get_xattr_fs_quotas(libra_app_domain)
 fs_rw_inherited_tmpfs_files(libra_app_domain)
 fs_dontaudit_rw_anon_inodefs_files(libra_app_domain)
 
+dontaudit libra_domain file_type:dir read;
 files_dontaudit_list_home(libra_app_domain)
 files_dontaudit_search_all_pids(libra_app_domain)
 files_dontaudit_getattr_all_dirs(libra_app_domain)
@@ -209,6 +233,7 @@ files_dontaudit_list_var(libra_app_domain)
 files_dontaudit_getattr_lost_found_dirs(libra_app_domain)
 files_dontaudit_search_all_mountpoints(libra_app_domain)
 files_dontaudit_search_spool(libra_app_domain)
+files_dontaudit_search_all_dirs(libra_app_domain)
 files_dontaudit_list_var(libra_app_domain)
 files_read_etc_files(libra_app_domain)
 files_exec_etc_files(libra_app_domain)
@@ -259,29 +284,6 @@ oddjob_dontaudit_rw_fifo_file(libra_app_domain)
 #
 # libra initrc local policy
 #
-
-gen_require(`
-        type httpd_t;
-	type ping_t;
-        type httpd_log_t;
-	type httpd_exec_t;
-	type sshd_devpts_t;
-	type ptmx_t;
-	type crontab_t;
-	type sshd_t;
-	role system_r;
-	role unconfined_r;
-	attribute unconfined_usertype;
-	type rpm_script_t;
-	type puppet_t;
-	type sendmail_t;
-	attribute domain;
-	type quota_t;
-	type quota_db_t;
-        type system_cronjob_t;
-	attribute exec_type;
-')
- 
 allow unconfined_usertype self:process dyntransition;
 
 role_transition unconfined_r libra_initrc_exec_t system_r;

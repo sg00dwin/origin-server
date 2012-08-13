@@ -81,6 +81,7 @@ TEST_SETTINGS = {
   :evaluating_regex => /^Test Results: Evaluating/,
   :waiting_regex => /^Test Results: Waiting/,
   :running_regex => /^Test Results: Running \((.*)\)/,
+  :finished_regex => /^Test Results: .+ \((.*)\)/,
   :queued_regex => /^Test Results: Waiting: You are in the build queue at position: \d+/,
   :allow_multiple => true,
   :branches => { 'stage'   => {:jenkins_project_name => "test_pull_requests_stage",
@@ -105,6 +106,7 @@ MERGE_TEST_SETTINGS = {
   :evaluating_regex => /^Merge Test Results: Evaluating/,
   :waiting_regex => /^Merge Test Results: Waiting/,
   :running_regex => /^Merge Test Results: Running \((.*)\)/,
+  :finished_regex => /^Merge Test Results: .+ \((.*)\)/,
   :queued_regex => /^Merge Test Results: Waiting: You are in the build queue at position: \d+/,
   :allow_multiple => false,
   :branches => { 'stage'   => {:jenkins_project_name => "merge_pull_request_stage",
@@ -154,7 +156,13 @@ BOT_MARKER = "[EVALUATED]"
 module Hub
   class GitHubAPI
     def list_pull_requests(repo)
-      res = get "https://api.github.com/repos/#{OPENSHIFT_USER}/#{repo}/pulls" 
+      res = get "https://api.github.com/repos/#{OPENSHIFT_USER}/#{repo}/pulls"
+      rate_limit_remaining = res.header['X-RateLimit-Remaining']
+      $stderr.puts "Rate limit remaining: #{rate_limit_remaining}"
+      if rate_limit_remaining.to_i < 100
+        $stderr.puts "WARNING: Skipping processing due to rate limit approaching!" 
+        exit 0
+      end
       res.error! unless res.success?
       res.data
     end
@@ -165,13 +173,19 @@ module Hub
       res.data
     end
 
-    def is_mergeable?(id, repo)
+    def is_mergeable?(id, repo, num_tries=1)
       # This call isn't reliable so make sure
-      pull_request = get_pull_request(id, repo)
-      unless pull_request['mergeable']
+      (1..num_tries).each do |i|
         pull_request = get_pull_request(id, repo)
+        return true if pull_request['mergeable']
       end
-      pull_request['mergeable']
+      return false
+    end
+
+    def get_commits(id, repo)
+      res = get "https://api.github.com/repos/#{OPENSHIFT_USER}/#{repo}/pulls/%s/commits" % id
+      res.error! unless res.success?
+      res.data
     end
 
     def get_comments(issue_id, repo)
@@ -270,7 +284,7 @@ module Hub
       pull_request = get_pull_request(pull_id, repo)
       mergeable = pull_request['mergeable']
       # This call isn't reliable so make sure
-      mergeable = is_mergeable?(pull_id, repo) unless mergeable 
+      mergeable = is_mergeable?(pull_id, repo, 2) unless mergeable 
       raise "Pull request isn't mergeable!" unless mergeable
       pull_request_updated_at = Time.parse(pull_request['head']['repo']['updated_at']) 
       unless evaluated_time > pull_request_updated_at
@@ -407,7 +421,7 @@ module Hub
     end
 
     # Updates all the bot markers for the involved pull requests.  To be called after you have validated the tests should be kicked off again
-    def update_evaluated_markers(repo_to_pull_request, settings) 
+    def update_evaluated_markers(repo_to_pull_request, trigger_updated_at, settings) 
       repo_to_pull_request.each do |repo, pull_request|
         pull_request_comments = get_comments(pull_request['number'], repo)
         test_prefix_comment = get_comment_with_prefix(pull_request['number'], repo, settings[:test_prefix], pull_request_comments)
@@ -416,7 +430,7 @@ module Hub
         end
         pull_request_evaluated_time = get_evaluated_time(pull_request_comments)
         pull_request_updated_at = Time.parse(pull_request['head']['repo']['updated_at'])
-        if !pull_request_evaluated_time || pull_request_evaluated_time < pull_request_updated_at
+        if !pull_request_evaluated_time || pull_request_evaluated_time < pull_request_updated_at || pull_request_evaluated_time < trigger_updated_at
           add_comment(pull_request['number'], repo, BOT_MARKER)
         end
       end
@@ -432,13 +446,18 @@ module Hub
       id = req['number']
       branch = req['base']['ref']
       base_repo = req['base']['repo']['name']
+      login = req['user']['login']
       updated_at = Time.parse(req['head']['repo']['updated_at'])
       repo_to_pull_request = {base_repo => req}
       
-      $stderr.puts "****Processing '#{settings[:name]}' pull request #{id} for repo '#{base_repo}'"
+      $stderr.puts "****Processing '#{settings[:name]}' pull request #{id} for user '#{login}' in repo '#{base_repo}'"
       
       trigger_updated_at = get_trusted_trigger_time(req, comments, settings)
       evaluated_time = get_evaluated_time(comments)
+      
+      $stderr.puts "Updated at: #{updated_at}"
+      $stderr.puts "Trigger updated at: #{trigger_updated_at}"
+      $stderr.puts "Evaluated time: #{evaluated_time}"
 
       # Gather any dependencies from trusted users
       comments.each do |comment|
@@ -483,7 +502,7 @@ module Hub
                     break
                   end
                 end
-                update_evaluated_markers(repo_to_pull_request, settings)
+                update_evaluated_markers(repo_to_pull_request, trigger_updated_at, settings)
                 submit_test_job = true
               else
                 create_or_update_comment(id, base_repo, ACTION_PREFIX, ACTION_NOT_TEAM, comments)
@@ -497,8 +516,6 @@ module Hub
             if JenkinsAPI.is_project_stable?(branch, settings) 
               if !($submitted_tests[settings[:name]] && comment =~ settings[:queued_regex])
                 $stderr.puts "Checking that evaluated times are still up to date"
-                $stderr.puts "Evaluated time: #{evaluated_time}"
-                $stderr.puts "Updated at: #{updated_at}"
                 if evaluated_time && evaluated_time > updated_at
                   submit_test_job = true
                   repo_to_pull_request.each do |repo, sub_pull_request|
@@ -540,18 +557,13 @@ module Hub
             end
           else
             $stderr.puts "Finished..."
+            $stderr.puts comment if comment =~ settings[:finished_regex]
             resubmit_test_job = true if JenkinsAPI.is_project_stable?(branch, settings)
         end
         if resubmit_test_job
           submit_test_job = false
 
           $stderr.puts "Checking whether we should resubmit"
-          $stderr.puts "Evaluated time: #{evaluated_time}"
-          if trigger_updated_at
-            $stderr.puts "Trigger Updated at: #{trigger_updated_at}"
-          else
-            $stderr.puts "Missing trusted trigger comment"
-          end
           if trigger_updated_at
             # We already trust the primary pull request.  Just need to check whether the eval time is older than last update or last trusted trigger.
             if !evaluated_time || (evaluated_time < updated_at || evaluated_time < trigger_updated_at)
@@ -589,7 +601,7 @@ module Hub
             submit_test_job = false
           end
           if submit_test_job
-            update_evaluated_markers(repo_to_pull_request, settings)
+            update_evaluated_markers(repo_to_pull_request, trigger_updated_at, settings)
           end
         end
         if submit_test_job
@@ -622,19 +634,27 @@ module Hub
           
           if BRANCHES.include?(branch)
 
+            login = req['user']['login']
+
             comments = nil
             # Skip if it's not mergeable
             mergeable = is_mergeable?(id, repo)
+            merge_id="#{repo}_#{id}_#{login}"
             $stderr.puts "Mergeable #{mergeable}"
             if mergeable
+              `sed -i "/#{merge_id}/d" ~/test_pull_request_not_mergable`
               comments = get_comments(id, repo) if comments.nil?
               delete_comment_with_prefix(id, repo, ACTION_NOT_MERGE, comments)
             else
-              create_or_update_comment(id, repo, ACTION_PREFIX, ACTION_NOT_MERGE)
+              `grep #{merge_id} ~/test_pull_request_not_mergable > /dev/null 2>&1`
+              if $? == 0
+                create_or_update_comment(id, repo, ACTION_PREFIX, ACTION_NOT_MERGE)
+              else
+                `echo "#{merge_id}" >> ~/test_pull_request_not_mergable`
+              end
               next
             end
 
-            login = req['user']['login']
             updated_at = Time.parse(req['head']['repo']['updated_at'])
 
             permission_denied = Array.new(SETTINGS.length, false)
