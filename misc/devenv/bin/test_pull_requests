@@ -81,6 +81,7 @@ TEST_SETTINGS = {
   :evaluating_regex => /^Test Results: Evaluating/,
   :waiting_regex => /^Test Results: Waiting/,
   :running_regex => /^Test Results: Running \((.*)\)/,
+  :finished_regex => /^Test Results: .+ \((.*)\)/,
   :queued_regex => /^Test Results: Waiting: You are in the build queue at position: \d+/,
   :allow_multiple => true,
   :branches => { 'stage'   => {:jenkins_project_name => "test_pull_requests_stage",
@@ -105,6 +106,7 @@ MERGE_TEST_SETTINGS = {
   :evaluating_regex => /^Merge Test Results: Evaluating/,
   :waiting_regex => /^Merge Test Results: Waiting/,
   :running_regex => /^Merge Test Results: Running \((.*)\)/,
+  :finished_regex => /^Merge Test Results: .+ \((.*)\)/,
   :queued_regex => /^Merge Test Results: Waiting: You are in the build queue at position: \d+/,
   :allow_multiple => false,
   :branches => { 'stage'   => {:jenkins_project_name => "merge_pull_request_stage",
@@ -555,6 +557,7 @@ module Hub
             end
           else
             $stderr.puts "Finished..."
+            $stderr.puts comment if comment =~ settings[:finished_regex]
             resubmit_test_job = true if JenkinsAPI.is_project_stable?(branch, settings)
         end
         if resubmit_test_job
