@@ -15,9 +15,13 @@ module Aria
       capabilities.gear_sizes
     end
 
+    cache_find_method :single
+    cache_find_method :every
+
     protected
       def aria_plan
-        @aria_plan ||= Aria.get_client_plans_basic.find{ |plan| plan.plan_no == self.plan_no }
+        @aria_plan ||= Aria.cached.get_client_plans_basic.find{ |plan| plan.plan_no == self.plan_no }
       end
+
   end
 end

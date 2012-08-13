@@ -17,6 +17,7 @@ module Aria
   cache_method :get_acct_no_from_user_id
   cache_method :get_supp_field_value
   cache_method :get_supp_field_values
+  cache_method :get_client_plans_basic
 
   private
     def self.client

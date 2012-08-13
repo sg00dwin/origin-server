@@ -16,12 +16,18 @@ class AccountUpgradesController < ApplicationController
   def new
     plan_id = params[:plan_id]
 
-    @user = User.find(:one, :as => current_user)
-    @plan = Plan.find(plan_id, :as => current_user)
-    @current_plan = @user.plan
     aria_user = current_user.extend(Aria::User)
-    @payment_method = aria_user.payment_method
-    @billing_info = aria_user.billing_info
+
+    async do
+      @user = User.find :one, :as => current_user
+      @plan = Aria::MasterPlan.cached.find plan_id
+      @current_plan = @user.plan
+    end
+    async do
+      @payment_method = aria_user.payment_method
+      @billing_info = aria_user.billing_info
+    end
+    join
 
     render :unchanged and return if @plan == @current_plan
     render :downgrade and return if @plan.basic?
@@ -35,8 +41,8 @@ class AccountUpgradesController < ApplicationController
     @payment_method = aria_user.payment_method
     @billing_info = aria_user.billing_info
 
-    @user = User.find(:one, :as => current_user)
-    @plan = Plan.find(plan_id, :as => current_user)
+    @user = User.find :one, :as => current_user
+    @plan = Aria::MasterPlan.cached.find plan_id
     @current_plan = @user.plan
 
     @user.plan_id = plan_id

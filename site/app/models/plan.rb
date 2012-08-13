@@ -1,6 +1,6 @@
 class Plan < RestApi::Base
   allow_anonymous
-  
+
   schema do
     string :id, :name
     integer :plan_no
@@ -10,4 +10,7 @@ class Plan < RestApi::Base
   def basic?
     id == 'freeshift'
   end
+
+  cache_find_method :single
+  cache_find_method :every
 end
