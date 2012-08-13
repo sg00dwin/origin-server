@@ -1,7 +1,8 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <project>
   <actions/>
-  <description>Build an ami from a fork(s) of the openshift source</description>
+  <description>Build an ami from a fork(s) of the openshift source with options to run extended and qe tests.  The QE jenkins is located at:  http://ciqe.englab.nay.redhat.com/&#xd;
+</description>
   <logRotator>
     <daysToKeep>10</daysToKeep>
     <numToKeep>50</numToKeep>
@@ -12,6 +13,12 @@
   <properties>
     <hudson.model.ParametersDefinitionProperty>
       <parameterDefinitions>
+        <hudson.model.StringParameterDefinition>
+          <name>AMI_POSTFIX</name>
+          <description>The postfix to add to the ami name =&gt; fork_ami_${AMI_POSTFIX}_${BUILD_NUMBER}
+Usually would be the feature name or something to indicate the purpose of the ami.  Only 1 ami per postfix is kept.</description>
+          <defaultValue></defaultValue>
+        </hudson.model.StringParameterDefinition>
         <hudson.model.StringParameterDefinition>
           <name>FORK_ID</name>
           <description>The default fork id to use for all repos.
@@ -48,12 +55,44 @@ Note:  If you only want to use a fork for 1 of the repos then use that ${REPO}_F
           <description>Branch to use for rhc fork</description>
           <defaultValue>master</defaultValue>
         </hudson.model.StringParameterDefinition>
-        <hudson.model.StringParameterDefinition>
-          <name>AMI_POSTFIX</name>
-          <description>The postfix to add to the ami name =&gt; fork_ami_${AMI_POSTFIX}_${BUILD_NUMBER}
-Usually would be the feature name or something to indicate the purpose of the ami.  Only 1 ami per postfix is kept.</description>
-          <defaultValue></defaultValue>
-        </hudson.model.StringParameterDefinition>
+        <hudson.model.BooleanParameterDefinition>
+          <name>RUN_BROKER_EXTENDED</name>
+          <description>In addition to the verification tests include the broker extended tests.  Note:  The ami will still be marked qe-ready and the qe tests launched even if these tests fail.</description>
+          <defaultValue>false</defaultValue>
+        </hudson.model.BooleanParameterDefinition>
+        <hudson.model.BooleanParameterDefinition>
+          <name>RUN_RUNTIME_EXTENDED</name>
+          <description>In addition to the verification tests include the runtime extended tests.  Note:  The ami will still be marked qe-ready and the qe tests launched even if these tests fail.</description>
+          <defaultValue>false</defaultValue>
+        </hudson.model.BooleanParameterDefinition>
+        <hudson.model.BooleanParameterDefinition>
+          <name>RUN_SITE_EXTENDED</name>
+          <description>In addition to the verification tests include the site extended tests.  Note:  The ami will still be marked qe-ready and the qe tests launched even if these tests fail.</description>
+          <defaultValue>false</defaultValue>
+        </hudson.model.BooleanParameterDefinition>
+        <hudson.model.BooleanParameterDefinition>
+          <name>RUN_RHC_EXTENDED</name>
+          <description>In addition to the verification tests include the rhc extended tests.  Note:  The ami will still be marked qe-ready and the qe tests launched even if these tests fail.</description>
+          <defaultValue>false</defaultValue>
+        </hudson.model.BooleanParameterDefinition>
+        <hudson.model.BooleanParameterDefinition>
+          <name>RUN_QE_SMOKE_TESTS</name>
+          <description>Run the QE &apos;smoke&apos; tests after build and basic verification success.  These tests should be run for most amis and take ~1.5 hours on 1 instance.
+https://tcms.engineering.redhat.com/cases/?plan=4962&amp;is_automated=1&amp;case_status=2&amp;tag__name__in=smoke&amp;a=search</description>
+          <defaultValue>true</defaultValue>
+        </hudson.model.BooleanParameterDefinition>
+        <hudson.model.BooleanParameterDefinition>
+          <name>RUN_QE_ACCEPTANCE_TESTS</name>
+          <description>Run the QE &apos;acceptance&apos; tests after build and basic verification success.  These tests take ~5 hours to complete (using 4 instances).  They should be run for any significant changes.
+https://tcms.engineering.redhat.com/cases/?plan=4962&amp;is_automated=1&amp;case_status=2&amp;tag__name__in=acceptance&amp;a=search</description>
+          <defaultValue>false</defaultValue>
+        </hudson.model.BooleanParameterDefinition>
+        <hudson.model.BooleanParameterDefinition>
+          <name>RUN_QE_FULLFUNCTIONAL_TESTS</name>
+          <description>Run the QE &apos;fullfunction&apos; tests after build and basic verification success.  These tests take ~7 hours to complete (using 6 instances).  They should be run for the largest of changes (large user stories or changes involving a lot of refactoring)
+https://tcms.engineering.redhat.com/cases/?plan=4962&amp;is_automated=1&amp;case_status=2&amp;tag__name__in=fullfunction&amp;a=search</description>
+          <defaultValue>false</defaultValue>
+        </hudson.model.BooleanParameterDefinition>
       </parameterDefinitions>
     </hudson.model.ParametersDefinitionProperty>
   </properties>
@@ -104,7 +143,37 @@ Usually would be the feature name or something to indicate the purpose of the am
   <concurrentBuild>true</concurrentBuild>
   <builders>
     <hudson.tasks.Shell>
-      <command>if [ -n &quot;$FORK_ID&quot; ]
+      <command>EXTENDED_TESTS_ARRAY=()
+if $RUN_BROKER_EXTENDED
+then
+  EXTENDED_TESTS_ARRAY+=(broker)
+fi
+if $RUN_RUNTIME_EXTENDED
+then
+  EXTENDED_TESTS_ARRAY+=(runtime)
+fi
+if $RUN_SITE_EXTENDED
+then
+  EXTENDED_TESTS_ARRAY+=(site)
+fi
+if $RUN_RHC_EXTENDED
+then
+  EXTENDED_TESTS_ARRAY+=(rhc)
+fi
+
+
+EXTENDED_TESTS=&quot;&quot;
+for test in &quot;${EXTENDED_TESTS_ARRAY[@]}&quot;
+do
+  if [ -z &quot;$EXTENDED_TESTS&quot; ]
+  then
+    EXTENDED_TESTS=$test
+  else
+    EXTENDED_TESTS=$EXTENDED_TESTS,$test
+  fi
+done
+
+if [ -n &quot;$FORK_ID&quot; ]
 then
   if [ -z &quot;$LI_FORK_ID&quot; ]
   then
@@ -176,7 +245,57 @@ pushd rhc
 popd
 
 pushd li
-  build/devenv build ${TAG_NAME} ${BUILD_NUMBER} --register --official --terminate --install_from_local_source --instance_type m1.large
+set +e
+  build/devenv build ${TAG_NAME} ${BUILD_NUMBER} --register --official --install_from_local_source --instance_type m1.large
+  RESULT=$?
+set -e
+
+  if [ $RESULT -eq 0 ]
+  then
+
+    QE_TESTS_ARRAY=()
+    if $RUN_QE_SMOKE_TESTS
+    then
+      QE_TESTS_ARRAY+=(smoke)
+    fi
+    if $RUN_QE_ACCEPTANCE_TESTS
+    then
+      QE_TESTS_ARRAY+=(acceptance)
+    fi
+    if $RUN_QE_FULLFUNCTIONAL_TESTS
+    then
+      QE_TESTS_ARRAY+=(fullfunction)
+    fi
+
+
+    QE_TESTS=&quot;&quot;
+    for test in &quot;${QE_TESTS_ARRAY[@]}&quot;
+    do
+      if [ -z &quot;$QE_TESTS&quot; ]
+      then
+        QE_TESTS=$test
+      else
+        QE_TESTS=$QE_TESTS,$test
+      fi
+    done
+    
+    if [ -n &quot;$QE_TESTS&quot; ]
+    then
+      sed -i &quot;/${TAG_NAME}_.*/d&quot; ~/fork_ami_qe_test_queue
+      echo &quot;${TAG_NAME}_${BUILD_NUMBER}=$QE_TESTS&quot; &gt;&gt; ~/fork_ami_qe_test_queue
+    fi
+
+    if [ -n &quot;$EXTENDED_TESTS&quot; ]
+    then
+      # Run the extended tests
+      build/devenv test ${TAG_NAME}_${BUILD_NUMBER} --include_extended=&quot;$EXTENDED_TESTS&quot; --terminate 
+    else
+      build/devenv terminate ${TAG_NAME}_${BUILD_NUMBER}
+    fi
+  else
+    build/devenv terminate ${TAG_NAME}_${BUILD_NUMBER}
+    exit $RESULT
+  fi
 popd</command>
     </hudson.tasks.Shell>
   </builders>

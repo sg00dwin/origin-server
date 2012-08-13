@@ -344,6 +344,8 @@ module OpenShift
         end
         break if image
       end
+      puts "Image ID: #{image.id}"
+      puts "Image Name: #{image.name}"
       puts "Done"
       image
     end
