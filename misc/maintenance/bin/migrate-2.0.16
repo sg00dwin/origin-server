@@ -1,0 +1,66 @@
+#!/usr/bin/env ruby
+require 'rubygems'
+require 'mongo'
+require '/var/www/stickshift/broker/config/environment'
+
+# Configurable params
+$config = Rails.application.config.datastore
+
+def mongo_connect
+  if $config[:replica_set]
+    con = Mongo::ReplSetConnection.new(*$config[:host_port] \
+                                       << {:read => :secondary})
+  else
+    con = Mongo::Connection.new($config[:host_port][0], 
+                                $config[:host_port][1])
+  end
+  db = con.db($config[:db])
+  db.authenticate($config[:user], $config[:password])
+  $coll = con.db($config[:db]).collection($config[:collections][:user])
+end
+
+def mongo_migrate
+  usernames = $coll.find(nil, { :fields => [] } )
+  count = 0
+  ssh_count = 0
+  usernames.each do |user_info|
+    login = user_info["_id"]
+    user = $coll.find_one( { "_id" => login } )
+    puts "Processing user #{user['login']}"
+    next unless user.has_key?("apps")
+    updates = { "$set" => {}, "$unset" => {} }
+    if user.has_key?("system_ssh_keys") and user["system_ssh_keys"]
+      user["system_ssh_keys"].each { |app_name,key|
+        # check whether app is a scalable app
+        index = user["apps"].index { |app_index, app| 
+          true if app["name"]==app_name && app["scalable"]==true 
+        }
+        if index
+          ssh_count = ssh_count + 1
+          updates["$unset"]["system_ssh_keys.#{app_name}"] = 1 
+          updates["$set"]["apps.#{index}.ssh_keys"] = { "haproxy" => key } 
+        end
+      }
+    end
+    app_index = -1
+    user["apps"].each { |app|
+      app_index = app_index +1
+      gi_index = -1
+      app["group_instances"].each { |gi|
+        gi_index = gi_index +1
+        next if gi.has_key?("uuid")
+        count = count+1
+        uuid = StickShift::Model.gen_uuid
+        updates["$set"]["apps.#{app_index}.group_instances.#{gi_index}.uuid"] = uuid
+      }
+    }
+    $coll.update({"_id" => user["login"]}, updates) if !updates.empty?
+  end
+  puts "Added uuid to #{count} group instances"
+  puts "Migrated #{ssh_count} ssh keys"
+end
+
+mongo_connect
+puts "User migration Started"
+mongo_migrate
+puts "User migration Done!"
