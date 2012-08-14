@@ -29,6 +29,6 @@ end
 
 Then /^the active capacity has been reduced$/ do
    current_capacity = `facter active_capacity`.to_f
-   current_capacity.should be > 0.0
+   current_capacity.should be >= 0.0
    @active_capacity.should be > current_capacity
 end
