@@ -3,7 +3,7 @@
 
 Summary:   Li broker components
 Name:      rhc-broker
-Version: 0.97.2
+Version: 0.97.3
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -118,6 +118,13 @@ if [ ! -f %{_localstatedir}/log/stickshift/user_action.log ]; then
 fi
 
 %changelog
+* Tue Aug 14 2012 Adam Miller <admiller@redhat.com> 0.97.3-1
+- Updating gem versions (admiller@redhat.com)
+- Updated from comments (nhr@redhat.com)
+- Merge remote-tracking branch 'upstream/master' into aria (nhr@redhat.com)
+- Bug 846555 (dmcphers@redhat.com)
+- Updated Plan, added Aria::MasterPlan (nhr@redhat.com)
+
 * Thu Aug 09 2012 Adam Miller <admiller@redhat.com> 0.97.2-1
 - Updating gem versions (admiller@redhat.com)
 - allow non trusted users to add cross links as well as long as the trigger is
