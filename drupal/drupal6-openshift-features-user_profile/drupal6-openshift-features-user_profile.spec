@@ -5,7 +5,7 @@
 %global modname             user_profile
 
 Name:    drupal%{drupal_release}-openshift-features-%{modname}
-Version: 1.5.2
+Version: 1.5.3
 Release: 1%{?dist}
 Summary: Openshift Red Hat Custom User Profile Feature for Drupal6
 Group:   Applications/Publishing
@@ -41,6 +41,10 @@ rm -rf $RPM_BUILD_ROOT
 %{drupal_modules}/%{modname}
 
 %changelog
+* Tue Aug 14 2012 Adam Miller <admiller@redhat.com> 1.5.3-1
+- Make sure individual videos have the left nav.  Add SEO to pages.
+  (ccoleman@redhat.com)
+
 * Thu Aug 09 2012 Adam Miller <admiller@redhat.com> 1.5.2-1
 - Move remaining openshift content in drupal (ccoleman@redhat.com)
 - Add messaging blocks to community (ccoleman@redhat.com)
