@@ -10,7 +10,7 @@
           %span.tile-copy-text First <b>three</b> gears for free<br />First-class management console<br />Basic monitoring with uptime alerts
         .span6
           %span.tile-copy-text Shared database for development<br />Choice of runtime environments<br />NSA-class security
-    = render :collection => @plans, :partial => 'plans/plan'
+    = render :collection => @plans, :partial => 'plans/plan', :locals => { :current_plan => @current_plan }
   .span6
     %p
       %b What's a gear?<br />

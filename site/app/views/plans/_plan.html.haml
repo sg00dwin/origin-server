@@ -1,7 +1,12 @@
+- display_only = false if local_assigns[:display_only].nil?
+- current_plan = { :id => '' } if local_assigns[:current_plan].nil?
 .tile
   .row-fluid
     .span7
-      %h3= plan.name
+      %h3
+        #{plan.name}
+        - if !display_only && plan == current_plan
+          %span.tile-current-plan current plan
       %p= plan.description
       %ul
         - if plan.gear_sizes.length > 1
@@ -14,4 +19,5 @@
       %p
         %b Best for<br />
         %span.tile-copy-text Praesent et varius lectus. Sed consectetur ante eu mi sagittis a ultrices lacus ultrices.
-      = link_to "Select", account_plan_upgrade_path(plan), :class => 'btn'
+      - if !display_only && plan != current_plan
+        = link_to "Select", account_plan_upgrade_path(plan), :class => 'btn'
