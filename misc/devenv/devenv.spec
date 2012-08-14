@@ -8,7 +8,7 @@
 
 Summary:   Dependencies for OpenShift development
 Name:      rhc-devenv
-Version: 0.98.2
+Version: 0.98.3
 Release:   1%{?dist}
 Group:     Development/Libraries
 License:   GPLv2
@@ -530,6 +530,21 @@ fi
 %{policydir}/*
 
 %changelog
+* Tue Aug 14 2012 Adam Miller <admiller@redhat.com> 0.98.3-1
+- syncing test pull requests (dmcphers@redhat.com)
+- syncing jenkins scripts (dmcphers@redhat.com)
+- show build status for finished jobs in logs (dmcphers@redhat.com)
+- syncing pull requests script (dmcphers@redhat.com)
+- fixing broker extended tests and adding cleanup of previous fork ami test
+  flags (dmcphers@redhat.com)
+- allow multiple extended tests to be passed (dmcphers@redhat.com)
+- mark evaluated for new trigger as well (dmcphers@redhat.com)
+- Bug 846555 (dmcphers@redhat.com)
+- move template deployment further down and add a retry (dmcphers@redhat.com)
+- Merge pull request #212 from danmcp/master (openshift+bot@redhat.com)
+- add more retries around validate (dmcphers@redhat.com)
+- testing pull requests (dmcphers@redhat.com)
+
 * Thu Aug 09 2012 Adam Miller <admiller@redhat.com> 0.98.2-1
 - syncing jenkins config.xml (dmcphers@redhat.com)
 - remove libra check from configs (dmcphers@redhat.com)
