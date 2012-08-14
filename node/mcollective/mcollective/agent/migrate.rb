@@ -3,6 +3,7 @@ require 'etc'
 require 'fileutils'
 require 'socket'
 require 'parseconfig'
+require 'selinux'
 require 'pp'
 require File.dirname(__FILE__) + "/migrate-util"
 
@@ -36,6 +37,17 @@ module OpenShiftMigration
         gear_type = Util.get_env_var_value(gear_home, "OPENSHIFT_GEAR_TYPE")
         cartridge_root_dir = "/usr/libexec/stickshift/cartridges"
         cartridge_dir = "#{cartridge_root_dir}/#{gear_type}"
+
+        if ['mysql-5.1'].include? gear_type
+          if File.symlink?("#{gear_dir}/data")
+            FileUtils.rm_f("#{gear_dir}/data")
+            secon = Selinux.getfilecon("#{gear_home}/app-root/data")
+            FileUtils.mv("#{gear_home}/app-root/data", "#{gear_dir}/", :force => true)
+            FileUtils.mkdir_p("#{gear_home}/app-root/data")
+            FileUtils.chown(uuid, uuid, "#{gear_home}/app-root/data")
+            Selinux.setfilecon("#{gear_home}/app-root/data", secon[1])
+          end
+        end
         
         env_echos = []
 
