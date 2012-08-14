@@ -1,6 +1,6 @@
 Summary:       SELinux policy for OpenShift nodes
 Name:          rhc-selinux
-Version: 0.97.3
+Version: 0.97.4
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -46,6 +46,10 @@ rm -rf %{buildroot}
 %attr(0640,-,-) %{_datadir}/selinux/packages/libra.pp
 
 %changelog
+* Tue Aug 14 2012 Adam Miller <admiller@redhat.com> 0.97.4-1
+- Stop auditing libra instances for searching or listing directories.  This is
+  not really intersting from a SELinux point of view (dwalsh@redhat.com)
+
 * Thu Aug 09 2012 Adam Miller <admiller@redhat.com> 0.97.3-1
 - Create sandbox directory with proper selinux policy and manage
   polyinstantiation for it. (rmillner@redhat.com)
