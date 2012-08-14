@@ -1,0 +1,336 @@
+<link href="/app/stylesheets/site.css" media="all" rel="stylesheet" type="text/css" />
+
+<style type="text/css">
+
+
+
+</style>
+
+
+    <header>
+      <div class='section-top' id='top'>
+        <div class='container'>
+          <a href="/app/status" class="btn btn-small btn-warning" id="outage" style="display:none;" title="Track open issues on the OpenShift status page">Status</a>
+          <div class='pull-left'>
+            <a href="http://makara.nurturehq.com/makara/newsletter_signup.html">Newsletter Sign Up</a>
+          </div>
+          <div class='pull-right login'>
+            <form action='/community/search/node' id='search-top' method='get'>
+              <input class='search-query' name='keys' placeholder='SEARCH' type='text' />
+                <button class='search' type='submit' value='Search'></button>
+            </form>
+            <a href="/app/console" class="btn btn-small">Manage Your Apps</a>
+            <a href="/app/logout" class="btn btn-small sign_out">Sign Out</a>
+          </div>
+        </div>
+      </div>
+      <nav class='section-nav lift-counter' id='nav'>
+        <div class='navbar'>
+          <div class='container'>
+            <div class='brand'>
+              <a href="/app/"><div class='brand-image'></div>
+              <div class='brand-text'><strong>Open</strong>Shift
+              </div>
+              </a>
+            </div>
+            <ul class='nav'>
+              <li class=''>
+                <a href="/app/platform" class="learn_more"><span>Learn More</span>
+                </a>
+              </li>
+              <li class=''>
+                <a href="/app/getting_started" class="getting_started"><span>Get Started</span>
+                </a>
+              </li>
+              <li class='divider'>&nbsp;</li>
+              <li class=''>
+                <a href="/community/developers" class="developers"><span>Developers</span>
+                </a>
+              </li>
+              <li class=''>
+                <a href="/community/" class="community"><span>Community</span>
+                </a>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </nav>
+    </header>
+    
+    <div class="community"><!-- extra for spacing -->
+    
+    <div id="content" class="section-striped">
+      <div class="container"><div class="row-content">
+      <div class='row row-flush-right'>
+              	<!-- div class="column-navbar">      	
+        	<a data-toggle="collapse" data-target=".nav-collapse" class="btn btn-navbar">
+        	<span class="pull-left">Navigate</span>
+        	<span class="pull-right">
+        	<span class="icon-bar"></span>
+        	<span class="icon-bar"></span>
+        	<span class="icon-bar"></span>
+        	</span>
+        	</a>
+        </div -->
+          <div class="column-nav lift-less grid-wrapper">
+          <div class="nav-collapse collapse">
+            <nav class="span3">
+              <div class="gutter-right">
+                  <div id="block-menu_block-1" class="block  block-menu_block">
+  <h3>Developers</h3>
+
+  <div class="content">
+    <div class="menu-block-1 menu-name-primary-links parent-mlid-0 menu-level-2">
+  <ul class="menu nav nav-list"><li class="expanded first menu-mlid-12005"><a href="/community/developers" title="">Overview</a><ul class="menu nav nav-list"><li class="leaf first menu-mlid-11885"><a href="/community/developers/get-started" title="OpenShift has lots of great quickstart projects to help you launch with your favorite technology - learn more about them here.">Get Started Fast</a></li>
+<li class="leaf menu-mlid-11895"><a href="http://docs.redhat.com/docs/en-US/OpenShift/2.0/html/User_Guide/index.html" title="">User Guide</a></li>
+<li class="collapsed menu-mlid-13563"><a href="/community/developers/tools" title="OpenShift Client Tools">Client Tools</a></li>
+<li class="leaf last menu-mlid-13576"><a href="/community/developers/pricing" title="Pricing">Pricing</a></li>
+</ul></li>
+<li class="expanded menu-mlid-12985"><a href="/community/developers/technologies" title="">Platform Technologies</a><ul class="menu nav nav-list">
+<li><a class="active-trail" href="">Java</a></li>
+<li class="leaf first menu-mlid-12646"><a href="/community/developers/jboss" title="" class="">JBoss</a></li>
+<li><a href="">PHP</a></li>
+<li class=""><a href="">Python</a></li>
+<li class="active"><a class="active-trail active" href="">Node.js</a></li>
+<li class=""><a href="">Ruby</a></li>
+<li class=""><a href="">MySQL</a></li>
+<li class="leaf menu-mlid-12647"><a href="/community/developers/mongodb" title="">MongoDB</a></li>
+<li class="leaf menu-mlid-13025"><a href="/community/jenkins" title="">Build with Jenkins</a></li>
+<li class="leaf menu-mlid-13063"><a href="/community/developers/do-it-yourself" title="Use Your Own Framework on OpenShift">Use your own Framework</a></li>
+<li class="leaf last menu-mlid-13575"><a href="/community/developers/remote-access" title="Remote Access">Remote Access</a></li>
+</ul></li>
+<li class="expanded menu-mlid-11995"><a href="/community/developers/get-help" title="Get Help with OpenShift">Get Help</a><ul class="menu nav nav-list"><li class="leaf first menu-mlid-11815"><a href="/community/faq" title="">FAQs</a></li>
+<li class="leaf menu-mlid-11905"><a href="/community/kb" title="Known problems and workarounds and documentation on specific topics in OpenShift">Knowledge Base</a></li>
+<li class="leaf last menu-mlid-11915"><a href="/community/documentation" title="">Downloadable Documents</a></li>
+</ul></li>
+<li class="collapsed last menu-mlid-11985"><a href="/community/developers/get-involved" title="Get Involved">Get Involved</a></li>
+</ul></div>
+  </div>
+</div>
+ 
+ 
+ 
+ 
+             </nav>
+           </div>
+          </div>
+    
+            <div class='column-content lift-less grid-wrapper'>
+              <div class='span9 span-flush-right'>
+                <h1 class='ribbon'>Node.js on OpenShift</h1>
+                
+                
+                 <section>
+                 
+                                                                          <div id="node-11674" class="page node">
+
+    
+  <div class="content clear-block">
+  
+  <div class="row">
+  <div class="span5">
+    <h2>Overview</h2>
+    <p class="larger">With Openshift you upload your code using Git and OpenShift configures, secures and scales the web, application and database tiers so you don't have to.</p>
+    
+    <p>Your application is hosted on "gears" which are configured with a set amount of memory and storage. You define your application's stack using "cartridges", which are frameworks and databases. For example: Node.js is an application type and MySQL is a cartridge. When you sign up you get access to three gears free for a total of 1.5 GB of RAM and 3 GB of storage.</p>
+
+    <table class="table">
+      <thead>
+        <tr>
+          <th colspan="2">OpenShift supports</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Node.js Stack
+          </td>
+          <td>
+              Node.js 0.6<br />
+              Apache 2.2.15<br />
+              Red Hat Enterprise Linux 6.3
+          </td>
+        </tr>
+        <tr>
+          <td>Datastores
+          </td>
+          <td>
+              MySQL<br />
+              MongoDB<br />
+              PostgreSQL
+          </td>
+        </tr>
+        <tr>
+          <td>
+            Tools
+          </td>
+          <td>
+              Eclipse<br />
+              Git<br />
+              SSH access
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <p>Learn more about features and benefits of the <a href="/community/paas">OpenShift Platform as a Service</a></p>  
+  </div>
+  <div class="related-block span4">
+    <div class="related-logo">
+    <img src="/app/images/nodejs-light.png" alt="Node.js logo" />
+    </div>
+    <div class="related-info">
+    <p class="larger">"Node.js is a platform built on Chrome's JavaScript runtime for easily building fast, scalable network applications. Node.js uses an event-driven, non-blocking I/O model that makes it lightweight and efficient, perfect for data-intensive real-time applications that run across distributed devices." 
+    <cite>&mdash; <a href="http://www.nodejs.org">Nodejs.org</a></cite></p>
+    
+    <h4>Resources</h4>
+    <ul class="">
+      <li><a href="">Getting started (video) with Node.js on OpenShift</a> </li>
+      <li><a href="http://docs.redhat.com/docs/en-US/OpenShift/2.0/html/User_Guide/sect-User_Guide-Using_Node.js.html">Using node.js</a></li>
+      <li><a href="http://docs.redhat.com/docs/en-US/OpenShift/2.0/html/User_Guide/sect-User_Guide-Using_Node.js-Installing_Node_Modules.html">Installing node modules</a></li>
+      <li><a href="http://docs.redhat.com/docs/en-US/OpenShift/2.0/html/User_Guide/sect-User_Guide-Using_Node.js-Common_Node.js_Environment_Variables_in_OpenShift.html">Common Node.js environment variables in OpenShift</a></li>
+      <li><a href="http://docs.redhat.com/docs/en-US/OpenShift/2.0/html/User_Guide/chap-User_Guide-OpenShift_Command_Line_Interface.html">OpenShift command line interface</a></li>
+      <li><a href="https://openshift.redhat.com/app/getting_started#install_client_tools">Install the command line client tools</a></li>
+      <li><a href="/community/forums/">Community forum</a></li>
+    </ul>
+    
+    </div>
+  </div>
+  </div><!-- /row -->
+  
+
+<h2>Let's Get in the Cloud</h2>
+
+<p>There are 2 options to deploy your Node.js application to the cloud &mdash; OpenShift Management Console (easiest) and the OpenShift (RHC) command line tools</p>
+
+<h4>Using the OpenShift Management Console</h4>
+
+<p>Using the OpenShift <a href="/app/console">Management Console</a> is going to be the fastest and easiest way to get a basic Node.js application deployed. If you are going to eventually deploy your own code or want access to more functionality than the Management Console offers, we recommend getting started with the rhc command line tools.</p>
+
+<ol>
+<li><p><a href="/app/account/new">Sign up for an OpenShift account</a> &mdash; an email is all you need to provide. Once you have verified your account and accepted the legal terms, you'll automatically be taken to the OpenShift Management Console create an application process.</p></li>
+<li>
+<p>In the "Web Cartridges" section select Node.js 0.6. Next, give your new application a name. If this is your first application you will need to create a namespace for all your applications to be grouped under. This step will define the public URL for your app.</p></li>
+
+<li><p>Congratulations, your application is up and ready! It really is that easy. You've now got a basic Node.js app running in the cloud courtesy of OpenShift. </p></li>
+</ol>
+
+<p>If you want to make some changes to the default app, upload your own code, add cartridges like MySQL or simply learn more about hosting Node.js applications on OpenShift, check out the <a href="/community/developers">Developer Center</a>.</p>
+
+<h4>Using the Command Line</h4>
+
+<p>The rhc CLI is for developers who prefer the terminal and want a fully featured environment for managing their OpenShift applications. </p>
+
+<ol>
+<li><p><a href="/app/account/new">Sign up for an OpenShift account</a> &mdash; an email is all you need to provide. Once you have verified your account and accepted the legal terms, you'll automatically be taken to the OpenShift Management Console. We are going to use the command line tools, so let's open up a terminal instead.</p>
+</li>
+<li><p><a href="/community/get-started">Install the rhc client tools</a><br />Getting the rhc client tools installed takes just one command. Just follow the instructions on the Getting Started page. You will need to have Git installed and depending on whether you use Windows, Mac or Linux, it's going to be some variant of "gem install rhc." </p></li>
+<li><p>Create your first Node.js application</p>
+
+<p>Now that you have the tools installed, execute</p>
+
+<pre>$ rhc setup</pre>
+
+<p>This command sets up your SSH key so that you can securely communicate with Git and creates a namespace for all your applications to be grouped under.</li>
+</ul>
+
+<p>Next, execute the following command:</p>
+
+<pre>$ rhc app create -a  -t Node.js-0.6</pre>
+
+<p>This will give your new app a name and define the public URL for your app.</p></li>
+<li><p>That's it! You've now got a basic Node.js app running in the cloud courtesy of OpenShift. Not as easy as using the Management Console, but pretty darn close.</p></li>
+</ol>
+
+<p> If you want to make some changes to the default app, upload your own code, add cartridges like MySQL or simply learn more about hosting Node.js applications on OpenShift, check out the <a href="/community/developers">Developer Center</a>.</p>
+
+<h2>What's Next?</h2>
+
+<p>Join and participate in the OpenShift <a href="/community">Community</a>.  <a href="/community/forums/openshift">Ask questions</a>, <a href="/community/developers/get-help">get help</a> and <a href="/community/open-source">contribute code</a>.  Stay up to date by <a href="http://makara.nurturehq.com/makara/newsletter_signup.html">subscribing</a> to the OpenShift Newsletter.</p>
+  </div>
+
+
+
+</div>
+
+            </section>
+                
+                
+                
+              </div><!-- /span12 span-flush -->
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <footer>
+      <div id='footer-nav'>
+        <div class='container'>
+          <div class='row'>
+            <nav class='span3'>
+              <header>
+                <h3><a href="/community/developers">Developers</a></h3>
+              </header>
+              <ul class='unstyled'>
+                <li><a href="/app/getting_started">Get Started</a></li>
+                <li><a href="http://docs.redhat.com/docs/en-US/OpenShift/2.0/html/User_Guide/index.html">User Guide</a></li>
+                <li><a href="/community/faq">FAQ</a></li>
+                <li><a href="/community/developers/pricing">Pricing</a></li>
+              </ul>
+            </nav>
+            <nav class='span3'>
+              <header>
+                <h3><a href="/community/">Community</a></h3>
+              </header>
+              <ul class='unstyled'>
+                <li><a href="/community/blogs">Blog</a></li>
+                <li><a href="/community/forums/openshift">Forum</a></li>
+                <li><a href="http://webchat.freenode.net/?randomnick=1&amp;channels=openshift&amp;uio=d4">IRC Channel</a></li>
+                <li><a href="mailto:openshift@redhat.com">Feedback</a></li>
+                <li><a href="http://makara.nurturehq.com/makara/newsletter_signup.html" class="visible-phone">Newsletter Sign up</a></li>
+              </ul>
+            </nav>
+            <nav class='span3'>
+              <header>
+                <h3><a href="/community/get-involved">Get Involved</a></h3>
+              </header>
+              <ul class='unstyled'>
+                <li><a href="/community/open-source">Open Source</a></li>
+                <li><a href="/app/opensource/download">Get the Bits</a></li>
+                <li><a href="/community/developers/get-involved">Make it Better</a></li>
+                <li><a href="https://github.com/openshift">OpenShift on GitHub</a></li>
+              </ul>
+            </nav>
+            <nav class='span3'>
+              <header>
+                <h3><a href="/app/legal">Legal</a></h3>
+              </header>
+              <ul class='unstyled'>
+                <li><a href="/app/legal/services_agreement">Terms of Service</a></li>
+                <li><a href="/app/legal/openshift_privacy">Privacy Policy</a></li>
+                <li><a href="https://access.redhat.com/security/team/contact/">Security</a></li>
+              </ul>
+            </nav>
+          </div>
+        </div>
+      </div>
+      <section id='copyright'>
+        <div class='container'>
+          <a href='https://www.redhat.com/'>
+            <img alt='Red Hat' src='/app/images/redhat.png?1344352063'>
+          </a>
+          <div class='pull-right'>Copyright &copy; 2012 Red Hat, Inc.</div>
+        </div>
+      </section>
+    </footer>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js" type="text/javascript"></script>
+    <script src="/app/javascripts/rails.js?1344352063" type="text/javascript"></script>
+    <script src="/app/javascripts/plugins.js?1344352063" type="text/javascript"></script>
+    <script src="/app/javascripts/jquery.cookie.js?1344352063" type="text/javascript"></script>
+    <script src="/app/javascripts/bootstrap-dropdown.js?1344352063" type="text/javascript"></script>
+    <script src="/app/javascripts/jquery.validate.min.js?1344352063" type="text/javascript"></script>
+    <script src="/app/javascripts/form.js?1344352063" type="text/javascript"></script>
+    <script src="/app/status/status.js?id=outage" type="text/javascript"></script>
+    
+    </div><!-- /community -->
+  
+  </body>
+</html>

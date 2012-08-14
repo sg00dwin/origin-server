@@ -1241,3 +1241,29 @@ body.simple {
 	}
 }
 
+
+.related-block {
+ position: relative;
+ 
+ .related-logo {
+   background: #fff;
+   text-align: center;
+   margin-bottom: 15px;
+ }
+ 
+ .related-info {
+  padding: 30px 25px 15px;
+  margin-bottom: 30px;
+  background-color: #e0e1dd;
+  background-image: 
+    url("../images/related-bottom-bg.png"),
+    url("../images/related-top-bg.png");
+  background-position: 
+    right 106%,
+    left -40px;
+  background-repeat: 
+    no-repeat, 
+    no-repeat;
+    }
+}
+
