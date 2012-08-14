@@ -5,7 +5,7 @@
 %global drupal_themename    openshift-theme
 
 Name:           drupal6-%{drupal_themename}
-Version: 3.6.2
+Version: 3.6.3
 Release:        1%{?dist}
 Summary:        Red Hat Openshift theme for Drupal %{drupal_release}
 
@@ -44,6 +44,13 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
+* Tue Aug 14 2012 Adam Miller <admiller@redhat.com> 3.6.3-1
+- Make sure individual videos have the left nav.  Add SEO to pages.
+  (ccoleman@redhat.com)
+- Merge pull request #211 from fabianofranz/master (openshift+bot@redhat.com)
+- US2583: changed footer links and added redirects for the Legal content
+  (ffranz@redhat.com)
+
 * Thu Aug 09 2012 Adam Miller <admiller@redhat.com> 3.6.2-1
 - Move remaining openshift content in drupal (ccoleman@redhat.com)
 - Add a new $messaging region (ccoleman@redhat.com)
