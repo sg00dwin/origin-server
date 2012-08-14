@@ -3,7 +3,7 @@
 
 Summary:   Li site components
 Name:      rhc-site
-Version: 0.97.3
+Version: 0.97.4
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -137,6 +137,21 @@ rm -rf %{buildroot}
 %{sitedir}/public
 
 %changelog
+* Tue Aug 14 2012 Adam Miller <admiller@redhat.com> 0.97.4-1
+- Bug 847147 - Change linking of help information about SSH to the developer
+  center, also add some informative help to the ssh upload section.
+  (ccoleman@redhat.com)
+- Made some minor changes based on code review (nhr@redhat.com)
+- Added conditional display hints to plans (nhr@redhat.com)
+- Updated plan selection page (nhr@redhat.com)
+- Updated from comments (nhr@redhat.com)
+- Merge remote-tracking branch 'upstream/master' into aria (nhr@redhat.com)
+- Merge pull request #211 from fabianofranz/master (openshift+bot@redhat.com)
+- Updated Plan, added Aria::MasterPlan (nhr@redhat.com)
+- US2583: added and adjusted tests (ffranz@redhat.com)
+- US2583: changed footer links and added redirects for the Legal content
+  (ffranz@redhat.com)
+
 * Thu Aug 09 2012 Adam Miller <admiller@redhat.com> 0.97.3-1
 - Merge pull request #206 from smarterclayton/us2583_move_learn_more_to_drupal
   (openshift+bot@redhat.com)
