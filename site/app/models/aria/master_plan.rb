@@ -3,6 +3,10 @@ module Aria
     self.element_name = 'plan'
     allow_anonymous
 
+    def name
+      aria_plan.plan_name
+    end
+
     def description
       aria_plan.plan_desc
     end
@@ -15,7 +19,7 @@ module Aria
       capabilities.gear_sizes
     end
 
-    cache_find_method :single
+    cache_method :find_single, lambda{ |*args| ['MasterPlan', :find_single, args[0]] }, :before => remove_authorization_from_model
     cache_find_method :every
 
     protected

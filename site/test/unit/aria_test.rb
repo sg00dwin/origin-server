@@ -7,7 +7,9 @@ require 'aria'
 # and simple server/client interactions via HttpMock
 #
 class AriaUnitTest < ActiveSupport::TestCase
+  uses_http_mock
   setup { WebMock.disable_net_connect! }
+  setup{ Rails.cache.clear }
   teardown { WebMock.allow_net_connect! }
 
   def query_for(method, query=nil)
@@ -220,6 +222,33 @@ class AriaUnitTest < ActiveSupport::TestCase
       returns(Aria::WDDX::Struct.new({'acct_no' => '1'}))
     assert_equal '1', Aria.cached.get_acct_no_from_user_id('foo')
     assert_equal '1', Aria.cached.get_acct_no_from_user_id('foo')
+  end
+
+  test 'Aria::MasterPlan.find is cacheable' do
+    ActiveResource::HttpMock.respond_to do |mock|
+      mock.get '/broker/rest/plans/freeshift.json', anonymous_json_header, {:id => 'freeshift', :plan_no => '1'}.to_json
+      mock.get '/broker/rest/plans/megashift.json', anonymous_json_header, {:id => 'megashift', :plan_no => '2'}.to_json
+    end
+    Aria::Client.any_instance.expects(:invoke).once.
+      with(:get_client_plans_basic).
+      returns(Aria::WDDX::Struct.new({
+        'plans_basic' => [
+          Aria::WDDX::Struct.new({
+            'plan_no' => '1',
+            'plan_name' => 'FreeShift',
+          }),
+          Aria::WDDX::Struct.new({
+            'plan_no' => '2',
+            'plan_name' => 'MegaShift',
+          })
+        ]
+      }))
+    assert Aria.cached.get_client_plans_basic
+    assert_equal 2, Aria.cached.get_client_plans_basic.length
+    assert_equal 'FreeShift', Aria::MasterPlan.cached.find('freeshift').name
+    assert_equal 'FreeShift', Aria::MasterPlan.cached.find('freeshift').name
+
+    assert_equal 'MegaShift', Aria::MasterPlan.cached.find('megashift').name
   end
 
   test 'should throw when non hash passed' do
