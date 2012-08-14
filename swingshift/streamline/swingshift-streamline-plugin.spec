@@ -5,7 +5,7 @@
 
 Summary:        SwingShift plugin for streamline auth service
 Name:           rubygem-%{gemname}
-Version: 0.12.1
+Version: 0.12.2
 Release:        1%{?dist}
 Group:          Development/Languages
 License:        ASL 2.0
@@ -70,6 +70,12 @@ rm -rf %{buildroot}
 %{ruby_sitelib}/%{gemname}.rb
 
 %changelog
+* Tue Aug 14 2012 Adam Miller <admiller@redhat.com> 0.12.2-1
+- capturing broker key/iv auth failure and returning access denied exception
+  (abhgupta@redhat.com)
+- fixing auth issue that returned 500 if credentials were not specified in the
+  new rest api (abhgupta@redhat.com)
+
 * Wed Jul 11 2012 Adam Miller <admiller@redhat.com> 0.12.1-1
 - bump_minor_versions for sprint 15 (admiller@redhat.com)
 
