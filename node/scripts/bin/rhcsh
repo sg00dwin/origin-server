@@ -72,12 +72,12 @@ function mysql() {
 
 
 function psql() {
-    # The password should be contained in ~/.pgpass
     PGDATABASE="$OPENSHIFT_APP_NAME" \
         PGHOST="$OPENSHIFT_DB_HOST" \
         PGPORT="${OPENSHIFT_DB_PORT:-5432}" \
         PGUSER="${OPENSHIFT_DB_USERNAME:-'admin'}" \
-        /usr/bin/psql "$@"
+        PGPASSWORD="${OPENSHIFT_DB_PASSWORD}" \
+        /usr/bin/psql --set HISTFILE="~/app-root/data/.psql_history" "$@"
 }  #  End of psql function.
 
 
