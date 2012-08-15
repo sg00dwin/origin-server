@@ -60,8 +60,8 @@ class Usage < StickShift::Model
     end
   end
   
-  def self.find_latest_by_gear(gear_uuid)
-    where(:gear_uuid => gear_uuid).sort(:begin_time.desc).first
+  def self.find_latest_by_gear(gear_uuid, usage_type)
+    where(:gear_uuid => gear_uuid, :usage_type => usage_type).sort(:begin_time.desc).first
   end
 
   def self.find_user_summary(login)
