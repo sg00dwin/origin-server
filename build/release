@@ -194,9 +194,13 @@ class Release < Thor
         inside(working_dir) do
           puts "Tagging #{build_dir}"
           # Tag the package
-          if run("tito tag --accept-auto-changelog", :verbose => options.verbose?)
+          output = `tito tag --accept-auto-changelog`
+          puts output
+          #if run("tito tag --accept-auto-changelog", :verbose => options.verbose?)
+          if $? == 0
             if File.basename(build_dir) == 'rhc'
-              unless run('TAG=`git tag -l --contains=HEAD` && rake version && git add . && git commit --amend -C HEAD && git tag -f $TAG', :verbose => options.verbose?)
+              match = output.match(/\nCreated tag: (.+?)\n/)
+              unless match and run("rake version && git add . && git commit --amend -C HEAD && git tag -f #{match[1]}", :verbose => options.verbose?)
                 if run('tito tag -u')
                   puts '  Unable to rewrite the rhc version tag.  Successfully reverted the tito tag.'
                   tag_failures << build_dir
