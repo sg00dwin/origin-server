@@ -137,14 +137,39 @@ else
           billing_api = Express::AriaBilling::Api.new
           billing_user_id = Digest::MD5::hexdigest(user.login)
           billing_acct_no = get_billing_user_acct_no(billing_api, billing_user_id)
+          
+          usage_record_pairs = []
+          [gear_usage_records_by_gear, storage_usage_records_by_gear].each do |usage_records_by_gear|
+            usage_records_by_gear.each do |gear_uuid, usage_records_for_gear|
+              previous_usage_record = nil
+              usage_records_for_gear.each_with_index do |usage_record, i|
+                if i.odd?
+                  usage_record_pairs << {gear_uuid => [previous_usage_record, usage_record]}
+                  previous_usage_record = nil 
+                elsif i == usage_records_for_gear.length
+                  usage_record_pairs << {gear_uuid => [usage_record]}
+                else
+                  previous_usage_record = usage_record
+                end
+              end
+            end
+          end
 
           if sync
-            [gear_usage_records_by_gear, storage_usage_records_by_gear].each do |usage_records_by_gear|  
-              usage_records_by_gear.each do |gear_uuid, usage_records_for_gear|
+            usage_record_pairs.each do |gear_uuid_to_record_pair|  
+              gear_uuid_to_record_pair.each do |gear_uuid, usage_records_for_gear|
                 usage = nil
+                previous_usage_record = nil
                 usage_records_for_gear.each do |usage_record|
                   unless usage_record.event == UsageRecord::EVENTS[:continue]
-                    usage = Usage.find_latest_by_gear(usage_record.gear_uuid) unless usage
+                    unless usage
+                      if usage_record.event == UsageRecord::EVENTS[:begin]
+                        usage_uuid = usage_record.uuid
+                      else
+                        usage_uuid = previous_usage_record.uuid 
+                      end
+                      usage = Usage.find(usage_record.uuid)                      
+                    end
                     if !usage && usage_record.event == UsageRecord::EVENTS[:begin]
                       puts "WARNING: Usage not found in collection for new gear: #{usage_record.gear_uuid}"
                       usage = Usage.new(user.login, usage_record.gear_uuid, usage_record.time, nil, usage_record.uuid, usage_record.usage_type)
@@ -160,13 +185,14 @@ else
                       exit 1
                     end
                   end
+                  previous_usage_record = usage_record
                 end
                 usage.save! if usage
               end
             end
 
-            [gear_usage_records_by_gear, storage_usage_records_by_gear].each do |usage_records_by_gear|
-              usage_records_by_gear.each do |gear_uuid, usage_records_for_gear|
+            usage_record_pairs.each do |gear_uuid_to_record_pair|  
+              gear_uuid_to_record_pair.each do |gear_uuid, usage_records_for_gear|
                 usage = nil
                 begin_time = nil
                 end_time = nil
@@ -191,14 +217,9 @@ else
                 if billing_usage_type
                   puts "Sending usage data (#{ut}h) to billing vendor."
                   # Send data to billing vendor
-                  2.times do
-                    if billing_api.record_usage(gear_uuid, usage_record.sync_time, billing_user_id, nil, billing_usage_type, ut)
-                      puts "Billing vendor returned success."
-                      success = true
-                      break
-                    else
-                      sleep 1
-                    end
+                  if billing_api.record_usage(gear_uuid, usage_record.sync_time, billing_user_id, nil, billing_usage_type, ut)
+                    puts "Billing vendor returned success."
+                    success = true
                   end
                 else
                   puts "Skipping billing for usage data (#{ut}h) of type: #{usage_record.usage_type}"
@@ -207,7 +228,7 @@ else
                 if success
                   if usage_records_for_gear.length == 2 && usage_records_for_gear.last.event == UsageRecord::EVENTS[:end]
                     puts "Deleting ended usage record"
-                    usage_record.delete_by_gear_uuid
+                    StickShift::DataStore.instance.delete_usage_records_by_uuids(user_id, usage_records_for_gear.map{ |usage_record| usage_record.uuid })
                   else
                     puts "Continuing usage record."
                     usage_record.event = UsageRecord::EVENTS[:continue]
@@ -222,8 +243,8 @@ else
               end
             end
           elsif list
-            [gear_usage_records_by_gear, storage_usage_records_by_gear].each do |usage_records_by_gear|
-              usage_records_by_gear.each do |gear_uuid, usage_records_for_gear|
+            usage_record_pairs.each do |gear_uuid_to_record_pair|  
+              gear_uuid_to_record_pair.each do |gear_uuid, usage_records_for_gear|
                 begin_time = nil
                 end_time = nil
                 now = Time.now.utc

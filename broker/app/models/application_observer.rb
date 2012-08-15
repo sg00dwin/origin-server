@@ -18,10 +18,9 @@ class ApplicationObserver < ActiveModel::Observer
       usage.gear_size = gear_size if gear_size
       usage.addtl_fs_gb = addtl_fs_gb if addtl_fs_gb 
     elsif event == UsageRecord::EVENTS[:end]
-      usage = Usage.find_latest_by_gear(gear_uuid)
+      usage = Usage.find_latest_by_gear(gear_uuid, usage_type)
       if usage
         usage.end_time = time
-        usage.usage_type = usage_type  #TODO can remove this after the 2.0.15 release
       end
     end
     usage.save! if usage

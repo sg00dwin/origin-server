@@ -9,7 +9,7 @@ module Express
         elsif defined? Rails
           access_info = Rails.application.config.billing[:aria]
         else
-          raise Exception.new("Aria Billing Api Helper service is not inilialized")
+          raise Exception.new("Aria Billing Api Helper service is not initialized")
         end
         @auth_key = access_info[:config][:auth_key]
         @client_no = access_info[:config][:client_no]
