@@ -3,7 +3,7 @@
 
 Summary:   Li site components
 Name:      rhc-site
-Version: 0.97.4
+Version: 0.97.5
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -137,6 +137,12 @@ rm -rf %{buildroot}
 %{sitedir}/public
 
 %changelog
+* Wed Aug 15 2012 Adam Miller <admiller@redhat.com> 0.97.5-1
+- Merge pull request #231 from sg00dwin/master (openshift+bot@redhat.com)
+- Styles and images for the developers technology page; and fix search field
+  img on console/help, set new app input width (sgoodwin@redhat.com)
+- Merge branch 'master' of github.com:openshift/li (sgoodwin@redhat.com)
+
 * Tue Aug 14 2012 Adam Miller <admiller@redhat.com> 0.97.4-1
 - Bug 847147 - Change linking of help information about SSH to the developer
   center, also add some informative help to the ssh upload section.
