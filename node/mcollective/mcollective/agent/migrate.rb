@@ -18,6 +18,32 @@ module OpenShiftMigration
     val
   end
 
+
+  def self.migrate_haproxy_config(gear_home, app_name, uuid, namespace)
+     redeploy_cmd=%{
+APP_HOME=#{gear_home}
+application=#{app_name}
+uuid=#{uuid}
+namespace=#{namespace}
+cartridge_type="haproxy-1.4"
+source "/etc/stickshift/stickshift-node.conf"
+source ${CARTRIDGE_BASE_PATH}/abstract/info/lib/util
+source ${CARTRIDGE_BASE_PATH}/abstract/info/lib/apache
+source ${CARTRIDGE_BASE_PATH}/abstract/info/lib/network
+uid=$(id -u "$uuid")
+rm -f  "$APP_HOME/.env/OPENSHIFT_HAPROXY_INTERNAL_IP" "$APP_HOME/.env/OPENSHIFT_HAPROXY_STATUS_IP"
+export IP=`embedded_find_open_ip $uid "$APP_HOME"`
+echo "export OPENSHIFT_HAPROXY_INTERNAL_IP='$IP'" > "$APP_HOME/.env/OPENSHIFT_HAPROXY_INTERNAL_IP"
+export IP2=`embedded_find_open_ip $uid "$APP_HOME"`
+echo "export OPENSHIFT_HAPROXY_STATUS_IP='$IP2'" > "$APP_HOME/.env/OPENSHIFT_HAPROXY_STATUS_IP"
+export CART_INFO_DIR=$CARTRIDGE_BASE_PATH/$cartridge_type/info
+$CART_INFO_DIR/bin/deploy_httpd_config.sh $application $uuid $IP
+$CART_INFO_DIR/bin/deploy_httpd_proxy.sh $application $namespace $uuid $IP
+restart_httpd_graceful
+}
+    `#{redeploy_cmd}`
+  end
+
   # Note: This method must be reentrant.  Meaning it should be able to 
   # be called multiple times on the same gears.  Each time having failed 
   # at any point and continue to pick up where it left off or make
@@ -37,6 +63,11 @@ module OpenShiftMigration
         gear_type = Util.get_env_var_value(gear_home, "OPENSHIFT_GEAR_TYPE")
         cartridge_root_dir = "/usr/libexec/stickshift/cartridges"
         cartridge_dir = "#{cartridge_root_dir}/#{gear_type}"
+
+        if File.directory?("#{gear_home}/haproxy-1.4")
+          app_name = Util.get_env_var_value(gear_home, "OPENSHIFT_APP_NAME")
+          output += migrate_haproxy_config(gear_home, app_name, uuid, namespace)
+        end
 
         if ['mysql-5.1'].include? gear_type
           if File.symlink?("#{gear_dir}/data")
