@@ -2,7 +2,7 @@
 
 Summary:       Multi-tenant cloud management system node tools
 Name:          rhc-node
-Version: 0.97.2
+Version: 0.97.3
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -271,6 +271,10 @@ fi
 
 
 %changelog
+* Wed Aug 15 2012 Adam Miller <admiller@redhat.com> 0.97.3-1
+- Adds migration to move mysql data dir on standalone gears.
+  (mpatel@redhat.com)
+
 * Thu Aug 09 2012 Adam Miller <admiller@redhat.com> 0.97.2-1
 - allow non trusted users to add cross links as well as long as the trigger is
   added after (dmcphers@redhat.com)
