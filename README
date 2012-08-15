@@ -16,7 +16,7 @@ site:
 broker:
   Contains broker
 server-common:
-  Contains code common to site and broker
+  Contains common prereqs to site and broker
 tests:
   Location for cucumber test cases
 
