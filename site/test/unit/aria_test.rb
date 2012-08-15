@@ -224,7 +224,7 @@ class AriaUnitTest < ActiveSupport::TestCase
     assert_equal '1', Aria.cached.get_acct_no_from_user_id('foo')
   end
 
-  test 'Aria::MasterPlan.find is cacheable' do
+  def mock_plans
     ActiveResource::HttpMock.respond_to do |mock|
       mock.get '/broker/rest/plans/freeshift.json', anonymous_json_header, {:id => 'freeshift', :plan_no => '1'}.to_json
       mock.get '/broker/rest/plans/megashift.json', anonymous_json_header, {:id => 'megashift', :plan_no => '2'}.to_json
@@ -243,12 +243,23 @@ class AriaUnitTest < ActiveSupport::TestCase
           })
         ]
       }))
+  end
+
+  test 'Aria::MasterPlan.find is cacheable' do
+    mock_plans
     assert Aria.cached.get_client_plans_basic
     assert_equal 2, Aria.cached.get_client_plans_basic.length
     assert_equal 'FreeShift', Aria::MasterPlan.cached.find('freeshift').name
     assert_equal 'FreeShift', Aria::MasterPlan.cached.find('freeshift').name
 
     assert_equal 'MegaShift', Aria::MasterPlan.cached.find('megashift').name
+  end
+
+  test 'Aria::MasterPlan can lazy load aria_plan with cache' do
+    mock_plans
+    base_plan = Aria::MasterPlan.cached.find('freeshift')
+    cached_plan = Aria::MasterPlan.cached.find('freeshift')
+    assert_equal 'FreeShift', cached_plan.name
   end
 
   test 'should throw when non hash passed' do
