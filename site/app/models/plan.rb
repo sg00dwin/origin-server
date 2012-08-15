@@ -11,6 +11,6 @@ class Plan < RestApi::Base
     id == 'freeshift'
   end
 
-  cache_find_method :single
+  cache_method :find_single, lambda{ |*args| [Plan.name, :find_single, args[0]] }, :before => remove_authorization_from_model
   cache_find_method :every
 end

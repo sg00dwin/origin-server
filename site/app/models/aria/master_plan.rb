@@ -19,7 +19,7 @@ module Aria
       capabilities.gear_sizes
     end
 
-    cache_method :find_single, lambda{ |*args| ['MasterPlan', :find_single, args[0]] }, :before => remove_authorization_from_model
+    cache_method :find_single, lambda{ |*args| [MasterPlan.name, :find_single, args[0]] }, :before => remove_authorization_from_model
     cache_find_method :every
 
     protected
