@@ -3,7 +3,7 @@
 
 Summary:   Li broker components
 Name:      rhc-broker
-Version: 0.97.3
+Version: 0.97.4
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -118,6 +118,15 @@ if [ ! -f %{_localstatedir}/log/stickshift/user_action.log ]; then
 fi
 
 %changelog
+* Wed Aug 15 2012 Adam Miller <admiller@redhat.com> 0.97.4-1
+- Updating gem versions (admiller@redhat.com)
+- Merge pull request #233 from mrunalp/dev/migrate_mysql_data_dir
+  (openshift+bot@redhat.com)
+- fixing ctl usage to handle multiple begin and end events
+  (dmcphers@redhat.com)
+- Adds migration to move mysql data dir on standalone gears.
+  (mpatel@redhat.com)
+
 * Tue Aug 14 2012 Adam Miller <admiller@redhat.com> 0.97.3-1
 - Updating gem versions (admiller@redhat.com)
 - Updated from comments (nhr@redhat.com)
