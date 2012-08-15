@@ -49,6 +49,10 @@ User errors:
 156: Updating user plan on billing provider failed
 157: Plan change not allowed for subaccount user
 158: Domain already exists for user
+163: Gear group does not exist
+164: User is not allowed to change storage quota
+165: Invalid storage quota value provided
+166: Storage value not within allowed range
 210: Can not override existing location for git repo
 211: Parent directory for git repo does not exist
 212: Could not find libra_id_rsa
