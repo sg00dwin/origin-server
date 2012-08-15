@@ -57,8 +57,9 @@ RedHatCloud::Application.configure do
   config.aria_default_plan_no = 10044929
   config.aria_force_test_users = true
   # Aria direct post configuration - uses public URL
+  # Requires rake aria:set_direct_post be called once per Aria system tested against
   config.aria_direct_post_uri = "https://secure.current.stage.ariasystems.net/api/direct_post.php"
-  config.aria_direct_post_name = 'website_new_payment'
+  config.aria_direct_post_name = 'test_website_new_payment'
   config.aria_direct_post_redirect_base = 'https://example.com'
 
   # Promo code Email notification setup
