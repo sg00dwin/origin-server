@@ -3,7 +3,7 @@
 
 Summary:   Li broker components
 Name:      rhc-broker
-Version: 0.97.5
+Version: 0.97.6
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -118,6 +118,10 @@ if [ ! -f %{_localstatedir}/log/stickshift/user_action.log ]; then
 fi
 
 %changelog
+* Thu Aug 16 2012 Adam Miller <admiller@redhat.com> 0.97.6-1
+- Updating gem versions (admiller@redhat.com)
+- Resolve merge conflicts (rpenta@redhat.com)
+
 * Thu Aug 16 2012 Adam Miller <admiller@redhat.com> 0.97.5-1
 - Updating gem versions (admiller@redhat.com)
 - Merge pull request #244 from ramr/master (openshift+bot@redhat.com)
