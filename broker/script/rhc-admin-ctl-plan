@@ -1,0 +1,210 @@
+#!/usr/bin/env ruby
+require 'rubygems'
+require 'getoptlong'
+require 'socket'
+require 'time'
+
+def usage
+    puts <<USAGE
+== Synopsis
+
+rhc-admin-ctl-plan: List or Fix inconsistent user plan
+
+== Usage
+
+rhc-admin-ctl-plan OPTIONS
+
+Options:
+--list
+    List user(s) with inconsistent plan
+--fix
+    Fix user(s) with inconsistent plan
+--login
+    User login
+--remove_plan_lock
+    Remove existing plan lock
+-v|--verbose
+    Verbose output
+-h|--help
+    Show Usage info
+USAGE
+end
+
+opts = GetoptLong.new(
+    ["--list",             GetoptLong::NO_ARGUMENT],
+    ["--fix",              GetoptLong::NO_ARGUMENT],
+    ["--login",            GetoptLong::REQUIRED_ARGUMENT],
+    ["--remove_plan_lock", GetoptLong::NO_ARGUMENT],
+    ["--verbose", "-v",    GetoptLong::NO_ARGUMENT],
+    ["--help",    "-h",    GetoptLong::NO_ARGUMENT]
+)
+
+args = {}
+begin
+    opts.each{ |k,v| args[k]=v }
+rescue GetoptLong::Error => e
+    usage
+    exit -100
+end
+
+if args["--help"]
+  usage
+  exit 1
+end
+
+list = args["--list"]
+fix = args["--fix"]
+login = args["--login"]
+remove_plan_lock = args["--remove_plan_lock"]
+$verbose = args["--verbose"]
+
+unless list || fix || remove_plan_lock
+  puts "You must specify --list or --fix or --remove_plan_lock"
+  exit 1
+end
+
+require "/var/www/stickshift/broker/config/environment"
+
+PLAN_UPDATE_THRESHOLD = 300  #5 mins
+$aria = Express::AriaBilling::Api.new
+$default_plan_id = Rails.application.config.billing[:aria][:default_plan].to_s
+$total_count = $failure_count = $progress_count = 0
+
+def update_user_noplan(user)
+  if user.check_plan_compatibility($default_plan_id)
+    if user.usage_account_id
+      user.update_plan($default_plan_id)
+    else
+      user.assign_plan($default_plan_id)
+      user.plan_id = nil
+      user.pending_plan_id = nil
+      user.pending_plan_uptime = nil
+      user.save
+    end
+  end
+end
+
+def throw_error(user, plan_id=nil, ex=nil)
+  error_msg = ex_msg = nil
+  error_msg = "Failed to update plan #{plan_id} for #{user.login}.\n" if plan_id
+  ex_msg = "#{ex.message}\n" if ex
+  printf("%s%s", error_msg, ex_msg) if $verbose || (ex && !ex.kind_of?(StickShift::UserException))
+end
+
+def fix_user_plan(user, old_plan_id, new_plan_id)
+  #Try to redo plan change
+  begin
+    user.update_plan(new_plan_id)
+    return true
+  rescue Exception => e
+    throw_error(user, new_plan_id, e)
+  end
+
+  puts "Redo plan change failed, trying Undo plan change for #{user.login}." if $verbose
+  #Try to undo plan change
+  begin
+    if old_plan_id.empty?
+      update_user_noplan(user)
+      return true
+    else
+      user.update_plan(old_plan_id)
+      return true
+    end
+  rescue Exception => e
+    throw_error(user, old_plan_id, e)
+  end
+  $failure_count += 1
+  return false
+end
+
+def print_summary(fix)
+  puts ""
+  puts "##########################"
+  puts "Users with inconsistent plan:" 
+  puts "Total = #{$total_count}"
+  puts "In progress = #{$progress_count}"
+  if fix
+    puts "Fixed = #{$total_count - $failure_count}"
+    puts "Failed = #{$failure_count}"
+  end
+  puts "##########################"
+end
+
+def get_user_obj(login)
+  user = CloudUser.find(login)
+  unless user
+    puts "User '#{login}' not found"
+    exit 1
+  end
+  return user
+end
+
+def process_user(user, list, fix)
+  if user.pending_plan_id && ((Time.now.utc - user.pending_plan_uptime) <= PLAN_UPDATE_THRESHOLD)
+    $total_count += 1
+    $progress_count += 1
+  elsif user.pending_plan_id
+    $total_count += 1
+    msg = "User '#{user.login}' : '#{user.plan_id}' to '#{user.pending_plan_id}' at '#{user.pending_plan_uptime}'"
+    status = nil
+    if fix
+      if fix_user_plan(user, user.plan_id, user.pending_plan_id)
+        status = "=> Fixed"
+      else
+        status = "=> Failed"
+      end
+    end
+    printf("%s %s\n", msg, status)
+  elsif user.plan_id
+    msg = "User '#{user.login}' has '#{user.plan_id}' plan but has inconsistent capabilities"
+    status = nil
+    begin
+      user.check_plan_compatibility(user.plan_id)
+    rescue Exception => e
+      $total_count += 1
+      $failure_count += 1
+      throw_error(user, nil, e)
+      status = "=> Failed" if fix
+      printf("%s %s\n", msg, status)
+      return
+    end
+    begin
+      user.match_plan_capabilities(user.plan_id)
+    rescue Exception => e
+      $total_count += 1
+      throw_error(user, nil, e)
+      if fix
+        user.assign_plan(user.plan_id, true)
+        status = "=> Fixed"
+      end
+      printf("%s %s\n", msg, status)
+      return
+    end
+  end
+end
+
+if remove_plan_lock
+  Express::Broker::DistributedLock.release_lock("billing_plan")
+else
+  hostname = Socket.gethostname
+  if Express::Broker::DistributedLock.obtain_lock("billing_plan", hostname)
+    begin
+      if login
+        user = get_user_obj(login)
+        process_user(user, list, fix)
+      else
+        CloudUser.find_all(nil, {:with_plan => true}) do |user_hash|
+          user = CloudUser.hash_to_obj(user_hash)
+          process_user(user, list, fix)
+        end
+        print_summary(fix)
+      end
+    ensure
+      Express::Broker::DistributedLock.release_lock("billing_plan", hostname)
+    end
+  else
+    puts "Failed to obtain lock to interact with billing plan"
+    exit 1
+  end
+  puts "Done"
+end
