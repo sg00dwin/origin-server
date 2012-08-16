@@ -41,6 +41,7 @@ RedHatCloud::Application.configure do
   config.sso_verify_interval = 0
 
   # Aria API information
+  config.aria_enabled = true
   config.aria_uri = "https://streamline-proxy1.ops.rhcloud.com/api/ws/api_ws_class_dispatcher.php"
   config.aria_auth_key = "sRvjFqjSadu3AFB8jRAR3tqeH5Qf6XjW"
   config.aria_client_no = 3754655

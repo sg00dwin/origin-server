@@ -46,7 +46,7 @@ RedHatCloud::Application.routes.draw do
 
     get :complete, :on => :member
 
-    unless Rails.env.production?
+    if Rails.configuration.aria_enabled
       resources :plans,   :only => :index do
         resource :upgrade, :controller => :account_upgrades, :only => [:edit, :new, :create, :show] do
           put  :edit, :action => :update, :on => :member

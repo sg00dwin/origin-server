@@ -6,14 +6,6 @@ module Aria
     # perform complicated logic - they only exist to enforce certain 
     # call behaviors.
 
-    def available?(message='Aria is not available:')
-      Aria.gen_random_string
-      true
-    rescue Aria::AuthenticationError, Aria::NotAvailable => e
-      puts "#{message} (#{caller.find{ |s| not s =~ /\/lib\/aria[\.\/]/}}) #{e}"
-      false
-    end
-
     def client_no
       Rails.application.config.aria_client_no
     end
