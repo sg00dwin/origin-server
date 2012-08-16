@@ -343,4 +343,35 @@ class AriaUnitTest < ActiveSupport::TestCase
     ))
     assert !p.persisted?
   end
+  
+  test 'master plan adds aria plan details to broker plans' do
+    Aria::Client.any_instance.expects(:invoke).once.
+      with(:get_client_plans_basic).
+      returns(Aria::WDDX::Struct.new({
+        'plans_basic' => [
+          Aria::WDDX::Struct.new({
+            'plan_no' => '1',
+            'plan_name' => 'FreeShift',
+            'plan_desc' => 'FreeShift description'
+          }),
+          Aria::WDDX::Struct.new({
+            'plan_no' => '2',
+            'plan_name' => 'MegaShift',
+            'plan_desc' => 'MegaShift description'
+          })
+        ]
+      }))
+
+    assert plan = Aria::MasterPlan.new(
+      :plan_no => '1',
+      :capabilities => { :max_gears => 3, :gear_sizes => ['small'] }
+    )
+    assert_equal 'FreeShift', plan.name
+    assert_equal 'FreeShift description', plan.description
+    assert_equal 3, plan.max_gears
+    assert_equal ['small'], plan.gear_sizes
+    
+    # The aria plan object should be protected.
+    assert_raise(NoMethodError) { plan.aria_plan }
+  end
 end
