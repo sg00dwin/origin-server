@@ -8,7 +8,7 @@
 
 Summary:   Dependencies for OpenShift development
 Name:      rhc-devenv
-Version: 0.98.5
+Version: 0.98.6
 Release:   1%{?dist}
 Group:     Development/Libraries
 License:   GPLv2
@@ -543,6 +543,10 @@ fi
 %{policydir}/*
 
 %changelog
+* Thu Aug 16 2012 Adam Miller <admiller@redhat.com> 0.98.6-1
+- Security - Remove Virtual Terminals from securetty and blacklist transports
+  in modprobe.d for OpenScap checks (tkramer@redhat.com)
+
 * Thu Aug 16 2012 Adam Miller <admiller@redhat.com> 0.98.5-1
 - Bug 848419 (dmcphers@redhat.com)
 
