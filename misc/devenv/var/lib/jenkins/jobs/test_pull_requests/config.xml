@@ -6,9 +6,9 @@ Blank pull_id(s) will use master&#xd;
 </description>
   <logRotator>
     <daysToKeep>10</daysToKeep>
-    <numToKeep>50</numToKeep>
-    <artifactDaysToKeep>-1</artifactDaysToKeep>
-    <artifactNumToKeep>-1</artifactNumToKeep>
+    <numToKeep>100</numToKeep>
+    <artifactDaysToKeep>10</artifactDaysToKeep>
+    <artifactNumToKeep>100</artifactNumToKeep>
   </logRotator>
   <keepDependencies>false</keepDependencies>
   <properties>
@@ -50,28 +50,47 @@ git clone git://github.com/openshift/crankcase.git
 git clone git://github.com/openshift/rhc.git
 
 if [ -n &quot;$LI_PULL_ID&quot; ]; then
-  echo &quot;RUNNING for Pull Request: https://github.com/openshift/li/pull/$LI_PULL_ID&quot;
-  set +x
+set +x
+  echo &quot;
+
+*****Patching Pull Request: https://github.com/openshift/li/pull/$LI_PULL_ID&quot;
+set -x
   pushd li
-  SECRET=`cat ~/.config/secret`
-  curl --basic -u &quot;openshift-bot:$SECRET&quot; https://github.com/openshift/li/pull/$LI_PULL_ID.patch | git am
-  set -x
+    set +x
+    SECRET=`cat ~/.config/secret`
+    curl --basic -u &quot;openshift-bot:$SECRET&quot; https://github.com/openshift/li/pull/$LI_PULL_ID.patch | git am
+    set -x
   popd
 fi
 
 if [ -n &quot;$CRANKCASE_PULL_ID&quot; ]; then
-  echo &quot;RUNNING for Pull Request: https://github.com/openshift/crankcase/pull/$CRANKCASE_PULL_ID&quot;
+set +x
+  echo &quot;
+
+*****Patching Pull Request: https://github.com/openshift/crankcase/pull/$CRANKCASE_PULL_ID&quot;
+set -x
   pushd crankcase
-  curl https://github.com/openshift/crankcase/pull/$CRANKCASE_PULL_ID.patch | git am
+    curl https://github.com/openshift/crankcase/pull/$CRANKCASE_PULL_ID.patch | git am
   popd
 fi
 
 if [ -n &quot;$RHC_PULL_ID&quot; ]; then
-  echo &quot;RUNNING for Pull Request: https://github.com/openshift/rhc/pull/$RHC_PULL_ID&quot;
+set +x
+  echo &quot;
+
+*****Patching Pull Request: https://github.com/openshift/rhc/pull/$RHC_PULL_ID&quot;
+set -x
   pushd rhc
-  curl https://github.com/openshift/rhc/pull/$RHC_PULL_ID.patch | git am
+    curl https://github.com/openshift/rhc/pull/$RHC_PULL_ID.patch | git am
   popd
 fi
+
+set +x
+echo &quot;
+
+
+&quot;
+set -x
 
 pushd li
 build/devenv launch test_pull_requests_${BUILD_NUMBER} --verifier --instance_type m1.large
@@ -81,8 +100,7 @@ build/devenv sync test_pull_requests_${BUILD_NUMBER} --tag --clean_metadata
 build/devenv test test_pull_requests_${BUILD_NUMBER} --terminate
 popd
 
-RESULT=$?
-</command>
+RESULT=$?</command>
     </hudson.tasks.Shell>
     <hudson.tasks.Shell>
       <command>#!/bin/sh -e

@@ -4,9 +4,9 @@
   <description>Merge a pull request after tests have passes in serial</description>
   <logRotator>
     <daysToKeep>10</daysToKeep>
-    <numToKeep>50</numToKeep>
+    <numToKeep>100</numToKeep>
     <artifactDaysToKeep>10</artifactDaysToKeep>
-    <artifactNumToKeep>50</artifactNumToKeep>
+    <artifactNumToKeep>100</artifactNumToKeep>
   </logRotator>
   <keepDependencies>false</keepDependencies>
   <properties>

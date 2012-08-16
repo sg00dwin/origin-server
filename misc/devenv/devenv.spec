@@ -331,7 +331,7 @@ service libra-datastore start
 service libra-site restart
 service libra-broker restart
 service jenkins restart
-service httpd restart
+service httpd restart --verbose 2>&1
 service sshd restart
 chkconfig iptables on
 chkconfig named on
