@@ -45,9 +45,9 @@
       <div id="top" class="section-top">
         <div class="container">
         	<a title="Track open issues on the OpenShift status page" style="display:none;" id="outage" class="btn btn-small btn-warning" href="/app/status">Status</a>
-          <div class="pull-left"><a href="http://makara.nurturehq.com/makara/newsletter_signup.html">Newsletter Sign Up</a></div>
+          <div class="pull-left"><a href="/community/developers/pricing">Plans and Pricing</a></div>
           <div class="pull-right login">
-          
+
           <form action="/community/search/node" method="get" id="search-top">
              <input name="keys" class="search-query" type="text" placeholder="SEARCH">
              <button type="submit" class="search" value="Search"></button>
@@ -56,15 +56,16 @@
 
             <?php
             global $user;
-            
+
             if ( $user->uid ) {
               $logout_url = variable_get('redhat_sso_logout_url', $base_url . '/logout');
               $logout_url .= '?then=' . urlencode(drupal_get_path_alias(request_uri()));
-              print '<a class="btn btn-small" href="/app/console">Manage Your Apps</a> ';
+              print '<a class="btn btn-small" href="/app/console">My Apps</a> ';
+              print '<a class="btn btn-small" href="/app/account">My Account</a> ';
               print '<a class="btn btn-small" href="'. $logout_url .'">Sign Out</a>';
             } else {
        	      $login_url = variable_get('redhat_sso_login_url', $base_url . '/user');
-              print '<a class="btn btn-small" href="'. $login_url .'">Sign in to participate</a>';
+              print '<a class="btn btn-small" href="'. $login_url .'">Sign in</a>';
             }
             ?>
           </div>
@@ -196,7 +197,7 @@
               </header>
               <ul class="unstyled">
                 <li><a href="/app/getting_started">Get Started</a></li>
-                <li><a href="http://docs.redhat.com/docs/en-US/OpenShift/2.0/html/User_Guide/index.html">User Guide</a></li>
+                <li><a href="<?php print openshift_user_guide_url(); ?>">User Guide</a></li>
                 <li><a href="/community/faq">FAQ</a></li>
                 <li><a href="/community/developers/pricing">Pricing</a></li>
               </ul>

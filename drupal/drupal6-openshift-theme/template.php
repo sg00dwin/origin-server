@@ -17,7 +17,10 @@ function openshift_theme() {
     'comment_form' => array('arguments' => array(
       'form' => NULL,
       'edit' => NULL,
-    ))
+    )),
+    'search_form' => array(
+      'arguments' => array('form' => NULL),
+    ),
   );
 }
 
@@ -367,6 +370,9 @@ function openshift_form_element($element, $value) {
   if (!empty($element['#description'])) {
     $output .= ' <div class="help-block">'. $element['#description'] ."</div>\n";
   }
+  if (!empty($element['#additional'])) {
+    $output .= $element['#additional'];
+  }
   
   $output .= "</div>";
 
@@ -445,6 +451,20 @@ function openshift_preprocess_search_block_form(&$vars) {
 
   // Collect all form elements to print entire form
   $vars['search_form'] = implode($vars['search']);
+}
+
+function openshift_user_guide_url() {
+  return 'http://access.redhat.com/knowledge/docs/en-US/OpenShift/2.0/html/User_Guide/index.html';
+}
+
+function openshift_search_form($form) {
+  #print '<pre>'. check_plain(print_r($form, 1)) .'</pre>';
+  $form['basic']['inline']['#suffix'] = '</div>'.
+    '<div class="alert alert-info">Note: This search does not search the <a target="_blank" href="'.openshift_user_guide_url().'">OpenShift user guide</a></div>';
+  $submit = drupal_render($form['basic']['inline']['submit']);
+  unset($form['basic']['inline']['submit']);
+  $form['basic']['inline']['keys']['#additional'] = ' '.$submit;
+  return drupal_render($form);
 }
 
 function openshift_preprocess_search_result(&$vars) {
