@@ -10,7 +10,8 @@ node_profile=exlarge
 # Quotas: File system limits
 #
 quota_files=400000
-quota_blocks=10485760 # 10GB.  1 block = 1024byte
+# 10GB.  1 block = 1024byte
+quota_blocks=10485760
 
 # For no over commitment, should be memory_limit_in_bytes / (Total System Memory - 1G)
 max_apps=10
