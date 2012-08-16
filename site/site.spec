@@ -3,7 +3,7 @@
 
 Summary:   Li site components
 Name:      rhc-site
-Version: 0.97.5
+Version: 0.97.6
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -137,6 +137,31 @@ rm -rf %{buildroot}
 %{sitedir}/public
 
 %changelog
+* Thu Aug 16 2012 Adam Miller <admiller@redhat.com> 0.97.6-1
+- Merge pull request #237 from smarterclayton/add_process_id_to_rails_logs
+  (openshift+bot@redhat.com)
+- Merge pull request #226 from smarterclayton/us2516_fill_out_billing_flow
+  (openshift+bot@redhat.com)
+- Merge pull request #238 from smarterclayton/use_aria_proxy_for_devenv
+  (openshift+bot@redhat.com)
+- Create a separate test configuration for direct post so it does not conflict
+  with the real values. (ccoleman@redhat.com)
+- Add process id output to Rails loggers in all modes.  Will need to be changed
+  in Rails 3.2+ (ccoleman@redhat.com)
+- Point site and broker development environments to the Aria API proxy machine
+  (same as streamline) (ccoleman@redhat.com)
+- MasterPlan is cached without loading aria_plan, but the cached object is
+  frozen which prevents the plan from being loaded. (ccoleman@redhat.com)
+- Bad merge (ccoleman@redhat.com)
+- Tweak cache_method for Plan to work correctly (ccoleman@redhat.com)
+- PlansController#show should be auth protected (ccoleman@redhat.com)
+- Overlapping cache responses because of key generation (ccoleman@redhat.com)
+- REST API models were not inheriting parent state, which prevented caching
+  from working.  Add caching more aggressively to all static content.  Remove
+  singleton on application template. (ccoleman@redhat.com)
+- US2516 Flush out the billing flow, add prototypical dashboard for plans, and
+  add Aria caching. (ccoleman@redhat.com)
+
 * Wed Aug 15 2012 Adam Miller <admiller@redhat.com> 0.97.5-1
 - Merge pull request #231 from sg00dwin/master (openshift+bot@redhat.com)
 - Styles and images for the developers technology page; and fix search field
