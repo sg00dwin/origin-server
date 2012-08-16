@@ -143,7 +143,7 @@ module Uplift
           else
             raise_dns_exception(nil, resp)
           end
-        rescue Exception => e
+        rescue StickShift::DNSException => e
           raise
         rescue Exception => e
           raise_dns_exception(e)

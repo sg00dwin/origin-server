@@ -302,7 +302,9 @@ EOF
   cp /tmp/tito/noarch/*.rpm /root/li-local/
   createrepo /root/li-local/
 
+  set -e
   yum -y install rhc-devenv --enablerepo=li-local
+  set +e
   
   pushd /root/li-working > /dev/null
     build/devenv write_sync_history

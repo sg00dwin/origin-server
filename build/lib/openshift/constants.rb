@@ -27,7 +27,7 @@ DEVENV_AMI_WILDCARDS = {DEVENV_WILDCARD => {:keep => 2, :regex => /(devenv)_(\d*
                         OSO_FEDORA_WILDCARD => {:keep => 1, :regex => /(oso_fedora)_(\d*)/},
                         OSO_RHEL_WILDCARD => {:keep => 1, :regex => /(oso_rhel)_(\d*)/},
                         FORK_AMI_WILDCARD => {:keep => 50, :keep_per_sub_group => 1, :regex => /(fork_ami_.*)_(\d*)/}}
-VERIFIER_REGEXS = {/^(devenv)_(\d+)$/ => {:multiple => true},
+VERIFIER_REGEXS = {/^(devenv)_(\d+)$/ => {},
                    /^(devenv_verifier)_(\d+)$/ => {}, 
                    /^(devenv-stage)_(\d+)$/ => {}, 
                    /^(devenv-stage_verifier)_(\d+)$/ => {},
