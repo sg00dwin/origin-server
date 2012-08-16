@@ -32,7 +32,7 @@ def mongo_migrate
     if user.has_key?("system_ssh_keys") and user["system_ssh_keys"]
       user["system_ssh_keys"].each { |app_name,key|
         # check whether app is a scalable app
-        index = user["apps"].index { |app_index, app| 
+        index = user["apps"].index { |app| 
           true if app["name"]==app_name && app["scalable"]==true 
         }
         if index
