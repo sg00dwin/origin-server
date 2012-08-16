@@ -3,7 +3,7 @@
 
 Summary:   Li broker components
 Name:      rhc-broker
-Version: 0.97.4
+Version: 0.97.5
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -118,6 +118,21 @@ if [ ! -f %{_localstatedir}/log/stickshift/user_action.log ]; then
 fi
 
 %changelog
+* Thu Aug 16 2012 Adam Miller <admiller@redhat.com> 0.97.5-1
+- Updating gem versions (admiller@redhat.com)
+- Merge pull request #244 from ramr/master (openshift+bot@redhat.com)
+- Bug 848739 (dmcphers@redhat.com)
+- Bug 848419 (dmcphers@redhat.com)
+- Merge pull request #237 from smarterclayton/add_process_id_to_rails_logs
+  (openshift+bot@redhat.com)
+- Merge pull request #238 from smarterclayton/use_aria_proxy_for_devenv
+  (openshift+bot@redhat.com)
+- Migration for haproxy changes. (ramr@redhat.com)
+- Add process id output to Rails loggers in all modes.  Will need to be changed
+  in Rails 3.2+ (ccoleman@redhat.com)
+- Point site and broker development environments to the Aria API proxy machine
+  (same as streamline) (ccoleman@redhat.com)
+
 * Wed Aug 15 2012 Adam Miller <admiller@redhat.com> 0.97.4-1
 - Updating gem versions (admiller@redhat.com)
 - Merge pull request #233 from mrunalp/dev/migrate_mysql_data_dir
