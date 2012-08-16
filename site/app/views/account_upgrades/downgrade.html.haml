@@ -1,0 +1,20 @@
+- content_for :title, "Downgrade your Plan"
+
+= semantic_form_for :plan, :url => account_plan_upgrade_path do |f|
+  = f.hidden_field :id
+
+  %h2 Are you sure you want to downgrade your plan to #{@plan.name}?
+
+  %p 
+    Downgrading your plan requires that you scale down or delete applications 
+    until you are within the gear limit for your new plan.  Once you downgrade
+    your applications will also no longer scale and features of your
+    current plan will no longer be available.
+
+  %p
+    If you continue with your downgrade, any remaining fees will be assessed
+    at the end of the current billing period.  After that you will no longer 
+    be charged for your use of OpenShift.
+
+  = link_to "Select a different plan", account_plans_path, :class => 'btn'
+  = submit_tag "Yes, I want to downgrade", :class => 'btn btn-danger'

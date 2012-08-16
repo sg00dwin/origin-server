@@ -1,0 +1,10 @@
+- content_for :title, 'Provide your payment of method'
+= plan_upgrade_steps 2
+
+- if @previous_payment_method
+  %p Current method of payment
+  = render :partial => 'payment_methods/payment_method', :locals => {:payment_method => @previous_payment_method}
+
+  %p Enter your new credit card information to pay for your account:
+
+= render :partial => 'payment_methods/form', :locals => {:payment_method => @payment_method, :previous_link => ['See other plans', account_plans_path, {:class => 'btn'}]}

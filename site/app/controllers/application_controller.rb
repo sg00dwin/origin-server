@@ -1,5 +1,6 @@
 class ApplicationController < ActionController::Base
   include Secured
+  include AsyncAware
 
   protect_from_forgery
 

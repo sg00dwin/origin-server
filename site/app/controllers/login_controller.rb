@@ -1,4 +1,4 @@
-class LoginController < AccountController
+class LoginController < ApplicationController
 
   layout 'simple'
 

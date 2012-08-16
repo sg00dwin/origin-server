@@ -1,4 +1,5 @@
-class AccountUpgradesController < AccountController
+class AccountUpgradesController < ApplicationController
+  layout 'site'
 
   before_filter :authenticate_user!, :except => :show
   before_filter :authenticate_user_for_upgrade!, :only => :show
@@ -15,28 +16,43 @@ class AccountUpgradesController < AccountController
   def new
     plan_id = params[:plan_id]
 
-    @user = User.find(:one, :as => current_user)
-    @plan = Plan.find(plan_id, :as => current_user)
-    @current_plan = @user.plan
     aria_user = current_user.extend(Aria::User)
-    @payment_method = aria_user.payment_method
 
-    render :unchanged if @plan == @current_plan
+    async do
+      @user = User.find :one, :as => current_user
+      @plan = Aria::MasterPlan.cached.find plan_id
+      @current_plan = @user.plan
+    end
+    async do
+      @payment_method = aria_user.payment_method
+      @billing_info = aria_user.billing_info
+    end
+    join
+
+    render :unchanged and return if @plan == @current_plan
+    render :downgrade and return if @plan.basic?
+    render :change and return unless @current_plan.basic?
   end
 
   def create
     plan_id = params[:plan][:id]
 
-    @user = User.find(:one, :as => current_user)
-    @plan = Plan.find(plan_id, :as => current_user)
+    aria_user = current_user.extend(Aria::User)
+    @payment_method = aria_user.payment_method
+    @billing_info = aria_user.billing_info
+
+    @user = User.find :one, :as => current_user
+    @plan = Aria::MasterPlan.cached.find plan_id
     @current_plan = @user.plan
 
     @user.plan_id = plan_id
 
-    logger.debug "@plan=#{@plan.inspect} @current_plan=#{@current_plan.inspect} @user=#{@user.inspect}"
     if @user.save
       redirect_to account_plan_path, :flash => {:success => 'upgraded'}
     else
+      render :unchanged and return if @plan == @current_plan
+      render :downgrade and return if @plan.basic?
+      render :change and return unless @current_plan.basic?
       render :new
     end
   end
@@ -57,10 +73,7 @@ class AccountUpgradesController < AccountController
     @full_user = Streamline::FullUser.test if !@full_user.persisted? && Rails.env.development?
 
     @billing_info = current_user.extend(Aria::User).billing_info
-    logger.debug "billing #{@billing_info.inspect}"
     copy_user_to_billing(@full_user, @billing_info) unless @billing_info.persisted?
-    logger.debug "billing #{@billing_info.inspect}"
-    # if user is full user, render as uneditable
   end
 
   def update
@@ -87,14 +100,7 @@ class AccountUpgradesController < AccountController
 
   protected
     def authenticate_user_for_upgrade!
-      unless user_signed_in?
-        path = if previously_signed_in?
-          login_path(:then => account_plan_upgrade_path)
-        else
-          new_account_path(:then => account_plan_upgrade_path)
-        end
-        redirect_to path
-      end
+      redirect_to login_or_signup_path(account_plan_upgrade_path) unless user_signed_in?
     end
 
     def copy_user_to_billing(user, billing)

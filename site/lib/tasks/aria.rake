@@ -9,7 +9,7 @@ namespace :aria do
     urls = Rails.application.routes.url_helpers
 
     puts "Set direct post configuration for default edit"
-    Aria::DirectPost.create(nil, "#{base}#{urls.direct_update_account_payment_method_path}")
+    Aria::DirectPost.create('account', "#{base}#{urls.direct_update_account_payment_method_path}")
 
     Plan.all.each do |plan|
       name = Aria::DirectPost.get_configured(plan)
@@ -18,6 +18,7 @@ namespace :aria do
       puts "Set direct post configuration '#{name}' to redirect to '#{url}'"
 
       Aria::DirectPost.create(plan, url)
+      Aria::DirectPost.create("edit_#{plan}", url)
       puts "  Settings: #{Aria.get_reg_uss_config_params("direct_post_#{name}").inspect}"
     end
   end
@@ -25,12 +26,13 @@ namespace :aria do
   desc 'Reset all API only Aria resources to their default state'
   task :clean => :environment do
     puts "Deleting config params for default direct post"
-    Aria::DirectPost.destroy
+    Aria::DirectPost.destroy("account")
 
     Plan.all.each do |plan| 
       if name = Aria::DirectPost.get_configured(plan)
         puts "Deleting config params for direct post #{name}"
         Aria::DirectPost.destroy(name)
+        Aria::DirectPost.destroy("edit_#{name}")
       end
     end
   end

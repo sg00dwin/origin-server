@@ -18,7 +18,10 @@ module Aria
 
     def method_missing(meth, *args, &block)
       return super if Object.method_defined? meth
+      invoke(meth, *args, &block)
+    end
 
+    def invoke(meth, *args, &block)
       options = args.extract_options!
       meth = meth.to_s
       raw = true if meth.sub!(/_raw$/, '')

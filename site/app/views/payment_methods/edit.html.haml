@@ -5,4 +5,4 @@
 
 %p Enter a new payment method
 = flashes
-= render :partial => 'form', :locals => {:payment_method => @payment_method, :previous_url => @previous_url}
+= render :partial => 'form', :locals => {:payment_method => @payment_method, :previous_link => ['Cancel', account_path, {:class => 'btn'}]}

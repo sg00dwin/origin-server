@@ -1,6 +1,6 @@
 require File.expand_path('../../test_helper', __FILE__)
 
-class UserControllerTest < ActionController::TestCase
+class AccountControllerTest < ActionController::TestCase
 
   test "should get new unauthorized" do
     get :new
@@ -72,12 +72,22 @@ class UserControllerTest < ActionController::TestCase
     assert_response :success
   end
 
-  test "should render page" do
+  test "should render dashboard" do
     with_unique_user
     get :show
     assert_response :success
     assert assigns(:user).email_address.present?
     assert assigns(:identities).present?
+    assert assigns(:domain).nil?
+
+    if Aria.available?
+      assert assigns(:plan).present?
+      assert_select 'a', 'Upgrade now!'
+      assert_select 'p', /FreeShift/, response.inspect
+    else
+      assert assigns(:plan).nil?
+      assert_select 'p', /Your plan cannot be displayed/
+    end
   end
 
   test "should render captcha" do

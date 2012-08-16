@@ -185,6 +185,18 @@ module Secured
     end
 
     #
+    # Return the login path if the user has previously_signed_in? or the
+    # new account path if not.
+    #
+    def login_or_signup_path(path)
+      if previously_signed_in?
+        login_path(:then => path)
+      else
+        new_account_path(:then => path)
+      end
+    end
+
+    #
     # Return the appropriate URL to return to after a successful login. Subclasses may
     # override to return values that are specific to their method
     #

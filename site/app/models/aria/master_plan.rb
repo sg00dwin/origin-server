@@ -3,6 +3,10 @@ module Aria
     self.element_name = 'plan'
     allow_anonymous
 
+    def name
+      aria_plan.plan_name
+    end
+
     def description
       aria_plan.plan_desc
     end
@@ -15,9 +19,16 @@ module Aria
       capabilities.gear_sizes
     end
 
+    cache_method :find_single,
+                 lambda{ |*args| [MasterPlan.name, :find_single, args[0]] },
+                 :before => lambda{ |p| p.as = nil; p.send(:aria_plan) }
+    cache_method :find_every,
+                 :before => lambda{ |plans| plans.each{ |p| p.as = nil; p.send(:aria_plan) } }
+
     protected
       def aria_plan
-        @aria_plan ||= Aria.get_client_plans_basic.find{ |plan| plan.plan_no == self.plan_no }
+        @aria_plan ||= Aria.cached.get_client_plans_basic.find{ |plan| plan.plan_no == self.plan_no }
       end
+
   end
 end

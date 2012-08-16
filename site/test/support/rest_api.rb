@@ -161,6 +161,13 @@ class ActiveSupport::TestCase
     use_app(:scalable_app) { Application.new({:name => "cart#{uuid}", :cartridge => 'ruby-1.8', :scale => 'true'}) }
   end
 
+  def json_header(is_post=false)
+    {(is_post ? 'Content-Type' : 'Accept') => 'application/json', 'User-Agent' => Rails.configuration.user_agent}.merge!(@auth_headers)
+  end
+
+  def anonymous_json_header(is_post=false)
+    {(is_post ? 'Content-Type' : 'Accept') => 'application/json', 'User-Agent' => Rails.configuration.user_agent}
+  end
 
   def assert_attr_equal(o1, o2)
     unless o1 == o2

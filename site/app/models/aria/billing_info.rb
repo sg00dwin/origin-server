@@ -30,6 +30,19 @@ module Aria
     #  tax_exempt.present? and tax_exempt.to_i > 0
     #end
 
+    def full_name
+      [first_name, middle_initial, last_name].map(&:presence).compact.join(' ')
+    end
+    def address
+      [address1, address2, address3, location].map(&:presence).compact
+    end
+    def location
+      [
+        [city].map(&:presence).compact,
+        [state, zip, country].map(&:presence).compact.join(' ')
+      ].compact.join(', ')
+    end
+
     def self.test
       new({
         :address1 => '12345 Happy Street',

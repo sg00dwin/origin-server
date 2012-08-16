@@ -1,0 +1,19 @@
+- content_for :title, 'Update your Billing Info'
+= plan_upgrade_steps 4, :and => {:name => 'Change billing info'}
+
+= semantic_form_for @billing_info, :url => url_for(:action => :edit) do |f|
+  = f.semantic_errors
+
+  = f.input :first_name
+  = f.input :middle_initial
+  = f.input :last_name
+  = f.input :address1
+  = f.input :address2
+  = f.input :address3
+  = f.input :city
+  = f.inputs :state, :country, :zip
+
+  = f.buttons do
+    = link_to "Cancel", controller.previous_path, :class => 'btn'
+    = f.commit_button 'Save'
+    = f.loading

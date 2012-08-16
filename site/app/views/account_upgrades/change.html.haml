@@ -1,0 +1,17 @@
+- content_for :title, "Change your Plan"
+
+%h2 Are you sure you want to change from #{@current_plan.name} to #{@plan.name}?
+
+%p ... description of change ...
+
+.row
+  %section.span6
+    %p Your method of payment is:
+    = render :partial => 'payment_methods/payment_method', :locals => {:payment_method => @payment_method}
+    %p= link_to "Change your payment method", edit_account_plan_upgrade_payment_method_path
+  %section.span6
+    %p Bill to:
+    = render :partial => 'billing_info/billing_info', :locals => {:billing_info => @billing_info}
+    %p= link_to "Change your billing info", edit_account_plan_upgrade_billing_info_path
+
+= link_to "Select a different plan", account_plans_path, :class => 'btn'
