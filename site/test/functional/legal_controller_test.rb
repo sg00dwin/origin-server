@@ -22,7 +22,7 @@ class LegalControllerTest < ActionDispatch::IntegrationTest
     assert_redirected_to '/community/legal/openshift_privacy'
   end
 
-  test "show acceptacble use" do
+  test "show acceptable use" do
     get '/legal/acceptable_use'
     assert_redirected_to '/community/legal/acceptable_use'
   end
