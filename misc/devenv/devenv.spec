@@ -505,6 +505,19 @@ useradd nagios_monitor
 chown -R root:nagios_monitor /var/log/rkhunter
 chmod -R 770 /var/log/rkhunter
 
+# Remove Virtual Consoles from /etc/securetty for OpenScap
+sed '/^vc\//d' /etc/securetty > /tmp/no_vc
+mv /tmp/no_vc /etc/securetty
+
+# Create Disable Transport for OpenScap check
+cat > /etc/modprobe.d/disable_transport.conf << EOF
+# Disables the latest transports in RHEL6 for OpenScap checks
+install dccp /bin/true
+install sctp /bin/true
+install rds /bin/true
+install tipc /bin/true
+EOF
+
 # Deploy application templates - fotios
 /usr/bin/ruby /usr/lib/stickshift/broker/application_templates/templates/deploy.rb
 if [ $? -ne 0 ]
