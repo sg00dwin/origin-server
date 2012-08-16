@@ -180,6 +180,7 @@ class Release < Thor
     branch = get_branch
     orig_branches = checkout_branch(branch, options.verbose?)
     begin
+      fail_if_uncommitted_changes
 
       # Update the repo
       git_pull
@@ -193,26 +194,27 @@ class Release < Thor
         working_dir = File.expand_path("../#{build_dir}", File.dirname(__FILE__))
         inside(working_dir) do
           puts "Tagging #{build_dir}"
-          # Tag the package
-          output = `tito tag --accept-auto-changelog`
-          puts output
-          #if run("tito tag --accept-auto-changelog", :verbose => options.verbose?)
-          if $? == 0
-            if File.basename(build_dir) == 'rhc'
-              match = output.match(/\nCreated tag: (.+?)\n/)
-              unless match and run("rake version && git add . && git commit --amend -C HEAD && git tag -f #{match[1]}", :verbose => options.verbose?)
-                if run('tito tag -u')
-                  puts '  Unable to rewrite the rhc version tag.  Successfully reverted the tito tag.'
-                  tag_failures << build_dir
-                else
-                  puts '  Unable to rewrite the rhc version tag, and unable to undo the tito tag.'
-                  requires_rebuild << build_dir
-                end
+
+          if File.basename(build_dir) == 'rhc'
+            # packages that have versioning steps
+            version = /^(Version: )(.*)/.match(File.read(Dir['*.spec'][0]))[2].strip
+            next_version = next_patch_version(version)
+            if run("rake version && git add .", :verbose => options.verbose?)
+              unless run('tito tag --accept-auto-changelog')
+                tag_failures << build_dir
               end
+            else
+              run('git reset HEAD --hard')
+              puts '  Unable to set the version number for this package.'
+              requires_rebuild << build_dir
             end
           else
-            tag_failures << build_dir
+            # packages without versioning steps
+            unless run('tito tag --accept-auto-changelog')
+              tag_failures << build_dir
+            end
           end
+
           puts "Done"
         end
       end
@@ -273,7 +275,7 @@ class Release < Thor
       end
       unless tag_failures.empty?
         puts "************BEGIN TAG FAILURES****************"
-        puts "Note: Packages that failed to tag should continue to show up in build/release check"
+        puts "Note: Packages that failed to tag should continue to show up in build/release check.  Since tito failed there may be uncommited changes in your repo.  Clear these by running 'git reset HEAD --hard' from each repo."
         puts tag_failures.pretty_inspect
         puts "*************END TAG FAILURES*****************\n"
       end
