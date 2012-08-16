@@ -228,7 +228,7 @@ else
                 if success
                   if usage_records_for_gear.length == 2 && usage_records_for_gear.last.event == UsageRecord::EVENTS[:end]
                     puts "Deleting ended usage record"
-                    StickShift::DataStore.instance.delete_usage_records_by_uuids(user_id, usage_records_for_gear.map{ |usage_record| usage_record.uuid })
+                    StickShift::DataStore.instance.delete_usage_records_by_uuids(user.login, usage_records_for_gear.map{ |usage_record| usage_record.uuid })
                   else
                     puts "Continuing usage record."
                     usage_record.event = UsageRecord::EVENTS[:continue]
