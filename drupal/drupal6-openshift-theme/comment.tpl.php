@@ -25,7 +25,23 @@ $do = og_comment_perms_do();
         <?php } */ ?>
 
       <div class="content">
-        <?php print $content ?>
+	 <?php
+          $dom = new DOMDocument;
+          $dom->loadHTML($content);
+          $anchors = $dom->getElementsByTagName('a');
+          foreach($anchors as $anchor) {
+              $rel = array();
+              if ($anchor->hasAttribute('rel') AND ($relAtt = $anchor->getAttribute('rel')) !== '') {
+                 $rel = preg_split('/\s+/', trim($relAtt));
+              }
+              if (in_array('nofollow', $rel)) {
+                continue;
+              }
+              $rel[] = 'nofollow';
+              $anchor->setAttribute('rel', implode(' ', $rel));
+          }
+          print $dom->saveHTML();
+        ?>
         <?php if ($signature): ?>
         <div class="clear-block">
           <div>&nbsp;</div>

@@ -230,7 +230,7 @@
               <ul class="unstyled">
                 <li><a href="/community/legal/services_agreement">Terms of Service</a></li>
                 <li><a href="/community/legal/openshift_privacy">Privacy Policy</a></li>
-                <li><a href="https://access.redhat.com/security/team/contact/">Security</a></li>
+                <li><a href="/community/policy/security">Security Policy</a></li>
                 <li><a href="/community/developers/pricing">Plans</a></li>
               </ul>
             </nav>
