@@ -3,7 +3,7 @@
 
 Summary:   Li site components
 Name:      rhc-site
-Version: 0.97.6
+Version: 0.97.7
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -137,6 +137,10 @@ rm -rf %{buildroot}
 %{sitedir}/public
 
 %changelog
+* Thu Aug 16 2012 Adam Miller <admiller@redhat.com> 0.97.7-1
+- Merge pull request #230 from nhr/plan_tests (openshift+bot@redhat.com)
+- US2457 - Added tests for billing components (nhr@redhat.com)
+
 * Thu Aug 16 2012 Adam Miller <admiller@redhat.com> 0.97.6-1
 - Merge pull request #237 from smarterclayton/add_process_id_to_rails_logs
   (openshift+bot@redhat.com)
