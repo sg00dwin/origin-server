@@ -41,14 +41,18 @@ User errors:
 146: User has valid credentials but hasn't been granted access to Express yet.
 147: User has valid credentials but hasn't requested access to Express yet.
 150: A plan with specified id does not exist
-151: An account was not found for user
-152: Account status not active
+151: Billing account was not found for user
+152: Billing account status not active
 153: User has more consumed gears than the new plan allows.
 154: User has gears that the new plan does not allow.
 155: Error getting account information from billing provider
 156: Updating user plan on billing provider failed
 157: Plan change not allowed for subaccount user
 158: Domain already exists for user
+159: User has additional filesystem storage that the new plan does not allow.
+160: User max gear limit capability does not match with current plan
+161: User gear sizes capability does not match with current plan
+162: User max additional file-system storage per gear group capability does not match with current plan
 163: Gear group does not exist
 164: User is not allowed to change storage quota
 165: Invalid storage quota value provided
