@@ -8,7 +8,7 @@
 
 Summary:   Dependencies for OpenShift development
 Name:      rhc-devenv
-Version: 0.98.4
+Version: 0.98.5
 Release:   1%{?dist}
 Group:     Development/Libraries
 License:   GPLv2
@@ -530,6 +530,9 @@ fi
 %{policydir}/*
 
 %changelog
+* Thu Aug 16 2012 Adam Miller <admiller@redhat.com> 0.98.5-1
+- Bug 848419 (dmcphers@redhat.com)
+
 * Wed Aug 15 2012 Adam Miller <admiller@redhat.com> 0.98.4-1
 - syncing jenkins jobs (dmcphers@redhat.com)
 
