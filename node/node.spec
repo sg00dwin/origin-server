@@ -2,7 +2,7 @@
 
 Summary:       Multi-tenant cloud management system node tools
 Name:          rhc-node
-Version: 0.97.3
+Version: 0.97.4
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -273,6 +273,18 @@ fi
 
 
 %changelog
+* Thu Aug 16 2012 Adam Miller <admiller@redhat.com> 0.97.4-1
+- Merge pull request #245 from rmillner/US2102 (dmcphers@redhat.com)
+- Merge pull request #244 from ramr/master (openshift+bot@redhat.com)
+- Merge pull request #242 from abhgupta/fix/resource_limits_file
+  (openshift+bot@redhat.com)
+- Remove requirement for .pgpass and .psql_history files on scalable app.
+  (rmillner@redhat.com)
+- Migration for haproxy changes. (ramr@redhat.com)
+- Add nano and emacs (the no X variant) to list of editors available on nodes
+  where apps are running. (ramr@redhat.com)
+- fixing quota_blocks value - moving comments above line (abhgupta@redhat.com)
+
 * Wed Aug 15 2012 Adam Miller <admiller@redhat.com> 0.97.3-1
 - Adds migration to move mysql data dir on standalone gears.
   (mpatel@redhat.com)
