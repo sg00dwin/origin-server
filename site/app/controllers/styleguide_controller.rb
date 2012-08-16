@@ -33,7 +33,7 @@ class StyleguideController < ApplicationController
   end
 
   def technologies
-    types = ApplicationType.find(:all, :as => session_user)
+    types = ApplicationType.find :all
     p_t, types = types.partition {|t| t.categories.include? :productivity }
     carts = CartridgeType.embedded(:as => session_user)
     carts.reject! {|t| ([:blacklist, :experimental] & t.categories).present? }
