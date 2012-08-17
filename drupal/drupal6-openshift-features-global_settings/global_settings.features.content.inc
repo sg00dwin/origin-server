@@ -405,32 +405,32 @@ function global_settings_content_default_fields() {
     'display_settings' => array(
       'weight' => '-3',
       'parent' => '',
+      'token' => array(
+        'format' => 'image_plain',
+        'exclude' => 1,
+      ),
       '2' => array(
         'format' => 'image_plain',
         'exclude' => 0,
       ),
       '3' => array(
         'format' => 'image_plain',
-        'exclude' => 0,
+        'exclude' => 1,
       ),
       '4' => array(
         'format' => 'image_plain',
-        'exclude' => 0,
+        'exclude' => 1,
       ),
       'label' => array(
         'format' => 'above',
       ),
       'teaser' => array(
         'format' => 'image_plain',
-        'exclude' => 0,
+        'exclude' => 1,
       ),
       'full' => array(
         'format' => 'image_plain',
-        'exclude' => 0,
-      ),
-      'token' => array(
-        'format' => 'image_plain',
-        'exclude' => 0,
+        'exclude' => 1,
       ),
     ),
     'widget_active' => '1',
