@@ -136,7 +136,9 @@
   <p>
     Then reload this page.
   </p>
-  
+  <p>
+    Alternatively, go to <a href="/ZendServer">Zend Server Console</a> and upload your application.
+  </p>
   <h2>
     What's next?
   </h2>

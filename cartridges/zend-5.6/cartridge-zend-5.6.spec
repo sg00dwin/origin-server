@@ -2,7 +2,7 @@
 
 Summary:   Provides zend-5.6 support
 Name:      cartridge-zend-5.6
-Version: 0.94.0
+Version: 0.94.10
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   ASL 2.0
@@ -16,21 +16,9 @@ BuildArch: noarch
 BuildRequires: git
 Requires: stickshift-abstract
 Requires: rubygem(stickshift-node)
-Requires: zend-server-php-5.3
+Requires: zend-server-php-5.3 >= 5.6.0-11
 Requires: mod_bw
 Requires: rubygem-builder
-Requires: php-pdo
-Requires: php-gd
-Requires: php-xml
-Requires: php-mysql
-Requires: php-pecl-mongo
-Requires: php-pgsql
-Requires: php-mbstring
-Requires: php-pear
-Requires: php-imap
-Requires: php-pecl-apc
-Requires: php-mcrypt
-
 
 %description
 Provides zend support to OpenShift
@@ -58,6 +46,7 @@ mkdir -p %{buildroot}%{cartridgedir}
 mkdir -p %{buildroot}/%{_sysconfdir}/stickshift/cartridges
 ln -s %{cartridgedir}/info/configuration/ %{buildroot}/%{_sysconfdir}/stickshift/cartridges/%{name}
 cp -r info %{buildroot}%{cartridgedir}/
+cp -r files %{buildroot}%{cartridgedir}/
 cp LICENSE %{buildroot}%{cartridgedir}/
 cp COPYRIGHT %{buildroot}%{cartridgedir}/
 mkdir -p %{buildroot}%{cartridgedir}/info/data/
@@ -93,6 +82,9 @@ ln -s %{cartridgedir}/../abstract/info/connection-hooks/set-nosql-db-connection-
 ln -s %{cartridgedir}/../abstract/info/bin/sync_gears.sh %{buildroot}%{cartridgedir}/info/bin/sync_gears.sh
 
 %post
+#this copies over files in zend server rpm install that do not work in openshift 
+cp -rf %{cartridgedir}/files/shared-files/usr/local/zend/* /usr/local/zend/.
+ln -sf /usr/libexec/stickshift/cartridges/zend-5.6/info/bin/httpd_ctl.sh /usr/local/zend/bin/apachectl
 sh %{cartridgedir}/info/bin/zend_configure_filesystem.sh
 
 %clean
@@ -105,6 +97,8 @@ rm -rf %{buildroot}
 %attr(0750,-,-) %{cartridgedir}/info/build/
 %attr(0755,-,-) %{cartridgedir}/info/bin/
 %attr(0755,-,-) %{cartridgedir}/info/connection-hooks/
+%attr(-,-,-) %{cartridgedir}/files/
+
 %config(noreplace) %{cartridgedir}/info/configuration/
 %{_sysconfdir}/stickshift/cartridges/%{name}
 %{cartridgedir}/info/changelog

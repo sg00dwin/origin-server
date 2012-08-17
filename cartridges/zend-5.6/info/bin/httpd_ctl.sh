@@ -9,6 +9,13 @@ do
     . $f
 done
 
+if [ -f /etc/zce.rc ];then
+    . /etc/zce.rc
+else
+    echo "/etc/zce.rc doesn't exist!"
+    exit 1;
+fi
+
 translate_env_vars
 
 if ! [ $# -eq 1 ]
@@ -21,6 +28,7 @@ validate_run_as_user
 
 . app_ctl_pre.sh
 
+export CARTRIDGE_TYPE="zend-5.6"
 CART_CONF_DIR=${CARTRIDGE_BASE_PATH}/${CARTRIDGE_TYPE}/info/configuration/etc/conf
 
 cart_instance_dir=${OPENSHIFT_HOMEDIR}/${CARTRIDGE_TYPE}
