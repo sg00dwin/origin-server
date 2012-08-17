@@ -124,7 +124,7 @@ Order Allow,Deny
 Allow from All
 </Directory>
 ' > /etc/httpd/conf.d/stickshift-datastore.conf
-    /etc/init.d/httpd restart
+    #/etc/init.d/httpd restart
 }
 
 rh_status() {
