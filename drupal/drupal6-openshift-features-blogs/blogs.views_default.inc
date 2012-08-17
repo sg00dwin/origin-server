@@ -1278,11 +1278,18 @@ function blogs_views_default_views() {
       'relationship' => 'none',
     ),
   ));
+  $handler->override_option('cache', array(
+    'type' => 'time',
+    'results_lifespan' => '1800',
+    'output_lifespan' => '1800',
+  ));
   $handler->override_option('title', 'Videos');
-  $handler->override_option('header', '');
+  $handler->override_option('header', 'Viewing this page from China?  See our [Tudou video page](/community/videos/tudou)!');
+  $handler->override_option('header_format', '1');
+  $handler->override_option('header_empty', 1);
   $handler->override_option('items_per_page', 15);
   $handler->override_option('use_pager', 'mini');
-  $handler->override_option('path', 'youtubevideos');
+  $handler->override_option('path', 'videos');
   $handler->override_option('menu', array(
     'type' => 'none',
     'title' => '',
@@ -1537,7 +1544,7 @@ function blogs_views_default_views() {
   $handler->override_option('items_per_page', 5);
   $handler->override_option('block_description', '');
   $handler->override_option('block_caching', '8');
-  $handler = $view->new_display('page', 'Videos', 'page_5');
+  $handler = $view->new_display('page', 'Tudou Videos', 'page_5');
   $handler->override_option('relationships', array(
     'votingapi_cache' => array(
       'label' => 'Vote results',
@@ -1851,11 +1858,16 @@ function blogs_views_default_views() {
       'relationship' => 'none',
     ),
   ));
-  $handler->override_option('title', 'Videos');
+  $handler->override_option('cache', array(
+    'type' => 'time',
+    'results_lifespan' => '1800',
+    'output_lifespan' => '1800',
+  ));
+  $handler->override_option('title', 'Tudou Videos');
   $handler->override_option('header', '');
   $handler->override_option('items_per_page', 15);
   $handler->override_option('use_pager', 'mini');
-  $handler->override_option('path', 'youkuvideos');
+  $handler->override_option('path', 'videos/tudou');
   $handler->override_option('menu', array(
     'type' => 'none',
     'title' => '',
