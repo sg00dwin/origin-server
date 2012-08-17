@@ -11,6 +11,19 @@ class LastAccessUpdater
     @all_apps_info = Hash.new
     @app_root_dir = app_root_dir
     @last_access_data = Hash.new
+    @addrs_ignore = Array.new
+    @hosts_ignore = ["localhost"]
+  end
+
+  def load_addrs_ignore
+    matchaddr = Regexp.new('inet6? (.*)\/[0-9]')
+    lines = %x[/sbin/ip -o addr show]
+    for line in lines
+      begin
+        @addrs_ignore << matchaddr.match(line)[1]
+      rescue NoMethodError:
+      end
+    end
   end
 
   # Read a property from app's environment files
@@ -56,7 +69,11 @@ class LastAccessUpdater
   end
 
   def parse_log
-    lines = %x[/bin/awk '{ h[$2]=$5" "$6 } END{ for ( i in h ) { printf("%s=%s\\n",i,h[i]) } }' #{@log_file}]
+    # Doing the file read with awk is 10x faster than doing it inside
+    # Ruby and we desperately need speed here.
+    ignore_cond = [@hosts_ignore.map { |a| "$2 != \"#{a}\"" },
+                   @addrs_ignore.map { |a| "$1 != \"#{a}\"" }].flatten.join(' && ')
+    lines = %x[/bin/awk '{ if ( #{ignore_cond} ) h[$2]=$5" "$6 } END{ for ( i in h ) { printf("%s=%s\\n",i,h[i]) } }' #{@log_file}]
     for line in lines
       parts = line.split("=")
       timestamp = parts[1].delete("[").delete("]").strip
@@ -99,6 +116,7 @@ end
 
 single_instance do
   l = LastAccessUpdater.new(APP_ROOT_DIR, APACHE_ACCESS_LOG)
+  l.load_addrs_ignore
   l.load_apps_data
   l.parse_log
   l.persist_last_access_data
