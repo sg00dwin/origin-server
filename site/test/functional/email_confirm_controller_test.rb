@@ -46,6 +46,13 @@ class EmailConfirmControllerTest < ActionController::TestCase
     assert_redirected_to '/foo'
   end
 
+  test "should logout if user is currently logged in" do
+    EmailConfirmController.any_instance.expects(:user_signed_in?).returns(true)
+    params = {:key => 'test', :emailAddress => 'test', :then => '/foo'}
+    get :confirm, params
+    assert_redirected_to logout_path :cause => 'change_account', :then => email_confirm_path(params)
+  end
+
 
   test "confirming user redirects to console" do
     get :confirm, :key => unconfirmed_user.token, :emailAddress => unconfirmed_user.email_address

@@ -40,6 +40,23 @@ class LogoutControllerTest < ActionController::TestCase
     assert_redirected_to getting_started_path
   end
 
+  test 'should show a message' do
+    get :show, {:cause => 'foo', :then => getting_started_path}
+    assert_response :success
+    assert_select 'a', 'Continue working' do |el|
+      assert_equal getting_started_path, el.first['href']
+    end
+  end
+
+  test 'should show the change_account page' do
+    get :show, {:cause => 'change_account', :then => getting_started_path}
+    assert_response :success
+    assert_template :change_account
+    assert_select 'a', 'Continue to a different account' do |el|
+      assert_equal getting_started_path, el.first['href']
+    end
+  end
+
   test 'should not redirect outside domain' do
     get :show, {:then => 'http://www.google.com/a_test_page'}
     assert_redirected_to '/a_test_page'
