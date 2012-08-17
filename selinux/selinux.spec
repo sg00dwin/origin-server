@@ -1,6 +1,6 @@
 Summary:       SELinux policy for OpenShift nodes
 Name:          rhc-selinux
-Version: 0.97.4
+Version: 0.97.5
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -46,6 +46,9 @@ rm -rf %{buildroot}
 %attr(0640,-,-) %{_datadir}/selinux/packages/libra.pp
 
 %changelog
+* Fri Aug 17 2012 Adam Miller <admiller@redhat.com> 0.97.5-1
+- BZ847906: Add whois to allowed list of ports. (rmillner@redhat.com)
+
 * Tue Aug 14 2012 Adam Miller <admiller@redhat.com> 0.97.4-1
 - Stop auditing libra instances for searching or listing directories.  This is
   not really intersting from a SELinux point of view (dwalsh@redhat.com)
