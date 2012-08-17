@@ -3,7 +3,7 @@
 
 Summary:   Li site components
 Name:      rhc-site
-Version: 0.97.8
+Version: 0.97.9
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -137,6 +137,17 @@ rm -rf %{buildroot}
 %{sitedir}/public
 
 %changelog
+* Fri Aug 17 2012 Adam Miller <admiller@redhat.com> 0.97.9-1
+- Merge pull request #255 from
+  smarterclayton/bug849068_warn_about_account_change (openshift+bot@redhat.com)
+- Merge pull request #253 from nhr/US2457_auth_changes
+  (openshift+bot@redhat.com)
+- Add left margin to blog author image to force H1 to wrap
+  (ccoleman@redhat.com)
+- Bug 849068 - Warn the user when they take an action that may result in them
+  being authenticated as another person. (ccoleman@redhat.com)
+- US2457 Relaxed auth for cartridge types and app templates (nhr@redhat.com)
+
 * Fri Aug 17 2012 Adam Miller <admiller@redhat.com> 0.97.8-1
 - Merge pull request #249 from smarterclayton/support_aria_feature_flag
   (openshift+bot@redhat.com)
