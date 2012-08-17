@@ -3,7 +3,7 @@
 
 Summary:   Li site components
 Name:      rhc-site
-Version: 0.97.7
+Version: 0.97.8
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -137,6 +137,14 @@ rm -rf %{buildroot}
 %{sitedir}/public
 
 %changelog
+* Fri Aug 17 2012 Adam Miller <admiller@redhat.com> 0.97.8-1
+- Merge pull request #249 from smarterclayton/support_aria_feature_flag
+  (openshift+bot@redhat.com)
+- Merge pull request #248 from fabianofranz/master (openshift+bot@redhat.com)
+- Forgot to add plan info page for disabled path (ccoleman@redhat.com)
+- Provide Aria enabled and disabled modes in production. (ccoleman@redhat.com)
+- US2592 and US2583 (ffranz@redhat.com)
+
 * Thu Aug 16 2012 Adam Miller <admiller@redhat.com> 0.97.7-1
 - Merge pull request #230 from nhr/plan_tests (openshift+bot@redhat.com)
 - US2457 - Added tests for billing components (nhr@redhat.com)
