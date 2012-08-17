@@ -1,4 +1,4 @@
-class RestPlan
+class RestPlan < StickShift::Model
   attr_accessor :id, :plan_no, :name, :capabilities
 
   def initialize(id, name, plan_no, capabilities)
