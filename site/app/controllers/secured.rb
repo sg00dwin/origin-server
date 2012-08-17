@@ -149,6 +149,18 @@ module Secured
       authenticate_user!
     end
 
+    #
+    # Controller before_filter to force a logout if the user is authenticated
+    #
+    def changing_current_user!
+      if user_signed_in?
+        redirect_to logout_path(
+          :cause => :change_account,
+          :then => url_for({:only_path => true}.merge(params))
+        )
+      end
+    end
+
 
     ##
     # Methods to manage the Streamline single sign-on (SSO) cookie.

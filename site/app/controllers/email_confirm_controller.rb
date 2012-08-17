@@ -7,6 +7,8 @@ class EmailConfirmController < SiteController
 
   layout 'simple'
 
+  before_filter :changing_current_user!
+
   def confirm_external
     registration_referrer = params[:registration_referrer]
     if registration_referrer
