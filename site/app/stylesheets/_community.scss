@@ -566,25 +566,25 @@ html.js fieldset.collapsible .fieldset-wrapper {
   }
 }
 .community .blog-post {
-	h1 {
-		font-size: 22px;
+  h1 {
+    font-size: 22px;
     line-height: 36px;
     margin-bottom: 8px;
-	}
-	> h1.blog-title {
-		font-size: 30px;
-		//font-weight:bold;
-	}
-	.blog-author-image {
-  	 img {
-    	 border: 4px solid black;
-    	 width: 40px;
-    	 height: 40px;
-    	 position: absolute;
-    	 right: 0;
-    	 top: 0;
-  	 }
-	}
+  }
+  > h1.blog-title {
+    font-size: 30px;
+    margin-right: 80px;
+  }
+  .blog-author-image {
+    img {
+      border: 4px solid black;
+      width: 65px;
+      height: 65px;
+      position: absolute;
+      right: 0;
+      bottom: 10px;
+    }
+  }
 }
 
 @media (max-width: 480px) {
