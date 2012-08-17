@@ -19,6 +19,14 @@ module Aria
   cache_method :get_supp_field_values
   cache_method :get_client_plans_basic
 
+  def self.available?(message='Aria is not available:')
+    Aria.gen_random_string
+    true
+  rescue Aria::AuthenticationError, Aria::NotAvailable => e
+    puts "#{message} (#{caller.find{ |s| not s =~ /\/lib\/aria[\.\/]/}}) #{e}"
+    false
+  end
+
   private
     def self.client
       @client ||= Aria::Client.new

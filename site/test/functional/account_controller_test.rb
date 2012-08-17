@@ -80,13 +80,14 @@ class AccountControllerTest < ActionController::TestCase
     assert assigns(:identities).present?
     assert assigns(:domain).nil?
 
-    if Aria.available?
+    if Rails.configuration.aria_enabled
       assert assigns(:plan).present?
       assert_select 'a', 'Upgrade now!'
       assert_select 'p', /FreeShift/, response.inspect
     else
       assert assigns(:plan).nil?
-      assert_select 'p', /Your plan cannot be displayed/
+      assert_select 'a', /Learn more about upcoming/
+      assert_select 'p', /FreeShift/, response.inspect
     end
   end
 

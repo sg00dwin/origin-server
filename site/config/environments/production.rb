@@ -63,6 +63,7 @@ RedHatCloud::Application.configure do
   config.sso_verify_interval = 60
 
   # Aria API information
+  config.aria_enabled = false
   config.aria_uri = "https://secure.current.stage.ariasystems.net/api/ws/api_ws_class_dispatcher.php"
   config.aria_direct_post_uri = "https://secure.current.stage.ariasystems.net/api/direct_post.php"
   config.aria_auth_key = "sRvjFqjSadu3AFB8jRAR3tqeH5Qf6XjW"
