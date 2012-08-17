@@ -2,7 +2,7 @@
 
 Summary:       Multi-tenant cloud management system node tools
 Name:          rhc-node
-Version: 0.97.4
+Version: 0.97.5
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -273,6 +273,9 @@ fi
 
 
 %changelog
+* Fri Aug 17 2012 Adam Miller <admiller@redhat.com> 0.97.5-1
+- BZ 847398: Filter out requests from local addresses. (rmillner@redhat.com)
+
 * Thu Aug 16 2012 Adam Miller <admiller@redhat.com> 0.97.4-1
 - Merge pull request #245 from rmillner/US2102 (dmcphers@redhat.com)
 - Merge pull request #244 from ramr/master (openshift+bot@redhat.com)
