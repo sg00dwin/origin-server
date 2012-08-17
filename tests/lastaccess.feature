@@ -1,5 +1,7 @@
-@runtime_extended
-@runtime_extended3
+@runtime
+#Disabled as last access script now filters local machine
+#@runtime_extended
+#@runtime_extended3
 Feature: Last Access Updater
 
   Scenario: Application Creation
