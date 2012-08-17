@@ -5,7 +5,7 @@
 %global drupal_themename    openshift-theme
 
 Name:           drupal6-%{drupal_themename}
-Version: 3.6.3
+Version: 3.6.4
 Release:        1%{?dist}
 Summary:        Red Hat Openshift theme for Drupal %{drupal_release}
 
@@ -44,6 +44,10 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
+* Fri Aug 17 2012 Adam Miller <admiller@redhat.com> 3.6.4-1
+- US2592 and US2583 (ffranz@redhat.com)
+- BZ846514 fixed (ffranz@redhat.com)
+
 * Tue Aug 14 2012 Adam Miller <admiller@redhat.com> 3.6.3-1
 - Make sure individual videos have the left nav.  Add SEO to pages.
   (ccoleman@redhat.com)
