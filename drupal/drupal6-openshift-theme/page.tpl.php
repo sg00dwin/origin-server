@@ -219,9 +219,9 @@
               </header>
               <ul class="unstyled">
                 <li><a href="/community/open-source">Open Source</a></li>
-                <li><a href="/app/opensource/download">Get the Bits</a></li>
                 <li><a href="/community/developers/get-involved">Make it Better</a></li>
                 <li><a href="https://github.com/openshift">OpenShift on GitHub</a></li>
+                <li><a href="http://makara.nurturehq.com/makara/newsletter_signup.html">Newsletter sign up</a></li>
               </ul>
             </nav>
             <nav class="span3">
