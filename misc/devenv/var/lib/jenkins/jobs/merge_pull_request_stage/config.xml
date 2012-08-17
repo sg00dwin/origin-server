@@ -86,10 +86,9 @@ pushd li
     set +x
     echo &quot;
 
-*****Patching Pull Request: https://github.com/openshift/li/pull/$LI_PULL_ID&quot;
-    SECRET=`cat ~/.config/secret`
-    curl --basic -u &quot;openshift-bot:$SECRET&quot; https://github.com/openshift/li/pull/$LI_PULL_ID.patch | git am
+*****Locally Merging Pull Request: https://github.com/openshift/li/pull/$LI_PULL_ID&quot;
     set -x
+    test_pull_requests --local_merge_pull_request $LI_PULL_ID --repo li
   fi
 popd
 
@@ -101,9 +100,9 @@ pushd crankcase
     set +x
     echo &quot;
 
-*****Patching Pull Request: https://github.com/openshift/crankcase/pull/$CRANKCASE_PULL_ID&quot;
+*****Locally Merging Pull Request: https://github.com/openshift/crankcase/pull/$CRANKCASE_PULL_ID&quot;
     set -x
-    curl https://github.com/openshift/crankcase/pull/$CRANKCASE_PULL_ID.patch | git am
+    test_pull_requests --local_merge_pull_request $CRANKCASE_PULL_ID --repo crankcase
   fi
 popd
 
@@ -115,9 +114,9 @@ pushd rhc
     set +x
     echo &quot;
 
-*****Patching Pull Request: https://github.com/openshift/rhc/pull/$RHC_PULL_ID&quot;
+*****Locally Merging Pull Request: https://github.com/openshift/rhc/pull/$RHC_PULL_ID&quot;
     set -x
-    curl https://github.com/openshift/rhc/pull/$RHC_PULL_ID.patch | git am
+    test_pull_requests --local_merge_pull_request $RHC_PULL_ID --repo rhc
   fi
 popd
 
@@ -128,7 +127,7 @@ echo &quot;
 set -x
 
 pushd li
-  build/devenv build merge_pull_request ${BUILD_NUMBER} --terminate --install_from_local_source --instance_type m1.large --use_stage_repo
+  build/devenv build merge_pull_request_stage ${BUILD_NUMBER} --terminate --install_from_local_source --instance_type m1.large --use_stage_repo
 popd
 
 # Make sure all the pull requests will merge cleanly

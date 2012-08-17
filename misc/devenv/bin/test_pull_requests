@@ -22,7 +22,7 @@ require 'time'
 
 def usage
     puts <<USAGE
-Usage: test_pull_requests [--help] [--merge_pull_request <pull_id>] [--test_pull_request <pull_id>] [--repo <repo>]
+Usage: test_pull_requests [--help] [--merge_pull_request <pull_id>] [--local_merge_pull_request <pull_id>] [--test_pull_request <pull_id>] [--repo <repo>]
 
 This will process all the openshift pull requests and submit
 Jenkins tests for any mergeable pull requests
@@ -32,6 +32,8 @@ Options:
     Show Usage info
 --merge_pull_request <pull_id>
     Takes the id of the pull request to merge and merges into master
+--local_merge_pull_request <pull_id>
+    Takes the id of the pull request to merge and locally merges into master
 --test_merge_pull_request <pull_id>
     Takes the id of the pull request to merge and makes sure the merge will succeed before actually merging
 --repo <repo>
@@ -42,6 +44,7 @@ end
 opts = GetoptLong.new(
     ["--help",               "-h", GetoptLong::NO_ARGUMENT],
     ["--merge_pull_request",       GetoptLong::REQUIRED_ARGUMENT],
+    ["--local_merge_pull_request", GetoptLong::REQUIRED_ARGUMENT],
     ["--test_merge_pull_request",  GetoptLong::REQUIRED_ARGUMENT],
     ["--repo",                     GetoptLong::REQUIRED_ARGUMENT]
 )
@@ -60,6 +63,7 @@ if args[:help]
 end
 
 merge_pull_id = args[:merge_pull_request]
+local_merge_pull_id = args[:local_merge_pull_request]
 test_merge_pull_id = args[:test_merge_pull_request]
 pull_id_repo = args[:repo]
 
@@ -85,9 +89,13 @@ TEST_SETTINGS = {
   :queued_regex => /^Test Results: Waiting: You are in the build queue at position: \d+/,
   :allow_multiple => true,
   :branches => { 'stage'   => {:jenkins_project_name => "test_pull_requests_stage",
-                               :downstream_job => "libra_ami_stage"},
+                               :downstream_job => "libra_ami_stage",
+                               :build_dir => "/var/lib/jenkins/jobs/test_pull_requests_stage/builds",
+                               :build_num_regex => /https:\/\/ci\.dev\.openshift\.redhat\.com\/jenkins\/job\/test_pull_requests_stage\/(\d+)/},
                  'master'  => {:jenkins_project_name => "test_pull_requests",
-                               :downstream_job => "libra_ami"} },
+                               :downstream_job => "libra_ami",
+                               :build_dir => "/var/lib/jenkins/jobs/test_pull_requests/builds",
+                               :build_num_regex => /https:\/\/ci\.dev\.openshift\.redhat\.com\/jenkins\/job\/test_pull_requests\/(\d+)/} },
   :repo_to_teams => {
     'li' => ["168397", "175254", "202863"], # Team Red Hat, crankcase, site
     'crankcase' => ["168397", "175254"], # Team Red Hat, crankcase
@@ -110,9 +118,15 @@ MERGE_TEST_SETTINGS = {
   :queued_regex => /^Merge Test Results: Waiting: You are in the build queue at position: \d+/,
   :allow_multiple => false,
   :branches => { 'stage'   => {:jenkins_project_name => "merge_pull_request_stage",
-                               :downstream_job => "libra_ami_stage"},
+                               :downstream_job => "libra_ami_stage",
+                               :ami_base_name => "devenv-stage",
+                               :build_dir => "/var/lib/jenkins/jobs/merge_pull_request_stage/builds",
+                               :build_num_regex => /https:\/\/ci\.dev\.openshift\.redhat\.com\/jenkins\/job\/merge_pull_request_stage\/(\d+)/},
                  'master'  => {:jenkins_project_name => "merge_pull_request",
-                               :downstream_job => "libra_ami"} },
+                               :downstream_job => "libra_ami",
+                               :ami_base_name => "devenv",
+                               :build_dir => "/var/lib/jenkins/jobs/merge_pull_request/builds",
+                               :build_num_regex => /https:\/\/ci\.dev\.openshift\.redhat\.com\/jenkins\/job\/merge_pull_request\/(\d+)/} },
   :repo_to_teams => {
     'li' => ["175254", "202863"], # Team crankcase, site
     'crankcase' => ["175254"], # Team crankcase
@@ -276,9 +290,18 @@ module Hub
     
     def merge_pull_request(pull_id, repo, settings)
       $stderr.puts "Merging pull request ##{pull_id} for repo '#{repo}'"
-      bot_comment = test_merge_pull_request(pull_id, repo, settings)
-      build_url = settings[:running_regex].match(bot_comment['body'])[1] 
-      update_comment(bot_comment['id'], repo, "#{settings[:test_prefix]} SUCCESS (#{build_url})")
+      pull_request, bot_comment = test_merge_pull_request(pull_id, repo, settings)
+      build_url = settings[:running_regex].match(bot_comment['body'])[1]
+      build_num = settings[:branches][pull_request['base']['ref']][:build_num_regex].match(build_url)[1]
+      build_log = "#{settings[:branches][pull_request['base']['ref']][:build_dir]}/#{build_num}/log"
+      ami_num = nil
+      grep_out = `grep "#{settings[:branches][pull_request['base']['ref']][:downstream_job]} #.*" #{build_log}`
+      if !grep_out.empty? && grep_out =~ /#{settings[:branches][pull_request['base']['ref']][:downstream_job]} #(\d+)/
+        ami_num = $1
+      end
+
+      comment = "#{settings[:test_prefix]} SUCCESS (#{build_url})\nAMI: #{settings[:branches][pull_request['base']['ref']][:ami_base_name]}_#{ami_num}"
+      update_comment(bot_comment['id'], repo, comment)
       params = { :commit_message => "Merged by openshift-bot" }
       res = put "https://api.github.com/repos/#{OPENSHIFT_USER}/#{repo}/pulls/#{pull_id}/merge", params
       res.error! unless res.success?
@@ -302,7 +325,30 @@ module Hub
         $stderr.puts "Updated at: #{pull_request_updated_at}"
         raise "Pull request was updated after testing started!"
       end
-      bot_comment
+      return pull_request, bot_comment
+    end
+    
+    def local_merge_pull_request(pull_id, repo)
+      $stderr.puts "Local merging pull request ##{pull_id} for repo '#{repo}'"
+      pull_request = get_pull_request(pull_id, repo)
+      mergeable = pull_request['mergeable']
+      # This call isn't reliable so make sure
+      mergeable = is_mergeable?(pull_id, repo, 2) unless mergeable
+      raise "Pull request isn't mergeable!" unless mergeable
+      merge_command = %{
+set -e
+pushd #{repo}
+  git checkout #{pull_request['base']['ref']}
+  git checkout -b #{pull_request['head']['ref']}_#{pull_request['user']['login']}
+  git pull #{pull_request['head']['repo']['ssh_url']} #{pull_request['head']['ref']}
+  git checkout #{pull_request['base']['ref']}
+  git merge #{pull_request['head']['ref']}_#{pull_request['user']['login']}
+popd
+}
+      output = `#{merge_command}`
+      exit_code = $?
+      puts output
+      exit exit_code if exit_code != 0
     end
 
     def put url, params = nil
@@ -912,6 +958,8 @@ $submitted_tests = {}
 
 if merge_pull_id
   @api_client.merge_pull_request(merge_pull_id, pull_id_repo, MERGE_TEST_SETTINGS)
+elsif local_merge_pull_id
+  @api_client.local_merge_pull_request(local_merge_pull_id, pull_id_repo)
 elsif test_merge_pull_id
   @api_client.test_merge_pull_request(test_merge_pull_id, pull_id_repo, MERGE_TEST_SETTINGS)
 else

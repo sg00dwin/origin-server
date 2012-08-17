@@ -55,10 +55,9 @@ pushd li
     set +x
     echo &quot;
 
-*****Patching Pull Request: https://github.com/openshift/li/pull/$LI_PULL_ID&quot;
-    SECRET=`cat ~/.config/secret`
-    curl --basic -u &quot;openshift-bot:$SECRET&quot; https://github.com/openshift/li/pull/$LI_PULL_ID.patch | git am
+*****Locally Merging Pull Request: https://github.com/openshift/li/pull/$LI_PULL_ID&quot;
     set -x
+    test_pull_requests --local_merge_pull_request $LI_PULL_ID --repo li
   fi
 popd
 
@@ -68,9 +67,9 @@ pushd crankcase
     set +x
     echo &quot;
 
-*****Patching Pull Request: https://github.com/openshift/crankcase/pull/$CRANKCASE_PULL_ID&quot;
+*****Locally Merging Pull Request: https://github.com/openshift/crankcase/pull/$CRANKCASE_PULL_ID&quot;
     set -x
-    curl https://github.com/openshift/crankcase/pull/$CRANKCASE_PULL_ID.patch | git am
+    test_pull_requests --local_merge_pull_request $CRANKCASE_PULL_ID --repo crankcase
   fi
 popd
 
@@ -80,9 +79,9 @@ pushd rhc
     set +x
     echo &quot;
 
-*****Patching Pull Request: https://github.com/openshift/rhc/pull/$RHC_PULL_ID&quot;
+*****Locally Merging Pull Request: https://github.com/openshift/rhc/pull/$RHC_PULL_ID&quot;
     set -x
-    curl https://github.com/openshift/rhc/pull/$RHC_PULL_ID.patch | git am
+    test_pull_requests --local_merge_pull_request $RHC_PULL_ID --repo rhc
   fi
 popd
 
@@ -99,15 +98,7 @@ build/devenv sync test_pull_requests_stage_${BUILD_NUMBER} --tag --clean_metadat
 
 # Run the tests
 build/devenv test test_pull_requests_stage_${BUILD_NUMBER} --terminate
-popd
-
-RESULT=$?</command>
-    </hudson.tasks.Shell>
-    <hudson.tasks.Shell>
-      <command>#!/bin/sh -e
-SECRET=`sed &apos;s/[][\.*^$/]/\\\\&amp;/g&apos; &lt;~/.config/secret`
-sed -i &quot;s/$SECRET/BLOCKED/g&quot; ../builds/$BUILD_NUMBER/log
-exit $RESULT</command>
+popd</command>
     </hudson.tasks.Shell>
   </builders>
   <publishers>
