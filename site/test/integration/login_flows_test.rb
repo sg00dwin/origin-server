@@ -97,7 +97,7 @@ class LoginFlowsTest < ActionDispatch::IntegrationTest
 
       get '/'
       assert_response :success
-      assert_select 'a', :text => /sign in to manage your apps/i
+      assert_select 'a', :text => /sign in/i
       assert !@controller.previously_logged_in?
 
       get new_account_path
@@ -147,7 +147,7 @@ class LoginFlowsTest < ActionDispatch::IntegrationTest
       assert_redirected_to root_path
 
       follow_redirect!
-      assert_select 'a', :text => /sign in to manage your apps/i
+      assert_select 'a', :text => /sign in/i
       assert @controller.previously_logged_in?
     end
   end
