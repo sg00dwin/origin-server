@@ -153,9 +153,8 @@ ACTION_NOT_MERGE            = "#{ACTION_PREFIX} Pull request cannot be automatic
 ACTION_NOT_TEAM             = "#{ACTION_PREFIX} Please contact #openshift-dev to have this pull request manually reviewed and tested"
 ACTION_UNSUPPORTED_BRANCH   = "#{ACTION_PREFIX} Only pull request(s) from #{BRANCHES.keys.pretty_inspect.chomp} are handled by the openshift-bot"
 
-EVALUATED_MARKER_REGEX = /^\[Evaluated\]/i
-EVALUATED_MARKER_WITH_SHA_REGEX = /^\[Evaluated\] up to (.*)/
-EVALUATED_MARKER = "[Evaluated]"
+EVALUATED_MARKER = "Evaluated up to %s"
+EVALUATED_MARKER_REGEX = /^Evaluated up to (.*)/
 
 # Dynamically extend GitHubAPI to add methods that don't
 # require a local git project
@@ -480,7 +479,7 @@ popd
         if pull_request_changed_after_eval || pull_request_evaluated_time < trigger_updated_at
           commits = get_commits(pull_request['number'], repo)
           # Add a new evaluated marker
-          add_comment(pull_request['number'], repo, "#{EVALUATED_MARKER} up to #{commits.last['sha']}")
+          add_comment(pull_request['number'], repo, (EVALUATED_MARKER % commits.last['sha']))
           # Delete the old evaluated markers
           pull_request_comments.each do |comment|
             if comment['user']['login'] == 'openshift-bot' && comment['body'] =~ EVALUATED_MARKER_REGEX 
@@ -496,7 +495,7 @@ popd
       comments = sort_comments(comments)
       previous_sha = nil
       comments.each do |comment|
-        if comment['user']['login'] == 'openshift-bot' && comment['body'] =~ EVALUATED_MARKER_WITH_SHA_REGEX
+        if comment['user']['login'] == 'openshift-bot' && comment['body'] =~ EVALUATED_MARKER_REGEX
           previous_sha = $1
         end
       end
