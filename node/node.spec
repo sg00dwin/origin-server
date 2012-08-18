@@ -110,18 +110,14 @@ rm -rf $RPM_BUILD_ROOT
 cp -f /etc/stickshift/stickshift-node.conf.libra /etc/stickshift/stickshift-node.conf
 restorecon /var/lib/stickshift/stickshift-node.conf || :
 
-# mount all desired cgroups under a single root
-perl -p -i -e 's:/cgroup/[^\s]+;:/cgroup/all;:; /blkio|cpuset|devices/ && ($_ = "#$_")' /etc/cgconfig.conf
-/sbin/restorecon /etc/cgconfig.conf || :
-# only restart if it's on
-/sbin/chkconfig cgconfig && /sbin/service cgconfig restart >/dev/null 2>&1 || :
-/sbin/chkconfig oddjobd on
-/sbin/service messagebus restart
-/sbin/service oddjobd restart
+echo "/usr/bin/trap-user" >> /etc/shells
+
 /sbin/chkconfig --add libra || :
 /sbin/chkconfig --add libra-data || :
 /sbin/chkconfig --add libra-cgroups || :
 /sbin/chkconfig --add libra-tc || :
+/sbin/chkconfig --add libra-watchman || :
+
 #/sbin/service mcollective restart > /dev/null 2>&1 || :
 /sbin/restorecon /etc/init.d/libra || :
 /sbin/restorecon /var/lib/stickshift || :
@@ -129,18 +125,38 @@ perl -p -i -e 's:/cgroup/[^\s]+;:/cgroup/all;:; /blkio|cpuset|devices/ && ($_ = 
 /sbin/restorecon /usr/bin/rhc-cgroup-read || :
 /sbin/restorecon /var/lib/stickshift/.httpd.d/ || :
 /sbin/restorecon -r /sandbox
-/usr/bin/rhc-restorecon || :
-# only enable if cgconfig is
-chkconfig cgconfig && /sbin/service libra-cgroups start > /dev/null 2>&1 || :
-# only enable if cgconfig is
-chkconfig cgconfig && /sbin/service libra-tc start > /dev/null 2>&1 || :
-/sbin/service libra-data start > /dev/null 2>&1 || :
-echo "/usr/bin/trap-user" >> /etc/shells
 /sbin/restorecon /etc/init.d/libra || :
 /sbin/restorecon /etc/init.d/mcollective || :
 /sbin/restorecon /usr/bin/rhc-restorer* || :
+
+# Only bounce cgroups if not already initialized
+# CAVEAT: if the policy is changed, must run these by hand (release ticket)
+if [ ! -e /cgroup/all/libra/cgroup.event_control ]
+then
+    # mount all desired cgroups under a single root
+    perl -p -i -e 's:/cgroup/[^\s]+;:/cgroup/all;:; /blkio|cpuset|devices/ && ($_ = "#$_")' /etc/cgconfig.conf
+    /sbin/restorecon /etc/cgconfig.conf || :
+    # only restart if it's on
+    /sbin/chkconfig cgconfig && /sbin/service cgconfig restart >/dev/null 2>&1 || :
+    # only enable if cgconfig is
+    chkconfig cgconfig && /sbin/service libra-cgroups start > /dev/null 2>&1 || :
+fi
+
+# Only bounce tc if its not already initialized
+# CAVEAT: if the policy is changed, must run these by hand (release ticket)
+if ! ( tc qdisc show | grep -q 'qdisc htb 1: dev' )
+then
+    # only enable if cgconfig is
+    chkconfig cgconfig && /sbin/service libra-tc start > /dev/null 2>&1 || :
+fi
+
+/sbin/chkconfig oddjobd on
+/sbin/service messagebus restart
+/sbin/service oddjobd restart
+# /usr/bin/rhc-restorecon || :    # Takes too long and shouldn't be needded
+/sbin/service libra-data start > /dev/null 2>&1 || :
 [ $(/usr/sbin/semanage node -l | /bin/grep -c 255.255.255.128) -lt 1000 ] && /usr/bin/rhc-ip-prep.sh || :
-/sbin/chkconfig --add libra-watchman || :
+
 # Ensure the default users have a more restricted shell then normal.
 #semanage login -m -s guest_u __default__ || :
 
