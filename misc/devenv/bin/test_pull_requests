@@ -89,13 +89,9 @@ TEST_SETTINGS = {
   :queued_regex => /^Test Results: Waiting: You are in the build queue at position: \d+/,
   :allow_multiple => true,
   :branches => { 'stage'   => {:jenkins_project_name => "test_pull_requests_stage",
-                               :downstream_job => "libra_ami_stage",
-                               :build_dir => "/var/lib/jenkins/jobs/test_pull_requests_stage/builds",
-                               :build_num_regex => /https:\/\/ci\.dev\.openshift\.redhat\.com\/jenkins\/job\/test_pull_requests_stage\/(\d+)/},
+                               :downstream_job => "libra_ami_stage"},
                  'master'  => {:jenkins_project_name => "test_pull_requests",
-                               :downstream_job => "libra_ami",
-                               :build_dir => "/var/lib/jenkins/jobs/test_pull_requests/builds",
-                               :build_num_regex => /https:\/\/ci\.dev\.openshift\.redhat\.com\/jenkins\/job\/test_pull_requests\/(\d+)/} },
+                               :downstream_job => "libra_ami"} },
   :repo_to_teams => {
     'li' => ["168397", "175254", "202863"], # Team Red Hat, crankcase, site
     'crankcase' => ["168397", "175254"], # Team Red Hat, crankcase
@@ -119,14 +115,10 @@ MERGE_TEST_SETTINGS = {
   :allow_multiple => false,
   :branches => { 'stage'   => {:jenkins_project_name => "merge_pull_request_stage",
                                :downstream_job => "libra_ami_stage",
-                               :ami_base_name => "devenv-stage",
-                               :build_dir => "/var/lib/jenkins/jobs/merge_pull_request_stage/builds",
-                               :build_num_regex => /https:\/\/ci\.dev\.openshift\.redhat\.com\/jenkins\/job\/merge_pull_request_stage\/(\d+)/},
+                               :ami_base_name => "devenv-stage"},
                  'master'  => {:jenkins_project_name => "merge_pull_request",
                                :downstream_job => "libra_ami",
-                               :ami_base_name => "devenv",
-                               :build_dir => "/var/lib/jenkins/jobs/merge_pull_request/builds",
-                               :build_num_regex => /https:\/\/ci\.dev\.openshift\.redhat\.com\/jenkins\/job\/merge_pull_request\/(\d+)/} },
+                               :ami_base_name => "devenv"} },
   :repo_to_teams => {
     'li' => ["175254", "202863"], # Team crankcase, site
     'crankcase' => ["175254"], # Team crankcase
@@ -292,16 +284,15 @@ module Hub
       $stderr.puts "Merging pull request ##{pull_id} for repo '#{repo}'"
       pull_request, bot_comment = test_merge_pull_request(pull_id, repo, settings)
       build_url = settings[:running_regex].match(bot_comment['body'])[1]
-      build_num = settings[:branches][pull_request['base']['ref']][:build_num_regex].match(build_url)[1]
-      build_log = "#{settings[:branches][pull_request['base']['ref']][:build_dir]}/#{build_num}/log"
-      ami_num = nil
-      grep_out = `grep "#{settings[:branches][pull_request['base']['ref']][:downstream_job]} #.*" #{build_log}`
-      if !grep_out.empty? && grep_out =~ /#{settings[:branches][pull_request['base']['ref']][:downstream_job]} #(\d+)/
-        ami_num = $1
+
+      ami = "unknown"
+      begin
+        ami = "#{settings[:branches][pull_request['base']['ref']][:ami_base_name]}_#{JenkinsAPI.get_next_build(pull_request['base']['ref'], settings)}"
+      rescue Exception => e
+        $stderr.puts e.message
       end
 
-      comment = "#{settings[:test_prefix]} SUCCESS (#{build_url})\nAMI: #{settings[:branches][pull_request['base']['ref']][:ami_base_name]}_#{ami_num}"
-      update_comment(bot_comment['id'], repo, comment)
+      update_comment(bot_comment['id'], repo, "#{settings[:test_prefix]} SUCCESS (#{build_url})\nAMI: #{ami}")
       params = { :commit_message => "Merged by openshift-bot" }
       res = put "https://api.github.com/repos/#{OPENSHIFT_USER}/#{repo}/pulls/#{pull_id}/merge", params
       res.error! unless res.success?
@@ -331,10 +322,6 @@ module Hub
     def local_merge_pull_request(pull_id, repo)
       $stderr.puts "Local merging pull request ##{pull_id} for repo '#{repo}'"
       pull_request = get_pull_request(pull_id, repo)
-      mergeable = pull_request['mergeable']
-      # This call isn't reliable so make sure
-      mergeable = is_mergeable?(pull_id, repo, 2) unless mergeable
-      raise "Pull request isn't mergeable!" unless mergeable
       merge_command = %{
 set -e
 pushd #{repo}

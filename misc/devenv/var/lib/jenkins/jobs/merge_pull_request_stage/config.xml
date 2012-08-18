@@ -1,7 +1,7 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <project>
   <actions/>
-  <description>Merge a pull request after tests have passes in serial</description>
+  <description>Merge a stage pull request after tests have passed in serial</description>
   <logRotator>
     <daysToKeep>10</daysToKeep>
     <numToKeep>50</numToKeep>
