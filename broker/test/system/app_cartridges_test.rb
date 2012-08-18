@@ -114,12 +114,6 @@ class AppCartridgesTest < ActionDispatch::IntegrationTest
     request_via_redirect(:post, APP_COLLECTION_URL_FORMAT % [ns], {:name => "appscale", :cartridge => "php-5.3", :scale => true}, @headers)
     assert_response :created
 
-    # embed a cartridge that is not allowed for scalable applications
-    request_via_redirect(:post, APP_CARTRIDGES_URL_FORMAT % [ns, "appscale"], {:name => "postgresql-8.4"}, @headers)
-    assert_response :unprocessable_entity
-    body = JSON.parse(@response.body)
-    assert_equal(body["messages"][0]["exit_code"], 108)
-
     # create a non-scalable application
     request_via_redirect(:post, APP_COLLECTION_URL_FORMAT % [ns], {:name => "appnoscale", :cartridge => "php-5.3"}, @headers)
     assert_response :created
