@@ -12,6 +12,8 @@
 # processname:  NA
 #
 
+# CAVEAT: if the policy is changed, must run these by hand (release ticket)
+
 # source function library
 . /etc/rc.d/init.d/functions
 
