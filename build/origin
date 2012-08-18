@@ -219,7 +219,7 @@ module Origin
           out, ret = ssh(hostname, "cd /data/crankcase/build && rake devbroker", 60 * 20, true, 1, "ec2-user") if ret == 0
           out, ret = ssh(hostname, "su -c \"cd /data && chown -R ec2-user:ec2-user *\"", 60 * 2, true, 1, "ec2-user") if ret == 0
           puts "Running ss-setup-broker script with the full path..."
-          out, ret = ssh(hostname, "su -c \"/usr/bin/ss-setup-broker\"", 60 * 10, true, 1, "ec2-user") if ret == 0
+          out, ret = ssh(hostname, "su -c \"export PATH=/usr/local/bin:/bin:/usr/bin:/usr/local/sbin:/usr/sbin:/sbin:$PATH && /usr/bin/ss-setup-broker\"", 60 * 10, true, 1, "ec2-user") if ret == 0
       
           if ret != 0
             puts "Exiting with error code #{ret}"

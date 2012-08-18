@@ -4,6 +4,7 @@ $: << File.expand_path(File.dirname(__FILE__))
 
 require 'rubygems'
 require 'thor'
+require 'express_constants'
 require 'lib/openshift'
 
 class Release < Thor
