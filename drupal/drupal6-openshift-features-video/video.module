@@ -1,22 +1,3 @@
 <?php
 
-function video_menu() {
-  $items['videos'] = array(
-    'page callback' => redhat_videos_page,
-    'access callback' => TRUE,
-    'type' => MENU_NORMAL_ITEM,
-  );
-
-  return $items;
-}
-
-function redhat_videos_page(){
-  if (geoip_country_code() == 'CN'){  
-    $content .= views_embed_view('nodes_by_category', 'page_5');
-  } else {
-    $content .= views_embed_view('nodes_by_category', 'page_2');
-  }
-  return $content;
-}
-
 include_once('video.features.inc');

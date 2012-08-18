@@ -236,6 +236,11 @@ function user_profile_context_default_contexts() {
         'node_form' => '1',
       ),
     ),
+    'views' => array(
+      'values' => array(
+        'nodes_by_category:page_5' => 'nodes_by_category:page_5',
+      ),
+    ),
   );
   $context->reactions = array(
     'menu' => 'videos',
