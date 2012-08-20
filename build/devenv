@@ -24,34 +24,142 @@ module Express
       get_sync_dirs
     end
   
-    desc "watch", "Watch for changes to your source directory and copy them to the remote image.  Will look for ~/.openshiftdev/watch.lua for an override configuration.  Not a full replacement for 'sync' - intended to speed Rails development. Requires the lsyncd package installed."
+    desc "watch", "Watch for changes to your source directory with the 'listen' gem and copy them to the remote image. Not a full replacement for 'sync' - intended to speed Rails development."
     method_option :verbose, :type => :boolean, :desc => "Enable verbose logging"
     def watch
-      raise Thor::Error, "You must install lsyncd ('sudo yum install lsyncd') in order to run the 'watch' command" if not run "which lsyncd > /dev/null", :verbose => false
-      options.verbose? ? @@log.level = Logger::DEBUG : @@log.level = Logger::ERROR
-  
       config = File.join ENV['HOME'], '.openshiftdev/watch.lua'
       if File.exists? config
-        say "Using your custom sync config '#{config}'"
-      else
-        say "Creating the default sync config"
-        template = IO.read(repo_path('build/watch_default.lua')).gsub('{LOCAL_DIR}', "#{repo_path}")
-        if options.verbose?
-          puts "Lsyncd template"
-          puts "----------"
-          puts template
-          puts "----------"
-        end
-        Tempfile.open('lsynctemplate') { |f| f.puts template; config = f.path }
+        say "You have #{config}, which was used for an old mechanism which relied on lsyncd to check for local file changes. It is no longer used. Please remove it."
       end
-  
-      # Rsync cannot set owner or group, so we should inherit
-      ssh("verifier", "find /var/www/stickshift -type d | xargs chmod g+s", 1800)
-      ssh("verifier", "find /usr/lib/ruby/site_ruby -type d | xargs chmod g+s", 1800)
-  
-      say "Watching your development directories, hit CTRL+C to stop"
-      run "lsyncd #{options.verbose? ? '-log all' : ''} #{config}"
+      
+      @rsync_default_opts = ['-vuzt', '--chmod=ug+rwX']
+    
+      @source_dir_for = {
+        # The trailing slash is important in order to avoid creating an
+        # additional directory
+        :rails  => File.join('site', '/'),
+        :rpm    => File.join('server-common', '/'),
+        :drupal => File.join('misc', 'devenv', 'etc', 'drupal6', '/'),
+        :httpd  => File.join('misc', 'devenv', 'etc', 'httpd', '/'),
+        # Drupal modules
+        :'custom_forms'                    => File.join('drupal', 'drupal6-openshift-custom_forms'                   , '/'),
+        :'features-blogs'                  => File.join('drupal', 'drupal6-openshift-features-blogs'                 , '/'),
+        :'features-community_wiki'         => File.join('drupal', 'drupal6-openshift-features-community_wiki'        , '/'),
+        :'features-forums'                 => File.join('drupal', 'drupal6-openshift-features-forums'                , '/'),
+        :'features-front_page'             => File.join('drupal', 'drupal6-openshift-features-front_page'            , '/'),
+        :'features-global_settings'        => File.join('drupal', 'drupal6-openshift-features-global_settings'       , '/'),
+        :'features-recent_activity_report' => File.join('drupal', 'drupal6-openshift-features-recent_activity_report', '/'),
+        :'features-reporting_csv_views'    => File.join('drupal', 'drupal6-openshift-features-reporting_csv_views'   , '/'),
+        :'features-rules_by_category'      => File.join('drupal', 'drupal6-openshift-features-rules_by_category'     , '/'),
+        :'features-user_profile'           => File.join('drupal', 'drupal6-openshift-features-user_profile'          , '/'),
+        :'features-video'                  => File.join('drupal', 'drupal6-openshift-features-video'                 , '/'),
+        :'modals'                          => File.join('drupal', 'drupal6-openshift-modals'                         , '/'),
+        :'og_comment_perms'                => File.join('drupal', 'drupal6-openshift-og_comment_perms'               , '/'),
+        :'redhat_acquia'                   => File.join('drupal', 'drupal6-openshift-redhat_acquia'                  , '/'),
+        :'redhat_frontpage'                => File.join('drupal', 'drupal6-openshift-redhat_frontpage'               , '/'),
+        :'redhat_events'                   => File.join('drupal', 'drupal6-openshift-redhat_events'                  , '/'),
+        :'redhat_ideas'                    => File.join('drupal', 'drupal6-openshift-redhat_ideas'                   , '/'),
+        :'redhat_sso'                      => File.join('drupal', 'drupal6-openshift-redhat_sso'                     , '/'),
+        :'theme'                           => File.join('drupal', 'drupal6-openshift-theme'                          , '/'),
+      }
+    
+      @target_dir_for = {
+        :rails  => '/var/www/stickshift/site',
+        :rpm    => '/usr/lib/ruby/site_ruby/1.8',
+        :drupal => '/etc/drupal6',
+        :httpd  => '/etc/httpd',
+        # Drupal modules
+        :'custom_forms'                    => '/etc/drupal6/all/modules/custom/custom_forms',
+        :'features-blogs'                  => '/etc/drupal6/all/modules/features/blogs',
+        :'features-community_wiki'         => '/etc/drupal6/all/modules/features/community_wiki',
+        :'features-forums'                 => '/etc/drupal6/all/modules/features/forums',
+        :'features-front_page'             => '/etc/drupal6/all/modules/features/front_page',
+        :'features-global_settings'        => '/etc/drupal6/all/modules/features/global_settings',
+        :'features-recent_activity_report' => '/etc/drupal6/all/modules/features/recent_activity_report',
+        :'features-reporting_csv_views'    => '/etc/drupal6/all/modules/features/reporting_csv_views',
+        :'features-rules_by_category'      => '/etc/drupal6/all/modules/features/rules_by_category',
+        :'features-user_profile'           => '/etc/drupal6/all/modules/features/user_profile',
+        :'features-video'                  => '/etc/drupal6/all/modules/features/video',
+        :'modals'                          => '/etc/drupal6/all/modules/custom/modals',
+        :'og_comment_perms'                => '/etc/drupal6/all/modules/custom/og_comment_perms',
+        :'redhat_acquia'                   => '/etc/drupal6/all/modules/custom/redhat_acquia',
+        :'redhat_frontpage'                => '/etc/drupal6/all/modules/custom/redhat_frontpage',
+        :'redhat_events'                   => '/etc/drupal6/all/modules/custom/redhat_events',
+        :'redhat_ideas'                    => '/etc/drupal6/all/modules/custom/redhat_ideas',
+        :'redhat_sso'                      => '/etc/drupal6/all/modules/custom/redhat_sso',
+        :'theme'                           => '/etc/drupal6/all/themes/openshift-theme',
+      }
+        
+      @ignore_for = {
+        :rails => ['log', 'tmp', 'httpd'],
+        :rpm   => ['*.spec'],
+      }
+    
+      @latency_for = {
+        :rails => 0.2,
+        :rpm => 0.2,
+      }
+    
+      @rsync_target_host = 'verifier'
+    
+      begin
+        require 'listen'
+        if options.verbose?
+          say "Using 'listen' gem"
+        end
+        watch_with_listen(options.verbose?)
+      rescue LoadError
+        warn "'listen' gem is required for the 'watch' function."
+      end
     end
+  
+    private
+    def watch_with_listen(verbose = false)
+      # Rsync cannot set owner or group, so we should inherit
+      set_sticky_bits_for '/var/www/stickshift'
+      set_sticky_bits_for '/usr/lib/ruby/site_ruby'
+
+      [:rails, :rpm, :drupal, :httpd].each do |component|
+        start_listener_for component
+      end
+    
+      # gather drupal modules here for organizational purposes
+      [:'custom_forms', :'features-blogs', :'features-community_wiki',
+        :'features-forums', :'features-front_page', :'features-global_settings',
+        :'features-recent_activity_report', :'features-reporting_csv_views',
+        :'features-rules_by_category', :'features-user_profile', :'features-video',
+        :'modals', :'og_comment_perms', :'redhat_acquia', :'redhat_frontpage',
+        :'redhat_events', :'redhat_ideas', :'redhat_sso', :'theme'].each do |drupal_module|
+          start_listener_for drupal_module
+      end
+    
+      sleep
+    end
+  
+    def start_listener_for(component)
+      Dir.chdir(File.join(File.dirname(__FILE__), '..'))
+      Listen.to(@source_dir_for[component],
+        :latency => @latency_for[component]).
+        change(&(callback_for component, @ignore_for[component])).start(false)
+    end
+  
+    def callback_for(component, exclude = nil)
+      unless @source_dir_for[component]
+        warn "#{@source_dir_for[component]} does not contain key #{component}"
+        return
+      end
+    
+      Proc.new do |modified, added, removed|
+        Dir.chdir(File.join(File.dirname(__FILE__), '..'))
+        run ['rsync', '-r', @rsync_default_opts, exclude ? exclude.map {|dir| "--exclude=#{dir}" } : nil, @source_dir_for[component], @rsync_target_host + ':' + @target_dir_for[component]].join(" ")
+      end
+    end
+  
+    def set_sticky_bits_for(dir, timeout = 1800)
+      ssh @rsync_target_host, "find #{dir} -type d | xargs chmod g+s", timeout
+    end
+  
+    public
     
     desc "print_packages", "Print a space separated list of packages"
     def print_packages
