@@ -5,7 +5,7 @@
 %global drupal_themename    openshift-theme
 
 Name:           drupal6-%{drupal_themename}
-Version: 3.6.4
+Version: 3.6.5
 Release:        1%{?dist}
 Summary:        Red Hat Openshift theme for Drupal %{drupal_release}
 
@@ -44,6 +44,14 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
+* Mon Aug 20 2012 Adam Miller <admiller@redhat.com> 3.6.5-1
+- Merge pull request #251 from smarterclayton/header_and_footer_updates
+  (openshift+bot@redhat.com)
+- Tests were looking for old link name.  Moved newsletter into footer.
+  (ccoleman@redhat.com)
+- Update header and footer to fix doc links, and begin simplification of the
+  header. (ccoleman@redhat.com)
+
 * Fri Aug 17 2012 Adam Miller <admiller@redhat.com> 3.6.4-1
 - US2592 and US2583 (ffranz@redhat.com)
 - BZ846514 fixed (ffranz@redhat.com)
