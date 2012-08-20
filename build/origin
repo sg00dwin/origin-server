@@ -65,7 +65,7 @@ module Origin
 
     no_tasks do  
       def download_artifacts(hostname)
-        print "Downloading logs and screenshots..."
+        puts "Downloading logs and screenshots..."
         `rm -rf rhc/log; mkdir -p rhc/log/; pushd rhc/log > /dev/null; mkdir -p broker mcollective system screenshots selenium jbossas broker-profiler coverage; popd > /dev/null`
         scp_from(hostname, "/tmp/rhc/*", "rhc/log")
         scp_from(hostname, "/var/www/stickshift/broker/httpd/logs/access_log", "rhc/log/broker/access_log.log")

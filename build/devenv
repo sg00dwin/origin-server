@@ -229,7 +229,7 @@ module Express
       end
       
       def download_artifacts(hostname)
-        print "Downloading logs and screenshots..."
+        puts "Downloading logs and screenshots..."
         `rm -rf rhc/log; mkdir -p rhc/log/; pushd rhc/log > /dev/null; mkdir -p site/test/reports broker mcollective system screenshots selenium jbossas broker-profiler coverage; popd > /dev/null`
         scp_from(hostname, "/tmp/rhc/*", "rhc/log")
         scp_from(hostname, "/var/www/stickshift/site/httpd/logs/access_log", "rhc/log/site/access_log.log")
@@ -262,7 +262,7 @@ module Express
 
       def validate_instance(hostname, num_tries=1)
         # Validate the node installation
-        print "Validating instance..."
+        puts "Validating instance..."
         (1..num_tries).each do |i|
           unless is_valid?(hostname)
             if i == num_tries
@@ -280,7 +280,7 @@ module Express
       end
 
       def update_remote_tests(hostname, branch=nil)
-        print "Updating remote tests..."
+        puts "Updating remote tests..."
         all_repo_dirs = ['/root/li']
         SIBLING_REPOS.each do |repo_name, repo_dirs|
           all_repo_dirs << "/root/#{repo_name}"
@@ -361,10 +361,11 @@ mkdir -p /tmp/rhc/junit
               case extended_test
               when 'broker'
                 test_queues[0] << ["REST API", "cucumber #{@@CUCUMBER_OPTIONS} -t @broker_api li-test/tests", {:retry_individually => true}]
-                test_queues[1] << ["Broker Domain System", "cd li-test/broker; rake domain_system_test", {:retry_individually => true}]
-                test_queues[2] << ["Broker Application System", "cd li-test/broker; rake application_system_test", {:retry_individually => true}]
-                test_queues[3] << ["Broker Cartridge System", "cd li-test/broker; rake cartridge_system_test", {:retry_individually => true}]
+                test_queues[1] << ["Broker Domain System", "cd li-test/broker; rake test:domain_system_test", {:retry_individually => true}]
+                test_queues[2] << ["Broker Application System", "cd li-test/broker; rake test:application_system_test", {:retry_individually => true}]
+                test_queues[3] << ["Broker Cartridge System", "cd li-test/broker; rake test:cartridge_system_test", {:retry_individually => true}]
                 test_queues[1] << ["StickShift Broker Unit Ext 1", "cd li-test/stickshift/broker; rake test:ss_unit_ext1", {:retry_individually => true}]
+                test_queues[2] << ["Broker Usage", "cd li-test/broker; rake test:usage", {:retry_individually => true}]
               when 'runtime'
                 test_queues[0] << ["Extended Runtime Group 1", "cucumber #{@@CUCUMBER_OPTIONS} -t @runtime_extended1 li-test/tests"]
                 test_queues[1] << ["Extended Runtime Group 2", "cucumber #{@@CUCUMBER_OPTIONS} -t @runtime_extended2 li-test/tests"]
@@ -554,11 +555,11 @@ mkdir -p /tmp/rhc/junit
             image = conn.images[image_id]
             verify_image(image)
   
-            print "Sending QE ready email..."
+            puts "Sending QE ready email..."
             begin
               send_verified_email(image_id, image.name)
             rescue Exception => e
-              print "Failed sending email with message: #{e.message}"
+              puts "Failed sending email with message: #{e.message}"
             end
           elsif !options.terminate?
             idle_all_gears(hostname)
@@ -658,7 +659,7 @@ mkdir -p /tmp/rhc/junit
           manifest = nil
           begin
             if options.build_clean_ami? || options.install_from_source? || options.install_from_local_source? || options.install_required_packages?
-              print "Updating all packages on the system..."
+              puts "Updating all packages on the system..."
               2.times do
                 ssh(hostname, "yum update -y --exclude='rhc*'; yum -y install openssh-clients", 1800)
               end
@@ -668,11 +669,11 @@ mkdir -p /tmp/rhc/junit
                 reboot(instance)
               end
     
-              print "Uploading devenv script..."
+              puts "Uploading devenv script..."
               script_path = File.expand_path(File.dirname(__FILE__) + "/../misc/devenv/li-devenv.sh")
               scp_to(hostname, script_path, "~/")
               puts "Done"
-              print "Uploading yum client certificates..."
+              puts "Uploading yum client certificates..."
               script_path = File.expand_path(File.dirname(__FILE__) + "/../misc/client-cert.pem")
               scp_to(hostname, script_path, "/var/lib/yum/")
               script_path = File.expand_path(File.dirname(__FILE__) + "/../misc/client-key.pem")
@@ -682,7 +683,7 @@ mkdir -p /tmp/rhc/junit
               puts "Done"
               output = ''
               if options.install_from_source?
-                print "Performing clean install from source..."
+                puts "Performing clean install from source..."
                 cmd = "set -e; /bin/bash li-devenv.sh #{options.use_stage_repo? ? "stage" : "candidate"} --install_from_source"
               elsif options.install_from_local_source?
                 init_repo(hostname)
@@ -693,15 +694,15 @@ mkdir -p /tmp/rhc/junit
                     break if sync_sibling_repo(repo_name, repo_dir, hostname, ssh_path)
                   end
                 end
-                print "Performing clean install from local source..."
+                puts "Performing clean install from local source..."
                 cmd = "set -e; /bin/bash li-devenv.sh #{options.use_stage_repo? ? "stage" : "candidate"} --install_from_local_source"
               elsif options.install_required_packages?
-                print "Installing requires..."
+                puts "Installing requires..."
                 cmd = "set -e; /bin/bash li-devenv.sh #{options.use_stage_repo? ? "stage" : "candidate"} --install_build_prereqs"
                 output += ssh(hostname, cmd, 600)
                 cmd = "set -e; /bin/bash li-devenv.sh #{options.use_stage_repo? ? "stage" : "candidate"} --install_required_packages"
               else
-                print "Performing clean install with the latest code..."
+                puts "Performing clean install with the latest code..."
                 cmd = 'set -e ; /bin/bash ~/li-devenv.sh'
                 cmd += ' stage' if options.use_stage_repo?
               end
@@ -722,7 +723,7 @@ mkdir -p /tmp/rhc/junit
                 register_image(conn, instance, name + '-clean_' + build_num, manifest)
               end
             else
-              print "Updating all packages on the system..."
+              puts "Updating all packages on the system..."
               output, exit_code = ssh(hostname, "yum clean metadata; yum update -y --exclude='rhc-devenv'; set -e; yum update -y --exclude='rhc-devenv' --disablerepo=\\* --enablerepo=li --enablerepo=ruby193", 600, true)
               puts "Done"
     
