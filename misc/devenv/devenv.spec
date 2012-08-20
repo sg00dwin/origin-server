@@ -8,7 +8,7 @@
 
 Summary:   Dependencies for OpenShift development
 Name:      rhc-devenv
-Version: 0.98.7
+Version: 0.98.8
 Release:   1%{?dist}
 Group:     Development/Libraries
 License:   GPLv2
@@ -543,6 +543,13 @@ fi
 %{policydir}/*
 
 %changelog
+* Mon Aug 20 2012 Adam Miller <admiller@redhat.com> 0.98.8-1
+- add comments to fork ami about tags (dmcphers@redhat.com)
+- Change the format for evaluated (dmcphers@redhat.com)
+- better output on local merge (dmcphers@redhat.com)
+- add devenv number to pull request after it completes (dmcphers@redhat.com)
+- use merge instead of patch for testing pull requests (dmcphers@redhat.com)
+
 * Fri Aug 17 2012 Adam Miller <admiller@redhat.com> 0.98.7-1
 - Merge pull request #250 from danmcp/master (openshift+bot@redhat.com)
 - trying to get some more stability on the initial ami create
