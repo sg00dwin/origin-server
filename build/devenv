@@ -5,7 +5,7 @@ $: << File.expand_path(File.dirname(__FILE__))
 require 'rubygems'
 require 'thor'
 require 'fileutils'
-require 'express_constants'
+require 'li_constants'
 require 'lib/openshift'
 require 'pp'
 require 'yaml'
