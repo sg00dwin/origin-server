@@ -3,7 +3,7 @@
 
 Summary:   Li site components
 Name:      rhc-site
-Version: 0.97.9
+Version: 0.97.10
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -137,6 +137,24 @@ rm -rf %{buildroot}
 %{sitedir}/public
 
 %changelog
+* Mon Aug 20 2012 Adam Miller <admiller@redhat.com> 0.97.10-1
+- Merge pull request #275 from
+  smarterclayton/bug849631_downgrade_should_show_errors
+  (openshift+bot@redhat.com)
+- No wizard state on plan selection page. (ccoleman@redhat.com)
+- Bug 849631 - Downgrade of user plan should display errors to user
+  (ccoleman@redhat.com)
+- Bug 849636 Account upgrade should display validation messages from forms
+  (ccoleman@redhat.com)
+- Bug 849356 - The first two segments of the raw content for an SSH key should
+  be used as type and content. (ccoleman@redhat.com)
+- Merge pull request #251 from smarterclayton/header_and_footer_updates
+  (openshift+bot@redhat.com)
+- Tests were looking for old link name.  Moved newsletter into footer.
+  (ccoleman@redhat.com)
+- Update header and footer to fix doc links, and begin simplification of the
+  header. (ccoleman@redhat.com)
+
 * Fri Aug 17 2012 Adam Miller <admiller@redhat.com> 0.97.9-1
 - Merge pull request #255 from
   smarterclayton/bug849068_warn_about_account_change (openshift+bot@redhat.com)
