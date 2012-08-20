@@ -5,7 +5,7 @@
 %global modname             user_profile
 
 Name:    drupal%{drupal_release}-openshift-features-%{modname}
-Version: 1.5.3
+Version: 1.5.4
 Release: 1%{?dist}
 Summary: Openshift Red Hat Custom User Profile Feature for Drupal6
 Group:   Applications/Publishing
@@ -41,6 +41,11 @@ rm -rf $RPM_BUILD_ROOT
 %{drupal_modules}/%{modname}
 
 %changelog
+* Mon Aug 20 2012 Adam Miller <admiller@redhat.com> 1.5.4-1
+- Bug 814844 - Ensure that Tudou videos always show up by splitting out the
+  second page and make it always browsable (and cacheable).
+  (ccoleman@redhat.com)
+
 * Tue Aug 14 2012 Adam Miller <admiller@redhat.com> 1.5.3-1
 - Make sure individual videos have the left nav.  Add SEO to pages.
   (ccoleman@redhat.com)
