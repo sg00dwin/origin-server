@@ -70,13 +70,17 @@ module Aria
 
     def create_account(opts=nil)
       params = default_account_params
+      validates = true
       opts.each_pair do |k,v|
         if v.respond_to? :to_aria_attributes
           params.merge!(v.to_aria_attributes)
         else
           params[k] = v
         end
+        validates &= v.valid? if v.respond_to? :valid?
       end if opts
+      return false unless validates
+
       Aria.create_acct_complete(params)
       true
     rescue Aria::AccountExists
@@ -88,13 +92,17 @@ module Aria
 
     def update_account(opts)
       params = HashWithIndifferentAccess.new
+      validates = true
       opts.each_pair do |k,v|
         if v.respond_to? :to_aria_attributes
           params.merge!(v.to_aria_attributes)
         else
           params[k] = v
         end
+        validates &= v.valid? if v.respond_to? :valid?
       end
+      return false unless validates
+
       Aria.update_acct_complete(acct_no, params)
       @billing_info = nil
       @account_details = nil
