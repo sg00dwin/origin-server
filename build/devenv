@@ -197,7 +197,11 @@ module Express
         ssh(hostname, "service mcollective restart; service stickshift-proxy restart; for dir in /var/lib/stickshift/*; do if [ -d $dir ] && [ ! -h $dir ] ; then rhc-idler -n -u `basename $dir`; fi; done; service httpd graceful", 240)
         puts "Done"
       end
-  
+
+      def repo_path(dir='')
+        File.expand_path("../#{dir}", File.dirname(__FILE__))
+      end
+
       def disable_charlie(hostname)
         puts "Disabling automatic shutdown on remote instance: #{hostname}"
         ssh(hostname, "echo HOURS=9999 > /etc/charlie.conf", 240)

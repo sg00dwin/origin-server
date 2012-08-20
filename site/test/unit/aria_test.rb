@@ -332,6 +332,23 @@ class AriaUnitTest < ActiveSupport::TestCase
     assert p.persisted?
   end
 
+  test 'validates values for create account' do
+    user = Object.new.extend(ActiveModel::Validations).extend(Aria::User)
+    user.expects(:login).at_least_once.returns('foo')
+    billing_info = Aria::BillingInfo.new
+    assert !user.create_account(:billing_info => billing_info)
+    assert user.errors.empty?
+    assert !billing_info.errors.empty?
+  end
+
+  test 'validates values for update account' do
+    user = Object.new.extend(ActiveModel::Validations).extend(Aria::User)
+    billing_info = Aria::BillingInfo.new
+    assert !user.update_account(:billing_info => billing_info)
+    assert user.errors.empty?
+    assert !billing_info.errors.empty?
+  end
+
   test 'payment_method is only persisted when account_details pay_method is 1' do
     assert p = Aria::PaymentMethod.from_account_details(stub(
       :pay_method => '0',
