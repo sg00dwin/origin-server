@@ -146,7 +146,7 @@ else
                 if i.odd?
                   usage_record_pairs << {gear_uuid => [previous_usage_record, usage_record]}
                   previous_usage_record = nil 
-                elsif i == usage_records_for_gear.length
+                elsif i == usage_records_for_gear.length - 1
                   usage_record_pairs << {gear_uuid => [usage_record]}
                 else
                   previous_usage_record = usage_record
