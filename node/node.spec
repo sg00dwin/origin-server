@@ -2,7 +2,7 @@
 
 Summary:       Multi-tenant cloud management system node tools
 Name:          rhc-node
-Version: 0.97.5
+Version: 0.97.6
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -289,6 +289,10 @@ fi
 
 
 %changelog
+* Mon Aug 20 2012 Adam Miller <admiller@redhat.com> 0.97.6-1
+- BZ 846445: libra-cgroups, libra-tc and rhc-restorecon are slow and should not
+  re-run if already initialized. (rmillner@redhat.com)
+
 * Fri Aug 17 2012 Adam Miller <admiller@redhat.com> 0.97.5-1
 - BZ 847398: Filter out requests from local addresses. (rmillner@redhat.com)
 
