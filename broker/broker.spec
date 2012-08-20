@@ -3,7 +3,7 @@
 
 Summary:   Li broker components
 Name:      rhc-broker
-Version: 0.97.8
+Version: 0.97.9
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -120,6 +120,15 @@ if [ ! -f %{_localstatedir}/log/stickshift/user_action.log ]; then
 fi
 
 %changelog
+* Mon Aug 20 2012 Adam Miller <admiller@redhat.com> 0.97.9-1
+- Updating gem versions (admiller@redhat.com)
+- Fix issue syncing continued usage (dmcphers@redhat.com)
+- enable usage tests by default in extended tests (dmcphers@redhat.com)
+- fix broker extended tests (dmcphers@redhat.com)
+- Merge pull request #260 from lnader/master (openshift+bot@redhat.com)
+- Bug 848956 - Rest api for list plans via XML is not working
+  (lnader@redhat.com)
+
 * Fri Aug 17 2012 Adam Miller <admiller@redhat.com> 0.97.8-1
 - Updating gem versions (admiller@redhat.com)
 
