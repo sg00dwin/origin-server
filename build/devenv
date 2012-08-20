@@ -362,10 +362,10 @@ mkdir -p /tmp/rhc/junit
               when 'broker'
                 test_queues[0] << ["REST API", "cucumber #{@@CUCUMBER_OPTIONS} -t @broker_api li-test/tests", {:retry_individually => true}]
                 test_queues[1] << ["Broker Domain System", "cd li-test/broker; rake test:domain_system_test", {:retry_individually => true}]
+                test_queues[1] << ["StickShift Broker Unit Ext 1", "cd li-test/stickshift/broker; rake test:ss_unit_ext1", {:retry_individually => true}]
+                test_queues[1] << ["Broker Usage", "cd li-test/broker; rake test:usage", {:retry_individually => true}]
                 test_queues[2] << ["Broker Application System", "cd li-test/broker; rake test:application_system_test", {:retry_individually => true}]
                 test_queues[3] << ["Broker Cartridge System", "cd li-test/broker; rake test:cartridge_system_test", {:retry_individually => true}]
-                test_queues[1] << ["StickShift Broker Unit Ext 1", "cd li-test/stickshift/broker; rake test:ss_unit_ext1", {:retry_individually => true}]
-                test_queues[2] << ["Broker Usage", "cd li-test/broker; rake test:usage", {:retry_individually => true}]
               when 'runtime'
                 test_queues[0] << ["Extended Runtime Group 1", "cucumber #{@@CUCUMBER_OPTIONS} -t @runtime_extended1 li-test/tests"]
                 test_queues[1] << ["Extended Runtime Group 2", "cucumber #{@@CUCUMBER_OPTIONS} -t @runtime_extended2 li-test/tests"]
