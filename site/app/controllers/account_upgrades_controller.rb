@@ -35,7 +35,7 @@ class AccountUpgradesController < ApplicationController
   end
 
   def create
-    plan_id = params[:plan][:id]
+    plan_id = params[:plan_id]
 
     aria_user = current_user.extend(Aria::User)
     @payment_method = aria_user.payment_method

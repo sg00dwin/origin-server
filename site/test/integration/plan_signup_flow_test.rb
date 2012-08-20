@@ -95,7 +95,7 @@ class PlanSignupFlowTest < ActionDispatch::IntegrationTest
     get '/account/plans/megashift/upgrade/new'
     assert_response :success
 
-    post '/account/plans/megashift/upgrade', {:plan => {:id => 'megashift'}}
+    post '/account/plans/megashift/upgrade', {:plan_id => 'megashift'}
     assert_redirected_to '/account/plan'
 
     assert_equal 'megashift', User.find(:one, :as => user).plan_id
