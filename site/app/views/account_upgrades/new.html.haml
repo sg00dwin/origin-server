@@ -1,8 +1,10 @@
 - content_for :title, "Upgrade your Plan"
 = plan_upgrade_steps 3
 
-= semantic_form_for :plan, :url => account_plan_upgrade_path do |f|
-  = f.hidden_field :id
+= semantic_form_for @user, :url => account_plan_upgrade_path do |f|
+  = hidden_field_tag :plan_id, @plan.id
+
+  = f.semantic_errors
 
   %h2
     Are you ready to upgrade your plan from #{@current_plan.name} to #{@plan.name}?

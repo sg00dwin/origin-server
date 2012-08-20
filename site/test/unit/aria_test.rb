@@ -343,7 +343,7 @@ class AriaUnitTest < ActiveSupport::TestCase
     ))
     assert !p.persisted?
   end
-  
+
   test 'master plan adds aria plan details to broker plans' do
     Aria::Client.any_instance.expects(:invoke).once.
       with(:get_client_plans_basic).

@@ -59,6 +59,7 @@ en:
       '116': 'Type is required and cannot be blank.'
       '121': 'You have already saved this public key with a different name. Provide a different key here.'
       '151': 'You must create a Jenkins application (to act as a build server) before you can add the Jenkins cartridge to an application.'
+      '153': 'You are currently using more gears than the new plan would allow.  Please scale down or delete applications before downgrading.'
 
   recaptcha:
     errors:
