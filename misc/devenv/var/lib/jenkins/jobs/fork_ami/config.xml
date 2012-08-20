@@ -2,7 +2,16 @@
 <project>
   <actions/>
   <description>Build an ami from a fork(s) of the openshift source with options to run extended and qe tests.  The QE jenkins is located at:  http://ciqe.englab.nay.redhat.com/&#xd;
-</description>
+&lt;p&gt;&#xd;
+Note: You&apos;ll want to make sure your repos are up to date with something similar to the following before kicking off a build (or you will likely be missing the necessary tags in your repo in order to build the ami):&#xd;
+&lt;pre&gt;&#xd;
+git fetch upstream&#xd;
+git fetch upstream --tags&#xd;
+git rebase upstream/master&#xd;
+git push origin master&#xd;
+git push --tags&#xd;
+&lt;/pre&gt;&#xd;
+&lt;/p&gt;</description>
   <logRotator>
     <daysToKeep>10</daysToKeep>
     <numToKeep>50</numToKeep>
