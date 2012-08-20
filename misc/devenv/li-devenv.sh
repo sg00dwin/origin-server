@@ -107,19 +107,6 @@ sslclientcert=/etc/pki/entitlement/product/content-rhel6.crt
 sslcacert=/etc/pki/entitlement/cdn.redhat.com-chain.crt
 includepkgs=java-1.6.0-openjdk*
 
-[ruby193]
-name=Ruby193 Software Collection for RHEL6 - $basearch
-baseurl=https://mirror1.ops.rhcloud.com/libra/ruby193-rhel-6-${1-candidate}/\$basearch/
-        https://mirror2.ops.rhcloud.com/libra/ruby193-rhel-6-${1-candidate}/\$basearch/
-failovermethod=priority
-enabled=1
-gpgcheck=0
-gpgkey=https://mirror1.ops.rhcloud.com/libra/RPM-GPG-KEY-redhat-beta
-ggpkey=https://mirror1.ops.rhcloud.com/libra/RPM-GPG-KEY-redhat-release
-sslverify=0
-sslclientcert=/var/lib/yum/client-cert.pem
-sslclientkey=/var/lib/yum/client-key.pem
-
 [Zend]
 name=Zend Server
 baseurl=http://mirror2.ops.rhcloud.com/mirror/zend/$basearch
