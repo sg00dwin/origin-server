@@ -5,7 +5,7 @@
 %global modname             blogs
 
 Name:    drupal%{drupal_release}-openshift-features-%{modname}
-Version: 1.6.1
+Version: 1.6.2
 Release: 1%{?dist}
 Summary: Openshift Red Hat Custom Blog Feature for Drupal6
 Group:   Applications/Publishing
@@ -41,6 +41,11 @@ rm -rf $RPM_BUILD_ROOT
 %{drupal_modules}/%{modname}
 
 %changelog
+* Mon Aug 20 2012 Adam Miller <admiller@redhat.com> 1.6.2-1
+- Bug 814844 - Ensure that Tudou videos always show up by splitting out the
+  second page and make it always browsable (and cacheable).
+  (ccoleman@redhat.com)
+
 * Thu Aug 02 2012 Adam Miller <admiller@redhat.com> 1.6.1-1
 - bump_minor_versions for sprint 16 (admiller@redhat.com)
 
