@@ -1,19 +1,52 @@
+.current-plan {
+  font-weight: bold;
+  text-align: center;
+}
+.plan-info {
+  min-height: 80px;
+}
+.plan-btn {
+  text-align: center;
+  min-height: 28px;
+  vertical-align: bottom;
+}
+.plan-title {
+	font-size: x-large;
+	font-weight: bold;
+	text-align: center;
+}
 .tile {
   padding: 9px 35px 10px 21px; 
-  margin-bottom: 20px; 
+  margin-bottom: 12px;
   background-color: #eee;
   color: #000;
+}
+.upgrade {
+  border: 2px solid #999;
+}
+.standard {
+  border: 2px solid #fff;
 }
 .tile-copy-text {
   font-size: smaller;
 }
-.tile-faq {
-  font-size: larger;  
+.tile-splash {
+  background-color: #999;
+  color: #fff;
+  font-size: larger;
+  margin-bottom: 12px;
+  padding-bottom: 9px;
+  padding-top: 9px;
+  text-align: center;
 }
-.tile-current-plan {
-  background-color: #EA0011;
-  color: #FFF;
-  font-size: x-small;
-  padding-left: 4px;
-  padding-right: 4px;
+.tile-std-header {
+  background-color: #fff;
+  color: #fff;
+  padding: 6px;
+}
+.tile-upgrade-header {
+  background-color: #999;
+  color: #fff;
+  padding: 6px;
+  text-align: center;
 }
