@@ -92,6 +92,11 @@ class PlanSignupFlowTest < ActionDispatch::IntegrationTest
     assert_equal test_credit_card['cc_exp_yyyy'].to_i, payment_method.cc_exp_yyyy
     assert_equal test_credit_card['cc_exp_mm'].to_i, payment_method.cc_exp_mm
 
+    rest_user = User.find :one, :as => user
+    plan = rest_user.plan
+    assert plan
+    assert_equal "freeshift", plan.id, "The user plan is not freeshift prior to upgrade\n#{rest_user.inspect}\n#{user.inspect}\n#{plan.inspect}"
+
     get '/account/plans/megashift/upgrade/new'
     assert_response :success
 

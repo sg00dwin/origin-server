@@ -47,9 +47,13 @@ class ActiveSupport::TestCase
 
   def setup_domain
     domain = Domain.new :name => "#{uuid}", :as => @user
-    unless domain.save
-      puts domain.errors.inspect
-      fail 'Unable to create the initial domain, test cannot be run'
+    begin
+      domain.save!
+    rescue Domain::AlreadyExists, Domain::UserAlreadyHasDomain
+      domain.errors.clear
+    rescue => e
+      puts "Domain create failed: #{e.response.errors.inspect}" rescue nil
+      raise
     end
     set_domain(domain)
   end
@@ -101,14 +105,11 @@ class ActiveSupport::TestCase
     setup_user
     once :domain do
       domain = Domain.first :as => @user
-      domain.destroy_recursive if domain
-      @@domain = setup_domain
+      @@domain = domain || setup_domain
       unless @with_unique_user
         lambda do
-          begin
-            @@domain.destroy_recursive
-          rescue ActiveResource::ResourceNotFound
-          end
+          @@domain.destroy_recursive rescue nil
+          @@domain = nil
         end
       end
     end
