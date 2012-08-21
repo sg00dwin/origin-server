@@ -34,7 +34,9 @@ namespace :test do
     t.test_files = FileList[
       'test/**/*aria*_test.rb',
       'test/**/plan_signup_flow_test.rb',
-      'test/**/account_upgrades_controller_test.rb',
+      'test/**/payment_methods_controller_test.rb',
+      'test/**/billing_info_controller_test.rb',
+      'test/**/account_upgrade*_test.rb',
     ]
   end
 
