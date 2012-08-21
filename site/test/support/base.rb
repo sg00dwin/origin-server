@@ -47,6 +47,12 @@ class ActiveSupport::TestCase
     user
   end
 
+  def mock_controller_user(extends=nil)
+    @controller.expects(:current_user).at_least(0).returns(@user)
+    @user.expects(:extends).at_least(0).with(extends).returns(@user) if extends
+    @user
+  end
+
   def assert_session_user(user)
     assert_equal user.login, session[:login]
     assert_equal user.ticket, session[:ticket]

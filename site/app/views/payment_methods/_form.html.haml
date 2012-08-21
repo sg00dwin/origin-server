@@ -1,9 +1,11 @@
-= semantic_form_for :payment_method, :url => aria_direct_post_url, :html => {:class => 'form-horizontal', :id => 'payment_method'} do |f|
-  -# f.semantic_errors
+= semantic_form_for payment_method, :url => aria_direct_post_url, :html => {:class => 'form-horizontal', :id => 'payment_method'} do |f|
+
   = f.hidden_field :form_of_payment, :name => :formOfPayment
   = f.hidden_field :session_id, :name => :inSessionID
   = f.hidden_field :mode, :name => :mode
   = f.hidden_field :client_no, :name => :client_no
+
+  = f.semantic_errors
 
   = f.input :cc_no, :input_html => {:name => :cc_no, :autofocus => true}
 

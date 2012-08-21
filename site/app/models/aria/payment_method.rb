@@ -1,6 +1,8 @@
 module Aria
   class PaymentMethod
     include ActiveModel::Serialization
+    include ActiveModel::Validations
+    include ActiveModel::Conversion
     extend ActiveModel::Naming
 
     attr_accessor :cc_no, :cvv        # available only during set
