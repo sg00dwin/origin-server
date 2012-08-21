@@ -86,6 +86,10 @@ may be ok if '#{uapp.name}#{BUILDER_SUFFIX}' was the builder of a previously des
         end
       end
     end
+
+    if CartridgeCache.cartridge_names('standalone').include? "zend-5.6" and not Application::UNSCALABLE_FRAMEWORKS.include? "zend-5.6"
+      Application::UNSCALABLE_FRAMEWORKS << "zend-5.6"
+    end
     
     if application.user.auth_method == :login and not StickShift::ApplicationContainerProxy.valid_gear_sizes(application.user).include?(application.node_profile)
       raise StickShift::UserException.new("Invalid Profile: #{application.node_profile}.  Must be: #{StickShift::ApplicationContainerProxy.valid_gear_sizes(application.user).join(", ")}", 1)
