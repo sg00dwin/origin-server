@@ -595,9 +595,8 @@ mkdir -p /tmp/rhc/junit
             end
   
             unless options.exclude_rhc?
-  
+              test_queues[1] << ["RHC Functional", "GIT_SSH=li-test/features/support/ssh.sh RHC_ENDPOINT=https://localhost/broker/rest/api cucumber #{@@CUCUMBER_OPTIONS} li-test/features"]
             end
-  
           end
   
           threads = []
