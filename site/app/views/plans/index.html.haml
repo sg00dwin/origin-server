@@ -1,29 +1,93 @@
 - content_for :title, 'Select a plan'
-.row
-  .span6
-    .tile
-      .row-fluid
-        .span12
-          %b All plans come with
-      .row-fluid
-        .span6
-          %span.tile-copy-text First <b>three</b> gears for free<br />First-class management console<br />Basic monitoring with uptime alerts
-        .span6
-          %span.tile-copy-text Shared database for development<br />Choice of runtime environments<br />NSA-class security
-    = render :collection => @plans, :partial => 'plans/plan', :locals => { :current_plan => @current_plan }
-  .span6
+:css
+  .current-plan {
+    font-weight: bold;
+    text-align: center;
+  }
+  .plan-info {
+    min-height: 80px;
+  }
+  .plan-btn {
+    text-align: center;
+    min-height: 28px;
+    vertical-align: bottom;
+  }
+  .plan-title {
+    font-size: x-large;
+    font-weight: bold;
+    text-align: center;
+  }
+  .upgrade {
+    border: 2px solid #999;
+  }
+  .standard {
+    border: 2px solid #fff;
+  }
+  .plan-copy-text {
+    font-size: smaller;
+  }
+  .plan-splash {
+    background-color: #999;
+    color: #fff;
+    font-size: larger;
+    margin-bottom: 12px;
+    padding-bottom: 9px;
+    padding-top: 9px;
+    text-align: center;
+  }
+  .plan-std-header {
+    background-color: #fff;
+    color: #fff;
+    padding: 6px;
+  }
+  .plan-upgrade-header {
+    background-color: #999;
+    color: #fff;
+    padding: 6px;
+    text-align: center;
+  }
+
+.row-fluid
+  .span1
+    &nbsp;
+  = render :collection => @plans, :partial => 'plans/plan', :locals => { :current_plan => @current_plan }
+  .span1
+    &nbsp;
+.row-fluid
+  .span1
+    &nbsp;
+  .span10
+    .plan-splash
+      Need more info? Compare plans, read our Pricing FAQ, or try our Cost Estimator.
+  .span1
+    &nbsp;
+.row-fluid
+  .span1
+    &nbsp;
+  .span2
     %p
       %b What's a gear?<br />
-      A gear is a set of resources (memory, cpu, storage) that your application can use. You can add more gears to your application to scale it up. A small gear has 256MB of memory and can handle approximately 15 concurrent connections. A medium gear has 512MB of memory and can handle approximately 40 concurrent connections.
+      %span.plan-copy-text
+        Gears are resource-constrained containers where you can run one or more cartridges. Gears will be offered in two different sizes limited by memory and disk space.
+  .span2
+    %p
+      %b How much does a gear cost?<br />
+      %span.plan-copy-text
+        Your first three small gears are free. After that, you're charged for the gears you're actually using, an hour at a time. Small gears cost five cents per hour and medium gears cost twelve cents per hour. If you used them continuously for 30 days, a small gear would cost $36.00 and a medium gear would cost $86.40.
+  .span2
     %p
       %b Do I have to sign a contract?<br />
-      No contract is required - you can change or cancel your account any time.
+      %span.plan-copy-text
+        No contract is required - you can change or cancel your account any time.
+  .span2
     %p
-      %b When am I billed?<br />
-      You'll be billed the monthly minimum at the beginning of your billing cycle, then you'll be billed for usage in your next bill.
+      %b What are the different gear sizes?<br />
+      %span.plan-copy-text
+        We currently have two different gear sizes: small and medium. A small gear has 512 MB of RAM and 1GB of disk space. A medium gear has 1GB of RAM and 1GB of disk space.
+  .span2
     %p
-      %b Does the monthly minimum count towards my usage?<br />
-      Yes.
-    %p
-      %b What's the difference between the different kinds of support?<br />
-      Phone support gives you access to our professional support by phone 24/7. E-mail support is handled by the same great, professional support staff, who are guaranteed to respond within 12 hours. Get support from the community by posting your question in the forums, where it can be handled by our staff or our great community.
+      %b How many invoices will I receive a month?<br />
+      %span.plan-copy-text
+        The very first time you will receive an invoice of $42.00 to start your subscription. AFter that, on the 5th of every month you will receive an invoice for the next months' subscription fee + gear usage for the previous month. THink of it like a phone bill.
+  .span1
+    &nbsp;

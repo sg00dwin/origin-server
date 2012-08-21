@@ -1,23 +1,13 @@
 - display_only = false if local_assigns[:display_only].nil?
 - current_plan = { :id => '' } if local_assigns[:current_plan].nil?
-.tile
-  .row-fluid
-    .span7
-      %h3
-        #{plan.name}
-        - if !display_only && plan == current_plan
-          %span.tile-current-plan current plan
-      %p= plan.description
-      %ul
-        - if plan.gear_sizes.length > 1
-          %li Available gear sizes: #{h plan.gear_sizes.join ", "}
-        %li
-          Up to
-          %b= plan.max_gears
-          gears
-    .span5
-      %p
-        %b Best for<br />
-        %span.tile-copy-text Praesent et varius lectus. Sed consectetur ante eu mi sagittis a ultrices lacus ultrices.
-      - if !display_only && plan != current_plan
-        = link_to "Select", account_plan_upgrade_path(plan), :class => 'btn'
+.span5
+  - if current_plan == nil or (plan.id == 'megashift' && current_plan.id != plan.id)
+    .plan-upgrade-header
+      Sign up now and get a free month!
+    .tile.upgrade
+      = render :partial => 'plans/plan_copy', :locals => { :current_plan => @current_plan, :display_only => display_only, :plan => plan }
+  - else
+    .plan-std-header
+      &nbsp;
+    .tile.standard
+      = render :partial => 'plans/plan_copy', :locals => { :current_plan => @current_plan, :display_only => display_only, :plan => plan }
