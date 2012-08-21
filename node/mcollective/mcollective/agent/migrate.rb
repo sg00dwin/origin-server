@@ -55,6 +55,7 @@ restart_httpd_graceful
       libra_domain = get_config_value('CLOUD_DOMAIN')
       gear_home = "#{libra_home}/#{uuid}"
       gear_name = Util.get_env_var_value(gear_home, "OPENSHIFT_GEAR_NAME")
+      app_name = Util.get_env_var_value(gear_home, "OPENSHIFT_APP_NAME")
       gear_dir = "#{gear_home}/#{gear_name}"
       output = ''
       exitcode = 0
@@ -65,8 +66,11 @@ restart_httpd_graceful
         cartridge_dir = "#{cartridge_root_dir}/#{gear_type}"
 
         if File.directory?("#{gear_home}/haproxy-1.4")
-          app_name = Util.get_env_var_value(gear_home, "OPENSHIFT_APP_NAME")
           output += migrate_haproxy_config(gear_home, app_name, uuid, namespace)
+        elsif gear_name != app_name
+          # On "slave" gears of a scalable app, gear_name != app_name,
+          # so disable the idler stale detection check.
+          FileUtils.touch("#{gear_home}/.disable_stale")
         end
 
         if ['mysql-5.1'].include? gear_type
