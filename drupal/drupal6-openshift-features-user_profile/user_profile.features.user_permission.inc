@@ -1044,6 +1044,17 @@ function user_profile_user_default_permissions() {
     ),
   );
 
+  // Exported permission: edit field_search_meta_description
+  $permissions['edit field_search_meta_description'] = array(
+    'name' => 'edit field_search_meta_description',
+    'roles' => array(
+      '0' => 'administrator',
+      '1' => 'blogger',
+      '2' => 'doc content owner',
+      '3' => 'page author',
+    ),
+  );
+
   // Exported permission: edit field_state
   $permissions['edit field_state'] = array(
     'name' => 'edit field_state',
@@ -1552,8 +1563,10 @@ function user_profile_user_default_permissions() {
     'name' => 'view field_author',
     'roles' => array(
       '0' => 'administrator',
-      '1' => 'doc content owner',
-      '2' => 'moderator',
+      '1' => 'anonymous user',
+      '2' => 'authenticated user',
+      '3' => 'doc content owner',
+      '4' => 'moderator',
     ),
   );
 
@@ -1562,8 +1575,10 @@ function user_profile_user_default_permissions() {
     'name' => 'view field_author_image',
     'roles' => array(
       '0' => 'administrator',
-      '1' => 'doc content owner',
-      '2' => 'moderator',
+      '1' => 'anonymous user',
+      '2' => 'authenticated user',
+      '3' => 'doc content owner',
+      '4' => 'moderator',
     ),
   );
 
@@ -1759,6 +1774,17 @@ function user_profile_user_default_permissions() {
   // Exported permission: view field_promo_url
   $permissions['view field_promo_url'] = array(
     'name' => 'view field_promo_url',
+    'roles' => array(
+      '0' => 'administrator',
+      '1' => 'anonymous user',
+      '2' => 'authenticated user',
+      '3' => 'moderator',
+    ),
+  );
+
+  // Exported permission: view field_search_meta_description
+  $permissions['view field_search_meta_description'] = array(
+    'name' => 'view field_search_meta_description',
     'roles' => array(
       '0' => 'administrator',
       '1' => 'anonymous user',
