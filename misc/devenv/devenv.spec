@@ -8,7 +8,7 @@
 
 Summary:   Dependencies for OpenShift development
 Name:      rhc-devenv
-Version: 0.98.8
+Version: 0.98.9
 Release:   1%{?dist}
 Group:     Development/Libraries
 License:   GPLv2
@@ -544,6 +544,11 @@ fi
 %{policydir}/*
 
 %changelog
+* Tue Aug 21 2012 Adam Miller <admiller@redhat.com> 0.98.9-1
+- Merge pull request #277 from lnader/zend (openshift+bot@redhat.com)
+- remove now defunct ruby193 yum repo, it merged with li (admiller@redhat.com)
+- US2378: Zend Server Cartridge Packaging (lnader@redhat.com)
+
 * Mon Aug 20 2012 Adam Miller <admiller@redhat.com> 0.98.8-1
 - add comments to fork ami about tags (dmcphers@redhat.com)
 - Change the format for evaluated (dmcphers@redhat.com)
