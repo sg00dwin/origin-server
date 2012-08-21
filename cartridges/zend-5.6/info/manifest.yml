@@ -1,9 +1,11 @@
 Name: zend-5.6
-Display-Name: zend v1.0.0 (noarch)
-Description: Cartridge packaging ZEND versions 5.6.0 upto 5.6.0
+Display-Name: zend server v1.0.0 (noarch)
+Description: Cartridge packaging Zend Server versions 5.6.0 upto 5.6.0
 Version: 1.0.0
-License: ASL 2.0
-Vendor:  zend
+License: TBD
+Vendor:  Zend
+Website: www.zend.com
+Categories: cartridge, web_framework, promoted
 Provides:
   - "zend"
   - "zend(version) = 5.6.0"
@@ -13,32 +15,9 @@ Native-Requires:
 Architecture: noarch
 Reservations:
   - MEM >= 100MB
-Start-Order: php
+Start-Order: zend
 Publishes:
-  get-doc-root:
-    Type: "FILESYSTEM:doc-root"
-  get-php-ini:
-    Type: "FILESYSTEM:php-ini"
-  publish-http-url:
-    Type: "NET_TCP:httpd-proxy-info"
-  publish-gear-endpoint:
-    Type: "NET_TCP:gear-endpoint-info"
 Subscribes:
-  set-db-connection-info:
-    Type: "NET_TCP:db:connection-info"
-    Required: false
-  set-nosql-db-connection-info:
-    Type: "NET_TCP:nosqldb:connection-info"
-    Required: false
-  set-mysql-connection-info:
-    Type: "NET_TCP:db:mysql"
-    Required : false
-  set-postgres-connection-info:
-    Type: "NET_TCP:db:postgres"
-    Required : false
-  set-doc-url:
-    Type: "STRING:urlpath"
-    Required : false
 Scaling:
   Min: 1
   Max: -1

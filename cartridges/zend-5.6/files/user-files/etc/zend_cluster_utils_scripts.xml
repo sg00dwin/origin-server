@@ -1,0 +1,3 @@
+<Scripts>
+	<Script path="###OPENSHIFT_GEAR_DIR###/gui/application/PE/batch/cleanupIssues.php" interval="86400" />
+</Scripts>
