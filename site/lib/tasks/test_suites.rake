@@ -55,8 +55,7 @@ namespace :test do
       'test/functional/password_controller_test.rb',
       'test/functional/product_controller_test.rb',
       'test/functional/promo_code_mailer_test.rb',
-      'test/functional/terms_controller_test.rb',
-      'test/functional/user_controller_test.rb',
+      'test/functional/terms_controller_test.rb'
     ]
   end
 

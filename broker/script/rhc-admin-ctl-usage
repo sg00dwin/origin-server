@@ -168,7 +168,7 @@ else
                       else
                         usage_uuid = previous_usage_record.uuid 
                       end
-                      usage = Usage.find(usage_record.uuid)                      
+                      usage = Usage.find(usage_uuid)              
                     end
                     if !usage && usage_record.event == UsageRecord::EVENTS[:begin]
                       puts "WARNING: Usage not found in collection for new gear: #{usage_record.gear_uuid}"

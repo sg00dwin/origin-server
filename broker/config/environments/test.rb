@@ -59,15 +59,6 @@ Broker::Application.configure do
     :syslog_enabled => false
   }
   
-  config.rpc_opts = {
-    :disctimeout => 2,
-    :timeout     => 180,
-    :verbose     => false,
-    :progress_bar=> false,
-    :filter      => {"identity"=>[], "fact"=>[], "agent"=>[], "cf_class"=>[]},
-    :config      => "/etc/mcollective/client.cfg"
-  }
-  
   config.analytics = {
     :nurture_enabled => false,
     :nurture_username => "admin",
@@ -157,7 +148,7 @@ Broker::Application.configure do
   # mcollective configuration
   config.gearchanger = {
     :rpc_options => {
-        :disctimeout => 5,
+        :disctimeout => 2,
         :timeout => 180,
         :verbose => false,
         :progress_bar => false,

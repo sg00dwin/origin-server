@@ -68,7 +68,7 @@ require "/var/www/stickshift/broker/config/environment"
 
 # Set the MCollective options
 if timeout
-  Rails.configuration.rpc_opts[:timeout] = timeout.to_i 
+  Rails.configuration.gearchanger[:rpc_options][:timeout] = timeout.to_i
 end
 
 user = CloudUser.find(login)
