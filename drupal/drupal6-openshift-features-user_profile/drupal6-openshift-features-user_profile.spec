@@ -5,7 +5,7 @@
 %global modname             user_profile
 
 Name:    drupal%{drupal_release}-openshift-features-%{modname}
-Version: 1.5.4
+Version: 1.5.5
 Release: 1%{?dist}
 Summary: Openshift Red Hat Custom User Profile Feature for Drupal6
 Group:   Applications/Publishing
@@ -41,6 +41,10 @@ rm -rf $RPM_BUILD_ROOT
 %{drupal_modules}/%{modname}
 
 %changelog
+* Tue Aug 21 2012 Adam Miller <admiller@redhat.com> 1.5.5-1
+- Permissions for the following items needed to be updated and exported: - Blog
+  author photo - View/edit search metadata keywords (ccoleman@redhat.com)
+
 * Mon Aug 20 2012 Adam Miller <admiller@redhat.com> 1.5.4-1
 - Bug 814844 - Ensure that Tudou videos always show up by splitting out the
   second page and make it always browsable (and cacheable).
