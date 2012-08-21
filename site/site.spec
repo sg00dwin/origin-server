@@ -3,7 +3,7 @@
 
 Summary:   Li site components
 Name:      rhc-site
-Version: 0.97.10
+Version: 0.97.11
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -137,6 +137,18 @@ rm -rf %{buildroot}
 %{sitedir}/public
 
 %changelog
+* Tue Aug 21 2012 Adam Miller <admiller@redhat.com> 0.97.11-1
+- Merge pull request #279 from
+  smarterclayton/bug849627_improve_error_message_handling_on_direct_post
+  (openshift+bot@redhat.com)
+- ctl usage tests (dmcphers@redhat.com)
+- Bug 849627 When an error is encountered from direct post, redirect back to
+  the form with the error keys and attributes. (ccoleman@redhat.com)
+- Merge pull request #276 from nhr/US2457_revised_billing_plan_layout
+  (openshift+bot@redhat.com)
+- Revised plan-related CSS; moved to .haml file (hripps@redhat.com)
+- US2457 Updated plan layout to match latest design (hripps@redhat.com)
+
 * Mon Aug 20 2012 Adam Miller <admiller@redhat.com> 0.97.10-1
 - Merge pull request #275 from
   smarterclayton/bug849631_downgrade_should_show_errors
