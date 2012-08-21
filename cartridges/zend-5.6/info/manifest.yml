@@ -1,6 +1,6 @@
 Name: zend-5.6
 Display-Name: zend server v1.0.0 (noarch)
-Description: Cartridge packaging Zend Server versions 5.6.0 upto 5.6.0
+Description: "Web Application Server for Business-Critical PHP Applications"
 Version: 5.6
 License: "TBD"
 License-Url: http://framework.zend.com/license/
