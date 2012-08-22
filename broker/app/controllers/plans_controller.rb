@@ -9,31 +9,20 @@ class PlansController < BaseController
       plan = RestPlan.new(key, value[:name], value[:plan_no], value[:capabilities])
       plans.push(plan)
     end
-    @reply = RestReply.new(:ok, "plans", plans)
-    respond_with @reply, :status => @reply.status
+    render_success(:ok, "plans", plans, "LIST_PLANS")
   end
 
   def show
     id = params[:id]
     Express::AriaBilling::Plan.instance.plans.each do |key, value|
-      Rails.logger.debug "plan #{key} #{value.inspect}"
-      if key == id
-        plan = RestPlan.new(key, value[:name], value[:plan_no], value[:capabilities])
-        @reply = RestReply.new(:ok, "plan", plan)
-        respond_with @reply, :status => @reply.status
-      return
-      end
+      return render_success(:ok, "plan", RestPlan.new(key, value[:name], value[:plan_no], value[:capabilities]),
+                            "SHOW_PLAN") if key == id
     end
-    @reply = RestReply.new(:not_found)
-    @reply.messages.push(message = Message.new(:error, "Plan not found.", 150))
-    respond_with @reply, :status => @reply.status
+    render_error(:not_found, "Plan not found.", 150, "SHOW_PLAN")
   end
 
   def get_url
-    #Rails.logger.debug "Request URL: #{request.url}"
     url = URI::join(request.url, "/broker/billing/rest")
-    #Rails.logger.debug "Request URL: #{url.to_s}"
     return url.to_s
   end
-
 end
