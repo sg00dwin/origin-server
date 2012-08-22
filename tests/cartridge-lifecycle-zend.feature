@@ -1,5 +1,6 @@
 @runtime
-@runtime3
+@runtime_extended
+@runtime_extended1
 Feature: Cartridge Lifecycle Zend Verification Tests
   Scenario Outline: Application Creation
     Given the libra client tools
