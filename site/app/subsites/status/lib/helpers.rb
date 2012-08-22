@@ -38,3 +38,22 @@ def _log(string)
   logger = defined?(Rails) ? Rails.logger : Logger.new(STDOUT)
   logger.debug("STATUS_APP: #{string}")
 end
+
+def overwrite_db(data)
+  # Remove current data
+  Issue.delete_all
+  Update.delete_all
+
+  string = "update sqlite_sequence set seq = 0 where name = '%s'"
+  ActiveRecord::Base.connection.execute(sprintf(string,'issues'))
+  ActiveRecord::Base.connection.execute(sprintf(string,'updates'))
+
+  data['issues'].each do |val|
+    issue = val['issue']
+    Issue.create issue
+  end
+  data['updates'].each do |val|
+    update = val['update']
+    Update.create update
+  end
+end
