@@ -8,7 +8,7 @@
 
 Summary:   Dependencies for OpenShift development
 Name:      rhc-devenv
-Version: 0.98.9
+Version: 0.98.10
 Release:   1%{?dist}
 Group:     Development/Libraries
 License:   GPLv2
@@ -544,6 +544,10 @@ fi
 %{policydir}/*
 
 %changelog
+* Wed Aug 22 2012 Adam Miller <admiller@redhat.com> 0.98.10-1
+- look at mergeable on sub pull requests before processing
+  (dmcphers@redhat.com)
+
 * Tue Aug 21 2012 Adam Miller <admiller@redhat.com> 0.98.9-1
 - Merge pull request #277 from lnader/zend (openshift+bot@redhat.com)
 - remove now defunct ruby193 yum repo, it merged with li (admiller@redhat.com)
