@@ -61,9 +61,11 @@ module Origin
     end
 
 
-
-
     no_tasks do  
+      def ssh_user
+        return "ec2-user"
+      end
+
       def download_artifacts(hostname)
         puts "Downloading logs and screenshots..."
         `rm -rf rhc/log; mkdir -p rhc/log/; pushd rhc/log > /dev/null; mkdir -p broker mcollective system screenshots selenium jbossas broker-profiler coverage; popd > /dev/null`
@@ -107,17 +109,17 @@ module Origin
       def sync_impl(name, options)
         # Get the hostname from a tag lookup or assume it's SSH accessible directly
         conn = connect(options.region)
-        hostname = options.tag? ? find_instance(conn, name, true, true, "ec2-user").dns_name : name
+        hostname = options.tag? ? find_instance(conn, name, true, true, ssh_user).dns_name : name
     
         ssh_path=File.expand_path(File.dirname(__FILE__)) + "/ssh-override"
     
         puts "Creating mount"
-        out, ret = ssh(hostname, "su -c \"umount -l /data ; if [ ! -b /dev/xvdb ]; then /sbin/mke2fs /dev/xvdb; fi; mkdir -p /data && mount /dev/xvdb /data && chown -R ec2-user:ec2-user /data/\"", 60 * 10, true, 1, "ec2-user") 
+        out, ret = ssh(hostname, "su -c \"umount -l /data ; if [ ! -b /dev/xvdb ]; then /sbin/mke2fs /dev/xvdb; fi; mkdir -p /data && mount /dev/xvdb /data && chown -R ec2-user:ec2-user /data/\"", 60 * 10, true, 1, ssh_user) 
     
         avail_sibling_repo_names = []
         SIBLING_REPOS.each do |repo_name, repo_dirs|
           repo_dirs.each do |repo_dir|
-            if sync_sibling_repo(repo_name, repo_dir, hostname, ssh_path, "/data", "ec2-user")
+            if sync_sibling_repo(repo_name, repo_dir, hostname, ssh_path, "/data", ssh_user)
               avail_sibling_repo_names.push(repo_name)
               break
             end
@@ -134,16 +136,16 @@ module Origin
         # This is not required since we have already synced the crankcase repository
         # Instead we can just create a symlink for the tests in li-test/tests
         #update_remote_tests(hostname)
-        out, ret = ssh(hostname, "cd /data; #{clone_commands}", 60 * 5, true, 2, "ec2-user") if ret == 0
-        out, ret = ssh(hostname, "mkdir -p ~/li-test; cd ~/li-test; ln -s /data/crankcase-working/stickshift/controller/test/cucumber tests; ln -s /data/crankcase-working/stickshift stickshift", 60, true, 1, "ec2-user")
+        out, ret = ssh(hostname, "cd /data; #{clone_commands}", 60 * 5, true, 2, ssh_user) if ret == 0
+        out, ret = ssh(hostname, "mkdir -p ~/li-test; cd ~/li-test; ln -s /data/crankcase-working/stickshift/controller/test/cucumber tests; ln -s /data/crankcase-working/stickshift stickshift", 60, true, 1, ssh_user)
     
         if !options.skip_build?
           puts "Performing remote install...."
     
-          out, ret = ssh(hostname, "cd /data/crankcase-working/build && rake devbroker", 60 * 20, true, 1, "ec2-user") if ret == 0
-          out, ret = ssh(hostname, "su -c \"cd /data && chown -R ec2-user:ec2-user *\"", 60 * 2, true, 1, "ec2-user") if ret == 0
+          out, ret = ssh(hostname, "cd /data/crankcase-working/build && rake devbroker", 60 * 20, true, 1, ssh_user) if ret == 0
+          out, ret = ssh(hostname, "su -c \"cd /data && chown -R ec2-user:ec2-user *\"", 60 * 2, true, 1, ssh_user) if ret == 0
           puts "Restarting services..."
-          out, ret = ssh(hostname, "su -c \"/usr/bin/ss-setup-broker\"", 60 * 2, true, 2, "ec2-user") if ret == 0
+          out, ret = ssh(hostname, "su -c \"/usr/bin/ss-setup-broker\"", 60 * 2, true, 2, ssh_user) if ret == 0
       
           if ret != 0
             puts "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
@@ -179,7 +181,7 @@ module Origin
           exit(1)
         else
           puts "Launching latest Fedora instance #{ami.id} - #{ami.name}"
-          instance = launch_instance(ami, name + "_" + build_num, 1, "ec2-user")
+          instance = launch_instance(ami, name + "_" + build_num, 1, ssh_user)
         end
         
         hostname = instance.dns_name
@@ -189,13 +191,13 @@ module Origin
         ret, out = 0, nil
         begin
           puts "Starting yum update"
-          out, ret = ssh(hostname, "su -c \"yum -y update\"", 60 * 10, true, 1, "ec2-user")
+          out, ret = ssh(hostname, "su -c \"yum -y update\"", 60 * 10, true, 1, ssh_user)
           puts "Installing git, vim, and rake"
-          out, ret = ssh(hostname, "su -c \"yum install -y git vim rubygem-rake\"", 60 * 10, true, 1, "ec2-user") if ret == 0
+          out, ret = ssh(hostname, "su -c \"yum install -y git vim rubygem-rake\"", 60 * 10, true, 1, ssh_user) if ret == 0
           puts "Creating mount"
-          out, ret = ssh(hostname, "su -c \"umount -l /data ; if [ ! -b /dev/xvdb ]; then /sbin/mke2fs /dev/xvdb; fi; mkdir -p /data && mount /dev/xvdb /data && chown -R ec2-user:ec2-user /data/\"", 60 * 10, true, 1, "ec2-user") 
+          out, ret = ssh(hostname, "su -c \"umount -l /data ; if [ ! -b /dev/xvdb ]; then /sbin/mke2fs /dev/xvdb; fi; mkdir -p /data && mount /dev/xvdb /data && chown -R ec2-user:ec2-user /data/\"", 60 * 10, true, 1, ssh_user) 
           puts "Cloning / Updating crankcase repo"
-          out, ret = ssh(hostname, "if [ -d /data/crankcase ]; then cd /data/crankcase && git stash && git pull --rebase && git stash pop; else cd /data && git clone https://github.com/openshift/crankcase.git /data/crankcase; fi;" , 60 * 5, true, 1, "ec2-user") if ret == 0
+          out, ret = ssh(hostname, "if [ -d /data/crankcase ]; then cd /data/crankcase && git stash && git pull --rebase && git stash pop; else cd /data && git clone https://github.com/openshift/crankcase.git /data/crankcase; fi;" , 60 * 5, true, 1, ssh_user) if ret == 0
     
           if ret != 0
             puts "Exiting with error code #{ret}"
@@ -204,22 +206,22 @@ module Origin
           end
           
           if options[:extra_rpm_dir]
-            out, ret = ssh(hostname, "mkdir -p /data/crankcase/build/extras" , 60, true, 1, "ec2-user")
+            out, ret = ssh(hostname, "mkdir -p /data/crankcase/build/extras" , 60, true, 1, ssh_user)
             files = Dir.glob("#{options[:extra_rpm_dir]}/*.rpm")
             files.each do |file|
-              scp_to(hostname, file, "/data/crankcase/build/extras/", 60*10, 5, "ec2-user")
+              scp_to(hostname, file, "/data/crankcase/build/extras/", 60*10, 5, ssh_user)
             end
       
-            out, ret = ssh(hostname, "su -c \"cd /data/crankcase/build/extras && yum install -y *.rpm\"", 60 * 20, true, 1, "ec2-user")
+            out, ret = ssh(hostname, "su -c \"cd /data/crankcase/build/extras && yum install -y *.rpm\"", 60 * 20, true, 1, ssh_user)
           end
       
           puts "Running build_setup script..."
-          out, ret = ssh(hostname, "cd /data/crankcase/build && rake build_setup", 60 * 20, true, 1, "ec2-user") if ret == 0
+          out, ret = ssh(hostname, "cd /data/crankcase/build && rake build_setup", 60 * 20, true, 1, ssh_user) if ret == 0
           puts "Running devbroker script..."
-          out, ret = ssh(hostname, "cd /data/crankcase/build && rake devbroker", 60 * 20, true, 1, "ec2-user") if ret == 0
-          out, ret = ssh(hostname, "su -c \"cd /data && chown -R ec2-user:ec2-user *\"", 60 * 2, true, 1, "ec2-user") if ret == 0
-          puts "Running ss-setup-broker script with the full path..."
-          out, ret = ssh(hostname, "su -c \"export PATH=/usr/local/bin:/bin:/usr/bin:/usr/local/sbin:/usr/sbin:/sbin:$PATH && /usr/bin/ss-setup-broker\"", 60 * 10, true, 1, "ec2-user") if ret == 0
+          out, ret = ssh(hostname, "cd /data/crankcase/build && rake devbroker", 60 * 20, true, 1, ssh_user) if ret == 0
+          out, ret = ssh(hostname, "su -c \"cd /data && chown -R ec2-user:ec2-user *\"", 60 * 2, true, 1, ssh_user) if ret == 0
+          puts "Running broker setup..."
+          out, ret = ssh(hostname, "su -c \"export PATH=/usr/local/bin:/bin:/usr/bin:/usr/local/sbin:/usr/sbin:/sbin:$PATH && /usr/bin/ss-setup-broker --build\"", 60 * 10, true, 1, ssh_user) if ret == 0
       
           if ret != 0
             puts "Exiting with error code #{ret}"
@@ -229,7 +231,7 @@ module Origin
     
           image_id = nil
           if options[:register]
-            manifest = rpm_manifest(hostname, "ec2-user")
+            manifest = rpm_manifest(hostname, ssh_user)
             image = register_image(conn, instance, name + '_' + build_num, manifest)
             image_id = image.id
           end
@@ -252,8 +254,8 @@ module Origin
     
         cmds = ["cd li-test/stickshift/broker; su -c \"rake test:sanity\"",
                 "cd li-test/stickshift/node; su -c \"rake unit_test\""]
-        add_ssh_cmd_to_threads(hostname, threads, failures, titles, cmds, false, @@SSH_TIMEOUT, "ec2-user")
-        add_ssh_cmd_to_threads(hostname, threads, failures, "Cucumber Sanity", "cucumber #{@@CUCUMBER_OPTIONS} -t @sanity li-test/tests/", false, @@SSH_TIMEOUT, "ec2-user")
+        add_ssh_cmd_to_threads(hostname, threads, failures, titles, cmds, false, @@SSH_TIMEOUT, ssh_user)
+        add_ssh_cmd_to_threads(hostname, threads, failures, "Cucumber Sanity", "cucumber #{@@CUCUMBER_OPTIONS} -t @sanity li-test/tests/", false, @@SSH_TIMEOUT, ssh_user)
     
         threads.each do |t|
           t[0].join
@@ -261,12 +263,23 @@ module Origin
     
         unless failures.empty?
           failures.uniq!
-          retry_test_failures(hostname, failures, 1, @@SSH_TIMEOUT, "ec2-user")
+          retry_test_failures(hostname, failures, 1, @@SSH_TIMEOUT, ssh_user)
         end
       end
       
       def update_facts_impl(hostname)
         # Not required since this is handled by ss-setup-broker script
+      end
+      
+      def post_launch_setup(hostname)
+        puts "Running broker setup..."
+        out, ret = ssh(hostname, "su -c \"export PATH=/usr/local/bin:/bin:/usr/bin:/usr/local/sbin:/usr/sbin:/sbin:$PATH && /usr/bin/complete-origin-setup\"", 60 * 10, true, 1, ssh_user)
+
+        if ret != 0
+          puts "Exiting with error code #{ret}"
+          puts "Output: #{out}"
+          exit ret
+        end
       end
     end # no_tasks end
   end # class end

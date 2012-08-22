@@ -14,7 +14,17 @@ include FileUtils
 module StickShift
   class Builder < Thor
     include OpenShift::BuilderHelper
-  
+
+    no_tasks do
+      def ssh_user
+        return "root"
+      end
+      
+      def post_launch_setup(hostname)
+        # Child classes can override, if required
+      end
+    end
+      
     desc "build NAME BUILD_NUM", "Build a new devenv AMI with the given NAME"
     method_option :register, :type => :boolean, :desc => "Register the instance"
     method_option :terminate, :type => :boolean, :desc => "Terminate the instance on exit"
@@ -108,7 +118,8 @@ module StickShift
       else
         puts "Launching latest DevEnv instance #{ami.id} - #{ami.name}"
       end
-      instance = launch_instance(ami, name)
+
+      instance = launch_instance(ami, name, 1, ssh_user)
       hostname = instance.dns_name
       puts "Done"
       puts "Hostname: #{hostname}"
@@ -118,6 +129,7 @@ module StickShift
       puts "Done"
   
       update_facts_impl(hostname)
+      post_launch_setup(hostname)
   
       if options.verifier?
         print "Initializing git repo for syncing..."
@@ -135,7 +147,7 @@ module StickShift
       if File.exists?(home_dir)
         Dir.glob(File.join(home_dir, '???*'), File::FNM_DOTMATCH).each {|file|
           puts "Installing ~/#{File.basename(file)}"
-          scp_to(hostname, file, "~/", File.stat(file).mode, 10)
+          scp_to(hostname, file, "~/", File.stat(file).mode, 10, ssh_user)
         }
       end
   
