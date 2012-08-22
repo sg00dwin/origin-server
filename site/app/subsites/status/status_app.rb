@@ -166,8 +166,22 @@ class StatusApp < Sinatra::Base
             if data['issues'].empty?
               _log "Server responded with no issues, refusing to sync"
             else
-              # Overwrite the current database
-              overwrite_db(data)
+              # Remove current data
+              delete_all
+
+              string = "update sqlite_sequence set seq = 0 where name = '%s'"
+              ActiveRecord::Base.connection.execute(sprintf(string,'issues'))
+              ActiveRecord::Base.connection.execute(sprintf(string,'updates'))
+
+              data['issues'].each do |val|
+                issue = val['issue']
+                Issue.create issue
+              end
+              data['updates'].each do |val|
+                update = val['update']
+                Update.create update
+              end
+
             end
             settings.synced = true
           rescue JSON::ParserError

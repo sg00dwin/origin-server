@@ -39,24 +39,6 @@ def _log(string)
   logger.debug("STATUS_APP: #{string}")
 end
 
-def overwrite_db(data)
-  # Remove current data
-  delete_all
-
-  string = "update sqlite_sequence set seq = 0 where name = '%s'"
-  ActiveRecord::Base.connection.execute(sprintf(string,'issues'))
-  ActiveRecord::Base.connection.execute(sprintf(string,'updates'))
-
-  data['issues'].each do |val|
-    issue = val['issue']
-    Issue.create issue
-  end
-  data['updates'].each do |val|
-    update = val['update']
-    Update.create update
-  end
-end
-
 def delete_all
   [Issue,Update].each do |x|
     x.delete_all
