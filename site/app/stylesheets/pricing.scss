@@ -44,16 +44,19 @@
     } 
     section.gears {
       div.example {
-        display: table-row;
+        display: table;
+        table-layout: fixed;
         width: 100%;
         div {
           text-align: center; 
+          display: table-cell;
           padding: 15px 3px;
           p.price { font-size: 20px; padding-top: 12px;}
         }
         div.scenario {
           background-color: #f2f2f2; 
-          p.content { font-size: 11px; }
+          display: table-caption;
+          padding: 15px;
         }
         div.example1 { background: #ccc url('/app/images/single_gear_bg.png') no-repeat left bottom; width: 25%; }
         div.example2 { background: #888 url('/app/images/multi_gear_bg.png') no-repeat left bottom; width: 25%; color: #111; }
@@ -78,9 +81,19 @@
   }
 }
 
-.ie7 .community article.pricing section.gears div.example div,
-.ie8 .community article.pricing section.gears div.example div { 
+.ie7 .community article.pricing section.gears div.example div.scenario,
+.ie8 .community article.pricing section.gears div.example div.scenario {
+  display: table-caption;
+  width: 100%;
+  padding: 15px 0;
+}
+.ie8 .community article.pricing section.gears div.example div {
   width: 25%;
+}
+
+.ie7 .community article.pricing section.gears div.example div {
+  float:left;
+  width: 32%;
 }
 
 table#attachments {
@@ -89,16 +102,19 @@ table#attachments {
 a.notifications_0, a.notifications_1, a.notifications_2 {
   display: none; }
 
-@media (min-width: 480px) {
-  .community article.pricing section.gears div.example div {
-    width: 25%;
-    display: table-cell;
+@media (max-width: 350px) {
+  .community article.pricing section.gears div.example {
+    div.example1,
+    div.example2,
+    div.example3 {
+      float: left;
+      width: inherit;  
+    }  
   }
 }
+
 @media (max-width: 480px) {
-  .community article.pricing section.gears div.example {
-    display: block !important; 
-  }
+
   .community article.pricing section.pricing table thead th.plan h1 {
     font-size: 15px;
   }
@@ -120,3 +136,4 @@ a.notifications_0, a.notifications_1, a.notifications_2 {
     padding: 10px;
   }
 }
+
