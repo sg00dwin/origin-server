@@ -3,7 +3,7 @@
 
 Summary:   Li site components
 Name:      rhc-site
-Version: 0.97.11
+Version: 0.97.12
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -137,6 +137,21 @@ rm -rf %{buildroot}
 %{sitedir}/public
 
 %changelog
+* Wed Aug 22 2012 Adam Miller <admiller@redhat.com> 0.97.12-1
+- Un-refactoring overwrite_db (fotios@redhat.com)
+- Moved dumping to JSON to its own function (fotios@redhat.com)
+- Moved deletion to its own function (fotios@redhat.com)
+- Refuse to push if there are no Issues on this host (fotios@redhat.com)
+- Added function to clear current database (useful for testing)
+  (fotios@redhat.com)
+- Refuse to sync from a host with no issues (fotios@redhat.com)
+- Renamed sync to push (fotios@redhat.com)
+- Moved writing database to helper functions (fotios@redhat.com)
+- Merge pull request #283 from
+  smarterclayton/bug849939_plan_upgrade_fails_to_put (openshift+bot@redhat.com)
+- Bug 849939 - Use POST instead of PUT when submitting an account upgrade.
+  (ccoleman@redhat.com)
+
 * Tue Aug 21 2012 Adam Miller <admiller@redhat.com> 0.97.11-1
 - Merge pull request #279 from
   smarterclayton/bug849627_improve_error_message_handling_on_direct_post
