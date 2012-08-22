@@ -49,16 +49,75 @@ class CtlUsageTest < ActionDispatch::IntegrationTest
       assert_equal(UsageRecord::EVENTS[:continue], cu.usage_records[0].event)
     end
     
-    
-    cu = CloudUser.find(login)
+    # Add fs storage
     app = Application.find(cu, 'usageapp')
-    app.cleanup_and_delete()
+    gi = app.group_instances[0] 
+    gi.set_quota(gi.get_cached_min_storage_in_gb + 1)
+    app.save
+
+    assert_equal(1, gi.addtl_fs_gb)
 
     cu = CloudUser.find(login)
     assert_equal(2, cu.usage_records.length)
-    assert_equal(UsageRecord::EVENTS[:continue], cu.usage_records[0].event)
-    assert_equal(UsageRecord::EVENTS[:end], cu.usage_records[1].event)
+    assert_equal(UsageRecord::USAGE_TYPES[:addtl_fs_gb], cu.usage_records[1].usage_type)
+    assert_equal(UsageRecord::EVENTS[:begin], cu.usage_records[1].event)
 
+    # Sync fs storage
+    output = `export RAILS_ENV=test; rhc-admin-ctl-usage --sync 2>&1`
+    assert_equal(0, $?)
+
+    cu = CloudUser.find(login)
+    assert_equal(2, cu.usage_records.length)
+    assert_equal(UsageRecord::USAGE_TYPES[:addtl_fs_gb], cu.usage_records[1].usage_type)
+    assert_equal(UsageRecord::EVENTS[:continue], cu.usage_records[1].event)
+
+    # Remove fs storage
+    app = Application.find(cu, 'usageapp')
+    gi = app.group_instances[0] 
+    gi.set_quota(gi.get_cached_min_storage_in_gb)
+    app.save
+
+    assert_equal(0, gi.addtl_fs_gb)
+
+    cu = CloudUser.find(login)
+    assert_equal(3, cu.usage_records.length)
+    assert_equal(UsageRecord::EVENTS[:continue], cu.usage_records[1].event)
+    assert_equal(UsageRecord::EVENTS[:end], cu.usage_records[2].event)
+
+    # Sync removal of fs storage
+    output = `export RAILS_ENV=test; rhc-admin-ctl-usage --sync 2>&1`
+    assert_equal(0, $?)
+
+    cu = CloudUser.find(login)
+    assert_equal(1, cu.usage_records.length)
+    assert_equal(UsageRecord::USAGE_TYPES[:gear_usage], cu.usage_records[0].usage_type)
+    assert_equal(UsageRecord::EVENTS[:continue], cu.usage_records[0].event)
+
+    # Add fs storage back to test removal with gear
+    app = Application.find(cu, 'usageapp')
+    gi = app.group_instances[0] 
+    gi.set_quota(gi.get_cached_min_storage_in_gb + 1)
+    app.save
+    
+    assert_equal(1, gi.addtl_fs_gb)
+    
+    cu = CloudUser.find(login)
+    assert_equal(2, cu.usage_records.length)
+    assert_equal(UsageRecord::USAGE_TYPES[:addtl_fs_gb], cu.usage_records[1].usage_type)
+    assert_equal(UsageRecord::EVENTS[:begin], cu.usage_records[1].event)
+    
+    # Delete the app
+    app = Application.find(cu, 'usageapp')
+    app.cleanup_and_delete
+
+    cu = CloudUser.find(login)
+    assert_equal(4, cu.usage_records.length)
+    assert_equal(UsageRecord::EVENTS[:continue], cu.usage_records[0].event)
+    assert_equal(UsageRecord::EVENTS[:begin], cu.usage_records[1].event)
+    assert_equal(UsageRecord::EVENTS[:end], cu.usage_records[2].event)
+    assert_equal(UsageRecord::EVENTS[:end], cu.usage_records[3].event)
+
+    # Sync the delete
     output = `export RAILS_ENV=test; rhc-admin-ctl-usage --sync 2>&1`
     assert_equal(0, $?)
 
