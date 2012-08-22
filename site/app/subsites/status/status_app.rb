@@ -163,6 +163,9 @@ class StatusApp < Sinatra::Base
           begin
             data = JSON.parse(resp.body)
 
+            if data['issues'].empty?
+              _log "Server responded with no issues, refusing to sync"
+            else
               # Overwrite the current database
               overwrite_db(data)
             end
