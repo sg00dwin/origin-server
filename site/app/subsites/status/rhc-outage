@@ -35,7 +35,7 @@ class UpdateStatusCli < Thor
       if issue.save
         say "Created issue \##{issue.id}"
         invoke :update , [issue.id, description], :nested => true
-        invoke :sync, []
+        invoke :push, []
       else
         say_errors issue, "Unable to create issue"
       end
@@ -58,7 +58,7 @@ class UpdateStatusCli < Thor
         if update.save
           say "Update applied to issue \##{issue_id}"
           if options[:nested].nil?
-            invoke :sync, []
+            invoke :push, []
           end
         else
           say_errors update, "Unable to update issue"
@@ -80,7 +80,7 @@ class UpdateStatusCli < Thor
         invoke :update, [issue_id, description], :nested => true
         if issue.resolve
           say "Resolved issue \##{issue_id}"
-          invoke :sync, []
+          invoke :push, []
         else
           say_errors issue, "Unable to resolve issue"
         end
@@ -109,8 +109,8 @@ class UpdateStatusCli < Thor
     end
   end
 
-  desc "sync", "Synchronize all hosts (based on this host)"
-  def sync()
+  desc "push", "Push this host's status to all other hosts"
+  def push()
     hosts = YAML.load(File.open(File.join(SCRIPT_ROOT,'config','hosts.yml')))
     hostname = get_hostname
 
