@@ -544,7 +544,7 @@ function blogs_views_default_views() {
     'type' => 'none',
   ));
   $handler->override_option('title', 'Content');
-  $handler->override_option('header', '<a class="pull-right label label-feed" href="/community/blogs/feed">RSS</a>');
+  $handler->override_option('header', '<a class="pull-right" href="/community/blogs/feed"><img width="16" height="16" title="Subscribe to the blog RSS feed" alt="Syndicate content" src="/community/misc/feed.png"></a>');
   $handler->override_option('header_format', '2');
   $handler->override_option('header_empty', 0);
   $handler->override_option('style_plugin', 'table');
