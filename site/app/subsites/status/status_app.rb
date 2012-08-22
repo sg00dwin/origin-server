@@ -55,9 +55,9 @@ class StatusApp < Sinatra::Base
 
   get '*/status/current.json' do
     content_type :json
-    { :issues => Issue.all, :updates => Update.all }.to_json 
+    dump_json
   end
-  
+
   get '*/status/sync/?' do
     redirect "*/status/sync/#{STATUS_APP_HOSTS[:host]}"
   end
@@ -163,20 +163,25 @@ class StatusApp < Sinatra::Base
           begin
             data = JSON.parse(resp.body)
 
-            Issue.delete_all
-            Update.delete_all
+            if data['issues'].empty?
+              _log "Server responded with no issues, refusing to sync"
+            else
+              # Remove current data
+              delete_all
 
-            string = "update sqlite_sequence set seq = 0 where name = '%s'"
-            ActiveRecord::Base.connection.execute(sprintf(string,'issues'))
-            ActiveRecord::Base.connection.execute(sprintf(string,'updates'))
+              string = "update sqlite_sequence set seq = 0 where name = '%s'"
+              ActiveRecord::Base.connection.execute(sprintf(string,'issues'))
+              ActiveRecord::Base.connection.execute(sprintf(string,'updates'))
 
-            data['issues'].each do |val| 
-              issue = val['issue']
-              Issue.create issue
-            end
-            data['updates'].each do |val| 
-              update = val['update']
-              Update.create update
+              data['issues'].each do |val|
+                issue = val['issue']
+                Issue.create issue
+              end
+              data['updates'].each do |val|
+                update = val['update']
+                Update.create update
+              end
+
             end
             settings.synced = true
           rescue JSON::ParserError
