@@ -45,6 +45,7 @@ def migrate_gear(rhlogin, app_name, gear_uuid, version)
         if gear
           server_identity = gear.server_identity
           gear.node_profile = app.node_profile if gear.node_profile.nil?
+          is_haproxy_gear = false
           begin
             Timeout::timeout(240) do
               output = ''
@@ -56,6 +57,13 @@ def migrate_gear(rhlogin, app_name, gear_uuid, version)
                   break
                 end
               end unless migrate
+
+              # Handle case where its a scalable app's secondary gears. We
+              # want to disable idling those for now. So migrate all gears for
+              # scalable apps.
+              migrate = true  if app.scalable
+              is_haproxy_gear = true if gear.cartridges.include?("haproxy-1.4")
+
               if migrate
                 out << "Migrating on node...\n"
                 GearChanger::MCollectiveApplicationContainerProxy.rpc_exec('libra', server_identity) do |client|
@@ -106,7 +114,7 @@ def migrate_gear(rhlogin, app_name, gear_uuid, version)
           rescue Timeout::Error
             raise "Command '#{migrate_cmd}' timed out"
           end
-          if app.scalable
+          if app.scalable  &&  is_haproxy_gear
             app.elaborate_descriptor
             app.execute_connections
           end
@@ -234,7 +242,7 @@ def migrate(version, continue=false, target_server_identity=nil, migrate_positio
           server_identity = gear.server_identity
           if (!target_server_identity || (server_identity == target_server_identity))
             gear.cartridges.each do |cart_name|
-              if $all_cart_types.nil? || $all_cart_types.include?(cart_name)
+              if $all_cart_types.nil? || $all_cart_types.include?(cart_name) || app.scalable
                 node_to_gears[server_identity] = [] unless node_to_gears[server_identity]
                 node_to_gears[server_identity] << {:server_identity => server_identity, :uuid => gear.uuid, :name => gear.name, :app_name => gear.app.name, :login => user.login}
                 gear_cnt += 1 
