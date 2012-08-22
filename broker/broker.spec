@@ -3,7 +3,7 @@
 
 Summary:   Li broker components
 Name:      rhc-broker
-Version: 0.97.10
+Version: 0.97.11
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -120,6 +120,15 @@ if [ ! -f %{_localstatedir}/log/stickshift/user_action.log ]; then
 fi
 
 %changelog
+* Wed Aug 22 2012 Adam Miller <admiller@redhat.com> 0.97.11-1
+- Updating gem versions (admiller@redhat.com)
+- Cleanup broker REST api controllers (rpenta@redhat.com)
+- Merge pull request #292 from ramr/master (openshift+bot@redhat.com)
+- Merge pull request #285 from danmcp/master (openshift+bot@redhat.com)
+- Fix to add disable stale detection for a scalable app's gears.
+  (ramr@redhat.com)
+- more ctl usage test cases and related fixes (dmcphers@redhat.com)
+
 * Tue Aug 21 2012 Adam Miller <admiller@redhat.com> 0.97.10-1
 - Updating gem versions (admiller@redhat.com)
 - ctl usage tests (dmcphers@redhat.com)
