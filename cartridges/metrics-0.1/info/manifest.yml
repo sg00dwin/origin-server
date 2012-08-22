@@ -4,6 +4,10 @@ Description: Cartridge packaging metrics
 Version: 1.0.0
 License: GPLv2
 Vendor:  
+Cart-Data:
+  - Key: connection_url
+    Type: cart_data
+    Description: "Application metrics URL"
 Provides:
   - "metrics"
 Requires:
