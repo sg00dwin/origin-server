@@ -2,7 +2,7 @@
 
 Summary:       Multi-tenant cloud management system node tools
 Name:          rhc-node
-Version: 0.97.6
+Version: 0.97.7
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -289,6 +289,15 @@ fi
 
 
 %changelog
+* Wed Aug 22 2012 Adam Miller <admiller@redhat.com> 0.97.7-1
+- Merge pull request #292 from ramr/master (openshift+bot@redhat.com)
+- Fix to add disable stale detection for a scalable app's gears.
+  (ramr@redhat.com)
+- BZ 848500: Isolate hiccups during editing. (rmillner@redhat.com)
+- Coalesce the reload requests and force reload to finish after 30 seconds.
+  Use flock instead of lockfile so locks die if the script does.
+  (rmillner@redhat.com)
+
 * Mon Aug 20 2012 Adam Miller <admiller@redhat.com> 0.97.6-1
 - BZ 846445: libra-cgroups, libra-tc and rhc-restorecon are slow and should not
   re-run if already initialized. (rmillner@redhat.com)
