@@ -131,6 +131,12 @@ class UpdateStatusCli < Thor
       end
     end
   end
+
+  desc "clear", "Clear all issues/updates from this host"
+  def clear()
+    Issue.delete_all
+    Update.delete_all
+  end
 end
 
 UpdateStatusCli.start
