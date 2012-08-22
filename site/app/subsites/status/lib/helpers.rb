@@ -62,4 +62,7 @@ def delete_all
     x.delete_all
   end
 end
+
+def dump_json
+  { :issues => Issue.all, :updates => Update.all }.to_json
 end

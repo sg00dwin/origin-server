@@ -55,9 +55,9 @@ class StatusApp < Sinatra::Base
 
   get '*/status/current.json' do
     content_type :json
-    { :issues => Issue.all, :updates => Update.all }.to_json 
+    dump_json
   end
-  
+
   get '*/status/sync/?' do
     redirect "*/status/sync/#{STATUS_APP_HOSTS[:host]}"
   end
