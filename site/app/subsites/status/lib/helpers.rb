@@ -41,8 +41,7 @@ end
 
 def overwrite_db(data)
   # Remove current data
-  Issue.delete_all
-  Update.delete_all
+  delete_all
 
   string = "update sqlite_sequence set seq = 0 where name = '%s'"
   ActiveRecord::Base.connection.execute(sprintf(string,'issues'))
@@ -56,4 +55,11 @@ def overwrite_db(data)
     update = val['update']
     Update.create update
   end
+end
+
+def delete_all
+  [Issue,Update].each do |x|
+    x.delete_all
+  end
+end
 end

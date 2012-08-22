@@ -141,9 +141,9 @@ class UpdateStatusCli < Thor
   desc "clear", "Clear all issues/updates from this host"
   method_option :force, :type => :boolean, :aliases => "-f"
   def clear()
-    return unless options.force? || yes?("Are you sure?")
-    Issue.delete_all
-    Update.delete_all
+    if options.force? || yes?("Are you sure?")
+      delete_all
+    end
   end
 end
 
