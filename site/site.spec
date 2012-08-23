@@ -3,7 +3,7 @@
 
 Summary:   Li site components
 Name:      rhc-site
-Version: 0.97.12
+Version: 0.98.0
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2

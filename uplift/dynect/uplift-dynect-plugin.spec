@@ -5,7 +5,7 @@
 
 Summary:        Uplift plugin for Dynect DNS service
 Name:           rubygem-%{gemname}
-Version: 0.12.2
+Version: 0.13.0
 Release:        1%{?dist}
 Group:          Development/Languages
 License:        ASL 2.0
