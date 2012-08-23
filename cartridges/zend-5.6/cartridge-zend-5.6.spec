@@ -2,7 +2,7 @@
 
 Summary:   Provides zend-5.6 support
 Name:      cartridge-zend-5.6
-Version: 0.95.0
+Version: 0.95.1
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   ASL 2.0
