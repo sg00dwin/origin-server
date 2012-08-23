@@ -11,7 +11,7 @@ Broker::Application.configure do
 
   config.log_level = :debug
 
-  # Show full error reports and disable caching
+  # Show full error reports and enable caching
   config.consider_all_requests_local       = true
   config.action_view.debug_rjs             = true
   config.action_controller.perform_caching = true

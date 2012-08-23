@@ -253,8 +253,8 @@ module Hub
     # Submit tests to Jenkins and update the comment
     def submit_tests(repo_to_pull_request, base_repo, branch, comment_id, settings)
       unless settings[:allow_multiple]
-        if $submitted_tests[settings[:name]] || JenkinsAPI.is_previous_build_running?(branch, settings)
-          $submitted_tests[settings[:name]] = true
+        if $submitted_tests[branch][settings[:name]] || JenkinsAPI.is_previous_build_running?(branch, settings)
+          $submitted_tests[branch][settings[:name]] = true
           $stderr.puts "Waiting for existing build to finish"
           return
         end
@@ -276,7 +276,7 @@ module Hub
         end
       end
 
-      $submitted_tests[settings[:name]] = true unless settings[:allow_multiple]
+      $submitted_tests[branch][settings[:name]] = true unless settings[:allow_multiple]
     end
     
     def merge_pull_request(pull_id, repo, settings)
@@ -594,7 +594,7 @@ popd
             $stderr.puts "Waiting..."
             # Only submit the tests if the project is stable
             if JenkinsAPI.is_project_stable?(branch, settings) 
-              if !($submitted_tests[settings[:name]] && comment =~ settings[:queued_regex])
+              if !($submitted_tests[branch][settings[:name]] && comment =~ settings[:queued_regex])
                 $stderr.puts "Checking that evaluated times are still up to date"
                 if changed_after_eval
                   resubmit_test_job = true
@@ -629,7 +629,7 @@ popd
 
             # If the build is finished, update with the results
             if JenkinsAPI.is_build_running?(build_url, branch, settings)
-              $submitted_tests[settings[:name]] = true unless settings[:allow_multiple] 
+              $submitted_tests[branch][settings[:name]] = true unless settings[:allow_multiple] 
             else
               result = JenkinsAPI.get_build_result(build_url, branch, settings)
               updated_comment = "#{settings[:test_prefix]} #{result} (#{build_url})"
@@ -793,6 +793,9 @@ popd
       end
 
       skipped_count = {}
+      BRANCHES.keys.each do |branch|
+        skipped_count[branch] = {}
+      end
       sorted_pull_requests.each do |req_info|
         # Process the pull request
         req = req_info[0]
@@ -801,15 +804,17 @@ popd
         comments = req_info[3]
         settings = req_info[4]
         process_pull_request(req, updated_at, changed_after_eval, comments, settings)
+        
+        branch = req['base']['ref']
 
-        if !settings[:allow_multiple] && $submitted_tests[settings[:name]] 
+        if !settings[:allow_multiple] && $submitted_tests[branch][settings[:name]]
           comments = get_comments(req['number'], req['base']['repo']['name'])
           bot_comment = get_comment_with_prefix(req['number'], req['base']['repo']['name'], settings[:test_prefix], comments)
           if bot_comment && (bot_comment['body'] =~ settings[:waiting_regex])
-            skipped_count[settings[:name]] = 0 if skipped_count[settings[:name]].nil?
-            skipped_count[settings[:name]] += 1
-            create_or_update_comment(req['number'], req['base']['repo']['name'], settings[:test_prefix], settings[:queued_comment] % skipped_count[settings[:name]].to_s, comments)
-            $stderr.puts "Pull ##{req['number']} in repo '#{req['base']['repo']['name']}' is at build position ##{skipped_count[settings[:name]]}"
+            skipped_count[branch][settings[:name]] = 0 if skipped_count[branch][settings[:name]].nil?
+            skipped_count[branch][settings[:name]] += 1
+            create_or_update_comment(req['number'], req['base']['repo']['name'], settings[:test_prefix], settings[:queued_comment] % skipped_count[branch][settings[:name]].to_s, comments)
+            $stderr.puts "Pull ##{req['number']} in repo '#{req['base']['repo']['name']}' is at build position ##{skipped_count[branch][settings[:name]]}"
           end
         end
       end
@@ -961,6 +966,9 @@ end
 $permissions = {}
 $commits = {}
 $submitted_tests = {}
+BRANCHES.keys.each do |branch|
+  $submitted_tests[branch] = {}  
+end
 
 if merge_pull_id
   @api_client.merge_pull_request(merge_pull_id, pull_id_repo, MERGE_TEST_SETTINGS)

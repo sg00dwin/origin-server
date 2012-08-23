@@ -81,44 +81,44 @@
 git clone git@github.com:openshift/li.git
 pushd li
   git checkout stage
-  if [ -n &quot;$LI_PULL_ID&quot; ]
-  then
-    set +x
-    echo &quot;
+popd
+if [ -n &quot;$LI_PULL_ID&quot; ]
+then
+  set +x
+  echo &quot;
 
 *****Locally Merging Pull Request: https://github.com/openshift/li/pull/$LI_PULL_ID&quot;
-    set -x
-    test_pull_requests --local_merge_pull_request $LI_PULL_ID --repo li
-  fi
-popd
+  set -x
+  test_pull_requests --local_merge_pull_request $LI_PULL_ID --repo li
+fi
 
 git clone git@github.com:openshift/crankcase.git
 pushd crankcase
   git checkout stage
-  if [ -n &quot;$CRANKCASE_PULL_ID&quot; ]
-  then
-    set +x
-    echo &quot;
+popd
+if [ -n &quot;$CRANKCASE_PULL_ID&quot; ]
+then
+  set +x
+  echo &quot;
 
 *****Locally Merging Pull Request: https://github.com/openshift/crankcase/pull/$CRANKCASE_PULL_ID&quot;
-    set -x
-    test_pull_requests --local_merge_pull_request $CRANKCASE_PULL_ID --repo crankcase
-  fi
-popd
+  set -x
+  test_pull_requests --local_merge_pull_request $CRANKCASE_PULL_ID --repo crankcase
+fi
 
 git clone git@github.com:openshift/rhc.git
 pushd rhc
   git checkout stage
-  if [ -n &quot;$RHC_PULL_ID&quot; ]
-  then
-    set +x
-    echo &quot;
+popd
+if [ -n &quot;$RHC_PULL_ID&quot; ]
+then
+  set +x
+  echo &quot;
 
 *****Locally Merging Pull Request: https://github.com/openshift/rhc/pull/$RHC_PULL_ID&quot;
-    set -x
-    test_pull_requests --local_merge_pull_request $RHC_PULL_ID --repo rhc
-  fi
-popd
+  set -x
+  test_pull_requests --local_merge_pull_request $RHC_PULL_ID --repo rhc
+fi
 
 set +x
 echo &quot;
