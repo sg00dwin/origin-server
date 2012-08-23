@@ -31,6 +31,7 @@ class Release < Thor
         end
       end
     end
+    
 
     def fail_if_uncommitted_changes
       raise "You have uncommited changes in the repository, cannot bump versions" unless run('git diff --quiet')
@@ -45,6 +46,63 @@ class Release < Thor
       end
     end
 
+    def update_our_gems(package_name, build_dir, spec_file)
+      gem_updates = false
+      chain_build_set = []
+      list_of_deps = []
+      all_packages = get_packages
+
+      if package_name == 'rubygem-stickshift-common'
+        update_gemfile_version(spec_file, 'stickshift-common', "broker/Gemfile.lock", verbose)
+        update_gemfile_version(spec_file, 'stickshift-common', "#{build_dir}/../broker/Gemfile.lock", verbose)
+        update_gemfile_version(spec_file, 'stickshift-common', "#{build_dir}/../node/Gemfile.lock", verbose)
+        list_of_deps |= ['rhc-broker','stickshift-broker','rubygem-stickshift-node']
+
+        gem_updates = true
+      end
+
+      if package_name == 'rubygem-stickshift-node' || package_name == 'rubygem-stickshift-common'
+        pkg = all_packages['rubygem-stickshift-node']
+        build_dir = pkg[0]
+        spec_file = pkg[1]
+        update_gemfile_version(spec_file, 'stickshift-node', "#{build_dir}/Gemfile.lock", verbose)
+        update_gemfile_version(spec_file, 'stickshift-node', "#{build_dir}/../broker/Gemfile.lock", verbose)
+        list_of_deps |= ['rhc-broker','stickshift-broker']
+        gem_updates = true
+      end
+
+      if package_name == 'rubygem-stickshift-controller'
+        update_gemfile_version(spec_file, 'stickshift-controller', "broker/Gemfile.lock", verbose)
+        update_gemfile_version(spec_file, 'stickshift-controller', "#{build_dir}/../broker/Gemfile.lock", verbose)
+        list_of_deps |= ['rhc-broker','stickshift-broker']
+        gem_updates = true
+      end
+
+      if ['rubygem-gearchanger-m-collective-plugin','rubygem-gearchanger-mcollective-plugin', \
+          'rubygem-swingshift-streamline-plugin', 'rubygem-uplift-dynect-plugin'].member? package_name
+        short_name = package_name.split("-")[1..-1].join('-')
+        update_gemfile_version(spec_file, short_name, "broker/Gemfile.lock", verbose)
+        list_of_deps |= ['rhc-broker']
+        gem_updates = true
+      end
+        
+      list_of_deps.each do | pkg | 
+        chain_build_set << [pkg, all_packages[pkg][0], all_pacakges[pkg][1]]
+      end
+
+      return gem_updates, chain_build_set
+
+    end
+
+    def git_add_gemfiles
+      branch = get_branch
+      run("git add broker/Gemfile.lock; git commit -m 'Updating gem versions'; git push origin #{branch}", :verbose => options.verbose?)
+      inside('../crankcase') do
+        branch = get_branch
+        run("git add stickshift/node/Gemfile.lock stickshift/broker/Gemfile.lock; git commit -m 'Updating gem versions'; git push origin #{branch}", :verbose => options.verbose?)
+      end
+    end
+
     def get_updated_build_dirs(verbose, push_changes=false)
       gem_updates = false
       
@@ -56,58 +114,12 @@ class Release < Thor
         build_dir = build_info[1]
         spec_file = build_info[2]
 
-        if package_name == 'rubygem-stickshift-common'
-          update_gemfile_version(spec_file, 'stickshift-common', "broker/Gemfile.lock", verbose)
-          update_gemfile_version(spec_file, 'stickshift-common', "#{build_dir}/../broker/Gemfile.lock", verbose)
-          update_gemfile_version(spec_file, 'stickshift-common', "#{build_dir}/../node/Gemfile.lock", verbose)
-          gem_updates = true
-        end
-
-        if package_name == 'rubygem-stickshift-node' || package_name == 'rubygem-stickshift-common'
-          pkg = all_packages['rubygem-stickshift-node']
-          build_dir = pkg[0]
-          spec_file = pkg[1]
-          update_gemfile_version(spec_file, 'stickshift-node', "#{build_dir}/Gemfile.lock", verbose)
-          update_gemfile_version(spec_file, 'stickshift-node', "#{build_dir}/../broker/Gemfile.lock", verbose)
-          gem_updates = true
-        end
-
-        if package_name == 'rubygem-stickshift-controller'
-          update_gemfile_version(spec_file, 'stickshift-controller', "broker/Gemfile.lock", verbose)
-          update_gemfile_version(spec_file, 'stickshift-controller', "#{build_dir}/../broker/Gemfile.lock", verbose)
-          gem_updates = true
-        end
-
-        if package_name == 'rubygem-gearchanger-m-collective-plugin'
-          update_gemfile_version(spec_file, 'gearchanger-m-collective-plugin', "broker/Gemfile.lock", verbose)
-          gem_updates = true
-        end
-        
-        if package_name == 'rubygem-gearchanger-mcollective-plugin'
-          update_gemfile_version(spec_file, 'gearchanger-mcollective-plugin', "broker/Gemfile.lock", verbose)
-          gem_updates = true
-        end
-
-        if package_name == 'rubygem-swingshift-streamline-plugin'
-          update_gemfile_version(spec_file, 'swingshift-streamline-plugin', "broker/Gemfile.lock", verbose)
-          gem_updates = true
-        end
-
-        if package_name == 'rubygem-uplift-dynect-plugin'
-          update_gemfile_version(spec_file, 'uplift-dynect-plugin', "broker/Gemfile.lock", verbose)
-          gem_updates = true
-        end
-
+        gem_updates, chain_build_set = update_our_gems(package_name, build_dir, spec_file)
       end
       
       if gem_updates
         if push_changes
-          branch = get_branch
-          run("git add broker/Gemfile.lock; git commit -m 'Updating gem versions'; git push origin #{branch}", :verbose => options.verbose?)
-          inside('../crankcase') do
-            branch = get_branch
-            run("git add stickshift/node/Gemfile.lock stickshift/broker/Gemfile.lock; git commit -m 'Updating gem versions'; git push origin #{branch}", :verbose => options.verbose?)
-          end
+          git_add_gemfiles
           build_dirs = get_build_dirs
         end
       end
@@ -167,6 +179,7 @@ class Release < Thor
   end
 
   desc "build", "Tag and build new RPMs for any changes"
+  method_option :release_package, :type => :string, :desc => "name of package to release", :default => ""
   method_option :verbose, :type => :boolean, :desc => "Enable verbose logging"
   def build
 
@@ -185,8 +198,34 @@ class Release < Thor
 
       # Update the repo
       git_pull
+    
+      unless options.release_package.empty?
+        found_single_release = false
+        
+        packages = get_packages
+        packages.each do | pkg_name, build_info |
+          if pkg_name == options.release_package
+            found_single_release = true
+            build_dirs = [ [pkg_name, build_info[0], build_info[1]] ]
+            break
+          end
+        end
 
-      build_dirs = get_updated_build_dirs(options.verbose?, true)
+        if found_single_release 
+          gem_updates, chain_build_set = update_our_gems(build_dirs[0][0], build_dirs[0][1], build_dirs[0][2])
+        
+          if gem_updates
+            git_add_gemfiles 
+            build_dirs += chain_build_set
+          end
+        else
+          puts "ERROR: package #{options.release_package} not a valid build target"
+          exit 1
+        end
+      else
+        build_dirs = get_updated_build_dirs(options.verbose?, true)
+      end
+  
       tag_failures = []
       requires_rebuild = []
 
