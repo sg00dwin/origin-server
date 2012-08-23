@@ -2,6 +2,8 @@
 
 #. /etc/bashrc
 
+[ -f ~/app-root/data/.bash_profile ] && source ~/app-root/data/.bash_profile
+
 source /etc/init.d/functions 2> /dev/null
 
 # Import Environment Variables
