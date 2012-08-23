@@ -5,7 +5,7 @@
 %global modname             global_settings
 
 Name:    drupal%{drupal_release}-openshift-features-%{modname}
-Version: 1.4.0
+Version: 1.4.1
 Release: 1%{?dist}
 Summary: Openshift Red Hat Custom Forums Feature for Drupal6
 Group:   Applications/Publishing
@@ -41,6 +41,9 @@ rm -rf $RPM_BUILD_ROOT
 %{drupal_modules}/%{modname}
 
 %changelog
+* Wed Aug 22 2012 Adam Miller <admiller@redhat.com> 1.4.1-1
+- bump_minor_versions for sprint 17 (admiller@redhat.com)
+
 * Mon Aug 20 2012 Adam Miller <admiller@redhat.com> 1.3.3-1
 - Hide image field from pages (ccoleman@redhat.com)
 
