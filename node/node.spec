@@ -28,6 +28,7 @@ Requires:      rubygem-systemu
 Requires:      stickshift-abstract
 Requires:      mcollective-qpid-plugin
 Requires:      stickshift-mcollective-agent
+Requires:      stickshift-port-proxy
 Requires:      quota
 Requires:      lsof
 Requires:      wget
@@ -84,7 +85,6 @@ mkdir -p %{buildroot}/%{_sysconfdir}/security/
 mkdir -p %{buildroot}%{_localstatedir}/lib/stickshift
 mkdir -p %{buildroot}%{_localstatedir}/run/stickshift
 mkdir -p %{buildroot}%{_localstatedir}/lib/stickshift/.httpd.d
-mkdir -p %{buildroot}%{_localstatedir}/lib/stickshift/.stickshift-proxy.d
 mkdir -p %{buildroot}/%{_sysconfdir}/httpd/conf.d/
 mkdir -p %{buildroot}/lib64/security/
 mkdir -p %{buildroot}/sandbox
@@ -171,16 +171,6 @@ fi
 # To workaround mcollective 2.0 monkey patch to tmpdir
 chmod o+w /tmp
 
-# Enable proxy and fix if the config file is missing
-/sbin/chkconfig --add stickshift-proxy || :
-if ! [ -f /var/lib/stickshift/.stickshift-proxy.d/stickshift-proxy.cfg ]; then
-   cp /etc/stickshift/stickshift-proxy.cfg /var/lib/stickshift/.stickshift-proxy.d/stickshift-proxy.cfg
-   restorecon /var/lib/stickshift/.stickshift-proxy.d/stickshift-proxy.cfg || :
-fi
-/sbin/restorecon /var/lib/stickshift/.stickshift-proxy.d/ || :
-/sbin/service stickshift-proxy condrestart || :
-
-
 
 %triggerin -- rubygem-stickshift-node
 
@@ -198,7 +188,6 @@ if [ "$1" -eq "0" ]; then
     /sbin/chkconfig --del libra-cgroups || :
     /sbin/chkconfig --del libra-data || :
     /sbin/chkconfig --del libra || :
-    /sbin/chkconfig --del stickshift-proxy || :
     /sbin/chkconfig --del libra-watchman || :
     /usr/sbin/semodule -r libra
     sed -i -e '\:/usr/bin/trap-user:d' /etc/shells
@@ -218,9 +207,6 @@ then
     mv /etc/httpd/conf.d/stickshift/ /etc/httpd/conf.d/stickshift.bak/
 fi
 
-%triggerin -- haproxy
-/sbin/service stickshift-proxy condrestart
-
 %files
 %defattr(-,root,root,-)
 %attr(0640,-,-) %{_libexecdir}/mcollective/mcollective/agent/*
@@ -228,7 +214,6 @@ fi
 %attr(0750,-,-) %{_initddir}/libra-data
 %attr(0750,-,-) %{_initddir}/libra-cgroups
 %attr(0750,-,-) %{_initddir}/libra-tc
-%attr(0750,-,-) %{_initddir}/stickshift-proxy
 %attr(0750,-,-) %{_initddir}/libra-watchman
 %attr(0755,-,-) %{_bindir}/trap-user
 %attr(0750,-,-) %{_bindir}/rhc-ip-prep.sh
@@ -249,10 +234,8 @@ fi
 %attr(0750,-,-) %{_bindir}/ec2-prep.sh
 %attr(0750,-,-) %{_bindir}/remount-secure.sh
 %attr(0755,-,-) %{_bindir}/rhc-cgroup-read
-%attr(0755,-,-) %{_bindir}/stickshift-proxy-cfg
 %dir %attr(0751,root,root) %{_localstatedir}/lib/stickshift
 %dir %attr(0750,root,root) %{_localstatedir}/lib/stickshift/.httpd.d
-%dir %attr(0750,root,root) %{_localstatedir}/lib/stickshift/.stickshift-proxy.d
 %dir %attr(0700,root,root) %{_localstatedir}/run/stickshift
 #%dir %attr(0755,root,root) %{_libexecdir}/stickshift/cartridges/abstract-httpd/
 #%attr(0750,-,-) %{_libexecdir}/stickshift/cartridges/abstract-httpd/info/hooks/
@@ -276,7 +259,6 @@ fi
 %attr(0640,-,-) %config(noreplace) %{_sysconfdir}/oddjobd.conf.d/oddjobd-restorer.conf
 %attr(0640,-,-) %config(noreplace) %{_sysconfdir}/dbus-1/system.d/openshift-restorer.conf
 %attr(0644,-,-) %config(noreplace) %{_sysconfdir}/stickshift/stickshift-node.conf.libra
-%attr(0640,-,-) %config(noreplace) %{_sysconfdir}/stickshift/stickshift-proxy.cfg
 %attr(0644,-,-) %config(noreplace) %{_sysconfdir}/stickshift/resource_limits.con*
 %attr(0750,-,-) %config(noreplace) %{_sysconfdir}/cron.daily/stickshift_tmpwatch.sh
 %attr(0644,-,-) %config(noreplace) %{_sysconfdir}/security/namespace.d/*
