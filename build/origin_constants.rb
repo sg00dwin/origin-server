@@ -14,13 +14,13 @@ DEVENV_STAGE_CLEAN_WILDCARD = "oso-fedora-stage-clean_*"
 DEVENV_STAGE_BASE_WILDCARD = "oso-fedora-stage-base_*"
 
 FORK_AMI_WILDCARD = "fork_ami_*"
-DEVENV_AMI_WILDCARDS = {DEVENV_WILDCARD => {:keep => 1, :regex => /(oso-fedora)_(\d*)/}, 
-                        DEVENV_STAGE_WILDCARD => {:keep => 8, :regex => /(oso-fedora-stage)_(\d*)/},
-                        DEVENV_CLEAN_WILDCARD => {:keep => 1, :regex => /(oso-fedora-clean)_(\d*)/},
-                        DEVENV_STAGE_CLEAN_WILDCARD => {:keep => 1, :regex => /(oso-fedora-stage-clean)_(\d*)/},
-                        DEVENV_BASE_WILDCARD => {:keep => 1, :regex => /(oso-fedora-base)_(\d*)/},
-                        DEVENV_STAGE_BASE_WILDCARD => {:keep => 1, :regex => /(oso-fedora-stage-base)_(\d*)/},
-                        FORK_AMI_WILDCARD => {:keep => 50, :keep_per_sub_group => 1, :regex => /(fork_ami_.*)_(\d*)/}}
+DEVENV_AMI_WILDCARDS = {DEVENV_WILDCARD => {:keep => 1, :regex => /(oso-fedora)_(\d+)/}, 
+                        DEVENV_STAGE_WILDCARD => {:keep => 8, :regex => /(oso-fedora-stage)_(\d+)/},
+                        DEVENV_CLEAN_WILDCARD => {:keep => 1, :regex => /(oso-fedora-clean)_(\d+)/},
+                        DEVENV_STAGE_CLEAN_WILDCARD => {:keep => 1, :regex => /(oso-fedora-stage-clean)_(\d+)/},
+                        DEVENV_BASE_WILDCARD => {:keep => 1, :regex => /(oso-fedora-base)_(\d+)/},
+                        DEVENV_STAGE_BASE_WILDCARD => {:keep => 1, :regex => /(oso-fedora-stage-base)_(\d+)/},
+                        FORK_AMI_WILDCARD => {:keep => 50, :keep_per_sub_group => 1, :regex => /(fork_ami_.*)_(\d+)/}}
 VERIFIER_REGEXS = {/^(oso-fedora)_(\d+)$/ => {},
                    /^(oso-fedora_verifier)_(\d+)$/ => {}, 
                    /^(oso-fedora-stage)_(\d+)$/ => {}, 

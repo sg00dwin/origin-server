@@ -112,7 +112,7 @@ module OpenShift
           filter("state", "available").
           filter("name", filter_val)
         # Take the last DevEnv AMI - memoize saves a remote call
-        devenv_amis.to_a.sort_by {|ami| ami.name.split("_")[1].to_i}.last
+        devenv_amis.to_a.sort_by {|ami| ami.name.split("_")[-1].to_i}.last
       end
     end
 
