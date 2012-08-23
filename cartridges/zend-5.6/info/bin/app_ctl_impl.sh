@@ -16,7 +16,8 @@ else
     exit 1;
 fi
 
-echo $INSTALLATION_ID
+
+[ "$1" == "reload" ] && shift && eval set -- "restart $@"
 
 /usr/local/zend/bin/zdd.sh $1
 /usr/local/zend/bin/monitor-node.sh $1
