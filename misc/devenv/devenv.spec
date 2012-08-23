@@ -172,6 +172,7 @@ Requires:  openscap-content
 Requires:  openscap-extra-probes
 Requires:  openscap-python
 Requires:  openscap-utils
+Requires:  html2text
 
 BuildArch: noarch
 
