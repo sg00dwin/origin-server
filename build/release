@@ -198,7 +198,9 @@ class Release < Thor
 
       # Update the repo
       git_pull
-    
+   
+      build_dirs = []
+
       unless options.release_package.empty?
         found_single_release = false
         
