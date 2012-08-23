@@ -5,7 +5,7 @@
 %global modname             user_profile
 
 Name:    drupal%{drupal_release}-openshift-features-%{modname}
-Version: 1.6.0
+Version: 1.6.1
 Release: 1%{?dist}
 Summary: Openshift Red Hat Custom User Profile Feature for Drupal6
 Group:   Applications/Publishing
@@ -41,6 +41,9 @@ rm -rf $RPM_BUILD_ROOT
 %{drupal_modules}/%{modname}
 
 %changelog
+* Wed Aug 22 2012 Adam Miller <admiller@redhat.com> 1.6.1-1
+- bump_minor_versions for sprint 17 (admiller@redhat.com)
+
 * Tue Aug 21 2012 Adam Miller <admiller@redhat.com> 1.5.5-1
 - Permissions for the following items needed to be updated and exported: - Blog
   author photo - View/edit search metadata keywords (ccoleman@redhat.com)
