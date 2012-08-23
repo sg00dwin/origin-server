@@ -5,7 +5,7 @@
 %global modname             reporting_csv_views
 
 Name:    drupal%{drupal_release}-openshift-features-%{modname}
-Version: 1.3.0
+Version: 1.3.1
 Release: 1%{?dist}
 Summary: Openshift Red Hat Custom Reporting CSV Views Feature for Drupal6
 Group:   Applications/Publishing
@@ -41,6 +41,9 @@ rm -rf $RPM_BUILD_ROOT
 %{drupal_modules}/%{modname}
 
 %changelog
+* Wed Aug 22 2012 Adam Miller <admiller@redhat.com> 1.3.1-1
+- bump_minor_versions for sprint 17 (admiller@redhat.com)
+
 * Sun Aug 05 2012 Dan McPherson <dmcphers@redhat.com> 1.2.2-1
 - 
 
