@@ -3,7 +3,7 @@
 
 Summary:   Li site components
 Name:      rhc-site
-Version: 0.98.0
+Version: 0.98.1
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -137,6 +137,9 @@ rm -rf %{buildroot}
 %{sitedir}/public
 
 %changelog
+* Wed Aug 22 2012 Adam Miller <admiller@redhat.com> 0.98.1-1
+- bump_minor_versions for sprint 17 (admiller@redhat.com)
+
 * Wed Aug 22 2012 Adam Miller <admiller@redhat.com> 0.97.12-1
 - Un-refactoring overwrite_db (fotios@redhat.com)
 - Moved dumping to JSON to its own function (fotios@redhat.com)
