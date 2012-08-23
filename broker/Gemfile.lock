@@ -86,7 +86,7 @@ GEM
     rest-client (1.6.1)
     ruby-prof (0.10.7)
     state_machine (1.1.2)
-    stickshift-common (0.15.1)
+    stickshift-common (0.15.2)
       activemodel
       json
       mongo
