@@ -105,8 +105,7 @@ class Release < Thor
 
     def get_updated_build_dirs(verbose, push_changes=false)
       gem_updates = false
-      
-      all_packages = get_packages
+
       build_dirs = get_build_dirs
 
       build_dirs.each do |build_info|
@@ -116,7 +115,7 @@ class Release < Thor
 
         gem_updates, chain_build_set = update_our_gems(package_name, build_dir, spec_file, verbose)
       end
-      
+
       if gem_updates
         if push_changes
           git_add_gemfiles
