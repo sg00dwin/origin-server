@@ -522,7 +522,7 @@ popd
       login = req['user']['login']
       repo_to_pull_request = {base_repo => req}
       
-      $stderr.puts "\n****Processing '#{settings[:name]}' for user '#{login}' on: https://github.com/openshift/#{base_repo}/pull/#{id}"
+      $stderr.puts "\n****Processing #{settings[:name]} in '#{branch}' branch for user '#{login}' on: https://github.com/openshift/#{base_repo}/pull/#{id}"
 
       trigger_updated_at = get_trusted_trigger_time(req, comments, settings)
       evaluated_time = get_evaluated_time(comments)
@@ -715,6 +715,7 @@ popd
       else
         `sed -i "/#{merge_id}/d" ~/test_pull_request_not_mergable && echo "#{merge_id}=#{(count+1).to_s}" >> ~/test_pull_request_not_mergable`
       end
+      count == 0 #return if this was the first time (used as stability measure, Github becomes unstable for mergeability right after a merge happens)
     end
 
     #
@@ -743,7 +744,9 @@ popd
               comments = get_comments(id, repo) if comments.nil?
               set_mergeable(id, repo, login, comments)
             else
-              set_not_mergeable(id, repo, login)
+              if set_not_mergeable(id, repo, login)
+                $stderr.puts "Waiting till next run to see if mergeability if in flux"
+              end
               next
             end
 
