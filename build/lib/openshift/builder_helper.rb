@@ -229,8 +229,10 @@ END
                 end
               end
             elsif retry_individ && output.include?("Failure:") && output.include?("rake_test_loader")
+              found_test = false
               output.lines.each do |line|
                 if line =~ /\A(test_\w+)\((\w+Test)\) \[\/*(.*?_test\.rb):(\d+)\]:/
+                  found_test = true
                   test_name = $1
                   class_name = $2
                   file_name = $3
@@ -244,6 +246,7 @@ END
                   failures.push(["#{class_name} (#{test_name})", "#{chdir_command} ruby -Ilib:test #{file_name} -n #{test_name}"])
                 end
               end
+              failures.push([title, cmd]) unless found_test
             else
               failures.push([title, cmd])
             end
