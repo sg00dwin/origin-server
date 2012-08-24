@@ -34,13 +34,11 @@ class CtlUsageTest < ActionDispatch::IntegrationTest
     assert_equal(UsageRecord::EVENTS[:begin], cu.usage_records[0].event)
 
     # Make sure this doesn't explode    
-    output = `export RAILS_ENV=test; rhc-admin-ctl-usage --list 2>&1` 
-    assert_equal(0, $?)
+    list_usage
 
     # Sync a couple of times
     2.times do
-      output = `export RAILS_ENV=test; rhc-admin-ctl-usage --sync 2>&1`
-      assert_equal(0, $?)
+      sync_usage
   
       cu = CloudUser.find(login)
       assert_equal(1, cu.usage_records.length)
@@ -63,8 +61,7 @@ class CtlUsageTest < ActionDispatch::IntegrationTest
     assert_equal(UsageRecord::EVENTS[:begin], cu.usage_records[1].event)
 
     # Sync fs storage
-    output = `export RAILS_ENV=test; rhc-admin-ctl-usage --sync 2>&1`
-    assert_equal(0, $?)
+    sync_usage
 
     cu = CloudUser.find(login)
     assert_equal(2, cu.usage_records.length)
@@ -85,8 +82,7 @@ class CtlUsageTest < ActionDispatch::IntegrationTest
     assert_equal(UsageRecord::EVENTS[:end], cu.usage_records[2].event)
 
     # Sync removal of fs storage
-    output = `export RAILS_ENV=test; rhc-admin-ctl-usage --sync 2>&1`
-    assert_equal(0, $?)
+    sync_usage
 
     cu = CloudUser.find(login)
     assert_equal(1, cu.usage_records.length)
@@ -118,11 +114,24 @@ class CtlUsageTest < ActionDispatch::IntegrationTest
     assert_equal(UsageRecord::EVENTS[:end], cu.usage_records[3].event)
 
     # Sync the delete
-    output = `export RAILS_ENV=test; rhc-admin-ctl-usage --sync 2>&1`
-    assert_equal(0, $?)
+    sync_usage
 
     cu = CloudUser.find(login)
     assert_equal(0, cu.usage_records.length)
+  end
+  
+  def sync_usage
+    output = `export RAILS_ENV=test; rhc-admin-ctl-usage --sync 2>&1` 
+    exit_code = $?
+    puts output if exit_code != 0
+    assert_equal(0, exit_code)
+  end
+  
+  def list_usage
+    output = `export RAILS_ENV=test; rhc-admin-ctl-usage --list 2>&1` 
+    exit_code = $?
+    puts output if exit_code != 0
+    assert_equal(0, exit_code)
   end
 
 end
