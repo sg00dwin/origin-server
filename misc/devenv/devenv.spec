@@ -399,17 +399,20 @@ cp -f %{devenvdir}/puppet-private.pem /var/lib/puppet/ssl/private_keys/localhost
 # Create OpenScap script
 cat > /usr/local/bin/openscap.sh << EOF
 # Create OpenScap results
-/usr/bin/oscap xccdf eval --profile RHEL6-Default --results /var/log/xccdf-results.xml /usr/share/openscap/scap-rhel6-xccdf.xml 
-/usr/bin/oscap oval eval --results /var/log/oval-results.xml /usr/share/openscap/scap-rhel6-oval.xml 
+/usr/bin/oscap xccdf eval --profile RHEL6-Default --results /var/log/xccdf-results.xml /usr/share/openscap/scap-rhel6-xccdf.xml
+#/usr/bin/oscap oval eval --results /var/log/oval-results.xml /usr/share/openscap/scap-rhel6-oval.xml
 
 # Validate the OpenScap results
-/usr/bin/oscap xccdf validate-xml /usr/share/openscap/scap-rhel6-xccdf.xml 
-/usr/bin/oscap oval validate-xml /usr/share/openscap/scap-rhel6-oval.xml 
+#/usr/bin/oscap xccdf validate-xml /usr/share/openscap/scap-rhel6-xccdf.xml
+#/usr/bin/oscap oval validate-xml /usr/share/openscap/scap-rhel6-oval.xml
 
 # Create OpenScap HTML reports
-/usr/bin/oscap xccdf generate report /var/log/xccdf-results.xml > /var/log/report-xccdf.html 
-/usr/bin/oscap oval generate report /var/log/oval-results.xml > /var/log/report-oval.html 
-/usr/bin/oscap xccdf generate report --oval-template /var/log/oval-results.xml /var/log/xccdf-results.xml > /var/log/report-xccdf-oval.html 
+/usr/bin/oscap xccdf generate report /var/log/xccdf-results.xml > /var/log/report-xccdf.html
+#/usr/bin/oscap oval generate report /var/log/oval-results.xml > /var/log/report-oval.html
+#/usr/bin/oscap xccdf generate report --oval-template /var/log/oval-results.xml /var/log/xccdf-results.xml > /var/log/report-xccdf-oval.html
+
+# Create rsyslog file from html
+/usr/bin/html2text -o /var/log/openscap_rsyslog.txt /var/log/report-xccdf.html
 EOF
 
 # Make OpenScap.sh executable
