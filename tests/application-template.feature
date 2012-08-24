@@ -1,4 +1,5 @@
 @broker_api
+@broker_api4
 Feature: Application template list
   As an OpenShift user
   I should be able to preview the # of gears used by a quickstart based application
