@@ -1,6 +1,7 @@
 Given /^an accepted node$/ do
   accept_node = "/usr/bin/rhc-accept-node"
-  File.exists?(accept_node).should be_true
+  assert_file_exists accept_node
+
   num_tries = 10
   (1..num_tries).each do |i|
     begin
@@ -24,12 +25,12 @@ Given /^an accepted node$/ do
 end
 
 Given /^the libra client tools$/ do
-  File.exists?($create_app_script).should be_true
-  File.exists?($create_domain_script).should be_true
-  File.exists?($client_config).should be_true
-  File.exists?($ctl_app_script).should be_true
+  assert_file_exists $create_app_script
+  assert_file_exists $create_domain_script
+  assert_file_exists $client_config
+  assert_file_exists $ctl_app_script
 
-  File.exists?($rhc_app_script).should be_true
-  File.exists?($rhc_domain_script).should be_true
-  File.exists?($rhc_sshkey_script).should be_true
+  assert_file_exists $rhc_app_script
+  assert_file_exists $rhc_domain_script
+  assert_file_exists $rhc_sshkey_script
 end

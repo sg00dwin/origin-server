@@ -22,9 +22,9 @@ end
 
 Then /^the file (.*) does( not)? exist$/ do |file, negate|
   if negate
-    File.exist?(file).should be_false
+    assert_file_not_exists file
   else
-    File.exist?(file).should be_true
+    assert_file_exists file
   end
 end
 
