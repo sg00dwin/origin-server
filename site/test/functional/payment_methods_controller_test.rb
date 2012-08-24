@@ -1,6 +1,14 @@
 require File.expand_path('../../test_helper', __FILE__)
 
 class PaymentMethodsControllerTest < ActionController::TestCase
+  test "should display payment method" do
+    with_account_holder
+    get :edit, :plan_id => :megashift
+    assert_response :success
+    assert_select ".alert.alert-error", 0
+    assert_select "#aria_payment_method_cvv_input.error .help-inline", 0
+  end
+
   test "should display payment method errors" do
     with_account_holder
     get :edit, :plan_id => :megashift, :payment_method => {:errors => {:base => 'foo', :cvv => 'servercvvmustbenumeric'}}

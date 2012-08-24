@@ -8,7 +8,7 @@ class PaymentMethodsController < ApplicationController
     @payment_method = @user.payment_method
     @previous_payment_method = @payment_method.dup
 
-    update_errors(@payment_method.errors, (params[:payment_method] || [])[:errors] || {})
+    update_errors(@payment_method.errors, (params[:payment_method] || {})[:errors] || {})
 
     @payment_method.cc_no = nil
     @payment_method.mode = Aria::DirectPost.get_or_create(post_name, url_for(:action => :direct_update))
