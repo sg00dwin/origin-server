@@ -19,10 +19,10 @@ module Account
 
       async do
         rest_user = User.find :one, :as => @user
-        @plan = rest_user.plan.tap{ |c| c.aria_plan }
+        @plan = rest_user.plan.tap{ |c| c.name }
       end
 
-      join!(15)
+      join!(30)
 
       render :show_extended, :layout => 'console'
     end
