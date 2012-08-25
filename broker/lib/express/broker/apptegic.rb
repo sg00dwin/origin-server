@@ -121,6 +121,8 @@ module Express
             Rails.logger.debug "Response from apptegic #{response.code}"
           rescue RestClient::ExceptionWithResponse => e
             Rails.logger.error "Response from apptegic #{e.response}"
+          rescue Exception => e
+            Rails.logger.error "Error: sending data to apptegic #{e.message}"
           end
         }
 

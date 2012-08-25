@@ -1,5 +1,5 @@
 - content_for :javascripts do
-  = javascript_include_tag 'script.js'
+  = javascript_include_tag status_jsonp_url('outage')
 
 !!! 5
 -# http://paulirish.com/2008/conditional-stylesheets-vs-css-hacks-answer-neither
@@ -9,8 +9,6 @@
     = render "layouts/site/stylesheets"
 
   %body{ :class => "#{controller.controller_name} #{controller.action_name} #{yield :body_class}" }
-
-    = outage_notification
 
     %header
       = render 'layouts/site/header'
@@ -32,18 +30,25 @@
                     = yield :navigation
                 .column-content.lift.grid-wrapper
                   .span9.span-flush-right
+                    - if content_for? :title
+                      %h1.ribbon= yield :title
                     = flashes
                     = yield
               - else
                 .column-content.lift-less.grid-wrapper
                   .span12.span-flush-right
+                    - if content_for? :title
+                      %h1.ribbon= yield :title
                     = flashes
                     = yield
 
     %footer
-      = render 'layouts/site/footer'
+      = render 'layouts/footer'
 
     = render 'layouts/site/javascripts'
 
-    -# Omniture code will not load in devenvs to force it to load, just comment out if statement
-    = render('shared/omniture_code', :controller => controller.controller_name, :action => controller.action_name, :event => @event ||= '', :evar8 => @evar8 ||= '') if Rails.env.production?
+    = render('shared/tracking',
+      :controller => controller.controller_name,
+      :action => controller.action_name,
+      :event => @event ||= '',
+      :evar8 => @evar8 ||= '') if Rails.env.production?

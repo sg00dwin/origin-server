@@ -1,0 +1,58 @@
+#!/usr/bin/env ruby
+
+require 'tmpdir'
+
+$: << File.expand_path(File.dirname(__FILE__))
+
+base_dir = '/etc/drupal6/all/modules/features'
+
+features = Dir.entries(base_dir).select do |x|
+  File.directory? "#{base_dir}/#{x}" and not ['.','..'].include?(x)
+end
+features << 'redhat_events'
+features << 'redhat_ideas'
+
+puts 'Export drupal features to disk...'
+puts "  #{features.join(', ')}\n"
+Dir.chdir '/usr/share/drupal6' do
+  system("drush features-update -y #{features.join(' ')}")
+end
+
+zip = nil
+Dir.mktmpdir 'drushexport' do |working_dir|
+
+  puts 'Create archive of all features...'
+  targets = {}
+  Dir.foreach(base_dir) do |x|
+    next unless File.directory? "#{base_dir}/#{x}"
+    next if x == '.' || x == '..'
+
+    dest = "#{working_dir}/drupal/drupal6-openshift-features-#{x}"
+    targets["#{base_dir}/#{x}"] = dest
+  end
+
+  puts 'Create archive of external features...'
+  targets["#{base_dir}/../custom/redhat_events"] = "#{working_dir}/drupal/drupal6-openshift-redhat_events"
+  targets["#{base_dir}/../custom/redhat_ideas"] = "#{working_dir}/drupal/drupal6-openshift-redhat_ideas"
+
+  targets.each_pair do |source,dest|
+    %x( mkdir -p #{dest} )
+    %x( cp -rf #{source}/* #{dest}/ )
+  end
+
+  Dir.chdir working_dir do
+    zip = "#{Dir.tmpdir}/export_#{Time.now.to_i}.tar.gz"
+    %( rm #{zip} )
+    puts ` tar cvzf #{zip} . `
+  end
+end
+
+puts <<-S
+exit 0
+Archive of features created:
+  #{zip}
+
+From your 'li' folder run the following command to apply these changes.
+
+scp verifier:#{zip} #{zip} && git diff --exit-code --quiet && tar xvzf #{zip}
+S

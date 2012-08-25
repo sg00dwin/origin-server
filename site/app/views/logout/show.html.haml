@@ -1,0 +1,13 @@
+- content_for :title, 'Logged out of OpenShift'
+
+%p
+  You have been logged out of OpenShift.  Usually this occurs when you have conflicting browser cookies and is a safeguard to protect your account from malicious sites.  You can log in again and continue your work using the link below.
+
+%p= link_to 'Continue working', @redirect, :class => 'btn'
+
+%p
+  If you are repeatedly logged out, try clearing your browser cookies for the #{content_tag(:code, '.redhat.com')} domain.  If this does not address the issue, please contact us at #{link_to_account_mailto} or on #{link_to_irc}.
+
+%p
+  We apologize for the inconvenience - The OpenShift team.
+

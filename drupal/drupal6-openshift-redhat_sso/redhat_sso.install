@@ -1,0 +1,44 @@
+<?php
+function _redhat_sso_profile_field_add($properties) {
+  $result = drupal_write_record('profile_fields', $properties);
+  
+  $category = (array_key_exists('category', $properties) ?
+    $properties['category'] : t('(none)') );
+
+  watchdog('profile', 'Profile field %field added under category %category. %result',
+    array('%field' => $properties['title'], '%category' => $category, '%result' => $result),
+    WATCHDOG_NOTICE, l(t('view'), 'admin/user/profile'));
+}
+
+function _redhat_sso_profile_field_remove($name, $remove_values=TRUE) {
+  //could be bad ramifications from deleting a profile field but *not* deleting its values (fid seems not to be reused) ?
+  if ($remove_values) {
+    //not sure how db-independent this SQL is ...
+    $values = db_query("DELETE FROM {profile_values} WHERE fid IN (SELECT fid FROM {profile_fields} WHERE name='%s')",$name);
+    watchdog('profile', 'Profile field %name values were deleted. %values', array('%name' => $name, '%values' => $values), WATCHDOG_NOTICE, l(t('view'), 'admin/user/profile')); #TODO: also mention whether values were killed
+  }
+  $values = db_query("DELETE FROM {profile_fields} WHERE name='%s'", $name);
+  watchdog('profile', 'Profile field %name was deleted. %values', array('%name' => $name, '%values' => $values), WATCHDOG_NOTICE, l(t('view'), 'admin/user/profile')); #TODO: also mention whether values were killed
+}
+
+function redhat_sso_install() {
+  variable_set('site_403', 'user/denied');
+  _redhat_sso_profile_field_add( array(
+    'title' => 'Red Hat login external ID',
+    'name' => 'profile_rhlogin',
+    'explanation' => 'The unique identifier of a Streamline user (simple = mail, full = rhlogin)',
+    'category' => 'External Account',
+    'type' => 'textfield',
+    'weight' => 0,
+    'required' => 0,
+    'register' => 0,
+    'visibility' => 4,
+    'autocomplete' => 0,
+    'page' => '',
+  ));
+}
+
+function redhat_sso_uninstall() {
+  _redhat_sso_profile_field_remove( 'profile_rhlogin' );
+}
+?>

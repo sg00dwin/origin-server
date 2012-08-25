@@ -2,10 +2,10 @@
 
 %h1.ribbon Reset your password
 
-= semantic_form_for @user, :url => password_path, :html => {:class => 'form-horizontal'} do |f|
-  %p If you have forgotten your password please enter your email address here, and we will send you an email with a link that will create a new, random password for your account.
+= semantic_form_for @user, :url => account_password_path, :html => {:id => 'password_reset_form', :class => 'form-horizontal'} do |f|
+  %p If you have forgotten your password please enter your email address or Red Hat login here, and we will send you an email with a link that will create a new, random password for your account.
   = f.semantic_errors
-  = f.input :email_address, :as => :email, :input_html => {:autofocus => true}
+  = f.input :login, :input_html => {:autofocus => true}
   = f.buttons do
     = f.commit_button "Reset Password", :button_html =>  {:class => 'btn'}
     or 

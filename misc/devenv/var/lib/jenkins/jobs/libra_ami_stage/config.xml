@@ -33,7 +33,7 @@
         <string>uploadpack</string>
         <string>git-upload-pack</string>
         <string>url</string>
-        <string>git://git1.ops.rhcloud.com/li.git/</string>
+        <string>git@github.com:openshift/li.git</string>
         <string>tagopt</string>
         <string></string>
       </org.spearce.jgit.transport.RemoteConfig>
@@ -69,20 +69,20 @@
     <hudson.tasks.Shell>
       <command>if [ &quot;$BUILD_CLEAN_AMI&quot; == &quot;true&quot; ]
 then
-  build/devenv build devenv-stage ${BUILD_NUMBER} --register --official --terminate --use_stage_repo --build_clean_ami
+  build/devenv build devenv-stage ${BUILD_NUMBER} --register --official --terminate --use_stage_repo --build_clean_ami --instance_type m1.large
 else
-  build/devenv build devenv-stage ${BUILD_NUMBER} --register --official --terminate --use_stage_repo
+  build/devenv build devenv-stage ${BUILD_NUMBER} --register --official --terminate --use_stage_repo --instance_type m1.large
 fi</command>
     </hudson.tasks.Shell>
   </builders>
   <publishers>
     <hudson.tasks.ArtifactArchiver>
-      <artifacts>rhc/log/*</artifacts>
+      <artifacts>rhc/log/**</artifacts>
       <latestOnly>false</latestOnly>
     </hudson.tasks.ArtifactArchiver>
     <hudson.tasks.Mailer>
       <recipients>libra-devel@redhat.com</recipients>
-      <dontNotifyEveryUnstableBuild>true</dontNotifyEveryUnstableBuild>
+      <dontNotifyEveryUnstableBuild>false</dontNotifyEveryUnstableBuild>
       <sendToIndividuals>false</sendToIndividuals>
     </hudson.tasks.Mailer>
   </publishers>

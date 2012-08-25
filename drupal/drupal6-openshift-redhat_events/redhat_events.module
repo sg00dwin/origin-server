@@ -1,0 +1,69 @@
+<?php
+
+function redhat_events_menu() {
+  $items['events'] = array(
+    'page callback' => redhat_events_page,
+    'access callback' => TRUE,
+    'type' => MENU_NORMAL_ITEM,
+  );
+
+  return $items;
+}
+
+function redhat_events_date_format_types() {
+  return array(
+    'redhat_events_date_format_short' => t('Events short'),
+    'redhat_events_date_format_medium' => t('Events medium'),
+  );
+}
+
+/*
+* hook_date_formats
+*/
+function redhat_events_date_formats() {
+  $formats = array();
+
+  // Short date formats.
+  $formats[] = array(
+    'type' => 'redhat_events_date_format_short',
+    'format' => 'D M j o',
+    'locales' => array(),
+  );
+  $formats[] = array(
+    'type' => 'redhat_events_date_format_medium',
+    'format' => 'l F j, Y g:ma',
+    'locales' => array(),
+  );
+  return $formats;
+}
+
+function redhat_events_page(){
+
+  $content = "<ul class='nav nav-pills'>";
+
+  $sort = $_GET['sort'];
+  if (!$sort) {
+    $sort = 'date';
+  }
+  if ($sort != 'country'){
+    $content .= "<li><a href='events?sort=country'>View By Country</a></li>";
+  }
+  if ($sort != 'date'){
+    $content .= "<li><a href='events'>View By Date</a></li>";
+  }
+  if ($sort != 'calendar'){
+    $content .= "<li><a href='calendar'>Calendar View</a></li>";
+  }
+  $content .= "</ul>";
+
+  if ($sort == 'country'){
+    $content .= views_embed_view('event_view', 'block_2');
+  }
+  elseif ($sort == 'date'){
+    $content .= views_embed_view('event_view', 'block_1');
+  }
+  return $content;
+
+}
+
+include_once('redhat_events.features.inc');

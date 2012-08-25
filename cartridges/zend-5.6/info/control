@@ -1,0 +1,13 @@
+Name: zend-5.6
+Version: 5.6.x
+Architecture: i686/x86_64
+Provides: zend
+Depends:
+Conflicts:
+Type: Cartridge
+Role: misc
+Vendor: zend
+DisplayName: ZEND-5.6
+Bundles:  zend-5.6-bundle.tar.gz
+Description: 
+

@@ -29,8 +29,8 @@ class Download
   files = [
     {
       :id => 'remix',
-      :name => 'StickShift Fedora Remix',
-      :filename => 'fedora_remix.iso',
+      :name => 'OpenShift Origin LiveCD',
+      :filename => 'openshift_origin_livecd.iso',
       :type => 'application/x-iso9660-image',
       :size => 1102053376,
       :location => File.join(DEFAULT_LOCATION,%w(fedora-remix 16 x86_64))

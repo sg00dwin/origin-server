@@ -1,0 +1,192 @@
+#!/usr/bin/env ruby
+require 'rubygems'
+require 'pp'
+require 'thread'
+require 'thread-dump'
+require 'getoptlong'
+require 'stringio'
+
+RHLOGINS = nil #['rhlogin']
+MAX_THREADS = 8
+WORK_DIR = '/tmp/rhc/migration'
+
+STDOUT.sync, STDERR.sync = true
+
+def migrate_jenkins_gear(rhlogin, app_name, gear_uuid, version)
+  migrate_cmd = "#{__FILE__} --rhlogin '#{rhlogin}' --migrate-gear '#{gear_uuid}' --app-name '#{app_name}' --version '#{version}'"
+  puts "Migrating gear on node with: #{migrate_cmd}\n"
+  migrated = false
+  begin
+    user = CloudUser.find(rhlogin)
+    if user
+      app = Application.find(user, app_name)
+      puts "App: #{app}\n"
+      if app
+        puts "Name: #{app.name} #{app.architecture} #{app.version} #{app.description} #{app.cart_data}\n"
+     
+        gear = nil
+        app.gears.each do |app_gear|
+          if app_gear.uuid == gear_uuid
+            gear = app_gear
+            break
+          end
+        end
+        puts "Gear: #{gear}\n"
+        if gear
+          redeploy_jenkins_httpd_proxy(gear)
+          migrated = true
+        else
+          puts "WARNING: Gear not found with uuid #{gear_uuid} for app '#{app_name}' and user '#{rhlogin}'\n"
+          migrated = true
+        end
+       
+      else
+        puts "ERROR: App not found: #{app_name}"
+      end
+    else
+      puts "ERROR: User not found: #{rhlogin}"
+    end 
+  rescue Exception => e
+    raise "#{e.message}\n#{e.backtrace}\nOutput:\n"
+  end
+end
+
+def redeploy_jenkins_httpd_proxy(gear)
+  puts "redeploy_jenkins_httpd_proxy"
+  gear.configured_components.each do |comp_name|
+    component = gear.app.comp_instance_map[comp_name]
+    if component
+      puts "component #{component} #{component.parent_cart_name}"
+      if component.parent_cart_name == 'jenkins-1.4'
+        puts "Redeploying httpd proxy for '#{component.parent_cart_name}' on gear '#{gear.name}' with uuid '#{gear.uuid}' on node #{gear.server_identity}\n"
+#        embedded = gear.app.embedded.include?(component.parent_cart_name)
+        reply = gear.app.container.send(:run_cartridge_command, component.parent_cart_name, gear.app, gear, 'deploy-httpd-proxy', nil, false)
+    
+        puts "DEPLOY_HTTP_PROXY DEBUG OUTPUT:\n#{reply.debugIO.string}\n" unless reply.debugIO.string.empty?
+        puts "DEPLOY_HTTP_PROXY ERROR OUTPUT:\n#{reply.errorIO.string}\n" unless reply.errorIO.string.empty?
+        
+        if reply.exitcode != 0
+          puts "Deploy httpd proxy for cart: #{component.parent_cart_name} on node exit code: #{reply.exitcode}\n"
+          raise "Failed deploying httpd proxy for gear '#{gear.name}' with uuid '#{gear.uuid}' on node '#{gear.server_identity}'"
+        end
+        
+        restart_jenkins_component(gear, component)
+      end
+    end
+    puts "done"
+  end
+end
+
+def restart_jenkins_component(gear, component)
+  reply = gear.status(component)
+  num_tries = 2
+  (1..num_tries).each do |i|
+    puts "Restarting component '#{component.name}' on gear with uuid '#{gear.uuid}' on node '#{gear.server_identity}'\n"
+    begin
+      reply.append gear.restart(component)
+      break
+    rescue Exception => e
+      if i == num_tries
+        puts "Failed to restart component '#{component.name}' on gear with uuid '#{gear.uuid}' on node '#{gear.server_identity}' after #{num_tries} tries with exception: #{e.message}\n"
+        raise
+      end
+    end
+  end
+ 
+  puts "RESTART DEBUG OUTPUT:\n#{reply.debugIO.string}\n" unless reply.debugIO.string.empty?
+  puts "RESTART ERROR OUTPUT:\n#{reply.errorIO.string}\n" unless reply.errorIO.string.empty?
+end
+
+def migrate(version=1, continue=false, target_server_identity=nil, migrate_position=1, num_migrators=1)
+  start_time = Time.now.to_i
+  puts "Getting all RHLogins..."
+  users = []
+  if RHLOGINS
+    RHLOGINS.each do |rhlogin|
+      user = CloudUser.find(rhlogin)
+      if user
+        users << user
+      else
+        puts "WARNING:  Couldn't find user: #{rhlogin}"
+      end
+    end
+  else
+    users = CloudUser.find_all(nil)
+  end
+  all_rhlogins_length = users.length
+  gear_cnt = 0
+  puts "RHLogins.length: #{all_rhlogins_length.to_s}"
+  
+  node_to_gears = {}
+  ds_queues = []
+  users.each_with_index do |user, index|
+    queue_index = index % MAX_THREADS
+    ds_queues[queue_index] = [] unless ds_queues[queue_index]
+    ds_queues[queue_index].push(user)
+  end
+  ds_threads = []
+#  mutex = Mutex.new
+  ds_queues.each do |users|
+    
+#    ds_threads << Thread.new do
+      users.each do |user|
+        puts "Gathering gears for user: #{user.login} with uuid: #{user.uuid}"
+        apps = user.applications
+        apps.each do |app|
+          puts "Found app #{app.name}"
+#          puts "gears"
+          gears = app.gears
+          if gears 
+            gears.each do |gear|
+#              puts "Found gear #{gear.name}"
+              migrate_jenkins_gear(user.login, app.name, gear.uuid, version)
+            end
+          else
+            puts "ERROR: Gear not found for app: '#{app.name}' of user #{user.login}"
+          end
+#        end
+      end
+    end
+  end
+end
+
+def p_usage
+    puts <<USAGE
+
+Usage: #{$0}
+
+  --rhlogin rhlogin                    User rhlogin
+  --app-name app_name                  App name of the gear to migrate
+
+USAGE
+exit 255
+end
+
+begin
+  opts = GetoptLong.new(
+    ["--migrate-gear", GetoptLong::REQUIRED_ARGUMENT],
+    ["--rhlogin", GetoptLong::REQUIRED_ARGUMENT],
+    ["--app-name", GetoptLong::REQUIRED_ARGUMENT],
+    ["--version", GetoptLong::REQUIRED_ARGUMENT],
+    ["--help", "-h", GetoptLong::NO_ARGUMENT]
+  )
+  opt = {}
+  opts.each do |o, a|
+    opt[o[2..-1]] = a.to_s
+  end
+rescue Exception => e
+  p_usage
+end
+
+if opt['help']
+  p_usage
+end
+
+$:.unshift('/var/www/stickshift/broker')
+require 'config/environment'
+
+if opt['migrate-gear'] && opt['rhlogin'] && opt['app-name'] && opt['version']
+  migrate_jenkins_gear(opt['rhlogin'], opt['app-name'], opt['migrate-gear'], opt['version'])
+else 
+  migrate()
+end

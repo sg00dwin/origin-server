@@ -1,0 +1,75 @@
+- content_for :title, 'Set Account Information'
+= plan_upgrade_steps 1
+
+= semantic_form_for @full_user, :namespace => :upgrade_account, :url => edit_account_plan_upgrade_path, :html => {:method => :put} do |f|
+  -#= f.inputs
+  = f.semantic_errors
+
+  = f.inputs 'Account', :for => @full_user do |u|
+    - if @full_user.persisted?
+
+      %p
+        You are logged in as <strong>#{logged_in_id}</strong> under the name <strong>#{@full_user.first_name} #{@full_user.last_name}</strong>.
+        Your phone number for this account is <strong>#{@full_user.phone}</strong>
+
+    - else
+      .row
+        .span8
+          = u.input :first_name
+          = u.input :last_name
+          = u.input :phone
+
+        .span4
+          %h4 Complete your Account
+          %p 
+            To purchase a plan, we need to have a few pieces of information for tax and 
+            legal purposes.  The info you provide will be stored as part of a Red Hat Network
+            account (RHN) which gives you access to other Red Hat properties and services.
+
+          %h4 How does a Red Hat account affect me?
+          %p
+            Upgrading your account will not change how you access and use OpenShift, nor will
+            Red Hat or OpenShift contact you differently as part of this upgrade.  A Red Hat
+            account is necessary for contacting Red Hat Support.
+
+
+  = f.inputs 'Billing Information', :for => @billing_info do |b|
+    = b.semantic_errors
+
+    .row
+      .span8
+        = b.input :first_name
+        = b.input :middle_initial
+        = b.input :last_name
+        = b.input :address1
+        = b.input :address2
+        = b.input :address3
+        = b.input :city
+        = b.inputs :state, :country, :zip
+
+        = f.buttons do
+          = link_to "Back to plans", account_plans_path, :class => 'btn'
+          = f.commit_button "Update my account"
+          = f.loading
+
+      .span4
+        %h4 Your contact information is safe
+        %p 
+          We will never share your contact information with third parties, and we
+          will only use it to contact you regarding your OpenShift account
+
+        %h4 Are you located in the US?
+        %p
+          At this time paid OpenShift access is only available to customers in the
+          United States. We plan on expanding availability in the future. Please
+          contact us at #{link_to_account_mailto} if you are interested in subscribing
+          from another country.
+
+        %h4 Tax exempt?
+        %p
+          To qualify for tax exempt status you must submit a certificate to Red Hat.
+          Upon reciept of your certificate we will refund all previously paid taxes to 
+          your credit card. #{link_to "Learn more about filing for tax exempt status", tax_exempt_help_status, :target => '_blank', :class => 'external'}.
+
+
+

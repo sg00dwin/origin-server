@@ -1,0 +1,139 @@
+/* Pricing and plans pages */ 
+
+.community {
+  article.pricing {
+    section.pricing {
+      table { 
+        width: 100%; 
+        margin-top: 20px;
+        th, td { text-align: center; }
+        thead {
+          tr th:last-child { border-left: 10px solid white; }
+          th.plan { 
+            background-color: #f2f2f2; 
+            width: 36%;
+            h1 { padding-top: 20px; margin-bottom: 5px; }
+            h2.price.free { font-size: 22px; }
+            h2.price { margin-bottom: 25px; }
+            h3 { margin-bottom: 20px; }
+            p.description { font-size: 16px; font-weight: normal; }
+            p.price-details { font-size: 14px; font-weight: normal; }
+            .action-call { margin-left: auto; margin-right: auto; margin-bottom: 15px; }
+          }
+        }
+        tbody {
+          td { 
+            height: 48px; 
+            a.about { display: block; font-size: smaller; }
+          }
+          td:first-child { text-align: right; padding-right: 10px; }
+          td.key { font-size: 14px; }
+          td.value { font-size: 16px; }
+          tr:nth-child(odd) { 
+            background-color: #f2f2f2; 
+            td.value { background-color: #ececec; }
+            td:last-child { border-left: 10px solid #f2f2f2; }
+          }
+          tr:nth-child(even) { 
+            background-color: #fff; 
+            td.value { background-color: #f9f9f9; }
+            td:last-child { border-left: 10px solid #fff; }
+          }
+        }
+      }
+    } 
+    section.gears {
+      div.example {
+        display: table;
+        table-layout: fixed;
+        width: 100%;
+        div {
+          text-align: center; 
+          display: table-cell;
+          padding: 15px 3px;
+          p.price { font-size: 20px; padding-top: 12px;}
+        }
+        div.scenario {
+          background-color: #f2f2f2; 
+          display: table-caption;
+          padding: 15px;
+        }
+        div.example1 { background: #ccc url('/app/images/single_gear_bg.png') no-repeat left bottom; width: 25%; }
+        div.example2 { background: #888 url('/app/images/multi_gear_bg.png') no-repeat left bottom; width: 25%; color: #111; }
+        div.example3 { 
+          background: #3f3f3f url('/app/images/lotsa_gears_bg.png') no-repeat left bottom; 
+          color: white; 
+          width: 25%; 
+          h3 { color: white; }
+        }
+      }
+    }
+    section.faq {
+      dl.faq {
+        dt { padding-bottom: 5px; }
+        dd { 
+          padding-bottom: 15px; 
+          margin-left: 0; 
+        }
+      }
+
+    }
+  }
+}
+
+.ie7 .community article.pricing section.gears div.example div.scenario,
+.ie8 .community article.pricing section.gears div.example div.scenario {
+  display: table-caption;
+  width: 100%;
+  padding: 15px 0;
+}
+.ie8 .community article.pricing section.gears div.example div {
+  width: 25%;
+}
+
+.ie7 .community article.pricing section.gears div.example div {
+  float:left;
+  width: 32%;
+}
+
+table#attachments {
+  display: none; }
+
+a.notifications_0, a.notifications_1, a.notifications_2 {
+  display: none; }
+
+@media (max-width: 350px) {
+  .community article.pricing section.gears div.example {
+    div.example1,
+    div.example2,
+    div.example3 {
+      float: left;
+      width: inherit;  
+    }  
+  }
+}
+
+@media (max-width: 480px) {
+
+  .community article.pricing section.pricing table thead th.plan h1 {
+    font-size: 15px;
+  }
+  .community article.pricing section.pricing table tbody td.key,
+  .community article.pricing section.pricing table tbody td.value,
+  .community article.pricing section.pricing table thead th.plan p.description,
+  .community article.pricing section.pricing table thead th.plan p.price-details,
+  .community article.pricing section.pricing table thead th.plan h2.price.free,
+  .community article.pricing section.pricing table thead th.plan h2,
+  .community article.pricing section.pricing table thead th.plan h3 {
+    font-size: inherit; 
+  }
+  .community article.pricing section.pricing table tbody tr:nth-child(odd) td:last-child,
+  .community article.pricing section.pricing table tbody tr:nth-child(even) td:last-child,
+  .community article.pricing section.pricing table thead tr th:last-child {
+      border-left: 1px solid #fff;
+  }
+  .action-call > div {
+    padding: 10px;
+  }
+}
+

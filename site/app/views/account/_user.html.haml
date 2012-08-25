@@ -1,0 +1,25 @@
+= div_for user do
+  %h2 Personal Information
+
+  %p
+    OpenShift currently allows access via an existing Red Hat account or through an account created with your e-mail and password.
+
+  %table.table
+    %thead
+      %tr
+        %th{:title => 'The account name you will use to log in'} Login
+        - if show_email
+          %th Email
+        %th Account Type
+    - identities.each do |i|
+      %tr
+        %td= i.id
+        - if show_email
+          %td= i.email
+        %td= i.url.present? ? link_to(i.type_name, i.url, :class => 'external') : i.type_name
+
+  .btn-toolbar
+    = link_to "Change password...", edit_account_password_path, :class => 'btn'
+    -#%li= link_to "Terms of Use", legal_site_terms_path
+    -#%li= link_to "Privacy Policy", legal_openshift_privacy_path
+

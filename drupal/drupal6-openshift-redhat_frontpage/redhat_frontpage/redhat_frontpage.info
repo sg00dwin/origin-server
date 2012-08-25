@@ -1,6 +1,0 @@
-; $Id
-name = Red Hat Front Page
-description = Front page for the community site
-core = 6.x
-package = front_page
-version = VERSION

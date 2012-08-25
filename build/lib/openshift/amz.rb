@@ -37,7 +37,7 @@ module OpenShift
         conn = AWS::EC2.new
       rescue StandardError => e
         puts <<-eos
-          Couldn't access credentials in ~/.awscred
+          Couldn't access credentials in #{File.expand_path("~/.awscred")}
 
           Please create a file with the following format:
             AWSAccessKeyId=<ACCESS_KEY>
@@ -49,22 +49,6 @@ module OpenShift
           
       conn = conn.regions[region] if region
       conn
-    end
-
-    def get_version(package)
-      yum_output = `yum info #{package}`
-
-      # Process the yum output to get a version
-      version = yum_output.split("\n").collect do |line|
-        line.split(":")[1].strip if line.start_with?("Version")
-      end.compact[-1]
-
-      # Process the yum output to get a release
-      release = yum_output.split("\n").collect do |line|
-        line.split(":")[1].strip if line.start_with?("Release")
-      end.compact[-1]
-
-      return "#{version}-#{release.split('.')[0]}"
     end
 
     def check_update
@@ -90,6 +74,21 @@ module OpenShift
         filter("name", filter)
     end
     
+    def get_specific_public_ami(conn, filter_val)
+      if filter_val.start_with?("ami")
+        filter_param = "image-id"
+      else
+        filter_param = "name"
+      end 
+      AWS.memoize do
+        devenv_amis = conn.images.
+          filter("state", "available").
+          filter(filter_param, filter_val)
+        # Take the last DevEnv AMI - memoize saves a remote call
+        devenv_amis.to_a[0]
+      end
+    end
+    
     def get_specific_ami(conn, filter_val)
       if filter_val.start_with?("ami")
         filter_param = "image-id"
@@ -113,7 +112,7 @@ module OpenShift
           filter("state", "available").
           filter("name", filter_val)
         # Take the last DevEnv AMI - memoize saves a remote call
-        devenv_amis.to_a.sort_by {|ami| ami.name.split("_")[1].to_i}.last
+        devenv_amis.to_a.sort_by {|ami| ami.name.split("_")[-1].to_i}.last
       end
     end
 
@@ -133,15 +132,17 @@ module OpenShift
       end
     end
 
-    def find_instance(conn, name, use_tag=false)
-      conn.instances.each do |i|
+    def find_instance(conn, name, use_tag=false, block_until_available=true, ssh_user="root")
+      if use_tag
+        instances = conn.instances.filter('tag-key', 'Name').filter('tag-value', name)
+      else
+        instances = conn.instances.filter('dns-name', name)
+      end
+      instances.each do |i|
         if (instance_status(i) != :terminated)
-          if (use_tag and i.tags["Name"] == name) or
-             (!use_tag and i.dns_name == name)
-            puts "Found instance #{i.id}"
-            block_until_available(i)
-            return i
-          end
+          puts "Found instance #{i.id}"
+          block_until_available(i, ssh_user) if block_until_available
+          return i
         end
       end
 
@@ -189,7 +190,7 @@ module OpenShift
       end
     end
 
-    def launch_instance(image, name, max_retries = 1)
+    def launch_instance(image, name, max_retries = 1, ssh_user="root")
       log.info "Creating new instance..."
 
       # You may have to retry creating instances since Amazon
@@ -200,11 +201,10 @@ module OpenShift
       instance = image.run_instance($amz_options)
 
       begin
-          
         add_tag(instance, name, 10)
 
         # Block until the instance is accessible
-        block_until_available(instance)
+        block_until_available(instance, ssh_user, true)
 
         return instance
       rescue ScriptError => e
@@ -229,9 +229,9 @@ module OpenShift
       end
     end
 
-    def block_until_available(instance)
+    def block_until_available(instance, ssh_user="root", terminate_if_unavailable=false)
       log.info "Waiting for instance to be available..."
-      
+
       (0..12).each do
         break if instance_status(instance) == :running
         log.info "Instance isn't running yet... retrying"
@@ -239,18 +239,18 @@ module OpenShift
       end
 
       unless instance_status(instance) == :running
-        terminate_instance(instance)
-        raise ScriptError, "Timed out before instance was 'running'"
+        terminate_instance(instance) if terminate_if_unavailable
+        raise ScriptError, "Instance is not in a state of 'running'"
       end
 
       hostname = instance.dns_name
       (1..30).each do
-        break if can_ssh?(hostname)
+        break if can_ssh?(hostname, ssh_user)
         log.info "SSH access failed... retrying"
         sleep 5
       end
 
-      unless can_ssh?(hostname)
+      unless can_ssh?(hostname, ssh_user)
         terminate_instance(instance)
         raise ScriptError, "SSH availability timed out"
       end
@@ -258,14 +258,18 @@ module OpenShift
       log.info "Instance (#{hostname}) is accessible"
     end
 
-    def is_valid?(hostname)
-      @validation_output = ssh(hostname, '/usr/bin/rhc-accept-node')
-      log.info "Node Acceptance Output = #{@validation_output}"
-      @validation_output == "PASS"
+    def is_valid?(hostname, ssh_user="root")
+      @validation_output = ssh(hostname, '/usr/bin/rhc-accept-devenv', 60, false, 1, ssh_user)
+      if @validation_output == "PASS"
+        return true
+      else
+        puts "Node Acceptance Output = #{@validation_output}"
+        return false
+      end
     end
 
-    def get_private_ip(hostname)
-      private_ip = ssh(hostname, "facter ipaddress")
+    def get_private_ip(hostname, ssh_user="root")
+      private_ip = ssh(hostname, "facter ipaddress", 60, false, 1, ssh_user)
       if !private_ip or private_ip.strip.empty?
         puts "EXITING - AMZ instance didn't return ipaddress fact"
         exit 0
@@ -273,40 +277,34 @@ module OpenShift
       private_ip
     end
     
-    def use_private_ip(hostname)
+    def use_private_ip(hostname, ssh_user="root")
       private_ip = get_private_ip(hostname)
       puts "Updating instance facts with private ip #{private_ip}"
-      set_instance_ip(hostname, private_ip, private_ip)
-    end
-    
-    def run_libra_data(hostname)
-      print "Running libra-data to set the public ip..."
-      ssh(hostname, "service libra-data start")
-      puts 'Done'
+      set_instance_ip(hostname, private_ip, private_ip, ssh_user)
     end
 
-    def use_public_ip(hostname, use_hostname=false)
-      dhostname = ssh(hostname, "wget -qO- http://169.254.169.254/latest/meta-data/public-hostname")
-      public_ip = ssh(hostname, "wget -qO- http://169.254.169.254/latest/meta-data/public-ipv4")
-      public_ip = dhostname unless use_hostname
+    def use_public_ip(hostname, ssh_user="root")
+      dhostname = ssh(hostname, "wget -qO- http://169.254.169.254/latest/meta-data/public-hostname", 60, false, 1, ssh_user)
+      public_ip = ssh(hostname, "wget -qO- http://169.254.169.254/latest/meta-data/public-ipv4", 60, false, 1, ssh_user)
       puts "Updating instance facts with public ip #{public_ip} and hostname #{dhostname}"
-      set_instance_ip(hostname,public_ip,dhostname)
+      set_instance_ip(hostname, public_ip, dhostname, ssh_user)
     end
-    
-    def get_internal_hostname(hostname)
-      internal_hostname = ssh(hostname, "hostname")
+
+    def get_internal_hostname(hostname, ssh_user="root")
+      internal_hostname = ssh(hostname, "hostname", 60, false, 1, ssh_user)
       internal_hostname
     end
 
-    def update_facts(hostname)
-      puts "Updating instance facts"
-      ssh(hostname, "sed -i \"s/.*PUBLIC_IP_OVERRIDE.*/#PUBLIC_IP_OVERRIDE=/g\" /etc/stickshift/stickshift-node.conf; sed -i \"s/.*PUBLIC_HOSTNAME_OVERRIDE.*/#PUBLIC_HOSTNAME_OVERRIDE=/g\" /etc/stickshift/stickshift-node.conf; /usr/libexec/mcollective/update_yaml.rb > /etc/mcollective/facts.yaml")
+    def update_facts(hostname, ssh_user="root")
+      puts "Updating instance facts and running libra-data to set the public ip..."
+      ssh(hostname, "sed -i \"s/.*PUBLIC_IP_OVERRIDE.*/#PUBLIC_IP_OVERRIDE=/g\" /etc/stickshift/stickshift-node.conf; sed -i \"s/.*PUBLIC_HOSTNAME_OVERRIDE.*/#PUBLIC_HOSTNAME_OVERRIDE=/g\" /etc/stickshift/stickshift-node.conf; /usr/libexec/mcollective/update_yaml.rb /etc/mcollective/facts.yaml; service libra-data start", 60, false, 1, ssh_user)
+      puts 'Done'
     end
     
-    def set_instance_ip(hostname, ip, dhostname)
+    def set_instance_ip(hostname, ip, dhostname, ssh_user="root")
       print "Updating the controller to use the ip '#{ip}'..."
       # Both calls below are needed to fix a race condition between ssh and libra-data start times
-      ssh(hostname, "sed -i \"s/.*PUBLIC_IP_OVERRIDE.*/PUBLIC_IP_OVERRIDE='#{ip}'/g\" /etc/stickshift/stickshift-node.conf; sed -i \"s/.*PUBLIC_HOSTNAME_OVERRIDE.*/PUBLIC_HOSTNAME_OVERRIDE='#{dhostname}'/g\" /etc/stickshift/stickshift-node.conf; /usr/libexec/mcollective/update_yaml.rb > /etc/mcollective/facts.yaml")
+      ssh(hostname, "sed -i \"s/.*PUBLIC_IP_OVERRIDE.*/PUBLIC_IP_OVERRIDE='#{ip}'/g\" /etc/stickshift/stickshift-node.conf; sed -i \"s/.*PUBLIC_HOSTNAME_OVERRIDE.*/PUBLIC_HOSTNAME_OVERRIDE='#{dhostname}'/g\" /etc/stickshift/stickshift-node.conf; /usr/libexec/mcollective/update_yaml.rb /etc/mcollective/facts.yaml", 60, false, 1, ssh_user)
       puts 'Done'
     end
 
@@ -346,6 +344,8 @@ module OpenShift
         end
         break if image
       end
+      puts "Image ID: #{image.id}"
+      puts "Image Name: #{image.name}"
       puts "Done"
       image
     end
@@ -365,24 +365,26 @@ module OpenShift
       AWS.memoize do
         build_name_to_verifiers = {}
         conn.instances.each do |i|
-          VERIFIER_REGEXS.each do |regex|
+          VERIFIER_REGEXS.each do |regex, opts|
             if i.tags["Name"] =~ regex
               build_name = $1
               build_num = $2
               build_name_to_verifiers[build_name] = [] unless build_name_to_verifiers[build_name]
-              build_name_to_verifiers[build_name] << [build_num, i]
+              build_name_to_verifiers[build_name] << [build_num, i, opts]
             end
           end
         end
         build_name_to_verifiers.each do |build_name, verifiers|
           unless verifiers.empty?
-            verifiers.sort!
+            verifiers = verifiers.sort_by {|verifier| verifier[0].to_i}
             verifiers.each_with_index do |verifier, index|
               build_num = verifier[0]
               i = verifier[1]
-              if index == verifiers.length - 1
-                unless Time.new - i.launch_time > 16200 #4.5 hours
-                  break
+              opts = verifier[2]
+              max_run_time = opts[:max_run_time] ? opts[:max_run_time] : 9000 #2.5 hours
+              if (index == verifiers.length - 1) || opts[:multiple]
+                unless Time.new - i.launch_time > max_run_time
+                  next
                 end
               end
               if instance_status(i) == :running || instance_status(i) == :stopped
@@ -394,7 +396,7 @@ module OpenShift
         end
       end
     end
-    
+
     def flag_old_devenvs(conn)
       AWS.memoize do
         conn.instances.each do |i|
@@ -406,8 +408,26 @@ module OpenShift
             end
             if yday - launch_yday > 6
               # Tag the node to give people a heads up
+              log.info "Tagging old instances to terminate #{i.tags["Name"]}"
               add_tag(i, 'will-terminate')
-              log.info "Tagging old instances to terminate #{i.id}"
+            end
+          end
+        end
+      end
+    end
+
+    def flag_old_qe_devenvs(conn)
+      AWS.memoize do
+        conn.instances.each do |i|
+          current_time = Time.new
+          if i.tags["Name"] =~ /^QE(_|-)/i && !(i.tags["Name"] =~ /preserve/)
+            if ((current_time - i.launch_time) > 57600) && (instance_status(i) == :running)
+              log.info "Stopping qe instance #{i.id}"
+              i.stop
+            elsif ((current_time - i.launch_time) > 100800) && (instance_status(i) == :stopped)
+              # Tag the node to give people a heads up
+              log.info "Tagging qe instance to terminate #{i.tags["Name"]}"
+              add_tag(i, 'will-terminate')
             end
           end
         end

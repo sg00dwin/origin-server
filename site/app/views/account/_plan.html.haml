@@ -1,0 +1,8 @@
+%h2 Plan
+- if plan
+  - if plan.basic?
+    %p You are on the #{plan.name} plan. #{link_to "Upgrade now!", account_plans_path}
+  - else
+    %p You are on the #{plan.name} plan. #{link_to "Change plan", account_plans_path}
+- else
+  %p Your plan cannot be displayed at this time.  Please check back later.

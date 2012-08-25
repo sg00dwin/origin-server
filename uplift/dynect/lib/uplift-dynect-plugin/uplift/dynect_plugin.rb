@@ -77,6 +77,11 @@ module Uplift
       delete_app_dns_entries(app_name, namespace, @auth_token, @@dyn_retries)    
     end
     
+    def modify_application(app_name, namespace, public_hostname)
+      login
+      modify_app_dns_entries(app_name, namespace, public_hostname, @auth_token, @@dyn_retries)
+    end
+    
     def publish
       dyn_publish(@auth_token, @@dyn_retries)
     end
@@ -138,7 +143,7 @@ module Uplift
           else
             raise_dns_exception(nil, resp)
           end
-        rescue Exception => e
+        rescue StickShift::DNSException => e
           raise
         rescue Exception => e
           raise_dns_exception(e)
@@ -170,6 +175,10 @@ module Uplift
     def create_app_dns_entries(app_name, namespace, public_hostname, auth_token, retries=2)
       dyn_create_cname_record(app_name, namespace, public_hostname, auth_token, retries)
     end
+    
+    def modify_app_dns_entries(app_name, namespace, public_hostname, auth_token, retries=2)
+      dyn_modify_cname_record(app_name, namespace, public_hostname, auth_token, retries)
+    end
 
     def dyn_do(method, retries=2)
       i = 0
@@ -191,13 +200,21 @@ module Uplift
     end
     
     def dyn_create_cname_record(application, namespace, public_hostname, auth_token, retries=0)
-      #public_hostname = get_fact_direct('public_hostname')
       logger.debug "DEBUG: Public ip being configured '#{public_hostname}' to app '#{application}'"
       fqdn = "#{application}-#{namespace}.#{@domain_suffix}"
       # Create the CNAME record
       path = "CNAMERecord/#{@zone}/#{fqdn}/"
       record_data = { :rdata => { :cname => public_hostname }, :ttl => "60" }
       resp, data = dyn_post(path, record_data, auth_token, retries)
+    end
+
+    def dyn_modify_cname_record(application, namespace, public_hostname, auth_token, retries=0)
+      logger.debug "DEBUG: Public ip being modified '#{public_hostname}' to app '#{application}'"
+      fqdn = "#{application}-#{namespace}.#{@domain_suffix}"
+      # MOdify the CNAME record
+      path = "CNAMERecord/#{@zone}/#{fqdn}/"
+      record_data = { :rdata => { :cname => public_hostname }, :ttl => "60" }
+      resp, data = dyn_put(path, record_data, auth_token, retries)
     end
     
     def dyn_delete_cname_record(application, namespace, auth_token, retries=0)
@@ -263,7 +280,9 @@ module Uplift
         while !success && retries < 5
           retries += 1
           begin
-            logger.debug "DEBUG: DYNECT handle temp redirect with path: #{url.path} and headers: #{headers.inspect} attempt: #{retries} sleep_time: #{sleep_time}"
+            logheaders = headers.clone
+            logheaders["Auth-Token"]="[hidden]"
+            logger.debug "DEBUG: DYNECT handle temp redirect with path: #{url.path} and headers: #{logheaders.inspect} attempt: #{retries} sleep_time: #{sleep_time}"
             resp, data = http.get(url.path, headers)
             case resp
             when Net::HTTPSuccess, Net::HTTPTemporaryRedirect
@@ -312,7 +331,9 @@ module Uplift
         #http.set_debug_output $stderr
         http.use_ssl = true
         begin
-          logger.debug "DEBUG: DYNECT has? with path: #{url.path} and headers: #{headers.inspect}"
+          logheaders = headers.clone
+          logheaders["Auth-Token"]="[hidden]"
+          logger.debug "DEBUG: DYNECT has? with path: #{url.path} and headers: #{logheaders.inspect}"
           resp, data = http.get(url.path, headers)
           case resp
           when Net::HTTPSuccess
@@ -359,7 +380,9 @@ module Uplift
         http.use_ssl = true
         json_data = JSON.generate(post_data);
         begin
-          logger.debug "DEBUG: DYNECT put/post with path: #{url.path} json data: #{json_data} and headers: #{headers.inspect}"
+          logheaders = headers.clone
+          logheaders["Auth-Token"]="[hidden]"
+          logger.debug "DEBUG: DYNECT put/post with path: #{url.path} json data: #{json_data} and headers: #{logheaders.inspect}"
           if put
             resp, data = http.put(url.path, json_data, headers)
           else
@@ -410,7 +433,9 @@ module Uplift
         #http.set_debug_output $stderr
         http.use_ssl = true
         begin
-          logger.debug "DEBUG: DYNECT delete with path: #{url.path} and headers: #{headers.inspect}"
+          logheaders = headers.clone
+          logheaders["Auth-Token"]="[hidden]"
+          logger.debug "DEBUG: DYNECT delete with path: #{url.path} and headers: #{logheaders.inspect}"
           resp, data = http.delete(url.path, headers)
           case resp
           when Net::HTTPSuccess

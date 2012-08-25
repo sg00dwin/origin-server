@@ -1,0 +1,108 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<project>
+  <actions/>
+  <description>Run job by hand to test a cross repo pushes.&#xd;
+Blank pull_id(s) will use master&#xd;
+</description>
+  <logRotator>
+    <daysToKeep>10</daysToKeep>
+    <numToKeep>100</numToKeep>
+    <artifactDaysToKeep>10</artifactDaysToKeep>
+    <artifactNumToKeep>100</artifactNumToKeep>
+  </logRotator>
+  <keepDependencies>false</keepDependencies>
+  <properties>
+    <hudson.model.ParametersDefinitionProperty>
+      <parameterDefinitions>
+        <hudson.model.StringParameterDefinition>
+          <name>CRANKCASE_PULL_ID</name>
+          <description></description>
+          <defaultValue></defaultValue>
+        </hudson.model.StringParameterDefinition>
+        <hudson.model.StringParameterDefinition>
+          <name>LI_PULL_ID</name>
+          <description></description>
+          <defaultValue></defaultValue>
+        </hudson.model.StringParameterDefinition>
+        <hudson.model.StringParameterDefinition>
+          <name>RHC_PULL_ID</name>
+          <description></description>
+          <defaultValue></defaultValue>
+        </hudson.model.StringParameterDefinition>
+      </parameterDefinitions>
+    </hudson.model.ParametersDefinitionProperty>
+  </properties>
+  <scm class="hudson.scm.NullSCM"/>
+  <canRoam>true</canRoam>
+  <disabled>true</disabled>
+  <blockBuildWhenDownstreamBuilding>false</blockBuildWhenDownstreamBuilding>
+  <blockBuildWhenUpstreamBuilding>false</blockBuildWhenUpstreamBuilding>
+  <authToken>libra1</authToken>
+  <triggers class="vector"/>
+  <concurrentBuild>true</concurrentBuild>
+  <builders>
+    <hudson.tasks.Shell>
+      <command># Build and install HEAD for the integration tests
+rm -rf li rhc crankcase
+
+git clone git@github.com:openshift/li.git
+git clone git://github.com/openshift/crankcase.git
+git clone git://github.com/openshift/rhc.git
+
+if [ -n &quot;$LI_PULL_ID&quot; ]; then
+set +x
+  echo &quot;
+
+*****Locally Merging Pull Request: https://github.com/openshift/li/pull/$LI_PULL_ID&quot;
+set -x
+  test_pull_requests --local_merge_pull_request $LI_PULL_ID --repo li
+fi
+
+if [ -n &quot;$CRANKCASE_PULL_ID&quot; ]; then
+set +x
+  echo &quot;
+
+*****Locally Merging Pull Request: https://github.com/openshift/crankcase/pull/$CRANKCASE_PULL_ID&quot;
+set -x
+  test_pull_requests --local_merge_pull_request $CRANKCASE_PULL_ID --repo crankcase
+fi
+
+if [ -n &quot;$RHC_PULL_ID&quot; ]; then
+set +x
+  echo &quot;
+
+*****Locally Merging Pull Request: https://github.com/openshift/rhc/pull/$RHC_PULL_ID&quot;
+set -x
+  test_pull_requests --local_merge_pull_request $RHC_PULL_ID --repo rhc
+fi
+
+set +x
+echo &quot;
+
+
+&quot;
+set -x
+
+pushd li
+build/devenv launch test_pull_requests_${BUILD_NUMBER} --verifier --instance_type m1.large
+build/devenv sync test_pull_requests_${BUILD_NUMBER} --tag --clean_metadata
+
+# Run the tests
+build/devenv test test_pull_requests_${BUILD_NUMBER} --terminate
+popd
+</command>
+    </hudson.tasks.Shell>
+  </builders>
+  <publishers>
+    <hudson.tasks.ArtifactArchiver>
+      <artifacts>li/rhc/log/**</artifacts>
+      <latestOnly>false</latestOnly>
+    </hudson.tasks.ArtifactArchiver>
+    <hudson.tasks.junit.JUnitResultArchiver>
+      <testResults>li/rhc/log/**/*.xml</testResults>
+      <keepLongStdio>false</keepLongStdio>
+      <testDataPublishers/>
+    </hudson.tasks.junit.JUnitResultArchiver>
+  </publishers>
+  <buildWrappers/>
+</project>

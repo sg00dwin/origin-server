@@ -1,17 +1,28 @@
 RedHatCloud::Application.routes.draw do
 
-  # The priority is based upon order of creation:
-  # first created -> highest priority.
+  community_paas = redirect('/community/paas')
+  get_started = redirect('/community/get-started')
+  open_source_download = redirect('/community/open-source/download-origin')
 
-  # Legacy redirects
-  match 'access/express(/:request)' => app_redirect('express')
-  match 'access/flex(/:request)' => app_redirect('flex')
-  match 'features' => app_redirect('platform'), :as => 'features'
-  match 'power' => app_redirect('platform')
-  match 'about' => app_redirect('platform'), :as => 'about'
-  match 'express' => app_redirect('platform'), :as => 'express'
-  match 'flex' => app_redirect('platform'), :as => 'flex'
-  match 'flex_redirect' => app_redirect('flex'), :as => 'flex_redirect'
+  # Legacy content redirects
+  match 'access/express(/:request)' => community_paas
+  match 'access/flex(/:request)' => community_paas
+  match 'features' => community_paas, :as => 'features'
+  match 'power' => community_paas
+  match 'about' => community_paas, :as => 'about'
+  match 'express' => community_paas, :as => 'express'
+  match 'flex' => community_paas, :as => 'flex'
+  match 'flex_redirect' => community_paas, :as => 'flex_redirect'
+  match 'platform' => community_paas
+  match 'partners' => community_paas
+
+  match 'getting_started' => get_started
+  match 'getting_started/express' => get_started
+  match 'getting_started/flex' => get_started
+
+  match 'getting_started_external/:registration_referrer' => 'getting_started_external#show'
+
+  # Legacy account creation paths
   match 'email_confirm_flex' => app_redirect {|p, req| "email_confirm?#{req.query_string}"}
   match 'email_confirm_express' => app_redirect {|p, req| "email_confirm?#{req.query_string}"}
   match 'user/new' => app_redirect('account/new'), :via => [:get]
@@ -19,40 +30,66 @@ RedHatCloud::Application.routes.draw do
   match 'user/new/express' => app_redirect('account/new'), :via => [:get]
   match 'user/complete' => app_redirect('account/complete'), :via => [:get]
 
-  #Marketing site
-  match 'getting_started' => 'product#getting_started', :as => 'getting_started'
-  match 'getting_started/express' => app_redirect('getting_started')
-  match 'getting_started/flex' => app_redirect('getting_started')
-  match 'getting_started_external/:registration_referrer' => 'getting_started_external#show'
-  match 'platform' => 'product#overview', :as => 'product_overview'
-  #match 'partners/join' => 'partner#join', :as=> 'join_partner'
-  match 'partners' => app_redirect('platform')
+  # Prototype not found pages
+  match 'not_found' => 'product#not_found'
+  match 'error' => 'product#error'
+  match 'console/not_found' => 'product#console_not_found'
+  match 'console/error' => 'product#console_error'
 
   # Buzz
   match 'twitter_latest_tweet' => 'twitter#latest_tweet'
   match 'twitter_latest_retweets' => 'twitter#latest_retweets'
 
   resource :account,
-           :controller => "user",
+           :controller => :account,
            :only => [:new, :create, :show] do
-    get :complete, :on => :member
-  end
-  # preserve legacy support for this path
-  match 'user/create/external' => 'user#create_external', :via => [:post]
 
-  scope '/account' do
-    resource :password,
-             :controller => "password" do
+    get :complete, :on => :member
+
+    if Rails.configuration.aria_enabled
+      resources :plans,   :only => :index do
+        resource :upgrade, :controller => :account_upgrades, :only => [:edit, :new, :create, :show] do
+          put  :edit, :action => :update, :on => :member
+
+          resource :payment_method,
+                   :controller => :account_upgrade_payment_method,
+                   :only => [:show, :new, :edit] do
+            get :direct_create, :on => :member
+            get :direct_update, :on => :member
+          end
+          resource :billing_info,
+                   :controller => :account_upgrade_billing_info,
+                   :only => :edit do
+            put :edit, :action => :update, :on => :member
+          end
+        end
+      end
+      resource :payment_method, :only => [:edit] do
+        get :direct_update, :on => :member
+      end
+      resource :billing_info,
+               :controller => :billing_info,
+               :only => :edit do
+        put :edit, :action => :update, :on => :member
+      end
+      resource :plan, :only => [:update, :show]
+    end
+
+    resource  :password, :controller => :password do
       match 'edit' => 'password#update', :via => :put
       member do
         get :reset
         get :success
       end
     end
+  end
 
+  scope :account do
     resource :domain, :only => [:new, :create, :edit, :update]
     resources :keys, :only => [:new, :create, :destroy]
   end
+
+  match 'user/create/external' => 'account#create_external', :via => [:post]
 
   match 'user/reset_password' => app_redirect {|p, req| "account/password/reset?#{req.query_string}"}, :via => [:get]
   match 'email_confirm' => 'email_confirm#confirm'
@@ -70,12 +107,11 @@ RedHatCloud::Application.routes.draw do
 
   match 'video/:name' => 'video#show', :as => 'video'
 
-  match 'legal' => 'legal#show'
-  match 'legal/site_terms' => 'legal#site_terms'
-  match 'legal/services_agreement' => 'legal#services_agreement'
-  match 'legal/acceptable_use' => 'legal#acceptable_use'
-  match 'legal/openshift_privacy' => 'legal#openshift_privacy'
-  match 'legal/opensource_disclaimer' => 'legal#opensource_disclaimer'
+  match 'legal' => redirect('/community/legal')
+  match 'legal/site_terms' => redirect('/community/legal/site_terms')
+  match 'legal/services_agreement' => redirect('/community/legal/services_agreement')
+  match 'legal/acceptable_use' => redirect('/community/legal/acceptable_use')
+  match 'legal/openshift_privacy' => redirect('/community/legal/openshift_privacy')
 
   # suggest we consolidate login/logout onto a session controller
   resource :login,
@@ -98,12 +134,18 @@ RedHatCloud::Application.routes.draw do
     match 'help' => 'console#help', :via => :get, :as => 'console_help'
 
     resources :application_types, :only => [:show, :index], :id => /[^\/]+/
-    resources :applications,
-              :controller => "applications" do 
-      resources :cartridges,
-                :controller => "cartridges",
-                :only => [:show, :create, :index], :id => /[^\/]+/
+    resources :applications do
+      resources :cartridges, :only => [:show, :create, :index], :id => /[^\/]+/
       resources :cartridge_types, :only => [:show, :index], :id => /[^\/]+/
+
+      resource :building, :controller => :building, :id => /[^\/]+/, :only => [:show, :new, :destroy, :create] do
+        get :delete
+      end
+
+      resource :scaling, :controller => :scaling, :id => /[^\/]+/, :only => [:show, :new] do
+        get :delete
+      end
+
       member do
         get :delete
         get :get_started
@@ -114,67 +156,22 @@ RedHatCloud::Application.routes.draw do
   match 'console' => 'console#index', :via => :get
   match 'new_application' => 'application_types#index', :via => :get
 
-  unless Rails.env.production?
-    # TODO: Remove conditional when we go live with OpenSource OpenShift
-    match 'opensource' => 'opensource#index'
-    match 'opensource/download' => 'opensource#download'
-
-    resources   :download,
-                :controller => 'download',
-                :only => [:show,:index]
-  end
+  match 'opensource' => open_source_download
+  match 'opensource/download' => open_source_download
+  resources   :download,
+              :controller => 'download',
+              :only => [:show,:index]
 
   unless Rails.env.production?
     match 'styleguide/:action' => 'styleguide'
     match 'styleguide' => 'styleguide#index'
   end
 
-  # Sample resource route with options:
-  #   resources :products do
-  #     member do
-  #       get 'short'
-  #       post 'toggle'
-  #     end
-  #
-  #     collection do
-  #       get 'sold'
-  #     end
-  #   end
-
-  # Sample resource route with sub-resources:
-  #   resources :products do
-  #     resources :comments, :sales
-  #     resource :seller
-  #   end
-
-  # Sample resource route with more complex sub-resources
-  #   resources :products do
-  #     resources :comments
-  #     resources :sales do
-  #       get 'recent', :on => :collection
-  #     end
-  #   end
-
-  # Sample resource route within a namespace:
-  #   namespace :admin do
-  #     # Directs /admin/products/* to Admin::ProductsController
-  #     # (app/controllers/admin/products_controller.rb)
-  #     resources :products
-  #   end
-
-  # You can have the root of your site routed with "root"getting_started
-  # just remember to delete public/index.html.
   root :to => "product#index"
 
-  # See how all your routes lay out with "rake routes"
-
-  # This is a legacy wild controller route that's not recommended for RESTful applications.
-  # Note: This route will make all actions in every controller accessible via GET requests.
-  # match ':controller(/:action(/:id(.:format)))'
-
-
   scope '/status' do
-    match '/(:id)(.:format)' => StatusApp
+    match '/(:base)(.:format)' => StatusApp, :as => 'status'
+    match '/status.js' => StatusApp, :as => 'status_js'
     match '/sync/(:host)' => StatusApp, :constraints => {:host => /[0-z\.-]+/}
   end
 end

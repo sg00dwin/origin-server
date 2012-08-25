@@ -24,14 +24,15 @@ done
 
 [ $# -eq 3 ] || print_help
 
+cartridge_type="rockmongo-1.1"
 source "/etc/stickshift/stickshift-node.conf"
 source ${CARTRIDGE_BASE_PATH}/abstract/info/lib/util
-CART_INFO_DIR=${CARTRIDGE_BASE_PATH}/embedded/rockmongo-1.1/info
 
-app_type="rockmongo-1.1"
+CART_INFO_DIR=${CARTRIDGE_BASE_PATH}/embedded/$cartridge_type/info
+
 setup_embedded_configure "$1" $2 $3
 
-ROCKMONGO_DIR=`echo $APP_HOME/rockmongo-1.1 | tr -s /` # ensure that there aren't double /'s
+ROCKMONGO_DIR=$(get_cartridge_instance_dir "$cartridge_type")
 ROCKMONGO_CTL_SCRIPT="$ROCKMONGO_DIR/${application}_rockmongo_ctl.sh"
 
 if [ ! -f "$APP_HOME/.env/OPENSHIFT_NOSQL_DB_USERNAME" ] ||
@@ -65,7 +66,8 @@ then
     client_error "Embedded rockmongo-1.1 already attached to $application"
     exit 132
 fi
-mkdir -p "$ROCKMONGO_DIR"
+
+create_cartridge_instance_dir "$cartridge_type"
 pushd "$ROCKMONGO_DIR" > /dev/null
 mkdir -p conf conf.d logs run sessions tmp html rockmongo
 ln -s /usr/lib64/httpd/modules modules
@@ -149,5 +151,9 @@ client_result "   RockMongo User    : $OPENSHIFT_NOSQL_DB_USERNAME"
 client_result "   RockMongo Password: $OPENSHIFT_NOSQL_DB_PASSWORD"
 client_result ""
 client_result "URL: https://$OPENSHIFT_GEAR_DNS/rockmongo/"
+
+cart_props "connection_url=https://$OPENSHIFT_GEAR_DNS/rockmongo/"
+cart_props "username=$OPENSHIFT_NOSQL_DB_USERNAME"
+cart_props "password=$OPENSHIFT_NOSQL_DB_PASSWORD"
 
 set_app_info "URL: https://$OPENSHIFT_GEAR_DNS/rockmongo/"

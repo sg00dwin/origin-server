@@ -13,6 +13,7 @@ function print_help {
     echo "Usage: $0"
     echo "  -u UUID       idles the app"
     echo "  -l            list all idled apps"
+    echo "  -n            don't restart httpd"
     exit 1
 }
 
@@ -30,25 +31,35 @@ function print_idled {
     done
 }
 
+function get_state {
+    source "/var/lib/stickshift/$1/.env/OPENSHIFT_HOMEDIR"
+    cat $OPENSHIFT_HOMEDIR/app-root/runtime/.state
+}
+
 function is_idled {
     appid=$1
 
-    if ! grep -q ' #ProxyPass' "/etc/httpd/conf.d/stickshift/${appid}"*.conf 2>/dev/null
+    HTTP_DIR=`dirname "/etc/httpd/conf.d/stickshift/${appid}"*/00000_default.conf`
+    if ! grep -q ' #ProxyPass' $HTTP_DIR/*.conf 2>/dev/null
     then
         return $FALSE
     fi
 
-    if [ ! -f "/etc/httpd/conf.d/stickshift/${appid}"*/0000000000000_disabled.conf ]
+    if [ ! -f $HTTP_DIR/0000000000000_disabled.conf ]
     then
         return $FALSE
     fi
 
-    source "/var/lib/stickshift/${appid}/.env/OPENSHIFT_RUNTIME_DIR"
-    _test=`cat $OPENSHIFT_RUNTIME_DIR/.state`
+    _test=`get_state $appid`
     return `test idle = "$_test"`
 }
 
-while getopts 'u:dl' OPTION
+function is_stopped {
+    _test=`get_state $1`
+    return `test stopped = "$_test"`
+}
+
+while getopts 'u:dln' OPTION
 do
 case $OPTION in
         u) uuid=$OPTARG
@@ -56,6 +67,8 @@ case $OPTION in
         d) set -x
     ;;
         l) list_idled="TRUE"
+    ;;
+        n) no_httpd_restart="TRUE"
     ;;
         ?) print_help
     ;;
@@ -73,30 +86,36 @@ then
     print_help
 fi
 
-source "/var/lib/stickshift/${uuid}/.env/OPENSHIFT_GEAR_DIR"
-[ -f "/var/lib/stickshift/${uuid}/.env/OPENSHIFT_RUNTIME_DIR" ] && source "/var/lib/stickshift/${uuid}/.env/OPENSHIFT_RUNTIME_DIR"
-: ${OPENSHIFT_RUNTIME_DIR:=$OPENSHIFT_GEAR_DIR/runtime}
+# Get the libra_server
+source /etc/stickshift/stickshift-node.conf
+source "/var/lib/stickshift/${uuid}/.env/OPENSHIFT_HOMEDIR"
 
-if is_idled "$uuid"
-then
-    exit 0 # app is already idled, nothing to do
+if `is_idled "$uuid"` || `is_stopped "$uuid"` ; then
+    exit 0 # app is already idled or stopped, nothing to do
 fi
 
-sed -i "s/ ProxyPass/ #ProxyPass/g" "/etc/httpd/conf.d/stickshift/${uuid}"*.conf
-
 HTTP_DIR=`dirname "/etc/httpd/conf.d/stickshift/${uuid}"*/00000_default.conf`
+sed -i "s/ ProxyPass/ #ProxyPass/g" $HTTP_DIR/*.conf
+
 
 cat > $HTTP_DIR/0000000000000_disabled.conf <<EOF
 Alias / /var/www/html/restorer.php/${uuid}/
 EOF
 
-service httpd graceful
+if [ -z "$no_httpd_restart" ]
+then
+    service httpd graceful
+fi
+
 
 service libra stopuser "${uuid}"
 
 # Disable
 # code copied from node/lib/util_ext
-runuser --shell /bin/sh "$uuid" -c "echo idle >$OPENSHIFT_RUNTIME_DIR/.state"
+runuser --shell /bin/sh "$uuid" -c "echo idle >$OPENSHIFT_HOMEDIR/app-root/runtime/.state"
+
+# Report to apptegic/nurture
+curl -sk -d "json_data={\"app_uuid\":\"${uuid}\",\"action\":\"idle\"}" -X POST https://${BROKER_HOST}/broker/nurture >/dev/null 2>&1 &
 
 source "/var/lib/stickshift/${uuid}/.env/OPENSHIFT_RUN_DIR"
 touch "${OPENSHIFT_RUN_DIR}/stop_lock"

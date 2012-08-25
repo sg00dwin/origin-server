@@ -1,29 +1,38 @@
 :css
   .action-call { font-weight: bold; margin: 10px 0 10px; }
 
-- content_for :page_title, 'Under the Hood'
+- content_for :page_title, 'OpenShift Origin Source Code'
 
-%h1.ribbon Under the Hood
-%p OpenShift is made of many different Open Source software components working in harmony to power your apps.  The list below describes each component and links to the public GitHub repository.
+%h1.ribbon OpenShift Origin Source Code
+%p OpenShift runs on many different open source software components and we have made those publicly available under the OpenShift Origin project name.  The list below describes each component with links to the official GitHub repository.
 
 %section.row
   .span6
     %dl.larger
-      %dt.headline= link_to "Crank Case", "#{@openshift_github_url}/crankcase", :class => "external", :target => "_blank"
-      %dd User Management Component
-      %dt.headline= link_to "Gear Changer", "#{@openshift_github_url}/gearchanger", :class => "external", :target => "_blank"
-      %dd Short description to come
-      %dt.headline= link_to "RHC", "#{@openshift_github_url}/os-client-tools", :class => "external", :target => "_blank"
-      %dd Command-line client tools
-      %dt.headline= link_to "StickShift", "#{@openshift_github_url}//stickshift", :class => "external", :target => "_blank"
-      %dd Provides API
-      %dt.headline= link_to "SwingShift", "#{@openshift_github_url}/swingshift", :class => "external", :target => "_blank"
-      %dd Provides user authentication
-      %dt.headline= link_to "Uplift", "#{@openshift_github_url}/uplift", :class => "external", :target => "_blank"
-      %dd DNS Management component
+      %dt.headline= link_to "Server", crankcase_url, :class => "external", :target => "_blank"
+      %dd 
+        %p The server components that make up OpenShift Origin are collectively known as CrankCase. The source is divided into the following areas:
+        %dl
+          %dt.headline= link_to "Broker", crankcase_source_path_url('stickshift'), :class => "external", :target => "_blank"
+          %dd Central service exposing a REST API for consumers and coordinating with the application containers (known as nodes).
+          %dt.headline= link_to "Messaging System", crankcase_source_path_url('gearchanger'), :class => "external", :target => "_blank"
+          %dd Communication pipeline between StickShift and each node.
+          %dt.headline= link_to "User Authentication",  crankcase_source_path_url('swingshift'), :class => "external", :target => "_blank"
+          %dd A pluggable user authentication component with a default MongoDB implementation.
+          %dt.headline= link_to "Domain Name Management", crankcase_source_path_url('uplift'), :class => "external", :target => "_blank"
+          %dd A BIND implementation of DNS registration and management.
 
-      %p
-        %em Coming soon &mdash; the OpenShift web console
+      %dt.headline= link_to "Command Line Client", client_tools_url, :class => "external", :target => "_blank"
+      %dd 
+        %p 
+          The command line program 
+          %code rhc
+          connects to OpenShift via our REST API and can be downloaded as a RubyGem.
+
+      -#%dt.headline Web Management Console
+      -#%dd
+        %p
+          %em Coming soon
 
   .span5.info-ribbon
     %h2 Test Drive
@@ -35,25 +44,24 @@
     - else
       = take_action download_index_path, "Start Download"
     %p
-      Once you got it, you can
-      = link_to "run it as a virtual guest", "#"
-      ,
-      = link_to "boot it from a LiveCD", "#"
-      , or
-      = link_to "boot it from a USB stick", "#"
+      After you download the image, you can #{link_to "run it as a virtual guest", livecd_wiki_url('boot_vm')},
+      #{link_to "boot it from a LiveCD", livecd_wiki_url('boot_livecd')}, or
+      #{link_to "boot it from a USB stick", livecd_wiki_url('boot_usb')}.
     %p
       Then, we suggest you read the
-      = link_to "live image documentation", "#"
+      #{link_to "live image documentation", livecd_wiki_url('next_steps')}
       for instructions on what to do after you boot.
     .well
       %h4 Important Information
       %p
-        This image contains software from Fedora 16.  Corresponding source packages for such software are available at
-        = link_to "http://koji.fedoraproject.org/koji", "http://koji.fedoraproject.org/koji"
+        This image contains software from Fedora 16.  Corresponding source packages for such software are available 
+        at #{link_to "http://koji.fedoraproject.org/koji", "http://koji.fedoraproject.org/koji"}
+      %p 
+        Source packages for OpenShift Origin are available at #{link_to crankcase_srpm_url, crankcase_srpm_url}.
 
 %section.row
   .span12
-    %h3 Cartridges
+    %h3= link_to "Cartridges", crankcase_source_path_url('cartridges'), :class => "external", :target => "_blank"
     %p
       Cartridges enable new capabilities for applications by adding middleware components or enhancing other cartridges.
 
@@ -61,48 +69,68 @@
     %h5 Web Frameworks
     %ul.unstyled
       %li
-        = link_to "JBossAS Cartridge", "#{@openshift_cartridges_github_url}/jboss_cartridge", :class => "external", :target => "_blank"
+        = link_to "JBossAS Cartridge", crankcase_source_path_url('cartridges/jbossas-7'), :class => "external", :target => "_blank"
       %li
-        = link_to "Node.js Cartridge", "#{@openshift_cartridges_github_url}/node_js_cartridge", :class => "external", :target => "_blank"
+        = link_to "Node.js Cartridge", crankcase_source_path_url('cartridges/nodejs-0.6'), :class => "external", :target => "_blank"
       %li
-        = link_to "PHP Cartridge", "#{@openshift_cartridges_github_url}/php_cartidge", :class => "external", :target => "_blank"
+        = link_to "PHP Cartridge", crankcase_source_path_url('cartridges/php-5.3'), :class => "external", :target => "_blank"
       %li
-        = link_to "Perl Cartridge", "#{@openshift_cartridges_github_url}/perl_cartridge", :class => "external", :target => "_blank"
+        = link_to "Perl Cartridge", crankcase_source_path_url('cartridges/perl-5.10'), :class => "external", :target => "_blank"
       %li
-        = link_to "Python Cartridge", "#{@openshift_cartridges_github_url}/python_cartridge", :class => "external", :target => "_blank"
+        = link_to "Python Cartridge", crankcase_source_path_url('cartridges/python-2.6'), :class => "external", :target => "_blank"
       %li
-        = link_to "Ruby Cartridge", "#{@openshift_cartridges_github_url}/ruby_cartridge", :class => "external", :target => "_blank"
+        = link_to "Ruby Cartridge", crankcase_source_path_url('cartridges/ruby-1.8'), :class => "external", :target => "_blank"
   .span4.link-column
     %h5 Database and Related
     %ul.unstyled
       %li
-        = link_to "10Gen MMS Cartridge", "#{@openshift_cartridges_github_url}/10gen_mms_cartridge", :class => "external", :target => "_blank"
+        = link_to "10Gen MMS Cartridge", crankcase_source_path_url('cartridges/10gen-mms-agent-0.1'), :class => "external", :target => "_blank"
       %li
-        = link_to "MondgoDB Cartridge", "#{@openshift_cartridges_github_url}/mondgodb_cartridge", :class => "external", :target => "_blank"
+        = link_to "MongoDB Cartridge", crankcase_source_path_url('cartridges/mongodb-2.0'), :class => "external", :target => "_blank"
       %li
-        = link_to "MySQL Cartridge", "#{@openshift_cartridges_github_url}/mysql_cartridge", :class => "external", :target => "_blank"
+        = link_to "MySQL Cartridge", crankcase_source_path_url('cartridges/mysql-5.1'), :class => "external", :target => "_blank"
       %li
-        = link_to "PHPMyAdmin Cartridge", "#{@openshift_cartridges_github_url}/phpmyadmin_cartridge", :class => "external", :target => "_blank"
+        = link_to "PHPMyAdmin Cartridge", crankcase_source_path_url('cartridges/phpmyadmin-3.4'), :class => "external", :target => "_blank"
       %li
-        = link_to "PostgreSQL Cartridge", "#{@openshift_cartridges_github_url}/postgresql_cartridge", :class => "external", :target => "_blank"
-      %li
-        = link_to "Rockmongo Cartridge", "#{@openshift_cartridges_github_url}/rockmongo_cartridge", :class => "external", :target => "_blank"
+        = link_to "PostgreSQL Cartridge", crankcase_source_path_url('cartridges/postgresql-8.4'), :class => "external", :target => "_blank"
+      -#%li
+        = link_to "Rockmongo Cartridge", crankcase_source_path_url('cartridges/rockmongo'), :class => "external", :target => "_blank"
   .span4.link-column
     %h5 Other Cartridges
     %ul.unstyled
       %li
-        = link_to "Cron Cartridge", "#{@openshift_cartridges_github_url}/cron_cartridge", :class => "external", :target => "_blank"
+        = link_to "Cron Cartridge", crankcase_source_path_url('cartridges/cron-1.4'), :class => "external", :target => "_blank"
       %li
-        = link_to "Jenkins Server Cartridge", "#{@openshift_cartridges_github_url}/jenkins_server_cartridge", :class => "external", :target => "_blank"
+        = link_to "Jenkins Server Cartridge", crankcase_source_path_url('cartridges/jenkins-1.4'), :class => "external", :target => "_blank"
       %li
-        = link_to "Jenkins Client Cartridge", "#{@openshift_cartridges_github_url}/jenkins_client_cartridge", :class => "external", :target => "_blank"
-      %li
-        = link_to "Metrics Cartridge", "#{@openshift_cartridges_github_url}/metrics_cartridge", :class => "external", :target => "_blank"
+        = link_to "Jenkins Client Cartridge", crankcase_source_path_url('cartridges/jenkins-client-1.4'), :class => "external", :target => "_blank"
+      -#%li
+        = link_to "Metrics Cartridge", crankcase_source_path_url('cartridges/metrics_cartridge'), :class => "external", :target => "_blank"
+
 %section.well
   %h2 Important Information
   %p
-    These are some of the projects that are used to create Red Hat's OpenShift Platform-as-a-Service (PaaS), but are not necessarily the versions of code currently used for OpenShift. Red Hat and OpenShift are trademarks of Red Hat, Inc., registered in the United States and other countries. Red Hat's offering of the code for your downloading, use, modification, or distribution is not a grant of a trademark license to OpenShift or any other Red Hat trademark.
+    These are some of the projects that are used to create Red Hat's OpenShift Platform-as-a-Service (PaaS). Red Hat and OpenShift are trademarks of Red Hat, Inc., registered in the United States and other countries. Red Hat's offering of the code for your downloading, use, modification, or distribution is not a grant of a trademark license to OpenShift or any other Red Hat trademark.
   %p
     The components listed above are under the
-    = link_to "Apache Software License 2.0", "http://www.apache.org/licenses/LICENSE-2.0.html", :class => "external", :target => "_blank"
+    = link_to "Apache License 2.0", "http://www.apache.org/licenses/LICENSE-2.0.html", :class => "external", :target => "_blank"
     , except with cartridges listed with a specific license.  See project pages for full text of each project's license.
+  %p
+    This software distribution includes cryptographic software that is
+    subject to the U.S. Export Administration Regulations (the “*EAR*”) and
+    other U.S. and foreign laws and may not be exported, re-exported or
+    transferred (a) to any country listed in Country Group E:1 in Supplement
+    No. 1 to part 740 of the EAR (currently, Cuba, Iran, North Korea,
+    Sudan, and  Syria); (b) to any prohibited destination or to any end user
+    who has been prohibited from participating in U.S. export transactions by any
+    federal agency of the U.S. government; or (c) for use in connection with
+    the design, development or production of nuclear, chemical or
+    biological weapons, or rocket systems, space launch vehicles, or
+    sounding rockets, or unmanned air vehicle systems. You may not download this software or
+    technical information if you are located in one of these countries or
+    otherwise subject to these restrictions. You may not provide this
+    software or technical information to individuals or entities located in
+    one of these countries or otherwise subject to these restrictions.
+    You are also responsible for compliance with foreign law requirements
+    applicable to the import, export and use of this software and
+    technical information.

@@ -15,7 +15,7 @@ Given /^a Watchman object using "([^"]*)" and "([^"]*)"$/ do |log, epoch|
 
   raise "Watchman tests missing #{messages} file" if not File.exist?(messages)
 
-  @watchman = Watchman1.new(messages, 2, false, DateTime.strptime(epoch, '%b %d %T'), home)
+  @watchman = Watchman1.new(messages, 0, false, DateTime.strptime(epoch, '%b %d %T'), home)
   @watchman.run
 end
 
@@ -31,16 +31,19 @@ Given /^a JBoss application the Watchman Service using "([^"]*)" and "([^"]*)"$/
 
   raise "Watchman tests missing #{messages} file" if not File.exist?(messages)
 
-  @watchman = Watchman1.new(messages, 2, false, DateTime.strptime(epoch, '%b %d %T'), home)
+  @watchman = Watchman1.new(messages, 0, false, DateTime.strptime(epoch, '%b %d %T'), home)
   @watchman.run
 end
 
 Given /^a Watchman object using "([^"]*)" and "([^"]*)" expect "([^"]*)" exceptions*$/ do |log, epoch, exceptions|
+  class ExpectedException < Exception
+  end
+
   class Watchman3 < Watchman
     attr_accessor :restarted
     def restart(uuid, env)
       @restarted = @restarted.nil? ? 1 : @restarted += 1
-      raise "expected exception"
+      raise ExpectedException
     end
 
     def now() DateTime.new(2012, 02, 14, 18, 55, 00, 0, "+05:00") end
@@ -51,18 +54,18 @@ Given /^a Watchman object using "([^"]*)" and "([^"]*)" expect "([^"]*)" excepti
 
   raise "Watchman tests missing #{messages} file" if not File.exist?(messages)
 
-  @watchman = Watchman3.new(messages, 2, false, DateTime.strptime(epoch, '%b %d %T'), home)
-
   iterations = exceptions.to_i
+  @watchman = Watchman3.new(messages, 0, false, DateTime.strptime(epoch, '%b %d %T'), home, 5)
+
   iterations.times do
     begin
       @watchman.run
-    rescue
+    rescue ExpectedException
       #puts "exception in steps... #{@watchman.retries}"
       # eat exceptions since we are not running as a daemon they all show up here...
     end
   end
 
-  expected = 10 - iterations
+  expected = 5 - iterations
   @watchman.retries.should be expected
 end

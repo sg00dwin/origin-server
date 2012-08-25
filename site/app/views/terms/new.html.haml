@@ -2,10 +2,8 @@
 
 - content_for :page_title, 'Legal terms'
 
-%h1.ribbon
-  .ribbon-content Legal terms
-  .ribbon-left
-  
+%h1.ribbon Legal terms
+
 %section.content
   - @term.errors.each do |key, value|
     - if key == :base
@@ -23,15 +21,8 @@
   %p
     Clicking <strong>I accept</strong> means that you agree to the above terms.
   
-  = render 'layouts/flashes'
+  = flashes
 
   = semantic_form_for @term, :simple => true do |form|
-    = form.inputs do
-      - if @show_captcha
-        .control-group
-          %label.control-label(for="recaptcha_response_field")
-            Are you human?
-          .controls.recaptcha
-            = recaptcha_tags :ssl => true 
     = form.buttons do
       = form.commit_button "I Accept", :button_html => { :class => 'btn btn-primary' }

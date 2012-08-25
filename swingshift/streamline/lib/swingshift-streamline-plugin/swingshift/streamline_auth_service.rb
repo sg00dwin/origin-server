@@ -28,7 +28,12 @@ module SwingShift
       
         public_key = OpenSSL::PKey::RSA.new(File.read('/var/www/stickshift/broker/config/keys/public.pem'), Rails.configuration.auth[:broker_auth_rsa_secret])
         encrypted_iv = public_key.public_encrypt(iv)
-        [encrypted_iv, encrypted_token]
+        
+        # Base64 encode the iv and token
+        encoded_iv = Base64::encode64(encrypted_iv)
+        encoded_token = Base64::encode64(encrypted_token)
+        
+        [encoded_iv, encoded_token]
       end
       
       def authenticate(request, login, password)
@@ -42,6 +47,7 @@ module SwingShift
             token = check_login(request, login, password)
           end
         end
+        raise StickShift::AccessDeniedException if token.nil? or token[:username].nil?
         return token
       end
       
@@ -61,6 +67,7 @@ module SwingShift
             token =  check_login(request, login, password)
           end
         end
+        raise StickShift::AccessDeniedException if token.nil? or token[:username].nil?
         return token
       end
       
@@ -69,14 +76,22 @@ module SwingShift
       def check_login(request, user, password)
         ticket = request.cookies['rh_sso']
         rhlogin = nil
+        is_cached = false
+
         if ticket
+          # check for presence of rh_sso cookie in the auth cache
           begin
-            login = nil
-            roles = []
-            http_post(@@roles_url,{},ticket) do |json|
-              login = json['username'] || json['login']
-              roles = json['roles']      
+            json = get_cache(ticket)
+            if json
+              is_cached = true
+            else
+              Rails.logger.debug("Login information for ticket '#{ticket}' not available in cache. Continuing with streamline authentication for the ticket...")
+              json, ticket = http_post(@@roles_url, {}, ticket)
             end
+
+            login = json['username'] || json['login']
+            roles = json['roles']      
+
             check_access(roles)
             rhlogin = login
           rescue
@@ -89,32 +104,39 @@ module SwingShift
             return rhlogin if not user or not password
             login_args = {'login' => user, 'password' => password}
             # Establish the authentication ticket
-            login = nil
-            roles = []
-            http_post(@@login_url, login_args) do |json|
-              Rails.logger.debug("Current login = #{user} / authenticated for #{json['username'] || json['login']}")
-              login = json['username'] || json['login']
-              roles = json['roles']
-            end
+            json, ticket = http_post(@@login_url, login_args)
+            Rails.logger.debug("Current login = #{user} / authenticated for #{json['username'] || json['login']}")
+            login = json['username'] || json['login']
+            roles = json['roles']
+
             check_access(roles)
             rhlogin = login
           end
         end
         
+        # store the validated ticket and login info in the cache for 5 minutes
+        # Write to cache only if the ticket is not already present in the cache
+        write_cache(ticket, json, :expires_in => 300.seconds) unless is_cached
+
         {:username => rhlogin, :auth_method => :login}
       end
       
       def check_broker_key(key, iv)
         key = key.gsub(" ", "+")
         iv = iv.gsub(" ", "+")
-        encrypted_token = Base64::decode64(key)
-        cipher = OpenSSL::Cipher::Cipher.new("aes-256-cbc")
-        cipher.decrypt
-        cipher.key = OpenSSL::Digest::SHA512.new(Rails.configuration.auth[:broker_auth_secret]).digest
-        private_key = OpenSSL::PKey::RSA.new(File.read('config/keys/private.pem'), Rails.configuration.auth[:broker_auth_rsa_secret])
-        cipher.iv =  private_key.private_decrypt(Base64::decode64(iv))
-        json_token = cipher.update(encrypted_token)
-        json_token << cipher.final
+        begin
+          encrypted_token = Base64::decode64(key)
+          cipher = OpenSSL::Cipher::Cipher.new("aes-256-cbc")
+          cipher.decrypt
+          cipher.key = OpenSSL::Digest::SHA512.new(Rails.configuration.auth[:broker_auth_secret]).digest
+          private_key = OpenSSL::PKey::RSA.new(File.read('config/keys/private.pem'), Rails.configuration.auth[:broker_auth_rsa_secret])
+          cipher.iv =  private_key.private_decrypt(Base64::decode64(iv))
+          json_token = cipher.update(encrypted_token)
+          json_token << cipher.final
+        rescue => e
+          Rails.logger.error "Broker key authentication failed."
+          raise StickShift::AccessDeniedException.new
+        end
   
         token = JSON.parse(json_token)
         username = token['rhlogin']
@@ -140,7 +162,30 @@ module SwingShift
           end
         end
       end
-      
+
+      def get_cache(key)
+        begin
+          if Rails.configuration.action_controller.perform_caching
+            return Rails.cache.read(key)
+          else
+            return nil
+          end
+        rescue
+          Rails.logger.error("Failed to read auth cookie from cache")
+          return nil
+        end
+      end
+
+      def write_cache(key, val, opts={})
+        if Rails.configuration.action_controller.perform_caching
+          begin
+            Rails.cache.write(key, val, opts)
+          rescue
+            Rails.logger.error("Failed to write auth cookie to cache")
+          end
+        end
+      end
+
       def http_post(url, args={}, ticket=nil)
         begin
           req = Net::HTTP::Post.new(url.path + (url.query ? ('?' + url.query) : ''))
@@ -162,11 +207,21 @@ module SwingShift
           case res
           when Net::HTTPSuccess, Net::HTTPRedirection
             Rails.logger.debug("POST Response code = #{res.code}")
-    
+
+            cookies = res.get_fields('Set-Cookie')
+            if cookies
+              cookies.each do |cookie|
+                if cookie.index("rh_sso")
+                  ticket = cookie.split('; ')[0].split("=")[1]
+                  break
+                end
+              end
+            end
+
             # Parse and yield the body if a block is supplied
             if res.body and !res.body.empty?
               json = JSON.parse(res.body)
-              yield json if block_given?
+              return json, ticket
             else
               Rails.logger.error "Empty response from streamline - #{res.code}"
               raise StickShift::AuthServiceException

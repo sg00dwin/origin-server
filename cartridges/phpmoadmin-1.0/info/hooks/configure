@@ -24,13 +24,13 @@ done
 
 [ $# -eq 3 ] || print_help
 
+cartridge_type="phpmoadmin-1.0"
 source "/etc/stickshift/stickshift-node.conf"
 source ${CARTRIDGE_BASE_PATH}/abstract/info/lib/util
 
-app_type="phpmoadmin-1.0"
 setup_embedded_configure "$1" $2 $3
 
-PHPMOADMIN_DIR=`echo $APP_HOME/phpmoadmin-1.0 | tr -s /` # ensure that there aren't double /'s
+PHPMOADMIN_DIR=$(get_cartridge_instance_dir "$cartridge_type")
 PHPMOADMIN_CTL_SCRIPT="$PHPMOADMIN_DIR/${application}_phpmoadmin_ctl.sh"
 
 if [ ! -f "$APP_HOME/.env/OPENSHIFT_NOSQL_DB_USERNAME" ] ||
@@ -64,7 +64,8 @@ then
     client_error "Embedded phpMoAdmin-1.0 already attached to $application"
     exit 132
 fi
-mkdir -p "$PHPMOADMIN_DIR"
+
+create_cartridge_instance_dir "$cartridge_type"
 pushd "$PHPMOADMIN_DIR" > /dev/null
 mkdir -p conf conf.d logs run sessions tmp html
 ln -s /usr/lib64/httpd/modules modules
@@ -169,5 +170,9 @@ client_result "   PhpMoAdmin User    : $OPENSHIFT_PHPMOADMIN_USERNAME"
 client_result "   PhpMoAdmin Password: $OPENSHIFT_PHPMOADMIN_PASSWORD"
 client_result ""
 client_result "URL: https://$OPENSHIFT_GEAR_DNS/phpmoadmin/"
+
+cart_props "connection_url=https://$OPENSHIFT_GEAR_DNS/phpmoadmin/"
+cart_props "username=$OPENSHIFT_PHPMOADMIN_USERNAME"
+cart_props "password=$OPENSHIFT_PHPMOADMIN_PASSWORD"
 
 set_app_info "URL: https://$OPENSHIFT_GEAR_DNS/phpmoadmin/"

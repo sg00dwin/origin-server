@@ -1,4 +1,4 @@
-policy_module(libra,1.1.17)
+policy_module(libra,1.1.38)
 
 ########################################
 #
@@ -21,6 +21,8 @@ files_tmp_file(libra_initrc_tmp_t)
 type libra_tmp_t, libra_file_type;
 files_tmp_file(libra_tmp_t)
 files_mountpoint(libra_tmp_t)
+files_poly(libra_tmp_t)
+files_poly_parent(libra_tmp_t)
 
 type libra_var_run_t;
 files_pid_file(libra_var_run_t)
@@ -54,6 +56,29 @@ type libra_port_t;
 corenet_port(libra_port_t)
 corenet_reserved_port(libra_port_t)
 
+gen_require(`
+        type httpd_t;
+	type ping_t;
+        type httpd_log_t;
+	type httpd_exec_t;
+	type sshd_devpts_t;
+	type ptmx_t;
+	type crontab_t;
+	type sshd_t;
+	role system_r;
+	role unconfined_r;
+	attribute unconfined_usertype;
+	type rpm_script_t;
+	type puppet_t;
+	type sendmail_t;
+	attribute domain;
+	type quota_t;
+	type quota_db_t;
+        type system_cronjob_t;
+	attribute exec_type;
+	attribute file_type;
+')
+ 
 ########################################
 #
 # libra standard local policy
@@ -69,8 +94,10 @@ corenet_tcp_connect_ftp_port(libra_net_domain)
 #/* These ports are the ephemeral ports needed for ftp */
 corenet_tcp_connect_virt_migration_port(libra_net_domain)
 corenet_tcp_connect_ssh_port(libra_net_domain)
+corenet_tcp_connect_jacorb_port(libra_net_domain)
 corenet_tcp_connect_jboss_management_port(libra_net_domain)
 corenet_tcp_connect_jboss_debug_port(libra_net_domain)
+corenet_tcp_connect_jboss_messaging_port(libra_net_domain)
 corenet_tcp_connect_memcache_port(libra_net_domain)
 corenet_tcp_connect_http_cache_port(libra_net_domain)
 corenet_tcp_connect_amqp_port(libra_net_domain)
@@ -78,11 +105,19 @@ corenet_tcp_connect_generic_port(libra_net_domain)
 corenet_tcp_connect_mongod_port(libra_net_domain)
 corenet_tcp_connect_munin_port(libra_net_domain)
 corenet_tcp_connect_pop_port(libra_net_domain)
+corenet_tcp_connect_pulseaudio_port(libra_net_domain)
+corenet_tcp_connect_smtp_port(libra_net_domain)
+corenet_tcp_connect_whois_port(libra_net_domain)
 corenet_udp_bind_generic_port(libra_net_domain)
+corenet_tcp_bind_http_cache_port(libra_app_domain)
+corenet_tcp_bind_jacorb_port(libra_net_domain)
 corenet_tcp_bind_jboss_management_port(libra_net_domain)
+corenet_tcp_bind_jboss_messaging_port(libra_net_domain)
 corenet_tcp_bind_jboss_debug_port(libra_net_domain)
 corenet_tcp_bind_mongod_port(libra_net_domain)
-corenet_tcp_connect_smtp_port(libra_net_domain)
+corenet_tcp_bind_mysqld_port(libra_app_domain)
+corenet_tcp_bind_pulseaudio_port(libra_net_domain)
+corenet_tcp_bind_postgresql_port(libra_net_domain)
 
 ssh_exec(libra_app_domain)
 cloudform_exec_mongod(libra_app_domain)
@@ -99,11 +134,13 @@ corenet_tcp_connect_all_ports(libra_net_t)
 #
 allow libra_app_domain self:process { setcurrent getcap getattr fork getpgid setpgid setrlimit setfscreate setsched signal_perms getsched execmem execstack };
 
+allow libra_app_domain self:msg all_msg_perms;
 allow libra_app_domain self:msgq create_msgq_perms;
 allow libra_app_domain self:shm create_shm_perms;
 allow libra_app_domain self:sem create_sem_perms;
 # Not sure if we should allow or dontaudit.
 #allow libra_app_domain self:socket  create_socket_perms;
+dontaudit libra_app_domain self:netlink_tcpdiag_socket create;
 allow libra_app_domain self:tcp_socket  create_stream_socket_perms;
 
 allow libra_app_domain self:fifo_file manage_fifo_file_perms;
@@ -123,6 +160,7 @@ manage_lnk_files_pattern(libra_domain, libra_file_type, libra_file_type)
 manage_sock_files_pattern(libra_domain, libra_file_type, libra_file_type)
 allow libra_domain libra_file_type:file execmod;
 
+dontaudit libra_domain libra_file_type:sock_file execute;
 files_var_lib_filetrans(libra_domain, libra_var_lib_t, { dir file sock_file } )
 files_read_var_lib_symlinks(libra_app_domain)
 allow libra_domain libra_var_lib_t:dir_file_class_set { relabelfrom relabelto };
@@ -135,7 +173,7 @@ manage_files_pattern(libra_app_domain, libra_tmp_t, libra_tmp_t)
 manage_lnk_files_pattern(libra_app_domain, libra_tmp_t, libra_tmp_t)
 manage_sock_files_pattern(libra_app_domain, libra_tmp_t, libra_tmp_t)
 allow libra_app_domain libra_tmp_t:dir_file_class_set { relabelfrom relabelto };
-files_tmp_filetrans(libra_app_domain, libra_tmp_t, { file dir sock_file fifo_file })
+files_tmp_filetrans(libra_app_domain, libra_tmp_t, { lnk_file file dir sock_file fifo_file })
 can_exec(libra_app_domain, libra_tmp_t)
 
 list_dirs_pattern(libra_app_domain, libra_var_lib_t, libra_var_lib_t)
@@ -145,14 +183,22 @@ rw_sock_files_pattern(libra_app_domain, libra_var_lib_t, libra_var_lib_t)
 read_lnk_files_pattern(libra_app_domain, libra_var_lib_t, libra_var_lib_t)
 allow libra_app_domain libra_var_lib_t:file entrypoint;
 
+# Dontaudit libra domains trying to search other libra domains directories, 
+# this happens just when users are probing the system
+dontaudit libra_app_domain libra_var_lib_t:dir search_dir_perms
+;
+
 
 kernel_read_system_state(libra_app_domain)
 kernel_read_network_state(libra_app_domain)
 kernel_dontaudit_list_all_proc(libra_app_domain)
 kernel_dontaudit_list_all_sysctls(libra_app_domain)
+kernel_get_sysvipc_info(libra_app_domain)
 
 corecmd_exec_bin(libra_app_domain)
 corecmd_exec_shell(libra_app_domain)
+corecmd_dontaudit_exec_all_executables(libra_app_domain)
+# corecmd_dontaudit_read_all_executables(libra_app_domain)
 
 dev_list_sysfs(libra_app_domain)
 dev_read_rand(libra_app_domain)
@@ -164,8 +210,7 @@ dev_dontaudit_getattr_all_chr_files(libra_app_domain)
 domain_use_interactive_fds(libra_app_domain)
 domain_dontaudit_read_all_domains_state(libra_app_domain)
 
-# Disabled for now, doesn't exist in our current policy -- mmcgrath
-#fs_read_hugetlbfs_files(libra_app_domain)
+fs_rw_hugetlbfs_files(libra_app_domain)
 fs_dontaudit_rw_anon_inodefs_files(libra_app_domain)
 fs_search_tmpfs(libra_app_domain)
 fs_getattr_xattr_fs(libra_app_domain)
@@ -174,7 +219,12 @@ fs_list_inotifyfs(libra_app_domain)
 fs_dontaudit_list_auto_mountpoints(libra_app_domain)
 fs_dontaudit_list_tmpfs(libra_app_domain)
 storage_dontaudit_getattr_fixed_disk_dev(libra_app_domain)
+storage_getattr_fixed_disk_dev(libra_app_domain)
+fs_get_xattr_fs_quotas(libra_app_domain)
+fs_rw_inherited_tmpfs_files(libra_app_domain)
+fs_dontaudit_rw_anon_inodefs_files(libra_app_domain)
 
+dontaudit libra_domain file_type:dir read;
 files_dontaudit_list_home(libra_app_domain)
 files_dontaudit_search_all_pids(libra_app_domain)
 files_dontaudit_getattr_all_dirs(libra_app_domain)
@@ -184,13 +234,12 @@ files_dontaudit_list_var(libra_app_domain)
 files_dontaudit_getattr_lost_found_dirs(libra_app_domain)
 files_dontaudit_search_all_mountpoints(libra_app_domain)
 files_dontaudit_search_spool(libra_app_domain)
-# Uncomment when we have selinux-policy-3.7.19-134.el6
-# files_dontaudit_list_var(libra_app_domain)
+files_dontaudit_search_all_dirs(libra_app_domain)
+files_dontaudit_list_var(libra_app_domain)
 files_read_etc_files(libra_app_domain)
 files_exec_etc_files(libra_app_domain)
 files_read_usr_files(libra_app_domain)
 files_dontaudit_getattr_non_security_sockets(libra_app_domain)
-# Uncomment when we have selinux-policy-3.7.19-133.el6
 files_dontaudit_setattr_etc_runtime_files(libra_app_domain)
 
 libs_exec_lib_files(libra_app_domain)
@@ -224,10 +273,7 @@ apache_list_modules(libra_app_domain)
 apache_read_config(libra_app_domain)
 apache_search_config(libra_app_domain)
 apache_read_sys_content(libra_app_domain)
-corenet_tcp_bind_http_cache_port(libra_app_domain)
-apache_search_sys_scripts(libra_app_domain)
-# Will need to change to this when it becomes available in RHEL6.3 policy
-#apache_exec_sys_scripts(libra_app_domain)
+apache_exec_sys_script(libra_app_domain)
 
 apache_content_template(libra)
 domtrans_pattern(httpd_libra_script_t, libra_initrc_exec_t, libra_initrc_t)
@@ -239,20 +285,6 @@ oddjob_dontaudit_rw_fifo_file(libra_app_domain)
 #
 # libra initrc local policy
 #
-
-gen_require(`
-	type sshd_devpts_t;
-	type ptmx_t;
-	type crontab_t;
-	type sshd_t;
-	role system_r;
-	role unconfined_r;
-	attribute unconfined_usertype;
-	type rpm_script_t;
-	type puppet_t;
-	type puppet_tmp_t;
-')
- 
 allow unconfined_usertype self:process dyntransition;
 
 role_transition unconfined_r libra_initrc_exec_t system_r;
@@ -272,7 +304,7 @@ files_pid_filetrans(libra_initrc_t, libra_var_run_t, { file dir })
 domtrans_pattern(unconfined_usertype, libra_initrc_exec_t, libra_initrc_t)
 domtrans_pattern(rpm_script_t, libra_initrc_exec_t, libra_initrc_t)
 domtrans_pattern(puppet_t, libra_initrc_exec_t, libra_initrc_t)
-dontaudit domain puppet_tmp_t:file { read write };
+puppet_rw_tmp(domain)
 
 manage_dirs_pattern(libra_initrc_t, libra_log_t, libra_log_t)
 manage_files_pattern(libra_initrc_t, libra_log_t, libra_log_t)
@@ -282,30 +314,19 @@ allow libra_initrc_t libra_app_domain:process { getattr getsched setsched transi
 allow libra_app_domain libra_initrc_t:fd use;
 allow libra_app_domain libra_initrc_t:fifo_file rw_inherited_fifo_file_perms;
 allow libra_app_domain libra_initrc_t:process sigchld;
+dontaudit libra_app_domain libra_initrc_t:key view;
 dontaudit libra_app_domain libra_initrc_t:process signull;
 dontaudit libra_app_domain libra_initrc_t:socket_class_set { read write };
-
-# use this when available, see can_exec below MAL 20110422
-#apache_exec_rotatelogs(libra_app_domain)
+dontaudit libra_app_domain exec_type:file read;
 
 ########################################
 #
 # generic policy 
 #
 
-require {
-	type httpd_exec_t;
-	type httpd_rotatelogs_exec_t;
-	attribute exec_type;
-	type sendmail_t;
-	attribute domain;
-	type quota_t;
-	type quota_db_t;
-        type system_cronjob_t;
-}
-
 allow libra_app_domain httpd_exec_t:file entrypoint;
-dontaudit libra_app_domain exec_type:file getattr;
+corecmd_getattr_all_executables(libra_app_domain)
+ssh_getattr_user_home_dir(libra_app_domain)
 ssh_dontaudit_search_user_home_dir(libra_app_domain)
 dontaudit sendmail_t libra_initrc_t:fifo_file { read write };
 dontaudit domain libra_app_domain:fifo_file { getattr write };
@@ -330,6 +351,8 @@ cron_role(system_r, libra_app_domain)
 allow system_cronjob_t libra_app_domain:process transition;
 allow libra_app_domain system_cronjob_t:process sigchld;
 dontaudit crontab_t sshd_devpts_t:chr_file { read write };
+dontaudit crontab_t libra_initrc_t:fifo_file { write read };
+fs_dontaudit_rw_anon_inodefs_files(crontab_t)
 
 ########################################
 #
@@ -338,7 +361,6 @@ dontaudit crontab_t sshd_devpts_t:chr_file { read write };
 
 mysql_exec(libra_app_domain)
 mysql_safe_exec(libra_app_domain)
-corenet_tcp_bind_mysqld_port(libra_app_domain)
 mysql_search_db(libra_app_domain)
 allow libra_app_domain self:process setexec;
 
@@ -346,18 +368,12 @@ allow libra_app_domain self:process setexec;
 #
 # Postgresql support
 #
-require {
-	type postgresql_exec_t;
-	type tmpfs_t;
-}
+postgresql_exec(libra_app_domain)
 
-# Uncomment when we have selinux-policy-3.7.19-134.el6
-# fs_rw_inherited_tmpfs_files(libra_app_domain)
-# postgresql_exec(libra_app_domain)
-can_exec(libra_app_domain, postgresql_exec_t)
-corenet_tcp_bind_postgresql_port(libra_net_domain)
-# Do not allow open or create, just allow it to use inherited from kernel
-allow libra_app_domain tmpfs_t:file { read write };
+########################################
+#
+# Node.js support
+#
 allow libra_app_domain anon_inodefs_t:file write;
 
 #########
@@ -367,10 +383,12 @@ allow libra_app_domain anon_inodefs_t:file write;
 require {
     type ntpd_t;
     type postfix_master_t;
+    type mysqld_t;
 }
 
 mcs_socket_write_all_levels(ntpd_t)
 mcs_socket_write_all_levels(postfix_master_t)
+mcs_socket_write_all_levels(mysqld_t)
 
 #################################
 # Potentially dangerous configs #
@@ -382,9 +400,7 @@ allow libra_app_domain libra_var_lib_t:file { execute execute_no_trans };
 #################################
 # Allow Log Rotation            #
 #################################
-# Allow libra users to run apache rotatelogs
-# replace with apache_exec_rotatelogs(libra_app_domain) when available MAL 20110422
-can_exec(libra_app_domain, httpd_rotatelogs_exec_t)
+apache_exec_rotatelogs(libra_app_domain)
 
 allow unconfined_usertype libra_app_domain:process transition;
 dontaudit unconfined_usertype libra_app_domain:process { noatsecure siginh rlimitinh };
@@ -397,10 +413,6 @@ corecmd_bin_entry_type(libra_app_domain)
 userdom_use_inherited_user_ptys(libra_app_domain)
 
 gpg_entry_type(libra_app_domain)
-
-require {
-        type httpd_t;
-}
 
 ##########
 # Used for development or when the li controller is running outside
@@ -419,6 +431,7 @@ domain_dontaudit_read_all_domains_state(httpd_t)
 allow httpd_t self:capability sys_ptrace;
 
 dontaudit httpd_t libra_initrc_t:process signull;
+allow httpd_t domain:process getpgid;
 
 type libra_cgroup_read_t;
 type libra_cgroup_read_exec_t;
@@ -469,12 +482,24 @@ mta_base_mail_template(libra)
 mta_sendmail_domtrans(libra_app_domain, libra_mail_t)
 role system_r types libra_mail_t;
 
+allow libra_app_domain libra_mail_t:process { getattr signal signull sigkill };
 allow libra_mail_t libra_initrc_t:fifo_file rw_inherited_fifo_file_perms;
 dontaudit libra_mail_t sshd_devpts_t:chr_file { read write };
+
+######################################################
+# Remove once interface shows up in RHEL
+# mta_signal_user_agent(libra_app_domain)
+gen_require(`
+	attribute mta_user_agent;
+')
+allow libra_app_domain mta_user_agent:process signal;
+######################################################
 
 fs_dontaudit_rw_anon_inodefs_files(libra_mail_t)
 
 read_files_pattern(libra_mail_t, libra_var_lib_t, libra_var_lib_t)
+allow libra_mail_t libra_var_lib_t:file rw_inherited_file_perms;
+
 manage_files_pattern(libra_mail_t, libra_tmp_t, libra_tmp_t)
 
 mta_dontaudit_read_spool_symlinks(libra_mail_t)
@@ -488,6 +513,7 @@ allow sshd_t libra_domain:process { transition dyntransition };
 libra_search_lib(sshd_t)
 dontaudit sshd_t self:capability sys_admin;
 allow libra_domain sshd_t:process sigchld;
+dontaudit libra_domain sshd_t:key view;
 allow libra_domain sshd_t:unix_stream_socket connectto;
 allow libra_domain sshd_t:unix_dgram_socket write;
 allow sshd_t libra_domain:process { rlimitinh signal };
@@ -519,6 +545,7 @@ allow libra_app_domain libra_rw_file_t:dir_file_class_set { relabelfrom relabelt
 
 # Remove the following once sshd gets fixed.
 dontaudit libra_domain self:process dyntransition;
+dontaudit libra_domain httpd_log_t:lnk_file read_lnk_file_perms;
 
 allow libra_domain libra_app_domain:process transition;
 kernel_read_vm_sysctls(libra_t)
@@ -528,3 +555,4 @@ kernel_search_vm_sysctl(libra_app_t)
 netutils_domtrans_ping(libra_t)
 netutils_kill_ping(libra_t)
 netutils_signal_ping(libra_t)
+allow ping_t libra_file_type:file rw_inherited_file_perms;

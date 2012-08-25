@@ -4,15 +4,15 @@
  * Configuration key/value pairs for external Redhat services.
  */
 
-$streamline_host = 'https://10.196.215.67';
+$streamline_host = 'https://streamline-proxy1.ops.rhcloud.com';
 /**
  * If you have configured broker and site to generate cookies to
- * the current domain, comment out this line.
+ * uncomment this line.
  */
-$cookie_domain = '.redhat.com'
+#$cookie_domain = '.redhat.com';
 
-$conf['redhat_sso_enabled'] = TRUE;
-$conf['redhat_sso_force_login'] = FALSE;
+$conf['redhat_sso_enabled'] = true;
+$conf['redhat_sso_force_login'] = false;
 $conf['redhat_sso_login_url'] = '/app/login';
 $conf['redhat_sso_logout_url'] = '/app/logout';
 $conf['redhat_sso_verify_url'] = $streamline_host . '/wapps/streamline/cloudVerify.html';

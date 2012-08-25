@@ -1,0 +1,290 @@
+#!/usr/bin/env ruby
+
+require 'rubygems'
+require 'getoptlong'
+require 'socket'
+
+def usage
+    puts <<USAGE
+== Synopsis
+
+rhc-admin-ctl-usage: Control usage
+
+== Usage
+
+rhc-admin-ctl-usage OPTIONS
+
+Options:
+--sync
+    Sync usage with the billing vendor
+--remove_sync_lock
+    Remove existing sync lock
+--list
+    List usage available to be synced
+-h|--help
+    Show Usage info
+USAGE
+end
+
+opts = GetoptLong.new(
+    ["--remove_sync_lock",       GetoptLong::NO_ARGUMENT],
+    ["--list",                   GetoptLong::NO_ARGUMENT],
+    ["--sync",                   GetoptLong::NO_ARGUMENT],
+    ["--help",             "-h", GetoptLong::NO_ARGUMENT]
+)
+
+args = {}
+begin
+    opts.each{ |k,v| args[k]=v }
+rescue GetoptLong::Error => e
+    usage
+    exit -100
+end
+
+sync = args["--sync"]
+list = args["--list"]
+remove_sync_lock = args["--remove_sync_lock"]
+
+if args["--help"]
+  usage
+  exit 1
+end
+
+unless sync || list || remove_sync_lock
+  puts "You must --list or --sync or --remove_sync_lock"
+  exit 1
+end
+
+require "/var/www/stickshift/broker/config/environment"
+
+def usage_record_to_billing_usage_type(billing_api, usage_record)
+  billing_usage_type = nil
+  
+  case usage_record.usage_type
+  when UsageRecord::USAGE_TYPES[:gear_usage]
+    billing_usage_type = billing_api.usage_type[:gear][usage_record.gear_size.to_sym]
+  when UsageRecord::USAGE_TYPES[:addtl_fs_gb]
+    billing_usage_type = billing_api.usage_type[:storage][:gigabyte_hour]
+  else
+    raise "Usage type not supported: '#{usage_record.usage_type}'"
+  end
+end
+
+def usage_time(billing_api, acct_no, usage_record, begin_time, end_time)
+  if usage_record.sync_time
+    found = false
+    billing_usage_type = usage_record_to_billing_usage_type(billing_api, usage_record)
+    if billing_usage_type
+      usages = billing_api.get_usage_history(acct_no, billing_usage_type)
+      usages.each do |usage|
+        gear_uuid = usage["qualifier_1"]
+        sync_time = usage["qualifier_2"]
+        if usage_record.sync_time.to_i == sync_time.to_i && usage_record.gear_uuid == gear_uuid
+          found = true
+          break
+        end
+      end
+      if found
+        puts "WARNING: Usage data has already been sent to billing vendor but not removed from datastore usage.  Resetting begin_time to previous sync_time."
+        begin_time = usage_record.sync_time
+      else
+        puts "WARNING: Billing vendor doesn't have the records.  Leaving begin_time from previous sync."
+      end
+    end
+  end
+  total_time = (end_time - begin_time) / 3600 # hours
+  total_time
+end
+
+def get_billing_user_acct_no(billing_api, billing_user_id)
+  puts "Aria userid: #{billing_user_id}"
+  unless billing_api.userid_exists(billing_user_id)
+    puts "User didn't exist"
+    # Temporary code until users are created up front
+    acct_no = billing_api.create_fake_acct(billing_user_id, :megashift)
+  else
+    acct_no = billing_api.get_acct_no_from_user_id(billing_user_id)
+  end
+  acct_no
+end
+
+if remove_sync_lock
+  Express::Broker::DistributedLock.release_lock("sync_usage")
+else
+  hostname = Socket.gethostname
+  if Express::Broker::DistributedLock.obtain_lock("sync_usage", hostname)
+    begin
+      failures = []
+      CloudUser.find_all(nil, {:with_usage => true}) {|hash|
+        user = CloudUser.hash_to_obj(hash)
+        if user.usage_records && !user.usage_records.empty?
+          puts "\n#################"
+          puts "User: #{user.login}"
+          puts "#################"
+          sorted_usage = user.usage_records.sort_by { |usage_record| usage_record.time }
+          gear_usage_records_by_gear = {}
+          storage_usage_records_by_gear = {}
+          sorted_usage.each do |usage_record|
+            case usage_record.usage_type
+            when UsageRecord::USAGE_TYPES[:gear_usage]
+              gear_usage_records_by_gear[usage_record.gear_uuid] = [] unless gear_usage_records_by_gear[usage_record.gear_uuid]
+              gear_usage_records_by_gear[usage_record.gear_uuid] << usage_record
+            when UsageRecord::USAGE_TYPES[:addtl_fs_gb]
+              storage_usage_records_by_gear[usage_record.gear_uuid] = [] unless storage_usage_records_by_gear[usage_record.gear_uuid]
+              storage_usage_records_by_gear[usage_record.gear_uuid] << usage_record
+            end
+          end
+          billing_api = Express::AriaBilling::Api.new
+          billing_user_id = Digest::MD5::hexdigest(user.login)
+          billing_acct_no = get_billing_user_acct_no(billing_api, billing_user_id)
+          
+          usage_record_pairs = []
+          [gear_usage_records_by_gear, storage_usage_records_by_gear].each do |usage_records_by_gear|
+            usage_records_by_gear.each do |gear_uuid, usage_records_for_gear|
+              previous_usage_record = nil
+              usage_records_for_gear.each_with_index do |usage_record, i|
+                if i.odd?
+                  usage_record_pairs << {gear_uuid => [previous_usage_record, usage_record]}
+                  previous_usage_record = nil 
+                elsif i == usage_records_for_gear.length - 1
+                  usage_record_pairs << {gear_uuid => [usage_record]}
+                else
+                  previous_usage_record = usage_record
+                end
+              end
+            end
+          end
+
+          if sync
+            usage_record_pairs.each do |gear_uuid_to_record_pair|  
+              gear_uuid_to_record_pair.each do |gear_uuid, usage_records_for_gear|
+                usage = nil
+                previous_usage_record = nil
+                usage_records_for_gear.each do |usage_record|
+                  unless usage_record.event == UsageRecord::EVENTS[:continue]
+                    unless usage
+                      if usage_record.event == UsageRecord::EVENTS[:begin]
+                        usage_uuid = usage_record.uuid
+                      else
+                        usage_uuid = previous_usage_record.uuid 
+                      end
+                      usage = Usage.find(usage_uuid)              
+                    end
+                    if !usage && usage_record.event == UsageRecord::EVENTS[:begin]
+                      puts "WARNING: Usage not found in collection for new gear: #{usage_record.gear_uuid}"
+                      usage = Usage.new(user.login, usage_record.gear_uuid, usage_record.time, nil, usage_record.uuid, usage_record.usage_type)
+                      usage.gear_size = usage_record.gear_size
+                      usage.addtl_fs_gb = usage_record.addtl_fs_gb
+                    elsif usage
+                      if usage_record.event == UsageRecord::EVENTS[:end]
+                        puts "Setting end time for gear: #{usage.gear_uuid}"
+                        usage.end_time = usage_record.time
+                      end
+                    else
+                      puts "ERROR: Usage not found in collection for gear: #{usage_record.gear_uuid}"
+                      exit 1
+                    end
+                  end
+                  previous_usage_record = usage_record
+                end
+                usage.save! if usage
+              end
+            end
+
+            usage_record_pairs.each do |gear_uuid_to_record_pair|  
+              gear_uuid_to_record_pair.each do |gear_uuid, usage_records_for_gear|
+                usage = nil
+                begin_time = nil
+                end_time = nil
+                now = Time.now.utc
+                usage_records_for_gear.each do |usage_record|
+                  if usage_record.event == UsageRecord::EVENTS[:end]
+                    end_time = usage_record.time
+                  else
+                    begin_time = usage_record.time
+                  end
+                end
+                end_time = now unless end_time
+    
+                usage_record = usage_records_for_gear.first
+                puts "Collecting '#{usage_record.usage_type}' usage for gear: #{gear_uuid}"
+                ut = usage_time(billing_api, billing_acct_no, usage_record, begin_time, end_time)
+                puts "Saving sync_time before sending usage data to billing vendor."
+                usage_record.sync_time = now
+                usage_record.save
+                billing_usage_type = usage_record_to_billing_usage_type(billing_api, usage_record)
+                success = false
+                if billing_usage_type
+                  puts "Sending usage data (#{ut}h) to billing vendor."
+                  # Send data to billing vendor
+                  if billing_api.record_usage(gear_uuid, usage_record.sync_time, billing_user_id, nil, billing_usage_type, ut)
+                    puts "Billing vendor returned success."
+                    success = true
+                  end
+                else
+                  puts "Skipping billing for usage data (#{ut}h) of type: #{usage_record.usage_type}"
+                  success = true
+                end
+                if success
+                  if usage_records_for_gear.length == 2 && usage_records_for_gear.last.event == UsageRecord::EVENTS[:end]
+                    puts "Deleting ended usage record"
+                    StickShift::DataStore.instance.delete_usage_records_by_uuids(user.login, usage_records_for_gear.map{ |usage_record| usage_record.uuid })
+                  else
+                    puts "Continuing usage record."
+                    usage_record.event = UsageRecord::EVENTS[:continue]
+                    usage_record.time = now
+                    usage_record.sync_time = nil
+                    usage_record.save
+                  end
+                else
+                  puts "Billing vendor returned error."
+                  failures << [user.login, gear_uuid, usage_record.usage_type]
+                end
+              end
+            end
+          elsif list
+            usage_record_pairs.each do |gear_uuid_to_record_pair|  
+              gear_uuid_to_record_pair.each do |gear_uuid, usage_records_for_gear|
+                begin_time = nil
+                end_time = nil
+                now = Time.now.utc
+                usage_records_for_gear.each do |usage_record|
+                  if usage_record.event == UsageRecord::EVENTS[:end]
+                    end_time = usage_record.time
+                  else
+                    begin_time = usage_record.time
+                  end
+                end
+                puts "Collecting '#{usage_records_for_gear.first.usage_type}' usage for gear: #{gear_uuid}"
+                if end_time
+                  puts "Usage record ended."
+                else
+                  puts "Usage record continued."
+                  end_time = now
+                end
+                ut = usage_time(billing_api, billing_acct_no, usage_records_for_gear.first, begin_time, end_time)
+                puts "Usage to send to billing vendor: #{ut}h"
+              end
+            end
+          end
+        else
+          puts "Gear usage not found for user: #{user.login}"
+        end
+      }
+
+      unless failures.empty?
+        puts "!!!!!!!!!!!!!!!!!!!FAILURES!!!!!!!!!!!!!!!!!!!!!!"
+        failures.each do |failure|
+          puts "User: #{failure[0]}   Gear UUID: #{failure[1]}   Usage Type: #{failure[2]}"
+        end
+        puts "!!!!!!!!!!!!!!!!!END FAILURES!!!!!!!!!!!!!!!!!!!!"
+      end
+    ensure
+      Express::Broker::DistributedLock.release_lock("sync_usage", hostname)
+    end
+  else
+    puts "Failed to obtain lock to interact with usage data"
+    exit 1
+  end
+  puts "Done"
+end

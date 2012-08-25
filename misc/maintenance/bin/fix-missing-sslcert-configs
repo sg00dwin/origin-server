@@ -1,0 +1,65 @@
+#!/bin/bash
+
+# set -x 
+set -e 
+
+VHOST_CFG_DIR="/etc/httpd/conf.d/stickshift"
+OLD_CFG_COPY_DIR="/tmp/backup-old-config.$$"
+
+function print_missing_config_bits() {
+  cat <<MYEOF
+
+  # This file gets inserted into every httpd.conf ssl section
+  SSLEngine on
+  
+  SSLCertificateFile /etc/pki/tls/certs/localhost.crt
+  SSLCertificateKeyFile /etc/pki/tls/private/localhost.key
+  SSLCertificateChainFile /etc/pki/tls/certs/localhost.crt
+  SSLCipherSuite RSA:!EXPORT:!DH:!LOW:!NULL:+MEDIUM:+HIGH
+  SSLProtocol -ALL +SSLv3 +TLSv1
+MYEOF
+
+}
+
+
+#
+# _main():
+#
+echo "Finding missing SSL config in vhost files and fixing 'em up ..."
+echo ""
+
+mkdir -p "$OLD_CFG_COPY_DIR"
+echo "Note: Prior to making any modifications to the config files in the "
+echo "      $VHOST_CFG_DIR, this script will keep a backup copy of the"
+echo "      current version of the config file in $OLD_CFG_COPY_DIR/ ... "
+echo ""
+
+cntr=0
+for inf in $(grep -c "SSLCertificateFile" $VHOST_CFG_DIR/*.conf | grep ":0$" |
+             sed "s/:0$//"); do
+    echo "`date`: File `basename \"$inf\"`: backing up old config ..."
+    cp -f "$inf"  $OLD_CFG_COPY_DIR
+
+    tmpf=/tmp/vhost-modified.$$
+    touch $tmpf
+
+    cat "$inf" | while IFS= read line; do
+       echo "$line" >> $tmpf
+       if [[ "$line" =~ "RequestHeader append X-Forwarded-Proto \"https\"" ]]; then
+          print_missing_config_bits >> $tmpf
+       fi
+    done
+
+    cat "$tmpf" > "$inf"
+    echo "`date`: Fixed up `basename \"$inf\"` config file"
+
+    cntr=$((cntr+1))
+    rm -f /tmp/vhost-modified.$$
+done
+
+echo ""
+if [ $cntr -eq 0 ]; then
+   echo "`date`: All done!  Didn't need to fixup any vhost config."
+else
+   echo "`date`: Completed - Needed to fixup $cntr vhost config."
+fi

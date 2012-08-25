@@ -1,0 +1,23 @@
+Setup
+=====
+Make sure to run `bundle install`, since this project needs a few gems we don't normally use.
+
+Run
+===
+  ./sprint_status_report
+
+Use --help for more options
+
+Available Reports
+=================
+The following reports are defined (with their default variables)
+* dev
+  - Recipient: libra-devel@redhat.com
+  - WILL send nag emails to US owners
+* qe
+  - Recipient: libra-qe@redhat.com
+  - Will NOT send nag emails to US owners
+
+Any problems
+============
+Contact Fotios Lindiakos <fotios@redhat.com>

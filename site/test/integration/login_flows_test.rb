@@ -7,6 +7,14 @@ class LoginFlowsTest < ActionDispatch::IntegrationTest
     open_session
   end
 
+  def with_integrated(&block)
+    previous = Rails.configuration.integrated
+    Rails.configuration.integrated = true
+    yield
+  ensure
+    Rails.configuration.integrated = previous
+  end
+
   def internal_user
     {:rhlogin => 'test', :password => 'password'}
   end
@@ -31,8 +39,10 @@ class LoginFlowsTest < ActionDispatch::IntegrationTest
       '/user/new' => '/app/account/new',
       '/user/new/flex' => '/app/account/new',
       '/user/new/express' => '/app/account/new',
-      '/express' => '/app/platform',
-      '/flex' => '/app/platform'
+      '/express' => '/community/paas',
+      '/flex' => '/community/paas',
+      '/platform' => '/community/paas',
+      '/getting_started' => '/community/get-started',
     }.each_pair do |url,to|
       get url, nil, {'SCRIPT_NAME' => '/app'}
       assert_redirected_to to, "Requesting #{url} => #{to}"
@@ -79,5 +89,66 @@ class LoginFlowsTest < ActionDispatch::IntegrationTest
 
     assert_blank cookies['rh_sso']
     assert_equal 'true', cookies['prev_login']
+  end
+
+  test 'signup to app creation' do
+    with_integrated do
+      user = new_user
+
+      get '/'
+      assert_response :success
+      assert_select 'a', :text => /sign in/i
+      assert !@controller.previously_logged_in?
+
+      get new_account_path
+      assert_response :success
+      assert_select 'form#new_user_form', {}, @response.inspect
+
+      post account_path, {
+        :captcha_secret => Rails.application.config.captcha_secret,
+        :then => '/account',
+        :web_user => {
+          :email_address => user.email_address,
+          :password => user.password,
+          :password_confirmation => user.password,
+        }
+      }
+      assert user = assigns(:user)
+      assert user.token
+      assert_redirected_to complete_account_path
+
+      follow_redirect!
+      assert_response :success
+      assert_select 'p', :text => /Check your inbox/
+
+      get email_confirm_path(:key => user.token, :emailAddress => user.email_address, :then => '/account')
+      assert user = assigns(:user)
+      assert_redirected_to account_path
+
+      follow_redirect!
+      assert_redirected_to new_terms_path
+      assert_equal account_path, session[:terms_redirect]
+
+      follow_redirect!
+      assert_response :success
+      assert_select 'form#new_term'
+
+      post terms_path
+      assert_redirected_to account_path
+
+      follow_redirect!
+      assert_response :success
+      assert_equal user.login, @controller.current_user.login
+      assert_equal user.ticket, @controller.current_user.ticket
+      assert_select 'a', :text => user.email_address
+      assert_select 'h2', :text => /personal information/i
+
+      get logout_path
+      assert_redirected_to root_path
+
+      follow_redirect!
+      assert_select 'a', :text => /sign in/i
+      assert @controller.previously_logged_in?
+    end
   end
 end

@@ -3,7 +3,7 @@
 
 Summary:   Li broker components
 Name:      rhc-broker
-Version:   0.91.5
+Version: 0.98.2
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -26,13 +26,18 @@ Requires:  rubygem-rest-client
 Requires:  rubygem-thread-dump
 Requires:  rubygem-swingshift-streamline-plugin
 Requires:  rubygem-uplift-dynect-plugin
-Requires:  rubygem-gearchanger-m-collective-plugin
-Requires:  rubygem-crankcase-mongo-plugin
-Requires:  rubygem-term-ansicolor
-Requires:  rubygem-trollop
-Requires:  rubygem-cucumber
-Requires:  rubygem-gherkin
-
+Requires:  rubygem-gearchanger-mcollective-plugin
+#Requires:  rubygem-term-ansicolor
+#Requires:  rubygem-trollop
+#Requires:  rubygem-cucumber
+#Requires:  rubygem-gherkin
+Requires:  rubygem(ruby-prof)
+Requires:  rubygem-ruby-prof
+Requires:  rubygem-rcov
+Requires:  rubygem-mongo_mapper
+Requires:  rubygem-wddx
+Requires:  rubygem-pony
+Requires:  mcollective-qpid-plugin
 
 BuildArch: noarch
 
@@ -50,19 +55,24 @@ rm -rf %{buildroot}
 mkdir -p %{buildroot}%{_bindir}
 mkdir -p %{buildroot}%{htmldir}
 mkdir -p %{buildroot}%{brokerdir}
+mkdir -p %{buildroot}/usr/lib/stickshift/broker
+mv application_templates %{buildroot}/usr/lib/stickshift/broker
 cp -r . %{buildroot}%{brokerdir}
 ln -s %{brokerdir}/public %{buildroot}%{htmldir}/broker
 
 mkdir -p %{buildroot}%{brokerdir}/run
 mkdir -p %{buildroot}%{brokerdir}/log
-touch %{buildroot}%{brokerdir}/log/production.log
+mkdir -p %{buildroot}%{_localstatedir}/log/stickshift
+
 mv %{buildroot}%{brokerdir}/script/rhc-admin-ctl-domain %{buildroot}/%{_bindir}
 mv %{buildroot}%{brokerdir}/script/rhc-admin-ctl-app %{buildroot}/%{_bindir}
 mv %{buildroot}%{brokerdir}/script/rhc-admin-cartridge-do %{buildroot}/%{_bindir}
+mv %{buildroot}%{brokerdir}/script/rhc-admin-migrate %{buildroot}/%{_bindir}
 mv %{buildroot}%{brokerdir}/script/rhc-admin-move %{buildroot}/%{_bindir}
 mv %{buildroot}%{brokerdir}/script/rhc-admin-ctl-district %{buildroot}/%{_bindir}
 mv %{buildroot}%{brokerdir}/script/rhc-admin-ctl-template %{buildroot}/%{_bindir}
-mv %{buildroot}%{brokerdir}/script/rhc-admin-user-vip %{buildroot}/%{_bindir}
+mv %{buildroot}%{brokerdir}/script/rhc-admin-ctl-usage %{buildroot}/%{_bindir}
+mv %{buildroot}%{brokerdir}/script/rhc-admin-ctl-plan %{buildroot}/%{_bindir}
 mv %{buildroot}%{brokerdir}/script/rhc-admin-ctl-user %{buildroot}/%{_bindir}
 mv %{buildroot}%{brokerdir}/script/rhc-admin-chk %{buildroot}/%{_bindir}
 
@@ -71,7 +81,8 @@ rm -rf $RPM_BUILD_ROOT
 
 %files
 %defattr(0640,root,libra_user,0750)
-%attr(0666,-,-) %{brokerdir}/log/production.log
+%ghost %{brokerdir}/log/production.log
+%ghost %{_localstatedir}/log/stickshift/user_action.log
 %config(noreplace) %{brokerdir}/config/environments/production.rb
 %config(noreplace) %{brokerdir}/config/keys/public.pem
 %config(noreplace) %{brokerdir}/config/keys/private.pem
@@ -86,16 +97,741 @@ rm -rf $RPM_BUILD_ROOT
 %attr(0750,-,-) %{_bindir}/rhc-admin-chk
 %attr(0750,-,-) %{_bindir}/rhc-admin-ctl-app
 %attr(0750,-,-) %{_bindir}/rhc-admin-cartridge-do
+%attr(0750,-,-) %{_bindir}/rhc-admin-migrate
 %attr(0750,-,-) %{_bindir}/rhc-admin-move
 %attr(0750,-,-) %{_bindir}/rhc-admin-ctl-district
 %attr(0750,-,-) %{_bindir}/rhc-admin-ctl-template
-%attr(0750,-,-) %{_bindir}/rhc-admin-user-vip
+%attr(0750,-,-) %{_bindir}/rhc-admin-ctl-usage
+%attr(0750,-,-) %{_bindir}/rhc-admin-ctl-plan
 %attr(0750,-,-) %{_bindir}/rhc-admin-ctl-user
+/usr/lib/stickshift/broker/application_templates
 
 %post
-/bin/touch %{brokerdir}/log/production.log
+if [ ! -f %{brokerdir}/log/production.log ]; then
+  /bin/touch %{brokerdir}/log/production.log
+  chown root:libra_user %{brokerdir}/log/production.log
+  chmod 660 %{brokerdir}/log/production.log
+fi
+
+if [ ! -f %{_localstatedir}/log/stickshift/user_action.log ]; then
+  /bin/touch %{_localstatedir}/log/stickshift/user_action.log
+  chown root:libra_user %{_localstatedir}/log/stickshift/user_action.log
+  chmod 660 %{_localstatedir}/log/stickshift/user_action.log
+fi
 
 %changelog
+* Thu Aug 23 2012 Adam Miller <admiller@redhat.com> 0.98.2-1
+- Updating gem versions (admiller@redhat.com)
+
+* Wed Aug 22 2012 Adam Miller <admiller@redhat.com> 0.98.1-1
+- Updating gem versions (admiller@redhat.com)
+- bump_minor_versions for sprint 17 (admiller@redhat.com)
+
+* Wed Aug 22 2012 Adam Miller <admiller@redhat.com> 0.97.11-1
+- Updating gem versions (admiller@redhat.com)
+- Cleanup broker REST api controllers (rpenta@redhat.com)
+- Merge pull request #292 from ramr/master (openshift+bot@redhat.com)
+- Merge pull request #285 from danmcp/master (openshift+bot@redhat.com)
+- Fix to add disable stale detection for a scalable app's gears.
+  (ramr@redhat.com)
+- more ctl usage test cases and related fixes (dmcphers@redhat.com)
+
+* Tue Aug 21 2012 Adam Miller <admiller@redhat.com> 0.97.10-1
+- Updating gem versions (admiller@redhat.com)
+- ctl usage tests (dmcphers@redhat.com)
+
+* Mon Aug 20 2012 Adam Miller <admiller@redhat.com> 0.97.9-1
+- Updating gem versions (admiller@redhat.com)
+- Fix issue syncing continued usage (dmcphers@redhat.com)
+- enable usage tests by default in extended tests (dmcphers@redhat.com)
+- fix broker extended tests (dmcphers@redhat.com)
+- Merge pull request #260 from lnader/master (openshift+bot@redhat.com)
+- Bug 848956 - Rest api for list plans via XML is not working
+  (lnader@redhat.com)
+
+* Fri Aug 17 2012 Adam Miller <admiller@redhat.com> 0.97.8-1
+- Updating gem versions (admiller@redhat.com)
+
+* Fri Aug 17 2012 Adam Miller <admiller@redhat.com> 0.97.7-1
+- Updating gem versions (admiller@redhat.com)
+
+* Thu Aug 16 2012 Adam Miller <admiller@redhat.com> 0.97.6-1
+- Updating gem versions (admiller@redhat.com)
+- Resolve merge conflicts (rpenta@redhat.com)
+
+* Thu Aug 16 2012 Adam Miller <admiller@redhat.com> 0.97.5-1
+- Updating gem versions (admiller@redhat.com)
+- Merge pull request #244 from ramr/master (openshift+bot@redhat.com)
+- Bug 848739 (dmcphers@redhat.com)
+- Bug 848419 (dmcphers@redhat.com)
+- Merge pull request #237 from smarterclayton/add_process_id_to_rails_logs
+  (openshift+bot@redhat.com)
+- Merge pull request #238 from smarterclayton/use_aria_proxy_for_devenv
+  (openshift+bot@redhat.com)
+- Migration for haproxy changes. (ramr@redhat.com)
+- Add process id output to Rails loggers in all modes.  Will need to be changed
+  in Rails 3.2+ (ccoleman@redhat.com)
+- Point site and broker development environments to the Aria API proxy machine
+  (same as streamline) (ccoleman@redhat.com)
+
+* Wed Aug 15 2012 Adam Miller <admiller@redhat.com> 0.97.4-1
+- Updating gem versions (admiller@redhat.com)
+- Merge pull request #233 from mrunalp/dev/migrate_mysql_data_dir
+  (openshift+bot@redhat.com)
+- fixing ctl usage to handle multiple begin and end events
+  (dmcphers@redhat.com)
+- Adds migration to move mysql data dir on standalone gears.
+  (mpatel@redhat.com)
+
+* Tue Aug 14 2012 Adam Miller <admiller@redhat.com> 0.97.3-1
+- Updating gem versions (admiller@redhat.com)
+- Updated from comments (nhr@redhat.com)
+- Merge remote-tracking branch 'upstream/master' into aria (nhr@redhat.com)
+- Bug 846555 (dmcphers@redhat.com)
+- Updated Plan, added Aria::MasterPlan (nhr@redhat.com)
+
+* Thu Aug 09 2012 Adam Miller <admiller@redhat.com> 0.97.2-1
+- Updating gem versions (admiller@redhat.com)
+- allow non trusted users to add cross links as well as long as the trigger is
+  added after (dmcphers@redhat.com)
+- Merge pull request #183 from sosiouxme/master (openshift+bot@redhat.com)
+- Update kitchensink to have a better title. (ccoleman@redhat.com)
+- fix "JBoss JBoss" typo bz 843345 (lmeyer@redhat.com)
+- Remove ruby common code from rhc-server-common (ccoleman@redhat.com)
+
+* Thu Aug 02 2012 Adam Miller <admiller@redhat.com> 0.97.1-1
+- Updating gem versions (admiller@redhat.com)
+- bump_minor_versions for sprint 16 (admiller@redhat.com)
+
+* Wed Aug 01 2012 Adam Miller <admiller@redhat.com> 0.96.16-1
+- Updating gem versions (admiller@redhat.com)
+- migration for BZ844267 (bdecoste@gmail.com)
+- Merge pull request #154 from mrunalp/bugs/remove_duplicate_district_model
+  (kraman@gmail.com)
+- Remove duplicate district model. (mpatel@redhat.com)
+
+* Tue Jul 31 2012 Dan McPherson <dmcphers@redhat.com> 0.96.15-1
+- Updating gem versions (dmcphers@redhat.com)
+
+* Tue Jul 31 2012 Adam Miller <admiller@redhat.com> 0.96.14-1
+- Fix ownership of log files. (rmillner@redhat.com)
+
+* Tue Jul 31 2012 Adam Miller <admiller@redhat.com> 0.96.13-1
+- Updating gem versions (admiller@redhat.com)
+- Fixing build - setting file permission for log files in the post section
+  explicitly (kraman@gmail.com)
+
+* Tue Jul 31 2012 Adam Miller <admiller@redhat.com> 0.96.12-1
+- Updating gem versions (admiller@redhat.com)
+- Merge pull request #143 from kraman/dev/kraman/bugs/user_action_log
+  (abhgupta@redhat.com)
+- Merge pull request #147 from rajatchopra/master (dmcphers@redhat.com)
+- Merge pull request #144 from mrunalp/bugs/district_config_fix
+  (kraman@gmail.com)
+- merge user response code into a function (rchopra@redhat.com)
+- Fixed a typo in the CakePHP deployment metadata (hripps@redhat.com)
+- Added CakePHP to production app templates (hripps@redhat.com)
+- add a force-destroy option to rhc-admin-ctl-app. for bug#844490
+  (rchopra@redhat.com)
+- Remove duplicate district configuration. (mpatel@redhat.com)
+- Made user_action_log a ghost file so that new deployments dont wipe out the
+  logs. (kraman@gmail.com)
+
+* Mon Jul 30 2012 Dan McPherson <dmcphers@redhat.com> 0.96.11-1
+- Updating gem versions (dmcphers@redhat.com)
+- Bug 844276 (dmcphers@redhat.com)
+- Merge pull request #58 from fotioslindiakos/remove_rails_test_template
+  (fotioslindiakos@gmail.com)
+- Removing Rails test template (fotios@redhat.com)
+- Bug 844286 (dmcphers@redhat.com)
+- switch from user uuid to MD5 for aria id (dmcphers@redhat.com)
+- Bug 844238 (dmcphers@redhat.com)
+
+* Fri Jul 27 2012 Dan McPherson <dmcphers@redhat.com> 0.96.10-1
+- Updating gem versions (dmcphers@redhat.com)
+- Merge pull request #139 from nhr/hiding_django (fotioslindiakos@gmail.com)
+- Setting Django template to 'in_development' (hripps@redhat.com)
+- Merge pull request #134 from pravisankar/dev/ravi/story/2555-cleanup
+  (kraman@gmail.com)
+- Fix for BugZ#843818: Add a template without '-t' parameter (tags) leads to an
+  error (kraman@gmail.com)
+- Added subaccount inheritance testcase and cloud9 cleanup (rpenta@redhat.com)
+
+* Fri Jul 27 2012 Dan McPherson <dmcphers@redhat.com> 0.96.9-1
+- Updating gem versions (dmcphers@redhat.com)
+
+* Fri Jul 27 2012 Dan McPherson <dmcphers@redhat.com> 0.96.8-1
+- Updating gem versions (dmcphers@redhat.com)
+
+* Thu Jul 26 2012 Dan McPherson <dmcphers@redhat.com> 0.96.7-1
+- Updating gem versions (dmcphers@redhat.com)
+- Merge pull request #129 from rmillner/dev/rmillner/bugs/842977
+  (dmcphers@redhat.com)
+- Add mysql and mongodb type gears to migration. (rmillner@redhat.com)
+- Merge pull request #128 from nhr/templates (fotioslindiakos@gmail.com)
+- Fixed descriptors for test templates (hripps@redhat.com)
+- Merge pull request #124 from pravisankar/dev/ravi/story/2555
+  (kraman@gmail.com)
+- Merge pull request #126 from nhr/templates (fotioslindiakos@gmail.com)
+- Added templates for CakePHP and Django (hripps@redhat.com)
+- Remove 'vip' from user model and other scripts (rpenta@redhat.com)
+- Adding blacklisted words (kraman@gmail.com)
+- minor cleanup (dmcphers@redhat.com)
+- US2397 (dmcphers@redhat.com)
+
+* Tue Jul 24 2012 Adam Miller <admiller@redhat.com> 0.96.6-1
+- Updating gem versions (admiller@redhat.com)
+- Renamed 'send' calls to 'request' as per rhc change. (hripps@redhat.com)
+- Merge pull request #104 from pravisankar/dev/ravi/billing_fix_testcase
+  (lnader@redhat.com)
+- Fix billing functional test (rpenta@redhat.com)
+
+* Fri Jul 20 2012 Adam Miller <admiller@redhat.com> 0.96.5-1
+- Updating gem versions (admiller@redhat.com)
+- Merge pull request #101 from lnader/master (rpenta@redhat.com)
+- fix typo (dmcphers@redhat.com)
+- Billing Rest API and bug 841058 (lnader@redhat.com)
+- Merge pull request #100 from pravisankar/dev/ravi/billing_fix_exception
+  (lnader@redhat.com)
+- Bug 841073 (dmcphers@redhat.com)
+- Added aria_billing.rb so that rails can *explicitly* pick up Aria::Billing::*
+  classes (rpenta@redhat.com)
+- Merge pull request #99 from tkramer-rh/dev/tkramer/broker/log_acl
+  (admiller@redhat.com)
+- Security - remove Other perms from production.log and user_action.log
+  (tkramer@redhat.com)
+
+* Thu Jul 19 2012 Adam Miller <admiller@redhat.com> 0.96.4-1
+- Updating gem versions (admiller@redhat.com)
+
+* Thu Jul 19 2012 Adam Miller <admiller@redhat.com> 0.96.3-1
+- Updating gem versions (admiller@redhat.com)
+- Bug 841032 (dmcphers@redhat.com)
+- Revert the following commit IDs because they broke the build
+  (admiller@redhat.com)
+- corrected syntax error in test (lnader@redhat.com)
+- Merge pull request #87 from lnader/master (rpenta@redhat.com)
+- broker sanity test reorg (dmcphers@redhat.com)
+- added checking to see if user is being downgraded (lnader@redhat.com)
+- incorporated changes from pull request review (lnader@redhat.com)
+- disable teardown when tests are disabled (lnader@redhat.com)
+- US2427: Broker add / change plan REST API (lnader@redhat.com)
+- Merge pull request #72 from fotioslindiakos/rhc_admin_ctl_template
+  (kraman@gmail.com)
+- add rhc-accept-devenv (dmcphers@redhat.com)
+- Added ability to remove templates by name or multiple uuids/names
+  (fotios@redhat.com)
+
+* Fri Jul 13 2012 Adam Miller <admiller@redhat.com> 0.96.2-1
+- Updating gem versions (admiller@redhat.com)
+- update migration to 2.0.15 and add better config for migration
+  (dmcphers@redhat.com)
+- Fixing template generation (fotios@redhat.com)
+
+* Wed Jul 11 2012 Adam Miller <admiller@redhat.com> 0.96.1-1
+- Updating gem versions (admiller@redhat.com)
+- bump_minor_versions for sprint 15 (admiller@redhat.com)
+
+* Wed Jul 11 2012 Adam Miller <admiller@redhat.com> 0.95.21-1
+- Updating gem versions (admiller@redhat.com)
+- added mcollective-qpid-plugin as a dep to rhc-broker rpm
+  (admiller@redhat.com)
+- Merge pull request #55 from fotioslindiakos/bson_fix (ccoleman@redhat.com)
+- Merge pull request #54 from rmillner/dev/rmillner/bug/832747
+  (jwhonce@gmail.com)
+- More fixes for proper serialization (fotios@redhat.com)
+- Fixed serialization of nested hashes (fotios@redhat.com)
+- Regenerated descriptors with new code (fotios@redhat.com)
+- Added functions to deploy.rb to ensure it can parse the YAML::Omap properly
+  (fotios@redhat.com)
+- Added support to parse the BSON coming back from the broker
+  (fotios@redhat.com)
+- New rpc options created without using a large enough timeout.
+  (rmillner@redhat.com)
+
+* Wed Jul 11 2012 Adam Miller <admiller@redhat.com> 0.95.20-1
+- Updating gem versions (admiller@redhat.com)
+
+* Tue Jul 10 2012 Adam Miller <admiller@redhat.com> 0.95.19-1
+- Updating gem versions (admiller@redhat.com)
+- Add missing config. (mpatel@redhat.com)
+- Bug 838831 - Simplify enable/disable-sso for all teams (ccoleman@redhat.com)
+
+* Tue Jul 10 2012 Adam Miller <admiller@redhat.com> 0.95.18-1
+- Updating gem versions (admiller@redhat.com)
+
+* Mon Jul 09 2012 Adam Miller <admiller@redhat.com> 0.95.17-1
+- Updating gem versions (admiller@redhat.com)
+
+* Mon Jul 09 2012 Adam Miller <admiller@redhat.com> 0.95.16-1
+- Updating gem versions (admiller@redhat.com)
+
+* Mon Jul 09 2012 Adam Miller <admiller@redhat.com> 0.95.15-1
+- Updating gem versions (admiller@redhat.com)
+
+* Mon Jul 09 2012 Dan McPherson <dmcphers@redhat.com> 0.95.14-1
+- Updating gem versions (dmcphers@redhat.com)
+
+* Mon Jul 09 2012 Dan McPherson <dmcphers@redhat.com> 0.95.13-1
+- Merge pull request #30 from fabianofranz/master (ccoleman@redhat.com)
+- Merged application templates (contact@fabianofranz.com)
+- Regenerated springeap6/descriptor.yaml (contact@fabianofranz.com)
+- Adjusted broker/application_templates/templates/deploy.rb with YAML generated
+  by Ruby 1.9 (contact@fabianofranz.com)
+- Recreated deploy.rb for app templates (contact@fabianofranz.com)
+- Added Spring Framework on JBoss EAP6 template (contact@fabianofranz.com)
+
+* Mon Jul 09 2012 Dan McPherson <dmcphers@redhat.com> 0.95.12-1
+- Updating gem versions (dmcphers@redhat.com)
+- Merge pull request #29 from abhgupta/abhgupta-dev (kraman@gmail.com)
+- Merge pull request #33 from fotioslindiakos/rails32_template
+  (ccoleman@redhat.com)
+- fixing libra_extended - bug in one of the newly added tests
+  (abhgupta@redhat.com)
+- Fixed deploy.rb (fotios@redhat.com)
+- Removed new metadata fields (fotios@redhat.com)
+- fix for bug#837574 - vip user cannot create medium gear (rchopra@redhat.com)
+- Adding test Rails template that points to my master branch for Rails
+  quickstart (fotios@redhat.com)
+- Modified Rails template to use Ruby 1.9 and Rails 3.2.6 (fotios@redhat.com)
+
+* Fri Jul 06 2012 Adam Miller <admiller@redhat.com> 0.95.11-1
+- Updating gem versions (admiller@redhat.com)
+
+* Thu Jul 05 2012 Adam Miller <admiller@redhat.com> 0.95.10-1
+- fixed Gemfile.lock (admiller@redhat.com)
+
+* Thu Jul 05 2012 Adam Miller <admiller@redhat.com> 0.95.9-1
+- Updating gem versions (admiller@redhat.com)
+- adding rake system-level tests (abhgupta@redhat.com)
+- Fix Gemfile.lock to match version in tag. (mpatel@redhat.com)
+
+* Tue Jul 03 2012 Adam Miller <admiller@redhat.com> 0.95.8-1
+- fix typo for Gemfile.lock in broker (admiller@redhat.com)
+
+* Tue Jul 03 2012 Adam Miller <admiller@redhat.com> 0.95.7-1
+- Add missing systemu dependency. (mpatel@redhat.com)
+
+* Tue Jul 03 2012 Adam Miller <admiller@redhat.com> 0.95.6-1
+- Updating gem versions (admiller@redhat.com)
+- Fix broker Gemfile.lock to use correct plugin. (mpatel@redhat.com)
+- Fix the dependency to correct plugin. (mpatel@redhat.com)
+- Fix invalid args. (mpatel@redhat.com)
+- Fixes. (mpatel@redhat.com)
+- WIP changes to support mcollective 2.0. (mpatel@redhat.com)
+- Refactoring out express specific code from mcollective. (mpatel@redhat.com)
+
+* Mon Jul 02 2012 Adam Miller <admiller@redhat.com> 0.95.5-1
+- Updating gem versions (admiller@redhat.com)
+- Add the 180s timeout to devenv as well. (rmillner@redhat.com)
+- Merge pull request #14 from rmillner/dev/rmillner/bug/832747
+  (rpenta@redhat.com)
+- Merge pull request #15 from pravisankar/master (rpenta@redhat.com)
+- billing event changes (rpenta@redhat.com)
+- minor fix in billing events (rpenta@redhat.com)
+- Revert "Updating gem versions" (dmcphers@redhat.com)
+- Billing event changes: RHLogin info in account data section and add
+  supplemental fields to each event notification (rpenta@redhat.com)
+- Billing: Added get_acct_plans_all() api (rpenta@redhat.com)
+- Observing rpc timeouts of otherwise successful operations when there's a high
+  IO or CPU load.  The jbossas-7 configure hook takes 30 seconds on an
+  otherwise idle system; heavy IO can easily double or triple the cost of the
+  hook.  Making the timeout higher to compensate. (rmillner@redhat.com)
+- Updating gem versions (admiller@redhat.com)
+- update migration for 2.0.14 (dmcphers@redhat.com)
+- update streamline ip (dmcphers@redhat.com)
+
+* Sat Jun 23 2012 Dan McPherson <dmcphers@redhat.com> 0.95.4-1
+- Updating gem versions (dmcphers@redhat.com)
+
+* Sat Jun 23 2012 Dan McPherson <dmcphers@redhat.com> 0.95.3-1
+- new package built with tito
+
+* Thu Jun 21 2012 Adam Miller <admiller@redhat.com> 0.95.2-1
+- Updating gem versions (admiller@redhat.com)
+- Need to add active_support to templates rake script (fotios@redhat.com)
+
+* Wed Jun 20 2012 Adam Miller <admiller@redhat.com> 0.95.1-1
+- Updating gem versions (admiller@redhat.com)
+- Updating gem versions (admiller@redhat.com)
+- bump_minor_versions for sprint 14 (admiller@redhat.com)
+
+* Wed Jun 20 2012 Adam Miller <admiller@redhat.com> 0.94.17-1
+- Updating gem versions (admiller@redhat.com)
+- cleanup (dmcphers@redhat.com)
+- don't restart jenkins twice (bdecoste@gmail.com)
+- added jenkins httpd proxy migrate to rhc-admin-migrate (bdecoste@gmail.com)
+- Billing event notification changes:  - Removed event:120  - Include
+  supplemental fields in 'Account Data' section  - Event:105 notification will
+  be send only if status cd: active or suspended or cancelled or terminated  -
+  Format change for sections: Supplemental plans, Supplemental Fields and
+  Events (rpenta@redhat.com)
+
+* Tue Jun 19 2012 Adam Miller <admiller@redhat.com> 0.94.16-1
+- Updating gem versions (admiller@redhat.com)
+- move migrate to the broker (dmcphers@redhat.com)
+- BugFix: 833372 (rpenta@redhat.com)
+- Billing:Fix record_usage api (rpenta@redhat.com)
+- Fix for bug#833331 (rpenta@redhat.com)
+- Merge branch 'master' of git1.ops.rhcloud.com:/srv/git/li (rpenta@redhat.com)
+- Billing: Fix broker enablement unit tests (rpenta@redhat.com)
+- BZ828116: Added logic for displaying credentials for applications created
+  from templates (fotios@redhat.com)
+- was missing listsubaccounts option in the usage info for rhc-admin-ctl-user
+  (abhgupta@redhat.com)
+
+* Tue Jun 19 2012 Adam Miller <admiller@redhat.com> 0.94.15-1
+- Updating gem versions (admiller@redhat.com)
+- Merge branch 'master' of git1.ops.rhcloud.com:/srv/git/li (rpenta@redhat.com)
+- Billing: Restrict '/broker/billing/*' URI access to Aria IP address range:
+  64.238.195.110 to 64.238.195.125 (rpenta@redhat.com)
+
+* Mon Jun 18 2012 Adam Miller <admiller@redhat.com> 0.94.14-1
+- Updating gem versions (admiller@redhat.com)
+- Billing: Remove MegaShift plan in production.rb for safety
+  (rpenta@redhat.com)
+- Merge branch 'master' of git1.ops.rhcloud.com:/srv/git/li (rpenta@redhat.com)
+- Billing: minor fix (rpenta@redhat.com)
+- Billing: return supplemental field 'RHLogin' as userid (rpenta@redhat.com)
+- Billing: Unit tests for billing events (rpenta@redhat.com)
+- Billing: Added more aria api methods + some cleanup (rpenta@redhat.com)
+- Billing config: Added supplemental plan + name change: plan_id to id
+  (rpenta@redhat.com)
+
+* Fri Jun 15 2012 Dan McPherson <dmcphers@redhat.com> 0.94.13-1
+- Updating gem versions (dmcphers@redhat.com)
+
+* Fri Jun 15 2012 Adam Miller <admiller@redhat.com> 0.94.12-1
+- Updating gem versions (admiller@redhat.com)
+- Merge branch 'master' of git1.ops.rhcloud.com:/srv/git/li (rpenta@redhat.com)
+- Bug 832500 (dmcphers@redhat.com)
+- billing error handling (dmcphers@redhat.com)
+- Billing: classify notification either order or people info
+  (rpenta@redhat.com)
+
+* Thu Jun 14 2012 Adam Miller <admiller@redhat.com> 0.94.11-1
+- Updating gem versions (admiller@redhat.com)
+- search for existing usage before retrying (dmcphers@redhat.com)
+- Billing: Event notification changes (rpenta@redhat.com)
+- live without acct no for now (dmcphers@redhat.com)
+- api to change master plan. function test capturing enablement lifecycle
+  (rchopra@redhat.com)
+- use aria userid as user's uuid (rchopra@redhat.com)
+- usage work in progress (dmcphers@redhat.com)
+- Added integration tests to test sub-user functionality (kraman@gmail.com)
+- enable broker changes (rchopra@redhat.com)
+- Billing: fixes (rpenta@redhat.com)
+- Update broker Gemfile.lock (rpenta@redhat.com)
+- Merge branch 'master' of git1.ops.rhcloud.com:/srv/git/li (rpenta@redhat.com)
+- Adding Cloud 9 settings template to non-dev environment configs for Broker
+- Adding capabilities to cloud_user when it is created changes to admin script
+  to manage sub accounts and capabilities changes to Mcollective application
+  container proxy to include gear_sizes specified using capabilities for a user
+  Cloud 9 config added to development environment Added c9 gear profile to
+  district admin script changes to rhc-admil-ctl-user to validate input gear
+  size
+- Billing:Added Aria api (rpenta@redhat.com)
+- remove unnecessary files (rpenta@redhat.com)
+- Re-origanize aria billing helpers (rpenta@redhat.com)
+- Merge branch 'master' of git1.ops.rhcloud.com:/srv/git/li (rpenta@redhat.com)
+- Merge billing code into broker (rpenta@redhat.com)
+
+* Wed Jun 13 2012 Adam Miller <admiller@redhat.com> 0.94.10-1
+- Updating gem versions (admiller@redhat.com)
+
+* Tue Jun 12 2012 Adam Miller <admiller@redhat.com> 0.94.9-1
+- Updating gem versions (admiller@redhat.com)
+- enable usage tracking by default for test and dev (dmcphers@redhat.com)
+
+* Tue Jun 12 2012 Adam Miller <admiller@redhat.com> 0.94.8-1
+- Updating gem versions (admiller@redhat.com)
+
+* Mon Jun 11 2012 Adam Miller <admiller@redhat.com> 0.94.7-1
+- Updating gem versions (admiller@redhat.com)
+- Updated Gemfile.lock from running broker. (rmillner@redhat.com)
+
+* Mon Jun 11 2012 Adam Miller <admiller@redhat.com> 0.94.6-1
+- remove requires aws-sdk, these apparently don't actually need it
+  (admiller@redhat.com)
+
+* Mon Jun 11 2012 Adam Miller <admiller@redhat.com> 0.94.5-1
+- Updating gem versions (admiller@redhat.com)
+- Strip out the unnecessary gems from rcov reports and focus it on just the
+  OpenShift code. (rmillner@redhat.com)
+- move test collections to be separate (dmcphers@redhat.com)
+
+* Fri Jun 08 2012 Adam Miller <admiller@redhat.com> 0.94.4-1
+- Updating gem versions (admiller@redhat.com)
+- fix for bug#827635 (rchopra@redhat.com)
+
+* Fri Jun 08 2012 Adam Miller <admiller@redhat.com> 0.94.3-1
+- Updating gem versions (admiller@redhat.com)
+- use distributed lock from ctl-usage (dmcphers@redhat.com)
+- adding basic distributed locking mechanism (dmcphers@redhat.com)
+- Revert "BZ824124 remove unused doc_root connector" (jhonce@redhat.com)
+- BZ824124 remove unused doc_root connector (jhonce@redhat.com)
+- Updated gem info for rails 3.0.13 (admiller@redhat.com)
+- Template profiling  * Added active total time to  * Removed metadata and
+  individual create scripts  * Updated descriptors to ensure there were no
+  changes (fotioslindiakos@gmail.com)
+- Added ability to test git based templates (instead of descriptor based)
+  (fotioslindiakos@gmail.com)
+
+* Mon Jun 04 2012 Adam Miller <admiller@redhat.com> 0.94.2-1
+- Updating gem versions (admiller@redhat.com)
+
+* Fri Jun 01 2012 Adam Miller <admiller@redhat.com> 0.94.1-1
+- Updating gem versions (admiller@redhat.com)
+- bumping spec versions (admiller@redhat.com)
+- Added filtering to template profiling (fotioslindiakos@gmail.com)
+- Much more awesome profiling (fotioslindiakos@gmail.com)
+- Don't need to rotate logfile numbers since logger will just append nicely
+  (fotioslindiakos@gmail.com)
+- Created template profiling script (fotioslindiakos@gmail.com)
+- Updated template descriptors (fotioslindiakos@gmail.com)
+
+* Thu May 31 2012 Adam Miller <admiller@redhat.com> 0.93.22-1
+- Added experimental tag to templates (fotioslindiakos@gmail.com)
+
+* Thu May 31 2012 Adam Miller <admiller@redhat.com> 0.93.21-1
+- Fixed application template git_url (fotioslindiakos@gmail.com)
+
+* Wed May 30 2012 Adam Miller <admiller@redhat.com> 0.93.20-1
+- Updating gem versions (admiller@redhat.com)
+- Moved templates into broker and updated broker.spec
+  (fotioslindiakos@gmail.com)
+
+* Tue May 29 2012 Adam Miller <admiller@redhat.com> 0.93.19-1
+- Updating gem versions (admiller@redhat.com)
+- Updating gem versions (admiller@redhat.com)
+
+* Tue May 29 2012 Adam Miller <admiller@redhat.com> 0.93.18-1
+- Updating gem versions (admiller@redhat.com)
+
+* Fri May 25 2012 Dan McPherson <dmcphers@redhat.com> 0.93.17-1
+- Updating gem versions (dmcphers@redhat.com)
+
+* Fri May 25 2012 Adam Miller <admiller@redhat.com> 0.93.16-1
+- Updating gem versions (admiller@redhat.com)
+- better treatment - bug#817663 (rchopra@redhat.com)
+- clean help message (rchopra@redhat.com)
+- Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
+  (rchopra@redhat.com)
+- Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
+  (rchopra@redhat.com)
+- fix bugs 824433 and 824040 and 824375 (rchopra@redhat.com)
+
+* Fri May 25 2012 Dan McPherson <dmcphers@redhat.com> 0.93.15-1
+- Updating gem versions (dmcphers@redhat.com)
+
+* Thu May 24 2012 Dan McPherson <dmcphers@redhat.com> 0.93.14-1
+- Updating gem versions (dmcphers@redhat.com)
+
+* Thu May 24 2012 Adam Miller <admiller@redhat.com> 0.93.13-1
+- Updating gem versions (admiller@redhat.com)
+
+* Thu May 24 2012 Adam Miller <admiller@redhat.com> 0.93.12-1
+- Updating gem versions (admiller@redhat.com)
+
+* Thu May 24 2012 Adam Miller <admiller@redhat.com> 0.93.11-1
+- Updating gem versions (admiller@redhat.com)
+- changes for US2255 - authentication ticket caching (abhgupta@redhat.com)
+
+* Thu May 24 2012 Adam Miller <admiller@redhat.com> 0.93.10-1
+- Updating gem versions (admiller@redhat.com)
+- the pkg build bombed due to krb ticket timeout and the gems weren't updated,
+  fixing (admiller@redhat.com)
+
+* Wed May 23 2012 Adam Miller <admiller@redhat.com> 0.93.9-1
+- Updating gem versions (admiller@redhat.com)
+- add basic sync with billing vendor logic (dmcphers@redhat.com)
+
+* Wed May 23 2012 Dan McPherson <dmcphers@redhat.com> 0.93.8-1
+- Updating gem versions (dmcphers@redhat.com)
+
+* Tue May 22 2012 Dan McPherson <dmcphers@redhat.com> 0.93.7-1
+- Updating gem versions (dmcphers@redhat.com)
+
+* Tue May 22 2012 Adam Miller <admiller@redhat.com> 0.93.6-1
+- Updating gem versions (admiller@redhat.com)
+- add usage observer (dmcphers@redhat.com)
+- move gear support for non-scalable apps (rchopra@redhat.com)
+- Fix for domain update admin script when user exists but does not own any
+  domains. Fix for domain info admin script when user exists but does not own
+  any domains. (kraman@gmail.com)
+- some performance tuning (dmcphers@redhat.com)
+
+* Fri May 18 2012 Adam Miller <admiller@redhat.com> 0.93.5-1
+- Updating gem versions (admiller@redhat.com)
+
+* Thu May 17 2012 Adam Miller <admiller@redhat.com> 0.93.4-1
+- 
+
+* Thu May 17 2012 Adam Miller <admiller@redhat.com> 0.93.3-1
+- Merge branch 'master' of git1.ops.rhcloud.com:/srv/git/li (rpenta@redhat.com)
+- Create db:test:prepare task so that we don't execute actual mongo_mapper rake
+  task which is trying to connect to 'test' db in mongo and that will fail due
+  to incorrect credentials. (rpenta@redhat.com)
+
+* Thu May 17 2012 Adam Miller <admiller@redhat.com> 0.93.2-1
+- Updating gem versions (admiller@redhat.com)
+- Enable usage modal code (rpenta@redhat.com)
+- get tests running faster (dmcphers@redhat.com)
+- Re-include all OpenShift components in rcov run. (rmillner@redhat.com)
+- enable move_gear for scalable apps (rchopra@redhat.com)
+- add syslog for usage (dmcphers@redhat.com)
+- Bug 822186 (dmcphers@redhat.com)
+- usage tracking options (dmcphers@redhat.com)
+- Comment usage model (rpenta@redhat.com)
+- Until we install mongo_mapper, disable usage model unittests
+  (rpenta@redhat.com)
+- Until we get plucky 0.4.4 rpm, temporarily disable mongo_mapper in
+  broker.spec and ruby Gemfile (rpenta@redhat.com)
+- Resolve conflicts during Usage branch merge (rpenta@redhat.com)
+- fix build (dmcphers@redhat.com)
+- Add rcov to broker and as a dependency for devenv for build & test.
+  (rmillner@redhat.com)
+- restore rhc-admin-move to original form : accepts only apps (no gears) and
+  rejects scalable apps (rchopra@redhat.com)
+- fix for bug821003 (rchopra@redhat.com)
+- fix for bug#811576 (rchopra@redhat.com)
+- Add usage summary for user (rpenta@redhat.com)
+- Usage model changes (rpenta@redhat.com)
+- nit (dmcphers@redhat.com)
+- Initial version of Usage model: create/update/find/delete usage event in
+  mongo 'usages' collection (rpenta@redhat.com)
+- add a simple usage object (dmcphers@redhat.com)
+
+* Thu May 10 2012 Adam Miller <admiller@redhat.com> 0.93.1-1
+- Updating gem versions (admiller@redhat.com)
+- bumping spec versions (admiller@redhat.com)
+
+* Wed May 09 2012 Adam Miller <admiller@redhat.com> 0.92.5-1
+- Updating gem versions (admiller@redhat.com)
+- move_gear should not allow haproxy gear to be moved until the cartridge is
+  fixed. rhc-admin-move should filter scalable apps and act accordingly
+  (rchopra@redhat.com)
+
+* Tue May 08 2012 Adam Miller <admiller@redhat.com> 0.92.4-1
+- Updating gem versions (admiller@redhat.com)
+- Bug 819739 (dmcphers@redhat.com)
+
+* Mon May 07 2012 Adam Miller <admiller@redhat.com> 0.92.3-1
+- Updating gem versions (admiller@redhat.com)
+- added exception handling and logging to apptegic and nurture calls
+  (lnader@redhat.com)
+- minor changes to domain observer (lnader@redhat.com)
+- Merge branch 'master' of git1.ops.rhcloud.com:/srv/git/li (lnader@redhat.com)
+- Bug 815554 (lnader@redhat.com)
+- added domain observer class (lnader@redhat.com)
+
+* Mon May 07 2012 Adam Miller <admiller@redhat.com> 0.92.2-1
+- Updating gem versions (admiller@redhat.com)
+- moving fix gear-uids to maintenance/bin area (rchopra@redhat.com)
+- fix gears that do not have their uids set - bug# 815406 (rchopra@redhat.com)
+- Fix for Bugz # 818255 (kraman@gmail.com)
+- Add response status to profiler info output. (rmillner@redhat.com)
+- Revert "Updating gem versions". Gem version already up to date.
+  (kraman@gmail.com)
+- Updating gem versions (kraman@gmail.com)
+- update gem versions (dmcphers@redhat.com)
+- fix for bug#816462 (rchopra@redhat.com)
+
+* Thu Apr 26 2012 Adam Miller <admiller@redhat.com> 0.92.1-1
+- Updating gem versions (admiller@redhat.com)
+- bumping spec versions (admiller@redhat.com)
+
+* Wed Apr 25 2012 Adam Miller <admiller@redhat.com> 0.91.17-1
+- 
+
+* Wed Apr 25 2012 Adam Miller <admiller@redhat.com> 0.91.16-1
+- Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
+  (rmillner@redhat.com)
+- Found bug in profiler code when theres an exception from legacy controller.
+  (rmillner@redhat.com)
+
+* Wed Apr 25 2012 Adam Miller <admiller@redhat.com> 0.91.15-1
+- Updating gem versions (admiller@redhat.com)
+- Merge branch 'master' of git1.ops.rhcloud.com:/srv/git/li (rpenta@redhat.com)
+- Fix for bug# 815609 (rpenta@redhat.com)
+
+* Tue Apr 24 2012 Dan McPherson <dmcphers@redhat.com> 0.91.14-1
+- fix logic for updating gem versions (dmcphers@redhat.com)
+
+* Tue Apr 24 2012 Adam Miller <admiller@redhat.com> 0.91.13-1
+- Updating gem versions (admiller@redhat.com)
+
+* Tue Apr 24 2012 Adam Miller <admiller@redhat.com> 0.91.12-1
+- Updating gem versions (admiller@redhat.com)
+
+* Mon Apr 23 2012 Adam Miller <admiller@redhat.com> 0.91.11-1
+- Updating gem versions (admiller@redhat.com)
+
+* Mon Apr 23 2012 Adam Miller <admiller@redhat.com> 0.91.10-1
+- Updating gem versions (admiller@redhat.com)
+- BugzID 814007. Added protect_from_forgery (kraman@gmail.com)
+
+* Mon Apr 23 2012 Adam Miller <admiller@redhat.com> 0.91.9-1
+- Updating gem versions (admiller@redhat.com)
+- Remove references to rhc-admin-user-vip. (rmillner@redhat.com)
+- rhc-admin-ctl-user provides the same ability. (rmillner@redhat.com)
+- move crankcase mongo datastore (dmcphers@redhat.com)
+- Temporary commit to build (dmcphers@redhat.com)
+
+* Sat Apr 21 2012 Dan McPherson <dmcphers@redhat.com> 0.91.8-1
+- Updating gem versions (dmcphers@redhat.com)
+- Updating gem versions (dmcphers@redhat.com)
+- Add profiler to test rails configuration. (rmillner@redhat.com)
+- Also scrub out http auth header from REST calls. (rmillner@redhat.com)
+- Clean up the info output.  Gzip the output files since they are huge.
+  (rmillner@redhat.com)
+- We only have perms to write into /tmp.  Still had a reference to outfile.
+  (rmillner@redhat.com)
+- Add info file with request and timestamp information. (rmillner@redhat.com)
+
+* Wed Apr 18 2012 Dan McPherson <dmcphers@redhat.com> 0.91.7-1
+- fixing controller Gemfile.lock in build/release (admiller@redhat.com)
+
+* Wed Apr 18 2012 Adam Miller <admiller@redhat.com> 0.91.6-1
+- 1) removing cucumber gem dependency from express broker. 2) moved ruby
+  related cucumber tests back into express. 3) fixed issue with broker
+  Gemfile.lock file where ruby-prof was not specified in the dependency
+  section. 4) copying cucumber features into li-test/tests automatically within
+  the devenv script. 5) fixing ctl status script that used ps to list running
+  processes to specify the user. 6) fixed tidy.sh script to not display error
+  on fedora stickshift. (abhgupta@redhat.com)
+- rhc-admin-ctl-user: added ability to set vip status (twiest@redhat.com)
+- rhc-admin-ctl-user: updated to be able to set consumed gears as well.
+  (twiest@redhat.com)
+- typos (rmillner@redhat.com)
+- Clean up some of the help text. (rmillner@redhat.com)
+- Had to move profiler to ActionController::Base (rmillner@redhat.com)
+- Add range to runtime squash (rmillner@redhat.com)
+- Add measurement type to file name. (rmillner@redhat.com)
+- Add measurement type and description in config (rmillner@redhat.com)
+- It seems like most of our threads come in during processing.  Delete them
+  after the fact from the report. (rmillner@redhat.com)
+- Just print the thread IDs (rmillner@redhat.com)
+- Add log for thread handling.  Fix config entry. (rmillner@redhat.com)
+- Dont pack nils into the exclude_threads array. (rmillner@redhat.com)
+- Clean up methods. Add thread squash. Pass whole cfg to printer.
+  (rmillner@redhat.com)
+- Profiler moved into the app controller. (rmillner@redhat.com)
+- Move profiling into the controller filter. (rmillner@redhat.com)
+- Used the wrong variable (rmillner@redhat.com)
+- Variable was being defined lower in the code. (rmillner@redhat.com)
+- Use double quotes for var expansion (rmillner@redhat.com)
+- Catch nomethod in case theres no profiler config. (rmillner@redhat.com)
+- Add debug logging to the profiler calls (rmillner@redhat.com)
+- Add an instance of the profiler to the broker startup (rmillner@redhat.com)
+- The rubygem(foo) dependency is missing from ruby-prof. (rmillner@redhat.com)
+- changed configuration block for profiler. (rmillner@redhat.com)
+- Add observer for profiling of specific events. (rmillner@redhat.com)
+- Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
+  (rchopra@redhat.com)
+- admin chk script to check mismatch between consumed_gears and actual gears
+  for each user (rchopra@redhat.com)
+
 * Thu Apr 12 2012 Mike McGrath <mmcgrath@redhat.com> 0.91.5-1
 - release bump for mongo (mmcgrath@redhat.com)
 

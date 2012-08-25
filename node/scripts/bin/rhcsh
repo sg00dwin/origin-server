@@ -1,5 +1,5 @@
 #!/bin/bash
- 
+
 #. /etc/bashrc
 
 source /etc/init.d/functions 2> /dev/null
@@ -11,7 +11,17 @@ do
 done
 
 function welcome {
-    cat <<EOF
+    cat 1>&2 <<EOF
+
+    *********************************************************************
+
+    You are accessing a service that is for use only by authorized users.  
+    If you do not have authorization, discontinue use at once. 
+    Any use of the services is subject to the applicable terms of the 
+    agreement which can be found at: 
+    https://openshift.redhat.com/app/legal
+
+    *********************************************************************
 
     Welcome to OpenShift shell
 
@@ -40,11 +50,7 @@ function ctl_all {
 
 function mysql() {
    #  Setup default options.
-   if [ -n "$OPENSHIFT_DB_GEAR_DNS" ]; then
-      hostopt="-h $OPENSHIFT_DB_GEAR_DNS"
-   else
-      [ -n "$OPENSHIFT_DB_HOST" ]  &&  hostopt="-h $OPENSHIFT_DB_HOST"
-   fi
+   [ -n "$OPENSHIFT_DB_HOST" ]  &&  hostopt="-h $OPENSHIFT_DB_HOST"
    portopt="-P ${OPENSHIFT_DB_PORT:-3306}"
    useropt="-u ${OPENSHIFT_DB_USERNAME:-'admin'}"
    passopt=--password="$OPENSHIFT_DB_PASSWORD"
@@ -65,6 +71,16 @@ function mysql() {
 }  #  End of  mysql  function.
 
 
+function psql() {
+    PGDATABASE="$OPENSHIFT_APP_NAME" \
+        PGHOST="$OPENSHIFT_DB_HOST" \
+        PGPORT="${OPENSHIFT_DB_PORT:-5432}" \
+        PGUSER="${OPENSHIFT_DB_USERNAME:-'admin'}" \
+        PGPASSWORD="${OPENSHIFT_DB_PASSWORD}" \
+        /usr/bin/psql --set HISTFILE="~/app-root/data/.psql_history" "$@"
+}  #  End of psql function.
+
+
 function mongo() {
    if test $# -gt 0; then
       uopt=""
@@ -77,7 +93,11 @@ function mongo() {
    if echo "$@" | egrep "\-\-host|$OPENSHIFT_NOSQL_DB_HOST" > /dev/null; then
       hopt=""  #  Do not override if --host is passed.
    else
-      hopt="${OPENSHIFT_NOSQL_DB_HOST:-'127.0.0.1'}:${OPENSHIFT_NOSQL_DB_PORT:-27017}/admin"
+      if [ -n "$OPENSHIFT_NOSQL_DB_GEAR_DNS" ]; then
+         hopt="${OPENSHIFT_NOSQL_DB_GEAR_DNS:-'127.0.0.1'}:${OPENSHIFT_NOSQL_DB_PORT:-27017}/admin"
+      else
+         hopt="${OPENSHIFT_NOSQL_DB_HOST:-'127.0.0.1'}:${OPENSHIFT_NOSQL_DB_PORT:-27017}/admin"
+      fi
    fi
 
    /usr/bin/mongo ${hopt} ${uopt} ${popt} "$@"
@@ -86,8 +106,6 @@ function mongo() {
 
 
 function help {
-# FIXME: Comment out quota for now - till the selinux policy is in place.
-# quota           list free space
     cat <<EOF
 Help menu: The following commands are available to help control your openshift
 application and environment.
@@ -102,6 +120,8 @@ ps              list running applications
 kill            kill running applications
 mysql           interactive MySQL shell
 mongo           interactive MongoDB shell
+psql            interactive PostgreSQL shell
+quota           list disk usage
 
 EOF
 }

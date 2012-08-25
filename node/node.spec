@@ -2,7 +2,7 @@
 
 Summary:       Multi-tenant cloud management system node tools
 Name:          rhc-node
-Version:       0.91.2
+Version: 0.98.1
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -24,10 +24,16 @@ Requires:      ruby
 Requires:      rubygem-open4
 Requires:      rubygem-parseconfig
 Requires:      rubygem-stickshift-node
+Requires:      rubygem-systemu
 Requires:      stickshift-abstract
+Requires:      mcollective-qpid-plugin
+Requires:      stickshift-mcollective-agent
+Requires:      stickshift-port-proxy
 Requires:      quota
 Requires:      lsof
 Requires:      wget
+Requires:      nano
+Requires:      emacs-nox
 Requires:      oddjob
 Requires:      libjpeg-devel
 Requires:      libcurl-devel
@@ -36,6 +42,8 @@ Requires:      giflib-devel
 Requires:      mod_ssl
 Requires:      haproxy
 Requires:      procmail
+Requires:      libevent
+Requires:      libevent-devel
 Requires(post):   /usr/sbin/semodule
 Requires(post):   /usr/sbin/semanage
 Requires(postun): /usr/sbin/semodule
@@ -50,10 +58,6 @@ Turns current host into a OpenShift managed node
 %setup -q
 
 %build
-for f in **/*.rb
-do
-  ruby -c $f
-done
 
 # Build pam_libra
 pwd
@@ -81,15 +85,14 @@ mkdir -p %{buildroot}/%{_sysconfdir}/security/
 mkdir -p %{buildroot}%{_localstatedir}/lib/stickshift
 mkdir -p %{buildroot}%{_localstatedir}/run/stickshift
 mkdir -p %{buildroot}%{_localstatedir}/lib/stickshift/.httpd.d
-mkdir -p %{buildroot}%{_localstatedir}/lib/stickshift/.stickshift-proxy.d
 mkdir -p %{buildroot}/%{_sysconfdir}/httpd/conf.d/
 mkdir -p %{buildroot}/lib64/security/
-ln -s %{_localstatedir}/lib/stickshift/.httpd.d/ %{buildroot}/%{_sysconfdir}/httpd/conf.d/stickshift
+mkdir -p %{buildroot}/sandbox
+# ln -s %{_localstatedir}/lib/stickshift/.httpd.d/ %{buildroot}/%{_sysconfdir}/httpd/conf.d/stickshift
 
 cp -r lib %{buildroot}%{_libexecdir}/stickshift
 cp -r conf/httpd %{buildroot}%{_sysconfdir}
 cp -r conf/stickshift %{buildroot}%{_sysconfdir}
-cp -r facter %{buildroot}%{ruby_sitelibdir}/facter
 cp -r mcollective %{buildroot}%{_libexecdir}
 cp -r namespace.d %{buildroot}%{_sysconfdir}/security
 cp scripts/bin/* %{buildroot}%{_bindir}
@@ -107,36 +110,53 @@ rm -rf $RPM_BUILD_ROOT
 cp -f /etc/stickshift/stickshift-node.conf.libra /etc/stickshift/stickshift-node.conf
 restorecon /var/lib/stickshift/stickshift-node.conf || :
 
-# mount all desired cgroups under a single root
-perl -p -i -e 's:/cgroup/[^\s]+;:/cgroup/all;:; /blkio|cpuset|devices/ && ($_ = "#$_")' /etc/cgconfig.conf
-/sbin/restorecon /etc/cgconfig.conf || :
-# only restart if it's on
-/sbin/chkconfig cgconfig && /sbin/service cgconfig restart >/dev/null 2>&1 || :
-/sbin/chkconfig oddjobd on
-/sbin/service messagebus restart
-/sbin/service oddjobd restart
+echo "/usr/bin/trap-user" >> /etc/shells
+
 /sbin/chkconfig --add libra || :
 /sbin/chkconfig --add libra-data || :
 /sbin/chkconfig --add libra-cgroups || :
 /sbin/chkconfig --add libra-tc || :
+/sbin/chkconfig --add libra-watchman || :
+
 #/sbin/service mcollective restart > /dev/null 2>&1 || :
 /sbin/restorecon /etc/init.d/libra || :
 /sbin/restorecon /var/lib/stickshift || :
 /sbin/restorecon /var/run/stickshift || :
 /sbin/restorecon /usr/bin/rhc-cgroup-read || :
 /sbin/restorecon /var/lib/stickshift/.httpd.d/ || :
-/usr/bin/rhc-restorecon || :
-# only enable if cgconfig is
-chkconfig cgconfig && /sbin/service libra-cgroups start > /dev/null 2>&1 || :
-# only enable if cgconfig is
-chkconfig cgconfig && /sbin/service libra-tc start > /dev/null 2>&1 || :
-/sbin/service libra-data start > /dev/null 2>&1 || :
-echo "/usr/bin/trap-user" >> /etc/shells
+/sbin/restorecon -r /sandbox
 /sbin/restorecon /etc/init.d/libra || :
 /sbin/restorecon /etc/init.d/mcollective || :
 /sbin/restorecon /usr/bin/rhc-restorer* || :
+
+# Only bounce cgroups if not already initialized
+# CAVEAT: if the policy is changed, must run these by hand (release ticket)
+if [ ! -e /cgroup/all/libra/cgroup.event_control ]
+then
+    # mount all desired cgroups under a single root
+    perl -p -i -e 's:/cgroup/[^\s]+;:/cgroup/all;:; /blkio|cpuset|devices/ && ($_ = "#$_")' /etc/cgconfig.conf
+    /sbin/restorecon /etc/cgconfig.conf || :
+    # only restart if it's on
+    /sbin/chkconfig cgconfig && /sbin/service cgconfig restart >/dev/null 2>&1 || :
+    # only enable if cgconfig is
+    chkconfig cgconfig && /sbin/service libra-cgroups start > /dev/null 2>&1 || :
+fi
+
+# Only bounce tc if its not already initialized
+# CAVEAT: if the policy is changed, must run these by hand (release ticket)
+if ! ( tc qdisc show | grep -q 'qdisc htb 1: dev' )
+then
+    # only enable if cgconfig is
+    chkconfig cgconfig && /sbin/service libra-tc start > /dev/null 2>&1 || :
+fi
+
+/sbin/chkconfig oddjobd on
+/sbin/service messagebus restart
+/sbin/service oddjobd restart
+# /usr/bin/rhc-restorecon || :    # Takes too long and shouldn't be needded
+/sbin/service libra-data start > /dev/null 2>&1 || :
 [ $(/usr/sbin/semanage node -l | /bin/grep -c 255.255.255.128) -lt 1000 ] && /usr/bin/rhc-ip-prep.sh || :
-/sbin/chkconfig --add libra-watchman || :
+
 # Ensure the default users have a more restricted shell then normal.
 #semanage login -m -s guest_u __default__ || :
 
@@ -148,15 +168,8 @@ then
     rmdir /etc/httpd/conf.d/stickshift.bak
 fi
 
-# Enable proxy and fix if the config file is missing
-/sbin/chkconfig --add stickshift-proxy || :
-if ! [ -f /var/lib/stickshift/.stickshift-proxy.d/stickshift-proxy.cfg ]; then
-   cp /etc/stickshift/stickshift-proxy.cfg /var/lib/stickshift/.stickshift-proxy.d/stickshift-proxy.cfg
-   restorecon /var/lib/stickshift/.stickshift-proxy.d/stickshift-proxy.cfg || :
-fi
-/sbin/restorecon /var/lib/stickshift/.stickshift-proxy.d/ || :
-/sbin/service stickshift-proxy condrestart || :
-
+# To workaround mcollective 2.0 monkey patch to tmpdir
+chmod o+w /tmp
 
 
 %triggerin -- rubygem-stickshift-node
@@ -175,7 +188,6 @@ if [ "$1" -eq "0" ]; then
     /sbin/chkconfig --del libra-cgroups || :
     /sbin/chkconfig --del libra-data || :
     /sbin/chkconfig --del libra || :
-    /sbin/chkconfig --del stickshift-proxy || :
     /sbin/chkconfig --del libra-watchman || :
     /usr/sbin/semodule -r libra
     sed -i -e '\:/usr/bin/trap-user:d' /etc/shells
@@ -195,23 +207,19 @@ then
     mv /etc/httpd/conf.d/stickshift/ /etc/httpd/conf.d/stickshift.bak/
 fi
 
-%triggerin -- haproxy
-/sbin/service stickshift-proxy condrestart
-
 %files
 %defattr(-,root,root,-)
 %attr(0640,-,-) %{_libexecdir}/mcollective/mcollective/agent/*
-%attr(0750,-,-) %{_libexecdir}/mcollective/update_yaml.rb
-%attr(0640,-,-) %{ruby_sitelibdir}/facter/libra.rb
 %attr(0750,-,-) %{_initddir}/libra
 %attr(0750,-,-) %{_initddir}/libra-data
 %attr(0750,-,-) %{_initddir}/libra-cgroups
 %attr(0750,-,-) %{_initddir}/libra-tc
-%attr(0750,-,-) %{_initddir}/stickshift-proxy
 %attr(0750,-,-) %{_initddir}/libra-watchman
 %attr(0755,-,-) %{_bindir}/trap-user
 %attr(0750,-,-) %{_bindir}/rhc-ip-prep.sh
 %attr(0750,-,-) %{_bindir}/rhc-iptables.sh
+%attr(0750,-,-) %{_bindir}/rhc-mcollective-log-profile
+%attr(0750,-,-) %{_bindir}/rhc-profiler-merge-report
 %attr(0750,-,-) %{_bindir}/rhc-restorecon
 %attr(0750,-,-) %{_bindir}/rhc-init-quota
 %attr(0750,-,-) %{_bindir}/rhc-list-stale
@@ -228,7 +236,6 @@ fi
 %attr(0755,-,-) %{_bindir}/rhc-cgroup-read
 %dir %attr(0751,root,root) %{_localstatedir}/lib/stickshift
 %dir %attr(0750,root,root) %{_localstatedir}/lib/stickshift/.httpd.d
-%dir %attr(0750,root,root) %{_localstatedir}/lib/stickshift/.stickshift-proxy.d
 %dir %attr(0700,root,root) %{_localstatedir}/run/stickshift
 #%dir %attr(0755,root,root) %{_libexecdir}/stickshift/cartridges/abstract-httpd/
 #%attr(0750,-,-) %{_libexecdir}/stickshift/cartridges/abstract-httpd/info/hooks/
@@ -242,6 +249,7 @@ fi
 %attr(0755,-,-) %{_libexecdir}/stickshift/lib/
 #%{_libexecdir}/stickshift/cartridges/abstract/info
 %attr(0750,-,-) %{_bindir}/rhc-accept-node
+%attr(0750,-,-) %{_bindir}/rhc-accept-devenv
 %attr(0755,-,-) %{_bindir}/rhc-list-ports
 %attr(0750,-,-) %{_bindir}/rhc-node-account
 %attr(0750,-,-) %{_bindir}/rhc-node-application
@@ -251,17 +259,373 @@ fi
 %attr(0640,-,-) %config(noreplace) %{_sysconfdir}/oddjobd.conf.d/oddjobd-restorer.conf
 %attr(0640,-,-) %config(noreplace) %{_sysconfdir}/dbus-1/system.d/openshift-restorer.conf
 %attr(0644,-,-) %config(noreplace) %{_sysconfdir}/stickshift/stickshift-node.conf.libra
-%attr(0640,-,-) %config(noreplace) %{_sysconfdir}/stickshift/stickshift-proxy.cfg
 %attr(0644,-,-) %config(noreplace) %{_sysconfdir}/stickshift/resource_limits.con*
 %attr(0750,-,-) %config(noreplace) %{_sysconfdir}/cron.daily/stickshift_tmpwatch.sh
 %attr(0644,-,-) %config(noreplace) %{_sysconfdir}/security/namespace.d/*
 %{_localstatedir}/www/html/restorer.php
 %attr(0750,root,root) %config(noreplace) %{_sysconfdir}/httpd/conf.d/000000_default.conf
-%attr(0640,root,root) %{_sysconfdir}/httpd/conf.d/stickshift
+#%attr(0640,root,root) %{_sysconfdir}/httpd/conf.d/stickshift
 %dir %attr(0755,root,root) %{_sysconfdir}/stickshift/skel
 /lib64/security/pam_libra.so
+%dir %attr(1777,root,root) /sandbox
+
 
 %changelog
+* Wed Aug 22 2012 Adam Miller <admiller@redhat.com> 0.98.1-1
+- bump_minor_versions for sprint 17 (admiller@redhat.com)
+
+* Wed Aug 22 2012 Adam Miller <admiller@redhat.com> 0.97.7-1
+- Merge pull request #292 from ramr/master (openshift+bot@redhat.com)
+- Fix to add disable stale detection for a scalable app's gears.
+  (ramr@redhat.com)
+- BZ 848500: Isolate hiccups during editing. (rmillner@redhat.com)
+- Coalesce the reload requests and force reload to finish after 30 seconds.
+  Use flock instead of lockfile so locks die if the script does.
+  (rmillner@redhat.com)
+
+* Mon Aug 20 2012 Adam Miller <admiller@redhat.com> 0.97.6-1
+- BZ 846445: libra-cgroups, libra-tc and rhc-restorecon are slow and should not
+  re-run if already initialized. (rmillner@redhat.com)
+
+* Fri Aug 17 2012 Adam Miller <admiller@redhat.com> 0.97.5-1
+- BZ 847398: Filter out requests from local addresses. (rmillner@redhat.com)
+
+* Thu Aug 16 2012 Adam Miller <admiller@redhat.com> 0.97.4-1
+- Merge pull request #245 from rmillner/US2102 (dmcphers@redhat.com)
+- Merge pull request #244 from ramr/master (openshift+bot@redhat.com)
+- Merge pull request #242 from abhgupta/fix/resource_limits_file
+  (openshift+bot@redhat.com)
+- Remove requirement for .pgpass and .psql_history files on scalable app.
+  (rmillner@redhat.com)
+- Migration for haproxy changes. (ramr@redhat.com)
+- Add nano and emacs (the no X variant) to list of editors available on nodes
+  where apps are running. (ramr@redhat.com)
+- fixing quota_blocks value - moving comments above line (abhgupta@redhat.com)
+
+* Wed Aug 15 2012 Adam Miller <admiller@redhat.com> 0.97.3-1
+- Adds migration to move mysql data dir on standalone gears.
+  (mpatel@redhat.com)
+
+* Thu Aug 09 2012 Adam Miller <admiller@redhat.com> 0.97.2-1
+- allow non trusted users to add cross links as well as long as the trigger is
+  added after (dmcphers@redhat.com)
+- The sandbox config is also in node. (rmillner@redhat.com)
+- Restart proxy if its been stopped. (rmillner@redhat.com)
+- Need to set selinux perms for /sandbox (rmillner@redhat.com)
+- Create sandbox directory with proper selinux policy and manage
+  polyinstantiation for it. (rmillner@redhat.com)
+- remove *.war.* from deployments (bdecoste@gmail.com)
+- BZ 845332: Separate out configuration file management from the init script so
+  that systemd properly interprets the daemon restart. (rmillner@redhat.com)
+- remove *.war.* from deployments (bdecoste@gmail.com)
+- remove *.war.* from deployments (bdecoste@gmail.com)
+- Filter for directories (rmillner@redhat.com)
+
+* Thu Aug 02 2012 Adam Miller <admiller@redhat.com> 0.97.1-1
+- bump_minor_versions for sprint 16 (admiller@redhat.com)
+
+* Wed Aug 01 2012 Adam Miller <admiller@redhat.com> 0.96.10-1
+- Merge branch 'master' of https://github.com/openshift/li (bdecoste@gmail.com)
+- migration for BZ844267 (bdecoste@gmail.com)
+- BZ 844948: Medium gear gets same quota as small and large.
+  (rmillner@redhat.com)
+
+* Tue Jul 31 2012 Dan McPherson <dmcphers@redhat.com> 0.96.9-1
+- Move tc output to global and examine the quota output to ensure its really
+  enforcing. (rmillner@redhat.com)
+
+* Tue Jul 31 2012 Adam Miller <admiller@redhat.com> 0.96.8-1
+- Cleaning up m-collective from li repo (kraman@gmail.com)
+
+* Mon Jul 30 2012 Dan McPherson <dmcphers@redhat.com> 0.96.7-1
+- Ruby version of rhc-accept-node from BZ 843106 (rmillner@redhat.com)
+
+* Thu Jul 26 2012 Dan McPherson <dmcphers@redhat.com> 0.96.6-1
+- Stand-alone mysql or mongodb gears disable stale detection.
+  (rmillner@redhat.com)
+- Merge pull request #90 from tdawson/mirror (dmcphers@redhat.com)
+- replace mirror.stg and prod with mirror.ops (tdawson@redhat.com)
+
+* Tue Jul 24 2012 Adam Miller <admiller@redhat.com> 0.96.5-1
+- Add pre and post destroy calls on gear destruction and move unobfuscate and
+  stickshift-proxy out of cartridge hooks and into node. (rmillner@redhat.com)
+
+* Fri Jul 20 2012 Adam Miller <admiller@redhat.com> 0.96.4-1
+- Merge branch 'master' of github.com:openshift/li (mmcgrath@redhat.com)
+- made init script more efficient (mmcgrath@redhat.com)
+
+* Thu Jul 19 2012 Adam Miller <admiller@redhat.com> 0.96.3-1
+- add rhc-accept-devenv (dmcphers@redhat.com)
+
+* Fri Jul 13 2012 Adam Miller <admiller@redhat.com> 0.96.2-1
+- Merge pull request #71 from tkramer-rh/dev/tkramer/bug/831325
+  (admiller@redhat.com)
+- Merge pull request #62 from jwhonce/BZ837066 (admiller@redhat.com)
+- Security - BZ831325 - Block random high ports from binding in the 127.0.0.1
+  address space. (tkramer@redhat.com)
+- update migration to 2.0.15 and add better config for migration
+  (dmcphers@redhat.com)
+- Corrected check period (jhonce@redhat.com)
+
+* Wed Jul 11 2012 Adam Miller <admiller@redhat.com> 0.96.1-1
+- bump_minor_versions for sprint 15 (admiller@redhat.com)
+
+* Tue Jul 10 2012 Adam Miller <admiller@redhat.com> 0.95.7-1
+- Remove unused methods from ddl. (mpatel@redhat.com)
+
+* Thu Jul 05 2012 Adam Miller <admiller@redhat.com> 0.95.6-1
+- Merge pull request #20 from jwhonce/BZ837066 (mmcgrath+openshift@redhat.com)
+- BZ837066 watchman inefficient (jhonce@redhat.com)
+
+* Tue Jul 03 2012 Adam Miller <admiller@redhat.com> 0.95.5-1
+- Fix for bugz 837424 - typeless gears migration. (ramr@redhat.com)
+
+* Tue Jul 03 2012 Adam Miller <admiller@redhat.com> 0.95.4-1
+- Taking out duplicate link. (mpatel@redhat.com)
+- Add missing systemu dependency. (mpatel@redhat.com)
+- Migration for bugz 837130. (ramr@redhat.com)
+- Remove duplicate file. (mpatel@redhat.com)
+- Add new dependencies. (mpatel@redhat.com)
+- Fixes. (mpatel@redhat.com)
+- WIP changes to support mcollective 2.0. (mpatel@redhat.com)
+
+* Mon Jul 02 2012 Adam Miller <admiller@redhat.com> 0.95.3-1
+- Merge pull request #7 from rmillner/dev/rmillner/bug/827817
+  (rpenta@redhat.com)
+- update migration for 2.0.14 (dmcphers@redhat.com)
+- BZ 827817: Add interactive shell for PostgreSQL. (rmillner@redhat.com)
+- Bug 828126 (dmcphers@redhat.com)
+
+* Sat Jun 23 2012 Dan McPherson <dmcphers@redhat.com> 0.95.2-1
+- new package built with tito
+
+* Wed Jun 20 2012 Adam Miller <admiller@redhat.com> 0.95.1-1
+- bump_minor_versions for sprint 14 (admiller@redhat.com)
+- BZ834126 (jhonce@redhat.com)
+
+* Wed Jun 20 2012 Adam Miller <admiller@redhat.com> 0.94.10-1
+- BZ 830286: Missing -n option (rmillner@redhat.com)
+
+* Fri Jun 15 2012 Adam Miller <admiller@redhat.com> 0.94.9-1
+- BZ832261: Order app start scripts using the same logic as the start function
+  in util.  Explicitly reverse that order on stop. (rmillner@redhat.com)
+
+* Thu Jun 14 2012 Adam Miller <admiller@redhat.com> 0.94.8-1
+- BZ829826 additionally made some performance enhancements (jhonce@redhat.com)
+- Migration for HAProxy stats socket file. (mpatel@redhat.com)
+
+* Wed Jun 13 2012 Adam Miller <admiller@redhat.com> 0.94.7-1
+- BZ 830286.  Defer restarting httpd until the end of a set of applications.
+  (rmillner@redhat.com)
+- BZ827575.  Also allow existing applications to specify foreign channels in
+  deplist.txt. (rmillner@redhat.com)
+- BZ806468 Relocate/Rename district.conf (jhonce@redhat.com)
+- Modified name to c9 + change limits. (ramr@redhat.com)
+
+* Tue Jun 12 2012 Adam Miller <admiller@redhat.com> 0.94.6-1
+- Add cloud9.io high density node profile. (ramr@redhat.com)
+
+* Tue Jun 12 2012 Adam Miller <admiller@redhat.com> 0.94.5-1
+- Security - changed URL in rhcsh to point to proper legal page
+  (tkramer@redhat.com)
+
+* Mon Jun 11 2012 Adam Miller <admiller@redhat.com> 0.94.4-1
+- Security - added legal login banner to OpenShift shell (tkramer@redhat.com)
+
+* Fri Jun 08 2012 Adam Miller <admiller@redhat.com> 0.94.3-1
+- Proxy init script cleanup. (rmillner@redhat.com)
+- Fix glob to find git directories (jhonce@redhat.com)
+- Bug 806468 /etc/stickshift/district.conf should be put under /var
+  (jhonce@redhat.com)
+- The exta rules are expensive and unnecessary; we will expand the ranger later
+  if its needed. (rmillner@redhat.com)
+- Needed a larger range allocated for iptables rules.  Also, the port to uid
+  mapping is no longer trivial. (rmillner@redhat.com)
+
+* Mon Jun 04 2012 Adam Miller <admiller@redhat.com> 0.94.2-1
+- update migration for 2.0.13 and fix gear dns fixup with scaled apps
+  (dmcphers@redhat.com)
+- Improved exception handling (jhonce@redhat.com)
+- fix facter loop (jhonce@redhat.com)
+
+* Fri Jun 01 2012 Adam Miller <admiller@redhat.com> 0.94.1-1
+- bumping spec versions (admiller@redhat.com)
+- restore embedded cartridges when migrating (jhonce@redhat.com)
+- Fix for bugz 827564. Only list scaled gears if gear registry exists.
+  (ramr@redhat.com)
+
+* Wed May 30 2012 Adam Miller <admiller@redhat.com> 0.93.13-1
+- Add support for http alias (jhonce@redhat.com)
+- Fix bugz 825792 -- OPENSHIFT_{DATA,REPO}_DIR needs a trailing /.
+  (ramr@redhat.com)
+- Typeless gears migration fixes for new app-root updates. (ramr@redhat.com)
+- Merge branch 'US2109' (rmillner@redhat.com)
+- Fix to make inline ss calls multithreaded. (mpatel@redhat.com)
+- Fix migrate rerun issues - check runtime/repo instead of runtime.
+  (ramr@redhat.com)
+- Bug fix to handle case when migrate is rerun. (ramr@redhat.com)
+- Migrate work for typeless gears. (ramr@redhat.com)
+- Merge branch 'master' into US2109 (rmillner@redhat.com)
+- TA2182 Latest location for .state file (jhonce@redhat.com)
+
+* Tue May 29 2012 Adam Miller <admiller@redhat.com> 0.93.12-1
+- Add migration code for previously created scalable apps - bugz 825077.
+  (ramr@redhat.com)
+- Fix for bugz 825077 - mysql added to a scalable app is not accessible via
+  environment variables. OPENSHIFT_DB_HOST is now set correctly.
+  (ramr@redhat.com)
+
+* Tue May 29 2012 Adam Miller <admiller@redhat.com> 0.93.11-1
+- Bug 820223 820338 820325 (dmcphers@redhat.com)
+- re-introduce ~/data in typeless gears (jhonce@redhat.com)
+- Security - Moved the disable of binding of ports on the real 10. address from
+  devenv.spec to rhc-ip-prep.sh so that it can make it into STG for testing
+  (tkramer@redhat.com)
+
+* Fri May 25 2012 Dan McPherson <dmcphers@redhat.com> 0.93.10-1
+- US2109 Migration (jhonce@redhat.com)
+- Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
+  (rmillner@redhat.com)
+- BZ 825124, had the wrong variable name. (rmillner@redhat.com)
+
+* Fri May 25 2012 Adam Miller <admiller@redhat.com> 0.93.9-1
+- Bug 825207: Do not chown on nonexistent .state file (jhonce@redhat.com)
+
+* Thu May 24 2012 Adam Miller <admiller@redhat.com> 0.93.8-1
+- more efficient cgroup disabling method (mmcgrath@redhat.com)
+
+* Thu May 24 2012 Adam Miller <admiller@redhat.com> 0.93.7-1
+- Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
+  (mmcgrath@redhat.com)
+- US2307 (bdecoste@gmail.com)
+- Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
+  (mmcgrath@redhat.com)
+- cleaning up whitespace, no longer killing apps on cgroup stop, adding cgroup
+  bits (mmcgrath@redhat.com)
+
+* Wed May 23 2012 Adam Miller <admiller@redhat.com> 0.93.6-1
+- [mpatel+ramr] Fix issues where app_name is not the same as gear_name - fixups
+  for typeless gears. (ramr@redhat.com)
+- BZ824546 move nurture notification (jhonce@redhat.com)
+- fix for BZ: 824135 (mmcgrath@redhat.com)
+
+* Tue May 22 2012 Adam Miller <admiller@redhat.com> 0.93.5-1
+- ITERS was not incrementing.  This would run for ever if semodule call was
+  failing. (rmillner@redhat.com)
+
+* Tue May 22 2012 Dan McPherson <dmcphers@redhat.com> 0.93.4-1
+- Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
+  (rmillner@redhat.com)
+- Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
+  (rmillner@redhat.com)
+- Merge branch 'US2109' of ssh://git1.ops.rhcloud.com/srv/git/li into US2109
+  (rmillner@redhat.com)
+- migrate http proxy config (jhonce@redhat.com)
+- Merge branch 'master' into US2109 (rmillner@redhat.com)
+- Merge branch 'master' into US2109 (rmillner@redhat.com)
+- Merge branch 'master' into US2109 (jhonce@redhat.com)
+- Update idler code for new envars (jhonce@redhat.com)
+- Merge branch 'master' into US2109 (jhonce@redhat.com)
+- Merge branch 'master' into US2109 (jhonce@redhat.com)
+- Merge branch 'master' into US2109 (ramr@redhat.com)
+- Merge branch 'master' into US2109 (ramr@redhat.com)
+- Merge branch 'master' into US2109 (ramr@redhat.com)
+- Merge branch 'master' into US2109 (ramr@redhat.com)
+- Migrate state, repo and logs. (ramr@redhat.com)
+- Support new location for .state file (jhonce@redhat.com)
+
+* Tue May 22 2012 Adam Miller <admiller@redhat.com> 0.93.3-1
+- Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
+  (rmillner@redhat.com)
+- EPEL updated mcollective and broke the build! forcing mcollective 1.1.2
+  (admiller@redhat.com)
+- Several types of log entries were missing exit records.  Synchronize to the
+  yaml serialization entry if we fall off an event. (rmillner@redhat.com)
+- The mcollective log profiler needs this log message to find the end of a
+  call. (rmillner@redhat.com)
+- Changes to connect to mongo on standalone gear. (mpatel@redhat.com)
+
+* Thu May 17 2012 Adam Miller <admiller@redhat.com> 0.93.2-1
+- remove preconfigure (dmcphers@redhat.com)
+- reset migration for release 2.0.12 (dmcphers@redhat.com)
+- Add ability to run the quota command. (rmillner@redhat.com)
+
+* Thu May 10 2012 Adam Miller <admiller@redhat.com> 0.93.1-1
+- bumping spec versions (admiller@redhat.com)
+
+* Wed May 09 2012 Adam Miller <admiller@redhat.com> 0.92.5-1
+- Merge branch 'master' of git1.ops.rhcloud.com:/srv/git/li (rpenta@redhat.com)
+- Fix for 'empty? undefined for <uid>:Fixnum' during app create
+  (rpenta@redhat.com)
+
+* Tue May 08 2012 Adam Miller <admiller@redhat.com> 0.92.4-1
+- Bug 819739 (dmcphers@redhat.com)
+
+* Mon May 07 2012 Adam Miller <admiller@redhat.com> 0.92.3-1
+- Migrate app ctl file. (rmillner@redhat.com)
+- adding mcollective call to fetch the application state from the .state file
+  on each gear (abhgupta@redhat.com)
+- Cleanup. (mpatel@redhat.com)
+- TA2025 (bdecoste@gmail.com)
+
+* Mon May 07 2012 Adam Miller <admiller@redhat.com> 0.92.2-1
+- Cleanup. (mpatel@redhat.com)
+- Changes to make inline library calls for ss commands. (mpatel@redhat.com)
+- Notify when a start or stop times out. (rmillner@redhat.com)
+- Raise the timeout to compensate for heavy IO during system start dragging
+  start times out. (rmillner@redhat.com)
+- Add a 60 second timeout (3x measured cost of a couple of apps) on starting
+  any gear in the parallel gear start. (rmillner@redhat.com)
+- next generation migration (dmcphers@redhat.com)
+- Merge branch 'master' of git1.ops.rhcloud.com:/srv/git/li (rpenta@redhat.com)
+- Fix rhc-autoidler (rpenta@redhat.com)
+- Forgot to add rhc-profiler-merge-report to the specfile.
+  (rmillner@redhat.com)
+- Add average call time. (rmillner@redhat.com)
+- Filter function breaks unless the filter list is a static class global.
+  Allow a list of filters. (rmillner@redhat.com)
+- Rewrite filters and finish the filter set. (rmillner@redhat.com)
+- Fix mcollective log tracking.  Correct for missing timezone in mcollective
+  log entries.  Print report. (rmillner@redhat.com)
+- Make options global. (rmillner@redhat.com)
+- Fill out matcher class.  Change the mcollective log class so that it slurps
+  in the whole file set and produces a unified array of events.  This also
+  allows it to parse events that cross a log file. (rmillner@redhat.com)
+- profile correlator script. (rmillner@redhat.com)
+
+* Thu Apr 26 2012 Adam Miller <admiller@redhat.com> 0.92.1-1
+- bumping spec versions (admiller@redhat.com)
+
+* Wed Apr 25 2012 Adam Miller <admiller@redhat.com> 0.91.5-1
+- Fix for bug# 815609 (rpenta@redhat.com)
+
+* Sat Apr 21 2012 Dan McPherson <dmcphers@redhat.com> 0.91.4-1
+- Switch to Time module and add beginning and ent time parsing.
+  (rmillner@redhat.com)
+- Add command line options. (rmillner@redhat.com)
+- Bug fix - handle cases when migration is run multiple times.
+  (ramr@redhat.com)
+- Add average call time (rmillner@redhat.com)
+- Account for all of the calls in a parallel execution by taking the whole
+  execute time and dividing it up among each call.  Its not perfectly accurate,
+  but its good enough with the data at hand. (rmillner@redhat.com)
+- Migrate old haproxy registries to new format (ramr@redhat.com)
+- Corrected test BZ814024 (jhonce@redhat.com)
+
+* Wed Apr 18 2012 Adam Miller <admiller@redhat.com> 0.91.3-1
+- Added check to not idle stopped application (jhonce@redhat.com)
+- Caught in the middle of a log message. (rmillner@redhat.com)
+- Add cartridge name to the profile output (rmillner@redhat.com)
+- Cleanup output (rmillner@redhat.com)
+- Add the mcollective-log-profile command to specfile (rmillner@redhat.com)
+- add a spare blank line to pretty up output. (rmillner@redhat.com)
+- Print the call profile most expensive first. (rmillner@redhat.com)
+- Add the mcollective call profiler. (rmillner@redhat.com)
+- bug 808544 (dmcphers@redhat.com)
+- Merge branch 'master' of li-master:/srv/git/li (ramr@redhat.com)
+- Add libevent and libevent-devel to list of packages to install.
+  (ramr@redhat.com)
+
 * Thu Apr 12 2012 Mike McGrath <mmcgrath@redhat.com> 0.91.2-1
 - release bump for tag uniqueness (mmcgrath@redhat.com)
 

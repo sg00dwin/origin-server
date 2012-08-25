@@ -4,12 +4,14 @@ $: << File.expand_path(File.dirname(__FILE__))
 
 require 'rubygems'
 require 'thor'
+require 'li_constants'
 require 'lib/openshift'
 
 class Release < Thor
   include Thor::Actions
   include OpenShift::Tito
-  
+  include OpenShift::Brew
+
   method_option :temp_dir, :type => :string, :default => '/tmp', :desc => "A location to write temporary files to"
   def initialize(*args)
     super(*args)
@@ -18,52 +20,105 @@ class Release < Thor
   no_tasks do
     def git_pull
       run("git pull", :verbose => options.verbose?)
-      if File.exists?('../os-client-tools')
-        inside('../os-client-tools') do
-          run("git pull", :verbose => options.verbose?)
+      SIBLING_REPOS.each do |repo_name, repo_dirs|
+        repo_dirs.each do |repo_dir|
+          if File.exists?(repo_dir)
+            inside(repo_dir) do
+              run("git pull", :verbose => options.verbose?)
+            end
+            break
+          end
         end
       end
     end
     
-    def next_version(version)
-      last_index_of_dot = version.rindex('.')
-      version[0..last_index_of_dot] + (version[last_index_of_dot+1..-1].to_i + 1).to_s
+
+    def fail_if_uncommitted_changes
+      raise "You have uncommited changes in the repository, cannot bump versions" unless run('git diff --quiet')
+      SIBLING_REPOS.each do |repo_name, repo_dirs| 
+        repo_dirs.each do |repo_dir| 
+          if File.exists?(repo_dir) 
+            inside(repo_dir) do 
+              raise "You have uncommited changes in #{repo_dir}, cannot bump versions" unless run('git diff --quiet')
+            end
+          end
+        end
+      end
     end
-    
-    def get_updated_build_dirs(verbose, push_changes=false)
-      build_dirs = get_build_dirs
+
+    def update_our_gems(package_name, build_dir, spec_file, verbose)
       gem_updates = false
-      if build_dirs.include?("stickshift/common")
-        version = /(Version: )(.*)/.match(File.read("stickshift/common/stickshift-common.spec"))[2].strip
-        nv = next_version(version)
-        run("/bin/sed -i 's,stickshift-common (.*,stickshift-common (#{nv}),' broker/Gemfile.lock", :verbose => verbose)
-        run("/bin/sed -i 's,stickshift-common (.*,stickshift-common (#{nv}),' stickshift/controller/Gemfile.lock", :verbose => verbose)
-        run("/bin/sed -i 's,stickshift-common (.*,stickshift-common (#{nv}),' stickshift/broker/Gemfile.lock", :verbose => verbose)
-        run("/bin/sed -i 's,stickshift-common (.*,stickshift-common (#{nv}),' stickshift/node/Gemfile.lock", :verbose => verbose)
+      chain_build_set = []
+      list_of_deps = []
+      all_packages = get_packages
+
+      if package_name == 'rubygem-stickshift-common'
+        update_gemfile_version(spec_file, 'stickshift-common', "broker/Gemfile.lock", verbose)
+        update_gemfile_version(spec_file, 'stickshift-common', "#{build_dir}/../broker/Gemfile.lock", verbose)
+        update_gemfile_version(spec_file, 'stickshift-common', "#{build_dir}/../node/Gemfile.lock", verbose)
+        list_of_deps |= ['rhc-broker','stickshift-broker','rubygem-stickshift-node']
+
         gem_updates = true
       end
-      
-      if build_dirs.include?("stickshift/controller") || build_dirs.include?("stickshift/common")
-        version = /(Version: )(.*)/.match(File.read("stickshift/controller/stickshift-controller.spec"))[2].strip
-        nv = next_version(version)
-        run("/bin/sed -i 's,stickshift-controller (.*,stickshift-controller (#{nv}),' broker/Gemfile.lock", :verbose => verbose)
-        run("/bin/sed -i 's,stickshift-controller (.*,stickshift-controller (#{nv}),' stickshift/controller/Gemfile.lock", :verbose => verbose)
-        run("/bin/sed -i 's,stickshift-controller (.*,stickshift-controller (#{nv}),' stickshift/broker/Gemfile.lock", :verbose => verbose)
+
+      if package_name == 'rubygem-stickshift-node' || package_name == 'rubygem-stickshift-common'
+        pkg = all_packages['rubygem-stickshift-node']
+        build_dir = pkg[0]
+        spec_file = pkg[1]
+        update_gemfile_version(spec_file, 'stickshift-node', "#{build_dir}/Gemfile.lock", verbose)
+        update_gemfile_version(spec_file, 'stickshift-node', "#{build_dir}/../broker/Gemfile.lock", verbose)
+        list_of_deps |= ['rhc-broker','stickshift-broker']
         gem_updates = true
       end
-      
-      if build_dirs.include?("stickshift/node") || build_dirs.include?("stickshift/common")
-        version = /(Version: )(.*)/.match(File.read("stickshift/node/stickshift-node.spec"))[2].strip
-        nv = next_version(version)
-        run("/bin/sed -i 's,stickshift-node (.*,stickshift-node (#{nv}),' stickshift/node/Gemfile.lock", :verbose => verbose)
-        run("/bin/sed -i 's,stickshift-node (.*,stickshift-node (#{nv}),' stickshift/broker/Gemfile.lock", :verbose => verbose)
+
+      if package_name == 'rubygem-stickshift-controller'
+        update_gemfile_version(spec_file, 'stickshift-controller', "broker/Gemfile.lock", verbose)
+        update_gemfile_version(spec_file, 'stickshift-controller', "#{build_dir}/../broker/Gemfile.lock", verbose)
+        list_of_deps |= ['rhc-broker','stickshift-broker']
         gem_updates = true
       end
-      
-      if gem_updates
+
+      if ['rubygem-gearchanger-m-collective-plugin','rubygem-gearchanger-mcollective-plugin', \
+          'rubygem-swingshift-streamline-plugin', 'rubygem-uplift-dynect-plugin'].member? package_name
+        short_name = package_name.split("-")[1..-1].join('-')
+        update_gemfile_version(spec_file, short_name, "broker/Gemfile.lock", verbose)
+        list_of_deps |= ['rhc-broker']
+        gem_updates = true
+      end
+        
+      list_of_deps.each do | pkg | 
+        chain_build_set << [pkg, all_packages[pkg][0], all_packages[pkg][1]]
+      end
+
+      return gem_updates, chain_build_set
+
+    end
+
+    def git_add_gemfiles
+      branch = get_branch
+      run("git add broker/Gemfile.lock; git commit -m 'Updating gem versions'; git push origin #{branch}", :verbose => options.verbose?)
+      inside('../crankcase') do
         branch = get_branch
+        run("git add stickshift/node/Gemfile.lock stickshift/broker/Gemfile.lock; git commit -m 'Updating gem versions'; git push origin #{branch}", :verbose => options.verbose?)
+      end
+    end
+
+    def get_updated_build_dirs(verbose, push_changes=false)
+      gem_updates = false
+
+      build_dirs = get_build_dirs
+
+      build_dirs.each do |build_info|
+        package_name = build_info[0]
+        build_dir = build_info[1]
+        spec_file = build_info[2]
+
+        gem_updates, chain_build_set = update_our_gems(package_name, build_dir, spec_file, verbose)
+      end
+
+      if gem_updates
         if push_changes
-          run("git add broker/Gemfile.lock stickshift/controller/Gemfile.lock stickshift/node/Gemfile.lock stickshift/broker/Gemfile.lock; git commit -m 'Updating gem versions'; git push origin #{branch}", :verbose => options.verbose?)
+          git_add_gemfiles
           build_dirs = get_build_dirs
         end
       end
@@ -73,8 +128,17 @@ class Release < Thor
 
   desc "check", "Check the directories that need to be released"
   def check
-    git_pull
-    puts "Changes detected in the following directories: #{get_build_dirs.pretty_inspect}"
+    branch = get_branch
+    orig_branches = checkout_branch(branch)
+    begin
+      git_pull
+      build_dir_list = get_build_dirs.map do |build_info|
+        build_info[1]
+      end
+      puts "Changes detected in the following directories: #{build_dir_list.pretty_inspect}"
+    ensure
+      reset_orig_branches(orig_branches)
+    end
   end
   
   desc "update_gem_versions", "Update the gem versions for gems going to be released"
@@ -87,19 +151,19 @@ class Release < Thor
   desc "release_jenkins_plugin", "Brew build the jenkins plugin"
   method_option :verbose, :type => :boolean, :desc => "Enable verbose logging"
   def release_jenkins_plugin(commit_message, committer_name="Dan McPherson", committer_email="dmcphers@redhat.com")
-    if File.exists?("../jenkins-cloud")
-      inside("../jenkins-cloud") do
+    if File.exists?("../jenkins-cloud-plugin")
+      inside("../jenkins-cloud-plugin") do
         run("git pull", :verbose => options.verbose?)
         exit unless run("mvn package -DskipTests", :verbose => options.verbose?)
       end
       inside("..") do
         FileUtils.rm_rf "jenkins-plugin-openshift/"
-        exit unless run("rhpkg clone -b libra-rhel-6.2 jenkins-plugin-openshift", :verbose => options.verbose?)
+        exit unless run("rhpkg clone -b libra-rhel-6.3 jenkins-plugin-openshift", :verbose => options.verbose?)
       end
       inside("../jenkins-plugin-openshift/") do
-        FileUtils.cp "../jenkins-cloud/target/openshift.hpi", "./openshift.hpi"
+        FileUtils.cp "../jenkins-cloud-plugin/target/openshift.hpi", "./openshift.hpi"
         version = /^(Version: )(.*)/.match(File.read("jenkins-plugin-openshift.spec"))[2].strip
-        nv = next_version(version)
+        nv = next_patch_version(version)
         run("sed -i 's/Version:.*#{version}.*/Version: #{nv}/' jenkins-plugin-openshift.spec", :verbose => options.verbose?)
         date = `date +'%a %b %d %Y'`.chomp
         puts "sed -i 's/%changelog.*/%changelog\\n* #{date} #{committer_name} <#{committer_email}> - #{nv}\\n- #{commit_message}/' jenkins-plugin-openshift.spec"
@@ -109,14 +173,15 @@ class Release < Thor
         end
       end
     else
-      puts "Jenkins plugin not found at ../jenkins-cloud"
+      puts "Jenkins plugin not found at ../jenkins-cloud-plugin"
     end
   end
 
   desc "build", "Tag and build new RPMs for any changes"
+  method_option :release_package, :type => :string, :desc => "name of package to release", :default => ""
   method_option :verbose, :type => :boolean, :desc => "Enable verbose logging"
   def build
-  
+
     unless run("if [ -n \"${http_proxy+x}\" ]; then exit 1; fi", :verbose => options.verbose?)
       puts "ERROR - you need to unset http_proxy first"; exit 1
     end
@@ -124,52 +189,153 @@ class Release < Thor
     unless run("klist | grep REDHAT.COM@REDHAT.COM", :verbose => options.verbose?)
       puts "ERROR - you need to kinit first"; exit 1
     end
-     
-    # Update the repo
-    git_pull
+
+    branch = get_branch
+    orig_branches = checkout_branch(branch, options.verbose?)
+    begin
+      fail_if_uncommitted_changes
+      
+      build_dirs = []
+
+      # Update the repo
+      git_pull
     
-    build_dirs = get_updated_build_dirs(options.verbose?, true)
-
-    build_dirs.each do |build_dir|
-      inside(File.expand_path("../#{build_dir}", File.dirname(__FILE__))) do
-        puts "Releasing #{build_dir}"
-
-        # Cleanup any tito data
-        unless run("rm -rf #{options.temp_dir}/tito/cvswork/", :verbose => options.verbose?)
-          puts "ERROR - tito temp cleanup failed"; exit 1
+      unless options.release_package.empty?
+        found_single_release = false
+        
+        packages = get_packages
+        packages.each do | pkg_name, build_info |
+          if pkg_name == options.release_package
+            found_single_release = true
+            build_dirs = [ [pkg_name, build_info[0], build_info[1]] ]
+            break
+          end
         end
 
-        # Tag the package and push the tags
-        unless run("tito tag --accept-auto-changelog", :verbose => options.verbose?)
-          puts "ERROR - tito tagging failed"; exit 1
+        if found_single_release 
+          gem_updates, chain_build_set = update_our_gems(build_dirs[0][0], build_dirs[0][1], build_dirs[0][2], options.verbose?)
+        
+          if gem_updates
+            git_add_gemfiles 
+            build_dirs += chain_build_set
+          end
+        else
+          puts "ERROR: package #{options.release_package} not a valid build target"
           exit 1
         end
-
-        branch = get_branch
-        unless run("git pull && git push origin #{branch} && git push --tags", :verbose => options.verbose?)
-          puts "ERROR - tito tag push failed"; exit 1
-        end
-
-        # Detect which tito command is available
-        `tito release --help`
-        cmd_exit = $?.exitstatus
-        if cmd_exit == 0
-          # The release command is supported - use it
-          tito_cmd = "tito release brew < #{options.temp_dir}/answerfile"
-        else
-          raise "Your version of tito is no longer supported after the Brew migration to git"
-        end
-
-        # Build the RPM in brew
-        run("echo -e 'y\nn' > #{options.temp_dir}/answerfile", :verbose => options.verbose?)
-        unless run(tito_cmd, :verbose => options.verbose?)
-          puts "ERROR - tito cvs release failed"
-        end
-        puts "Done"
+      else
+        build_dirs = get_updated_build_dirs(options.verbose?, true)
       end
+  
+      tag_failures = []
+      requires_rebuild = []
+
+      build_dirs.each do |build_info|
+        build_dir = build_info[1]
+        working_dir = File.expand_path("../#{build_dir}", File.dirname(__FILE__))
+        inside(working_dir) do
+          puts "Tagging #{build_dir}"
+
+          if File.basename(build_dir) == 'rhc'
+            # packages that have versioning steps
+            version = /^(Version: )(.*)/.match(File.read(Dir['*.spec'][0]))[2].strip
+            next_version = next_patch_version(version)
+            if run("rake version && git add .", :verbose => options.verbose?)
+              unless run('tito tag --accept-auto-changelog')
+                tag_failures << build_dir
+              end
+            else
+              run('git reset HEAD --hard')
+              puts '  Unable to set the version number for this package.'
+              requires_rebuild << build_dir
+            end
+          else
+            # packages without versioning steps
+            unless run('tito tag --accept-auto-changelog')
+              tag_failures << build_dir
+            end
+          end
+
+          puts "Done"
+        end
+      end
+
+      (tag_failures + requires_rebuild).each do |build_dir|
+        build_dirs.delete_if { build_info | build_info[1] == build_dir }
+      end
+
+      li_repo = {'li' => [FileUtils.pwd]}
+      repos = li_repo.merge(SIBLING_REPOS)
+      push_failures = ''
+      repos.each do |repo_name, repo_dirs|
+        repo_dirs.each do |repo_dir|
+          if File.exists?(repo_dir)
+            inside(repo_dir) do
+              puts "Pushing #{repo_dir}"
+              branch = get_branch
+              push_cmd = "git fetch --tags && git pull && git push origin #{branch} && git push --tags"
+              unless run(push_cmd, :verbose => options.verbose?)
+                push_failures += "pushd #{repo_dir} > /dev/null; #{push_cmd}; popd > /dev/null;\n"
+              end
+            end
+            break
+          end
+        end
+      end
+
+      run("echo -e 'y\nn' > #{options.temp_dir}/answerfile", :verbose => options.verbose?)
+      tito_cmd = "tito release brew < #{options.temp_dir}/answerfile"
+      build_failures = ''
+      build_dirs.each do |build_info|
+        build_dir = build_info[1]
+        working_dir = File.expand_path("../#{build_dir}", File.dirname(__FILE__))
+        inside(working_dir) do
+          if push_failures.empty?
+            puts "Releasing #{build_dir}"
+
+            # Detect which tito command is available
+            `tito release --help`
+            cmd_exit = $?.exitstatus
+            raise "Your version of tito is no longer supported after the Brew migration to git" if cmd_exit != 0
+          end
+
+          # Build the RPM in brew
+          if push_failures.empty? && run(tito_cmd, :verbose => options.verbose?)
+            puts "Done"
+          else
+            build_failures += "pushd #{working_dir} > /dev/null; #{tito_cmd}; popd > /dev/null;\n"
+          end
+        end
+      end
+
+      unless requires_rebuild.empty?
+        puts "************BEGIN REQUIRES REBUILD****************"
+        puts "Note: These packages will need to be force built by hand."
+        puts requires_rebuild.pretty_inspect
+        puts "*************END REQUIRES REBUILD*****************\n"
+      end
+      unless tag_failures.empty?
+        puts "************BEGIN TAG FAILURES****************"
+        puts "Note: Packages that failed to tag should continue to show up in build/release check.  Since tito failed there may be uncommited changes in your repo.  Clear these by running 'git reset HEAD --hard' from each repo."
+        puts tag_failures.pretty_inspect
+        puts "*************END TAG FAILURES*****************\n"
+      end
+      unless push_failures.empty?
+        puts "************BEGIN PUSH FAILURES****************"
+        puts push_failures
+        puts "*************END PUSH FAILURES*****************\n"
+      end
+      unless build_failures.empty?
+        puts "************BEGIN BUILD FAILURES****************"
+        puts build_failures
+        puts "*************END BUILD FAILURES*****************\n"
+      end
+    ensure
+      reset_orig_branches(orig_branches, options.verbose?)
     end
-    if File.exists?("../jenkins-cloud")
-      inside("../jenkins-cloud") do
+    
+    if File.exists?("../jenkins-cloud-plugin")
+      inside("../jenkins-cloud-plugin") do
         git_pull_output = `git pull`.chomp
         unless git_pull_output.include?("Already up-to-date.")
           puts ""
@@ -184,23 +350,98 @@ class Release < Thor
 
   desc "sync", "Download a build from Brew (using Mash) and sync it to the OpenShift repos"
   method_option :stage, :type => :string, :desc => "Comma-delimited list of packages to sync.  Exclude NVR for latest versions.  (e.g. --stage='rhc, rhc-site-0.73.3-1')"
+  method_option :stage_all, :type => :boolean, :desc => "Tag all the latest packages for stage"
   method_option :clean_ami, :type => :boolean, :desc => "Indicates whether to build a clean ami"
   method_option :no_ami, :type => :boolean, :desc => "Indicates whether to not build an ami"
   method_option :source_ami, :type => :boolean, :desc => "Indicates whether to build a source ami"
   def sync
-    # do RHEL 6.x first
-    mash_and_rsync "libra-rhel-6.2", false, options
+    orig_branches = checkout_branch(options[:stage] || options.stage? ? "stage" : "master")
+    begin
+      # do RHEL 6.x first
+      rhc_devenv_found = mash_and_rsync "libra-rhel-6.3", false, options
 
-    # now RHEL 5.x, skipping rhc gem build/deploy
-    mash_and_rsync "libra-rhel-5.8", true, options
-
-    unless options.no_ami?
-      create_ami options
+      unless options.no_ami?
+        create_ami(options, rhc_devenv_found)
+      end
+    ensure
+      reset_orig_branches(orig_branches)
     end
   end
   
+  desc "tag_pkgs_stg AFTER_DATE", "Tag packages that are from external sources into the stage repo since AFTER_DATE"
+  method_option :check, :type => :boolean, :desc => "Don't do anything yet, just show what would be done"
+  method_option :include_internal, :type => :boolean, :desc => "Boolean indicating whether to include internal packages"
+  def tag_pkgs_stg(after_date)
+    stg_brew_tag = "libra-rhel-6.3-stage"
+    cand_brew_tag = "libra-rhel-6.3-candidate"
+    orig_branches = checkout_branch("master")
+    git_pull
+
+    if after_date.nil? or after_date.empty?
+      puts "ERROR: No date paramter passed!"
+      puts "Example: build/release tag_external_pkgs_stg 1970-01-30 [--check]"
+      exit 1
+    else
+      external_pkgs_tag_stg = get_packages_to_tag(cand_brew_tag, stg_brew_tag, after_date, options.include_internal?)
+    end
+
+    if options.check?
+      puts "### If this were run without --check, the following packages would be tagged into #{stg_brew_tag}:"
+      external_pkgs_tag_stg.each { |pkg| puts pkg }
+    else
+      puts "### Tagging the following packages into #{stg_brew_tag}:"
+      external_pkgs_tag_stg.each do |pkg| 
+        puts pkg 
+        `brew tag-pkg #{stg_brew_tag} #{pkg}`
+      end
+    end
+
+    reset_orig_branches(orig_branches)
+  end
+
+  desc "bump_minor_versions", "Bump the minor version in all specs > .1 patch level"
+  method_option :push_changes, :type => :boolean, :desc => "Push the changes to the current branch"
+  method_option :verbose, :type => :boolean, :desc => "Enable verbose logging"
+  def bump_minor_versions
+    fail_if_uncommitted_changes
+
+    orig_branches = checkout_branch("master", options.verbose?)
+    begin
+      all_packages = get_packages
+      IGNORE_PACKAGES.each do |package|
+        all_packages.delete(package)
+      end
+
+      all_packages.each do |package_name, pkg|
+        build_dir = pkg[0]
+        spec_file = pkg[1]
+        version = get_version(spec_file)
+        new_version = next_minor_version(version)
+        if new_version
+          run("/bin/sed -i 's,^Version:.*,Version: #{new_version},' #{spec_file}", :verbose => options.verbose?)
+          inside(File.dirname(spec_file)){ run('rake version') } if package_name == 'rhc'
+        end
+      end
+      if options.push_changes?
+        run("git add .; git commit -m 'Bumping spec versions'; git push origin master", :verbose => options.verbose?)
+        SIBLING_REPOS.each do |repo_name, repo_dirs|
+          repo_dirs.each do |repo_dir|
+            if File.exists?(repo_dir)
+              inside(repo_dir) do
+                run("git add .; git commit -m 'Bumping spec versions'; git push origin master", :verbose => options.verbose?)
+              end
+              break
+            end
+          end
+        end
+      end
+    ensure
+      reset_orig_branches(orig_branches)
+    end
+  end
+
   desc "build_ami", "Build an ami based on the current li repo"
-  method_option :stage, :type => :string, :desc => "Indicates whether to use the stage repo"
+  method_option :stage, :type => :boolean, :desc => "Indicates whether to use the stage repo"
   method_option :clean_ami, :type => :boolean, :desc => "Indicates whether to build a clean ami"
   method_option :source_ami, :type => :boolean, :desc => "Indicates whether to build a source ami"
   def build_ami
@@ -209,18 +450,68 @@ class Release < Thor
 
   # sync impl methods
   no_tasks do
+    def checkout_branch(branch="master", verbose=false)
+      puts "#######################"
+      puts "Operating on branch: #{branch}"
+      puts "#######################"
+      orig_branch = get_branch
+      orig_branches = {}
+      begin
+        if orig_branch != branch
+          orig_branches[FileUtils.pwd] = orig_branch
+          unless run("git checkout #{branch}", :verbose => verbose)
+            puts "Unable to checkout branch '#{branch}' for repo 'li'"
+            exit 1
+          end
+        end
+        SIBLING_REPOS.each do |repo_name, repo_dirs|
+          repo_dirs.each do |repo_dir|
+            if File.exists?(repo_dir)
+              inside(repo_dir) do
+                orig_branch = get_branch
+                if orig_branch != branch
+                  orig_branches[repo_dir] = orig_branch
+                  unless run("git checkout #{branch}", :verbose => verbose)
+                    puts "Unable to checkout branch '#{branch}' for repo '#{repo_name}'"
+                    exit 1
+                  end
+                end
+              end
+              break
+            end
+          end
+        end
+      rescue Exception => e
+        reset_orig_branches(orig_branches, verbose)
+        raise
+      end
+      orig_branches
+    end
+    
+    def reset_orig_branches(orig_branches, verbose=false)
+      orig_branches.each do |repo_dir, branch|
+        inside(repo_dir) do
+          run("git checkout #{branch}", :verbose => verbose)
+        end
+      end
+    end
+    
+    
     def mash_and_rsync(tag_base, skip_gem, options)
       # Mash / RSync parameters
-      mash_config = options[:stage] ? "#{tag_base}-stage" : "#{tag_base}-candidate"
-      repo_host = "mirror1.stg.rhcloud.com"
+      mash_config = (options[:stage] || options.stage_all?) ? "#{tag_base}-stage" : "#{tag_base}-candidate"
+      repo_host = "mirror1.ops.rhcloud.com"
       repo_dir = "/export/gpxe/trees"
       repo = "#{repo_host}:#{repo_dir}"
       rsync = nil
-      if options[:stage]
-        rsync = "rsync -aHv --progress --no-g --omit-dir-times --chmod=Dug=rwX"
+      if options[:stage] || options.stage_all?
+        rsync = "rsync -aHv --progress --no-p --no-g --omit-dir-times --chmod=Dug=rwX"
       else
-        rsync = "rsync -aHv --delete-after --progress --no-g --omit-dir-times --chmod=Dug=rwX"
+        rsync = "rsync -aHv --delete-after --progress --no-p --no-g --omit-dir-times --chmod=Dug=rwX"
       end
+
+      # variable to keep track of if we've built a new rhc-devenv
+      rhc_devenv_found = false
   
       # derive pkg_suffix from tag_base
       if tag_base =~ /^.*rhel-(\d)\.(\d)$/
@@ -228,8 +519,6 @@ class Release < Thor
       else
         pkg_suffix = "el6_2"
       end
-      
-      pkg_suffix = "el5" if pkg_suffix == "el5_8"
   
       # Check the Brew installation
       `brew --help`
@@ -254,27 +543,40 @@ class Release < Thor
       end
   
       # See if we are doing a stage sync - if so, tag the packages listed
-      if options[:stage] and !options[:stage].empty?
-        options[:stage].split(",").each do |package|
-          package.strip!
-  
-          nvr_regex = /(.*)-(\d+)\.(\d+)\.(\d+)-?(\d)?/
-  
+      if (options[:stage] and !options[:stage].empty?) or options.stage_all?
+
+        all_packages = get_packages
+        nvr_regex = /(.*)-(\d+)\.(\d+)\.(\d+)-?(\d)?/
+
+        packages = nil
+        if options[:stage]
+          packages = options[:stage].split(",").map do |package|
+            package.strip!
+            pkg = package
+            if nvr_regex.match(package)
+              pkg = $1
+            end
+            unless all_packages[pkg]
+              puts "Couldn't find '#{pkg}' on local system.  You probably don't have one of these repos #{SIBLING_REPOS}"
+              exit 1
+            end
+            package
+          end
+        else
+          packages = all_packages.keys
+          packages -= IGNORE_PACKAGES
+        end
+        
+        packages.each do |package|
           # Check for the supplied NVR value (e.g. 0.45.1)
           if nvr_regex.match(package)
+            pkg = $1 
             # Confirm the package is valid
             nvr_package = nil
-            if package =~ /^rhc-(\d)/
-              if File.exists?('../os-client-tools')
-                inside('../os-client-tools') do
-                  nvr_package = `git tag | grep #{package} | tail -n1`.chomp
-                end
-              else            
-                puts "Couldn't find ../os-client-tools."
-                exit 1
-              end
-            else
-              nvr_package = `git tag | grep #{package} | tail -n1`.chomp
+            build_info = all_packages[pkg]
+            build_dir = build_info[0]
+            inside(build_dir) do
+              nvr_package = `git tag | grep ^#{package} | tail -n1`.chomp
             end
   
             unless nvr_package.empty?
@@ -286,17 +588,10 @@ class Release < Thor
           else
             # No NVR was specified - lookup the latest
             tags = []
-            if package == 'rhc'
-              if File.exists?('../os-client-tools')
-                inside('../os-client-tools') do
-                  tags = `git tag | grep -e rhc-[0-9]`.chomp.split("\n")
-                end
-              else            
-                puts "Couldn't find ../os-client-tools."
-                exit 1
-              end
-            else
-              tags = `git tag | grep #{package}-`.chomp.split("\n")
+            build_info = all_packages[package]
+            build_dir = build_info[0]
+            inside(build_dir) do
+              tags = `git tag | grep ^#{package}-[0-9]`.chomp.split("\n")
             end
   
             # Sort the tags by NVR and take the last entry
@@ -317,79 +612,53 @@ class Release < Thor
         puts "ERROR - mash sync failed"
         exit 1
       end
-  
-      # If createrepo understands --compress-type flag, it will create repodata in RHEL5-unfriendly format
-      # recreate repo metadata if we are targeting RHEL5 and createrepo is sufficiently equipped
-      if pkg_suffix =~ /^el5/
-        `/usr/bin/createrepo -h | grep -q compress-type`
-        cmd_exit = $?.exitstatus
-        if cmd_exit == 0
-          repos = `/usr/bin/find #{options.temp_dir}/#{mash_config} -type d -name repodata | /bin/sed 's,/repodata$,,'`.chomp.split("\n")
-          repos.each do |repo_dir|
-            `/usr/bin/createrepo -s sha --compress-type bz2 #{repo_dir}`
-          end
-        end
-      end
 
       unless skip_gem
         # Build the gem locally since it's not stored centrally like RPMs in Brew
         puts "Building client gem..."
-        if File.exists?('../os-client-tools/express')
-          inside(File.expand_path(File.dirname(File.expand_path(__FILE__)) + "/../../os-client-tools/express")) do
-            unless run('./build_pure.sh', :verbose => options.verbose?)
+        if File.exists?('../rhc')
+          inside(File.expand_path(File.dirname(File.expand_path(__FILE__)) + "/../../rhc")) do
+            unless run('./build.sh', :verbose => options.verbose?)
               puts "ERROR - client gem building failed"
               exit 1
             end
           end
           puts "Done"
         else
-          puts "Couldn't find ../os-client-tools/express.  Skipping build client gem step."
-        end
-
-        # Build the rest-client
-        if File.exists?('../os-client-tools/rhc-rest')
-          inside(File.expand_path(File.dirname(File.expand_path(__FILE__)) + "/../../os-client-tools/rhc-rest")) do
-            unless run('rake build', :verbose => options.verbose?)
-              puts "ERROR - client gem building failed"
-              exit 1
-            end
-          end
-          puts "Done"
-        else
-          puts "Couldn't find ../os-client-tools/rhc-rest.  Skipping build rhc-rest gem step."
+          puts "Couldn't find ../rhc.  Skipping build client gem step."
         end
 
       end
 
       puts "Syncing RPMs to repo..."
-      unless run("#{rsync} #{options.temp_dir}/#{mash_config}/#{mash_config}/* #{repo}/#{mash_config}/", :verbose => options.verbose?)
-        puts "ERROR - RPM sync failed."
+      #
+      # Ugly bash hack to set the value of ruby's $? as well as get output to 
+      # terminal while rsync runs.
+      rsync_output = `_f() { #{rsync} #{options.temp_dir}/#{mash_config}/#{mash_config}/* #{repo}/#{mash_config}/ | tee /dev/tty; return ${PIPESTATUS[0]}; }; _f`
+      if $? != 0
+        puts "ERROR - RPM sync failed"
         exit 1
       end
+      
+      rhc_devenv_found = rsync_output.include?('rhc-devenv')
+      
+      ### FIXME - Comment this out until new patch is verified, then remove
+      #unless run("#{rsync} #{options.temp_dir}/#{mash_config}/#{mash_config}/* #{repo}/#{mash_config}/", :verbose => options.verbose?)
+      #  puts "ERROR - RPM sync failed."
+      #  exit 1
+      #end
       
       unless skip_gem
         # sync rhc gem
         puts "Syncing client gem to repo..."
-        if File.exists?('../os-client-tools/express')
-          unless run("#{rsync} ../os-client-tools/express/pkg/*.gem #{repo}/#{mash_config}/client/gems/", :verbose => options.verbose?)
+        if File.exists?('../rhc')
+          unless run("#{rsync} ../rhc/pkg/*.gem #{repo}/#{mash_config}/client/gems/", :verbose => options.verbose?)
             puts "ERROR - Gem sync failed."
             exit 1
           end
           puts "Done"
         else
-          puts "Couldn't find ../os-client-tools/express.  Skipping rsync client gem step."
-        end
-
-        # sync rhc-rest gem
-        puts "Syncing rhc-rest gem to repo..."
-        if File.exists?('../os-client-tools/rhc-rest')
-          unless run("#{rsync} ../os-client-tools/rhc-rest/pkg/*.gem #{repo}/#{mash_config}/client/gems/", :verbose => options.verbose?)
-            puts "ERROR - Gem sync failed."
-            exit 1
-          end
-          puts "Done"
-        else
-          puts "Couldn't find ../os-client-tools/rhc-rest.  Skipping rsync client gem step."
+          puts "Couldn't find ../rhc.  Skipping rsync client gem step."
         end
       end
   
@@ -401,29 +670,30 @@ class Release < Thor
         end
         puts "Done"
       end
+      rhc_devenv_found
     end
   
-    def create_ami(options)
+    def create_ami(options, devenv_update=false)
       # Jenkins parameters
       proxy = "squid.corp.redhat.com:8080"
       jenkins = "https://ci.dev.openshift.redhat.com/jenkins"
       token = "libra1"
+      
+      clean_ami = (options.clean_ami? || devenv_update)
   
+      puts "Kicking off AMI build..."
       if options.stage?
-        puts "Kicking off stage verification..."
-        unless run("curl --insecure --proxy #{proxy} #{jenkins}/job/libra_ami_stage/buildWithParameters?token=#{token}\\&BUILD_CLEAN_AMI=#{options.clean_ami? ? "true" : "false"}", :verbose => options.verbose?)
+        unless run("curl --insecure --proxy #{proxy} #{jenkins}/job/libra_ami_stage/buildWithParameters?token=#{token}\\&BUILD_CLEAN_AMI=#{clean_ami.to_s}\\&BUILD_UPDATE_AMI=#{(!clean_ami).to_s}", :verbose => options.verbose?)
           puts "ERROR - Jenkins remote job invocation failed."
           exit 1
         end
-        puts "Done"
       else
-        puts "Kicking off AMI build..."
-        unless run("curl --insecure --proxy #{proxy} #{jenkins}/job/libra_ami/buildWithParameters?token=#{token}\\&BUILD_CLEAN_AMI=#{options.clean_ami? ? "true" : "false"}\\&INSTALL_FROM_SOURCE=#{options.source_ami? ? "true" : "false"}", :verbose => options.verbose?)
+        unless run("curl --insecure --proxy #{proxy} #{jenkins}/job/libra_ami/buildWithParameters?token=#{token}\\&BUILD_CLEAN_AMI=#{clean_ami.to_s}\\&BUILD_UPDATE_AMI=#{(!clean_ami && !options.source_ami?).to_s}\\&INSTALL_FROM_SOURCE=#{(options.source_ami?).to_s}", :verbose => options.verbose?)
           puts "ERROR - Jenkins remote job invocation failed."
           exit 1
         end
-        puts "Done"
       end
+      puts "Done"
     end
   end
 end

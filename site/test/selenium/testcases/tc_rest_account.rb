@@ -17,7 +17,7 @@ class RestAccount < OpenShift::Rest::TestCase
     form = @rest_account.domain_form
     assert !form.in_error?(:namespace)
     form.submit
-    @rest_account.domain_page.wait
+    # should be an instant client side error so don't wait for domain page
     assert form.in_error?(:namespace)
   end
 
@@ -35,14 +35,14 @@ class RestAccount < OpenShift::Rest::TestCase
 
   def test_create_namespace_duplicate
     # create a namespace to try and duplicate
-    @login, pass = dummy_credentials
-    dup_namespace = @login.sub("test", "dup")
+    @login, pass, namespace = dummy_credentials
+    dup_namespace = namespace.sub("test", "dup")
     create_namespace(@login, pass, dup_namespace)
 
     signout
     form = @rest_account.domain_form
     # log in a new user and try and use same namespace
-    @login += "dup"
+    @login = @login.sub("test", "dup")
     signin(@login, pass)
     @rest_account.open
     form = @rest_account.domain_form
@@ -51,7 +51,6 @@ class RestAccount < OpenShift::Rest::TestCase
     form.submit
     @rest_account.domain_page.wait
     assert form.in_error?(:namespace)
-
   end
 
   def test_edit_namespace_invaild
@@ -59,28 +58,28 @@ class RestAccount < OpenShift::Rest::TestCase
     form = @rest_account.domain_form
 
     # create a namespace to try and duplicate
-    @login, pass = dummy_credentials
-    dup_namespace = @login.sub("test", "dup")
+    @login, pass, namespace = dummy_credentials
+    dup_namespace = namespace.sub("test", "dup")
     create_namespace(@login, pass, dup_namespace)
     signout
 
     # log in a new user and create a unique namespace
-    # we sub to keep the domain name short
-    @login = @login.sub("test", "") + "new"
-    create_namespace(@login, pass, @login)
+    @login = @login.sub("test", "new")
+    create_namespace(@login, pass, namespace)
 
     # try to edit with blank namespace
     @rest_account.domain_edit_page.open
-    assert_equal @login, form.get_value(:namespace)
+    assert_equal namespace, form.get_value(:namespace)
     assert !form.in_error?(:namespace)
     form.set_value(:namespace, "")
     form.submit
-    @rest_account.domain_page.wait
+
+    # should be instant client side validation error so don't wait for page
     assert form.in_error?(:namespace)
 
     # try to edit with an invalid namespace
     @rest_account.domain_edit_page.open
-    assert_equal @login, form.get_value(:namespace)
+    assert_equal namespace, form.get_value(:namespace)
     assert !form.in_error?(:namespace)
     form.set_value(:namespace, "thisnamespaceisoverthemaxsizeallowed")
     form.submit
@@ -89,7 +88,7 @@ class RestAccount < OpenShift::Rest::TestCase
 
     # try to edit with a duplicate namespace
     @rest_account.domain_edit_page.open
-    assert_equal @login, form.get_value(:namespace)
+    assert_equal namespace, form.get_value(:namespace)
     assert !form.in_error?(:namespace)
     form.set_value(:namespace, dup_namespace)
     form.submit
@@ -98,23 +97,23 @@ class RestAccount < OpenShift::Rest::TestCase
   end
 
   def test_create_namespace_valid
-    @login, pass = dummy_credentials
-    create_namespace(@login, pass, @login)
+    @login, pass, namespace = dummy_credentials
+    create_namespace(@login, pass, namespace)
   end
 
   def test_update_namespace
-    @login, pass = dummy_credentials
-    create_namespace(@login, pass, @login)
+    @login, pass, namespace = dummy_credentials
+    create_namespace(@login, pass, namespace)
 
     @rest_account.edit_namespace_button.click
     wait_for_page @rest_account.domain_edit_page.path
 
     form = @rest_account.domain_form
 
-    new_namespace = @login + "a"
+    new_namespace = namespace.sub("test", "new")
 
     form.set_value(:namespace, new_namespace)
-    assert form.get_value(:namespace) != @login
+    assert form.get_value(:namespace) != namespace
 
     form.submit
 
@@ -123,12 +122,12 @@ class RestAccount < OpenShift::Rest::TestCase
   end
 
   def test_ssh_key_add_default
-    @login, pass = dummy_credentials
+    @login, pass, namespace = dummy_credentials
 
     signin(@login, pass)
     @rest_account.open
 
-    create_namespace(@login, pass, @login, false)
+    create_namespace(@login, pass, namespace, false)
 
     # go back to the account page
     @rest_account.open
@@ -144,7 +143,7 @@ class RestAccount < OpenShift::Rest::TestCase
     # we shorten key so split and check via regex
     cmp_key = @rest_account.find_ssh_key('default')
     cmp_key = cmp_key.split('..')
-    if cmp_key.length > 1:
+    if cmp_key.length > 1
       key_re = "(#{Regexp.quote(cmp_key[0])}).*(#{Regexp.quote(cmp_key[1])})$"
       assert_match /#{key_re}/, key
     else
@@ -153,12 +152,12 @@ class RestAccount < OpenShift::Rest::TestCase
   end
 
   def test_ssh_key_add_more_than_one
-    @login, pass = dummy_credentials
+    @login, pass, namespace = dummy_credentials
 
     signin(@login, pass)
     @rest_account.open
 
-    create_namespace(@login, pass, @login, false)
+    create_namespace(@login, pass, namespace, false)
 
     # go back to the account page
     @rest_account.open
@@ -174,7 +173,7 @@ class RestAccount < OpenShift::Rest::TestCase
     # we shorten key so split and check via regex
     cmp_key = @rest_account.find_ssh_key('default')
     cmp_key = cmp_key.split('..')
-    if cmp_key.length > 1:
+    if cmp_key.length > 1
       key_re = "(#{Regexp.quote(cmp_key[0])}).*(#{Regexp.quote(cmp_key[1])})$"
       assert_match /#{key_re}/, key
     else
@@ -193,7 +192,7 @@ class RestAccount < OpenShift::Rest::TestCase
       # we shorten key so split and check via regex
       cmp_key = @rest_account.find_ssh_key(name)
       cmp_key = cmp_key.split('..')
-      if cmp_key.length > 1:
+      if cmp_key.length > 1
         key_re = "(#{Regexp.quote(cmp_key[0])}).*(#{Regexp.quote(cmp_key[1])})$"
         assert_match /#{key_re}/, key
       else
@@ -203,12 +202,12 @@ class RestAccount < OpenShift::Rest::TestCase
   end
 
   def test_ssh_key_add_invalid
-    @login, pass = dummy_credentials
+    @login, pass, namespace = dummy_credentials
 
     signin(@login, pass)
     @rest_account.open
 
-    create_namespace(@login, pass, @login, false)
+    create_namespace(@login, pass, namespace, false)
 
     # go back to the account page
     @rest_account.open

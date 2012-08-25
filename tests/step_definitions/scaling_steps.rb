@@ -6,6 +6,13 @@ require 'pty'
 
 include AppHelper
 
+SSH_OPTS="-o 'BatchMode=yes' -o 'StrictHostKeyChecking=no'"
+
+def set_max_gears(num)
+  output = `rhc-admin-ctl-user --setmaxgears #{num} -l #{@app.login}`
+  raise "Failed to allocate #{num} gears for #{@app.login}" unless $?.success?
+end
+
 def gear_up?(hostname, state='UP')
   csv = `/usr/bin/curl -s -H 'Host: #{hostname}' -s 'http://localhost/haproxy-status/;csv'`
   $logger.debug('============ GEAR CSV ================')
@@ -44,6 +51,7 @@ When /^a scaled (.+) application is created$/ do |app_type|
   app_info = JSON.parse(json_string)
   raise "Could not create application: #{app_info['messages'][0]['text']}" unless app_info['status'] == 'created'
   @app.uid = app_info['data']['uuid']
+  set_max_gears(8)
   fp.close
 end
 
@@ -85,19 +93,26 @@ Then /^(\d+) gears will be in the cluster$/ do |count|
   raise "Gear counts do not match: #{gear_count.to_i} should be #{count.to_i}" unless gear_count.to_i == count.to_i
 end
 
-Then /^the php-5.3 health\-check will( not)? be successful$/ do |negate|
+Then /^the ([\w\-\.]+) health\-check will( not)? be successful$/ do |type, negate|
   good_status = negate ? 1 : 0
 
-  command = "/usr/bin/curl -s -H 'Host: #{@app.name}-#{@app.namespace}.dev.rhcloud.com' -s 'http://localhost/health_check.php' | grep -q -e '^1$'"
+  case type
+  when "php-5.3"
+    url='http://localhost/health_check.php'
+  else
+    url='http://localhost/health'
+  end
+
+  command = "/usr/bin/curl -s -H 'Host: #{@app.name}-#{@app.namespace}.dev.rhcloud.com' -s #{url} | grep -q -e '^1$'"
   exit_status = runcon command, 'unconfined_u', 'unconfined_r', 'unconfined_t'
   exit_status.should == good_status
 end
 
 When /^a gear is (added|removed)$/ do |action|
   if action == "added"
-    ssh_cmd = "ssh -t #{@app.uid}@#{@app.hostname} 'rhcsh haproxy_ctld -u'"
+    ssh_cmd = "ssh #{SSH_OPTS} -t #{@app.uid}@#{@app.hostname} 'rhcsh haproxy_ctld -u'"
   elsif action == "removed"
-    ssh_cmd = "ssh -t #{@app.uid}@#{@app.hostname} 'rhcsh haproxy_ctld -d'"
+    ssh_cmd = "ssh #{SSH_OPTS} -t #{@app.uid}@#{@app.hostname} 'rhcsh haproxy_ctld -d'"
   else
     puts "Invalid gear action specified (must be added/removed)"
     exit 1
@@ -108,15 +123,15 @@ When /^a gear is (added|removed)$/ do |action|
 end
 
 When /^haproxy_ctld_daemon is (started|stopped)$/ do | action |
-  ssh_cmd = "ssh -t #{@app.uid}@#{@app.hostname} 'rhcsh haproxy_ctld_daemon start'" if action == "started"
-  ssh_cmd = "ssh -t #{@app.uid}@#{@app.hostname} 'rhcsh haproxy_ctld_daemon stop'" if action == "stopped"
+  ssh_cmd = "ssh #{SSH_OPTS} -t #{@app.uid}@#{@app.hostname} 'rhcsh haproxy_ctld_daemon start'" if action == "started"
+  ssh_cmd = "ssh #{SSH_OPTS} -t #{@app.uid}@#{@app.hostname} 'rhcsh haproxy_ctld_daemon stop'" if action == "stopped"
 
   exit_code = runcon ssh_cmd, 'unconfined_u', 'unconfined_r', 'unconfined_t'
   raise "Could not start haproxy_ctld_daemon.  Exit code: #{exit_code}" unless exit_code == 0
 end
 
 Then /^haproxy_ctld is running$/ do
-  ssh_cmd = "ssh -t #{@app.uid}@#{@app.hostname} 'rhcsh ps auxwww | grep -q haproxy_ctld'"
+  ssh_cmd = "ssh #{SSH_OPTS} -t #{@app.uid}@#{@app.hostname} 'rhcsh ps auxwww | grep -q haproxy_ctld'"
   exit_code = runcon ssh_cmd, 'unconfined_u', 'unconfined_r', 'unconfined_t'
   raise "haproxy_ctld is not running!" unless exit_code == 0
 end
@@ -125,4 +140,40 @@ When /^(\d+) concurrent http connections are generated for (\d+) seconds$/ do |c
   cmd = "ab -H 'Host: #{@app.name}-#{@app.namespace}.dev.rhcloud.com' -c #{concurrent} -t #{seconds} http://localhost/ > /tmp/rhc/http_load_test_#{@app.name}_#{@app.namespace}.txt"
   exit_status = runcon cmd, 'unconfined_u', 'unconfined_r', 'unconfined_t'
   raise "load test failed.  Exit code: #{exit_status}" unless exit_status == 0
+end
+
+When /^mongo is added to the scaled app$/ do
+  rhc_embed_add(@app, "mongodb-2.0")
+end
+
+Then /^app should be able to connect to mongo$/ do
+  command  = "echo 'show dbs' | ssh #{SSH_OPTS} -t 2>/dev/null #{@app.uid}@#{@app.name}-#{@app.namespace}.dev.rhcloud.com rhcsh mongo | grep #{@app.name}"
+
+  max_retry = 10
+  i = 0
+  exit_status = run(command)
+
+  while exit_status != 0 and i <= max_retry
+    sleep 5
+    $logger.debug("retrying #{i}")
+    exit_status = run(command)
+    i = i + 1
+  end
+
+  exit_status.should == 0
+end
+
+When /^the haproxy-1.4 cartridge is removed$/ do
+  out = `curl -k -H 'Accept: application/json' --user '#{@app.login}:fakepw' https://localhost/broker/rest/domains/#{@app.namespace}/applications/#{@app.name}/cartridges/haproxy-1.4 -X DELETE`
+  out_obj = JSON.parse(out)
+  $rest_exit_code = out_obj["messages"][0]["exit_code"]
+end
+
+Then /^the operation is( not)? allowed$/ do |negate|
+  puts negate
+  if negate
+    $rest_exit_code.should == 101
+  else
+    $rest_exit_code.should == 0
+  end
 end

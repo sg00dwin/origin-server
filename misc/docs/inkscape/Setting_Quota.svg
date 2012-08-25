@@ -1,0 +1,804 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="744.09448819"
+   height="1052.3622047"
+   id="svg2"
+   version="1.1"
+   inkscape:version="0.48.1 r9760"
+   sodipodi:docname="Setting_Quota.svg">
+  <defs
+     id="defs4">
+    <marker
+       inkscape:stockid="Arrow2Lend"
+       orient="auto"
+       refY="0.0"
+       refX="0.0"
+       id="Arrow2Lend"
+       style="overflow:visible;">
+      <path
+         id="path4395"
+         style="font-size:12.0;fill-rule:evenodd;stroke-width:0.62500000;stroke-linejoin:round;"
+         d="M 8.7185878,4.0337352 L -2.2072895,0.016013256 L 8.7185884,-4.0017078 C 6.9730900,-1.6296469 6.9831476,1.6157441 8.7185878,4.0337352 z "
+         transform="scale(1.1) rotate(180) translate(1,0)" />
+    </marker>
+    <radialGradient
+       gradientUnits="userSpaceOnUse"
+       gradientTransform="matrix(0.103799,8.14516e-2,-0.214019,0.272739,-132.2014,63.74477)"
+       r="15.008935"
+       fy="72.644211"
+       fx="-164.86122"
+       cy="72.644211"
+       cx="-164.86122"
+       id="radialGradient17178"
+       xlink:href="#linearGradient17172"
+       inkscape:collect="always" />
+    <linearGradient
+       gradientUnits="userSpaceOnUse"
+       y2="48.75983"
+       x2="-172.04314"
+       y1="16.79554"
+       x1="-247.27679"
+       id="linearGradient14509"
+       xlink:href="#linearGradient14503"
+       inkscape:collect="always" />
+    <radialGradient
+       gradientUnits="userSpaceOnUse"
+       gradientTransform="matrix(0.7193,-1.71987e-2,3.513213e-2,1.469327,-47.5673,-19.60001)"
+       r="21.607157"
+       fy="33.695477"
+       fx="-165.2417"
+       cy="33.695477"
+       cx="-165.2417"
+       id="radialGradient13603"
+       xlink:href="#linearGradient13597"
+       inkscape:collect="always" />
+    <linearGradient
+       y2="-1.6124004"
+       x2="56.009064"
+       y1="7.1001654"
+       x1="40.537895"
+       gradientTransform="translate(-199.9859,52.32021)"
+       gradientUnits="userSpaceOnUse"
+       id="linearGradient12710"
+       xlink:href="#linearGradient7269"
+       inkscape:collect="always" />
+    <linearGradient
+       gradientTransform="translate(-331.4237,73.06709)"
+       y2="-67.703445"
+       x2="164.94254"
+       y1="-8.0820084"
+       x1="160.12111"
+       gradientUnits="userSpaceOnUse"
+       id="linearGradient12708"
+       xlink:href="#linearGradient7301"
+       inkscape:collect="always" />
+    <linearGradient
+       gradientTransform="translate(-331.4237,73.06709)"
+       y2="13.3125"
+       x2="159.78572"
+       y1="-10.794643"
+       x1="161.20535"
+       gradientUnits="userSpaceOnUse"
+       id="linearGradient12706"
+       xlink:href="#linearGradient10894"
+       inkscape:collect="always" />
+    <linearGradient
+       gradientTransform="translate(-331.4237,73.06709)"
+       y2="-11.642858"
+       x2="158.40045"
+       y1="24.964285"
+       x1="158.42857"
+       gradientUnits="userSpaceOnUse"
+       id="linearGradient12704"
+       xlink:href="#linearGradient11787"
+       inkscape:collect="always" />
+    <linearGradient
+       y2="-10.638393"
+       x2="1.6168088"
+       y1="-31.888393"
+       x1="8.3035717"
+       gradientTransform="translate(-199.9859,52.32021)"
+       gradientUnits="userSpaceOnUse"
+       id="linearGradient12702"
+       xlink:href="#linearGradient6376"
+       inkscape:collect="always" />
+    <linearGradient
+       y2="-25.337072"
+       x2="27.385256"
+       y1="5.3772144"
+       x1="-13.709487"
+       gradientTransform="translate(-199.9859,52.32021)"
+       gradientUnits="userSpaceOnUse"
+       id="linearGradient12700"
+       xlink:href="#linearGradient5483"
+       inkscape:collect="always" />
+    <linearGradient
+       id="linearGradient5483">
+      <stop
+         id="stop5485"
+         offset="0"
+         style="stop-color:#664314;stop-opacity:1;" />
+      <stop
+         id="stop5487"
+         offset="1"
+         style="stop-color:#a06b08;stop-opacity:1;" />
+    </linearGradient>
+    <linearGradient
+       id="linearGradient6376">
+      <stop
+         id="stop6378"
+         offset="0"
+         style="stop-color:#da8410;stop-opacity:1;" />
+      <stop
+         id="stop6380"
+         offset="1"
+         style="stop-color:#c97402;stop-opacity:0;" />
+    </linearGradient>
+    <linearGradient
+       id="linearGradient7269"
+       inkscape:collect="always">
+      <stop
+         id="stop7271"
+         offset="0"
+         style="stop-color:#9f5f09;stop-opacity:1;" />
+      <stop
+         id="stop7273"
+         offset="1"
+         style="stop-color:#9f5f09;stop-opacity:0;" />
+    </linearGradient>
+    <linearGradient
+       id="linearGradient7301">
+      <stop
+         id="stop7303"
+         offset="0"
+         style="stop-color:#d49c56;stop-opacity:1;" />
+      <stop
+         id="stop7305"
+         offset="1"
+         style="stop-color:#d49c56;stop-opacity:0;" />
+    </linearGradient>
+    <linearGradient
+       id="linearGradient10894">
+      <stop
+         id="stop10896"
+         offset="0"
+         style="stop-color:#d49c56;stop-opacity:1;" />
+      <stop
+         id="stop10898"
+         offset="1"
+         style="stop-color:#d49c56;stop-opacity:0.25806451;" />
+    </linearGradient>
+    <linearGradient
+       id="linearGradient11787">
+      <stop
+         id="stop11789"
+         offset="0"
+         style="stop-color:black;stop-opacity:1;" />
+      <stop
+         id="stop11791"
+         offset="1"
+         style="stop-color:#747474;stop-opacity:1;" />
+    </linearGradient>
+    <linearGradient
+       id="linearGradient13597">
+      <stop
+         id="stop13599"
+         offset="0"
+         style="stop-color:#ffeed6;stop-opacity:1;" />
+      <stop
+         id="stop13601"
+         offset="1"
+         style="stop-color:#ffcd8b;stop-opacity:1;" />
+    </linearGradient>
+    <linearGradient
+       id="linearGradient14503"
+       inkscape:collect="always">
+      <stop
+         id="stop14505"
+         offset="0"
+         style="stop-color:white;stop-opacity:1;" />
+      <stop
+         id="stop14507"
+         offset="1"
+         style="stop-color:white;stop-opacity:0;" />
+    </linearGradient>
+    <linearGradient
+       id="linearGradient17172">
+      <stop
+         id="stop17174"
+         offset="0"
+         style="stop-color:#ffeed6;stop-opacity:1;" />
+      <stop
+         id="stop17176"
+         offset="1"
+         style="stop-color:#ffcd8b;stop-opacity:1;" />
+    </linearGradient>
+    <linearGradient
+       id="linearGradient5483-6">
+      <stop
+         id="stop5485-5"
+         offset="0"
+         style="stop-color:#664314;stop-opacity:1;" />
+      <stop
+         id="stop5487-1"
+         offset="1"
+         style="stop-color:#a06b08;stop-opacity:1;" />
+    </linearGradient>
+    <linearGradient
+       id="linearGradient11787-7">
+      <stop
+         id="stop11789-1"
+         offset="0"
+         style="stop-color:black;stop-opacity:1;" />
+      <stop
+         id="stop11791-4"
+         offset="1"
+         style="stop-color:#747474;stop-opacity:1;" />
+    </linearGradient>
+    <linearGradient
+       id="linearGradient17172-7">
+      <stop
+         id="stop17174-3"
+         offset="0"
+         style="stop-color:#ffeed6;stop-opacity:1;" />
+      <stop
+         id="stop17176-3"
+         offset="1"
+         style="stop-color:#ffcd8b;stop-opacity:1;" />
+    </linearGradient>
+    <linearGradient
+       id="linearGradient10894-1">
+      <stop
+         id="stop10896-4"
+         offset="0"
+         style="stop-color:#d49c56;stop-opacity:1;" />
+      <stop
+         id="stop10898-9"
+         offset="1"
+         style="stop-color:#d49c56;stop-opacity:0.25806451;" />
+    </linearGradient>
+    <linearGradient
+       id="linearGradient13597-5">
+      <stop
+         id="stop13599-0"
+         offset="0"
+         style="stop-color:#ffeed6;stop-opacity:1;" />
+      <stop
+         id="stop13601-3"
+         offset="1"
+         style="stop-color:#ffcd8b;stop-opacity:1;" />
+    </linearGradient>
+    <linearGradient
+       id="linearGradient7301-0">
+      <stop
+         id="stop7303-4"
+         offset="0"
+         style="stop-color:#d49c56;stop-opacity:1;" />
+      <stop
+         id="stop7305-5"
+         offset="1"
+         style="stop-color:#d49c56;stop-opacity:0;" />
+    </linearGradient>
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient5483"
+       id="linearGradient3453"
+       gradientUnits="userSpaceOnUse"
+       gradientTransform="translate(-198.23195,52.32021)"
+       x1="-13.709487"
+       y1="5.3772144"
+       x2="27.385256"
+       y2="-25.337072" />
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient11787"
+       id="linearGradient3455"
+       gradientUnits="userSpaceOnUse"
+       gradientTransform="translate(-331.4237,73.06709)"
+       x1="158.42857"
+       y1="24.964285"
+       x2="158.40045"
+       y2="-11.642858" />
+    <radialGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient17172"
+       id="radialGradient3457"
+       gradientUnits="userSpaceOnUse"
+       gradientTransform="matrix(0.103799,0.0814516,-0.214019,0.272739,-132.2014,63.74477)"
+       cx="-164.86122"
+       cy="72.644211"
+       fx="-164.86122"
+       fy="72.644211"
+       r="15.008935" />
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient10894"
+       id="linearGradient3459"
+       gradientUnits="userSpaceOnUse"
+       gradientTransform="translate(-331.4237,73.06709)"
+       x1="161.20535"
+       y1="-10.794643"
+       x2="159.78572"
+       y2="13.3125" />
+    <radialGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient13597"
+       id="radialGradient3461"
+       gradientUnits="userSpaceOnUse"
+       gradientTransform="matrix(0.7193,-0.0171987,0.03513213,1.469327,-44.059406,-19.60001)"
+       cx="-165.2417"
+       cy="33.695477"
+       fx="-165.2417"
+       fy="33.695477"
+       r="21.607157" />
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient7301"
+       id="linearGradient3463"
+       gradientUnits="userSpaceOnUse"
+       gradientTransform="translate(-327.9158,73.06709)"
+       x1="160.12111"
+       y1="-8.0820084"
+       x2="164.94254"
+       y2="-67.703445" />
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient14503"
+       id="linearGradient3465"
+       gradientUnits="userSpaceOnUse"
+       gradientTransform="translate(1.7539475,0)"
+       x1="-247.27679"
+       y1="16.79554"
+       x2="-172.04314"
+       y2="48.75983" />
+  </defs>
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="0.7"
+     inkscape:cx="443.02189"
+     inkscape:cy="689.28636"
+     inkscape:document-units="px"
+     inkscape:current-layer="layer1"
+     showgrid="false"
+     inkscape:window-width="1035"
+     inkscape:window-height="856"
+     inkscape:window-x="1889"
+     inkscape:window-y="424"
+     inkscape:window-maximized="0"
+     showborder="false" />
+  <metadata
+     id="metadata7">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title />
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1">
+    <g
+       id="g3564"
+       transform="translate(10.705577,50.101526)">
+      <rect
+         y="412.6929"
+         x="11.75928"
+         height="136.9054"
+         width="702.63422"
+         id="rect3286-2"
+         style="fill:#bcbdbc;fill-rule:evenodd;stroke:#000000;stroke-width:1.8839699px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" />
+      <text
+         sodipodi:linespacing="125%"
+         id="text3260-9-7"
+         y="433.28433"
+         x="20.540586"
+         style="font-size:20px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
+         xml:space="preserve"><tspan
+           style="font-weight:bold"
+           id="tspan3268-4-4"
+           y="433.28433"
+           x="20.540586"
+           sodipodi:role="line">Broker</tspan></text>
+      <text
+         sodipodi:linespacing="125%"
+         id="text3270"
+         y="462.36221"
+         x="17.142868"
+         style="font-size:20px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
+         xml:space="preserve"><tspan
+           y="462.36221"
+           x="17.142868"
+           sodipodi:role="line"
+           id="tspan3467"
+           style="font-size:18px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Liberation Sans;-inkscape-font-specification:Liberation Sans">API Request Possibly:</tspan><tspan
+           id="tspan3421"
+           y="484.86221"
+           x="17.142868"
+           sodipodi:role="line"
+           style="font-size:18px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Liberation Sans;-inkscape-font-specification:Liberation Sans">/broker/rest/domains/&lt;domain name&gt;/applications/&lt;appname&gt;/gear_groups/&lt;name&gt;/</tspan><tspan
+           id="tspan3550"
+           y="507.36221"
+           x="17.142868"
+           sodipodi:role="line"
+           style="font-size:18px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Liberation Sans;-inkscape-font-specification:Liberation Sans" /><tspan
+           id="tspan3552"
+           y="529.86218"
+           x="17.142868"
+           sodipodi:role="line"
+           style="font-size:18px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Liberation Sans;-inkscape-font-specification:Liberation Sans">Storage info stored with gear usage</tspan></text>
+    </g>
+    <path
+       style="fill:none;stroke:#000000;stroke-width:2;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;marker-end:url(#Arrow2Lend);display:inline"
+       d="m 357.09209,112.60287 5.17697,86.88334"
+       id="path3595"
+       inkscape:connector-type="polyline"
+       inkscape:connector-curvature="0"
+       inkscape:connection-start="#g3442"
+       inkscape:connection-start-point="d4"
+       inkscape:connection-end="#g5585"
+       inkscape:connection-end-point="d4" />
+    <g
+       id="g5585">
+      <g
+         id="g3113">
+        <rect
+           style="fill:#bcbdbc;fill-rule:evenodd;stroke:#000000;stroke-width:2.27860284px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+           id="rect3286"
+           width="711.50299"
+           height="197.77097"
+           x="12.409685"
+           y="199.48621" />
+        <text
+           xml:space="preserve"
+           style="font-size:20px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
+           x="24.216034"
+           y="245.30342"
+           id="text3260"
+           sodipodi:linespacing="125%"><tspan
+             sodipodi:role="line"
+             x="24.216034"
+             y="245.30342"
+             id="tspan3268">Add 1-30G storage (In 1G increments)</tspan><tspan
+             sodipodi:role="line"
+             x="24.216034"
+             y="270.30341"
+             id="tspan5559" /><tspan
+             id="tspan5545"
+             sodipodi:role="line"
+             x="24.216034"
+             y="295.30341">Site: Application Overview -&gt; Cartridge - &gt; view current / editable</tspan><tspan
+             sodipodi:role="line"
+             x="24.216034"
+             y="320.30341"
+             id="tspan5563">CLI:</tspan><tspan
+             id="tspan5547"
+             sodipodi:role="line"
+             x="24.216034"
+             y="345.30341">rhc app cartridge change-storage - a foo -c php-5.3 --storage=10GB</tspan><tspan
+             id="tspan3111"
+             sodipodi:role="line"
+             x="24.216034"
+             y="370.30341">rhc app info (to display the quota limits)</tspan></text>
+        <text
+           xml:space="preserve"
+           style="font-size:20px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
+           x="22.246124"
+           y="218.52071"
+           id="text3260-9"
+           sodipodi:linespacing="125%"><tspan
+             sodipodi:role="line"
+             x="22.246124"
+             y="218.52071"
+             id="tspan3268-4"
+             style="font-weight:bold">CLI/Site</tspan></text>
+      </g>
+    </g>
+    <g
+       id="g3583"
+       transform="translate(-147.14285,-97.142859)">
+      <g
+         transform="translate(-121.42856,27.142857)"
+         id="g3431">
+        <rect
+           style="fill:#bcbdbc;fill-rule:evenodd;stroke:#000000;stroke-width:2.18114877px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+           id="rect3286-0"
+           width="491.78122"
+           height="262.18066"
+           x="150.50806"
+           y="742.87024" />
+        <text
+           xml:space="preserve"
+           style="font-size:20px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
+           x="167.14285"
+           y="805.21936"
+           id="text3274"
+           sodipodi:linespacing="125%"><tspan
+             sodipodi:role="line"
+             id="tspan3276"
+             x="167.14285"
+             y="805.21936">New Mcollective Agent</tspan><tspan
+             sodipodi:role="line"
+             x="167.14285"
+             y="830.21936"
+             id="tspan3278">(ss-set-quota)</tspan></text>
+        <text
+           xml:space="preserve"
+           style="font-size:20px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
+           x="164.28571"
+           y="935.21936"
+           id="text3280"
+           sodipodi:linespacing="125%"><tspan
+             sodipodi:role="line"
+             id="tspan3282"
+             x="164.28571"
+             y="935.21936">stickshift-node</tspan><tspan
+             sodipodi:role="line"
+             x="164.28571"
+             y="960.21936"
+             id="tspan3284">ss-set-quota -c $UUID -b $BLOCKS -i $INODES</tspan></text>
+        <text
+           xml:space="preserve"
+           style="font-size:20px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
+           x="166.25488"
+           y="768.9986"
+           id="text3260-9-9"
+           sodipodi:linespacing="125%"><tspan
+             sodipodi:role="line"
+             x="166.25488"
+             y="768.9986"
+             id="tspan3268-4-43"
+             style="font-weight:bold">Node</tspan></text>
+      </g>
+    </g>
+    <text
+       xml:space="preserve"
+       style="font-size:20px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
+       x="581.42859"
+       y="-27.637819"
+       id="text3384"
+       sodipodi:linespacing="125%"><tspan
+         sodipodi:role="line"
+         id="tspan3386"
+         x="581.42859"
+         y="-27.637819">2012-06-15</tspan><tspan
+         sodipodi:role="line"
+         x="581.42859"
+         y="-2.6378193"
+         id="tspan3152">Most up to date doc in li repo</tspan><tspan
+         sodipodi:role="line"
+         x="581.42859"
+         y="22.362181"
+         id="tspan3121">li/misc/docs/inkscape/Setting_Quota.svg</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:20px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
+       x="167.14285"
+       y="-21.923532"
+       id="text3388"
+       sodipodi:linespacing="125%"><tspan
+         sodipodi:role="line"
+         id="tspan3390"
+         x="167.14285"
+         y="-21.923532"
+         style="font-size:48px">Setting Quota</tspan><tspan
+         sodipodi:role="line"
+         x="167.14285"
+         y="38.076466"
+         style="font-size:48px"
+         id="tspan3127">US2437</tspan></text>
+    <g
+       id="g3442"
+       transform="translate(9.2349557,-0.13126183)">
+      <g
+         transform="matrix(0.56652345,0,0,0.56652345,311.59962,65.086376)"
+         inkscape:label="Ebene 1"
+         id="layer1-3">
+        <g
+           id="g17180"
+           transform="matrix(1.140285,0,0,1.140285,257.5128,9.583516)">
+          <path
+             inkscape:connector-curvature="0"
+             sodipodi:nodetypes="csss"
+             id="path12688"
+             d="m -147.33901,25.709573 c 1.60248,-11.000871 -4.47637,-25.92402727 -21.36656,-26.24812697 -21.91736,-0.42056427 -25.99283,15.37022297 -24.88152,27.15852797 1.35349,14.35731 43.43226,18.41994 46.24808,-0.910401 z"
+             style="fill:url(#linearGradient3453);fill-opacity:1;fill-rule:evenodd;stroke:none" />
+          <path
+             inkscape:connector-curvature="0"
+             sodipodi:nodetypes="cccccccc"
+             id="path12692"
+             d="m -222.67372,95.620662 c 2.44913,-6.76266 3.53352,-19.316348 11.96428,-23.507891 l 39.10715,-8.367105 40.84427,7.763769 c 7.18714,2.580184 10.58445,16.564047 14.02048,24.487407 -2.23825,1.60676 -4.16734,3.98641 -6.82904,4.534538 l -92.67857,0 c -3.00971,-1.116788 -4.53412,-3.124768 -6.42857,-4.910718 z"
+             style="fill:url(#linearGradient3455);fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" />
+          <path
+             inkscape:connector-curvature="0"
+             sodipodi:nodetypes="ccccc"
+             id="path12694"
+             d="m -183.12015,55.084952 c 0.20847,5.059484 -0.99076,7.975428 -3.3611,12.263909 9.22895,16.963145 33.15006,8.218841 32.52577,-0.478195 l -2.64681,-14.464286 -26.51786,2.678572 z"
+             style="fill:url(#radialGradient3457);fill-opacity:1;fill-rule:evenodd;stroke:url(#linearGradient3459);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" />
+          <path
+             inkscape:connector-curvature="0"
+             sodipodi:nodetypes="cczzccssc"
+             id="path12696"
+             d="m -149.37964,27.913445 c -0.51037,7.997041 -0.7342,17.748029 -2.52538,25.74507 0,0 -8.14428,7.402937 -12.69005,9.420866 -4.54577,2.017929 -5.81808,1.744272 -10.10153,-0.06313 -4.28344,-1.807406 -14.20527,-8.852654 -14.20527,-8.852654 -4.26434,-17.290001 -5.7232,-35.412143 13.25826,-45.0642384 l 5.62,6.6745734 c 2.0794,2.469598 11.20933,6.30898 14.65825,3.016129 2.7221,-2.598909 4.38415,6.931223 5.98572,9.123389 z"
+             style="fill:url(#radialGradient3461);fill-opacity:1;fill-rule:evenodd;stroke:url(#linearGradient3463);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" />
+          <path
+             inkscape:connector-curvature="0"
+             sodipodi:nodetypes="ccccccc"
+             id="path13605"
+             d="m -189.88923,29.284383 c -0.7068,8.01587 0.46446,15.673295 2.23958,23.851961 4.89236,3.952642 8.6008,9.167299 18.81302,7.080731 3.49665,-0.796865 2.20012,-2.468331 4.20841,-3.477821 -12.07205,3.58663 -14.04134,1.050382 -20.26382,-6.252832 l -4.10785,-23.873488 -0.88934,2.671449 z"
+             style="fill:url(#linearGradient3465);fill-opacity:1;fill-rule:evenodd;stroke:none" />
+        </g>
+      </g>
+      <text
+         sodipodi:linespacing="125%"
+         id="text3388-9"
+         y="155.02261"
+         x="328.00226"
+         style="font-size:20px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
+         xml:space="preserve"><tspan
+           y="155.02261"
+           x="328.00226"
+           id="tspan3390-3"
+           sodipodi:role="line">User</tspan></text>
+    </g>
+    <g
+       id="g3574"
+       transform="translate(74.285714,127.14286)">
+      <g
+         id="g3556">
+        <rect
+           style="fill:#bcbdbc;fill-rule:evenodd;stroke:#000000;stroke-width:1.02581728px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+           id="rect3286-0-8"
+           width="223.89507"
+           height="127.37891"
+           x="496.96658"
+           y="592.70044" />
+        <text
+           xml:space="preserve"
+           style="font-size:20px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
+           x="512.17273"
+           y="647.90662"
+           id="text3274-0"
+           sodipodi:linespacing="125%"><tspan
+             sodipodi:role="line"
+             x="512.17273"
+             y="647.90662"
+             id="tspan3278-1">Update Aria via</tspan><tspan
+             sodipodi:role="line"
+             x="512.17273"
+             y="672.90662"
+             id="tspan3554">record_usage API</tspan></text>
+        <text
+           xml:space="preserve"
+           style="font-size:20px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
+           x="505.57053"
+           y="618.82874"
+           id="text3260-9-9-1"
+           sodipodi:linespacing="125%"><tspan
+             sodipodi:role="line"
+             x="505.57053"
+             y="618.82874"
+             id="tspan3268-4-43-0"
+             style="font-weight:bold">Billing</tspan></text>
+      </g>
+    </g>
+    <path
+       style="fill:none;stroke:#000000;stroke-width:2;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;marker-end:url(#Arrow2Lend);display:inline"
+       d="m 370.54792,397.25717 1.58184,65.53726"
+       id="path3597"
+       inkscape:connector-type="polyline"
+       inkscape:connector-curvature="0"
+       inkscape:connection-end="#g3564"
+       inkscape:connection-end-point="d4"
+       inkscape:connection-start="#g5585"
+       inkscape:connection-start-point="d4" />
+    <path
+       style="fill:none;stroke:#000000;stroke-width:2;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;marker-end:url(#Arrow2Lend)"
+       d="m 457.73636,599.69982 147.351,120.14348"
+       id="path3599"
+       inkscape:connector-type="polyline"
+       inkscape:connector-curvature="0"
+       inkscape:connection-start="#g3564"
+       inkscape:connection-start-point="d4"
+       inkscape:connection-end="#g3574"
+       inkscape:connection-end-point="d4" />
+    <path
+       style="fill:none;stroke:#000000;stroke-width:2;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;marker-start:none;marker-end:url(#Arrow2Lend)"
+       d="m 312.04587,599.69982 -65.99091,73.17042"
+       id="path3601"
+       inkscape:connector-type="polyline"
+       inkscape:connector-curvature="0"
+       inkscape:connection-start="#g3564"
+       inkscape:connection-start-point="d4"
+       inkscape:connection-end="#g3583"
+       inkscape:connection-end-point="d4" />
+    <g
+       id="g3431-7"
+       transform="translate(-289.25581,242.68733)">
+      <g
+         id="g3137">
+        <rect
+           style="fill:#bcbdbc;fill-rule:evenodd;stroke:#000000;stroke-width:3.13581967px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+           id="rect3286-0-6"
+           width="932.65613"
+           height="285.74762"
+           x="150.7849"
+           y="743.14709" />
+        <text
+           xml:space="preserve"
+           style="font-size:20px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
+           x="167.14285"
+           y="805.21936"
+           id="text3274-9"
+           sodipodi:linespacing="125%"><tspan
+             sodipodi:role="line"
+             x="167.14285"
+             y="805.21936"
+             id="tspan3278-0">Quota *USAGE* is not included as part of this design</tspan><tspan
+             id="tspan5662"
+             sodipodi:role="line"
+             x="167.14285"
+             y="830.21936" /><tspan
+             id="tspan5664"
+             sodipodi:role="line"
+             x="167.14285"
+             y="855.21936">rhc-admin-chk should have a test to confirm node quota matches what is stored in mongo</tspan><tspan
+             id="tspan5666"
+             sodipodi:role="line"
+             x="167.14285"
+             y="880.21936" /><tspan
+             id="tspan5668"
+             sodipodi:role="line"
+             x="167.14285"
+             y="905.21936">Gear Groups get different quotas but it impacts the gears themselves.  This means that</tspan><tspan
+             id="tspan3129"
+             sodipodi:role="line"
+             x="167.14285"
+             y="930.21936">in an application that has a load balancer (tier 1), php apps (tier 2) and a database (tier 3)</tspan><tspan
+             id="tspan3131"
+             sodipodi:role="line"
+             x="167.14285"
+             y="955.21936">quotas could be set at a per tier level (tier 1 might have 2G, tier 2 might have 10).  Every</tspan><tspan
+             id="tspan3133"
+             sodipodi:role="line"
+             x="167.14285"
+             y="980.21936">gear at a given tier has the same amount of storage.  If I say tier 2 has 10G, every gear at</tspan><tspan
+             id="tspan3135"
+             sodipodi:role="line"
+             x="167.14285"
+             y="1005.2194">tier 2 has 10G and thus, if I have 4 gears at tier 2, I'd have 40G of total storage at tier 2.</tspan></text>
+        <text
+           xml:space="preserve"
+           style="font-size:20px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
+           x="166.25488"
+           y="768.9986"
+           id="text3260-9-9-0"
+           sodipodi:linespacing="125%"><tspan
+             sodipodi:role="line"
+             x="166.25488"
+             y="768.9986"
+             id="tspan3268-4-43-7"
+             style="font-weight:bold">Additional:</tspan></text>
+      </g>
+    </g>
+  </g>
+</svg>

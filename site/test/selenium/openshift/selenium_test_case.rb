@@ -8,6 +8,10 @@ require "selenium/client"
 require "selenium/webdriver"
 require "openshift/sauce_helper" unless $local_selenium
 
+require 'openshift/rest/pages'
+require 'openshift/rest/forms'
+require 'openshift/rest/navbars'
+
 module OpenShift
   class SeleniumTestCase < Test::Unit::TestCase
     include ::OpenShift::TestBase
@@ -42,8 +46,13 @@ module OpenShift
         browser_url = "#{base_url}/app"
       end
 
+      # Make this global so we can compare relative URIs even
+      # if the app is not served from the root path
+      $browser_url = browser_url
+
       if OpenShift::SeleniumTestCase.local?
         @driver = Selenium::WebDriver.for :firefox
+        @driver.manage.timeouts.implicit_wait = 3
         @driver.navigate.to browser_url
       else
         cfg = Sauce::Config.new()
@@ -75,6 +84,11 @@ module OpenShift
         caps[:name] = get_name
         caps[:build] = ENV['JENKINS_BUILD'] || 'unofficial'
 
+        caps[:"selenium-version"] = "2.7.0" if caps[:"selenium-version"].nil?
+        if ENV["SAUCE_SELENIUM_VERSION"]
+          caps[:"selenium-version"] = ENV["SAUCE_SELENIUM_VERSION"]
+        end
+
         @driver = Selenium::WebDriver.for(
           :remote,
           :url => "http://#{opts[:username]}:#{opts[:access_key]}@#{opts[:host]}:#{opts[:port]}/wd/hub",
@@ -82,22 +96,15 @@ module OpenShift
       end
 
       @page    = page
-      #@home    = OpenShift::Express::Home.new(page, "#{base_url}/app")
-      #@express = OpenShift::Express::Express.new(page, "#{base_url}/app/express")
-      #@flex    = OpenShift::Express::Flex.new(page, "#{base_url}/app/flex")
-      #@express_console = OpenShift::Express::ExpressConsole.new(page, "#{base_url}/app/control_panel")
 
-      #@navbar  = OpenShift::Express::MainNav.new(page,'main_nav')
-      #@signin  = OpenShift::Express::Login.new(page,'signin')
-      #@reset   = OpenShift::Express::Reset.new(page,'reset_password')
-      #@signup  = OpenShift::Express::Signup.new(page,'signup')
+      @navbar  = OpenShift::Rest::MainNav.new(page,'main_nav')
+      @home    = OpenShift::Rest::Home.new(page, "/")
+      @login_page = OpenShift::Rest::Login.new(page,"/login")
+      @logout = Proc.new { @page.get "#{browser_url}/logout"; wait_for_page "/" }
 
-      @home    = OpenShift::Rest::Home.new(page, "#{base_url}/app")
-      @login_page = OpenShift::Rest::Login.new(page,"#{base_url}/app/login")
-      @logout = Proc.new { @page.get "#{base_url}/app/logout"; wait_for_page "#{base_url}/app/" }
-
-      @rest_console = OpenShift::Rest::Console.new(page, "#{base_url}/app/console")
-      @rest_account = OpenShift::Rest::Account.new(page, "#{base_url}/app/account")
+      @rest_console = OpenShift::Rest::Console.new(page, "/console")
+      @rest_account = OpenShift::Rest::Account.new(page, "/account")
+      @signup = OpenShift::Rest::Signup.new(page, "/account/new")
     end
 
     def run(*args, &blk)
@@ -131,16 +138,18 @@ module OpenShift
           sleep (ENV['SAUCE_SLEEP_ON_FAILURE'] || 0).to_i
         end
 
+        # always make sure we clear the session
+        signout
+
         @driver.quit
 
         unless OpenShift::SeleniumTestCase.local?
           set_meta(session_id, {:passed => @test_passed})
         end
       end
-      
       super
     end
-    
+
     def get_name
       if self.respond_to? :name
         return self.name

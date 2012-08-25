@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<layout>
+	<menu>
+		<item name="Monitor" controller="Information" action="Dashboard">
+			<identifier>monitor-tab</identifier>
+			<image>monitor</image>
+			<sidebarid>monitor-sidebar</sidebarid>
+			<menu>
+				<item name="Dashboard" controller="Information" action="Dashboard">
+					<helpIdentifier>dashboard.htm</helpIdentifier>
+				</item>
+				<item name="Events" controller="Monitor-Ui" action="Issues-List">
+					<helpIdentifier>events.htm</helpIdentifier>
+				</item>
+				<item name="Jobs" controller="Job-Queue" action="Jobs">
+					<helpIdentifier>jq_jobs_list.htm</helpIdentifier>
+				</item>
+				<item name="Queue Statistics" controller="Job-Queue" action="Queue-Statistics">
+					<helpIdentifier>jq_statistics.htm</helpIdentifier>
+				</item>
+				<item name="Code Tracing" controller="Code-Tracing" action="Dumps-List">
+					<helpIdentifier>code_tracing.htm</helpIdentifier>
+				</item>
+				<item name="Server Info" controller="Information" action="Server-Info">
+					<helpIdentifier>server_info.htm</helpIdentifier>
+				</item>
+				<item name="PHP Info" controller="Information" action="Phpinfo">
+					<helpIdentifier>php_info.htm</helpIdentifier>
+				</item>
+				<item name="Logs" controller="Log-Tail" action="Index">
+					<helpIdentifier>log.htm</helpIdentifier>
+				</item>
+			</menu>
+		</item>
+		<item name="Applications" controller="Deployment" action="Index">
+			<identifier>applications-tab</identifier>
+			<image>applications-tab</image>
+			<sidebarid>applications-sidebar</sidebarid>
+			<menu>
+				<item name="Applications" controller="Deployment" action="Index">
+					<helpIdentifier>deployment.htm</helpIdentifier>
+				</item>
+			</menu>
+		</item>
+		<item name="Rule Management" controller="Monitor-Component" action="Rules">
+			<identifier>cache-tab</identifier>
+			<image>manage</image>
+			<sidebarid>cache-sidebar</sidebarid>
+			<menu>
+				<item name="Monitoring" controller="Monitor-Component" action="Rules">
+					<helpIdentifier>monitoring_rules.htm</helpIdentifier>
+				</item>
+				<item name="Caching" controller="Page-cache" action="Rules">
+					<helpIdentifier>caching_rules.htm</helpIdentifier>
+				</item>
+				<item name="Recurring Jobs" controller="Job-Queue-Scheduling" action="Rules">
+					<helpIdentifier>jq_rules.htm</helpIdentifier>
+				</item>
+			</menu>
+		</item>
+		<item name="Server Setup" controller="Configuration" action="Zend-Server-Components">
+			<identifier>setup-tab</identifier>
+			<image>configuration</image>
+			<sidebarid>configuration-sidebar</sidebarid>
+			<menu>
+				<item name="Components" controller="Configuration" action="Zend-Server-Components">
+					<helpIdentifier>components.htm</helpIdentifier>
+				</item>
+				<item name="Extensions" controller="Configuration" action="Extensions">
+					<helpIdentifier>php_extensions.htm</helpIdentifier>
+				</item>
+				<item name="Directives" controller="Directives" action="Index">
+					<helpIdentifier>php_directives.htm</helpIdentifier>
+				</item>
+				<item name="Debugger" controller="Debugger" action="Index">
+					<helpIdentifier>debugger.htm</helpIdentifier>
+				</item>
+				<item name="Monitor" controller="Studio-Integration" action="Configuration">
+					<helpIdentifier>server_setup_monitor.htm</helpIdentifier>
+				</item>
+				<item name="Job Queue" controller="Job-Queue-Setup" action="Setup">
+					<helpIdentifier>jq.htm</helpIdentifier>
+				</item>				
+			</menu>
+		</item>
+		<item name="Administration" controller="Admin" action="Tasks">
+			<identifier>admin-tab</identifier>
+			<image>admin</image>
+			<sidebarid>admin-sidebar</sidebarid>
+			<menu>
+				<item name="License and Password" controller="Admin" action="Tasks">
+					<helpIdentifier>tasks.htm</helpIdentifier>
+				</item>
+				<item name="API Keys" controller="Admin" action="Api-Keys">
+					<helpIdentifier>api_keys.htm</helpIdentifier>
+				</item>
+				<item name="Update Notifications" controller="Admin" action="Update-Notifications">
+					<helpIdentifier>updates.htm</helpIdentifier>
+				</item>
+			</menu>
+		</item>
+	</menu>
+</layout>

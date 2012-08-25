@@ -19,6 +19,15 @@ class BootstrapFormBuilder < Formtastic::SemanticFormBuilder
     true
   end
 
+  def current_layout
+    layout = template.controller.send(:_layout)
+    if layout.instance_of? String
+      layout
+    else
+      File.basename(layout.identifier).split('.').first
+    end
+  end
+
   # set the default css class
   def buttons(*args)
     return super unless new_forms_enabled?
@@ -29,7 +38,8 @@ class BootstrapFormBuilder < Formtastic::SemanticFormBuilder
   end
 
   def loading(*args)
-    template.image_tag('/app/images/loader.gif', :alt => 'Working...', 'data-loading' => 'true', :style => 'display: none;')
+    image = template.instance_variable_get(:@loader_image) || template.image_path('loader.gif')
+    template.content_tag(:img, nil, :alt => 'Working...', 'data-loading' => 'true', :class => 'icon-loading', :style => 'display: none', :src => image)
   end
 
   # override tag creation
@@ -78,13 +88,13 @@ class BootstrapFormBuilder < Formtastic::SemanticFormBuilder
       #errors = Array(@object.errors[method.to_sym]).to_sentence
       #errors.present? ? array << [attribute, errors].join(" ") : array ||= []
     end
-    full_errors << @object.errors[:base]
+    full_errors << @object.errors[:base] unless html_options.delete(:not) == :base
     full_errors.flatten!
     full_errors.compact!
     return nil if full_errors.blank?
     #html_options[:class] ||= "errors"
     template.content_tag(:ul, html_options) do
-      Formtastic::Util.html_safe(full_errors.map { |error| template.content_tag(:li, Formtastic::Util.html_safe(error)) }.join)
+      Formtastic::Util.html_safe(full_errors.map { |error| template.content_tag(:li, error) }.join)
     end
   end
 
@@ -106,7 +116,7 @@ class BootstrapFormBuilder < Formtastic::SemanticFormBuilder
   def error_list(errors, options = {}) #:nodoc:
     return super unless new_forms_enabled?
     error_class = options[:error_class] || default_inline_error_class
-    template.content_tag(:p, Formtastic::Util.html_safe(errors.join(' ').untaint), :class => error_class)
+    template.content_tag(:p, errors.join(' ').untaint, :class => error_class)
   end
 
   # change from li to div.control-group, move hints/errors into the input block
@@ -119,9 +129,13 @@ class BootstrapFormBuilder < Formtastic::SemanticFormBuilder
     options[:as]     ||= default_input_type(method, options)
 
     html_class = [ options[:as], (options[:required] ? :required : :optional), 'control-group' ] #changed
-    html_class << 'error' if has_errors?(method, options)
 
     wrapper_html = options.delete(:wrapper_html) || {}
+    if has_errors?(method, options)
+      html_class << 'error'
+
+      wrapper_html[:"data-server-error"] = "server-error"
+    end
     wrapper_html[:id]  ||= generate_html_id(method)
     wrapper_html[:class] = (html_class << wrapper_html[:class]).flatten.compact.join(' ')
 
@@ -133,6 +147,14 @@ class BootstrapFormBuilder < Formtastic::SemanticFormBuilder
     # moved hint/error output inside basic_input_helper
 
     template.content_tag(:div, Formtastic::Util.html_safe(inline_input_for(method, options)), wrapper_html) #changed to move to basic_input_helper
+  end
+
+  def parts(method, options, &block)
+    input_parts = (custom_inline_order[options[:as]] || inline_order).dup
+    input_parts = input_parts - [:errors, :hints] if options[:as] == :hidden
+    input_parts.map do |type|
+      (:input == type) ? yield : send(:"inline_#{type}_for", method, options)
+    end.compact.join("\n")
   end
 
   # wrap contents in div.controls
@@ -147,17 +169,9 @@ class BootstrapFormBuilder < Formtastic::SemanticFormBuilder
     label_options[:class] ||= 'control-label'
     label_options[:for] ||= html_options[:id]
 
-    # begin changes - moved from input()
-    input_parts = (custom_inline_order[options[:as]] || inline_order).dup
-    input_parts = input_parts - [:errors, :hints] if options[:as] == :hidden
-
-    control_content = input_parts.map do |type|
-      if :input == type
-        send(respond_to?(form_helper_method) ? form_helper_method : :text_field, method, html_options)
-      else
-        send(:"inline_#{type}_for", method, options)
-      end
-    end.compact.join("\n")
+    control_content = parts(method, options) do
+      send(respond_to?(form_helper_method) ? form_helper_method : :text_field, method, html_options)
+    end
 
     label(method, label_options) <<
       template.content_tag(:div, Formtastic::Util.html_safe(control_content), {:class => 'controls'}) #added class
@@ -207,6 +221,10 @@ class BootstrapFormBuilder < Formtastic::SemanticFormBuilder
     label_options[:for] ||= html_options[:id]
     label(method, label_options) <<
       template.content_tag(:div, Formtastic::Util.html_safe(select_html), {:class => 'controls'})
+  end
+
+  def boolean_input(method, options)
+    parts(method, options){ super }
   end
 
   # remove the button wrapper

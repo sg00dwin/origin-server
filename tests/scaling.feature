@@ -1,6 +1,5 @@
-#@verify
-@node
-@broker
+#@runtime_extended
+#@runtime_extended1
 Feature: Scaling Verification Tests
   Scenario Outline: AutoScale App
     Given the libra client tools
@@ -47,4 +46,18 @@ Feature: Scaling Verification Tests
     | app_count |     type     |
     |     1     |  php-5.3     |
 
+  Scenario Outline: Scaled App Cartridges
+    Given the libra client tools
+    And an accepted node
+    When a scaled <type> application is created
+    Then the haproxy-status page will be responding
+    And the gear members will be UP
+    When the haproxy-1.4 cartridge is removed
+    Then the operation is not allowed
+    And the haproxy-status page will be responding
+    And the <type> health-check will be successful
+
+  Scenarios: Scaled App Cartridges Scenarios
+   | app_count |     type     |
+   |     1     |  php-5.3     |
 

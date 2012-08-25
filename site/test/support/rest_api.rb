@@ -1,21 +1,26 @@
 require 'mocha'
-require 'openshift'
 require 'streamline'
 
 class ActiveSupport::TestCase
   def setup_api
-    host = ENV['LIBRA_HOST'] || 'localhost'
+    host = ENV['RHC_SERVER'] || ENV['LIBRA_SERVER'] || 'localhost'
     RestApi::Base.site = "https://#{host}/broker/rest"
     RestApi::Base.prefix='/broker/rest/'
   end
   def setup_user(unique=false)
-    @user = WebUser.new :email_address=>"app_test1#{unique ? uuid : ''}@test1.com", :rhlogin=>"app_test1#{unique ? uuid : ''}@test1.com"
-
-    session[:login] = @user.login
-    session[:user] = @user
-    session[:ticket] = '123'
-    @request.cookies['rh_sso'] = '123'
+    set_user(WebUser.new :email_address=>"app_test1#{unique ? uuid : ''}@test1.com", :rhlogin=>"app_test1#{unique ? uuid : ''}@test1.com", :ticket => '1')
+  end
+  def set_user(user)
+    session[:login] = user.login
+    session[:user] = user
+    session[:ticket] = user.ticket
+    @request.cookies['rh_sso'] = user.ticket
     @request.env['HTTPS'] = 'on'
+    @user = user
+  end
+
+  def auth_headers
+   {'Cookie' => "rh_sso=#{@user.ticket}", 'Authorization' => "Basic #{::Base64.encode64s("#{@user.login}:#{@user.password}")}"}
   end
 
   # Create a new, unique user
@@ -30,13 +35,21 @@ class ActiveSupport::TestCase
     "#{Time.now.to_i}#{gen_small_uuid[0,6]}"
   end
 
+  def set_domain(domain)
+    @domain = domain
+  end
+
   def setup_domain
-    @domain = Domain.new :name => "#{uuid}", :as => @user
-    unless @domain.save
-      puts @domain.errors.inspect
-      fail 'Unable to create the initial domain, test cannot be run'
+    domain = Domain.new :name => "#{uuid}", :as => @user
+    begin
+      domain.save!
+    rescue Domain::AlreadyExists, Domain::UserAlreadyHasDomain
+      domain.errors.clear
+    rescue => e
+      puts "Domain create failed: #{e.response.errors.inspect}" rescue nil
+      raise
     end
-    @domain
+    set_domain(domain)
   end
 
   def cleanup_domain
@@ -86,18 +99,69 @@ class ActiveSupport::TestCase
     setup_user
     once :domain do
       domain = Domain.first :as => @user
-      domain.destroy_recursive if domain
-      @@domain = setup_domain
+      @@domain = domain || setup_domain
       unless @with_unique_user
         lambda do
-          begin
-            @@domain.destroy_recursive
-          rescue ActiveResource::ResourceNotFound
-          end
+          @@domain.destroy_recursive rescue nil
+          @@domain = nil
         end
       end
     end
     @domain = @@domain
+  end
+
+  def setup_from_app(app)
+    set_domain Domain.new({:id => app.domain_id, :as => app.as}, true)
+    set_user app.as
+    app
+  end
+
+  def self.api_cache
+    @@cache ||= {}
+  end
+
+  def api_fetch(name, &block)
+    varname = "@#{name}_cached"
+    instance_variable_get(varname) || begin
+      created = if cached = self.class.api_cache[name]
+          block.call(cached) || cached
+        else
+          self.class.api_cache[name] = block.call(nil)
+        end
+      instance_variable_set(varname, created)
+    end
+  end
+
+  def use_app(symbol, &block)
+    api_fetch(symbol) do |cached|
+      if cached
+        setup_from_app(cached)
+      else
+        with_unique_domain
+        app = yield block if block_given?
+        app ||= Application.new :name => uuid
+        app.as ||= @user
+        app.domain_id ||= @domain.id
+        app.save!
+        app
+      end
+    end
+  end
+
+  def with_app
+    use_app(:readable_app) { Application.new({:name => "cart#{uuid}", :cartridge => 'ruby-1.8'}) }
+  end
+
+  def with_scalable_app
+    use_app(:scalable_app) { Application.new({:name => "cart#{uuid}", :cartridge => 'ruby-1.8', :scale => 'true'}) }
+  end
+
+  def json_header(is_post=false)
+    {(is_post ? 'Content-Type' : 'Accept') => 'application/json', 'User-Agent' => Rails.configuration.user_agent}.merge!(auth_headers)
+  end
+
+  def anonymous_json_header(is_post=false)
+    {(is_post ? 'Content-Type' : 'Accept') => 'application/json', 'User-Agent' => Rails.configuration.user_agent}
   end
 
   def assert_attr_equal(o1, o2)
@@ -113,4 +177,3 @@ class ActiveSupport::TestCase
     end
   end
 end
-

@@ -3,7 +3,7 @@
 %global gemdir %(ruby -rubygems -e 'puts Gem::dir' 2>/dev/null)
 %global geminstdir %{gemdir}/gems/%{gemname}-%{version}
 
-Summary:       OpenShift Express Client Tools
+Summary:       OpenShift Client Tools
 Name:          rubygem-%{gemname}
 Version:       0.84.1
 Release:       1%{?dist}
@@ -21,8 +21,8 @@ BuildArch:     noarch
 Provides:      rubygem(%{gemname}) = %{version}
 
 %description
-OpenShift Express Client Tools allows you to create and deploy applications to
-the cloud. The OpenShift Express client is a command line tool that allows you
+OpenShift Client Tools allows you to create and deploy applications to
+the cloud. The OpenShift client is a command line tool that allows you
 to manage your applications in the cloud.
 
 %prep

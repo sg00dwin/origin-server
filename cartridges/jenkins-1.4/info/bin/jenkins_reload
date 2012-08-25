@@ -1,6 +1,0 @@
-#!/bin/bash
-
-# Exit on any errors
-set -e
-
-curl -s -w %{http_code} -X POST --insecure --user ${1}:${2} ${3}reload

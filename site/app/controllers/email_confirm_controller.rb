@@ -7,6 +7,8 @@ class EmailConfirmController < SiteController
 
   layout 'simple'
 
+  before_filter :changing_current_user!
+
   def confirm_external
     registration_referrer = params[:registration_referrer]
     if registration_referrer
@@ -24,20 +26,20 @@ class EmailConfirmController < SiteController
     key = params[:key]
     email = params[:emailAddress]
 
-    redirect_path ||= login_path(:email_address => email)
-
     @user = WebUser.new
 
     if key.blank? or email.blank?
       @user.errors.add(:base, 'The confirmation link is not correct.  Please check that you copied the link correctly or try registering again.')
 
-    elsif @user.confirm_email(key, email) #sets errors
-      reset_sso
-      reset_session
+    elsif @user.confirm_email(key, email)
+      redirect_path ||= server_relative_uri(params[:then]) || default_after_signup_redirect
+
+      self.current_user = @user
+
       redirect_to redirect_path and return
     end
 
-    logger.debug "Errors during confirmation #{@user.errors}"
+    logger.debug "  Errors during confirmation #{@user.errors.inspect}"
     render :error
   end
 end

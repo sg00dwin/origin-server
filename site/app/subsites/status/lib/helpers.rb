@@ -38,3 +38,13 @@ def _log(string)
   logger = defined?(Rails) ? Rails.logger : Logger.new(STDOUT)
   logger.debug("STATUS_APP: #{string}")
 end
+
+def delete_all
+  [Issue,Update].each do |x|
+    x.delete_all
+  end
+end
+
+def dump_json
+  { :issues => Issue.all, :updates => Update.all }.to_json
+end

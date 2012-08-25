@@ -5,13 +5,15 @@ auth --useshadow --enablemd5
 selinux --enforcing
 firewall --enabled --service=mdns
 xconfig --startxonboot
-part / --size 6120  --fstype ext4 --ondisk sda
+part / --size 6000  --fstype ext4 --ondisk sda
 services --enabled=network,sshd --disabled=NetworkManager
+bootloader --append="biosdevname=0"
 
 repo --name=fedora --mirrorlist=http://mirrors.fedoraproject.org/mirrorlist?repo=fedora-$releasever&arch=$basearch
-repo --name=updates --mirrorlist=http://mirrors.fedoraproject.org/mirrorlist?repo=updates-released-f$releasever&arch=$basearch
-repo --name=brew --baseurl=file:///root/brew
-repo --name=stickshift --baseurl=file:///tmp/tito/noarch
+#repo --name=updates --mirrorlist=http://mirrors.fedoraproject.org/mirrorlist?repo=updates-released-f$releasever&arch=$basearch
+repo --name=updates --baseurl=file:///build/update_repo
+repo --name=brew --baseurl=file:///build/brew
+repo --name=stickshift --baseurl=file:///build/tito/rpms/fc16/x86_64
 repo --name=passenger --baseurl=http://passenger.stealthymonkeys.com/fedora/$releasever/$basearch
 
 %packages
@@ -109,24 +111,24 @@ stickshift-broker
 
 cartridge-10gen-mms-agent-0.1
 cartridge-cron-1.4
-cartridge-haproxy-1.4
+#cartridge-haproxy-1.4
 cartridge-jbossas-7
-#cartridge-jenkins-1.4
-#cartridge-jenkins-client-1.4
+cartridge-jbosseap-6.0
+cartridge-jenkins-1.4
+cartridge-jenkins-client-1.4
 cartridge-mongodb-2.0
 cartridge-mysql-5.1
 cartridge-nodejs-0.6
 cartridge-perl-5.10
 cartridge-php-5.3
-cartridge-phpmoadmin-1.0
+#cartridge-phpmoadmin-1.0
 cartridge-phpmyadmin-3.4
-cartridge-postgresql-8.4
-cartridge-ruby-1.1
+#cartridge-postgresql-8.4
+cartridge-ruby-1.8
 cartridge-diy-0.1
-cartridge-rockmongo-1.1
-cartridge-python-3.2
+#cartridge-rockmongo-1.1
+cartridge-python-2.6
 
-rubygem-crankcase-mongo-plugin
 rubygem-swingshift-mongo-plugin
 rubygem-uplift-bind-plugin
 rubygem-gearchanger-oddjob-plugin
@@ -466,9 +468,42 @@ Name=Openshift
 Comment[en_US]=Openshift
 Comment=Openshift
 FOE
+cat <<FOE > /home/liveuser/.config/autostart/terminal.desktop
+[Desktop Entry]
+Type=Application
+Exec=/usr/bin/gnome-terminal
+Hidden=false
+X-GNOME-Autostart-enabled=true
+Name[en_US]=Terminal
+Name=Terminal
+Comment[en_US]=Terminal
+Comment=Terminal
+FOE
 chown -R liveuser:liveuser /home/liveuser
 chown -R liveuser:liveuser /home/liveuser/.config
 
+cat <<FOE > /home/liveuser/SOURCES.txt
+A complete machine-readable copy of the source code corresponding to
+certain portions of the accompanying software is available from Red
+Hat on request. To obtain such source code, send a check or money
+order in the amount of US$10.00 along with a copy of this offer to:
+
+Legal Affairs 
+c/o Richard Fontana
+Red Hat, Inc.
+314 Littleton Road
+Westford, MA 01886 USA
+
+Please provide an email address and a telephone number so that we may
+contact you should we have any questions concerning fulfillment of
+your order. This offer is open to any third party in receipt of this
+information and shall expire three years following the date of the
+most recent distribution of the accompanying software by Red Hat.
+
+Corresponding source packages for components of this software that are
+taken from Fedora 16 are also available at
+http://koji.fedoraproject.org/koji/.
+FOE
 
 # Turn off PackageKit-command-not-found while uninstalled
 if [ -f /etc/PackageKit/CommandNotFound.conf ]; then
@@ -516,6 +551,7 @@ grep -l NM_CONTROLLED /etc/sysconfig/network-scripts/ifcfg-* | xargs perl -p -i 
 su -c "/usr/bin/ss-register-user -u admin -p admin"
 
 
+su -c "/usr/bin/ss-register-user -u admin -p admin"
 EOF
 
 echo "Final setup"
@@ -540,7 +576,7 @@ chkconfig mongod on
 perl -p -i -e "s/^#auth = .*$/auth = true/" /etc/mongodb.conf
 
 echo "setup stickshift plugins in broker"
-sed -i -e "s/^# Add plugin gems here/# Add plugin gems here\ngem 'swingshift-mongo-plugin'\ngem 'uplift-bind-plugin'\ngem 'crankcase-mongo-plugin'\ngem 'gearchanger-oddjob-plugin'\n/" /var/www/stickshift/broker/Gemfile
+sed -i -e "s/^# Add plugin gems here/# Add plugin gems here\ngem 'swingshift-mongo-plugin'\ngem 'uplift-bind-plugin'\ngem 'gearchanger-oddjob-plugin'\n/" /var/www/stickshift/broker/Gemfile
 
 echo "setup bind-plugin selinux policy"
 mkdir -p /usr/share/selinux/packages/rubygem-uplift-bind-plugin
@@ -604,26 +640,10 @@ rotatelogs_interval=86400
 rotatelogs_format="-%Y%m%d-%H%M%S-%Z"
 EOF
 
-sed -i -e "s/^# Add plugin gems here/# Add plugin gems here\ngem 'swingshift-mongo-plugin'\ngem 'uplift-bind-plugin'\ngem 'crankcase-mongo-plugin'\ngem 'gearchanger-oddjob-plugin'\n/" /var/www/stickshift/broker/Gemfile
+sed -i -e "s/^# Add plugin gems here/# Add plugin gems here\ngem 'swingshift-mongo-plugin'\ngem 'uplift-bind-plugin'\ngem 'gearchanger-oddjob-plugin'\n/" /var/www/stickshift/broker/Gemfile
 pushd /var/www/stickshift/broker/ && rm -f Gemfile.lock && bundle show && chown apache:apache Gemfile.lock && popd
 
 mkdir -p /var/www/stickshift/broker/config/environments/plugin-config
-
-echo "require File.expand_path('../plugin-config/crankcase-mongo-plugin.rb', __FILE__)" >> /var/www/stickshift/broker/config/environments/development.rb
-cat <<EOF > /var/www/stickshift/broker/config/environments/plugin-config/crankcase-mongo-plugin.rb
-Broker::Application.configure do
-  config.datastore = {
-    :replica_set => false,
-    # Replica set example: [[<host-1>, <port-1>], [<host-2>, <port-2>], ...]
-    :host_port => ["localhost", 27017],
-
-    :user => "stickshift",
-    :password => "mooo",
-    :db => "stickshift_broker_dev",
-    :collections => {:user => "user"}
-  }
-end
-EOF
 
 
 echo "require File.expand_path('../plugin-config/swingshift-mongo-plugin.rb', __FILE__)" >> /var/www/stickshift/broker/config/environments/development.rb
@@ -668,17 +688,34 @@ BOOTPROTO=dhcp
 ONBOOT=yes
 EOF
 
-# Setup swap for devenv
+# Setup swap for VM
 [ -f /.swap ] || ( /bin/dd if=/dev/zero of=/.swap bs=1024 count=1024000
     /sbin/mkswap -f /.swap
     /sbin/swapon /.swap
     echo "/.swap swap   swap    defaults        0 0" >> /etc/fstab
 )
 
+echo 'AcceptEnv GIT_SSH' >> /etc/ssh/sshd_config
+ln -s /usr/bin/sssh /usr/bin/rhcsh
 chkconfig oddjobd on
 chmod 755 /etc/rc.d/init.d/livesys-late-openshift
 /sbin/restorecon /etc/rc.d/init.d/livesys-late-openshift
 /sbin/chkconfig --add livesys-late-openshift
+
+mkdir -p /home/liveuser/.config/autostart
+chown -R liveuser:liveuser /home/liveuser/.config
+echo <<EOF > /home/liveuser/.config/autostart/openshift.desktop
+[Desktop Entry]
+Type=Application
+Exec=/usr/bin/firefox http://www.openshift.com
+Hidden=false
+X-GNOME-Autostart-enabled=true
+Name[en_US]=Openshift
+Name=Openshift
+Comment[en_US]=Openshift
+Comment=Openshift
+EOF
+
 %end
 
 %post
@@ -734,39 +771,39 @@ Get Started
 <div class="column-content lift-less grid-wrapper">
 <div class="span12 span-flush-right">
 
-<h1 class="ribbon">About this Fedora remix</h1>
+<h1 class="ribbon">About this Openshift Origin LiveCD</h1>
 <section id="intro">
-This Fedora remix contains all the Open-source components that power Openshift. Source code and documentation for these components is available at https://github.com/openshift<br/><br/>
+OpenShift Origin contains the open-source components that power OpenShift. Source code and documentation for these components is available at <a href="https://github.com/openshift/crankcase">https://github.com/openshift/crankcase</a><br/><br/>
 The image contains 5 sets of components:
 <ol>
-	<li><a href="https://github.com/openshift/stickshift">StickShift</a>: Provides a PaaS API framework and plugin architecture to build a cloud</li>
-	<li><a href="https://github.com/openshift/crankcase">Crankcase</a>: Plugins that provide different persistence layers for application metadata. Eg: Mongo, s3 etc.</li>
-	<li><a href="https://github.com/openshift/gearchanger">Gearchanger</a>: Plugins that provide different broker-gear communication mechanisms.</li>
-	<li><a href="https://github.com/openshift/uplift">Uplift</a>: Plugins that provide different DNS management engines.</li>
-	<li><a href="https://github.com/openshift/swingshift">Swingshift</a>: Plugins that provide integration with different authentication schemes.</li>
-	<li><a href="https://github.com/openshift/cartridges">Cartridges</a>: Provides management wrappers around software runtimes that will be enabled in both this runtime and the service offering.</li>	
+	<li><a href="https://github.com/openshift/crankcase/tree/master/stickshift">Broker</a>: Central service exposing a REST API for consumers and coordinating with the application containers (known as nodes).</li>
+	<li><a href="https://github.com/openshift/crankcase/tree/master/gearchanger">Messaging System</a>: A pluggable communication pipeline component for facilitating communication between broker and each node.</li>
+	<li><a href="https://github.com/openshift/crankcase/tree/master/swingshift">User Authentication</a>: A pluggable user authentication component with a default MongoDB implementation.</li>
+	<li><a href="https://github.com/openshift/crankcase/tree/master/uplift">Domain Name Management</a>:  A pluggable user authentication component that provides DNS management.</li>
+	<li><a href="https://github.com/openshift/crankcase/tree/master/cartridges">Cartridges</a>: Management wrappers around software runtimes that will be enabled in both this runtime and the service offering.</li>	
 </ol>
 </section>
 
-<h1 class="ribbon">Get Started with the Fedora remix</h1>
+<h1 class="ribbon">Get Started with the OpenShift Origin</h1>
 <section id="create_domain_name">
 <h3>1. Create a domain name</h3>
 <p>
-Using your OpenShift login and password, call rhc domain create to create a unique domain name for your applications.<br/>
-<pre><b>Note:</b> A login with the username 'admin' and password 'admin' has been created for you.</pre>
+Using your OpenShift Origin login and password, call rhc domain create to create a unique domain name for your applications.<br/>
+<pre><b>Note:</b> A login with the username 'admin' and password 'admin' has been created for you.
+Additional logins can be created using the ss-create-user command:
+    su -c "ss-create-user -u&lt;username&gt; -p&lt;password&gt;"</pre>
+
 </p><pre>$ rhc domain create -n mydomain -l admin
 Password: admin
 </pre>
 <p></p>
 <aside>
 <p>
-OpenShift domain names make up part of your app's url. They are also unique across all OpenShift users, so choose wisely, and be creative!
+The domain names provided above make up part of your app's url.
 </p>
 </aside>
 <aside>
-<p>
-The <code>rhc domain create</code> command will create a configuration file - &lt;your home directory&gt;/.openshift/express.conf - which sets up a default login.
-</p>
+<p>The <code>rhc domain create</code> command will create a configuration file - &lt;your home directory&gt;/.openshift/express.conf - which sets up a default login.</p>
 </aside>
 </section>
 <section class="topic" id="create_application">
@@ -781,7 +818,7 @@ This will create a remote git repository for your application, and clone it loca
 </p>
 <aside>
 <p>
-OpenShift offers many application stacks. Run <code>rhc app create -h</code> to see all of your options.
+OpenShift Origin offers many application stacks. Run <code>rhc app create -h</code> to see all of your options.
 </p>
 </aside>
 <aside>
@@ -796,8 +833,8 @@ Your application's domain name will be &lt;your app name&gt;-&lt;your domain nam
 <section class="topic" id="publish">
 <h3>3. Make a change, publish</h3>
 <p>
-As we all know, getting an application running is only the first step. Now you are on the road to making it your own.  Here's an example for
-the php framework.
+Now that you have created a template application, here's how to update it with your content.
+Here's an example for the php framework.
 </p>
 <pre>$ cd myapp
 $ vim php/index.php
@@ -806,7 +843,7 @@ $ git commit -a -m "My first change"
 $ git push
 </pre>
 <p>
-Use whichever IDE or editor works best for you. Chances are, it'll have git support. Even if it doesn't, you're just two simple commands away from glory!
+Use whichever IDE or editor works best for you. Chances are, it'll have git support.
 </p>
 <p>
 Now, check your URL - your change will be live.
@@ -825,9 +862,9 @@ Checkout these great guides for deploying popular frameworks on OpenShift:
 </aside>
 </section>
 <section class="topic" id="next_steps">
-<h3>5. Next steps</h3>
+<h3>4. Next steps</h3>
 <p>
-While this has gotten you started, there is a lot more information out there to really get you going.  Check out the following pages for videos, blogs, and tutorials:
+Check out the following pages for videos, blogs, and tutorials:
 </p><ul>
 <li><a href="https://www.redhat.com/openshift/community/videos">Videos</a></li>
 <li><a href="http://docs.redhat.com/docs/en-US/OpenShift/2.0/html/User_Guide/index.html">Technical Documentation</a></li>
@@ -910,5 +947,5 @@ While this has gotten you started, there is a lot more information out there to 
 EOF
 chown apache:apache /var/www/html/getting_started.html
 chmod a+r /var/www/html/getting_started.html
-restorecon /var/www/html/getting_started.html
+/sbin/restorecon /var/www/html/getting_started.html
 %end

@@ -28,11 +28,9 @@ class Signin < OpenShift::SeleniumTestCase
 
     # Try a valid login
     signin
-    assert_redirected_to '/app/console/application_types'
+    assert_redirected_to @rest_console.application_types_page.path
 
-    # FIXME: when navbar functionality is restored click the logout link instead
-    # Log out and make sure we're redirected
-    signout
-    assert_redirected_to '/app/'
+    @navbar.click_signout
+    assert_redirected_to "/"
   end
 end

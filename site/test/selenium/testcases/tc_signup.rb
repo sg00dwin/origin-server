@@ -2,61 +2,68 @@ require 'openshift/selenium_test_case'
 
 class Signup < OpenShift::SeleniumTestCase
 
-# FIXME: signup is now a page, not a dialog so we need to fix the code to
-#        reflect that
-
-=begin
   def setup
     super
     @home.open
 
     @tests = {
       :empty => [],
-      :invalid => [ data[:username] ],
-      :short_pass => [ "#{data[:username]}@#{data[:domain]}.com", data[:password][0,5] ],
-      :mismatched => [ "#{data[:username]}@#{data[:domain]}.com", data[:password], data[:password2] ],
-      :bad_domain => [ "#{data[:username]}@#{data[:domain]}.ir", data[:password], data[:password], true ],
-      :success => [ "flindiak+sauce_#{data[:username]}@redhat.com", data[:password],data[:password], true ]
+      :invalid => { :name => data[:username] },
+      :short_pass => { :name => "#{data[:username]}@#{data[:domain]}.com",
+                       :password => data[:password][0,5] },
+      :mismatched => { :name => "#{data[:username]}@#{data[:domain]}.com",
+                       :password => data[:password],
+                       :confirm => data[:password2] },
+      :bad_domain => { :name => "#{data[:username]}@#{data[:domain]}.ir",
+                       :password => data[:password],
+                       :confirm => data[:password],
+                       :recaptcha => true },
+=begin
+      #FIXME: figure out how to bypass captcha
+      :success => { :name => "flindiaksauce_#{data[:username]}@redhat.com",
+                    :password => data[:password],
+                    :confirm => data[:password],
+                    :recaptcha => true }
+=end
     }
   end
 
-  def test_signup_dialog
+  def test_signup
     assertions = {
-      :empty => lambda{|s| 
-        [ :email, :password, :confirm ].each do |field|
-          assert_dialog_error(s,:label,field,[:required_field])
+      :empty => lambda{
+        [ :name, :password, :confirm ].each do |field|
+           assert @signup.form.in_error? field
         end
       },
-      :invalid => lambda{|s|
-        assert_dialog_error(s,:label,:email,[ :invalid_email ])
+      :invalid => lambda{
+        assert @signup.form.in_error? :name
       },
-      :short_pass => lambda{|s| 
-        assert_dialog_error(s,:label,:password,[ :short_password ])
+      :short_pass => lambda{
+        assert @signup.form.in_error? :password
       },
-      :mismatched => lambda{|s|
-        assert_dialog_error(s,:label,:confirm,[ :mismatched_password ])
+      :mismatched => lambda{
+        assert @signup.form.in_error? :confirm
       },
 
-      # These errors are generated server side
-      :no_captcha => lambda{|s|
-        assert_dialog_error(s,:error,nil,[ :bad_captcha ])
+      :no_captcha => lambda{
+        assert @signup.form.in_error? :captcha
       },
-      :bad_domain => lambda{|s|
-        assert_dialog_error(s,:error,nil,[ :bad_domain ])
+
+      :bad_domain => lambda{
+        assert @signup.form.in_error? :name
       },
 
       # This should succeed
-      :success => lambda{|s|
-        assert_redirected_to('/app/user/complete')
+      :success => lambda{
+        assert_redirected_to('/user/complete')
       }
     }
 
-    @tests.each do |name,args|
-      open_dialog(:signup, name != :success){ |signup|
-        signup.submit(*args) #*args passes the array as individual elements
-        assertions[name].call(signup)
-      }
+    @tests.each do |name, args|
+      @signup.open
+      args.each { |field, value| @signup.form.set_value(field, value) }
+      @signup.form.submit
+      assertions[name].call
     end
   end
-=end
 end

@@ -1,17 +1,24 @@
 #top.section-top
   .container
+    = link_to "Status", status_path, :title => 'Track open issues on the OpenShift status page', :class => 'btn btn-small btn-warning', :style => 'display:none;', :id => 'outage'
     .pull-left
-      = link_to "Sign up for the newsletter", newsletter_signup_url
+      -#= link_to "Newsletter Sign Up", newsletter_signup_url
+      = link_to "Plans and Pricing", pricing_url
     .pull-right.login
+      %form#search-top{:action => "/community/search/node", :method => "get"}
+        %input.search-query{:name => "keys", :placeholder => "SEARCH", :type => "text"}
+          %button.search{:type => "submit", :value => "Search"}
+    
       -#if session[:login]
         = link_to session[:login], "console", :class => 'btn btn-small'
-        = link_to 'Sign out', logout_path, :class => 'btn btn-small'
+        = link_to 'Sign out', logout_path, :class => 'btn btn-small sign_out'
       -# The signin link is always present so we can cache the page
       - if logged_in?
-        = link_to "Manage Your Apps", console_path, :class => 'btn btn-small'
-        = link_to "Sign Out", logout_path, :class => 'btn btn-small'
+        = link_to "My Apps", console_path, :class => 'btn btn-small'
+        = link_to "My Account", account_path, :class => 'btn btn-small'
+        = link_to "Sign Out", logout_path, :class => 'btn btn-small sign_out'
       - else
-        = link_to "Sign In to Manage Your Apps", console_path, :class => 'btn btn-small'
+        = link_to "Sign In", console_path, :class => 'btn btn-small sign_in'
 
       -# ['f', 'g', 't'].each do |p|
         = link_to p, :class => 'btn btn-small login-provider' do
@@ -29,16 +36,16 @@
             Shift
       %ul.nav
         - cur_url = url_for(:action => controller.action_name, :controller => controller.controller_name)
-        -[  ["Learn More", product_overview_path],
-            ["Get Started", getting_started_path],
+        -[  ["Learn More", product_overview_path, 'learn_more'],
+            ["Get Started", getting_started_path, 'getting_started'],
             "&nbsp;",
-            ["Console", console_path],
-            ["Community", community_url] ].each do |link|
+            ["Developers", developers_path,'developers'],
+            ["Community", community_path, 'community'] ].each do |link|
           - if link.class.name == "String"
             %li.divider!= link.to_s
           -else
             %li{:class => cur_url == link[1] ? :active : ''}
-              = link_to link[1] do
+              = link_to link[1], :class => link[2] do
                 %span= link[0]
 
   - if content_for? :header

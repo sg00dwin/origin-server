@@ -23,7 +23,7 @@
         <string>uploadpack</string>
         <string>git-upload-pack</string>
         <string>url</string>
-        <string>git://git1.ops.rhcloud.com/li.git/</string>
+        <string>git@github.com:openshift/li.git</string>
         <string>tagopt</string>
         <string></string>
       </org.spearce.jgit.transport.RemoteConfig>
@@ -55,7 +55,7 @@
   <triggers class="vector">
     <org.jenkinsci.plugins.fstrigger.triggers.FolderContentTrigger>
       <spec>* */2 * * *</spec>
-      <path>/var/lib/jenkins/jobs/libra_check/workspace/site</path>
+      <path>/var/lib/jenkins/jobs/libra_ami/workspace/site</path>
     </org.jenkinsci.plugins.fstrigger.triggers.FolderContentTrigger>
   </triggers>
   <concurrentBuild>false</concurrentBuild>
@@ -66,12 +66,12 @@ build/devenv launch libra_web_${BUILD_NUMBER} --verifier
 build/devenv sync libra_web_${BUILD_NUMBER} --tag --clean_metadata
 
 # Run the web verification tests
-build/devenv test libra_web_${BUILD_NUMBER} --terminate --exclude_internal --exclude_verification --include_web</command>
+build/devenv test libra_web_${BUILD_NUMBER} --terminate --include_web</command>
     </hudson.tasks.Shell>
   </builders>
   <publishers>
     <hudson.tasks.ArtifactArchiver>
-      <artifacts>rhc/log/*</artifacts>
+      <artifacts>rhc/log/**</artifacts>
       <latestOnly>false</latestOnly>
     </hudson.tasks.ArtifactArchiver>
     <hudson.tasks.Mailer>

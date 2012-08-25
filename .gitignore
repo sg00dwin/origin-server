@@ -1,5 +1,6 @@
 *~
 #*#
+app/subsites/status/db/status.sqlite3
 .idea
 *.iml
 *.komodoproject
@@ -10,6 +11,7 @@
 *.pyo
 *.redcar*
 rhc/
+.sass-cache
 site/.sass-cache/
 .*.swp
-.sass-cache
+._*

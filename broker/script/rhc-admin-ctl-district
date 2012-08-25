@@ -22,7 +22,7 @@ Options:
 -n|--name <district name>
     District name (Used on create or in place of uuid on other commands)
 -p|--node_profile <profile_size>
-    (small(default)|jumbo|exlarge|large|medium|micro) Only needed for create
+    (small(default)|jumbo|exlarge|large|medium|micro|c9) Only needed for create
 -i|--server_identity
     Node server_identity (required)
 -s|--size
@@ -81,8 +81,8 @@ bypass   = args['--bypass']
 name     = args['--name']
 node_profile = args['--node_profile']
   
-if node_profile && !(node_profile =~ /\A(jumbo|exlarge|large|medium|micro|small)\z/)
-  puts "Node profile must be one of: (small(default)|jumbo|exlarge|medium|large|micro)"
+if node_profile && !(node_profile =~ /\A(jumbo|exlarge|large|medium|micro|small|c9)\z/)
+  puts "Node profile must be one of: (small(default)|jumbo|exlarge|medium|large|micro|c9)"
   exit 1
 end
 

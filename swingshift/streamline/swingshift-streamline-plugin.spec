@@ -5,7 +5,7 @@
 
 Summary:        SwingShift plugin for streamline auth service
 Name:           rubygem-%{gemname}
-Version:        0.8.2
+Version: 0.13.1
 Release:        1%{?dist}
 Group:          Development/Languages
 License:        ASL 2.0
@@ -70,22 +70,20 @@ rm -rf %{buildroot}
 %{ruby_sitelib}/%{gemname}.rb
 
 %changelog
-* Thu Apr 12 2012 Mike McGrath <mmcgrath@redhat.com> 0.8.2-1
-- release bump for tag uniqueness (mmcgrath@redhat.com)
+* Wed Aug 22 2012 Adam Miller <admiller@redhat.com> 0.13.1-1
+- bump_minor_versions for sprint 17 (admiller@redhat.com)
 
-* Mon Apr 09 2012 Mike McGrath <mmcgrath@redhat.com> 0.7.5-1
-- raise access denied exception when recieving empty user login in devenv.
-  Bugz(811015) (kraman@gmail.com)
-- Test build process (kraman@gmail.com)
-- Additonal fixes:        - streamline auth (kraman@gmail.com)
-- Bug fixes after initial merge of OSS packages (kraman@gmail.com)
+* Tue Aug 14 2012 Adam Miller <admiller@redhat.com> 0.12.2-1
+- capturing broker key/iv auth failure and returning access denied exception
+  (abhgupta@redhat.com)
+- fixing auth issue that returned 500 if credentials were not specified in the
+  new rest api (abhgupta@redhat.com)
 
-* Mon Apr 02 2012 Krishna Raman <kraman@gmail.com> 0.7.4-1
-- 
+* Wed Jul 11 2012 Adam Miller <admiller@redhat.com> 0.12.1-1
+- bump_minor_versions for sprint 15 (admiller@redhat.com)
 
-* Fri Mar 30 2012 Krishna Raman <kraman@gmail.com> 0.7.3-1
-- Renaming for open-source release
+* Sat Jun 23 2012 Dan McPherson <dmcphers@redhat.com> 0.11.3-1
+- cleaning up specs (dmcphers@redhat.com)
 
-* Wed Mar 21 2012 Krishna Raman <kraman@gmail.com> 0.7.2-1
-- Renaming for open-source release
-
+* Sat Jun 23 2012 Dan McPherson <dmcphers@redhat.com> 0.11.2-1
+- new package built with tito

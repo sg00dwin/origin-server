@@ -1,0 +1,72 @@
+<style type="text/css">
+#not_found {
+  min-height: 450px;
+  background-image: 
+    url('/app/images/panda404_400.png');
+  background-position: 
+    center top;
+  background-repeat: 
+    no-repeat;
+}
+@media  (max-width: 479px) {
+  #not_found {
+    background-image: 
+      url('/app/images/panda404_250.png');
+    background-position: 
+      center top;
+    min-height: 335px;
+  }
+}
+@media (min-width: 480px) and (max-width: 767px) {
+  #not_found {
+    background-image: 
+      url('/app/images/panda404_300.png');
+    background-position: 
+      center top;
+    min-height: 400px;
+  }
+}
+@media (min-width: 768px) and (max-width: 979px) {
+  #not_found {
+    background-image: 
+      url('/app/images/panda404_350.png');
+  }
+}
+ 
+h1 span {
+  font-size: 16px;
+  color: #888;
+  color: rgb(136, 136, 136);
+  text-shadow: none;
+}
+</style>
+
+<h1>Page not found <span>404</span></h1>
+
+<div class="row">
+  <div class="span6">
+<h2>The page you requested was not found.</h2>
+
+<h3>Your applications</h3>
+<div class="well">
+<a href="">PHPapp.rhcloud.com</a><br />
+<a href="">Rubyapp.rhcloud.com</a><br />
+<a href="">MyOtherapp.rhcloud.com</a><br />
+</div>
+
+<ul>
+  <li><a href="http://openshift.redhat.com/app/console">Management console</a></li>
+  <li><a href="http://openshift.redhat.com/app/account">View your account</a></li>
+  <li><a href="http://openshift.redhat.com/app/console/help">Get help</a></li>
+</ul>
+
+
+<p><a href="mailto:openshift@redhat.com">Contact us</a> if you feel you have reached this page in error.
+</div><!-- /span -->
+
+<div class="span6">
+<div id="not_found">
+
+</div>
+</div><!-- /span -->
+</div><!-- /row -->

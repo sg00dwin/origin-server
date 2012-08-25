@@ -1,22 +1,25 @@
 source 'http://rubygems.org'
 
-gem 'rails', '~> 3.0.10'
+gem 'rails', '~> 3.0.13'
 gem 'json'
 gem 'stomp'
 gem 'parseconfig'
 gem 'mongo'
-gem 'aws-sdk'
 gem 'xml-simple'
 gem 'rack'
 gem 'open4'
 gem 'regin'
 gem 'stickshift-controller'
 gem 'uplift-dynect-plugin'
-gem 'crankcase-mongo-plugin'
 gem 'swingshift-streamline-plugin'
-gem 'gearchanger-m-collective-plugin'
+gem 'gearchanger-mcollective-plugin'
 gem 'rest-client'
 gem 'thread-dump'
+gem 'ruby-prof'
+gem 'mongo_mapper'
+gem 'wddx'
+gem 'pony'
+gem 'systemu'
 
 # Bundle edge Rails instead:
 # gem 'rails', :git => 'git://github.com/rails/rails.git'
@@ -43,5 +46,5 @@ gem 'thread-dump'
 group :development, :test do
   # The require part from http://tinyurl.com/3pf68ho
   gem 'mocha', :require => nil
-  gem 'cucumber'
+  gem 'rcov', :require => nil
 end

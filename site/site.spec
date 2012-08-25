@@ -3,46 +3,45 @@
 
 Summary:   Li site components
 Name:      rhc-site
-Version:   0.91.2
+Version: 0.98.1
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
 URL:       http://openshift.redhat.com
 Source0:   rhc-site-%{version}.tar.gz
-
 BuildRoot: %(mktemp -ud %{_tmppath}/%{name}-%{version}-%{release}-XXXXXX)
 
 # Core dependencies to run the build steps
 BuildRequires: rubygem-bundler
 BuildRequires: rubygem-rake
 BuildRequires: js
-
 # Additional dependencies to satisfy the gems, listed in Gemfile order
 BuildRequires: rubygem-rails
 BuildRequires: rubygem-recaptcha
 BuildRequires: rubygem-json
 BuildRequires: rubygem-stomp
 BuildRequires: rubygem-parseconfig
-BuildRequires: rubygem-aws-sdk
 BuildRequires: rubygem-xml-simple
 BuildRequires: rubygem-haml
 BuildRequires: rubygem-compass
 BuildRequires: rubygem-formtastic
 BuildRequires: rubygem-rack
 BuildRequires: rubygem-regin
+BuildRequires: rubygem-httparty
 BuildRequires: rubygem-rdiscount
+BuildRequires: rubygem-webmock
 BuildRequires: rubygem-barista
-
 BuildRequires: rubygem-mocha
 BuildRequires: rubygem-hpricot
-
 BuildRequires: rubygem-sinatra
 BuildRequires: rubygem-tilt
 BuildRequires: rubygem-sqlite3
-
 BuildRequires: rubygem-mail
 BuildRequires: rubygem-treetop
-
+BuildRequires: rubygem-net-http-persistent
+BuildRequires: rubygem-wddx
+BuildRequires: rubygem-rcov
+BuildRequires: rubygem-ci_reporter
 Requires:  rhc-common
 Requires:  rhc-server-common
 Requires:  httpd
@@ -60,21 +59,33 @@ Requires:  rubygem-compass
 Requires:  rubygem-recaptcha
 Requires:  rubygem-hpricot
 Requires:  rubygem-barista
+Requires:  rubygem-httparty
 Requires:  rubygem-rdiscount
+Requires:  rubygem-webmock
 Requires:  js
-# The following requires are for the status subsite
 Requires:  ruby-sqlite3
 Requires:  rubygem-sqlite3
 Requires:  rubygem-sinatra
-
 Requires:  rubygem-mail
 Requires:  rubygem-treetop
-
+Requires:  rubygem-net-http-persistent
+Requires:  rubygem-wddx
+Requires:  rubygem-rcov
+Requires:  rubygem-ci_reporter
+Requires:  rhc-site-static
 BuildArch: noarch
 
 %description
 This contains the OpenShift website which manages user authentication,
 authorization and also the workflows to request access.
+
+%package static
+Summary:   The static content for the OpenShift website
+Requires: rhc-server-common
+
+%description static
+Static files that can be used even if the OpenShift site is not installed,
+such as images, CSS, JavaScript, and HTML.
 
 %prep
 %setup -q
@@ -84,6 +95,8 @@ bundle exec compass compile
 rm -rf tmp/sass-cache
 bundle exec rake barista:brew
 rm log/development.log
+mv -f tmp/javascripts/* public/javascripts/
+mv -f tmp/stylesheets/* public/stylesheets/
 
 %install
 rm -rf %{buildroot}
@@ -100,6 +113,9 @@ touch %{buildroot}%{sitedir}/log/production.log
 %clean
 rm -rf %{buildroot}                                
 
+%post
+/bin/touch %{sitedir}/log/production.log
+
 %files
 %attr(0775,root,libra_user) %{sitedir}/app/subsites/status/db
 %attr(0664,root,libra_user) %config(noreplace) %{sitedir}/app/subsites/status/db/status.sqlite3
@@ -112,11 +128,1009 @@ rm -rf %{buildroot}
 %{htmldir}/app
 %config(noreplace) %{sitedir}/config/environments/production.rb
 %config(noreplace) %{sitedir}/app/subsites/status/config/hosts.yml
+%exclude %{sitedir}/public
+%exclude %{sitedir}/tmp/javascripts
+%exclude %{sitedir}/tmp/stylesheets
 
-%post
-/bin/touch %{sitedir}/log/production.log
+%files static
+%defattr(0640,root,libra_user,0750)
+%{sitedir}/public
 
 %changelog
+* Wed Aug 22 2012 Adam Miller <admiller@redhat.com> 0.98.1-1
+- bump_minor_versions for sprint 17 (admiller@redhat.com)
+
+* Wed Aug 22 2012 Adam Miller <admiller@redhat.com> 0.97.12-1
+- Un-refactoring overwrite_db (fotios@redhat.com)
+- Moved dumping to JSON to its own function (fotios@redhat.com)
+- Moved deletion to its own function (fotios@redhat.com)
+- Refuse to push if there are no Issues on this host (fotios@redhat.com)
+- Added function to clear current database (useful for testing)
+  (fotios@redhat.com)
+- Refuse to sync from a host with no issues (fotios@redhat.com)
+- Renamed sync to push (fotios@redhat.com)
+- Moved writing database to helper functions (fotios@redhat.com)
+- Merge pull request #283 from
+  smarterclayton/bug849939_plan_upgrade_fails_to_put (openshift+bot@redhat.com)
+- Bug 849939 - Use POST instead of PUT when submitting an account upgrade.
+  (ccoleman@redhat.com)
+
+* Tue Aug 21 2012 Adam Miller <admiller@redhat.com> 0.97.11-1
+- Merge pull request #279 from
+  smarterclayton/bug849627_improve_error_message_handling_on_direct_post
+  (openshift+bot@redhat.com)
+- ctl usage tests (dmcphers@redhat.com)
+- Bug 849627 When an error is encountered from direct post, redirect back to
+  the form with the error keys and attributes. (ccoleman@redhat.com)
+- Merge pull request #276 from nhr/US2457_revised_billing_plan_layout
+  (openshift+bot@redhat.com)
+- Revised plan-related CSS; moved to .haml file (hripps@redhat.com)
+- US2457 Updated plan layout to match latest design (hripps@redhat.com)
+
+* Mon Aug 20 2012 Adam Miller <admiller@redhat.com> 0.97.10-1
+- Merge pull request #275 from
+  smarterclayton/bug849631_downgrade_should_show_errors
+  (openshift+bot@redhat.com)
+- No wizard state on plan selection page. (ccoleman@redhat.com)
+- Bug 849631 - Downgrade of user plan should display errors to user
+  (ccoleman@redhat.com)
+- Bug 849636 Account upgrade should display validation messages from forms
+  (ccoleman@redhat.com)
+- Bug 849356 - The first two segments of the raw content for an SSH key should
+  be used as type and content. (ccoleman@redhat.com)
+- Merge pull request #251 from smarterclayton/header_and_footer_updates
+  (openshift+bot@redhat.com)
+- Tests were looking for old link name.  Moved newsletter into footer.
+  (ccoleman@redhat.com)
+- Update header and footer to fix doc links, and begin simplification of the
+  header. (ccoleman@redhat.com)
+
+* Fri Aug 17 2012 Adam Miller <admiller@redhat.com> 0.97.9-1
+- Merge pull request #255 from
+  smarterclayton/bug849068_warn_about_account_change (openshift+bot@redhat.com)
+- Merge pull request #253 from nhr/US2457_auth_changes
+  (openshift+bot@redhat.com)
+- Add left margin to blog author image to force H1 to wrap
+  (ccoleman@redhat.com)
+- Bug 849068 - Warn the user when they take an action that may result in them
+  being authenticated as another person. (ccoleman@redhat.com)
+- US2457 Relaxed auth for cartridge types and app templates (nhr@redhat.com)
+
+* Fri Aug 17 2012 Adam Miller <admiller@redhat.com> 0.97.8-1
+- Merge pull request #249 from smarterclayton/support_aria_feature_flag
+  (openshift+bot@redhat.com)
+- Merge pull request #248 from fabianofranz/master (openshift+bot@redhat.com)
+- Forgot to add plan info page for disabled path (ccoleman@redhat.com)
+- Provide Aria enabled and disabled modes in production. (ccoleman@redhat.com)
+- US2592 and US2583 (ffranz@redhat.com)
+
+* Thu Aug 16 2012 Adam Miller <admiller@redhat.com> 0.97.7-1
+- Merge pull request #230 from nhr/plan_tests (openshift+bot@redhat.com)
+- US2457 - Added tests for billing components (nhr@redhat.com)
+
+* Thu Aug 16 2012 Adam Miller <admiller@redhat.com> 0.97.6-1
+- Merge pull request #237 from smarterclayton/add_process_id_to_rails_logs
+  (openshift+bot@redhat.com)
+- Merge pull request #226 from smarterclayton/us2516_fill_out_billing_flow
+  (openshift+bot@redhat.com)
+- Merge pull request #238 from smarterclayton/use_aria_proxy_for_devenv
+  (openshift+bot@redhat.com)
+- Create a separate test configuration for direct post so it does not conflict
+  with the real values. (ccoleman@redhat.com)
+- Add process id output to Rails loggers in all modes.  Will need to be changed
+  in Rails 3.2+ (ccoleman@redhat.com)
+- Point site and broker development environments to the Aria API proxy machine
+  (same as streamline) (ccoleman@redhat.com)
+- MasterPlan is cached without loading aria_plan, but the cached object is
+  frozen which prevents the plan from being loaded. (ccoleman@redhat.com)
+- Bad merge (ccoleman@redhat.com)
+- Tweak cache_method for Plan to work correctly (ccoleman@redhat.com)
+- PlansController#show should be auth protected (ccoleman@redhat.com)
+- Overlapping cache responses because of key generation (ccoleman@redhat.com)
+- REST API models were not inheriting parent state, which prevented caching
+  from working.  Add caching more aggressively to all static content.  Remove
+  singleton on application template. (ccoleman@redhat.com)
+- US2516 Flush out the billing flow, add prototypical dashboard for plans, and
+  add Aria caching. (ccoleman@redhat.com)
+
+* Wed Aug 15 2012 Adam Miller <admiller@redhat.com> 0.97.5-1
+- Merge pull request #231 from sg00dwin/master (openshift+bot@redhat.com)
+- Styles and images for the developers technology page; and fix search field
+  img on console/help, set new app input width (sgoodwin@redhat.com)
+- Merge branch 'master' of github.com:openshift/li (sgoodwin@redhat.com)
+
+* Tue Aug 14 2012 Adam Miller <admiller@redhat.com> 0.97.4-1
+- Bug 847147 - Change linking of help information about SSH to the developer
+  center, also add some informative help to the ssh upload section.
+  (ccoleman@redhat.com)
+- Made some minor changes based on code review (nhr@redhat.com)
+- Added conditional display hints to plans (nhr@redhat.com)
+- Updated plan selection page (nhr@redhat.com)
+- Updated from comments (nhr@redhat.com)
+- Merge remote-tracking branch 'upstream/master' into aria (nhr@redhat.com)
+- Merge pull request #211 from fabianofranz/master (openshift+bot@redhat.com)
+- Updated Plan, added Aria::MasterPlan (nhr@redhat.com)
+- US2583: added and adjusted tests (ffranz@redhat.com)
+- US2583: changed footer links and added redirects for the Legal content
+  (ffranz@redhat.com)
+
+* Thu Aug 09 2012 Adam Miller <admiller@redhat.com> 0.97.3-1
+- Merge pull request #206 from smarterclayton/us2583_move_learn_more_to_drupal
+  (openshift+bot@redhat.com)
+- Remove unused code, add tests to cover new redirections (ccoleman@redhat.com)
+- Move remaining openshift content in drupal (ccoleman@redhat.com)
+- Merge pull request #199 from sg00dwin/master (openshift+bot@redhat.com)
+- Point learn more to community (ccoleman@redhat.com)
+- Merge pull request #194 from smarterclayton/direct_post_config_tasks
+  (openshift+bot@redhat.com)
+- fix blog author photo 829774 (sgoodwin@redhat.com)
+- Middle initial is not serialized identically between create/update account.
+  (ccoleman@redhat.com)
+- Check persistence in unit tests (ccoleman@redhat.com)
+- Update account upgrade edit page to more closely resemble emily's mockups and
+  to reuse data (ccoleman@redhat.com)
+- The mother of all integration tests (ccoleman@redhat.com)
+- Flush out payment methods (ccoleman@redhat.com)
+- Adding feature request search field (sgoodwin@redhat.com)
+- Add direct payment edit paths, simplify logic and flow (ccoleman@redhat.com)
+- Provide rake tasks to set/clear direct post Aria configuration.
+  (ccoleman@redhat.com)
+- Remove ruby common code from rhc-server-common (ccoleman@redhat.com)
+
+* Thu Aug 02 2012 Adam Miller <admiller@redhat.com> 0.97.2-1
+- Merge pull request #162 from smarterclayton/use_ci_reporter_in_site
+  (ccoleman@redhat.com)
+- Bug 844845 - Parallelize site tests, add junit style XML output for reporting
+  to Jenkins (ccoleman@redhat.com)
+
+* Thu Aug 02 2012 Adam Miller <admiller@redhat.com> 0.97.1-1
+- bump_minor_versions for sprint 16 (admiller@redhat.com)
+
+* Wed Aug 01 2012 Adam Miller <admiller@redhat.com> 0.96.8-1
+- css fix for 844916b (sgoodwin@redhat.com)
+- fix 844891 (sgoodwin@redhat.com)
+
+* Tue Jul 31 2012 Adam Miller <admiller@redhat.com> 0.96.7-1
+- add custom forum only search; minor work of breadcrumb partials and spacing,
+  headings at <480px get small line-height (sgoodwin@redhat.com)
+- Merge pull request #151 from
+  smarterclayton/bug844231_user_gets_error_on_signup (contact@fabianofranz.com)
+- Merge pull request #150 from smarterclayton/captcha_can_be_nil
+  (contact@fabianofranz.com)
+- Merge pull request #145 from
+  smarterclayton/us2531_add_user_agent_to_console_requests
+  (ccoleman@redhat.com)
+- Bug 844231 - During signup, a user who has confirmed his email sees an error
+  message, instead of being taken to the signup confirm page.  This is because
+  streamline has different behavior if the user has confirmed their email.
+  (ccoleman@redhat.com)
+- Allow captcha to be set to nil to disable it. (ccoleman@redhat.com)
+- Fix functional tests (ccoleman@redhat.com)
+- Send a consistent user agent from the console to Aria, Streamline, and
+  broker. (ccoleman@redhat.com)
+
+* Mon Jul 30 2012 Dan McPherson <dmcphers@redhat.com> 0.96.6-1
+- Merge pull request #89 from smarterclayton/add_tax_exempt_model_attribute
+  (ccoleman@redhat.com)
+- Remove tax exemption for simplification of process. (ccoleman@redhat.com)
+- Have account_upgrade completion post to itself to simplify creation, move
+  some plan stuff, update tests to validate plan id from broker.
+  (ccoleman@redhat.com)
+- Ensure that the correct plan ID is pushed to the user object.
+  (ccoleman@redhat.com)
+- Add the necessary glue so that the checkbox for tax exemption shows up and
+  sets values on creation.  Also ensure that user accounts are created with the
+  default tax_exempt value of 0. (ccoleman@redhat.com)
+- Add a tax_exempt supplemental attribute in Aria for use by Ops team.  Value 0
+  means not tax exempt, value 1 means has requested exemption, value 2 means
+  user has been confirmed exempt (ccoleman@redhat.com)
+
+* Thu Jul 26 2012 Dan McPherson <dmcphers@redhat.com> 0.96.5-1
+- site.spec: removing release changes (tdawson@redhat.com)
+- site.spec: clean up the spec file (tdawson@redhat.com)
+- add requires for rhc-site-static (dmcphers@redhat.com)
+
+* Thu Jul 19 2012 Adam Miller <admiller@redhat.com> 0.96.4-1
+- added rubygem-rcov to Build/Requires for site to fix brew build breakage
+  (admiller@redhat.com)
+
+* Thu Jul 19 2012 Adam Miller <admiller@redhat.com> 0.96.3-1
+- Merge remote-tracking branch 'origin/master' into move_os-client-tools_to_rhc
+  (ccoleman@redhat.com)
+- Removed invalid puts (ccoleman@redhat.com)
+- Move %%files static below %%post, give all static files the default
+  permissions (ccoleman@redhat.com)
+- Merge pull request #85 from smarterclayton/us2518_split_rpm_output_of_site
+  (contact@fabianofranz.com)
+- Merge pull request #68 from J5/master (ccoleman@redhat.com)
+- Add console layout helpers for steve's story (ccoleman@redhat.com)
+- Merge pull request #67 from sg00dwin/master (ccoleman@redhat.com)
+- Provide a rake task to delete pregenerated content in a devenv.  Run rake
+  assets:clean to make autogeneration work. (ccoleman@redhat.com)
+- US2518 - Split the RPM output of the site into a static subpackage that can
+  be installed and updated independently. (ccoleman@redhat.com)
+- Merge pull request #77 from smarterclayton/add_test_suite_tasks
+  (ccoleman@redhat.com)
+- US2531 - Move os-client-tools to rhc (ccoleman@redhat.com)
+- Fix remaining issue with mock reuse (wrapper class doesn't pass
+  http_without_mock to nested connection) (ccoleman@redhat.com)
+- Speed up tests by reswizzling http mock behavior (ccoleman@redhat.com)
+- refactor "rcov" rake task to "coverage" (johnp@redhat.com)
+- add rcov rake task for site (johnp@redhat.com)
+- Add new rake test:streamline, test:aria, and test:restapi wrappers for more
+  focused testing (ccoleman@redhat.com)
+- switch margin to baseLineHeight variable (sgoodwin@redhat.com)
+- Merge branch 'master' of github.com:openshift/li (sgoodwin@redhat.com)
+- revert class placement (sgoodwin@redhat.com)
+- switch to baseLineHeight (sgoodwin@redhat.com)
+- Visual adjustments several places (sgoodwin@redhat.com)
+
+* Fri Jul 13 2012 Adam Miller <admiller@redhat.com> 0.96.2-1
+- Streamline fixed the confirm email bug in staging so that confirm can be done
+  twice. (ccoleman@redhat.com)
+- Merge pull request #65 from
+  smarterclayton/bug_839545_duplicate_text_in_template (ccoleman@redhat.com)
+- Bug 839545 - The provides element on a template should be coerced to an array
+  (ccoleman@redhat.com)
+- Merge pull request #60 from
+  smarterclayton/bug_839127_update_client_install_docs (ccoleman@redhat.com)
+- Merge pull request #59 from nhr/BZ838062r1 (ccoleman@redhat.com)
+- Bug 839127 - Update the client getting started documentation to be more gem
+  centric (cross platform) and link out to a new developer center page.
+  (ccoleman@redhat.com)
+- Building controller now differentiates between Jenkins server DNS delays and
+  other Jenkins client cartridge creation errors. Also revised/streamlined
+  cartridge save attempt logic (nhr@redhat.com)
+
+* Wed Jul 11 2012 Adam Miller <admiller@redhat.com> 0.96.1-1
+- bump_minor_versions for sprint 15 (admiller@redhat.com)
+
+* Wed Jul 11 2012 Adam Miller <admiller@redhat.com> 0.95.13-1
+- Add more tests to verify filtering and behavior of application template
+  methods and make the filtering apply after the objects have been type
+  converted (ccoleman@redhat.com)
+- Allow templates to be added which do not show up in production (the
+  :in_development / 'in_development' category/tag) (ccoleman@redhat.com)
+- Add an integration test specifically for the Streamline confirm twice failure
+  and rescue body errors so the ticket can be retrieved (ccoleman@redhat.com)
+- Merge pull request #50 from sg00dwin/master (ccoleman@redhat.com)
+- Merge branch 'master' of github.com:openshift/li (sgoodwin@redhat.com)
+- Visual edits and bug fix (sgoodwin@redhat.com)
+- merge into one file for _code.scss (sgoodwin@redhat.com)
+
+* Tue Jul 10 2012 Adam Miller <admiller@redhat.com> 0.95.12-1
+- Add tests to streamline to ensure parse failures are handled.
+  (ccoleman@redhat.com)
+- Merge pull request #51 from fabianofranz/master (ccoleman@redhat.com)
+- Bug 838800 - Update streamline address in drupal, make no cookies the default
+  (ccoleman@redhat.com)
+- Updated links to pricing page to point to full url (contact@fabianofranz.com)
+- Links to pricing page all over the website, related to BZ 837902
+  (contact@fabianofranz.com)
+- Merge pull request #46 from smarterclayton/aria_payment_methods
+  (ccoleman@redhat.com)
+- Get unit tests passing again (ccoleman@redhat.com)
+- Implement account payment specification and full account creation flow
+  (ccoleman@redhat.com)
+
+* Mon Jul 09 2012 Adam Miller <admiller@redhat.com> 0.95.11-1
+- Fix ordering test to be accurate with 1.8 ruby now lower.
+  (ccoleman@redhat.com)
+- Update Ruby 1.8.7 to fall further down the list, fix double HTML escaping of
+  descriptions (ccoleman@redhat.com)
+- Ensure cart metadata is not overwriting core values. (ccoleman@redhat.com)
+
+* Mon Jul 09 2012 Dan McPherson <dmcphers@redhat.com> 0.95.10-1
+- 
+
+* Mon Jul 09 2012 Dan McPherson <dmcphers@redhat.com> 0.95.9-1
+- Merge pull request #40 from
+  smarterclayton/bugz_838428_users_intermittently_logged_out
+  (ccoleman@redhat.com)
+- Fix bug 838428 and random session logout issues caused by the session cookie
+  being unencoded. (ccoleman@redhat.com)
+
+* Mon Jul 09 2012 Dan McPherson <dmcphers@redhat.com> 0.95.8-1
+- Merge pull request #36 from
+  smarterclayton/bugz_814025_prevent_external_redirect (ccoleman@redhat.com)
+- Merge branch 'sgoodwin-dev0506' (sgoodwin@redhat.com)
+- Multiple style related changes to address bugs or other issue
+  (sgoodwin@redhat.com)
+- new pre.cli styles within console (sgoodwin@redhat.com)
+- 838353 link fix (sgoodwin@redhat.com)
+- Bug 814025 Prevent external redirects on login, logout, and a few other
+  places (ccoleman@redhat.com)
+
+* Mon Jul 09 2012 Dan McPherson <dmcphers@redhat.com> 0.95.7-1
+- Add better debugging to session_trace in development mode, remove some
+  unnecessary trace statements (ccoleman@redhat.com)
+- Balance news and learn sections of the homepage with bottom margin
+  (ccoleman@redhat.com)
+- At Legal's request, change the footer link for 'Terms of Service' to point to
+  the preview services agreement. (ccoleman@redhat.com)
+
+* Thu Jul 05 2012 Adam Miller <admiller@redhat.com> 0.95.6-1
+- Ensure rails cache is cleared before tests and fix incorrect cache entries
+  (ccoleman@redhat.com)
+- Update cartridge type (ccoleman@redhat.com)
+- React to cartridge metadata by removing need for :framework category.
+  (ccoleman@redhat.com)
+- all css changes... align center footer when in mobile portrait display. set
+  app name and app url on same line when space allows, and set max-width with
+  text-overflow:ellipsis to address bz 832900 (sgoodwin@redhat.com)
+- Merge branch 'master' of github.com:openshift/li (sgoodwin@redhat.com)
+- Unable to log into site in devenv, changing mock implementation resulted in
+  form parameters being wrong. (ccoleman@redhat.com)
+- 834714 css fix (sgoodwin@redhat.com)
+- US2361 - Allow user to be automatically logged in after signup, and allow
+  redirect after signup back to originating page.  Add lots and lots and lots
+  of testing. (ccoleman@redhat.com)
+
+* Mon Jul 02 2012 Adam Miller <admiller@redhat.com> 0.95.5-1
+- added rubygem-wddx to requires/buildrequires for site rpm
+  (admiller@redhat.com)
+
+* Mon Jul 02 2012 Adam Miller <admiller@redhat.com> 0.95.4-1
+- Updated omniture script to send stg data to correct report suites
+  (spurtell@redhat.com)
+- US2500 - Prototype aria billing in the site, includes massive chunks of new
+  code.  Adds aria client wrapper, config for connecting to aria, new
+  controllers, test cases, and should handle when the current system doesn't
+  have access to aria gracefully. (ccoleman@redhat.com)
+- Add requires for transitions, fix build break (ccoleman@redhat.com)
+- Bug 834727 - Use Compass helpers to get full browser support on rotating O
+  (ccoleman@redhat.com)
+- update streamline ip (dmcphers@redhat.com)
+
+* Sat Jun 23 2012 Dan McPherson <dmcphers@redhat.com> 0.95.3-1
+- new package built with tito
+
+* Thu Jun 21 2012 Adam Miller <admiller@redhat.com> 0.95.2-1
+- fix eap url (bdecoste@gmail.com)
+- Bug 820760 - Background animated images don't work, copy hidden source image
+  url (ccoleman@redhat.com)
+
+* Wed Jun 20 2012 Adam Miller <admiller@redhat.com> 0.95.1-1
+- bump_minor_versions for sprint 14 (admiller@redhat.com)
+
+* Wed Jun 20 2012 Adam Miller <admiller@redhat.com> 0.94.16-1
+- BZ833654: Removed extra flashes if the string is blank (fotios@redhat.com)
+- Allow streamline to return login or emailAddress (as confirmation of email
+  login) (ccoleman@redhat.com)
+- Merge branch 'master' of git:/srv/git/li (sgoodwin@redhat.com)
+- css edits - fix for 832900 (sgoodwin@redhat.com)
+- Bug 830670 - Remove cartridge user guide link. (ccoleman@redhat.com)
+- Bug 825094 - Prevent clickjacking through use of X-Frame-Options: SAMEORIGIN
+  (ccoleman@redhat.com)
+
+* Tue Jun 19 2012 Adam Miller <admiller@redhat.com> 0.94.15-1
+- Update homepage with EAP6 info (ccoleman@redhat.com)
+- BZ828116: Added logic for displaying credentials for applications created
+  from templates (fotios@redhat.com)
+- Update some of the cartridge text to be less verbose (ccoleman@redhat.com)
+
+* Mon Jun 18 2012 Adam Miller <admiller@redhat.com> 0.94.14-1
+- merge fix in pricing.scss (sgoodwin@redhat.com)
+- fix layout issues for bug 832926 (sgoodwin@redhat.com)
+- Minor wording of login placeholder (ccoleman@redhat.com)
+- Update helpers to fix broken link on get_started page for JBoss tools
+  (ccoleman@redhat.com)
+- Merge branch 'master' of git1.ops.rhcloud.com:/srv/git/li (ffranz@redhat.com)
+- Removed flexbox model styling form pricing page (spec still very unstable)
+  (ffranz@redhat.com)
+- Bug 819402 - Streamline sometimes returns 401 + specific service error, which
+  is not an AccessDeniedException scenario. (ccoleman@redhat.com)
+- minor spacing changes for lists and on the search input (sgoodwin@redhat.com)
+
+* Fri Jun 15 2012 Adam Miller <admiller@redhat.com> 0.94.13-1
+- Bug 832290 - Publish remote access page (ccoleman@redhat.com)
+- Bug 827531 - Link to add cart page from getting started (ccoleman@redhat.com)
+
+* Thu Jun 14 2012 Adam Miller <admiller@redhat.com> 0.94.12-1
+- Add caching to drupal views and blocks for better performance.  Remove
+  unnecessary sections from UI (ccoleman@redhat.com)
+- Improved gears background images (ffranz@redhat.com)
+- Merge branch 'master' of git1.ops.rhcloud.com:/srv/git/li (ffranz@redhat.com)
+- Pricing page styles and images (ffranz@redhat.com)
+- Add unit tests for and gracefully handle when cartridges are added without
+  metadata Speed up application and cartridge tests by reusing existing apps
+  (ccoleman@redhat.com)
+- updated URL of pricing page for custom tracking variable
+  (spurtell@redhat.com)
+- fix typos (sgoodwin@redhat.com)
+- Merge branch 'master' of git1.ops.rhcloud.com:/srv/git/li (ffranz@redhat.com)
+- More pricing page styling, gears background images (ffranz@redhat.com)
+- Show only a single error message when hit gear limit on creation.
+  (ccoleman@redhat.com)
+- Clean up cartridge layout at low resolutions (ccoleman@redhat.com)
+- Minor pricing page style adjustments (ffranz@redhat.com)
+- add test to make sure JBoss EAP comes befor JBoss AS (johnp@redhat.com)
+- make sure JBoss EAP comes before JBoss AS (johnp@redhat.com)
+- Added FAQ section content, styling (ffranz@redhat.com)
+- New separated file for pricing styles (ffranz@redhat.com)
+- remove space before parens in function call (johnp@redhat.com)
+- functional tests for sshkey cache (johnp@redhat.com)
+- make ssh urls and git show up only if the user has added their ssh key
+  (johnp@redhat.com)
+- add ssh_key caching (johnp@redhat.com)
+- add ssh url to application overview (johnp@redhat.com)
+- Merge branch 'master' of git:/srv/git/li (sgoodwin@redhat.com)
+- mobile ui tuning (sgoodwin@redhat.com)
+- Styling for the pricing page (ffranz@redhat.com)
+
+* Wed Jun 13 2012 Adam Miller <admiller@redhat.com> 0.94.11-1
+- add text to getting started application page for JBoss Dev Studio
+  (johnp@redhat.com)
+- Merge branch 'master' of git:/srv/git/li (sgoodwin@redhat.com)
+- fix header spacing and such, change action-call on home (sgoodwin@redhat.com)
+
+* Tue Jun 12 2012 Adam Miller <admiller@redhat.com> 0.94.10-1
+- Modularize security helpers in application controller for better readability
+  and consistency with other security solutions. Provide a session level cache
+  for user domain info and listen for create/delete events.  Use the cache when
+  viewing pages, but not on update pages. (ccoleman@redhat.com)
+- Add :new tag to EAP (ccoleman@redhat.com)
+- Gemfile.lock no longer has dependencies on a few extra modules
+  (ccoleman@redhat.com)
+
+* Tue Jun 12 2012 Adam Miller <admiller@redhat.com> 0.94.9-1
+- explict height set on form fields and minor visual adjustment in console
+  (sgoodwin@redhat.com)
+- fix to force wrap long strings within table cells (sgoodwin@redhat.com)
+- Merge branch 'master' of git:/srv/git/li into searchmod (sgoodwin@redhat.com)
+- incorporate search field within header of site pages, reset headings to use
+  line-height instead of margin-bottom, reset /stylesheets/_type.scss to
+  bootstrap/_type.scss and merge customizations within so that we only use
+  single _type file, minor tinkerings and condensing of styles
+  (sgoodwin@redhat.com)
+- Merge branch 'master' of git:/srv/git/li into searchmod (sgoodwin@redhat.com)
+- Merge branch 'master' of git:/srv/git/li into searchmod (sgoodwin@redhat.com)
+- modifications to search in header within drupal pages (sgoodwin@redhat.com)
+- Initial incorporation of search within ui header (sgoodwin@redhat.com)
+
+* Mon Jun 11 2012 Adam Miller <admiller@redhat.com> 0.94.8-1
+- Update of spec file (admiller@redhat.com)
+- Display the current scale multiplier in the UI and add feature enablement
+  pages that allow users to understand how scaling is exposed. Add a build
+  feature enabler into the application overview page that lets users easily add
+  and remove Jenkins support to their application. (ccoleman@redhat.com)
+
+* Mon Jun 11 2012 Adam Miller <admiller@redhat.com> - 0.94.7-1
+- Display the current scale multiplier in the UI and add feature enablement
+  pages that allow users to understand how scaling is exposed. Add a build
+  feature enabler into the application overview page that lets users easily add
+  and remove Jenkins support to their application. (ccoleman@redhat.com)
+
+* Mon Jun 11 2012 Adam Miller <admiller@redhat.com> 0.94.6-1
+- remove requires aws-sdk, these apparently don't actually need it
+  (admiller@redhat.com)
+
+* Mon Jun 11 2012 Adam Miller <admiller@redhat.com> 0.94.5-1
+- need hard requires of rubygem-aws-sdk version for rhc-site spec file
+  (admiller@redhat.com)
+
+* Fri Jun 08 2012 Adam Miller <admiller@redhat.com> 0.94.3-1
+- Remove black bar from simple layout (ccoleman@redhat.com)
+- Updating jquery version to fix new bootstrap issue
+  (fotioslindiakos@gmail.com)
+- Fix JS error with reenabling the loading button (ccoleman@redhat.com)
+- Update the help link for the getting_started page (ccoleman@redhat.com)
+- Updated tracking.js with KissInsights integration, pricing page var, and
+  Origin download tracking (spurtell@redhat.com)
+- Made sure application_types index page works when no templates exist
+  (fotioslindiakos@gmail.com)
+- Add EAP metadata, clean up the creation pages a bit more, fix an empty box on
+  app creation. (ccoleman@redhat.com)
+- bz 827994 changes to next steps page, change experimental label to use just
+  default label style, remove label hover, add spacing in btw p + heading
+  (sgoodwin@redhat.com)
+- Updated gem info for rails 3.0.13 (admiller@redhat.com)
+
+* Mon Jun 04 2012 Adam Miller <admiller@redhat.com> 0.94.2-1
+- Merge branch 'master' of git:/srv/git/li (sgoodwin@redhat.com)
+- css updates for labels, breadcrumbs, help section in console, blogs
+  (sgoodwin@redhat.com)
+- Merge branch 'net_http_persistent' (ccoleman@redhat.com)
+- Added detailed steps to the Getting Started page about installing cli on
+  windows (ffranz@redhat.com)
+- Reuse HTTP object more efficiently (ccoleman@redhat.com)
+- Keep local copy of gear_groups until Application.reload (ccoleman@redhat.com)
+- Merge branch 'master' into net_http_persistent (ccoleman@redhat.com)
+- Update index (ccoleman@redhat.com)
+- Update terminology to avoid "templates" being exposed to users.
+  (ccoleman@redhat.com)
+- Bug 826651 - Can't login to mock devenv with @ in login, use Base64 encoding
+  instead of CGI double encoding (ccoleman@redhat.com)
+- Pass all tests (ccoleman@redhat.com)
+- Merge branch 'master' into net_http_persistent (ccoleman@redhat.com)
+- Implement part of persistent local http connections (ccoleman@redhat.com)
+- Add net-http-persistent to site. (ccoleman@redhat.com)
+- Print a message when a user's cookie cannot be decoded (ccoleman@redhat.com)
+- Bug 822018 - Remove JS validation on domain create/edit forms for simplicity
+  (ccoleman@redhat.com)
+- Bug 811391 - Users with '+' in them can't stay logged in under non-integrated
+  environment (ccoleman@redhat.com)
+
+* Fri Jun 01 2012 Adam Miller <admiller@redhat.com> 0.94.1-1
+- bumping spec versions (admiller@redhat.com)
+- Fixed minor typo (fotioslindiakos@gmail.com)
+
+* Thu May 31 2012 Adam Miller <admiller@redhat.com> 0.93.12-1
+- Removed experimental tag from DIY cart (fotioslindiakos@gmail.com)
+- Added experimental label and adding spacing between multiple labels
+  (fotioslindiakos@gmail.com)
+
+* Thu May 31 2012 Adam Miller <admiller@redhat.com> 0.93.11-1
+- 818653 (sgoodwin@redhat.com)
+- Stylized template information in applications list
+  (fotioslindiakos@gmail.com)
+- BZ826972: Fixing application template link (fotioslindiakos@gmail.com)
+
+* Wed May 30 2012 Adam Miller <admiller@redhat.com> 0.93.10-1
+- Added application_templates to site (fotioslindiakos@gmail.com)
+- Revert "Merge branch 'dev/fotios/descriptor'" (admiller@redhat.com)
+- styling for application templates additions (sgoodwin@redhat.com)
+- Moved templates to their own row in the view (fotioslindiakos@gmail.com)
+- Added views for new application_templates (fotioslindiakos@gmail.com)
+- Merge branch 'dev0530' (sgoodwin@redhat.com)
+- fix for bz 820842 and enable outage status link display at view <768
+  (sgoodwin@redhat.com)
+- Fixes BZ 821103 (ffranz@redhat.com)
+- mostly css changes - adjustments to breadcrumb, headings, collapsed nav
+  order. haml change - add my account tab back into console default nav.
+  (sgoodwin@redhat.com)
+
+* Tue May 29 2012 Adam Miller <admiller@redhat.com> 0.93.9-1
+- fine tuning position of ui at individual responsive breakpoints, correct
+  utility nav drop menu and alert status message presentation and other ui
+  tweaks (sgoodwin@redhat.com)
+
+* Sun May 27 2012 Dan McPherson <dmcphers@redhat.com> 0.93.8-1
+- add base package concept (dmcphers@redhat.com)
+
+* Fri May 25 2012 Adam Miller <admiller@redhat.com> 0.93.7-1
+- Bug 821103 - Send promo code to registration endpoint via streamline
+  (ccoleman@redhat.com)
+- Users were being logged in to the broker with the wrong rhlogin in non-
+  integrated mode (ccoleman@redhat.com)
+- Bug 811391 - Users with '+' in them can't stay logged in under non-integrated
+  environment (ccoleman@redhat.com)
+- Bug 822018 - Remove JS validation on domain create/edit forms for simplicity
+  (ccoleman@redhat.com)
+- Merge branch 'master' of git:/srv/git/li (sgoodwin@redhat.com)
+- auto merge conflict fixes to console.scss and console/_ribbon.scss Merge
+  branch 'mobileui' (sgoodwin@redhat.com)
+- status alert header msg fix, minor spacing and font-type changes
+  (sgoodwin@redhat.com)
+- fix horizontal scroll at <767, and adjustment tuning (sgoodwin@redhat.com)
+- css/markup to enable responsive nav for mobile views and lots of fine tuning
+  of ui components in both site and console (sgoodwin@redhat.com)
+
+* Thu May 24 2012 Adam Miller <admiller@redhat.com> 0.93.6-1
+- Bug 824913 - Add helper code to filter certain parameter values from logged
+  hashes (instead of using Rails helper code that wasn't working)
+  (ccoleman@redhat.com)
+- New installation instructions on Windows (ffranz@redhat.com)
+
+* Wed May 23 2012 Adam Miller <admiller@redhat.com> 0.93.5-1
+- Adding application template support (fotioslindiakos@gmail.com)
+
+* Wed May 23 2012 Adam Miller <admiller@redhat.com> 0.93.4-1
+- Blank flashes are duly ignored (ccoleman@redhat.com)
+- Update cartridge link on getting started page to point to Platform Features
+  page. (ccoleman@redhat.com)
+- CSS cleanup of application header and application list, make headers share
+  CSS and degrade gracefully, and make application lists flush with the left
+  margin (ccoleman@redhat.com)
+- Unit test for gear state output (ccoleman@redhat.com)
+
+* Tue May 22 2012 Adam Miller <admiller@redhat.com> 0.93.3-1
+- Add more information to the status app Update overview text with less
+  hyperbolic descriptions (ccoleman@redhat.com)
+- Bug 822936 - Remove old reference to express. (ccoleman@redhat.com)
+- Cache streamline email address loading per user to speed up my account page
+  (ccoleman@redhat.com)
+- Provide a tiered application view that shows cartridges organized by what
+  resources they share Expose Jenkins builds as an embedded component within a
+  cartridge Implement a unified cartridge / application type model with caching
+  (ccoleman@redhat.com)
+
+* Thu May 17 2012 Adam Miller <admiller@redhat.com> 0.93.2-1
+- Unit test now passes with bug 812060 fixed (ccoleman@redhat.com)
+- Bug 804937 - Update to use the correct exit code for the message
+  (ccoleman@redhat.com)
+- Remove puts (ccoleman@redhat.com)
+- Gear state (ccoleman@redhat.com)
+- Basic gear group code (ccoleman@redhat.com)
+- re enable mixin inputGridSystem-generate (sgoodwin@redhat.com)
+- Merge branch 'dev0510' (sgoodwin@redhat.com)
+- another tweak for search-query class (sgoodwin@redhat.com)
+- update to tracking.js (spurtell@redhat.com)
+- Merge branch 'master' of git:/srv/git/li (spurtell@redhat.com)
+- community search field fix for ipad/chrome width issue (sgoodwin@redhat.com)
+- More fixes for input field width sizing (sgoodwin@redhat.com)
+- Merge branch 'master' of git:/srv/git/li into dev0510 (sgoodwin@redhat.com)
+- Add helper to generate technologies page for dev center (ccoleman@redhat.com)
+- Make username drop menu position absolute at mobile sizes to enable topmost
+  position on open, Fix search field to use modified mixin inputGridSystem-
+  inputColumns and set have it's width set appropriate to grid. And a few other
+  minor visual mods... (sgoodwin@redhat.com)
+- Merge branch 'master' of git:/srv/git/li (spurtell@redhat.com)
+- Updated tracking.js with Google Analytcs and AdWords code
+  (spurtell@redhat.com)
+
+* Thu May 10 2012 Adam Miller <admiller@redhat.com> 0.93.1-1
+- Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
+  (admiller@redhat.com)
+- bumping spec versions (admiller@redhat.com)
+- Bug 818030 - Remove opensource disclaimer page (ccoleman@redhat.com)
+- Fix username dropdown-menu at responsive sizes, tweak wizard styles
+  (sgoodwin@redhat.com)
+
+* Wed May 09 2012 Adam Miller <admiller@redhat.com> 0.92.6-1
+- alignment issue fix on docs page (sgoodwin@redhat.com)
+- add error-client class to correct state handling on form submits
+  (johnp@redhat.com)
+- Make forum thread list much simpler (ccoleman@redhat.com)
+- Make status ribbon be a bit cleaner in console (ccoleman@redhat.com)
+- Update logo invoice (ccoleman@redhat.com)
+- Bug 817447 - Feedback from david about getting started page
+  (ccoleman@redhat.com)
+- Bug 817892 - Grammar police are out in force (ccoleman@redhat.com)
+- CSS tweaks to bring content into better visual appearance, restore some minor
+  problems (ccoleman@redhat.com)
+- Cancel button on delete always returns user to application details page (more
+  consistent), fix logging bug, and terms page should use simpler title style.
+  (ccoleman@redhat.com)
+- Bug 820151 - Show the account information for jenkins on app creation,
+  refactor message passing on cart creation, remove layout/_flashes and replace
+  with simpler helper, ensure pages are flashing in the right spot, add a new
+  :info_pre flash type that renders with preformatted output (don't like the
+  name, but eh) (ccoleman@redhat.com)
+- Bug 819441 - Some account related paths should not be redirected back to
+  (ccoleman@redhat.com)
+- Bug 817907 - Really REALLY don't set cookies from status app.  Also fix
+  issues with starting status app in failure mode. (ccoleman@redhat.com)
+- Basic compact left navigation (ccoleman@redhat.com)
+- Simplify how the dropdown link is generated, use a view helper
+  (ccoleman@redhat.com)
+
+* Tue May 08 2012 Adam Miller <admiller@redhat.com> 0.92.5-1
+- Merge branch 'devcomm' (sgoodwin@redhat.com)
+-  minor updates to the visual presentation of the forums threat list and blog
+  details views (sgoodwin@redhat.com)
+
+* Tue May 08 2012 Adam Miller <admiller@redhat.com> 0.92.4-1
+- Make the delete button more subtle (ccoleman@redhat.com)
+- Merge branch 'cleanupscss' (sgoodwin@redhat.com)
+- button disabled/active changes (sgoodwin@redhat.com)
+- Reenable Jenkins from the UI (ccoleman@redhat.com)
+- Add an informational page on logout that informs the user that they have been
+  logged out and why.  Currently just takes the user back to the account page.
+  (ccoleman@redhat.com)
+
+* Mon May 07 2012 Adam Miller <admiller@redhat.com> 0.92.3-1
+- add navbar tests back and add unique classes to links (johnp@redhat.com)
+- Fix bug 818391 - special code branch should have been removed when we fixed
+  bug 789786 (ccoleman@redhat.com)
+- shadowman icon for username association (sgoodwin@redhat.com)
+
+* Mon May 07 2012 Adam Miller <admiller@redhat.com> 0.92.2-1
+- Fix failing test from renaming red hat network identity (ccoleman@redhat.com)
+- Update styles on terms controller, remove captcha there.
+  (ccoleman@redhat.com)
+- Change from 'red hat network' to 'red hat' terminology. (ccoleman@redhat.com)
+- Remove extra role establish call on login. (ccoleman@redhat.com)
+- Merge branch 'dev0430' (sgoodwin@redhat.com)
+- separate console button styles out from site into their own partial scss
+  (sgoodwin@redhat.com)
+- Merge events recent changes and user profile into code. (ccoleman@redhat.com)
+- pull duplicate style, add mixin box-shadow (sgoodwin@redhat.com)
+- more scss cleanup. button work, username dropdown and ribbon polish
+  (sgoodwin@redhat.com)
+- Merge branch 'master' of git:/srv/git/li into dev0430 (sgoodwin@redhat.com)
+- scss css cleanup (sgoodwin@redhat.com)
+- Failure during cartridge creation, tests not as good as we thought.
+  (ccoleman@redhat.com)
+- Simplify how we handle cart type models Prevent bad custom_ids from being
+  passed Fix bug with CartridgeType retrieval (ccoleman@redhat.com)
+- Prefix mappings were screwed up and breaking unit tests.  Now use
+  RestApi::Base.prefix everywhere (ccoleman@redhat.com)
+- new _buttons and _dropdowns partials for console and color corrected logo
+  (sgoodwin@redhat.com)
+- Merge branch 'master' of git:/srv/git/li into dev0430 (sgoodwin@redhat.com)
+- color scale added for console and change styleguide/console markup to bring
+  into alignment with latest (sgoodwin@redhat.com)
+- Remove duplicate slash from request URLs (ccoleman@redhat.com)
+- Instrument ActiveResource to logs (ccoleman@redhat.com)
+- Loading icon needs to be reinstated Update loading script
+  (ccoleman@redhat.com)
+- Add better association logic Allow objects to be passed to RestApi::Base
+  initialize method to handle belongs_to Add more assignment unit tests Ensure
+  change notifications are cleared by the save() command Remove unnecessary
+  check in domain save Test changes? more thoroughly (ccoleman@redhat.com)
+- Fix formatting of error messages when form is using input-prepends
+  (ccoleman@redhat.com)
+- Update community side nav-column font color/size and fix ipad search field
+  issue. Adjust console colors, center nav, breadcrumb and other minor visual
+  changes. (sgoodwin@redhat.com)
+- Package rename python(3.2 -> 2.6), ruby(1.1 -> 1.8) (kraman@gmail.com)
+- Merge branch 'dev/clayton/identity' (ccoleman@redhat.com)
+- Add passing status_app_test for null issues (ccoleman@redhat.com)
+- Use simple user to extract identity (ccoleman@redhat.com)
+- Fix styleguide (ccoleman@redhat.com)
+- Ensure exceptions are loaded optimistically for streamline
+  (ccoleman@redhat.com)
+- Ensure type is correctly loaded from session (ccoleman@redhat.com)
+- Refactor streamline into multiple objects that cleanly define usage Make
+  inheritance act normally Remove autoload of lib sub-directories (so that
+  Rails autoloading picks up module namespaces) (ccoleman@redhat.com)
+- Add a type attribute on streamline user (ccoleman@redhat.com)
+- Move attributes to Streamline::Base for resharing (ccoleman@redhat.com)
+- Merge branch 'master' into dev/clayton/identity (ccoleman@redhat.com)
+- Ensure status app cannot set session cookies, add tests.
+  (ccoleman@redhat.com)
+- Get tests to passing with better abstraction of name change logic and role
+  setting in streamline_test.rb (ccoleman@redhat.com)
+- Unit tests for status (ccoleman@redhat.com)
+- Ensure status app cannot set session cookies (ccoleman@redhat.com)
+- Status app should not set cookies (ccoleman@redhat.com)
+- Fix bugs with recording time of streamline calls (ccoleman@redhat.com)
+- Add streamline time tracing (ccoleman@redhat.com)
+- Make streamline attribute writers protected to prevent general access Prevent
+  rhlogin from being updated except by Streamline code Allow captcha_secret to
+  be provided on login URL for simpler login sequence in kiosks Change
+  establish_email_address to load_email_address Fine tune identity display on
+  account page to show link to RHN account page When access denied exception is
+  thrown write backtrace (ccoleman@redhat.com)
+- Fix unit test failure on nil test (ccoleman@redhat.com)
+- Centralize roles load logic (ccoleman@redhat.com)
+- Update identity to have better display name (ccoleman@redhat.com)
+- Add identity display to ui (ccoleman@redhat.com)
+- Bug 817627 - Prevent infinite redirect of users who have invalid rh_sso
+  tokens (ccoleman@redhat.com)
+- Add tests to handle infinite redirect bug (ccoleman@redhat.com)
+- Move accessors (squash) (ccoleman@redhat.com)
+- Refactor some of the establish scenarios to be cleaner (ccoleman@redhat.com)
+- Adjust margin settings for console at >767 widths, remove inadvertant btn
+  box-shadow default, center console nav per design, and a few other minor
+  tweaks to spacing in the console (sgoodwin@redhat.com)
+- Finish breadcrumb (ccoleman@redhat.com)
+- Alter head ribbon to use a simpler style of wrapping (ccoleman@redhat.com)
+- Start whittling console.scss down, fix ribbon to flush correctly
+  (ccoleman@redhat.com)
+- css tweeks (sgoodwin@redhat.com)
+- Add FireSASS support (ccoleman@redhat.com)
+- More aggressive gitignore (ccoleman@redhat.com)
+- Write expanded CSS in dev mode (ccoleman@redhat.com)
+- Rename to make a generic tracking file and tracking JS file Provide query
+  parameters for promo_code on emails Remove warnings on test runs Add test
+  cases for promo code redirect Make it so that a refresh is not required to
+  enter a promo code. Fix failures in test env on mailer. (ccoleman@redhat.com)
+- Community nav column is creating a white bar on iphone (ccoleman@redhat.com)
+- Removed mirror.openshift.com tests until it goes public (ffranz@redhat.com)
+- Fixes BZ 816797 (ffranz@redhat.com)
+- Remove 'by Red Hat' from site (ccoleman@redhat.com)
+- Updated requirements from legal regarding removal of opensource disclaimer
+  page and changes to language on download page. (ccoleman@redhat.com)
+
+* Thu Apr 26 2012 Adam Miller <admiller@redhat.com> 0.92.1-1
+- new loader image for console and css (sgoodwin@redhat.com)
+- bumping spec versions (admiller@redhat.com)
+- Update logo-24-inside to not have improper color saturation on firefox
+  (ccoleman@redhat.com)
+- Origin SRPMs on download page (ccoleman@redhat.com)
+
+* Wed Apr 25 2012 Adam Miller <admiller@redhat.com> 0.91.11-1
+- Merge branch 'dev0425' (sgoodwin@redhat.com)
+- event section styles added (sgoodwin@redhat.com)
+
+* Wed Apr 25 2012 Adam Miller <admiller@redhat.com> 0.91.10-1
+- Create a stub logo invoice (ccoleman@redhat.com)
+- Bug 815173 - Set header in drupal to force IE edge mode in devenv.   Ensure
+  that status messages won't be shown for N-1 compat with site   Update
+  copyright colors to be black background   Update copyright date
+  (ccoleman@redhat.com)
+- Fixes #816081 (ffranz@redhat.com)
+
+* Tue Apr 24 2012 Adam Miller <admiller@redhat.com> 0.91.9-1
+- Links to live cd Navbar tweaks to fit in small spaces Remove "new" tag on
+  node.js (ccoleman@redhat.com)
+- Better wrapping of header on phone (ccoleman@redhat.com)
+- Added warning color and some tweaks to content width (ccoleman@redhat.com)
+- More button tweaks, some table fixes.  Will need to further pursue items next
+  sprint. (ccoleman@redhat.com)
+- Heavy refactoring of nav header code (ccoleman@redhat.com)
+- Remove navbar-inner, not used (ccoleman@redhat.com)
+- Move navbar code into _navbar (ccoleman@redhat.com)
+
+* Tue Apr 24 2012 Adam Miller <admiller@redhat.com> 0.91.8-1
+- Improved responsiveness for dropdown navbar (ffranz@redhat.com)
+- Improved responsiveness for dropdown navbar (ffranz@redhat.com)
+- Fixes #815261 (ffranz@redhat.com)
+- Merge branch 'dev0424' (sgoodwin@redhat.com)
+- Tighten up opensource download page (sgoodwin@redhat.com)
+- Fixes #815698 by handling invalid constant names; rest api auto detects proxy
+  (ffranz@redhat.com)
+- Bug 814573 - Fix up lots of links to www.redhat.com/openshift/community
+  (ccoleman@redhat.com)
+
+* Tue Apr 24 2012 Adam Miller <admiller@redhat.com> 0.91.7-1
+- sync error handling client side and server side (johnp@redhat.com)
+
+* Mon Apr 23 2012 Adam Miller <admiller@redhat.com> 0.91.6-1
+- Disable Jenkins because upstream bugs could not be fixed.
+  (ccoleman@redhat.com)
+- Merge branch 'dev0423' (sgoodwin@redhat.com)
+- revised button styles, search field focus (sgoodwin@redhat.com)
+- Mark's suggestions (ccoleman@redhat.com)
+- Better opensource links and descriptions (ccoleman@redhat.com)
+- Update to LiveCd with kraman's agreement (ccoleman@redhat.com)
+- Reorder items in user_profile_box to work better with Steve's styling
+  (ccoleman@redhat.com)
+- Touch up blog theme prior to ship (ccoleman@redhat.com)
+
+* Mon Apr 23 2012 Adam Miller <admiller@redhat.com> 0.91.5-1
+- Change #console-head to .console-head for selectivity fix
+  (ccoleman@redhat.com)
+- Fix breadcrumbs on lots of console pages, add blue add cart button to app
+  details page (ccoleman@redhat.com)
+- max-widths off by one Replace console-panel with section-console (may change
+  selectivity) (ccoleman@redhat.com)
+- Fix warning on applications index page (ccoleman@redhat.com)
+- Split out urls for git/opensource into their own file to reduce
+  application_helper size Remove unused _pageheader file Switch order of page
+  title - current page title comes first, then the generic 'Openshift by
+  redhat' message Improve text on index.html.haml page Changes to opensource
+  download page to reflect new structure of page (ccoleman@redhat.com)
+
+* Sat Apr 21 2012 Dan McPherson <dmcphers@redhat.com> 0.91.4-1
+- Added styles for the ToC of wiki pages (ffranz@redhat.com)
+- minor spacing changes in community forum (sgoodwin@redhat.com)
+- Tests mildly out of sync with controllers in bug 814835 (ccoleman@redhat.com)
+- Merge branch 'dev0420' (sgoodwin@redhat.com)
+- community pages - ui css changes (sgoodwin@redhat.com)
+- Reads better this way (ccoleman@redhat.com)
+- Bug 814835 - Password reset should not expose whether the user has an account
+  (ccoleman@redhat.com)
+- isolate column-content div only (sgoodwin@redhat.com)
+- Merge branch 'dev0420' (sgoodwin@redhat.com)
+- community comments changes (sgoodwin@redhat.com)
+- Bug 808657 - Users who signup should be taken to the console after their
+  first login (ccoleman@redhat.com)
+- Merge branch 'master' of git1.ops.rhcloud.com:/srv/git/li (ffranz@redhat.com)
+- Bug 814575 - Developers link is missing (ccoleman@redhat.com)
+- minor edit to go along with forum changes (sgoodwin@redhat.com)
+- Reformat forum thread and comments (sgoodwin@redhat.com)
+- Added styles for the ToC of wiki pages (ffranz@redhat.com)
+- Fix cartridge tests to use new assigns names (ccoleman@redhat.com)
+- Merge branch 'dev/clayton/console-branding' (ccoleman@redhat.com)
+- Added styles for the ToC of wiki pages (ffranz@redhat.com)
+- Lots of cleanup of getting started and next steps (ccoleman@redhat.com)
+- community forum layout changes and remove input box-shadow from console
+  (sgoodwin@redhat.com)
+- comment out visual blocks which we don't have any data for yet
+  (johnp@redhat.com)
+- [security] do not call html_safe on error messages (johnp@redhat.com)
+- Prevent pictures in left nav from getting too big (ccoleman@redhat.com)
+- Merge branch 'master' into dev/clayton/console-branding (ccoleman@redhat.com)
+- Give Jenkins some info and a link to a help page (ccoleman@redhat.com)
+- minor edits (sgoodwin@redhat.com)
+- Help documents update (ccoleman@redhat.com)
+- Tweaks to console help (ccoleman@redhat.com)
+- Fixes duplicate arrows for external links on wiki (ffranz@redhat.com)
+- more merge fixes (johnp@redhat.com)
+- fix merge issues (johnp@redhat.com)
+- update my applications page to dark console ui (johnp@redhat.com)
+- Remove section help (ccoleman@redhat.com)
+- Revert changes to console help, update footer sections to be cleaner
+  (ccoleman@redhat.com)
+- Unbreak layout for J5 (ccoleman@redhat.com)
+- A few less styles, some slightly cleaner grid behavior for help
+  (ccoleman@redhat.com)
+- Other dark_layout page, a few color tweaks for readability on get started
+  page.  Fix remaining styleguides (ccoleman@redhat.com)
+- Alternate dark_layout implementation, change #console-panel to .section-
+  console and .row-console to be consistent with site (ccoleman@redhat.com)
+- Update links on homepage to new features this sprint (ccoleman@redhat.com)
+- update cartridge_type selection and addition styles (johnp@redhat.com)
+- style dark layout closer to mockups (johnp@redhat.com)
+- style application details page (johnp@redhat.com)
+- add dark_layout to console and have the applications::show controller use it
+  (johnp@redhat.com)
+- update breadcrumb helper to add delimiters and an active class
+  (johnp@redhat.com)
+- Restore color overrides on form errors that were lost during _custom.css
+  normalization (ccoleman@redhat.com)
+- add breadcrumbs helper and content_for block to the layout (johnp@redhat.com)
+- fix styling on create app page (johnp@redhat.com)
+- Abstract out messaging and handle navbar bottom margin a bit cleaner
+  (ccoleman@redhat.com)
+- fix link color and dropdown arrow position (johnp@redhat.com)
+- fix up dropdown style a bit more (johnp@redhat.com)
+- remove import to nonexitant file (johnp@redhat.com)
+- minor position edits and class change on get started (sgoodwin@redhat.com)
+- Remove console-transition (ccoleman@redhat.com)
+- Some basic stuff to verify that the styles were properly merged
+  (ccoleman@redhat.com)
+- Merge branch 'dev/clayton/console-branding' of git:/srv/git/li into
+  dev/clayton/console-branding (ccoleman@redhat.com)
+- Switch to using common.scss for console, mostly refactored
+  (ccoleman@redhat.com)
+- Move stuff moved out of _custom.scss (ccoleman@redhat.com)
+- make header more like mockups (johnp@redhat.com)
+- Moving stuff out of custom.scss (ccoleman@redhat.com)
+- Split out buttons (ccoleman@redhat.com)
+- add dropdown user menu to user's login in header (johnp@redhat.com)
+- upgrade to jquery-1.7.2 and add bootstrap-dropdown.js dropdown menu widget
+  (johnp@redhat.com)
+
+* Wed Apr 18 2012 Adam Miller <admiller@redhat.com> 0.91.3-1
+- Status app now causing warning on redefinition in test - hack around it
+  (ccoleman@redhat.com)
+- Bug 813616 - Instruct users about the optional RHEL 6.2 channel for getting
+  'rubygems' (ccoleman@redhat.com)
+- Bug 813613 (ccoleman@redhat.com)
+- Abstract out messaging and handle navbar bottom margin a bit cleaner
+  (ccoleman@redhat.com)
+- Fix domain controller failures, bonehead move. (ccoleman@redhat.com)
+- new console prototype pages for reference (sgoodwin@redhat.com)
+- Fixed image overflow at small sizes in product overview page.
+  (edirsh@redhat.com)
+- Update getting started page to be a "bit" prettier (ccoleman@redhat.com)
+- Merge branch 'master' into dev/clayton/community_urls (ccoleman@redhat.com)
+- Enable Jenkins as an app (ccoleman@redhat.com)
+- Fix fake_before_filter_test, add pending/error access request pages
+  (ccoleman@redhat.com)
+- Merge remote-tracking branch 'origin/master' into dev/fotios/login
+  (ccoleman@redhat.com)
+- Add GitHub link to footer (ccoleman@redhat.com)
+- Link the redhat image to https://www.redhat.com/ (ccoleman@redhat.com)
+- Enable the opensource and download controllers for production
+  (ccoleman@redhat.com)
+- First stab at new navigation / footer layout (ccoleman@redhat.com)
+- Remove old layout files (ccoleman@redhat.com)
+- Merge branch 'master' into dev/clayton/community_urls (ccoleman@redhat.com)
+- Fix two test changes (ccoleman@redhat.com)
+- Merged some test improvements made upstream (ccoleman@redhat.com)
+- Merge branch 'master' into dev/fotios/login (ccoleman@redhat.com)
+- Get terms controller test passing (ccoleman@redhat.com)
+- Center the signup terms to balance the page (ccoleman@redhat.com)
+- Move AccessDeniedException to an appropriate place, ensure it is autoloaded,
+  fix syntactical vagueness in unit test (ccoleman@redhat.com)
+- Minor reorganization (ccoleman@redhat.com)
+- Switch to a much cleaner recaptcha and give the promo code an extra few
+  pixels. (ccoleman@redhat.com)
+- Remove sso cookie reset from login page (ccoleman@redhat.com)
+- Make promo code suggestion simpler (ccoleman@redhat.com)
+- Simple pages are wasting too much vertical space on the header
+  (ccoleman@redhat.com)
+- Allow the community theme to return to the current location after logout
+  (ccoleman@redhat.com)
+- Allow streamline to be dynamically reloaded when it changes Fix logout flow
+  to use standard streamline config (ccoleman@redhat.com)
+- Updated test_helper.rb to match latest changes from master Merged
+  application_controller (ccoleman@redhat.com)
+- Automatic commit of package [rhc-site] release [0.90.6-1].
+  (mmcgrath@redhat.com)
+- Simplify some styles on the opensource page, correct some phone/tablet layout
+  issues. (ccoleman@redhat.com)
+- Attached images list removed from Community Wiki using CSS display none
+  (ffranz@redhat.com)
+- restrict opensource download routes to dev instance (johnp@redhat.com)
+- add all cart links to page (johnp@redhat.com)
+- Add timing and parent branch removal Better comments in the change section
+  Branch pruning and empty merge filtering Add password controller to
+  exclusion, begin tidying opensource.sh up for final status. Indicate how many
+  files will be preserved (ccoleman@redhat.com)
+- Create draft file for creating open source engine on console
+  (ccoleman@redhat.com)
+- Tweak headers down except on home page, change header to point to the
+  developers link. (ccoleman@redhat.com)
+- Update forum_list view with menu fix Make relative URLs work from menus Minor
+  CSS tweaks to community. (ccoleman@redhat.com)
+- Merged login changes (fotios@redhat.com)
+
 * Thu Apr 12 2012 Mike McGrath <mmcgrath@redhat.com> 0.91.2-1
 - release bump for tag uniqueness (mmcgrath@redhat.com)
 - Merge branch '0412dev' (sgoodwin@redhat.com)

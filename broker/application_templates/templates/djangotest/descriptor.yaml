@@ -1,0 +1,5 @@
+--- !omap 
+- Display-Name: djangotest-0.0-noarch
+- Name: djangotest
+- Requires: 
+  - python-2.6

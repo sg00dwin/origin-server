@@ -28,4 +28,37 @@ class LogoutControllerTest < ActionController::TestCase
     # Make sure we didn't delete all cookies
     assert_not_nil cookies['keep']
   end
+
+  test 'should recover from exceptions' do
+    @controller.expects(:reset_sso).raises(AccessDeniedException)
+    get :show
+    assert_redirected_to root_path
+  end
+
+  test 'should redirect' do
+    get :show, {:then => getting_started_path}
+    assert_redirected_to getting_started_path
+  end
+
+  test 'should show a message' do
+    get :show, {:cause => 'foo', :then => getting_started_path}
+    assert_response :success
+    assert_select 'a', 'Continue working' do |el|
+      assert_equal getting_started_path, el.first['href']
+    end
+  end
+
+  test 'should show the change_account page' do
+    get :show, {:cause => 'change_account', :then => getting_started_path}
+    assert_response :success
+    assert_template :change_account
+    assert_select 'a', 'Continue to a different account' do |el|
+      assert_equal getting_started_path, el.first['href']
+    end
+  end
+
+  test 'should not redirect outside domain' do
+    get :show, {:then => 'http://www.google.com/a_test_page'}
+    assert_redirected_to '/a_test_page'
+  end
 end

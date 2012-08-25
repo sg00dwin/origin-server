@@ -38,7 +38,7 @@ RedHatCloud::Application.configure do
   # config.action_mailer.raise_delivery_errors = false
 
   # Enable threaded mode
-  # config.threadsafe!
+  config.threadsafe!
 
   # Enable locale fallbacks for I18n (makes lookups for any locale fall back to
   # the I18n.default_locale when a translation can not be found)
@@ -51,20 +51,29 @@ RedHatCloud::Application.configure do
   # OpenShift Configuration Below this point #
   ############################################
   config.integrated = true
-  config.login = "https://www.redhat.com/wapps/streamline/login.html"
   config.streamline = {
     :host => 'https://www.redhat.com',
     :base_url => '/wapps/streamline',
-    :email_confirm_url => '/wapps/streamline/confirm.html',
-    :lost_password_url => '/wapps/streamline/resetPassword.html',
-    :change_password_url => '/wapps/streamline/protected/changePassword.html',
-    :login_url => '/wapps/streamline/login.html',
-    :logout_url => '/wapps/sso/logout.html',
     :register_secret => 'c0ldW1n3',
-    :user_info_secret => 'sw33tl1Qu0r'
+    :user_info_secret => 'sw33tl1Qu0r',
+    :cookie_domain => 'redhat.com',
+    :timeout => 5
   }
   config.captcha_secret = 'zvw5LiixMB0I4mjk06aR'
   config.sso_verify_interval = 60
+
+  # Aria API information
+  config.aria_enabled = false
+  config.aria_uri = "https://secure.current.stage.ariasystems.net/api/ws/api_ws_class_dispatcher.php"
+  config.aria_direct_post_uri = "https://secure.current.stage.ariasystems.net/api/direct_post.php"
+  config.aria_auth_key = "sRvjFqjSadu3AFB8jRAR3tqeH5Qf6XjW"
+  config.aria_client_no = 3754655
+  config.aria_default_plan_no = 10044929
+  config.aria_force_test_users = false
+  # Aria direct post configuration
+  config.aria_direct_post_uri = "https://secure.current.stage.ariasystems.net/api/direct_post.php"
+  config.aria_direct_post_name = 'website_new_payment'
+  config.aria_direct_post_redirect_base = 'https://openshift.redhat.com'
 
   # Promo code Email notification setup
   config.email_from = 'OpenShift <noreply@openshift.redhat.com>'

@@ -28,20 +28,26 @@ case "$1" in
             echo "Application is explicitly stopped!  Use 'rhc app cartridge start -a ${OPENSHIFT_GEAR_NAME} -c rockmongo-1.1' to start back up." 1>&2
             exit 0
         else
+            src_user_hook pre_start_rockmongo-1.1
             /usr/sbin/httpd -C "Include ${OPENSHIFT_ROCKMONGO_GEAR_DIR}/conf.d/*.conf" -f $CART_CONF_DIR/httpd_nolog.conf -k $1
+            run_user_hook post_start_rockmongo-1.1
         fi
     ;;
 
     graceful-stop|stop)
         if [ -f ${OPENSHIFT_ROCKMONGO_GEAR_DIR}run/httpd.pid ]
         then
+            src_user_hook pre_stop_rockmongo-1.1
             httpd_pid=`cat ${OPENSHIFT_ROCKMONGO_GEAR_DIR}run/httpd.pid 2> /dev/null`
             /usr/sbin/httpd -C "Include ${OPENSHIFT_ROCKMONGO_GEAR_DIR}/conf.d/*.conf" -f $CART_CONF_DIR/httpd_nolog.conf -k $1
             wait_for_stop $httpd_pid
+            run_user_hook post_stop_rockmongo-1.1
         fi
     ;;
 
     restart|graceful)
+        src_user_hook pre_start_rockmongo-1.1
         /usr/sbin/httpd -C "Include ${OPENSHIFT_ROCKMONGO_GEAR_DIR}/conf.d/*.conf" -f $CART_CONF_DIR/httpd_nolog.conf -k $1
+        run_user_hook post_start_rockmongo-1.1
     ;;
 esac

@@ -2,10 +2,50 @@ class ApplicationObserver < ActiveModel::Observer
   observe Application
 
   BUILDER_SUFFIX = "bldr"
+  
+  def track_usage(data)
+    gear_uuid = data[:gear_uuid]
+    login = data[:login]
+    event = data[:event]
+    time = data[:time]
+    uuid = data[:uuid]
+    usage_type = data[:usage_type]
+    gear_size = data[:gear_size]
+    addtl_fs_gb = data[:addtl_fs_gb]
+    usage = nil
+    if event == UsageRecord::EVENTS[:begin]
+      usage = Usage.new(login, gear_uuid, time, nil, uuid, usage_type)
+      usage.gear_size = gear_size if gear_size
+      usage.addtl_fs_gb = addtl_fs_gb if addtl_fs_gb 
+    elsif event == UsageRecord::EVENTS[:end]
+      usage = Usage.find_latest_by_gear(gear_uuid, usage_type)
+      if usage
+        usage.end_time = time
+      end
+    end
+    usage.save! if usage
+  end
 
   def before_application_create(data)
     application = data[:application]
     reply = data[:reply]
+
+    unless application.node_profile
+      capabilities = application.user.get_capabilities
+      user_gear_sizes = []
+      user_gear_sizes = capabilities['gear_sizes'] if capabilities.has_key?('gear_sizes')
+      if user_gear_sizes.length == 1
+        application.node_profile = user_gear_sizes[0]
+      elsif user_gear_sizes.length > 1
+        if user_gear_sizes.include?(Rails.application.config.ss[:default_gear_size])
+          application.node_profile = Rails.application.config.ss[:default_gear_size]
+        else
+          application.node_profile = user_gear_sizes[0]
+        end
+      else
+        application.node_profile = Rails.application.config.ss[:default_gear_size]
+      end
+    end
 
     if application.name =~ /.+#{BUILDER_SUFFIX}$/
       reply.messageIO << "
@@ -46,9 +86,13 @@ may be ok if '#{uapp.name}#{BUILDER_SUFFIX}' was the builder of a previously des
         end
       end
     end
+
+    if CartridgeCache.cartridge_names('standalone').include? "zend-5.6" and not Application::UNSCALABLE_FRAMEWORKS.include? "zend-5.6"
+      Application::UNSCALABLE_FRAMEWORKS << "zend-5.6"
+    end
     
-    if application.user.auth_method == :login and application.user.vip == false and not (application.node_profile.nil? or ["small"].include?(application.node_profile))
-      raise StickShift::UserException.new("Invalid Profile: #{application.node_profile}.  Must be: small", 1)
+    if application.user.auth_method == :login and not StickShift::ApplicationContainerProxy.valid_gear_sizes(application.user).include?(application.node_profile)
+      raise StickShift::UserException.new("Invalid Profile: #{application.node_profile}.  Must be: #{StickShift::ApplicationContainerProxy.valid_gear_sizes(application.user).join(", ")}", 1)
     end
   end
   

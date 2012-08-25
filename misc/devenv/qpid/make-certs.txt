@@ -6,9 +6,9 @@ you're generating certs for it's important to match whatever is listed in the
 
 Using Mostly Defaults
 ---------------------
-To generate a cert for qpid1.stg.rhcloud.com run:
+To generate a cert for ex-qpid1.stg.rhcloud.com run:
 
-./make-cert.sh -O qpid1.stg.rhcloud.com -s qpid1.stg.rhcloud.com
+./make-cert.sh -O ex-qpid1.stg.rhcloud.com -s ex-qpid1.stg.rhcloud.com
 
 This will, by default, create certs that are valid for 3 months.
 
@@ -16,7 +16,7 @@ Specifying Certificate Expiration
 ---------------------------------
 To generate a cert that is valid for a longer time run:
 
-./make-cert.sh -m 12 -O qpid1.stg.rhcloud.com -s qpid1.stg.rhcloud.com
+./make-cert.sh -m 12 -O ex-qpid1.stg.rhcloud.com -s ex-qpid1.stg.rhcloud.com
 
 This will generate a cert that is valid for 1 year.
 
@@ -24,7 +24,7 @@ Specifying Certificate Password
 -------------------------------
 To generate a cert that has a specific password (needed for PROD), run:
 
-./make-cert.sh -P mypass -O qpid1.stg.rhcloud.com -s qpid1.stg.rhcloud.com
+./make-cert.sh -P mypass -O ex-qpid1.stg.rhcloud.com -s ex-qpid1.stg.rhcloud.com
 
 
 Once make-cert.sh is done generating the new cert, copy the test/server_db and

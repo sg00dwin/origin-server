@@ -13,30 +13,30 @@ end
 
 Then /^an account PAM limits file should( not)? exist$/ do |negate|
   limits_dir = '/etc/security/limits.d'
-  @pamfile = File.exists? "#{limits_dir}/84-#{@account['accountname']}.conf"
+  pamfile = "#{limits_dir}/84-#{@account['accountname']}.conf"
 
   if negate
-    @pamfile.should_not be_true
+    assert_file_not_exists pamfile
   else
-    @pamfile.should be_true
+    assert_file_exists pamfile
   end
 end
 
 Then /^an account cgroup directory should( not)? exist$/ do |negate|
   cgroups_dir = '/cgroup/all/libra'
-  @cgdir = File.directory? "#{cgroups_dir}/#{@account['accountname']}"
+  cgdir = "#{cgroups_dir}/#{@account['accountname']}"
 
   if negate
-    @cgdir.should_not be_true
+    assert_directory_not_exists cgdir
   else
-    @cgdir.should be_true
+    assert_directory_exists cgdir
   end
 end
 
 Then /^selinux labels on the account home directory should be correct$/ do
   homedir = "#{$home_root}/#{@account['accountname']}"
-  @result = `restorecon -v -n #{homedir}`
-  @result.should be == "" 
+  result = `restorecon -v -n #{homedir}`
+  result.should be == "" 
 end
 
 Then /^disk quotas on the account home directory should be correct$/ do
@@ -54,22 +54,22 @@ Then /^disk quotas on the account home directory should be correct$/ do
   #     /dev/xvde      24       0  131072               7       0   10000        
   #    
 
-  @result = `quota -u #{@account['accountname']}`
+  result = `quota -u #{@account['accountname']}`
     
-  @result.should_not match /does not exist./
-  @result.should_not match /: none\s*\n?/
-  @result.should match /Filesystem  blocks   quota   limit   grace   files   quota   limit   grace/
+  result.should_not match /does not exist./
+  result.should_not match /: none\s*\n?/
+  result.should match /Filesystem  blocks   quota   limit   grace   files   quota   limit   grace/
 end
 
 Then /^a traffic control entry should( not)? exist$/ do |negate|
   acctname = @account['accountname']
   tc_format = 'tc -s class show dev eth0 classid 1:%s'
   tc_command = tc_format % (netclass @account['uid'])
-  @result = `#{tc_command}`
+  result = `#{tc_command}`
   if negate
-    @result.should be == ""
+    result.should be == ""
   else
-    @result.should_not be == ""
+    result.should_not be == ""
   end
 end
 

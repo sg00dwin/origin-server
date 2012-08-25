@@ -36,7 +36,7 @@ remotehost=$1
 ssh root@$remotehost "set -e
 rpm -Uhv http://download.fedora.redhat.com/pub/epel/beta/6/x86_64/epel-release-6-5.noarch.rpm
 rpm -e rh-amazon-rhui-client
-rpm -Uhv https://mirror1.stg.rhcloud.com/libra/li/rhel/6/x86_64/rhel6-and-optional-0.1-1.noarch.rpm
+rpm -Uhv https://mirror1.ops.rhcloud.com/libra/li/rhel/6/x86_64/rhel6-and-optional-0.1-1.noarch.rpm
 yum -y update
 yum -y install puppet git
 mkdir -p /var/lib/puppet/git/

@@ -6,7 +6,7 @@ User errors:
 101: An application with specified name does not exist and can not be operated on
 102: A user with login already exists
 103: The namespace already exists
-104: User's application limit has been reached
+104: User's gear limit has been reached
 105: Invalid appname
 106: Invalid namespace
 107: Invalid rhlogin
@@ -32,15 +32,32 @@ User errors:
 127: A domain with specified namespace does not exist and can not be operated on
 128: The domain with specified namespace contains applications. Delete applications first or set force to true.
 129: The application is not configure with this cartridge
-130: Invalid object for estimation
+130: Invalid params to estimates controller
 131: Error during estimation
 132: Insufficient Access Rights
 133: Could not delete user
 134: Invalid node profile
-135: Could not decrement gears for the user, application gears already at zero.
 136: Could not delete domain, domain has valid applications.
 146: User has valid credentials but hasn't been granted access to Express yet.
 147: User has valid credentials but hasn't requested access to Express yet.
+150: A plan with specified id does not exist
+151: Billing account was not found for user
+152: Billing account status not active
+153: User has more consumed gears than the new plan allows.
+154: User has gears that the new plan does not allow.
+155: Error getting account information from billing provider
+156: Updating user plan on billing provider failed
+157: Plan change not allowed for subaccount user
+158: Domain already exists for user
+159: User has additional filesystem storage that the new plan does not allow.
+160: User max gear limit capability does not match with current plan
+161: User gear sizes capability does not match with current plan
+162: User max additional file-system storage per gear group capability does not match with current plan
+163: Gear group does not exist
+164: User is not allowed to change storage quota
+165: Invalid storage quota value provided
+166: Storage value not within allowed range
+167: Invalid value for 'nolinks' parameter.
 210: Can not override existing location for git repo
 211: Parent directory for git repo does not exist
 212: Could not find libra_id_rsa

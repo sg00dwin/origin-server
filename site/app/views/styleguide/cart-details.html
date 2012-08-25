@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<!--[if lt IE 7]> <html class="ie6 no-js" lang="en"> <![endif]-->
+<!--[if IE 7]>    <html class="ie7 no-js" lang="en"> <![endif]-->
+<!--[if IE 8]>    <html class="ie8 no-js" lang="en"> <![endif]-->
+<!--[if gt IE 8]><!-->
+<html class='no-js' lang='en'>
+  <!--<![endif]-->
+  <head>
+    <meta charset='utf-8'>
+    <meta content='IE=edge,chrome=1' http-equiv='X-UA-Compatible'>
+    <title>
+      OpenShift by Red Hat
+    </title>
+    <meta content='' name='description'>
+    <meta content='' name='author'>
+    <meta content='width=device-width, initial-scale=1.0' name='viewport'>
+    <link href='/app/images/favicon-32.png' rel='shortcut icon' type='image/png'>
+    
+    <link href="/app/stylesheets/overpass.css" media="all" rel="stylesheet" type="text/css" />
+    <link href="/app/stylesheets/bootstrap.css" media="all" rel="stylesheet" type="text/css" />
+    <link href="/app/stylesheets/console.css" media="all" rel="stylesheet" type="text/css" />
+    <link href="/app/stylesheets/console-new.css" media="all" rel="stylesheet" type="text/css" />    
+    <style type="text/css">
+#cartridges {}
+    
+  section#cartridges .cartridge-details {
+    background-color: #171717;
+    border-bottom: 3px solid #1E1E1E;
+    border-top: 3px solid #1E1E1E;
+    margin-bottom: 25px;
+    padding: 8px 0;
+		}
+
+	
+    
+		.cartridge-details .inner-block {
+			background-color: #0e0e0e;
+			overflow: hidden;
+			margin: 0 5px 3px 5px;
+			padding: 10px 15px;
+			}
+		.cartridge-details h4 {
+			margin-bottom: 0;
+			line-height: normal;
+			}
+	.pull-left-group {
+		float: left;
+		padding-right: 30px;
+		}
+    
+    
+    </style>
+    
+  </head>
+  
+  
+  
+  
+  
+  <body id="app-details" class="console console-transition applications index">
+  <header>
+      <div class="navbar">
+          <div class="container">
+            <div class="brand">
+              <a href="/app"><img src="/app/images/logo-24-inside.png" class="brand-image">
+              </a>
+							<span class="navbar-text headline">OPENSHIFT &nbsp; | &nbsp; Management Console</span>
+            </div>
+            
+            <div class="nav-collapse">
+              <ul class="nav"><li class="active"><a href="console.html">My Applications</a></li>
+              <li><a href="app-type.html">Create New Application</a></li>
+              <li><a href="/app/console/help">Help</a></li>
+              </ul>
+            </div>
+            <ul id="utility-nav" class="navbar-text pull-right">
+              <li><a href="http://www.redhat.com/openshift/community">Community</a></li>
+              <li><a href="/app/account">My Account</a></li>
+              <li><a href="/app/logout">Sign Out</a></li>
+            </ul>
+            <div id="identity" class="pull-right">
+              <div class="username">
+                jsmithers1234567890@redhat.com
+              </div>
+            </div>
+          </div>	
+      </div>
+    </header>
+    
+    
+    
+    <div class='section-console' id='content'>
+      <div class='container'>
+        <div class='row-console'>
+          <div class='row row-flush-right'>
+            <div class='column-content grid-wrapper'>
+            
+            <div class='ribbon'>
+            	<div class='ribbon-content row'>
+            		<nav>
+								<ul class='breadcrumb'>
+								<li>
+								<a href="console.html" action="index">My applications</a>
+								<span class='divider'>></span>
+								</li>
+								<li><a href="app-details.html">Matt's blog</a></li>
+								<span class='divider'>></span>
+								</li>
+								<li class='active'>Cartridges</li>
+								</ul>
+								</nav>
+            	</div>
+            </div>
+  					
+  					<div id="console-head" class="clearfix base">
+  					  <h1 class="span4">Matt's blog</h1>	
+  					  <div class="emblem span"><img class="" alt="" src="../images/console/gear-bars.png"><span>09/20</span></div>
+  					  <div class="emblem span"><img class="" alt="" src="../images/console/bolt.png"><span>35%</span></div>
+							<div class="emblem span"><img class="" alt="" src="../images/console/mark.png"><span>07</span></div>
+							<div class="emblem span"><img class="" alt="" src="../images/console/warning.png"><span>01</span></div>
+							<div class="total-cost">$10.00</div>
+  					</div>
+  					
+  					<section id="app-specifics">
+  						
+  					</section><!-- /app-specifics -->
+	
+    				<section class='span9' id='cartridges'>
+    					<header>
+  							<h4 class="invisible">Cartridge details</h4>
+      				</header>
+      				  		
+      				  <div class="cartridge-details">
+      				  	<div class="row">
+      				  		<div class="span9">
+      				  			<div class="inner-block">
+												<h4 class="pull-left">Builds</h4>
+												<div class="pull-right"><a class="console-link" href="">Jenkins Console<span class="sprite"></span></a></div>
+										</div>
+									</div>
+									</div>
+      				    <div class="row">
+      				     		<div class="span9">
+      				    			<div class="inner-block">
+      				    				<div class="pull-left-group">
+  								 		 			<h6>Job</h6>
+      				     		  		<h4>Wordpress</h4>
+      				     		  	</div>
+      				    				<div class="pull-left-group">
+		   								 		 	<h6>Last Success</h6>
+		      				     		  <h4>10 hours (#22)</h4>
+		      				     		</div>
+      				    				<div class="pull-left-group">
+		  								 		 	<h6>Last Failure</h6>
+		      				     		  <h4>8 days (#9)</h4>
+		      				     		</div>
+      				    				<div class="pull-left-group">
+		  								 		 	<h6>Last Duration</h6>
+		      				     		  <h4>52 minutes</h4>
+		      				     		</div>
+      				     		</div>
+      				     	</div>
+      				    </div>
+      				  </div><!-- /cartridge-details -->
+      				  
+      				  <div class="cartridge-details">
+     					   	<div class="row">
+     					   		<div class="span9">
+     					   			<div class="inner-block">
+		 										<h4 class="pull-left">Git</h4>
+		 										<div class="pull-right"><a class="console-link" href="">Commit History<span class="sprite"></span></a></div>
+		 									</div>
+		 								</div>
+		 							</div>
+     					     <div class="row">
+     					     	<div class="span9">
+      				    		<div class="inner-block">
+      				    			<h6>Repository URL</h6>
+     					      		<div class="pull-left data">ssh://88di98927u0n1qdd7...</div>
+      				    			<div class="pull-right">
+  	 								 		 	<a class="cap-link" href="">VIEW</a> <a class="cap-link" href="">COPY</a>
+     					      		</div>
+     					      	</div>
+     					     	</div>
+     					     </div>
+     					     <div class="row">
+     					      	<div class="span9">
+      				    			<div class="inner-block">
+      				    				<div class="pull-left-group">
+  	 								 			 	<h6>Last committed ID</h6>
+     					      			  <div class="data">ff8l34</div>
+     					      			</div>
+      				    				<div class="pull-left-group">
+  	 								 			 	<h6>Time</h6>
+  	 								 			 	<div class="data">2 hours 38 minutes</div>
+  	 								 			</div>
+      				    				<div class="pull-left-group">  	 								 		 	
+  	 								 			 	<h6>Who</h6>
+  	 								 			 	<div class="data">John Doe</div>
+  	 								 			</div>
+     					      		</div>
+     					      		<div class="inner-block"><h6>Comments:</h6>Fixed bugs 786534, 674839, 866870 and added new feature...</div>
+     					     	</div>
+     					     </div>
+     					   </div><!-- /cartridge-details -->
+     					   
+     					   <div class="cartridge-details">
+     					   	<div class="row">
+     					   		<div class="span9">
+      				    		<div class="inner-block">
+		 										<h4 class="pull-left">Last Backup</h4>
+		 										<div class="pull-right"><a class="console-link" href="">Backup History<span class="sprite"></span></a></div>
+		 									</div>
+		 								</div>
+									</div>
+     					    <div class="row">
+     					   		<div class="span9">
+      				    		<div class="inner-block">
+      				    			<div class="pull-left-group">
+  	 								 		 	<h6>Time</h6>
+     					      		  <div class="data">11:45 pm EST</div>
+     					      		</div>
+      				    			<div class="pull-left-group">
+  	 								 		 	<h6>Date</h6>
+     					      		  <div class="data">Feb 8, 2012</div>
+     					      		</div>
+     					      		<div class="pull-right cap-link">
+  	 								 		 		<a class="cap-link" href="">DOWNLOAD</a> <a class="cap-link" href="">RESTORE</a>
+     					      		</div>
+     					      	</div>
+     					      </div>
+     					     </div>
+     					   </div><!-- /cartridge-details -->
+     					   
+     					   <div class="cartridge-details">
+     					   	<div class="row">
+     					   		<div class="span9">
+      				    		<div class="inner-block">
+		 										<h4 class="pull-left">Data</h4>
+		 										<div class="pull-right"><a class="console-link" href="">More Data<span class="sprite"></span></a></div>
+		 									</div>
+		 								</div>
+									</div>
+									<div class="row">
+										<div class="span9">
+											<div class="inner-block">
+      				    			<div class="pull-left-group">
+												<img class="" alt="" src="../images/console/sparkgraph.png">
+												</div>
+											</div>
+										</div>
+									</div>
+     					    <div class="row">
+     					   		<div class="span9">
+      				    		<div class="inner-block">
+      				    			<div class="pull-left-group">
+  	 								 		 	<h6>Cumulative Usage</h6>
+     					      		  <div class="data">11:45 pm EST</div>
+     					      		</div>
+      				    			<div class="pull-left-group">
+  	 								 		 	<h6>Dates</h6>
+     					      		  <div class="data">Feb. 8, 2012 - Mar. 8, 2012</div>
+     					      		</div>
+     					      	</div>
+     					      </div>
+     					     </div>
+     					   </div><!-- /cartridge-details -->
+     					   
+     					   <div class="cartridge-details">
+     					   	<div class="row">
+     					   		<div class="span9">
+     					   			<div class="inner-block">
+		 										<h4 class="pull-left">Add-Ons</h4>
+		 										<div class="pull-right"><a class="console-link" href="">More Add-ons <span class="sprite"></span></a></div>
+		 									</div>
+		 								</div>
+		 							</div>
+     					    <div class="row">
+     					     		<div class="span9">
+         				    		<div class="inner-block">
+  	 							  			 	<h6>MySQL 5.1</h6>
+     					     		  		<div class="pull-left data">Connection url:MYSQL://127.1.234.8:339/</div>
+      				    				<div class="pull-right">
+  	 							  			 		<a class="cap-link" href="">remove</a> <a class="cap-link" href="">restart</a>
+     					     				</div>
+     					     			</div>
+     					     		</div>
+     					    </div>
+     					    <div class="row">
+     					     		<div class="span9">
+         				    		<div class="inner-block">
+  	 							  			 	<h6>Jenkins client 4.1</h6>
+     					     		  		<div class="pull-left data">Connection url:jenkins://195.1.234.8:339/</div>
+      				    				<div class="pull-right">
+  	 							  			 		<a class="cap-link" href="">remove</a> <a class="cap-link" href="">restart</a>
+     					     				</div>
+     					     			</div>
+     					     		</div>
+     					    </div>
+     					    <div class="row">
+     					     		<div class="span9">
+         				    		<div class="inner-block">
+  	 							  			 	<h6>phpmyadmin 3.4</h6>
+     					     		  		<div class="pull-left data">Connection url:phpmyadmin://127.1.234.8:339</div>
+      				    				<div class="pull-right">
+  	 							  			 		<a class="cap-link" href="">remove</a> <a class="cap-link" href="">restart</a>
+     					     				</div>
+     					     			</div>
+     					     		</div>
+     					    </div>
+        					</div><!-- /cartridge-details -->
+      				  
+    			</section><!-- /cartridges -->
+  					
+  					
+  					
+  							<aside class='span3' id='secondary'>
+									<div id='app-unique-info'>
+										<h5>Visibility</h5>
+											<ul class='unstyled'>
+											<li>External</li>
+											</ul>
+											<h5>URL</h5>
+											<ul class='unstyled'>
+											<li><a href="http://lalala-mememe.rhcloud.com">http://lalala-mememe.rhcloud.com</a></li>
+											</ul>
+											<h5>Aliases <a href=""><img src="../images/console/question-mark.png" alt="What's this?" /></a></h5>
+											<ul class='unstyled'>
+											<li>No alias set</li>
+											</ul>
+											</div>
+											<div id='assistance'>
+											<h5>Client Tools Help</h5>
+											<ul class='unstyled'>
+												<li>
+												<a href='https://www.redhat.com/openshift/community/sites/default/files/documents/OpenShift_Express-User_Guide-en-US.pdf'>OpenShift Express User Guide</a>
+												</li>
+												<li>
+												<a href='https://www.redhat.com/openshift/community/kb/kb-e1006-sync-new-express-git-repo-with-your-own-existing-git-repo'>Sync your OpenShift repo with an existing Git repo</a>
+												</li>
+											</ul>
+											<h5>JBoss Application Server Help</h5>
+											<ul class='unstyled'>
+												<li><a href="https://www.redhat.com/openshift/community/kb/kb-e1019-my-jboss-application-has-a-bunch-of-javanetbindexceptions-to-8080-when-starting">How to solve java.net.BindException to 8080</a></li>
+												<li><a href="https://www.redhat.com/openshift/community/kb/kb-e1018-how-can-i-add-jboss-modules-to-an-express-app">How to add JBoss modules to an Express app</a></li>
+											</ul>
+											<h5>Scaling Help</h5>
+											<ul class="unstyled">
+												<li><a href="">What is a gear?</a></li>
+												<li><a href="">How do cartridges use gears?</a></li>
+											</ul>
+									</div>
+								</aside>
+
+  					
+            </div><!-- /.column-content -->
+          </div><!-- /.row.row-flush-right -->
+          
+          
+          
+          
+        </div><!-- /.row-content -->
+      </div><!-- /.container -->
+    </div><!-- /#content -->
+    
+    
+    
+    <footer>      
+      <section id='copyright'>
+        <div class='container'>
+          <img alt='Red Hat' src='/app/images/redhat.png'>
+          <div class='pull-right'>Copyright &copy; 2012 Red Hat, Inc.</div>
+        </div>
+      </section>
+    </footer>
+    
+    
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.6.0/jquery.min.js" type="text/javascript"></script>
+    <script src="/app/javascripts/rails.js" type="text/javascript"></script>
+    <script src="/app/javascripts/plugins.js" type="text/javascript"></script>
+    <script src="/app/javascripts/jquery.cookie.js" type="text/javascript"></script>
+    <script src="/app/javascripts/jquery.validate.min.js" type="text/javascript"></script>
+    <script src="/app/javascripts/form.js" type="text/javascript"></script>
+    <script src="/app/javascripts/script.js" type="text/javascript"></script>
+  
+  </body>
+</html>

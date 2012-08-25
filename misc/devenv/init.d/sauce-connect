@@ -18,7 +18,11 @@ SAUCE_CFG="/etc/sauce/sauce.conf"
 
 SAUCE_LOG="/var/log/sauce-connect.log"
 
-SAUCE_SCRIPT="java -jar /var/lib/sauce/Sauce-Connect.jar $SAUCE_USER $SAUCE_SECRET"
+# newer java has issues with dealing with SSL proxying
+# this option should bypass the issue
+JAVA_OPTIONS="-Djsse.enableSNIExtension=false"
+
+SAUCE_SCRIPT="java $JAVA_OPTIONS -jar /var/lib/sauce/Sauce-Connect.jar $SAUCE_USER $SAUCE_SECRET"
 
 if [ -z "$SAUCE_PID" ]; then
     mkdir -p /var/run/sauce 

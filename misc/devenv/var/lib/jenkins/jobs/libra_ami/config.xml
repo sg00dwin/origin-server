@@ -4,9 +4,9 @@
   <description></description>
   <logRotator>
     <daysToKeep>10</daysToKeep>
-    <numToKeep>10</numToKeep>
+    <numToKeep>100</numToKeep>
     <artifactDaysToKeep>10</artifactDaysToKeep>
-    <artifactNumToKeep>10</artifactNumToKeep>
+    <artifactNumToKeep>100</artifactNumToKeep>
   </logRotator>
   <keepDependencies>false</keepDependencies>
   <properties>
@@ -19,6 +19,11 @@
         </hudson.model.StringParameterDefinition>
         <hudson.model.StringParameterDefinition>
           <name>INSTALL_FROM_SOURCE</name>
+          <description></description>
+          <defaultValue>true</defaultValue>
+        </hudson.model.StringParameterDefinition>
+        <hudson.model.StringParameterDefinition>
+          <name>BUILD_UPDATE_AMI</name>
           <description></description>
           <defaultValue>false</defaultValue>
         </hudson.model.StringParameterDefinition>
@@ -38,7 +43,7 @@
         <string>uploadpack</string>
         <string>git-upload-pack</string>
         <string>url</string>
-        <string>git://git1.ops.rhcloud.com/li.git/</string>
+        <string>git@github.com:openshift/li.git</string>
         <string>tagopt</string>
         <string></string>
       </org.spearce.jgit.transport.RemoteConfig>
@@ -74,31 +79,40 @@
     <hudson.tasks.Shell>
       <command>if [ &quot;$BUILD_CLEAN_AMI&quot; == &quot;true&quot; ]
 then
-  build/devenv build devenv ${BUILD_NUMBER} --register --official --terminate --build_clean_ami
+  build/devenv build devenv ${BUILD_NUMBER} --register --official --build_clean_ami --terminate --instance_type m1.large
+elif [ &quot;$BUILD_UPDATE_AMI&quot; == &quot;true&quot; ]
+then
+  build/devenv build devenv ${BUILD_NUMBER} --register --official --terminate --instance_type m1.large
 elif [ &quot;$INSTALL_FROM_SOURCE&quot; == &quot;true&quot; ]
 then
-  build/devenv build devenv ${BUILD_NUMBER} --register --official --terminate --install_from_source
+  build/devenv build devenv ${BUILD_NUMBER} --register --official --terminate --install_from_source --instance_type m1.large
 else
-  build/devenv build devenv ${BUILD_NUMBER} --register --official --terminate
+  printf &quot;ERROR: incorrect or insufficient build parameters\n&quot;
+  exit 1
 fi</command>
     </hudson.tasks.Shell>
   </builders>
   <publishers>
+    <hudson.tasks.ArtifactArchiver>
+      <artifacts>rhc/log/**</artifacts>
+      <latestOnly>false</latestOnly>
+    </hudson.tasks.ArtifactArchiver>
     <hudson.tasks.BuildTrigger>
-      <childProjects>jenkins_update</childProjects>
+      <childProjects>libra_coverage, broker_extended, runtime_extended, site_extended, rhc_extended</childProjects>
       <threshold>
         <name>SUCCESS</name>
         <ordinal>0</ordinal>
         <color>BLUE</color>
       </threshold>
     </hudson.tasks.BuildTrigger>
-    <hudson.tasks.ArtifactArchiver>
-      <artifacts>rhc/log/*</artifacts>
-      <latestOnly>false</latestOnly>
-    </hudson.tasks.ArtifactArchiver>
+    <hudson.tasks.junit.JUnitResultArchiver>
+      <testResults>rhc/log/**/*.xml</testResults>
+      <keepLongStdio>false</keepLongStdio>
+      <testDataPublishers/>
+    </hudson.tasks.junit.JUnitResultArchiver>
     <hudson.tasks.Mailer>
       <recipients>libra-devel@redhat.com</recipients>
-      <dontNotifyEveryUnstableBuild>true</dontNotifyEveryUnstableBuild>
+      <dontNotifyEveryUnstableBuild>false</dontNotifyEveryUnstableBuild>
       <sendToIndividuals>false</sendToIndividuals>
     </hudson.tasks.Mailer>
   </publishers>

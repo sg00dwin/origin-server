@@ -2,108 +2,89 @@ require File.expand_path('../../test_helper', __FILE__)
 
 class ApplicationControllerTest < ActionController::TestCase
 
-  ########################3
-  #  
-  #  These tests have been covered in the fake_before_filter_test
-  #  They mostly covered check_credentials 
-  #   which is being replaced by require_login
-  #
-  #  In order to best simulate the way a controller behaves,
-  #   we created a controller inside the test to test against
-  #
-  ########################3
+  def with_custom_config(options={}, integrated=Rails.configuration.integrated, &block)
+    rconf = Rails.configuration
+    streamline = rconf.streamline
+    old_integrated = rconf.integrated
+    old_streamline = streamline.clone
 
-#  test "check credentials" do
-#    @controller.check_credentials
-#  end
-#
-#  test "verify auto-request access" do
-#    @request.cookies['rh_sso'] = '123'
-#    @request.env['HTTPS'] = 'on'
-#
-#    # Setup a mocked user with no terms and no access role
-#    user = WebUser.new
-#    WebUser.expects(:find_by_ticket).returns(user)
-#    user.expects(:establish_terms)
-#    user.expects(:terms).returns([])
-#
-#    # First return no access, the after the request, return has access
-#    user.stubs(:has_access?).returns(false).then.returns(true)
-#    user.expects(:has_requested?).returns(false)
-#    user.expects(:request_access).with(CloudAccess::EXPRESS)
-#
-#    # Run the check
-#    @controller.check_credentials
-#
-#    # Make sure no notices were placed
-#    assert_nil flash[:notice]
-#  end
-#
-#  test "failed auto-request access" do
-#    @request.cookies['rh_sso'] = '123'
-#    @request.env['HTTPS'] = 'on'
-#
-#    # Setup a mocked user with no terms and no access role
-#    user = WebUser.new
-#    WebUser.expects(:find_by_ticket).returns(user)
-#    user.expects(:establish_terms)
-#    user.expects(:terms).returns([])
-#
-#    # First return no access, the after the request, return false
-#    # in order to simulate a failure or queueing
-#    user.stubs(:has_access?).returns(false).then.returns(false)
-#    user.expects(:has_requested?).returns(false)
-#    user.expects(:request_access).with(CloudAccess::EXPRESS)
-#
-#    # Run the check
-#    @controller.check_credentials
-#
-#    # Make sure the flash notice is there about the pending account
-#    assert_not_nil flash[:notice]
-#    assert_match(/access setup/, flash[:notice])
-#  end
-#
-#  test "no call when already has access" do
-#    @request.cookies['rh_sso'] = '123'
-#    @request.env['HTTPS'] = 'on'
-#
-#    # Setup a mocked user with no terms and no access role
-#    user = WebUser.new
-#    WebUser.expects(:find_by_ticket).returns(user)
-#    user.expects(:establish_terms)
-#    user.expects(:terms).returns([])
-#
-#    # Don't expect a request call if user has access
-#    user.stubs(:has_access?).returns(true)
-#    user.expects(:request_access).never()
-#
-#    # Run the check
-#    @controller.check_credentials
-#
-#    # Make sure no notices were placed
-#    assert_nil flash[:notice]
-#  end
-#
-#  test "no call when already has requested access" do
-#    @request.cookies['rh_sso'] = '123'
-#    @request.env['HTTPS'] = 'on'
-#
-#    # Setup a mocked user with no terms and no access role
-#    user = WebUser.new
-#    WebUser.expects(:find_by_ticket).returns(user)
-#    user.expects(:establish_terms)
-#    user.expects(:terms).returns([])
-#
-#    # Don't expect a request call if user has access
-#    user.stubs(:has_access?).returns(false)
-#    user.expects(:has_requested?).returns(true)
-#    user.expects(:request_access).never()
-#
-#    # Run the check
-#    @controller.check_credentials
-#
-#    # Make sure the flash notice is there about the pending account
-#    assert_not_nil flash[:notice]
-#    assert_match(/access setup/, flash[:notice])
-#  end
+    rconf.integrated = integrated
+    streamline.merge!(options)
+
+    yield
+
+    rconf.integrated = old_integrated
+    rconf.streamline = old_streamline
+  end
+
+  test 'user_from_session handles exceptions' do
+    @request.cookies['rh_sso'] = "im_a_bad_cookie"
+    WebUser.expects(:find_by_ticket).raises(AccessDeniedException)
+    @controller.send('user_from_session')
+  end
+
+  test 'user_to_session stores user' do
+    attrs = {:ticket => 'ticket', :rhlogin => 'login', :streamline_type => :simple}
+    user = WebUser.new(attrs)
+
+    attrs[:login] = attrs.delete(:rhlogin) # different names
+    attrs.merge!(session)
+
+    @controller.send('user_to_session', user)
+
+    assert (session[:ticket_verified] - Time.now.to_i) < 100
+    attrs[:ticket_verified] = session[:ticket_verified]
+
+    assert_equal attrs.with_indifferent_access, session.to_hash.with_indifferent_access
+  end
+
+  test 'user_from_session restores simple user' do
+    attrs = {:ticket => 'ticket', :login => 'login', :streamline_type => :simple}
+    attrs.each_pair {|k,v| @request.session[k] = v }
+    user = @controller.send('user_from_session')
+    attrs[:rhlogin] = attrs.delete(:login) # different names
+    attrs.each_pair {|k,v| assert_equal v, user.send(k) }
+    assert user.simple_user?
+  end
+
+  test 'user_from_session restores full user' do
+    attrs = {:ticket => 'ticket', :login => 'login', :streamline_type => :full}
+    attrs.each_pair {|k,v| @request.session[k] = v }
+    user = @controller.send('user_from_session')
+    attrs[:rhlogin] = attrs.delete(:login) # different names
+    attrs.each_pair {|k,v| assert_equal v, user.send(k) }
+    assert !user.simple_user?
+  end
+  
+  test 'cookie domain can be loosely defined' do
+    with_custom_config({:cookie_domain => 'test.com'}, false) do
+      assert_equal '.test.com', @controller.send(:sso_cookie_domain)
+    end
+  end
+
+  test 'cookie domain local is nil, can depend on request' do
+    @request.host = 'a.test.domain.com'
+    with_custom_config({:cookie_domain => :current}, false) do
+      assert_nil @controller.send(:sso_cookie_domain)
+    end
+  end
+
+  test 'integrated default domain_cookie_opts' do
+    with_custom_config({:cookie_domain => nil}, false) do
+      assert_equal '.redhat.com', @controller.send(:sso_cookie_domain)
+    end
+  end
+
+  test 'create server relative uri' do
+    {
+      '' => nil,
+      ' ' => nil,
+      '/' => '/',
+      '/?' => '/',
+      '/?' => '/',
+      '/foo?' => '/foo',
+      '/foo?a=b' => '/foo?a=b',
+      'http://www.google.com/foo?a=b' => '/foo?a=b',
+    }.each_pair{ |k,v| assert_equal v, @controller.server_relative_uri(k) }
+  end
 end

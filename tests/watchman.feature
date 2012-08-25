@@ -1,6 +1,5 @@
-
-@internals @watchman
-@node
+@runtime_extended
+@runtime_extended1
 Feature: Watchman Service
   Scenario Outline: Watchman monitoring misc applications
     Given a Watchman object using "<log_file>" and "<epoch>"
@@ -26,5 +25,5 @@ Feature: Watchman Service
   Scenario: Watchman survives one exception
     Given a Watchman object using "messages.log" and "Feb  7 18:20:44" expect "1" exception
 
-  Scenario: Watchman dies with 10 exceptions
-    Given a Watchman object using "messages.log" and "Feb  7 18:20:44" expect "10" exception
+  Scenario: Watchman dies with 5 exceptions
+    Given a Watchman object using "messages.log" and "Feb  7 18:20:44" expect "5" exception

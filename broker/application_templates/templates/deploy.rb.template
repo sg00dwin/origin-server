@@ -1,0 +1,50 @@
+#!/usr/bin/env ruby
+require 'rubygems'
+require 'yaml'
+require 'tempfile'
+require 'json'
+require 'bson'
+
+# Courtesy of: http://as.rubyonrails.org/classes/Object.html#M000010
+def returning(value)
+  yield(value)
+  value
+end
+
+templates = YAML.load(DATA)
+
+templates.each do |options|
+  begin
+    name = options[:name]
+    puts "Deploying #{name}"
+
+    # Create a hash of all files to include as options
+    files = Hash[
+      [:descriptor, :metadata ].map do |name|
+        file = returning(Tempfile.new(name)) do |file|
+          file.write options[name]
+          file.close
+          file
+        end
+
+        [name,file]
+      end
+    ]
+
+    # Create the script to run
+    script = [
+      options[:script],
+      *files.map{|k,v| "--%s '%s'" % [k,v.path]}
+    ].join(' ')
+
+    puts `#{script}`
+  ensure
+    # Make sure all of the files are closed
+    files.each do |name,f|
+      f.close
+      f.unlink
+    end
+  end
+end
+
+__END__

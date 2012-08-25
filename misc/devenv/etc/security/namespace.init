@@ -22,14 +22,17 @@ if [ "$3" = 1 ]; then
         fi
 fi
 
-if [ "$1" == "/tmp" ] || [ "$1" == "/var/tmp" ]
+if [ "$1" == "/tmp" ] || [ "$1" == "/var/tmp" ] || [ "$1" == "/sandbox" ]
 then
     /bin/chown $4 $2
     uid=$(id -u "$4")
     source /usr/libexec/stickshift/lib/util_ext
     mcs_level=`get_mcs_level $uid`
-    chcon -t libra_tmp_t -l $mcs_level $1
-    chcon -t libra_tmp_t -l $mcs_level $2
+    if awk -F\: '/'"$4"'/{ if($5~/libra guest/) print $1 }' /etc/passwd | grep -q $4
+    then
+        chcon -t libra_tmp_t -l $mcs_level $1
+        chcon -t libra_tmp_t -l $mcs_level $2
+    fi
 fi
 
 exit 0

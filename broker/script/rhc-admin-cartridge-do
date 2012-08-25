@@ -15,7 +15,7 @@ rhc-admin-cartridge-do OPTIONS
 
 Options:
 -l|--rhlogin <rhlogin>
-    Red Hat login (RHN or OpenShift login with OpenShift Express access) (required)
+    Red Hat login (RHN or OpenShift login with OpenShift access) (required)
 -a|--app     <application>
     Application name  (alphanumeric) (required)
 -c|--command <command>
@@ -57,11 +57,18 @@ if login.nil? or app_name.nil? or command.nil? or cartridge.nil? or args["--help
   exit 1
 end
 
+if timeout
+  unless timeout =~ /^[0-9]+$/
+    puts "ERROR: Timeout must be a positive integer"
+    exit 1
+  end
+end
+
 require "/var/www/stickshift/broker/config/environment"
 
 # Set the MCollective options
 if timeout
-  Rails.configuration.rpc_opts[:timeout] = timeout.to_i 
+  Rails.configuration.gearchanger[:rpc_options][:timeout] = timeout.to_i
 end
 
 user = CloudUser.find(login)

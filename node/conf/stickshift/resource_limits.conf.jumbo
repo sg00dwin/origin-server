@@ -9,7 +9,8 @@ node_profile=jumbo
 # Quotas: File system limits
 #
 quota_files=4000000
-quota_blocks=104857600 # 100GB.  1 block = 1024byte
+# 100GB.  1 block = 1024byte
+quota_blocks=104857600
 
 # For no over commitment, should be memory_limit_in_bytes / (Total System Memory - 1G)
 max_apps=5

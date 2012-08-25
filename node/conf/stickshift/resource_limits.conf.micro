@@ -9,7 +9,8 @@ node_profile=micro
 # Quotas: File system limits
 #
 quota_files=20000
-quota_blocks=262144 # 256MByte.  1 block = 1024byte 
+# 256MByte.  1 block = 1024byte 
+quota_blocks=262144
 
 # For no over commitment, should be memory_limit_in_bytes / (Total System Memory - 1G)
 max_apps=160

@@ -21,7 +21,7 @@
   #learn.section-striped.lift-counter
     .container.container-inset
       .row
-        = take_action new_account_path, 'Get started in the cloud for <strong>free</strong>', 'Try it now', :class => 'span12'
+        = take_action new_account_path, 'Get started in the cloud', 'SIGN UP - IT\'S FREE', :class => 'span12'
   
         .span6
           %ul.learn.unstyled
@@ -42,18 +42,18 @@
                 %p Built on open technologies so you can take it with you.
         .span6
           %ul.news.unstyled
+            %li 
+              =link_to pricing_url, :class => 'link-tile' do
+                %h4 Announcing the first tier of OpenShift pricing
+                %p We're announcing OpenShift pricing for the first paid tier offering, along with our plan to continue a free offering like the one that developers are currently enjoying in the OpenShift Developer Preview.
             %li
-              = link_to openshift_blog_url, :class => 'link-tile' do
-                %h4 Want to keep up to date?
-                %p Keep up to date with the latest news and announcements from the OpenShift team. Our team is constantly bringing you the latest advice and tutorials.
+              = link_to application_types_path, :class => 'link-tile' do
+                %h4 Build your apps with JBoss EAP 6
+                %p Market-leading open source enterprise platform for next-generation, highly transactional enterprise Java applications.  Build and deploy enterprise Java on OpenShift!
             %li
-              = link_to console_path, :class => 'link-tile' do
-                %h4 Try out the new console
-                %p The new console is out of preview and ready to help you build your apps in the cloud. We'll be adding lots more features to the console, so check back frequently!
-            %li
-              = link_to events_url, :class => 'link-tile' do
-                %h4 Meet the OpenShift team
-                %p We're in your area - check out the event list and join us!
+              = link_to developers_url, :class => 'link-tile' do
+                %h4 Find answers in the Developer Center
+                %p Building applications involves lots of questions and we want you to find those answers fast.  The new Developer Center will centralize and organize all our reference material.
 
       .row
         .span6
@@ -83,7 +83,7 @@
               .span1 &nbsp;
               #buzz-twitter.span6
   
-            .row-fluid
+            .row-fluid.buzz-actions
               .span6
                 = link_to community_url, :class => 'link-with-action' do
                   %strong Join

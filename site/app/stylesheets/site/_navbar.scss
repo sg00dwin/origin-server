@@ -1,8 +1,6 @@
-@import "../navbar";
 
 /* This is site specific branding */
 .navbar {
-  /*margin-bottom: 30px;*/
   position: relative;
 
   .brand {
@@ -25,32 +23,29 @@
     //width: $logoWidth;
     margin-bottom: 11px;
   }
-  
+
   .brand > a {
     display: block;
     color: #fff;
     text-decoration:none;
-  }
+    > .brand-image {
+      @include transition(all 0.2s);
+    }
+    > .brand-text {
+    	border-bottom: 2px solid transparent;
+      padding-bottom: 2px;
+      color: white;
+      text-align: center;
+    }
 
-  .brand > a > .brand-image {
-    -moz-transition: all 0.2s;
-    -webkit-transition: all 0.2s;
-    transition: all 0.2s;
-  }
-
-  .brand > a:hover > .brand-image {
-    -moz-transform: rotate(-10deg);
-    -webkit-transform: rotate(-10deg);
-    transform: rotate(-10deg);
-  }
-  .brand > a > .brand-text {
-  	border-bottom: 2px solid transparent;
-    padding-bottom: 2px;
-    color: white;
-    text-align: center;
-  }
-  .brand > a:hover > .brand-text {
-  	border-bottom: 2px solid #EB0011;
+    &:hover {
+      > .brand-image {
+        @include transform(rotate(-10deg));
+      }
+      > .brand-text {
+      	border-bottom: 2px solid #EB0011;
+      }
+    }
   }
 
   .nav {
@@ -103,6 +98,65 @@
   }
 }
 
+.column-navbar {
+	display:none;
+}
+.column-navbar .btn-navbar {
+  background-color: #1f1f1f;
+  background-image: none;
+  //@include gradient-vertical($startColor: #282828, $endColor: #121212);
+  display: none;
+  font-size: 12px;
+  text-transform: uppercase;
+  font-weight:normal;
+  margin: 0 0 0 -20px;
+  padding: 8px 20px;
+  border:0;
+  color: #aaa;
+  overflow: hidden;
+  text-align:left;
+  width: 100%;
+  text-shadow: -1px -1px 2px rgba(0, 0, 0, 0.25);
+  
+  &:hover {
+  	color:#eee;
+  	background-color:#4f4f4f;
+  	background-image:none;
+  	.icon-bar {
+    	background-color: #eee;
+    }
+  }
+  
+  .icon-bar {
+    background-color: #aaa;
+    border-radius: 1px 1px 1px 1px;
+    box-shadow: 0 1px 0 rgba(0, 0, 0, 0.25);
+    display: block;
+    height: 2px;
+    margin: 2px 0;
+    width: 38px;
+    float:right;
+    clear:both;   
+	}
+}
+
+@media (max-width:767px) {
+	.column-navbar {
+		background: #000;
+		display:block;
+		margin: 0 -20px;
+    padding:0 20px;
+		> h3 {
+			float:left;
+			color: #fff;
+			margin: 8px 20px 0;
+		}
+		.btn-navbar {
+    	display: block;
+  	}
+	}
+}
+
 @media (max-width: 767px) {
   .navbar {
     padding-top: 15px;
@@ -111,10 +165,11 @@
     .brand {
       float: left;
       text-align: center;
+      font-size: 14px;
     }
 
     .nav {
-      margin-left: $logoWidth + 10px; 
+      margin-left: 95px; 
       margin-top: 5px; /* centers navigation text on the logo */
       width: inherit;
 
@@ -125,12 +180,20 @@
 
         > a {
           padding: 10px 0;
+      		font-size: 14px;
+      		font-weight: normal;
         }
       }
       > li.divider {
         display: none;
       }
     }
+    .brand-image {
+  	  background: url('../images/OSlogo57.png') center top no-repeat transparent;
+  	  height: 60px;
+  	  margin-bottom: 5px;
+  	  margin-top: 5px;
+  	}
   }
 }
 @media (min-width: 768px) {
@@ -149,7 +212,6 @@
       left: -50%;
       height: 125px;
     }
-
     .nav {
       margin-top: 20px; /* centers navigation text on the logo */
     }
@@ -162,10 +224,10 @@
     font-size: 11px;
   }
   .navbar {
+  	.navbar {
+			min-height: 90px;
+		}
     .brand {
-      .brand-image {
-        margin-bottom: 5px;
-      }
       > a:hover > .brand-image {
         -moz-transform: rotate(0);
         -webkit-transform: rotate(0);
@@ -174,25 +236,11 @@
     }
     .nav > li > a {
       font-weight: normal;
+      font-size: 12px;
+      //padding: 5px 0;
     }
   }
 }
-
-@media (max-width: 480px) {
-	.navbar {
-		min-height: 90px;
-		
-		.nav {
-    	font-size: 12px;
-
-      li  > a {
-        padding: 5px 0;
-      }
-    }
-  }
-  
-}
-
 
 
 

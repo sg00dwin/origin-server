@@ -18,7 +18,7 @@ exec="/usr/bin/mongod"
 prog="mongod"
 pidfile="/var/run/mongodb/mongodb.pid"
 logfile="/var/log/mongodb/mongodb.log"
-options=" --replSet libra_rs --auth --nojournal --smallfiles --oplogSize=16 -f /etc/mongodb.conf"
+options=" --replSet libra_rs --auth --journal --smallfiles --nssize=8 --oplogSize=8 -f /etc/mongodb.conf"
 
 [ -e /etc/sysconfig/$prog ] && . /etc/sysconfig/$prog
 
@@ -61,19 +61,18 @@ rh_configure_mongo() {
     start
     retry_cnt=0
     while true; do
-        sleep 1
-        rh_status_q
+        sleep 2
+        # Setup replica set and user
+        echo 'rs.initiate({_id: "libra_rs", members:[{_id: 0, host:"localhost:27017"}]});' | mongo > /dev/null 2>&1
         if [ $? -eq 0 ]; then
             break;
         fi
         retry_cnt=$((retry_cnt + 1))
-        if [ $retry_cnt -ge 30 ]; then
+        if [ $retry_cnt -ge 60 ]; then
             echo "Unable to start mongod server"
             exit 1
         fi
     done
-    # Setup replica set and user
-    echo 'rs.initiate({_id: "libra_rs", members:[{_id: 0, host:"localhost:27017"}]});' | mongo
     retry_cnt=0
     while true; do
         sleep 1
@@ -125,7 +124,7 @@ Order Allow,Deny
 Allow from All
 </Directory>
 ' > /etc/httpd/conf.d/stickshift-datastore.conf
-    /etc/init.d/httpd restart
+    #/etc/init.d/httpd restart
 }
 
 rh_status() {

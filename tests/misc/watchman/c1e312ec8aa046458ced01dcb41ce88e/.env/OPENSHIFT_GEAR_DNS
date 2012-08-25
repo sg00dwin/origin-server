@@ -1,0 +1,1 @@
+export OPENSHIFT_GEAR_DNS='app001-jwh201202141359.dev.rhcloud.com'

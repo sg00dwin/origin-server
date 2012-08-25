@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 # Copyright © 2011 Red Hat, Inc. All rights reserved
 
 # This copyrighted material is made available to anyone wishing to use, modify,
@@ -73,6 +74,12 @@ module StickShift
 
       cmd = "/bin/sh #{File.join("/usr/libexec/stickshift/lib", "express/teardown_pam_fs_limits.sh")} #{user.name}"
       shellCmd(cmd)
+    end
+
+    def before_initialize_stickshift_proxy(user)
+    end
+
+    def after_initialize_stickshift_proxy(user)
     end
 
     def after_unix_user_destroy(user)

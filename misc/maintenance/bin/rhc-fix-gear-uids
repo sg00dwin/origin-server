@@ -1,0 +1,102 @@
+#!/usr/bin/env ruby
+
+require 'rubygems'
+require 'getoptlong'
+require "/var/www/stickshift/broker/config/environment"
+
+users = CloudUser.find_all(nil)
+
+mongo_hash = {}
+users.each { |user|
+  user.applications.each { |app|
+    app.group_instances.uniq.each { |gi|
+      gi.gears.each { |gear|
+        mongo_hash[gear.uuid] = gear
+      }
+    }
+  }
+}
+
+node_hash = StickShift::ApplicationContainerProxy.get_all_gears
+no_error = true
+
+fail_summary = []
+cleanup_summary = []
+nil_summary = []
+numerify_uid_summary = []
+numerify_uid_fail_summary = []
+# now check
+mongo_hash.each { |gear_uuid,gear|
+  if not node_hash.has_key? gear_uuid
+    nil_summary << gear_uuid
+    next
+  end
+  old_value = gear.uid
+  node_info = node_hash[gear_uuid]
+  begin
+    g_uid = Integer(node_info.split("uid:")[1].split(']')[0])
+  rescue Exception => e
+    fail_summary << "FAILED to check gear #{gear_uuid} in app #{gear.app.uuid} because of exception : #{e.message}\n"
+    next
+  end
+  if gear.uid.nil?
+    old_value = "nil"
+  end
+  if old_value != g_uid
+    msg = "Gear '#{gear_uuid}' in app #{gear.app.uuid} for user '#{gear.app.user.login}', needs its uid to be set from '#{old_value}' to '#{g_uid}'..."
+    begin
+      gear.uid = g_uid
+      app = gear.app
+      app.save
+      msg += "done.\n"
+      cleanup_summary << msg
+    rescue Exception => e
+      msg += "failed. Because of #{e.message}\n"
+      fail_summary << msg
+    end
+  end
+  if gear.uid.class == String
+    begin
+      msg = "Gear '#{gear_uuid}' in app #{gear.app.uuid} for user '#{gear.app.user.login}', needs its uid converted from String to Integer..."
+      gear.uid = Integer(gear.uid)
+      app = gear.app
+      app.save
+      msg += "done.\n"
+      numerify_uid_summary << msg
+    rescue Exception =>e
+      msg += "failed. Because of #{e.message}\n"
+      numerify_uid_fail_summary << msg
+    end
+  end
+}
+
+exitstatus = 0
+if cleanup_summary.length > 0
+  print "Gear UID cleanup summary : \n#{cleanup_summary}\n"
+else
+  print "No gears were cleaned up.\n"
+end
+
+if nil_summary.length > 0
+  print "The following gears had 'nil' uid, but could not be fixed still:\n#{nil_summary.join("\n")}\n"
+  exitstatus = 1
+end
+
+if fail_summary.length > 0
+  print "The following gears needed a fix on their uid, but could not be fixed still:\n#{fail_summary.join("\n")}\n"
+  exitstatus = 1
+end
+
+if numerify_uid_summary.length > 0
+  print "The following gears converted their uids from String to Integer and succeeded: \n#{numerify_uid_summary}\n"
+else
+  print "No gears required their uids to be converted from String to Integer!\n"
+end
+
+if numerify_uid_fail_summary.length > 0
+  print "The following gears converted their uids from String to Integer but FAILED: \n#{numerify_uid_fail_summary}\n"
+  exitstatus = 1
+end
+
+exit exitstatus
+

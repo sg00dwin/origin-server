@@ -13,17 +13,22 @@
     <hudson.model.ParametersDefinitionProperty>
       <parameterDefinitions>
         <hudson.model.StringParameterDefinition>
-          <name>exclude_internal</name>
+          <name>exclude_broker</name>
           <description></description>
           <defaultValue>false</defaultValue>
         </hudson.model.StringParameterDefinition>
         <hudson.model.StringParameterDefinition>
-          <name>exclude_verification</name>
+          <name>exclude_runtime</name>
           <description></description>
           <defaultValue>false</defaultValue>
         </hudson.model.StringParameterDefinition>
         <hudson.model.StringParameterDefinition>
-          <name>include_web</name>
+          <name>exclude_site</name>
+          <description></description>
+          <defaultValue>false</defaultValue>
+        </hudson.model.StringParameterDefinition>
+        <hudson.model.StringParameterDefinition>
+          <name>exclude_rhc</name>
           <description></description>
           <defaultValue>false</defaultValue>
         </hudson.model.StringParameterDefinition>
@@ -37,23 +42,28 @@
   <blockBuildWhenUpstreamBuilding>false</blockBuildWhenUpstreamBuilding>
   <triggers class="vector"/>
   <concurrentBuild>false</concurrentBuild>
+  <customWorkspace>jobs/libra_ami/workspace</customWorkspace>
   <builders>
     <hudson.tasks.Shell>
       <command># Launch a test instance
-build/devenv launch devenv_verifier_${BUILD_NUMBER} --verifier
+build/devenv launch devenv_verifier_${BUILD_NUMBER} --verifier --instance_type m1.large
 
 excludes=&quot;&quot;
-if [ &quot;$include_web&quot; == &quot;true&quot; ]
+if [ &quot;$exclude_broker&quot; == &quot;true&quot; ]
 then
-    excludes=$excludes&quot; --include_web&quot;
+    excludes=$excludes&quot; --exclude_broker&quot;
 fi
-if [ &quot;$exclude_internal&quot; == &quot;true&quot; ]
+if [ &quot;$exclude_runtime&quot; == &quot;true&quot; ]
 then
-    excludes=$excludes&quot; --exclude_internal&quot;
+    excludes=$excludes&quot; --exclude_runtime&quot;
 fi
-if [ &quot;$exclude_verification&quot; == &quot;true&quot; ]
+if [ &quot;$exclude_site&quot; == &quot;true&quot; ]
 then
-    excludes=$excludes&quot; --exclude_verification&quot;
+    excludes=$excludes&quot; --exclude_site&quot;
+fi
+if [ &quot;$exclude_rhc&quot; == &quot;true&quot; ]
+then
+    excludes=$excludes&quot; --exclude_rhc&quot;
 fi
 echo $excludes
 # Run the image tests
@@ -62,9 +72,17 @@ build/devenv test devenv_verifier_${BUILD_NUMBER} --official --terminate $exclud
   </builders>
   <publishers>
     <hudson.tasks.ArtifactArchiver>
-      <artifacts>rhc/log/*</artifacts>
+      <artifacts>rhc/log/**</artifacts>
       <latestOnly>false</latestOnly>
     </hudson.tasks.ArtifactArchiver>
+    <hudson.tasks.BuildTrigger>
+      <childProjects>broker_extended, runtime_extended, site_extended, rhc_extended</childProjects>
+      <threshold>
+        <name>SUCCESS</name>
+        <ordinal>0</ordinal>
+        <color>BLUE</color>
+      </threshold>
+    </hudson.tasks.BuildTrigger>
     <hudson.tasks.Mailer>
       <recipients>libra-devel@redhat.com</recipients>
       <dontNotifyEveryUnstableBuild>true</dontNotifyEveryUnstableBuild>
@@ -72,5 +90,4 @@ build/devenv test devenv_verifier_${BUILD_NUMBER} --official --terminate $exclud
     </hudson.tasks.Mailer>
   </publishers>
   <buildWrappers/>
-  <customWorkspace>jobs/libra_ami/workspace</customWorkspace>
 </project>

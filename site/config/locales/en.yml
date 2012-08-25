@@ -18,7 +18,7 @@ en:
     token_is_invalid: "This password reset request is no longer valid. This could be caused by the link being more than 24 hours old or it's already been used. Please try to reset your password again using the 'Sign in' form."
     terms_not_accepted: 'Terms must be accepted'
     service_error: 'A system error has occurred. If the problem persists, please contact Red Hat support.'
-    user_not_found: 'No existing account fot the given email address.'
+    user_not_found: 'No existing account for the given email address.'
     email_service_error: 'A system error has occurred.  If the problem persists, please contact Red Hat support.'
     waiting_for_access: 'We are setting up your account now.  You will receive an email when your account is opened.'
     already_requested_access: 'You have already requested access to this service.  You should expect an email when access is granted.'
@@ -37,6 +37,45 @@ en:
       access/express_request:
        terms_accepted: "Accept Terms?"
 
+  express_api:
+    errors:
+      unauthorized: "Authorization problem. Please check that your password is correct."
+      app_unavailable: "We couldn't verify that your app was successfully created. It may have been created but be unavailable. Please check back in a bit to see if your app was created or not."
+      timeout: "We're sorry, this operation has timed out. It is possible that it was successfully completed, but we are unable to verify it."
+    messages:
+      domain_create: "Congratulations! You successfully created your domain"
+      domain_update: "Congratulations! You successfully updated your domain"
+      domain_update_ssh: "Congratulations! You successfully updated your ssh key"
+      app_available: "Congratulations! Your app is live!"
+      app_created: "Congratulations! Your app has been created. It may be a few minutes before it is live."
+      app_deleted: "Your app has been successfully deleted"
+
+  rest_api:
+    errors:
+      '104': 'You have reached the maximum allowed gears and cannot create another.  You must scale down an application or remove an application or cartridge to continue.'
+      '116': 'Type is required and cannot be blank.'
+      '121': 'You have already saved this public key with a different name. Provide a different key here.'
+      '151': 'You must create a Jenkins application (to act as a build server) before you can add the Jenkins cartridge to an application.'
+      '153': 'You are currently using more gears than the new plan would allow.  Please scale down or delete applications before downgrading.'
+
   recaptcha:
     errors:
       incorrect-captcha-sol: "Captcha text didn't match"
+
+  aria:
+    direct_post:
+      unknown: 
+        Your payment information could not be processed at this time.  Please contact the OpenShift team for support.
+
+      serveryoumustenterccnumber: 
+        Please enter the credit card number you wish to make payments with.
+
+      server_card_cvv: 
+        You must enter the security code associated with your card.  The security code is a three or four digit number (also known as the CVV, CVD, or CCV) usually displayed on the back of your card.
+      server_card_contents: 
+        Credit card numbers may only contain digits, spaces, or dashes, and be 15 or 16 digits in length.
+
+      servercouldnotvalidatecard:
+        Your credit card could not be validated at this time.  Please re-enter card number, expiration, and CVV and try again.
+      servercouldnotvalidatecard:
+        Your credit card could not be validated at this time.  Please re-enter card number, expiration, and CVV and try again.  If you continue to experience problems, please contact the OpenShift support team.

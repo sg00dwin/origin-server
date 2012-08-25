@@ -10,8 +10,13 @@ module OpenShift
         @expected_redirects = [path]
       end
 
+      def full_path
+        path = @path
+        path = $browser_url + path if not path.start_with?("http")
+      end
+
       def open
-        @page.get @path
+        @page.get full_path
         wait
       end
 
@@ -61,11 +66,11 @@ module OpenShift
       end
 
       def edit_namespace_button
-        @page.find_element(:xpath => "//a[@href='/app/account/domain/edit']")
+        @page.find_element(:xpath => "//a[contains(@href, '/account/domain/edit')]")
       end
 
       def ssh_key_add_button
-        @page.find_element(:xpath => "//a[@href='/app/account/keys/new']")
+        @page.find_element(:xpath => "//a[contains(@href, '/account/keys/new')]")
       end
 
       def find_ssh_key_row(key_name)
@@ -91,6 +96,19 @@ module OpenShift
       end
     end
 
+    class ApplicationDetails < Page
+      attr_accessor :application_delete_form
+
+      def initialize(page, path)
+        super
+        @application_delete_form = OpenShift::Rest::ApplicationDeleteForm.new(page, 'application_delete')
+      end
+
+      def find_delete_button
+        @page.find_elements(:xpath => "//a[contains(@href, '/delete')]")[0]
+      end
+    end
+
     class ApplicationTypes < Page
       def initialize(page, path)
         super
@@ -102,7 +120,7 @@ module OpenShift
       def get_app_type(link)
         href = link.attribute(:href)
 
-        if !href.start_with? "#{@path}/"
+        if !href.start_with? "#{full_path}/"
           raise "The link '#{href}' does not point to an application creation page"
         end
 
@@ -111,7 +129,7 @@ module OpenShift
       end
 
       def find_create_buttons
-        @page.find_elements(:xpath => "//a[starts-with(@href, '/app/console/application_types/')]")
+        @page.find_elements(:xpath => "//div[contains(@class, 'application_type')]/a[contains(@href, '/console/application_types/')][contains(@class, 'btn')]")
       end
     end
 
@@ -119,11 +137,25 @@ module OpenShift
       def initialize(page, path)
         super
       end
+
+      ##
+      # get_app_name - take an anchor element and determines the application
+      # name from the restful href path
+      def get_app_name(link)
+        href = link.attribute(:href)
+
+        path_components = href.split('/')
+        path_components[-1]
+      end
+
+      def find_app_buttons
+        @page.find_elements(:xpath => "//div[contains(@class, 'app-block')]//a[contains(@href, '/console/applications/')]")
+      end
     end
 
     class GetStartedPage < Page
       def initialize(page, app_name)
-        super(page, "/app/console/applications/#{app_name}/get_started")
+        super(page, "/console/applications/#{app_name}/get_started")
       end
 
       def find_app_link
@@ -133,7 +165,8 @@ module OpenShift
 
     class Console < Page
       attr_accessor :domain_form, :app_form, :application_types_page,
-                    :applications_page, :application_create_form
+                    :applications_page, :application_details_page,
+                    :application_create_form
 
       def initialize(page, path)
         super
@@ -141,11 +174,10 @@ module OpenShift
         @application_types_page = ApplicationTypes.new(page, "#{path}/application_types")
         @applications_page = Applications.new(page, "#{path}/applications")
         @application_create_form = ApplicationCreateForm.new(page, 'application')
+        @application_details_page = ApplicationDetails.new(page, "#{path}/applications")
 
         add_redirect(@application_types_page.path)
         add_redirect(@applications_page.path)
-        #@domain_form = OpenShift::Express::DomainForm.new(page, "new_express_domain")
-       # @app_form = OpenShift::Express::AppForm.new(page, "new_express_app")
       end
     end
 
@@ -163,6 +195,15 @@ module OpenShift
 
       def click(css)
         @page.find_element(:css => css).click
+      end
+    end
+
+    class Signup < Page
+      attr_accessor :form
+
+      def initialize(page, path)
+        super
+        @form = SignupForm.new(page, 'signup')
       end
     end
   end

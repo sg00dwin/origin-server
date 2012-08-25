@@ -50,13 +50,6 @@ Broker::Application.configure do
   ############################################
   # OpenShift Configuration Below this point #
   ############################################
-  config.districts = {
-    :enabled => true,
-    :require_for_app_create => true,
-    :max_capacity => 6000, # Only used with district create.  Modify capacity through rhc-admin-ctl-district.
-    :first_uid => 1000 # Can not modify after district is created.  Only affects new districts.
-  }
-  
   config.dns = {
     :zone => "rhcloud.com",
     :dynect_customer_name => "demo-redhat",
@@ -75,13 +68,9 @@ Broker::Application.configure do
     }
   }
   
-  config.rpc_opts = {
-    :disctimeout => 3,
-    :timeout     => 60,
-    :verbose     => false,
-    :progress_bar=> false,
-    :filter      => {"identity"=>[], "fact"=>[], "agent"=>[], "cf_class"=>[]},
-    :config      => "/etc/mcollective/client.cfg"
+  config.usage_tracking = {
+    :datastore_enabled => false,
+    :syslog_enabled => false
   }
   
   config.analytics = {
@@ -90,7 +79,7 @@ Broker::Application.configure do
     :nurture_password => "password",
     :nurture_url => "https://libra-makara.nurturehq.com/",
     
-    :apptegic_enabled => true,
+    :apptegic_enabled => false,
     :apptegic_url => "https://redhat.apptegic.com/httpreceiver",
     :apptegic_key => "redhat",
     :apptegic_secret => "4DC5A0AA-48AE-9287-5F66-9A73E14B6E31",
@@ -105,14 +94,78 @@ Broker::Application.configure do
     :user => "USER_NAME",
     :password => "PASSWORD",
     :db => "openshift_broker",
-    :collections => {:user => "user", :district => "district", :application_template => "template"}
+    :collections => {:user => "user", 
+                     :district => "district", 
+                     :application_template => "template",
+                     :distributed_lock => "distributed_lock"}
   }
 
-  
+  config.user_action_logging = {
+    :logging_enabled => true,
+    :log_filepath => "/var/log/stickshift/user_action.log"
+  }
+
+  config.billing = {
+    :aria => {
+      :config => {
+        :url => "https://streamline-proxy1.ops.rhcloud.com/api/ws/api_ws_class_dispatcher.php",
+        :auth_key => "sRvjFqjSadu3AFB8jRAR3tqeH5Qf6XjW",
+        :client_no => 3754655
+      },
+      :usage_type => {
+        :gear => {:small => 10014123,
+                  :medium => 10014125,
+                  :large => 10014127,
+                  :xlarge => 10014151},
+        :storage => {:gigabyte_hour => 10037755}
+      },
+      :default_plan => :freeshift,
+      :plans => {
+        :freeshift => {
+          :plan_no => 10044929,
+          :name => "FreeShift",
+          :capabilities => {
+            'max_gears' => 3,
+            'gear_sizes' => ["small"]
+          }
+        },
+        :megashift => {
+          :plan_no => 10044931,
+          :name => "MegaShift",
+          :capabilities => {
+            'max_gears' => 16,
+            'gear_sizes' => ["small", "medium"],
+            'max_storage_per_gear' => 30 # 30GB
+          }
+        }
+      },
+      :supp_plans => {}
+    }
+  }
+
   # SS Config
   config.ss = {
     :domain_suffix => "rhcloud.com",
     :default_max_gears => 3,
+    :default_gear_size => "small"
+  }
+
+  config.gearchanger = {
+    :rpc_options => {
+        :disctimeout => 2,
+        :timeout => 60,
+        :verbose => false,
+        :progress_bar => false,
+        :filter => {"identity" => [], "fact" => [], "agent" => [], "cf_class" => []},
+        :config => "/etc/mcollective/client.cfg"
+    },
+    :districts => {
+        :enabled => true,
+        :require_for_app_create => true,
+        :max_capacity => 6000, # Only used with district create.  Modify capacity through rhc-admin-ctl-district.
+        :first_uid => 1000 # Can not modify after district is created.  Only affects new districts.
+    },
+    :node_profile_enabled => true
   }
 
 end

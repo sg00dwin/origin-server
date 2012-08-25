@@ -15,7 +15,7 @@ class TermsControllerTest < ActionController::TestCase
   test "show terms" do
     setup_user
     user = WebUser.new
-    user.terms = ['1']
+    user.send('terms=', ['1'])
     @controller.expects(:session_user).at_least_once.returns(user)
     get :new
     assert_response :success
@@ -30,7 +30,7 @@ class TermsControllerTest < ActionController::TestCase
     # Override the returned user with one that has errors
     # to simulate a failure
     user = WebUser.new
-    user.terms = ['1']
+    user.send('terms=', ['1'])
     user.errors.add(:base, "test")
     @controller.expects(:session_user).at_least_once.returns(user)
 
@@ -42,7 +42,7 @@ class TermsControllerTest < ActionController::TestCase
   test "accept terms but already accepted" do
     setup_user
     user = @controller.session_user
-    user.terms=[]
+    user.send('terms=', [])
     user.expects(:accept_terms).never    
     post :create
     assert_equal 0, assigns(:term).errors.length
@@ -52,7 +52,7 @@ class TermsControllerTest < ActionController::TestCase
   test "accept terms successfully" do
     setup_user
     user = @controller.session_user
-    user.terms = [{'termId' => '1', 'termUrl' => 'localhost'}]
+    user.send('terms=', [{'termId' => '1', 'termUrl' => 'localhost'}])
     user.expects(:accept_terms).once
     post :create
     assert_equal 0, assigns(:term).errors.length
@@ -63,7 +63,7 @@ class TermsControllerTest < ActionController::TestCase
     setup_user
     @controller.terms_redirect = account_path
     user = @controller.session_user
-    user.terms = [{'termId' => '1', 'termUrl' => 'localhost'}]
+    user.send('terms=', [{'termId' => '1', 'termUrl' => 'localhost'}])
     user.expects(:accept_terms).once
     post :create
     assert_equal 0, assigns(:term).errors.length
@@ -75,7 +75,7 @@ class TermsControllerTest < ActionController::TestCase
     url = 'http://external.url/to-something' 
     @controller.terms_redirect = url
     user = @controller.session_user
-    user.terms = [{'termId' => '1', 'termUrl' => 'localhost'}]
+    user.send('terms=', [{'termId' => '1', 'termUrl' => 'localhost'}])
     user.expects(:accept_terms).once
     post :create
     assert_equal 0, assigns(:term).errors.length
@@ -85,7 +85,7 @@ class TermsControllerTest < ActionController::TestCase
   test "show acceptance terms" do
     setup_user
     user = @controller.session_user
-    user.terms = [{'termId' => '1', 'termUrl' => 'localhost', 'termTitle' => 'title'}]
+    user.send('terms=', [{'termId' => '1', 'termUrl' => 'localhost', 'termTitle' => 'title'}])
     get :acceptance_terms
     assert_equal 0, assigns(:term).errors.length
     assert_response :success

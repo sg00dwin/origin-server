@@ -1,0 +1,14 @@
+%section#tech
+  - @sections.each do |s|
+    - next unless s[:data]
+    %h2= s[:name]
+    %table.table.table-bordered.table-striped
+      %thead
+        %tr
+          %td Name
+          %td Description
+      %tbody
+        - s[:data].each do |i|
+          %tr
+            %td= i.respond_to?(:display_name) ? i.display_name : i.name
+            %td= i.description

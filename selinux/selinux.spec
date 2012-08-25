@@ -1,6 +1,6 @@
 Summary:       SELinux policy for OpenShift nodes
 Name:          rhc-selinux
-Version:       0.91.2
+Version: 0.98.1
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -8,8 +8,8 @@ URL:           http://openshift.redhat.com
 Source0:       rhc-selinux-%{version}.tar.gz
 
 BuildRoot:     %(mktemp -ud %{_tmppath}/%{name}-%{version}-%{release}-XXXXXX)
-BuildRequires: selinux-policy >= 3.7.19-134
-Requires:      selinux-policy-targeted >= 3.7.19-134
+BuildRequires: selinux-policy >= 3.7.19-153
+Requires:      selinux-policy-targeted >= 3.7.19-153
 Requires(post):   /usr/sbin/semanage
 Requires(postun): /usr/sbin/semanage
 
@@ -46,6 +46,143 @@ rm -rf %{buildroot}
 %attr(0640,-,-) %{_datadir}/selinux/packages/libra.pp
 
 %changelog
+* Wed Aug 22 2012 Adam Miller <admiller@redhat.com> 0.98.1-1
+- bump_minor_versions for sprint 17 (admiller@redhat.com)
+
+* Fri Aug 17 2012 Adam Miller <admiller@redhat.com> 0.97.5-1
+- BZ847906: Add whois to allowed list of ports. (rmillner@redhat.com)
+
+* Tue Aug 14 2012 Adam Miller <admiller@redhat.com> 0.97.4-1
+- Stop auditing libra instances for searching or listing directories.  This is
+  not really intersting from a SELinux point of view (dwalsh@redhat.com)
+
+* Thu Aug 09 2012 Adam Miller <admiller@redhat.com> 0.97.3-1
+- Create sandbox directory with proper selinux policy and manage
+  polyinstantiation for it. (rmillner@redhat.com)
+
+* Thu Aug 02 2012 Adam Miller <admiller@redhat.com> 0.97.2-1
+- Dontaudit libra domains trying to search other libra domains directories,
+  this happens just when users are probing the system (dwalsh@redhat.com)
+
+* Thu Aug 02 2012 Adam Miller <admiller@redhat.com> 0.97.1-1
+- bump_minor_versions for sprint 16 (admiller@redhat.com)
+
+* Fri Jul 27 2012 Dan McPherson <dmcphers@redhat.com> 0.96.4-1
+- Allow libra instances to create lnk_files in /tmp directory
+  (dwalsh@redhat.com)
+
+* Tue Jul 24 2012 Adam Miller <admiller@redhat.com> 0.96.3-1
+- Lots of updates to quiet AVC's in audit logs (dwalsh@redhat.com)
+
+* Thu Jul 19 2012 Adam Miller <admiller@redhat.com> 0.96.2-1
+- Security open up selinux for mysqld binding to 127.0.0.1 (tkramer@redhat.com)
+
+* Wed Jul 11 2012 Adam Miller <admiller@redhat.com> 0.96.1-1
+- bump_minor_versions for sprint 15 (admiller@redhat.com)
+
+* Sat Jun 23 2012 Dan McPherson <dmcphers@redhat.com> 0.95.2-1
+- new package built with tito
+
+* Wed Jun 20 2012 Adam Miller <admiller@redhat.com> 0.95.1-1
+- bump_minor_versions for sprint 14 (admiller@redhat.com)
+
+* Tue Jun 19 2012 Adam Miller <admiller@redhat.com> 0.94.4-1
+- Some apps are checking if there is a ~/.ssh in the homedir
+  (dwalsh@redhat.com)
+
+* Mon Jun 18 2012 Adam Miller <admiller@redhat.com> 0.94.3-1
+- Allow libra_mail_t to write/append inherited file descriptors so users could
+  do bash directrion of files (dwalsh@redhat.com)
+
+* Fri Jun 08 2012 Adam Miller <admiller@redhat.com> 0.94.2-1
+- Since bash command completions is flooding the logs with read/execute checks
+  on lots of executables, we need to add dontaudit rules. (dwalsh@redhat.com)
+
+* Fri Jun 01 2012 Adam Miller <admiller@redhat.com> 0.94.1-1
+- bumping spec versions (admiller@redhat.com)
+
+* Wed May 23 2012 Adam Miller <admiller@redhat.com> 0.93.8-1
+- Fix for bugz 824356 - Node.js process not started up. (ramr@redhat.com)
+
+* Tue May 22 2012 Adam Miller <admiller@redhat.com> 0.93.7-1
+- libra selinux policy now requires 3.7.19-153 targeted (admiller@redhat.com)
+
+* Tue May 22 2012 Adam Miller <admiller@redhat.com> 0.93.6-1
+- Allow libra instances to send signals to mail agents that they may have
+  spawned (dwalsh@redhat.com)
+- Dontaudit libra domains looking at leaked kernel keyring, httpd wants to get
+  the parent gid of libra instances (dwalsh@redhat.com)
+- Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
+  (dwalsh@redhat.com)
+- Update libra instance to allow it to use all jboss ports  Including jabberd.
+  (dwalsh@redhat.com)
+
+* Fri May 18 2012 Adam Miller <admiller@redhat.com> 0.93.5-1
+- 
+
+* Thu May 17 2012 Adam Miller <admiller@redhat.com> 0.93.4-1
+- bumped selinux-policy dep to match actual requirement (admiller@redhat.com)
+
+* Thu May 17 2012 Adam Miller <admiller@redhat.com> 0.93.3-1
+- 
+
+* Thu May 17 2012 Adam Miller <admiller@redhat.com> 0.93.2-1
+- SELinux lines to allow use of the quota command. (rmillner@redhat.com)
+- Allow libra domains to communicate with jboss_messageing ports
+  (dwalsh@redhat.com)
+
+* Thu May 10 2012 Adam Miller <admiller@redhat.com> 0.93.1-1
+- bumping spec versions (admiller@redhat.com)
+
+* Wed May 09 2012 Adam Miller <admiller@redhat.com> 0.92.4-1
+- Revert "Allow libra domains to communicate with jboss_messageing ports"
+  (dmcphers@redhat.com)
+- reverted yum update selinux in favor or proper spec file requires
+  (admiller@redhat.com)
+- Allow libra domains to communicate with jboss_messageing ports
+  (dwalsh@redhat.com)
+
+* Tue May 08 2012 Adam Miller <admiller@redhat.com> 0.92.3-1
+- Dontaudit leaked file descriptors going to crontab_t command
+  (dwalsh@redhat.com)
+
+* Mon May 07 2012 Adam Miller <admiller@redhat.com> 0.92.2-1
+- revert previous commit 3f29dfed for now (dmcphers@redhat.com)
+- Dontaudit libra domains trying to create netlink_tcpdiag_sockets, executing
+  ss command causes this, and we have decided to allow libra instances to
+  execute ss (dwalsh@redhat.com)
+- Remove libra's ability to look at network state (dwalsh@redhat.com)
+- fix signull signal name (dwalsh@redhat.com)
+- fix signull signal name (dwalsh@redhat.com)
+- temporarily revert 27d63c03 that was failing libra_check build
+  (admiller@redhat.com)
+- Don't allow libra domains to look at sshd_t kernel keyrings
+  (dwalsh@redhat.com)
+- libra instances should be able to kill the mailer that they launch
+  (dwalsh@redhat.com)
+- Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
+  (dwalsh@redhat.com)
+- Revert "Allow libra to check the access on any file in libra_var_lib_t, this
+  allows us to check access on sock_file" (dwalsh@redhat.com)
+- temporarily reverted 39860d58ac3b6fad7462f2f9f88b5bc893854df7 to let
+  libra_check build succeed (admiller@redhat.com)
+- Allow libra to check the access on any file in libra_var_lib_t, this allows
+  us to check access on sock_file (dwalsh@redhat.com)
+
+* Thu Apr 26 2012 Adam Miller <admiller@redhat.com> 0.92.1-1
+- bumping spec versions (admiller@redhat.com)
+
+* Mon Apr 23 2012 Adam Miller <admiller@redhat.com> 0.91.5-1
+- Allow libra domains to ask the kernel about what ipc mechanisms are available
+  (dwalsh@redhat.com)
+
+* Sat Apr 21 2012 Dan McPherson <dmcphers@redhat.com> 0.91.4-1
+- Added fix to libra selinux as per dwalsh (admiller@redhat.com)
+
+* Wed Apr 18 2012 Adam Miller <admiller@redhat.com> 0.91.3-1
+- dontaudit httpd starting as libra_t trying to read the httpd_log_t link file
+  (dwalsh@redhat.com)
+
 * Thu Apr 12 2012 Mike McGrath <mmcgrath@redhat.com> 0.91.2-1
 - release bump for tag uniqueness (mmcgrath@redhat.com)
 

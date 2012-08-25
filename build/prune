@@ -4,6 +4,7 @@ $: << File.expand_path(File.dirname(__FILE__))
 
 require 'rubygems'
 require 'thor'
+require 'li_constants'
 require 'lib/openshift'
 require 'pp'
 
@@ -20,6 +21,7 @@ class Prune < Thor
       stop_untagged_instances(region)
       terminate_old_verifiers(region)
       flag_old_devenvs(region)
+      flag_old_qe_devenvs(region)
     end
   end
 
@@ -30,19 +32,84 @@ class Prune < Thor
     conn.regions.each do |region|
       puts "Prunning AMIs in region=#{region.name}"
       AWS.memoize do
-        images = get_amis(region)
-        # Take the last DevEnv AMI - memoize saves a remote call
-        sorted_images = images.to_a.sort_by {|ami| ami.name.split("_")[1].to_i}
-  
-        # Keep the 10 most recent images
-        sorted_images.pop(10)
-  
-        # Deregister the rest
-        puts "Removing AMI's #{sorted_images.pretty_inspect}"
-        sorted_images.each {|i| i.deregister}
+        DEVENV_AMI_WILDCARDS.each do |wildcard, opts|
+          num_to_keep = opts[:keep]
+          regex = opts[:regex] 
+          num_to_keep_per_sub_group = opts[:keep_per_sub_group] ? opts[:keep_per_sub_group] : num_to_keep
+          images = get_amis(region, wildcard)
+          sorted_images = images.to_a.sort_by do |i|
+            if i.name =~ regex
+              $2
+            else
+              999_999_999
+            end
+          end
+          
+          groups = {}
+          sorted_images.each do |i|
+            if i.name =~ regex
+              group_name = $1
+              groups[group_name] = [] unless groups[group_name]
+              groups[group_name] << i
+            else
+              puts "WARNING: Not sure what to do with: #{i.name}"
+            end
+          end
+
+          groups.each do |group_name, group|
+            group.pop if (group[-1].tags["Name"] != VERIFIED_TAG) # Never remove the very latest ami
+
+            group.delete_if do |i|
+              if i.tags["Name"] != VERIFIED_TAG
+                puts "Removing non qe-ready AMI: #{i.name}"
+                i.deregister
+                true
+              else
+                false
+              end
+            end
+
+            current_rhc_version = nil
+            group.reverse.delete_if do |i|
+              delete = false
+              if i.description =~ /(-\d+\.\d+).\d+/
+                next_rhc_version = $1
+                if next_rhc_version == current_rhc_version
+                  puts "Removing AMI with later duplicated rhc versions: #{i.name}"
+                  i.deregister
+                  delete = true
+                end
+                current_rhc_version = next_rhc_version
+              end
+              delete
+            end
+
+            #remove the images we want to keep
+            group.pop(num_to_keep_per_sub_group)
+
+            # Deregister the rest
+            group.each do |i| 
+              puts "Removing old AMI: #{i.name}"
+              i.deregister
+            end
+          end
+          
+          if opts[:keep_per_sub_group]
+            #remove the images we want to keep
+            sorted_images.pop(num_to_keep)
+      
+            # Deregister the rest
+            sorted_images.each do |i| 
+              puts "Removing old AMI: #{i.name}"
+              i.deregister
+            end
+          end
+
+        end
       end
     end
   end
+
   desc "security_groups PATTERN", "prune unused security groups matching pattern"
   def security_groups(pattern)
     conn = connect

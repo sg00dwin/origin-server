@@ -5,11 +5,11 @@ module OpenShift
       super
       @data = Hash.new{|hash,key|
         array = [('a'..'z'),('A'..'Z'),(0..9)].map{|a| a.to_a}.flatten
-        hash[key] = 10.times.map{array.choice}.join
+        hash[key] = 10.times.map{array.respond_to?(:choice) ? array.choice : array.sample}.join
       }
 
       @valid_credentials = {
-        :email => "flindiak+sauce_valid@redhat.com",
+        :email => "flindiaksauce_valid@redhat.com",
         :password => "Pa$$word1"
       }
     end
@@ -19,7 +19,6 @@ module OpenShift
       count = 0;
       result = self.instance_variable_get(:@_result)
       results = result.instance_variable_get("@#{type}".to_sym)
-      
       results.each do |res| 
         count += 1 if res.test_name.start_with?(self.method_name)
       end
@@ -35,7 +34,7 @@ module OpenShift
         @login_page.submit(login, password)
 
         await("logout link", 10) {
-          exists?("a[href='/app/logout']")
+          exists?(".dropdown.username")
         }
     end
   end
@@ -130,11 +129,19 @@ module OpenShift
     end
 
     def wait_for_page(location, timeout=5)
-      uri = URI.parse(@page.current_url)
-      match = location.start_with?("http") ? #assume absolute URL
-        uri.to_s : uri.to_s.split(uri.host)[1]
-
       await("location: #{location}", timeout) {
+
+        match = @page.current_url
+        if not location.start_with?("http") #assume not absolute URL
+          if match.start_with?($browser_url)
+            # remove the browser url to get the relative path
+            match = match[$browser_url.length..-1]
+          else
+            # just compare the path
+            match = URI.parse(match).path
+          end
+        end
+
         location == match
       }
     end

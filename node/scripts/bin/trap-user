@@ -29,7 +29,8 @@ commands_map = {
     "ctl_all": "/bin/bash",
     "deploy.sh": "/bin/bash",
     "rhc-list-ports": "/bin/bash",
-    "post_deploy.sh": "/bin/bash"
+    "post_deploy.sh": "/bin/bash",
+    "quota": "/usr/bin/quota"
 }
 
 #
@@ -116,9 +117,10 @@ if __name__ == '__main__':
         basecmd = os.path.basename(allargs[0])
         cmd = commands_map[basecmd]
     except:
-        syslog.syslog("Invalid command %s" % orig_cmd)
-        sys.stderr.write("Invalid command %s" % orig_cmd)
-        sys.exit(2)
+        # Catch all, just run the command as is via bash.
+        cmd = "/bin/bash"
+        str = ' '.join(allargs)
+        allargs = ['-c', str]
     if basecmd in ('snapshot',):
         # This gets called with "snapshot"
         allargs = ['snapshot.sh']
@@ -202,6 +204,9 @@ if __name__ == '__main__':
 
 
         allargs = [thearg]
+
+    elif basecmd in ('quota',):
+        allargs = []
 
     runcon = '/usr/bin/runcon'
     mcs_level = get_mcs_level(os.getuid())

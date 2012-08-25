@@ -2,13 +2,11 @@ require 'openshift/selenium_test_case'
 
 require 'openshift/rest/pages'
 require 'openshift/rest/forms'
+require 'openshift/rest/navbars'
 
 module OpenShift
   module Rest
     class TestCase < OpenShift::SeleniumTestCase
-      def setup
-        super
-      end
       private
 
       # helper method for creating a namespace
@@ -31,7 +29,8 @@ module OpenShift
       end
 
       def dummy_credentials
-        return ["test#{data[:uid]}", data[:password]]
+        # [email login, password, valid namespace]
+        ["test#{data[:uid]}@redhat.com", data[:password], "test#{data[:uid]}"]
       end
 
       def dummy_ssh_key(type='ssh-rsa')

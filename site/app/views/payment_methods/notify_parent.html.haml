@@ -1,0 +1,4 @@
+:javascript
+  window.onload = function() {
+    parent.payment_method_complete(#{(@errors || []).to_json}, "#{escape_javascript(@next_url || '')}");
+  }

@@ -1,6 +1,6 @@
 Summary:   Common dependencies of the libra server and node
 Name:      rhc-common
-Version:   0.77.2
+Version: 0.81.1
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -12,6 +12,7 @@ Requires:  mcollective-client
 Requires:  qpid-cpp-client
 Requires:  qpid-cpp-client-ssl
 Requires:  ruby-qmf
+Requires(pre):  shadow-utils
 
 BuildArch: noarch
 
@@ -39,12 +40,40 @@ rm -rf %{buildroot}
 %{_libexecdir}/mcollective/mcollective/connector/amqp.rb
 
 %pre
-/usr/sbin/groupadd -r libra_user 2>&1 || :
+getent group libra_user >/dev/null || groupadd -r libra_user
 
 %post
 /bin/chgrp libra_user /etc/mcollective/client.cfg
 
 %changelog
+* Wed Jul 11 2012 Adam Miller <admiller@redhat.com> 0.81.1-1
+- bump_minor_versions for sprint 15 (admiller@redhat.com)
+
+* Tue Jul 03 2012 Adam Miller <admiller@redhat.com> 0.80.3-1
+- WIP changes to support mcollective 2.0. (mpatel@redhat.com)
+
+* Sat Jun 23 2012 Dan McPherson <dmcphers@redhat.com> 0.80.2-1
+- new package built with tito
+
+* Fri Jun 01 2012 Adam Miller <admiller@redhat.com> 0.80.1-1
+- bumping spec versions (admiller@redhat.com)
+
+* Tue May 29 2012 Adam Miller <admiller@redhat.com> 0.79.3-1
+- Bug 820223 820338 820325 (dmcphers@redhat.com)
+
+* Tue May 22 2012 Adam Miller <admiller@redhat.com> 0.79.2-1
+- EPEL updated mcollective and broke the build! forcing mcollective 1.1.2
+  (admiller@redhat.com)
+
+* Thu May 10 2012 Adam Miller <admiller@redhat.com> 0.79.1-1
+- bumping spec versions (admiller@redhat.com)
+
+* Mon May 07 2012 Adam Miller <admiller@redhat.com> 0.78.2-1
+- Work with version 14.4 of qpid (dmcphers@redhat.com)
+
+* Thu Apr 26 2012 Adam Miller <admiller@redhat.com> 0.78.1-1
+- bumping spec versions (admiller@redhat.com)
+
 * Thu Apr 12 2012 Mike McGrath <mmcgrath@redhat.com> 0.77.2-1
 - release bump for tag uniqueness (mmcgrath@redhat.com)
 

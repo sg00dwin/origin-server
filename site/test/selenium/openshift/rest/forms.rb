@@ -32,12 +32,9 @@ module OpenShift
       end
 
       def in_error?(field_name)
-        error_field_name = :"#{field_name}_error"
-        field = @fields[error_field_name]
-        if field.nil?
-          field = @fields[field_name]
-        end
-        xpath_exists?("//*[@id='#{field}' and contains(@class, 'error')]")
+        # check the field and the field error for an error class
+        field = @fields[field_name]
+        xpath_exists?("//*[@id='#{field}']/ancestor::div[contains(@class, 'control-group')][1][contains(@class, 'error')]")
       end
 
       def error_message(field)
@@ -65,13 +62,12 @@ module OpenShift
       def initialize(page,id)
         super(page,id)
         @fields = {
-          :namespace => "domain_name",
-          :namespace_error => "domain_name_group"
+          :namespace => "domain_name"
         }
 
       	@submit = "//input[@id='domain_submit']"
 
-        @loc_btn_cancel = "//a[@href='/app/account']"
+        @loc_btn_cancel = "//a[contains(@href, '/account')]"
       end
     end
 
@@ -98,20 +94,18 @@ module OpenShift
         super(page,id)
         @fields = {
           :name => "key_name",
-          :name_error => "key_name_input",
-          :key => "key_raw_content",
-          :key_error => "key_raw_content_input"
+          :key => "key_raw_content"
         }
 
       	@submit = "//input[@id='key_submit']"
 
-        @cancel_path = '/app/account'
-        @loc_btn_cancel = "//a[@href='#{@cancel_path}']"
+        @cancel_path = '/account'
+        @loc_btn_cancel = "//a[contains(@href, @cancel_path)][contains(text(), 'Cancel')]"
       end
 
       def cancel
         @page.find_element(:xpath => @loc_btn_cancel).click
-        wait_for_page @cancel_path
+        wait_for_page "#{@cancel_path}"
       end
     end
 
@@ -124,6 +118,28 @@ module OpenShift
         }
 
       	@submit = "//input[@id='application_submit']"
+      end
+    end
+
+    class ApplicationDeleteForm < Form
+      def initialize(page,id)
+        super(page,id)
+
+        @submit = "//input[@id='application_submit']"
+      end
+    end
+
+    class SignupForm < Form
+      def initialize(page,id)
+        super(page,id)
+        @fields = {
+          :name => "web_user_email_address",
+          :password => "web_user_password",
+          :confirm => "web_user_password_confirmation",
+          :recaptcha => "recaptcha_response_field"
+        }
+
+        @submit = "//input[@id='web_user_submit']"
       end
     end
   end

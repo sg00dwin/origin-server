@@ -1,0 +1,6 @@
+; $Id
+name = Redhat SSO
+description = Single Sign-on Implementation for Red Hat
+core = 6.x
+package = SSO
+version = VERSION

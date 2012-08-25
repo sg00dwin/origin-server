@@ -1,0 +1,44 @@
+<?php
+
+include_once('redhat_ideas.features.inc');
+
+function redhat_ideas_menu() {
+  $items['ideas'] = array(
+    'page callback' => redhat_ideas_page,
+    'access callback' => TRUE,
+    'type' => MENU_NORMAL_ITEM,
+  );
+  
+  return $items;
+}
+
+function redhat_ideas_page() {
+  global $base_url;
+  $content .= '<p>View the current feature requests and browse implemented ideas down below, or <a href="/community/node/add/idea">submit a new one</a> to the OpenShift team!</p>';
+  $content .= '<form action="/community/search/node" method="post" class="form-search custom-form-search">';
+  $content .= '<input class="span6" placeholder="Search feature requests..." type="text" value="" name="keys" />';
+  $content .= '<input type="submit" value="" name="op" title="Search OpenShift feature requests" alt="Search OpenShift feature requests" />';
+  $content .= '<input type="hidden" value="';
+  $content .= drupal_get_token('search_form');
+  $content .= '" name="form_token" />';
+  $content .= '<input type="hidden" value="search_form" id="edit-search-form" name="form_id" />';
+  $content .= '<input type="hidden" name="type[idea]" id="edit-idea" value="idea" /></form>';
+  $content .= '<div class="search-help"><strong>Advanced options:</strong> quotes search for <strong>"exact phrase"</strong>, dash excludes a <strong>-keyword</strong>, OR matches any <strong>keyword OR term</strong></div>';
+  $content .= '<div class="row-fluid"><div class="span6"><h2>Top Ideas</h2>';
+  $content .= views_embed_view('Ideas', 'block_1');
+  $content .= '</div><section class="span6"><h2>Recent Ideas</h2>';
+  $content .= views_embed_view('Ideas', 'block_3');
+  $content .= '</section></div>';
+  $content .= '<section>';
+  $content .= '<h2>Implemented Ideas</h2>';
+  $content .= views_embed_view('Ideas', 'block_2');
+  $content .= '</section>';
+  return $content;
+}
+
+function vud_views_query_alter(&$view, &$query) {
+    if($view->name == 'Ideas'){
+        $query->fields['votingapi_cache_node_points_vote_sum_value']['table'] = 'IFNULL(votingapi_cache_node_points_vote_sum';
+        $query->fields['votingapi_cache_node_points_vote_sum_value']['field'] = 'value, 0)';
+    }
+}

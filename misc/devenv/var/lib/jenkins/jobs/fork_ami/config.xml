@@ -1,0 +1,323 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<project>
+  <actions/>
+  <description>Build an ami from a fork(s) of the openshift source with options to run extended and qe tests.  The QE jenkins is located at:  http://ciqe.englab.nay.redhat.com/&#xd;
+&lt;p&gt;&#xd;
+Note: You&apos;ll want to make sure your repos are up to date with something similar to the following before kicking off a build (or you will likely be missing the necessary tags in your repo in order to build the ami):&#xd;
+&lt;pre&gt;&#xd;
+git fetch upstream&#xd;
+git fetch upstream --tags&#xd;
+git rebase upstream/master&#xd;
+git push origin master&#xd;
+git push --tags&#xd;
+&lt;/pre&gt;&#xd;
+&lt;/p&gt;</description>
+  <logRotator>
+    <daysToKeep>10</daysToKeep>
+    <numToKeep>50</numToKeep>
+    <artifactDaysToKeep>10</artifactDaysToKeep>
+    <artifactNumToKeep>50</artifactNumToKeep>
+  </logRotator>
+  <keepDependencies>false</keepDependencies>
+  <properties>
+    <hudson.model.ParametersDefinitionProperty>
+      <parameterDefinitions>
+        <hudson.model.StringParameterDefinition>
+          <name>AMI_POSTFIX</name>
+          <description>The postfix to add to the ami name =&gt; fork_ami_${AMI_POSTFIX}_${BUILD_NUMBER}
+Usually would be the feature name or something to indicate the purpose of the ami.  Only 1 ami per postfix is kept.</description>
+          <defaultValue></defaultValue>
+        </hudson.model.StringParameterDefinition>
+        <hudson.model.StringParameterDefinition>
+          <name>FORK_ID</name>
+          <description>The default fork id to use for all repos.
+Note:  If you only want to use a fork for 1 of the repos then use that ${REPO}_FORK_ID instead.</description>
+          <defaultValue></defaultValue>
+        </hudson.model.StringParameterDefinition>
+        <hudson.model.StringParameterDefinition>
+          <name>LI_FORK_ID</name>
+          <description>The fork id to use for the li repo.  Will use FORK_ID followed by &apos;openshift&apos; if not specified.</description>
+          <defaultValue></defaultValue>
+        </hudson.model.StringParameterDefinition>
+        <hudson.model.StringParameterDefinition>
+          <name>LI_BRANCH</name>
+          <description>Branch to use for li fork</description>
+          <defaultValue>master</defaultValue>
+        </hudson.model.StringParameterDefinition>
+        <hudson.model.StringParameterDefinition>
+          <name>CRANKCASE_FORK_ID</name>
+          <description>The fork id to use for the crankcase repo.  Will use FORK_ID followed by &apos;openshift&apos; if not specified.</description>
+          <defaultValue></defaultValue>
+        </hudson.model.StringParameterDefinition>
+        <hudson.model.StringParameterDefinition>
+          <name>CRANKCASE_BRANCH</name>
+          <description>Branch to use for crankcase fork</description>
+          <defaultValue>master</defaultValue>
+        </hudson.model.StringParameterDefinition>
+        <hudson.model.StringParameterDefinition>
+          <name>RHC_FORK_ID</name>
+          <description>The fork id to use for the rhc repo.  Will use FORK_ID followed by &apos;openshift&apos; if not specified.</description>
+          <defaultValue></defaultValue>
+        </hudson.model.StringParameterDefinition>
+        <hudson.model.StringParameterDefinition>
+          <name>RHC_BRANCH</name>
+          <description>Branch to use for rhc fork</description>
+          <defaultValue>master</defaultValue>
+        </hudson.model.StringParameterDefinition>
+        <hudson.model.BooleanParameterDefinition>
+          <name>RUN_BROKER_EXTENDED</name>
+          <description>In addition to the verification tests include the broker extended tests.  Note:  The ami will still be marked qe-ready and the qe tests launched even if these tests fail.</description>
+          <defaultValue>false</defaultValue>
+        </hudson.model.BooleanParameterDefinition>
+        <hudson.model.BooleanParameterDefinition>
+          <name>RUN_RUNTIME_EXTENDED</name>
+          <description>In addition to the verification tests include the runtime extended tests.  Note:  The ami will still be marked qe-ready and the qe tests launched even if these tests fail.</description>
+          <defaultValue>false</defaultValue>
+        </hudson.model.BooleanParameterDefinition>
+        <hudson.model.BooleanParameterDefinition>
+          <name>RUN_SITE_EXTENDED</name>
+          <description>In addition to the verification tests include the site extended tests.  Note:  The ami will still be marked qe-ready and the qe tests launched even if these tests fail.</description>
+          <defaultValue>false</defaultValue>
+        </hudson.model.BooleanParameterDefinition>
+        <hudson.model.BooleanParameterDefinition>
+          <name>RUN_RHC_EXTENDED</name>
+          <description>In addition to the verification tests include the rhc extended tests.  Note:  The ami will still be marked qe-ready and the qe tests launched even if these tests fail.</description>
+          <defaultValue>false</defaultValue>
+        </hudson.model.BooleanParameterDefinition>
+        <hudson.model.BooleanParameterDefinition>
+          <name>RUN_QE_SMOKE_TESTS</name>
+          <description>Run the QE &apos;smoke&apos; tests after build and basic verification success.  These tests should be run for most amis and take ~1.5 hours on 1 instance.
+https://tcms.engineering.redhat.com/cases/?plan=4962&amp;is_automated=1&amp;case_status=2&amp;tag__name__in=smoke&amp;a=search</description>
+          <defaultValue>true</defaultValue>
+        </hudson.model.BooleanParameterDefinition>
+        <hudson.model.BooleanParameterDefinition>
+          <name>RUN_QE_ACCEPTANCE_TESTS</name>
+          <description>Run the QE &apos;acceptance&apos; tests after build and basic verification success.  These tests take ~5 hours to complete (using 4 instances).  They should be run for any significant changes.
+https://tcms.engineering.redhat.com/cases/?plan=4962&amp;is_automated=1&amp;case_status=2&amp;tag__name__in=acceptance&amp;a=search</description>
+          <defaultValue>false</defaultValue>
+        </hudson.model.BooleanParameterDefinition>
+        <hudson.model.BooleanParameterDefinition>
+          <name>RUN_QE_FULLFUNCTIONAL_TESTS</name>
+          <description>Run the QE &apos;fullfunction&apos; tests after build and basic verification success.  These tests take ~7 hours to complete (using 6 instances).  They should be run for the largest of changes (large user stories or changes involving a lot of refactoring)
+https://tcms.engineering.redhat.com/cases/?plan=4962&amp;is_automated=1&amp;case_status=2&amp;tag__name__in=fullfunction&amp;a=search</description>
+          <defaultValue>false</defaultValue>
+        </hudson.model.BooleanParameterDefinition>
+      </parameterDefinitions>
+    </hudson.model.ParametersDefinitionProperty>
+  </properties>
+  <scm class="hudson.plugins.git.GitSCM">
+    <configVersion>1</configVersion>
+    <remoteRepositories>
+      <org.spearce.jgit.transport.RemoteConfig>
+        <string>origin</string>
+        <int>5</int>
+        <string>fetch</string>
+        <string>+refs/heads/*:refs/remotes/origin/*</string>
+        <string>receivepack</string>
+        <string>git-upload-pack</string>
+        <string>uploadpack</string>
+        <string>git-upload-pack</string>
+        <string>url</string>
+        <string>git@github.com:openshift/li.git</string>
+        <string>tagopt</string>
+        <string></string>
+      </org.spearce.jgit.transport.RemoteConfig>
+    </remoteRepositories>
+    <branches>
+      <hudson.plugins.git.BranchSpec>
+        <name>master</name>
+      </hudson.plugins.git.BranchSpec>
+    </branches>
+    <mergeOptions/>
+    <recursiveSubmodules>false</recursiveSubmodules>
+    <doGenerateSubmoduleConfigurations>false</doGenerateSubmoduleConfigurations>
+    <authorOrCommitter>false</authorOrCommitter>
+    <clean>false</clean>
+    <wipeOutWorkspace>false</wipeOutWorkspace>
+    <pruneBranches>false</pruneBranches>
+    <buildChooser class="hudson.plugins.git.util.DefaultBuildChooser"/>
+    <gitTool>Default</gitTool>
+    <submoduleCfg class="list"/>
+    <relativeTargetDir></relativeTargetDir>
+    <excludedRegions></excludedRegions>
+    <excludedUsers></excludedUsers>
+    <skipTag>false</skipTag>
+  </scm>
+  <canRoam>true</canRoam>
+  <disabled>true</disabled>
+  <blockBuildWhenDownstreamBuilding>false</blockBuildWhenDownstreamBuilding>
+  <blockBuildWhenUpstreamBuilding>false</blockBuildWhenUpstreamBuilding>
+  <authToken>libra1</authToken>
+  <triggers class="vector"/>
+  <concurrentBuild>true</concurrentBuild>
+  <builders>
+    <hudson.tasks.Shell>
+      <command>EXTENDED_TESTS_ARRAY=()
+if $RUN_BROKER_EXTENDED
+then
+  EXTENDED_TESTS_ARRAY+=(broker)
+fi
+if $RUN_RUNTIME_EXTENDED
+then
+  EXTENDED_TESTS_ARRAY+=(runtime)
+fi
+if $RUN_SITE_EXTENDED
+then
+  EXTENDED_TESTS_ARRAY+=(site)
+fi
+if $RUN_RHC_EXTENDED
+then
+  EXTENDED_TESTS_ARRAY+=(rhc)
+fi
+
+
+EXTENDED_TESTS=&quot;&quot;
+for test in &quot;${EXTENDED_TESTS_ARRAY[@]}&quot;
+do
+  if [ -z &quot;$EXTENDED_TESTS&quot; ]
+  then
+    EXTENDED_TESTS=$test
+  else
+    EXTENDED_TESTS=$EXTENDED_TESTS,$test
+  fi
+done
+
+if [ -n &quot;$FORK_ID&quot; ]
+then
+  if [ -z &quot;$LI_FORK_ID&quot; ]
+  then
+    LI_FORK_ID=$FORK_ID
+  fi
+  if [ -z &quot;$CRANKCASE_FORK_ID&quot; ]
+  then
+    CRANKCASE_FORK_ID=$FORK_ID
+  fi
+  if [ -z &quot;$RHC_FORK_ID&quot; ]
+  then
+    RHC_FORK_ID=$FORK_ID
+  fi
+else
+  if [ -z &quot;$LI_FORK_ID&quot; ]
+  then
+    LI_FORK_ID=openshift
+  fi
+  if [ -z &quot;$CRANKCASE_FORK_ID&quot; ]
+  then
+    CRANKCASE_FORK_ID=openshift
+  fi
+  if [ -z &quot;$RHC_FORK_ID&quot; ]
+  then
+    RHC_FORK_ID=openshift
+  fi
+fi
+
+if [ -n &quot;$AMI_POSTFIX&quot; ]
+then
+  TAG_NAME=fork_ami_${AMI_POSTFIX}
+elif [ -n &quot;$FORK_ID&quot; ]
+then
+  TAG_NAME=fork_ami_${FORK_ID}
+elif [ -n &quot;$LI_FORK_ID&quot; ]
+then
+  TAG_NAME=fork_ami_${LI_FORK_ID}
+elif [ -n &quot;$CRANKCASE_FORK_ID&quot; ]
+then
+  TAG_NAME=fork_ami_${CRANKCASE_FORK_ID}
+elif [ -n &quot;$RHC_FORK_ID&quot; ]
+then
+  TAG_NAME=fork_ami_${RHC_FORK_ID}
+else
+  TAG_NAME=fork_ami_openshift
+fi
+
+rm -rf li rhc crankcase
+git clone git@github.com:${LI_FORK_ID}/li.git
+pushd li
+  if [ -n &quot;$LI_BRANCH&quot; ]
+  then
+    git checkout $LI_BRANCH
+  fi
+popd
+git clone git@github.com:${CRANKCASE_FORK_ID}/crankcase.git
+pushd crankcase
+  if [ -n &quot;$CRANKCASE_BRANCH&quot; ]
+  then
+    git checkout $CRANKCASE_BRANCH
+  fi
+popd
+git clone git@github.com:${RHC_FORK_ID}/rhc.git
+pushd rhc
+  if [ -n &quot;$RHC_BRANCH&quot; ]
+  then
+    git checkout $RHC_BRANCH
+  fi
+popd
+
+pushd li
+set +e
+  build/devenv build ${TAG_NAME} ${BUILD_NUMBER} --register --official --install_from_local_source --instance_type m1.large
+  RESULT=$?
+set -e
+
+  if [ $RESULT -eq 0 ]
+  then
+
+    QE_TESTS_ARRAY=()
+    if $RUN_QE_SMOKE_TESTS
+    then
+      QE_TESTS_ARRAY+=(smoke)
+    fi
+    if $RUN_QE_ACCEPTANCE_TESTS
+    then
+      QE_TESTS_ARRAY+=(acceptance)
+    fi
+    if $RUN_QE_FULLFUNCTIONAL_TESTS
+    then
+      QE_TESTS_ARRAY+=(fullfunction)
+    fi
+
+
+    QE_TESTS=&quot;&quot;
+    for test in &quot;${QE_TESTS_ARRAY[@]}&quot;
+    do
+      if [ -z &quot;$QE_TESTS&quot; ]
+      then
+        QE_TESTS=$test
+      else
+        QE_TESTS=$QE_TESTS,$test
+      fi
+    done
+    
+    if [ -n &quot;$QE_TESTS&quot; ]
+    then
+      sed -i &quot;/${TAG_NAME}_.*/d&quot; ~/fork_ami_qe_test_queue
+      echo &quot;${TAG_NAME}_${BUILD_NUMBER}=$QE_TESTS&quot; &gt;&gt; ~/fork_ami_qe_test_queue
+    fi
+
+    if [ -n &quot;$EXTENDED_TESTS&quot; ]
+    then
+      # Run the extended tests
+      build/devenv test ${TAG_NAME}_${BUILD_NUMBER} --include_extended=&quot;$EXTENDED_TESTS&quot; --terminate 
+    else
+      build/devenv terminate ${TAG_NAME}_${BUILD_NUMBER}
+    fi
+  else
+    build/devenv terminate ${TAG_NAME}_${BUILD_NUMBER}
+    exit $RESULT
+  fi
+popd</command>
+    </hudson.tasks.Shell>
+  </builders>
+  <publishers>
+    <hudson.tasks.ArtifactArchiver>
+      <artifacts>li/rhc/log/**</artifacts>
+      <latestOnly>false</latestOnly>
+    </hudson.tasks.ArtifactArchiver>
+    <hudson.tasks.junit.JUnitResultArchiver>
+      <testResults>li/rhc/log/**/*.xml</testResults>
+      <keepLongStdio>false</keepLongStdio>
+      <testDataPublishers/>
+    </hudson.tasks.junit.JUnitResultArchiver>
+  </publishers>
+  <buildWrappers/>
+</project>

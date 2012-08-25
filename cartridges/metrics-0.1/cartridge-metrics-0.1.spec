@@ -1,7 +1,7 @@
 %define cartridgedir %{_libexecdir}/stickshift/cartridges/embedded/metrics-0.1
 
 Name: cartridge-metrics-0.1
-Version: 0.12.2
+Version: 0.19.1
 Release: 1%{?dist}
 Summary: Embedded metrics support for express
 
@@ -11,8 +11,6 @@ URL: https://engineering.redhat.com/trac/Libra
 Source0: %{name}-%{version}.tar.gz
 BuildRoot:    %(mktemp -ud %{_tmppath}/%{name}-%{version}-%{release}-XXXXXX)
 BuildArch: noarch
-
-Obsoletes: rhc-cartridge-metrics-0.1
 
 Requires: stickshift-abstract
 Requires: rubygem(stickshift-node)
@@ -51,6 +49,71 @@ rm -rf $RPM_BUILD_ROOT
 %{cartridgedir}/info/manifest.yml
 
 %changelog
+* Wed Aug 22 2012 Adam Miller <admiller@redhat.com> 0.19.1-1
+- bump_minor_versions for sprint 17 (admiller@redhat.com)
+
+* Wed Aug 22 2012 Adam Miller <admiller@redhat.com> 0.18.2-1
+- Update manifest to register cartridge data. (rmillner@redhat.com)
+
+* Thu Aug 02 2012 Adam Miller <admiller@redhat.com> 0.18.1-1
+- bump_minor_versions for sprint 16 (admiller@redhat.com)
+
+* Wed Aug 01 2012 Adam Miller <admiller@redhat.com> 0.17.4-1
+- Merge pull request #157 from rmillner/dev/rmillner/bug/843326
+  (rmillner@redhat.com)
+- Some frameworks (ex: mod_wsgi) need HTTPS set to notify the app that https
+  was used. (rmillner@redhat.com)
+
+* Tue Jul 31 2012 Adam Miller <admiller@redhat.com> 0.17.3-1
+- Move direct calls to httpd init script to httpd_singular locking script
+  (rmillner@redhat.com)
+
+* Thu Jul 19 2012 Adam Miller <admiller@redhat.com> 0.17.2-1
+- Fixes for bugz 840030 - Apache blocks access to /icons. Remove these as
+  mod_autoindex has now been turned OFF (see bugz 785050 for more details).
+  (ramr@redhat.com)
+
+* Wed Jul 11 2012 Adam Miller <admiller@redhat.com> 0.17.1-1
+- bump_minor_versions for sprint 15 (admiller@redhat.com)
+
+* Sat Jun 23 2012 Dan McPherson <dmcphers@redhat.com> 0.16.2-1
+- new package built with tito
+
+* Wed Jun 20 2012 Adam Miller <admiller@redhat.com> 0.16.1-1
+- bump_minor_versions for sprint 14 (admiller@redhat.com)
+
+* Mon Jun 18 2012 Adam Miller <admiller@redhat.com> 0.15.2-1
+- exposing urls and credentials for metrics, rockmongo, and phpmoadmin
+  cartridges through the rest apis (abhgupta@redhat.com)
+
+* Fri Jun 01 2012 Adam Miller <admiller@redhat.com> 0.15.1-1
+- bumping spec versions (admiller@redhat.com)
+
+* Tue May 22 2012 Dan McPherson <dmcphers@redhat.com> 0.14.2-1
+- Merge branch 'master' into US2109 (jhonce@redhat.com)
+- Merge branch 'master' into US2109 (jhonce@redhat.com)
+- Modify cartridges for typeless gear changes. (ramr@redhat.com)
+
+* Thu May 10 2012 Adam Miller <admiller@redhat.com> 0.14.1-1
+- bumping spec versions (admiller@redhat.com)
+
+* Mon May 07 2012 Adam Miller <admiller@redhat.com> 0.13.3-1
+- Update user hooks to call with the whole cartridge name (rmillner@redhat.com)
+- Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
+  (rmillner@redhat.com)
+- Embedded cartridge pre/post hooks. (rmillner@redhat.com)
+
+* Mon May 07 2012 Adam Miller <admiller@redhat.com> 0.13.2-1
+- remove old obsoletes (dmcphers@redhat.com)
+
+* Thu Apr 26 2012 Adam Miller <admiller@redhat.com> 0.13.1-1
+- bumping spec versions (admiller@redhat.com)
+
+* Sat Apr 21 2012 Dan McPherson <dmcphers@redhat.com> 0.12.4-1
+- forcing builds (dmcphers@redhat.com)
+- moved a little too much (dmcphers@redhat.com)
+- moving our os code (dmcphers@redhat.com)
+
 * Thu Apr 12 2012 Mike McGrath <mmcgrath@redhat.com> 0.12.2-1
 - release bump for tag uniqueness (mmcgrath@redhat.com)
 

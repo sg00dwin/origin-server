@@ -1,11 +1,14 @@
 RedHatCloud::Application.configure do
   # Settings specified here will take precedence over those in config/application.rb
+  config.threadsafe!
 
   # The test environment is used exclusively to run your application's
   # test suite.  You never need to work with it otherwise.  Remember that
   # your test database is "scratch space" for the test suite and is wiped
   # and recreated between test runs.  Don't rely on the data there!
   config.cache_classes = true
+
+  config.cache_store = :memory_store
 
   # Log error messages when you accidentally call methods on nil.
   config.whiny_nils = true
@@ -37,22 +40,34 @@ RedHatCloud::Application.configure do
   # OpenShift Configuration Below this point #
   ############################################
   config.integrated = false
-  config.login = "/app/login"
   config.streamline = {
-    :host => 'https://localhost',
-    :base_url => '',
-    :email_confirm_url => '/confirm.html',
-    :lost_password_url => '/lostPassword.html',
-    :change_password_url => '/changePassword.html',
-    :login_url => '',
-    :logout_url => '',
+    :host => 'https://streamline-proxy1.ops.rhcloud.com',
+    :base_url => '/wapps/streamline',
     :register_secret => 'c0ldW1n3',
     :user_info_secret => 'sw33tl1Qu0r',
-    :cookie_domain => :nil
+    :cookie_domain => nil,
+    :timeout => 5
   }
   config.captcha_secret = 'secret'
   config.sso_verify_interval = 0
-  
+
+  # Aria API information
+  config.aria_enabled = true
+  config.aria_uri = "https://streamline-proxy1.ops.rhcloud.com/api/ws/api_ws_class_dispatcher.php"
+  config.aria_auth_key = "sRvjFqjSadu3AFB8jRAR3tqeH5Qf6XjW"
+  config.aria_client_no = 3754655
+  config.aria_default_plan_no = 10044929
+  config.aria_force_test_users = true
+  # Aria direct post configuration - uses public URL
+  # Requires rake aria:set_direct_post be called once per Aria system tested against
+  config.aria_direct_post_uri = "https://secure.current.stage.ariasystems.net/api/direct_post.php"
+  config.aria_direct_post_name = 'test_website_new_payment'
+  config.aria_direct_post_redirect_base = 'https://example.com'
+
+  # Promo code Email notification setup
+  config.email_from = 'OpenShift <noreply@openshift.redhat.com>'
+  config.marketing_mailing_list = 'Marketing Mailing List <jgurrero@redhat.com>'
+
   # Maximum number of apps
   config.express_max_apps = 5
   

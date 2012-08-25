@@ -1,19 +1,17 @@
-- content_for :title, 'Sign in'
-- content_for :ribbon, 'Sign in to OpenShift'
+- content_for :title, 'Sign in to OpenShift'
 
-#login-form
-  = semantic_form_for @user, :url => login_path, :html => {:class => 'form-horizontal'} do |f|
-    - if @redirectUrl.present?
-      %input{:type => "hidden", :name => "redirectUrl", :value => @redirectUrl }
-    = f.semantic_errors
-    = f.input :rhlogin,
-              :label => 'Login',
-              :input_html => {:autofocus => @user.rhlogin.blank?, :placeholder => 'Your redhat.com or RHN account', :class => @user.errors[:base].present? ? 'error' : ''}
-    = f.input :password,
-              :as => :password,
-              :hint => link_to("Forgot your password?", new_password_path),
-              :input_html => {:autofocus => @user.rhlogin.present?, :class => @user.errors[:base].present? ? 'error' : ''}
-    = f.buttons do
-      = f.commit_button "Sign in", :button_html =>  {:class => 'btn'}
-      or 
-      = link_to 'create an account', @register_url || new_account_path
+= semantic_form_for @user, :url => login_path, :html => {:id => 'login_form', :class => 'form-horizontal'} do |f|
+  - if @redirectUrl.present?
+    %input{:type => "hidden", :name => "then", :value => @redirectUrl }
+  = f.semantic_errors
+  = f.input :rhlogin,
+            :label => 'Login',
+            :input_html => {:autofocus => @user.rhlogin.blank?, :placeholder => 'OpenShift or Red Hat Network account', :class => @user.errors[:base].present? ? 'error' : ''}
+  = f.input :password,
+            :as => :password,
+            :hint => link_to("Forgot your password?", new_account_password_path),
+            :input_html => {:autofocus => @user.rhlogin.present?, :class => @user.errors[:base].present? ? 'error' : ''}
+  = f.buttons do
+    = f.commit_button "Sign in", :button_html =>  {:class => 'btn'}
+    or 
+    = link_to 'create an account', @register_url || new_account_path

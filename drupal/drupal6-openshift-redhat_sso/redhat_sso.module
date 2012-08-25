@@ -1,0 +1,322 @@
+<?php
+// $Id$
+
+/**
+ * @file
+ * redhat_sso.module
+ *
+ * Connects Drupal application to RedHat SSO service.
+ *
+ */
+
+function redhat_sso_menu(){
+  $items['user/denied'] = array(
+    'type' => MENU_CALLBACK,
+    'page callback' => '_redhat_sso_redirect',
+    'access callback' => TRUE,
+  );
+  return $items;
+}
+
+function _redhat_sso_redirect() {
+  if(user_is_anonymous()) {
+    $path = variable_get('redhat_sso_login_url', 'redhat_sso_login_url_NOT_SET');
+    $to = request_uri();
+    header('Location: ' . url($path, array('query' => "redirect=$to")));
+  }
+}
+
+/**
+ * Implementation of hook_boot().  Authorization must take place
+ * before caching.
+ */
+function redhat_sso_boot() {
+  if (_redhat_sso_is_sso_enabled()) {
+    _redhat_sso_login_check();  
+  }
+}
+
+
+/*
+ * Checks if SSO is enabled in application configuration and ensures user is not "admin".
+ */
+function _redhat_sso_is_sso_enabled($admin_check = TRUE) {
+  global $user;
+  if($admin_check) {
+    return variable_get('redhat_sso_enabled', FALSE) && $user->uid != 1;
+  }
+  else {
+    return variable_get('redhat_sso_enabled', FALSE);
+  }
+}
+
+
+/*
+ * Destroys session and ensures user is logged out.
+ */
+function _redhat_sso_logout_user() {
+  global $user;
+
+  if (_redhat_user_logged_in()) {
+    // Destroy sesssion.
+    session_destroy();
+
+    # logout requires the full bootstrap
+    drupal_bootstrap(DRUPAL_BOOTSTRAP_FULL);
+    // Log user out.
+    $null = NULL;
+    user_module_invoke('logout', $null, $user);
+    $user = drupal_anonymous_user();
+    drupal_goto($_GET['q']);
+  }
+}
+
+function _redhat_user_logged_in() {
+  global $user;
+  return !!$user->uid;
+}
+
+/*
+ * Checks if user needs to login via SSO or is already logged in.
+ */
+function _redhat_sso_login_check() {
+
+  //print "check authenticated user\n";
+
+  // Skip SSO service calls if SSO cookie already validated.
+  if (isset($_SESSION['rh_sso'])) {
+    if ($_SESSION['rh_sso'] == $_COOKIE['rh_sso']) {
+      watchdog('redhat_sso', 'User session rh_sso matches cookie rh_sso');
+      return;
+    }
+    else {
+      // SSO session data exists, but not synced with cookie data.
+      watchdog('redhat_sso', 'rh_sso in session does not match cookie');
+      _redhat_sso_logout_user();
+      return;
+    }
+  }
+  // Ensure user is logged out if SSO cookie is not present.
+  if (!isset($_COOKIE['rh_sso']) && _redhat_user_logged_in()) {
+    _redhat_sso_logout_user();
+    watchdog('redhat_sso', 'User is logged in but has no rh_sso cookie');
+    return; //?
+  }
+
+  // Check forcing login for entire site or if SSO cookie exists to auto login.
+  if (isset($_COOKIE['rh_sso'])) {
+    watchdog('redhat_sso', 'rh_sso cookie set, log user in');
+    _redhat_sso_login();
+  }
+} // END _redhat_sso_login_check().
+
+
+/*
+ * Performs SSO login of user.
+ */
+function _redhat_sso_login() {
+  global $user;
+
+  # login requires the full bootstrap
+  drupal_bootstrap(DRUPAL_BOOTSTRAP_FULL);
+  try {
+    // Read SSO cookie data.
+    $rh_sso_cookie = $_COOKIE['rh_sso'];
+    watchdog('user info', $rh_sso_cookie);
+
+    // Validate cookie and fetch user data.
+    $rh_sso_cookie = explode('|', $rh_sso_cookie);
+    $response = drupal_http_request(variable_get('redhat_sso_verify_url', 'redhat_sso_verify_url_NOT_SET') .'?rh-sso='. (isset($rh_sso_cookie[1]) ? $rh_sso_cookie[1] : ''));
+    if ($response->code < 0) {
+      throw new Exception('SSO validation service failed: '. $response->error);
+    }
+    $user_data = json_decode($response->data);
+    //watchdog('user info', _devel_print_object($user_data));
+
+    if (isset($user_data->username) && !empty($user_data->username)) {
+      $username = $user_data->username;
+      // Is the username an email?  If not, we need to get the user's email.
+      if (valid_email_address($username) == TRUE) {
+        $email = $username;
+      }
+      else {
+        // Retrieve the email from Red Hat.
+        $email = _redhat_get_email($username);
+        
+        // Verify that we received a valid email.
+        if (valid_email_address($email) == FALSE) {
+          drupal_set_message('There was an error retrieving your email.  You are not logged in to this community.', 'error');
+          return; // We don't have a valid email.  Don't login and don't register.
+        }
+      }
+
+      $result = db_query('select u.uid as uid, u.name as name, u.mail as mail from {profile_values} as v, {profile_fields} as f, {users} as u where f.name = "profile_rhlogin" and v.value = "%s" and f.fid = v.fid and u.uid = v.uid order by u.uid asc', $username);
+      $uid = NULL;
+      while ($field = db_fetch_array($result)) {
+        watchdog('redhat_sso', 
+          'Login located user %name / %mail / %uid during username lookup',
+          array(
+            '%name' => $field['name'], 
+            '%mail' => $field['mail'], 
+            '%uid' => $field['uid'],
+          ),
+          WATCHDOG_NOTICE);
+        if ($uid == NULL) {
+          $uid = $field['uid'];
+        }
+      }
+
+      // Determine if user exists to create account and/or log them in.
+      if ($account = user_load(array('mail' => $email))) {
+        // User already exists, just log in.
+        user_external_login_register($account->name, 'redhat_sso');
+      }
+      else {
+        // Create a new user with the supplied email and login them in.
+        user_external_login_register($email, 'redhat_sso');
+
+        // Update $account password.
+        $account->pass = user_password();
+        $account->password = $account->pass;
+
+        // Set email address and other details for new user.
+        $timestamp = time();
+        user_save($user, array('mail' => $email, 'created' => $timestamp, 'access' => $timestamp, 'login' => $timestamp, 'status' => 1, timezone => '-18000', init => $email));
+
+        // TODO: Add/remove user roles based on validation service response data?
+
+        // TODO: Should application email user if accounts are maintained through Redhat.com?
+        //_user_mail_notify('register_no_approval_required', $account);
+      }
+
+      $result = db_query("SELECT fid FROM {profile_fields} WHERE name = 'profile_rhlogin'");
+      if ($field = db_fetch_object($result)) {
+        db_query("DELETE FROM {profile_values} WHERE fid = %d AND uid = %d", $field->fid, $user->uid);
+        $insert = db_query("INSERT INTO {profile_values} (fid, uid, value) VALUES (%d, %d, '%s')", $field->fid, $user->uid, $username);
+
+        watchdog('user info', 'Inserted profile_rhlogin %value %result', array('%result' => $insert, '%value' => $username));
+      }
+
+      if (strcasecmp($user->uid, $uid) != 0) {
+        watchdog('redhat_sso', 
+          'Should use %uid, will use %actual',
+          array(
+            '%uid' => $uid,
+            '%actual' => $user->uid,
+          ),
+          WATCHDOG_NOTICE);
+      }
+
+      // Add SSO cookie to session, so we know it has been validated.
+      $_SESSION['rh_sso'] = $_COOKIE['rh_sso'];
+      drupal_goto($_GET['q']);
+    }
+    else {
+      // No valid user data was returned from verification service.  Ensure user is logged out.
+      _redhat_sso_logout_user();
+    }
+  }
+  catch (Exception $e) {
+    drupal_set_message($e->getMessage(), 'error');
+    watchdog('redhat_sso', 'Exception: '. $e->getMessage());
+  }
+
+} // END _redhat_sso_login().
+
+
+/**
+ * Implementation of hook_menu_alter().
+ *
+ * Note: hook_menu_alter() is called when menu router table is rebuilt, so
+ *       if the redirects are not in place with SSO enabled, try clearing cache.
+ */
+function redhat_sso_menu_alter(&$items) {
+  // Set custom callbacks for core user menu items
+  // if SSO enabled and SSO URL variables exist.
+  if (_redhat_sso_is_sso_enabled(FALSE)) {
+    if (variable_get('redhat_sso_login_url', 0)) {
+      $items['user/login']['page callback'] = '_redhat_redirect_login';
+      unset($items['user/login']['file']);
+    }
+    if (variable_get('redhat_sso_logout_url', 0)) {
+      $items['logout']['page callback'] = '_redhat_redirect_logout';
+      unset($items['logout']['file']);
+    }
+    if (variable_get('redhat_sso_register_url', 0)) {
+      $items['user/register']['page callback'] = '_redhat_redirect_register';
+      unset($items['user/register']['file']);
+    }
+  }
+}
+
+
+/*
+ * Retrieve a user's email from a Red Hat's streamline service.  Here is an example response:
+ * 
+ * stdClass Object (
+ *   [request] => POST /wapps/streamline/userInfo.html
+ *     HTTP/1.0 Host: www.webqa.redhat.com
+ *     User-Agent: Drupal (+http://drupal.org/)
+ *     Content-Length: 33
+ *     Content-Type: application/x-www-form-urlencoded
+ *     login=xeops&secretKey=sw33tl1Qu0r
+ *   [data] => {"emailAddress":"xeops_linux@deutsche-boerse.com","login":"XEOPS"}
+ *   [protocol] => HTTP/1.1
+ *   [status_message] => OK
+ *   [headers] => Array
+ *       (
+ *           [Date] => Thu, 05 May 2011 20:17:37 GMT
+ *           [Server] => Apache
+ *           [Content-Language] => en-US
+ *           [Content-Length] => 66
+ *           [Content-Type] => application/json;charset=UTF-8
+ *           [Connection] => close
+ *       )
+ *
+ *   [code] => 200
+ * )
+ */
+function _redhat_get_email($username) {
+  $data = array('login' => $username, 'secretKey' => variable_get('redhat_user_info_secret_key', 'redhat_user_info_secret_key_NOT_SET'));
+
+  // Set some parameters for sending request.
+  $request_url = variable_get('redhat_user_info_url', 'redhat_user_info_url_NOT_SET');
+  $request_headers = array('Content-Type' => 'application/x-www-form-urlencoded');
+  $request_method = 'POST';
+  $request_retry = 3;
+  $post_data = http_build_query($data, '', '&');
+ 
+  // Send the request.
+  $response = drupal_http_request($request_url, $request_headers, $request_method, $post_data, $request_retry);
+  $response_array = json_decode($response->data, TRUE);
+  return $response_array['emailAddress'];
+}
+
+
+/*
+ * Redirects user to SSO login page.
+ */
+function _redhat_redirect_login() {
+  $path = variable_get('redhat_sso_login_url', 'redhat_sso_login_url_NOT_SET');
+  $to = request_uri();
+  header('Location: ' . url($path, array('query' => urldecode("redirect=$to"))));
+  exit;
+}
+
+
+/*
+ * Redirects user to SSO logout page.
+ */
+function _redhat_redirect_logout() {
+  header('Location: '. variable_get('redhat_sso_logout_url', 'redhat_sso_logout_url_NOT_SET'));
+  exit;
+}
+
+
+/*
+ * Redirects user to SSO registration page.
+ */
+function _redhat_redirect_register() {
+  header('Location: '. variable_get('redhat_sso_register_url', 'redhat_sso_register_url_NOT_SET'));
+  exit;
+}

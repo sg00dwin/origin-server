@@ -4,6 +4,17 @@ Description: Cartridge packaging phpmoadmin
 Version: 1.0.0
 License: ASL 2.0
 Vendor:  phpmoadmin.com
+Website: http://www.phpmoadmin.com
+Cart-Data:
+  - Key: "username"
+    Type: cart_data
+    Description: "Admin user on phpmoadmin interface"
+  - Key: "password"
+    Type: cart_data
+    Description: "Password for admin user on phpmoadmin interface"
+  - Key: connection_url
+    Type: cart_data
+    Description: "phpMoAdmin connection URL"
 Provides:
   - "phpmoadmin"
 Requires:
@@ -15,7 +26,7 @@ Reservations:
 Components:
   default:
 #    Dependencies: [rhc-cartridge-php]
-    Service-Dependencies: [rhc-cartridge-mongodb-2.0]
+    Service-Dependencies: ["mongodb-2.0"]
     Publishes:
       get-serve-info:
         Type: "NET_TCP:db-config:url"

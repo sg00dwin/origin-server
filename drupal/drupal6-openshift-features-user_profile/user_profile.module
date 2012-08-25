@@ -1,0 +1,80 @@
+<?php
+
+include_once('user_profile.features.inc');
+
+function user_profile_block($op = 'list', $delta = '', $edit = array()) {
+  global $user;
+  switch ($op) {
+  case 'list':
+    $blocks['community-messaging'] = array(
+      'info' => t('Community Messaging')
+    );
+    $blocks['developer-center-messaging'] = array(
+      'info' => t('Developer Center Messaging')
+    );
+    $blocks['learn-more-messaging'] = array(
+      'info' => t('Learn More Messaging')
+    );
+    $blocks['get-started-messaging'] = array(
+      'info' => t('Get Started Messaging')
+    );
+    return $blocks;
+  case 'configure':
+    return array();
+  case 'save':
+    return;
+  case 'view':
+    switch ($delta) {
+    case 'get-started-messaging':
+      $block['content'] = 
+        '<div class="messaging"><div class="container">'.
+        '<div class="primary headline">Launch your <strong>Big Idea</strong> in minutes</div>' .
+        '<div class="secondary">OpenShift is a next generation application hosting environment. Read on to see how easy it is to get started in the cloud.</div>' .
+        '</div></div>'.
+        user_profile_block_call_to_action();
+      break;
+    case 'learn-more-messaging':
+      $block['content'] = 
+        '<div class="messaging"><div class="container">'.
+        '<div class="primary headline">Take your <strong>Apps</strong> to the Cloud</div>' .
+        '<div class="secondary">OpenShift is a next generation application hosting environment. Read on to see how it can help you achieve your application goals.</div>' .
+        '</div></div>'.
+        user_profile_block_call_to_action();
+      break;
+    case 'developer-center-messaging':
+      $block['content'] = 
+        '<div class="messaging"><div class="container">'.
+        '<div class="primary headline">Build on <strong>OpenShift</strong></div>' .
+        '<div class="secondary">Find the help you need in the Developer Center to launch your biggest ideas.</div>' .
+        '</div></div>';
+      break;
+    case 'community-messaging':
+      if (!user_is_logged_in()) {
+        $block['content'] = 
+          '<div class="messaging"><div class="container">'.
+          '<div class="primary headline">Join the <strong>OpenShift Community</strong></div>' .
+          '<div class="secondary">This is the place to learn and engage with OpenShift users and developers. Sign in to participate</div>' .
+          '</div></div>';
+      }
+      break;
+    }
+    return $block;
+  }
+}
+
+function user_profile_block_call_to_action() {
+  if (user_is_logged_in()) {
+    return 
+      '<a class="action-call" href="/app/console">'.
+        '<div>Open the <strong>OpenShift</strong> Console</div>'.
+        '<div class="highlight-arrow">&gt;</div>'.
+      '</a>';
+  }
+  else {
+    return 
+      '<a class="action-call" href="/app/account/new">'.
+        '<div>Sign up to try <strong>OpenShift</strong></div>'.
+        '<div class="highlight-arrow">&gt;</div>'.
+      '</a>';
+  }
+}

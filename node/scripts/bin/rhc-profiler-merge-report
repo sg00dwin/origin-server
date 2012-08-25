@@ -1,0 +1,317 @@
+#!/usr/bin/env ruby
+
+# Scan the provided directory for mcollective log files, profiler call
+# graphs and profiler info files.  Report back the set of call graphs
+# that pertain to a specific search matched in the info files and the
+# call cost from mcollective.
+
+require 'rubygems'
+require 'time'
+require 'date'
+require 'optparse'
+require 'json'
+require 'zlib'
+
+
+# Hash deep_include? method from Stack Overflow
+# http://stackoverflow.com/questions/3826969
+# Thanks to the following contributors:
+#    Refactor http://stackoverflow.com/users/636053/refactor
+#    Oleg Keene http://stackoverflow.com/users/457846/oleg-keene
+#    Sam Stephens http://stackoverflow.com/users/372926/samstephens
+class Hash
+  def deep_include?(sub_hash)
+    sub_hash.keys.all? do |key|
+      self.has_key?(key) && if sub_hash[key].is_a?(Hash)
+        self[key].is_a?(Hash) && self[key].deep_include?(sub_hash[key])
+      else
+        self[key] == sub_hash[key]
+      end
+    end
+  end
+end
+
+
+class InfoMatchers
+  @@CARTRIDGES = ['php-5.3', 'ruby-1.8', 'python-2.6', 'perl-5.10', 'jbossas-7', 'jbosseap-6.0', 
+                  'nodejs-0.6', 'jenkins-1.4', 'diy-0.1']
+
+  @@FILTERS =  {
+    'all'                   => {},
+    'legacy_user_info_post' => { "PARAMS" => { "controller" => "legacy_broker", "action" => "user_info_post" } },
+    'legacy_domain_post'    => { "PARAMS" => { "controller" => "legacy_broker", "action" => "domain_post" } },
+    'legacy_deconfigure'    => { "PARAMS" => { "controller" => "legacy_broker", "action" => "cartridge_post", "json_data" => { "action" => "deconfigure" } } },
+    'legacy_configure'      => { "PARAMS" => { "controller" => "legacy_broker", "action" => "cartridge_post", "json_data" => { "action" => "configure" } } },
+    'scale_up'              => { "PARAMS" => { "controller" => "app_events", "action" => "create", "event" => "scale-up" } },
+    'scale_down'            => { "PARAMS" => { "controller" => "app_events", "action" => "create", "event" => "scale-down" } },
+    'create'                => { "PARAMS" => { "controller" => "applications", "action" => "create" } },
+    'create_scaled'         => { "PARAMS" => { "controller" => "applications", "action" => "create", "scale" => "true" } } }
+  @@FILTERS.merge!(Hash[*@@CARTRIDGES.collect { |c| ["legacy_configure_#{c}",  
+                                                     { "PARAMS" => { "controller" => "legacy_broker", "action" => "cartridge_post", "json_data" => 
+                                                         { "action" => "configure", "cartridge"  => c } } } ] }.flatten])
+  @@FILTERS.merge!(Hash[*@@CARTRIDGES.collect { |c| ["create_#{c}",  { "PARAMS" => { "controller" => "applications", "action" => 
+                                                         "create", "cartridge" => c } }] }.flatten])
+  @@FILTERS.merge!(Hash[*@@CARTRIDGES.collect { |c| ["create_scaled_#{c}",  { "PARAMS" => { "controller" => "applications", "action" => 
+                                                         "create", "scale" => "true", "cartridge" => c } }] }.flatten])
+
+
+  class Error < StandardError; end
+
+  def initialize(filter)
+    @filter=filter
+  end
+
+  def to_s
+    @filter
+  end
+
+  def to_hash
+    @@FILTERS[@filter]
+  end
+
+  def self.filters
+    @@FILTERS.keys.sort
+  end
+
+end
+
+
+
+class InfoChunk
+  attr_accessor :data, :stamp, :profile, :timestamp, :endstamp, :duration
+  
+  @@NAMEMATCH=Regexp.new('^profiler-info-([\d\-]+)\.json(\..*|)$')
+  @@GLOB="profiler-info-*.json*"
+
+  class Error < StandardError; end
+
+  def initialize(jfile)
+    if m = @@NAMEMATCH.match(File.basename(jfile))
+      @stamp = m[1]
+      exten = m[2]
+      @profile = File.join(File.dirname(jfile), "profiler-wall-call_tree-#{@stamp}.txt#{exten}")
+      case exten
+      when '.gz'
+        opener=Zlib::GzipReader
+      else
+        opener=File
+      end
+    else
+      raise Error, "File does not match pattern: '#{jfile}'"
+    end
+
+    opener.open(jfile) { |f| @data = JSON.parse f.read }
+
+    @timestamp = Time.at(@data['TIMESTAMP_F'])
+    @endstamp = Time.at(@data['ENDSTAMP_F'])
+    @duration = @data['DURATION']
+  end
+
+  def include?(other)
+    @data.deep_include?(other)
+  end
+  
+  def self.myfiles(path)
+    Dir[File.join(path,@@GLOB)]
+  end
+  
+end
+
+
+class McollectiveLog
+  attr_accessor :entries
+
+  @@NAMEMATCH = Regexp.new('^mcollective\.log(\.\d+|)(\..*|)$')
+
+  @@REQBEGIN = Regexp.new('^D, \[(.*) \#\d+\] DEBUG .* (\w+) call \/ request =')
+  @@REQACTION = Regexp.new(':action=>"(.*)"')
+  @@REQCART = Regexp.new(':cartridge=>"(.*)"')
+  @@REQEND = Regexp.new('^D, \[(.*) \#\d+\] DEBUG .* (\w+) (?: ERROR )*\(\d+\)')
+  @@REQSERIALIZE = Regexp.new('^D, \[(.*) \#\d+\] DEBUG .* Serializing using yaml')
+
+  @@GLOB="mcollective.log*"
+
+  class Error < StandardError; end
+    
+  class McEntry
+    attr_accessor :type, :timestamp, :endstamp, :action_cart, :action_call
+
+    def initialize(type, timestamp)
+      @type = type
+      @timestamp = timestamp
+    end
+
+    def duration
+      @endstamp - @timestamp
+    end
+  end
+
+
+  class McFile
+    attr_accessor :filename, :handle, :timestamp, :zone
+
+    @@STAMPMATCH = Regexp.new('\# Logfile created on (.*) by logger.rb')
+
+    def initialize(filename)
+      @filename = filename
+      @handle = File.open(filename)
+
+      stamp=@@STAMPMATCH.match(@handle.gets)[1]
+      @timestamp = Time.parse(stamp)
+      @zone = DateTime.parse(stamp).strftime('%z')
+    end
+
+    def <=>(other)
+      @timestamp <=> other.timestamp
+    end
+
+  end
+
+  def initialize(path)
+    rfiles=[]
+    Dir[File.join(path,@@GLOB)].each do |lfile|
+      m = @@NAMEMATCH.match(File.basename(lfile))
+      if not m.nil?
+        rfiles << McFile.new(lfile)
+      end
+    end
+
+    @entries = []
+    tentries=[]
+
+    rfiles.sort.each do |rf|
+      f = rf.handle
+      while line = f.gets do
+        if (m = @@REQBEGIN.match(line))
+          tentries << McEntry.new(m[2], Time.parse(m[1] + " " + rf.zone))
+        elsif (m = @@REQACTION.match(line))
+          if not tentries.last.action_call.nil?
+            tentries << McEntry.new(tentries.last.type, tentries.last.timestamp)
+          end
+          tentries.last.action_call = m[1]
+        elsif (m = @@REQCART.match(line))
+          if not tentries.last.action_cart.nil?
+            tentries << McEntry.new(tentries.last.type, tentries.last.timestamp)
+          end
+          tentries.last.action_cart = m[1]
+        elsif (m = @@REQEND.match(line))
+          if not tentries.first.nil?
+            tentries.first.endstamp = Time.parse(m[1] + " " + rf.zone)
+            @entries << tentries.shift
+          end
+        elsif (m = @@REQSERIALIZE.match(line))
+          if not tentries.first.nil?
+            tentries.each do |tent|
+              tent.endstamp=Time.parse(m[1] + " " + rf.zone)
+              @entries << tent
+            end
+            tentries=[]
+          end
+        end
+      end
+      f.close
+    end
+  end
+
+  def filter(timestamp, endstamp)
+    newinst = self.clone
+    newinst.entries = self.entries.select do |item|
+      ((item.timestamp >= timestamp ) and (item.endstamp <= endstamp))
+    end
+    newinst
+  end
+
+  def length
+    @entries.length
+  end
+
+  def report
+    results={}
+    @entries.each do |entry|
+      name = "#{entry.type} #{entry.action_cart} #{entry.action_call}"
+      if results[name].nil?
+        results[name]={:count => 0, :total => 0}
+      end
+      results[name][:count] += 1
+      results[name][:total] += entry.duration
+    end
+    results
+  end
+
+end
+
+
+$options = {}
+OptionParser.new do |opts|
+  $options[:verbose] = false
+  opts.on('-v', '--[no-]verbose', 'Output verbose run information') do |v|
+    $options[:verbose] = v
+  end
+
+  $options[:filter] = []
+  opts.on('-f', '--filter NAME,NAME,...', Array, 'filter(s) to search events') do |ts|
+    begin
+      $options[:filter] = ts.map { |t| InfoMatchers.new(t) }
+    rescue InfoMatchers::Error => e
+      puts e
+      exit 1
+    end
+  end
+
+  $options[:dir] = "."
+  opts.on('-d', '--dir NAME', 'Search for files in this directory') do |dr|
+    $options[:dir] = dr
+  end
+
+  opts.on('--filters', 'Display filters') do
+    puts "Filters..."
+    InfoMatchers.filters.each { |f| puts "     #{f}" }
+  end
+
+end.parse!
+
+if $options[:verbose]
+  $stderr.puts "Filter: #{$options[:filter]}"
+  $stderr.puts "Directory: #{$options[:dir]}"
+end
+
+if $options[:filter].length == 0
+  $options[:filter] = [InfoMatchers.new('all')]
+end
+
+mcents = McollectiveLog.new($options[:dir])
+$stderr.puts "Mcollective Events: #{mcents.length}" if $options[:verbose]
+
+InfoChunk.myfiles($options[:dir]).sort.each do |testfile|
+  chunk = InfoChunk.new(testfile)
+  matched = false
+  $options[:filter].each { |f| matched = true if chunk.include? f.to_hash }
+  if matched
+    puts "---------------------------------------------------------------------------------------"
+    filtmatch = []
+    InfoMatchers.filters.each do |filt|
+      if filt != 'all'
+        if chunk.include? InfoMatchers.new(filt).to_hash
+          filtmatch << filt
+        end
+      end
+    end
+    puts "Filters: " + filtmatch.join(", ")
+
+    puts "Info file: #{testfile}"
+    puts "Call Graph: #{chunk.profile}"
+    puts "Duration: #{chunk.duration}"
+
+    mymcents = mcents.filter(chunk.timestamp, chunk.endstamp)
+    puts "Mcollective summary: #{mymcents.length} events"
+    if mymcents.length > 0
+      printf("%12s: %5s: %12s: %s\n", " Total (s) ", "  N  ", "  Avg (s)  ", "           Event                          ")
+      printf("%12s: %5s: %12s: %s\n", "-----------", "-----", "-----------", "------------------------------------------")
+
+      sprof = mymcents.report.sort_by {|key, value| value[:total]}
+      sprof.reverse.each do |profent|
+        printf("% 12.6f: %5d: % 12.6f: %s\n", profent[1][:total], profent[1][:count], profent[1][:total]/profent[1][:count].to_f, profent[0])
+      end
+    end
+  end
+end
