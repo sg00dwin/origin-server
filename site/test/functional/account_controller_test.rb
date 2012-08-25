@@ -81,7 +81,7 @@ class AccountControllerTest < ActionController::TestCase
     assert assigns(:domain).nil?
 
     if Rails.configuration.aria_enabled
-      assert assigns(:plan).present?
+      assert assigns(:plan).present?, assigns(:user).inspect
       assert_select 'a', 'Upgrade now!'
       assert_select 'p', /FreeShift/, response.inspect
     else
