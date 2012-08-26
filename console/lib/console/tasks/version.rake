@@ -17,8 +17,8 @@ module Console
     MAJOR = #{major||0}
     MINOR = #{minor||0}
     MICRO = #{micro||0}
-    #PRE  = '#{extra.join('_')}'
-    STRING = [MAJOR,MINOR,MICRO].compact.join('.')
+    PRE  = #{extra.empty? ? 'nil' : "'#{extra.join('_')}'"}
+    STRING = [MAJOR,MINOR,MICRO,PRE].compact.join('.')
   end
 end
     VERSION_RB
