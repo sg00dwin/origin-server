@@ -1,3 +1,7 @@
-Dummy::Application.routes.draw do
-  # Console is automounted at /console
+Rails.application.routes.draw do
+  scope 'console' do
+    openshift_console
+  end
+
+  root :to => app_redirect('console')
 end

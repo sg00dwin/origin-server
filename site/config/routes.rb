@@ -84,7 +84,7 @@ RedHatCloud::Application.routes.draw do
     end
   end
 
-  scope :account do
+  scope 'account' do
     resource :domain, :only => [:new, :create, :edit, :update]
     resources :keys, :only => [:new, :create, :destroy]
   end
@@ -130,7 +130,7 @@ RedHatCloud::Application.routes.draw do
   #          :controller => "partner",
   #          :only => [:show, :index]
 
-  scope '/console' do
+  scope 'console' do
     match 'help' => 'console#help', :via => :get, :as => 'console_help'
 
     resources :application_types, :only => [:show, :index], :id => /[^\/]+/
@@ -169,7 +169,7 @@ RedHatCloud::Application.routes.draw do
 
   root :to => "product#index"
 
-  scope '/status' do
+  scope 'status' do
     match '/(:base)(.:format)' => StatusApp, :as => 'status'
     match '/status.js' => StatusApp, :as => 'status_js'
     match '/sync/(:host)' => StatusApp, :constraints => {:host => /[0-z\.-]+/}
