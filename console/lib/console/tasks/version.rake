@@ -6,6 +6,7 @@
 task :version, :version do |t, args|
   version = args[:version] || /(Version: )(.*)/.match(File.read("console.spec"))[2]
   raise "No version specified" unless version
+  version.strip!
   puts "RPM version  #{version}"
   major, minor, micro, *extra = version.split('.')
   puts "Ruby version #{major||0}.#{minor||0}.#{micro||0} #{extra.join('_')}"
