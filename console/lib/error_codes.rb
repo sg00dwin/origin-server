@@ -1,5 +1,0 @@
-module ErrorCodes
-  STREAMLINE_ERROR = 144
-  COMMUNICATION_ERROR = 219
-  UNKNOWN = 1
-end
