@@ -5,6 +5,7 @@ RedHatCloud::Application.configure do
   # every request.  This slows down response time but is perfect for development
   # since you don't have to restart the webserver when you make code changes.
   config.cache_classes = false
+  config.reload_plugins = true
 
   # Log error messages when you accidentally call methods on nil.
   config.whiny_nils = true
@@ -57,14 +58,9 @@ RedHatCloud::Application.configure do
   config.marketing_mailing_list = 'Marketing Mailing List <jgurrero@redhat.com>'
   config.action_mailer.delivery_method = :test
   config.action_mailer.perform_deliveries = false
-  
-  # Express API base url
-  config.express_api_url = 'https://localhost'
 
-  # base domain
-  config.base_domain = 'dev.rhcloud.com'
-  
-  # Max apps for express
-  config.express_max_apps = 5
-  
+  Console.configure do |c|
+    c.api = :external
+    #c.disable_account = true
+  end
 end

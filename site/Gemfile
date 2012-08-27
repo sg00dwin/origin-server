@@ -15,6 +15,7 @@ gem 'rdiscount'
 gem 'httparty'
 gem 'wddx'
 gem 'crack'
+gem 'console', :path => '../console'
 
 # Files for Barista (https://github.com/Sutto/barista)
 gem 'barista'

@@ -8,7 +8,7 @@ class AccountUpgradesControllerTest < ActionController::TestCase
   def with_user(user)
     @user ||= begin
       @controller.expects(:current_user).at_least_once.returns(user)
-      user_to_session(user)
+      set_user(user)
     end
   end
   def simple

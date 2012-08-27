@@ -3,8 +3,6 @@
 # the streamline REST service.
 #
 module Streamline
-  include ErrorCodes
-
   class Cookie
     def initialize(*arguments)
       @name, @value, @options = arguments
