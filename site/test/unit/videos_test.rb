@@ -1,12 +1,15 @@
 require File.expand_path('../../test_helper', __FILE__)
 
-# some representative IPs
-LOCALHOST = "127.0.0.1"
-YAHOO_COM = "98.139.180.149"
-YAHOO_DE = "87.248.120.148"
-EN_CHINA_CN = "124.238.254.71"
+require 'video_helper'
+puts "GeoIP not installed, skipping tests in #{__FILE__}" unless defined? Net::GeoIP
 
-class ExpressControllerTest < ActiveSupport::TestCase
+class VideoTest < ActiveSupport::TestCase
+
+  # some representative IPs
+  LOCALHOST = "127.0.0.1"
+  YAHOO_COM = "98.139.180.149"
+  YAHOO_DE = "87.248.120.148"
+  EN_CHINA_CN = "124.238.254.71"
 
   test 'should except upon invalid video key' do
     @controller = DummyController.new(LOCALHOST)
@@ -54,7 +57,7 @@ class ExpressControllerTest < ActiveSupport::TestCase
   end
 
   class DummyController
-    include ApplicationHelper
+    include VideoHelper
 
     attr_accessor :request
 
@@ -63,4 +66,5 @@ class ExpressControllerTest < ActiveSupport::TestCase
     end
   end
 
-end
+end if defined? Net::GeoIP
+

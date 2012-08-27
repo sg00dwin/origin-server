@@ -1,4 +1,4 @@
-require 'net/geoip' rescue nil
+require 'net/geoip' rescue Rails.logger.error "Net::GeoIP not available, unable to serve country specific videos."
 
 module VideoHelper
   # localized video URL
