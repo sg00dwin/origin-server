@@ -1,5 +1,17 @@
 module ApplicationHelper
-  puts "ApplicationHelper loading"
+  include Console::CommunityHelper
+  include Console::ConsoleHelper
+  include Console::HelpHelper
+  include Console::Html5BoilerplateHelper
+  include Console::LayoutHelper
+  include Console::ModelHelper
+  include Console::SecuredHelper
+  include Console::UpgradeHelper
+
+  def logout_path(*args)
+    controller.logout_path(*args)
+  end
+
   def product_title
     "OpenShift by Red Hat"
   end
