@@ -15,7 +15,11 @@ gem 'rdiscount'
 gem 'httparty'
 gem 'wddx'
 gem 'crack'
-gem 'console', :path => '../console'
+if ENV['CONSOLE_PATH']
+  gem 'openshift_origin_console', :path => ENV['CONSOLE_PATH']
+else
+  gem 'openshift_origin_console'
+end
 
 # Files for Barista (https://github.com/Sutto/barista)
 gem 'barista'
