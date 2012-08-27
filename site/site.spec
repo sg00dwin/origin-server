@@ -25,6 +25,7 @@ BuildRequires: rubygem-xml-simple
 BuildRequires: rubygem-haml
 BuildRequires: rubygem-compass
 BuildRequires: rubygem-formtastic
+BuildRequires: rubygem-openshift_origin_console
 BuildRequires: rubygem-rack
 BuildRequires: rubygem-regin
 BuildRequires: rubygem-httparty
@@ -60,6 +61,7 @@ Requires:  rubygem-recaptcha
 Requires:  rubygem-hpricot
 Requires:  rubygem-barista
 Requires:  rubygem-httparty
+Requires: rubygem-openshift_origin_console
 Requires:  rubygem-rdiscount
 Requires:  rubygem-webmock
 Requires:  js
