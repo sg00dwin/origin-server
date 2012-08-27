@@ -2,15 +2,7 @@ require 'ci/reporter/rake/test_unit'
 
 namespace :test do
 
-  namespace :prepare do
-    task :ci_reporter do
-      # removed deletion of test cases
-      path = File.join(Gem.loaded_specs["ci_reporter"].full_gem_path, 'lib', 'ci', 'reporter', 'rake', 'test_unit_loader.rb')
-      test_loader = CI::Reporter.maybe_quote_filename path
-      ENV["TESTOPTS"] = "#{ENV["TESTOPTS"]} #{test_loader}"
-    end
-  end
-  task 'test:prepare' => 'test:prepare:ci_reporter'
+  console_path = File.expand_path(Gem.loaded_specs["console"].full_gem_path)
 
   Rake::TestTask.new :streamline => 'test:prepare' do |t|
     t.libs << 'test'
@@ -21,11 +13,12 @@ namespace :test do
     ]
   end
 
+  Rake::Task[:restapi].abandon
   Rake::TestTask.new :restapi => 'test:prepare' do |t|
     t.libs << 'test'
     t.test_files = FileList[
-      'test/**/rest_api_test.rb',
-      'test/**/rest_api/*_test.rb',
+      "#{console_path}/test/**/rest_api_test.rb",
+      "#{console_path}/test/**/rest_api/*_test.rb",
     ]
   end
 

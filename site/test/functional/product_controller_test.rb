@@ -11,6 +11,7 @@ class ProductControllerTest < ActionController::TestCase
   test "should get index unauthorized" do
     get :index
     assert_response :success
+    assert_select "head title", "OpenShift by Red Hat"
   end
 
   test "should get index authorized" do
