@@ -1,7 +1,7 @@
 PATH
   remote: ../console
   specs:
-    console (1.0.0.alpha)
+    openshift_origin_console (1.0.0.alpha)
       barista (~> 1.2.1)
       compass (~> 0.11.5)
       formtastic (~> 1.2.3)
@@ -134,7 +134,6 @@ DEPENDENCIES
   barista
   ci_reporter
   compass
-  console!
   crack
   formtastic (~> 1.2.3)
   haml
@@ -143,6 +142,7 @@ DEPENDENCIES
   json
   mocha
   net-http-persistent
+  openshift_origin_console!
   parseconfig
   rack
   rails (~> 3.0.13)

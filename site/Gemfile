@@ -16,9 +16,9 @@ gem 'httparty'
 gem 'wddx'
 gem 'crack'
 if ENV['CONSOLE_PATH']
-  gem 'openshift_origin_console', :path => ENV['CONSOLE_PATH']
+  gem 'openshift_origin_console', :require => 'console', :path => ENV['CONSOLE_PATH']
 else
-  gem 'openshift_origin_console'
+  gem 'openshift_origin_console', :require => 'console'
 end
 
 # Files for Barista (https://github.com/Sutto/barista)

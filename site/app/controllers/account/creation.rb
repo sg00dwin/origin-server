@@ -2,8 +2,6 @@ module Account
   module Creation
     extend ActiveSupport::Concern
 
-    require_dependency 'recaptcha'
-
     def skip_captcha?
       Rails.configuration.captcha_secret.nil? or params[:captcha_secret] == Rails.configuration.captcha_secret
     end
