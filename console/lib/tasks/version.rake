@@ -4,7 +4,7 @@
 #require 'rake/testtask'
 
 task :version, :version do |t, args|
-  version = args[:version] || /(Version: )(.*)/.match(File.read("console.spec"))[2]
+  version = args[:version] || /(Version: )(.*)/.match(File.read(FileList["*.spec"][0]))[2]
   raise "No version specified" unless version
   version.strip!
   puts "RPM version  #{version}"
