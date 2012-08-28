@@ -105,7 +105,7 @@ class DomainTest < ActionDispatch::IntegrationTest
     request_via_redirect(:post, DOMAIN_COLLECTION_URL, {:id => new_ns, :nolinks => true}, @headers)
     assert_response :conflict
     body = JSON.parse(@response.body)
-    assert_equal(body["messages"][0]["exit_code"], 102)
+    assert_equal(body["messages"][0]["exit_code"], 158)
   end
 
   def test_domain_update_validation
