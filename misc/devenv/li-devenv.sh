@@ -283,6 +283,7 @@ name=li-local
 baseurl=file:///root/li-local/
 enabled=0
 gpgcheck=0
+priority=1
 EOF
 
   cp /tmp/tito/x86_64/*.rpm /root/li-local/
@@ -290,7 +291,9 @@ EOF
   createrepo /root/li-local/
 
   set -e
+  yum -y install yum-priorities
   yum -y install rhc-devenv --enablerepo=li-local
+  yum -y erase yum-priorities
   set +e
   
   pushd /root/li-working > /dev/null
