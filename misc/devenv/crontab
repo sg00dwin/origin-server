@@ -1,2 +1,2 @@
-* * * * * /usr/libexec/mcollective/update_yaml.rb /etc/mcollective/facts.yaml
+* * * * * /usr/libexec/mcollective/update_yaml.rb /etc/mcollective/facts.yaml &> /dev/null
 0 * * * * /usr/bin/rhc-last-access > /var/lib/stickshift/last_access.log 2>&1
