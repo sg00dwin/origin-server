@@ -421,7 +421,7 @@ module Express
 set -e;
 rm -rf /root/li-test
 #{git_archive_commands}
-cp -n /root/li-test/stickshift/controller/test/cucumber/*.feature /root/li-test/tests/.  
+cp -n /root/li-test/stickshift/controller/test/cucumber/*.feature /root/li-test/tests/.
 mkdir -p /tmp/rhc/junit
 }, 60, false, 2)
         puts "Done"
@@ -614,7 +614,17 @@ mkdir -p /tmp/rhc/junit
             end
   
             unless options.exclude_rhc?
-              test_queues[2] << ["RHC Functional", "GIT_SSH=li-test/features/support/ssh.sh RHC_ENDPOINT=https://localhost/broker/rest/api cucumber #{@@CUCUMBER_OPTIONS} li-test/features"]
+              base_str = "QUIET=1 GIT_SSH=li-test/features/support/ssh.sh RHC_ENDPOINT=https://localhost/broker/rest/api cucumber #{@@CUCUMBER_OPTIONS} li-test/features"
+              [
+                :client,
+                :domain,
+                :application,
+                :single_cartridge,
+                :multiple_cartridge
+              ].each do |tag|
+                test_queues[1] << ["RHC Basic Functional: #{tag}", "#{base_str} -t @#{tag} -t @init", {:retry_individually => true }]
+                test_queues[2] << ["RHC Advanced Functional: #{tag}", "#{base_str} -t @#{tag} -t ~@init", {:retry_individually => true }]
+              end
             end
           end
   
