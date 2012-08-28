@@ -756,7 +756,7 @@ popd
               set_mergeable(id, repo, login, comments)
             else
               if set_not_mergeable(id, repo, login)
-                $stderr.puts "Waiting till next run to see if mergeability if in flux"
+                $stderr.puts "Waiting till next run to see if mergeability is in flux"
               end
               next
             end
