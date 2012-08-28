@@ -196,6 +196,38 @@ module Express
       puts packages_str
     end
 
+    desc "find_and_build_specs", "Builds all non ignored specs in the current directory"
+    def find_and_build_specs
+      packages = get_packages(false, true)
+      buildable = packages.select{ |p| not IGNORE_PACKAGES.include? p.name }.select do |p|
+        inside(p.dir) { system "git tag | grep '#{p.name}'" }
+      end
+
+      # packages not in source
+      installed = buildable.map(&:build_requires).flatten(1).uniq - buildable.map(&:name)
+
+      phases = [installed.clone]
+      while not buildable.empty?
+        # all prereq packages
+        has_dependencies, installable = buildable.partition do |p|
+          p.build_requires.any?{ |name| name == p.name }
+        end
+
+        raise "The packages remaining to install #{dependencies.inspect} have mutual dependencies" if installable.empty?
+
+        phase = installable.map!(&:name) - installed
+        phases << phase
+        installed.concat!(phase)
+
+        buildable = has_dependencies
+      end
+
+      puts "Running #{phases.length} phases:"
+      phases.each_with_index{ |phase,i| puts "  %-5s %s" % ["#{i+1}:", phase.inspect] }
+      puts "\nBuilding"
+
+    end
+
     desc "sauce_usage", "Prints out usage information for sauce tests"
     method_option :sauce_username, :required => false, :desc => "Sauce Labs username (default '#{SAUCE_USER}')"
     method_option :sauce_access_key, :required => false, :desc => "Sauce Labs access key (default '#{SAUCE_SECRET}')"
