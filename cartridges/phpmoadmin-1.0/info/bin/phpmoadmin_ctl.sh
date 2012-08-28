@@ -35,6 +35,8 @@ case "$1" in
     ;;
 
     graceful-stop|stop)
+        # Don't exit on errors on stop.
+        set +e
         if [ -f ${OPENSHIFT_PHPMOADMIN_GEAR_DIR}run/httpd.pid ]
         then
             src_user_hook pre_stop_phpmoadmin-1.0
