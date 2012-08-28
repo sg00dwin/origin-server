@@ -757,6 +757,7 @@ popd
             else
               if set_not_mergeable(id, repo, login)
                 $stderr.puts "Waiting till next run to see if mergeability is in flux"
+                exit 1
               end
               next
             end
