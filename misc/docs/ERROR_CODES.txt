@@ -5,11 +5,11 @@ User errors:
 100: An application with specified name already exists
 101: An application with specified name does not exist and can not be operated on
 102: A user with login already exists
-103: The namespace already exists
+103: Given namespace is already in use.
 104: User's gear limit has been reached
-105: Invalid appname
+105: Invalid application name
 106: Invalid namespace
-107: Invalid rhlogin
+107: Invalid user login
 108: Invalid ssh key
 109: Invalid cartridge types
 110: Invalid application type specified
@@ -30,16 +30,16 @@ User errors:
 125: Invalid template
 126: Invalid event
 127: A domain with specified namespace does not exist and can not be operated on
-128: The domain with specified namespace contains applications. Delete applications first or set force to true.
-129: The application is not configure with this cartridge
+128: Could not delete domain, domain has valid applications.
+129: The application is not configured with this cartridge
 130: Invalid params to estimates controller
 131: Error during estimation
 132: Insufficient Access Rights
 133: Could not delete user
 134: Invalid node profile
-136: Could not delete domain, domain has valid applications.
-146: User has valid credentials but hasn't been granted access to Express yet.
-147: User has valid credentials but hasn't requested access to Express yet.
+135: Cartridge/Component/Feature not found in the application
+136: Cartridge/Component/Feature already embedded in the application
+137: Cartridge/Component/Feature can not be removed from the application.
 150: A plan with specified id does not exist
 151: Billing account was not found for user
 152: Billing account status not active
