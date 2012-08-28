@@ -1,5 +1,5 @@
 class AccountUpgradesController < ApplicationController
-  layout 'site'
+  layout 'account'
 
   before_filter :authenticate_user!, :except => :show
   before_filter :authenticate_user_for_upgrade!, :only => :show
