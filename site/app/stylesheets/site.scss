@@ -463,7 +463,7 @@ body.signup {
 } }
 
 .column-buzz {
-  background: $buzzBackgroundColor url($buzzBackgroundImage) repeat-x bottom left;
+  background: $openshiftMediumBackgroundGray image-url('images/landscape-trees.png') repeat-x bottom left;
   font-weight: 300; 
 
   > h2 { 
