@@ -61,7 +61,7 @@ Requires:  rubygem-recaptcha
 Requires:  rubygem-hpricot
 Requires:  rubygem-barista
 Requires:  rubygem-httparty
-Requires: rubygem-openshift_origin_console
+Requires:  rubygem-openshift_origin_console
 Requires:  rubygem-rdiscount
 Requires:  rubygem-webmock
 Requires:  js
