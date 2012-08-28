@@ -432,7 +432,8 @@ chmod u-s /usr/bin/sudo
 # chmod u-s /usr/bin/pkexec
 # chmod u-s /usr/bin/newgrp
 # chmod u-s /usr/libexec/polkit-1/polkit-agent-helper-1
-# chmod u-s /usr/libexec/pt_chown
+# BZ844881 - was chmod 4711
+chmod 4710 /usr/libexec/pt_chown
 # chmod u-s /usr/libexec/openssh/ssh-keysign
 # chmod u-s /usr/sbin/suexec
 # chmod u-s /usr/sbin/userhelper
