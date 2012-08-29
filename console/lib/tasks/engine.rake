@@ -1,5 +1,6 @@
-raise "engine.rake was backported from 3.1, remove" unless Gem::Requirement.create("~> 3.0.0") =~ Gem.loaded_specs['rails'].version
 if not defined?(ENGINE_LOADED) and defined?(APP_RAKEFILE)
+  raise "engine.rake was backported from 3.1, remove" unless Gem::Requirement.create("~> 3.0.0") =~ Gem.loaded_specs['rails'].version
+
   task "load_app" do
     namespace :app do
       load APP_RAKEFILE

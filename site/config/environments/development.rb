@@ -60,7 +60,7 @@ RedHatCloud::Application.configure do
   config.action_mailer.perform_deliveries = false
 
   Console.configure do |c|
-    c.api = :external
+    c.api = (ENV['CONSOLE_API_MODE'] || 'local').to_sym
     #c.disable_account = true
   end
 end

@@ -69,7 +69,7 @@ RedHatCloud::Application.configure do
   config.marketing_mailing_list = 'Marketing Mailing List <jgurrero@redhat.com>'
 
   Console.configure do |c|
-    c.api = :external
+    c.api = (ENV['CONSOLE_API_MODE'] || 'local').to_sym
     #c.disable_account = true
   end
 end
