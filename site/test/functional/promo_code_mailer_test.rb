@@ -11,7 +11,7 @@ class PromoCodeMailerTest < ActionMailer::TestCase
     email = PromoCodeMailer.promo_code_email(WebUser.new({:email_address => "test@openshift.com", :promo_code => "promo1"})).deliver
     assert !ActionMailer::Base.deliveries.empty?
     
-    assert ['Marketing Mailing List <jgurrero@redhat.com>'], email.to
-    assert 'OpenShift <noreply@openshift.redhat.com>', email.from
+    assert ['Marketing Mailing List <jgurrero@redhat.com>'], email.to.inspect
+    assert 'OpenShift <noreply@openshift.redhat.com>', email.from.inspect
   end
 end

@@ -1,5 +1,5 @@
-- display_only = false if local_assigns[:display_only].nil?
-- current_plan = { :id => '' } if local_assigns[:current_plan].nil?
+- display_only = false unless defined? display_only
+- current_plan = nil unless defined? current_plan
 .span5
   - if current_plan == nil or (plan.id == 'megashift' && current_plan.id != plan.id)
     .plan-upgrade-header
