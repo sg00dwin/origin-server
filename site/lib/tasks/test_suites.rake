@@ -60,6 +60,13 @@ namespace :test do
   namespace :check do
     covered = []
 
+    [:applications,
+     :cartridges,
+     :misc1,
+     :restapi_integration,
+     :base,
+    ].each{ |s| Rake::Task[s].abandon }
+
     Rake::TestTask.new :applications => ['test:prepare'] do |t|
       t.libs << 'test'
       covered.concat(t.test_files = FileList[
@@ -98,6 +105,7 @@ namespace :test do
     end
   end
 
+  Rake::Task[:check].abandon
   task :check => Rake::Task.tasks.select{ |t| t.name.match(/\Atest:check:/) }.map(&:name)
   task :extended => []
 end
