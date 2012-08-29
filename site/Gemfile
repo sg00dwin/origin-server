@@ -49,8 +49,10 @@ group :development, :test do
   gem 'mocha', :require => nil
   gem 'hpricot'
   gem 'webmock', '~> 1.6.4', :require => nil
-  gem 'rcov', :require => nil
+  gem 'rcov', :require => nil if RUBY_VERSION.to_f == 1.8
+  gem 'simplecov', :require => nil if RUBY_VERSION.to_f >= 1.9
   gem 'ci_reporter', :require => nil
+  gem 'test-unit' if RUBY_VERSION.to_f >= 1.9
 end
 
 gem 'sinatra', '1.2.6'

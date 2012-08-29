@@ -1,4 +1,6 @@
+if RUBY_VERSION.to_f == 1.8
 require 'net/geoip' rescue Rails.logger.error "Net::GeoIP not available, unable to serve country specific videos."
+end
 
 module VideoHelper
   # localized video URL
@@ -38,3 +40,4 @@ module VideoHelper
     end
   end
 end
+
