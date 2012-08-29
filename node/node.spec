@@ -223,7 +223,6 @@ fi
 %attr(0750,-,-) %{_bindir}/rhc-restorecon
 %attr(0750,-,-) %{_bindir}/rhc-init-quota
 %attr(0750,-,-) %{_bindir}/rhc-list-stale
-%attr(0750,-,-) %{_bindir}/rhc-app-gear-xlate
 %attr(0750,-,-) %{_bindir}/rhc-idler
 %attr(0750,-,-) %{_bindir}/rhc-last-access
 %attr(0750,-,-) %{_bindir}/rhc-app-idle
