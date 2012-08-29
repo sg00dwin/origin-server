@@ -237,10 +237,11 @@ then
         then
           git checkout $branch
         fi
-        find_and_build_specs
       popd > /dev/null
     fi
   done
+
+  find_and_build_specs
 
   yum -y install createrepo
   mkdir /root/li-local/
