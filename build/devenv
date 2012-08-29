@@ -229,7 +229,7 @@ module Express
       end
 
       puts "\n\nInstalling all prereqs\n  #{installed.map(&:yum_name).join("\n  ")}"
-      #system "yum install -y #{package_list}"
+      raise "Unable to install prerequisite packages" unless system "yum install -y #{installed.map(&:yum_name).join(' ')}"
 
       prereqs = (phases[1..-1] || []).flatten(1).map(&:build_requires).flatten(1).uniq.sort - installed
       puts "\nPackages that are prereqs for later phases\n  #{prereqs.join("\n  ")}"
