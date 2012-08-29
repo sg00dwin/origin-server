@@ -2,7 +2,7 @@ require 'ci/reporter/rake/test_unit'
 
 namespace :test do
 
-  console_path = File.expand_path(Gem.loaded_specs["openshift_origin_console"].full_gem_path)
+  console_path = File.expand_path(Gem.loaded_specs["openshift-origin-console"].full_gem_path)
 
   Rake::TestTask.new :streamline => 'test:prepare' do |t|
     t.libs << 'test'
