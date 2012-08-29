@@ -11,9 +11,10 @@ class AccountUpgradePaymentMethodController < PaymentMethodsController
     @user = current_user.extend Aria::User
     @payment_method = @user.payment_method || Aria::PaymentMethod.new
 
+    @payment_method = Aria::PaymentMethod.test if Rails.env.development?
+
     update_errors(@payment_method.errors, (params[:payment_method] || {})[:errors] || {})
 
-    @payment_method = Aria::PaymentMethod.test if Rails.env.development?
     @payment_method.mode = Aria::DirectPost.get_or_create(params[:plan_id], url_for(:action => :direct_create))
     @payment_method.session_id = @user.create_session
   end
