@@ -1,12 +1,12 @@
 %define htmldir %{_localstatedir}/www/html
 %define sitedir %{_localstatedir}/www/stickshift/site
 
-Summary:   Li site components
+Summary:   OpenShift Site Rails application
 Name:      rhc-site
 Version: 0.98.1
 Release:   1%{?dist}
 Group:     Network/Daemons
-License:   GPLv2
+License:   ASL 2.0
 URL:       http://openshift.redhat.com
 Source0:   rhc-site-%{version}.tar.gz
 BuildRoot: %(mktemp -ud %{_tmppath}/%{name}-%{version}-%{release}-XXXXXX)
@@ -79,7 +79,9 @@ BuildArch: noarch
 
 %description
 This contains the OpenShift website which manages user authentication,
-authorization and also the workflows to request access.
+authorization and also the workflows to request access.  It includes 
+the OpenShift Origin management console and specializes some of its
+behavior.
 
 %package static
 Summary:   The static content for the OpenShift website

@@ -9,17 +9,9 @@ class ActiveSupport::TestCase
     assert_equal user.streamline_type, session[:streamline_type]
   end
 
-  def new_user(opts=nil)
-    id = ActiveSupport::SecureRandom.base64(10).gsub(/[^a-zA-Z0-9_\-]/, '_')
-    Streamline::Base.new(
-      :email_address => "os_#{id}@mailinator.com",
-      :password => ActiveSupport::SecureRandom.base64(20)
-    ).extend(Streamline::User)
-  end
-
   def unconfirmed_user
     @unconfirmed_user ||= begin
-      user = new_user
+      user = new_streamline_user
       assert user.register('/email_confirm')
       assert user.token
       user

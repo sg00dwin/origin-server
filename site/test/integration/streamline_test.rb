@@ -4,7 +4,7 @@ class StreamlineIntegrationTest < ActionDispatch::IntegrationTest
 
   def confirmed_user
     @@confirmed_user ||= begin
-      user = new_user
+      user = new_streamline_user
       assert user.register('/email_confirm')
       assert user.token
       assert_nil user.login
@@ -24,7 +24,7 @@ class StreamlineIntegrationTest < ActionDispatch::IntegrationTest
   end
 
   test 'should fail when a token is reused' do
-    user = new_user
+    user = new_streamline_user
     assert user.register('/email_confirm')
     assert user.token
     assert_nil user.login
@@ -50,7 +50,7 @@ class StreamlineIntegrationTest < ActionDispatch::IntegrationTest
   end
 
   test 'should suppress duplicate registration' do
-    user = new_user
+    user = new_streamline_user
     assert user.register('/email_confirm')
     assert user.register('/email_confirm')
   end
