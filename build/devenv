@@ -615,15 +615,16 @@ mkdir -p /tmp/rhc/junit
   
             unless options.exclude_rhc?
               base_str = "QUIET=1 GIT_SSH=li-test/features/support/ssh.sh RHC_ENDPOINT=https://localhost/broker/rest/api cucumber #{@@CUCUMBER_OPTIONS} li-test/features"
-              [
-                :client,
-                :domain,
-                :application,
-                :single_cartridge,
-                :multiple_cartridge
-              ].each do |tag|
-                test_queues[1] << ["RHC Basic Functional: #{tag}", "#{base_str} -t @#{tag} -t @init", {:retry_individually => true }]
-                test_queues[2] << ["RHC Advanced Functional: #{tag}", "#{base_str} -t @#{tag} -t ~@init", {:retry_individually => true }]
+              tags = [
+                [ :client, :domain ],
+                [ :application ],
+                [ :single_cartridge ],
+                [ :multiple_cartridge ]
+              ]
+              (0..3).each do |q|
+                tags[q].each do |tag|
+                  test_queues[q] << ["RHC Functional: #{tag}", "#{base_str} -t @#{tag} ", {:retry_individually => true }]
+                end
               end
             end
           end
