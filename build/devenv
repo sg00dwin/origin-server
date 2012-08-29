@@ -623,7 +623,7 @@ mkdir -p /tmp/rhc/junit
               ]
               (0..3).each do |q|
                 tags[q].each do |tag|
-                  test_queues[q] << ["RHC Functional: #{tag}", "#{base_str} -t @#{tag} ", {:retry_individually => true }]
+                  test_queues[q] << ["RHC Functional: #{tag}", "#{base_str} -t @#{tag} "]
                 end
               end
             end
