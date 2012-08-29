@@ -119,8 +119,8 @@ module OpenShift
             packages[package.name] = as_obj ? package : [package.dir, package.spec_path]
 
             if include_subpackages
-              package.subpackages.each do |package|
-                packages[package.name] = as_obj ? package : [package.dir, package.spec_path]
+              package.subpackages.each do |p|
+                packages[package.name] = as_obj ? p : [p.dir, p.spec_path]
               end
             end
           end
@@ -149,6 +149,14 @@ module OpenShift
         end
       end
 
+      def build_requires
+        @build_requires ||= spec_file.lines.to_a.inject([]) do |a,s|
+          match = s.match(/^\s*BuildRequires:\s*(.+)$/)
+          a << Require.new(match[1]) if match
+          a
+        end
+      end
+
       def subpackages
         @subpackages ||= begin
           package = /%package *(.*)/.match(spec_file)
@@ -159,12 +167,30 @@ module OpenShift
             else
               package_name = "#{name}-#{package_name}"
             end
-            package_name = replace_globals(package_name, file_str)
+            package_name = replace_globals(package_name, spec_file)
             [Subpackage.new(self, package_name)]
           else
             []
           end
         end
+      end
+
+      def eql?(other)
+        return self.name == other if other.is_a? String
+        self.name == other.name
+      end
+      def ==(other)
+        eql?(other)
+      end
+      def hash
+        self.name.hash
+      end
+      def to_s
+        self.name
+      end
+      def <=>(other)
+        return self.name <=> other if other.is_a? String
+        self.name <=> other.name
       end
 
       protected
@@ -189,6 +215,46 @@ module OpenShift
         end
       end
       def sub_packages; []; end
+    end
+
+    class Require
+      attr_reader :value
+      def initialize(value)
+        @value = value
+      end
+      def name
+        @name ||= value.
+          gsub(/\(/, '-').  # package names get unparethesized
+          gsub(/\)/, '').
+          gsub(/>=.+/, ''). # strip version qualifiers
+          gsub(/=.+/,'').
+          gsub(/,/, '').strip
+      end
+      def yum_name
+        @yum_name ||= value.
+          gsub(/\(/, '-').
+          gsub(/\)/, '').
+          gsub(/>=.+/, '').
+          gsub(/=/,'-').
+          gsub(/,/, '').strip
+      end
+      def to_s
+        name
+      end
+      def eql?(other)
+        return self.name == other if other.is_a? String
+        return true if other.respond_to?(:name) && other.name == name
+        false
+      end
+      def ==(other)
+        eql?(other)
+      end
+      def hash
+        name.hash
+      end
+      def <=>(other)
+        name <=> other.name
+      end
     end
 
 
