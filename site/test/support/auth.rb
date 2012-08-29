@@ -1,3 +1,4 @@
+if false
 module Test
   class WebUser
     include ActiveModel::Validations
@@ -19,6 +20,7 @@ module Test
     end
   end
 end
+end
 
 class ActiveSupport::TestCase
   def set_user(user)
@@ -29,5 +31,13 @@ class ActiveSupport::TestCase
     @request.cookies['rh_sso'] = user.ticket
     @request.env['HTTPS'] = 'on'
     @user = user
+  end
+end
+
+class ActionController::TestCase
+  def new_user(opts=nil)
+    opts[:ticket] = '1234'
+    opts[:password] = nil
+    WebUser::Mock.new opts
   end
 end

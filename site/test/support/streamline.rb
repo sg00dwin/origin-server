@@ -9,7 +9,7 @@ class ActiveSupport::TestCase
     assert_equal user.streamline_type, session[:streamline_type]
   end
 
-  def new_user
+  def new_user(opts=nil)
     id = ActiveSupport::SecureRandom.base64(10).gsub(/[^a-zA-Z0-9_\-]/, '_')
     Streamline::Base.new(
       :email_address => "os_#{id}@mailinator.com",
