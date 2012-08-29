@@ -93,7 +93,7 @@ class LoginFlowsTest < ActionDispatch::IntegrationTest
 
   test 'signup to app creation' do
     with_integrated do
-      user = new_user
+      user = new_streamline_user
 
       get '/'
       assert_response :success
