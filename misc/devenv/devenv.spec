@@ -8,7 +8,7 @@
 
 Summary:   Dependencies for OpenShift development
 Name:      rhc-devenv
-Version: 0.99.1
+Version: 0.99.2
 Release:   1%{?dist}
 Group:     Development/Libraries
 License:   GPLv2
@@ -549,6 +549,29 @@ fi
 %{policydir}/*
 
 %changelog
+* Thu Aug 30 2012 Adam Miller <admiller@redhat.com> 0.99.2-1
+- moving test pull requests to its own repo (dmcphers@redhat.com)
+- exit on instability (dmcphers@redhat.com)
+- fix typo (dmcphers@redhat.com)
+- Security - Removed other execute from pt_chown for BZ844881
+  (tkramer@redhat.com)
+- enfore packages are installed from local for install from source
+  (dmcphers@redhat.com)
+- Merge pull request #315 from lnader/master (openshift+bot@redhat.com)
+- Bug 852139: Disable emails to mailbox. (mpatel@redhat.com)
+- Bug 851679 - ssh -R seems to be ignoring the remote bind address
+  (lnader@redhat.com)
+- Merge pull request #308 from tkramer-rh/dev/tkramer/openscap/run_file_fix
+  (openshift+bot@redhat.com)
+- syncing pull requests script (dmcphers@redhat.com)
+- Security - Made the OpenScap run file look closer to production
+  (tkramer@redhat.com)
+- reorg broker extended tests (dmcphers@redhat.com)
+- enable caching for tests and use nolinks some (dmcphers@redhat.com)
+- Merge pull request #297 from tkramer-rh/dev/tkramer/openscap/html2text
+  (openshift+bot@redhat.com)
+- Security - Add html2text for OpenScap (tkramer@redhat.com)
+
 * Wed Aug 22 2012 Adam Miller <admiller@redhat.com> 0.99.1-1
 - bump_minor_versions for sprint 17 (admiller@redhat.com)
 - syncing jenkins scripts (dmcphers@redhat.com)
