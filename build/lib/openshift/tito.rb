@@ -6,6 +6,7 @@ SIBLING_REPOS = {'crankcase' => ['../crankcase-working', '../crankcase-fork', '.
   
 PACKAGE_REGEX = /^([\w\.-]*)-\d+\.\d+\.\d+-\d+\.\..*:$/
 IGNORE_PACKAGES = ['bind-local', 'rubygem-rhc', 'stickshift-broker', 'rubygem-gearchanger-oddjob-plugin', 'rubygem-swingshift-mongo-plugin', 'rubygem-uplift-bind-plugin', 'openshift-origin', 'openshift-origin-broker', 'openshift-origin-node','rubygem-swingshift-kerberos-plugin']
+SKIP_PREREQ_PACKAGES = ['java-1.6.0-openjdk-devel']
 
 module OpenShift
   module Tito
