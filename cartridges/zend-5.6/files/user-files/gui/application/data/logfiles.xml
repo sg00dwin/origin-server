@@ -7,12 +7,12 @@
 	</logfile>
 	<logfile id="1">
 		<name>Server Error Log</name>
-		<value>###OPENSHIFT_GEAR_DIR###/var/log/error.log</value>
+		<value>/usr/local/zend/var/log/error.log</value>
 		<directive></directive>
 	</logfile>
 	<logfile id="2">
 		<name>Server Access Log</name>
-		<value>###OPENSHIFT_GEAR_DIR###/var/log/access.log</value>
+		<value>/usr/local/zend/var/log/access.log</value>
 		<directive></directive>
 	</logfile>
 </files>
