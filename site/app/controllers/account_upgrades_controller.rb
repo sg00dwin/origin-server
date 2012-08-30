@@ -110,12 +110,4 @@ class AccountUpgradesController < ApplicationController
       ].each{ |s| billing.send(:"#{s}=", user.send(s)) }
       billing
     end
-
-    def copy_user_to_billing(user, billing)
-      [:first_name, :last_name,
-       :address1, :address2, :address3,
-       :city, :state, :country, :zip
-      ].each{ |s| billing.send(:"#{s}=", user.send(s)) }
-      billing
-    end
 end
