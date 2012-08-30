@@ -21,7 +21,7 @@ User $uuid
 Group $uuid
 ErrorLog "|/usr/sbin/rotatelogs $ZEND_INSTANCE_DIR/logs/error_log$rotatelogs_format $rotatelogs_interval"
 CustomLog "|/usr/sbin/rotatelogs $ZEND_INSTANCE_DIR/logs/access_log$rotatelogs_format $rotatelogs_interval" combined
-php_value include_path ".:$OPENSHIFT_REPO_DIR/libs/:$ZEND_INSTANCE_DIR/phplib/pear/pear/php/:/usr/share/pear/:$OPENSHIFT_GEAR_DIR/share/ZendFramework/library:$OPENSHIFT_GEAR_DIR/share/pear"
+#php_value include_path ".:$OPENSHIFT_REPO_DIR/libs/:$ZEND_INSTANCE_DIR/phplib/pear/pear/php/:/usr/share/pear/:$OPENSHIFT_GEAR_DIR/share/ZendFramework/library:$OPENSHIFT_GEAR_DIR/share/pear"
 # TODO: Adjust from ALL to more conservative values
 <Directory "$OPENSHIFT_REPO_DIR/php">
   AllowOverride All
