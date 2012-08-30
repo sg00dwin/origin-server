@@ -20,9 +20,6 @@ then
   exit 0
 fi
 
-
-#echo "nameserver 4.2.2.2" >> /etc/resolv.conf
-
 #rpm -Uhv http://download.fedora.redhat.com/pub/epel/6/x86_64/epel-release-6-5.noarch.rpm
 #rpm -Uhv http://download.fedoraproject.org/pub/epel/6/x86_64/epel-release-6-5.noarch.rpm
 cat > /etc/yum.repos.d/epel.repo <<EOF
@@ -336,4 +333,7 @@ then
     rm -rf /root/$repo_name
   done
 fi
+
+#not sure who is adding this but remove it regardless
+sed -i "/nameserver 127.0.0.1/d" /etc/resolv.conf
 
