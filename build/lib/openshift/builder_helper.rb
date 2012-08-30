@@ -20,7 +20,7 @@ module OpenShift
 
     @@SSH_TIMEOUT = 4800
     @@SSH_TIMEOUT_OVERRIDES = { "benchmark" => 172800 }
-    @@CUCUMBER_OPTIONS = '--strict -f junit --out /tmp/rhc/cucumber_results -f progress'
+    @@CUCUMBER_OPTIONS = '--strict -f progress -f junit --out /tmp/rhc/cucumber_results'
 
     def sync_repo(repo_name, hostname, ssh_path, remote_repo_parent_dir="/root", ssh_user="root", verbose=false)
       temp_commit
