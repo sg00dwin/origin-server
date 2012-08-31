@@ -24,7 +24,7 @@ class PasswordController < ApplicationController
   end
 
   def show
-    redirect_to logged_in? ? edit_account_password_path : new_account_password_path
+    redirect_to user_signed_in? ? edit_account_password_path : new_account_password_path
   end
 
   def reset

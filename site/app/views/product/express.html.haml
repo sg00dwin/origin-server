@@ -8,7 +8,7 @@
         cloud solution
       .secondary Express is a free, cloud-based application platform for Java, Perl, PHP, Python, and Ruby applications. 
 
-  - if logged_in?
+  - if user_signed_in?
     = take_action console_path, 'Open the <strong>OpenShift</strong> Console'
   - else
     = take_action '/app/user/new/express', 'Sign up to try <strong>OpenShift</strong>'

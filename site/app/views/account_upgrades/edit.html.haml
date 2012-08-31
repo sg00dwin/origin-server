@@ -9,7 +9,7 @@
     - if @full_user.persisted?
 
       %p
-        You are logged in as <strong>#{logged_in_id}</strong> under the name <strong>#{@full_user.first_name} #{@full_user.last_name}</strong>.
+        You are logged in as <strong>#{current_user_id}</strong> under the name <strong>#{@full_user.first_name} #{@full_user.last_name}</strong>.
         Your phone number for this account is <strong>#{@full_user.phone}</strong>
 
     - else
