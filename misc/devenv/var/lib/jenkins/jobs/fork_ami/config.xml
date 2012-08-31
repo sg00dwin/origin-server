@@ -86,19 +86,19 @@ Note:  If you only want to use a fork for 1 of the repos then use that ${REPO}_F
         </hudson.model.BooleanParameterDefinition>
         <hudson.model.BooleanParameterDefinition>
           <name>RUN_QE_SMOKE_TESTS</name>
-          <description>Run the QE &apos;smoke&apos; tests after build and basic verification success.  These tests should be run for most amis and take ~1.5 hours on 1 instance.
+          <description>Run the QE &apos;smoke&apos; tests after build and basic verification success.  These tests should be run for most amis and take ~1 hours on 1 instance.
 https://tcms.engineering.redhat.com/cases/?plan=4962&amp;is_automated=1&amp;case_status=2&amp;tag__name__in=smoke&amp;a=search</description>
           <defaultValue>true</defaultValue>
         </hudson.model.BooleanParameterDefinition>
         <hudson.model.BooleanParameterDefinition>
           <name>RUN_QE_ACCEPTANCE_TESTS</name>
-          <description>Run the QE &apos;acceptance&apos; tests after build and basic verification success.  These tests take ~5 hours to complete (using 4 instances).  They should be run for any significant changes.
+          <description>Run the QE &apos;acceptance&apos; tests after build and basic verification success.  These tests take ~3 hours to complete (using 2 instances).  They should be run for any significant changes.
 https://tcms.engineering.redhat.com/cases/?plan=4962&amp;is_automated=1&amp;case_status=2&amp;tag__name__in=acceptance&amp;a=search</description>
           <defaultValue>false</defaultValue>
         </hudson.model.BooleanParameterDefinition>
         <hudson.model.BooleanParameterDefinition>
           <name>RUN_QE_FULLFUNCTIONAL_TESTS</name>
-          <description>Run the QE &apos;fullfunction&apos; tests after build and basic verification success.  These tests take ~7 hours to complete (using 6 instances).  They should be run for the largest of changes (large user stories or changes involving a lot of refactoring)
+          <description>Run the QE &apos;fullfunction&apos; tests after build and basic verification success.  These tests take ~5 hours to complete (using 2 instances).  They should be run for the largest of changes (large user stories or changes involving a lot of refactoring)
 https://tcms.engineering.redhat.com/cases/?plan=4962&amp;is_automated=1&amp;case_status=2&amp;tag__name__in=fullfunction&amp;a=search</description>
           <defaultValue>false</defaultValue>
         </hudson.model.BooleanParameterDefinition>
@@ -263,19 +263,16 @@ set -e
   then
 
     QE_TESTS_ARRAY=()
-    if $RUN_QE_SMOKE_TESTS
-    then
-      QE_TESTS_ARRAY+=(smoke)
-    fi
-    if $RUN_QE_ACCEPTANCE_TESTS
-    then
-      QE_TESTS_ARRAY+=(acceptance)
-    fi
     if $RUN_QE_FULLFUNCTIONAL_TESTS
     then
       QE_TESTS_ARRAY+=(fullfunction)
+    elif $RUN_QE_ACCEPTANCE_TESTS
+    then
+      QE_TESTS_ARRAY+=(acceptance)
+    elif $RUN_QE_SMOKE_TESTS
+    then
+      QE_TESTS_ARRAY+=(smoke)
     fi
-
 
     QE_TESTS=&quot;&quot;
     for test in &quot;${QE_TESTS_ARRAY[@]}&quot;
