@@ -2,7 +2,7 @@
 
 Summary:       Multi-tenant cloud management system node tools
 Name:          rhc-node
-Version: 0.98.1
+Version: 0.98.2
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -223,7 +223,6 @@ fi
 %attr(0750,-,-) %{_bindir}/rhc-restorecon
 %attr(0750,-,-) %{_bindir}/rhc-init-quota
 %attr(0750,-,-) %{_bindir}/rhc-list-stale
-%attr(0750,-,-) %{_bindir}/rhc-app-gear-xlate
 %attr(0750,-,-) %{_bindir}/rhc-idler
 %attr(0750,-,-) %{_bindir}/rhc-last-access
 %attr(0750,-,-) %{_bindir}/rhc-app-idle
@@ -271,6 +270,12 @@ fi
 
 
 %changelog
+* Thu Aug 30 2012 Adam Miller <admiller@redhat.com> 0.98.2-1
+- update migration for 2.0.17 (dmcphers@redhat.com)
+- Bash environment support (jhonce@redhat.com)
+- Merge pull request #299 from rmillner/moveproxy (openshift+bot@redhat.com)
+- Removing duplicate stickshift-proxy bits from rhc-node. (rmillner@redhat.com)
+
 * Wed Aug 22 2012 Adam Miller <admiller@redhat.com> 0.98.1-1
 - bump_minor_versions for sprint 17 (admiller@redhat.com)
 

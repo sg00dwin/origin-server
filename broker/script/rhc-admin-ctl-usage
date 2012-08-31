@@ -144,7 +144,14 @@ else
               previous_usage_record = nil
               usage_records_for_gear.each_with_index do |usage_record, i|
                 if i.odd?
-                  usage_record_pairs << {gear_uuid => [previous_usage_record, usage_record]}
+                  if usage_record.event == UsageRecord::EVENTS[:end]
+                    usage_record_pairs << {gear_uuid => [previous_usage_record, usage_record]}
+                  elsif previous_usage_record.event == UsageRecord::EVENTS[:end]
+                    # The usage time is negative.  Will be reported as 0 usage.
+                    usage_record_pairs << {gear_uuid => [usage_record, previous_usage_record]}
+                  else
+                    puts "ERROR: Begin/continue and end markers do not match for gear: #{gear_uuid}"
+                  end
                   previous_usage_record = nil 
                 elsif i == usage_records_for_gear.length - 1
                   usage_record_pairs << {gear_uuid => [usage_record]}
@@ -168,7 +175,7 @@ else
                       else
                         usage_uuid = previous_usage_record.uuid 
                       end
-                      usage = Usage.find(usage_uuid)              
+                      usage = Usage.find(usage_uuid)
                     end
                     if !usage && usage_record.event == UsageRecord::EVENTS[:begin]
                       puts "WARNING: Usage not found in collection for new gear: #{usage_record.gear_uuid}"
@@ -178,7 +185,7 @@ else
                     elsif usage
                       if usage_record.event == UsageRecord::EVENTS[:end]
                         puts "Setting end time for gear: #{usage.gear_uuid}"
-                        usage.end_time = usage_record.time
+                        usage.end_time = usage_record.time > usage.begin_time ? usage_record.time : usage.begin_time
                       end
                     else
                       puts "ERROR: Usage not found in collection for gear: #{usage_record.gear_uuid}"
@@ -205,6 +212,7 @@ else
                   end
                 end
                 end_time = now unless end_time
+                end_time = begin_time if end_time < begin_time
     
                 usage_record = usage_records_for_gear.first
                 puts "Collecting '#{usage_record.usage_type}' usage for gear: #{gear_uuid}"
@@ -262,6 +270,7 @@ else
                   puts "Usage record continued."
                   end_time = now
                 end
+                end_time = begin_time if end_time < begin_time
                 ut = usage_time(billing_api, billing_acct_no, usage_records_for_gear.first, begin_time, end_time)
                 puts "Usage to send to billing vendor: #{ut}h"
               end

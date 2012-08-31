@@ -507,7 +507,8 @@ class Release < Thor
       if options[:stage] || options.stage_all?
         rsync = "rsync -aHv --progress --no-p --no-g --omit-dir-times --chmod=Dug=rwX"
       else
-        rsync = "rsync -aHv --delete-after --progress --no-p --no-g --omit-dir-times --chmod=Dug=rwX"
+        #rsync = "rsync -aHv --delete-after --progress --no-p --no-g --omit-dir-times --chmod=Dug=rwX"
+        rsync = "rsync -aHv --progress --no-p --no-g --omit-dir-times --chmod=Dug=rwX"
       end
 
       # variable to keep track of if we've built a new rhc-devenv

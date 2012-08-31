@@ -1,0 +1,57 @@
+{
+  "proxy_host": null,
+  "proxy_port": null,
+  "jenkins_host": "https://ci.dev.openshift.redhat.com",
+  "jenkins_url": "https://ci.dev.openshift.redhat.com/jenkins/",
+  "hub_config": "~/.config/hub",
+  "github_user": "openshift",
+  "irc_channel": "#openshift-dev",
+  "bot_github_user": "openshift-bot",
+
+  "settings": {
+    "test_settings": {
+      "name": "test",
+      "test_prefix": "Test Results:",
+      "allow_multiple": true,
+      "branches": { "stage": {"jenkins_job_name": "test_pull_requests_stage",
+                              "downstream_job_name": "libra_ami_stage",
+                              "build_token": "libra1"},
+                    "master": {"jenkins_job_name": "test_pull_requests",
+                               "downstream_job_name": "libra_ami",
+                               "build_token": "libra1"} },
+      "repo_to_teams": {
+        "li": ["168397", "175254", "202863"],
+        "crankcase": ["168397", "175254"],
+        "rhc": ["168397", "77593"]
+      },
+      "repo_to_pull_id_param": {
+        "li": "LI_PULL_ID",
+        "crankcase": "CRANKCASE_PULL_ID",
+        "rhc": "RHC_PULL_ID"
+      }
+    },
+    "merge_test_settings": {
+      "name": "merge",
+      "test_prefix": "Merge Test Results:",
+      "allow_multiple": false,
+      "branches": { "stage": {"jenkins_job_name": "merge_pull_request_stage",
+                              "downstream_job_name": "libra_ami_stage",
+                              "image_base_name": "devenv-stage",
+                              "build_token": "libra1"},
+                    "master": {"jenkins_job_name": "merge_pull_request",
+                               "downstream_job_name": "libra_ami",
+                               "image_base_name": "devenv",
+                               "build_token": "libra1"} },
+      "repo_to_teams": {
+        "li": ["175254", "202863"],
+        "crankcase": ["175254"],
+        "rhc": ["77593"]
+      },
+      "repo_to_pull_id_param": {
+        "li": "LI_PULL_ID",
+        "crankcase": "CRANKCASE_PULL_ID",
+        "rhc": "RHC_PULL_ID" 
+      }
+    }
+  }
+}

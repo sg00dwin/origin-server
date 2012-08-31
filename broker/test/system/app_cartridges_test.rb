@@ -136,7 +136,7 @@ class AppCartridgesTest < ActionDispatch::IntegrationTest
     request_via_redirect(:post, APP_CARTRIDGES_URL_FORMAT % [ns, "appnoscale"], {:name => "mysql-5.1"}, @headers)
     assert_response :unprocessable_entity
     body = JSON.parse(@response.body)
-    assert_equal(body["messages"][0]["exit_code"], 101)
+    assert_equal(body["messages"][0]["exit_code"], 136)
 
     # embed mysql cartridge into the scalable app
     # since the cartridge will reside on a separate gear and with the gear limit of 3 reached, this should fail

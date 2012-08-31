@@ -3,7 +3,7 @@
 
 Summary:   OpenShift Site Rails application
 Name:      rhc-site
-Version: 0.98.1
+Version: 0.98.2
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   ASL 2.0
@@ -141,6 +141,24 @@ rm -rf %{buildroot}
 %{sitedir}/public
 
 %changelog
+* Thu Aug 30 2012 Adam Miller <admiller@redhat.com> 0.98.2-1
+- TA2740 Added form validation for payment, billing & technical account info
+  (hripps@redhat.com)
+- Merge pull request #325 from nhr/TA2734 (openshift+bot@redhat.com)
+- Bug 849627 - In development mode, the Enter payment method form would hide
+  errors. (ccoleman@redhat.com)
+- Cloned the console layout & theme for use with accounts (hripps@redhat.com)
+- Move console scss completely into partials so that it can be reused.
+  (ccoleman@redhat.com)
+- Use .name because aria_plan is protected (ccoleman@redhat.com)
+- Add thread timeout safety to the async_aware gem method, and a test.  This
+  fixes intermittent test failures with account dashboard (5s join timeout
+  before).  Default timeout is now 15s. Also fix cases with parallel test
+  cleanup (domain is stomping on other domains). (ccoleman@redhat.com)
+- Merge pull request #298 from sg00dwin/master (openshift+bot@redhat.com)
+- 849902 fix pricing page to display example site boxes correctly at mobile
+  sizes (sgoodwin@redhat.com)
+
 * Wed Aug 22 2012 Adam Miller <admiller@redhat.com> 0.98.1-1
 - bump_minor_versions for sprint 17 (admiller@redhat.com)
 

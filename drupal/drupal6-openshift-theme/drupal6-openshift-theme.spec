@@ -5,7 +5,7 @@
 %global drupal_themename    openshift-theme
 
 Name:           drupal6-%{drupal_themename}
-Version: 3.7.1
+Version: 3.7.2
 Release:        1%{?dist}
 Summary:        Red Hat Openshift theme for Drupal %{drupal_release}
 
@@ -44,6 +44,12 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
+* Thu Aug 30 2012 Adam Miller <admiller@redhat.com> 3.7.2-1
+- Add thread timeout safety to the async_aware gem method, and a test.  This
+  fixes intermittent test failures with account dashboard (5s join timeout
+  before).  Default timeout is now 15s. Also fix cases with parallel test
+  cleanup (domain is stomping on other domains). (ccoleman@redhat.com)
+
 * Wed Aug 22 2012 Adam Miller <admiller@redhat.com> 3.7.1-1
 - bump_minor_versions for sprint 17 (admiller@redhat.com)
 

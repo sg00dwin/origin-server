@@ -477,7 +477,7 @@ module Express
 set -e;
 rm -rf /root/li-test
 #{git_archive_commands}
-cp -n /root/li-test/stickshift/controller/test/cucumber/*.feature /root/li-test/tests/.  
+cp -n /root/li-test/stickshift/controller/test/cucumber/*.feature /root/li-test/tests/.
 mkdir -p /tmp/rhc/junit
 }, 60, false, 2)
         puts "Done"
@@ -561,6 +561,18 @@ mkdir -p /tmp/rhc/junit
                 test_queues[0] << ["Site Extended", "cd li-test/site; rake test:extended"]
               when 'rhc'
                 test_queues[0] << ["RHC Extended", "cucumber #{@@CUCUMBER_OPTIONS} -t @rhc_extended li-test/tests", {:retry_individually => true}]
+                base_str = "QUIET=1 RHC_SERVER=localhost cucumber #{@@CUCUMBER_OPTIONS} li-test/features"
+                tags = [
+                  [ :client, :domain ],
+                  [ :application ],
+                  [ :single_cartridge ],
+                  [ :multiple_cartridge ]
+                ]
+                (0..3).each do |q|
+                  tags[q].each do |tag|
+                    test_queues[q] << ["RHC Functional: #{tag}", "#{base_str} -t @#{tag} "]
+                  end
+                end
               else
                 puts "Not supported for extended: #{extended_test}"
                 exit 1
@@ -648,12 +660,12 @@ mkdir -p /tmp/rhc/junit
               test_queues[0] << ["Broker Integration", "cd li-test/broker; rake test:integration"]
               test_queues[1] << ["StickShift Broker Functional", "cd li-test/stickshift/broker; rake test:functionals"]
               test_queues[0] << ["StickShift Broker Integration", "cd li-test/stickshift/broker; rake test:integration"]
-  
+
               test_queues[2] << ["StickShift Broker Unit 1", "cd li-test/stickshift/broker; rake test:ss_unit1"]
               test_queues[2] << ["StickShift Broker Unit 2", "cd li-test/stickshift/broker; rake test:ss_unit2"]
               test_queues[3] << ["Broker Cucumber", "cucumber --strict -f html --out /tmp/rhc/broker_cucumber.html -f progress -t @broker li-test/tests"]
             end
-  
+
             unless options.exclude_runtime?
               test_queues[0] << ["Runtime Unit", "cd li-test/stickshift/node; rake unit_test"]
               (1..4).each do |i|
@@ -668,9 +680,8 @@ mkdir -p /tmp/rhc/junit
               test_queues[2] << ["Site Check Miscellaneous 1", "cd li-test/site; rake test:check:misc1"]
               test_queues[3] << ["Site Check REST API Integration", "cd li-test/site; rake test:check:restapi_integration"]
             end
-  
+
             unless options.exclude_rhc?
-              test_queues[2] << ["RHC Functional", "GIT_SSH=li-test/features/support/ssh.sh RHC_ENDPOINT=https://localhost/broker/rest/api cucumber #{@@CUCUMBER_OPTIONS} li-test/features"]
             end
           end
   

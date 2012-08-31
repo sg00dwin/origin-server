@@ -36,6 +36,8 @@ case "$1" in
     ;;
 
     graceful-stop|stop)
+        # Don't exit on errors on stop.
+        set +e
         if [ -f ${OPENSHIFT_METRICS_GEAR_DIR}run/httpd.pid ]
         then
             src_user_hook pre_stop_metrics-0.1

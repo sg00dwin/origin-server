@@ -1,7 +1,7 @@
 %define cartridgedir %{_libexecdir}/stickshift/cartridges/embedded/metrics-0.1
 
 Name: cartridge-metrics-0.1
-Version: 0.19.1
+Version: 0.19.2
 Release: 1%{?dist}
 Summary: Embedded metrics support for express
 
@@ -49,6 +49,10 @@ rm -rf $RPM_BUILD_ROOT
 %{cartridgedir}/info/manifest.yml
 
 %changelog
+* Thu Aug 30 2012 Adam Miller <admiller@redhat.com> 0.19.2-1
+- Fix for bugz 852518 - Failed move due to httpd.pid file being empty.
+  (ramr@redhat.com)
+
 * Wed Aug 22 2012 Adam Miller <admiller@redhat.com> 0.19.1-1
 - bump_minor_versions for sprint 17 (admiller@redhat.com)
 

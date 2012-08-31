@@ -15,8 +15,8 @@
     - else
       .row
         .span8
-          = u.input :first_name
-          = u.input :last_name
+          = u.input :first_name, :required => true
+          = u.input :last_name, :required => true
           = u.input :phone
 
         .span4
@@ -38,9 +38,9 @@
 
     .row
       .span8
-        = b.input :first_name
+        = b.input :first_name, :required => true
         = b.input :middle_initial
-        = b.input :last_name
+        = b.input :last_name, :required => true
         = b.input :address1
         = b.input :address2
         = b.input :address3

@@ -16,6 +16,7 @@
 #set -x
 
 lockfile=/var/lock/subsys/libra
+logfile=/var/log/libra-async-start.log
 
 numparallel=5
 timeout=90
@@ -120,6 +121,21 @@ then
     echo 1 > /proc/sys/net/ipv6/conf/default/disable_ipv6
 fi
 
+function _log_message() {
+    faclvl=$1
+    shift
+    [ -z "$@" ]  &&  return 0
+    /usr/bin/logger -i -s -t "libra-service" -p $faclvl "$@"
+}
+
+function log_info() {
+    _log_message user.info "$@"
+}
+
+function log_error() {
+    _log_message user.err "$@"
+}
+
 return_output() {
     if [ "$1" ]; then
 	echo >> "$1" 2>&1
@@ -129,7 +145,8 @@ return_output() {
 }
 
 return_terminate() {
-    print_column -n 59 "Timeout $1..."
+    log_error "Timeout $1 $2"
+    print_column -n 59 "Timeout $2..."
     echo "[${RED}FAILED${NORM}]"
     exit 1
 }
@@ -137,26 +154,30 @@ return_terminate() {
 startuser() {
     # USERNAME=$1
     local OUTFILE=$(mktemp /var/run/stickshift/stickshift_init-startuser-$1.XXXXXXXX)
-    trap "return_terminate $1 $OUTFILE" USR1
+    trap "return_terminate startuser $1 $OUTFILE" USR1
+    log_info "Starting $1..."
     echo "Starting $1..." >> $OUTFILE 2>&1
     ( for APPNAME in `userapps $1`
       do
           startapp $1 $APPNAME >> $OUTFILE 2>&1
       done ) &
     wait
+    log_info "Started $1"
     return_output $OUTFILE
 }
 
 stopuser() {
     # USERNAME=$1
     local OUTFILE=$(mktemp /var/run/stickshift/stickshift_init-stopuser-$1.XXXXXXXX)
-    trap "return_terminate $1 $OUTFILE" USR1
+    trap "return_terminate stopuser $1 $OUTFILE" USR1
+    log_info "Stopping $1..."
     echo "Stopping $1..." >> $OUTFILE 2>&1
     ( for APPNAME in `userapps $1 | tac`
       do
           stopapp $1 $APPNAME >> $OUTFILE 2>&1
       done ) &
     wait
+    log_info "Stopped $1"
     return_output $OUTFILE
 }
 
@@ -219,8 +240,20 @@ stopapp() {
     echo
 }
 
-start() {
-    echo "Starting Libra Services: "
+start_backgrounded() {
+    log_info "Starting Libra services in the background ..."
+    nohup /etc/init.d/libra waited-start > $logfile 2>&1 &
+    bgpid=$!
+    log_info "Background start initiated - process id = $bgpid"
+    log_info "Check $logfile for more details."
+    echo
+    echo "Note: In the future, if you wish to start the libra services in the"
+    echo "      foreground (waited), use:  service libra waited-start"
+    echo
+}
+
+waited_start() {
+    log_info "Starting Libra services: "
     echo
 
     for uuid in `libra_users`
@@ -228,7 +261,7 @@ start() {
         /bin/egrep -q -v "idle" /var/lib/stickshift/$uuid/app-root/runtime/.state && echo $uuid || echo "Skipping $uuid" 1>&2
     done | xargs -I{} -n 1 -P $numparallel /usr/bin/timeout -s USR1 $timeout /etc/init.d/libra startuser {}
 
-    echo -n "All Libra services started"
+    log_info "All Libra services started"
     [ $GROUP_RETVAL -eq 0 ] && touch ${lockfile}
     [ $GROUP_RETVAL -eq 0 ] && success || failure
     echo
@@ -236,7 +269,7 @@ start() {
 }
 
 stop() {
-    echo "Stopping Libra Services: "
+    log_info "Stopping Libra Services: "
     echo
 
     for uuid in `libra_users`
@@ -244,7 +277,7 @@ stop() {
         /bin/egrep -q -v "stopped|idle" /var/lib/stickshift/$uuid/app-root/runtime/.state && echo $uuid || echo "Skipping $uuid" 1>&2
     done | xargs -I{} -n 1 -P $numparallel /usr/bin/timeout -s USR1 $timeout /etc/init.d/libra stopuser {}
 
-    echo -n "All Libra services stopped"
+    log_info "All Libra services stopped"
     [ $GROUP_RETVAL -eq 0 ] && touch ${lockfile}
     [ $GROUP_RETVAL -eq 0 ] && success || failure
     echo
@@ -253,7 +286,7 @@ stop() {
 
 restart() {
     # This restarts each app individually. DO NOT change it to simply call stop() and start()
-    echo "Restarting Libra Services: "
+    log_info "Restarting Libra Services: "
     echo
 
     for uuid in `libra_users`
@@ -261,7 +294,7 @@ restart() {
         /bin/egrep -q -v "idle|stopped" /var/lib/stickshift/$uuid/app-root/runtime/.state && echo $uuid || echo "Skipping $uuid" 1>&2
     done | xargs -I{} -n 1 -P $numparallel /usr/bin/timeout -s USR1 $timeout /etc/init.d/libra restartuser {}
 
-    echo -n "All Libra services restarted"
+    log_info "All Libra services restarted"
     [ $GROUP_RETVAL -eq 0 ] && touch ${lockfile}
     [ $GROUP_RETVAL -eq 0 ] && success || failure
     echo
@@ -270,7 +303,7 @@ restart() {
 
 case "$1" in
   start)
-    start
+    start_backgrounded
     ;;
   stop)
     stop
@@ -282,6 +315,9 @@ case "$1" in
     ;;
   condrestart)
     [ -f "$lockfile" ] && restart
+    ;;
+  waited-start)
+    waited_start
     ;;
   status)
     echo "Checking Libra Services: "

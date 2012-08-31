@@ -3,7 +3,7 @@
 
 Summary:   Li broker components
 Name:      rhc-broker
-Version: 0.98.2
+Version: 0.98.4
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -120,6 +120,20 @@ if [ ! -f %{_localstatedir}/log/stickshift/user_action.log ]; then
 fi
 
 %changelog
+* Thu Aug 30 2012 Adam Miller <admiller@redhat.com> 0.98.4-1
+- bump Gemfile.lock for broker (admiller@redhat.com)
+
+* Thu Aug 30 2012 Adam Miller <admiller@redhat.com> 0.98.3-1
+- update migration for 2.0.17 (dmcphers@redhat.com)
+- Fix broker system,integration tests (rpenta@redhat.com)
+- Fix for bugs# 851735, 851345 (rpenta@redhat.com)
+- handle cases when usage is negative (dmcphers@redhat.com)
+- Merge pull request #304 from rajatchopra/master (openshift+bot@redhat.com)
+- zend cartridge cannot be scaled (rchopra@redhat.com)
+- ctl usage debugging and more extended test tuning (dmcphers@redhat.com)
+- Merge pull request #303 from danmcp/master (openshift+bot@redhat.com)
+- enable caching for tests and use nolinks some (dmcphers@redhat.com)
+
 * Thu Aug 23 2012 Adam Miller <admiller@redhat.com> 0.98.2-1
 - Updating gem versions (admiller@redhat.com)
 

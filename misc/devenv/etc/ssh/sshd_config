@@ -104,7 +104,7 @@ AcceptEnv XMODIFIERS GIT_SSH
 
 #AllowAgentForwarding yes
 #AllowTcpForwarding yes
-GatewayPorts no
+GatewayPorts clientspecified
 #X11Forwarding no
 X11Forwarding yes
 #X11DisplayOffset 10

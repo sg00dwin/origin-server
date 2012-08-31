@@ -20,9 +20,6 @@ then
   exit 0
 fi
 
-
-#echo "nameserver 4.2.2.2" >> /etc/resolv.conf
-
 #rpm -Uhv http://download.fedora.redhat.com/pub/epel/6/x86_64/epel-release-6-5.noarch.rpm
 #rpm -Uhv http://download.fedoraproject.org/pub/epel/6/x86_64/epel-release-6-5.noarch.rpm
 cat > /etc/yum.repos.d/epel.repo <<EOF
@@ -252,6 +249,7 @@ name=li-local
 baseurl=file:///root/li-local/
 enabled=0
 gpgcheck=0
+priority=1
 EOF
 
   cp /tmp/tito/x86_64/*.rpm /root/li-local/
@@ -259,7 +257,9 @@ EOF
   createrepo /root/li-local/
 
   set -e
+  yum -y install yum-priorities
   yum -y install rhc-devenv --enablerepo=li-local
+  yum -y erase yum-priorities
   set +e
   
   pushd /root/li-working > /dev/null
@@ -302,4 +302,7 @@ then
     rm -rf /root/$repo_name
   done
 fi
+
+#not sure who is adding this but remove it regardless
+sed -i "/nameserver 127.0.0.1/d" /etc/resolv.conf
 
