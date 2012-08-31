@@ -1,4 +1,5 @@
-%define cartridgedir %{_libexecdir}/stickshift/cartridges/embedded/rockmongo-1.1
+%global cartridgedir %{_libexecdir}/stickshift/cartridges/embedded/rockmongo-1.1
+%global frameworkdir %{_libexecdir}/stickshift/cartridges/rockmongo-1.1
 
 Name: cartridge-rockmongo-1.1
 Version: 1.15.2
@@ -31,6 +32,7 @@ ln -s %{cartridgedir}/info/configuration/ %{buildroot}/%{_sysconfdir}/stickshift
 cp -r info %{buildroot}%{cartridgedir}/
 cp LICENSE %{buildroot}%{cartridgedir}/
 cp COPYRIGHT %{buildroot}%{cartridgedir}/
+ln -s %{cartridgedir} %{buildroot}/%{frameworkdir}
 
 %post
 
@@ -42,6 +44,7 @@ rm -rf $RPM_BUILD_ROOT
 %attr(0750,-,-) %{cartridgedir}/info/hooks/
 %attr(0750,-,-) %{cartridgedir}/info/build/
 %attr(0750,-,-) %{cartridgedir}/info/html/
+%attr(0755,-,-) %{frameworkdir}
 %config(noreplace) %{cartridgedir}/info/configuration/
 %attr(0755,-,-) %{cartridgedir}/info/bin/
  %{cartridgedir}/info/rockmongo/

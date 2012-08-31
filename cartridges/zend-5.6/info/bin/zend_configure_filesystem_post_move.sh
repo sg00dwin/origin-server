@@ -40,8 +40,6 @@ function copy_files_to_cartridge_dir {
     fi
     #echo "Replacing ###OPENSHIFT_INTERNAL_IP### with ${IP_ADDRESS} in $zdir/${zfile}"
     sed -i "s/###OPENSHIFT_INTERNAL_IP###/${IP_ADDRESS}/g" $zdir/${zfile}
-    #echo "Replacing ###OPENSHIFT_GEAR_DIR### with ${CART_DIR} in $zdir/${zfile}"
-    sed -i "s|###OPENSHIFT_GEAR_DIR###|${CART_DIR}|g" $zdir/${zfile}
     #echo "Replacing ###UID### with $USER_ID in $zdir/${zfile}"
     sed -i "s/###UID###/${USER_ID}/g" $zdir/${zfile}
     #echo "Replacing ###GID### with $GROUP_ID in $zdir/${zfile}"

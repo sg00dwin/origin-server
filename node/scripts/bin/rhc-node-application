@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 #
 # Survey the character of an application
 #
@@ -33,11 +33,10 @@ function user_app_type() {
     _APPTYPE=`cat ${_HOMEDIR}/git/${2}.git/description | cut -d' ' -f1`
     if [ "$_APPTYPE" != "Unnamed" ]
     then
-	echo $_APPTYPE
+      echo $_APPTYPE
     else
-	#echo "WARNING: Unnamed Application: update git description" >&2
-	_APPDIR=`dirname ${_HOMEDIR}/*/$2`
-	basename $_APPDIR
+      #echo "WARNING: Unnamed Application: update git description" >&2
+      ls $_HOMEDIR |grep -v 'app-root|git' |sed '$!s/$/, /' |tr -d '\n'
     fi
 }
 
@@ -45,12 +44,6 @@ function user_app_git() {
     # USERNAME=$1
     # APPNAME=$2
     echo `homedir $1`/git/${2}.git
-}
-
-function user_app_workspace() {
-    # USERNAME=$1
-    # APPNAME=$2
-    echo `homedir $1`/${2}
 }
 
 function valid_app() {
@@ -61,14 +54,15 @@ function valid_app() {
     # directory
     if [ ! -d `user_app_git $1 $2` ]
     then
-	echo "ERROR: not a valid application: `user_app_git $1 $2` does not exist" >&2
-	return 1
+      echo "ERROR: not a valid application: `user_app_git $1 $2` does not exist" >&2
+      return 1
     fi
 
-    if [ ! -d `user_app_workspace $1 $2` ]
+    cartridges=`ls \`homedir $1\` |egrep -v 'app-root|git'`
+    if [ -z "$cartridges" ]
     then
-	echo "ERROR: not a valid application: `user_app_workspace $1 $2` does not exist" >&2
-	return 1
+      echo "ERROR: not a valid application: $1 $2 contains no cartridges" >&2
+      return 1
     fi
 
     return 0
@@ -77,13 +71,14 @@ function valid_app() {
 function user_app_disk_space() {
     # USERNAME=$1
     # APPNAME=$2
-    du -s `homedir $1`/$2 | cut -f1
+    _home=`homedir $1`
+    du -s `ls -d $_home/* |egrep -v 'app-root|git'` | awk '{total=total+$1} END {print total}'
 }
 
 function user_app_repo_disk_space() {
     # USERNAME=$1
     # APPNAME=$2
-    du -s `homedir $1`/$2/repo | cut -f1
+    du -s `homedir $1`/app-root/runtime/repo | cut -f1
 }
 
 function user_app_git_disk_space() {
@@ -95,13 +90,13 @@ function user_app_git_disk_space() {
 function user_app_log_disk_space() {
     # USERNAME=$1
     # APPNAME=$2
-    du -s `homedir $1`/$2/logs | cut -f1
+    du -s `ls -d \`homedir $1\`/*/logs/* |egrep -v 'app-root|git'` | awk '{total=total+$1} END {print total}'
 }
 
 function user_app_data_disk_space() {
     # USERNAME=$1
     # APPNAME=$2
-    du -s `homedir $1`/$2/data | cut -f1
+    du -s `homedir $1`/app-root/data | cut -f1
 }
 
 # ============================================================================
@@ -166,17 +161,21 @@ echo
 # largest log files
 # insert an = to prevent splitting
 echo log file sizes 
-for FSPEC in `bigfiles \`user_app_workspace $USERNAME $APPNAME\`/logs | tr ' ' '='`
+for dir in `ls -d \`homedir $USERNAME\`/*/logs |egrep -v 'app-root|git'`
 do
-    # this is truely ugly.  It needs to be formatted
-    echo " " `echo '  ' $FSPEC | tr '=' ' '`
+    echo $dir
+    for FSPEC in `bigfiles $dir | tr ' ' '='`
+    do
+      # this is truely ugly.  It needs to be formatted
+      echo " " `echo '  ' $FSPEC | tr '=' ' '`
+    done
 done
 echo
 
 # largest log files
 # insert an = to prevent splitting
 echo data file sizes 
-for FSPEC in `bigfiles \`user_app_workspace $USERNAME $APPNAME\`/data | tr ' ' '='`
+for FSPEC in `bigfiles \`homedir $USERNAME\`/app-root/data | tr ' ' '='`
 do
     # this is truely ugly.  It needs to be formatted
     echo " " `echo '  ' $FSPEC | tr '=' ' '`
@@ -186,7 +185,7 @@ echo
 # largest log files
 # insert an = to prevent splitting
 echo app large files
-for FSPEC in `bigfiles \`user_app_workspace $USERNAME $APPNAME\`/repo | tr ' ' '='`
+for FSPEC in `bigfiles \`homedir $USERNAME\`/app-root/repo | tr ' ' '='`
 do
     # this is truely ugly.  It needs to be formatted
     echo " " `echo '  ' $FSPEC | tr '=' ' '`

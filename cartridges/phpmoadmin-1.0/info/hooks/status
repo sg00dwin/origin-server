@@ -32,7 +32,6 @@ source ${CARTRIDGE_BASE_PATH}/abstract/info/lib/util
 setup_basic_hook "$1" $2 $3
 
 PHPMOADMIN_DIR=`echo $APP_HOME/phpmoadmin-1.0 | tr -s /` # ensure that there aren't double /'s
-PHPMOADMIN_CTL_SCRIPT="$PHPMOADMIN_DIR/${application}_phpmoadmin_ctl.sh"
 
 
 #

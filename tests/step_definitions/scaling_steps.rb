@@ -3,27 +3,28 @@ require 'uri'
 require 'fileutils'
 require 'json'
 require 'pty'
+require 'test/unit'
 
 include AppHelper
+include Test::Unit::Assertions
 
 SSH_OPTS="-o 'BatchMode=yes' -o 'StrictHostKeyChecking=no'"
 
 def set_max_gears(num)
   output = `rhc-admin-ctl-user --setmaxgears #{num} -l #{@app.login}`
-  raise "Failed to allocate #{num} gears for #{@app.login}" unless $?.success?
+  assert $?.success?, "Failed to allocate #{num} gears for #{@app.login}: #{output}"
 end
 
 def gear_up?(hostname, state='UP')
   csv = `/usr/bin/curl -s -H 'Host: #{hostname}' -s 'http://localhost/haproxy-status/;csv'`
-  $logger.debug('============ GEAR CSV ================')
+  assert $?.success?, "Failed to retrieve haproxy-status results: #{csv}"
+  $logger.debug("============ GEAR CSV #{Process.pid} ============")
   $logger.debug(csv)
   $logger.debug('============ GEAR CSV END ============')
   found = 1
   csv.split.each do | haproxy_worker |
 
     worker_attrib_array = haproxy_worker.split(',')
-    max_wait = 24 # 2 minutes
-    i = 0
     if worker_attrib_array[17] and worker_attrib_array[1].to_s.start_with?('gear') and worker_attrib_array[17].to_s.start_with?(state)
       $logger.debug("Found: #{worker_attrib_array[1]} - #{worker_attrib_array[17]}")
       found = 0
@@ -43,103 +44,116 @@ When /^a scaled (.+) application is created$/ do |app_type|
   command = "curl -s -o /tmp/rhc/json_response_#{@app.name}_#{@app.namespace}.json -k -H 'Accept: application/json' --user '#{@app.login}:fakepw' https://localhost/broker/rest/domains/#{@app.namespace}/applications -X POST -d name=#{@app.name} -d cartridge=#{app_type} -d scale=true"
 
   exit_code = runcon command, 'unconfined_u', 'unconfined_r', 'unconfined_t'
-  raise "Could not create scaled app.  Exit code: #{exit_code}.  Json debug: /tmp/rhc/json_response_#{@app.name}_#{@app.namespace}.json" unless exit_code == 0
-  fp = File.open("/tmp/rhc/json_response_#{@app.name}_#{@app.namespace}.json")
-  json_string = fp.read
-  run("echo '127.0.0.1 #{@app.name}-#{@app.namespace}.dev.rhcloud.com  # Added by cucumber' >> /etc/hosts")
-  $logger.debug("json string: #{json_string}")
-  app_info = JSON.parse(json_string)
-  raise "Could not create application: #{app_info['messages'][0]['text']}" unless app_info['status'] == 'created'
-  @app.uid = app_info['data']['uuid']
-  set_max_gears(8)
-  fp.close
+  assert_equal 0, exit_code, "Could not create scaled app.  Exit code: #{exit_code}.  Json debug: /tmp/rhc/json_response_#{@app.name}_#{@app.namespace}.json"
+
+  File.open("/tmp/rhc/json_response_#{@app.name}_#{@app.namespace}.json") { |file|
+    json_string = file.read
+    $logger.debug("json string: #{json_string}")
+
+    app_info = JSON.parse(json_string)
+    assert_equal 'created', app_info['status'], "Could not create application: #{app_info['messages'][0]['text']}"
+
+    @app.uid = app_info['data']['uuid']
+    run("echo '127.0.0.1 #{@app.name}-#{@app.namespace}.dev.rhcloud.com  # Added by cucumber' >> /etc/hosts")
+    set_max_gears(8)
+  }
 end
 
 Then /^the haproxy-status page will( not)? be responding$/ do |negate|
-  good_status = negate ? 1 : 0
+  expected_status = negate ? 1 : 0
 
   command = "/usr/bin/curl -s -H 'Host: #{@app.name}-#{@app.namespace}.dev.rhcloud.com' -s 'http://localhost/haproxy-status/;csv' | /bin/grep -q -e '^stats,FRONTEND'"
   exit_status = runcon command, 'unconfined_u', 'unconfined_r', 'unconfined_t'
-  exit_status.should == good_status
+  exit_status.should == expected_status
 end
 
 Then /^the gear members will be (UP|DOWN)$/ do |state|
   found = nil
 
-  max_wait = 40 # 2 minutes
-  i = 0
-  while gear_up?("#{@app.name}-#{@app.namespace}.dev.rhcloud.com", state) != 0 and i <= max_wait
-    $logger.debug("loop #{i}")
-    i = i + 1
-    sleep 5
+  StickShift::timeout(120) do
+    while found != 0
+      found = gear_up?("#{@app.name}-#{@app.namespace}.dev.rhcloud.com", state)
+      sleep 1
+    end
   end
-  raise "Could not find valid gear" if i >= max_wait
+  assert_equal 0, found, "Could not find valid gear"
 end
 
-Then /^(\d+) gears will be in the cluster$/ do |count|
-  max_wait = 30
-  i = 0
-  gear_count = 0
-  while gear_count.to_i != count.to_i and i <= max_wait
-    i = i + 1
-    sleep 4
+Then /^(\d+) gears will be in the cluster$/ do |expected|
+  expected = expected.to_i
+  actual = 0
 
-    $logger.debug("============ GEAR CSV (#{i})) ============")
-    $logger.debug(`/usr/bin/curl -s -H 'Host: #{@app.name}-#{@app.namespace}.dev.rhcloud.com' -s 'http://localhost/haproxy-status/;csv'`)
-    $logger.debug('============ GEAR CSV END ============')
-    gear_count = `/usr/bin/curl -s -H 'Host: #{@app.name}-#{@app.namespace}.dev.rhcloud.com' -s 'http://localhost/haproxy-status/;csv' | grep -c "express,gear"`
-    $logger.debug("Gear count: #{gear_count.to_i} should be #{count.to_i}")
+  host = "'Host: #{@app.name}-#{@app.namespace}.dev.rhcloud.com'"
+  StickShift::timeout(300) do
+    while actual != expected
+      sleep 1
+
+      $logger.debug("============ GEAR CSV #{Process.pid} ============")
+      results = `/usr/bin/curl -s -H #{host} -s 'http://localhost/haproxy-status/;csv'`.chomp()
+      $logger.debug(results)
+      $logger.debug("============ GEAR CSV END ============")
+
+      actual = results.split("\n").find_all {|l| l.start_with?('express,gear')}.length()
+      $logger.debug("Gear count: waiting for #{actual} to be #{expected}")
+    end
   end
-  raise "Gear counts do not match: #{gear_count.to_i} should be #{count.to_i}" unless gear_count.to_i == count.to_i
+  assert_equal expected, actual
 end
 
 Then /^the ([\w\-\.]+) health\-check will( not)? be successful$/ do |type, negate|
-  good_status = negate ? 1 : 0
+  expected_status = negate ? 1 : 0
 
   case type
   when "php-5.3"
     url='http://localhost/health_check.php'
+  when "perl-5.10"
+    url='http://localhost/health_check.pl'
   else
     url='http://localhost/health'
   end
 
-  command = "/usr/bin/curl -s -H 'Host: #{@app.name}-#{@app.namespace}.dev.rhcloud.com' -s #{url} | grep -q -e '^1$'"
-  exit_status = runcon command, 'unconfined_u', 'unconfined_r', 'unconfined_t'
-  exit_status.should == good_status
+  host = "#{@app.name}-#{@app.namespace}.dev.rhcloud.com"
+  command = "/usr/bin/curl -L -k -s -H 'Host: #{host}' -s #{url} | grep -q -e '^1$'"
+  exit_status = nil
+  StickShift::timeout(60) do
+    while exit_status != expected_status
+      exit_status = runcon command, 'unconfined_u', 'unconfined_r', 'unconfined_t'
+      $logger.info("Waiting for health-check to stabilize #{host}")
+    end
+  end
+  exit_status.should == expected_status
 end
 
 When /^a gear is (added|removed)$/ do |action|
-  if action == "added"
-    ssh_cmd = "ssh #{SSH_OPTS} -t #{@app.uid}@#{@app.hostname} 'rhcsh haproxy_ctld -u'"
-  elsif action == "removed"
-    ssh_cmd = "ssh #{SSH_OPTS} -t #{@app.uid}@#{@app.hostname} 'rhcsh haproxy_ctld -d'"
-  else
-    puts "Invalid gear action specified (must be added/removed)"
-    exit 1
-  end
+  assert_match %r{added|removed}x, action
+
+  ssh_cmd = "ssh #{SSH_OPTS} -t #{@app.uid}@#{@app.hostname} 'rhcsh haproxy_ctld -u'" if action == "added"
+  ssh_cmd = "ssh #{SSH_OPTS} -t #{@app.uid}@#{@app.hostname} 'rhcsh haproxy_ctld -d'" if action == "removed"
 
   exit_code = runcon ssh_cmd, 'unconfined_u', 'unconfined_r', 'unconfined_t'
-  raise "Gear #{action} failed: #{ssh_cmd} exited with code #{exit_code}" unless exit_code == 0
+  assert_equal 0, exit_code, "Gear #{action} failed: #{ssh_cmd} exited with code #{exit_code}"
 end
 
 When /^haproxy_ctld_daemon is (started|stopped)$/ do | action |
+  assert_match %r{started|stopped}x, action
+
   ssh_cmd = "ssh #{SSH_OPTS} -t #{@app.uid}@#{@app.hostname} 'rhcsh haproxy_ctld_daemon start'" if action == "started"
   ssh_cmd = "ssh #{SSH_OPTS} -t #{@app.uid}@#{@app.hostname} 'rhcsh haproxy_ctld_daemon stop'" if action == "stopped"
 
   exit_code = runcon ssh_cmd, 'unconfined_u', 'unconfined_r', 'unconfined_t'
-  raise "Could not start haproxy_ctld_daemon.  Exit code: #{exit_code}" unless exit_code == 0
+  assert_equal 0, exit_code, "Could not start haproxy_ctld_daemon.  Exit code: #{exit_code}"
 end
 
 Then /^haproxy_ctld is running$/ do
   ssh_cmd = "ssh #{SSH_OPTS} -t #{@app.uid}@#{@app.hostname} 'rhcsh ps auxwww | grep -q haproxy_ctld'"
   exit_code = runcon ssh_cmd, 'unconfined_u', 'unconfined_r', 'unconfined_t'
-  raise "haproxy_ctld is not running!" unless exit_code == 0
+  assert_equal 0, exit_code, "haproxy_ctld is not running!" 
 end
 
 When /^(\d+) concurrent http connections are generated for (\d+) seconds$/ do |concurrent, seconds|
   cmd = "ab -H 'Host: #{@app.name}-#{@app.namespace}.dev.rhcloud.com' -c #{concurrent} -t #{seconds} http://localhost/ > /tmp/rhc/http_load_test_#{@app.name}_#{@app.namespace}.txt"
   exit_status = runcon cmd, 'unconfined_u', 'unconfined_r', 'unconfined_t'
-  raise "load test failed.  Exit code: #{exit_status}" unless exit_status == 0
+  assert_equal 0, exit_status, "load test failed."
 end
 
 When /^mongo is added to the scaled app$/ do
@@ -149,30 +163,27 @@ end
 Then /^app should be able to connect to mongo$/ do
   command  = "echo 'show dbs' | ssh #{SSH_OPTS} -t 2>/dev/null #{@app.uid}@#{@app.name}-#{@app.namespace}.dev.rhcloud.com rhcsh mongo | grep #{@app.name}"
 
-  max_retry = 10
-  i = 0
-  exit_status = run(command)
-
-  while exit_status != 0 and i <= max_retry
-    sleep 5
-    $logger.debug("retrying #{i}")
+  StickShift::timeout(500) do
     exit_status = run(command)
-    i = i + 1
+    while exit_status != 0
+      $logger.debug("waiting on mongo")
+      sleep 1
+      exit_status = run(command)
+    end
   end
 
   exit_status.should == 0
 end
 
 When /^the haproxy-1.4 cartridge is removed$/ do
-  out = `curl -k -H 'Accept: application/json' --user '#{@app.login}:fakepw' https://localhost/broker/rest/domains/#{@app.namespace}/applications/#{@app.name}/cartridges/haproxy-1.4 -X DELETE`
+  out = `curl -s -k -H 'Accept: application/json' --user '#{@app.login}:fakepw' https://localhost/broker/rest/domains/#{@app.namespace}/applications/#{@app.name}/cartridges/haproxy-1.4 -X DELETE`
   out_obj = JSON.parse(out)
   $rest_exit_code = out_obj["messages"][0]["exit_code"]
 end
 
 Then /^the operation is( not)? allowed$/ do |negate|
-  puts negate
   if negate
-    $rest_exit_code.should == 101
+    $rest_exit_code.should == 137
   else
     $rest_exit_code.should == 0
   end

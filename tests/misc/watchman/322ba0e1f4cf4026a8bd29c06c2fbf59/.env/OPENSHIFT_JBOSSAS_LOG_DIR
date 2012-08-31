@@ -1,0 +1,1 @@
+export OPENSHIFT_JBOSSAS_LOG_DIR='/root/li-test/tests/misc/watchman/322ba0e1f4cf4026a8bd29c06c2fbf59/jbossas-7/logs/'
