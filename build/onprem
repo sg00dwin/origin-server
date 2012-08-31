@@ -1,0 +1,117 @@
+#!/usr/bin/env ruby
+
+#####################################################################3
+#
+# Global definitions
+#
+# other useful TYPEs "m1.large" or "m1.medium" or "m1.small" etc
+TYPE = "t1.micro"
+KEY_PAIR = "libra"
+ZONE = 'us-east-1d'
+
+DEVENV_WILDCARD = "DevOps*"
+
+DEVENV_AMI_WILDCARDS = {
+                        DEVENV_WILDCARD => {:keep => 1, :regex => /(DevOps)(\d+)/},
+}
+VERIFIER_REGEXS = {/^(devops)_(\d+)$/ => {},
+                   /^(devops_verifier)_(\d+)$/ => {},
+                   /^(devops-base)_(\d+)$/ => {},
+                   /^(broker_check)_(\d+)$/ => {},
+                   /^(node_check)_(\d+)$/ => {},
+}
+TERMINATE_REGEX = /terminate|teminate|termiante|terminatr|terninate/
+VERIFIED_TAG = "qe-ready"
+RSA = File.expand_path("~/.ssh/libra.pem")
+CAN_SSH_TIMEOUT=90
+
+$amz_options = {:key_name => KEY_PAIR, :instance_type => TYPE}
+
+# need these due to hardwired inherited code
+SAUCE_USER = ""
+SAUCE_SECRET = ""
+
+
+#####################################################################3
+#
+
+$: << File.expand_path(File.dirname(__FILE__))
+
+require 'rubygems'
+require 'thor'
+require 'fileutils'
+require 'lib/openshift'
+require 'pp'
+require 'yaml'
+require 'builder'
+
+include FileUtils
+
+module DevOps
+  class BuilderPlugin < StickShift::Builder
+    include OpenShift::BuilderHelper
+
+    desc "launch TAG", "Launches the latest DevEnv instance, tagging with TAG"
+    method_option :verbose, :type => :boolean, :desc => "Enable verbose logging"
+    method_option :express_server, :type => :boolean, :desc => "Set as express server in express.conf and leave on public_ip"
+    method_option :ssh_config_verifier, :type => :boolean, :desc => "Set as verifier in .ssh/config"
+    method_option :instance_type, :required => false, :desc => "Amazon machine type override (default '#{TYPE}')"
+    method_option :region, :required => false, :desc => "Amazon region override (default us-east-1)"
+    method_option :image_name, :required => false, :desc => "AMI ID or DEVENV name to launch"
+    def launch(tag)
+        super #just needed the method to override options
+    end
+
+
+    desc "sanity_check NAME", "validates instance NAME can find openshift-origin-broker RPM"
+    def sanity_check(name)
+          conn = connect()  # connect to amz ec2
+          instance = find_instance(conn, name, true)
+          validate_instance(instance.dns_name)
+    end
+
+    desc "build NAME BUILD_NUM", "TODO"
+    def build(name, num)
+    end
+    desc "install_local_client", "TODO"
+    def install_local_client
+    end
+    desc "sync NAME", "TODO"
+    def sync(name)
+    end
+    desc "test TAG", "TODO"
+    def test(tag)
+    end
+    desc "update", "TODO"
+    def update
+    end
+
+    no_tasks do
+      # launch calls this; not needed yet
+      def update_facts_impl(hostname)
+      end
+
+      # launch also calls this to perform some kind of validation of instance state
+      def validate_instance(hostname, num_tries=1)
+        # here we will check that it has access to the yum repos
+        puts "Validating instance..."
+
+        @validation_output = ssh(hostname, 'yum info openshift-origin-broker --cacheonly', 90)
+        if @validation_output =~ /Name\s*:\s*openshift-origin-broker/
+          puts "Instance is valid."
+        else
+          puts "ERROR - instance is not valid"
+          puts "Node Acceptance Output:"
+          puts @validation_output
+          exit 1
+        end
+      end
+
+    end # no_tasks end
+  end # class end
+end # module end
+
+#####################################################################
+# ... now read the cmdline and do what it says.
+
+DevOps::BuilderPlugin.start
