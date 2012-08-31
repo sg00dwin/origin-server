@@ -1,5 +1,3 @@
-require 'filter_hash'
-
 module Streamline
   class FullUser
     include ActiveModel::Serialization
