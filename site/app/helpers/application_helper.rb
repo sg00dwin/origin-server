@@ -6,7 +6,6 @@ module ApplicationHelper
   include Console::LayoutHelper
   include Console::ModelHelper
   include Console::SecuredHelper
-  include Console::UpgradeHelper
 
   def logout_path(*args)
     controller.logout_path(*args)
