@@ -3,7 +3,7 @@
 
 Summary:   Li site components
 Name:      rhc-site
-Version: 0.98.2
+Version: 0.98.3
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -137,6 +137,9 @@ rm -rf %{buildroot}
 %{sitedir}/public
 
 %changelog
+* Tue Sep 04 2012 Adam Miller <admiller@redhat.com> 0.98.3-1
+- Added some functional tests around plan upgrades (hripps@redhat.com)
+
 * Thu Aug 30 2012 Adam Miller <admiller@redhat.com> 0.98.2-1
 - TA2740 Added form validation for payment, billing & technical account info
   (hripps@redhat.com)

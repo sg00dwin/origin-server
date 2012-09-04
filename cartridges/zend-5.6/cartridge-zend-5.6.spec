@@ -2,7 +2,7 @@
 
 Summary:   Provides zend-5.6 support
 Name:      cartridge-zend-5.6
-Version: 0.95.3
+Version: 0.95.4
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   ASL 2.0
@@ -107,3 +107,6 @@ rm -rf %{buildroot}
 %doc %{cartridgedir}/COPYRIGHT
 %doc %{cartridgedir}/LICENSE
 
+%changelog
+* Tue Sep 04 2012 Adam Miller <admiller@redhat.com> - 0.95.4-1
+- spec file clean up, add changelog, fix brew build failures

@@ -2,7 +2,7 @@
 
 Summary:       Multi-tenant cloud management system node tools
 Name:          rhc-node
-Version: 0.98.2
+Version: 0.98.3
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -270,6 +270,11 @@ fi
 
 
 %changelog
+* Tue Sep 04 2012 Adam Miller <admiller@redhat.com> 0.98.3-1
+- Merge pull request #334 from ramr/master (openshift+bot@redhat.com)
+- US2593 - make starting libra services non blocking on startup.
+  (ramr@redhat.com)
+
 * Thu Aug 30 2012 Adam Miller <admiller@redhat.com> 0.98.2-1
 - update migration for 2.0.17 (dmcphers@redhat.com)
 - Bash environment support (jhonce@redhat.com)
