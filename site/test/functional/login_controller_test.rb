@@ -26,7 +26,7 @@ class LoginControllerTest < ActionController::TestCase
     assert user = assigns(:user)
     assert !user.roles.empty?
     assert_redirected_to console_path
-    assert_equal 'true', cookies['prev_login']
+    assert_equal true, cookies['prev_login']
     assert_not_nil session[:ticket_verified]
     assert_equal :simple, session[:streamline_type]
     #assert_equal assigns(:user).ticket, cookies['rh_sso'] #FIXME: broken, can't get cookie
@@ -37,7 +37,7 @@ class LoginControllerTest < ActionController::TestCase
     assert user = assigns(:user)
     assert !user.roles.empty?
     assert_redirected_to console_path
-    assert_equal 'true', cookies['prev_login']
+    assert_equal true, cookies['prev_login']
     assert_not_nil session[:ticket_verified]
     assert_equal :full, session[:streamline_type]
     #assert_equal assigns(:user).ticket, cookies['rh_sso'] #FIXME: broken, can't get cookie

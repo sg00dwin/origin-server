@@ -60,7 +60,7 @@ class StreamlineUnitTest < ActiveSupport::TestCase
   end
   
   test "should raise when parse malformed JSON" do
-    assert_raise(StandardError){ @streamline.send(:parse_body, "{json: 'foo'") }
+    assert_raise(MultiJson::DecodeError){ @streamline.send(:parse_body, "{json: 'foo'") }
   end
 
   test "parse body errors" do
@@ -104,7 +104,7 @@ class StreamlineUnitTest < ActiveSupport::TestCase
     json_errors = {"errors" => ['email_required', 'user_already_registered']}
     @streamline.send(:parse_json_errors, json_errors)
     assert !@streamline.errors.empty?
-    assert_equal 1, @streamline.errors.length
+    assert_equal 2, @streamline.errors.size
     assert_equal 2, @streamline.errors.full_messages.length
   end
 
@@ -176,12 +176,12 @@ class StreamlineUnitTest < ActiveSupport::TestCase
 
   test "http call with 401 and service errors" do
     res = Net::HTTPUnauthorized.new('', '401', '')
-    res.expects(:body).at_least_once.returns("{errors:['service_error']}")
+    res.expects(:body).at_least_once.returns('{"errors":["service_error"]}')
     Net::HTTP.any_instance.expects(:start).returns(res)
 
-    assert_raise(Streamline::StreamlineException) {
+    assert_raise(Streamline::StreamlineException) do
       @streamline.send(:http_post, @url)
-    }
+    end
     assert @streamline.errors[:base].all?{ |s| s =~ (/system error has occurred./) }
   end
 
@@ -296,14 +296,14 @@ class StreamlineUnitTest < ActiveSupport::TestCase
     @streamline.expects(:http_post).never
     set_roles [CloudAccess.req_role(CloudAccess::EXPRESS)]
     @streamline.request_access(CloudAccess::EXPRESS)
-    assert @streamline.errors.length == 1
+    assert @streamline.errors.size == 1
   end
 
   test "request access already has" do
     @streamline.expects(:http_post).never
     set_roles [CloudAccess.auth_role(CloudAccess::EXPRESS)]
     @streamline.request_access(CloudAccess::EXPRESS)
-    assert @streamline.errors.length == 1
+    assert @streamline.errors.size == 1
   end
 
   test "establish roles implicitly" do
@@ -452,7 +452,7 @@ class StreamlineUnitTest < ActiveSupport::TestCase
     json = {"term" => ['a', 'b']}
     @streamline.expects(:http_post).once.yields(json).returns(@streamline.terms)
     assert_equal true, @streamline.accept_terms
-    assert_equal 0, @streamline.errors.length
+    assert_equal 0, @streamline.errors.size
   end
 
   test "accept terms with partial streamline result" do
@@ -462,7 +462,7 @@ class StreamlineUnitTest < ActiveSupport::TestCase
     json = {"term" => terms}
     @streamline.expects(:http_post).once.yields(json).returns(terms)
     assert_equal false, @streamline.accept_terms
-    assert_equal 1, @streamline.errors.length
+    assert_equal 1, @streamline.errors.size
   end
 
   test "confirm simple email with emailAddress" do
@@ -483,7 +483,7 @@ class StreamlineUnitTest < ActiveSupport::TestCase
     @streamline.email_address = 'foo@foo.com'
     @streamline.expects(:http_post).once.yields({'errors' => ['service_error']})
     assert !@streamline.confirm_email('key')
-    assert_equal 1, @streamline.errors.length
+    assert_equal 1, @streamline.errors.size
     assert @streamline.errors[:base].first =~ /system error has occurred/
   end
 
@@ -491,7 +491,7 @@ class StreamlineUnitTest < ActiveSupport::TestCase
     @streamline.email_address = 'foo@foo.com'
     @streamline.expects(:http_post).once.yields({}).returns
     assert !@streamline.confirm_email('key')
-    assert_equal 1, @streamline.errors.length
+    assert_equal 1, @streamline.errors.size
     assert @streamline.errors[:base].first =~ /system error has occurred/
   end
 
@@ -507,13 +507,13 @@ class StreamlineUnitTest < ActiveSupport::TestCase
   test "authenticate success" do
     @streamline.expects(:http_post).once
     assert_equal true, @streamline.authenticate("test1", "test1")
-    assert_equal 0, @streamline.errors.length
+    assert_equal 0, @streamline.errors.size
   end
 
   test "authenticate unknown user" do
     @streamline.expects(:http_post).once.yields({'roles' => ['foo'], 'username' => 'test1'})
     assert_equal true, @streamline.authenticate("test1", "test1")
-    assert_equal 0, @streamline.errors.length
+    assert_equal 0, @streamline.errors.size
 
     assert_nil @streamline.streamline_type
     assert !@streamline.simple_user?
@@ -523,7 +523,7 @@ class StreamlineUnitTest < ActiveSupport::TestCase
   test "authenticate simple user" do
     @streamline.expects(:http_post).once.yields({'roles' => ['simple_authenticated'], 'username' => 'test1'})
     assert_equal true, @streamline.authenticate("test1", "test1")
-    assert_equal 0, @streamline.errors.length
+    assert_equal 0, @streamline.errors.size
 
     assert_equal :simple, @streamline.streamline_type
     assert @streamline.simple_user?
@@ -533,7 +533,7 @@ class StreamlineUnitTest < ActiveSupport::TestCase
   test "authenticate full user" do
     @streamline.expects(:http_post).once.yields({'roles' => ['authenticated'], 'username' => 'test1'})
     assert_equal true, @streamline.authenticate("test1", "test1")
-    assert_equal 0, @streamline.errors.length
+    assert_equal 0, @streamline.errors.size
 
     assert_equal :full, @streamline.streamline_type
     assert !@streamline.simple_user?
@@ -543,14 +543,14 @@ class StreamlineUnitTest < ActiveSupport::TestCase
   test "authenticate fails" do
     @streamline.expects(:http_post).once.raises(AccessDeniedException.new)
     assert_equal false, @streamline.authenticate("test1", "test1")
-    assert_equal 1, @streamline.errors.length
+    assert_equal 1, @streamline.errors.size
     assert_equal I18n.t(:login_error, :scope => :streamline), @streamline.errors[:base].first
   end
 
   test "authenticate fails with http not found" do
     @streamline.expects(:http_post).once.raises(Streamline::StreamlineException.new)
     assert_equal false, @streamline.authenticate("test1", "test1")
-    assert_equal 1, @streamline.errors.length
+    assert_equal 1, @streamline.errors.size
     assert_equal I18n.t(:service_error, :scope => :streamline), @streamline.errors[:base].first
   end
 

@@ -65,9 +65,7 @@ module Account
 
       logger.debug "Confirmation URL: #{confirmationUrl}"
 
-      unless @user.errors.length == 0
-        render :new and return
-      end
+      render :new and return unless @user.errors.empty?
 
       # Successful user registration event for analytics
       @event = 'event29'

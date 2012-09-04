@@ -71,11 +71,11 @@ class StreamlineIntegrationTest < ActionDispatch::IntegrationTest
 
     confirmed_user.password = 'testab'
     assert !confirmed_user.change_password
-    assert confirmed_user.errors[:base], confirmed_user.errors
+    assert confirmed_user.errors[:base], confirmed_user.errors.inspect
 
     confirmed_user.password_confirmation = 'testab'
     assert !confirmed_user.change_password
-    assert confirmed_user.errors[:base], confirmed_user.errors
+    assert confirmed_user.errors[:base], confirmed_user.errors.inspect
 
     confirmed_user.old_password = old_password
     assert confirmed_user.change_password, confirmed_user.errors.inspect

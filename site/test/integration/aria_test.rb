@@ -44,7 +44,7 @@ class AriaIntegrationTest < ActionDispatch::IntegrationTest
 
     # create
     methods.each do |m|
-      info.send(m, ActiveSupport::SecureRandom.base64(5)) if m.to_s.ends_with?('=')
+      info.send(m, ::SecureRandom.base64(5)) if m.to_s.ends_with?('=')
     end
     info.country = 'US'
     info.zip = 12345.to_s
@@ -60,7 +60,7 @@ class AriaIntegrationTest < ActionDispatch::IntegrationTest
 
     # update
     methods.each do |m|
-      info.send(m, ActiveSupport::SecureRandom.base64(5)) if m.to_s.ends_with?('=')
+      info.send(m, ::SecureRandom.base64(5)) if m.to_s.ends_with?('=')
     end
     info.country = 'FR'
     info.zip = 54321.to_s

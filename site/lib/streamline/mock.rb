@@ -99,7 +99,7 @@ module Streamline
       Rails.logger.debug "Authenticating user #{login}"
 
       if login.present? and password.present?
-        @ticket = Base64.encode64s(login)
+        @ticket = Base64.strict_encode64(login)
         @rhlogin = login
         set_fake_roles
         true
