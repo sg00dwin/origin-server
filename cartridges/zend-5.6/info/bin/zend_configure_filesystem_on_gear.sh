@@ -73,7 +73,7 @@ function create_sandbox_to_cart_dir_links {
     zpath=$zend_sandbox/$path
     zdir=`dirname $zpath`
     zfile=`basename $zpath`
-    mkdir -p $zdir
+    [ -d "$zdir" ]  ||  mkdir -p $zdir
     #echo "Linking $zdir/$zfile to $CART_DIR/$path"
     ln -s $CART_DIR/$path $zdir/$zfile
   done
