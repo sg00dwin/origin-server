@@ -107,3 +107,6 @@ rm -rf %{buildroot}
 %doc %{cartridgedir}/COPYRIGHT
 %doc %{cartridgedir}/LICENSE
 
+%changelog
+* Tue Sep 04 2012 Adam Miller <admiller@redhat.com> - 0.95.4-1
+- spec file clean up, add changelog, fix brew build failures
