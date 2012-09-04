@@ -4,15 +4,13 @@ class PlansController < ApplicationController
   before_filter :authenticate_user!, :only => :show
 
   def index
-    @plans = Aria::MasterPlan.cached.all
-    if user_signed_in?
-      @user = User.find :one, :as => current_user
-      @current_plan = @user.plan
-    end
+    redirect_to :action => 'show'
   end
 
   def show
     @user = User.find :one, :as => current_user
-    @plan = @user.plan
+    @plans = Aria::MasterPlan.cached.all
+    @current_plan = Aria::MasterPlan.cached.find(@user.plan.id)
+    @smaller_plans, @bigger_plans = @plans.split{ |p| p.id == @current_plan.id }
   end
 end

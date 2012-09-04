@@ -21,7 +21,7 @@ class AccountUpgradesController < ApplicationController
     async do
       @user = User.find :one, :as => current_user
       @plan = Aria::MasterPlan.cached.find plan_id
-      @current_plan = @user.plan
+      @current_plan = Aria::MasterPlan.cached.find @user.plan.id
     end
     async do
       @payment_method = aria_user.payment_method

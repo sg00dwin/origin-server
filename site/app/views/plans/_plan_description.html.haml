@@ -1,0 +1,11 @@
+.plan
+  %h3= show_plan.name
+  %p= show_plan.description
+  %ol
+    - show_plan.features.each do |f|
+      %li=  "#{f.name}: #{f.value}"
+      - if f.name == 'Free Gears'
+        %li= "Max Gears: #{show_plan.max_gears}"
+        %li= "Gear Sizes: #{show_plan.gear_sizes.join(' and ')}"
+  - if select_button != ''
+    = link_to select_button, account_plan_upgrade_path(show_plan), :class => 'btn'
