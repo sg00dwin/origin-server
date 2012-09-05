@@ -17,6 +17,13 @@ class PaymentMethodsControllerTest < ActionController::TestCase
     assert_select "#aria_payment_method_cvv_input.error .help-inline", /security code is a three or four digit/
   end
 
+  test "should display correctly for an existing payment method" do
+    with_account_holder
+    mock_controller_user.expects(:payment_method).returns(Aria::PaymentMethod.new({}, true))
+    get :edit, :plan_id => :megashift
+    assert_response :success
+  end
+
   test "should redirect when aria reports success" do
     with_account_holder
     mock_controller_user(Aria::User).expects(:has_valid_payment_method?).returns(true)

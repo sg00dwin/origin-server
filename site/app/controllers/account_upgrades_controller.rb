@@ -27,7 +27,7 @@ class AccountUpgradesController < ApplicationController
       @payment_method = aria_user.payment_method
       @billing_info = aria_user.billing_info
     end
-    join
+    join!
 
     render :unchanged and return if @plan == @current_plan
     render :downgrade and return if @plan.basic?
