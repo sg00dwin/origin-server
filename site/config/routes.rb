@@ -105,15 +105,12 @@ RedHatCloud::Application.routes.draw do
 
   match 'legal/acceptance_terms' => 'terms#acceptance_terms', :as => 'acceptance_terms'
 
-  match 'video/:name' => 'video#show', :as => 'video'
-
   match 'legal' => redirect('/community/legal')
   match 'legal/site_terms' => redirect('/community/legal/site_terms')
   match 'legal/services_agreement' => redirect('/community/legal/services_agreement')
   match 'legal/acceptable_use' => redirect('/community/legal/acceptable_use')
   match 'legal/openshift_privacy' => redirect('/community/legal/openshift_privacy')
 
-  # suggest we consolidate login/logout onto a session controller
   resource :login,
            :controller => "login",
            :only => [:show, :create]
@@ -125,10 +122,6 @@ RedHatCloud::Application.routes.draw do
            :only => [:show]
   match 'logout/flex' => 'logout#show_flex', :via => [:get]
   match 'logout/express' => 'logout#show_express', :via => [:get]
-
-  #resources :partners,
-  #          :controller => "partner",
-  #          :only => [:show, :index]
 
   scope 'console' do
     openshift_console :skip => :account

@@ -3,15 +3,6 @@
 # the streamline REST service.
 #
 module Streamline
-  class Cookie
-    def initialize(*arguments)
-      @name, @value, @options = arguments
-    end
-    def to_s
-      "#{@name}=#{@value}"
-    end
-  end
-
   class OpenShiftException < StandardError
     attr :exit_code
     def initialize(exit_code)

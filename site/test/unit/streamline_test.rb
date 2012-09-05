@@ -554,10 +554,6 @@ class StreamlineUnitTest < ActiveSupport::TestCase
     assert_equal I18n.t(:service_error, :scope => :streamline), @streamline.errors[:base].first
   end
 
-  test "cookie initializes" do
-    assert_equal "hi=value", Streamline::Cookie.new("hi", "value").to_s
-  end
-
   test "rack should not escape rh_sso" do
     headers = {}
     Rack::Utils.set_cookie_header!(headers, 'rh_sso', '1+2')

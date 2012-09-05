@@ -5,10 +5,10 @@
 require 'simplecov'
 SimpleCov.start 'rails' do
   coverage_dir 'test/coverage/'
-  command_name 'Console tests'
+  command_name 'Site tests'
 
   # Filters - these files will be ignored.
-  add_filter 'app/models/rest_api/railties'
+  add_filter 'app/controllers/styleguide_controller.rb'
 
   merge_timeout 1000
 
