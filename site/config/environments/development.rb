@@ -58,8 +58,16 @@ RedHatCloud::Application.configure do
   config.action_mailer.delivery_method = :test
   config.action_mailer.perform_deliveries = false
 
+  # Do not compress assets
+  config.assets.compress = false
+
+  # Expands the lines which load the assets
+  config.assets.debug = true
+
+  config.sass.style = :nested
+  config.sass.line_comments = true
+
   Console.configure do |c|
     c.api = (ENV['CONSOLE_API_MODE'] || 'local').to_sym
-    #c.disable_account = true
   end
 end

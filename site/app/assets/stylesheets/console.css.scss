@@ -18,10 +18,10 @@ Color palette
 @import "console/base";
 
 @import "variables";
+@import "console/mixins";
 @import "bootstrap/variables";
 @import "bootstrap/mixins";
 @import "mixins";
-@import "console/mixins";
 
 @import "console/navbar";
 @import "console/help";
@@ -34,3 +34,4 @@ Color palette
 @import "console/application";
 
 @import "console/core";
+
