@@ -34,7 +34,6 @@
     <link type="text/css" rel="stylesheet" href="/app/stylesheets/site.css"></link>
 	  <?php print $styles; ?>
 	  <?php print $scripts; ?>
-    <meta content='' name='description'>
     <meta content='' name='author'>
     <meta content='width=device-width, initial-scale=1.0' name='viewport'>
     <meta name="csrf-param" content="authenticity_token"/>
