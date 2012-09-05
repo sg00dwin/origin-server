@@ -120,10 +120,8 @@ echo "/usr/bin/trap-user" >> /etc/shells
 
 #/sbin/service mcollective restart > /dev/null 2>&1 || :
 /sbin/restorecon /etc/init.d/libra || :
-/sbin/restorecon /var/lib/stickshift || :
 /sbin/restorecon /var/run/stickshift || :
 /sbin/restorecon /usr/bin/rhc-cgroup-read || :
-/sbin/restorecon /var/lib/stickshift/.httpd.d/ || :
 /sbin/restorecon -r /sandbox
 /sbin/restorecon /etc/init.d/libra || :
 /sbin/restorecon /etc/init.d/mcollective || :
