@@ -1,7 +1,7 @@
 %define cartridgedir %{_libexecdir}/stickshift/cartridges/embedded/phpmoadmin-1.0
 
 Name: cartridge-phpmoadmin-1.0
-Version: 0.15.2
+Version: 0.15.3
 Release: 1%{?dist}
 Summary: Embedded phpMoAdmin support for express
 
@@ -54,6 +54,10 @@ rm -rf $RPM_BUILD_ROOT
 %doc %{cartridgedir}/LICENSE
 
 %changelog
+* Thu Sep 06 2012 Adam Miller <admiller@redhat.com> 0.15.3-1
+- Fix for bugz 852518 - Failed move due to httpd.pid file being empty.
+  (ramr@redhat.com)
+
 * Thu Aug 30 2012 Adam Miller <admiller@redhat.com> 0.15.2-1
 - Fix for bugz 852518 - Failed move due to httpd.pid file being empty.
   (ramr@redhat.com)

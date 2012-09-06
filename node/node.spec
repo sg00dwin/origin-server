@@ -2,7 +2,7 @@
 
 Summary:       Multi-tenant cloud management system node tools
 Name:          rhc-node
-Version: 0.98.3
+Version: 0.98.4
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -268,6 +268,11 @@ fi
 
 
 %changelog
+* Thu Sep 06 2012 Adam Miller <admiller@redhat.com> 0.98.4-1
+- Fix for bugz 852486 - rubygem-stickshift-node is running restorecon against
+  /var/lib/stickshift - required for Origin, so moved to ss-setup-node.
+  (ramr@redhat.com)
+
 * Tue Sep 04 2012 Adam Miller <admiller@redhat.com> 0.98.3-1
 - Merge pull request #334 from ramr/master (openshift+bot@redhat.com)
 - US2593 - make starting libra services non blocking on startup.

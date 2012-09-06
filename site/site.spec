@@ -3,7 +3,7 @@
 
 Summary:   Li site components
 Name:      rhc-site
-Version: 0.98.3
+Version: 0.98.4
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -137,6 +137,15 @@ rm -rf %{buildroot}
 %{sitedir}/public
 
 %changelog
+* Thu Sep 06 2012 Adam Miller <admiller@redhat.com> 0.98.4-1
+- Merge pull request #343 from spurtell/spurtell/analytics
+  (openshift+bot@redhat.com)
+- updated sitespeedsample rate, updated origin download tracking, updated
+  kissinsights code (spurtell@redhat.com)
+- Merge branch 'master' of github.com:openshift/li (sgoodwin@redhat.com)
+- Chrome bug fix 851389. Target Chrome and adjust span-flush-right to allow for
+  width variance at grid spans widths within 768-980 (sgoodwin@redhat.com)
+
 * Tue Sep 04 2012 Adam Miller <admiller@redhat.com> 0.98.3-1
 - Added some functional tests around plan upgrades (hripps@redhat.com)
 

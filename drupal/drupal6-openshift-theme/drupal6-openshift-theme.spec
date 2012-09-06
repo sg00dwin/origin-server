@@ -5,7 +5,7 @@
 %global drupal_themename    openshift-theme
 
 Name:           drupal6-%{drupal_themename}
-Version: 3.7.2
+Version: 3.7.3
 Release:        1%{?dist}
 Summary:        Red Hat Openshift theme for Drupal %{drupal_release}
 
@@ -44,6 +44,9 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
+* Thu Sep 06 2012 Adam Miller <admiller@redhat.com> 3.7.3-1
+- removed empty meta description tag from Drupal template (spurtell@redhat.com)
+
 * Thu Aug 30 2012 Adam Miller <admiller@redhat.com> 3.7.2-1
 - Add thread timeout safety to the async_aware gem method, and a test.  This
   fixes intermittent test failures with account dashboard (5s join timeout
