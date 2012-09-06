@@ -10,76 +10,30 @@ License:   ASL 2.0
 URL:       http://openshift.redhat.com
 Source0:   rhc-site-%{version}.tar.gz
 BuildRoot: %(mktemp -ud %{_tmppath}/%{name}-%{version}-%{release}-XXXXXX)
+Requires:       ruby(abi) = 1.8
+Requires:       rubygems
+Requires:       rubygem(rails)
+Requires:       rubygem(openshift-origin-console)
+Requires:       rubygem-mocha
+Requires:       rubygem-webmock
+Requires:       rubygem-haml
+Requires:       rubygem-sqlite3
+Requires:       rubygem-sinatra
+Requires:       rubygem-net-http-persistent
+Requires:       rubygem-wddx
+Requires:       rubygem-ci_reporter
+Requires:       rhc-site-static
+BuildArch:      noarch
 
-# Core dependencies to run the build steps
-BuildRequires: rubygem-bundler
-BuildRequires: rubygem-rake
-BuildRequires: js
-# Additional dependencies to satisfy the gems, listed in Gemfile order
-BuildRequires: rubygem-rails
-BuildRequires: rubygem-recaptcha
-BuildRequires: rubygem-json
-BuildRequires: rubygem-stomp
-BuildRequires: rubygem-parseconfig
-BuildRequires: rubygem-xml-simple
-BuildRequires: rubygem-haml
-BuildRequires: rubygem-compass
-BuildRequires: rubygem-formtastic
-BuildRequires: rubygem-openshift-origin-console
-BuildRequires: rubygem-rack
-BuildRequires: rubygem-regin
-BuildRequires: rubygem-httparty
-BuildRequires: rubygem-rdiscount
-BuildRequires: rubygem-webmock
-BuildRequires: rubygem-barista
-BuildRequires: rubygem-mocha
-BuildRequires: rubygem-hpricot
-BuildRequires: rubygem-sinatra
-BuildRequires: rubygem-tilt
-BuildRequires: rubygem-sqlite3
-BuildRequires: rubygem-mail
-BuildRequires: rubygem-treetop
-BuildRequires: rubygem-net-http-persistent
-BuildRequires: rubygem-wddx
-BuildRequires: rubygem-rcov
-BuildRequires: rubygem-ci_reporter
-Requires:  rhc-common
-Requires:  rhc-server-common
-Requires:  httpd
-Requires:  mod_ssl
-Requires:  mod_passenger
-Requires:  ruby-geoip
-Requires:  rubygem-passenger-native-libs
-Requires:  rubygem-rails
-Requires:  rubygem-json
-Requires:  rubygem-parseconfig
-Requires:  rubygem-xml-simple
-Requires:  rubygem-formtastic
-Requires:  rubygem-haml
-Requires:  rubygem-compass
-Requires:  rubygem-recaptcha
-Requires:  rubygem-hpricot
-Requires:  rubygem-barista
-Requires:  rubygem-httparty
-Requires:  rubygem-openshift-origin-console
-Requires:  rubygem-rdiscount
-Requires:  rubygem-webmock
-Requires:  js
-Requires:  ruby-sqlite3
-Requires:  rubygem-sqlite3
-Requires:  rubygem-sinatra
-Requires:  rubygem-mail
-Requires:  rubygem-treetop
-Requires:  rubygem-net-http-persistent
-Requires:  rubygem-wddx
-Requires:  rubygem-rcov
-Requires:  rubygem-ci_reporter
-Requires:  rhc-site-static
-BuildArch: noarch
+BuildRequires:  ruby
+BuildRequires:  rubygems
+BuildRequires:  rubygem(rake)
+BuildRequires:  rubygem(bundler)
+BuildRequires:  rubygem(openshift-origin-console)
 
 %description
 This contains the OpenShift website which manages user authentication,
-authorization and also the workflows to request access.  It includes 
+authorization and also the workflows to request access.  It requires
 the OpenShift Origin management console and specializes some of its
 behavior.
 
@@ -95,12 +49,13 @@ such as images, CSS, JavaScript, and HTML.
 %setup -q
 
 %build
-bundle exec compass compile
-rm -rf tmp/sass-cache
-bundle exec rake barista:brew
-rm log/development.log
-mv -f tmp/javascripts/* public/javascripts/
-mv -f tmp/stylesheets/* public/stylesheets/
+
+# Temporary BEGIN
+bundle install
+# Temporary END
+RAILS_RELATIVE_URL_ROOT=/app bundle exec rake assets:precompile
+rm -rf tmp
+rm log/production.log
 
 %install
 rm -rf %{buildroot}
@@ -111,21 +66,23 @@ ln -s %{sitedir}/public %{buildroot}%{htmldir}/app
 
 mkdir -p %{buildroot}%{sitedir}/run
 mkdir -p %{buildroot}%{sitedir}/log
-mkdir -p -m 770 %{buildroot}%{sitedir}/tmp
+mkdir -p %{buildroot}%{sitedir}/tmp/cache/assets
 touch %{buildroot}%{sitedir}/log/production.log
 
 %clean
-rm -rf %{buildroot}                                
+rm -rf %{buildroot}
 
 %post
 /bin/touch %{sitedir}/log/production.log
 
 %files
-%attr(0775,root,libra_user) %{sitedir}/app/subsites/status/db
-%attr(0664,root,libra_user) %config(noreplace) %{sitedir}/app/subsites/status/db/status.sqlite3
-%attr(0744,root,libra_user) %{sitedir}/app/subsites/status/rhc-outage
+%attr(0770,root,libra_user) %{sitedir}/app/subsites/status/db
+%attr(0660,root,libra_user) %config(noreplace) %{sitedir}/app/subsites/status/db/status.sqlite3
+%attr(0740,root,libra_user) %{sitedir}/app/subsites/status/rhc-outage
 %attr(0770,root,libra_user) %{sitedir}/tmp
-%attr(0666,root,libra_user) %{sitedir}/log/production.log
+%attr(0770,root,libra_user) %{sitedir}/tmp/cache
+%attr(0770,root,libra_user) %{sitedir}/tmp/cache/assets
+%attr(0660,root,libra_user) %{sitedir}/log/production.log
 
 %defattr(0640,root,libra_user,0750)
 %{sitedir}
@@ -133,8 +90,6 @@ rm -rf %{buildroot}
 %config(noreplace) %{sitedir}/config/environments/production.rb
 %config(noreplace) %{sitedir}/app/subsites/status/config/hosts.yml
 %exclude %{sitedir}/public
-%exclude %{sitedir}/tmp/javascripts
-%exclude %{sitedir}/tmp/stylesheets
 
 %files static
 %defattr(0640,root,libra_user,0750)

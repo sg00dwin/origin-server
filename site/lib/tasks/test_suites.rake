@@ -1,5 +1,3 @@
-require 'ci/reporter/rake/test_unit'
-
 namespace :test do
 
   console_path = File.expand_path(Gem.loaded_specs["openshift-origin-console"].full_gem_path)
