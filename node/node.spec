@@ -108,7 +108,7 @@ rm -rf $RPM_BUILD_ROOT
 
 %post
 cp -f /etc/stickshift/stickshift-node.conf.libra /etc/stickshift/stickshift-node.conf
-restorecon /var/lib/stickshift/stickshift-node.conf || :
+restorecon /etc/stickshift/stickshift-node.conf || :
 
 echo "/usr/bin/trap-user" >> /etc/shells
 
@@ -173,7 +173,7 @@ chmod o+w /tmp
 %triggerin -- rubygem-stickshift-node
 
 cp -f /etc/stickshift/stickshift-node.conf.libra /etc/stickshift/stickshift-node.conf
-restorecon /var/lib/stickshift/stickshift-node.conf || :
+restorecon /etc/stickshift/stickshift-node.conf || :
 /sbin/service libra-data start > /dev/null 2>&1 || :
 
 
