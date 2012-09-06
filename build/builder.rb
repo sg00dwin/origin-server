@@ -77,7 +77,7 @@ module StickShift
     def terminate(tag)
       options.verbose? ? @@log.level = Logger::DEBUG : @@log.level = Logger::ERROR
       conn = connect(options.region)
-      instance = find_instance(conn, tag, true, false)
+      instance = find_instance(conn, tag, true, false, ssh_user)
       terminate_instance(instance, true) if instance
     end
   
@@ -180,7 +180,7 @@ module StickShift
       options.verbose? ? @@log.level = Logger::DEBUG : @@log.level = Logger::ERROR
   
       conn = connect(options.region)
-      instance = find_instance(conn, tag, true)
+      instance = find_instance(conn, tag, true, true, ssh_user)
       hostname = instance.dns_name
   
       test_impl(tag, hostname, instance, conn, options)
@@ -193,7 +193,7 @@ module StickShift
       options.verbose? ? @@log.level = Logger::DEBUG : @@log.level = Logger::ERROR
       
       conn = connect(options.region)
-      instance = find_instance(conn, tag, true)
+      instance = find_instance(conn, tag, true, true, ssh_user)
       hostname = instance.dns_name
 
       sanity_check_impl(tag, hostname, instance, conn, options)
