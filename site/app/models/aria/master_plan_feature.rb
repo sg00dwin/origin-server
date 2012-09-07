@@ -61,22 +61,20 @@ module Aria
       feature_list = []
 
       features = plan_description.each_line.select{ |line| line !~ /^\s*$/ }.map(&:chomp).split{ |s| s =~ /^\s*Features:/ }[1]
-      unless features.nil? or features.length == 0
-        features.each{ |feature|
-          match, name, data, ranking = /^\* ([^\:]+)\: ([^\*]+) *(\**)$/.match(feature).to_a
-          type = 'text'
-          rank = ranking.nil? ? 0 : ranking.length
-          count = 0
-          if data =~ /^\d+$/
-            count = data
-            type  = 'numeric'
-          end
-          if (name.nil? or name =~ /^\s*$/ or data.nil? or data =~ /^\s*$/)
-            raise MalformedFeatureError.new("Improperly defined plan feature: '#{feature}'")
-          end
+      (features || []).map do |feature|
+        match, name, data, ranking = /^\* ([^\:]+)\: ([^\*]+) *(\**)$/.match(feature).to_a
+        type = 'text'
+        rank = ranking.nil? ? 0 : ranking.length
+        count = 0
+        if data =~ /^\d+$/
+          count = data
+          type  = 'numeric'
+        end
+        if (name.nil? or name =~ /^\s*$/ or data.nil? or data =~ /^\s*$/)
+          raise MalformedFeatureError.new("Improperly defined plan feature: '#{feature}'")
+        end
 
-          feature_list << Aria::MasterPlanFeature.new({ :name => name, :value => data, :type => type, :count => count, :rank => rank })
-        }
+        feature_list << Aria::MasterPlanFeature.new({ :name => name, :value => data, :type => type, :count => count, :rank => rank })
       end
       feature_list
     end

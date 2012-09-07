@@ -36,7 +36,10 @@ class PlanSignupFlowTest < ActionDispatch::IntegrationTest
 
   test 'anonymous without prev signin redirected to signup' do
     get '/account/plans'
-    assert_response :success
+    assert_response :redirect
+
+    get '/account/plan'
+    assert_response :redirect
 
     get '/account/plans/megashift/upgrade'
     assert_redirected_to new_account_path(:then => account_plan_upgrade_path('megashift'))
@@ -46,7 +49,10 @@ class PlanSignupFlowTest < ActionDispatch::IntegrationTest
     cookies[:prev_login] = true
 
     get '/account/plans'
-    assert_response :success
+    assert_response :redirect
+
+    get '/account/plan'
+    assert_response :redirect
 
     get '/account/plans/megashift/upgrade'
     assert_redirected_to login_path(:then => account_plan_upgrade_path('megashift'))
@@ -58,6 +64,9 @@ class PlanSignupFlowTest < ActionDispatch::IntegrationTest
     user = login_simple_user
 
     get '/account/plans'
+    assert_response :redirect
+
+    get '/account/plan'
     assert_response :success
 
     get '/account/plans/megashift/upgrade'
