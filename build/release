@@ -237,11 +237,11 @@ class Release < Thor
         inside(working_dir) do
           puts "Tagging #{build_dir}"
 
-          if File.basename(build_dir) == 'rhc'
+          if ['rhc', 'openshift-origin-console'].include?(File.basename(build_dir))
             # packages that have versioning steps
             version = /^(Version: )(.*)/.match(File.read(Dir['*.spec'][0]))[2].strip
             next_version = next_patch_version(version)
-            if run("rake version && git add .", :verbose => options.verbose?)
+            if run("rake version['#{next_version}'] && git add .", :verbose => options.verbose?)
               unless run('tito tag --accept-auto-changelog')
                 tag_failures << build_dir
               end

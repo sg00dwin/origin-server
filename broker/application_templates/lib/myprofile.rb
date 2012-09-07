@@ -129,7 +129,7 @@ class Profile
         debug "Giving up: #{e}"
         return e
       end
-    rescue Rhc::Rest::ValidationException => e
+    rescue RHC::Rest::ValidationException => e
       debug "Failure: #{e}: #{e.message}"
       return RestException.new(e.message)
     rescue Exception => e

@@ -1,7 +1,7 @@
 %define cartridgedir %{_libexecdir}/stickshift/cartridges/embedded/metrics-0.1
 
 Name: cartridge-metrics-0.1
-Version: 0.19.3
+Version: 0.19.4
 Release: 1%{?dist}
 Summary: Embedded metrics support for express
 
@@ -49,6 +49,11 @@ rm -rf $RPM_BUILD_ROOT
 %{cartridgedir}/info/manifest.yml
 
 %changelog
+* Fri Sep 07 2012 Adam Miller <admiller@redhat.com> 0.19.4-1
+- Merge pull request #340 from pravisankar/dev/ravi/zend-fix-description
+  (openshift+bot@redhat.com)
+- Modify Display-name/Description fields for all cartridges (rpenta@redhat.com)
+
 * Thu Sep 06 2012 Adam Miller <admiller@redhat.com> 0.19.3-1
 - Fix for bugz 852518 - Failed move due to httpd.pid file being empty.
   (ramr@redhat.com)
