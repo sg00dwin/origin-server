@@ -2,7 +2,7 @@
 
 Summary:       Multi-tenant cloud management system node tools
 Name:          rhc-node
-Version: 0.98.2
+Version: 0.98.4
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -108,7 +108,7 @@ rm -rf $RPM_BUILD_ROOT
 
 %post
 cp -f /etc/stickshift/stickshift-node.conf.libra /etc/stickshift/stickshift-node.conf
-restorecon /var/lib/stickshift/stickshift-node.conf || :
+restorecon /etc/stickshift/stickshift-node.conf || :
 
 echo "/usr/bin/trap-user" >> /etc/shells
 
@@ -120,10 +120,8 @@ echo "/usr/bin/trap-user" >> /etc/shells
 
 #/sbin/service mcollective restart > /dev/null 2>&1 || :
 /sbin/restorecon /etc/init.d/libra || :
-/sbin/restorecon /var/lib/stickshift || :
 /sbin/restorecon /var/run/stickshift || :
 /sbin/restorecon /usr/bin/rhc-cgroup-read || :
-/sbin/restorecon /var/lib/stickshift/.httpd.d/ || :
 /sbin/restorecon -r /sandbox
 /sbin/restorecon /etc/init.d/libra || :
 /sbin/restorecon /etc/init.d/mcollective || :
@@ -175,7 +173,7 @@ chmod o+w /tmp
 %triggerin -- rubygem-stickshift-node
 
 cp -f /etc/stickshift/stickshift-node.conf.libra /etc/stickshift/stickshift-node.conf
-restorecon /var/lib/stickshift/stickshift-node.conf || :
+restorecon /etc/stickshift/stickshift-node.conf || :
 /sbin/service libra-data start > /dev/null 2>&1 || :
 
 
@@ -270,6 +268,16 @@ fi
 
 
 %changelog
+* Thu Sep 06 2012 Adam Miller <admiller@redhat.com> 0.98.4-1
+- Fix for bugz 852486 - rubygem-stickshift-node is running restorecon against
+  /var/lib/stickshift - required for Origin, so moved to ss-setup-node.
+  (ramr@redhat.com)
+
+* Tue Sep 04 2012 Adam Miller <admiller@redhat.com> 0.98.3-1
+- Merge pull request #334 from ramr/master (openshift+bot@redhat.com)
+- US2593 - make starting libra services non blocking on startup.
+  (ramr@redhat.com)
+
 * Thu Aug 30 2012 Adam Miller <admiller@redhat.com> 0.98.2-1
 - update migration for 2.0.17 (dmcphers@redhat.com)
 - Bash environment support (jhonce@redhat.com)

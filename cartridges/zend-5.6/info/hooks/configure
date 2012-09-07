@@ -69,8 +69,12 @@ create_app_ctl_script "$cartridge_type"
 #copy over zen config files
 ZEND_USER_FILES="/usr/libexec/stickshift/cartridges/${cartridge_type}/files/user-files"
 echo "ZEND_USER_FILES ${ZEND_USER_FILES}"
+zend_sandbox_dir="$APP_HOME/.sandbox/$uuid/zend"
+mkdir -p "$zend_sandbox_dir"
+chown ${user_id}:${group_id} "$zend_sandbox_dir"
 $CART_INFO_DIR/bin/zend_configure_filesystem_on_gear.sh ${ZEND_USER_FILES} ${ZENDCART_INSTANCE_DIR} ${user_id} ${group_id} ${IP} || error "Failed to copy files to cartridge directory" 121
 run_as_user "$CART_INFO_DIR/bin/zend_configure_filesystem_on_gear.sh ${ZEND_USER_FILES} ${ZENDCART_INSTANCE_DIR} ${user_id} ${group_id} ${IP}" || error "Failed to create symlinks in sandbox namespace" 121
+chown root:${group_id} "$zend_sandbox_dir"
 
 # Pear requires a special pearrc file, this is that file:
 #pear config-create "$ZENDCART_INSTANCE_DIR"/phplib/pear/ "$APP_HOME"/.pearrc > /dev/null 2>&1
@@ -117,7 +121,6 @@ fi
 # Create virtualhost definition for apache
 #
 export CART_INFO_DIR
-$CARTRIDGE_BASE_PATH/abstract/info/bin/deploy_httpd_proxy.sh $application $namespace $uuid $IP
-$CART_INFO_DIR/bin/zend_deploy_httpd_proxy.sh $application $namespace $uuid $IP
+$CART_INFO_DIR/bin/deploy_httpd_proxy.sh $application $namespace $uuid $IP
 restart_httpd_graceful
 enable_cgroups

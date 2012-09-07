@@ -1,6 +1,6 @@
 Name: phpmoadmin-1.0
-Display-Name: phpmoadmin v1.0 (noarch)
-Description: Cartridge packaging phpmoadmin
+Display-Name: phpMoAdmin 1.0
+Description: "Web based MongoDB administration tool. Requires the MongoDB cartridge to be installed first."
 Version: 1.0.0
 License: ASL 2.0
 Vendor:  phpmoadmin.com

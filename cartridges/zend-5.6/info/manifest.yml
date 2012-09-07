@@ -1,10 +1,10 @@
 Name: zend-5.6
-Display-Name: zend server v5.6.0 (noarch)
-Description: "Web Application Server for Business-Critical PHP Applications"
+Display-Name: Zend Server 5.6
+Description: "A PHP Server for PHP applications that require performance, reliability and security."
 Version: 5.6
 License: "Commercial"
 License-Url: http://static.zend.com/topics/Zend-License-EULA-2010-09-2.pdf
-Vendor:  Zend
+Vendor: Zend
 Categories:
   - cartridge
   - web_framework

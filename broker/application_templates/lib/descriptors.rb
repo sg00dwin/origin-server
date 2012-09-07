@@ -2,7 +2,7 @@
 
 require 'rubygems'
 require 'rhc-common'
-require 'rhc-rest'
+require 'rhc/rest'
 require 'yaml'
 require 'json'
 require 'bson'

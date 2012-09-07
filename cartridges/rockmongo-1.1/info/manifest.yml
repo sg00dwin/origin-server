@@ -1,6 +1,6 @@
 Name: rockmongo-1.1
-Display-Name: rockmongo v1.1 (noarch)
-Description: Cartridge packaging rockmongo
+Display-Name: RockMongo 1.1
+Description: "Web based MongoDB administration tool. Requires the MongoDB cartridge to be installed first."
 Version: 1.1.0
 License: ASL 2.0
 Vendor: code.google.com/p/rock-php/wiki/rock_mongo

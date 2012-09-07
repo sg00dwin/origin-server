@@ -8,7 +8,7 @@
 
 Summary:   Dependencies for OpenShift development
 Name:      rhc-devenv
-Version: 0.99.2
+Version: 0.99.4
 Release:   1%{?dist}
 Group:     Development/Libraries
 License:   GPLv2
@@ -549,6 +549,14 @@ fi
 %{policydir}/*
 
 %changelog
+* Thu Sep 06 2012 Adam Miller <admiller@redhat.com> 0.99.4-1
+- Fix for bugz 852216 - zend /sandbox should be root owned if possible.
+  (ramr@redhat.com)
+
+* Tue Sep 04 2012 Adam Miller <admiller@redhat.com> 0.99.3-1
+- only run 1 set of qe tests since they are proper subsets
+  (dmcphers@redhat.com)
+
 * Thu Aug 30 2012 Adam Miller <admiller@redhat.com> 0.99.2-1
 - moving test pull requests to its own repo (dmcphers@redhat.com)
 - exit on instability (dmcphers@redhat.com)

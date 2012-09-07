@@ -67,7 +67,8 @@ class Release < Thor
         spec_file = pkg[1]
         update_gemfile_version(spec_file, 'stickshift-node', "#{build_dir}/Gemfile.lock", verbose)
         update_gemfile_version(spec_file, 'stickshift-node', "#{build_dir}/../broker/Gemfile.lock", verbose)
-        list_of_deps |= ['rhc-broker','stickshift-broker']
+        list_of_deps |= ['stickshift-broker']
+        list_of_deps |= ['rubygem-stickshift-node'] if package_name != 'rubygem-stickshift-node'
         gem_updates = true
       end
 

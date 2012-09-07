@@ -16,7 +16,7 @@ def login(password = nil)
     password = ask("Password: ",true) unless password
 
     end_point = "https://#{libra_server}/broker/rest/api"
-    Rhc::Rest::Client.new(end_point, rhlogin, password)
+    RHC::Rest::Client.new(end_point, rhlogin, password)
   )
 end
 

@@ -2,7 +2,7 @@
 
 Summary:   Provides zend-5.6 support
 Name:      cartridge-zend-5.6
-Version: 0.95.3
+Version: 0.95.5
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   ASL 2.0
@@ -107,3 +107,12 @@ rm -rf %{buildroot}
 %doc %{cartridgedir}/COPYRIGHT
 %doc %{cartridgedir}/LICENSE
 
+%changelog
+* Thu Sep 06 2012 Adam Miller <admiller@redhat.com> 0.95.5-1
+- Fix for bugz 852216 - zend /sandbox should be root owned if possible.
+  (ramr@redhat.com)
+- Bug 852192 - Zend - additional Information (lnader@redhat.com)
+- zend spec fix (admiller@redhat.com)
+
+* Tue Sep 04 2012 Adam Miller <admiller@redhat.com> - 0.95.4-1
+- spec file clean up, add changelog, fix brew build failures

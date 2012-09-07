@@ -18,6 +18,17 @@ class AccountUpgradesControllerTest < ActionController::TestCase
     WebUser.new :rhlogin => 'rhnuser', :email_address => 'rhnuser@redhat.com', :streamline_type => :full
   end
 
+  test "should show an unchanged plan when the current plan matches the new one" do
+    user = with_user(full)
+    get :new, :plan_id => 'freeshift'
+    assert_not_nil assigns[:user]
+    assert_not_nil assigns[:plan]
+    assert_not_nil assigns[:current_plan]
+    assert_not_nil assigns[:payment_method]
+    assert_not_nil assigns[:billing_info]
+    assert_template :unchanged
+  end
+
   test "should raise on invalid user" do
     user = with_user(full)
     user.expects(:extend).with(Aria::User)
@@ -26,5 +37,12 @@ class AccountUpgradesControllerTest < ActionController::TestCase
     assert_response :success
     assert m = assigns(:message)
     assert m =~ /IDCOLLISION/, "Message was '#{m}'"
+  end
+
+  test "should make a copy of billing info for editing" do
+    user = with_user(full)
+    @controller.edit
+    assert_not_nil assigns[:full_user]
+    assert_not_nil assigns[:billing_info]
   end
 end# if Aria.available?
