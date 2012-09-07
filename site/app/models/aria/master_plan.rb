@@ -23,6 +23,7 @@ module Aria
       @features ||= Aria::MasterPlanFeature.from_description(aria_plan.plan_desc)
     end
 
+    # Find a feature of the given name or create a new 'null' feature to represent it
     def feature(name)
       features.each { |feat|
         if feat.name == name
@@ -30,8 +31,6 @@ module Aria
         end
       }
 
-      # Still here? Make a new bogus feature
-      # for this name and add it to the list for future reference
       null_feature = Aria::MasterPlanFeature.new({ :name => name })
       @features << null_feature
       null_feature

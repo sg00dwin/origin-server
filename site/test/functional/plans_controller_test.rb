@@ -23,18 +23,13 @@ class PlansControllerTest < ActionController::TestCase
     assert_match /^\d+$/, plan.plan_no.to_s
   end
 
-  test "should provide a plan list even without authentication" do
-    get :index
-    assert_response :success
-    assert_nil assigns(:user)
-    assert_nil assigns(:current_plan)
-    validate_plan_list(assigns(:plans))
-  end
-
   test "should provide a plan list and instantiate user when authenticated" do
     with_unique_user
 
     get :index
+    assert_response :redirect
+
+    get :show
     assert_response :success
     user = assigns(:user)
     assert_equal user.plan_id, user.plan.id
@@ -54,6 +49,6 @@ class PlansControllerTest < ActionController::TestCase
     assert_response :success
     user = assigns(:user)
     assert_equal user.plan_id, user.plan.id
-    validate_plan(assigns(:plan))
+    validate_plan(assigns(:current_plan))
   end
 end

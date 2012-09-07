@@ -10,7 +10,7 @@ class PlansController < ApplicationController
   def show
     @user = User.find :one, :as => current_user
     @plans = Aria::MasterPlan.cached.all
-    @current_plan = Aria::MasterPlan.cached.find(@user.plan.id)
+    @current_plan = @user.plan
     @smaller_plans, @bigger_plans = @plans.split{ |p| p.id == @current_plan.id }
   end
 end
