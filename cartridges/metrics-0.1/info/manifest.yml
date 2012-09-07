@@ -1,6 +1,6 @@
 Name: metrics-0.1
-Display-Name: metrics v1.0 (noarch)
-Description: Cartridge packaging metrics
+Display-Name: OpenShift Metrics 0.1
+Description: "An experimental cartridge that demonstrates retrieving real-time statistics from your application. May be removed or replaced in the future."
 Version: 1.0.0
 License: GPLv2
 Vendor:  
