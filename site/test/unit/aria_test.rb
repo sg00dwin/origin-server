@@ -236,10 +236,12 @@ class AriaUnitTest < ActiveSupport::TestCase
           Aria::WDDX::Struct.new({
             'plan_no' => '1',
             'plan_name' => 'FreeShift',
+            'plan_desc' => 'FreeShift plan description'
           }),
           Aria::WDDX::Struct.new({
             'plan_no' => '2',
             'plan_name' => 'MegaShift',
+            'plan_desc' => 'MegaShift plan description'
           })
         ]
       }))
