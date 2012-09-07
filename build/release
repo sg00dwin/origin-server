@@ -114,7 +114,8 @@ class Release < Thor
         build_dir = build_info[1]
         spec_file = build_info[2]
 
-        gem_updates, chain_build_set = update_our_gems(package_name, build_dir, spec_file, verbose)
+        next_gem_updates, next_chain_build_set = update_our_gems(package_name, build_dir, spec_file, verbose)
+        gem_updates = gem_updates || next_gem_updates
       end
 
       if gem_updates
