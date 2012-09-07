@@ -3,7 +3,7 @@
 
 Summary:   Li site components
 Name:      rhc-site
-Version: 0.98.4
+Version: 0.98.5
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -137,6 +137,32 @@ rm -rf %{buildroot}
 %{sitedir}/public
 
 %changelog
+* Fri Sep 07 2012 Adam Miller <admiller@redhat.com> 0.98.5-1
+- Merge pull request #350 from sg00dwin/master (openshift+bot@redhat.com)
+- Merge pull request #340 from pravisankar/dev/ravi/zend-fix-description
+  (openshift+bot@redhat.com)
+- Merge branch 'master' of github.com:openshift/li (sgoodwin@redhat.com)
+- add table-fixed class for IE text-overflow bug on sshkey table. Include form
+  field states back in _custom (not sure why they don't work in _forms)
+  (sgoodwin@redhat.com)
+- BZ 849782 - rss button rendering issue BZ 839242 - new app page for zend
+  needed css added BZ 820086 - long sshkey name text-overflow issue Check in
+  new account plan styleguide pages for billing, payment, review/confirm along
+  with new form validation css Misc css - switch heading font-size to be based
+  off of $baseFontSize computation - match <legend> style to heading.divide for
+  consistency when used on console form pages - addition of <select> to
+  standard form field rules (not sure why they aren't included in bootstrap by
+  default) - set box-showdow(none) on .btn so there's no conflict when used on
+  <input> - create aside rule within console/_core to be used on pages with for
+  secondary column (help) - remove input grid system rules that caused
+  conflicting widths with inputs set to grid span - add :focus to
+  buttonBackground mixin - decrease spacing associated with .control-group -
+  added rules for :focus:required:valid :focus:required:invalid to take
+  advantage of client side browsers that support them - move rules for field
+  feedback states from _custom to _forms - .alert a so link color is optimal on
+  all alert states (sgoodwin@redhat.com)
+- Modify Display-name/Description fields for all cartridges (rpenta@redhat.com)
+
 * Thu Sep 06 2012 Adam Miller <admiller@redhat.com> 0.98.4-1
 - Merge pull request #343 from spurtell/spurtell/analytics
   (openshift+bot@redhat.com)
