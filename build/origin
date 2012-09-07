@@ -105,48 +105,31 @@ module Origin
       def update_impl(options)
         puts "update_impl - Not yet implemented"
       end
-  
+
       def sync_impl(name, options)
         # Get the hostname from a tag lookup or assume it's SSH accessible directly
         conn = connect(options.region)
         hostname = options.tag? ? find_instance(conn, name, true, true, ssh_user).dns_name : name
-    
-        ssh_path=File.expand_path(File.dirname(__FILE__)) + "/ssh-override"
-    
+
         puts "Creating mount"
-        out, ret = ssh(hostname, "su -c \"umount -l /data ; if [ ! -b /dev/xvdb ]; then /sbin/mke2fs /dev/xvdb; fi; mkdir -p /data && mount /dev/xvdb /data && chown -R ec2-user:ec2-user /data/\"", 60 * 10, true, 1, ssh_user) 
-    
-        avail_sibling_repo_names = []
-        SIBLING_REPOS.each do |repo_name, repo_dirs|
-          repo_dirs.each do |repo_dir|
-            if sync_sibling_repo(repo_name, repo_dir, hostname, ssh_path, "/data", ssh_user)
-              avail_sibling_repo_names.push(repo_name)
-              break
-            end
-          end
-        end
-        
-        clone_commands = ''
-        working_dirs = ''
-        avail_sibling_repo_names.each do |repo_name|
-          working_dirs += "#{repo_name}-working "
-          clone_commands += "git clone #{repo_name} #{repo_name}-working; "
-        end
-    
+        out, ret = ssh(hostname, "su -c \"umount -l /data ; if [ ! -b /dev/xvdb ]; then /sbin/mke2fs /dev/xvdb; fi; mkdir -p /data && mount /dev/xvdb /data && chown -R ec2-user:ec2-user /data/\"", 60 * 10, true, 1, ssh_user)
+
+        clone_commands, working_dirs = sync_available_sibling_repos(hostname, "/data", ssh_user)
+
         # This is not required since we have already synced the crankcase repository
         # Instead we can just create a symlink for the tests in li-test/tests
         #update_remote_tests(hostname)
         out, ret = ssh(hostname, "cd /data; #{clone_commands}", 60 * 5, true, 2, ssh_user) if ret == 0
         out, ret = ssh(hostname, "mkdir -p ~/li-test; cd ~/li-test; ln -s /data/crankcase-working/stickshift/controller/test/cucumber tests; ln -s /data/crankcase-working/stickshift stickshift", 60, true, 1, ssh_user)
-    
+
         if !options.skip_build?
           puts "Performing remote install...."
-    
+
           out, ret = ssh(hostname, "cd /data/crankcase-working/build && rake devbroker", 60 * 20, true, 1, ssh_user) if ret == 0
           out, ret = ssh(hostname, "su -c \"cd /data && chown -R ec2-user:ec2-user *\"", 60 * 2, true, 1, ssh_user) if ret == 0
           puts "Restarting services..."
           out, ret = ssh(hostname, "su -c \"/usr/bin/ss-setup-broker\"", 60 * 2, true, 2, ssh_user) if ret == 0
-      
+
           if ret != 0
             puts "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
             puts "Build failed!  Exiting."
@@ -157,7 +140,7 @@ module Origin
           puts "Done"
         end
       end
-  
+
       def build_impl(name, build_num, options)
         # Override the machine type to launch if necessary
         $amz_options[:instance_type] = options[:instance_type] if options[:instance_type]
