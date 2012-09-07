@@ -1,0 +1,325 @@
+<link href="/app/stylesheets/console.css" media="all" rel="stylesheet" type="text/css" />
+
+<style type="text/css">
+.plan-arrow {
+  background: transparent url('/app/images/sprite-vert-large.png') 0 0 no-repeat;
+  height: 85px;
+  margin-top: 50px;
+}
+@media (max-width:767px) {
+  .plan-arrow {
+    background: transparent url('/app/images/sprite-vert-large.png') 0 -135px no-repeat;
+    height: 90px;
+  }
+}
+.plan-pricing {
+  width:100%;
+  table-layout: fixed;
+}
+.plan-pricing th {text-align: left;}
+.plan-pricing th.current {background: transparent url('/app/images/plan-arrow.png') 88% 0 no-repeat; height: 53px;}
+@media (max-width:767px) {
+  .plan-pricing th.current {background-image: none;}
+}
+
+.plan-pricing tbody tr:hover th,
+.plan-pricing tbody tr:hover td {
+  background-color: transparent;
+}
+
+.plan-pricing td.value.upgrade {
+  color: #cdff7a;
+}
+.plan-pricing td.value.downgrade {
+  color: #ee8e39;
+}
+
+</style>
+
+<header>
+<div class='navbar'>
+<div class='navbar-inner'>
+<div class='container'>
+<ul class='navbar-text pull-right' id='utility-nav'>
+<li class='hidden-phone'><a href="/community/" class="community">Community</a></li>
+<li class='hidden-phone'><a href="/community/developers" class="developer">Developer Center</a></li>
+<li class='dropdown username hidden-phone'>
+<a href="/app/account" class="dropdown-toggle" data-target="#" data-toggle="dropdown">sgoodwin@redhat.com</a>
+<ul class='dropdown-menu hidden-phone'>
+<li><a href="/app/account">My Account</a></li>
+<li><a href="/app/logout" class="sign_out">Sign Out</a></li>
+</ul>
+</li>
+<li><a href="https://openshift.redhat.com/app/status" class="alert" id="outage" style="display:none;" title="Track open issues on the OpenShift status page">Status</a></li>
+</ul>
+<a class='btn btn-navbar' data-target='.nav-collapse' data-toggle='collapse'>
+<span class='icon-bar'></span>
+<span class='icon-bar'></span>
+<span class='icon-bar'></span>
+</a>
+<div class='brand'>
+<a href="/app/"><span class='brand-image'></span>
+<span class='brand-text headline'><strong>Open</strong>Shift
+</span>
+</a><span class='navbar-text headline'>
+User Account
+</span>
+</div>
+<div class='nav-collapse collapse'>
+<ul class="nav"><li><a href="/app/console/applications">Account Dashboard</a></li>
+<li><a href="/app/console/application_types">Settings</a></li>
+<li class="active"><a href="/app/console/help">Plan</a></li>
+<li><a href="/app/account">Help</a></li>
+</ul><ul class='nav visible-phone'>
+<li><a href="/community/" class="community">Community</a></li>
+<li><a href="/community/developers" class="developer">Developer Center</a></li>
+</ul>
+<ul class='nav visible-phone'>
+<li><a href="/app/logout" class="sign_out">Sign Out</a></li> 
+</ul>
+</div>
+</div>
+</div>
+</div>
+
+</header>
+<div class='section-console section-console-light' id='content'>
+<div class='container'>
+<div class='row-console'>
+<div class='row row-flush-right'>
+<div class='grid-wrapper ribbon'>
+<div class='span12 span-flush-right'>
+&nbsp;
+</div>
+</div>
+
+<div class='column-content grid-wrapper'>
+<div class='span12'>
+
+<h1 class="invisible">Compare and choose your plan</h1>
+<div class="row">
+<div class="span12">
+<ol class="wizard"><li><span><i>1</i>Plans</span></li><li><span><i>2</i>Account and Billing</span></li><li><span><i>3</i>Payment Information</span></li><li class="active"><span><i>4</i>Review and Confirm</span></li></ol>
+</div>
+</div>
+
+
+<h2 class="divide">Review and confirm your plan changes</h2>
+<section>
+<div class="row">
+  <div class="span6 offset1">
+    <h3>Payment method</h3>
+    <div>
+      Credit Card: xxxx-xxxx-xxxx-xxxx<br />
+      Expires: mm/yyyy
+    </div>
+  <p><a href="">Change your payment method</a></p>
+  </div>
+  <div class="span5">
+    <h3>Billing information</h3>
+    <div class="billing_info">
+       <div class="name">Joe Somebody</div>
+       <div class="address">12345 Happy Street</div>
+       <div class="address">Happyville, nc 10001 US</div>
+     </div>
+    <p><a href="">Change your billing information</a></p>
+  </div>
+</div>
+</section>
+
+<section>
+<p class="larger">The following plan changes will take effect when you switch from FreeShift to MegaShift.</p>
+<!-- div class="row">
+  <div class="span4 offset1">
+    <h3>FreeShift <small>(Current plan)</small></h3>
+    <ul class="">
+      <li>Free Gears: 3</li>
+      <li>Max Gears: 3</li>
+      <li>Gear size small</li>
+      <li>Support ...</li>
+      <li>Scaling limited to 3 gears</li>
+      <li>Additional storage no</li>
+      <li>SSL shared</li>
+      <li>Java EE6 full profile & CDI included</li>
+    </ul>
+  </div>
+  <div class="span2 plan-arrow">
+  </div>
+  <div class="span5">
+  <h3>MegaShift <small>(New plan)</small></h3>
+    <ul class="">
+      <li>Free Gears: 3</li>
+      <li>Max Gears: 16</li>
+      <li>Small gears ($.05/hour)</li>
+      <li>Large gears ($.12/hour)</li>
+      <li>Support ...</li>
+      <li>Scaling included</li>
+      <li>Additional storage ($1/GB per month)</li>
+      <li>SSL for custom domains</li>
+      <li>Java EE6 full profile & CDI ($.03/hour additional)</li>
+    </ul>
+  </div>
+</div -->
+
+<div class="row"> 
+<div class="span10 offset1">
+  <table class="plan-pricing table table-condensed">
+			<thead>
+				<tr>
+					<th></th>
+					<th class="plan current">
+						<h6>Current plan</h6>
+						<h3>FreeShift</h3>
+					</th>
+					<th class="plan new">
+					 <h6>New plan</h6>
+						<h3>MegaShift</h3>
+					</th>
+				</tr>				
+			</thead>
+			<tbody>
+			  <tr >
+					<th class="parameter key">Cost</th>
+					<td class="parameter value">Free</td>
+					<td class="parameter value upgrade">$42/month</td>
+				</tr>
+				<tr class="same-value">
+					<th class="parameter key">Free Gears</th>
+					<td class="parameter value">3</td>
+					<td class="parameter value">3</td>
+				</tr>
+				<tr>
+					<th class="parameter key">Max Gears</th>
+					<td class="parameter value">3</td>
+					<td class="parameter value upgrade">16</td>
+				</tr>
+				<tr>
+					<th class="parameter key">Gear Sizes</th>
+					<td class="parameter value">Small</td>
+					<td class="parameter value upgrade">Small, $0.05/hr<br>Medium, $0.12/hr</td>
+				</tr>
+				<tr>
+					<th class="parameter key">Support</th>
+					<td class="parameter value">Community</td>
+					<td class="parameter value upgrade">By Red Hat</td>
+				</tr>
+				<tr>
+					<th class="parameter key">Scaling</th>
+					<td class="parameter value">Limited to 3 Gears</td>
+					<td class="parameter value upgrade">3 Included</td>
+				</tr>
+				<tr>
+					<th class="parameter key">Additional Storage</th>
+					<td class="parameter value">No</td>
+					<td class="parameter value upgrade">$1/GB per month</td>
+				</tr>
+				<tr>
+					<th class="parameter key">SSL</th>
+					<td class="parameter value">Shared</td>
+					<td class="parameter value upgrade">For custom domains</td>
+				</tr>
+				<tr>
+					<th class="parameter key">Java EE6 Full Profile &amp; CDI</th>
+					<td class="parameter value">Included</td>
+					<td class="parameter value upgrade">3 gears free included,<br />$0.03/hr per additional gear</td>
+				</tr>
+			</tbody>
+		</table>
+		</div>
+</div>
+</section>
+
+		
+
+<form class="form-inline">
+<div class="form-actions"><a class="btn" href="/app/account/plans">Back to plans</a>
+      <input type="submit" value="Confirm your plan changes" name="commit" id="streamline_full_user_submit" class="btn btn-primary create">
+      <img style="display: none" src="/app/images/loader.gif?1345116900" data-loading="true" class="icon-loading" alt="Working...">
+    </div>
+</form>
+</div>
+
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<footer>
+
+<div id='footer-nav'>
+<div class='container'>
+<div class='row'>
+<nav class='span3'>
+<header>
+<h3><a href="/community/developers">Developers</a></h3>
+</header>
+<ul class='unstyled'>
+<li><a href="/app/getting_started">Get Started</a></li>
+<li><a href="http://docs.redhat.com/docs/en-US/OpenShift/2.0/html/User_Guide/index.html">User Guide</a></li>
+<li><a href="/community/faq">FAQ</a></li>
+<li><a href="/community/developers/pricing">Pricing</a></li>
+</ul>
+</nav>
+<nav class='span3'>
+<header>
+<h3><a href="/community/">Community</a></h3>
+</header>
+<ul class='unstyled'>
+<li><a href="/community/blogs">Blog</a></li>
+<li><a href="/community/forums/openshift">Forum</a></li>
+<li><a href="http://webchat.freenode.net/?randomnick=1&amp;channels=openshift&amp;uio=d4">IRC Channel</a></li>
+<li><a href="mailto:openshift@redhat.com">Feedback</a></li>
+<li><a href="http://makara.nurturehq.com/makara/newsletter_signup.html" class="visible-phone">Newsletter Sign up</a></li>
+</ul>
+</nav>
+<nav class='span3'>
+<header>
+<h3><a href="/community/get-involved">Get Involved</a></h3>
+</header>
+<ul class='unstyled'>
+<li><a href="/community/open-source">Open Source</a></li>
+<li><a href="/app/opensource/download">Get the Bits</a></li>
+<li><a href="/community/developers/get-involved">Make it Better</a></li>
+<li><a href="https://github.com/openshift">OpenShift on GitHub</a></li>
+</ul>
+</nav>
+<nav class='span3'>
+<header>
+<h3><a href="/app/legal">Legal</a></h3>
+</header>
+<ul class='unstyled'>
+<li><a href="/app/legal/services_agreement">Terms of Service</a></li>
+<li><a href="/app/legal/openshift_privacy">Privacy Policy</a></li>
+<li><a href="https://access.redhat.com/security/team/contact/">Security</a></li>
+</ul>
+</nav>
+</div>
+</div>
+</div>
+<section id='copyright'>
+<div class='container'>
+<a href='https://www.redhat.com/'>
+<img alt='Red Hat' src='/app/images/redhat.png?1343856921'>
+</a>
+<div class='pull-right'>Copyright &copy; 2012 Red Hat, Inc.</div>
+</div>
+</section>
+
+</footer>
+<script src="/app/javascripts/jquery-1.7.2.min.js?1343856921" type="text/javascript"></script>
+<script src="/app/javascripts/rails.js?1343856921" type="text/javascript"></script>
+<script src="/app/javascripts/plugins.js?1343856921" type="text/javascript"></script>
+<script src="/app/javascripts/jquery.validate.min.js?1343856921" type="text/javascript"></script>
+<script src="/app/javascripts/jquery.cookie.js?1343856921" type="text/javascript"></script>
+<script src="/app/javascripts/form.js?1343856921" type="text/javascript"></script>
+<script src="/app/javascripts/bootstrap-dropdown.js?1343856921" type="text/javascript"></script>
+<script src="/app/javascripts/bootstrap-collapse.js?1343856921" type="text/javascript"></script>
+<script src="/app/javascripts/bootstrap-transition.js?1343856921" type="text/javascript"></script>
+<script src="/app/status/status.js?id=outage" type="text/javascript"></script>
+
+
+
+
+</body>
+</html>
