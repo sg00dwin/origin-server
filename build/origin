@@ -190,14 +190,17 @@ module Origin
     
         ret, out = 0, nil
         begin
-          puts "Starting yum update"
+          puts "Starting yum update..."
           out, ret = ssh(hostname, "su -c \"yum -y update\"", 60 * 10, true, 1, ssh_user)
-          puts "Installing git, vim, and rake"
+          puts "Installing packages required for build..."
           out, ret = ssh(hostname, "su -c \"yum install -y git vim rubygem-rake\"", 60 * 10, true, 1, ssh_user) if ret == 0
-          puts "Creating mount"
-          out, ret = ssh(hostname, "su -c \"umount -l /data ; if [ ! -b /dev/xvdb ]; then /sbin/mke2fs /dev/xvdb; fi; mkdir -p /data && mount /dev/xvdb /data && chown -R ec2-user:ec2-user /data/\"", 60 * 10, true, 1, ssh_user) 
-          puts "Cloning / Updating crankcase repo"
+          puts "Downgrading qpid version..."
+          out, ret = ssh(hostname, "su -c \"yum -y downgrade qpid-cpp-server qpid-cpp-client qpid-qmf qpid-client-devel ruby-qpid-qmf qpid-cpp-client-devel\"", 60 * 60 * 10, false, 1, ssh_user) if ret == 0
+          puts "Creating mount..."
+          out, ret = ssh(hostname, "su -c \"umount -l /data ; if [ ! -b /dev/xvdb ]; then /sbin/mke2fs /dev/xvdb; fi; mkdir -p /data && mount /dev/xvdb /data && chown -R ec2-user:ec2-user /data/\"", 60 * 10, true, 1, ssh_user)
+          puts "Cloning / Updating crankcase repository..."
           out, ret = ssh(hostname, "if [ -d /data/crankcase ]; then cd /data/crankcase && git stash && git pull --rebase && git stash pop; else cd /data && git clone https://github.com/openshift/crankcase.git /data/crankcase; fi;" , 60 * 5, true, 1, ssh_user) if ret == 0
+          puts "Done"
     
           if ret != 0
             puts "Exiting with error code #{ret}"
@@ -206,7 +209,7 @@ module Origin
           end
           
           if options[:extra_rpm_dir]
-            out, ret = ssh(hostname, "mkdir -p /data/crankcase/build/extras" , 60, true, 1, ssh_user)
+            out, ret = ssh(hostname, "mkdir -p /data/crankcase/build/extras", 60, true, 1, ssh_user)
             files = Dir.glob("#{options[:extra_rpm_dir]}/*.rpm")
             files.each do |file|
               scp_to(hostname, file, "/data/crankcase/build/extras/", 60*10, 5, ssh_user)
@@ -219,9 +222,10 @@ module Origin
           out, ret = ssh(hostname, "cd /data/crankcase/build && rake build_setup", 60 * 20, true, 1, ssh_user) if ret == 0
           puts "Running devbroker script..."
           out, ret = ssh(hostname, "cd /data/crankcase/build && rake devbroker", 60 * 20, true, 1, ssh_user) if ret == 0
+          puts "Done"
           out, ret = ssh(hostname, "su -c \"cd /data && chown -R ec2-user:ec2-user *\"", 60 * 2, true, 1, ssh_user) if ret == 0
-          puts "Running broker setup..."
-          out, ret = ssh(hostname, "su -c \"export PATH=/usr/local/bin:/bin:/usr/bin:/usr/local/sbin:/usr/sbin:/sbin:$PATH && /usr/bin/ss-setup-broker --build\"", 60 * 10, true, 1, ssh_user) if ret == 0
+          #puts "Running broker setup..."
+          #out, ret = ssh(hostname, "su -c \"export PATH=/usr/local/bin:/bin:/usr/bin:/usr/local/sbin:/usr/sbin:/sbin:$PATH && /usr/bin/ss-setup-broker --build\"", 60 * 10, true, 1, ssh_user) if ret == 0
       
           if ret != 0
             puts "Exiting with error code #{ret}"
@@ -252,7 +256,7 @@ module Origin
         titles = ["StickShift Broker Sanity",
                   "StickShift Node Unit"]
     
-        cmds = ["cd li-test/stickshift/broker; su -c \"rake test:sanity\"",
+        cmds = ["su -c \"cd /var/www/stickshift/broker; bundle exec rake test:sanity\"",
                 "cd li-test/stickshift/node; su -c \"rake unit_test\""]
         add_ssh_cmd_to_threads(hostname, threads, failures, titles, cmds, false, @@SSH_TIMEOUT, ssh_user)
         add_ssh_cmd_to_threads(hostname, threads, failures, "Cucumber Sanity", "cucumber #{@@CUCUMBER_OPTIONS} -t @sanity li-test/tests/", false, @@SSH_TIMEOUT, ssh_user)
@@ -273,7 +277,9 @@ module Origin
       
       def post_launch_setup(hostname)
         puts "Running broker setup..."
-        out, ret = ssh(hostname, "su -c \"export PATH=/usr/local/bin:/bin:/usr/bin:/usr/local/sbin:/usr/sbin:/sbin:$PATH && /usr/bin/complete-origin-setup\"", 60 * 10, true, 1, ssh_user)
+        #out, ret = ssh(hostname, "su -c \"export PATH=/usr/local/bin:/bin:/usr/bin:/usr/local/sbin:/usr/sbin:/sbin:$PATH && /usr/bin/complete-origin-setup\"", 60 * 10, true, 1, ssh_user)
+        out, ret = ssh(hostname, "su -c \"export PATH=/usr/local/bin:/bin:/usr/bin:/usr/local/sbin:/usr/sbin:/sbin:$PATH && /usr/bin/ss-setup-broker\"", 60 * 10, true, 1, ssh_user)
+        puts "Done"
 
         if ret != 0
           puts "Exiting with error code #{ret}"
