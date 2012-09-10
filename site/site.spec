@@ -3,7 +3,7 @@
 
 Summary:   Li site components
 Name:      rhc-site
-Version: 0.98.6
+Version: 0.98.7
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -137,6 +137,9 @@ rm -rf %{buildroot}
 %{sitedir}/public
 
 %changelog
+* Mon Sep 10 2012 Troy Dawson <tdawson@redhat.com> 0.98.7-1
+- 
+
 * Mon Sep 10 2012 Troy Dawson <tdawson@redhat.com> 0.98.6-1
 - Merge pull request #353 from
   smarterclayton/bug849950_ensure_cart_tags_properly_pulled_from_server
