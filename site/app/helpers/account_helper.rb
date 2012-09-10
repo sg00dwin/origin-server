@@ -1,17 +1,17 @@
 module AccountHelper
   PlanUpgradeStepsCreate = [
     {
-      :name => 'OpenShift plans',
+      :name => 'Plans',
       :link => 'account_plans_path',
     },
     {
-      :name => 'Provide contact info',
+      :name => 'Account and Billing',
     },
     {
-      :name => 'Enter payment method'
+      :name => 'Payment Information'
     },
     {
-      :name => 'Confirm upgrade',
+      :name => 'Review and Confirm',
       :link => 'new_account_plan_upgrade_path'
     }
   ]

@@ -1,8 +1,18 @@
-.plan-comparison
-  .row-fluid
-    .span4
-      = render :partial => 'plans/plan_comparison_column', :locals => { :show => 'features', :current_plan => current_plan, :new_plan => new_plan }
-    .span4
-      = render :partial => 'plans/plan_comparison_column', :locals => { :show => 'current', :current_plan => current_plan, :new_plan => new_plan }
-    .span4
-      = render :partial => 'plans/plan_comparison_column', :locals => { :show => 'new', :current_plan => current_plan, :new_plan => new_plan }
+.row
+  %div{:class => 'span10 offset1'}
+    %table{:class => 'plan-pricing table table-condensed'}
+      %thead
+        %tr
+          %th
+          %th{:class => 'plan current'}
+            %h6 Current Plan
+            %h3= current_plan.name
+          %th{:class => 'plan new'}
+            %h6 New Plan
+            %h3= new_plan.name
+      %tbody
+        - new_plan.features.each do |f|        
+          = render :partial => 'plans/plan_comparison_feature', :locals => { :feature_name => f.name, :current_value => @current_plan.feature(f.name).value || '', :new_value => f.value, :comparison => f.<=>(current_plan.feature(f.name)) }
+          - if f.name == 'Free Gears'
+            = render :partial => 'plans/plan_comparison_feature', :locals => { :feature_name => 'Max Gears', :current_value => current_plan.max_gears, :new_value => new_plan.max_gears, :comparison => new_plan.max_gears.<=>(current_plan.max_gears) }
+            = render :partial => 'plans/plan_comparison_feature', :locals => { :feature_name => 'Gear Sizes', :current_value => current_plan.gear_sizes, :new_value => new_plan.gear_sizes, :comparison => new_plan.gear_sizes.length<=>(current_plan.gear_sizes.length) }

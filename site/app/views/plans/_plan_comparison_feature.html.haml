@@ -1,0 +1,8 @@
+- if (current_value.class == Array)
+  - current_value = current_value.map{ |line| line.capitalize }.join('<br />')
+- if (new_value.class == Array)
+  - new_value = new_value.map{ |line| line.capitalize }.join('<br />')
+%tr{:class => (comparison == 0 ? 'same-value' : nil)}
+  %th{:class => 'parameter key'}= feature_name
+  %td{:class => 'parameter value'}!= current_value || ''
+  %td{:class => 'parameter value' << (comparison == 1 ? ' upgrade' : '')}!= new_value
