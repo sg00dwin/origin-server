@@ -19,12 +19,12 @@ module StickShift
       def ssh_user
         return "root"
       end
-      
+
       def post_launch_setup(hostname)
         # Child classes can override, if required
       end
     end
-      
+
     desc "build NAME BUILD_NUM", "Build a new devenv AMI with the given NAME"
     method_option :register, :type => :boolean, :desc => "Register the instance"
     method_option :terminate, :type => :boolean, :desc => "Terminate the instance on exit"
@@ -51,7 +51,7 @@ module StickShift
       options.verbose? ? @@log.level = Logger::DEBUG : @@log.level = Logger::ERROR
       build_impl(name, build_num, options)
     end
-  
+
     desc "update", "Update current instance by installing RPMs from local git tree"
     method_option :include_stale, :type => :boolean, :desc => "Include packages that have been tagged but not synced to the repo"
     method_option :verbose, :type => :boolean, :desc => "Enable verbose logging"
@@ -59,7 +59,7 @@ module StickShift
       options.verbose? ? @@log.level = Logger::DEBUG : @@log.level = Logger::ERROR
       update_impl(options)
     end
-  
+
     desc "sync NAME", "Synchronize a local git repo with a remote DevEnv instance.  NAME should be ssh resolvable."
     method_option :tag, :type => :boolean, :desc => "NAME is an Amazon tag"
     method_option :verbose, :type => :boolean, :desc => "Enable verbose logging"
@@ -70,7 +70,7 @@ module StickShift
       options.verbose? ? @@log.level = Logger::DEBUG : @@log.level = Logger::ERROR
       sync_impl(name, options)
     end
-  
+
     desc "terminate TAG", "Terminates the instance with the specified tag"
     method_option :verbose, :type => :boolean, :desc => "Enable verbose logging"
     method_option :region, :required => false, :desc => "Amazon region override (default us-east-1)"
@@ -80,7 +80,7 @@ module StickShift
       instance = find_instance(conn, tag, true, false, ssh_user)
       terminate_instance(instance, true) if instance
     end
-  
+
     desc "launch NAME", "Launches the latest DevEnv instance, tagging with NAME"
     method_option :verifier, :type => :boolean, :desc => "Add verifier functionality (private IP setup and local tests)"
     method_option :use_stage_image, :type => :boolean, :desc => "Launch a stage DevEnv image"
@@ -94,55 +94,42 @@ module StickShift
     def launch(name)
       options.verbose? ? @@log.level = Logger::DEBUG : @@log.level = Logger::ERROR
 
+      ami = choose_ami_for_launch(options)
+
       # Override the machine type to launch if necessary
       $amz_options[:instance_type] = options[:instance_type] if options[:instance_type]
-  
-      # Get the latest devenv image and create a new instance
-      conn = connect(options.region)
-      if options.use_stage_image?
-        filter = DEVENV_STAGE_WILDCARD
-      elsif options.use_clean_image?
-        filter = DEVENV_CLEAN_WILDCARD
-      else
-        filter = DEVENV_WILDCARD
-      end
-      if options[:image_name]
-        filter = options[:image_name]
-        ami = get_specific_ami(conn, filter)
-      else
-        ami = get_latest_ami(conn, filter)
-      end
+
       if ami.nil?
         puts "No image name '#{options[:image_name]}' found!"
         exit(1)
       else
-        puts "Launching latest DevEnv instance #{ami.id} - #{ami.name}"
+        puts "Launching latest instance #{ami.id} - #{ami.name}"
       end
 
       instance = launch_instance(ami, name, 1, ssh_user)
       hostname = instance.dns_name
       puts "Done"
       puts "Hostname: #{hostname}"
-  
+
       puts "Sleeping for 30 seconds to let node stabilize..."
       sleep 30
       puts "Done"
-  
+
       update_facts_impl(hostname)
       post_launch_setup(hostname)
-  
+
       if options.verifier?
         print "Initializing git repo for syncing..."
         init_repo(hostname)
         puts "Done"
         update_remote_tests(instance.dns_name)
       end
-  
+
       validate_instance(hostname, 4)
-  
+
       update_ssh_config_verifier(instance) if options.ssh_config_verifier?
       update_express_server(instance) if options.express_server?
-  
+
       home_dir=File.join(ENV['HOME'], '.openshiftdev/home.d')
       if File.exists?(home_dir)
         Dir.glob(File.join(home_dir, '???*'), File::FNM_DOTMATCH).each {|file|
@@ -150,13 +137,13 @@ module StickShift
           scp_to(hostname, file, "~/", File.stat(file).mode, 10, ssh_user)
         }
       end
-  
+
       puts "Public IP:       #{instance.public_ip_address}"
       puts "Public Hostname: #{hostname}"
       puts "Site URL:        https://#{hostname}"
       puts "Done"
     end
-  
+
     desc "test TAG", "Runs the tests on a tagged instance and downloads the results"
     method_option :terminate, :type => :boolean, :desc => "Terminate the instance when finished"
     method_option :verbose, :type => :boolean, :desc => "Enable verbose logging"
@@ -178,48 +165,74 @@ module StickShift
     method_option :region, :required => false, :desc => "Amazon region override (default us-east-1)"
     def test(tag)
       options.verbose? ? @@log.level = Logger::DEBUG : @@log.level = Logger::ERROR
-  
+
       conn = connect(options.region)
       instance = find_instance(conn, tag, true, true, ssh_user)
       hostname = instance.dns_name
-  
+
       test_impl(tag, hostname, instance, conn, options)
     end
-    
+
     desc "sanity_check TAG", "Runs a set of sanity check tests on a tagged instance"
     method_option :verbose, :type => :boolean, :desc => "Enable verbose logging"
     method_option :region, :required => false, :desc => "Amazon region override (default us-east-1)"
     def sanity_check(tag)
       options.verbose? ? @@log.level = Logger::DEBUG : @@log.level = Logger::ERROR
-      
+
       conn = connect(options.region)
       instance = find_instance(conn, tag, true, true, ssh_user)
       hostname = instance.dns_name
 
       sanity_check_impl(tag, hostname, instance, conn, options)
     end
-  
+
     desc "install_local_client", "Builds and installs the local client rpm (uses sudo)"
     method_option :verbose, :type => :boolean, :desc => "Enable verbose logging"
     def install_local_client
       options.verbose? ? @@log.level = Logger::DEBUG : @@log.level = Logger::ERROR
-  
+
       if File.exists?('../rhc')
         inside('../rhc') do
           temp_commit
-  
+
           puts "building rhc..."
           `tito build --rpm --test`
           puts "installing rhc..."
           `sudo rpm -Uvh --force /tmp/tito/noarch/rhc-*; rm -rf /tmp/tito; mkdir -p /tmp/tito`
-  
+
           reset_temp_commit
-  
+
           puts "Done"
         end
       else
         puts "Couldn't find ../rhc."
       end
     end
-  end
-end
+
+    no_tasks do
+      def choose_ami_for_launch(options)
+        # Get the latest devenv image and create a new instance
+        conn = connect(options.region)
+        filter = choose_filter_for_launch_ami(options)
+        if options[:image_name]
+          filter = options[:image_name]
+          ami = get_specific_ami(conn, filter)
+        else
+          ami = get_latest_ami(conn, filter)
+        end
+        ami
+      end
+
+      def choose_filter_for_launch_ami(options)
+        if options.use_stage_image?
+          filter = DEVENV_STAGE_WILDCARD
+        elsif options.use_clean_image?
+          filter = DEVENV_CLEAN_WILDCARD
+        else
+          filter = DEVENV_WILDCARD
+        end
+        filter
+      end
+    end #no_tasks
+  end #class
+end #module
