@@ -9,49 +9,42 @@ require 'reports'
 require 'yaml'
 require 'commander/import'
 
-CONFIG_DIR = File.join(File.expand_path(File.dirname(__FILE__)),'/config')
-CAL_PATH='https://mail.corp.redhat.com/home/shadowman@redhat.com/OpenShift.ics'
-
-# Read Rally configuration file
-rally_config = YAML.load_file(File.join(CONFIG_DIR,'rally.yml'))
-
-# Define available report types
-reports_config = YAML.load_file(File.join(CONFIG_DIR,'reports.yml'))
-
-$report_types = {}
-reports_config.each do |name,args|
-  $report_types[name] = UserStoryReport.new(args)
-end
-
-say "Logging into Rally..."
-$sprint = Sprint.new({
-  :calendar => CAL_PATH,
-  :rally_config => rally_config
-})
-
-reports = {}
-say "Building available reports..."
-reports[:dev] = Report.new({
-  :reports => [:no_tasks,:blocked,:not_approved,:rejected,:dcut],
-  :summary_email => 'libra-devel@redhat.com'
-})
-
-reports[:qe] = Report.new({
-  :reports => [:not_qe_ready,:rejected],
-  :summary_email => 'libra-qe@redhat.com',
-  :nag_owners => false
-})
-
-#####
-# Commander stuff
-#####
-
 name="#{__FILE__}"
 
 program :name, "Sprint Status Notifier"
 program :version, "1.0.0"
 program :description, "A script to create sprint status notification emails"
 
+CONFIG_DIR = File.join(File.expand_path(File.dirname(__FILE__)),'/config')
+
+# This loads the conf files and creates new objects
+#   based on the specified classes
+def load_conf(klass,file,single = false)
+  args = YAML.load_file(File.join(CONFIG_DIR,file))
+  if single
+    klass.new(args)
+  else
+    Hash[*args.map do |key,val|
+      [key,klass.new(val)]
+    end.flatten]
+  end
+end
+
+# Read Rally configuration file
+say "Logging into Rally..."
+$sprint = load_conf(Sprint,'rally.yml',true)
+
+# Generate queries
+say "Generating queries..."
+$report_types = load_conf(UserStoryReport,'queries.yml')
+
+# Generate reports
+say "Building available reports..."
+reports = load_conf(Report,'reports.yml')
+
+#####
+# Commander stuff
+#####
 global_option "-r", "--report NAME" , "Available report types: %s"% reports.keys.join(', ')
 global_option "-s", "--send", "Actually send the report (we will test by default)"
 global_option "-t", "--to EMAIL", "Who to send the email to (overrides default for report)"

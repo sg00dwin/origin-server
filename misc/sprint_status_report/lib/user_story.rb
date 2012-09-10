@@ -1,3 +1,4 @@
+require 'pry'
 class UserStory
   attr_accessor :data
 
@@ -21,24 +22,18 @@ class UserStory
     notes =~ regex
   end
 
-  def design?(match = true)
-    check_project("Design",match)
-  end
-
-  def ui?(match = true)
-    check_project("User Interface",match)
-  end
-
-  def runtime?(match = true)
-    check_project("Runtime",match)
-  end
-
-  def business?(match = true)
-    check_project("Business Integration",match)
-  end
-
-  def check_project(name,match)
-    (project.name =~ /^#{name}/).nil? != match
+  # Dynamically create functions to check what project this is for
+  {
+    :business?      => "Business Integration",
+    :design?        => "Design",
+    :documentation? => "Documentation",
+    :onpremise?     => "OnPremise",
+    :runtime?       => "Runtime",
+    :ui?            => "User Interface",
+  }.each do |name,val|
+    define_method(name) do |match = true|
+      (project.name =~ /^#{val}/).nil? != match
+    end
   end
 
   def output

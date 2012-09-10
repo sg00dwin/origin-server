@@ -2,7 +2,6 @@ source :rubygems
 
 gem 'rally_rest_api'
 gem 'builder'
-gem 'ri_cal'
 gem 'pony'
 gem 'kramdown'
 

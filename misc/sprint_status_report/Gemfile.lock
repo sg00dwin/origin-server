@@ -16,7 +16,6 @@ GEM
     pony (1.4)
       mail (> 2.0)
     rally_rest_api (1.0.3)
-    ri_cal (0.8.8)
     treetop (1.4.10)
       polyglot
       polyglot (>= 0.3.1)
@@ -30,4 +29,3 @@ DEPENDENCIES
   kramdown
   pony
   rally_rest_api
-  ri_cal

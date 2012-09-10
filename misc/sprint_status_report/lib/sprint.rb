@@ -1,12 +1,14 @@
 require 'rally_rest_api'
-require 'calendar'
 require 'user_story'
+require 'queries'
 
 class Sprint
+  # Rally Config
+  attr_accessor :eng_workspace_oid, :username, :password
   # Calendar related attributes
-  attr_accessor :name, :number, :start, :end, :dcut, :calendar
+  attr_accessor :name, :number, :start, :end, :dcut, :dcut_offset
   # Rally related attributes
-  attr_accessor :rally, :workspace, :project, :rally_config
+  attr_accessor :rally, :workspace, :project, :rally_config, :iterations
   # UserStory related attributes
   attr_accessor :stories, :processed, :results
   # Queries to run against US
@@ -17,6 +19,13 @@ class Sprint
     opts.each do |k,v|
       send("#{k}=",v)
     end
+
+    @rally = RallyRestAPI.new(
+      :username => @username,
+      :password => @password
+    )
+
+    @stories = get_stories
   end
 
   def day
@@ -51,71 +60,52 @@ class Sprint
     $date = Date.today
   end
 
-  def queries
-    {
-      :needs_tasks => {
-        :function => lambda{|x| x.tasks.nil? }
-      },
-      :blocked => {
-        :function => lambda{|x| x.blocked == "true" }
-      },
-      :needs_qe => {
-        :function => lambda{|x| !x.design? && !x.check_tags('no-qe') }
-      },
-      :qe_ready => {
-        :parent => :needs_qe,
-        :function => lambda{|x| x.check_notes(/(\[libra-qe\]|tcms|QE)/) }
-      },
-      :approved => {
-        :parent => :not_rejected,
-        :function => lambda{|x| x.check_tags('TC-approved') }
-      },
-      :rejected => {
-        :parent => :qe_ready,
-        :function => lambda{|x| x.check_tags('TC-rejected') }
-      },
-      :accepted   => {
-        :function => lambda{|x| x.schedule_state == "Accepted" }
-      },
-      :completed   => {
-        :parent   => :not_accepted,
-        :function => lambda{|x| x.schedule_state == "Completed" }
-      },
-      :not_dcut_complete => {
-        :parent   => :not_completed,
-        :function => lambda{|x| x.check_tags('os-DevCut')}
-      }
-    }
-  end
-
-  # Parse the calendar
-  def calendar=(calendar)
-    SprintCalendar.new(calendar).sprint_args.each do |k,v|
-      send("#{k}=",v)
-    end
-  end
-
-  # Log in to Rally
-  def rally_config=(config)
-    @rally = RallyRestAPI.new(
-      :username => config[:username],
-      :password => config[:password]
-    )
-
-    @workspace = rally.user.subscription.workspaces.select{|x| x.oid == config[:eng_workspace_oid] }.first
-
+  def workspace
+    @workspace ||= rally.user.subscription.workspaces.select{|x| x.oid == @eng_workspace_oid }.first
+  ensure
     # Verify we have access to the Engineering Workspace
     unless @workspace
       puts "You do not have access to the Engineering workspace"
       puts "Please send this error to libra-devel@redhat.com for support"
       exit 1
     end
+  end
 
+  def project
     # Find the OpenShift 2.0 project
-    @project = workspace.projects.select{|p| p.name == "OpenShift 2.0"}.compact.first
+    @project ||= workspace.projects.select{|p| p.name == "OpenShift 2.0"}.compact.first
+  end
 
-    # Fetch stories after logging in
-    @stories = get_stories
+  def iterations
+    # Get all current iterations for this project
+    @iterations ||= rally.find(:iteration, :project => project, :workspace => workspace){
+      lte :start_date, Date.today.to_s
+      gte :end_date, Date.today.to_s
+      not_equal :state, "Accepted"
+      not_equal :state, "Committed"
+    }
+  end
+
+  def start
+    @start ||= iterations.map{|x| Date.parse(x.start_date)}.sort.first
+  end
+
+  def end
+    @end ||= iterations.map{|x| Date.parse(x.end_date)}.sort.last
+  end
+
+  def dcut
+    @dcut ||= start + dcut_offset
+  end
+
+  def number
+    name.scan(/\d+/).first.to_i
+  end
+
+  def name
+    @name ||= (iterations.map do |i|
+      i.name
+    end.uniq.first)
   end
 
   def title(short = false)
