@@ -25,11 +25,12 @@ function copy_files_to_cartridge_dir {
     echo "Target location '#target_location' does not exist."
     return
   fi
-  echo "Copying files from $source_location to location $target_location"
-  cp -rf $source_location/* $target_location/.
+  #echo "Copying files from $source_location to location $target_location"
+  #cp -rf  * $target_location/.
   #FILES=$(find $target_location -type f -name *.ini -or -name *.conf -or -name *.xml)
 
   for f in ${template_files[*]}; do
+    cp -f $source_location/$f ${target_location}/$f
     zpath=${target_location}/$f
     zdir=`dirname $zpath`
     zfile=`basename $zpath`
@@ -54,7 +55,7 @@ function create_sandbox_to_cart_dir_links {
     zpath=$zend_sandbox/$path
     zdir=`dirname $zpath`
     zfile=`basename $zpath`
-    [ -d "$zdir" ]  ||  mkdir -p $zdir
+    mkdir -p $zdir
     #echo "Linking $zdir/$zfile to $CART_DIR/$path"
     ln -s $CART_DIR/$path $zdir/$zfile
   done
@@ -84,12 +85,8 @@ echo "FILES_DIR=${FILES_DIR} CART_DIR=${CART_DIR} USER_ID=${USER_ID} GROUP_ID=${
 
 uid=`id -u`
 if [ $uid -eq 0 ] ; then
-  echo "Running as root"
+  echo "Configuring zend server on move"
   copy_files_to_cartridge_dir  $FILES_DIR
   change_ownership_to_user
-else
-  echo "Running as non-root..."
-  #copy_files_to_sandbox $FILES_DIR
-  create_sandbox_to_cart_dir_links
 fi
 
