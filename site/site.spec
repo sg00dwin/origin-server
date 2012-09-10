@@ -3,7 +3,7 @@
 
 Summary:   Li site components
 Name:      rhc-site
-Version: 0.98.5
+Version: 0.98.6
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -137,6 +137,16 @@ rm -rf %{buildroot}
 %{sitedir}/public
 
 %changelog
+* Mon Sep 10 2012 Troy Dawson <tdawson@redhat.com> 0.98.6-1
+- Merge pull request #353 from
+  smarterclayton/bug849950_ensure_cart_tags_properly_pulled_from_server
+  (openshift+bot@redhat.com)
+- Backport changes from the opensource branch that fix build issues
+  (ccoleman@redhat.com)
+- Bug 849950 - Respect server tags (ccoleman@redhat.com)
+- Bug 849950 - Give Zend cart proper metadata and ensure sorting of cartridges
+  on the cartridge page is working. (ccoleman@redhat.com)
+
 * Fri Sep 07 2012 Adam Miller <admiller@redhat.com> 0.98.5-1
 - Merge pull request #350 from sg00dwin/master (openshift+bot@redhat.com)
 - Merge pull request #340 from pravisankar/dev/ravi/zend-fix-description
