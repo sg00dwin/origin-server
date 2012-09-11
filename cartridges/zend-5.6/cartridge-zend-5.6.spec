@@ -2,7 +2,7 @@
 
 Summary:   Provides zend-5.6 support
 Name:      cartridge-zend-5.6
-Version: 0.95.6
+Version: 0.95.7
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   ASL 2.0
@@ -108,6 +108,10 @@ rm -rf %{buildroot}
 %doc %{cartridgedir}/LICENSE
 
 %changelog
+* Mon Sep 10 2012 Dan McPherson <dmcphers@redhat.com> 0.95.7-1
+- Merge pull request #355 from lnader/master (openshift+bot@redhat.com)
+- Bug 853586 (lnader@redhat.com)
+
 * Fri Sep 07 2012 Adam Miller <admiller@redhat.com> 0.95.6-1
 - Merge pull request #350 from sg00dwin/master (openshift+bot@redhat.com)
 - Merge pull request #340 from pravisankar/dev/ravi/zend-fix-description
