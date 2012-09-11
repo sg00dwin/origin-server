@@ -11,12 +11,13 @@ done
 
 # Allow old and new backups without an error message from tar by
 # including all data dirs and excluding the cartridge ones.
-includes=( "./*/*/data" "./*/*/etc" "./*/*/var" "./*/*/gui")
+includes=( "./*/*/data" "./*/zend-5.6/etc" "./*/zend-5.6/var" "./*/zend-5.6/gui" )
 
 transforms=( --transform="s|${OPENSHIFT_GEAR_NAME}/data|app-root/data|" )
 
 excludes=()
 carts=( $(source /etc/stickshift/stickshift-node.conf; ls $CARTRIDGE_BASE_PATH ; ls $CARTRIDGE_BASE_PATH/embedded) )
+
 for cdir in ${carts[@]}
 do
     excludes=( "${excludes[@]}" --exclude="./*/$cdir/data" )
@@ -31,4 +32,4 @@ else
   echo "Restoring ~/app-root/data" 1>&2
 fi
 
-/bin/tar --strip=2 --overwrite -xmz "${includes[@]}" "${transforms[@]}" "${excludes[@]}"  
+/bin/tar --strip=2 --overwrite -xmz "${includes[@]}" "${transforms[@]}" "${excludes[@]}" 1>&2
