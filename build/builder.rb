@@ -49,7 +49,43 @@ module StickShift
     method_option :extra_rpm_dir, :required => false, :dessc => "Directory containing extra rpms to be installed"
     def build(name, build_num)
       options.verbose? ? @@log.level = Logger::DEBUG : @@log.level = Logger::ERROR
-      build_impl(name, build_num, options)
+
+      # Override the machine type to launch if necessary
+      $amz_options[:instance_type] = options[:instance_type] if options[:instance_type]
+  
+      # Establish a new connection
+      conn = connect(options.region)
+  
+      image = nil
+      if options.install_required_packages?
+        # Create a new builder instance
+        if (options.region?nil)
+          image = conn.images[AMI["us-east-1"]]
+        elsif AMI[options.region].nil?
+          puts "No AMI specified for region:" + options.region
+          exit 1
+        else
+          image = conn.images[AMI[options.region]]
+        end
+      elsif options.build_clean_ami? || options.install_from_source? || options.install_from_local_source?
+        # Get the latest devenv base image and create a new instance
+        if options.use_stage_repo?
+          filter = DEVENV_STAGE_BASE_WILDCARD
+        else
+          filter = DEVENV_BASE_WILDCARD
+        end
+        image = get_latest_ami(conn, filter)
+      else
+        # Get the latest devenv clean image and create a new instance
+        if options.use_stage_repo?
+          filter = DEVENV_STAGE_CLEAN_WILDCARD
+        else
+          filter = DEVENV_CLEAN_WILDCARD
+        end
+        image = get_latest_ami(conn, filter)
+      end
+
+      build_impl(name, build_num, image, conn, options)
     end
 
     desc "update", "Update current instance by installing RPMs from local git tree"
