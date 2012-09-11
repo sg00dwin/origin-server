@@ -27,6 +27,8 @@ class PlansControllerTest < ActionController::TestCase
   end
 
   test "should redirect index requests to the show action" do
+    with_unique_user
+
     get :index
     assert_response :redirect
     assert_redirected_to :controller => 'plans', :action => 'show'
@@ -34,6 +36,7 @@ class PlansControllerTest < ActionController::TestCase
 
   test "should redirect to login for an unauthenticated show request" do
     get :show
+    assert_response :redirect
     assert_redirected_to login_path(:redirectUrl => '/account/plan')
   end
 
