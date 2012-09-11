@@ -3,7 +3,7 @@
 
 Summary:   Li site components
 Name:      rhc-site
-Version: 0.98.7
+Version: 0.98.8
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -137,6 +137,11 @@ rm -rf %{buildroot}
 %{sitedir}/public
 
 %changelog
+* Tue Sep 11 2012 Troy Dawson <tdawson@redhat.com> 0.98.8-1
+- Merge pull request #356 from sg00dwin/master (openshift+bot@redhat.com)
+- Minor css updates (sgoodwin@redhat.com)
+- Merge branch 'master' of github.com:openshift/li (sgoodwin@redhat.com)
+
 * Mon Sep 10 2012 Troy Dawson <tdawson@redhat.com> 0.98.7-1
 - 
 
