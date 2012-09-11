@@ -441,6 +441,46 @@ class AriaUnitTest < ActiveSupport::TestCase
     assert_raise(Aria::MasterPlanFeature::MalformedFeatureError) {features = plan.features}
   end
 
+  test 'should be able to sort master plans by price then gear size options' do
+    Aria::Client.any_instance.expects(:invoke).once.
+      with(:get_client_plans_basic).
+      returns(Aria::WDDX::Struct.new({
+        'plans_basic' => [
+          Aria::WDDX::Struct.new({
+            'plan_no' => '3',
+            'plan_name' => 'MockShift',
+            'plan_desc' => "This is the MockShift plan.\n\nFeatures:\n\n* Price: Free"
+          }),
+          Aria::WDDX::Struct.new({
+            'plan_no' => '4',
+            'plan_name' => 'SuperMockShift',
+            'plan_desc' => "This is the SuperMockShift plan.\n\nFeatures:\n\n* Price: $42/month *"
+          }),
+          Aria::WDDX::Struct.new({
+            'plan_no' => '5',
+            'plan_name' => 'MegaMockShift',
+            'plan_desc' => "This is the MegaMockShift plan.\n\nFeatures:\n\n* Price: $42/month *"
+          })
+        ]
+      }))
+
+    assert plan = Aria::MasterPlan.new(
+      :plan_no => '3',
+      :capabilities => { :max_gears => 16, :gear_sizes => ['small'] }
+    )
+    assert plan2 = Aria::MasterPlan.new(
+      :plan_no => '4',
+      :capabilities => { :max_gears => 32, :gear_sizes => ['small','medium'] }
+    )
+    assert plan3 = Aria::MasterPlan.new(
+      :plan_no => '5',
+      :capabilities => { :max_gears => 32, :gear_sizes => ['small','medium','large'] }
+    )
+
+    assert_equal [plan, plan2], [plan2, plan].sort
+    assert_equal [plan2, plan3], [plan3, plan2].sort
+  end
+
   test 'should be able to sort master plan features from different plans' do
     Aria::Client.any_instance.expects(:invoke).once.
       with(:get_client_plans_basic).

@@ -24,30 +24,17 @@ module Aria
     end
 
     def count
-      if type == 'numeric'
-        @count
-      else
-        nil
-      end
+      (type == 'numeric') ? @count : nil
     end
 
     def not_available?
-      if (type == 'text' and value == '') or (type == 'numeric' and count == 0)
-        true
-      else
-        false
-      end
+      (type == 'text' and value == '') or (type == 'numeric' and count == 0)
     end
 
     def <=>(other)
-      if name != other.name
-        raise ComparisonError.new('Only identically named features can be compared.')
-      end
-      if rank == other.rank and type == 'numeric'
-        value <=> other.value
-      else
-        rank <=> other.rank
-      end
+      raise ComparisonError.new('Only identically named features can be compared.') unless name == other.name
+      return value <=> other.value if rank == other.rank and type == 'numeric'
+      rank <=> other.rank
     end
 
     def self.from_description(plan_description)
