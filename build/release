@@ -263,7 +263,7 @@ class Release < Thor
       end
 
       (tag_failures + requires_rebuild).each do |build_dir|
-        build_dirs.delete_if { build_info | build_info[1] == build_dir }
+        build_dirs.delete_if { | build_info | build_info[1] == build_dir }
       end
 
       li_repo = {'li' => [FileUtils.pwd]}
