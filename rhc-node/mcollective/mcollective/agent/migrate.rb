@@ -204,8 +204,8 @@ module OpenShiftMigration
           File.unlink(entry)
           File.symlink(dstlink,entry)
           mcs_label = Util.get_mcs_level(uuid)
-          output+="Fixing selinux MCS label: #{entry} -> system_u:object_r:libra_var_lib_t:#{mcs_label}"
-          %x[ chcon -h -u system_u -r object_r -t libra_var_lib_t -l #{mcs_label} #{entry} ]
+          output+="Fixing selinux MCS label: #{entry} -> system_u:object_r:openshift_var_lib_t:#{mcs_label}"
+          %x[ chcon -h -u system_u -r object_r -t openshift_var_lib_t -l #{mcs_label} #{entry} ]
         end
       elsif File.file?(entry)
         File.open(entry, File::RDWR) do |f|

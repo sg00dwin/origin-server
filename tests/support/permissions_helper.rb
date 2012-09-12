@@ -30,7 +30,7 @@ module PermissionHelper
   # Examples
   #
   #   context?("/var/lib/openshift/#{uuid}/.pearrc", 
-  #           "unconfined_u:object_r:libra_var_lib_t:#{mcs}")
+  #           "unconfined_u:object_r:openshift_var_lib_t:#{mcs}")
   #   # => true 
   #
   # Returns true if the context matches or nil if it does not.
@@ -66,11 +66,11 @@ module PermissionHelper
   #
   # Examples
   #
-  #   libra_mcs_level(501)
+  #   openshift_mcs_level(501)
   #   # => "s0:c0,c501"
   #
   # Returns the String representation of the mcs label (selinux range).
-  def libra_mcs_level(uid)
+  def openshift_mcs_level(uid)
     setsize=1023
     tier=setsize
     ord=uid

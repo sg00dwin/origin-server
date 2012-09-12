@@ -1,0 +1,129 @@
+policy_module(openshift-hosted,1.0.0)
+
+gen_require(`
+	attribute openshift_net_domain;
+	attribute openshift_domain;
+	attribute openshift_file_type;
+	type openshift_t;
+	type openshift_app_t;
+	type openshift_cgroup_read_t;
+	type openshift_cgroup_read_exec_t;
+	type openshift_initrc_t;
+	type openshift_initrc_exec_t;
+	type openshift_initrc_tmp_t;
+	type openshift_log_t ;
+	type openshift_port_t;
+	type openshift_tmp_t;
+	type openshift_rw_file_t;
+	type openshift_var_lib_t;
+	type openshift_var_run_t;
+')
+
+typealias openshift_t alias libra_t;
+typealias openshift_app_t alias libra_app_t;
+typealias openshift_initrc_t alias libra_initrc_t;
+typealias openshift_initrc_exec_t alias libra_initrc_exec_t;
+typealias openshift_initrc_tmp_t alias libra_initrc_tmp_t;
+typealias openshift_tmp_t alias libra_tmp_t;
+typealias openshift_var_run_t alias libra_var_run_t;
+typealias openshift_var_lib_t alias libra_var_lib_t;
+typealias openshift_rw_file_t alias libra_rw_file_t;
+typealias openshift_log_t  alias libra_log_t;
+typealias openshift_port_t alias libra_port_t;
+typealias openshift_cgroup_read_t alias libra_cgroup_t;
+typealias openshift_cgroup_read_exec_t alias libra_cgroup_read_exec_t;
+
+# Not sure if we should allow or dontaudit.
+#dontaudit openshift_domain self:socket  create_socket_perms;
+
+openshift_net_type(openshift_app_t)
+
+openshift_service_domain_template(openshift_net)
+openshift_net_type(openshift_net_t)
+
+openshift_service_domain_template(openshift_min)
+
+########################################
+#
+# openshift hosted standard local policy
+#
+corenet_tcp_connect_mssql_port(openshift_net_domain)
+corenet_tcp_connect_mysqld_port(openshift_net_domain)
+corenet_tcp_connect_postgresql_port(openshift_net_domain)
+corenet_tcp_connect_git_port(openshift_net_domain)
+corenet_tcp_connect_oracle_port(openshift_net_domain)
+corenet_tcp_connect_flash_port(openshift_net_domain)
+corenet_tcp_connect_http_port(openshift_net_domain)
+corenet_tcp_connect_ftp_port(openshift_net_domain)
+#/* These ports are the ephemeral ports needed for ftp */
+corenet_tcp_connect_virt_migration_port(openshift_net_domain)
+corenet_tcp_connect_ssh_port(openshift_net_domain)
+corenet_tcp_connect_jacorb_port(openshift_net_domain)
+corenet_tcp_connect_jboss_management_port(openshift_net_domain)
+corenet_tcp_connect_jboss_debug_port(openshift_net_domain)
+corenet_tcp_connect_jboss_messaging_port(openshift_net_domain)
+corenet_tcp_connect_memcache_port(openshift_net_domain)
+corenet_tcp_connect_http_cache_port(openshift_net_domain)
+corenet_tcp_connect_amqp_port(openshift_net_domain)
+corenet_tcp_connect_generic_port(openshift_net_domain)
+corenet_tcp_connect_mongod_port(openshift_net_domain)
+corenet_tcp_connect_munin_port(openshift_net_domain)
+corenet_tcp_connect_pop_port(openshift_net_domain)
+corenet_tcp_connect_pulseaudio_port(openshift_net_domain)
+corenet_tcp_connect_smtp_port(openshift_net_domain)
+corenet_tcp_connect_whois_port(openshift_net_domain)
+corenet_udp_bind_generic_port(openshift_net_domain)
+corenet_tcp_bind_http_cache_port(openshift_domain)
+corenet_tcp_bind_jacorb_port(openshift_net_domain)
+corenet_tcp_bind_jboss_management_port(openshift_net_domain)
+corenet_tcp_bind_jboss_messaging_port(openshift_net_domain)
+corenet_tcp_bind_jboss_debug_port(openshift_net_domain)
+corenet_tcp_bind_mongod_port(openshift_net_domain)
+corenet_tcp_bind_mysqld_port(openshift_domain)
+corenet_tcp_bind_pulseaudio_port(openshift_net_domain)
+corenet_tcp_bind_postgresql_port(openshift_net_domain)
+allow openshift_net_domain openshift_port_t:tcp_socket name_connect;
+
+########################################
+#
+# openshift net local policy
+#
+corenet_tcp_connect_all_ports(openshift_net_t)
+
+########################################
+#
+# openshift_mail local policy
+#
+mta_base_mail_template(openshift)
+mta_sendmail_domtrans(openshift_domain, openshift_mail_t)
+role system_r types openshift_mail_t;
+
+allow openshift_domain openshift_mail_t:process { getattr signal signull sigkill };
+allow openshift_mail_t openshift_initrc_t:fifo_file rw_inherited_fifo_file_perms;
+dontaudit openshift_mail_t sshd_devpts_t:chr_file { read write };
+ssh_dontaudit_use_ptys(openshift_mail_t)
+
+fs_dontaudit_rw_anon_inodefs_files(openshift_mail_t)
+
+read_files_pattern(openshift_mail_t, openshift_file_type, openshift_file_type)
+allow openshift_mail_t openshift_file_type:file rw_inherited_file_perms;
+
+manage_files_pattern(openshift_mail_t, openshift_tmp_t, openshift_tmp_t)
+
+mta_dontaudit_read_spool_symlinks(openshift_mail_t)
+
+userdom_dontaudit_use_user_ptys(openshift_mail_t)
+
+mta_signal_user_agent(openshift_user_domain)
+
+#
+# Programs that openshift instances should not be allowed to execute, that I have 
+# see users attempt to execute
+#
+# rpm, yum, debuginfo-install
+# traceroute, iptables, iptables-multi
+# dmesg, tcpdump, mtr, ip
+# su, sudo, denyhosts, chsh, chfn
+#
+
+

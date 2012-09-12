@@ -675,6 +675,27 @@ module Express
               puts output
               puts "---------------------------------------------------------"
 
+              if options[:extra_rpm_dir]
+                if File.exist? options[:extra_rpm_dir]
+                  out, ret = ssh(hostname, "mkdir -p /data/origin-server-working/build/extras", 60, true, 1, ssh_user)
+                  files = Dir.glob("#{options[:extra_rpm_dir]}/*.rpm")
+                  files.each do |file|
+                    scp_to(hostname, file, "/data/origin-server-working/build/extras/", 60*10, 5, ssh_user)
+                  end
+
+                  out, ret = ssh(hostname, "su -c \"cd /data/origin-server-working/build/extras && yum install -y *.rpm\"", 60 * 20, true, 1, ssh_user)
+
+                  puts "------------------ Extra RPMs Output ------------------------"
+                  puts out
+                  puts "-------------------------------------------------------------"
+
+                else
+                  puts "!!!Warning!!!"
+                  puts "Directory containing extra rpms not found. Skipping..."
+                  puts "!!!Warning!!!"
+                end
+              end
+
               if options.reboot?
                 reboot(instance)
               end

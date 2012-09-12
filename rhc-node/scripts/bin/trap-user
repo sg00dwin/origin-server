@@ -9,8 +9,6 @@ import base64
 import commands
 import selinux
 
-EXT_LIB = "/usr/libexec/openshift/lib/util_ext"
-
 commands_map = {
     "git-receive-pack": "/usr/bin/git-receive-pack",
     "git-upload-pack": "/usr/bin/git-upload-pack",
@@ -64,7 +62,7 @@ def read_env_vars():
         os.putenv(env, env_var)
 
 def get_mcs_level(uid):
-    cmd = "source %s; get_mcs_level %s" % (EXT_LIB, uid)
+    cmd = "oo-get-mcs-level %s" % uid
     ret = commands.getstatusoutput(cmd)
     return ret[1]
 
@@ -211,7 +209,7 @@ if __name__ == '__main__':
     runcon = '/usr/bin/runcon'
     mcs_level = get_mcs_level(os.getuid())
 
-    target_context = 'unconfined_u:system_r:libra_t:%s' % mcs_level
+    target_context = 'unconfined_u:system_r:openshift_t:%s' % mcs_level
     actual_context = selinux.getcon()[1]
     # Confirm nothing fishy is going on
     if target_context != actual_context:

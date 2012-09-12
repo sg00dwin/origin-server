@@ -11,9 +11,6 @@ Source0:       rhc-node-%{version}.tar.gz
 
 BuildRoot:     %(mktemp -ud %{_tmppath}/%{name}-%{version}-%{release}-XXXXXX)
 BuildRequires: ruby
-BuildRequires: pam-devel
-BuildRequires: libselinux-devel
-BuildRequires: gcc-c++
 Requires:      rhc-common
 Requires:      rhc-selinux >= 0.84.7-1
 Requires:      git
@@ -60,12 +57,6 @@ Turns current host into a OpenShift managed node
 
 %build
 
-# Build pam_libra
-pwd
-cd pam_libra
-make
-cd -
-
 
 %install
 rm -rf $RPM_BUILD_ROOT
@@ -102,7 +93,6 @@ cp scripts/openshift_tmpwatch.sh %{buildroot}%{_sysconfdir}/cron.daily/openshift
 cp conf/oddjob/openshift-restorer.conf %{buildroot}%{_sysconfdir}/dbus-1/system.d/
 cp conf/oddjob/oddjobd-restorer.conf %{buildroot}%{_sysconfdir}/oddjobd.conf.d/
 cp scripts/restorer.php %{buildroot}/%{_localstatedir}/www/html/
-cp pam_libra/pam_libra.so.1  %{buildroot}/lib64/security/pam_libra.so
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -257,7 +247,6 @@ fi
 %attr(0750,root,root) %config(noreplace) %{_sysconfdir}/httpd/conf.d/000000_default.conf
 #%attr(0640,root,root) %{_sysconfdir}/httpd/conf.d/openshift
 %dir %attr(0755,root,root) %{_sysconfdir}/openshift/skel
-/lib64/security/pam_libra.so
 %dir %attr(1777,root,root) /sandbox
 
 

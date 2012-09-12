@@ -11,4 +11,4 @@ setup_user_vars
 
 rm -f $dest
 ln -s $src $dest
-chcon -u system_u -t libra_var_lib_t -l $mcs_level --no-dereference $dest
+chcon -u system_u -t openshift_var_lib_t -l $mcs_level --no-dereference $dest

@@ -137,8 +137,8 @@ def check_selinux()
     unless %x[getenforce] =~ /Enforcing/
         do_fail("selinux is not enabled") 
     else
-        verbose("checking selinux libra policy")
-        do_fail("selinux libra policy is not loaded") unless %x[/usr/bin/timeout -s9 10 /usr/sbin/semodule -l] =~ /libra/
+        verbose("checking selinux openshift-hosted policy")
+        do_fail("selinux openshift-hosted policy is not loaded") unless %x[/usr/bin/timeout -s9 10 /usr/sbin/semodule -l] =~ /openshift-hosted/
     end
     verbose("checking selinux booleans")
     $SEBOOL_LIST.split.each { |bool|

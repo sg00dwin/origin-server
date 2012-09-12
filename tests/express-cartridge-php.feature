@@ -6,7 +6,7 @@ Feature: PHP Application
 # since these are express-ONLY features as of now
 # When we support these features on the opensource side as well, we should merge this section back
 
-  # runcon -u ?? -r system_r -t libra_initrc_t
+  # runcon -u ?? -r system_r -t openshift_initrc_t
 
   Scenario: Create Delete one PHP Application
     Given a new php-5.3 type application
