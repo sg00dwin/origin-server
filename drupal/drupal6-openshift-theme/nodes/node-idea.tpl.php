@@ -5,7 +5,7 @@
 //echo '</pre>';
 $do = og_comment_perms_do();
 ?>
-<div id="node-<?php print $node->nid; ?>" class="node node-og-group-post<?php if ($sticky) { print ' sticky'; } ?><?php if (!$status) { print ' node-unpublished'; } ?>">
+<div id="node-<?php print $node->nid; ?>" class="thread node node-og-group-post<?php if ($sticky) { print ' sticky'; } ?><?php if (!$status) { print ' node-unpublished'; } ?>">
   <div class="thread-header">Feature Request</div>
 
   <?php if ($forum) { ?>
@@ -15,11 +15,11 @@ $do = og_comment_perms_do();
     </ul><?php
   } ?>
 
-  <h2><a href="<?php print $node_url ?>" title="<?php print $title ?>"><?php print $title ?></a></h2>
-  
+<div id="thread-intro" class="clearfix">
   <?php print theme('user_picture', $node); ?>
+  <h2><?php print $title ?></h2>
 
-  <div class="meta">
+  <div class="meta thread-author">
   <?php if ($submitted): ?>
     <div class="submitted">
       <?php
@@ -34,8 +34,9 @@ $do = og_comment_perms_do();
     <div class="terms terms-inline"><?php print $terms ?></div>
   <?php endif;?>
   </div>
+</div><!-- /thread-intro -->
 
-  <div class="content">
+  <div class="content clearfix">
     <?php if ($node->field_state[0]['value'] == 'Completed'): ?>
       <h3 class='implemented'>This feature has been implemented</h3>
       <br />
