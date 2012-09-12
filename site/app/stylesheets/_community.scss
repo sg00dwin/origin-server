@@ -221,7 +221,7 @@
 }
 .community .thread .thread-author .views-field-name {
 	font-size: inherit;
-	padding: 0 4px 0 1px;
+	padding: 0 8px 0 5px;
 }
 .column-content .picture img,
 .community .field_author_image_fid {
@@ -334,7 +334,7 @@ html.js fieldset.collapsed {
     border-bottom-width: 0;
     border-left-width: 0;
     border-right-width: 0;
-    height: 1em;
+    height: 3em;
     margin-bottom: 0;
 }
 html.js fieldset.collapsed * {
@@ -426,14 +426,27 @@ html.js fieldset.collapsible .fieldset-wrapper {
 }
 
 /* thread author */
-.community .thread .thread-author .submitted {
-	float: left;
-	margin-right: 10px;
-	font-style: normal;
+.community .thread {
+  .thread-author{
+    margin: 10px 0;
+    .submitted {
+      float: left;
+      margin-right: 10px;
+      font-style: normal;
+      span {color: #333;}
+  	}
+  }
+  .links {
+    font-weight: normal;
+    margin: 20px 0 0 0;
+    a {
+      text-transform: capitalize;
+      padding: 0 3px 0 0;
+    }
+	}
 }
-.community .thread .thread-author .submitted span {
-	color: #333;
-}
+
+
 .community .meta .view-user-profile-box div {
  	display: inline-block;
  	vertical-align: bottom;
@@ -472,15 +485,7 @@ html.js fieldset.collapsible .fieldset-wrapper {
 	background:#666;
 	white-space: nowrap;
 }
-.community .thread .links {
-	font-weight: normal;
-}
-.community .thread .links a {
-	text-transform: capitalize;
-}
-.community .thread .addthis_button {
-	float: right;
-}
+
 .comment-content {
 	border: 1px solid #ddd;
 	padding: 20px 25px 5px;
@@ -514,22 +519,20 @@ html.js fieldset.collapsible .fieldset-wrapper {
   margin-bottom: 30px;
   position: relative;
 }
-.thread {
-	margin-bottom: 70px;
-}
-.community .thread .picture {
-	float: right;
-}
-.community .thread  h2 {
-	color: inherit;
-	font-weight: bold;
-}
-.thread-author .rank {
-	float: none;
-}
-.thread-intro {
-	padding-bottom: 8px;
-}
+
+.community .thread {
+  margin-bottom: 70px;
+  .picture {
+    float: right;
+	}
+	h2 {
+	 font-weight: bold;
+	}
+	.rank {
+  	float: none;
+	}
+} 
+
 #thread-text {
 	padding: 20px;
 	margin: 10px 0;
@@ -545,6 +548,8 @@ html.js fieldset.collapsible .fieldset-wrapper {
 .thread-actions li {
 	margin-right: 40px;
 }
+
+.ie8 .community .thread .picture {min-width: 80px}
 
 
 /* Blog pages */ 
@@ -650,17 +655,31 @@ html.js fieldset.collapsible .fieldset-wrapper {
   .links a {
     margin-right: 10px;
   }
-  
-  .calendar-calendar .week-view table.full {
+  .calendar-calendar .week-view table.full,
+  .calendar-calendar .day-view table.full {
     margin: 0;
     table-layout: auto;
     width: 100%;
   }
-  
-  .view-content .calendar-calendar .date-heading {
-    top: 10px;
+  .view-content .calendar-calendar { 
+    margin-top: -10px;
+    
+    .date-heading {
+      top: 10px;
+    }
+    .links {
+      margin-left:12px;
+    }
   }
 }
 
 .forum-header-hat, .forum-header-right {display: none;}
+
+
+
+
+
+
+
+
 
