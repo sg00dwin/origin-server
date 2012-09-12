@@ -2,7 +2,7 @@
 
 Summary:   Provides zend-5.6 support
 Name:      cartridge-zend-5.6
-Version: 0.95.8
+Version: 0.95.9
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   ASL 2.0
@@ -108,6 +108,11 @@ rm -rf %{buildroot}
 %doc %{cartridgedir}/LICENSE
 
 %changelog
+* Wed Sep 12 2012 Adam Miller <admiller@redhat.com> 0.95.9-1
+- Merge pull request #363 from smarterclayton/last_minute_zend_changes
+  (openshift+bot@redhat.com)
+- Updates for Zend based on last minute feedback (ccoleman@redhat.com)
+
 * Tue Sep 11 2012 Troy Dawson <tdawson@redhat.com> 0.95.8-1
 - Merge pull request #358 from lnader/master (openshift+bot@redhat.com)
 - Bug 853324 (lnader@redhat.com)
