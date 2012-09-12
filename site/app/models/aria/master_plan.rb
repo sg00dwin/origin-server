@@ -8,7 +8,7 @@ module Aria
     end
 
     def description
-      @description ||= aria_description(aria_plan.plan_desc)
+      @description ||= aria_plan.plan_desc.each_line.map(&:chomp).split{ |s| s =~ /^\s*Features:/ }[0].join("\n").chomp
     end
 
     def max_gears
@@ -57,10 +57,6 @@ module Aria
     protected
       def aria_plan
         @aria_plan ||= Aria.cached.get_client_plans_basic.find{ |plan| plan.plan_no == self.plan_no }
-      end
-
-      def aria_description(plan_text)
-        plan_text.each_line.map(&:chomp).split{ |s| s =~ /^\s*Features:/ }[0].join("\n").chomp.html_safe
       end
   end
 end
