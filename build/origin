@@ -219,8 +219,6 @@ module Origin
           
           out, ret = ssh(hostname, "su -c \"cd /data && chown -R ec2-user:ec2-user *\"", 60 * 2, true, 1, ssh_user) if ret == 0
           puts "Done"
-          #puts "Running broker setup..."
-          #out, ret = ssh(hostname, "su -c \"export PATH=/usr/local/bin:/bin:/usr/bin:/usr/local/sbin:/usr/sbin:/sbin:$PATH && /usr/bin/ss-setup-broker --build\"", 60 * 10, true, 1, ssh_user) if ret == 0
       
           if ret != 0
             puts "Exiting with error code #{ret}"
@@ -237,7 +235,10 @@ module Origin
             image_id = registered_ami.id
           end
     
-          unless options.skip_verify?
+          unless options.skip_verify? || options.install_required_packages?
+            puts "Running broker setup..."
+            out, ret = ssh(hostname, "su -c \"export PATH=/usr/local/bin:/bin:/usr/bin:/usr/local/sbin:/usr/sbin:/sbin:$PATH && /usr/bin/ss-setup-broker\"", 60 * 10, true, 1, ssh_user) if ret == 0
+
             scp_remote_tests(hostname)
             test_impl(name + '_' + build_num, hostname, instance, conn, options, image_id)
           end
