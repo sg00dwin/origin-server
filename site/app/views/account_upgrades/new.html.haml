@@ -1,23 +1,59 @@
+:css
+  .plan-arrow {
+    background: transparent url('/app/images/sprite-vert-large.png') 0 0 no-repeat;
+    height: 85px;
+    margin-top: 50px;
+  }
+  @media (max-width:767px) {
+    .plan-arrow {
+      background: transparent url('/app/images/sprite-vert-large.png') 0 -135px no-repeat;
+      height: 90px;
+    }
+  }
+  .plan-pricing {
+    width:100%;
+    table-layout: fixed;
+  }
+  .plan-pricing th {text-align: left;}
+  .plan-pricing th.current {background: transparent url('/app/images/plan-arrow.png') 88% 0 no-repeat; height: 53px;}
+  @media (max-width:767px) {
+    .plan-pricing th.current {background-image: none;}
+  }
+
+  .plan-pricing tbody tr:hover th,
+  .plan-pricing tbody tr:hover td {
+    background-color: transparent;
+  }
+
+  .plan-pricing td.value.upgrade {
+    color: #cdff7a;
+  }
+  .plan-pricing td.value.downgrade {
+    color: #ee8e39;
+  }
+
 - content_for :title, "Upgrade your Plan"
 = plan_upgrade_steps 3
 
-= semantic_form_for @user, :url => account_plan_upgrade_path, :html => {:method => :post} do |f|
-  = hidden_field_tag :plan_id, @plan.id
-
-  = f.semantic_errors
-
-  %h2
-    Are you ready to upgrade your plan from #{@current_plan.name} to #{@plan.name}?
-
+%h2.divide Review and confirm your plan changes
+%section
   .row
-    %section.span6
-      %p Your method of payment is:
+    %div{:class => 'span6 offset1'}
+      %h3 Payment method
       = render :partial => 'payment_methods/payment_method', :locals => {:payment_method => @payment_method}
       %p= link_to "Change your payment method", edit_account_plan_upgrade_payment_method_path
-    %section.span6
-      %p Bill to:
+    .span5
+      %h3 Billing Information
       = render :partial => 'billing_info/billing_info', :locals => {:billing_info => @billing_info}
-      %p= link_to "Change your billing info", edit_account_plan_upgrade_billing_info_path
+      %p= link_to "Change your billing information", edit_account_plan_upgrade_billing_info_path
+%section
+  %p.larger= "The following plan changes will take effect when you switch from #{@current_plan.name}  to #{@plan.name}."
+  = render :partial => 'plans/plan_comparison', :locals => { :current_plan => @current_plan, :new_plan => @plan } 
 
-  = link_to "Select a different plan", account_plans_path, :class => 'btn'
-  = submit_tag "Upgrade me!", :class => 'btn btn-primary'
+= semantic_form_for @user, :class => 'form-inline', :url => account_plan_upgrade_path, :html => {:method => :post} do |f|
+  = hidden_field_tag :plan_id, @plan.id
+  = f.semantic_errors
+  .form-actions
+    = link_to "Back to plans", account_plans_path, :class => 'btn'
+    = submit_tag "Confirm your plan changes", :class => 'btn btn-primary'
+

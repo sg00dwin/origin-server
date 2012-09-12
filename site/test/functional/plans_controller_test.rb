@@ -5,6 +5,9 @@ class PlansControllerTest < ActionController::TestCase
     ['freeshift','megashift']
   end
 
+  # This will also return 'true' for an empty list.
+  # That is intentional so that the @smaller_plans/@bigger plans
+  # tests work even when one or the other is an empty list.
   def validate_plan_list(plans)
     plans.each do |plan|
       # These extra properties belong to Aria::MasterPlan
@@ -23,37 +26,30 @@ class PlansControllerTest < ActionController::TestCase
     assert_match /^\d+$/, plan.plan_no.to_s
   end
 
-  test "should provide a plan list even without authentication" do
-    get :index
-    assert_response :success
-    assert_nil assigns(:user)
-    assert_nil assigns(:current_plan)
-    validate_plan_list(assigns(:plans))
-  end
-
-  test "should provide a plan list and instantiate user when authenticated" do
+  test "should redirect index requests to the show action" do
     with_unique_user
 
     get :index
+    assert_response :redirect
+    assert_redirected_to :controller => 'plans', :action => 'show'
+  end
+
+  test "should redirect to login for an unauthenticated show request" do
+    get :show
+    assert_response :redirect
+    assert_redirected_to login_path(:redirectUrl => '/account/plan')
+  end
+
+  test "should provide plan lists and instantiate user when authenticated" do
+    with_unique_user
+
+    get :show
     assert_response :success
     user = assigns(:user)
     assert_equal user.plan_id, user.plan.id
     validate_plan(assigns(:current_plan))
     validate_plan_list(assigns(:plans))
-  end
-
-  test "should redirect to login for an unauthenticated show request" do
-    get :show
-    assert_redirected_to login_path(:redirectUrl => '/account/plan')
-  end
-
-  test "should show a user's current plan when authenticated" do
-    with_unique_user
-
-    get :show
-    assert_response :success
-    user = assigns(:user)
-    assert_equal user.plan_id, user.plan.id
-    validate_plan(assigns(:plan))
+    validate_plan_list(assigns(:smaller_plans))
+    validate_plan_list(assigns(:bigger_plans))
   end
 end
