@@ -5,7 +5,7 @@
 %global drupal_themename    openshift-theme
 
 Name:           drupal6-%{drupal_themename}
-Version: 3.7.3
+Version: 3.7.4
 Release:        1%{?dist}
 Summary:        Red Hat Openshift theme for Drupal %{drupal_release}
 
@@ -44,6 +44,9 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
+* Wed Sep 12 2012 Adam Miller <admiller@redhat.com> 3.7.4-1
+- bug fixes - 835843, 828111 (sgoodwin@redhat.com)
+
 * Thu Sep 06 2012 Adam Miller <admiller@redhat.com> 3.7.3-1
 - removed empty meta description tag from Drupal template (spurtell@redhat.com)
 
