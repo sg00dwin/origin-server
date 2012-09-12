@@ -1,5 +1,5 @@
 class PaymentMethodsController < ApplicationController
-  layout 'site'
+  layout 'account'
 
   before_filter :authenticate_user!
 
