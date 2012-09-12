@@ -720,77 +720,8 @@ mkdir -p /tmp/rhc/junit
         end
       end
     
-      def build_and_install(package_name, build_dir, spec_file)
-        if package_name.include? "origin" || package_name == "stickshift-broker"
-            puts "Skipping #{package_name}"
-            return
-        end
-        remove_dir '/tmp/tito/'
-        FileUtils.mkdir_p '/tmp/tito/'
-        puts "Building in #{build_dir}"
-        inside(File.expand_path("../#{build_dir}", File.dirname(__FILE__))) do
-          # Build and install the RPM's locally
-          unless run("tito build --rpm --test", :verbose => options.verbose?)
-            # Tag to trick tito to build
-            commit_id = `git log --pretty=format:%%H --max-count=1 %s" % .`
-            spec_file_name = File.basename(spec_file)
-            version = get_version(spec_file_name)
-            next_version = next_tito_version(version, commit_id)
-            puts "current spec file version #{version} next version #{next_version}"
-            unless run("tito tag --accept-auto-changelog --use-version='#{next_version}'; tito build --rpm --test", :verbose => options.verbose?)
-              FileUtils.rm_rf '/tmp/devenv/sync/'
-              exit 1
-            end
-          end
-          Dir.glob('/tmp/tito/x86_64/*.rpm').each {|file|
-            FileUtils.mkdir_p "/tmp/tito/noarch/"
-            FileUtils.mv file, "/tmp/tito/noarch/"
-          }
-          unless run("rpm -Uvh --force /tmp/tito/noarch/*.rpm", :verbose => options.verbose?)
-            unless run("rpm -e --justdb --nodeps #{package_name}; yum install -y /tmp/tito/noarch/*.rpm", :verbose => options.verbose?)
-              FileUtils.rm_rf '/tmp/devenv/sync/'
-              exit 1
-            end
-          end
-        end
-      end
-  
-      def build_impl(name, build_num, options)
-        # Override the machine type to launch if necessary
-        $amz_options[:instance_type] = options[:instance_type] if options[:instance_type]
-    
-        # Establish a new connection
-        conn = connect(options.region)
-    
-        image = nil
-        if options.install_required_packages?
-          # Create a new builder instance
-          if (options.region?nil)
-            image = conn.images[AMI["us-east-1"]]
-          elsif AMI[options.region].nil?
-            puts "No AMI specified for region:" + options.region
-            exit 1
-          else
-            image = conn.images[AMI[options.region]]
-          end
-        elsif options.build_clean_ami? || options.install_from_source? || options.install_from_local_source?
-          # Get the latest devenv base image and create a new instance
-          if options.use_stage_repo?
-            filter = DEVENV_STAGE_BASE_WILDCARD
-          else
-            filter = DEVENV_BASE_WILDCARD
-          end
-          image = get_latest_ami(conn, filter)
-        else
-          # Get the latest devenv clean image and create a new instance
-          if options.use_stage_repo?
-            filter = DEVENV_STAGE_CLEAN_WILDCARD
-          else
-            filter = DEVENV_CLEAN_WILDCARD
-          end
-          image = get_latest_ami(conn, filter)
-        end
-    
+      def build_impl(name, build_num, image, conn, options)
+        puts "Launching instance of AMI: #{image.id} - #{image.name}"
         instance = launch_instance(image, name + '_' + build_num)
         hostname = instance.dns_name
         
@@ -915,7 +846,13 @@ mkdir -p /tmp/rhc/junit
           package_name = sync_dir[0]
           build_dir = sync_dir[1]
           spec_file = sync_dir[2]
-          build_and_install(package_name, build_dir, spec_file)
+
+          if package_name.include? "origin" || package_name == "stickshift-broker"
+              puts "Skipping #{package_name}"
+              return
+          else
+            build_and_install(package_name, build_dir, spec_file)
+          end
         end
         
         if options.include_stale?
@@ -924,7 +861,13 @@ mkdir -p /tmp/rhc/junit
             package_name = stale_dir[0]
             build_dir = stale_dir[1]
             spec_file = stale_dir[2]
-            build_and_install(package_name, build_dir, spec_file)
+
+            if package_name.include? "origin" || package_name == "stickshift-broker"
+                puts "Skipping #{package_name}"
+                return
+            else
+              build_and_install(package_name, build_dir, spec_file)
+            end
           end
         end
         run("yum update -y --exclude='rhc-devenv' --disablerepo=\\* --enablerepo=li rhc-* cartridge-* rubygem-stickshift-* rubygem-gearchanger-* rubygem-uplift-* rubygem-swingshift-*", :verbose => options.verbose?)

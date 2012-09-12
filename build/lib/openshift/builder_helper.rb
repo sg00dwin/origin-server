@@ -33,6 +33,37 @@ module OpenShift
       return instance ? instance.dns_name : name
     end
 
+    def build_and_install(package_name, build_dir, spec_file)
+      remove_dir '/tmp/tito/'
+      FileUtils.mkdir_p '/tmp/tito/'
+      puts "Building in #{build_dir}"
+      inside(File.expand_path("#{build_dir}", File.dirname(File.dirname(File.dirname(File.dirname(__FILE__)))))) do
+        # Build and install the RPM's locally
+        unless run("tito build --rpm --test", :verbose => options.verbose?)
+          # Tag to trick tito to build
+          commit_id = `git log --pretty=format:%%H --max-count=1 %s" % .`
+          spec_file_name = File.basename(spec_file)
+          version = get_version(spec_file_name)
+          next_version = next_tito_version(version, commit_id)
+          puts "current spec file version #{version} next version #{next_version}"
+          unless run("tito tag --accept-auto-changelog --use-version='#{next_version}'; tito build --rpm --test", :verbose => options.verbose?)
+            FileUtils.rm_rf '/tmp/devenv/sync/'
+            exit 1
+          end
+        end
+        Dir.glob('/tmp/tito/x86_64/*.rpm').each {|file|
+          FileUtils.mkdir_p "/tmp/tito/noarch/"
+          FileUtils.mv file, "/tmp/tito/noarch/"
+        }
+        unless run("rpm -Uvh --force /tmp/tito/noarch/*.rpm", :verbose => options.verbose?)
+          unless run("rpm -e --justdb --nodeps #{package_name}; yum install -y /tmp/tito/noarch/*.rpm", :verbose => options.verbose?)
+            FileUtils.rm_rf '/tmp/devenv/sync/'
+            exit 1
+          end
+        end
+      end
+    end
+
     def sync_repo(repo_name, hostname, remote_repo_parent_dir="/root", ssh_user="root", verbose=false)
       temp_commit
 
