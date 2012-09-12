@@ -1,6 +1,6 @@
 Name: zend-5.6
 Display-Name: Zend Server 5.6
-Description: "A PHP Server for PHP applications that require performance, reliability and security."
+Description: "A PHP server by Zend for applications that require performance, reliability and security. Zend Server combined with Zend Studio offers code optimization, debugging, and code assist."
 Version: 5.6
 License: "Commercial"
 License-Url: http://static.zend.com/topics/Zend-License-EULA-2010-09-2.pdf
