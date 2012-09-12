@@ -807,7 +807,7 @@ h1.ribbon {
 	    //background: image-url("sprite-vert.png") right -293px no-repeat #aaa;
 	    background-color: #aaabac;
 	    color: #000;
-	    font-size: inherit;
+	    //font-size: inherit; 
 	    
 	    + button.search {
 		    background: transparent image-url("sprite-vert.png") 2px -293px no-repeat;
@@ -815,7 +815,7 @@ h1.ribbon {
   	}
   }
 } 
-
+ 
 @media (max-width: 767px) {
 	#search-top .search-query {
   	margin-left: 0;

@@ -2,7 +2,7 @@
 
 Summary:   Provides zend-5.6 support
 Name:      cartridge-zend-5.6
-Version: 0.95.5
+Version: 0.95.7
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   ASL 2.0
@@ -68,7 +68,7 @@ ln -s %{cartridgedir}/../abstract/info/hooks/force-stop %{buildroot}%{cartridged
 ln -s %{cartridgedir}/../abstract/info/hooks/add-alias %{buildroot}%{cartridgedir}/info/hooks/add-alias
 ln -s %{cartridgedir}/../abstract/info/hooks/tidy %{buildroot}%{cartridgedir}/info/hooks/tidy
 ln -s %{cartridgedir}/../abstract/info/hooks/remove-alias %{buildroot}%{cartridgedir}/info/hooks/remove-alias
-ln -s %{cartridgedir}/../abstract/info/hooks/move %{buildroot}%{cartridgedir}/info/hooks/move
+#ln -s %{cartridgedir}/../abstract/info/hooks/move %{buildroot}%{cartridgedir}/info/hooks/move
 ln -s %{cartridgedir}/../abstract/info/hooks/threaddump %{buildroot}%{cartridgedir}/info/hooks/threaddump
 ln -s %{cartridgedir}/../abstract/info/hooks/expose-port %{buildroot}%{cartridgedir}/info/hooks/expose-port
 ln -s %{cartridgedir}/../abstract/info/hooks/conceal-port %{buildroot}%{cartridgedir}/info/hooks/conceal-port
@@ -108,6 +108,33 @@ rm -rf %{buildroot}
 %doc %{cartridgedir}/LICENSE
 
 %changelog
+* Mon Sep 10 2012 Dan McPherson <dmcphers@redhat.com> 0.95.7-1
+- Merge pull request #355 from lnader/master (openshift+bot@redhat.com)
+- Bug 853586 (lnader@redhat.com)
+
+* Fri Sep 07 2012 Adam Miller <admiller@redhat.com> 0.95.6-1
+- Merge pull request #350 from sg00dwin/master (openshift+bot@redhat.com)
+- Merge pull request #340 from pravisankar/dev/ravi/zend-fix-description
+  (openshift+bot@redhat.com)
+- Merge branch 'master' of github.com:openshift/li (sgoodwin@redhat.com)
+- BZ 849782 - rss button rendering issue BZ 839242 - new app page for zend
+  needed css added BZ 820086 - long sshkey name text-overflow issue Check in
+  new account plan styleguide pages for billing, payment, review/confirm along
+  with new form validation css Misc css - switch heading font-size to be based
+  off of $baseFontSize computation - match <legend> style to heading.divide for
+  consistency when used on console form pages - addition of <select> to
+  standard form field rules (not sure why they aren't included in bootstrap by
+  default) - set box-showdow(none) on .btn so there's no conflict when used on
+  <input> - create aside rule within console/_core to be used on pages with for
+  secondary column (help) - remove input grid system rules that caused
+  conflicting widths with inputs set to grid span - add :focus to
+  buttonBackground mixin - decrease spacing associated with .control-group -
+  added rules for :focus:required:valid :focus:required:invalid to take
+  advantage of client side browsers that support them - move rules for field
+  feedback states from _custom to _forms - .alert a so link color is optimal on
+  all alert states (sgoodwin@redhat.com)
+- Modify Display-name/Description fields for all cartridges (rpenta@redhat.com)
+
 * Thu Sep 06 2012 Adam Miller <admiller@redhat.com> 0.95.5-1
 - Fix for bugz 852216 - zend /sandbox should be root owned if possible.
   (ramr@redhat.com)

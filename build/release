@@ -114,7 +114,8 @@ class Release < Thor
         build_dir = build_info[1]
         spec_file = build_info[2]
 
-        gem_updates, chain_build_set = update_our_gems(package_name, build_dir, spec_file, verbose)
+        next_gem_updates, next_chain_build_set = update_our_gems(package_name, build_dir, spec_file, verbose)
+        gem_updates = gem_updates || next_gem_updates
       end
 
       if gem_updates
@@ -262,7 +263,7 @@ class Release < Thor
       end
 
       (tag_failures + requires_rebuild).each do |build_dir|
-        build_dirs.delete_if { build_info | build_info[1] == build_dir }
+        build_dirs.delete_if { | build_info | build_info[1] == build_dir }
       end
 
       li_repo = {'li' => [FileUtils.pwd]}

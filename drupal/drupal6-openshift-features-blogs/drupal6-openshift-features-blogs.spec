@@ -5,7 +5,7 @@
 %global modname             blogs
 
 Name:    drupal%{drupal_release}-openshift-features-%{modname}
-Version: 1.7.1
+Version: 1.7.2
 Release: 1%{?dist}
 Summary: Openshift Red Hat Custom Blog Feature for Drupal6
 Group:   Applications/Publishing
@@ -41,6 +41,24 @@ rm -rf $RPM_BUILD_ROOT
 %{drupal_modules}/%{modname}
 
 %changelog
+* Fri Sep 07 2012 Adam Miller <admiller@redhat.com> 1.7.2-1
+- BZ 849782 - rss button rendering issue BZ 839242 - new app page for zend
+  needed css added BZ 820086 - long sshkey name text-overflow issue Check in
+  new account plan styleguide pages for billing, payment, review/confirm along
+  with new form validation css Misc css - switch heading font-size to be based
+  off of $baseFontSize computation - match <legend> style to heading.divide for
+  consistency when used on console form pages - addition of <select> to
+  standard form field rules (not sure why they aren't included in bootstrap by
+  default) - set box-showdow(none) on .btn so there's no conflict when used on
+  <input> - create aside rule within console/_core to be used on pages with for
+  secondary column (help) - remove input grid system rules that caused
+  conflicting widths with inputs set to grid span - add :focus to
+  buttonBackground mixin - decrease spacing associated with .control-group -
+  added rules for :focus:required:valid :focus:required:invalid to take
+  advantage of client side browsers that support them - move rules for field
+  feedback states from _custom to _forms - .alert a so link color is optimal on
+  all alert states (sgoodwin@redhat.com)
+
 * Wed Aug 22 2012 Adam Miller <admiller@redhat.com> 1.7.1-1
 - bump_minor_versions for sprint 17 (admiller@redhat.com)
 

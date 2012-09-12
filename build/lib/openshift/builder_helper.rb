@@ -22,7 +22,15 @@ module OpenShift
     @@SSH_TIMEOUT_OVERRIDES = { "benchmark" => 172800 }
     @@CUCUMBER_OPTIONS = '--strict -f progress -f junit --out /tmp/rhc/cucumber_results'
 
-    def sync_repo(repo_name, hostname, ssh_path, remote_repo_parent_dir="/root", ssh_user="root", verbose=false)
+    # Get the hostname from a tag lookup or assume it's SSH accessible directly
+    # Only look for a tag if the --tag option is specified
+    def get_host_by_name_or_tag(name, options=nil)
+      return name unless options && options.tag?
+      instance = find_instance(connect(options.region), name, true)
+      return instance ? instance.dns_name : name
+    end
+
+    def sync_repo(repo_name, hostname, remote_repo_parent_dir="/root", ssh_user="root", verbose=false)
       temp_commit
 
       begin
@@ -34,40 +42,61 @@ module OpenShift
 
         init_repo(hostname, false, repo_name, remote_repo_parent_dir, ssh_user)
 
-        exitcode = run(%{
-#######
-# Start shell code
-export GIT_SSH=#{ssh_path}
-#{branch == 'origin/master' ? "git push -q #{ssh_user}@#{hostname}:#{remote_repo_parent_dir}/#{repo_name} master:master --tags --force; " : ''}
-git push -q #{ssh_user}@#{hostname}:#{remote_repo_parent_dir}/#{repo_name} #{branch}:master --tags --force
+        # we will need ssh with some different options for git clones
+        git_ssh_path=File.expand_path(File.dirname(__FILE__)) + "/ssh-override"
 
-#######
-# End shell code
-}, :verbose => verbose)
+        exitcode = run(<<-"SHELL", :verbose => verbose)
+          #######
+          # Start shell code
+          export GIT_SSH=#{git_ssh_path}
+          #{branch == 'origin/master' ? "git push -q #{ssh_user}@#{hostname}:#{remote_repo_parent_dir}/#{repo_name} master:master --tags --force; " : ''}
+          git push -q #{ssh_user}@#{hostname}:#{remote_repo_parent_dir}/#{repo_name} #{branch}:master --tags --force
+
+          #######
+          # End shell code
+          SHELL
 
         puts "Done"
       ensure
         reset_temp_commit
       end
     end
-    
-    def sync_sibling_repo(repo_name, repo_dir, hostname, ssh_path, remote_repo_parent_dir="/root", ssh_user="root")
-      exists = File.exists?(repo_dir) 
+
+    def sync_sibling_repo(repo_name, repo_dir, hostname, remote_repo_parent_dir="/root", ssh_user="root")
+      exists = File.exists?(repo_dir)
       inside(repo_dir) do
-        sync_repo(repo_name, hostname, ssh_path, remote_repo_parent_dir, ssh_user)
+        sync_repo(repo_name, hostname, remote_repo_parent_dir, ssh_user)
       end if exists
       exists
     end
 
+    # clones crankcase/rhc over to remote;
+    # returns command to run remotely for cloning to standard -working dirs,
+    # plus the names of those working dirs
+    def sync_available_sibling_repos(hostname, remote_repo_parent_dir="/root", ssh_user="root")
+      working_dirs = ''
+      clone_commands = ''
+      SIBLING_REPOS.each do |repo_name, repo_dirs|
+        repo_dirs.each do |repo_dir|
+          if sync_sibling_repo(repo_name, repo_dir, hostname, remote_repo_parent_dir, ssh_user)
+            working_dirs += "#{repo_name}-working "
+            clone_commands += "git clone #{repo_name} #{repo_name}-working; "
+            break # just need the first repo found
+          end
+        end
+      end
+      return clone_commands, working_dirs
+    end
+
     def init_repo(hostname, replace=true, repo=nil, remote_repo_parent_dir="/root", ssh_user="root")
       git_clone_commands = "set -e\n "
-      
+
       if repo.nil? or repo == "li"
         git_clone_commands += "if [ ! -d #{remote_repo_parent_dir}/li ]; then\n" unless replace
         git_clone_commands += "rm -rf #{remote_repo_parent_dir}/li; git clone --bare git@github.com:openshift/li.git #{remote_repo_parent_dir}/li\n"
         git_clone_commands += "fi\n" unless replace
       end
-      
+
       SIBLING_REPOS.each do |repo_name, repo_dirs|
         if repo.nil? or repo == repo_name
           git_clone_commands += "if [ ! -d #{remote_repo_parent_dir}/#{repo_name} ]; then\n" unless replace
@@ -182,7 +211,7 @@ END
       puts "Updating ~/.openshift/express.conf libra_server entry with public ip = #{public_ip}"
       `sed -i -e 's,^libra_server.*,libra_server=#{public_ip},' ~/.openshift/express.conf`
     end
-    
+
     def repo_path(dir='')
       File.expand_path("../#{dir}", File.dirname(__FILE__))
     end
@@ -201,7 +230,7 @@ END
           -----------------------------------------------------------
                        End Output From #{title} Tests
           -----------------------------------------------------------
-      
+
 
       eos
       return output, code
@@ -261,8 +290,8 @@ END
                   test_name = $1
                   class_name = $2
                   file_name = $3
-                  
-                  # determine if the first part of the command is a directory change 
+
+                  # determine if the first part of the command is a directory change
                   # if so, include that in the retry command
                   chdir_command = ""
                   if cmd =~ /\A(cd .+?; )/

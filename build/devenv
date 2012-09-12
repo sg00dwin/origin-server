@@ -884,11 +884,10 @@ mkdir -p /tmp/rhc/junit
                 cmd = "set -e; /bin/bash li-devenv.sh #{options.use_stage_repo? ? "stage" : "candidate"} --install_from_source"
               elsif options.install_from_local_source?
                 init_repo(hostname)
-                ssh_path = File.expand_path(File.dirname(__FILE__)) + "/ssh-override"
-                sync_repo('li', hostname, ssh_path)
+                sync_repo('li', hostname)
                 SIBLING_REPOS.each do |repo_name, repo_dirs|
                   repo_dirs.each do |repo_dir|
-                    break if sync_sibling_repo(repo_name, repo_dir, hostname, ssh_path)
+                    break if sync_sibling_repo(repo_name, repo_dir, hostname)
                   end
                 end
                 puts "Performing clean install from local source..."
@@ -989,33 +988,13 @@ mkdir -p /tmp/rhc/junit
       end
 
       def sync_impl(name, options)
-        # Get the hostname from a tag lookup or assume it's SSH accessible directly
-        conn = connect(options.region)
-        hostname = options.tag? ? find_instance(conn, name, true).dns_name : name
-    
-        ssh_path=File.expand_path(File.dirname(__FILE__)) + "/ssh-override"
-    
-        sync_repo('li', hostname, ssh_path, "/root", "root", options.versbose?)
-    
-        avail_sibling_repo_names = []
-    
-        SIBLING_REPOS.each do |repo_name, repo_dirs|
-          repo_dirs.each do |repo_dir|
-            if sync_sibling_repo(repo_name, repo_dir, hostname, ssh_path)
-              avail_sibling_repo_names.push(repo_name)
-              break
-            end
-          end
-        end
+        hostname = get_host_by_name_or_tag(name, options)
+
+        # get the necessary repos cloned out to the instance
+        sync_repo('li', hostname, "/root", "root", options.verbose?)
+        clone_commands, working_dirs = sync_available_sibling_repos(hostname)
         update_remote_tests(hostname)
-    
-        clone_commands = ''
-        working_dirs = ''
-        avail_sibling_repo_names.each do |repo_name|
-          working_dirs += "#{repo_name}-working "
-          clone_commands += "git clone #{repo_name} #{repo_name}-working; "
-        end
-        
+
         if !options.skip_build?
           puts "Performing remote install...."
           output, exit_code = ssh(hostname, %{
