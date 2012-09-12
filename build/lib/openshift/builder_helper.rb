@@ -11,6 +11,9 @@ require 'yaml'
 
 include FileUtils
 
+# we will need ssh with some different options for git clones
+GIT_SSH_PATH=File.expand_path(File.dirname(__FILE__)) + "/ssh-override"
+
 module OpenShift
   module BuilderHelper
     include Thor::Actions
@@ -42,13 +45,10 @@ module OpenShift
 
         init_repo(hostname, false, repo_name, remote_repo_parent_dir, ssh_user)
 
-        # we will need ssh with some different options for git clones
-        git_ssh_path=File.expand_path(File.dirname(__FILE__)) + "/ssh-override"
-
         exitcode = run(<<-"SHELL", :verbose => verbose)
           #######
           # Start shell code
-          export GIT_SSH=#{git_ssh_path}
+          export GIT_SSH=#{GIT_SSH_PATH}
           #{branch == 'origin/master' ? "git push -q #{ssh_user}@#{hostname}:#{remote_repo_parent_dir}/#{repo_name} master:master --tags --force; " : ''}
           git push -q #{ssh_user}@#{hostname}:#{remote_repo_parent_dir}/#{repo_name} #{branch}:master --tags --force
 
