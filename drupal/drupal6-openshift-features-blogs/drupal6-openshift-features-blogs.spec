@@ -5,7 +5,7 @@
 %global modname             blogs
 
 Name:    drupal%{drupal_release}-openshift-features-%{modname}
-Version: 1.8.0
+Version: 1.8.1
 Release: 1%{?dist}
 Summary: Openshift Red Hat Custom Blog Feature for Drupal6
 Group:   Applications/Publishing
@@ -41,6 +41,9 @@ rm -rf $RPM_BUILD_ROOT
 %{drupal_modules}/%{modname}
 
 %changelog
+* Wed Sep 12 2012 Adam Miller <admiller@redhat.com> 1.8.1-1
+- bump_minor_versions for sprint 18 (admiller@redhat.com)
+
 * Fri Sep 07 2012 Adam Miller <admiller@redhat.com> 1.7.2-1
 - BZ 849782 - rss button rendering issue BZ 839242 - new app page for zend
   needed css added BZ 820086 - long sshkey name text-overflow issue Check in
