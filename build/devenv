@@ -870,7 +870,7 @@ mkdir -p /tmp/rhc/junit
             end
           end
         end
-        run("yum update -y --exclude='rhc-devenv' --disablerepo=\\* --enablerepo=li rhc-* cartridge-* rubygem-stickshift-* rubygem-gearchanger-* rubygem-uplift-* rubygem-swingshift-*", :verbose => options.verbose?)
+        #run("yum update -y --exclude='rhc-devenv' --disablerepo=\\* --enablerepo=li rhc-* cartridge-* rubygem-stickshift-* rubygem-gearchanger-* rubygem-uplift-* rubygem-swingshift-*", :verbose => options.verbose?)
         run("service mcollective restart; service libra-broker restart; service libra-site restart", :verbose => options.verbose?)
       end
 
