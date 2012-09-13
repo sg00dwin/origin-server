@@ -3,7 +3,7 @@
 
 Summary:   Li broker components
 Name:      rhc-broker
-Version: 0.99.0
+Version: 0.99.1
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -120,6 +120,10 @@ if [ ! -f %{_localstatedir}/log/stickshift/user_action.log ]; then
 fi
 
 %changelog
+* Wed Sep 12 2012 Adam Miller <admiller@redhat.com> 0.99.1-1
+- Updating gem versions (admiller@redhat.com)
+- bump_minor_versions for sprint 18 (admiller@redhat.com)
+
 * Wed Sep 12 2012 Adam Miller <admiller@redhat.com> 0.98.8-1
 - Updating gem versions (admiller@redhat.com)
 
