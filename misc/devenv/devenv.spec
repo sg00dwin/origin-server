@@ -8,7 +8,7 @@
 
 Summary:   Dependencies for OpenShift development
 Name:      rhc-devenv
-Version: 0.100.0
+Version: 0.100.1
 Release:   1%{?dist}
 Group:     Development/Libraries
 License:   GPLv2
@@ -549,6 +549,9 @@ fi
 %{policydir}/*
 
 %changelog
+* Wed Sep 12 2012 Adam Miller <admiller@redhat.com> 0.100.1-1
+- bump_minor_versions for sprint 18 (admiller@redhat.com)
+
 * Thu Sep 06 2012 Adam Miller <admiller@redhat.com> 0.99.4-1
 - Fix for bugz 852216 - zend /sandbox should be root owned if possible.
   (ramr@redhat.com)
