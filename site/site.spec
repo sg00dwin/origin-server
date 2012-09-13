@@ -3,7 +3,7 @@
 
 Summary:   Li site components
 Name:      rhc-site
-Version: 0.99.0
+Version: 0.99.1
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -137,6 +137,9 @@ rm -rf %{buildroot}
 %{sitedir}/public
 
 %changelog
+* Wed Sep 12 2012 Adam Miller <admiller@redhat.com> 0.99.1-1
+- bump_minor_versions for sprint 18 (admiller@redhat.com)
+
 * Wed Sep 12 2012 Adam Miller <admiller@redhat.com> 0.98.9-1
 - bug fixes - 835843, 828111 (sgoodwin@redhat.com)
 - Revised Aria::MasterPlan::description() (hripps@redhat.com)
