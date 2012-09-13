@@ -370,35 +370,55 @@ class Release < Thor
     end
   end
   
-  desc "tag_pkgs_stg AFTER_DATE", "Tag packages that are from external sources into the stage repo since AFTER_DATE"
-  method_option :check, :type => :boolean, :desc => "Don't do anything yet, just show what would be done"
+  desc "tag_pkgs [AFTER_DATE]", "Tag packages into the candidate or stage repo, specify AFTER_DATE(YYYY-MM-DD) optionally" 
   method_option :include_internal, :type => :boolean, :desc => "Boolean indicating whether to include internal packages"
-  def tag_pkgs_stg(after_date)
-    stg_brew_tag = "libra-rhel-6.3-stage"
-    cand_brew_tag = "libra-rhel-6.3-candidate"
-    orig_branches = checkout_branch("master")
-    git_pull
-
-    if after_date.nil? or after_date.empty?
-      puts "ERROR: No date paramter passed!"
-      puts "Example: build/release tag_external_pkgs_stg 1970-01-30 [--check]"
+  method_option :check, :type => :boolean, :desc => "Don't do anything yet, just show what would be done"
+  method_option :stage, :type => :boolean, :desc => "Target brew tag is stage"
+  method_option :candidate, :type => :boolean, :desc => "Target brew tag is candidate"
+  def tag_pkgs(after_date = nil)
+    if options.stage?
+      target_brew_tag = "libra-rhel-6.3-stage"
+      src_brew_tag = "libra-rhel-6.3-candidate"
+    elsif options.candidate?
+      target_brew_tag = "libra-rhel-6.3-candidate"
+      src_brew_tag = "libra-rhel-6.3-test"
+    else
+      puts "ERROR: must specify target brew tag with --stage or --candidate"
       exit 1
-    else
-      external_pkgs_tag_stg = get_packages_to_tag(cand_brew_tag, stg_brew_tag, after_date, options.include_internal?)
-    end
+    end 
 
-    if options.check?
-      puts "### If this were run without --check, the following packages would be tagged into #{stg_brew_tag}:"
-      external_pkgs_tag_stg.each { |pkg| puts pkg }
-    else
-      puts "### Tagging the following packages into #{stg_brew_tag}:"
-      external_pkgs_tag_stg.each do |pkg| 
-        puts pkg 
-        `brew tag-pkg #{stg_brew_tag} #{pkg}`
+    orig_branches = checkout_branch("master")
+  
+    begin
+      
+      git_pull
+      if after_date.nil? or after_date.empty?
+        # Define a month timeline to trim down the package list to process
+        # from brew's output
+        t = Time.new
+        if t.month == 1
+          last_month = 12
+        else
+          last_month = t.month - 1
+        end
+        after_date = "#{t.year}-#{last_month}-#{t.day}"
       end
-    end
 
-    reset_orig_branches(orig_branches)
+      pkgs_need_tagging = get_packages_to_tag(src_brew_tag, target_brew_tag, after_date, options.include_internal?)
+
+      if options.check?
+        puts "### If this were run without --check, the following packages would be tagged into #{target_brew_tag}:"
+        pkgs_need_tagging.each { |pkg| puts pkg }
+      else
+        puts "### Tagging the following packages into #{target_brew_tag}:"
+        pkgs_need_tagging.each do |pkg| 
+          puts pkg 
+          `brew tag-pkg #{target_brew_tag} #{pkg}`
+        end
+      end
+    ensure
+      reset_orig_branches(orig_branches)
+    end
   end
 
   desc "bump_minor_versions", "Bump the minor version in all specs > .1 patch level"
