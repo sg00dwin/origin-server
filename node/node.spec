@@ -2,7 +2,7 @@
 
 Summary:       Multi-tenant cloud management system node tools
 Name:          rhc-node
-Version: 0.99.0
+Version: 0.99.1
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -268,6 +268,9 @@ fi
 
 
 %changelog
+* Wed Sep 12 2012 Adam Miller <admiller@redhat.com> 0.99.1-1
+- bump_minor_versions for sprint 18 (admiller@redhat.com)
+
 * Tue Sep 11 2012 Troy Dawson <tdawson@redhat.com> 0.98.6-1
 - Increase active apps to 90 on small nodes. For bugz 852887 -- investigated
   with setting active apps to 100 on m1.small -- results are ok -- used current
