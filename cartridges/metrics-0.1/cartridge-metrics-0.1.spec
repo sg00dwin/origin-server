@@ -1,7 +1,7 @@
 %define cartridgedir %{_libexecdir}/stickshift/cartridges/embedded/metrics-0.1
 
 Name: cartridge-metrics-0.1
-Version: 0.19.4
+Version: 0.20.0
 Release: 1%{?dist}
 Summary: Embedded metrics support for express
 
