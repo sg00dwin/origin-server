@@ -24,6 +24,7 @@ def action_view
        {host: 'localhost'}
     end
   end
+  view
 end
 
 namespace :assets do
