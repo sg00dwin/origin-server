@@ -12,7 +12,7 @@ WORK_DIR = '/tmp/rhc/migration'
 
 # For each of these sets:  nil implies all and empty implies none
 MIGRATION_CART_TYPES = [].to_set
-RESTART_CART_TYPES = ['jenkins-1.4'].to_set
+RESTART_CART_TYPES = ['jenkins-1.4','mongodb-2.0'].to_set
 REDEPLOY_HTTPD_PROXY_CART_TYPES = [].to_set # Deploys on top of existing config.  Will not fixup renames.
 
 $all_cart_types = nil
