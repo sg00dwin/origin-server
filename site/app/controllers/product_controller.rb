@@ -4,16 +4,18 @@ class ProductController < SiteController
   end
 
   def not_found
+    render 'shared/not_found'
   end
 
   def error
+    render 'shared/error'
   end
 
   def console_not_found
-    render :layout => 'console'
+    render 'shared/not_found', :layout => 'console'
   end
 
   def console_error
-    render :layout => 'console'
+    render 'shared/error', :layout => 'console'
   end
 end
