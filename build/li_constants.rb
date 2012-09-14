@@ -59,6 +59,15 @@ SAUCE_BROWSER = "firefox"
 SAUCE_BROWSER_VERSION = "7"
 CAN_SSH_TIMEOUT=90
 
+JENKINS_HOME_DIR = '/var/lib/jenkins'
+
+SIBLING_REPOS = {'crankcase' => ['../crankcase-working', '../crankcase-fork', '../crankcase', JENKINS_HOME_DIR + '/jobs/crankcase/workspace'],
+                 'rhc' => ['../rhc-working', '../rhc-fork', '../rhc', JENKINS_HOME_DIR + '/jobs/rhc/workspace'],
+                 'li' => [FileUtils.pwd]}
+SIBLING_REPOS_GIT_URL = {'crankcase' => 'https://github.com/openshift/crankcase.git',
+                        'rhc' => 'https://github.com/openshift/rhc.git',
+                        'li' => 'git@github.com:openshift/li.git'}
+
 CUCUMBER_OPTIONS = '--strict -f progress -f junit --out /tmp/rhc/cucumber_results'
 
 $amz_options = {:key_name => KEY_PAIR, :instance_type => TYPE}

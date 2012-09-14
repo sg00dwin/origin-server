@@ -33,7 +33,7 @@ module Origin
   
       begin
         puts "Launching live-cd build..."
-        out, ret = ssh(hostname, "export PATH=/usr/local/bin:/bin:/usr/bin:/usr/local/sbin:/usr/sbin:/sbin:$PATH && cd /data/crankcase/build && rake devcd", 60 * 60 * 2, false, 1, "ec2-user")
+        out = ssh(hostname, "export PATH=/usr/local/bin:/bin:/usr/bin:/usr/local/sbin:/usr/sbin:/sbin:$PATH && cd /data/crankcase/build && rake devcd", 60 * 60 * 2, false, 1, "ec2-user")
         puts "Done"
       ensure
         terminate_instance(instance) if options.terminate?
@@ -71,10 +71,8 @@ module Origin
       def validate_instance(hostname, num_tries=1)
       end
       
-      def update_remote_tests(hostname, branch=nil)
-      end
-      
-      def scp_remote_tests(hostname)
+      def update_cucumber_tests(hostname, repo_parent_dir="/root", user="root")
+        ssh(hostname, "rm -f #{repo_parent_dir}/li-test/tests; ln -s #{repo_parent_dir}/li-test/stickshift/controller/test/cucumber #{repo_parent_dir}/li-test/tests ;", 60, false, 2, user)
       end
       
       def test_impl(tag, hostname, instance, conn, options, image_id=nil)
@@ -157,9 +155,9 @@ module Origin
             end
 
             unless options.exclude_runtime?
-              test_queues[3] << ["Runtime Unit", "cd li-test/stickshift/node; su -c \"rake unit_test\""]
+              #test_queues[3] << ["Runtime Unit", "cd li-test/stickshift/node; su -c \"rake unit_test\""]
               (1..4).each do |i|
-                test_queues[i-1] << ["Runtime Group #{i.to_s}", "su -c \"export PATH=/usr/local/bin:/bin:/usr/bin:/usr/local/sbin:/usr/sbin:/sbin:$PATH; cucumber #{CUCUMBER_OPTIONS} -t @runtime#{i.to_s} li-test/tests\""]
+                test_queues[i-1] << ["Runtime Group #{i.to_s}", "su -c \"cucumber #{CUCUMBER_OPTIONS} -t @runtime#{i.to_s} li-test/tests\""]
               end
             end
   
@@ -287,44 +285,37 @@ module Origin
             build_and_install(package_name, build_dir, spec_file)
           end
         end
-        run("yum update -y rhc cartridge-* rubygem-stickshift-* rubygem-gearchanger-* rubygem-uplift-* rubygem-swingshift-*", :verbose => options.verbose?)
+        #run("yum update -y rhc cartridge-* rubygem-stickshift-* rubygem-gearchanger-* rubygem-uplift-* rubygem-swingshift-*", :verbose => options.verbose?)
         run("/sbin/service mcollective restart; /sbin/service stickshift-broker restart", :verbose => options.verbose?)
       end
 
       def sync_impl(name, options)
         # Get the hostname from a tag lookup or assume it's SSH accessible directly
-        conn = connect(options.region)
-        hostname = options.tag? ? find_instance(conn, name, true, true, ssh_user).dns_name : name
+        hostname = get_host_by_name_or_tag(name, options)
 
-        puts "Creating mount"
-        out, ret = ssh(hostname, "su -c \"umount -l /data ; if [ ! -b /dev/xvdb ]; then /sbin/mke2fs /dev/xvdb; fi; mkdir -p /data && mount /dev/xvdb /data && chown -R ec2-user:ec2-user /data/\"", 60 * 10, true, 1, ssh_user)
-
-        clone_commands, working_dirs = sync_available_sibling_repos(hostname, "/data", ssh_user)
-
-        # This is not required since we have already synced the crankcase repository
-        # Instead we can just create a symlink for the tests in li-test/tests
-        #update_remote_tests(hostname)
-        out, ret = ssh(hostname, "cd /data; rm -rf #{working_dirs}; #{clone_commands}", 60 * 5, true, 1, ssh_user) if ret == 0
-    
+        clone_commands, working_dirs = sync_available_sibling_repos(hostname, "~", ssh_user)
+        update_remote_tests(hostname, nil, "~", ssh_user)
+        
         if !options.skip_build?
           puts "Performing remote install..."
 
-          out, ret = ssh(hostname, "cd /data; rm -rf build-working; mkdir -p /data/build-working/build", 60, true, 1, ssh_user) if ret == 0
-          scp_to(hostname, "build/*", "/data/build-working/build", 60, 2, ssh_user) if ret == 0
+          out, ret = ssh(hostname, "rm -rf build-working; mkdir -p build-working/build", 60, true, 1, ssh_user) if ret == 0
+          scp_to(hostname, "build/*", "build-working/build", 60, 2, ssh_user) if ret == 0
+
+          out, ret = ssh(hostname, "rm -rf #{working_dirs}; #{clone_commands}", 60 * 5, true, 1, ssh_user) if ret == 0
 
           if options.clean_metadata? and ret == 0
             out, ret = ssh(hostname, "su -c \"yum clean metadata\"", 60, 2, ssh_user)
           end
           
-          out, ret = ssh(hostname, "su -c \"cd /data/build-working; build/origin update #{options.verbose? ? '--verbose' : ''} #{options.clean_metadata? ? '--include_stale' : ''} 2>&1 \"", 60 * 15, true, 1, ssh_user)
+          out, ret = ssh(hostname, "su -c \"cd build-working; build/origin update #{options.verbose? ? '--verbose' : ''} #{options.clean_metadata? ? '--include_stale' : ''} 2>&1 \"", 60 * 15, true, 1, ssh_user)
 
           if options.clean_metadata? and ret == 0
             out, ret = ssh(hostname, "su -c \"#{options.clean_metadata? ? "yum update -y rhc cartridge-* rubygem-stickshift-* rubygem-gearchanger-* rubygem-uplift-* rubygem-swingshift-*; " : ''}\"", 60 * 15, true, 1, ssh_user) if ret == 0
           end
 
-          out, ret = ssh(hostname, "su -c \"cd /data && chown -R ec2-user:ec2-user *\"", 60 * 2, true, 1, ssh_user) if ret == 0
           puts "Restarting services..."
-          out, ret = ssh(hostname, "su -c \"export PATH=/usr/local/bin:/bin:/usr/bin:/usr/local/sbin:/usr/sbin:/sbin:$PATH && /usr/bin/ss-setup-broker\"", 60 * 5, true, 1, ssh_user)          
+          out, ret = ssh(hostname, "su -c /usr/bin/ss-setup-broker", 60 * 5, true, 1, ssh_user)          
         end
 
         out, ret = ssh(hostname, "mkdir -p ~/li-test; cd ~/li-test; rm -f tests stickshift; ln -s /data/crankcase-working/stickshift/controller/test/cucumber tests; ln -s /data/crankcase-working/stickshift stickshift", 60, true, 1, ssh_user) if ret == 0
@@ -354,14 +345,26 @@ module Origin
             puts "Starting yum update..."
             out, ret = ssh(hostname, "su -c \"yum -y update\"", 60 * 10, true, 1, ssh_user)
             puts "Installing packages required for build..."
-            out, ret = ssh(hostname, "su -c \"yum install -y git vim rubygem-rake rubygem-aws\"", 60 * 10, true, 1, ssh_user) if ret == 0
+            out, ret = ssh(hostname, "su -c \"yum install -y git vim rubygem-rake rubygem-aws-sdk\"", 60 * 10, true, 1, ssh_user) if ret == 0
             if ret == 0
               puts "Creating mount..."
               out, ret = ssh(hostname, "su -c \"umount -l /data ; if [ ! -b /dev/xvdb ]; then /sbin/mke2fs /dev/xvdb; fi; mkdir -p /data && mount /dev/xvdb /data && chown -R ec2-user:ec2-user /data/\"", 60 * 10, true, 1, ssh_user)
             end
+
             if ret == 0
-              puts "Cloning / Updating crankcase repository..."
-              out, ret = ssh(hostname, "cd /data && git clone https://github.com/openshift/crankcase.git" , 60 * 5, true, 1, ssh_user) 
+              init_repo(hostname, true, nil, "/data", ssh_user)
+              clone_commands, working_dirs = '', ''
+  
+              if options.install_from_local_source?
+                puts "Performing clean install from local source..."
+                clone_commands, working_dirs = sync_available_sibling_repos(hostname, "/data", ssh_user)
+              else 
+                SIBLING_REPOS.each do |repo_name, repo_dirs|
+                  working_dirs += "#{repo_name}-working "
+                  clone_commands += "git clone #{repo_name} #{repo_name}-working; "
+                end
+              end
+              out, ret = ssh(hostname, "cd /data; rm -rf #{working_dirs}; #{clone_commands}", 60 * 2, true, 2, ssh_user)
             end
             puts "Done"
       
@@ -373,13 +376,13 @@ module Origin
             
             if options[:extra_rpm_dir]
               if File.exist? options[:extra_rpm_dir]
-                out, ret = ssh(hostname, "mkdir -p /data/crankcase/build/extras", 60, true, 1, ssh_user)
+                out, ret = ssh(hostname, "mkdir -p /data/crankcase-working/build/extras", 60, true, 1, ssh_user)
                 files = Dir.glob("#{options[:extra_rpm_dir]}/*.rpm")
                 files.each do |file|
-                  scp_to(hostname, file, "/data/crankcase/build/extras/", 60*10, 5, ssh_user)
+                  scp_to(hostname, file, "/data/crankcase-working/build/extras/", 60*10, 5, ssh_user)
                 end
           
-                out, ret = ssh(hostname, "su -c \"cd /data/crankcase/build/extras && yum install -y *.rpm\"", 60 * 20, true, 1, ssh_user)
+                out, ret = ssh(hostname, "su -c \"cd /data/crankcase-working/build/extras && yum install -y *.rpm\"", 60 * 20, true, 1, ssh_user)
               else
                 puts "!!!Warning!!!"
                 puts "Directory containing extra rpms not found. Skipping..."
@@ -388,21 +391,14 @@ module Origin
             end
         
             puts "Running build_setup script..."
-            out, ret = ssh(hostname, "cd /data/crankcase/build && rake build_setup", 60 * 20, true, 1, ssh_user) if ret == 0
+            out, ret = ssh(hostname, "cd /data/crankcase-working/build && rake build_setup", 60 * 20, true, 1, ssh_user) if ret == 0
             puts "Downgrading qpid version..."
             out = ssh(hostname, "su -c \"yum -y downgrade qpid-cpp-server qpid-cpp-client qpid-qmf qpid-client-devel ruby-qpid-qmf qpid-cpp-client-devel\"", 60 * 60 * 10, false, 1, ssh_user) if ret == 0
           end
           
-          if options.install_from_source?
-            puts "Running devbroker script..."
-            out, ret = ssh(hostname, "cd /data/crankcase/build && rake devbroker", 60 * 20, true, 1, ssh_user) if ret == 0
-            out, ret = ssh(hostname, "su -c \"umount -l /data ; if [ ! -b /dev/xvdb ]; then /sbin/mke2fs /dev/xvdb; fi; mkdir -p /data && mount /dev/xvdb /data && chown -R ec2-user:ec2-user /data/\"", 60 * 10, true, 1, ssh_user)
-            out, ret = ssh(hostname, "mkdir -p ~/li-test; cd ~/li-test; rm -f tests stickshift; ln -s /data/crankcase/stickshift/controller/test/cucumber tests; ln -s /data/crankcase/stickshift stickshift", 60, true, 1, ssh_user) if ret == 0
-          elsif options.install_from_local_source?
-            system("build/origin sync #{hostname} #{options.verbose? ? '--verbose' : ''} --skip-build")
+          if options.install_from_source? || options.install_from_local_source?
             puts "Running devbroker script..."
             out, ret = ssh(hostname, "cd /data/crankcase-working/build && rake devbroker", 60 * 20, true, 1, ssh_user) if ret == 0
-            out, ret = ssh(hostname, "mkdir -p ~/li-test; cd ~/li-test; rm -f tests stickshift; ln -s /data/crankcase-working/stickshift/controller/test/cucumber tests; ln -s /data/crankcase-working/stickshift stickshift", 60, true, 1, ssh_user) if ret == 0
           end
           
           out, ret = ssh(hostname, "su -c \"cd /data && chown -R ec2-user:ec2-user *\"", 60 * 2, true, 1, ssh_user) if ret == 0
@@ -413,6 +409,9 @@ module Origin
             puts "Output: #{out}"
             exit ret
           end
+
+          # Add the paths to the users .bashrc file
+          out, ret = ssh(hostname, "echo \"export PATH=/usr/local/bin:/bin:/usr/bin:/usr/local/sbin:/usr/sbin:/sbin:$PATH\" >> ~/.bashrc", 60, true, 1, ssh_user) if ret == 0
     
           image_id = nil
           if options[:register]
@@ -425,9 +424,9 @@ module Origin
     
           unless options.skip_verify? || options.install_required_packages?
             puts "Running broker setup..."
-            out, ret = ssh(hostname, "su -c \"export PATH=/usr/local/bin:/bin:/usr/bin:/usr/local/sbin:/usr/sbin:/sbin:$PATH && /usr/bin/ss-setup-broker\"", 60 * 10, true, 1, ssh_user) if ret == 0
+            out, ret = ssh(hostname, "su -c /usr/bin/ss-setup-broker", 60 * 10, true, 1, ssh_user) if ret == 0
 
-            scp_remote_tests(hostname)
+            scp_remote_tests(hostname, "~", ssh_user)
             test_impl(name + '_' + build_num, hostname, instance, conn, options, image_id)
           end
           puts "Done."
@@ -463,8 +462,7 @@ module Origin
       
       def post_launch_setup(hostname)
         puts "Running broker setup..."
-        #out, ret = ssh(hostname, "su -c \"export PATH=/usr/local/bin:/bin:/usr/bin:/usr/local/sbin:/usr/sbin:/sbin:$PATH && /usr/bin/complete-origin-setup\"", 60 * 10, true, 1, ssh_user)
-        out, ret = ssh(hostname, "su -c \"export PATH=/usr/local/bin:/bin:/usr/bin:/usr/local/sbin:/usr/sbin:/sbin:$PATH && /usr/bin/ss-setup-broker\"", 60 * 5, true, 1, ssh_user)
+        out, ret = ssh(hostname, "su -c /usr/bin/ss-setup-broker", 60 * 5, true, 1, ssh_user)
         puts "Done"
 
         if ret != 0
