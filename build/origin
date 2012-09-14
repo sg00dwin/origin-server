@@ -148,17 +148,17 @@ module Origin
           else
   
             unless options.exclude_broker?
-              test_queues[0] << ["StickShift Broker Functional", "cd li-test/stickshift/broker; rake test:functionals"]
-              test_queues[1] << ["StickShift Broker Integration", "cd li-test/stickshift/broker; rake test:integration"]
+              test_queues[0] << ["StickShift Broker Functional", "cd li-test/stickshift/broker; bundle exec rake test:functionals"]
+              test_queues[1] << ["StickShift Broker Integration", "cd li-test/stickshift/broker; bundle exec rake test:integration"]
 
-              test_queues[2] << ["StickShift Broker Unit 1", "cd li-test/stickshift/broker; rake test:ss_unit1"]
-              test_queues[3] << ["StickShift Broker Unit 2", "cd li-test/stickshift/broker; rake test:ss_unit2"]
-              test_queues[0] << ["Broker Cucumber", "su -c \"cucumber --strict -f html --out /tmp/rhc/broker_cucumber.html -f progress -t @broker -t ~@nit-origin li-test/tests\""]
+              test_queues[2] << ["StickShift Broker Unit 1", "cd li-test/stickshift/broker; bundle exec rake test:ss_unit1"]
+              test_queues[3] << ["StickShift Broker Unit 2", "cd li-test/stickshift/broker; bundle exec rake test:ss_unit2"]
+              test_queues[2] << ["Broker Cucumber", "su -c \"cucumber --strict -f html --out /tmp/rhc/broker_cucumber.html -f progress -t @broker -t ~@not-origin li-test/tests\""]
             end
 
             unless options.exclude_runtime?
-              test_queues[0] << ["Runtime Unit", "cd li-test/stickshift/node; su -c \"rake unit_test\""]
-              (1..1).each do |i|
+              test_queues[3] << ["Runtime Unit", "cd li-test/stickshift/node; su -c \"rake unit_test\""]
+              (1..4).each do |i|
                 test_queues[i-1] << ["Runtime Group #{i.to_s}", "su -c \"export PATH=/usr/local/bin:/bin:/usr/bin:/usr/local/sbin:/usr/sbin:/sbin:$PATH; cucumber #{CUCUMBER_OPTIONS} -t @runtime#{i.to_s} li-test/tests\""]
               end
             end
@@ -354,7 +354,7 @@ module Origin
             puts "Starting yum update..."
             out, ret = ssh(hostname, "su -c \"yum -y update\"", 60 * 10, true, 1, ssh_user)
             puts "Installing packages required for build..."
-            out, ret = ssh(hostname, "su -c \"yum install -y git vim rubygem-rake aws\"", 60 * 10, true, 1, ssh_user) if ret == 0
+            out, ret = ssh(hostname, "su -c \"yum install -y git vim rubygem-rake rubygem-aws\"", 60 * 10, true, 1, ssh_user) if ret == 0
             if ret == 0
               puts "Creating mount..."
               out, ret = ssh(hostname, "su -c \"umount -l /data ; if [ ! -b /dev/xvdb ]; then /sbin/mke2fs /dev/xvdb; fi; mkdir -p /data && mount /dev/xvdb /data && chown -R ec2-user:ec2-user /data/\"", 60 * 10, true, 1, ssh_user)
@@ -396,10 +396,13 @@ module Origin
           if options.install_from_source?
             puts "Running devbroker script..."
             out, ret = ssh(hostname, "cd /data/crankcase/build && rake devbroker", 60 * 20, true, 1, ssh_user) if ret == 0
+            out, ret = ssh(hostname, "su -c \"umount -l /data ; if [ ! -b /dev/xvdb ]; then /sbin/mke2fs /dev/xvdb; fi; mkdir -p /data && mount /dev/xvdb /data && chown -R ec2-user:ec2-user /data/\"", 60 * 10, true, 1, ssh_user)
+            out, ret = ssh(hostname, "mkdir -p ~/li-test; cd ~/li-test; rm -f tests stickshift; ln -s /data/crankcase/stickshift/controller/test/cucumber tests; ln -s /data/crankcase/stickshift stickshift", 60, true, 1, ssh_user) if ret == 0
           elsif options.install_from_local_source?
             system("build/origin sync #{hostname} #{options.verbose? ? '--verbose' : ''} --skip-build")
             puts "Running devbroker script..."
             out, ret = ssh(hostname, "cd /data/crankcase-working/build && rake devbroker", 60 * 20, true, 1, ssh_user) if ret == 0
+            out, ret = ssh(hostname, "mkdir -p ~/li-test; cd ~/li-test; rm -f tests stickshift; ln -s /data/crankcase-working/stickshift/controller/test/cucumber tests; ln -s /data/crankcase-working/stickshift stickshift", 60, true, 1, ssh_user) if ret == 0
           end
           
           out, ret = ssh(hostname, "su -c \"cd /data && chown -R ec2-user:ec2-user *\"", 60 * 2, true, 1, ssh_user) if ret == 0
