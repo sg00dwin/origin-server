@@ -8,17 +8,6 @@ class ApplicationController < ActionController::Base
     logger.debug "Access denied: #{e}"
     redirect_to logout_path :cause => e.message, :then => account_path
   end
-  rescue_from 'ActiveResource::ConnectionError' do |e|
-    if defined? e.response and defined? env and env
-      env['broker.response'] = e.response.inspect
-      env['broker.response.body'] = e.response.body if defined? e.response.body
-    end
-    raise e
-  end
-  rescue_from 'ActiveResource::ResourceNotFound' do |e|
-    logger.debug "#{e}\n  #{e.backtrace.join("\n  ")}"
-    render :file => "#{Rails.root}/public/404.html", :status => :not_found, :layout => false
-  end
 
   def handle_unverified_request
     raise AccessDeniedException, "Request authenticity token does not match session #{session.inspect}"

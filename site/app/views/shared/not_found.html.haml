@@ -47,7 +47,7 @@
 %section.row
   .span7
     - unless @message
-      %h2 The page you requested was not found or may no longer exist
+      %h2 The page you requested may no longer exist
 
     - if @alternatives.present?
       %p Were you looking for any of the following?
@@ -55,7 +55,7 @@
         - @alternatives.each do |alt|
           %li= link_to alt[0], alt[1], alt[2] || {}
 
-    %ul.spaced-items
+    %ul
       %li= link_to "Management console", console_path
       %li= link_to "View your account", account_path
       %li= link_to "Get help", console_help_path
