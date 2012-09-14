@@ -78,7 +78,188 @@ module Origin
       end
       
       def test_impl(tag, hostname, instance, conn, options, image_id=nil)
-        puts "test_impl - Not yet implemented"
+        begin
+          
+          validate_instance(hostname, 4)
+  
+          #disable_charlie(hostname) if options.disable_charlie?
+          
+          mcollective_logs(hostname) if options.mcollective_logs?
+  
+          #idle_all_gears(hostname) unless options.official?
+          
+          reset_test_dir(hostname)
+  
+          #broker_profiler(hostname) if options.profile_broker?
+  
+          test_queues = [[], [], [], []]
+            
+          extended_tests = nil
+          if options.include_extended
+            extended_tests = []
+            extended_tests = options.include_extended.split(",").map do |extended_test|
+              extended_test.strip
+            end
+          end
+  
+          if options.include_extended
+            extended_tests.each do |extended_test|
+              case extended_test
+              when 'broker'
+                test_queues[0] << ["REST API Group 1", "su -c \"cucumber #{CUCUMBER_OPTIONS} -t @broker_api1 li-test/tests\"", {:retry_individually => true}]
+                test_queues[1] << ["REST API Group 2", "su -c \"cucumber #{CUCUMBER_OPTIONS} -t @broker_api2 li-test/tests\"", {:retry_individually => true}]
+                test_queues[2] << ["REST API Group 3", "su -c \"cucumber #{CUCUMBER_OPTIONS} -t @broker_api3 li-test/tests\"", {:retry_individually => true}]
+                test_queues[3] << ["REST API Group 4", "su -c \"cucumber #{CUCUMBER_OPTIONS} -t @broker_api4 li-test/tests\"", {:retry_individually => true}]
+                test_queues[3] << ["StickShift Broker Unit Ext 1", "cd li-test/stickshift/broker; rake test:ss_unit_ext1", {:retry_individually => true}]
+              when 'runtime'
+                test_queues[0] << ["Extended Runtime Group 1", "su -c \"cucumber #{CUCUMBER_OPTIONS} -t @runtime_extended1 li-test/tests\""]
+                test_queues[1] << ["Extended Runtime Group 2", "su -c \"cucumber #{CUCUMBER_OPTIONS} -t @runtime_extended2 li-test/tests\""]
+                test_queues[2] << ["Extended Runtime Group 3", "su -c \"cucumber #{CUCUMBER_OPTIONS} -t @runtime_extended3 li-test/tests\""]
+              when 'site'
+                puts "Warning: Site tests are currently not supported"
+              when 'rhc'
+                test_queues[0] << ["RHC Extended", "su -c \"cucumber #{CUCUMBER_OPTIONS} -t @rhc_extended li-test/tests\"", {:retry_individually => true}]
+                base_str = "QUIET=1 RHC_SERVER=localhost cucumber #{CUCUMBER_OPTIONS} li-test/features"
+                tags = [
+                  [ :client, :domain ],
+                  [ :application ],
+                  [ :single_cartridge ],
+                  [ :multiple_cartridge ]
+                ]
+                (0..3).each do |q|
+                  tags[q].each do |tag|
+                    test_queues[q] << ["RHC Functional: #{tag}", "#{base_str} -t @#{tag} "]
+                  end
+                end
+              else
+                puts "Not supported for extended: #{extended_test}"
+                exit 1
+              end
+            end
+          elsif options.include_rcov?
+            test_queues[0] << ["StickShift Node Unit Coverage", "cd li-test/stickshift/node; rake rcov; cp -a coverage /tmp/rhc/stickshift_node_coverage"]
+            test_queues[1] << ["StickShift Broker Unit and Functional Coverage", "cd li-test/stickshift/broker; rake rcov; cp -a test/coverage /tmp/rhc/stickshift_broker_coverage"]
+          elsif options.include_cucumber
+            timeout = @@SSH_TIMEOUT
+            timeout = @@SSH_TIMEOUT_OVERRIDES[options.include_cucumber] if not @@SSH_TIMEOUT_OVERRIDES[options.include_cucumber].nil?
+            test_queues[0] << [options.include_cucumber, "cucumber #{CUCUMBER_OPTIONS} -t @#{options.include_cucumber} li-test/tests", {:timeout => timeout}]
+          elsif options.include_web?
+            puts "Warning: Tests for the website are currently not supported"
+          else
+  
+            unless options.exclude_broker?
+              test_queues[0] << ["StickShift Broker Functional", "cd li-test/stickshift/broker; rake test:functionals"]
+              test_queues[1] << ["StickShift Broker Integration", "cd li-test/stickshift/broker; rake test:integration"]
+
+              test_queues[2] << ["StickShift Broker Unit 1", "cd li-test/stickshift/broker; rake test:ss_unit1"]
+              test_queues[3] << ["StickShift Broker Unit 2", "cd li-test/stickshift/broker; rake test:ss_unit2"]
+              test_queues[0] << ["Broker Cucumber", "su -c \"cucumber --strict -f html --out /tmp/rhc/broker_cucumber.html -f progress -t @broker -t ~@nit-origin li-test/tests\""]
+            end
+
+            unless options.exclude_runtime?
+              test_queues[0] << ["Runtime Unit", "cd li-test/stickshift/node; su -c \"rake unit_test\""]
+              (1..1).each do |i|
+                test_queues[i-1] << ["Runtime Group #{i.to_s}", "su -c \"export PATH=/usr/local/bin:/bin:/usr/bin:/usr/local/sbin:/usr/sbin:/sbin:$PATH; cucumber #{CUCUMBER_OPTIONS} -t @runtime#{i.to_s} li-test/tests\""]
+              end
+            end
+  
+            unless options.exclude_site?
+              puts "Warning: Tests for the site are currently not supported"
+            end
+
+            unless options.exclude_rhc?
+            end
+          end
+  
+          threads = []
+          failures = []
+  
+          retry_threshold = 0
+          test_queues.each do |test_queue|
+            titles = []
+            cmds = []
+            retry_individually = []
+            timeouts = []
+            test_queue.each do |test|
+              titles << test[0]
+              cmds << test[1]
+              opts = test[2] || {}
+              retry_individually << opts[:retry_individually] ? true : false
+              timeouts << opts[:timeout] ? opts[:timeout] : @@SSH_TIMEOUT
+              retry_threshold += 8
+            end
+            add_ssh_cmd_to_threads(hostname, threads, failures, titles, cmds, retry_individually, timeouts, ssh_user)
+          end
+  
+          threads.each do |t|
+            t[0].join
+          end
+  
+          failures.uniq!
+  
+          begin
+            if failures.length > 0 && failures.length <= retry_threshold 
+              #idle_all_gears(hostname)
+              retry_test_failures(hostname, failures, 2, timeout=@@SSH_TIMEOUT, ssh_user)
+            elsif failures.length > retry_threshold
+              exit 1
+            end
+  
+            # These are special tests that cannot be written to work concurrently
+            if options.include_extended
+              extended_tests.each do |extended_test|
+                case extended_test
+                when 'broker'
+                when 'runtime'
+                  #idle_all_gears(hostname)
+                  singleton_queue = ['Singletons', "su -c \"cucumber #{CUCUMBER_OPTIONS} -t @singleton li-test/tests\""]
+                  output, exit_code = run_ssh(hostname, singleton_queue[0], singleton_queue[1], timeout=@@SSH_TIMEOUT, ssh_user)
+                  retry_test_failures(hostname, [singleton_queue], 2, timeout=@@SSH_TIMEOUT, ssh_user) if 0 != exit_code
+                when 'site'
+                when 'rhc'
+                else
+                  puts "Not supported for extended: #{extended_test}"
+                  exit 1
+                end
+              end
+            end
+  
+            validate_instance(hostname, 4)
+          ensure
+            if options.include_web?
+              cmd = "service sauce-connect stop"
+              run_ssh(hostname, "Stop sauce connect tunnel", cmd, timeout)
+            end
+          end
+  
+          if options.official?
+            image_id = image_id ? image_id : instance.image_id
+            # Mark the image as verified
+            image = conn.images[image_id]
+            verify_image(image)
+  
+            puts "Sending QE ready email..."
+            begin
+              send_verified_email(image_id, image.name)
+            rescue Exception => e
+              puts "Failed sending email with message: #{e.message}"
+            end
+          elsif !options.terminate?
+            #idle_all_gears(hostname)
+          end
+  
+          #broker_profiler(hostname, enable=false) if options.profile_broker?
+  
+          puts "Done"
+  
+        ensure
+          if options.terminate? || options.official?
+            download_artifacts(hostname)
+          end
+          if options.terminate?
+            terminate_instance(instance)
+          end
+        end
       end
       
       def update_impl(options)
@@ -173,11 +354,15 @@ module Origin
             puts "Starting yum update..."
             out, ret = ssh(hostname, "su -c \"yum -y update\"", 60 * 10, true, 1, ssh_user)
             puts "Installing packages required for build..."
-            out, ret = ssh(hostname, "su -c \"yum install -y git vim rubygem-rake\"", 60 * 10, true, 1, ssh_user) if ret == 0
-            puts "Creating mount..."
-            out, ret = ssh(hostname, "su -c \"umount -l /data ; if [ ! -b /dev/xvdb ]; then /sbin/mke2fs /dev/xvdb; fi; mkdir -p /data && mount /dev/xvdb /data && chown -R ec2-user:ec2-user /data/\"", 60 * 10, true, 1, ssh_user)
-            puts "Cloning / Updating crankcase repository..."
-            out, ret = ssh(hostname, "cd /data && git clone https://github.com/openshift/crankcase.git" , 60 * 5, true, 1, ssh_user) if ret == 0
+            out, ret = ssh(hostname, "su -c \"yum install -y git vim rubygem-rake aws\"", 60 * 10, true, 1, ssh_user) if ret == 0
+            if ret == 0
+              puts "Creating mount..."
+              out, ret = ssh(hostname, "su -c \"umount -l /data ; if [ ! -b /dev/xvdb ]; then /sbin/mke2fs /dev/xvdb; fi; mkdir -p /data && mount /dev/xvdb /data && chown -R ec2-user:ec2-user /data/\"", 60 * 10, true, 1, ssh_user)
+            end
+            if ret == 0
+              puts "Cloning / Updating crankcase repository..."
+              out, ret = ssh(hostname, "cd /data && git clone https://github.com/openshift/crankcase.git" , 60 * 5, true, 1, ssh_user) 
+            end
             puts "Done"
       
             if ret != 0
@@ -257,7 +442,7 @@ module Origin
         cmds = ["su -c \"cd /var/www/stickshift/broker; bundle exec rake test:sanity\"",
                 "cd li-test/stickshift/node; su -c \"rake unit_test\""]
         add_ssh_cmd_to_threads(hostname, threads, failures, titles, cmds, false, @@SSH_TIMEOUT, ssh_user)
-        add_ssh_cmd_to_threads(hostname, threads, failures, "Cucumber Sanity", "cucumber #{@@CUCUMBER_OPTIONS} -t @sanity li-test/tests/", false, @@SSH_TIMEOUT, ssh_user)
+        add_ssh_cmd_to_threads(hostname, threads, failures, "Cucumber Sanity", "cucumber #{CUCUMBER_OPTIONS} -t @sanity li-test/tests/", false, @@SSH_TIMEOUT, ssh_user)
     
         threads.each do |t|
           t[0].join
