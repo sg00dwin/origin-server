@@ -23,7 +23,6 @@ module OpenShift
 
     @@SSH_TIMEOUT = 4800
     @@SSH_TIMEOUT_OVERRIDES = { "benchmark" => 172800 }
-    @@CUCUMBER_OPTIONS = '--strict -f progress -f junit --out /tmp/rhc/cucumber_results'
 
     # Get the hostname from a tag lookup or assume it's SSH accessible directly
     # Only look for a tag if the --tag option is specified
@@ -282,9 +281,9 @@ END
                   test = $1
                   scenario = $2
                   if retry_individ
-                    failures.push(["#{title} (#{test}:#{scenario})", "cucumber #{@@CUCUMBER_OPTIONS} li-test/tests/#{test}:#{scenario}"])
+                    failures.push(["#{title} (#{test}:#{scenario})", "su -c \"cucumber #{CUCUMBER_OPTIONS} li-test/tests/#{test}:#{scenario}\""])
                   else
-                    failures.push(["#{title} (#{test})", "cucumber #{@@CUCUMBER_OPTIONS} li-test/tests/#{test}"])
+                    failures.push(["#{title} (#{test})", "su -c \"cucumber #{CUCUMBER_OPTIONS} li-test/tests/#{test}\""])
                   end
                 end
               end

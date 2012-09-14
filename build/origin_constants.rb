@@ -49,4 +49,6 @@ SAUCE_BROWSER = ""
 SAUCE_BROWSER_VERSION = ""
 CAN_SSH_TIMEOUT=90
 
+CUCUMBER_OPTIONS = '--strict -f progress -f junit --out /tmp/rhc/cucumber_results -t ~@not-origin'
+
 $amz_options = {:key_name => KEY_PAIR, :instance_type => TYPE}

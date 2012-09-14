@@ -59,4 +59,6 @@ SAUCE_BROWSER = "firefox"
 SAUCE_BROWSER_VERSION = "7"
 CAN_SSH_TIMEOUT=90
 
+CUCUMBER_OPTIONS = '--strict -f progress -f junit --out /tmp/rhc/cucumber_results'
+
 $amz_options = {:key_name => KEY_PAIR, :instance_type => TYPE}
