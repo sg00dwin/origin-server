@@ -3,7 +3,7 @@
 
 Summary:   Li broker components
 Name:      rhc-broker
-Version: 0.98.8
+Version: 0.98.9
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -120,6 +120,10 @@ if [ ! -f %{_localstatedir}/log/stickshift/user_action.log ]; then
 fi
 
 %changelog
+* Fri Sep 14 2012 Adam Miller <admiller@redhat.com> 0.98.9-1
+- BZ 857344: Upgrading mongodb rpm kills all instances of mongodb on gears.
+  (rmillner@redhat.com)
+
 * Wed Sep 12 2012 Adam Miller <admiller@redhat.com> 0.98.8-1
 - Updating gem versions (admiller@redhat.com)
 
