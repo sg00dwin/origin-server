@@ -39,7 +39,7 @@ class Prune < Thor
           images = get_amis(region, wildcard)
           sorted_images = images.to_a.sort_by do |i|
             if i.name =~ regex
-              $2
+              $2.to_i
             else
               999_999_999
             end
