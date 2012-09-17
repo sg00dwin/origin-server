@@ -432,6 +432,59 @@ module Express
         puts "Done"
       end
 
+      def update_remote_tests(hostname, branch=nil)
+        puts "Updating remote tests..."
+        all_repo_dirs = ['/root/li']
+        SIBLING_REPOS.each do |repo_name, repo_dirs|
+          all_repo_dirs << "/root/#{repo_name}"
+        end
+        git_archive_commands = ''
+        all_repo_dirs.each do |repo_dir|
+          git_archive_commands += "pushd #{repo_dir} > /dev/null; git archive --prefix li-test/ --format=tar #{branch ? branch : 'HEAD'} | (cd /root && tar --warning=no-timestamp -xf -); popd > /dev/null; "
+        end
+        ssh(hostname, %{
+set -e;
+rm -rf /root/li-test
+#{git_archive_commands}
+cp -n /root/li-test/stickshift/controller/test/cucumber/*.feature /root/li-test/tests/.
+mkdir -p /tmp/rhc/junit
+}, 60, false, 2)
+        puts "Done"
+      end
+      
+      def scp_remote_tests(hostname)
+        if FileUtils.pwd == "/var/lib/jenkins/jobs/libra_ami_stage/workspace" || FileUtils.pwd == "/var/lib/jenkins/jobs/libra_ami_verify_stage/workspace"
+          init_repo(hostname)
+          update_remote_tests(hostname, "stage")
+        else
+          puts "Archiving local changes..."
+          tmpdir = `mktemp -d`.strip
+          all_repo_dirs = ['.']
+          SIBLING_REPOS.each do |repo_name, repo_dirs|
+            repo_dirs.each do |repo_dir|
+              if File.exists?(repo_dir)
+                all_repo_dirs << repo_dir
+                break
+              end
+            end
+          end
+          all_repo_dirs.each do |repo_dir|
+            inside(repo_dir) do
+              `git archive --prefix li-test/ --format=tar HEAD | (cd #{tmpdir} && tar --warning=no-timestamp -xf -)`
+            end
+          end
+          `cd /tmp/ && tar -cvf /tmp/li-test.tar $(basename #{tmpdir})`
+          puts "Done"
+          puts "Copying tests to remote instance: #{hostname}"
+          scp_to(hostname, "/tmp/li-test.tar", "~/", 600, 10)
+          puts "Done"
+          puts "Extracting tests on remote instance: #{hostname}"
+          ssh(hostname, 'set -e; rm -rf li-test; tar -xf li-test.tar; mv $(basename #{tmpdir}) li-test; cp -n /root/li-test/stickshift/controller/test/cucumber/*.feature /root/li-test/tests/. ; mkdir -p /tmp/rhc/junit', 120)
+          puts "Done"
+          FileUtils.rmdir tmpdir
+        end
+      end
+
       def test_impl(tag, hostname, instance, conn, options, image_id=nil)
         begin
           
