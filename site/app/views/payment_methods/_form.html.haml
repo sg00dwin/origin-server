@@ -72,10 +72,14 @@
             %span Mastercard
           %li{ :class => 'AMEX cc-card' }
             %span American Express                      
-  
-    = f.inputs :inline => true, :required => true, :name => 'Expiration Date' do
-      = f.input :cc_exp_mm, :required => true, :as => :select, :include_blank => false, :collection => months_for_select, :input_html => { :class => 'input-medium', :name => :cc_exp_mm }
-      = f.input :cc_exp_yyyy, :required => true, :as => :select, :include_blank => false, :collection => years_for_select, :input_html => { :class => 'input-medium', :name => :cc_exp_yyyy }
+
+    .control-group
+      %label{ :class => 'control-label'}
+        Expiration Date
+        %abbr{ :title => 'required' } *
+      .controls
+        = select_month(payment_method.cc_exp_mm || Date.today.month, {:field_name => :cc_exp_mm,}, { :name => :cc_exp_mm, :class => 'input-medium' })
+        = select_year(payment_method.cc_exp_yyyy || Date.today.year, {:start_year => Date.today.year, :end_year => Date.today.year+10, :field_name => :cc_exp_yyyy, }, { :name => :cc_exp_yyyy, :class => 'input-medium' })
     = f.input :cvv, :label => 'Security Code', :input_html => { :class => 'input-mini', :name => :cvv }
 
   = f.buttons do
