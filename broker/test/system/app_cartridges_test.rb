@@ -215,7 +215,7 @@ class AppCartridgesTest < ActionDispatch::IntegrationTest
     assert_response :created
 
     # delete a different application cartridge
-    request_via_redirect(:delete, APP_CARTRIDGE_URL_FORMAT % [ns, "app1", "mongodb-2.0"], {}, @headers)
+    request_via_redirect(:delete, APP_CARTRIDGE_URL_FORMAT % [ns, "app1", "mongodb-2.2"], {}, @headers)
     assert_response :bad_request
     body = JSON.parse(@response.body)
     assert_equal(body["messages"][0]["exit_code"], 129)

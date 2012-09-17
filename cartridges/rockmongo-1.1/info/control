@@ -2,7 +2,7 @@ Name: rockmongo-1.1
 Version: 1.0.x
 Architecture: i686/x86_64
 Provides: rockmongo
-Depends: rhc-cartridge-mongodb-2.0
+Depends: rhc-cartridge-mongodb-2.2
 Conflicts:
 Type: Cartridge
 Role: misc

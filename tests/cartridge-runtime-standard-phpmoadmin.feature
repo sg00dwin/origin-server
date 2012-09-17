@@ -5,7 +5,7 @@ Feature: phpmoadmin Embedded Cartridge
   Scenario: Add remove phpmoadmin to one application
     Given a new php-5.3 type application
     
-    When I embed a mongodb-2.0 cartridge into the application
+    When I embed a mongodb-2.2 cartridge into the application
     And I embed a phpmoadmin-1.0 cartridge into the application
     Then the embedded phpmoadmin-1.0 cartridge http proxy file will exist
     And 4 processes named httpd will be running
