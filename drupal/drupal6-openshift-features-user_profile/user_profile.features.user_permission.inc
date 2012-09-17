@@ -449,7 +449,8 @@ function user_profile_user_default_permissions() {
     'name' => 'create blog content',
     'roles' => array(
       '0' => 'administrator',
-      '1' => 'moderator',
+      '1' => 'blogger',
+      '2' => 'moderator',
     ),
   );
 
@@ -1114,7 +1115,8 @@ function user_profile_user_default_permissions() {
     'name' => 'edit own blog content',
     'roles' => array(
       '0' => 'administrator',
-      '1' => 'moderator',
+      '1' => 'blogger',
+      '2' => 'moderator',
     ),
   );
 

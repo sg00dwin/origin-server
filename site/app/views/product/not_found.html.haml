@@ -42,7 +42,7 @@
 
 - content_for :page_title, @message || 'Page not found'
 
-%h1= @message || 'Page not found <small>404</small>'.html_safe
+%h1.ribbon= @message || 'Page not found <small>404</small>'.html_safe
 
 %section.row
   .span7
@@ -55,10 +55,11 @@
         - @alternatives.each do |alt|
           %li= link_to alt[0], alt[1], alt[2] || {}
 
-    %ul
-      %li= link_to "Management console", console_path
-      %li= link_to "View your account", account_path
-      %li= link_to "Get help", console_help_path
+    %form.form-search
+      %input.search
+      %input.btn.btn-primary{:type => 'button', :value => 'Search'}
+
+    %p= link_to "Return to our homepage.", root_path
 
     %p #{link_to "Contact us", mailto_openshift_url} if you feel you have reached this page in error.
 
