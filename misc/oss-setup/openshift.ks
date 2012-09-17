@@ -116,7 +116,7 @@ cartridge-jbossas-7
 cartridge-jbosseap-6.0
 cartridge-jenkins-1.4
 cartridge-jenkins-client-1.4
-cartridge-mongodb-2.0
+cartridge-mongodb-2.2
 cartridge-mysql-5.1
 cartridge-nodejs-0.6
 cartridge-perl-5.10

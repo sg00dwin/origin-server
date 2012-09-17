@@ -32,7 +32,7 @@ Requires:  cartridge-jenkins-1.4
 Requires:  cartridge-diy-0.1
 Requires:  cartridge-jenkins-client-1.4
 Requires:  cartridge-metrics-0.1
-Requires:  cartridge-mongodb-2.0
+Requires:  cartridge-mongodb-2.2
 Requires:  cartridge-phpmoadmin-1.0
 Requires:  cartridge-rockmongo-1.1
 Requires:  cartridge-10gen-mms-agent-0.1

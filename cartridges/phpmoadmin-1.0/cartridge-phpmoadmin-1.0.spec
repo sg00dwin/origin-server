@@ -14,7 +14,7 @@ BuildArch: noarch
 
 Requires: stickshift-abstract
 Requires: rubygem(stickshift-node)
-Requires: cartridge-mongodb-2.0
+Requires: cartridge-mongodb-2.2
 
 %description
 Provides rhc phpMoAdmin cartridge support

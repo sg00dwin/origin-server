@@ -5,7 +5,7 @@ Feature: rockmongo Embedded Cartridge
   Scenario: Add remove rockmongo to one application
     Given a new php-5.3 type application
     
-    When I embed a mongodb-2.0 cartridge into the application
+    When I embed a mongodb-2.2 cartridge into the application
     And I embed a rockmongo-1.1 cartridge into the application
     Then the embedded rockmongo-1.1 cartridge http proxy file will exist
     And 4 processes named httpd will be running

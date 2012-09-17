@@ -17,7 +17,7 @@ Feature: Create applications for migration testing
     |  nodejs-0.6  |
     |  diy-0.1     |
     |  mysql-5.1   |
-    |  mongodb-2.0 |
+    |  mongodb-2.2 |
     |  jenkins-1.4 |
   
 
@@ -25,7 +25,7 @@ Feature: Create applications for migration testing
     Given the libra client tools
     And an accepted node
     When 1 <type> applications are created
-    And the embedded mongodb-2.0 cartridge is added
+    And the embedded mongodb-2.2 cartridge is added
     And the embedded phpmoadmin-1.0 cartridge is added
     And the embedded rockmongo-1.1 cartridge is added
     And the embedded 10gen-mms-agent-0.1 is added
@@ -101,7 +101,7 @@ Feature: Create applications for migration testing
     Given the libra client tools
     And an accepted node
     When a scaled <type> applications are created
-    And the embedded mongodb-2.0 cartridge is added
+    And the embedded mongodb-2.2 cartridge is added
     And the embedded phpmoadmin-1.0 cartridge is added
     And the embedded rockmongo-1.1 cartridge is added
     And the embedded 10gen-mms-agent-0.1 is added
