@@ -459,7 +459,7 @@ mkdir -p /tmp/rhc/junit
         else
           puts "Archiving local changes..."
           tmpdir = `mktemp -d`.strip
-          tarname = `basename #{tmpdir}`.strip
+          tarname = File.basename tmpdir
           all_repo_dirs = ['.']
           SIBLING_REPOS.each do |repo_name, repo_dirs|
             repo_dirs.each do |repo_dir|
@@ -482,7 +482,7 @@ mkdir -p /tmp/rhc/junit
           puts "Extracting tests on remote instance: #{hostname}"
           ssh(hostname, "set -e; rm -rf li-test; tar -xf #{tarname}.tar; mv #{tarname} li-test; cp -n /root/li-test/stickshift/controller/test/cucumber/*.feature /root/li-test/tests/. ; mkdir -p /tmp/rhc/junit", 120)
           puts "Done"
-          FileUtils.rm_fr tmpdir
+          FileUtils.rm_rf tmpdir
           FileUtils.rm "/tmp/#{tarname}.tar"
         end
       end
