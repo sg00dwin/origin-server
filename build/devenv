@@ -459,6 +459,7 @@ mkdir -p /tmp/rhc/junit
         else
           puts "Archiving local changes..."
           tmpdir = `mktemp -d`.strip
+          tarname = `basename #{tmpdir}`.strip
           all_repo_dirs = ['.']
           SIBLING_REPOS.each do |repo_name, repo_dirs|
             repo_dirs.each do |repo_dir|
@@ -473,15 +474,16 @@ mkdir -p /tmp/rhc/junit
               `git archive --prefix li-test/ --format=tar HEAD | (cd #{tmpdir} && tar --warning=no-timestamp -xf -)`
             end
           end
-          `cd /tmp/ && tar -cvf /tmp/li-test.tar $(basename #{tmpdir})`
+          `cd /tmp/ && tar -cvf /tmp/#{tarname}.tar #{tarname}` 
           puts "Done"
           puts "Copying tests to remote instance: #{hostname}"
-          scp_to(hostname, "/tmp/li-test.tar", "~/", 600, 10)
+          scp_to(hostname, "/tmp/#{tarname}.tar", "~/", 600, 10)
           puts "Done"
           puts "Extracting tests on remote instance: #{hostname}"
-          ssh(hostname, 'set -e; rm -rf li-test; tar -xf li-test.tar; mv $(basename #{tmpdir}) li-test; cp -n /root/li-test/stickshift/controller/test/cucumber/*.feature /root/li-test/tests/. ; mkdir -p /tmp/rhc/junit', 120)
+          ssh(hostname, "set -e; rm -rf li-test; tar -xf #{tarname}.tar; mv #{tarname} li-test; cp -n /root/li-test/stickshift/controller/test/cucumber/*.feature /root/li-test/tests/. ; mkdir -p /tmp/rhc/junit", 120)
           puts "Done"
-          FileUtils.rmdir tmpdir
+          FileUtils.rm_fr tmpdir
+          FileUtils.rm "/tmp/#{tarname}.tar"
         end
       end
 
