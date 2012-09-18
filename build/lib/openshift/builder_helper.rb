@@ -63,6 +63,62 @@ module OpenShift
       end
     end
 
+    def update_remote_tests(hostname, branch=nil, repo_parent_dir="/root", user="root")
+      puts "Updating remote tests..."
+      #all_repo_dirs = ['/root/li']
+      all_repo_dirs = []
+      SIBLING_REPOS.each do |repo_name, repo_dirs|
+        all_repo_dirs << "#{repo_parent_dir}/#{repo_name}"
+      end
+      git_archive_commands = ''
+      all_repo_dirs.each do |repo_dir|
+        git_archive_commands += "pushd #{repo_dir} > /dev/null; git archive --prefix li-test/ --format=tar #{branch ? branch : 'HEAD'} | (cd #{repo_parent_dir} && tar --warning=no-timestamp -xf -); popd > /dev/null; "
+      end
+
+      ssh(hostname, %{
+set -e;
+rm -rf #{repo_parent_dir}/li-test
+#{git_archive_commands}
+mkdir -p /tmp/rhc/junit
+}, 60, false, 2, user)
+
+      update_cucumber_tests(hostname, repo_parent_dir, user)
+      puts "Done"
+    end
+    
+    def scp_remote_tests(hostname, repo_parent_dir="/root", user="root")
+      if FileUtils.pwd == "#{JENKINS_HOME_DIR}/jobs/libra_ami_stage/workspace" || FileUtils.pwd == "#{JENKINS_HOME_DIR}/jobs/libra_ami_verify_stage/workspace"
+        init_repo(hostname, true, nil, repo_parent_dir, user)
+        update_remote_tests(hostname, "stage", repo_parent_dir, user)
+      else
+        puts "Archiving local changes..."
+        FileUtils.rm_rf '/tmp/li-test'
+        all_repo_dirs = []
+        SIBLING_REPOS.each do |repo_name, repo_dirs|
+          repo_dirs.each do |repo_dir|
+            if File.exists?(repo_dir)
+              all_repo_dirs << repo_dir
+              break
+            end
+          end
+        end
+        all_repo_dirs.each do |repo_dir|
+          inside(repo_dir) do
+            `git archive --prefix li-test/ --format=tar HEAD | (cd /tmp && tar --warning=no-timestamp -xf -)`
+          end
+        end
+        `cd /tmp/ && tar -cvf /tmp/li-test.tar li-test`
+        puts "Done"
+        puts "Copying tests to remote instance: #{hostname}"
+        scp_to(hostname, "/tmp/li-test.tar", "~/", 600, 10, user)
+        puts "Done"
+        puts "Extracting tests on remote instance: #{hostname}"
+        ssh(hostname, 'set -e; rm -rf li-test; tar -xf li-test.tar; mkdir -p /tmp/rhc/junit', 120, false, 1, user)
+        update_cucumber_tests(hostname, repo_parent_dir, user)
+        puts "Done"
+      end
+    end
+
     def sync_repo(repo_name, hostname, remote_repo_parent_dir="/root", ssh_user="root", verbose=false)
       temp_commit
 
@@ -121,16 +177,11 @@ module OpenShift
     def init_repo(hostname, replace=true, repo=nil, remote_repo_parent_dir="/root", ssh_user="root")
       git_clone_commands = "set -e\n "
 
-      if repo.nil? or repo == "li"
-        git_clone_commands += "if [ ! -d #{remote_repo_parent_dir}/li ]; then\n" unless replace
-        git_clone_commands += "rm -rf #{remote_repo_parent_dir}/li; git clone --bare git@github.com:openshift/li.git #{remote_repo_parent_dir}/li\n"
-        git_clone_commands += "fi\n" unless replace
-      end
-
       SIBLING_REPOS.each do |repo_name, repo_dirs|
         if repo.nil? or repo == repo_name
+          repo_git_url = SIBLING_REPOS_GIT_URL[repo_name]
           git_clone_commands += "if [ ! -d #{remote_repo_parent_dir}/#{repo_name} ]; then\n" unless replace
-          git_clone_commands += "rm -rf #{remote_repo_parent_dir}/#{repo_name}; git clone --bare https://github.com/openshift/#{repo_name}.git #{remote_repo_parent_dir}/#{repo_name};\n"
+          git_clone_commands += "rm -rf #{remote_repo_parent_dir}/#{repo_name}; git clone --bare #{repo_git_url} #{remote_repo_parent_dir}/#{repo_name};\n"
           git_clone_commands += "fi\n" unless replace
         end
       end

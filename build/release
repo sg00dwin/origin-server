@@ -19,7 +19,6 @@ class Release < Thor
   
   no_tasks do
     def git_pull
-      run("git pull", :verbose => options.verbose?)
       SIBLING_REPOS.each do |repo_name, repo_dirs|
         repo_dirs.each do |repo_dir|
           if File.exists?(repo_dir)
@@ -34,7 +33,6 @@ class Release < Thor
     
 
     def fail_if_uncommitted_changes
-      raise "You have uncommited changes in the repository, cannot bump versions" unless run('git diff --quiet')
       SIBLING_REPOS.each do |repo_name, repo_dirs| 
         repo_dirs.each do |repo_dir| 
           if File.exists?(repo_dir) 
@@ -266,10 +264,8 @@ class Release < Thor
         build_dirs.delete_if { | build_info | build_info[1] == build_dir }
       end
 
-      li_repo = {'li' => [FileUtils.pwd]}
-      repos = li_repo.merge(SIBLING_REPOS)
       push_failures = ''
-      repos.each do |repo_name, repo_dirs|
+      SIBLING_REPOS.each do |repo_name, repo_dirs|
         repo_dirs.each do |repo_dir|
           if File.exists?(repo_dir)
             inside(repo_dir) do
@@ -445,7 +441,6 @@ class Release < Thor
         end
       end
       if options.push_changes?
-        run("git add .; git commit -m 'Bumping spec versions'; git push origin master", :verbose => options.verbose?)
         SIBLING_REPOS.each do |repo_name, repo_dirs|
           repo_dirs.each do |repo_dir|
             if File.exists?(repo_dir)
@@ -476,16 +471,8 @@ class Release < Thor
       puts "#######################"
       puts "Operating on branch: #{branch}"
       puts "#######################"
-      orig_branch = get_branch
       orig_branches = {}
       begin
-        if orig_branch != branch
-          orig_branches[FileUtils.pwd] = orig_branch
-          unless run("git checkout #{branch}", :verbose => verbose)
-            puts "Unable to checkout branch '#{branch}' for repo 'li'"
-            exit 1
-          end
-        end
         SIBLING_REPOS.each do |repo_name, repo_dirs|
           repo_dirs.each do |repo_dir|
             if File.exists?(repo_dir)

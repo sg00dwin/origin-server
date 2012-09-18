@@ -356,6 +356,10 @@ module Express
         puts 'Done'
       end
       
+      def update_cucumber_tests(hostname, repo_parent_dir="/root", user="root")
+        ssh(hostname, "cp -n #{repo_parent_dir}/li-test/stickshift/controller/test/cucumber/*.feature #{repo_parent_dir}/li-test/tests/. ", 60, false, 2, user)
+      end
+      
       def download_artifacts(hostname)
         puts "Downloading logs and screenshots..."
         `rm -rf rhc/log; mkdir -p rhc/log/; pushd rhc/log > /dev/null; mkdir -p site/test/reports broker mcollective system screenshots selenium jbossas broker-profiler coverage; popd > /dev/null`
@@ -405,58 +409,6 @@ module Express
           end
         end
         puts "Done"
-      end
-
-      def update_remote_tests(hostname, branch=nil)
-        puts "Updating remote tests..."
-        all_repo_dirs = ['/root/li']
-        SIBLING_REPOS.each do |repo_name, repo_dirs|
-          all_repo_dirs << "/root/#{repo_name}"
-        end
-        git_archive_commands = ''
-        all_repo_dirs.each do |repo_dir|
-          git_archive_commands += "pushd #{repo_dir} > /dev/null; git archive --prefix li-test/ --format=tar #{branch ? branch : 'HEAD'} | (cd /root && tar --warning=no-timestamp -xf -); popd > /dev/null; "
-        end
-        ssh(hostname, %{
-set -e;
-rm -rf /root/li-test
-#{git_archive_commands}
-cp -n /root/li-test/stickshift/controller/test/cucumber/*.feature /root/li-test/tests/.
-mkdir -p /tmp/rhc/junit
-}, 60, false, 2)
-        puts "Done"
-      end
-      
-      def scp_remote_tests(hostname)
-        if FileUtils.pwd == "/var/lib/jenkins/jobs/libra_ami_stage/workspace" || FileUtils.pwd == "/var/lib/jenkins/jobs/libra_ami_verify_stage/workspace"
-          init_repo(hostname)
-          update_remote_tests(hostname, "stage")
-        else
-          puts "Archiving local changes..."
-          FileUtils.rm_rf '/tmp/li-test'
-          all_repo_dirs = ['.']
-          SIBLING_REPOS.each do |repo_name, repo_dirs|
-            repo_dirs.each do |repo_dir|
-              if File.exists?(repo_dir)
-                all_repo_dirs << repo_dir
-                break
-              end
-            end
-          end
-          all_repo_dirs.each do |repo_dir|
-            inside(repo_dir) do
-              `git archive --prefix li-test/ --format=tar HEAD | (cd /tmp && tar --warning=no-timestamp -xf -)`
-            end
-          end
-          `cd /tmp/ && tar -cvf /tmp/li-test.tar li-test`
-          puts "Done"
-          puts "Copying tests to remote instance: #{hostname}"
-          scp_to(hostname, "/tmp/li-test.tar", "~/", 600, 10)
-          puts "Done"
-          puts "Extracting tests on remote instance: #{hostname}"
-          ssh(hostname, 'set -e; rm -rf li-test; tar -xf li-test.tar; cp -n /root/li-test/stickshift/controller/test/cucumber/*.feature /root/li-test/tests/. ; mkdir -p /tmp/rhc/junit', 120)
-          puts "Done"
-        end
       end
 
       def test_impl(tag, hostname, instance, conn, options, image_id=nil)
@@ -766,7 +718,6 @@ mkdir -p /tmp/rhc/junit
                 cmd = "set -e; /bin/bash li-devenv.sh #{options.use_stage_repo? ? "stage" : "candidate"} --install_from_source"
               elsif options.install_from_local_source?
                 init_repo(hostname)
-                sync_repo('li', hostname)
                 SIBLING_REPOS.each do |repo_name, repo_dirs|
                   repo_dirs.each do |repo_dir|
                     break if sync_sibling_repo(repo_name, repo_dir, hostname)
@@ -885,7 +836,6 @@ mkdir -p /tmp/rhc/junit
         hostname = get_host_by_name_or_tag(name, options)
 
         # get the necessary repos cloned out to the instance
-        sync_repo('li', hostname, "/root", "root", options.verbose?)
         clone_commands, working_dirs = sync_available_sibling_repos(hostname)
         update_remote_tests(hostname)
 
@@ -897,18 +847,15 @@ mkdir -p /tmp/rhc/junit
 
 set -e
 #{options.clean_metadata? ? 'yum clean metadata' : ''}
-rm -rf li-working #{working_dirs}
+rm -rf #{working_dirs}
 
 #{clone_commands}
-
-# li repo
-git clone li li-working
 
 pushd li-working > /dev/null
   build/devenv update#{options.verbose? ? ' --verbose' : ''} #{options.clean_metadata? ? ' --include_stale' : ''} 2>&1
 popd > /dev/null
 
-rm -rf li-working #{working_dirs}
+rm -rf #{working_dirs}
 #{options.clean_metadata? ? "yum update -y --exclude='rhc-devenv' rhc-* cartridge-* rubygem-stickshift-* rubygem-gearchanger-* rubygem-uplift-* rubygem-swingshift-*; " : ''}
 
 #{options.clean_metadata? ? '/bin/bash li-test/misc/devenv/li-devenv.sh --install_templates' : ''} 
