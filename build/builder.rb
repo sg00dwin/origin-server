@@ -153,13 +153,7 @@ module StickShift
 
       update_facts_impl(hostname)
       post_launch_setup(hostname)
-
-      if options.verifier?
-        print "Initializing git repo for syncing..."
-        init_repo(hostname)
-        puts "Done"
-        update_remote_tests(instance.dns_name)
-      end
+      setup_verifier(hostname) if options.verifier?
 
       validate_instance(hostname, 4)
 

@@ -74,7 +74,32 @@ module Origin
       def update_cucumber_tests(hostname, repo_parent_dir="/root", user="root")
         ssh(hostname, "rm -f #{repo_parent_dir}/li-test/tests; ln -s #{repo_parent_dir}/li-test/stickshift/controller/test/cucumber #{repo_parent_dir}/li-test/tests ;", 60, false, 2, user)
       end
-      
+
+      def setup_verifier(hostname)
+        print "Initializing git repo for syncing..."
+        init_repo(hostname, true, nil, "~", ssh_user)
+        puts "Done"
+        update_remote_tests(hostname, nil, "~", ssh_user)
+      end
+
+      def rpm_manifest(hostname, sshuser="root")
+        print "Retrieving RPM manifest.."
+        manifest = ssh(hostname, "rpm -qa | grep -E '(rhc|stickshift|swingshift|gearchanger|uplift)'", user=sshuser)
+        manifest = manifest.split("\n").sort.join(" / ")
+        # Trim down the output to 255 characters
+        manifest.gsub!(/rubygem-([a-z])/, '\1')
+        manifest.gsub!('swingshift-', '')
+        manifest.gsub!('uplift-', '')
+        manifest.gsub!('gearchanger-', '')
+        manifest.gsub!('stickshift-', 'ss-')
+        manifest.gsub!('mcollective-', 'mco-')
+        manifest.gsub!('.fc16.noarch', '')
+        manifest.gsub!(/\.git\.[a-z0-9\.]+/, '')
+        manifest = manifest[0..254]
+        puts "Done"
+        return manifest
+      end
+
       def test_impl(tag, hostname, instance, conn, options, image_id=nil)
         begin
           
@@ -299,7 +324,7 @@ module Origin
         if !options.skip_build?
           puts "Performing remote install..."
 
-          out, ret = ssh(hostname, "rm -rf build-working; mkdir -p build-working/build", 60, true, 1, ssh_user) if ret == 0
+          out, ret = ssh(hostname, "rm -rf build-working; mkdir -p build-working/build", 60, true, 1, ssh_user)
           scp_to(hostname, "build/*", "build-working/build", 60, 2, ssh_user) if ret == 0
 
           out, ret = ssh(hostname, "rm -rf #{working_dirs}; #{clone_commands}", 60 * 5, true, 1, ssh_user) if ret == 0
