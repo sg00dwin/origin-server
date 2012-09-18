@@ -360,6 +360,27 @@ module Express
         ssh(hostname, "cp -n #{repo_parent_dir}/li-test/stickshift/controller/test/cucumber/*.feature #{repo_parent_dir}/li-test/tests/. ", 60, false, 2, user)
       end
       
+      def setup_verifier(hostname)
+        print "Initializing git repo for syncing..."
+        init_repo(hostname)
+        puts "Done"
+        update_remote_tests(hostname)
+      end
+
+      def rpm_manifest(hostname)
+        print "Retrieving RPM manifest.."
+        manifest = ssh(hostname, 'rpm -qa | grep rhc-')
+        manifest = manifest.split("\n").sort.join(" / ")
+        # Trim down the output to 255 characters
+        manifest.gsub!(/rhc-([a-z])/, '\1')
+        manifest.gsub!('.el6.noarch', '')
+        manifest.gsub!('.el6_1.noarch', '')
+        manifest.gsub!('cartridge', 'c-')
+        manifest = manifest[0..254]
+        puts "Done"
+        return manifest
+      end
+
       def download_artifacts(hostname)
         puts "Downloading logs and screenshots..."
         `rm -rf rhc/log; mkdir -p rhc/log/; pushd rhc/log > /dev/null; mkdir -p site/test/reports broker mcollective system screenshots selenium jbossas broker-profiler coverage; popd > /dev/null`

@@ -292,20 +292,6 @@ END
       return output, code
     end
 
-    def rpm_manifest(hostname, ssh_user="root")
-      print "Retrieving RPM manifest..."
-      manifest = ssh(hostname, 'rpm -qa | grep rhc-', 60, false, 1, ssh_user)
-      manifest = manifest.split("\n").sort.join(" / ")
-      # Trim down the output to 255 characters
-      manifest.gsub!(/rhc-([a-z])/, '\1')
-      manifest.gsub!('.el6.noarch', '')
-      manifest.gsub!('.el6_1.noarch', '')
-      manifest.gsub!('cartridge', 'c-')
-      manifest = manifest[0..254]
-      puts "Done"
-      return manifest
-    end
-
     def reboot(instance)
       print "Rebooting instance to apply new kernel..."
       instance.reboot
