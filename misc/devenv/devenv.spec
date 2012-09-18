@@ -499,6 +499,12 @@ chmod 640 /etc/stickshift/resource_limits.template
 # Remove Other rights from iptables-multi - was 755
 chmod 750 /sbin/iptables-multi
 
+# Remove Other rights from crontab - was 4755 - BZ856939
+chmod 750 /usr/bin/crontab
+
+# Remove Other rights from at - was 4755 - BZ856933
+chmod 750 /usr/bin/at
+
 # Fix devenv log file ownership
 chown root:libra_user /var/www/stickshift/broker/log/development.log
 chown root:libra_user /var/www/stickshift/broker/log/mcollective-client.log
