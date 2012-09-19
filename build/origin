@@ -316,7 +316,7 @@ module Origin
 
       def sync_impl(name, options)
         # Get the hostname from a tag lookup or assume it's SSH accessible directly
-        hostname = get_host_by_name_or_tag(name, options)
+        hostname = get_host_by_name_or_tag(name, options, ssh_user)
 
         clone_commands, working_dirs = sync_available_sibling_repos(hostname, "~", ssh_user)
         update_remote_tests(hostname, nil, "~", ssh_user)
@@ -330,7 +330,7 @@ module Origin
           out, ret = ssh(hostname, "rm -rf #{working_dirs}; #{clone_commands}", 60 * 5, true, 1, ssh_user) if ret == 0
 
           if options.clean_metadata? and ret == 0
-            out, ret = ssh(hostname, "su -c \"yum clean metadata\"", 60, 2, ssh_user)
+            out, ret = ssh(hostname, "su -c \"yum clean metadata\"", 60 * 2, true, 2, ssh_user)
           end
           
           out, ret = ssh(hostname, "su -c \"cd build-working; build/origin update #{options.verbose? ? '--verbose' : ''} #{options.clean_metadata? ? '--include_stale' : ''} 2>&1 \"", 60 * 15, true, 1, ssh_user)
@@ -387,6 +387,7 @@ module Origin
                 SIBLING_REPOS.each do |repo_name, repo_dirs|
                   working_dirs += "#{repo_name}-working "
                   clone_commands += "git clone #{repo_name} #{repo_name}-working; "
+                  clone_commands += "pushd #{repo_name}-working; git checkout stage; popd; " if options.use_stage_repo?
                 end
               end
               out, ret = ssh(hostname, "cd /data; rm -rf #{working_dirs}; #{clone_commands}", 60 * 2, true, 2, ssh_user)
