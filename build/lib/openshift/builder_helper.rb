@@ -86,14 +86,15 @@ mkdir -p /tmp/rhc/junit
       puts "Done"
     end
     
-    def scp_remote_tests(hostname, repo_parent_dir="/root", user="root")
-      if FileUtils.pwd == "#{JENKINS_HOME_DIR}/jobs/libra_ami_stage/workspace" || FileUtils.pwd == "#{JENKINS_HOME_DIR}/jobs/libra_ami_verify_stage/workspace"
-        init_repo(hostname, true, nil, repo_parent_dir, user)
-        update_remote_tests(hostname, "stage", repo_parent_dir, user)
+    def scp_remote_tests(hostname)
+      if FileUtils.pwd == "/var/lib/jenkins/jobs/libra_ami_stage/workspace" || FileUtils.pwd == "/var/lib/jenkins/jobs/libra_ami_verify_stage/workspace"
+        init_repo(hostname)
+        update_remote_tests(hostname, "stage")
       else
         puts "Archiving local changes..."
-        FileUtils.rm_rf '/tmp/li-test'
-        all_repo_dirs = []
+        tmpdir = `mktemp -d`.strip
+        tarname = File.basename tmpdir
+        all_repo_dirs = ['.']
         SIBLING_REPOS.each do |repo_name, repo_dirs|
           repo_dirs.each do |repo_dir|
             if File.exists?(repo_dir)
@@ -104,18 +105,19 @@ mkdir -p /tmp/rhc/junit
         end
         all_repo_dirs.each do |repo_dir|
           inside(repo_dir) do
-            `git archive --prefix li-test/ --format=tar HEAD | (cd /tmp && tar --warning=no-timestamp -xf -)`
+            `git archive --prefix li-test/ --format=tar HEAD | (cd #{tmpdir} && tar --warning=no-timestamp -xf -)`
           end
         end
-        `cd /tmp/ && tar -cvf /tmp/li-test.tar li-test`
+        `cd /tmp/ && tar -cvf /tmp/#{tarname}.tar #{tarname}` 
         puts "Done"
         puts "Copying tests to remote instance: #{hostname}"
-        scp_to(hostname, "/tmp/li-test.tar", "~/", 600, 10, user)
+        scp_to(hostname, "/tmp/#{tarname}.tar", "~/", 600, 10)
         puts "Done"
         puts "Extracting tests on remote instance: #{hostname}"
-        ssh(hostname, 'set -e; rm -rf li-test; tar -xf li-test.tar; mkdir -p /tmp/rhc/junit', 120, false, 1, user)
-        update_cucumber_tests(hostname, repo_parent_dir, user)
+        ssh(hostname, "set -e; rm -rf li-test; tar -xf #{tarname}.tar; mv #{tarname} li-test; cp -n /root/li-test/stickshift/controller/test/cucumber/*.feature /root/li-test/tests/. ; mkdir -p /tmp/rhc/junit", 120)
         puts "Done"
+        FileUtils.rm_rf tmpdir
+        FileUtils.rm "/tmp/#{tarname}.tar"
       end
     end
 
