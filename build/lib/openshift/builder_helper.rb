@@ -26,9 +26,9 @@ module OpenShift
 
     # Get the hostname from a tag lookup or assume it's SSH accessible directly
     # Only look for a tag if the --tag option is specified
-    def get_host_by_name_or_tag(name, options=nil)
+    def get_host_by_name_or_tag(name, options=nil, user="root")
       return name unless options && options.tag?
-      instance = find_instance(connect(options.region), name, true)
+      instance = find_instance(connect(options.region), name, true, true, user)
       return instance ? instance.dns_name : name
     end
 
@@ -86,15 +86,15 @@ mkdir -p /tmp/rhc/junit
       puts "Done"
     end
     
-    def scp_remote_tests(hostname)
-      if FileUtils.pwd == "/var/lib/jenkins/jobs/libra_ami_stage/workspace" || FileUtils.pwd == "/var/lib/jenkins/jobs/libra_ami_verify_stage/workspace"
-        init_repo(hostname)
-        update_remote_tests(hostname, "stage")
+    def scp_remote_tests(hostname, repo_parent_dir="/root", user="root")
+      if FileUtils.pwd == "#{JENKINS_HOME_DIR}/jobs/libra_ami_stage/workspace" || FileUtils.pwd == "#{JENKINS_HOME_DIR}/jobs/libra_ami_verify_stage/workspace"
+        init_repo(hostname, true, nil, repo_parent_dir, user)
+        update_remote_tests(hostname, "stage", repo_parent_dir, user)
       else
         puts "Archiving local changes..."
         tmpdir = `mktemp -d`.strip
         tarname = File.basename tmpdir
-        all_repo_dirs = ['.']
+        all_repo_dirs = []
         SIBLING_REPOS.each do |repo_name, repo_dirs|
           repo_dirs.each do |repo_dir|
             if File.exists?(repo_dir)
@@ -114,7 +114,8 @@ mkdir -p /tmp/rhc/junit
         scp_to(hostname, "/tmp/#{tarname}.tar", "~/", 600, 10)
         puts "Done"
         puts "Extracting tests on remote instance: #{hostname}"
-        ssh(hostname, "set -e; rm -rf li-test; tar -xf #{tarname}.tar; mv ./#{tarname}/li-test ./li-test; cp -n /root/li-test/stickshift/controller/test/cucumber/*.feature /root/li-test/tests/. ; mkdir -p /tmp/rhc/junit", 120)
+        ssh(hostname, "set -e; rm -rf li-test; tar -xf #{tarname}.tar; mv ./#{tarname}/li-test ./li-test; mkdir -p /tmp/rhc/junit", 120)
+        update_cucumber_tests(hostname, repo_parent_dir, user)
         puts "Done"
         FileUtils.rm_rf tmpdir
         FileUtils.rm "/tmp/#{tarname}.tar"
