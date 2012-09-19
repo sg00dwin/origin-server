@@ -38,6 +38,7 @@ Requires:  rubygem-mongo_mapper
 Requires:  rubygem-wddx
 Requires:  rubygem-pony
 Requires:  mcollective-qpid-plugin
+Provides:  openshift-broker
 
 BuildArch: noarch
 
