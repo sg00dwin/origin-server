@@ -114,7 +114,7 @@ mkdir -p /tmp/rhc/junit
         scp_to(hostname, "/tmp/#{tarname}.tar", "~/", 600, 10)
         puts "Done"
         puts "Extracting tests on remote instance: #{hostname}"
-        ssh(hostname, "set -e; rm -rf li-test; tar -xf #{tarname}.tar; mv #{tarname} li-test; cp -n /root/li-test/stickshift/controller/test/cucumber/*.feature /root/li-test/tests/. ; mkdir -p /tmp/rhc/junit", 120)
+        ssh(hostname, "set -e; rm -rf li-test; tar -xf #{tarname}.tar; mv ./#{tarname}/li-test ./li-test; cp -n /root/li-test/stickshift/controller/test/cucumber/*.feature /root/li-test/tests/. ; mkdir -p /tmp/rhc/junit", 120)
         puts "Done"
         FileUtils.rm_rf tmpdir
         FileUtils.rm "/tmp/#{tarname}.tar"
