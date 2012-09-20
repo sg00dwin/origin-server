@@ -57,7 +57,7 @@
   <concurrentBuild>false</concurrentBuild>
   <builders>
     <hudson.tasks.Shell>
-      <command>build/devenv build testenv ${BUILD_NUMBER} --register --official --build_clean_ami --use_test_repo --terminate --instance_type m1.large</command>
+      <command>build/devenv build testenv ${build_number} --build_clean_ami --use_test_repo --terminate --instance_type m1.large</command>
     </hudson.tasks.Shell>
   </builders>
   <publishers>
