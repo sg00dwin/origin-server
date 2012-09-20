@@ -11,6 +11,9 @@ require 'yaml'
 
 include FileUtils
 
+# we will need ssh with some different options for git clones
+GIT_SSH_PATH=File.expand_path(File.dirname(__FILE__)) + "/ssh-override"
+
 module OpenShift
   module BuilderHelper
     include Thor::Actions
@@ -30,6 +33,37 @@ module OpenShift
       return instance ? instance.dns_name : name
     end
 
+    def build_and_install(package_name, build_dir, spec_file)
+      remove_dir '/tmp/tito/'
+      FileUtils.mkdir_p '/tmp/tito/'
+      puts "Building in #{build_dir}"
+      inside(File.expand_path("#{build_dir}", File.dirname(File.dirname(File.dirname(File.dirname(__FILE__)))))) do
+        # Build and install the RPM's locally
+        unless run("tito build --rpm --test", :verbose => options.verbose?)
+          # Tag to trick tito to build
+          commit_id = `git log --pretty=format:%%H --max-count=1 %s" % .`
+          spec_file_name = File.basename(spec_file)
+          version = get_version(spec_file_name)
+          next_version = next_tito_version(version, commit_id)
+          puts "current spec file version #{version} next version #{next_version}"
+          unless run("tito tag --accept-auto-changelog --use-version='#{next_version}'; tito build --rpm --test", :verbose => options.verbose?)
+            FileUtils.rm_rf '/tmp/devenv/sync/'
+            exit 1
+          end
+        end
+        Dir.glob('/tmp/tito/x86_64/*.rpm').each {|file|
+          FileUtils.mkdir_p "/tmp/tito/noarch/"
+          FileUtils.mv file, "/tmp/tito/noarch/"
+        }
+        unless run("rpm -Uvh --force /tmp/tito/noarch/*.rpm", :verbose => options.verbose?)
+          unless run("rpm -e --justdb --nodeps #{package_name}; yum install -y /tmp/tito/noarch/*.rpm", :verbose => options.verbose?)
+            FileUtils.rm_rf '/tmp/devenv/sync/'
+            exit 1
+          end
+        end
+      end
+    end
+
     def sync_repo(repo_name, hostname, remote_repo_parent_dir="/root", ssh_user="root", verbose=false)
       temp_commit
 
@@ -42,13 +76,10 @@ module OpenShift
 
         init_repo(hostname, false, repo_name, remote_repo_parent_dir, ssh_user)
 
-        # we will need ssh with some different options for git clones
-        git_ssh_path=File.expand_path(File.dirname(__FILE__)) + "/ssh-override"
-
         exitcode = run(<<-"SHELL", :verbose => verbose)
           #######
           # Start shell code
-          export GIT_SSH=#{git_ssh_path}
+          export GIT_SSH=#{GIT_SSH_PATH}
           #{branch == 'origin/master' ? "git push -q #{ssh_user}@#{hostname}:#{remote_repo_parent_dir}/#{repo_name} master:master --tags --force; " : ''}
           git push -q #{ssh_user}@#{hostname}:#{remote_repo_parent_dir}/#{repo_name} #{branch}:master --tags --force
 
@@ -139,31 +170,6 @@ module OpenShift
       ssh(hostname, "/sbin/service mcollective restart", 240)
     end
 
-    def update_api_file(instance)
-      public_ip = instance.dns_name
-      external_config = "~/.openshift/api.yml"
-      config_file = File.expand_path(external_config)
-
-      Dir.mkdir(File.expand_path('~/.openshift')) rescue nil
-
-      if not FileTest.exists?(config_file)
-        puts "File '#{external_config}' does not exist, creating..."
-        system("touch #{external_config}")
-        File.open(config_file, 'w') do |f| f.write(<<-END
-url: https://#{public_ip}/broker/rest
-suffix: dev.rhcloud.com
-          END
-          )
-        end
-
-      else
-        puts "Updating ~/.openshift/api.yml with public ip = #{public_ip}"
-        s = IO.read(config_file)
-        s.gsub!(%r[^url:\s*https://[^/]+/broker/rest$]m, "url: https://#{public_ip}/broker/rest")
-        File.open(config_file, 'w'){ |f| f.write(s) }
-      end
-    end
-
     def update_ssh_config_verifier(instance)
       public_ip = instance.public_ip_address
       ssh_config = "~/.ssh/config"
@@ -185,7 +191,7 @@ Host verifier
 END
 
       if not FileTest.exists?(config_file)
-        puts "File '#{ssh_config}' does not exist, creating..."
+        puts "File '#{ssh_config}' does not exists, creating..."
         system("touch #{ssh_config}")
         cmd = "chmod 600 #{ssh_config}"
         system(cmd)

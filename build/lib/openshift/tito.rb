@@ -5,7 +5,7 @@ SIBLING_REPOS = {'crankcase' => ['../crankcase-working', '../crankcase-fork', '.
                  'rhc' => ['../rhc-working', '../rhc-fork', '../rhc', '/var/lib/jenkins/jobs/rhc/workspace']}
   
 PACKAGE_REGEX = /^([\w\.-]*)-\d+\.\d+\.\d+-\d+\.\..*:$/
-IGNORE_PACKAGES = ['bind-local', 'rubygem-rhc', 'stickshift-broker', 'rubygem-gearchanger-oddjob-plugin', 'rubygem-swingshift-mongo-plugin', 'rubygem-uplift-bind-plugin', 'openshift-origin', 'openshift-origin-broker', 'openshift-origin-node','rubygem-swingshift-kerberos-plugin']
+IGNORE_PACKAGES = ['bind-local', 'rubygem-rhc', 'stickshift-broker', 'rubygem-gearchanger-oddjob-plugin', 'rubygem-swingshift-mongo-plugin', 'rubygem-uplift-bind-plugin', 'openshift-origin', 'openshift-origin-broker', 'openshift-origin-node', 'rubygem-swingshift-kerberos-plugin', 'cartridge-postgresql-9.1', 'cartridge-php-5.4']
 SKIP_PREREQ_PACKAGES = ['java-devel']
 
 module OpenShift
@@ -139,7 +139,9 @@ module OpenShift
         @spec_file ||= File.read(@spec_path)
       end
       def name
-        @name ||= replace_globals(/Name: *(.*)/.match(spec_file)[1].strip)
+        @name ||= replace_globals(/Name:\s*(.*)/.match(spec_file)[1].strip)
+      rescue
+        raise @spec_path
       end
 
       def build_requires
@@ -160,7 +162,7 @@ module OpenShift
 
       def subpackages
         @subpackages ||= begin
-          package = /%package *(.*)/.match(spec_file)
+          package = /%package\s*(.*)/.match(spec_file)
           if package
             package_name = package[1].strip
             if package_name.start_with?('-n')
@@ -229,7 +231,8 @@ module OpenShift
           gsub(/\)/, '').
           gsub(/>=.+/, ''). # strip version qualifiers
           gsub(/=.+/,'').
-          gsub(/,/, '').strip
+          gsub(/,/, '').
+          gsub('%{?scl:%scl_prefix}', 'ruby193-').strip
       end
       def yum_name
         @yum_name ||= value.
@@ -237,7 +240,8 @@ module OpenShift
           gsub(/\)/, '').
           gsub(/>=.+/, '').
           gsub(/=/,'-').
-          gsub(/,/, '').strip
+          gsub(/,/, '').
+          gsub('%{?scl:%scl_prefix}', 'ruby193-').strip
       end
       def to_s
         name

@@ -23,17 +23,18 @@ module Express
       options.verbose? ? @@log.level = Logger::DEBUG : @@log.level = Logger::ERROR
       get_sync_dirs
     end
-  
+
     desc "watch", "Watch for changes to your source directory with the 'listen' gem and copy them to the remote image. Not a full replacement for 'sync' - intended to speed Rails development."
     method_option :verbose, :type => :boolean, :desc => "Enable verbose logging"
+
     def watch
       config = File.join ENV['HOME'], '.openshiftdev/watch.lua'
       if File.exists? config
         say "You have #{config}, which was used for an old mechanism which relied on lsyncd to check for local file changes. It is no longer used. Please remove it."
       end
-      
+
       @rsync_default_opts = ['-vuzt', '--chmod=ug+rwX']
-    
+
       @source_dir_for = {
         # The trailing slash is important in order to avoid creating an
         # additional directory
@@ -62,7 +63,7 @@ module Express
         :'redhat_sso'                      => File.join('drupal', 'drupal6-openshift-redhat_sso'                     , '/'),
         :'theme'                           => File.join('drupal', 'drupal6-openshift-theme'                          , '/'),
       }
-    
+
       @target_dir_for = {
         :rails  => '/var/www/stickshift/site',
         :rpm    => '/usr/lib/ruby/site_ruby/1.8',
@@ -89,19 +90,19 @@ module Express
         :'redhat_sso'                      => '/etc/drupal6/all/modules/custom/redhat_sso',
         :'theme'                           => '/etc/drupal6/all/themes/openshift-theme',
       }
-        
+
       @ignore_for = {
         :rails => ['log', 'tmp', 'httpd'],
         :rpm   => ['*.spec'],
       }
-    
+
       @latency_for = {
         :rails => 0.2,
         :rpm => 0.2,
       }
-    
+
       @rsync_target_host = 'verifier'
-    
+
       begin
         require 'listen'
         if options.verbose?
@@ -112,8 +113,9 @@ module Express
         warn "'listen' gem is required for the 'watch' function."
       end
     end
-  
+
     private
+
     def watch_with_listen(verbose = false)
       # Rsync cannot set owner or group, so we should inherit
       set_sticky_bits_for '/var/www/stickshift'
@@ -122,7 +124,7 @@ module Express
       [:rails, :rpm, :drupal, :httpd].each do |component|
         start_listener_for component
       end
-    
+
       # gather drupal modules here for organizational purposes
       [:'custom_forms', :'features-blogs', :'features-community_wiki',
         :'features-forums', :'features-front_page', :'features-global_settings',
@@ -130,38 +132,39 @@ module Express
         :'features-rules_by_category', :'features-user_profile', :'features-video',
         :'modals', :'og_comment_perms', :'redhat_acquia', :'redhat_frontpage',
         :'redhat_events', :'redhat_ideas', :'redhat_sso', :'theme'].each do |drupal_module|
-          start_listener_for drupal_module
+        start_listener_for drupal_module
       end
-    
+
       sleep
     end
-  
+
     def start_listener_for(component)
       Dir.chdir(File.join(File.dirname(__FILE__), '..'))
       Listen.to(@source_dir_for[component],
-        :latency => @latency_for[component]).
-        change(&(callback_for component, @ignore_for[component])).start(false)
+      :latency => @latency_for[component]).
+      change(&(callback_for component, @ignore_for[component])).start(false)
     end
-  
+
     def callback_for(component, exclude = nil)
       unless @source_dir_for[component]
         warn "#{@source_dir_for[component]} does not contain key #{component}"
         return
       end
-    
+
       Proc.new do |modified, added, removed|
         Dir.chdir(File.join(File.dirname(__FILE__), '..'))
         run ['rsync', '-r', @rsync_default_opts, exclude ? exclude.map {|dir| "--exclude=#{dir}" } : nil, @source_dir_for[component], @rsync_target_host + ':' + @target_dir_for[component]].join(" ")
       end
     end
-  
+
     def set_sticky_bits_for(dir, timeout = 1800)
       ssh @rsync_target_host, "find #{dir} -type d | xargs chmod g+s", timeout
     end
-  
+
     public
-    
+
     desc "print_packages", "Print a space separated list of packages"
+
     def print_packages
       packages = get_packages(true)
       packages_str = ""
@@ -170,9 +173,10 @@ module Express
       end
       puts packages_str
     end
-    
+
     desc "print_ignore_packages", "Print a space separated list of packages to ignore"
     method_option :include_unmodified, :type => :boolean, :desc => "Include packages which have no modifications since their last tag"
+
     def print_ignore_packages
       packages_str = ""
       IGNORE_PACKAGES.each do |package_name|
@@ -197,6 +201,7 @@ module Express
     end
 
     desc "find_and_build_specs", "Builds all non ignored specs in the current directory"
+
     def find_and_build_specs
       packages = get_packages(false, true).values
       buildable = packages.select{ |p| not IGNORE_PACKAGES.include? p.name }.select do |p|
@@ -236,12 +241,12 @@ module Express
       prereqs = (phases[1..-1] || []).flatten(1).map(&:build_requires).flatten(1).uniq.sort - installed
       puts "\nPackages that are prereqs for later phases\n  #{prereqs.join("\n  ")}"
 
-      phases.each_with_index do |phase,i| 
+      phases.each_with_index do |phase,i|
         puts "\n#{'='*60}\n\nBuilding phase #{i+1} packages"
         phase.sort.each do |package|
           Dir.chdir(package.dir) do
             puts "\n#{'-'*60}"
-            raise "Unable to build #{package.name}" unless system 'tito build --test --rpm'
+            raise "Unable to build #{package.name}" unless system "tito build --rpm --test"
             if prereqs.include? package
               puts "\n    Installing..."
               #FileUtils.rm_rf "/tmp/tito/**"
@@ -255,6 +260,7 @@ module Express
     desc "sauce_usage", "Prints out usage information for sauce tests"
     method_option :sauce_username, :required => false, :desc => "Sauce Labs username (default '#{SAUCE_USER}')"
     method_option :sauce_access_key, :required => false, :desc => "Sauce Labs access key (default '#{SAUCE_SECRET}')"
+
     def sauce_usage
       usage = super options
       puts "Sauce Labs Usage: #{usage[:percentage]}% (#{usage[:used]} minutes of #{usage[:quota]})"
@@ -263,9 +269,10 @@ module Express
 
     desc "setup_multi_node_broker", "Sets up verifier as a multi-node broker"
     method_option :verbose, :type => :boolean, :desc => "Enable verbose logging"
+
     def setup_multi_node_broker
       options.verbose? ? @@log.level = Logger::DEBUG : @@log.level = Logger::ERROR
-  
+
       #internal_hostname = get_internal_hostname("verifier")
       internal_ip = get_private_ip("verifier")
       ssh("verifier", "sed -i 's,^plugin.qpid.host.ha.*=.*,plugin.qpid.host.ha=#{internal_ip},' /etc/mcollective/client.cfg;" \
@@ -281,32 +288,34 @@ module Express
                     "popd > /dev/null;" \
                     "restorecon -R /etc/qpid/pki/; chmod +r /etc/qpid/pki/client_db/* /etc/qpid/pki/server_db/*;" \
                     "service iptables restart; service qpidd restart; service mcollective restart", 240)
-  
+
       puts ssh("verifier", "mco ping")
     end
-  
+
     desc "add_multi_node_devenv", "Adds a node to a multi node devenv setup"
     method_option :verbose, :type => :boolean, :desc => "Enable verbose logging"
+
     def add_multi_node_devenv(hostname)
       options.verbose? ? @@log.level = Logger::DEBUG : @@log.level = Logger::ERROR
-  
+
       internal_hostname = get_internal_hostname("verifier")
       internal_ip = get_private_ip("verifier")
-  
+
       puts `pushd /tmp > /dev/null; rm -rf /tmp/test; scp -r verifier:/etc/stickshift/devenv/qpid/test/ .; scp -r test/client_db/* #{hostname}:/etc/qpid/pki/client_db/; scp -r test/server_db/* #{hostname}:/etc/qpid/pki/server_db/; popd > /dev/null`
       puts `pushd /tmp > /dev/null; rm -rf /tmp/clients; scp -r verifier:/etc/mcollective/ssl/clients/ .; scp -r clients/* #{hostname}:/etc/mcollective/ssl/clients/; popd > /dev/null`
-  
+
       ssh(hostname, "sed -i 's,^plugin.qpid.host.ha.*=.*,plugin.qpid.host.ha=#{internal_ip},' /etc/mcollective/server.cfg;" \
                     "restorecon -R /etc/qpid/pki/; chmod +r /etc/qpid/pki/client_db/* /etc/qpid/pki/server_db/*;" \
                     "sed -i 's,^BROKER_HOST.*=.*,BROKER_HOST=#{internal_ip},' /etc/stickshift/stickshift-node.conf;" \
                     "service qpidd stop; service mcollective restart", 240)
-  
+
       puts ssh("verifier", "mco ping")
     end
-  
+
     desc "sync_groups GROUPNAME", "Copies the security group permission from specified region to other regions"
     method_option :clean, :type => :boolean, :desc => "Revokes any existing permissions and starts fresh"
     method_option :region, :required => false, :default => 'us-east-1', :desc => "Amazon region to copy (default us-east-1)"
+
     def sync_groups(group_name)
       conn = connect
       origin_sg = conn.regions[options.region].security_groups.filter('group-name', group_name).first
@@ -317,7 +326,7 @@ module Express
       conn.regions.each do |region|
         #skip the region of origin
         next if(region.name == options.region)
-  
+
         puts "Synching #{region.name}"
         sg = conn.regions[region.name].security_groups.filter('group-name', group_name).first
         #If group does not exist then create it
@@ -368,9 +377,6 @@ module Express
       end
     end
 
-
-
-
     no_tasks do
       def idle_all_gears(hostname)
         puts "Idling all gears on remote instance: #{hostname}"
@@ -386,7 +392,7 @@ module Express
         puts "Disabling automatic shutdown on remote instance: #{hostname}"
         ssh(hostname, "echo HOURS=9999 > /etc/charlie.conf", 240)
       end
-  
+
       def broker_profiler(hostname, enable=true)
         puts "Setting broker profile enable: #{enable}"
         f=Tempfile.open('fixbroker')
@@ -411,7 +417,7 @@ module Express
         ssh(hostname, "sed -i \"s/.*PUBLIC_IP_OVERRIDE.*/#PUBLIC_IP_OVERRIDE=/g\" /etc/stickshift/stickshift-node.conf; sed -i \"s/.*PUBLIC_HOSTNAME_OVERRIDE.*/#PUBLIC_HOSTNAME_OVERRIDE=/g\" /etc/stickshift/stickshift-node.conf; /usr/libexec/mcollective/update_yaml.rb /etc/mcollective/facts.yaml; service libra-data start")
         puts 'Done'
       end
-      
+
       def download_artifacts(hostname)
         puts "Downloading logs and screenshots..."
         `rm -rf rhc/log; mkdir -p rhc/log/; pushd rhc/log > /dev/null; mkdir -p site/test/reports broker mcollective system screenshots selenium jbossas broker-profiler coverage; popd > /dev/null`
@@ -482,7 +488,7 @@ mkdir -p /tmp/rhc/junit
 }, 60, false, 2)
         puts "Done"
       end
-      
+
       def scp_remote_tests(hostname)
         if FileUtils.pwd == "/var/lib/jenkins/jobs/libra_ami_stage/workspace" || FileUtils.pwd == "/var/lib/jenkins/jobs/libra_ami_verify_stage/workspace"
           init_repo(hostname)
@@ -517,21 +523,21 @@ mkdir -p /tmp/rhc/junit
 
       def test_impl(tag, hostname, instance, conn, options, image_id=nil)
         begin
-          
+
           validate_instance(hostname, 4)
-  
+
           disable_charlie(hostname) if options.disable_charlie?
-          
+
           mcollective_logs(hostname) if options.mcollective_logs?
-  
+
           idle_all_gears(hostname) unless options.official?
-          
+
           reset_test_dir(hostname)
-  
+
           broker_profiler(hostname) if options.profile_broker?
-  
+
           test_queues = [[], [], [], []]
-            
+
           extended_tests = nil
           if options.include_extended
             extended_tests = []
@@ -539,7 +545,7 @@ mkdir -p /tmp/rhc/junit
               extended_test.strip
             end
           end
-  
+
           if options.include_extended
             extended_tests.each do |extended_test|
               case extended_test
@@ -578,28 +584,28 @@ mkdir -p /tmp/rhc/junit
                 exit 1
               end
             end
-          elsif options.include_rcov?
-            test_queues[0] << ["StickShift Node Unit Coverage", "cd li-test/stickshift/node; rake rcov; cp -a coverage /tmp/rhc/stickshift_node_coverage"]
-            test_queues[1] << ["Broker Unit and Functional Coverage", "cd li-test/broker; rake rcov; cp -a test/coverage /tmp/rhc/broker_coverage"]
-            test_queues[2] << ["StickShift Broker Unit and Functional Coverage", "cd li-test/stickshift/broker; rake rcov; cp -a test/coverage /tmp/rhc/stickshift_broker_coverage"]
+          elsif options.include_coverage?
+            test_queues[0] << ["StickShift Node Unit Coverage", "cd li-test/stickshift/node; rake coverage; cp -a coverage /tmp/rhc/stickshift_node_coverage"]
+            test_queues[1] << ["Broker Unit and Functional Coverage", "cd li-test/broker; rake coverage; cp -a test/coverage /tmp/rhc/broker_coverage"]
+            test_queues[2] << ["StickShift Broker Unit and Functional Coverage", "cd li-test/stickshift/broker; rake coverage; cp -a test/coverage /tmp/rhc/stickshift_broker_coverage"]
           elsif options.include_cucumber
             timeout = @@SSH_TIMEOUT
             timeout = @@SSH_TIMEOUT_OVERRIDES[options.include_cucumber] if not @@SSH_TIMEOUT_OVERRIDES[options.include_cucumber].nil?
             test_queues[0] << [options.include_cucumber, "cucumber #{@@CUCUMBER_OPTIONS} -t @#{options.include_cucumber} li-test/tests", {:timeout => timeout}]
           elsif options.include_web?
-  
+
             # check sauce quotas first
             usage = sauce_usage
-  
+
             if usage[:percentage] > 95 && !options[:sauce_overage]
               puts "Refusing to run Sauce Labs tests due to quota overage considerations.  Run with --sauce_overage to override."
               return
             end
-  
+
             # TODO: respect sauce username and access key settings
             cmd = "service sauce-connect start"
             run_ssh(hostname, "Start sauce connect tunnel", cmd, timeout)
-  
+
             if options.sauce_os && options.sauce_browser && options.sauce_browser_version
               browsers = [[options.sauce_os, options.sauce_browser, options.sauce_browser_version]]
             else
@@ -611,7 +617,7 @@ mkdir -p /tmp/rhc/junit
               browsers.delete_at(2)
               browsers.delete_at(2)
             end
-  
+
             browsers.each do |browser|
               sauce_os = browser[0]
               sauce_browser = browser[1]
@@ -633,12 +639,12 @@ mkdir -p /tmp/rhc/junit
                 sauce_opts['SAUCE_USERNAME'] = options.sauce_username
                 sauce_opts['SAUCE_ACCESS_KEY'] = options.sauce_access_key
               end
-  
+
               env_string = sauce_opts.keys.map{|k| %Q(#{k}="#{sauce_opts[k]}")}.join(' ')
-  
+
               puts "Running Sauce tests with the following options:"
               puts sauce_opts.to_yaml
-  
+
               pos = 0
               Dir.foreach('selenium/testcases') do |filename|
                 if filename =~ /^tc_(.*)\.rb$/
@@ -646,14 +652,14 @@ mkdir -p /tmp/rhc/junit
                   test_queues[pos] << ["Web Selenium (#{sauce_os} - #{sauce_browser} #{sauce_browser_version}) (#{test})", "cd li-test/selenium; #{env_string} ruby ts_web #{test}"]
                   if pos == test_queues.length - 1
                     pos = 0
-                  else 
+                  else
                     pos += 1
                   end
                 end
               end
             end
           else
-  
+
             unless options.exclude_broker?
               test_queues[0] << ["Broker Unit", "cd li-test/broker; rake test:units"]
               test_queues[1] << ["Broker Functional", "cd li-test/broker; rake test:functionals"]
@@ -672,7 +678,7 @@ mkdir -p /tmp/rhc/junit
                 test_queues[i-1] << ["Runtime Group #{i.to_s}", "cucumber #{@@CUCUMBER_OPTIONS} -t @runtime#{i.to_s} li-test/tests"]
               end
             end
-  
+
             unless options.exclude_site?
               test_queues[0] << ["Site Check Applications", "cd li-test/site; rake test:check:applications"]
               test_queues[1].unshift ["Site Check Base", "cd li-test/site; rake test:check:base"]
@@ -684,10 +690,10 @@ mkdir -p /tmp/rhc/junit
             unless options.exclude_rhc?
             end
           end
-  
+
           threads = []
           failures = []
-  
+
           retry_threshold = 0
           test_queues.each do |test_queue|
             titles = []
@@ -704,21 +710,21 @@ mkdir -p /tmp/rhc/junit
             end
             add_ssh_cmd_to_threads(hostname, threads, failures, titles, cmds, retry_individually, timeouts)
           end
-  
+
           threads.each do |t|
             t[0].join
           end
-  
+
           failures.uniq!
-  
+
           begin
-            if failures.length > 0 && failures.length <= retry_threshold 
+            if failures.length > 0 && failures.length <= retry_threshold
               idle_all_gears(hostname)
               retry_test_failures(hostname, failures, 2)
             elsif failures.length > retry_threshold
               exit 1
             end
-  
+
             # These are special tests that cannot be written to work concurrently
             if options.include_extended
               extended_tests.each do |extended_test|
@@ -737,7 +743,7 @@ mkdir -p /tmp/rhc/junit
                 end
               end
             end
-  
+
             validate_instance(hostname, 4)
           ensure
             if options.include_web?
@@ -745,13 +751,13 @@ mkdir -p /tmp/rhc/junit
               run_ssh(hostname, "Stop sauce connect tunnel", cmd, timeout)
             end
           end
-  
+
           if options.official?
             image_id = image_id ? image_id : instance.image_id
             # Mark the image as verified
             image = conn.images[image_id]
             verify_image(image)
-  
+
             puts "Sending QE ready email..."
             begin
               send_verified_email(image_id, image.name)
@@ -761,11 +767,11 @@ mkdir -p /tmp/rhc/junit
           elsif !options.terminate?
             idle_all_gears(hostname)
           end
-  
+
           broker_profiler(hostname, enable=false) if options.profile_broker?
-  
+
           puts "Done"
-  
+
         ensure
           if options.terminate? || options.official?
             download_artifacts(hostname)
@@ -775,11 +781,11 @@ mkdir -p /tmp/rhc/junit
           end
         end
       end
-    
+
       def build_and_install(package_name, build_dir, spec_file)
         if package_name.include? "origin" || package_name == "stickshift-broker"
-            puts "Skipping #{package_name}"
-            return
+          puts "Skipping #{package_name}"
+          return
         end
         remove_dir '/tmp/tito/'
         FileUtils.mkdir_p '/tmp/tito/'
@@ -810,71 +816,43 @@ mkdir -p /tmp/rhc/junit
           end
         end
       end
-  
-      def build_impl(name, build_num, options)
-        # Override the machine type to launch if necessary
-        $amz_options[:instance_type] = options[:instance_type] if options[:instance_type]
-    
-        # Establish a new connection
-        conn = connect(options.region)
-    
-        image = nil
-        if options.install_required_packages?
-          # Create a new builder instance
-          if (options.region?nil)
-            image = conn.images[AMI["us-east-1"]]
-          elsif AMI[options.region].nil?
-            puts "No AMI specified for region:" + options.region
-            exit 1
-          else
-            image = conn.images[AMI[options.region]]
-          end
-        elsif options.build_clean_ami? || options.install_from_source? || options.install_from_local_source?
-          # Get the latest devenv base image and create a new instance
-          if options.use_stage_repo?
-            filter = DEVENV_STAGE_BASE_WILDCARD
-          else
-            filter = DEVENV_BASE_WILDCARD
-          end
-          image = get_latest_ami(conn, filter)
-        else
-          # Get the latest devenv clean image and create a new instance
-          if options.use_stage_repo?
-            filter = DEVENV_STAGE_CLEAN_WILDCARD
-          else
-            filter = DEVENV_CLEAN_WILDCARD
-          end
-          image = get_latest_ami(conn, filter)
-        end
-    
+
+      def build_impl(name, build_num, image, conn, options)
+        puts "Launching instance of AMI: #{image.id} - #{image.name}"
         instance = launch_instance(image, name + '_' + build_num)
         hostname = instance.dns_name
-        
+
         puts "Building on: #{hostname}"
-    
+
         begin
           manifest = nil
           begin
             if options.build_clean_ami? || options.install_from_source? || options.install_from_local_source? || options.install_required_packages?
               puts "Updating all packages on the system..."
-              2.times do
-                ssh(hostname, "yum update -y --exclude='rhc*'; yum -y install openssh-clients", 1800)
-              end
+              output = ssh(hostname, "yum update -y --exclude='rhc*'; yum -y install openssh-clients", 1800)
               puts "Done"
-    
+
+              puts "------------------ Update Output ------------------------"
+              puts output
+              puts "---------------------------------------------------------"
+
               if options.reboot?
                 reboot(instance)
               end
-    
+
               puts "Uploading devenv script..."
               script_path = File.expand_path(File.dirname(__FILE__) + "/../misc/devenv/li-devenv.sh")
               scp_to(hostname, script_path, "~/")
               puts "Done"
               puts "Uploading yum client certificates..."
-              script_path = File.expand_path(File.dirname(__FILE__) + "/../misc/client-cert.pem")
-              scp_to(hostname, script_path, "/var/lib/yum/")
-              script_path = File.expand_path(File.dirname(__FILE__) + "/../misc/client-key.pem")
-              scp_to(hostname, script_path, "/var/lib/yum/")
+              pem_path = File.expand_path(File.dirname(__FILE__) + "/../misc/client-cert.pem")
+              scp_to(hostname, pem_path, "/var/lib/yum/")
+              pem_path = File.expand_path(File.dirname(__FILE__) + "/../misc/client-key.pem")
+              scp_to(hostname, pem_path, "/var/lib/yum/")
+              if options.install_from_source? || options.install_from_local_source?
+                cfg_path = File.expand_path(File.dirname(__FILE__) + "/../misc/libra-rhel-ruby193.cfg")
+                scp_to(hostname, cfg_path, "/etc/mock/")
+              end
               scp_to(hostname, "misc/devenv/root/.ssh/*", "/root/.ssh/")
               ssh(hostname, "chmod 0600 /root/.ssh/id_rsa; chmod 0644 /root/.ssh/id_rsa.pub /root/.ssh/known_hosts;")
               puts "Done"
@@ -904,17 +882,17 @@ mkdir -p /tmp/rhc/junit
               end
               output, exit_code = ssh(hostname, cmd, 3600, true)
               puts "Done"
-    
+
               puts "----------------- Install Output ------------------------"
               puts output
               puts "---------------------------------------------------------"
-    
+
               exit exit_code unless exit_code == 0
-    
+
               validate_instance(hostname, 4) unless options.install_required_packages?
-    
+
               manifest = rpm_manifest(hostname)
-    
+
               if options.register? && options.build_clean_ami?
                 register_image(conn, instance, name + '-clean_' + build_num, manifest)
               end
@@ -922,34 +900,34 @@ mkdir -p /tmp/rhc/junit
               puts "Updating all packages on the system..."
               output, exit_code = ssh(hostname, "yum clean metadata; yum update -y --exclude='rhc-devenv'; set -e; yum update -y --exclude='rhc-devenv' --disablerepo=\\* --enablerepo=li", 600, true)
               puts "Done"
-    
+
               puts "------------------ Update Output ------------------------"
               puts output
               puts "---------------------------------------------------------"
-              
+
               exit exit_code unless exit_code == 0
-    
+
               validate_instance(hostname, 4)
-    
+
               manifest = rpm_manifest(hostname)
             end
           rescue SystemExit => e
             download_artifacts(hostname) if options.terminate? || options.official?
             raise
           end
-          
+
           output = ssh(hostname, "yum list installed", 120)
-    
+
           puts "---------------- Installed Packages ---------------------"
           puts output
           puts "---------------------------------------------------------"
-    
+
           image_id = nil
           if options.register?
             image = register_image(conn, instance, name + '_' + build_num, manifest)
             image_id = image.id
           end
-    
+
           unless options.skip_verify? || options.install_required_packages?
             scp_remote_tests(hostname)
             test_impl(name + '_' + build_num, hostname, instance, conn, options, image_id)
@@ -963,24 +941,36 @@ mkdir -p /tmp/rhc/junit
         # Warn on uncommitted changes
         `git diff-index --quiet HEAD`
         puts "WARNING - Uncommitted repository changes" if $? != 0
-    
+
         # Figure out what needs to be built - exclude devenv for syncs
         sync_dirs = get_sync_dirs
-    
+
         sync_dirs.each do |sync_dir|
           package_name = sync_dir[0]
           build_dir = sync_dir[1]
           spec_file = sync_dir[2]
-          build_and_install(package_name, build_dir, spec_file)
+
+          if package_name.include? "origin" || package_name == "stickshift-broker"
+              puts "Skipping #{package_name}"
+              return
+          else
+            build_and_install(package_name, build_dir, spec_file)
+          end
         end
-        
+
         if options.include_stale?
           stale_dirs = get_stale_dirs
           stale_dirs.each do |stale_dir|
             package_name = stale_dir[0]
             build_dir = stale_dir[1]
             spec_file = stale_dir[2]
-            build_and_install(package_name, build_dir, spec_file)
+
+            if package_name.include? "origin" || package_name == "stickshift-broker"
+                puts "Skipping #{package_name}"
+                return
+            else
+              build_and_install(package_name, build_dir, spec_file)
+            end
           end
         end
         run("yum update -y --exclude='rhc-devenv' --disablerepo=\\* --enablerepo=li rhc-* cartridge-* rubygem-stickshift-* rubygem-gearchanger-* rubygem-uplift-* rubygem-swingshift-*", :verbose => options.verbose?)
@@ -988,6 +978,7 @@ mkdir -p /tmp/rhc/junit
       end
 
       def sync_impl(name, options)
+
         hostname = get_host_by_name_or_tag(name, options)
 
         # get the necessary repos cloned out to the instance
@@ -1017,7 +1008,7 @@ popd > /dev/null
 rm -rf li-working #{working_dirs}
 #{options.clean_metadata? ? "yum update -y --exclude='rhc-devenv' rhc-* cartridge-* rubygem-stickshift-* rubygem-gearchanger-* rubygem-uplift-* rubygem-swingshift-*; " : ''}
 
-#{options.clean_metadata? ? '/bin/bash li-test/misc/devenv/li-devenv.sh --install_templates' : ''} 
+#{options.clean_metadata? ? '/bin/bash li-test/misc/devenv/li-devenv.sh --install_templates' : ''}
 
 # End shell code
 ################
@@ -1033,40 +1024,41 @@ rm -rf li-working #{working_dirs}
           puts "Done"
         end
       end
-  
+
       def sanity_check_impl(tag, hostname, instance, conn, options)
         validate_instance(hostname)
-    
+
         threads = []
         failures = []
         site_titles = ["Site Sanity"]
         site_cmds = ["cd li-test/site; rake test:sanity"]
         add_ssh_cmd_to_threads(hostname, threads, failures, site_titles, site_cmds)
         titles = ["Broker Sanity",
-                  "StickShift Broker Sanity",
-                  "StickShift Node Unit"]
-    
+          "StickShift Broker Sanity",
+          "StickShift Node Unit"]
+
         cmds = ["cd li-test/broker; rake test:sanity",
-                "cd li-test/stickshift/broker; rake test:sanity",
-                "cd li-test/stickshift/node; rake test"]
+          "cd li-test/stickshift/broker; rake test:sanity",
+          "cd li-test/stickshift/node; rake test"]
         add_ssh_cmd_to_threads(hostname, threads, failures, titles, cmds)
         add_ssh_cmd_to_threads(hostname, threads, failures, "Cucumber Sanity", "cucumber #{@@CUCUMBER_OPTIONS} -t @sanity li-test/tests/")
-    
+
         threads.each do |t|
           t[0].join
         end
-    
+
         unless failures.empty?
           failures.uniq!
           retry_test_failures(hostname, failures, 1)
         end
         validate_instance(hostname)
       end
-      
+
       def update_facts_impl(hostname)
         update_facts(hostname)
       end
     end # no_tasks end
   end # class end
 end # module end
+
 Express::BuilderPlugin.start
