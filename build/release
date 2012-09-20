@@ -702,7 +702,7 @@ class Release < Thor
   
       puts "Kicking off AMI build..."
       if options.test?
-        unless run("curl --insecure --proxy #{proxy} #{jenkins}/job/libra_ami_test/buildWithParameters?token=#{token}\\&BUILD_CLEAN_AMI=#{clean_ami.to_s}\\&BUILD_UPDATE_AMI=#{(!clean_ami).to_s}", :verbose => options.verbose?)
+        unless run("curl --insecure --proxy #{proxy} #{jenkins}/job/libra_ami_test/buildWithParameters?token=#{token}", :verbose => options.verbose?)
           puts "ERROR - Jenkins remote job invocation failed."
           exit 1
         end
