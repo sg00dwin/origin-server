@@ -512,8 +512,10 @@ class Release < Thor
       # Mash / RSync parameters
       if options.test?
         mash_config = "#{tag_base}-test"
-      else
-        mash_config = (options[:stage] || options.stage_all?) ? "#{tag_base}-stage" : "#{tag_base}-candidate"
+      elsif options[:stage] || option.stage_all
+        mash_config = "#{tag_base}-stage"  
+      else 
+        mash_config = "#{tag_base}-candidate"
       end
 
       repo_host = "mirror1.ops.rhcloud.com"

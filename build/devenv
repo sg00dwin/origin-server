@@ -754,8 +754,11 @@ module Express
               else
                 puts "Performing clean install with the latest code..."
                 cmd = 'set -e ; /bin/bash ~/li-devenv.sh'
-                cmd += ' stage' if options.use_stage_repo?
-                cmd += ' test' if options.test_pkg_set?
+                if options.use_stage_repo?
+                  cmd += ' stage'
+                elsif options.use_test_repo?
+                  cmd += ' test' 
+                end
               end
               output, exit_code = ssh(hostname, cmd, 3600, true)
               puts "Done"
