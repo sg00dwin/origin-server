@@ -43,32 +43,6 @@ EOF
 #sed -i s/sslverify=1/sslverify=0/g /etc/yum.repos.d/rh-cloud.repo
 
 cat > /etc/yum.repos.d/li.repo <<EOF
-[li]
-name=Li repo for Enterprise Linux 6 - $basearch
-baseurl=https://mirror1.ops.rhcloud.com/libra/libra-rhel-6.3-${1-candidate}/\$basearch/
-        https://mirror2.ops.rhcloud.com/libra/libra-rhel-6.3-${1-candidate}/\$basearch/
-failovermethod=priority
-enabled=1
-gpgcheck=0
-gpgkey=https://mirror1.ops.rhcloud.com/libra/RPM-GPG-KEY-redhat-beta
-ggpkey=https://mirror1.ops.rhcloud.com/libra/RPM-GPG-KEY-redhat-release
-sslverify=0
-sslclientcert=/var/lib/yum/client-cert.pem
-sslclientkey=/var/lib/yum/client-key.pem
-
-[li-source]
-name=Li repo for Enterprise Linux 6 - $basearch
-baseurl=https://mirror1.ops.rhcloud.com/libra/libra-rhel-6.3-${1-candidate}/source/SRPMS/
-        https://mirror2.ops.rhcloud.com/libra/libra-rhel-6.3-${1-candidate}/source/SRPMS/
-failovermethod=priority
-enabled=0
-gpgkey=https://mirror1.ops.rhcloud.com/libra/RPM-GPG-KEY-redhat-beta
-ggpkey=https://mirror1.ops.rhcloud.com/libra/RPM-GPG-KEY-redhat-release
-gpgcheck=0
-sslverify=0
-sslclientcert=/var/lib/yum/client-cert.pem
-sslclientkey=/var/lib/yum/client-key.pem
-
 [qpid]
 name=Qpid repo for Enterprise Linux 6 - $basearch
 baseurl=https://mirror1.ops.rhcloud.com/libra/qpid/\$basearch/Packages/
@@ -119,6 +93,68 @@ enabled=1
 gpgcheck=0
 
 EOF
+
+if [[ "$1" == "test" ]]; then
+
+cat >> /etc/yum.repos.d/li.repo <<EOF
+[li]
+name=Li repo for Enterprise Linux 6 - $basearch
+baseurl=https://mirror1.ops.rhcloud.com/libra/libra-rhel-6.3-test/\$basearch/
+        https://mirror2.ops.rhcloud.com/libra/libra-rhel-6.3-test/\$basearch/
+failovermethod=priority
+enabled=1
+gpgcheck=0
+gpgkey=https://mirror1.ops.rhcloud.com/libra/RPM-GPG-KEY-redhat-beta
+ggpkey=https://mirror1.ops.rhcloud.com/libra/RPM-GPG-KEY-redhat-release
+sslverify=0
+sslclientcert=/var/lib/yum/client-cert.pem
+sslclientkey=/var/lib/yum/client-key.pem
+
+[li-source]
+name=Li repo for Enterprise Linux 6 - $basearch
+baseurl=https://mirror1.ops.rhcloud.com/libra/libra-rhel-6.3-test/source/SRPMS/
+        https://mirror2.ops.rhcloud.com/libra/libra-rhel-6.3-test/source/SRPMS/
+failovermethod=priority
+enabled=0
+gpgkey=https://mirror1.ops.rhcloud.com/libra/RPM-GPG-KEY-redhat-beta
+ggpkey=https://mirror1.ops.rhcloud.com/libra/RPM-GPG-KEY-redhat-release
+gpgcheck=0
+sslverify=0
+sslclientcert=/var/lib/yum/client-cert.pem
+sslclientkey=/var/lib/yum/client-key.pem
+EOF
+
+else
+
+cat >> /etc/yum.repos.d/li.repo <<EOF
+[li]
+name=Li repo for Enterprise Linux 6 - $basearch
+baseurl=https://mirror1.ops.rhcloud.com/libra/libra-rhel-6.3-${1-candidate}/\$basearch/
+        https://mirror2.ops.rhcloud.com/libra/libra-rhel-6.3-${1-candidate}/\$basearch/
+failovermethod=priority
+enabled=1
+gpgcheck=0
+gpgkey=https://mirror1.ops.rhcloud.com/libra/RPM-GPG-KEY-redhat-beta
+ggpkey=https://mirror1.ops.rhcloud.com/libra/RPM-GPG-KEY-redhat-release
+sslverify=0
+sslclientcert=/var/lib/yum/client-cert.pem
+sslclientkey=/var/lib/yum/client-key.pem
+
+[li-source]
+name=Li repo for Enterprise Linux 6 - $basearch
+baseurl=https://mirror1.ops.rhcloud.com/libra/libra-rhel-6.3-${1-candidate}/source/SRPMS/
+        https://mirror2.ops.rhcloud.com/libra/libra-rhel-6.3-${1-candidate}/source/SRPMS/
+failovermethod=priority
+enabled=0
+gpgkey=https://mirror1.ops.rhcloud.com/libra/RPM-GPG-KEY-redhat-beta
+ggpkey=https://mirror1.ops.rhcloud.com/libra/RPM-GPG-KEY-redhat-release
+gpgcheck=0
+sslverify=0
+sslclientcert=/var/lib/yum/client-cert.pem
+sslclientkey=/var/lib/yum/client-key.pem
+EOF
+
+fi
 
 # Install the 32 bit java before anything else
 yum -y install java-1.6.0-openjdk.i686 java-1.6.0-openjdk-devel.i686

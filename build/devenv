@@ -710,7 +710,7 @@ module Express
         begin
           manifest = nil
           begin
-            if options.build_clean_ami? || options.install_from_source? || options.install_from_local_source? || options.install_required_packages?
+            if options.build_clean_ami? || options.install_from_source? || options.install_from_local_source? || options.install_required_packages? 
               puts "Updating all packages on the system..."
               2.times do
                 ssh(hostname, "yum update -y --exclude='rhc*'; yum -y install openssh-clients", 1800)
@@ -754,7 +754,11 @@ module Express
               else
                 puts "Performing clean install with the latest code..."
                 cmd = 'set -e ; /bin/bash ~/li-devenv.sh'
-                cmd += ' stage' if options.use_stage_repo?
+                if options.use_stage_repo?
+                  cmd += ' stage'
+                elsif options.use_test_repo?
+                  cmd += ' test' 
+                end
               end
               output, exit_code = ssh(hostname, cmd, 3600, true)
               puts "Done"
