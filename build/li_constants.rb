@@ -64,7 +64,7 @@ JENKINS_HOME_DIR = '/var/lib/jenkins'
 
 SIBLING_REPOS = {'crankcase' => ['../crankcase-working', '../crankcase-fork', '../crankcase', JENKINS_HOME_DIR + '/jobs/crankcase/workspace'],
                  'rhc' => ['../rhc-working', '../rhc-fork', '../rhc', JENKINS_HOME_DIR + '/jobs/rhc/workspace'],
-                 'li' => [FileUtils.pwd]}
+                 'li' => ["../#{File.basename(FileUtils.pwd)}"]}
 SIBLING_REPOS_GIT_URL = {'crankcase' => 'https://github.com/openshift/crankcase.git',
                         'rhc' => 'https://github.com/openshift/rhc.git',
                         'li' => 'git@github.com:openshift/li.git'}
