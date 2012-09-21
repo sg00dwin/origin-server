@@ -8,7 +8,7 @@
 
 Summary:   Dependencies for OpenShift development
 Name:      rhc-devenv
-Version: 0.100.1
+Version: 0.100.2
 Release:   1%{?dist}
 Group:     Development/Libraries
 License:   GPLv2
@@ -555,6 +555,16 @@ fi
 %{policydir}/*
 
 %changelog
+* Thu Sep 20 2012 Adam Miller <admiller@redhat.com> 0.100.2-1
+- don't want register/official for test ami (admiller@redhat.com)
+- fixed jenkins job xml to reflect change in build call (admiller@redhat.com)
+- added libra_ami_test and libra-test repo build scripts (admiller@redhat.com)
+- Security - remove other perms from crontab and at for BZ856933 and BZ856939
+  (tkramer@redhat.com)
+- Change hard-coded references to mongodb-2.2 (rmillner@redhat.com)
+- BZ 847906: Enable compression for specific content types.
+  (rmillner@redhat.com)
+
 * Wed Sep 12 2012 Adam Miller <admiller@redhat.com> 0.100.1-1
 - bump_minor_versions for sprint 18 (admiller@redhat.com)
 

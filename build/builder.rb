@@ -29,6 +29,7 @@ module StickShift
     method_option :register, :type => :boolean, :desc => "Register the instance"
     method_option :terminate, :type => :boolean, :desc => "Terminate the instance on exit"
     method_option :use_stage_repo, :type => :boolean, :desc => "Build instance off the stage repository"
+    method_option :use_test_repo, :type => :boolean, :desc => "Build instance off the test yum repository"
     method_option :reboot, :type => :boolean, :desc => "Reboot the instance after updating"
     method_option :verbose, :type => :boolean, :desc => "Enable verbose logging"
     method_option :official, :type => :boolean, :desc => "For official use.  Send emails, etc."
@@ -153,13 +154,7 @@ module StickShift
 
       update_facts_impl(hostname)
       post_launch_setup(hostname)
-
-      if options.verifier?
-        print "Initializing git repo for syncing..."
-        init_repo(hostname)
-        puts "Done"
-        update_remote_tests(instance.dns_name)
-      end
+      setup_verifier(hostname) if options.verifier?
 
       validate_instance(hostname, 4)
 

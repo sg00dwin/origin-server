@@ -4,6 +4,7 @@ $: << File.expand_path(File.dirname(__FILE__))
 
 require 'rubygems'
 require 'thor'
+require 'fileutils'
 require 'li_constants'
 require 'lib/openshift'
 
@@ -348,6 +349,7 @@ class Release < Thor
 
   desc "sync", "Download a build from Brew (using Mash) and sync it to the OpenShift repos"
   method_option :stage, :type => :string, :desc => "Comma-delimited list of packages to sync.  Exclude NVR for latest versions.  (e.g. --stage='rhc, rhc-site-0.73.3-1')"
+  method_option :test, :type => :boolean, :desc => "Run against libra's -test repo"
   method_option :stage_all, :type => :boolean, :desc => "Tag all the latest packages for stage"
   method_option :clean_ami, :type => :boolean, :desc => "Indicates whether to build a clean ami"
   method_option :no_ami, :type => :boolean, :desc => "Indicates whether to not build an ami"
@@ -508,7 +510,14 @@ class Release < Thor
     
     def mash_and_rsync(tag_base, skip_gem, options)
       # Mash / RSync parameters
-      mash_config = (options[:stage] || options.stage_all?) ? "#{tag_base}-stage" : "#{tag_base}-candidate"
+      if options.test?
+        mash_config = "#{tag_base}-test"
+      elsif options[:stage] || options.stage_all
+        mash_config = "#{tag_base}-stage"  
+      else 
+        mash_config = "#{tag_base}-candidate"
+      end
+
       repo_host = "mirror1.ops.rhcloud.com"
       repo_dir = "/export/gpxe/trees"
       repo = "#{repo_host}:#{repo_dir}"
@@ -527,7 +536,7 @@ class Release < Thor
       if tag_base =~ /^.*rhel-(\d)\.(\d)$/
         pkg_suffix = "el#{$1}_#{$2}"
       else
-        pkg_suffix = "el6_2"
+        pkg_suffix = "el6_3"
       end
   
       # Check the Brew installation
@@ -692,7 +701,13 @@ class Release < Thor
       clean_ami = (options.clean_ami? || devenv_update)
   
       puts "Kicking off AMI build..."
-      if options.stage?
+      if options.test?
+        unless run("curl --insecure --proxy #{proxy} #{jenkins}/job/libra_ami_test/build?token=#{token}", :verbose => options.verbose?)
+          puts "ERROR - Jenkins remote job invocation failed."
+          exit 1
+        end
+         
+      elsif options.stage?
         unless run("curl --insecure --proxy #{proxy} #{jenkins}/job/libra_ami_stage/buildWithParameters?token=#{token}\\&BUILD_CLEAN_AMI=#{clean_ami.to_s}\\&BUILD_UPDATE_AMI=#{(!clean_ami).to_s}", :verbose => options.verbose?)
           puts "ERROR - Jenkins remote job invocation failed."
           exit 1

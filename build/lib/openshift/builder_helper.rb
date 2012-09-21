@@ -26,9 +26,9 @@ module OpenShift
 
     # Get the hostname from a tag lookup or assume it's SSH accessible directly
     # Only look for a tag if the --tag option is specified
-    def get_host_by_name_or_tag(name, options=nil)
+    def get_host_by_name_or_tag(name, options=nil, user="root")
       return name unless options && options.tag?
-      instance = find_instance(connect(options.region), name, true)
+      instance = find_instance(connect(options.region), name, true, true, user)
       return instance ? instance.dns_name : name
     end
 
@@ -92,7 +92,8 @@ mkdir -p /tmp/rhc/junit
         update_remote_tests(hostname, "stage", repo_parent_dir, user)
       else
         puts "Archiving local changes..."
-        FileUtils.rm_rf '/tmp/li-test'
+        tmpdir = `mktemp -d`.strip
+        tarname = File.basename tmpdir
         all_repo_dirs = []
         SIBLING_REPOS.each do |repo_name, repo_dirs|
           repo_dirs.each do |repo_dir|
@@ -104,18 +105,20 @@ mkdir -p /tmp/rhc/junit
         end
         all_repo_dirs.each do |repo_dir|
           inside(repo_dir) do
-            `git archive --prefix li-test/ --format=tar HEAD | (cd /tmp && tar --warning=no-timestamp -xf -)`
+            `git archive --prefix li-test/ --format=tar HEAD | (cd #{tmpdir} && tar --warning=no-timestamp -xf -)`
           end
         end
-        `cd /tmp/ && tar -cvf /tmp/li-test.tar li-test`
+        `cd /tmp/ && tar -cvf /tmp/#{tarname}.tar #{tarname}` 
         puts "Done"
         puts "Copying tests to remote instance: #{hostname}"
-        scp_to(hostname, "/tmp/li-test.tar", "~/", 600, 10, user)
+        scp_to(hostname, "/tmp/#{tarname}.tar", "~/", 600, 10)
         puts "Done"
         puts "Extracting tests on remote instance: #{hostname}"
-        ssh(hostname, 'set -e; rm -rf li-test; tar -xf li-test.tar; mkdir -p /tmp/rhc/junit', 120, false, 1, user)
+        ssh(hostname, "set -e; rm -rf li-test; tar -xf #{tarname}.tar; mv ./#{tarname}/li-test ./li-test; mkdir -p /tmp/rhc/junit", 120)
         update_cucumber_tests(hostname, repo_parent_dir, user)
         puts "Done"
+        FileUtils.rm_rf tmpdir
+        FileUtils.rm "/tmp/#{tarname}.tar"
       end
     end
 
@@ -290,20 +293,6 @@ END
 
       eos
       return output, code
-    end
-
-    def rpm_manifest(hostname, ssh_user="root")
-      print "Retrieving RPM manifest..."
-      manifest = ssh(hostname, 'rpm -qa | grep rhc-', 60, false, 1, ssh_user)
-      manifest = manifest.split("\n").sort.join(" / ")
-      # Trim down the output to 255 characters
-      manifest.gsub!(/rhc-([a-z])/, '\1')
-      manifest.gsub!('.el6.noarch', '')
-      manifest.gsub!('.el6_1.noarch', '')
-      manifest.gsub!('cartridge', 'c-')
-      manifest = manifest[0..254]
-      puts "Done"
-      return manifest
     end
 
     def reboot(instance)

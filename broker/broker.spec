@@ -3,7 +3,7 @@
 
 Summary:   Li broker components
 Name:      rhc-broker
-Version: 0.99.1
+Version: 0.99.2
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -38,6 +38,7 @@ Requires:  rubygem-mongo_mapper
 Requires:  rubygem-wddx
 Requires:  rubygem-pony
 Requires:  mcollective-qpid-plugin
+Provides:  openshift-broker
 
 BuildArch: noarch
 
@@ -120,6 +121,13 @@ if [ ! -f %{_localstatedir}/log/stickshift/user_action.log ]; then
 fi
 
 %changelog
+* Thu Sep 20 2012 Adam Miller <admiller@redhat.com> 0.99.2-1
+- Updating gem versions (admiller@redhat.com)
+- Prep work for the admin-ctl script move (bleanhar@redhat.com)
+- Change hard-coded references to mongodb-2.2 (rmillner@redhat.com)
+- BZ 857344: Upgrading mongodb rpm kills all instances of mongodb on gears.
+  (rmillner@redhat.com)
+
 * Wed Sep 12 2012 Adam Miller <admiller@redhat.com> 0.99.1-1
 - Updating gem versions (admiller@redhat.com)
 - bump_minor_versions for sprint 18 (admiller@redhat.com)

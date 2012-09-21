@@ -133,6 +133,7 @@ alias tail_all="/usr/bin/tail -f $OPENSHIFT_GEAR_DIR/logs/*"
 
 export PS1="[$OPENSHIFT_GEAR_DNS \W]\> "
 export TMOUT=300
+export SHELL=/bin/bash
 welcome
 
 if [ -z $SSH_TTY ]

@@ -2,7 +2,7 @@
 
 Summary:       Multi-tenant cloud management system node tools
 Name:          rhc-node
-Version: 0.99.1
+Version: 0.99.2
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -268,6 +268,9 @@ fi
 
 
 %changelog
+* Thu Sep 20 2012 Adam Miller <admiller@redhat.com> 0.99.2-1
+- Fix for bugz 856487 - can't run mongo shell. (ramr@redhat.com)
+
 * Wed Sep 12 2012 Adam Miller <admiller@redhat.com> 0.99.1-1
 - bump_minor_versions for sprint 18 (admiller@redhat.com)
 
