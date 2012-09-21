@@ -17,6 +17,7 @@ do
 done > /tmp/selinux
 echo "node -a -t node_t -r s0:c1023 -M  255.0.0.0 -p ipv4 127.0.0.0" >> /tmp/selinux
 echo "node -a -t node_t -r s0:c1023 -M  255.0.0.0 -p ipv4 10.0.0.0" >> /tmp/selinux
+echo "node -a -t node_t -r s0:c1023 -M  0.0.0.0 -p ipv4 0.0.0.0" >> /tmp/selinux
 # BZ831325 - was opening high ports to bind to.   echo "node -a -t node_t -r s0 -p ipv4 -M 255.255.255.255 127.0.0.1" >> /tmp/selinux
 
 semanage -S targeted -i - < /tmp/selinux
