@@ -364,9 +364,10 @@ fi
 if [[ "$2" == "--install_from_source" ]] || [[ "$2" == "--install_from_local_source" ]] || [[ "$2" == "--install_required_packages" ]]
 then
   rm -rf /tmp/tito
+  mkdir -p /root/.source_build
   for repo_name in "${repos[@]}"
   do
-    rm -rf /root/$repo_name
+    mv /root/$repo_name /root/.source_build/${repo_name}
   done
 fi
 
