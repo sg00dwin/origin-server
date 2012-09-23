@@ -1,3 +1,8 @@
+%if 0%{?fedora}%{?rhel} <= 6
+    %global scl ruby193
+    %global scl_prefix ruby193-
+%endif
+%global rubyabi 1.9.1
 %define htmldir %{_localstatedir}/www/html
 %define sitedir %{_localstatedir}/www/stickshift/site
 
@@ -10,26 +15,36 @@ License:   ASL 2.0
 URL:       http://openshift.redhat.com
 Source0:   rhc-site-%{version}.tar.gz
 BuildRoot: %(mktemp -ud %{_tmppath}/%{name}-%{version}-%{release}-XXXXXX)
-Requires:       ruby(abi) = 1.8
-Requires:       rubygems
-Requires:       rubygem(rails)
-Requires:       rubygem(openshift-origin-console)
-Requires:       rubygem-mocha
-Requires:       rubygem-webmock
-Requires:       rubygem-haml
-Requires:       rubygem-sqlite3
-Requires:       rubygem-sinatra
-Requires:       rubygem-net-http-persistent
-Requires:       rubygem-wddx
-Requires:       rubygem-ci_reporter
+Requires:       %{?scl:%scl_prefix}ruby(abi) = %{rubyabi}
+Requires:       %{?scl:%scl_prefix}ruby
+Requires:       %{?scl:%scl_prefix}rubygems
+Requires:       %{?scl:%scl_prefix}rubygem(bundler)
+Requires:       %{?scl:%scl_prefix}rubygem(rails)
+Requires:       %{?scl:%scl_prefix}rubygem(openshift-origin-console)
+#Requires:       rubygem-mocha
+#Requires:       rubygem-webmock
+#Requires:       rubygem-haml
+#Requires:       rubygem-sqlite3
+#Requires:       rubygem-sinatra
+#Requires:       rubygem-net-http-persistent
+#Requires:       rubygem-wddx
+#Requires:       rubygem-ci_reporter
 Requires:       rhc-site-static
-BuildArch:      noarch
 
-BuildRequires:  ruby
-BuildRequires:  rubygems
-BuildRequires:  rubygem(rake)
-BuildRequires:  rubygem(bundler)
-BuildRequires:  rubygem(openshift-origin-console)
+%if 0%{?fedora}%{?rhel} <= 6
+BuildRequires:  ruby193-build
+BuildRequires:  scl-utils-build
+%endif
+
+BuildRequires:  %{?scl:%scl_prefix}ruby(abi) = %{rubyabi}
+BuildRequires:  %{?scl:%scl_prefix}ruby 
+BuildRequires:  %{?scl:%scl_prefix}rubygems
+BuildRequires:  %{?scl:%scl_prefix}rubygems-devel
+BuildRequires:  %{?scl:%scl_prefix}rubygem(rake)
+BuildRequires:  %{?scl:%scl_prefix}rubygem(bundler)
+BuildRequires:  %{?scl:%scl_prefix}rubygem(openshift-origin-console)
+
+BuildArch:      noarch
 
 %description
 This contains the OpenShift website which manages user authentication,
@@ -49,6 +64,7 @@ such as images, CSS, JavaScript, and HTML.
 %setup -q
 
 %build
+%{?scl:scl enable %scl - << \EOF}
 
 # Temporary BEGIN
 bundle install
@@ -56,6 +72,8 @@ bundle install
 RAILS_RELATIVE_URL_ROOT=/app bundle exec rake assets:precompile
 rm -rf tmp
 rm log/production.log
+
+%{?scl:EOF}
 
 %install
 rm -rf %{buildroot}
