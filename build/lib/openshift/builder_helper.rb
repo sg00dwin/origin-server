@@ -223,6 +223,31 @@ mkdir -p /tmp/rhc/junit
       ssh(hostname, "/sbin/service mcollective restart", 240)
     end
 
+    def update_api_file(instance)
+      public_ip = instance.dns_name
+      external_config = "~/.openshift/api.yml"
+      config_file = File.expand_path(external_config)
+
+      Dir.mkdir(File.expand_path('~/.openshift')) rescue nil
+
+      if not FileTest.exists?(config_file)
+        puts "File '#{external_config}' does not exist, creating..."
+        system("touch #{external_config}")
+        File.open(config_file, 'w') do |f| f.write(<<-END
+url: https://#{public_ip}/broker/rest
+suffix: dev.rhcloud.com
+          END
+          )
+        end
+
+      else
+        puts "Updating ~/.openshift/api.yml with public ip = #{public_ip}"
+        s = IO.read(config_file)
+        s.gsub!(%r[^url:\s*https://[^/]+/broker/rest$]m, "url: https://#{public_ip}/broker/rest")
+        File.open(config_file, 'w'){ |f| f.write(s) }
+      end
+    end
+
     def update_ssh_config_verifier(instance)
       public_ip = instance.public_ip_address
       ssh_config = "~/.ssh/config"
