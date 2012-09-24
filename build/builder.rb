@@ -163,6 +163,7 @@ module StickShift
 
       validate_instance(hostname, 4)
 
+      update_api_file(instance) if options.ssh_config_verifier?
       update_ssh_config_verifier(instance) if options.ssh_config_verifier?
       update_express_server(instance) if options.express_server?
 
