@@ -42,8 +42,10 @@ Requires:  cartridge-haproxy-1.4
 Requires:  cartridge-nodejs-0.6
 Requires:  cartridge-ruby-1.9
 Requires:  cartridge-zend-5.6
-Requires:  qpid-cpp-server
-Requires:  qpid-cpp-server-ssl
+Requires:  activemq
+Requires:  activemq-client
+#Requires:  qpid-cpp-server
+#Requires:  qpid-cpp-server-ssl
 Requires:  puppet
 Requires:  rubygem-cucumber
 Requires:  rubygem-mechanize
@@ -243,6 +245,7 @@ cp -rf %{devenvdir}/httpd/* %{libradir}
 cp -rf %{devenvdir}/httpd.conf %{sitedir}/httpd/
 cp -rf %{devenvdir}/httpd.conf %{brokerdir}/httpd/
 cp -f %{devenvdir}/client.cfg %{devenvdir}/server.cfg /etc/mcollective
+cp -f %{devenvdir}/activemq.xml /etc/activemq
 mkdir -p %{sitedir}/httpd/logs
 mkdir -p %{sitedir}/httpd/run
 mkdir -p %{brokerdir}/httpd/logs
@@ -320,13 +323,14 @@ pushd /root/submodule_test_repo > /dev/null
 popd > /dev/null
 
 # Restore permissions
-/sbin/restorecon -R %{_sysconfdir}/qpid/pki
+#/sbin/restorecon -R %{_sysconfdir}/qpid/pki
 /sbin/restorecon -R %{libradir}
 /sbin/restorecon -R /etc/drupal6
 
 # Start services
 service iptables restart
-service qpidd restart
+service activemq restart
+#service qpidd restart
 service mcollective start
 service libra-datastore configure
 service libra-datastore start
@@ -337,7 +341,8 @@ service httpd restart --verbose 2>&1
 service sshd restart
 chkconfig iptables on
 chkconfig named on
-chkconfig qpidd on
+#chkconfig qpidd on
+chkconfig activemq on
 chkconfig mcollective on
 chkconfig libra-datastore on
 chkconfig libra-site on
