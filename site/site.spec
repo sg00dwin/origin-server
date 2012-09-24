@@ -71,7 +71,7 @@ bundle install
 # Temporary END
 RAILS_RELATIVE_URL_ROOT=/app bundle exec rake assets:precompile assets:public_pages
 rm -rf tmp
-rm log/production.log
+rm log/*
 
 %{?scl:EOF}
 
