@@ -1,2 +1,2 @@
 //= require console.js
-//= require_tree .
+//= require_tree ./shared
