@@ -1,0 +1,131 @@
+#!/bin/bash
+#  Chokes or throttles requests to an Apache Virtual Host.
+
+#  vhost-choke sets up the mod_vhost_choke configuration for the specified
+#  gear uuid.
+
+HTTPD_CONFD_DIR="/etc/httpd/conf.d"
+VHOST_CHOKE_SAMPLE_CONFIG="/usr/share/doc/mod_vhost_choke-0.1/mod_vhost_choke.conf.sample"
+VHOST_CHOKE_CFG="vhost_choke.conf"
+
+
+#  For now, these parameters are not configurable.
+GRACE_PERCENT=40
+GRACE_SECS=90
+FLAP_SECS=3600
+
+
+#  Print usage/help.
+function print_help() {
+    script_name=$(basename "$0")
+    echo "Usage: $script_name"
+    echo "  -u UUID  (UUID of gear to choke)"
+    echo "  -n count (choke or throttle limit for allowed concurrent requests"
+    echo "            Default is 5)"
+    echo "  -l       (displays a list of choked gears)"
+    exit 1
+
+}  #  End of function  print_help.
+
+
+
+#  Ensures/sets up mod_vhost_choke module/configuration.
+function ensure_mod_vhost_choke_configured() {
+    [ -f "$HTTPD_CONFD_DIR/mod_vhost_choke.conf" ]   &&  return 0
+    echo -n "   - Installing mod_vhost_choke configuration ... "
+    cp "$VHOST_CHOKE_SAMPLE_CONFIG" "$HTTPD_CONFD_DIR/mod_vhost_choke.conf"
+    echo "DONE"
+    echo -n "   - Module add requires an Apache restart, doing that now ... "
+    service httpd restart
+    echo "DONE"
+
+}  #  End of function  ensure_mod_vhost_choke_configured.
+
+
+
+#  Print list of choked gears.
+function list_choked_gears() {
+   for uuid in `grep ":libra guest:" /etc/passwd | cut -d: -f1`; do
+       vhcfg=$(find $STICKSHIFT_HTTP_CONF_DIR -follow -name $uuid\* -type d | head -1)
+       [[ -z "$vhcfg"  ||  ! -d "$vhcfg" ]]  &&  continue
+       if [ -f "$vhcfg/$VHOST_CHOKE_CFG" ]; then
+           nslots=$(egrep "\s*VHostChokeSlotLimit" "$vhcfg/$VHOST_CHOKE_CFG")
+           echo "$uuid: $nslots"
+       fi
+   done
+
+}  #  End of function  list_choked_gears.
+
+
+
+#
+#  main():  Main code.
+#
+
+#  Source node configuration + apache utility functions.
+source "/etc/stickshift/stickshift-node.conf"
+source "${CARTRIDGE_BASE_PATH}/abstract/info/lib/apache"
+
+#  Handle command line parameters.
+cnt=5
+showchoked=""
+while getopts 'dln:u:' OPTION; do
+   case $OPTION in
+       d)  set -x             ;;
+       u)  uuid="$OPTARG"     ;;
+       n)  cnt="$OPTARG"      ;;
+       l)  showchoked="true"  ;;
+       ?)  print_help         ;;
+   esac
+done
+
+
+#  Check if its just a show listing command and if so perform it.
+if [ -n "$showchoked" ]; then
+    list_choked_gears
+    exit 0;
+fi
+
+#  Check gear uuid is valid and that it exists.
+if [[ -z "$uuid"  ||  ! -d "$GEAR_BASE_DIR/$uuid" ]]; then
+    echo "ERROR: Invalid uuid '$uuid' specified"
+    print_help
+fi
+
+#  Ensure mod_vhost_choke is configured.
+ensure_mod_vhost_choke_configured
+
+#  Find the vhost configuration directory for the gear.
+vhcfg=$(find $STICKSHIFT_HTTP_CONF_DIR -follow -name $uuid\* -type d | head -1)
+if [[ -z "$vhcfg"  ||  ! -d "$vhcfg" ]]; then
+    #  Exit with ENOENT.
+    error "Missing httpd configuration directory for gear $uuid" 2
+fi
+
+
+#  Add to the vhost configuration for the gear.
+cat > "$vhcfg/$VHOST_CHOKE_CFG"  <<CHOKEEOF
+#  $cnt concurrent requests.
+VHostChokeSlotLimit  $cnt
+
+#  Grace percentage is ${GRACE_PERCENT}% (of $cnt requests).
+VHostChokeBurstPercent  $GRACE_PERCENT
+
+#  Grace period is $GRACE_SECS seconds.
+VHostChokeGracePeriod   $GRACE_SECS
+
+#  Flap every $FLAP_SECS seconds.
+VHostChokeBurstFlapPeriod  $FLAP_SECS
+
+CHOKEEOF
+
+
+#  Finally restart Apache gracefully.
+echo "Added vhost_choke configuration - $vhcfg/$VHOST_CHOKE_CFG"
+echo "Config: "
+cat "$vhcfg/$VHOST_CHOKE_CFG"
+echo ""
+echo -n "Restarting apache gracefully ... "
+restart_httpd_graceful
+echo "DONE"
+
