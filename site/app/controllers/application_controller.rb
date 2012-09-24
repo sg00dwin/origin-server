@@ -8,8 +8,9 @@ class ApplicationController < ActionController::Base
     logger.debug "Access denied: #{e}"
     redirect_to logout_path :cause => e.message, :then => account_path
   end
-
-  rescue_from StandardError, :with => :generic_error
+  rescue_from 'Streamline::Error', 
+              'Aria::Error', 'Aria::NotAvailable', 
+              :with => :generic_error
 
   protected
     def handle_unverified_request
@@ -73,5 +74,4 @@ class ApplicationController < ActionController::Base
       @message, @alternatives = message, alternatives
       render 'console/error'
     end
-
 end

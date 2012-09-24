@@ -1,6 +1,5 @@
 module Streamline
   module User
-    require_dependency "streamline"
 
     #
     # Establish the user state based on the current ticket

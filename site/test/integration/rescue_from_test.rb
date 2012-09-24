@@ -17,6 +17,10 @@ class RescueFromTest < ActionDispatch::IntegrationTest
     end
   end
 
+  def default_error_message
+    /We appear to be having technical difficulties/i
+  end
+
   def product_controller_raises(exception)
     with_configured_user
     ProductController.any_instance.expects(:index).raises(exception)
@@ -27,21 +31,22 @@ class RescueFromTest < ActionDispatch::IntegrationTest
 
   def test_render_unexpected_error_page
     controller_raises(ActiveResource::ConnectionError.new(nil))
-
-    assert_response :success
-    assert_select 'h1', /We appear to be having technical difficulties/
-
-    assert assigns(:reference_id)
-    assert_select 'p', /#{assigns(:reference_id)}/
+    assert_error_page
   end
 
-  def test_render_unexpected_site_error_page
-    product_controller_raises(ActiveResource::ConnectionError.new(nil))
+  def test_render_unexpected_aria_error_page
+    product_controller_raises(Aria::Error)
+    assert_error_page
+  end
 
-    assert_response :success
-    assert_select 'h1', /We appear to be having technical difficulties/
+  def test_render_unexpected_streamline_error_page
+    product_controller_raises(Streamline::Error)
+    assert_error_page
+  end
 
-    assert assigns(:reference_id)
-    assert_select 'p', /#{assigns(:reference_id)}/
+  def test_access_denied_results_in_redirect
+    product_controller_raises(AccessDeniedException)
+
+    assert_response :redirect
   end
 end
