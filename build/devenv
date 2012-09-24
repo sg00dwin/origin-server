@@ -660,11 +660,11 @@ module Express
             end
 
             unless options.exclude_site?
-              test_queues[0] << ["Site Check Applications", "cd li-test/site; rake test:check:applications"]
-              test_queues[1].unshift ["Site Check Base", "cd li-test/site; rake test:check:base"]
-              test_queues[1] << ["Site Check Cartridges", "cd li-test/site; rake test:check:cartridges"]
-              test_queues[2] << ["Site Check Miscellaneous 1", "cd li-test/site; rake test:check:misc1"]
-              test_queues[3] << ["Site Check REST API Integration", "cd li-test/site; rake test:check:restapi_integration"]
+              test_queues[0] << ["Site Check Applications", "cd li-test/site; scl enable ruby193 'rake test:check:applications'"]
+              test_queues[1].unshift ["Site Check Base", "cd li-test/site; scl enable ruby193 'rake test:check:base'"]
+              test_queues[1] << ["Site Check Cartridges", "cd li-test/site; scl enable ruby193 'rake test:check:cartridges'"]
+              test_queues[2] << ["Site Check Miscellaneous 1", "cd li-test/site; scl enable ruby193 'rake test:check:misc1'"]
+              test_queues[3] << ["Site Check REST API Integration", "cd li-test/site; scl enable ruby193 'rake test:check:restapi_integration'"]
             end
 
             unless options.exclude_rhc?
