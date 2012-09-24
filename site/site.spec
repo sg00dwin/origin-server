@@ -20,7 +20,7 @@ Requires:       %{?scl:%scl_prefix}ruby
 Requires:       %{?scl:%scl_prefix}rubygems
 Requires:       %{?scl:%scl_prefix}rubygem(bundler)
 Requires:       %{?scl:%scl_prefix}rubygem(rails)
-Requires:       %{?scl:%scl_prefix}rubygem(openshift-origin-console)
+Requires:       rubygem(openshift-origin-console)
 #Requires:       rubygem-mocha
 #Requires:       rubygem-webmock
 #Requires:       rubygem-haml
@@ -42,7 +42,7 @@ BuildRequires:  %{?scl:%scl_prefix}rubygems
 BuildRequires:  %{?scl:%scl_prefix}rubygems-devel
 BuildRequires:  %{?scl:%scl_prefix}rubygem(rake)
 BuildRequires:  %{?scl:%scl_prefix}rubygem(bundler)
-BuildRequires:  %{?scl:%scl_prefix}rubygem(openshift-origin-console)
+BuildRequires:  rubygem(openshift-origin-console)
 
 BuildArch:      noarch
 
@@ -69,7 +69,7 @@ such as images, CSS, JavaScript, and HTML.
 # Temporary BEGIN
 bundle install
 # Temporary END
-RAILS_RELATIVE_URL_ROOT=/app bundle exec rake assets:precompile
+RAILS_RELATIVE_URL_ROOT=/app bundle exec rake assets:precompile assets:public_pages
 rm -rf tmp
 rm log/production.log
 
