@@ -31,3 +31,26 @@ class ActionController::TestCase
     super
   end
 end
+
+class ActionDispatch::IntegrationTest
+  protected
+    def login(user=nil)
+      if user
+        open_session do |sess|
+          sess.https!
+          sess.extend(CustomAssertions)
+          sess.post login_path, :web_user => {:login => user.login, :password => user.password}
+          sess.assert_response 302
+        end
+      else
+        open_session
+        https!
+        self.extend(CustomAssertions)
+        post login_path, :web_user => {:login => @user.login, :password => @user.password}
+        assert_response 302
+      end
+    end
+  private
+    module CustomAssertions
+    end
+end
