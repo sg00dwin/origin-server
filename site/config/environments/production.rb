@@ -39,6 +39,8 @@ RedHatCloud::Application.configure do
 
   # Enable threaded mode
   config.threadsafe!
+  # Workaround for Rails 3.2.x and threadsafe!
+  config.dependency_loading = true if $rails_rake_task
 
   # Enable locale fallbacks for I18n (makes lookups for any locale fall back to
   # the I18n.default_locale when a translation can not be found)
