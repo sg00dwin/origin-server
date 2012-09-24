@@ -18,9 +18,11 @@ BuildRoot: %(mktemp -ud %{_tmppath}/%{name}-%{version}-%{release}-XXXXXX)
 Requires:       %{?scl:%scl_prefix}ruby(abi) = %{rubyabi}
 Requires:       %{?scl:%scl_prefix}ruby
 Requires:       %{?scl:%scl_prefix}rubygems
-Requires:       %{?scl:%scl_prefix}rubygem(bundler)
-Requires:       %{?scl:%scl_prefix}rubygem(rails)
 Requires:       rubygem(openshift-origin-console)
+Requires:       %{?scl:%scl_prefix}rubygem(recaptcha)
+Requires:       %{?scl:%scl_prefix}rubygem(wddx)
+Requires:       %{?scl:%scl_prefix}rubygem(sinatra)
+Requires:       %{?scl:%scl_prefix}rubygem(sqlite3)
 #Requires:       rubygem-mocha
 #Requires:       rubygem-webmock
 #Requires:       rubygem-haml
@@ -40,9 +42,24 @@ BuildRequires:  %{?scl:%scl_prefix}ruby(abi) = %{rubyabi}
 BuildRequires:  %{?scl:%scl_prefix}ruby 
 BuildRequires:  %{?scl:%scl_prefix}rubygems
 BuildRequires:  %{?scl:%scl_prefix}rubygems-devel
-BuildRequires:  %{?scl:%scl_prefix}rubygem(rake)
-BuildRequires:  %{?scl:%scl_prefix}rubygem(bundler)
+BuildRequires:  %{?scl:%scl_prefix}rubygem(rails)
+BuildRequires:  %{?scl:%scl_prefix}rubygem(compass-rails)
+BuildRequires:  %{?scl:%scl_prefix}rubygem(mocha)
+BuildRequires:  %{?scl:%scl_prefix}rubygem(simplecov)
+BuildRequires:  %{?scl:%scl_prefix}rubygem(test-unit)
+BuildRequires:  %{?scl:%scl_prefix}rubygem(ci_reporter)
+BuildRequires:  %{?scl:%scl_prefix}rubygem(webmock)
+BuildRequires:  %{?scl:%scl_prefix}rubygem(sprockets)
+BuildRequires:  %{?scl:%scl_prefix}rubygem(rdiscount)
+BuildRequires:  %{?scl:%scl_prefix}rubygem(formtastic)
+BuildRequires:  %{?scl:%scl_prefix}rubygem(net-http-persistent)
+BuildRequires:  %{?scl:%scl_prefix}rubygem(haml)
 BuildRequires:  rubygem(openshift-origin-console)
+BuildRequires:  %{?scl:%scl_prefix}rubygem(recaptcha)
+BuildRequires:  %{?scl:%scl_prefix}rubygem(wddx)
+BuildRequires:  %{?scl:%scl_prefix}rubygem(sinatra)
+BuildRequires:  %{?scl:%scl_prefix}rubygem(sqlite3)
+#BuildRequires:  %{?scl:%scl_prefix}rubygem(httparty)
 
 BuildArch:      noarch
 
@@ -67,9 +84,11 @@ such as images, CSS, JavaScript, and HTML.
 %{?scl:scl enable %scl - << \EOF}
 
 # Temporary BEGIN
-bundle install
+rm Gemfile.lock
+gem install httparty --version 0.8.3
+bundle install --local
 # Temporary END
-RAILS_RELATIVE_URL_ROOT=/app bundle exec rake assets:precompile assets:public_pages
+RAILS_ENV=production RAILS_RELATIVE_URL_ROOT=/app bundle exec rake assets:precompile assets:public_pages
 rm -rf tmp
 rm log/*
 
