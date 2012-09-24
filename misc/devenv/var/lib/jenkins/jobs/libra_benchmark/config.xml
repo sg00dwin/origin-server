@@ -30,44 +30,7 @@
       </parameterDefinitions>
     </hudson.model.ParametersDefinitionProperty>
   </properties>
-  <scm class="hudson.plugins.git.GitSCM">
-    <configVersion>1</configVersion>
-    <remoteRepositories>
-      <org.spearce.jgit.transport.RemoteConfig>
-        <string>origin</string>
-        <int>5</int>
-        <string>fetch</string>
-        <string>+refs/heads/*:refs/remotes/origin/*</string>
-        <string>receivepack</string>
-        <string>git-upload-pack</string>
-        <string>uploadpack</string>
-        <string>git-upload-pack</string>
-        <string>url</string>
-        <string>git@github.com:openshift/li.git</string>
-        <string>tagopt</string>
-        <string></string>
-      </org.spearce.jgit.transport.RemoteConfig>
-    </remoteRepositories>
-    <branches>
-      <hudson.plugins.git.BranchSpec>
-        <name>master</name>
-      </hudson.plugins.git.BranchSpec>
-    </branches>
-    <mergeOptions/>
-    <recursiveSubmodules>false</recursiveSubmodules>
-    <doGenerateSubmoduleConfigurations>false</doGenerateSubmoduleConfigurations>
-    <authorOrCommitter>false</authorOrCommitter>
-    <clean>false</clean>
-    <wipeOutWorkspace>false</wipeOutWorkspace>
-    <pruneBranches>false</pruneBranches>
-    <buildChooser class="hudson.plugins.git.util.DefaultBuildChooser"/>
-    <gitTool>Default</gitTool>
-    <submoduleCfg class="list"/>
-    <relativeTargetDir></relativeTargetDir>
-    <excludedRegions></excludedRegions>
-    <excludedUsers></excludedUsers>
-    <skipTag>false</skipTag>
-  </scm>
+  <scm class="hudson.scm.NullSCM"/>
   <canRoam>true</canRoam>
   <disabled>true</disabled>
   <blockBuildWhenDownstreamBuilding>false</blockBuildWhenDownstreamBuilding>
@@ -76,7 +39,14 @@
   <concurrentBuild>false</concurrentBuild>
   <builders>
     <hudson.tasks.Shell>
-      <command>if [ -d &quot;rhc/log&quot; ]; then
+      <command># Delete the previous repo clone directories
+rm -rf li openshift-dev-tools
+
+# Clone the repos
+git clone git@github.com:openshift/li.git
+git clone git@github.com:openshift/openshift-dev-tools.git
+
+if [ -d &quot;rhc/log&quot; ]; then
     echo &quot;Wiping out old build data...&quot;
     rm -rf rhc/log/*
 fi
@@ -87,6 +57,8 @@ then
 launch_params=$launch_params&quot; --use_stage_image&quot;
 fi
 echo $launch_params
+
+pushd li
 
 # Launch a test instance
 build/devenv launch libra_benchmark_${BUILD_NUMBER} --verifier --instance_type $instance_type $launch_params
@@ -100,12 +72,14 @@ echo $test_params
 
 # Run the image tests
 build/devenv test libra_benchmark_${BUILD_NUMBER} --include_cucumber=benchmark --disable-charlie --mcollective-logs --terminate $test_params
+
+popd
 </command>
     </hudson.tasks.Shell>
   </builders>
   <publishers>
     <hudson.tasks.ArtifactArchiver>
-      <artifacts>rhc/log/**</artifacts>
+      <artifacts>li/rhc/log/**</artifacts>
       <latestOnly>false</latestOnly>
     </hudson.tasks.ArtifactArchiver>
   </publishers>

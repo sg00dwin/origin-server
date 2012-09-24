@@ -43,9 +43,10 @@ Blank pull_id(s) will use master&#xd;
   <builders>
     <hudson.tasks.Shell>
       <command># Build and install HEAD for the integration tests
-rm -rf li rhc crankcase
+rm -rf li openshift-dev-tools rhc crankcase
 
 git clone git@github.com:openshift/li.git
+git clone git@github.com:openshift/openshift-dev-tools.git
 git clone git://github.com/openshift/crankcase.git
 git clone git://github.com/openshift/rhc.git
 

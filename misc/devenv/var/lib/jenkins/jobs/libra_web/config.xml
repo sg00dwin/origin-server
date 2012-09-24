@@ -61,17 +61,28 @@
   <concurrentBuild>false</concurrentBuild>
   <builders>
     <hudson.tasks.Shell>
-      <command># Build and install HEAD for the integration tests
+      <command># Delete the previous repo clone directories
+rm -rf li openshift-dev-tools
+
+# Clone the repos
+git clone git@github.com:openshift/li.git
+git clone git@github.com:openshift/openshift-dev-tools.git
+
+pushd li
+
+# Build and install HEAD for the integration tests
 build/devenv launch libra_web_${BUILD_NUMBER} --verifier
 build/devenv sync libra_web_${BUILD_NUMBER} --tag --clean_metadata
 
 # Run the web verification tests
-build/devenv test libra_web_${BUILD_NUMBER} --terminate --include_web</command>
+build/devenv test libra_web_${BUILD_NUMBER} --terminate --include_web
+
+popd</command>
     </hudson.tasks.Shell>
   </builders>
   <publishers>
     <hudson.tasks.ArtifactArchiver>
-      <artifacts>rhc/log/**</artifacts>
+      <artifacts>li/rhc/log/**</artifacts>
       <latestOnly>false</latestOnly>
     </hudson.tasks.ArtifactArchiver>
     <hudson.tasks.Mailer>
