@@ -97,6 +97,7 @@ rm -rf %{buildroot}
 %attr(0770,root,libra_user) %{sitedir}/app/subsites/status/db
 %attr(0660,root,libra_user) %config(noreplace) %{sitedir}/app/subsites/status/db/status.sqlite3
 %attr(0740,root,libra_user) %{sitedir}/app/subsites/status/rhc-outage
+%attr(0750,root,libra_user) %{sitedir}/script/site_ruby
 %attr(0770,root,libra_user) %{sitedir}/tmp
 %attr(0770,root,libra_user) %{sitedir}/tmp/cache
 %attr(0770,root,libra_user) %{sitedir}/tmp/cache/assets

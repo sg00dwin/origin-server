@@ -274,6 +274,9 @@ getsebool allow_polyinstantiation | grep -q -e 'on$' || /usr/sbin/setsebool -P a
 # Allow httpd to relay
 getsebool httpd_can_network_relay | grep -q -e 'on$' || /usr/sbin/setsebool -P httpd_can_network_relay=on || :
 
+# Ensure that V8 in Node.js can compile JS for Rails asset compilation
+getsebool httpd_execmem | grep -q -e 'on$' || /usr/sbin/setsebool -P httpd_execmem=on || :
+
 # Add policy for developement environment
 cd %{policydir} ; make -f ../devel/Makefile
 semodule -l | grep -q dhcpnamedforward || semodule -i dhcpnamedforward.pp
@@ -395,9 +398,6 @@ cp -f %{devenvdir}/puppet-private.pem /var/lib/puppet/ssl/private_keys/localhost
 
 # Remove blank passwd for root in shadow
 /bin/echo root:\!! | /usr/sbin/chpasswd -e
-
-# Ensure that V8 in Node.js can compile JS for Rails asset compilation
-setsebool -P httpd_execmem 1
 
 # Create OpenScap script
 cat > /usr/local/bin/openscap.sh << EOF
@@ -542,6 +542,15 @@ then
   sleep 10
   /usr/bin/ruby /usr/lib/stickshift/broker/application_templates/templates/deploy.rb
 fi
+
+# TEMPORARY: Guarantee gems are available until build work completed
+ruby19_dir=$(dirname `scl enable ruby193 "which ruby"`)
+export PATH=$ruby19_dir:$PATH
+ruby19_ld_libs=$(scl enable ruby193 "printenv LD_LIBRARY_PATH")
+export LD_LIBRARY_PATH=$ruby19_ld_libs:$LD_LIBRARY_PATH
+pushd /var/www/stickshift/site
+scl enable ruby193 'bundle install'
+popd
 
 %files
 %defattr(-,root,root,-)
