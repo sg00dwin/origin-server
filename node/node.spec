@@ -2,7 +2,7 @@
 
 Summary:       Multi-tenant cloud management system node tools
 Name:          rhc-node
-Version: 0.99.2
+Version: 0.99.3
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -268,6 +268,14 @@ fi
 
 
 %changelog
+* Mon Sep 24 2012 Adam Miller <admiller@redhat.com> 0.99.3-1
+- Merge remote-tracking branch 'upstream/master' (tkramer@redhat.com)
+- Security - BZ834418  Remove 0.0.0.0 from being bound to.  This requires
+  selinux-policy-3.7.19-162.el6 which is in devenv (tkramer@redhat.com)
+- Merge pull request #392 from ramr/master (openshift+bot@redhat.com)
+- Set shell to bash instead of trap-user - can't run :!cmd from within vi.
+  (ramr@redhat.com)
+
 * Thu Sep 20 2012 Adam Miller <admiller@redhat.com> 0.99.2-1
 - Fix for bugz 856487 - can't run mongo shell. (ramr@redhat.com)
 
