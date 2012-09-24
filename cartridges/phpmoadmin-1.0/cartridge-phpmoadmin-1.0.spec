@@ -1,7 +1,7 @@
 %define cartridgedir %{_libexecdir}/stickshift/cartridges/embedded/phpmoadmin-1.0
 
 Name: cartridge-phpmoadmin-1.0
-Version: 0.15.4
+Version: 0.16.2
 Release: 1%{?dist}
 Summary: Embedded phpMoAdmin support for express
 
@@ -14,7 +14,7 @@ BuildArch: noarch
 
 Requires: stickshift-abstract
 Requires: rubygem(stickshift-node)
-Requires: cartridge-mongodb-2.0
+Requires: cartridge-mongodb-2.2
 
 %description
 Provides rhc phpMoAdmin cartridge support
@@ -54,6 +54,12 @@ rm -rf $RPM_BUILD_ROOT
 %doc %{cartridgedir}/LICENSE
 
 %changelog
+* Thu Sep 20 2012 Adam Miller <admiller@redhat.com> 0.16.2-1
+- Change hard-coded references to mongodb-2.2 (rmillner@redhat.com)
+
+* Wed Sep 12 2012 Adam Miller <admiller@redhat.com> 0.16.1-1
+- bump_minor_versions for sprint 18 (admiller@redhat.com)
+
 * Fri Sep 07 2012 Adam Miller <admiller@redhat.com> 0.15.4-1
 - Merge pull request #340 from pravisankar/dev/ravi/zend-fix-description
   (openshift+bot@redhat.com)

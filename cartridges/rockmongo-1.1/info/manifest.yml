@@ -25,7 +25,7 @@ Reservations:
 Components:
   default:
 #    Dependencies: [rhc-cartridge-php]
-    Service-Dependencies: ["mongodb-2.0"]
+    Service-Dependencies: ["mongodb-2.2"]
     Publishes:
       get-serve-info:
         Type: "NET_TCP:db-config:url"

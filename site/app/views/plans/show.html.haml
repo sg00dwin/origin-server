@@ -1,3 +1,12 @@
-%h1 Your current plan
-
-%p You are currently on #{@plan.name}
+%h1 OpenShift Plans
+.row-fluid
+  .span6
+    %h2 Your Plan
+    = render :partial => 'plans/plan_description', :locals => { :show_plan => @current_plan, :select_button => '' }
+  .span6
+    - if @bigger_plans.length > 0
+      %h2 Looking to Upgrade?
+      = render :collection => @bigger_plans, :as => :show_plan, :partial => 'plans/plan_description', :locals => { :select_button => 'Upgrade' }
+    - if @smaller_plans.length > 0
+      %h2 Looking to Downgrade?
+      = render :collection => @smaller_plans.reverse, :as => :show_plan, :partial => 'plans/plan_description', :locals => { :select_button => 'Downgrade' }

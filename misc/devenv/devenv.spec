@@ -8,7 +8,7 @@
 
 Summary:   Dependencies for OpenShift development
 Name:      rhc-devenv
-Version: 0.99.4
+Version: 0.100.2
 Release:   1%{?dist}
 Group:     Development/Libraries
 License:   GPLv2
@@ -32,7 +32,7 @@ Requires:  cartridge-jenkins-1.4
 Requires:  cartridge-diy-0.1
 Requires:  cartridge-jenkins-client-1.4
 Requires:  cartridge-metrics-0.1
-Requires:  cartridge-mongodb-2.0
+Requires:  cartridge-mongodb-2.2
 Requires:  cartridge-phpmoadmin-1.0
 Requires:  cartridge-rockmongo-1.1
 Requires:  cartridge-10gen-mms-agent-0.1
@@ -502,6 +502,12 @@ chmod 640 /etc/stickshift/resource_limits.template
 # Remove Other rights from iptables-multi - was 755
 chmod 750 /sbin/iptables-multi
 
+# Remove Other rights from crontab - was 4755 - BZ856939
+chmod 750 /usr/bin/crontab
+
+# Remove Other rights from at - was 4755 - BZ856933
+chmod 750 /usr/bin/at
+
 # Fix devenv log file ownership
 chown root:libra_user /var/www/stickshift/broker/log/development.log
 chown root:libra_user /var/www/stickshift/broker/log/mcollective-client.log
@@ -552,6 +558,19 @@ fi
 %{policydir}/*
 
 %changelog
+* Thu Sep 20 2012 Adam Miller <admiller@redhat.com> 0.100.2-1
+- don't want register/official for test ami (admiller@redhat.com)
+- fixed jenkins job xml to reflect change in build call (admiller@redhat.com)
+- added libra_ami_test and libra-test repo build scripts (admiller@redhat.com)
+- Security - remove other perms from crontab and at for BZ856933 and BZ856939
+  (tkramer@redhat.com)
+- Change hard-coded references to mongodb-2.2 (rmillner@redhat.com)
+- BZ 847906: Enable compression for specific content types.
+  (rmillner@redhat.com)
+
+* Wed Sep 12 2012 Adam Miller <admiller@redhat.com> 0.100.1-1
+- bump_minor_versions for sprint 18 (admiller@redhat.com)
+
 * Thu Sep 06 2012 Adam Miller <admiller@redhat.com> 0.99.4-1
 - Fix for bugz 852216 - zend /sandbox should be root owned if possible.
   (ramr@redhat.com)

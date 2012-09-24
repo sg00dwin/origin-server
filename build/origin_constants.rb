@@ -49,4 +49,13 @@ SAUCE_BROWSER = ""
 SAUCE_BROWSER_VERSION = ""
 CAN_SSH_TIMEOUT=90
 
+JENKINS_HOME_DIR = '/var/lib/stickshift/ci-origin/app-root/data'
+
+SIBLING_REPOS = {'crankcase' => ['../crankcase-working', '../crankcase-fork', '../crankcase', JENKINS_HOME_DIR + '/jobs/crankcase/workspace'],
+                 'rhc' => ['../rhc-working', '../rhc-fork', '../rhc', JENKINS_HOME_DIR + '/jobs/rhc/workspace']}
+SIBLING_REPOS_GIT_URL = {'crankcase' => 'https://github.com/openshift/crankcase.git',
+                        'rhc' => 'https://github.com/openshift/rhc.git'}
+
+CUCUMBER_OPTIONS = '--strict -f progress -f junit --out /tmp/rhc/cucumber_results -t ~@not-origin'
+
 $amz_options = {:key_name => KEY_PAIR, :instance_type => TYPE}

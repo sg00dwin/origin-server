@@ -2,74 +2,66 @@
 = plan_upgrade_steps 1
 
 = semantic_form_for @full_user, :namespace => :upgrade_account, :url => edit_account_plan_upgrade_path, :html => {:method => :put} do |f|
-  -#= f.inputs
-  = f.semantic_errors
-
-  = f.inputs 'Account', :for => @full_user do |u|
-    - if @full_user.persisted?
-
-      %p
-        You are logged in as <strong>#{current_user_id}</strong> under the name <strong>#{@full_user.first_name} #{@full_user.last_name}</strong>.
-        Your phone number for this account is <strong>#{@full_user.phone}</strong>
-
-    - else
-      .row
-        .span8
-          = u.input :first_name, :required => true
-          = u.input :last_name, :required => true
-          = u.input :phone
-
-        .span4
-          %h4 Complete your Account
-          %p 
-            To purchase a plan, we need to have a few pieces of information for tax and 
-            legal purposes.  The info you provide will be stored as part of a Red Hat Network
-            account (RHN) which gives you access to other Red Hat properties and services.
-
-          %h4 How does a Red Hat account affect me?
+  %section{ :class => 'row' }
+    .span8
+      = f.inputs 'Account', :class => 'inputs form-horizontal', :for => @full_user do |u|
+        = u.semantic_errors
+        - if @full_user.persisted?
           %p
-            Upgrading your account will not change how you access and use OpenShift, nor will
-            Red Hat or OpenShift contact you differently as part of this upgrade.  A Red Hat
-            account is necessary for contacting Red Hat Support.
+            You are logged in as <strong>#{current_user_id}</strong> under the name <strong>#{@full_user.first_name} #{@full_user.last_name}</strong>.
+            Your phone number for this account is <strong>#{@full_user.phone}</strong>
+        - else
+          = u.inputs :inline => true, :required => true, :name => 'Name' do
+            = u.input :first_name, :required => true, :input_html => { :placeholder => "First" }
+            = u.input :last_name, :required => true, :input_html => { :placeholder => "Last" }
+          = u.input :phone, :input_html => { :class => 'input-medium', :placeholder => "10 digit number", :maxlength => 10 }
+    %aside{ :class => 'span4' }
+      %h5 Complete your Account
+      %p 
+        To purchase a plan, we need to have a few pieces of information for tax and 
+        legal purposes.  The info you provide will be stored as part of a Red Hat Network
+        account (RHN) which gives you access to other Red Hat properties and services.
 
-
-  = f.inputs 'Billing Information', :for => @billing_info do |b|
-    = b.semantic_errors
-
-    .row
-      .span8
-        = b.input :first_name, :required => true
-        = b.input :middle_initial
-        = b.input :last_name, :required => true
-        = b.input :address1
-        = b.input :address2
-        = b.input :address3
-        = b.input :city
-        = b.inputs :state, :country, :zip
-
-        = f.buttons do
-          = link_to "Back to plans", account_plans_path, :class => 'btn'
-          = f.commit_button "Update my account"
-          = f.loading
-
-      .span4
-        %h4 Your contact information is safe
-        %p 
-          We will never share your contact information with third parties, and we
-          will only use it to contact you regarding your OpenShift account
-
-        %h4 Are you located in the US?
-        %p
-          At this time paid OpenShift access is only available to customers in the
-          United States. We plan on expanding availability in the future. Please
-          contact us at #{link_to_account_mailto} if you are interested in subscribing
-          from another country.
-
-        %h4 Tax exempt?
-        %p
-          To qualify for tax exempt status you must submit a certificate to Red Hat.
-          Upon reciept of your certificate we will refund all previously paid taxes to 
-          your credit card. #{link_to "Learn more about filing for tax exempt status", tax_exempt_help_status, :target => '_blank', :class => 'external'}.
-
-
+      %h5 How does a Red Hat account affect me?
+      %p
+        Upgrading your account will not change how you access and use OpenShift, nor will
+        Red Hat or OpenShift contact you differently as part of this upgrade.  A Red Hat
+        account is necessary for contacting Red Hat Support.
+  %section{ :class => 'row' }
+    .span8
+      = f.inputs 'Billing Information', :class => 'inputs form-horizontal', :for => @billing_info do |b|
+        = b.semantic_errors
+        = b.inputs :inline => true, :required => true, :name => 'Name' do
+          = b.input :first_name, :required => true, :input_html => { :class => 'input-medium', :placeholder => "First" }
+          = b.input :middle_initial, :input_html => { :class => 'input-mini', :placeholder => "MI" }
+          = b.input :last_name, :required => true, :input_html => { :class => 'input-medium', :placeholder => "Last" }
+        = b.input :address1, :required => true, :label => 'Street Address'
+        = b.input :address2, :label => '&nbsp;'
+        = b.input :address3, :label => '&nbsp;'
+        = b.inputs :inline => true, :required => true, :name => 'City, State, Zip' do
+          = b.input :city, :required => true, :input_html => { :class => 'input-medium' }
+          = b.input :state, :required => true, :as => :select, :collection => us_states_for_select, :input_html => { :class => 'input-medium' }
+          = b.input :zip, :required => true, :input_html => { :class => 'input-mini', :placeholder => "Zip" }
+        = b.input :country, :label => 'Country', :input_html => { :readonly => true, :placeholder => "US", :value => "US", :title => 'Current signup restricted to United States' }
+    %aside{ :class => 'span4' }
+      %h5 Your contact information is safe
+      %p
+        Read our <a href="/community/policy/security">Privacy Policy</a>.
+        
+      %h5 Are you located in the US?
+      %p
+        At this time paid OpenShift access is only available to customers in the
+        United States. We plan on expanding availability in the future. Please
+        contact us at #{link_to_account_mailto} if you are interested in subscribing
+        from another country.
+        
+      %h5 Tax exempt?
+      %p
+        To qualify for tax exempt status you must submit a certificate to Red Hat.
+        Upon reciept of your certificate we will refund all previously paid taxes to 
+        your credit card. #{link_to "Learn more about filing for tax exempt status", tax_exempt_help_status, :target => '_blank', :class => 'external'}.
+  = f.buttons do
+    = link_to "Back to plans", account_plans_path, :class => 'btn'
+    = f.commit_button "Update my account"
+    = f.loading
 

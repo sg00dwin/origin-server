@@ -25,7 +25,7 @@ module Streamline
       new({
         :first_name => 'Joe',
         :last_name => 'Somebody',
-        :phone => '919-111-1111',
+        :phone => '9191111111',
 
         :address1 => '12345 Happy Street',
         :city => 'Happyville',

@@ -33,6 +33,7 @@ VERIFIER_REGEXS = {/^(devenv)_(\d+)$/ => {:multiple => true},
                    /^(devenv-stage_verifier)_(\d+)$/ => {},
                    /^(devenv-base)_(\d+)$/ => {},
                    /^(devenv-stage-base)_(\d+)$/ => {},
+                   /^(testenv)_(\d+)$/ => {},
                    /^(oso-fedora)_(\d+)$/ => {},
                    /^(oso-fedora-base)_(\d+)$/ => {},
                    /^(libra_benchmark)_(\d+)$/ => {:max_run_time => (60*60*24)},
@@ -58,5 +59,16 @@ SAUCE_OS = "Windows 2008"
 SAUCE_BROWSER = "firefox"
 SAUCE_BROWSER_VERSION = "7"
 CAN_SSH_TIMEOUT=90
+
+JENKINS_HOME_DIR = '/var/lib/jenkins'
+
+SIBLING_REPOS = {'crankcase' => ['../crankcase-working', '../crankcase-fork', '../crankcase', JENKINS_HOME_DIR + '/jobs/crankcase/workspace'],
+                 'rhc' => ['../rhc-working', '../rhc-fork', '../rhc', JENKINS_HOME_DIR + '/jobs/rhc/workspace'],
+                 'li' => ["../#{File.basename(FileUtils.pwd)}"]}
+SIBLING_REPOS_GIT_URL = {'crankcase' => 'https://github.com/openshift/crankcase.git',
+                        'rhc' => 'https://github.com/openshift/rhc.git',
+                        'li' => 'git@github.com:openshift/li.git'}
+
+CUCUMBER_OPTIONS = '--strict -f progress -f junit --out /tmp/rhc/cucumber_results'
 
 $amz_options = {:key_name => KEY_PAIR, :instance_type => TYPE}

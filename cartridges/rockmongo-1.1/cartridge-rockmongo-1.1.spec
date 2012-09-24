@@ -1,7 +1,7 @@
 %define cartridgedir %{_libexecdir}/stickshift/cartridges/embedded/rockmongo-1.1
 
 Name: cartridge-rockmongo-1.1
-Version: 1.14.4
+Version: 1.15.2
 Release: 1%{?dist}
 Summary: Embedded RockMongo support for OpenShift
 
@@ -12,7 +12,7 @@ Source0: %{name}-%{version}.tar.gz
 BuildRoot:    %(mktemp -ud %{_tmppath}/%{name}-%{version}-%{release}-XXXXXX)
 BuildArch: noarch
 Requires: stickshift-abstract
-Requires: cartridge-mongodb-2.0
+Requires: cartridge-mongodb-2.2
 
 %description
 Provides rhc RockMongo cartridge support
@@ -53,6 +53,12 @@ rm -rf $RPM_BUILD_ROOT
 %doc %{cartridgedir}/LICENSE
 
 %changelog
+* Thu Sep 20 2012 Adam Miller <admiller@redhat.com> 1.15.2-1
+- Change hard-coded references to mongodb-2.2 (rmillner@redhat.com)
+
+* Wed Sep 12 2012 Adam Miller <admiller@redhat.com> 1.15.1-1
+- bump_minor_versions for sprint 18 (admiller@redhat.com)
+
 * Fri Sep 07 2012 Adam Miller <admiller@redhat.com> 1.14.4-1
 - Merge pull request #340 from pravisankar/dev/ravi/zend-fix-description
   (openshift+bot@redhat.com)

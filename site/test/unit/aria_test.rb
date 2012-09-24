@@ -236,10 +236,12 @@ class AriaUnitTest < ActiveSupport::TestCase
           Aria::WDDX::Struct.new({
             'plan_no' => '1',
             'plan_name' => 'FreeShift',
+            'plan_desc' => 'FreeShift plan description'
           }),
           Aria::WDDX::Struct.new({
             'plan_no' => '2',
             'plan_name' => 'MegaShift',
+            'plan_desc' => 'MegaShift plan description'
           })
         ]
       }))
@@ -387,8 +389,139 @@ class AriaUnitTest < ActiveSupport::TestCase
     assert_equal 'FreeShift description', plan.description
     assert_equal 3, plan.max_gears
     assert_equal ['small'], plan.gear_sizes
-    
+
     # The aria plan object should be protected.
     assert_raise(NoMethodError) { plan.aria_plan }
+  end
+
+  test 'master plan parses complex aria description text into plan features' do
+    Aria::Client.any_instance.expects(:invoke).once.
+      with(:get_client_plans_basic).
+      returns(Aria::WDDX::Struct.new({
+        'plans_basic' => [
+          Aria::WDDX::Struct.new({
+            'plan_no' => '3',
+            'plan_name' => 'MockShift',
+            'plan_desc' => "This is the MockShift plan.\n\nFeatures:\n\n* Free Gears: 3\n* Support: Red Hat 24x7x365\n* Scaling: Included\n* Additional Storage: 1 Meellion Gigabytes\n* SSL: Custom domain support\n* Java EE6 Full Profile & CDI: Bazinga"
+          })
+        ]
+      }))
+
+    assert plan = Aria::MasterPlan.new(
+      :plan_no => '3',
+      :capabilities => { :max_gears => 16, :gear_sizes => ['small','medium'] }
+    )
+
+    assert_equal 'This is the MockShift plan.', plan.description
+    assert features = plan.features
+    assert_equal 'Red Hat 24x7x365', features.each.select{ |feat| feat.name == 'Support' }[0].value
+    assert_equal 3, plan.feature('Free Gears').count
+    assert_equal nil, plan.feature('NotAFeature').count
+    assert_equal true, plan.feature('NotAFeature').not_available?
+  end
+
+  test 'should raise an error when an aria description can not be parsed into plan features' do
+    Aria::Client.any_instance.expects(:invoke).once.
+      with(:get_client_plans_basic).
+      returns(Aria::WDDX::Struct.new({
+        'plans_basic' => [
+          Aria::WDDX::Struct.new({
+            'plan_no' => '3',
+            'plan_name' => 'MockShift',
+            'plan_desc' => "This is the MockShift plan.\n\nFeatures:\n\n* : 3\n* Support: Red Hat 24x7x365\n* Scaling: Included\n* Additional Storage: 1 Meellion Gigabytes\n* SSL: Custom domain support\n* Java EE6 Full Profile & CDI: Bazinga"
+          })
+        ]
+      }))
+
+    assert plan = Aria::MasterPlan.new(
+      :plan_no => '3',
+      :capabilities => { :max_gears => 16, :gear_sizes => ['small','medium'] }
+    )
+
+    assert_raise(Aria::MasterPlanFeature::MalformedFeatureError) {features = plan.features}
+  end
+
+  test 'should be able to sort master plans by price then gear size options' do
+    Aria::Client.any_instance.expects(:invoke).once.
+      with(:get_client_plans_basic).
+      returns(Aria::WDDX::Struct.new({
+        'plans_basic' => [
+          Aria::WDDX::Struct.new({
+            'plan_no' => '3',
+            'plan_name' => 'MockShift',
+            'plan_desc' => "This is the MockShift plan.\n\nFeatures:\n\n* Price: Free"
+          }),
+          Aria::WDDX::Struct.new({
+            'plan_no' => '4',
+            'plan_name' => 'SuperMockShift',
+            'plan_desc' => "This is the SuperMockShift plan.\n\nFeatures:\n\n* Price: $42/month *"
+          }),
+          Aria::WDDX::Struct.new({
+            'plan_no' => '5',
+            'plan_name' => 'MegaMockShift',
+            'plan_desc' => "This is the MegaMockShift plan.\n\nFeatures:\n\n* Price: $42/month *"
+          })
+        ]
+      }))
+
+    assert plan = Aria::MasterPlan.new(
+      :plan_no => '3',
+      :capabilities => { :max_gears => 16, :gear_sizes => ['small'] }
+    )
+    assert plan2 = Aria::MasterPlan.new(
+      :plan_no => '4',
+      :capabilities => { :max_gears => 32, :gear_sizes => ['small','medium'] }
+    )
+    assert plan3 = Aria::MasterPlan.new(
+      :plan_no => '5',
+      :capabilities => { :max_gears => 32, :gear_sizes => ['small','medium','large'] }
+    )
+
+    assert_equal [plan, plan2], [plan2, plan].sort
+    assert_equal [plan2, plan3], [plan3, plan2].sort
+  end
+
+  test 'should be able to sort master plan features from different plans' do
+    Aria::Client.any_instance.expects(:invoke).once.
+      with(:get_client_plans_basic).
+      returns(Aria::WDDX::Struct.new({
+        'plans_basic' => [
+          Aria::WDDX::Struct.new({
+            'plan_no' => '3',
+            'plan_name' => 'MockShift',
+            'plan_desc' => "This is the MockShift plan.\n\nFeatures:\n\n* Free Gears: 3\n* Support: Red Hat 24x7x365\n* Scaling: Included\n* Additional Storage: 1 Meellion Gigabytes\n* SSL: Custom domain support\n* Java EE6 Full Profile & CDI: Bazinga"
+          }),
+          Aria::WDDX::Struct.new({
+            'plan_no' => '4',
+            'plan_name' => 'SuperMockShift',
+            'plan_desc' => "This is the SuperMockShift plan.\n\nFeatures:\n\n* Free Gears: 5\n* Support: Red Hat 24x7x365\n* Scaling: Unlimited **\n* Additional Storage: 1 Meellion Gigabytes\n* SSL: Custom domain support\n* Java EE6 Full Profile & CDI: Bazinga"
+          })
+        ]
+      }))
+
+    assert plan = Aria::MasterPlan.new(
+      :plan_no => '3',
+      :capabilities => { :max_gears => 16, :gear_sizes => ['small','medium'] }
+    )
+    assert plan2 = Aria::MasterPlan.new(
+      :plan_no => '4',
+      :capabilities => { :max_gears => 32, :gear_sizes => ['small','medium','large'] }
+    )
+
+    # These are numeric but have no ranking
+    assert plan1_gears = plan.feature('Free Gears')
+    assert plan2_gears = plan2.feature('Free Gears')
+    assert_equal [plan1_gears, plan2_gears], [plan2_gears, plan1_gears].sort
+
+    # These have ranking and are non-numeric
+    assert plan1_scale = plan.feature('Scaling')
+    assert plan2_scale = plan2.feature('Scaling')
+    assert_equal [plan1_scale, plan2_scale], [plan2_scale, plan1_scale].sort
+
+    # These have no ranking and are non-numeric
+    assert_equal plan.feature('SSL').rank, plan2.feature('SSL').rank
+
+    # Different features can't be sorted together
+    assert_raise(Aria::MasterPlanFeature::ComparisonError) {[plan2_scale, plan1_gears].sort}
   end
 end

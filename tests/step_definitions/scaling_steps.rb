@@ -143,7 +143,7 @@ When /^(\d+) concurrent http connections are generated for (\d+) seconds$/ do |c
 end
 
 When /^mongo is added to the scaled app$/ do
-  rhc_embed_add(@app, "mongodb-2.0")
+  rhc_embed_add(@app, "mongodb-2.2")
 end
 
 Then /^app should be able to connect to mongo$/ do

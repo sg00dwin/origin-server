@@ -30,6 +30,8 @@ RedHatCloud::Application.routes.draw do
   match 'user/new/express' => app_redirect('account/new'), :via => [:get]
   match 'user/complete' => app_redirect('account/complete'), :via => [:get]
 
+  match 'account/plans' => app_redirect('account/plan'), :via => [:get]
+
   # Prototype not found pages
   match 'not_found' => 'product#not_found'
   match 'error' => 'product#error'

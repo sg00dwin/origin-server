@@ -23,10 +23,10 @@ Feature: Application Performance Tests
     And the embedded phpmyadmin-3.4 cartridge is added
     When the embedded phpmyadmin-3.4 cartridge is removed
     And the embedded mysql-5.1 cartridge is removed
-    When the embedded mongodb-2.0 cartridge is added
+    When the embedded mongodb-2.2 cartridge is added
     And the embedded rockmongo-1.1 cartridge is added
     When the embedded rockmongo-1.1 cartridge is removed
-    And the embedded mongodb-2.0 cartridge is removed
+    And the embedded mongodb-2.2 cartridge is removed
     And the embedded postgresql-8.4 cartridge is added
     And the embedded postgresql-8.4 cartridge is removed
     And the embedded cron-1.4 cartridge is added

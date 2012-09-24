@@ -1,7 +1,7 @@
 %define cartridgedir %{_libexecdir}/stickshift/cartridges/embedded/metrics-0.1
 
 Name: cartridge-metrics-0.1
-Version: 0.19.4
+Version: 0.20.1
 Release: 1%{?dist}
 Summary: Embedded metrics support for express
 
@@ -49,6 +49,9 @@ rm -rf $RPM_BUILD_ROOT
 %{cartridgedir}/info/manifest.yml
 
 %changelog
+* Wed Sep 12 2012 Adam Miller <admiller@redhat.com> 0.20.1-1
+- bump_minor_versions for sprint 18 (admiller@redhat.com)
+
 * Fri Sep 07 2012 Adam Miller <admiller@redhat.com> 0.19.4-1
 - Merge pull request #340 from pravisankar/dev/ravi/zend-fix-description
   (openshift+bot@redhat.com)

@@ -1,3 +1,48 @@
+:css
+  /* credit card */
+  .card-types-passive {
+    list-style: none;
+    margin-left: 230px;
+  }
+  .card-types-passive li {
+    display: inline;
+    float: left;
+    text-indent: -5000em;
+  }
+  .card-types-passive .cc-card {
+    background: #fff url("/app/images/credit-cards.png") 0 0 no-repeat;
+    height: 25px;
+    width: 52px;
+  }
+  .card-types-passive li.Visa {
+    background-position: 0 0;
+  }
+  .card-types-passive li.Mastercard {
+    background-position: -55px 0;
+  }
+  .card-types-passive li.AMEX {
+    background-position: -110px 0;
+  }
+  .card-types-passive.selected .cc-card.selected {
+    opacity: 1;
+    background-color: transparent;
+    z-index: 10;
+  }
+  .card-types-passive.selected .cc-card {	
+    -moz-transition: opacity 400ms ease 0s;
+    background-color: transparent;
+    opacity: 0.33;
+  }
+  
+  .form-validation .validation01 {
+    top: 35px;
+  }
+  
+  .payment_method {
+    margin: 18px 0;
+    -webkit-margin-top-collapse: separate; /* needed since used after legend which collapses margins */
+  }
+
 = semantic_form_for payment_method, :url => aria_direct_post_url, :html => {:class => 'form-horizontal', :id => 'payment_method'} do |f|
 
   = f.hidden_field :form_of_payment, :name => :formOfPayment
@@ -7,17 +52,35 @@
 
   = f.semantic_errors
 
-  = f.input :cc_no, :input_html => {:name => :cc_no, :autofocus => true}
+  = f.inputs 'Payment Method' do
+    - if defined? previous_payment_method and not previous_payment_method.nil?
+      .row
+        .span2
+          &nbsp;
+        .span10
+          .payment_method
+            Card on file: #### #### #### #{previous_payment_method.cc_no}, expires #{previous_payment_method.cc_exp_mm} / #{previous_payment_method.cc_exp_yyyy}
+    -# This hand-rendered form control needs to be converted into a formtastic input type.    
+    .control-group
+      %label{ :class => 'control-label' } Credit Card Number
+      %div{ :class => 'controls clearfix' }
+        %input{ :id => 'aria_payment_method_cc_no', :name => 'cc_no', :type => 'text', :class => 'pull-left input-large', :value => (@payment_method.cc_no || '')}
+        %ul{ :class => 'card-types-passive selected' }
+          %li{ :class => 'Visa cc-card' }
+            %span VISA
+          %li{ :class => 'Mastercard cc-card' }
+            %span Mastercard
+          %li{ :class => 'AMEX cc-card' }
+            %span American Express                      
 
-  .control-group
-    %label.control-label 
-      Expiration date
-      %abbr{:title => 'required'} * 
-    .controls
-      = select_month(payment_method.cc_exp_mm || Date.today.month, {:field_name => :cc_exp_mm,}, { :name => :cc_exp_mm, })
-      = select_year(payment_method.cc_exp_yyyy || Date.today.year, {:start_year => Date.today.year, :end_year => Date.today.year+10, :field_name => :cc_exp_yyyy, }, { :name => :cc_exp_yyyy, })
-
-  = f.input :cvv, :input_html => {:name => :cvv}
+    .control-group
+      %label{ :class => 'control-label'}
+        Expiration Date
+        %abbr{ :title => 'required' } *
+      .controls
+        = select_month(payment_method.cc_exp_mm || Date.today.month, {:field_name => :cc_exp_mm,}, { :name => :cc_exp_mm, :class => 'input-medium' })
+        = select_year(payment_method.cc_exp_yyyy || Date.today.year, {:start_year => Date.today.year, :end_year => Date.today.year+10, :field_name => :cc_exp_yyyy, }, { :name => :cc_exp_yyyy, :class => 'input-medium' })
+    = f.input :cvv, :label => 'Security Code', :input_html => { :class => 'input-mini', :name => :cvv }
 
   = f.buttons do
     = link_to *previous_link

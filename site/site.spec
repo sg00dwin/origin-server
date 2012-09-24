@@ -8,7 +8,7 @@
 
 Summary:   OpenShift Site Rails application
 Name:      rhc-site
-Version: 0.98.7
+Version: 0.99.2
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   ASL 2.0
@@ -114,6 +114,45 @@ rm -rf %{buildroot}
 %{sitedir}/public
 
 %changelog
+* Thu Sep 20 2012 Adam Miller <admiller@redhat.com> 0.99.2-1
+- Merge pull request #372 from nhr/formtastic_layout (openshift+bot@redhat.com)
+- Fixed month/year selects per feedback (hripps@redhat.com)
+- Temporarily suspended JS validation logic for inline form elements
+  (hripps@redhat.com)
+- Formtastic gymnastics - new control + CSS adoption (hripps@redhat.com)
+- Change hard-coded references to mongodb-2.2 (rmillner@redhat.com)
+- Make related logo background not be white (ccoleman@redhat.com)
+
+* Wed Sep 12 2012 Adam Miller <admiller@redhat.com> 0.99.1-1
+- bump_minor_versions for sprint 18 (admiller@redhat.com)
+
+* Wed Sep 12 2012 Adam Miller <admiller@redhat.com> 0.98.9-1
+- bug fixes - 835843, 828111 (sgoodwin@redhat.com)
+- Revised Aria::MasterPlan::description() (hripps@redhat.com)
+- Fixed test setup to match plans controller behavior (hripps@redhat.com)
+- Updated with feedback from pull request discussion (hripps@redhat.com)
+- Applied layout & CSS to plan confirmation page (hripps@redhat.com)
+- Revised functional testing of account upgrade controller (hripps@redhat.com)
+- ruby style refactor; corrected plan signup tests (hripps@redhat.com)
+- Updated from feedback. (hripps@redhat.com)
+- Fixed features parser to handle empty sets (hripps@redhat.com)
+- Added end-to-end plans description and feature comparison (hripps@redhat.com)
+- Merge pull request #359 from
+  smarterclayton/bug849950_fix_priority_order_of_mongo_vs_diy
+  (openshift+bot@redhat.com)
+- Merge pull request #363 from smarterclayton/last_minute_zend_changes
+  (openshift+bot@redhat.com)
+- Ruby 1.8.7 can't sort symbols (ccoleman@redhat.com)
+- Updates for Zend based on last minute feedback (ccoleman@redhat.com)
+- bug 828111 fix (sgoodwin@redhat.com)
+- Bug 849950 - DIY cart has lower priority, deeper bug in sort order
+  (ccoleman@redhat.com)
+
+* Tue Sep 11 2012 Troy Dawson <tdawson@redhat.com> 0.98.8-1
+- Merge pull request #356 from sg00dwin/master (openshift+bot@redhat.com)
+- Minor css updates (sgoodwin@redhat.com)
+- Merge branch 'master' of github.com:openshift/li (sgoodwin@redhat.com)
+
 * Mon Sep 10 2012 Troy Dawson <tdawson@redhat.com> 0.98.7-1
 - 
 

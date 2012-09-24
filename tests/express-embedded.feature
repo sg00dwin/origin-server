@@ -12,12 +12,12 @@ Feature: Embedded Cartridge Verification Tests
     Then the applications should be accessible
 
     Given an existing php-5.3 application without an embedded cartridge
-    When the embedded mongodb-2.0 cartridge is added
+    When the embedded mongodb-2.2 cartridge is added
     And the embedded rockmongo-1.1 cartridge is added
     And the embedded metrics-0.1 cartridge is added
     Then the application should be accessible
     When the embedded rockmongo-1.1 cartridge is removed
-    And the embedded mongodb-2.0 cartridge is removed
+    And the embedded mongodb-2.2 cartridge is removed
     And the embedded metrics-0.1 cartridge is removed
 
     And the embedded postgresql-8.4 cartridge is added

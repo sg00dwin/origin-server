@@ -4,6 +4,7 @@ $: << File.expand_path(File.dirname(__FILE__))
 
 require 'rubygems'
 require 'thor'
+require 'fileutils'
 require 'li_constants'
 require 'lib/openshift'
 
@@ -19,7 +20,6 @@ class Release < Thor
   
   no_tasks do
     def git_pull
-      run("git pull", :verbose => options.verbose?)
       SIBLING_REPOS.each do |repo_name, repo_dirs|
         repo_dirs.each do |repo_dir|
           if File.exists?(repo_dir)
@@ -34,7 +34,6 @@ class Release < Thor
     
 
     def fail_if_uncommitted_changes
-      raise "You have uncommited changes in the repository, cannot bump versions" unless run('git diff --quiet')
       SIBLING_REPOS.each do |repo_name, repo_dirs| 
         repo_dirs.each do |repo_dir| 
           if File.exists?(repo_dir) 
@@ -266,10 +265,8 @@ class Release < Thor
         build_dirs.delete_if { | build_info | build_info[1] == build_dir }
       end
 
-      li_repo = {'li' => [FileUtils.pwd]}
-      repos = li_repo.merge(SIBLING_REPOS)
       push_failures = ''
-      repos.each do |repo_name, repo_dirs|
+      SIBLING_REPOS.each do |repo_name, repo_dirs|
         repo_dirs.each do |repo_dir|
           if File.exists?(repo_dir)
             inside(repo_dir) do
@@ -352,6 +349,7 @@ class Release < Thor
 
   desc "sync", "Download a build from Brew (using Mash) and sync it to the OpenShift repos"
   method_option :stage, :type => :string, :desc => "Comma-delimited list of packages to sync.  Exclude NVR for latest versions.  (e.g. --stage='rhc, rhc-site-0.73.3-1')"
+  method_option :test, :type => :boolean, :desc => "Run against libra's -test repo"
   method_option :stage_all, :type => :boolean, :desc => "Tag all the latest packages for stage"
   method_option :clean_ami, :type => :boolean, :desc => "Indicates whether to build a clean ami"
   method_option :no_ami, :type => :boolean, :desc => "Indicates whether to not build an ami"
@@ -370,35 +368,55 @@ class Release < Thor
     end
   end
   
-  desc "tag_pkgs_stg AFTER_DATE", "Tag packages that are from external sources into the stage repo since AFTER_DATE"
-  method_option :check, :type => :boolean, :desc => "Don't do anything yet, just show what would be done"
+  desc "tag_pkgs [AFTER_DATE]", "Tag packages into the candidate or stage repo, specify AFTER_DATE(YYYY-MM-DD) optionally" 
   method_option :include_internal, :type => :boolean, :desc => "Boolean indicating whether to include internal packages"
-  def tag_pkgs_stg(after_date)
-    stg_brew_tag = "libra-rhel-6.3-stage"
-    cand_brew_tag = "libra-rhel-6.3-candidate"
-    orig_branches = checkout_branch("master")
-    git_pull
-
-    if after_date.nil? or after_date.empty?
-      puts "ERROR: No date paramter passed!"
-      puts "Example: build/release tag_external_pkgs_stg 1970-01-30 [--check]"
+  method_option :check, :type => :boolean, :desc => "Don't do anything yet, just show what would be done"
+  method_option :stage, :type => :boolean, :desc => "Target brew tag is stage"
+  method_option :candidate, :type => :boolean, :desc => "Target brew tag is candidate"
+  def tag_pkgs(after_date = nil)
+    if options.stage?
+      target_brew_tag = "libra-rhel-6.3-stage"
+      src_brew_tag = "libra-rhel-6.3-candidate"
+    elsif options.candidate?
+      target_brew_tag = "libra-rhel-6.3-candidate"
+      src_brew_tag = "libra-rhel-6.3-test"
+    else
+      puts "ERROR: must specify target brew tag with --stage or --candidate"
       exit 1
-    else
-      external_pkgs_tag_stg = get_packages_to_tag(cand_brew_tag, stg_brew_tag, after_date, options.include_internal?)
-    end
+    end 
 
-    if options.check?
-      puts "### If this were run without --check, the following packages would be tagged into #{stg_brew_tag}:"
-      external_pkgs_tag_stg.each { |pkg| puts pkg }
-    else
-      puts "### Tagging the following packages into #{stg_brew_tag}:"
-      external_pkgs_tag_stg.each do |pkg| 
-        puts pkg 
-        `brew tag-pkg #{stg_brew_tag} #{pkg}`
+    orig_branches = checkout_branch("master")
+  
+    begin
+      
+      git_pull
+      if after_date.nil? or after_date.empty?
+        # Define a month timeline to trim down the package list to process
+        # from brew's output
+        t = Time.new
+        if t.month == 1
+          last_month = 12
+        else
+          last_month = t.month - 1
+        end
+        after_date = "#{t.year}-#{last_month}-#{t.day}"
       end
-    end
 
-    reset_orig_branches(orig_branches)
+      pkgs_need_tagging = get_packages_to_tag(src_brew_tag, target_brew_tag, after_date, options.include_internal?)
+
+      if options.check?
+        puts "### If this were run without --check, the following packages would be tagged into #{target_brew_tag}:"
+        pkgs_need_tagging.each { |pkg| puts pkg }
+      else
+        puts "### Tagging the following packages into #{target_brew_tag}:"
+        pkgs_need_tagging.each do |pkg| 
+          puts pkg 
+          `brew tag-pkg #{target_brew_tag} #{pkg}`
+        end
+      end
+    ensure
+      reset_orig_branches(orig_branches)
+    end
   end
 
   desc "bump_minor_versions", "Bump the minor version in all specs > .1 patch level"
@@ -425,7 +443,6 @@ class Release < Thor
         end
       end
       if options.push_changes?
-        run("git add .; git commit -m 'Bumping spec versions'; git push origin master", :verbose => options.verbose?)
         SIBLING_REPOS.each do |repo_name, repo_dirs|
           repo_dirs.each do |repo_dir|
             if File.exists?(repo_dir)
@@ -456,16 +473,8 @@ class Release < Thor
       puts "#######################"
       puts "Operating on branch: #{branch}"
       puts "#######################"
-      orig_branch = get_branch
       orig_branches = {}
       begin
-        if orig_branch != branch
-          orig_branches[FileUtils.pwd] = orig_branch
-          unless run("git checkout #{branch}", :verbose => verbose)
-            puts "Unable to checkout branch '#{branch}' for repo 'li'"
-            exit 1
-          end
-        end
         SIBLING_REPOS.each do |repo_name, repo_dirs|
           repo_dirs.each do |repo_dir|
             if File.exists?(repo_dir)
@@ -501,7 +510,14 @@ class Release < Thor
     
     def mash_and_rsync(tag_base, skip_gem, options)
       # Mash / RSync parameters
-      mash_config = (options[:stage] || options.stage_all?) ? "#{tag_base}-stage" : "#{tag_base}-candidate"
+      if options.test?
+        mash_config = "#{tag_base}-test"
+      elsif options[:stage] || options.stage_all
+        mash_config = "#{tag_base}-stage"  
+      else 
+        mash_config = "#{tag_base}-candidate"
+      end
+
       repo_host = "mirror1.ops.rhcloud.com"
       repo_dir = "/export/gpxe/trees"
       repo = "#{repo_host}:#{repo_dir}"
@@ -520,7 +536,7 @@ class Release < Thor
       if tag_base =~ /^.*rhel-(\d)\.(\d)$/
         pkg_suffix = "el#{$1}_#{$2}"
       else
-        pkg_suffix = "el6_2"
+        pkg_suffix = "el6_3"
       end
   
       # Check the Brew installation
@@ -685,7 +701,13 @@ class Release < Thor
       clean_ami = (options.clean_ami? || devenv_update)
   
       puts "Kicking off AMI build..."
-      if options.stage?
+      if options.test?
+        unless run("curl --insecure --proxy #{proxy} #{jenkins}/job/libra_ami_test/build?token=#{token}", :verbose => options.verbose?)
+          puts "ERROR - Jenkins remote job invocation failed."
+          exit 1
+        end
+         
+      elsif options.stage?
         unless run("curl --insecure --proxy #{proxy} #{jenkins}/job/libra_ami_stage/buildWithParameters?token=#{token}\\&BUILD_CLEAN_AMI=#{clean_ami.to_s}\\&BUILD_UPDATE_AMI=#{(!clean_ami).to_s}", :verbose => options.verbose?)
           puts "ERROR - Jenkins remote job invocation failed."
           exit 1

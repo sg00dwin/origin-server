@@ -23,13 +23,12 @@ module OpenShift
 
     @@SSH_TIMEOUT = 4800
     @@SSH_TIMEOUT_OVERRIDES = { "benchmark" => 172800 }
-    @@CUCUMBER_OPTIONS = '--strict -f progress -f junit --out /tmp/rhc/cucumber_results'
 
     # Get the hostname from a tag lookup or assume it's SSH accessible directly
     # Only look for a tag if the --tag option is specified
-    def get_host_by_name_or_tag(name, options=nil)
+    def get_host_by_name_or_tag(name, options=nil, user="root")
       return name unless options && options.tag?
-      instance = find_instance(connect(options.region), name, true)
+      instance = find_instance(connect(options.region), name, true, true, user)
       return instance ? instance.dns_name : name
     end
 
@@ -61,6 +60,65 @@ module OpenShift
             exit 1
           end
         end
+      end
+    end
+
+    def update_remote_tests(hostname, branch=nil, repo_parent_dir="/root", user="root")
+      puts "Updating remote tests..."
+      #all_repo_dirs = ['/root/li']
+      all_repo_dirs = []
+      SIBLING_REPOS.each do |repo_name, repo_dirs|
+        all_repo_dirs << "#{repo_parent_dir}/#{repo_name}"
+      end
+      git_archive_commands = ''
+      all_repo_dirs.each do |repo_dir|
+        git_archive_commands += "pushd #{repo_dir} > /dev/null; git archive --prefix li-test/ --format=tar #{branch ? branch : 'HEAD'} | (cd #{repo_parent_dir} && tar --warning=no-timestamp -xf -); popd > /dev/null; "
+      end
+
+      ssh(hostname, %{
+set -e;
+rm -rf #{repo_parent_dir}/li-test
+#{git_archive_commands}
+mkdir -p /tmp/rhc/junit
+}, 60, false, 2, user)
+
+      update_cucumber_tests(hostname, repo_parent_dir, user)
+      puts "Done"
+    end
+    
+    def scp_remote_tests(hostname, repo_parent_dir="/root", user="root")
+      if FileUtils.pwd == "#{JENKINS_HOME_DIR}/jobs/libra_ami_stage/workspace" || FileUtils.pwd == "#{JENKINS_HOME_DIR}/jobs/libra_ami_verify_stage/workspace"
+        init_repo(hostname, true, nil, repo_parent_dir, user)
+        update_remote_tests(hostname, "stage", repo_parent_dir, user)
+      else
+        puts "Archiving local changes..."
+        tmpdir = `mktemp -d`.strip
+        tarname = File.basename tmpdir
+        all_repo_dirs = []
+        SIBLING_REPOS.each do |repo_name, repo_dirs|
+          repo_dirs.each do |repo_dir|
+            if File.exists?(repo_dir)
+              all_repo_dirs << repo_dir
+              break
+            end
+          end
+        end
+        all_repo_dirs.each do |repo_dir|
+          inside(repo_dir) do
+            `git archive --prefix li-test/ --format=tar HEAD | (cd #{tmpdir} && tar --warning=no-timestamp -xf -)`
+          end
+        end
+        `cd /tmp/ && tar -cvf /tmp/#{tarname}.tar #{tarname}` 
+        puts "Done"
+        puts "Copying tests to remote instance: #{hostname}"
+        scp_to(hostname, "/tmp/#{tarname}.tar", "~/", 600, 10)
+        puts "Done"
+        puts "Extracting tests on remote instance: #{hostname}"
+        ssh(hostname, "set -e; rm -rf li-test; tar -xf #{tarname}.tar; mv ./#{tarname}/li-test ./li-test; mkdir -p /tmp/rhc/junit", 120)
+        update_cucumber_tests(hostname, repo_parent_dir, user)
+        puts "Done"
+        FileUtils.rm_rf tmpdir
+        FileUtils.rm "/tmp/#{tarname}.tar"
       end
     end
 
@@ -122,16 +180,11 @@ module OpenShift
     def init_repo(hostname, replace=true, repo=nil, remote_repo_parent_dir="/root", ssh_user="root")
       git_clone_commands = "set -e\n "
 
-      if repo.nil? or repo == "li"
-        git_clone_commands += "if [ ! -d #{remote_repo_parent_dir}/li ]; then\n" unless replace
-        git_clone_commands += "rm -rf #{remote_repo_parent_dir}/li; git clone --bare git@github.com:openshift/li.git #{remote_repo_parent_dir}/li\n"
-        git_clone_commands += "fi\n" unless replace
-      end
-
       SIBLING_REPOS.each do |repo_name, repo_dirs|
         if repo.nil? or repo == repo_name
+          repo_git_url = SIBLING_REPOS_GIT_URL[repo_name]
           git_clone_commands += "if [ ! -d #{remote_repo_parent_dir}/#{repo_name} ]; then\n" unless replace
-          git_clone_commands += "rm -rf #{remote_repo_parent_dir}/#{repo_name}; git clone --bare https://github.com/openshift/#{repo_name}.git #{remote_repo_parent_dir}/#{repo_name};\n"
+          git_clone_commands += "rm -rf #{remote_repo_parent_dir}/#{repo_name}; git clone --bare #{repo_git_url} #{remote_repo_parent_dir}/#{repo_name};\n"
           git_clone_commands += "fi\n" unless replace
         end
       end
@@ -242,20 +295,6 @@ END
       return output, code
     end
 
-    def rpm_manifest(hostname, ssh_user="root")
-      print "Retrieving RPM manifest..."
-      manifest = ssh(hostname, 'rpm -qa | grep rhc-', 60, false, 1, ssh_user)
-      manifest = manifest.split("\n").sort.join(" / ")
-      # Trim down the output to 255 characters
-      manifest.gsub!(/rhc-([a-z])/, '\1')
-      manifest.gsub!('.el6.noarch', '')
-      manifest.gsub!('.el6_1.noarch', '')
-      manifest.gsub!('cartridge', 'c-')
-      manifest = manifest[0..254]
-      puts "Done"
-      return manifest
-    end
-
     def reboot(instance)
       print "Rebooting instance to apply new kernel..."
       instance.reboot
@@ -282,9 +321,9 @@ END
                   test = $1
                   scenario = $2
                   if retry_individ
-                    failures.push(["#{title} (#{test}:#{scenario})", "cucumber #{@@CUCUMBER_OPTIONS} li-test/tests/#{test}:#{scenario}"])
+                    failures.push(["#{title} (#{test}:#{scenario})", "su -c \"cucumber #{CUCUMBER_OPTIONS} li-test/tests/#{test}:#{scenario}\""])
                   else
-                    failures.push(["#{title} (#{test})", "cucumber #{@@CUCUMBER_OPTIONS} li-test/tests/#{test}"])
+                    failures.push(["#{title} (#{test})", "su -c \"cucumber #{CUCUMBER_OPTIONS} li-test/tests/#{test}\""])
                   end
                 end
               end
