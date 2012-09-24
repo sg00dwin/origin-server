@@ -64,10 +64,12 @@ JENKINS_HOME_DIR = '/var/lib/jenkins'
 
 SIBLING_REPOS = {'crankcase' => ['../crankcase-working', '../crankcase-fork', '../crankcase', JENKINS_HOME_DIR + '/jobs/crankcase/workspace'],
                  'rhc' => ['../rhc-working', '../rhc-fork', '../rhc', JENKINS_HOME_DIR + '/jobs/rhc/workspace'],
-                 'li' => ["../#{File.basename(FileUtils.pwd)}"]}
+                 'li' => ["../#{File.basename(FileUtils.pwd)}"],
+                 'openshift-dev-tools' => ['../openshift-dev-tools']}
 SIBLING_REPOS_GIT_URL = {'crankcase' => 'https://github.com/openshift/crankcase.git',
                         'rhc' => 'https://github.com/openshift/rhc.git',
-                        'li' => 'git@github.com:openshift/li.git'}
+                        'li' => 'git@github.com:openshift/li.git',
+                        'openshift-dev-tools' => 'git@github.com:openshift/openshift-dev-tools.git'}
 
 CUCUMBER_OPTIONS = '--strict -f progress -f junit --out /tmp/rhc/cucumber_results'
 
