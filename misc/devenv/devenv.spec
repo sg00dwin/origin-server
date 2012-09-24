@@ -396,6 +396,9 @@ cp -f %{devenvdir}/puppet-private.pem /var/lib/puppet/ssl/private_keys/localhost
 # Remove blank passwd for root in shadow
 /bin/echo root:\!! | /usr/sbin/chpasswd -e
 
+# Ensure that V8 in Node.js can compile JS for Rails asset compilation
+setsebool -P httpd_execmem 1
+
 # Create OpenScap script
 cat > /usr/local/bin/openscap.sh << EOF
 # Create OpenScap results

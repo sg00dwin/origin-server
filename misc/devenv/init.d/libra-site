@@ -32,7 +32,7 @@ pidfile=${PIDFILE-/var/www/stickshift/site/httpd/run/httpd.pid}
 lockfile=${LOCKFILE-/var/lock/subsys/stickshift-site}
 RETVAL=0
 
-OPTIONS="-C 'Include /var/www/stickshift/site/httpd/site.conf' -f /var/www/stickshift/site/httpd/httpd.conf"
+OPTIONS="-c 'Include /var/www/stickshift/site/httpd/site.conf' -f /var/www/stickshift/site/httpd/httpd.conf"
 
 # The semantics of these two functions differ from the way apachectl does
 # things -- attempting to start while running is a failure, and shutdown
