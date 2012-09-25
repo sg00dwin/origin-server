@@ -14,6 +14,7 @@
 /* Drupal specific markup, we may want to wrap this with a top level selector on body.drupal or something */
 .views-field-rss { float: right; }
 .views-field-picture { float: left; margin-right: 6px; }
+.views-field-created {font-size: $baseFontSize - 2;}
 .view-forum-list .views-field-picture { float: right; margin-left: 6px; }
 .block-stats div { display: inline; }
 .views-table .views-field-pageviews { white-space: nowrap; }
@@ -36,8 +37,9 @@
 .links.inline a {
   text-transform: capitalize;
   margin-right: 10px;
+  font-size: $baseFontSize - 2;
 }
-.btn-toolbar .links.inline a {margin-right: 20px;}
+.btn-toolbar .links.inline a {margin-right: 20px;font-size: $baseFontSize - 2;}
 
 .og-mission,
 .forum-header-description { 
@@ -264,11 +266,11 @@
 
 .column-nav {
   .views-row {
-    margin-bottom: 5px;
+    margin-bottom: $baseLineHeight;
   }
   .poll {
     > .title {
-      margin-bottom: 5px;
+      margin-bottom: $baseLineHeight / 2;
       color: #fff;
     }
     > .text {
