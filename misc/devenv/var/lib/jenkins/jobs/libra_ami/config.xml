@@ -30,44 +30,7 @@
       </parameterDefinitions>
     </hudson.model.ParametersDefinitionProperty>
   </properties>
-  <scm class="hudson.plugins.git.GitSCM">
-    <configVersion>1</configVersion>
-    <remoteRepositories>
-      <org.spearce.jgit.transport.RemoteConfig>
-        <string>origin</string>
-        <int>5</int>
-        <string>fetch</string>
-        <string>+refs/heads/*:refs/remotes/origin/*</string>
-        <string>receivepack</string>
-        <string>git-upload-pack</string>
-        <string>uploadpack</string>
-        <string>git-upload-pack</string>
-        <string>url</string>
-        <string>git@github.com:openshift/li.git</string>
-        <string>tagopt</string>
-        <string></string>
-      </org.spearce.jgit.transport.RemoteConfig>
-    </remoteRepositories>
-    <branches>
-      <hudson.plugins.git.BranchSpec>
-        <name>master</name>
-      </hudson.plugins.git.BranchSpec>
-    </branches>
-    <mergeOptions/>
-    <recursiveSubmodules>false</recursiveSubmodules>
-    <doGenerateSubmoduleConfigurations>false</doGenerateSubmoduleConfigurations>
-    <authorOrCommitter>false</authorOrCommitter>
-    <clean>false</clean>
-    <wipeOutWorkspace>false</wipeOutWorkspace>
-    <pruneBranches>false</pruneBranches>
-    <buildChooser class="hudson.plugins.git.util.DefaultBuildChooser"/>
-    <gitTool>Default</gitTool>
-    <submoduleCfg class="list"/>
-    <relativeTargetDir></relativeTargetDir>
-    <excludedRegions></excludedRegions>
-    <excludedUsers></excludedUsers>
-    <skipTag>false</skipTag>
-  </scm>
+  <scm class="hudson.scm.NullSCM"/>
   <canRoam>true</canRoam>
   <disabled>true</disabled>
   <blockBuildWhenDownstreamBuilding>true</blockBuildWhenDownstreamBuilding>
@@ -77,7 +40,16 @@
   <concurrentBuild>false</concurrentBuild>
   <builders>
     <hudson.tasks.Shell>
-      <command>if [ &quot;$BUILD_CLEAN_AMI&quot; == &quot;true&quot; ]
+      <command># Delete the previous repo clone directories
+rm -rf li openshift-dev-tools
+
+# Clone the repos
+git clone git@github.com:openshift/li.git
+git clone git@github.com:openshift/openshift-dev-tools.git
+
+pushd li
+
+if [ &quot;$BUILD_CLEAN_AMI&quot; == &quot;true&quot; ]
 then
   build/devenv build devenv ${BUILD_NUMBER} --register --official --build_clean_ami --terminate --instance_type m1.large
 elif [ &quot;$BUILD_UPDATE_AMI&quot; == &quot;true&quot; ]
@@ -89,12 +61,14 @@ then
 else
   printf &quot;ERROR: incorrect or insufficient build parameters\n&quot;
   exit 1
-fi</command>
+fi
+
+popd</command>
     </hudson.tasks.Shell>
   </builders>
   <publishers>
     <hudson.tasks.ArtifactArchiver>
-      <artifacts>rhc/log/**</artifacts>
+      <artifacts>li/rhc/log/**</artifacts>
       <latestOnly>false</latestOnly>
     </hudson.tasks.ArtifactArchiver>
     <hudson.tasks.BuildTrigger>
@@ -106,7 +80,7 @@ fi</command>
       </threshold>
     </hudson.tasks.BuildTrigger>
     <hudson.tasks.junit.JUnitResultArchiver>
-      <testResults>rhc/log/**/*.xml</testResults>
+      <testResults>li/rhc/log/**/*.xml</testResults>
       <keepLongStdio>false</keepLongStdio>
       <testDataPublishers/>
     </hudson.tasks.junit.JUnitResultArchiver>

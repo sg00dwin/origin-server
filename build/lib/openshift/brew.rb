@@ -1,6 +1,3 @@
-$:.unshift('build')
-require 'lib/openshift/tito.rb'
-
 module OpenShift
   module Brew
 
