@@ -1,0 +1,80 @@
+#!/usr/bin/env ruby
+require 'rubygems'
+require 'mongo'
+require '/var/www/stickshift/broker/config/environment'
+
+# Configurable params
+$config = Rails.application.config.datastore
+
+def mongo_connect
+  if $config[:replica_set]
+    con = Mongo::ReplSetConnection.new(*$config[:host_port] \
+                                       << {:read => :secondary})
+  else
+    con = Mongo::Connection.new($config[:host_port][0], 
+                                $config[:host_port][1])
+  end
+  db = con.db($config[:db])
+  db.authenticate($config[:user], $config[:password])
+  $coll = con.db($config[:db]).collection($config[:collections][:user])
+end
+
+
+#
+# Recursive string replace from mongo-2.0 to mongo-2.2
+#
+$MONGO_SRC_STR='mongodb-2.0'
+$MONGO_DST_STR='mongodb-2.2'
+
+def migrate_entry_mongo_22(ent, prefix, changeset={})
+
+  if ent.respond_to?(:gsub)
+    r=ent.gsub!($MONGO_SRC_STR, $MONGO_DST_STR)
+    if not r.nil?
+      changeset["#{prefix}"]=ent
+    end
+
+  elsif ent.respond_to?(:each_index)
+    ent.each_index do |i|
+      migrate_entry_mongo_22(ent[i], "#{prefix}.#{i}", changeset)
+    end
+
+  elsif ent.respond_to?(:each_key)
+    ent.each_key do |k|
+      migrate_entry_mongo_22(ent[k], "#{prefix}.#{k}", changeset)
+    end
+  end
+  return changeset
+end
+
+#
+# Edit all user entries with an app containing mongo
+#
+# With the selective find; this routine without the update at the end
+# took 21 seconds to run in production and would change 1055 entries.
+#
+def migrate_users_mongo_22
+  $coll.find({ '_id' => { '$not' => /^livec9/ },
+               'apps' => { '$elemMatch' => { 'group_instances' => { '$elemMatch' => { 'cart_name' => $MONGO_SRC_STR } } }}
+             }).each do |user|
+    puts "Processing user #{user['_id']}"
+
+    changeset = migrate_entry_mongo_22(user["apps"], "apps")
+
+    if changeset.length != 0
+      puts "Updating #{user['_id']}: #{changeset.inspect}"
+      $coll.update({"_id" => user['_id']}, { '$set' => changeset })
+    end
+
+  end
+end
+
+
+def migrate_mongo
+end
+
+mongo_connect
+puts "User migration Started"
+migrate_users_mongo_22
+migrate_mongo
+puts "User migration Done!"
