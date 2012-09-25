@@ -61,7 +61,7 @@ class TermsControllerTest < ActionController::TestCase
 
   test "accept terms successfully with workflow" do
     setup_user
-    @controller.terms_redirect = account_path
+    @controller.send(:terms_redirect=, account_path)
     user = @controller.session_user
     user.send('terms=', [{'termId' => '1', 'termUrl' => 'localhost'}])
     user.expects(:accept_terms).once
@@ -73,7 +73,7 @@ class TermsControllerTest < ActionController::TestCase
   test "accept terms successfully with external workflow" do
     setup_user
     url = 'http://external.url/to-something' 
-    @controller.terms_redirect = url
+    @controller.send(:terms_redirect=, url)
     user = @controller.session_user
     user.send('terms=', [{'termId' => '1', 'termUrl' => 'localhost'}])
     user.expects(:accept_terms).once

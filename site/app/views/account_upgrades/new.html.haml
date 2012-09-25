@@ -50,7 +50,7 @@
   %p.larger= "The following plan changes will take effect when you switch from #{@current_plan.name}  to #{@plan.name}."
   = render :partial => 'plans/plan_comparison', :locals => { :current_plan => @current_plan, :new_plan => @plan } 
 
-= semantic_form_for @user, :class => 'form-inline', :url => account_plan_upgrade_path, :html => {:method => :post} do |f|
+= semantic_form_for @user, :simple => true, :url => account_plan_upgrade_path, :method => :post do |f|
   = hidden_field_tag :plan_id, @plan.id
   = f.semantic_errors
   .form-actions
