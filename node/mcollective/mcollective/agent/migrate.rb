@@ -24,7 +24,7 @@ module OpenShiftMigration
   # at any point and continue to pick up where it left off or make
   # harmless changes the 2-n times around.
   def self.migrate(uuid, namespace, version)
-    if version == "2.0.17"
+    if version == "2.0.18"
       libra_home = '/var/lib/stickshift' #node_config.get_value('libra_dir')
       libra_server = get_config_value('BROKER_HOST')
       libra_domain = get_config_value('CLOUD_DOMAIN')
@@ -41,10 +41,16 @@ module OpenShiftMigration
         cartridge_dir = "#{cartridge_root_dir}/#{gear_type}"
 
         env_echos = []
+          
+        output += gear_dir
 
         env_echos.each do |env_echo|
           echo_output, echo_exitcode = Util.execute_script(env_echo)
           output += echo_output
+        end
+        
+        if gear_type == "python-2.6"
+          output += migrate_python(gear_dir, uuid)
         end
 
       else
@@ -55,5 +61,16 @@ module OpenShiftMigration
     else
       return "Invalid version: #{version}", 255
     end
+  end
+  
+  def self.migrate_python(gear_dir, uuid)
+    conf_file = "#{gear_dir}/conf.d/stickshift.conf"
+    text = File.read(conf_file)
+    result = text.gsub("WSGIPassAuthorization On", "WSGIPassAuthorization On\nWSGIProcessGroup #{uuid}\nWSGIDaemonProcess #{uuid} user=#{uuid} group=#{uuid} processes=2 threads=25")
+    File.open(conf_file, "w") {|file| file.puts result}
+    
+    output = ''
+    output += "migrate_python #{conf_file}"
+    return output
   end
 end
