@@ -1,4 +1,5 @@
 class ApplicationController < ActionController::Base
+  include Console::Rescue
   include Secured
   include AsyncAware
 
