@@ -1,4 +1,3 @@
-
 # This is intended to be used from the "onprem" script in the dir above
 # But defining this separately allows "instrumentation" ;-)
 #
@@ -51,13 +50,14 @@ VERIFIED_TAG = "devops-qe-ready"
 #
 # Now pull in dependencies...
 
+DEVTOOLS_REPO = File.join(File.dirname(__FILE__), '..', '..', '..', 'openshift-dev-tools')
 require 'rubygems'
 require 'thor'
 require 'fileutils'
-require 'lib/openshift'
+require File.join(DEVTOOLS_REPO, 'build', 'lib', 'openshift')
 require 'pp'
 require 'yaml'
-require 'builder'
+require File.join(DEVTOOLS_REPO, 'build', 'builder')
 
 include FileUtils
 
