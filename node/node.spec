@@ -44,6 +44,7 @@ Requires:      haproxy
 Requires:      procmail
 Requires:      libevent
 Requires:      libevent-devel
+Requires:      mod_vhost_choke
 Requires(post):   /usr/sbin/semodule
 Requires(post):   /usr/sbin/semanage
 Requires(postun): /usr/sbin/semodule
@@ -231,6 +232,7 @@ fi
 %attr(0750,-,-) %{_bindir}/ec2-prep.sh
 %attr(0750,-,-) %{_bindir}/remount-secure.sh
 %attr(0755,-,-) %{_bindir}/rhc-cgroup-read
+%attr(0755,-,-) %{_bindir}/rhc-vhost-choke
 %dir %attr(0751,root,root) %{_localstatedir}/lib/stickshift
 %dir %attr(0750,root,root) %{_localstatedir}/lib/stickshift/.httpd.d
 %dir %attr(0700,root,root) %{_localstatedir}/run/stickshift
