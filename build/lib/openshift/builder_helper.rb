@@ -82,6 +82,8 @@ rm -rf #{repo_parent_dir}/li-test
 mkdir -p /tmp/rhc/junit
 }, 60, false, 2, user)
 
+      ssh(hostname, %{cd ~/li-test; find -name Gemfile.lock | xargs -L 1 dirname | xargs -t -L 1 -I {} sh -c "pushd {}; rm Gemfile.lock; scl enable ruby193 \\"bundle install --local\\"; touch Gemfile.lock; popd;"}, 60, false, 1, user)
+
       update_cucumber_tests(hostname, repo_parent_dir, user)
       puts "Done"
     end
@@ -115,6 +117,7 @@ mkdir -p /tmp/rhc/junit
         puts "Done"
         puts "Extracting tests on remote instance: #{hostname}"
         ssh(hostname, "set -e; rm -rf li-test; tar -xf #{tarname}.tar; mv ./#{tarname}/li-test ./li-test; mkdir -p /tmp/rhc/junit", 120)
+        ssh(hostname, %{cd ~/li-test; find -name Gemfile.lock | xargs -L 1 dirname | xargs -t -L 1 -I {} sh -c "pushd {}; rm Gemfile.lock; scl enable ruby193 \\"bundle install --local\\"; touch Gemfile.lock; popd;"}, 60, false, 1, user)
         update_cucumber_tests(hostname, repo_parent_dir, user)
         puts "Done"
         FileUtils.rm_rf tmpdir
