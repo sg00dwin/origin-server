@@ -8,7 +8,7 @@
 
 Summary:   Dependencies for OpenShift development
 Name:      rhc-devenv
-Version: 0.100.3
+Version: 0.100.4
 Release:   1%{?dist}
 Group:     Development/Libraries
 License:   GPLv2
@@ -555,6 +555,11 @@ fi
 %{policydir}/*
 
 %changelog
+* Mon Sep 24 2012 Adam Miller <admiller@redhat.com> 0.100.4-1
+- Modifying jenkins jobs to accommodate build scripts moving to a separate repo
+  (abhgupta@redhat.com)
+- handle provides when installing requires (dmcphers@redhat.com)
+
 * Mon Sep 24 2012 Adam Miller <admiller@redhat.com> 0.100.3-1
 - keep source build folders (dmcphers@redhat.com)
 
