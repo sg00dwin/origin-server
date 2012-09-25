@@ -543,15 +543,6 @@ then
   /usr/bin/ruby /usr/lib/stickshift/broker/application_templates/templates/deploy.rb
 fi
 
-# TEMPORARY: Guarantee gems are available until build work completed
-ruby19_dir=$(dirname `scl enable ruby193 "which ruby"`)
-export PATH=$ruby19_dir:$PATH
-ruby19_ld_libs=$(scl enable ruby193 "printenv LD_LIBRARY_PATH")
-export LD_LIBRARY_PATH=$ruby19_ld_libs:$LD_LIBRARY_PATH
-pushd /var/www/stickshift/site
-scl enable ruby193 'bundle install'
-popd
-
 %files
 %defattr(-,root,root,-)
 %attr(0660,-,-) %{brokerdir}/log/mcollective-client.log

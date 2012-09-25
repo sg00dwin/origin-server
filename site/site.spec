@@ -23,14 +23,7 @@ Requires:       %{?scl:%scl_prefix}rubygem(recaptcha)
 Requires:       %{?scl:%scl_prefix}rubygem(wddx)
 Requires:       %{?scl:%scl_prefix}rubygem(sinatra)
 Requires:       %{?scl:%scl_prefix}rubygem(sqlite3)
-#Requires:       rubygem-mocha
-#Requires:       rubygem-webmock
-#Requires:       rubygem-haml
-#Requires:       rubygem-sqlite3
-#Requires:       rubygem-sinatra
-#Requires:       rubygem-net-http-persistent
-#Requires:       rubygem-wddx
-#Requires:       rubygem-ci_reporter
+Requires:       %{?scl:%scl_prefix}rubygem(httparty)
 Requires:       rhc-site-static
 
 %if 0%{?fedora}%{?rhel} <= 6
@@ -59,7 +52,7 @@ BuildRequires:  %{?scl:%scl_prefix}rubygem(recaptcha)
 BuildRequires:  %{?scl:%scl_prefix}rubygem(wddx)
 BuildRequires:  %{?scl:%scl_prefix}rubygem(sinatra)
 BuildRequires:  %{?scl:%scl_prefix}rubygem(sqlite3)
-#BuildRequires:  %{?scl:%scl_prefix}rubygem(httparty)
+BuildRequires:  %{?scl:%scl_prefix}rubygem(httparty)
 
 BuildArch:      noarch
 
@@ -85,7 +78,6 @@ such as images, CSS, JavaScript, and HTML.
 
 # Temporary BEGIN
 rm Gemfile.lock
-gem install httparty --version 0.8.3
 bundle install --local
 # Temporary END
 RAILS_ENV=production RAILS_RELATIVE_URL_ROOT=/app bundle exec rake assets:precompile assets:public_pages
