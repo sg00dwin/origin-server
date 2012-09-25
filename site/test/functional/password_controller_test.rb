@@ -44,6 +44,38 @@ class PasswordControllerTest < ActionController::TestCase
     assert_template
   end
 
+  test 'reset should succeed' do
+    WebUser::Mock.any_instance.expects(:complete_reset_password).with('foo').returns(true)
+    get :reset, :token => 'foo', :email => 'test@test.com'
+    assert_response :success
+    assert_template :reset
+  end
+
+  test 'reset should display generic error' do
+    WebUser::Mock.any_instance.expects(:complete_reset_password).with('foo').returns(false)
+    get :reset, :token => 'foo', :email => 'test@test.com'
+    assert_response :success
+    assert_template :reset_error
+  end
+
+  test 'reset should handle missing email' do
+    get :reset, :token => 'foo'
+    assert_response :success
+    assert_template :reset_error
+  end
+
+  test 'reset should handle missing token' do
+    get :reset, :email => 'foo@foo.com'
+    assert_response :success
+    assert_template :reset_error
+  end
+
+  test 'reset should handle expired token' do
+    get :reset, :token => 'expired', :email => 'test@test.com'
+    assert_response :success
+    assert_template :reset_expired
+  end
+
   def get_post_form
     {:login => 'tester@example.com', :password => 'pw1234', :password_confirmation => 'pw1234'}
   end

@@ -30,7 +30,6 @@ class PasswordController < ApplicationController
   def reset
     token = params[:token]
     @user = WebUser.new({:email_address => params[:email]})
-
     if token.blank? or @user.email_address.blank?
       @user.errors.add(:base, 'The reset password link is not correct.  Please check that you copied the link correctly or try resetting your password again.')
       render :reset_error

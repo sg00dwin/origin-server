@@ -89,7 +89,7 @@ module Streamline
     end
 
     def complete_reset_password(token)
-      raise Streamline::TokenExpired if token.blank?
+      raise Streamline::TokenExpired if token.blank? || token == 'expired'
       true
     end
 

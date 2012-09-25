@@ -3,7 +3,6 @@ class WebUser < Streamline::Base
   include ActiveModel::Serialization
   extend ActiveModel::Naming
 
-  require_dependency 'streamline/mock'
   include Streamline::User
 
   attr_accessor :cloud_access_choice
