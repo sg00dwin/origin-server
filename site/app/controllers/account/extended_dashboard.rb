@@ -25,7 +25,7 @@ module Account
 
       join!(30)
 
-      render :show_extended, :layout => 'console'
+      render :show_extended
     end
   end
 end
