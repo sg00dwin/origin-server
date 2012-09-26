@@ -2,7 +2,7 @@
 
 Summary:       Multi-tenant cloud management system node tools
 Name:          rhc-node
-Version: 0.99.3
+Version: 0.99.4
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -270,6 +270,23 @@ fi
 
 
 %changelog
+* Wed Sep 26 2012 Adam Miller <admiller@redhat.com> 0.99.4-1
+- merged rhc-admin-migrate again (bdecoste@gmail.com)
+- Merge pull request #405 from rmillner/US2755 (openshift+bot@redhat.com)
+- Merge pull request #403 from ironcladlou/bz/859828 (openshift+bot@redhat.com)
+- Fixes to migration based on feedback from typeless gears.
+  (rmillner@redhat.com)
+- Merge pull request #401 from ramr/master (openshift+bot@redhat.com)
+- merged rhc-admin-migrate (bdecoste@gmail.com)
+- Add Jenkins migration for bz 859828 (ironcladlou@gmail.com)
+- migration for python daemon mode (bdecoste@gmail.com)
+- Fix bugz 859560 - rhc-accept-node check for {.ssh,.env,.sandbox,.tmp} dirs.
+  (ramr@redhat.com)
+- MongoDB 2.2 migration in mongo and gears (rmillner@redhat.com)
+- Add operational control utility for choking gears. (ramr@redhat.com)
+- Add mod_vhost_choke to list of apache modules to install on node.
+  (ramr@redhat.com)
+
 * Mon Sep 24 2012 Adam Miller <admiller@redhat.com> 0.99.3-1
 - Merge remote-tracking branch 'upstream/master' (tkramer@redhat.com)
 - Security - BZ834418  Remove 0.0.0.0 from being bound to.  This requires
