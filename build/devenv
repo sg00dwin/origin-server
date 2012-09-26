@@ -9,7 +9,7 @@ require 'pp'
 require 'yaml'
 require 'li_constants'
 require File.join('lib', '..', '..', '..', 'origin-dev-tools', 'build', 'lib', 'openshift')
-require File.join('lib', '..', '..', '..', 'origin-dev-tools', 'build', 'lib', 'builder')
+require File.join('lib', '..', '..', '..', 'origin-dev-tools', 'build', 'builder')
 require 'lib/openshift/sauce_labs'
 require 'lib/openshift/brew'
 
