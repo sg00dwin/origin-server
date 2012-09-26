@@ -8,7 +8,7 @@
 
 Summary:   Dependencies for OpenShift development
 Name:      rhc-devenv
-Version: 0.100.4
+Version: 0.100.5
 Release:   1%{?dist}
 Group:     Development/Libraries
 License:   GPLv2
@@ -563,6 +563,33 @@ fi
 %{policydir}/*
 
 %changelog
+* Wed Sep 26 2012 Adam Miller <admiller@redhat.com> 0.100.5-1
+- Merge branch 'move_opensource' (ccoleman@redhat.com)
+- find_and_build_specs should fail devenv builds if any failure happens
+  (ccoleman@redhat.com)
+- add origin-dev-tools to li-devenv.sh (dmcphers@redhat.com)
+- Copy origin-dev-tools to the remote server during build sync
+  (ccoleman@redhat.com)
+- Merge branch 'opensource_console_final' (ccoleman@redhat.com)
+- synching the job configs in the repo with the actual config in  jenkins
+  (abhgupta@redhat.com)
+- Httparty rpm available (ccoleman@redhat.com)
+- Merge pull request #394 from markllama/devenv-activemq
+  (openshift+bot@redhat.com)
+- switch from qpid messaging to activemq (mlamouri@redhat.com)
+- Force bundle installation of site gems, make selinux enablement correct.  Set
+  permissions on site_ruby (ccoleman@redhat.com)
+- Merge remote-tracking branch 'origin/master' into opensource_console_final
+  (ccoleman@redhat.com)
+- Changes necessary to run site in devenv in Ruby 1.9 mode (selinux execmem
+  hack, change order site.conf is loaded, and add site_ruby stub for
+  LD_LOAD_PATH) (ccoleman@redhat.com)
+- Merge branch 'master' into rails32 (ccoleman@redhat.com)
+- Merge remote-tracking branch 'origin/master' into opensource
+  (ccoleman@redhat.com)
+- Prevent builds from running twice (ccoleman@redhat.com)
+- Changes to build env to allow multistage builds (ccoleman@redhat.com)
+
 * Mon Sep 24 2012 Adam Miller <admiller@redhat.com> 0.100.4-1
 - Modifying jenkins jobs to accommodate build scripts moving to a separate repo
   (abhgupta@redhat.com)
