@@ -1,6 +1,5 @@
 module Streamline
   module User
-    require_dependency "streamline"
 
     #
     # Establish the user state based on the current ticket
@@ -239,7 +238,7 @@ module Streamline
       http_post(reset_password_url, args, false) do |json|
         Rails.logger.debug "Password reset completion #{json.inspect}"
         if json['errors']
-          raise TokenExpired if 'token_is_invalid' == json['errors'].first
+          raise Streamline::TokenExpired if 'token_is_invalid' == json['errors'].first
           errors.add(:base, I18n.t(:unknown)) if errors.empty?
         end
       end
@@ -276,7 +275,7 @@ module Streamline
           if ['user_already_registered'] == json['errors']
             # register ignores existing users
             errors.clear
-          elsif errors.length == 0
+          elsif errors.empty?
             errors.add(:base, I18n.t(:unknown))
           end
         end
@@ -302,7 +301,7 @@ module Streamline
           # success
           errors.clear
         else
-          if errors.length == 0
+          if errors.empty?
             errors.add(:base, I18n.t(:unknown))
           end
         end
@@ -327,7 +326,7 @@ module Streamline
           if json['solution']
             # success
           else
-            if errors.length == 0
+            if errors.empty?
               errors.add(:base, I18n.t(:unknown))
             end
           end

@@ -86,7 +86,7 @@ RedHatCloud::Application.routes.draw do
     end
   end
 
-  scope :account do
+  scope 'account' do
     resource :domain, :only => [:new, :create, :edit, :update]
     resources :keys, :only => [:new, :create, :destroy]
   end
@@ -107,15 +107,12 @@ RedHatCloud::Application.routes.draw do
 
   match 'legal/acceptance_terms' => 'terms#acceptance_terms', :as => 'acceptance_terms'
 
-  match 'video/:name' => 'video#show', :as => 'video'
-
   match 'legal' => redirect('/community/legal')
   match 'legal/site_terms' => redirect('/community/legal/site_terms')
   match 'legal/services_agreement' => redirect('/community/legal/services_agreement')
   match 'legal/acceptable_use' => redirect('/community/legal/acceptable_use')
   match 'legal/openshift_privacy' => redirect('/community/legal/openshift_privacy')
 
-  # suggest we consolidate login/logout onto a session controller
   resource :login,
            :controller => "login",
            :only => [:show, :create]
@@ -128,34 +125,10 @@ RedHatCloud::Application.routes.draw do
   match 'logout/flex' => 'logout#show_flex', :via => [:get]
   match 'logout/express' => 'logout#show_express', :via => [:get]
 
-  #resources :partners,
-  #          :controller => "partner",
-  #          :only => [:show, :index]
-
-  scope '/console' do
-    match 'help' => 'console#help', :via => :get, :as => 'console_help'
-
-    resources :application_types, :only => [:show, :index], :id => /[^\/]+/
-    resources :applications do
-      resources :cartridges, :only => [:show, :create, :index], :id => /[^\/]+/
-      resources :cartridge_types, :only => [:show, :index], :id => /[^\/]+/
-
-      resource :building, :controller => :building, :id => /[^\/]+/, :only => [:show, :new, :destroy, :create] do
-        get :delete
-      end
-
-      resource :scaling, :controller => :scaling, :id => /[^\/]+/, :only => [:show, :new] do
-        get :delete
-      end
-
-      member do
-        get :delete
-        get :get_started
-      end
-    end
+  scope 'console' do
+    openshift_console :skip => :account
   end
 
-  match 'console' => 'console#index', :via => :get
   match 'new_application' => 'application_types#index', :via => :get
 
   match 'opensource' => open_source_download
@@ -171,7 +144,7 @@ RedHatCloud::Application.routes.draw do
 
   root :to => "product#index"
 
-  scope '/status' do
+  scope 'status' do
     match '/(:base)(.:format)' => StatusApp, :as => 'status'
     match '/status.js' => StatusApp, :as => 'status_js'
     match '/sync/(:host)' => StatusApp, :constraints => {:host => /[0-z\.-]+/}

@@ -5,7 +5,7 @@ class ConsoleControllerTest < ActionController::TestCase
   setup :with_unique_user
 
   test 'should raise if no domain' do
-    assert_raise(ActiveResource::ResourceNotFound) { @controller.user_default_domain }
+    assert_raise(RestApi::ResourceNotFound) { @controller.user_default_domain }
   end
 
   test 'should retrieve and set domain onto session' do

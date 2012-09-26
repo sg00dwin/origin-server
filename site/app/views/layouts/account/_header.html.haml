@@ -7,7 +7,7 @@
         %li.hidden-phone= link_to "Developer Center", developers_url, :class => 'developer'
         - if user_signed_in?
           %li.dropdown.username.hidden-phone
-            = link_to logged_in_id, account_path, :class => 'dropdown-toggle', 'data-toggle' => 'dropdown', 'data-target' => '#'
+            = link_to current_user_id, account_path, :class => 'dropdown-toggle', 'data-toggle' => 'dropdown', 'data-target' => '#'
             %ul.dropdown-menu.hidden-phone
               %li= link_to "My Account", account_path
               %li= link_to "Sign Out", logout_path, :class => "sign_out"

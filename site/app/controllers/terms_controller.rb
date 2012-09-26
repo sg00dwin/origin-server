@@ -38,7 +38,9 @@ class TermsController < SiteController
         redirect_to terms_redirect
       else
         logger.debug "Found errors, updating terms object with #{@user.errors}"
-        @term.errors.update(@user.errors)
+        @user.errors.each do |attr, message|
+          @term.errors.add(attr, message)
+        end
         render :new, :layout => 'simple'
       end
     else

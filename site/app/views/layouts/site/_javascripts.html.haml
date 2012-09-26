@@ -1,26 +1,5 @@
 -# Javascript at the bottom for fast page loading
-:ruby
-  cdn_scripts = [
-    'https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js'
-  ]
-
-  local_scripts = [
-    #'jquery.min.js',        # Now loaded through CDN
-    'rails',                 # Generic Rails to jQuery adapter
-    'plugins',               # Contains plugin for spinner and text overflow
-    'jquery.cookie.js',      # Needed when we set the cookie for whether the outage notification was seen
-    'bootstrap-dropdown.js',
-
-    # Needed for validations
-    'jquery.validate.min.js',
-    'form' 
-  ]
-
-- cdn_scripts.each do |script|
-  = javascript_include_tag script
-
-- local_scripts.each do |script|
-  = javascript_include_tag script
+= javascript_include_tag 'application'
 
 -#  Append your own using content_for :javascripts
 = yield :javascripts

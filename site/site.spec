@@ -1,83 +1,66 @@
+%if 0%{?fedora}%{?rhel} <= 6
+    %global scl ruby193
+    %global scl_prefix ruby193-
+%endif
+%global rubyabi 1.9.1
 %define htmldir %{_localstatedir}/www/html
 %define sitedir %{_localstatedir}/www/stickshift/site
 
-Summary:   Li site components
+Summary:   OpenShift Site Rails application
 Name:      rhc-site
 Version: 0.99.2
 Release:   1%{?dist}
 Group:     Network/Daemons
-License:   GPLv2
+License:   ASL 2.0
 URL:       http://openshift.redhat.com
 Source0:   rhc-site-%{version}.tar.gz
 BuildRoot: %(mktemp -ud %{_tmppath}/%{name}-%{version}-%{release}-XXXXXX)
+Requires:       %{?scl:%scl_prefix}ruby(abi) = %{rubyabi}
+Requires:       %{?scl:%scl_prefix}ruby
+Requires:       %{?scl:%scl_prefix}rubygems
+Requires:       rubygem(openshift-origin-console)
+Requires:       %{?scl:%scl_prefix}rubygem(recaptcha)
+Requires:       %{?scl:%scl_prefix}rubygem(wddx)
+Requires:       %{?scl:%scl_prefix}rubygem(sinatra)
+Requires:       %{?scl:%scl_prefix}rubygem(sqlite3)
+Requires:       %{?scl:%scl_prefix}rubygem(httparty)
+Requires:       rhc-site-static
 
-# Core dependencies to run the build steps
-BuildRequires: rubygem-bundler
-BuildRequires: rubygem-rake
-BuildRequires: js
-# Additional dependencies to satisfy the gems, listed in Gemfile order
-BuildRequires: rubygem-rails
-BuildRequires: rubygem-recaptcha
-BuildRequires: rubygem-json
-BuildRequires: rubygem-stomp
-BuildRequires: rubygem-parseconfig
-BuildRequires: rubygem-xml-simple
-BuildRequires: rubygem-haml
-BuildRequires: rubygem-compass
-BuildRequires: rubygem-formtastic
-BuildRequires: rubygem-rack
-BuildRequires: rubygem-regin
-BuildRequires: rubygem-httparty
-BuildRequires: rubygem-rdiscount
-BuildRequires: rubygem-webmock
-BuildRequires: rubygem-barista
-BuildRequires: rubygem-mocha
-BuildRequires: rubygem-hpricot
-BuildRequires: rubygem-sinatra
-BuildRequires: rubygem-tilt
-BuildRequires: rubygem-sqlite3
-BuildRequires: rubygem-mail
-BuildRequires: rubygem-treetop
-BuildRequires: rubygem-net-http-persistent
-BuildRequires: rubygem-wddx
-BuildRequires: rubygem-rcov
-BuildRequires: rubygem-ci_reporter
-Requires:  rhc-common
-Requires:  rhc-server-common
-Requires:  httpd
-Requires:  mod_ssl
-Requires:  mod_passenger
-Requires:  ruby-geoip
-Requires:  rubygem-passenger-native-libs
-Requires:  rubygem-rails
-Requires:  rubygem-json
-Requires:  rubygem-parseconfig
-Requires:  rubygem-xml-simple
-Requires:  rubygem-formtastic
-Requires:  rubygem-haml
-Requires:  rubygem-compass
-Requires:  rubygem-recaptcha
-Requires:  rubygem-hpricot
-Requires:  rubygem-barista
-Requires:  rubygem-httparty
-Requires:  rubygem-rdiscount
-Requires:  rubygem-webmock
-Requires:  js
-Requires:  ruby-sqlite3
-Requires:  rubygem-sqlite3
-Requires:  rubygem-sinatra
-Requires:  rubygem-mail
-Requires:  rubygem-treetop
-Requires:  rubygem-net-http-persistent
-Requires:  rubygem-wddx
-Requires:  rubygem-rcov
-Requires:  rubygem-ci_reporter
-Requires:  rhc-site-static
-BuildArch: noarch
+%if 0%{?fedora}%{?rhel} <= 6
+BuildRequires:  ruby193-build
+BuildRequires:  scl-utils-build
+%endif
+
+BuildRequires:  %{?scl:%scl_prefix}ruby(abi) = %{rubyabi}
+BuildRequires:  %{?scl:%scl_prefix}ruby 
+BuildRequires:  %{?scl:%scl_prefix}rubygems
+BuildRequires:  %{?scl:%scl_prefix}rubygems-devel
+BuildRequires:  %{?scl:%scl_prefix}rubygem(rails)
+BuildRequires:  %{?scl:%scl_prefix}rubygem(compass-rails)
+BuildRequires:  %{?scl:%scl_prefix}rubygem(mocha)
+BuildRequires:  %{?scl:%scl_prefix}rubygem(simplecov)
+BuildRequires:  %{?scl:%scl_prefix}rubygem(test-unit)
+BuildRequires:  %{?scl:%scl_prefix}rubygem(ci_reporter)
+BuildRequires:  %{?scl:%scl_prefix}rubygem(webmock)
+BuildRequires:  %{?scl:%scl_prefix}rubygem(sprockets)
+BuildRequires:  %{?scl:%scl_prefix}rubygem(rdiscount)
+BuildRequires:  %{?scl:%scl_prefix}rubygem(formtastic)
+BuildRequires:  %{?scl:%scl_prefix}rubygem(net-http-persistent)
+BuildRequires:  %{?scl:%scl_prefix}rubygem(haml)
+BuildRequires:  rubygem(openshift-origin-console)
+BuildRequires:  %{?scl:%scl_prefix}rubygem(recaptcha)
+BuildRequires:  %{?scl:%scl_prefix}rubygem(wddx)
+BuildRequires:  %{?scl:%scl_prefix}rubygem(sinatra)
+BuildRequires:  %{?scl:%scl_prefix}rubygem(sqlite3)
+BuildRequires:  %{?scl:%scl_prefix}rubygem(httparty)
+
+BuildArch:      noarch
 
 %description
 This contains the OpenShift website which manages user authentication,
-authorization and also the workflows to request access.
+authorization and also the workflows to request access.  It requires
+the OpenShift Origin management console and specializes some of its
+behavior.
 
 %package static
 Summary:   The static content for the OpenShift website
@@ -91,12 +74,17 @@ such as images, CSS, JavaScript, and HTML.
 %setup -q
 
 %build
-bundle exec compass compile
-rm -rf tmp/sass-cache
-bundle exec rake barista:brew
-rm log/development.log
-mv -f tmp/javascripts/* public/javascripts/
-mv -f tmp/stylesheets/* public/stylesheets/
+%{?scl:scl enable %scl - << \EOF}
+
+# Temporary BEGIN
+rm Gemfile.lock
+bundle install --local
+# Temporary END
+RAILS_ENV=production RAILS_RELATIVE_URL_ROOT=/app bundle exec rake assets:precompile assets:public_pages
+rm -rf tmp
+rm log/*
+
+%{?scl:EOF}
 
 %install
 rm -rf %{buildroot}
@@ -107,21 +95,24 @@ ln -s %{sitedir}/public %{buildroot}%{htmldir}/app
 
 mkdir -p %{buildroot}%{sitedir}/run
 mkdir -p %{buildroot}%{sitedir}/log
-mkdir -p -m 770 %{buildroot}%{sitedir}/tmp
+mkdir -p %{buildroot}%{sitedir}/tmp/cache/assets
 touch %{buildroot}%{sitedir}/log/production.log
 
 %clean
-rm -rf %{buildroot}                                
+rm -rf %{buildroot}
 
 %post
 /bin/touch %{sitedir}/log/production.log
 
 %files
-%attr(0775,root,libra_user) %{sitedir}/app/subsites/status/db
-%attr(0664,root,libra_user) %config(noreplace) %{sitedir}/app/subsites/status/db/status.sqlite3
-%attr(0744,root,libra_user) %{sitedir}/app/subsites/status/rhc-outage
+%attr(0770,root,libra_user) %{sitedir}/app/subsites/status/db
+%attr(0660,root,libra_user) %config(noreplace) %{sitedir}/app/subsites/status/db/status.sqlite3
+%attr(0740,root,libra_user) %{sitedir}/app/subsites/status/rhc-outage
+%attr(0750,root,libra_user) %{sitedir}/script/site_ruby
 %attr(0770,root,libra_user) %{sitedir}/tmp
-%attr(0666,root,libra_user) %{sitedir}/log/production.log
+%attr(0770,root,libra_user) %{sitedir}/tmp/cache
+%attr(0770,root,libra_user) %{sitedir}/tmp/cache/assets
+%attr(0660,root,libra_user) %{sitedir}/log/production.log
 
 %defattr(0640,root,libra_user,0750)
 %{sitedir}
@@ -129,8 +120,6 @@ rm -rf %{buildroot}
 %config(noreplace) %{sitedir}/config/environments/production.rb
 %config(noreplace) %{sitedir}/app/subsites/status/config/hosts.yml
 %exclude %{sitedir}/public
-%exclude %{sitedir}/tmp/javascripts
-%exclude %{sitedir}/tmp/stylesheets
 
 %files static
 %defattr(0640,root,libra_user,0750)

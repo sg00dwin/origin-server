@@ -277,6 +277,9 @@ getsebool allow_polyinstantiation | grep -q -e 'on$' || /usr/sbin/setsebool -P a
 # Allow httpd to relay
 getsebool httpd_can_network_relay | grep -q -e 'on$' || /usr/sbin/setsebool -P httpd_can_network_relay=on || :
 
+# Ensure that V8 in Node.js can compile JS for Rails asset compilation
+getsebool httpd_execmem | grep -q -e 'on$' || /usr/sbin/setsebool -P httpd_execmem=on || :
+
 # Add policy for developement environment
 cd %{policydir} ; make -f ../devel/Makefile
 semodule -l | grep -q dhcpnamedforward || semodule -i dhcpnamedforward.pp

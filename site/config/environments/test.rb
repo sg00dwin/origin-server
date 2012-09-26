@@ -68,13 +68,8 @@ RedHatCloud::Application.configure do
   config.email_from = 'OpenShift <noreply@openshift.redhat.com>'
   config.marketing_mailing_list = 'Marketing Mailing List <jgurrero@redhat.com>'
 
-  # Maximum number of apps
-  config.express_max_apps = 5
-  
-  # Express API base url
-  config.express_api_url = 'https://localhost'
-
-  # base domain
-  config.base_domain = 'dev.rhcloud.com'
-
+  Console.configure do |c|
+    c.api = (ENV['CONSOLE_API_MODE'] || 'local').to_sym
+    #c.disable_account = true
+  end
 end

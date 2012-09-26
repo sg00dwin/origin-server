@@ -13,7 +13,7 @@
         = link_to session[:login], "console", :class => 'btn btn-small'
         = link_to 'Sign out', logout_path, :class => 'btn btn-small sign_out'
       -# The signin link is always present so we can cache the page
-      - if logged_in?
+      - if user_signed_in?
         = link_to "My Apps", console_path, :class => 'btn btn-small'
         = link_to "My Account", account_path, :class => 'btn btn-small'
         = link_to "Sign Out", logout_path, :class => 'btn btn-small sign_out'

@@ -1,0 +1,35 @@
+@font-face {
+  font-family: 'Overpass';
+  src:font-url('overpass-bold-wf.eot');
+  src:font-url('overpass-bold-wf.eot?#iefix') format('eot'),
+      font-url('overpass-bold-wf.woff') format('woff'),
+      font-url('overpass-bold-wf.ttf') format('truetype'),
+      font-url('overpass-bold-wf.svg#webfontzRhIMntw') format('svg');
+  font-weight: bold;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Overpass';
+  src:font-url('overpass-wf.eot');
+  src:font-url('overpass-wf.eot?#iefix') format('eot'),
+      font-url('overpass-wf.woff') format('woff'),
+      font-url('overpass-wf.ttf') format('truetype'),
+      font-url('overpass-wf.svg#webfontiqWxLEM5') format('svg');
+  font-weight: normal;
+  font-style: normal;
+}
+
+/* OverpassNormal will be taller than surrounding text when 
+   bolded, so use Overpass when mixing bolded and normal text 
+   */
+@font-face {
+  font-family: 'OverpassNormal';
+  src:font-url('overpass-wf.eot');
+  src:font-url('overpass-wf.eot?#iefix') format('eot'),
+      font-url('overpass-wf.woff') format('woff'),
+      font-url('overpass-wf.ttf') format('truetype'),
+      font-url('overpass-wf.svg#webfontiqWxLEM5') format('svg');
+  font-weight: normal;
+  font-style: normal;
+}

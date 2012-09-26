@@ -199,41 +199,12 @@ IFS="
 }
 
 function find_and_build_specs {
+  set -e
   pushd /root/li-working > /dev/null
-    ignore_packages=(`build/devenv print_ignore_packages`)
+    echo "Building all specs on the server..."
+    build/devenv find_and_build_specs
   popd > /dev/null
-  for x in $(find -name *.spec)
-  do
-    package_name=`get_package_name $x`
-    if ! `contains_value "$package_name" "${ignore_packages[@]}"`
-    then
-      dir=$(dirname $x)
-      tagged=false
-      pushd $dir > /dev/null
-        if $(git tag | grep "$package_name" > /dev/null 2>&1)
-        then
-          tagged=true
-        fi
-      popd > /dev/null
-      if $tagged
-      then
-        echo "
-
-Building '${dir}'"
-
-        install_requires "BuildRequires" "$x"
-        pushd $dir > /dev/null
-          set -e
-          tito build --test --rpm
-          set +e
-        popd > /dev/null
-      else
-        echo "
-
-Skipping '${dir}' since it isn't tagged"
-      fi
-    fi
-  done
+  set +e
 }
 
 function contains_value { 
@@ -304,10 +275,11 @@ then
         then
           git checkout $branch
         fi
-        find_and_build_specs
       popd > /dev/null
     fi
   done
+
+  find_and_build_specs
 
   yum -y install createrepo
   mkdir /root/li-local/

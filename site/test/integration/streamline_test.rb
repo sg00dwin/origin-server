@@ -4,7 +4,7 @@ class StreamlineIntegrationTest < ActionDispatch::IntegrationTest
 
   def confirmed_user
     @@confirmed_user ||= begin
-      user = new_user
+      user = new_streamline_user
       assert user.register('/email_confirm')
       assert user.token
       assert_nil user.login
@@ -24,7 +24,7 @@ class StreamlineIntegrationTest < ActionDispatch::IntegrationTest
   end
 
   test 'should fail when a token is reused' do
-    user = new_user
+    user = new_streamline_user
     assert user.register('/email_confirm')
     assert user.token
     assert_nil user.login
@@ -50,7 +50,7 @@ class StreamlineIntegrationTest < ActionDispatch::IntegrationTest
   end
 
   test 'should suppress duplicate registration' do
-    user = new_user
+    user = new_streamline_user
     assert user.register('/email_confirm')
     assert user.register('/email_confirm')
   end
@@ -67,15 +67,15 @@ class StreamlineIntegrationTest < ActionDispatch::IntegrationTest
     old_password = confirmed_user.password
 
     assert !confirmed_user.change_password
-    assert confirmed_user.errors[:base], confirmed_user.errors
+    assert confirmed_user.errors[:base], confirmed_user.errors.inspect
 
     confirmed_user.password = 'testab'
     assert !confirmed_user.change_password
-    assert confirmed_user.errors[:base], confirmed_user.errors
+    assert confirmed_user.errors[:base], confirmed_user.errors.inspect
 
     confirmed_user.password_confirmation = 'testab'
     assert !confirmed_user.change_password
-    assert confirmed_user.errors[:base], confirmed_user.errors
+    assert confirmed_user.errors[:base], confirmed_user.errors.inspect
 
     confirmed_user.old_password = old_password
     assert confirmed_user.change_password, confirmed_user.errors.inspect

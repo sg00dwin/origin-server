@@ -8,6 +8,7 @@ module Aria
       end
 
       def get_configured(plan=nil)
+        plan = plan.to_s if Symbol === plan
         if name_prefix.present?
           plan.nil? ? name_prefix : "#{name_prefix}_#{plan.is_a?(String) ? plan : plan.id}"
         else
@@ -16,6 +17,7 @@ module Aria
       end
 
       def create(plan, url)
+        plan = plan.to_s if Symbol === plan
         prefix = name_prefix || `uname -n`.strip
         name = plan.nil? ? prefix : "#{prefix}_#{plan.is_a?(String) ? plan : plan.id}"
         Aria.set_reg_uss_config_params("direct_post_#{name}", {
