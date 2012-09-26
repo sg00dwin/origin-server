@@ -73,9 +73,16 @@ class Release < Thor
       end
 
       if package_name == 'rubygem-stickshift-controller'
+        puts "Hi i'm in controller"
         update_gemfile_version(spec_file, 'stickshift-controller', "broker/Gemfile.lock", verbose)
         update_gemfile_version(spec_file, 'stickshift-controller', "#{build_dir}/../broker/Gemfile.lock", verbose)
         list_of_deps |= ['rhc-broker','stickshift-broker']
+        gem_updates = true
+      end
+
+      if package_name == 'rubygem-openshift-origin-console'
+        update_gemfile_version(spec_file, 'openshift-origin-console', "site/Gemfile.lock", verbose)
+        list_of_deps |= ['rhc-site']
         gem_updates = true
       end
 
