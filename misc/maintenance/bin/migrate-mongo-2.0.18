@@ -55,7 +55,9 @@ end
 #
 def migrate_users_mongo_22
   $coll.find({ '_id' => { '$not' => /^livec9/ },
-               'apps' => { '$elemMatch' => { 'group_instances' => { '$elemMatch' => { 'cart_name' => $MONGO_SRC_STR } } }}
+               '$or' => ['apps' => { '$elemMatch' => { 'group_instances' => { '$elemMatch' => { 'cart_name' => $MONGO_SRC_STR } } }},
+                         'apps' => { '$elemMatch' => { 'requires_feature' => { '$elemMatch' => $MONGO_SRC_STR } } },
+                         'apps' => { '$elemMatch' => { 'comp_instances' => { '$elemMatch' => { 'parent_cart_name' => $MONGO_SRC_STR } } }} ]
              }).each do |user|
     puts "Processing user #{user['_id']}"
 
