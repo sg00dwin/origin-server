@@ -8,7 +8,7 @@
 
 Summary:   OpenShift Site Rails application
 Name:      rhc-site
-Version: 0.99.2
+Version: 0.99.3
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   ASL 2.0
@@ -126,6 +126,146 @@ rm -rf %{buildroot}
 %{sitedir}/public
 
 %changelog
+* Wed Sep 26 2012 Adam Miller <admiller@redhat.com> 0.99.3-1
+- Ensure key messages are the same from the engine and the site
+  (ccoleman@redhat.com)
+- Remove old unused test (preventing test:check:base from running)
+  (ccoleman@redhat.com)
+- Use a relative path for default Gemfile.lock for development mode
+  (ccoleman@redhat.com)
+- Bug 860223 - Load error when resetting password a second time
+  (ccoleman@redhat.com)
+- Add other tests, only update lock file for site and console
+  (ccoleman@redhat.com)
+- Httparty rpm available (ccoleman@redhat.com)
+- Bug 860223 - Error when resetting password, a class was being reloaded
+  (ccoleman@redhat.com)
+- Merge branch 'opensource_console_final' of github.com:smarterclayton/li into
+  dev0924 (sgoodwin@redhat.com)
+- Add default bottom margin to h1, h2 Adjust various custom heading styles to
+  offset change and addtion of smaller font to wiki/community default links
+  (subscribe, flag, bookmark links) (sgoodwin@redhat.com)
+- Handle generic exceptions more abstractly ConsoleController no longer
+  rescues, that is calling applications responsibility Fix bug 859564 -
+  newsletter signup (ccoleman@redhat.com)
+- Remove Rails 3.0 workaround for bootstrap simple forms (ccoleman@redhat.com)
+- Only load webmock in test env (ccoleman@redhat.com)
+- Gemfile.lock should be more specific (ccoleman@redhat.com)
+- Site is almost ready to build (ccoleman@redhat.com)
+- Console builds in devenv/builder (ccoleman@redhat.com)
+- Visibility of application_controller methods changed (ccoleman@redhat.com)
+- Ensure application errors (not generic errors) are caught across the entire
+  site (ccoleman@redhat.com)
+- Ensure site properly respects error handlers (ccoleman@redhat.com)
+- Fixup JS errors related to twitter and home js being loaded on all pages
+  (ccoleman@redhat.com)
+- Force bundle installation of site gems, make selinux enablement correct.  Set
+  permissions on site_ruby (ccoleman@redhat.com)
+- Do not create development.log (ccoleman@redhat.com)
+- Merge remote-tracking branch 'origin/master' into opensource_console_final
+  (ccoleman@redhat.com)
+- Changes necessary to run site in devenv in Ruby 1.9 mode (selinux execmem
+  hack, change order site.conf is loaded, and add site_ruby stub for
+  LD_LOAD_PATH) (ccoleman@redhat.com)
+- Fix asset building (incomplete task conversion) and prep site spec build
+  requires (ccoleman@redhat.com)
+- Site spec update (ccoleman@redhat.com)
+- Arrange content so that the same markup can be shown in the site and console
+  (ccoleman@redhat.com)
+- Error page and test (ccoleman@redhat.com)
+- * Add simple Pry support * Add error page renderer * Fix test failures in
+  domain/key due to new RestApi::ResourceNotFound exception
+  (ccoleman@redhat.com)
+- Billing info needs to_key implementation (ccoleman@redhat.com)
+- Merge branch 'master' into rails32 (ccoleman@redhat.com)
+- Merge branch 'master' into rails32 (ccoleman@redhat.com)
+- Build site specs under Rails 3.2 (sort out asset issues, use bundler for now)
+  (ccoleman@redhat.com)
+- Add simplecov support to the site, remove some obvious unused and dead code
+  (ccoleman@redhat.com)
+- Fix some rails 32 issues in the account section (ccoleman@redhat.com)
+- Include required images into the assets folder. (ccoleman@redhat.com)
+- More purging and moves (ccoleman@redhat.com)
+- Massive asset renaming spree (ccoleman@redhat.com)
+- Make footer more opensource compatible. (ccoleman@redhat.com)
+- Move console assets into place. (ccoleman@redhat.com)
+- Abstract branding, begin moving images. (ccoleman@redhat.com)
+- Remove SSH startup for li in rails server script (ccoleman@redhat.com)
+- Update site to rails 3.2 gems.  Remove references to .length on
+  ActiveModel::Errors.  Use ::SecureRandom instead of
+  ActiveSupport::SecureRandom.  Other minor cleanup. (ccoleman@redhat.com)
+- Remove upgrade_in_rails31 and fix 404 rendering in console app
+  (ccoleman@redhat.com)
+- Rails 3.2 testing.  Refactor active_resource overrides and remove old paths
+  (some fixes merged upstream).  Change to use ActiveModel::Dirty more
+  effectively.  Begin stubbing out and removing old 3.0 code - some code still
+  stubs.  Handle cacheable resources correctly with to_partial_path
+  (ccoleman@redhat.com)
+- Merge error with logged_in (which has been removed) (ccoleman@redhat.com)
+- filter_hash is implicitly loaded (ccoleman@redhat.com)
+- Merge remote-tracking branch 'origin/master' into opensource
+  (ccoleman@redhat.com)
+- More 1.9 fixes in site (ccoleman@redhat.com)
+- Ruby 1.9 support (ccoleman@redhat.com)
+- Rename openshift_origin_console to openshift-origin-console to match overall
+  openshift gem naming (extensions of openshift). (ccoleman@redhat.com)
+- All tests should pass! (ccoleman@redhat.com)
+- Separate streamline user tests (ccoleman@redhat.com)
+- Ensure there are test stubs for all tests.  Fix failing unit tests in base.
+  (ccoleman@redhat.com)
+- Ensure console and site both have extended tests (ccoleman@redhat.com)
+- Demonstrate relocatable test (ccoleman@redhat.com)
+- Ensure devenv builds correctly with origin (ccoleman@redhat.com)
+- Ensure version can be run without bundler. (ccoleman@redhat.com)
+- Site spec needs to require openshift_origin_console (ccoleman@redhat.com)
+- Gem builds, site can launch via gem or via path (ccoleman@redhat.com)
+- Rename gemspecs and rpm (ccoleman@redhat.com)
+- Allow tests in console to be executed in scope of current app.
+  (ccoleman@redhat.com)
+- Implement a root path, split coffee into appropriate files, and fix load
+  errors in console tests. (ccoleman@redhat.com)
+- Put videos in proper location, cleanup and fix issues in site helpers.  All
+  site tests pass. (ccoleman@redhat.com)
+- Scope helpers and provide config so that applications can include/override
+  specific methods. (ccoleman@redhat.com)
+- More tests running in site (ccoleman@redhat.com)
+- Move stub footer and update source links to proposed destinations.
+  (ccoleman@redhat.com)
+- Clean up CSS and images (pure copy) (ccoleman@redhat.com)
+- Get remaining javascript in the right place (ccoleman@redhat.com)
+- Application templates pass (html5 boilerplate needs to come back as well)
+  (ccoleman@redhat.com)
+- Most tests pass, move stylesheets back to site. (ccoleman@redhat.com)
+- Building, app, scaling, and cart controller tests pass (ccoleman@redhat.com)
+- Account code split into console (ccoleman@redhat.com)
+- Some functional tests pass (ccoleman@redhat.com)
+- Move helpers to correct location (ccoleman@redhat.com)
+- Move helpers and other code into the right locations (ccoleman@redhat.com)
+- Rest API unit tests run, finish merging latest changes (ccoleman@redhat.com)
+- Merge branch 'master' into opensource (ccoleman@redhat.com)
+- Move javascript into console, remove dead javascript (ccoleman@redhat.com)
+- Update root to redirect to /console Move app_redirector into console gem
+  Update footer to point back to opensource on GitHub Update domain suffixes
+  (ccoleman@redhat.com)
+- CSS mostly working (ccoleman@redhat.com)
+- Move footer back to preserve version history. (ccoleman@redhat.com)
+- Merge branch 'master' into dev/clayton/opensource (ccoleman@redhat.com)
+- Merge branch 'master' into dev/clayton/opensource (ccoleman@redhat.com)
+- Setup locales in the gem (ccoleman@redhat.com)
+- Add simple web_user.rb, add dependency on mocha in gemspec, move methods from
+  application_helper.rb (ccoleman@redhat.com)
+- Refactor user_controller to use the engine user_controller
+  (ccoleman@redhat.com)
+- Begin rearranging user_controller to be easily overriden
+  (ccoleman@redhat.com)
+- Copy routes, move initializers (ccoleman@redhat.com)
+- Move /test and image resources into opensource (ccoleman@redhat.com)
+- Move the rest /app for opensource (ccoleman@redhat.com)
+- Move /lib directory contents out (ccoleman@redhat.com)
+- Bad comments in opensource.sh (ccoleman@redhat.com)
+- Move selenium into site (ccoleman@redhat.com)
+- All contents documented (ccoleman@redhat.com)
+
 * Thu Sep 20 2012 Adam Miller <admiller@redhat.com> 0.99.2-1
 - Merge pull request #372 from nhr/formtastic_layout (openshift+bot@redhat.com)
 - Fixed month/year selects per feedback (hripps@redhat.com)
