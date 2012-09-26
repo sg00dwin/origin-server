@@ -200,6 +200,7 @@ IFS="
 
 function find_and_build_specs {
   pushd /root/li-working > /dev/null
+    echo "Building all specs on the server..."
     build/devenv find_and_build_specs
   popd > /dev/null
 }
@@ -226,8 +227,8 @@ function get_package_name {
   echo "$package_name"
 }
 
-github_repos=( crankcase rhc )
-repos=( crankcase rhc li-working )
+github_repos=( crankcase rhc origin-dev-tools )
+repos=( crankcase rhc origin-dev-tools li-working )
 
 branch="master"
 if [ "$1" == "stage" ]
