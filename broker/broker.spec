@@ -3,7 +3,7 @@
 
 Summary:   Li broker components
 Name:      rhc-broker
-Version: 0.99.4
+Version: 0.99.5
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -123,6 +123,14 @@ if [ ! -f %{_localstatedir}/log/stickshift/user_action.log ]; then
 fi
 
 %changelog
+* Wed Sep 26 2012 Adam Miller <admiller@redhat.com> 0.99.5-1
+- Stale DNS purge script. (rmillner@redhat.com)
+- merged rhc-admin-migrate again (bdecoste@gmail.com)
+- merged rhc-admin-migrate (bdecoste@gmail.com)
+- Add Jenkins migration for bz 859828 (ironcladlou@gmail.com)
+- migration for python daemon mode (bdecoste@gmail.com)
+- MongoDB 2.2 migration in mongo and gears (rmillner@redhat.com)
+
 * Mon Sep 24 2012 Adam Miller <admiller@redhat.com> 0.99.4-1
 - Updating gem versions (admiller@redhat.com)
 
