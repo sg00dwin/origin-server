@@ -199,10 +199,12 @@ IFS="
 }
 
 function find_and_build_specs {
+  set -e
   pushd /root/li-working > /dev/null
     echo "Building all specs on the server..."
     build/devenv find_and_build_specs
   popd > /dev/null
+  set +e
 }
 
 function contains_value { 
