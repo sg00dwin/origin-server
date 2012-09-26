@@ -7,7 +7,6 @@ module Aria
     extend ActiveModel::Naming
 
     attribute_method_suffix '='
-    attribute_method_suffix ''
 
     attr_reader :attributes
 

@@ -39,7 +39,7 @@ module Account
         render :json => json, :status => :internal_server_error and return
       end
 
-      if @user.errors.length == 0
+      if @user.errors.empty?
         json = JSON.generate({:result => "Check your inbox for an email with a validation link. Click on the link to complete the registration process."})
         render :json => json and return
       else

@@ -35,7 +35,7 @@ class TermsControllerTest < ActionController::TestCase
     @controller.expects(:session_user).at_least_once.returns(user)
 
     post(:create, {}, {:user => user})
-    assert_equal 1, assigns(:term).errors.length
+    assert_equal 1, assigns(:term).errors.size
     assert_response :success
   end
 
@@ -45,7 +45,7 @@ class TermsControllerTest < ActionController::TestCase
     user.send('terms=', [])
     user.expects(:accept_terms).never    
     post :create
-    assert_equal 0, assigns(:term).errors.length
+    assert_equal 0, assigns(:term).errors.size
     assert_redirected_to console_path
   end
 
@@ -55,30 +55,30 @@ class TermsControllerTest < ActionController::TestCase
     user.send('terms=', [{'termId' => '1', 'termUrl' => 'localhost'}])
     user.expects(:accept_terms).once
     post :create
-    assert_equal 0, assigns(:term).errors.length
+    assert_equal 0, assigns(:term).errors.size
     assert_redirected_to console_path
   end
 
   test "accept terms successfully with workflow" do
     setup_user
-    @controller.terms_redirect = account_path
+    @controller.send(:terms_redirect=, account_path)
     user = @controller.session_user
     user.send('terms=', [{'termId' => '1', 'termUrl' => 'localhost'}])
     user.expects(:accept_terms).once
     post :create
-    assert_equal 0, assigns(:term).errors.length
+    assert_equal 0, assigns(:term).errors.size
     assert_redirected_to account_path
   end
 
   test "accept terms successfully with external workflow" do
     setup_user
     url = 'http://external.url/to-something' 
-    @controller.terms_redirect = url
+    @controller.send(:terms_redirect=, url)
     user = @controller.session_user
     user.send('terms=', [{'termId' => '1', 'termUrl' => 'localhost'}])
     user.expects(:accept_terms).once
     post :create
-    assert_equal 0, assigns(:term).errors.length
+    assert_equal 0, assigns(:term).errors.size
     assert_redirected_to url
   end
 
@@ -87,7 +87,7 @@ class TermsControllerTest < ActionController::TestCase
     user = @controller.session_user
     user.send('terms=', [{'termId' => '1', 'termUrl' => 'localhost', 'termTitle' => 'title'}])
     get :acceptance_terms
-    assert_equal 0, assigns(:term).errors.length
+    assert_equal 0, assigns(:term).errors.size
     assert_response :success
   end
 

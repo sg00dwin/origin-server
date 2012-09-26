@@ -122,7 +122,7 @@ module Aria
         Digest::MD5::hexdigest(login)
       end
       def random_password
-        ActiveSupport::SecureRandom.base64(16)[0..12].gsub(/[^a-zA-Z0-9]/,'_') # Max allowed Aria limit
+        ::SecureRandom.base64(16)[0..12].gsub(/[^a-zA-Z0-9]/,'_') # Max allowed Aria limit
       end
 
       # Checks whether the basic Aria account exists, but not whether

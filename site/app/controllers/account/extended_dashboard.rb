@@ -6,6 +6,7 @@ module Account
 
     def show
       @user = current_user
+      logger.debug @user.inspect
 
       async do
         @user.load_email_address
@@ -24,7 +25,7 @@ module Account
 
       join!(30)
 
-      render :show_extended, :layout => 'console'
+      render :show_extended
     end
   end
 end

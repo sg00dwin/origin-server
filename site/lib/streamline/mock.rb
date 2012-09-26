@@ -89,7 +89,7 @@ module Streamline
     end
 
     def complete_reset_password(token)
-      raise Streamline::TokenExpired if token.blank?
+      raise Streamline::TokenExpired if token.blank? || token == 'expired'
       true
     end
 
@@ -99,7 +99,7 @@ module Streamline
       Rails.logger.debug "Authenticating user #{login}"
 
       if login.present? and password.present?
-        @ticket = Base64.encode64s(login)
+        @ticket = Base64.strict_encode64(login)
         @rhlogin = login
         set_fake_roles
         true

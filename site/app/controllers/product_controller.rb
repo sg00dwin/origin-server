@@ -7,13 +7,14 @@ class ProductController < SiteController
   end
 
   def error
+    render 'console/error'
   end
 
   def console_not_found
-    render :layout => 'console'
+    render 'console/not_found', :layout => 'console'
   end
 
   def console_error
-    render :layout => 'console'
+    render 'console/error', :layout => 'console'
   end
 end

@@ -38,7 +38,7 @@
     %h2 Test Drive
     %p.larger
       Get all the components preconfigured in a bootable disk image.
-    - if logged_in?
+    - if user_signed_in?
       - download = Download.find('remix')
       = take_action download_path(download), download.name
     - else

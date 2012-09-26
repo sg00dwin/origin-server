@@ -2,7 +2,7 @@
 
 %h1 Change your password
 
-= semantic_form_for @user, :url => edit_account_password_path, :simple => true, :html => {:method => :put, :class => 'form-inline'} do |f|
+= semantic_form_for @user, :url => edit_account_password_path, :simple => true, :method => :put do |f|
   %p When choosing a password we recommend using numbers, symbols, and upper and lower case letters for extra security.
   = f.inputs do
     - if @token.nil?

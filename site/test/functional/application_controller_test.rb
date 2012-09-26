@@ -85,6 +85,6 @@ class ApplicationControllerTest < ActionController::TestCase
       '/foo?' => '/foo',
       '/foo?a=b' => '/foo?a=b',
       'http://www.google.com/foo?a=b' => '/foo?a=b',
-    }.each_pair{ |k,v| assert_equal v, @controller.server_relative_uri(k) }
+    }.each_pair{ |k,v| assert_equal v, @controller.send(:server_relative_uri, k) }
   end
 end

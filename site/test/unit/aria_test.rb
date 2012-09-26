@@ -194,7 +194,7 @@ class AriaUnitTest < ActiveSupport::TestCase
     user.expects(:login).returns('foo').at_least_once
     Aria.expects(:create_acct_complete).raises(Aria::AuthenticationError)
     assert !user.create_account
-    assert user.errors.length == 1
+    assert user.errors.size == 1
     assert user.errors[:base][0] =~ /AuthenticationError/, user.errors.inspect
   end
 

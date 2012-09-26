@@ -1,0 +1,31 @@
+/*
+  Draft CSS for the site
+
+  Notes:
+
+  $gridGutterWidth changes based on responsive layout - we need to have a single responsive style
+  per element that depends on it (maybe define $gridGutterWidthLarge and use it in responsive.scss)
+
+  SASS 3.0 doesn't support inlining media queries - we need to upgrade
+
+  Continue to pull out variables
+
+  Simplify login link behavior - lots of styles for fairly simple markup
+
+  Unicode mode is → UTF-8
+*/
+
+@import "compass/css3/transition";
+@import "compass/css3/transform";
+
+@import "variables";
+@import "bootstrap/variables";
+@import "bootstrap/mixins";
+@import "mixins";
+@import "ribbon";
+@import "breadcrumbs";
+
+@import "site/navbar";
+@import "site/tile";
+@import "site/community";
+@import "site/core";

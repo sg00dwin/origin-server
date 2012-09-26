@@ -53,6 +53,10 @@ module Aria
       })
     end
 
+    def to_key
+      []
+    end
+
     protected
       # A user without a billing address is invalid
       def self.persisted?(details)

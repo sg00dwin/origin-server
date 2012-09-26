@@ -7,7 +7,7 @@ class LoginController < ApplicationController
   def show
     @redirectUrl = params[:then] || params[:redirectUrl] || @referrerRedirect
     user_params = params[:web_user] || params
-    @user = WebUser.new :rhlogin => (user_params[:rhlogin] || user_params[:email_address])
+    @user = WebUser.new :rhlogin => (user_params[:rhlogin] || user_params[:login] || user_params[:email_address])
   end
 
   def create
@@ -15,7 +15,7 @@ class LoginController < ApplicationController
     user_params = params[:web_user] || params
 
     @user = WebUser.new
-    if @user.authenticate(user_params[:rhlogin], user_params[:password])
+    if @user.authenticate(user_params[:rhlogin] || user_params[:login], user_params[:password])
 
       self.current_user = @user
 

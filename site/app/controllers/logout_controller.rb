@@ -11,9 +11,9 @@ class LogoutController < ApplicationController
     logger.warn "Exception in logout: #{e}\n#{e.backtrace.join("\n  ")}"
   ensure
     case @cause
-    when nil:
+    when nil
       redirect_to @redirect
-    when 'change_account':
+    when 'change_account'
       render :change_account
     end
   end

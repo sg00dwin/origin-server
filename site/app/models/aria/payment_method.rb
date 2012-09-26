@@ -42,6 +42,10 @@ module Aria
       end
     end
 
+    def to_key
+      persisted? ? [cc_id] : nil
+    end
+
     protected
       # Only exposed for deserialization from account details
       alias_attribute :cc_expire_mm, :cc_exp_mm

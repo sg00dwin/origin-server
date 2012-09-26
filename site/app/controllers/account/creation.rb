@@ -2,8 +2,6 @@ module Account
   module Creation
     extend ActiveSupport::Concern
 
-    require_dependency 'recaptcha'
-
     def skip_captcha?
       Rails.configuration.captcha_secret.nil? or params[:captcha_secret] == Rails.configuration.captcha_secret
     end
@@ -67,9 +65,7 @@ module Account
 
       logger.debug "Confirmation URL: #{confirmationUrl}"
 
-      unless @user.errors.length == 0
-        render :new and return
-      end
+      render :new and return unless @user.errors.empty?
 
       # Successful user registration event for analytics
       @event = 'event29'

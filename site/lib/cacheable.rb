@@ -51,10 +51,8 @@ module Cacheable
       end
   end
 
-  module InstanceMethods
-    def cached
-      @cacheable ||= CacheProxy.new(self, self.class.send(:cache_options))
-    end
+  def cached
+    @cacheable ||= CacheProxy.new(self, self.class.send(:cache_options))
   end
 
   module ClassMethods
