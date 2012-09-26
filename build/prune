@@ -7,7 +7,7 @@ require 'thor'
 require 'fileutils'
 require 'pp'
 require 'li_constants'
-require File.join(File.dirname(__FILE__), '..', '..', 'origin-dev-tools', 'build', 'lib', 'openshift')
+require File.join('lib', '..', '..', '..', 'origin-dev-tools', 'build', 'lib', 'openshift')
 
 class Prune < Thor
   include OpenShift::Amazon
