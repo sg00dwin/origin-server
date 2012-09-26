@@ -45,7 +45,9 @@
   <customWorkspace>jobs/libra_ami_stage/workspace</customWorkspace>
   <builders>
     <hudson.tasks.Shell>
-      <command># Launch a test instance
+      <command>pushd li
+
+# Launch a test instance
 build/devenv launch devenv-stage_verifier_${BUILD_NUMBER} --use_stage_image --verifier --instance_type m1.large
 
 excludes=&quot;&quot;
@@ -67,12 +69,14 @@ then
 fi
 echo $excludes
 # Run the image tests
-build/devenv test devenv-stage_verifier_${BUILD_NUMBER} --official --terminate $excludes</command>
+build/devenv test devenv-stage_verifier_${BUILD_NUMBER} --official --terminate $excludes
+
+popd</command>
     </hudson.tasks.Shell>
   </builders>
   <publishers>
     <hudson.tasks.ArtifactArchiver>
-      <artifacts>rhc/log/**</artifacts>
+      <artifacts>li/rhc/log/**</artifacts>
       <latestOnly>false</latestOnly>
     </hudson.tasks.ArtifactArchiver>
     <hudson.tasks.Mailer>
