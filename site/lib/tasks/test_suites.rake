@@ -64,6 +64,7 @@ namespace :test do
      :restapi_integration,
      :base,
     ].each{ |s| Rake::Task[s].abandon }
+    Rake::Task[:check].abandon
 
     Rake::TestTask.new :applications => ['test:prepare'] do |t|
       t.libs << 'test'
@@ -103,7 +104,6 @@ namespace :test do
     end
   end
 
-  Rake::Task[:check].abandon
   task :check => Rake::Task.tasks.select{ |t| t.name.match(/\Atest:check:/) }.map(&:name)
   task :extended => []
 end
