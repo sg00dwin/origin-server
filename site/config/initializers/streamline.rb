@@ -1,3 +1,4 @@
+require 'streamline'
 require 'streamline/railties/controller_runtime'
 require 'streamline/log_subscriber'
 require 'rack/utils'

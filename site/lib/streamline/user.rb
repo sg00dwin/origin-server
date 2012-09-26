@@ -238,7 +238,7 @@ module Streamline
       http_post(reset_password_url, args, false) do |json|
         Rails.logger.debug "Password reset completion #{json.inspect}"
         if json['errors']
-          raise TokenExpired if 'token_is_invalid' == json['errors'].first
+          raise Streamline::TokenExpired if 'token_is_invalid' == json['errors'].first
           errors.add(:base, I18n.t(:unknown)) if errors.empty?
         end
       end
