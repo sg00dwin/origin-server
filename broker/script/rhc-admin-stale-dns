@@ -1,0 +1,92 @@
+#!/usr/bin/env ruby
+
+require 'rubygems'
+require 'getoptlong'
+
+def usage
+    puts <<USAGE
+== Synopsis
+
+rhc-admin-stale-dns: Purge stale DNS records
+
+== Usage
+
+rhc-admin-stale-dns OPTIONS
+
+Options:
+-n|--namespace <Namespace>
+    Namespace for application(s) (alphanumeric - max 16 chars) (required)
+-a|--application <Name>
+    Application name to destroy (optional)
+-h|--help:
+    Show Usage info
+
+== Example
+
+To purge the following applications and namespaces:
+foo-foo1, bar-foo1, baz-foo1, uno-foo2, dos-foo2, tres-foo2, foo1, foo2
+
+rhc-admin-stale-dns -n foo1 -a foo-foo1 -a bar-foo1 -n foo2 -a uno-foo2 -a dos-foo2
+
+
+== Warning
+
+This purges information directly out of DNS without any sanity checks
+to ensure its the right information.  Excercise extreme caution.
+
+USAGE
+end
+
+opts = GetoptLong.new(
+    ["--namespace",        "-n", GetoptLong::REQUIRED_ARGUMENT],    
+    ["--application",      "-a", GetoptLong::OPTIONAL_ARGUMENT],
+    ["--help",             "-h", GetoptLong::NO_ARGUMENT]
+)
+
+namespaces=[]
+applications=[]
+begin
+  opts.each do |opt,arg|
+    case opt
+    when '--help'
+      usage
+      exit 1
+    when '--namespace'
+      namespaces << arg
+    when '--application'
+      app, ns = arg.split("-")
+      if app.nil? or ns.nil?
+        usage
+        exit 1
+      end
+      applications << [app, ns]
+    end
+  end
+rescue GetoptLong::Error => e
+    usage
+    exit -100
+end
+
+if namespaces.length == 0
+  usage
+  exit 1
+end
+
+require "/var/www/stickshift/broker/config/environment"
+
+dns = StickShift::DnsService.instance
+begin
+  applications.each do |app|
+    puts "Deregister application: #{app[0]} in #{app[1]}"
+    dns.deregister_application(app[0], app[1])
+  end
+
+  namespaces.each do |namespace|
+    puts "Deregister namespace: #{namespace}"
+    dns.deregister_namespace(namespace)
+  end
+
+  dns.publish
+ensure
+  dns.close
+end

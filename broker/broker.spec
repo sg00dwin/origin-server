@@ -76,6 +76,7 @@ mv %{buildroot}%{brokerdir}/script/rhc-admin-ctl-usage %{buildroot}/%{_bindir}
 mv %{buildroot}%{brokerdir}/script/rhc-admin-ctl-plan %{buildroot}/%{_bindir}
 mv %{buildroot}%{brokerdir}/script/rhc-admin-ctl-user %{buildroot}/%{_bindir}
 mv %{buildroot}%{brokerdir}/script/rhc-admin-chk %{buildroot}/%{_bindir}
+mv %{buildroot}%{brokerdir}/script/rhc-admin-stale-dns %{buildroot}/%{_bindir}
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -105,6 +106,7 @@ rm -rf $RPM_BUILD_ROOT
 %attr(0750,-,-) %{_bindir}/rhc-admin-ctl-usage
 %attr(0750,-,-) %{_bindir}/rhc-admin-ctl-plan
 %attr(0750,-,-) %{_bindir}/rhc-admin-ctl-user
+%attr(0750,-,-) %{_bindir}/rhc-admin-stale-dns
 /usr/lib/stickshift/broker/application_templates
 
 %post
