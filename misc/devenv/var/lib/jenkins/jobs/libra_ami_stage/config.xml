@@ -31,14 +31,14 @@
   <builders>
     <hudson.tasks.Shell>
       <command># Delete the previous repo clone directories
-rm -rf li openshift-dev-tools
+rm -rf li origin-dev-tools
 
 # Clone the repos
 git clone git@github.com:openshift/li.git
-git clone git@github.com:openshift/openshift-dev-tools.git
+git clone git@github.com:openshift/origin-dev-tools.git
 
 pushd li
-      
+
 if [ &quot;$BUILD_CLEAN_AMI&quot; == &quot;true&quot; ]
 then
   build/devenv build devenv-stage ${BUILD_NUMBER} --register --official --terminate --use_stage_repo --build_clean_ami --instance_type m1.large

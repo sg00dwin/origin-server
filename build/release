@@ -6,7 +6,7 @@ require 'rubygems'
 require 'thor'
 require 'fileutils'
 require 'li_constants'
-require File.join(File.dirname(__FILE__), '..', '..', 'origin-dev-tools', 'build', 'lib', 'openshift')
+require File.join('lib', '..', '..', '..', 'origin-dev-tools', 'build', 'lib', 'openshift')
 require 'lib/openshift/brew'
 
 class Release < Thor

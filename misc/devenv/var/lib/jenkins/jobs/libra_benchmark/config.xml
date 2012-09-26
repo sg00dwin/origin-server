@@ -40,11 +40,13 @@
   <builders>
     <hudson.tasks.Shell>
       <command># Delete the previous repo clone directories
-rm -rf li openshift-dev-tools
+rm -rf li origin-dev-tools
 
 # Clone the repos
 git clone git@github.com:openshift/li.git
-git clone git@github.com:openshift/openshift-dev-tools.git
+git clone git@github.com:openshift/origin-dev-tools.git
+
+pushd li
 
 if [ -d &quot;rhc/log&quot; ]; then
     echo &quot;Wiping out old build data...&quot;
@@ -57,8 +59,6 @@ then
 launch_params=$launch_params&quot; --use_stage_image&quot;
 fi
 echo $launch_params
-
-pushd li
 
 # Launch a test instance
 build/devenv launch libra_benchmark_${BUILD_NUMBER} --verifier --instance_type $instance_type $launch_params
@@ -73,8 +73,7 @@ echo $test_params
 # Run the image tests
 build/devenv test libra_benchmark_${BUILD_NUMBER} --include_cucumber=benchmark --disable-charlie --mcollective-logs --terminate $test_params
 
-popd
-</command>
+popd</command>
     </hudson.tasks.Shell>
   </builders>
   <publishers>
