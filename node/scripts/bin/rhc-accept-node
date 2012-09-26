@@ -293,6 +293,9 @@ def check_app_dirs
         next if entry == 'last_access.log'
         next if File.symlink? File.join($GEAR_BASE_DIR,entry)
         next unless File.directory? File.join($GEAR_BASE_DIR,entry)
+        [ ".ssh", ".env", ".sandbox", ".tmp" ].each { |dotdir|
+             do_fail("directory #{entry} doesn't have a #{dotdir} directory") unless File.directory? File.join($GEAR_BASE_DIR,entry,dotdir)
+        }
         ind = copy_all_users.index(entry)
         if ind
           copy_all_users.delete_at(ind)

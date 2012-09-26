@@ -20,7 +20,7 @@ module OpenShiftMigration
 
 
   # Transformations on namespace
-  def self.mongodb_xform_ent(input)
+  def self.xform_ent_mongodb_22(input)
     output=input.clone
     { "mongodb-2.0" => "mongodb-2.2", "MONGODB_20" => "MONGODB_22" }.each do |src,dst|
       output.gsub!(src,dst)
@@ -37,24 +37,6 @@ module OpenShiftMigration
   def self.migrate_mongodb_22(uuid, gear_home, gear_name)
     output = ""
 
-    # Check if called on a gear of an app that has mongodb.
-    # This test is not altered by the migration.
-    nosql_type=""
-    [ File.join(gear_home, ".env", "OPENSHIFT_NOSQL_DB_TYPE"),
-      File.join(gear_home, ".env", ".uservars", "OPENSHIFT_NOSQL_DB_TYPE") ].each do |envfile|
-      begin
-        File.open(envfile) do |f|
-          nosql_type=f.read
-          nosql_type.strip!
-          nosql_type.sub!(/^.*=/,'')
-          nosql_type.gsub!('\'','')
-        end
-      rescue Errno::ENOENT
-      end
-    end
-
-    return unless nosql_type[0,7] == "mongodb"
-
     output+="Mongodb migration for gear #{uuid}\n"
 
     # The mongodb-2.0 directory must be ahead of its subdirectories
@@ -70,7 +52,7 @@ module OpenShiftMigration
     ].flatten.sort { |i,j| i.length <=> j.length }.each do |entry|
 
       # Fix the entry itself and correct file name for below.
-      entry = self.mongodb_xform_ent(entry) do |dentry|
+      entry = self.xform_ent_mongodb_22(entry) do |dentry|
         if File.exist?(entry) and not File.exist?(dentry)
           output+="Rename: #{entry} -> #{dentry}\n"
           File.rename(entry, dentry)
@@ -81,7 +63,7 @@ module OpenShiftMigration
       # through a symlink to avoid the risk of accidentally making
       # edits outside the gear.
       if File.symlink?(entry)
-        self.mongodb_xform_ent(File.readlink(entry)) do |dstlink|
+        self.xform_ent_mongodb_22(File.readlink(entry)) do |dstlink|
           output+="Fix Symlink: #{entry} -> #{dstlink}\n"
           File.unlink(entry)
           File.symlink(dstlink,entry)
@@ -92,7 +74,7 @@ module OpenShiftMigration
 
       elsif File.file?(entry)
         File.open(entry, File::RDWR) do |f|
-          self.mongodb_xform_ent(f.read) do |dstbuf|
+          self.xform_ent_mongodb_22(f.read) do |dstbuf|
             output+="File contents: #{entry}\n"
             f.seek(0)
             f.truncate(0)
@@ -104,6 +86,18 @@ module OpenShiftMigration
     end
 
     return output
+  end
+
+  # Disable the Jenkins SSHD server on all instances, regardless of
+  # current user preferences.
+  def self.migrate_jenkins_sshd(gear_home, cartridge_dir)
+    sshd_conf_basename = "org.jenkinsci.main.modules.sshd.SSHD.xml"
+    
+    gear_sshd_conf = File.join(gear_home, "app-root", "data", sshd_conf_basename)
+    cart_sshd_conf = File.join(cartridge_dir, "info", "configuration", "jenkins-pre-deploy", sshd_conf_basename)
+
+    FileUtils.rm(gear_sshd_conf) if File.exists?(gear_sshd_conf)
+    FileUtils.copy(cart_sshd_conf, gear_sshd_conf)
   end
 
   # Note: This method must be reentrant.  Meaning it should be able to 
@@ -146,6 +140,16 @@ module OpenShiftMigration
           output+="Exception caught in mongo migration:\n"
           output+="#{e}\n"
           exitcode=100
+        end
+
+        if gear_type == "jenkins-1.4"
+          begin
+            self.migrate_jenkins_sshd(gear_home, cartridge_dir)
+          rescue => e
+            output+="Exception caught in Jenkins SSHD migration in gear #{gear_home}:\n"
+            output+="#{e}\n"
+            exitcode=101
+          end
         end
 
       else

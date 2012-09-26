@@ -20,11 +20,11 @@
   <builders>
     <hudson.tasks.Shell>
       <command># Delete the previous repo clone directories
-rm -rf li openshift-dev-tools
+rm -rf li origin-dev-tools
 
 # Clone the repos
 git clone git@github.com:openshift/li.git
-git clone git@github.com:openshift/openshift-dev-tools.git
+git clone git@github.com:openshift/origin-dev-tools.git
 
 pushd li
 
@@ -43,11 +43,6 @@ popd</command>
       <artifacts>li/rhc/log/**</artifacts>
       <latestOnly>false</latestOnly>
     </hudson.tasks.ArtifactArchiver>
-    <hudson.tasks.junit.JUnitResultArchiver>
-      <testResults>li/rhc/log/**/*.xml</testResults>
-      <keepLongStdio>false</keepLongStdio>
-      <testDataPublishers/>
-    </hudson.tasks.junit.JUnitResultArchiver>
     <hudson.tasks.Mailer>
       <recipients>libra-devel@redhat.com</recipients>
       <dontNotifyEveryUnstableBuild>true</dontNotifyEveryUnstableBuild>
