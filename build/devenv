@@ -8,8 +8,8 @@ require 'fileutils'
 require 'pp'
 require 'yaml'
 require 'li_constants'
-require File.join(File.dirname(__FILE__), '..', '..', 'openshift-dev-tools', 'build', 'lib', 'openshift')
-require File.join(File.dirname(__FILE__), '..', '..', 'openshift-dev-tools', 'build', 'builder')
+require File.join(File.dirname(__FILE__), '..', '..', 'origin-dev-tools', 'build', 'lib', 'openshift')
+require File.join(File.dirname(__FILE__), '..', '..', 'origin-dev-tools', 'build', 'builder')
 require 'lib/openshift/sauce_labs'
 require 'lib/openshift/brew'
 
@@ -878,8 +878,8 @@ rm -rf #{working_dirs}
 
 #{clone_commands}
 
-rm -rf openshift-dev-tools
-mv openshift-dev-tools-working openshift-dev-tools
+rm -rf origin-dev-tools
+mv origin-dev-tools-working origin-dev-tools
 
 pushd li-working > /dev/null
   build/devenv update#{options.verbose? ? ' --verbose' : ''} #{options.clean_metadata? ? ' --include_stale' : ''} 2>&1
