@@ -1,5 +1,5 @@
 PATH
-  remote: ../console
+  remote: ../../crankcase/console
   specs:
     openshift-origin-console (0.0.1)
       formtastic (~> 1.2.4)
