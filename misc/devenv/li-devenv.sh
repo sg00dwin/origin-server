@@ -258,8 +258,9 @@ function get_package_name {
   echo "$package_name"
 }
 
-github_repos=( crankcase rhc )
-repos=( crankcase rhc li-working )
+github_repos=( crankcase rhc origin-dev-tools )
+source_repos=( crankcase rhc li-working )
+all_repos=( crankcase rhc li-working origin-dev-tools )
 
 branch="master"
 if [ "$1" == "stage" ]
@@ -294,7 +295,7 @@ then
 
   mkdir -p /tmp/tito
 
-  for repo_name in "${repos[@]}"
+  for repo_name in "${source_repos[@]}"
   do
     if [ -d /root/$repo_name ]
     then
@@ -340,7 +341,7 @@ then
     packages=(`build/devenv print_packages`)
     ignore_packages=(`build/devenv print_ignore_packages`)
   popd > /dev/null
-  for repo_name in "${repos[@]}"
+  for repo_name in "${source_repos[@]}"
   do
     pushd /root/$repo_name > /dev/null
       git checkout $branch
@@ -366,7 +367,7 @@ if [[ "$2" == "--install_from_source" ]] || [[ "$2" == "--install_from_local_sou
 then
   rm -rf /tmp/tito
   mkdir -p /root/.source_build
-  for repo_name in "${repos[@]}"
+  for repo_name in "${all_repos[@]}"
   do
     mv /root/$repo_name /root/.source_build/${repo_name}
   done
