@@ -106,6 +106,18 @@ module OpenShiftMigration
     return output
   end
 
+  # Disable the Jenkins SSHD server on all instances, regardless of
+  # current user preferences.
+  def self.migrate_jenkins_sshd(gear_home, cartridge_dir)
+    sshd_conf_basename = "org.jenkinsci.main.modules.sshd.SSHD.xml"
+    
+    gear_sshd_conf = File.join(gear_home, "app-root", "data", sshd_conf_basename)
+    cart_sshd_conf = File.join(cartridge_dir, "info", "configuration", "jenkins-pre-deploy", sshd_conf_basename)
+
+    FileUtils.rm(gear_sshd_conf) if File.exists?(gear_sshd_conf)
+    FileUtils.copy(cart_sshd_conf, gear_sshd_conf)
+  end
+
   # Note: This method must be reentrant.  Meaning it should be able to 
   # be called multiple times on the same gears.  Each time having failed 
   # at any point and continue to pick up where it left off or make
@@ -140,6 +152,16 @@ module OpenShiftMigration
           output+="Exception caught in mongo migration:\n"
           output+="#{e}\n"
           exitcode=100
+        end
+
+        if gear_type == "jenkins-1.4"
+          begin
+            self.migrate_jenkins_sshd(gear_home, cartridge_dir)
+          rescue => e
+            output+="Exception caught in Jenkins SSHD migration in gear #{gear_home}:\n"
+            output+="#{e}\n"
+            exitcode=101
+          end
         end
 
       else
