@@ -8,7 +8,7 @@
 
 Summary:   Dependencies for OpenShift development
 Name:      rhc-devenv
-Version: 0.100.5
+Version: 0.100.6
 Release:   1%{?dist}
 Group:     Development/Libraries
 License:   GPLv2
@@ -563,6 +563,9 @@ fi
 %{policydir}/*
 
 %changelog
+* Thu Sep 27 2012 Adam Miller <admiller@redhat.com> 0.100.6-1
+- stop the nesting of old source build dirs (dmcphers@redhat.com)
+
 * Wed Sep 26 2012 Adam Miller <admiller@redhat.com> 0.100.5-1
 - Merge branch 'move_opensource' (ccoleman@redhat.com)
 - find_and_build_specs should fail devenv builds if any failure happens
