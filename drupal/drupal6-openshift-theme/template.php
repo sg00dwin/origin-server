@@ -108,10 +108,12 @@ function _openshift_whitelist_css(&$vars)
   }
   $vars['styles'] = drupal_get_css($css);
 
-  /*drupal_add_js(drupal_get_path('theme', 'openshift') . '/js/flag.js', 'theme');
   $scripts = drupal_add_js();
-  unset($scripts['module']['sites/all/modules/contrib/flag/theme/flag.js']);
-  $vars['scripts'] = drupal_get_js('header', $scripts);  */
+  #print_r($scripts);
+  unset($scripts['core']['misc/jquery.js']);
+  /*drupal_add_js(drupal_get_path('theme', 'openshift') . '/js/flag.js', 'theme');
+  unset($scripts['module']['sites/all/modules/contrib/flag/theme/flag.js']);*/
+  $vars['scripts'] = drupal_get_js('header', $scripts);
 }
 
 function openshift_pager($tags = array(), $limit = 10, $element = 0, $parameters = array(), $quantity = 9) {
