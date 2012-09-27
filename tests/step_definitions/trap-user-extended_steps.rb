@@ -1,5 +1,5 @@
 def ssh_command(command) 
-  "ssh -o BatchMode=yes -o StrictHostKeyChecking=no -q -t #{@gear.uuid}@#{@app.name}-#{@account.domain}.dev.rhcloud.com " + command
+  "ssh 2>&1 -o BatchMode=yes -o StrictHostKeyChecking=no -q -t #{@gear.uuid}@#{@app.name}-#{@account.domain}.dev.rhcloud.com " + command
 end
 
 When /^I (start|stop) the application using ctl_all via rhcsh$/ do |action|
