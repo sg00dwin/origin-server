@@ -27,12 +27,13 @@
         else { $layout = 'both'; }
       }
     ?>
-    <link type="image/png" rel="shortcut icon" href="/app/images/favicon-32.png"></link>
-    <link type="text/css" rel="stylesheet" href="/app/stylesheets/overpass.css"></link>
-    <script src="/app/javascripts/modernizr.min.js" type="text/javascript"></script>
-    <link type="text/css" rel="stylesheet" href="/app/stylesheets/common.css"></link>
-    <link type="text/css" rel="stylesheet" href="/app/stylesheets/site.css"></link>
+    <link type="image/png" rel="shortcut icon" href="/app/assets/images/favicon-32.png"></link>
+    <link type="text/css" rel="stylesheet" href="/app/assets/overpass.css"></link>
+    <script src="/app/assets/modernizr.min.js" type="text/javascript"></script>
+    <link type="text/css" rel="stylesheet" href="/app/assets/common.css"></link>
+    <link type="text/css" rel="stylesheet" href="/app/assets/site.css"></link>
 	  <?php print $styles; ?>
+    <script type="text/javascript" src="/app/assets/application.js"></script>
 	  <?php print $scripts; ?>
     <meta content='' name='author'>
     <meta content='width=device-width, initial-scale=1.0' name='viewport'>
@@ -240,15 +241,12 @@
       <section id="copyright">
         <div class="container">
           <a href="https://www.redhat.com/">
-            <img src="/app/images/redhat.png" alt="Red Hat">
+            <img src="/app/assets/redhat.png" alt="Red Hat">
           </a>
           <div class="pull-right">Copyright &copy; 2012 Red Hat, Inc.</div>
         </div>
       </section>
     </footer>
-    <script type="text/javascript" src="/app/javascripts/jquery-1.7.2.min.js"></script>
-    <script type="text/javascript" src="/app/javascripts/bootstrap-collapse.js"></script>
-    <script type="text/javascript" src="/app/javascripts/bootstrap-dropdown.js"></script>
     <!-- SiteCatalyst code version: H.23.3.
     Copyright 1996-2011 Adobe, Inc. All Rights Reserved
     More info available at http://www.omniture.com -->
