@@ -341,6 +341,7 @@ then
   mkdir -p /root/.source_build
   for repo_name in "${all_repos[@]}"
   do
+    rm -rf /root/.source_build/${repo_name}
     mv /root/$repo_name /root/.source_build/${repo_name}
   done
 fi
