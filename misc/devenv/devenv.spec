@@ -507,6 +507,9 @@ chmod 640 /etc/stickshift/resource_limits.template
 # Remove Other rights from iptables-multi - was 755
 chmod 750 /sbin/iptables-multi
 
+# Remove Other rights from ip6tables-multi - was 755
+chmod 750 /sbin/ip6tables-multi
+
 # Remove Other rights from crontab - was 4755 - BZ856939
 chmod 750 /usr/bin/crontab
 
