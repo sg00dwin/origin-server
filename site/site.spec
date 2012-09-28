@@ -8,7 +8,7 @@
 
 Summary:   OpenShift Site Rails application
 Name:      rhc-site
-Version: 0.99.3
+Version: 0.99.4
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   ASL 2.0
@@ -126,6 +126,19 @@ rm -rf %{buildroot}
 %{sitedir}/public
 
 %changelog
+* Fri Sep 28 2012 Adam Miller <admiller@redhat.com> 0.99.4-1
+- Merge pull request #413 from smarterclayton/remove_execjs_dependency
+  (openshift+bot@redhat.com)
+- Merge pull request #412 from smarterclayton/more_asset_images
+  (openshift+bot@redhat.com)
+- Remove dependency on SpiderMonkey for ExecJS (ccoleman@redhat.com)
+- Credit card images should be assets (ccoleman@redhat.com)
+- Merge pull request #411 from
+  smarterclayton/bug860892_drupal_needs_to_use_new_assets_paths
+  (openshift+bot@redhat.com)
+- Bug 860892 - No CSS or JS in drupal, need to update theme to point to new
+  directories (ccoleman@redhat.com)
+
 * Wed Sep 26 2012 Adam Miller <admiller@redhat.com> 0.99.3-1
 - Ensure key messages are the same from the engine and the site
   (ccoleman@redhat.com)
