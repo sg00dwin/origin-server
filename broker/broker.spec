@@ -3,7 +3,7 @@
 
 Summary:   Li broker components
 Name:      rhc-broker
-Version: 0.99.6
+Version: 0.99.7
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -123,6 +123,9 @@ if [ ! -f %{_localstatedir}/log/stickshift/user_action.log ]; then
 fi
 
 %changelog
+* Fri Sep 28 2012 Adam Miller <admiller@redhat.com> 0.99.7-1
+- Updating gem versions (admiller@redhat.com)
+
 * Thu Sep 27 2012 Adam Miller <admiller@redhat.com> 0.99.6-1
 - Updating gem versions (admiller@redhat.com)
 - Add mongodb-2.2 to the restart list since the RPM is being upgraded.
