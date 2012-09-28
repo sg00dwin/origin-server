@@ -5,7 +5,7 @@
 %global drupal_themename    openshift-theme
 
 Name:           drupal6-%{drupal_themename}
-Version: 3.8.1
+Version: 3.8.2
 Release:        1%{?dist}
 Summary:        Red Hat Openshift theme for Drupal %{drupal_release}
 
@@ -44,6 +44,10 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
+* Fri Sep 28 2012 Adam Miller <admiller@redhat.com> 3.8.2-1
+- Bug 860892 - No CSS or JS in drupal, need to update theme to point to new
+  directories (ccoleman@redhat.com)
+
 * Wed Sep 12 2012 Adam Miller <admiller@redhat.com> 3.8.1-1
 - bump_minor_versions for sprint 18 (admiller@redhat.com)
 
