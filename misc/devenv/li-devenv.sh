@@ -322,7 +322,7 @@ then
         package_name=`get_package_name $x`
         if ! `contains_value "$package_name" "${ignore_packages[@]}"`
 	    then
-	      install_requires "BuildRequires" "$x"
+	      install_requires "BuildRequires" "$x" "${packages[@]}"
 	      install_requires "Requires" "$x" "${packages[@]}"
 	    fi
 	  done
