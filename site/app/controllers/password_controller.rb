@@ -65,7 +65,7 @@ class PasswordController < ApplicationController
 
     respond_to do |format|
       if @user.change_password
-        format.html { redirect_to account_path }
+        format.html { redirect_to account_path, :flash => { :success => 'Your password has been changed' } }
         format.js { render :json => { :status => 'success', :message => 'Your password has been successfully changed' } }
       else
         msg = @user.errors.values.first
