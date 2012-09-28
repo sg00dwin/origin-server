@@ -53,6 +53,7 @@ BuildRequires:  %{?scl:%scl_prefix}rubygem(wddx)
 BuildRequires:  %{?scl:%scl_prefix}rubygem(sinatra)
 BuildRequires:  %{?scl:%scl_prefix}rubygem(sqlite3)
 BuildRequires:  %{?scl:%scl_prefix}rubygem(httparty)
+BuildRequires:  %{?scl:%scl_prefix}rubygem(therubyracer)
 
 BuildArch:      noarch
 
