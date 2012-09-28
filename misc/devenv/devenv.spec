@@ -8,7 +8,7 @@
 
 Summary:   Dependencies for OpenShift development
 Name:      rhc-devenv
-Version: 0.100.6
+Version: 0.100.7
 Release:   1%{?dist}
 Group:     Development/Libraries
 License:   GPLv2
@@ -566,6 +566,14 @@ fi
 %{policydir}/*
 
 %changelog
+* Fri Sep 28 2012 Adam Miller <admiller@redhat.com> 0.100.7-1
+- exclude our packages from BuildRequires as well (dmcphers@redhat.com)
+- The AddOutputFilterByType directive is deprecated.  Switch to mod_filter.
+  (rmillner@redhat.com)
+- Merge pull request #410 from tkramer-rh/dev/tkramer/security/ip6tables
+  (openshift+bot@redhat.com)
+- Security - remove other perms from ip6tables (tkramer@redhat.com)
+
 * Thu Sep 27 2012 Adam Miller <admiller@redhat.com> 0.100.6-1
 - stop the nesting of old source build dirs (dmcphers@redhat.com)
 
