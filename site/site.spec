@@ -8,7 +8,7 @@
 
 Summary:   OpenShift Site Rails application
 Name:      rhc-site
-Version: 0.99.4
+Version: 0.99.5
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   ASL 2.0
@@ -127,6 +127,18 @@ rm -rf %{buildroot}
 %{sitedir}/public
 
 %changelog
+* Fri Sep 28 2012 Adam Miller <admiller@redhat.com> 0.99.5-1
+- Merge pull request #417 from smarterclayton/add_therubyracer
+  (openshift+bot@redhat.com)
+- Add therubyracer for RPM builds (ccoleman@redhat.com)
+- Merge pull request #416 from
+  smarterclayton/bug861184_confirmation_on_password_change
+  (openshift+bot@redhat.com)
+- Merge pull request #415 from smarterclayton/bug861317_typo_in_error
+  (openshift+bot@redhat.com)
+- Bug 861184 - Confirmation on password change (ccoleman@redhat.com)
+- Bug 861317 - Typo in error message for key creation (ccoleman@redhat.com)
+
 * Fri Sep 28 2012 Adam Miller <admiller@redhat.com> 0.99.4-1
 - Merge pull request #413 from smarterclayton/remove_execjs_dependency
   (openshift+bot@redhat.com)
