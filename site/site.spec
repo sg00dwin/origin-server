@@ -140,6 +140,9 @@ rm -rf %{buildroot}
 %{sitedir}/public
 
 %changelog
+* Sat Sep 29 2012 Adam Miller <admiller@redhat.com> 0.99.6-4
+- fix typo in Requires ... its late (admiller@redhat.com)
+
 * Sat Sep 29 2012 Adam Miller <admiller@redhat.com> 0.99.6-3
 - Fixed -Release -- added missing Requires: from Gemfile to spec
   (admiller@redhat.com)
