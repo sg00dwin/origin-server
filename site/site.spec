@@ -25,6 +25,7 @@ Requires:       %{?scl:%scl_prefix}rubygem(sinatra)
 Requires:       %{?scl:%scl_prefix}rubygem(sqlite3)
 Requires:       %{?scl:%scl_prefix}rubygem(httparty)
 Requires:       rhc-site-static
+Requires:       %{?scl:%scl_prefix}rubygem(addressable)
 
 %if 0%{?fedora}%{?rhel} <= 6
 BuildRequires:  ruby193-build
@@ -54,6 +55,7 @@ BuildRequires:  %{?scl:%scl_prefix}rubygem(sinatra)
 BuildRequires:  %{?scl:%scl_prefix}rubygem(sqlite3)
 BuildRequires:  %{?scl:%scl_prefix}rubygem(httparty)
 BuildRequires:  %{?scl:%scl_prefix}rubygem(therubyracer)
+BuildRequires:       %{?scl:%scl_prefix}rubygem(addressable)
 
 BuildArch:      noarch
 
