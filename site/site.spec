@@ -9,7 +9,7 @@
 Summary:   OpenShift Site Rails application
 Name:      rhc-site
 Version: 0.99.6
-Release:   3%{?dist}
+Release:   4%{?dist}
 Group:     Network/Daemons
 License:   ASL 2.0
 URL:       http://openshift.redhat.com
@@ -31,7 +31,6 @@ Requires:       %{?scl:%scl_prefix}rubygem(coffee-rails)
 Requires:       %{?scl:%scl_prefix}rubygem(compass-rails)
 Requires:       %{?scl:%scl_prefix}rubygem(jquery-rails)
 Requires:       %{?scl:%scl_prefix}rubygem(mocha)
-Requires:       %{?scl:%scl_prefix}rubygem(openshift-origin-console!)
 Requires:       %{?scl:%scl_prefix}rubygem(sass-rails)
 Requires:       %{?scl:%scl_prefix}rubygem(simplecov)
 Requires:       %{?scl:%scl_prefix}rubygem(test-unit)
