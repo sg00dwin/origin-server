@@ -9,7 +9,7 @@
 Summary:   OpenShift Site Rails application
 Name:      rhc-site
 Version: 0.99.6
-Release:   1%{?dist}
+Release:   2%{?dist}
 Group:     Network/Daemons
 License:   ASL 2.0
 URL:       http://openshift.redhat.com
@@ -129,6 +129,12 @@ rm -rf %{buildroot}
 %{sitedir}/public
 
 %changelog
+* Sat Sep 29 2012 Adam Miller <admiller@redhat.com> 0.99.6-2
+- Release bump to build against newer origin console 
+
+* Sat Sep 29 2012 Adam Miller <admiller@redhat.com> 0.99.6-2
+- Release bump to build against newer version of origin console
+
 * Sat Sep 29 2012 Adam Miller <admiller@redhat.com> 0.99.6-1
 - add addressable gem dep to site (admiller@redhat.com)
 
