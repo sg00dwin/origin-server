@@ -1,7 +1,7 @@
 PATH
   remote: ../../crankcase/console
   specs:
-    openshift-origin-console (0.0.1)
+    openshift-origin-console (0.0.4)
       formtastic (~> 1.2.4)
       haml (~> 3.1.7)
       net-http-persistent (>= 2.7)
