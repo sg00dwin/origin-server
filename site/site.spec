@@ -8,7 +8,7 @@
 
 Summary:   OpenShift Site Rails application
 Name:      rhc-site
-Version: 0.99.5
+Version: 0.99.6
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   ASL 2.0
@@ -129,6 +129,9 @@ rm -rf %{buildroot}
 %{sitedir}/public
 
 %changelog
+* Sat Sep 29 2012 Adam Miller <admiller@redhat.com> 0.99.6-1
+- add addressable gem dep to site (admiller@redhat.com)
+
 * Fri Sep 28 2012 Adam Miller <admiller@redhat.com> 0.99.5-1
 - Merge pull request #417 from smarterclayton/add_therubyracer
   (openshift+bot@redhat.com)
