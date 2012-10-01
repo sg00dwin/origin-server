@@ -1,7 +1,0 @@
-source :rubygems
-
-gem 'selenium-webdriver', '>= 2.19.0'
-gem 'rake'
-gem 'sauce'
-gem 'zip'
-gem 'json'
