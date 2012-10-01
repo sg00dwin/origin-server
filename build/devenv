@@ -424,11 +424,11 @@ module Express
         ssh(hostname, "cp -n #{repo_parent_dir}/li-test/stickshift/controller/test/cucumber/*.feature #{repo_parent_dir}/li-test/tests/. ", 60, false, 2, user)
       end
       
-      def setup_verifier(hostname)
+      def setup_verifier(hostname, use_stage_image=false)
         print "Initializing git repo for syncing..."
         init_repo(hostname)
         puts "Done"
-        update_remote_tests(hostname)
+        update_remote_tests(hostname, use_stage_image ? "stage" : nil)
       end
 
       def rpm_manifest(hostname)
@@ -879,7 +879,7 @@ module Express
           end
 
           unless options.skip_verify? || options.install_required_packages?
-            scp_remote_tests(hostname)
+            scp_remote_tests(hostname, options.use_stage_repo)
             test_impl(name + '_' + build_num, hostname, instance, conn, options, image_id)
           end
         ensure
@@ -947,12 +947,16 @@ rm -rf #{working_dirs}
 
 #{clone_commands}
 
-rm -rf origin-dev-tools
+rm -rf origin-dev-tools-bare-repo
+mv origin-dev-tools origin-dev-tools-bare-repo
 mv origin-dev-tools-working origin-dev-tools
 
 pushd li-working > /dev/null
   build/devenv update#{options.verbose? ? ' --verbose' : ''} #{options.clean_metadata? ? ' --include_stale' : ''} 2>&1
 popd > /dev/null
+
+rm -rf origin-dev-tools
+mv origin-dev-tools-bare-repo origin-dev-tools
 
 rm -rf #{working_dirs}
 #{options.clean_metadata? ? "yum update -y --exclude='rhc-devenv' rhc-* cartridge-* rubygem-stickshift-* rubygem-gearchanger-* rubygem-uplift-* rubygem-swingshift-*; " : ''}
