@@ -152,20 +152,9 @@ function blogs_content_default_fields() {
     'field_name' => 'field_author',
     'type_name' => 'blog',
     'display_settings' => array(
-      'weight' => '-2',
+      'weight' => '-4',
       'parent' => '',
-      'label' => array(
-        'format' => 'above',
-      ),
-      'teaser' => array(
-        'format' => 'default',
-        'exclude' => 1,
-      ),
-      'full' => array(
-        'format' => 'default',
-        'exclude' => 1,
-      ),
-      '4' => array(
+      'token' => array(
         'format' => 'default',
         'exclude' => 0,
       ),
@@ -177,9 +166,20 @@ function blogs_content_default_fields() {
         'format' => 'default',
         'exclude' => 0,
       ),
-      'token' => array(
+      '4' => array(
         'format' => 'default',
         'exclude' => 0,
+      ),
+      'label' => array(
+        'format' => 'above',
+      ),
+      'teaser' => array(
+        'format' => 'default',
+        'exclude' => 1,
+      ),
+      'full' => array(
+        'format' => 'default',
+        'exclude' => 1,
       ),
     ),
     'widget_active' => '1',
@@ -213,7 +213,7 @@ function blogs_content_default_fields() {
       ),
       'default_value_php' => NULL,
       'label' => 'Author',
-      'weight' => '-2',
+      'weight' => '-4',
       'description' => '',
       'type' => 'nodereference_autocomplete',
       'module' => 'nodereference',
@@ -225,20 +225,9 @@ function blogs_content_default_fields() {
     'field_name' => 'field_image_upload',
     'type_name' => 'blog',
     'display_settings' => array(
-      'weight' => '-3',
+      'weight' => '-1',
       'parent' => '',
-      'label' => array(
-        'format' => 'above',
-      ),
-      'teaser' => array(
-        'format' => 'image_plain',
-        'exclude' => 1,
-      ),
-      'full' => array(
-        'format' => 'image_plain',
-        'exclude' => 1,
-      ),
-      '4' => array(
+      'token' => array(
         'format' => 'image_plain',
         'exclude' => 0,
       ),
@@ -250,9 +239,20 @@ function blogs_content_default_fields() {
         'format' => 'image_plain',
         'exclude' => 0,
       ),
-      'token' => array(
+      '4' => array(
         'format' => 'image_plain',
         'exclude' => 0,
+      ),
+      'label' => array(
+        'format' => 'above',
+      ),
+      'teaser' => array(
+        'format' => 'image_plain',
+        'exclude' => 1,
+      ),
+      'full' => array(
+        'format' => 'image_plain',
+        'exclude' => 1,
       ),
     ),
     'widget_active' => '1',
@@ -295,10 +295,74 @@ function blogs_content_default_fields() {
       'insert_class' => '',
       'insert_width' => '600',
       'label' => 'Image Upload',
-      'weight' => '-3',
+      'weight' => '-1',
       'description' => '',
       'type' => 'imagefield_widget',
       'module' => 'imagefield',
+    ),
+  );
+
+  // Exported field: field_summary
+  $fields['blog-field_summary'] = array(
+    'field_name' => 'field_summary',
+    'type_name' => 'blog',
+    'display_settings' => array(
+      'weight' => '10',
+      'parent' => '',
+      'token' => array(
+        'format' => 'default',
+        'exclude' => 1,
+      ),
+      '2' => array(
+        'format' => 'default',
+        'exclude' => 0,
+      ),
+      '3' => array(
+        'format' => 'default',
+        'exclude' => 1,
+      ),
+      '4' => array(
+        'format' => 'default',
+        'exclude' => 1,
+      ),
+      'label' => array(
+        'format' => 'above',
+      ),
+      'teaser' => array(
+        'format' => 'default',
+        'exclude' => 1,
+      ),
+      'full' => array(
+        'format' => 'default',
+        'exclude' => 1,
+      ),
+    ),
+    'widget_active' => '1',
+    'type' => 'text',
+    'required' => '0',
+    'multiple' => '0',
+    'module' => 'text',
+    'active' => '1',
+    'text_processing' => '1',
+    'max_length' => '1024',
+    'allowed_values' => '',
+    'allowed_values_php' => '',
+    'widget' => array(
+      'rows' => '5',
+      'size' => '60',
+      'default_value' => array(
+        '0' => array(
+          'value' => '',
+          'format' => '1',
+          '_error_element' => 'default_value_widget][field_summary][0][value',
+        ),
+      ),
+      'default_value_php' => NULL,
+      'label' => 'Summary',
+      'weight' => 0,
+      'description' => 'Set a summary element for use in external services that need to display limited content.  Each type may use this differently.',
+      'type' => 'text_textarea',
+      'module' => 'text',
     ),
   );
 
@@ -308,6 +372,7 @@ function blogs_content_default_fields() {
   t('Author Image');
   t('Author Profession Title');
   t('Image Upload');
+  t('Summary');
 
   return $fields;
 }

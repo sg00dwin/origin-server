@@ -13,7 +13,7 @@ License: GPLv2+
 Source0: %{name}-%{version}.tar.gz
 BuildArch: noarch
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
-Requires:  drupal6, drupal6-votingapi, drupal6-rules, drupal6-flag, drupal6-og, drupal6-token, drupal6-userpoints, drupal6-views, drupal6-faq, drupal6-fivestar, drupal6-admin_menu, drupal6-advanced-help, drupal6-better_formats, drupal6-context, drupal6-devel, drupal6-homebox, drupal6-stringoverrides, drupal6-userpoints, drupal6-eazylaunch, drupal6-custom_breadcrumbs
+Requires:  drupal6, drupal6-votingapi, drupal6-rules, drupal6-flag, drupal6-og, drupal6-token, drupal6-userpoints, drupal6-views, drupal6-faq, drupal6-fivestar, drupal6-admin_menu, drupal6-advanced-help, drupal6-better_formats, drupal6-context, drupal6-devel, drupal6-homebox, drupal6-stringoverrides, drupal6-userpoints, drupal6-eazylaunch, drupal6-custom_breadcrumbs, drupal6-views_datasource
 
 %description
 Openshift Red Hat Custom User Profile Feature for Drupal6
