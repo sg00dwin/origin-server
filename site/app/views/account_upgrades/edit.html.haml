@@ -46,8 +46,9 @@
     %aside{ :class => 'span4' }
       %h5 Your contact information is safe
       %p
-        Read our <a href="/community/policy/security">Privacy Policy</a>.
-        
+        Read our
+        = link_to 'Privacy Policy', community_security_policy_url
+      
       %h5 Are you located in the US?
       %p
         At this time paid OpenShift access is only available to customers in the

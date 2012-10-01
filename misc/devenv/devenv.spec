@@ -553,6 +553,10 @@ then
   /usr/bin/ruby /usr/lib/stickshift/broker/application_templates/templates/deploy.rb
 fi
 
+# Create a known test user with medium-sized gears - nhr
+/usr/bin/rhc-chk -l user_with_multiple_gear_sizes@test.com -p foo > /dev/null 2>&1
+/usr/bin/rhc-admin-ctl-user -l user_with_multiple_gear_sizes@test.com --addgearsize medium > /dev/null 2>&1
+
 %files
 %defattr(-,root,root,-)
 %attr(0660,-,-) %{brokerdir}/log/mcollective-client.log
