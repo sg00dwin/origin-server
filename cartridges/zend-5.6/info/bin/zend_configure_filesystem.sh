@@ -16,6 +16,7 @@ restore=$1
 
 #This function symlinks the above paths to /sandbox PAM namespace
 function create_zend_to_sandbox_links {
+  mkdir -p $zend_sandbox
   for path in ${symlinks_to_sandbox[*]}; do
     zpath=$zend_install_dir/$path
     if [ ! -e $zpath ]; then
@@ -29,11 +30,16 @@ function create_zend_to_sandbox_links {
     if [ "$restore" == "restore" ]; then
       #echo "Undoing Linking $zdir/$zfile to $zend_sandbox/$path"
       rm -f $zdir/$zfile
-      #echo "Undoing Moving $zpath to $zdir/${zfile}_openshift_original"
-      mv $zdir/${zfile}_openshift_original $zpath
+      #echo "Removing $zend_sandbox"
+      rm -rf $zend_sandbox
     else
-      #echo "Moving $zpath to $zdir/${zfile}_openshift_original"
-      mv $zpath $zdir/${zfile}_openshift_original
+      #echo "Backing up $zpath to ${zpath}_openshift_original_$(date +%s)"
+      cp -r $zpath ${zpath}_openshift_original_$(date +%s)
+      #echo "Copying $zpath to $zend_sandbox/${zfile}"
+      mkdir -p $zend_sandbox/${path}
+      cp -r $zpath/* $zend_sandbox/${path}/.
+      #echo "Removing $zpath"
+      rm -rf $zpath
       #echo "Linking $zdir/$zfile to $zend_sandbox/$path"
       ln -s $zend_sandbox/$path $zdir/$zfile
     fi
