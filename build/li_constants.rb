@@ -52,7 +52,12 @@ VERIFIER_REGEXS = {/^(devenv)_(\d+)$/ => {:multiple => true},
                    /^(libra_coverage)_(\d+)$/ => {:max_run_time => (60*60*1)}}
 TERMINATE_REGEX = /terminate|teminate|termiante|terminatr|terninate/
 VERIFIED_TAG = "qe-ready"
-RSA = File.expand_path("~/.ssh/libra.pem")
+
+# Specify the source location of the SSH key
+# This will be used if the key is not found at the location specified by "RSA"
+RSA = File.expand_path("~/.ssh/devenv.pem")
+RSA_SOURCE = File.expand_path("../../misc/libra.pem", File.expand_path(__FILE__))
+
 SAUCE_USER = "openshift_ci"
 SAUCE_SECRET = "3d67e770-ce7d-482a-8c7f-07aec039d564"
 SAUCE_OS = "Windows 2008"
