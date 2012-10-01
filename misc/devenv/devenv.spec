@@ -54,6 +54,7 @@ Requires:  rubygem-rspec
 Requires:  rubygem-webmock
 Requires:  rubygem-nokogiri
 Requires:  rubygem-rcov
+Requires:  ruby193-build
 Requires:  charlie
 Requires:  pam
 Requires:  pam-devel
@@ -159,6 +160,7 @@ Requires:  drupal6-vertical_tabs
 Requires:  drupal6-views
 Requires:  drupal6-views_bonus
 Requires:  drupal6-views_customfield
+Requires:  drupal6-views_datasource
 Requires:  drupal6-vote_up_down
 Requires:  drupal6-votingapi
 Requires:  drupal6-wikitools
