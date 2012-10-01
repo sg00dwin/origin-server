@@ -17,7 +17,7 @@ class UserApiTest < ActionDispatch::IntegrationTest
   
   def teardown
     cloud_user = CloudUser.find(@login)
-    cloud_user.delete unless cloud_user.nil?
+    cloud_user.force_delete unless cloud_user.nil?
   end
   
   def test_user_show

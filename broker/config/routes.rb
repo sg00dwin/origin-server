@@ -10,7 +10,7 @@ Broker::Application.routes.draw do
   match 'nurture' => 'broker#nurture_post', :via => [:post]
 
   scope "/rest" do
-    resource :user, :only => [:show, :update], :controller => :user_ext do
+    resource :user, :only => [:show, :update, :destroy], :controller => :user_ext do
       resources :keys, :controller => :keys, :constraints => { :id => /[\w]+/ } 
     end
     resources :plans, :only => [:index, :show]

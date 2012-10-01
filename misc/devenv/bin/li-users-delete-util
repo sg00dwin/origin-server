@@ -31,7 +31,7 @@ if opt['namespace']
 else 
   users = CloudUser.find_all(nil)
   users.each do |user|
-    user.delete
+    user.force_delete
   end if users
 end
 

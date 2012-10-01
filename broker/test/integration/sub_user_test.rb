@@ -62,6 +62,37 @@ class SubUserTest < ActionDispatch::IntegrationTest
     assert_equal 401, status
   end
 
+  def test_delete_subaccount
+    get "rest/domains.json", nil, @headers
+    assert_equal 200, status
+
+    delete "rest/user.json", nil, @headers
+    assert_equal 403, status
+
+    `rhc-admin-ctl-user -l #{@username} --allowsubaccounts true`
+
+    @headers2 = @headers.clone
+    subaccount_user = "subuser#{@random}"
+    @headers2["HTTP_AUTHORIZATION"] = "Basic " + Base64.encode64("#{subaccount_user}:password")
+
+    @headers["X-Impersonate-User"] = subaccount_user
+    get "rest/domains.json", nil, @headers
+    assert_equal 200, status
+
+    domain_name = "namespace#{@random}"
+    post "rest/domains.json", { :id => domain_name }, @headers2
+    assert_equal 201, status
+
+    delete "rest/user.json", nil, @headers2
+    assert_equal 422, status
+
+    delete "rest/domains/#{domain_name}.json", nil, @headers2
+    assert_equal 204, status
+
+    delete "rest/user.json", nil, @headers2
+    assert_equal 204, status
+  end
+
   def test_subaccount_inherit_gear_sizes
     get "rest/domains.json", nil, @headers
     assert_equal 200, status

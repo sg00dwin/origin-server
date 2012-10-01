@@ -101,6 +101,6 @@ test "update master plan and then revert to previous" do
   end
 
   def teardown
-    @user.delete
+    @user.force_delete
   end
 end
