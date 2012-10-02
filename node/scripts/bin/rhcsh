@@ -136,8 +136,10 @@ export TMOUT=300
 export SHELL=/bin/bash
 welcome
 
-if [ -z $SSH_TTY ]
-then
+# Since the user is actively using this gear, unidle the gear (if idle).
+which unidle_gear.sh &> /dev/null  &&  unidle_gear.sh "${PS1:+'show-messages'}"
+
+if [ -z $SSH_TTY ]; then
     echo "WARNING: This ssh terminal was started without a tty." 1>&2
     echo "          It is highly recommended to login with: ssh -t" 1>&2
 fi
