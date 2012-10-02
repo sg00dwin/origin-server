@@ -92,10 +92,9 @@ such as images, CSS, JavaScript, and HTML.
 %build
 %{?scl:scl enable %scl - << \EOF}
 
-# Temporary BEGIN
+set -e
 rm Gemfile.lock
 bundle install --local
-# Temporary END
 RAILS_ENV=production RAILS_RELATIVE_URL_ROOT=/app bundle exec rake assets:precompile assets:public_pages
 rm -rf tmp
 rm log/*
