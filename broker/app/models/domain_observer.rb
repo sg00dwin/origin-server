@@ -17,9 +17,8 @@ class DomainObserver < ActiveModel::Observer
 
   def send_data_to_analytics(domain)
     begin
-      Rails.logger.debug "Sending updated domain info #{domain.namespace} to apptegic and nurture"
+      Rails.logger.debug "Sending updated domain info #{domain.namespace} to nurture"
       Express::Broker::Nurture.libra_contact(domain.user.login, domain.user.uuid, domain.namespace, 'update')
-      Express::Broker::Apptegic.libra_contact(domain.user.login, domain.user.uuid, domain.namespace, 'update')
     rescue Exception => e
       Rail.logger.error "ERROR: sending analytic data #{e.message}"
     end

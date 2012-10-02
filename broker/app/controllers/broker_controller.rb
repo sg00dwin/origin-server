@@ -50,7 +50,6 @@ class BrokerController < ApplicationController
       action = data['action']
       app_uuid = data['app_uuid']
       Express::Broker::Nurture.application_update(action, app_uuid)
-      Express::Broker::Apptegic.application_update(action, app_uuid)
   
       # Just return a 200 success
       render :json => generate_result_json("Success") and return

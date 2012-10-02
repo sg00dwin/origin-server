@@ -73,6 +73,8 @@ if namespaces.length == 0
 end
 
 require "/var/www/stickshift/broker/config/environment"
+# Disable analytics for admin scripts
+Rails.configuration.analytics[:enabled] = false
 
 dns = StickShift::DnsService.instance
 begin

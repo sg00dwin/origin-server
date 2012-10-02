@@ -64,6 +64,8 @@ unless list || fix || remove_plan_lock
 end
 
 require "/var/www/stickshift/broker/config/environment"
+# Disable analytics for admin scripts
+Rails.configuration.analytics[:enabled] = false
 
 PLAN_UPDATE_THRESHOLD = 300  #5 mins
 $aria = Express::AriaBilling::Api.new

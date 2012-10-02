@@ -56,6 +56,8 @@ unless sync || list || remove_sync_lock
 end
 
 require "/var/www/stickshift/broker/config/environment"
+# Disable analytics for admin scripts
+Rails.configuration.analytics[:enabled] = false
 
 def usage_record_to_billing_usage_type(billing_api, usage_record)
   billing_usage_type = nil

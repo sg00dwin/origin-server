@@ -65,6 +65,8 @@ if timeout
 end
 
 require "/var/www/stickshift/broker/config/environment"
+# Disable analytics for admin scripts
+Rails.configuration.analytics[:enabled] = false
 
 # Set the MCollective options
 if timeout

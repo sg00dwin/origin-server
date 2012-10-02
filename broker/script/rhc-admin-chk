@@ -38,6 +38,8 @@ verbose = args["--verbose"]
 
 
 require "/var/www/stickshift/broker/config/environment"
+# Disable analytics for admin scripts
+Rails.configuration.analytics[:enabled] = false
 
 no_error = true
 summary = []
