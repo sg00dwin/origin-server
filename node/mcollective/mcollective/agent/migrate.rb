@@ -165,7 +165,7 @@ module OpenShiftMigration
   def self.migrate_python(gear_dir, uuid)
     conf_file = "#{gear_dir}/conf.d/stickshift.conf"
     text = File.read(conf_file)
-    result = text.gsub("WSGIPassAuthorization On", "WSGIPassAuthorization On\nWSGIProcessGroup #{uuid}\nWSGIDaemonProcess #{uuid} user=#{uuid} group=#{uuid} processes=2 threads=25")
+    result = text.gsub("WSGIPassAuthorization On", "WSGIPassAuthorization On\nWSGIProcessGroup #{uuid}\nWSGIDaemonProcess #{uuid} user=#{uuid} group=#{uuid} processes=2 threads=25 python-path=\"#{gear_dir}/repo/libs:#{gear_dir}/repo/wsgi:#{gear_dir}/virtenv/lib/python2.6/")
     File.open(conf_file, "w") {|file| file.puts result}
     
     output = ''
