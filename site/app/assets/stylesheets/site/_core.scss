@@ -1,5 +1,7 @@
 /* @charset UTF-8 */
 
+$noiseImage: image-url('noise.png') !default;
+
 a { color: $linkColorBlue; }
 a:hover, a:active { color: $linkColorBlueHover; }
 
