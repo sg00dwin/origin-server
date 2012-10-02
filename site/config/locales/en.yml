@@ -74,7 +74,8 @@ en:
         You must enter the security code associated with your card.  The security code is a three or four digit number (also known as the CVV, CVD, or CCV) usually displayed on the back of your card.
       server_card_contents: 
         Credit card numbers may only contain digits, spaces, or dashes, and be 15 or 16 digits in length.
-
+      serverccexpired:
+        The expiration date is invalid, or your card has expired.
       servercouldnotvalidatecard:
         Your credit card could not be validated at this time.  Please re-enter card number, expiration, and CVV and try again.
       servercouldnotvalidatecard:

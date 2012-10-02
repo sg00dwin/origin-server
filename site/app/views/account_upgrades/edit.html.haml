@@ -5,15 +5,15 @@
   %section{ :class => 'row' }
     .span8
       = f.inputs 'Account', :class => 'inputs form-horizontal', :for => @full_user do |u|
-        = u.semantic_errors
         - if @full_user.persisted?
           %p
             You are logged in as <strong>#{current_user_id}</strong> under the name <strong>#{@full_user.first_name} #{@full_user.last_name}</strong>.
             Your phone number for this account is <strong>#{@full_user.phone}</strong>
         - else
-          = u.inputs :inline => true, :required => true, :name => 'Name' do
+          = u.inputs :inline => true, :required => true, :label => 'Name' do
             = u.input :first_name, :required => true, :input_html => { :placeholder => "First" }
             = u.input :last_name, :required => true, :input_html => { :placeholder => "Last" }
+            = u.semantic_errors(:first_name, :last_name)
           = u.input :phone, :input_html => { :class => 'input-medium', :placeholder => "10 digit number", :maxlength => 10 }
     %aside{ :class => 'span4' }
       %h5 Complete your Account
@@ -29,19 +29,20 @@
         account is necessary for contacting Red Hat Support.
   %section{ :class => 'row' }
     .span8
-      = f.inputs 'Billing Information', :class => 'inputs form-horizontal', :for => @billing_info do |b|
-        = b.semantic_errors
-        = b.inputs :inline => true, :required => true, :name => 'Name' do
+      = f.inputs 'Billing Information', :class => 'inputs form-horizontal', :for => @billing_info do |b|      
+        = b.inputs :inline => true, :required => true, :label => 'Name' do
           = b.input :first_name, :required => true, :input_html => { :class => 'input-medium', :placeholder => "First" }
           = b.input :middle_initial, :input_html => { :class => 'input-mini', :placeholder => "MI" }
           = b.input :last_name, :required => true, :input_html => { :class => 'input-medium', :placeholder => "Last" }
+          = b.semantic_errors(:first_name, :middle_initial, :last_name)
         = b.input :address1, :required => true, :label => 'Street Address'
         = b.input :address2, :label => '&nbsp;'
         = b.input :address3, :label => '&nbsp;'
-        = b.inputs :inline => true, :required => true, :name => 'City, State, Zip' do
+        = b.inputs :inline => true, :required => true, :label => 'City, State, Zip' do
           = b.input :city, :required => true, :input_html => { :class => 'input-medium' }
           = b.input :state, :required => true, :as => :select, :collection => us_states_for_select, :input_html => { :class => 'input-medium' }
           = b.input :zip, :required => true, :input_html => { :class => 'input-mini', :placeholder => "Zip" }
+          = b.semantic_errors(:city, :state, :zip)
         = b.input :country, :label => 'Country', :input_html => { :readonly => true, :placeholder => "US", :value => "US", :title => 'Current signup restricted to United States' }
     %aside{ :class => 'span4' }
       %h5 Your contact information is safe

@@ -4,17 +4,19 @@
 = semantic_form_for @billing_info, :url => url_for(:action => :edit), :html => { :id => 'edit_aria_billing_info', :method => 'put' } do |f|
   = f.semantic_errors
   = f.inputs 'Billing Information', :class => 'inputs form-horizontal', :for => @billing_info do |b|
-    = f.inputs :inline => true, :required => true, :name => 'Name' do
+    = f.inputs :inline => true, :required => true, :label => 'Name' do
       = f.input :first_name, :required => true, :input_html => { :class => 'input-medium', :placeholder => "First" }
       = f.input :middle_initial, :input_html => { :class => 'input-mini', :placeholder => "MI" }
       = f.input :last_name, :required => true, :input_html => { :class => 'input-medium', :placeholder => "Last" }
+      = f.semantic_errors(:first_name, :middle_initial, :last_name)
     = f.input :address1, :required => true, :label => 'Street Address'
     = f.input :address2, :label => '&nbsp;'
     = f.input :address3, :label => '&nbsp;'
-    = f.inputs :inline => true, :required => true, :name => 'City, State, Zip' do
+    = f.inputs :inline => true, :required => true, :label => 'City, State, Zip' do
       = f.input :city, :required => true, :input_html => { :class => 'input-medium' }
-      = f.input :state, :required => true, :as => :select, :collection => us_states_for_select, :input_html => { :class => 'input-medium' }
+      = f.input :state, :required => true, :as => :select, :collection => us_states_for_select, :include_blank => false, :input_html => { :class => 'input-medium' }
       = f.input :zip, :required => true, :input_html => { :class => 'input-mini', :placeholder => "Zip" }
+      = f.semantic_errors(:city, :state, :zip)
     = f.input :country, :label => 'Country', :input_html => { :readonly => true, :placeholder => "US", :value => "US", :title => 'Current signup restricted to United States' }
 
   = f.buttons do
