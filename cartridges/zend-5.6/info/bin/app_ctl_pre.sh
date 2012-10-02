@@ -6,4 +6,4 @@ do
     . $f
 done
 
-export PHPRC="${OPENSHIFT_GEAR_DIR}conf/php.ini"
+export PHPRC="${OPENSHIFT_GEAR_DIR}etc/php.ini"
