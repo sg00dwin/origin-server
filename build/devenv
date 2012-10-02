@@ -900,7 +900,7 @@ module Express
             build_dir = stale_dir[1]
             spec_file = stale_dir[2]
 
-            if package_name.include? "origin" || package_name == "stickshift-broker"
+            if (package_name.include?("origin") && package_name != 'rubygem-openshift-origin-console') || package_name == "stickshift-broker"
                 puts "Skipping #{package_name}"
                 return
             else
