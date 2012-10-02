@@ -39,6 +39,10 @@ OPTIONS="-c 'Include /var/www/stickshift/site/httpd/site.conf' -f /var/www/stick
 # when not running is also a failure.  So we just do it the way init scripts
 # are expected to behave here.
 start() {
+        pushd /var/www/stickshift/site > /dev/null
+          rm -rf Gemfile.lock
+          scl enable ruby193 "bundle install --local" > /dev/null
+        popd > /dev/null
         echo -n $"Starting $prog: "
         LANG=$HTTPD_LANG daemon --pidfile=${pidfile} $httpd $OPTIONS
         RETVAL=$?
