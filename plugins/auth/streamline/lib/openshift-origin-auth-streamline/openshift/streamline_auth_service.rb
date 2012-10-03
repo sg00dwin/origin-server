@@ -9,36 +9,18 @@ require 'openshift-origin-common'
 module OpenShift
     class StreamlineAuthService < OpenShift::AuthService
       def initialize
+        super
+
         service_base_url = defined?(Rails) ? Rails.configuration.auth[:auth_service][:host] + Rails.configuration.auth[:auth_service][:base_url] : ""
         @@login_url = URI.parse(service_base_url + "/login.html")
         @@roles_url = URI.parse(service_base_url + "/cloudVerify.html")
         @@user_info_url = URI.parse(service_base_url + "/userInfo.html")
       end
-      
-      def generate_broker_key(app)
-        cipher = OpenSSL::Cipher::Cipher.new("aes-256-cbc")                                                                                                                                                                 
-        cipher.encrypt
-        cipher.key = OpenSSL::Digest::SHA512.new(Rails.configuration.auth[:broker_auth_secret]).digest
-        cipher.iv = iv = cipher.random_iv
-        token = {:app_name => app.name,
-                 :rhlogin => app.user.login,
-                 :creation_time => app.creation_time}
-        encrypted_token = cipher.update(token.to_json)
-        encrypted_token << cipher.final
-      
-        public_key = OpenSSL::PKey::RSA.new(File.read('/var/www/openshift/broker/config/keys/public.pem'), Rails.configuration.auth[:broker_auth_rsa_secret])
-        encrypted_iv = public_key.public_encrypt(iv)
-        
-        # Base64 encode the iv and token
-        encoded_iv = Base64::encode64(encrypted_iv)
-        encoded_token = Base64::encode64(encrypted_token)
-        
-        [encoded_iv, encoded_token]
-      end
-      
+
       def authenticate(request, login, password)
         if request.headers['User-Agent'] == "OpenShift"
-          return check_broker_key(login, password)
+          # password == iv, login == key
+          return validate_broker_key(password, login)
         else
           unless Rails.configuration.auth[:integrated]
             raise OpenShift::AccessDeniedException if login.nil? or login.empty?
@@ -50,13 +32,13 @@ module OpenShift
         raise OpenShift::AccessDeniedException if token.nil? or token[:username].nil?
         return token
       end
-      
+
       def login(request, params, cookies)
         data = JSON.parse(params['json_data'])
         token = nil
         username = nil
         if params['broker_auth_key'] && params['broker_auth_iv']
-          token = check_broker_key(params['broker_auth_key'],params['broker_auth_iv'])
+          token = validate_broker_key(params['broker_auth_iv'],params['broker_auth_key'])
         else
           login = data['rhlogin']
           unless Rails.configuration.auth[:integrated]
@@ -120,38 +102,7 @@ module OpenShift
 
         {:username => rhlogin, :auth_method => :login}
       end
-      
-      def check_broker_key(key, iv)
-        key = key.gsub(" ", "+")
-        iv = iv.gsub(" ", "+")
-        begin
-          encrypted_token = Base64::decode64(key)
-          cipher = OpenSSL::Cipher::Cipher.new("aes-256-cbc")
-          cipher.decrypt
-          cipher.key = OpenSSL::Digest::SHA512.new(Rails.configuration.auth[:broker_auth_secret]).digest
-          private_key = OpenSSL::PKey::RSA.new(File.read('config/keys/private.pem'), Rails.configuration.auth[:broker_auth_rsa_secret])
-          cipher.iv =  private_key.private_decrypt(Base64::decode64(iv))
-          json_token = cipher.update(encrypted_token)
-          json_token << cipher.final
-        rescue => e
-          Rails.logger.error "Broker key authentication failed."
-          raise OpenShift::AccessDeniedException.new
-        end
-  
-        token = JSON.parse(json_token)
-        username = token['rhlogin']
-        app_name = token['app_name']
-        creation_time = token['creation_time']
-              
-        user = CloudUser.find(username)
-        raise OpenShift::UserValidationException.new unless user
-        
-        app = Application.find(user, app_name)
-        
-        raise OpenShift::UserValidationException.new if !app or creation_time != app.creation_time
-        return {:username => username, :auth_method => :broker_auth}
-      end
-      
+
       def check_access(roles)
         roles = [] unless roles
         unless roles.index('cloud_access_1')

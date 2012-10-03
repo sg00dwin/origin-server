@@ -60,8 +60,13 @@ Broker::Application.configure do
   
   config.auth = {
     :integrated => true,
-    :broker_auth_secret => "EIvWT6u3lsvSRNRGZhhW8YcWMh5mUAlc32nZlRJPdJM=",
-    :broker_auth_rsa_secret => "SJDIkdfhuISe3wrulhjvcKHJFDUeoi8gfcdnu8299dhc",
+    # formerly the broker_auth_secret
+    :salt => "EIvWT6u3lsvSRNRGZhhW8YcWMh5mUAlc32nZlRJPdJM=",
+    # formerly the broker_auth_rsa_secret
+    :privkeypass => "SJDIkdfhuISe3wrulhjvcKHJFDUeoi8gfcdnu8299dhc",
+    :privkeyfile => "config/keys/private.pem",
+    :pubkeyfile => "/var/www/openshift/broker/config/keys/public.pem",
+    :token_login_key => :rhlogin,
     :auth_service => {
       :host => "https://www.redhat.com",
       :base_url => "/wapps/streamline"
