@@ -60,6 +60,7 @@
     = f.inputs :inline => true, :required => true, :label => 'Credit Card Number' do
       .clearfix
         = f.input :cc_no, :input_html => { :name => 'cc_no', :type => 'text', :class => 'pull-left input-large', :value => (@payment_method.cc_no || '') }
+        = f.inline_errors_for :cc_no
         %ul{ :class => 'card-types-passive selected' }
           %li{ :class => 'Visa cc-card' }
             %span VISA
@@ -67,12 +68,12 @@
             %span Mastercard
           %li{ :class => 'AMEX cc-card' }
             %span American Express
-        = f.semantic_errors(:cc_no)          
     = f.inputs :inline => true, :required => true, :label => 'Expiration Date' do
       = f.input :cc_exp_mm, :as => :select, :include_blank => false, :default => (@payment_method.cc_exp_mm || Date.today.month), :collection => (1..12).to_a.map{|num| [(num < 10 ? "0#{num}" : num.to_s),num]}, :input_html => { :name => 'cc_exp_mm', :class => 'input-small' }
       - year_options = (Date.today.year..(Date.today.year + 10)).to_a
       = f.input :cc_exp_yyyy, :as => :select, :include_blank => false, :default => (@payment_method.cc_exp_yyyy || Date.today.year), :collection => year_options, :input_html => { :name => 'cc_exp_yyyy', :class => 'input-medium' }
-      = f.semantic_errors(:cc_exp_mm, :cc_exp_yyyy)
+      = f.inline_errors_for :cc_exp_mm
+      = f.inline_errors_for :cc_exp_yyyy    
     = f.input :cvv, :label => 'Security Code', :input_html => { :class => 'input-mini', :name => :cvv }
 
   = f.buttons do

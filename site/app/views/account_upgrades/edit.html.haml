@@ -13,7 +13,8 @@
           = u.inputs :inline => true, :required => true, :label => 'Name' do
             = u.input :first_name, :required => true, :input_html => { :placeholder => "First" }
             = u.input :last_name, :required => true, :input_html => { :placeholder => "Last" }
-            = u.semantic_errors(:first_name, :last_name)
+            = u.inline_errors_for :first_name
+            = u.inline_errors_for :last_name
           = u.input :phone, :input_html => { :class => 'input-medium', :placeholder => "10 digit number", :maxlength => 10 }
     %aside{ :class => 'span4' }
       %h5 Complete your Account
@@ -34,7 +35,9 @@
           = b.input :first_name, :required => true, :input_html => { :class => 'input-medium', :placeholder => "First" }
           = b.input :middle_initial, :input_html => { :class => 'input-mini', :placeholder => "MI" }
           = b.input :last_name, :required => true, :input_html => { :class => 'input-medium', :placeholder => "Last" }
-          = b.semantic_errors(:first_name, :middle_initial, :last_name)
+          = b.inline_errors_for :first_name
+          = b.inline_errors_for :middle_initial
+          = b.inline_errors_for :last_name
         = b.input :address1, :required => true, :label => 'Street Address'
         = b.input :address2, :label => '&nbsp;'
         = b.input :address3, :label => '&nbsp;'
@@ -42,7 +45,9 @@
           = b.input :city, :required => true, :input_html => { :class => 'input-medium' }
           = b.input :state, :required => true, :as => :select, :collection => us_states_for_select, :input_html => { :class => 'input-medium' }
           = b.input :zip, :required => true, :input_html => { :class => 'input-mini', :placeholder => "Zip" }
-          = b.semantic_errors(:city, :state, :zip)
+          = b.inline_errors_for :city
+          = b.inline_errors_for :state
+          = b.inline_errors_for :zip
         = b.input :country, :label => 'Country', :input_html => { :readonly => true, :placeholder => "US", :value => "US", :title => 'Current signup restricted to United States' }
     %aside{ :class => 'span4' }
       %h5 Your contact information is safe
