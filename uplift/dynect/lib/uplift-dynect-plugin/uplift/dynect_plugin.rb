@@ -38,7 +38,7 @@ module Uplift
         @domain_suffix = Rails.configuration.ss[:domain_suffix]
         @zone = Rails.configuration.dns[:zone]
       else
-        raise Exception.new("Dynect DNS service is not inilialized")
+        raise Exception.new("Dynect DNS service is not initialized")
       end
       login
     end
