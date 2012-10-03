@@ -147,8 +147,11 @@
 }
 
 .community .column-content {
-	min-height: 712px;
+	min-height: 300px;
 	}
+.community .column-nav + .column-content {
+  min-height: 700px;
+}
 .community #comments .views-field-name,
 .community #comments .views-field-phpcode,
 .community #comments .views-field-value,
