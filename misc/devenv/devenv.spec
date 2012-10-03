@@ -220,6 +220,9 @@ cp %{buildroot}%{devenvdir}%{policydir}/* %{buildroot}%{policydir}
 rm -rf %{buildroot}
 
 %post
+# Setup stickshift-node.conf for the devenv
+cp -f /etc/stickshift/stickshift-node.conf.libra /etc/stickshift/stickshift-node.conf
+restorecon /etc/stickshift/stickshift-node.conf || :
 
 # Install the Sauce Labs gems
 gem install sauce --no-rdoc --no-ri
@@ -570,6 +573,11 @@ fi
 %{_initddir}/libra-site
 %{_initddir}/sauce-connect
 %{policydir}/*
+
+%triggerin -- rubygem-stickshift-node
+cp -f /etc/stickshift/stickshift-node.conf.libra /etc/stickshift/stickshift-node.conf
+restorecon /etc/stickshift/stickshift-node.conf || :
+/sbin/service libra-data restart > /dev/null 2>&1 || :
 
 %changelog
 * Fri Sep 28 2012 Adam Miller <admiller@redhat.com> 0.100.7-1

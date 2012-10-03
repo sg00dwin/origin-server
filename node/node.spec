@@ -108,9 +108,6 @@ cp pam_libra/pam_libra.so.1  %{buildroot}/lib64/security/pam_libra.so
 rm -rf $RPM_BUILD_ROOT
 
 %post
-cp -f /etc/stickshift/stickshift-node.conf.libra /etc/stickshift/stickshift-node.conf
-restorecon /etc/stickshift/stickshift-node.conf || :
-
 echo "/usr/bin/trap-user" >> /etc/shells
 
 /sbin/chkconfig --add libra || :
@@ -170,13 +167,8 @@ fi
 # To workaround mcollective 2.0 monkey patch to tmpdir
 chmod o+w /tmp
 
-
 %triggerin -- rubygem-stickshift-node
-
-cp -f /etc/stickshift/stickshift-node.conf.libra /etc/stickshift/stickshift-node.conf
-restorecon /etc/stickshift/stickshift-node.conf || :
 /sbin/service libra-data start > /dev/null 2>&1 || :
-
 
 %preun
 if [ "$1" -eq "0" ]; then
