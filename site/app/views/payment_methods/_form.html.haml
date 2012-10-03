@@ -69,8 +69,7 @@
             %span American Express
         = f.semantic_errors(:cc_no)          
     = f.inputs :inline => true, :required => true, :label => 'Expiration Date' do
-      - month_options = (1..12).to_a.map{ |month| [(month < 10 ? "0#{month}" : month.to_s) + " - " + Date::MONTHNAMES[month],month] }
-      = f.input :cc_exp_mm, :as => :select, :include_blank => false, :default => (@payment_method.cc_exp_mm || Date.today.month), :collection => month_options, :input_html => { :name => 'cc_exp_mm', :class => 'input-medium' }
+      = f.input :cc_exp_mm, :as => :select, :include_blank => false, :default => (@payment_method.cc_exp_mm || Date.today.month), :collection => (1..12).to_a.map{|num| [(num < 10 ? "0#{num}" : num.to_s),num]}, :input_html => { :name => 'cc_exp_mm', :class => 'input-small' }
       - year_options = (Date.today.year..(Date.today.year + 10)).to_a
       = f.input :cc_exp_yyyy, :as => :select, :include_blank => false, :default => (@payment_method.cc_exp_yyyy || Date.today.year), :collection => year_options, :input_html => { :name => 'cc_exp_yyyy', :class => 'input-medium' }
       = f.semantic_errors(:cc_exp_mm, :cc_exp_yyyy)
