@@ -13,7 +13,7 @@
 
 # source function library
 . /etc/rc.d/init.d/functions
-#set -x
+. /usr/libexec/stickshift/cartridges/abstract/info/lib/util 
 
 lockfile=/var/lock/subsys/libra
 logfile=/var/log/libra-async-start.log
@@ -61,7 +61,8 @@ function get_mcs_level() {
     TIER=$SETSIZE
 
     ORD=$1
-    while [ $ORD -gt $(($TIER)) ] ; do
+    while [ $ORD -gt $(($TIER)) ]
+    do
         ORD=$(($ORD - $TIER))
         TIER=$(($TIER - 1))
     done
@@ -75,36 +76,6 @@ function get_mcs_level() {
 function homedir() {
     # USERNAME=$1
     grep "^$1:" /etc/passwd | cut -d: -f 6
-}
-
-function userapps() {
-    # USERNAME=$1
-    (
-        for env_var in `homedir $1`/.env/*_CTL_SCRIPT
-        do
-            source $env_var
-        done
-        for cmd in `awk 'BEGIN { for (a in ENVIRON) if (a ~ /DB_CTL_SCRIPT$/) print ENVIRON[a] }'`
-        do
-            echo "$cmd"
-        done
-        for cmd in `awk 'BEGIN { for (a in ENVIRON) if ((a ~ /_CTL_SCRIPT$/) && !(a ~ /DB_CTL_SCRIPT$/) && (a != "OPENSHIFT_GEAR_CTL_SCRIPT")) print ENVIRON[a] }'`
-        do
-            echo "$cmd"
-        done
-        for cmd in `awk 'BEGIN { for (a in ENVIRON) if (a == "OPENSHIFT_GEAR_CTL_SCRIPT") print ENVIRON[a] }'`
-        do
-            echo "$cmd"
-        done
-    )
-}
-
-function apptype() {
-    # USERNAME=$1
-    # APPNAME=$2
-    _HOMEDIR=`homedir $1`
-    _APP_TYPE=`cat $_HOMEDIR/git/${2}.git/description | cut -d' ' -f 1`
-    echo $_APP_TYPE
 }
 
 RETVAL=0
@@ -136,52 +107,59 @@ function log_error() {
     _log_message user.err "$@"
 }
 
-return_output() {
-    if [ "$1" ]; then
-	echo >> "$1" 2>&1
-	cat "$1" | sed -e "s#\[  OK  \]#\[  ${GREEN}OK${NORM}  \]#" -e "s#\[FAILED\]#\[${RED}FAILED${NORM}\]#"
-	rm -f "$1"
+function return_output() {
+    if [ "$1" ]
+    then
+        echo >> "$1" 2>&1
+        cat "$1" | sed -e "s#\[  OK  \]#\[  ${GREEN}OK${NORM}  \]#" -e "s#\[FAILED\]#\[${RED}FAILED${NORM}\]#"
+        rm -f "$1"
     fi
 }
 
-return_terminate() {
+function return_terminate() {
     log_error "Timeout $1 $2"
     print_column -n 59 "Timeout $2..."
     echo "[${RED}FAILED${NORM}]"
     exit 1
 }
 
-startuser() {
+function startuser() {
     # USERNAME=$1
     local OUTFILE=$(mktemp /var/run/stickshift/stickshift_init-startuser-$1.XXXXXXXX)
     trap "return_terminate startuser $1 $OUTFILE" USR1
     log_info "Starting $1..."
     echo "Starting $1..." >> $OUTFILE 2>&1
-    ( for APPNAME in `userapps $1`
+    (
+      APP_HOME=/var/lib/stickshift/$1
+      for cartridge in $(get_start_order)
       do
-          startapp $1 $APPNAME >> $OUTFILE 2>&1
-      done ) &
+          startapp $1 $cartridge >> $OUTFILE 2>&1
+      done
+    ) &
     wait
     log_info "Started $1"
     return_output $OUTFILE
 }
 
-stopuser() {
+function stopuser() {
     # USERNAME=$1
     local OUTFILE=$(mktemp /var/run/stickshift/stickshift_init-stopuser-$1.XXXXXXXX)
     trap "return_terminate stopuser $1 $OUTFILE" USR1
     log_info "Stopping $1..."
     echo "Stopping $1..." >> $OUTFILE 2>&1
-    ( for APPNAME in `userapps $1 | tac`
+    (
+      APP_HOME=/var/lib/stickshift/$1
+      for cartridge in $(get_stop_order)
       do
-          stopapp $1 $APPNAME >> $OUTFILE 2>&1
-      done ) &
+          stopapp $1 $cartridge >> $OUTFILE 2>&1
+      done
+    ) &
     wait
     log_info "Stopped $1"
     return_output $OUTFILE
 }
 
-setuppam(){
+function setuppam() {
     uuid=$1
     if [ ! -f "/etc/security/limits.d/84-${uuid}.conf" ]
     then
@@ -190,19 +168,22 @@ setuppam(){
     fi
 }
 
-startapp() {
+function startapp() {
     # USERNAME=$1
-    # APPSCRIPT=$2
+    # CARTRIDGE=$2
     uid=$(id -u "$1")
     setuppam $1
-    mcs_level=`get_mcs_level $uid`
-    source /var/lib/stickshift/$1/.env/OPENSHIFT_RUN_DIR
-    if [ -f "${OPENSHIFT_RUN_DIR}/stop_lock" ]
+    mcs_level=$(get_mcs_level $uid)
+
+    locks=$(ls /var/lib/stickshift/$1/*/run/stop_lock 2>/dev/null |grep -ve 'app-root|git' |wc -l)
+    if [ "$locks" -gt 0 ]
     then
         echo "$1 is locked"
     else
-        print_column -n 59 "    $(basename $2)"
-        local OUTPUT=$(daemon --user="$1" --pidfile=httpd_$1-$(basename $2) runcon -t libra_t -l $mcs_level $2 start)
+        print_column -n 59 "    $2"
+
+        script_name=/usr/libexec/stickshift/cartridges/$2/info/bin/app_ctl.sh
+        local OUTPUT=$(daemon --user="$1" --pidfile=httpd_$1-$2 runcon -t libra_t -l $mcs_level $script_name start)
         RETVAL=$?
         if [ $RETVAL -eq 0 ]
         then
@@ -216,16 +197,16 @@ startapp() {
         fi
         echo
     fi
-    unset OPENSHIFT_RUN_DIR
 }
 
-stopapp() {
+function stopapp() {
     # USERNAME=$1
-    # APPSCRIPT=$2
+    # CARTRIDGE=$2
     uid=$(id -u "$1")
-    mcs_level=`get_mcs_level $uid`
-    print_column -n 59 "    $(basename $2)"
-    local OUTPUT=$(daemon --user="$1" --pidfile=httpd_$1-$(basename $2) runcon -t libra_t -l $mcs_level $2 stop)
+    mcs_level=$(get_mcs_level $uid)
+    print_column -n 59 "    $2"
+    script_name=/usr/libexec/stickshift/cartridges/$2/info/bin/app_ctl.sh
+    local OUTPUT=$(daemon --user="$1" --pidfile=httpd_$1-$2 runcon -t libra_t -l $mcs_level $script_name stop)
     RETVAL=$?
     if [ $RETVAL -eq 0 ]
     then
@@ -240,7 +221,7 @@ stopapp() {
     echo
 }
 
-start_backgrounded() {
+function start_backgrounded() {
     log_info "Starting Libra services in the background ..."
     nohup /etc/init.d/libra waited-start > $logfile 2>&1 &
     bgpid=$!
@@ -252,11 +233,11 @@ start_backgrounded() {
     echo
 }
 
-waited_start() {
+function waited_start() {
     log_info "Starting Libra services: "
     echo
 
-    for uuid in `libra_users`
+    for uuid in $(libra_users)
     do
         /bin/egrep -q -v "idle" /var/lib/stickshift/$uuid/app-root/runtime/.state && echo $uuid || echo "Skipping $uuid" 1>&2
     done | xargs -I{} -n 1 -P $numparallel /usr/bin/timeout -s USR1 $timeout /etc/init.d/libra startuser {}
@@ -268,11 +249,11 @@ waited_start() {
     return $GROUP_RETVAL
 }
 
-stop() {
+function stop() {
     log_info "Stopping Libra Services: "
     echo
 
-    for uuid in `libra_users`
+    for uuid in $(libra_users)
     do
         /bin/egrep -q -v "stopped|idle" /var/lib/stickshift/$uuid/app-root/runtime/.state && echo $uuid || echo "Skipping $uuid" 1>&2
     done | xargs -I{} -n 1 -P $numparallel /usr/bin/timeout -s USR1 $timeout /etc/init.d/libra stopuser {}
@@ -284,12 +265,12 @@ stop() {
     return $GROUP_RETVAL
 }
 
-restart() {
+function restart() {
     # This restarts each app individually. DO NOT change it to simply call stop() and start()
     log_info "Restarting Libra Services: "
     echo
 
-    for uuid in `libra_users`
+    for uuid in $(libra_users)
     do
         /bin/egrep -q -v "idle|stopped" /var/lib/stickshift/$uuid/app-root/runtime/.state && echo $uuid || echo "Skipping $uuid" 1>&2
     done | xargs -I{} -n 1 -P $numparallel /usr/bin/timeout -s USR1 $timeout /etc/init.d/libra restartuser {}
@@ -322,25 +303,28 @@ case "$1" in
   status)
     echo "Checking Libra Services: "
 
-    # check for $1 (user) and $2 (appname)
-    # This won't scale forever, but works fine in the '100 or so' range
-    for ctl_script in `/bin/find /var/lib/stickshift/ -maxdepth 3 -mindepth 3 -type f -name "*_ctl.sh"`
+    for gear in $(grep ':libra guest:' /etc/passwd | cut -d: -f6)
     do
-        script_name=$(basename $ctl_script)
-        run_as=$( echo $ctl_script | awk -F/ '{print $5}')
-        echo -n "    Checking http for ${script_name%_ctl.sh}"
-        uid=$(id -u "$run_as")
-        mcs_level=`get_mcs_level $uid`
-        daemon --user=$run_as --pidfile=httpd_${script_name} runcon -t libra_t -l $mcs_level $ctl_script status
-        RETVAL=$?
-        echo
-        if [ $RETVAL -eq 0 ]
-        then
-            echo_success
-        else
-            GROUP_RETVAL=$(($GROUP_RETVAL+1))
-            echo_failure
-        fi
+        for cartridge in $(ls -d $gear/* |grep -v 'app-root|git')
+        do
+            cartridge=$(basename $cartridge)
+            script_name=/usr/libexec/stickshift/cartridges/$cartridge/info/bin/app_ctl.sh
+            source $gear/.env/OPENSHIFT_APP_NAME
+            echo -n "    Checking http for $OPENSHIFT_APP_NAME"
+            runas=$(basename $gear)
+            uid=$(id -u "$run_as")
+            mcs_level=$(get_mcs_level $uid)
+            daemon --user=$run_as --pidfile=httpd_$runas_$cartridge runcon -t libra_t -l $mcs_level $script_name status
+            RETVAL=$?
+            echo
+            if [ $RETVAL -eq 0 ]
+            then
+                echo_success
+            else
+                GROUP_RETVAL=$(($GROUP_RETVAL+1))
+                echo_failure
+            fi
+        done
     done
     echo
     #return $GROUP_RETVAL

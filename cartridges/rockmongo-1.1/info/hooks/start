@@ -26,17 +26,17 @@ done
 
 [ $# -eq 3 ] || print_help
 
+cartridge_type="rockmongo-1.1"
 source "/etc/stickshift/stickshift-node.conf"
 source ${CARTRIDGE_BASE_PATH}/abstract/info/lib/util
 
 setup_basic_hook "$1" $2 $3
 
 ROCKMONGO_DIR=`echo $APP_HOME/rockmongo-1.1 | tr -s /` # ensure that there aren't double /'s
-ROCKMONGO_CTL_SCRIPT="$ROCKMONGO_DIR/${application}_rockmongo_ctl.sh"
 
 
 #
 # Start application
 #
 rm -f "$ROCKMONGO_DIR/run/stop_lock"
-run_as_user "$ROCKMONGO_CTL_SCRIPT start"
+run_as_user "${CARTRIDGE_BASE_PATH}/${cartridge_type}/info/bin/app_ctl.sh start"

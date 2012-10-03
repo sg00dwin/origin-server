@@ -51,7 +51,7 @@ def read_env_vars():
 #    os.putenv
     envdir = os.path.expanduser('~/.env/')
     for env in os.listdir(envdir):
-        if 'USER_VARS' == env:
+        if env in ['USER_VARS', 'TYPELESS_TRANSLATED_VARS']:
            continue
         elif os.path.isdir(envdir + env):
            if '.uservars' == env:

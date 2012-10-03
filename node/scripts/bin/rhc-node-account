@@ -137,18 +137,17 @@ function user_app_type() {
     _APPTYPE=`cat ${_HOMEDIR}/git/${2}.git/description | cut -d' ' -f1`
     if [ "$_APPTYPE" != "Unnamed" ]
     then
-	echo $_APPTYPE
+        echo $_APPTYPE
     else
-	#echo "WARNING: Unnamed Application: update git description" >&2
-	_APPDIR=`dirname ${_HOMEDIR}/*/$2`
-	basename $_APPDIR
+        #echo "WARNING: Unnamed Application: update git description" >&2
+        ls $_HOMEDIR |grep -v 'app-root|git' |sed '$!s/$/, /' |tr -d '\n'
     fi
 }
 
 function user_app_disk_space() {
     # USERNAME=$1
     # APPNAME=$2
-    du -s `homedir $1`/$2 | cut -f1
+    du -s `ls -d \`homedir $1/*\` |egrep -v 'app-root|git'` | awk '{total=total+$1} END {print total}'
 }
 
 function user_app_git_disk_space() {
@@ -160,7 +159,7 @@ function user_app_git_disk_space() {
 function user_app_log_disk_space() {
     # USERNAME=$1
     # APPNAME=$2
-    du -s `homedir $1`/$2/logs | cut -f1
+    du -s `ls -d \`homedir $1\`/*/logs/* |egrep -v 'app-root|git'` | awk '{total=total+$1} END {print total}'
 }
 # disk use categories:
 # total
