@@ -5,7 +5,7 @@
       -#= link_to "Newsletter Sign Up", newsletter_signup_url
       = link_to "Plans and Pricing", pricing_url
     .pull-right.login
-      %form#search-top{:action => "/community/search/node", :method => "get"}
+      %form#search-top{:action => community_search_url, :method => "get"}
         %input.search-query{:name => "keys", :placeholder => "SEARCH", :type => "text"}
           %button.search{:type => "submit", :value => "Search"}
     
