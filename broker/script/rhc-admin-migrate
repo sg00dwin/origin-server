@@ -557,6 +557,8 @@ end
 
 $:.unshift('/var/www/stickshift/broker')
 require 'config/environment'
+# Disable analytics for admin scripts
+Rails.configuration.analytics[:enabled] = false
 
 if opt['max_threads']
   max_threads = opt['max_threads'].to_i
