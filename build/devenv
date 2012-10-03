@@ -944,9 +944,9 @@ rm -rf origin-dev-tools
 mv origin-dev-tools-bare-repo origin-dev-tools
 
 rm -rf #{working_dirs}
-#{options.clean_metadata? ? "yum update -y --exclude='rhc-devenv' rhc-* cartridge-* rubygem-stickshift-* rubygem-gearchanger-* rubygem-uplift-* rubygem-swingshift-*; " : ''}
+#{options.clean_metadata? ? "yum update -y --exclude='rhc-devenv' rhc-* cartridge-* rubygem-stickshift-* rubygem-gearchanger-* rubygem-uplift-* rubygem-swingshift-* 2>&1;" : ''}
 
-#{options.clean_metadata? ? '/bin/bash li-test/misc/devenv/li-devenv.sh --install_templates' : ''}
+#{options.clean_metadata? ? '/bin/bash li-test/misc/devenv/li-devenv.sh --install_templates 2>&1' : ''}
 
 # End shell code
 ################

@@ -21,9 +21,8 @@ class CloudUserObserver < ActiveModel::Observer
   end
 
   def cloud_user_create_success(user)
-    # add nurture and apptegic
+    # add nurture
     Express::Broker::Nurture.libra_contact(user.login, user.uuid, nil, 'create')
-    Express::Broker::Apptegic.libra_contact(user.login, user.uuid, nil, 'create')
     # if any of the above fail, it will result in the user being deleted
   end
 

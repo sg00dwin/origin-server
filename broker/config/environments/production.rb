@@ -72,18 +72,15 @@ Broker::Application.configure do
     :datastore_enabled => false,
     :syslog_enabled => false
   }
-  
+
   config.analytics = {
-    :nurture_enabled => true,
-    :nurture_username => "admin",
-    :nurture_password => "password",
-    :nurture_url => "https://libra-makara.nurturehq.com/",
-    
-    :apptegic_enabled => false,
-    :apptegic_url => "https://redhat.apptegic.com/httpreceiver",
-    :apptegic_key => "redhat",
-    :apptegic_secret => "4DC5A0AA-48AE-9287-5F66-9A73E14B6E31",
-    :apptegic_dataset => "test"
+    :enabled => true, # global flag for whether any analytics should be enabled
+    :nurture => {
+      :enabled => true,
+      :username => "admin",
+      :password => "password",
+      :url => "https://libra-makara.nurturehq.com/" 
+    }
   }
 
   config.datastore = {

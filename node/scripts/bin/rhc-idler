@@ -114,7 +114,7 @@ service libra stopuser "${uuid}"
 # code copied from node/lib/util_ext
 runuser --shell /bin/sh "$uuid" -c "echo idle >$OPENSHIFT_HOMEDIR/app-root/runtime/.state"
 
-# Report to apptegic/nurture
+# Report to nurture
 curl -sk -d "json_data={\"app_uuid\":\"${uuid}\",\"action\":\"idle\"}" -X POST https://${BROKER_HOST}/broker/nurture >/dev/null 2>&1 &
 
 source "/var/lib/stickshift/${uuid}/.env/OPENSHIFT_RUN_DIR"
