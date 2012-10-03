@@ -557,6 +557,14 @@ fi
 /usr/bin/rhc-chk -l user_with_multiple_gear_sizes@test.com -p foo > /dev/null 2>&1
 /usr/bin/rhc-admin-ctl-user -l user_with_multiple_gear_sizes@test.com --addgearsize medium > /dev/null 2>&1
 
+# Hack to resolve parser error
+# See https://github.com/cucumber/gherkin/issues/182
+if [ -f /usr/lib/ruby/gems/1.8/gems/gherkin-2.2.4/lib/gherkin/i18n.rb ]
+then
+  sed -i 's/listener, force_ruby=false/listener, force_ruby=true/' \
+      /usr/lib/ruby/gems/1.8/gems/gherkin-2.2.4/lib/gherkin/i18n.rb
+fi
+
 %files
 %defattr(-,root,root,-)
 %attr(0660,-,-) %{brokerdir}/log/mcollective-client.log
