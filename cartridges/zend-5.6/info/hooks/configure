@@ -53,8 +53,14 @@ mkdir -p phplib/pear/{docs,ext,php,cache,cfg,data,download,temp,tests,www}
 ln -s /usr/lib64/httpd/modules modules
 ln -s /etc/httpd/conf/magic conf/magic
 mkdir -p $ZENDCART_INSTANCE_DIR/etc
+#sed -e "s,TEMPLATE_SET_ME_SESSION_SAVE_PATH,$ZENDCART_INSTANCE_DIR/sessions/," \
+#    -e "s,TEMPLATE_SET_ME_UPLOAD_TMP_DIR,$ZENDCART_INSTANCE_DIR/tmp/," $CART_CONF_DIR/php.ini > $ZENDCART_INSTANCE_DIR/etc/php.ini
+
+source_if_exists "$APP_HOME/.env/OPENSHIFT_REPO_DIR"
 sed -e "s,TEMPLATE_SET_ME_SESSION_SAVE_PATH,$ZENDCART_INSTANCE_DIR/sessions/," \
-    -e "s,TEMPLATE_SET_ME_UPLOAD_TMP_DIR,$ZENDCART_INSTANCE_DIR/tmp/," $CART_CONF_DIR/php.ini > $ZENDCART_INSTANCE_DIR/etc/php.ini
+    -e "s,TEMPLATE_SET_ME_UPLOAD_TMP_DIR,$ZENDCART_INSTANCE_DIR/tmp/," \
+    -e "s,TEMPLATE_ZEND_INSTANCE_DIR,$ZENDCART_INSTANCE_DIR," \
+    -e "s,TEMPLATE_OPENSHIFT_REPO_DIR,$OPENSHIFT_REPO_DIR," $CART_CONF_DIR/php.ini > $ZENDCART_INSTANCE_DIR/etc/php.ini
 popd > /dev/null
 
 #
@@ -78,10 +84,10 @@ run_as_user "$CART_INFO_DIR/bin/zend_configure_filesystem_on_gear.sh ${ZEND_USER
 chown root:${group_id} "$zend_sandbox_dir"
 
 # Pear requires a special pearrc file, this is that file:
-#pear config-create "$ZENDCART_INSTANCE_DIR"/phplib/pear/ "$APP_HOME"/.pearrc > /dev/null 2>&1
-#pear -c "$APP_HOME"/.pearrc config-set php_ini "$ZENDCART_INSTANCE_DIR"/conf/php.ini > /dev/null 2>&1
-#pear -c "$APP_HOME"/.pearrc config-set auto_discover 1 > /dev/null 2>&1
-#observe_setup_var_lib_file "$APP_HOME"/.pearrc
+pear config-create "$ZENDCART_INSTANCE_DIR"/phplib/pear/ "$APP_HOME"/.pearrc > /dev/null 2>&1
+pear -c "$APP_HOME"/.pearrc config-set php_ini "$ZENDCART_INSTANCE_DIR"/etc/php.ini > /dev/null 2>&1
+pear -c "$APP_HOME"/.pearrc config-set auto_discover 1 > /dev/null 2>&1
+observe_setup_var_lib_file "$APP_HOME"/.pearrc
 
 populate_repo_dir
 
