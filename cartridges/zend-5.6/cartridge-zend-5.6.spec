@@ -2,7 +2,7 @@
 
 Summary:   Provides zend-5.6 support
 Name:      cartridge-zend-5.6
-Version: 0.96.1
+Version: 0.96.2
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   ASL 2.0
@@ -108,6 +108,16 @@ rm -rf %{buildroot}
 %doc %{cartridgedir}/LICENSE
 
 %changelog
+* Wed Oct 03 2012 Adam Miller <admiller@redhat.com> 0.96.2-1
+- Bug 862199 (lnader@redhat.com)
+- script to fix migration (lnader@redhat.com)
+- Fixed zend upgrade problem (lnader@redhat.com)
+- added Zend framework 2 ini file (lnader@redhat.com)
+- Bug 859186 (lnader@redhat.com)
+- minor change request from zend (lnader@redhat.com)
+- Display EULA on users first visit (lnader@redhat.com)
+- Merge Zend's and OpenShift's php.ini files (vvitek@redhat.com)
+
 * Wed Sep 12 2012 Adam Miller <admiller@redhat.com> 0.96.1-1
 - bump_minor_versions for sprint 18 (admiller@redhat.com)
 

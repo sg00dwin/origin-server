@@ -8,7 +8,7 @@
 
 Summary:   Dependencies for OpenShift development
 Name:      rhc-devenv
-Version: 0.100.7
+Version: 0.100.8
 Release:   1%{?dist}
 Group:     Development/Libraries
 License:   GPLv2
@@ -572,6 +572,17 @@ fi
 %{policydir}/*
 
 %changelog
+* Wed Oct 03 2012 Adam Miller <admiller@redhat.com> 0.100.8-1
+- US1375 Created multi-gear user for test; moved URLs to helpers
+  (hripps@redhat.com)
+- syncing jenkins jobs (dmcphers@redhat.com)
+- Merge pull request #426 from danmcp/master (openshift+bot@redhat.com)
+- Merge pull request #424 from pravisankar/dev/ravi/subaccount-deletion
+  (openshift+bot@redhat.com)
+- Subaccount user delete tests Fix scripts/tests (rpenta@redhat.com)
+- Add ruby193-build to devenv.spec so that sync will work (ccoleman@redhat.com)
+- Removing Gemfile.locks (dmcphers@redhat.com)
+
 * Fri Sep 28 2012 Adam Miller <admiller@redhat.com> 0.100.7-1
 - exclude our packages from BuildRequires as well (dmcphers@redhat.com)
 - The AddOutputFilterByType directive is deprecated.  Switch to mod_filter.
