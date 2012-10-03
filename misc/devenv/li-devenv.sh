@@ -10,7 +10,7 @@ then
 
   while read uuid 
   do
-    rhc-admin-ctl-template -c remove -u $uuid
+    ss-admin-ctl-template -c remove -u $uuid
   done < <(mongo openshift_broker_dev --quiet --eval "$query")
 
   #### This creates the templates

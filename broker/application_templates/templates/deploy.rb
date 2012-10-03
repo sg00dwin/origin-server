@@ -78,7 +78,7 @@ __END__
     Description: ""
     Architecture: noarch
 
-  :script: rhc-admin-ctl-template --command 'add' --cost '1' --git-url 'git://github.com/openshift/cakephp-example.git' --named 'CakePHP' --tags 'php,cakephp,framework,experimental'
+  :script: ss-admin-ctl-template --command 'add' --cost '1' --git-url 'git://github.com/openshift/cakephp-example.git' --named 'CakePHP' --tags 'php,cakephp,framework,experimental'
   :metadata: |-
     {
       "website": "http://cakephp.org/",
@@ -118,7 +118,7 @@ __END__
     Description: ""
     Architecture: noarch
 
-  :script: rhc-admin-ctl-template --command 'add' --cost '1' --git-url 'git://github.com/openshift/drupal-example.git' --named 'Drupal' --tags 'php,drupal,wiki,framework,experimental'
+  :script: ss-admin-ctl-template --command 'add' --cost '1' --git-url 'git://github.com/openshift/drupal-example.git' --named 'Drupal' --tags 'php,drupal,wiki,framework,experimental'
   :metadata: |-
     {
       "website": "http://drupal.org/",
@@ -158,7 +158,7 @@ __END__
     Description: ""
     Architecture: noarch
 
-  :script: rhc-admin-ctl-template --command 'add' --cost '1' --git-url 'git://github.com/openshift/kitchensink-example.git' --named 'Kitchensink Example' --tags 'java,jboss,framework,experimental'
+  :script: ss-admin-ctl-template --command 'add' --cost '1' --git-url 'git://github.com/openshift/kitchensink-example.git' --named 'Kitchensink Example' --tags 'java,jboss,framework,experimental'
   :metadata: |-
     {
       "website": "https://docs.jboss.org/author/display/AS71/Kitchensink+quickstart",
@@ -198,7 +198,7 @@ __END__
     Description: ""
     Architecture: noarch
 
-  :script: rhc-admin-ctl-template --command 'add' --cost '1' --git-url 'git://github.com/openshift/rails-example.git' --named 'Ruby on Rails' --tags 'ruby,rails,framework,experimental'
+  :script: ss-admin-ctl-template --command 'add' --cost '1' --git-url 'git://github.com/openshift/rails-example.git' --named 'Ruby on Rails' --tags 'ruby,rails,framework,experimental'
   :metadata: |-
     {
       "website": "http://rubyonrails.org/",
@@ -232,7 +232,7 @@ __END__
     Description: ""
     Architecture: noarch
 
-  :script: rhc-admin-ctl-template --command 'add' --cost '1' --git-url 'git://github.com/openshift/spring-eap6-quickstart.git' --named 'Spring Framework on JBoss EAP6' --tags 'java,jboss,framework,experimental'
+  :script: ss-admin-ctl-template --command 'add' --cost '1' --git-url 'git://github.com/openshift/spring-eap6-quickstart.git' --named 'Spring Framework on JBoss EAP6' --tags 'java,jboss,framework,experimental'
   :metadata: |-
     {
       "website": "http://springframework.org/",
@@ -272,7 +272,7 @@ __END__
     Description: ""
     Architecture: noarch
 
-  :script: rhc-admin-ctl-template --command 'add' --cost '1' --git-url 'git://github.com/openshift/wordpress-example.git' --named 'WordPress' --tags 'php,wordpress,blog,framework,experimental'
+  :script: ss-admin-ctl-template --command 'add' --cost '1' --git-url 'git://github.com/openshift/wordpress-example.git' --named 'WordPress' --tags 'php,wordpress,blog,framework,experimental'
   :metadata: |-
     {
       "website": "http://wordpress.org",

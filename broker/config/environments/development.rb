@@ -165,7 +165,7 @@ Broker::Application.configure do
     :districts => {
         :enabled => true,
         :require_for_app_create => false,
-        :max_capacity => 6000, # Only used with district create.  Modify capacity through rhc-admin-ctl-district.
+        :max_capacity => 6000, # Only used with district create.  Modify capacity through ss-admin-ctl-district.
         :first_uid => 1000 # Can not modify after district is created.  Only affects new districts.
     },
     :node_profile_enabled => false

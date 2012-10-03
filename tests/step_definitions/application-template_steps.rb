@@ -6,7 +6,7 @@ end
 
 When /^I add a new template named '([^\']*)' with dependencies: '([^\']*)' and git repository '([^\']*)' and tags '([^\']*)' consuming (\d+) gear and metadata '([^\']*)'$/ do |display_name, dependencies, git_url, tags, num_gears, metadata|
   dependencies = dependencies.split(",").map{ |dep| "  - #{dep}\n"}
-  output = `rhc-admin-ctl-template -c add -n "#{display_name}" -d "Requires: \n#{dependencies}\nSubscribes:\n  doc-root:\n    Type: \"FILESYSTEM:doc-root\"" -g #{git_url} -t#{tags} --cost #{num_gears} -m '#{metadata}'`
+  output = `ss-admin-ctl-template -c add -n "#{display_name}" -d "Requires: \n#{dependencies}\nSubscribes:\n  doc-root:\n    Type: \"FILESYSTEM:doc-root\"" -g #{git_url} -t#{tags} --cost #{num_gears} -m '#{metadata}'`
   @template_uuid = output.split(" ")[1]
 end
 
@@ -18,7 +18,7 @@ When /^I add a new rails template$/ do
   File.open( "/tmp/descriptor.yaml", "w" ) { |f| f.write(descriptor_yaml) }
   File.open( "/tmp/metadata.json", "w" ) { |f| f.write(metadata_json) }
 
-  output = `rhc-admin-ctl-template --named 'Ruby on Rails' --metadata '/tmp/metadata.json' --git-url 'https://github.com/openshift/rails-example' --command 'add' --cost '1' --descriptor '/tmp/descriptor.yaml' --tags 'ruby,rails,framework'`
+  output = `ss-admin-ctl-template --named 'Ruby on Rails' --metadata '/tmp/metadata.json' --git-url 'https://github.com/openshift/rails-example' --command 'add' --cost '1' --descriptor '/tmp/descriptor.yaml' --tags 'ruby,rails,framework'`
   @template_uuid = output.split(" ")[1]
 end
 
@@ -69,7 +69,7 @@ When /^I search for the tag '([^\']*)'$/ do |tag|
 end
 
 When /^I remove the template$/ do
-  output = `rhc-admin-ctl-template -c remove -u "#{@template_uuid}"`
+  output = `ss-admin-ctl-template -c remove -u "#{@template_uuid}"`
 end
 
 Then /^the template exists$/ do

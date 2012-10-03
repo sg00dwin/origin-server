@@ -38,6 +38,8 @@ Requires:  rubygem-mongo_mapper
 Requires:  rubygem-wddx
 Requires:  rubygem-pony
 Requires:  mcollective-qpid-plugin
+# As broker admin scripts are opensourced they are placed into this package
+Requires:  openshift-origin-broker-util
 Provides:  openshift-broker
 
 BuildArch: noarch
@@ -65,16 +67,10 @@ mkdir -p %{buildroot}%{brokerdir}/run
 mkdir -p %{buildroot}%{brokerdir}/log
 mkdir -p %{buildroot}%{_localstatedir}/log/stickshift
 
-mv %{buildroot}%{brokerdir}/script/rhc-admin-ctl-domain %{buildroot}/%{_bindir}
-mv %{buildroot}%{brokerdir}/script/rhc-admin-ctl-app %{buildroot}/%{_bindir}
 mv %{buildroot}%{brokerdir}/script/rhc-admin-cartridge-do %{buildroot}/%{_bindir}
 mv %{buildroot}%{brokerdir}/script/rhc-admin-migrate %{buildroot}/%{_bindir}
-mv %{buildroot}%{brokerdir}/script/rhc-admin-move %{buildroot}/%{_bindir}
-mv %{buildroot}%{brokerdir}/script/rhc-admin-ctl-district %{buildroot}/%{_bindir}
-mv %{buildroot}%{brokerdir}/script/rhc-admin-ctl-template %{buildroot}/%{_bindir}
 mv %{buildroot}%{brokerdir}/script/rhc-admin-ctl-usage %{buildroot}/%{_bindir}
 mv %{buildroot}%{brokerdir}/script/rhc-admin-ctl-plan %{buildroot}/%{_bindir}
-mv %{buildroot}%{brokerdir}/script/rhc-admin-ctl-user %{buildroot}/%{_bindir}
 mv %{buildroot}%{brokerdir}/script/rhc-admin-chk %{buildroot}/%{_bindir}
 mv %{buildroot}%{brokerdir}/script/rhc-admin-stale-dns %{buildroot}/%{_bindir}
 
@@ -95,17 +91,11 @@ rm -rf $RPM_BUILD_ROOT
 %attr(0750,-,-) %{brokerdir}/script
 %{brokerdir}
 %{htmldir}/broker
-%attr(0750,-,-) %{_bindir}/rhc-admin-ctl-domain
 %attr(0750,-,-) %{_bindir}/rhc-admin-chk
-%attr(0750,-,-) %{_bindir}/rhc-admin-ctl-app
 %attr(0750,-,-) %{_bindir}/rhc-admin-cartridge-do
 %attr(0750,-,-) %{_bindir}/rhc-admin-migrate
-%attr(0750,-,-) %{_bindir}/rhc-admin-move
-%attr(0750,-,-) %{_bindir}/rhc-admin-ctl-district
-%attr(0750,-,-) %{_bindir}/rhc-admin-ctl-template
 %attr(0750,-,-) %{_bindir}/rhc-admin-ctl-usage
 %attr(0750,-,-) %{_bindir}/rhc-admin-ctl-plan
-%attr(0750,-,-) %{_bindir}/rhc-admin-ctl-user
 %attr(0750,-,-) %{_bindir}/rhc-admin-stale-dns
 /usr/lib/stickshift/broker/application_templates
 
