@@ -266,7 +266,6 @@ module OpenShiftMigration
       gear_home = "#{libra_home}/#{uuid}"
       gear_name = Util.get_env_var_value(gear_home, "OPENSHIFT_GEAR_NAME")
       app_name = Util.get_env_var_value(gear_home, "OPENSHIFT_APP_NAME")
-      gear_dir = "#{gear_home}/#{gear_name}"
       output = ''
       exitcode = 0
 
@@ -286,7 +285,7 @@ module OpenShiftMigration
         }
 
         if File.directory?(File.join(gear_home, 'python-2.6'))
-          output += migrate_python(gear_dir, uuid)
+          output += migrate_python(gear_home, uuid)
         end
 
         jbosses.each { |k, v|
@@ -465,8 +464,8 @@ module OpenShiftMigration
     end
   end
   
-  def self.migrate_python(gear_dir, uuid)
-    conf_file = "#{gear_dir}/conf.d/stickshift.conf"
+  def self.migrate_python(gear_home, uuid)
+    conf_file = File.join(gear_home, 'python-2.6', 'conf.d', 'stickshift.conf')
     text = File.read(conf_file)
     result = text.gsub("WSGIPassAuthorization On", "WSGIPassAuthorization On\nWSGIProcessGroup #{uuid}\nWSGIDaemonProcess #{uuid} user=#{uuid} group=#{uuid} processes=2 threads=25 python-path=\"#{gear_dir}/repo/libs:#{gear_dir}/repo/wsgi:#{gear_dir}/virtenv/lib/python2.6/")
     File.open(conf_file, "w") {|file| file.puts result}
