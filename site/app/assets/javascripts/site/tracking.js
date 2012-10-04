@@ -39,7 +39,6 @@ function customGATracker() {
     _gaq.push(['_setAccount', 'UA-30752912-1']);
     _gaq.push(['_setDomainName', 'redhat.com']);
     _gaq.push(['_setCustomVar', 3 ,'Omni', omniCode , 1]);
-    _gaq.push(['_setSiteSpeedSampleRate', 10]);
     
     if(/app\/account\/complete/.test(url) && typeof trackAdWordsConversion == "function"){
         trackAdWordsConversion('1007064360', '3qfsCMjw0gIQqKqa4AM');
@@ -47,7 +46,7 @@ function customGATracker() {
     if(/community\/pricing/.test(url)){
         _gaq.push(['_setCustomVar', 4 ,'Viewed Pricing Page', 'Viewed Page', 1]);
     }
-    if(/community\/open-source\/download-origin/.test(url)){
+    if(/app\/opensource\/download/.test(url)){
         try{
             $('.action-call').live('click',function(e){
                 var url = $(this).attr("href");
@@ -101,7 +100,7 @@ try{
             var ki = document.createElement('script');
             ki.type = 'text/javascript';
             ki.async = true;
-            ki.src = '//s3.amazonaws.com/ki.js/35352/7LV.js';
+            ki.src = '//s3.amazonaws.com/ki.js/35352/7iu.js';
             var s = document.getElementsByTagName('script')[0];
             s.parentNode.insertBefore(ki, s);
         })();
