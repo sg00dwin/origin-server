@@ -156,6 +156,9 @@ EOF
 
 fi
 
+# Enable RHUI JBoss repos for cartridge rebase on core EAP packages
+yum -y install rh-amazon-rhui-client-jbeap6
+
 # Install the 32 bit java before anything else
 yum -y install java-1.6.0-openjdk.i686 java-1.6.0-openjdk-devel.i686
 yum -y remove java-1.6.0-openjdk.x86_64
