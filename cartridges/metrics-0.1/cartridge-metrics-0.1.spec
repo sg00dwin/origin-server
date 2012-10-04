@@ -2,7 +2,7 @@
 %global frameworkdir %{_libexecdir}/stickshift/cartridges/metrics-0.1
 
 Name: cartridge-metrics-0.1
-Version: 0.20.1
+Version: 0.20.2
 Release: 1%{?dist}
 Summary: Embedded metrics support for express
 
@@ -52,6 +52,9 @@ rm -rf $RPM_BUILD_ROOT
 %{cartridgedir}/info/manifest.yml
 
 %changelog
+* Thu Oct 04 2012 Adam Miller <admiller@redhat.com> 0.20.2-1
+- Typeless gear changes for US 2105 (jhonce@redhat.com)
+
 * Wed Sep 12 2012 Adam Miller <admiller@redhat.com> 0.20.1-1
 - bump_minor_versions for sprint 18 (admiller@redhat.com)
 
