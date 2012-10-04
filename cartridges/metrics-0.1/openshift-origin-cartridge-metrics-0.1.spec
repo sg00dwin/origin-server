@@ -2,7 +2,7 @@
 %global frameworkdir %{_libexecdir}/openshift/cartridges/metrics-0.1
 
 Name: openshift-origin-cartridge-metrics-0.1
-Version: 0.20.2
+Version: 0.20.3
 Release: 1%{?dist}
 Summary: Embedded metrics support for express
 
@@ -52,6 +52,9 @@ rm -rf $RPM_BUILD_ROOT
 %{cartridgedir}/info/manifest.yml
 
 %changelog
+* Thu Oct 04 2012 Krishna Raman <kraman@gmail.com> 0.20.3-1
+- new package built with tito
+
 * Thu Oct 04 2012 Adam Miller <admiller@redhat.com> 0.20.2-1
 - Typeless gear changes for US 2105 (jhonce@redhat.com)
 
