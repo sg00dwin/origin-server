@@ -8,7 +8,7 @@
 
 Summary:   Dependencies for OpenShift development
 Name:      rhc-devenv
-Version: 0.100.8
+Version: 0.100.9
 Release:   1%{?dist}
 Group:     Development/Libraries
 License:   GPLv2
@@ -580,6 +580,9 @@ fi
 %{policydir}/*
 
 %changelog
+* Thu Oct 04 2012 Adam Miller <admiller@redhat.com> 0.100.9-1
+- Hack to fix gherkin parser failure (jhonce@redhat.com)
+
 * Wed Oct 03 2012 Adam Miller <admiller@redhat.com> 0.100.8-1
 - US1375 Created multi-gear user for test; moved URLs to helpers
   (hripps@redhat.com)
