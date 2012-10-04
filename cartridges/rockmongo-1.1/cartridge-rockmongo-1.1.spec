@@ -2,7 +2,7 @@
 %global frameworkdir %{_libexecdir}/stickshift/cartridges/rockmongo-1.1
 
 Name: cartridge-rockmongo-1.1
-Version: 1.15.2
+Version: 1.15.3
 Release: 1%{?dist}
 Summary: Embedded RockMongo support for OpenShift
 
@@ -56,6 +56,9 @@ rm -rf $RPM_BUILD_ROOT
 %doc %{cartridgedir}/LICENSE
 
 %changelog
+* Thu Oct 04 2012 Adam Miller <admiller@redhat.com> 1.15.3-1
+- Typeless gear changes for US 2105 (jhonce@redhat.com)
+
 * Thu Sep 20 2012 Adam Miller <admiller@redhat.com> 1.15.2-1
 - Change hard-coded references to mongodb-2.2 (rmillner@redhat.com)
 
