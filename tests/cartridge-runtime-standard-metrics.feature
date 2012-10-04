@@ -10,7 +10,6 @@ Feature: metrics Embedded Cartridge
     And 4 processes named httpd will be running
     And the embedded metrics-0.1 cartridge directory will exist
     And the embedded metrics-0.1 cartridge log files will exist
-    And the embedded metrics-0.1 cartridge control script will exist
 
     When I stop the metrics-0.1 cartridge
     Then 2 processes named httpd will be running

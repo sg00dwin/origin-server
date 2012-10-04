@@ -8,7 +8,7 @@
 
 Summary:   Dependencies for OpenShift development
 Name:      rhc-devenv
-Version: 0.100.8
+Version: 0.100.10
 Release:   1%{?dist}
 Group:     Development/Libraries
 License:   GPLv2
@@ -557,6 +557,14 @@ fi
 /usr/bin/rhc-chk -l user_with_multiple_gear_sizes@test.com -p foo > /dev/null 2>&1
 /usr/bin/rhc-admin-ctl-user -l user_with_multiple_gear_sizes@test.com --addgearsize medium > /dev/null 2>&1
 
+# Hack to resolve parser error
+# See https://github.com/cucumber/gherkin/issues/182
+if [ -f /usr/lib/ruby/gems/1.8/gems/gherkin-2.2.4/lib/gherkin/i18n.rb ]
+then
+  sed -i 's/listener, force_ruby=false/listener, force_ruby=true/' \
+      /usr/lib/ruby/gems/1.8/gems/gherkin-2.2.4/lib/gherkin/i18n.rb
+fi
+
 %files
 %defattr(-,root,root,-)
 %attr(0660,-,-) %{brokerdir}/log/mcollective-client.log
@@ -572,6 +580,16 @@ fi
 %{policydir}/*
 
 %changelog
+* Thu Oct 04 2012 Adam Miller <admiller@redhat.com> 0.100.10-1
+- Merge pull request #438 from brenton/remove_os_scripts2
+  (openshift+bot@redhat.com)
+- Merging in the latest from master (bleanhar@redhat.com)
+- The openshift-origin-broker-util packages provides the newly renamed admin
+  scripts (bleanhar@redhat.com)
+
+* Thu Oct 04 2012 Adam Miller <admiller@redhat.com> 0.100.9-1
+- Hack to fix gherkin parser failure (jhonce@redhat.com)
+
 * Wed Oct 03 2012 Adam Miller <admiller@redhat.com> 0.100.8-1
 - US1375 Created multi-gear user for test; moved URLs to helpers
   (hripps@redhat.com)

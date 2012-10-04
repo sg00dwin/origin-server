@@ -5,6 +5,7 @@
 [ -f ~/app-root/data/.bash_profile ] && source ~/app-root/data/.bash_profile
 
 source /etc/init.d/functions 2> /dev/null
+source /usr/libexec/stickshift/cartridges/abstract/info/lib/util
 
 # Import Environment Variables
 for f in ~/.env/*
@@ -42,20 +43,19 @@ EOF
 }
 
 function ctl_all {
-    for cmd in `awk 'BEGIN { for (a in ENVIRON) if (a ~ /_CTL_SCRIPT$/) print ENVIRON[a] }'`
-    do
-        echo "+ $cmd $@"
-        $cmd $@
-    done
+    case "$1" in
+        start) start_app ;;
+        stop)  stop_app ;;
+    esac
 }
 
 
 function mysql() {
    #  Setup default options.
-   [ -n "$OPENSHIFT_DB_HOST" ]  &&  hostopt="-h $OPENSHIFT_DB_HOST"
-   portopt="-P ${OPENSHIFT_DB_PORT:-3306}"
-   useropt="-u ${OPENSHIFT_DB_USERNAME:-'admin'}"
-   passopt=--password="$OPENSHIFT_DB_PASSWORD"
+   [ -n "$OPENSHIFT_MYSQL_DB_HOST" ]  &&  hostopt="-h $OPENSHIFT_MYSQL_DB_HOST"
+   portopt="-P ${OPENSHIFT_MYSQL_DB_PORT:-3306}"
+   useropt="-u ${OPENSHIFT_MYSQL_DB_USERNAME:-'admin'}"
+   passopt=--password="$OPENSHIFT_MYSQL_DB_PASSWORD"
 
    #  Unset default value if it was provided to us.
    for arg in $@; do
@@ -75,10 +75,10 @@ function mysql() {
 
 function psql() {
     PGDATABASE="$OPENSHIFT_APP_NAME" \
-        PGHOST="$OPENSHIFT_DB_HOST" \
-        PGPORT="${OPENSHIFT_DB_PORT:-5432}" \
-        PGUSER="${OPENSHIFT_DB_USERNAME:-'admin'}" \
-        PGPASSWORD="${OPENSHIFT_DB_PASSWORD}" \
+        PGHOST="$OPENSHIFT_POSTGRESQL_DB_HOST" \
+        PGPORT="${OPENSHIFT_POSTGRESQL_DB_PORT:-5432}" \
+        PGUSER="${OPENSHIFT_POSTGRESQL_DB_USERNAME:-'admin'}" \
+        PGPASSWORD="${OPENSHIFT_POSTGRESQL_DB_PASSWORD}" \
         /usr/bin/psql --set HISTFILE="~/app-root/data/.psql_history" "$@"
 }  #  End of psql function.
 
@@ -88,17 +88,17 @@ function mongo() {
       uopt=""
       popt=""
    else
-      uopt="--username ${OPENSHIFT_NOSQL_DB_USERNAME:-'admin'}"
-      [ -n "$OPENSHIFT_NOSQL_DB_PASSWORD" ]  &&  popt="--password $OPENSHIFT_NOSQL_DB_PASSWORD"
+      uopt="--username ${OPENSHIFT_MONGODB_DB_USERNAME:-'admin'}"
+      [ -n "$OPENSHIFT_MONGODB_DB_PASSWORD" ]  &&  popt="--password $OPENSHIFT_MONGODB_DB_PASSWORD"
    fi
 
-   if echo "$@" | egrep "\-\-host|$OPENSHIFT_NOSQL_DB_HOST" > /dev/null; then
+   if echo "$@" | egrep "\-\-host|$OPENSHIFT_MONGODB_DB_HOST" > /dev/null; then
       hopt=""  #  Do not override if --host is passed.
    else
-      if [ -n "$OPENSHIFT_NOSQL_DB_GEAR_DNS" ]; then
-         hopt="${OPENSHIFT_NOSQL_DB_GEAR_DNS:-'127.0.0.1'}:${OPENSHIFT_NOSQL_DB_PORT:-27017}/admin"
+      if [ -n "$OPENSHIFT_MONGODB_DB_GEAR_DNS" ]; then
+         hopt="${OPENSHIFT_MONGODB_DB_GEAR_DNS:-'127.0.0.1'}:${OPENSHIFT_MONGODB_DB_PORT:-27017}/admin"
       else
-         hopt="${OPENSHIFT_NOSQL_DB_HOST:-'127.0.0.1'}:${OPENSHIFT_NOSQL_DB_PORT:-27017}/admin"
+         hopt="${OPENSHIFT_MONGODB_DB_HOST:-'127.0.0.1'}:${OPENSHIFT_MONGODB_DB_PORT:-27017}/admin"
       fi
    fi
 
@@ -128,8 +128,8 @@ quota           list disk usage
 EOF
 }
 
-alias ctl_app=$OPENSHIFT_GEAR_CTL_SCRIPT
-alias tail_all="/usr/bin/tail -f $OPENSHIFT_GEAR_DIR/logs/*"
+alias ctl_app=$(get_framework_ctl_script $OPENSHIFT_GEAR_UUID)
+alias tail_all="/usr/bin/tail -f */logs/*"
 
 export PS1="[$OPENSHIFT_GEAR_DNS \W]\> "
 export TMOUT=300

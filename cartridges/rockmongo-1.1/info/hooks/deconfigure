@@ -28,12 +28,11 @@ source ${CARTRIDGE_BASE_PATH}/abstract/info/lib/util
 setup_embedded_deconfigure "$1" $2 $3
 
 ROCKMONGO_DIR=$(get_cartridge_instance_dir "$cartridge_type")
-ROCKMONGO_CTL_SCRIPT="$ROCKMONGO_DIR/${application}_rockmongo_ctl.sh"
 
 #
 # Stop app
 #
-run_as_user "$ROCKMONGO_CTL_SCRIPT stop" || warning "Failed to stop ${application}" 121
+run_as_user "${CARTRIDGE_BASE_PATH}/${cartridge_type}/info/bin/app_ctl.sh stop" || warning "Failed to stop ${application}" 121
 
 confirm_pid_gone "${ROCKMONGO_DIR}/run/httpd.pid"
 
@@ -42,7 +41,7 @@ confirm_log_files_inactive "$ROCKMONGO_DIR/logs"
 #
 # Remove environment variables
 #
-/bin/rm -f $APP_HOME/.env/OPENSHIFT_ROCKMONGO_GEAR_DIR $APP_HOME/.env/OPENSHIFT_ROCKMONGO_CTL_SCRIPT $APP_HOME/.env/OPENSHIFT_ROCKMONGO_IP 
+/bin/rm -f $APP_HOME/.env/OPENSHIFT_ROCKMONGO*
 
 
 # Remove rockmongo dir. This MUST be after stopping rockmongo as the CTL script relies on these.

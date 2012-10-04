@@ -1,5 +1,5 @@
-#@runtime_extended
-#@runtime_extended1
+# This file is kept around for testing the tests...
+# To quickly verify one cartridge without running the _MUCH_ longer scale-all.feature tests
 Feature: Scaling Verification Tests
   Scenario Outline: AutoScale App
     Given the libra client tools
@@ -11,7 +11,7 @@ Feature: Scaling Verification Tests
     When haproxy_ctld_daemon is started
     Then haproxy_ctld is running
     And 1 gears will be in the cluster
-    When 10 concurrent http connections are generated for 90 seconds
+    When 25 concurrent http connections are generated for 90 seconds
     Then 2 gears will be in the cluster
     When the application is destroyed
     Then the application should not be accessible

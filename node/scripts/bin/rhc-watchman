@@ -80,29 +80,13 @@ class Watchman
       }
 
       app_env.keys.each {|uuid|
-        if app_env[uuid][:OPENSHIFT_GEAR_TYPE].nil?
-          Syslog.warning("watchman unable to determine application type of user #{uuid}. OPENSHIFT_HOMEDIR/.env/OPENSHIFT_GEAR_TYPE missing.")
+        if app_env[uuid][:OPENSHIFT_GEAR_DNS].nil?
+          Syslog.warning("watchman unable to determine application setup for gear #{uuid}. OPENSHIFT_HOMEDIR/.env/OPENSHIFT_GEAR_DNS missing.")
           next
         end
 
-        if app_env[uuid][:OPENSHIFT_GEAR_TYPE].start_with?('jboss')
-          if app_env[uuid][:OPENSHIFT_LOG_DIR].nil?
-            Syslog.warning("watchman unable to determine log directory for user #{uuid}. OPENSHIFT_HOMEDIR/.env/OPENSHIFT_LOG_DIR missing.")
-            next
-          end
-
-          # skip missing log files as jboss may be comming up. 
-          server_log = File.join(app_env[uuid][:OPENSHIFT_LOG_DIR], 'server.log')
-          next if not File.exists?(server_log)
-
-          File.open(server_log).grep(/ java.lang.OutOfMemoryError/) {|msg|
-            # timezones are just a PITA. server.log message doesn't include timezone or date so inject both from today
-            ts = DateTime.strptime(msg, '%Y/%m/%d %T')
-            timestamp = DateTime.civil(ts.year, ts.month, ts.day, ts.hour, ts.min, ts.sec, epoch.zone)
-            next if epoch > timestamp 
-
-            cache_incident(uuid, timestamp, app_env)
-          }
+        if app_env[uuid].key?(:OPENSHIFT_JBOSSAS_LOG_DIR) || app_env[uuid].key?(:OPENSHIFT_JBOSSEAP_LOG_DIR)
+          process_server_log(uuid, app_env)
         end
       }
     rescue Exception => e
@@ -113,24 +97,44 @@ class Watchman
     end while @daemon
   end
   
+  # Search jboss* server logs for OOM exceptions
+  def process_server_log(uuid, app_env)
+    if app_env[uuid].key?(:OPENSHIFT_JBOSSAS_LOG_DIR)
+      log_dir = app_env[uuid][:OPENSHIFT_JBOSSAS_LOG_DIR]
+    elsif app_env[uuid].key?(:OPENSHIFT_JBOSSEAP_LOG_DIR)
+      log_dir = app_env[uuid][:OPENSHIFT_JBOSSEAP_LOG_DIR]
+    else
+      Syslog.warning("watchman unable to determine log directory for jboss gear #{uuid}. OPENSHIFT_JBOSS\*_LOG_DIR env var missing.")
+      return
+    end
+
+    # skip missing log files as jboss may be comming up. 
+    server_log = File.join(log_dir, 'server.log')
+    return if not File.exists?(server_log)
+
+    File.open(server_log).grep(/ java.lang.OutOfMemoryError/) {|msg|
+      # timezones are just a PITA. server.log message doesn't include timezone or date so inject both from today
+      ts = DateTime.strptime(msg, '%Y/%m/%d %T')
+      timestamp = DateTime.civil(ts.year, ts.month, ts.day, ts.hour, ts.min, ts.sec, epoch.zone)
+      next if epoch > timestamp 
+
+      cache_incident(uuid, timestamp, app_env)
+    }
+  end
+
   # Exposed to be overridden by unit tests
   def now() DateTime.now end
 
   # Don't restart if application has been marked down
   def restart(uuid, env) 
-    if env[uuid][:OPENSHIFT_GEAR_DIR].nil?
-      Syslog.warning("watchman unable to determine application home directory. OPENSHIFT_GEAR_DIR/.env/OPENSHIFT_GEAR_DIR missing. User #{uuid}: application #{env[uuid][:OPENSHIFT_GEAR_NAME]} will not be restarted as it should be.")
-      return
-    end
-
     begin
       if is_running? uuid
         `service libra restartuser #{uuid}`
         Syslog.info("watchman restarted user #{uuid}: application #{env[uuid][:OPENSHIFT_GEAR_NAME]}") 
       end
     rescue Errno::ENOENT
-      stop_lock = File.join(env[uuid][:OPENSHIFT_GEAR_DIR], 'run', 'stop_lock')
-      if not File.exists?(stop_lock) 
+      # .state file missing is there a stop_lock?
+      if 0 == Dir["@{env[uuid][:OPENSHIFT_HOMEDIR]}/*/run/stop_lock"].count
         `service libra restartuser #{uuid}`
         Syslog.info("watchman restarted user #{uuid}: application #{env[uuid][:OPENSHIFT_GEAR_NAME]}") 
       end
@@ -176,23 +180,19 @@ class Watchman
 
   # Make current process a daemon
   def daemon()
-    if '1.9' <= RUBY_VERSION
-      Process.daemon
-    else
-      Syslog.warning('Fork from parent process failed') if (pid = fork) == -1
-      exit unless pid.nil?
+    Syslog.warning('Fork from parent process failed') if (pid = fork) == -1
+    exit unless pid.nil?
 
-      Process.setsid
-      Syslog.warning('Fork from process leader failed') if (pid = fork) == -1
-      exit unless pid.nil?
+    Process.setsid
+    Syslog.warning('Fork from process leader failed') if (pid = fork) == -1
+    exit unless pid.nil?
 
-      Dir.chdir '/'
-      File.umask 0000
+    Dir.chdir '/'
+    File.umask 0000
 
-      STDIN.reopen '/dev/null'
-      STDOUT.reopen '/dev/null', 'a'
-      STDERR.reopen STDOUT
-    end
+    STDIN.reopen '/dev/null'
+    STDOUT.reopen '/dev/null', 'a'
+    STDERR.reopen STDOUT
 
     File.open("/var/run/#{File.basename($0)}.pid", 'w') {|f| f.puts(Process.pid)}
   end

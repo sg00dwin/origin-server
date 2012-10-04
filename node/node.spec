@@ -2,7 +2,7 @@
 
 Summary:       Multi-tenant cloud management system node tools
 Name:          rhc-node
-Version: 0.99.5
+Version: 0.99.6
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -270,6 +270,14 @@ fi
 
 
 %changelog
+* Thu Oct 04 2012 Adam Miller <admiller@redhat.com> 0.99.6-1
+- Bug 862439 patch for fix (jhonce@redhat.com)
+- Merge pull request #442 from mrunalp/dev/typeless (dmcphers@redhat.com)
+- BZ853582: Prevent user from logging in while deleting gear
+  (jhonce@redhat.com)
+- Fix for Bug 862439 (jhonce@redhat.com)
+- Typeless gear changes for US 2105 (jhonce@redhat.com)
+
 * Wed Oct 03 2012 Adam Miller <admiller@redhat.com> 0.99.5-1
 - Disable analytics for admin scripts (dmcphers@redhat.com)
 - update python migration (bdecoste@gmail.com)

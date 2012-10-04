@@ -31,28 +31,17 @@ source ${CARTRIDGE_BASE_PATH}/abstract/info/lib/util
 CART_INFO_DIR=${CARTRIDGE_BASE_PATH}/embedded/$cartridge_type/info
 
 setup_embedded_configure "$1" $2 $3
+import_env_vars
 
 ROCKMONGO_DIR=$(get_cartridge_instance_dir "$cartridge_type")
-ROCKMONGO_CTL_SCRIPT="$ROCKMONGO_DIR/${application}_rockmongo_ctl.sh"
 
-if [ ! -f "$APP_HOME/.env/OPENSHIFT_NOSQL_DB_USERNAME" ] ||
-   [ ! -f "$APP_HOME/.env/OPENSHIFT_NOSQL_DB_PASSWORD" ] ||
-   [ ! -f "$APP_HOME/.env/OPENSHIFT_NOSQL_DB_HOST" ] ||
-   [ ! -f "$APP_HOME/.env/OPENSHIFT_NOSQL_DB_TYPE" ] ||
-   [ ! -f "$APP_HOME/.env/OPENSHIFT_NOSQL_DB_PORT" ] 
+databases=$(get_attached_databases)
+if ! echo "$databases" |grep -q 'mongodb'
 then
    client_error ""
-   client_error "MongoDB must be embedded before rockmongo"
+   client_error "MongoDB must be embedded before rockmongo."
    client_error ""
    exit 137
-else
-   source "$APP_HOME/.env/OPENSHIFT_NOSQL_DB_TYPE"
-   if [ $OPENSHIFT_NOSQL_DB_TYPE != "mongodb" ]; then
-      client_error ""
-      client_error "MongoDB must be embedded before rockmongo"
-      client_error ""
-      exit 137
-   fi
 fi
 
 # check that the proxy pass include directory exists
@@ -80,14 +69,14 @@ sed -e "s,TEMPLATE_SET_ME_SESSION_SAVE_PATH,$ROCKMONGO_DIR/sessions/," \
 # Setup Environment Variables
 #
 
-. $APP_HOME/.env/OPENSHIFT_NOSQL_DB_USERNAME
-. $APP_HOME/.env/OPENSHIFT_NOSQL_DB_PASSWORD
-. $APP_HOME/.env/OPENSHIFT_NOSQL_DB_HOST
-. $APP_HOME/.env/OPENSHIFT_NOSQL_DB_PORT
+. $APP_HOME/.env/OPENSHIFT_MONGODB_DB_USERNAME
+. $APP_HOME/.env/OPENSHIFT_MONGODB_DB_PASSWORD
+. $APP_HOME/.env/OPENSHIFT_MONGODB_DB_HOST
+. $APP_HOME/.env/OPENSHIFT_MONGODB_DB_PORT
 
 cp -r $CART_INFO_DIR/rockmongo/* $ROCKMONGO_DIR/rockmongo/
-sed -e "s,TEMPLATE_SET_MONGODB_HOST,$OPENSHIFT_NOSQL_DB_HOST," \
-    -e "s,TEMPLATE_SET_MONGODB_PORT,$OPENSHIFT_NOSQL_DB_PORT," \
+sed -e "s,TEMPLATE_SET_MONGODB_HOST,$OPENSHIFT_MONGODB_DB_HOST," \
+    -e "s,TEMPLATE_SET_MONGODB_PORT,$OPENSHIFT_MONGODB_DB_PORT," \
     $CART_INFO_DIR/rockmongo/config.php > $ROCKMONGO_DIR/rockmongo/config.php
 
 popd > /dev/null
@@ -103,10 +92,6 @@ IP=`embedded_find_open_ip $uid $APP_HOME`
 
 $CART_INFO_DIR/bin/deploy_httpd_config.sh $application $uuid $IP
 
-#
-# Create simple rockmongo start / stop script
-#
-ln -s $CART_INFO_DIR/bin/rockmongo_ctl.sh $ROCKMONGO_CTL_SCRIPT
 
 #
 # Setup Permissions
@@ -118,18 +103,18 @@ chown root.root -R "$ROCKMONGO_DIR/conf" "$ROCKMONGO_DIR/conf.d"
 chown root.root "$ROCKMONGO_DIR"
 observe_setup_var_lib_dir "$ROCKMONGO_DIR"
 
+
 #
 # Create environment variables. This MUST be before starting rockmongo as the CTL script relies on these.
 #
-echo "export OPENSHIFT_ROCKMONGO_IP='$IP'" > $APP_HOME/.env/OPENSHIFT_ROCKMONGO_IP
-echo "export OPENSHIFT_ROCKMONGO_GEAR_DIR='$ROCKMONGO_DIR/'" > $APP_HOME/.env/OPENSHIFT_ROCKMONGO_GEAR_DIR
-echo "export OPENSHIFT_ROCKMONGO_CTL_SCRIPT='$ROCKMONGO_CTL_SCRIPT'" > $APP_HOME/.env/OPENSHIFT_ROCKMONGO_CTL_SCRIPT
+create_standard_cart_env_vars
+create_cart_network_env_vars $IP
 
 
 #
 # Start the server
 #
-run_as_user "$ROCKMONGO_CTL_SCRIPT start" || error "Failed to start ${application}" 121
+run_as_user "${CARTRIDGE_BASE_PATH}/${cartridge_type}/info/bin/app_ctl.sh start" || error "Failed to start ${application}" 121
 
 
 #
@@ -147,13 +132,13 @@ restart_httpd_graceful
 client_result ""
 client_result "rockmongo-1.1 added.  Please make note of these MongoDB credentials again:"
 client_result ""
-client_result "   RockMongo User    : $OPENSHIFT_NOSQL_DB_USERNAME"
-client_result "   RockMongo Password: $OPENSHIFT_NOSQL_DB_PASSWORD"
+client_result "   RockMongo User    : $OPENSHIFT_MONGODB_DB_USERNAME"
+client_result "   RockMongo Password: $OPENSHIFT_MONGODB_DB_PASSWORD"
 client_result ""
 client_result "URL: https://$OPENSHIFT_GEAR_DNS/rockmongo/"
 
 cart_props "connection_url=https://$OPENSHIFT_GEAR_DNS/rockmongo/"
-cart_props "username=$OPENSHIFT_NOSQL_DB_USERNAME"
-cart_props "password=$OPENSHIFT_NOSQL_DB_PASSWORD"
+cart_props "username=$OPENSHIFT_MONGODB_DB_USERNAME"
+cart_props "password=$OPENSHIFT_MONGODB_DB_PASSWORD"
 
 set_app_info "URL: https://$OPENSHIFT_GEAR_DNS/rockmongo/"

@@ -33,10 +33,9 @@ source ${CARTRIDGE_BASE_PATH}/abstract/info/lib/util
 setup_basic_hook "$1" $2 $3
 
 METRICS_DIR=$(get_cartridge_instance_dir "$cartridge_type")
-METRICS_CTL_SCRIPT="$METRICS_DIR/${application}_metrics_ctl.sh"
 
 #
 # Start application
 #
-run_as_user "$METRICS_CTL_SCRIPT stop"
+run_as_user "${CARTRIDGE_BASE_PATH}/${cartridge_type}/info/bin/app_ctl.sh stop"
 touch "$METRICS_DIR/run/stop_lock"

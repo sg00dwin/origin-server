@@ -1,7 +1,8 @@
-%define cartridgedir %{_libexecdir}/stickshift/cartridges/embedded/phpmoadmin-1.0
+%global cartridgedir %{_libexecdir}/stickshift/cartridges/embedded/phpmoadmin-1.0
+%global frameworkdir %{_libexecdir}/stickshift/cartridges/phpmoadmin-1.0
 
 Name: cartridge-phpmoadmin-1.0
-Version: 0.16.2
+Version: 0.16.3
 Release: 1%{?dist}
 Summary: Embedded phpMoAdmin support for express
 
@@ -33,6 +34,7 @@ ln -s %{cartridgedir}/info/configuration/ %{buildroot}/%{_sysconfdir}/stickshift
 cp -r info %{buildroot}%{cartridgedir}/
 cp LICENSE %{buildroot}%{cartridgedir}/
 cp COPYRIGHT %{buildroot}%{cartridgedir}/
+ln -s %{cartridgedir} %{buildroot}/%{frameworkdir}
 
 %post
 
@@ -44,6 +46,7 @@ rm -rf $RPM_BUILD_ROOT
 %attr(0750,-,-) %{cartridgedir}/info/hooks/
 %attr(0750,-,-) %{cartridgedir}/info/build/
 %attr(0750,-,-) %{cartridgedir}/info/html/
+%attr(0755,-,-) %{frameworkdir}
 %config(noreplace) %{cartridgedir}/info/configuration/
 %attr(0755,-,-) %{cartridgedir}/info/bin/
 %{_sysconfdir}/stickshift/cartridges/%{name}
@@ -54,6 +57,9 @@ rm -rf $RPM_BUILD_ROOT
 %doc %{cartridgedir}/LICENSE
 
 %changelog
+* Thu Oct 04 2012 Adam Miller <admiller@redhat.com> 0.16.3-1
+- Typeless gear changes for US 2105 (jhonce@redhat.com)
+
 * Thu Sep 20 2012 Adam Miller <admiller@redhat.com> 0.16.2-1
 - Change hard-coded references to mongodb-2.2 (rmillner@redhat.com)
 

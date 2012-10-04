@@ -10,7 +10,7 @@ then
 
   while read uuid 
   do
-    rhc-admin-ctl-template -c remove -u $uuid
+    ss-admin-ctl-template -c remove -u $uuid
   done < <(mongo openshift_broker_dev --quiet --eval "$query")
 
   #### This creates the templates
@@ -155,6 +155,9 @@ sslclientkey=/var/lib/yum/client-key.pem
 EOF
 
 fi
+
+# Enable RHUI JBoss repos for cartridge rebase on core EAP packages
+yum -y install rh-amazon-rhui-client-jbeap6
 
 # Install the 32 bit java before anything else
 yum -y install java-1.6.0-openjdk.i686 java-1.6.0-openjdk-devel.i686

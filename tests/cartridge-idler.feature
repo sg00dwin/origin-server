@@ -1,30 +1,72 @@
 @singleton
-Feature: Idle one Perl Application
+Feature: Explicit idle/restore checks
 
-  # runcon -u ?? -r system_r -t libra_initrc_t
-
-  Scenario: Idle one Perl Application
-    Given a new perl-5.10 type application
-    Then a httpd process will be running
+  Scenario Outline: Idle one application
+    Given a new <type> type application
+    Then a <proc_name> process will be running
     And I record the active capacity
 
-    When I idle the application
-    Then a httpd process will not be running
+    When I rhc-idle the application
+    Then a <proc_name> process will not be running
     And the active capacity has been reduced
-    And the php application health-check will be successful
 
-#    Given an accepted node
-#    And a new guest account
-#    And a new php_idler application
-#    And the php application is running
-#    And record the active capacity
-#    When I idle the php application
-#    Then the php application will not be running
-#    And the active capacity has been reduced
-#    And the php application health-check will be successful
+  Scenarios:
+    | type         | proc_name |
+    | perl-5.10    | httpd     |
+    | ruby-1.8     | httpd     |
+    | ruby-1.9     | httpd     |
+    | php-5.3      | httpd     |
+    | nodejs-0.6   | node      |
+    | python-2.6   | httpd     |
+    | jbosseap-6.0 | java      |
+    | jbossas-7    | java      |
 
-#  Scenario: Restore one PHP Application
-#    Given an accepted node
-#    And a running php application
-#    When I idle the php application
+  Scenario Outline: Restore one application
+    Given a new <type> type application
+    Then a <proc_name> process will be running
+    And I record the active capacity
 
+    When I rhc-idle the application
+    Then a <proc_name> process will not be running
+    And the active capacity has been reduced
+    And I record the active capacity after idling
+
+    When I rhc-restore the application
+    Then a <proc_name> process will be running
+    And the active capacity has been increased
+
+  Scenarios:
+    | type         | proc_name |
+    | perl-5.10    | httpd     |
+    | ruby-1.8     | httpd     |
+    | ruby-1.9     | httpd     |
+    | php-5.3      | httpd     |
+    | nodejs-0.6   | node      |
+    | python-2.6   | httpd     |
+    | jbosseap-6.0 | java      |
+    | jbossas-7    | java      |
+
+  Scenario Outline: Auto-restore one application
+    Given a new <type> type application
+    Then a <proc_name> process will be running
+    And I record the active capacity
+
+    When I rhc-idle the application
+    Then a <proc_name> process will not be running
+    And the active capacity has been reduced
+    And I record the active capacity after idling
+
+    When I run the health-check for the <type> cartridge
+    Then a <proc_name> process will be running
+    And the active capacity has been increased
+
+  Scenarios:
+    | type         | proc_name |
+    | perl-5.10    | httpd     |
+    | ruby-1.8     | httpd     |
+    | ruby-1.9     | httpd     |
+    | php-5.3      | httpd     |
+    | nodejs-0.6   | node      |
+    | python-2.6   | httpd     |
+    | jbosseap-6.0 | java      |
+    | jbossas-7    | java      |

@@ -18,7 +18,7 @@
   }
 
   .brand-image {
-    background: url('../images/logo-medium.png') center top no-repeat transparent;
+    background: image-url('logo-medium.png') center top no-repeat transparent;
     height: $logoHeight;
     //width: $logoWidth;
     margin-bottom: 11px;

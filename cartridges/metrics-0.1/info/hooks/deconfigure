@@ -29,12 +29,11 @@ source ${CARTRIDGE_BASE_PATH}/abstract/info/lib/util
 setup_embedded_deconfigure "$1" $2 $3
 
 METRICS_DIR=$(get_cartridge_instance_dir "$cartridge_type")
-METRICS_CTL_SCRIPT="$METRICS_DIR/${application}_metrics_ctl.sh"
 
 #
 # Stop app
 #
-run_as_user "$METRICS_CTL_SCRIPT stop" || warning "Failed to stop ${application}" 121
+run_as_user "$CART_INSTANCE_DIR/bin/app_ctl.sh stop" || warning "Failed to stop ${application}" 121
 
 confirm_pid_gone "${METRICS_DIR}/run/httpd.pid"
 
@@ -43,7 +42,7 @@ confirm_log_files_inactive "$METRICS_DIR/logs"
 #
 # Remove environment variables
 #
-/bin/rm -f $APP_HOME/.env/OPENSHIFT_METRICS_GEAR_DIR $APP_HOME/.env/OPENSHIFT_METRICS_CTL_SCRIPT $APP_HOME/.env/OPENSHIFT_METRICS_IP
+/bin/rm -f $APP_HOME/.env/OPENSHIFT_METRICS*
 
 
 # Remove metrics dir. This MUST be after stopping metrics as the CTL script relies on these.

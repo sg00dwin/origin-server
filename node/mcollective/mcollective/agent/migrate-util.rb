@@ -37,12 +37,69 @@ module OpenShiftMigration
       value = value[0..-2] if value.end_with?("'")
       return value
     end
+
+    def self.add_env_vars_to_typeless_translated(homedir, env_map)
+      envfile = File.join(homedir, ".env", "TYPELESS_TRANSLATED_VARS")
+      File.open(envfile, File::WRONLY|File::TRUNC|File::CREAT) do |file|
+        env_map.each do |name, value|
+          file.write "export #{name}=\"#{value}\"\n"
+        end
+      end
+    end
     
+    def self.append_env_vars_to_typeless_translated(homedir, env_map)
+      envfile = File.join(homedir, ".env", "TYPELESS_TRANSLATED_VARS")
+      File.open(envfile, 'a') do |file|
+        env_map.each do |name, value|
+          file.write "export #{name}=\"#{value}\"\n"
+        end
+      end
+    end
+
     def self.set_env_var_value(homedir, name, value)
       envfile = File.join(homedir, ".env", name)
       File.open(envfile, File::WRONLY|File::TRUNC|File::CREAT) do |file|
         file.write "export #{name}='#{value}'"
       end
+    end
+
+    # Copy value from old env var and write to new, deleting old env var
+    #   NO-OP if old env var does not exist
+    #
+    # @param [String] homedir OPENSHIFT_HOMEDIR for gear under operation
+    # @param [String] old     Old environment variable name
+    # @param [String] new     New environment variable name
+    def self.cp_env_var_value(homedir, old, new)
+      old_file = File.join(homedir, ".env", old)
+      if File.exists?(old_file)
+        self.set_env_var_value(homedir, new, self.get_env_var_value(homedir, old))
+      end
+    end
+
+    # Copy value from old env var and write to new, deleting old env var
+    #   NO-OP if old env var does not exist
+    #
+    # @param [String] homedir OPENSHIFT_HOMEDIR for gear under operation
+    # @param [String] old     Old environment variable name
+    # @param [String] new     New environment variable name
+    def self.mv_env_var_value(homedir, old, new)
+      old_file = File.join(homedir, ".env", old)
+      if File.exists?(old_file)
+        self.set_env_var_value(homedir, new, self.get_env_var_value(homedir, old))
+        FileUtils.rm(old_file)
+      end
+    end
+
+    # Delete list of old env var
+    #   NO-OP if env var does not exist
+    #
+    # @param [String]         homedir OPENSHIFT_HOMEDIR for gear under operation
+    # @param [ArrayOf String] name    env var to be deleted
+    def self.rm_env_var_value(homedir, *name)
+      name.each { |file|
+        path = File.join(homedir, ".env", file)
+        FileUtils.rm(path) if File.exists?(path)
+      }
     end
 
     def self.file_to_string(file_path)

@@ -50,7 +50,12 @@ VERIFIED_TAG = "devops-qe-ready"
 #
 # Now pull in dependencies...
 
-DEVTOOLS_REPO = File.join(File.dirname(__FILE__), '..', '..', '..', 'openshift-dev-tools')
+DEVTOOLS_REPO = File.join(File.dirname(__FILE__), '..', '..', '..', 'origin-dev-tools')
+unless File.exists? DEVTOOLS_REPO
+  puts "You need to check out origin-dev-tools next to li"
+  exit 1
+end
+
 require 'rubygems'
 require 'thor'
 require 'fileutils'

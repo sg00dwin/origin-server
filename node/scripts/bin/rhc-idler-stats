@@ -101,28 +101,35 @@ def run(cmd, workdir=None):
 def percent(a, b):
     return float(a)/float(b)*100.0
 
+def cartridge_types(homedir):
+    return_code, types = run("ls |egrep -v 'app-root|git'", homedir)
+    return types
+
 def get_app_type(app_path, app_name="unknown"):
     ''' try to figure out what sort of openshift app is inside a given path.
     Warning: this is a bit naive.
     '''
 
-    apptype = "unknown"
-    if os.path.isdir(app_path+"/"+app_name+"/jbossas-7.0"):
-        apptype = "jboss"
-    elif os.path.isdir(app_path+"/"+app_name+"/jbosseap-6.0"):
-        apptype = "jbosseap"
-    elif os.path.isdir(app_path+"/"+app_name+"/repo/perl"):
-        apptype = "perl"
-    elif os.path.isdir(app_path+"/"+app_name+"/repo/php"):
-        apptype = "php"
-    elif os.path.isdir(app_path+"/"+app_name+"/repo/wsgi"):
-        apptype = "wsgi"
-    elif os.path.isfile(app_path+"/"+app_name+"/repo/config.ru") or \
-            os.path.isfile(app_path+"/"+app_name+"/repo/Rakefile"):
-        apptype = "rack"
-    elif os.path.isfile(app_path+"/"+app_name+"/data/war/WEB-INF/jenkins-cli.jar"):
-        apptype = "jenkins"
-    return apptype
+    installed = cartridge_types(app_path)
+    if 0 == len(installed):
+        return "unknown"
+
+    candidates = set(["diy-0.1", "jbossas-7", "jbosseap-6.0", "nodejs-0.6", "perl-5.10", \
+        "php-5.3", "python-2.6", "ruby-1.8", "ruby-1.9", "zend-5.6"]).intersection(installed)
+    if 0 < len(candidates):
+        return candidates.pop().rsplit('-', 1)[0]
+
+    candidates = set(["mongodb-2.0", "mysql-5.1", "postgresql-8.4", \
+        "jenkins-1.4"]).intersection(installed)
+    if 0 < len(candidates):
+        return candidates.pop().rsplit('-', 1)[0]
+
+    candidates = set(["metrics-0.1", "phpmoadmin-1.0", "rockmongo-1.1", "10gen-mms-agent-0.1", \
+        "cron-1.4", "haproxy-1.4", "jenkins-client-1.4", "phpmyadmin-3.4"]).intersection(installed)
+    if 0 < len(candidates):
+        return candidates.pop().rsplit('-', 1)[0]
+
+    return "unknown"
 
 def validate(uuid):
     ''' given a user's uuid, verify an app exists. '''
@@ -156,14 +163,17 @@ def validate(uuid):
     last_commit = datetime.strptime(last_commit[:-6], "%a %b %d %H:%M:%S %Y")
     time_diff = datetime.now() - last_commit
 
-    # does /appname exist?
-    if not os.path.isdir(app_path+"/"+app_name):
-        return "Path /var/stickshift/%s/%s not found." % (uuid, app_name)
+    # do any cartridges exists?
+    types = cartridge_types(app_path)
+    if 0 >= len(types):
+        return "Path %s does not contain any cartridges." % (app_path)
 
-    # is there stuff in /appname?
-    app_files = os.listdir(app_path+"/"+app_name)
-    if len(app_files) == 0:
-        return "Path /var/lib/stickshift/%s is empty." % uuid
+    # is there stuff in cartridges?
+    for cartridge in types:
+        cartridge_path = app_path + "/" + cartridge
+        app_files = os.listdir(cartridge_path)
+        if len(app_files) == 0:
+            return "Path %s is empty." % (cartridge_path)
 
     # great! what is it?
     app_type = get_app_type(app_path, app_name)

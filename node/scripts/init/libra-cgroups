@@ -41,6 +41,7 @@ GROUP_RETVAL=0
 #
 # Set defaults if not provided
 #
+CGROUP_ROOT="/cgroup/all"
 LIBRA_CGROUP_ROOT=${LIBRA_CGROUP_ROOT:="/libra"}
 LIBRA_CGROUP_SUBSYSTEMS=${LIBRA_CGROUP_SUBSYSTEMS:="cpu,cpuacct,memory,net_cls,freezer"}
 
@@ -417,6 +418,44 @@ status() {
 }
 
 
+#
+# Freeze a libra user cgroup
+#
+freezeuser() {
+    # USERNAME=$1
+
+    freezer_state=$CGROUP_ROOT/$LIBRA_CGROUP_ROOT/$1/freezer.state
+    retries=0
+
+    /usr/bin/logger -i -s -t "libra-cgroups" -p user.info "Freezing $freezer_state"
+    echo FROZEN >$freezer_state
+    while [ FREEZING = `cat $freezer_state` -a 30 -lt $retries]
+    do
+      sleep 1
+      retries=`expr $retries + 1`
+    done
+
+    if [ FROZEN = `cat $freezer_state` ]
+    then
+      RETVAL=0
+    else
+      /usr/bin/logger -i -s -t "libra-cgroups" -p user.err "Timeout freezing $freezer_state"
+      RETVAL=1
+    fi
+}
+
+#
+# Thaw a libra user cgroup
+#
+thawuser() {
+    # USERNAME=$1
+
+    freezer_state=$CGROUP_ROOT/$LIBRA_CGROUP_ROOT/$1/freezer.state
+    /usr/bin/logger -i -s -t "libra-cgroups" -p user.info "Thawing $freezer_state"
+    echo THAWED >$freezer_state
+    RETVAL=$?
+}
+
 case "$1" in
   start)
     start
@@ -436,6 +475,26 @@ case "$1" in
 
   status)
     status $2
+    ;;
+
+  freezeuser)
+    if (service cgconfig status >/dev/null)
+    then
+        freezeuser $2
+    else
+        RETVAL=1
+        echo "cgconfig service not running"
+    fi
+    ;;
+
+  thawuser)
+    if (service cgconfig status >/dev/null)
+    then
+        thawuser $2
+    else
+        RETVAL=1
+        echo "cgconfig service not running"
+    fi
     ;;
 
   startuser)
@@ -461,7 +520,7 @@ case "$1" in
     ;;
 
   *)
-    echo $"Usage: $0 {start|stop|status|restart|reload|force-reload|condrestart|startuser <username>|stopuser <username>}"
+    echo $"Usage: $0 {start|stop|status|restart|reload|force-reload|condrestart|startuser <username>|stopuser <username>|freezeuser <username>|thawuser <username>}"
     exit 1
 esac
 

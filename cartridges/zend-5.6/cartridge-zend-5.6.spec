@@ -2,7 +2,7 @@
 
 Summary:   Provides zend-5.6 support
 Name:      cartridge-zend-5.6
-Version: 0.96.2
+Version: 0.96.3
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   ASL 2.0
@@ -108,6 +108,10 @@ rm -rf %{buildroot}
 %doc %{cartridgedir}/LICENSE
 
 %changelog
+* Thu Oct 04 2012 Adam Miller <admiller@redhat.com> 0.96.3-1
+- Merge pull request #442 from mrunalp/dev/typeless (dmcphers@redhat.com)
+- Typeless gear changes for US 2105 (jhonce@redhat.com)
+
 * Wed Oct 03 2012 Adam Miller <admiller@redhat.com> 0.96.2-1
 - Bug 862199 (lnader@redhat.com)
 - script to fix migration (lnader@redhat.com)

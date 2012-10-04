@@ -64,16 +64,15 @@ module StickShift
         shellCmd("service libra-tc stopuser #{user.name} > /dev/null")
       end
 
+      cmd = "/bin/sh #{File.join('/usr/libexec/stickshift/lib', "express/setup_pam_fs_limits.sh")} #{user.name} 0 0 0"
+      out,err,rc = shellCmd(cmd)
+      raise StickShift::UserCreationException.new("Unable to setup pam/fs/nproc limits for #{user.name}") unless rc == 0
+
       out,err,rc = shellCmd("service cgconfig status > /dev/null")
-      if rc == 0
-        shellCmd("service libra-cgroups stopuser #{user.name} > /dev/null")
-      end
+      shellCmd("service libra-cgroups freezeuser #{user.name} > /dev/null") if rc == 0
 
       last_access_dir = StickShift::Config.instance.get("LAST_ACCESS_DIR")
       shellCmd("rm -f #{last_access_dir}/#{user.name} > /dev/null")
-
-      cmd = "/bin/sh #{File.join("/usr/libexec/stickshift/lib", "express/teardown_pam_fs_limits.sh")} #{user.name}"
-      shellCmd(cmd)
     end
 
     def before_initialize_stickshift_proxy(user)
@@ -83,6 +82,13 @@ module StickShift
     end
 
     def after_unix_user_destroy(user)
+      out,err,rc = shellCmd("service cgconfig status > /dev/null")
+      shellCmd("service libra-cgroups thawuser #{user.name} > /dev/null") if rc == 0
+      shellCmd("service libra-cgroups stopuser #{user.name} > /dev/null") if rc == 0
+
+      cmd = "/bin/sh #{File.join("/usr/libexec/stickshift/lib", "express/teardown_pam_fs_limits.sh")} #{user.name}"
+      out,err,rc = shellCmd(cmd)
+      raise StickShift::UserCreationException.new("Unable to teardown pam/fs/nproc limits for #{user.name}") unless rc == 0
     end
 
     def before_add_ssh_key(user,key)

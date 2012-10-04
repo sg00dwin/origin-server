@@ -44,7 +44,6 @@ fi
 # Create the core of the application
 #
 create_cartridge_instance_dir "$cartridge_type"
-create_app_dir_symlink "$cartridge_type"
 ZENDCART_INSTANCE_DIR=$(get_cartridge_instance_dir "$cartridge_type")
 pushd "$ZENDCART_INSTANCE_DIR" > /dev/null
 create_standard_app_dirs
@@ -68,10 +67,8 @@ popd > /dev/null
 #
 IP=`find_open_ip $uid $uuid`
 
-$CART_INFO_DIR/bin/deploy_httpd_config.sh $application $uuid $IP
-$CART_INFO_DIR/bin/zendserver_gui_config.sh $application $uuid $IP
-
-create_app_ctl_script "$cartridge_type"
+$CART_INFO_DIR/bin/deploy_httpd_config.sh $ZENDCART_INSTANCE_DIR $application $uuid $IP
+$CART_INFO_DIR/bin/zendserver_gui_config.sh $ZENDCART_INSTANCE_DIR $IP
 
 #copy over zen config files
 ZEND_USER_FILES="/usr/libexec/stickshift/cartridges/${cartridge_type}/files/user-files"
@@ -104,9 +101,10 @@ observe_setup_cart_instance_dir
 #
 # Create environment variables
 #
-create_standard_env_vars
+create_standard_cart_env_vars
 create_standard_env_uservars
-create_standard_network_env_vars
+create_standard_network_env_vars $IP
+create_cart_network_env_vars $IP
 create_standard_repo_dir_env_var
 create_standard_path_env_var
 

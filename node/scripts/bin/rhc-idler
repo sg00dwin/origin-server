@@ -86,6 +86,8 @@ then
     print_help
 fi
 
+source /usr/libexec/stickshift/cartridges/abstract/info/lib/util
+
 # Get the libra_server
 source /etc/stickshift/stickshift-node.conf
 source "/var/lib/stickshift/${uuid}/.env/OPENSHIFT_HOMEDIR"
@@ -117,7 +119,9 @@ runuser --shell /bin/sh "$uuid" -c "echo idle >$OPENSHIFT_HOMEDIR/app-root/runti
 # Report to nurture
 curl -sk -d "json_data={\"app_uuid\":\"${uuid}\",\"action\":\"idle\"}" -X POST https://${BROKER_HOST}/broker/nurture >/dev/null 2>&1 &
 
-source "/var/lib/stickshift/${uuid}/.env/OPENSHIFT_RUN_DIR"
-touch "${OPENSHIFT_RUN_DIR}/stop_lock"
+# Temporary workaround to get primary cart run directory
+framework_carts=$(get_installed_framework_carts)
+primary_framework_cart=${framework_carts[0]}
+touch "${OPENSHIFT_HOMEDIR}/${primary_framework_cart}/run/stop_lock"
 
 echo "Idled: ${uuid}" | /usr/bin/logger -p local0.notice -t rhc_idler

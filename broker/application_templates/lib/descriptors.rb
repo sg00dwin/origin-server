@@ -50,7 +50,7 @@ def application_templates
 end
 
 def template_command(params)
-  cmd = "rhc-admin-ctl-template"
+  cmd = "ss-admin-ctl-template"
   deep_sort(params).each do |key,val|
     cmd << " --%s '%s'" % [key,val.to_s]
   end
