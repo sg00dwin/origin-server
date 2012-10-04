@@ -2,7 +2,7 @@
 %global frameworkdir %{_libexecdir}/stickshift/cartridges/phpmoadmin-1.0
 
 Name: cartridge-phpmoadmin-1.0
-Version: 0.16.2
+Version: 0.16.3
 Release: 1%{?dist}
 Summary: Embedded phpMoAdmin support for express
 
@@ -57,6 +57,9 @@ rm -rf $RPM_BUILD_ROOT
 %doc %{cartridgedir}/LICENSE
 
 %changelog
+* Thu Oct 04 2012 Adam Miller <admiller@redhat.com> 0.16.3-1
+- Typeless gear changes for US 2105 (jhonce@redhat.com)
+
 * Thu Sep 20 2012 Adam Miller <admiller@redhat.com> 0.16.2-1
 - Change hard-coded references to mongodb-2.2 (rmillner@redhat.com)
 
