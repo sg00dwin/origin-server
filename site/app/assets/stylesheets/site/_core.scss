@@ -1,5 +1,7 @@
 /* @charset UTF-8 */
 
+$noiseImage: image-url('noise.png') !default;
+
 a { color: $linkColorBlue; }
 a:hover, a:active { color: $linkColorBlueHover; }
 
@@ -646,7 +648,7 @@ h1.ribbon {
   .row-content > .row { background-color: $textLightBackground; }
 }
 
-.column-buzz { background: $darkNoiseBackgroundColor url($transparentNoiseImageData); color: $textDarkBackground; }
+.column-buzz { background: $darkNoiseBackgroundColor $noiseImage; color: $textDarkBackground; }
 .column-buzz a { color: $linkTextDarkBackground; }
 
 // Column navigation
@@ -867,10 +869,10 @@ h1.ribbon {
 /* Background */
 body > header {
   /* fallback */
-  background: #191919 url($transparentNoiseImageData);
+  background: #191919 $noiseImage;
   background-image:
     image-url('comets.png'),
-    url($transparentNoiseImageData);
+    $noiseImage;
   background-repeat:
     repeat-x,
     repeat;
@@ -878,12 +880,12 @@ body > header {
 
 
 .ie9 body.home > header {
-	background: #191919 url($transparentNoiseImageData);
+	background: #191919 $noiseImage;
   background-image:
     image-url('diagonals-top.png'),
 	  image-url('mts.png'), 
 	  image-url('stars.png'),
-	  url($transparentNoiseImageData);
+	  $noiseImage;
   background-repeat:
   	no-repeat,
   	no-repeat,
@@ -902,7 +904,7 @@ body.community > header {
   background-color: #191919;
   background-image:
     image-url('planets.png'),
-    url($transparentNoiseImageData);
+    $noiseImage;
   background-repeat:
     repeat-x,
     repeat;
@@ -919,25 +921,25 @@ body.home {
 	    image-url('diagonals-top.png'),
 	    image-url('mts.png'), 
 	    image-url('stars.png'),
-	    url($transparentNoiseImageData),
+	    $noiseImage,
 	    -moz-repeating-linear-gradient(110deg, #191919 0px, #191919 10px, #181818 10px, #181818 20px);
 	  background-image:
 	    image-url('diagonals-top.png'),
 	    image-url('mts.png'), 
 	    image-url('stars.png'),
-	    url($transparentNoiseImageData),
+	    $noiseImage,
 	    -webkit-repeating-linear-gradient(110deg, #191919 0px, #191919 10px, #171717 10px, #171717 20px);
 	  background-image:
 	    image-url('diagonals-top.png'),
 	    image-url('mts.png'), 
 	    image-url('stars.png'),
-	    url($transparentNoiseImageData),
+	    $noiseImage,
 	    -ms-repeating-linear-gradient(110deg, #191919 0px, #191919 10px, #181818 10px, #181818 20px);
 	  background-image:
 	    image-url('diagonals-top.png'),
 	    image-url('mts.png'), 
 	    image-url('stars.png'),
-	    url($transparentNoiseImageData),
+	    $noiseImage,
 	    repeating-linear-gradient(110deg, #191919 0px, #191919 10px, #181818 10px, #181818 20px);
 	  background-repeat:
 	    no-repeat,
@@ -1019,7 +1021,7 @@ body.home {
     background-color: #191919;
     background-image: 
     	image-url("diagonals-top.png"),
-    	url($transparentNoiseImageData); 
+    	$noiseImage; 
     background-repeat: 
     	no-repeat,
     	repeat;
@@ -1050,7 +1052,7 @@ body.home {
     background-color: #191919;
     background-image: 
     	image-url("diagonals-top.png"),
-    	url($transparentNoiseImageData); 
+    	$noiseImage; 
     background-repeat: 
     	no-repeat,
     	repeat;
@@ -1116,26 +1118,26 @@ body.simple {
 
   /* background */
   min-height: 100%;
-  background: #191919 url($transparentNoiseImageData);
+  background: #191919 $noiseImage;
   background-image:
     image-url('mts-bottom-transparent.png'),
     image-url('stars.png'),
-    url($transparentNoiseImageData),
+    $noiseImage,
     -moz-repeating-linear-gradient(110deg, #191919 0px, #191919 10px, #181818 10px, #181818 20px);
   background-image:
     image-url('mts-bottom-transparent.png'),
     image-url('stars.png'),
-    url($transparentNoiseImageData),
+    $noiseImage,
     -webkit-repeating-linear-gradient(110deg, #191919 0px, #191919 10px, #171717 10px, #171717 20px);
   background-image:
     image-url('mts-bottom-transparent.png'),
     image-url('stars.png'),
-    url($transparentNoiseImageData),
+    $noiseImage,
     -ms-repeating-linear-gradient(110deg, #191919 0px, #191919 10px, #181818 10px, #181818 20px);
   background-image:
     image-url('mts-bottom-transparent.png'),
     image-url('stars.png'),
-    url($transparentNoiseImageData),
+    $noiseImage,
     repeating-linear-gradient(110deg, #191919 0px, #191919 10px, #181818 10px, #181818 20px);
   background-repeat:
     repeat-x,
@@ -1154,7 +1156,7 @@ body.simple {
       background-color: white;
     }
 
-    background-image: url($transparentNoiseImageData);
+    background-image: $noiseImage;
     background-repeat: repeat;
   }
 }
