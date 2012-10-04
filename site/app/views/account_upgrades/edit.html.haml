@@ -5,6 +5,7 @@
   %section{ :class => 'row' }
     .span8
       = f.inputs 'Account', :class => 'inputs form-horizontal', :for => @full_user do |u|
+        = u.semantic_errors
         - if @full_user.persisted?
           %p
             You are logged in as <strong>#{current_user_id}</strong> under the name <strong>#{@full_user.first_name} #{@full_user.last_name}</strong>.
@@ -28,7 +29,8 @@
         account is necessary for contacting Red Hat Support.
   %section{ :class => 'row' }
     .span8
-      = f.inputs 'Billing Information', :class => 'inputs form-horizontal', :for => @billing_info do |b|      
+      = f.inputs 'Billing Information', :class => 'inputs form-horizontal', :for => @billing_info do |b|
+        = b.semantic_errors
         = b.inputs :inline => true, :required => true, :label => 'Name' do
           = b.input :first_name, :required => true, :input_html => { :class => 'input-medium', :placeholder => "First" }
           = b.input :middle_initial, :input_html => { :class => 'input-mini', :placeholder => "MI" }
