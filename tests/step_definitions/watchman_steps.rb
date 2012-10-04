@@ -1,4 +1,4 @@
-load File.dirname(__FILE__) + '/../../node/scripts/bin/rhc-watchman'
+load File.dirname(__FILE__) + '/../../rhc-node/scripts/bin/rhc-watchman'
 
 Given /^a Watchman object using "([^"]*)" and "([^"]*)"$/ do |log, epoch|
   class Watchman1 < Watchman

@@ -11,7 +11,7 @@ include Test::Unit::Assertions
 SSH_OPTS="-o 'BatchMode=yes' -o 'StrictHostKeyChecking=no'"
 
 def set_max_gears(num)
-  output = `ss-admin-ctl-user --setmaxgears #{num} -l #{@app.login}`
+  output = `oo-admin-ctl-user --setmaxgears #{num} -l #{@app.login}`
   assert $?.success?, "Failed to allocate #{num} gears for #{@app.login}: #{output}"
 end
 
@@ -70,7 +70,7 @@ end
 Then /^the gear members will be (UP|DOWN)$/ do |state|
   found = nil
 
-  StickShift::timeout(120) do
+  OpenShift::timeout(120) do
     while found != 0
       found = gear_up?("#{@app.name}-#{@app.namespace}.dev.rhcloud.com", state)
       sleep 1
@@ -84,7 +84,7 @@ Then /^(\d+) gears will be in the cluster$/ do |expected|
   actual = 0
 
   host = "'Host: #{@app.name}-#{@app.namespace}.dev.rhcloud.com'"
-  StickShift::timeout(300) do
+  OpenShift::timeout(300) do
     while actual != expected
       sleep 1
 
@@ -115,7 +115,7 @@ Then /^the ([\w\-\.]+) health\-check will( not)? be successful$/ do |type, negat
   host = "#{@app.name}-#{@app.namespace}.dev.rhcloud.com"
   command = "/usr/bin/curl -L -k -s -H 'Host: #{host}' -s #{url} | grep -q -e '^1$'"
   exit_status = nil
-  StickShift::timeout(60) do
+  OpenShift::timeout(60) do
     while exit_status != expected_status
       exit_status = runcon command, 'unconfined_u', 'unconfined_r', 'unconfined_t'
       $logger.info("Waiting for health-check to stabilize #{host}")
@@ -163,7 +163,7 @@ end
 Then /^app should be able to connect to mongo$/ do
   command  = "echo 'show dbs' | ssh #{SSH_OPTS} -t 2>/dev/null #{@app.uid}@#{@app.name}-#{@app.namespace}.dev.rhcloud.com rhcsh mongo | grep #{@app.name}"
 
-  StickShift::timeout(500) do
+  OpenShift::timeout(500) do
     exit_status = run(command)
     while exit_status != 0
       $logger.debug("waiting on mongo")

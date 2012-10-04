@@ -12,6 +12,9 @@ License:        ASL 2.0
 URL:            http://openshift.redhat.com
 Source0:        rubygem-%{gemname}-%{version}.tar.gz
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
+
+Obsoletes: rubygem-uplift-dynect-plugin
+
 Requires:       ruby(abi) = 1.8
 Requires:       rubygems
 Requires:       rubygem(openshift-origin-common)

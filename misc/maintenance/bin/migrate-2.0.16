@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
 require 'rubygems'
 require 'mongo'
-require '/var/www/stickshift/broker/config/environment'
+require '/var/www/openshift/broker/config/environment'
 
 # Configurable params
 $config = Rails.application.config.datastore
@@ -50,7 +50,7 @@ def mongo_migrate
         gi_index = gi_index +1
         next if gi.has_key?("uuid")
         count = count+1
-        uuid = StickShift::Model.gen_uuid
+        uuid = OpenShift::Model.gen_uuid
         updates["$set"]["apps.#{app_index}.group_instances.#{gi_index}.uuid"] = uuid
       }
     }

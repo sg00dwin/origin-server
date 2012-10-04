@@ -42,11 +42,11 @@ clean = opt["clean"]
 archive = opt["archive"]
 
 if clean
-    `echo > /var/www/stickshift/broker/log/mcollective-client.log`
+    `echo > /var/www/openshift/broker/log/mcollective-client.log`
     `echo > /var/log/mcollective.log`
-    `echo > /var/www/stickshift/site/log/development.log`
-    `echo > /var/www/stickshift/broker/log/development.log`    
+    `echo > /var/www/openshift/site/log/development.log`
+    `echo > /var/www/openshift/broker/log/development.log`    
     `echo > /tmp/rhc/cucumber.log`
 else
-    `tar -cf #{opt["archive"]}.tar.gz -z /var/www/stickshift/broker/log/mcollective-client.log /var/log/mcollective.log /var/www/stickshift/site/log/development.log /var/www/stickshift/broker/log/development.log /tmp/rhc/cucumber.log`
+    `tar -cf #{opt["archive"]}.tar.gz -z /var/www/openshift/broker/log/mcollective-client.log /var/log/mcollective.log /var/www/openshift/site/log/development.log /var/www/openshift/broker/log/development.log /tmp/rhc/cucumber.log`
 end

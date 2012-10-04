@@ -13,6 +13,8 @@ Source0: %{name}-%{version}.tar.gz
 BuildRoot:    %(mktemp -ud %{_tmppath}/%{name}-%{version}-%{release}-XXXXXX)
 BuildArch: noarch
 
+Obsoletes: cartridge-metrics-0.1
+
 Requires: openshift-origin-cartridge-abstract
 Requires: rubygem(openshift-origin-node)
 
@@ -155,8 +157,8 @@ rm -rf $RPM_BUILD_ROOT
 - Batch variable name chage (rmillner@redhat.com)
 - Adding export control files (kraman@gmail.com)
 - loading resource limits config when needed (kraman@gmail.com)
-- replacing references to libra with openshift origin (abhgupta@redhat.com)
-- Update metrics cartridge li/libra => openshift origin (kraman@gmail.com)
+- replacing references to libra with openshift (abhgupta@redhat.com)
+- Update metrics cartridge li/libra => openshift (kraman@gmail.com)
 - Removed new instances of GNU license headers (jhonce@redhat.com)
 
 * Fri Mar 02 2012 Dan McPherson <dmcphers@redhat.com> 0.10.1-1

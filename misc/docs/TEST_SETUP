@@ -9,7 +9,7 @@ that can be run from /root:
 
 2. Check out the output logs
   Test output - /tmp/rhc/cucumber.log
-  Rails logs - /var/www/html/stickshift/log/*
+  Rails logs - /var/www/html/openshift/log/*
 
 3. If you make some local test changes and want to push them up to your verifier, run
   rake ami:verify:update

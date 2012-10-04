@@ -4,7 +4,7 @@
 %endif
 %global rubyabi 1.9.1
 %define htmldir %{_localstatedir}/www/html
-%define sitedir %{_localstatedir}/www/stickshift/site
+%define sitedir %{_localstatedir}/www/openshift/site
 
 Summary:   OpenShift Site Rails application
 Name:      rhc-site

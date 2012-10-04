@@ -1,4 +1,4 @@
 source "http://rubygems.org"
 
-# Specify your gem's dependencies in uplift-dynect-plugin.gemspec
+# Specify your gem's dependencies in openshift-origin-auth-streamline.gemspec
 gemspec

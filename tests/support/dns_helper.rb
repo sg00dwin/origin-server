@@ -1,6 +1,6 @@
 require 'rubygems'
-require 'stickshift-controller'
-require 'uplift-dynect-plugin'
+require 'openshift-origin-controller'
+require 'openshift-origin-dns-dynect'
 
 module DnsHelper
   #
@@ -11,7 +11,7 @@ module DnsHelper
   
   def dns_service
     if not $dns_con
-      $dns_con = Uplift::DynectPlugin.new({:end_point => "https://api2.dynect.net", 
+      $dns_con = OpenShift::DynectPlugin.new({:end_point => "https://api2.dynect.net", 
                                            :customer_name => "demo-redhat",
                                            :user_name => "dev-rhcloud-user", 
                                            :password => "vo8zaijoN7Aecoo", 

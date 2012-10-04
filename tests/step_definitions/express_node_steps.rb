@@ -3,7 +3,7 @@
 # Steps that can be used to check applications installed on a server (node)
 #
 
-$home_root = "/var/lib/stickshift"
+$home_root = "/var/lib/openshift"
 
 # Convert a unix UID to a hex string suitable for use as a tc(1m) class value
 def netclass uid

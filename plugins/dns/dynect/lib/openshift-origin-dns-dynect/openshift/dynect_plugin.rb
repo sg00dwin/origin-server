@@ -7,7 +7,7 @@ require 'json'
 
 ##
 # This gem is an OpenShift plugin for the Dynect DNS Service.
-# The plugin works with the StickShift controller in order
+# The plugin works with the OpenShift controller in order
 # to maintain DNS records for user domains and applications.
 # 
 # This plugin requires the following config entries to be present:

@@ -71,7 +71,7 @@ include FileUtils
 # Define the options available for the onprem builder
 
 module DevOps
-  class BuilderPlugin < StickShift::Builder
+  class BuilderPlugin < OpenShift::Builder
     include OpenShift::BuilderHelper
 
     desc "launch TAG", "Launches and configures the latest devops instance, tagging with TAG"

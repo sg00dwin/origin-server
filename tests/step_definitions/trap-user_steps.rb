@@ -10,7 +10,7 @@ Given /^the user has (no|\d+) tail process(es)? running( in (\d+) seconds)?$/ do
   timeout = timeout ? timeout.to_i : 1
 
   pcount = num_procs @app.uid, "tail"
-  StickShift::timeout(timeout) do
+  OpenShift::timeout(timeout) do
     while pcount != expect
       sleep 1
       pcount = num_procs @app.uid, "tail"

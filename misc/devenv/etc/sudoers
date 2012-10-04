@@ -111,7 +111,7 @@ jenkins	ALL=(root) NOPASSWD: /usr/local/bin/fix_perms.sh
 jenkins	ALL=(root) NOPASSWD: /sbin/service
 jenkins	ALL=(root) NOPASSWD: /usr/bin/yum clean metadata
 jenkins	ALL=(root) NOPASSWD: /usr/bin/yum update -y --nogpgcheck --exclude=rhc-devenv
-jenkins	ALL=(root) NOPASSWD: /bin/rm -rf /var/www/stickshift/test
+jenkins	ALL=(root) NOPASSWD: /bin/rm -rf /var/www/openshift/test
 jenkins	ALL=(root) NOPASSWD: /bin/rpm
 jenkins	ALL=(root) NOPASSWD: /usr/bin/puppet
 jenkins	ALL=(root) NOPASSWD: /bin/sed

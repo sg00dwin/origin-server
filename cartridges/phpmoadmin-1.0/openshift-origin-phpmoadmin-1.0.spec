@@ -13,6 +13,8 @@ Source0: %{name}-%{version}.tar.gz
 BuildRoot:    %(mktemp -ud %{_tmppath}/%{name}-%{version}-%{release}-XXXXXX)
 BuildArch: noarch
 
+Obsoletes: cartridge-phpmoadmin-1.0
+
 Requires: openshift-origin-cartridge-abstract
 Requires: rubygem(openshift-origin-node)
 Requires: openshift-origin-cartridge-mongodb-2.2
@@ -172,8 +174,8 @@ rm -rf $RPM_BUILD_ROOT
 - Batch variable name chage (rmillner@redhat.com)
 - Adding export control files (kraman@gmail.com)
 - loading resource limits config when needed (kraman@gmail.com)
-- replacing references to libra with openshift origin (abhgupta@redhat.com)
-- Update phpmoadmin li/libra => openshift origin (kraman@gmail.com)
+- replacing references to libra with openshift (abhgupta@redhat.com)
+- Update phpmoadmin li/libra => openshift (kraman@gmail.com)
 - Removed new instances of GNU license headers (jhonce@redhat.com)
 
 * Fri Mar 02 2012 Dan McPherson <dmcphers@redhat.com> 0.7.1-1

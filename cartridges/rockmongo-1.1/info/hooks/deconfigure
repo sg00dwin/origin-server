@@ -22,7 +22,7 @@ done
 [ $# -eq 3 ] || print_help
 
 cartridge_type="rockmongo-1.1"
-source "/etc/openshift/openshift-origin-node.conf"
+source "/etc/openshift/node.conf"
 source ${CARTRIDGE_BASE_PATH}/abstract/info/lib/util
 
 setup_embedded_deconfigure "$1" $2 $3

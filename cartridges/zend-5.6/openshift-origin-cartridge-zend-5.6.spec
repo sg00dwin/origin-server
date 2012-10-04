@@ -13,6 +13,8 @@ Source0:   %{name}-%{version}.tar.gz
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root
 BuildArch: noarch
 
+Obsoletes: cartridge-zend-5.6
+
 BuildRequires: git
 Requires: openshift-origin-cartridge-abstract
 Requires: rubygem(openshift-origin-node)

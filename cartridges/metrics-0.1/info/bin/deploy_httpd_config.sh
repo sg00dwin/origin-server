@@ -1,8 +1,8 @@
 #!/bin/bash
 
 cartridge_type="metrics-0.1"
-source "/etc/openshift/openshift-origin-node.conf"
-source "/etc/openshift origin/resource_limits.conf"
+source "/etc/openshift/node.conf"
+source "/etc/openshift/resource_limits.conf"
 source ${CARTRIDGE_BASE_PATH}/abstract/info/lib/util
 CART_INFO_DIR=${CARTRIDGE_BASE_PATH}/embedded/metrics-0.1/info
 

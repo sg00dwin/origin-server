@@ -10,11 +10,11 @@ then
 
   while read uuid 
   do
-    ss-admin-ctl-template -c remove -u $uuid
+    oo-admin-ctl-template -c remove -u $uuid
   done < <(mongo openshift_broker_dev --quiet --eval "$query")
 
   #### This creates the templates
-  pushd /usr/lib/stickshift/broker/application_templates/
+  pushd /usr/lib/openshift/broker/application_templates/
     ruby templates/deploy.rb
   popd
   exit 0
@@ -73,7 +73,7 @@ enabled=1
 gpgcheck=1
 gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-redhat-release file:///etc/pki/rpm-gpg/RPM-GPG-KEY-redhat-auxiliary
 sslverify=1
-sslclientkey=/etc/pki/entitlement/content-rhel6-key.pem
+sslclientkey=/etc/pki/entitlement/content-rhel6.key
 sslclientcert=/etc/pki/entitlement/product/content-rhel6.crt
 sslcacert=/etc/pki/entitlement/cdn.redhat.com-chain.crt
 includepkgs=java-1.6.0-openjdk*

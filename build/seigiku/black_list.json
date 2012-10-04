@@ -1,12 +1,12 @@
 {
   "specfiles" : [
-    "selinux.spec",
+    "rhc-selinux.spec",
     "devenv.spec",
-    "node.spec",
-    "rhc-cartridge-metrics-0.1.spec",
+    "rhc-node.spec",
+    "openshift-origin-cartridge-metrics-0.1.spec",
     "site.spec",
-    "broker.spec",
-    "server-common.spec",
-    "common.spec"
+    "rhc-broker.spec",
+    "rhc-server-common.spec",
+    "rhc-common.spec"
   ]
 }

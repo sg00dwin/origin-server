@@ -12,6 +12,9 @@ URL: http://openshift.redhat.com
 Source0: %{name}-%{version}.tar.gz
 BuildRoot:    %(mktemp -ud %{_tmppath}/%{name}-%{version}-%{release}-XXXXXX)
 BuildArch: noarch
+
+Obsoletes: cartridge-rockmongo-1.1
+
 Requires: openshift-origin-cartridge-abstract
 Requires: openshift-origin-cartridge-mongodb-2.2
 
@@ -165,8 +168,8 @@ rm -rf $RPM_BUILD_ROOT
 - Batch variable name chage (rmillner@redhat.com)
 - Adding export control files (kraman@gmail.com)
 - loading resource limits config when needed (kraman@gmail.com)
-- replacing references to libra with openshift origin (abhgupta@redhat.com)
-- replacing references to libra with openshift origin in rockmongo cartridge
+- replacing references to libra with openshift (abhgupta@redhat.com)
+- replacing references to libra with openshift in rockmongo cartridge
   (abhgupta@redhat.com)
 - Removed new instances of GNU license headers (jhonce@redhat.com)
 
