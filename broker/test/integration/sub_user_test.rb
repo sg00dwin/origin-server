@@ -34,7 +34,7 @@ class SubUserTest < ActionDispatch::IntegrationTest
     get "rest/domains.json", nil, @headers
     assert_equal 200, status
 
-    `rhc-admin-ctl-user -l #{@username} --allowsubaccounts true`
+    `ss-admin-ctl-user -l #{@username} --allowsubaccounts true`
 
     @headers["X-Impersonate-User"] = "subuser#{@random}"
     get "rest/domains.json", nil, @headers
@@ -50,8 +50,8 @@ class SubUserTest < ActionDispatch::IntegrationTest
     get "rest/domains.json", nil, @headers2
     assert_equal 200, status
 
-    `rhc-admin-ctl-user -l #{@username} --allowsubaccounts true`
-    `rhc-admin-ctl-user -l #{@username}x --allowsubaccounts true`
+    `ss-admin-ctl-user -l #{@username} --allowsubaccounts true`
+    `ss-admin-ctl-user -l #{@username}x --allowsubaccounts true`
 
     @headers["X-Impersonate-User"] = "subuser#{@random}"
     get "rest/domains.json", nil, @headers
@@ -69,7 +69,7 @@ class SubUserTest < ActionDispatch::IntegrationTest
     delete "rest/user.json", nil, @headers
     assert_equal 403, status
 
-    `rhc-admin-ctl-user -l #{@username} --allowsubaccounts true`
+    `ss-admin-ctl-user -l #{@username} --allowsubaccounts true`
 
     @headers2 = @headers.clone
     subaccount_user = "subuser#{@random}"
@@ -97,9 +97,9 @@ class SubUserTest < ActionDispatch::IntegrationTest
     get "rest/domains.json", nil, @headers
     assert_equal 200, status
 
-    `rhc-admin-ctl-user -l #{@username} --addgearsize c9`
-    `rhc-admin-ctl-user -l #{@username} --allowsubaccounts true`
-    `rhc-admin-ctl-user -l #{@username} --inheritgearsizes true`
+    `ss-admin-ctl-user -l #{@username} --addgearsize c9`
+    `ss-admin-ctl-user -l #{@username} --allowsubaccounts true`
+    `ss-admin-ctl-user -l #{@username} --inheritgearsizes true`
 
     @headers["X-Impersonate-User"] = "subuser#{@random}"
     get "rest/domains.json", nil, @headers
@@ -110,14 +110,14 @@ class SubUserTest < ActionDispatch::IntegrationTest
     assert_equal 2, capabilities["gear_sizes"].size
     assert_equal ["c9", "small"], capabilities["gear_sizes"].sort
 
-    `rhc-admin-ctl-user -l #{@username} --removegearsize c9`
+    `ss-admin-ctl-user -l #{@username} --removegearsize c9`
 
     subuser = CloudUser.find "subuser#{@random}"
     capabilities = subuser.get_capabilities
     assert_equal 1, capabilities["gear_sizes"].size
     assert_equal "small", capabilities["gear_sizes"][0]
 
-    `rhc-admin-ctl-user -l #{@username} --inheritgearsizes false`
+    `ss-admin-ctl-user -l #{@username} --inheritgearsizes false`
 
     subuser = CloudUser.find "subuser#{@random}"
     capabilities = subuser.get_capabilities

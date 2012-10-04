@@ -11,7 +11,7 @@ include Test::Unit::Assertions
 SSH_OPTS="-o 'BatchMode=yes' -o 'StrictHostKeyChecking=no'"
 
 def set_max_gears(num)
-  output = `rhc-admin-ctl-user --setmaxgears #{num} -l #{@app.login}`
+  output = `ss-admin-ctl-user --setmaxgears #{num} -l #{@app.login}`
   assert $?.success?, "Failed to allocate #{num} gears for #{@app.login}: #{output}"
 end
 
