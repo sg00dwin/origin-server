@@ -5,7 +5,7 @@
 
 Summary:        OpenShift plugin for Dynect DNS service
 Name:           rubygem-%{gemname}
-Version: 0.13.2
+Version: 0.13.3
 Release:        1%{?dist}
 Group:          Development/Languages
 License:        ASL 2.0
@@ -77,6 +77,9 @@ rm -rf %{buildroot}
 %{ruby_sitelib}/%{gemname}.rb
 
 %changelog
+* Thu Oct 04 2012 Krishna Raman <kraman@gmail.com> 0.13.3-1
+- new package built with tito
+
 * Wed Oct 03 2012 Adam Miller <admiller@redhat.com> 0.13.2-1
 - fix typos (dmcphers@redhat.com)
 
