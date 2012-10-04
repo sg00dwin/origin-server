@@ -27,9 +27,6 @@ RedHatCloud::Application.configure do
   # Use a different cache store in production
   # config.cache_store = :mem_cache_store
 
-  # Disable Rails's static asset server
-  # In production, Apache or nginx will already do this
-  config.serve_static_assets = false
 
   # Enable serving of images, stylesheets, and javascripts from an asset server
   # config.action_controller.asset_host = "http://assets.example.com"
@@ -52,7 +49,7 @@ RedHatCloud::Application.configure do
   ############################################
   # OpenShift Configuration Below this point #
   ############################################
-  config.integrated = true
+  config.integrated = false# true
   config.streamline = {
     :host => 'https://www.redhat.com',
     :base_url => '/wapps/streamline',
@@ -80,6 +77,35 @@ RedHatCloud::Application.configure do
   # Promo code Email notification setup
   config.email_from = 'OpenShift <noreply@openshift.redhat.com>'
   config.marketing_mailing_list = ['Marketing Mailing List <jgurrero@redhat.com>', 'mthompso@redhat.com']
+
+  # Disable Rails's static asset server
+  # In production, Apache or nginx will already do this
+  config.serve_static_assets = true#false
+
+  config.assets.compile = false
+  config.assets.initialize_on_precompile = false
+  config.assets.compress = true
+  # Digest is disabled so we serve the same resources
+  #config.assets.digest = true
+  config.assets.js_compressor = :uglifier
+  config.assets.precompile += %w(application.js
+                                 console.js
+                                 modernizr.min.js
+                                 site/home.js
+                                 site/tracking.js
+                                 site/omniture.js
+                                 site/s_code.js
+                                 common.css
+                                 console.css
+                                 site.css
+                                 overpass.css
+                                )
+
+  if config.respond_to? :sass
+    config.sass.style = :compressed
+    config.sass.line_comments = false
+    config.sass.relative_assets = true
+  end
 
   Console.configure do |c|
     c.api = :local
