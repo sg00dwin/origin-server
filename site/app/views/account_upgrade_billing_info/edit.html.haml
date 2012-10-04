@@ -7,9 +7,6 @@
       = f.input :first_name, :required => true, :input_html => { :class => 'input-medium', :placeholder => "First" }
       = f.input :middle_initial, :input_html => { :class => 'input-mini', :placeholder => "MI" }
       = f.input :last_name, :required => true, :input_html => { :class => 'input-medium', :placeholder => "Last" }
-      = f.inline_errors_for :first_name
-      = f.inline_errors_for :middle_initial
-      = f.inline_errors_for :last_name
     = f.input :address1, :required => true, :label => 'Street Address'
     = f.input :address2, :label => '&nbsp;'
     = f.input :address3, :label => '&nbsp;'
@@ -17,9 +14,6 @@
       = f.input :city, :required => true, :input_html => { :class => 'input-medium' }
       = f.input :state, :required => true, :as => :select, :collection => us_states_for_select, :include_blank => false, :input_html => { :class => 'input-medium' }
       = f.input :zip, :required => true, :input_html => { :class => 'input-mini', :placeholder => "Zip" }
-      = f.inline_errors_for :city
-      = f.inline_errors_for :state
-      = f.inline_errors_for :zip
     = f.input :country, :label => 'Country', :input_html => { :readonly => true, :placeholder => "US", :value => "US", :title => 'Current signup restricted to United States' }
 
   = f.buttons do
