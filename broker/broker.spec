@@ -3,7 +3,7 @@
 
 Summary:   Li broker components
 Name:      rhc-broker
-Version: 0.99.9
+Version: 0.99.10
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -123,6 +123,11 @@ if [ ! -f %{_localstatedir}/log/stickshift/user_action.log ]; then
 fi
 
 %changelog
+* Thu Oct 04 2012 Adam Miller <admiller@redhat.com> 0.99.10-1
+- Merge pull request #442 from mrunalp/dev/typeless (dmcphers@redhat.com)
+- Add Gemfile.lock to .gitignore (dmcphers@redhat.com)
+- Typeless gear changes for US 2105 (jhonce@redhat.com)
+
 * Wed Oct 03 2012 Adam Miller <admiller@redhat.com> 0.99.9-1
 - fix typos (dmcphers@redhat.com)
 - Disable analytics for admin scripts (dmcphers@redhat.com)
