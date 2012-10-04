@@ -3,7 +3,7 @@
 
 Summary:   Li broker components
 Name:      rhc-broker
-Version: 0.99.10
+Version: 0.99.11
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -113,6 +113,14 @@ if [ ! -f %{_localstatedir}/log/stickshift/user_action.log ]; then
 fi
 
 %changelog
+* Thu Oct 04 2012 Adam Miller <admiller@redhat.com> 0.99.11-1
+- Merge pull request #438 from brenton/remove_os_scripts2
+  (openshift+bot@redhat.com)
+- Merging in the latest from master (bleanhar@redhat.com)
+- Merging in the latest from master (bleanhar@redhat.com)
+- The openshift-origin-broker-util packages provides the newly renamed admin
+  scripts (bleanhar@redhat.com)
+
 * Thu Oct 04 2012 Adam Miller <admiller@redhat.com> 0.99.10-1
 - Merge pull request #442 from mrunalp/dev/typeless (dmcphers@redhat.com)
 - Add Gemfile.lock to .gitignore (dmcphers@redhat.com)
