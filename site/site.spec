@@ -142,6 +142,10 @@ rm -rf %{buildroot}
 %{sitedir}/public
 
 %changelog
+* Thu Oct 04 2012 Adam Miller <admiller@redhat.com> 0.99.8-2
+- bump site.spec Release: for fake chain-build with console
+  (admiller@redhat.com)
+
 * Thu Oct 04 2012 Adam Miller <admiller@redhat.com> 0.99.8-1
 - Merge pull request #441 from
   smarterclayton/not_found_and_error_pages_for_drupal
