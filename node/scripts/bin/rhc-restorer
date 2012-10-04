@@ -23,13 +23,13 @@ case $OPTION in
 esac
 done
 
-if [ -z "$uuid" ] || ! [ -d "/var/lib/stickshift/$uuid" ]
+if [ -z "$uuid" ] || ! [ -d "/var/lib/openshift/$uuid" ]
 then
     print_help
 fi
 
-source /usr/libexec/stickshift/cartridges/abstract/info/lib/util
-source "/var/lib/stickshift/${uuid}/.env/OPENSHIFT_HOMEDIR"
+source /usr/libexec/openshift/cartridges/abstract/info/lib/util
+source "/var/lib/openshift/${uuid}/.env/OPENSHIFT_HOMEDIR"
 
 # Turn user application back on.
 # Temporary workaround to get primary cart run directory
@@ -42,7 +42,7 @@ runuser --shell /bin/sh "$uuid" -c "echo started >$OPENSHIFT_HOMEDIR/app-root/ru
 
 /sbin/service libra startuser "${uuid}"
 
-HTTP_DIR=`dirname "/etc/httpd/conf.d/stickshift/${uuid}"*/00000_default.conf`
+HTTP_DIR=`dirname "/etc/httpd/conf.d/openshift/${uuid}"*/00000_default.conf`
 
 # Enable proxy setup
 sed -i "s/#ProxyPass/ProxyPass/g" $HTTP_DIR/*.conf

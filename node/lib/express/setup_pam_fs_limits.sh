@@ -29,7 +29,7 @@
 #
 # default values
 #
-source /etc/stickshift/stickshift-node.conf
+source /etc/openshift/openshift-origin-node.conf
 DEFAULT_LIBRA_SKEL_DIR=$GEAR_SKEL_DIR
 
 # defaults
@@ -40,12 +40,12 @@ quota_files=1000
 quota_blocks=`expr 1024 \* 128` # 128MB
 
 function load_node_conf {
-    if [ -f '/etc/stickshift/stickshift-node.conf' ]
+    if [ -f '/etc/openshift/openshift-origin-node.conf' ]
     then
-        . /etc/stickshift/stickshift-node.conf
-    elif [ -f 'stickshift-node.conf' ]
+        . /etc/openshift/openshift-origin-node.conf
+    elif [ -f 'openshift-origin-node.conf' ]
     then
-        . stickshift-node.conf
+        . openshift-origin-node.conf
     else
         echo "node.conf not found.  Cannot continue" 1>&2
         exit 3
@@ -53,9 +53,9 @@ function load_node_conf {
 }
 
 function load_resource_limits_conf {
-    if [ -f '/etc/stickshift/resource_limits.conf' ]
+    if [ -f '/etc/openshift/resource_limits.conf' ]
     then
-        . /etc/stickshift/resource_limits.conf
+        . /etc/openshift/resource_limits.conf
     fi
 }
 

@@ -1,5 +1,5 @@
 require 'test_helper'
-require 'stickshift-controller'
+require 'openshift-origin-controller'
 require 'mocha'
 
 class CtlUsageTest < ActionDispatch::IntegrationTest

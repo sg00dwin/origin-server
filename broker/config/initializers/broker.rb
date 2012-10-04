@@ -1,4 +1,4 @@
-StickShift::DataStore.provider=Express::Broker::MongoDataStore
+OpenShift::DataStore.provider=Express::Broker::MongoDataStore
 ApplicationObserver.instance
 CloudUserObserver.instance
 DomainObserver.instance
@@ -17,7 +17,7 @@ MongoMapper.database = Rails.application.config.datastore[:db]
 MongoMapper.connection[Rails.application.config.datastore[:db]].authenticate(Rails.application.config.datastore[:user], Rails.application.config.datastore[:password]) if Rails.application.config.datastore[:user]
   
   
-db = StickShift::DataStore.instance.db
+db = OpenShift::DataStore.instance.db
 distributed_lock_collection = db.collection(Rails.application.config.datastore[:collections][:distributed_lock])
 distributed_lock_collection.ensure_index([["type", Mongo::ASCENDING]], {:unique => true})
 

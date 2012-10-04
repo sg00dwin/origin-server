@@ -63,7 +63,7 @@ unless list || fix || remove_plan_lock
   exit 1
 end
 
-require "/var/www/stickshift/broker/config/environment"
+require "/var/www/openshift/broker/config/environment"
 # Disable analytics for admin scripts
 Rails.configuration.analytics[:enabled] = false
 
@@ -90,7 +90,7 @@ def throw_error(user, plan_id=nil, ex=nil)
   error_msg = ex_msg = nil
   error_msg = "Failed to update plan #{plan_id} for #{user.login}.\n" if plan_id
   ex_msg = "#{ex.message}\n" if ex
-  printf("%s%s", error_msg, ex_msg) if $verbose || (ex && !ex.kind_of?(StickShift::UserException))
+  printf("%s%s", error_msg, ex_msg) if $verbose || (ex && !ex.kind_of?(OpenShift::UserException))
 end
 
 def fix_user_plan(user, old_plan_id, new_plan_id)

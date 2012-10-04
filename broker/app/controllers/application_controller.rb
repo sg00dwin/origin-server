@@ -167,7 +167,7 @@ class ApplicationController < ActionController::Base
   before_filter :store_user_agent
   protect_from_forgery
   
-  @@outage_notification_file = '/etc/stickshift/express_outage_notification.txt'  
+  @@outage_notification_file = '/etc/openshift/express_outage_notification.txt'  
   
   def store_user_agent
     user_agent = request.headers['User-Agent']

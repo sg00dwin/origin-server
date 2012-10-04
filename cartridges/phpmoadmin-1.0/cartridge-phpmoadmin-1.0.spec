@@ -1,7 +1,7 @@
-%global cartridgedir %{_libexecdir}/stickshift/cartridges/embedded/phpmoadmin-1.0
-%global frameworkdir %{_libexecdir}/stickshift/cartridges/phpmoadmin-1.0
+%global cartridgedir %{_libexecdir}/openshift/cartridges/embedded/phpmoadmin-1.0
+%global frameworkdir %{_libexecdir}/openshift/cartridges/phpmoadmin-1.0
 
-Name: cartridge-phpmoadmin-1.0
+Name: openshift-origin-cartridge-phpmoadmin-1.0
 Version: 0.16.3
 Release: 1%{?dist}
 Summary: Embedded phpMoAdmin support for express
@@ -13,9 +13,9 @@ Source0: %{name}-%{version}.tar.gz
 BuildRoot:    %(mktemp -ud %{_tmppath}/%{name}-%{version}-%{release}-XXXXXX)
 BuildArch: noarch
 
-Requires: stickshift-abstract
-Requires: rubygem(stickshift-node)
-Requires: cartridge-mongodb-2.2
+Requires: openshift-origin-cartridge-abstract
+Requires: rubygem(openshift-origin-node)
+Requires: openshift-origin-cartridge-mongodb-2.2
 
 %description
 Provides rhc phpMoAdmin cartridge support
@@ -29,8 +29,8 @@ Provides rhc phpMoAdmin cartridge support
 rm -rf $RPM_BUILD_ROOT
 rm -rf %{buildroot}
 mkdir -p %{buildroot}%{cartridgedir}
-mkdir -p %{buildroot}/%{_sysconfdir}/stickshift/cartridges
-ln -s %{cartridgedir}/info/configuration/ %{buildroot}/%{_sysconfdir}/stickshift/cartridges/%{name}
+mkdir -p %{buildroot}/%{_sysconfdir}/openshift/cartridges
+ln -s %{cartridgedir}/info/configuration/ %{buildroot}/%{_sysconfdir}/openshift/cartridges/%{name}
 cp -r info %{buildroot}%{cartridgedir}/
 cp LICENSE %{buildroot}%{cartridgedir}/
 cp COPYRIGHT %{buildroot}%{cartridgedir}/
@@ -49,7 +49,7 @@ rm -rf $RPM_BUILD_ROOT
 %attr(0755,-,-) %{frameworkdir}
 %config(noreplace) %{cartridgedir}/info/configuration/
 %attr(0755,-,-) %{cartridgedir}/info/bin/
-%{_sysconfdir}/stickshift/cartridges/%{name}
+%{_sysconfdir}/openshift/cartridges/%{name}
 %{cartridgedir}/info/changelog
 %{cartridgedir}/info/control
 %{cartridgedir}/info/manifest.yml
@@ -169,8 +169,8 @@ rm -rf $RPM_BUILD_ROOT
 - Batch variable name chage (rmillner@redhat.com)
 - Adding export control files (kraman@gmail.com)
 - loading resource limits config when needed (kraman@gmail.com)
-- replacing references to libra with stickshift (abhgupta@redhat.com)
-- Update phpmoadmin li/libra => stickshift (kraman@gmail.com)
+- replacing references to libra with openshift origin (abhgupta@redhat.com)
+- Update phpmoadmin li/libra => openshift origin (kraman@gmail.com)
 - Removed new instances of GNU license headers (jhonce@redhat.com)
 
 * Fri Mar 02 2012 Dan McPherson <dmcphers@redhat.com> 0.7.1-1

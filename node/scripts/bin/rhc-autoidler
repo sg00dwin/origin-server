@@ -6,7 +6,7 @@ days=15
 export PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin:/root/bin:$PATH
 
 # Get the libra_server
-source /etc/stickshift/stickshift-node.conf
+source /etc/openshift/openshift-origin-node.conf
 source ${CARTRIDGE_BASE_PATH}/abstract/info/lib/util
 
 function get_appids_to_idle() {

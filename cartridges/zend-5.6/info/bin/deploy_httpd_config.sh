@@ -1,7 +1,7 @@
 #!/bin/bash
 
-source "/etc/stickshift/stickshift-node.conf"
-source "/etc/stickshift/resource_limits.conf"
+source "/etc/openshift/openshift-origin-node.conf"
+source "/etc/openshift origin/resource_limits.conf"
 source ${CARTRIDGE_BASE_PATH}/abstract/info/lib/util
 
 cartridge_dir="$1"
@@ -12,7 +12,7 @@ IP="$4"
 APP_HOME="$GEAR_BASE_DIR/$uuid"
 source "$APP_HOME/.env/OPENSHIFT_REPO_DIR"
 
-cat <<EOF > "$cartridge_dir/conf.d/stickshift.conf"
+cat <<EOF > "$cartridge_dir/conf.d/openshift.conf"
 ServerRoot "$cartridge_dir"
 DocumentRoot "$OPENSHIFT_REPO_DIR/php"
 Listen $IP:8080

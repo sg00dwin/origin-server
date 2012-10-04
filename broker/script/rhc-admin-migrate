@@ -66,7 +66,7 @@ def migrate_gear(rhlogin, app_name, gear_uuid, version)
 
               if migrate
                 out << "Migrating on node...\n"
-                GearChanger::MCollectiveApplicationContainerProxy.rpc_exec('libra', server_identity) do |client|
+                OpenShift::MCollectiveApplicationContainerProxy.rpc_exec('libra', server_identity) do |client|
                   client.migrate(:uuid => gear_uuid,
                                  :namespace => app.domain.namespace,
                                  :version => version) do |response|
@@ -444,7 +444,7 @@ def migrate_from_file(file)
             append_to_file(error_file, migrate_on_node_cmd)
             break
           else
-            if StickShift::DataStore.instance.find(Application.name, rhlogin, app_name)
+            if OpenShift::DataStore.instance.find(Application.name, rhlogin, app_name)
               sleep 4
             else
               append_to_file(log_file, "App '#{app_name}' no longer found in datastore with uuid '#{gear_uuid}'.  Ignoring...")
@@ -554,7 +554,7 @@ if opt['help']
   p_usage
 end
 
-$:.unshift('/var/www/stickshift/broker')
+$:.unshift('/var/www/openshift/broker')
 require 'config/environment'
 # Disable analytics for admin scripts
 Rails.configuration.analytics[:enabled] = false

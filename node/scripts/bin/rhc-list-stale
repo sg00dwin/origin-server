@@ -9,7 +9,7 @@ days=15
 
 for f in $(libra_users)
 do
-    APPHOME=/var/lib/stickshift/$f
+    APPHOME=/var/lib/openshift/$f
     if [ -d "$APPHOME" ]; then
         # Is stale detection disabled
         [ -e "${APPHOME}/.disable_stale" ] && continue

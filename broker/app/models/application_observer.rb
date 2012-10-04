@@ -60,7 +60,7 @@ called '#{application.name[0..-(BUILDER_SUFFIX.length+1)]}' and build that app i
     if application.framework_cartridge == 'jenkins'
       application.user.applications.each do |uapp|
         if uapp.framework_cartridge == "jenkins"
-          raise StickShift::UserException.new("A jenkins application named '#{uapp.name}' in namespace '#{application.domain.namespace}' already exists.  You can only have 1 jenkins application per account.", 115)
+          raise OpenShift::UserException.new("A jenkins application named '#{uapp.name}' in namespace '#{application.domain.namespace}' already exists.  You can only have 1 jenkins application per account.", 115)
         end
 
         if application.name == "#{uapp.name}#{BUILDER_SUFFIX}"
@@ -76,13 +76,13 @@ may be ok if '#{uapp.name}#{BUILDER_SUFFIX}' was the builder of a previously des
     end
 
     unless Application.find(application.user, application.name).nil?
-      raise StickShift::UserException.new("An application named '#{application.name}' in namespace '#{application.domain.namespace}' already exists", 100)
+      raise OpenShift::UserException.new("An application named '#{application.name}' in namespace '#{application.domain.namespace}' already exists", 100)
     end
 
     if application.framework_cartridge == 'jenkins'
       application.user.applications.each do |app|
         if app.framework_cartridge == 'jenkins'
-          raise StickShift::UserException.new("A jenkins application named '#{application.name}' in namespace '#{application.domain.namespace}' already exists. You can only have 1 jenkins application per account.", 115)
+          raise OpenShift::UserException.new("A jenkins application named '#{application.name}' in namespace '#{application.domain.namespace}' already exists. You can only have 1 jenkins application per account.", 115)
         end
       end
     end
@@ -91,8 +91,8 @@ may be ok if '#{uapp.name}#{BUILDER_SUFFIX}' was the builder of a previously des
       Application::UNSCALABLE_FRAMEWORKS << "zend-5.6"
     end
     
-    if application.user.auth_method == :login and not StickShift::ApplicationContainerProxy.valid_gear_sizes(application.user).include?(application.node_profile)
-      raise StickShift::UserException.new("Invalid Profile: #{application.node_profile}.  Must be: #{StickShift::ApplicationContainerProxy.valid_gear_sizes(application.user).join(", ")}", 1)
+    if application.user.auth_method == :login and not OpenShift::ApplicationContainerProxy.valid_gear_sizes(application.user).include?(application.node_profile)
+      raise OpenShift::UserException.new("Invalid Profile: #{application.node_profile}.  Must be: #{OpenShift::ApplicationContainerProxy.valid_gear_sizes(application.user).join(", ")}", 1)
     end
   end
   

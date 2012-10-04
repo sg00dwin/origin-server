@@ -4,10 +4,10 @@ require 'net/http'
 require 'net/https'
 require 'json'
 require 'singleton'
-require 'stickshift-common'
+require 'openshift-origin-common'
 
-module SwingShift
-    class StreamlineAuthService < StickShift::AuthService
+module OpenShift Origin
+    class StreamlineAuthService < OpenShift Origin::AuthService
       def initialize
         service_base_url = defined?(Rails) ? Rails.configuration.auth[:auth_service][:host] + Rails.configuration.auth[:auth_service][:base_url] : ""
         @@login_url = URI.parse(service_base_url + "/login.html")
@@ -26,7 +26,7 @@ module SwingShift
         encrypted_token = cipher.update(token.to_json)
         encrypted_token << cipher.final
       
-        public_key = OpenSSL::PKey::RSA.new(File.read('/var/www/stickshift/broker/config/keys/public.pem'), Rails.configuration.auth[:broker_auth_rsa_secret])
+        public_key = OpenSSL::PKey::RSA.new(File.read('/var/www/openshift/broker/config/keys/public.pem'), Rails.configuration.auth[:broker_auth_rsa_secret])
         encrypted_iv = public_key.public_encrypt(iv)
         
         # Base64 encode the iv and token
@@ -37,17 +37,17 @@ module SwingShift
       end
       
       def authenticate(request, login, password)
-        if request.headers['User-Agent'] == "StickShift"
+        if request.headers['User-Agent'] == "OpenShift Origin"
           return check_broker_key(login, password)
         else
           unless Rails.configuration.auth[:integrated]
-            raise StickShift::AccessDeniedException if login.nil? or login.empty?
+            raise OpenShift Origin::AccessDeniedException if login.nil? or login.empty?
             token = {:username => login, :auth_method => :login}
           else
             token = check_login(request, login, password)
           end
         end
-        raise StickShift::AccessDeniedException if token.nil? or token[:username].nil?
+        raise OpenShift Origin::AccessDeniedException if token.nil? or token[:username].nil?
         return token
       end
       
@@ -60,14 +60,14 @@ module SwingShift
         else
           login = data['rhlogin']
           unless Rails.configuration.auth[:integrated]
-            raise StickShift::AccessDeniedException if data['rhlogin'].nil? or data['rhlogin'].empty?
+            raise OpenShift Origin::AccessDeniedException if data['rhlogin'].nil? or data['rhlogin'].empty?
             token = {:username => data['rhlogin'], :auth_method => :login}
           else
             password = params['password']
             token =  check_login(request, login, password)
           end
         end
-        raise StickShift::AccessDeniedException if token.nil? or token[:username].nil?
+        raise OpenShift Origin::AccessDeniedException if token.nil? or token[:username].nil?
         return token
       end
       
@@ -135,7 +135,7 @@ module SwingShift
           json_token << cipher.final
         rescue => e
           Rails.logger.error "Broker key authentication failed."
-          raise StickShift::AccessDeniedException.new
+          raise OpenShift Origin::AccessDeniedException.new
         end
   
         token = JSON.parse(json_token)
@@ -144,11 +144,11 @@ module SwingShift
         creation_time = token['creation_time']
               
         user = CloudUser.find(username)
-        raise StickShift::UserValidationException.new unless user
+        raise OpenShift Origin::UserValidationException.new unless user
         
         app = Application.find(user, app_name)
         
-        raise StickShift::UserValidationException.new if !app or creation_time != app.creation_time
+        raise OpenShift Origin::UserValidationException.new if !app or creation_time != app.creation_time
         return {:username => username, :auth_method => :broker_auth}
       end
       
@@ -156,9 +156,9 @@ module SwingShift
         roles = [] unless roles
         unless roles.index('cloud_access_1')
           if roles.index('cloud_access_request_1')
-            raise StickShift::UserValidationException.new("Found valid credentials but you haven't been granted access yet", 146)
+            raise OpenShift Origin::UserValidationException.new("Found valid credentials but you haven't been granted access yet", 146)
           else
-            raise StickShift::UserValidationException.new("Found valid credentials but you haven't requested access yet", 147)
+            raise OpenShift Origin::UserValidationException.new("Found valid credentials but you haven't requested access yet", 147)
           end
         end
       end
@@ -224,21 +224,21 @@ module SwingShift
               return json, ticket
             else
               Rails.logger.error "Empty response from streamline - #{res.code}"
-              raise StickShift::AuthServiceException
+              raise OpenShift Origin::AuthServiceException
             end
           when Net::HTTPForbidden, Net::HTTPUnauthorized
-            raise StickShift::AccessDeniedException
+            raise OpenShift Origin::AccessDeniedException
           else
             Rails.logger.error "Invalid HTTP response from streamline - #{res.code}"
             Rails.logger.error "Response body:\n#{res.body}"
-            raise StickShift::AuthServiceException
+            raise OpenShift Origin::AuthServiceException
           end
-        rescue StickShift::AccessDeniedException, StickShift::UserValidationException, StickShift::AuthServiceException
+        rescue OpenShift Origin::AccessDeniedException, OpenShift Origin::UserValidationException, OpenShift Origin::AuthServiceException
           raise
         rescue Exception => e
           Rails.logger.error "Exception occurred while calling streamline - #{e.message}"
           Rails.logger.error e, e.backtrace
-          raise StickShift::AuthServiceException
+          raise OpenShift Origin::AuthServiceException
         end
       end
     end

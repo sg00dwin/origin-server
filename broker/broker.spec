@@ -1,5 +1,5 @@
 %define htmldir %{_localstatedir}/www/html
-%define brokerdir %{_localstatedir}/www/stickshift/broker
+%define brokerdir %{_localstatedir}/www/openshift/broker
 
 Summary:   Li broker components
 Name:      rhc-broker
@@ -20,7 +20,7 @@ Requires:  rubygem-parseconfig
 Requires:  rubygem-passenger-native-libs
 Requires:  rubygem-rails
 Requires:  rubygem-xml-simple
-Requires:  rubygem-stickshift-controller
+Requires:  rubygem-openshift-origin-controller
 Requires:  rubygem-bson_ext
 Requires:  rubygem-rest-client
 Requires:  rubygem-thread-dump
@@ -58,14 +58,14 @@ rm -rf %{buildroot}
 mkdir -p %{buildroot}%{_bindir}
 mkdir -p %{buildroot}%{htmldir}
 mkdir -p %{buildroot}%{brokerdir}
-mkdir -p %{buildroot}/usr/lib/stickshift/broker
-mv application_templates %{buildroot}/usr/lib/stickshift/broker
+mkdir -p %{buildroot}/usr/lib/openshift/broker
+mv application_templates %{buildroot}/usr/lib/openshift/broker
 cp -r . %{buildroot}%{brokerdir}
 ln -s %{brokerdir}/public %{buildroot}%{htmldir}/broker
 
 mkdir -p %{buildroot}%{brokerdir}/run
 mkdir -p %{buildroot}%{brokerdir}/log
-mkdir -p %{buildroot}%{_localstatedir}/log/stickshift
+mkdir -p %{buildroot}%{_localstatedir}/log/openshift
 
 mv %{buildroot}%{brokerdir}/script/rhc-admin-cartridge-do %{buildroot}/%{_bindir}
 mv %{buildroot}%{brokerdir}/script/rhc-admin-migrate %{buildroot}/%{_bindir}
@@ -80,7 +80,7 @@ rm -rf $RPM_BUILD_ROOT
 %files
 %defattr(0640,root,libra_user,0750)
 %ghost %{brokerdir}/log/production.log
-%ghost %{_localstatedir}/log/stickshift/user_action.log
+%ghost %{_localstatedir}/log/openshift/user_action.log
 %config(noreplace) %{brokerdir}/config/environments/production.rb
 %config(noreplace) %{brokerdir}/config/keys/public.pem
 %config(noreplace) %{brokerdir}/config/keys/private.pem
@@ -97,7 +97,7 @@ rm -rf $RPM_BUILD_ROOT
 %attr(0750,-,-) %{_bindir}/rhc-admin-ctl-usage
 %attr(0750,-,-) %{_bindir}/rhc-admin-ctl-plan
 %attr(0750,-,-) %{_bindir}/rhc-admin-stale-dns
-/usr/lib/stickshift/broker/application_templates
+/usr/lib/openshift/broker/application_templates
 
 %post
 if [ ! -f %{brokerdir}/log/production.log ]; then
@@ -106,10 +106,10 @@ if [ ! -f %{brokerdir}/log/production.log ]; then
   chmod 660 %{brokerdir}/log/production.log
 fi
 
-if [ ! -f %{_localstatedir}/log/stickshift/user_action.log ]; then
-  /bin/touch %{_localstatedir}/log/stickshift/user_action.log
-  chown root:libra_user %{_localstatedir}/log/stickshift/user_action.log
-  chmod 660 %{_localstatedir}/log/stickshift/user_action.log
+if [ ! -f %{_localstatedir}/log/openshift/user_action.log ]; then
+  /bin/touch %{_localstatedir}/log/openshift/user_action.log
+  chown root:libra_user %{_localstatedir}/log/openshift/user_action.log
+  chmod 660 %{_localstatedir}/log/openshift/user_action.log
 fi
 
 %changelog
@@ -1120,7 +1120,7 @@ fi
 - Changes to MongoDatastore: - Enabled creation of new mongodb instances with
   different config parameters. - Re-organized mongo rails configuration
   (rpenta@redhat.com)
-- Renaming Cloud-SDK -> StickShift (kraman@gmail.com)
+- Renaming Cloud-SDK -> OpenShift Origin (kraman@gmail.com)
 - missed a help message on the new gear sizes (rmillner@redhat.com)
 - Add new env var *_USER_APP_NAME (need to rename this once the *_APP_NAME is
   switched over to *_GEAR_NAME). (ramr@redhat.com)

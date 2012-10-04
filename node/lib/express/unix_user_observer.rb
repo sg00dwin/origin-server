@@ -16,13 +16,13 @@
 
 require 'rubygems'
 require 'singleton'
-require 'stickshift-node/config'
-require 'stickshift-node/model/unix_user'
-require 'stickshift-node/utils/shell_exec'
+require 'openshift-origin-node/config'
+require 'openshift-origin-node/model/unix_user'
+require 'openshift-origin-node/utils/shell_exec'
 
-module StickShift
+module OpenShift
   class UnixUserObserver
-    include StickShift::Utils::ShellExec
+    include OpenShift::Utils::ShellExec
     include Object::Singleton
 
     def update(*args)
@@ -38,13 +38,13 @@ module StickShift
       out,err,rc = shellCmd("service cgconfig status > /dev/null 2>&1")
       if rc == 0
         out,err,rc = shellCmd("service libra-cgroups startuser #{user.name} > /dev/null")
-        raise StickShift::UserCreationException.new("Unable to setup cgroups for #{user.name}") unless rc == 0
+        raise OpenShift::UserCreationException.new("Unable to setup cgroups for #{user.name}") unless rc == 0
       end
 
       out,err,rc = shellCmd("service libra-tc status > /dev/null 2>&1")
       if rc == 0
         shellCmd("service libra-tc startuser #{user.name} > /dev/null")
-        raise StickShift::UserCreationException.new("Unable to setup tc for #{user.name}") unless rc == 0
+        raise OpenShift::UserCreationException.new("Unable to setup tc for #{user.name}") unless rc == 0
       end
     end
 
@@ -52,9 +52,9 @@ module StickShift
     end
 
     def after_initialize_homedir(user)
-      cmd = "/bin/sh #{File.join('/usr/libexec/stickshift/lib', "express/setup_pam_fs_limits.sh")} #{user.name} #{user.quota_blocks ? user.quota_blocks : ''} #{user.quota_files ? user.quota_files : ''}"
+      cmd = "/bin/sh #{File.join('/usr/libexec/openshift/lib', "express/setup_pam_fs_limits.sh")} #{user.name} #{user.quota_blocks ? user.quota_blocks : ''} #{user.quota_files ? user.quota_files : ''}"
       out,err,rc = shellCmd(cmd)
-      raise StickShift::UserCreationException.new("Unable to setup pam/fs limits for #{user.name}") unless rc == 0
+      raise OpenShift::UserCreationException.new("Unable to setup pam/fs limits for #{user.name}") unless rc == 0
     end
 
 
@@ -64,21 +64,21 @@ module StickShift
         shellCmd("service libra-tc stopuser #{user.name} > /dev/null")
       end
 
-      cmd = "/bin/sh #{File.join('/usr/libexec/stickshift/lib', "express/setup_pam_fs_limits.sh")} #{user.name} 0 0 0"
+      cmd = "/bin/sh #{File.join('/usr/libexec/openshift/lib', "express/setup_pam_fs_limits.sh")} #{user.name} 0 0 0"
       out,err,rc = shellCmd(cmd)
-      raise StickShift::UserCreationException.new("Unable to setup pam/fs/nproc limits for #{user.name}") unless rc == 0
+      raise OpenShift::UserCreationException.new("Unable to setup pam/fs/nproc limits for #{user.name}") unless rc == 0
 
       out,err,rc = shellCmd("service cgconfig status > /dev/null")
       shellCmd("service libra-cgroups freezeuser #{user.name} > /dev/null") if rc == 0
 
-      last_access_dir = StickShift::Config.instance.get("LAST_ACCESS_DIR")
+      last_access_dir = OpenShift::Config.instance.get("LAST_ACCESS_DIR")
       shellCmd("rm -f #{last_access_dir}/#{user.name} > /dev/null")
     end
 
-    def before_initialize_stickshift_proxy(user)
+    def before_initialize_openshift_origin_port_proxy(user)
     end
 
-    def after_initialize_stickshift_proxy(user)
+    def after_initialize_openshift_origin_port_proxy(user)
     end
 
     def after_unix_user_destroy(user)
@@ -86,9 +86,9 @@ module StickShift
       shellCmd("service libra-cgroups thawuser #{user.name} > /dev/null") if rc == 0
       shellCmd("service libra-cgroups stopuser #{user.name} > /dev/null") if rc == 0
 
-      cmd = "/bin/sh #{File.join("/usr/libexec/stickshift/lib", "express/teardown_pam_fs_limits.sh")} #{user.name}"
+      cmd = "/bin/sh #{File.join("/usr/libexec/openshift/lib", "express/teardown_pam_fs_limits.sh")} #{user.name}"
       out,err,rc = shellCmd(cmd)
-      raise StickShift::UserCreationException.new("Unable to teardown pam/fs/nproc limits for #{user.name}") unless rc == 0
+      raise OpenShift::UserCreationException.new("Unable to teardown pam/fs/nproc limits for #{user.name}") unless rc == 0
     end
 
     def before_add_ssh_key(user,key)
@@ -107,5 +107,5 @@ module StickShift
     end
   end
 
-  StickShift::UnixUser.add_observer(UnixUserObserver.instance)
+  OpenShift::UnixUser.add_observer(UnixUserObserver.instance)
 end

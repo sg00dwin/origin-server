@@ -1,7 +1,7 @@
 require File.expand_path('./nurture', File.dirname(__FILE__))
 
 module GearChanger
-  class MCollectiveApplicationContainerProxy < StickShift::ApplicationContainerProxy
+  class MCollectiveApplicationContainerProxy < OpenShift::ApplicationContainerProxy
     alias :run_cartridge_command_old :run_cartridge_command
 
     def run_cartridge_command(framework, app, gear, command, arg=nil, allow_move=true)

@@ -25,14 +25,14 @@ fi
 
 lockfile=/var/lock/subsys/libra-cgroups
 
-if [ -f /etc/stickshift/stickshift-node.conf ]
+if [ -f /etc/openshift/openshift-origin-node.conf ]
 then
-    . /etc/stickshift/stickshift-node.conf
+    . /etc/openshift/openshift-origin-node.conf
 fi
 
-if [ -f /etc/stickshift/resource_limits.conf ]
+if [ -f /etc/openshift/resource_limits.conf ]
 then
-    . /etc/stickshift/resource_limits.conf
+    . /etc/openshift/resource_limits.conf
 fi
 
 # ============================================================================

@@ -23,7 +23,7 @@ Requires:      perl
 Requires:      ruby
 Requires:      rubygem-open4
 Requires:      rubygem-parseconfig
-Requires:      rubygem-stickshift-node
+Requires:      rubygem-openshift-origin-node
 Requires:      rubygem-systemu
 Requires:      stickshift-abstract
 Requires:      mcollective-qpid-plugin
@@ -80,16 +80,16 @@ mkdir -p %{buildroot}%{_sysconfdir}/cron.daily/
 mkdir -p %{buildroot}%{_sysconfdir}/oddjobd.conf.d/
 mkdir -p %{buildroot}%{_sysconfdir}/dbus-1/system.d/
 mkdir -p %{buildroot}%{_sysconfdir}/cron.daily/
-mkdir -p %{buildroot}%{_sysconfdir}/stickshift/skel
+mkdir -p %{buildroot}%{_sysconfdir}/openshift/skel
 mkdir -p %{buildroot}/%{_localstatedir}/www/html/
 mkdir -p %{buildroot}/%{_sysconfdir}/security/
-mkdir -p %{buildroot}%{_localstatedir}/lib/stickshift
+mkdir -p %{buildroot}%{_localstatedir}/lib/openshift
 mkdir -p %{buildroot}%{_localstatedir}/run/stickshift
-mkdir -p %{buildroot}%{_localstatedir}/lib/stickshift/.httpd.d
+mkdir -p %{buildroot}%{_localstatedir}/lib/openshift/.httpd.d
 mkdir -p %{buildroot}/%{_sysconfdir}/httpd/conf.d/
 mkdir -p %{buildroot}/lib64/security/
 mkdir -p %{buildroot}/sandbox
-# ln -s %{_localstatedir}/lib/stickshift/.httpd.d/ %{buildroot}/%{_sysconfdir}/httpd/conf.d/stickshift
+# ln -s %{_localstatedir}/lib/openshift/.httpd.d/ %{buildroot}/%{_sysconfdir}/httpd/conf.d/openshift
 
 cp -r lib %{buildroot}%{_libexecdir}/stickshift
 cp -r conf/httpd %{buildroot}%{_sysconfdir}
@@ -98,7 +98,7 @@ cp -r mcollective %{buildroot}%{_libexecdir}
 cp -r namespace.d %{buildroot}%{_sysconfdir}/security
 cp scripts/bin/* %{buildroot}%{_bindir}
 cp scripts/init/* %{buildroot}%{_initddir}
-cp scripts/stickshift_tmpwatch.sh %{buildroot}%{_sysconfdir}/cron.daily/stickshift_tmpwatch.sh
+cp scripts/openshift_tmpwatch.sh %{buildroot}%{_sysconfdir}/cron.daily/openshift_tmpwatch.sh
 cp conf/oddjob/openshift-restorer.conf %{buildroot}%{_sysconfdir}/dbus-1/system.d/
 cp conf/oddjob/oddjobd-restorer.conf %{buildroot}%{_sysconfdir}/oddjobd.conf.d/
 cp scripts/restorer.php %{buildroot}/%{_localstatedir}/www/html/
@@ -157,17 +157,17 @@ fi
 #semanage login -m -s guest_u __default__ || :
 
 # If /etc/httpd/conf.d/libra is a dir, make it a symlink
-if [[ -d "/etc/httpd/conf.d/stickshift.bak" && -L "/etc/httpd/conf.d/stickshift" ]]
+if [[ -d "/etc/httpd/conf.d/openshift.bak" && -L "/etc/httpd/conf.d/openshift" ]]
 then
-    mv /etc/httpd/conf.d/stickshift.bak/* /var/lib/stickshift/.httpd.d/
+    mv /etc/httpd/conf.d/openshift.bak/* /var/lib/openshift/.httpd.d/
     # not forced to prevent data loss
-    rmdir /etc/httpd/conf.d/stickshift.bak
+    rmdir /etc/httpd/conf.d/openshift.bak
 fi
 
 # To workaround mcollective 2.0 monkey patch to tmpdir
 chmod o+w /tmp
 
-%triggerin -- rubygem-stickshift-node
+%triggerin -- rubygem-openshift-origin-node
 /sbin/service libra-data start > /dev/null 2>&1 || :
 
 %preun
@@ -193,9 +193,9 @@ fi
 
 %pre
 
-if [[ -d "/etc/httpd/conf.d/stickshift" && ! -L "/etc/httpd/conf.d/stickshift" ]]
+if [[ -d "/etc/httpd/conf.d/openshift" && ! -L "/etc/httpd/conf.d/openshift" ]]
 then
-    mv /etc/httpd/conf.d/stickshift/ /etc/httpd/conf.d/stickshift.bak/
+    mv /etc/httpd/conf.d/openshift/ /etc/httpd/conf.d/openshift.bak/
 fi
 
 %files
@@ -225,8 +225,8 @@ fi
 %attr(0750,-,-) %{_bindir}/remount-secure.sh
 %attr(0755,-,-) %{_bindir}/rhc-cgroup-read
 %attr(0755,-,-) %{_bindir}/rhc-vhost-choke
-%dir %attr(0751,root,root) %{_localstatedir}/lib/stickshift
-%dir %attr(0750,root,root) %{_localstatedir}/lib/stickshift/.httpd.d
+%dir %attr(0751,root,root) %{_localstatedir}/lib/openshift
+%dir %attr(0750,root,root) %{_localstatedir}/lib/openshift/.httpd.d
 %dir %attr(0700,root,root) %{_localstatedir}/run/stickshift
 #%dir %attr(0755,root,root) %{_libexecdir}/stickshift/cartridges/abstract-httpd/
 #%attr(0750,-,-) %{_libexecdir}/stickshift/cartridges/abstract-httpd/info/hooks/
@@ -249,14 +249,14 @@ fi
 %attr(0700,-,-) %{_bindir}/migration-symlink-as-user
 %attr(0640,-,-) %config(noreplace) %{_sysconfdir}/oddjobd.conf.d/oddjobd-restorer.conf
 %attr(0640,-,-) %config(noreplace) %{_sysconfdir}/dbus-1/system.d/openshift-restorer.conf
-%attr(0644,-,-) %config(noreplace) %{_sysconfdir}/stickshift/stickshift-node.conf.libra
-%attr(0644,-,-) %config(noreplace) %{_sysconfdir}/stickshift/resource_limits.con*
-%attr(0750,-,-) %config(noreplace) %{_sysconfdir}/cron.daily/stickshift_tmpwatch.sh
+%attr(0644,-,-) %config(noreplace) %{_sysconfdir}/openshift/openshift-origin-node.conf.libra
+%attr(0644,-,-) %config(noreplace) %{_sysconfdir}/openshift/resource_limits.con*
+%attr(0750,-,-) %config(noreplace) %{_sysconfdir}/cron.daily/openshift_tmpwatch.sh
 %attr(0644,-,-) %config(noreplace) %{_sysconfdir}/security/namespace.d/*
 %{_localstatedir}/www/html/restorer.php
 %attr(0750,root,root) %config(noreplace) %{_sysconfdir}/httpd/conf.d/000000_default.conf
-#%attr(0640,root,root) %{_sysconfdir}/httpd/conf.d/stickshift
-%dir %attr(0755,root,root) %{_sysconfdir}/stickshift/skel
+#%attr(0640,root,root) %{_sysconfdir}/httpd/conf.d/openshift
+%dir %attr(0755,root,root) %{_sysconfdir}/openshift/skel
 /lib64/security/pam_libra.so
 %dir %attr(1777,root,root) /sandbox
 
@@ -316,8 +316,8 @@ fi
 - Fix typo - using wrong filename. (ramr@redhat.com)
 
 * Thu Sep 06 2012 Adam Miller <admiller@redhat.com> 0.98.4-1
-- Fix for bugz 852486 - rubygem-stickshift-node is running restorecon against
-  /var/lib/stickshift - required for Origin, so moved to ss-setup-node.
+- Fix for bugz 852486 - rubygem-openshift-origin-node is running restorecon against
+  /var/lib/openshift - required for Origin, so moved to ss-setup-node.
   (ramr@redhat.com)
 
 * Tue Sep 04 2012 Adam Miller <admiller@redhat.com> 0.98.3-1
@@ -329,7 +329,7 @@ fi
 - update migration for 2.0.17 (dmcphers@redhat.com)
 - Bash environment support (jhonce@redhat.com)
 - Merge pull request #299 from rmillner/moveproxy (openshift+bot@redhat.com)
-- Removing duplicate stickshift-proxy bits from rhc-node. (rmillner@redhat.com)
+- Removing duplicate openshift-origin-port-proxy bits from rhc-node. (rmillner@redhat.com)
 
 * Wed Aug 22 2012 Adam Miller <admiller@redhat.com> 0.98.1-1
 - bump_minor_versions for sprint 17 (admiller@redhat.com)
@@ -408,7 +408,7 @@ fi
 
 * Tue Jul 24 2012 Adam Miller <admiller@redhat.com> 0.96.5-1
 - Add pre and post destroy calls on gear destruction and move unobfuscate and
-  stickshift-proxy out of cartridge hooks and into node. (rmillner@redhat.com)
+  openshift-origin-port-proxy out of cartridge hooks and into node. (rmillner@redhat.com)
 
 * Fri Jul 20 2012 Adam Miller <admiller@redhat.com> 0.96.4-1
 - Merge branch 'master' of github.com:openshift/li (mmcgrath@redhat.com)
@@ -495,7 +495,7 @@ fi
 * Fri Jun 08 2012 Adam Miller <admiller@redhat.com> 0.94.3-1
 - Proxy init script cleanup. (rmillner@redhat.com)
 - Fix glob to find git directories (jhonce@redhat.com)
-- Bug 806468 /etc/stickshift/district.conf should be put under /var
+- Bug 806468 /etc/openshift/district.conf should be put under /var
   (jhonce@redhat.com)
 - The exta rules are expensive and unnecessary; we will expand the ranger later
   if its needed. (rmillner@redhat.com)
@@ -768,14 +768,14 @@ fi
   (rmillner@redhat.com)
 - Escape the # character (rmillner@redhat.com)
 - Copy over old proxies if creating a new proxy cfg (rmillner@redhat.com)
-- Rename libra-proxy to stickshift-proxy (rmillner@redhat.com)
+- Rename libra-proxy to openshift-origin-port-proxy (rmillner@redhat.com)
 - Bug 803267: Fixing incorrect path (rmillner@redhat.com)
 - enable support for cfs quotas (mmcgrath@redhat.com)
 - Fixing migration script for jenkins and jboss apps Also updated notes
   https://engineering.redhat.com/trac/Libra/ticket/149 (kraman@gmail.com)
 
 * Tue Mar 13 2012 Dan McPherson <dmcphers@redhat.com> 0.88.6-1
-- The values of stickshift-node.conf were being overridden after libra-data,
+- The values of openshift-origin-node.conf were being overridden after libra-data,
   should be before. (rmillner@redhat.com)
 - Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
   (rmillner@redhat.com)
@@ -800,7 +800,7 @@ fi
   PUBLIC_IP_OVERRIDE and PUBLIC_HOSTNAME_OVERRIDE from PUBLIC_IP and
   PUBLIC_HOSTNAME so that OVERRIDE is optional and can be used from devenv.
   (rmillner@redhat.com)
-- moving li/stickshift/node/lib/stickshift-node/express to li/node/lib
+- moving li/stickshift/node/lib/openshift-node/express to li/node/lib
   (abhgupta@redhat.com)
 - Fix to chown in migrate script. (mpatel@redhat.com)
 - Merge branch 'master' of ssh://git1.ops.rhcloud.com/srv/git/li
@@ -811,7 +811,7 @@ fi
   away entirely. (rmillner@redhat.com)
 - Migrate script recreates app-symlinks (for devenv) and handles env vars
   (kraman@gmail.com)
-- Change remaining references from /usr/libexec/li to /usr/libexec/stickshift
+- Change remaining references from /usr/libexec/li to /usr/libexec/openshift
   (rmillner@redhat.com)
 - Bug fixes in migrate script (checkpoint, migrates all except jenkins and
   broker-mongo-ds) (kraman@gmail.com)
@@ -828,7 +828,7 @@ fi
 - remove jenkinsUrl from config.xml (dmcphers@redhat.com)
 - Change strategy for old variables.  Leave the old files in place, source the
   new file in case its value changes. (rmillner@redhat.com)
-- /var/lib/libra became /var/lib/stickshift in the stickshift merge.
+- /var/lib/libra became /var/lib/openshift in the stickshift merge.
   (rmillner@redhat.com)
 - rhc-accept-node: added a check for the system httpd configs to catch configs
   that don't have an associated user account (twiest@redhat.com)
@@ -862,14 +862,14 @@ fi
 - Fixing missing connection hooks in abstract cartridge (kraman@gmail.com)
 - Fix factor code to read node config properly Fix rhc-admin-add-template to
   store yaml for descriptor (kraman@gmail.com)
-- Put our version of node.conf back whenever the stickshift-node package is
+- Put our version of node.conf back whenever the openshift-origin-node package is
   installed. (rmillner@redhat.com)
 - Changing permission to allow stickshift confi files to be user readable
   (kraman@gmail.com)
 - Moved abstract carts from rhc-node (kraman@gmail.com)
 - Updates for getting devenv running (kraman@gmail.com)
 - NodeJS update li/libra => stickshift (kraman@gmail.com)
-- Renaming Cloud-SDK -> StickShift (kraman@gmail.com)
+- Renaming Cloud-SDK -> OpenShift (kraman@gmail.com)
 - switching to new mirror1 repo (dmcphers@redhat.com)
 - Re-enable both flavors of mysql. (ramr@redhat.com)
 - Add publication of git url and http proxy info to nodejs. Rename the

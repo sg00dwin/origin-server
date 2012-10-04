@@ -7,8 +7,8 @@ mount --bind -o defaults,nosuid,noexec,nodev,remount /var/log/audit /var/log/aud
 mount --bind -o defaults,nosuid,noexec,nodev /home /home
 mount --bind -o defaults,nosuid,noexec,nodev,remount /home /home
 
-mount --bind -o defaults,nosuid,nodev /var/lib/stickshift/ /var/lib/stickshift
-mount --bind -o defaults,nosuid,nodev,remount /var/lib/stickshift /var/lib/stickshift
+mount --bind -o defaults,nosuid,nodev /var/lib/openshift/ /var/lib/openshift
+mount --bind -o defaults,nosuid,nodev,remount /var/lib/openshift /var/lib/openshift
 
 mount --bind -o defaults,nosuid /var /var
 mount --bind -o defaults,nosuid,remount /var /var

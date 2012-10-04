@@ -21,8 +21,8 @@ $USERS = %x[grep ":libra guest:" /etc/passwd].split("\n")
 $TC_DATA = %x[tc clas show dev eth0].split("\n").grep(/parent/)
 $ALL_QUOTAS = %x[repquota -a].split("\n")
 
-$LIBRA_CONF_DIR="/etc/stickshift"
-$NODE_CONF_FILE=File.join($LIBRA_CONF_DIR, "/stickshift-node.conf")
+$LIBRA_CONF_DIR="/etc/openshift"
+$NODE_CONF_FILE=File.join($LIBRA_CONF_DIR, "/openshift-origin-node.conf")
 $RESOURCE_LIMITS_FILE=File.join($LIBRA_CONF_DIR,"/resource_limits.conf")
 $LIMITS_CONF_DIR="/etc/security/limits.d"
 #

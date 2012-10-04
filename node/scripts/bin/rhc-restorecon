@@ -1,13 +1,13 @@
 #!/usr/bin/ruby
 
-# Purpose: Chcon /var/lib/stickshift to proper mcs contexts
+# Purpose: Chcon /var/lib/openshift to proper mcs contexts
 #
 # Type should generally be libra_var_lib_t
 # MCS should be s0:c$UID-499  so UID500 has a mcs of s0:c1
 
 require 'etc'
 
-home_dirs = Dir.glob("/var/lib/stickshift/[0-9a-zA-Z]*")
+home_dirs = Dir.glob("/var/lib/openshift/[0-9a-zA-Z]*")
 
 debug=1
 

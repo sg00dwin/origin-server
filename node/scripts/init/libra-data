@@ -12,7 +12,7 @@
 
 # source function library
 . /etc/rc.d/init.d/functions
-LIBRA_NODE_CONF=${LIBRA_NODE_CONF:=/etc/stickshift/stickshift-node.conf}
+LIBRA_NODE_CONF=${LIBRA_NODE_CONF:=/etc/openshift/openshift-origin-node.conf}
 
 if [ -f $LIBRA_NODE_CONF ]
 then

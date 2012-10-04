@@ -1,3 +1,3 @@
-require "stickshift-common"
+require "openshift-origin-common"
 require "swingshift-streamline-plugin/swingshift/streamline_auth_service.rb"
-StickShift::AuthService.provider=SwingShift::StreamlineAuthService
+OpenShift Origin::AuthService.provider=OpenShift Origin::StreamlineAuthService

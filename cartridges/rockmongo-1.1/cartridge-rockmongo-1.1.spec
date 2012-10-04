@@ -1,7 +1,7 @@
-%global cartridgedir %{_libexecdir}/stickshift/cartridges/embedded/rockmongo-1.1
-%global frameworkdir %{_libexecdir}/stickshift/cartridges/rockmongo-1.1
+%global cartridgedir %{_libexecdir}/openshift/cartridges/embedded/rockmongo-1.1
+%global frameworkdir %{_libexecdir}/openshift/cartridges/rockmongo-1.1
 
-Name: cartridge-rockmongo-1.1
+Name: openshift-origin-cartridge-rockmongo-1.1
 Version: 1.15.3
 Release: 1%{?dist}
 Summary: Embedded RockMongo support for OpenShift
@@ -12,8 +12,8 @@ URL: http://openshift.redhat.com
 Source0: %{name}-%{version}.tar.gz
 BuildRoot:    %(mktemp -ud %{_tmppath}/%{name}-%{version}-%{release}-XXXXXX)
 BuildArch: noarch
-Requires: stickshift-abstract
-Requires: cartridge-mongodb-2.2
+Requires: openshift-origin-cartridge-abstract
+Requires: openshift-origin-cartridge-mongodb-2.2
 
 %description
 Provides rhc RockMongo cartridge support
@@ -27,8 +27,8 @@ Provides rhc RockMongo cartridge support
 rm -rf $RPM_BUILD_ROOT
 rm -rf %{buildroot}
 mkdir -p %{buildroot}%{cartridgedir}
-mkdir -p %{buildroot}/%{_sysconfdir}/stickshift/cartridges
-ln -s %{cartridgedir}/info/configuration/ %{buildroot}/%{_sysconfdir}/stickshift/cartridges/%{name}
+mkdir -p %{buildroot}/%{_sysconfdir}/openshift/cartridges
+ln -s %{cartridgedir}/info/configuration/ %{buildroot}/%{_sysconfdir}/openshift/cartridges/%{name}
 cp -r info %{buildroot}%{cartridgedir}/
 cp LICENSE %{buildroot}%{cartridgedir}/
 cp COPYRIGHT %{buildroot}%{cartridgedir}/
@@ -48,7 +48,7 @@ rm -rf $RPM_BUILD_ROOT
 %config(noreplace) %{cartridgedir}/info/configuration/
 %attr(0755,-,-) %{cartridgedir}/info/bin/
  %{cartridgedir}/info/rockmongo/
-%{_sysconfdir}/stickshift/cartridges/%{name}
+%{_sysconfdir}/openshift/cartridges/%{name}
 %{cartridgedir}/info/changelog
 %{cartridgedir}/info/control
 %{cartridgedir}/info/manifest.yml
@@ -162,8 +162,8 @@ rm -rf $RPM_BUILD_ROOT
 - Batch variable name chage (rmillner@redhat.com)
 - Adding export control files (kraman@gmail.com)
 - loading resource limits config when needed (kraman@gmail.com)
-- replacing references to libra with stickshift (abhgupta@redhat.com)
-- replacing references to libra with stickshift in rockmongo cartridge
+- replacing references to libra with openshift origin (abhgupta@redhat.com)
+- replacing references to libra with openshift origin in rockmongo cartridge
   (abhgupta@redhat.com)
 - Removed new instances of GNU license headers (jhonce@redhat.com)
 

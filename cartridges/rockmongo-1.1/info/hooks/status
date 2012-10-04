@@ -9,7 +9,7 @@ function print_help {
     echo "Usage: $0 app-name namespace uuid"
     echo "Stop a running application and disable it"
 
-    echo "$0 $@" | logger -p local0.notice -t stickshift_rockmongo_status
+    echo "$0 $@" | logger -p local0.notice -t openshift_origin_rockmongo_status
     exit 1
 }
 
@@ -26,7 +26,7 @@ done
 
 [ $# -eq 3 ] || print_help
 
-source "/etc/stickshift/stickshift-node.conf"
+source "/etc/openshift/openshift-origin-node.conf"
 source ${CARTRIDGE_BASE_PATH}/abstract/info/lib/util
 
 setup_basic_hook "$1" $2 $3
@@ -37,7 +37,7 @@ ROCKMONGO_DIR=`echo $APP_HOME/rockmongo-1.1 | tr -s /` # ensure that there aren'
 #
 # Start application
 #
-ADDRESS="$(awk '/Listen/{ print $2 }' $ROCKMONGO_DIR/conf.d/stickshift.conf)"
+ADDRESS="$(awk '/Listen/{ print $2 }' $ROCKMONGO_DIR/conf.d/openshift.conf)"
 URL="http://$ADDRESS/rockmongo"
 
 if output=$(runuser --shell /bin/sh "$uuid" -c "/usr/bin/wget -qO- $URL >> /dev/null ; if [ \$? -ne 0 ]; then echo Stopped; else echo Running; fi" 2>&1)

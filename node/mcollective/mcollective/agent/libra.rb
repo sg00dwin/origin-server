@@ -29,7 +29,7 @@ require 'rubygems'
 require 'open4'
 require 'pp'
 require 'json'
-require 'stickshift-node'
+require 'openshift-origin-node'
 require 'shellwords'
 require 'facter'
 

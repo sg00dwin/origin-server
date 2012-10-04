@@ -24,7 +24,7 @@ Reservations:
   - MEM >= 100MB
 Components:
   default:
-#    Dependencies: [rhc-cartridge-php]
+#    Dependencies: [rhc-openshift-origin-cartridge-php]
     Service-Dependencies: ["mongodb-2.2"]
     Publishes:
       get-serve-info:

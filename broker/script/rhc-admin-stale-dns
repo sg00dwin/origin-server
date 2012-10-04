@@ -72,11 +72,11 @@ if namespaces.length == 0
   exit 1
 end
 
-require "/var/www/stickshift/broker/config/environment"
+require "/var/www/openshift/broker/config/environment"
 # Disable analytics for admin scripts
 Rails.configuration.analytics[:enabled] = false
 
-dns = StickShift::DnsService.instance
+dns = OpenShift::DnsService.instance
 begin
   applications.each do |app|
     puts "Deregister application: #{app[0]} in #{app[1]}"

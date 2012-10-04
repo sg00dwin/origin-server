@@ -6,9 +6,9 @@
 #
 # Get libra_dir configured value
 # TODO: MAL 20110317 restore when libra_dir is in it's own filesystem
-if [ -f /etc/stickshift/stickshift-node.conf ]
+if [ -f /etc/openshift/openshift-origin-node.conf ]
 then
-    . /etc/stickshift/stickshift-node.conf
+    . /etc/openshift/openshift-origin-node.conf
 fi
 libra_dir=${GEAR_BASE_DIR}
 
@@ -21,7 +21,7 @@ fi
 # default if no one gives you a good answer
 # this applies until we get a separate partition for Libra
 # because you can't apply quotas to bind mounts
-libra_dir=${libra_dir:=/var/lib/stickshift}
+libra_dir=${libra_dir:=/var/lib/openshift}
 
 # remove trailing / as they mess up the searches
 libra_dir=`echo $libra_dir | tr -s / | perl -p -e 's:(.)/$:$1 :'`

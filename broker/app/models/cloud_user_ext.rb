@@ -1,4 +1,4 @@
-class CloudUser < StickShift::UserModel
+class CloudUser < OpenShift::UserModel
   alias :initialize_old :initialize
 
   def initialize(login=nil, ssh=nil, ssh_type=nil, key_name=nil, capabilities=nil, parent_user_login=nil)
@@ -20,7 +20,7 @@ class CloudUser < StickShift::UserModel
     plan_id.downcase! if plan_id
 
     if !plan_id || !Express::AriaBilling::Plan.instance.valid_plan(plan_id)
-      raise StickShift::UserException.new("A plan with specified id does not exist", 150, "plan_id")
+      raise OpenShift::UserException.new("A plan with specified id does not exist", 150, "plan_id")
     end
     Express::AriaBilling::Plan.instance.plans[plan_id.to_sym]
   end
@@ -30,15 +30,15 @@ class CloudUser < StickShift::UserModel
     capabilities = plan_info[:capabilities]
 
     if capabilities.has_key?("max_gears") && (capabilities["max_gears"] != self.max_gears)
-      raise StickShift::UserException.new("User #{self.login} has gear limit set to #{self.max_gears} but '#{plan_id}' plan allows #{capabilities["max_gears"]}.", 160)
+      raise OpenShift::UserException.new("User #{self.login} has gear limit set to #{self.max_gears} but '#{plan_id}' plan allows #{capabilities["max_gears"]}.", 160)
     end
     if capabilities.has_key?("gear_sizes") && self.capabilities.has_key?("gear_sizes") &&
        (capabilities["gear_sizes"].sort != self.capabilities["gear_sizes"].sort)
-      raise StickShift::UserException.new("User #{self.login} can use gear sizes [#{self.capabilities["gear_sizes"].join(",")}] but '#{plan_id}' plan allows [#{capabilities["gear_sizes"].join(",")}].", 161)
+      raise OpenShift::UserException.new("User #{self.login} can use gear sizes [#{self.capabilities["gear_sizes"].join(",")}] but '#{plan_id}' plan allows [#{capabilities["gear_sizes"].join(",")}].", 161)
     end
     if capabilities.has_key?("max_storage_per_gear") && self.capabilities.has_key?("max_storage_per_gear") &&
        (capabilities["max_storage_per_gear"] != self.capabilities["max_storage_per_gear"])
-      raise StickShift::UserException.new("User #{self.login} can have additional file-system storage of #{self.capabilities["max_storage_per_gear"]} GB per gear group but '#{plan_id}' plan allows #{capabilities["max_storage_per_gear"]} GB.", 162)
+      raise OpenShift::UserException.new("User #{self.login} can have additional file-system storage of #{self.capabilities["max_storage_per_gear"]} GB per gear group but '#{plan_id}' plan allows #{capabilities["max_storage_per_gear"]} GB.", 162)
     end
   end
 
@@ -47,12 +47,12 @@ class CloudUser < StickShift::UserModel
     capabilities = plan_info[:capabilities]
 
     if capabilities.has_key?("max_gears") && (capabilities["max_gears"] < self.consumed_gears)
-      raise StickShift::UserException.new("User #{self.login} has more consumed gears(#{self.consumed_gears}) than the '#{plan_id}' plan allows.", 153)
+      raise OpenShift::UserException.new("User #{self.login} has more consumed gears(#{self.consumed_gears}) than the '#{plan_id}' plan allows.", 153)
     end
     if capabilities.has_key?("gear_sizes")
       self.applications.each do |app|
         if !capabilities["gear_sizes"].include?(app.node_profile)
-          raise StickShift::UserException.new("User #{self.login}, application '#{app.name}' has '#{app.node_profile}' type gear that the '#{plan_id}' plan does not allow.", 154)
+          raise OpenShift::UserException.new("User #{self.login}, application '#{app.name}' has '#{app.node_profile}' type gear that the '#{plan_id}' plan does not allow.", 154)
         end
       end if self.applications
     end
@@ -63,7 +63,7 @@ class CloudUser < StickShift::UserModel
         if ginst.addtl_fs_gb && (ginst.addtl_fs_gb > addtl_storage)
           carts = []
           carts = ginst.gears[0].cartridges if ginst.gears[0]
-          raise StickShift::UserException.new("User #{self.login}, application '#{app.name}', gears having [#{carts.join(",")}] components has additional file-system storage of #{ginst.addtl_fs_gb} GB that the '#{plan_id}' plan does not allow.", 159)
+          raise OpenShift::UserException.new("User #{self.login}, application '#{app.name}', gears having [#{carts.join(",")}] components has additional file-system storage of #{ginst.addtl_fs_gb} GB that the '#{plan_id}' plan does not allow.", 159)
         end
       end if app.group_instances
     end if self.applications
@@ -91,9 +91,9 @@ class CloudUser < StickShift::UserModel
       begin
         account_no = billing_api.get_acct_no_from_user_id(billing_user_id)
       rescue Exception => ex
-        raise StickShift::UserException.new("Could not get billing account number for user #{self.login} : #{ex.message}", 155)
+        raise OpenShift::UserException.new("Could not get billing account number for user #{self.login} : #{ex.message}", 155)
       end
-      raise StickShift::UserException.new("Billing account not found", 151) if account_no.nil?
+      raise OpenShift::UserException.new("Billing account not found", 151) if account_no.nil?
       return account_no
     end
   end
@@ -103,7 +103,7 @@ class CloudUser < StickShift::UserModel
       billing_api = Express::AriaBilling::Api.instance
       return billing_api.get_acct_details_all(self.get_billing_account_no)
     rescue Exception => ex
-      raise StickShift::UserException.new("Could not get billing account info for user #{self.login} : #{ex.message}", 155)
+      raise OpenShift::UserException.new("Could not get billing account info for user #{self.login} : #{ex.message}", 155)
     end
   end
 
@@ -111,7 +111,7 @@ class CloudUser < StickShift::UserModel
     plan_info = self.get_plan_info(plan_id)
 
     #check if subaccount user
-    raise StickShift::UserException.new("Plan change not allowed for subaccount user", 157) if self.parent_user_login
+    raise OpenShift::UserException.new("Plan change not allowed for subaccount user", 157) if self.parent_user_login
 
     #check to see if user can be switched to the new plan
     self.check_plan_compatibility(plan_id)
@@ -122,7 +122,7 @@ class CloudUser < StickShift::UserModel
 
     default_plan_id = Rails.application.config.billing[:aria][:default_plan].to_s
     #allow user to downgrade to default plan if the a/c status is not active. 
-    raise StickShift::UserException.new("Billing account status not active", 152) if account["status_cd"].to_i <= 0 and plan_id != default_plan_id
+    raise OpenShift::UserException.new("Billing account status not active", 152) if account["status_cd"].to_i <= 0 and plan_id != default_plan_id
 
     old_plan_id = self.plan_id
     old_capabilities = self.capabilities

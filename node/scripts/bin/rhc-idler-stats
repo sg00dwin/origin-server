@@ -133,7 +133,7 @@ def get_app_type(app_path, app_name="unknown"):
 
 def validate(uuid):
     ''' given a user's uuid, verify an app exists. '''
-    app_path = "/var/lib/stickshift/%s" % uuid
+    app_path = "/var/lib/openshift/%s" % uuid
 
     # Is there a /git directory?
     if not os.path.isdir(app_path+"/git"):
@@ -142,7 +142,7 @@ def validate(uuid):
     # Is there something inside the /git directory?
     dirs = os.listdir(app_path+"/git")
     if len(dirs) == 0:
-        return "Path /var/lib/stickshift/%s/git is empty." % uuid
+        return "Path /var/lib/openshift/%s/git is empty." % uuid
 
     # Under /git should be appname.git
     app_name = None
@@ -153,7 +153,7 @@ def validate(uuid):
     # Is there stuff inside git/appname.git?
     gitfiles = os.listdir(app_path+"/git/"+app_name+".git")
     if len(gitfiles) == 0:
-        return "Path /var/lib/stickshift/%s/git/%s.git is empty." % (uuid, app_name)
+        return "Path /var/lib/openshift/%s/git/%s.git is empty." % (uuid, app_name)
 
     # Chances are good that this is a git repo. What's the last commit?
     last_commit = run('git show HEAD | grep Date | sed "s/Date:   //"',

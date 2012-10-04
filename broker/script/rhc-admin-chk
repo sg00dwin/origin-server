@@ -37,14 +37,14 @@ end
 verbose = args["--verbose"]
 
 
-require "/var/www/stickshift/broker/config/environment"
+require "/var/www/openshift/broker/config/environment"
 # Disable analytics for admin scripts
 Rails.configuration.analytics[:enabled] = false
 
 no_error = true
 summary = []
 
-node_hash = StickShift::ApplicationContainerProxy.get_all_gears
+node_hash = OpenShift::ApplicationContainerProxy.get_all_gears
 
 mongo_hash = {}
 CloudUser.find_all(nil) {|hash|

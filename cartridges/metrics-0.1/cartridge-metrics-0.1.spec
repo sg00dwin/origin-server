@@ -1,7 +1,7 @@
-%define cartridgedir %{_libexecdir}/stickshift/cartridges/embedded/metrics-0.1
-%global frameworkdir %{_libexecdir}/stickshift/cartridges/metrics-0.1
+%define cartridgedir %{_libexecdir}/openshift/cartridges/embedded/metrics-0.1
+%global frameworkdir %{_libexecdir}/openshift/cartridges/metrics-0.1
 
-Name: cartridge-metrics-0.1
+Name: openshift-origin-cartridge-metrics-0.1
 Version: 0.20.2
 Release: 1%{?dist}
 Summary: Embedded metrics support for express
@@ -13,8 +13,8 @@ Source0: %{name}-%{version}.tar.gz
 BuildRoot:    %(mktemp -ud %{_tmppath}/%{name}-%{version}-%{release}-XXXXXX)
 BuildArch: noarch
 
-Requires: stickshift-abstract
-Requires: rubygem(stickshift-node)
+Requires: openshift-origin-cartridge-abstract
+Requires: rubygem(openshift-origin-node)
 
 %description
 Provides rhc metrics cartridge support
@@ -28,8 +28,8 @@ Provides rhc metrics cartridge support
 rm -rf $RPM_BUILD_ROOT
 rm -rf %{buildroot}
 mkdir -p %{buildroot}%{cartridgedir}
-mkdir -p %{buildroot}/%{_sysconfdir}/stickshift/cartridges
-ln -s %{cartridgedir}/info/configuration/ %{buildroot}/%{_sysconfdir}/stickshift/cartridges/%{name}
+mkdir -p %{buildroot}/%{_sysconfdir}/openshift/cartridges
+ln -s %{cartridgedir}/info/configuration/ %{buildroot}/%{_sysconfdir}/openshift/cartridges/%{name}
 cp -r info %{buildroot}%{cartridgedir}/
 ln -s %{cartridgedir} %{buildroot}/%{frameworkdir}
 
@@ -46,7 +46,7 @@ rm -rf $RPM_BUILD_ROOT
 %attr(0755,-,-) %{cartridgedir}/info/bin/
 %attr(0755,-,-) %{cartridgedir}/info/data/
 %attr(0755,-,-) %{frameworkdir}
-%{_sysconfdir}/stickshift/cartridges/%{name}
+%{_sysconfdir}/openshift/cartridges/%{name}
 %{cartridgedir}/info/changelog
 %{cartridgedir}/info/control
 %{cartridgedir}/info/manifest.yml
@@ -152,8 +152,8 @@ rm -rf $RPM_BUILD_ROOT
 - Batch variable name chage (rmillner@redhat.com)
 - Adding export control files (kraman@gmail.com)
 - loading resource limits config when needed (kraman@gmail.com)
-- replacing references to libra with stickshift (abhgupta@redhat.com)
-- Update metrics cartridge li/libra => stickshift (kraman@gmail.com)
+- replacing references to libra with openshift origin (abhgupta@redhat.com)
+- Update metrics cartridge li/libra => openshift origin (kraman@gmail.com)
 - Removed new instances of GNU license headers (jhonce@redhat.com)
 
 * Fri Mar 02 2012 Dan McPherson <dmcphers@redhat.com> 0.10.1-1

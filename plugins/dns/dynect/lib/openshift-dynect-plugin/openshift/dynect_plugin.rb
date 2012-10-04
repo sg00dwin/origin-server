@@ -6,7 +6,7 @@ require 'net/https'
 require 'json'
 
 ##
-# This gem is an Uplift plugin for the Dynect DNS Service.
+# This gem is an OpenShift plugin for the Dynect DNS Service.
 # The plugin works with the StickShift controller in order
 # to maintain DNS records for user domains and applications.
 # 
@@ -17,7 +17,7 @@ require 'json'
 # * dns[:dynect_customer_name]  - The API customer name
 # * dns[:zone]                  - The DNS Zone
 # * dns[:domain_suffix]         - The domain suffix for applications
-module Uplift
+module OpenShift
   class DynectPlugin
     @@dyn_retries = 2      
     def initialize(args=nil)
@@ -143,7 +143,7 @@ module Uplift
           else
             raise_dns_exception(nil, resp)
           end
-        rescue StickShift::DNSException => e
+        rescue OpenShift::DNSException => e
           raise
         rescue Exception => e
           raise_dns_exception(e)
@@ -165,7 +165,7 @@ module Uplift
         logger.debug "DEBUG: Response code: #{resp.code}"
         logger.debug "DEBUG: Response body: #{resp.body}"
       end
-      raise StickShift::DNSException.new(145), "Error communicating with DNS system.  If the problem persists please contact Red Hat support."
+      raise OpenShift::DNSException.new(145), "Error communicating with DNS system.  If the problem persists please contact Red Hat support."
     end
     
     def delete_app_dns_entries(app_name, namespace, auth_token, retries=2)
@@ -186,7 +186,7 @@ module Uplift
         begin
           yield
           break
-        rescue  StickShift::DNSException => e
+        rescue  OpenShift::DNSException => e
           raise if i >= retries
           logger.debug "DEBUG: Retrying #{method} after exception caught from DNS request: #{e.message}"
           i += 1
@@ -305,7 +305,7 @@ module Uplift
             else
               raise_dns_exception(nil, resp)
             end
-          rescue StickShift::DNSException => e
+          rescue OpenShift::DNSException => e
             raise
           rescue Exception => e
             raise_dns_exception(e)
@@ -350,7 +350,7 @@ module Uplift
           else
             raise_dns_exception(nil, resp)
           end 
-        rescue StickShift::DNSException => e
+        rescue OpenShift::DNSException => e
           raise
         rescue Exception => e
           raise_dns_exception(e)
@@ -396,7 +396,7 @@ module Uplift
           else
             raise_dns_exception(nil, resp)
           end
-        rescue StickShift::DNSException => e
+        rescue OpenShift::DNSException => e
           raise
         rescue Exception => e
           raise_dns_exception(e)
@@ -447,7 +447,7 @@ module Uplift
           else
             raise_dns_exception(nil, resp)
           end
-        rescue StickShift::DNSException => e
+        rescue OpenShift::DNSException => e
           raise
         rescue Exception => e
           raise_dns_exception(e)

@@ -9,7 +9,7 @@ function print_help {
     echo "Usage: $0 app-name namespace uuid"
     echo "Stop a running application and disable it"
 
-    echo "$0 $@" | logger -p local0.notice -t stickshift_metrics_status
+    echo "$0 $@" | logger -p local0.notice -t openshift_origin_metrics_status
     exit 1
 }
 
@@ -27,7 +27,7 @@ done
 [ $# -eq 3 ] || print_help
 
 cartridge_type="metrics-0.1"
-source "/etc/stickshift/stickshift-node.conf"
+source "/etc/openshift/openshift-origin-node.conf"
 source ${CARTRIDGE_BASE_PATH}/abstract/info/lib/util
 
 setup_basic_hook "$1" $2 $3
@@ -37,7 +37,7 @@ METRICS_DIR=$(get_cartridge_instance_dir "$cartridge_type")
 #
 # Start application
 #
-ADDRESS="$(awk '/Listen/{ print $2 }' $METRICS_DIR/conf.d/stickshift.conf)"
+ADDRESS="$(awk '/Listen/{ print $2 }' $METRICS_DIR/conf.d/openshift.conf)"
 URL="http://$ADDRESS/server-status?auto"
 
 if output=$(runuser --shell /bin/sh "$uuid" -c "/usr/bin/wget -qO- $URL" 2>&1)

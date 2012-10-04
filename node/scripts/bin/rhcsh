@@ -5,7 +5,7 @@
 [ -f ~/app-root/data/.bash_profile ] && source ~/app-root/data/.bash_profile
 
 source /etc/init.d/functions 2> /dev/null
-source /usr/libexec/stickshift/cartridges/abstract/info/lib/util
+source /usr/libexec/openshift/cartridges/abstract/info/lib/util
 
 # Import Environment Variables
 for f in ~/.env/*

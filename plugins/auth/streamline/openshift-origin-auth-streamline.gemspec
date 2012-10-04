@@ -22,7 +22,7 @@ Gem::Specification.new do |s|
   s.files       += %w(README.md Rakefile Gemfile swingshift-streamline-plugin.spec swingshift-streamline-plugin.gemspec LICENSE COPYRIGHT)
   s.require_paths = ["lib"]
 
-  s.add_dependency('stickshift-controller')
+  s.add_dependency('openshift-origin-controller')
   s.add_dependency('json')  
   s.add_development_dependency('rake')  
   s.add_development_dependency('rspec')

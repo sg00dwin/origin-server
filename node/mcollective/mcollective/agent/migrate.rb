@@ -15,7 +15,7 @@ module OpenShiftMigration
   end
 
   def self.get_config_value(key)
-    @node_config ||= ParseConfig.new('/etc/stickshift/stickshift-node.conf')
+    @node_config ||= ParseConfig.new('/etc/openshift/openshift-origin-node.conf')
     val = @node_config.get_value(key)
     val.gsub!(/\\:/,":") if not val.nil?
     val.gsub!(/[ \t]*#[^\n]*/,"") if not val.nil?
@@ -25,7 +25,7 @@ module OpenShiftMigration
 
   def self.typed_cleanup(app_name, gear_home, gear_type, cart_ns)
     translate_map = {
-        "OPENSHIFT_GEAR_CTL_SCRIPT" => "/usr/libexec/stickshift/cartridges/#{gear_type}/info/bin/app_ctl.sh",
+        "OPENSHIFT_GEAR_CTL_SCRIPT" => "/usr/libexec/openshift/cartridges/#{gear_type}/info/bin/app_ctl.sh",
         "OPENSHIFT_GEAR_DIR" => "#{gear_home}/#{gear_type}",
         "OPENSHIFT_LOG_DIR" => "$OPENSHIFT_#{cart_ns}_LOG_DIR",
         "OPENSHIFT_RUN_DIR" => "#{gear_home}/#{gear_type}/run",
@@ -260,7 +260,7 @@ module OpenShiftMigration
         'jbosseap-6.0' => 'JBOSSEAP'
       }
 
-      libra_home = '/var/lib/stickshift' #node_config.get_value('libra_dir')
+      libra_home = '/var/lib/openshift' #node_config.get_value('libra_dir')
       libra_server = get_config_value('BROKER_HOST')
       libra_domain = get_config_value('CLOUD_DOMAIN')
       gear_home = "#{libra_home}/#{uuid}"
@@ -270,7 +270,7 @@ module OpenShiftMigration
       exitcode = 0
 
       if (File.exists?(gear_home) && !File.symlink?(gear_home))
-        cartridge_root_dir = "/usr/libexec/stickshift/cartridges"
+        cartridge_root_dir = "/usr/libexec/openshift/cartridges"
 
         frameworks.each { |k, v|
           if File.directory?(File.join(gear_home, k))

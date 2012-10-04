@@ -1,7 +1,7 @@
-%global cartridgedir %{_libexecdir}/stickshift/cartridges/zend-5.6
+%global cartridgedir %{_libexecdir}/openshift/cartridges/zend-5.6
 
 Summary:   Provides zend-5.6 support
-Name:      cartridge-zend-5.6
+Name:      openshift-origin-cartridge-zend-5.6
 Version: 0.96.3
 Release:   1%{?dist}
 Group:     Development/Languages
@@ -14,8 +14,8 @@ BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root
 BuildArch: noarch
 
 BuildRequires: git
-Requires: stickshift-abstract
-Requires: rubygem(stickshift-node)
+Requires: openshift-origin-cartridge-abstract
+Requires: rubygem(openshift-origin-node)
 Requires: zend-server-php-5.3 >= 5.6.0-11
 Requires: mod_bw
 Requires: rubygem-builder
@@ -43,8 +43,8 @@ touch git_template.git/refs/heads/.gitignore
 %install
 rm -rf %{buildroot}
 mkdir -p %{buildroot}%{cartridgedir}
-mkdir -p %{buildroot}/%{_sysconfdir}/stickshift/cartridges
-ln -s %{cartridgedir}/info/configuration/ %{buildroot}/%{_sysconfdir}/stickshift/cartridges/%{name}
+mkdir -p %{buildroot}/%{_sysconfdir}/openshift/cartridges
+ln -s %{cartridgedir}/info/configuration/ %{buildroot}/%{_sysconfdir}/openshift/cartridges/%{name}
 cp -r info %{buildroot}%{cartridgedir}/
 cp -r files %{buildroot}%{cartridgedir}/
 cp LICENSE %{buildroot}%{cartridgedir}/
@@ -84,7 +84,7 @@ ln -s %{cartridgedir}/../abstract/info/bin/sync_gears.sh %{buildroot}%{cartridge
 %post
 #this copies over files in zend server rpm install that do not work in openshift 
 cp -rf %{cartridgedir}/files/shared-files/usr/local/zend/* /usr/local/zend/.
-ln -sf /usr/libexec/stickshift/cartridges/zend-5.6/info/bin/httpd_ctl.sh /usr/local/zend/bin/apachectl
+ln -sf /usr/libexec/openshift/cartridges/zend-5.6/info/bin/httpd_ctl.sh /usr/local/zend/bin/apachectl
 sh %{cartridgedir}/info/bin/zend_configure_filesystem.sh
 
 %clean
@@ -100,7 +100,7 @@ rm -rf %{buildroot}
 %attr(-,-,-) %{cartridgedir}/files/
 
 %config(noreplace) %{cartridgedir}/info/configuration/
-%{_sysconfdir}/stickshift/cartridges/%{name}
+%{_sysconfdir}/openshift/cartridges/%{name}
 %{cartridgedir}/info/changelog
 %{cartridgedir}/info/control
 %{cartridgedir}/info/manifest.yml

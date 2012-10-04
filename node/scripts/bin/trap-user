@@ -9,7 +9,7 @@ import base64
 import commands
 import selinux
 
-EXT_LIB = "/usr/libexec/stickshift/lib/util_ext"
+EXT_LIB = "/usr/libexec/openshift/lib/util_ext"
 
 commands_map = {
     "git-receive-pack": "/usr/bin/git-receive-pack",
@@ -190,7 +190,7 @@ if __name__ == '__main__':
 
         # replace leading tilde (~) with user's home path
         realpath = os.path.expanduser(thearg)
-        if not realpath.startswith('/var/lib/stickshift/'):
+        if not realpath.startswith('/var/lib/openshift/'):
             syslog.syslog("Invalid repository: not in libra_root - %s: (%s)" % 
                           (thearg, realpath))
             print "Invalid repository %s: not in libra_root" % thearg

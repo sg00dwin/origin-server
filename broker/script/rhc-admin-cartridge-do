@@ -64,7 +64,7 @@ if timeout
   end
 end
 
-require "/var/www/stickshift/broker/config/environment"
+require "/var/www/openshift/broker/config/environment"
 # Disable analytics for admin scripts
 Rails.configuration.analytics[:enabled] = false
 

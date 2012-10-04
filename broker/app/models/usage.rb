@@ -2,7 +2,7 @@ require 'rubygems'
 require 'mongo'
 require 'mongo_mapper'
 
-class Usage < StickShift::Model
+class Usage < OpenShift::Model
   include MongoMapper::Document
 
   VALID_GEAR_SIZES = ['small', 'medium', 'large', 'c9']
@@ -22,7 +22,7 @@ class Usage < StickShift::Model
 
   def initialize(login, gear_uuid, begin_time=nil, end_time=nil, uuid=nil, usage_type=nil)
     self.uuid = uuid
-    self.uuid = StickShift::Model.gen_uuid unless uuid
+    self.uuid = OpenShift::Model.gen_uuid unless uuid
     self._id = self.uuid
     self.login = login
     self.gear_uuid = gear_uuid

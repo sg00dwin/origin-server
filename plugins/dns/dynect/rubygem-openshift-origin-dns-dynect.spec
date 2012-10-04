@@ -3,7 +3,7 @@
 %global gemname uplift-dynect-plugin
 %global geminstdir %{gemdir}/gems/%{gemname}-%{version}
 
-Summary:        Uplift plugin for Dynect DNS service
+Summary:        OpenShift plugin for Dynect DNS service
 Name:           rubygem-%{gemname}
 Version: 0.13.2
 Release:        1%{?dist}
@@ -14,7 +14,7 @@ Source0:        rubygem-%{gemname}-%{version}.tar.gz
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 Requires:       ruby(abi) = 1.8
 Requires:       rubygems
-Requires:       rubygem(stickshift-common)
+Requires:       rubygem(openshift-origin-common)
 Requires:       rubygem(json)
 
 BuildRequires:  ruby
@@ -23,7 +23,7 @@ BuildArch:      noarch
 Provides:       rubygem(%{gemname}) = %version
 
 %package -n ruby-%{gemname}
-Summary:        Uplift plugin for Dynect DNS service
+Summary:        OpenShift plugin for Dynect DNS service
 Requires:       rubygem(%{gemname}) = %version
 Provides:       ruby(%{gemname}) = %version
 

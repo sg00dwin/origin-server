@@ -4,7 +4,7 @@
 require 'date'
 OPENSHIFT_GEAR_UUID = ARGV[0]
 IDLE_FOR = ARGV[1].to_i
-LAST_ACCESS_DIR = '/var/lib/stickshift/.last_access'
+LAST_ACCESS_DIR = '/var/lib/openshift/.last_access'
 
 file_path = "#{LAST_ACCESS_DIR}/#{OPENSHIFT_GEAR_UUID}"
 exit 6 unless File.exists?(file_path)

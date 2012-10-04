@@ -15,7 +15,7 @@ class Watchman
 
   ##
   # monitor +message_file+ every +period+ seconds for cgroups kill messages
-  def initialize(message_file = '/var/log/messages', period = 20, daemon=true, epoch = DateTime.now, libra_var_lib = '/var/lib/stickshift', retries = 10)
+  def initialize(message_file = '/var/log/messages', period = 20, daemon=true, epoch = DateTime.now, libra_var_lib = '/var/lib/openshift', retries = 10)
     @message_file = message_file
     @period_seconds = period
     @daemon = daemon

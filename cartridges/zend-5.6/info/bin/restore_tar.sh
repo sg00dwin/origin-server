@@ -14,7 +14,7 @@ includes=( "./*/*/data" "./*/zend-5.6/etc" "./*/zend-5.6/var" "./*/zend-5.6/gui"
 transforms=( --transform="s|${cartridge_type}/data|app-root/data|" )
 
 excludes=()
-carts=( $(source /etc/stickshift/stickshift-node.conf; ls $CARTRIDGE_BASE_PATH ; ls $CARTRIDGE_BASE_PATH/embedded) )
+carts=( $(source /etc/openshift/openshift-origin-node.conf; ls $CARTRIDGE_BASE_PATH ; ls $CARTRIDGE_BASE_PATH/embedded) )
 
 for cdir in ${carts[@]}
 do

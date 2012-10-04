@@ -1,3 +1,3 @@
-require "stickshift-common"
+require "openshift-origin-common"
 require "uplift-dynect-plugin/uplift/dynect_plugin.rb"
-StickShift::DnsService.provider=Uplift::DynectPlugin
+OpenShift::DnsService.provider=OpenShift::DynectPlugin

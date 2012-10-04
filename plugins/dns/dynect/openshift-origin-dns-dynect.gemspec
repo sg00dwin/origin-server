@@ -11,7 +11,7 @@ Gem::Specification.new do |s|
   s.authors     = ["Krishna Raman"]
   s.email       = ["kraman@gmail.com"]
   s.homepage    = ""
-  s.summary     = %q{Uplift plugin for Dynect DNS service}
+  s.summary     = %q{OpenShift plugin for Dynect DNS service}
   s.description = %q{Provides a Dynect DNS service based plugin}
 
   s.rubyforge_project = "uplift-dynect-plugin"
@@ -22,7 +22,7 @@ Gem::Specification.new do |s|
   s.files       += %w(README.md Rakefile Gemfile uplift-dynect-plugin.spec uplift-dynect-plugin.gemspec LICENSE COPYRIGHT)
   s.require_paths = ["lib"]
 
-  s.add_dependency('stickshift-controller')
+  s.add_dependency('openshift-origin-controller')
   s.add_dependency('json')  
   s.add_development_dependency('rake')  
   s.add_development_dependency('rspec')
