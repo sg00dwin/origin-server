@@ -2,7 +2,7 @@
 
 Summary:   Provides zend-5.6 support
 Name:      openshift-origin-cartridge-zend-5.6
-Version: 0.96.3
+Version: 0.96.4
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   ASL 2.0
@@ -108,6 +108,9 @@ rm -rf %{buildroot}
 %doc %{cartridgedir}/LICENSE
 
 %changelog
+* Thu Oct 04 2012 Krishna Raman <kraman@gmail.com> 0.96.4-1
+- new package built with tito
+
 * Thu Oct 04 2012 Adam Miller <admiller@redhat.com> 0.96.3-1
 - Merge pull request #442 from mrunalp/dev/typeless (dmcphers@redhat.com)
 - Typeless gear changes for US 2105 (jhonce@redhat.com)
