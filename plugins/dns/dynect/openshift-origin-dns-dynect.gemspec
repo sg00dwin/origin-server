@@ -5,8 +5,8 @@ test_dir  = File.join(File.join("test", "**"), "*")
 bin_dir  = File.join("bin", "*")
 
 Gem::Specification.new do |s|
-  s.name        = "uplift-dynect-plugin"
-  s.version     = /(Version: )(.*)/.match(File.read("uplift-dynect-plugin.spec"))[2].strip
+  s.name        = "openshift-origin-dns-dynect"
+  s.version     = /(Version: )(.*)/.match(File.read("rubygem-openshift-origin-dns-dynect.spec"))[2].strip
   s.license     = 'ASL 2.0'
   s.authors     = ["Krishna Raman"]
   s.email       = ["kraman@gmail.com"]
@@ -14,12 +14,12 @@ Gem::Specification.new do |s|
   s.summary     = %q{OpenShift plugin for Dynect DNS service}
   s.description = %q{Provides a Dynect DNS service based plugin}
 
-  s.rubyforge_project = "uplift-dynect-plugin"
+  s.rubyforge_project = "openshift-origin-dns-dynect"
 
   s.files       = Dir[lib_dir]
   s.test_files  = Dir[test_dir]
   s.executables   = Dir[bin_dir]
-  s.files       += %w(README.md Rakefile Gemfile uplift-dynect-plugin.spec uplift-dynect-plugin.gemspec LICENSE COPYRIGHT)
+  s.files       += %w(README.md Rakefile Gemfile rubygem-openshift-origin-dns-dynect.spec openshift-origin-dns-dynect.gemspec LICENSE COPYRIGHT)
   s.require_paths = ["lib"]
 
   s.add_dependency('openshift-origin-controller')

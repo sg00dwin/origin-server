@@ -1,6 +1,6 @@
 %global ruby_sitelib %(ruby -rrbconfig -e "puts Config::CONFIG['sitelibdir']")
 %global gemdir %(ruby -rubygems -e 'puts Gem::dir' 2>/dev/null)
-%global gemname uplift-dynect-plugin
+%global gemname openshift-origin-dns-dynect
 %global geminstdir %{gemdir}/gems/%{gemname}-%{version}
 
 Summary:        OpenShift plugin for Dynect DNS service
@@ -39,7 +39,7 @@ Provides a DYN DNS service based plugin
 %build
 
 %post
-echo " The uplift-dynect-plugin requires the following config entries to be present:"
+echo " The openshift-origin-dns-dynect requires the following config entries to be present:"
 echo " * dns[:dynect_url]            - The dynect API url"
 echo " * dns[:dynect_user_name]      - The API user"
 echo " * dns[:dynect_password]       - The API user password"
