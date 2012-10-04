@@ -70,11 +70,6 @@
       = f.input :cc_exp_mm, :as => :select, :include_blank => false, :default => (@payment_method.cc_exp_mm || Date.today.month), :collection => (1..12).to_a.map{|num| [(num < 10 ? "0#{num}" : num.to_s),num]}, :input_html => { :name => 'cc_exp_mm', :class => 'input-small' }
       - year_options = (Date.today.year..(Date.today.year + 10)).to_a
       = f.input :cc_exp_yyyy, :as => :select, :include_blank => false, :default => (@payment_method.cc_exp_yyyy || Date.today.year), :collection => year_options, :input_html => { :name => 'cc_exp_yyyy', :class => 'input-medium' }
-      -# Because the name attributes are customized for these selects,
-      -# the normal formtastic magic won't work; we must explicitly
-      -# call for error messages on these values.
-      = f.inline_errors_for :cc_exp_mm
-      = f.inline_errors_for :cc_exp_yyyy
     = f.input :cvv, :label => 'Security Code', :input_html => { :class => 'input-mini', :name => :cvv }
 
   = f.buttons do
