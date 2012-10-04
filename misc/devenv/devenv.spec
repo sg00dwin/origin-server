@@ -8,7 +8,7 @@
 
 Summary:   Dependencies for OpenShift development
 Name:      rhc-devenv
-Version: 0.100.9
+Version: 0.100.10
 Release:   1%{?dist}
 Group:     Development/Libraries
 License:   GPLv2
@@ -580,6 +580,13 @@ fi
 %{policydir}/*
 
 %changelog
+* Thu Oct 04 2012 Adam Miller <admiller@redhat.com> 0.100.10-1
+- Merge pull request #438 from brenton/remove_os_scripts2
+  (openshift+bot@redhat.com)
+- Merging in the latest from master (bleanhar@redhat.com)
+- The openshift-origin-broker-util packages provides the newly renamed admin
+  scripts (bleanhar@redhat.com)
+
 * Thu Oct 04 2012 Adam Miller <admiller@redhat.com> 0.100.9-1
 - Hack to fix gherkin parser failure (jhonce@redhat.com)
 
