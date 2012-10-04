@@ -8,7 +8,7 @@
 
 Summary:   OpenShift Site Rails application
 Name:      rhc-site
-Version: 0.99.7
+Version: 0.99.8
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   ASL 2.0
@@ -142,6 +142,19 @@ rm -rf %{buildroot}
 %{sitedir}/public
 
 %changelog
+* Thu Oct 04 2012 Adam Miller <admiller@redhat.com> 0.99.8-1
+- Merge pull request #441 from
+  smarterclayton/not_found_and_error_pages_for_drupal
+  (openshift+bot@redhat.com)
+- Merge pull request #440 from sg00dwin/master (openshift+bot@redhat.com)
+- Merge pull request #435 from
+  smarterclayton/bug862362_move_remaining_js_to_assets
+  (openshift+bot@redhat.com)
+- Add not found and error pages for drupal (ccoleman@redhat.com)
+- horizontal logo for aws marketplace (sgoodwin@redhat.com)
+- Bug 862362 Move remaining js to assets to avoid errors and simplify links
+  (ccoleman@redhat.com)
+
 * Wed Oct 03 2012 Adam Miller <admiller@redhat.com> 0.99.7-1
 - Merge pull request #395 from nhr/specify_gear_size (openshift+bot@redhat.com)
 - Merge pull request #434 from
