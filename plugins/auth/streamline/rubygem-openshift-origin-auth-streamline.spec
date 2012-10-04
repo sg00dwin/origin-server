@@ -1,6 +1,6 @@
 %global ruby_sitelib %(ruby -rrbconfig -e "puts Config::CONFIG['sitelibdir']")
 %global gemdir %(ruby -rubygems -e 'puts Gem::dir' 2>/dev/null)
-%global gemname swingshift-streamline-plugin
+%global gemname openshift-origin-auth-streamline
 %global geminstdir %{gemdir}/gems/%{gemname}-%{version}
 
 Summary:        OpenShift Origin plugin for streamline auth service
