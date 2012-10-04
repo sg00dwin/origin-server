@@ -1,4 +1,5 @@
 %define cartridgedir %{_libexecdir}/stickshift/cartridges/embedded/metrics-0.1
+%global frameworkdir %{_libexecdir}/stickshift/cartridges/metrics-0.1
 
 Name: cartridge-metrics-0.1
 Version: 0.20.1
@@ -30,6 +31,7 @@ mkdir -p %{buildroot}%{cartridgedir}
 mkdir -p %{buildroot}/%{_sysconfdir}/stickshift/cartridges
 ln -s %{cartridgedir}/info/configuration/ %{buildroot}/%{_sysconfdir}/stickshift/cartridges/%{name}
 cp -r info %{buildroot}%{cartridgedir}/
+ln -s %{cartridgedir} %{buildroot}/%{frameworkdir}
 
 %post
 
@@ -43,6 +45,7 @@ rm -rf $RPM_BUILD_ROOT
 %config(noreplace) %{cartridgedir}/info/configuration/
 %attr(0755,-,-) %{cartridgedir}/info/bin/
 %attr(0755,-,-) %{cartridgedir}/info/data/
+%attr(0755,-,-) %{frameworkdir}
 %{_sysconfdir}/stickshift/cartridges/%{name}
 %{cartridgedir}/info/changelog
 %{cartridgedir}/info/control

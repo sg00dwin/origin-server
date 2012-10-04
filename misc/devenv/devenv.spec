@@ -8,7 +8,7 @@
 
 Summary:   Dependencies for OpenShift development
 Name:      rhc-devenv
-Version: 0.100.7
+Version: 0.100.8
 Release:   1%{?dist}
 Group:     Development/Libraries
 License:   GPLv2
@@ -553,6 +553,18 @@ then
   /usr/bin/ruby /usr/lib/stickshift/broker/application_templates/templates/deploy.rb
 fi
 
+# Create a known test user with medium-sized gears - nhr
+/usr/bin/rhc-chk -l user_with_multiple_gear_sizes@test.com -p foo > /dev/null 2>&1
+/usr/bin/rhc-admin-ctl-user -l user_with_multiple_gear_sizes@test.com --addgearsize medium > /dev/null 2>&1
+
+# Hack to resolve parser error
+# See https://github.com/cucumber/gherkin/issues/182
+if [ -f /usr/lib/ruby/gems/1.8/gems/gherkin-2.2.4/lib/gherkin/i18n.rb ]
+then
+  sed -i 's/listener, force_ruby=false/listener, force_ruby=true/' \
+      /usr/lib/ruby/gems/1.8/gems/gherkin-2.2.4/lib/gherkin/i18n.rb
+fi
+
 %files
 %defattr(-,root,root,-)
 %attr(0660,-,-) %{brokerdir}/log/mcollective-client.log
@@ -568,6 +580,17 @@ fi
 %{policydir}/*
 
 %changelog
+* Wed Oct 03 2012 Adam Miller <admiller@redhat.com> 0.100.8-1
+- US1375 Created multi-gear user for test; moved URLs to helpers
+  (hripps@redhat.com)
+- syncing jenkins jobs (dmcphers@redhat.com)
+- Merge pull request #426 from danmcp/master (openshift+bot@redhat.com)
+- Merge pull request #424 from pravisankar/dev/ravi/subaccount-deletion
+  (openshift+bot@redhat.com)
+- Subaccount user delete tests Fix scripts/tests (rpenta@redhat.com)
+- Add ruby193-build to devenv.spec so that sync will work (ccoleman@redhat.com)
+- Removing Gemfile.locks (dmcphers@redhat.com)
+
 * Fri Sep 28 2012 Adam Miller <admiller@redhat.com> 0.100.7-1
 - exclude our packages from BuildRequires as well (dmcphers@redhat.com)
 - The AddOutputFilterByType directive is deprecated.  Switch to mod_filter.

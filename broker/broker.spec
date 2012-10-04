@@ -3,7 +3,7 @@
 
 Summary:   Li broker components
 Name:      rhc-broker
-Version: 0.99.8
+Version: 0.99.9
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -113,6 +113,14 @@ if [ ! -f %{_localstatedir}/log/stickshift/user_action.log ]; then
 fi
 
 %changelog
+* Wed Oct 03 2012 Adam Miller <admiller@redhat.com> 0.99.9-1
+- fix typos (dmcphers@redhat.com)
+- Disable analytics for admin scripts (dmcphers@redhat.com)
+- provide global flag for whether analytics is enabled (dmcphers@redhat.com)
+- Merge pull request #426 from danmcp/master (openshift+bot@redhat.com)
+- Subaccount user delete tests Fix scripts/tests (rpenta@redhat.com)
+- Removing Gemfile.locks (dmcphers@redhat.com)
+
 * Sat Sep 29 2012 Adam Miller <admiller@redhat.com> 0.99.8-1
 - Updating gem versions (admiller@redhat.com)
 

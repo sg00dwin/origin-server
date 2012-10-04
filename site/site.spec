@@ -8,8 +8,8 @@
 
 Summary:   OpenShift Site Rails application
 Name:      rhc-site
-Version: 0.99.6
-Release:   4%{?dist}
+Version: 0.99.7
+Release:   1%{?dist}
 Group:     Network/Daemons
 License:   ASL 2.0
 URL:       http://openshift.redhat.com
@@ -142,6 +142,24 @@ rm -rf %{buildroot}
 %{sitedir}/public
 
 %changelog
+* Wed Oct 03 2012 Adam Miller <admiller@redhat.com> 0.99.7-1
+- Merge pull request #395 from nhr/specify_gear_size (openshift+bot@redhat.com)
+- Merge pull request #434 from
+  smarterclayton/bug862065_additional_faq_on_signup (openshift+bot@redhat.com)
+- Merge pull request #430 from
+  smarterclayton/bug862298_add_passenger_to_site_rpm (openshift+bot@redhat.com)
+- US1375 Created multi-gear user for test; moved URLs to helpers
+  (hripps@redhat.com)
+- Bug 862065 - Add some additional info to signup complete page.
+  (ccoleman@redhat.com)
+- Bug 862298 - Add passenger dependencies to RPM (ccoleman@redhat.com)
+- Merge pull request #426 from danmcp/master (openshift+bot@redhat.com)
+- Merge pull request #422 from smarterclayton/favicon_misplaced
+  (openshift+bot@redhat.com)
+- Favicon-32 should be in the assets directory (ccoleman@redhat.com)
+- Overpass was missing from site (ccoleman@redhat.com)
+- Removing Gemfile.locks (dmcphers@redhat.com)
+
 * Sat Sep 29 2012 Adam Miller <admiller@redhat.com> 0.99.6-4
 - fix typo in Requires ... its late (admiller@redhat.com)
 

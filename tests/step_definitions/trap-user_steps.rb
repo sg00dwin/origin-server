@@ -20,7 +20,7 @@ Given /^the user has (no|\d+) tail process(es)? running( in (\d+) seconds)?$/ do
 end
 
 Given /a running SSH log stream/ do
-  ssh_cmd = ssh + "-t #{@app.uid}@#{@app.hostname} tail -f #{@app.name}/logs/\\*"
+  ssh_cmd = ssh + "-t #{@app.uid}@#{@app.hostname} tail -f */logs/\\*"
   stdout, stdin, pid = PTY.spawn ssh_cmd
 
   @ssh_cmd = {
@@ -32,7 +32,7 @@ Given /a running SSH log stream/ do
 end
 
 When /^I request the logs via SSH$/ do
-  ssh_cmd = ssh + " #{@app.uid}@#{@app.hostname} tail -f #{@app.name}/logs/\\*"
+  ssh_cmd = ssh + " #{@app.uid}@#{@app.hostname} tail -f */logs/\\*"
   stdout, stdin, pid = PTY.spawn ssh_cmd
 
   @ssh_cmd = {

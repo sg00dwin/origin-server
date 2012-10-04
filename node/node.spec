@@ -2,7 +2,7 @@
 
 Summary:       Multi-tenant cloud management system node tools
 Name:          rhc-node
-Version: 0.99.4
+Version: 0.99.5
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -270,6 +270,11 @@ fi
 
 
 %changelog
+* Wed Oct 03 2012 Adam Miller <admiller@redhat.com> 0.99.5-1
+- Disable analytics for admin scripts (dmcphers@redhat.com)
+- update python migration (bdecoste@gmail.com)
+- Fix for bugz 859990 - Unidling on ssh. (ramr@redhat.com)
+
 * Wed Sep 26 2012 Adam Miller <admiller@redhat.com> 0.99.4-1
 - merged rhc-admin-migrate again (bdecoste@gmail.com)
 - Merge pull request #405 from rmillner/US2755 (openshift+bot@redhat.com)

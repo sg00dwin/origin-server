@@ -9,7 +9,7 @@ module Express
         elsif defined? Rails
           access_info = Rails.application.config.billing[:aria]
         else
-          raise Exception.new("Aria Billing Plan is not inilialized")
+          raise Exception.new("Aria Billing Plan is not initialized")
         end
         @plans = access_info[:plans]
       end

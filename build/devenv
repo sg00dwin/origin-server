@@ -524,7 +524,7 @@ module Express
                 test_queues[1] << ["Extended Runtime Group 2", "cucumber #{CUCUMBER_OPTIONS} -t @runtime_extended2 li-test/tests"]
                 test_queues[2] << ["Extended Runtime Group 3", "cucumber #{CUCUMBER_OPTIONS} -t @runtime_extended3 li-test/tests"]
               when 'site'
-                test_queues[0] << ["Site Extended", "cd li-test/site; rake test:extended"]
+                test_queues[0] << ["Site Extended", "cd li-test/site; scl enable ruby193 \"rake test:extended\""]
               when 'rhc'
                 test_queues[0] << ["RHC Extended", "cucumber #{CUCUMBER_OPTIONS} -t @rhc_extended li-test/tests", {:retry_individually => true}]
                 base_str = "QUIET=1 RHC_SERVER=localhost cucumber #{CUCUMBER_OPTIONS} li-test/features"

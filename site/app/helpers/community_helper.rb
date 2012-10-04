@@ -67,4 +67,12 @@ module CommunityHelper
   def status_jsonp_url(id)
     status_js_path :id => id
   end
+
+  def faq_gear_sizes_url
+    '/community/faq/are-there-different-gear-sizes-and-how-much-do-they-cost'
+  end
+
+  def community_security_policy_url
+    '/community/policy/security'
+  end
 end

@@ -2,6 +2,22 @@
 
 function redhat_frontpage_menu() {
 
+  $not_found = array(
+    'page callback' => redhat_not_found,
+    'access callback' => TRUE,
+    'type' => MENU_NORMAL_ITEM,
+    'title' => 'Page not found',
+  );
+  $items['_errors/404'] = $not_found;
+  
+  $access_denied = array(
+    'page callback' => redhat_access_denied,
+    'access callback' => TRUE,
+    'type' => MENU_NORMAL_ITEM,
+    'title' => 'Access denied',
+  );
+  $items['_errors/403'] = $access_denied;
+
   $item = array(
     'page callback' => redhat_frontpage,
     'access callback' => TRUE,
@@ -12,6 +28,33 @@ function redhat_frontpage_menu() {
   $items['home'] = $item;
   return $items;
 }
+
+function redhat_not_found() {
+  $content = ' <section class="row">
+                  <div class="span12">
+                    <h2>The page you requested may no longer exist</h2>
+                    <form class="form-search">
+                      <input class="search">
+                      <input class="btn btn-primary" value="Search" type="button">
+                    </form>
+                    <p><a href="/">Return to our homepage.</a></p>
+                    <p><a href="mailto:openshift@redhat.com">Contact us</a> if you feel you have reached this page in error.</p>
+                  </div>
+                  </section>';
+  return $content;
+}
+
+function redhat_access_denied() {
+  $content = ' <section class="row">
+                  <div class="span12">
+                    <h2>You do not have permission to access this page</h2>
+                    <p><a href="/">Return to our homepage.</a></p>
+                    <p><a href="mailto:openshift@redhat.com">Contact us</a> if you feel you have reached this page in error.</p>
+                  </div>
+                  </section>';
+  return $content;
+}
+
 
 function redhat_frontpage(){
   global $user;
