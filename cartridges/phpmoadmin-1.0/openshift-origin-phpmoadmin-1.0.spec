@@ -2,7 +2,7 @@
 %global frameworkdir %{_libexecdir}/openshift/cartridges/phpmoadmin-1.0
 
 Name: openshift-origin-cartridge-phpmoadmin-1.0
-Version: 0.16.3
+Version: 0.16.4
 Release: 1%{?dist}
 Summary: Embedded phpMoAdmin support for express
 
@@ -57,6 +57,9 @@ rm -rf $RPM_BUILD_ROOT
 %doc %{cartridgedir}/LICENSE
 
 %changelog
+* Thu Oct 04 2012 Krishna Raman <kraman@gmail.com> 0.16.4-1
+- new package built with tito
+
 * Thu Oct 04 2012 Adam Miller <admiller@redhat.com> 0.16.3-1
 - Typeless gear changes for US 2105 (jhonce@redhat.com)
 
