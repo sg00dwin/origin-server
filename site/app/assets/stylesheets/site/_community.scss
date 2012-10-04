@@ -10,7 +10,7 @@
 		}
 	}
 } 
-
+ 
 /* Drupal specific markup, we may want to wrap this with a top level selector on body.drupal or something */
 .views-field-rss { float: right; }
 .views-field-picture { float: left; margin-right: 6px; }
@@ -296,7 +296,9 @@ td.views-field-vud-node-widget {
 {
   float: right;
 }
-
+.node-og-group-post .vud-widget-updown {
+  padding: 0 2em 0 0;
+}
 /* Quick fixes to force wrap long strings within table cells */
 .table th, .table td {
 	max-width: 400px;
