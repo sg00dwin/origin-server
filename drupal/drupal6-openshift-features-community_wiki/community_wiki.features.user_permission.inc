@@ -11,6 +11,7 @@ function community_wiki_user_default_permissions() {
     'name' => 'attach images',
     'roles' => array(
       '0' => 'authenticated user',
+      '1' => 'blogger',
     ),
   );
 
