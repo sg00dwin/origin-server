@@ -67,11 +67,11 @@ CAN_SSH_TIMEOUT=90
 
 JENKINS_HOME_DIR = '/var/lib/jenkins'
 
-SIBLING_REPOS = {'crankcase' => ['../crankcase-working', '../crankcase-fork', '../crankcase', JENKINS_HOME_DIR + '/jobs/crankcase/workspace'],
+SIBLING_REPOS = {'origin-server' => ['../origin-server-working', '../origin-server-fork', '../origin-server', JENKINS_HOME_DIR + '/jobs/origin-server/workspace'],
                  'rhc' => ['../rhc-working', '../rhc-fork', '../rhc', JENKINS_HOME_DIR + '/jobs/rhc/workspace'],
                  'li' => ["../#{File.basename(FileUtils.pwd)}"],
                  'origin-dev-tools' => ['../origin-dev-tools']}
-SIBLING_REPOS_GIT_URL = {'crankcase' => 'https://github.com/openshift/crankcase.git',
+SIBLING_REPOS_GIT_URL = {'origin-server' => 'https://github.com/openshift/origin-server.git',
                         'rhc' => 'https://github.com/openshift/rhc.git',
                         'li' => 'git@github.com:openshift/li.git',
                         'origin-dev-tools' => 'git@github.com:openshift/origin-dev-tools.git'}

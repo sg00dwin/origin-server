@@ -23,7 +23,7 @@
         <string>uploadpack</string>
         <string>git-upload-pack</string>
         <string>url</string>
-        <string>git@github.com:openshift/crankcase.git</string>
+        <string>git@github.com:openshift/origin-server.git</string>
         <string>tagopt</string>
         <string></string>
       </org.spearce.jgit.transport.RemoteConfig>

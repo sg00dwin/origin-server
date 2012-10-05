@@ -232,7 +232,7 @@ module DevOps
         else # devbroker build
           puts "Performing remote rake devbroker...."
           ssh(hostname, sync_shell_cmd(working_dirs, clone_commands, <<-"SHELL"), 900, true)
-            pushd crankcase-working/build > /dev/null
+            pushd origin-server-working/build > /dev/null
               rake build_setup 2>&1 # may be a no-op
               rake devbroker 2>&1
             popd > /dev/null

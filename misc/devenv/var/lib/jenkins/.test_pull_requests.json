@@ -21,12 +21,12 @@
                                "build_token": "libra1"} },
       "repo_to_teams": {
         "li": ["168397", "175254", "202863"],
-        "crankcase": ["168397", "175254"],
+        "origin-server": ["168397", "175254"],
         "rhc": ["168397", "77593"]
       },
       "repo_to_pull_id_param": {
         "li": "LI_PULL_ID",
-        "crankcase": "CRANKCASE_PULL_ID",
+        "origin-server": "ORIGIN_SERVER_PULL_ID",
         "rhc": "RHC_PULL_ID"
       }
     },
@@ -44,12 +44,12 @@
                                "build_token": "libra1"} },
       "repo_to_teams": {
         "li": ["175254", "202863"],
-        "crankcase": ["175254"],
+        "origin-server": ["175254"],
         "rhc": ["77593"]
       },
       "repo_to_pull_id_param": {
         "li": "LI_PULL_ID",
-        "crankcase": "CRANKCASE_PULL_ID",
+        "origin-server": "ORIGIN_SERVER_PULL_ID",
         "rhc": "RHC_PULL_ID" 
       }
     }

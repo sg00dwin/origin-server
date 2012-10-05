@@ -232,9 +232,9 @@ function get_package_name {
   echo "$package_name"
 }
 
-github_repos=( crankcase rhc origin-dev-tools )
-source_repos=( crankcase rhc li-working )
-all_repos=( crankcase rhc li-working origin-dev-tools )
+github_repos=( origin-server rhc origin-dev-tools )
+source_repos=( origin-server rhc li-working )
+all_repos=( origin-server rhc li-working origin-dev-tools )
 
 branch="master"
 if [ "$1" == "stage" ]
