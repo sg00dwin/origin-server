@@ -52,15 +52,6 @@ module RedHatCloud
 
     # Enable the asset pipeline
     config.assets.enabled = true
-    config.assets.compress = true
-    config.assets.js_compressor = :uglifier
-    config.assets.precompile += %w(application.js common.css console.css site.css overpass.css)
-
-    if config.respond_to? :sass
-      config.sass.style = :compressed
-      config.sass.line_comments = false
-      config.sass.relative_assets = true
-    end
 
     # Version of your assets, change this if you want to expire all your assets
     config.assets.version = '1.0'
