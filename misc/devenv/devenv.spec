@@ -574,7 +574,8 @@ fi
 %attr(0660,-,-) %{brokerdir}/log/development.log
 %attr(0660,-,-) %{sitedir}/log/development.log
 %config(noreplace) %{jenkins}/jobs/*/*
-%{jenkins}/jobs/sync.rb
+%{jenkins}/jobs/sync_up.rb
+%{jenkins}/jobs/sync_down.rb
 %{devenvdir}
 %{_initddir}/rhc-datastore
 %{_initddir}/rhc-broker
