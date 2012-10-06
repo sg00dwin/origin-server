@@ -55,6 +55,7 @@ Requires:  rubygem-webmock
 Requires:  rubygem-nokogiri
 Requires:  rubygem-rcov
 Requires:  ruby193-build
+Requires:  ruby193-rubygems-devel
 Requires:  charlie
 Requires:  pam
 Requires:  pam-devel
