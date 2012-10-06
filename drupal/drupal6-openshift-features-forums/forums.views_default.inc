@@ -1310,8 +1310,8 @@ print $data->node_comment_statistics_last_comment_uid;
   ));
   $handler->override_option('cache', array(
     'type' => 'time',
-    'results_lifespan' => '21600',
-    'output_lifespan' => '21600',
+    'results_lifespan' => '1800',
+    'output_lifespan' => '1800',
   ));
   $handler->override_option('items_per_page', 1);
   $handler->override_option('style_plugin', 'table');
