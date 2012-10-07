@@ -77,5 +77,5 @@ SIBLING_REPOS_GIT_URL = {'origin-server' => 'https://github.com/openshift/origin
                         'origin-dev-tools' => 'git@github.com:openshift/origin-dev-tools.git'}
 
 CUCUMBER_OPTIONS = '--strict -f progress -f junit --out /tmp/rhc/cucumber_results'
-
+IGNORE_PACKAGES = ['bind-local', 'rubygem-rhc', 'openshift-origin-broker', 'rubygem-openshift-origin-auth-mongo', 'rubygem-openshift-origin-dns-bind', 'openshift-origin', 'openshift-origin-broker', 'openshift-origin-node', 'openshift-origin-node-util', 'rubygem-openshift-origin-auth-kerberos', 'cartridge-postgresql-9.1', 'cartridge-php-5.4']
 $amz_options = {:key_name => KEY_PAIR, :instance_type => TYPE}
