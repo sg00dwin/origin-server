@@ -5,7 +5,7 @@
 
 Summary:        OpenShift Origin plugin for streamline auth service
 Name:           rubygem-%{gemname}
-Version: 0.13.2
+Version: 0.13.4
 Release:        1%{?dist}
 Group:          Development/Languages
 License:        ASL 2.0
@@ -73,6 +73,16 @@ rm -rf %{buildroot}
 %{ruby_sitelib}/%{gemname}.rb
 
 %changelog
+* Mon Oct 08 2012 Adam Miller <admiller@redhat.com> 0.13.4-1
+- Merge pull request #455 from brenton/streamline_auth_misc1-rebase
+  (openshift+bot@redhat.com)
+- Refactorings needed to share the generate_broker_key logic with Origin
+  (bleanhar@redhat.com)
+
+* Mon Oct 08 2012 Dan McPherson <dmcphers@redhat.com> 0.13.3-1
+- Fixing renames, paths, configs and cleaning up old packages. Adding
+  obsoletes. (kraman@gmail.com)
+
 * Thu Oct 04 2012 Krishna Raman <kraman@gmail.com> 0.13.2-1
 - new package built with tito
 

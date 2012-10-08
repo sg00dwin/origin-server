@@ -2,7 +2,7 @@
 %global frameworkdir %{_libexecdir}/openshift/cartridges/rockmongo-1.1
 
 Name: openshift-origin-cartridge-rockmongo-1.1
-Version: 1.15.4
+Version: 1.15.5
 Release: 1%{?dist}
 Summary: Embedded RockMongo support for OpenShift
 
@@ -59,6 +59,10 @@ rm -rf $RPM_BUILD_ROOT
 %doc %{cartridgedir}/LICENSE
 
 %changelog
+* Mon Oct 08 2012 Dan McPherson <dmcphers@redhat.com> 1.15.5-1
+- Fixing renames, paths, configs and cleaning up old packages. Adding
+  obsoletes. (kraman@gmail.com)
+
 * Thu Oct 04 2012 Krishna Raman <kraman@gmail.com> 1.15.4-1
 - new package built with tito
 

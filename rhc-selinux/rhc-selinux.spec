@@ -1,6 +1,6 @@
 Summary:       SELinux policy for OpenShift nodes
 Name:          rhc-selinux
-Version: 0.98.1
+Version: 0.98.2
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -46,6 +46,10 @@ rm -rf %{buildroot}
 %attr(0640,-,-) %{_datadir}/selinux/packages/libra.pp
 
 %changelog
+* Mon Oct 08 2012 Adam Miller <admiller@redhat.com> 0.98.2-1
+- Fixing renames, paths, configs and cleaning up old packages. Adding
+  obsoletes. (kraman@gmail.com)
+
 * Wed Aug 22 2012 Adam Miller <admiller@redhat.com> 0.98.1-1
 - bump_minor_versions for sprint 17 (admiller@redhat.com)
 

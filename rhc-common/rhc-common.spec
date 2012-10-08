@@ -1,6 +1,6 @@
 Summary:   Common dependencies of the libra server and node
 Name:      rhc-common
-Version: 0.81.1
+Version: 0.81.2
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -46,6 +46,10 @@ getent group libra_user >/dev/null || groupadd -r libra_user
 /bin/chgrp libra_user /etc/mcollective/client.cfg
 
 %changelog
+* Mon Oct 08 2012 Adam Miller <admiller@redhat.com> 0.81.2-1
+- Fixing renames, paths, configs and cleaning up old packages. Adding
+  obsoletes. (kraman@gmail.com)
+
 * Wed Jul 11 2012 Adam Miller <admiller@redhat.com> 0.81.1-1
 - bump_minor_versions for sprint 15 (admiller@redhat.com)
 
