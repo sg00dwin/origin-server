@@ -2,7 +2,7 @@
 
 Summary:       Multi-tenant cloud management system node tools
 Name:          rhc-node
-Version: 0.99.6
+Version: 0.99.7
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -262,6 +262,11 @@ fi
 
 
 %changelog
+* Mon Oct 08 2012 Adam Miller <admiller@redhat.com> 0.99.7-1
+- Carrying over migration to 2.0.19 (dmcphers@redhat.com)
+- Fixing renames, paths, configs and cleaning up old packages. Adding
+  obsoletes. (kraman@gmail.com)
+
 * Thu Oct 04 2012 Adam Miller <admiller@redhat.com> 0.99.6-1
 - Bug 862439 patch for fix (jhonce@redhat.com)
 - Merge pull request #442 from mrunalp/dev/typeless (dmcphers@redhat.com)
