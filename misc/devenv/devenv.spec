@@ -8,7 +8,7 @@
 
 Summary:   Dependencies for OpenShift development
 Name:      rhc-devenv
-Version: 0.100.10
+Version: 0.100.11
 Release:   1%{?dist}
 Group:     Development/Libraries
 License:   GPLv2
@@ -590,6 +590,24 @@ restorecon /etc/openshift/node.conf || :
 /sbin/service libra-data restart > /dev/null 2>&1 || :
 
 %changelog
+* Mon Oct 08 2012 Adam Miller <admiller@redhat.com> 0.100.11-1
+- Merge pull request #450 from
+  smarterclayton/add_ruby193_rubygems_devel_to_devenv
+  (openshift+bot@redhat.com)
+- fix spec (dmcphers@redhat.com)
+- renaming crankcase -> origin-server (dmcphers@redhat.com)
+- Fixing renames, paths, configs and cleaning up old packages. Adding
+  obsoletes. (kraman@gmail.com)
+- Add ruby193-rubygems-devel to devenv.spec so that sync will always pass
+  (ccoleman@redhat.com)
+- get multinode setup working with activemq (dmcphers@redhat.com)
+- Merge pull request #446 from pmorie/bugs/859541 (openshift+bot@redhat.com)
+- Merge pull request #447 from maxamillion/dev/admiller/enable_rhui_jboss
+  (openshift+bot@redhat.com)
+- BZ859541: Move manipulation of stickshift-node.conf from rhc-node spec to
+  devenv spec (pmorie@gmail.com)
+- enable jboss rhui repo in devenv (admiller@redhat.com)
+
 * Thu Oct 04 2012 Adam Miller <admiller@redhat.com> 0.100.10-1
 - Merge pull request #438 from brenton/remove_os_scripts2
   (openshift+bot@redhat.com)
