@@ -5,7 +5,7 @@
 %global modname             blogs
 
 Name:    drupal%{drupal_release}-openshift-features-%{modname}
-Version: 1.8.2
+Version: 1.8.3
 Release: 1%{?dist}
 Summary: Openshift Red Hat Custom Blog Feature for Drupal6
 Group:   Applications/Publishing
@@ -41,6 +41,9 @@ rm -rf $RPM_BUILD_ROOT
 %{drupal_modules}/%{modname}
 
 %changelog
+* Mon Oct 08 2012 Adam Miller <admiller@redhat.com> 1.8.3-1
+- Implement recent blogs and upcoming events views. (ccoleman@redhat.com)
+
 * Wed Oct 03 2012 Adam Miller <admiller@redhat.com> 1.8.2-1
 - Add taxonomy support for blogs and a json export for the most recent release
   (ccoleman@redhat.com)
