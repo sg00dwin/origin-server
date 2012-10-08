@@ -5,7 +5,7 @@
 %global modname             user_profile
 
 Name:    drupal%{drupal_release}-openshift-features-%{modname}
-Version: 1.6.3
+Version: 1.6.4
 Release: 1%{?dist}
 Summary: Openshift Red Hat Custom User Profile Feature for Drupal6
 Group:   Applications/Publishing
@@ -41,6 +41,9 @@ rm -rf $RPM_BUILD_ROOT
 %{drupal_modules}/%{modname}
 
 %changelog
+* Mon Oct 08 2012 Adam Miller <admiller@redhat.com> 1.6.4-1
+- Backport permission changes from production to Drupal. (ccoleman@redhat.com)
+
 * Wed Oct 03 2012 Adam Miller <admiller@redhat.com> 1.6.3-1
 - Add taxonomy support for blogs and a json export for the most recent release
   (ccoleman@redhat.com)
