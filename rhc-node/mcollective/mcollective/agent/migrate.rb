@@ -239,7 +239,7 @@ module OpenShiftMigration
   # at any point and continue to pick up where it left off or make
   # harmless changes the 2-n times around.
   def self.migrate(uuid, namespace, version)
-    if version == "2.0.18"
+    if version == "2.0.19"
 
       # See jenkins below for an example of a specialization for a cartridge type
       frameworks = {
