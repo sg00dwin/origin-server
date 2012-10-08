@@ -8,8 +8,8 @@
 
 Summary:   OpenShift Site Rails application
 Name:      rhc-site
-Version: 0.99.8
-Release:   2%{?dist}
+Version: 0.99.9
+Release:   1%{?dist}
 Group:     Network/Daemons
 License:   ASL 2.0
 URL:       http://openshift.redhat.com
@@ -145,6 +145,51 @@ rm -rf %{buildroot}
 %{sitedir}/public
 
 %changelog
+* Mon Oct 08 2012 Adam Miller <admiller@redhat.com> 0.99.9-1
+- US2912 - Site should customize error pages to use site layout
+  (ccoleman@redhat.com)
+- Merge pull request #448 from smarterclayton/preserve_old_content
+  (openshift+bot@redhat.com)
+- Merge pull request #451 from smarterclayton/production_assets_broken
+  (openshift+bot@redhat.com)
+- Merge pull request #439 from nhr/BZ849627 (openshift+bot@redhat.com)
+- Merge pull request #449 from sg00dwin/master (openshift+bot@redhat.com)
+- renaming crankcase -> origin-server (dmcphers@redhat.com)
+- Fixing renames, paths, configs and cleaning up old packages. Adding
+  obsoletes. (kraman@gmail.com)
+- Revert to Shawns' changes (ccoleman@redhat.com)
+- Use application.js in console in production, rather than console.js
+  (ccoleman@redhat.com)
+- Asset compilation in production should be disabled without digests, but a
+  Rails issue is preventing page rendering when digests are off.  Patch Rails,
+  then ensure the correct compile = false flags are present.
+  (ccoleman@redhat.com)
+- Corrected error handling for inlined selects (hripps@redhat.com)
+- Merge branch 'master' of github.com:openshift/li (sgoodwin@redhat.com)
+- css fix for bz 849077 Include link to overpass.css for styleguide
+  (sgoodwin@redhat.com)
+- Re-added semantic_errors calls to handle general form errors.
+  (hripps@redhat.com)
+- Merge branch 'master' of github.com:openshift/li (admiller@redhat.com)
+- Explicitly calling for error strings on customized selects
+  (hripps@redhat.com)
+- Removed explicit error inclusion; happens automatically (hripps@redhat.com)
+- Add generated versions of site and console CSS/JS for N-1 compatibility
+  (ccoleman@redhat.com)
+- Temporarily preserve asset files that were moved for N-1 sprint
+  compatability.  This commit should be undone later. (ccoleman@redhat.com)
+- Ignore gemfile.lock always during builds (ccoleman@redhat.com)
+- Allow variable extension. (ccoleman@redhat.com)
+- Isolate site specific variables (ccoleman@redhat.com)
+- Transparent noise image should not be inlined for size reasons
+  (ccoleman@redhat.com)
+- Revised inlined form elements to use revised error capture method
+  (hripps@redhat.com)
+- Removed month names to avoid I18N complications (hripps@redhat.com)
+- BZ849627 Revised forms to correctly use new formtastic inline presentation
+  (hripps@redhat.com)
+- Merge branch 'master' of github.com:openshift/li (sgoodwin@redhat.com)
+
 * Thu Oct 04 2012 Adam Miller <admiller@redhat.com> 0.99.8-2
 - bump site.spec Release: for fake chain-build with console
   (admiller@redhat.com)
