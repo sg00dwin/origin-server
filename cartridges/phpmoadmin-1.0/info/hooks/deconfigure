@@ -5,7 +5,7 @@
 function print_help {
     echo "Usage: $0 app-name namespace uuid"
 
-    echo "$0 $@" | logger -p local0.notice -t stickshift_phpmoadmin_deconfigure
+    echo "$0 $@" | logger -p local0.notice -t openshift_origin_phpmoadmin_deconfigure
     exit 1
 }
 
@@ -21,7 +21,7 @@ done
 
 [ $# -eq 3 ] || print_help
 
-source "/etc/stickshift/stickshift-node.conf"
+source "/etc/openshift/node.conf"
 source ${CARTRIDGE_BASE_PATH}/abstract/info/lib/util
 
 # Import Environment Variables
@@ -58,6 +58,6 @@ runcon -l s0-s0:c0.c1023 rm -rf "${cartridge_dir}"
 #
 # Remove ProxyPass definition from apache
 #
-rm -f /etc/httpd/conf.d/stickshift/${uuid}_${namespace}_${application}/phpmoadmin-1.0.conf || warning "Could not remove phpmoadmin apache definition" 156
+rm -f /etc/httpd/conf.d/openshift/${uuid}_${namespace}_${application}/phpmoadmin-1.0.conf || warning "Could not remove phpmoadmin apache definition" 156
 
 ${CARTRIDGE_BASE_PATH}/abstract/info/bin/httpd_singular graceful || warning "Failed to restart master httpd, please contact support" 120

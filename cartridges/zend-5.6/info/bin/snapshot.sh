@@ -5,7 +5,7 @@ for f in ~/.env/*; do . $f; done
 cartridge_type="zend-5.6"
 cartridge_dir=$OPENSHIFT_HOMEDIR/$cartridge_type
 
-source /etc/stickshift/stickshift-node.conf
+source /etc/openshift/node.conf
 source ${CARTRIDGE_BASE_PATH}/abstract/info/lib/util
 
 # Run pre-dump dumps

@@ -16,7 +16,7 @@ require 'lib/openshift/brew'
 include FileUtils
 
 module Express
-  class BuilderPlugin < StickShift::Builder
+  class BuilderPlugin < OpenShift::Builder
     include OpenShift::BuilderHelper
     include OpenShift::SauceLabs
 
@@ -116,7 +116,7 @@ module Express
 
     def watch_with_listen(verbose = false)
       # Rsync cannot set owner or group, so we should inherit
-      set_sticky_bits_for '/var/www/stickshift'
+      set_sticky_bits_for '/var/www/openshift'
 
       @target_dir_for.keys.each do |component|
         start_listener_for component
@@ -265,7 +265,7 @@ module Express
       ssh("verifier", "sed -i 's,^plugin.stomp.host.*=.*,plugin.stomp.host=#{internal_ip},' /etc/mcollective/client.cfg;" \
                     "sed -i 's,^plugin.stomp.host.*=.*,plugin.stomp.host=#{internal_ip},' /etc/mcollective/server.cfg;" \
                     "sed -i 's,^#-A,-A,' /etc/sysconfig/iptables;" \
-                    "sed -i 's,^BROKER_HOST.*=.*,BROKER_HOST=#{internal_ip},' /etc/stickshift/stickshift-node.conf;" \
+                    "sed -i 's,^BROKER_HOST.*=.*,BROKER_HOST=#{internal_ip},' /etc/openshift/node.conf;" \
                     "service iptables restart; service activemq restart; service mcollective restart", 240)
 
       puts ssh("verifier", "mco ping")
@@ -283,7 +283,7 @@ module Express
       puts `pushd /tmp > /dev/null; rm -rf /tmp/clients; scp -r verifier:/etc/mcollective/ssl/clients/ .; scp -r clients/* #{hostname}:/etc/mcollective/ssl/clients/; popd > /dev/null`
 
       ssh(hostname, "sed -i 's,^plugin.stomp.host.*=.*,plugin.stomp.host=#{internal_ip},' /etc/mcollective/server.cfg;" \
-                    "sed -i 's,^BROKER_HOST.*=.*,BROKER_HOST=#{internal_ip},' /etc/stickshift/stickshift-node.conf;" \
+                    "sed -i 's,^BROKER_HOST.*=.*,BROKER_HOST=#{internal_ip},' /etc/openshift/node.conf;" \
                     "service activemq stop; service mcollective restart", 240)
 
       puts ssh("verifier", "mco ping")
@@ -357,7 +357,7 @@ module Express
     no_tasks do
       def idle_all_gears(hostname)
         puts "Idling all gears on remote instance: #{hostname}"
-        ssh(hostname, "service mcollective restart; service stickshift-proxy restart; for dir in /var/lib/stickshift/*; do if [ -d $dir ] && [ ! -h $dir ] ; then rhc-idler -n -u `basename $dir`; fi; done; service httpd graceful", 240)
+        ssh(hostname, "service mcollective restart; service openshift-port-proxy restart; for dir in /var/lib/openshift/*; do if [ -d $dir ] && [ ! -h $dir ] ; then rhc-idler -n -u `basename $dir`; fi; done; service httpd graceful", 240)
         puts "Done"
       end
 
@@ -381,8 +381,8 @@ module Express
           end
           f.close
           scp_to(hostname, f.path, "/tmp/fixbroker.sed", 600, 10)
-          ssh(hostname, "sed -i -f /tmp/fixbroker.sed /var/www/stickshift/broker/config/environments/development.rb", 240)
-          ssh(hostname, "/sbin/service libra-broker restart", 240)
+          ssh(hostname, "sed -i -f /tmp/fixbroker.sed /var/www/openshift/broker/config/environments/development.rb", 240)
+          ssh(hostname, "/sbin/service rhc-broker restart", 240)
         ensure
           f.close
           f.unlink
@@ -391,14 +391,14 @@ module Express
 
       def update_facts(hostname)
         puts "Updating instance facts and running libra-data to set the public ip..."
-        ssh(hostname, "sed -i \"s/.*PUBLIC_IP_OVERRIDE.*/#PUBLIC_IP_OVERRIDE=/g\" /etc/stickshift/stickshift-node.conf; sed -i \"s/.*PUBLIC_HOSTNAME_OVERRIDE.*/#PUBLIC_HOSTNAME_OVERRIDE=/g\" /etc/stickshift/stickshift-node.conf; /usr/libexec/mcollective/update_yaml.rb /etc/mcollective/facts.yaml; service libra-data start")
+        ssh(hostname, "sed -i \"s/.*PUBLIC_IP_OVERRIDE.*/#PUBLIC_IP_OVERRIDE=/g\" /etc/openshift/node.conf; sed -i \"s/.*PUBLIC_HOSTNAME_OVERRIDE.*/#PUBLIC_HOSTNAME_OVERRIDE=/g\" /etc/openshift/node.conf; /usr/libexec/mcollective/update_yaml.rb /etc/mcollective/facts.yaml; service libra-data start")
         puts 'Done'
       end
-      
+
       def update_cucumber_tests(hostname, repo_parent_dir="/root", user="root")
-        ssh(hostname, "cp -n #{repo_parent_dir}/li-test/stickshift/controller/test/cucumber/*.feature #{repo_parent_dir}/li-test/tests/. ", 60, false, 2, user)
+        ssh(hostname, "cp -n #{repo_parent_dir}/li-test/controller/test/cucumber/*.feature #{repo_parent_dir}/li-test/tests/. ", 60, false, 2, user)
       end
-      
+
       def setup_verifier(hostname, use_stage_image=false)
         print "Initializing git repo for syncing..."
         init_repo(hostname)
@@ -424,16 +424,16 @@ module Express
         puts "Downloading logs and screenshots..."
         `rm -rf rhc/log; mkdir -p rhc/log/; pushd rhc/log > /dev/null; mkdir -p site/test/reports broker mcollective system screenshots selenium jbossas broker-profiler coverage; popd > /dev/null`
         scp_from(hostname, "/tmp/rhc/*", "rhc/log")
-        scp_from(hostname, "/var/www/stickshift/site/httpd/logs/access_log", "rhc/log/site/access_log.log")
-        scp_from(hostname, "/var/www/stickshift/site/httpd/logs/error_log", "rhc/log/site/error_log.log")
-        scp_from(hostname, "/var/www/stickshift/site/log/*", "rhc/log/site")
+        scp_from(hostname, "/var/www/openshift/site/httpd/logs/access_log", "rhc/log/site/access_log.log")
+        scp_from(hostname, "/var/www/openshift/site/httpd/logs/error_log", "rhc/log/site/error_log.log")
+        scp_from(hostname, "/var/www/openshift/site/log/*", "rhc/log/site")
         scp_from(hostname, "/root/li-test/site/test/reports/*", "rhc/log/site/test/reports")
         scp_from(hostname, "/root/li-test/site/log/*", "rhc/log/site")
-        scp_from(hostname, "/var/www/stickshift/broker/httpd/logs/access_log", "rhc/log/broker/access_log.log")
-        scp_from(hostname, "/var/www/stickshift/broker/httpd/logs/error_log", "rhc/log/broker/error_log.log")
-        scp_from(hostname, "/var/www/stickshift/broker/log/*", "rhc/log/broker")
-        scp_from(hostname, "/root/li-test/broker/log/*", "rhc/log/broker")
-        scp_from(hostname, "/var/log/stickshift/user_action.log", "rhc/log/broker/user_action.log")
+        scp_from(hostname, "/var/www/openshift/broker/httpd/logs/access_log", "rhc/log/broker/access_log.log")
+        scp_from(hostname, "/var/www/openshift/broker/httpd/logs/error_log", "rhc/log/broker/error_log.log")
+        scp_from(hostname, "/var/www/openshift/broker/log/*", "rhc/log/broker")
+        scp_from(hostname, "/root/li-test/rhc-broker/log/*", "rhc/log/broker")
+        scp_from(hostname, "/var/log/openshift/user_action.log", "rhc/log/broker/user_action.log")
         scp_from(hostname, "/var/log/mcollective.*", "rhc/log/mcollective")
         scp_from(hostname, "/var/log/httpd/access_log", "rhc/log/system/access_log.log")
         scp_from(hostname, "/var/log/httpd/error_log", "rhc/log/system/error_log.log")
@@ -444,8 +444,8 @@ module Express
         scp_from(hostname, "/var/log/audit/audit.log", "rhc/log/system/audit.log")
         scp_from(hostname, "/tmp/rhc/screenshots/*", "rhc/log/screenshots")
         scp_from(hostname, "/root/li-test/selenium/output/*", "rhc/log/selenium")
-        scp_from(hostname, "/var/lib/stickshift/*/*/jbossas-7/standalone/tmp/*.log", "rhc/log/jbossas")
-        scp_from(hostname, "/var/lib/stickshift/*/*/jbosseap-6.0/standalone/tmp/*.log", "rhc/log/jbosseap")
+        scp_from(hostname, "/var/lib/openshift/*/*/jbossas-7/standalone/tmp/*.log", "rhc/log/jbossas")
+        scp_from(hostname, "/var/lib/openshift/*/*/jbosseap-6.0/standalone/tmp/*.log", "rhc/log/jbosseap")
         scp_from(hostname, "/tmp/rhc/benchmark.csv", "rhc/log")
         scp_from(hostname, "/tmp/broker-profiler/*", "rhc/log/broker-profiler")
         scp_from(hostname, "/tmp/rhc/*_coverage", "rhc/log/coverage")
@@ -461,7 +461,7 @@ module Express
               puts "ERROR - instance is not valid"
               exit 1
             elsif i == 2
-              ssh(hostname, "service libra-broker restart; service libra-site restart; service httpd restart", 60)
+              ssh(hostname, "service rhc-broker restart; service rhc-site restart; service httpd restart", 60)
             end
             sleep 5
           else
@@ -504,11 +504,11 @@ module Express
                 test_queues[1] << ["REST API Group 2", "cucumber #{CUCUMBER_OPTIONS} -t @broker_api2 li-test/tests", {:retry_individually => true}]
                 test_queues[2] << ["REST API Group 3", "cucumber #{CUCUMBER_OPTIONS} -t @broker_api3 li-test/tests", {:retry_individually => true}]
                 test_queues[3] << ["REST API Group 4", "cucumber #{CUCUMBER_OPTIONS} -t @broker_api4 li-test/tests", {:retry_individually => true}]
-                test_queues[0] << ["Broker Domain System", "cd li-test/broker; rake test:domain_system_test", {:retry_individually => true}]
-                test_queues[2] << ["StickShift Broker Unit Ext 1", "cd li-test/stickshift/broker; rake test:ss_unit_ext1", {:retry_individually => true}]
-                test_queues[3] << ["Broker Usage", "cd li-test/broker; rake test:usage"]
-                test_queues[0] << ["Broker Application System", "cd li-test/broker; rake test:application_system_test", {:retry_individually => true}]
-                test_queues[2] << ["Broker Cartridge System", "cd li-test/broker; rake test:cartridge_system_test", {:retry_individually => true}]
+                test_queues[0] << ["Broker Domain System", "cd li-test/rhc-broker; rake test:domain_system_test", {:retry_individually => true}]
+                test_queues[2] << ["OpenShift Broker Unit Ext 1", "cd li-test/broker; rake test:oo_unit_ext1", {:retry_individually => true}]
+                test_queues[3] << ["Broker Usage", "cd li-test/rhc-broker; rake test:usage"]
+                test_queues[0] << ["Broker Application System", "cd li-test/rhc-broker; rake test:application_system_test", {:retry_individually => true}]
+                test_queues[2] << ["Broker Cartridge System", "cd li-test/rhc-broker; rake test:cartridge_system_test", {:retry_individually => true}]
               when 'runtime'
                 test_queues[0] << ["Extended Runtime Group 1", "cucumber #{CUCUMBER_OPTIONS} -t @runtime_extended1 li-test/tests"]
                 test_queues[1] << ["Extended Runtime Group 2", "cucumber #{CUCUMBER_OPTIONS} -t @runtime_extended2 li-test/tests"]
@@ -542,9 +542,9 @@ module Express
               end
             end
           elsif options.include_coverage?
-            test_queues[0] << ["StickShift Node Unit Coverage", "cd li-test/stickshift/node; rake coverage; cp -a coverage /tmp/rhc/stickshift_node_coverage"]
-            test_queues[1] << ["Broker Unit and Functional Coverage", "cd li-test/broker; rake coverage; cp -a test/coverage /tmp/rhc/broker_coverage"]
-            test_queues[2] << ["StickShift Broker Unit and Functional Coverage", "cd li-test/stickshift/broker; rake coverage; cp -a test/coverage /tmp/rhc/stickshift_broker_coverage"]
+            test_queues[0] << ["OpenShift Node Unit Coverage", "cd li-test/node; rake coverage; cp -a coverage /tmp/rhc/openshift_node_coverage"]
+            test_queues[1] << ["Broker Unit and Functional Coverage", "cd li-test/rhc-broker; rake coverage; cp -a test/coverage /tmp/rhc/broker_coverage"]
+            test_queues[2] << ["OpenShift Broker Unit and Functional Coverage", "cd li-test/broker; rake coverage; cp -a test/coverage /tmp/rhc/openshift_broker_coverage"]
           elsif options.include_cucumber
             timeout = @@SSH_TIMEOUT
             timeout = @@SSH_TIMEOUT_OVERRIDES[options.include_cucumber] if not @@SSH_TIMEOUT_OVERRIDES[options.include_cucumber].nil?
@@ -618,19 +618,19 @@ module Express
           else
 
             unless options.exclude_broker?
-              test_queues[0] << ["Broker Unit", "cd li-test/broker; rake test:units"]
-              test_queues[1] << ["Broker Functional", "cd li-test/broker; rake test:functionals"]
-              test_queues[0] << ["Broker Integration", "cd li-test/broker; rake test:integration"]
-              test_queues[1] << ["StickShift Broker Functional", "cd li-test/stickshift/broker; rake test:functionals"]
-              test_queues[0] << ["StickShift Broker Integration", "cd li-test/stickshift/broker; rake test:integration"]
+              test_queues[0] << ["Broker Unit", "cd li-test/rhc-broker; rake test:units"]
+              test_queues[1] << ["Broker Functional", "cd li-test/rhc-broker; rake test:functionals"]
+              test_queues[0] << ["Broker Integration", "cd li-test/rhc-broker; rake test:integration"]
+              test_queues[1] << ["OpenShift Broker Functional", "cd li-test/broker; rake test:functionals"]
+              test_queues[0] << ["OpenShift Broker Integration", "cd li-test/broker; rake test:integration"]
 
-              test_queues[2] << ["StickShift Broker Unit 1", "cd li-test/stickshift/broker; rake test:ss_unit1"]
-              test_queues[2] << ["StickShift Broker Unit 2", "cd li-test/stickshift/broker; rake test:ss_unit2"]
+              test_queues[2] << ["OpenShift Broker Unit 1", "cd li-test/broker; rake test:oo_unit1"]
+              test_queues[2] << ["OpenShift Broker Unit 2", "cd li-test/broker; rake test:oo_unit2"]
               test_queues[3] << ["Broker Cucumber", "cucumber --strict -f html --out /tmp/rhc/broker_cucumber.html -f progress -t @broker li-test/tests"]
             end
 
             unless options.exclude_runtime?
-              test_queues[0] << ["Runtime Unit", "cd li-test/stickshift/node; rake unit_test"]
+              test_queues[0] << ["Runtime Unit", "cd li-test/node; rake unit_test"]
               (1..4).each do |i|
                 test_queues[i-1] << ["Runtime Group #{i.to_s}", "cucumber #{CUCUMBER_OPTIONS} -t @runtime#{i.to_s} li-test/tests"]
               end
@@ -749,7 +749,7 @@ module Express
         begin
           manifest = nil
           begin
-            if options.build_clean_ami? || options.install_from_source? || options.install_from_local_source? || options.install_required_packages? 
+            if options.build_clean_ami? || options.install_from_source? || options.install_from_local_source? || options.install_required_packages?
               puts "Updating all packages on the system..."
               output = ssh(hostname, "yum update -y --exclude='rhc*'; yum -y install openssh-clients", 1800)
               puts "Done"
@@ -802,7 +802,7 @@ module Express
                 if options.use_stage_repo?
                   cmd += ' stage'
                 elsif options.use_test_repo?
-                  cmd += ' test' 
+                  cmd += ' test'
                 end
               end
               output, exit_code = ssh(hostname, cmd, 3600, true)
@@ -875,9 +875,9 @@ module Express
           build_dir = sync_dir[1]
           spec_file = sync_dir[2]
 
-          if (package_name.include?("origin") && package_name != 'rubygem-openshift-origin-console') || package_name == "stickshift-broker"
-              puts "Skipping #{package_name}"
-              return
+          if IGNORE_PACKAGES.include? package_name
+            puts "Skipping #{package_name}"
+            return
           else
             build_and_install(package_name, build_dir, spec_file)
           end
@@ -890,16 +890,15 @@ module Express
             build_dir = stale_dir[1]
             spec_file = stale_dir[2]
 
-            if (package_name.include?("origin") && package_name != 'rubygem-openshift-origin-console') || package_name == "stickshift-broker"
-                puts "Skipping #{package_name}"
-                return
+            if IGNORE_PACKAGES.include? package_name
+              puts "Skipping #{package_name}"
+              return
             else
               build_and_install(package_name, build_dir, spec_file)
             end
           end
         end
-        #run("yum update -y --exclude='rhc-devenv' --disablerepo=\\* --enablerepo=li rhc-* cartridge-* rubygem-stickshift-* rubygem-gearchanger-* rubygem-uplift-* rubygem-swingshift-*", :verbose => options.verbose?)
-        run("service mcollective restart; service libra-broker restart; service libra-site restart", :verbose => options.verbose?)
+        run("service mcollective restart; service rhc-broker restart; service rhc-site restart", :verbose => options.verbose?)
       end
 
       def sync_impl(name, options)
@@ -934,7 +933,7 @@ rm -rf origin-dev-tools
 mv origin-dev-tools-bare-repo origin-dev-tools
 
 rm -rf #{working_dirs}
-#{options.clean_metadata? ? "yum update -y --exclude='rhc-devenv' rhc-* cartridge-* rubygem-stickshift-* rubygem-gearchanger-* rubygem-uplift-* rubygem-swingshift-* 2>&1;" : ''}
+#{options.clean_metadata? ? "yum update -y --exclude='rhc-devenv' rhc-* *openshift* 2>&1;" : ''}
 
 #{options.clean_metadata? ? '/bin/bash li-test/misc/devenv/li-devenv.sh --install_templates 2>&1' : ''}
 
@@ -962,15 +961,15 @@ rm -rf #{working_dirs}
         site_cmds = ["cd li-test/site; rake test:sanity"]
         add_ssh_cmd_to_threads(hostname, threads, failures, site_titles, site_cmds)
         titles = ["Broker Sanity",
-          "StickShift Broker Sanity",
-          "StickShift Node Unit"]
+          "OpenShift Broker Sanity",
+          "OpenShift Node Unit"]
 
-        cmds = ["cd li-test/broker; rake test:sanity",
-          "cd li-test/stickshift/broker; rake test:sanity",
-          "cd li-test/stickshift/node; rake test"]
+        cmds = ["cd li-test/rhc-broker; rake test:sanity",
+          "cd li-test/broker; rake test:sanity",
+          "cd li-test/node; rake test"]
         add_ssh_cmd_to_threads(hostname, threads, failures, titles, cmds)
         add_ssh_cmd_to_threads(hostname, threads, failures, "Cucumber Sanity", "cucumber #{CUCUMBER_OPTIONS} -t @sanity li-test/tests/")
-    
+
         threads.each do |t|
           t[0].join
         end

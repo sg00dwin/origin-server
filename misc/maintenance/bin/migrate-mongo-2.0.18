@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
 require 'rubygems'
 require 'mongo'
-require '/var/www/stickshift/broker/config/environment'
+require '/var/www/openshift/broker/config/environment'
 
 # Configurable params
 $config = Rails.application.config.datastore

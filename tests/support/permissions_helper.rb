@@ -8,7 +8,7 @@ module PermissionHelper
   #
   # Examples
   #
-  #   mode?('/var/lib/stickshift/.blah/', '40755')
+  #   mode?('/var/lib/openshift/.blah/', '40755')
   #   # => true 
   #
   #   mode?('/etc/passwd', '100644')
@@ -29,7 +29,7 @@ module PermissionHelper
   #
   # Examples
   #
-  #   context?("/var/lib/stickshift/#{uuid}/.pearrc", 
+  #   context?("/var/lib/openshift/#{uuid}/.pearrc", 
   #           "unconfined_u:object_r:libra_var_lib_t:#{mcs}")
   #   # => true 
   #

@@ -1,12 +1,12 @@
 #!/bin/bash
 
 echo "Disabling SSO for Broker..."
-sed -i 's/\:integrated => true/:integrated => false/' /var/www/stickshift/broker/config/environments/development.rb
-service libra-broker restart
+sed -i 's/\:integrated => true/:integrated => false/' /var/www/openshift/broker/config/environments/development.rb
+service rhc-broker restart
 
 echo "Disabling SSO for Site..."
-sed -i "s/config\.integrated \= true/config.integrated = false/" /var/www/stickshift/site/config/environments/development.rb
-service libra-site restart
+sed -i "s/config\.integrated \= true/config.integrated = false/" /var/www/openshift/site/config/environments/development.rb
+service rhc-site restart
 
 echo "Disabling SSO for Drupal..."
 pushd /etc/drupal6/default/

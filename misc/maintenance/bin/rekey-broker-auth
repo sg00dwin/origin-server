@@ -1,6 +1,6 @@
 #!/usr/bin/env ruby
 # Usage: ./rekey-broker-auth > out.txt
-$:.unshift('/var/www/stickshift/broker')
+$:.unshift('/var/www/openshift/broker')
 require 'config/environment'
 require 'rubygems'
 

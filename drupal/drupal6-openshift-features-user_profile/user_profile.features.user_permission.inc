@@ -59,6 +59,7 @@ function user_profile_user_default_permissions() {
       '1' => 'anonymous user',
       '2' => 'authenticated user',
       '3' => 'moderator',
+      '4' => 'page author',
     ),
   );
 
@@ -246,6 +247,7 @@ function user_profile_user_default_permissions() {
     'name' => 'administer nodes',
     'roles' => array(
       '0' => 'administrator',
+      '1' => 'page author',
     ),
   );
 
@@ -650,7 +652,8 @@ function user_profile_user_default_permissions() {
     'name' => 'delete own blog content',
     'roles' => array(
       '0' => 'administrator',
-      '1' => 'moderator',
+      '1' => 'blogger',
+      '2' => 'moderator',
     ),
   );
 
@@ -1024,6 +1027,7 @@ function user_profile_user_default_permissions() {
     'roles' => array(
       '0' => 'administrator',
       '1' => 'moderator',
+      '2' => 'page author',
     ),
   );
 
@@ -1317,6 +1321,7 @@ function user_profile_user_default_permissions() {
     'name' => 'revert revisions',
     'roles' => array(
       '0' => 'administrator',
+      '1' => 'page author',
     ),
   );
 
@@ -1920,6 +1925,7 @@ function user_profile_user_default_permissions() {
     'roles' => array(
       '0' => 'authenticated user',
       '1' => 'moderator',
+      '2' => 'page author',
     ),
   );
 

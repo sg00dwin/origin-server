@@ -1,6 +1,6 @@
 #!/usr/bin/ruby
 require 'rubygems'
-require '/var/www/stickshift/broker/config/environment'
+require '/var/www/openshift/broker/config/environment'
 
 def p_usage
     puts <<USAGE
@@ -24,7 +24,7 @@ end
 p_usage if opt['help']
 
 if opt['namespace']
-  dns = Uplift::DynectPlugin.new
+  dns = OpenShift::DynectPlugin.new
   dns.deregister_namespace(opt['namespace'])
   dns.publish
   dns.close

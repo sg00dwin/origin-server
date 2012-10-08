@@ -1,1 +1,1 @@
-export OPENSHIFT_HOMEDIR='/var/lib/stickshift/c1e312ec8aa046458ced01dcb41ce88e/'
+export OPENSHIFT_HOMEDIR='/var/lib/openshift/c1e312ec8aa046458ced01dcb41ce88e/'

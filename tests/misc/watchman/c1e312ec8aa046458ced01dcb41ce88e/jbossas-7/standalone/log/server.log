@@ -10,7 +10,7 @@
 2012/02/08 16:00:00,680 INFO  [org.apache.coyote.http11.Http11Protocol] (MSC service thread 1-4) Starting Coyote HTTP/1.1 on http--127.0.250.1-8080
 2012/02/08 16:00:00,728 INFO  [org.jboss.as.connector] (MSC service thread 1-4) Starting JCA Subsystem (JBoss IronJacamar 1.0.3.Final)
 2012/02/08 16:00:00,828 INFO  [org.jboss.as.connector.subsystems.datasources] (MSC service thread 1-3) Bound data source [java:jboss/datasources/ExampleDS]
-2012/02/08 16:00:01,425 INFO  [org.jboss.as.deployment] (MSC service thread 1-2) Started FileSystemDeploymentService for directory /var/lib/stickshift/322ba0e1f4cf4026a8bd29c06c2fbf59/app001/jbossas-7/standalone/deployments
+2012/02/08 16:00:01,425 INFO  [org.jboss.as.deployment] (MSC service thread 1-2) Started FileSystemDeploymentService for directory /var/lib/openshift/322ba0e1f4cf4026a8bd29c06c2fbf59/app001/jbossas-7/standalone/deployments
 2012/02/08 16:00:01,459 INFO  [org.jboss.as] (Controller Boot Thread) JBoss AS 7.0.2.Final "Arc" started in 3605ms - Started 83 of 111 services (22 services are passive or on-demand)
 2012/02/08 16:00:01,513 INFO  [org.jboss.as.server.deployment] (MSC service thread 1-2) Starting deployment of "ROOT.war"
 2012/02/08 16:00:01,826 INFO  [org.jboss.as.jpa] (MSC service thread 1-4) added javax.persistence.api dependency to ROOT.war
@@ -28,7 +28,7 @@
 2012/02/08 17:48:51,194 INFO  [org.apache.coyote.http11.Http11Protocol] (MSC service thread 1-3) Starting Coyote HTTP/1.1 on http--127.0.250.1-8080
 2012/02/08 17:48:51,251 INFO  [org.jboss.as.connector] (MSC service thread 1-2) Starting JCA Subsystem (JBoss IronJacamar 1.0.3.Final)
 2012/02/08 17:48:51,318 INFO  [org.jboss.as.connector.subsystems.datasources] (MSC service thread 1-4) Bound data source [java:jboss/datasources/ExampleDS]
-2012/02/08 17:48:51,817 INFO  [org.jboss.as.deployment] (MSC service thread 1-4) Started FileSystemDeploymentService for directory /var/lib/stickshift/322ba0e1f4cf4026a8bd29c06c2fbf59/app001/jbossas-7/standalone/deployments
+2012/02/08 17:48:51,817 INFO  [org.jboss.as.deployment] (MSC service thread 1-4) Started FileSystemDeploymentService for directory /var/lib/openshift/322ba0e1f4cf4026a8bd29c06c2fbf59/app001/jbossas-7/standalone/deployments
 2012/02/08 17:48:51,912 INFO  [org.jboss.as] (Controller Boot Thread) JBoss AS 7.0.2.Final "Arc" started in 3598ms - Started 83 of 111 services (22 services are passive or on-demand)
 2012/02/08 17:48:51,967 INFO  [org.jboss.as.server.deployment] (MSC service thread 1-4) Starting deployment of "ROOT.war"
 2012/02/08 17:48:52,201 INFO  [org.jboss.as.jpa] (MSC service thread 1-2) added javax.persistence.api dependency to ROOT.war
@@ -47,7 +47,7 @@
 2012/02/08 17:52:27,435 INFO  [org.apache.coyote.http11.Http11Protocol] (MSC service thread 1-4) Starting Coyote HTTP/1.1 on http--127.0.250.1-8080
 2012/02/08 17:52:27,574 INFO  [org.jboss.as.connector] (MSC service thread 1-3) Starting JCA Subsystem (JBoss IronJacamar 1.0.3.Final)
 2012/02/08 17:52:27,713 INFO  [org.jboss.as.connector.subsystems.datasources] (MSC service thread 1-2) Bound data source [java:jboss/datasources/ExampleDS]
-2012/02/08 17:52:28,227 INFO  [org.jboss.as.deployment] (MSC service thread 1-4) Started FileSystemDeploymentService for directory /var/lib/stickshift/322ba0e1f4cf4026a8bd29c06c2fbf59/app001/jbossas-7/standalone/deployments
+2012/02/08 17:52:28,227 INFO  [org.jboss.as.deployment] (MSC service thread 1-4) Started FileSystemDeploymentService for directory /var/lib/openshift/322ba0e1f4cf4026a8bd29c06c2fbf59/app001/jbossas-7/standalone/deployments
 2012/02/08 17:52:28,250 INFO  [org.jboss.as] (Controller Boot Thread) JBoss AS 7.0.2.Final "Arc" started in 3655ms - Started 83 of 111 services (22 services are passive or on-demand)
 2012/02/08 17:54:02,678 INFO  [org.jboss.as.controller] (MSC service thread 1-4) Service status report
    New missing/unsatisfied dependencies:
@@ -69,7 +69,7 @@
 2012/02/08 17:54:11,917 INFO  [org.apache.coyote.http11.Http11Protocol] (MSC service thread 1-2) Starting Coyote HTTP/1.1 on http--127.0.250.1-8080
 2012/02/08 17:54:12,004 INFO  [org.jboss.as.connector] (MSC service thread 1-3) Starting JCA Subsystem (JBoss IronJacamar 1.0.3.Final)
 2012/02/08 17:54:12,071 INFO  [org.jboss.as.connector.subsystems.datasources] (MSC service thread 1-3) Bound data source [java:jboss/datasources/ExampleDS]
-2012/02/08 17:54:12,752 INFO  [org.jboss.as.deployment] (MSC service thread 1-2) Started FileSystemDeploymentService for directory /var/lib/stickshift/322ba0e1f4cf4026a8bd29c06c2fbf59/app001/jbossas-7/standalone/deployments
+2012/02/08 17:54:12,752 INFO  [org.jboss.as.deployment] (MSC service thread 1-2) Started FileSystemDeploymentService for directory /var/lib/openshift/322ba0e1f4cf4026a8bd29c06c2fbf59/app001/jbossas-7/standalone/deployments
 2012/02/08 17:54:12,772 INFO  [org.jboss.as] (Controller Boot Thread) JBoss AS 7.0.2.Final "Arc" started in 3566ms - Started 83 of 111 services (22 services are passive or on-demand)
 2012/02/08 17:54:51,422 INFO  [org.jboss.as.connector.subsystems.datasources] (Controller Boot Thread) Deploying JDBC-compliant driver class org.h2.Driver (version 1.2)
 2012/02/08 17:54:51,431 INFO  [org.jboss.as.connector.subsystems.datasources] (Controller Boot Thread) Deploying non-JDBC-compliant driver class com.mysql.jdbc.Driver (version 5.1)
@@ -83,7 +83,7 @@
 2012/02/08 17:54:52,148 INFO  [org.apache.coyote.http11.Http11Protocol] (MSC service thread 1-2) Starting Coyote HTTP/1.1 on http--127.0.250.1-8080
 2012/02/08 17:54:52,288 INFO  [org.jboss.as.connector] (MSC service thread 1-4) Starting JCA Subsystem (JBoss IronJacamar 1.0.3.Final)
 2012/02/08 17:54:52,355 INFO  [org.jboss.as.connector.subsystems.datasources] (MSC service thread 1-4) Bound data source [java:jboss/datasources/ExampleDS]
-2012/02/08 17:54:52,846 INFO  [org.jboss.as.deployment] (MSC service thread 1-1) Started FileSystemDeploymentService for directory /var/lib/stickshift/322ba0e1f4cf4026a8bd29c06c2fbf59/app001/jbossas-7/standalone/deployments
+2012/02/08 17:54:52,846 INFO  [org.jboss.as.deployment] (MSC service thread 1-1) Started FileSystemDeploymentService for directory /var/lib/openshift/322ba0e1f4cf4026a8bd29c06c2fbf59/app001/jbossas-7/standalone/deployments
 2012/02/08 17:54:52,864 INFO  [org.jboss.as] (Controller Boot Thread) JBoss AS 7.0.2.Final "Arc" started in 3506ms - Started 83 of 111 services (22 services are passive or on-demand)
 2012/02/08 17:55:43,143 INFO  [org.jboss.as.controller] (MSC service thread 1-1) Service status report
    New missing/unsatisfied dependencies:
@@ -105,7 +105,7 @@
 2012/02/08 17:55:53,088 INFO  [org.apache.coyote.http11.Http11Protocol] (MSC service thread 1-3) Starting Coyote HTTP/1.1 on http--127.0.250.1-8080
 2012/02/08 17:55:53,211 INFO  [org.jboss.as.connector] (MSC service thread 1-2) Starting JCA Subsystem (JBoss IronJacamar 1.0.3.Final)
 2012/02/08 17:55:53,285 INFO  [org.jboss.as.connector.subsystems.datasources] (MSC service thread 1-4) Bound data source [java:jboss/datasources/ExampleDS]
-2012/02/08 17:55:53,862 INFO  [org.jboss.as.deployment] (MSC service thread 1-2) Started FileSystemDeploymentService for directory /var/lib/stickshift/322ba0e1f4cf4026a8bd29c06c2fbf59/app001/jbossas-7/standalone/deployments
+2012/02/08 17:55:53,862 INFO  [org.jboss.as.deployment] (MSC service thread 1-2) Started FileSystemDeploymentService for directory /var/lib/openshift/322ba0e1f4cf4026a8bd29c06c2fbf59/app001/jbossas-7/standalone/deployments
 2012/02/08 17:55:53,899 INFO  [org.jboss.as] (Controller Boot Thread) JBoss AS 7.0.2.Final "Arc" started in 3749ms - Started 83 of 111 services (22 services are passive or on-demand)
 2012/02/08 17:56:39,732 INFO  [org.jboss.as.connector.subsystems.datasources] (Controller Boot Thread) Deploying JDBC-compliant driver class org.h2.Driver (version 1.2)
 2012/02/08 17:56:39,740 INFO  [org.jboss.as.connector.subsystems.datasources] (Controller Boot Thread) Deploying non-JDBC-compliant driver class com.mysql.jdbc.Driver (version 5.1)
@@ -119,7 +119,7 @@
 2012/02/08 17:56:40,498 INFO  [org.apache.coyote.http11.Http11Protocol] (MSC service thread 1-3) Starting Coyote HTTP/1.1 on http--127.0.250.1-8080
 2012/02/08 17:56:40,629 INFO  [org.jboss.as.connector] (MSC service thread 1-1) Starting JCA Subsystem (JBoss IronJacamar 1.0.3.Final)
 2012/02/08 17:56:40,653 INFO  [org.jboss.as.connector.subsystems.datasources] (MSC service thread 1-1) Bound data source [java:jboss/datasources/ExampleDS]
-2012/02/08 17:56:41,169 INFO  [org.jboss.as.deployment] (MSC service thread 1-4) Started FileSystemDeploymentService for directory /var/lib/stickshift/322ba0e1f4cf4026a8bd29c06c2fbf59/app001/jbossas-7/standalone/deployments
+2012/02/08 17:56:41,169 INFO  [org.jboss.as.deployment] (MSC service thread 1-4) Started FileSystemDeploymentService for directory /var/lib/openshift/322ba0e1f4cf4026a8bd29c06c2fbf59/app001/jbossas-7/standalone/deployments
 2012/02/08 17:56:41,195 INFO  [org.jboss.as] (Controller Boot Thread) JBoss AS 7.0.2.Final "Arc" started in 3556ms - Started 83 of 111 services (22 services are passive or on-demand)
 2012/02/08 17:56:41,299 INFO  [org.jboss.as.server.deployment] (MSC service thread 1-2) Starting deployment of "ROOT.war"
 2012/02/08 17:56:41,554 INFO  [org.jboss.as.jpa] (MSC service thread 1-1) added javax.persistence.api dependency to ROOT.war

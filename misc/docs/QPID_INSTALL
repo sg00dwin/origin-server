@@ -31,6 +31,6 @@
   mco ping
 
 6. You probably want to setup the client logger in /etc/mcollective/client.cfg
-  logfile = /var/www/stickshift/broker/log/mcollective-client.log
+  logfile = /var/www/openshift/broker/log/mcollective-client.log
 
 7. For debugging, you also want to set 'loglevel = debug' in both /etc/mcollective/client.cfg and /etc/mcollective/server.cfg

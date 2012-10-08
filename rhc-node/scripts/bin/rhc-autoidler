@@ -1,0 +1,36 @@
+#!/bin/bash
+
+days=15
+[ -z $1 ] || days=$1
+
+export PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin:/root/bin:$PATH
+
+# Get the libra_server
+source /etc/openshift/node.conf
+source ${CARTRIDGE_BASE_PATH}/abstract/info/lib/util
+
+function get_appids_to_idle() {
+    /usr/bin/rhc-list-stale $days 2>/dev/null | /bin/awk '{print $1}'
+}
+
+function print_stats() {
+    (
+        echo -n "$1: " ;
+        /usr/bin/rhc-idler-stats
+    ) | /usr/bin/logger -p local0.notice -t libra_auto_idler
+}
+
+print_stats "Before"
+
+for user in `get_appids_to_idle`
+do
+    /usr/bin/rhc-idler -n -u $user > /dev/null 2>&1
+    httpd_restart="TRUE"
+done
+
+if [ ! -z "$httpd_restart" ]
+then
+    service httpd graceful
+fi
+
+print_stats "After"

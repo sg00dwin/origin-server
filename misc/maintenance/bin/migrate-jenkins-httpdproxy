@@ -182,7 +182,7 @@ if opt['help']
   p_usage
 end
 
-$:.unshift('/var/www/stickshift/broker')
+$:.unshift('/var/www/openshift/broker')
 require 'config/environment'
 
 if opt['migrate-gear'] && opt['rhlogin'] && opt['app-name'] && opt['version']

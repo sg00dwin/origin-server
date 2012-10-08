@@ -1,0 +1,205 @@
+#!/usr/bin/env ruby
+
+#
+# rhc-watchman - restart an application that has been killed by cgroups
+# Runs as a daemon and monitors /var/log/messags for notifications of cgroups killing applications 
+
+require 'pathname'
+require 'date'
+require 'syslog'
+
+##
+# Monitor syslog files for messages from cgroups killing off applications 
+class Watchman
+  attr_accessor :epoch, :period_seconds, :message_file, :retries
+
+  ##
+  # monitor +message_file+ every +period+ seconds for cgroups kill messages
+  def initialize(message_file = '/var/log/messages', period = 20, daemon=true, epoch = DateTime.now, libra_var_lib = '/var/lib/openshift', retries = 10)
+    @message_file = message_file
+    @period_seconds = period
+    @daemon = daemon
+    @var_lib = libra_var_lib
+    @retries = retries
+
+    # Once the SDK has finer control over whether an application should be running or not this could be lifted.
+    # Don't process any errors that occurred before we were started.
+    # Maybe use application status to get around this issue
+    @epoch = epoch
+
+    daemon() if daemon
+
+    @incidents = {}
+
+    Syslog.open(File.basename($0), Syslog::LOG_PID, Syslog::LOG_DAEMON) unless Syslog.opened?
+    Syslog.info("Starting rhc-watchman => delay: #{period}s, exception threshold: #{retries}")
+  end
+
+  def run()
+    period = @period_seconds
+    begin
+      sleep period
+
+      # pull in all running environments to find new applications and incorporate any changes...
+      # todo add last_run logic to only read files when needed
+      app_env = {}
+      total_count = 0
+      Dir[@var_lib + '/*'].each {|app_path|
+        app_uuid = File.basename(app_path)
+        if app_uuid =~ /^[a-f0-9]{32}$/
+          begin
+            # reduce load on node by skipping non-running apps
+            app_env[app_uuid] = read_env(app_path) if is_running? app_uuid
+          rescue Errno::ENOENT
+            # If state file is missing process application...
+            # we don't have sufficient information to look for stop_lock
+            app_env[app_uuid] = read_env(app_path)
+          end
+          total_count += 1
+        end
+      }
+      next if app_env.empty?
+      period = @period_seconds * 3 if (total_count / app_env.length) > 2
+      Syslog.info("Running rhc-watchman => delay: #{period}s, exception threshold: #{retries}")
+	
+      # Read current message_file and troll for killed applications
+      # todo dump incidents if message_file has rolled?
+      File.open(@message_file).grep(/ killed as a result of limit of /).each {|msg|
+        # timezones are just a PITA. Syslog message doesn't include timezone so inject timezone from epoch
+        ts = DateTime.strptime(msg, '%b %d %T')
+        timestamp = DateTime.civil(ts.year, ts.month, ts.day, ts.hour, ts.min, ts.sec, epoch.zone)
+
+        uuid = msg.scan(/[a-f0-9]{32}/).first
+
+        # Skip any messages that occurred before we were started.
+        # Assume those have been dealt with manually or on a previous run. 
+        # We don't want to restart any application that may already be running.
+        next if epoch > timestamp 
+
+        cache_incident(uuid, timestamp, app_env)
+      }
+
+      app_env.keys.each {|uuid|
+        if app_env[uuid][:OPENSHIFT_GEAR_DNS].nil?
+          Syslog.warning("watchman unable to determine application setup for gear #{uuid}. OPENSHIFT_HOMEDIR/.env/OPENSHIFT_GEAR_DNS missing.")
+          next
+        end
+
+        if app_env[uuid].key?(:OPENSHIFT_JBOSSAS_LOG_DIR) || app_env[uuid].key?(:OPENSHIFT_JBOSSEAP_LOG_DIR)
+          process_server_log(uuid, app_env)
+        end
+      }
+    rescue Exception => e
+      @retries -= 1
+      Syslog.warning("watchman caught #{e.inspect}: #{e.message}. Retries left: #{@retries}")
+      retry if @daemon and 0 < @retries
+      raise
+    end while @daemon
+  end
+  
+  # Search jboss* server logs for OOM exceptions
+  def process_server_log(uuid, app_env)
+    if app_env[uuid].key?(:OPENSHIFT_JBOSSAS_LOG_DIR)
+      log_dir = app_env[uuid][:OPENSHIFT_JBOSSAS_LOG_DIR]
+    elsif app_env[uuid].key?(:OPENSHIFT_JBOSSEAP_LOG_DIR)
+      log_dir = app_env[uuid][:OPENSHIFT_JBOSSEAP_LOG_DIR]
+    else
+      Syslog.warning("watchman unable to determine log directory for jboss gear #{uuid}. OPENSHIFT_JBOSS\*_LOG_DIR env var missing.")
+      return
+    end
+
+    # skip missing log files as jboss may be comming up. 
+    server_log = File.join(log_dir, 'server.log')
+    return if not File.exists?(server_log)
+
+    File.open(server_log).grep(/ java.lang.OutOfMemoryError/) {|msg|
+      # timezones are just a PITA. server.log message doesn't include timezone or date so inject both from today
+      ts = DateTime.strptime(msg, '%Y/%m/%d %T')
+      timestamp = DateTime.civil(ts.year, ts.month, ts.day, ts.hour, ts.min, ts.sec, epoch.zone)
+      next if epoch > timestamp 
+
+      cache_incident(uuid, timestamp, app_env)
+    }
+  end
+
+  # Exposed to be overridden by unit tests
+  def now() DateTime.now end
+
+  # Don't restart if application has been marked down
+  def restart(uuid, env) 
+    begin
+      if is_running? uuid
+        `service libra restartuser #{uuid}`
+        Syslog.info("watchman restarted user #{uuid}: application #{env[uuid][:OPENSHIFT_GEAR_NAME]}") 
+      end
+    rescue Errno::ENOENT
+      # .state file missing is there a stop_lock?
+      if 0 == Dir["@{env[uuid][:OPENSHIFT_HOMEDIR]}/*/run/stop_lock"].count
+        `service libra restartuser #{uuid}`
+        Syslog.info("watchman restarted user #{uuid}: application #{env[uuid][:OPENSHIFT_GEAR_NAME]}") 
+      end
+    end
+  end
+
+  def cache_incident(uuid, timestamp, env)
+    if @incidents.has_key?(uuid) 
+      if @incidents[uuid][:last_updated] < timestamp
+        # Repeat death. Should there be an additional delay here?
+        restart(uuid, env)
+        @incidents[uuid] = {:last_updated => timestamp}
+      end
+    else
+      # First death. Restart and move on...
+      restart(uuid, env)
+      @incidents[uuid] = {:last_updated => timestamp}
+    end
+  end
+
+  def is_running? uuid
+    state_file = File.join(@var_lib, uuid, 'app-root', 'runtime', '.state')
+    state = File.read(state_file).chomp
+    not ('idle' == state || 'stopped' == state)
+  end
+
+  # Load environment variables into a hash
+  def read_env(path)
+    env = {}
+    Dir["#{path}/.env/*"].each { |f|
+      contents = nil
+      File.open(f) {|input|
+        contents = input.read.chomp
+        index = contents.index('=')
+        contents = contents[(index + 1)..-1]
+        contents = contents[/'(.*)'/, 1] if contents.start_with?("'")
+        contents = contents[/"(.*)"/, 1] if contents.start_with?('"')
+      }
+      env[File.basename(f).intern] =  contents
+    }
+    env
+  end
+
+  # Make current process a daemon
+  def daemon()
+    Syslog.warning('Fork from parent process failed') if (pid = fork) == -1
+    exit unless pid.nil?
+
+    Process.setsid
+    Syslog.warning('Fork from process leader failed') if (pid = fork) == -1
+    exit unless pid.nil?
+
+    Dir.chdir '/'
+    File.umask 0000
+
+    STDIN.reopen '/dev/null'
+    STDOUT.reopen '/dev/null', 'a'
+    STDERR.reopen STDOUT
+
+    File.open("/var/run/#{File.basename($0)}.pid", 'w') {|f| f.puts(Process.pid)}
+  end
+end
+
+if __FILE__ == $0
+  raise 'Must run as root' if Process.euid != 0
+  Watchman.new().run
+end
+

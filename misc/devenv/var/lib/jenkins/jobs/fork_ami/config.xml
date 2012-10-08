@@ -45,13 +45,13 @@ Note:  If you only want to use a fork for 1 of the repos then use that ${REPO}_F
           <defaultValue>master</defaultValue>
         </hudson.model.StringParameterDefinition>
         <hudson.model.StringParameterDefinition>
-          <name>CRANKCASE_FORK_ID</name>
-          <description>The fork id to use for the crankcase repo.  Will use FORK_ID followed by &apos;openshift&apos; if not specified.</description>
+          <name>ORIGIN_SERVER_FORK_ID</name>
+          <description>The fork id to use for the origin-server repo.  Will use FORK_ID followed by &apos;openshift&apos; if not specified.</description>
           <defaultValue></defaultValue>
         </hudson.model.StringParameterDefinition>
         <hudson.model.StringParameterDefinition>
-          <name>CRANKCASE_BRANCH</name>
-          <description>Branch to use for crankcase fork</description>
+          <name>ORIGIN_SERVER_BRANCH</name>
+          <description>Branch to use for origin-server fork</description>
           <defaultValue>master</defaultValue>
         </hudson.model.StringParameterDefinition>
         <hudson.model.StringParameterDefinition>
@@ -151,9 +151,9 @@ then
   then
     LI_FORK_ID=$FORK_ID
   fi
-  if [ -z &quot;$CRANKCASE_FORK_ID&quot; ]
+  if [ -z &quot;$ORIGIN_SERVER_FORK_ID&quot; ]
   then
-    CRANKCASE_FORK_ID=$FORK_ID
+    ORIGIN_SERVER_FORK_ID=$FORK_ID
   fi
   if [ -z &quot;$RHC_FORK_ID&quot; ]
   then
@@ -164,9 +164,9 @@ else
   then
     LI_FORK_ID=openshift
   fi
-  if [ -z &quot;$CRANKCASE_FORK_ID&quot; ]
+  if [ -z &quot;$ORIGIN_SERVER_FORK_ID&quot; ]
   then
-    CRANKCASE_FORK_ID=openshift
+    ORIGIN_SERVER_FORK_ID=openshift
   fi
   if [ -z &quot;$RHC_FORK_ID&quot; ]
   then
@@ -183,9 +183,9 @@ then
 elif [ -n &quot;$LI_FORK_ID&quot; ]
 then
   TAG_NAME=fork_ami_${LI_FORK_ID}
-elif [ -n &quot;$CRANKCASE_FORK_ID&quot; ]
+elif [ -n &quot;$ORIGIN_SERVER_FORK_ID&quot; ]
 then
-  TAG_NAME=fork_ami_${CRANKCASE_FORK_ID}
+  TAG_NAME=fork_ami_${ORIGIN_SERVER_FORK_ID}
 elif [ -n &quot;$RHC_FORK_ID&quot; ]
 then
   TAG_NAME=fork_ami_${RHC_FORK_ID}
@@ -193,7 +193,7 @@ else
   TAG_NAME=fork_ami_openshift
 fi
 
-rm -rf li rhc crankcase origin-dev-tools
+rm -rf li rhc origin-server origin-dev-tools
 git clone git@github.com:openshift/origin-dev-tools.git
 
 git clone git@github.com:${LI_FORK_ID}/li.git
@@ -203,11 +203,11 @@ pushd li
     git checkout $LI_BRANCH
   fi
 popd
-git clone git@github.com:${CRANKCASE_FORK_ID}/crankcase.git
-pushd crankcase
-  if [ -n &quot;$CRANKCASE_BRANCH&quot; ]
+git clone git@github.com:${ORIGIN_SERVER_FORK_ID}/origin-server.git
+pushd origin-server
+  if [ -n &quot;$ORIGIN_SERVER_BRANCH&quot; ]
   then
-    git checkout $CRANKCASE_BRANCH
+    git checkout $ORIGIN_SERVER_BRANCH
   fi
 popd
 git clone git@github.com:${RHC_FORK_ID}/rhc.git

@@ -1,0 +1,82 @@
+#!/usr/bin/env ruby
+
+require 'rubygems'
+require 'getoptlong'
+
+def usage
+    puts <<USAGE
+== Synopsis
+
+rhc-admin-cartridge-do: Run cartridge hooks
+
+== Usage
+
+rhc-admin-cartridge-do OPTIONS
+
+Options:
+-l|--rhlogin <rhlogin>
+    Red Hat login (RHN or OpenShift login with OpenShift access) (required)
+-a|--app     <application>
+    Application name  (alphanumeric) (required)
+-c|--command <command>
+    (start|stop|force-stop|restart|status|destroy) (required)
+-f|--cartridge
+    Cartridge
+-t|--timeout
+    timeout
+-h|--help
+    Show Usage info
+USAGE
+end
+
+opts = GetoptLong.new(
+    ["--rhlogin",          "-l", GetoptLong::REQUIRED_ARGUMENT],
+    ["--app",              "-a", GetoptLong::REQUIRED_ARGUMENT],    
+    ["--command",          "-c", GetoptLong::REQUIRED_ARGUMENT],
+    ["--cartridge",        "-f", GetoptLong::REQUIRED_ARGUMENT],
+    ["--timeout",          "-t", GetoptLong::REQUIRED_ARGUMENT],
+    ["--help",             "-h", GetoptLong::NO_ARGUMENT]
+)
+
+args = {}
+begin
+    opts.each{ |k,v| args[k]=v }
+rescue GetoptLong::Error => e
+    usage
+    exit -100
+end
+
+login    = args["--rhlogin"]
+app_name = args["--app"]
+command  = args['--command']
+cartridge  = args['--cartridge']
+timeout  = args['--timeout']
+
+if login.nil? or app_name.nil? or command.nil? or cartridge.nil? or args["--help"]
+  usage
+  exit 1
+end
+
+if timeout
+  unless timeout =~ /^[0-9]+$/
+    puts "ERROR: Timeout must be a positive integer"
+    exit 1
+  end
+end
+
+require "/var/www/openshift/broker/config/environment"
+# Disable analytics for admin scripts
+Rails.configuration.analytics[:enabled] = false
+
+# Set the MCollective options
+if timeout
+  Rails.configuration.msg_broker[:rpc_options][:timeout] = timeout.to_i
+end
+
+user = CloudUser.find(login)
+app  = Application.find(user, app_name)
+reply = app.container.send(:run_cartridge_command, cartridge, app, app.gear, command, nil, false)
+
+puts "DEBUG OUTPUT:\n#{reply.debugIO.string}\n" unless reply.debugIO.string.empty?
+puts "ERROR OUTPUT:\n#{reply.errorIO.string}\n" unless reply.errorIO.string.empty?
+puts reply.resultIO.string.empty? ? "Success" : reply.resultIO.string

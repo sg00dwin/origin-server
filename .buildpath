@@ -1,22 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <buildpath>
-	<buildpathentry kind="src" path="broker"/>
-	<buildpathentry kind="src" path="build"/>
-	<buildpathentry kind="src" path="cartridges/jenkins-1.4/info/bin"/>
-	<buildpathentry kind="src" path="cartridges/jenkins-client-1.4/info/bin"/>
-	<buildpathentry kind="src" path="stickshift"/>
-	<buildpathentry kind="src" path="common/mcollective/connector"/>
-	<buildpathentry kind="src" path="misc"/>
-	<buildpathentry kind="src" path="node/cartridges/abstract/info/bin"/>
-	<buildpathentry kind="src" path="node/facter"/>
-	<buildpathentry kind="src" path="node/mcollective"/>
-	<buildpathentry kind="src" path="node/scripts/bin"/>
-	<buildpathentry kind="src" path="selenium"/>
-	<buildpathentry kind="src" path="server-common"/>
-	<buildpathentry kind="src" path="site"/>
-	<buildpathentry kind="src" path="tests/bin"/>
-	<buildpathentry kind="src" path="tests/misc/bin"/>
-	<buildpathentry kind="src" path="tests/step_definitions"/>
-	<buildpathentry kind="src" path="tests/support"/>
 	<buildpathentry kind="con" path="org.eclipse.dltk.launching.INTERPRETER_CONTAINER"/>
 </buildpath>

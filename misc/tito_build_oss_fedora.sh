@@ -17,10 +17,10 @@ f_ctrl_c() {
 trap f_ctrl_c SIGINT
 
 # "Global" variables
-sibling_dirs=( "rhc" "crankcase" )
+sibling_dirs=( "rhc" "origin-server" )
 sync_only=""
 remote_repo="mirror1.ops.rhcloud.com"
-remote_repo_dir="/srv/pub/crankcase/nightly"
+remote_repo_dir="/srv/pub/origin-server/nightly"
 declare -a failed_builds
 declare -a failed_builds_paths
 

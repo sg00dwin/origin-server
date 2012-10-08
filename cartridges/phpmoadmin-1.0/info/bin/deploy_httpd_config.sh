@@ -1,7 +1,7 @@
 #!/bin/bash
 
-source "/etc/stickshift/stickshift-node.conf"
-source "/etc/stickshift/resource_limits.conf"
+source "/etc/openshift/node.conf"
+source "/etc/openshift/resource_limits.conf"
 source ${CARTRIDGE_BASE_PATH}/abstract/info/lib/util
 
 application="$1"
@@ -11,7 +11,7 @@ IP="$3"
 APP_HOME="${GEAR_BASE_DIR}/$uuid"
 PHPMOADMIN_DIR=`echo $APP_HOME/phpmoadmin-1.0 | tr -s /`
 
-cat <<EOF > "$PHPMOADMIN_DIR/conf.d/stickshift.conf"
+cat <<EOF > "$PHPMOADMIN_DIR/conf.d/openshift.conf"
 ServerRoot "$PHPMOADMIN_DIR"
 DocumentRoot "$PHPMOADMIN_DIR"
 Listen $IP:8080

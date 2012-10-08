@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
 require 'rubygems'
 require 'mongo'
-$:.unshift('/var/www/stickshift/broker')
+$:.unshift('/var/www/openshift/broker')
 require 'config/environment'
 
 # Configurable params

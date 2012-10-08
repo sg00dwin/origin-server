@@ -1,5 +1,5 @@
 #!/usr/bin/env ruby
-require '/var/www/stickshift/broker/config/environment'
+require '/var/www/openshift/broker/config/environment'
 
 CloudUser.find_all(nil).each { |u|
   u.applications.each { |a|

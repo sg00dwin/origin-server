@@ -60,7 +60,7 @@ Modify
 ssl-cert-name=ip-10-10-10-10.ec2.internal
 to the hostname of the other instance
 
-cd /etc/stickshift/devenv/qpid/
+cd /etc/openshift/devenv/qpid/
 vi make-certs.sh
 Modify
 server_id="ip-10-10-10-10.ec2.internal"
@@ -81,7 +81,7 @@ service mcollective restart
 Assumes you have your broker instance as 'verifier2' and server instance as 'verifier'
 cd /tmp
 rm -rf /tmp/test
-scp -r verifier2:/etc/stickshift/devenv/qpid/test/ .
+scp -r verifier2:/etc/openshift/devenv/qpid/test/ .
 scp -r test/client_db/* verifier:/etc/qpid/pki/client_db/
 scp -r test/server_db/* verifier:/etc/qpid/pki/server_db/
 

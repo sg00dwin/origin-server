@@ -3,7 +3,7 @@
 # set -x 
 set -e 
 
-VHOST_CFG_DIR="/etc/httpd/conf.d/stickshift"
+VHOST_CFG_DIR="/etc/httpd/conf.d/openshift"
 OLD_CFG_COPY_DIR="/tmp/backup-old-config.$$"
 
 function print_missing_config_bits() {

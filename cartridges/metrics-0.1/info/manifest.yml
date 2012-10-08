@@ -18,7 +18,7 @@ Reservations:
   - MEM >= 100MB
 Components:
   default:
-#     Dependencies: [rhc-cartridge-php]
+#     Dependencies: [openshift-origin-cartridge-php]
      Publishes:
         get-proxy-path:
           Type: "STRING:proxy-path"

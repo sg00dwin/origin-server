@@ -8,7 +8,7 @@ set -e
 function print_help {
     echo "Usage: $0 app-name namespace uuid git-url"
 
-    echo "$0 $@" | logger -p local0.notice -t stickshift_php_configure
+    echo "$0 $@" | logger -p local0.notice -t openshift_origin_php_configure
     exit 1
 }
 
@@ -25,7 +25,7 @@ done
 [ $# -eq 4 -o $# -eq 3 ] || print_help
 
 cartridge_type="zend-5.6"
-source "/etc/stickshift/stickshift-node.conf"
+source "/etc/openshift/node.conf"
 source ${CARTRIDGE_BASE_PATH}/abstract/info/lib/util
 
 setup_configure "$1" $2 $3 $4
@@ -71,7 +71,7 @@ $CART_INFO_DIR/bin/deploy_httpd_config.sh $ZENDCART_INSTANCE_DIR $application $u
 $CART_INFO_DIR/bin/zendserver_gui_config.sh $ZENDCART_INSTANCE_DIR $IP
 
 #copy over zen config files
-ZEND_USER_FILES="/usr/libexec/stickshift/cartridges/${cartridge_type}/files/user-files"
+ZEND_USER_FILES="/usr/libexec/openshift/cartridges/${cartridge_type}/files/user-files"
 echo "ZEND_USER_FILES ${ZEND_USER_FILES}"
 zend_sandbox_dir="$APP_HOME/.sandbox/$uuid/zend"
 mkdir -p "$zend_sandbox_dir"
