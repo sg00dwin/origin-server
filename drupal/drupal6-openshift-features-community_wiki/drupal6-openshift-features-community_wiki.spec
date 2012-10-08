@@ -5,7 +5,7 @@
 %global modname             community_wiki
 
 Name:    drupal%{drupal_release}-openshift-features-%{modname}
-Version: 1.3.1
+Version: 1.3.2
 Release: 1%{?dist}
 Summary: Openshift Red Hat Community Wiki Feature for Drupal6
 Group:   Applications/Publishing
@@ -41,6 +41,9 @@ rm -rf $RPM_BUILD_ROOT
 %{drupal_modules}/%{modname}
 
 %changelog
+* Mon Oct 08 2012 Adam Miller <admiller@redhat.com> 1.3.2-1
+- Backport permission changes from production to Drupal. (ccoleman@redhat.com)
+
 * Wed Jul 11 2012 Adam Miller <admiller@redhat.com> 1.3.1-1
 - bump_minor_versions for sprint 15 (admiller@redhat.com)
 
