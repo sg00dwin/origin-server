@@ -401,7 +401,7 @@ module OpenShiftMigration
 
         if File.directory?(File.join(gear_home, 'cron-1.4'))
           begin
-            rm_exists(gear_home,
+            Util.rm_env_var_value(gear_home,
                 "OPENSHIFT_BATCH_CRON_14_EMBEDDED_TYPE",
                 "OPENSHIFT_BATCH_CTL_SCRIPT",
                 "OPENSHIFT_BATCH_TYPE"
