@@ -14,51 +14,22 @@
 # source function library
 . /etc/rc.d/init.d/functions
 
-exec="/usr/bin/mongod"
 prog="mongod"
-pidfile="/var/run/mongodb/mongodb.pid"
-logfile="/var/log/mongodb/mongodb.log"
-options=" --replSet libra_rs --auth --journal --smallfiles --nssize=8 --oplogSize=8 -f /etc/mongodb.conf"
+options="--replSet libra_rs --auth --journal --smallfiles --nssize=8 --oplogSize=8"
 
 [ -e /etc/sysconfig/$prog ] && . /etc/sysconfig/$prog
 
-lockfile="/var/lock/subsys/mongod"
-
-start() {
-    [ -x $exec ] || exit 5
-    echo -n $"Starting $prog: "
-    daemon --user mongodb "$exec --quiet $options run >> $logfile 2>&1 &"
-    retval=$?
-    echo
-    [ $retval -eq 0 ] && touch $lockfile
-    return $retval
+function start_mongod_with_replica_sets() {
+    service mongod stop  || :
+    pkill -u mongodb
+    #  Use /etc/init.d in lieu of service otherwise options are not passed down.
+    MONGODB_OPTIONS="$options" /etc/init.d/mongod start
 }
 
-stop() {
-    echo -n $"Stopping $prog: "
-    killproc -p $pidfile $prog
-    retval=$?
-    echo
-    [ $retval -eq 0 ] && rm -f $lockfile
-    return $retval
-}
-
-restart() {
-    stop
-    start
-}
-
-reload() {
-    restart
-}
-
-force_reload() {
-    restart
-}
 
 rh_configure_mongo() {
-    # Start mongod server
-    start
+    # Start mongod server with replicasets config
+    start_mongod_with_replica_sets
     retry_cnt=0
     while true; do
         sleep 2
@@ -92,7 +63,7 @@ rh_configure_mongo() {
           exit
          ' | mongo
     # Stop mongod server
-    stop
+    service mongod stop
 }
 
 rh_configure_rockmongo() {
@@ -127,46 +98,15 @@ Allow from All
     #/etc/init.d/httpd restart
 }
 
-rh_status() {
-    # run checks to determine if the service is running or use generic status
-    status $prog
-}
-
-rh_status_q() {
-    rh_status >/dev/null 2>&1
-}
 
 case "$1" in
-    start)
-        rh_status_q && exit 0
-        $1
-        ;;
-    stop)
-        rh_status_q || exit 0
-        $1
-        ;;
-    restart)
-        $1
-        ;;
-    reload)
-        rh_status_q || exit 7
-        $1
-        ;;
-    force-reload)
-        force_reload
-        ;;
-    status)
-        rh_status
-        ;;
     configure)
         rh_configure_mongo && rh_configure_rockmongo
         ;;
-    condrestart|try-restart)
-        rh_status_q || exit 0
-        restart
-        ;;
     *)
-        echo $"Usage: $0 {start|stop|status|restart|condrestart|try-restart|reload|force-reload|configure}"
-        exit 2
+        #  Use /etc/init.d in lieu of service otherwise options are not
+        #  passed down.
+        MONGODB_OPTIONS="$options" /etc/init.d/mongod "$@"
+        ;;
 esac
 exit $?
