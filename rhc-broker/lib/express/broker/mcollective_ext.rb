@@ -3,12 +3,20 @@ require File.expand_path('./nurture', File.dirname(__FILE__))
 module OpenShift
   class MCollectiveApplicationContainerProxy < OpenShift::ApplicationContainerProxy
     alias :run_cartridge_command_old :run_cartridge_command
+    alias :destroy_old :destroy
 
     def run_cartridge_command(framework, app, gear, command, arg=nil, allow_move=true)
       if allow_move
         Express::Broker::Nurture.application(app.user.login, app.user.uuid, app.name, app.domain.namespace, framework, command, app.uuid)
       end
       run_cartridge_command_old(framework, app, gear, command, arg, allow_move)
+    end
+    
+    def destroy(app, gear, keep_uid=false, uid=nil, skip_hooks=false)
+      unless skip_hooks
+        Express::Broker::Nurture.application(app.user.login, app.user.uuid, app.name, app.domain.namespace, app.framework, "deconfigure", app.uuid)
+      end
+      destroy_old(app, gear, keep_uid, uid, skip_hooks)
     end
 
     class << self
