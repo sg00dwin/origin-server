@@ -15,7 +15,9 @@
 . /etc/rc.d/init.d/functions
 
 prog="mongod"
-options="--replSet libra_rs --auth --journal --smallfiles --nssize=8 --oplogSize=8"
+bindips=$(hostname -I | tr ' ' ',' | sed 's/,$//')
+[ -n "$bindips" ]  ||  bindips="localhost"
+options="--replSet libra_rs --auth --journal --smallfiles --nssize=8 --oplogSize=8 --bind_ip ${bindips},127.0.0.1"
 
 [ -e /etc/sysconfig/$prog ] && . /etc/sysconfig/$prog
 
