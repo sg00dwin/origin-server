@@ -47,6 +47,8 @@
     <hudson.tasks.Shell>
       <command>pushd li
 
+git checkout stage
+
 # Launch a test instance
 build/devenv launch devenv-stage_verifier_${BUILD_NUMBER} --use_stage_image --verifier --instance_type m1.large
 
