@@ -71,7 +71,7 @@ module OpenShift
       out,err,rc = shellCmd("service cgconfig status > /dev/null")
       shellCmd("service libra-cgroups freezeuser #{user.name} > /dev/null") if rc == 0
 
-      last_access_dir = OpenShift::Config.instance.get("LAST_ACCESS_DIR")
+      last_access_dir = OpenShift::Config.new.get("LAST_ACCESS_DIR")
       shellCmd("rm -f #{last_access_dir}/#{user.name} > /dev/null")
     end
 
