@@ -6,10 +6,10 @@
   - :not_approved
   - :rejected
   - :dcut
-  :summary_email: libra-devel@redhat.com
+  :to: libra-devel@redhat.com
 :qe:
   :reports:
   - :not_qe_ready
   - :rejected
-  :summary_email: libra-qe@redhat.com
-  :nag_owners: false
+  :to: libra-qe@redhat.com
+  :nag: false

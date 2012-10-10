@@ -9,6 +9,12 @@ require 'reports'
 require 'yaml'
 require 'commander/import'
 
+Pony.options = {
+  :from => 'openshift-sprint-report@redhat.com',
+  :reply_to => 'fotios@redhat.com',
+  :via => :sendmail
+}
+
 name="#{__FILE__}"
 
 program :name, "Sprint Status Notifier"
@@ -30,120 +36,48 @@ def load_conf(klass,file,single = false)
   end
 end
 
-# Read Rally configuration file
-say "Logging into Rally..."
-$sprint = load_conf(Sprint,'rally.yml',true)
-
-# Generate queries
-say "Generating queries..."
-$report_types = load_conf(UserStoryReport,'queries.yml')
-
-# Generate reports
-say "Building available reports..."
-reports = load_conf(Report,'reports.yml')
-
-#####
-# Commander stuff
-#####
-global_option "-r", "--report NAME" , "Available report types: %s"% reports.keys.join(', ')
-global_option "-s", "--send", "Actually send the report (we will test by default)"
-global_option "-t", "--to EMAIL", "Who to send the email to (overrides default for report)"
-global_option("-n","--nag [false]", "Nag the individual owners (overrides default overrides default for report)")
-global_option("-f","--file FILENAME", "Write output to a file (useful for testing email output)")
-global_option("-o","--once","Only run single report (does not prompt for multiple runs")
+reports = YAML.load_file(File.join(CONFIG_DIR,'reports.yml'))
 
 command :run do |c|
   c.syntax = "#{name} run"
+
+  c.option "--report NAME" , "Available report types: %s" % reports.keys.join(', ')
+  c.option "--[no-]nag", "Nag the individual owners (overrides default overrides default for report)"
+  c.option "--[no-]email", "Actually send the report (false by default)"
+  c.option "--to EMAIL", "Who to send the email to (overrides default for report)"
+
   c.description = "Run available reports"
   c.action do |args,options|
-    report_name = options.report || choose("Report to run?",*reports.keys)
+    options.report ||= choose("Report to run?",*reports.keys)
+    options.report = options.report.to_sym
 
-    @args = {
-      :send => options.send || false,
-      :file => options.file
-    }
+    # Read Rally configuration file
+    say "Logging into Rally..."
+    $sprint = load_conf(Sprint,'rally.yml',true)
 
-    change_report(reports[report_name.to_sym],options)
+    # Generate queries
+    say "Generating queries..."
+    $report_types = load_conf(UserStoryReport,'queries.yml')
 
-    while(1)
-      @args = to_boolean(@args,[:send,:nag])
-      say "\nRunning #{report_name} report with"
-      show_options
+    # Generate reports
+    say "Building available reports..."
+    $reports = load_conf(Report,'reports.yml')
 
-      begin
-        if file = @args[:file]
-          old_stdout = $stdout
-          fh = File.open(file,'w')
-          $stdout = fh
-        end
-        @report.send_email(@args)
-      ensure
-        if fh
-          $stdout = old_stdout
-          fh.close
-        end
-      end
-      say "Done!"
-
-      break unless (!options.once && agree("Do something else (Y/N) ? "))
-
-      if agree("Change report? ")
-        say "Current report: #{report_name}"
-        val = choose("Report to run (ENTER for same)?",*[*reports.keys,''])
-        unless val == ''
-          if change_report(reports[val.to_sym],options)
-            say "Report Changed"
-            show_options
-          end
-        end
-      end
-
-      change_options if agree("Change any options? ")
-    end
+    report = $reports[options.report]
+    report.options = options.__hash__
+    show_options(report.options)
+    report.send_email
+    say "Done"
   end
 end
 
-def change_options
-  while(1)
-    show_options
-    key = choose("Option to change (ENTER when done):",*[*@args.keys,""])
-
-    break if key == ""
-    val = ask("Value (ENTER for default): ")
-
-    @args[key] = (val == "" ? nil : val)
-    @args = to_boolean(@args,[:send,:nag])
-  end
-end
-
-def change_report(new_report,options)
-  changed = (new_report != @report)
-  if changed
-    @report = new_report
-    @args.merge!({
-      :to  => (options.to  || @report.summary_email),
-      :nag => (options.nag || @report.nag_owners),
-    })
-  end
-  changed
-end
-
-def to_boolean(args,which)
-  # Change args to proper booleans
-  regex = /^(true|t|yes|y)$/i
-  which.each do |x|
-    val = args[x]
-    case val
-    when String
-      args[x] = (regex.match(val) ? true : false)
-    end
-  end
-  args
-end
-
-def show_options
-  @args.each do |k,v|
-    say "  %5s: %s \n" % [k.capitalize, (defined?(v) && !v.nil? ? v : "(default)")]
+def show_options(options)
+  say "Running Report With Options"
+  say "==========================="
+  args = options.marshal_dump
+  max_len = args.keys.map(&:to_s).map(&:length).max + 1
+  args.each do |k,v|
+    say "  %#{max_len}s: %s \n" % [k.to_s.capitalize, [v].join(',')]
   end
 end
 

@@ -30,7 +30,7 @@ class Sprint
 
   def day
     $date ||= Date.today # Allow overriding for testing
-    ($date - start.to_date + 1).to_i
+    ($date - start + 1).to_i
   end
 
   def days_until(num)

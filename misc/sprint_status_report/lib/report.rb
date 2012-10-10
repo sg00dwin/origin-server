@@ -1,33 +1,30 @@
 require 'pony'
 require 'kramdown'
+require 'ostruct'
 
 class Report
-  attr_accessor :reports, :summary_email, :nag_owners
+  attr_accessor :options
 
   def initialize(opts)
-    opts.each do |k,v|
-      send("#{k}=",v)
-    end
+    self.options = opts
+  end
 
-    unless defined?(@nag_owners)
-      @nag_owners = true
-    end
-
+  def reports
+    @reports ||= (
     # Map passed in names to global report_types
-    reports.map! do |name|
-      $report_types[name]
-    end
+      options.reports.map do |name|
+        $report_types[name]
+      end.each do |r|
+        # Set the sprint for each report
+        r.sprint = $sprint
+      end
+    )
+  end
 
-    # Set the sprint for each report
-    reports.each do |r|
-      r.sprint = $sprint
-    end
-
-    Pony.options = {
-      :from => 'openshift-sprint-report@redhat.com',
-      :reply_to => 'fotios@redhat.com',
-      :via => :sendmail
-    }
+  def options=(new_opts)
+    @options ||= OpenStruct.new()
+    old_opts = @options.marshal_dump
+    @options.marshal_load(old_opts.merge(new_opts))
   end
 
   def required_reports
@@ -116,35 +113,27 @@ class Report
     str.join("\n")
   end
 
-  def send_email(args = {})
-    default_options = {
-      :to => summary_email,
-      :nag => nag_owners,
-      :send => false
-    }
-
-    args = default_options.merge(args)
-
+  def send_email
     data = process
-    make_mail(args[:to],$sprint.title(true),data,args[:send])
+    make_mail(options.to,$sprint.title(true),data)
 
-    if args[:nag]
+    puts to_ascii(data)
+
+    unless options.nag == false
       offenders.each do |user|
         data = process(user)
-        make_mail(user,"Incomplete User Story #{$sprint.title(true)}",data,args[:send])
+        make_mail(user,"Incomplete User Story #{$sprint.title(true)}",data)
       end
     end
   end
 
-  def make_mail(to,subject,data,send=true)
+  def make_mail(to,subject,data)
     puts "#"*100
     puts "Creating mail to: #{to} (#{subject})"
-    if send
+    if options.email
       print "\t Sending..."
       Pony.mail(:to => to, :subject => subject, :body => to_ascii(data), :html_body => to_kramdown(data).to_html)
       puts "Done"
-    else
-      puts to_ascii(data)
     end
   end
 end

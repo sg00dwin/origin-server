@@ -1,13 +1,24 @@
-require 'pry'
 class UserStory
   attr_accessor :data
 
   def initialize(rest_data)
     @data = rest_data
+    @projects = {
+      :business?      => "Business Integration",
+      :design?        => "Design",
+      :documentation? => "Documentation",
+      :onpremise?     => "OnPremise",
+      :runtime?       => "Runtime",
+      :ui?            => "User Interface",
+    }
   end
 
   def method_missing(method,*args,&block)
-    @data.send(method,*args,&block)
+    if (val = @projects[method])
+      is_project?(val,args.first)
+    else
+      @data.send(method,*args,&block)
+    end
   end
 
   def check_tags(target)
@@ -22,18 +33,8 @@ class UserStory
     notes =~ regex
   end
 
-  # Dynamically create functions to check what project this is for
-  {
-    :business?      => "Business Integration",
-    :design?        => "Design",
-    :documentation? => "Documentation",
-    :onpremise?     => "OnPremise",
-    :runtime?       => "Runtime",
-    :ui?            => "User Interface",
-  }.each do |name,val|
-    define_method(name) do |match = true|
-      (project.name =~ /^#{val}/).nil? != match
-    end
+  def is_project?(val,match = true)
+    (project.name =~ /^#{val}/).nil? != match
   end
 
   def output
