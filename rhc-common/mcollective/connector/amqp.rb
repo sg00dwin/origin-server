@@ -6,7 +6,7 @@ module MCollective
       attr_reader :connection
 
       def initialize
-        @config = Config.instance
+        @config = Config.new
         @subscriptions = {}
         @log = Log.instance
       end
