@@ -30,9 +30,9 @@ then
     mcs_level=`oo-get-mcs-level $uid`
     if awk -F\: '/'"$4"'/{ if($5~/libra guest/) print $1 }' /etc/passwd | grep -q $4
     then
-        restorecon $1 $2
-        chcon -l $mcs_level $1
-        chcon -l $mcs_level $2
+        /sbin/restorecon $1 $2
+        /usr/bin/chcon -l $mcs_level $1
+        /usr/bin/chcon -l $mcs_level $2
     fi
 fi
 

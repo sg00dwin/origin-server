@@ -66,11 +66,11 @@ module PermissionHelper
   #
   # Examples
   #
-  #   openshift_mcs_level(501)
+  #   get_mcs_level(501)
   #   # => "s0:c0,c501"
   #
   # Returns the String representation of the mcs label (selinux range).
-  def openshift_mcs_level(uid)
+  def get_mcs_level(uid)
     setsize=1023
     tier=setsize
     ord=uid
