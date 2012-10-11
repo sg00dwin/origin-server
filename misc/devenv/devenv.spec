@@ -279,6 +279,9 @@ chmod o+rwX /tmp /var/tmp
 usermod -G libra_user jenkins
 chown -R jenkins:jenkins /var/lib/jenkins
 
+# Allow misc Openshift related Apache options
+getsebool httpd_run_stickshift | grep -q -e 'on$' || /usr/sbin/setsebool -P httpd_run_stickshift=on || :
+
 # Allow Apache to connect to Jenkins port 8081
 getsebool httpd_can_network_connect | grep -q -e 'on$' || /usr/sbin/setsebool -P httpd_can_network_connect=on || :
 

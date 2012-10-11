@@ -45,11 +45,6 @@ semodule -r libra >/dev/null 2>&1 || :
 
 /usr/sbin/semodule -d openshift-origin -i %{_datadir}/selinux/packages/openshift-hosted.pp.bz2 || :
 
-# At some point, the boolean will switch from stickshift to openshift
-setsebool httpd_run_stickshift 1 >/dev/null 2>&1 || :
-setsebool httpd_run_openshift 1  >/dev/null 2>&1 || :
-
-
 %postun
 if [ $1 = 0 ]
 then
