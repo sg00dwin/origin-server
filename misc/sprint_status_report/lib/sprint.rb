@@ -153,8 +153,8 @@ class Sprint
   private
   def method_missing(method,*args,&block)
     begin
-      case method
-      when *queries.keys
+      case method.to_s
+      when *(queries.keys.map(&:to_s))
         find(method,*args)
       when /^not_/
         meth = method.to_s.scan(/not_(.*)/).flatten.first.to_sym
