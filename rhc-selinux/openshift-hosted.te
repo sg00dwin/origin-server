@@ -1,5 +1,12 @@
 policy_module(openshift-hosted,1.0.0)
 
+## <desc>
+##	<p>
+##	Run openshift applications started by apache in a locked down domain.
+##	</p>
+## </desc>
+gen_tunable(openshift_lockdown_app, false)
+
 gen_require(`
 	attribute openshift_net_domain;
 	attribute openshift_domain;
@@ -126,4 +133,11 @@ mta_signal_user_agent(openshift_user_domain)
 # su, sudo, denyhosts, chsh, chfn
 #
 
+tunable_policy(`openshift_lockdown_app',`
+	gen_require(`
+		type httpd_exec_t;
+	')
+
+	domtrans_pattern(openshift_t, httpd_exec_t, openshift_app_t)
+')
 
