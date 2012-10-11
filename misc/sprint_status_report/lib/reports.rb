@@ -17,7 +17,7 @@ module SprintReport
     if @data.empty? && sprint && function
       @data = sprint.send(function)
     end
-    @data.sort_by!{|x| x.send(sort_key) || '' } if sort_key
+    @data = @data.sort_by{|x| x.send(sort_key) || '' } if sort_key
     @data
   end
 
