@@ -30,7 +30,7 @@ class Sprint
 
   def day
     $date ||= Date.today # Allow overriding for testing
-    ($date - start.to_date + 1).to_i
+    ($date - start + 1).to_i
   end
 
   def days_until(num)
@@ -81,8 +81,7 @@ class Sprint
     @iterations ||= rally.find(:iteration, :project => project, :workspace => workspace){
       lte :start_date, Date.today.to_s
       gte :end_date, Date.today.to_s
-      not_equal :state, "Accepted"
-      not_equal :state, "Committed"
+      equal :state, "Committed"
     }
   end
 
