@@ -123,6 +123,8 @@ userdom_dontaudit_use_user_ptys(openshift_mail_t)
 
 mta_signal_user_agent(openshift_user_domain)
 
+ssh_rw_tcp_sockets(openshift_user_domain)
+
 #
 # Programs that openshift instances should not be allowed to execute, that I have 
 # see users attempt to execute
