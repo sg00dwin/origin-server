@@ -73,7 +73,7 @@ class LastAccessUpdater
     # Ruby and we desperately need speed here.
     ignore_cond = [@hosts_ignore.map { |a| "$2 != \"#{a}\"" },
                    @addrs_ignore.map { |a| "$1 != \"#{a}\"" }].flatten.join(' && ')
-    lines = %x[/bin/awk '{ if ( #{ignore_cond} ) h[$2]=$5" "$6 } END{ for ( i in h ) { printf("%s=%s\\n",i,h[i]) } }' #{@log_file}]
+    lines = %x[/bin/awk -F '"' 'BEGIN{ IGNORECASE = 1} { if ( $6 !~/bot|spider|fetcher|reader|crawler/ ) print $0 }' #{@log_file} | /bin/awk '{ if ( #{ignore_cond} ) h[$2]=$5" "$6 } END{ for ( i in h ) { printf("%s=%s\\n",i,h[i]) } }']
     for line in lines
       parts = line.split("=")
       timestamp = parts[1].delete("[").delete("]").strip
@@ -115,7 +115,11 @@ def single_instance(&block)
 end
 
 single_instance do
-  l = LastAccessUpdater.new(APP_ROOT_DIR, APACHE_ACCESS_LOG)
+  log_file = APACHE_ACCESS_LOG
+  if ARGV.length > 0
+    log_file = ARGV[0]
+  end
+  l = LastAccessUpdater.new(APP_ROOT_DIR, log_file)
   l.load_addrs_ignore
   l.load_apps_data
   l.parse_log
