@@ -1,6 +1,6 @@
-require 'pony'
 require 'kramdown'
 require 'ostruct'
+require 'mailer'
 
 class Report
   attr_accessor :options
@@ -97,43 +97,49 @@ class Report
   end
 
   def to_ascii(data, user = nil)
-    str = []
-    str << "%s" % user ? "Incomplete User Stories for #{user}" : $sprint.title
-    str << ("=" * str.last.length)
-    data.each do |t|
-      r = t[:report]
-      d = t[:data]
-      str << r.print_title
-      str << ("="*str.last.length)
-      d[:rows].each do |row|
-        str << row.join(' - ')
+    return capture_stdout do
+      title = user ? "Incomplete User Stories for #{user}" : $sprint.title
+      heading title do
+        data.each do |t|
+          _table(t[:report].print_title, t[:data][:rows])
+        end
       end
-      str << ''
-    end
-    str.join("\n")
+    end.string
   end
 
   def send_email
     data = process
-    make_mail(options.to,$sprint.title(true),data)
+    emails = []
+    emails << make_mail(options.to,$sprint.title(true),data)
 
-    puts to_ascii(data)
+    ascii = to_ascii(data)
 
     unless options.nag == false
       offenders.each do |user|
         data = process(user)
-        make_mail(user,"Incomplete User Story #{$sprint.title(true)}",data)
+        emails << make_mail(user,"Incomplete User Story #{$sprint.title(true)}",data)
       end
     end
+
+    if options.email
+      heading "Sending Emails" do
+        emails.each do |email|
+          _progress email.mail.to do
+            email.deliver!
+          end
+        end
+      end
+    end
+
+    puts ascii
   end
 
   def make_mail(to,subject,data)
-    puts "#"*100
-    puts "Creating mail to: #{to} (#{subject})"
-    if options.email
-      print "\t Sending..."
-      Pony.mail(:to => to, :subject => subject, :body => to_ascii(data), :html_body => to_kramdown(data).to_html)
-      puts "Done"
-    end
+    Status::Email.new(
+      :to => to,
+      :subject => subject,
+      :body => to_ascii(data),
+      :html_body => to_kramdown(data).to_html
+    )
   end
 end
