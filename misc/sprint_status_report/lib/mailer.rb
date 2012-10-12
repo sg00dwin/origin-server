@@ -1,6 +1,5 @@
 #!/usr/bin/env ruby
 
-require 'yaml'
 require 'mail'
 require 'ostruct'
 
@@ -9,7 +8,7 @@ module Status
     attr_accessor :mail
 
     def initialize(opts)
-      default_opts = OpenStruct.new(YAML.load_file(File.join(CONFIG_DIR,'mail.yml')))
+      default_opts = OpenStruct.new(CONFIG.mail)
 
       @mail = Mail.new do
         if ( _body = opts.delete(:body) )
