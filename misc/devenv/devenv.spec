@@ -25,6 +25,7 @@ Requires:  openshift-origin-cartridge-python-2.6
 Requires:  openshift-origin-cartridge-ruby-1.8
 Requires:  openshift-origin-cartridge-jbossas-7
 Requires:  openshift-origin-cartridge-jbosseap-6.0
+Requires:  openshift-origin-cartridge-jbossews-1.0
 Requires:  openshift-origin-cartridge-perl-5.10
 Requires:  openshift-origin-cartridge-mysql-5.1
 Requires:  openshift-origin-cartridge-phpmyadmin-3.4
