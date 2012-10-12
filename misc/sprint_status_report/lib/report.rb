@@ -109,6 +109,12 @@ class Report
 
   def send_email
     data = process
+
+    if data.empty?
+      say "No reports to send"
+      return
+    end
+
     emails = []
     emails << make_mail(options.to,$sprint.title(true),data)
 
