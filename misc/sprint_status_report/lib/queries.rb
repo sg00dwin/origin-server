@@ -2,6 +2,7 @@ class Sprint
   def queries
     {
       :needs_tasks => {
+        :parent => :not_completed,
         :function => lambda{|x| x.tasks.nil? }
       },
       :blocked => {
@@ -28,11 +29,11 @@ class Sprint
         :function => lambda{|x| x.check_tags('TC-rejected') }
       },
       :accepted   => {
-        :function => lambda{|x| x.schedule_state == "Accepted" }
+        :function => lambda{|x| x.accepted? }
       },
       :completed   => {
         :parent   => :not_accepted,
-        :function => lambda{|x| x.schedule_state == "Completed" }
+        :function => lambda{|x| x.completed? }
       },
       :not_dcut_complete => {
         :parent   => :not_completed,

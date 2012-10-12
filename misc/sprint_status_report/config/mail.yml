@@ -2,7 +2,6 @@
 :mail_type: :sendmail
 :msg_opts:
   :from: "Sprint Status Report <noreply@redhat.com>"
-  :reply_to: fotios@redhat.com
 :delivery_opts:
   # Specify things like address, port, credentials, etc
   #  Format isn't really documented, but here are the default options:
