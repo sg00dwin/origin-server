@@ -86,7 +86,6 @@ cp -r lib %{buildroot}%{_libexecdir}/openshift
 cp -r conf/httpd %{buildroot}%{_sysconfdir}
 cp -r conf/openshift %{buildroot}%{_sysconfdir}
 cp -r mcollective %{buildroot}%{_libexecdir}
-cp -r namespace.d %{buildroot}%{_sysconfdir}/security
 cp scripts/bin/* %{buildroot}%{_bindir}
 cp scripts/init/* %{buildroot}%{_initddir}
 cp scripts/openshift_tmpwatch.sh %{buildroot}%{_sysconfdir}/cron.daily/openshift_tmpwatch.sh
@@ -242,7 +241,6 @@ fi
 %attr(0644,-,-) %config(noreplace) %{_sysconfdir}/openshift/node.conf.libra
 %attr(0644,-,-) %config(noreplace) %{_sysconfdir}/openshift/resource_limits.con*
 %attr(0750,-,-) %config(noreplace) %{_sysconfdir}/cron.daily/openshift_tmpwatch.sh
-%attr(0644,-,-) %config(noreplace) %{_sysconfdir}/security/namespace.d/*
 %{_localstatedir}/www/html/restorer.php
 %attr(0750,root,root) %config(noreplace) %{_sysconfdir}/httpd/conf.d/000000_default.conf
 #%attr(0640,root,root) %{_sysconfdir}/httpd/conf.d/openshift
