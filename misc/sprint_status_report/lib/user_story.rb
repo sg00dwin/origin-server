@@ -3,18 +3,11 @@ class UserStory
 
   def initialize(rest_data)
     @data = rest_data
-    @projects = {
-      :business?      => "Business Integration",
-      :design?        => "Design",
-      :documentation? => "Documentation",
-      :onpremise?     => "OnPremise",
-      :runtime?       => "Runtime",
-      :ui?            => "User Interface",
-    }
   end
 
   def method_missing(method,*args,&block)
-    if (val = @projects[method])
+    if (val = CONFIG.projects[method])
+      args[0] ||= true
       is_project?(val,args.first)
     else
       @data.send(method,*args,&block)

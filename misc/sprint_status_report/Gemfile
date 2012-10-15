@@ -2,7 +2,7 @@ source :rubygems
 
 gem 'rally_rest_api'
 gem 'builder'
-gem 'pony'
 gem 'kramdown'
+gem 'mail'
 
 gem 'commander'

@@ -25,6 +25,7 @@ Requires:  openshift-origin-cartridge-python-2.6
 Requires:  openshift-origin-cartridge-ruby-1.8
 Requires:  openshift-origin-cartridge-jbossas-7
 Requires:  openshift-origin-cartridge-jbosseap-6.0
+Requires:  openshift-origin-cartridge-jbossews-1.0
 Requires:  openshift-origin-cartridge-perl-5.10
 Requires:  openshift-origin-cartridge-mysql-5.1
 Requires:  openshift-origin-cartridge-phpmyadmin-3.4
@@ -547,6 +548,18 @@ install rds /bin/true
 install tipc /bin/true
 EOF
 
+# Create a known test user with medium-sized gears - nhr
+# This must be done before the deployment of application templates!
+echo "Creating named test user"
+cd /var/www/openshift/broker && bundle exec rails runner 'test_user=CloudUser.new("user_with_multiple_gear_sizes@test.com"); test_user.save();'
+if [ $? -ne 0 ]
+then
+    echo "Named test user could not be created."
+else
+    /usr/bin/oo-admin-ctl-user -l user_with_multiple_gear_sizes@test.com --addgearsize medium
+    echo "Named test user created."
+fi
+
 # Deploy application templates - fotios
 /usr/bin/ruby /usr/lib/openshift/broker/application_templates/templates/deploy.rb
 if [ $? -ne 0 ]
@@ -556,10 +569,6 @@ then
   sleep 10
   /usr/bin/ruby /usr/lib/openshift/broker/application_templates/templates/deploy.rb
 fi
-
-# Create a known test user with medium-sized gears - nhr
-/usr/bin/rhc-chk -l user_with_multiple_gear_sizes@test.com -p foo > /dev/null 2>&1
-/usr/bin/rhc-admin-ctl-user -l user_with_multiple_gear_sizes@test.com --addgearsize medium > /dev/null 2>&1
 
 # Hack to resolve parser error
 # See https://github.com/cucumber/gherkin/issues/182

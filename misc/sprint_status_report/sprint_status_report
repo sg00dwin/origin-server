@@ -2,18 +2,15 @@
 
 $LOAD_PATH.unshift(File.dirname(__FILE__) + '/lib') unless $LOAD_PATH.include?(File.dirname(__FILE__) + '/lib')
 
+require 'config'
+
 require 'sprint'
 require 'report'
 require 'reports'
+require 'output_helper'
 
 require 'yaml'
 require 'commander/import'
-
-Pony.options = {
-  :from => 'openshift-sprint-report@redhat.com',
-  :reply_to => 'fotios@redhat.com',
-  :via => :sendmail
-}
 
 name="#{__FILE__}"
 
@@ -21,12 +18,9 @@ program :name, "Sprint Status Notifier"
 program :version, "1.0.0"
 program :description, "A script to create sprint status notification emails"
 
-CONFIG_DIR = File.join(File.expand_path(File.dirname(__FILE__)),'/config')
-
 # This loads the conf files and creates new objects
 #   based on the specified classes
-def load_conf(klass,file,single = false)
-  args = YAML.load_file(File.join(CONFIG_DIR,file))
+def load_conf(klass,args,single = false)
   if single
     klass.new(args)
   else
@@ -36,48 +30,46 @@ def load_conf(klass,file,single = false)
   end
 end
 
-reports = YAML.load_file(File.join(CONFIG_DIR,'reports.yml'))
-
 command :run do |c|
   c.syntax = "#{name} run"
 
-  c.option "--report NAME" , "Available report types: %s" % reports.keys.join(', ')
+  c.option "--report NAME" , "Available report types: %s" % CONFIG.reports.keys.join(', ')
   c.option "--[no-]nag", "Nag the individual owners (overrides default overrides default for report)"
   c.option "--[no-]email", "Actually send the report (false by default)"
   c.option "--to EMAIL", "Who to send the email to (overrides default for report)"
 
   c.description = "Run available reports"
   c.action do |args,options|
-    options.report ||= choose("Report to run?",*reports.keys)
+    options.report ||= choose("Report to run?",*CONFIG.reports.keys)
     options.report = options.report.to_sym
 
-    # Read Rally configuration file
-    say "Logging into Rally..."
-    $sprint = load_conf(Sprint,'rally.yml',true)
+    heading "Generating Status Report" do
+      # Read Rally configuration file
+      _progress "Logging into Rally" do
+        $sprint = load_conf(Sprint,CONFIG.rally,true)
+      end
 
-    # Generate queries
-    say "Generating queries..."
-    $report_types = load_conf(UserStoryReport,'queries.yml')
+      # Generate queries
+      _progress "Generating queries" do
+        $report_types = load_conf(UserStoryReport,CONFIG.queries)
+      end
 
-    # Generate reports
-    say "Building available reports..."
-    $reports = load_conf(Report,'reports.yml')
+      # Generate reports
+      _progress "Building available reports" do
+        $reports = load_conf(Report,CONFIG.reports)
+      end
+    end
 
     report = $reports[options.report]
     report.options = options.__hash__
-    show_options(report.options)
-    report.send_email
-    say "Done"
-  end
-end
 
-def show_options(options)
-  say "Running Report With Options"
-  say "==========================="
-  args = options.marshal_dump
-  max_len = args.keys.map(&:to_s).map(&:length).max + 1
-  args.each do |k,v|
-    say "  %#{max_len}s: %s \n" % [k.to_s.capitalize, [v].join(',')]
+    _table(
+      "Running Report With Options",
+      report.options.marshal_dump,
+      { :capitalize => true, :sort => 0, :separator => ':' }
+    )
+
+    report.send_email
   end
 end
 
