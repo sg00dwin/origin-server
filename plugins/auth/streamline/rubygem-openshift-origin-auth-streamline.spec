@@ -5,7 +5,7 @@
 
 Summary:        OpenShift Origin plugin for streamline auth service
 Name:           rubygem-%{gemname}
-Version: 0.13.4
+Version: 0.13.5
 Release:        1%{?dist}
 Group:          Development/Languages
 License:        ASL 2.0
@@ -73,6 +73,9 @@ rm -rf %{buildroot}
 %{ruby_sitelib}/%{gemname}.rb
 
 %changelog
+* Mon Oct 15 2012 Adam Miller <admiller@redhat.com> 0.13.5-1
+- Fix streamline obsoletes (pmorie@gmail.com)
+
 * Mon Oct 08 2012 Adam Miller <admiller@redhat.com> 0.13.4-1
 - Merge pull request #455 from brenton/streamline_auth_misc1-rebase
   (openshift+bot@redhat.com)
