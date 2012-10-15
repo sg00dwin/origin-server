@@ -3,7 +3,7 @@
 
 Summary:   Li broker components
 Name:      rhc-broker
-Version: 0.99.12
+Version: 0.99.13
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -113,6 +113,10 @@ if [ ! -f %{_localstatedir}/log/openshift/user_action.log ]; then
 fi
 
 %changelog
+* Mon Oct 15 2012 Adam Miller <admiller@redhat.com> 0.99.13-1
+- fix extended tests (rchopra@redhat.com)
+- Bug 863575 (dmcphers@redhat.com)
+
 * Mon Oct 08 2012 Adam Miller <admiller@redhat.com> 0.99.12-1
 - Refactorings needed to share the generate_broker_key logic with Origin
   (bleanhar@redhat.com)
