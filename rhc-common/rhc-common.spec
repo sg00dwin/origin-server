@@ -1,6 +1,6 @@
 Summary:   Common dependencies of the libra server and node
 Name:      rhc-common
-Version: 0.81.2
+Version: 0.81.3
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -46,6 +46,9 @@ getent group libra_user >/dev/null || groupadd -r libra_user
 /bin/chgrp libra_user /etc/mcollective/client.cfg
 
 %changelog
+* Mon Oct 15 2012 Adam Miller <admiller@redhat.com> 0.81.3-1
+- Migrate to using OpenShift::Config.new (miciah.masters@gmail.com)
+
 * Mon Oct 08 2012 Adam Miller <admiller@redhat.com> 0.81.2-1
 - Fixing renames, paths, configs and cleaning up old packages. Adding
   obsoletes. (kraman@gmail.com)
