@@ -2,7 +2,7 @@
 
 Summary:       Multi-tenant cloud management system node tools
 Name:          rhc-node
-Version: 0.99.7
+Version: 0.99.8
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -262,6 +262,17 @@ fi
 
 
 %changelog
+* Mon Oct 15 2012 Adam Miller <admiller@redhat.com> 0.99.8-1
+- BZ 864617: Ignore search engine bot entries in log and allow passing log file
+  path as an argument. (mpatel@redhat.com)
+- Merge pull request #473 from kwoodson/increase_small_capacity
+  (openshift+bot@redhat.com)
+- resource_limits: Updated from 90 to 100 (kwoodson@redhat.com)
+- Migrate to using OpenShift::Config.new (miciah.masters@gmail.com)
+- Merge pull request #458 from mrunalp/bugs/cron-migration-fix
+  (openshift+bot@redhat.com)
+- Fix to use correction function. (mpatel@redhat.com)
+
 * Mon Oct 08 2012 Adam Miller <admiller@redhat.com> 0.99.7-1
 - Carrying over migration to 2.0.19 (dmcphers@redhat.com)
 - Fixing renames, paths, configs and cleaning up old packages. Adding
