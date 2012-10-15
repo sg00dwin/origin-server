@@ -8,7 +8,7 @@
 
 Summary:   Dependencies for OpenShift development
 Name:      rhc-devenv
-Version: 0.100.11
+Version: 0.100.12
 Release:   1%{?dist}
 Group:     Development/Libraries
 License:   GPLv2
@@ -599,6 +599,21 @@ restorecon /etc/openshift/node.conf || :
 /sbin/service libra-data restart > /dev/null 2>&1 || :
 
 %changelog
+* Mon Oct 15 2012 Adam Miller <admiller@redhat.com> 0.100.12-1
+- sync jenkins jobs to update libra_ami_test to install_from_source
+  (admiller@redhat.com)
+- Added logic to create a named test user on devenv (hripps@redhat.com)
+- added ews (bdecoste@gmail.com)
+- Set the correct ip address mongod binds on in devenv. (ramr@redhat.com)
+- Revert "REVERT "Fix to start mongodb w/ replica sets + use the base mongod
+  init script."" (ramr@redhat.com)
+- REVERT "Fix to start mongodb w/ replica sets + use the base mongod init
+  script." (admiller@redhat.com)
+- Fix to start mongodb w/ replica sets + use the base mongod init script.
+  (ramr@redhat.com)
+- fixing libra_ami_stage and libra_ami_verify_stage (abhgupta@redhat.com)
+- added rh-amazon-rhui-client-jbews1 for tomcat cart (admiller@redhat.com)
+
 * Mon Oct 08 2012 Adam Miller <admiller@redhat.com> 0.100.11-1
 - Merge pull request #450 from
   smarterclayton/add_ruby193_rubygems_devel_to_devenv
