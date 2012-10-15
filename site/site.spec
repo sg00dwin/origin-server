@@ -143,6 +143,9 @@ rm -rf %{buildroot}
 %{sitedir}/public
 
 %changelog
+* Mon Oct 15 2012 Adam Miller <admiller@redhat.com> 0.99.10-2
+- Bump Release of site for quasi chain-build (admiller@redhat.com)
+
 * Mon Oct 15 2012 Adam Miller <admiller@redhat.com> 0.99.10-1
 - removing addressable dep, not needed. (admiller@redhat.com)
 - Changed blurb in the website home (ffranz@redhat.com)
