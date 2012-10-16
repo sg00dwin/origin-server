@@ -17,14 +17,14 @@ function print_stats() {
     (
         echo -n "$1: " ;
         /usr/bin/rhc-idler-stats
-    ) | /usr/bin/logger -p local0.notice -t libra_auto_idler
+    ) | /usr/bin/logger -p local0.notice -t origin_auto_idler
 }
 
 print_stats "Before"
 
 for user in `get_appids_to_idle`
 do
-    /usr/bin/rhc-idler -n -u $user > /dev/null 2>&1
+    /usr/bin/oo-idler -n -u $user > /dev/null 2>&1
     httpd_restart="TRUE"
 done
 
