@@ -79,8 +79,8 @@ rm -rf $RPM_BUILD_ROOT
 
 %files
 %defattr(0640,root,libra_user,0750)
-%ghost %{brokerdir}/log/production.log
-%ghost %{_localstatedir}/log/openshift/user_action.log
+%ghost %attr(0660,root,root) %{brokerdir}/log/production.log
+%ghost %attr(0660,root,root) %{_localstatedir}/log/openshift/user_action.log
 %config(noreplace) %{brokerdir}/config/environments/production.rb
 %config(noreplace) %{brokerdir}/config/keys/public.pem
 %config(noreplace) %{brokerdir}/config/keys/private.pem
@@ -128,5 +128,4 @@ fi
   (openshift+bot@redhat.com)
 - Merging in the latest from master (bleanhar@redhat.com)
 - Merging in the latest from master (bleanhar@redhat.com)
-- The openshift-origin-broker-util packages provides the newly renamed admin
-  scripts (bleanhar@redhat.com)
+- The openshift-origin-broker-util packages provides the newly renamed admin scripts (bleanhar@redhat.com)

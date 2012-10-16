@@ -137,7 +137,7 @@ module OpenShift
           resp, data = http.post(url.path, JSON.generate(session_data), headers)
           case resp
           when Net::HTTPSuccess
-            raise_dns_exception(nil, resp) unless dyn_success?(data)
+            raise_dns_exception(nil, resp, data) unless dyn_success?(data)
             result = JSON.parse(data)
             auth_token = result['data']['token']    
           else
@@ -156,7 +156,7 @@ module OpenShift
       return auth_token
     end
   
-    def raise_dns_exception(e=nil, resp=nil)
+    def raise_dns_exception(e=nil, resp=nil, data=nil)
       if e
         logger.debug "DEBUG: Exception caught from DNS request: #{e.message}"
         logger.debug e.backtrace
@@ -164,6 +164,12 @@ module OpenShift
       if resp
         logger.debug "DEBUG: Response code: #{resp.code}"
         logger.debug "DEBUG: Response body: #{resp.body}"
+      end
+      if data
+        data = JSON.parse(data)
+        data['msgs'].each do |msg|
+          raise OpenShift::DNSAlreadyExistsException.new("Namespace already in use. Please choose another.", 103) if msg['ERR_CD'] == "TARGET_EXISTS"
+        end if data.kind_of?(Hash) and data['msgs']
       end
       raise OpenShift::DNSException.new(145), "Error communicating with DNS system.  If the problem persists please contact Red Hat support."
     end
@@ -390,7 +396,7 @@ module OpenShift
           end
           case resp
           when Net::HTTPSuccess
-            raise_dns_exception(nil, resp) unless dyn_success?(data)
+            raise_dns_exception(nil, resp, data) unless dyn_success?(data)
           when Net::HTTPTemporaryRedirect
             handle_temp_redirect(resp, auth_token)
           else
@@ -439,7 +445,7 @@ module OpenShift
           resp, data = http.delete(url.path, headers)
           case resp
           when Net::HTTPSuccess
-            raise_dns_exception(nil, resp) unless dyn_success?(data)
+            raise_dns_exception(nil, resp, data) unless dyn_success?(data)
           when Net::HTTPNotFound
             logger.debug "DEBUG: DYNECT: Could not find #{url.path} to delete"
           when Net::HTTPTemporaryRedirect
