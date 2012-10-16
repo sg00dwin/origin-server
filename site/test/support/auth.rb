@@ -1,10 +1,4 @@
 class ActiveSupport::TestCase
-  def set_user(user)
-    @request.cookies['rh_sso'] = user.ticket
-    @request.env['HTTPS'] = 'on'
-    @user = user
-  end
-
   def new_streamline_user
     id = ::SecureRandom.base64(10).gsub(/[^a-zA-Z0-9_\-]/, '_')
     Streamline::Base.new(
@@ -34,6 +28,9 @@ end
 
 class ActionDispatch::IntegrationTest
   protected
+    def set_user(user)
+      @user = user
+    end
     def login(user=nil)
       if user
         open_session do |sess|
