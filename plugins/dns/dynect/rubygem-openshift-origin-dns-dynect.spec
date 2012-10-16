@@ -5,7 +5,7 @@
 
 Summary:        OpenShift plugin for Dynect DNS service
 Name:           rubygem-%{gemname}
-Version: 0.13.4
+Version: 0.13.5
 Release:        1%{?dist}
 Group:          Development/Languages
 License:        ASL 2.0
@@ -80,6 +80,11 @@ rm -rf %{buildroot}
 %{ruby_sitelib}/%{gemname}.rb
 
 %changelog
+* Tue Oct 16 2012 Adam Miller <admiller@redhat.com> 0.13.5-1
+- Fix dynect plugin: raise DNS already exists exception instead of error
+  communicating with DNS when dynect error code is TARGET_EXISTS
+  (rpenta@redhat.com)
+
 * Mon Oct 08 2012 Dan McPherson <dmcphers@redhat.com> 0.13.4-1
 - Fixing renames, paths, configs and cleaning up old packages. Adding
   obsoletes. (kraman@gmail.com)
