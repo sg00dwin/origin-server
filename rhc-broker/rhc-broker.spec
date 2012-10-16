@@ -3,7 +3,7 @@
 
 Summary:   Li broker components
 Name:      rhc-broker
-Version: 0.99.13
+Version: 0.99.14
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -113,6 +113,16 @@ if [ ! -f %{_localstatedir}/log/openshift/user_action.log ]; then
 fi
 
 %changelog
+* Tue Oct 16 2012 Adam Miller <admiller@redhat.com> 0.99.14-1
+- Merge pull request #489 from tkramer-
+  rh/dev/tkramer/security/user_action_and_production_log (dmcphers@redhat.com)
+- Merge pull request #487 from rajatchopra/master (dmcphers@redhat.com)
+- Security - fix user_action and production logs to root root 0660 and fixed
+  the last line in the change log (tkramer@redhat.com)
+- Security - changes user_action.log and production.log to be root root 0660
+  (tkramer@redhat.com)
+- update error codes; user-agent in nurture info (rchopra@redhat.com)
+
 * Mon Oct 15 2012 Adam Miller <admiller@redhat.com> 0.99.13-1
 - fix extended tests (rchopra@redhat.com)
 - Bug 863575 (dmcphers@redhat.com)
