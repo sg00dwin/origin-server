@@ -233,6 +233,10 @@ gem install zip --no-rdoc --no-ri
 # Install hub for automatic pull request testing
 gem install hub --no-rdoc --no-ri
 
+# Install gems for sprint_status_script
+gem install rally_rest_api --no-rdoc --no-ri
+gem install kramdown --no-rdoc --no-ri
+
 # Move over all configs and scripts
 cp -rf %{devenvdir}/etc/* %{_sysconfdir}
 cp -rf %{devenvdir}/bin/* %{_bindir}

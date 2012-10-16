@@ -54,22 +54,35 @@ class Report
 
     data.delete_if{|d| d[:data][:rows].length == 0}
 
-    unless data.empty?
+    unless data.empty? || user
+      deadlines = DeadlinesReport.new
+
+      #TODO: This should probably be moved to the sprint itself
+      upcoming = reports.select{|x| !(x.required? || x.first_day?) }.sort_by{|x| x.due_date }.map{|x| {:date => x.due_date.to_s, :title => x.friendly || x.title} }
+      upcoming << {:date => $sprint.end, :title => "Last Day of Sprint" }
+      deadlines.data = upcoming
+      data.unshift({
+        :report => deadlines,
+        :data => {
+          :title => deadlines.title,
+          :headings => deadlines.columns.map{|col| col.header},
+          :rows => deadlines.rows
+        }
+      })
+
       stats.data.unshift({
         :name => 'Total Stories',
         :count => $sprint.stories.length
       })
 
-      stats_table = {
+      data.unshift({
         :report => stats,
         :data => {
           :title => stats.title,
           :headings => stats.columns.map{|col| col.header},
           :rows => stats.rows
         }
-      }
-
-      data.unshift stats_table unless user
+      })
     end
 
     data
@@ -144,8 +157,9 @@ class Report
     Status::Email.new(
       :to => to,
       :subject => subject,
-      :body => to_ascii(data),
-      :html_body => to_kramdown(data).to_html
+      :body => to_ascii(data)
+      #TODO: Removing the HTML mail for now, it's kinda clunky looking
+      #:html_body => to_kramdown(data).to_html
     )
   end
 end

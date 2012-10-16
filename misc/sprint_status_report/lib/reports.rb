@@ -1,7 +1,7 @@
 require 'sprint'
 
 module SprintReport
-  attr_accessor :title, :headings, :function, :columns, :data, :day, :sort_key, :link
+  attr_accessor :title, :headings, :function, :columns, :data, :day, :sort_key, :link, :friendly
   attr_accessor :sprint
   def initialize(opts)
     opts.each do |k,v|
@@ -48,6 +48,10 @@ module SprintReport
 
   def first_day?
     sprint.days_until(day) == 0
+  end
+
+  def due_date
+    day.is_a?(Integer) ? (sprint.start + day) : sprint.send(day)
   end
 
   class Column
@@ -101,8 +105,23 @@ class StatsReport
       :title => "Sprint Stats",
       :function => :stats,
       :headings => [
+        {:header => "Count"},
         {:header => "Name"},
-        {:header => "Count"}
+      ],
+    })
+  end
+end
+
+class DeadlinesReport
+  include SprintReport
+
+  def initialize
+    super({
+      :title => "Upcoming Deadlines",
+      :function => :upcoming,
+      :headings => [
+        {:header => "Date"},
+        {:header => "Title"}
       ],
     })
   end

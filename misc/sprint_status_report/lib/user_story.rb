@@ -6,9 +6,12 @@ class UserStory
   end
 
   def method_missing(method,*args,&block)
-    if (val = CONFIG.projects[method])
+    case method
+    when *CONFIG.projects.keys
       args[0] ||= true
-      is_project?(val,args.first)
+      is_project?(method,args.first)
+    when *CONFIG.states.keys
+      check_state(method)
     else
       @data.send(method,*args,&block)
     end
@@ -27,7 +30,12 @@ class UserStory
   end
 
   def is_project?(val,match = true)
+    val = CONFIG.projects[val]
     (project.name =~ /^#{val}/).nil? != match
+  end
+
+  def check_state(val)
+    schedule_state == CONFIG.states[val]
   end
 
   def output

@@ -16,7 +16,7 @@ module Status
             body _body
           end
         end
-        if( _html = opts.delete(:html) )
+        if( _html = opts.delete(:html_body) )
           html_part do
             content_type 'text/html; charset=UTF-8'
             body _html
