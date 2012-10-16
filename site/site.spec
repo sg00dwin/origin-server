@@ -9,7 +9,7 @@
 Summary:   OpenShift Site Rails application
 Name:      rhc-site
 Version: 0.99.11
-Release:   1%{?dist}
+Release:   2%{?dist}
 Group:     Network/Daemons
 License:   ASL 2.0
 URL:       http://openshift.redhat.com
@@ -143,6 +143,9 @@ rm -rf %{buildroot}
 %{sitedir}/public
 
 %changelog
+* Tue Oct 16 2012 Adam Miller <admiller@redhat.com> 0.99.11-2
+- bump spec file for chain build 
+
 * Tue Oct 16 2012 Adam Miller <admiller@redhat.com> 0.99.11-1
 - Allow streamline tests to fail, fixup auth to match latest changes
   (ccoleman@redhat.com)
