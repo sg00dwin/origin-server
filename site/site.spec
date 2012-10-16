@@ -8,8 +8,8 @@
 
 Summary:   OpenShift Site Rails application
 Name:      rhc-site
-Version: 0.99.9
-Release:   1%{?dist}
+Version: 0.99.10
+Release:   2%{?dist}
 Group:     Network/Daemons
 License:   ASL 2.0
 URL:       http://openshift.redhat.com
@@ -143,6 +143,13 @@ rm -rf %{buildroot}
 %{sitedir}/public
 
 %changelog
+* Mon Oct 15 2012 Adam Miller <admiller@redhat.com> 0.99.10-2
+- Bump Release of site for quasi chain-build (admiller@redhat.com)
+
+* Mon Oct 15 2012 Adam Miller <admiller@redhat.com> 0.99.10-1
+- removing addressable dep, not needed. (admiller@redhat.com)
+- Changed blurb in the website home (ffranz@redhat.com)
+
 * Mon Oct 08 2012 Adam Miller <admiller@redhat.com> 0.99.9-1
 - US2912 - Site should customize error pages to use site layout
   (ccoleman@redhat.com)
