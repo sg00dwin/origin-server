@@ -8,7 +8,7 @@
 
 Summary:   Dependencies for OpenShift development
 Name:      rhc-devenv
-Version: 0.100.12
+Version: 0.100.13
 Release:   1%{?dist}
 Group:     Development/Libraries
 License:   GPLv2
@@ -603,6 +603,9 @@ restorecon /etc/openshift/node.conf || :
 /sbin/service libra-data restart > /dev/null 2>&1 || :
 
 %changelog
+* Tue Oct 16 2012 Adam Miller <admiller@redhat.com> 0.100.13-1
+- Added sprint_status_report jenkins jobs (fotios@redhat.com)
+
 * Mon Oct 15 2012 Adam Miller <admiller@redhat.com> 0.100.12-1
 - sync jenkins jobs to update libra_ami_test to install_from_source
   (admiller@redhat.com)
