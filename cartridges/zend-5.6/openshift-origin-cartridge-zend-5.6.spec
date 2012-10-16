@@ -2,7 +2,7 @@
 
 Summary:   Provides zend-5.6 support
 Name:      openshift-origin-cartridge-zend-5.6
-Version: 0.96.5
+Version: 0.96.6
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   ASL 2.0
@@ -110,6 +110,9 @@ rm -rf %{buildroot}
 %doc %{cartridgedir}/LICENSE
 
 %changelog
+* Tue Oct 16 2012 Adam Miller <admiller@redhat.com> 0.96.6-1
+- fixed error message druing upgrade (lnader@redhat.com)
+
 * Mon Oct 08 2012 Dan McPherson <dmcphers@redhat.com> 0.96.5-1
 - Fixing renames, paths, configs and cleaning up old packages. Adding
   obsoletes. (kraman@gmail.com)
