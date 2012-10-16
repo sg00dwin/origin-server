@@ -33,15 +33,17 @@ function create_zend_to_sandbox_links {
       #echo "Removing $zend_sandbox"
       rm -rf $zend_sandbox
     else
-      #echo "Backing up $zpath to ${zpath}_openshift_original_$(date +%s)"
-      cp -r $zpath ${zpath}_openshift_original_$(date +%s)
-      #echo "Copying $zpath to $zend_sandbox/${zfile}"
-      mkdir -p $zend_sandbox/${path}
-      cp -r $zpath/* $zend_sandbox/${path}/.
-      #echo "Removing $zpath"
-      rm -rf $zpath
-      #echo "Linking $zdir/$zfile to $zend_sandbox/$path"
-      ln -s $zend_sandbox/$path $zdir/$zfile
+      if [ ! -L $zpath ]; then
+        #echo "Backing up $zpath to ${zpath}_openshift_original_$(date +%s)"
+        cp -r $zpath ${zpath}_openshift_original_$(date +%s)
+        #echo "Copying $zpath to $zend_sandbox/${path}"
+        mkdir -p $zend_sandbox/${path}
+        cp -r $zpath/* $zend_sandbox/${path}/.
+        #echo "Removing $zpath"
+        rm -rf $zpath
+        #echo "Linking $zdir/$zfile to $zend_sandbox/$path"
+        ln -s $zend_sandbox/$path $zdir/$zfile
+      fi
     fi
   done
 }

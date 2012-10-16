@@ -2,6 +2,10 @@ require 'streamline'
 
 class ActiveSupport::TestCase
 
+  def omit_on_register
+    omit('Streamline did not successfully register a new user, environment may be down')
+  end
+
   def assert_session_user(user)
     assert_equal user.login, session[:login]
     assert_equal user.ticket, session[:ticket]
@@ -12,7 +16,7 @@ class ActiveSupport::TestCase
   def unconfirmed_user
     @unconfirmed_user ||= begin
       user = new_streamline_user
-      assert user.register('/email_confirm')
+      omit_on_register unless user.register('/email_confirm')
       assert user.token
       user
     end

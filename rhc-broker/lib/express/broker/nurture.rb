@@ -7,7 +7,7 @@ module Express
       #
       # Send application data (start, stop, etc)
       #
-      def self.application(login, user_uuid, app_name, user_namespace, type, action, app_uuid)
+      def self.application(login, user_uuid, app_name, user_namespace, type, action, app_uuid, user_agent)
         return unless Rails.configuration.analytics[:enabled] && Rails.configuration.analytics[:nurture][:enabled]
         Rails.logger.debug "DEBUG: Sending to Nurture:application: app_uuid='#{app_uuid}' action='#{action}'"
         # Why curl?  So I could & at the end.  We don't want this blocking requests
@@ -15,6 +15,7 @@ module Express
         system("curl -s -O /dev/null -X POST -u '#{Rails.configuration.analytics[:nurture][:username]}:#{Rails.configuration.analytics[:nurture][:password]}' '#{Rails.configuration.analytics[:nurture][:url]}applications' \
                 --data-urlencode 'application[action]=#{action}' \
                 --data-urlencode 'application[user_name]=#{login}' \
+                --data-urlencode 'application[user_agent]=#{user_agent}' \
                 --data-urlencode 'application[guid]=#{app_uuid}' \
                 --data-urlencode 'application[uuid]=#{user_uuid}' \
                 --data-urlencode 'application[name]=#{app_name}' \
