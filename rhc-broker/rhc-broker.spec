@@ -128,5 +128,4 @@ fi
   (openshift+bot@redhat.com)
 - Merging in the latest from master (bleanhar@redhat.com)
 - Merging in the latest from master (bleanhar@redhat.com)
-- The openshift-origin-broker-util packages provides the newly renamed admin
-  scripts (bleanhar@redhat.com)
+- The openshift-origin-broker-util packages provides the newly renamed admin scripts (bleanhar@redhat.com)
