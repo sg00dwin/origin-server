@@ -183,12 +183,12 @@ end
 def check_cgroup_config
     verbose("checking cgroups configuration")
 
-    if %x[lscgroup cpu,cpuacct,memory,freezer,net_cls:/libra 2>/dev/null | wc -l].strip.to_i < 1
-        do_fail("lscgroup /libra path does not exist")
+    if %x[lscgroup cpu,cpuacct,memory,freezer,net_cls:/openshift 2>/dev/null | wc -l].strip.to_i < 1
+        do_fail("lscgroup /openshift path does not exist")
         $CGROUP_PASS=false
     end
 
-    ["/cgroup", "/cgroup/all", "/cgroup/all/libra"].each { |path|
+    ["/cgroup", "/cgroup/all", "/cgroup/all/openshift"].each { |path|
         verbose("checking presence of #{path}")
         next if File.exists? path
         do_fail("cgroup root /cgroup directory does not exist")
@@ -247,7 +247,7 @@ def check_users
     #users = %x[grep ":libra guest:" /etc/passwd].split("\n")
     verbose("checking #{$USERS.length} user accounts")
     conf_dir_templ = "#{$LIMITS_CONF_DIR}/84-%s.conf"
-    user_cgroup="/cgroup/all/libra/%s"
+    user_cgroup="/cgroup/all/openshift/%s"
     $USERS.each do |user|
         username,password,uid,gid,gecos,home_dir,shell = user.split(":")
         $ALL_USERS << username #store it so we can use it later

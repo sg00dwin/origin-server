@@ -24,7 +24,7 @@
 
 ETC_PASSWD=${ETC_PASSWD:=/etc/passwd}
 LIBRA_GUEST_MARKER=${LIBRA_GUEST_MARKER:="libra guest"}
-LIBRA_CGROUPS_ROOT=${LIBRA_CGROUPS_ROOT:="/cgroup/all/libra"}
+LIBRA_CGROUPS_ROOT=${LIBRA_CGROUPS_ROOT:="/cgroup/all/openshift"}
 LIBRA_CGROUPS_MEMORY_STATS="failcnt limit_in_bytes max_usage_in_bytes usage_in_bytes
 memsw.failcnt memsw.limit_in_bytes memsw.max_usage_in_bytes memsw.usage_in_bytes"
 LIBRA_CGROUPS_CPUACCT_STATUS="stat usage"

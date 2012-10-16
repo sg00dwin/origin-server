@@ -370,11 +370,11 @@ chkconfig httpd on
 # CGroup services
 service cgconfig start
 service cgred start
-service libra-cgroups start
+service openshift-cgroups start
 service libra-tc start
 chkconfig cgconfig on
 chkconfig cgred on
-chkconfig libra-cgroups on
+chkconfig openshift-cgroups on
 chkconfig libra-tc on
 
 # DHCP/DNS Service initialization

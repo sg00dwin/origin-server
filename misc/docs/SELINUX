@@ -120,7 +120,7 @@ end
 The Labels
 ==========
 
-openshift_t: Our primary libra type, all running customer apps should be of type
+openshift_t: Our primary SELinux type, all running customer apps should be of type
     openshift_t
 openshift_var_lib_t: Most customer files should be labeled openshift_var_lib_t
 
