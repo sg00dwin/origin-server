@@ -4,10 +4,7 @@ module RHC
       #Get descriptor for this application
       def descriptor
         logger.debug "Getting descriptor for application #{self.name}" if @mydebug
-        url = @links['GET_DESCRIPTOR']['href']
-        method =  @links['GET_DESCRIPTOR']['method']
-        request = RestClient::Request.new(:url => url, :method => method, :headers => @@headers)
-        return request(request)
+        rest_method "GET_DESCRIPTOR"
       end
     end
 
@@ -15,10 +12,7 @@ module RHC
       #Get all templates
       def templates
         logger.debug "Getting all templates" if @mydebug
-        url = @links['LIST_TEMPLATES']['href']
-        method =  @links['LIST_TEMPLATES']['method']
-        request = RestClient::Request.new(:url => url, :method => method, :headers => @@headers)
-        return request(request)
+        rest_method "LIST_TEMPLATES"
       end
     end
   end
