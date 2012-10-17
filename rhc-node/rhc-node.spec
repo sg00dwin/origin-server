@@ -69,8 +69,6 @@ mkdir -p %{buildroot}%{ruby_sitelibdir}
 mkdir -p %{buildroot}%{_libexecdir}/openshift
 mkdir -p %{buildroot}/usr/share/selinux/packages
 mkdir -p %{buildroot}%{_sysconfdir}/cron.daily/
-mkdir -p %{buildroot}%{_sysconfdir}/oddjobd.conf.d/
-mkdir -p %{buildroot}%{_sysconfdir}/dbus-1/system.d/
 mkdir -p %{buildroot}%{_sysconfdir}/cron.daily/
 mkdir -p %{buildroot}%{_sysconfdir}/openshift/skel
 mkdir -p %{buildroot}/%{_localstatedir}/www/html/
@@ -90,7 +88,6 @@ cp -r mcollective %{buildroot}%{_libexecdir}
 cp scripts/bin/* %{buildroot}%{_bindir}
 cp scripts/init/* %{buildroot}%{_initddir}
 cp scripts/openshift_tmpwatch.sh %{buildroot}%{_sysconfdir}/cron.daily/openshift_tmpwatch.sh
-cp conf/oddjob/openshift-restorer.conf %{buildroot}%{_sysconfdir}/dbus-1/system.d/
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -193,11 +190,6 @@ fi
 %attr(0750,-,-) %{_bindir}/rhc-profiler-merge-report
 %attr(0750,-,-) %{_bindir}/rhc-restorecon
 %attr(0750,-,-) %{_bindir}/rhc-init-quota
-%attr(0750,-,-) %{_bindir}/rhc-list-stale
-%attr(0750,-,-) %{_bindir}/rhc-last-access
-%attr(0750,-,-) %{_bindir}/rhc-app-idle
-%attr(0750,-,-) %{_bindir}/rhc-autoidler
-%attr(0750,-,-) %{_bindir}/rhc-idler-stats
 %attr(0750,-,-) %{_bindir}/ec2-prep.sh
 %attr(0750,-,-) %{_bindir}/remount-secure.sh
 %attr(0755,-,-) %{_bindir}/rhc-vhost-choke
@@ -223,7 +215,6 @@ fi
 %attr(0750,-,-) %{_bindir}/rhc-watchman
 %attr(0755,-,-) %{_bindir}/rhcsh
 %attr(0700,-,-) %{_bindir}/migration-symlink-as-user
-%attr(0640,-,-) %config(noreplace) %{_sysconfdir}/dbus-1/system.d/openshift-restorer.conf
 %attr(0644,-,-) %config(noreplace) %{_sysconfdir}/openshift/node.conf.libra
 %attr(0644,-,-) %config(noreplace) %{_sysconfdir}/openshift/resource_limits.con*
 %attr(0750,-,-) %config(noreplace) %{_sysconfdir}/cron.daily/openshift_tmpwatch.sh
