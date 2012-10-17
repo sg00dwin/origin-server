@@ -4,6 +4,7 @@ inline_test(File.expand_path(__FILE__))
 
 class ApplicationTypesControllerTest < ActionController::TestCase
   def test_should_show_index_with_proper_title
+    with_unique_user
     get :index
     assert_response :success
     assert_select 'head title', 'OpenShift by Red Hat'
