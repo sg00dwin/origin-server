@@ -134,7 +134,7 @@ module OpenShiftMigration
     end
 
     def self.relabel_file_security_context(mcs_level, pathlist)
-      %x[ chcon -t libra_var_lib_t -l #{mcs_level} -R #{pathlist.join " "} ]
+      %x[ restorecon -R #{pathlist.join " "} && chcon -l #{mcs_level} -R #{pathlist.join " "} ]
     end
 
     def self.remove_dir_if_empty(dirname)

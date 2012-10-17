@@ -43,7 +43,7 @@ way.
 
 An MCS label is the last part of an selinux context (seen from ls -lZ):
 
-    unconfined_u:object_r:libra_var_lib_t:s0:c2
+    unconfined_u:object_r:openshift_var_lib_t:s0:c2
 
 In the above example the mcs is "s0:c2", the mcs can be expanded on
 significantly for example: s0:c2,c9 is also valuable.  They go from 0 to 1023.
@@ -51,7 +51,7 @@ One got'cha here is running admin commands, as is done by mcollective or an init
 script.  The MCS restrictions are being set in each applications init script via
 runcon:
 
-    runcon -t libra_t -l s0:c3
+    runcon -t openshift_t -l s0:c3
 
 if we ran the init script with a restricted mcs (like s0:c1) the above command
 would fail because s0:c1 != s0:c3.  To get around this restriction, we need to
@@ -85,7 +85,7 @@ c1,c2 -> c1,c1023.  When that rolls over, the next set is c2,c3 -> c2,c1023.
 
 The algorithm to generate the category sets is:
 
--- libra_mcs_level.sh
+-- openshift_mcs_level.sh
 #!/bin/sh
 N=$1
 
@@ -101,8 +101,8 @@ TIER=$(($SETSIZE - $TIER))
 echo c$TIER,c$(($ORD + $TIER))
 --
 
--- libra_mcs_level.rb
-def libra_mcs_level(uid)
+-- openshift_mcs_level.rb
+def openshift_mcs_level(uid)
   setsize=1023
   tier=setsize
   ord=uid
@@ -120,9 +120,9 @@ end
 The Labels
 ==========
 
-libra_t: Our primary libra type, all running customer apps should be of type
-    libra_t
-libra_var_lib_t: Most customer files should be labeled libra_var_lib_t
+openshift_t: Our primary SELinux type, all running customer apps should be of type
+    openshift_t
+openshift_var_lib_t: Most customer files should be labeled openshift_var_lib_t
 
 
 The Files

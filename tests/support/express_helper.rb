@@ -20,7 +20,7 @@ $user_register_script_format = nil
 $gear_update_plugin_service = "mcollective"
 $selinux_user = "unconfined_u"
 $selinux_role = "system_r"
-$selinux_type = "libra_initrc_t"
+$selinux_type = "openshift_initrc_t"
 
 # Submodule repo directory for testing submodule addition test case
 $submodule_repo_dir = "/root/submodule_test_repo"

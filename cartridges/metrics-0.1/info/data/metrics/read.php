@@ -29,7 +29,7 @@ $security_arr = array('cgroup.procs',
 $item = $_GET['item'];
 
 if($security_arr[$item]) {
-    $value = shell_exec("/usr/bin/rhc-cgroup-read $item");
+    $value = shell_exec("/usr/bin/oo-cgroup-read $item");
     $arr = array('value' => trim($value), 'type' => $security_arr[$item]);
     echo json_encode($arr);
 } else {

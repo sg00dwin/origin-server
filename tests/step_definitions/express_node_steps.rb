@@ -23,7 +23,7 @@ Then /^an account PAM limits file should( not)? exist$/ do |negate|
 end
 
 Then /^an account cgroup directory should( not)? exist$/ do |negate|
-  cgroups_dir = '/cgroup/all/libra'
+  cgroups_dir = '/cgroup/all/openshift'
   cgdir = "#{cgroups_dir}/#{@account['accountname']}"
 
   if negate

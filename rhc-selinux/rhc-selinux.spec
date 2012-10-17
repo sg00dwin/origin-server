@@ -8,8 +8,9 @@ URL:           http://openshift.redhat.com
 Source0:       rhc-selinux-%{version}.tar.gz
 
 BuildRoot:     %(mktemp -ud %{_tmppath}/%{name}-%{version}-%{release}-XXXXXX)
-BuildRequires: selinux-policy >= 3.7.19-153
-Requires:      selinux-policy-targeted >= 3.7.19-153
+BuildRequires: selinux-policy >= 3.7.19-167
+Requires:      selinux-policy-targeted >= 3.7.19-167
+Requires:      policycoreutils-python
 Requires(post):   /usr/sbin/semanage
 Requires(postun): /usr/sbin/semanage
 
@@ -23,29 +24,51 @@ Supplies the SELinux policy for the OpenShift nodes
 
 %build
 make -f /usr/share/selinux/devel/Makefile
+bzip2 -9 openshift-hosted.pp
 
 %install
 rm -rf %{buildroot}
 mkdir -p %{buildroot}%{_datadir}/selinux/packages
-cp libra.pp %{buildroot}%{_datadir}/selinux/packages/libra.pp
+mkdir -p %{buildroot}%{_datadir}/selinux/devel/include/services
+
+install -m 644 openshift-hosted.pp.bz2 %{buildroot}%{_datadir}/selinux/packages/openshift-hosted.pp.bz2
+install -m 644 openshift-hosted.if     %{buildroot}%{_datadir}/selinux/devel/include/services/openshift-hosted.if
+
 
 %clean
 rm -rf %{buildroot}
 
 %post
-/usr/sbin/semodule -i %{_datadir}/selinux/packages/libra.pp || :
+# Not compatible with the old libra policy and older versions of this
+# RPM don't remove it.
+semodule -r libra >/dev/null 2>&1 || :
 
-# Bring in external smtp ports but _NOT_ 25.
-#semanage -i - << _EOF
-#port -m -t libra_port_t -p tcp 465
-#port -m -t libra_port_t -p tcp 587
-#_EOF
+/usr/sbin/semodule -d openshift-origin -i %{_datadir}/selinux/packages/openshift-hosted.pp.bz2 || :
+
+%postun
+if [ $1 = 0 ]
+then
+    /usr/sbin/semodule -r openshift-hosted -e openshift-origin || :
+fi
 
 %files
 %defattr(-,root,root,-)
-%attr(0640,-,-) %{_datadir}/selinux/packages/libra.pp
+%attr(0644,-,-) %{_datadir}/selinux/packages/openshift-hosted.pp.bz2
+%{_datadir}/selinux/devel/include/services/openshift-hosted.if
+
 
 %changelog
+* Wed Oct 10 2012 Rob Millner <rmillner@redhat.com> 0.98.5-1
+- Official openshift-hosted policy (rmillner@redhat.com)
+- Move SELinux to Origin and use new policy definition. (rmillner@redhat.com)
+
+* Wed Oct 10 2012 Rob Millner <rmillner@redhat.com> 0.98.4-1
+- The devenv build script requires the package to be listed by name.
+  (rmillner@redhat.com)
+
+* Wed Oct 10 2012 Rob Millner <rmillner@redhat.com> 0.98.3-1
+- Move SELinux to Origin and use new policy definition. (rmillner@redhat.com)
+
 * Mon Oct 08 2012 Adam Miller <admiller@redhat.com> 0.98.2-1
 - Fixing renames, paths, configs and cleaning up old packages. Adding
   obsoletes. (kraman@gmail.com)

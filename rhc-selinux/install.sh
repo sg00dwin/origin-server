@@ -10,8 +10,8 @@ fi
 
 if [ $# -eq 1 ]; then
 	if [ "$1" = "--update" ] ; then
-		time=`ls -l --time-style="+%x %X" libra.te | awk '{ printf "%s %s", $6, $7 }'`
-		rules=`ausearch --start $time -m avc --raw -se libra`
+		time=`ls -l --time-style="+%x %X" openshift-hosted.te | awk '{ printf "%s %s", $6, $7 }'`
+		rules=`ausearch --start $time -m avc --raw -se openshift-hosted`
 		if [ x"$rules" != "x" ] ; then
 			echo "Found avc's to update policy with"
 			echo -e "$rules" | audit2allow -R
@@ -19,7 +19,7 @@ if [ $# -eq 1 ]; then
 			read ANS
 			if [ "$ANS" = "y" -o "$ANS" = "Y" ] ; then
 				echo "Updating policy"
-				echo -e "$rules" | audit2allow -R >> libra.te
+				echo -e "$rules" | audit2allow -R >> openshift-hosted.te
 				# Fall though and rebuild policy
 			else
 				exit 0
@@ -40,7 +40,7 @@ fi
 echo "Building and Loading Policy"
 set -x
 make -f /usr/share/selinux/devel/Makefile
-/usr/sbin/semodule -i libra.pp
+/usr/sbin/semodule -i openshift-hosted.pp
 
 # Fixing the file context on /usr/sbin/httpd
 /sbin/restorecon -F -R -v /usr/sbin/httpd

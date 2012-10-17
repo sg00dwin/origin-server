@@ -4,11 +4,11 @@ auth       include      password-auth
 account    required     pam_nologin.so
 account    include      password-auth
 password   include      password-auth
-# pam_libra.so close should be the first session rule
-session    required     pam_libra.so close
+# pam_openshift.so close should be the first session rule
+session    required     pam_openshift.so close
 session    required     pam_loginuid.so
-# pam_libra.so open should only be followed by sessions to be executed in the user context
-session    required     pam_libra.so open env_params
+# pam_openshift.so open should only be followed by sessions to be executed in the user context
+session    required     pam_openshift.so open env_params
 session    optional     pam_keyinit.so force revoke
 session    include      password-auth
 session    required     pam_namespace.so no_unmount_on_close
