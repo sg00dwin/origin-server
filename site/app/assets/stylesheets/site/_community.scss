@@ -644,6 +644,19 @@ html.js fieldset.collapsible .fieldset-wrapper {
 #toc td { font-size: 90%; }
 #toc td ul { list-style: none; margin: 0 0 0 9px; }
 
+#node-delete-confirm.confirmation {
+    background-color: $errorBackground;
+    color: white;
+    padding: 10px 20px;
+    position: relative;
+    
+    .container-inline {
+      background: white;
+      margin-top: 30px;
+      position: absolute;
+    } 
+}
+
 
 /* Events */
 .event-listings .view-event-view .views-row-first {

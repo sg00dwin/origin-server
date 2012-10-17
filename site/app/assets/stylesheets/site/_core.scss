@@ -43,7 +43,7 @@ a:hover, a:active { color: $linkColorBlueHover; }
     color: $hoverColor;
     background: -moz-repeating-linear-gradient(-180deg, $backgroundHoverColor, $backgroundHoverColor 6px, transparentize($backgroundHoverColor, 1.0) 6px, transparentize($backgroundHoverColor, 1.0) 10px, $backgroundHoverColor 10px, $backgroundHoverColor) repeat scroll 0 0 transparent;
     background: -webkit-repeating-linear-gradient(-180deg, $backgroundHoverColor, $backgroundHoverColor 6px, transparentize($backgroundHoverColor, 1.0) 6px, transparentize($backgroundHoverColor, 1.0) 10px, $backgroundHoverColor 10px, $backgroundHoverColor) repeat scroll 0 0 transparent;
-    background: repeating-linear-gradient(-180deg, $backgroundHoverColor, $backgroundHoverColor 6px, transparentize($backgroundHoverColor, 1.0) 6px, transparentize($backgroundHoverColor, 1.0) 10px, $backgroundHoverColor 10px, $backgroundHoverColor) repeat scroll 0 0 transparent;
+    background: repeating-linear-gradient(-90deg, $backgroundHoverColor, $backgroundHoverColor 6px, transparentize($backgroundHoverColor, 1.0) 6px, transparentize($backgroundHoverColor, 1.0) 10px, $backgroundHoverColor 10px, $backgroundHoverColor) repeat scroll 0 0 transparent;
     /*FIXME: no fallback? background: $backgroundHoverColor; */
   }
   &:active {
@@ -95,7 +95,7 @@ body.signup {
   background-color: #e5e5e5;
   background: -moz-repeating-linear-gradient(-70deg, $lightStripesColor, $lightStripesColor 6px, $lightStripesAltColor 9px, $lightStripesAltColor 15px, $lightStripesColor 18px) repeat scroll 0 0 $lightStripesBackground;
   background: -webkit-repeating-linear-gradient(-70deg, $lightStripesColor, $lightStripesColor 6px, $lightStripesAltColor 9px, $lightStripesAltColor 15px, $lightStripesColor 18px) repeat scroll 0 0 $lightStripesBackground;
-  background: repeating-linear-gradient(-70deg, $lightStripesColor, $lightStripesColor 6px, $lightStripesAltColor 9px, $lightStripesAltColor 15px, $lightStripesColor 18px) repeat scroll 0 0 $lightStripesBackground;
+  background: repeating-linear-gradient(-20deg, $lightStripesColor, $lightStripesColor 6px, $lightStripesAltColor 9px, $lightStripesAltColor 15px, $lightStripesColor 18px) repeat scroll 0 0 $lightStripesBackground;
 
   .link-tile {
     color: $stripesText;
@@ -940,7 +940,7 @@ body.home {
 	    image-url('mts.png'), 
 	    image-url('stars.png'),
 	    $noiseImage,
-	    repeating-linear-gradient(110deg, #191919 0px, #191919 10px, #181818 10px, #181818 20px);
+	    repeating-linear-gradient(160deg, #191919 0px, #191919 10px, #181818 10px, #181818 20px);
 	  background-repeat:
 	    no-repeat,
 	    no-repeat,
@@ -1138,7 +1138,7 @@ body.simple {
     image-url('mts-bottom-transparent.png'),
     image-url('stars.png'),
     $noiseImage,
-    repeating-linear-gradient(110deg, #191919 0px, #191919 10px, #181818 10px, #181818 20px);
+    repeating-linear-gradient(160deg, #191919 0px, #191919 10px, #181818 10px, #181818 20px);
   background-repeat:
     repeat-x,
     repeat,
