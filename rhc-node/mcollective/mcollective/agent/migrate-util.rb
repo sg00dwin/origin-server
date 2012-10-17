@@ -22,11 +22,15 @@ module OpenShiftMigration
       end
       false
     end
-    
+
     def self.replace_in_file(file, old_value, new_value, sep=',')
       output, exitcode = execute_script("sed -i \"s#{sep}#{old_value}#{sep}#{new_value}#{sep}g\" #{file} 2>&1")
       #TODO handle exitcode
       return "Updated '#{file}' changed '#{old_value}' to '#{new_value}'.  output: #{output}  exitcode: #{exitcode}\n"
+    end
+
+    def self.gear_has_cart?(gear_home, cart_name)
+      File.directory?(File.join(gear_home, cart_name))
     end
     
     def self.get_env_var_value(app_home, env_var_name)
@@ -135,6 +139,10 @@ module OpenShiftMigration
 
     def self.relabel_file_security_context(mcs_level, pathlist)
       %x[ restorecon -R #{pathlist.join " "} && chcon -l #{mcs_level} -R #{pathlist.join " "} ]
+    end
+
+    def self.symlink_as_user(uuid, target, link_name)
+      FileUtils.ln_s(target, link_name, :force => true)
     end
 
     def self.remove_dir_if_empty(dirname)
