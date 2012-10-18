@@ -239,235 +239,228 @@ module OpenShiftMigration
   # at any point and continue to pick up where it left off or make
   # harmless changes the 2-n times around.
   def self.migrate(uuid, namespace, version)
-    if version == "2.0.19"
-
-      # See jenkins below for an example of a specialization for a cartridge type
-      frameworks = {
-        '10gen-mms-agent-0.1' => '10GENMMSAGENT',
-        'diy-0.1'             => 'DIY',
-        'jenkins-client-1.4'  => 'JENKINSCLIENT',
-        'nodejs-0.6'          => 'NODEJS',
-        'perl-5.10'           => 'PERL',
-        'php-5.3'             => 'PHP',
-        'python-2.6'          => 'PYTHON',
-        'ruby-1.8'            => 'RUBY',
-        'ruby-1.9'            => 'RUBY',
-        'zend-5.6'            => 'ZEND'
-      }
-
-      jbosses = {
-        'jbossas-7'    => 'JBOSSAS',
-        'jbosseap-6.0' => 'JBOSSEAP'
-      }
-
-      libra_home = '/var/lib/openshift' #node_config.get_value('libra_dir')
-      libra_server = get_config_value('BROKER_HOST')
-      libra_domain = get_config_value('CLOUD_DOMAIN')
-      gear_home = "#{libra_home}/#{uuid}"
-      gear_name = Util.get_env_var_value(gear_home, "OPENSHIFT_GEAR_NAME")
-      app_name = Util.get_env_var_value(gear_home, "OPENSHIFT_APP_NAME")
-      output = ''
-      exitcode = 0
-
-      if (File.exists?(gear_home) && !File.symlink?(gear_home))
-        cartridge_root_dir = "/usr/libexec/openshift/cartridges"
-
-        frameworks.each { |k, v|
-          if File.directory?(File.join(gear_home, k))
-            begin
-              typeless_framework(app_name, gear_home, k, v)
-            rescue => e
-              output+="Exception caught in #{k} framework migration in gear #{gear_home}:\n"
-              output+="#{e}\n"
-              exitcode=101
-            end
-          end
-        }
-
-        if File.directory?(File.join(gear_home, 'python-2.6'))
-          output += migrate_python(gear_home, uuid)
-        end
-
-        jbosses.each { |k, v|
-          if File.directory?(File.join(gear_home, k))
-            begin
-              typeless_jboss(app_name, gear_home, k, v)
-            rescue => e
-              output+="Exception caught in #{k} framework migration in gear #{gear_home}:\n"
-              output+="#{e}\n"
-              exitcode=101
-            end
-          end
-        }
-
-        if File.directory?(File.join(gear_home, 'mysql-5.1'))
-          begin
-            typeless_mysql(app_name, gear_home, 'mysql-5.1', 'MYSQL')
-          rescue => e
-            output+="Exception caught in mysql-5.1 migration in gear #{gear_home}:\n"
-            output+="#{e}\n"
-            exitcode=101
-          end
-        end
-
-        if File.directory?(File.join(gear_home, 'postgresql-8.4'))
-          begin
-            typeless_postgresql(app_name, gear_home, 'postgresql-8.4', 'POSTGRESQL')
-          rescue => e
-            output+="Exception caught in postgresql-8.4 migration in gear #{gear_home}:\n"
-            output+="#{e}\n"
-            exitcode=101
-          end
-        end
-
-        if File.directory?(File.join(gear_home, 'mongodb-2.0'))
-          begin
-          	output+=self.migrate_mongodb_22(uuid, gear_home, gear_name)
-          rescue => e
-            output+="Exception caught in mongo-2.0 migration:\n"
-            output+="#{e}\n"
-            exitcode=100
-          end        
-        end
-
-        if File.directory?(File.join(gear_home, 'mongodb-2.2'))
-          begin
-            typeless_mongodb(app_name, gear_home, 'mongodb-2.2', 'MONGODB')
-          rescue => e
-            output+="Exception caught in mongodb-2.2 migration in gear #{gear_home}:\n"
-            output+="#{e}\n"
-            exitcode=101
-          end
-		    end
-
-        if File.directory?(File.join(gear_home, 'haproxy-1.4'))
-          begin
-            typeless_log_dir(gear_home, 'haproxy-1.4', 'HAPROXY')
-          rescue => e
-            output+="Exception caught in haproxy-1.4 migration in gear #{gear_home}:\n"
-            output+="#{e}\n"
-            exitcode=101
-          end
-        end
-
-        begin
-          # Cleanup DB connection vars, if any. These will be recreated on running
-          # hascaledb.rb migration script
-          Dir[File.join(gear_home, '.env', '.uservars', "OPENSHIFT_DB_*"),
-              File.join(gear_home, '.env', '.uservars', "OPENSHIFT_NOSQL_DB_*")].each { |entry|
-            rm_exists(entry)
-          }
-        rescue => e
-          output+="Exception caught in cleaning up db connections in gear #{gear_home}:\n"
-          output+="#{e}\n"
-          exitcode=101
-        end
-
-        if File.directory?(File.join(gear_home, 'metrics-0.1'))
-          begin
-            typeless_embedded(app_name, gear_home, 'metrics-0.1', 'METRICS')
-          rescue => e
-            output+="Exception caught in metrics-0.1 migration in gear #{gear_home}:\n"
-            output+="#{e}\n"
-            exitcode=101
-          end
-        end
-
-        if File.directory?(File.join(gear_home, 'phpmyadmin-3.4'))
-          begin
-            typeless_embedded(app_name, gear_home, 'phpmyadmin-3.4', 'PHPMYADMIN')
-            Dir[File.join(gear_home, '*', "#{app_name}_phpmyadmin_ctl.sh")].each { |entry|
-              rm_exists(entry)
-            }
-          rescue => e
-            output+="Exception caught in phpmyadmin-3.4 migration in gear #{gear_home}:\n"
-            output+="#{e}\n"
-            exitcode=101
-          end
-        end
-
-        if File.directory?(File.join(gear_home, 'rockmongo-1.1'))
-          begin
-            typeless_embedded(app_name, gear_home, 'rockmongo-1.1', 'ROCKMONGO')
-            Dir[File.join(gear_home, '*', "#{app_name}_rockmongo_ctl.sh")].each { |entry|
-              rm_exists(entry)
-            }
-          rescue => e
-            output+="Exception caught in rockmongo-1.1 migration in gear #{gear_home}:\n"
-            output+="#{e}\n"
-            exitcode=101
-          end
-        end
-
-        if File.directory?(File.join(gear_home, 'cron-1.4'))
-          begin
-            Util.rm_env_var_value(gear_home,
-                "OPENSHIFT_BATCH_CRON_14_EMBEDDED_TYPE",
-                "OPENSHIFT_BATCH_CTL_SCRIPT",
-                "OPENSHIFT_BATCH_TYPE"
-                )
-          rescue => e
-            output+="Exception caught in cron-1.4 migration in gear #{gear_home}:\n"
-            output+="#{e}\n"
-            exitcode=101
-          end
-        end
-
-        if File.directory?(File.join(gear_home, "jenkins-1.4"))
-          begin
-            typeless_framework(app_name, gear_home, 'jenkins-1.4', 'JENKINS')
-            command =%Q|sed -i "s#~/\\([A-Za-z0-9]\\+\\)/repo#~/app-root/runtime/repo#g;\\
-                                s#~/\\([A-Za-z0-9]\\+\\)/node_modules#~/nodejs-0.6/node_modules#g;\\
-                                s#\\${OPENSHIFT_GEAR_NAME}/node_modules#nodejs-0.6/node_modules#g;\\
-                                s#~/#{gear_name}/node_modules#~/nodejs-0.6/node_modules#g;\\
-                                s#~/\\([A-Za-z0-9]\\+\\)/perl5lib#~/perl-5.10/perl5lib#g;\\
-                                s#~/#{gear_name}/perl5lib#~/perl-5.10/perl5lib#g;\\
-                                s#\\${OPENSHIFT_GEAR_NAME}/perl5lib#perl-5.10/perl5lib#g;\\
-                                s#~/\\([A-Za-z0-9]\\+\\)/phplib#~/php-5.3/phplib#g;\\
-                                s#~/#{gear_name}/phplib#~/php-5.3/phplib#g;\\
-                                s#\\${OPENSHIFT_GEAR_NAME}/phplib#php-5.3/phplib#g;\\
-                                s#~/\\([A-Za-z0-9]\\+\\)/virtenv#~/python-2.6/virtenv#g;\\
-                                s#~/#{gear_name}/virtenv#~/python-2.6/virtenv#g;\\
-                                s#\\${OPENSHIFT_GEAR_NAME}/virtenv#python-2.6/virtenv#g;\\
-                                s#\\${OPENSHIFT_GEAR_NAME}/nodejs-0.6#nodejs-0.6#g;\\
-                                s#\\${OPENSHIFT_GEAR_NAME}/jbossas-7#jbossas-7#g;\\
-                                s#\\${OPENSHIFT_GEAR_NAME}/jbosseap-6.0#jbosseap-6.0#g;\\
-                                s#\\${OPENSHIFT_GEAR_NAME}/perl-5.10#perl-5.10#g;\\
-                                s#\\${OPENSHIFT_GEAR_NAME}/php-5.3#php-5.3#g;\\
-                                s#\\${OPENSHIFT_GEAR_NAME}/python-2.6#python-2.6#g;\\
-                                s#\\${OPENSHIFT_GEAR_NAME}/ruby-1.8#ruby-1.8#g;\\
-                                s#\\${OPENSHIFT_GEAR_NAME}/ruby-1.9#ruby-1.9#g;"\\
-                                #{gear_home}/jenkins-1.4/data/jobs/*/config.xml| 
-            system(command)
-
-            self.migrate_jenkins_sshd(gear_home, File.join(cartridge_root_dir, 'jenkins-1.4'))
-          rescue => e
-            output+="Exception caught in jenkins-1.4 migration in gear #{gear_home}:\n"
-            output+="#{e}\n"
-            exitcode=101
-          end
-        end
-
-        env_echos = []
-
-        env_echos.each do |env_echo|
-          echo_output, echo_exitcode = Util.execute_script(env_echo)
-          output += echo_output
-        end
-      else
-        exitcode = 127
-        output += "Application not found to migrate: #{gear_home}\n"
-      end
-      return output, exitcode
-    else
+    unless version == "2.0.19"
       return "Invalid version: #{version}", 255
     end
+
+    # See jenkins below for an example of a specialization for a cartridge type
+    frameworks = {
+      '10gen-mms-agent-0.1' => '10GENMMSAGENT',
+      'diy-0.1'             => 'DIY',
+      'jenkins-client-1.4'  => 'JENKINSCLIENT',
+      'nodejs-0.6'          => 'NODEJS',
+      'perl-5.10'           => 'PERL',
+      'php-5.3'             => 'PHP',
+      'python-2.6'          => 'PYTHON',
+      'ruby-1.8'            => 'RUBY',
+      'ruby-1.9'            => 'RUBY',
+      'zend-5.6'            => 'ZEND'
+    }
+
+    carts_to_touch = [
+      '10gen-mms-agent-0.1',
+      'diy-0.1',
+      'jenkins-client-1.4',
+      'nodejs-0.6',
+      'perl-5.10',
+      'php-5.3',
+      'python-2.6',
+      'ruby-1.8',
+      'ruby-1.9',
+      'zend-5.6',
+      'cron-1.4',
+      'haproxy-1.4',
+      'jbossas-7', 'jbosseap-6.0', 
+      'mongodb-2.0', 'rockmongo-1.1', 'phpmoadmin-1.0',
+      'mysql-5.1', 'phpmyadmin-3.4',
+      'postgresql-8.4',
+      'metrics-0.1'
+    ]
+
+    jbosses = {
+      'jbossas-7'    => 'JBOSSAS',
+      'jbosseap-6.0' => 'JBOSSEAP'
+    }
+
+    cartridge_root_dir = "/usr/libexec/openshift/cartridges"
+    libra_home = '/var/lib/openshift' #node_config.get_value('libra_dir')
+    libra_server = get_config_value('BROKER_HOST')
+    libra_domain = get_config_value('CLOUD_DOMAIN')
+    gear_home = "#{libra_home}/#{uuid}"
+    gear_name = Util.get_env_var_value(gear_home, "OPENSHIFT_GEAR_NAME")
+    app_name = Util.get_env_var_value(gear_home, "OPENSHIFT_APP_NAME")
+    output = ''
+    exitcode = 0
+    env_echos = []
+
+    unless (File.exists?(gear_home) && !File.symlink?(gear_home))
+      exitcode = 127
+      output += "Application not found to migrate: #{gear_home}\n"
+      return output, exitcode
+    end
+
+    rename_env_vars(gear_home)
+
+    Dir[File.join(libra_home, '.httpd.d', "#{uuid}_#{namespace}_#{app_name}", "*.conf")].each { |entry|
+      Util.replace_in_file(entry, "/usr/libexec/stickshift/", "/usr/libexec/openshift/" )
+    }
+
+    Util.replace_in_file("#{libra_home}/.httpd.d/#{uuid}_#{namespace}_#{app_name}.conf", "/etc/httpd/conf.d/stickshift/" , "/etc/httpd/conf.d/openshift/" )
+
+    carts_to_touch.each do |cart_name|
+      next unless Util.gear_has_cart?(gear_home, cart_name)
+
+      begin 
+        # rename migrations
+        output += "Migrating #{cart_name} for rename for #{app_name}"
+        rename_migrate_generic(cart_name, app_name, gear_home)
+
+        cart_dir = "#{gear_home}/#{cart_name}"
+
+        case cart_name
+        when 'diy-0.1'
+          Util.replace_in_file("/etc/httpd/conf.d/stickshift/#{uuid}_#{namespace}_#{app_name}.conf", "/usr/libexec/stickshift/cartridges", "/usr/libexec/openshift/cartridges")
+        when /^jboss/
+          output += rename_migrate_jboss(uuid, cart_name, app_name, gear_home, cartridge_root_dir)
+        when 'php-5.3'
+          Util.replace_in_file("#{cart_dir}/conf/php.ini", "/var/lib/stickshift", "/var/lib/openshift")
+          Util.replace_in_file("#{gear_home}/.pearrc", "/var/lib/stickshift", "/var/lib/openshift")
+        when 'mongodb-2.0'
+          Util.replace_in_file("#{cart_dir}/etc/mongodb.conf", "/var/lib/stickshift", "/var/lib/openshift")
+        when 'rockmongo-1.1'
+          Util.replace_in_file("#{cart_dir}/conf.d/ROCKMONGO.conf", "/var/lib/stickshift", "/var/lib/openshift")
+          Util.replace_in_file("#{cart+dir}/conf/php.ini", "/var/lib/stickshift", "/var/lib/openshift")
+        when 'phpmoadmin-1.0'
+          Util.replace_in_file("#{cart_dir}/conf.d/phpMoAdmin.conf", "/var/lib/stickshift", "/var/lib/openshift")
+          Util.replace_in_file("#{cart_dir}/conf/php.ini", "/var/lib/openshift", "/var/lib/openshift")
+
+          output += Util.symlink_as_user(uuid, "#{cartridge_root_dir}/phpmoadmin-1.0/info/configuration/disabled_pages.conf" ,"#{cart_dir}/conf.d/disabled_pages.conf")
+        when 'cron-1.4'
+          output += Util.symlink_as_user(uuid, "#{cartridge_root_dir}/cron-1.4/info/bin/cron_runjobs.sh", "#{gear_home}/cron-1.4/cron_runjobs.sh")
+          # TODO: determine primary framework cart
+          output += Util.symlink_as_user(uuid, "#{app_dir}/repo/.openshift/cron" ,"#{gear_home}/cron-1.4/jobs")
+        when 'mysql-5.1'
+          Util.replace_in_file("#{gear_home}/mysql-5.1/etc/my.cnf", "/var/lib/stickshift", "/var/lib/openshift")
+        when 'phpmyadmin-3.4'
+          Util.replace_in_file("#{cart_dir}/conf/php.ini", "/var/lib/stickshift", "/var/lib/openshift")
+          Util.replace_in_file("#{cart_dir}/conf.d/disabled_pages.conf", "/var/lib/stickshift", "/var/lib/openshift")
+        
+          output += Util.symlink_as_user(uuid, "#{cartridge_root_dir}/embedded/phpmyadmin-3.4/info/configuration/disabled_pages.conf", "#{cart_dir}/conf.d/disabled_pages.conf")
+        when 'postgresql-8.4'
+          Util.replace_in_file("#{cart_dir}/data/postgresql.conf", "/var/lib/stickshift", "/var/lib/openshift")
+          Util.replace_in_file("#{cart_dir}/data/postmaster.opts", "/var/lib/stickshift", "/var/lib/openshift")
+          Util.replace_in_file("#{cart_dir}/data/postmaster.pid", "/var/lib/stickshift", "/var/lib/openshift")
+        when 'metrics-0.1'
+          Util.replace_in_file("#{cart_dir}/conf.d/metrics.conf", "/var/lib/stickshift", "/var/lib/openshift")
+          Util.replace_in_file("#{cart_dir}/conf/php.ini", "/var/lib/stickshift", "/var/lib/openshift")
+        when 'jenkins-1.4'
+          Util.replace_in_file("#{cart_dir}/data/jobs/*/config.xml", "/usr/libexec/stickshift", "/usr/libexec/openshift")
+        end
+
+        # cartridge_upgrades
+        case cart_name
+        when 'mongodb-2.0'
+          output += self.migrate_mongodb_22(uuid, gear_home, gear_name)
+        end
+
+        # typeless migrations
+        case cart_name
+        when *frameworks.keys
+          typeless_framework(app_name, gear_home, cart_name, frameworks[cart_name])
+        when /^jboss/
+          typeless_jboss(app_name, gear_home, cart_name, jbosses[cart_name])
+        when 'mysql-5.1'
+          typeless_mysql(app_name, gear_home, 'mysql-5.1', 'MYSQL')
+        when 'postgesql-8.4'
+          typeless_postgresql(app_name, gear_home, 'postgresql-8.4', 'POSTGRESQL')
+        when 'mongodb-2.2'
+          typeless_mongodb(app_name, gear_home, 'mongodb-2.2', 'MONGODB')
+        when 'haproxy-1.4'
+          typeless_log_dir(gear_home, 'haproxy-1.4', 'HAPROXY')
+        when 'metrics-0.1'
+          typeless_embedded(app_name, gear_home, 'metrics-0.1', 'METRICS')
+        when 'phpmyadmin-3.4'
+          typeless_embedded(app_name, gear_home, 'phpmyadmin-3.4', 'PHPMYADMIN')
+          Dir[File.join(gear_home, '*', "#{app_name}_phpmyadmin_ctl.sh")].each { |entry|
+            rm_exists(entry)
+          }
+        when 'rockmongo-1.1'
+          typeless_embedded(app_name, gear_home, 'rockmongo-1.1', 'ROCKMONGO')
+          Dir[File.join(gear_home, '*', "#{app_name}_rockmongo_ctl.sh")].each { |entry|
+            rm_exists(entry)
+          }
+        when 'cron-1.4'
+          rm_exists(gear_home,
+              "OPENSHIFT_BATCH_CRON_14_EMBEDDED_TYPE",
+              "OPENSHIFT_BATCH_CTL_SCRIPT",
+              "OPENSHIFT_BATCH_TYPE")
+        when 'jenkins-1.4'
+          typeless_framework(app_name, gear_home, 'jenkins-1.4', 'JENKINS')
+          command =%Q|sed -i "s#~/\\([A-Za-z0-9]\\+\\)/repo#~/app-root/runtime/repo#g;\\
+                              s#~/\\([A-Za-z0-9]\\+\\)/node_modules#~/nodejs-0.6/node_modules#g;\\
+                              s#\\${OPENSHIFT_GEAR_NAME}/node_modules#nodejs-0.6/node_modules#g;\\
+                              s#~/#{gear_name}/node_modules#~/nodejs-0.6/node_modules#g;\\
+                              s#~/\\([A-Za-z0-9]\\+\\)/perl5lib#~/perl-5.10/perl5lib#g;\\
+                              s#~/#{gear_name}/perl5lib#~/perl-5.10/perl5lib#g;\\
+                              s#\\${OPENSHIFT_GEAR_NAME}/perl5lib#perl-5.10/perl5lib#g;\\
+                              s#~/\\([A-Za-z0-9]\\+\\)/phplib#~/php-5.3/phplib#g;\\
+                              s#~/#{gear_name}/phplib#~/php-5.3/phplib#g;\\
+                              s#\\${OPENSHIFT_GEAR_NAME}/phplib#php-5.3/phplib#g;\\
+                              s#~/\\([A-Za-z0-9]\\+\\)/virtenv#~/python-2.6/virtenv#g;\\
+                              s#~/#{gear_name}/virtenv#~/python-2.6/virtenv#g;\\
+                              s#\\${OPENSHIFT_GEAR_NAME}/virtenv#python-2.6/virtenv#g;\\
+                              s#\\${OPENSHIFT_GEAR_NAME}/nodejs-0.6#nodejs-0.6#g;\\
+                              s#\\${OPENSHIFT_GEAR_NAME}/jbossas-7#jbossas-7#g;\\
+                              s#\\${OPENSHIFT_GEAR_NAME}/jbosseap-6.0#jbosseap-6.0#g;\\
+                              s#\\${OPENSHIFT_GEAR_NAME}/perl-5.10#perl-5.10#g;\\
+                              s#\\${OPENSHIFT_GEAR_NAME}/php-5.3#php-5.3#g;\\
+                              s#\\${OPENSHIFT_GEAR_NAME}/python-2.6#python-2.6#g;\\
+                              s#\\${OPENSHIFT_GEAR_NAME}/ruby-1.8#ruby-1.8#g;\\
+                              s#\\${OPENSHIFT_GEAR_NAME}/ruby-1.9#ruby-1.9#g;"\\
+                              #{gear_home}/jenkins-1.4/data/jobs/*/config.xml| 
+          system(command)
+        end
+
+        # misc migrations (jenkins sshd, etc)
+        case cart_name
+        when 'python-2.6'
+          output += migrate_python(gear_home, uuid)
+        when 'jenkins-1.4'
+          self.migrate_jenkins_sshd(gear_home, File.join(cartridge_root_dir, 'jenkins-1.4'))
+        end
+      rescue => e
+        output+="Exception caught in #{cart_name} framework migration in gear #{gear_home}:\n"
+        output+="#{e}\n"
+        output+="#{e.backtrace}"
+        exitcode=101
+      end
+    end
+
+    begin
+      # Cleanup DB connection vars, if any. These will be recreated on running
+      # hascaledb.rb migration script
+      Dir[File.join(gear_home, '.env', '.uservars', "OPENSHIFT_DB_*"),
+          File.join(gear_home, '.env', '.uservars', "OPENSHIFT_NOSQL_DB_*")].each { |entry|
+        rm_exists(entry)
+      }
+    rescue => e
+      output+="Exception caught in cleaning up db connections in gear #{gear_home}:\n"
+      output+="#{e}\n"
+      exitcode=101
+    end
+
+    env_echos.each do |env_echo|
+      echo_output, echo_exitcode = Util.execute_script(env_echo)
+      output += echo_output
+    end
+      
+    return output, exitcode
   end
   
   def self.migrate_python(gear_home, uuid)
     gear_dir = File.join(gear_home, 'python-2.6')
-    #TODO need to figure out whether this is stickshift or openshift at this point
-    conf_file = File.join(gear_dir, 'conf.d', 'stickshift.conf')
+    #TODO need to confirm that it is openshift at this point
+    conf_file = File.join(gear_dir, 'conf.d', 'openshift.conf')
     text = File.read(conf_file)
     if text !~ /WSGIDaemonProcess/
       result = text.gsub("WSGIPassAuthorization On", "WSGIPassAuthorization On\nWSGIProcessGroup #{uuid}\nWSGIDaemonProcess #{uuid} user=#{uuid} group=#{uuid} processes=2 threads=25 python-path=\"#{gear_dir}/repo/libs:#{gear_dir}/repo/wsgi:#{gear_dir}/virtenv/lib/python2.6/")
@@ -476,5 +469,49 @@ module OpenShiftMigration
     output = ''
     output += "migrate_python #{conf_file}"
     return output
+  end
+
+  def self.rename_env_vars(gear_home)
+    env_files = Dir["#{gear_home}/.env/*"] + Dir["#{gear_home}/.env/.uservars/*"]
+
+    env_files.each do |fname|
+      if File.file?("#{fname}") && !File.symlink?("#{fname}")
+        Util.replace_in_file("#{fname}", "/var/lib/stickshift", "/var/lib/openshift")
+        Util.replace_in_file("#{fname}", "/usr/libexec/stickshift", "/usr/libexec/openshift")
+      end
+    end
+  end
+
+  def self.rename_ss_conf(gear_home, cart_name)
+    unless File.exists?("#{gear_home}/#{cart_name}/conf.d/openshift.conf")
+      if File.exists?("#{gear_home}/#{cart_name}/conf.d/stickshift.conf")
+        FileUtils.mv("#{gear_home}/#{cart_name}/conf.d/stickshift.conf", "#{gear_home}/#{cart_name}/conf.d/openshift.conf") 
+      end
+    end
+  end
+
+  def self.rename_migrate_generic(cart_name, app_name, gear_home)
+    rename_ss_conf(gear_home, cart_name)
+
+    if File.exists?("#{gear_home}/#{cart_name}/conf.d/openshift.conf")
+      Util.replace_in_file("#{gear_home}/#{cart_name}/conf.d/openshift.conf", "/var/lib/stickshift", "/var/lib/openshift")
+    end
+  end
+
+  def self.rename_migrate_jboss (uuid, jboss_name, app_name, gear_home, cartridge_root_dir)
+    output = ''
+
+    ["/#{jboss_name}/standalone/configuration/standalone.xml", "/#{jboss_name}/standalone/configuration/standalone_xml_history/current/standalone.last.xml"].each do |fname|
+      if File.exists? "#{gear_home}/#{fname}"
+        Util.replace_in_file("#{gear_home}/#{fname}", "/var/lib/stickshift", "/var/lib/openshift")
+      end
+    end
+
+    Util.symlink_as_user(uuid, "#{cartridge_root_dir}/#{jboss_name}/info/bin/product.conf", "#{gear_home}/#{jboss_name}/#{jboss_name}/bin/product.conf")
+    Util.symlink_as_user(uuid, "#{cartridge_root_dir}/#{jboss_name}/info/bin/standalone.conf", "#{gear_home}/#{jboss_name}/#{jboss_name}/bin/standalone.conf")
+    Util.symlink_as_user(uuid, "#{cartridge_root_dir}/#{jboss_name}/info/bin/standalone.sh", "#{gear_home}/#{jboss_name}/#{jboss_name}/bin/standalone.sh")
+    Util.symlink_as_user(uuid, "#{gear_home}/#{jboss_name}/repo/.openshift/config/modules", "#{gear_home}/#{jboss_name}/#{jboss_name}/standalone/configuration/modules")
+
+    output
   end
 end
