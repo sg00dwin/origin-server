@@ -8,7 +8,7 @@
 
 Summary:   Dependencies for OpenShift development
 Name:      rhc-devenv
-Version: 0.100.13
+Version: 0.100.14
 Release:   1%{?dist}
 Group:     Development/Libraries
 License:   GPLv2
@@ -606,6 +606,15 @@ restorecon /etc/openshift/node.conf || :
 /sbin/service libra-data restart > /dev/null 2>&1 || :
 
 %changelog
+* Thu Oct 18 2012 Adam Miller <admiller@redhat.com> 0.100.14-1
+- Bug 867671 (dmcphers@redhat.com)
+- Fixes for scripts moved to origin-server (kraman@gmail.com)
+- Polydirs moved to Origin.  The /sandbox directory stays in Hosted for now.
+  (rmillner@redhat.com)
+- Consolidate boolean setting with devenv. (rmillner@redhat.com)
+- Bugs from testing. (rmillner@redhat.com)
+- Move SELinux to Origin and use new policy definition. (rmillner@redhat.com)
+
 * Tue Oct 16 2012 Adam Miller <admiller@redhat.com> 0.100.13-1
 - Added sprint_status_report jenkins jobs (fotios@redhat.com)
 
