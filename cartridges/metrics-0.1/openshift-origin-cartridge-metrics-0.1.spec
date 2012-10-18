@@ -2,7 +2,7 @@
 %global frameworkdir %{_libexecdir}/openshift/cartridges/metrics-0.1
 
 Name: openshift-origin-cartridge-metrics-0.1
-Version: 0.20.4
+Version: 0.20.5
 Release: 1%{?dist}
 Summary: Embedded metrics support for express
 
@@ -54,6 +54,9 @@ rm -rf $RPM_BUILD_ROOT
 %{cartridgedir}/info/manifest.yml
 
 %changelog
+* Thu Oct 18 2012 Adam Miller <admiller@redhat.com> 0.20.5-1
+- Fixes for scripts moved to origin-server (kraman@gmail.com)
+
 * Mon Oct 08 2012 Dan McPherson <dmcphers@redhat.com> 0.20.4-1
 - Fixing renames, paths, configs and cleaning up old packages. Adding
   obsoletes. (kraman@gmail.com)
