@@ -76,7 +76,19 @@ sslverify=1
 sslclientkey=/etc/pki/entitlement/content-rhel6.key
 sslclientcert=/etc/pki/entitlement/product/content-rhel6.crt
 sslcacert=/etc/pki/entitlement/cdn.redhat.com-chain.crt
-includepkgs=java-1.6.0-openjdk*
+includepkgs=java-1.6.0-openjdk* java-1.7.0-openjdk*
+
+[rhui-us-east-1-rhel-server-releases-optional-i386]
+name=Red Hat Enterprise Linux Server 6 Optional -i386 (RPMs)
+mirrorlist=https://rhui2-cds01.us-east-1.aws.ce.redhat.com/pulp/mirror/content/dist/rhel/rhui/server/6/\$releasever/i386/optional/os
+enabled=1
+gpgcheck=1
+gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-redhat-release file:///etc/pki/rpm-gpg/RPM-GPG-KEY-redhat-auxiliary
+sslverify=1
+sslclientkey=/etc/pki/entitlement/content-rhel6.key
+sslclientcert=/etc/pki/entitlement/product/content-rhel6.crt
+sslcacert=/etc/pki/entitlement/cdn.redhat.com-chain.crt
+includepkgs=java-1.6.0-openjdk* java-1.7.0-openjdk*
 
 [Zend]
 name=Zend Server
@@ -165,6 +177,8 @@ yum -y install rh-amazon-rhui-client-jbews1
 # Install the 32 bit java before anything else
 yum -y install java-1.6.0-openjdk.i686 java-1.6.0-openjdk-devel.i686
 yum -y remove java-1.6.0-openjdk.x86_64
+rpm -e --nodeps java-1.7.0-openjdk java-1.7.0-openjdk-devel
+yum -y install java-1.7.0-openjdk.i686 java-1.7.0-openjdk-devel.i686
 yum update -y --exclude='rhc*' --exclude='mcollective*'
 
 
