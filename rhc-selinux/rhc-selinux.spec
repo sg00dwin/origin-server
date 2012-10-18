@@ -1,6 +1,6 @@
 Summary:       SELinux policy for OpenShift nodes
 Name:          rhc-selinux
-Version: 0.98.2
+Version: 0.98.3
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -58,6 +58,12 @@ fi
 
 
 %changelog
+* Thu Oct 18 2012 Adam Miller <admiller@redhat.com> 0.98.3-1
+- Needed additional ssh policy to allow ssh into gears. (rmillner@redhat.com)
+- Consolidate boolean setting with devenv. (rmillner@redhat.com)
+- Policy update (rmillner@redhat.com)
+- Move SELinux to Origin and use new policy definition. (rmillner@redhat.com)
+
 * Wed Oct 10 2012 Rob Millner <rmillner@redhat.com> 0.98.5-1
 - Official openshift-hosted policy (rmillner@redhat.com)
 - Move SELinux to Origin and use new policy definition. (rmillner@redhat.com)
