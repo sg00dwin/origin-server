@@ -2,7 +2,7 @@
 
 Summary:       Multi-tenant cloud management system node tools
 Name:          rhc-node
-Version: 0.99.8
+Version: 0.99.9
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -225,6 +225,14 @@ fi
 
 
 %changelog
+* Thu Oct 18 2012 Adam Miller <admiller@redhat.com> 0.99.9-1
+- Port auto-Idler to origin-server (jhonce@redhat.com)
+- Update to use origin scripts (jhonce@redhat.com)
+- Fixes for scripts moved to origin-server (kraman@gmail.com)
+- Polydirs moved to Origin.  The /sandbox directory stays in Hosted for now.
+  (rmillner@redhat.com)
+- Move SELinux to Origin and use new policy definition. (rmillner@redhat.com)
+
 * Mon Oct 15 2012 Adam Miller <admiller@redhat.com> 0.99.8-1
 - BZ 864617: Ignore search engine bot entries in log and allow passing log file
   path as an argument. (mpatel@redhat.com)
