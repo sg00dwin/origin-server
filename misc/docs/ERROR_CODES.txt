@@ -62,6 +62,7 @@ User errors:
 167: Invalid value for 'nolinks' parameter.
 168: Invalid scaling facter provided. Value out of range.
 169: Could not completely distribute scales_from to all groups
+170: Could not resolve DNS
 210: Can not override existing location for git repo
 211: Parent directory for git repo does not exist
 212: Could not find libra_id_rsa
