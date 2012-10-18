@@ -143,6 +143,9 @@ rm -rf %{buildroot}
 %{sitedir}/public
 
 %changelog
+* Thu Oct 18 2012 Adam Miller <admiller@redhat.com> 0.99.12-2
+- bump site Release for quasi chain build (admiller@redhat.com)
+
 * Thu Oct 18 2012 Adam Miller <admiller@redhat.com> 0.99.12-1
 - Merge pull request #482 from sg00dwin/master (openshift+bot@redhat.com)
 - Adjust linear gradient degree to account for rendering change introduced in
