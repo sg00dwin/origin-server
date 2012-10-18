@@ -3,7 +3,7 @@
 
 Summary:   Li broker components
 Name:      rhc-broker
-Version: 0.99.14
+Version: 0.99.15
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -113,6 +113,9 @@ if [ ! -f %{_localstatedir}/log/openshift/user_action.log ]; then
 fi
 
 %changelog
+* Thu Oct 18 2012 Adam Miller <admiller@redhat.com> 0.99.15-1
+- Fixed template rake tasks to work with new REST API stuff (fotios@redhat.com)
+
 * Tue Oct 16 2012 Adam Miller <admiller@redhat.com> 0.99.14-1
 - Merge pull request #489 from tkramer-
   rh/dev/tkramer/security/user_action_and_production_log (dmcphers@redhat.com)
