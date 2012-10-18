@@ -8,8 +8,8 @@
 
 Summary:   OpenShift Site Rails application
 Name:      rhc-site
-Version: 0.99.11
-Release:   2%{?dist}
+Version: 0.99.12
+Release:   1%{?dist}
 Group:     Network/Daemons
 License:   ASL 2.0
 URL:       http://openshift.redhat.com
@@ -143,6 +143,15 @@ rm -rf %{buildroot}
 %{sitedir}/public
 
 %changelog
+* Thu Oct 18 2012 Adam Miller <admiller@redhat.com> 0.99.12-1
+- Merge pull request #482 from sg00dwin/master (openshift+bot@redhat.com)
+- Adjust linear gradient degree to account for rendering change introduced in
+  FF16 more info here https://hacks.mozilla.org/2012/07/aurora-16-is-out/
+  (sgoodwin@redhat.com)
+- Merge branch 'master' of github.com:openshift/li (sgoodwin@redhat.com)
+- Merge branch 'master' of github.com:openshift/li (sgoodwin@redhat.com)
+- fix bz816372 (sgoodwin@redhat.com)
+
 * Tue Oct 16 2012 Adam Miller <admiller@redhat.com> 0.99.11-2
 - bump spec file for chain build 
 
