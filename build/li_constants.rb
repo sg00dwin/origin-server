@@ -22,8 +22,8 @@ DEVENV_AMI_WILDCARDS = {DEVENV_WILDCARD => {:keep => 2, :regex => /(devenv)_(\d+
                         DEVENV_STAGE_WILDCARD => {:keep => 8, :regex => /(devenv-stage)_(\d+)/},
                         DEVENV_CLEAN_WILDCARD => {:keep => 1, :regex => /(devenv-clean)_(\d+)/},
                         DEVENV_STAGE_CLEAN_WILDCARD => {:keep => 1, :regex => /(devenv-stage-clean)_(\d+)/},
-                        DEVENV_BASE_WILDCARD => {:keep => 1, :regex => /(devenv-base)_(\d+)/},
-                        DEVENV_STAGE_BASE_WILDCARD => {:keep => 1, :regex => /(devenv-stage-base)_(\d+)/},
+                        DEVENV_BASE_WILDCARD => {:keep => 2, :regex => /(devenv-base)_(\d+)/},
+                        DEVENV_STAGE_BASE_WILDCARD => {:keep => 2, :regex => /(devenv-stage-base)_(\d+)/},
                         OSO_FEDORA_WILDCARD => {:keep => 2, :regex => /(oso-fedora)_(\d+)/},
                         OSO_FEDORA_BASE_WILDCARD => {:keep => 1, :regex => /(oso-fedora-base)_(\d+)/},
                         FORK_AMI_WILDCARD => {:keep => 50, :keep_per_sub_group => 1, :regex => /(fork_ami_.*)_(\d+)/}}
