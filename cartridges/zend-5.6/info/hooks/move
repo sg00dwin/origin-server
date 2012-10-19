@@ -5,8 +5,13 @@
 # Exit on any errors
 set -e
 
-# Import Environment Variables
-for f in ~/.env/*; do . $f; done
+# Import Environment Variables - this runs as root so ~ is not right
+# use /var/lib/openshift/$uuid/.env  where uuid=$3
+source /etc/openshift/node.conf
+for f in $GEAR_BASE_DIR/$3/.env/*; do
+    . $f;
+done
+
 cartridge_type="zend-5.6"
 cartridge_dir=$OPENSHIFT_HOMEDIR/$cartridge_type
 
