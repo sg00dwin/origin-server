@@ -242,8 +242,22 @@ def update_devenv(mig_config, devenv, new_version, verbose = true, dry_run = tru
   command("ssh root@#{devenv} yum -y install yum-priorities", '  ', verbose, dry_run)
   command("ssh root@#{devenv} yum -y install rh-amazon-rhui-client-jbeap6", '  ', verbose, dry_run)
   command("ssh root@#{devenv} yum -y install rh-amazon-rhui-client-jbews1", '  ', verbose, dry_run)
+  command("ssh root@#{devenv} service libra-site stop", '  ', verbose, dry_run)
+  command("ssh root@#{devenv} service libra-broker stop", '  ', verbose, dry_run)
+  command("ssh root@#{devenv} service mcollective stop", '  ', verbose, dry_run)
+  command("ssh root@#{devenv} semodule -r libra", '  ', verbose, dry_run)
+  command("ssh root@#{devenv} yum -y update rhc-selinux selinux-policy selinux-policy-targeted", '  ', verbose, dry_run)
+  command("ssh root@#{devenv} \"semodule -l | grep libra\"", '  ', verbose, dry_run)
+  command("ssh root@#{devenv} \"semodule -l | grep openshift\"", '  ', verbose, dry_run)
 
+  puts "Does that look right?"
+  answer = STDIN.gets
+
+  command("ssh root@#{devenv} setsebool -P httpd_run_stickshift=1", '  ', verbose, dry_run)
   command("ssh root@#{devenv} \"yum -y update --enablerepo li-local 2>&1 > /root/update.#{new_version}.log\"", '  ', verbose, dry_run)
+
+  command("ssh root@#{devenv} sed -i -e 's,user,user:iscript=/usr/sbin/oo-namespace-init,g' /etc/security/namespace.d/* ", '  ', verbose, dry_run)
+  command("ssh root@#{devenv} sed -i -e 's/pam_libra/pam_openshift/g' /etc/security/namespace.d/* ", '  ', verbose, dry_run)
 
   reboot_devenv(devenv, verbose, dry_run)
 end
@@ -403,7 +417,7 @@ def get_or_create_config()
   return YAML.load_file(config_file)
 end
 
-cart_types = [ 'php-5.3', 'ruby-1.8', 'ruby-1.9', 'perl-5.10', 'jbossas-7', 'jbosseap-6.0', 'python-2.6', 'diy-0.1',
+cart_types = [ 'php-5.3', 'ruby-1.8', 'ruby-1.9', 'perl-5.10', 'jbossas-7', 'jbosseap-6.0', 'python-2.6', 'diy-0.1', 'nodejs-0.6',
                ['php-5.3', 'mysql-5.1'], ['php-5.3', 'postgresql-8.4'], ['php-5.3', 'mongodb-2.0']
              ]
              
