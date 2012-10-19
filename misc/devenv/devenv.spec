@@ -8,7 +8,7 @@
 
 Summary:   Dependencies for OpenShift development
 Name:      rhc-devenv
-Version: 0.100.14
+Version: 0.100.15
 Release:   1%{?dist}
 Group:     Development/Libraries
 License:   GPLv2
@@ -607,6 +607,13 @@ restorecon /etc/openshift/node.conf || :
 /sbin/service libra-data restart > /dev/null 2>&1 || :
 
 %changelog
+* Fri Oct 19 2012 Adam Miller <admiller@redhat.com> 0.100.15-1
+- Merge pull request #502 from tdawson/tdawson/i386repo
+  (openshift+bot@redhat.com)
+- changes for i386 java-1.7.0-openjdk (tdawson@redhat.com)
+- adding drupal6-node_import package to devenv.spec and adding to
+  enable_modules.sh drush script (ansilva@redhat.com)
+
 * Thu Oct 18 2012 Adam Miller <admiller@redhat.com> 0.100.14-1
 - Bug 867671 (dmcphers@redhat.com)
 - Fixes for scripts moved to origin-server (kraman@gmail.com)
