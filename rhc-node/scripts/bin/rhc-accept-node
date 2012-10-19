@@ -17,7 +17,7 @@ optparse = OptionParser.new { |opts|
 optparse.parse!
 
 
-$USERS = %x[grep ":libra guest:" /etc/passwd].split("\n")
+$USERS = %x[grep ":OpenShift guest:" /etc/passwd].split("\n")
 $TC_DATA = %x[tc clas show dev eth0].split("\n").grep(/parent/)
 $ALL_QUOTAS = %x[repquota -a].split("\n")
 
@@ -244,7 +244,7 @@ def check_quotas
 end
 
 def check_users
-    #users = %x[grep ":libra guest:" /etc/passwd].split("\n")
+    #users = %x[grep ":OpenShift guest:" /etc/passwd].split("\n")
     verbose("checking #{$USERS.length} user accounts")
     conf_dir_templ = "#{$LIMITS_CONF_DIR}/84-%s.conf"
     user_cgroup="/cgroup/all/openshift/%s"

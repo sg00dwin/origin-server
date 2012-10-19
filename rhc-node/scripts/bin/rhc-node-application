@@ -3,7 +3,7 @@
 # Survey the character of an application
 #
 ETC_PASSWD=${ETC_PASSWD:=/etc/passwd}
-LIBRA_GUEST_MARKER=${LIBRA_GUEST_MARKER:="libra guest"}
+LIBRA_GUEST_MARKER=${LIBRA_GUEST_MARKER:="OpenShift guest"}
 
 function valid_user() {
     # USERNAME=$1
