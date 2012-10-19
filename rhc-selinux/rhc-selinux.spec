@@ -8,8 +8,8 @@ URL:           http://openshift.redhat.com
 Source0:       rhc-selinux-%{version}.tar.gz
 
 BuildRoot:     %(mktemp -ud %{_tmppath}/%{name}-%{version}-%{release}-XXXXXX)
-BuildRequires: selinux-policy >= 3.7.19-167
-Requires:      selinux-policy-targeted >= 3.7.19-167
+BuildRequires: selinux-policy >= 3.7.19-173
+Requires:      selinux-policy-targeted >= 3.7.19-173
 Requires:      policycoreutils-python
 Requires(post):   /usr/sbin/semanage
 Requires(postun): /usr/sbin/semanage
@@ -41,9 +41,9 @@ rm -rf %{buildroot}
 %post
 # Not compatible with the old libra policy and older versions of this
 # RPM don't remove it.
-semodule -r libra >/dev/null 2>&1 || :
-
-/usr/sbin/semodule -d openshift-origin -i %{_datadir}/selinux/packages/openshift-hosted.pp.bz2 || :
+/usr/sbin/semodule -r libra >/dev/null 2>&1 || :
+/usr/sbin/semodule -d openshift-origin 2>&1 || :
+/usr/sbin/semodule -i %{_datadir}/selinux/packages/openshift-hosted.pp.bz2 || :
 
 %postun
 if [ $1 = 0 ]
