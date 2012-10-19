@@ -3,7 +3,7 @@
 
 Summary:   Li broker components
 Name:      rhc-broker
-Version: 0.99.15
+Version: 0.99.16
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -113,6 +113,10 @@ if [ ! -f %{_localstatedir}/log/openshift/user_action.log ]; then
 fi
 
 %changelog
+* Fri Oct 19 2012 Adam Miller <admiller@redhat.com> 0.99.16-1
+- Merge pull request #501 from pmorie/dev/rename (dmcphers@redhat.com)
+- Changes for 2.0.19 migrations (pmorie@gmail.com)
+
 * Thu Oct 18 2012 Adam Miller <admiller@redhat.com> 0.99.15-1
 - Fixed template rake tasks to work with new REST API stuff (fotios@redhat.com)
 
