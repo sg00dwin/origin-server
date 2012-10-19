@@ -33,8 +33,14 @@ namespace :descriptors do
         puts "Creating application #{name}"
 
         # Destroy application if it already exists
-        if(app = client.find_application("#{name}").first)
+        begin
+          app = domain.find_application("#{name}")
           destroy_app(app)
+        rescue RHC::ApplicationNotFoundException
+          # Nothing to do
+        rescue => err
+          puts "An error occured deleting application #{name}"
+          raise err
         end
 
         # Create new application
@@ -69,7 +75,7 @@ namespace :descriptors do
       {
         :name => name,
         :script => template.template_function(false),
-        :metadata => JSON.pretty_generate(opts[:metadata]),
+        :metadata => JSON.dump(opts[:metadata]),
         :descriptor => desc
       }
     end.compact.sort_by{|x| x[:name] }
