@@ -2,7 +2,7 @@
 
 Summary:       Multi-tenant cloud management system node tools
 Name:          rhc-node
-Version: 0.99.9
+Version: 0.99.10
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -225,6 +225,11 @@ fi
 
 
 %changelog
+* Fri Oct 19 2012 Adam Miller <admiller@redhat.com> 0.99.10-1
+- Change libra guest to OpenShift guest (dmcphers@redhat.com)
+- Merge pull request #501 from pmorie/dev/rename (dmcphers@redhat.com)
+- Changes for 2.0.19 migrations (pmorie@gmail.com)
+
 * Thu Oct 18 2012 Adam Miller <admiller@redhat.com> 0.99.9-1
 - Port auto-Idler to origin-server (jhonce@redhat.com)
 - Update to use origin scripts (jhonce@redhat.com)
