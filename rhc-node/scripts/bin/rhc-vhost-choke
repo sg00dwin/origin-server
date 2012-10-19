@@ -45,7 +45,7 @@ function ensure_mod_vhost_choke_configured() {
 
 #  Print list of choked gears.
 function list_choked_gears() {
-   for uuid in `grep ":libra guest:" /etc/passwd | cut -d: -f1`; do
+   for uuid in `grep ":OpenShift guest:" /etc/passwd | cut -d: -f1`; do
        vhcfg=$(find $OPENSHIFT_HTTP_CONF_DIR -follow -name $uuid\* -type d | head -1)
        [[ -z "$vhcfg"  ||  ! -d "$vhcfg" ]]  &&  continue
        if [ -f "$vhcfg/$VHOST_CHOKE_CFG" ]; then

@@ -49,10 +49,10 @@ function netclass() {
     printf "%04x" $1
 }
 
-# List the libra guest users
+# List the OpenShift guest users
 #
 libra_users() {
-    grep 'libra guest' /etc/passwd | cut -d: -f1
+    grep 'OpenShift guest' /etc/passwd | cut -d: -f1
 }
 
 #
