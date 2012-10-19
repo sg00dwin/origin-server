@@ -2,7 +2,7 @@
 %global frameworkdir %{_libexecdir}/openshift/cartridges/metrics-0.1
 
 Name: openshift-origin-cartridge-metrics-0.1
-Version: 0.20.5
+Version: 0.20.6
 Release: 1%{?dist}
 Summary: Embedded metrics support for express
 
@@ -54,6 +54,11 @@ rm -rf $RPM_BUILD_ROOT
 %{cartridgedir}/info/manifest.yml
 
 %changelog
+* Fri Oct 19 2012 Adam Miller <admiller@redhat.com> 0.20.6-1
+- Merge pull request #495 from rmillner/dev/rmillner/bugs/843286
+  (openshift+bot@redhat.com)
+- BZ 843286: Enable auth files via htaccess (rmillner@redhat.com)
+
 * Thu Oct 18 2012 Adam Miller <admiller@redhat.com> 0.20.5-1
 - Fixes for scripts moved to origin-server (kraman@gmail.com)
 
