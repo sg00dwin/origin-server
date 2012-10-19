@@ -49,243 +49,197 @@ end
 
 __END__
 ---
-- :descriptor: |
-    ---
-    Name: cakephp
-    Scaling:
-      Max: -1
-      Min: 1
-    License-Url: ""
-    License: unknown
-    Help-Topics: {}
+- :name: cakephp
+  :script: oo-admin-ctl-template --command 'add' --cost '1' --git-url 'git://github.com/openshift/cakephp-example.git'
+    --named 'CakePHP' --tags 'php,cakephp,framework,experimental'
+  :metadata: ! '{"git_url":"git://github.com/openshift/cakephp-example.git","git_project_url":"http://github.com/openshift/cakephp-example","website":"http://cakephp.org/","version":"2.2.1","license":"mit","description":"CakePHP
+    is a rapid development framework for PHP which uses commonly known design patterns
+    like Active Record, Association Data Mapping, Front Controller and MVC."}'
+  :descriptor: ! "---\nConnections:\n  mysql-5.1-php-5.3:\n    Components:\n    -
+    php-5.3\n    - mysql-5.1\nDisplay-Name: cakephp-0.0-noarch\nName: cakephp\nRequires:\n-
+    php-5.3\n- mysql-5.1\n"
+- :name: cakephptest
+  :script: oo-admin-ctl-template --command 'add' --cost '1' --git-url 'git://github.com/nhr/cakephp-example.git'
+    --named 'CakePHP (TEST)' --tags 'php,cakephp,framework,experimental,in_development'
+  :metadata: ! '{"git_url":"git://github.com/nhr/cakephp-example.git","git_project_url":"http://github.com/nhr/cakephp-example","website":"http://cakephp.org/","version":"2.2.1","license":"mit","description":"CakePHP
+    is a rapid development framework for PHP which uses commonly known design patterns
+    like Active Record, Association Data Mapping, Front Controller and MVC."}'
+  :descriptor: ! "---\nConnections:\n  mysql-5.1-php-5.3:\n    Components:\n    -
+    php-5.3\n    - mysql-5.1\nDisplay-Name: cakephptest-0.0-noarch\nName: cakephptest\nRequires:\n-
+    php-5.3\n- mysql-5.1\n"
+- :name: cakephptypeless
+  :script: oo-admin-ctl-template --command 'add' --cost '1' --git-url 'git://github.com/ironcladlou/cakephp-example.git'
+    --named 'CakePHP' --tags 'php,cakephp,framework,experimental,in_development'
+  :metadata: ! '{"git_url":"git://github.com/ironcladlou/cakephp-example.git","git_project_url":"http://github.com/ironcladlou/cakephp-example","website":"http://cakephp.org/","version":"2.2.1","license":"mit","description":"CakePHP
+    is a rapid development framework for PHP which uses commonly known design patterns
+    like Active Record, Association Data Mapping, Front Controller and MVC."}'
+  :descriptor: ! "---\nConnections:\n  mysql-5.1-php-5.3:\n    Components:\n    -
+    php-5.3\n    - mysql-5.1\nDisplay-Name: cakephptypeless-0.0-noarch\nName: cakephptypeless\nRequires:\n-
+    php-5.3\n- mysql-5.1\n"
+- :name: django
+  :script: oo-admin-ctl-template --command 'add' --cost '1' --git-url 'git://github.com/openshift/django-example.git'
+    --named 'Django' --tags 'python,django,framework,experimental,in_development'
+  :metadata: ! '{"git_url":"git://github.com/openshift/django-example.git","git_project_url":"http://github.com/openshift/django-example","website":"https://www.djangoproject.com/","version":1.4,"license":"bsd","description":"A
+    high-level Python web framework that encourages rapid development and clean, pragmatic
+    design."}'
+  :descriptor: ! '---
+
+    Display-Name: django-0.0-noarch
+
+    Name: django
 
     Requires:
-    - php-5.3
-    - mysql-5.1
-    Display-Name: cakephp-0.0-noarch
-    Cart-Data: {}
 
-    Connections:
-      mysql-5.1-php-5.3:
-        Components:
-        - php-5.3
-        - mysql-5.1
-    Version: "0.0"
-    Website: ""
-    Vendor: unknown
-    Categories:
-    - cartridge
-    Description: ""
-    Architecture: noarch
+    - python-2.6
 
-  :script: oo-admin-ctl-template --command 'add' --cost '1' --git-url 'git://github.com/openshift/cakephp-example.git' --named 'CakePHP' --tags 'php,cakephp,framework,experimental'
-  :metadata: |-
-    {
-      "website": "http://cakephp.org/",
-      "git_url": "git://github.com/openshift/cakephp-example.git",
-      "license": "mit",
-      "version": "2.2.1",
-      "git_project_url": "http://github.com/openshift/cakephp-example",
-      "description": "CakePHP is a rapid development framework for PHP which uses commonly known design patterns like Active Record, Association Data Mapping, Front Controller and MVC."
-    }
-  :name: cakephp
-- :descriptor: |
-    ---
-    Name: drupal
-    Scaling:
-      Max: -1
-      Min: 1
-    License-Url: ""
-    License: unknown
-    Help-Topics: {}
+'
+- :name: djangotest
+  :script: oo-admin-ctl-template --command 'add' --cost '1' --git-url 'git://github.com/nhr/django-example.git'
+    --named 'Django (Test)' --tags 'python,django,framework,experimental,in_development'
+  :metadata: ! '{"git_url":"git://github.com/nhr/django-example.git","git_project_url":"http://github.com/nhr/django-example","website":"https://www.djangoproject.com/","version":1.4,"license":"bsd","description":"A
+    high-level Python web framework that encourages rapid development and clean, pragmatic
+    design."}'
+  :descriptor: ! '---
+
+    Display-Name: djangotest-0.0-noarch
+
+    Name: djangotest
 
     Requires:
-    - php-5.3
-    - mysql-5.1
-    Display-Name: drupal-0.0-noarch
-    Cart-Data: {}
 
-    Connections:
-      mysql-5.1-php-5.3:
-        Components:
-        - php-5.3
-        - mysql-5.1
-    Version: "0.0"
-    Website: ""
-    Vendor: unknown
-    Categories:
-    - cartridge
-    Description: ""
-    Architecture: noarch
+    - python-2.6
 
-  :script: oo-admin-ctl-template --command 'add' --cost '1' --git-url 'git://github.com/openshift/drupal-example.git' --named 'Drupal' --tags 'php,drupal,wiki,framework,experimental'
-  :metadata: |-
-    {
-      "website": "http://drupal.org/",
-      "git_url": "git://github.com/openshift/drupal-example.git",
-      "license": "gpl2+",
-      "credentials": [
-        {
-          "username": "Admin",
-          "password": "OpenShiftAdmin"
-        }
-      ],
-      "version": 7.7,
-      "git_project_url": "http://github.com/openshift/drupal-example",
-      "description": "An open source content management platform written in PHP powering millions of websites and applications. It is built, used, and supported by an active and diverse community of people around the world."
-    }
-  :name: drupal
-- :descriptor: |
-    ---
-    Name: kitchensink
-    Scaling:
-      Max: -1
-      Min: 1
-    License-Url: ""
-    License: unknown
-    Help-Topics: {}
+'
+- :name: djangotypeless
+  :script: oo-admin-ctl-template --command 'add' --cost '1' --git-url 'git://github.com/ironcladlou/django-example.git'
+    --named 'Django' --tags 'python,django,framework,experimental,in_development'
+  :metadata: ! '{"git_url":"git://github.com/ironcladlou/django-example.git","git_project_url":"http://github.com/ironcladlou/django-example","website":"https://www.djangoproject.com/","version":1.4,"license":"bsd","description":"A
+    high-level Python web framework that encourages rapid development and clean, pragmatic
+    design."}'
+  :descriptor: ! '---
+
+    Display-Name: djangotypeless-0.0-noarch
+
+    Name: djangotypeless
 
     Requires:
+
+    - python-2.6
+
+'
+- :name: drupal
+  :script: oo-admin-ctl-template --command 'add' --cost '1' --git-url 'git://github.com/openshift/drupal-example.git'
+    --named 'Drupal' --tags 'php,drupal,wiki,framework,experimental'
+  :metadata: ! '{"git_url":"git://github.com/openshift/drupal-example.git","git_project_url":"http://github.com/openshift/drupal-example","website":"http://drupal.org/","version":7.7,"license":"gpl2+","description":"An
+    open source content management platform written in PHP powering millions of websites
+    and applications. It is built, used, and supported by an active and diverse community
+    of people around the world.","credentials":[{"username":"Admin","password":"OpenShiftAdmin"}]}'
+  :descriptor: ! "---\nArchitecture: noarch\nCart-Data: {}\nCategories:\n- cartridge\nConnections:\n
+    \ mysql-5.1-php-5.3:\n    Components:\n    - php-5.3\n    - mysql-5.1\nDescription:
+    ''\nDisplay-Name: drupal-0.0-noarch\nHelp-Topics: {}\nLicense: unknown\nLicense-Url:
+    ''\nName: drupal\nRequires:\n- php-5.3\n- mysql-5.1\nScaling:\n  Max: -1\n  Min:
+    1\nVendor: unknown\nVersion: '0.0'\nWebsite: ''\n"
+- :name: drupaltypeless
+  :script: oo-admin-ctl-template --command 'add' --cost '1' --git-url 'git://github.com/ironcladlou/drupal-example.git'
+    --named 'Drupal' --tags 'php,drupal,wiki,framework,experimental,in_development'
+  :metadata: ! '{"git_url":"git://github.com/ironcladlou/drupal-example.git","git_project_url":"http://github.com/ironcladlou/drupal-example","website":"http://drupal.org/","version":7.7,"license":"gpl2+","description":"An
+    open source content management platform written in PHP powering millions of websites
+    and applications. It is built, used, and supported by an active and diverse community
+    of people around the world.","credentials":[{"username":"Admin","password":"OpenShiftAdmin"}]}'
+  :descriptor: ! "---\nArchitecture: noarch\nCart-Data: {}\nCategories:\n- cartridge\nConnections:\n
+    \ mysql-5.1-php-5.3:\n    Components:\n    - php-5.3\n    - mysql-5.1\nDescription:
+    ''\nDisplay-Name: drupal-0.0-noarch\nHelp-Topics: {}\nLicense: unknown\nLicense-Url:
+    ''\nName: drupal\nRequires:\n- php-5.3\n- mysql-5.1\nScaling:\n  Max: -1\n  Min:
+    1\nVendor: unknown\nVersion: '0.0'\nWebsite: ''\n"
+- :name: kitchensink
+  :script: oo-admin-ctl-template --command 'add' --cost '1' --git-url 'git://github.com/openshift/kitchensink-example.git'
+    --named 'JavaEE Full Profile Example on JBoss' --tags 'java,jboss,framework,experimental'
+  :metadata: ! '{"git_url":"git://github.com/openshift/kitchensink-example.git","git_project_url":"http://github.com/openshift/kitchensink-example","website":"https://docs.jboss.org/author/display/AS71/Kitchensink+quickstart","version":"7.0.0","license":"apache2","description":"This
+    quickstart uses JBoss AS7 to show off all the new features of Java EE 6 and makes
+    a great starting point for your Java project."}'
+  :descriptor: ! "---\nArchitecture: noarch\nCart-Data: {}\nCategories:\n- cartridge\nDescription:
+    ''\nDisplay-Name: kitchensink-0.0-noarch\nHelp-Topics: {}\nLicense: unknown\nLicense-Url:
+    ''\nName: kitchensink\nRequires:\n- jbossas-7\nScaling:\n  Max: -1\n  Min: 1\nVendor:
+    unknown\nVersion: '0.0'\nWebsite: ''\n"
+- :name: kitchensinktypeless
+  :script: oo-admin-ctl-template --command 'add' --cost '1' --git-url 'git://github.com/ironcladlou/kitchensink-example.git'
+    --named 'JavaEE Full Profile Example on JBoss' --tags 'java,jboss,framework,experimental,in_development'
+  :metadata: ! '{"git_url":"git://github.com/ironcladlou/kitchensink-example.git","git_project_url":"http://github.com/ironcladlou/kitchensink-example","website":"https://docs.jboss.org/author/display/AS71/Kitchensink+quickstart","version":"7.0.0","license":"apache2","description":"This
+    quickstart uses JBoss AS7 to show off all the new features of Java EE 6 and makes
+    a great starting point for your Java project."}'
+  :descriptor: ! '---
+
+    Display-Name: kitchensinktypeless-0.0-noarch
+
+    Name: kitchensinktypeless
+
+    Requires:
+
     - jbossas-7
-    Display-Name: kitchensink-0.0-noarch
-    Cart-Data: {}
 
-    Version: "0.0"
-    Website: ""
-    Vendor: unknown
-    Categories:
-    - cartridge
-    Description: ""
-    Architecture: noarch
+'
+- :name: rails
+  :script: oo-admin-ctl-template --command 'add' --cost '1' --git-url 'git://github.com/openshift/rails-example.git'
+    --named 'Ruby on Rails' --tags 'ruby,rails,framework,experimental'
+  :metadata: ! '{"git_url":"git://github.com/openshift/rails-example.git","git_project_url":"http://github.com/openshift/rails-example","website":"http://rubyonrails.org/","version":"3.2.6","license":"mit","description":"An
+    open source web framework for Ruby that is optimized for programmer happiness
+    and sustainable productivity. It lets you write beautiful code by favoring convention
+    over configuration."}'
+  :descriptor: ! "---\nArchitecture: noarch\nCart-Data: {}\nCategories:\n- cartridge\nConnections:\n
+    \ mysql-5.1-ruby-1.9:\n    Components:\n    - ruby-1.9\n    - mysql-5.1\nDescription:
+    ''\nDisplay-Name: rails-0.0-noarch\nHelp-Topics: {}\nLicense: unknown\nLicense-Url:
+    ''\nName: rails\nRequires:\n- ruby-1.9\n- mysql-5.1\nScaling:\n  Max: -1\n  Min:
+    1\nVendor: unknown\nVersion: '0.0'\nWebsite: ''\n"
+- :name: railstypeless
+  :script: oo-admin-ctl-template --command 'add' --cost '1' --git-url 'git://github.com/ironcladlou/rails-example.git'
+    --named 'Ruby on Rails' --tags 'ruby,rails,framework,experimental,in_development'
+  :metadata: ! '{"git_url":"git://github.com/ironcladlou/rails-example.git","git_project_url":"http://github.com/ironcladlou/rails-example","website":"http://rubyonrails.org/","version":"3.2.6","license":"mit","description":"An
+    open source web framework for Ruby that is optimized for programmer happiness
+    and sustainable productivity. It lets you write beautiful code by favoring convention
+    over configuration."}'
+  :descriptor: ! "---\nConnections:\n  mysql-5.1-ruby-1.9:\n    Components:\n    -
+    ruby-1.9\n    - mysql-5.1\nDisplay-Name: railstypeless-0.0-noarch\nName: railstypeless\nRequires:\n-
+    ruby-1.9\n- mysql-5.1\n"
+- :name: springeap6
+  :script: oo-admin-ctl-template --command 'add' --cost '1' --git-url 'git://github.com/openshift/spring-eap6-quickstart.git'
+    --named 'Spring Framework on JBoss EAP6' --tags 'java,jboss,framework,experimental'
+  :metadata: ! '{"git_url":"git://github.com/openshift/spring-eap6-quickstart.git","git_project_url":"http://github.com/openshift/spring-eap6-quickstart","website":"http://springframework.org/","version":"3.1.1","license":"apache2","description":"This
+    quickstart allows you to use Spring Framework on JBoss EAP 6."}'
+  :descriptor: ! "---\nArchitecture: noarch\nCart-Data: {}\nCategories:\n- cartridge\nDescription:
+    ''\nDisplay-Name: springeap6-0.0-noarch\nHelp-Topics: {}\nLicense: unknown\nLicense-Url:
+    ''\nName: springeap6\nRequires:\n- jbosseap-6.0\nScaling:\n  Max: -1\n  Min: 1\nVendor:
+    unknown\nVersion: '0.0'\nWebsite: ''\n"
+- :name: springeap6typeless
+  :script: oo-admin-ctl-template --command 'add' --cost '1' --git-url 'git://github.com/ironcladlou/spring-eap6-quickstart.git'
+    --named 'Spring Framework on JBoss EAP6' --tags 'java,jboss,framework,experimental,in_development'
+  :metadata: ! '{"git_url":"git://github.com/ironcladlou/spring-eap6-quickstart.git","git_project_url":"http://github.com/ironcladlou/spring-eap6-quickstart","website":"http://springframework.org/","version":"3.1.1","license":"apache2","description":"This
+    quickstart allows you to use Spring Framework on JBoss EAP 6."}'
+  :descriptor: ! '---
 
-  :script: oo-admin-ctl-template --command 'add' --cost '1' --git-url 'git://github.com/openshift/kitchensink-example.git' --named 'Kitchensink Example' --tags 'java,jboss,framework,experimental'
-  :metadata: |-
-    {
-      "website": "https://docs.jboss.org/author/display/AS71/Kitchensink+quickstart",
-      "git_url": "git://github.com/openshift/kitchensink-example.git",
-      "license": "apache2",
-      "version": "7.0.0",
-      "git_project_url": "http://github.com/openshift/kitchensink-example",
-      "description": "This quickstart uses JBoss AS7 to show off all the new features of Java EE 6 and makes a great starting point for your Java project."
-    }
-  :name: kitchensink
-- :descriptor: |
-    ---
-    Name: rails
-    Scaling:
-      Max: -1
-      Min: 1
-    License-Url: ""
-    License: unknown
-    Help-Topics: {}
+    Display-Name: springeap6typeless-0.0-noarch
 
-    Requires:
-    - ruby-1.9
-    - mysql-5.1
-    Display-Name: rails-0.0-noarch
-    Cart-Data: {}
-
-    Connections:
-      mysql-5.1-ruby-1.9:
-        Components:
-        - ruby-1.9
-        - mysql-5.1
-    Version: "0.0"
-    Website: ""
-    Vendor: unknown
-    Categories:
-    - cartridge
-    Description: ""
-    Architecture: noarch
-
-  :script: oo-admin-ctl-template --command 'add' --cost '1' --git-url 'git://github.com/openshift/rails-example.git' --named 'Ruby on Rails' --tags 'ruby,rails,framework,experimental'
-  :metadata: |-
-    {
-      "website": "http://rubyonrails.org/",
-      "git_url": "git://github.com/openshift/rails-example.git",
-      "license": "mit",
-      "version": "3.2.6",
-      "git_project_url": "http://github.com/openshift/rails-example",
-      "description": "An open source web framework for Ruby that is optimized for programmer happiness and sustainable productivity. It lets you write beautiful code by favoring convention over configuration."
-    }
-  :name: rails
-- :descriptor: |
-    ---
-    Name: springeap6
-    Scaling:
-      Max: -1
-      Min: 1
-    License-Url: ""
-    License: unknown
-    Help-Topics: {}
+    Name: springeap6typeless
 
     Requires:
+
     - jbosseap-6.0
-    Display-Name: springeap6-0.0-noarch
-    Cart-Data: {}
 
-    Version: "0.0"
-    Website: ""
-    Vendor: unknown
-    Categories:
-    - cartridge
-    Description: ""
-    Architecture: noarch
-
-  :script: oo-admin-ctl-template --command 'add' --cost '1' --git-url 'git://github.com/openshift/spring-eap6-quickstart.git' --named 'Spring Framework on JBoss EAP6' --tags 'java,jboss,framework,experimental'
-  :metadata: |-
-    {
-      "website": "http://springframework.org/",
-      "git_url": "git://github.com/openshift/spring-eap6-quickstart.git",
-      "license": "apache2",
-      "version": "3.1.1",
-      "git_project_url": "http://github.com/openshift/spring-eap6-quickstart",
-      "description": "This quickstart allows you to use Spring Framework on JBoss EAP 6."
-    }
-  :name: springeap6
-- :descriptor: |
-    ---
-    Name: wordpress
-    Scaling:
-      Max: -1
-      Min: 1
-    License-Url: ""
-    License: unknown
-    Help-Topics: {}
-
-    Requires:
-    - php-5.3
-    - mysql-5.1
-    Display-Name: wordpress-0.0-noarch
-    Cart-Data: {}
-
-    Connections:
-      mysql-5.1-php-5.3:
-        Components:
-        - php-5.3
-        - mysql-5.1
-    Version: "0.0"
-    Website: ""
-    Vendor: unknown
-    Categories:
-    - cartridge
-    Description: ""
-    Architecture: noarch
-
-  :script: oo-admin-ctl-template --command 'add' --cost '1' --git-url 'git://github.com/openshift/wordpress-example.git' --named 'WordPress' --tags 'php,wordpress,blog,framework,experimental'
-  :metadata: |-
-    {
-      "website": "http://wordpress.org",
-      "git_url": "git://github.com/openshift/wordpress-example.git",
-      "license": "gpl2+",
-      "credentials": [
-        {
-          "username": "Admin",
-          "password": "OpenShiftAdmin"
-        }
-      ],
-      "version": "3.3.2",
-      "git_project_url": "http://github.com/openshift/wordpress-example",
-      "description": "A semantic personal publishing platform written in PHP with a MySQL back end, focusing on aesthetics, web standards, and usability."
-    }
-  :name: wordpress
+'
+- :name: wordpress
+  :script: oo-admin-ctl-template --command 'add' --cost '1' --git-url 'git://github.com/openshift/wordpress-example.git'
+    --named 'WordPress' --tags 'php,wordpress,blog,framework,experimental'
+  :metadata: ! '{"git_url":"git://github.com/openshift/wordpress-example.git","git_project_url":"http://github.com/openshift/wordpress-example","website":"http://wordpress.org","version":"3.3.2","license":"gpl2+","description":"A
+    semantic personal publishing platform written in PHP with a MySQL back end, focusing
+    on aesthetics, web standards, and usability.","credentials":[{"username":"Admin","password":"OpenShiftAdmin"}]}'
+  :descriptor: ! "---\nConnections:\n  mysql-5.1-php-5.3:\n    Components:\n    -
+    php-5.3\n    - mysql-5.1\nDisplay-Name: wordpress-0.0-noarch\nName: wordpress\nRequires:\n-
+    php-5.3\n- mysql-5.1\n"
+- :name: wordpresstypeless
+  :script: oo-admin-ctl-template --command 'add' --cost '1' --git-url 'git://github.com/ironcladlou/wordpress-example.git'
+    --named 'WordPress' --tags 'php,wordpress,blog,framework,experimental,in_development'
+  :metadata: ! '{"git_url":"git://github.com/ironcladlou/wordpress-example.git","git_project_url":"http://github.com/ironcladlou/wordpress-example","website":"http://wordpress.org","version":"3.3.2","license":"gpl2+","description":"A
+    semantic personal publishing platform written in PHP with a MySQL back end, focusing
+    on aesthetics, web standards, and usability.","credentials":[{"username":"Admin","password":"OpenShiftAdmin"}]}'
+  :descriptor: ! "---\nConnections:\n  mysql-5.1-php-5.3:\n    Components:\n    -
+    php-5.3\n    - mysql-5.1\nDisplay-Name: wordpresstypeless-0.0-noarch\nName: wordpresstypeless\nRequires:\n-
+    php-5.3\n- mysql-5.1\n"
