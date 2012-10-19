@@ -130,6 +130,7 @@ Requires:  drupal6-mediawiki_filter
 Requires:  drupal6-menu_block
 Requires:  drupal6-messaging
 Requires:  drupal6-notifications
+Requires:  drupal6-node_import
 Requires:  drupal6-og
 Requires:  drupal6-openshift-custom_forms
 Requires:  drupal6-openshift-features-blogs
