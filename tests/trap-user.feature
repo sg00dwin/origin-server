@@ -1,5 +1,5 @@
 @runtime
-@runtime4
+@runtime3
 Feature: Trap User Shell
 
   As a system designer
