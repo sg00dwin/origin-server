@@ -6,7 +6,7 @@ Feature: Explicit idle/restore checks
     Then a <proc_name> process will be running
     And I record the active capacity
 
-    When I rhc-idle the application
+    When I oo-idle the application
     Then a <proc_name> process will not be running
     And the active capacity has been reduced
 
@@ -26,12 +26,12 @@ Feature: Explicit idle/restore checks
     Then a <proc_name> process will be running
     And I record the active capacity
 
-    When I rhc-idle the application
+    When I oo-idle the application
     Then a <proc_name> process will not be running
     And the active capacity has been reduced
     And I record the active capacity after idling
 
-    When I rhc-restore the application
+    When I oo-restore the application
     Then a <proc_name> process will be running
     And the active capacity has been increased
 
@@ -51,7 +51,7 @@ Feature: Explicit idle/restore checks
     Then a <proc_name> process will be running
     And I record the active capacity
 
-    When I rhc-idle the application
+    When I oo-idle the application
     Then a <proc_name> process will not be running
     And the active capacity has been reduced
     And I record the active capacity after idling
