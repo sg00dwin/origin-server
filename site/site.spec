@@ -143,6 +143,9 @@ rm -rf %{buildroot}
 %{sitedir}/public
 
 %changelog
+* Fri Oct 19 2012 Adam Miller <admiller@redhat.com> 0.99.13-3
+- bump site Release for quasi chain build (admiller@redhat.com)
+
 * Fri Oct 19 2012 Adam Miller <admiller@redhat.com> 0.99.13-2
 - bump site Release for quasi chain build (admiller@redhat.com)
 
