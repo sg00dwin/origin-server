@@ -131,8 +131,8 @@ Broker::Application.configure do
     }
   }
 
-  # SS Config
-  config.ss = {
+  # OpenShift Config
+  config.openshift = {
     :domain_suffix => "dev.rhcloud.com",
     :default_max_gears => 3,
     :default_gear_size => "small"

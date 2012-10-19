@@ -35,7 +35,7 @@ module OpenShift
         @customer_name = Rails.configuration.dns[:dynect_customer_name]
         @user_name = Rails.configuration.dns[:dynect_user_name]
         @password = Rails.configuration.dns[:dynect_password]
-        @domain_suffix = Rails.configuration.ss[:domain_suffix]
+        @domain_suffix = Rails.configuration.openshift[:domain_suffix]
         @zone = Rails.configuration.dns[:zone]
       else
         raise Exception.new("Dynect DNS service is not initialized")

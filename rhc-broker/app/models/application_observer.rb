@@ -37,13 +37,13 @@ class ApplicationObserver < ActiveModel::Observer
       if user_gear_sizes.length == 1
         application.node_profile = user_gear_sizes[0]
       elsif user_gear_sizes.length > 1
-        if user_gear_sizes.include?(Rails.application.config.ss[:default_gear_size])
-          application.node_profile = Rails.application.config.ss[:default_gear_size]
+        if user_gear_sizes.include?(Rails.application.config.openshift[:default_gear_size])
+          application.node_profile = Rails.application.config.openshift[:default_gear_size]
         else
           application.node_profile = user_gear_sizes[0]
         end
       else
-        application.node_profile = Rails.application.config.ss[:default_gear_size]
+        application.node_profile = Rails.application.config.openshift[:default_gear_size]
       end
     end
 

@@ -13,7 +13,7 @@ class CloudUserObserver < ActiveModel::Observer
       user.capabilities = user.capabilities.merge(plan_details[:capabilities].dup)
       capabilities = user.capabilities
     else
-      user.capabilities['gear_sizes'] = [Rails.application.config.ss[:default_gear_size]] unless user.capabilities.has_key?('gear_sizes')
+      user.capabilities['gear_sizes'] = [Rails.application.config.openshift[:default_gear_size]] unless user.capabilities.has_key?('gear_sizes')
       capabilities = user.capabilities
     end
     user.max_gears = capabilities['max_gears'] if capabilities.has_key?('max_gears')
