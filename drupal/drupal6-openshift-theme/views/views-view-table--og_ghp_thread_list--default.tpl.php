@@ -31,7 +31,9 @@
         </td>
         <td>
           <div class="views-field views-field-participants sprite-icon-bg sprite-icon-people"><?php print $unique_participants; ?></div>
-          <div class="views-field views-field-pageviews sprite-icon-bg sprite-icon-views"><?php print format_plural($row['totalcount'], '1 View', '@count Views'); ?></div>
+          <?php if (!empty($row['totalcount'])) : ?>
+            <div class="views-field views-field-pageviews sprite-icon-bg sprite-icon-views"><?php print format_plural($row['totalcount'], '1 View', '@count Views'); ?></div>
+          <?php endif; ?>
         </td>
         <td>
           <div class="views-field views-field-picture"><?php print $last_comment_author_icon ?></div>
