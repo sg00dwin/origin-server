@@ -143,6 +143,9 @@ rm -rf %{buildroot}
 %{sitedir}/public
 
 %changelog
+* Fri Oct 19 2012 Adam Miller <admiller@redhat.com> 0.99.13-2
+- bump site Release for quasi chain build (admiller@redhat.com)
+
 * Fri Oct 19 2012 Adam Miller <admiller@redhat.com> 0.99.13-1
 - Merge pull request #499 from fabianofranz/master (dmcphers@redhat.com)
 - Added TOC limit support to site styles (ffranz@redhat.com)
