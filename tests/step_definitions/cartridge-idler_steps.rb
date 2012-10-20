@@ -1,12 +1,12 @@
-# match against rhc-idle and rhc-restore to avoid conflict
-When /^I rhc-(idle|restore) the application$/ do |action|
+# match against oo-idle and oo-restore to avoid conflict
+When /^I oo-(idle|restore) the application$/ do |action|
   cmd = nil
 
   case action
     when "idle"
-      cmd = "/usr/bin/rhc-idler -u #{@gear.uuid}" 
+      cmd = "/usr/bin/oo-idler -u #{@gear.uuid}" 
     when "restore"
-      cmd = "/usr/bin/rhc-restorer -u #{@gear.uuid}"
+      cmd = "/usr/bin/oo-restorer -u #{@gear.uuid}"
   end
 
   exit_code = run cmd
