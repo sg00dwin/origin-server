@@ -586,6 +586,11 @@ then
       /usr/lib/ruby/gems/1.8/gems/gherkin-2.2.4/lib/gherkin/i18n.rb
 fi
 
+# BZ864807 - clean up redundant assets to prevent JS oddities
+#            in rails development mode.
+cd /var/www/openshift/site && /usr/bin/scl enable ruby193 "rake assets:clean"
+
+
 %files
 %defattr(-,root,root,-)
 %attr(0660,-,-) %{brokerdir}/log/mcollective-client.log
