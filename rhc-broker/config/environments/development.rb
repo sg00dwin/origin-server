@@ -128,7 +128,7 @@ Broker::Application.configure do
     :domain_suffix => "dev.rhcloud.com",
     :default_max_gears => 3,
     :default_gear_size => "small",
-
+    :gear_sizes => ["small", "medium", "c9"],
     :dns => {
       :bind => {
         :server => "127.0.0.1",
