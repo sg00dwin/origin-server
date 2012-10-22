@@ -1,6 +1,6 @@
 Summary:       SELinux policy for OpenShift nodes
 Name:          rhc-selinux
-Version: 1.0.0
+Version: 1.0.1
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -58,6 +58,11 @@ fi
 
 
 %changelog
+* Mon Oct 22 2012 Adam Miller <admiller@redhat.com> 1.0.1-1
+- Update version since its a radically different policy. (rmillner@redhat.com)
+- BZ868262: Move the removal of openshift-origin to a different step to ensure
+  that the install works if its already disabled. (rmillner@redhat.com)
+
 * Thu Oct 18 2012 Adam Miller <admiller@redhat.com> 0.98.3-1
 - Needed additional ssh policy to allow ssh into gears. (rmillner@redhat.com)
 - Consolidate boolean setting with devenv. (rmillner@redhat.com)
