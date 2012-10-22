@@ -2,7 +2,7 @@
 
 Summary:   Provides zend-5.6 support
 Name:      openshift-origin-cartridge-zend-5.6
-Version: 0.96.8
+Version: 0.96.9
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   ASL 2.0
@@ -110,6 +110,9 @@ rm -rf %{buildroot}
 %doc %{cartridgedir}/LICENSE
 
 %changelog
+* Mon Oct 22 2012 Adam Miller <admiller@redhat.com> 0.96.9-1
+- Bug 867660 - Zend and mongo don't work (lnader@redhat.com)
+
 * Fri Oct 19 2012 Adam Miller <admiller@redhat.com> 0.96.8-1
 - Merge pull request #495 from rmillner/dev/rmillner/bugs/843286
   (openshift+bot@redhat.com)
