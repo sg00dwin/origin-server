@@ -879,7 +879,9 @@ body > header {
 }
 
 
-.ie9 body.home > header {
+.ie9 body.home > header,
+.ie8 body.home > header,
+.ie7 body.home > header {
 	background: #191919 $noiseImage;
   background-image:
     image-url('diagonals-top.png'),
