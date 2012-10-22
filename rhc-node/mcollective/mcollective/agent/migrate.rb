@@ -261,6 +261,7 @@ module OpenShiftMigration
       '10gen-mms-agent-0.1',
       'diy-0.1',
       'jenkins-client-1.4',
+      'jenkins-1.4',
       'nodejs-0.6',
       'perl-5.10',
       'php-5.3',
@@ -306,6 +307,7 @@ module OpenShiftMigration
     }
 
     Util.replace_in_file("#{libra_home}/.httpd.d/#{uuid}_#{namespace}_#{app_name}.conf", "/etc/httpd/conf.d/stickshift/" , "/etc/httpd/conf.d/openshift/" )
+    Util.replace_in_file("#{libra_home}/.httpd.d/#{uuid}_#{namespace}_#{app_name}.conf", "/usr/libexec/stickshift/" , "/usr/libexec/openshift/" )
 
     carts_to_touch.each do |cart_name|
       next unless Util.gear_has_cart?(gear_home, cart_name)
@@ -321,7 +323,7 @@ module OpenShiftMigration
         when 'diy-0.1'
           Util.replace_in_file("/etc/httpd/conf.d/stickshift/#{uuid}_#{namespace}_#{app_name}.conf", "/usr/libexec/stickshift/cartridges", "/usr/libexec/openshift/cartridges")
         when /^jboss/
-          output += rename_migrate_jboss(uuid, cart_name, app_name, gear_home, cartridge_root_dir)
+          rename_migrate_jboss(uuid, cart_name, app_name, gear_home, cartridge_root_dir)
         when 'php-5.3'
           Util.replace_in_file("#{cart_dir}/conf/php.ini", "/var/lib/stickshift", "/var/lib/openshift")
           Util.replace_in_file("#{gear_home}/.pearrc", "/var/lib/stickshift", "/var/lib/openshift")
@@ -329,23 +331,23 @@ module OpenShiftMigration
           Util.replace_in_file("#{cart_dir}/etc/mongodb.conf", "/var/lib/stickshift", "/var/lib/openshift")
         when 'rockmongo-1.1'
           Util.replace_in_file("#{cart_dir}/conf.d/ROCKMONGO.conf", "/var/lib/stickshift", "/var/lib/openshift")
-          Util.replace_in_file("#{cart+dir}/conf/php.ini", "/var/lib/stickshift", "/var/lib/openshift")
+          Util.replace_in_file("#{cart_dir}/conf/php.ini", "/var/lib/stickshift", "/var/lib/openshift")
         when 'phpmoadmin-1.0'
           Util.replace_in_file("#{cart_dir}/conf.d/phpMoAdmin.conf", "/var/lib/stickshift", "/var/lib/openshift")
           Util.replace_in_file("#{cart_dir}/conf/php.ini", "/var/lib/openshift", "/var/lib/openshift")
 
-          output += Util.symlink_as_user(uuid, "#{cartridge_root_dir}/phpmoadmin-1.0/info/configuration/disabled_pages.conf" ,"#{cart_dir}/conf.d/disabled_pages.conf")
+          Util.symlink_as_user(uuid, "#{cartridge_root_dir}/phpmoadmin-1.0/info/configuration/disabled_pages.conf" ,"#{cart_dir}/conf.d/disabled_pages.conf")
         when 'cron-1.4'
-          output += Util.symlink_as_user(uuid, "#{cartridge_root_dir}/cron-1.4/info/bin/cron_runjobs.sh", "#{gear_home}/cron-1.4/cron_runjobs.sh")
+          Util.symlink_as_user(uuid, "#{cartridge_root_dir}/cron-1.4/info/bin/cron_runjobs.sh", "#{gear_home}/cron-1.4/cron_runjobs.sh")
           # TODO: determine primary framework cart
-          output += Util.symlink_as_user(uuid, "#{app_dir}/repo/.openshift/cron" ,"#{gear_home}/cron-1.4/jobs")
+          Util.symlink_as_user(uuid, "#{app_dir}/repo/.openshift/cron" ,"#{gear_home}/cron-1.4/jobs")
         when 'mysql-5.1'
           Util.replace_in_file("#{gear_home}/mysql-5.1/etc/my.cnf", "/var/lib/stickshift", "/var/lib/openshift")
         when 'phpmyadmin-3.4'
           Util.replace_in_file("#{cart_dir}/conf/php.ini", "/var/lib/stickshift", "/var/lib/openshift")
           Util.replace_in_file("#{cart_dir}/conf.d/disabled_pages.conf", "/var/lib/stickshift", "/var/lib/openshift")
         
-          output += Util.symlink_as_user(uuid, "#{cartridge_root_dir}/embedded/phpmyadmin-3.4/info/configuration/disabled_pages.conf", "#{cart_dir}/conf.d/disabled_pages.conf")
+          Util.symlink_as_user(uuid, "#{cartridge_root_dir}/embedded/phpmyadmin-3.4/info/configuration/disabled_pages.conf", "#{cart_dir}/conf.d/disabled_pages.conf")
         when 'postgresql-8.4'
           Util.replace_in_file("#{cart_dir}/data/postgresql.conf", "/var/lib/stickshift", "/var/lib/openshift")
           Util.replace_in_file("#{cart_dir}/data/postmaster.opts", "/var/lib/stickshift", "/var/lib/openshift")
@@ -499,8 +501,6 @@ module OpenShiftMigration
   end
 
   def self.rename_migrate_jboss (uuid, jboss_name, app_name, gear_home, cartridge_root_dir)
-    output = ''
-
     ["/#{jboss_name}/standalone/configuration/standalone.xml", "/#{jboss_name}/standalone/configuration/standalone_xml_history/current/standalone.last.xml"].each do |fname|
       if File.exists? "#{gear_home}/#{fname}"
         Util.replace_in_file("#{gear_home}/#{fname}", "/var/lib/stickshift", "/var/lib/openshift")
@@ -511,7 +511,5 @@ module OpenShiftMigration
     Util.symlink_as_user(uuid, "#{cartridge_root_dir}/#{jboss_name}/info/bin/standalone.conf", "#{gear_home}/#{jboss_name}/#{jboss_name}/bin/standalone.conf")
     Util.symlink_as_user(uuid, "#{cartridge_root_dir}/#{jboss_name}/info/bin/standalone.sh", "#{gear_home}/#{jboss_name}/#{jboss_name}/bin/standalone.sh")
     Util.symlink_as_user(uuid, "#{gear_home}/#{jboss_name}/repo/.openshift/config/modules", "#{gear_home}/#{jboss_name}/#{jboss_name}/standalone/configuration/modules")
-
-    output
   end
 end
