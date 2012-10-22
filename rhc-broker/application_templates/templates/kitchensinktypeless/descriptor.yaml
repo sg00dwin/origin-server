@@ -1,0 +1,5 @@
+---
+Display-Name: kitchensinktypeless-0.0-noarch
+Name: kitchensinktypeless
+Requires:
+- jbossas-7

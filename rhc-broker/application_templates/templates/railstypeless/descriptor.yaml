@@ -1,0 +1,11 @@
+---
+Connections:
+  mysql-5.1-ruby-1.9:
+    Components:
+    - ruby-1.9
+    - mysql-5.1
+Display-Name: railstypeless-0.0-noarch
+Name: railstypeless
+Requires:
+- ruby-1.9
+- mysql-5.1
