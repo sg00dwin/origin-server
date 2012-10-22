@@ -213,7 +213,6 @@ fi
 %attr(0750,-,-) %{_bindir}/rhc-node-account
 %attr(0750,-,-) %{_bindir}/rhc-node-application
 %attr(0750,-,-) %{_bindir}/rhc-watchman
-%attr(0755,-,-) %{_bindir}/rhcsh
 %attr(0700,-,-) %{_bindir}/migration-symlink-as-user
 %attr(0644,-,-) %config(noreplace) %{_sysconfdir}/openshift/node.conf.libra
 %attr(0644,-,-) %config(noreplace) %{_sysconfdir}/openshift/resource_limits.con*
