@@ -3,7 +3,7 @@
 
 Summary:   Li broker components
 Name:      rhc-broker
-Version: 0.99.16
+Version: 0.99.17
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -113,6 +113,9 @@ if [ ! -f %{_localstatedir}/log/openshift/user_action.log ]; then
 fi
 
 %changelog
+* Mon Oct 22 2012 Adam Miller <admiller@redhat.com> 0.99.17-1
+- removing remaining cases of SS and config.ss (dmcphers@redhat.com)
+
 * Fri Oct 19 2012 Adam Miller <admiller@redhat.com> 0.99.16-1
 - Merge pull request #501 from pmorie/dev/rename (dmcphers@redhat.com)
 - Changes for 2.0.19 migrations (pmorie@gmail.com)
