@@ -258,6 +258,7 @@ def update_devenv(mig_config, devenv, new_version, verbose = true, dry_run = tru
 
   command("ssh root@#{devenv} sed -i -e 's,user,user:iscript=/usr/sbin/oo-namespace-init,g' /etc/security/namespace.d/* ", '  ', verbose, dry_run)
   command("ssh root@#{devenv} sed -i -e 's/pam_libra/pam_openshift/g' /etc/security/namespace.d/* ", '  ', verbose, dry_run)
+  command("ssh root@#{devenv} sed -i -e 's,/usr/bin/trap-user,/usr/bin/oo-trap-user,g' /etc/passwd ", '  ', verbose, dry_run)
 
   reboot_devenv(devenv, verbose, dry_run)
 end
@@ -323,6 +324,8 @@ def create_comparison_apps(old_to_new_cart_types, mig_config, apps, devenv, conf
   puts "Creating #{apps.length} post-migration apps for comparison"
 
   apps.each do |app|
+    next if app[:type] == 'jenkins-1.4'
+
     app_symlink = "#{app[:new_name]}_#{app[:domain]}"
 
     if command("ssh root@#{devenv} \"if [ -d /tmp/#{app_symlink} ]; then echo 'Exists'; fi\"", '', verbose, dry_run) == 'Exists'
@@ -360,10 +363,13 @@ def diff_report(mig_config, apps, devenv, verbose = true, dry_run = true)
   puts "Creating diff reports for #{apps.length} applications"
 
   apps.each do |app|
+    next if app[:type] == 'jenkins-1.4'
+
     carts = ''
     app[:embedded].each {|cart_type|
       carts += "_#{cart_type}"
     }
+
     puts "  Diffing #{app[:old_name]} against #{app[:new_name]} (#{app[:type]}#{carts}, #{app[:scalable] ? 'scalable' : 'unscalable'})"
     result_file = "/#{mig_config['tmp']}/#{app[:type]}#{carts}.#{app[:scalable] ? 'scalable' : 'unscalable'}.diff"
 
@@ -418,7 +424,8 @@ def get_or_create_config()
 end
 
 cart_types = [ 'php-5.3', 'ruby-1.8', 'ruby-1.9', 'perl-5.10', 'jbossas-7', 'jbosseap-6.0', 'python-2.6', 'diy-0.1', 'nodejs-0.6',
-               ['php-5.3', 'mysql-5.1'], ['php-5.3', 'postgresql-8.4'], ['php-5.3', 'mongodb-2.0']
+               ['php-5.3', 'mysql-5.1'], ['php-5.3', 'postgresql-8.4'], ['php-5.3', 'mongodb-2.0'], 
+               ['php-5.3', 'mongodb-2.0', 'rockmongo-1.1'], ['php-5.3', 'mongodb-2.0', 'phpmoadmin-1.0'], ['php-5.3', 'mysql-5.1', 'phpmyadmin-3.4'], 'jenkins-1.4'
              ]
              
 old_to_new_cart_types = {
@@ -507,6 +514,17 @@ when 'migrate'
   save_comparison_apps(mig_config, devenv, apps, config, verbose, dry_run)
   migrate_apps(new_version, apps, devenv, account, verbose, dry_run)
   create_comparison_apps(old_to_new_cart_types, mig_config, apps, devenv, config, verbose, dry_run)
+  diff_report(mig_config, apps, devenv, verbose, dry_run)
+when 'diff'
+  devenv = ARGV[2]
+
+  if devenv.nil?
+    puts "usage: migratomatic.rb <version> diff <devenv>"
+
+    exit
+  end  
+
+  apps = load_apps(mig_config)
   diff_report(mig_config, apps, devenv, verbose, dry_run)
 when 'help'
   puts "  help:     see this message"
