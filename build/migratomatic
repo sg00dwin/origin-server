@@ -249,16 +249,15 @@ def update_devenv(mig_config, devenv, new_version, verbose = true, dry_run = tru
   command("ssh root@#{devenv} yum -y update rhc-selinux selinux-policy selinux-policy-targeted", '  ', verbose, dry_run)
   command("ssh root@#{devenv} \"semodule -l | grep libra\"", '  ', verbose, dry_run)
   command("ssh root@#{devenv} \"semodule -l | grep openshift\"", '  ', verbose, dry_run)
-
-  puts "Does that look right?"
-  answer = STDIN.gets
-
   command("ssh root@#{devenv} setsebool -P httpd_run_stickshift=1", '  ', verbose, dry_run)
+
   command("ssh root@#{devenv} \"yum -y update --enablerepo li-local 2>&1 > /root/update.#{new_version}.log\"", '  ', verbose, dry_run)
 
   command("ssh root@#{devenv} sed -i -e 's,user,user:iscript=/usr/sbin/oo-namespace-init,g' /etc/security/namespace.d/* ", '  ', verbose, dry_run)
   command("ssh root@#{devenv} sed -i -e 's/pam_libra/pam_openshift/g' /etc/security/namespace.d/* ", '  ', verbose, dry_run)
   command("ssh root@#{devenv} sed -i -e 's,/usr/bin/trap-user,/usr/bin/oo-trap-user,g' /etc/passwd ", '  ', verbose, dry_run)
+  command("ssh root@#{devenv} sed -i -e 's,/var/lib/stickshift,/var/lib/openshift,g' /etc/passwd ", '  ', verbose, dry_run)
+  command("ssh root@#{devenv} sed -i -e 's/libra\\ guest/OpenShift\\ guest/g' /etc/passwd ", '  ', verbose, dry_run)
 
   reboot_devenv(devenv, verbose, dry_run)
 end
@@ -425,8 +424,9 @@ end
 
 cart_types = [ 'php-5.3', 'ruby-1.8', 'ruby-1.9', 'perl-5.10', 'jbossas-7', 'jbosseap-6.0', 'python-2.6', 'diy-0.1', 'nodejs-0.6',
                ['php-5.3', 'mysql-5.1'], ['php-5.3', 'postgresql-8.4'], ['php-5.3', 'mongodb-2.0'], 
-               ['php-5.3', 'mongodb-2.0', 'rockmongo-1.1'], ['php-5.3', 'mongodb-2.0', 'phpmoadmin-1.0'], ['php-5.3', 'mysql-5.1', 'phpmyadmin-3.4'], 'jenkins-1.4'
+               ['php-5.3', 'mongodb-2.0', 'rockmongo-1.1'], ['php-5.3', 'mysql-5.1', 'phpmyadmin-3.4'], 'jenkins-1.4'
              ]
+#cart_types = [ 'jenkins-1.4', ['php-5.3', 'jenkins-client-1.4'], 'php-5.3']
              
 old_to_new_cart_types = {
   'mongodb-2.0' => 'mongodb-2.2'
