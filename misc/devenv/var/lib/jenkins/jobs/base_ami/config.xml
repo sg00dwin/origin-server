@@ -9,7 +9,37 @@
     <artifactNumToKeep>10</artifactNumToKeep>
   </logRotator>
   <keepDependencies>false</keepDependencies>
-  <properties/>
+  <properties>
+    <hudson.model.ParametersDefinitionProperty>
+      <parameterDefinitions>
+        <hudson.model.StringParameterDefinition>
+          <name>YUM_REPO</name>
+          <description></description>
+          <defaultValue>candidate</defaultValue>
+        </hudson.model.StringParameterDefinition>
+        <hudson.model.StringParameterDefinition>
+          <name>BRANCH</name>
+          <description></description>
+          <defaultValue>master</defaultValue>
+        </hudson.model.StringParameterDefinition>
+        <hudson.model.StringParameterDefinition>
+          <name>DEV_TOOLS_EXT_REPO</name>
+          <description></description>
+          <defaultValue>li</defaultValue>
+        </hudson.model.StringParameterDefinition>
+        <hudson.model.StringParameterDefinition>
+          <name>DEV_TOOLS_REPO</name>
+          <description></description>
+          <defaultValue>origin-dev-tools</defaultValue>
+        </hudson.model.StringParameterDefinition>
+        <hudson.model.StringParameterDefinition>
+          <name>IMAGE_BASE_NAME</name>
+          <description></description>
+          <defaultValue>devenv</defaultValue>
+        </hudson.model.StringParameterDefinition>
+      </parameterDefinitions>
+    </hudson.model.ParametersDefinitionProperty>
+  </properties>
   <scm class="hudson.scm.NullSCM"/>
   <canRoam>true</canRoam>
   <disabled>true</disabled>
@@ -24,16 +54,20 @@
   <builders>
     <hudson.tasks.Shell>
       <command># Delete the previous repo clone directories
-rm -rf li origin-dev-tools
+rm -rf $DEV_TOOLS_REPO $DEV_TOOLS_EXT_REPO
 
 # Clone the repos
-git clone git@github.com:openshift/li.git
-git clone git@github.com:openshift/origin-dev-tools.git
+git clone git@github.com:openshift/${DEV_TOOLS_EXT_REPO}.git
+pushd $DEV_TOOLS_EXT_REPO
+  git checkout $BRANCH
+popd
+git clone git@github.com:openshift/${DEV_TOOLS_REPO}.git
+pushd $DEV_TOOLS_REPO
+  git checkout $BRANCH
+popd
 
 pushd li
-
-  build/devenv build devenv-base ${BUILD_NUMBER} --install_required_packages --register --terminate
-
+  build/devenv build ${IMAGE_BASE_NAME}-base ${BUILD_NUMBER} --install_required_packages --register --terminate --yum_repo=$YUM_REPO --branch=$BRANCH
 popd</command>
     </hudson.tasks.Shell>
   </builders>

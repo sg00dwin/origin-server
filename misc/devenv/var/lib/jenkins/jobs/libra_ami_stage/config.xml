@@ -11,8 +11,7 @@
   <keepDependencies>false</keepDependencies>
   <properties>
     <hudson.model.ParametersDefinitionProperty>
-      <parameterDefinitions>
-      </parameterDefinitions>
+      <parameterDefinitions/>
     </hudson.model.ParametersDefinitionProperty>
   </properties>
   <scm class="hudson.scm.NullSCM"/>
