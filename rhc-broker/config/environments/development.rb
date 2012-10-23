@@ -44,6 +44,7 @@ Broker::Application.configure do
     :privkeypass => "SJDIkdfhuISe3wrulhjvcKHJFDUeoi8gfcdnu8299dhc",
     :privkeyfile => "config/keys/private.pem",
     :pubkeyfile  => "/var/www/openshift/broker/config/keys/public.pem",
+    :rsync_keyfile => "/var/www/openshift/broker/config/keys/rsync_id_rsa",
     :token_login_key => :rhlogin,
     :auth_service => {
       :host => "https://streamline-proxy1.ops.rhcloud.com",
