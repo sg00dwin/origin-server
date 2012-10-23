@@ -66,8 +66,15 @@ pushd $DEV_TOOLS_REPO
   git checkout $BRANCH
 popd
 
+if [ $BRANCH == master ]
+then
+  IMAGE_NAME=${IMAGE_BASE_NAME}-base
+else
+  IMAGE_NAME=${IMAGE_BASE_NAME}-${BRANCH}-base
+fi
+
 pushd li
-  build/devenv build ${IMAGE_BASE_NAME}-base ${BUILD_NUMBER} --install_required_packages --register --terminate --yum_repo=$YUM_REPO --branch=$BRANCH
+  build/devenv build ${IMAGE_NAME} ${BUILD_NUMBER} --install_required_packages --register --terminate --yum_repo=$YUM_REPO --branch=$BRANCH
 popd</command>
     </hudson.tasks.Shell>
   </builders>
