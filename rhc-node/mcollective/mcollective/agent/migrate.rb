@@ -339,8 +339,9 @@ module OpenShiftMigration
           Util.symlink_as_user(uuid, "#{cartridge_root_dir}/phpmoadmin-1.0/info/configuration/disabled_pages.conf" ,"#{cart_dir}/conf.d/disabled_pages.conf")
         when 'cron-1.4'
           Util.symlink_as_user(uuid, "#{cartridge_root_dir}/cron-1.4/info/bin/cron_runjobs.sh", "#{gear_home}/cron-1.4/cron_runjobs.sh")
-          # TODO: determine primary framework cart
-          Util.symlink_as_user(uuid, "#{app_dir}/repo/.openshift/cron" ,"#{gear_home}/cron-1.4/jobs")
+          Dir[File.join(gear_home, '*', 'repo')].each do |entry|
+            Util.symlink_as_user(uuid, "#{entry}/cron", "#{gear_home}/cron-1.4/jobs")
+          end
         when 'mysql-5.1'
           Util.replace_in_file("#{gear_home}/mysql-5.1/etc/my.cnf", "/var/lib/stickshift", "/var/lib/openshift")
         when 'phpmyadmin-3.4'
@@ -354,6 +355,7 @@ module OpenShiftMigration
           Util.replace_in_file("#{cart_dir}/data/postmaster.pid", "/var/lib/stickshift", "/var/lib/openshift")
         when 'metrics-0.1'
           Util.replace_in_file("#{cart_dir}/conf.d/metrics.conf", "/var/lib/stickshift", "/var/lib/openshift")
+          Util.replace_in_file("#{cart_dir}/conf.d/metrics.conf", "/usr/libexec/stickshift", "/usr/libexec/openshift")
           Util.replace_in_file("#{cart_dir}/conf/php.ini", "/var/lib/stickshift", "/var/lib/openshift")
         when 'jenkins-1.4'
           Util.replace_in_file("#{cart_dir}/data/jobs/*/config.xml", "/usr/libexec/stickshift", "/usr/libexec/openshift")
@@ -392,10 +394,17 @@ module OpenShiftMigration
             rm_exists(entry)
           }
         when 'cron-1.4'
-          rm_exists(gear_home,
-              "OPENSHIFT_BATCH_CRON_14_EMBEDDED_TYPE",
-              "OPENSHIFT_BATCH_CTL_SCRIPT",
-              "OPENSHIFT_BATCH_TYPE")
+          [ "#{gear_home}/.env/OPENSHIFT_BATCH_CRON_14_EMBEDDED_TYPE", 
+            "#{gear_home}/.env/OPENSHIFT_BATCH_TYPE", 
+            "#{gear_home}/.env/OPENSHIFT_BATCH_CTL_SCRIPT"
+          ].each do |entry|
+            rm_exists(entry)
+          end
+
+          #rm_exists(gear_home,
+          #    "OPENSHIFT_BATCH_CRON_14_EMBEDDED_TYPE",
+          #    "OPENSHIFT_BATCH_CTL_SCRIPT",
+          #    "OPENSHIFT_BATCH_TYPE")
         when 'jenkins-1.4'
           typeless_framework(app_name, gear_home, 'jenkins-1.4', 'JENKINS')
           command =%Q|sed -i "s#~/\\([A-Za-z0-9]\\+\\)/repo#~/app-root/runtime/repo#g;\\
