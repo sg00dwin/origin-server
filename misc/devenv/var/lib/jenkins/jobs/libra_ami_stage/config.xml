@@ -12,11 +12,6 @@
   <properties>
     <hudson.model.ParametersDefinitionProperty>
       <parameterDefinitions>
-        <hudson.model.StringParameterDefinition>
-          <name>BUILD_CLEAN_AMI</name>
-          <description></description>
-          <defaultValue>true</defaultValue>
-        </hudson.model.StringParameterDefinition>
       </parameterDefinitions>
     </hudson.model.ParametersDefinitionProperty>
   </properties>
@@ -41,12 +36,7 @@ pushd li
 
 git checkout stage
 
-if [ &quot;$BUILD_CLEAN_AMI&quot; == &quot;true&quot; ]
-then
-  build/devenv build devenv-stage ${BUILD_NUMBER} --register --official --terminate --use_stage_repo --build_clean_ami --instance_type m1.large
-else
-  build/devenv build devenv-stage ${BUILD_NUMBER} --register --official --terminate --use_stage_repo --instance_type m1.large
-fi
+build/devenv build devenv-stage ${BUILD_NUMBER} --register --official --terminate --yum_repo=stage --branch=stage
 
 popd</command>
     </hudson.tasks.Shell>

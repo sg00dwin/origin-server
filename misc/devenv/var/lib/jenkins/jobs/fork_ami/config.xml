@@ -220,7 +220,7 @@ popd
 
 pushd li
 set +e
-  build/devenv build ${TAG_NAME} ${BUILD_NUMBER} --register --official --install_from_local_source --instance_type m1.large
+  build/devenv build ${TAG_NAME} ${BUILD_NUMBER} --register --official --install_from_local_source
   RESULT=$?
 set -e
 

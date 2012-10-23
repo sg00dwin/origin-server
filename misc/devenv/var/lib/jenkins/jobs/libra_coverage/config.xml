@@ -33,11 +33,11 @@ git clone git@github.com:openshift/origin-dev-tools.git
 pushd li
 
 # Build and install HEAD for the integration tests
-build/devenv launch libra_coverage_${BUILD_NUMBER} --verifier --instance_type m1.large
-build/devenv sync libra_coverage_${BUILD_NUMBER} --tag --clean_metadata
+build/devenv launch devenv_coverage_${BUILD_NUMBER} --verifier
+build/devenv sync devenv_coverage_${BUILD_NUMBER} --tag --clean_metadata
 
 # Run the tests
-build/devenv test libra_coverage_${BUILD_NUMBER} --include_rcov --terminate
+build/devenv test devenv_coverage_${BUILD_NUMBER} --include_rcov --terminate
 
 popd</command>
     </hudson.tasks.Shell>

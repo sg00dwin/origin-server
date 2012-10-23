@@ -28,7 +28,7 @@ git clone git@github.com:openshift/origin-dev-tools.git
 
 pushd li
   git checkout stage
-  build/devenv build devenv-stage-base ${BUILD_NUMBER} --install_required_packages --register --use_stage_repo --terminate
+  build/devenv build devenv-stage-base ${BUILD_NUMBER} --install_required_packages --register --yum_repo=stage --branch=stage --terminate
 popd</command>
     </hudson.tasks.Shell>
   </builders>

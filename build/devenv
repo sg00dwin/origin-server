@@ -318,7 +318,7 @@ module Express
 
       def setup_verifier(hostname, use_stage_image=false)
         print "Initializing git repo for syncing..."
-        init_repo(hostname)
+        init_repos(hostname)
         puts "Done"
         update_remote_tests(hostname, use_stage_image ? "stage" : nil)
       end
@@ -649,114 +649,85 @@ module Express
         begin
           manifest = nil
           begin
-            if options.build_clean_ami? || options.install_from_source? || options.install_from_local_source? || options.install_required_packages?
-              puts "Updating all packages on the system..."
-              output = ssh(hostname, "yum update -y --exclude='rhc*'; yum -y install openssh-clients", 1800)
-              puts "Done"
+            puts "Updating all packages on the system..."
+            output = ssh(hostname, "yum update -y --exclude='rhc*'; yum -y install openssh-clients", 1800)
+            puts "Done"
 
-              puts "------------------ Update Output ------------------------"
-              puts output
-              puts "---------------------------------------------------------"
+            puts "------------------ Update Output ------------------------"
+            puts output
+            puts "---------------------------------------------------------"
 
-              if options[:extra_rpm_dir]
-                if File.exist? options[:extra_rpm_dir]
-                  out, ret = ssh(hostname, "mkdir -p /data/origin-server-working/build/extras", 60, true, 1, ssh_user)
-                  files = Dir.glob("#{options[:extra_rpm_dir]}/*.rpm")
-                  files.each do |file|
-                    scp_to(hostname, file, "/data/origin-server-working/build/extras/", 60*10, 5, ssh_user)
-                  end
-
-                  out, ret = ssh(hostname, "su -c \"cd /data/origin-server-working/build/extras && yum install -y *.rpm\"", 60 * 20, true, 1, ssh_user)
-
-                  puts "------------------ Extra RPMs Output ------------------------"
-                  puts out
-                  puts "-------------------------------------------------------------"
-
-                else
-                  puts "!!!Warning!!!"
-                  puts "Directory containing extra rpms not found. Skipping..."
-                  puts "!!!Warning!!!"
+            if options[:extra_rpm_dir]
+              if File.exist? options[:extra_rpm_dir]
+                out, ret = ssh(hostname, "mkdir -p /data/origin-server-working/build/extras", 60, true, 1, ssh_user)
+                files = Dir.glob("#{options[:extra_rpm_dir]}/*.rpm")
+                files.each do |file|
+                  scp_to(hostname, file, "/data/origin-server-working/build/extras/", 60*10, 5, ssh_user)
                 end
-              end
 
-              if options.reboot?
-                reboot(instance)
-              end
+                out, ret = ssh(hostname, "su -c \"cd /data/origin-server-working/build/extras && yum install -y *.rpm\"", 60 * 20, true, 1, ssh_user)
 
-              puts "Uploading devenv script..."
-              script_path = File.expand_path(File.dirname(__FILE__) + "/../misc/devenv/li-devenv.sh")
-              scp_to(hostname, script_path, "~/")
-              puts "Done"
-              puts "Uploading yum client certificates..."
-              pem_path = File.expand_path(File.dirname(__FILE__) + "/../misc/client-cert.pem")
-              scp_to(hostname, pem_path, "/var/lib/yum/")
-              pem_path = File.expand_path(File.dirname(__FILE__) + "/../misc/client-key.pem")
-              scp_to(hostname, pem_path, "/var/lib/yum/")
-              if options.install_from_source? || options.install_from_local_source?
-                cfg_path = File.expand_path(File.dirname(__FILE__) + "/../misc/libra-rhel-ruby193.cfg")
-                scp_to(hostname, cfg_path, "/etc/mock/")
-              end
-              scp_to(hostname, "misc/devenv/root/.ssh/*", "/root/.ssh/")
-              ssh(hostname, "chmod 0600 /root/.ssh/id_rsa; chmod 0644 /root/.ssh/id_rsa.pub /root/.ssh/known_hosts;")
-              puts "Done"
-              output = ''
-              if options.install_from_source?
-                puts "Performing clean install from source..."
-                cmd = "set -e; /bin/bash li-devenv.sh #{options.use_stage_repo? ? "stage" : "candidate"} --install_from_source"
-              elsif options.install_from_local_source?
-                init_repo(hostname)
-                SIBLING_REPOS.each do |repo_name, repo_dirs|
-                  repo_dirs.each do |repo_dir|
-                    break if sync_sibling_repo(repo_name, repo_dir, hostname)
-                  end
-                end
-                puts "Performing clean install from local source..."
-                cmd = "set -e; /bin/bash li-devenv.sh #{options.use_stage_repo? ? "stage" : "candidate"} --install_from_local_source"
-              elsif options.install_required_packages?
-                puts "Installing requires..."
-                cmd = "set -e; /bin/bash li-devenv.sh #{options.use_stage_repo? ? "stage" : "candidate"} --install_build_prereqs"
-                output += ssh(hostname, cmd, 600)
-                cmd = "set -e; /bin/bash li-devenv.sh #{options.use_stage_repo? ? "stage" : "candidate"} --install_required_packages"
+                puts "------------------ Extra RPMs Output ------------------------"
+                puts out
+                puts "-------------------------------------------------------------"
+
               else
-                puts "Performing clean install with the latest code..."
-                cmd = 'set -e ; /bin/bash ~/li-devenv.sh'
-                if options.use_stage_repo?
-                  cmd += ' stage'
-                elsif options.use_test_repo?
-                  cmd += ' test'
-                end
+                puts "!!!Warning!!!"
+                puts "Directory containing extra rpms not found. Skipping..."
+                puts "!!!Warning!!!"
               end
-              output, exit_code = ssh(hostname, cmd, 3600, true)
-              puts "Done"
-
-              puts "----------------- Install Output ------------------------"
-              puts output
-              puts "---------------------------------------------------------"
-
-              exit exit_code unless exit_code == 0
-
-              validate_instance(hostname, 4) unless options.install_required_packages?
-
-              manifest = rpm_manifest(hostname)
-
-              if options.register? && options.build_clean_ami?
-                register_image(conn, instance, name + '-clean_' + build_num, manifest)
-              end
-            else
-              puts "Updating all packages on the system..."
-              output, exit_code = ssh(hostname, "yum clean metadata; yum update -y --exclude='rhc-devenv'; set -e; yum update -y --exclude='rhc-devenv' --disablerepo=\\* --enablerepo=li", 600, true)
-              puts "Done"
-
-              puts "------------------ Update Output ------------------------"
-              puts output
-              puts "---------------------------------------------------------"
-
-              exit exit_code unless exit_code == 0
-
-              validate_instance(hostname, 4)
-
-              manifest = rpm_manifest(hostname)
             end
+
+            if options.reboot?
+              reboot(instance)
+            end
+
+            puts "Uploading devenv script..."
+            script_path = File.expand_path(File.dirname(__FILE__) + "/../misc/devenv/li-devenv.sh")
+            scp_to(hostname, script_path, "~/")
+            puts "Done"
+            puts "Uploading yum client certificates..."
+            pem_path = File.expand_path(File.dirname(__FILE__) + "/../misc/client-cert.pem")
+            scp_to(hostname, pem_path, "/var/lib/yum/")
+            pem_path = File.expand_path(File.dirname(__FILE__) + "/../misc/client-key.pem")
+            scp_to(hostname, pem_path, "/var/lib/yum/")
+            if options.install_from_source? || options.install_from_local_source?
+              cfg_path = File.expand_path(File.dirname(__FILE__) + "/../misc/libra-rhel-ruby193.cfg")
+              scp_to(hostname, cfg_path, "/etc/mock/")
+            end
+            scp_to(hostname, "misc/devenv/root/.ssh/*", "/root/.ssh/")
+            ssh(hostname, "chmod 0600 /root/.ssh/id_rsa; chmod 0644 /root/.ssh/id_rsa.pub /root/.ssh/known_hosts;")
+            puts "Done"
+            output = ''
+            if options.install_from_source?
+              puts "Performing clean install from source..."
+              cmd = "set -e; /bin/bash li-devenv.sh #{options.yum_repo} --install_from_source"
+            elsif options.install_from_local_source?
+              init_repos(hostname)
+              sync_repos(hostname)
+              puts "Performing clean install from local source..."
+              cmd = "set -e; /bin/bash li-devenv.sh #{options.yum_repo} --install_from_local_source"
+            elsif options.install_required_packages?
+              puts "Installing requires..."
+              cmd = "set -e; /bin/bash li-devenv.sh #{options.yum_repo} --install_build_prereqs"
+              output += ssh(hostname, cmd, 600)
+              cmd = "set -e; /bin/bash li-devenv.sh #{options.yum_repo} --install_required_packages"
+            else
+              puts "Performing clean install with the latest code..."
+              cmd = "set -e ; /bin/bash ~/li-devenv.sh #{options.yum_repo}"
+            end
+            output, exit_code = ssh(hostname, cmd, 3600, true)
+            puts "Done"
+
+            puts "----------------- Install Output ------------------------"
+            puts output
+            puts "---------------------------------------------------------"
+
+            exit exit_code unless exit_code == 0
+
+            validate_instance(hostname, 4) unless options.install_required_packages?
+
+            manifest = rpm_manifest(hostname)
           rescue SystemExit => e
             download_artifacts(hostname) if options.terminate? || options.official?
             raise
@@ -775,7 +746,7 @@ module Express
           end
 
           unless options.skip_verify? || options.install_required_packages?
-            scp_remote_tests(hostname, options.use_stage_repo)
+            scp_remote_tests(hostname, options.branch)
             test_impl(name + '_' + build_num, hostname, instance, conn, options, image_id)
           end
         ensure

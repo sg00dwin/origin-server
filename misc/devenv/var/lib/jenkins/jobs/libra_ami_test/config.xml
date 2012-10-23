@@ -28,7 +28,7 @@ git clone git@github.com:openshift/li.git
 git clone git@github.com:openshift/origin-dev-tools.git
 
 pushd li
-build/devenv build testenv ${BUILD_NUMBER} --install_from_source --use_test_repo --terminate --instance_type m1.large
+build/devenv build devenv_test ${BUILD_NUMBER} --install_from_source --yum_repo=test --terminate
 popd</command>
     </hudson.tasks.Shell>
   </builders>

@@ -9,47 +9,31 @@ AMI = {"us-east-1" =>"ami-938c5dfa"}
 TYPE = "m1.large"
 KEY_PAIR = "libra"
 ZONE = 'us-east-1d'
-DEVENV_WILDCARD = "devenv_*"
-DEVENV_STAGE_WILDCARD = "devenv-stage_*"
-DEVENV_CLEAN_WILDCARD = "devenv-clean_*"
-DEVENV_STAGE_CLEAN_WILDCARD = "devenv-stage-clean_*"
-DEVENV_BASE_WILDCARD = "devenv-base_*"
-DEVENV_STAGE_BASE_WILDCARD = "devenv-stage-base_*"
-OSO_FEDORA_WILDCARD = "oso-fedora_*"
-OSO_FEDORA_BASE_WILDCARD = "oso-fedora-base_*"
-FORK_AMI_WILDCARD = "fork_ami_*"
-DEVENV_AMI_WILDCARDS = {DEVENV_WILDCARD => {:keep => 2, :regex => /(devenv)_(\d+)/}, 
-                        DEVENV_STAGE_WILDCARD => {:keep => 8, :regex => /(devenv-stage)_(\d+)/},
-                        DEVENV_CLEAN_WILDCARD => {:keep => 1, :regex => /(devenv-clean)_(\d+)/},
-                        DEVENV_STAGE_CLEAN_WILDCARD => {:keep => 1, :regex => /(devenv-stage-clean)_(\d+)/},
-                        DEVENV_BASE_WILDCARD => {:keep => 2, :regex => /(devenv-base)_(\d+)/},
-                        DEVENV_STAGE_BASE_WILDCARD => {:keep => 2, :regex => /(devenv-stage-base)_(\d+)/},
-                        OSO_FEDORA_WILDCARD => {:keep => 2, :regex => /(oso-fedora)_(\d+)/},
-                        OSO_FEDORA_BASE_WILDCARD => {:keep => 1, :regex => /(oso-fedora-base)_(\d+)/},
-                        FORK_AMI_WILDCARD => {:keep => 50, :keep_per_sub_group => 1, :regex => /(fork_ami_.*)_(\d+)/}}
-VERIFIER_REGEXS = {/^(devenv)_(\d+)$/ => {:multiple => true},
-                   /^(devenv_verifier)_(\d+)$/ => {}, 
-                   /^(devenv-stage)_(\d+)$/ => {}, 
-                   /^(devenv-stage_verifier)_(\d+)$/ => {},
-                   /^(devenv-base)_(\d+)$/ => {},
-                   /^(devenv-stage-base)_(\d+)$/ => {},
-                   /^(testenv)_(\d+)$/ => {},
-                   /^(oso-fedora)_(\d+)$/ => {},
-                   /^(oso-fedora-base)_(\d+)$/ => {},
-                   /^(libra_benchmark)_(\d+)$/ => {:max_run_time => (60*60*24)},
-                   /^(broker_extended)_(\d+)$/ => {:max_run_time => (60*60*4)},
-                   /^(runtime_extended)_(\d+)$/ => {:max_run_time => (60*60*4)},
-                   /^(site_extended)_(\d+)$/ => {:max_run_time => (60*60*4)},
-                   /^(rhc_extended)_(\d+)$/ => {:max_run_time => (60*60*4)},
-                   /^(test_pull_requests)_(\d+)$/ => {:multiple => true},
-                   /^(test_pull_requests_stage)_(\d+)$/ => {:multiple => true},
-                   /^(merge_pull_request)_(\d+)$/ => {},
-                   /^(merge_pull_request_stage)_(\d+)$/ => {},
-                   /(fork_ami)_.*_(\d+)$/ => {:multiple => true},
-                   /^(broker_check)_(\d+)$/ => {}, 
-                   /^(node_check)_(\d+)$/ => {}, 
-                   /^(libra_web)_(\d+)$/ => {:max_run_time => (60*60*3)}, 
-                   /^(libra_coverage)_(\d+)$/ => {:max_run_time => (60*60*1)}}
+
+
+DEVENV_NAME = 'devenv'
+
+IMAGES = {DEVENV_NAME => {:base => true, :stage => true},
+          'oso-fedora' => {:base => true, :stage => false}}
+
+DEVENV_AMI_WILDCARDS = {}
+IMAGES.each do |image, opts|
+  keep = opts[:keep] ? opts[:keep] : 2
+  DEVENV_AMI_WILDCARDS["#{image}_*"] = {:keep => keep, :regex => /^(#{image})_(\d+)/}
+  if opts[:base]
+    DEVENV_AMI_WILDCARDS["#{image}-base_*"] = {:keep => 2, :regex => /^(#{image}-base)_(\d+)/}
+  end
+  if opts[:stage]
+    DEVENV_AMI_WILDCARDS["#{image}-stage-base_*"] = {:keep => 8, :regex => /^(#{image}-stage-base)_(\d+)/}
+  end
+end
+
+DEVENV_AMI_WILDCARDS["fork_ami_*"] = {:keep => 50, :keep_per_sub_group => 1, :regex => /(fork_ami_.*)_(\d+)/}
+
+VERIFIER_REGEXS = {/^(devenv).*_(\d+)$/ => {:multiple => true},
+                   /^(oso-fedora).*_(\d+)$/ => {:multiple => true},
+                   /^((test|merge)_pull_requests).*_(\d+)$/ => {:multiple => true, :max_run_time => (60*60*2)},
+                   /(fork_ami)_.*_(\d+)$/ => {:multiple => true}}
 TERMINATE_REGEX = /terminate|teminate|termiante|terminatr|terninate/
 VERIFIED_TAG = "qe-ready"
 

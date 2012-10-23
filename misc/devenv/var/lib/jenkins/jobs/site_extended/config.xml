@@ -29,11 +29,11 @@ git clone git@github.com:openshift/origin-dev-tools.git
 pushd li
 
 # Build and install HEAD for the tests
-build/devenv launch site_extended_${BUILD_NUMBER} --verifier --instance_type m1.large
-build/devenv sync site_extended_${BUILD_NUMBER} --tag --clean_metadata
+build/devenv launch devenv_site_extended_${BUILD_NUMBER} --verifier
+build/devenv sync devenv_site_extended_${BUILD_NUMBER} --tag --clean_metadata
 
 # Run the tests
-build/devenv test site_extended_${BUILD_NUMBER} --terminate --include_extended=site
+build/devenv test devenv_site_extended_${BUILD_NUMBER} --terminate --include_extended=site
 
 popd</command>
     </hudson.tasks.Shell>

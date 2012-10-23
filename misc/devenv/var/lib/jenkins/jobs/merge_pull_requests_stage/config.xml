@@ -1,12 +1,12 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <project>
   <actions/>
-  <description>Merge a pull request after tests have passed in serial</description>
+  <description>Merge a stage pull request after tests have passed in serial</description>
   <logRotator>
     <daysToKeep>10</daysToKeep>
-    <numToKeep>100</numToKeep>
+    <numToKeep>50</numToKeep>
     <artifactDaysToKeep>10</artifactDaysToKeep>
-    <artifactNumToKeep>100</artifactNumToKeep>
+    <artifactNumToKeep>50</artifactNumToKeep>
   </logRotator>
   <keepDependencies>false</keepDependencies>
   <properties>
@@ -44,33 +44,44 @@
 git clone git@github.com:openshift/origin-dev-tools.git
 
 git clone git@github.com:openshift/li.git
+pushd li
+  git checkout stage
+popd
 if [ -n &quot;$LI_PULL_ID&quot; ]
 then
-set +x
+  set +x
   echo &quot;
 
 *****Locally Merging Pull Request: https://github.com/openshift/li/pull/$LI_PULL_ID&quot;
-set -x
+  set -x
   test_pull_requests --local_merge_pull_request $LI_PULL_ID --repo li
 fi
+
 git clone git@github.com:openshift/origin-server.git
+pushd origin-server
+  git checkout stage
+popd
 if [ -n &quot;$ORIGIN_SERVER_PULL_ID&quot; ]
 then
-set +x
+  set +x
   echo &quot;
 
 *****Locally Merging Pull Request: https://github.com/openshift/origin-server/pull/$ORIGIN_SERVER_PULL_ID&quot;
-set -x
+  set -x
   test_pull_requests --local_merge_pull_request $ORIGIN_SERVER_PULL_ID --repo origin-server
 fi
+
 git clone git@github.com:openshift/rhc.git
+pushd rhc
+  git checkout stage
+popd
 if [ -n &quot;$RHC_PULL_ID&quot; ]
 then
-set +x
+  set +x
   echo &quot;
 
 *****Locally Merging Pull Request: https://github.com/openshift/rhc/pull/$RHC_PULL_ID&quot;
-set -x
+  set -x
   test_pull_requests --local_merge_pull_request $RHC_PULL_ID --repo rhc
 fi
 
@@ -81,7 +92,7 @@ echo &quot;
 set -x
 
 pushd li
-  build/devenv build merge_pull_request ${BUILD_NUMBER} --terminate --install_from_local_source --instance_type m1.large
+  build/devenv build merge_pull_requests_stage ${BUILD_NUMBER} --terminate --install_from_local_source --yum_repo=stage --branch=stage
 popd
 
 # Make sure all the pull requests will merge cleanly
@@ -123,14 +134,6 @@ fi</command>
       <artifacts>li/rhc/log/**</artifacts>
       <latestOnly>false</latestOnly>
     </hudson.tasks.ArtifactArchiver>
-    <hudson.tasks.BuildTrigger>
-      <childProjects>libra_ami</childProjects>
-      <threshold>
-        <name>SUCCESS</name>
-        <ordinal>0</ordinal>
-        <color>BLUE</color>
-      </threshold>
-    </hudson.tasks.BuildTrigger>
     <hudson.tasks.junit.JUnitResultArchiver>
       <testResults>li/rhc/log/**/*.xml</testResults>
       <keepLongStdio>false</keepLongStdio>

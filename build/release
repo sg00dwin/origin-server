@@ -257,17 +257,16 @@ class Release < Thor
   method_option :stage, :type => :string, :desc => "Comma-delimited list of packages to sync.  Exclude NVR for latest versions.  (e.g. --stage='rhc, rhc-site-0.73.3-1')"
   method_option :test, :type => :boolean, :desc => "Run against libra's -test repo"
   method_option :stage_all, :type => :boolean, :desc => "Tag all the latest packages for stage"
-  method_option :clean_ami, :type => :boolean, :desc => "Indicates whether to build a clean ami"
   method_option :no_ami, :type => :boolean, :desc => "Indicates whether to not build an ami"
   method_option :source_ami, :type => :boolean, :desc => "Indicates whether to build a source ami"
   def sync
     orig_branches = checkout_branch(options[:stage] || options.stage? ? "stage" : "master")
     begin
       # do RHEL 6.x first
-      rhc_devenv_found = mash_and_rsync "libra-rhel-6.3", false, options
+      mash_and_rsync "libra-rhel-6.3", false, options
 
       unless options.no_ami?
-        create_ami(options, rhc_devenv_found)
+        create_ami(options)
       end
     ensure
       reset_orig_branches(orig_branches)
@@ -367,10 +366,9 @@ class Release < Thor
 
   desc "build_ami", "Build an ami based on the current li repo"
   method_option :stage, :type => :boolean, :desc => "Indicates whether to use the stage repo"
-  method_option :clean_ami, :type => :boolean, :desc => "Indicates whether to build a clean ami"
   method_option :source_ami, :type => :boolean, :desc => "Indicates whether to build a source ami"
   def build_ami
-    create_ami options
+    create_ami(options)
   end
 
   # sync impl methods
@@ -598,13 +596,11 @@ class Release < Thor
       rhc_devenv_found
     end
   
-    def create_ami(options, devenv_update=false)
+    def create_ami(options)
       # Jenkins parameters
       proxy = "squid.corp.redhat.com:8080"
       jenkins = "https://ci.dev.openshift.redhat.com/jenkins"
       token = "libra1"
-      
-      clean_ami = (options.clean_ami? || devenv_update)
   
       puts "Kicking off AMI build..."
       if options.test?
@@ -614,12 +610,12 @@ class Release < Thor
         end
          
       elsif options.stage?
-        unless run("curl --insecure --proxy #{proxy} #{jenkins}/job/libra_ami_stage/buildWithParameters?token=#{token}\\&BUILD_CLEAN_AMI=#{clean_ami.to_s}\\&BUILD_UPDATE_AMI=#{(!clean_ami).to_s}", :verbose => options.verbose?)
+        unless run("curl --insecure --proxy #{proxy} #{jenkins}/job/libra_ami_stage/buildWithParameters?token=#{token}", :verbose => options.verbose?)
           puts "ERROR - Jenkins remote job invocation failed."
           exit 1
         end
       else
-        unless run("curl --insecure --proxy #{proxy} #{jenkins}/job/libra_ami/buildWithParameters?token=#{token}\\&BUILD_CLEAN_AMI=#{clean_ami.to_s}\\&BUILD_UPDATE_AMI=#{(!clean_ami && !options.source_ami?).to_s}\\&INSTALL_FROM_SOURCE=#{(options.source_ami?).to_s}", :verbose => options.verbose?)
+        unless run("curl --insecure --proxy #{proxy} #{jenkins}/job/libra_ami/buildWithParameters?token=#{token}\\&INSTALL_FROM_PUBLISHED_RPMS=#{(!options.source_ami?).to_s}\\&INSTALL_FROM_SOURCE=#{(options.source_ami?).to_s}", :verbose => options.verbose?)
           puts "ERROR - Jenkins remote job invocation failed."
           exit 1
         end

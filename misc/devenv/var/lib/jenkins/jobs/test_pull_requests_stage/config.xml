@@ -94,7 +94,7 @@ echo &quot;
 set -x
 
 pushd li
-build/devenv launch test_pull_requests_stage_${BUILD_NUMBER} --verifier --instance_type m1.large --use_stage_image
+build/devenv launch test_pull_requests_stage_${BUILD_NUMBER} --verifier --use_stage_image
 build/devenv sync test_pull_requests_stage_${BUILD_NUMBER} --tag --clean_metadata
 
 # Run the tests
