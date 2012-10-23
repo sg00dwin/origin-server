@@ -45,6 +45,12 @@ rm -rf %{buildroot}
 /usr/sbin/semodule -d openshift-origin 2>&1 || :
 /usr/sbin/semodule -i %{_datadir}/selinux/packages/openshift-hosted.pp.bz2 || :
 
+for fixpath in "/sandbox"
+do
+    [ -e "$fixpath" ] /sbin/restorecon -R "$fixpath"
+done
+
+
 %postun
 if [ $1 = 0 ]
 then
