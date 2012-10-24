@@ -2,7 +2,7 @@
 
 Summary:   Provides zend-5.6 support
 Name:      openshift-origin-cartridge-zend-5.6
-Version: 0.96.9
+Version: 0.96.10
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   ASL 2.0
@@ -110,6 +110,10 @@ rm -rf %{buildroot}
 %doc %{cartridgedir}/LICENSE
 
 %changelog
+* Wed Oct 24 2012 Adam Miller <admiller@redhat.com> 0.96.10-1
+- Fix issue w/ incorrect variables sourced in zend cartridge move hook.
+  (ramr@redhat.com)
+
 * Mon Oct 22 2012 Adam Miller <admiller@redhat.com> 0.96.9-1
 - Bug 867660 - Zend and mongo don't work (lnader@redhat.com)
 
