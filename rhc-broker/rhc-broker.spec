@@ -3,7 +3,7 @@
 
 Summary:   Li broker components
 Name:      rhc-broker
-Version: 0.99.17
+Version: 0.99.18
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -113,6 +113,14 @@ if [ ! -f %{_localstatedir}/log/openshift/user_action.log ]; then
 fi
 
 %changelog
+* Wed Oct 24 2012 Adam Miller <admiller@redhat.com> 0.99.18-1
+- rsync key path pulled in as part of the config file (rchopra@redhat.com)
+- Merge pull request #516 from ironcladlou/dev/typeless
+  (openshift+bot@redhat.com)
+- Bug 868858 (dmcphers@redhat.com)
+- Add development templates for typeless gears (ironcladlou@gmail.com)
+- RHC client compatibility fix for application lookups (ironcladlou@gmail.com)
+
 * Mon Oct 22 2012 Adam Miller <admiller@redhat.com> 0.99.17-1
 - removing remaining cases of SS and config.ss (dmcphers@redhat.com)
 
