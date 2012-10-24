@@ -2,7 +2,7 @@
 
 Summary:       Multi-tenant cloud management system node tools
 Name:          rhc-node
-Version: 0.99.10
+Version: 0.99.11
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -224,6 +224,16 @@ fi
 
 
 %changelog
+* Wed Oct 24 2012 Adam Miller <admiller@redhat.com> 0.99.11-1
+- Merge pull request #513 from ramr/master (openshift+bot@redhat.com)
+- Fixes for cron (pmorie@gmail.com)
+- Fixes for sshing to migrated apps, jenkins-1.4, phpmyadmin, and rockmongo
+  (pmorie@gmail.com)
+- Remove rhcsh from li - use the one from origin-server/node/misc/bin/rhcsh.
+  (ramr@redhat.com)
+- Remove sourcing abstract/info/lib/util -- brings in "cruft" and fix up rhcsh.
+  (ramr@redhat.com)
+
 * Fri Oct 19 2012 Adam Miller <admiller@redhat.com> 0.99.10-1
 - Change libra guest to OpenShift guest (dmcphers@redhat.com)
 - Merge pull request #501 from pmorie/dev/rename (dmcphers@redhat.com)
