@@ -13,7 +13,7 @@
       "name": "test",
       "test_prefix": "Test Results:",
       "allow_multiple": true,
-      "branches": { "stage": {"jenkins_job_name": "test_pull_requests_stage",
+      "branches": { "stage": {"jenkins_job_name": "test_pull_requests_generic",
                               "downstream_job_name": "libra_ami",
                               "build_token": "libra1"},
                     "master": {"jenkins_job_name": "test_pull_requests",
@@ -25,16 +25,22 @@
         "rhc": ["168397", "77593"]
       },
       "repo_to_pull_id_param": {
-        "li": "LI_PULL_ID",
+        "li": "DEV_TOOLS_EXT_PULL_ID",
         "origin-server": "ORIGIN_SERVER_PULL_ID",
         "rhc": "RHC_PULL_ID"
+      },
+      "addtl_jenkins_params": {
+        "DEV_TOOLS_EXT_REPO": "li",
+        "DEV_TOOLS_REPO": "origin-dev-tools",
+        "RHC_REPO": "rhc",
+        "ORIGIN_SERVER_REPO": "origin-server"
       }
     },
     "merge_test_settings": {
       "name": "merge",
       "test_prefix": "Merge Test Results:",
       "allow_multiple": false,
-      "branches": { "stage": {"jenkins_job_name": "merge_pull_requests_stage",
+      "branches": { "stage": {"jenkins_job_name": "merge_pull_requests_generic",
                               "downstream_job_name": "libra_ami",
                               "image_base_name": "devenv-stage",
                               "build_token": "libra1"},
@@ -48,9 +54,15 @@
         "rhc": ["77593"]
       },
       "repo_to_pull_id_param": {
-        "li": "LI_PULL_ID",
+        "li": "DEV_TOOLS_EXT_PULL_ID",
         "origin-server": "ORIGIN_SERVER_PULL_ID",
         "rhc": "RHC_PULL_ID" 
+      },
+      "addtl_jenkins_params": {
+        "DEV_TOOLS_EXT_REPO": "li",
+        "DEV_TOOLS_REPO": "origin-dev-tools",
+        "RHC_REPO": "rhc",
+        "ORIGIN_SERVER_REPO": "origin-server"
       }
     }
   }

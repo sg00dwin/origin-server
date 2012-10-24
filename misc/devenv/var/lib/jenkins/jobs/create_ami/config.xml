@@ -38,16 +38,6 @@
           <defaultValue>li</defaultValue>
         </hudson.model.StringParameterDefinition>
         <hudson.model.StringParameterDefinition>
-          <name>ORIGIN_SERVER_REPO</name>
-          <description></description>
-          <defaultValue>origin-server</defaultValue>
-        </hudson.model.StringParameterDefinition>
-        <hudson.model.StringParameterDefinition>
-          <name>RHC_REPO</name>
-          <description></description>
-          <defaultValue>rhc</defaultValue>
-        </hudson.model.StringParameterDefinition>
-        <hudson.model.StringParameterDefinition>
           <name>IMAGE_BASE_NAME</name>
           <description></description>
           <defaultValue>devenv</defaultValue>
@@ -116,7 +106,7 @@ done
 
 
 # Delete the previous repo clone directories
-rm -rf $DEV_TOOLS_REPO $DEV_TOOLS_EXT_REPO $RHC_REPO $ORIGIN_SERVER_REPO
+rm -rf $DEV_TOOLS_REPO $DEV_TOOLS_EXT_REPO
 
 # Clone the repos
 git clone git@github.com:openshift/${DEV_TOOLS_EXT_REPO}.git
@@ -125,14 +115,6 @@ pushd $DEV_TOOLS_EXT_REPO
 popd
 git clone git@github.com:openshift/${DEV_TOOLS_REPO}.git
 pushd $DEV_TOOLS_REPO
-  git checkout $BRANCH
-popd
-git clone git@github.com:openshift/${RHC_REPO}.git
-pushd $RHC_REPO
-  git checkout $BRANCH
-popd
-git clone git@github.com:openshift/${ORIGIN_SERVER_REPO}.git
-pushd $ORIGIN_SERVER_REPO
   git checkout $BRANCH
 popd
 
@@ -144,6 +126,9 @@ else
 fi
 
 pushd $DEV_TOOLS_EXT_REPO
+
+build/devenv clone_addtl_repos $BRANCH --replace
+
 set +e
   build/devenv build ${IMAGE_NAME} ${BUILD_NUMBER} --register --official --terminate --yum_repo=$YUM_REPO --branch=$BRANCH
   RESULT=$?

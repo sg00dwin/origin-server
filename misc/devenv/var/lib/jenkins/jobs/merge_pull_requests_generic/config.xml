@@ -1,12 +1,12 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <project>
   <actions/>
-  <description>Merge a pull request after tests have passed in serial</description>
+  <description>Merge a pull request after tests have passed in serial for a given branch</description>
   <logRotator>
     <daysToKeep>10</daysToKeep>
-    <numToKeep>100</numToKeep>
+    <numToKeep>50</numToKeep>
     <artifactDaysToKeep>10</artifactDaysToKeep>
-    <artifactNumToKeep>100</artifactNumToKeep>
+    <artifactNumToKeep>50</artifactNumToKeep>
   </logRotator>
   <keepDependencies>false</keepDependencies>
   <properties>
@@ -27,6 +27,21 @@
           <description>The pull id to use for the rhc repo.</description>
           <defaultValue></defaultValue>
         </hudson.model.StringParameterDefinition>
+        <hudson.model.StringParameterDefinition>
+          <name>BRANCH</name>
+          <description></description>
+          <defaultValue>stage</defaultValue>
+        </hudson.model.StringParameterDefinition>
+        <hudson.model.StringParameterDefinition>
+          <name>DEV_TOOLS_REPO</name>
+          <description></description>
+          <defaultValue>origin-dev-tools</defaultValue>
+        </hudson.model.StringParameterDefinition>
+        <hudson.model.StringParameterDefinition>
+          <name>DEV_TOOLS_EXT_REPO</name>
+          <description></description>
+          <defaultValue>li</defaultValue>
+        </hudson.model.StringParameterDefinition>
       </parameterDefinitions>
     </hudson.model.ParametersDefinitionProperty>
   </properties>
@@ -40,42 +55,41 @@
   <concurrentBuild>false</concurrentBuild>
   <builders>
     <hudson.tasks.Shell>
-      <command>rm -rf li origin-dev-tools
-git clone git@github.com:openshift/origin-dev-tools.git
-git clone git@github.com:openshift/li.git
-
-pushd li
-build/devenv clone_addtl_repos master --replace
+      <command>rm -rf $DEV_TOOLS_REPO $DEV_TOOLS_EXT_REPO
+git clone git@github.com:openshift/${DEV_TOOLS_REPO}.git
+git clone git@github.com:openshift/${DEV_TOOLS_EXT_REPO}.git
+pushd $DEV_TOOLS_EXT_REPO
+  git checkout $BRANCH
+  build/devenv clone_addtl_repos $BRANCH --replace
 popd
-
 if [ -n &quot;$DEV_TOOLS_EXT_PULL_ID&quot; ]
 then
-set +x
+  set +x
   echo &quot;
 
-*****Locally Merging Pull Request: https://github.com/openshift/li/pull/$DEV_TOOLS_EXT_PULL_ID&quot;
-set -x
-  test_pull_requests --local_merge_pull_request $DEV_TOOLS_EXT_PULL_ID --repo li
+*****Locally Merging Pull Request: https://github.com/openshift/${DEV_TOOLS_EXT_REPO}/pull/$DEV_TOOLS_EXT_PULL_ID&quot;
+  set -x
+  test_pull_requests --local_merge_pull_request $DEV_TOOLS_EXT_PULL_ID --repo $DEV_TOOLS_EXT_REPO
 fi
 
 if [ -n &quot;$ORIGIN_SERVER_PULL_ID&quot; ]
 then
-set +x
+  set +x
   echo &quot;
 
-*****Locally Merging Pull Request: https://github.com/openshift/origin-server/pull/$ORIGIN_SERVER_PULL_ID&quot;
-set -x
-  test_pull_requests --local_merge_pull_request $ORIGIN_SERVER_PULL_ID --repo origin-server
+*****Locally Merging Pull Request: https://github.com/openshift/${ORIGIN_SERVER_REPO}/pull/$ORIGIN_SERVER_PULL_ID&quot;
+  set -x
+  test_pull_requests --local_merge_pull_request $ORIGIN_SERVER_PULL_ID --repo $ORIGIN_SERVER_REPO
 fi
 
 if [ -n &quot;$RHC_PULL_ID&quot; ]
 then
-set +x
+  set +x
   echo &quot;
 
-*****Locally Merging Pull Request: https://github.com/openshift/rhc/pull/$RHC_PULL_ID&quot;
-set -x
-  test_pull_requests --local_merge_pull_request $RHC_PULL_ID --repo rhc
+*****Locally Merging Pull Request: https://github.com/openshift/${RHC_REPO}/pull/$RHC_PULL_ID&quot;
+  set -x
+  test_pull_requests --local_merge_pull_request $RHC_PULL_ID --repo $RHC_REPO
 fi
 
 set +x
@@ -84,41 +98,41 @@ echo &quot;
 &quot;
 set -x
 
-pushd li
-  build/devenv build merge_pull_requests ${BUILD_NUMBER} --terminate --install_from_local_source
+pushd $DEV_TOOLS_EXT_REPO
+  build/devenv build merge_pull_requests_generic ${BUILD_NUMBER} --terminate --install_from_local_source --yum_repo=stage --branch=stage
 popd
 
 # Make sure all the pull requests will merge cleanly
 if [ -n &quot;$DEV_TOOLS_EXT_PULL_ID&quot; ]
 then
-  test_pull_requests --test_merge_pull_request $DEV_TOOLS_EXT_PULL_ID --repo li
+  test_pull_requests --test_merge_pull_request $DEV_TOOLS_EXT_PULL_ID --repo $DEV_TOOLS_EXT_REPO
 fi
 
 if [ -n &quot;$ORIGIN_SERVER_PULL_ID&quot; ]
 then
-  test_pull_requests --test_merge_pull_request $ORIGIN_SERVER_PULL_ID --repo origin-server
+  test_pull_requests --test_merge_pull_request $ORIGIN_SERVER_PULL_ID --repo $ORIGIN_SERVER_REPO
 fi
 
 if [ -n &quot;$RHC_PULL_ID&quot; ]
 then
-  test_pull_requests --test_merge_pull_request $RHC_PULL_ID --repo rhc
+  test_pull_requests --test_merge_pull_request $RHC_PULL_ID --repo $RHC_REPO
 fi
 
 
 # Do the merge
 if [ -n &quot;$DEV_TOOLS_EXT_PULL_ID&quot; ]
 then
-  test_pull_requests --merge_pull_request $DEV_TOOLS_EXT_PULL_ID --repo li
+  test_pull_requests --merge_pull_request $DEV_TOOLS_EXT_PULL_ID --repo $DEV_TOOLS_EXT_REPO
 fi
 
 if [ -n &quot;$ORIGIN_SERVER_PULL_ID&quot; ]
 then
-  test_pull_requests --merge_pull_request $ORIGIN_SERVER_PULL_ID --repo origin-server
+  test_pull_requests --merge_pull_request $ORIGIN_SERVER_PULL_ID --repo $ORIGIN_SERVER_REPO
 fi
 
 if [ -n &quot;$RHC_PULL_ID&quot; ]
 then
-  test_pull_requests --merge_pull_request $RHC_PULL_ID --repo rhc
+  test_pull_requests --merge_pull_request $RHC_PULL_ID --repo $RHC_REPO
 fi</command>
     </hudson.tasks.Shell>
   </builders>
@@ -127,14 +141,6 @@ fi</command>
       <artifacts>li/rhc/log/**</artifacts>
       <latestOnly>false</latestOnly>
     </hudson.tasks.ArtifactArchiver>
-    <hudson.tasks.BuildTrigger>
-      <childProjects>libra_ami</childProjects>
-      <threshold>
-        <name>SUCCESS</name>
-        <ordinal>0</ordinal>
-        <color>BLUE</color>
-      </threshold>
-    </hudson.tasks.BuildTrigger>
     <hudson.tasks.junit.JUnitResultArchiver>
       <testResults>li/rhc/log/**/*.xml</testResults>
       <keepLongStdio>false</keepLongStdio>

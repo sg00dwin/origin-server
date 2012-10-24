@@ -25,19 +25,18 @@
   <builders>
     <hudson.tasks.Shell>
       <command># Delete the previous repo clone directories
-rm -rf li rhc origin-server origin-dev-tools
+rm -rf li origin-dev-tools
 
 # Clone the repos
 git clone git@github.com:openshift/li.git
-git clone git@github.com:openshift/rhc.git
-git clone git@github.com:openshift/origin-server.git
 git clone git@github.com:openshift/origin-dev-tools.git
 
 pushd li
 
+build/devenv clone_addtl_repos master --replace
+
 # Build and install HEAD for the integration tests
 build/devenv launch devenv_web_${BUILD_NUMBER} --verifier
-build/devenv sync devenv_web_${BUILD_NUMBER} --tag --clean_metadata
 
 # Run the web verification tests
 build/devenv test devenv_web_${BUILD_NUMBER} --terminate --include_web

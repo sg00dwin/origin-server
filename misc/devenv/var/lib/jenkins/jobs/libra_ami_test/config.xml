@@ -21,15 +21,14 @@
   <builders>
     <hudson.tasks.Shell>
       <command># Delete the previous repo clone directories
-rm -rf li rhc origin-server origin-dev-tools 
+rm -rf li origin-dev-tools 
 
 # Clone the repos
 git clone git@github.com:openshift/li.git
-git clone git@github.com:openshift/rhc.git
-git clone git@github.com:openshift/origin-server.git
 git clone git@github.com:openshift/origin-dev-tools.git
 
 pushd li
+build/devenv clone_addtl_repos master --replace
 build/devenv build devenv_test ${BUILD_NUMBER} --install_from_source --yum_repo=test --terminate
 popd</command>
     </hudson.tasks.Shell>
