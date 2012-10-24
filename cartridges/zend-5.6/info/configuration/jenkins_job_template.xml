@@ -65,7 +65,7 @@
 alias rsync="rsync --delete-after -az -e '$GIT_SSH'"
 
 # Sync libs - Faster builds
-rsync UPSTREAM_SSH:~/zend-5.6/phplib/ ~/php-5.3/phplib/
+rsync UPSTREAM_SSH:~/zend-5.6/phplib/ ~/zend-5.6/phplib/
 
 # Build/update libs and run user pre_build and build
 . ci_build.sh
@@ -78,7 +78,7 @@ rsync UPSTREAM_SSH:~/zend-5.6/phplib/ ~/php-5.3/phplib/
 $GIT_SSH UPSTREAM_SSH 'ctl_all stop'
 
 # Push content back to application
-rsync ~/php-5.3/phplib/ UPSTREAM_SSH:~/zend-5.6/phplib/
+rsync ~/zend-5.6/phplib/ UPSTREAM_SSH:~/zend-5.6/phplib/
 rsync ~/$WORKSPACE/ UPSTREAM_SSH:~/app-root/runtime/repo/
 
 # Configure / start app
