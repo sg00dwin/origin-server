@@ -117,7 +117,7 @@ module OpenShiftMigration
   end
 
   def self.typeless_mysql(app_name, gear_home, gear_type, cart_ns)
-    typeless_database(app_name, gear_home, gear_type, cart_ns, tag = "DB")
+    typeless_database(app_name, gear_home, gear_type, cart_ns)
     Util.rm_env_var_value(gear_home,
         "OPENSHIFT_DB_MYSQL_51_DUMP_CLEANUP",
         "OPENSHIFT_DB_MYSQL_51_DUMP",
@@ -130,7 +130,7 @@ module OpenShiftMigration
   end
 
   def self.typeless_postgresql(app_name, gear_home, gear_type, cart_ns)
-    typeless_database(app_name, gear_home, gear_type, cart_ns, tag = "DB")
+    typeless_database(app_name, gear_home, gear_type, cart_ns)
     Util.rm_env_var_value(gear_home,
         "OPENSHIFT_DB_POSTGRESQL_84_DUMP_CLEANUP",
         "OPENSHIFT_DB_POSTGRESQL_84_DUMP",
@@ -156,7 +156,7 @@ module OpenShiftMigration
   end
 
   def self.typeless_mongodb(app_name, gear_home, gear_type, cart_ns)
-    typeless_database(app_name, gear_home, gear_type, cart_ns, tag = "NOSQL_DB")
+    typeless_database(app_name, gear_home, gear_type, cart_ns, "NOSQL_DB")
     Util.rm_env_var_value(gear_home,
         "OPENSHIFT_NOSQL_DB_MONGODB_22_DUMP_CLEANUP",
         "OPENSHIFT_NOSQL_DB_MONGODB_22_DUMP",
@@ -378,9 +378,9 @@ module OpenShiftMigration
           typeless_jboss(app_name, gear_home, cart_name, jbosses[cart_name])
         when 'mysql-5.1'
           typeless_mysql(app_name, gear_home, 'mysql-5.1', 'MYSQL')
-        when 'postgesql-8.4'
+        when 'postgresql-8.4'
           typeless_postgresql(app_name, gear_home, 'postgresql-8.4', 'POSTGRESQL')
-        when 'mongodb-2.2'
+        when 'mongodb-2.0'
           typeless_mongodb(app_name, gear_home, 'mongodb-2.2', 'MONGODB')
         when 'haproxy-1.4'
           typeless_log_dir(gear_home, 'haproxy-1.4', 'HAPROXY')
