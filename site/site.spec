@@ -143,6 +143,10 @@ rm -rf %{buildroot}
 %{sitedir}/public
 
 %changelog
+* Wed Oct 24 2012 Adam Miller <admiller@redhat.com> 0.99.14-2
+- bump site.spec Release: for fake chain-build with console
+  (admiller@redhat.com)
+
 * Wed Oct 24 2012 Adam Miller <admiller@redhat.com> 0.99.14-1
 - Merge pull request #492 from nhr/specify_gear_size (openshift+bot@redhat.com)
 - Fixing a test case to pre-authenticate (nhr@redhat.com)
