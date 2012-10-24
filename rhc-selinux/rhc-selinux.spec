@@ -42,8 +42,14 @@ rm -rf %{buildroot}
 # Not compatible with the old libra policy and older versions of this
 # RPM don't remove it.
 /usr/sbin/semodule -r libra >/dev/null 2>&1 || :
-/usr/sbin/semodule -d openshift-origin 2>&1 || :
+/usr/sbin/semodule -d openshift-origin >/dev/null 2>&1 || :
 /usr/sbin/semodule -i %{_datadir}/selinux/packages/openshift-hosted.pp.bz2 || :
+
+for fixpath in "/sandbox"
+do
+    [ -e "$fixpath" ] && /sbin/restorecon -R "$fixpath"
+done
+
 
 %postun
 if [ $1 = 0 ]
