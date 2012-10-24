@@ -8,7 +8,7 @@
 
 Summary:   Dependencies for OpenShift development
 Name:      rhc-devenv
-Version: 0.100.16
+Version: 0.100.17
 Release:   1%{?dist}
 Group:     Development/Libraries
 License:   GPLv2
@@ -612,6 +612,11 @@ restorecon /etc/openshift/node.conf || :
 /sbin/service libra-data restart > /dev/null 2>&1 || :
 
 %changelog
+* Wed Oct 24 2012 Adam Miller <admiller@redhat.com> 0.100.17-1
+- syncing jenkins config (dmcphers@redhat.com)
+- syncing with latest jenkins configs (dmcphers@redhat.com)
+- Making build tools more configurable (dmcphers@redhat.com)
+
 * Mon Oct 22 2012 Adam Miller <admiller@redhat.com> 0.100.16-1
 - Added commands to remove redundant JS assets from devenv (nhr@redhat.com)
 
