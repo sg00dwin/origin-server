@@ -21,10 +21,12 @@
   <builders>
     <hudson.tasks.Shell>
       <command># Delete the previous repo clone directories
-rm -rf li origin-dev-tools
+rm -rf li rhc origin-server origin-dev-tools 
 
 # Clone the repos
 git clone git@github.com:openshift/li.git
+git clone git@github.com:openshift/rhc.git
+git clone git@github.com:openshift/origin-server.git
 git clone git@github.com:openshift/origin-dev-tools.git
 
 pushd li

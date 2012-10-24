@@ -12,16 +12,11 @@
   <properties>
     <hudson.model.ParametersDefinitionProperty>
       <parameterDefinitions>
-        <hudson.model.StringParameterDefinition>
+        <hudson.model.BooleanParameterDefinition>
           <name>INSTALL_FROM_SOURCE</name>
-          <description></description>
+          <description>Note: The alternative is to install from published rpms</description>
           <defaultValue>true</defaultValue>
-        </hudson.model.StringParameterDefinition>
-        <hudson.model.StringParameterDefinition>
-          <name>INSTALL_FROM_PUBLISHED_RPMS</name>
-          <description></description>
-          <defaultValue>false</defaultValue>
-        </hudson.model.StringParameterDefinition>
+        </hudson.model.BooleanParameterDefinition>
       </parameterDefinitions>
     </hudson.model.ParametersDefinitionProperty>
   </properties>
@@ -36,23 +31,21 @@
   <builders>
     <hudson.tasks.Shell>
       <command># Delete the previous repo clone directories
-rm -rf li origin-dev-tools
+rm -rf li rhc origin-server origin-dev-tools
 
 # Clone the repos
 git clone git@github.com:openshift/li.git
+git clone git@github.com:openshift/rhc.git
+git clone git@github.com:openshift/origin-server.git
 git clone git@github.com:openshift/origin-dev-tools.git
 
 pushd li
 
-if [ &quot;$INSTALL_FROM_PUBLISHED_RPMS&quot; == &quot;true&quot; ]
-then
-  build/devenv build devenv ${BUILD_NUMBER} --register --official --terminate
-elif [ &quot;$INSTALL_FROM_SOURCE&quot; == &quot;true&quot; ]
+if $INSTALL_FROM_SOURCE
 then
   build/devenv build devenv ${BUILD_NUMBER} --register --official --terminate --install_from_source
 else
-  printf &quot;ERROR: incorrect or insufficient build parameters\n&quot;
-  exit 1
+  build/devenv build devenv ${BUILD_NUMBER} --register --official --terminate
 fi
 
 popd</command>
@@ -66,9 +59,9 @@ popd</command>
     <hudson.tasks.BuildTrigger>
       <childProjects>libra_coverage, broker_extended, runtime_extended, site_extended, rhc_extended</childProjects>
       <threshold>
-        <name>SUCCESS</name>
-        <ordinal>0</ordinal>
-        <color>BLUE</color>
+        <name>UNSTABLE</name>
+        <ordinal>1</ordinal>
+        <color>YELLOW</color>
       </threshold>
     </hudson.tasks.BuildTrigger>
     <hudson.tasks.junit.JUnitResultArchiver>

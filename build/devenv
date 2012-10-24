@@ -771,7 +771,7 @@ module Express
             puts "Skipping #{package_name}"
             return
           else
-            build_and_install(package_name, build_dir, spec_file)
+            build_and_install(package_name, build_dir, spec_file, options)
           end
         end
 
@@ -786,7 +786,7 @@ module Express
               puts "Skipping #{package_name}"
               return
             else
-              build_and_install(package_name, build_dir, spec_file)
+              build_and_install(package_name, build_dir, spec_file, options)
             end
           end
         end

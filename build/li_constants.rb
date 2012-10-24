@@ -49,16 +49,16 @@ SAUCE_BROWSER = "firefox"
 SAUCE_BROWSER_VERSION = "7"
 CAN_SSH_TIMEOUT=90
 
-JENKINS_HOME_DIR = '/var/lib/jenkins'
-
-SIBLING_REPOS = {'origin-server' => ['../origin-server-working', '../origin-server-fork', '../origin-server', JENKINS_HOME_DIR + '/jobs/origin-server/workspace'],
-                 'rhc' => ['../rhc-working', '../rhc-fork', '../rhc', JENKINS_HOME_DIR + '/jobs/rhc/workspace'],
+SIBLING_REPOS = {'origin-server' => ['../origin-server-working', '../origin-server'],
+                 'rhc' => ['../rhc-working', '../rhc'],
                  'li' => ["../#{File.basename(FileUtils.pwd)}"],
                  'origin-dev-tools' => ['../origin-dev-tools']}
 SIBLING_REPOS_GIT_URL = {'origin-server' => 'https://github.com/openshift/origin-server.git',
                         'rhc' => 'https://github.com/openshift/rhc.git',
                         'li' => 'git@github.com:openshift/li.git',
                         'origin-dev-tools' => 'git@github.com:openshift/origin-dev-tools.git'}
+                        
+ADDTL_SIBLING_REPOS = ['origin-server', 'rhc']
 
 CUCUMBER_OPTIONS = '--strict -f progress -f junit --out /tmp/rhc/cucumber_results'
 IGNORE_PACKAGES = ['bind-local', 'rubygem-rhc', 'openshift-origin-broker', 'rubygem-openshift-origin-auth-mongo', 'rubygem-openshift-origin-dns-bind', 'openshift-origin', 'rubygem-openshift-origin-auth-kerberos', 'cartridge-postgresql-9.1', 'cartridge-php-5.4']

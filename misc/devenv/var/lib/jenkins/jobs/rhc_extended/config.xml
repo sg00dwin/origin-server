@@ -30,7 +30,6 @@ pushd li
 
 # Build and install HEAD for the tests
 build/devenv launch devenv_rhc_extended_${BUILD_NUMBER} --verifier
-build/devenv sync devenv_rhc_extended_${BUILD_NUMBER} --tag --clean_metadata
 
 # Run the tests
 build/devenv test devenv_rhc_extended_${BUILD_NUMBER} --terminate --include_extended=rhc
