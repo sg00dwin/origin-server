@@ -121,7 +121,8 @@ class SubUserTest < ActionDispatch::IntegrationTest
 
     subuser = CloudUser.find "subuser#{@random}"
     capabilities = subuser.get_capabilities
-    assert_equal false, capabilities.has_key?("gear_sizes")
+    assert_equal 1, capabilities["gear_sizes"].size
+    assert_equal "small", capabilities["gear_sizes"][0]
   end
 
   def teardown
