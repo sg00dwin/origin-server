@@ -79,5 +79,4 @@ module CommunityHelper
   def community_zend_get_started_url
     community_base_url 'get-started/zend'
   end
-
 end

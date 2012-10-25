@@ -134,6 +134,7 @@ Requires:  drupal6-notifications
 Requires:  drupal6-node_import
 Requires:  drupal6-og
 Requires:  drupal6-openshift-custom_forms
+Requires:  drupal6-openshift-features-application_quickstarts
 Requires:  drupal6-openshift-features-blogs
 Requires:  drupal6-openshift-features-forums
 Requires:  drupal6-openshift-features-front_page

@@ -1,7 +1,16 @@
 module Aria
   class MasterPlan < Plan
+    class Capability
+      attr_accessor :max_gears, :gear_sizes, :max_storage_per_gear
+      def initialize(opts)
+        opts.each_pair{ |k,v| send("#{k}=", v) if respond_to?("#{k}=") }
+      end
+    end
+
     self.element_name = 'plan'
     allow_anonymous
+
+    has_one :capabilities, :class_name => 'Aria::MasterPlan::Capability'
 
     def name
       aria_plan.plan_name

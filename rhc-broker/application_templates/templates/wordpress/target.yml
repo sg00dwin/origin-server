@@ -3,9 +3,8 @@
 :cartridge: php-5.3
 :tags:
 - :php
-- :wordpress
 - :blog
-- :framework
+- :instant_app
 - :experimental
 :embed:
 - mysql-5.1
