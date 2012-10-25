@@ -752,7 +752,7 @@ rm -rf /tmp/tito; mkdir -p /root/.source_build;
               init_repos(hostname)
               cmd += "yum -y install git tito ruby rubygems rubygem-thor rubygem-parseconfig rubygem-json rubygem-aws-sdk;"
               cmd += "#{clone_commands}\n"
-              cmd += "pushd li; build/devenv install_required_packages; popd; rm -rf /root/*-bare;"
+              cmd += "pushd li; build/devenv install_required_packages; popd;"
               SIBLING_REPOS.each_key do |repo_name|
                 cmd += "rm -rf /root/#{repo_name}; rm -rf /root/#{repo_name}-bare;"
               end
