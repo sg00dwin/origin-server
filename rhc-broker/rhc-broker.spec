@@ -59,6 +59,8 @@ mkdir -p %{buildroot}%{_bindir}
 mkdir -p %{buildroot}%{htmldir}
 mkdir -p %{buildroot}%{brokerdir}
 mkdir -p %{buildroot}/usr/lib/openshift/broker
+mkdir -p %{buildroot}/etc/openshift/plugins.d/
+
 mv application_templates %{buildroot}/usr/lib/openshift/broker
 cp -r . %{buildroot}%{brokerdir}
 ln -s %{brokerdir}/public %{buildroot}%{htmldir}/broker
@@ -73,6 +75,11 @@ mv %{buildroot}%{brokerdir}/script/rhc-admin-ctl-usage %{buildroot}/%{_bindir}
 mv %{buildroot}%{brokerdir}/script/rhc-admin-ctl-plan %{buildroot}/%{_bindir}
 mv %{buildroot}%{brokerdir}/script/rhc-admin-chk %{buildroot}/%{_bindir}
 mv %{buildroot}%{brokerdir}/script/rhc-admin-stale-dns %{buildroot}/%{_bindir}
+
+cp conf/broker.conf %{buildroot}/etc/openshift/
+cp conf/broker-dev.conf %{buildroot}/etc/openshift/
+cp conf/openshift-origin-msg-broker-mcollective-dev.conf %{buildroot}/etc/openshift/plugins.d/
+cp conf/openshift-origin-msg-broker-mcollective.conf %{buildroot}/etc/openshift/plugins.d/
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -98,6 +105,11 @@ rm -rf $RPM_BUILD_ROOT
 %attr(0750,-,-) %{_bindir}/rhc-admin-ctl-plan
 %attr(0750,-,-) %{_bindir}/rhc-admin-stale-dns
 /usr/lib/openshift/broker/application_templates
+
+%config(noreplace) /etc/openshift/plugins.d/openshift-origin-msg-broker-mcollective.conf
+%config(noreplace) /etc/openshift/broker.conf
+/etc/openshift/plugins.d/openshift-origin-msg-broker-mcollective-dev.conf
+/etc/openshift/broker-dev.conf
 
 %post
 if [ ! -f %{brokerdir}/log/production.log ]; then

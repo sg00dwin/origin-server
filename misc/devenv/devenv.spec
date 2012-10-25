@@ -219,6 +219,10 @@ mv %{buildroot}%{devenvdir}%{jenkins}/jobs/* %{buildroot}%{jenkins}/jobs
 mkdir -p %{buildroot}%{policydir}
 cp %{buildroot}%{devenvdir}%{policydir}/* %{buildroot}%{policydir} 
 
+# Marking installation as a devenv
+mkdir -p %{buildroot}/etc/openshift
+touch %{buildroot}/etc/openshift/development
+
 %clean
 rm -rf %{buildroot}
 
@@ -590,7 +594,6 @@ fi
 #            in rails development mode.
 cd /var/www/openshift/site && /usr/bin/scl enable ruby193 "rake assets:clean"
 
-
 %files
 %defattr(-,root,root,-)
 %attr(0660,-,-) %{brokerdir}/log/mcollective-client.log
@@ -605,6 +608,7 @@ cd /var/www/openshift/site && /usr/bin/scl enable ruby193 "rake assets:clean"
 %{_initddir}/rhc-site
 %{_initddir}/sauce-connect
 %{policydir}/*
+/etc/openshift/development
 
 %triggerin -- rubygem-openshift-origin-node
 cp -f /etc/openshift/node.conf.libra /etc/openshift/node.conf
