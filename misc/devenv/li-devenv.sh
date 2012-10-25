@@ -1,25 +1,5 @@
 #!/bin/bash
 
-
-#### FIXME -- THIS IS A HACK AND SHOULD NOT STAY HERE LONG
-if [[ "$1" == "--install_templates" ]]
-then
-  # FIXME - templates stuff - destroy and create
-  #### This destroys the templates
-  query="db.template.find({},{'_id':true}).forEach(function(x){print(x['_id']);});"
-
-  while read uuid 
-  do
-    oo-admin-ctl-template -c remove -u $uuid
-  done < <(mongo openshift_broker_dev --quiet --eval "$query")
-
-  #### This creates the templates
-  pushd /usr/lib/openshift/broker/application_templates/
-    ruby templates/deploy.rb
-  popd
-  exit 0
-fi
-
 #rpm -Uhv http://download.fedora.redhat.com/pub/epel/6/x86_64/epel-release-6-5.noarch.rpm
 #rpm -Uhv http://download.fedoraproject.org/pub/epel/6/x86_64/epel-release-6-5.noarch.rpm
 cat > /etc/yum.repos.d/epel.repo <<EOF
@@ -153,6 +133,7 @@ sslclientcert=/var/lib/yum/client-cert.pem
 sslclientkey=/var/lib/yum/client-key.pem
 
 [li-source]
+
 name=Li repo for Enterprise Linux 6 - $basearch
 baseurl=https://mirror1.ops.rhcloud.com/libra/libra-rhel-6.3-${1-candidate}/source/SRPMS/
         https://mirror2.ops.rhcloud.com/libra/libra-rhel-6.3-${1-candidate}/source/SRPMS/
@@ -168,204 +149,12 @@ EOF
 
 fi
 
-# Enable RHUI JBoss repos for cartridge rebase on core EAP packages
-yum -y install rh-amazon-rhui-client-jbeap6
-
-# Enable RHUI JB EWS repos for Tomcat cartridge
-yum -y install rh-amazon-rhui-client-jbews1
+# Enable RHUI JBoss repos for cartridge rebase on core EAP packages and enable RHUI JB EWS repos for Tomcat cartridge
+yum -y install rh-amazon-rhui-client-jbeap6 rh-amazon-rhui-client-jbews1
 
 # Install the 32 bit java before anything else
 yum -y install java-1.6.0-openjdk.i686 java-1.6.0-openjdk-devel.i686
 yum -y remove java-1.6.0-openjdk.x86_64
 rpm -e --nodeps java-1.7.0-openjdk java-1.7.0-openjdk-devel
 yum -y install java-1.7.0-openjdk.i686 java-1.7.0-openjdk-devel.i686
-yum update -y --exclude='rhc*' --exclude='mcollective*'
-
-
-function install_requires {
-  spec_file=$2
-  echo "Installing $1 for ${spec_file}"
-  requires=""
-  IFS_BAK=$IFS
-IFS="
-"
-  for s in $(grep -e "^$1:" $spec_file)
-  do
-    s=`echo ${s//$1:/}`
-    s=`echo ${s// /}`
-    s=`echo ${s//(/-}`
-    s=`echo ${s//)/}`
-    s=`echo ${s//>=*/}`
-    s=`echo ${s//=/-}`
-    s=`echo ${s//,/ }`
-    if ! [[ $s =~ "%{" ]]
-    then
-      if [ -n "$3" ]
-      then
-        if ! `contains_value "$s" "${@:3}"`
-        then
-          requires+=" $s"
-        fi
-      else
-        requires+=" $s"
-      fi
-    fi
-  done
-  IFS=$IFS_BAK
-  if [ -n "$requires" ]
-  then
-    yum install -y $requires
-  fi
-}
-
-function find_and_build_specs {
-  set -e
-  pushd /root/li-working > /dev/null
-    echo "Building all specs on the server..."
-    build/devenv find_and_build_specs
-  popd > /dev/null
-  set +e
-}
-
-function contains_value { 
-  for v in "${@:2}"
-  do 
-    [[ "$v" = "$1" ]] && break
-  done
-}
-
-function get_package_name {
-  name_grep=`grep -e "^Name:" $1`
-  name_grep_array=($name_grep)
-  package_name=${name_grep_array[1]}
-  while [[ $package_name =~ %\{([^{]*)\} ]]
-  do
-    global_name=${BASH_REMATCH[1]}
-    global_grep=`grep -e "%global $global_name" $1`
-    global_grep_array=($global_grep)
-    global=${global_grep_array[2]}
-    package_name=`echo ${package_name//%\{$global_name\}/$global}`
-  done
-  echo "$package_name"
-}
-
-github_repos=( origin-server rhc origin-dev-tools )
-source_repos=( origin-server rhc li-working )
-all_repos=( origin-server rhc li-working origin-dev-tools )
-
-branch="master"
-if [ "$1" == "stage" ]
-then
-  branch="stage"
-fi
-
-rm -rf /root/li-working
-
-if [[ "$2" == "--install_from_source" ]] || [[ "$2" == "--install_required_packages" ]]
-then
-  git clone git@github.com:openshift/li.git /root/li-working
-
-  for repo_name in "${github_repos[@]}"
-  do
-    rm -rf /root/$repo_name
-    git clone git@github.com:openshift/$repo_name.git /root/$repo_name
-  done
-elif [[ "$2" == "--install_from_local_source" ]]
-then
-  git clone /root/li /root/li-working
-  for repo_name in "${github_repos[@]}"
-  do
-    mv /root/$repo_name /root/${repo_name}_working
-    git clone /root/${repo_name}_working /root/$repo_name
-    rm -rf /root/${repo_name}_working
-  done
-fi
-
-if [[ "$2" == "--install_from_source" ]] || [[ "$2" == "--install_from_local_source" ]]
-then
-
-  mkdir -p /tmp/tito
-
-  for repo_name in "${source_repos[@]}"
-  do
-    if [ -d /root/$repo_name ]
-    then
-      pushd /root/$repo_name > /dev/null
-        if [[ "$2" == "--install_from_source" ]]
-        then
-          git checkout $branch
-        fi
-      popd > /dev/null
-    fi
-  done
-
-  find_and_build_specs
-
-  yum -y install createrepo
-  mkdir /root/li-local/
-
-  cat > /etc/yum.repos.d/local.repo <<EOF
-[li-local]
-name=li-local
-baseurl=file:///root/li-local/
-enabled=0
-gpgcheck=0
-priority=1
-EOF
-
-  cp /tmp/tito/x86_64/*.rpm /root/li-local/
-  cp /tmp/tito/noarch/*.rpm /root/li-local/
-  createrepo /root/li-local/
-
-  set -e
-  yum -y install yum-priorities
-  yum -y install rhc-devenv --enablerepo=li-local
-  yum -y erase yum-priorities
-  set +e
-  
-  pushd /root/li-working > /dev/null
-    build/devenv write_sync_history
-  popd > /dev/null
-elif [[ "$2" == "--install_required_packages" ]]
-then
-  pushd /root/li-working > /dev/null
-    git checkout $branch
-    packages=(`build/devenv print_packages`)
-    ignore_packages=(`build/devenv print_ignore_packages`)
-  popd > /dev/null
-  for repo_name in "${source_repos[@]}"
-  do
-    pushd /root/$repo_name > /dev/null
-      git checkout $branch
-      for x in $(find -name *.spec)
-      do
-        package_name=`get_package_name $x`
-        if ! `contains_value "$package_name" "${ignore_packages[@]}"`
-	    then
-	      install_requires "BuildRequires" "$x" "${packages[@]}"
-	      install_requires "Requires" "$x" "${packages[@]}"
-	    fi
-	  done
-	popd > /dev/null
-  done
-elif [ "$2" == "--install_build_prereqs" ]
-then
-  yum -y install git tito ruby rubygems rubygem-thor rubygem-parseconfig rubygem-json rubygem-aws-sdk
-else
-  yum -y install rhc-devenv
-fi
-
-if [[ "$2" == "--install_from_source" ]] || [[ "$2" == "--install_from_local_source" ]] || [[ "$2" == "--install_required_packages" ]]
-then
-  rm -rf /tmp/tito
-  mkdir -p /root/.source_build
-  for repo_name in "${all_repos[@]}"
-  do
-    rm -rf /root/.source_build/${repo_name}
-    mv /root/$repo_name /root/.source_build/${repo_name}
-  done
-fi
-
-#not sure who is adding this but remove it regardless
-sed -i "/nameserver 127.0.0.1/d" /etc/resolv.conf
 

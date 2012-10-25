@@ -117,7 +117,7 @@ module DevOps
     end
 
     # override those that are inherited but not ready
-    desc "update", "TODO: local build from -working repos"
+    desc "update", "TODO: local build from working repos"
     def update
       puts "TODO: update not yet implemented"
     end
@@ -210,8 +210,8 @@ module DevOps
         if options.li_build?
           # we need the li repo there in order to run the "onprem" script from li
           sync_repo('li', hostname, remote_dir, ssh_user, options.verbose?)
-          clone_commands += "git clone li li-working; "
-          working_dirs += "li-working "
+          clone_commands += "git clone li-bare li; "
+          working_dirs += "li "
         end
 
         # run a remote command to copy repos and build
@@ -225,14 +225,14 @@ module DevOps
         elsif options.li_build?
           puts "Performing remote onprem update...."
           ssh(hostname, sync_shell_cmd(working_dirs, clone_commands, <<-"SHELL"), 900, true)
-            pushd li-working > /dev/null
+            pushd li > /dev/null
               build/onprem update #{options.verbose? ? '--verbose' : ''} 2>&1
             popd > /dev/null
             SHELL
         else # devbroker build
           puts "Performing remote rake devbroker...."
           ssh(hostname, sync_shell_cmd(working_dirs, clone_commands, <<-"SHELL"), 900, true)
-            pushd origin-server-working/build > /dev/null
+            pushd origin-server/build > /dev/null
               rake build_setup 2>&1 # may be a no-op
               rake devbroker 2>&1
             popd > /dev/null

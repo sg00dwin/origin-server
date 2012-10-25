@@ -659,13 +659,13 @@ module Express
 
             if options[:extra_rpm_dir]
               if File.exist? options[:extra_rpm_dir]
-                out, ret = ssh(hostname, "mkdir -p /data/origin-server-working/build/extras", 60, true, 1, ssh_user)
+                out, ret = ssh(hostname, "mkdir -p /data/origin-server/build/extras", 60, true, 1, ssh_user)
                 files = Dir.glob("#{options[:extra_rpm_dir]}/*.rpm")
                 files.each do |file|
-                  scp_to(hostname, file, "/data/origin-server-working/build/extras/", 60*10, 5, ssh_user)
+                  scp_to(hostname, file, "/data/origin-server/build/extras/", 60*10, 5, ssh_user)
                 end
 
-                out, ret = ssh(hostname, "su -c \"cd /data/origin-server-working/build/extras && yum install -y *.rpm\"", 60 * 20, true, 1, ssh_user)
+                out, ret = ssh(hostname, "su -c \"cd /data/origin-server/build/extras && yum install -y *.rpm\"", 60 * 20, true, 1, ssh_user)
 
                 puts "------------------ Extra RPMs Output ------------------------"
                 puts out
@@ -691,31 +691,77 @@ module Express
             scp_to(hostname, pem_path, "/var/lib/yum/")
             pem_path = File.expand_path(File.dirname(__FILE__) + "/../misc/client-key.pem")
             scp_to(hostname, pem_path, "/var/lib/yum/")
-            if options.install_from_source? || options.install_from_local_source?
-              cfg_path = File.expand_path(File.dirname(__FILE__) + "/../misc/libra-rhel-ruby193.cfg")
-              scp_to(hostname, cfg_path, "/etc/mock/")
-            end
             scp_to(hostname, "misc/devenv/root/.ssh/*", "/root/.ssh/")
             ssh(hostname, "chmod 0600 /root/.ssh/id_rsa; chmod 0644 /root/.ssh/id_rsa.pub /root/.ssh/known_hosts;")
             puts "Done"
             output = ''
-            if options.install_from_source?
-              puts "Performing clean install from source..."
-              cmd = "set -e; /bin/bash li-devenv.sh #{options.yum_repo} --install_from_source"
-            elsif options.install_from_local_source?
+            clone_commands, working_dirs = sync_available_sibling_repos(hostname)
+            cmd = "set -ex; /bin/bash ~/li-devenv.sh #{options.yum_repo};"
+            if options.install_from_source? || options.install_from_local_source?
+              if options.install_from_source?
+                puts "Performing clean install from source..."
+              elsif options.install_from_local_source?
+                puts "Performing clean install from local source..."
+              end
               init_repos(hostname)
-              sync_repos(hostname)
-              puts "Performing clean install from local source..."
-              cmd = "set -e; /bin/bash li-devenv.sh #{options.yum_repo} --install_from_local_source"
+              sync_repos(hostname) if options.install_from_local_source?
+              cmd += "#{clone_commands}\n"
+              cmd += "mkdir -p /tmp/tito;"
+              SIBLING_REPOS.each_key do |repo_name|
+                cmd += "pushd /root/#{repo_name}; git checkout #{options.branch}; popd;"
+              end if options.install_from_source?
+
+              cmd += %{
+
+pushd /root/li > /dev/null
+  echo "Building all specs on the server..."
+  build/devenv find_and_build_specs
+popd > /dev/null
+
+yum -y install createrepo
+mkdir /root/li-local/
+
+cat > /etc/yum.repos.d/local.repo <<EOF
+[li-local]
+name=li-local
+baseurl=file:///root/li-local/
+enabled=0
+gpgcheck=0
+priority=1
+EOF
+            
+cp /tmp/tito/x86_64/*.rpm /root/li-local/
+cp /tmp/tito/noarch/*.rpm /root/li-local/
+createrepo /root/li-local/
+
+yum -y install yum-priorities
+yum -y install rhc-devenv --enablerepo=li-local
+yum -y erase yum-priorities
+
+pushd /root/li > /dev/null
+  build/devenv write_sync_history
+popd > /dev/null
+                
+rm -rf /tmp/tito; mkdir -p /root/.source_build;
+}
+              SIBLING_REPOS.each_key do |repo_name|
+                cmd += "rm -rf /root/#{repo_name}-bare; rm -rf /root/.source_build/#{repo_name}; mv /root/#{repo_name} /root/.source_build/#{repo_name};"
+              end
             elsif options.install_required_packages?
               puts "Installing requires..."
-              cmd = "set -e; /bin/bash li-devenv.sh #{options.yum_repo} --install_build_prereqs"
-              output += ssh(hostname, cmd, 600)
-              cmd = "set -e; /bin/bash li-devenv.sh #{options.yum_repo} --install_required_packages"
+              init_repos(hostname)
+              cmd += "yum -y install git tito ruby rubygems rubygem-thor rubygem-parseconfig rubygem-json rubygem-aws-sdk;"
+              cmd += "#{clone_commands}\n"
+              cmd += "pushd li; build/devenv install_required_packages; popd; rm -rf /root/*-bare;"
+              SIBLING_REPOS.each_key do |repo_name|
+                cmd += "rm -rf /root/#{repo_name}; rm -rf /root/#{repo_name}-bare;"
+              end
             else
               puts "Performing clean install with the latest code..."
-              cmd = "set -e ; /bin/bash ~/li-devenv.sh #{options.yum_repo}"
+              cmd += "yum -y install rhc-devenv;"
             end
+            cmd += 'sed -i "/nameserver 127.0.0.1/d" /etc/resolv.conf;'
+                  
             output, exit_code = ssh(hostname, cmd, 3600, true)
             puts "Done"
 
@@ -813,21 +859,28 @@ rm -rf #{working_dirs}
 
 #{clone_commands}
 
-rm -rf origin-dev-tools-bare-repo
-mv origin-dev-tools origin-dev-tools-bare-repo
-mv origin-dev-tools-working origin-dev-tools
-
-pushd li-working > /dev/null
+pushd li > /dev/null
   build/devenv update#{options.verbose? ? ' --verbose' : ''} #{options.clean_metadata? ? ' --include_stale' : ''} 2>&1
 popd > /dev/null
-
-rm -rf origin-dev-tools
-mv origin-dev-tools-bare-repo origin-dev-tools
 
 rm -rf #{working_dirs}
 #{options.clean_metadata? ? "yum update -y --exclude='rhc-devenv' rhc-* *openshift* 2>&1;" : ''}
 
-#{options.clean_metadata? ? '/bin/bash li-test/misc/devenv/li-devenv.sh --install_templates 2>&1' : ''}
+#{options.clean_metadata? ? "
+#### FIXME -- THIS IS A HACK AND SHOULD NOT STAY HERE LONG
+#### This destroys the templates
+query=\"db.template.find({},{'_id':true}).forEach(function(x){print(x['_id']);});\"
+
+while read uuid 
+do
+  oo-admin-ctl-template -c remove -u $uuid
+done < <(mongo openshift_broker_dev --quiet --eval \"$query\")
+
+#### This creates the templates
+pushd /usr/lib/openshift/broker/application_templates/
+  ruby templates/deploy.rb
+popd
+" : ''}
 
 # End shell code
 ################

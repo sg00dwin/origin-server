@@ -49,8 +49,8 @@ SAUCE_BROWSER = "firefox"
 SAUCE_BROWSER_VERSION = "7"
 CAN_SSH_TIMEOUT=90
 
-SIBLING_REPOS = {'origin-server' => ['../origin-server-working', '../origin-server'],
-                 'rhc' => ['../rhc-working', '../rhc'],
+SIBLING_REPOS = {'origin-server' => ['../origin-server'],
+                 'rhc' => ['../rhc'],
                  'li' => ["../#{File.basename(FileUtils.pwd)}"],
                  'origin-dev-tools' => ['../origin-dev-tools']}
 SIBLING_REPOS_GIT_URL = {'origin-server' => 'https://github.com/openshift/origin-server.git',
