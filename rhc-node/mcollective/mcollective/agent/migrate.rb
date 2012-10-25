@@ -306,11 +306,21 @@ module OpenShiftMigration
       Util.replace_in_file(entry, "/usr/libexec/stickshift/", "/usr/libexec/openshift/" )
     }
 
-    haproxy_conf = "#{libra_home}/.httpd.d/#{uuid}_#{namespace}_#{uuid[0...10]}.conf"
-    Util.replace_in_file(haproxy_conf, "/etc/httpd/conf.d/stickshift/", "/etc/httpd/conf.d/openshift/") if File.exists? haproxy_conf
+    httpd_conf = "#{libra_home}/.httpd.d/#{uuid}_#{namespace}_#{app_name}.conf"
 
-    Util.replace_in_file("#{libra_home}/.httpd.d/#{uuid}_#{namespace}_#{app_name}.conf", "/etc/httpd/conf.d/stickshift/", "/etc/httpd/conf.d/openshift/")
-    Util.replace_in_file("#{libra_home}/.httpd.d/#{uuid}_#{namespace}_#{app_name}.conf", "/usr/libexec/stickshift/", "/usr/libexec/openshift/")
+    Util.replace_in_file(httpd_conf, "/etc/httpd/conf.d/stickshift/", "/etc/httpd/conf.d/openshift/")
+    Util.replace_in_file(httpd_conf, "/usr/libexec/stickshift/", "/usr/libexec/openshift/")
+
+    haproxy_conf = "#{libra_home}/.httpd.d/#{uuid}_#{namespace}_#{uuid[0...10]}.conf"
+
+    if File.exists? haproxy_conf
+      Util.replace_in_file(haproxy_conf, "/etc/httpd/conf.d/stickshift/", "/etc/httpd/conf.d/openshift/") 
+      Util.replace_in_file(haproxy_conf, "/usr/libexec/stickshift/", "/usr/libexec/openshift/") 
+    end
+
+    Dir[File.join(libra_home, '.httpd.d', "#{uuid}_#{namespace}_#{uuid[0...10]}", "*.conf")].each { |entry|
+      Util.replace_in_file(entry, "/usr/libexec/stickshift/", "/usr/libexec/openshift/" )
+    }
 
     carts_to_touch.each do |cart_name|
       next unless Util.gear_has_cart?(gear_home, cart_name)
