@@ -148,8 +148,8 @@ __END__
     of people around the world.","credentials":[{"username":"Admin","password":"OpenShiftAdmin"}]}'
   :descriptor: ! "---\nArchitecture: noarch\nCart-Data: {}\nCategories:\n- cartridge\nConnections:\n
     \ mysql-5.1-php-5.3:\n    Components:\n    - php-5.3\n    - mysql-5.1\nDescription:
-    ''\nDisplay-Name: drupal-0.0-noarch\nHelp-Topics: {}\nLicense: unknown\nLicense-Url:
-    ''\nName: drupal\nRequires:\n- php-5.3\n- mysql-5.1\nScaling:\n  Max: -1\n  Min:
+    ''\nDisplay-Name: drupaltypeless-0.0-noarch\nHelp-Topics: {}\nLicense: unknown\nLicense-Url:
+    ''\nName: drupaltypeless\nRequires:\n- php-5.3\n- mysql-5.1\nScaling:\n  Max: -1\n  Min:
     1\nVendor: unknown\nVersion: '0.0'\nWebsite: ''\n"
 - :name: kitchensink
   :script: oo-admin-ctl-template --command 'add' --cost '1' --git-url 'git://github.com/openshift/kitchensink-example.git'

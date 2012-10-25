@@ -10,12 +10,12 @@
       - php-5.3
       - mysql-5.1
 - Description: ""
-- Display-Name: drupal-0.0-noarch
+- Display-Name: drupaltypeless-0.0-noarch
 - Help-Topics: !map:BSON::OrderedHash {}
 
 - License: unknown
 - License-Url: ""
-- Name: drupal
+- Name: drupaltypeless
 - Requires: 
   - php-5.3
   - mysql-5.1
