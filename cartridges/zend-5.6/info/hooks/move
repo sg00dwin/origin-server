@@ -56,7 +56,8 @@ IP=`find_open_ip $uid $uuid`
 echo "export OPENSHIFT_INTERNAL_IP='$IP'" > $APP_HOME/.env/OPENSHIFT_INTERNAL_IP
 if [ -f $CART_INFO_DIR/bin/deploy_httpd_config.sh ]
 then
-  $CART_INFO_DIR/bin/deploy_httpd_config.sh $application $uuid $IP
+  ZENDCART_INSTANCE_DIR=$(get_cartridge_instance_dir "$cartridge_type")
+  $CART_INFO_DIR/bin/deploy_httpd_config.sh $ZENDCART_INSTANCE_DIR $application $uuid $IP
 fi
 
 run_as_user "${CARTRIDGE_BASE_PATH}/abstract/info/bin/redeploy_config_dir.sh"
