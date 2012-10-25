@@ -658,10 +658,11 @@ module Express
             puts "---------------------------------------------------------"
             
             if options.install_required_packages?
-              output = ssh(hostname, "yum -y install openssh-clients git tito ruby rubygems rubygem-thor rubygem-parseconfig rubygem-json rubygem-aws-sdk createrepo yum-priorities", 600, false, 2)
-              puts "----------- Install Bootstrap Packages Output -----------"
+              output, exit_code = ssh(hostname, "yum -y install openssh-clients", 240, true)
+              puts "----------- Install OpenSSH Clients Output -----------"
               puts output
               puts "---------------------------------------------------------"
+              exit 1 unless exit_code == 0
             end
 
             if options[:extra_rpm_dir]
@@ -704,10 +705,12 @@ module Express
               ssh(hostname, "chmod 0600 /root/.ssh/id_rsa; chmod 0644 /root/.ssh/id_rsa.pub /root/.ssh/known_hosts;")
               puts "Done"
             end
+            
+            ssh(hostname, "/bin/bash ~/setup-li-repos.sh #{options.yum_repo};")
 
             output = ''
             clone_commands = repo_clone_commands(hostname)
-            cmd = "set -ex; /bin/bash ~/setup-li-repos.sh #{options.yum_repo};"
+            cmd = "set -ex;"
             if options.install_from_source? || options.install_from_local_source?
               if options.install_from_source?
                 puts "Performing clean install from source..."
@@ -726,7 +729,7 @@ module Express
 
 pushd /root/li > /dev/null
   echo "Building all specs on the server..."
-  build/devenv find_and_build_specs
+  build/devenv find_and_build_specs 2>&1
 popd > /dev/null
 
 mkdir /root/li-local/
@@ -746,10 +749,10 @@ createrepo /root/li-local/
 
 #TODO remove this install of yum-priorities 
 yum -y install yum-priorities
-yum -y install rhc-devenv --enablerepo=li-local
+yum -y install rhc-devenv --enablerepo=li-local 2>&1
 
 pushd /root/li > /dev/null
-  build/devenv write_sync_history
+  build/devenv write_sync_history 2>&1
 popd > /dev/null
                 
 rm -rf /tmp/tito; mkdir -p /root/.source_build;
@@ -758,6 +761,14 @@ rm -rf /tmp/tito; mkdir -p /root/.source_build;
                 cmd += "rm -rf /root/#{repo_name}-bare; rm -rf /root/.source_build/#{repo_name}; mv /root/#{repo_name} /root/.source_build/#{repo_name};"
               end
             elsif options.install_required_packages?
+              puts "Installing bootstrap packages..."
+              output, exit_code = ssh(hostname, "yum -y install git tito ruby rubygems rubygem-thor rubygem-parseconfig rubygem-json rubygem-aws-sdk createrepo yum-priorities", 600, true)
+              puts "----------- Install Bootstrap Packages Output -----------"
+              puts output
+              puts "---------------------------------------------------------"
+              exit 1 unless exit_code == 0
+              puts "Done"
+
               puts "Installing requires..."
               init_repos(hostname)
               cmd += %{
@@ -779,7 +790,7 @@ set -e
 yum -y install java-1.7.0-openjdk.i686 java-1.7.0-openjdk-devel.i686
 
 pushd li
-  build/devenv install_required_packages
+  build/devenv install_required_packages 2>&1
 popd
 }
               SIBLING_REPOS.each_key do |repo_name|
