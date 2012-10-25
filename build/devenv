@@ -701,7 +701,7 @@ module Express
             end
 
             output = ''
-            repo_clone_commands(hostname)
+            clone_commands = repo_clone_commands(hostname)
             cmd = "set -ex; /bin/bash ~/li-devenv.sh #{options.yum_repo};"
             if options.install_from_source? || options.install_from_local_source?
               if options.install_from_source?
