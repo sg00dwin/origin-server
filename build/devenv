@@ -657,17 +657,22 @@ module Express
             puts output
             puts "---------------------------------------------------------"
             
-            ssh(hostname, "yum -y install openssh-clients", 120) if options.install_required_packages?
+            if options.install_required_packages?
+              output = ssh(hostname, "yum -y install openssh-clients git tito ruby rubygems rubygem-thor rubygem-parseconfig rubygem-json rubygem-aws-sdk createrepo yum-priorities", 600, false, 2)
+              puts "----------- Install Bootstrap Packages Output -----------"
+              puts output
+              puts "---------------------------------------------------------"
+            end
 
             if options[:extra_rpm_dir]
               if File.exist? options[:extra_rpm_dir]
-                out, ret = ssh(hostname, "mkdir -p /data/origin-server/build/extras", 60, true, 1, ssh_user)
+                out, ret = ssh(hostname, "mkdir -p /data/origin-server/build/extras", 60, true, 1)
                 files = Dir.glob("#{options[:extra_rpm_dir]}/*.rpm")
                 files.each do |file|
-                  scp_to(hostname, file, "/data/origin-server/build/extras/", 60*10, 5, ssh_user)
+                  scp_to(hostname, file, "/data/origin-server/build/extras/", 60*10, 5)
                 end
 
-                out, ret = ssh(hostname, "su -c \"cd /data/origin-server/build/extras && yum install -y *.rpm\"", 60 * 20, true, 1, ssh_user)
+                out, ret = ssh(hostname, "su -c \"cd /data/origin-server/build/extras && yum install -y *.rpm\"", 60 * 20, true, 1)
 
                 puts "------------------ Extra RPMs Output ------------------------"
                 puts out
@@ -685,7 +690,7 @@ module Express
             end
 
             puts "Uploading devenv script..."
-            script_path = File.expand_path(File.dirname(__FILE__) + "/../misc/devenv/li-devenv.sh")
+            script_path = File.expand_path(File.dirname(__FILE__) + "/../misc/devenv/setup-li-repos.sh")
             scp_to(hostname, script_path, "~/")
             puts "Done"
 
@@ -702,7 +707,7 @@ module Express
 
             output = ''
             clone_commands = repo_clone_commands(hostname)
-            cmd = "set -ex; /bin/bash ~/li-devenv.sh #{options.yum_repo};"
+            cmd = "set -ex; /bin/bash ~/setup-li-repos.sh #{options.yum_repo};"
             if options.install_from_source? || options.install_from_local_source?
               if options.install_from_source?
                 puts "Performing clean install from source..."
@@ -724,7 +729,6 @@ pushd /root/li > /dev/null
   build/devenv find_and_build_specs
 popd > /dev/null
 
-yum -y install createrepo
 mkdir /root/li-local/
 
 cat > /etc/yum.repos.d/local.repo <<EOF
@@ -740,9 +744,9 @@ cp /tmp/tito/x86_64/*.rpm /root/li-local/
 cp /tmp/tito/noarch/*.rpm /root/li-local/
 createrepo /root/li-local/
 
+#TODO remove this install of yum-priorities 
 yum -y install yum-priorities
 yum -y install rhc-devenv --enablerepo=li-local
-yum -y erase yum-priorities
 
 pushd /root/li > /dev/null
   build/devenv write_sync_history
@@ -757,7 +761,6 @@ rm -rf /tmp/tito; mkdir -p /root/.source_build;
               puts "Installing requires..."
               init_repos(hostname)
               cmd += %{
-yum -y install git tito ruby rubygems rubygem-thor rubygem-parseconfig rubygem-json rubygem-aws-sdk
 
 #{clone_commands}
 
@@ -770,7 +773,9 @@ yum -y install rh-amazon-rhui-client-jbews1
 # Install the 32 bit java before anything else
 yum -y install java-1.6.0-openjdk.i686 java-1.6.0-openjdk-devel.i686
 yum -y remove java-1.6.0-openjdk.x86_64
+set +e
 rpm -e --nodeps java-1.7.0-openjdk java-1.7.0-openjdk-devel
+set -e
 yum -y install java-1.7.0-openjdk.i686 java-1.7.0-openjdk-devel.i686
 
 pushd li
