@@ -29,12 +29,15 @@
         "origin-server": "ORIGIN_SERVER_PULL_ID",
         "rhc": "RHC_PULL_ID"
       },
-      "addtl_jenkins_params": {
-        "DEV_TOOLS_EXT_REPO": "li",
-        "DEV_TOOLS_REPO": "origin-dev-tools",
-        "RHC_REPO": "rhc",
-        "ORIGIN_SERVER_REPO": "origin-server"
-      }
+      "addtl_jenkins_params_group": {
+        "li": "hosted",
+        "origin-server": "hosted",
+        "rhc": "hosted"
+      },
+      "addtl_jenkins_params": {"hosted": {"DEV_TOOLS_EXT_REPO": "li",
+                                          "DEV_TOOLS_REPO": "origin-dev-tools",
+                                          "RHC_REPO": "rhc",
+                                          "ORIGIN_SERVER_REPO": "origin-server"} }
     },
     "merge_test_settings": {
       "name": "merge",
@@ -56,14 +59,17 @@
       "repo_to_pull_id_param": {
         "li": "DEV_TOOLS_EXT_PULL_ID",
         "origin-server": "ORIGIN_SERVER_PULL_ID",
-        "rhc": "RHC_PULL_ID" 
+        "rhc": "RHC_PULL_ID"
       },
-      "addtl_jenkins_params": {
-        "DEV_TOOLS_EXT_REPO": "li",
-        "DEV_TOOLS_REPO": "origin-dev-tools",
-        "RHC_REPO": "rhc",
-        "ORIGIN_SERVER_REPO": "origin-server"
-      }
+      "addtl_jenkins_params_group": {
+        "li": "hosted",
+        "origin-server": "hosted",
+        "rhc": "hosted"
+      },
+      "addtl_jenkins_params": {"hosted": {"DEV_TOOLS_EXT_REPO": "li",
+                                          "DEV_TOOLS_REPO": "origin-dev-tools",
+                                          "RHC_REPO": "rhc",
+                                          "ORIGIN_SERVER_REPO": "origin-server"} }
     }
   }
 }
