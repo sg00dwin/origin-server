@@ -650,12 +650,14 @@ module Express
           manifest = nil
           begin
             puts "Updating all packages on the system..."
-            output = ssh(hostname, "yum update -y --exclude='rhc*'; yum -y install openssh-clients", 1800)
+            output = ssh(hostname, "yum update -y --exclude='rhc*'", 1800)
             puts "Done"
 
             puts "------------------ Update Output ------------------------"
             puts output
             puts "---------------------------------------------------------"
+            
+            ssh(hostname, "yum -y install openssh-clients", 120) if options.install_required_packages?
 
             if options[:extra_rpm_dir]
               if File.exist? options[:extra_rpm_dir]
@@ -686,16 +688,20 @@ module Express
             script_path = File.expand_path(File.dirname(__FILE__) + "/../misc/devenv/li-devenv.sh")
             scp_to(hostname, script_path, "~/")
             puts "Done"
-            puts "Uploading yum client certificates..."
-            pem_path = File.expand_path(File.dirname(__FILE__) + "/../misc/client-cert.pem")
-            scp_to(hostname, pem_path, "/var/lib/yum/")
-            pem_path = File.expand_path(File.dirname(__FILE__) + "/../misc/client-key.pem")
-            scp_to(hostname, pem_path, "/var/lib/yum/")
-            scp_to(hostname, "misc/devenv/root/.ssh/*", "/root/.ssh/")
-            ssh(hostname, "chmod 0600 /root/.ssh/id_rsa; chmod 0644 /root/.ssh/id_rsa.pub /root/.ssh/known_hosts;")
-            puts "Done"
+
+            if options.install_required_packages?
+              puts "Uploading yum client certificates..."
+              pem_path = File.expand_path(File.dirname(__FILE__) + "/../misc/client-cert.pem")
+              scp_to(hostname, pem_path, "/var/lib/yum/")
+              pem_path = File.expand_path(File.dirname(__FILE__) + "/../misc/client-key.pem")
+              scp_to(hostname, pem_path, "/var/lib/yum/")
+              scp_to(hostname, "misc/devenv/root/.ssh/*", "/root/.ssh/")
+              ssh(hostname, "chmod 0600 /root/.ssh/id_rsa; chmod 0644 /root/.ssh/id_rsa.pub /root/.ssh/known_hosts;")
+              puts "Done"
+            end
+
             output = ''
-            clone_commands, working_dirs = sync_available_sibling_repos(hostname)
+            repo_clone_commands(hostname)
             cmd = "set -ex; /bin/bash ~/li-devenv.sh #{options.yum_repo};"
             if options.install_from_source? || options.install_from_local_source?
               if options.install_from_source?
@@ -750,9 +756,27 @@ rm -rf /tmp/tito; mkdir -p /root/.source_build;
             elsif options.install_required_packages?
               puts "Installing requires..."
               init_repos(hostname)
-              cmd += "yum -y install git tito ruby rubygems rubygem-thor rubygem-parseconfig rubygem-json rubygem-aws-sdk;"
-              cmd += "#{clone_commands}\n"
-              cmd += "pushd li; build/devenv install_required_packages; popd;"
+              cmd += %{
+yum -y install git tito ruby rubygems rubygem-thor rubygem-parseconfig rubygem-json rubygem-aws-sdk
+
+#{clone_commands}
+
+# Enable RHUI JBoss repos for cartridge rebase on core EAP packages
+yum -y install rh-amazon-rhui-client-jbeap6
+              
+# Enable RHUI JB EWS repos for Tomcat cartridge
+yum -y install rh-amazon-rhui-client-jbews1
+                
+# Install the 32 bit java before anything else
+yum -y install java-1.6.0-openjdk.i686 java-1.6.0-openjdk-devel.i686
+yum -y remove java-1.6.0-openjdk.x86_64
+rpm -e --nodeps java-1.7.0-openjdk java-1.7.0-openjdk-devel
+yum -y install java-1.7.0-openjdk.i686 java-1.7.0-openjdk-devel.i686
+
+pushd li
+  build/devenv install_required_packages
+popd
+}
               SIBLING_REPOS.each_key do |repo_name|
                 cmd += "rm -rf /root/#{repo_name}; rm -rf /root/#{repo_name}-bare;"
               end

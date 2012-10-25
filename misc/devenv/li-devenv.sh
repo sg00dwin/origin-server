@@ -53,7 +53,7 @@ enabled=1
 gpgcheck=1
 gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-redhat-release file:///etc/pki/rpm-gpg/RPM-GPG-KEY-redhat-auxiliary
 sslverify=1
-sslclientkey=/etc/pki/entitlement/content-rhel6.key
+sslclientkey=/etc/pki/entitlement/content-rhel6.key.pem
 sslclientcert=/etc/pki/entitlement/product/content-rhel6.crt
 sslcacert=/etc/pki/entitlement/cdn.redhat.com-chain.crt
 includepkgs=java-1.6.0-openjdk* java-1.7.0-openjdk*
@@ -65,7 +65,7 @@ enabled=1
 gpgcheck=1
 gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-redhat-release file:///etc/pki/rpm-gpg/RPM-GPG-KEY-redhat-auxiliary
 sslverify=1
-sslclientkey=/etc/pki/entitlement/content-rhel6.key
+sslclientkey=/etc/pki/entitlement/content-rhel6.key.pem
 sslclientcert=/etc/pki/entitlement/product/content-rhel6.crt
 sslcacert=/etc/pki/entitlement/cdn.redhat.com-chain.crt
 includepkgs=java-1.6.0-openjdk* java-1.7.0-openjdk*
@@ -148,13 +148,3 @@ sslclientkey=/var/lib/yum/client-key.pem
 EOF
 
 fi
-
-# Enable RHUI JBoss repos for cartridge rebase on core EAP packages and enable RHUI JB EWS repos for Tomcat cartridge
-yum -y install rh-amazon-rhui-client-jbeap6 rh-amazon-rhui-client-jbews1
-
-# Install the 32 bit java before anything else
-yum -y install java-1.6.0-openjdk.i686 java-1.6.0-openjdk-devel.i686
-yum -y remove java-1.6.0-openjdk.x86_64
-rpm -e --nodeps java-1.7.0-openjdk java-1.7.0-openjdk-devel
-yum -y install java-1.7.0-openjdk.i686 java-1.7.0-openjdk-devel.i686
-
