@@ -12,14 +12,15 @@ Feature: Explicit idle/restore checks
 
   Scenarios:
     | type         | proc_name |
+    | jbossas-7    | java      |
+    | jbosseap-6.0 | java      |
+    | jbossews-1.0 | java      |
+    | nodejs-0.6   | node      |
     | perl-5.10    | httpd     |
+    | php-5.3      | httpd     |
+    | python-2.6   | httpd     |
     | ruby-1.8     | httpd     |
     | ruby-1.9     | httpd     |
-    | php-5.3      | httpd     |
-    | nodejs-0.6   | node      |
-    | python-2.6   | httpd     |
-    | jbosseap-6.0 | java      |
-    | jbossas-7    | java      |
 
   Scenario Outline: Restore one application
     Given a new <type> type application
@@ -37,14 +38,15 @@ Feature: Explicit idle/restore checks
 
   Scenarios:
     | type         | proc_name |
+    | jbossas-7    | java      |
+    | jbosseap-6.0 | java      |
+    | jbossews-1.0 | java      |
+    | nodejs-0.6   | node      |
     | perl-5.10    | httpd     |
+    | php-5.3      | httpd     |
+    | python-2.6   | httpd     |
     | ruby-1.8     | httpd     |
     | ruby-1.9     | httpd     |
-    | php-5.3      | httpd     |
-    | nodejs-0.6   | node      |
-    | python-2.6   | httpd     |
-    | jbosseap-6.0 | java      |
-    | jbossas-7    | java      |
 
   Scenario Outline: Auto-restore one application
     Given a new <type> type application
@@ -62,11 +64,12 @@ Feature: Explicit idle/restore checks
 
   Scenarios:
     | type         | proc_name |
+    | jbossas-7    | java      |
+    | jbosseap-6.0 | java      |
+    | jbossews-1.0 | java      |
+    | nodejs-0.6   | node      |
     | perl-5.10    | httpd     |
+    | php-5.3      | httpd     |
+    | python-2.6   | httpd     |
     | ruby-1.8     | httpd     |
     | ruby-1.9     | httpd     |
-    | php-5.3      | httpd     |
-    | nodejs-0.6   | node      |
-    | python-2.6   | httpd     |
-    | jbosseap-6.0 | java      |
-    | jbossas-7    | java      |

@@ -35,11 +35,12 @@ Feature: rockmongo Embedded Cartridge Extended Checks
   Scenarios:
 
     | app_type     |
-    #| php-5.3  | # Standard test exercises php-5.3
-    | ruby-1.8     |
-    | ruby-1.9     |
-    | python-2.6   | 
-    | perl-5.10    |
-    | nodejs-0.6   |
     | jbossas-7    |
     | jbosseap-6.0 |
+    | jbossews-1.0 |
+    | nodejs-0.6   |
+    | perl-5.10    |
+    | python-2.6   | 
+    | ruby-1.8     |
+    | ruby-1.9     |
+    #| php-5.3      | # Standard test exercises php-5.3
