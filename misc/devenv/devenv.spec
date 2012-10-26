@@ -8,7 +8,7 @@
 
 Summary:   Dependencies for OpenShift development
 Name:      rhc-devenv
-Version: 0.100.17
+Version: 0.100.18
 Release:   1%{?dist}
 Group:     Development/Libraries
 License:   GPLv2
@@ -612,6 +612,16 @@ restorecon /etc/openshift/node.conf || :
 /sbin/service libra-data restart > /dev/null 2>&1 || :
 
 %changelog
+* Fri Oct 26 2012 Adam Miller <admiller@redhat.com> 0.100.18-1
+- rename li-devenv.sh to setup-li-repos.sh to relect what it does
+  (dmcphers@redhat.com)
+- fix key location (dmcphers@redhat.com)
+- moving logic to only run as part of base ami (dmcphers@redhat.com)
+- break addtl jenkins params into groups (dmcphers@redhat.com)
+- move remaining logic out of li-devenv.sh (dmcphers@redhat.com)
+- more prep to handle multiple repos from jenkins jobs (dmcphers@redhat.com)
+- more work to make repos configurable (dmcphers@redhat.com)
+
 * Wed Oct 24 2012 Adam Miller <admiller@redhat.com> 0.100.17-1
 - syncing jenkins config (dmcphers@redhat.com)
 - syncing with latest jenkins configs (dmcphers@redhat.com)
