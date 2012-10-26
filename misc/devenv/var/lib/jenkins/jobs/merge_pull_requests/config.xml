@@ -27,6 +27,11 @@
           <description>The pull id to use for the rhc repo.</description>
           <defaultValue></defaultValue>
         </hudson.model.StringParameterDefinition>
+        <hudson.model.StringParameterDefinition>
+          <name>DEV_TOOLS_PULL_ID</name>
+          <description>The pull id to use for the dev tools repo.</description>
+          <defaultValue></defaultValue>
+        </hudson.model.StringParameterDefinition>
       </parameterDefinitions>
     </hudson.model.ParametersDefinitionProperty>
   </properties>
@@ -78,6 +83,16 @@ set -x
   test_pull_requests --local_merge_pull_request $RHC_PULL_ID --repo rhc
 fi
 
+if [ -n &quot;$DEV_TOOLS_PULL_ID&quot; ]
+then
+set +x
+  echo &quot;
+
+*****Locally Merging Pull Request: https://github.com/openshift/origin-dev-tools/pull/$DEV_TOOLS_PULL_ID&quot;
+set -x
+  test_pull_requests --local_merge_pull_request $DEV_TOOLS_PULL_ID --repo origin-dev-tools
+fi
+
 set +x
 echo &quot;
 
@@ -104,6 +119,11 @@ then
   test_pull_requests --test_merge_pull_request $RHC_PULL_ID --repo rhc
 fi
 
+if [ -n &quot;$DEV_TOOLS_PULL_ID&quot; ]
+then
+  test_pull_requests --test_merge_pull_request $DEV_TOOLS_PULL_ID --repo origin-dev-tools
+fi
+
 
 # Do the merge
 if [ -n &quot;$DEV_TOOLS_EXT_PULL_ID&quot; ]
@@ -119,6 +139,11 @@ fi
 if [ -n &quot;$RHC_PULL_ID&quot; ]
 then
   test_pull_requests --merge_pull_request $RHC_PULL_ID --repo rhc
+fi
+
+if [ -n &quot;$DEV_TOOLS_PULL_ID&quot; ]
+then
+  test_pull_requests --merge_pull_request $DEV_TOOLS_PULL_ID --repo origin-dev-tools
 fi</command>
     </hudson.tasks.Shell>
   </builders>

@@ -28,6 +28,11 @@
           <description></description>
           <defaultValue></defaultValue>
         </hudson.model.StringParameterDefinition>
+        <hudson.model.StringParameterDefinition>
+          <name>DEV_TOOLS_PULL_ID</name>
+          <description></description>
+          <defaultValue></defaultValue>
+        </hudson.model.StringParameterDefinition>
       </parameterDefinitions>
     </hudson.model.ParametersDefinitionProperty>
   </properties>
@@ -75,6 +80,15 @@ set +x
 *****Locally Merging Pull Request: https://github.com/openshift/rhc/pull/$RHC_PULL_ID&quot;
 set -x
   test_pull_requests --local_merge_pull_request $RHC_PULL_ID --repo rhc
+fi
+
+if [ -n &quot;$DEV_TOOLS_PULL_ID&quot; ]; then
+set +x
+  echo &quot;
+
+*****Locally Merging Pull Request: https://github.com/openshift/origin-dev-tools/pull/$DEV_TOOLS_PULL_ID&quot;
+set -x
+  test_pull_requests --local_merge_pull_request $DEV_TOOLS_PULL_ID --repo origin-dev-tools
 fi
 
 set +x

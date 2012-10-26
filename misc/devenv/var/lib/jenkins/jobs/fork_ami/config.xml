@@ -30,19 +30,23 @@ Usually would be the feature name or something to indicate the purpose of the am
         </hudson.model.StringParameterDefinition>
         <hudson.model.StringParameterDefinition>
           <name>FORK_ID</name>
-          <description>The default fork id to use for all repos.
-Note:  If you only want to use a fork for 1 of the repos then use that ${REPO}_FORK_ID instead.</description>
+          <description>The default fork id to use for all repos.  Leave empty unless you have relevant forks for all the repos. If you only want to use a fork for 1 - (n-1) of the repos then use that ${REPO}_FORK_ID instead.  Any  ${REPO}_FORK_IDs specified will override FORK_ID for that repo.</description>
           <defaultValue></defaultValue>
         </hudson.model.StringParameterDefinition>
         <hudson.model.StringParameterDefinition>
-          <name>LI_FORK_ID</name>
-          <description>The fork id to use for the li repo.  Will use FORK_ID followed by &apos;openshift&apos; if not specified.</description>
+          <name>DEV_TOOLS_EXT_FORK_ID</name>
+          <description>The fork id to use for the DEV_TOOLS_EXT (li) repo.  Will use FORK_ID followed by &apos;openshift&apos; if not specified.</description>
           <defaultValue></defaultValue>
         </hudson.model.StringParameterDefinition>
         <hudson.model.StringParameterDefinition>
-          <name>LI_BRANCH</name>
-          <description>Branch to use for li fork</description>
+          <name>DEV_TOOLS_EXT_BRANCH</name>
+          <description>Branch to use for DEV_TOOLS_EXT (li) fork</description>
           <defaultValue>master</defaultValue>
+        </hudson.model.StringParameterDefinition>
+        <hudson.model.StringParameterDefinition>
+          <name>DEV_TOOLS_EXT_REPO</name>
+          <description>The name of the DEV_TOOLS_EXT (li) repo</description>
+          <defaultValue>li</defaultValue>
         </hudson.model.StringParameterDefinition>
         <hudson.model.StringParameterDefinition>
           <name>ORIGIN_SERVER_FORK_ID</name>
@@ -55,6 +59,11 @@ Note:  If you only want to use a fork for 1 of the repos then use that ${REPO}_F
           <defaultValue>master</defaultValue>
         </hudson.model.StringParameterDefinition>
         <hudson.model.StringParameterDefinition>
+          <name>ORIGIN_SERVER_REPO</name>
+          <description>The name of the origin-server repo</description>
+          <defaultValue>origin-server</defaultValue>
+        </hudson.model.StringParameterDefinition>
+        <hudson.model.StringParameterDefinition>
           <name>RHC_FORK_ID</name>
           <description>The fork id to use for the rhc repo.  Will use FORK_ID followed by &apos;openshift&apos; if not specified.</description>
           <defaultValue></defaultValue>
@@ -63,6 +72,26 @@ Note:  If you only want to use a fork for 1 of the repos then use that ${REPO}_F
           <name>RHC_BRANCH</name>
           <description>Branch to use for rhc fork</description>
           <defaultValue>master</defaultValue>
+        </hudson.model.StringParameterDefinition>
+        <hudson.model.StringParameterDefinition>
+          <name>RHC_REPO</name>
+          <description>The name of the rhc repo</description>
+          <defaultValue>rhc</defaultValue>
+        </hudson.model.StringParameterDefinition>
+        <hudson.model.StringParameterDefinition>
+          <name>DEV_TOOLS_FORK_ID</name>
+          <description>The fork id to use for the origin-dev-tools repo.  Will use FORK_ID followed by &apos;openshift&apos; if not specified.</description>
+          <defaultValue></defaultValue>
+        </hudson.model.StringParameterDefinition>
+        <hudson.model.StringParameterDefinition>
+          <name>DEV_TOOLS_BRANCH</name>
+          <description>Branch to use for origin-dev-tools fork</description>
+          <defaultValue></defaultValue>
+        </hudson.model.StringParameterDefinition>
+        <hudson.model.StringParameterDefinition>
+          <name>DEV_TOOLS_REPO</name>
+          <description>The name of the origin-dev-tools repo</description>
+          <defaultValue>origin-dev-tools</defaultValue>
         </hudson.model.StringParameterDefinition>
         <hudson.model.BooleanParameterDefinition>
           <name>RUN_BROKER_EXTENDED</name>
@@ -147,9 +176,9 @@ done
 
 if [ -n &quot;$FORK_ID&quot; ]
 then
-  if [ -z &quot;$LI_FORK_ID&quot; ]
+  if [ -z &quot;$DEV_TOOLS_EXT_FORK_ID&quot; ]
   then
-    LI_FORK_ID=$FORK_ID
+    DEV_TOOLS_EXT_FORK_ID=$FORK_ID
   fi
   if [ -z &quot;$ORIGIN_SERVER_FORK_ID&quot; ]
   then
@@ -159,10 +188,14 @@ then
   then
     RHC_FORK_ID=$FORK_ID
   fi
-else
-  if [ -z &quot;$LI_FORK_ID&quot; ]
+  if [ -z &quot;$DEV_TOOLS_FORK_ID&quot; ]
   then
-    LI_FORK_ID=openshift
+    DEV_TOOLS_FORK_ID=$FORK_ID
+  fi
+else
+  if [ -z &quot;$DEV_TOOLS_EXT_FORK_ID&quot; ]
+  then
+    DEV_TOOLS_EXT_FORK_ID=openshift
   fi
   if [ -z &quot;$ORIGIN_SERVER_FORK_ID&quot; ]
   then
@@ -172,6 +205,10 @@ else
   then
     RHC_FORK_ID=openshift
   fi
+  if [ -z &quot;$DEV_TOOLS_FORK_ID&quot; ]
+  then
+    DEV_TOOLS_FORK_ID=openshift
+  fi
 fi
 
 if [ -n &quot;$AMI_POSTFIX&quot; ]
@@ -180,45 +217,54 @@ then
 elif [ -n &quot;$FORK_ID&quot; ]
 then
   TAG_NAME=fork_ami_${FORK_ID}
-elif [ -n &quot;$LI_FORK_ID&quot; ]
+elif [ -n &quot;$DEV_TOOLS_EXT_FORK_ID&quot; ]
 then
-  TAG_NAME=fork_ami_${LI_FORK_ID}
+  TAG_NAME=fork_ami_${DEV_TOOLS_EXT_FORK_ID}
 elif [ -n &quot;$ORIGIN_SERVER_FORK_ID&quot; ]
 then
   TAG_NAME=fork_ami_${ORIGIN_SERVER_FORK_ID}
 elif [ -n &quot;$RHC_FORK_ID&quot; ]
 then
   TAG_NAME=fork_ami_${RHC_FORK_ID}
+elif [ -n &quot;$DEV_TOOLS_FORK_ID&quot; ]
+then
+  TAG_NAME=fork_ami_${DEV_TOOLS_FORK_ID}
 else
   TAG_NAME=fork_ami_openshift
 fi
 
-rm -rf li rhc origin-server origin-dev-tools
-git clone git@github.com:openshift/origin-dev-tools.git
+rm -rf $DEV_TOOLS_EXT_REPO $RHC_REPO $ORIGIN_SERVER_REPO $DEV_TOOLS_REPO
 
-git clone git@github.com:${LI_FORK_ID}/li.git
-pushd li
-  if [ -n &quot;$LI_BRANCH&quot; ]
+git clone git@github.com:${DEV_TOOLS_EXT_FORK_ID}/${DEV_TOOLS_EXT_REPO}.git
+pushd $DEV_TOOLS_EXT_REPO
+  if [ -n &quot;$DEV_TOOLS_EXT_BRANCH&quot; ]
   then
-    git checkout $LI_BRANCH
+    git checkout $DEV_TOOLS_EXT_BRANCH
   fi
 popd
-git clone git@github.com:${ORIGIN_SERVER_FORK_ID}/origin-server.git
-pushd origin-server
+git clone git@github.com:${ORIGIN_SERVER_FORK_ID}/${ORIGIN_SERVER_REPO}.git
+pushd $ORIGIN_SERVER_REPO
   if [ -n &quot;$ORIGIN_SERVER_BRANCH&quot; ]
   then
     git checkout $ORIGIN_SERVER_BRANCH
   fi
 popd
-git clone git@github.com:${RHC_FORK_ID}/rhc.git
-pushd rhc
+git clone git@github.com:${RHC_FORK_ID}/${RHC_REPO}.git
+pushd $RHC_REPO
   if [ -n &quot;$RHC_BRANCH&quot; ]
   then
     git checkout $RHC_BRANCH
   fi
 popd
+git clone git@github.com:${DEV_TOOLS_FORK_ID}/${DEV_TOOLS_REPO}.git
+pushd $DEV_TOOLS_REPO
+  if [ -n &quot;$DEV_TOOLS_BRANCH&quot; ]
+  then
+    git checkout $DEV_TOOLS_BRANCH
+  fi
+popd
 
-pushd li
+pushd $DEV_TOOLS_EXT_REPO
 set +e
   build/devenv build ${TAG_NAME} ${BUILD_NUMBER} --register --official --install_from_local_source
   RESULT=$?

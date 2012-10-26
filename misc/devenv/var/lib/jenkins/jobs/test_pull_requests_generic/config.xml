@@ -28,6 +28,11 @@
           <defaultValue></defaultValue>
         </hudson.model.StringParameterDefinition>
         <hudson.model.StringParameterDefinition>
+          <name>DEV_TOOLS_PULL_ID</name>
+          <description></description>
+          <defaultValue></defaultValue>
+        </hudson.model.StringParameterDefinition>
+        <hudson.model.StringParameterDefinition>
           <name>BRANCH</name>
           <description></description>
           <defaultValue>stage</defaultValue>
@@ -50,7 +55,7 @@
         <hudson.model.StringParameterDefinition>
           <name>ORIGIN_SERVER_REPO</name>
           <description></description>
-          <defaultValue></defaultValue>
+          <defaultValue>origin-server</defaultValue>
         </hudson.model.StringParameterDefinition>
       </parameterDefinitions>
     </hudson.model.ParametersDefinitionProperty>
@@ -101,6 +106,15 @@ if [ -n &quot;$RHC_PULL_ID&quot; ]; then
 *****Locally Merging Pull Request: https://github.com/openshift/${RHC_REPO}/pull/$RHC_PULL_ID&quot;
   set -x
   test_pull_requests --local_merge_pull_request $RHC_PULL_ID --repo $RHC_REPO
+fi
+
+if [ -n &quot;$DEV_TOOLS_PULL_ID&quot; ]; then
+  set +x
+  echo &quot;
+
+*****Locally Merging Pull Request: https://github.com/openshift/${DEV_TOOLS_REPO}/pull/$DEV_TOOLS_PULL_ID&quot;
+  set -x
+  test_pull_requests --local_merge_pull_request $DEV_TOOLS_PULL_ID --repo $DEV_TOOLS_REPO
 fi
 
 set +x

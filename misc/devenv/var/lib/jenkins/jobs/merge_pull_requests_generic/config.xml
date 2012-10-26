@@ -28,6 +28,11 @@
           <defaultValue></defaultValue>
         </hudson.model.StringParameterDefinition>
         <hudson.model.StringParameterDefinition>
+          <name>DEV_TOOLS_PULL_ID</name>
+          <description></description>
+          <defaultValue>origin-dev-tools</defaultValue>
+        </hudson.model.StringParameterDefinition>
+        <hudson.model.StringParameterDefinition>
           <name>BRANCH</name>
           <description></description>
           <defaultValue>stage</defaultValue>
@@ -41,6 +46,16 @@
           <name>DEV_TOOLS_EXT_REPO</name>
           <description></description>
           <defaultValue>li</defaultValue>
+        </hudson.model.StringParameterDefinition>
+        <hudson.model.StringParameterDefinition>
+          <name>RHC_REPO</name>
+          <description></description>
+          <defaultValue>rhc</defaultValue>
+        </hudson.model.StringParameterDefinition>
+        <hudson.model.StringParameterDefinition>
+          <name>ORIGIN_SERVER_REPO</name>
+          <description></description>
+          <defaultValue>origin-server</defaultValue>
         </hudson.model.StringParameterDefinition>
       </parameterDefinitions>
     </hudson.model.ParametersDefinitionProperty>
@@ -92,6 +107,16 @@ then
   test_pull_requests --local_merge_pull_request $RHC_PULL_ID --repo $RHC_REPO
 fi
 
+if [ -n &quot;$DEV_TOOLS_PULL_ID&quot; ]
+then
+  set +x
+  echo &quot;
+
+*****Locally Merging Pull Request: https://github.com/openshift/${DEV_TOOLS_REPO}/pull/$DEV_TOOLS_PULL_ID&quot;
+  set -x
+  test_pull_requests --local_merge_pull_request $DEV_TOOLS_PULL_ID --repo $DEV_TOOLS_REPO
+fi
+
 set +x
 echo &quot;
 
@@ -118,6 +143,11 @@ then
   test_pull_requests --test_merge_pull_request $RHC_PULL_ID --repo $RHC_REPO
 fi
 
+if [ -n &quot;$DEV_TOOLS_PULL_ID&quot; ]
+then
+  test_pull_requests --test_merge_pull_request $DEV_TOOLS_PULL_ID --repo $DEV_TOOLS_REPO
+fi
+
 
 # Do the merge
 if [ -n &quot;$DEV_TOOLS_EXT_PULL_ID&quot; ]
@@ -133,6 +163,11 @@ fi
 if [ -n &quot;$RHC_PULL_ID&quot; ]
 then
   test_pull_requests --merge_pull_request $RHC_PULL_ID --repo $RHC_REPO
+fi
+
+if [ -n &quot;$DEV_TOOLS_PULL_ID&quot; ]
+then
+  test_pull_requests --merge_pull_request $DEV_TOOLS_PULL_ID --repo $DEV_TOOLS_REPO
 fi</command>
     </hudson.tasks.Shell>
   </builders>
