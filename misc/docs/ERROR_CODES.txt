@@ -42,6 +42,7 @@ User errors:
 137: Cartridge/Component/Feature can not be removed from the application.
 138: User deletion not permitted for normal/non-subaccount user.
 139: Could not delete user, user has valid domain or applications.
+140: Alias already in use.
 150: A plan with specified id does not exist
 151: Billing account was not found for user
 152: Billing account status not active
