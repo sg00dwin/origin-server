@@ -5,17 +5,14 @@ class ApplicationController < ActionController::Base
 
   protect_from_forgery
 
-  rescue_from AccessDeniedException do |e|
-    logger.debug "Access denied: #{e}"
-    redirect_to logout_path :cause => e.message, :then => account_path
-  end
-  rescue_from 'Streamline::Error', 
-              'Aria::Error', 'Aria::NotAvailable', 
+  rescue_from AccessDeniedException, :with => :access_denied
+  rescue_from 'Streamline::Error',
+              'Aria::Error', 'Aria::NotAvailable',
               :with => :generic_error
 
   protected
     def handle_unverified_request
-      raise AccessDeniedException, "Request authenticity token does not match session #{session.inspect}"
+      raise Console::AccessDenied, "Request authenticity token does not match session #{session.inspect}"
     end
 
     def set_no_cache
@@ -74,5 +71,13 @@ class ApplicationController < ActionController::Base
       logger.error "Unhandled exception reference ##{@reference_id}: #{e.message}\n#{e.backtrace.join("\n  ")}"
       @message, @alternatives = message, alternatives
       render 'console/error'
+    end
+
+    def access_denied(e)
+      logger.debug "Access denied: #{e}"
+      redirect_to logout_path :cause => e.message, :then => account_path
+    end
+    def console_access_denied(e)
+      access_denied(e)
     end
 end
