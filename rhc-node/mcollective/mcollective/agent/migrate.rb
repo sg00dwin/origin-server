@@ -370,6 +370,9 @@ module OpenShiftMigration
           Util.replace_in_file("#{cart_dir}/conf.d/metrics.conf", "/var/lib/stickshift", "/var/lib/openshift")
           Util.replace_in_file("#{cart_dir}/conf.d/metrics.conf", "/usr/libexec/stickshift", "/usr/libexec/openshift")
           Util.replace_in_file("#{cart_dir}/conf/php.ini", "/var/lib/stickshift", "/var/lib/openshift")
+        when 'haproxy-1.4'
+          Util.replace_in_file("#{cart_dir}/conf/haproxy.cfg", "/var/lib/stickshift/", "/var/lib/openshift")
+          Util.replace_in_file("#{cart_dir}/conf/haproxy.cfg.template", "/var/lib/stickshift/", "/var/lib/openshift")
         when 'jenkins-1.4'
           Util.replace_in_file("#{cart_dir}/data/jobs/*/config.xml", "/usr/libexec/stickshift", "/usr/libexec/openshift")
         end
@@ -413,11 +416,6 @@ module OpenShiftMigration
           ].each do |entry|
             rm_exists(entry)
           end
-
-          #rm_exists(gear_home,
-          #    "OPENSHIFT_BATCH_CRON_14_EMBEDDED_TYPE",
-          #    "OPENSHIFT_BATCH_CTL_SCRIPT",
-          #    "OPENSHIFT_BATCH_TYPE")
         when 'jenkins-1.4'
           typeless_framework(app_name, gear_home, 'jenkins-1.4', 'JENKINS')
           command =%Q|sed -i "s#~/\\([A-Za-z0-9]\\+\\)/repo#~/app-root/runtime/repo#g;\\
@@ -463,13 +461,27 @@ module OpenShiftMigration
     begin
       # Cleanup DB connection vars, if any. These will be recreated on running
       # hascaledb.rb migration script
-      Dir[File.join(gear_home, '.env', '.uservars', "OPENSHIFT_DB_*"),
-          File.join(gear_home, '.env', '.uservars', "OPENSHIFT_NOSQL_DB_*")].each { |entry|
-        rm_exists(entry)
-      }
+      [
+        "OPENSHIFT_DB_*_DUMP*",
+        "OPENSHIFT_DB_*_EMBEDDED_TYPE", 
+        "OPENSHIFT_DB_*_RESTORE",
+        "OPENSHIFT_DB_TYPE",
+        "OPENSHIFT_DB_CTL_ONGEAR_SCRIPT",
+        "OPENSHIFT_NOSQL_DB_*_DUMP*",
+        "OPENSHIFT_NOSQL_DB_*_EMBEDDED_TYPE",
+        "OPENSHIFT_NOSQL_DB_*_RESTORE",
+        "OPENSHIFT_NOSQL_DB_TYPE",
+        "OPENSHIFT_NOSQL_DB_CTL_ONGEAR_SCRIPT",
+      ].map { |x| File.join(gear_home, '.env', '.uservars', x) }.each do |entry|
+        Dir[entry].each do |file|
+          output += "Cleaning up #{file}\n"
+          rm_exists(file)
+        end
+      end
     rescue => e
       output+="Exception caught in cleaning up db connections in gear #{gear_home}:\n"
       output+="#{e}\n"
+      output+="#{e.backtrace}\n"
       exitcode=101
     end
 
@@ -480,10 +492,9 @@ module OpenShiftMigration
       
     return output, exitcode
   end
-  
+
   def self.migrate_python(gear_home, uuid)
     gear_dir = File.join(gear_home, 'python-2.6')
-    #TODO need to confirm that it is openshift at this point
     conf_file = File.join(gear_dir, 'conf.d', 'openshift.conf')
     text = File.read(conf_file)
     if text !~ /WSGIDaemonProcess/

@@ -134,7 +134,7 @@ end
 def up_gears(devenv, account, verbose = true, dry_run = true)
   cmd = "ssh root@#{devenv} rhc-admin-ctl-user -l #{account} --setmaxgears 50 2>&1"
 
-  puts "Setting max gears to 50"
+  puts "Setting max gears to 100"
 
   command(cmd, '', verbose, dry_run)
 end
@@ -147,11 +147,11 @@ def generate_apps(app_defs, domain)
   app_defs.each do |app_def|
     case app_def
     when String
-      apps << generate_app(app_def, domain)
-      #apps << generate_app(cart_type, domain, true)
+      #apps << generate_app(app_def, domain)
+      apps << generate_app(app_def, domain, true)
     when Array  
-      apps << generate_app(app_def.first, domain, false, app_def[1..-1])
-      #apps << generate_app(app_def.first, domain, true, app_def[1..-1])
+      #apps << generate_app(app_def.first, domain, false, app_def[1..-1])
+      apps << generate_app(app_def.first, domain, true, app_def[1..-1])
     else
       $stderr.puts "generate_apps does not know how to process classOf #{app_def.class}"
     end
@@ -260,6 +260,10 @@ def update_devenv(mig_config, devenv, new_version, verbose = true, dry_run = tru
   command("ssh root@#{devenv} sed -i -e 's/libra\\ guest/OpenShift\\ guest/g' /etc/passwd ", '  ', verbose, dry_run)
 
   reboot_devenv(devenv, verbose, dry_run)
+
+  command("scp misc/maintenance/bin/migrate-mongo-2.0.18 root@#{devenv}:/root/", '  ', verbose, dry_run)
+  command("ssh root@#{devenv} \"echo 'Running migrate-mongo-2.0.18\\n' >> /root/update.#{new_version}.log\"", '  ', verbose, dry_run)  
+  command("ssh root@#{devenv} \"/root/migrate-mongo-2.0.18 >> /root/update.#{new_version}.log\"", '  ', verbose, dry_run)  
 end
 
 def reboot_devenv(devenv, verbose, dry_run) 
@@ -284,12 +288,9 @@ end
 def migrate_apps(new_version, apps, devenv, account, verbose = true, dry_run = true)
   puts "Migrating #{apps.length} applications"
 
-  puts 'Restoring previously-created comparison apps'
-
   command("ssh root@#{devenv} mv /var/lib/stickshift /var/lib/stickshift.old", '', verbose, dry_run)
   command("ssh root@#{devenv} rm -rf /tmp/rhc/migration /var/lib/openshift/* /var/lib/openshift/.httpd.d/*", '', verbose, dry_run)
   command("ssh root@#{devenv} ln -sf /var/lib/openshift /var/lib/stickshift", '', verbose, dry_run)
-  #command("ssh root@#{devenv} \"sed -i -e \"s|/var/lib/stickshift|/var/lib/openshift|g\" /etc/passwd\"", '', verbose, dry_run)
   command("ssh root@#{devenv} cp -rP --preserve=all /var/lib/stickshift.old/* /var/lib/openshift/", '', verbose, dry_run)  
   command("ssh root@#{devenv} cp -rP --preserve=all /var/lib/stickshift.old/.httpd.d/* /var/lib/openshift/.httpd.d/", '', verbose, dry_run)  
   
@@ -302,21 +303,22 @@ def migrate_apps(new_version, apps, devenv, account, verbose = true, dry_run = t
     end
   end
 
-  #puts "  Migrating app #{app[:old_name]} (#{app[:type]}, #{app[:scalable] ? 'scalable' : 'unscalable'})"
-  #apps.each do |app|
+  command = "ssh root@#{devenv} \"rhc-admin-migrate --rhlogin #{account} --version #{new_version} >> /root/migrate.#{new_version}.log\""
 
-    command = "ssh root@#{devenv} rhc-admin-migrate --rhlogin #{account} --version #{new_version}"
+  if verbose
+    puts "  Running: \"#{command}\""
+  end
 
-    if verbose
-      puts "  Running: \"#{command}\""
-    end
+  if !dry_run
+    output = `#{command}`
+    cmd_output(output, '  ')
+    raise "Error migrating app #{app[:old_name]}" unless $? == 0
+  end 
 
-    if !dry_run
-      output = `#{command}`
-      cmd_output(output, '  ')
-      raise "Error migrating app #{app[:old_name]}" unless $? == 0
-    end 
-  #end
+  migrate_log = "/root/migrate.#{new_version}.log"
+
+  command("scp misc/maintenance/bin/{hascaledb-migrate-2.0.18.rb,execute-connections-2.0.19} root@#{devenv}:/root/ ", '', verbose, dry_run) 
+  command("ssh root@#{devenv} \"/root/hascaledb-migrate-2.0.18.rb >> #{migrate_log}; /root/execute-connections-2.0.19 >> #{migrate_log}; service httpd restart\"", '', verbose, dry_run)   
 end
 
 def create_comparison_apps(old_to_new_cart_types, mig_config, apps, devenv, config, verbose=true, dry_run=true)
@@ -422,11 +424,34 @@ def get_or_create_config()
   return YAML.load_file(config_file)
 end
 
-cart_types = [ 'php-5.3', 'ruby-1.8', 'ruby-1.9', 'perl-5.10', 'jbossas-7', 'jbosseap-6.0', 'python-2.6', 'diy-0.1', 'nodejs-0.6',
-               ['php-5.3', 'mysql-5.1'], ['php-5.3', 'postgresql-8.4'], ['php-5.3', 'mongodb-2.0'], 
-               ['php-5.3', 'mongodb-2.0', 'rockmongo-1.1'], ['php-5.3', 'mysql-5.1', 'phpmyadmin-3.4'], 'jenkins-1.4'
-             ]
-#cart_types = [ 'jenkins-1.4', ['php-5.3', 'jenkins-client-1.4'], 'php-5.3']
+#cart_types = [ 'php-5.3', 'ruby-1.8', 'ruby-1.9', 'perl-5.10', 'jbossas-7', 'jbosseap-6.0', 'python-2.6', 'diy-0.1', 'nodejs-0.6',
+#               ['php-5.3', 'mysql-5.1'], ['php-5.3', 'postgresql-8.4'], ['php-5.3', 'mongodb-2.0'], 
+#               ['php-5.3', 'mongodb-2.0', 'rockmongo-1.1'], ['php-5.3', 'mysql-5.1', 'phpmyadmin-3.4'], 'jenkins-1.4'
+#             ]
+
+cart_types = [
+  ['php-5.3', 'mysql-5.1'], 
+  ['php-5.3', 'postgresql-8.4'], 
+  ['php-5.3', 'mongodb-2.0'],
+  ['nodejs-0.6', 'mysql-5.1'], 
+  ['nodejs-0.6', 'postgresql-8.4'], 
+  ['nodejs-0.6', 'mongodb-2.0'],
+  ['jbossas-7', 'mysql-5.1'], 
+  ['jbossas-7', 'postgresql-8.4'], 
+  ['jbossas-7', 'mongodb-2.0'],
+]
+
+#cart_types = [ 'jenkins-1.4', 
+#               ['php-5.3', 'jenkins-client-1.4'],
+#               ['ruby-1.8', 'jenkins-client-1.4'], 
+#               ['ruby-1.9', 'jenkins-client-1.4'],
+#               ['perl-5.10', 'jenkins-client-1.4'],
+#               ['jbossas-7', 'jenkins-client-1.4'],
+#               ['jbosseap-6.0', 'jenkins-client-1.4'],
+#               ['diy-0.1', 'jenkins-client-1.4'],
+#               ['nodejs-0.6', 'jenkins-client-1.4'],
+#               ['python-2.6', 'jenkins-client-1.4'],
+#]
              
 old_to_new_cart_types = {
   'mongodb-2.0' => 'mongodb-2.2'
@@ -511,10 +536,7 @@ when 'migrate'
   apps = load_apps(mig_config)
   config = load_config(mig_config)
   account = load_rhlogin(config)
-  save_comparison_apps(mig_config, devenv, apps, config, verbose, dry_run)
   migrate_apps(new_version, apps, devenv, account, verbose, dry_run)
-  create_comparison_apps(old_to_new_cart_types, mig_config, apps, devenv, config, verbose, dry_run)
-  diff_report(mig_config, apps, devenv, verbose, dry_run)
 when 'diff'
   devenv = ARGV[2]
 
@@ -525,6 +547,8 @@ when 'diff'
   end  
 
   apps = load_apps(mig_config)
+  config = load_config(mig_config)
+  create_comparison_apps(old_to_new_cart_types, mig_config, apps, devenv, config, verbose, dry_run)
   diff_report(mig_config, apps, devenv, verbose, dry_run)
 when 'help'
   puts "  help:     see this message"
@@ -532,8 +556,9 @@ when 'help'
   puts "  create:         create a devenv from the latest stage ami"
   puts "  setup:          create a domain and pre-migration apps" 
   puts "  update:         update a devenv to a new version"
-  puts "  migrate:        migrate apps to a new version and diff"
+  puts "  migrate:        migrate apps to a new version"
+  puts "  diff:           create comparison apps and diff reports"
   puts "  test:           the whole \#!"
 else
-  puts "supported commands: pull-artifacts|create|setup|update|migrate|test|help"
+  puts "supported commands: pull-artifacts|create|setup|update|migrate|diff|test|help"
 end
