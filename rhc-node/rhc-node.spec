@@ -2,7 +2,7 @@
 
 Summary:       Multi-tenant cloud management system node tools
 Name:          rhc-node
-Version: 0.99.11
+Version: 0.99.12
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -224,6 +224,14 @@ fi
 
 
 %changelog
+* Fri Oct 26 2012 Adam Miller <admiller@redhat.com> 0.99.12-1
+- Add substitutions for httpd config files on haproxy gear for scalable apps
+  (pmorie@gmail.com)
+- Merge pull request #528 from pmorie/dev/migrations (dmcphers@redhat.com)
+- Fixes problems with mongodb and postgresql migrations. (pmorie@gmail.com)
+- Merge pull request #525 from pmorie/dev/migrations (dmcphers@redhat.com)
+- Fixes for migrations of scalable apps (pmorie@gmail.com)
+
 * Wed Oct 24 2012 Adam Miller <admiller@redhat.com> 0.99.11-1
 - Merge pull request #513 from ramr/master (openshift+bot@redhat.com)
 - Fixes for cron (pmorie@gmail.com)
