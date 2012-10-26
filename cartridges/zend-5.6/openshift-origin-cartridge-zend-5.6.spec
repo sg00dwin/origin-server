@@ -2,7 +2,7 @@
 
 Summary:   Provides zend-5.6 support
 Name:      openshift-origin-cartridge-zend-5.6
-Version: 0.96.10
+Version: 0.96.11
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   ASL 2.0
@@ -110,6 +110,10 @@ rm -rf %{buildroot}
 %doc %{cartridgedir}/LICENSE
 
 %changelog
+* Fri Oct 26 2012 Adam Miller <admiller@redhat.com> 0.96.11-1
+- Fix zend-5.6 move hook (bug# 867713) (rpenta@redhat.com)
+- BZ868193 (bdecoste@gmail.com)
+
 * Wed Oct 24 2012 Adam Miller <admiller@redhat.com> 0.96.10-1
 - Fix issue w/ incorrect variables sourced in zend cartridge move hook.
   (ramr@redhat.com)
