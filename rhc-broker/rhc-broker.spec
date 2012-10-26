@@ -3,7 +3,7 @@
 
 Summary:   Li broker components
 Name:      rhc-broker
-Version: 0.99.18
+Version: 0.99.19
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -113,6 +113,12 @@ if [ ! -f %{_localstatedir}/log/openshift/user_action.log ]; then
 fi
 
 %changelog
+* Fri Oct 26 2012 Adam Miller <admiller@redhat.com> 0.99.19-1
+- Merge pull request #526 from ironcladlou/drupal-typeless
+  (openshift+bot@redhat.com)
+- topping the bz868570 fix for subaccounts (rchopra@redhat.com)
+- Fix fork repo reference for drupal template (ironcladlou@gmail.com)
+
 * Wed Oct 24 2012 Adam Miller <admiller@redhat.com> 0.99.18-1
 - rsync key path pulled in as part of the config file (rchopra@redhat.com)
 - Merge pull request #516 from ironcladlou/dev/typeless
