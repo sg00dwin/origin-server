@@ -14,6 +14,7 @@ function redhat_events_date_format_types() {
   return array(
     'redhat_events_date_format_short' => t('Events short'),
     'redhat_events_date_format_medium' => t('Events medium'),
+    'redhat_events_date_format_mini_calendar' => t('Events mini calendar'),
   );
 }
 
@@ -32,6 +33,11 @@ function redhat_events_date_formats() {
   $formats[] = array(
     'type' => 'redhat_events_date_format_medium',
     'format' => 'l F j, Y g:ma',
+    'locales' => array(),
+  );
+  $formats[] = array(
+    'type' => 'redhat_events_date_format_mini_calendar',
+    'format' => 'D M',
     'locales' => array(),
   );
   return $formats;
