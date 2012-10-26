@@ -747,8 +747,6 @@ cp /tmp/tito/x86_64/*.rpm /root/li-local/
 cp /tmp/tito/noarch/*.rpm /root/li-local/
 createrepo /root/li-local/
 
-#TODO remove this install of yum-priorities 
-yum -y install yum-priorities
 yum -y install rhc-devenv --enablerepo=li-local 2>&1
 
 pushd /root/li > /dev/null
