@@ -28,62 +28,72 @@ Broker::Application.configure do
   ############################################
   # OpenShift Configuration Below this point #
   ############################################
-  config.dns = {
-    :zone => "rhcloud.com",
-    :dynect_customer_name => "demo-redhat",
-    :dynect_user_name => "dev-rhcloud-user",
-    :dynect_password => "vo8zaijoN7Aecoo",
-    :dynect_url => "https://api2.dynect.net"
-  }
-
-  config.auth = {
-    :integrated => false,
-    # formerly the broker_auth_secret
-    :salt => "EIvWT6u3lsvSRNRGZhhW8YcWMh5mUAlc32nZlRJPdJM=",
-    # formerly the broker_auth_rsa_secret
-    :privkeypass => "SJDIkdfhuISe3wrulhjvcKHJFDUeoi8gfcdnu8299dhc",
-    :privkeyfile => "config/keys/private.pem",
-    :pubkeyfile  => "/var/www/openshift/broker/config/keys/public.pem",
-    :rsync_keyfile => "/var/www/openshift/broker/config/keys/rsync_id_rsa",
-    :token_login_key => :rhlogin,
-    :auth_service => {
-      :host => "https://streamline-proxy1.ops.rhcloud.com",
-      :base_url => "/wapps/streamline"
-    }
-  }
-
-  config.usage_tracking = {
-    :datastore_enabled => true,
-    :syslog_enabled => false
-  }
-
-  config.analytics = {
-    :enabled => false, # global flag for whether any analytics should be enabled
-    :nurture => {
-      :enabled => false,
-      :username => "admin",
-      :password => "password",
-      :url => "http://69.164.192.124:4500/" 
-    }
-  }
-
+  conf = OpenShift::Config.new(File.join(OpenShift::Config::CONF_DIR, 'broker-dev.conf'))
+  replica_sets = conf.get_bool("MONGO_REPLICA_SETS", "false")
+  hp = conf.get("MONGO_HOST_PORT", "localhost:27017")
+  if !hp
+    raise "Broker is missing Mongo configuration."
+  elif replica_sets
+    host_port = hp.split.map do |x|
+      (h,p) = x.split(":")
+      [h, p.to_i]
+    end
+  else
+    (h,p) = hp.split(":")
+    host_port = [h, p.to_i]
+  end
+  
   config.datastore = {
-    :replica_set => true,
-    # Replica set example: [[<host-1>, <port-1>], [<host-2>, <port-2>], ...]
-    :host_port => [["localhost", 27017]],
-
-    :user => "libra",
-    :password => "momo",
-    :db => "openshift_broker_dev",
-    :collections => {:user => "user", 
-                     :district => "district", 
+    :replica_set => replica_sets,
+    :host_port => host_port,
+  
+    :user => conf.get("MONGO_USER", ""),
+    :password => conf.get("MONGO_PASSWORD", ""),
+    :db => conf.get("MONGO_DB", "openshift_broker_dev"),
+    :collections => {:user => "user",
+                     :district => "district",
                      :application_template => "template",
                      :distributed_lock => "distributed_lock"}
   }
 
+  config.usage_tracking = {
+    :datastore_enabled => conf.get_bool("ENABLE_USAGE_TRACKING_DATASTORE", "true"),
+    :syslog_enabled => conf.get_bool("ENABLE_USAGE_TRACKING_SYSLOG", "false")
+  }
+  
+  config.analytics = {
+    :enabled => conf.get_bool("ENABLE_ANALYTICS", "false"), # global flag for whether any analytics should be enabled
+  }
+  
   config.user_action_logging = {
-    :logging_enabled => true,
-    :log_filepath => "/var/log/openshift/user_action.log"
+    :logging_enabled => conf.get_bool("ENABLE_USER_ACTION_LOG", "true"),
+    :log_filepath => conf.get("USER_ACTION_LOG_FILE", "/var/log/openshift/user_action.log")
+  }
+  
+  config.openshift = {
+    :domain_suffix => conf.get("CLOUD_DOMAIN", "dev.rhcloud.com"),
+    :default_max_gears => (conf.get("DEFAULT_MAX_GEARS", "3")).to_i,
+    :default_gear_size => conf.get("DEFAULT_GEAR_SIZE", "small"),
+    :gear_sizes => conf.get("VALID_GEAR_SIZES", "small,medium,c9").split(",")
+  }
+  
+  config.auth = {
+    # formerly the broker_auth_secret
+    :salt => conf.get("AUTH_SALT", ""),
+    :privkeypass => conf.get("AUTH_PRIV_KEY_PASS", ""),
+    :privkeyfile => conf.get("AUTH_PRIV_KEY_FILE", ""),
+    :pubkeyfile  => conf.get("AUTH_PUB_KEY_FILE", ""),
+    :rsync_keyfile => conf.get("AUTH_RSYNC_KEY_FILE", ""),
+  }
+
+  config.analytics = {
+    :enabled => conf.get_bool("ENABLE_ANALYTICS", "false"),
+    :nurture => {
+      :enabled => conf.get_bool("ENABLE_NURTURE", "false"),
+      :username => conf.get("NURTURE_USERNAME", ""),
+      :password => conf.get("NURTURE_PASSWORD", ""),
+      :url => conf.get("NURTURE_URL", ""),
+    }
   }
 
   config.billing = {
@@ -124,23 +134,6 @@ Broker::Application.configure do
     }
   }
 
-  # OpenShift Config
-  config.openshift= {
-    :domain_suffix => "dev.rhcloud.com",
-    :default_max_gears => 3,
-    :default_gear_size => "small",
-    :gear_sizes => ["small", "medium", "c9"],
-    :dns => {
-      :bind => {
-        :server => "127.0.0.1",
-        :port => 53,
-        :keyname => "example.com",
-        :keyvalue => "H6NDDnTbNpcBrUM5c4BJtohyK2uuZ5Oi6jxg3ME+RJsNl5Wl2B87oL12YxWUR3Gp7FdZQojTKBSfs5ZjghYxGw==",
-        :zone => "example.com"
-      }
-    }
-  }
-
   # Profiler config
   # See ruby-prof documentation for more info
   # :type     Type of report file: flat (default), graph, graph_html, call_tree, call_stack
@@ -155,23 +148,5 @@ Broker::Application.configure do
 #    :squash_threads => true,
 #    :squash_runtime => true
 #  }
-
-  config.msg_broker = {
-    :rpc_options => {
-        :disctimeout => 2,
-        :timeout => 180,
-        :verbose => false,
-        :progress_bar => false,
-        :filter => {"identity" => [], "fact" => [], "agent" => [], "cf_class" => []},
-        :config => "/etc/mcollective/client.cfg"
-    },
-    :districts => {
-        :enabled => true,
-        :require_for_app_create => false,
-        :max_capacity => 6000, # Only used with district create.  Modify capacity through oo-admin-ctl-district.
-        :first_uid => 1000 # Can not modify after district is created.  Only affects new districts.
-    },
-    :node_profile_enabled => false
-  }
 
 end

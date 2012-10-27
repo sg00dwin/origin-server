@@ -2,6 +2,7 @@
 $:.push File.expand_path("../lib", __FILE__)
 lib_dir  = File.join(File.join("lib", "**"), "*")
 test_dir  = File.join(File.join("test", "**"), "*")
+conf_dir  = File.join(File.join("conf", "**"), "*")
 bin_dir  = File.join("bin", "*")
 
 Gem::Specification.new do |s|
@@ -16,7 +17,7 @@ Gem::Specification.new do |s|
 
   s.rubyforge_project = "openshift-origin-auth-streamline"
 
-  s.files       = Dir[lib_dir]
+  s.files       = Dir[lib_dir] + Dir[conf_dir]
   s.test_files  = Dir[test_dir]
   s.executables   = Dir[bin_dir]
   s.files       += %w(README.md Rakefile Gemfile rubygem-openshift-origin-auth-streamline.spec openshift-origin-auth-streamline.gemspec LICENSE COPYRIGHT)

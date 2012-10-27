@@ -63,6 +63,10 @@ gem install --local --install-dir %{buildroot}%{gemdir} --force %{gemname}-%{ver
 ln -s %{geminstdir}/lib/%{gemname} %{buildroot}%{ruby_sitelib}
 ln -s %{geminstdir}/lib/%{gemname}.rb %{buildroot}%{ruby_sitelib}
 
+mkdir -p %{buildroot}/etc/openshift/plugins.d
+cp conf/openshift-origin-dns-dynect.conf %{buildroot}/etc/openshift/plugins.d/
+cp conf/openshift-origin-dns-dynect-dev.conf %{buildroot}/etc/openshift/plugins.d/
+
 %clean
 rm -rf %{buildroot}                                
 
@@ -74,6 +78,8 @@ rm -rf %{buildroot}
 %{gemdir}/gems/%{gemname}-%{version}
 %{gemdir}/cache/%{gemname}-%{version}.gem
 %{gemdir}/specifications/%{gemname}-%{version}.gemspec
+%config(noreplace) /etc/openshift/plugins.d/openshift-origin-dns-dynect.conf
+/etc/openshift/plugins.d/openshift-origin-dns-dynect-dev.conf
 
 %files -n ruby-%{gemname}
 %{ruby_sitelib}/%{gemname}
