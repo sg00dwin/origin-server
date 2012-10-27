@@ -563,24 +563,56 @@ EOF
 # Create a known test user with medium-sized gears - nhr
 # This must be done before the deployment of application templates!
 echo "Creating named test user"
-cd /var/www/openshift/broker && bundle exec rails runner 'test_user=CloudUser.new("user_with_multiple_gear_sizes@test.com"); test_user.save();'
-if [ $? -ne 0 ]
-then
-    echo "Named test user could not be created."
-else
+sleep_time=10
+for i in {1..5}
+do
+  cd /var/www/openshift/broker && bundle exec rails runner 'test_user=CloudUser.new("user_with_multiple_gear_sizes@test.com"); test_user.save();'
+  if [ $? -ne 0 ]
+  then
+    if [ $i -eq 5 ]
+    then
+      echo "Named test user could not be created."
+      break
+    fi
+    service mongod restart
+    sleep $sleep_time
+    sleep_time=$(expr $sleep_time + 10)
+    echo "Retrying....."
+  else
     /usr/bin/oo-admin-ctl-user -l user_with_multiple_gear_sizes@test.com --addgearsize medium
     echo "Named test user created."
-fi
+    break
+  fi
+done
+
+
 
 # Deploy application templates - fotios
-/usr/bin/ruby /usr/lib/openshift/broker/application_templates/templates/deploy.rb
-if [ $? -ne 0 ]
-then
-  service mongod restart
-  service rhc-broker restart
-  sleep 10
+echo "Deploying templates"
+sleep_time=10
+for i in {1..3}
+do
   /usr/bin/ruby /usr/lib/openshift/broker/application_templates/templates/deploy.rb
-fi
+  if [ $? -ne 0 ]
+  then
+    if [ $i -eq 3 ]
+    then
+      echo "Templates could not be deployed."
+      break
+    fi
+    service mongod restart
+    sleep $sleep_time
+    sleep_time=$(expr $sleep_time + 10)
+    echo "Retrying....."
+  else
+    echo "Templates deployed."
+    break
+  fi
+done
+
+
+
+
 
 # Hack to resolve parser error
 # See https://github.com/cucumber/gherkin/issues/182
