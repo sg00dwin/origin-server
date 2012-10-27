@@ -760,7 +760,7 @@ rm -rf /tmp/tito; mkdir -p /root/.source_build;
               end
             elsif options.install_required_packages?
               puts "Installing bootstrap packages..."
-              output, exit_code = ssh(hostname, "yum -y install git tito ruby rubygems rubygem-thor rubygem-parseconfig rubygem-json rubygem-aws-sdk createrepo yum-priorities", 600, true)
+              output, exit_code = ssh(hostname, "yum clean metadata; yum update -y; yum -y install git tito ruby rubygems rubygem-thor rubygem-parseconfig rubygem-json rubygem-aws-sdk createrepo yum-priorities", 600, true)
               puts "----------- Install Bootstrap Packages Output -----------"
               puts output
               puts "---------------------------------------------------------"
