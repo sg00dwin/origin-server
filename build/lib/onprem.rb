@@ -22,11 +22,7 @@ DEVOPS_NODE_WILDCARD = "devops_node_*"
 
 # not sure we need this yet
 VERIFIER_REGEXS = {
-                   /^(devops)_(\d+)$/ => {},
-                   /^(devops_verifier)_(\d+)$/ => {},
-                   /^(devops-base)_(\d+)$/ => {},
-                   /^(broker_check)_(\d+)$/ => {},
-                   /^(node_check)_(\d+)$/ => {},
+                   /^(devops).*_(\d+)$/ => {}
 }
 
 # accepts multiple typos of "terminate" - this should be shared, no?
@@ -189,7 +185,7 @@ module DevOps
           puts "Installing and configuring broker..."
           ssh(hostname, <<-SHELL, 600, true)
             yum install -y openshift-origin-node openshift-origin-broker
-            ss-setup-broker
+            oo-setup-broker
           SHELL
         end
         if rc > 0
