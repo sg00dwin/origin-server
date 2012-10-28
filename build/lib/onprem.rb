@@ -39,7 +39,7 @@ SAUCE_SECRET = ""
 ZONE = 'us-east-1'
 $amz_options = {:key_name => KEY_PAIR, :instance_type => TYPE}
 # not sure what we'll do with this yet
-VERIFIED_TAG = "devops-qe-ready"
+VERIFIED_TAG = "qe-ready"
 
 
 ######################################################################

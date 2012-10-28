@@ -787,7 +787,7 @@ rpm -e --nodeps java-1.7.0-openjdk java-1.7.0-openjdk-devel
 set -e
 yum -y install java-1.7.0-openjdk.i686 java-1.7.0-openjdk-devel.i686
 
-pushd li
+pushd #{DEV_TOOLS_EXT_REPO}
   build/devenv install_required_packages 2>&1
 popd
 }
@@ -897,7 +897,7 @@ rm -rf #{working_dirs}
 
 #{clone_commands}
 
-pushd li > /dev/null
+pushd #{DEV_TOOLS_EXT_REPO} > /dev/null
   build/devenv update#{options.verbose? ? ' --verbose' : ''} #{options.clean_metadata? ? ' --include_stale' : ''} 2>&1
 popd > /dev/null
 
