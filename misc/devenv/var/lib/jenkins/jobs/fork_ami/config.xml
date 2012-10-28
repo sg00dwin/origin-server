@@ -86,7 +86,7 @@ Usually would be the feature name or something to indicate the purpose of the am
         <hudson.model.StringParameterDefinition>
           <name>DEV_TOOLS_BRANCH</name>
           <description>Branch to use for origin-dev-tools fork</description>
-          <defaultValue></defaultValue>
+          <defaultValue>master</defaultValue>
         </hudson.model.StringParameterDefinition>
         <hudson.model.StringParameterDefinition>
           <name>DEV_TOOLS_REPO</name>

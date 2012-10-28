@@ -30,7 +30,7 @@
         <hudson.model.StringParameterDefinition>
           <name>DEV_TOOLS_PULL_ID</name>
           <description></description>
-          <defaultValue>origin-dev-tools</defaultValue>
+          <defaultValue></defaultValue>
         </hudson.model.StringParameterDefinition>
         <hudson.model.StringParameterDefinition>
           <name>BRANCH</name>

@@ -13,20 +13,15 @@
     <hudson.model.ParametersDefinitionProperty>
       <parameterDefinitions>
         <hudson.model.StringParameterDefinition>
-          <name>use_stage_image</name>
+          <name>branch</name>
           <description></description>
-          <defaultValue>false</defaultValue>
+          <defaultValue>master</defaultValue>
         </hudson.model.StringParameterDefinition>
-        <hudson.model.StringParameterDefinition>
+        <hudson.model.BooleanParameterDefinition>
           <name>profile_broker</name>
           <description></description>
           <defaultValue>false</defaultValue>
-        </hudson.model.StringParameterDefinition>
-        <hudson.model.StringParameterDefinition>
-          <name>instance_type</name>
-          <description></description>
-          <defaultValue>m1.large</defaultValue>
-        </hudson.model.StringParameterDefinition>
+        </hudson.model.BooleanParameterDefinition>
       </parameterDefinitions>
     </hudson.model.ParametersDefinitionProperty>
   </properties>
@@ -48,25 +43,13 @@ git clone git@github.com:openshift/origin-dev-tools.git
 
 pushd li
 
-if [ -d &quot;rhc/log&quot; ]; then
-    echo &quot;Wiping out old build data...&quot;
-    rm -rf rhc/log/*
-fi
-
-launch_params=&quot;&quot;
-if [ &quot;$use_stage_image&quot; == &quot;true&quot; ]
-then
-launch_params=$launch_params&quot; --use_stage_image&quot;
-fi
-echo $launch_params
-
 # Launch a test instance
-build/devenv launch devenv_benchmark_${BUILD_NUMBER} --verifier --instance_type $instance_type $launch_params
+build/devenv launch devenv_benchmark_${BUILD_NUMBER} --verifier --branch $branch $launch_params
 
 test_params=&quot;&quot;
-if [ &quot;$profile_broker&quot; == &quot;true&quot; ]
+if $profile_broker
 then
-test_params=$test_params&quot; --profile-broker&quot;
+  test_params=$test_params&quot; --profile-broker&quot;
 fi
 echo $test_params
 

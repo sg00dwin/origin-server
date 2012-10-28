@@ -155,9 +155,9 @@ fi</command>
     <hudson.tasks.BuildTrigger>
       <childProjects>libra_ami</childProjects>
       <threshold>
-        <name>SUCCESS</name>
-        <ordinal>0</ordinal>
-        <color>BLUE</color>
+        <name>UNSTABLE</name>
+        <ordinal>1</ordinal>
+        <color>YELLOW</color>
       </threshold>
     </hudson.tasks.BuildTrigger>
     <hudson.tasks.junit.JUnitResultArchiver>

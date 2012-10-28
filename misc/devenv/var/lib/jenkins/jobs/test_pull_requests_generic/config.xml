@@ -125,7 +125,7 @@ echo &quot;
 set -x
 
 pushd $DEV_TOOLS_EXT_REPO
-build/devenv launch test_pull_requests_generic_${BUILD_NUMBER} --verifier --use_stage_image
+build/devenv launch test_pull_requests_generic_${BUILD_NUMBER} --verifier --branch $BRANCH
 build/devenv sync test_pull_requests_generic_${BUILD_NUMBER} --tag --clean_metadata
 
 # Run the tests

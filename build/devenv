@@ -316,11 +316,11 @@ module Express
         ssh(hostname, "cp -n #{repo_parent_dir}/openshift-test/controller/test/cucumber/*.feature #{repo_parent_dir}/openshift-test/tests/. ", 60, false, 2, user)
       end
 
-      def setup_verifier(hostname, use_stage_image=false)
+      def setup_verifier(hostname, branch)
         print "Initializing git repo for syncing..."
         init_repos(hostname)
         puts "Done"
-        update_remote_tests(hostname, use_stage_image ? "stage" : nil)
+        update_remote_tests(hostname, branch)
       end
 
       def rpm_manifest(hostname)
@@ -656,7 +656,7 @@ module Express
             puts "------------------ Update Output ------------------------"
             puts output
             puts "---------------------------------------------------------"
-            
+
             if options.install_required_packages?
               output, exit_code = ssh(hostname, "yum -y install openssh-clients", 240, true)
               puts "----------- Install OpenSSH Clients Output -----------"
