@@ -16,7 +16,7 @@ $brew_url = "https://brewweb.devel.redhat.com/buildinfo?buildID=%d"
 $koji_url = "http://koji.fedoraproject.org/koji/buildinfo?buildID=%d"
 
 # RHEL-6.2-build
-$brew_tags = %w{f11-import-s390x-build it-eng-rhel-6-build cloud-ruby-rhel-6-candidate rhel-6-libra-build libra-rhel-6.2-build libra-rhel-6.2-candidate libra-maven-rhel-6.2-candidate}
+$brew_tags = %w{f11-import-s390x-build it-eng-rhel-6-build cloud-ruby-rhel-6-candidate rhel-6-libra-build libra-rhel-6.3-build libra-rhel-6.3-candidate libra-maven-rhel-6.3-candidate}
 $koji_tags = %w{f16-build f16-updates-testing}
 
 ##

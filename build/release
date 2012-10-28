@@ -5,7 +5,7 @@ $: << File.expand_path(File.dirname(__FILE__))
 require 'rubygems'
 require 'thor'
 require 'fileutils'
-require 'li_constants'
+require 'dev_tools_ext_constants'
 require File.join('lib', '..', '..', '..', 'origin-dev-tools', 'build', 'lib', 'openshift')
 require 'lib/openshift/brew'
 
@@ -72,7 +72,7 @@ class Release < Thor
       end
       inside("..") do
         FileUtils.rm_rf "jenkins-plugin-openshift/"
-        exit unless run("rhpkg clone -b libra-rhel-6.3 jenkins-plugin-openshift", :verbose => options.verbose?)
+        exit unless run("rhpkg clone -b #{BASE_RELEASE_BRANCH} jenkins-plugin-openshift", :verbose => options.verbose?)
       end
       inside("../jenkins-plugin-openshift/") do
         FileUtils.cp "../jenkins-cloud-plugin/target/openshift.hpi", "./openshift.hpi"
@@ -263,7 +263,7 @@ class Release < Thor
     orig_branches = checkout_branch(options[:stage] || options.stage? ? "stage" : "master")
     begin
       # do RHEL 6.x first
-      mash_and_rsync "libra-rhel-6.3", false, options
+      mash_and_rsync BASE_RELEASE_BRANCH, false, options
 
       unless options.no_ami?
         create_ami(options)
@@ -280,18 +280,18 @@ class Release < Thor
   method_option :candidate, :type => :boolean, :desc => "Target brew tag is candidate"
   def tag_pkgs(after_date = nil)
     if options.stage?
-      target_brew_tag = "libra-rhel-6.3-stage"
-      src_brew_tag = "libra-rhel-6.3-candidate"
+      target_brew_tag = "#{BASE_RELEASE_BRANCH}-stage"
+      src_brew_tag = "#{BASE_RELEASE_BRANCH}-candidate"
     elsif options.candidate?
-      target_brew_tag = "libra-rhel-6.3-candidate"
-      src_brew_tag = "libra-rhel-6.3-test"
+      target_brew_tag = "#{BASE_RELEASE_BRANCH}-candidate"
+      src_brew_tag = "#{BASE_RELEASE_BRANCH}-test"
     else
       puts "ERROR: must specify target brew tag with --stage or --candidate"
       exit 1
     end 
 
     orig_branches = checkout_branch("master")
-  
+
     begin
       
       git_pull
@@ -364,7 +364,7 @@ class Release < Thor
     end
   end
 
-  desc "build_ami", "Build an ami based on the current li repo"
+  desc "build_ami", "Build an ami"
   method_option :stage, :type => :boolean, :desc => "Indicates whether to use the stage repo"
   method_option :source_ami, :type => :boolean, :desc => "Indicates whether to build a source ami"
   def build_ami
@@ -600,22 +600,21 @@ class Release < Thor
       # Jenkins parameters
       proxy = "squid.corp.redhat.com:8080"
       jenkins = "https://ci.dev.openshift.redhat.com/jenkins"
-      token = "libra1"
   
       puts "Kicking off AMI build..."
       if options.test?
-        unless run("curl --insecure --proxy #{proxy} #{jenkins}/job/libra_ami_test/build?token=#{token}", :verbose => options.verbose?)
+        unless run("curl --insecure --proxy #{proxy} #{jenkins}/job/libra_ami_test/build?token=#{JENKINS_BUILD_TOKEN}", :verbose => options.verbose?)
           puts "ERROR - Jenkins remote job invocation failed."
           exit 1
         end
          
       elsif options.stage?
-        unless run("curl --insecure --proxy #{proxy} #{jenkins}/job/create_ami/buildWithParameters?token=#{token}", :verbose => options.verbose?)
+        unless run("curl --insecure --proxy #{proxy} #{jenkins}/job/create_ami/buildWithParameters?token=#{JENKINS_BUILD_TOKEN}", :verbose => options.verbose?)
           puts "ERROR - Jenkins remote job invocation failed."
           exit 1
         end
       else
-        unless run("curl --insecure --proxy #{proxy} #{jenkins}/job/libra_ami/buildWithParameters?token=#{token}\\&INSTALL_FROM_SOURCE=#{(options.source_ami?).to_s}", :verbose => options.verbose?)
+        unless run("curl --insecure --proxy #{proxy} #{jenkins}/job/libra_ami/buildWithParameters?token=#{JENKINS_BUILD_TOKEN}\\&INSTALL_FROM_SOURCE=#{(options.source_ami?).to_s}", :verbose => options.verbose?)
           puts "ERROR - Jenkins remote job invocation failed."
           exit 1
         end

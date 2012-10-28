@@ -22,7 +22,7 @@ gpgcheck=0
 EOF
 #sed -i s/sslverify=1/sslverify=0/g /etc/yum.repos.d/rh-cloud.repo
 
-cat > /etc/yum.repos.d/li.repo <<EOF
+cat > /etc/yum.repos.d/devenv.repo <<EOF
 [qpid]
 name=Qpid repo for Enterprise Linux 6 - $basearch
 baseurl=https://mirror1.ops.rhcloud.com/libra/qpid/\$basearch/Packages/
@@ -88,11 +88,11 @@ EOF
 
 if [[ "$1" == "test" ]]; then
 
-cat >> /etc/yum.repos.d/li.repo <<EOF
-[li]
+cat >> /etc/yum.repos.d/devenv.repo <<EOF
+[devenv]
 name=Li repo for Enterprise Linux 6 - $basearch
-baseurl=https://mirror1.ops.rhcloud.com/libra/libra-rhel-6.3-test/\$basearch/
-        https://mirror2.ops.rhcloud.com/libra/libra-rhel-6.3-test/\$basearch/
+baseurl=https://mirror1.ops.rhcloud.com/libra/${2-libra-rhel-6.3}-test/\$basearch/
+        https://mirror2.ops.rhcloud.com/libra/${2-libra-rhel-6.3}-test/\$basearch/
 failovermethod=priority
 enabled=1
 gpgcheck=0
@@ -102,10 +102,10 @@ sslverify=0
 sslclientcert=/var/lib/yum/client-cert.pem
 sslclientkey=/var/lib/yum/client-key.pem
 
-[li-source]
+[devenv-source]
 name=Li repo for Enterprise Linux 6 - $basearch
-baseurl=https://mirror1.ops.rhcloud.com/libra/libra-rhel-6.3-test/source/SRPMS/
-        https://mirror2.ops.rhcloud.com/libra/libra-rhel-6.3-test/source/SRPMS/
+baseurl=https://mirror1.ops.rhcloud.com/libra/${2-libra-rhel-6.3}-test/source/SRPMS/
+        https://mirror2.ops.rhcloud.com/libra/${2-libra-rhel-6.3}-test/source/SRPMS/
 failovermethod=priority
 enabled=0
 gpgkey=https://mirror1.ops.rhcloud.com/libra/RPM-GPG-KEY-redhat-beta
@@ -118,11 +118,11 @@ EOF
 
 else
 
-cat >> /etc/yum.repos.d/li.repo <<EOF
-[li]
+cat >> /etc/yum.repos.d/devenv.repo <<EOF
+[devenv]
 name=Li repo for Enterprise Linux 6 - $basearch
-baseurl=https://mirror1.ops.rhcloud.com/libra/libra-rhel-6.3-${1-candidate}/\$basearch/
-        https://mirror2.ops.rhcloud.com/libra/libra-rhel-6.3-${1-candidate}/\$basearch/
+baseurl=https://mirror1.ops.rhcloud.com/libra/${2-libra-rhel-6.3}-${1-candidate}/\$basearch/
+        https://mirror2.ops.rhcloud.com/libra/${2-libra-rhel-6.3}-${1-candidate}/\$basearch/
 failovermethod=priority
 enabled=1
 gpgcheck=0
@@ -132,11 +132,11 @@ sslverify=0
 sslclientcert=/var/lib/yum/client-cert.pem
 sslclientkey=/var/lib/yum/client-key.pem
 
-[li-source]
+[devenv-source]
 
 name=Li repo for Enterprise Linux 6 - $basearch
-baseurl=https://mirror1.ops.rhcloud.com/libra/libra-rhel-6.3-${1-candidate}/source/SRPMS/
-        https://mirror2.ops.rhcloud.com/libra/libra-rhel-6.3-${1-candidate}/source/SRPMS/
+baseurl=https://mirror1.ops.rhcloud.com/libra/${2-libra-rhel-6.3}-${1-candidate}/source/SRPMS/
+        https://mirror2.ops.rhcloud.com/libra/${2-libra-rhel-6.3}-${1-candidate}/source/SRPMS/
 failovermethod=priority
 enabled=0
 gpgkey=https://mirror1.ops.rhcloud.com/libra/RPM-GPG-KEY-redhat-beta

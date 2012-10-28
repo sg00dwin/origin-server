@@ -45,7 +45,7 @@ def pull_artifacts(mig_config, devenv, version, verbose = true, dry_run = true)
   puts "Pulling artifacts for #{version} from #{devenv}"
 
   command("rm -rf #{mig_config['tmp']}/#{version}; mkdir -p #{mig_config['tmp']}/#{version}", '', verbose, dry_run)
-  command("scp -r root@#{devenv}:li-local #{mig_config['tmp']}/#{version}", '', verbose, dry_run)
+  command("scp -r root@#{devenv}:devenv-local #{mig_config['tmp']}/#{version}", '', verbose, dry_run)
   command("scp root@#{devenv}:/etc/yum.repos.d/local.repo #{mig_config['tmp']}/#{version}", '', verbose, dry_run)
 end
 
@@ -235,10 +235,10 @@ end
 def update_devenv(mig_config, devenv, new_version, verbose = true, dry_run = true)
   puts "Updating devenv #{devenv}"
 
-  command("scp -i ~/.ssh/libra.pem -r #{mig_config['tmp']}/#{new_version}/li-local root@#{devenv}:/root/", '  ', verbose, dry_run)
+  command("scp -i ~/.ssh/libra.pem -r #{mig_config['tmp']}/#{new_version}/devenv-local root@#{devenv}:/root/", '  ', verbose, dry_run)
   command("scp -i ~/.ssh/libra.pem #{mig_config['tmp']}/#{new_version}/local.repo root@#{devenv}:/etc/yum.repos.d/", '  ', verbose, dry_run)
 
-  command("ssh root@#{devenv} sed -i -e \"s/stage/candidate/g\" /etc/yum.repos.d/li.repo 2>&1", '  ', verbose, dry_run)
+  command("ssh root@#{devenv} sed -i -e \"s/stage/candidate/g\" /etc/yum.repos.d/devenv.repo 2>&1", '  ', verbose, dry_run)
   command("ssh root@#{devenv} yum -y install yum-priorities", '  ', verbose, dry_run)
   command("ssh root@#{devenv} yum -y install rh-amazon-rhui-client-jbeap6", '  ', verbose, dry_run)
   command("ssh root@#{devenv} yum -y install rh-amazon-rhui-client-jbews1", '  ', verbose, dry_run)
@@ -251,7 +251,7 @@ def update_devenv(mig_config, devenv, new_version, verbose = true, dry_run = tru
   command("ssh root@#{devenv} \"semodule -l | grep openshift\"", '  ', verbose, dry_run)
   command("ssh root@#{devenv} setsebool -P httpd_run_stickshift=1", '  ', verbose, dry_run)
 
-  command("ssh root@#{devenv} \"yum -y update --enablerepo li-local 2>&1 > /root/update.#{new_version}.log\"", '  ', verbose, dry_run)
+  command("ssh root@#{devenv} \"yum -y update --enablerepo devenv-local 2>&1 > /root/update.#{new_version}.log\"", '  ', verbose, dry_run)
 
   command("ssh root@#{devenv} sed -i -e 's,user,user:iscript=/usr/sbin/oo-namespace-init,g' /etc/security/namespace.d/* ", '  ', verbose, dry_run)
   command("ssh root@#{devenv} sed -i -e 's/pam_libra/pam_openshift/g' /etc/security/namespace.d/* ", '  ', verbose, dry_run)
@@ -552,7 +552,7 @@ when 'diff'
   diff_report(mig_config, apps, devenv, verbose, dry_run)
 when 'help'
   puts "  help:     see this message"
-  puts "  pull-artifacts: pull artifacts (li-local, local.repo) from a devenv"
+  puts "  pull-artifacts: pull artifacts (devenv-local, local.repo) from a devenv"
   puts "  create:         create a devenv from the latest stage ami"
   puts "  setup:          create a domain and pre-migration apps" 
   puts "  update:         update a devenv to a new version"
