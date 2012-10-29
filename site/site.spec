@@ -8,8 +8,8 @@
 
 Summary:   OpenShift Site Rails application
 Name:      rhc-site
-Version: 0.99.14
-Release:   3%{?dist}
+Version: 0.99.15
+Release:   1%{?dist}
 Group:     Network/Daemons
 License:   ASL 2.0
 URL:       http://openshift.redhat.com
@@ -143,6 +143,14 @@ rm -rf %{buildroot}
 %{sitedir}/public
 
 %changelog
+* Mon Oct 29 2012 Adam Miller <admiller@redhat.com> 0.99.15-1
+- Merge pull request #518 from smarterclayton/console_remote_user
+  (openshift+bot@redhat.com)
+- Bug 869590 - Infinite redirect on visit to /unauthorized
+  (ccoleman@redhat.com)
+- Update site to accomodate new console config settings and implement
+  console_access_denied exception handler. (ccoleman@redhat.com)
+
 * Fri Oct 26 2012 Adam Miller <admiller@redhat.com> 0.99.14-3
 - bump site.spec Release: for fake chain-build with console
   (admiller@redhat.com)
