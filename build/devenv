@@ -7,7 +7,7 @@ require 'thor'
 require 'fileutils'
 require 'pp'
 require 'yaml'
-require 'li_constants'
+require 'dev_tools_ext_constants'
 require File.join('lib', '..', '..', '..', 'origin-dev-tools', 'build', 'lib', 'openshift')
 require File.join('lib', '..', '..', '..', 'origin-dev-tools', 'build', 'builder')
 require 'lib/openshift/sauce_labs'
@@ -691,7 +691,7 @@ module Express
             end
 
             puts "Uploading devenv script..."
-            script_path = File.expand_path(File.dirname(__FILE__) + "/../misc/devenv/setup-li-repos.sh")
+            script_path = File.expand_path(File.dirname(__FILE__) + "/../misc/devenv/setup-devenv-repos.sh")
             scp_to(hostname, script_path, "~/")
             puts "Done"
 
@@ -706,7 +706,7 @@ module Express
               puts "Done"
             end
             
-            ssh(hostname, "/bin/bash ~/setup-li-repos.sh #{options.yum_repo};")
+            ssh(hostname, "/bin/bash ~/setup-devenv-repos.sh #{options.yum_repo} #{BASE_RELEASE_BRANCH};")
 
             output = ''
             clone_commands = repo_clone_commands(hostname)
@@ -727,29 +727,29 @@ module Express
 
               cmd += %{
 
-pushd /root/li > /dev/null
+pushd /root/#{DEV_TOOLS_EXT_REPO} > /dev/null
   echo "Building all specs on the server..."
   build/devenv find_and_build_specs 2>&1
 popd > /dev/null
 
-mkdir /root/li-local/
+mkdir /root/devenv-local/
 
 cat > /etc/yum.repos.d/local.repo <<EOF
-[li-local]
-name=li-local
-baseurl=file:///root/li-local/
+[devenv-local]
+name=devenv-local
+baseurl=file:///root/devenv-local/
 enabled=0
 gpgcheck=0
 priority=1
 EOF
             
-cp /tmp/tito/x86_64/*.rpm /root/li-local/
-cp /tmp/tito/noarch/*.rpm /root/li-local/
-createrepo /root/li-local/
+cp /tmp/tito/x86_64/*.rpm /root/devenv-local/
+cp /tmp/tito/noarch/*.rpm /root/devenv-local/
+createrepo /root/devenv-local/
 
-yum -y install rhc-devenv --enablerepo=li-local 2>&1
+yum -y install rhc-devenv --enablerepo=devenv-local 2>&1
 
-pushd /root/li > /dev/null
+pushd /root/#{DEV_TOOLS_EXT_REPO} > /dev/null
   build/devenv write_sync_history 2>&1
 popd > /dev/null
                 
