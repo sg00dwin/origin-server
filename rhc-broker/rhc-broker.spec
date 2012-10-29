@@ -3,7 +3,7 @@
 
 Summary:   Li broker components
 Name:      rhc-broker
-Version: 0.99.19
+Version: 0.99.20
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -125,6 +125,14 @@ if [ ! -f %{_localstatedir}/log/openshift/user_action.log ]; then
 fi
 
 %changelog
+* Mon Oct 29 2012 Adam Miller <admiller@redhat.com> 0.99.20-1
+- Converted dynect and streamline plugins to rails engines Moved plugin config
+  into /etc/openshift/plugins.d Moved broker global conf to
+  /etc/openshift/broker.conf Modified broker and plugins to loca *-dev.conf
+  files when in development environment Mofied broker to switch to dev
+  environment with /etc/openshift/development flag is present
+  (kraman@gmail.com)
+
 * Fri Oct 26 2012 Adam Miller <admiller@redhat.com> 0.99.19-1
 - Merge pull request #526 from ironcladlou/drupal-typeless
   (openshift+bot@redhat.com)
