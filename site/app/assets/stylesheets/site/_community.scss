@@ -732,6 +732,7 @@ html.js fieldset.collapsible .fieldset-wrapper {
   -moz-border-radius: 3px;
   -webkit-border-radius: 3px;
   text-shadow: 1px 1px 6px #EEEEEE, 0 0 0 #DDDDDD;
+  margin-right: 20px;
 }
 .event-listings .event-date span {
   display: block;
@@ -802,6 +803,8 @@ filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=3);
 .related-logo {
   max-width: 200px;
   max-height: 200px;
+  margin-right: 10%;
+  margin-left: 10px;
 }
 
 .event-metadata {

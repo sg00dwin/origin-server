@@ -8,46 +8,52 @@ $do = og_comment_perms_do();
 
 <section id="node-<?php print $node->nid; ?>" class="<?php if ($sticky) { print ' sticky'; } ?><?php if (!$status) { print ' node-unpublished'; } ?>">
 
-<div class="breadcrumb"><a href="/community/events">Events</a><span class="divider"> /</span>CodeStrong</div>
+<div class="breadcrumb"><a href="<?php print base_path() ?>events">Events</a><span class="divider">/</span><?php print $title ?></div>
 
 <div class="events-post node node-events">
 
   <div class="row">
   <div class="span9">
     <div class="event-metadata">
-    <figure class="pull-right related-block">
-    <div class="related-logo" style="margin-right: 10%;"><img src="http://lacot.org/media/original/blog/2011/09/logo-codestrong.png" alt="codestrong logo" />
-    </div>
-    </figure>
-    
-    <h1><?php print $title ?></h1>
-    <p class="event-date">
-    	<?php print $node->field_event_start_date[0]["view"] ?>
-    	<a href="" class="add-calendar">Add to calendar</a>
-    </p>
-    
-    <h4>Intercontinental Hotel</h4>
-    <?php print $node->field_event_city[0]["view"] ?>, 
-    <?php print $node->field_event_state[0]["view"] ?>
-    <?php print $node->field_event_country[0]["view"] ?><br />
-    <?php print $node->field_event_url[0]["view"] ?><br />
-    
-    </div>
 
-    <p>
-    	<?php print $node->content["body"]["#value"] ?>
-    </p>
+        <?php if (strlen($node->field_event_logo[0]["view"]) > 0): ?>
+            <figure class="pull-right related-block">
+                <div class="related-logo">
+                    <?php print $node->field_event_logo[0]["view"] ?>
+                </div>
+            </figure>
+        <?php endif; ?> 
+        
+        <h1><?php print $title ?></h1>
+        <p class="event-date">
+        	<?php print $node->field_event_start_date[0]["view"] ?>
+        	<!--<a href="" class="add-calendar">Add to calendar</a>-->
+        </p>
+        
+        <?php if (strlen($node->field_event_venue[0]["view"]) > 0): ?>
+            <h4><?php print $node->field_event_venue[0]["view"] ?></h4>
+        <?php endif; ?> 
 
-    <?php print $node->field_event_categories[0]["view"] ?>
-    
+        <?php print $node->field_event_city[0]["view"] ?><?php if (strlen($node->field_event_city[0]["view"]) > 0 && strlen($node->field_event_state[0]["view"]) > 0) echo ", " ?> 
+        <?php print $node->field_event_state[0]["view"] ?> 
+        <?php if ((strlen($node->field_event_city[0]["view"]) > 0 || strlen($node->field_event_state[0]["view"]) > 0) && strlen($node->field_event_country[0]["view"]) > 0) echo " - " ?> 
+        <?php print $node->field_event_country[0]["view"] ?>
+        
+        <?php if (strlen($node->field_event_url[0]["view"]) > 0) echo "<br />" ?> 
+        <?php print $node->field_event_url[0]["view"] ?><br />
+        
+        </div>
+
+        <?php if (strlen($node->content["body"]["#value"]) > 0): ?> 
+            <p>
+            	<?php print $node->content["body"]["#value"] ?>
+            </p>
+        <?php endif; ?> 
+
+        <?php print $node->field_event_categories[0]["view"] ?>
+        
     </div>
   </div><!-- /row -->
 
 </div>  
 </section>
-
-<!--
-<pre>
-	<?php //print_r($node); ?>
-</pre>
--->
