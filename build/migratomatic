@@ -61,7 +61,7 @@ def create_devenv(mig_config, use_stage = true, pad = "", verbose = true, dry_ru
   cmd = "cd #{mig_config['repo_home']}/li;build/devenv launch #{env_name} 2>&1"
 
   if use_stage
-    cmd += " --use-stage-image"
+    cmd += " --branch stage"
   end
 
   if verbose
