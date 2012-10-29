@@ -2,7 +2,7 @@
 
 Summary:       Multi-tenant cloud management system node tools
 Name:          rhc-node
-Version: 0.99.12
+Version: 0.99.13
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -223,6 +223,14 @@ fi
 
 
 %changelog
+* Mon Oct 29 2012 Adam Miller <admiller@redhat.com> 0.99.13-1
+- Merge pull request #534 from brenton/rhc-list-ports1
+  (openshift+bot@redhat.com)
+- better debugging on rhc-accept-devenv failures (dmcphers@redhat.com)
+- Fix numerous issues with migrations for scalable apps. (pmorie@gmail.com)
+- Bug 835501 - 'rhc-port-foward' returns 'No available ports to forward '
+  (bleanhar@redhat.com)
+
 * Fri Oct 26 2012 Adam Miller <admiller@redhat.com> 0.99.12-1
 - Add substitutions for httpd config files on haproxy gear for scalable apps
   (pmorie@gmail.com)
