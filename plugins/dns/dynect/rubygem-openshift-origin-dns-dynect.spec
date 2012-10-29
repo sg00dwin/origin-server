@@ -5,7 +5,7 @@
 
 Summary:        OpenShift plugin for Dynect DNS service
 Name:           rubygem-%{gemname}
-Version: 0.13.6
+Version: 0.13.7
 Release:        1%{?dist}
 Group:          Development/Languages
 License:        ASL 2.0
@@ -86,6 +86,14 @@ rm -rf %{buildroot}
 %{ruby_sitelib}/%{gemname}.rb
 
 %changelog
+* Mon Oct 29 2012 Adam Miller <admiller@redhat.com> 0.13.7-1
+- Converted dynect and streamline plugins to rails engines Moved plugin config
+  into /etc/openshift/plugins.d Moved broker global conf to
+  /etc/openshift/broker.conf Modified broker and plugins to loca *-dev.conf
+  files when in development environment Mofied broker to switch to dev
+  environment with /etc/openshift/development flag is present
+  (kraman@gmail.com)
+
 * Mon Oct 22 2012 Adam Miller <admiller@redhat.com> 0.13.6-1
 - removing remaining cases of SS and config.ss (dmcphers@redhat.com)
 
