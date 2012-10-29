@@ -238,6 +238,10 @@ def update_devenv(mig_config, devenv, new_version, verbose = true, dry_run = tru
   command("scp -i ~/.ssh/libra.pem -r #{mig_config['tmp']}/#{new_version}/devenv-local root@#{devenv}:/root/", '  ', verbose, dry_run)
   command("scp -i ~/.ssh/libra.pem #{mig_config['tmp']}/#{new_version}/local.repo root@#{devenv}:/etc/yum.repos.d/", '  ', verbose, dry_run)
 
+  # FIXME: Remove this after 2.0.19 migration
+  command("ssh root@#{devenv} '[ -f /etc/yum.repos.d/li.repo ] && mv /etc/yum.repos.d/li.repo /etc/yum.repos.d/devenv.repo 2>&1'",
+      '  ', verbose, dry_run)
+
   command("ssh root@#{devenv} sed -i -e \"s/stage/candidate/g\" /etc/yum.repos.d/devenv.repo 2>&1", '  ', verbose, dry_run)
   command("ssh root@#{devenv} yum -y install yum-priorities", '  ', verbose, dry_run)
   command("ssh root@#{devenv} yum -y install rh-amazon-rhui-client-jbeap6", '  ', verbose, dry_run)
