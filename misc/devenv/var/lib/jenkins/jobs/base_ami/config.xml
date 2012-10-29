@@ -73,7 +73,7 @@ else
   IMAGE_NAME=${IMAGE_BASE_NAME}-${BRANCH}-base
 fi
 
-pushd li
+pushd $DEV_TOOLS_EXT_REPO
   build/devenv build ${IMAGE_NAME} ${BUILD_NUMBER} --install_required_packages --register --terminate --yum_repo=$YUM_REPO --branch=$BRANCH
 popd</command>
     </hudson.tasks.Shell>

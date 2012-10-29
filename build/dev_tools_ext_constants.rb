@@ -5,7 +5,7 @@
 #AMI = {"us-east-1" =>"ami-4509c12c", "eu-west-1" => "ami-69360a1d", "us-west-1" => "ami-8b95cace", "ap-northeast-1" => "ami-aeb601af", "ap-southeast-1" => "ami-9e1d58cc", "us-west-2" => "ami-ec810cdc"}
 #
 # Blentz OpenShift images
-AMI = {"us-east-1" =>"ami-938c5dfa"}
+AMI = {"us-east-1" => "ami-938c5dfa"}
 TYPE = "m1.large"
 KEY_PAIR = "libra"
 ZONE = 'us-east-1d'
