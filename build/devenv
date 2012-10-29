@@ -62,6 +62,7 @@ module Express
         :'redhat_ideas'                    => File.join('drupal', 'drupal6-openshift-redhat_ideas'                   , '/'),
         :'redhat_sso'                      => File.join('drupal', 'drupal6-openshift-redhat_sso'                     , '/'),
         :'theme'                           => File.join('drupal', 'drupal6-openshift-theme'                          , '/'),
+        :'styles'                          => File.join('site', 'app', 'assets', 'stylesheets'                       , '/'),
       }
 
       @target_dir_for = {
@@ -87,6 +88,7 @@ module Express
         :'redhat_ideas'                    => '/etc/drupal6/all/modules/custom/redhat_ideas',
         :'redhat_sso'                      => '/etc/drupal6/all/modules/custom/redhat_sso',
         :'theme'                           => '/etc/drupal6/all/themes/openshift-theme',
+        :'styles'                          => '/var/www/openshift/site/app/assets/stylesheets',
       }
 
       @ignore_for = {
