@@ -8,7 +8,7 @@
 
 Summary:   Dependencies for OpenShift development
 Name:      rhc-devenv
-Version: 0.100.18
+Version: 0.100.19
 Release:   1%{?dist}
 Group:     Development/Libraries
 License:   GPLv2
@@ -648,6 +648,24 @@ restorecon /etc/openshift/node.conf || :
 /sbin/service libra-data restart > /dev/null 2>&1 || :
 
 %changelog
+* Mon Oct 29 2012 Adam Miller <admiller@redhat.com> 0.100.19-1
+- making onprem scripts more like the other devenvs - work in progress
+  (dmcphers@redhat.com)
+- various cleanup (dmcphers@redhat.com)
+- syncing jenkins jobs (dmcphers@redhat.com)
+- adding retries and debugging around creating test users and templates
+  (dmcphers@redhat.com)
+- Merge pull request #532 from kraman/global_broker_config
+  (openshift+bot@redhat.com)
+- add an extra yum update after adding li.repo (dmcphers@redhat.com)
+- Converted dynect and streamline plugins to rails engines Moved plugin config
+  into /etc/openshift/plugins.d Moved broker global conf to
+  /etc/openshift/broker.conf Modified broker and plugins to loca *-dev.conf
+  files when in development environment Mofied broker to switch to dev
+  environment with /etc/openshift/development flag is present
+  (kraman@gmail.com)
+- syncing jenkins configs (dmcphers@redhat.com)
+
 * Fri Oct 26 2012 Adam Miller <admiller@redhat.com> 0.100.18-1
 - rename li-devenv.sh to setup-li-repos.sh to relect what it does
   (dmcphers@redhat.com)
