@@ -205,7 +205,8 @@ module OpenShiftMigration
           File.symlink(dstlink,entry)
           mcs_label = Util.get_mcs_level(uuid)
           output+="Fixing selinux MCS label: #{entry} -> system_u:object_r:openshift_var_lib_t:#{mcs_label}"
-          %x[ chcon -h -u system_u -r object_r -t openshift_var_lib_t -l #{mcs_label} #{entry} ]
+          %x[ /sbin/restorecon -h #{entry} ]
+          %x[ /usr/bin/chcon -l #{mcs_label} #{entry} ]
         end
       elsif File.file?(entry)
         File.open(entry, File::RDWR) do |f|
@@ -340,6 +341,12 @@ module OpenShiftMigration
         when 'php-5.3'
           Util.replace_in_file("#{cart_dir}/conf/php.ini", "/var/lib/stickshift", "/var/lib/openshift")
           Util.replace_in_file("#{gear_home}/.pearrc", "/var/lib/stickshift", "/var/lib/openshift")
+        when 'zend-5.6'
+          Util.replace_in_file("#{cart_dir}/etc/php.ini", "/var/lib/stickshift", "/var/lib/openshift")
+          Util.replace_in_file("#{cart_dir}/conf.d/zendserver_gui.conf", "/var/lib/stickshift", "/var/lib/openshift")
+          Util.replace_in_file("#{cart_dir}/conf.d/stickshift.conf", "/var/lib/stickshift", "/var/lib/openshift")
+          Util.replace_in_file("#{gear_home}/.pearrc", "/var/lib/stickshift", "/var/lib/openshift")
+          File.rename("#{cart_dir}/conf.d/stickshift.conf", "#{cart_dir}/conf.d/openshift.conf")
         when 'mongodb-2.0'
           Util.replace_in_file("#{cart_dir}/etc/mongodb.conf", "/var/lib/stickshift", "/var/lib/openshift")
         when 'rockmongo-1.1'
@@ -375,6 +382,7 @@ module OpenShiftMigration
           Util.replace_in_file("#{cart_dir}/conf/haproxy.cfg.template", "/var/lib/stickshift/", "/var/lib/openshift")
         when 'jenkins-1.4'
           Util.replace_in_file("#{cart_dir}/data/jobs/*/config.xml", "/usr/libexec/stickshift", "/usr/libexec/openshift")
+        when 'zend-5.6'
         end
 
         # cartridge_upgrades
