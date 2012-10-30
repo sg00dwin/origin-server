@@ -6,7 +6,7 @@ require 'rubygems'
 require 'thor'
 require 'fileutils'
 require 'pp'
-require 'dev_tools_ext_constants'
+require 'dev_tools_constants'
 require File.join('lib', '..', '..', '..', "#{DEV_TOOLS_REPO}", 'build', 'lib', 'openshift')
 
 class Prune < Thor
