@@ -2,7 +2,7 @@
 
 Summary:       Multi-tenant cloud management system node tools
 Name:          rhc-node
-Version: 1.0.0
+Version: 1.0.1
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -223,6 +223,14 @@ fi
 
 
 %changelog
+* Tue Oct 30 2012 Adam Miller <admiller@redhat.com> 1.0.1-1
+- Merge pull request #551 from mrunalp/bugs/mig_env_var_1
+  (openshift+bot@redhat.com)
+- Merge pull request #548 from danmcp/master (openshift+bot@redhat.com)
+- Fix for BZ 869236. (mpatel@redhat.com)
+- bumping specs to at least 1.0.0 (dmcphers@redhat.com)
+- BZ 870937: Needed a migration for Zend. (rmillner@redhat.com)
+
 * Mon Oct 29 2012 Adam Miller <admiller@redhat.com> 0.99.13-1
 - Merge pull request #534 from brenton/rhc-list-ports1
   (openshift+bot@redhat.com)
