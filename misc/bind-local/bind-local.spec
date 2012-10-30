@@ -1,5 +1,5 @@
 Name: bind-local
-Version:	0.9.2
+Version:	1.0.0
 Release:	1%{?dist}
 Summary:	Config for local named for test and development with Dynamic DNS
 Group:		Network/Daemons

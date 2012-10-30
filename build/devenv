@@ -7,7 +7,7 @@ require 'thor'
 require 'fileutils'
 require 'pp'
 require 'yaml'
-require 'dev_tools_ext_constants'
+require 'dev_tools_constants'
 require File.join('lib', '..', '..', '..', "#{DEV_TOOLS_REPO}", 'build', 'lib', 'openshift')
 require File.join('lib', '..', '..', '..', "#{DEV_TOOLS_REPO}", 'build', 'builder')
 require 'lib/openshift/sauce_labs'
