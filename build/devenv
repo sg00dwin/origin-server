@@ -653,37 +653,12 @@ module Express
             output = ssh(hostname, "yum update -y --exclude='rhc*'", 1800)
             puts "Done"
 
-            puts "------------------ Update Output ------------------------"
-            puts output
-            puts "---------------------------------------------------------"
+            print_highlighted_output('Update Output', output)
 
             if options.install_required_packages?
               output, exit_code = ssh(hostname, "yum -y install openssh-clients", 240, true)
-              puts "----------- Install OpenSSH Clients Output -----------"
-              puts output
-              puts "---------------------------------------------------------"
+              print_highlighted_output('Install OpenSSH Clients Output', output)
               exit 1 unless exit_code == 0
-            end
-
-            if options[:extra_rpm_dir]
-              if File.exist? options[:extra_rpm_dir]
-                out, ret = ssh(hostname, "mkdir -p /data/origin-server/build/extras", 60, true, 1)
-                files = Dir.glob("#{options[:extra_rpm_dir]}/*.rpm")
-                files.each do |file|
-                  scp_to(hostname, file, "/data/origin-server/build/extras/", 60*10, 5)
-                end
-
-                out, ret = ssh(hostname, "su -c \"cd /data/origin-server/build/extras && yum install -y *.rpm\"", 60 * 20, true, 1)
-
-                puts "------------------ Extra RPMs Output ------------------------"
-                puts out
-                puts "-------------------------------------------------------------"
-
-              else
-                puts "!!!Warning!!!"
-                puts "Directory containing extra rpms not found. Skipping..."
-                puts "!!!Warning!!!"
-              end
             end
 
             if options.reboot?
@@ -761,9 +736,7 @@ rm -rf /tmp/tito; mkdir -p /root/.source_build;
             elsif options.install_required_packages?
               puts "Installing bootstrap packages..."
               output, exit_code = ssh(hostname, "yum clean metadata; yum update -y; yum -y install git tito ruby rubygems rubygem-thor rubygem-parseconfig rubygem-json rubygem-aws-sdk createrepo yum-priorities", 600, true)
-              puts "----------- Install Bootstrap Packages Output -----------"
-              puts output
-              puts "---------------------------------------------------------"
+              print_highlighted_output('Install Bootstrap Packages Output', output)
               exit 1 unless exit_code == 0
               puts "Done"
 
@@ -803,9 +776,7 @@ popd
             output, exit_code = ssh(hostname, cmd, 3600, true)
             puts "Done"
 
-            puts "----------------- Install Output ------------------------"
-            puts output
-            puts "---------------------------------------------------------"
+            print_highlighted_output('Install Output', output)
 
             exit exit_code unless exit_code == 0
 
@@ -819,9 +790,7 @@ popd
 
           output = ssh(hostname, "yum list installed", 120)
 
-          puts "---------------- Installed Packages ---------------------"
-          puts output
-          puts "---------------------------------------------------------"
+          print_highlighted_output('Installed Packages', output)
 
           image_id = nil
           if options.register?

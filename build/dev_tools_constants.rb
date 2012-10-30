@@ -13,18 +13,20 @@ ZONE = 'us-east-1d'
 
 DEVENV_NAME = 'devenv'
 
-IMAGES = {DEVENV_NAME => {:base => true, :stage => true},
-          'oso-fedora' => {:base => true, :stage => false}}
+IMAGES = {DEVENV_NAME => {:branches => ['stage']},
+          'enterprise' => {:branches => []},
+          'oso-fedora' => {:branches => []}}
 
 DEVENV_AMI_WILDCARDS = {}
 IMAGES.each do |image, opts|
   keep = opts[:keep] ? opts[:keep] : 2
   DEVENV_AMI_WILDCARDS["#{image}_*"] = {:keep => keep, :regex => /^(#{image})_(\d+)/}
-  if opts[:base]
-    DEVENV_AMI_WILDCARDS["#{image}-base_*"] = {:keep => 2, :regex => /^(#{image}-base)_(\d+)/}
-  end
-  if opts[:stage]
-    DEVENV_AMI_WILDCARDS["#{image}-stage-base_*"] = {:keep => 8, :regex => /^(#{image}-stage-base)_(\d+)/}
+  DEVENV_AMI_WILDCARDS["#{image}-base_*"] = {:keep => keep, :regex => /^(#{image}-base)_(\d+)/}
+  if opts[:branches]
+    opts[:branches].each do |branch|
+      DEVENV_AMI_WILDCARDS["#{image}-#{branch}_*"] = {:keep => 4, :regex => /^(#{image}-#{branch})_(\d+)/}
+      DEVENV_AMI_WILDCARDS["#{image}-#{branch}-base_*"] = {:keep => keep, :regex => /^(#{image}-#{branch}-base)_(\d+)/}
+    end
   end
 end
 
