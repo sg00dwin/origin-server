@@ -41,7 +41,7 @@
         "li": "DEV_TOOLS_EXT_PULL_ID",
         "origin-server": "ORIGIN_SERVER_PULL_ID",
         "rhc": "RHC_PULL_ID",
-        "origin-dev-tools": "ORIGIN_DEV_PULL_ID"
+        "origin-dev-tools": "DEV_TOOLS_PULL_ID"
       }
     },
     "merge_test_settings": {
