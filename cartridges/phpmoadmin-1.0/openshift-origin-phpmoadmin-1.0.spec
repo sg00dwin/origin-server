@@ -2,7 +2,7 @@
 %global frameworkdir %{_libexecdir}/openshift/cartridges/phpmoadmin-1.0
 
 Name: openshift-origin-cartridge-phpmoadmin-1.0
-Version: 1.0.0
+Version: 1.0.1
 Release: 1%{?dist}
 Summary: Embedded phpMoAdmin support for express
 
@@ -59,6 +59,9 @@ rm -rf $RPM_BUILD_ROOT
 %doc %{cartridgedir}/LICENSE
 
 %changelog
+* Tue Oct 30 2012 Adam Miller <admiller@redhat.com> 1.0.1-1
+- bumping specs to at least 1.0.0 (dmcphers@redhat.com)
+
 * Fri Oct 19 2012 Adam Miller <admiller@redhat.com> 0.16.6-1
 - BZ 843286: Enable auth files via htaccess (rmillner@redhat.com)
 
