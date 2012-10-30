@@ -356,12 +356,6 @@ module OpenShiftMigration
         when 'php-5.3'
           Util.replace_in_file("#{cart_dir}/conf/php.ini", "/var/lib/stickshift", "/var/lib/openshift")
           Util.replace_in_file("#{gear_home}/.pearrc", "/var/lib/stickshift", "/var/lib/openshift")
-        when 'zend-5.6'
-          Util.replace_in_file("#{cart_dir}/etc/php.ini", "/var/lib/stickshift", "/var/lib/openshift")
-          Util.replace_in_file("#{cart_dir}/conf.d/zendserver_gui.conf", "/var/lib/stickshift", "/var/lib/openshift")
-          Util.replace_in_file("#{cart_dir}/conf.d/stickshift.conf", "/var/lib/stickshift", "/var/lib/openshift")
-          Util.replace_in_file("#{gear_home}/.pearrc", "/var/lib/stickshift", "/var/lib/openshift")
-          File.rename("#{cart_dir}/conf.d/stickshift.conf", "#{cart_dir}/conf.d/openshift.conf")
         when 'nodejs-0.6'
           FileUtils.mv("#{gear_home}/node_modules", "#{gear_home}/.node_modules") if File.exists?("#{gear_home}/node_modules")
         when 'mongodb-2.0'
@@ -400,6 +394,31 @@ module OpenShiftMigration
         when 'jenkins-1.4'
           Util.replace_in_file("#{cart_dir}/data/jobs/*/config.xml", "/usr/libexec/stickshift", "/usr/libexec/openshift")
         when 'zend-5.6'
+          [ "#{cart_dir}/etc/php.ini",
+            "#{cart_dir}/conf.d/zendserver_gui.conf",
+            "#{cart_dir}/conf.d/stickshift.conf",
+            "#{cart_dir}/conf.d/openshift.conf",
+            "#{gear_home}/.pearrc",
+          ].each do |f|
+            if File.exist?(f)
+              Util.replace_in_file(f, "/var/lib/stickshift", "/var/lib/openshift")
+            end
+          end
+          if File.exist?("#{cart_dir}/conf.d/stickshift.conf") and not File.exist?("#{cart_dir}/conf.d/openshift.conf")
+            FileUtils.mv("#{cart_dir}/conf.d/stickshift.conf", "#{cart_dir}/conf.d/openshift.conf")
+          end
+          [ "etc",
+            "tmp",
+            "var",
+            "gui/application/data",
+            "gui/lighttpd/etc",
+            "gui/lighttpd/tmp",
+            "gui/lighttpd/logs",
+          ].each do |f|
+            lnkf="#{gear_home}/.sandbox/#{uuid}/zend/#{f}"
+            targ="#{cart_dir}/#{f}"
+            FileUtils.ln_sf(targ, lnkf)
+          end
         end
 
         # cartridge_upgrades
