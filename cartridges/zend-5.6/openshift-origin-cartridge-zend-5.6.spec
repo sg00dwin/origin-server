@@ -2,7 +2,7 @@
 
 Summary:   Provides zend-5.6 support
 Name:      openshift-origin-cartridge-zend-5.6
-Version: 1.0.0
+Version: 1.0.1
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   ASL 2.0
@@ -110,6 +110,9 @@ rm -rf %{buildroot}
 %doc %{cartridgedir}/LICENSE
 
 %changelog
+* Tue Oct 30 2012 Adam Miller <admiller@redhat.com> 1.0.1-1
+- bumping specs to at least 1.0.0 (dmcphers@redhat.com)
+
 * Mon Oct 29 2012 Adam Miller <admiller@redhat.com> 0.96.12-1
 - Fixing Zend manifest to mark scaling from 1:1 (non scalable)
   (kraman@gmail.com)
