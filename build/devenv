@@ -434,7 +434,7 @@ module Express
                 test_queues[0] << ["Site Extended", "cd openshift-test/site; scl enable ruby193 \"rake test:extended\""]
               when 'rhc'
                 test_queues[0] << ["RHC Extended", "cucumber #{CUCUMBER_OPTIONS} -t @rhc_extended openshift-test/tests", {:retry_individually => true}]
-                test_queues[0] << ["RHC Integration", "QUIET=1 RHC_SERVER=localhost cucumber #{CUCUMBER_OPTIONS} openshift-test/features", {:retry_individually => true}]
+                test_queues[0] << ["RHC Integration", "QUIET=1 RHC_SERVER=localhost cucumber #{CUCUMBER_OPTIONS} openshift-test/rhc/features", {:retry_individually => true}]
 
               else
                 puts "Not supported for extended: #{extended_test}"
@@ -545,6 +545,7 @@ module Express
             end
 
             unless options.exclude_rhc?
+                test_queues[0].unshift(["RHC Spec", 'cd openshift-test/rhc; scl enable ruby193 "bundle install && bundle exec rake spec"'])
             end
           end
 

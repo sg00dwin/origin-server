@@ -55,6 +55,7 @@ SIBLING_REPOS = {'origin-server' => ['../origin-server'],
                  'rhc' => ['../rhc'],
                  'li' => ["../#{File.basename(FileUtils.pwd)}"],
                  'origin-dev-tools' => ['../origin-dev-tools']}
+OPENSHIFT_ARCHIVE_DIR_MAP = {'rhc' => 'rhc/'}
 SIBLING_REPOS_GIT_URL = {'origin-server' => 'https://github.com/openshift/origin-server.git',
                         'rhc' => 'https://github.com/openshift/rhc.git',
                         'li' => 'git@github.com:openshift/li.git',
