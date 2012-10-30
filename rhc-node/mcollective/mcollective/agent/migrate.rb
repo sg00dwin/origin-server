@@ -89,6 +89,18 @@ module OpenShiftMigration
     Util.mv_env_var_value(gear_home, "OPENSHIFT_JBOSS_MESSAGING_PORT",            "OPENSHIFT_#{cart_ns}_MESSAGING_PORT")
     Util.mv_env_var_value(gear_home, "OPENSHIFT_JBOSS_MESSAGING_THROUGHPUT_PORT", "OPENSHIFT_#{cart_ns}_MESSAGING_THROUGHPUT_PORT")
     Util.mv_env_var_value(gear_home, "OPENSHIFT_JBOSS_REMOTING_PORT",             "OPENSHIFT_#{cart_ns}_REMOTING_PORT")
+
+    translate_jboss_vars_map = {
+      "OPENSHIFT_JBOSS_CLUSTER"                   =>  "$OPENSHIFT_#{cart_ns}_CLUSTER",
+      "OPENSHIFT_JBOSS_CLUSTER_PORT"              =>  "$OPENSHIFT_#{cart_ns}_CLUSTER_PORT",
+      "OPENSHIFT_JBOSS_CLUSTER_PROXY_PORT"        =>  "$OPENSHIFT_#{cart_ns}_CLUSTER_PROXY_PORT",
+      "OPENSHIFT_JBOSS_CLUSTER_REMOTING"          =>  "$OPENSHIFT_#{cart_ns}_CLUSTER_REMOTING",
+      "OPENSHIFT_JBOSS_MESSAGING_PORT"            =>  "$OPENSHIFT_#{cart_ns}_MESSAGING_PORT",
+      "OPENSHIFT_JBOSS_MESSAGING_THROUGHPUT_PORT" =>  "$OPENSHIFT_#{cart_ns}_MESSAGING_THROUGHPUT_PORT",
+      "OPENSHIFT_JBOSS_REMOTING_PORT"             =>  "$OPENSHIFT_#{cart_ns}_REMOTING_PORT"
+    }
+
+    Util.append_env_vars_to_typeless_translated(gear_home, translate_jboss_vars_map)
   end
 
   def self.typeless_database(app_name, gear_home, gear_type, cart_ns, tag = "DB")
@@ -108,10 +120,13 @@ module OpenShiftMigration
       "OPENSHIFT_#{tag}_HOST"      =>  "$OPENSHIFT_#{cart_ns}_DB_HOST",
       "OPENSHIFT_#{tag}_PASSWORD"  =>  "$OPENSHIFT_#{cart_ns}_DB_PASSWORD",
       "OPENSHIFT_#{tag}_PORT"      =>  "$OPENSHIFT_#{cart_ns}_DB_PORT",
-      "OPENSHIFT_#{tag}_SOCKET"    =>  "$OPENSHIFT_#{cart_ns}_DB_SOCKET",
       "OPENSHIFT_#{tag}_URL"       =>  "$OPENSHIFT_#{cart_ns}_DB_URL",
       "OPENSHIFT_#{tag}_USERNAME"  =>  "$OPENSHIFT_#{cart_ns}_DB_USERNAME"
     }
+
+    if tag == "DB"
+      translate_db_vars_map["OPENSHIFT_#{tag}_SOCKET"] = "$OPENSHIFT_#{cart_ns}_DB_SOCKET"
+    end
 
     Util.append_env_vars_to_typeless_translated(gear_home, translate_db_vars_map)
   end
@@ -246,7 +261,6 @@ module OpenShiftMigration
 
     # See jenkins below for an example of a specialization for a cartridge type
     frameworks = {
-      '10gen-mms-agent-0.1' => '10GENMMSAGENT',
       'diy-0.1'             => 'DIY',
       'jenkins-client-1.4'  => 'JENKINSCLIENT',
       'nodejs-0.6'          => 'NODEJS',
@@ -273,7 +287,7 @@ module OpenShiftMigration
       'cron-1.4',
       'haproxy-1.4',
       'jbossas-7', 'jbosseap-6.0', 
-      'mongodb-2.0', 'rockmongo-1.1', 'phpmoadmin-1.0',
+      'mongodb-2.0', 'mongodb-2.2', 'rockmongo-1.1', 'phpmoadmin-1.0',
       'mysql-5.1', 'phpmyadmin-3.4',
       'postgresql-8.4',
       'metrics-0.1'
@@ -301,6 +315,7 @@ module OpenShiftMigration
       return output, exitcode
     end
 
+    Util.rm_env_var_value(gear_home, "TYPELESS_TRANSLATED_VARS")
     rename_env_vars(gear_home)
 
     Dir[File.join(libra_home, '.httpd.d', "#{uuid}_#{namespace}_#{app_name}", "*.conf")].each { |entry|
@@ -347,6 +362,8 @@ module OpenShiftMigration
           Util.replace_in_file("#{cart_dir}/conf.d/stickshift.conf", "/var/lib/stickshift", "/var/lib/openshift")
           Util.replace_in_file("#{gear_home}/.pearrc", "/var/lib/stickshift", "/var/lib/openshift")
           File.rename("#{cart_dir}/conf.d/stickshift.conf", "#{cart_dir}/conf.d/openshift.conf")
+        when 'nodejs-0.6'
+          FileUtils.mv("#{gear_home}/node_modules", "#{gear_home}/.node_modules") if File.exists?("#{gear_home}/node_modules")
         when 'mongodb-2.0'
           Util.replace_in_file("#{cart_dir}/etc/mongodb.conf", "/var/lib/stickshift", "/var/lib/openshift")
         when 'rockmongo-1.1'
@@ -401,7 +418,7 @@ module OpenShiftMigration
           typeless_mysql(app_name, gear_home, 'mysql-5.1', 'MYSQL')
         when 'postgresql-8.4'
           typeless_postgresql(app_name, gear_home, 'postgresql-8.4', 'POSTGRESQL')
-        when 'mongodb-2.0'
+        when 'mongodb-2.2'
           typeless_mongodb(app_name, gear_home, 'mongodb-2.2', 'MONGODB')
         when 'haproxy-1.4'
           typeless_log_dir(gear_home, 'haproxy-1.4', 'HAPROXY')
@@ -415,6 +432,15 @@ module OpenShiftMigration
         when 'rockmongo-1.1'
           typeless_embedded(app_name, gear_home, 'rockmongo-1.1', 'ROCKMONGO')
           Dir[File.join(gear_home, '*', "#{app_name}_rockmongo_ctl.sh")].each { |entry|
+            rm_exists(entry)
+          }
+        when '10gen-mms-agent-0.1'
+          Util.rm_env_var_value(gear_home,
+              "OPENSHIFT_10GEN_MMS_AGENT_CTL_SCRIPT",
+              "OPENSHIFT_10GEN_MMS_AGENT_GEAR_DIR"
+              )
+          typeless_log_dir(gear_home, '10gen-mms-agent-0.1', '10GENMMSAGENT')
+          Dir[File.join(gear_home, '*', "#{app_name}_10gen_mms_agent_ctl.sh")].each { |entry|
             rm_exists(entry)
           }
         when 'cron-1.4'
