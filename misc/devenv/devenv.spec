@@ -299,6 +299,9 @@ getsebool httpd_can_network_relay | grep -q -e 'on$' || /usr/sbin/setsebool -P h
 # Ensure that V8 in Node.js can compile JS for Rails asset compilation
 getsebool httpd_execmem | grep -q -e 'on$' || /usr/sbin/setsebool -P httpd_execmem=on || :
 
+# Allow httpd to verify dns records
+getsebool httpd_verify_dns | grep -q -e 'on$' || /usr/sbin/setsebool -P httpd_verify_dns=on || :
+ 
 # Add policy for developement environment
 cd %{policydir} ; make -f ../devel/Makefile
 semodule -l | grep -q dhcpnamedforward || semodule -i dhcpnamedforward.pp
