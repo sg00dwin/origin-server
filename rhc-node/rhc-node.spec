@@ -208,7 +208,6 @@ fi
 %attr(0755,-,-) %{_libexecdir}/openshift/lib/
 #%{_libexecdir}/openshift/cartridges/abstract/info
 %attr(0750,-,-) %{_bindir}/rhc-accept-node
-%attr(0750,-,-) %{_bindir}/rhc-accept-devenv
 %attr(0750,-,-) %{_bindir}/rhc-node-account
 %attr(0750,-,-) %{_bindir}/rhc-node-application
 %attr(0750,-,-) %{_bindir}/rhc-watchman
