@@ -129,13 +129,13 @@ class Watchman
   def restart(uuid, env) 
     begin
       if is_running? uuid
-        `/usr/bin/oo-admin-ctl-gears restartgear #{uuid}`
+        `/usr/sbin/oo-admin-ctl-gears restartgear #{uuid}`
         Syslog.info("watchman restarted user #{uuid}: application #{env[uuid][:OPENSHIFT_GEAR_NAME]}") 
       end
     rescue Errno::ENOENT
       # .state file missing is there a stop_lock?
       if 0 == Dir["@{env[uuid][:OPENSHIFT_HOMEDIR]}/*/run/stop_lock"].count
-        `/usr/bin/oo-admin-ctl-gears restartgear #{uuid}`
+        `/usr/sbin/oo-admin-ctl-gears restartgear #{uuid}`
         Syslog.info("watchman restarted user #{uuid}: application #{env[uuid][:OPENSHIFT_GEAR_NAME]}") 
       end
     end
