@@ -579,7 +579,7 @@ do
     sleep_time=$(expr $sleep_time + 10)
     echo "Retrying....."
   else
-    /usr/bin/oo-admin-ctl-user -l user_with_multiple_gear_sizes@test.com --addgearsize medium
+    /usr/sbin/oo-admin-ctl-user -l user_with_multiple_gear_sizes@test.com --addgearsize medium
     echo "Named test user created."
     break
   fi

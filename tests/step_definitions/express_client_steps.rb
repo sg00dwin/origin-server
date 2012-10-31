@@ -1,5 +1,5 @@
 Given /^an accepted node$/ do
-  accept_node = "/usr/bin/oo-accept-node"
+  accept_node = "/usr/sbin/oo-accept-node"
   assert_file_exists accept_node
 
   num_tries = 10

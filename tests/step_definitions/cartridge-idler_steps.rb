@@ -4,9 +4,9 @@ When /^I oo-(idle|restore) the application$/ do |action|
 
   case action
     when "idle"
-      cmd = "/usr/bin/oo-idler -u #{@gear.uuid}" 
+      cmd = "/usr/sbin/oo-idler -u #{@gear.uuid}" 
     when "restore"
-      cmd = "/usr/bin/oo-restorer -u #{@gear.uuid}"
+      cmd = "/usr/sbin/oo-restorer -u #{@gear.uuid}"
   end
 
   exit_code = run cmd

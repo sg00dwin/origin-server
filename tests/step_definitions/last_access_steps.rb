@@ -1,5 +1,5 @@
 When /^the last access script is run$/ do
-  run('/usr/bin/oo-last-access')
+  run('/usr/sbin/oo-last-access')
 end
 
 Then /^the application last access file should be present$/ do
