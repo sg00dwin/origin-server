@@ -82,9 +82,18 @@ class AccountUpgradesController < ApplicationController
     user = current_user
     @full_user = user.full_user
 
+    # Attempt to promote the streamline user to a full streamline user
+    # if they aren't already
     unless @full_user.persisted?
-      @full_user = Streamline::FullUser.new user_params
-      render :edit and return unless user.promote(@full_user)
+      full_user_params = {}
+      [:first_name,:last_name,:phone].each do |field|
+        full_user_params[field] = user_params[:streamline_full_user][field]
+      end
+      [:address1,:address2,:address3,:city,:state,:country,:zip].each do |field|
+        full_user_params[field] = user_params[:aria_billing_info][field]
+      end
+
+      render :edit and return unless user.promote(full_user_params)
     end
 
     user.extend Aria::User
