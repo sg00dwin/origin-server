@@ -395,8 +395,8 @@ module OpenShiftMigration
           Util.replace_in_file("#{cart_dir}/conf.d/metrics.conf", "/usr/libexec/stickshift", "/usr/libexec/openshift")
           Util.replace_in_file("#{cart_dir}/conf/php.ini", "/var/lib/stickshift", "/var/lib/openshift")
         when 'haproxy-1.4'
-          Util.replace_in_file("#{cart_dir}/conf/haproxy.cfg", "/var/lib/stickshift/", "/var/lib/openshift")
-          Util.replace_in_file("#{cart_dir}/conf/haproxy.cfg.template", "/var/lib/stickshift/", "/var/lib/openshift")
+          Util.replace_in_file("#{cart_dir}/conf/haproxy.cfg", "/var/lib/stickshift", "/var/lib/openshift")
+          Util.replace_in_file("#{cart_dir}/conf/haproxy.cfg.template", "/var/lib/stickshift", "/var/lib/openshift")
         when 'jenkins-1.4'
           Util.replace_in_file("#{cart_dir}/data/jobs/*/config.xml", "/usr/libexec/stickshift", "/usr/libexec/openshift")
         when 'zend-5.6'
