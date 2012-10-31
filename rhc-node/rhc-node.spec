@@ -2,7 +2,7 @@
 
 Summary:       Multi-tenant cloud management system node tools
 Name:          rhc-node
-Version: 1.0.1
+Version: 1.0.2
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -223,6 +223,14 @@ fi
 
 
 %changelog
+* Wed Oct 31 2012 Adam Miller <admiller@redhat.com> 1.0.2-1
+- move broker/node utils to /usr/sbin/ everywhere (admiller@redhat.com)
+- Merge pull request #554 from rmillner/BZ870937 (openshift+bot@redhat.com)
+- Merge pull request #552 from pmorie/dev/migrations (openshift+bot@redhat.com)
+- Fix zend migration. (rmillner@redhat.com)
+- Fix incorrect substitutions in haproxy config files for rename migration
+  (pmorie@gmail.com)
+
 * Tue Oct 30 2012 Adam Miller <admiller@redhat.com> 1.0.1-1
 - Merge pull request #551 from mrunalp/bugs/mig_env_var_1
   (openshift+bot@redhat.com)
