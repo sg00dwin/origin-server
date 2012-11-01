@@ -10,7 +10,6 @@ TYPE = "m1.large"
 KEY_PAIR = "libra"
 ZONE = 'us-east-1d'
 
-
 DEVENV_NAME = 'devenv'
 
 IMAGES = {DEVENV_NAME => {:branches => ['stage']},
@@ -71,3 +70,5 @@ $amz_options = {:key_name => KEY_PAIR, :instance_type => TYPE}
 BASE_RELEASE_BRANCH = 'libra-rhel-6.3'
 
 JENKINS_BUILD_TOKEN = 'libra1'
+
+ACCEPT_DEVENV_SCRIPT = '/usr/bin/rhc-accept-devenv'
