@@ -8,8 +8,8 @@
 
 Summary:   OpenShift Site Rails application
 Name:      rhc-site
-Version: 1.0.2
-Release:   2%{?dist}
+Version: 1.0.3
+Release:   1%{?dist}
 Group:     Network/Daemons
 License:   ASL 2.0
 URL:       http://openshift.redhat.com
@@ -143,6 +143,11 @@ rm -rf %{buildroot}
 %{sitedir}/public
 
 %changelog
+* Thu Nov 01 2012 Adam Miller <admiller@redhat.com> 1.0.3-1
+- Bug 872054 - When a user enters the wrong email in their confirmation link,
+  Streamline invalidates the token and then rejects the request.  We can
+  display a better message in that scenario. (ccoleman@redhat.com)
+
 * Wed Oct 31 2012 Adam Miller <admiller@redhat.com> 1.0.2-2
 - bump site.spec Release: for fake chain-build with console
   (admiller@redhat.com)
