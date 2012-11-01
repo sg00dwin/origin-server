@@ -774,9 +774,9 @@ popd
             cmd += 'sed -i "/nameserver 127.0.0.1/d" /etc/resolv.conf;'
                   
             output, exit_code = ssh(hostname, cmd, 3600, true)
-            puts "Done"
 
             print_highlighted_output('Install Output', output)
+            puts "Done"
 
             exit exit_code unless exit_code == 0
 
