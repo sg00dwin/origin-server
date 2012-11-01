@@ -8,6 +8,7 @@ en:
     login_error: 'The supplied login or password was invalid.'
     login_disabled: 'This account has been disabled.  Please contact customer service.'
     user_email_failed_confirmation: 'Your account cannot be confirmed at this time. If the problem persists, please contact Red Hat support.'
+    user_confirmation_invalid_token: 'Your account cannot be confirmed at this time. Check that you have properly entered the confirmation URL, then contact Red Hat support.'
     email_required: 'Email address is required'
     email_invalid: 'The given email address is not a valid email format'
     email_not_verified: 'The given email address is not a valid email format'

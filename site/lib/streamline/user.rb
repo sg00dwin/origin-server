@@ -297,9 +297,12 @@ module Streamline
           self.rhlogin = json['login']
           self.token = nil # token is consumed by confirmation
           # success
-        elsif json['errors'] and json['errors'][0] == 'user_already_registered'
+        elsif Array(json['errors']).include?('user_already_registered')
           # success
           errors.clear
+        elsif Array(json['errors']).include?('invalid_token')
+          errors.clear
+          errors.add(:base, I18n.t(:user_confirmation_invalid_token, :scope => :streamline))
         else
           if errors.empty?
             errors.add(:base, I18n.t(:unknown))
