@@ -8,7 +8,7 @@
 
 Summary:   Dependencies for OpenShift development
 Name:      rhc-devenv
-Version: 1.0.4
+Version: 1.0.5
 Release:   1%{?dist}
 Group:     Development/Libraries
 License:   GPLv2
@@ -651,6 +651,9 @@ restorecon /etc/openshift/node.conf || :
 /sbin/service libra-data restart > /dev/null 2>&1 || :
 
 %changelog
+* Thu Nov 01 2012 Adam Miller <admiller@redhat.com> 1.0.5-1
+- Security - create a polyinstantiated /dev/shm 5M in size (tkramer@redhat.com)
+
 * Thu Nov 01 2012 Adam Miller <admiller@redhat.com> 1.0.4-1
 - moving rhc-accept-devenv to devenv rpm (dmcphers@redhat.com)
 - Merge pull request #555 from pravisankar/dev/ravi/bug/869748
