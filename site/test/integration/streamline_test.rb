@@ -55,6 +55,14 @@ class StreamlineIntegrationTest < ActionDispatch::IntegrationTest
     assert user.register('/email_confirm')
   end
 
+  test 'should give specific message for badly pasted URL' do
+    user = new_streamline_user
+    omit_on_register unless user.register('/email_confirm')
+    assert !user.confirm_email(user.token, 'invalid_email!!')
+    assert user.errors.full_messages.first =~ /properly entered the confirmation URL/, user.errors.full_messages.join("\n")
+    assert_equal 1, user.errors.size
+  end
+
   test 'should return token and accept it for confirmation' do
     assert confirmed_user
 
