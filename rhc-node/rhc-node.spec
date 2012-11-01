@@ -2,7 +2,7 @@
 
 Summary:       Multi-tenant cloud management system node tools
 Name:          rhc-node
-Version: 1.0.2
+Version: 1.0.3
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -222,6 +222,9 @@ fi
 
 
 %changelog
+* Thu Nov 01 2012 Adam Miller <admiller@redhat.com> 1.0.3-1
+- moving rhc-accept-devenv to devenv rpm (dmcphers@redhat.com)
+
 * Wed Oct 31 2012 Adam Miller <admiller@redhat.com> 1.0.2-1
 - move broker/node utils to /usr/sbin/ everywhere (admiller@redhat.com)
 - Merge pull request #554 from rmillner/BZ870937 (openshift+bot@redhat.com)
