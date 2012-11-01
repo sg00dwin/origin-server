@@ -67,8 +67,7 @@ module OpenShift
 
         # Add to need_stage_tags unless it is one of ours or if there's been no
         # recent activity in brew
-        need_stage_tags.push( pkg ) unless brew_recent_activity.empty? \
-                                            or our_pkgs.include? pkg
+        need_stage_tags.push( pkg ) unless brew_recent_activity.empty? 
       end
       
       need_stage_tags
