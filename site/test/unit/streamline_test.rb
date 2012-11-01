@@ -540,6 +540,33 @@ class StreamlineUnitTest < ActiveSupport::TestCase
     assert @streamline.full_user?
   end
 
+  test "promote simple user to full user" do
+    @streamline.expects(:http_post).times(3).yields({'username' => 'test1', 'roles' => ['simple_authenticated']}).then.returns(nil).then.returns(['authenticated'])
+    # First, establish a simple streamline user
+    assert_equal true, @streamline.authenticate("test1", "test1")
+    assert_equal false, @streamline.full_user?
+
+    # Now promote the user
+    assert user_info = {
+      :login => 'test1',
+      :first_name => 'Joe',
+      :last_name => 'Somebody',
+      :phone => '9191111111',
+      :address1 => '12345 Happy Street',
+      :city => 'Happyville',
+      :country => 'US',
+      :state => 'TX',
+      :zip => '10001',
+    }
+    assert_equal true, @streamline.promote(user_info)
+
+    # Now ensure that the user was promoted
+    assert_equal true, @streamline.full_user?
+    [:first_name, :last_name, :phone, :address1, :city, :state, :zip, :country].each do |field|
+      assert_equal user_info[field], @streamline.full_user.send(field)
+    end
+  end
+
   test "authenticate fails" do
     @streamline.expects(:http_post).once.raises(AccessDeniedException.new)
     assert_equal false, @streamline.authenticate("test1", "test1")
