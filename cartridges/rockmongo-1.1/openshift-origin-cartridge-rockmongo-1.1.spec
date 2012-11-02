@@ -2,7 +2,7 @@
 %global frameworkdir %{_libexecdir}/openshift/cartridges/rockmongo-1.1
 
 Name: openshift-origin-cartridge-rockmongo-1.1
-Version: 1.16.0
+Version: 1.16.1
 Release: 1%{?dist}
 Summary: Embedded RockMongo support for OpenShift
 
@@ -59,6 +59,9 @@ rm -rf $RPM_BUILD_ROOT
 %doc %{cartridgedir}/LICENSE
 
 %changelog
+* Thu Nov 01 2012 Adam Miller <admiller@redhat.com> 1.16.1-1
+- bump_minor_versions for sprint 20 (admiller@redhat.com)
+
 * Fri Oct 19 2012 Adam Miller <admiller@redhat.com> 1.15.6-1
 - BZ 843286: Enable auth files via htaccess (rmillner@redhat.com)
 
