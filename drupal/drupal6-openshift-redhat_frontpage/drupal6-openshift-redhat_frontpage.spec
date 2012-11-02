@@ -5,7 +5,7 @@
 %global modname             redhat_frontpage
 
 Name:    drupal%{drupal_release}-openshift-%{modname}
-Version: 1.4.0
+Version: 1.4.1
 Release: 1%{?dist}
 Summary: Openshift Red Hat Front Page Custom Module for Drupal6
 Group:   Applications/Publishing
@@ -41,6 +41,9 @@ rm -rf $RPM_BUILD_ROOT
 %{drupal_modules}/%{modname}
 
 %changelog
+* Thu Nov 01 2012 Adam Miller <admiller@redhat.com> 1.4.1-1
+- bump_minor_versions for sprint 20 (admiller@redhat.com)
+
 * Thu Oct 04 2012 Adam Miller <admiller@redhat.com> 1.3.2-1
 - Add not found and error pages for drupal (ccoleman@redhat.com)
 
