@@ -22,7 +22,7 @@ class StreamlineIntegrationTest < ActionDispatch::IntegrationTest
       user
     end
   end
-
+=begin
   test 'should fail when a token is reused' do
     user = new_streamline_user
     omit_on_register unless user.register('/email_confirm')
@@ -70,7 +70,7 @@ class StreamlineIntegrationTest < ActionDispatch::IntegrationTest
     second_user.establish
     assert_equal confirmed_user.login, second_user.login
   end
-  
+
   test 'should change password' do
     old_password = confirmed_user.password
 
@@ -104,6 +104,29 @@ class StreamlineIntegrationTest < ActionDispatch::IntegrationTest
     assert !confirmed_user.waiting_for_entitle?
     assert confirmed_user.entitled?
     assert !confirmed_user.waiting_for_entitle?
+  end
+=end
+  test 'should promote a simple user to a full user' do
+    user = new_streamline_user
+    omit_on_register unless user.register('/email_confirm')
+    assert user.confirm_email
+    assert user.roles.include? 'simple_authenticated'
+    assert user_info = {
+      :login => 'test1',
+      :first_name => 'Joe',
+      :last_name => 'Somebody',
+      :phone => '9191111111',
+      :address1 => '12345 Happy Street',
+      :city => 'Happyville',
+      :country => 'US',
+      :state => 'TX',
+      :zip => '10001',
+    }
+    unless user.promote(user_info)
+      omit_on_promote
+    else
+      assert user.roles.include? 'authenticated'
+    end
   end
 
   test 'should change password with token' do

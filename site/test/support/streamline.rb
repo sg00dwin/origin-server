@@ -6,6 +6,10 @@ class ActiveSupport::TestCase
     omit('Streamline did not successfully register a new user, environment may be down')
   end
 
+  def omit_on_promote
+    omit('Streamline did not successfully promote a user, environment may be down')
+  end
+
   def assert_session_user(user)
     assert_equal user.login, session[:login]
     assert_equal user.ticket, session[:ticket]
