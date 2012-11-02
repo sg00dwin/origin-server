@@ -1,6 +1,6 @@
 Summary:       SELinux policy for OpenShift nodes
 Name:          rhc-selinux
-Version: 1.1.0
+Version: 1.1.1
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -64,6 +64,9 @@ fi
 
 
 %changelog
+* Thu Nov 01 2012 Adam Miller <admiller@redhat.com> 1.1.1-1
+- bump_minor_versions for sprint 20 (admiller@redhat.com)
+
 * Thu Nov 01 2012 Adam Miller <admiller@redhat.com> 1.0.3-1
 - Update selinux-policy package, enable httpd_verify_dns (rpenta@redhat.com)
 
