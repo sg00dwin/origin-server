@@ -5,7 +5,7 @@
 %global modname             blogs
 
 Name:    drupal%{drupal_release}-openshift-features-%{modname}
-Version: 1.9.0
+Version: 1.9.1
 Release: 1%{?dist}
 Summary: Openshift Red Hat Custom Blog Feature for Drupal6
 Group:   Applications/Publishing
@@ -41,6 +41,9 @@ rm -rf $RPM_BUILD_ROOT
 %{drupal_modules}/%{modname}
 
 %changelog
+* Thu Nov 01 2012 Adam Miller <admiller@redhat.com> 1.9.1-1
+- bump_minor_versions for sprint 20 (admiller@redhat.com)
+
 * Mon Oct 08 2012 Adam Miller <admiller@redhat.com> 1.8.3-1
 - Implement recent blogs and upcoming events views. (ccoleman@redhat.com)
 
