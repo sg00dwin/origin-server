@@ -5,7 +5,7 @@
 %global drupal_themename    openshift-theme
 
 Name:           drupal6-%{drupal_themename}
-Version: 3.9.0
+Version: 3.9.1
 Release:        1%{?dist}
 Summary:        Red Hat Openshift theme for Drupal %{drupal_release}
 
@@ -44,6 +44,9 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
+* Thu Nov 01 2012 Adam Miller <admiller@redhat.com> 3.9.1-1
+- bump_minor_versions for sprint 20 (admiller@redhat.com)
+
 * Mon Oct 22 2012 Adam Miller <admiller@redhat.com> 3.8.4-1
 - Fixes BZ 856733 (ffranz@redhat.com)
 
