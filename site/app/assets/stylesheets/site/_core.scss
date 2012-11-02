@@ -15,6 +15,21 @@ a:hover, a:active { color: $linkColorBlueHover; }
 	}
 }
 
+input:-moz-placeholder,
+textarea:-moz-placeholder {
+  color: $grayLight;
+}
+
+input:-ms-input-placeholder,
+textarea:-ms-input-placeholder {
+  color: $grayLight;
+}
+
+input::-webkit-input-placeholder,
+textarea::-webkit-input-placeholder {
+  color: $grayLight;
+}
+
 /* Hitch a div out of its parent */
 .lift {
   margin-top: -90px;
