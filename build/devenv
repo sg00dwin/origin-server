@@ -650,7 +650,7 @@ module Express
           manifest = nil
           begin
             puts "Updating all packages on the system..."
-            output = ssh(hostname, "yum update -y --exclude='rhc*'", 1800)
+            output = ssh(hostname, "yum update -y --exclude='rhc*' 2>&1", 1800)
             puts "Done"
 
             print_highlighted_output('Update Output', output)
