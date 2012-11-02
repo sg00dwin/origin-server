@@ -30,9 +30,9 @@ home_dirs.each do |home_dir|
             user = Etc.getpwnam(username)
             mcs_level = get_mcs_level(user.uid)
             puts "restorecon -R #{home_dir}" if debug
-            puts "chcon -l #{mcs_level} -R #{home_dir}" if debug
+            puts "chcon -l #{mcs_level} -R #{home_dir}/*" if debug
             %x[restorecon -R #{home_dir} ]
-            %x[chcon -l #{mcs_level} -R #{home_dir} ]
+            %x[chcon -l #{mcs_level} -R #{home_dir}/* ]
         rescue ArgumentError
             puts "Warning: #{home_dir} is not owned by #{user} - #{$!}"
         end
