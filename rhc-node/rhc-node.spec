@@ -2,7 +2,7 @@
 
 Summary:       Multi-tenant cloud management system node tools
 Name:          rhc-node
-Version: 1.1.0
+Version: 1.1.1
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -222,6 +222,11 @@ fi
 
 
 %changelog
+* Thu Nov 01 2012 Adam Miller <admiller@redhat.com> 1.1.1-1
+- bump_minor_versions for sprint 20 (admiller@redhat.com)
+- Remove redundant comment. (rmillner@redhat.com)
+- Only set MCS labels on cart dirs, git, app-root, etc... (rmillner@redhat.com)
+
 * Thu Nov 01 2012 Adam Miller <admiller@redhat.com> 1.0.3-1
 - moving rhc-accept-devenv to devenv rpm (dmcphers@redhat.com)
 
