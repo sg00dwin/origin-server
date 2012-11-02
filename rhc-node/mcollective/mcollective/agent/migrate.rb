@@ -221,7 +221,7 @@ module OpenShiftMigration
           mcs_label = Util.get_mcs_level(uuid)
           output+="Fixing selinux MCS label: #{entry} -> system_u:object_r:openshift_var_lib_t:#{mcs_label}"
           %x[ /sbin/restorecon -h #{entry} ]
-          %x[ /usr/bin/chcon -l #{mcs_label} #{entry} ]
+          %x[ /usr/bin/chcon -h -l #{mcs_label} #{entry} ]
         end
       elsif File.file?(entry)
         File.open(entry, File::RDWR) do |f|
