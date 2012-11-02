@@ -466,8 +466,10 @@ chmod u-s /usr/bin/sudo
 chmod 4710 /usr/libexec/pt_chown
 # chmod u-s /usr/libexec/openssh/ssh-keysign
 # chmod u-s /usr/sbin/suexec
-# chmod u-s /usr/sbin/userhelper
-# chmod u-s /usr/sbin/usernetctl
+# BZ817670 - /usr/sbin/usernetctl was 4755
+chmod 4750 /usr/sbin/usernetctl
+# BZ817668 - /usr/sbin/userhelper was 4711
+chmod 4710 /usr/sbin/userhelper
 chmod u-s /bin/ping6
 chmod u-s /bin/mount
 # chmod u-s /bin/su
