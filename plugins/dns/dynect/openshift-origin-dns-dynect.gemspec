@@ -1,7 +1,9 @@
 # -*- encoding: utf-8 -*-
+config_dir  = File.join(File.join("config", "**"), "*")
 $:.push File.expand_path("../lib", __FILE__)
 lib_dir  = File.join(File.join("lib", "**"), "*")
 conf_dir  = File.join(File.join("lib", "**"), "*")
+config_dir  = File.join(File.join("config", "**"), "*")
 test_dir  = File.join(File.join("test", "**"), "*")
 bin_dir  = File.join("bin", "*")
 
@@ -17,7 +19,7 @@ Gem::Specification.new do |s|
 
   s.rubyforge_project = "openshift-origin-dns-dynect"
 
-  s.files       = Dir[lib_dir] + Dir[conf_dir]
+  s.files       = Dir[lib_dir] + Dir[conf_dir] + Dir[config_dir]
   s.test_files  = Dir[test_dir]
   s.executables   = Dir[bin_dir]
   s.files       += %w(README.md Rakefile Gemfile rubygem-openshift-origin-dns-dynect.spec openshift-origin-dns-dynect.gemspec LICENSE COPYRIGHT)

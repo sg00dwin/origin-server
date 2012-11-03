@@ -310,12 +310,12 @@ module Express
 
       def update_facts(hostname)
         puts "Updating instance facts and running libra-data to set the public ip..."
-        ssh(hostname, "sed -i \"s/.*PUBLIC_IP_OVERRIDE.*/#PUBLIC_IP_OVERRIDE=/g\" /etc/openshift/node.conf; sed -i \"s/.*PUBLIC_HOSTNAME_OVERRIDE.*/#PUBLIC_HOSTNAME_OVERRIDE=/g\" /etc/openshift/node.conf; /usr/libexec/mcollective/update_yaml.rb /etc/mcollective/facts.yaml; service libra-data start")
+        ssh(hostname, "sed -i \"s/.*PUBLIC_IP_OVERRIDE.*/#PUBLIC_IP_OVERRIDE=/g\" /etc/openshift/node.conf; sed -i \"s/.*PUBLIC_HOSTNAME_OVERRIDE.*/#PUBLIC_HOSTNAME_OVERRIDE=/g\" /etc/openshift/node.conf; scl enable ruby193 \"/usr/libexec/mcollective/update_yaml.rb /etc/mcollective/facts.yaml\"; service libra-data start")
         puts 'Done'
       end
 
       def update_cucumber_tests(hostname, repo_parent_dir="/root", user="root")
-        ssh(hostname, "cp -n #{repo_parent_dir}/openshift-test/controller/test/cucumber/*.feature #{repo_parent_dir}/openshift-test/tests/. ", 60, false, 2, user)
+        ssh(hostname, "cp -n #{repo_parent_dir}/openshift-test/controller/test/cucumber/*.feature #{repo_parent_dir}/openshift-test/tests/.; mkdir -p #{repo_parent_dir}/openshift-test/broker/tmp/cache; mkdir -p #{repo_parent_dir}/openshift-test/rhc-broker/tmp/cache ", 60, false, 2, user)
       end
 
       def setup_verifier(hostname, branch)
