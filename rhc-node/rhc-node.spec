@@ -2,7 +2,7 @@
 
 Summary:       Multi-tenant cloud management system node tools
 Name:          rhc-node
-Version: 1.0.3
+Version: 1.0.4
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -222,6 +222,12 @@ fi
 
 
 %changelog
+* Fri Nov 02 2012 Adam Miller <admiller@redhat.com> 1.0.4-1
+- Fix mongodb permissions issue w/ the migrator - bugz 872494 - affect the
+  symlink not the target. (ramr@redhat.com)
+- Remove redundant comment. (rmillner@redhat.com)
+- Only set MCS labels on cart dirs, git, app-root, etc... (rmillner@redhat.com)
+
 * Thu Nov 01 2012 Adam Miller <admiller@redhat.com> 1.0.3-1
 - moving rhc-accept-devenv to devenv rpm (dmcphers@redhat.com)
 
