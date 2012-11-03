@@ -29,7 +29,7 @@
         </hudson.model.StringParameterDefinition>
         <hudson.model.StringParameterDefinition>
           <name>DEV_TOOLS_PULL_ID</name>
-          <description></description>
+          <description>The pull id to use for the dev tools repo.</description>
           <defaultValue></defaultValue>
         </hudson.model.StringParameterDefinition>
         <hudson.model.StringParameterDefinition>
