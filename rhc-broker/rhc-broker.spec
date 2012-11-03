@@ -35,7 +35,7 @@ Requires:  mcollective-qpid-plugin
 Requires:  openshift-origin-broker-util
 Provides:  openshift-broker
 Requires:  ruby193-rubygem-simplecov
-Requires:  ruby193-rubygem-mongoid
+#Requires:  ruby193-rubygem-mongoid
 Requires:  ruby193-rubygem-stomp
 Requires:  ruby193-rubygem-open4
 Requires:  ruby193-rubygem-regin

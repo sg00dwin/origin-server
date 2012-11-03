@@ -1,3 +1,4 @@
+require File.expand_path('../../lib/express/broker/mongo_data_store', File.dirname(__FILE__))
 OpenShift::DataStore.provider=Express::Broker::MongoDataStore
 ApplicationObserver.instance
 CloudUserObserver.instance
