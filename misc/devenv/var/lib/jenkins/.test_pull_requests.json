@@ -12,7 +12,11 @@
     "li": "hosted",
     "origin-server": "hosted",
     "rhc": "hosted",
-    "origin-dev-tools": "hosted"
+    "origin-dev-tools": "hosted",
+    "enterprise": "enterprise",
+    "enterprise-server": "enterprise",
+    "enterprise-rhc": "enterprise",
+    "enterprise-dev-tools": "enterprise"
   },
 
   "settings": {
@@ -26,7 +30,11 @@
                           "addtl_jenkins_params": {"hosted": {"DEV_TOOLS_EXT_REPO": "li",
                                                               "DEV_TOOLS_REPO": "origin-dev-tools",
                                                               "RHC_REPO": "rhc",
-                                                              "ORIGIN_SERVER_REPO": "origin-server"} }
+                                                              "ORIGIN_SERVER_REPO": "origin-server"},
+                                                   "enterprise": {"DEV_TOOLS_EXT_REPO": "enterprise",
+                                                                  "DEV_TOOLS_REPO": "enterprise-dev-tools",
+                                                                  "RHC_REPO": "enterprise-rhc",
+                                                                  "ORIGIN_SERVER_REPO": "enterprise-server"} }
                              },
                     "master": {"jenkins_job_name": "test_pull_requests",
                                "downstream_job_name": "libra_ami",
@@ -35,13 +43,21 @@
         "li": ["168397", "175254", "202863"],
         "origin-server": ["168397", "175254"],
         "rhc": ["168397", "77593"],
-        "origin-dev-tools": ["168397", "77593", "175254", "202863"]
+        "origin-dev-tools": ["168397", "77593", "175254", "202863"],
+        "enterprise": ["168397", "276484"],
+        "enterprise-server": ["168397", "276484"],
+        "enterprise-rhc": ["168397", "276484"],
+        "enterprise-dev-tools": ["168397", "276484"]
       },
       "repo_to_pull_id_param": {
         "li": "DEV_TOOLS_EXT_PULL_ID",
         "origin-server": "ORIGIN_SERVER_PULL_ID",
         "rhc": "RHC_PULL_ID",
-        "origin-dev-tools": "DEV_TOOLS_PULL_ID"
+        "origin-dev-tools": "DEV_TOOLS_PULL_ID",
+        "enterprise": "DEV_TOOLS_EXT_PULL_ID",
+        "enterprise-server": "ORIGIN_SERVER_PULL_ID",
+        "enterprise-rhc": "RHC_PULL_ID",
+        "enterprise-dev-tools": "DEV_TOOLS_PULL_ID"
       }
     },
     "merge_test_settings": {
@@ -55,7 +71,13 @@
                               "addtl_jenkins_params": {"hosted": {"DEV_TOOLS_EXT_REPO": "li",
                                                                   "DEV_TOOLS_REPO": "origin-dev-tools",
                                                                   "RHC_REPO": "rhc",
-                                                                  "ORIGIN_SERVER_REPO": "origin-server"} }
+                                                                  "ORIGIN_SERVER_REPO": "origin-server",
+                                                                  "YUM_REPO": "*"},
+                                                       "enterprise": {"DEV_TOOLS_EXT_REPO": "enterprise",
+                                                                      "DEV_TOOLS_REPO": "enterprise-dev-tools",
+                                                                      "RHC_REPO": "enterprise-rhc",
+                                                                      "ORIGIN_SERVER_REPO": "enterprise-server",
+                                                                      "YUM_REPO": "*"} }
                              },
                     "master": {"jenkins_job_name": "merge_pull_requests",
                                "downstream_job_name": "libra_ami",
@@ -65,13 +87,21 @@
         "li": ["175254", "202863"],
         "origin-server": ["175254"],
         "rhc": ["77593"],
-        "origin-dev-tools": ["77593", "175254", "202863"]
+        "origin-dev-tools": ["77593", "175254", "202863"],
+        "enterprise": ["276484"],
+        "enterprise-server": ["276484"],
+        "enterprise-rhc": ["276484"],
+        "enterprise-dev-tools": ["276484"]
       },
       "repo_to_pull_id_param": {
         "li": "DEV_TOOLS_EXT_PULL_ID",
         "origin-server": "ORIGIN_SERVER_PULL_ID",
         "rhc": "RHC_PULL_ID",
-        "origin-dev-tools": "DEV_TOOLS_PULL_ID"
+        "origin-dev-tools": "DEV_TOOLS_PULL_ID",
+        "enterprise": "DEV_TOOLS_EXT_PULL_ID",
+        "enterprise-server": "ORIGIN_SERVER_PULL_ID",
+        "enterprise-rhc": "RHC_PULL_ID",
+        "enterprise-dev-tools": "DEV_TOOLS_PULL_ID"
       }
     }
   }
