@@ -74,8 +74,10 @@
 rm -rf $DEV_TOOLS_REPO $DEV_TOOLS_EXT_REPO
 
 git clone git@github.com:openshift/${DEV_TOOLS_REPO}.git
+pushd ${DEV_TOOLS_REPO}
+  git checkout $BRANCH
+popd
 git clone git@github.com:openshift/${DEV_TOOLS_EXT_REPO}.git
-
 pushd ${DEV_TOOLS_EXT_REPO}
   git checkout $BRANCH
   build/devenv clone_addtl_repos $BRANCH --replace
