@@ -1,3 +1,4 @@
+require 'rubygems'
 require 'test_helper'
 require 'openshift-origin-controller'
 require 'mocha'
@@ -205,7 +206,7 @@ class AppEventsTest < ActionDispatch::IntegrationTest
     request_via_redirect(:post, APP_EVENTS_URL_FORMAT % [ns, "app1"], {:event => "add-alias", :alias => "alias#{@random}"}, @headers)
     assert_response :unprocessable_entity
     body = JSON.parse(@response.body)
-    assert_equal(body["messages"][0]["exit_code"], 255)
+    assert_equal(body["messages"][0]["exit_code"], 140)
 
     # remove-alias application - non-existant alias
     request_via_redirect(:post, APP_EVENTS_URL_FORMAT % [ns, "app1"], {:event => "remove-alias", :alias => "newalias#{@random}"}, @headers)
