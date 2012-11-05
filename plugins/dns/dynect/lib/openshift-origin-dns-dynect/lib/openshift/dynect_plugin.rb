@@ -134,7 +134,8 @@ module OpenShift
         http.use_ssl = true
         begin
           logger.debug "DEBUG: DYNECT Login with path: #{url.path}"
-          resp, data = http.post(url.path, JSON.generate(session_data), headers)
+          resp = http.post(url.path, JSON.generate(session_data), headers)
+          data = resp.body
           case resp
           when Net::HTTPSuccess
             raise_dns_exception(nil, resp, data) unless dyn_success?(data)
@@ -149,10 +150,6 @@ module OpenShift
           raise_dns_exception(e)
         end
       end
-      # Is the session still alive?
-      #headers = { "Content-Type" => 'application/json', 'Auth-Token' => auth_token }
-      #resp, data = http.get(url.path, headers)
-      #logger.debug 'GET Session Response: ', data, '\n'
       return auth_token
     end
   
@@ -202,7 +199,7 @@ module OpenShift
   
     def dyn_logout(auth_token, retries=0)
       # Logout
-      resp, data = dyn_delete("Session/", auth_token, retries)
+      dyn_delete("Session/", auth_token, retries)
     end
     
     def dyn_create_cname_record(application, namespace, public_hostname, auth_token, retries=0)
@@ -211,7 +208,7 @@ module OpenShift
       # Create the CNAME record
       path = "CNAMERecord/#{@zone}/#{fqdn}/"
       record_data = { :rdata => { :cname => public_hostname }, :ttl => "60" }
-      resp, data = dyn_post(path, record_data, auth_token, retries)
+      dyn_post(path, record_data, auth_token, retries)
     end
 
     def dyn_modify_cname_record(application, namespace, public_hostname, auth_token, retries=0)
@@ -220,21 +217,21 @@ module OpenShift
       # MOdify the CNAME record
       path = "CNAMERecord/#{@zone}/#{fqdn}/"
       record_data = { :rdata => { :cname => public_hostname }, :ttl => "60" }
-      resp, data = dyn_put(path, record_data, auth_token, retries)
+      dyn_put(path, record_data, auth_token, retries)
     end
     
     def dyn_delete_cname_record(application, namespace, auth_token, retries=0)
       fqdn = "#{application}-#{namespace}.#{@domain_suffix}"
       # Delete the A record
       path = "CNAMERecord/#{@zone}/#{fqdn}/"
-      resp, data = dyn_delete(path, auth_token, retries)
+      dyn_delete(path, auth_token, retries)
     end
     
     def dyn_delete_sshfp_record(application, namespace, auth_token, retries=0)
       fqdn = "#{application}-#{namespace}.#{@domain_suffix}"
       # Delete the SSHFP record
       path = "SSHFPRecord/#{@zone}/#{fqdn}/"
-      resp, data = dyn_delete(path, auth_token, retries)
+      dyn_delete(path, auth_token, retries)
     end
   
     def dyn_create_txt_record(namespace, auth_token, retries=0)
@@ -242,21 +239,21 @@ module OpenShift
       # Create the TXT record
       path = "TXTRecord/#{@zone}/#{fqdn}/"
       record_data = { :rdata => { :txtdata => "Text record for #{namespace}"}, :ttl => "60" }
-      resp, data = dyn_post(path, record_data, auth_token, retries)
+      dyn_post(path, record_data, auth_token, retries)
     end
   
     def dyn_delete_txt_record(namespace, auth_token, retries=0)
       fqdn = "#{namespace}.#{@domain_suffix}"
       # Delete the TXT record
       path = "TXTRecord/#{@zone}/#{fqdn}/"
-      resp, data = dyn_delete(path, auth_token, retries)
+      dyn_delete(path, auth_token, retries)
     end
   
     def dyn_publish(auth_token, retries=0)
       # Publish the changes
       path = "Zone/#{@zone}/"
       publish_data = { "publish" => "true" }
-      resp, data = dyn_put(path, publish_data, auth_token, retries)
+      dyn_put(path, publish_data, auth_token, retries)
     end
   
     def dyn_has_txt_record?(namespace, auth_token, raise_exception_on_exists=false)
@@ -289,7 +286,8 @@ module OpenShift
             logheaders = headers.clone
             logheaders["Auth-Token"]="[hidden]"
             logger.debug "DEBUG: DYNECT handle temp redirect with path: #{url.path} and headers: #{logheaders.inspect} attempt: #{retries} sleep_time: #{sleep_time}"
-            resp, data = http.get(url.path, headers)
+            resp = http.get(url.path, headers)
+            data = resp.body
             case resp
             when Net::HTTPSuccess, Net::HTTPTemporaryRedirect
               data = JSON.parse(data)
@@ -340,7 +338,8 @@ module OpenShift
           logheaders = headers.clone
           logheaders["Auth-Token"]="[hidden]"
           logger.debug "DEBUG: DYNECT has? with path: #{url.path} and headers: #{logheaders.inspect}"
-          resp, data = http.get(url.path, headers)
+          resp = http.get(url.path, headers)
+          data = resp.body
           case resp
           when Net::HTTPSuccess
             has = dyn_success?(data)
@@ -390,10 +389,11 @@ module OpenShift
           logheaders["Auth-Token"]="[hidden]"
           logger.debug "DEBUG: DYNECT put/post with path: #{url.path} json data: #{json_data} and headers: #{logheaders.inspect}"
           if put
-            resp, data = http.put(url.path, json_data, headers)
+            resp = http.put(url.path, json_data, headers)
           else
-            resp, data = http.post(url.path, json_data, headers)
+            resp = http.post(url.path, json_data, headers)
           end
+          data = resp.body
           case resp
           when Net::HTTPSuccess
             raise_dns_exception(nil, resp, data) unless dyn_success?(data)
@@ -442,7 +442,8 @@ module OpenShift
           logheaders = headers.clone
           logheaders["Auth-Token"]="[hidden]"
           logger.debug "DEBUG: DYNECT delete with path: #{url.path} and headers: #{logheaders.inspect}"
-          resp, data = http.delete(url.path, headers)
+          resp = http.delete(url.path, headers)
+          data = resp.body
           case resp
           when Net::HTTPSuccess
             raise_dns_exception(nil, resp, data) unless dyn_success?(data)
