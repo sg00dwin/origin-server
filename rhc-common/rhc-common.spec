@@ -9,6 +9,7 @@ Source0:   rhc-common-%{version}.tar.gz
 
 BuildRoot: %(mktemp -ud %{_tmppath}/%{name}-%{version}-%{release}-XXXXXX)
 Requires:  mcollective-client
+Requires:  ruby193-mcollective-common
 Requires:  qpid-cpp-client
 Requires:  qpid-cpp-client-ssl
 Requires:  ruby-qmf

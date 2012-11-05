@@ -16,13 +16,14 @@ Requires:      rhc-selinux >= 0.84.7-1
 Requires:      git
 Requires:      libcgroup
 Requires:      mcollective
+Requires:      ruby193-mcollective-common
 Requires:      perl
 Requires:      ruby
-Requires:      rubygem-open4
-Requires:      rubygem-parseconfig
+Requires:      ruby193-rubygem-open4
+Requires:      ruby193-rubygem-parseconfig
 Requires:      rubygem-openshift-origin-node
 Requires:      openshift-origin-node-util
-Requires:      rubygem-systemu
+Requires:      ruby193-rubygem-systemu
 Requires:      openshift-origin-cartridge-abstract
 Requires:      mcollective-qpid-plugin
 Requires:      openshift-origin-msg-node-mcollective
@@ -72,17 +73,19 @@ mkdir -p %{buildroot}%{ruby_sitelibdir}
 mkdir -p %{buildroot}%{_libexecdir}/openshift
 mkdir -p %{buildroot}/usr/share/selinux/packages
 mkdir -p %{buildroot}%{_sysconfdir}/cron.daily/
+mkdir -p %{buildroot}%{_sysconfdir}/oddjobd.conf.d/
+mkdir -p %{buildroot}%{_sysconfdir}/dbus-1/system.d/
 mkdir -p %{buildroot}%{_sysconfdir}/cron.daily/
 mkdir -p %{buildroot}%{_sysconfdir}/openshift/skel
-mkdir -p %{buildroot}/%{_localstatedir}/www/html/
+mkdir -p %{buildroot}/%{_var}/www/html/
 mkdir -p %{buildroot}/%{_sysconfdir}/security/
-mkdir -p %{buildroot}%{_localstatedir}/lib/openshift
-mkdir -p %{buildroot}%{_localstatedir}/run/openshift
-mkdir -p %{buildroot}%{_localstatedir}/lib/openshift/.httpd.d
+mkdir -p %{buildroot}%{_var}/lib/openshift
+mkdir -p %{buildroot}%{_var}/run/openshift
+mkdir -p %{buildroot}%{_var}/lib/openshift/.httpd.d
 mkdir -p %{buildroot}/%{_sysconfdir}/httpd/conf.d/
 mkdir -p %{buildroot}/lib64/security/
 mkdir -p %{buildroot}/sandbox
-# ln -s %{_localstatedir}/lib/openshift/.httpd.d/ %{buildroot}/%{_sysconfdir}/httpd/conf.d/openshift
+# ln -s %{_var}/lib/openshift/.httpd.d/ %{buildroot}/%{_sysconfdir}/httpd/conf.d/openshift
 
 cp -r lib %{buildroot}%{_libexecdir}/openshift
 cp -r conf/httpd %{buildroot}%{_sysconfdir}
@@ -197,9 +200,9 @@ fi
 %attr(0750,-,-) %{_bindir}/ec2-prep.sh
 %attr(0750,-,-) %{_bindir}/remount-secure.sh
 %attr(0755,-,-) %{_bindir}/rhc-vhost-choke
-%dir %attr(0751,root,root) %{_localstatedir}/lib/openshift
-%dir %attr(0750,root,root) %{_localstatedir}/lib/openshift/.httpd.d
-%dir %attr(0700,root,root) %{_localstatedir}/run/openshift
+%dir %attr(0751,root,root) %{_var}/lib/openshift
+%dir %attr(0750,root,root) %{_var}/lib/openshift/.httpd.d
+%dir %attr(0700,root,root) %{_var}/run/openshift
 #%dir %attr(0755,root,root) %{_libexecdir}/openshift/cartridges/abstract-httpd/
 #%attr(0750,-,-) %{_libexecdir}/openshift/cartridges/abstract-httpd/info/hooks/
 #%attr(0755,-,-) %{_libexecdir}/openshift/cartridges/abstract-httpd/info/bin/
@@ -255,85 +258,3 @@ fi
 - bump_minor_versions for sprint 20 (admiller@redhat.com)
 - Remove redundant comment. (rmillner@redhat.com)
 - Only set MCS labels on cart dirs, git, app-root, etc... (rmillner@redhat.com)
-
-* Thu Nov 01 2012 Adam Miller <admiller@redhat.com> 1.0.3-1
-- moving rhc-accept-devenv to devenv rpm (dmcphers@redhat.com)
-
-* Wed Oct 31 2012 Adam Miller <admiller@redhat.com> 1.0.2-1
-- move broker/node utils to /usr/sbin/ everywhere (admiller@redhat.com)
-- Merge pull request #554 from rmillner/BZ870937 (openshift+bot@redhat.com)
-- Merge pull request #552 from pmorie/dev/migrations (openshift+bot@redhat.com)
-- Fix zend migration. (rmillner@redhat.com)
-- Fix incorrect substitutions in haproxy config files for rename migration
-  (pmorie@gmail.com)
-
-* Tue Oct 30 2012 Adam Miller <admiller@redhat.com> 1.0.1-1
-- Merge pull request #551 from mrunalp/bugs/mig_env_var_1
-  (openshift+bot@redhat.com)
-- Merge pull request #548 from danmcp/master (openshift+bot@redhat.com)
-- Fix for BZ 869236. (mpatel@redhat.com)
-- bumping specs to at least 1.0.0 (dmcphers@redhat.com)
-- BZ 870937: Needed a migration for Zend. (rmillner@redhat.com)
-
-* Mon Oct 29 2012 Adam Miller <admiller@redhat.com> 0.99.13-1
-- Merge pull request #534 from brenton/rhc-list-ports1
-  (openshift+bot@redhat.com)
-- better debugging on rhc-accept-devenv failures (dmcphers@redhat.com)
-- Fix numerous issues with migrations for scalable apps. (pmorie@gmail.com)
-- Bug 835501 - 'rhc-port-foward' returns 'No available ports to forward '
-  (bleanhar@redhat.com)
-
-* Fri Oct 26 2012 Adam Miller <admiller@redhat.com> 0.99.12-1
-- Add substitutions for httpd config files on haproxy gear for scalable apps
-  (pmorie@gmail.com)
-- Merge pull request #528 from pmorie/dev/migrations (dmcphers@redhat.com)
-- Fixes problems with mongodb and postgresql migrations. (pmorie@gmail.com)
-- Merge pull request #525 from pmorie/dev/migrations (dmcphers@redhat.com)
-- Fixes for migrations of scalable apps (pmorie@gmail.com)
-
-* Wed Oct 24 2012 Adam Miller <admiller@redhat.com> 0.99.11-1
-- Merge pull request #513 from ramr/master (openshift+bot@redhat.com)
-- Fixes for cron (pmorie@gmail.com)
-- Fixes for sshing to migrated apps, jenkins-1.4, phpmyadmin, and rockmongo
-  (pmorie@gmail.com)
-- Remove rhcsh from li - use the one from origin-server/node/misc/bin/rhcsh.
-  (ramr@redhat.com)
-- Remove sourcing abstract/info/lib/util -- brings in "cruft" and fix up rhcsh.
-  (ramr@redhat.com)
-
-* Fri Oct 19 2012 Adam Miller <admiller@redhat.com> 0.99.10-1
-- Change libra guest to OpenShift guest (dmcphers@redhat.com)
-- Merge pull request #501 from pmorie/dev/rename (dmcphers@redhat.com)
-- Changes for 2.0.19 migrations (pmorie@gmail.com)
-
-* Thu Oct 18 2012 Adam Miller <admiller@redhat.com> 0.99.9-1
-- Port auto-Idler to origin-server (jhonce@redhat.com)
-- Update to use origin scripts (jhonce@redhat.com)
-- Fixes for scripts moved to origin-server (kraman@gmail.com)
-- Polydirs moved to Origin.  The /sandbox directory stays in Hosted for now.
-  (rmillner@redhat.com)
-- Move SELinux to Origin and use new policy definition. (rmillner@redhat.com)
-
-* Mon Oct 15 2012 Adam Miller <admiller@redhat.com> 0.99.8-1
-- BZ 864617: Ignore search engine bot entries in log and allow passing log file
-  path as an argument. (mpatel@redhat.com)
-- Merge pull request #473 from kwoodson/increase_small_capacity
-  (openshift+bot@redhat.com)
-- resource_limits: Updated from 90 to 100 (kwoodson@redhat.com)
-- Migrate to using OpenShift::Config.new (miciah.masters@gmail.com)
-- Merge pull request #458 from mrunalp/bugs/cron-migration-fix
-  (openshift+bot@redhat.com)
-- Fix to use correction function. (mpatel@redhat.com)
-
-* Mon Oct 08 2012 Adam Miller <admiller@redhat.com> 0.99.7-1
-- Carrying over migration to 2.0.19 (dmcphers@redhat.com)
-- Fixing renames, paths, configs and cleaning up old packages. Adding
-  obsoletes. (kraman@gmail.com)
-
-* Thu Oct 04 2012 Adam Miller <admiller@redhat.com> 0.99.6-1
-- Bug 862439 patch for fix (jhonce@redhat.com)
-- Merge pull request #442 from mrunalp/dev/typeless (dmcphers@redhat.com)
-- BZ853582: Prevent user from logging in while deleting gear
-  (jhonce@redhat.com)
-- Fix for Bug 862439 (jhonce@redhat.com)
-- Typeless gear changes for US 2105 (jhonce@redhat.com)

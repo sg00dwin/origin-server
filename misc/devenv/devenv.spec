@@ -1,7 +1,7 @@
-%define htmldir %{_localstatedir}/www/html
-%define libradir %{_localstatedir}/www/openshift
-%define brokerdir %{_localstatedir}/www/openshift/broker
-%define sitedir %{_localstatedir}/www/openshift/site
+%define htmldir %{_var}/www/html
+%define libradir %{_var}/www/openshift
+%define brokerdir %{_var}/www/openshift/broker
+%define sitedir %{_var}/www/openshift/site
 %define devenvdir %{_sysconfdir}/openshift/devenv
 %define jenkins %{_sharedstatedir}/jenkins
 %define policydir %{_datadir}/selinux/packages
@@ -49,15 +49,14 @@ Requires:  activemq-client
 #Requires:  qpid-cpp-server
 #Requires:  qpid-cpp-server-ssl
 Requires:  puppet
-Requires:  rubygem-cucumber
-Requires:  rubygem-mechanize
-Requires:  rubygem-mocha
-Requires:  rubygem-rspec
-Requires:  rubygem-webmock
-Requires:  rubygem-nokogiri
-Requires:  rubygem-rcov
+Requires:  ruby193-rubygem-cucumber
+Requires:  ruby193-rubygem-mocha
+Requires:  ruby193-rubygem-rspec
+Requires:  ruby193-rubygem-webmock
+Requires:  ruby193-rubygem-nokogiri
 Requires:  ruby193-build
 Requires:  ruby193-rubygems-devel
+Requires:  ruby193-rubygem-aws-sdk
 Requires:  charlie
 Requires:  pam
 Requires:  pam-devel
@@ -196,7 +195,7 @@ Provides all the development dependencies to be able to run the OpenShift tests
 rm -rf %{buildroot}
 
 mkdir -p %{buildroot}%{devenvdir}
-cp -adv * %{buildroot}%{devenvdir}
+/bin/cp -adv * %{buildroot}%{devenvdir}
 
 # Move over the init scripts so they get the right context
 mkdir -p %{buildroot}%{_initddir}
@@ -218,7 +217,7 @@ mv %{buildroot}%{devenvdir}%{jenkins}/jobs/* %{buildroot}%{jenkins}/jobs
 
 # Add the SELinux policy files
 mkdir -p %{buildroot}%{policydir}
-cp %{buildroot}%{devenvdir}%{policydir}/* %{buildroot}%{policydir} 
+/bin/cp %{buildroot}%{devenvdir}%{policydir}/* %{buildroot}%{policydir}
 
 # Marking installation as a devenv
 mkdir -p %{buildroot}/etc/openshift
@@ -228,9 +227,26 @@ touch %{buildroot}/etc/openshift/development
 rm -rf %{buildroot}
 
 %post
+
 # Setup node.conf for the devenv
 cp -f /etc/openshift/node.conf.libra /etc/openshift/node.conf
 restorecon /etc/openshift/node.conf || :
+
+echo "
+# Setup PATH, LD_LIBRARY_PATH and MANPATH for ruby-1.9
+ruby19_dir=\$(dirname \`scl enable ruby193 \"which ruby\"\`)
+export PATH=\$ruby19_dir:\$PATH
+
+ruby19_ld_libs=\$(scl enable ruby193 \"printenv LD_LIBRARY_PATH\")
+export LD_LIBRARY_PATH=\$ruby19_ld_libs:\$LD_LIBRARY_PATH
+
+ruby19_manpath=\$(scl enable ruby193 \"printenv MANPATH\")
+export MANPATH=\$ruby19_manpath:\$MANPATH" >> /etc/profile.d/openshift.sh
+
+source /etc/profile.d/openshift.sh
+cat /etc/profile.d/openshift.sh >> /etc/sysconfig/mcollective
+
+
 
 # Install the Sauce Labs gems
 gem install sauce --no-rdoc --no-ri
@@ -244,25 +260,25 @@ gem install rally_rest_api --no-rdoc --no-ri
 gem install kramdown --no-rdoc --no-ri
 
 # Move over all configs and scripts
-cp -rf %{devenvdir}/etc/* %{_sysconfdir}
-cp -rf %{devenvdir}/bin/* %{_bindir}
-cp -rf %{devenvdir}/var/* %{_localstatedir}
+/bin/cp -rf %{devenvdir}/etc/* %{_sysconfdir}
+/bin/cp -rf %{devenvdir}/bin/* %{_bindir}
+/bin/cp -rf %{devenvdir}/var/* %{_var}
 
 # Add rsync key to authorized keys
 cat %{brokerdir}/config/keys/rsync_id_rsa.pub >> /root/.ssh/authorized_keys
 
 # Add deploy key
-cp -rf %{devenvdir}/root/.ssh/* /root/.ssh/
+/bin/cp -rf %{devenvdir}/root/.ssh/* /root/.ssh/
 
 chmod 0600 %{jenkins}/.ssh/id_rsa /root/.ssh/id_rsa
 chmod 0644 %{jenkins}/.ssh/id_rsa.pub %{jenkins}/.ssh/known_hosts /root/.ssh/id_rsa.pub /root/.ssh/known_hosts 
 
 # Move over new http configurations
-cp -rf %{devenvdir}/httpd/* %{libradir}
-cp -rf %{devenvdir}/httpd.conf %{sitedir}/httpd/
-cp -rf %{devenvdir}/httpd.conf %{brokerdir}/httpd/
-cp -f %{devenvdir}/client.cfg %{devenvdir}/server.cfg /etc/mcollective
-cp -f %{devenvdir}/activemq.xml /etc/activemq
+/bin/cp -rf %{devenvdir}/httpd/* %{libradir}
+/bin/cp -rf %{devenvdir}/httpd.conf %{sitedir}/httpd/
+/bin/cp -rf %{devenvdir}/httpd.conf %{brokerdir}/httpd/
+/bin/cp -f %{devenvdir}/client.cfg %{devenvdir}/server.cfg /etc/mcollective
+/bin/cp -f %{devenvdir}/activemq.xml /etc/activemq
 mkdir -p %{sitedir}/httpd/logs
 mkdir -p %{sitedir}/httpd/run
 mkdir -p %{brokerdir}/httpd/logs
@@ -322,7 +338,7 @@ echo "net.netfilter.nf_conntrack_max = 1048576" >> /etc/sysctl.conf
 sysctl net.netfilter.nf_conntrack_max=1048576
 
 # Setup facts
-/usr/libexec/mcollective/update_yaml.rb /etc/mcollective/facts.yaml
+scl enable ruby193 "/usr/libexec/mcollective/update_yaml.rb /etc/mcollective/facts.yaml"
 crontab -u root %{devenvdir}/crontab
 
 # enable disk quotas
@@ -409,8 +425,8 @@ cd
 # Move static puppet certs in devenv
 mkdir -p /var/lib/puppet/ssl/public_keys/
 mkdir -p /var/lib/puppet/ssl/private_keys/
-cp -f %{devenvdir}/puppet-public.pem /var/lib/puppet/ssl/public_keys/localhost.localdomain.pem
-cp -f %{devenvdir}/puppet-private.pem /var/lib/puppet/ssl/private_keys/localhost.localdomain.pem
+/bin/cp -f %{devenvdir}/puppet-public.pem /var/lib/puppet/ssl/public_keys/localhost.localdomain.pem
+/bin/cp -f %{devenvdir}/puppet-private.pem /var/lib/puppet/ssl/private_keys/localhost.localdomain.pem
 
 # Chgrp to wheel for rpm, dmesg, su, and sudo
 /bin/chgrp wheel /bin/rpm
@@ -568,33 +584,6 @@ install rds /bin/true
 install tipc /bin/true
 EOF
 
-# Create a known test user with medium-sized gears - nhr
-# This must be done before the deployment of application templates!
-echo "Creating named test user"
-sleep_time=10
-for i in {1..5}
-do
-  cd /var/www/openshift/broker && bundle exec rails runner 'test_user=CloudUser.new("user_with_multiple_gear_sizes@test.com"); test_user.save();'
-  if [ $? -ne 0 ]
-  then
-    if [ $i -eq 5 ]
-    then
-      echo "Named test user could not be created."
-      break
-    fi
-    service mongod restart
-    sleep $sleep_time
-    sleep_time=$(expr $sleep_time + 10)
-    echo "Retrying....."
-  else
-    /usr/sbin/oo-admin-ctl-user -l user_with_multiple_gear_sizes@test.com --addgearsize medium
-    echo "Named test user created."
-    break
-  fi
-done
-
-
-
 # Deploy application templates - fotios
 echo "Deploying templates"
 sleep_time=10
@@ -673,116 +662,3 @@ restorecon /etc/openshift/node.conf || :
 
 * Thu Nov 01 2012 Adam Miller <admiller@redhat.com> 1.1.1-1
 - bump_minor_versions for sprint 20 (admiller@redhat.com)
-
-* Thu Nov 01 2012 Adam Miller <admiller@redhat.com> 1.0.5-1
-- Security - create a polyinstantiated /dev/shm 5M in size (tkramer@redhat.com)
-
-* Thu Nov 01 2012 Adam Miller <admiller@redhat.com> 1.0.4-1
-- moving rhc-accept-devenv to devenv rpm (dmcphers@redhat.com)
-- Merge pull request #555 from pravisankar/dev/ravi/bug/869748
-  (openshift+bot@redhat.com)
-- Update selinux-policy package, enable httpd_verify_dns (rpenta@redhat.com)
-
-* Wed Oct 31 2012 Adam Miller <admiller@redhat.com> 1.0.3-1
-- move broker/node utils to /usr/sbin/ everywhere (admiller@redhat.com)
-
-* Tue Oct 30 2012 Adam Miller <admiller@redhat.com> 1.0.2-1
-- fix request params for dev tools repo (dmcphers@redhat.com)
-
-* Tue Oct 30 2012 Adam Miller <admiller@redhat.com> 1.0.1-1
-- bumping specs to at least 1.0.0 (dmcphers@redhat.com)
-
-* Mon Oct 29 2012 Adam Miller <admiller@redhat.com> 0.100.19-1
-- making onprem scripts more like the other devenvs - work in progress
-  (dmcphers@redhat.com)
-- various cleanup (dmcphers@redhat.com)
-- syncing jenkins jobs (dmcphers@redhat.com)
-- adding retries and debugging around creating test users and templates
-  (dmcphers@redhat.com)
-- Merge pull request #532 from kraman/global_broker_config
-  (openshift+bot@redhat.com)
-- add an extra yum update after adding li.repo (dmcphers@redhat.com)
-- Converted dynect and streamline plugins to rails engines Moved plugin config
-  into /etc/openshift/plugins.d Moved broker global conf to
-  /etc/openshift/broker.conf Modified broker and plugins to loca *-dev.conf
-  files when in development environment Mofied broker to switch to dev
-  environment with /etc/openshift/development flag is present
-  (kraman@gmail.com)
-- syncing jenkins configs (dmcphers@redhat.com)
-
-* Fri Oct 26 2012 Adam Miller <admiller@redhat.com> 0.100.18-1
-- rename li-devenv.sh to setup-li-repos.sh to relect what it does
-  (dmcphers@redhat.com)
-- fix key location (dmcphers@redhat.com)
-- moving logic to only run as part of base ami (dmcphers@redhat.com)
-- break addtl jenkins params into groups (dmcphers@redhat.com)
-- move remaining logic out of li-devenv.sh (dmcphers@redhat.com)
-- more prep to handle multiple repos from jenkins jobs (dmcphers@redhat.com)
-- more work to make repos configurable (dmcphers@redhat.com)
-
-* Wed Oct 24 2012 Adam Miller <admiller@redhat.com> 0.100.17-1
-- syncing jenkins config (dmcphers@redhat.com)
-- syncing with latest jenkins configs (dmcphers@redhat.com)
-- Making build tools more configurable (dmcphers@redhat.com)
-
-* Mon Oct 22 2012 Adam Miller <admiller@redhat.com> 0.100.16-1
-- Added commands to remove redundant JS assets from devenv (nhr@redhat.com)
-
-* Fri Oct 19 2012 Adam Miller <admiller@redhat.com> 0.100.15-1
-- Merge pull request #502 from tdawson/tdawson/i386repo
-  (openshift+bot@redhat.com)
-- changes for i386 java-1.7.0-openjdk (tdawson@redhat.com)
-- adding drupal6-node_import package to devenv.spec and adding to
-  enable_modules.sh drush script (ansilva@redhat.com)
-
-* Thu Oct 18 2012 Adam Miller <admiller@redhat.com> 0.100.14-1
-- Bug 867671 (dmcphers@redhat.com)
-- Fixes for scripts moved to origin-server (kraman@gmail.com)
-- Polydirs moved to Origin.  The /sandbox directory stays in Hosted for now.
-  (rmillner@redhat.com)
-- Consolidate boolean setting with devenv. (rmillner@redhat.com)
-- Bugs from testing. (rmillner@redhat.com)
-- Move SELinux to Origin and use new policy definition. (rmillner@redhat.com)
-
-* Tue Oct 16 2012 Adam Miller <admiller@redhat.com> 0.100.13-1
-- Added sprint_status_report jenkins jobs (fotios@redhat.com)
-
-* Mon Oct 15 2012 Adam Miller <admiller@redhat.com> 0.100.12-1
-- sync jenkins jobs to update libra_ami_test to install_from_source
-  (admiller@redhat.com)
-- Added logic to create a named test user on devenv (hripps@redhat.com)
-- added ews (bdecoste@gmail.com)
-- Set the correct ip address mongod binds on in devenv. (ramr@redhat.com)
-- Revert "REVERT "Fix to start mongodb w/ replica sets + use the base mongod
-  init script."" (ramr@redhat.com)
-- REVERT "Fix to start mongodb w/ replica sets + use the base mongod init
-  script." (admiller@redhat.com)
-- Fix to start mongodb w/ replica sets + use the base mongod init script.
-  (ramr@redhat.com)
-- fixing libra_ami_stage and libra_ami_verify_stage (abhgupta@redhat.com)
-- added rh-amazon-rhui-client-jbews1 for tomcat cart (admiller@redhat.com)
-
-* Mon Oct 08 2012 Adam Miller <admiller@redhat.com> 0.100.11-1
-- Merge pull request #450 from
-  smarterclayton/add_ruby193_rubygems_devel_to_devenv
-  (openshift+bot@redhat.com)
-- fix spec (dmcphers@redhat.com)
-- renaming crankcase -> origin-server (dmcphers@redhat.com)
-- Fixing renames, paths, configs and cleaning up old packages. Adding
-  obsoletes. (kraman@gmail.com)
-- Add ruby193-rubygems-devel to devenv.spec so that sync will always pass
-  (ccoleman@redhat.com)
-- get multinode setup working with activemq (dmcphers@redhat.com)
-- Merge pull request #446 from pmorie/bugs/859541 (openshift+bot@redhat.com)
-- Merge pull request #447 from maxamillion/dev/admiller/enable_rhui_jboss
-  (openshift+bot@redhat.com)
-- BZ859541: Move manipulation of stickshift-node.conf from rhc-node spec to
-  devenv spec (pmorie@gmail.com)
-- enable jboss rhui repo in devenv (admiller@redhat.com)
-
-* Thu Oct 04 2012 Adam Miller <admiller@redhat.com> 0.100.10-1
-- Merge pull request #438 from brenton/remove_os_scripts2
-  (openshift+bot@redhat.com)
-- Merging in the latest from master (bleanhar@redhat.com)
-- The openshift-origin-broker-util packages provides the newly renamed admin
-  scripts (bleanhar@redhat.com)
