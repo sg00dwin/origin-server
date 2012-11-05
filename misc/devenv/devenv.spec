@@ -470,6 +470,8 @@ chmod 4710 /usr/libexec/pt_chown
 chmod 4750 /usr/sbin/usernetctl
 # BZ817668 - /usr/sbin/userhelper was 4711
 chmod 4710 /usr/sbin/userhelper
+# BZ873080 - /sbin/pam_timestamp_check was 4755
+chmod 4750 /sbin/pam_timestamp_check
 chmod u-s /bin/ping6
 chmod u-s /bin/mount
 # chmod u-s /bin/su
