@@ -92,8 +92,8 @@ class AccountUpgradesController < ApplicationController
       [:address1,:address2,:address3,:city,:state,:country,:zip].each do |field|
         full_user_params[field] = user_params[:aria_billing_info][field]
       end
-
-      render :edit and return unless user.promote(full_user_params)
+      user.full_user(full_user_params, false)
+      render :edit and return unless user.promote()
     end
 
     user.extend Aria::User

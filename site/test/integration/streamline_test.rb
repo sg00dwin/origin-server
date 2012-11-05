@@ -22,7 +22,7 @@ class StreamlineIntegrationTest < ActionDispatch::IntegrationTest
       user
     end
   end
-=begin
+
   test 'should fail when a token is reused' do
     user = new_streamline_user
     omit_on_register unless user.register('/email_confirm')
@@ -105,12 +105,12 @@ class StreamlineIntegrationTest < ActionDispatch::IntegrationTest
     assert confirmed_user.entitled?
     assert !confirmed_user.waiting_for_entitle?
   end
-=end
+
   test 'should promote a simple user to a full user' do
     user = new_streamline_user
     omit_on_register unless user.register('/email_confirm')
     assert user.confirm_email
-    assert user.roles.include? 'simple_authenticated'
+    assert user.simple_user?
     assert user_info = {
       :login => 'test1',
       :first_name => 'Joe',
@@ -122,10 +122,11 @@ class StreamlineIntegrationTest < ActionDispatch::IntegrationTest
       :state => 'TX',
       :zip => '10001',
     }
-    unless user.promote(user_info)
-      omit_on_promote
+    assert user.full_user(user_info, false)
+    unless user.promote
+      omit('Streamline did not successfully promote a user, environment may be down')
     else
-      assert user.roles.include? 'authenticated'
+      assert user.full_user?
     end
   end
 

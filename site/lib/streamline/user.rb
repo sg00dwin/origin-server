@@ -392,9 +392,10 @@ module Streamline
       not roles.include?('cloud_access_1') and roles.include?('cloud_access_request_1')
     end
 
-    def full_user(args={})
-      # Compute if there is no current full user object, or if the current object is a stub
-      if @full_user.nil? or not @full_user.persisted?
+    def full_user(args={}, persisted=false)
+      # Compute if there is no current full user object, or if
+      # we've got arguments for an update
+      if @full_user.nil? or args.keys.any?
         if self.full_user? and not args.keys.any?
           # If the user is already a full streamline user,
           # build the FullUser object with the details from streamline.
@@ -415,7 +416,7 @@ module Streamline
         elsif args.keys.any?
           # If this user was just promoted, we can build the FullUser object from the
           # same arguments without making another API call.
-          @full_user = Streamline::FullUser.new args, true
+          @full_user = Streamline::FullUser.new args, persisted
         elsif @full_user.nil?
           # Otherwise get an empty full user object
           @full_user = Streamline::FullUser.new
@@ -424,44 +425,17 @@ module Streamline
       @full_user
     end
 
-    def promote(args)
+    def promote()
       # Post to the promote URL
-      http_post(promote_user_url, map_args_to_api(args))
+      http_post(promote_user_url, self.full_user.to_api)
       streamline_type!
 
-      # If everything is good, call full_user to populate the @full_user object
-      self.full_user(args) if self.full_user?
+      # If everything is good, promote full_user to populate the @full_user object
+      self.full_user.promote if self.full_user?
       self.full_user?
     end
 
     protected
-      def map_args_to_api(args)
-        map_streamline_args(args, :api)
-      end
-
-      def map_args_to_full_user(args)
-        map_streamline_args(args, :full_user)
-      end
-
-      def map_streamline_args(args, direction)
-        # Going from :api to :full_user
-        arg_map = {
-          :firstName => :first_name,
-          :lastName => :last_name,
-          :postalCode => :zip,
-          :phoneNumber => :phone
-        }
-        # Swapping map for :full_user to :api
-        arg_map = arg_map.invert if direction == :api
-
-        new_args = {}
-        args.each_pair do |key,value|
-          new_key = arg_map.has_key?(key) ? arg_map[key] : key
-          new_args[new_key] = value
-        end
-        new_args
-      end
-
       def new_http
         Net::HTTP.new(service_base_url.host, service_base_url.port).tap do |http|
           http.use_ssl = true
