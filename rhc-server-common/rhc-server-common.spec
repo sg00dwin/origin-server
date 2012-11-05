@@ -1,6 +1,6 @@
 Summary:       Common dependencies of the OpenShift broker and site
 Name:          rhc-server-common
-Version: 1.0.1
+Version: 1.1.0
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2

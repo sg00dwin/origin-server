@@ -2,7 +2,7 @@
 %global frameworkdir %{_libexecdir}/openshift/cartridges/phpmoadmin-1.0
 
 Name: openshift-origin-cartridge-phpmoadmin-1.0
-Version: 1.0.1
+Version: 1.1.0
 Release: 1%{?dist}
 Summary: Embedded phpMoAdmin support for express
 
