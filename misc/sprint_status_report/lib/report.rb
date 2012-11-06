@@ -116,6 +116,9 @@ class Report
         data.each do |t|
           _table(t[:report].print_title, t[:data][:rows])
         end
+        unless $sprint.notes.empty?
+          _table("Additional Sprint Notes", [$sprint.notes])
+        end
       end
     end.string
   end
