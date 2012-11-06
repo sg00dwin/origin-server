@@ -101,6 +101,24 @@ __END__
     - python-2.6
 
 '
+  
+- :name: capedwarf
+  :script: oo-admin-ctl-template --command 'add' --cost '1' --git-url 'git://github.com/openshift/capedwarf-example.git'
+     --named 'CapeDwarf' --tags 'app engine,java,google,capedwarf,experimental'
+  :metadata: ! '{"git_url":"git://github.com/openshift/capedwarf-example.git","git_project_url":"https://github.com/openshift/capedwarf-example","website":"http://www.jboss.org/capedwarf","version":"1.0.0-SNAPSHOT","license":"lgpl",
+    "description":"Deploy and run your Java App Engine applications on your own private JBoss Application Server (AS7) cluster or on RedHat\xE2\x80\x99s OpenShift cloud."}'
+  :descriptor: ! '---
+
+    Display-Name: capedwarf-0.0-noarch
+
+    Name: capedwarf
+
+    Requires:
+
+    - jbossas-7
+
+'
+  
 - :name: drupal
   :script: oo-admin-ctl-template --command 'add' --cost '1' --git-url 'git://github.com/openshift/drupal-example.git'
     --named 'Drupal' --tags 'php,drupal,wiki,framework,experimental'
@@ -123,6 +141,7 @@ __END__
     ''\nDisplay-Name: kitchensink-0.0-noarch\nHelp-Topics: {}\nLicense: unknown\nLicense-Url:
     ''\nName: kitchensink\nRequires:\n- jbossas-7\nScaling:\n  Max: -1\n  Min: 1\nVendor:
     unknown\nVersion: '0.0'\nWebsite: ''\n"
+  
 - :name: rails
   :script: oo-admin-ctl-template --command 'add' --cost '1' --git-url 'git://github.com/openshift/rails-example.git'
     --named 'Ruby on Rails' --tags 'ruby,rails,framework,experimental'
