@@ -43,7 +43,7 @@
 - content_for :page_title, @message || "An error occurred"
 
 - content_for :javascripts do
-  = javascript_include_tag status_jsonp_url('system-status')
+  %script{:src => status_jsonp_url('system-status')}
 
 %h1= @message || "We appear to be having technical difficulties"
 

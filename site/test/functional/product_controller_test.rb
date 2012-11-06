@@ -12,6 +12,9 @@ class ProductControllerTest < ActionController::TestCase
     get :index
     assert_response :success
     assert_select "head title", "OpenShift by Red Hat"
+    assert_select "script", :minimum => 1 do |elements|
+      assert elements.any?{ |e| e['src'].ends_with?('/status.js?id=outage') }
+    end
   end
 
   test "should get index authorized" do

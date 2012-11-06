@@ -1,3 +1,6 @@
+- content_for :javascripts do
+  %script{:src => status_jsonp_url('outage')}
+
 .navbar
   .navbar-inner
     .container
