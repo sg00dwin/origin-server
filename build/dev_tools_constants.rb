@@ -50,6 +50,7 @@ SAUCE_OS = "Windows 2008"
 SAUCE_BROWSER = "firefox"
 SAUCE_BROWSER_VERSION = "7"
 CAN_SSH_TIMEOUT=90
+SLEEP_AFTER_LAUNCH=30
 
 SIBLING_REPOS = {'origin-server' => ['../origin-server'],
                  'rhc' => ['../rhc'],
