@@ -1,0 +1,18 @@
+---
+:cost: 1
+:cartridge: jbossas-7
+:tags:
+- :app engine
+- :java
+- :google
+- :capedwarf
+- :experimental
+:metadata:
+  :git_url: git://github.com/openshift/capedwarf-example.git
+  :git_project_url: https://github.com/openshift/capedwarf-example
+  :website: http://www.jboss.org/capedwarf
+  :version: 1.0.0-SNAPSHOT
+  :license: :lgpl
+  :description: >
+     Deploy and run your Java App Engine applications on your own private JBoss Application Server (AS7) cluster or on RedHat’s OpenShift cloud.
+:display_name: CapeDwarf
