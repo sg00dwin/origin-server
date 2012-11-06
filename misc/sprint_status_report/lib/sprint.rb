@@ -94,7 +94,24 @@ class Sprint
   end
 
   def dcut
-    @dcut ||= start + dcut_offset
+    @dcut ||= (
+      # See if dcut was provided in the notes
+      notes_dcut,@notes = notes.partition{|x| x =~ /^DCUT:/}
+      notes_dcut = notes_dcut.map{|x| x.scan(/^DCUT: (.*)/) }.flatten
+
+      # If we don't specify dcut in the notes, just use the offset
+      notes_dcut.empty? ?
+        (start + dcut_offset) :
+        Date.parse(notes_dcut.first)
+    )
+  end
+
+  def notes
+    # Combine the notes from all active iterations (each project has one)
+    #   Split into lines based on HTML breaks and remove div tags
+    #   Strip extra whitespace
+    # This will leave as an array so we can remove meaningful lines (like dcut)
+    @notes ||= iterations.map(&:notes).compact.map{|x| x.split(/<br \/>/)}.flatten.map{|x| x.gsub(/<\/?div>/,'')}.map(&:strip)
   end
 
   def number
@@ -102,9 +119,7 @@ class Sprint
   end
 
   def name
-    @name ||= (iterations.map do |i|
-      i.name
-    end.uniq.first)
+    @name ||= iterations.map(&:name).uniq.first
   end
 
   def title(short = false)

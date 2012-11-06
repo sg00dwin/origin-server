@@ -89,6 +89,20 @@ Queries That Are Run
   </tr>
 </table>
 
+Overriding DCUT
+===============
+The DCUT date may be overridden by specifying a note in the current
+iteration (can be the iteration for any of the teams).
+Simply specify:
+
+  ```
+  DCUT: YYYY-MM-DD
+  ```
+
+Adding Notes
+============
+Similarly to DCUT, other notes in the iterations will be included in the
+emails as well.
 
 Any problems
 ============
