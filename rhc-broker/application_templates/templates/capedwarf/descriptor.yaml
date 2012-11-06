@@ -1,0 +1,5 @@
+--- !omap 
+- Display-Name: capedwarf-0.0-noarch
+- Name: capedwarf
+- Requires: 
+  - jbossas-7
