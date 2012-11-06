@@ -45,7 +45,9 @@ function redhat_events_date_formats() {
 
 function redhat_events_page(){
 
-  $content = "<ul class='nav nav-pills'>";
+  $content = "<a class='pull-right' href='/community/events/feed'><img title='Subscribe to the events RSS feed '' alt='Syndicate content' src='/community/misc/feed.png'></a>";
+  
+  $content .= "<ul class='nav nav-pills'>";
 
   $sort = $_GET['sort'];
   if (!$sort) {
@@ -68,6 +70,7 @@ function redhat_events_page(){
   elseif ($sort == 'date'){
     $content .= views_embed_view('event_view', 'block_1');
   }
+
   return $content;
 
 }

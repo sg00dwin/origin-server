@@ -27,6 +27,9 @@ $do = og_comment_perms_do();
         <h1><?php print $title ?></h1>
         <p class="event-date">
         	<?php print $node->field_event_start_date[0]["view"] ?>
+            <?php if (strlen($node->field_event_timezone[0]["view"]) > 0): ?>
+                (<?php print $node->field_event_timezone[0]["view"] ?>)
+            <?php endif; ?> 
         	<!--<a href="" class="add-calendar">Add to calendar</a>-->
         </p>
         
