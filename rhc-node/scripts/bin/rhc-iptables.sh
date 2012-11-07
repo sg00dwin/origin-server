@@ -3,9 +3,9 @@
 #
 # Create iptables rules for application compartmentalization.
 #
-
+# The maximum UID our allocation mechanism scales to is 262143
 UID_BEGIN=500
-UID_END=7000                        # Large enough to cover the broker range
+UID_END=16000                       # Large enough to cover the broker range
 NTABLE="rhc-user-table"             # Switchyard for app UID tables
 
 # Cross-app restrictions

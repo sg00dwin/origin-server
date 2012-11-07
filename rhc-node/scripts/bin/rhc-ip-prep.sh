@@ -6,8 +6,9 @@
 # [ $(semanage node -l | grep -c 255.255.255.128) -lt 1000 ] && ./rhc-ip-prep.sh
 
 # lock down the localhost ip addresses
-ulimit -n 15000
-for uid in `seq 500 12700`
+# The maximum UID our allocation mechanism scales to is 262143
+ulimit -n 131070
+for uid in `seq 500 16000`
 do
     a=$(($uid*128+2130706432))
     net=$(($a>>24 )).$(($(($a%16777216))<<8>>24)).$(($(($a%65536))<<16>>24)).$(($(($a%256))<<24>>24))
