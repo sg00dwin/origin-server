@@ -22,5 +22,33 @@ class ActiveSupport::TestCase
     end
   end
 
+  def full_user_args(user=nil, delete_keys=[])
+    args = {
+      :login => 'test1',
+      :password => 'p4ssw0rd',
+      :password_confirmation => 'p4ssw0rd',
+      :email_subscribe => false,
+      :greeting => 'Mr.',
+      :first_name => 'Joe',
+      :last_name => 'Somebody',
+      :phone_number => '9191111111',
+      :company => 'Test Corp.',
+      :address1 => '12345 Happy Street',
+      :city => 'Happyville',
+      :country => 'US',
+      :state => 'TX',
+      :postal_code => '10001',
+    }
+    unless user.nil?
+      args[:login] = user.email_address
+      args[:password] = user.password
+      args[:password_confirmation] = user.password
+    end
+    delete_keys.each do |key|
+      args.delete(key)
+    end
+    args
+  end
+
 end
 

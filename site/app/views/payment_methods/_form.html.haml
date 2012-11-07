@@ -56,7 +56,7 @@
         .controls
           .payment_method
             Card on file: #### #### #### #{previous_payment_method.cc_no}, expires #{previous_payment_method.cc_exp_mm} / #{previous_payment_method.cc_exp_yyyy}
-    = f.inputs :inline => true, :required => true, :label => 'Credit Card Number' do
+    = f.inputs :inline => true, :required => true, :name => 'Credit Card Number' do
       .clearfix
         = f.input :cc_no, :input_html => { :name => 'cc_no', :type => 'text', :class => 'pull-left input-large', :value => (@payment_method.cc_no || '') }
         %ul{ :class => 'card-types-passive selected' }
@@ -66,7 +66,7 @@
             %span Mastercard
           %li{ :class => 'AMEX cc-card' }
             %span American Express
-    = f.inputs :inline => true, :required => true, :label => 'Expiration Date' do
+    = f.inputs :inline => true, :required => true, :name => 'Expiration Date' do
       = f.input :cc_exp_mm, :as => :select, :include_blank => false, :default => (@payment_method.cc_exp_mm || Date.today.month), :collection => (1..12).to_a.map{|num| [(num < 10 ? "0#{num}" : num.to_s),num]}, :input_html => { :name => 'cc_exp_mm', :class => 'input-small' }
       - year_options = (Date.today.year..(Date.today.year + 10)).to_a
       = f.input :cc_exp_yyyy, :as => :select, :include_blank => false, :default => (@payment_method.cc_exp_yyyy || Date.today.year), :collection => year_options, :input_html => { :name => 'cc_exp_yyyy', :class => 'input-medium' }

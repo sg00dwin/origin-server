@@ -425,9 +425,16 @@ module Streamline
       @full_user
     end
 
-    def promote()
+    def promote
       # Post to the promote URL
-      http_post(promote_user_url, self.full_user.to_api)
+      http_post(promote_user_url, self.full_user.to_streamline_hash) do |response|
+        self.full_user.parse_json_errors(response)
+      end
+
+      # Bail out if we hit any errors.
+      return false if self.full_user.errors.count > 0
+
+      # Still here? Re-compute user type.
       streamline_type!
 
       # If everything is good, promote full_user to populate the @full_user object

@@ -111,23 +111,52 @@ class StreamlineIntegrationTest < ActionDispatch::IntegrationTest
     omit_on_register unless user.register('/email_confirm')
     assert user.confirm_email
     assert user.simple_user?
-    assert user_info = {
-      :login => 'test1',
-      :first_name => 'Joe',
-      :last_name => 'Somebody',
-      :phone => '9191111111',
-      :address1 => '12345 Happy Street',
-      :city => 'Happyville',
-      :country => 'US',
-      :state => 'TX',
-      :zip => '10001',
-    }
-    assert user.full_user(user_info, false)
+    assert user_args = full_user_args(user)
+    assert user.full_user(user_args, false)
     unless user.promote
       omit('Streamline did not successfully promote a user, environment may be down')
     else
       assert user.full_user?
     end
+  end
+
+  test 'should handle various promote error conditions' do
+    user = new_streamline_user
+    omit_on_register unless user.register('/email_confirm')
+    assert user.confirm_email
+    assert user.simple_user?
+
+    # Missing/wrong secret key test
+    assert user_args = full_user_args(user)
+    assert user.full_user(user_args)
+    Rails.configuration.streamline[:user_info_secret].reverse!
+    assert_raise(Streamline::PromoteInvalidSecretKey){ user.promote }
+    Rails.configuration.streamline[:user_info_secret].reverse!
+
+    # Mismatched password / confirm case
+    assert user_args = full_user_args(user)
+    assert user_args[:password_confirmation] = user_args[:password].reverse
+    assert user.full_user(user_args, false)
+    assert_equal false, user.promote
+    assert_equal 1, user.full_user.errors[:base].count
+
+    # Individual missing required field cases
+    assert key_list = full_user_args
+    key_list.keys.each do |field|
+      # Skip special fields and non-required fields
+      next if [:email_subscribe, :login, :password, :password_confirmation, :state].include?(field)
+      assert user_args = full_user_args(user, [field])
+      assert user.full_user(user_args, false)
+      assert_equal false, user.promote
+      assert_equal 1, user.full_user.errors[:base].count
+      assert_equal 1, user.full_user.errors.get(field).count
+    end
+
+    # Multiple missing required fields
+    assert user_args = full_user_args(user, [:first_name, :last_name, :company])
+    assert user.full_user(user_args, false)
+    assert_equal false, user.promote
+    assert_equal 3, user.full_user.errors[:base].count
   end
 
   test 'should change password with token' do

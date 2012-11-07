@@ -85,14 +85,19 @@ class AccountUpgradesController < ApplicationController
     # Attempt to promote the streamline user to a full streamline user
     # if they aren't already
     unless @full_user.persisted?
-      full_user_params = {}
-      [:first_name,:last_name,:phone].each do |field|
-        full_user_params[field] = user_params[:streamline_full_user][field]
-      end
-      [:address1,:address2,:address3,:city,:state,:country,:zip].each do |field|
+      # Collect args for the streamline API
+      full_user_params = user_params[:streamline_full_user]
+      [:address1,:address2,:address3,:city,:state,:country].each do |field|
         full_user_params[field] = user_params[:aria_billing_info][field]
       end
-      user.full_user(full_user_params, false)
+      # ZIP is a funny case; Aria uses :zip but FullUser is more worldly and uses
+      # :postal_code
+      full_user_params[:postal_code] = user_params[:aria_billing_info][:zip]
+
+      # Build the updated FullUser object
+      @full_user = user.full_user(full_user_params, false)
+
+      # Attempt to promote
       render :edit and return unless user.promote()
     end
 
@@ -112,11 +117,12 @@ class AccountUpgradesController < ApplicationController
       redirect_to login_or_signup_path(account_plan_upgrade_path) unless user_signed_in?
     end
 
-    def copy_user_to_billing(user, billing)
+    def copy_user_to_billing(full_user, billing)
+      # Here we must also transform between postal_code (FullUser) and zip (Aria)
       [:first_name, :last_name,
        :address1, :address2, :address3,
-       :city, :state, :country, :zip
-      ].each{ |s| billing.send(:"#{s}=", user.send(s)) }
+       :city, :state, :country, :postal_code
+      ].each{ |s| attr = s == :postal_code ? :zip : s; billing.send(:"#{attr}=", full_user.send(s)) }
       billing
     end
 end

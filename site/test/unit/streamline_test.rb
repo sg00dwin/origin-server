@@ -547,23 +547,19 @@ class StreamlineUnitTest < ActiveSupport::TestCase
     assert_equal false, @streamline.full_user?
 
     # Now promote the user
-    assert user_info = {
-      :login => 'test1',
-      :first_name => 'Joe',
-      :last_name => 'Somebody',
-      :phone => '9191111111',
-      :address1 => '12345 Happy Street',
-      :city => 'Happyville',
-      :country => 'US',
-      :state => 'TX',
-      :zip => '10001',
-    }
-    assert_equal true, @streamline.promote(user_info)
+    assert user_info = full_user_args
+    assert user_info[:intentionally_invalid_key] = 'foo'
+    assert @streamline.full_user(user_info, false)
+    assert_equal true, @streamline.promote
 
     # Now ensure that the user was promoted
     assert_equal true, @streamline.full_user?
-    [:first_name, :last_name, :phone, :address1, :city, :state, :zip, :country].each do |field|
-      assert_equal user_info[field], @streamline.full_user.send(field)
+    user_info.each_pair do |key,value|
+      if key == :intentionally_invalid_key
+        assert_equal false, @streamline.full_user.respond_to?(key)
+      else
+        assert_equal value, @streamline.full_user.send(key)
+      end
     end
   end
 
