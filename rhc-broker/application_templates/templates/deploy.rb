@@ -106,7 +106,7 @@ __END__
   :script: oo-admin-ctl-template --command 'add' --cost '1' --git-url 'git://github.com/openshift/capedwarf-example.git'
      --named 'CapeDwarf' --tags 'app engine,java,google,capedwarf,experimental'
   :metadata: ! '{"git_url":"git://github.com/openshift/capedwarf-example.git","git_project_url":"https://github.com/openshift/capedwarf-example","website":"http://www.jboss.org/capedwarf","version":"1.0.0-SNAPSHOT","license":"lgpl",
-    "description":"Deploy and run your Java App Engine applications on your own private JBoss Application Server (AS7) cluster or on RedHat\xE2\x80\x99s OpenShift cloud."}'
+    "description":"Deploy and run your Java App Engine applications on your own private JBoss Application Server (AS7) cluster or on RedHats OpenShift cloud."}'
   :descriptor: ! '---
 
     Display-Name: capedwarf-0.0-noarch
