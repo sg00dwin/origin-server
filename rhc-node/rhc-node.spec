@@ -2,7 +2,7 @@
 
 Summary:       Multi-tenant cloud management system node tools
 Name:          rhc-node
-Version: 1.0.4
+Version: 1.0.5
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -222,6 +222,9 @@ fi
 
 
 %changelog
+* Thu Nov 08 2012 Adam Miller <admiller@redhat.com> 1.0.5-1
+- Fix for Bug 873903 (jhonce@redhat.com)
+
 * Fri Nov 02 2012 Adam Miller <admiller@redhat.com> 1.0.4-1
 - Fix mongodb permissions issue w/ the migrator - bugz 872494 - affect the
   symlink not the target. (ramr@redhat.com)
