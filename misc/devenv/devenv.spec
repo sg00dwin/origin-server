@@ -8,7 +8,7 @@
 
 Summary:   Dependencies for OpenShift development
 Name:      rhc-devenv
-Version: 1.1.1
+Version: 1.1.2
 Release:   1%{?dist}
 Group:     Development/Libraries
 License:   GPLv2
@@ -655,6 +655,17 @@ restorecon /etc/openshift/node.conf || :
 /sbin/service libra-data restart > /dev/null 2>&1 || :
 
 %changelog
+* Thu Nov 08 2012 Adam Miller <admiller@redhat.com> 1.1.2-1
+- Increase the table sizes to cover 15000 nodes in dev and prod.
+  (rmillner@redhat.com)
+- Fix for Bug 873543 (jhonce@redhat.com)
+- Security change perms for BZ817670_BZ817668 BZ873080 (tkramer@redhat.com)
+- Security - remove other perms from userhelper and usernetctl -
+  BZ817670_BZ817668 (tkramer@redhat.com)
+- syncing jenkins jobs (dmcphers@redhat.com)
+- syncing jenkins jobs (dmcphers@redhat.com)
+- adding enterprise-1.0 repo (dmcphers@redhat.com)
+
 * Thu Nov 01 2012 Adam Miller <admiller@redhat.com> 1.1.1-1
 - bump_minor_versions for sprint 20 (admiller@redhat.com)
 
