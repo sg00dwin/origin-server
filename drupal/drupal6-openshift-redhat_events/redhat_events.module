@@ -53,12 +53,12 @@ function redhat_events_page(){
   if (!$sort) {
     $sort = 'date';
   }
-  if ($sort != 'country'){
-    $content .= "<li><a href='events?sort=country'>View By Country</a></li>";
-  }
-  if ($sort != 'date'){
-    $content .= "<li><a href='events'>View By Date</a></li>";
-  }
+  //if ($sort != 'date'){
+    $content .= "<li" . ($sort == 'date' ? " class='active'" : "") . "><a href='events'>View By Date</a></li>";
+  //}
+  //if ($sort != 'country'){
+    $content .= "<li" . ($sort == 'country' ? " class='active'" : "") . "><a href='events?sort=country'>View By Country</a></li>";
+  //}
   if ($sort != 'calendar'){
     $content .= "<li><a href='calendar'>Calendar View</a></li>";
   }
