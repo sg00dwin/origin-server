@@ -594,34 +594,14 @@ do
   fi
 done
 
-
-
-# Deploy application templates - fotios
-echo "Deploying templates"
-sleep_time=10
-for i in {1..3}
-do
-  /usr/bin/ruby /usr/lib/openshift/broker/application_templates/templates/deploy.rb
-  if [ $? -ne 0 ]
-  then
-    if [ $i -eq 3 ]
-    then
-      echo "Templates could not be deployed."
-      break
-    fi
-    service mongod restart
-    sleep $sleep_time
-    sleep_time=$(expr $sleep_time + 10)
-    echo "Retrying....."
-  else
-    echo "Templates deployed."
-    break
-  fi
-done
-
-
-
-
+#/usr/bin/ruby /usr/lib/openshift/broker/application_templates/templates/deploy.rb
+#if [ $? -ne 0 ]
+#then
+#  service mongod restart
+#  service rhc-broker restart
+#  sleep 10
+#  /usr/bin/ruby /usr/lib/openshift/broker/application_templates/templates/deploy.rb
+#fi
 
 # Hack to resolve parser error
 # See https://github.com/cucumber/gherkin/issues/182
