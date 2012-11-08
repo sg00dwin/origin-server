@@ -45,23 +45,21 @@ function redhat_events_date_formats() {
 
 function redhat_events_page(){
 
-  $content = "<a class='pull-right' href='/community/events/feed'><img title='Subscribe to the events RSS feed '' alt='Syndicate content' src='/community/misc/feed.png'></a>";
-  
-  $content .= "<ul class='nav nav-pills'>";
+  $content = <<<BAR
+    <div class="pull-right" style="margin-top:10px;">
+      <a href="/community/events/ics" style="margin-right:10px;font-size:90%;">Add to my calendar</a>
+      <a href="/community/events/feed">
+        <img title="Subscribe to the events RSS feed" alt="RSS" src="/community/misc/feed.png" style="vertical-align:middle;" />
+      </a>
+    </div>
+    <ul class="nav nav-tabs">
+BAR;
 
   $sort = $_GET['sort'];
-  if (!$sort) {
-    $sort = 'date';
-  }
-  //if ($sort != 'date'){
-    $content .= "<li" . ($sort == 'date' ? " class='active'" : "") . "><a href='events'>View By Date</a></li>";
-  //}
-  //if ($sort != 'country'){
-    $content .= "<li" . ($sort == 'country' ? " class='active'" : "") . "><a href='events?sort=country'>View By Country</a></li>";
-  //}
-  if ($sort != 'calendar'){
-    $content .= "<li><a href='calendar'>Calendar View</a></li>";
-  }
+  if (!$sort) { $sort = 'date'; }
+  $content .= "<li" . ($sort == 'date' ? " class='active'" : "") . "><a href='events'>View By Date</a></li>";
+  $content .= "<li" . ($sort == 'country' ? " class='active'" : "") . "><a href='events?sort=country'>View By Country</a></li>";
+  $content .= "<li" . ($sort == 'calendar' ? " class='active'" : "") . "><a href='calendar'>Calendar View</a></li>";
   $content .= "</ul>";
 
   if ($sort == 'country'){

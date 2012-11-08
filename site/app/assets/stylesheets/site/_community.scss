@@ -733,6 +733,7 @@ html.js fieldset.collapsible .fieldset-wrapper {
   -webkit-border-radius: 3px;
   text-shadow: 1px 1px 6px #EEEEEE, 0 0 0 #DDDDDD;
   margin-right: 20px;
+  margin-bottom: 5px;
 }
 .event-listings .event-date span {
   display: block;
@@ -797,6 +798,14 @@ html.js fieldset.collapsible .fieldset-wrapper {
     -o-transform:      rotate(-90deg); 
 /* Internet Explorer */
 filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=3);
+}
+.nav-pills .active > a, .nav-pills .active > a:hover {
+  background-color: #ededed;
+  text-decoration: none;
+  color: #006699;
+}
+.nav-pills .active > a:hover {
+  color: #ea0011;
 }
 
 /* Event detail */
