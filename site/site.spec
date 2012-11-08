@@ -8,7 +8,7 @@
 
 Summary:   OpenShift Site Rails application
 Name:      rhc-site
-Version: 1.1.1
+Version: 1.1.2
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   ASL 2.0
@@ -143,6 +143,12 @@ rm -rf %{buildroot}
 %{sitedir}/public
 
 %changelog
+* Thu Nov 08 2012 Adam Miller <admiller@redhat.com> 1.1.2-1
+- The status link is not present on OpenShift production when we deployed to
+  production (ccoleman@redhat.com)
+- Merge pull request #561 from sg00dwin/master (openshift+bot@redhat.com)
+- placeholder color fix (sgoodwin@redhat.com)
+
 * Thu Nov 01 2012 Adam Miller <admiller@redhat.com> 1.1.1-1
 - bump_minor_versions for sprint 20 (admiller@redhat.com)
 
