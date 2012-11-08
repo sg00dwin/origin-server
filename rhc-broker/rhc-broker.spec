@@ -3,7 +3,7 @@
 
 Summary:   Li broker components
 Name:      rhc-broker
-Version: 1.1.1
+Version: 1.1.2
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -125,6 +125,16 @@ if [ ! -f %{_localstatedir}/log/openshift/user_action.log ]; then
 fi
 
 %changelog
+* Thu Nov 08 2012 Adam Miller <admiller@redhat.com> 1.1.2-1
+- Merge pull request #580 from bdecoste/master (openshift+bot@redhat.com)
+- BZ873969 (bdecoste@gmail.com)
+- Merge pull request #575 from bdecoste/master (openshift+bot@redhat.com)
+- US2944 - CapeDwarf (bdecoste@gmail.com)
+- US2944 - CapeDwarf (bdecoste@gmail.com)
+- update migration to 2.0.20 (dmcphers@redhat.com)
+- Fix system/app_events_test.rb (causing broker_extended to fail)
+  (rpenta@redhat.com)
+
 * Thu Nov 01 2012 Adam Miller <admiller@redhat.com> 1.1.1-1
 - bump_minor_versions for sprint 20 (admiller@redhat.com)
 
