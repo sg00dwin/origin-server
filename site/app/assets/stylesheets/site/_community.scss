@@ -752,8 +752,11 @@ html.js fieldset.collapsible .fieldset-wrapper {
     text-transform: uppercase;
     text-shadow: none;
 }
-
-.event-listings h3, 
+.event-listings h3:not(.title) {
+  margin-top: 15px;
+  margin-left: 15px;
+}
+.event-listings h3.title, 
 .event-listings .views-field-group-location, 
 .event-listings .slug {
   display: block;

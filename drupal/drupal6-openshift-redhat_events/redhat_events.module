@@ -47,7 +47,7 @@ function redhat_events_page(){
 
   $content = <<<BAR
     <div class="pull-right" style="margin-top:10px;">
-      <a href="/community/events/ics" style="margin-right:10px;font-size:90%;">Add to my calendar</a>
+      <a href="/community/events/ics" style="margin-right:10px;font-size:90%;">iCalendar feed</a>
       <a href="/community/events/feed">
         <img title="Subscribe to the events RSS feed" alt="RSS" src="/community/misc/feed.png" />
       </a>

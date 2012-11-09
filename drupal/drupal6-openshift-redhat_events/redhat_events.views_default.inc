@@ -340,10 +340,17 @@ function redhat_events_views_default_views() {
     'type' => 'none',
   ));
   $handler->override_option('title', 'Calendar');
-  $handler->override_option('header', '<ul class=\'nav nav-pills\'>
-<li><a href=\'events?sort=country\'>View By Country</a></li>
-<li><a href=\'events\'>View By Date</a></li>
-</ul>');
+  $handler->override_option('header', '<!--<div class="pull-right" style="margin-top:10px;">
+      <a href="/community/events/ics" style="margin-right:10px;font-size:90%;">iCalendar feed</a>
+      <a href="/community/events/feed">
+        <img title="Subscribe to the events RSS feed" alt="RSS" src="/community/misc/feed.png" />
+      </a>
+    </div>-->
+    <ul class="nav nav-tabs">
+      <li><a href="events">View By Date</a></li>
+      <li><a href="events?sort=country">View By Country</a></li>
+      <li class="active"><a href="calendar">Calendar View</a></li>
+    </ul>');
   $handler->override_option('header_format', '2');
   $handler->override_option('header_empty', 1);
   $handler->override_option('items_per_page', 0);
