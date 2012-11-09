@@ -25,6 +25,34 @@ module Express
       end
 
       #
+      # Send application data in bulk
+      #
+      def self.application_bulk_update(app_update_array)
+        return unless Rails.configuration.analytics[:enabled] && Rails.configuration.analytics[:nurture][:enabled]
+
+        cmd = "curl -s -O /dev/null -X POST -u '#{Rails.configuration.analytics[:nurture][:username]}:#{Rails.configuration.analytics[:nurture][:password]}' '#{Rails.configuration.analytics[:nurture][:url]}applications/bulk_update/'"
+        count = 0
+        data = ""
+        app_update_array.each { |app_data|
+          count += 1
+          app_uuid = app_data["app_uuid"]
+          column_name = app_data["column_name"]
+          column_value = app_data["column_value"]
+          data += " --data-urlencode 'application[#{column_name}][#{app_uuid}]=#{column_value}'"
+          if count==1000
+            curl_cmd = cmd + data
+            system("#{curl_cmd} &")
+            data = ""
+            count = 0
+          end
+        }
+        if count > 0
+          curl_cmd = cmd + data
+          system("#{curl_cmd} &")
+        end
+      end
+
+      #
       # Send application data (git push, etc)
       #
       def self.application_update(action, app_uuid)

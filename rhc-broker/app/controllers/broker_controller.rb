@@ -2,7 +2,8 @@ require 'rubygems'
 require 'rack'
 require 'json'
 require 'stringio'
-require 'openssl'                                                                                                                                                                                              
+require 'openssl'
+require 'date'
 require 'digest/sha2'
 require 'base64'
 
@@ -44,12 +45,41 @@ class BrokerController < ApplicationController
   def nurture_post
     begin
       # Parse the incoming data
-      raise Exception.new("Required params 'app_uuid', 'action' not found") unless params['json_data']
-      data = parse_json_data(params['json_data'])
-      return unless data
-      action = data['action']
-      app_uuid = data['app_uuid']
-      Express::Broker::Nurture.application_update(action, app_uuid)
+      #
+      if params['json_data'].nil?
+        raise Exception.new("Required param 'nurture_action' not found") unless params['nurture_action']
+        action = params['nurture_action']
+        if action=="update_last_access"
+          gear_timestamps = params['gear_timestamps']
+          raise Exception.new("Required param 'gear_timestamps' not found for action 'update_last_access") if gear_timestamps.nil?
+          bulk_update_array = []
+          app_uuid_hash = {}
+          gear_timestamps.each { |gear_data|
+            gear_uuid = gear_data["uuid"]
+            next if not gear_data.has_key?("access_time")
+            begin
+              time_object = DateTime.strptime(gear_data["access_time"], "%d/%b/%Y:%H:%M:%S %Z")
+            rescue
+              raise Exception.new("Invalid format for access_time '#{gear_data["access_time"]}'. Needs to be %d/%b/%Y:%H:%M:%S %Z")
+            end
+            access_time = time_object.strftime("%Y:%m:%d %H:%M:%S")
+            app, gear = Application::find_by_gear_uuid(gear_uuid)
+            raise Exception.new("Invalid gear uuid #{gear_uuid}") if app.nil?
+            app_data = { "app_uuid" => app.uuid, "column_name" => "last_accessed_at", "column_value" => access_time }
+            if not app_uuid_hash.has_key?(app.uuid)
+              bulk_update_array << app_data 
+              app_uuid_hash[app.uuid] = 1
+            end
+          }
+          Express::Broker::Nurture.application_bulk_update(bulk_update_array)
+        end
+      else
+        data = parse_json_data(params['json_data'])
+        return unless data
+        action = data['action']
+        app_uuid = data['app_uuid']
+        Express::Broker::Nurture.application_update(action, app_uuid)
+      end
   
       # Just return a 200 success
       render :json => generate_result_json("Success") and return
