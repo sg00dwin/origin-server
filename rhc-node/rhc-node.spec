@@ -44,6 +44,8 @@ Requires:      libevent
 Requires:      libevent-devel
 Requires:      mod_vhost_choke
 Requires:      GeoIP-devel
+Requires:      unixODBC
+Requires:      unixODBC-devel
 Requires(post):   /usr/sbin/semodule
 Requires(post):   /usr/sbin/semanage
 Requires(postun): /usr/sbin/semodule
