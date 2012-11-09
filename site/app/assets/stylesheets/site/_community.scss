@@ -711,19 +711,15 @@ html.js fieldset.collapsible .fieldset-wrapper {
 /* Events list */
 .view-event-view .views-row {border:0}
 
-.event-summary {
-  margin-left: 80px;
-}
 .event-listings .event-date {
   font-size: 20px;
   font-weight: bold;
-  float: left;
   text-align: center;
   font-family: Overpass;
   color: #9f9f9f;
   box-shadow: 0 0 1px #888888;
-  
-  width: 52px; height: 52px; 
+  width: 52px; 
+  height: 52px; 
   background: #fcfcfc; 
   background: linear-gradient(bottom, #eaeaea 0%, #afafaf 100%); 
   background: -moz-linear-gradient(bottom, #eaeaea 0%, #afafaf 100%); 
@@ -732,8 +728,9 @@ html.js fieldset.collapsible .fieldset-wrapper {
   -moz-border-radius: 3px;
   -webkit-border-radius: 3px;
   text-shadow: 1px 1px 6px #EEEEEE, 0 0 0 #DDDDDD;
-  margin-right: 20px;
-  margin-bottom: 5px;
+  float: left; 
+  /* Internet Explorer */
+  filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=3);
 }
 .event-listings .event-date span {
   display: block;
@@ -756,48 +753,14 @@ html.js fieldset.collapsible .fieldset-wrapper {
     text-shadow: none;
 }
 
-.event-listings .event-date2 {
-  background: #fcfcfc; 
-  border: 1px solid #ccc;
-  height: 50px;
-  width: 65px;
-  position: relative;
-  font-family: Overpass;
+.event-listings h3, 
+.event-listings .views-field-group-location, 
+.event-listings .slug {
+  display: block;
+  margin-left: 80px;
 }
-.event-listings .event-date2 span {
-  padding: 17px 0 15px 25px;
-  position: absolute;
-  color: #AAABAC;
-  font-size: 26px;
-  font-weight: bold;
-}
-.event-listings .event-date2 b {
-  color: white;
-    font-size: 12.5px;
-    font-weight: normal;
-    left: -1px;
-    padding: 2px;
-    position: absolute;
-    text-align: center;
-    top: 51px;
-    width: 48px;
-    text-transform: uppercase;
-  
-   background: linear-gradient(center top , #7A0909 0%, #D10000 100%); 
-   background: -moz-linear-gradient(center top , #7A0909 0%, #D10000 100%); 
-   background: -webkit-linear-gradient(center top , #7A0909 0%, #D10000 100%); 
-
-    -webkit-transform-origin: 0 0;
-    -moz-transform-origin:    0 0;
-    -ms-transform-origin:     0 0;
-    -o-transform-origin:      0 0;
-    
-    -webkit-transform: rotate(-90deg); 
-    -moz-transform:    rotate(-90deg); 
-    -ms-transform:     rotate(-90deg); 
-    -o-transform:      rotate(-90deg); 
-/* Internet Explorer */
-filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=3);
+.event-listings .views-field-group-location span {
+  font-size: 110%;
 }
 .nav-pills .active > a, .nav-pills .active > a:hover {
   background-color: #ededed;
@@ -806,6 +769,13 @@ filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=3);
 }
 .nav-pills .active > a:hover {
   color: #ea0011;
+}
+.field-content {
+  font-size: 15px;
+  font-weight: 300; 
+}
+.slug {
+  margin: 10px 0;
 }
 
 /* Event detail */

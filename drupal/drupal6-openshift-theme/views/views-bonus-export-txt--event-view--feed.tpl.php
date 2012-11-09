@@ -12,8 +12,8 @@ foreach ($row as $field => $content):
 <?php endforeach; ?>
 END:VCALENDAR
 <?php
-header("Content-Type: text/Calendar");
-header("Content-Disposition: inline; filename=feed.ics");
+header("Content-Type: text/calendar");
+header("Content-Disposition: attachment; filename=feed.ics");
 header("Cache-Control: no-cache, must-revalidate"); // HTTP/1.1
 header("Expires: Sat, 01 Jan 2000 05:00:00 GMT"); // Date in the past
 ?>

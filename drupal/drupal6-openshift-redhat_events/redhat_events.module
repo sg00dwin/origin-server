@@ -49,7 +49,7 @@ function redhat_events_page(){
     <div class="pull-right" style="margin-top:10px;">
       <a href="/community/events/ics" style="margin-right:10px;font-size:90%;">Add to my calendar</a>
       <a href="/community/events/feed">
-        <img title="Subscribe to the events RSS feed" alt="RSS" src="/community/misc/feed.png" style="vertical-align:middle;" />
+        <img title="Subscribe to the events RSS feed" alt="RSS" src="/community/misc/feed.png" />
       </a>
     </div>
     <ul class="nav nav-tabs">
