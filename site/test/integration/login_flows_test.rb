@@ -19,6 +19,10 @@ class LoginFlowsTest < ActionDispatch::IntegrationTest
     {:rhlogin => 'test', :password => 'password'}
   end
 
+  def internal_user_2
+    {:rhlogin => 'test2', :password => 'password'}
+  end
+
   test "basic site redirection works for subsites" do
     get '/user/new'
     assert_redirected_to '/account/new'
@@ -64,6 +68,19 @@ class LoginFlowsTest < ActionDispatch::IntegrationTest
 
     post(path, internal_user)
     assert_redirected_to console_path
+  end
+  
+  test 'logins with the same session should reset the sesion' do
+    post('/login', internal_user)
+    assert_redirected_to console_path
+
+    assert original_id = session['session_id']
+
+    post('/login', internal_user_2)
+    assert_redirected_to console_path
+
+    assert new_id = session['session_id']
+    assert_not_equal original_id, new_id
   end
   
   test 'user can visit site, login, has cookies' do
