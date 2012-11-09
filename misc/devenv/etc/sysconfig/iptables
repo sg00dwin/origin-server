@@ -18,9 +18,9 @@
 #-A INPUT -m state --state NEW -m tcp -p tcp --dport 6163 -j ACCEPT
 -A INPUT -j REJECT --reject-with icmp-host-prohibited
 -A FORWARD -j REJECT --reject-with icmp-host-prohibited
--A OUTPUT -o lo -d 127.0.0.0/25 -m owner --uid-owner 500-1500 -j ACCEPT
--A OUTPUT -o lo -d 127.0.0.0/8 -m owner --uid-owner 500-1500 -m state --state ESTABLISHED,RELATED -j ACCEPT
--A OUTPUT -o lo -d 127.0.0.0/8 -m owner --uid-owner 500-1500 -m state --state NEW -j rhc-app-table
+-A OUTPUT -o lo -d 127.0.0.0/25 -m owner --uid-owner 500-16000 -j ACCEPT
+-A OUTPUT -o lo -d 127.0.0.0/8 -m owner --uid-owner 500-16000 -m state --state ESTABLISHED,RELATED -j ACCEPT
+-A OUTPUT -o lo -d 127.0.0.0/8 -m owner --uid-owner 500-16000 -m state --state NEW -j rhc-app-table
 -A rhc-app-table -d 127.0.250.0/25 -m owner --uid-owner 500 -j ACCEPT
 -A rhc-app-table -d 127.0.250.128/25 -m owner --uid-owner 501 -j ACCEPT
 -A rhc-app-table -d 127.0.251.0/25 -m owner --uid-owner 502 -j ACCEPT
