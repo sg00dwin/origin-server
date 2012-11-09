@@ -117,7 +117,12 @@ module Secured
       end
     end
 
+    #
+    # Update the session with a logged in user.  Will reset
+    # the session to prevent fixation attacks.
+    #
     def current_user=(user)
+      reset_session
       cookies.permanent[:prev_login] = true
       cookies[:rh_sso] = {
         :value => user.ticket,
