@@ -57,6 +57,9 @@ Requires:  ruby193-rubygem-nokogiri
 Requires:  ruby193-build
 Requires:  ruby193-rubygems-devel
 Requires:  ruby193-rubygem-aws-sdk
+Requires:  ruby193-rubygem-net-ssh
+Requires:  ruby193-rubygem-archive-tar-minitar
+Requires:  ruby193-rubygem-commander
 Requires:  charlie
 Requires:  pam
 Requires:  pam-devel
@@ -258,6 +261,10 @@ gem install hub --no-rdoc --no-ri
 # Install gems for sprint_status_script
 gem install rally_rest_api --no-rdoc --no-ri
 gem install kramdown --no-rdoc --no-ri
+
+# Install gems for rhc to work on the devenv with ruby-1.9 
+gem install rspec --version 1.3.0 --no-rdoc --no-ri
+gem install fakefs --no-rdoc --no-ri
 
 # Move over all configs and scripts
 /bin/cp -rf %{devenvdir}/etc/* %{_sysconfdir}
@@ -583,6 +590,32 @@ install sctp /bin/true
 install rds /bin/true
 install tipc /bin/true
 EOF
+
+# Create a known test user with medium-sized gears - nhr
+# This must be done before the deployment of application templates!
+echo "Creating named test user"
+sleep_time=10
+for i in {1..5}
+do
+  cd /var/www/openshift/broker && bundle exec rails runner 'test_user=CloudUser.new("user_with_multiple_gear_sizes@test.com"); test_user.save();'
+  if [ $? -ne 0 ]
+  then
+    if [ $i -eq 5 ]
+    then
+      echo "Named test user could not be created."
+      break
+    fi
+    service mongod restart
+    sleep $sleep_time
+    sleep_time=$(expr $sleep_time + 10)
+    echo "Retrying....."
+  else
+    /usr/sbin/oo-admin-ctl-user -l user_with_multiple_gear_sizes@test.com --addgearsize medium
+    echo "Named test user created."
+    break
+  fi
+done
+
 
 # Deploy application templates - fotios
 echo "Deploying templates"

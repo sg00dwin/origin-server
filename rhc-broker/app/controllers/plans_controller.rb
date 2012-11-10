@@ -16,7 +16,7 @@ class PlansController < BaseController
     id = params[:id]
     Express::AriaBilling::Plan.instance.plans.each do |key, value|
       return render_success(:ok, "plan", RestPlan.new(key, value[:name], value[:plan_no], value[:capabilities]),
-                            "SHOW_PLAN") if key == id
+                            "SHOW_PLAN") if key == id.to_sym
     end
     render_error(:not_found, "Plan not found.", 150, "SHOW_PLAN")
   end

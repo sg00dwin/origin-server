@@ -310,7 +310,7 @@ module Express
 
       def update_facts(hostname)
         puts "Updating instance facts and running libra-data to set the public ip..."
-        ssh(hostname, "sed -i \"s/.*PUBLIC_IP_OVERRIDE.*/#PUBLIC_IP_OVERRIDE=/g\" /etc/openshift/node.conf; sed -i \"s/.*PUBLIC_HOSTNAME_OVERRIDE.*/#PUBLIC_HOSTNAME_OVERRIDE=/g\" /etc/openshift/node.conf; scl enable ruby193 \"/usr/libexec/mcollective/update_yaml.rb /etc/mcollective/facts.yaml\"; service libra-data start")
+        ssh(hostname, "sed -i \"s/.*PUBLIC_IP_OVERRIDE.*/#PUBLIC_IP_OVERRIDE=/g\" /etc/openshift/node.conf; sed -i \"s/.*PUBLIC_HOSTNAME_OVERRIDE.*/#PUBLIC_HOSTNAME_OVERRIDE=/g\" /etc/openshift/node.conf; /usr/libexec/mcollective/update_yaml.rb /etc/mcollective/facts.yaml; service libra-data start")
         puts 'Done'
       end
 
@@ -433,7 +433,7 @@ module Express
                 test_queues[1] << ["Extended Runtime Group 2", "cucumber #{CUCUMBER_OPTIONS} -t @runtime_extended2 openshift-test/tests"]
                 test_queues[2] << ["Extended Runtime Group 3", "cucumber #{CUCUMBER_OPTIONS} -t @runtime_extended3 openshift-test/tests"]
               when 'site'
-                test_queues[0] << ["Site Extended", "cd openshift-test/site; scl enable ruby193 \"rake test:extended\""]
+                test_queues[0] << ["Site Extended", "cd openshift-test/site; rake test:extended"]
               when 'rhc'
                 test_queues[0] << ["RHC Extended", "cucumber #{CUCUMBER_OPTIONS} -t @rhc_extended openshift-test/tests", {:retry_individually => true}]
                 test_queues[0] << ["RHC Integration", "QUIET=1 RHC_SERVER=localhost cucumber #{CUCUMBER_OPTIONS} openshift-test/rhc/features", {:retry_individually => true}]
@@ -539,15 +539,15 @@ module Express
             end
 
             unless options.exclude_site?
-              test_queues[0] << ["Site Check Applications",         'cd openshift-test/site; scl enable ruby193 "rake test:check:applications"']
-              test_queues[1].unshift ["Site Check Base",            'cd openshift-test/site; scl enable ruby193 "rake test:check:base"']
-              test_queues[1] << ["Site Check Cartridges",           'cd openshift-test/site; scl enable ruby193 "rake test:check:cartridges"']
-              test_queues[2] << ["Site Check Miscellaneous 1",      'cd openshift-test/site; scl enable ruby193 "rake test:check:misc1"']
-              test_queues[3] << ["Site Check REST API Integration", 'cd openshift-test/site; scl enable ruby193 "rake test:check:restapi_integration"']
+              test_queues[0] << ["Site Check Applications",         'cd openshift-test/site; rake test:check:applications']
+              test_queues[1].unshift ["Site Check Base",            'cd openshift-test/site; rake test:check:base']
+              test_queues[1] << ["Site Check Cartridges",           'cd openshift-test/site; rake test:check:cartridges']
+              test_queues[2] << ["Site Check Miscellaneous 1",      'cd openshift-test/site; rake test:check:misc1']
+              test_queues[3] << ["Site Check REST API Integration", 'cd openshift-test/site; rake test:check:restapi_integration']
             end
 
             unless options.exclude_rhc?
-                test_queues[0].unshift(["RHC Spec", 'cd openshift-test/rhc; scl enable ruby193 "bundle install && bundle exec rake spec"'])
+                test_queues[0].unshift(["RHC Spec", 'cd openshift-test/rhc; bundle install && bundle exec rake spec'])
             end
           end
 
