@@ -8,8 +8,8 @@
 
 Summary:   OpenShift Site Rails application
 Name:      rhc-site
-Version: 1.1.2
-Release:   2%{?dist}
+Version: 1.1.3
+Release:   1%{?dist}
 Group:     Network/Daemons
 License:   ASL 2.0
 URL:       http://openshift.redhat.com
@@ -143,6 +143,16 @@ rm -rf %{buildroot}
 %{sitedir}/public
 
 %changelog
+* Mon Nov 12 2012 Adam Miller <admiller@redhat.com> 1.1.3-1
+- Merge pull request #589 from
+  smarterclayton/bug_874944_prevent_session_fixation (openshift+bot@redhat.com)
+- Merge pull request #590 from
+  smarterclayton/bug_874896_redirect_allows_bad_paths
+  (openshift+bot@redhat.com)
+- Bug 874896 - Redirection after login allows paths without a leading slash,
+  which creates dangerous URLs (ccoleman@redhat.com)
+- Bug 874944 - Prevent session fixation in site (ccoleman@redhat.com)
+
 * Thu Nov 08 2012 Adam Miller <admiller@redhat.com> 1.1.2-2
 - bump site.spec Release: for fake chain-build with console
   (admiller@redhat.com)
