@@ -3,7 +3,7 @@
 
 Summary:   Li broker components
 Name:      rhc-broker
-Version: 1.1.2
+Version: 1.1.3
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -125,6 +125,9 @@ if [ ! -f %{_localstatedir}/log/openshift/user_action.log ]; then
 fi
 
 %changelog
+* Mon Nov 12 2012 Adam Miller <admiller@redhat.com> 1.1.3-1
+- simplify migration logic (dmcphers@redhat.com)
+
 * Thu Nov 08 2012 Adam Miller <admiller@redhat.com> 1.1.2-1
 - Merge pull request #580 from bdecoste/master (openshift+bot@redhat.com)
 - BZ873969 (bdecoste@gmail.com)
