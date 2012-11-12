@@ -2,7 +2,7 @@
 
 Summary:       Multi-tenant cloud management system node tools
 Name:          rhc-node
-Version: 1.1.2
+Version: 1.1.3
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -225,6 +225,12 @@ fi
 
 
 %changelog
+* Mon Nov 12 2012 Adam Miller <admiller@redhat.com> 1.1.3-1
+- Old copy of this file was not deleted when it moved to origin.
+  (rmillner@redhat.com)
+- Fix bugz 874826 - pyodbc install fails - needs odbc libraries + headers.
+  (ramr@redhat.com)
+
 * Thu Nov 08 2012 Adam Miller <admiller@redhat.com> 1.1.2-1
 - Increase the table sizes to cover 15000 nodes in dev and prod.
   (rmillner@redhat.com)
