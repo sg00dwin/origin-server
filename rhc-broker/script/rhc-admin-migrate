@@ -278,34 +278,17 @@ def migrate(version, continue=false, target_server_identity=nil, migrate_positio
     end
   end
 
+  node_queue = []
   node_to_gears.each do |server_identity, gears|
     write_node_to_file(server_identity, gears, version) unless continue
-  end
-
-  gear_cnts = []
-  thread_groups = []
-  node_to_gears.each do |server_identity, gears|
-    if thread_groups.length < $max_threads
-      thread_groups << [server_identity]
-      gear_cnts << gears.length
-    else
-      min_pos = 0
-      min = gear_cnts[0]
-      gear_cnts.each_with_index do |cnt, index|
-        if cnt < min
-          min = cnt
-          min_pos = index
-        end
-      end
-      thread_groups[min_pos] << server_identity
-      gear_cnts[min_pos] += gears.length
-    end
+    node_queue << {:server_identity => server_identity, :gears_length => gears.length}
     node_to_gears[server_identity] = nil
   end
 
+  # Process the largest nodes first
+  node_queue = node_queue.sort_by{ |node| node[:gears_length] }.reverse
+
   puts "#####################################################"
-  puts 'Gear counts per thread:'
-  puts gear_cnts.pretty_inspect
   if !migrator_position_nodes.empty?
     puts 'Nodes this migrator is handling:'
     puts migrator_position_nodes.pretty_inspect
@@ -314,13 +297,28 @@ def migrate(version, continue=false, target_server_identity=nil, migrate_positio
 
   @failures = []
   node_threads = []
-  thread_groups.each do |thread_group|
+  gear_cnts = []
+  mutex = Mutex.new
+  starting_nodes = node_queue.shift($max_threads)
+  starting_nodes.each_with_index do |node, index|
+    server_identity = node[:server_identity]
+    gear_cnts[index] = node[:gears_length]
     node_threads << Thread.new do
-      thread_group.each do |nodes|
-        nodes.each do |server_identity|
-          migrate_node(server_identity, continue)
+      migrate_node(server_identity, continue)
+      # Get the next available node to process
+      server_identity = nil
+      mutex.synchronize do
+        unless node_queue.empty?
+          node = node_queue.delete_at(0)
+          server_identity = node[:server_identity]
+          gear_cnts[index] = node[:gears_length]
+          puts "#####################################################"
+          puts "Remaining node queue:"
+          puts node_queue.pretty_inspect
+          puts "#####################################################"
         end
       end
+      migrate_node(server_identity, continue) if server_identity
     end
   end
 
