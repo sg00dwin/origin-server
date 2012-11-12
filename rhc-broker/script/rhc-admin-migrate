@@ -92,9 +92,9 @@ def migrate_gear(rhlogin, app_name, gear_uuid, version)
                   end unless redeploy_httpd_proxy
                 end
 
-                #remove_httpd_proxy(gear, out)
+                #remove_httpd_proxy(gear, out) if recreate_httpd_proxy
                 redeploy_httpd_proxy(gear, out) if redeploy_httpd_proxy
-                #redeploy_aliases(gear, out)
+                #redeploy_aliases(gear, out) if recreate_httpd_proxy
 
                 gear.configured_components.each do |comp_name|
                   restart = RESTART_CART_TYPES.nil?
@@ -134,54 +134,56 @@ def migrate_gear(rhlogin, app_name, gear_uuid, version)
 end
 
 def restart_component(gear, component, out)
-  leave_stopped = false
-  reply = gear.status(component)
-  reply.cart_commands.each do |command_item|
-    case command_item[:command]
-    when "ATTR"
-      key = command_item[:args][0]
-      value = command_item[:args][1]
-      if key == 'status'
-        case value
-        when "ALREADY_STOPPED"
-          leave_stopped = true
-        when "ALREADY_IDLED"
-          leave_stopped = true
+  if component
+    leave_stopped = false
+    reply = gear.status(component)
+    reply.cart_commands.each do |command_item|
+      case command_item[:command]
+      when "ATTR"
+        key = command_item[:args][0]
+        value = command_item[:args][1]
+        if key == 'status'
+          case value
+          when "ALREADY_STOPPED"
+            leave_stopped = true
+          when "ALREADY_IDLED"
+            leave_stopped = true
+          end
         end
       end
     end
-  end
-  unless leave_stopped
-    begin
-      out << "Stopping component '#{component.name}' on gear with uuid '#{gear.uuid}' on node '#{gear.server_identity}'\n"
-      reply.append gear.stop(component)
-    rescue Exception => e
-      out << "WARNING: Error stopping component '#{component.name}' on gear with uuid '#{gear.uuid}' on node '#{gear.server_identity}': #{e.message}\n"
-    end
-    begin
-      out << "Force stopping component '#{component.name}' on gear with uuid '#{gear.uuid}' on node '#{gear.server_identity}'\n"
-      reply.append gear.force_stop(component)
-    rescue Exception => e
-      out << "WARNING: Error force stopping component '#{component.name}' on gear with uuid '#{gear.uuid}' on node '#{gear.server_identity}': #{e.message}\n"
-    end
-    num_tries = 2
-    (1..num_tries).each do |i|
-      out << "Restarting component '#{component.name}' on gear with uuid '#{gear.uuid}' on node '#{gear.server_identity}'\n"
+    unless leave_stopped
       begin
-        reply.append gear.restart(component)
-        break
+        out << "Stopping component '#{component.name}' on gear with uuid '#{gear.uuid}' on node '#{gear.server_identity}'\n"
+        reply.append gear.stop(component)
       rescue Exception => e
-        if i == num_tries
-          out << "Failed to restart component '#{component.name}' on gear with uuid '#{gear.uuid}' on node '#{gear.server_identity}' after #{num_tries} tries with exception: #{e.message}\n"
-          raise
+        out << "WARNING: Error stopping component '#{component.name}' on gear with uuid '#{gear.uuid}' on node '#{gear.server_identity}': #{e.message}\n"
+      end
+      begin
+        out << "Force stopping component '#{component.name}' on gear with uuid '#{gear.uuid}' on node '#{gear.server_identity}'\n"
+        reply.append gear.force_stop(component)
+      rescue Exception => e
+        out << "WARNING: Error force stopping component '#{component.name}' on gear with uuid '#{gear.uuid}' on node '#{gear.server_identity}': #{e.message}\n"
+      end
+      num_tries = 2
+      (1..num_tries).each do |i|
+        out << "Restarting component '#{component.name}' on gear with uuid '#{gear.uuid}' on node '#{gear.server_identity}'\n"
+        begin
+          reply.append gear.restart(component)
+          break
+        rescue Exception => e
+          if i == num_tries
+            out << "Failed to restart component '#{component.name}' on gear with uuid '#{gear.uuid}' on node '#{gear.server_identity}' after #{num_tries} tries with exception: #{e.message}\n"
+            raise
+          end
         end
       end
+    else
+      out << "Leaving component stopped '#{component.name}' on gear with uuid '#{gear.uuid}' on node '#{gear.server_identity}'\n"
     end
-  else
-    out << "Leaving component stopped '#{component.name}' on gear with uuid '#{gear.uuid}' on node '#{gear.server_identity}'\n"
+    out << "RESTART DEBUG OUTPUT:\n#{reply.debugIO.string}\n" unless reply.debugIO.string.empty?
+    out << "RESTART ERROR OUTPUT:\n#{reply.errorIO.string}\n" unless reply.errorIO.string.empty?
   end
-  out << "RESTART DEBUG OUTPUT:\n#{reply.debugIO.string}\n" unless reply.debugIO.string.empty?
-  out << "RESTART ERROR OUTPUT:\n#{reply.errorIO.string}\n" unless reply.errorIO.string.empty?
 end
 
 def redeploy_httpd_proxy(gear, out)
@@ -195,16 +197,18 @@ end
 def httpd_proxy_action(gear, action, out)
   gear.configured_components.each do |comp_name|
     component = gear.app.comp_instance_map[comp_name]
-    out << "#{action} for '#{component.parent_cart_name}' on gear '#{gear.name}' with uuid '#{gear.uuid}' on node #{gear.server_identity}\n"
-    embedded = gear.app.embedded.include?(component.parent_cart_name)
-    reply = gear.app.container.send(:run_cartridge_command, (embedded ? "embedded/" : '') + component.parent_cart_name, gear.app, gear, action, nil, false)
-
-    out << "DEPLOY_HTTP_PROXY DEBUG OUTPUT:\n#{reply.debugIO.string}\n" unless reply.debugIO.string.empty?
-    out << "DEPLOY_HTTP_PROXY ERROR OUTPUT:\n#{reply.errorIO.string}\n" unless reply.errorIO.string.empty?
-    
-    if reply.exitcode != 0
-      out << "#{action} for cart: #{component.parent_cart_name} on node exit code: #{reply.exitcode}\n"
-      raise "Failed deploying httpd proxy for gear '#{gear.name}' with uuid '#{gear.uuid}' on node '#{gear.server_identity}'"
+    if component
+      out << "#{action} for '#{component.parent_cart_name}' on gear '#{gear.name}' with uuid '#{gear.uuid}' on node #{gear.server_identity}\n"
+      embedded = gear.app.embedded.include?(component.parent_cart_name)
+      reply = gear.app.container.send(:run_cartridge_command, (embedded ? "embedded/" : '') + component.parent_cart_name, gear.app, gear, action, nil, false)
+  
+      out << "DEPLOY_HTTP_PROXY DEBUG OUTPUT:\n#{reply.debugIO.string}\n" unless reply.debugIO.string.empty?
+      out << "DEPLOY_HTTP_PROXY ERROR OUTPUT:\n#{reply.errorIO.string}\n" unless reply.errorIO.string.empty?
+      
+      if reply.exitcode != 0
+        out << "#{action} for cart: #{component.parent_cart_name} on node exit code: #{reply.exitcode}\n"
+        raise "Failed deploying httpd proxy for gear '#{gear.name}' with uuid '#{gear.uuid}' on node '#{gear.server_identity}'"
+      end
     end
   end
 end
@@ -255,7 +259,9 @@ def migrate(version, continue=false, target_server_identity=nil, migrate_positio
         puts "ERROR: Gear not found for app: '#{app.name}' of user #{user.login}"
       end
     end
-  }
+  } 
+  gather_users_total_time = Time.now.to_i - start_time
+
   puts "RHLogins.length: #{rhlogins_cnt.to_s}"
 
   position = migrate_position - 1
@@ -272,11 +278,15 @@ def migrate(version, continue=false, target_server_identity=nil, migrate_positio
     end
   end
 
+  node_to_gears.each do |server_identity, gears|
+    write_node_to_file(server_identity, gears, version) unless continue
+  end
+
   gear_cnts = []
   thread_groups = []
   node_to_gears.each do |server_identity, gears|
     if thread_groups.length < $max_threads
-      thread_groups << [{server_identity => gears}]
+      thread_groups << [server_identity]
       gear_cnts << gears.length
     else
       min_pos = 0
@@ -287,12 +297,12 @@ def migrate(version, continue=false, target_server_identity=nil, migrate_positio
           min_pos = index
         end
       end
-      thread_groups[min_pos] << {server_identity => gears}
+      thread_groups[min_pos] << server_identity
       gear_cnts[min_pos] += gears.length
     end
     node_to_gears[server_identity] = nil
   end
-  
+
   puts "#####################################################"
   puts 'Gear counts per thread:'
   puts gear_cnts.pretty_inspect
@@ -301,22 +311,13 @@ def migrate(version, continue=false, target_server_identity=nil, migrate_positio
     puts migrator_position_nodes.pretty_inspect
   end
   puts "#####################################################"
-  
-  thread_groups.each do |thread_group|
-    thread_group.each do |node_to_gears|
-      node_to_gears.each do |server_identity, gears|
-        write_node_to_file(server_identity, gears, version) unless continue
-        node_to_gears[server_identity] = nil
-      end
-    end
-  end
 
   @failures = []
   node_threads = []
   thread_groups.each do |thread_group|
     node_threads << Thread.new do
-      thread_group.each do |node_to_gears|
-        node_to_gears.each do |server_identity, gears|
+      thread_group.each do |nodes|
+        nodes.each do |server_identity|
           migrate_node(server_identity, continue)
         end
       end
@@ -326,7 +327,7 @@ def migrate(version, continue=false, target_server_identity=nil, migrate_positio
   node_threads.each do |t|
     t.join
   end
-  
+
   if @failures.length > 0
     puts "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
     puts "Failures:"
@@ -348,6 +349,8 @@ def migrate(version, continue=false, target_server_identity=nil, migrate_positio
       puts ""
     end
   end
+
+  total_time = Time.now.to_i - start_time
   
   puts "#####################################################"
   puts "Summary:"
@@ -357,8 +360,7 @@ def migrate(version, continue=false, target_server_identity=nil, migrate_positio
   puts "Gear counts per thread: #{gear_cnts.pretty_inspect}"
   puts "Nodes migrated: #{migrator_position_nodes.pretty_inspect}" if !migrator_position_nodes.empty?
 
-  end_time = Time.now.to_i
-  total_time = end_time-start_time
+  puts "Time gathering users: #{gather_users_total_time.to_s}s"
   puts "Total execution time: #{total_time.to_s}s"
   puts "#####################################################"
 end
