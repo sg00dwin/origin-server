@@ -79,6 +79,7 @@ cp conf/broker.conf %{buildroot}/etc/openshift/
 cp conf/broker-dev.conf %{buildroot}/etc/openshift/
 cp conf/openshift-origin-msg-broker-mcollective-dev.conf %{buildroot}/etc/openshift/plugins.d/
 cp conf/openshift-origin-msg-broker-mcollective.conf %{buildroot}/etc/openshift/plugins.d/
+cp conf/quickstarts.json %{buildroot}/etc/openshift/
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -104,6 +105,7 @@ rm -rf $RPM_BUILD_ROOT
 %attr(0750,-,-) %{_bindir}/rhc-admin-stale-dns
 /usr/lib/openshift/broker/application_templates
 
+%config(noreplace) /etc/openshift/quickstarts.json
 %config(noreplace) /etc/openshift/plugins.d/openshift-origin-msg-broker-mcollective.conf
 %config(noreplace) /etc/openshift/broker.conf
 /etc/openshift/plugins.d/openshift-origin-msg-broker-mcollective-dev.conf
