@@ -8,7 +8,7 @@
 
 Summary:   Dependencies for OpenShift development
 Name:      rhc-devenv
-Version: 1.1.2
+Version: 1.1.3
 Release:   1%{?dist}
 Group:     Development/Libraries
 License:   GPLv2
@@ -656,6 +656,10 @@ restorecon /etc/openshift/node.conf || :
 /sbin/service libra-data restart > /dev/null 2>&1 || :
 
 %changelog
+* Mon Nov 12 2012 Adam Miller <admiller@redhat.com> 1.1.3-1
+- Missed a few locations to update the UID. (rmillner@redhat.com)
+- trying again (bdecoste@gmail.com)
+
 * Thu Nov 08 2012 Adam Miller <admiller@redhat.com> 1.1.2-1
 - Increase the table sizes to cover 15000 nodes in dev and prod.
   (rmillner@redhat.com)
