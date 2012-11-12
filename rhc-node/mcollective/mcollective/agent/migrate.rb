@@ -32,6 +32,8 @@ module OpenShiftMigration
       return "Invalid version: #{version}", 255
     end
 
+    start_time = (Time.now.to_f * 1000).to_i
+    
     cartridge_root_dir = "/usr/libexec/openshift/cartridges"
     libra_home = '/var/lib/openshift' #node_config.get_value('libra_dir')
     libra_server = get_config_value('BROKER_HOST')
@@ -54,6 +56,8 @@ module OpenShiftMigration
       output += echo_output
     end
       
+    total_time = (Time.now.to_f * 1000).to_i - start_time
+    output += "***time_total_migrate_gear_measured_from_node=#{total_time}***\n"
     return output, exitcode
   end
 

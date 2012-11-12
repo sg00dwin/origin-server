@@ -27,6 +27,7 @@ STDOUT.sync, STDERR.sync = true
 #  Migrate the specified gear
 #
 def migrate_gear(rhlogin, app_name, gear_uuid, version)
+  total_migrate_gear_start_time = (Time.now.to_f * 1000).to_i
   migrate_cmd = "#{__FILE__} --rhlogin '#{rhlogin}' --migrate-gear '#{gear_uuid}' --app-name '#{app_name}' --version '#{version}'"
   out = StringIO.new
   out << "Migrating gear on node with: #{migrate_cmd}\n"
@@ -65,6 +66,7 @@ def migrate_gear(rhlogin, app_name, gear_uuid, version)
               is_haproxy_gear = true if gear.cartridges.include?("haproxy-1.4")
 
               if migrate
+                migrate_on_node_start_time = (Time.now.to_f * 1000).to_i
                 out << "Migrating on node...\n"
                 OpenShift::MCollectiveApplicationContainerProxy.rpc_exec('libra', server_identity) do |client|
                   client.migrate(:uuid => gear_uuid,
@@ -74,9 +76,11 @@ def migrate_gear(rhlogin, app_name, gear_uuid, version)
                     output = response[:body][:data][:output]
                   end
                 end
+                migrate_on_node_time = (Time.now.to_f * 1000).to_i - migrate_on_node_start_time
+                out << "***time_migrate_on_node=#{migrate_on_node_time}***\n"
               end
               if (output.length > 0)
-                out << "Migrate on node output: #{output}\n"
+                out << "Migrate on node output:\n #{output}\n"
               end
               if migrate && exit_code != 0
                 out << "Migrate on node exit code: #{exit_code}\n"
@@ -93,9 +97,13 @@ def migrate_gear(rhlogin, app_name, gear_uuid, version)
                 end
 
                 #remove_httpd_proxy(gear, out) if recreate_httpd_proxy
+                redeploy_httpd_proxy_start_time = (Time.now.to_f * 1000).to_i
                 redeploy_httpd_proxy(gear, out) if redeploy_httpd_proxy
+                redeploy_httpd_proxy_time = (Time.now.to_f * 1000).to_i - redeploy_httpd_proxy_start_time
+                out << "***time_redeploy_httpd_proxy=#{redeploy_httpd_proxy_time}***\n"
                 #redeploy_aliases(gear, out) if recreate_httpd_proxy
 
+                restart_start_time = (Time.now.to_f * 1000).to_i
                 gear.configured_components.each do |comp_name|
                   restart = RESTART_CART_TYPES.nil?
                   RESTART_CART_TYPES.each do |cart_name|
@@ -109,6 +117,8 @@ def migrate_gear(rhlogin, app_name, gear_uuid, version)
                     restart_component(gear, component, out)
                   end
                 end
+                restart_time = (Time.now.to_f * 1000).to_i - restart_start_time
+                out << "***time_restart=#{restart_time}***\n"
               end
             end
           rescue Timeout::Error
@@ -130,6 +140,8 @@ def migrate_gear(rhlogin, app_name, gear_uuid, version)
   rescue Exception => e
     raise "#{e.message}\n#{e.backtrace}\nOutput:\n#{out.string}"
   end
+  total_migrate_gear_time = (Time.now.to_f * 1000).to_i - total_migrate_gear_start_time
+  out << "***time_total_migrate_gear_measured_from_broker=#{total_migrate_gear_time}***\n"
   out.string
 end
 
@@ -228,8 +240,18 @@ def redeploy_aliases(gear, out)
   end
 end
 
+def add_to_timings(timings, more_timings)
+  more_timings.each do |topic, time_in_millis|
+    if timings[topic]
+      timings[topic] += time_in_millis
+    else
+      timings[topic] = time_in_millis
+    end
+  end
+end
+
 def migrate(version, continue=false, target_server_identity=nil, migrate_position=1, num_migrators=1)
-  start_time = Time.now.to_i
+  start_time = (Time.now.to_f * 1000).to_i
   puts "Getting all RHLogins..."
   rhlogins_cnt = 0
   gear_cnt = 0
@@ -260,7 +282,7 @@ def migrate(version, continue=false, target_server_identity=nil, migrate_positio
       end
     end
   } 
-  gather_users_total_time = Time.now.to_i - start_time
+  gather_users_total_time = (Time.now.to_f * 1000).to_i - start_time
 
   puts "RHLogins.length: #{rhlogins_cnt.to_s}"
 
@@ -299,12 +321,14 @@ def migrate(version, continue=false, target_server_identity=nil, migrate_positio
   node_threads = []
   gear_cnts = []
   mutex = Mutex.new
+  timings = {}
   starting_nodes = node_queue.shift($max_threads)
   starting_nodes.each_with_index do |node, index|
     server_identity = node[:server_identity]
     gear_cnts[index] = node[:gears_length]
     node_threads << Thread.new do
-      migrate_node(server_identity, continue)
+      node_timings = migrate_node(server_identity, continue)
+      add_to_timings(timings, node_timings)
       # Get the next available node to process
       server_identity = nil
       mutex.synchronize do
@@ -318,7 +342,10 @@ def migrate(version, continue=false, target_server_identity=nil, migrate_positio
           puts "#####################################################"
         end
       end
-      migrate_node(server_identity, continue) if server_identity
+      if server_identity
+        node_timings = migrate_node(server_identity, continue)
+        add_to_timings(timings, node_timings)
+      end
     end
   end
 
@@ -348,7 +375,7 @@ def migrate(version, continue=false, target_server_identity=nil, migrate_positio
     end
   end
 
-  total_time = Time.now.to_i - start_time
+  total_time = (Time.now.to_f * 1000).to_i - start_time
   
   puts "#####################################################"
   puts "Summary:"
@@ -357,9 +384,12 @@ def migrate(version, continue=false, target_server_identity=nil, migrate_positio
   puts "# of failures: #{@failures.length}"
   puts "Gear counts per thread: #{gear_cnts.pretty_inspect}"
   puts "Nodes migrated: #{migrator_position_nodes.pretty_inspect}" if !migrator_position_nodes.empty?
-
-  puts "Time gathering users: #{gather_users_total_time.to_s}s"
-  puts "Total execution time: #{total_time.to_s}s"
+  puts "Additional timings:"
+  timings.each do |topic, time_in_millis|
+    puts "    #{topic}=#{time_in_millis.to_f/1000}s"
+  end
+  puts "Time gathering users: #{gather_users_total_time.to_f/1000}s"
+  puts "Total execution time: #{total_time.to_f/1000}s"
   puts "#####################################################"
 end
 
@@ -408,13 +438,19 @@ def migrate_node(server_identity, continue)
     file.close
   end
   file = File.open(log_file, "r")
+  timings = {}
   begin
     while (line = file.readline)
+      if line =~ /\*\*\*time_(.*)=(\d+)\*\*\*/
+        timings[$1] = 0 unless timings[$1]
+        timings[$1] += $2.to_i
+      end
       print line
     end
   rescue EOFError
     file.close
   end
+  return timings
 end
 
 def migrate_from_file(file)
