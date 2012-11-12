@@ -127,6 +127,7 @@ Then /^the ([\w\-\.]+) health\-check will( not)? be successful$/ do |type, negat
     while exit_status != expected_status
       exit_status = runcon command, 'unconfined_u', 'unconfined_r', 'unconfined_t'
       $logger.info("Waiting for health-check to stabilize #{host}")
+      sleep 1
     end
   end
   exit_status.should == expected_status
