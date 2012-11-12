@@ -135,6 +135,7 @@ fi
 /sbin/chkconfig oddjobd on
 /sbin/service messagebus restart
 /sbin/service oddjobd restart
+/sbin/service libra-watchman restart || :
 # /usr/bin/rhc-restorecon || :    # Takes too long and shouldn't be needded
 /sbin/service libra-data start > /dev/null 2>&1 || :
 [ $(/usr/sbin/semanage node -l | /bin/grep -c 255.255.255.128) -lt 1000 ] && /usr/bin/rhc-ip-prep.sh || :
