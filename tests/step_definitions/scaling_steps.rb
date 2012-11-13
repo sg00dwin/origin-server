@@ -188,3 +188,7 @@ Then /^the operation is( not)? allowed$/ do |negate|
     $rest_exit_code.should == 0
   end
 end
+
+When /^the global httpd is restarted$/ do
+   `service httpd restart`
+end
