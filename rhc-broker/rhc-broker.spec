@@ -3,7 +3,7 @@
 
 Summary:   Li broker components
 Name:      rhc-broker
-Version: 1.1.3
+Version: 1.1.4
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -125,6 +125,18 @@ if [ ! -f %{_localstatedir}/log/openshift/user_action.log ]; then
 fi
 
 %changelog
+* Tue Nov 13 2012 Adam Miller <admiller@redhat.com> 1.1.4-1
+- Merge pull request #599 from ramr/master (openshift+bot@redhat.com)
+- add acceptable errors category (dmcphers@redhat.com)
+- better strings (dmcphers@redhat.com)
+- Change back mcollective timeout on rhc to 3 minutes. (ramr@redhat.com)
+- reformat timestring and url for nurture (rchopra@redhat.com)
+- Add additional timings for migrations (dmcphers@redhat.com)
+- handle queues as available processors rather than preset lists
+  (dmcphers@redhat.com)
+- Merge pull request #595 from rajatchopra/us3069 (openshift+bot@redhat.com)
+- last access time update to nurture (rchopra@redhat.com)
+
 * Mon Nov 12 2012 Adam Miller <admiller@redhat.com> 1.1.3-1
 - simplify migration logic (dmcphers@redhat.com)
 
