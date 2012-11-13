@@ -69,7 +69,7 @@ class LoginFlowsTest < ActionDispatch::IntegrationTest
     post(path, internal_user)
     assert_redirected_to console_path
   end
-  
+
   test 'logins with the same session should reset the sesion' do
     post('/login', internal_user)
     assert_redirected_to console_path
@@ -82,7 +82,7 @@ class LoginFlowsTest < ActionDispatch::IntegrationTest
     assert new_id = session['session_id']
     assert_not_equal original_id, new_id
   end
-  
+
   test 'user can visit site, login, has cookies' do
     get '/'
     assert_response :success
