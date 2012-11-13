@@ -5,7 +5,7 @@
 %global modname             blogs
 
 Name:    drupal%{drupal_release}-openshift-features-%{modname}
-Version: 1.9.1
+Version: 1.9.2
 Release: 1%{?dist}
 Summary: Openshift Red Hat Custom Blog Feature for Drupal6
 Group:   Applications/Publishing
@@ -41,6 +41,9 @@ rm -rf $RPM_BUILD_ROOT
 %{drupal_modules}/%{modname}
 
 %changelog
+* Tue Nov 13 2012 Adam Miller <admiller@redhat.com> 1.9.2-1
+- Bug 872912 - Prevent HTML in about user box (ccoleman@redhat.com)
+
 * Thu Nov 01 2012 Adam Miller <admiller@redhat.com> 1.9.1-1
 - bump_minor_versions for sprint 20 (admiller@redhat.com)
 
