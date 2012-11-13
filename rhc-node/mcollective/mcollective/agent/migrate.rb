@@ -57,7 +57,7 @@ module OpenShiftMigration
     end
       
     total_time = (Time.now.to_f * 1000).to_i - start_time
-    output += "***time_total_migrate_gear_measured_from_node=#{total_time}***\n"
+    output += "***time_migrate_on_node_measured_from_node=#{total_time}***\n"
     return output, exitcode
   end
 

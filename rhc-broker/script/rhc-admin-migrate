@@ -77,7 +77,7 @@ def migrate_gear(rhlogin, app_name, gear_uuid, version)
                   end
                 end
                 migrate_on_node_time = (Time.now.to_f * 1000).to_i - migrate_on_node_start_time
-                out << "***time_migrate_on_node=#{migrate_on_node_time}***\n"
+                out << "***time_migrate_on_node_measured_from_broker=#{migrate_on_node_time}***\n"
               end
               if (output.length > 0)
                 out << "Migrate on node output:\n #{output}\n"
