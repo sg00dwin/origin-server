@@ -30,7 +30,7 @@ module Express
       def self.application_bulk_update(app_update_array)
         return unless Rails.configuration.analytics[:enabled] && Rails.configuration.analytics[:nurture][:enabled]
 
-        cmd = "curl -s -O /dev/null -X POST -u '#{Rails.configuration.analytics[:nurture][:username]}:#{Rails.configuration.analytics[:nurture][:password]}' '#{Rails.configuration.analytics[:nurture][:url]}applications/bulk_update/'"
+        cmd = "curl -s -O /dev/null -X POST -u '#{Rails.configuration.analytics[:nurture][:username]}:#{Rails.configuration.analytics[:nurture][:password]}' '#{Rails.configuration.analytics[:nurture][:url]}applications/bulk_update'"
         count = 0
         data = ""
         app_update_array.each { |app_data|
