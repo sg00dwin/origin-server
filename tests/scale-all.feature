@@ -12,7 +12,7 @@ Feature: Scaling Verification Tests
     Then haproxy_ctld is running
     And 1 gears will be in the cluster
     When 25 concurrent http connections are generated for 90 seconds
-    Then 2 gears will be in the cluster
+    Then at least 2 gears will be in the cluster
     When the application is destroyed
     And the global httpd is restarted
     Then the application should not be accessible
