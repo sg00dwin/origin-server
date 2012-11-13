@@ -6,6 +6,205 @@
 function rules_by_category_rules_defaults() {
   return array(
     'rules' => array(
+      'rules_comment_on_faq_or_kb' => array(
+        '#type' => 'rule',
+        '#set' => 'event_comment_insert',
+        '#label' => 'Comment on FAQ or KB',
+        '#active' => 1,
+        '#weight' => '0',
+        '#categories' => array(
+          '0' => 'comment',
+          '1' => 'rules_by_category',
+        ),
+        '#status' => 'default',
+        '#conditions' => array(
+          '0' => array(
+            '#type' => 'condition',
+            '#settings' => array(
+              'type' => array(
+                'faq' => 'faq',
+                'knowledge_base' => 'knowledge_base',
+              ),
+              '#argument map' => array(
+                'node' => 'node',
+              ),
+            ),
+            '#name' => 'rules_condition_content_is_type',
+            '#info' => array(
+              'label' => 'Commented content is FAQ or Knowledge Base',
+              'arguments' => array(
+                'node' => array(
+                  'type' => 'node',
+                  'label' => 'Content',
+                ),
+              ),
+              'module' => 'Node',
+            ),
+            '#weight' => 0,
+          ),
+        ),
+        '#actions' => array(
+          '0' => array(
+            '#weight' => 0,
+            '#info' => array(
+              'label' => 'Send a mail to an arbitrary mail address',
+              'module' => 'System',
+              'eval input' => array(
+                '0' => 'subject',
+                '1' => 'message',
+                '2' => 'from',
+                '3' => 'to',
+              ),
+            ),
+            '#name' => 'rules_action_mail',
+            '#settings' => array(
+              'to' => 'kshaw@redhat.com,snathan@redhat.com,nduong@redhat.com,sannam@redhat.com',
+              'from' => '',
+              'subject' => 'New comment posted on a [node:type-name] Content type',
+              'message' => 'Hello, 
+
+A user has posted the following comment to the [node:type-name] titled [node:title].  
+
+[comment:comment-body]',
+              '#eval input' => array(
+                'token_rules_input_evaluator' => array(
+                  'subject' => array(
+                    '0' => 'node',
+                    '1' => ':global',
+                  ),
+                  'message' => array(
+                    '0' => 'comment',
+                    '1' => 'node',
+                    '2' => ':global',
+                  ),
+                  'from' => array(
+                    '0' => ':global',
+                  ),
+                  'to' => array(
+                    '0' => ':global',
+                  ),
+                ),
+              ),
+            ),
+            '#type' => 'action',
+          ),
+        ),
+        '#version' => 6003,
+      ),
+      'rules_email_when_comment_deleted' => array(
+        '#type' => 'rule',
+        '#set' => 'event_comment_delete',
+        '#label' => 'Email when comment deleted',
+        '#active' => 1,
+        '#weight' => '0',
+        '#categories' => array(
+          '0' => 'delete',
+          'rules_by_category' => 'rules_by_category',
+        ),
+        '#status' => 'default',
+        '#conditions' => array(),
+        '#actions' => array(
+          '0' => array(
+            '#weight' => 0,
+            '#type' => 'action',
+            '#settings' => array(
+              'to' => 'kshaw@redhat.com,snathan@redhat.com,nduong@redhat.com,sannam@redhat.com',
+              'from' => '',
+              'subject' => 'Comment deleted from openshift community site',
+              'message' => 'A user with the email [:global:user-mail] has deleted the following comment from node [node:nid] :
+
+[comment:comment-body]',
+              '#eval input' => array(
+                'token_rules_input_evaluator' => array(
+                  'subject' => array(
+                    '0' => ':global',
+                  ),
+                  'message' => array(
+                    '0' => 'comment',
+                    '1' => 'node',
+                    '2' => ':global',
+                  ),
+                  'from' => array(
+                    '0' => ':global',
+                  ),
+                  'to' => array(
+                    '0' => ':global',
+                  ),
+                ),
+              ),
+            ),
+            '#name' => 'rules_action_mail',
+            '#info' => array(
+              'label' => 'Send a mail to an arbitrary mail address',
+              'module' => 'System',
+              'eval input' => array(
+                '0' => 'subject',
+                '1' => 'message',
+                '2' => 'from',
+                '3' => 'to',
+              ),
+            ),
+          ),
+        ),
+        '#version' => 6003,
+      ),
+      'rules_email_when_node_deleted' => array(
+        '#type' => 'rule',
+        '#set' => 'event_node_delete',
+        '#label' => 'Email when node deleted',
+        '#active' => 1,
+        '#weight' => '0',
+        '#categories' => array(
+          '0' => 'delete',
+          'rules_by_category' => 'rules_by_category',
+        ),
+        '#status' => 'default',
+        '#conditions' => array(),
+        '#actions' => array(
+          '0' => array(
+            '#weight' => 0,
+            '#info' => array(
+              'label' => 'Send a mail to an arbitrary mail address',
+              'module' => 'System',
+              'eval input' => array(
+                '0' => 'subject',
+                '1' => 'message',
+                '2' => 'from',
+                '3' => 'to',
+              ),
+            ),
+            '#name' => 'rules_action_mail',
+            '#settings' => array(
+              'to' => 'kshaw@redhat.com,snathan@redhat.com,nduong@redhat.com,sannam@redhat.com',
+              'from' => '',
+              'subject' => 'Node deleted from Openshift Community',
+              'message' => 'Node [node:nid] with title [node:title] has been deleted from the Openshift community site by [user:mail]
+
+[node:node-body]',
+              '#eval input' => array(
+                'token_rules_input_evaluator' => array(
+                  'subject' => array(
+                    '0' => ':global',
+                  ),
+                  'message' => array(
+                    '0' => 'node',
+                    '1' => 'user',
+                    '2' => ':global',
+                  ),
+                  'from' => array(
+                    '0' => ':global',
+                  ),
+                  'to' => array(
+                    '0' => ':global',
+                  ),
+                ),
+              ),
+            ),
+            '#type' => 'action',
+          ),
+        ),
+        '#version' => 6003,
+      ),
       'rules_feature_completed' => array(
         '#type' => 'rule',
         '#set' => 'event_node_update',
@@ -112,205 +311,6 @@ function rules_by_category_rules_defaults() {
               ),
             ),
             '#type' => 'action',
-          ),
-        ),
-        '#version' => 6003,
-      ),
-      'rules_comment_on_faq_or_kb' => array(
-        '#type' => 'rule',
-        '#set' => 'event_comment_insert',
-        '#label' => 'Comment on FAQ or KB',
-        '#active' => 1,
-        '#weight' => '0',
-        '#categories' => array(
-          '0' => 'comment',
-          '1' => 'rules_by_category',
-        ),
-        '#status' => 'default',
-        '#conditions' => array(
-          '0' => array(
-            '#weight' => 0,
-            '#info' => array(
-              'label' => 'Commented content is FAQ or Knowledge Base',
-              'arguments' => array(
-                'node' => array(
-                  'type' => 'node',
-                  'label' => 'Content',
-                ),
-              ),
-              'module' => 'Node',
-            ),
-            '#name' => 'rules_condition_content_is_type',
-            '#settings' => array(
-              'type' => array(
-                'faq' => 'faq',
-                'knowledge_base' => 'knowledge_base',
-              ),
-              '#argument map' => array(
-                'node' => 'node',
-              ),
-            ),
-            '#type' => 'condition',
-          ),
-        ),
-        '#actions' => array(
-          '0' => array(
-            '#weight' => 0,
-            '#type' => 'action',
-            '#settings' => array(
-              'to' => 'kshaw@redhat.com,snathan@redhat.com,nduong@redhat.com',
-              'from' => '',
-              'subject' => 'New comment posted on a [node:type-name] Content type',
-              'message' => 'Hello, 
-
-A user has posted the following comment to the [node:type-name] titled [node:title].  
-
-[comment:comment-body]',
-              '#eval input' => array(
-                'token_rules_input_evaluator' => array(
-                  'subject' => array(
-                    '0' => 'node',
-                    '1' => ':global',
-                  ),
-                  'message' => array(
-                    '0' => 'comment',
-                    '1' => 'node',
-                    '2' => ':global',
-                  ),
-                  'from' => array(
-                    '0' => ':global',
-                  ),
-                  'to' => array(
-                    '0' => ':global',
-                  ),
-                ),
-              ),
-            ),
-            '#name' => 'rules_action_mail',
-            '#info' => array(
-              'label' => 'Send a mail to an arbitrary mail address',
-              'module' => 'System',
-              'eval input' => array(
-                '0' => 'subject',
-                '1' => 'message',
-                '2' => 'from',
-                '3' => 'to',
-              ),
-            ),
-          ),
-        ),
-        '#version' => 6003,
-      ),
-      'rules_email_when_comment_deleted' => array(
-        '#type' => 'rule',
-        '#set' => 'event_comment_delete',
-        '#label' => 'Email when comment deleted',
-        '#active' => 1,
-        '#weight' => '0',
-        '#categories' => array(
-          '0' => 'delete',
-          'rules_by_category' => 'rules_by_category',
-        ),
-        '#status' => 'default',
-        '#conditions' => array(),
-        '#actions' => array(
-          '0' => array(
-            '#weight' => 0,
-            '#info' => array(
-              'label' => 'Send a mail to an arbitrary mail address',
-              'module' => 'System',
-              'eval input' => array(
-                '0' => 'subject',
-                '1' => 'message',
-                '2' => 'from',
-                '3' => 'to',
-              ),
-            ),
-            '#name' => 'rules_action_mail',
-            '#settings' => array(
-              'to' => 'kshaw@redhat.com,snathan@redhat.com,nduong@redhat.com',
-              'from' => '',
-              'subject' => 'Comment deleted from openshift community site',
-              'message' => 'A user with the email [:global:user-mail] has deleted the following comment from node [node:nid] :
-
-[comment:comment-body]',
-              '#eval input' => array(
-                'token_rules_input_evaluator' => array(
-                  'subject' => array(
-                    '0' => ':global',
-                  ),
-                  'message' => array(
-                    '0' => 'comment',
-                    '1' => 'node',
-                    '2' => ':global',
-                  ),
-                  'from' => array(
-                    '0' => ':global',
-                  ),
-                  'to' => array(
-                    '0' => ':global',
-                  ),
-                ),
-              ),
-            ),
-            '#type' => 'action',
-          ),
-        ),
-        '#version' => 6003,
-      ),
-      'rules_email_when_node_deleted' => array(
-        '#type' => 'rule',
-        '#set' => 'event_node_delete',
-        '#label' => 'Email when node deleted',
-        '#active' => 1,
-        '#weight' => '0',
-        '#categories' => array(
-          '0' => 'delete',
-          'rules_by_category' => 'rules_by_category',
-        ),
-        '#status' => 'default',
-        '#conditions' => array(),
-        '#actions' => array(
-          '0' => array(
-            '#weight' => 0,
-            '#type' => 'action',
-            '#settings' => array(
-              'to' => 'kshaw@redhat.com,snathan@redhat.com,nduong@redhat.com',
-              'from' => '',
-              'subject' => 'Node deleted from Openshift Community',
-              'message' => 'Node [node:nid] with title [node:title] has been deleted from the Openshift community site by [user:mail]
-
-[node:node-body]',
-              '#eval input' => array(
-                'token_rules_input_evaluator' => array(
-                  'subject' => array(
-                    '0' => ':global',
-                  ),
-                  'message' => array(
-                    '0' => 'node',
-                    '1' => 'user',
-                    '2' => ':global',
-                  ),
-                  'from' => array(
-                    '0' => ':global',
-                  ),
-                  'to' => array(
-                    '0' => ':global',
-                  ),
-                ),
-              ),
-            ),
-            '#name' => 'rules_action_mail',
-            '#info' => array(
-              'label' => 'Send a mail to an arbitrary mail address',
-              'module' => 'System',
-              'eval input' => array(
-                '0' => 'subject',
-                '1' => 'message',
-                '2' => 'from',
-                '3' => 'to',
-              ),
-            ),
           ),
         ),
         '#version' => 6003,

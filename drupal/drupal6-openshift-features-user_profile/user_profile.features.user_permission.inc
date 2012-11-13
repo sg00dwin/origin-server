@@ -442,7 +442,8 @@ function user_profile_user_default_permissions() {
     'name' => 'create author content',
     'roles' => array(
       '0' => 'administrator',
-      '1' => 'moderator',
+      '1' => 'blogger',
+      '2' => 'moderator',
     ),
   );
 
@@ -643,7 +644,8 @@ function user_profile_user_default_permissions() {
     'name' => 'delete own author content',
     'roles' => array(
       '0' => 'administrator',
-      '1' => 'moderator',
+      '1' => 'blogger',
+      '2' => 'moderator',
     ),
   );
 
@@ -1110,7 +1112,8 @@ function user_profile_user_default_permissions() {
     'name' => 'edit own author content',
     'roles' => array(
       '0' => 'administrator',
-      '1' => 'moderator',
+      '1' => 'blogger',
+      '2' => 'moderator',
     ),
   );
 
@@ -1572,8 +1575,9 @@ function user_profile_user_default_permissions() {
       '0' => 'administrator',
       '1' => 'anonymous user',
       '2' => 'authenticated user',
-      '3' => 'doc content owner',
-      '4' => 'moderator',
+      '3' => 'blogger',
+      '4' => 'doc content owner',
+      '5' => 'moderator',
     ),
   );
 
@@ -1584,8 +1588,9 @@ function user_profile_user_default_permissions() {
       '0' => 'administrator',
       '1' => 'anonymous user',
       '2' => 'authenticated user',
-      '3' => 'doc content owner',
-      '4' => 'moderator',
+      '3' => 'blogger',
+      '4' => 'doc content owner',
+      '5' => 'moderator',
     ),
   );
 
