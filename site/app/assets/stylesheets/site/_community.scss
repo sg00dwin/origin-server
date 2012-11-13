@@ -708,6 +708,104 @@ html.js fieldset.collapsible .fieldset-wrapper {
   }
 }
 
+/* Events list */
+.view-event-view .views-row {border:0}
+
+.event-listings .event-date {
+  font-size: 20px;
+  font-weight: bold;
+  text-align: center;
+  font-family: Overpass;
+  color: #9f9f9f;
+  box-shadow: 0 0 1px #888888;
+  width: 52px; 
+  height: 52px; 
+  background: #fcfcfc; 
+  background: linear-gradient(bottom, #eaeaea 0%, #afafaf 100%); 
+  background: -moz-linear-gradient(bottom, #eaeaea 0%, #afafaf 100%); 
+  background: -webkit-linear-gradient(bottom, #eaeaea 0%, #afafaf 100%); 
+  border-radius: 3px;
+  -moz-border-radius: 3px;
+  -webkit-border-radius: 3px;
+  text-shadow: 1px 1px 6px #EEEEEE, 0 0 0 #DDDDDD;
+  float: left; 
+  /* Internet Explorer */
+  filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=3);
+}
+.event-listings .event-date span {
+  display: block;
+}
+.event-listings .event-date b {
+  display: block;
+  font-size: 12.5px;
+  font-weight: normal;
+  background: #D10000;
+   background: linear-gradient(center top , #a1000c 0%, #D10000 100%); /* $openshiftDarkRed to  */
+   background: -moz-linear-gradient(center top , #a1000c 0%, #D10000 100%); 
+   background: -webkit-linear-gradient(center top , #a1000c 0%, #D10000 100%); 
+    border-radius: 3px 3px 0 0;
+    border-bottom: 2px solid #A1000C;
+    color: #FFFFFF;
+    display: block;
+    padding: 3px 0 0;
+    margin-bottom: 6px;
+    text-transform: uppercase;
+    text-shadow: none;
+}
+.event-listings h3:not(.title) {
+  margin-top: 15px;
+  margin-left: 15px;
+}
+.event-listings h3.title, 
+.event-listings .views-field-group-location, 
+.event-listings .slug {
+  display: block;
+  margin-left: 80px;
+}
+.event-listings .views-field-group-location span {
+  font-size: 110%;
+}
+.nav-pills .active > a, .nav-pills .active > a:hover {
+  background-color: #ededed;
+  text-decoration: none;
+  color: #006699;
+}
+.nav-pills .active > a:hover {
+  color: #ea0011;
+}
+.field-content {
+  font-size: 15px;
+  font-weight: 300; 
+}
+.slug {
+  margin: 10px 0;
+}
+
+/* Event detail */
+.related-logo {
+  max-width: 200px;
+  max-height: 200px;
+  margin-right: 10%;
+  margin-left: 10px;
+}
+
+.event-metadata {
+  border-bottom: 1px solid #CCCCCC;
+    color: #999999;
+    margin-bottom: 15px;
+    padding-bottom: 10px;
+    position: relative; 
+}
+
+.events-post .event-date {
+  color: #404040; /* $baseFontColor */
+  margin-bottom: 0;
+}
+
+.add-calendar {
+  margin-left: 15px;
+}
+
 .forum-header-hat, .forum-header-right {display: none;}
 
 
