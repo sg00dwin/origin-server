@@ -8,8 +8,8 @@
 
 Summary:   OpenShift Site Rails application
 Name:      rhc-site
-Version: 1.1.3
-Release:   2%{?dist}
+Version: 1.1.4
+Release:   1%{?dist}
 Group:     Network/Daemons
 License:   ASL 2.0
 URL:       http://openshift.redhat.com
@@ -143,6 +143,16 @@ rm -rf %{buildroot}
 %{sitedir}/public
 
 %changelog
+* Tue Nov 13 2012 Adam Miller <admiller@redhat.com> 1.1.4-1
+- Styled the events list by country, sync date and country views, ical feed
+  improvements (ffranz@redhat.com)
+- Improved styling for events list (ffranz@redhat.com)
+- Added more data to the iCal feed, added iCal link, improved tabs styling in
+  the events list page (ffranz@redhat.com)
+- Improved Events page with better styles, logo upload, venue info, etc
+  (ffranz@redhat.com)
+- New Events section styles, added event detail page (ffranz@redhat.com)
+
 * Mon Nov 12 2012 Adam Miller <admiller@redhat.com> 1.1.3-2
 - bump site.spec Release: for fake chain-build with console
   (admiller@redhat.com)
