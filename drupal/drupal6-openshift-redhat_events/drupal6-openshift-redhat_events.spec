@@ -5,7 +5,7 @@
 %global modname             redhat_events
 
 Name:    drupal%{drupal_release}-openshift-%{modname}
-Version: 1.4.1
+Version: 1.4.2
 Release: 1%{?dist}
 Summary: Openshift Red Hat Events Custom Module for Drupal6
 Group:   Applications/Publishing
@@ -41,6 +41,21 @@ rm -rf $RPM_BUILD_ROOT
 %{drupal_modules}/%{modname}
 
 %changelog
+* Tue Nov 13 2012 Adam Miller <admiller@redhat.com> 1.4.2-1
+- Fixes BZ875635, reordered events fields (ffranz@redhat.com)
+- Fixes BZ875616 (link to internal events in the events calendar view)
+  (ffranz@redhat.com)
+- Updated Events Drupal Feature (sync permissions, new fields, etc)
+  (ffranz@redhat.com)
+- Styled the events list by country, sync date and country views, ical feed
+  improvements (ffranz@redhat.com)
+- Improved styling for events list (ffranz@redhat.com)
+- Added more data to the iCal feed, added iCal link, improved tabs styling in
+  the events list page (ffranz@redhat.com)
+- Events ICS/ICAL feed (ffranz@redhat.com)
+- Events RSS feed (ffranz@redhat.com)
+- New Events section styles, added event detail page (ffranz@redhat.com)
+
 * Wed Jul 11 2012 Adam Miller <admiller@redhat.com> 1.4.1-1
 - bump_minor_versions for sprint 15 (admiller@redhat.com)
 
