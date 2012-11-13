@@ -38,10 +38,17 @@ module OpenShiftMigration
     libra_home = '/var/lib/openshift' #node_config.get_value('libra_dir')
     libra_server = get_config_value('BROKER_HOST')
     libra_domain = get_config_value('CLOUD_DOMAIN')
-    gear_home = "#{libra_home}/#{uuid}"
-    gear_name = Util.get_env_var_value(gear_home, "OPENSHIFT_GEAR_NAME")
-    app_name = Util.get_env_var_value(gear_home, "OPENSHIFT_APP_NAME")
+    gear_name = nil
+    app_name = nil
     output = ''
+    gear_home = "#{libra_home}/#{uuid}"
+    begin
+      gear_name = Util.get_env_var_value(gear_home, "OPENSHIFT_GEAR_NAME")
+      app_name = Util.get_env_var_value(gear_home, "OPENSHIFT_APP_NAME")
+    rescue Errno::ENOENT
+      return "***acceptable_error_env_vars_not_found={\"gear_uuid\":\"#{uuid}\"}***\n", 0
+    end
+    
     exitcode = 0
     env_echos = []
 

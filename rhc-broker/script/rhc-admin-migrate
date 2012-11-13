@@ -186,7 +186,7 @@ def restart_component(gear, component, out)
         rescue Exception => e
           if i == num_tries
             out << "Failed to restart component '#{component.name}' on gear with uuid '#{gear.uuid}' on node '#{gear.server_identity}' after #{num_tries} tries with exception: #{e.message}\n"
-            raise
+            out << "***acceptable_error_restart_component={\"gear_uuid\":\"#{gear.uuid}\",\"component_name\":\"#{component.name}\",\"server_identity\":\"#{gear.server_identity}\",\"login\":\"#{gear.app.user.login}\",\"app_name\":\"#{gear.app.name}\"}***\n"
           end
         end
       end
@@ -240,12 +240,12 @@ def redeploy_aliases(gear, out)
   end
 end
 
-def add_to_timings(timings, more_timings)
-  more_timings.each do |topic, time_in_millis|
-    if timings[topic]
-      timings[topic] += time_in_millis
+def add_to(stuffs, more_stuffs)
+  more_stuffs.each do |topic, stuff|
+    if stuffs[topic]
+      stuffs[topic] += stuff
     else
-      timings[topic] = time_in_millis
+      stuffs[topic] = stuff
     end
   end
 end
@@ -322,13 +322,15 @@ def migrate(version, continue=false, target_server_identity=nil, migrate_positio
   gear_cnts = []
   mutex = Mutex.new
   timings = {}
+  acceptable_errors = {}
   starting_nodes = node_queue.shift($max_threads)
   starting_nodes.each_with_index do |node, index|
     server_identity = node[:server_identity]
     gear_cnts[index] = node[:gears_length]
     node_threads << Thread.new do
-      node_timings = migrate_node(server_identity, continue)
-      add_to_timings(timings, node_timings)
+      node_timings, node_acceptable_errors = migrate_node(server_identity, continue)
+      add_to(timings, node_timings)
+      add_to(acceptable_errors, node_acceptable_errors)
       # Get the next available node to process
       server_identity = nil
       mutex.synchronize do
@@ -343,8 +345,9 @@ def migrate(version, continue=false, target_server_identity=nil, migrate_positio
         end
       end
       if server_identity
-        node_timings = migrate_node(server_identity, continue)
-        add_to_timings(timings, node_timings)
+        node_timings, node_acceptable_errors = migrate_node(server_identity, continue)
+        add_to(timings, node_timings)
+        add_to(acceptable_errors, node_acceptable_errors)
       end
     end
   end
@@ -352,8 +355,10 @@ def migrate(version, continue=false, target_server_identity=nil, migrate_positio
   node_threads.each do |t|
     t.join
   end
+  
+  total_time = (Time.now.to_f * 1000).to_i - start_time
 
-  if @failures.length > 0
+  unless @failures.empty?
     puts "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
     puts "Failures:"
     @failures.each do |failure|
@@ -374,8 +379,14 @@ def migrate(version, continue=false, target_server_identity=nil, migrate_positio
       puts ""
     end
   end
-
-  total_time = (Time.now.to_f * 1000).to_i - start_time
+  
+  unless acceptable_errors.empty?
+    puts "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
+    puts "Acceptable Errors:"
+    pp acceptable_errors
+    puts "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
+    puts ""
+  end
   
   puts "#####################################################"
   puts "Summary:"
@@ -439,18 +450,22 @@ def migrate_node(server_identity, continue)
   end
   file = File.open(log_file, "r")
   timings = {}
+  acceptable_errors = {}
   begin
     while (line = file.readline)
       if line =~ /\*\*\*time_(.*)=(\d+)\*\*\*/
         timings[$1] = 0 unless timings[$1]
         timings[$1] += $2.to_i
+      elsif line =~ /\*\*\*acceptable_error_(.*)=(.+)\*\*\*/
+        acceptable_errors[$1] = [] unless acceptable_errors[$1]
+        acceptable_errors[$1] << $2
       end
       print line
     end
   rescue EOFError
     file.close
   end
-  return timings
+  return timings, acceptable_errors
 end
 
 def migrate_from_file(file)
