@@ -2,7 +2,7 @@
 
 Summary:       Multi-tenant cloud management system node tools
 Name:          rhc-node
-Version: 1.1.3
+Version: 1.1.4
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -225,6 +225,16 @@ fi
 
 
 %changelog
+* Tue Nov 13 2012 Adam Miller <admiller@redhat.com> 1.1.4-1
+- Merge pull request #585 from brenton/BZ874587 (openshift+bot@redhat.com)
+- Merge pull request #598 from rmillner/BZ875910 (openshift+bot@redhat.com)
+- add acceptable errors category (dmcphers@redhat.com)
+- better strings (dmcphers@redhat.com)
+- Remove duplicate script. (rmillner@redhat.com)
+- Add additional timings for migrations (dmcphers@redhat.com)
+- Bug 874587 - CLOUD_NAME in /etc/openshift/node.conf does not work
+  (bleanhar@redhat.com)
+
 * Mon Nov 12 2012 Adam Miller <admiller@redhat.com> 1.1.3-1
 - Old copy of this file was not deleted when it moved to origin.
   (rmillner@redhat.com)
