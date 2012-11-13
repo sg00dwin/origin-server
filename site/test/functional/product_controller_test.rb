@@ -15,6 +15,9 @@ class ProductControllerTest < ActionController::TestCase
     assert_select "script", :minimum => 1 do |elements|
       assert elements.any?{ |e| e['src'].ends_with?('/status.js?id=outage') }
     end
+    assert_select "ul.news.unstyled > li", :minimum => 1
+    assert_select "#buzz #buzz-retweets .tweet", :minimum => 1
+    assert_select "#buzz #buzz-tweets .tweet", :minimum => 1
   end
 
   test "should get index authorized" do

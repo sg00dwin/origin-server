@@ -1,6 +1,9 @@
 class ProductController < SiteController
 
   def index
+    @posts = BlogPost.cached.frontpage.first(3) rescue []
+    @tweets = Tweet.cached.openshift_tweets.first(4) rescue []
+    @retweets = Tweet.cached.openshift_retweets.first(4) rescue []
   end
 
   def not_found
