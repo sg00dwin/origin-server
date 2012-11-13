@@ -302,6 +302,69 @@ function blogs_content_default_fields() {
     ),
   );
 
+  // Exported field: field_search_meta_description
+  $fields['blog-field_search_meta_description'] = array(
+    'field_name' => 'field_search_meta_description',
+    'type_name' => 'blog',
+    'display_settings' => array(
+      'weight' => '31',
+      'parent' => '',
+      '2' => array(
+        'format' => 'default',
+        'exclude' => 0,
+      ),
+      '3' => array(
+        'format' => 'default',
+        'exclude' => 1,
+      ),
+      '4' => array(
+        'format' => 'default',
+        'exclude' => 1,
+      ),
+      'label' => array(
+        'format' => 'hidden',
+      ),
+      'teaser' => array(
+        'format' => 'default',
+        'exclude' => 1,
+      ),
+      'full' => array(
+        'format' => 'hidden',
+        'exclude' => 1,
+      ),
+      'token' => array(
+        'format' => 'default',
+        'exclude' => 0,
+      ),
+    ),
+    'widget_active' => '1',
+    'type' => 'text',
+    'required' => '0',
+    'multiple' => '0',
+    'module' => 'text',
+    'active' => '1',
+    'text_processing' => '0',
+    'max_length' => '150',
+    'allowed_values' => '',
+    'allowed_values_php' => '',
+    'widget' => array(
+      'rows' => 5,
+      'size' => '60',
+      'default_value' => array(
+        '0' => array(
+          'value' => '',
+          '_error_element' => 'default_value_widget][field_search_meta_description][0][value',
+        ),
+      ),
+      'default_value_php' => NULL,
+      'label' => 'Search Description (META)',
+      'weight' => '32',
+      'description' => 'This value will become the search metadata field in the HEAD of this page.',
+      'type' => 'text_textfield',
+      'module' => 'text',
+    ),
+  );
+
   // Exported field: field_summary
   $fields['blog-field_summary'] = array(
     'field_name' => 'field_summary',
@@ -372,6 +435,7 @@ function blogs_content_default_fields() {
   t('Author Image');
   t('Author Profession Title');
   t('Image Upload');
+  t('Search Description (META)');
   t('Summary');
 
   return $fields;

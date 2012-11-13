@@ -442,7 +442,8 @@ function user_profile_user_default_permissions() {
     'name' => 'create author content',
     'roles' => array(
       '0' => 'administrator',
-      '1' => 'moderator',
+      '1' => 'blogger',
+      '2' => 'moderator',
     ),
   );
 
@@ -643,7 +644,8 @@ function user_profile_user_default_permissions() {
     'name' => 'delete own author content',
     'roles' => array(
       '0' => 'administrator',
-      '1' => 'moderator',
+      '1' => 'blogger',
+      '2' => 'moderator',
     ),
   );
 
@@ -1069,6 +1071,17 @@ function user_profile_user_default_permissions() {
     ),
   );
 
+  // Exported permission: edit field_summary
+  $permissions['edit field_summary'] = array(
+    'name' => 'edit field_summary',
+    'roles' => array(
+      '0' => 'administrator',
+      '1' => 'blogger',
+      '2' => 'moderator',
+      '3' => 'page author',
+    ),
+  );
+
   // Exported permission: edit field_video_subtitle
   $permissions['edit field_video_subtitle'] = array(
     'name' => 'edit field_video_subtitle',
@@ -1110,7 +1123,8 @@ function user_profile_user_default_permissions() {
     'name' => 'edit own author content',
     'roles' => array(
       '0' => 'administrator',
-      '1' => 'moderator',
+      '1' => 'blogger',
+      '2' => 'moderator',
     ),
   );
 
@@ -1572,8 +1586,9 @@ function user_profile_user_default_permissions() {
       '0' => 'administrator',
       '1' => 'anonymous user',
       '2' => 'authenticated user',
-      '3' => 'doc content owner',
-      '4' => 'moderator',
+      '3' => 'blogger',
+      '4' => 'doc content owner',
+      '5' => 'moderator',
     ),
   );
 
@@ -1584,8 +1599,9 @@ function user_profile_user_default_permissions() {
       '0' => 'administrator',
       '1' => 'anonymous user',
       '2' => 'authenticated user',
-      '3' => 'doc content owner',
-      '4' => 'moderator',
+      '3' => 'blogger',
+      '4' => 'doc content owner',
+      '5' => 'moderator',
     ),
   );
 
@@ -1806,6 +1822,16 @@ function user_profile_user_default_permissions() {
     'roles' => array(
       '0' => 'administrator',
       '1' => 'moderator',
+    ),
+  );
+
+  // Exported permission: view field_summary
+  $permissions['view field_summary'] = array(
+    'name' => 'view field_summary',
+    'roles' => array(
+      '0' => 'administrator',
+      '1' => 'anonymous user',
+      '2' => 'authenticated user',
     ),
   );
 
