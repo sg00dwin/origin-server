@@ -3,10 +3,3 @@
 [ ! -z "$LI_CONTROLLER_LIB_EXT" ] && return 0
 LI_CONTROLLER_LIB_EXT=true
 
-function enable_stale_detection {
-    rm -f "${APP_HOME}/.disable_stale"
-}
-
-function disable_stale_detection {
-    touch "${APP_HOME}/.disable_stale"
-}
