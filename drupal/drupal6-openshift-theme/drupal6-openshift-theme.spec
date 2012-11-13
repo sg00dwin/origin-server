@@ -5,7 +5,7 @@
 %global drupal_themename    openshift-theme
 
 Name:           drupal6-%{drupal_themename}
-Version: 3.9.1
+Version: 3.9.2
 Release:        1%{?dist}
 Summary:        Red Hat Openshift theme for Drupal %{drupal_release}
 
@@ -44,6 +44,17 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
+* Tue Nov 13 2012 Adam Miller <admiller@redhat.com> 3.9.2-1
+- Styled the events list by country, sync date and country views, ical feed
+  improvements (ffranz@redhat.com)
+- Improved styling for events list (ffranz@redhat.com)
+- Added more data to the iCal feed, added iCal link, improved tabs styling in
+  the events list page (ffranz@redhat.com)
+- Events RSS feed (ffranz@redhat.com)
+- Improved Events page with better styles, logo upload, venue info, etc
+  (ffranz@redhat.com)
+- New Events section styles, added event detail page (ffranz@redhat.com)
+
 * Thu Nov 01 2012 Adam Miller <admiller@redhat.com> 3.9.1-1
 - bump_minor_versions for sprint 20 (admiller@redhat.com)
 
