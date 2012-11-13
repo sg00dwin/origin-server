@@ -73,7 +73,6 @@ mv %{buildroot}%{brokerdir}/script/rhc-admin-cartridge-do %{buildroot}/%{_bindir
 mv %{buildroot}%{brokerdir}/script/rhc-admin-migrate %{buildroot}/%{_bindir}
 mv %{buildroot}%{brokerdir}/script/rhc-admin-ctl-usage %{buildroot}/%{_bindir}
 mv %{buildroot}%{brokerdir}/script/rhc-admin-ctl-plan %{buildroot}/%{_bindir}
-mv %{buildroot}%{brokerdir}/script/rhc-admin-chk %{buildroot}/%{_bindir}
 mv %{buildroot}%{brokerdir}/script/rhc-admin-stale-dns %{buildroot}/%{_bindir}
 
 cp conf/broker.conf %{buildroot}/etc/openshift/
@@ -98,7 +97,6 @@ rm -rf $RPM_BUILD_ROOT
 %attr(0750,-,-) %{brokerdir}/script
 %{brokerdir}
 %{htmldir}/broker
-%attr(0750,-,-) %{_bindir}/rhc-admin-chk
 %attr(0750,-,-) %{_bindir}/rhc-admin-cartridge-do
 %attr(0750,-,-) %{_bindir}/rhc-admin-migrate
 %attr(0750,-,-) %{_bindir}/rhc-admin-ctl-usage
