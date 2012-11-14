@@ -8,7 +8,7 @@
 
 Summary:   Dependencies for OpenShift development
 Name:      rhc-devenv
-Version: 1.1.4
+Version: 1.1.5
 Release:   1%{?dist}
 Group:     Development/Libraries
 License:   GPLv2
@@ -660,6 +660,20 @@ restorecon /etc/openshift/node.conf || :
 /sbin/service libra-data restart > /dev/null 2>&1 || :
 
 %changelog
+* Wed Nov 14 2012 Adam Miller <admiller@redhat.com> 1.1.5-1
+- Merge pull request #612 from smarterclayton/us3046_quickstarts_and_app_types
+  (openshift+bot@redhat.com)
+- Merge remote-tracking branch 'origin/master' into
+  us3046_quickstarts_and_app_types (ccoleman@redhat.com)
+- Merge remote-tracking branch 'origin/master' into
+  us3046_quickstarts_and_app_types (ccoleman@redhat.com)
+- Disable reusing a pooled connection so as to avoid the 502 proxy error during
+  test runs when PHP apps are created (ccoleman@redhat.com)
+- Disable template generation and installation during the build
+  (ccoleman@redhat.com)
+- US3046 - Implement quickstarts in drupal and react to changes in console
+  (ccoleman@redhat.com)
+
 * Wed Nov 14 2012 Adam Miller <admiller@redhat.com> 1.1.4-1
 - Merge pull request #614 from danmcp/master (openshift+bot@redhat.com)
 - migration efficiency changes (dmcphers@redhat.com)
