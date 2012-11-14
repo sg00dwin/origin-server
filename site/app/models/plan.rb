@@ -7,6 +7,9 @@ class Plan < RestApi::Base
   end
   custom_id :id
 
+  class Capability < RestApi::Base; end
+  has_one :capabilities, :class_name => 'plan/capability'
+
   def basic?
     id == 'freeshift'
   end
