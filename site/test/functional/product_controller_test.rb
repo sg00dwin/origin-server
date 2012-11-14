@@ -36,4 +36,16 @@ class ProductControllerTest < ActionController::TestCase
     get(:index, {}, {:login => "test", :ticket => "test" })
     assert :success
   end
+
+  test "should be able to fetch tweets" do
+    begin 
+      assert tweets = Tweet.openshift_tweets
+      assert tweets.length > 0
+
+      assert tweets = Tweet.openshift_retweets
+      assert tweets.length > 0
+    rescue ActiveResource::BadRequest
+      omit("Twitter is rejecting requests because of rate limits")
+    end
+  end
 end
