@@ -143,6 +143,10 @@ rm -rf %{buildroot}
 %{sitedir}/public
 
 %changelog
+* Wed Nov 14 2012 Adam Miller <admiller@redhat.com> 1.1.6-2
+- bump site.spec Release: for fake chain-build with console
+  (admiller@redhat.com)
+
 * Wed Nov 14 2012 Adam Miller <admiller@redhat.com> 1.1.6-1
 - Merge pull request #612 from smarterclayton/us3046_quickstarts_and_app_types
   (openshift+bot@redhat.com)
