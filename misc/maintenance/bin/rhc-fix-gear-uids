@@ -4,10 +4,10 @@ require 'rubygems'
 require 'getoptlong'
 require "/var/www/openshift/broker/config/environment"
 
-users = CloudUser.find_all(nil)
 
 mongo_hash = {}
-users.each { |user|
+users = CloudUser.find_all(nil) { |hash|
+  user = CloudUser.hash_to_obj(hash)
   user.applications.each { |app|
     app.group_instances.uniq.each { |gi|
       gi.gears.each { |gear|
