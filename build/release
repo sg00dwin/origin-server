@@ -143,24 +143,9 @@ class Release < Thor
         inside(working_dir) do
           puts "Tagging #{build_dir}"
 
-          if ['rhc'].include?(File.basename(build_dir))
-            # packages that have versioning steps
-            version = /^(Version: )(.*)/.match(File.read(Dir['*.spec'][0]))[2].strip
-            next_version = next_patch_version(version)
-            if run("rake version['#{next_version}'] && git add .", :verbose => options.verbose?)
-              unless run('tito tag --accept-auto-changelog')
-                tag_failures << build_dir
-              end
-            else
-              run('git reset HEAD --hard')
-              puts '  Unable to set the version number for this package.'
-              requires_rebuild << build_dir
-            end
-          else
-            # packages without versioning steps
-            unless run('tito tag --accept-auto-changelog')
-              tag_failures << build_dir
-            end
+          # packages without versioning steps
+          unless run('tito tag --accept-auto-changelog')
+            tag_failures << build_dir
           end
 
           puts "Done"
@@ -344,7 +329,6 @@ class Release < Thor
         new_version = next_minor_version(version)
         if new_version
           run("/bin/sed -i 's,^Version:.*,Version: #{new_version},' #{spec_file}", :verbose => options.verbose?)
-          inside(File.dirname(spec_file)){ run('rake version') } if package_name == 'rhc'
         end
       end
       if options.push_changes?
