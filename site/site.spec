@@ -8,7 +8,7 @@
 
 Summary:   OpenShift Site Rails application
 Name:      rhc-site
-Version: 1.1.5
+Version: 1.1.6
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   ASL 2.0
@@ -143,6 +143,16 @@ rm -rf %{buildroot}
 %{sitedir}/public
 
 %changelog
+* Wed Nov 14 2012 Adam Miller <admiller@redhat.com> 1.1.6-1
+- Merge pull request #612 from smarterclayton/us3046_quickstarts_and_app_types
+  (openshift+bot@redhat.com)
+- Merge remote-tracking branch 'origin/master' into
+  us3046_quickstarts_and_app_types (ccoleman@redhat.com)
+- Plan capabilities were not decaching correctly (ccoleman@redhat.com)
+- Attempt to resolve issues with test race conditions (ccoleman@redhat.com)
+- US3046 - Implement quickstarts in drupal and react to changes in console
+  (ccoleman@redhat.com)
+
 * Wed Nov 14 2012 Adam Miller <admiller@redhat.com> 1.1.5-1
 - Merge pull request #606 from smarterclayton/bug_874916_bad_url_helpers
   (dmcphers@redhat.com)
