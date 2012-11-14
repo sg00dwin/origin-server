@@ -12,4 +12,7 @@ module CommunityHelper
     community_base_url 'get-started/zend'
   end
 
+  def red_hat_account_url
+    'https://www.redhat.com/wapps/ugc'
+  end
 end
