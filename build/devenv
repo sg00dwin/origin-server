@@ -845,22 +845,6 @@ popd > /dev/null
 rm -rf #{working_dirs}
 #{options.clean_metadata? ? "yum update -y --exclude='rhc-devenv' rhc-* *openshift* 2>&1;" : ''}
 
-#{options.clean_metadata? ? "
-#### FIXME -- THIS IS A HACK AND SHOULD NOT STAY HERE LONG
-#### This destroys the templates
-query=\"db.template.find({},{'_id':true}).forEach(function(x){print(x['_id']);});\"
-
-while read uuid 
-do
-  oo-admin-ctl-template -c remove -u $uuid
-done < <(mongo openshift_broker_dev --quiet --eval \"$query\")
-
-#### This creates the templates
-pushd /usr/lib/openshift/broker/application_templates/
-  ruby templates/deploy.rb
-popd
-" : ''}
-
 # End shell code
 ################
 }, 900, true)

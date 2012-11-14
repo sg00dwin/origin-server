@@ -114,7 +114,8 @@ Broker::Application.configure do
     :domain_suffix => conf.get("CLOUD_DOMAIN", "dev.rhcloud.com"),
     :default_max_gears => (conf.get("DEFAULT_MAX_GEARS", "3")).to_i,
     :default_gear_size => conf.get("DEFAULT_GEAR_SIZE", "small"),
-    :gear_sizes => conf.get("VALID_GEAR_SIZES", "small,medium,c9").split(",")
+    :gear_sizes => conf.get("VALID_GEAR_SIZES", "small,medium,c9").split(","),
+    :community_quickstarts_url => conf.get('COMMUNITY_QUICKSTARTS_URL'),
   }
   
   config.auth = {

@@ -19,7 +19,6 @@ class ActionController::TestCase
 
   def set_user(user)
     session[:login] = user.login
-    session[:user] = user
     session[:ticket] = user.ticket
     session[:streamline_type] = user.streamline_type if user.respond_to? :streamline_type
     super

@@ -3,7 +3,8 @@
 :cartridge: jbosseap-6.0
 :tags:
 - :java
-- :jboss
+- :JBoss
+- :Spring
 - :framework
 - :experimental
 :metadata:
