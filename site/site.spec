@@ -8,7 +8,7 @@
 
 Summary:   OpenShift Site Rails application
 Name:      rhc-site
-Version: 1.1.4
+Version: 1.1.5
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   ASL 2.0
@@ -143,6 +143,14 @@ rm -rf %{buildroot}
 %{sitedir}/public
 
 %changelog
+* Wed Nov 14 2012 Adam Miller <admiller@redhat.com> 1.1.5-1
+- Merge pull request #606 from smarterclayton/bug_874916_bad_url_helpers
+  (dmcphers@redhat.com)
+- Add account helper back (ccoleman@redhat.com)
+- Bug 874916 - A number of community URL helpers were duplicated
+  (ccoleman@redhat.com)
+- Bug 876017 - Mark rh_sso httponly (ccoleman@redhat.com)
+
 * Tue Nov 13 2012 Adam Miller <admiller@redhat.com> 1.1.4-1
 - Styled the events list by country, sync date and country views, ical feed
   improvements (ffranz@redhat.com)
