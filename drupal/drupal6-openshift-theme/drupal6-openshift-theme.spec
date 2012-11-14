@@ -5,7 +5,7 @@
 %global drupal_themename    openshift-theme
 
 Name:           drupal6-%{drupal_themename}
-Version: 3.9.2
+Version: 3.9.3
 Release:        1%{?dist}
 Summary:        Red Hat Openshift theme for Drupal %{drupal_release}
 
@@ -44,6 +44,10 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
+* Wed Nov 14 2012 Adam Miller <admiller@redhat.com> 3.9.3-1
+- Merge pull request #602 from sg00dwin/master (openshift+bot@redhat.com)
+- newsletter link change (sgoodwin@redhat.com)
+
 * Tue Nov 13 2012 Adam Miller <admiller@redhat.com> 3.9.2-1
 - Styled the events list by country, sync date and country views, ical feed
   improvements (ffranz@redhat.com)
