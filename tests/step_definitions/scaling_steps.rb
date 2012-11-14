@@ -79,13 +79,20 @@ Then /^the gear members will be (UP|DOWN)$/ do |state|
   assert_equal 0, found, "Could not find valid gear"
 end
 
-Then /^(\d+) gears will be in the cluster$/ do |expected|
+Then /^(at least )?(\d+) gears will be in the cluster$/ do |fuzzy, expected|
   expected = expected.to_i
   actual = 0
 
+  gear_test = lambda { | expected, actual| return actual != expected }
+
+  if fuzzy
+    gear_test = lambda { |expected, actual| return actual < expected }
+  end
+
+
   host = "'Host: #{@app.name}-#{@app.namespace}.dev.rhcloud.com'"
   OpenShift::timeout(300) do
-    while actual != expected
+    while gear_test.call(expected, actual)
       sleep 1
 
       $logger.debug("============ GEAR CSV #{Process.pid} ============")
@@ -94,10 +101,11 @@ Then /^(\d+) gears will be in the cluster$/ do |expected|
       $logger.debug("============ GEAR CSV END ============")
 
       actual = results.split("\n").find_all {|l| l.start_with?('express,gear')}.length()
-      $logger.debug("Gear count: waiting for #{actual} to be #{expected}")
+      $logger.debug("Gear count: waiting for #{actual} to be #{'at least ' if fuzzy}#{expected}")
     end
   end
-  assert_equal expected, actual
+
+  assert_equal false, gear_test.call(expected, actual)
 end
 
 Then /^the ([\w\-\.]+) health\-check will( not)? be successful$/ do |type, negate|
@@ -187,4 +195,8 @@ Then /^the operation is( not)? allowed$/ do |negate|
   else
     $rest_exit_code.should == 0
   end
+end
+
+When /^the global httpd is restarted$/ do
+   `service httpd restart`
 end
