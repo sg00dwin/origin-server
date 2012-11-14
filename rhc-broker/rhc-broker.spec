@@ -3,7 +3,7 @@
 
 Summary:   Li broker components
 Name:      rhc-broker
-Version: 1.1.5
+Version: 1.1.6
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -133,6 +133,16 @@ if [ ! -f %{_localstatedir}/log/openshift/user_action.log ]; then
 fi
 
 %changelog
+* Wed Nov 14 2012 Adam Miller <admiller@redhat.com> 1.1.6-1
+- Merge pull request #612 from smarterclayton/us3046_quickstarts_and_app_types
+  (openshift+bot@redhat.com)
+- Merge remote-tracking branch 'origin/master' into
+  us3046_quickstarts_and_app_types (ccoleman@redhat.com)
+- Add quickstarts to broker (ccoleman@redhat.com)
+- Add Quickstart config to build (ccoleman@redhat.com)
+- US3046 - Implement quickstarts in drupal and react to changes in console
+  (ccoleman@redhat.com)
+
 * Wed Nov 14 2012 Adam Miller <admiller@redhat.com> 1.1.5-1
 - Merge pull request #614 from danmcp/master (openshift+bot@redhat.com)
 - migration efficiency changes (dmcphers@redhat.com)
