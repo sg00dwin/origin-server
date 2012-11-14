@@ -10,7 +10,7 @@
 Summary:        OpenShift plugin for Dynect DNS service
 
 Name:           rubygem-%{gem_name}
-Version: 1.1.1
+Version: 1.1.2
 Release:        1%{?dist}
 Group:          Development/Languages
 License:        ASL 2.0
@@ -80,6 +80,11 @@ rm -rf %{buildroot}
 /etc/openshift/plugins.d/openshift-origin-dns-dynect-dev.conf
 
 %changelog
+* Wed Nov 14 2012 Adam Miller <admiller@redhat.com> 1.1.2-1
+- Fixing gemspecs (kraman@gmail.com)
+- Moving plugins to Rails 3.2.8 engines (kraman@gmail.com)
+- sclizing gems (dmcphers@redhat.com)
+
 * Thu Nov 08 2012 Adam Miller <admiller@redhat.com> 1.1.1-1
 - Bumping specs to at least 1.1 (dmcphers@redhat.com)
 - ruby 1.9 changes (dmcphers@redhat.com)
