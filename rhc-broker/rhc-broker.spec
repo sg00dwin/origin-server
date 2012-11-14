@@ -3,7 +3,7 @@
 
 Summary:   Li broker components
 Name:      rhc-broker
-Version: 1.1.6
+Version: 1.1.7
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -133,6 +133,10 @@ if [ ! -f %{_localstatedir}/log/openshift/user_action.log ]; then
 fi
 
 %changelog
+* Wed Nov 14 2012 Adam Miller <admiller@redhat.com> 1.1.7-1
+- Merge pull request #616 from danmcp/master (dmcphers@redhat.com)
+- add additional gem deps (dmcphers@redhat.com)
+
 * Wed Nov 14 2012 Adam Miller <admiller@redhat.com> 1.1.6-1
 - Merge pull request #612 from smarterclayton/us3046_quickstarts_and_app_types
   (openshift+bot@redhat.com)
