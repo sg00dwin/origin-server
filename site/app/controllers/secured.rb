@@ -127,6 +127,7 @@ module Secured
       cookies[:rh_sso] = {
         :value => user.ticket,
         :secure => true,
+        :httponly => true,
         :path => '/',
         :domain => sso_cookie_domain,
       }
