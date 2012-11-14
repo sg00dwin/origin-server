@@ -130,7 +130,7 @@ pushd $DEV_TOOLS_EXT_REPO
 build/devenv clone_addtl_repos $BRANCH --replace
 
 set +e
-  build/devenv build ${IMAGE_NAME} ${BUILD_NUMBER} --register --official --terminate --yum_repo=$YUM_REPO --branch=$BRANCH
+  build/devenv build ${IMAGE_NAME} ${BUILD_NUMBER} --register --official --terminate --yum_repo=$YUM_REPO --branch=$BRANCH ${INSTALL_FROM_SOURCE+--install_from_source}
   RESULT=$?
 set -e
 
