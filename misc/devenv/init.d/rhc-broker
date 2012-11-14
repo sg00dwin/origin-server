@@ -41,7 +41,7 @@ OPTIONS="-C 'Include /var/www/openshift/broker/httpd/broker.conf' -f /var/www/op
 start() {
         pushd /var/www/openshift/broker > /dev/null
           rm -rf Gemfile.lock
-          bundle install --local > /dev/null
+          scl enable ruby193 "bundle install --local" > /dev/null
         popd > /dev/null
         echo -n $"Starting $prog: "
         LANG=$HTTPD_LANG daemon --pidfile=${pidfile} $httpd $OPTIONS

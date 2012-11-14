@@ -36,7 +36,7 @@ pushd li
 build/devenv launch devenv_coverage_${BUILD_NUMBER} --verifier
 
 # Run the tests
-build/devenv test devenv_coverage_${BUILD_NUMBER} --include_rcov --terminate
+build/devenv test devenv_coverage_${BUILD_NUMBER} --include_coverage --terminate
 
 popd</command>
     </hudson.tasks.Shell>

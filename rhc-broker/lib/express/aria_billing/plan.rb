@@ -19,7 +19,7 @@ module Express
       end
 
       def valid_plan(plan_id)
-        @plans.keys.include?(plan_id)
+        @plans.keys.include?(plan_id.to_sym)
       end
 
       def get_plan_id_from_plan_no(plan_no)

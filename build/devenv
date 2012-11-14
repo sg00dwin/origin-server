@@ -315,7 +315,7 @@ module Express
       end
 
       def update_cucumber_tests(hostname, repo_parent_dir="/root", user="root")
-        ssh(hostname, "cp -n #{repo_parent_dir}/openshift-test/controller/test/cucumber/*.feature #{repo_parent_dir}/openshift-test/tests/. ", 60, false, 2, user)
+        ssh(hostname, "cp -n #{repo_parent_dir}/openshift-test/controller/test/cucumber/*.feature #{repo_parent_dir}/openshift-test/tests/.; mkdir -p #{repo_parent_dir}/openshift-test/broker/tmp/cache; mkdir -p #{repo_parent_dir}/openshift-test/rhc-broker/tmp/cache ", 60, false, 2, user)
       end
 
       def setup_verifier(hostname, branch)
@@ -433,7 +433,7 @@ module Express
                 test_queues[1] << ["Extended Runtime Group 2", "cucumber #{CUCUMBER_OPTIONS} -t @runtime_extended2 openshift-test/tests"]
                 test_queues[2] << ["Extended Runtime Group 3", "cucumber #{CUCUMBER_OPTIONS} -t @runtime_extended3 openshift-test/tests"]
               when 'site'
-                test_queues[0] << ["Site Extended", "cd openshift-test/site; scl enable ruby193 \"rake test:extended\""]
+                test_queues[0] << ["Site Extended", "cd openshift-test/site; rake test:extended"]
               when 'rhc'
                 test_queues[0] << ["RHC Extended", "cucumber #{CUCUMBER_OPTIONS} -t @rhc_extended openshift-test/tests", {:retry_individually => true}]
                 test_queues[0] << ["RHC Integration", "QUIET=1 RHC_SERVER=localhost cucumber #{CUCUMBER_OPTIONS} openshift-test/rhc/features", {:retry_individually => true}]
@@ -539,15 +539,15 @@ module Express
             end
 
             unless options.exclude_site?
-              test_queues[0] << ["Site Check Applications",         'cd openshift-test/site; scl enable ruby193 "rake test:check:applications"']
-              test_queues[1].unshift ["Site Check Base",            'cd openshift-test/site; scl enable ruby193 "rake test:check:base"']
-              test_queues[1] << ["Site Check Cartridges",           'cd openshift-test/site; scl enable ruby193 "rake test:check:cartridges"']
-              test_queues[2] << ["Site Check Miscellaneous 1",      'cd openshift-test/site; scl enable ruby193 "rake test:check:misc1"']
-              test_queues[3] << ["Site Check REST API Integration", 'cd openshift-test/site; scl enable ruby193 "rake test:check:restapi_integration"']
+              test_queues[0] << ["Site Check Applications",         'cd openshift-test/site; rake test:check:applications']
+              test_queues[1].unshift ["Site Check Base",            'cd openshift-test/site; rake test:check:base']
+              test_queues[1] << ["Site Check Cartridges",           'cd openshift-test/site; rake test:check:cartridges']
+              test_queues[2] << ["Site Check Miscellaneous 1",      'cd openshift-test/site; rake test:check:misc1']
+              test_queues[3] << ["Site Check REST API Integration", 'cd openshift-test/site; rake test:check:restapi_integration']
             end
 
             unless options.exclude_rhc?
-                test_queues[0].unshift(["RHC Spec", 'cd openshift-test/rhc; scl enable ruby193 "bundle install && bundle exec rake spec"'])
+                test_queues[0].unshift(["RHC Spec", 'cd openshift-test/rhc; bundle install && bundle exec rake spec'])
             end
           end
 
@@ -742,7 +742,7 @@ rm -rf /tmp/tito; mkdir -p /root/.source_build;
               end
             elsif options.install_required_packages?
               puts "Installing bootstrap packages..."
-              output, exit_code = ssh(hostname, "yum -y install git tito ruby rubygems rubygem-thor rubygem-parseconfig rubygem-json rubygem-aws-sdk createrepo yum-priorities", 600, true)
+              output, exit_code = ssh(hostname, "yum -y install git tito ruby rubygems rubygem-thor rubygem-parseconfig rubygem-json rubygem-aws-sdk ruby193-rubygem-thor ruby193-rubygem-parseconfig ruby193-rubygem-json ruby193-rubygem-aws-sdk scl-utils-build createrepo yum-priorities", 600, true)
               print_highlighted_output('Install Bootstrap Packages Output', output)
               exit 1 unless exit_code == 0
               puts "Done"

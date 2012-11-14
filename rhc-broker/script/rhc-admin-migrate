@@ -2,7 +2,6 @@
 require 'rubygems'
 require 'pp'
 require 'thread'
-require 'thread-dump'
 require 'getoptlong'
 require 'stringio'
 require 'set'
