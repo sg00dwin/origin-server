@@ -5,8 +5,11 @@ Given /^there are no templates$/ do
 end
 
 When /^I add a new template named '([^\']*)' with dependencies: '([^\']*)' and git repository '([^\']*)' and tags '([^\']*)' consuming (\d+) gear and metadata '([^\']*)'$/ do |display_name, dependencies, git_url, tags, num_gears, metadata|
-  dependencies = dependencies.split(",").map{ |dep| "  - #{dep}\n"}
-  output = `oo-admin-ctl-template -c add -n "#{display_name}" -d "Requires: \n#{dependencies}\nSubscribes:\n  doc-root:\n    Type: \"FILESYSTEM:doc-root\"" -g #{git_url} -t#{tags} --cost #{num_gears} -m '#{metadata}'`
+  requires = "Requires:\n"
+  dependencies.split(",").each do |dep|
+    requires += "  - #{dep}\n"
+  end
+  output = `oo-admin-ctl-template -c add -n "#{display_name}" -d "#{requires}Subscribes:\n  doc-root:\n    Type: \"FILESYSTEM:doc-root\"" -g #{git_url} -t#{tags} --cost #{num_gears} -m '#{metadata}'`
   @template_uuid = output.split(" ")[1]
 end
 
@@ -103,6 +106,7 @@ end
 When /^I create a new application named '([^\']*)' within domain '([^\']*)' with the template$/ do |app, domain|
   domain = sub_random(domain)
   payload = {"name" => app, "template" => @template_uuid}
+    
   url = @base_url + "/domains/#{domain}/applications"
   @app_url = "http://#{app}-#{domain}.dev.rhcloud.com"
   print "Post to #{url} values #{payload.to_json} User #{@username}\n"

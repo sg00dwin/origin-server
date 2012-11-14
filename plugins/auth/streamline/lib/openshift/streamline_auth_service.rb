@@ -10,7 +10,7 @@ module OpenShift
     class StreamlineAuthService < OpenShift::AuthService
       def initialize
         super
-
+        
         service_base_url = defined?(Rails) ? Rails.configuration.auth[:auth_service][:host] + Rails.configuration.auth[:auth_service][:base_url] : ""
         @@login_url = URI.parse(service_base_url + "/login.html")
         @@roles_url = URI.parse(service_base_url + "/cloudVerify.html")

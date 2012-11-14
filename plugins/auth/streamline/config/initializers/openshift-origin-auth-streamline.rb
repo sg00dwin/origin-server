@@ -17,7 +17,7 @@ Broker::Application.configure do
     config.auth[:token_login_key] = conf.get("TOKEN_LOGIN_KEY", "rhlogin").to_sym
     config.auth[:auth_service]    = {
       :host     => conf.get("AUTH_SERVICE_HOST", "https://streamline-proxy1.ops.rhcloud.com"),
-      :base_url => conf.get("AUTH_SERVICE_BASE_URL", "/wapps/streamline"),
+      :base_url => conf.get("AUTH_SERVICE_BASE_URL", "/wapps/streamline")
     }
   end
 end

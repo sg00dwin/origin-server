@@ -41,12 +41,7 @@ pushd li
 
 build/devenv clone_addtl_repos master --replace
 
-if $INSTALL_FROM_SOURCE
-then
-  build/devenv build devenv ${BUILD_NUMBER} --register --official --terminate --install_from_source
-else
-  build/devenv build devenv ${BUILD_NUMBER} --register --official --terminate
-fi
+build/devenv build devenv ${BUILD_NUMBER} --register --official --terminate ${INSTALL_FROM_SOURCE+--install_from_source}
 
 popd</command>
     </hudson.tasks.Shell>
