@@ -55,13 +55,8 @@ class MongoDataStoreTest < ActiveSupport::TestCase
       uid = ds.reserve_district_uid(uuid)
     end
     
-    caught_exception = false
-    begin
-      uid = ds.reserve_district_uid(uuid)
-    rescue Exception => e
-      caught_exception = true
-    end
-    assert(caught_exception)
+    uid = ds.reserve_district_uid(uuid)
+    assert(uid.nil?)
     
     ds.unreserve_district_uid(uuid, 1)
     d = ds.find_district(uuid)
