@@ -8,7 +8,7 @@
 
 Summary:   Dependencies for OpenShift development
 Name:      rhc-devenv
-Version: 1.1.3
+Version: 1.1.4
 Release:   1%{?dist}
 Group:     Development/Libraries
 License:   GPLv2
@@ -678,6 +678,15 @@ restorecon /etc/openshift/node.conf || :
 /sbin/service libra-data restart > /dev/null 2>&1 || :
 
 %changelog
+* Wed Nov 14 2012 Adam Miller <admiller@redhat.com> 1.1.4-1
+- Merge pull request #614 from danmcp/master (openshift+bot@redhat.com)
+- migration efficiency changes (dmcphers@redhat.com)
+- fix aria tests (dmcphers@redhat.com)
+- Fixing gemspecs (kraman@gmail.com)
+- sclizing gems (dmcphers@redhat.com)
+- Fix for Bug 876100 (jhonce@redhat.com)
+- Fix for Bug 873543 (jhonce@redhat.com)
+
 * Mon Nov 12 2012 Adam Miller <admiller@redhat.com> 1.1.3-1
 - Missed a few locations to update the UID. (rmillner@redhat.com)
 - trying again (bdecoste@gmail.com)
