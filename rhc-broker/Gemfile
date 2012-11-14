@@ -4,12 +4,15 @@ gem 'rails', '~> 3.2.8'
 
 gem 'json'
 gem 'parseconfig'
+gem 'bson'
+gem 'bson_ext'
 
 gem 'openshift-origin-controller'
 
 group :development do
   gem 'minitest'
   gem 'simplecov'
+  gem 'test-unit'
   gem 'mocha'
 end
 
