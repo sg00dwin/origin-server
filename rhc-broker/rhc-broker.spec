@@ -3,7 +3,7 @@
 
 Summary:   Li broker components
 Name:      rhc-broker
-Version: 1.1.4
+Version: 1.1.5
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -131,6 +131,15 @@ if [ ! -f %{_localstatedir}/log/openshift/user_action.log ]; then
 fi
 
 %changelog
+* Wed Nov 14 2012 Adam Miller <admiller@redhat.com> 1.1.5-1
+- Merge pull request #614 from danmcp/master (openshift+bot@redhat.com)
+- migration efficiency changes (dmcphers@redhat.com)
+- fix aria tests (dmcphers@redhat.com)
+- Fixing gemspecs (kraman@gmail.com)
+- Moving plugins to Rails 3.2.8 engines (kraman@gmail.com)
+- sclizing gems (dmcphers@redhat.com)
+- Bug 873349 (dmcphers@redhat.com)
+
 * Tue Nov 13 2012 Adam Miller <admiller@redhat.com> 1.1.4-1
 - Merge pull request #599 from ramr/master (openshift+bot@redhat.com)
 - add acceptable errors category (dmcphers@redhat.com)
