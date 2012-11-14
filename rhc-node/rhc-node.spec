@@ -2,7 +2,7 @@
 
 Summary:       Multi-tenant cloud management system node tools
 Name:          rhc-node
-Version: 1.1.4
+Version: 1.1.5
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -231,6 +231,17 @@ fi
 
 
 %changelog
+* Wed Nov 14 2012 Adam Miller <admiller@redhat.com> 1.1.5-1
+- Merge pull request #610 from danmcp/ruby19 (openshift+bot@redhat.com)
+- Merge pull request #611 from ramr/master (openshift+bot@redhat.com)
+- Merge pull request #603 from rmillner/inhibitidler (dmcphers@redhat.com)
+- sclizing gems (dmcphers@redhat.com)
+- Merge pull request #596 from jwhonce/master (openshift+bot@redhat.com)
+- Fix for bugz 874454 - can't install bzr. Add missing dependencies.
+  (ramr@redhat.com)
+- Finish moving stale disable to Origin. (rmillner@redhat.com)
+- Fix for Bug 873543 (jhonce@redhat.com)
+
 * Tue Nov 13 2012 Adam Miller <admiller@redhat.com> 1.1.4-1
 - Merge pull request #585 from brenton/BZ874587 (openshift+bot@redhat.com)
 - Merge pull request #598 from rmillner/BZ875910 (openshift+bot@redhat.com)
