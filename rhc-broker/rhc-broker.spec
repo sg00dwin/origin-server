@@ -44,6 +44,7 @@ Requires:  ruby193-rubygem-systemu
 Requires:  ruby193-rubygem-dnsruby
 Requires:  ruby193-rubygem-bigdecimal
 Requires:  ruby193-rubygem-state_machine
+Requires:  ruby193-rubygem-minitest
 
 BuildArch: noarch
 
