@@ -2,7 +2,7 @@
 
 Summary:       Multi-tenant cloud management system node tools
 Name:          rhc-node
-Version: 1.1.5
+Version: 1.1.6
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -231,6 +231,9 @@ fi
 
 
 %changelog
+* Thu Nov 15 2012 Adam Miller <admiller@redhat.com> 1.1.6-1
+- more ruby 1.9 changes (dmcphers@redhat.com)
+
 * Wed Nov 14 2012 Adam Miller <admiller@redhat.com> 1.1.5-1
 - Merge pull request #610 from danmcp/ruby19 (openshift+bot@redhat.com)
 - Merge pull request #611 from ramr/master (openshift+bot@redhat.com)
