@@ -8,8 +8,8 @@
 
 Summary:   OpenShift Site Rails application
 Name:      rhc-site
-Version: 1.1.6
-Release:   2%{?dist}
+Version: 1.1.7
+Release:   1%{?dist}
 Group:     Network/Daemons
 License:   ASL 2.0
 URL:       http://openshift.redhat.com
@@ -143,6 +143,18 @@ rm -rf %{buildroot}
 %{sitedir}/public
 
 %changelog
+* Thu Nov 15 2012 Adam Miller <admiller@redhat.com> 1.1.7-1
+- Can't search community content from the 404 page, no form action or input
+  name (ccoleman@redhat.com)
+- Merge pull request #604 from
+  smarterclayton/deliver_content_to_mainpage_from_community
+  (openshift+bot@redhat.com)
+- Handle test failures due to twitter rate limits (ccoleman@redhat.com)
+- Mock twitter so as to prevent rate limit test failures (ccoleman@redhat.com)
+- Content should be loaded from the community for the blogs section on the
+  site, and tweets should be loaded via a better caching mechanism
+  (ccoleman@redhat.com)
+
 * Wed Nov 14 2012 Adam Miller <admiller@redhat.com> 1.1.6-2
 - bump site.spec Release: for fake chain-build with console
   (admiller@redhat.com)
