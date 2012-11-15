@@ -3,7 +3,7 @@
 
 Summary:   Li broker components
 Name:      rhc-broker
-Version: 1.1.7
+Version: 1.1.8
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -134,6 +134,18 @@ if [ ! -f %{_localstatedir}/log/openshift/user_action.log ]; then
 fi
 
 %changelog
+* Thu Nov 15 2012 Adam Miller <admiller@redhat.com> 1.1.8-1
+- take out test-unit (dmcphers@redhat.com)
+- more ruby 1.9 changes (dmcphers@redhat.com)
+- Merge pull request #621 from danmcp/master (dmcphers@redhat.com)
+- added ruby193-rubygem-minitest to rhc-site (admiller@redhat.com)
+- Merge pull request #615 from rajatchopra/us3069 (dmcphers@redhat.com)
+- Merge pull request #619 from rmillner/BZ876712 (dmcphers@redhat.com)
+- Bug 876459 (dmcphers@redhat.com)
+- Add "git" to the list of blacklisted app names. (rmillner@redhat.com)
+- process the timezone to pacific time for nurture last access stamps
+  (rchopra@redhat.com)
+
 * Wed Nov 14 2012 Adam Miller <admiller@redhat.com> 1.1.7-1
 - Merge pull request #616 from danmcp/master (dmcphers@redhat.com)
 - add additional gem deps (dmcphers@redhat.com)
