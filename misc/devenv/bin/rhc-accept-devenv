@@ -1,4 +1,4 @@
-#!/usr/bin/ruby
+#!/usr/bin/env ruby
 
 output = `rhc-accept-node`
 exit_code = $?
