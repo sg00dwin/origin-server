@@ -94,11 +94,10 @@ class AccountUpgradesController < ApplicationController
       # :postal_code
       full_user_params[:postal_code] = user_params[:aria_billing_info][:zip]
 
-      # Build the updated FullUser object
-      @full_user = user.full_user(full_user_params, false)
+      @full_user = Streamline::FullUser.new(full_user_params)
 
       # Attempt to promote
-      render :edit and return unless user.promote()
+      render :edit and return unless @full_user.promote(user)
     end
 
     user.extend Aria::User

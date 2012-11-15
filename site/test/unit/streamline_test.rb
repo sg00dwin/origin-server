@@ -58,7 +58,7 @@ class StreamlineUnitTest < ActiveSupport::TestCase
     body = {"test" => "test2"}.to_json
     assert_not_nil @streamline.send(:parse_body, body)
   end
-  
+
   test "should raise when parse malformed JSON" do
     assert_raise(MultiJson::DecodeError){ @streamline.send(:parse_body, "{json: 'foo'") }
   end
@@ -549,8 +549,8 @@ class StreamlineUnitTest < ActiveSupport::TestCase
     # Now promote the user
     assert user_info = full_user_args
     assert user_info[:intentionally_invalid_key] = 'foo'
-    assert @streamline.full_user(user_info, false)
-    assert_equal true, @streamline.promote
+    assert @streamline.full_user(user_info)
+    assert_equal true, @streamline.full_user.promote(@streamline)
 
     # Now ensure that the user was promoted
     assert_equal true, @streamline.full_user?

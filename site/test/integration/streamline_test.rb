@@ -112,8 +112,8 @@ class StreamlineIntegrationTest < ActionDispatch::IntegrationTest
     assert user.confirm_email
     assert user.simple_user?
     assert user_args = full_user_args(user)
-    assert user.full_user(user_args, false)
-    unless user.promote
+    assert user.full_user(user_args)
+    unless user.full_user.promote(user)
       omit('Streamline did not successfully promote a user, environment may be down')
     else
       assert user.full_user?
@@ -130,14 +130,14 @@ class StreamlineIntegrationTest < ActionDispatch::IntegrationTest
     assert user_args = full_user_args(user)
     assert user.full_user(user_args)
     Rails.configuration.streamline[:user_info_secret].reverse!
-    assert_raise(Streamline::PromoteInvalidSecretKey){ user.promote }
+    assert_raise(Streamline::PromoteInvalidSecretKey){ user.full_user.promote(user) }
     Rails.configuration.streamline[:user_info_secret].reverse!
 
     # Mismatched password / confirm case
     assert user_args = full_user_args(user)
     assert user_args[:password_confirmation] = user_args[:password].reverse
-    assert user.full_user(user_args, false)
-    assert_equal false, user.promote
+    assert user.full_user(user_args)
+    assert_equal false, user.full_user.promote(user)
     assert_equal 1, user.full_user.errors[:base].count
 
     # Individual missing required field cases
@@ -146,16 +146,15 @@ class StreamlineIntegrationTest < ActionDispatch::IntegrationTest
       # Skip special fields and non-required fields
       next if [:email_subscribe, :login, :password, :password_confirmation, :state].include?(field)
       assert user_args = full_user_args(user, [field])
-      assert user.full_user(user_args, false)
-      assert_equal false, user.promote
-      assert_equal 1, user.full_user.errors[:base].count
+      assert user.full_user(user_args)
+      assert_equal false, user.full_user.promote(user)
       assert_equal 1, user.full_user.errors.get(field).count
     end
 
     # Multiple missing required fields
     assert user_args = full_user_args(user, [:first_name, :last_name, :company])
-    assert user.full_user(user_args, false)
-    assert_equal false, user.promote
+    assert user.full_user(user_args)
+    assert_equal false, user.full_user.promote(user)
     assert_equal 3, user.full_user.errors[:base].count
   end
 

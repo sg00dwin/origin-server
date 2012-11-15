@@ -392,53 +392,35 @@ module Streamline
       not roles.include?('cloud_access_1') and roles.include?('cloud_access_request_1')
     end
 
-    def full_user(args={}, persisted=false)
-      # Compute if there is no current full user object, or if
-      # we've got arguments for an update
+    def full_user(args={})
       if @full_user.nil? or args.keys.any?
         if self.full_user? and not args.keys.any?
-          # If the user is already a full streamline user,
-          # build the FullUser object with the details from streamline.
-
-          # TODO: Streamline does not currently support
-          #       reporting on full users via userInfo.
-          #       The code below _should_ work when that
-          #       support is added, but map_args_to_full_user
-          #       may need to be revised.
-
-          # http_post(user_info_url, { 'login' => @rhlogin, 'secretKey' => Rails.configuration.streamline[:user_info_secret] }) do |json|
-          #   @full_user = Streamline::FullUser.new map_args_to_full_user(json), true
-          # end
-
           # TODO: This returns a blank for now; remove this when userInfo
           #       functions for full users.
           @full_user = Streamline::FullUser.new
         elsif args.keys.any?
-          # If this user was just promoted, we can build the FullUser object from the
-          # same arguments without making another API call.
-          @full_user = Streamline::FullUser.new args, persisted
+          @full_user = Streamline::FullUser.new args
         elsif @full_user.nil?
-          # Otherwise get an empty full user object
           @full_user = Streamline::FullUser.new
         end
       end
       @full_user
     end
 
-    def promote
+    def promote(streamline_hash)
       # Post to the promote URL
-      http_post(promote_user_url, self.full_user.to_streamline_hash) do |response|
-        self.full_user.parse_json_errors(response)
+      http_post(promote_user_url, streamline_hash) do |response|
+        if response.has_key? 'errors'
+          self.full_user.errors_to_attributes(response['errors']).each do |error|
+            self.errors.add(:base, error)
+          end
+        end
       end
 
-      # Bail out if we hit any errors.
-      return false if self.full_user.errors.count > 0
+      return false if self.full_user.errors[:base].count > 0
 
-      # Still here? Re-compute user type.
       streamline_type!
 
-      # If everything is good, promote full_user to populate the @full_user object
-      self.full_user.promote if self.full_user?
       self.full_user?
     end
 

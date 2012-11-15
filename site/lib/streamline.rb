@@ -31,4 +31,6 @@ module Streamline
   # The secretKey used for an API transaction was incorrect
   class PromoteInvalidSecretKey < StreamlineException; end
 
+  # The attr_streamline method was called incorrectly
+  class FullUserClassError < StreamlineException; end
 end
