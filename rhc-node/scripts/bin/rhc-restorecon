@@ -1,4 +1,4 @@
-#!/usr/bin/ruby
+#!/usr/bin/env ruby
 
 # Purpose: Chcon /var/lib/openshift to proper mcs contexts
 #
