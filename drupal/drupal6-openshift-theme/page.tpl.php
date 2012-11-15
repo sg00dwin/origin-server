@@ -256,7 +256,7 @@
     <script language="JavaScript" type="text/javascript"><!--
     /* You may give each page an identifying name, server, and channel on
     the next lines. */
-    s.pageName="<?php if($node): echo $node->type . ' | ' . $node->name ?> |<?php endif; ?> openshift | community | <?php print $head_title; ?>"
+    s.pageName="openshift | community | <?php print $head_title; ?>"
     s.server=""
     s.channel="<?php if($product): ?>OpenShift | Product | <?php print $product; ?><?php endif; ?>"
     s.heir1=""
