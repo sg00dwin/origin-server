@@ -5,7 +5,7 @@
 %global drupal_themename    openshift-theme
 
 Name:           drupal6-%{drupal_themename}
-Version: 3.9.3
+Version: 3.9.4
 Release:        1%{?dist}
 Summary:        Red Hat Openshift theme for Drupal %{drupal_release}
 
@@ -44,6 +44,10 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
+* Thu Nov 15 2012 Adam Miller <admiller@redhat.com> 3.9.4-1
+- Bug 873781 - Do not output extra info about the user in Drupal omniture
+  (ccoleman@redhat.com)
+
 * Wed Nov 14 2012 Adam Miller <admiller@redhat.com> 3.9.3-1
 - Merge pull request #602 from sg00dwin/master (openshift+bot@redhat.com)
 - newsletter link change (sgoodwin@redhat.com)
