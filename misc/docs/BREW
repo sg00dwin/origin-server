@@ -1,0 +1,21 @@
+Brew hierarchy
+==============
+rhel-6-libra-build
+├─rhel-6-libra-override
+│ └─rhel-6-libra-candidate
+│ └─rhel-6-libra
+└─RHEL-6-build
+└─RHEL-6.0-Z-build
+└─RHEL-6.0-Z-override
+└─RHEL-6.0-Z
+└─RHEL-6.0
+
+Mash
+====
+In order to pull the files out of brew you'll need to yum install mash, then
+run:
+
+sudo cp misc/li-mash.conf /etc/mash/
+sudo cp misc/libra-rhel-* /etc/mash/
+
+Make sure you have write access to /var/cache/mash
