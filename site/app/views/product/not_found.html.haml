@@ -55,8 +55,8 @@
         - @alternatives.each do |alt|
           %li= link_to alt[0], alt[1], alt[2] || {}
 
-    %form.form-search
-      %input.search
+    %form.form-search{:method => :get, :action => community_search_url}
+      %input.search{:name => 'keys'}
       %input.btn.btn-primary{:type => 'button', :value => 'Search'}
 
     %p= link_to "Return to our homepage.", root_path
