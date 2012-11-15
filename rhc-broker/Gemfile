@@ -12,7 +12,6 @@ gem 'openshift-origin-controller'
 group :development do
   gem 'minitest'
   gem 'simplecov'
-  gem 'test-unit'
   gem 'mocha'
 end
 
