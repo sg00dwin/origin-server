@@ -33,8 +33,8 @@ function redhat_not_found() {
   $content = ' <section class="row">
                   <div class="span12">
                     <h2>The page you requested may no longer exist</h2>
-                    <form class="form-search">
-                      <input class="search">
+                    <form class="form-search" action="'.url('search').'" method="get">
+                      <input class="search" name="keys">
                       <input class="btn btn-primary" value="Search" type="button">
                     </form>
                     <p><a href="/">Return to our homepage.</a></p>
