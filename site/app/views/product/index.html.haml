@@ -17,88 +17,104 @@
 
 - content_for :sub_layout do
 
-  #learn.section-striped.lift-counter
-    .container.container-inset
-      .row
-        = take_action new_account_path, 'Get started in the cloud', 'SIGN UP - IT\'S FREE', :class => 'span12'
-  
-        .span6
-          %ul.learn.unstyled
-            %li.scale
-              = link_to product_overview_path(:anchor => 'scale'), :class => 'link-tile' do
-                %img{:src => image_path('scale.png')}
-                %h4 Java, Ruby, Node.js, Python, PHP, or Perl
-                %p Code in your favorite language, framework, and middleware.  Grow your applications easily with resource scaling.
-            %li.time
-              = link_to product_overview_path(:anchor => 'code'), :class => 'link-tile' do
-                %img{:src => image_path('time.png')}
-                %h4 Super Fast!
-                %p Code and deploy to the cloud in minutes.  Faster and easier than it has ever been.
-            %li.locked
-              = link_to product_overview_path(:anchor => 'open'), :class => 'link-tile' do
-                %img{:src => image_path('lock.png')}
-                %h4 No Lock-In
-                %p Built on open technologies so you can take it with you.
-        .span6
-          %ul.news.unstyled
-            %li 
-              =link_to community_zend_get_started_url, :class => 'link-tile' do
-                %h4 Deploy PHP apps with Zend Server
-                %p Zend Server is now available on OpenShift! With Zend Server you get a certified PHP stack with code optimization, data caching and debugging built-in.
-            %li
-              = link_to application_types_path, :class => 'link-tile' do
-                %h4 Build your apps with JBoss EAP 6
-                %p Market-leading open source enterprise platform for next-generation, highly transactional enterprise Java applications.  Build and deploy enterprise Java on OpenShift!
-            %li
-              = link_to developers_url, :class => 'link-tile' do
-                %h4 Find answers in the Developer Center
-                %p Building applications involves lots of questions and we want you to find those answers fast.  The new Developer Center will centralize and organize all our reference material.
+  - cache 'product_body', :expires_in => 10.minutes do
+    - Rails.logger.debug "Render body"
+    #learn.section-striped.lift-counter
+      .container.container-inset
+        .row
+          = take_action new_account_path, 'Get started in the cloud', 'SIGN UP - IT\'S FREE', :class => 'span12'
 
-      .row
-        .span6
-          %p.gutter= link_to "Learn about OpenShift", product_overview_path, :class => 'action-more'
-        .span6
-          %p.gutter= link_to "Read the OpenShift blog", openshift_blog_url, :class => 'action-more'
-  
-  #buzz.section-base
-    .container
-      .row.row-buzz.lift
-        .span12
-          .column-buzz
-            %h2 
-              Check the 
-              %strong Buzz
-            %hr
-            .row-fluid
-              -#.span6 #disabled for now
-                %blockquote
-                  %p OpenShift has dramatically improved my cloud experience. Managing my application is so much easier, I haven't had any problems dealing with usage spikes, and its security and scalability really help my peace of mind.
-                  %small Some person
-                %blockquote 
-                  %p OpenShift has dramatically improved my cloud experience. Managing my application is so much easier, I haven't had any problems dealing with usage spikes, and its security and scalability really help my peace of mind.
-                  %small Some other person
-              -# move to server side
-              #buzz-twitter-2.span5
-              .span1 &nbsp;
-              #buzz-twitter.span6
-  
-            .row-fluid.buzz-actions
-              .span6
-                = link_to community_url, :class => 'link-with-action' do
-                  %strong Join
-                  our community
-              .span6
-                .align-right
-                  = link_to openshift_twitter_url, :class => 'link-with-action' do
-                    %strong Follow
-                    OpenShift
-                .align-right
-                  = link_to openshift_twitter_hashtag_url, :class => 'link-with-action' do
-                    %strong More
-                    = "#OpenShift buzz"
-  
-            -#.callout disabled for this sprint, will eventually pull latest events
-              .one Look for team
-              .two OpenShift
-              .three at Mongo DB
+          .span6
+            %ul.learn.unstyled
+              %li.scale
+                = link_to product_overview_path(:anchor => 'scale'), :class => 'link-tile' do
+                  %img{:src => image_path('scale.png')}
+                  %h4 Java, Ruby, Node.js, Python, PHP, or Perl
+                  %p Code in your favorite language, framework, and middleware.  Grow your applications easily with resource scaling.
+              %li.time
+                = link_to product_overview_path(:anchor => 'code'), :class => 'link-tile' do
+                  %img{:src => image_path('time.png')}
+                  %h4 Super Fast!
+                  %p Code and deploy to the cloud in minutes.  Faster and easier than it has ever been.
+              %li.locked
+                = link_to product_overview_path(:anchor => 'open'), :class => 'link-tile' do
+                  %img{:src => image_path('lock.png')}
+                  %h4 No Lock-In
+                  %p Built on open technologies so you can take it with you.
+
+            %p.gutter= link_to "Learn about OpenShift", product_overview_path, :class => 'action-more'
+
+          .span6
+            - if @posts.present?
+              %ul.news.unstyled
+                - @posts.each do |blog|
+                  %li
+                    =link_to blog.href, :class => 'link-tile' do
+                      - unless blog.summary =~ /<h[1-4]>/
+                        %h4= blog.title
+                      = blog.summary.html_safe
+                      %aside Posted #{blog.date.to_s(:pretty_date)}
+            - else
+              %ul.news.unstyled
+                %li 
+                  =link_to community_zend_get_started_url, :class => 'link-tile' do
+                    %h4 Deploy PHP apps with Zend Server
+                    %p Zend Server is now available on OpenShift! With Zend Server you get a certified PHP stack with code optimization, data caching and debugging built-in.
+                %li
+                  = link_to application_types_path, :class => 'link-tile' do
+                    %h4 Build your apps with JBoss EAP 6
+                    %p Market-leading open source enterprise platform for next-generation, highly transactional enterprise Java applications.  Build and deploy enterprise Java on OpenShift!
+                %li
+                  = link_to developers_url, :class => 'link-tile' do
+                    %h4 Find answers in the Developer Center
+                    %p Building applications involves lots of questions and we want you to find those answers fast.  The new Developer Center will centralize and organize all our reference material.
+
+            %p.gutter= link_to "Read the OpenShift blog", openshift_blog_url, :class => 'action-more'
+
+    #buzz.section-base
+      .container
+        .row.row-buzz.lift
+          .span12
+            .column-buzz
+              %h2 
+                Check the 
+                %strong Buzz
+              %hr
+              .row-fluid
+                -#.span6 #disabled for now
+                  %blockquote
+                    %p OpenShift has dramatically improved my cloud experience. Managing my application is so much easier, I haven't had any problems dealing with usage spikes, and its security and scalability really help my peace of mind.
+                    %small Some person
+                  %blockquote 
+                    %p OpenShift has dramatically improved my cloud experience. Managing my application is so much easier, I haven't had any problems dealing with usage spikes, and its security and scalability really help my peace of mind.
+                    %small Some other person
+                -# move to server side
+                #buzz-tweets.span5
+                  - @tweets.each do |t|
+                    .tweet
+                      %p= tweet(t)
+                      %small= t.user.name
+                .span1 &nbsp;
+                #buzz-retweets.span6
+                  - @retweets.each do |t|
+                    - t = t.retweeted_status rescue t
+                    .tweet
+                      %img{:src => t.user.profile_image_url_https}
+                      %p= tweet(t)
+                      %small= t.user.name
+
+              .row-fluid.buzz-actions
+                .span6
+                  = link_to community_url, :class => 'link-with-action' do
+                    %strong Join
+                    our community
+                .span6
+                  .align-right
+                    = link_to openshift_twitter_url, :class => 'link-with-action' do
+                      %strong Follow
+                      OpenShift
+                  .align-right
+                    = link_to openshift_twitter_hashtag_url, :class => 'link-with-action' do
+                      %strong More
+                      = "#OpenShift buzz"
 

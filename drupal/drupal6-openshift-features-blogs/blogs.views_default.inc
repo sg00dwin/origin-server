@@ -2702,7 +2702,7 @@ function blogs_views_default_views() {
         'word_boundary' => 1,
         'ellipsis' => 1,
         'html' => 0,
-        'strip_tags' => 0,
+        'strip_tags' => 1,
       ),
       'empty' => '',
       'hide_empty' => 0,
@@ -2902,9 +2902,26 @@ function blogs_views_default_views() {
       'field' => 'status',
       'relationship' => 'none',
     ),
-    'name' => array(
+    'promote' => array(
       'operator' => '=',
-      'value' => 'frontpage',
+      'value' => '1',
+      'group' => '0',
+      'exposed' => FALSE,
+      'expose' => array(
+        'operator' => FALSE,
+        'label' => '',
+      ),
+      'id' => 'promote',
+      'table' => 'node',
+      'field' => 'promote',
+      'override' => array(
+        'button' => 'Use default',
+      ),
+      'relationship' => 'none',
+    ),
+    'field_summary_value' => array(
+      'operator' => 'not empty',
+      'value' => '',
       'group' => '0',
       'exposed' => FALSE,
       'expose' => array(
@@ -2912,10 +2929,10 @@ function blogs_views_default_views() {
         'label' => '',
         'optional' => FALSE,
       ),
-      'case' => 1,
-      'id' => 'name',
-      'table' => 'term_data',
-      'field' => 'name',
+      'case' => 0,
+      'id' => 'field_summary_value',
+      'table' => 'node_data_field_summary',
+      'field' => 'field_summary_value',
       'override' => array(
         'button' => 'Use default',
       ),

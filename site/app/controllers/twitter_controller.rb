@@ -63,7 +63,7 @@ class TwitterController < ApplicationController
     end
     json
   end
-  
+
   def twitter_get(url_path)
     url = URI.parse('http://api.twitter.com/1/statuses/' + url_path)
     req = Net::HTTP::Get.new(url.path + '?' + url.query)
