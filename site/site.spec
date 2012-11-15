@@ -143,6 +143,10 @@ rm -rf %{buildroot}
 %{sitedir}/public
 
 %changelog
+* Thu Nov 15 2012 Adam Miller <admiller@redhat.com> 1.1.7-2
+- bump site.spec Release: for fake chain-build with console
+  (admiller@redhat.com)
+
 * Thu Nov 15 2012 Adam Miller <admiller@redhat.com> 1.1.7-1
 - Can't search community content from the 404 page, no form action or input
   name (ccoleman@redhat.com)
