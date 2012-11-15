@@ -13,7 +13,7 @@ Given /^an accepted node$/ do
         puts "Exit status = #{exit_status}" if exit_status != 0
       end
     
-      exit_status.should be(0)
+      exit_status.should eq(0)
       pass.should == "PASS"
       break
     rescue Exception => e
