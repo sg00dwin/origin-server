@@ -62,7 +62,8 @@ class BrokerController < ApplicationController
             rescue
               raise Exception.new("Invalid format for access_time '#{gear_data["access_time"]}'. Needs to be %d/%b/%Y:%H:%M:%S %Z")
             end
-            access_time = time_object.strftime("%Y-%m-%d %H:%M:%S")
+            # Nurture stores everything in Pacific Time
+            access_time = time_object.in_time_zone("Pacific Time (US & Canada)").strftime("%Y-%m-%d %H:%M:%S")
             app, gear = Application::find_by_gear_uuid(gear_uuid)
             raise Exception.new("Invalid gear uuid #{gear_uuid}") if app.nil?
             app_data = { "app_uuid" => app.uuid, "column_name" => "last_accessed_at", "column_value" => access_time }
