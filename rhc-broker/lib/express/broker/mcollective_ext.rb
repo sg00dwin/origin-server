@@ -58,7 +58,7 @@ module OpenShift
 
     NONO = %w(amentra aop apiviz arquillian blacktie boxgrinder byteman cirras
             cloud cloudforms cygwin davcache dogtag drools drools ejb3 errai
-            esb fedora freeipa gatein gfs gravel guvnor hibernate hornetq iiop
+            esb fedora freeipa gatein git gfs gravel guvnor hibernate hornetq iiop
             infinispan ironjacamar javassist jbcaa jbcd jboss jbpm jdcom jgroups
             jmx jopr jrunit jsfunit kosmos liberation makara mass maven metajizer
             metamatrix mobicents mod_cluster modeshape mugshot mysql netty openshift
