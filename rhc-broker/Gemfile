@@ -9,7 +9,7 @@ gem 'bson_ext'
 
 gem 'openshift-origin-controller'
 
-group :development do
+group :other do
   gem 'minitest'
   gem 'simplecov'
   gem 'mocha'
