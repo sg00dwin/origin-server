@@ -68,7 +68,7 @@ function application_quickstarts_content_default_fields() {
 <li>A comma delimited list of cartridge names: <code>php-5.3, mysql-5.1</code></li>
 <li>A JSON array containing the parameters to pass to the cartridge: 
 <pre>
-[{"name": "php-5.3", "name": "mysql-5.1"}]
+[{"name": "php-5.3"}, {"name": "mysql-5.1"}]
 </pre>
 </li>
 </ul>',
