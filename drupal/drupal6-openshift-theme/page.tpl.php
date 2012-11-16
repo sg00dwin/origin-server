@@ -34,6 +34,24 @@
     <link type="text/css" rel="stylesheet" href="/app/assets/site.css"></link>
 	  <?php print $styles; ?>
     <script type="text/javascript" src="/app/assets/application.js"></script>
+    <script type="text/javascript">
+      $.ajaxPrefilter(function(options, orig, jqXHR) { 
+        if (options.dataType == 'json' || /\/community\//.exec(options.url)) {
+          options.dataType = 'postjson';
+          options.dataTypes = ['postjson']; // supposedly this isn't necessary but couldn't get it to work without it
+        }
+      });
+      $.ajaxSetup({
+        converters: {
+          "text postjson": function(text) {
+            try { return $.parseJSON(text); }
+            catch(e) { 
+              return window.eval('(' + text + ');');
+            }
+          }
+        }
+      });
+    </script>
 	  <?php print $scripts; ?>
     <meta content='' name='author'>
     <meta content='width=device-width, initial-scale=1.0' name='viewport'>
