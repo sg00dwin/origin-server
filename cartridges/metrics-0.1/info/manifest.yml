@@ -4,6 +4,7 @@ Description: "An experimental cartridge that demonstrates retrieving real-time s
 Version: 1.1.0
 License: GPLv2
 Vendor:  
+Website: "https://openshift.redhat.com/"
 Cart-Data:
   - Key: connection_url
     Type: cart_data
