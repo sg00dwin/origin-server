@@ -99,11 +99,7 @@ echo &quot;
 set -x
 
 pushd li
-build/devenv launch test_pull_requests_${BUILD_NUMBER} --verifier
-build/devenv sync test_pull_requests_${BUILD_NUMBER} --tag --clean_metadata
-
-# Run the tests
-build/devenv test test_pull_requests_${BUILD_NUMBER} --terminate
+  build/devenv build test_pull_requests ${BUILD_NUMBER} --terminate --install_from_local_source
 popd</command>
     </hudson.tasks.Shell>
   </builders>

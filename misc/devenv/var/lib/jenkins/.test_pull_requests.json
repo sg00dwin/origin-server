@@ -30,11 +30,13 @@
                           "addtl_jenkins_params": {"hosted": {"DEV_TOOLS_EXT_REPO": "li",
                                                               "DEV_TOOLS_REPO": "origin-dev-tools",
                                                               "RHC_REPO": "rhc",
-                                                              "ORIGIN_SERVER_REPO": "origin-server"},
+                                                              "ORIGIN_SERVER_REPO": "origin-server",
+                                                              "YUM_REPO": "*"},
                                                    "enterprise": {"DEV_TOOLS_EXT_REPO": "enterprise",
                                                                   "DEV_TOOLS_REPO": "enterprise-dev-tools",
                                                                   "RHC_REPO": "enterprise-rhc",
-                                                                  "ORIGIN_SERVER_REPO": "enterprise-server"} }
+                                                                  "ORIGIN_SERVER_REPO": "enterprise-server",
+                                                                  "YUM_REPO": "*"} }
                              },
                     "master": {"jenkins_job_name": "test_pull_requests",
                                "downstream_job_name": "libra_ami",
