@@ -79,7 +79,12 @@ module OpenShift
     
     def modify_application(app_name, namespace, public_hostname)
       login
-      modify_app_dns_entries(app_name, namespace, public_hostname, @auth_token, @@dyn_retries)
+      begin
+        modify_app_dns_entries(app_name, namespace, public_hostname, @auth_token, @@dyn_retries)
+      rescue DNSNotFoundException
+        logger.debug("DNS entry not found for #{app_name}-#{namespace}.  Attempting to create...")
+        create_app_dns_entries(app_name, namespace, public_hostname, @auth_token, @@dyn_retries)
+      end
     end
     
     def publish
@@ -397,6 +402,8 @@ module OpenShift
           case resp
           when Net::HTTPSuccess
             raise_dns_exception(nil, resp, data) unless dyn_success?(data)
+          when Net::HTTPNotFound
+            raise DNSNotFoundException.new(145), "DNS entry not found"
           when Net::HTTPTemporaryRedirect
             handle_temp_redirect(resp, auth_token)
           else
