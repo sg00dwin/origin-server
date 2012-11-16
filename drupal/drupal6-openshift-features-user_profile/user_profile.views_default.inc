@@ -859,8 +859,10 @@ switch ($data->user_badges_badges_name){
         'text' => '',
         'make_link' => 0,
         'path' => '',
+        'absolute' => 0,
         'link_class' => '',
         'alt' => '',
+        'rel' => '',
         'prefix' => '',
         'suffix' => '',
         'target' => '',
@@ -875,15 +877,16 @@ switch ($data->user_badges_badges_name){
       'empty' => '',
       'hide_empty' => 0,
       'empty_zero' => 0,
+      'hide_alter_empty' => 1,
       'value' => '<?php
 $full_name =  $data->profile_values_profile_first_name_value .\' \'. $data->profile_values_profile_last_name_value;
 $clean_name = trim(strip_tags($full_name));
 $company = $data->profile_values_profile_company_value;
 if (!empty($clean_name) && !empty($company)) {
-  print $clean_name .\', \'. $company;
+  print check_plain($clean_name .\', \'. $company);
 } else {
-  print $clean_name;
-  print $company;
+  print check_plain($clean_name);
+  print check_plain($company);
 }
 ?>',
       'exclude' => 0,
@@ -1001,8 +1004,10 @@ if (!empty($clean_name) && !empty($company)) {
         'text' => '',
         'make_link' => 0,
         'path' => '',
+        'absolute' => 0,
         'link_class' => '',
         'alt' => '',
+        'rel' => '',
         'prefix' => '',
         'suffix' => '',
         'target' => '',
@@ -1012,11 +1017,12 @@ if (!empty($clean_name) && !empty($company)) {
         'word_boundary' => 1,
         'ellipsis' => 1,
         'html' => 0,
-        'strip_tags' => 0,
+        'strip_tags' => 1,
       ),
       'empty' => '<em>This user has not filled out the About Me section yet.</em>',
       'hide_empty' => 0,
       'empty_zero' => 0,
+      'hide_alter_empty' => 1,
       'exclude' => 0,
       'id' => 'value',
       'table' => 'profile_values_profile_about_me',
