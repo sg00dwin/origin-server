@@ -3,7 +3,7 @@
 
 Summary:   Li broker components
 Name:      rhc-broker
-Version: 1.1.8
+Version: 1.1.9
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -134,6 +134,9 @@ if [ ! -f %{_localstatedir}/log/openshift/user_action.log ]; then
 fi
 
 %changelog
+* Fri Nov 16 2012 Adam Miller <admiller@redhat.com> 1.1.9-1
+- Finishing off bug 876447 (dmcphers@redhat.com)
+
 * Thu Nov 15 2012 Adam Miller <admiller@redhat.com> 1.1.8-1
 - take out test-unit (dmcphers@redhat.com)
 - more ruby 1.9 changes (dmcphers@redhat.com)
