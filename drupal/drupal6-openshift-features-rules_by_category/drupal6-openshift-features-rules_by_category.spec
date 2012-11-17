@@ -5,7 +5,7 @@
 %global modname             rules_by_category
 
 Name:    drupal%{drupal_release}-openshift-features-%{modname}
-Version: 1.4.0
+Version: 1.4.1
 Release: 1%{?dist}
 Summary: Openshift Red Hat Custom Rules by Category Feature for Drupal6
 Group:   Applications/Publishing
@@ -41,6 +41,9 @@ rm -rf $RPM_BUILD_ROOT
 %{drupal_modules}/%{modname}
 
 %changelog
+* Sat Nov 17 2012 Adam Miller <admiller@redhat.com> 1.4.1-1
+- bump_minor_versions for sprint 21 (admiller@redhat.com)
+
 * Tue Nov 13 2012 Adam Miller <admiller@redhat.com> 1.3.2-1
 - Bug 872912 - Prevent HTML in about user box (ccoleman@redhat.com)
 
