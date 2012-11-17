@@ -8,8 +8,8 @@
 
 Summary:   OpenShift Site Rails application
 Name:      rhc-site
-Version: 1.1.7
-Release:   2%{?dist}
+Version: 1.1.8
+Release:   1%{?dist}
 Group:     Network/Daemons
 License:   ASL 2.0
 URL:       http://openshift.redhat.com
@@ -143,6 +143,15 @@ rm -rf %{buildroot}
 %{sitedir}/public
 
 %changelog
+* Fri Nov 16 2012 Adam Miller <admiller@redhat.com> 1.1.8-1
+- Merge pull request #630 from smarterclayton/slightly_extend_match_spec
+  (openshift+bot@redhat.com)
+- Merge pull request #624 from
+  smarterclayton/better_gear_limit_message_on_create (ccoleman@redhat.com)
+- Ensure cartridge type test runs from li/site tests (ccoleman@redhat.com)
+- Stop overlaying our message on top of the broker's message, now that it is
+  better. (ccoleman@redhat.com)
+
 * Thu Nov 15 2012 Adam Miller <admiller@redhat.com> 1.1.7-2
 - bump site.spec Release: for fake chain-build with console
   (admiller@redhat.com)
