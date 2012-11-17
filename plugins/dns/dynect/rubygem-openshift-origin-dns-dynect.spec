@@ -10,7 +10,7 @@
 Summary:        OpenShift plugin for Dynect DNS service
 
 Name:           rubygem-%{gem_name}
-Version: 1.1.3
+Version: 1.2.0
 Release:        1%{?dist}
 Group:          Development/Languages
 License:        ASL 2.0
