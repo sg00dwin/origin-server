@@ -5,7 +5,7 @@
 %global modname             redhat_events
 
 Name:    drupal%{drupal_release}-openshift-%{modname}
-Version: 1.5.0
+Version: 1.5.1
 Release: 1%{?dist}
 Summary: Openshift Red Hat Events Custom Module for Drupal6
 Group:   Applications/Publishing
@@ -41,6 +41,9 @@ rm -rf $RPM_BUILD_ROOT
 %{drupal_modules}/%{modname}
 
 %changelog
+* Sat Nov 17 2012 Adam Miller <admiller@redhat.com> 1.5.1-1
+- bump_minor_versions for sprint 21 (admiller@redhat.com)
+
 * Tue Nov 13 2012 Adam Miller <admiller@redhat.com> 1.4.2-1
 - Fixes BZ875635, reordered events fields (ffranz@redhat.com)
 - Fixes BZ875616 (link to internal events in the events calendar view)
