@@ -5,7 +5,7 @@
 %global modname             application_quickstarts
 
 Name:    drupal%{drupal_release}-openshift-features-%{modname}
-Version: 1.0.1
+Version: 1.0.2
 Release: 1%{?dist}
 Summary: Openshift Application Quickstarts Feature for Drupal6
 Group:   Applications/Publishing
@@ -43,6 +43,10 @@ rm -rf $RPM_BUILD_ROOT
 %{drupal_modules}/%{modname}
 
 %changelog
+* Fri Nov 16 2012 Adam Miller <admiller@redhat.com> 1.0.2-1
+- Bug 877222 - Help example for quickstarts is wrong and confusing
+  (ccoleman@redhat.com)
+
 * Tue Nov 13 2012 Clayton Coleman <ccoleman@redhat.com> 1.0.1-1
 - new package built with tito
 
