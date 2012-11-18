@@ -347,7 +347,7 @@ def migrate(version, continue=false, target_server_identity=nil, migrate_positio
         unless node_queue.empty?
           node = node_queue.delete_at(0)
           server_identity = node[:server_identity]
-          gear_cnts[index] = node[:gears_length]
+          gear_cnts[index] += node[:gears_length]
           puts "#####################################################"
           puts "Remaining node queue:"
           puts node_queue.pretty_inspect
