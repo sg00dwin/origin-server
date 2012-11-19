@@ -729,8 +729,6 @@ html.js fieldset.collapsible .fieldset-wrapper {
   -webkit-border-radius: 3px;
   text-shadow: 1px 1px 6px #EEEEEE, 0 0 0 #DDDDDD;
   float: left; 
-  /* Internet Explorer */
-  filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=3);
 }
 .event-listings .event-date span {
   display: block;
@@ -740,17 +738,17 @@ html.js fieldset.collapsible .fieldset-wrapper {
   font-size: 12.5px;
   font-weight: normal;
   background: #D10000;
-   background: linear-gradient(center top , #a1000c 0%, #D10000 100%); /* $openshiftDarkRed to  */
-   background: -moz-linear-gradient(center top , #a1000c 0%, #D10000 100%); 
-   background: -webkit-linear-gradient(center top , #a1000c 0%, #D10000 100%); 
-    border-radius: 3px 3px 0 0;
-    border-bottom: 2px solid #A1000C;
-    color: #FFFFFF;
-    display: block;
-    padding: 3px 0 0;
-    margin-bottom: 6px;
-    text-transform: uppercase;
-    text-shadow: none;
+  background: linear-gradient(center top , #a1000c 0%, #D10000 100%); /* $openshiftDarkRed to  */
+  background: -moz-linear-gradient(center top , #a1000c 0%, #D10000 100%); 
+  background: -webkit-linear-gradient(center top , #a1000c 0%, #D10000 100%); 
+  border-radius: 3px 3px 0 0;
+  border-bottom: 2px solid #A1000C;
+  color: #FFFFFF;
+  display: block;
+  padding: 3px 0 0;
+  margin-bottom: 6px;
+  text-transform: uppercase;
+  text-shadow: none;
 }
 .event-listings h3:not(.title) {
   margin-top: 15px;
