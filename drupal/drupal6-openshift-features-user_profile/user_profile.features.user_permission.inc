@@ -84,6 +84,7 @@ function user_profile_user_default_permissions() {
     'name' => 'access site reports',
     'roles' => array(
       '0' => 'administrator',
+      '1' => 'moderator',
     ),
   );
 
@@ -92,6 +93,7 @@ function user_profile_user_default_permissions() {
     'name' => 'access statistics',
     'roles' => array(
       '0' => 'administrator',
+      '1' => 'moderator',
     ),
   );
 
@@ -353,6 +355,7 @@ function user_profile_user_default_permissions() {
     'name' => 'administer users',
     'roles' => array(
       '0' => 'administrator',
+      '1' => 'moderator',
     ),
   );
 
