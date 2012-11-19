@@ -5,7 +5,7 @@
 %global modname             user_profile
 
 Name:    drupal%{drupal_release}-openshift-features-%{modname}
-Version: 1.7.3
+Version: 1.7.4
 Release: 1%{?dist}
 Summary: Openshift Red Hat Custom User Profile Feature for Drupal6
 Group:   Applications/Publishing
@@ -41,6 +41,11 @@ rm -rf $RPM_BUILD_ROOT
 %{drupal_modules}/%{modname}
 
 %changelog
+* Mon Nov 19 2012 Adam Miller <admiller@redhat.com> 1.7.4-1
+- Update moderator permissions to include statistics and reports for shawn,
+  user admin for sumana (ccoleman@redhat.com)
+- Permissions recently applied to prod (ccoleman@redhat.com)
+
 * Fri Nov 16 2012 Adam Miller <admiller@redhat.com> 1.7.3-1
 - Bug 876726 - Be more consistent about user profiles (ccoleman@redhat.com)
 
