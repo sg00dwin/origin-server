@@ -47,9 +47,9 @@ def mongo_migrate
           gear_index += 1
         } if gi_hash["gears"]
         gi_index += 1
-      } 
+      } if ahash["group_instances"]
       app_index += 1
-    }
+    } if apps
   }
 end
 
