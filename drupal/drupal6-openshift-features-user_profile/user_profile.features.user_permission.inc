@@ -247,7 +247,8 @@ function user_profile_user_default_permissions() {
     'name' => 'administer nodes',
     'roles' => array(
       '0' => 'administrator',
-      '1' => 'page author',
+      '1' => 'moderator',
+      '2' => 'page author',
     ),
   );
 
@@ -776,7 +777,8 @@ function user_profile_user_default_permissions() {
     'name' => 'edit any blog content',
     'roles' => array(
       '0' => 'administrator',
-      '1' => 'moderator',
+      '1' => 'blogger',
+      '2' => 'moderator',
     ),
   );
 
