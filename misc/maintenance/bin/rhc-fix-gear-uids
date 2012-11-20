@@ -5,19 +5,46 @@ require 'getoptlong'
 require "/var/www/openshift/broker/config/environment"
 
 
-mongo_hash = {}
-users = CloudUser.find_all(nil) { |hash|
-  user = CloudUser.hash_to_obj(hash)
-  user.applications.each { |app|
-    app.group_instances.uniq.each { |gi|
-      gi.gears.each { |gear|
-        mongo_hash[gear.uuid] = gear
-      }
-    }
+def check_gear_uid(gear, new_uid)
+  district = gear.get_proxy.district
+  if district.nil?
+    return 
+  end
+  # first check if the new_uid is not taken by anyone on the member nodes (other than this gear's node)
+  district.server_identities.each { |server_id|
+    next if server_id == gear.get_proxy.id
+    if $sender_hash[server_id].has_key? String(new_uid)
+      raise Exception.new("ERROR : Gear #{gear.uuid} cannot set its uid to #{new_uid}, because the uid is taken in the district by another gear #{sender_hash[server_id][String(new_uid)]} on node #{server_id}.")
+    end
   }
-}
+  if district.available_uids.include? new_uid
+    # check and reserve the uid with the district
+    if !OpenShift::DataStore.instance.reserve_district_uid(district.uuid, new_uid)
+      raise Exception.new("Could not reserve uid #{new_uid} on district #{district.name} (#{district.uuid}).")
+    end
+  end
 
-node_hash = OpenShift::ApplicationContainerProxy.get_all_gears
+  return 
+end
+
+mongo_hash = {}
+query = {"$or" => [{"apps.group_instances.gears.0" => {"$exists" => true}}, {"consumed_gears" => {"$ne" => 0}}]}
+fields = {:fields => ["apps.group_instances.gears.uuid", "apps.group_instances.gears.uid"]}
+mcursor = OpenShift::DataStore.instance.user_collection.find(query, fields)
+ret = []
+mcursor.each do |hash|
+  hash['apps'].each { |app|
+    app['group_instances'].each { |gi|
+      if gi['gears']
+        gi['gears'].each { |gear|
+          mongo_hash[gear['uuid']] = [gear['uid']]
+        }
+      end
+    } if app['group_instances']
+  } if hash['apps']
+end
+
+node_hash, $sender_hash = OpenShift::ApplicationContainerProxy.get_all_gears
 no_error = true
 
 fail_summary = []
@@ -26,27 +53,19 @@ nil_summary = []
 numerify_uid_summary = []
 numerify_uid_fail_summary = []
 # now check
-mongo_hash.each { |gear_uuid,gear|
+mongo_hash.each { |gear_uuid,gear_uid|
   if not node_hash.has_key? gear_uuid
     nil_summary << gear_uuid
     next
   end
-  old_value = gear.uid
   node_info = node_hash[gear_uuid]
-  begin
-    g_uid = Integer(node_info.split("uid:")[1].split(']')[0])
-  rescue Exception => e
-    fail_summary << "FAILED to check gear #{gear_uuid} in app #{gear.app.uuid} because of exception : #{e.message}\n"
-    next
-  end
-  if gear.uid.nil?
-    old_value = "nil"
-  end
-  if old_value != g_uid
-    msg = "Gear '#{gear_uuid}' in app #{gear.app.uuid} for user '#{gear.app.user.login}', needs its uid to be set from '#{old_value}' to '#{g_uid}'..."
+  actual_uid = node_info[1]
+  if gear_uid != actual_uid
+    app, gear = Application::find_by_gear_uuid(gear_uuid)
+    msg = "Gear '#{gear_uuid}' in app #{app.name} for user '#{app.user.login}', needs its uid to be set from '#{gear_uid}' to '#{actual_uid}'..."
     begin
-      gear.uid = g_uid
-      app = gear.app
+      check_gear_uid(gear, actual_uid)
+      gear.uid = actual_uid
       app.save
       msg += "done.\n"
       cleanup_summary << msg
@@ -55,11 +74,11 @@ mongo_hash.each { |gear_uuid,gear|
       fail_summary << msg
     end
   end
-  if gear.uid.class == String
+  if gear_uid.class == String
     begin
-      msg = "Gear '#{gear_uuid}' in app #{gear.app.uuid} for user '#{gear.app.user.login}', needs its uid converted from String to Integer..."
-      gear.uid = Integer(gear.uid)
-      app = gear.app
+      app, gear = Application::find_by_gear_uuid(gear_uuid)
+      msg = "Gear '#{gear_uuid}' in app #{app.name} for user '#{app.user.login}', needs its uid converted from String to Integer..."
+      gear.uid = Integer(gear_uid)
       app.save
       msg += "done.\n"
       numerify_uid_summary << msg
