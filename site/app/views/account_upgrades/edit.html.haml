@@ -19,8 +19,7 @@
             = u.input :title, :required => false, :input_html => { :placeholder => "Job Title" }
             = u.input :company, :required => true, :input_html => { :placeholder => "Company Name" }
           = u.input :phone_number, :required => true, :label => 'Phone Number', :input_html => { :class => 'input-medium', :placeholder => "10 digit number", :maxlength => 10 }
-          = u.inputs :inline => true, :required => false, :name => 'Receive Mailings?' do
-            = u.input :email_subscribe, :as => :boolean, :checked_value => true, :unchecked_value => false, :required => false, :input_html => { :title => 'Check here to receive periodic e-mails from Red Hat' }
+          = u.input :email_subscribe, :as => :boolean, :checked_value => true, :unchecked_value => false, :required => false, :label => 'Receive mailings?', :input_html => { :title => 'Check here to receive periodic e-mails from Red Hat' }
           %p{ :style => 'font-size: 8pt; margin: 0px;' }
             &nbsp;
           = u.input :password, :required => true, :label => 'New Pasword', :input_html => { :class => 'input-medium' }
@@ -46,8 +45,8 @@
           = b.input :middle_initial, :input_html => { :class => 'input-mini', :placeholder => "MI" }
           = b.input :last_name, :required => true, :input_html => { :class => 'input-medium', :placeholder => "Last" }
         = b.input :address1, :required => true, :label => 'Street Address'
-        = b.input :address2, :label => '&nbsp;'
-        = b.input :address3, :label => '&nbsp;'
+        = b.input :address2, :label => false
+        = b.input :address3, :label => false
         = b.inputs :inline => true, :required => true, :name => 'City, State, Zip' do
           = b.input :city, :required => true, :input_html => { :class => 'input-medium' }
           = b.input :state, :required => true, :as => :select, :collection => us_states_for_select, :include_blank => false, :input_html => { :class => 'input-medium' }
