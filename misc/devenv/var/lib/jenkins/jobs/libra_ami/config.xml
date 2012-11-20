@@ -41,7 +41,13 @@ pushd li
 
 build/devenv clone_addtl_repos master --replace
 
-build/devenv build devenv ${BUILD_NUMBER} --register --official --terminate ${INSTALL_FROM_SOURCE+--install_from_source}
+opts=&quot;&quot;
+if $INSTALL_FROM_SOURCE
+then
+  opts=&quot;--install_from_source&quot;
+fi
+
+build/devenv build devenv ${BUILD_NUMBER} --register --official --terminate $opts
 
 popd</command>
     </hudson.tasks.Shell>
