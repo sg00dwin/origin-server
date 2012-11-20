@@ -172,7 +172,7 @@ function reporting_csv_views_views_default_views() {
   $handler->override_option('access', array(
     'type' => 'role',
     'role' => array(
-      3 => 3,
+      4 => 4,
     ),
   ));
   $handler->override_option('cache', array(
@@ -635,7 +635,7 @@ function reporting_csv_views_views_default_views() {
   $handler->override_option('access', array(
     'type' => 'role',
     'role' => array(
-      3 => 3,
+      4 => 4,
     ),
   ));
   $handler->override_option('cache', array(
@@ -951,7 +951,7 @@ function reporting_csv_views_views_default_views() {
   $handler->override_option('access', array(
     'type' => 'role',
     'role' => array(
-      3 => 3,
+      4 => 4,
     ),
   ));
   $handler->override_option('cache', array(
@@ -1193,7 +1193,7 @@ function reporting_csv_views_views_default_views() {
   $handler->override_option('access', array(
     'type' => 'role',
     'role' => array(
-      3 => 3,
+      4 => 4,
     ),
   ));
   $handler->override_option('cache', array(
