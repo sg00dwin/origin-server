@@ -295,6 +295,10 @@ def migrate(version, continue=false, target_server_identity=nil, migrate_positio
   gather_users_total_time = (Time.now.to_f * 1000).to_i - start_time
 
   puts "RHLogins.length: #{rhlogins_cnt.to_s}"
+  
+  gather_active_gears_start_time = (Time.now.to_f * 1000).to_i
+  active_gears_map = OpenShift::ApplicationContainerProxy.get_all_active_gears
+  gather_active_gears_total_time = (Time.now.to_f * 1000).to_i - gather_active_gears_start_time
 
   position = migrate_position - 1
   migrator_position_nodes = []
@@ -312,13 +316,14 @@ def migrate(version, continue=false, target_server_identity=nil, migrate_positio
 
   node_queue = []
   node_to_gears.each do |server_identity, gears|
+    gears = gears.sort_by { |gear| (active_gears_map.include?(server_identity) && active_gears_map[server_identity].include?(gear[:uuid])) ? 0 : 1 }
     write_node_to_file(server_identity, gears, version) unless continue
     node_queue << {:server_identity => server_identity, :gears_length => gears.length}
     node_to_gears[server_identity] = nil
   end
 
   # Process the largest nodes first
-  node_queue = node_queue.sort_by{ |node| node[:gears_length] }.reverse
+  node_queue = node_queue.sort_by { |node| node[:gears_length] }.reverse
 
   puts "#####################################################"
   if !migrator_position_nodes.empty?
@@ -410,6 +415,7 @@ def migrate(version, continue=false, target_server_identity=nil, migrate_positio
     puts "    #{topic}=#{time_in_millis.to_f/1000}s"
   end
   puts "Time gathering users: #{gather_users_total_time.to_f/1000}s"
+  puts "Time gathering active gears: #{gather_active_gears_total_time.to_f/1000}s"
   puts "Total execution time: #{total_time.to_f/1000}s"
   puts "#####################################################"
 end

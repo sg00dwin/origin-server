@@ -3,7 +3,6 @@ require 'etc'
 require 'fileutils'
 require 'socket'
 require 'parseconfig'
-require 'selinux'
 require 'pp'
 require File.dirname(__FILE__) + "/migrate-util"
 
