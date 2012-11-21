@@ -1,4 +1,4 @@
-#!/usr/bin/env ruby
+#!/usr/bin/env oo-ruby
 
 namespace :templates do
   desc "Deploy an application based on template from the broker"

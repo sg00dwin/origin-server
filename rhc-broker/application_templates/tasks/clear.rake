@@ -1,4 +1,4 @@
-#!/usr/bin/env ruby
+#!/usr/bin/env oo-ruby
 
 namespace :descriptors do
   desc "Clears all metadata and descriptors (leaves targets)"

@@ -27,6 +27,7 @@ Requires:       %{?scl:%scl_prefix}rubygem(sinatra)
 Requires:       %{?scl:%scl_prefix}rubygem(sqlite3)
 Requires:       %{?scl:%scl_prefix}rubygem(httparty)
 Requires:       rhc-site-static
+Requires:       openshift-origin-util-scl
 Requires:       %{?scl:%scl_prefix}rubygem(ci_reporter)
 Requires:       %{?scl:%scl_prefix}rubygem(coffee-rails)
 Requires:       %{?scl:%scl_prefix}rubygem(compass-rails)

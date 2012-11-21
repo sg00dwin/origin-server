@@ -1,4 +1,4 @@
-#!/usr/bin/env ruby
+#!/usr/bin/env oo-ruby
 
 namespace :templates do
   desc "Create scripts for destroying current templates"

@@ -1,3 +1,3 @@
-* * * * * scl enable ruby193 "/usr/libexec/mcollective/update_yaml.rb /etc/mcollective/facts.yaml" &> /dev/null
-0 * * * * scl enable ruby193 "/usr/sbin/oo-last-access" > /var/lib/openshift/last_access.log 2>&1
+* * * * * /usr/libexec/mcollective/update_yaml.rb /etc/mcollective/facts.yaml &> /dev/null
+0 * * * * /usr/sbin/oo-last-access > /var/lib/openshift/last_access.log 2>&1
 0 1 * * * /usr/sbin/oo-list-access

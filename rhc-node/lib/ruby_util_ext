@@ -1,8 +1,0 @@
-#!/bin/bash
-
-[ ! -z "$LI_CONTROLLER_LIB_RUBY_EXT" ] && return 0
-LI_CONTROLLER_LIB_RUBY_EXT=true
-
-function exec_ruby193 {
-  scl enable ruby193 "$*"
-}

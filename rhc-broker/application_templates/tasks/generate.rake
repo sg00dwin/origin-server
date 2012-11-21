@@ -1,4 +1,4 @@
-#!/usr/bin/env ruby
+#!/usr/bin/env oo-ruby
 
 namespace :descriptors do
   desc "Create applications and retrieve their descriptors"
