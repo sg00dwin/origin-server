@@ -27,7 +27,7 @@ module OpenShiftMigration
   # at any point and continue to pick up where it left off or make
   # harmless changes the 2-n times around.
   def self.migrate(uuid, namespace, version)
-    unless version == "2.0.20"
+    unless version == "2.0.21"
       return "Invalid version: #{version}", 255
     end
 
