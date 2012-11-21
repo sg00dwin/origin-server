@@ -147,7 +147,7 @@ body.signup {
 
 // Top bar
 
-.home .section-top .masthead.masthead-enterprise {
+.home .section-top .masthead-enterprise {
   display: block;
   height: 117px;
   margin: 0 auto;
@@ -167,7 +167,7 @@ body.signup {
   background-color: $topBarBackgroundColor; 
   color: #888;
   
-  .masthead {
+  .masthead-enterprise {
     display: none;
   }
   

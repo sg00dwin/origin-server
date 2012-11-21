@@ -45,7 +45,7 @@
       <div id="top" class="section-top">
         <div class="container">
         	<a title="Track open issues on the OpenShift status page" style="display:none;" id="outage" class="btn btn-small btn-warning" href="/app/status">Status</a>
-          <div class="pull-left mobile-block"><a href="/community/paas/enterprise"><span>Streamline App Delivery with  </span>OpenShift Enterprise</a></div>
+          <div class="pull-left mobile-block"><a href="/community/enterprise-paas"><span>Streamline App Delivery with  </span>OpenShift Enterprise</a></div>
           <div class="pull-right login">
 
           <form action="/community/search/node" method="get" id="search-top">
