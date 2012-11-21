@@ -148,29 +148,28 @@ body.signup {
 // Top bar
 
 .home .section-top .masthead.masthead-enterprise {
+  display: block;
   height: 117px;
   margin: 0 auto;
   background: #222 image-url("enterprise-banner.png") center center no-repeat;
-}
-
-.home .section-top div.masthead a {
-  display: block;
-  min-height: 117px;
-  background: transparent;
-  width:100%;
-}
-.home .section-top div.masthead div {
+  a {
+    display: block;
+    min-height: 117px;
+    background: transparent;
+    width:100%;
+  }
+  div {
     padding: 0;
-}
-.home .section-top div div a.pricing {
-    padding-left: 20px;
-    padding-right: 20px;
+  }
 }
 
 .section-top {
   background-color: $topBarBackgroundColor; 
   color: #888;
-  //height: 35px;
+  
+  .masthead {
+    display: none;
+  }
   
   .container {
     padding-top: 4px;
