@@ -171,13 +171,16 @@ body.signup {
     display: none;
   }
   
-  .container {
-    padding-top: 4px;
-    padding-bottom: 4px;
+  div div {
+    padding: 4px 0;
   }
   
   div div.mobile-block {
-     
+    float: none;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+
     a {
       background: transparent image-url("sprite-vert.png") right -113px no-repeat;
       color: #EA0011;
@@ -188,13 +191,13 @@ body.signup {
       @media (max-width: 480px) {
         margin-right: 0;
       }
-      
+
       span {
         text-transform: none;
         color: #fff;
         padding-right: 5px;
       }
-      
+
       &:hover {background-position: right -56px;}
     }
   }
@@ -247,7 +250,7 @@ body.signup {
     color: black;
     background: $warningBackground;
     float: right;
-    margin: 0 0 0 2px;
+    margin: 4px 0 4px 2px;
 
     &:hover, &:active {
       background: darken($warningBackground, 30%);
@@ -257,10 +260,17 @@ body.signup {
   
 }
 
+@media (max-width: 979px) {
+  // hide extra text when space is tight
+  .mobile-block > a > span {
+    display: none;
+  }
+}
+
 @media (max-width: 767px) {
 	.section-top {
 		#outage {
-			margin: 0 -20px 4px -20px;
+			margin: 0 -20px;
 			display: block;
 			float: none;
 		}
@@ -268,28 +278,36 @@ body.signup {
 }
 
 @media (max-width: 480px) {
-	.section-top div.pull-left {
-		display: table;
-		width: 100%;
-	}
-	.section-top #outage {
-		margin: 0 0 4px;
-	}
-	.section-top div a.sign_out {
-    float: none;
-	}
-	.section-top .login {
-		display: table;
-		width: 100%;
-		padding: 0;
-		> a {
-			display: table-cell;
-			border:0;
-			padding: 8px;
-			background-color: #000;	
-			float:none;
-		}
-	}
+  .section-top {
+    .container {
+      padding: 0;
+    }
+    .mobile-block {
+      display: table;
+      float: none;
+      text-align: center;
+      width: 100%;
+      // hide extra text when space is tight
+      > a > span {
+        display: inline;
+      }
+    }
+    div a.sign_out {
+      float: none;
+    }
+    .login {
+      display: table;
+      width: 100%;
+      padding: 0;
+      > a {
+        display: table-cell;
+        border:0;
+        padding: 8px;
+        background-color: #000;	
+        float:none;
+      }
+    }
+  }
 }
 
 // Central messaging content
@@ -879,7 +897,7 @@ h1.ribbon {
 @media (max-width: 480px) {
 	
 	#search-top {
-		margin: 3px 0 0 0;
+		margin: 3px 0 0 20px;
 	}
 	#search-top input[type="text"] {
 		background-color: transparent;
