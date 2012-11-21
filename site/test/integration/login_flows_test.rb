@@ -1,7 +1,7 @@
 require File.expand_path('../../test_helper', __FILE__)
 
 class LoginFlowsTest < ActionDispatch::IntegrationTest
-  
+
   def setup
     https!
     open_session
@@ -34,7 +34,7 @@ class LoginFlowsTest < ActionDispatch::IntegrationTest
 
   # Make sure unauthenticated users can get to basic pages
   test "browse unauthenticated pages" do
-    
+
     ['/', '/login', '/account/new', '/account/password/new'].each do |url|
       get url, nil, {'SCRIPT_NAME' => '/app'}
       assert_response :success, "Requesting #{url}"
@@ -53,7 +53,7 @@ class LoginFlowsTest < ActionDispatch::IntegrationTest
     end
   end
 
-  # Make sure users are sent to the login controller when requesting 
+  # Make sure users are sent to the login controller when requesting
   # a protected page
   test 'test being redirected to the login controller' do
     ['/console'].each do |url|
@@ -109,6 +109,7 @@ class LoginFlowsTest < ActionDispatch::IntegrationTest
   end
 
   test 'signup to app creation' do
+    omit_if_aria_is_unavailable
     with_integrated do
       user = new_streamline_user
 

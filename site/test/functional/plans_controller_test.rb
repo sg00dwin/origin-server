@@ -41,6 +41,7 @@ class PlansControllerTest < ActionController::TestCase
   end
 
   test "should provide plan lists and instantiate user when authenticated" do
+    omit_if_aria_is_unavailable
     with_unique_user
 
     get :show

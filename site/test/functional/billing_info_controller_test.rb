@@ -2,6 +2,7 @@ require File.expand_path('../../test_helper', __FILE__)
 
 class BillingInfoControllerTest < ActionController::TestCase
   test "should provide billing info on edit" do
+    omit_if_aria_is_unavailable
     with_account_holder
     get :edit
     assert_response :success
@@ -9,6 +10,7 @@ class BillingInfoControllerTest < ActionController::TestCase
   end
 
   test "update should return to account page if no validation errors" do
+    omit_if_aria_is_unavailable
     with_account_holder
     aria_billing_info = Aria::BillingInfo.test.attributes
     mock_controller_user(Aria::User).expects(:update_account).returns(true)
@@ -17,6 +19,7 @@ class BillingInfoControllerTest < ActionController::TestCase
   end
 
   test "update should return to edit page if validation errors" do
+    omit_if_aria_is_unavailable
     with_account_holder
     aria_billing_info = Aria::BillingInfo.test.attributes
     mock_controller_user(Aria::User).expects(:update_account).returns(false)

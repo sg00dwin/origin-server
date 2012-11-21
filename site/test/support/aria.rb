@@ -16,4 +16,8 @@ class ActiveSupport::TestCase
     end
     set_user(@@account_holder.dup)
   end
+
+  def omit_if_aria_is_unavailable
+    omit("Aria not available; omitting test.") unless Aria.available?
+  end
 end

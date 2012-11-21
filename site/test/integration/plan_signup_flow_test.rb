@@ -1,8 +1,9 @@
 require File.expand_path('../../test_helper', __FILE__)
 
 class PlanSignupFlowTest < ActionDispatch::IntegrationTest
-  
+
   def setup
+    omit_if_aria_is_unavailable
     WebMock.allow_net_connect!
     https!
     open_session
@@ -117,4 +118,4 @@ class PlanSignupFlowTest < ActionDispatch::IntegrationTest
     get '/account/plan'
     assert_response :success
   end
-end if Aria.available?
+end
