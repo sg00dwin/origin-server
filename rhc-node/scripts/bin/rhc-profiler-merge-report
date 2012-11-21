@@ -1,4 +1,4 @@
-#!/usr/bin/env ruby
+#!/usr/bin/env oo-ruby
 
 # Scan the provided directory for mcollective log files, profiler call
 # graphs and profiler info files.  Report back the set of call graphs

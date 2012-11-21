@@ -245,11 +245,11 @@ ruby19_ld_libs=\$(scl enable ruby193 \"printenv LD_LIBRARY_PATH\")
 export LD_LIBRARY_PATH=\$ruby19_ld_libs:\$LD_LIBRARY_PATH
 
 ruby19_manpath=\$(scl enable ruby193 \"printenv MANPATH\")
-export MANPATH=\$ruby19_manpath:\$MANPATH" >> /etc/profile.d/openshift.sh
+export MANPATH=\$ruby19_manpath:\$MANPATH" >> /etc/profile.d/openshift.sh.bak
 
-source /etc/profile.d/openshift.sh
-cat /etc/profile.d/openshift.sh >> /etc/sysconfig/mcollective
-
+source /etc/profile.d/openshift.sh.bak
+cat /etc/profile.d/openshift.sh.bak >> /etc/sysconfig/mcollective
+cat /etc/profile.d/openshift.sh.bak >> /root/.bashrc
 
 
 # Install the Sauce Labs gems

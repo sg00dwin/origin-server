@@ -1,4 +1,4 @@
-#!/usr/bin/env ruby
+#!/usr/bin/env oo-ruby
 
 #
 # rhc-watchman - restart an application that has been killed by cgroups
