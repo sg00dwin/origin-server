@@ -146,20 +146,70 @@ body.signup {
 }
 
 // Top bar
+
+.home .section-top .masthead.masthead-enterprise {
+  display: block;
+  height: 117px;
+  margin: 0 auto;
+  background: #222 image-url("enterprise-banner.png") center center no-repeat;
+  a {
+    display: block;
+    min-height: 117px;
+    background: transparent;
+    width:100%;
+  }
+  div {
+    padding: 0;
+  }
+}
+
 .section-top {
   background-color: $topBarBackgroundColor; 
   color: #888;
-  //height: 35px;
   
-  div div {
-    padding: 4px 0;
+  .masthead {
+    display: none;
+  }
+  
+  .container {
+    padding-top: 4px;
+    padding-bottom: 4px;
+  }
+  
+  div div.mobile-block {
+     
+    a {
+      background: transparent image-url("sprite-vert.png") right -113px no-repeat;
+      color: #EA0011;
+      height: 24px;
+      line-height: 25px;
+      padding-right: 28px;
+      color: $openshiftBrightRed;
+      @media (max-width: 480px) {
+        margin-right: 0;
+      }
+      
+      span {
+        text-transform: none;
+        color: #fff;
+        padding-right: 5px;
+      }
+      
+      &:hover {background-position: right -56px;}
+    }
+  }
+  
+  div div.login a {
+    float: left;
+    @media (max-width: 480px) {
+      float: none;
+    }
   }
   
   div a {
     color: $signupLinkColor;
     text-transform: uppercase;
     font-size: 12px;
-    float: left;
     
     &:hover {
     text-decoration: none;
@@ -197,7 +247,7 @@ body.signup {
     color: black;
     background: $warningBackground;
     float: right;
-    margin: 4px 0 4px 2px;
+    margin: 0 0 0 2px;
 
     &:hover, &:active {
       background: darken($warningBackground, 30%);
@@ -205,17 +255,12 @@ body.signup {
     }
   }
   
-  div.pull-left {
-	padding-right: 26px;
-	padding-top: 8px;
-	background: image-url("sprite-vert.png") no-repeat scroll right -161px transparent;
-	}
 }
 
 @media (max-width: 767px) {
 	.section-top {
 		#outage {
-			margin: 0 -20px;
+			margin: 0 -20px 4px -20px;
 			display: block;
 			float: none;
 		}
@@ -224,13 +269,11 @@ body.signup {
 
 @media (max-width: 480px) {
 	.section-top div.pull-left {
-		display: none;
+		display: table;
+		width: 100%;
 	}
 	.section-top #outage {
-		margin: 0;
-	}
-	.section-top .container {
-		padding: 0;
+		margin: 0 0 4px;
 	}
 	.section-top div a.sign_out {
     float: none;
@@ -836,7 +879,7 @@ h1.ribbon {
 @media (max-width: 480px) {
 	
 	#search-top {
-		margin: 3px 0 0 20px;
+		margin: 3px 0 0 0;
 	}
 	#search-top input[type="text"] {
 		background-color: transparent;
@@ -1042,9 +1085,8 @@ body.home {
     background-repeat: 
     	no-repeat,
     	repeat;
-  	background-position: 
-    	right 150px,
-    	center bottom;
+  //	background-position: right 150px,center bottom; /* without banner */
+      background-position: right 300px, center bottom; /* with banner */
   }
 
   .home .messaging {
@@ -1073,9 +1115,8 @@ body.home {
     background-repeat: 
     	no-repeat,
     	repeat;
-  	background-position: 
-    	right 200px,
-    	center bottom;
+  	// background-position: right 200px,center bottom;
+  	background-position: right 350px, center bottom; /* with banner */
   }
   .home .messaging {
     margin: 10px 0 15px 0;
