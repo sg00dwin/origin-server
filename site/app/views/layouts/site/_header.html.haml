@@ -1,9 +1,15 @@
 #top.section-top
+  .masthead.masthead-enterprise
+    .container
+      %a{:href => '/community/paas/enterprise'}
   .container
     = link_to "Status", status_path, :title => 'Track open issues on the OpenShift status page', :class => 'btn btn-small btn-warning', :style => 'display:none;', :id => 'outage'
-    .pull-left
+    .pull-left.mobile-block
       -#= link_to "Newsletter Sign Up", newsletter_signup_url
-      = link_to "Plans and Pricing", pricing_url
+      -#= link_to "Plans and Pricing", pricing_url, :class => 'pricing'
+      %a{:href => "/community/paas/enterprise"}
+        %span> Streamline App Delivery with
+        OpenShift Enterprise
     .pull-right.login
       %form#search-top{:action => community_search_url, :method => "get"}
         %input.search-query{:name => "keys", :placeholder => "SEARCH", :type => "text"}
