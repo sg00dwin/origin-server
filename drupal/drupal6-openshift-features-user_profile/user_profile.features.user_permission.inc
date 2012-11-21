@@ -471,6 +471,17 @@ function user_profile_user_default_permissions() {
     ),
   );
 
+  // Exported permission: create event content
+  $permissions['create event content'] = array(
+    'name' => 'create event content',
+    'roles' => array(
+      '0' => 'administrator',
+      '1' => 'blogger',
+      '2' => 'doc content owner',
+      '3' => 'moderator',
+    ),
+  );
+
   // Exported permission: create faq
   $permissions['create faq'] = array(
     'name' => 'create faq',
@@ -575,6 +586,15 @@ function user_profile_user_default_permissions() {
     ),
   );
 
+  // Exported permission: delete any event content
+  $permissions['delete any event content'] = array(
+    'name' => 'delete any event content',
+    'roles' => array(
+      '0' => 'administrator',
+      '1' => 'moderator',
+    ),
+  );
+
   // Exported permission: delete any group content
   $permissions['delete any group content'] = array(
     'name' => 'delete any group content',
@@ -669,6 +689,16 @@ function user_profile_user_default_permissions() {
     'roles' => array(
       '0' => 'administrator',
       '1' => 'authenticated user',
+      '2' => 'moderator',
+    ),
+  );
+
+  // Exported permission: delete own event content
+  $permissions['delete own event content'] = array(
+    'name' => 'delete own event content',
+    'roles' => array(
+      '0' => 'administrator',
+      '1' => 'blogger',
       '2' => 'moderator',
     ),
   );
@@ -794,6 +824,16 @@ function user_profile_user_default_permissions() {
     ),
   );
 
+  // Exported permission: edit any event content
+  $permissions['edit any event content'] = array(
+    'name' => 'edit any event content',
+    'roles' => array(
+      '0' => 'administrator',
+      '1' => 'blogger',
+      '2' => 'moderator',
+    ),
+  );
+
   // Exported permission: edit any group content
   $permissions['edit any group content'] = array(
     'name' => 'edit any group content',
@@ -914,7 +954,8 @@ function user_profile_user_default_permissions() {
     'name' => 'edit field_event_categories',
     'roles' => array(
       '0' => 'administrator',
-      '1' => 'moderator',
+      '1' => 'blogger',
+      '2' => 'moderator',
     ),
   );
 
@@ -923,7 +964,8 @@ function user_profile_user_default_permissions() {
     'name' => 'edit field_event_city',
     'roles' => array(
       '0' => 'administrator',
-      '1' => 'moderator',
+      '1' => 'blogger',
+      '2' => 'moderator',
     ),
   );
 
@@ -932,7 +974,8 @@ function user_profile_user_default_permissions() {
     'name' => 'edit field_event_country',
     'roles' => array(
       '0' => 'administrator',
-      '1' => 'moderator',
+      '1' => 'blogger',
+      '2' => 'moderator',
     ),
   );
 
@@ -941,7 +984,8 @@ function user_profile_user_default_permissions() {
     'name' => 'edit field_event_online',
     'roles' => array(
       '0' => 'administrator',
-      '1' => 'moderator',
+      '1' => 'blogger',
+      '2' => 'moderator',
     ),
   );
 
@@ -950,7 +994,8 @@ function user_profile_user_default_permissions() {
     'name' => 'edit field_event_start_date',
     'roles' => array(
       '0' => 'administrator',
-      '1' => 'moderator',
+      '1' => 'blogger',
+      '2' => 'moderator',
     ),
   );
 
@@ -959,7 +1004,8 @@ function user_profile_user_default_permissions() {
     'name' => 'edit field_event_state',
     'roles' => array(
       '0' => 'administrator',
-      '1' => 'moderator',
+      '1' => 'blogger',
+      '2' => 'moderator',
     ),
   );
 
@@ -968,7 +1014,8 @@ function user_profile_user_default_permissions() {
     'name' => 'edit field_event_url',
     'roles' => array(
       '0' => 'administrator',
-      '1' => 'moderator',
+      '1' => 'blogger',
+      '2' => 'moderator',
     ),
   );
 
@@ -1149,6 +1196,16 @@ function user_profile_user_default_permissions() {
     'roles' => array(
       '0' => 'administrator',
       '1' => 'authenticated user',
+      '2' => 'moderator',
+    ),
+  );
+
+  // Exported permission: edit own event content
+  $permissions['edit own event content'] = array(
+    'name' => 'edit own event content',
+    'roles' => array(
+      '0' => 'administrator',
+      '1' => 'blogger',
       '2' => 'moderator',
     ),
   );
