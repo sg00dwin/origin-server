@@ -37,7 +37,7 @@ mcursor.each do |hash|
     app['group_instances'].each { |gi|
       if gi['gears']
         gi['gears'].each { |gear|
-          mongo_hash[gear['uuid']] = [gear['uid']]
+          mongo_hash[gear['uuid']] = gear['uid']
         }
       end
     } if app['group_instances']
