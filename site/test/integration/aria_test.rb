@@ -2,6 +2,8 @@ require File.expand_path('../../test_helper', __FILE__)
 
 class AriaIntegrationTest < ActionDispatch::IntegrationTest
 
+  setup { omit_if_aria_is_unavailable }
+
   test 'should correctly handle sessions' do
     user = (WebUser.new :rhlogin => new_uuid).extend Aria::User
 
@@ -127,4 +129,4 @@ class AriaIntegrationTest < ActionDispatch::IntegrationTest
     assert plan.gear_sizes.kind_of? Array
     assert plan.gear_sizes.length > 0
   end
-end if Aria.available?
+end

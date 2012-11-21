@@ -18,6 +18,8 @@ class AccountUpgradesControllerTest < ActionController::TestCase
     WebUser.new :rhlogin => 'rhnuser', :email_address => 'rhnuser@redhat.com', :streamline_type => :full
   end
 
+  setup { omit_if_aria_is_unavailable }
+
   test "should show an unchanged plan when the current plan matches the new one" do
     user = with_user(full)
     get :new, :plan_id => 'freeshift'
@@ -45,4 +47,4 @@ class AccountUpgradesControllerTest < ActionController::TestCase
     assert_not_nil assigns[:full_user]
     assert_not_nil assigns[:billing_info]
   end
-end# if Aria.available?
+end

@@ -23,7 +23,7 @@ module Aria
     Aria.gen_random_string
     true
   rescue Aria::AuthenticationError, Aria::NotAvailable => e
-    puts "#{message} (#{caller.find{ |s| not s =~ /\/lib\/aria[\.\/]/}}) #{e}"
+    puts "#{message} (#{caller.find{ |s| not s =~ /\/lib\/aria[\.\/]/}}) #{e}" unless Rails.env.test?
     false
   end
 

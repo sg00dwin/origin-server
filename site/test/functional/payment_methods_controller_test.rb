@@ -1,6 +1,9 @@
 require File.expand_path('../../test_helper', __FILE__)
 
 class PaymentMethodsControllerTest < ActionController::TestCase
+
+  setup { omit_if_aria_is_unavailable }
+
   test "should display payment method" do
     with_account_holder
     get :edit, :plan_id => :megashift

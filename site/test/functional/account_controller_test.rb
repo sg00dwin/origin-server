@@ -73,6 +73,7 @@ class AccountControllerTest < ActionController::TestCase
   end
 
   test "should render dashboard" do
+    omit_if_aria_is_unavailable if Rails.configuration.aria_enabled
     with_unique_user
     get :show
     assert_response :success

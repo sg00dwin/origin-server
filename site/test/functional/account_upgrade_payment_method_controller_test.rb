@@ -2,6 +2,8 @@ require File.expand_path('../../test_helper', __FILE__)
 
 class AccountUpgradePaymentMethodControllerTest < ActionController::TestCase
 
+  setup { omit_if_aria_is_unavailable }
+
   test "should display payment method errors when creating" do
     with_account_holder
     get :new, :plan_id => :megashift, :payment_method => {:errors => {:base => 'foo', :cvv => 'servercvvmustbenumeric'}}
