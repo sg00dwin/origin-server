@@ -8,6 +8,7 @@ require 'set'
 
 $max_threads = 8
 WORK_DIR = '/tmp/rhc/migration'
+ACTIVE_SUFFIX = '_active'
 
 # For each of these sets:  nil implies all and empty implies none
 MIGRATION_CART_TYPES = [].to_set
@@ -314,16 +315,31 @@ def migrate(version, continue=false, target_server_identity=nil, migrate_positio
     end
   end
 
-  node_queue = []
+  active_node_queue = []
+  inactive_node_queue = []
   node_to_gears.each do |server_identity, gears|
-    gears = gears.sort_by { |gear| (active_gears_map.include?(server_identity) && active_gears_map[server_identity].include?(gear[:uuid])) ? 0 : 1 }
-    write_node_to_file(server_identity, gears, version) unless continue
-    node_queue << {:server_identity => server_identity, :gears_length => gears.length}
+    active_gears = []
+    inactive_gears = []
+    gears.each do |gear|
+      if active_gears_map.include?(server_identity) && active_gears_map[server_identity].include?(gear[:uuid])
+        active_gears << gear  
+      else
+        inactive_gears << gear
+      end
+    end
+    write_node_to_file(server_identity + ACTIVE_SUFFIX, active_gears, version) unless continue
+    write_node_to_file(server_identity, inactive_gears, version) unless continue
+    active_node_queue << {:server_identity => server_identity + ACTIVE_SUFFIX, :gears_length => active_gears.length}
+    inactive_node_queue << {:server_identity => server_identity, :gears_length => inactive_gears.length}
     node_to_gears[server_identity] = nil
   end
 
   # Process the largest nodes first
-  node_queue = node_queue.sort_by { |node| node[:gears_length] }.reverse
+  active_node_queue = active_node_queue.sort_by { |node| node[:gears_length] }.reverse
+  inactive_node_queue = inactive_node_queue.sort_by { |node| node[:gears_length] }.reverse
+  node_queue = active_node_queue + inactive_node_queue
+  
+  pp node_queue
 
   puts "#####################################################"
   if !migrator_position_nodes.empty?
@@ -496,8 +512,12 @@ def migrate_from_file(file)
       rhlogin = params[4]
       version = params[5]
       migrate_on_node_cmd = "#{__FILE__} --rhlogin '#{rhlogin}' --migrate-gear '#{gear_uuid}' --app-name '#{app_name}' --version '#{version}'"
-      error_file = error_file_path(server_identity)
-      log_file = log_file_path(server_identity)
+      base_path = server_identity
+      if File.basename(file) == File.basename(migrate_file_path(server_identity) + ACTIVE_SUFFIX)
+        base_path += ACTIVE_SUFFIX
+      end
+      error_file = error_file_path(base_path)
+      log_file = log_file_path(base_path)
       append_to_file(log_file,  "Migrating app '#{app_name}' gear '#{gear_name}' with uuid '#{gear_uuid}' on node '#{server_identity}' for user: #{rhlogin}")
       num_tries = 2
       (1..num_tries).each do |i|
