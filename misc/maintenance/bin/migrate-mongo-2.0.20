@@ -22,7 +22,7 @@ end
 
 def mongo_migrate
   puts "Checking for all users "
-  cursor = $coll.find( { }, { :fields => ["apps.group_instances.gears.configured_components", "apps.group_instances.name", "apps.group_instances.gears.uuid", "apps.comp_instances.name", "apps.name", "_id"] })
+  cursor = $coll.find( {"apps.group_instances.gears.0" => {"$exists" => true}}, { :fields => ["apps.group_instances.gears.configured_components", "apps.group_instances.name", "apps.group_instances.gears.uuid", "apps.comp_instances.name", "apps.name", "_id"] })
   cursor.each { |uhash|
     userid = uhash["_id"]
     apps = uhash["apps"]
