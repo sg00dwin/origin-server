@@ -26,7 +26,7 @@
         if (empty($sidebar_right)) { $layout = 'left'; }
         else { $layout = 'both'; }
       }
-    ?>
+    ?> 
     <link type="image/png" rel="shortcut icon" href="/app/assets/images/favicon-32.png"></link>
     <link type="text/css" rel="stylesheet" href="/app/assets/overpass.css"></link>
     <script src="/app/assets/modernizr.min.js" type="text/javascript"></script>
@@ -63,7 +63,6 @@
       <div id="top" class="section-top">
         <div class="container">
         	<a title="Track open issues on the OpenShift status page" style="display:none;" id="outage" class="btn btn-small btn-warning" href="/app/status">Status</a>
-          <div class="pull-left"><a href="/community/developers/pricing">Plans and Pricing</a></div>
           <div class="pull-right login">
 
           <form action="/community/search/node" method="get" id="search-top">
@@ -87,6 +86,7 @@
             }
             ?>
           </div>
+          <div class="mobile-block"><a href="/community/enterprise-paas"><span>Streamline App Delivery with  </span>OpenShift Enterprise</a></div>
         </div>
       </div>
 
