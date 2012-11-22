@@ -645,6 +645,7 @@ $:.unshift('/var/www/openshift/broker')
 require 'config/environment'
 # Disable analytics for admin scripts
 Rails.configuration.analytics[:enabled] = false
+Rails.configuration.msg_broker[:rpc_options][:disctimeout] = 60
 
 if opt['max_threads']
   max_threads = opt['max_threads'].to_i
