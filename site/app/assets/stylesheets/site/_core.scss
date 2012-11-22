@@ -146,20 +146,73 @@ body.signup {
 }
 
 // Top bar
+
+.home .section-top .masthead-enterprise {
+  display: block;
+  height: 117px;
+  margin: 0 auto;
+  background: #222 image-url("enterprise-banner.png") center center no-repeat;
+  a {
+    display: block;
+    min-height: 117px;
+    background: transparent;
+    width:100%;
+  }
+  div {
+    padding: 0;
+  }
+}
+
 .section-top {
   background-color: $topBarBackgroundColor; 
   color: #888;
-  //height: 35px;
+  
+  .masthead-enterprise {
+    display: none;
+  }
   
   div div {
     padding: 4px 0;
+  }
+  
+  div div.mobile-block {
+    float: none;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+
+    a {
+      background: transparent image-url("sprite-vert.png") right -113px no-repeat;
+      color: #EA0011;
+      height: 24px;
+      line-height: 25px;
+      padding-right: 28px;
+      color: $openshiftBrightRed;
+      @media (max-width: 480px) {
+        margin-right: 0;
+      }
+
+      span {
+        text-transform: none;
+        color: #fff;
+        padding-right: 5px;
+      }
+
+      &:hover {background-position: right -56px;}
+    }
+  }
+  
+  div div.login a {
+    float: left;
+    @media (max-width: 480px) {
+      float: none;
+    }
   }
   
   div a {
     color: $signupLinkColor;
     text-transform: uppercase;
     font-size: 12px;
-    float: left;
     
     &:hover {
     text-decoration: none;
@@ -205,11 +258,13 @@ body.signup {
     }
   }
   
-  div.pull-left {
-	padding-right: 26px;
-	padding-top: 8px;
-	background: image-url("sprite-vert.png") no-repeat scroll right -161px transparent;
-	}
+}
+
+@media (max-width: 979px) {
+  // hide extra text when space is tight
+  .mobile-block > a > span {
+    display: none;
+  }
 }
 
 @media (max-width: 767px) {
@@ -223,30 +278,36 @@ body.signup {
 }
 
 @media (max-width: 480px) {
-	.section-top div.pull-left {
-		display: none;
-	}
-	.section-top #outage {
-		margin: 0;
-	}
-	.section-top .container {
-		padding: 0;
-	}
-	.section-top div a.sign_out {
-    float: none;
-	}
-	.section-top .login {
-		display: table;
-		width: 100%;
-		padding: 0;
-		> a {
-			display: table-cell;
-			border:0;
-			padding: 8px;
-			background-color: #000;	
-			float:none;
-		}
-	}
+  .section-top {
+    .container {
+      padding: 0;
+    }
+    .mobile-block {
+      display: table;
+      float: none;
+      text-align: center;
+      width: 100%;
+      // hide extra text when space is tight
+      > a > span {
+        display: inline;
+      }
+    }
+    div a.sign_out {
+      float: none;
+    }
+    .login {
+      display: table;
+      width: 100%;
+      padding: 0;
+      > a {
+        display: table-cell;
+        border:0;
+        padding: 8px;
+        background-color: #000;	
+        float:none;
+      }
+    }
+  }
 }
 
 // Central messaging content
@@ -1042,9 +1103,8 @@ body.home {
     background-repeat: 
     	no-repeat,
     	repeat;
-  	background-position: 
-    	right 150px,
-    	center bottom;
+  //	background-position: right 150px,center bottom; /* without banner */
+      background-position: right 300px, center bottom; /* with banner */
   }
 
   .home .messaging {
@@ -1073,9 +1133,8 @@ body.home {
     background-repeat: 
     	no-repeat,
     	repeat;
-  	background-position: 
-    	right 200px,
-    	center bottom;
+  	// background-position: right 200px,center bottom;
+  	background-position: right 350px, center bottom; /* with banner */
   }
   .home .messaging {
     margin: 10px 0 15px 0;

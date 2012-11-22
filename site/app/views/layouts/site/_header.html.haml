@@ -1,9 +1,8 @@
 #top.section-top
+  .masthead-enterprise
+    %a{:href => enterprise_product_url}
   .container
     = link_to "Status", status_path, :title => 'Track open issues on the OpenShift status page', :class => 'btn btn-small btn-warning', :style => 'display:none;', :id => 'outage'
-    .pull-left
-      -#= link_to "Newsletter Sign Up", newsletter_signup_url
-      = link_to "Plans and Pricing", pricing_url
     .pull-right.login
       %form#search-top{:action => community_search_url, :method => "get"}
         %input.search-query{:name => "keys", :placeholder => "SEARCH", :type => "text"}
@@ -23,6 +22,12 @@
       -# ['f', 'g', 't'].each do |p|
         = link_to p, :class => 'btn btn-small login-provider' do
           %img{:alt => p}
+    .mobile-block
+      -#= link_to "Newsletter Sign Up", newsletter_signup_url
+      -#= link_to "Plans and Pricing", pricing_url, :class => 'pricing'
+      = link_to enterprise_product_url do
+        %span> Streamline App Delivery with
+        OpenShift Enterprise
 
 %nav#nav{:class => ((content_for? :nav_class) ? content_for(:nav_class) : 'section-nav lift-counter')}
   .navbar

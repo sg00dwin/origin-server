@@ -32,10 +32,16 @@
                   %h4 Java, Ruby, Node.js, Python, PHP, or Perl
                   %p Code in your favorite language, framework, and middleware.  Grow your applications easily with resource scaling.
               %li.time
-                = link_to product_overview_path(:anchor => 'code'), :class => 'link-tile' do
+                = link_to enterprise_product_url, :class => 'link-tile' do
                   %img{:src => image_path('time.png')}
-                  %h4 Super Fast!
-                  %p Code and deploy to the cloud in minutes.  Faster and easier than it has ever been.
+                  %h4 Private and Public Platform as a Service
+                  %p 
+                    OpenShift Enterprise by Red Hat brings the 
+                    ease-of-use, elasticity, and power of the 
+                    OpenShift PaaS to the enterprise.  Deployable 
+                    on-premise in your datacenter or in your 
+                    Private Cloud.  Now there is no excuse.
+
               %li.locked
                 = link_to product_overview_path(:anchor => 'open'), :class => 'link-tile' do
                   %img{:src => image_path('lock.png')}
