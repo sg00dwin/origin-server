@@ -8,7 +8,7 @@
 
 Summary:   OpenShift Site Rails application
 Name:      rhc-site
-Version: 1.1.9
+Version: 1.1.10
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   ASL 2.0
@@ -143,6 +143,10 @@ rm -rf %{buildroot}
 %{sitedir}/public
 
 %changelog
+* Fri Nov 23 2012 Dan McPherson <dmcphers@redhat.com> 1.1.10-1
+- Bug 879501 - Outage message too wide at mobile resolutions
+  (ccoleman@redhat.com)
+
 * Wed Nov 21 2012 Dan McPherson <dmcphers@redhat.com> 1.1.9-1
 - US3055 - Enterprise content for stage (sgoodwin@redhat.com)
 
