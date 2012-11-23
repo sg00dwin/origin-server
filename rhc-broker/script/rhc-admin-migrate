@@ -593,7 +593,7 @@ def execute_script(cmd, num_tries=1, timeout=28800)
 end
 
 def p_usage
-    puts <<USAGE
+  puts <<USAGE
 
 Usage: #{$0}
 
@@ -612,7 +612,7 @@ Usage: #{$0}
   --continue                           Flag indicating to continue a previous migration
 
 USAGE
-exit 255
+  exit 255
 end
 
 begin
