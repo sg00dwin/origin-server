@@ -11,8 +11,7 @@ args = {}
 begin
     opts.each{ |k,v| args[k]=v }
 rescue GetoptLong::Error => e
-    usage
-    exit -100
+    exit 1
 end
 
 

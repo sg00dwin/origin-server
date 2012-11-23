@@ -27,6 +27,7 @@ Options:
 -h|--help
     Show Usage info
 USAGE
+  exit 255
 end
 
 opts = GetoptLong.new(
@@ -40,10 +41,9 @@ opts = GetoptLong.new(
 
 args = {}
 begin
-    opts.each{ |k,v| args[k]=v }
+  opts.each{ |k,v| args[k]=v }
 rescue GetoptLong::Error => e
-    usage
-    exit -100
+  usage
 end
 
 login    = args["--rhlogin"]
@@ -54,7 +54,6 @@ timeout  = args['--timeout']
 
 if login.nil? or app_name.nil? or command.nil? or cartridge.nil? or args["--help"]
   usage
-  exit 1
 end
 
 if timeout

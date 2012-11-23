@@ -24,6 +24,7 @@ Options:
 -h|--help
     Show Usage info
 USAGE
+  exit 255
 end
 
 opts = GetoptLong.new(
@@ -35,10 +36,9 @@ opts = GetoptLong.new(
 
 args = {}
 begin
-    opts.each{ |k,v| args[k]=v }
+  opts.each{ |k,v| args[k]=v }
 rescue GetoptLong::Error => e
-    usage
-    exit -100
+  usage
 end
 
 sync = args["--sync"]
@@ -47,12 +47,11 @@ remove_sync_lock = args["--remove_sync_lock"]
 
 if args["--help"]
   usage
-  exit 1
 end
 
 unless sync || list || remove_sync_lock
   puts "You must --list or --sync or --remove_sync_lock"
-  exit 1
+  usage
 end
 
 require "/var/www/openshift/broker/config/environment"
