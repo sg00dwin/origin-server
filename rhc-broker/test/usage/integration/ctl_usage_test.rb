@@ -122,14 +122,14 @@ class CtlUsageTest < ActionDispatch::IntegrationTest
   
   def sync_usage
     output = `export RAILS_ENV=test; rhc-admin-ctl-usage --sync 2>&1` 
-    exit_code = $?
+    exit_code = $?.exitstatus
     puts output if exit_code != 0
     assert_equal(0, exit_code)
   end
   
   def list_usage
     output = `export RAILS_ENV=test; rhc-admin-ctl-usage --list 2>&1` 
-    exit_code = $?
+    exit_code = $?.exitstatus
     puts output if exit_code != 0
     assert_equal(0, exit_code)
   end

@@ -1,21 +1,21 @@
 #!/usr/bin/env oo-ruby
 
 output = `rhc-accept-node`
-exit_code = $?
+exit_code = $?.exitstatus
 if exit_code != 0
   puts "Accept Node Output: #{output}"
   exit exit_code
 end
 
 output = `service rhc-site status`
-exit_code = $?
+exit_code = $?.exitstatus
 if exit_code != 0
   puts "Site Status Output: #{output}"
   exit exit_code
 end
 
 output = `service rhc-broker status`
-exit_code = $?
+exit_code = $?.exitstatus
 if exit_code != 0
   puts "Broker Status Output: #{output}"
   exit exit_code
