@@ -647,12 +647,12 @@ require 'config/environment'
 Rails.configuration.analytics[:enabled] = false
 Rails.configuration.msg_broker[:rpc_options][:disctimeout] = 60
 
-if opt['max_threads']
-  max_threads = opt['max_threads'].to_i
+if opt['max-threads']
+  max_threads = opt['max-threads'].to_i
   if max_threads < 50 && max_threads > 0
     $max_threads = max_threads
   else
-    puts "max_threads must be less than 50 and greater than 0"
+    puts "max-threads must be less than 50 and greater than 0"
     exit 255
   end
 end
