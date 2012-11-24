@@ -16,9 +16,13 @@ RESTART_CART_TYPES = ['jenkins-1.4'].to_set
 REDEPLOY_HTTPD_PROXY_CART_TYPES = [].to_set # Deploys on top of existing config.  Will not fixup renames.
 
 $all_cart_types = nil
+$restart_only_cart_types = nil
 if MIGRATION_CART_TYPES && RESTART_CART_TYPES && REDEPLOY_HTTPD_PROXY_CART_TYPES
   $all_cart_types = Set.new
   $all_cart_types = MIGRATION_CART_TYPES + RESTART_CART_TYPES + REDEPLOY_HTTPD_PROXY_CART_TYPES
+  
+  $restart_only_cart_types = RESTART_CART_TYPES.dup
+  $restart_only_cart_types -= (MIGRATION_CART_TYPES + REDEPLOY_HTTPD_PROXY_CART_TYPES)
 end
 
 STDOUT.sync, STDERR.sync = true
@@ -241,11 +245,18 @@ end
 
 def migrate(version, continue=false, target_server_identity=nil, migrate_position=1, num_migrators=1)
   start_time = (Time.now.to_f * 1000).to_i
-  puts "Getting all RHLogins..."
   rhlogins_cnt = 0
   gear_cnt = 0
   node_to_gears = {}
-
+    
+  puts "Getting all active gears..."
+  gather_active_gears_start_time = (Time.now.to_f * 1000).to_i
+  active_gears_map = OpenShift::ApplicationContainerProxy.get_all_active_gears
+  gather_active_gears_total_time = (Time.now.to_f * 1000).to_i - gather_active_gears_start_time
+  
+  
+  puts "Getting all RHLogins..."
+  gather_users_start_time = (Time.now.to_f * 1000).to_i
   query = {"apps.group_instances.gears.0" => {"$exists" => true}}
   fields = {:fields => ["uuid",
                         "login",
@@ -263,7 +274,7 @@ def migrate(version, continue=false, target_server_identity=nil, migrate_positio
     rhlogins_cnt += 1
     user_uuid = hash['uuid']
     user_login = hash['login']
-    puts "Gathering gears for user: #{user_login} with uuid: #{user_uuid}"
+    print '.'
     hash['apps'].each do |app|
       component_instance_map = {}
       app['comp_instances'].each do |ci|
@@ -279,27 +290,22 @@ def migrate(version, continue=false, target_server_identity=nil, migrate_positio
           server_identity = gear['server_identity']
           if (!target_server_identity || (server_identity == target_server_identity))
             cart_names.each do |cart_name|
-              if $all_cart_types.nil? || $all_cart_types.include?(cart_name) || app['scalable']
+              if $all_cart_types.nil? || $all_cart_types.include?(cart_name)
                 node_to_gears[server_identity] = [] unless node_to_gears[server_identity]
-                node_to_gears[server_identity] << {:server_identity => server_identity, :uuid => gear['uuid'], :name => gear['name'], :app_name => app['name'], :login => user_login}
-                gear_cnt += 1 
-                break
+                if $restart_only_cart_types.nil? || !$restart_only_cart_types.include?(cart_name) || (active_gears_map.include?(server_identity) && active_gears_map[server_identity].include?(gear['uuid'])) 
+                  node_to_gears[server_identity] << {:server_identity => server_identity, :uuid => gear['uuid'], :name => gear['name'], :app_name => app['name'], :login => user_login}
+                  break
+                end
               end
             end
           end
         end
       end
     end
-
   end
+  gather_users_total_time = (Time.now.to_f * 1000).to_i - gather_users_start_time
 
-  gather_users_total_time = (Time.now.to_f * 1000).to_i - start_time
-
-  puts "RHLogins.length: #{rhlogins_cnt.to_s}"
-  
-  gather_active_gears_start_time = (Time.now.to_f * 1000).to_i
-  active_gears_map = OpenShift::ApplicationContainerProxy.get_all_active_gears
-  gather_active_gears_total_time = (Time.now.to_f * 1000).to_i - gather_active_gears_start_time
+  puts "\nRHLogins.length: #{rhlogins_cnt.to_s}"
 
   position = migrate_position - 1
   migrator_position_nodes = []
@@ -318,28 +324,35 @@ def migrate(version, continue=false, target_server_identity=nil, migrate_positio
   active_node_queue = []
   inactive_node_queue = []
   node_to_gears.each do |server_identity, gears|
-    active_gears = []
-    inactive_gears = []
-    gears.each do |gear|
-      if active_gears_map.include?(server_identity) && active_gears_map[server_identity].include?(gear[:uuid])
-        active_gears << gear  
-      else
-        inactive_gears << gear
+    node_to_gears[server_identity] = nil
+    unless gears.empty?
+      active_gears = []
+      inactive_gears = []
+      gears.each do |gear|
+        if active_gears_map.include?(server_identity) && active_gears_map[server_identity].include?(gear[:uuid])
+          active_gears << gear  
+        else
+          inactive_gears << gear
+        end
+      end
+
+      unless active_gears.empty?
+        write_node_to_file(server_identity + ACTIVE_SUFFIX, active_gears, version) unless continue
+        active_node_queue << {:server_identity => server_identity + ACTIVE_SUFFIX, :gears_length => active_gears.length}
+      end
+
+      unless inactive_gears.empty?
+        write_node_to_file(server_identity, inactive_gears, version) unless continue
+        inactive_node_queue << {:server_identity => server_identity, :gears_length => inactive_gears.length}
       end
     end
-    write_node_to_file(server_identity + ACTIVE_SUFFIX, active_gears, version) unless continue
-    write_node_to_file(server_identity, inactive_gears, version) unless continue
-    active_node_queue << {:server_identity => server_identity + ACTIVE_SUFFIX, :gears_length => active_gears.length}
-    inactive_node_queue << {:server_identity => server_identity, :gears_length => inactive_gears.length}
-    node_to_gears[server_identity] = nil
   end
+  node_to_gears.clear
 
   # Process the largest nodes first
   active_node_queue = active_node_queue.sort_by { |node| node[:gears_length] }.reverse
   inactive_node_queue = inactive_node_queue.sort_by { |node| node[:gears_length] }.reverse
   node_queue = active_node_queue + inactive_node_queue
-  
-  pp node_queue
 
   puts "#####################################################"
   if !migrator_position_nodes.empty?
@@ -358,6 +371,7 @@ def migrate(version, continue=false, target_server_identity=nil, migrate_positio
   starting_nodes.each_with_index do |node, index|
     server_identity = node[:server_identity]
     gear_cnts[index] = node[:gears_length]
+    gear_cnt += node[:gears_length]
     node_threads << Thread.new do
       node_timings, node_acceptable_errors = migrate_node(server_identity, continue)
       add_to(timings, node_timings)
@@ -369,6 +383,7 @@ def migrate(version, continue=false, target_server_identity=nil, migrate_positio
           node = node_queue.delete_at(0)
           server_identity = node[:server_identity]
           gear_cnts[index] += node[:gears_length]
+          gear_cnt += node[:gears_length]
           puts "#####################################################"
           puts "Remaining node queue:"
           puts node_queue.pretty_inspect
@@ -399,7 +414,8 @@ def migrate(version, continue=false, target_server_identity=nil, migrate_positio
     puts ""
   end
 
-  node_to_gears.each do |server_identity, gears|
+  node_queue.each do |node|
+    server_identity = node[:server_identity]
     f = migrate_file_path(server_identity)
     leftover_count = `wc -l #{f}`.to_i
     if leftover_count > 0
