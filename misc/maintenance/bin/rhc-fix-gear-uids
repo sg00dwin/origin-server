@@ -31,19 +31,20 @@ end
 
 mongo_hash = {}
 query = {"$or" => [{"apps.group_instances.gears.0" => {"$exists" => true}}, {"consumed_gears" => {"$ne" => 0}}]}
-fields = {:fields => ["apps.group_instances.gears.uuid", "apps.group_instances.gears.uid"]}
-mcursor = OpenShift::DataStore.instance.user_collection.find(query, fields)
+options = {:fields => ["apps.group_instances.gears.uuid", "apps.group_instances.gears.uid"], :timeout => false}
 ret = []
-mcursor.each do |hash|
-  hash['apps'].each { |app|
-    app['group_instances'].each { |gi|
-      if gi['gears']
-        gi['gears'].each { |gear|
-          mongo_hash[gear['uuid']] = gear['uid']
-        }
-      end
-    } if app['group_instances']
-  } if hash['apps']
+OpenShift::DataStore.instance.user_collection.find(query, options) do |mcursor|
+  mcursor.each do |hash|
+    hash['apps'].each { |app|
+      app['group_instances'].each { |gi|
+        if gi['gears']
+          gi['gears'].each { |gear|
+            mongo_hash[gear['uuid']] = gear['uid']
+          }
+        end
+      } if app['group_instances']
+    } if hash['apps']
+  end
 end
 
 node_hash, $sender_hash = OpenShift::ApplicationContainerProxy.get_all_gears
