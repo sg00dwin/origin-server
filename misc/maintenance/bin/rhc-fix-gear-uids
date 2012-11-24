@@ -4,7 +4,7 @@ require 'rubygems'
 require 'getoptlong'
 require "/var/www/openshift/broker/config/environment"
 
-Rails.configuration.msg_broker[:rpc_options][:disctimeout] = 60
+Rails.configuration.msg_broker[:rpc_options][:disctimeout] = 20
 
 
 def check_gear_uid(gear, new_uid)
