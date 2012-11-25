@@ -15,7 +15,7 @@ rhc-admin-cartridge-do OPTIONS
 
 Options:
 -l|--login <login_name>
-    Red Hat login (RHN or OpenShift login with OpenShift access) (required)
+    Login with OpenShift Access (required)
 -a|--app     <application>
     Application name  (alphanumeric) (required)
 -c|--command <command>
