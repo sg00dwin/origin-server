@@ -30,13 +30,13 @@ STDOUT.sync, STDERR.sync = true
 #
 #  Migrate the specified gear
 #
-def migrate_gear(rhlogin, app_name, gear_uuid, version)
+def migrate_gear(login, app_name, gear_uuid, version)
   total_migrate_gear_start_time = (Time.now.to_f * 1000).to_i
-  migrate_cmd = "#{__FILE__} --rhlogin '#{rhlogin}' --migrate-gear '#{gear_uuid}' --app-name '#{app_name}' --version '#{version}'"
+  migrate_cmd = "#{__FILE__} --login '#{login}' --migrate-gear '#{gear_uuid}' --app-name '#{app_name}' --version '#{version}'"
   out = StringIO.new
   out << "Migrating gear on node with: #{migrate_cmd}\n"
   begin
-    user = CloudUser.find(rhlogin)
+    user = CloudUser.find(login)
     if user
       app = Application.find(user, app_name)
       if app
@@ -122,13 +122,13 @@ def migrate_gear(rhlogin, app_name, gear_uuid, version)
             raise "Command '#{migrate_cmd}' timed out"
           end
         else
-          out << "WARNING: Gear not found with uuid #{gear_uuid} for app '#{app_name}' and user '#{rhlogin}'\n"
+          out << "WARNING: Gear not found with uuid #{gear_uuid} for app '#{app_name}' and user '#{login}'\n"
         end
       else
         out << "WARNING: App not found: #{app_name}\n"
       end
     else
-      raise "User not found: #{rhlogin}"
+      raise "User not found: #{login}"
     end
   rescue Exception => e
     raise "#{e.message}\n#{e.backtrace}\nOutput:\n#{out.string}"
@@ -245,7 +245,7 @@ end
 
 def migrate(version, continue=false, target_server_identity=nil, migrate_position=1, num_migrators=1)
   start_time = (Time.now.to_f * 1000).to_i
-  rhlogins_cnt = 0
+  logins_cnt = 0
   gear_cnt = 0
   node_to_gears = {}
     
@@ -255,7 +255,7 @@ def migrate(version, continue=false, target_server_identity=nil, migrate_positio
   gather_active_gears_total_time = (Time.now.to_f * 1000).to_i - gather_active_gears_start_time
   
   
-  puts "Getting all RHLogins..."
+  puts "Getting all logins..."
   gather_users_start_time = (Time.now.to_f * 1000).to_i
   query = {"apps.group_instances.gears.0" => {"$exists" => true}}
   options = {:fields => ["uuid",
@@ -272,7 +272,7 @@ def migrate(version, continue=false, target_server_identity=nil, migrate_positio
   ret = []
   OpenShift::DataStore.instance.user_collection.find(query, options) do |mcursor|
     mcursor.each do |hash|
-      rhlogins_cnt += 1
+      logins_cnt += 1
       user_uuid = hash['uuid']
       user_login = hash['login']
       print '.'
@@ -307,7 +307,7 @@ def migrate(version, continue=false, target_server_identity=nil, migrate_positio
   end
   gather_users_total_time = (Time.now.to_f * 1000).to_i - gather_users_start_time
 
-  puts "\nRHLogins.length: #{rhlogins_cnt.to_s}"
+  puts "\nlogins.length: #{logins_cnt.to_s}"
 
   position = migrate_position - 1
   migrator_position_nodes = []
@@ -439,7 +439,7 @@ def migrate(version, continue=false, target_server_identity=nil, migrate_positio
   
   puts "#####################################################"
   puts "Summary:"
-  puts "# of users: #{rhlogins_cnt}"
+  puts "# of users: #{logins_cnt}"
   puts "# of gears: #{gear_cnt}"
   puts "# of failures: #{@failures.length}"
   puts "Gear counts per thread: #{gear_cnts.pretty_inspect}"
@@ -527,20 +527,20 @@ def migrate_from_file(file)
       gear_uuid = params[1]
       gear_name = params[2]
       app_name = params[3]
-      rhlogin = params[4]
+      login = params[4]
       version = params[5]
-      migrate_on_node_cmd = "#{__FILE__} --rhlogin '#{rhlogin}' --migrate-gear '#{gear_uuid}' --app-name '#{app_name}' --version '#{version}'"
+      migrate_on_node_cmd = "#{__FILE__} --login '#{login}' --migrate-gear '#{gear_uuid}' --app-name '#{app_name}' --version '#{version}'"
       base_path = server_identity
       if File.basename(file) == File.basename(migrate_file_path(server_identity) + ACTIVE_SUFFIX)
         base_path += ACTIVE_SUFFIX
       end
       error_file = error_file_path(base_path)
       log_file = log_file_path(base_path)
-      append_to_file(log_file,  "Migrating app '#{app_name}' gear '#{gear_name}' with uuid '#{gear_uuid}' on node '#{server_identity}' for user: #{rhlogin}")
+      append_to_file(log_file,  "Migrating app '#{app_name}' gear '#{gear_name}' with uuid '#{gear_uuid}' on node '#{server_identity}' for user: #{login}")
       num_tries = 2
       (1..num_tries).each do |i|
         begin
-          output = migrate_gear(rhlogin, app_name, gear_uuid, version)
+          output = migrate_gear(login, app_name, gear_uuid, version)
           append_to_file(log_file, output)
           break
         rescue Exception => e
@@ -549,7 +549,7 @@ def migrate_from_file(file)
             append_to_file(error_file, migrate_on_node_cmd)
             break
           else
-            if OpenShift::DataStore.instance.find(Application.name, rhlogin, app_name)
+            if OpenShift::DataStore.instance.find(Application.name, login, app_name)
               sleep 4
             else
               append_to_file(log_file, "App '#{app_name}' no longer found in datastore with uuid '#{gear_uuid}'.  Ignoring...")
@@ -615,7 +615,7 @@ def p_usage
 
 Usage: #{$0}
 
-  --rhlogin rhlogin                    User rhlogin
+  --login login_name                   User login
   --migrate-gear gear_uuid             Gear uuid of the single gear to migrate
   --app-name app_name                  App name of the gear to migrate
   --migrate-node server_identity       Server identity of the node to migrate
@@ -635,7 +635,7 @@ end
 
 begin
   opts = GetoptLong.new(
-    ["--rhlogin", GetoptLong::REQUIRED_ARGUMENT],
+    ["--login", GetoptLong::REQUIRED_ARGUMENT],
     ["--migrate-gear", GetoptLong::REQUIRED_ARGUMENT],
     ["--app-name", GetoptLong::REQUIRED_ARGUMENT],
     ["--migrate-node", GetoptLong::REQUIRED_ARGUMENT],
@@ -678,10 +678,10 @@ end
 if opt['migrate-file']
   migrate_from_file(opt['migrate-file'])
 elsif opt['migrate-gear']
-  if opt['rhlogin'] && opt['app-name'] && opt['version']
-    puts migrate_gear(opt['rhlogin'], opt['app-name'], opt['migrate-gear'], opt['version'])
+  if opt['login'] && opt['app-name'] && opt['version']
+    puts migrate_gear(opt['login'], opt['app-name'], opt['migrate-gear'], opt['version'])
   else
-    puts "--rhlogin, --app-name, and --version is required with --migrate-gear"
+    puts "--login, --app-name, and --version is required with --migrate-gear"
     exit 255
   end
 elsif opt['migrate-node']

@@ -307,7 +307,7 @@ def migrate_apps(new_version, apps, devenv, account, verbose = true, dry_run = t
     end
   end
 
-  command = "ssh root@#{devenv} \"rhc-admin-migrate --rhlogin #{account} --version #{new_version} >> /root/migrate.#{new_version}.log\""
+  command = "ssh root@#{devenv} \"rhc-admin-migrate --login #{account} --version #{new_version} >> /root/migrate.#{new_version}.log\""
 
   if verbose
     puts "  Running: \"#{command}\""

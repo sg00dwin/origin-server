@@ -14,7 +14,7 @@ rhc-admin-cartridge-do: Run cartridge hooks
 rhc-admin-cartridge-do OPTIONS
 
 Options:
--l|--rhlogin <rhlogin>
+-l|--login <login_name>
     Red Hat login (RHN or OpenShift login with OpenShift access) (required)
 -a|--app     <application>
     Application name  (alphanumeric) (required)
@@ -31,7 +31,7 @@ USAGE
 end
 
 opts = GetoptLong.new(
-    ["--rhlogin",          "-l", GetoptLong::REQUIRED_ARGUMENT],
+    ["--login",            "-l", GetoptLong::REQUIRED_ARGUMENT],
     ["--app",              "-a", GetoptLong::REQUIRED_ARGUMENT],    
     ["--command",          "-c", GetoptLong::REQUIRED_ARGUMENT],
     ["--cartridge",        "-f", GetoptLong::REQUIRED_ARGUMENT],
@@ -46,7 +46,7 @@ rescue GetoptLong::Error => e
   usage
 end
 
-login    = args["--rhlogin"]
+login    = args["--login"]
 app_name = args["--app"]
 command  = args['--command']
 cartridge  = args['--cartridge']
