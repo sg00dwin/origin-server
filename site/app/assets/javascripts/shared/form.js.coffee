@@ -55,25 +55,13 @@ $ ->
       #  required: true
 
   # /app/account/plans/<plan>/upgrade/edit
-  $('form#new_streamline_full_user').validate
+  $('form#upgrade_account_new_streamline_full_user').validate
     rules:
-      # Commented out for now; the new layout isn't currently compatible.
-      #"streamline_full_user[streamline_full_user][first_name]":
-      #  required: true
-      #"streamline_full_user[streamline_full_user][last_name]":
-      #  required: true
-      #"streamline_full_user[aria_billing_info][first_name]":
-      #  required: true
-      #"streamline_full_user[aria_billing_info][last_name]":
-      #  required: true
-      "streamline_full_user[aria_billing_info][address1]":
-        required: true
-      #"streamline_full_user[aria_billing_info][city]":
-      #  required: true
-      #"streamline_full_user[aria_billing_info][state]":
-      #  required: true
-      "streamline_full_user[aria_billing_info][country]":
-        required: true
-      #"streamline_full_user[aria_billing_info][zip]":
-      #  required: true
-
+      # Presently the JavaScript doesn't support inline forms, so we only
+      # validate the password using this framework for now
+      "streamline_full_user[streamline_full_user][password]":
+        required:   true
+        minlength:  6
+      "streamline_full_user[streamline_full_user][passwordConfirmation]":
+        required:   true
+        equalTo:    "#upgrade_account_upgrade_account_streamline_full_user_streamline_full_user_password"

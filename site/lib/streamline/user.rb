@@ -109,7 +109,7 @@ module Streamline
         http_post(build_terms_url(terms), {}, false) do |json|
           # Log error on unknown result
           Rails.logger.error("Streamline accept terms failed") unless json['term']
-    
+
           # Unless everything was accepted, put an error on the user object
           json['term'] ||= []
 
@@ -392,12 +392,37 @@ module Streamline
       not roles.include?('cloud_access_1') and roles.include?('cloud_access_request_1')
     end
 
-    def full_user
-      Streamline::FullUser.new
+    def full_user(args={})
+      if @full_user.nil? or args.keys.any?
+        if self.full_user? and not args.keys.any?
+          # TODO: This returns a blank for now; remove this when userInfo
+          #       functions for full users.
+          @full_user = Streamline::FullUser.new
+        elsif args.keys.any?
+          @full_user = Streamline::FullUser.new args
+        elsif @full_user.nil?
+          @full_user = Streamline::FullUser.new
+        end
+      end
+      @full_user
     end
-    def promote(user)
-      #user.errors.add(:base, 'Promotion is not implemented')
-      true
+
+    def promote(streamline_hash)
+      streamline_hash[:login] = self.login
+      # Post to the promote URL
+      http_post(promote_user_url, streamline_hash) do |response|
+        if response.has_key? 'errors'
+          self.full_user.errors_to_attributes(response['errors']).each do |error|
+            self.errors.add(:base, error)
+          end
+        end
+      end
+
+      return false if self.full_user.errors[:base].count > 0
+
+      streamline_type!
+
+      self.full_user?
     end
 
     protected
@@ -539,6 +564,7 @@ module Streamline
       #end
 
       def user_info_url; service_base_url.merge("userInfo.html"); end
+      def promote_user_url; service_base_url.merge('promoteUser.html'); end
 
       def acknowledge_terms_url; service_base_url.merge("protected/acknowledgeTerms.html"); end
       def unacknowledged_terms_url; service_base_url.merge("protected/findUnacknowledgedTerms.html?hostname=openshift.redhat.com&context=OPENSHIFT&locale=en"); end

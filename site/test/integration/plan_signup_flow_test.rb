@@ -19,10 +19,33 @@ class PlanSignupFlowTest < ActionDispatch::IntegrationTest
   end
 
   def user_params
-    {:first_name => 'Mike', :last_name => 'Smith', :aria_billing_info => billing_params}
+    { :streamline_full_user => {
+        :greeting =>"Mr.",
+        :first_name =>"Joe",
+        :last_name =>"Somebody",
+        :title => "Stuntman",
+        :company => "Red Hat, Inc.",
+        :phone_number => "9191111111",
+        :email_subscribe => false,
+        :password => "f00b4r",
+        :password_confirmation =>"f00b4r"
+      },
+      :aria_billing_info => billing_params,
+    }
   end
+
   def billing_params
-    {:address1 => '1234 Someplace', :city => 'Somewhere', :state => 'TX', :country => 'US', :zip => '49345'}
+    { :first_name =>"Joe",
+      :middle_initial =>"",
+      :last_name =>"Somebody",
+      :address1 =>"12345 Happy Street",
+      :address2 =>"",
+      :address3 =>"",
+      :city => "Happyville",
+      :state =>"TX",
+      :zip => "10001",
+      :country => "US"
+    }
   end
 
   def simple_user

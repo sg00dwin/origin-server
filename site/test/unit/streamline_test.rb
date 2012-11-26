@@ -58,7 +58,7 @@ class StreamlineUnitTest < ActiveSupport::TestCase
     body = {"test" => "test2"}.to_json
     assert_not_nil @streamline.send(:parse_body, body)
   end
-  
+
   test "should raise when parse malformed JSON" do
     assert_raise(MultiJson::DecodeError){ @streamline.send(:parse_body, "{json: 'foo'") }
   end
@@ -538,6 +538,29 @@ class StreamlineUnitTest < ActiveSupport::TestCase
     assert_equal :full, @streamline.streamline_type
     assert !@streamline.simple_user?
     assert @streamline.full_user?
+  end
+
+  test "promote simple user to full user" do
+    @streamline.expects(:http_post).times(3).yields({'username' => 'test1', 'roles' => ['simple_authenticated']}).then.returns(nil).then.returns(['authenticated'])
+    # First, establish a simple streamline user
+    assert_equal true, @streamline.authenticate("test1", "test1")
+    assert_equal false, @streamline.full_user?
+
+    # Now promote the user
+    assert user_info = full_user_args
+    assert user_info[:intentionally_invalid_key] = 'foo'
+    assert @streamline.full_user(user_info)
+    assert_equal true, @streamline.full_user.promote(@streamline)
+
+    # Now ensure that the user was promoted
+    assert_equal true, @streamline.full_user?
+    user_info.each_pair do |key,value|
+      if key == :intentionally_invalid_key
+        assert_equal false, @streamline.full_user.respond_to?(key)
+      else
+        assert_equal value, @streamline.full_user.send(key)
+      end
+    end
   end
 
   test "authenticate fails" do

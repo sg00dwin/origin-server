@@ -3,36 +3,66 @@ module Streamline
     include ActiveModel::Serialization
     include ActiveModel::Validations
     include ActiveModel::Conversion
+    include Streamline::Attributes
     extend ActiveModel::Naming
 
-    attr_accessor :first_name, :last_name
-    attr_accessor :address1, :address2, :address3
-    attr_accessor :city, :state, :country, :zip
-    attr_accessor :phone
+    attribute_method_suffix '='
+    attr_reader :attributes
 
-    def initialize(opts=nil, persisted=false)
+    # Set up the attributes that are the same between this object and the Streamline API
+    attr_streamline :greeting, :title, :company, :address1, :address2, :address3, :city, :state, :country, :login, :password
+
+    # Set up the attributes that are different between this object and the Streamline API
+    [:first_name, :last_name, :phone_number, :email_subscribe, :postal_code, :password_confirmation].each do |attr|
+      attr_streamline attr, :as => attr.to_s.camelize(:lower).to_sym
+    end
+
+    def initialize(opts=nil)
+      @attributes = {}
       opts.each_pair do |k,v|
-        send("#{k}=", v) if respond_to?("#{k}=")
+        if respond_to?("#{k}=")
+          send("#{k}=", v)
+        end
       end if opts
-      @persisted = persisted
+      @persisted = false
+    end
+
+    def errors
+      @errors ||= ActiveModel::Errors.new(self)
     end
 
     def persisted?
       @persisted
     end
 
+    def promote(user)
+      if user.promote(to_streamline_hash)
+        @persisted = true
+      end
+      persisted?
+    end
+
     def self.test
       new({
+        :greeting => 'Mr.',
         :first_name => 'Joe',
         :last_name => 'Somebody',
-        :phone => '9191111111',
-
+        :phone_number => '9191111111',
+        :company => 'Red Hat, Inc.',
         :address1 => '12345 Happy Street',
         :city => 'Happyville',
         :country => 'US',
         :state => 'TX',
-        :zip => '10001',
+        :postal_code => '10001',
       })
     end
+
+    private
+      def attribute=(attr, value)
+        @attributes[attr] = value
+      end
+      def attribute(attr)
+        @attributes[attr]
+      end
   end
 end
