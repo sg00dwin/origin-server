@@ -41,7 +41,7 @@ RedHatCloud::Application.configure do
   ############################################
   config.integrated = false
   config.streamline = {
-    :host => 'https://access.qa.redhat.com',
+    :host => 'https://streamline-proxy1.ops.rhcloud.com',
     :base_url => '/wapps/streamline',
     :register_secret => 'c0ldW1n3',
     :user_info_secret => 'sw33tl1Qu0r',
