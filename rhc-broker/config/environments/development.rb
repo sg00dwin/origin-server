@@ -42,11 +42,11 @@ Broker::Application.configure do
   # OpenShift Configuration Below this point #
   ############################################
   conf = OpenShift::Config.new(File.join(OpenShift::Config::CONF_DIR, 'broker-dev.conf'))
-  replica_sets = conf.get_bool("MONGO_REPLICA_SETS", "false")
+  replica_sets = conf.get_bool("MONGO_REPLICA_SETS", "true")
   hp = conf.get("MONGO_HOST_PORT", "localhost:27017")
   if !hp
     raise "Broker is missing Mongo configuration."
-  elif replica_sets
+  elsif replica_sets
     host_port = hp.split.map do |x|
       (h,p) = x.split(":")
       [h, p.to_i]
