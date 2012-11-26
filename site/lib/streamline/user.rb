@@ -408,6 +408,7 @@ module Streamline
     end
 
     def promote(streamline_hash)
+      streamline_hash[:login] = self.login
       # Post to the promote URL
       http_post(promote_user_url, streamline_hash) do |response|
         if response.has_key? 'errors'
