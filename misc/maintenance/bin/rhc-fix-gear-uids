@@ -8,21 +8,22 @@ Rails.configuration.msg_broker[:rpc_options][:disctimeout] = 20
 
 
 def check_gear_uid(gear, new_uid)
-  district = gear.get_proxy.district
+  district = OpenShift::DataStore.instance.find_district_with_node(gear.server_identity)
+  # district = gear.get_proxy.district
   if district.nil?
     return 
   end
   # first check if the new_uid is not taken by anyone on the member nodes (other than this gear's node)
-  district.server_identities.each { |server_id|
+  district["server_identities"].keys.each { |server_id|
     next if server_id == gear.get_proxy.id
-    if $sender_hash[server_id].has_key? String(new_uid)
-      raise Exception.new("ERROR : Gear #{gear.uuid} cannot set its uid to #{new_uid}, because the uid is taken in the district by another gear #{sender_hash[server_id][String(new_uid)]} on node #{server_id}.")
+    if $sender_hash[server_id].has_key? new_uid
+      raise Exception.new("ERROR : Gear #{gear.uuid} cannot set its uid to #{new_uid}, because the uid is taken in the district by another gear #{$sender_hash[server_id][String(new_uid)]} on node #{server_id}.")
     end
   }
-  if district.available_uids.include? new_uid
+  if district["available_uids"].include? new_uid
     # check and reserve the uid with the district
-    if !OpenShift::DataStore.instance.reserve_district_uid(district.uuid, new_uid)
-      raise Exception.new("Could not reserve uid #{new_uid} on district #{district.name} (#{district.uuid}).")
+    if !OpenShift::DataStore.instance.reserve_district_uid(district["uuid"], new_uid)
+      raise Exception.new("Could not reserve uid #{new_uid} on district #{district["name"]} (#{district["uuid"]}).")
     end
   end
 
@@ -73,7 +74,7 @@ mongo_hash.each { |gear_uuid,gear_uid|
       msg += "done.\n"
       cleanup_summary << msg
     rescue Exception => e
-      msg += "failed. Because of #{e.message}\n"
+      msg += "failed. Reason - #{e.message}\n"
       fail_summary << msg
     end
   end
