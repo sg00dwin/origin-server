@@ -97,7 +97,6 @@ rm -rf $RPM_BUILD_ROOT
 %defattr(0640,root,libra_user,0750)
 %ghost %attr(0660,root,root) %{brokerdir}/log/production.log
 %ghost %attr(0660,root,root) %{_var}/log/openshift/user_action.log
-%config(noreplace) %{brokerdir}/config/environments/production.rb
 %config(noreplace) %{brokerdir}/config/keys/public.pem
 %config(noreplace) %{brokerdir}/config/keys/private.pem
 %attr(0600,-,-) %config(noreplace) %{brokerdir}/config/keys/rsync_id_rsa
