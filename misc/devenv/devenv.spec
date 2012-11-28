@@ -345,7 +345,7 @@ echo "net.netfilter.nf_conntrack_max = 1048576" >> /etc/sysctl.conf
 sysctl net.netfilter.nf_conntrack_max=1048576
 
 # Setup facts
-scl enable ruby193 "/usr/libexec/mcollective/update_yaml.rb /etc/mcollective/facts.yaml"
+/usr/libexec/mcollective/update_yaml.rb /etc/mcollective/facts.yaml
 crontab -u root %{devenvdir}/crontab
 
 # enable disk quotas
