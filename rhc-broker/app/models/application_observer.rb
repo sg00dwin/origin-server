@@ -100,7 +100,7 @@ may be ok if '#{uapp.name}#{BUILDER_SUFFIX}' was the builder of a previously des
     app = data[:application]
     reply = data[:reply]
     if app.framework_cartridge == "jenkins"
-      app.user.applications.each do |uapp|
+      app.domain.owner.applications.each do |uapp|
         begin
           reply.append uapp.remove_dependency('jenkins-client-1.4') if uapp.name != app.name and uapp.embedded and uapp.embedded.has_key?('jenkins-client-1.4')
         rescue Exception => e

@@ -1,0 +1,16 @@
+development:
+  sessions:
+    default:
+      database: localhost
+      hosts:
+        - localhost:27017
+      user: libra
+      password: momo
+test:
+  sessions:
+    default:
+      database: localhost
+      hosts:
+        - localhost:27017
+      user: libra
+      password: momo

@@ -66,7 +66,7 @@ mongo_hash.each { |gear_uuid,gear_uid|
   actual_uid = node_info[1]
   if gear_uid != actual_uid
     app, gear = Application::find_by_gear_uuid(gear_uuid)
-    msg = "Gear '#{gear_uuid}' in app #{app.name} for user '#{app.user.login}', needs its uid to be set from '#{gear_uid}' to '#{actual_uid}'..."
+    msg = "Gear '#{gear_uuid}' in app #{app.name} for user '#{app.domain.owner.login}', needs its uid to be set from '#{gear_uid}' to '#{actual_uid}'..."
     begin
       check_gear_uid(gear, actual_uid)
       gear.uid = actual_uid
@@ -81,7 +81,7 @@ mongo_hash.each { |gear_uuid,gear_uid|
   if gear_uid.class == String
     begin
       app, gear = Application::find_by_gear_uuid(gear_uuid)
-      msg = "Gear '#{gear_uuid}' in app #{app.name} for user '#{app.user.login}', needs its uid converted from String to Integer..."
+      msg = "Gear '#{gear_uuid}' in app #{app.name} for user '#{app.domain.owner.login}', needs its uid converted from String to Integer..."
       gear.uid = Integer(gear_uid)
       app.save
       msg += "done.\n"

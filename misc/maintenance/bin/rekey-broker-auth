@@ -27,17 +27,17 @@ def rekey
   users.each do |user|
     puts ""
     puts "######################################################"
-    puts "Updating apps for user: #{user.login}(#{user_count.to_s}) with uuid: #{user.uuid}"
+    puts "Updating apps for user: #{user.login}(#{user_count.to_s}) with uuid: #{user._id}"
     apps = user.applications
     apps.each do |app|
       begin
         app_name = app.name
         if app.framework == 'jenkins-1.4'
-          puts "Re-keying app '#{app_name}' with uuid '#{app.uuid}' on node '#{app.server_identity}' for user: #{user.login}"
+          puts "Re-keying app '#{app_name}' with uuid '#{app._id}' on node '#{app.server_identity}' for user: #{user.login}"
           app.add_broker_key
         end
       rescue Exception => e
-        puts "ERROR: Failed re-keying app: #{app_name} with uuid: #{app.uuid} for user: #{user.login}"
+        puts "ERROR: Failed re-keying app: #{app_name} with uuid: #{app._id} for user: #{user.login}"
         puts e.message
         puts e.backtrace
       end

@@ -42,7 +42,7 @@ def migrate_gear(login, app_name, gear_uuid, version)
       if app
         gear = nil
         app.gears.each do |app_gear|
-          if app_gear.uuid == gear_uuid
+          if app_gear._id == gear_uuid
             gear = app_gear
             break
           end
@@ -159,32 +159,32 @@ def restart_component(gear, component, out)
     end
     unless leave_stopped
       begin
-        out << "Stopping component '#{component.name}' on gear with uuid '#{gear.uuid}' on node '#{gear.server_identity}'\n"
+        out << "Stopping component '#{component.name}' on gear with uuid '#{gear._id}' on node '#{gear.server_identity}'\n"
         reply.append gear.stop(component)
       rescue Exception => e
-        out << "WARNING: Error stopping component '#{component.name}' on gear with uuid '#{gear.uuid}' on node '#{gear.server_identity}': #{e.message}\n"
+        out << "WARNING: Error stopping component '#{component.name}' on gear with uuid '#{gear._id}' on node '#{gear.server_identity}': #{e.message}\n"
       end
       begin
-        out << "Force stopping component '#{component.name}' on gear with uuid '#{gear.uuid}' on node '#{gear.server_identity}'\n"
+        out << "Force stopping component '#{component.name}' on gear with uuid '#{gear._id}' on node '#{gear.server_identity}'\n"
         reply.append gear.force_stop(component)
       rescue Exception => e
-        out << "WARNING: Error force stopping component '#{component.name}' on gear with uuid '#{gear.uuid}' on node '#{gear.server_identity}': #{e.message}\n"
+        out << "WARNING: Error force stopping component '#{component.name}' on gear with uuid '#{gear._id}' on node '#{gear.server_identity}': #{e.message}\n"
       end
       num_tries = 2
       (1..num_tries).each do |i|
-        out << "Restarting component '#{component.name}' on gear with uuid '#{gear.uuid}' on node '#{gear.server_identity}'\n"
+        out << "Restarting component '#{component.name}' on gear with uuid '#{gear._id}' on node '#{gear.server_identity}'\n"
         begin
           reply.append gear.restart(component)
           break
         rescue Exception => e
           if i == num_tries
-            out << "Failed to restart component '#{component.name}' on gear with uuid '#{gear.uuid}' on node '#{gear.server_identity}' after #{num_tries} tries with exception: #{e.message}\n"
-            out << "***acceptable_error_restart_component={\"gear_uuid\":\"#{gear.uuid}\",\"component_name\":\"#{component.name}\",\"server_identity\":\"#{gear.server_identity}\",\"login\":\"#{gear.app.user.login}\",\"app_name\":\"#{gear.app.name}\"}***\n"
+            out << "Failed to restart component '#{component.name}' on gear with uuid '#{gear._id}' on node '#{gear.server_identity}' after #{num_tries} tries with exception: #{e.message}\n"
+            out << "***acceptable_error_restart_component={\"gear_uuid\":\"#{gear._id}\",\"component_name\":\"#{component.name}\",\"server_identity\":\"#{gear.server_identity}\",\"login\":\"#{gear.app.domain.owner.login}\",\"app_name\":\"#{gear.app.name}\"}***\n"
           end
         end
       end
     else
-      out << "Leaving component stopped '#{component.name}' on gear with uuid '#{gear.uuid}' on node '#{gear.server_identity}'\n"
+      out << "Leaving component stopped '#{component.name}' on gear with uuid '#{gear._id}' on node '#{gear.server_identity}'\n"
     end
     out << "RESTART DEBUG OUTPUT:\n#{reply.debugIO.string}\n" unless reply.debugIO.string.empty?
     out << "RESTART ERROR OUTPUT:\n#{reply.errorIO.string}\n" unless reply.errorIO.string.empty?
@@ -203,7 +203,7 @@ def httpd_proxy_action(gear, action, out)
   gear.configured_components.each do |comp_name|
     component = gear.app.comp_instance_map[comp_name]
     if component
-      out << "#{action} for '#{component.parent_cart_name}' on gear '#{gear.name}' with uuid '#{gear.uuid}' on node #{gear.server_identity}\n"
+      out << "#{action} for '#{component.parent_cart_name}' on gear '#{gear.name}' with uuid '#{gear._id}' on node #{gear.server_identity}\n"
       embedded = gear.app.embedded.include?(component.parent_cart_name)
       reply = gear.app.container.send(:run_cartridge_command, (embedded ? "embedded/" : '') + component.parent_cart_name, gear.app, gear, action, nil, false)
   
@@ -212,7 +212,7 @@ def httpd_proxy_action(gear, action, out)
       
       if reply.exitcode != 0
         out << "#{action} for cart: #{component.parent_cart_name} on node exit code: #{reply.exitcode}\n"
-        raise "Failed deploying httpd proxy for gear '#{gear.name}' with uuid '#{gear.uuid}' on node '#{gear.server_identity}'"
+        raise "Failed deploying httpd proxy for gear '#{gear.name}' with uuid '#{gear._id}' on node '#{gear.server_identity}'"
       end
     end
   end
@@ -221,13 +221,13 @@ end
 def redeploy_aliases(gear, out)
   unless gear.app.aliases.nil?
     gear.app.aliases.each do |server_alias|
-      out << "Adding alias '#{server_alias}' for '#{gear.name}' with uuid '#{gear.uuid}' on node #{gear.server_identity}\n"
+      out << "Adding alias '#{server_alias}' for '#{gear.name}' with uuid '#{gear._id}' on node #{gear.server_identity}\n"
       reply = gear.add_alias(server_alias)
       out << "ADD_ALIAS DEBUG OUTPUT:\n#{reply.debugIO.string}\n" unless reply.debugIO.string.empty?
       out << "ADD_ALIAS ERROR OUTPUT:\n#{reply.errorIO.string}\n" unless reply.errorIO.string.empty?
       if reply.exitcode != 0
         out << "Add alias on node exit code: #{reply.exitcode}\n"
-        raise "Failed adding alias #{server_alias} for gear '#{gear.name}' with uuid '#{gear.uuid}' on node '#{gear.server_identity}'"
+        raise "Failed adding alias #{server_alias} for gear '#{gear.name}' with uuid '#{gear._id}' on node '#{gear.server_identity}'"
       end
     end
   end
