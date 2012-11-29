@@ -5,7 +5,7 @@
 %global modname             user_profile
 
 Name:    drupal%{drupal_release}-openshift-features-%{modname}
-Version: 1.8.1
+Version: 1.8.2
 Release: 1%{?dist}
 Summary: Openshift Red Hat Custom User Profile Feature for Drupal6
 Group:   Applications/Publishing
@@ -41,6 +41,12 @@ rm -rf $RPM_BUILD_ROOT
 %{drupal_modules}/%{modname}
 
 %changelog
+* Thu Nov 29 2012 Adam Miller <admiller@redhat.com> 1.8.2-1
+- Permissions for event moderation (ccoleman@redhat.com)
+- Update moderator permissions to include statistics and reports for shawn,
+  user admin for sumana (ccoleman@redhat.com)
+- Permissions recently applied to prod (ccoleman@redhat.com)
+
 * Sat Nov 17 2012 Adam Miller <admiller@redhat.com> 1.8.1-1
 - bump_minor_versions for sprint 21 (admiller@redhat.com)
 
