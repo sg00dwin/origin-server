@@ -144,6 +144,10 @@ rm -rf %{buildroot}
 %{sitedir}/public
 
 %changelog
+* Thu Nov 29 2012 Adam Miller <admiller@redhat.com> 1.2.2-2
+- bump site.spec Release: for fake chain-build with console
+  (admiller@redhat.com)
+
 * Thu Nov 29 2012 Adam Miller <admiller@redhat.com>
 - 
 
