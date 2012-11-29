@@ -4,7 +4,7 @@ metadata    :name        => "Libra Management",
             :license     => "GPLv2",
             :version     => "0.1",
             :url         => "https://engineering.redhat.com/trac/Libra",
-            :timeout     => 60
+            :timeout     => 240
 
 
 action "migrate", :description => "migrate a gear" do

@@ -40,7 +40,7 @@ module MCollective
   module Agent
   
     class Libra<RPC::Agent
-      metadata    :name        => "Libra Management",
+      metadata    :name        => "Libra Agent",
                   :description => "Agent to manage Libra services",
                   :author      => "Mike McGrath",
                   :license     => "GPLv2",

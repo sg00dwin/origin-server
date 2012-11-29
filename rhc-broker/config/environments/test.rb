@@ -161,7 +161,7 @@ Broker::Application.configure do
         :timeout => 180,
         :verbose => false,
         :progress_bar => false,
-        :filter => {"identity" => [], "fact" => [], "agent" => [], "cf_class" => []},
+        :filter => {"identity" => [], "fact" => [], "agent" => [], "cf_class" => [], "compound" => []},
         :config => "/etc/mcollective/client.cfg"
     },
     :districts => {
