@@ -5,7 +5,7 @@
 %global drupal_themename    openshift-theme
 
 Name:           drupal6-%{drupal_themename}
-Version: 3.10.1
+Version: 3.10.2
 Release:        1%{?dist}
 Summary:        Red Hat Openshift theme for Drupal %{drupal_release}
 
@@ -44,6 +44,15 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
+* Thu Nov 29 2012 Adam Miller <admiller@redhat.com> 3.10.2-1
+- US3055 - Enterprise content for stage (ccoleman@redhat.com)
+- Merge pull request #653 from sg00dwin/master (ccoleman@redhat.com)
+- images in correct dir, change to masthead-div (sgoodwin@redhat.com)
+- Merge pull request #652 from sg00dwin/master (ccoleman@redhat.com)
+- Addition of masthead for homepage, banner files, enterprise files, swap
+  pricing and plans link for enterprise link (sgoodwin@redhat.com)
+- Revert "BZ846514 fixed" - caused bug 869203 (ccoleman@redhat.com)
+
 * Sat Nov 17 2012 Adam Miller <admiller@redhat.com> 3.10.1-1
 - bump_minor_versions for sprint 21 (admiller@redhat.com)
 
