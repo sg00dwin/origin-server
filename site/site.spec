@@ -8,7 +8,7 @@
 
 Summary:   OpenShift Site Rails application
 Name:      rhc-site
-Version: 1.2.1
+Version: 1.2.2
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   ASL 2.0
@@ -144,6 +144,37 @@ rm -rf %{buildroot}
 %{sitedir}/public
 
 %changelog
+* Thu Nov 29 2012 Adam Miller <admiller@redhat.com> 1.2.2-1
+- Corrected missing field for streamline promotion; fixed mock integration data
+  to match current form structures. (hripps@redhat.com)
+- Corrected streamline proxy URL (hripps@redhat.com)
+- Inline context not necessary for lone checkbox (hripps@redhat.com)
+- Refactored based on code review (hripps@redhat.com)
+- Refactored to accomodate streamline full-user promote and formtastic mods
+  (hripps@redhat.com)
+- Updated based on code review (hripps@redhat.com)
+- Added integration test for promoteUser API (hripps@redhat.com)
+- Added unit tests for promote_user (hripps@redhat.com)
+- Modified streamline / account upgrades to handle user promotions
+  (hripps@redhat.com)
+- Bug 879501 - Outage message too wide at mobile resolutions
+  (ccoleman@redhat.com)
+- Merge pull request #655 from
+  smarterclayton/us3055_enterprise_content_for_launch_to_stage
+  (openshift+bot@redhat.com)
+- US3055 - Enterprise content for stage (ccoleman@redhat.com)
+- using oo-ruby (dmcphers@redhat.com)
+- Merge pull request #653 from sg00dwin/master (ccoleman@redhat.com)
+- images in correct dir, change to masthead-div (sgoodwin@redhat.com)
+- Merge pull request #652 from sg00dwin/master (ccoleman@redhat.com)
+- masthead div hidden by default (sgoodwin@redhat.com)
+- Addition of masthead for homepage, banner files, enterprise files, swap
+  pricing and plans link for enterprise link (sgoodwin@redhat.com)
+- Reverted  conditional based on feedback (hripps@redhat.com)
+- Refactored Aria-related tests to omit if Aria isn't available
+  (hripps@redhat.com)
+- Fixes BZ876027 (ffranz@redhat.com)
+
 * Sat Nov 17 2012 Adam Miller <admiller@redhat.com> 1.2.1-1
 - bump_minor_versions for sprint 21 (admiller@redhat.com)
 
