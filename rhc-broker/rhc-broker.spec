@@ -3,7 +3,7 @@
 
 Summary:   Li broker components
 Name:      rhc-broker
-Version: 1.2.1
+Version: 1.2.2
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -133,6 +133,29 @@ if [ ! -f %{_localstatedir}/log/openshift/user_action.log ]; then
 fi
 
 %changelog
+* Thu Nov 29 2012 Adam Miller <admiller@redhat.com> 1.2.2-1
+- various mcollective changes getting ready for 2.2 (dmcphers@redhat.com)
+- taking production.rb out of config (dmcphers@redhat.com)
+- fix elif typos (dmcphers@redhat.com)
+- fix desc (dmcphers@redhat.com)
+- command cleanup (dmcphers@redhat.com)
+- avoid timeouts on long running queries in a safe way (dmcphers@redhat.com)
+- don't call status if already found stopped from bulk call
+  (dmcphers@redhat.com)
+- use a more reasonable large disctimeout (dmcphers@redhat.com)
+- usage and exit code cleanup (dmcphers@redhat.com)
+- use $? the right way (dmcphers@redhat.com)
+- fix max-threads opt (dmcphers@redhat.com)
+- increase disc timeout on admin ops (dmcphers@redhat.com)
+- using oo-ruby (dmcphers@redhat.com)
+- Merge pull request #649 from smarterclayton/bug_878328_add_instant_apps
+  (openshift+bot@redhat.com)
+- Bug 878328 - Wordpress and Drupal should be tagged "instant_app"
+  (ccoleman@redhat.com)
+- migrate all the active gears first (dmcphers@redhat.com)
+- migrate active gears first (dmcphers@redhat.com)
+- increment rather than assign addtl nodes (dmcphers@redhat.com)
+
 * Sat Nov 17 2012 Adam Miller <admiller@redhat.com> 1.2.1-1
 - bump_minor_versions for sprint 21 (admiller@redhat.com)
 
