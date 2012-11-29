@@ -9,7 +9,32 @@
     <artifactNumToKeep>-1</artifactNumToKeep>
   </logRotator>
   <keepDependencies>false</keepDependencies>
-  <properties/>
+  <properties>
+    <hudson.model.ParametersDefinitionProperty>
+      <parameterDefinitions>
+        <hudson.model.BooleanParameterDefinition>
+          <name>RUN_BROKER_EXTENDED</name>
+          <description>In addition to the verification tests include the broker extended tests.  This job will fail if the extended tests fail but the ami will still be registered.</description>
+          <defaultValue>false</defaultValue>
+        </hudson.model.BooleanParameterDefinition>
+        <hudson.model.BooleanParameterDefinition>
+          <name>RUN_RUNTIME_EXTENDED</name>
+          <description>In addition to the verification tests include the runtime extended tests.  This job will fail if the extended tests fail but the ami will still be registered.</description>
+          <defaultValue>false</defaultValue>
+        </hudson.model.BooleanParameterDefinition>
+        <hudson.model.BooleanParameterDefinition>
+          <name>RUN_SITE_EXTENDED</name>
+          <description>In addition to the verification tests include the site extended tests.  This job will fail if the extended tests fail but the ami will still be registered.</description>
+          <defaultValue>false</defaultValue>
+        </hudson.model.BooleanParameterDefinition>
+        <hudson.model.BooleanParameterDefinition>
+          <name>RUN_RHC_EXTENDED</name>
+          <description>In addition to the verification tests include the rhc extended tests.  This job will fail if the extended tests fail but the ami will still be registered.</description>
+          <defaultValue>false</defaultValue>
+        </hudson.model.BooleanParameterDefinition>
+      </parameterDefinitions>
+    </hudson.model.ParametersDefinitionProperty>
+  </properties>
   <scm class="hudson.scm.NullSCM"/>
   <canRoam>true</canRoam>
   <disabled>true</disabled>
@@ -20,7 +45,37 @@
   <concurrentBuild>false</concurrentBuild>
   <builders>
     <hudson.tasks.Shell>
-      <command># Delete the previous repo clone directories
+      <command>EXTENDED_TESTS_ARRAY=()
+if $RUN_BROKER_EXTENDED
+then
+  EXTENDED_TESTS_ARRAY+=(broker)
+fi
+if $RUN_RUNTIME_EXTENDED
+then
+  EXTENDED_TESTS_ARRAY+=(runtime)
+fi
+if $RUN_SITE_EXTENDED
+then
+  EXTENDED_TESTS_ARRAY+=(site)
+fi
+if $RUN_RHC_EXTENDED
+then
+  EXTENDED_TESTS_ARRAY+=(rhc)
+fi
+
+EXTENDED_TESTS=&quot;&quot;
+for test in &quot;${EXTENDED_TESTS_ARRAY[@]}&quot;
+do
+  if [ -z &quot;$EXTENDED_TESTS&quot; ]
+  then
+    EXTENDED_TESTS=$test
+  else
+    EXTENDED_TESTS=$EXTENDED_TESTS,$test
+  fi
+done
+
+
+# Delete the previous repo clone directories
 rm -rf li origin-dev-tools 
 
 # Clone the repos
@@ -28,9 +83,28 @@ git clone git@github.com:openshift/li.git
 git clone git@github.com:openshift/origin-dev-tools.git
 
 pushd li
-build/devenv clone_addtl_repos master --replace
-build/devenv build devenv_test ${BUILD_NUMBER} --install_from_source --yum_repo=test --terminate
-popd</command>
+  build/devenv clone_addtl_repos master --replace
+  
+  set +e
+    build/devenv build devenv-test ${BUILD_NUMBER} --install_from_source --yum_repo=test
+    RESULT=$?
+  set -e
+
+  if [ $RESULT -eq 0 ]
+  then
+    if [ -n &quot;$EXTENDED_TESTS&quot; ]
+    then
+      # Run the extended tests
+      build/devenv test devenv-test_${BUILD_NUMBER} --include_extended=&quot;$EXTENDED_TESTS&quot; --terminate 
+    else
+      build/devenv terminate devenv-test_${BUILD_NUMBER}
+    fi
+  else
+    build/devenv terminate devenv-test_${BUILD_NUMBER}
+    exit $RESULT
+  fi
+popd
+</command>
     </hudson.tasks.Shell>
   </builders>
   <publishers>

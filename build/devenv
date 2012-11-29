@@ -380,7 +380,7 @@ module Express
               puts "ERROR - instance is not valid"
               exit 1
             elsif i == 1
-              ssh(hostname, "service rhc-broker restart; service rhc-site restart; service httpd restart", 60)
+              ssh(hostname, "service rhc-site restart; service rhc-broker restart; service httpd restart", 60)
             end
             sleep 5
           else
