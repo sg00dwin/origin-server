@@ -26,6 +26,8 @@ class PlansControllerTest < ActionController::TestCase
     assert_match /^\d+$/, plan.plan_no.to_s
   end
 
+  setup { omit_if_aria_is_unavailable }
+
   test "should redirect index requests to the show action" do
     with_unique_user
 
@@ -41,7 +43,6 @@ class PlansControllerTest < ActionController::TestCase
   end
 
   test "should provide plan lists and instantiate user when authenticated" do
-    omit_if_aria_is_unavailable
     with_unique_user
 
     get :show
