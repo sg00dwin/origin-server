@@ -119,7 +119,7 @@ class StreamlineIntegrationTest < ActionDispatch::IntegrationTest
     end
   end
 
-  test 'should handle various promote error conditions' do
+  test 'should raise an error when the wrong secret key is used' do
     user = new_streamline_user
     omit_on_register unless user.register('/email_confirm')
     assert user.confirm_email
@@ -129,7 +129,13 @@ class StreamlineIntegrationTest < ActionDispatch::IntegrationTest
     assert full_user = Streamline::FullUser.new(full_user_args(user))
     Rails.configuration.streamline[:user_info_secret].reverse!
     assert_raise(Streamline::PromoteInvalidSecretKey){ full_user.promote(user) }
-    Rails.configuration.streamline[:user_info_secret].reverse!
+  end
+
+  test 'should print an error message when the password and confirmation fields do not match' do
+    user = new_streamline_user
+    omit_on_register unless user.register('/email_confirm')
+    assert user.confirm_email
+    assert user.simple_user?
 
     # Mismatched password / confirm case
     assert user_args = full_user_args(user)
@@ -137,7 +143,13 @@ class StreamlineIntegrationTest < ActionDispatch::IntegrationTest
     assert full_user = Streamline::FullUser.new(user_args)
     assert_equal false, full_user.promote(user)
     assert_equal 1, full_user.errors[:base].count
-    assert user.errors.clear
+  end
+
+  test 'should print an error message when a required field is not provided' do
+    user = new_streamline_user
+    omit_on_register unless user.register('/email_confirm')
+    assert user.confirm_email
+    assert user.simple_user?
 
     # Individual missing required field cases
     assert key_list = full_user_args
@@ -150,12 +162,33 @@ class StreamlineIntegrationTest < ActionDispatch::IntegrationTest
       assert_equal 1, full_user.errors.get(field).count
       assert user.errors.clear
     end
+  end
+
+  test 'should make multiple error messages when multiple required fields are not provided' do
+    user = new_streamline_user
+    omit_on_register unless user.register('/email_confirm')
+    assert user.confirm_email
+    assert user.simple_user?
 
     # Multiple missing required fields
     assert user_args = full_user_args(user, [:first_name, :last_name, :company])
     assert full_user = Streamline::FullUser.new(user_args)
     assert_equal false, full_user.promote(user)
-    assert_equal 3, full_user.errors[:base].count
+    assert_equal 3, full_user.errors.to_hash.keys.count
+  end
+
+  test 'should handle multiple errors on the same element' do
+    user = new_streamline_user
+    omit_on_register unless user.register('/email_confirm')
+    assert user.confirm_email
+    assert user.simple_user?
+
+    # Mismatched password / confirm case
+    assert user_args = full_user_args(user)
+    assert user_args[:password] = ''
+    assert full_user = Streamline::FullUser.new(user_args)
+    assert_equal false, full_user.promote(user)
+    assert_equal 1, full_user.errors[:base].count
   end
 
   test 'should change password with token' do

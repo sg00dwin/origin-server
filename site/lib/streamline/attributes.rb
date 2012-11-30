@@ -66,7 +66,6 @@ module Streamline
           end
 
           error_object.add(attr, 'is required')
-          error_object.add(:base, error_object.full_message(attr, 'is required'))
         end
       end
 
