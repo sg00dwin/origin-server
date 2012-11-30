@@ -1,17 +1,23 @@
-class CloudUser < OpenShift::UserModel
-  alias :initialize_old :initialize
+class CloudUser
+  #alias :initialize_old :initialize
 
-  def initialize(login=nil, ssh=nil, ssh_type=nil, key_name=nil, capabilities=nil, parent_user_login=nil)
-    initialize_old(login, ssh, ssh_type, key_name, capabilities, parent_user_login)
-  end
+  #def initialize(login=nil, ssh=nil, ssh_type=nil, key_name=nil, capabilities=nil, parent_user_login=nil)
+  #  initialize_old(login, ssh, ssh_type, key_name, capabilities, parent_user_login)
+  #end
 
   def get_capabilities
     user_capabilities = self.capabilities.dup
-    if self.parent_user_login
-      parent_user = CloudUser.find(self.parent_user_login)
-      parent_user.capabilities['inherit_on_subaccounts'].each do |cap|
-        user_capabilities[cap] = parent_user.capabilities[cap] if parent_user.capabilities[cap] 
-      end if parent_user && parent_user.capabilities.has_key?('inherit_on_subaccounts')
+    unless self.parent_user_id.nil?
+      begin
+        parent_user = CloudUser.find(self.parent_user_id)
+        if parent_user.capabilities.has_key? 'inherit_on_subaccounts'
+          parent_user.capabilities['inherit_on_subaccounts'].each do |cap|
+            user_capabilities[cap] = parent_user.capabilities[cap] if parent_user.capabilities[cap] 
+          end if parent_user && parent_user.capabilities.has_key?('inherit_on_subaccounts')
+        end
+      rescue Mongoid::Errors::DocumentNotFound
+        #do nothing
+      end
     end
     user_capabilities
   end
@@ -111,7 +117,7 @@ class CloudUser < OpenShift::UserModel
     plan_info = self.get_plan_info(plan_id)
 
     #check if subaccount user
-    raise OpenShift::UserException.new("Plan change not allowed for subaccount user", 157) if self.parent_user_login
+    raise OpenShift::UserException.new("Plan change not allowed for subaccount user", 157) unless self.parent_user_id.nil?
 
     #check to see if user can be switched to the new plan
     self.check_plan_compatibility(plan_id)

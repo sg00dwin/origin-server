@@ -29,6 +29,7 @@ Requires:  rubygem-openshift-origin-auth-streamline
 Requires:  rubygem-openshift-origin-dns-dynect
 Requires:  rubygem-openshift-origin-msg-broker-mcollective
 Requires:  ruby193-rubygem-mongo_mapper
+Requires:  ruby193-rubygem-mongoid
 Requires:  ruby193-rubygem-wddx
 Requires:  ruby193-rubygem-pony
 Requires:  mcollective-qpid-plugin
