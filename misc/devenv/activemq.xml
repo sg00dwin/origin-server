@@ -48,6 +48,7 @@
         <destinationPolicy>
             <policyMap>
               <policyEntries>
+                <policyEntry queue="*.reply.>" gcInactiveDestinations="true" inactiveTimoutBeforeGC="300000" />
                 <policyEntry topic=">" producerFlowControl="true" memoryLimit="1mb">
                   <pendingSubscriberPolicy>
                     <vmCursor />
