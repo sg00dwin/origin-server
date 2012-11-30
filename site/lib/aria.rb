@@ -20,6 +20,7 @@ module Aria
   cache_method :get_client_plans_basic
 
   def self.available?(message='Aria is not available:')
+    return false unless Rails.configuration.aria_enabled
     Aria.gen_random_string
     true
   rescue Aria::AuthenticationError, Aria::NotAvailable => e
