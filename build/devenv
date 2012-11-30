@@ -380,7 +380,20 @@ module Express
               puts "ERROR - instance is not valid"
               exit 1
             elsif i == 1
-              ssh(hostname, "service rhc-site restart; service rhc-broker restart; service httpd restart", 60)
+              output = ssh(hostname, %{
+echo "show collections" | mongo -u libra -p momo openshift_broker_dev
+if [ $? -ne 0 ]
+then
+  service rhc-datastore restart
+  sleep 5
+fi
+echo > /var/www/openshift/site/log/development.log
+service rhc-site restart
+echo > /var/www/openshift/broker/log/development.log
+service rhc-broker restart
+service httpd restart
+}, 60)
+            puts output
             end
             sleep 5
           else

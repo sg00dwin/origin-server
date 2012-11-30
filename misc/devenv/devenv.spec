@@ -605,7 +605,7 @@ do
       echo "Named test user could not be created."
       break
     fi
-    service mongod restart
+    service rhc-datastore restart
     sleep $sleep_time
     sleep_time=$(expr $sleep_time + 10)
     echo "Retrying....."
@@ -615,15 +615,6 @@ do
     break
   fi
 done
-
-#/usr/bin/ruby /usr/lib/openshift/broker/application_templates/templates/deploy.rb
-#if [ $? -ne 0 ]
-#then
-#  service mongod restart
-#  service rhc-broker restart
-#  sleep 10
-#  /usr/bin/ruby /usr/lib/openshift/broker/application_templates/templates/deploy.rb
-#fi
 
 # Hack to resolve parser error
 # See https://github.com/cucumber/gherkin/issues/182
