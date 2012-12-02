@@ -199,5 +199,5 @@ Then /^the operation is( not)? allowed$/ do |negate|
 end
 
 When /^the global httpd is restarted$/ do
-   `/usr/libexec/openshift/cartridges/abstract/info/bin/httpd_singular graceful`
+   `/usr/sbin/oo-httpd-singular graceful`
 end

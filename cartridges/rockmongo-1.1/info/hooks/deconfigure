@@ -52,4 +52,4 @@ runcon -l s0-s0:c0.c1023 rm -rf "$ROCKMONGO_DIR"
 #
 rm -f ${OPENSHIFT_HTTP_CONF_DIR}/${uuid}_${namespace}_${application}/rockmongo-1.1.conf || warning "Could not remove rockmongo apache definition" 156
 
-${CARTRIDGE_BASE_PATH}/abstract/info/bin/httpd_singular graceful || warning "Failed to restart master httpd, please contact support" 120
+/usr/sbin/oo-httpd-singular graceful || warning "Failed to restart master httpd, please contact support" 120
