@@ -183,12 +183,15 @@ class StreamlineIntegrationTest < ActionDispatch::IntegrationTest
     assert user.confirm_email
     assert user.simple_user?
 
+    # Right now the streamline API will not produce this case, so we simulate it
+    user.errors.add(:first_name, "Mock error 1")
+    user.errors.add(:first_name, "Mock error 2")
+
     # Mismatched password / confirm case
     assert user_args = full_user_args(user)
-    assert user_args[:password] = ''
     assert full_user = Streamline::FullUser.new(user_args)
     assert_equal false, full_user.promote(user)
-    assert_equal 1, full_user.errors[:base].count
+    assert_equal 2, full_user.errors[:first_name].count
   end
 
   test 'should change password with token' do
