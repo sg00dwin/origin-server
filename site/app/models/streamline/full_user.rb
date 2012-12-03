@@ -38,6 +38,10 @@ module Streamline
     def promote(user)
       if user.promote(to_streamline_hash)
         @persisted = true
+      else
+        user.errors.each do |attribute,error|
+          self.errors.add(attribute, error)
+        end
       end
       persisted?
     end

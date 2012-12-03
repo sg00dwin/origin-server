@@ -9,7 +9,7 @@ class PlanSignupFlowTest < ActionDispatch::IntegrationTest
     open_session
   end
 
-  def test_credit_card
+  def credit_card_params
     {
       'cvv' => '111',
       'cc_no' => '4111 1111 1111 1111',
@@ -85,7 +85,10 @@ class PlanSignupFlowTest < ActionDispatch::IntegrationTest
   test 'user can signup' do
     Rails.configuration.expects(:aria_direct_post_name).at_least_once.returns(nil)
 
-    user = login_simple_user
+    user = new_streamline_user
+    omit_on_register unless user.register('/email_confirm')
+    assert user.confirm_email
+    post '/login', {:web_user => {:rhlogin => user.email_address, :password => user.password}}
 
     get '/account/plans'
     assert_response :redirect
@@ -102,13 +105,14 @@ class PlanSignupFlowTest < ActionDispatch::IntegrationTest
     put '/account/plans/megashift/upgrade/edit', :streamline_full_user => user_params
     assert_redirected_to '/account/plans/megashift/upgrade/payment_method'
 
+    omit_if_aria_is_unavailable
     get '/account/plans/megashift/upgrade/payment_method'
     assert_redirected_to '/account/plans/megashift/upgrade/payment_method/new'
 
     get '/account/plans/megashift/upgrade/payment_method/new'
     assert_response :success
 
-    res = submit_form('form#payment_method', test_credit_card)
+    res = submit_form('form#payment_method', credit_card_params)
     assert Net::HTTPRedirection === res, res.inspect
     redirect = res['Location']
     assert redirect.starts_with?(direct_create_account_plan_upgrade_payment_method_url('megashift')), redirect
@@ -117,13 +121,14 @@ class PlanSignupFlowTest < ActionDispatch::IntegrationTest
     assert_redirected_to '/account/plans/megashift/upgrade/new'
 
     # Do some direct checking here just to validate
-    user = WebUser.new(:rhlogin => user[:web_user][:rhlogin]).extend(Aria::User)
+    omit_if_aria_is_unavailable
+    user = WebUser.new(:rhlogin => user.rhlogin).extend(Aria::User)
     assert user.has_valid_payment_method?
     assert payment_method = user.payment_method
     assert payment_method.persisted?
-    assert payment_method.cc_no.ends_with?(test_credit_card['cc_no'][-4..-1])
-    assert_equal test_credit_card['cc_exp_yyyy'].to_i, payment_method.cc_exp_yyyy
-    assert_equal test_credit_card['cc_exp_mm'].to_i, payment_method.cc_exp_mm
+    assert payment_method.cc_no.ends_with?(credit_card_params['cc_no'][-4..-1])
+    assert_equal credit_card_params['cc_exp_yyyy'].to_i, payment_method.cc_exp_yyyy
+    assert_equal credit_card_params['cc_exp_mm'].to_i, payment_method.cc_exp_mm
 
     rest_user = User.find :one, :as => user
     plan = rest_user.plan

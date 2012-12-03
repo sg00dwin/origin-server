@@ -409,18 +409,17 @@ module Streamline
 
     def promote(streamline_hash)
       streamline_hash[:login] = self.login
-      # Post to the promote URL
-      http_post(promote_user_url, streamline_hash) do |response|
+
+      http_post(promote_user_url, streamline_hash, true, false) do |response|
         if response.has_key? 'errors'
-          self.full_user.errors_to_attributes(response['errors']).each do |error|
-            self.errors.add(:base, error)
-          end
+          Streamline::FullUser.errors_to_attributes(self.errors, response['errors'])
+        else
+          Rails.logger.warn "Promote user #{response['login']} different than active #{rhlogin}" if rhlogin != response['login']
+          self.roles = response['roles']
         end
       end
 
-      return false if self.full_user.errors[:base].count > 0
-
-      streamline_type!
+      return false unless self.errors.empty?
 
       self.full_user?
     end
@@ -435,7 +434,7 @@ module Streamline
         end
       end
 
-      def http_post(url, args={}, raise_exception_on_error=true)
+      def http_post(url, args={}, raise_exception_on_error=true, parse_errors_in_response=true)
         begin
           req = Net::HTTP::Post.new(url.request_uri)
           req.set_form_data(args)
@@ -453,7 +452,7 @@ module Streamline
             res = new_http.start {|http| http.request(req)}
 
             payload[:code] = res.code
-            json = parse_body(res.body) if res.body && !res.body.empty? rescue nil
+            json = parse_body(res.body, parse_errors_in_response) if res.body && !res.body.empty? rescue nil
             payload[:response] = json.inspect
 
             parse_ticket(res.get_fields('Set-Cookie'))
@@ -513,10 +512,10 @@ module Streamline
       # Parse the response body, setting errors on the
       # user object as necessary.  Returns json structure
       #
-      def parse_body(body)
+      def parse_body(body, parse_errors_in_response=true)
         if body
           json = ActiveSupport::JSON::decode(body)
-          parse_json_errors(json)
+          parse_json_errors(json) if parse_errors_in_response
           return json
         end
       end
