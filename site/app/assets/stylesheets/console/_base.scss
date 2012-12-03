@@ -22,5 +22,5 @@ body {
 h1,h2,h3,h4,h5,h6 {
 		color: #fafbfc;
 		}
-a {color:#6DB3C7;}
-a:hover,a:active {color:#b1e5f2;}
+a:link,a:visited,a:hover,a:active {color:#6DB3C7;}
+a:hover,a:active {text-decoration: underline;}
