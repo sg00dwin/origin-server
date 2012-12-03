@@ -3,7 +3,7 @@
 -ie_html :class => 'no-js', :lang => 'en' do
   %head
     = render "layouts/head"
-    = render "layouts/site/stylesheets"
+    = render "layouts/console/stylesheets"
 
   %body{ :class => "simple #{controller.controller_name} #{controller.action_name}" }
 
@@ -17,17 +17,62 @@
     - if content_for? :sub_layout
       = yield :sub_layout
     - else
-      .section-striped#content
+      #content.section-account
         .container
-          %div
-            .row.row-flush-right
-              .offset2.column-content.grid-wrapper
-                .span8.span-flush-right
+          .row
+            .span12
+              %section.frame.primary
+                .row-fluid
                   - if content_for? :title
                     %h1.ribbon= yield :title
                   = flashes
                   = yield
+        
+        -# Included here to show structure
+        .container
+          .row
+            .span12
+              %section.frame.announcement.outage
+                .row-fluid
+                  .announcement
+                    %h4
+                      Openshift DNS Latency
+                      %span.timestamp &mdash; (Started about 19 hours ago)
+                    We are currently experiencing intermittent issues with DNS propagation. We are working to resolve this as quickly as possible.
 
+        .container
+          .row
+            .span12
+              %section.frame.announcement
+                .row-fluid
+                  .announcement
+                    .column-1
+                      %h4
+                        Features Released
+                        %span.timestamp &mdash; November 25, 2012
+                      %ul.spaced-items
+                        %li Ruby applications can now be hot deployed, increasing deployment speed and reducing application downtime.
+                        %li Postgres can now be used with scaled applications
+                      %a.arrow-link{:href => "/community/documents/openshift-release-notes"}→ View more...
+                      
+                    .column-2
+                      %h4
+                        Upcoming Events
+                      %ul.unstyled.spaced-items
+                        %li
+                          %strong Event Title
+                          %p December 16 &mdash; Munich, Germany
+                        %li
+                          %strong Event Title
+                          %p January 05 &mdash; San Francisco, CA
+                      %a.action-more{:href => "/community/events"}→ View more...
+                          
+
+    %footer
+      = yield :footer
+
+      = render 'layouts/footer'
+      
     = render 'layouts/site/javascripts'
 
     = render('shared/tracking',
