@@ -187,11 +187,11 @@ class StreamlineIntegrationTest < ActionDispatch::IntegrationTest
     user.errors.add(:first_name, "Mock error 1")
     user.errors.add(:first_name, "Mock error 2")
 
-    # Mismatched password / confirm case
     assert user_args = full_user_args(user)
     assert full_user = Streamline::FullUser.new(user_args)
     assert_equal false, full_user.promote(user)
     assert_equal 2, full_user.errors[:first_name].count
+    assert_equal user.errors[:first_name], full_user.errors[:first_name]
   end
 
   test 'should change password with token' do
