@@ -1,3 +1,10 @@
+%if 0%{?fedora}
+    %global mco_agent_root /usr/libexec/mcollective/mcollective/agent/
+%endif
+%if 0%{?rhel}
+    %global mco_agent_root /opt/rh/ruby193/root/usr/libexec/mcollective/mcollective/agent/
+%endif
+
 Summary:   Common dependencies of the libra server and node
 Name:      rhc-common
 Version: 1.2.1
@@ -29,8 +36,10 @@ Provides the common dependencies for the OpenShift server and nodes
 rm -rf %{buildroot}
 mkdir -p %{buildroot}%{_sysconfdir}/mcollective
 mkdir -p %{buildroot}%{_libexecdir}/mcollective/mcollective/connector
+mkdir -p %{buildroot}%{mco_agent_root}
 cp mcollective/connector/amqp.rb %{buildroot}%{_libexecdir}/mcollective/mcollective/connector
 touch %{buildroot}%{_sysconfdir}/mcollective/client.cfg
+cp mcollective/agent/* %{buildroot}%{mco_agent_root}
 
 %clean
 rm -rf %{buildroot}
@@ -39,6 +48,7 @@ rm -rf %{buildroot}
 %defattr(-,root,root,-)
 %ghost %attr(-,-,libra_user) %{_sysconfdir}/mcollective/client.cfg
 %{_libexecdir}/mcollective/mcollective/connector/amqp.rb
+%attr(0640,-,-) %{mco_agent_root}*
 
 %pre
 getent group libra_user >/dev/null || groupadd -r libra_user
