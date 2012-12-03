@@ -541,7 +541,8 @@ class StreamlineUnitTest < ActiveSupport::TestCase
   end
 
   test "promote simple user to full user" do
-    @streamline.expects(:http_post).times(3).yields({'username' => 'test1', 'roles' => ['simple_authenticated']}).then.returns(nil).then.returns(['authenticated'])
+    @streamline.expects(:http_post).times(2).yields({'username' => 'test1', 'roles' => ['simple_authenticated']}).then.yields({ 'roles' => ['authenticated']})
+
     # First, establish a simple streamline user
     assert_equal true, @streamline.authenticate("test1", "test1")
     assert_equal false, @streamline.full_user?
@@ -549,8 +550,8 @@ class StreamlineUnitTest < ActiveSupport::TestCase
     # Now promote the user
     assert user_info = full_user_args
     assert user_info[:intentionally_invalid_key] = 'foo'
-    assert @streamline.full_user(user_info)
-    assert_equal true, @streamline.full_user.promote(@streamline)
+    assert full_user = @streamline.full_user(user_info)
+    assert_equal true, full_user.promote(@streamline)
 
     # Now ensure that the user was promoted
     assert_equal true, @streamline.full_user?
