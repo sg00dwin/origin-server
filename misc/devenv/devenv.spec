@@ -8,7 +8,7 @@
 
 Summary:   Dependencies for OpenShift development
 Name:      rhc-devenv
-Version: 1.2.2
+Version: 1.2.3
 Release:   1%{?dist}
 Group:     Development/Libraries
 License:   GPLv2
@@ -650,6 +650,11 @@ restorecon /etc/openshift/node.conf || :
 /sbin/service libra-data restart > /dev/null 2>&1 || :
 
 %changelog
+* Tue Dec 04 2012 Adam Miller <admiller@redhat.com> 1.2.3-1
+- Use activemq connector for mcollective. (pmorie@gmail.com)
+- fixing mongo connection issues for build (dmcphers@redhat.com)
+- Using better types for mco (dmcphers@redhat.com)
+
 * Thu Nov 29 2012 Adam Miller <admiller@redhat.com> 1.2.2-1
 - various mcollective changes getting ready for 2.2 (dmcphers@redhat.com)
 - Remove unused phpmoadmin cartridge (jhonce@redhat.com)
