@@ -8,8 +8,8 @@
 
 Summary:   OpenShift Site Rails application
 Name:      rhc-site
-Version: 1.2.2
-Release:   2%{?dist}
+Version: 1.2.3
+Release:   1%{?dist}
 Group:     Network/Daemons
 License:   ASL 2.0
 URL:       http://openshift.redhat.com
@@ -144,6 +144,16 @@ rm -rf %{buildroot}
 %{sitedir}/public
 
 %changelog
+* Tue Dec 04 2012 Adam Miller <admiller@redhat.com> 1.2.3-1
+- Revised test case to match revisions in underlying code (nhr@redhat.com)
+- Improved test case based on feedback (nhr@redhat.com)
+- Added test to insure propoagation of multiple errors on same element
+  (nhr@redhat.com)
+- Updated based on review feedback (nhr@redhat.com)
+- Revised promote flow and fixed error handling (hripps@redhat.com)
+- Added blanket Aria omit checks for plans_controller tests (nhr@redhat.com)
+- Suppressing Aria-related tests based on test.rb setting (nhr@redhat.com)
+
 * Thu Nov 29 2012 Adam Miller <admiller@redhat.com> 1.2.2-2
 - bump site.spec Release: for fake chain-build with console
   (admiller@redhat.com)
