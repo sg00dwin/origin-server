@@ -97,7 +97,7 @@ mkdir -p %{buildroot}%{mco_agent_root}
 cp -r lib %{buildroot}%{_libexecdir}/openshift
 cp -r conf/httpd %{buildroot}%{_sysconfdir}
 cp -r conf/openshift %{buildroot}%{_sysconfdir}
-cp mcollective/mcollective/agent/* %{buildroot}%{mco_agent_root}
+cp mcollective/agent/* %{buildroot}%{mco_agent_root}
 cp scripts/bin/* %{buildroot}%{_bindir}
 cp scripts/init/* %{buildroot}%{_initddir}
 cp scripts/openshift_tmpwatch.sh %{buildroot}%{_sysconfdir}/cron.daily/openshift_tmpwatch.sh
