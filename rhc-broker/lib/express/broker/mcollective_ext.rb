@@ -7,14 +7,14 @@ module OpenShift
 
     def run_cartridge_command(framework, app, gear, command, arg=nil, allow_move=true)
       if allow_move
-        Express::Broker::Nurture.application(app.domain.owner.login, app.domain.owner._id, app.name, app.domain.namespace, framework, command, app.uuid, app.user_agent)
+        Express::Broker::Nurture.application(app.domain.owner.login, app.domain.owner._id, app.name, app.domain.namespace, framework, command, app._id.to_s, app.user_agent)
       end
       run_cartridge_command_old(framework, app, gear, command, arg, allow_move)
     end
     
     def destroy(app, gear, keep_uid=false, uid=nil, skip_hooks=false)
       unless skip_hooks
-        Express::Broker::Nurture.application(app.domain.owner.login, app.domain.owner._id, app.name, app.domain.namespace, app.framework, "deconfigure", app.uuid, app.user_agent) if app.uuid==gear.uuid
+        Express::Broker::Nurture.application(app.domain.owner.login, app.domain.owner._id, app.name, app.domain.namespace, app.framework, "deconfigure", app._id.to_s, app.user_agent) if app._id.to_s==gear._id.to_s
       end
       destroy_old(app, gear, keep_uid, uid, skip_hooks)
     end
