@@ -3,7 +3,7 @@
 
 Summary:   Li broker components
 Name:      rhc-broker
-Version: 1.2.2
+Version: 1.2.3
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -133,6 +133,9 @@ if [ ! -f %{_localstatedir}/log/openshift/user_action.log ]; then
 fi
 
 %changelog
+* Tue Dec 04 2012 Adam Miller <admiller@redhat.com> 1.2.3-1
+- Additional fix for US3078 (abhgupta@redhat.com)
+
 * Thu Nov 29 2012 Adam Miller <admiller@redhat.com> 1.2.2-1
 - various mcollective changes getting ready for 2.2 (dmcphers@redhat.com)
 - taking production.rb out of config (dmcphers@redhat.com)
