@@ -132,28 +132,30 @@ build/devenv clone_addtl_repos $BRANCH --replace
 opts=&quot;&quot;
 if $INSTALL_FROM_SOURCE
 then
-  opts=&quot;--install_from_source&quot;
+  opts=$opts&quot; --install_from_source&quot;
+fi
+if [ -z &quot;$EXTENDED_TESTS&quot; ]
+then
+  opts=$opts&quot; --terminate&quot;
 fi
 
 set +e
-  build/devenv build ${IMAGE_NAME} ${BUILD_NUMBER} --register --official --terminate --yum_repo=$YUM_REPO --branch=$BRANCH $opts
+  build/devenv build ${IMAGE_NAME} ${BUILD_NUMBER} --register --official --yum_repo=$YUM_REPO --branch=$BRANCH $opts
   RESULT=$?
 set -e
 
-  if [ $RESULT -eq 0 ]
+  if [ -n &quot;$EXTENDED_TESTS&quot; ]
   then
-
-    if [ -n &quot;$EXTENDED_TESTS&quot; ]
+    if [ $RESULT -eq 0 ]
     then
       # Run the extended tests
-      build/devenv test ${IMAGE_NAME}_${BUILD_NUMBER} --include_extended=&quot;$EXTENDED_TESTS&quot; --terminate 
+      build/devenv test ${IMAGE_NAME}_${BUILD_NUMBER} --include_extended=&quot;$EXTENDED_TESTS&quot; --terminate
     else
       build/devenv terminate ${IMAGE_NAME}_${BUILD_NUMBER}
+      exit $RESULT
     fi
-  else
-    build/devenv terminate ${IMAGE_NAME}_${BUILD_NUMBER}
-    exit $RESULT
   fi
+
 popd</command>
     </hudson.tasks.Shell>
   </builders>

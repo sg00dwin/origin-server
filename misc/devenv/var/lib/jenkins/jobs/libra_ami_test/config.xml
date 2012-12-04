@@ -84,27 +84,31 @@ git clone git@github.com:openshift/origin-dev-tools.git
 
 pushd li
   build/devenv clone_addtl_repos master --replace
+
+  opts=&quot;&quot;
+  if [ -z &quot;$EXTENDED_TESTS&quot; ]
+  then
+    opts=$opts&quot; --terminate&quot;
+  fi
   
   set +e
-    build/devenv build devenv-test ${BUILD_NUMBER} --install_from_source --yum_repo=test
+    build/devenv build devenv-test ${BUILD_NUMBER} --install_from_source --yum_repo=test $opts
     RESULT=$?
   set -e
 
-  if [ $RESULT -eq 0 ]
+  if [ -n &quot;$EXTENDED_TESTS&quot; ]
   then
-    if [ -n &quot;$EXTENDED_TESTS&quot; ]
+    if [ $RESULT -eq 0 ]
     then
       # Run the extended tests
-      build/devenv test devenv-test_${BUILD_NUMBER} --include_extended=&quot;$EXTENDED_TESTS&quot; --terminate 
+      build/devenv test devenv-test_${BUILD_NUMBER} --include_extended=&quot;$EXTENDED_TESTS&quot; --terminate
     else
       build/devenv terminate devenv-test_${BUILD_NUMBER}
+      exit $RESULT
     fi
-  else
-    build/devenv terminate devenv-test_${BUILD_NUMBER}
-    exit $RESULT
   fi
-popd
-</command>
+
+popd</command>
     </hudson.tasks.Shell>
   </builders>
   <publishers>
