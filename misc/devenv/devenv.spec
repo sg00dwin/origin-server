@@ -591,30 +591,39 @@ install rds /bin/true
 install tipc /bin/true
 EOF
 
-# Create a known test user with medium-sized gears - nhr
-# This must be done before the deployment of application templates!
-echo "Creating named test user"
-sleep_time=10
+# Make sure that the datastore is available before adding test users
 for i in {1..5}
 do
-  cd /var/www/openshift/broker && bundle exec rails runner 'test_user=CloudUser.new("user_with_multiple_gear_sizes@test.com"); test_user.save();'
-  if [ $? -ne 0 ]
+  echo "show collections" | mongo -u libra -p momo openshift_broker_dev
+  if [ $? -eq 0 ]
   then
-    if [ $i -eq 5 ]
-    then
-      echo "Named test user could not be created."
-      break
-    fi
-    service rhc-datastore restart
-    sleep $sleep_time
-    sleep_time=$(expr $sleep_time + 10)
-    echo "Retrying....."
-  else
-    /usr/sbin/oo-admin-ctl-user -l user_with_multiple_gear_sizes@test.com --addgearsize medium
-    echo "Named test user created."
     break
+  else
+    echo "Rechecking datastore....."
+    sleep 1
   fi
 done
+
+# Create a known test user with medium-sized gears - nhr
+# This must be done before the deployment of application templates!
+cd /var/www/openshift/broker
+echo "Creating named test user"
+bundle exec rails runner "CloudUser.new('user_with_multiple_gear_sizes@test.com').save"
+if [ $? -eq 0 ]
+then
+  echo "Adding medium gear size to user"
+  /usr/sbin/oo-admin-ctl-user -l user_with_multiple_gear_sizes@test.com --addgearsize medium
+else
+  echo "user_with_multiple_gear_sizes could not be created!"
+fi
+
+# Create a test user with additional storage capabilities
+echo "Creating test user:  user_with_extra_storage@test.com"
+bundle exec rails runner "u=CloudUser.new('user_with_extra_storage@test.com'); u.capabilities['max_storage_per_gear'] = 10; u.save"
+if [ $? -ne 0 ]
+then
+  echo "user_with_extra_storage could not be created!"
+fi
 
 # Hack to resolve parser error
 # See https://github.com/cucumber/gherkin/issues/182
