@@ -1,6 +1,6 @@
 Summary:       Common dependencies of the OpenShift broker and site
 Name:          rhc-server-common
-Version: 1.1.1
+Version: 1.1.2
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -37,6 +37,10 @@ getent passwd libra_passenger || \
     -c "libra_passenger" libra_passenger
 
 %changelog
+* Wed Dec 05 2012 Adam Miller <admiller@redhat.com> 1.1.2-1
+- rhc-server-common should not depend on rhc-common - they are independant.
+  (ccoleman@redhat.com)
+
 * Thu Nov 08 2012 Adam Miller <admiller@redhat.com> 1.1.1-1
 - Bumping specs to at least 1.1 (dmcphers@redhat.com)
 
