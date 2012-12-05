@@ -3,7 +3,7 @@
 
 Summary:   Li broker components
 Name:      rhc-broker
-Version: 1.2.3
+Version: 1.2.4
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -134,6 +134,13 @@ if [ ! -f %{_localstatedir}/log/openshift/user_action.log ]; then
 fi
 
 %changelog
+* Wed Dec 05 2012 Adam Miller <admiller@redhat.com> 1.2.4-1
+- Merge pull request #681 from sosiouxme/BZ872415 (openshift+bot@redhat.com)
+- rhc-server-common should not depend on rhc-common - they are independant.
+  (ccoleman@redhat.com)
+- rhc conf files changes to add :default_gear_capabilities BZ872415
+  (lmeyer@redhat.com)
+
 * Tue Dec 04 2012 Adam Miller <admiller@redhat.com> 1.2.3-1
 - Additional fix for US3078 (abhgupta@redhat.com)
 
