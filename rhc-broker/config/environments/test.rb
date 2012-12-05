@@ -84,9 +84,9 @@ Broker::Application.configure do
     :replica_set => true,
     # Replica set example: [[<host-1>, <port-1>], [<host-2>, <port-2>], ...]
     :host_port => [["localhost", 27017]],
-
-    :user => "libra",
-    :password => "momo",
+        
+    :user => "openshift",
+    :password => "mooo",
     :db => "openshift_broker_dev",
     :collections => {:user => "user_test",
                      :district => "district_test",

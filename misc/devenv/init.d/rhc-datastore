@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# rhc-datastore This shell script can configure/start/stop libra datastore service
+# rhc-datastore This shell script can configure/start/stop rhc datastore service
 #
 # Author:       Ravi <rpenta@redhat.com>
 # Edited original mongod init script 
@@ -61,7 +61,7 @@ rh_configure_mongo() {
     done
     echo 'db.getMongo().setSlaveOk();
           use openshift_broker_dev
-          db.addUser("libra", "momo")
+          db.addUser("openshift", "mooo")
           exit
          ' | mongo
     # Stop mongod server
@@ -82,8 +82,8 @@ $MONGO["servers"][0]["mongo_host"] = "localhost"; //mongo host
 $MONGO["servers"][0]["mongo_port"] = "27017"; //mongo port
 $MONGO["servers"][0]["mongo_timeout"] = 30; //mongo connection timeout
 $MONGO["servers"][0]["mongo_db"] = "openshift_broker_dev"; //default mongo db to connect, works only if mongo_auth=false
-$MONGO["servers"][0]["mongo_user"] = "libra"; //mongo authentication user name, works only if mongo_auth=false
-$MONGO["servers"][0]["mongo_pass"] = "momo"; //mongo authentication password, works only if mongo_auth=false
+$MONGO["servers"][0]["mongo_user"] = "openshift"; //mongo authentication user name, works only if mongo_auth=false
+$MONGO["servers"][0]["mongo_pass"] = "mooo"; //mongo authentication password, works only if mongo_auth=false
 $MONGO["servers"][0]["mongo_auth"] = false; //enable mongo authentication?
 
 $MONGO["servers"][0]["control_auth"] = false; //enable control users, works only if mongo_auth=false

@@ -602,7 +602,7 @@ EOF
 # Make sure that the datastore is available before adding test users
 for i in {1..5}
 do
-  echo "show collections" | mongo -u libra -p momo openshift_broker_dev
+  echo "show collections" | mongo -u openshift -p mooo openshift_broker_dev
   if [ $? -eq 0 ]
   then
     break

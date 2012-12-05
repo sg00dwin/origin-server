@@ -382,7 +382,7 @@ module Express
               exit 1
             elsif i == 1
               output = ssh(hostname, %{
-echo "show collections" | mongo -u libra -p momo openshift_broker_dev
+echo "show collections" | mongo -u libra -p mooo openshift_broker_dev
 if [ $? -ne 0 ]
 then
   service rhc-datastore restart
