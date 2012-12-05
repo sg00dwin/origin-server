@@ -84,7 +84,7 @@ class UserApiTest < ActionDispatch::IntegrationTest
   end
  
   def test_user_downgrade_with_too_many_gears
-    user = CloudUser.new(@login)
+    user = CloudUser.new(login: @login)
     user.consumed_gears = 10
     user.save
     request_via_redirect(:put, USER_COLLECTION_URL, {:plan_id => :freeshift}, @headers)
@@ -94,7 +94,7 @@ class UserApiTest < ActionDispatch::IntegrationTest
   end
   
   def test_user_downgrade_with_large_gears
-    user = CloudUser.new(@login)
+    user = CloudUser.new(login: @login)
     user.capabilities['gear_sizes'] = ["small", "medium"]
     user.save
     #create app with large gears
@@ -116,7 +116,7 @@ class UserApiTest < ActionDispatch::IntegrationTest
   end
 
   def test_user_downgrade_with_additional_storage
-    user = CloudUser.new(@login)
+    user = CloudUser.new(login: @login)
     user.save
     #create app and add additional storage to the gear group
     request_via_redirect(:post, "/rest/domains", {:id=> @login[0..15]}, @headers)
