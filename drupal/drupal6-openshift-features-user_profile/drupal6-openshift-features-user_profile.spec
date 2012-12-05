@@ -5,7 +5,7 @@
 %global modname             user_profile
 
 Name:    drupal%{drupal_release}-openshift-features-%{modname}
-Version: 1.8.2
+Version: 1.8.3
 Release: 1%{?dist}
 Summary: Openshift Red Hat Custom User Profile Feature for Drupal6
 Group:   Applications/Publishing
@@ -41,6 +41,9 @@ rm -rf $RPM_BUILD_ROOT
 %{drupal_modules}/%{modname}
 
 %changelog
+* Wed Dec 05 2012 Adam Miller <admiller@redhat.com> 1.8.3-1
+- Bug 882784 - Unable to search quickstart (ccoleman@redhat.com)
+
 * Thu Nov 29 2012 Adam Miller <admiller@redhat.com> 1.8.2-1
 - Permissions for event moderation (ccoleman@redhat.com)
 - Update moderator permissions to include statistics and reports for shawn,
