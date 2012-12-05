@@ -24,9 +24,9 @@ module OpenShift
 
       # FIXME:  I'm open to suggestion about the awk, I just couldn't think of a
       #         more clean implementation to get only tagged lines and the pkg
-      source_pkgs = `brew -q latest-pkg #{[source]} --all \
+      source_pkgs = `brew -q latest-pkg #{source} --all \
                                               | awk '{print $1}'`.split("\n")
-      target_pkgs = `brew -q latest-pkg #{[target]} --all \
+      target_pkgs = `brew -q latest-pkg #{target} --all \
                                               | awk '{print $1}'`.split("\n")
 
       # Find which packages are new since last stage
@@ -53,9 +53,9 @@ module OpenShift
         
         # FIXME - This takes forever to run because of the brew query for each
         #         candidate package. Not sure of a better way to fix just yet.
-        brew_recent_activity = `brew list-history --tag=#{[source]} \
+        brew_recent_activity = `brew list-history --tag=#{source} \
                                 --package=#{pkg_base_name} \
-                                --after=#{[date]}` unless our_pkgs.include? pkg
+                                --after=#{date}` unless our_pkgs.include? pkg
         
         # FIXME - hack to get around ruby fail
         # For some reason ruby's ` ` operator is returning nil intermittently
