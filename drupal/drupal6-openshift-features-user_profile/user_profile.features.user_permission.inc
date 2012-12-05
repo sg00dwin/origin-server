@@ -123,6 +123,12 @@ function user_profile_user_default_permissions() {
     ),
   );
 
+  // Exported permission: administer block classes
+  $permissions['administer block classes'] = array(
+    'name' => 'administer block classes',
+    'roles' => array(),
+  );
+
   // Exported permission: administer blocks
   $permissions['administer blocks'] = array(
     'name' => 'administer blocks',
@@ -471,6 +477,18 @@ function user_profile_user_default_permissions() {
     ),
   );
 
+  // Exported permission: create document content
+  $permissions['create document content'] = array(
+    'name' => 'create document content',
+    'roles' => array(
+      '0' => 'administrator',
+      '1' => 'authenticated user',
+      '2' => 'blogger',
+      '3' => 'doc content owner',
+      '4' => 'moderator',
+    ),
+  );
+
   // Exported permission: create event content
   $permissions['create event content'] = array(
     'name' => 'create event content',
@@ -495,6 +513,18 @@ function user_profile_user_default_permissions() {
     'name' => 'create group content',
     'roles' => array(
       '0' => 'administrator',
+    ),
+  );
+
+  // Exported permission: create idea content
+  $permissions['create idea content'] = array(
+    'name' => 'create idea content',
+    'roles' => array(
+      '0' => 'administrator',
+      '1' => 'authenticated user',
+      '2' => 'blogger',
+      '3' => 'doc content owner',
+      '4' => 'moderator',
     ),
   );
 
@@ -542,6 +572,12 @@ function user_profile_user_default_permissions() {
     ),
   );
 
+  // Exported permission: create quickstart content
+  $permissions['create quickstart content'] = array(
+    'name' => 'create quickstart content',
+    'roles' => array(),
+  );
+
   // Exported permission: create url aliases
   $permissions['create url aliases'] = array(
     'name' => 'create url aliases',
@@ -586,6 +622,16 @@ function user_profile_user_default_permissions() {
     ),
   );
 
+  // Exported permission: delete any document content
+  $permissions['delete any document content'] = array(
+    'name' => 'delete any document content',
+    'roles' => array(
+      '0' => 'administrator',
+      '1' => 'doc content owner',
+      '2' => 'moderator',
+    ),
+  );
+
   // Exported permission: delete any event content
   $permissions['delete any event content'] = array(
     'name' => 'delete any event content',
@@ -598,6 +644,15 @@ function user_profile_user_default_permissions() {
   // Exported permission: delete any group content
   $permissions['delete any group content'] = array(
     'name' => 'delete any group content',
+    'roles' => array(
+      '0' => 'administrator',
+      '1' => 'moderator',
+    ),
+  );
+
+  // Exported permission: delete any idea content
+  $permissions['delete any idea content'] = array(
+    'name' => 'delete any idea content',
     'roles' => array(
       '0' => 'administrator',
       '1' => 'moderator',
@@ -644,6 +699,12 @@ function user_profile_user_default_permissions() {
       '0' => 'administrator',
       '1' => 'moderator',
     ),
+  );
+
+  // Exported permission: delete any quickstart content
+  $permissions['delete any quickstart content'] = array(
+    'name' => 'delete any quickstart content',
+    'roles' => array(),
   );
 
   // Exported permission: delete any video content
@@ -693,6 +754,16 @@ function user_profile_user_default_permissions() {
     ),
   );
 
+  // Exported permission: delete own document content
+  $permissions['delete own document content'] = array(
+    'name' => 'delete own document content',
+    'roles' => array(
+      '0' => 'administrator',
+      '1' => 'doc content owner',
+      '2' => 'moderator',
+    ),
+  );
+
   // Exported permission: delete own event content
   $permissions['delete own event content'] = array(
     'name' => 'delete own event content',
@@ -717,6 +788,16 @@ function user_profile_user_default_permissions() {
     'roles' => array(
       '0' => 'administrator',
       '1' => 'moderator',
+    ),
+  );
+
+  // Exported permission: delete own idea content
+  $permissions['delete own idea content'] = array(
+    'name' => 'delete own idea content',
+    'roles' => array(
+      '0' => 'administrator',
+      '1' => 'blogger',
+      '2' => 'moderator',
     ),
   );
 
@@ -761,6 +842,12 @@ function user_profile_user_default_permissions() {
       '0' => 'administrator',
       '1' => 'moderator',
     ),
+  );
+
+  // Exported permission: delete own quickstart content
+  $permissions['delete own quickstart content'] = array(
+    'name' => 'delete own quickstart content',
+    'roles' => array(),
   );
 
   // Exported permission: delete own video content
@@ -824,6 +911,16 @@ function user_profile_user_default_permissions() {
     ),
   );
 
+  // Exported permission: edit any document content
+  $permissions['edit any document content'] = array(
+    'name' => 'edit any document content',
+    'roles' => array(
+      '0' => 'administrator',
+      '1' => 'doc content owner',
+      '2' => 'moderator',
+    ),
+  );
+
   // Exported permission: edit any event content
   $permissions['edit any event content'] = array(
     'name' => 'edit any event content',
@@ -837,6 +934,15 @@ function user_profile_user_default_permissions() {
   // Exported permission: edit any group content
   $permissions['edit any group content'] = array(
     'name' => 'edit any group content',
+    'roles' => array(
+      '0' => 'administrator',
+      '1' => 'moderator',
+    ),
+  );
+
+  // Exported permission: edit any idea content
+  $permissions['edit any idea content'] = array(
+    'name' => 'edit any idea content',
     'roles' => array(
       '0' => 'administrator',
       '1' => 'moderator',
@@ -884,6 +990,12 @@ function user_profile_user_default_permissions() {
     ),
   );
 
+  // Exported permission: edit any quickstart content
+  $permissions['edit any quickstart content'] = array(
+    'name' => 'edit any quickstart content',
+    'roles' => array(),
+  );
+
   // Exported permission: edit any video content
   $permissions['edit any video content'] = array(
     'name' => 'edit any video content',
@@ -905,11 +1017,10 @@ function user_profile_user_default_permissions() {
   $permissions['edit field_author'] = array(
     'name' => 'edit field_author',
     'roles' => array(
-      '0' => 'administrator',
-      '1' => 'blogger',
-      '2' => 'doc content owner',
-      '3' => 'moderator',
-      '4' => 'page author',
+      '0' => 'blogger',
+      '1' => 'doc content owner',
+      '2' => 'moderator',
+      '3' => 'page author',
     ),
   );
 
@@ -917,11 +1028,10 @@ function user_profile_user_default_permissions() {
   $permissions['edit field_author_image'] = array(
     'name' => 'edit field_author_image',
     'roles' => array(
-      '0' => 'administrator',
-      '1' => 'blogger',
-      '2' => 'doc content owner',
-      '3' => 'moderator',
-      '4' => 'page author',
+      '0' => 'blogger',
+      '1' => 'doc content owner',
+      '2' => 'moderator',
+      '3' => 'page author',
     ),
   );
 
@@ -929,11 +1039,26 @@ function user_profile_user_default_permissions() {
   $permissions['edit field_author_profession_title'] = array(
     'name' => 'edit field_author_profession_title',
     'roles' => array(
-      '0' => 'administrator',
-      '1' => 'blogger',
-      '2' => 'doc content owner',
-      '3' => 'moderator',
-      '4' => 'page author',
+      '0' => 'blogger',
+      '1' => 'doc content owner',
+      '2' => 'moderator',
+      '3' => 'page author',
+    ),
+  );
+
+  // Exported permission: edit field_cartridges_list
+  $permissions['edit field_cartridges_list'] = array(
+    'name' => 'edit field_cartridges_list',
+    'roles' => array(
+      '0' => 'authenticated user',
+    ),
+  );
+
+  // Exported permission: edit field_code_language
+  $permissions['edit field_code_language'] = array(
+    'name' => 'edit field_code_language',
+    'roles' => array(
+      '0' => 'authenticated user',
     ),
   );
 
@@ -941,11 +1066,10 @@ function user_profile_user_default_permissions() {
   $permissions['edit field_document_file'] = array(
     'name' => 'edit field_document_file',
     'roles' => array(
-      '0' => 'administrator',
-      '1' => 'authenticated user',
-      '2' => 'blogger',
-      '3' => 'doc content owner',
-      '4' => 'moderator',
+      '0' => 'authenticated user',
+      '1' => 'blogger',
+      '2' => 'doc content owner',
+      '3' => 'moderator',
     ),
   );
 
@@ -953,9 +1077,8 @@ function user_profile_user_default_permissions() {
   $permissions['edit field_event_categories'] = array(
     'name' => 'edit field_event_categories',
     'roles' => array(
-      '0' => 'administrator',
-      '1' => 'blogger',
-      '2' => 'moderator',
+      '0' => 'blogger',
+      '1' => 'moderator',
     ),
   );
 
@@ -963,9 +1086,8 @@ function user_profile_user_default_permissions() {
   $permissions['edit field_event_city'] = array(
     'name' => 'edit field_event_city',
     'roles' => array(
-      '0' => 'administrator',
-      '1' => 'blogger',
-      '2' => 'moderator',
+      '0' => 'blogger',
+      '1' => 'moderator',
     ),
   );
 
@@ -973,9 +1095,17 @@ function user_profile_user_default_permissions() {
   $permissions['edit field_event_country'] = array(
     'name' => 'edit field_event_country',
     'roles' => array(
-      '0' => 'administrator',
-      '1' => 'blogger',
-      '2' => 'moderator',
+      '0' => 'blogger',
+      '1' => 'moderator',
+    ),
+  );
+
+  // Exported permission: edit field_event_logo
+  $permissions['edit field_event_logo'] = array(
+    'name' => 'edit field_event_logo',
+    'roles' => array(
+      '0' => 'blogger',
+      '1' => 'moderator',
     ),
   );
 
@@ -983,9 +1113,17 @@ function user_profile_user_default_permissions() {
   $permissions['edit field_event_online'] = array(
     'name' => 'edit field_event_online',
     'roles' => array(
-      '0' => 'administrator',
-      '1' => 'blogger',
-      '2' => 'moderator',
+      '0' => 'blogger',
+      '1' => 'moderator',
+    ),
+  );
+
+  // Exported permission: edit field_event_short_description
+  $permissions['edit field_event_short_description'] = array(
+    'name' => 'edit field_event_short_description',
+    'roles' => array(
+      '0' => 'blogger',
+      '1' => 'moderator',
     ),
   );
 
@@ -993,9 +1131,8 @@ function user_profile_user_default_permissions() {
   $permissions['edit field_event_start_date'] = array(
     'name' => 'edit field_event_start_date',
     'roles' => array(
-      '0' => 'administrator',
-      '1' => 'blogger',
-      '2' => 'moderator',
+      '0' => 'blogger',
+      '1' => 'moderator',
     ),
   );
 
@@ -1003,9 +1140,17 @@ function user_profile_user_default_permissions() {
   $permissions['edit field_event_state'] = array(
     'name' => 'edit field_event_state',
     'roles' => array(
-      '0' => 'administrator',
-      '1' => 'blogger',
-      '2' => 'moderator',
+      '0' => 'blogger',
+      '1' => 'moderator',
+    ),
+  );
+
+  // Exported permission: edit field_event_timezone
+  $permissions['edit field_event_timezone'] = array(
+    'name' => 'edit field_event_timezone',
+    'roles' => array(
+      '0' => 'blogger',
+      '1' => 'moderator',
     ),
   );
 
@@ -1013,9 +1158,25 @@ function user_profile_user_default_permissions() {
   $permissions['edit field_event_url'] = array(
     'name' => 'edit field_event_url',
     'roles' => array(
-      '0' => 'administrator',
-      '1' => 'blogger',
-      '2' => 'moderator',
+      '0' => 'blogger',
+      '1' => 'moderator',
+    ),
+  );
+
+  // Exported permission: edit field_event_venue
+  $permissions['edit field_event_venue'] = array(
+    'name' => 'edit field_event_venue',
+    'roles' => array(
+      '0' => 'blogger',
+      '1' => 'moderator',
+    ),
+  );
+
+  // Exported permission: edit field_git_repository_url
+  $permissions['edit field_git_repository_url'] = array(
+    'name' => 'edit field_git_repository_url',
+    'roles' => array(
+      '0' => 'authenticated user',
     ),
   );
 
@@ -1023,9 +1184,8 @@ function user_profile_user_default_permissions() {
   $permissions['edit field_image_upload'] = array(
     'name' => 'edit field_image_upload',
     'roles' => array(
-      '0' => 'administrator',
-      '1' => 'authenticated user',
-      '2' => 'moderator',
+      '0' => 'authenticated user',
+      '1' => 'moderator',
     ),
   );
 
@@ -1033,8 +1193,7 @@ function user_profile_user_default_permissions() {
   $permissions['edit field_kb_applies_to'] = array(
     'name' => 'edit field_kb_applies_to',
     'roles' => array(
-      '0' => 'administrator',
-      '1' => 'moderator',
+      '0' => 'moderator',
     ),
   );
 
@@ -1042,9 +1201,8 @@ function user_profile_user_default_permissions() {
   $permissions['edit field_kb_attachment'] = array(
     'name' => 'edit field_kb_attachment',
     'roles' => array(
-      '0' => 'administrator',
-      '1' => 'doc content owner',
-      '2' => 'moderator',
+      '0' => 'doc content owner',
+      '1' => 'moderator',
     ),
   );
 
@@ -1052,8 +1210,7 @@ function user_profile_user_default_permissions() {
   $permissions['edit field_kb_code'] = array(
     'name' => 'edit field_kb_code',
     'roles' => array(
-      '0' => 'administrator',
-      '1' => 'moderator',
+      '0' => 'moderator',
     ),
   );
 
@@ -1061,8 +1218,7 @@ function user_profile_user_default_permissions() {
   $permissions['edit field_kb_issue'] = array(
     'name' => 'edit field_kb_issue',
     'roles' => array(
-      '0' => 'administrator',
-      '1' => 'moderator',
+      '0' => 'moderator',
     ),
   );
 
@@ -1070,8 +1226,7 @@ function user_profile_user_default_permissions() {
   $permissions['edit field_kb_resolution'] = array(
     'name' => 'edit field_kb_resolution',
     'roles' => array(
-      '0' => 'administrator',
-      '1' => 'moderator',
+      '0' => 'moderator',
     ),
   );
 
@@ -1079,9 +1234,8 @@ function user_profile_user_default_permissions() {
   $permissions['edit field_page_image'] = array(
     'name' => 'edit field_page_image',
     'roles' => array(
-      '0' => 'administrator',
-      '1' => 'moderator',
-      '2' => 'page author',
+      '0' => 'moderator',
+      '1' => 'page author',
     ),
   );
 
@@ -1089,7 +1243,7 @@ function user_profile_user_default_permissions() {
   $permissions['edit field_promo_image'] = array(
     'name' => 'edit field_promo_image',
     'roles' => array(
-      '0' => 'administrator',
+      '0' => 'blogger',
       '1' => 'moderator',
     ),
   );
@@ -1098,19 +1252,36 @@ function user_profile_user_default_permissions() {
   $permissions['edit field_promo_url'] = array(
     'name' => 'edit field_promo_url',
     'roles' => array(
-      '0' => 'administrator',
+      '0' => 'blogger',
       '1' => 'moderator',
     ),
+  );
+
+  // Exported permission: edit field_quickstart_admin_tags
+  $permissions['edit field_quickstart_admin_tags'] = array(
+    'name' => 'edit field_quickstart_admin_tags',
+    'roles' => array(),
+  );
+
+  // Exported permission: edit field_quickstart_icon
+  $permissions['edit field_quickstart_icon'] = array(
+    'name' => 'edit field_quickstart_icon',
+    'roles' => array(),
+  );
+
+  // Exported permission: edit field_quickstart_priority
+  $permissions['edit field_quickstart_priority'] = array(
+    'name' => 'edit field_quickstart_priority',
+    'roles' => array(),
   );
 
   // Exported permission: edit field_search_meta_description
   $permissions['edit field_search_meta_description'] = array(
     'name' => 'edit field_search_meta_description',
     'roles' => array(
-      '0' => 'administrator',
-      '1' => 'blogger',
-      '2' => 'doc content owner',
-      '3' => 'page author',
+      '0' => 'blogger',
+      '1' => 'doc content owner',
+      '2' => 'page author',
     ),
   );
 
@@ -1118,8 +1289,7 @@ function user_profile_user_default_permissions() {
   $permissions['edit field_state'] = array(
     'name' => 'edit field_state',
     'roles' => array(
-      '0' => 'administrator',
-      '1' => 'moderator',
+      '0' => 'moderator',
     ),
   );
 
@@ -1127,10 +1297,8 @@ function user_profile_user_default_permissions() {
   $permissions['edit field_summary'] = array(
     'name' => 'edit field_summary',
     'roles' => array(
-      '0' => 'administrator',
-      '1' => 'blogger',
-      '2' => 'moderator',
-      '3' => 'page author',
+      '0' => 'blogger',
+      '1' => 'moderator',
     ),
   );
 
@@ -1138,7 +1306,7 @@ function user_profile_user_default_permissions() {
   $permissions['edit field_video_subtitle'] = array(
     'name' => 'edit field_video_subtitle',
     'roles' => array(
-      '0' => 'administrator',
+      '0' => 'blogger',
       '1' => 'moderator',
     ),
   );
@@ -1147,7 +1315,7 @@ function user_profile_user_default_permissions() {
   $permissions['edit field_video_third_party'] = array(
     'name' => 'edit field_video_third_party',
     'roles' => array(
-      '0' => 'administrator',
+      '0' => 'blogger',
       '1' => 'moderator',
     ),
   );
@@ -1156,7 +1324,7 @@ function user_profile_user_default_permissions() {
   $permissions['edit field_video_thumbnail'] = array(
     'name' => 'edit field_video_thumbnail',
     'roles' => array(
-      '0' => 'administrator',
+      '0' => 'blogger',
       '1' => 'moderator',
     ),
   );
@@ -1165,8 +1333,16 @@ function user_profile_user_default_permissions() {
   $permissions['edit field_video_youku'] = array(
     'name' => 'edit field_video_youku',
     'roles' => array(
-      '0' => 'administrator',
+      '0' => 'blogger',
       '1' => 'moderator',
+    ),
+  );
+
+  // Exported permission: edit field_website
+  $permissions['edit field_website'] = array(
+    'name' => 'edit field_website',
+    'roles' => array(
+      '0' => 'authenticated user',
     ),
   );
 
@@ -1200,6 +1376,16 @@ function user_profile_user_default_permissions() {
     ),
   );
 
+  // Exported permission: edit own document content
+  $permissions['edit own document content'] = array(
+    'name' => 'edit own document content',
+    'roles' => array(
+      '0' => 'administrator',
+      '1' => 'doc content owner',
+      '2' => 'moderator',
+    ),
+  );
+
   // Exported permission: edit own event content
   $permissions['edit own event content'] = array(
     'name' => 'edit own event content',
@@ -1224,6 +1410,18 @@ function user_profile_user_default_permissions() {
     'roles' => array(
       '0' => 'administrator',
       '1' => 'moderator',
+    ),
+  );
+
+  // Exported permission: edit own idea content
+  $permissions['edit own idea content'] = array(
+    'name' => 'edit own idea content',
+    'roles' => array(
+      '0' => 'administrator',
+      '1' => 'authenticated user',
+      '2' => 'blogger',
+      '3' => 'doc content owner',
+      '4' => 'moderator',
     ),
   );
 
@@ -1266,6 +1464,12 @@ function user_profile_user_default_permissions() {
       '0' => 'administrator',
       '1' => 'moderator',
     ),
+  );
+
+  // Exported permission: edit own quickstart content
+  $permissions['edit own quickstart content'] = array(
+    'name' => 'edit own quickstart content',
+    'roles' => array(),
   );
 
   // Exported permission: edit own video content
@@ -1576,6 +1780,12 @@ function user_profile_user_default_permissions() {
     ),
   );
 
+  // Exported permission: use views exporter
+  $permissions['use views exporter'] = array(
+    'name' => 'use views exporter',
+    'roles' => array(),
+  );
+
   // Exported permission: use vote up/down
   $permissions['use vote up/down'] = array(
     'name' => 'use vote up/down',
@@ -1630,6 +1840,14 @@ function user_profile_user_default_permissions() {
     ),
   );
 
+  // Exported permission: view date repeats
+  $permissions['view date repeats'] = array(
+    'name' => 'view date repeats',
+    'roles' => array(
+      '0' => 'administrator',
+    ),
+  );
+
   // Exported permission: view faq page
   $permissions['view faq page'] = array(
     'name' => 'view faq page',
@@ -1645,12 +1863,11 @@ function user_profile_user_default_permissions() {
   $permissions['view field_author'] = array(
     'name' => 'view field_author',
     'roles' => array(
-      '0' => 'administrator',
-      '1' => 'anonymous user',
-      '2' => 'authenticated user',
-      '3' => 'blogger',
-      '4' => 'doc content owner',
-      '5' => 'moderator',
+      '0' => 'anonymous user',
+      '1' => 'authenticated user',
+      '2' => 'blogger',
+      '3' => 'doc content owner',
+      '4' => 'moderator',
     ),
   );
 
@@ -1658,12 +1875,11 @@ function user_profile_user_default_permissions() {
   $permissions['view field_author_image'] = array(
     'name' => 'view field_author_image',
     'roles' => array(
-      '0' => 'administrator',
-      '1' => 'anonymous user',
-      '2' => 'authenticated user',
-      '3' => 'blogger',
-      '4' => 'doc content owner',
-      '5' => 'moderator',
+      '0' => 'anonymous user',
+      '1' => 'authenticated user',
+      '2' => 'blogger',
+      '3' => 'doc content owner',
+      '4' => 'moderator',
     ),
   );
 
@@ -1671,11 +1887,28 @@ function user_profile_user_default_permissions() {
   $permissions['view field_author_profession_title'] = array(
     'name' => 'view field_author_profession_title',
     'roles' => array(
-      '0' => 'administrator',
-      '1' => 'anonymous user',
-      '2' => 'authenticated user',
-      '3' => 'doc content owner',
-      '4' => 'moderator',
+      '0' => 'anonymous user',
+      '1' => 'authenticated user',
+      '2' => 'doc content owner',
+      '3' => 'moderator',
+    ),
+  );
+
+  // Exported permission: view field_cartridges_list
+  $permissions['view field_cartridges_list'] = array(
+    'name' => 'view field_cartridges_list',
+    'roles' => array(
+      '0' => 'anonymous user',
+      '1' => 'authenticated user',
+    ),
+  );
+
+  // Exported permission: view field_code_language
+  $permissions['view field_code_language'] = array(
+    'name' => 'view field_code_language',
+    'roles' => array(
+      '0' => 'anonymous user',
+      '1' => 'authenticated user',
     ),
   );
 
@@ -1683,11 +1916,10 @@ function user_profile_user_default_permissions() {
   $permissions['view field_document_file'] = array(
     'name' => 'view field_document_file',
     'roles' => array(
-      '0' => 'administrator',
-      '1' => 'anonymous user',
-      '2' => 'authenticated user',
-      '3' => 'doc content owner',
-      '4' => 'moderator',
+      '0' => 'anonymous user',
+      '1' => 'authenticated user',
+      '2' => 'doc content owner',
+      '3' => 'moderator',
     ),
   );
 
@@ -1695,10 +1927,9 @@ function user_profile_user_default_permissions() {
   $permissions['view field_event_categories'] = array(
     'name' => 'view field_event_categories',
     'roles' => array(
-      '0' => 'administrator',
-      '1' => 'anonymous user',
-      '2' => 'authenticated user',
-      '3' => 'moderator',
+      '0' => 'anonymous user',
+      '1' => 'authenticated user',
+      '2' => 'moderator',
     ),
   );
 
@@ -1706,10 +1937,9 @@ function user_profile_user_default_permissions() {
   $permissions['view field_event_city'] = array(
     'name' => 'view field_event_city',
     'roles' => array(
-      '0' => 'administrator',
-      '1' => 'anonymous user',
-      '2' => 'authenticated user',
-      '3' => 'moderator',
+      '0' => 'anonymous user',
+      '1' => 'authenticated user',
+      '2' => 'moderator',
     ),
   );
 
@@ -1717,10 +1947,18 @@ function user_profile_user_default_permissions() {
   $permissions['view field_event_country'] = array(
     'name' => 'view field_event_country',
     'roles' => array(
-      '0' => 'administrator',
-      '1' => 'anonymous user',
-      '2' => 'authenticated user',
-      '3' => 'moderator',
+      '0' => 'anonymous user',
+      '1' => 'authenticated user',
+      '2' => 'moderator',
+    ),
+  );
+
+  // Exported permission: view field_event_logo
+  $permissions['view field_event_logo'] = array(
+    'name' => 'view field_event_logo',
+    'roles' => array(
+      '0' => 'anonymous user',
+      '1' => 'authenticated user',
     ),
   );
 
@@ -1728,10 +1966,18 @@ function user_profile_user_default_permissions() {
   $permissions['view field_event_online'] = array(
     'name' => 'view field_event_online',
     'roles' => array(
-      '0' => 'administrator',
-      '1' => 'anonymous user',
-      '2' => 'authenticated user',
-      '3' => 'moderator',
+      '0' => 'anonymous user',
+      '1' => 'authenticated user',
+      '2' => 'moderator',
+    ),
+  );
+
+  // Exported permission: view field_event_short_description
+  $permissions['view field_event_short_description'] = array(
+    'name' => 'view field_event_short_description',
+    'roles' => array(
+      '0' => 'anonymous user',
+      '1' => 'authenticated user',
     ),
   );
 
@@ -1739,10 +1985,9 @@ function user_profile_user_default_permissions() {
   $permissions['view field_event_start_date'] = array(
     'name' => 'view field_event_start_date',
     'roles' => array(
-      '0' => 'administrator',
-      '1' => 'anonymous user',
-      '2' => 'authenticated user',
-      '3' => 'moderator',
+      '0' => 'anonymous user',
+      '1' => 'authenticated user',
+      '2' => 'moderator',
     ),
   );
 
@@ -1750,10 +1995,18 @@ function user_profile_user_default_permissions() {
   $permissions['view field_event_state'] = array(
     'name' => 'view field_event_state',
     'roles' => array(
-      '0' => 'administrator',
-      '1' => 'anonymous user',
-      '2' => 'authenticated user',
-      '3' => 'moderator',
+      '0' => 'anonymous user',
+      '1' => 'authenticated user',
+      '2' => 'moderator',
+    ),
+  );
+
+  // Exported permission: view field_event_timezone
+  $permissions['view field_event_timezone'] = array(
+    'name' => 'view field_event_timezone',
+    'roles' => array(
+      '0' => 'anonymous user',
+      '1' => 'authenticated user',
     ),
   );
 
@@ -1761,10 +2014,27 @@ function user_profile_user_default_permissions() {
   $permissions['view field_event_url'] = array(
     'name' => 'view field_event_url',
     'roles' => array(
-      '0' => 'administrator',
-      '1' => 'anonymous user',
-      '2' => 'authenticated user',
-      '3' => 'moderator',
+      '0' => 'anonymous user',
+      '1' => 'authenticated user',
+      '2' => 'moderator',
+    ),
+  );
+
+  // Exported permission: view field_event_venue
+  $permissions['view field_event_venue'] = array(
+    'name' => 'view field_event_venue',
+    'roles' => array(
+      '0' => 'anonymous user',
+      '1' => 'authenticated user',
+    ),
+  );
+
+  // Exported permission: view field_git_repository_url
+  $permissions['view field_git_repository_url'] = array(
+    'name' => 'view field_git_repository_url',
+    'roles' => array(
+      '0' => 'anonymous user',
+      '1' => 'authenticated user',
     ),
   );
 
@@ -1772,10 +2042,9 @@ function user_profile_user_default_permissions() {
   $permissions['view field_image_upload'] = array(
     'name' => 'view field_image_upload',
     'roles' => array(
-      '0' => 'administrator',
-      '1' => 'anonymous user',
-      '2' => 'authenticated user',
-      '3' => 'moderator',
+      '0' => 'anonymous user',
+      '1' => 'authenticated user',
+      '2' => 'moderator',
     ),
   );
 
@@ -1783,10 +2052,9 @@ function user_profile_user_default_permissions() {
   $permissions['view field_kb_applies_to'] = array(
     'name' => 'view field_kb_applies_to',
     'roles' => array(
-      '0' => 'administrator',
-      '1' => 'anonymous user',
-      '2' => 'authenticated user',
-      '3' => 'moderator',
+      '0' => 'anonymous user',
+      '1' => 'authenticated user',
+      '2' => 'moderator',
     ),
   );
 
@@ -1794,10 +2062,9 @@ function user_profile_user_default_permissions() {
   $permissions['view field_kb_attachment'] = array(
     'name' => 'view field_kb_attachment',
     'roles' => array(
-      '0' => 'administrator',
-      '1' => 'anonymous user',
-      '2' => 'authenticated user',
-      '3' => 'moderator',
+      '0' => 'anonymous user',
+      '1' => 'authenticated user',
+      '2' => 'moderator',
     ),
   );
 
@@ -1805,10 +2072,9 @@ function user_profile_user_default_permissions() {
   $permissions['view field_kb_code'] = array(
     'name' => 'view field_kb_code',
     'roles' => array(
-      '0' => 'administrator',
-      '1' => 'anonymous user',
-      '2' => 'authenticated user',
-      '3' => 'moderator',
+      '0' => 'anonymous user',
+      '1' => 'authenticated user',
+      '2' => 'moderator',
     ),
   );
 
@@ -1816,10 +2082,9 @@ function user_profile_user_default_permissions() {
   $permissions['view field_kb_issue'] = array(
     'name' => 'view field_kb_issue',
     'roles' => array(
-      '0' => 'administrator',
-      '1' => 'anonymous user',
-      '2' => 'authenticated user',
-      '3' => 'moderator',
+      '0' => 'anonymous user',
+      '1' => 'authenticated user',
+      '2' => 'moderator',
     ),
   );
 
@@ -1827,10 +2092,9 @@ function user_profile_user_default_permissions() {
   $permissions['view field_kb_resolution'] = array(
     'name' => 'view field_kb_resolution',
     'roles' => array(
-      '0' => 'administrator',
-      '1' => 'anonymous user',
-      '2' => 'authenticated user',
-      '3' => 'moderator',
+      '0' => 'anonymous user',
+      '1' => 'authenticated user',
+      '2' => 'moderator',
     ),
   );
 
@@ -1838,10 +2102,9 @@ function user_profile_user_default_permissions() {
   $permissions['view field_page_image'] = array(
     'name' => 'view field_page_image',
     'roles' => array(
-      '0' => 'administrator',
-      '1' => 'anonymous user',
-      '2' => 'authenticated user',
-      '3' => 'moderator',
+      '0' => 'anonymous user',
+      '1' => 'authenticated user',
+      '2' => 'moderator',
     ),
   );
 
@@ -1849,10 +2112,9 @@ function user_profile_user_default_permissions() {
   $permissions['view field_promo_image'] = array(
     'name' => 'view field_promo_image',
     'roles' => array(
-      '0' => 'administrator',
-      '1' => 'anonymous user',
-      '2' => 'authenticated user',
-      '3' => 'moderator',
+      '0' => 'anonymous user',
+      '1' => 'authenticated user',
+      '2' => 'moderator',
     ),
   );
 
@@ -1860,10 +2122,36 @@ function user_profile_user_default_permissions() {
   $permissions['view field_promo_url'] = array(
     'name' => 'view field_promo_url',
     'roles' => array(
-      '0' => 'administrator',
-      '1' => 'anonymous user',
-      '2' => 'authenticated user',
-      '3' => 'moderator',
+      '0' => 'anonymous user',
+      '1' => 'authenticated user',
+      '2' => 'moderator',
+    ),
+  );
+
+  // Exported permission: view field_quickstart_admin_tags
+  $permissions['view field_quickstart_admin_tags'] = array(
+    'name' => 'view field_quickstart_admin_tags',
+    'roles' => array(
+      '0' => 'anonymous user',
+      '1' => 'authenticated user',
+    ),
+  );
+
+  // Exported permission: view field_quickstart_icon
+  $permissions['view field_quickstart_icon'] = array(
+    'name' => 'view field_quickstart_icon',
+    'roles' => array(
+      '0' => 'anonymous user',
+      '1' => 'authenticated user',
+    ),
+  );
+
+  // Exported permission: view field_quickstart_priority
+  $permissions['view field_quickstart_priority'] = array(
+    'name' => 'view field_quickstart_priority',
+    'roles' => array(
+      '0' => 'anonymous user',
+      '1' => 'authenticated user',
     ),
   );
 
@@ -1871,10 +2159,9 @@ function user_profile_user_default_permissions() {
   $permissions['view field_search_meta_description'] = array(
     'name' => 'view field_search_meta_description',
     'roles' => array(
-      '0' => 'administrator',
-      '1' => 'anonymous user',
-      '2' => 'authenticated user',
-      '3' => 'moderator',
+      '0' => 'anonymous user',
+      '1' => 'authenticated user',
+      '2' => 'moderator',
     ),
   );
 
@@ -1882,8 +2169,7 @@ function user_profile_user_default_permissions() {
   $permissions['view field_state'] = array(
     'name' => 'view field_state',
     'roles' => array(
-      '0' => 'administrator',
-      '1' => 'moderator',
+      '0' => 'moderator',
     ),
   );
 
@@ -1891,9 +2177,8 @@ function user_profile_user_default_permissions() {
   $permissions['view field_summary'] = array(
     'name' => 'view field_summary',
     'roles' => array(
-      '0' => 'administrator',
-      '1' => 'anonymous user',
-      '2' => 'authenticated user',
+      '0' => 'anonymous user',
+      '1' => 'authenticated user',
     ),
   );
 
@@ -1901,10 +2186,9 @@ function user_profile_user_default_permissions() {
   $permissions['view field_video_subtitle'] = array(
     'name' => 'view field_video_subtitle',
     'roles' => array(
-      '0' => 'administrator',
-      '1' => 'anonymous user',
-      '2' => 'authenticated user',
-      '3' => 'moderator',
+      '0' => 'anonymous user',
+      '1' => 'authenticated user',
+      '2' => 'moderator',
     ),
   );
 
@@ -1912,10 +2196,9 @@ function user_profile_user_default_permissions() {
   $permissions['view field_video_third_party'] = array(
     'name' => 'view field_video_third_party',
     'roles' => array(
-      '0' => 'administrator',
-      '1' => 'anonymous user',
-      '2' => 'authenticated user',
-      '3' => 'moderator',
+      '0' => 'anonymous user',
+      '1' => 'authenticated user',
+      '2' => 'moderator',
     ),
   );
 
@@ -1923,10 +2206,9 @@ function user_profile_user_default_permissions() {
   $permissions['view field_video_thumbnail'] = array(
     'name' => 'view field_video_thumbnail',
     'roles' => array(
-      '0' => 'administrator',
-      '1' => 'anonymous user',
-      '2' => 'authenticated user',
-      '3' => 'moderator',
+      '0' => 'anonymous user',
+      '1' => 'authenticated user',
+      '2' => 'moderator',
     ),
   );
 
@@ -1934,10 +2216,18 @@ function user_profile_user_default_permissions() {
   $permissions['view field_video_youku'] = array(
     'name' => 'view field_video_youku',
     'roles' => array(
-      '0' => 'administrator',
-      '1' => 'anonymous user',
-      '2' => 'authenticated user',
-      '3' => 'moderator',
+      '0' => 'anonymous user',
+      '1' => 'authenticated user',
+      '2' => 'moderator',
+    ),
+  );
+
+  // Exported permission: view field_website
+  $permissions['view field_website'] = array(
+    'name' => 'view field_website',
+    'roles' => array(
+      '0' => 'anonymous user',
+      '1' => 'authenticated user',
     ),
   );
 
