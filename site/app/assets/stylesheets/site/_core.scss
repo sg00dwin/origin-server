@@ -283,13 +283,14 @@ body.signup {
       padding: 0;
     }
     #outage {
-      margin: 0;
+      margin: 5px 0;
     }
     .mobile-block {
-      display: table;
+      display: block;
       float: none;
       text-align: center;
       width: 100%;
+      margin-top: 32px; // vertical spacing needed for portait phone display
       // hide extra text when space is tight
       > a > span {
         display: inline;
