@@ -147,6 +147,7 @@ RedHatCloud::Application.routes.draw do
   scope 'status' do
     match '/(:base)(.:format)' => StatusApp, :as => 'status'
     match '/status.js' => StatusApp, :as => 'status_js'
+    match '/open_issues.js' => StatusApp, :as => 'open_issues_js'
     match '/sync/(:host)' => StatusApp, :constraints => {:host => /[0-z\.-]+/}
   end
 end

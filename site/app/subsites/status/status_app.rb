@@ -102,6 +102,20 @@ class StatusApp < Sinatra::Base
     end
   end
 
+  get '*/status/open_issues.js' do
+    callback = params[:jsonp]
+    json = { :open => Issue.is_open.includes(:updates) }.to_json(:include => :updates, :methods => :created_at_in_words)
+    expires 60*5, :public
+    if callback
+      content_type 'text/javascript'
+      return "#{callback}(#{json});"
+    else
+      content_type :json
+      return json
+    end
+    
+  end
+
   # copied from ActionView::Helpers::JavascriptHelper
   JS_ESCAPE_MAP = {
     '\\' => '\\\\',

@@ -29,43 +29,48 @@
                   = yield
         
         -# Included here to show structure
-        .container
+        #issues.container{ :style => 'display:none;' }
           .row
             .span12
               %section.frame.announcement.outage
                 .row-fluid
                   .announcement
                     %h4
-                      Openshift DNS Latency
-                      %span.timestamp &mdash; (Started about 19 hours ago)
-                    We are currently experiencing intermittent issues with DNS propagation. We are working to resolve this as quickly as possible.
+                      {{title}}
+                      %span.timestamp &mdash; ({{timestamp}})
+                    %aside.updates
+                      .update
+                        {{description}}
+                        %span.timestamp{ :style => 'font-size:90%'} &mdash; ({{timestamp}})
 
-        .container
-          .row
-            .span12
-              %section.frame.announcement
-                .row-fluid
-                  .announcement
-                    .column-1
-                      %h4
-                        Features Released
-                        %span.timestamp &mdash; November 25, 2012
-                      %ul.spaced-items
-                        %li Ruby applications can now be hot deployed, increasing deployment speed and reducing application downtime.
-                        %li Postgres can now be used with scaled applications
-                      %a.arrow-link{:href => "/community/documents/openshift-release-notes"}→ View more...
-                      
-                    .column-2
-                      %h4
-                        Upcoming Events
-                      %ul.unstyled.spaced-items
-                        %li
-                          %strong Event Title
-                          %p December 16 &mdash; Munich, Germany
-                        %li
-                          %strong Event Title
-                          %p January 05 &mdash; San Francisco, CA
-                      %a.action-more{:href => "/community/events"}→ View more...
+        -if @posts and @events
+          #announcements.container
+            .row
+              .span12
+                %section.frame.announcement
+                  .row-fluid
+                    .announcement
+                      .column-1
+                        %h4
+                          Features Released
+                          -# %span.timestamp &mdash; November 25, 2012
+                        %ul.spaced-items
+                        - @posts.each do |blog|
+                          %li= blog.summary.html_safe
+                        %a.arrow-link{:href => "/community/documents/openshift-release-notes"}→ View more...
+                        
+                      .column-2
+                        %h4
+                          Upcoming Events
+                        %ul.unstyled.spaced-items
+                        - @events.each do |event|
+                          %li
+                            %strong=raw event.title
+                            %p
+                              =raw event.date.strftime('%B %d') + ' - '
+                              =raw event.city
+                              =raw event.state
+                        %a.action-more{:href => "/community/events"}→ View more...
                           
 
     %footer

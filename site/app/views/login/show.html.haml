@@ -1,3 +1,29 @@
+- content_for :javascripts do
+  :javascript
+    showOpenIssues = function(data) {
+      var el = document.getElementById('issues');
+      if (el) {
+        var template_issues = el.innerHTML;
+        var template_updates = el.getElementsByTagName('aside')[0].innerHTML;
+        var content_issues = '';
+        var content_updates = '';
+        for (i = 0; i < data.open.length; i++) {
+          content_issues += template_issues
+            .replace(/\{\{title\}\}/, data.open[i].issue.title)
+            .replace(/\{\{timestamp\}\}/, data.open[i].issue.created_at_in_words + ' ago');
+          for (j = 0; j < data.open[i].issue.updates.length; j++) {
+            content_updates += template_updates
+              .replace(/\{\{description\}\}/, data.open[i].issue.updates[j].description)
+              .replace(/\{\{timestamp\}\}/, data.open[i].issue.updates[j].created_at_in_words + ' ago');
+          }
+        }
+        el.innerHTML = content_issues;
+        el.getElementsByTagName('aside')[0].innerHTML = content_updates;
+        el.style.display = '';
+      }
+    }
+  %script{:src => open_issues_jsonp_url('showOpenIssues')}
+
 .column-1
   - content_for :title, 'Sign in to OpenShift'
   

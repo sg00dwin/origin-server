@@ -16,7 +16,7 @@ $noiseImage: image-url('noise.png') !default;
   transform: rotate(0);
 }
 .navbar.centered .brand > a > .brand-image {
-  background: image-url("/assets/logo-wide-white.png") no-repeat scroll left center transparent;
+  background: image-url("logo-wide-white.png") no-repeat scroll left center transparent;
   transition: none;
   width: 44px;
   height: 42px;
@@ -73,7 +73,7 @@ $noiseImage: image-url('noise.png') !default;
 
 @media (max-width: 768px) {
   .navbar.centered .brand > a > .brand-image {
-    background: image-url("/assets/OSlogo32.png") no-repeat scroll left center transparent;
+    background: image-url("/app/images/OSlogo32.png") no-repeat scroll left center transparent;
     display: inline-block;
     height: 32px;
     margin-top: 2px;
@@ -114,7 +114,7 @@ h2 + ul, h3 + ul, h4 + ul {
   }
 }
 #web_user_password_input button.eye {
-  background: transparent image-url('/assets/eye.png') no-repeat right center;
+  background: transparent image-url('/app/images/eye.png') no-repeat right center;
   height: 20px;
   width: 20px;
   position: absolute;
