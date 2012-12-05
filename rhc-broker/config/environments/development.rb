@@ -21,7 +21,7 @@ Broker::Application.configure do
 
   # Only use best-standards-support built into browsers
   config.action_dispatch.best_standards_support = :builtin
-  
+
   # Log the query plan for queries taking more than this (works
   # with SQLite, MySQL, and PostgreSQL)
   #config.active_record.auto_explain_threshold_in_seconds = 0.5
@@ -34,7 +34,7 @@ Broker::Application.configure do
 
   # Expands the lines which load the assets
   config.assets.debug = true
-  
+
   # Set the log level
   config.log_level = :debug
 
@@ -55,11 +55,11 @@ Broker::Application.configure do
     (h,p) = hp.split(":")
     host_port = [h, p.to_i]
   end
-  
+
   config.datastore = {
     :replica_set => replica_sets,
     :host_port => host_port,
-  
+
     :user => conf.get("MONGO_USER", ""),
     :password => conf.get("MONGO_PASSWORD", ""),
     :db => conf.get("MONGO_DB", "openshift_broker_dev"),
@@ -73,24 +73,25 @@ Broker::Application.configure do
     :datastore_enabled => conf.get_bool("ENABLE_USAGE_TRACKING_DATASTORE", "true"),
     :syslog_enabled => conf.get_bool("ENABLE_USAGE_TRACKING_SYSLOG", "false")
   }
-  
+
   config.analytics = {
     :enabled => conf.get_bool("ENABLE_ANALYTICS", "false"), # global flag for whether any analytics should be enabled
   }
-  
+
   config.user_action_logging = {
     :logging_enabled => conf.get_bool("ENABLE_USER_ACTION_LOG", "true"),
     :log_filepath => conf.get("USER_ACTION_LOG_FILE", "/var/log/openshift/user_action.log")
   }
-  
+
   config.openshift = {
     :domain_suffix => conf.get("CLOUD_DOMAIN", "dev.rhcloud.com"),
     :default_max_gears => (conf.get("DEFAULT_MAX_GEARS", "3")).to_i,
     :default_gear_size => conf.get("DEFAULT_GEAR_SIZE", "small"),
     :gear_sizes => conf.get("VALID_GEAR_SIZES", "small,medium,c9").split(","),
+    :default_gear_capabilities => conf.get("DEFAULT_GEAR_CAPABILITIES", "small").split(","),
     :community_quickstarts_url => conf.get('COMMUNITY_QUICKSTARTS_URL'),
   }
-  
+
   config.auth = {
     # formerly the broker_auth_secret
     :salt => conf.get("AUTH_SALT", ""),

@@ -64,32 +64,32 @@ Broker::Application.configure do
       :base_url => "/wapps/streamline"
     }
   }
-  
+
   config.usage_tracking = {
     :datastore_enabled => true,
     :syslog_enabled => false
   }
-  
+
   config.analytics = {
     :enabled => false, # global flag for whether any analytics should be enabled
     :nurture => {
       :enabled => false,
       :username => "admin",
       :password => "password",
-      :url => "http://69.164.192.124:4500/" 
+      :url => "http://69.164.192.124:4500/"
     }
   }
-  
+
   config.datastore = {
     :replica_set => true,
     # Replica set example: [[<host-1>, <port-1>], [<host-2>, <port-2>], ...]
     :host_port => [["localhost", 27017]],
-        
+
     :user => "libra",
     :password => "momo",
     :db => "openshift_broker_dev",
     :collections => {:user => "user_test",
-                     :district => "district_test", 
+                     :district => "district_test",
                      :application_template => "template_test",
                      :distributed_lock => "distributed_lock_test"}
   }
@@ -142,6 +142,7 @@ Broker::Application.configure do
     :domain_suffix => "dev.rhcloud.com",
     :default_max_gears => 3,
     :default_gear_size => "small",
+    :default_gear_capabilities => ["small"],
     :gear_sizes => ["small", "medium", "c9"]
   }
 
