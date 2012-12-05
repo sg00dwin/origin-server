@@ -8,7 +8,7 @@
 
 Summary:   Dependencies for OpenShift development
 Name:      rhc-devenv
-Version: 1.2.3
+Version: 1.2.4
 Release:   1%{?dist}
 Group:     Development/Libraries
 License:   GPLv2
@@ -659,6 +659,12 @@ restorecon /etc/openshift/node.conf || :
 /sbin/service libra-data restart > /dev/null 2>&1 || :
 
 %changelog
+* Wed Dec 05 2012 Adam Miller <admiller@redhat.com> 1.2.4-1
+- Set proxy-initial-not-pooled on devenv (ccoleman@redhat.com)
+- Merge pull request #684 from jtharris/test_user (openshift+bot@redhat.com)
+- syncing jenkins jobs (dmcphers@redhat.com)
+- Adding test user with extra storage capabilities. (jharris@redhat.com)
+
 * Tue Dec 04 2012 Adam Miller <admiller@redhat.com> 1.2.3-1
 - Use activemq connector for mcollective. (pmorie@gmail.com)
 - fixing mongo connection issues for build (dmcphers@redhat.com)
