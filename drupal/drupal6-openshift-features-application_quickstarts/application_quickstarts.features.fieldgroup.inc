@@ -18,16 +18,16 @@ function application_quickstarts_fieldgroup_default_groups() {
         'description' => '',
       ),
       'display' => array(
-        'weight' => '34',
-        'token' => array(
-          'format' => 'fieldset',
-          'exclude' => 1,
-        ),
+        'weight' => '-2',
         '2' => array(
           'format' => 'fieldset',
-          'exclude' => 1,
+          'exclude' => 0,
         ),
         '3' => array(
+          'format' => 'fieldset',
+          'exclude' => 1,
+        ),
+        'token' => array(
           'format' => 'fieldset',
           'exclude' => 1,
         ),
@@ -66,16 +66,16 @@ function application_quickstarts_fieldgroup_default_groups() {
         'description' => '',
       ),
       'display' => array(
-        'weight' => '-2',
-        'token' => array(
-          'format' => 'fieldset',
-          'exclude' => 0,
-        ),
+        'weight' => '-3',
         '2' => array(
           'format' => 'fieldset',
           'exclude' => 0,
         ),
         '3' => array(
+          'format' => 'fieldset',
+          'exclude' => 0,
+        ),
+        'token' => array(
           'format' => 'fieldset',
           'exclude' => 0,
         ),

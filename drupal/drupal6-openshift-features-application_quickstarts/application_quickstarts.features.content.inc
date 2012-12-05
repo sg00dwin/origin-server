@@ -13,15 +13,15 @@ function application_quickstarts_content_default_fields() {
     'display_settings' => array(
       'weight' => '-2',
       'parent' => 'group_quickstart_info',
-      'token' => array(
-        'format' => 'default',
-        'exclude' => 0,
-      ),
       '2' => array(
         'format' => 'default',
         'exclude' => 0,
       ),
       '3' => array(
+        'format' => 'default',
+        'exclude' => 0,
+      ),
+      'token' => array(
         'format' => 'default',
         'exclude' => 0,
       ),
@@ -84,15 +84,15 @@ function application_quickstarts_content_default_fields() {
     'display_settings' => array(
       'weight' => '-1',
       'parent' => 'group_quickstart_info',
-      'token' => array(
-        'format' => 'default',
-        'exclude' => 0,
-      ),
       '2' => array(
         'format' => 'default',
         'exclude' => 0,
       ),
       '3' => array(
+        'format' => 'default',
+        'exclude' => 0,
+      ),
+      'token' => array(
         'format' => 'default',
         'exclude' => 0,
       ),
@@ -149,15 +149,15 @@ other|Other',
     'display_settings' => array(
       'weight' => 0,
       'parent' => 'group_quickstart_info',
-      'token' => array(
-        'format' => 'default',
-        'exclude' => 0,
-      ),
       '2' => array(
         'format' => 'default',
         'exclude' => 0,
       ),
       '3' => array(
+        'format' => 'default',
+        'exclude' => 0,
+      ),
+      'token' => array(
         'format' => 'default',
         'exclude' => 0,
       ),
@@ -220,15 +220,15 @@ other|Other',
     'display_settings' => array(
       'weight' => '32',
       'parent' => 'group_quickstart_admin',
-      'token' => array(
-        'format' => 'default',
-        'exclude' => 1,
-      ),
       '2' => array(
         'format' => 'default',
-        'exclude' => 1,
+        'exclude' => 0,
       ),
       '3' => array(
+        'format' => 'default',
+        'exclude' => 1,
+      ),
+      'token' => array(
         'format' => 'default',
         'exclude' => 1,
       ),
@@ -283,15 +283,15 @@ other|Other',
     'display_settings' => array(
       'weight' => '2',
       'parent' => 'group_quickstart_info',
-      'token' => array(
-        'format' => 'image_plain',
-        'exclude' => 0,
-      ),
       '2' => array(
         'format' => 'image_plain',
         'exclude' => 0,
       ),
       '3' => array(
+        'format' => 'image_plain',
+        'exclude' => 0,
+      ),
+      'token' => array(
         'format' => 'image_plain',
         'exclude' => 0,
       ),
@@ -365,15 +365,15 @@ other|Other',
     'display_settings' => array(
       'weight' => '31',
       'parent' => 'group_quickstart_admin',
-      'token' => array(
-        'format' => 'default',
-        'exclude' => 1,
-      ),
       '2' => array(
         'format' => 'default',
-        'exclude' => 1,
+        'exclude' => 0,
       ),
       '3' => array(
+        'format' => 'default',
+        'exclude' => 1,
+      ),
+      'token' => array(
         'format' => 'default',
         'exclude' => 1,
       ),
@@ -428,15 +428,15 @@ other|Other',
     'display_settings' => array(
       'weight' => '1',
       'parent' => 'group_quickstart_info',
-      'token' => array(
-        'format' => 'default',
-        'exclude' => 0,
-      ),
       '2' => array(
         'format' => 'default',
         'exclude' => 0,
       ),
       '3' => array(
+        'format' => 'default',
+        'exclude' => 0,
+      ),
+      'token' => array(
         'format' => 'default',
         'exclude' => 0,
       ),
