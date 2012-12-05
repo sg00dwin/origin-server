@@ -8,7 +8,6 @@ URL:           http://openshift.redhat.com
 Source0:       rhc-server-common-%{version}.tar.gz
 
 BuildRoot:     %(mktemp -ud %{_tmppath}/%{name}-%{version}-%{release}-XXXXXX)
-Requires:      rhc-common
 Requires(pre): shadow-utils
 
 BuildArch: noarch
