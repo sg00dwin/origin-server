@@ -1,5 +1,14 @@
 - content_for :body_class, 'home'
 - content_for :nav_class, 'section-nav'
+- content_for :top_banner do
+  .masthead-enterprise
+    = link_to enterprise_product_url do
+      %header
+        %hgroup
+          %h2 Introducing
+          %h1 OpenShift Enterprise
+          %h2 Streamline App Delivery
+      %p Learn More
 - content_for :header do
   .messaging.messaging-home
     .container
