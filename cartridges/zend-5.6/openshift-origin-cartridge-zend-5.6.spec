@@ -64,7 +64,6 @@ ln -s %{cartridgedir}/../abstract/info/hooks/stop %{buildroot}%{cartridgedir}/in
 ln -s %{cartridgedir}/../abstract/info/hooks/update-namespace %{buildroot}%{cartridgedir}/info/hooks/update-namespace
 ln -s %{cartridgedir}/../abstract/info/hooks/deploy-httpd-proxy %{buildroot}%{cartridgedir}/info/hooks/deploy-httpd-proxy
 ln -s %{cartridgedir}/../abstract/info/hooks/remove-httpd-proxy %{buildroot}%{cartridgedir}/info/hooks/remove-httpd-proxy
-ln -s %{cartridgedir}/../abstract/info/hooks/force-stop %{buildroot}%{cartridgedir}/info/hooks/force-stop
 ln -s %{cartridgedir}/../abstract/info/hooks/tidy %{buildroot}%{cartridgedir}/info/hooks/tidy
 #ln -s %{cartridgedir}/../abstract/info/hooks/move %{buildroot}%{cartridgedir}/info/hooks/move
 ln -s %{cartridgedir}/../abstract/info/hooks/threaddump %{buildroot}%{cartridgedir}/info/hooks/threaddump
@@ -90,7 +89,9 @@ rm -rf %{buildroot}
 
 %files
 %defattr(-,root,root,-)
-%attr(0750,-,-) %{cartridgedir}/info/hooks/
+%attr(0755,-,-) %{cartridgedir}/info/hooks
+%attr(0750,-,-) %{cartridgedir}/info/hooks/*
+%attr(0755,-,-) %{cartridgedir}/info/hooks/tidy
 %attr(0750,-,-) %{cartridgedir}/info/data/
 %attr(0750,-,-) %{cartridgedir}/info/build/
 %attr(0755,-,-) %{cartridgedir}/info/bin/
