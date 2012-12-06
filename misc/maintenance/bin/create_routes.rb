@@ -1,4 +1,4 @@
-#!/usr/bin/env ruby
+#!/usr/bin/env oo-ruby
 
 $ip_re = /ProxyPass[\s]+\/[\s]+http:\/\/(([0-9]{1,3}.){3}[0-9]{1,3})/
 $sn_re = /ServerName[\s]+(\S*)[\s]*$/
