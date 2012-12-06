@@ -27,20 +27,20 @@ function application_quickstarts_fieldgroup_default_groups() {
           'format' => 'fieldset',
           'exclude' => 1,
         ),
-        'token' => array(
-          'format' => 'fieldset',
-          'exclude' => 1,
-        ),
-        '4' => array(
-          'format' => 'fieldset',
-          'exclude' => 1,
-        ),
         'label' => 'hidden',
         'teaser' => array(
           'format' => 'fieldset',
           'exclude' => 1,
         ),
         'full' => array(
+          'format' => 'fieldset',
+          'exclude' => 1,
+        ),
+        'token' => array(
+          'format' => 'fieldset',
+          'exclude' => 1,
+        ),
+        '4' => array(
           'format' => 'fieldset',
           'exclude' => 1,
         ),
@@ -75,14 +75,6 @@ function application_quickstarts_fieldgroup_default_groups() {
           'format' => 'fieldset',
           'exclude' => 0,
         ),
-        'token' => array(
-          'format' => 'fieldset',
-          'exclude' => 0,
-        ),
-        '4' => array(
-          'format' => 'fieldset',
-          'exclude' => 0,
-        ),
         'label' => 'above',
         'teaser' => array(
           'format' => 'simple',
@@ -92,14 +84,22 @@ function application_quickstarts_fieldgroup_default_groups() {
           'format' => 'simple',
           'exclude' => 0,
         ),
+        'token' => array(
+          'format' => 'fieldset',
+          'exclude' => 0,
+        ),
+        '4' => array(
+          'format' => 'fieldset',
+          'exclude' => 0,
+        ),
         'description' => '',
       ),
     ),
     'weight' => '-3',
     'fields' => array(
       '0' => 'field_cartridges_list',
-      '1' => 'field_code_language',
-      '2' => 'field_git_repository_url',
+      '1' => 'field_git_repository_url',
+      '2' => 'field_code_language',
       '3' => 'field_website',
       '4' => 'field_quickstart_icon',
     ),

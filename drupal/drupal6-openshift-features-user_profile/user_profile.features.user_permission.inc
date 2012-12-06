@@ -1017,10 +1017,11 @@ function user_profile_user_default_permissions() {
   $permissions['edit field_author'] = array(
     'name' => 'edit field_author',
     'roles' => array(
-      '0' => 'blogger',
-      '1' => 'doc content owner',
-      '2' => 'moderator',
-      '3' => 'page author',
+      '0' => 'administrator',
+      '1' => 'blogger',
+      '2' => 'doc content owner',
+      '3' => 'moderator',
+      '4' => 'page author',
     ),
   );
 
@@ -1028,10 +1029,11 @@ function user_profile_user_default_permissions() {
   $permissions['edit field_author_image'] = array(
     'name' => 'edit field_author_image',
     'roles' => array(
-      '0' => 'blogger',
-      '1' => 'doc content owner',
-      '2' => 'moderator',
-      '3' => 'page author',
+      '0' => 'administrator',
+      '1' => 'blogger',
+      '2' => 'doc content owner',
+      '3' => 'moderator',
+      '4' => 'page author',
     ),
   );
 
@@ -1039,10 +1041,11 @@ function user_profile_user_default_permissions() {
   $permissions['edit field_author_profession_title'] = array(
     'name' => 'edit field_author_profession_title',
     'roles' => array(
-      '0' => 'blogger',
-      '1' => 'doc content owner',
-      '2' => 'moderator',
-      '3' => 'page author',
+      '0' => 'administrator',
+      '1' => 'blogger',
+      '2' => 'doc content owner',
+      '3' => 'moderator',
+      '4' => 'page author',
     ),
   );
 
@@ -1067,9 +1070,6 @@ function user_profile_user_default_permissions() {
     'name' => 'edit field_document_file',
     'roles' => array(
       '0' => 'authenticated user',
-      '1' => 'blogger',
-      '2' => 'doc content owner',
-      '3' => 'moderator',
     ),
   );
 
@@ -1077,8 +1077,9 @@ function user_profile_user_default_permissions() {
   $permissions['edit field_event_categories'] = array(
     'name' => 'edit field_event_categories',
     'roles' => array(
-      '0' => 'blogger',
-      '1' => 'moderator',
+      '0' => 'administrator',
+      '1' => 'blogger',
+      '2' => 'moderator',
     ),
   );
 
@@ -1086,8 +1087,9 @@ function user_profile_user_default_permissions() {
   $permissions['edit field_event_city'] = array(
     'name' => 'edit field_event_city',
     'roles' => array(
-      '0' => 'blogger',
-      '1' => 'moderator',
+      '0' => 'administrator',
+      '1' => 'blogger',
+      '2' => 'moderator',
     ),
   );
 
@@ -1095,8 +1097,9 @@ function user_profile_user_default_permissions() {
   $permissions['edit field_event_country'] = array(
     'name' => 'edit field_event_country',
     'roles' => array(
-      '0' => 'blogger',
-      '1' => 'moderator',
+      '0' => 'administrator',
+      '1' => 'blogger',
+      '2' => 'moderator',
     ),
   );
 
@@ -1104,8 +1107,9 @@ function user_profile_user_default_permissions() {
   $permissions['edit field_event_logo'] = array(
     'name' => 'edit field_event_logo',
     'roles' => array(
-      '0' => 'blogger',
-      '1' => 'moderator',
+      '0' => 'administrator',
+      '1' => 'blogger',
+      '2' => 'moderator',
     ),
   );
 
@@ -1113,8 +1117,9 @@ function user_profile_user_default_permissions() {
   $permissions['edit field_event_online'] = array(
     'name' => 'edit field_event_online',
     'roles' => array(
-      '0' => 'blogger',
-      '1' => 'moderator',
+      '0' => 'administrator',
+      '1' => 'blogger',
+      '2' => 'moderator',
     ),
   );
 
@@ -1122,8 +1127,9 @@ function user_profile_user_default_permissions() {
   $permissions['edit field_event_short_description'] = array(
     'name' => 'edit field_event_short_description',
     'roles' => array(
-      '0' => 'blogger',
-      '1' => 'moderator',
+      '0' => 'administrator',
+      '1' => 'blogger',
+      '2' => 'moderator',
     ),
   );
 
@@ -1131,8 +1137,9 @@ function user_profile_user_default_permissions() {
   $permissions['edit field_event_start_date'] = array(
     'name' => 'edit field_event_start_date',
     'roles' => array(
-      '0' => 'blogger',
-      '1' => 'moderator',
+      '0' => 'administrator',
+      '1' => 'blogger',
+      '2' => 'moderator',
     ),
   );
 
@@ -1140,8 +1147,9 @@ function user_profile_user_default_permissions() {
   $permissions['edit field_event_state'] = array(
     'name' => 'edit field_event_state',
     'roles' => array(
-      '0' => 'blogger',
-      '1' => 'moderator',
+      '0' => 'administrator',
+      '1' => 'blogger',
+      '2' => 'moderator',
     ),
   );
 
@@ -1149,8 +1157,9 @@ function user_profile_user_default_permissions() {
   $permissions['edit field_event_timezone'] = array(
     'name' => 'edit field_event_timezone',
     'roles' => array(
-      '0' => 'blogger',
-      '1' => 'moderator',
+      '0' => 'administrator',
+      '1' => 'blogger',
+      '2' => 'moderator',
     ),
   );
 
@@ -1158,8 +1167,9 @@ function user_profile_user_default_permissions() {
   $permissions['edit field_event_url'] = array(
     'name' => 'edit field_event_url',
     'roles' => array(
-      '0' => 'blogger',
-      '1' => 'moderator',
+      '0' => 'administrator',
+      '1' => 'blogger',
+      '2' => 'moderator',
     ),
   );
 
@@ -1167,8 +1177,9 @@ function user_profile_user_default_permissions() {
   $permissions['edit field_event_venue'] = array(
     'name' => 'edit field_event_venue',
     'roles' => array(
-      '0' => 'blogger',
-      '1' => 'moderator',
+      '0' => 'administrator',
+      '1' => 'blogger',
+      '2' => 'moderator',
     ),
   );
 
@@ -1201,8 +1212,9 @@ function user_profile_user_default_permissions() {
   $permissions['edit field_kb_attachment'] = array(
     'name' => 'edit field_kb_attachment',
     'roles' => array(
-      '0' => 'doc content owner',
-      '1' => 'moderator',
+      '0' => 'administrator',
+      '1' => 'doc content owner',
+      '2' => 'moderator',
     ),
   );
 
@@ -1243,8 +1255,9 @@ function user_profile_user_default_permissions() {
   $permissions['edit field_promo_image'] = array(
     'name' => 'edit field_promo_image',
     'roles' => array(
-      '0' => 'blogger',
-      '1' => 'moderator',
+      '0' => 'administrator',
+      '1' => 'blogger',
+      '2' => 'moderator',
     ),
   );
 
@@ -1252,8 +1265,9 @@ function user_profile_user_default_permissions() {
   $permissions['edit field_promo_url'] = array(
     'name' => 'edit field_promo_url',
     'roles' => array(
-      '0' => 'blogger',
-      '1' => 'moderator',
+      '0' => 'administrator',
+      '1' => 'blogger',
+      '2' => 'moderator',
     ),
   );
 
@@ -1279,9 +1293,10 @@ function user_profile_user_default_permissions() {
   $permissions['edit field_search_meta_description'] = array(
     'name' => 'edit field_search_meta_description',
     'roles' => array(
-      '0' => 'blogger',
-      '1' => 'doc content owner',
-      '2' => 'page author',
+      '0' => 'administrator',
+      '1' => 'blogger',
+      '2' => 'doc content owner',
+      '3' => 'page author',
     ),
   );
 
@@ -1297,8 +1312,9 @@ function user_profile_user_default_permissions() {
   $permissions['edit field_summary'] = array(
     'name' => 'edit field_summary',
     'roles' => array(
-      '0' => 'blogger',
-      '1' => 'moderator',
+      '0' => 'administrator',
+      '1' => 'blogger',
+      '2' => 'moderator',
     ),
   );
 
@@ -1306,8 +1322,9 @@ function user_profile_user_default_permissions() {
   $permissions['edit field_video_subtitle'] = array(
     'name' => 'edit field_video_subtitle',
     'roles' => array(
-      '0' => 'blogger',
-      '1' => 'moderator',
+      '0' => 'administrator',
+      '1' => 'blogger',
+      '2' => 'moderator',
     ),
   );
 
@@ -1315,8 +1332,9 @@ function user_profile_user_default_permissions() {
   $permissions['edit field_video_third_party'] = array(
     'name' => 'edit field_video_third_party',
     'roles' => array(
-      '0' => 'blogger',
-      '1' => 'moderator',
+      '0' => 'administrator',
+      '1' => 'blogger',
+      '2' => 'moderator',
     ),
   );
 
@@ -1324,8 +1342,9 @@ function user_profile_user_default_permissions() {
   $permissions['edit field_video_thumbnail'] = array(
     'name' => 'edit field_video_thumbnail',
     'roles' => array(
-      '0' => 'blogger',
-      '1' => 'moderator',
+      '0' => 'administrator',
+      '1' => 'blogger',
+      '2' => 'moderator',
     ),
   );
 
@@ -1333,8 +1352,9 @@ function user_profile_user_default_permissions() {
   $permissions['edit field_video_youku'] = array(
     'name' => 'edit field_video_youku',
     'roles' => array(
-      '0' => 'blogger',
-      '1' => 'moderator',
+      '0' => 'administrator',
+      '1' => 'blogger',
+      '2' => 'moderator',
     ),
   );
 
@@ -1783,7 +1803,9 @@ function user_profile_user_default_permissions() {
   // Exported permission: use views exporter
   $permissions['use views exporter'] = array(
     'name' => 'use views exporter',
-    'roles' => array(),
+    'roles' => array(
+      '0' => 'administrator',
+    ),
   );
 
   // Exported permission: use vote up/down
@@ -1865,9 +1887,6 @@ function user_profile_user_default_permissions() {
     'roles' => array(
       '0' => 'anonymous user',
       '1' => 'authenticated user',
-      '2' => 'blogger',
-      '3' => 'doc content owner',
-      '4' => 'moderator',
     ),
   );
 
@@ -1877,9 +1896,6 @@ function user_profile_user_default_permissions() {
     'roles' => array(
       '0' => 'anonymous user',
       '1' => 'authenticated user',
-      '2' => 'blogger',
-      '3' => 'doc content owner',
-      '4' => 'moderator',
     ),
   );
 
@@ -1889,8 +1905,6 @@ function user_profile_user_default_permissions() {
     'roles' => array(
       '0' => 'anonymous user',
       '1' => 'authenticated user',
-      '2' => 'doc content owner',
-      '3' => 'moderator',
     ),
   );
 
@@ -1918,8 +1932,6 @@ function user_profile_user_default_permissions() {
     'roles' => array(
       '0' => 'anonymous user',
       '1' => 'authenticated user',
-      '2' => 'doc content owner',
-      '3' => 'moderator',
     ),
   );
 
@@ -1929,7 +1941,6 @@ function user_profile_user_default_permissions() {
     'roles' => array(
       '0' => 'anonymous user',
       '1' => 'authenticated user',
-      '2' => 'moderator',
     ),
   );
 
@@ -1939,7 +1950,6 @@ function user_profile_user_default_permissions() {
     'roles' => array(
       '0' => 'anonymous user',
       '1' => 'authenticated user',
-      '2' => 'moderator',
     ),
   );
 
@@ -1949,7 +1959,6 @@ function user_profile_user_default_permissions() {
     'roles' => array(
       '0' => 'anonymous user',
       '1' => 'authenticated user',
-      '2' => 'moderator',
     ),
   );
 
@@ -1968,7 +1977,6 @@ function user_profile_user_default_permissions() {
     'roles' => array(
       '0' => 'anonymous user',
       '1' => 'authenticated user',
-      '2' => 'moderator',
     ),
   );
 
@@ -1987,7 +1995,6 @@ function user_profile_user_default_permissions() {
     'roles' => array(
       '0' => 'anonymous user',
       '1' => 'authenticated user',
-      '2' => 'moderator',
     ),
   );
 
@@ -1997,7 +2004,6 @@ function user_profile_user_default_permissions() {
     'roles' => array(
       '0' => 'anonymous user',
       '1' => 'authenticated user',
-      '2' => 'moderator',
     ),
   );
 
@@ -2016,7 +2022,6 @@ function user_profile_user_default_permissions() {
     'roles' => array(
       '0' => 'anonymous user',
       '1' => 'authenticated user',
-      '2' => 'moderator',
     ),
   );
 
@@ -2044,7 +2049,6 @@ function user_profile_user_default_permissions() {
     'roles' => array(
       '0' => 'anonymous user',
       '1' => 'authenticated user',
-      '2' => 'moderator',
     ),
   );
 
@@ -2054,7 +2058,6 @@ function user_profile_user_default_permissions() {
     'roles' => array(
       '0' => 'anonymous user',
       '1' => 'authenticated user',
-      '2' => 'moderator',
     ),
   );
 
@@ -2064,7 +2067,6 @@ function user_profile_user_default_permissions() {
     'roles' => array(
       '0' => 'anonymous user',
       '1' => 'authenticated user',
-      '2' => 'moderator',
     ),
   );
 
@@ -2074,7 +2076,6 @@ function user_profile_user_default_permissions() {
     'roles' => array(
       '0' => 'anonymous user',
       '1' => 'authenticated user',
-      '2' => 'moderator',
     ),
   );
 
@@ -2084,7 +2085,6 @@ function user_profile_user_default_permissions() {
     'roles' => array(
       '0' => 'anonymous user',
       '1' => 'authenticated user',
-      '2' => 'moderator',
     ),
   );
 
@@ -2094,7 +2094,6 @@ function user_profile_user_default_permissions() {
     'roles' => array(
       '0' => 'anonymous user',
       '1' => 'authenticated user',
-      '2' => 'moderator',
     ),
   );
 
@@ -2104,7 +2103,6 @@ function user_profile_user_default_permissions() {
     'roles' => array(
       '0' => 'anonymous user',
       '1' => 'authenticated user',
-      '2' => 'moderator',
     ),
   );
 
@@ -2114,7 +2112,6 @@ function user_profile_user_default_permissions() {
     'roles' => array(
       '0' => 'anonymous user',
       '1' => 'authenticated user',
-      '2' => 'moderator',
     ),
   );
 
@@ -2124,7 +2121,6 @@ function user_profile_user_default_permissions() {
     'roles' => array(
       '0' => 'anonymous user',
       '1' => 'authenticated user',
-      '2' => 'moderator',
     ),
   );
 
@@ -2161,7 +2157,6 @@ function user_profile_user_default_permissions() {
     'roles' => array(
       '0' => 'anonymous user',
       '1' => 'authenticated user',
-      '2' => 'moderator',
     ),
   );
 
@@ -2169,7 +2164,8 @@ function user_profile_user_default_permissions() {
   $permissions['view field_state'] = array(
     'name' => 'view field_state',
     'roles' => array(
-      '0' => 'moderator',
+      '0' => 'administrator',
+      '1' => 'moderator',
     ),
   );
 
@@ -2188,7 +2184,6 @@ function user_profile_user_default_permissions() {
     'roles' => array(
       '0' => 'anonymous user',
       '1' => 'authenticated user',
-      '2' => 'moderator',
     ),
   );
 
@@ -2198,7 +2193,6 @@ function user_profile_user_default_permissions() {
     'roles' => array(
       '0' => 'anonymous user',
       '1' => 'authenticated user',
-      '2' => 'moderator',
     ),
   );
 
@@ -2208,7 +2202,6 @@ function user_profile_user_default_permissions() {
     'roles' => array(
       '0' => 'anonymous user',
       '1' => 'authenticated user',
-      '2' => 'moderator',
     ),
   );
 
@@ -2218,7 +2211,6 @@ function user_profile_user_default_permissions() {
     'roles' => array(
       '0' => 'anonymous user',
       '1' => 'authenticated user',
-      '2' => 'moderator',
     ),
   );
 
