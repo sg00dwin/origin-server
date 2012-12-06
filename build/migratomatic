@@ -243,31 +243,9 @@ def update_devenv(mig_config, devenv, new_version, verbose = true, dry_run = tru
       '  ', verbose, dry_run)
 
   command("ssh root@#{devenv} sed -i -e \"s/stage/candidate/g\" /etc/yum.repos.d/devenv.repo 2>&1", '  ', verbose, dry_run)
-  command("ssh root@#{devenv} yum -y install yum-priorities", '  ', verbose, dry_run)
-  command("ssh root@#{devenv} yum -y install rh-amazon-rhui-client-jbeap6", '  ', verbose, dry_run)
-  command("ssh root@#{devenv} yum -y install rh-amazon-rhui-client-jbews1", '  ', verbose, dry_run)
-  command("ssh root@#{devenv} service libra-site stop", '  ', verbose, dry_run)
-  command("ssh root@#{devenv} service libra-broker stop", '  ', verbose, dry_run)
-  command("ssh root@#{devenv} service mcollective stop", '  ', verbose, dry_run)
-  command("ssh root@#{devenv} semodule -r libra", '  ', verbose, dry_run)
-  command("ssh root@#{devenv} yum -y update rhc-selinux selinux-policy selinux-policy-targeted", '  ', verbose, dry_run)
-  command("ssh root@#{devenv} \"semodule -l | grep libra\"", '  ', verbose, dry_run)
-  command("ssh root@#{devenv} \"semodule -l | grep openshift\"", '  ', verbose, dry_run)
-  command("ssh root@#{devenv} setsebool -P httpd_run_stickshift=1", '  ', verbose, dry_run)
-
   command("ssh root@#{devenv} \"yum -y update --enablerepo devenv-local 2>&1 > /root/update.#{new_version}.log\"", '  ', verbose, dry_run)
 
-  command("ssh root@#{devenv} sed -i -e 's,user,user:iscript=/usr/sbin/oo-namespace-init,g' /etc/security/namespace.d/* ", '  ', verbose, dry_run)
-  command("ssh root@#{devenv} sed -i -e 's/pam_libra/pam_openshift/g' /etc/security/namespace.d/* ", '  ', verbose, dry_run)
-  command("ssh root@#{devenv} sed -i -e 's,/usr/bin/trap-user,/usr/bin/oo-trap-user,g' /etc/passwd ", '  ', verbose, dry_run)
-  command("ssh root@#{devenv} sed -i -e 's,/var/lib/stickshift,/var/lib/openshift,g' /etc/passwd ", '  ', verbose, dry_run)
-  command("ssh root@#{devenv} sed -i -e 's/libra\\ guest/OpenShift\\ guest/g' /etc/passwd ", '  ', verbose, dry_run)
-
-  reboot_devenv(devenv, verbose, dry_run)
-
-  command("scp misc/maintenance/bin/migrate-mongo-2.0.18 root@#{devenv}:/root/", '  ', verbose, dry_run)
-  command("ssh root@#{devenv} \"echo 'Running migrate-mongo-2.0.18\\n' >> /root/update.#{new_version}.log\"", '  ', verbose, dry_run)  
-  command("ssh root@#{devenv} \"/root/migrate-mongo-2.0.18 >> /root/update.#{new_version}.log\"", '  ', verbose, dry_run)  
+  #reboot_devenv(devenv, verbose, dry_run)
 end
 
 def reboot_devenv(devenv, verbose, dry_run) 
@@ -292,11 +270,10 @@ end
 def migrate_apps(new_version, apps, devenv, account, verbose = true, dry_run = true)
   puts "Migrating #{apps.length} applications"
 
-  command("ssh root@#{devenv} mv /var/lib/stickshift /var/lib/stickshift.old", '', verbose, dry_run)
+  command("ssh root@#{devenv} mv /var/lib/openshift /var/lib/openshift.old", '', verbose, dry_run)
   command("ssh root@#{devenv} rm -rf /tmp/rhc/migration /var/lib/openshift/* /var/lib/openshift/.httpd.d/*", '', verbose, dry_run)
-  command("ssh root@#{devenv} ln -sf /var/lib/openshift /var/lib/stickshift", '', verbose, dry_run)
-  command("ssh root@#{devenv} cp -rP --preserve=all /var/lib/stickshift.old/* /var/lib/openshift/", '', verbose, dry_run)  
-  command("ssh root@#{devenv} cp -rP --preserve=all /var/lib/stickshift.old/.httpd.d/* /var/lib/openshift/.httpd.d/", '', verbose, dry_run)  
+  command("ssh root@#{devenv} cp -rP --preserve=all /var/lib/openshift.old/* /var/lib/openshift/", '', verbose, dry_run)  
+  command("ssh root@#{devenv} cp -rP --preserve=all /var/lib/openshift.old/.httpd.d/* /var/lib/openshift/.httpd.d/", '', verbose, dry_run)  
   
   apps.each do |app|
     app_symlink = "#{app[:new_name]}_#{app[:domain]}"
@@ -319,10 +296,7 @@ def migrate_apps(new_version, apps, devenv, account, verbose = true, dry_run = t
     raise "Error migrating app #{app[:old_name]}" unless $? == 0
   end 
 
-  migrate_log = "/root/migrate.#{new_version}.log"
-
-  command("scp misc/maintenance/bin/{hascaledb-migrate-2.0.18.rb,execute-connections-2.0.19} root@#{devenv}:/root/ ", '', verbose, dry_run) 
-  command("ssh root@#{devenv} \"/root/hascaledb-migrate-2.0.18.rb >> #{migrate_log}; /root/execute-connections-2.0.19 >> #{migrate_log}; service httpd restart\"", '', verbose, dry_run)   
+  migrate_log = "/root/migrate.#{new_version}.log"   
 end
 
 def create_comparison_apps(old_to_new_cart_types, mig_config, apps, devenv, config, verbose=true, dry_run=true)
