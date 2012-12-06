@@ -274,3 +274,9 @@ body.simple {
     padding-left: 0;
   }
 }
+
+@media (max-width: 320px) {
+  #recaptcha_image {
+    max-width: 240px;
+  }
+}
