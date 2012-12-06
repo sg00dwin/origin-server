@@ -172,6 +172,12 @@ Requires:  drupal6-votingapi
 Requires:  drupal6-wikitools
 Requires:  drupal6-wysiwyg
 Requires:  drupal6-openshift-features-community_wiki
+Requires:  drupal6-clamav
+
+# Security ClamAV Requirements
+Requires:  clamav
+Requires:  clamav-db
+Requires:  clamav-server
 
 # Security RKHunter Requirements
 Requires:  rkhunter
@@ -398,6 +404,7 @@ chkconfig rhc-site on
 chkconfig rhc-broker on
 chkconfig jenkins on
 chkconfig httpd on
+chkconfig clamd on
 
 # CGroup services
 service cgconfig start
@@ -636,6 +643,11 @@ fi
 # BZ864807 - clean up redundant assets to prevent JS oddities
 #            in rails development mode.
 cd /var/www/openshift/site && /usr/bin/scl enable ruby193 "rake assets:clean"
+
+# Set up ClamAV
+/usr/sbin/setsebool -P clamscan_can_scan_system 1
+# Update the Virus Definitions
+/usr/bin/freshclam
 
 %files
 %defattr(-,root,root,-)
