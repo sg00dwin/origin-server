@@ -33,6 +33,7 @@ Requires:      openshift-origin-cartridge-abstract
 Requires:      mcollective-qpid-plugin
 Requires:      openshift-origin-msg-node-mcollective
 Requires:      openshift-origin-port-proxy
+Requires:      openshift-origin-node-proxy
 Requires:      quota
 Requires:      lsof
 Requires:      wget
