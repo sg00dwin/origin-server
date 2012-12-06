@@ -40,6 +40,7 @@ When /^a scaled (.+) application is created$/ do |app_type|
   @app = TestApp.create_unique(app_type)
   # Create our app via the curl -s api:
   # Replace when the REST API libraries are complete
+  rhc_sshkey_upload @app
   rhc_create_domain(@app)
   command = "curl -s -o /tmp/rhc/json_response_#{@app.name}_#{@app.namespace}.json -k -H 'Accept: application/json' --user '#{@app.login}:fakepw' https://localhost/broker/rest/domains/#{@app.namespace}/applications -X POST -d name=#{@app.name} -d cartridge=#{app_type} -d scale=true"
 
