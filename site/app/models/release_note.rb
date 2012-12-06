@@ -20,5 +20,8 @@ class ReleaseNote < RestApi::Base
     def latest
       all(:from => "#{prefix}latest.json").first
     end
+    def frontpage
+      all(:from => "#{prefix}latest.json")
+    end
   end
 end
