@@ -23,7 +23,7 @@
             .span12
               %section.frame.primary
                 .row-fluid
-                  - if content_for? :title
+                  - if content_for? :title and !@suppress_ribbon
                     %h1.ribbon= yield :title
                   = flashes
                   = yield
