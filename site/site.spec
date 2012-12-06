@@ -144,6 +144,10 @@ rm -rf %{buildroot}
 %{sitedir}/public
 
 %changelog
+* Thu Dec 06 2012 Adam Miller <admiller@redhat.com> 1.2.4-2
+- bump site.spec Release: for fake chain-build with console
+  (admiller@redhat.com)
+
 * Wed Dec 05 2012 Adam Miller <admiller@redhat.com> 1.2.4-1
 - fix mobile portrait view of enterprise message bz 879501
   (sgoodwin@redhat.com)
