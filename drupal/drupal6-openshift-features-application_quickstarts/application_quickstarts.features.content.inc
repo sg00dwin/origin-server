@@ -21,14 +21,6 @@ function application_quickstarts_content_default_fields() {
         'format' => 'default',
         'exclude' => 0,
       ),
-      'token' => array(
-        'format' => 'default',
-        'exclude' => 0,
-      ),
-      '4' => array(
-        'format' => 'default',
-        'exclude' => 0,
-      ),
       'label' => array(
         'format' => 'inline',
       ),
@@ -37,6 +29,14 @@ function application_quickstarts_content_default_fields() {
         'exclude' => 0,
       ),
       'full' => array(
+        'format' => 'default',
+        'exclude' => 0,
+      ),
+      'token' => array(
+        'format' => 'default',
+        'exclude' => 0,
+      ),
+      '4' => array(
         'format' => 'default',
         'exclude' => 0,
       ),
@@ -82,21 +82,13 @@ function application_quickstarts_content_default_fields() {
     'field_name' => 'field_code_language',
     'type_name' => 'quickstart',
     'display_settings' => array(
-      'weight' => '-1',
+      'weight' => 0,
       'parent' => 'group_quickstart_info',
       '2' => array(
         'format' => 'default',
         'exclude' => 0,
       ),
       '3' => array(
-        'format' => 'default',
-        'exclude' => 0,
-      ),
-      'token' => array(
-        'format' => 'default',
-        'exclude' => 0,
-      ),
-      '4' => array(
         'format' => 'default',
         'exclude' => 0,
       ),
@@ -108,6 +100,14 @@ function application_quickstarts_content_default_fields() {
         'exclude' => 0,
       ),
       'full' => array(
+        'format' => 'default',
+        'exclude' => 0,
+      ),
+      'token' => array(
+        'format' => 'default',
+        'exclude' => 0,
+      ),
+      '4' => array(
         'format' => 'default',
         'exclude' => 0,
       ),
@@ -135,7 +135,7 @@ other|Other',
       ),
       'default_value_php' => NULL,
       'label' => 'Language',
-      'weight' => '-1',
+      'weight' => 0,
       'description' => '',
       'type' => 'optionwidgets_select',
       'module' => 'optionwidgets',
@@ -147,7 +147,7 @@ other|Other',
     'field_name' => 'field_git_repository_url',
     'type_name' => 'quickstart',
     'display_settings' => array(
-      'weight' => 0,
+      'weight' => '-1',
       'parent' => 'group_quickstart_info',
       '2' => array(
         'format' => 'default',
@@ -157,7 +157,14 @@ other|Other',
         'format' => 'default',
         'exclude' => 0,
       ),
-      'token' => array(
+      'label' => array(
+        'format' => 'inline',
+      ),
+      'teaser' => array(
+        'format' => 'default',
+        'exclude' => 0,
+      ),
+      'full' => array(
         'format' => 'default',
         'exclude' => 0,
       ),
@@ -165,51 +172,31 @@ other|Other',
         'format' => 'default',
         'exclude' => 0,
       ),
-      'label' => array(
-        'format' => 'inline',
-      ),
-      'teaser' => array(
-        'format' => 'url',
-        'exclude' => 0,
-      ),
-      'full' => array(
-        'format' => 'url',
+      'token' => array(
+        'format' => 'default',
         'exclude' => 0,
       ),
     ),
     'widget_active' => '1',
-    'type' => 'link',
+    'type' => 'text',
     'required' => '0',
     'multiple' => '0',
-    'module' => 'link',
+    'module' => 'text',
     'active' => '1',
-    'attributes' => array(
-      'target' => '_blank',
-      'rel' => '',
-      'class' => '',
-      'title' => '',
-    ),
-    'display' => array(
-      'url_cutoff' => '80',
-    ),
-    'url' => 'optional',
-    'title' => 'none',
-    'title_value' => '',
-    'enable_tokens' => 0,
-    'validate_url' => 1,
+    'text_processing' => '0',
+    'max_length' => '2048',
+    'allowed_values' => '',
+    'allowed_values_php' => '',
     'widget' => array(
-      'default_value' => array(
-        '0' => array(
-          'title' => '',
-          'url' => '',
-        ),
-      ),
+      'rows' => 5,
+      'size' => '80',
+      'default_value' => NULL,
       'default_value_php' => NULL,
       'label' => 'Git Repository URL',
-      'weight' => 0,
+      'weight' => '-1',
       'description' => 'An optional URL to a Git repository that will be cloned into this quickstart on creation.  The created application will have the base content here.',
-      'type' => 'link',
-      'module' => 'link',
+      'type' => 'text_textfield',
+      'module' => 'text',
     ),
   );
 
@@ -228,14 +215,6 @@ other|Other',
         'format' => 'default',
         'exclude' => 1,
       ),
-      'token' => array(
-        'format' => 'default',
-        'exclude' => 1,
-      ),
-      '4' => array(
-        'format' => 'default',
-        'exclude' => 1,
-      ),
       'label' => array(
         'format' => 'hidden',
       ),
@@ -244,6 +223,14 @@ other|Other',
         'exclude' => 1,
       ),
       'full' => array(
+        'format' => 'default',
+        'exclude' => 1,
+      ),
+      'token' => array(
+        'format' => 'default',
+        'exclude' => 1,
+      ),
+      '4' => array(
         'format' => 'default',
         'exclude' => 1,
       ),
@@ -291,14 +278,6 @@ other|Other',
         'format' => 'image_plain',
         'exclude' => 0,
       ),
-      'token' => array(
-        'format' => 'image_plain',
-        'exclude' => 0,
-      ),
-      '4' => array(
-        'format' => 'image_plain',
-        'exclude' => 0,
-      ),
       'label' => array(
         'format' => 'hidden',
       ),
@@ -307,6 +286,14 @@ other|Other',
         'exclude' => 0,
       ),
       'full' => array(
+        'format' => 'image_plain',
+        'exclude' => 0,
+      ),
+      'token' => array(
+        'format' => 'image_plain',
+        'exclude' => 0,
+      ),
+      '4' => array(
         'format' => 'image_plain',
         'exclude' => 0,
       ),
@@ -367,17 +354,9 @@ other|Other',
       'parent' => 'group_quickstart_admin',
       '2' => array(
         'format' => 'default',
-        'exclude' => 0,
+        'exclude' => 1,
       ),
       '3' => array(
-        'format' => 'default',
-        'exclude' => 1,
-      ),
-      'token' => array(
-        'format' => 'default',
-        'exclude' => 1,
-      ),
-      '4' => array(
         'format' => 'default',
         'exclude' => 1,
       ),
@@ -389,6 +368,14 @@ other|Other',
         'exclude' => 1,
       ),
       'full' => array(
+        'format' => 'default',
+        'exclude' => 1,
+      ),
+      'token' => array(
+        'format' => 'default',
+        'exclude' => 1,
+      ),
+      '4' => array(
         'format' => 'default',
         'exclude' => 1,
       ),
@@ -436,14 +423,6 @@ other|Other',
         'format' => 'default',
         'exclude' => 0,
       ),
-      'token' => array(
-        'format' => 'default',
-        'exclude' => 0,
-      ),
-      '4' => array(
-        'format' => 'default',
-        'exclude' => 0,
-      ),
       'label' => array(
         'format' => 'inline',
       ),
@@ -453,6 +432,14 @@ other|Other',
       ),
       'full' => array(
         'format' => 'url',
+        'exclude' => 0,
+      ),
+      'token' => array(
+        'format' => 'default',
+        'exclude' => 0,
+      ),
+      '4' => array(
+        'format' => 'default',
         'exclude' => 0,
       ),
     ),
