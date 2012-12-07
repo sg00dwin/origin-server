@@ -10,7 +10,7 @@ class BlogPost < RestApi::Base
   end
 
   def date
-    @date ||= Time.at(attributes[:date].to_i)
+    @date ||= Time.at(attributes[:date].to_i) rescue Date.now
   end
 
   cache_method :find_every, :expires_in => 10.minutes

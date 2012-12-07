@@ -58,7 +58,7 @@
                     =link_to blog.href, :class => 'link-tile' do
                       - unless blog.summary =~ /<h[1-4]>/
                         %h4= blog.title
-                      = blog.summary.html_safe
+                      = sanitize blog.summary
                       %aside Posted #{blog.date.to_s(:pretty_date)}
             - else
               %ul.news.unstyled
