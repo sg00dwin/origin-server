@@ -40,7 +40,7 @@
     = f.input :password,
               :wrapper_html => { :class => "control-group-important" },
               :as => :password,
-              :hint => link_to("Forgot your password?", new_account_password_path),
+              :hint => link_to("Forgot your password?", new_account_password_path, :data => {:submit_email_address => 'web_user[login]'}),
               :input_html => {:autofocus => @user.rhlogin.present?, :placeholder => 'Password', :class => @user.errors[:base].present? ? 'error' : 'max'}
     = f.buttons do
       = f.commit_button "Sign in", :button_html =>  {:class => 'btn btn-primary'}
@@ -50,7 +50,7 @@
 .column-2
   %h2{:style => "margin-top: 6px"}
     Need an account?
-    = link_to 'Create One', @register_url || new_account_path
+    = link_to 'Create One', @register_url || new_account_path, :data => {:submit_email_address => 'web_user[email_address]'}
   %ul.spaced-items.unstyled
     %li Code and deploy to the cloud in minutes.
     %li No-Lock-In. Built on open technologies.

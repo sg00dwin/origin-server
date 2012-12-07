@@ -1,6 +1,5 @@
 require 'active_record'
-
-include ActionView::Helpers::DateHelper
+require 'helpers'
 
 class Issue < ActiveRecord::Base
   has_many :updates, :order => "created_at ASC"

@@ -9,4 +9,4 @@
   = f.buttons do
     = f.commit_button "Reset Password", :button_html =>  {:class => 'btn'}
     or 
-    = link_to 'sign in', login_path
+    = link_to 'sign in', login_path, :data => {:submit_email_address => 'web_user[rhlogin]'}
