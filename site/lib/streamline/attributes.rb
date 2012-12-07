@@ -19,7 +19,7 @@ module Streamline
       end
 
       def has_streamline_attribute?(object_attribute)
-        @streamline_attribute_list.include?(object_attribute)
+        streamline_attribute_list.include?(object_attribute)
       end
 
       def set_api_attribute_map(object_attribute, api_attribute)
@@ -30,10 +30,14 @@ module Streamline
         @api_attribute_map.has_key?(object_attribute) ? @api_attribute_map[object_attribute] : object_attribute
       end
 
+      def get_obj_attribute_map(api_attribute)
+        @api_attribute_map.invert.has_key?(api_attribute) ? @api_attribute_map.invert[api_attribute] : api_attribute
+      end
+
       # Currently, the streamline promoteUser API accepts lowerCamelCase input arguments,
       # but emits lower_underscored error codes of the form:
       #
-      #    <field_name>_<condition>
+      #    field_<field_name>_<condition>
       #
       # in addition to a few special cases:
       # * key_mismatch - this is a config error case that is raise()-worthy
@@ -53,12 +57,12 @@ module Streamline
             next
           end
 
-          unless field_match = error.match(/(\w+)_required/)
+          unless field_match = error.match(/field_(\w+)_required/)
             error_object.add(:base, error)
             next
           end
 
-          attr = field_match[1] == 'address' ? :address1 : field_match[1].to_sym
+          attr = field_match[1] == 'address' ? :address1 : get_obj_attribute_map(field_match[1].to_sym)
 
           unless has_streamline_attribute? attr
             error_object.add(:base, error)
