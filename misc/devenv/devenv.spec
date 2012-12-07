@@ -649,6 +649,15 @@ cd /var/www/openshift/site && /usr/bin/scl enable ruby193 "rake assets:clean"
 # Update the Virus Definitions
 /usr/bin/freshclam
 
+# Configure Drupal for the first time
+/etc/drupal6/drupal-setup.sh
+
+# Tweak the /etc/clamd.conf file to run as root for now
+sed 's/User clam/User root/' /etc/clamd.conf > /tmp/clam_root.txt
+mv /tmp/clam_root.txt /etc/clamd.conf
+# Restart ClamAV
+service clamd restart
+
 %files
 %defattr(-,root,root,-)
 %attr(0660,-,-) %{brokerdir}/log/mcollective-client.log
