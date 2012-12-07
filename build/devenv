@@ -772,6 +772,21 @@ yum -y install rh-amazon-rhui-client-jbeap6
 # Enable RHUI JB EWS1 repos for Tomcat6 cartridge
 yum -y install rh-amazon-rhui-client-jbews1
 
+# Enable RHUI JB EWS2 repos for Tomcat7 cartridge
+yum -y install rh-amazon-rhui-client-jbews2
+
+# Define the package set we want from RHUI JB EWS2
+cat >> /etc/yum.repos.d/redhat-rhui-jbews2.repo <<EOF
+includepkgs=apache-commons-daemon-eap6
+            apache-commons-logging-eap6
+            tomcat7
+            tomcat7-el-1.0-api
+            tomcat7-jsp-2.2-api
+            tomcat7-lib
+            tomcat7-servlet-3.0-api
+            ecj3
+EOF
+
 # Install the 32 bit java before anything else
 yum -y install java-1.6.0-openjdk.i686 java-1.6.0-openjdk-devel.i686
 yum -y remove java-1.6.0-openjdk.x86_64
