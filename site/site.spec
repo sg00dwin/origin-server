@@ -8,8 +8,8 @@
 
 Summary:   OpenShift Site Rails application
 Name:      rhc-site
-Version: 1.2.4
-Release:   2%{?dist}
+Version: 1.2.5
+Release:   1%{?dist}
 Group:     Network/Daemons
 License:   ASL 2.0
 URL:       http://openshift.redhat.com
@@ -144,6 +144,17 @@ rm -rf %{buildroot}
 %{sitedir}/public
 
 %changelog
+* Fri Dec 07 2012 Adam Miller <admiller@redhat.com> 1.2.5-1
+- Merge pull request #697 from
+  smarterclayton/sitemap_and_updates_to_quickstart_permissions
+  (dmcphers@redhat.com)
+- Merge pull request #695 from
+  smarterclayton/bug_884747_be_resilient_to_bad_json_data (dmcphers@redhat.com)
+- Updated streamline handling to match API changes (nhr@redhat.com)
+- Sitemap and updates to application quickstarts (ccoleman@redhat.com)
+- Bug 884747 - Be resilient to bad JSON data from the community
+  (ccoleman@redhat.com)
+
 * Thu Dec 06 2012 Adam Miller <admiller@redhat.com> 1.2.4-2
 - bump site.spec Release: for fake chain-build with console
   (admiller@redhat.com)
