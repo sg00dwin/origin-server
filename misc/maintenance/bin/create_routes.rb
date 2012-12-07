@@ -36,7 +36,13 @@ def create_routes(path)
     conn = -1
   end
 
-  epc = File.read("#{path}/#{endpoint_file}")
+  ep_file_path = File.join(path, endpoint_file)
+  unless File.exists?(ep_file_path)
+    puts "Skipping standalone db gear"
+    return
+  end
+
+  epc = File.read(ep_file_path)
   m = epc.match $ip_re
   raise Exception.new "No endpoint found" unless m
 
