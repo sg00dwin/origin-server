@@ -50,7 +50,7 @@ def alias_validates
                 (server_alias =~ /^\d+\.\d+\.\d+\.\d+$/)
               puts("MALFORMED: #{id}: #{name}: #{server_alias}")
               
-            elsif !(server_alias =~ /\.[0-9A-Za-z\-]*[0-9A-Za-z]/)
+            elsif !(server_alias =~ /\.[0-9A-Za-z\-]*[0-9A-Za-z]$/)
               puts("NOT A DNS NAME: #{id}: #{name}: #{server_alias}")
             end
             
