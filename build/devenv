@@ -772,6 +772,11 @@ yum -y install rh-amazon-rhui-client-jbeap6
 # Enable RHUI JB EWS1 repos for Tomcat6 cartridge
 yum -y install rh-amazon-rhui-client-jbews1
 
+# Define the package set we want from RHUI JB EWS2
+cat >> /etc/yum.repos.d/redhat-rhui-jbews1.repo <<EOF
+includepkgs=tomcat6
+EOF
+
 # Enable RHUI JB EWS2 repos for Tomcat7 cartridge
 yum -y install rh-amazon-rhui-client-jbews2
 
