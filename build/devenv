@@ -771,19 +771,39 @@ yum -y install rh-amazon-rhui-client-jbeap6
 
 # Define the package set we want from RHUI JB EAP
 cat >> /etc/yum.repos.d/redhat-rhui-jbeap6.repo <<EOF
-includepkgs=jbossas-appclient
-            jbossas-bundles
-            jbossas-core
-            jbossas-domain
-            jbossas-hornetq-native
-            jbossas-jbossweb-native
-            jbossas-modules-eap
-            jbossas-product-eap
-            jbossas-standalone
-            jbossas-welcome-content-eap
-            jboss-eap6-modules
-            jboss-eap6-index
-            maven3
+includepkgs=jbossas-* 
+            jboss-*
+            jbossws-*
+            jbosgi-*
+            infinispan-*
+            hibernate-*
+            hibernate4-* 
+            glassfish-*
+            cxf-xjc-*
+            apache-commons-*
+            weld-core jul-to-slf4j-stub ws-commons-XmlSchema staxmapper 
+            jaxbintros guava xml-security maven3 gnu-getopt 
+            cal10n log4j-eap6 woodstox-stax2-api relaxngDatatype 
+            apache-mime4j joda-time xalan-j2-eap6
+            codehaus-jackson-jaxrs picketbox commons-cli jbossweb-lib jbossxb2
+            jaxen jline-eap6 org.apache.felix.configadmin javassist-eap6 
+            sun-xsom ws-scout h2database jtype 
+            org.osgi.enterprise juddi org.osgi.core sun-txw2
+            xml-commons-resolver-eap6 jakarta-commons-logging-tomcat6 stilts 
+            snakeyaml jcip-annotations resteasy codehaus-jackson-core-asl 
+            xerces-j2-eap6 atinject commons-configuration 
+            httpcomponents-httpclient apache-cxf wss4j slf4j-jboss-logmanager
+            sun-codemodel jgroups sun-saaj-1.3-impl picketbox-commons rngom
+            org.apache.felix.log wsdl4j-eap6 slf4j-eap6 weld-cdi-1.0-api
+            hornetq xom shrinkwrap scannotation jython-eap6 
+            picketlink-federation mod_cluster netty jakarta-commons-logging
+            dom4j httpcomponents-httpcore tomcat6-lib velocity-eap6
+            jacorb-jboss httpserver ironjacamar hibernate3-commons-annotations
+            jbossts antlr-eap6 codehaus-jackson-xc objectweb-asm-eap6 jdom-eap6
+            sun-ws-metadata-2.0-api sun-istack-commons ws-commons-neethi jandex
+            stilts codehaus-jackson-mapper-asl org.osgi.enterprise 
+            jaxws-jboss-httpserver-httpspi org.apache.felix.configadmin
+            log4j-jboss-logmanager woodstox-core
 EOF
               
 # Enable RHUI JB EWS1 repos for Tomcat6 cartridge
