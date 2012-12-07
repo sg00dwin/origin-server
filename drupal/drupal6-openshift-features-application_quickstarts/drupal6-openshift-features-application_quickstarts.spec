@@ -5,7 +5,7 @@
 %global modname             application_quickstarts
 
 Name:    drupal%{drupal_release}-openshift-features-%{modname}
-Version: 1.1.2
+Version: 1.1.3
 Release: 1%{?dist}
 Summary: Openshift Application Quickstarts Feature for Drupal6
 Group:   Applications/Publishing
@@ -43,6 +43,9 @@ rm -rf $RPM_BUILD_ROOT
 %{drupal_modules}/%{modname}
 
 %changelog
+* Fri Dec 07 2012 Adam Miller <admiller@redhat.com> 1.1.3-1
+- Sitemap and updates to application quickstarts (ccoleman@redhat.com)
+
 * Wed Dec 05 2012 Adam Miller <admiller@redhat.com> 1.1.2-1
 - Bug 882784 - Unable to search quickstart (ccoleman@redhat.com)
 
