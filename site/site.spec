@@ -144,6 +144,10 @@ rm -rf %{buildroot}
 %{sitedir}/public
 
 %changelog
+* Fri Dec 07 2012 Adam Miller <admiller@redhat.com> 1.2.5-2
+- bump site.spec Release: for fake chain-build with console
+  (admiller@redhat.com)
+
 * Fri Dec 07 2012 Adam Miller <admiller@redhat.com> 1.2.5-1
 - Merge pull request #697 from
   smarterclayton/sitemap_and_updates_to_quickstart_permissions
