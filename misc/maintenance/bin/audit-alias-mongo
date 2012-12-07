@@ -1,0 +1,78 @@
+#!/usr/bin/env oo-ruby
+# -*- ruby -*-
+
+require 'rubygems'
+require 'mongo'
+$:.unshift('/var/www/openshift/broker')
+require 'config/environment'
+
+# Configurable params
+$config = Rails.application.config.datastore
+
+def mongo_connect
+  if $config[:replica_set]
+    con = Mongo::ReplSetConnection.new(*$config[:host_port] \
+                                       << {:read => :secondary})
+  else
+    con = Mongo::Connection.new($config[:host_port][0], 
+                                $config[:host_port][1])
+  end
+  db = con.db($config[:db])
+  db.authenticate($config[:user], $config[:password])
+  $coll = con.db($config[:db]).collection($config[:collections][:user])
+end
+
+
+@DUPSET = Hash.new{ |hash, key| hash[key] = [] }
+def alias_validates
+  puts "Checking alises for invalid DNS names"
+
+  $coll.find({ "apps.aliases.0" => { "$exists" => true } },
+             { :fields => [ "apps.uuid", "apps.aliases", "apps.name" ] } ) do |cursor|
+    cursor.each do |uhash|
+
+      id = uhash["_id"]
+
+      # Validate aliases are properly formed
+      uhash["apps"].each do |app|
+        
+        name = app["name"]
+
+        if app["aliases"] != nil
+
+          app["aliases"].each do |server_alias|
+          
+            # Would we have rejected this alias
+            if !(server_alias =~ /\A[\w\-\.]+\z/) or
+                (server_alias =~ /#{Rails.configuration.openshift[:domain_suffix]}$/) or
+                (server_alias.length > 255 ) or
+                (server_alias.length == 0 ) or
+                (server_alias =~ /^\d+\.\d+\.\d+\.\d+$/)
+              puts("MALFORMED: #{id}: #{name}: #{server_alias}")
+              
+            elsif !(server_alias =~ /\.[0-9A-Za-z\-]*[0-9A-Za-z]$/)
+              puts("NOT A DNS NAME: #{id}: #{name}: #{server_alias}")
+            end
+            
+            d_server_alias = server_alias.downcase
+            @DUPSET[d_server_alias] << "#{id}: #{name}: #{server_alias}"
+            
+          end
+        end
+      end
+
+    end
+  end
+
+
+  @DUPSET.select{ |k, v| v.length > 1 }.each do |server_alias, apps|
+    applist = apps.join("; ")
+    puts "DUPLICATE: #{server_alias}: #{applist}"
+  end
+
+end
+
+mongo_connect
+puts "Audit Started."
+alias_validates
+puts "Audit Done!"
