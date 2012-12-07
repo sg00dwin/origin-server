@@ -43,7 +43,7 @@ def alias_validates
           app["aliases"].each do |server_alias|
           
             # Would we have rejected this alias
-            if !(server_alias =~ /\A[\w\-\.]+\z/) or
+            if !(server_alias =~ /\A[0-9a-zA-Z\-\.]+\z/) or
                 (server_alias =~ /#{Rails.configuration.openshift[:domain_suffix]}$/) or
                 (server_alias.length > 255 ) or
                 (server_alias.length == 0 ) or
