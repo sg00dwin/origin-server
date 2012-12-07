@@ -768,6 +768,23 @@ rm -rf /tmp/tito; mkdir -p /root/.source_build;
 
 # Enable RHUI JBoss repos for cartridge rebase on core EAP packages
 yum -y install rh-amazon-rhui-client-jbeap6
+
+# Define the package set we want from RHUI JB EAP
+cat >> /etc/yum.repos.d/redhat-rhui-jbeap6.repo <<EOF
+includepkgs=jbossas-appclient
+            jbossas-bundles
+            jbossas-core
+            jbossas-domain
+            jbossas-hornetq-native
+            jbossas-jbossweb-native
+            jbossas-modules-eap
+            jbossas-product-eap
+            jbossas-standalone
+            jbossas-welcome-content-eap
+            jboss-eap6-modules
+            jboss-eap6-index
+            maven3
+EOF
               
 # Enable RHUI JB EWS1 repos for Tomcat6 cartridge
 yum -y install rh-amazon-rhui-client-jbews1
