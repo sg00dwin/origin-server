@@ -8,7 +8,7 @@
 
 Summary:   Dependencies for OpenShift development
 Name:      rhc-devenv
-Version: 1.2.5
+Version: 1.2.6
 Release:   1%{?dist}
 Group:     Development/Libraries
 License:   GPLv2
@@ -671,6 +671,11 @@ restorecon /etc/openshift/node.conf || :
 /sbin/service libra-data restart > /dev/null 2>&1 || :
 
 %changelog
+* Fri Dec 07 2012 Adam Miller <admiller@redhat.com> 1.2.6-1
+- Merge pull request #694 from tkramer-
+  rh/dev/tkramer/security/Add_ClamAV_to_Drupal (dmcphers@redhat.com)
+- Security - Added ClamAV for Drupal (tkramer@redhat.com)
+
 * Thu Dec 06 2012 Adam Miller <admiller@redhat.com> 1.2.5-1
 - Merge pull request #691 from ramr/dev/websockets (openshift+bot@redhat.com)
 - Add dependency on node-proxy and setup ports for node-web-proxy (8000 and
