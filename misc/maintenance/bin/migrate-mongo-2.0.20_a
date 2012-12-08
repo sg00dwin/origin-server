@@ -1,0 +1,69 @@
+#!/usr/bin/env ruby
+require 'rubygems'
+require 'mongo'
+$:.unshift('/var/www/openshift/broker')
+require 'config/environment'
+
+# Configurable params
+$config = Rails.application.config.datastore
+
+def mongo_connect
+  if $config[:replica_set]
+    con = Mongo::ReplSetConnection.new(*$config[:host_port] \
+                                       << {:read => :secondary})
+  else
+    con = Mongo::Connection.new($config[:host_port][0], 
+                                $config[:host_port][1])
+  end
+  db = con.db($config[:db])
+  db.authenticate($config[:user], $config[:password])
+  $coll = con.db($config[:db]).collection($config[:collections][:user])
+end
+
+def mongo_migrate
+  puts "Checking for all users "
+  $coll.find( {"apps.group_instances.gears.0" => {"$exists" => true}}, { :fields => ["apps.group_instances.gears.node_profile", 
+                                                                                              "apps.group_instances.name", 
+                                                                                              "apps.group_instances.node_profile", 
+                                                                                              "apps.group_instances.gears.uuid", 
+                                                                                              "apps.name"],
+                                                                                              :timeout => false }) do |cursor|
+    cursor.each { |uhash|
+      userid = uhash["_id"]
+      apps = uhash["apps"]
+      app_index = 0
+      apps.each { |ahash|
+        print "."
+        appname = ahash["name"]
+        gi_index = 0
+        ahash["group_instances"].each { |gi_hash|
+          gear_index = 0
+          gi_name = gi_hash["name"]
+          if gi_hash["node_profile"].nil?
+            puts ""
+            puts "Fixing #{userid}/#{appname}/group_instances[#{gi_index}]/node_profile"
+            updates = { "$set" => { "apps.$.group_instances.#{gi_index}.node_profile" => "small"} }
+            $coll.update( { "_id" => userid, "apps.name" => appname, "apps.#{app_index}.group_instances.#{gi_index}.name" => gi_name}, updates )
+          end
+          gi_hash["gears"].each { |ghash|
+            gear_uuid = ghash["uuid"]
+            if ghash["node_profile"].nil?
+                puts ""
+                puts "Fixing #{userid}/#{appname}/group_instances[#{gi_index}]/gears[#{gear_index}]/node_profile"
+                updates = { "$set" => { "apps.$.group_instances.#{gi_index}.gears.#{gear_index}.node_profile" => "small"} }
+                $coll.update( { "_id" => userid, "apps.name" => appname, "apps.#{app_index}.group_instances.#{gi_index}.gears.#{gear_index}.uuid" => gear_uuid }, updates )
+            end
+            gear_index += 1
+          } if gi_hash["gears"]
+          gi_index += 1
+        } if ahash["group_instances"]
+        app_index += 1
+      } if apps
+    }
+  end
+end
+
+mongo_connect
+puts "User migration Started"
+mongo_migrate
+puts "User migration Done!"
