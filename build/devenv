@@ -771,7 +771,7 @@ yum -y install rh-amazon-rhui-client-jbeap6
 
 # Don't pull in JBoss' httpd package, it breaks things
 cat >> /etc/yum.repos.d/redhat-rhui-jbeap6.repo <<EOF
-excludepkgs=httpd*
+exclude=httpd*
 EOF
 
 # Enable RHUI JB EWS1 repos for Tomcat6 cartridge
@@ -779,7 +779,7 @@ yum -y install rh-amazon-rhui-client-jbews1
 
 # Don't pull in JBoss' httpd package, it breaks things
 cat >> /etc/yum.repos.d/redhat-rhui-jbews1.repo <<EOF
-excludepkgs=httpd*
+exclude=httpd*
 EOF
 
 # Enable RHUI JB EWS2 repos for Tomcat7 cartridge
@@ -787,7 +787,7 @@ yum -y install rh-amazon-rhui-client-jbews2
 
 # Don't pull in JBoss' httpd package, it breaks things
 cat >> /etc/yum.repos.d/redhat-rhui-jbews2.repo <<EOF
-excludepkgs=httpd*
+exclude=httpd*
 EOF
 
 # Install the 32 bit java before anything else
