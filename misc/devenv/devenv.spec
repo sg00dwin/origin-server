@@ -8,7 +8,7 @@
 
 Summary:   Dependencies for OpenShift development
 Name:      rhc-devenv
-Version: 1.2.6
+Version: 1.2.7
 Release:   1%{?dist}
 Group:     Development/Libraries
 License:   GPLv2
@@ -680,6 +680,10 @@ restorecon /etc/openshift/node.conf || :
 /sbin/service libra-data restart > /dev/null 2>&1 || :
 
 %changelog
+* Mon Dec 10 2012 Adam Miller <admiller@redhat.com> 1.2.7-1
+- Security - Add more automation to the ClamAV for Drupal install
+  (tkramer@redhat.com)
+
 * Fri Dec 07 2012 Adam Miller <admiller@redhat.com> 1.2.6-1
 - Merge pull request #694 from tkramer-
   rh/dev/tkramer/security/Add_ClamAV_to_Drupal (dmcphers@redhat.com)
