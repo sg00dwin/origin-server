@@ -769,8 +769,26 @@ rm -rf /tmp/tito; mkdir -p /root/.source_build;
 # Enable RHUI JBoss repos for cartridge rebase on core EAP packages
 yum -y install rh-amazon-rhui-client-jbeap6
 
+# Don't pull in JBoss' httpd package, it breaks things
+cat >> /etc/yum.repos.d/redhat-rhui-jbeap6.repo <<EOF
+excludepkgs=httpd*
+EOF
+
 # Enable RHUI JB EWS1 repos for Tomcat6 cartridge
 yum -y install rh-amazon-rhui-client-jbews1
+
+# Don't pull in JBoss' httpd package, it breaks things
+cat >> /etc/yum.repos.d/redhat-rhui-jbews1.repo <<EOF
+excludepkgs=httpd*
+EOF
+
+# Enable RHUI JB EWS2 repos for Tomcat7 cartridge
+yum -y install rh-amazon-rhui-client-jbews2
+
+# Don't pull in JBoss' httpd package, it breaks things
+cat >> /etc/yum.repos.d/redhat-rhui-jbews2.repo <<EOF
+excludepkgs=httpd*
+EOF
 
 # Install the 32 bit java before anything else
 yum -y install java-1.6.0-openjdk.i686 java-1.6.0-openjdk-devel.i686
