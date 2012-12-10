@@ -1,4 +1,5 @@
 require 'active_record'
+require 'helpers'
 
 class Issue < ActiveRecord::Base
   has_many :updates, :order => "created_at ASC"
@@ -22,6 +23,10 @@ class Issue < ActiveRecord::Base
     end
   end
 
+  def created_at_in_words
+    time_ago_in_words(created_at)
+  end
+
   scope :resolved, :conditions => 'resolved_at IS NOT NULL', :order => 'resolved_at DESC'
   scope :is_open, :conditions => {:resolved_at => nil}, :order => 'resolved_at DESC'
   scope :unresolved, :conditions => {:resolved_at => nil}, :order => 'resolved_at DESC'
@@ -36,4 +41,9 @@ class Update < ActiveRecord::Base
   belongs_to :issue
 
   validates_length_of   :description, :minimum => 10
+
+  def created_at_in_words
+    time_ago_in_words(created_at)
+  end
+
 end

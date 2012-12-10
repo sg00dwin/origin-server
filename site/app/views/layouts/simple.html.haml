@@ -1,9 +1,22 @@
+- content_for :javascripts do
+  :javascript
+    $(function() {
+      $('a[data-submit-email-address]').click(function() {
+        var actual = $(":input:not(input[type=hidden]):first");
+        if (actual && actual.val()) {
+          var sep = (this.href.indexOf('?') != -1) ? '&' : '?';
+          this.href = this.href + sep + encodeURIComponent($(this).data('submit-email-address')) + '=' + encodeURIComponent(actual.val());
+        }
+        return true;
+      });
+    });
+
 !!! 5
 -# http://paulirish.com/2008/conditional-stylesheets-vs-css-hacks-answer-neither
 -ie_html :class => 'no-js', :lang => 'en' do
   %head
     = render "layouts/head"
-    = render "layouts/site/stylesheets"
+    = render "layouts/console/stylesheets"
 
   %body{ :class => "simple #{controller.controller_name} #{controller.action_name}" }
 
@@ -17,17 +30,69 @@
     - if content_for? :sub_layout
       = yield :sub_layout
     - else
-      .section-striped#content
+      #content.section-account
         .container
-          %div
-            .row.row-flush-right
-              .offset2.column-content.grid-wrapper
-                .span8.span-flush-right
-                  - if content_for? :title
+          .row
+            .span12
+              %section.frame.primary
+                .row-fluid
+                  - if content_for? :title and !@suppress_ribbon
                     %h1.ribbon= yield :title
                   = flashes
                   = yield
+        
+        -# Included here to show structure
+        #issues.container{ :style => 'display:none;' }
+          .row
+            .span12
+              %section.frame.announcement.outage
+                .row-fluid
+                  .announcement
+                    %h4
+                      {{title}}
+                      %span.timestamp &mdash; ({{timestamp}})
+                    %aside.updates
+                      .update
+                        {{description}}
+                        %span.timestamp &mdash; ({{timestamp}})
 
+        -if @release_note and @events
+          #announcements.container
+            .row
+              .span12
+                %section.frame.announcement
+                  .row-fluid
+                    .announcement
+                      .column-1
+                        %h4
+                          Features Released
+                          %span.timestamp 
+                            &mdash; 
+                            = @release_note.date.strftime('%B %d, %Y')
+                        %ul.unstyled
+                          %li
+                            =sanitize @release_note.summary
+                        %a.arrow-link{:href => @release_note.href}→ View more...
+                        
+                      .column-2
+                        %h4
+                          Upcoming Events
+                        %ul.unstyled.spaced-items
+                          - @events.each do |event|
+                            %li
+                              %strong=raw event.title
+                              %p
+                                =raw event.date.strftime('%B %d') + ' - '
+                                =raw event.city
+                                =raw event.state
+                        %a.action-more{:href => "/community/events"}→ View more...
+                          
+
+    %footer
+      = yield :footer
+
+      = render 'layouts/footer'
+      
     = render 'layouts/site/javascripts'
 
     = render('shared/tracking',

@@ -33,3 +33,13 @@
   margin-top: -3px;
   vertical-align: middle;
 }
+
+@mixin account_background {
+  background-color: transparent;
+  background-image: image-url('mts-bottom-transparent.png');
+  background-repeat: repeat-x;
+  //background-position: bottom 160px right 300px;
+  background-position: 100% 60%;
+  padding-bottom: 115px;
+}
+ 
