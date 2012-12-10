@@ -104,7 +104,7 @@ class StatusApp < Sinatra::Base
 
   get '*/status/open_issues.js' do
     callback = params[:jsonp]
-    json = { :open => Issue.is_open.includes(:updates) }.to_json(:include => :updates, :methods => :created_at_in_words)
+    json = { :open => Issue.is_open.includes(:updates) }.to_json(:include => { :updates => { :methods => [:created_at_in_words] } }, :methods => [:created_at_in_words])
     expires 60*5, :public
     if callback
       content_type 'text/javascript'
