@@ -2,9 +2,11 @@
   :javascript
     $(function() {
       $('a[data-submit-email-address]').click(function() {
-        var sep = (this.href.indexOf('?') != -1) ? '&' : '?';
         var actual = $(":input:not(input[type=hidden]):first");
-        this.href = this.href + sep + encodeURI($(this).data('submit-email-address')) + '=' + encodeURI(actual.val());
+        if (actual && actual.val()) {
+          var sep = (this.href.indexOf('?') != -1) ? '&' : '?';
+          this.href = this.href + sep + encodeURIComponent($(this).data('submit-email-address')) + '=' + encodeURIComponent(actual.val());
+        }
         return true;
       });
     });
