@@ -177,7 +177,7 @@ Requires:  drupal6-clamav
 # Security ClamAV Requirements
 Requires:  clamav
 Requires:  clamav-db
-Requires:  clamav-server
+# TIM Requires:  clamav-server
 
 # Security RKHunter Requirements
 Requires:  rkhunter
@@ -404,7 +404,7 @@ chkconfig rhc-site on
 chkconfig rhc-broker on
 chkconfig jenkins on
 chkconfig httpd on
-chkconfig clamd on
+# TIM chkconfig clamd on
 
 # CGroup services
 service cgconfig start
@@ -645,7 +645,7 @@ fi
 cd /var/www/openshift/site && /usr/bin/scl enable ruby193 "rake assets:clean"
 
 # Set up ClamAV
-/usr/sbin/setsebool -P clamscan_can_scan_system 1
+# TIM /usr/sbin/setsebool -P clamscan_can_scan_system 1
 # Update the Virus Definitions
 /usr/bin/freshclam
 
@@ -653,10 +653,10 @@ cd /var/www/openshift/site && /usr/bin/scl enable ruby193 "rake assets:clean"
 /etc/drupal6/drupal-setup.sh
 
 # Tweak the /etc/clamd.conf file to run as root for now
-sed 's/User clam/User root/' /etc/clamd.conf > /tmp/clam_root.txt
-mv /tmp/clam_root.txt /etc/clamd.conf
+# TIM sed 's/User clam/User root/' /etc/clamd.conf > /tmp/clam_root.txt
+# TIM mv /tmp/clam_root.txt /etc/clamd.conf
 # Restart ClamAV
-service clamd restart
+# TIM service clamd restart
 
 %files
 %defattr(-,root,root,-)
