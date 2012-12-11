@@ -69,7 +69,7 @@
                           %span.timestamp 
                             &mdash; 
                             = @release_note.date.strftime('%B %d, %Y')
-                        %ul.unstyled
+                        %ul.unstyled.spaced-items
                           %li
                             =sanitize @release_note.summary
                         %a.arrow-link{:href => @release_note.href}→ View more...
