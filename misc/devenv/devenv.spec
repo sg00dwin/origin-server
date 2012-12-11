@@ -8,7 +8,7 @@
 
 Summary:   Dependencies for OpenShift development
 Name:      rhc-devenv
-Version: 1.2.7
+Version: 1.2.8
 Release:   1%{?dist}
 Group:     Development/Libraries
 License:   GPLv2
@@ -672,6 +672,16 @@ restorecon /etc/openshift/node.conf || :
 /sbin/service libra-data restart > /dev/null 2>&1 || :
 
 %changelog
+* Tue Dec 11 2012 Adam Miller <admiller@redhat.com> 1.2.8-1
+- Revert "work around for BZ 885905" (admiller@redhat.com)
+- work around for BZ 885905 (admiller@redhat.com)
+- Security - change ClamAV and Drupal to ondemand scan and run as user clam
+  (tkramer@redhat.com)
+- Merge pull request #704 from tkramer-rh/dev/tkramer/security/CLAMAV3
+  (openshift+bot@redhat.com)
+- Security - Change clamav and drupal to run as clam and ondemand scanning
+  (tkramer@redhat.com)
+
 * Mon Dec 10 2012 Adam Miller <admiller@redhat.com> 1.2.7-1
 - Security - Add more automation to the ClamAV for Drupal install
   (tkramer@redhat.com)
