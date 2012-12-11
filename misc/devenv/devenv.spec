@@ -189,6 +189,9 @@ Requires:  openscap-python
 Requires:  openscap-utils
 Requires:  html2text
 
+# Workaround for BZ 885905
+Requires:  fontconfig(i686)
+
 BuildArch: noarch
 
 %description

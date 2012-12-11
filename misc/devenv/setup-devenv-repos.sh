@@ -56,7 +56,7 @@ sslverify=1
 sslclientkey=/etc/pki/entitlement/content-rhel6.key
 sslclientcert=/etc/pki/entitlement/product/content-rhel6.crt
 sslcacert=/etc/pki/entitlement/cdn.redhat.com-chain.crt
-includepkgs=java-1.6.0-openjdk* java-1.7.0-openjdk*
+includepkgs=java-1.6.0-openjdk* java-1.7.0-openjdk* fontconfig
 
 [rhui-us-east-1-rhel-server-releases-optional-i386]
 name=Red Hat Enterprise Linux Server 6 Optional -i386 (RPMs)
@@ -68,7 +68,7 @@ sslverify=1
 sslclientkey=/etc/pki/entitlement/content-rhel6.key
 sslclientcert=/etc/pki/entitlement/product/content-rhel6.crt
 sslcacert=/etc/pki/entitlement/cdn.redhat.com-chain.crt
-includepkgs=java-1.6.0-openjdk* java-1.7.0-openjdk*
+includepkgs=java-1.6.0-openjdk* java-1.7.0-openjdk* fontconfig
 
 [Zend]
 name=Zend Server
