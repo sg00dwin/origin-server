@@ -8,8 +8,8 @@
 
 Summary:   OpenShift Site Rails application
 Name:      rhc-site
-Version: 1.2.5
-Release:   2%{?dist}
+Version: 1.2.6
+Release:   1%{?dist}
 Group:     Network/Daemons
 License:   ASL 2.0
 URL:       http://openshift.redhat.com
@@ -144,6 +144,26 @@ rm -rf %{buildroot}
 %{sitedir}/public
 
 %changelog
+* Tue Dec 11 2012 Adam Miller <admiller@redhat.com> 1.2.6-1
+- Fixes rhc-outage date and time display in the login page (ffranz@redhat.com)
+- Fixes Bug 884508, improved URI encoding (ffranz@redhat.com)
+- Fixes Bug 884508 (ffranz@redhat.com)
+- edit width (sgoodwin@redhat.com)
+- bug 884414 fix signup page width at mobile portrait view
+  (sgoodwin@redhat.com)
+- Added suppress ribbon support to haml pages (ffranz@redhat.com)
+- Now displaying release notes info in the login pages, styling improvements
+  (ffranz@redhat.com)
+- Adjusted some images path on css styles (ffranz@redhat.com)
+- Improved simple theme (sign in, sign up, remember password and other pages),
+  added outage issues and news to login page (ffranz@redhat.com)
+- New css for account (sgoodwin@redhat.com)
+- switch background-position from 4 value to 2 value syntax since to appease
+  Chrome & Safari (sgoodwin@redhat.com)
+- switch text hover to be underline (sgoodwin@redhat.com)
+- Updates to simple template including css/design changes. New mixin for
+  account_background. (sgoodwin@redhat.com)
+
 * Fri Dec 07 2012 Adam Miller <admiller@redhat.com> 1.2.5-2
 - bump site.spec Release: for fake chain-build with console
   (admiller@redhat.com)
