@@ -21,8 +21,13 @@ class UsageModelTest < ActiveSupport::TestCase
     ue = Usage.find(ue._id)
     assert(ue != nil)
     ue.delete
-    ue = Usage.find(ue._id)
-    assert_equal(nil, ue)
+    begin
+      ue = Usage.find(ue._id)
+    rescue Mongoid::Errors::DocumentNotFound
+      assert true
+    else
+      assert false
+    end
   end
  
   test "find all usage events" do
