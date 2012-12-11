@@ -177,7 +177,6 @@ Requires:  drupal6-clamav
 # Security ClamAV Requirements
 Requires:  clamav
 Requires:  clamav-db
-# TIM Requires:  clamav-server
 
 # Security RKHunter Requirements
 Requires:  rkhunter
@@ -404,7 +403,6 @@ chkconfig rhc-site on
 chkconfig rhc-broker on
 chkconfig jenkins on
 chkconfig httpd on
-# TIM chkconfig clamd on
 
 # CGroup services
 service cgconfig start
@@ -651,12 +649,6 @@ cd /var/www/openshift/site && /usr/bin/scl enable ruby193 "rake assets:clean"
 
 # Configure Drupal for the first time
 /etc/drupal6/drupal-setup.sh
-
-# Tweak the /etc/clamd.conf file to run as root for now
-# TIM sed 's/User clam/User root/' /etc/clamd.conf > /tmp/clam_root.txt
-# TIM mv /tmp/clam_root.txt /etc/clamd.conf
-# Restart ClamAV
-# TIM service clamd restart
 
 %files
 %defattr(-,root,root,-)
