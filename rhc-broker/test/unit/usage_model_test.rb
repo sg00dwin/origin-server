@@ -62,7 +62,8 @@ class UsageModelTest < ActiveSupport::TestCase
     ue2 = usage
     ue2.gear_id = ue1.gear_id
     ue2.begin_time = ue1.begin_time + 1
-    ue2.save
+    ue2.save!
+    ue2.reload
     ue = Usage.find_latest_by_gear(ue1.gear_id, UsageRecord::USAGE_TYPES[:gear_usage])
     assert_equal ue, ue2
   end
