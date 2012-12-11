@@ -560,7 +560,7 @@ service httpd restart
             end
 
             unless options.exclude_rhc?
-                test_queues[0].unshift(["RHC Spec", 'cd openshift-test/rhc; bundle install && bundle exec rake spec'])
+                test_queues[0].unshift(["RHC Spec", 'cd openshift-test/rhc; bundle install --path=/tmp/rhc_bundle && bundle exec rake spec'])
             end
           end
 
