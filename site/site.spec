@@ -144,6 +144,10 @@ rm -rf %{buildroot}
 %{sitedir}/public
 
 %changelog
+* Tue Dec 11 2012 Adam Miller <admiller@redhat.com> 1.2.6-2
+- bump site.spec Release: for fake chain-build with console
+  (admiller@redhat.com)
+
 * Tue Dec 11 2012 Adam Miller <admiller@redhat.com> 1.2.6-1
 - Fixes rhc-outage date and time display in the login page (ffranz@redhat.com)
 - Fixes Bug 884508, improved URI encoding (ffranz@redhat.com)
