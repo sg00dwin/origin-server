@@ -7,10 +7,10 @@ class UsageModelTest < ActiveSupport::TestCase
 
   test "create and find usage event" do
     orig = usage
-    ue = Usage.new(orig.login, orig.gear_uuid, orig.begin_time, orig.end_time, orig.uuid, UsageRecord::USAGE_TYPES[:gear_usage])
-    ue.gear_size = orig.gear_size
+    ue = Usage.new(login: orig.login, gear_id: orig.gear_id, begin_time: orig.begin_time, end_time: orig.end_time, usage_type: UsageRecord::USAGE_TYPES[:gear_usage], gear_size: orig.gear_size)
+    ue._id = orig._id
     ue.save!
-    ue = Usage.find(orig.uuid)
+    ue = Usage.find(orig._id)
     ue.updated_at = nil
     assert_equal(orig, ue)
   end
@@ -18,10 +18,10 @@ class UsageModelTest < ActiveSupport::TestCase
   test "delete usage event" do
     ue = usage
     ue.save!
-    ue = Usage.find(ue.uuid)
+    ue = Usage.find(ue._id)
     assert(ue != nil)
-    Usage.delete(ue.uuid)
-    ue = Usage.find(ue.uuid)
+    ue.delete
+    ue = Usage.find(ue._id)
     assert_equal(nil, ue)
   end
  
@@ -60,11 +60,11 @@ class UsageModelTest < ActiveSupport::TestCase
     ue1 = usage
     ue1.save!
     ue2 = usage
-    ue2.gear_uuid = ue1.gear_uuid
+    ue2.gear_id = ue1.gear_id
     ue2.begin_time = ue1.begin_time + 1
-    ue2.save!
-    ue = Usage.find_latest_by_gear(ue1.gear_uuid, UsageRecord::USAGE_TYPES[:gear_usage])
-    assert(ue == ue2)
+    ue2.save
+    ue = Usage.find_latest_by_gear(ue1.gear_id, UsageRecord::USAGE_TYPES[:gear_usage])
+    assert_equal ue, ue2
   end
 
   test "find all user usage events given time range" do
@@ -93,9 +93,9 @@ class UsageModelTest < ActiveSupport::TestCase
   test "find usage by gear" do
     ue = usage
     ue.save!
-    ue1 = Usage.find_by_gear(ue.gear_uuid)
+    ue1 = Usage.find_by_gear(ue.gear_id)
     assert(ue1 != nil)
-    ue1 = Usage.find_by_gear(ue.gear_uuid, ue.begin_time)
+    ue1 = Usage.find_by_gear(ue.gear_id, ue.begin_time)
     assert(ue1 != nil)
   end
 
@@ -125,11 +125,9 @@ class UsageModelTest < ActiveSupport::TestCase
   end
 
   def usage
-    uuid = "usage#{gen_uuid}"
-    obj = Usage.new("user#{gen_uuid}", "gear#{gen_uuid}", Time.now.utc, nil, uuid, UsageRecord::USAGE_TYPES[:gear_usage])
+    obj = Usage.new(login: "user#{gen_uuid}", gear_id: "gear#{gen_uuid}", begin_time: Time.now.utc, end_time: nil, usage_type: UsageRecord::USAGE_TYPES[:gear_usage])
     obj.gear_size = 'small'
     obj.addtl_fs_gb = 5
-    obj._id = uuid
     obj.updated_at = nil
     obj
   end

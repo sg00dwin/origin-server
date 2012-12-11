@@ -6,6 +6,8 @@ development:
         - localhost:27017
       user: openshift
       password: mooo
+  options:
+    raise_not_found_error: true
 test:
   sessions:
     default:
@@ -14,3 +16,5 @@ test:
         - localhost:27017
       user: openshift
       password: mooo
+  options:
+    raise_not_found_error: true
