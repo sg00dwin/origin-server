@@ -34,6 +34,7 @@ Requires:  ruby193-rubygem-pony
 Requires:  mcollective-qpid-plugin
 # As broker admin scripts are opensourced they are placed into this package
 Requires:  openshift-origin-broker-util
+Provides:  openshift-origin-broker
 Provides:  openshift-broker
 Requires:  ruby193-rubygem-simplecov
 #Requires:  ruby193-rubygem-mongoid
