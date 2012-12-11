@@ -190,6 +190,9 @@ Requires:  openscap-python
 Requires:  openscap-utils
 Requires:  html2text
 
+# Workaround for upstream JDK bug http://bugs.sun.com/view_bug.do?bug_id=7068471
+Requires:  fontconfig.i686 
+
 BuildArch: noarch
 
 %description
