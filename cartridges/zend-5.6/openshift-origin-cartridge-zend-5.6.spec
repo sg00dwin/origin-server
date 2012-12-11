@@ -2,7 +2,7 @@
 
 Summary:   Provides zend-5.6 support
 Name:      openshift-origin-cartridge-zend-5.6
-Version: 1.2.4
+Version: 1.2.5
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   ASL 2.0
@@ -107,6 +107,9 @@ rm -rf %{buildroot}
 %doc %{cartridgedir}/LICENSE
 
 %changelog
+* Tue Dec 11 2012 Adam Miller <admiller@redhat.com> 1.2.5-1
+- Fix for Bug 880013 (jhonce@redhat.com)
+
 * Wed Dec 05 2012 Adam Miller <admiller@redhat.com> 1.2.4-1
 - Made tidy hook accessible to gear users (ironcladlou@gmail.com)
 
