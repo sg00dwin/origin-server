@@ -8,7 +8,7 @@
 
 Summary:   Dependencies for OpenShift development
 Name:      rhc-devenv
-Version: 1.2.8
+Version: 1.2.9
 Release:   1%{?dist}
 Group:     Development/Libraries
 License:   GPLv2
@@ -672,6 +672,13 @@ restorecon /etc/openshift/node.conf || :
 /sbin/service libra-data restart > /dev/null 2>&1 || :
 
 %changelog
+* Wed Dec 12 2012 Adam Miller <admiller@redhat.com> 1.2.9-1
+- Merge pull request #714 from tkramer-rh/dev/tkramer/security/clamav_drupal
+  (openshift+bot@redhat.com)
+- Security - Enable ClamAV with Drupal plugin - selinux enabled
+  (tkramer@redhat.com)
+- workaround for BZ 885905 (admiller@redhat.com)
+
 * Tue Dec 11 2012 Adam Miller <admiller@redhat.com> 1.2.8-1
 - Revert "work around for BZ 885905" (admiller@redhat.com)
 - work around for BZ 885905 (admiller@redhat.com)
