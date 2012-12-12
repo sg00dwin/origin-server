@@ -643,7 +643,7 @@ fi
 cd /var/www/openshift/site && /usr/bin/scl enable ruby193 "rake assets:clean"
 
 # Set up ClamAV
-# TIM /usr/sbin/setsebool -P clamscan_can_scan_system 1
+/usr/sbin/setsebool -P clamscan_can_scan_system 1
 # Update the Virus Definitions
 /usr/bin/freshclam
 
