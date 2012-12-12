@@ -209,7 +209,7 @@ fi
 %attr(0750,-,-) %{_bindir}/remount-secure.sh
 %attr(0755,-,-) %{_bindir}/rhc-vhost-choke
 %dir %attr(0751,root,root) %{_var}/lib/openshift
-%dir %attr(0750,root,root) %{_var}/lib/openshift/.httpd.d
+%dir %attr(0750,root,apache) %{_var}/lib/openshift/.httpd.d
 %dir %attr(0700,root,root) %{_var}/run/openshift
 #%dir %attr(0755,root,root) %{_libexecdir}/openshift/cartridges/abstract-httpd/
 #%attr(0750,-,-) %{_libexecdir}/openshift/cartridges/abstract-httpd/info/hooks/
