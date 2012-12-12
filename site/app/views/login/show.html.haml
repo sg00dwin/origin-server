@@ -44,7 +44,7 @@
               :hint => link_to("Forgot your password?", new_account_password_path, :data => {:submit_email_address => 'web_user[login]'}),
               :input_html => {:autofocus => @user.rhlogin.present?, :placeholder => 'Password', :class => @user.errors[:base].present? ? 'error' : 'max'}
     = f.buttons do
-      = f.commit_button "Sign in", :button_html =>  {:class => 'btn btn-primary'}
+      = f.commit_button "Sign in", :button_html =>  {:class => 'btn btn-primary btn-block-phone btn-large'}
       -# or 
       -# = link_to 'create an account', @register_url || new_account_path
 

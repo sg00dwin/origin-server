@@ -56,7 +56,7 @@ sslverify=1
 sslclientkey=/etc/pki/entitlement/content-rhel6.key
 sslclientcert=/etc/pki/entitlement/product/content-rhel6.crt
 sslcacert=/etc/pki/entitlement/cdn.redhat.com-chain.crt
-includepkgs=java-1.6.0-openjdk* java-1.7.0-openjdk*
+includepkgs=java-1.6.0-openjdk* java-1.7.0-openjdk* fontconfig expat
 
 [rhui-us-east-1-rhel-server-releases-optional-i386]
 name=Red Hat Enterprise Linux Server 6 Optional -i386 (RPMs)
@@ -68,7 +68,7 @@ sslverify=1
 sslclientkey=/etc/pki/entitlement/content-rhel6.key
 sslclientcert=/etc/pki/entitlement/product/content-rhel6.crt
 sslcacert=/etc/pki/entitlement/cdn.redhat.com-chain.crt
-includepkgs=java-1.6.0-openjdk* java-1.7.0-openjdk*
+includepkgs=java-1.6.0-openjdk* java-1.7.0-openjdk* fontconfig expat
 
 [Zend]
 name=Zend Server
@@ -148,3 +148,8 @@ sslclientkey=/var/lib/yum/client-key.pem
 EOF
 
 fi
+
+
+printf "Installing fontconfig.i686 to workaround for BZ 885905... "
+yum -y install fontconfig.i686
+printf "Done.\n"
