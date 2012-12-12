@@ -30,7 +30,5 @@ Given /^the libra client tools$/ do
   assert_file_exists $client_config
   assert_file_exists $ctl_app_script
 
-  assert_file_exists $rhc_app_script
-  assert_file_exists $rhc_domain_script
-  assert_file_exists $rhc_sshkey_script
+  assert_file_exists $rhc_script
 end
