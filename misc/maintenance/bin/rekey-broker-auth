@@ -12,7 +12,7 @@ def rekey
   users = []
   if RHLOGINS
     RHLOGINS.each do |rhlogin|
-      user = CloudUser.find(rhlogin)
+      user = CloudUser.find_by(login: rhlogin)
       if user
         users << user
       else

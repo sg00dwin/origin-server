@@ -105,21 +105,21 @@ class SubUserTest < ActionDispatch::IntegrationTest
     get "rest/domains.json", nil, @headers
     assert_equal 200, status
 
-    subuser = CloudUser.find "subuser#{@random}"
+    subuser = CloudUser.find_by(login: "subuser#{@random}")
     capabilities = subuser.get_capabilities
     assert_equal 2, capabilities["gear_sizes"].size
     assert_equal ["c9", "small"], capabilities["gear_sizes"].sort
 
     `oo-admin-ctl-user -l #{@username} --removegearsize c9`
 
-    subuser = CloudUser.find "subuser#{@random}"
+    subuser = CloudUser.find_by(login: "subuser#{@random}")
     capabilities = subuser.get_capabilities
     assert_equal 1, capabilities["gear_sizes"].size
     assert_equal "small", capabilities["gear_sizes"][0]
 
     `oo-admin-ctl-user -l #{@username} --inheritgearsizes false`
 
-    subuser = CloudUser.find "subuser#{@random}"
+    subuser = CloudUser.find_by(login: "subuser#{@random}")
     capabilities = subuser.get_capabilities
     assert_equal 1, capabilities["gear_sizes"].size
     assert_equal "small", capabilities["gear_sizes"][0]

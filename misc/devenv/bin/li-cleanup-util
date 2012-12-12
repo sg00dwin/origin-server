@@ -27,7 +27,7 @@ end
 def delete_user(login)
   puts "deleting user #{login}"
   begin
-    cloud_user = CloudUser.find(login)
+    cloud_user = CloudUser.find_by(login: login)
     cloud_user.force_delete
   rescue Exception => e
     puts "failed to delete user #{} #{e.message}"

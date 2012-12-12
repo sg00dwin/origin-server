@@ -27,7 +27,7 @@ class CtlUsageTest < ActionDispatch::IntegrationTest
       Rails.configuration.msg_broker[:districts][:enabled] = districts_enabled
     end
     
-    cu = CloudUser.find(login)
+    cu = CloudUser.find_by(login: login)
     assert_equal(1, cu.usage_records.length)
     assert_equal(UsageRecord::USAGE_TYPES[:gear_usage], cu.usage_records[0].usage_type)
     assert_equal('small', cu.usage_records[0].gear_size)
@@ -40,7 +40,7 @@ class CtlUsageTest < ActionDispatch::IntegrationTest
     2.times do
       sync_usage
   
-      cu = CloudUser.find(login)
+      cu = CloudUser.find_by(login: login)
       assert_equal(1, cu.usage_records.length)
       assert_equal(UsageRecord::USAGE_TYPES[:gear_usage], cu.usage_records[0].usage_type)
       assert_equal('small', cu.usage_records[0].gear_size)
@@ -55,7 +55,7 @@ class CtlUsageTest < ActionDispatch::IntegrationTest
 
     assert_equal(1, gi.addtl_fs_gb)
 
-    cu = CloudUser.find(login)
+    cu = CloudUser.find_by(login: login)
     assert_equal(2, cu.usage_records.length)
     assert_equal(UsageRecord::USAGE_TYPES[:addtl_fs_gb], cu.usage_records[1].usage_type)
     assert_equal(UsageRecord::EVENTS[:begin], cu.usage_records[1].event)
@@ -63,7 +63,7 @@ class CtlUsageTest < ActionDispatch::IntegrationTest
     # Sync fs storage
     sync_usage
 
-    cu = CloudUser.find(login)
+    cu = CloudUser.find_by(login: login)
     assert_equal(2, cu.usage_records.length)
     assert_equal(UsageRecord::USAGE_TYPES[:addtl_fs_gb], cu.usage_records[1].usage_type)
     assert_equal(UsageRecord::EVENTS[:continue], cu.usage_records[1].event)
@@ -76,7 +76,7 @@ class CtlUsageTest < ActionDispatch::IntegrationTest
 
     assert_equal(0, gi.addtl_fs_gb)
 
-    cu = CloudUser.find(login)
+    cu = CloudUser.find_by(login: login)
     assert_equal(3, cu.usage_records.length)
     assert_equal(UsageRecord::EVENTS[:continue], cu.usage_records[1].event)
     assert_equal(UsageRecord::EVENTS[:end], cu.usage_records[2].event)
@@ -84,7 +84,7 @@ class CtlUsageTest < ActionDispatch::IntegrationTest
     # Sync removal of fs storage
     sync_usage
 
-    cu = CloudUser.find(login)
+    cu = CloudUser.find_by(login: login)
     assert_equal(1, cu.usage_records.length)
     assert_equal(UsageRecord::USAGE_TYPES[:gear_usage], cu.usage_records[0].usage_type)
     assert_equal(UsageRecord::EVENTS[:continue], cu.usage_records[0].event)
@@ -97,7 +97,7 @@ class CtlUsageTest < ActionDispatch::IntegrationTest
     
     assert_equal(1, gi.addtl_fs_gb)
     
-    cu = CloudUser.find(login)
+    cu = CloudUser.find_by(login: login)
     assert_equal(2, cu.usage_records.length)
     assert_equal(UsageRecord::USAGE_TYPES[:addtl_fs_gb], cu.usage_records[1].usage_type)
     assert_equal(UsageRecord::EVENTS[:begin], cu.usage_records[1].event)
@@ -106,7 +106,7 @@ class CtlUsageTest < ActionDispatch::IntegrationTest
     app = Application.find(cu, 'usageapp')
     app.cleanup_and_delete
 
-    cu = CloudUser.find(login)
+    cu = CloudUser.find_by(login: login)
     assert_equal(4, cu.usage_records.length)
     assert_equal(UsageRecord::EVENTS[:continue], cu.usage_records[0].event)
     assert_equal(UsageRecord::EVENTS[:begin], cu.usage_records[1].event)
@@ -116,7 +116,7 @@ class CtlUsageTest < ActionDispatch::IntegrationTest
     # Sync the delete
     sync_usage
 
-    cu = CloudUser.find(login)
+    cu = CloudUser.find_by(login: login)
     assert_equal(0, cu.usage_records.length)
   end
   

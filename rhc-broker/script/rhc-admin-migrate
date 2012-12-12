@@ -36,7 +36,7 @@ def migrate_gear(login, app_name, gear_uuid, version)
   out = StringIO.new
   out << "Migrating gear on node with: #{migrate_cmd}\n"
   begin
-    user = CloudUser.find(login)
+    user = CloudUser.find_by(login: login)
     if user
       app = Application.find(user, app_name)
       if app
