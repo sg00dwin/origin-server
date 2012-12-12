@@ -7,7 +7,7 @@
 
 Summary:       Multi-tenant cloud management system node tools
 Name:          rhc-node
-Version: 1.2.5
+Version: 1.2.6
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -237,6 +237,9 @@ fi
 
 
 %changelog
+* Wed Dec 12 2012 Adam Miller <admiller@redhat.com> 1.2.6-1
+- Allow route files to be read by node web proxy. (mpatel@redhat.com)
+
 * Thu Dec 06 2012 Adam Miller <admiller@redhat.com> 1.2.5-1
 - Merge pull request #691 from ramr/dev/websockets (openshift+bot@redhat.com)
 - Add dependency on node-proxy and setup ports for node-web-proxy (8000 and
