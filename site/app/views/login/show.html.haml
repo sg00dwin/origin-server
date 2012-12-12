@@ -13,7 +13,6 @@
           el_items.innerHTML = el_items.innerHTML + template_items
             .replace(/\{\{title\}\}/, data.open[i].issue.title)
             .replace(/\{\{timestamp\}\}/, data.open[i].issue.created_at_in_words + ' ago');
-
           var el_announcement = el_items.getElementsByClassName('announcement')[i];
           var el_updates = el_announcement.getElementsByClassName('updates')[0];
           el_updates.innerHTML = '';
