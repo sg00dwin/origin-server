@@ -3,6 +3,7 @@
 
 require 'rubygems'
 require 'mongo'
+require 'json'
 $:.unshift('/var/www/openshift/broker')
 require 'config/environment'
 
@@ -22,13 +23,12 @@ def mongo_connect
   $coll = con.db($config[:db]).collection($config[:collections][:user])
 end
 
-
+@MALFORMED = Hash.new()
+@NOT_DNS = Hash.new()
 @DUPSET = Hash.new{ |hash, key| hash[key] = [] }
 def alias_validates
-  puts "Checking alises for invalid DNS names"
-
   $coll.find({ "apps.aliases.0" => { "$exists" => true } },
-             { :fields => [ "apps.uuid", "apps.aliases", "apps.name" ] } ) do |cursor|
+             { :fields => [ "apps.uuid", "apps.aliases", "apps.name", "apps.domain.namespace" ] } ) do |cursor|
     cursor.each do |uhash|
 
       id = uhash["_id"]
@@ -37,6 +37,8 @@ def alias_validates
       uhash["apps"].each do |app|
         
         name = app["name"]
+
+        namespace = app["domain"]["namespace"]
 
         if app["aliases"] != nil
 
@@ -48,14 +50,14 @@ def alias_validates
                 (server_alias.length > 255 ) or
                 (server_alias.length == 0 ) or
                 (server_alias =~ /^\d+\.\d+\.\d+\.\d+$/)
-              puts("MALFORMED: #{id}: #{name}: #{server_alias}")
+              @MALFORMED[server_alias]=[id, namespace, name, server_alias]
               
             elsif !(server_alias =~ /\.[0-9A-Za-z\-]*[0-9A-Za-z]$/)
-              puts("NOT A DNS NAME: #{id}: #{name}: #{server_alias}")
+              @NOT_DNS[server_alias]=[id, namespace, name, server_alias]
             end
             
             d_server_alias = server_alias.downcase
-            @DUPSET[d_server_alias] << "#{id}: #{name}: #{server_alias}"
+            @DUPSET[d_server_alias] << [id, namespace, name, server_alias]
             
           end
         end
@@ -64,15 +66,17 @@ def alias_validates
     end
   end
 
+  @DUPSET.delete_if { |k, v| v.length < 2 }
 
-  @DUPSET.select{ |k, v| v.length > 1 }.each do |server_alias, apps|
-    applist = apps.join("; ")
-    puts "DUPLICATE: #{server_alias}: #{applist}"
-  end
+  output = {
+    'DUPSET'    => @DUPSET,
+    'MALFORMED' => @MALFORMED,
+    'NOT_DNS'   => @NOT_DNS
+  }
+
+  puts JSON.pretty_generate(output)
 
 end
 
 mongo_connect
-puts "Audit Started."
 alias_validates
-puts "Audit Done!"
