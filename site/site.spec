@@ -144,6 +144,10 @@ rm -rf %{buildroot}
 %{sitedir}/public
 
 %changelog
+* Wed Dec 12 2012 Adam Miller <admiller@redhat.com> 1.2.7-2
+- bump site.spec Release: for fake chain-build with console
+  (admiller@redhat.com)
+
 * Wed Dec 12 2012 Adam Miller <admiller@redhat.com> 1.2.7-1
 - Merge remote-tracking branch 'upstream/master' (ffranz@redhat.com)
 - Improved styling for outage messages in the login page (ffranz@redhat.com)
