@@ -8,8 +8,8 @@
 
 Summary:   OpenShift Site Rails application
 Name:      rhc-site
-Version: 1.2.6
-Release:   2%{?dist}
+Version: 1.2.7
+Release:   1%{?dist}
 Group:     Network/Daemons
 License:   ASL 2.0
 URL:       http://openshift.redhat.com
@@ -144,6 +144,17 @@ rm -rf %{buildroot}
 %{sitedir}/public
 
 %changelog
+* Wed Dec 12 2012 Adam Miller <admiller@redhat.com> 1.2.7-1
+- Merge remote-tracking branch 'upstream/master' (ffranz@redhat.com)
+- Improved styling for outage messages in the login page (ffranz@redhat.com)
+- Fix for Bug 883334. Addition of class to sigin and signup buttons.
+  (sgoodwin@redhat.com)
+- Fixes Bug 886451 by properly displaying multiple outage messages in the login
+  page (ffranz@redhat.com)
+- Merge pull request #708 from sg00dwin/dev-release-notes
+  (openshift+bot@redhat.com)
+- add style for release list (sgoodwin@redhat.com)
+
 * Tue Dec 11 2012 Adam Miller <admiller@redhat.com> 1.2.6-2
 - bump site.spec Release: for fake chain-build with console
   (admiller@redhat.com)
