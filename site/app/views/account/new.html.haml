@@ -31,6 +31,6 @@
           = link_to 'Terms of Service', terms_of_service_url
           and the
           = link_to 'Privacy Policy', privacy_policy_url
-        = form.commit_button 'Sign Up', :button_html => {:class => 'btn btn-primary'}
+        = form.commit_button 'Sign Up', :button_html => {:class => 'btn btn-primary btn-block-phone btn-large'}
         or
         = link_to 'sign in if you have an account', login_path(:then => @redirect), :data => {:submit_email_address => 'web_user[rhlogin]'}
