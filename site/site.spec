@@ -8,7 +8,7 @@
 
 Summary:   OpenShift Site Rails application
 Name:      rhc-site
-Version: 1.2.7
+Version: 1.3.0
 Release:   2%{?dist}
 Group:     Network/Daemons
 License:   ASL 2.0

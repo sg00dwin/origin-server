@@ -2,7 +2,7 @@
 %global frameworkdir %{_libexecdir}/openshift/cartridges/metrics-0.1
 
 Name: openshift-origin-cartridge-metrics-0.1
-Version: 1.2.3
+Version: 1.3.0
 Release: 1%{?dist}
 Summary: Embedded metrics support for express
 

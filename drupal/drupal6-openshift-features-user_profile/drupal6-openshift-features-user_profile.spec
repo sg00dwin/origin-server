@@ -5,7 +5,7 @@
 %global modname             user_profile
 
 Name:    drupal%{drupal_release}-openshift-features-%{modname}
-Version: 1.8.4
+Version: 1.9.0
 Release: 1%{?dist}
 Summary: Openshift Red Hat Custom User Profile Feature for Drupal6
 Group:   Applications/Publishing
