@@ -144,6 +144,10 @@ rm -rf %{buildroot}
 %{sitedir}/public
 
 %changelog
+* Thu Dec 13 2012 Adam Miller <admiller@redhat.com> 1.2.8-2
+- bump site.spec Release: for fake chain-build with console
+  (admiller@redhat.com)
+
 * Thu Dec 13 2012 Adam Miller <admiller@redhat.com> 1.2.8-1
 - Hide the outage box in the login page when there are no messages to display
   (ffranz@redhat.com)
