@@ -155,7 +155,6 @@ web_user_password_confirmation_input button.eye:hover {opacity: 1;}
   display: none;
 }
 .announcement a, .announcement h4 {color: inherit;}
-.announcement.item:not(:first-child) { margin-top: 10px; }
 
 .simple .frame.announcement {
   background-color: #aaa;
@@ -172,9 +171,6 @@ web_user_password_confirmation_input button.eye:hover {opacity: 1;}
 }
 .updates .update { 
   margin-top: 5px;
-  & + .update {
-    margin-top: 10px;
-    }
 }
 
 .timestamp {font-size: $baseFontSize - 2;}
