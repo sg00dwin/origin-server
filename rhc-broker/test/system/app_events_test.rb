@@ -147,9 +147,10 @@ class AppEventsTest < ActionDispatch::IntegrationTest
     request_via_redirect(:post, APP_EVENTS_URL_FORMAT % [ns, "app1"], {:event => "conceal-port"}, @headers)
     assert_response :ok
 
+    #no longer supported
     # show-port application
-    request_via_redirect(:post, APP_EVENTS_URL_FORMAT % [ns, "app1"], {:event => "show-port"}, @headers)
-    assert_response :ok
+    #request_via_redirect(:post, APP_EVENTS_URL_FORMAT % [ns, "app1"], {:event => "show-port"}, @headers)
+    #assert_response :ok
 
     # query application after all events
     request_via_redirect(:get, APP_URL_FORMAT % [ns, "app1"], {}, @headers)
