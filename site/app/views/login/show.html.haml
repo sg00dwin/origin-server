@@ -37,12 +37,12 @@
     = f.input :rhlogin,
               :wrapper_html => { :class => "control-group-important" },
               :label => 'Login',
-              :input_html => {:autofocus => @user.rhlogin.blank?, :placeholder => 'OpenShift or Red Hat account', :class => @user.errors[:base].present? ? 'error' : 'max'}
+              :input_html => {:autofocus => @user.rhlogin.blank?, :placeholder => 'OpenShift or Red Hat account', :class => @user.errors[:base].present? ? 'error max' : 'max'}
     = f.input :password,
               :wrapper_html => { :class => "control-group-important" },
               :as => :password,
               :hint => link_to("Forgot your password?", new_account_password_path, :data => {:submit_email_address => 'web_user[login]'}),
-              :input_html => {:autofocus => @user.rhlogin.present?, :placeholder => 'Password', :class => @user.errors[:base].present? ? 'error' : 'max'}
+              :input_html => {:autofocus => @user.rhlogin.present?, :placeholder => 'Password', :class => @user.errors[:base].present? ? 'error max' : 'max'}
     = f.buttons do
       = f.commit_button "Sign in", :button_html =>  {:class => 'btn btn-primary btn-block-phone btn-large'}
       -# or 
