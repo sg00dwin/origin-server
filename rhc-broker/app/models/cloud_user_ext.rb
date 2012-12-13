@@ -5,23 +5,6 @@ class CloudUser
   #  initialize_old(login, ssh, ssh_type, key_name, capabilities, parent_user_login)
   #end
 
-  def get_capabilities
-    user_capabilities = self.capabilities.dup
-    unless self.parent_user_id.nil?
-      begin
-        parent_user = CloudUser.find(self.parent_user_id)
-        if parent_user.capabilities.has_key? 'inherit_on_subaccounts'
-          parent_user.capabilities['inherit_on_subaccounts'].each do |cap|
-            user_capabilities[cap] = parent_user.capabilities[cap] if parent_user.capabilities[cap] 
-          end if parent_user && parent_user.capabilities.has_key?('inherit_on_subaccounts')
-        end
-      rescue Mongoid::Errors::DocumentNotFound
-        #do nothing
-      end
-    end
-    user_capabilities
-  end
-
   def get_plan_info(plan_id)
     plan_id.downcase! if plan_id
 
@@ -33,37 +16,40 @@ class CloudUser
 
   def match_plan_capabilities(plan_id)
     plan_info = get_plan_info(plan_id)
-    capabilities = plan_info[:capabilities]
+    plan_capabilities = plan_info[:capabilities]
+    user_capabilities = self.get_capabilities
 
-    if capabilities.has_key?("max_gears") && (capabilities["max_gears"] != self.max_gears)
-      raise OpenShift::UserException.new("User #{self.login} has gear limit set to #{self.max_gears} but '#{plan_id}' plan allows #{capabilities["max_gears"]}.", 160)
+    if plan_capabilities.has_key?("max_gears") && (plan_capabilities["max_gears"] != user_capabilities["max_gears"])
+      raise OpenShift::UserException.new("User #{self.login} has gear limit set to #{user_capabilities["max_gears"]} but '#{plan_id}' plan allows #{plan_capabilities["max_gears"]}.", 160)
     end
-    if capabilities.has_key?("gear_sizes") && self.capabilities.has_key?("gear_sizes") &&
-       (capabilities["gear_sizes"].sort != self.capabilities["gear_sizes"].sort)
-      raise OpenShift::UserException.new("User #{self.login} can use gear sizes [#{self.capabilities["gear_sizes"].join(",")}] but '#{plan_id}' plan allows [#{capabilities["gear_sizes"].join(",")}].", 161)
+
+    if plan_capabilities.has_key?("gear_sizes") && user_capabilities.has_key?("gear_sizes") &&
+       (plan_capabilities["gear_sizes"].sort != user_capabilities["gear_sizes"].sort)
+      raise OpenShift::UserException.new("User #{self.login} can use gear sizes [#{user_capabilities["gear_sizes"].join(",")}] but '#{plan_id}' plan allows [#{plan_capabilities["gear_sizes"].join(",")}].", 161)
     end
-    if capabilities.has_key?("max_storage_per_gear") && self.capabilities.has_key?("max_storage_per_gear") &&
-       (capabilities["max_storage_per_gear"] != self.capabilities["max_storage_per_gear"])
-      raise OpenShift::UserException.new("User #{self.login} can have additional file-system storage of #{self.capabilities["max_storage_per_gear"]} GB per gear group but '#{plan_id}' plan allows #{capabilities["max_storage_per_gear"]} GB.", 162)
+
+    if plan_capabilities.has_key?("max_storage_per_gear") && user_capabilities.has_key?("max_storage_per_gear") &&
+       (plan_capabilities["max_storage_per_gear"] != user_capabilities["max_storage_per_gear"])
+      raise OpenShift::UserException.new("User #{self.login} can have additional file-system storage of #{user_capabilities["max_storage_per_gear"]} GB per gear group but '#{plan_id}' plan allows #{plan_capabilities["max_storage_per_gear"]} GB.", 162)
     end
   end
 
   def check_plan_compatibility(plan_id)
     plan_info = get_plan_info(plan_id)
-    capabilities = plan_info[:capabilities]
+    plan_capabilities = plan_info[:capabilities]
 
-    if capabilities.has_key?("max_gears") && (capabilities["max_gears"] < self.consumed_gears)
+    if plan_capabilities.has_key?("max_gears") && (plan_capabilities["max_gears"] < self.consumed_gears)
       raise OpenShift::UserException.new("User #{self.login} has more consumed gears(#{self.consumed_gears}) than the '#{plan_id}' plan allows.", 153)
     end
-    if capabilities.has_key?("gear_sizes")
+    if plan_capabilities.has_key?("gear_sizes")
       self.applications.each do |app|
-        if !capabilities["gear_sizes"].include?(app.node_profile)
+        if !plan_capabilities["gear_sizes"].include?(app.node_profile)
           raise OpenShift::UserException.new("User #{self.login}, application '#{app.name}' has '#{app.node_profile}' type gear that the '#{plan_id}' plan does not allow.", 154)
         end
       end if self.applications
     end
     addtl_storage = 0
-    addtl_storage = capabilities["max_storage_per_gear"] if capabilities.has_key?("max_storage_per_gear")
+    addtl_storage = plan_capabilities["max_storage_per_gear"] if plan_capabilities.has_key?("max_storage_per_gear")
     self.applications.each do |app|
       app.group_instances.uniq.each do |ginst|
         if ginst.addtl_fs_gb && (ginst.addtl_fs_gb > addtl_storage)
@@ -77,13 +63,14 @@ class CloudUser
 
   def assign_plan(plan_id, persist=false)
     plan_info = get_plan_info(plan_id)
-    capabilities = plan_info[:capabilities]
+    plan_capabilities = plan_info[:capabilities]
+    user_capabilities = plan_capabilities.dup
+    user_capabilities.delete('max_gears')
 
     self.plan_id = plan_id
     self.capabilities_will_change!
-    self.capabilities = capabilities.dup
-    self.capabilities.delete('max_gears')
-    self.max_gears = capabilities['max_gears'] if capabilities.has_key?('max_gears')
+    self.set_capabilities(user_capabilities)
+    self.max_gears = plan_capabilities['max_gears'] if plan_capabilities.has_key?('max_gears')
     self.save if persist
   end
 
@@ -131,8 +118,8 @@ class CloudUser
     raise OpenShift::UserException.new("Billing account status not active", 152) if account["status_cd"].to_i <= 0 and plan_id != default_plan_id
 
     old_plan_id = self.plan_id
-    old_capabilities = self.capabilities
-    old_max_gears = self.max_gears
+    old_capabilities = self.get_capabilities
+    old_max_gears = old_capabilities["max_gears"]
     cur_time = Time.now.utc
     self.pending_plan_id = plan_id
     self.pending_plan_uptime = cur_time
@@ -150,7 +137,7 @@ class CloudUser
       self.pending_plan_uptime = nil
       self.plan_id = old_plan_id
       self.capabilities_will_change!
-      self.capabilities = old_capabilities
+      self.set_capabilities(old_capabilities)
       self.max_gears = old_max_gears
       self.save
       Rails.logger.error e

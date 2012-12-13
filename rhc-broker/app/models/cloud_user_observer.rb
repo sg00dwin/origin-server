@@ -4,17 +4,11 @@ class CloudUserObserver < ActiveModel::Observer
   def before_cloud_user_create(user)
     raise OpenShift::UserException.new("Invalid characters in login '#{user.login}' found", 107) if user.login =~ /["\$\^<>\|%\/;:,\\\*=~]/
 
-    capabilities = {}
-    if user.parent_user_id
-      capabilities = user.get_capabilities
-    elsif user.plan_id 
+    user_capabilities = user.get_capabilities
+    if user.plan_id 
       raise OpenShift::UserException.new("Specified plan_id does not exist", 150) if !Express::AriaBilling::Plan.instance.valid_plan(user.plan_id)
       plan_details = Rails.application.config.billing[:aria][:plans][user.plan_id.to_sym]
-      user.capabilities = user.capabilities.merge(plan_details[:capabilities].dup)
-      capabilities = user.capabilities
-    else
-      user.capabilities['gear_sizes'] = [Rails.application.config.openshift[:default_gear_size]] unless user.capabilities.has_key?('gear_sizes')
-      capabilities = user.capabilities
+      user.set_capabilities(user_capabilities.merge(plan_details[:capabilities].dup))
     end
   end
 

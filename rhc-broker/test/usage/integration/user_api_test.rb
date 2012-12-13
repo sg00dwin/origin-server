@@ -95,7 +95,9 @@ class UserApiTest < ActionDispatch::IntegrationTest
   
   def test_user_downgrade_with_large_gears
     user = CloudUser.new(login: @login)
-    user.capabilities['gear_sizes'] = ["small", "medium"]
+    user_capabilities = user.get_capabilities
+    user_capabilities['gear_sizes'] = ["small", "medium"]
+    user.set_capabilities(user_capabilities)
     user.save
     #create app with large gears
     request_via_redirect(:post, "/rest/domains", {:id=> @login[0..15]}, @headers)
@@ -193,11 +195,12 @@ class UserApiTest < ActionDispatch::IntegrationTest
     `rhc-admin-ctl-plan --fix --login #{@login}`
 
     user = CloudUser.find_by(login: @login)
+    user_capabilities = user.get_capabilities
     assert_equal(user.plan_id, "megashift")
     assert_not_equal(user.usage_account_id, nil)
     assert_equal(user.max_gears, 16)
-    assert_equal(user.capabilities["gear_sizes"].sort, ["medium", "small"])
-    assert_equal(user.capabilities["max_storage_per_gear"], 30)
+    assert_equal(user_capabilities["gear_sizes"].sort, ["medium", "small"])
+    assert_equal(user_capabilities["max_storage_per_gear"], 30)
     assert_equal(user.pending_plan_id, nil)
     assert_equal(user.pending_plan_uptime, nil)
     plans = api.get_acct_plans_all(acct_no)
@@ -228,11 +231,12 @@ class UserApiTest < ActionDispatch::IntegrationTest
     `rhc-admin-ctl-plan --fix --login #{@login}`
 
     user = CloudUser.find_by(login: @login)
+    user_capabilities = user.get_capabilities
     assert_equal(user.plan_id, "freeshift")
     assert_not_equal(user.usage_account_id, nil)
     assert_equal(user.max_gears, 3)
-    assert_equal(user.capabilities["gear_sizes"], ["small"])
-    assert_equal(user.capabilities.has_key?("max_storage_per_gear"), false)
+    assert_equal(user_capabilities["gear_sizes"], ["small"])
+    assert_equal(user_capabilities.has_key?("max_storage_per_gear"), false)
     assert_equal(user.pending_plan_id, nil)
     assert_equal(user.pending_plan_uptime, nil)
     plans = api.get_acct_plans_all(acct_no)
@@ -264,11 +268,12 @@ class UserApiTest < ActionDispatch::IntegrationTest
     `rhc-admin-ctl-plan --fix --login #{@login}`
 
     user = CloudUser.find_by(login: @login)
+    user_capabilities = user.get_capabilities
     assert_equal(user.plan_id, "megashift")
     assert_not_equal(user.usage_account_id, nil)
     assert_equal(user.max_gears, 16)
-    assert_equal(user.capabilities["gear_sizes"].sort, ["medium", "small"])
-    assert_equal(user.capabilities["max_storage_per_gear"], 30)
+    assert_equal(user_capabilities["gear_sizes"].sort, ["medium", "small"])
+    assert_equal(user_capabilities["max_storage_per_gear"], 30)
     assert_equal(user.pending_plan_id, nil)
     assert_equal(user.pending_plan_uptime, nil)
     plans = api.get_acct_plans_all(acct_no)
@@ -292,11 +297,13 @@ class UserApiTest < ActionDispatch::IntegrationTest
 
     #simulate noplan to megashift failure thats not recoverable
     user = CloudUser.find_by(login: @login)
+    user_capabilities = user.get_capabilities
     assert_equal(user.plan_id, nil)
     user.pending_plan_id = "megashift"
     user.pending_plan_uptime = Time.now.utc-1000
     user.capabilities_will_change!
-    user.capabilities["gear_sizes"].push("c9")
+    user_capabilities["gear_sizes"].push("c9")
+    user.set_capabilities(user_capabilities)
     user.save
 
     request_via_redirect(:post, "/rest/domains", {:id=> @login[0..15]}, @headers)
@@ -349,8 +356,10 @@ class UserApiTest < ActionDispatch::IntegrationTest
 
     #simulate user with valid plan but has inconsistent capabilities that can't be fixed
     user = CloudUser.find_by(login: @login)
+    user_capabilities = user.get_capabilities
     user.capabilities_will_change!
-    user.capabilities["gear_sizes"].push("c9")
+    user_capabilities["gear_sizes"].push("c9")
+    user.set_capabilities(user_capabilities)
     user.save
     request_via_redirect(:post, "/rest/domains", {:id=> @login[0..15]}, @headers)
     assert_response :created
@@ -362,7 +371,8 @@ class UserApiTest < ActionDispatch::IntegrationTest
     `rhc-admin-ctl-plan --fix --login #{@login}`
 
     user = CloudUser.find_by(login: @login)
+    user_capabilities = user.get_capabilities
     assert_equal(user.plan_id, "freeshift")
-    assert_equal(user.capabilities["gear_sizes"].sort, ["c9", "small"])
+    assert_equal(user_capabilities["gear_sizes"].sort, ["c9", "small"])
   end
 end
