@@ -3,7 +3,7 @@
 
 Summary:   Li broker components
 Name:      rhc-broker
-Version: 1.2.5
+Version: 1.2.6
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -135,6 +135,9 @@ if [ ! -f %{_localstatedir}/log/openshift/user_action.log ]; then
 fi
 
 %changelog
+* Thu Dec 13 2012 Adam Miller <admiller@redhat.com> 1.2.6-1
+- fix for bug#886245 (rchopra@redhat.com)
+
 * Wed Dec 12 2012 Adam Miller <admiller@redhat.com> 1.2.5-1
 - adding Provides:  openshift-origin-broker (tdawson@redhat.com)
 
