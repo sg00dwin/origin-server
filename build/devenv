@@ -201,7 +201,8 @@ module Express
 
       puts `pushd /tmp > /dev/null; rm -rf /tmp/clients; scp -r verifier:/etc/mcollective/ssl/clients/ .; scp -r clients/* #{hostname}:/etc/mcollective/ssl/clients/; popd > /dev/null`
 
-      ssh(hostname, "sed -i 's,^plugin.activemq.pool.1.host.*=.*,plugin.activemq.pool.1.host=#{internal_ip},' /etc/mcollective/server.cfg;" \
+      ssh(hostname, "sed -i 's,^plugin.activemq.pool.1.host.*=.*,plugin.activemq.pool.1.host=#{internal_ip},' /etc/mcollective/client.cfg;" \
+                    "sed -i 's,^plugin.activemq.pool.1.host.*=.*,plugin.activemq.pool.1.host=#{internal_ip},' /etc/mcollective/server.cfg;" \
                     "sed -i 's,^BROKER_HOST.*=.*,BROKER_HOST=#{internal_ip},' /etc/openshift/node.conf;" \
                     "service activemq stop; service mcollective restart", 240)
 
