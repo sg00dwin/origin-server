@@ -7,7 +7,7 @@
 
 Summary:       Multi-tenant cloud management system node tools
 Name:          rhc-node
-Version: 1.3.0
+Version: 1.3.1
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -237,6 +237,9 @@ fi
 
 
 %changelog
+* Wed Dec 12 2012 Adam Miller <admiller@redhat.com> 1.3.1-1
+- bump_minor_versions for sprint 22 (admiller@redhat.com)
+
 * Wed Dec 12 2012 Adam Miller <admiller@redhat.com> 1.2.6-1
 - Allow route files to be read by node web proxy. (mpatel@redhat.com)
 
