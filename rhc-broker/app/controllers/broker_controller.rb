@@ -55,17 +55,22 @@ class BrokerController < ApplicationController
           bulk_update_array = []
           app_uuid_hash = {}
           gear_timestamps.each { |gear_data|
-            gear_uuid = gear_data["uuid"]
             next if not gear_data.has_key?("access_time")
+            next if not gear_data.has_key?("uuid")
+            gear_uuid = gear_data["uuid"]
             begin
               time_object = DateTime.strptime(gear_data["access_time"], "%d/%b/%Y:%H:%M:%S %Z")
             rescue
-              raise Exception.new("Invalid format for access_time '#{gear_data["access_time"]}'. Needs to be %d/%b/%Y:%H:%M:%S %Z")
+              Rails.logger.error("Invalid format for access_time '#{gear_data["access_time"]}'. Needs to be %d/%b/%Y:%H:%M:%S %Z")
+              next 
             end
             # Nurture stores everything in Pacific Time
             access_time = time_object.in_time_zone("Pacific Time (US & Canada)").strftime("%Y-%m-%d %H:%M:%S")
             app, gear = Application::find_by_gear_uuid(gear_uuid)
-            raise Exception.new("Invalid gear uuid #{gear_uuid}") if app.nil?
+            if app.nil?
+              Rails.logger.error("Invalid gear uuid #{gear_uuid}")
+              next
+            end
             app_data = { "app_uuid" => app.uuid, "column_name" => "last_accessed_at", "column_value" => access_time }
             if not app_uuid_hash.has_key?(app.uuid)
               bulk_update_array << app_data 
