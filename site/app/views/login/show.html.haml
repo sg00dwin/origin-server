@@ -22,7 +22,9 @@
               .replace(/\{\{timestamp\}\}/, data.open[i].issue.updates[j].created_at_in_words + ' ago');
           }
         }
-        el.style.display = '';
+        if (data.open.length > 0) {
+          el.style.display = '';
+        }
       }
     }
   %script{:src => open_issues_jsonp_url('showOpenIssues')}
