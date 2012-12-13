@@ -102,12 +102,6 @@ class ApplicationTest < ActionDispatch::IntegrationTest
     body = JSON.parse(@response.body)
     assert_equal(body["messages"][0]["exit_code"], 109)
 
-    # create an application - and specify invalid template
-    request_via_redirect(:post, APP_COLLECTION_URL_FORMAT % [ns], {:name => "app1", :template => "invalid-template"}, @headers)
-    assert_response :unprocessable_entity
-    body = JSON.parse(@response.body)
-    assert_equal(body["messages"][0]["exit_code"], 125)
-
     # create an application - and specify invalid node profile
     request_via_redirect(:post, APP_COLLECTION_URL_FORMAT % [ns], {:name => "app1", :cartridge => "php-5.3", :gear_profile => "invalidprofile"}, @headers)
     assert_response :unprocessable_entity

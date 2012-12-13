@@ -90,7 +90,6 @@ Broker::Application.configure do
     :db => "openshift_broker_dev",
     :collections => {:user => "user_test",
                      :district => "district_test",
-                     :application_template => "template_test",
                      :distributed_lock => "distributed_lock_test"}
   }
 

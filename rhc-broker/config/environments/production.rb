@@ -92,7 +92,6 @@ Broker::Application.configure do
     :db => conf.get("MONGO_DB", "openshift_broker_dev"),
     :collections => {:user => "user",
                      :district => "district",
-                     :application_template => "template",
                      :distributed_lock => "distributed_lock"}
   }
 
