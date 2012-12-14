@@ -1,0 +1,321 @@
+#!/usr/bin/env oo-ruby
+require 'rubygems'
+require 'mongo'
+$:.unshift('/var/www/openshift/broker')
+require 'config/environment'
+
+@@dyn_retries = 2
+
+# Configurable params
+$config = Rails.application.config.datastore
+
+@end_point = Rails.configuration.dns[:dynect_url]
+@customer_name = Rails.configuration.dns[:dynect_customer_name]
+@user_name = Rails.configuration.dns[:dynect_user_name]
+@password = Rails.configuration.dns[:dynect_password]
+@domain_suffix = Rails.configuration.openshift[:domain_suffix]
+@zone = Rails.configuration.dns[:zone]
+
+def mongo_connect
+  if $config[:replica_set]
+    con = Mongo::ReplSetConnection.new(*$config[:host_port] \
+                                       << {:read => :secondary})
+  else
+    con = Mongo::Connection.new($config[:host_port][0], 
+                                $config[:host_port][1])
+  end
+  db = con.db($config[:db])
+  db.authenticate($config[:user], $config[:password])
+  $coll = con.db($config[:db]).collection("domains")
+end
+
+def mongo_migrate
+  puts "Checking for all users "
+  $coll.find( {}, { :fields => ["namespace"],
+                                :timeout => false }) do |cursor|
+    cursor.each { |dhash|
+      namespace = dhash["namespace"]
+      puts "Removing namespace: #{namespace}"
+      begin
+        login
+        if dyn_delete_txt_record(namespace, @auth_token, @@dyn_retries)
+          publish
+        end
+        close
+      rescue Exception => e
+        puts e.message
+        puts e.backtrace
+      end
+    }
+  end
+end
+
+def login
+  if @auth_token
+    return @auth_token
+  else
+    @auth_token = dyn_login(@@dyn_retries) 
+    return @auth_token
+  end
+end
+
+def publish
+  dyn_publish(@auth_token, @@dyn_retries)
+end
+
+def close
+  dyn_logout(@auth_token, @@dyn_retries)
+  @auth_token = nil
+end
+
+def dyn_delete_txt_record(namespace, auth_token, retries=0)
+  fqdn = "#{namespace}.#{@domain_suffix}"
+  # Delete the TXT record
+  path = "TXTRecord/#{@zone}/#{fqdn}/"
+  resp, data = dyn_delete(path, auth_token, retries)
+  case resp
+  when Net::HTTPNotFound
+    return false
+  else
+    return true
+  end
+end
+
+def dyn_delete(path, auth_token, retries=0)
+  headers = { "Content-Type" => 'application/json', 'Auth-Token' => auth_token }
+  url = URI.parse("#{@end_point}/REST/#{path}")
+  resp, data = nil, nil
+  dyn_do('dyn_delete', retries) do
+    http = Net::HTTP.new(url.host, url.port)
+    # below line get rid of the warning message
+    # warning: peer certificate won't be verified in this SSL session
+    http.verify_mode = OpenSSL::SSL::VERIFY_NONE
+    #http.set_debug_output $stderr
+    http.use_ssl = true
+    begin
+      logheaders = headers.clone
+      logheaders["Auth-Token"]="[hidden]"
+      puts "DEBUG: DYNECT delete with path: #{url.path} and headers: #{logheaders.inspect}"
+      resp = http.delete(url.path, headers)
+      data = resp.body
+      case resp
+      when Net::HTTPSuccess
+        raise_dns_exception(nil, resp, data) unless dyn_success?(data)
+      when Net::HTTPNotFound
+        puts "DEBUG: DYNECT: Could not find #{url.path} to delete"
+      when Net::HTTPTemporaryRedirect
+        handle_temp_redirect(resp, auth_token)
+      else
+        raise_dns_exception(nil, resp)
+      end
+    rescue OpenShift::DNSException => e
+      raise
+    rescue Exception => e
+      raise_dns_exception(e)
+    end
+  end
+  return resp, data
+end
+
+def handle_temp_redirect(resp, auth_token)
+  if resp.body =~ /^\/REST\//
+    headers = { "Content-Type" => 'application/json', 'Auth-Token' => auth_token }
+    url = URI.parse("#{@end_point}#{resp.body}")
+    http = Net::HTTP.new(url.host, url.port)
+    # below line get rid of the warning message
+    # warning: peer certificate won't be verified in this SSL session
+    http.verify_mode = OpenSSL::SSL::VERIFY_NONE
+    #http.set_debug_output $stderr
+    http.use_ssl = true
+    sleep_time = 2
+    success = false
+    retries = 0
+    while !success && retries < 5
+      retries += 1
+      begin
+        logheaders = headers.clone
+        logheaders["Auth-Token"]="[hidden]"
+        puts "DEBUG: DYNECT handle temp redirect with path: #{url.path} and headers: #{logheaders.inspect} attempt: #{retries} sleep_time: #{sleep_time}"
+        resp = http.get(url.path, headers)
+        data = resp.body
+        case resp
+        when Net::HTTPSuccess, Net::HTTPTemporaryRedirect
+          data = JSON.parse(data)
+          if data && data['status']
+            puts "DEBUG: DYNECT Response data: #{data['data']}"
+            status = data['status']
+            if status == 'success'
+              success = true
+            elsif status == 'incomplete'
+              sleep sleep_time
+              sleep_time *= 2
+            else #if status == 'failure'
+              puts "DEBUG: DYNECT Response status: #{data['status']}"
+              raise_dns_exception(nil, resp)
+            end
+          end
+        when Net::HTTPNotFound
+          raise DNSNotFoundException.new(145), "Error communicating with DNS system.  Job returned not found"
+        else
+          raise_dns_exception(nil, resp)
+        end
+      rescue OpenShift::DNSException => e
+        raise
+      rescue Exception => e
+        raise_dns_exception(e)
+      end
+    end
+    if !success
+      raise_dns_exception(nil, resp)
+    end
+  else
+    raise_dns_exception(nil, resp)
+  end
+end
+
+def dyn_do(method, retries=2)
+  i = 0
+  while true
+    begin
+      yield
+      break
+    rescue  OpenShift::DNSException => e
+      raise if i >= retries
+      puts "DEBUG: Retrying #{method} after exception caught from DNS request: #{e.message}"
+      i += 1
+    end
+  end
+end
+
+def dyn_logout(auth_token, retries=0)
+  # Logout
+  dyn_delete("Session/", auth_token, retries)
+end
+
+def dyn_publish(auth_token, retries=0)
+  # Publish the changes
+  path = "Zone/#{@zone}/"
+  publish_data = { "publish" => "true" }
+  dyn_put(path, publish_data, auth_token, retries)
+end
+
+def dyn_put(path, put_data, auth_token, retries=0)
+  return dyn_put_post(path, put_data, auth_token, true, retries)
+end
+
+def dyn_put_post(path, post_data, auth_token, put=false, retries=0)
+  url = URI.parse("#{@end_point}/REST/#{path}")
+  headers = { "Content-Type" => 'application/json', 'Auth-Token' => auth_token }
+  resp, data = nil, nil
+  dyn_do('dyn_put_post', retries) do
+    http = Net::HTTP.new(url.host, url.port)
+    # below line get rid of the warning message
+    # warning: peer certificate won't be verified in this SSL session
+    http.verify_mode = OpenSSL::SSL::VERIFY_NONE
+    #http.set_debug_output $stderr
+    http.use_ssl = true
+    json_data = JSON.generate(post_data);
+    begin
+      logheaders = headers.clone
+      logheaders["Auth-Token"]="[hidden]"
+      puts "DEBUG: DYNECT put/post with path: #{url.path} json data: #{json_data} and headers: #{logheaders.inspect}"
+      if put
+        resp = http.put(url.path, json_data, headers)
+      else
+        resp = http.post(url.path, json_data, headers)
+      end
+      data = resp.body
+      case resp
+      when Net::HTTPSuccess
+        raise_dns_exception(nil, resp, data) unless dyn_success?(data)
+      when Net::HTTPNotFound
+        raise DNSNotFoundException.new(145), "DNS entry not found"
+      when Net::HTTPTemporaryRedirect
+        handle_temp_redirect(resp, auth_token)
+      else
+        raise_dns_exception(nil, resp)
+      end
+    rescue OpenShift::DNSException => e
+      raise
+    rescue Exception => e
+      raise_dns_exception(e)
+    end
+  end
+  return resp, data
+end
+
+def dyn_success?(data)
+  puts "DEBUG: DYNECT Response: #{data}"
+  success = false
+  if data
+    data = JSON.parse(data)
+    if data && data['status'] && data['status'] == 'failure'
+      puts "DEBUG: DYNECT Response status: #{data['status']}"
+    elsif data && data['status'] == 'success'
+      puts "DEBUG: DYNECT Response data: #{data['data']}"
+      #has = data['data'][0].length > 0
+      success = true
+    end
+  end
+  success
+end
+
+def raise_dns_exception(e=nil, resp=nil, data=nil)
+  if e
+    puts "DEBUG: Exception caught from DNS request: #{e.message}"
+    puts e.backtrace
+  end
+  if resp
+    puts "DEBUG: Response code: #{resp.code}"
+    puts "DEBUG: Response body: #{resp.body}"
+  end
+  if data
+    data = JSON.parse(data)
+    data['msgs'].each do |msg|
+      raise OpenShift::DNSAlreadyExistsException.new("Namespace already in use. Please choose another.", 103) if msg['ERR_CD'] == "TARGET_EXISTS"
+    end if data.kind_of?(Hash) and data['msgs']
+  end
+  raise OpenShift::DNSException.new(145), "Error communicating with DNS system.  If the problem persists please contact Red Hat support."
+end
+
+def dyn_login(retries=0)
+  # Set your customer name, username, and password on the command line
+  # Set up our HTTP object with the required host and path
+  url = URI.parse("#{@end_point}/REST/Session/")
+  headers = { "Content-Type" => 'application/json' }
+  # Login and get an authentication token that will be used for all subsequent requests.
+  session_data = { :customer_name => @customer_name, :user_name => @user_name, :password => @password }
+
+  auth_token = nil
+  dyn_do('dyn_login', retries) do
+    http = Net::HTTP.new(url.host, url.port)
+    # below line get rid of the warning message
+    # warning: peer certificate won't be verified in this SSL session
+    http.verify_mode = OpenSSL::SSL::VERIFY_NONE
+    #http.set_debug_output $stderr
+    http.use_ssl = true
+    begin
+      puts "DEBUG: DYNECT Login with path: #{url.path}"
+      resp = http.post(url.path, JSON.generate(session_data), headers)
+      data = resp.body
+      case resp
+      when Net::HTTPSuccess
+        raise_dns_exception(nil, resp, data) unless dyn_success?(data)
+        result = JSON.parse(data)
+        auth_token = result['data']['token']    
+      else
+        raise_dns_exception(nil, resp)
+      end
+    rescue OpenShift::DNSException => e
+      raise
+    rescue Exception => e
+      raise_dns_exception(e)
+    end
+  end
+  return auth_token
+end
+
+mongo_connect
+puts "Dynect migration Started"
+mongo_migrate
+puts "Dynect migration Done!"
