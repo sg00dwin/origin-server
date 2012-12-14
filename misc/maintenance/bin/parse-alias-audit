@@ -1,0 +1,146 @@
+#!/usr/bin/env oo-ruby
+# -*- ruby -*-
+
+require 'rubygems'
+require 'json'
+require 'dnsruby'
+
+DOMAIN="rhcloud.com"
+
+@RESULTS=Hash.new { |hash, key| hash[key] = Hash.new { |dh, dk| dh[dk] = [] } }
+
+ENT_ID=0
+ENT_NS=1
+ENT_APP=2
+ENT_ALIAS=3
+
+
+File.open("audit-alias-mongo.log") do |f|
+  @DATA=JSON.load(f)
+end
+
+
+# Malformed entry results
+
+# IP based malformed entries
+    # test 1: IP addrs that resolve to the same EC2 host as the app
+    # test 2: IP addrs that resolve to an EC2 host not above
+    # test 3: IP addrs that don't resolve    
+@DATA['MALFORMED'].each do |server_alias, entry|
+  if server_alias =~ /^\d+\.\d+\.\d+\.\d+$/
+
+    begin
+      app_resolved = Dnsruby::Resolv.getaddress("#{entry[ENT_APP]}-#{entry[ENT_NS]}.#{DOMAIN}")
+      if app_resolved == server_alias
+        @RESULTS['MALFORMED'][server_alias] << 'CorrectIP'
+        puts "MALFORMED: CorrectIP: #{server_alias} #{entry.inspect}"
+        next
+      end
+    rescue Dnsruby::NXDomain
+      puts "ERROR: App should be resolvable: #{entry.inspect}"
+    end
+
+    begin
+      server_resolved = Dnsruby::Resolv.getname(server_alias)
+      if server_resolved=~/\.amazonaws\.com$/
+        puts "MALFORMED: AmazonIP: #{server_alias} #{entry.inspect}"
+      else
+        puts "MALFORMED: Resolves: #{server_alias} #{entry.inspect}"
+      end
+    rescue Dnsruby::NXDomain
+      puts "MALFORMED: NotResolve: #{server_alias} #{entry.inspect}"
+    end
+  
+  else
+    puts "MALFORMED: BadName: #{server_alias} #{entry.inspect}"
+  end
+end
+
+
+
+
+# Not a valid DNS name
+
+# test 1: Not valid DNS has no other tests
+@DATA['NOT_DNS'].each do |server_alias, entry|
+  puts "NOT_DNS: NoTests: #{server_alias} #{entry.inspect}"
+end
+
+
+# Duplicate grouping tests
+@DATA['DUPSET'].each do |server_alias, entries|
+  
+  accounts = []
+
+  entries.each do |entry|
+    accounts << entry[ENT_ID]
+  end
+
+  accounts.uniq!
+
+  if accounts.length == 1
+    puts "DUPSET: SameAccount: #{server_alias} #{entries.inspect}"
+  else
+    puts "DUPSET: DifferentAccounts: #{server_alias} #{entries.inspect}"
+  end
+end
+
+
+# Duplicate resolution tests
+# Requires not malformed or bad dns name
+   # - resolves to one of the contained apps
+   # - resolves to more than one of the contained apps
+   # - resolves, but not to any contained app
+   # - does not resolve
+@DATA['DUPSET'].each do |server_alias, entries|
+
+  resolved_entries = []
+
+  entries.each do |entry|
+    begin
+      dnsname = "#{entry[ENT_APP]}-#{entry[ENT_NS]}.#{DOMAIN}"
+      res = Dnsruby::Resolv.getaddress(dnsname)
+      resolved_entries << [res, entry]
+    rescue Dnsruby::NXDomain
+      puts "ERROR: App does not resolve: #{entry.inspect}"
+    end
+  end
+
+
+  if @DATA['MALFORMED'].has_key? server_alias
+    puts "DUPSET: Malformed: #{server_alias} #{entries.inspect}"
+  elsif @DATA['NOT_DNS'].has_key? server_alias
+    puts "DUPSET: NotDNS: #{server_alias} #{entries.inspect}"
+  else
+    begin
+      alias_addresses = Dnsruby::Resolv.getaddresses(server_alias)
+      apps_matched = []
+      unmatched = []
+
+      alias_addresses.each do |addr|
+        resolved_entries.each do |res|
+          if addr == res[0]
+            apps_matched << res[1]
+          else 
+            unmatched << addr
+          end
+        end
+      end
+
+      if apps_matched.length == 0
+        puts "DUPSET: NotAnyApps: #{server_alias} #{entries.inspect}"
+      elsif apps_matched.length == 1
+        puts "DUPSET: OneApp: #{server_alias} #{entries.inspect}"
+      elsif unmatched.length > 0
+        puts "DUPSET: Mixed: #{server_alias} #{entries.inspect}"
+      else
+        puts "DUPSET: MoreThanOneApp: #{server_alias} #{entries.inspect}"
+      end
+    rescue Dnsruby::NXDomain
+      puts "DUPSET: NotResolve: #{server_alias} #{entries.inspect}"
+    end
+  end
+  
+
+end
+
