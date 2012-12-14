@@ -60,7 +60,7 @@ echo "Creating and sending tar.gz" 1>&2
 # Cleanup
 for db in $(get_attached_databases)
 do
-    cleanup_cmd=${CARTRIDGE_BASE_PATH}/db/info/bin/cleanup.sh
+    cleanup_cmd=${CARTRIDGE_BASE_PATH}/$db/info/bin/cleanup.sh
     echo "Running extra cleanup for $db" 1>&2
     $cleanup_cmd
 done
