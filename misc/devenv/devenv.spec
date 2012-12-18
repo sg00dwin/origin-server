@@ -8,7 +8,7 @@
 
 Summary:   Dependencies for OpenShift development
 Name:      rhc-devenv
-Version: 1.3.1
+Version: 1.3.2
 Release:   1%{?dist}
 Group:     Development/Libraries
 License:   GPLv2
@@ -672,6 +672,9 @@ restorecon /etc/openshift/node.conf || :
 /sbin/service libra-data restart > /dev/null 2>&1 || :
 
 %changelog
+* Tue Dec 18 2012 Adam Miller <admiller@redhat.com> 1.3.2-1
+- change site and broker confs for passenger 3.0.17 (admiller@redhat.com)
+
 * Wed Dec 12 2012 Adam Miller <admiller@redhat.com> 1.3.1-1
 - bump_minor_versions for sprint 22 (admiller@redhat.com)
 
