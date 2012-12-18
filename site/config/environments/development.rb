@@ -35,7 +35,7 @@ RedHatCloud::Application.configure do
     :register_secret => 'c0ldW1n3',
     :user_info_secret => 'sw33tl1Qu0r',
     :cookie_domain => :nil,
-    :timeout => 5
+    :timeout => 20
   }
   config.captcha_secret = 'zvw5LiixMB0I4mjk06aR'
   config.sso_verify_interval = 0
