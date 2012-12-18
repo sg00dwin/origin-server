@@ -144,6 +144,10 @@ rm -rf %{buildroot}
 %{sitedir}/public
 
 %changelog
+* Tue Dec 18 2012 Adam Miller <admiller@redhat.com> 1.3.2-2
+- bump site.spec Release: for fake chain-build with console
+  (admiller@redhat.com)
+
 * Tue Dec 18 2012 Adam Miller <admiller@redhat.com> 1.3.2-1
 - Merge pull request #720 from sg00dwin/failed-login-inputs
   (openshift+bot@redhat.com)
