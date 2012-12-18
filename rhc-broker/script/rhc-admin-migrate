@@ -379,23 +379,25 @@ def migrate(version, continue=false, target_server_identity=nil, migrate_positio
       add_to(timings, node_timings)
       add_to(acceptable_errors, node_acceptable_errors)
       # Get the next available node to process
-      server_identity = nil
-      mutex.synchronize do
-        unless node_queue.empty?
-          node = node_queue.delete_at(0)
-          server_identity = node[:server_identity]
-          gear_cnts[index] += node[:gears_length]
-          gear_cnt += node[:gears_length]
-          puts "#####################################################"
-          puts "Remaining node queue:"
-          puts node_queue.pretty_inspect
-          puts "#####################################################"
+      while !node_queue.empty? do
+        server_identity = nil
+        mutex.synchronize do
+          unless node_queue.empty?
+            node = node_queue.delete_at(0)
+            server_identity = node[:server_identity]
+            gear_cnts[index] += node[:gears_length]
+            gear_cnt += node[:gears_length]
+            puts "#####################################################"
+            puts "Remaining node queue:"
+            puts node_queue.pretty_inspect
+            puts "#####################################################"
+          end
         end
-      end
-      if server_identity
-        node_timings, node_acceptable_errors = migrate_node(server_identity, continue)
-        add_to(timings, node_timings)
-        add_to(acceptable_errors, node_acceptable_errors)
+        if server_identity
+          node_timings, node_acceptable_errors = migrate_node(server_identity, continue)
+          add_to(timings, node_timings)
+          add_to(acceptable_errors, node_acceptable_errors)
+        end
       end
     end
   end
