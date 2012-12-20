@@ -5,6 +5,8 @@ Version: 1.1.0
 License: GPLv2
 Vendor:  
 Website: "https://openshift.redhat.com/"
+Categories:
+  - embedded
 Cart-Data:
   - Key: connection_url
     Type: cart_data
@@ -17,18 +19,11 @@ Native-Requires:
 Architecture: noarch
 Reservations:
   - MEM >= 100MB
-Components:
-  default:
-#     Dependencies: [openshift-origin-cartridge-php]
-     Publishes:
-        get-proxy-path:
-          Type: "STRING:proxy-path"
-        get-serve-info:
-          Type: "NET_TCP:db-config:url"
-Groups:
-  default:
-    Components:
-      default : default
-    Scaling:
-      Min: 1
-      Max: 1
+Publishes:
+  get-proxy-path:
+    Type: "STRING:proxy-path"
+  get-serve-info:
+    Type: "NET_TCP:db-config:url"
+Scaling:
+  Min: 1
+  Max: 1
