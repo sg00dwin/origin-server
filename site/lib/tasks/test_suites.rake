@@ -98,6 +98,26 @@ namespace :test do
       ])
     end
 
+    Rake::TestTask.new :external_integration => ['test:prepare'] do |t|
+      t.libs << 'test'
+      covered.concat(t.test_files = FileList[
+        # Aria and some Streamline
+        'test/integration/aria_test.rb',
+        'test/functional/account_controller_test.rb',
+        'test/integration/plan_signup_flow_test.rb',
+        'test/functional/billing_info_controller_test.rb',
+        'test/functional/plans_controller_test.rb',
+        'test/functional/payment_methods_controller_test.rb',
+        'test/functional/account_upgrades_controller_test.rb',
+        'test/functional/account_upgrade_payment_method_controller_test.rb',
+        'test/functional/account_upgrade_billing_info_controller_test.rb',
+
+        # Streamline only
+        'test/integration/streamline_test.rb',
+        'test/integration/login_flows_test.rb',
+      ])
+    end
+
     Rake::TestTask.new :base => ['test:prepare'] do |t|
       t.libs << 'test'
       t.test_files = FileList['test/**/*_test.rb'] - covered
@@ -105,5 +125,5 @@ namespace :test do
   end
 
   task :check => Rake::Task.tasks.select{ |t| t.name.match(/\Atest:check:/) }.map(&:name)
-  task :extended => []
+  task :extended => ['test:check:external_integration']
 end
