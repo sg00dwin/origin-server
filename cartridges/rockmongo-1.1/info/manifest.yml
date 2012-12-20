@@ -8,6 +8,7 @@ Website: http://rockmongo.com/
 Provides:
   - "rockmongo"
 Requires:
+  - "mongodb"
 Conflicts:
 Cart-Data:
   - Key: connection_url
