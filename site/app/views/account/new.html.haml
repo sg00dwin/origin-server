@@ -1,36 +1,54 @@
+- @suppress_ribbon = true
 - content_for :title, 'Create an account'
 
-= semantic_form_for @user, :url => account_path, :simple => true, :html => {:id => 'new_user_form', :class => 'form-horizontal'} do |form|
-  %div.control-group-important
-    %input{:type => "hidden", :name => "then", :value => @redirect }
-    %input{:type => "hidden", :name => "captcha_secret", :value => @captcha_secret }
-    = form.hidden_field :cloud_access_choice, :value => CloudAccess::EXPRESS
-    = form.semantic_errors
-    = form.inputs do
-      = form.input :email_address, :input_html => { :type => 'email', :class => 'input-xlarge', :placeholder => 'Enter a valid email address', :autofocus => true }
-      = form.input :password, :input_html => { :class => 'input-xlarge', :autocomplete => 'off', :placeholder => 'At least 6 characters', :maxlength => '50' }
-      = form.input :password_confirmation, :input_html => { :class => 'input-xlarge', :autocomplete => 'off', :placeholder => 'Enter it again', :maxlength => '50' }
-    
-      - if @user.promo_code == nil or @user.promo_code.empty?
-        .control-group{:'data-hide-parent' => '1'}
-          .controls
-            = link_to 'Have a promo code to enter?',
-                new_account_path(:web_user => {:promo_code => ' '}),
-                :style => 'font-size: 14px;',
-                :'data-unhide' => '#promo_code'
-    
-      #promo_code{:class => (@user.promo_code == nil or @user.promo_code.empty?) ? 'hidden' : ''}
-        = form.input :promo_code, :label => 'Promotional Code', :required => false, :input_html => { :class => 'input-xlarge' }
-
-    = form.inputs do
-      = input_recaptcha(:errors => @user.errors[:captcha]) unless controller.skip_captcha?
-    
-      .form-actions
-        %p
+.column-1
+  %h1 Create an account
+  = semantic_form_for @user, :url => account_path, :simple => true, :html => {:id => 'new_user_form', :class => ''} do |form|
+    %div.control-group-important
+      %input{:type => "hidden", :name => "then", :value => @redirect }
+      %input{:type => "hidden", :name => "captcha_secret", :value => @captcha_secret }
+      = form.hidden_field :cloud_access_choice, :value => CloudAccess::EXPRESS
+      = form.semantic_errors
+      = form.inputs do
+        = form.input :email_address, :input_html => { :type => 'email', :class => 'max', :placeholder => 'Valid email address', :autofocus => true }
+        = form.input :password, :input_html => { :class => 'max', :autocomplete => 'off', :placeholder => 'At least 6 characters', :maxlength => '50' }
+        = form.input :password_confirmation, :input_html => { :class => 'max', :autocomplete => 'off', :placeholder => 'Enter it again', :maxlength => '50' }
+      
+        - if @user.promo_code == nil or @user.promo_code.empty?
+          .control-group{:'data-hide-parent' => '1'}
+            .controls
+              = link_to 'Have a promo code to enter?',
+                  new_account_path(:web_user => {:promo_code => ' '}),
+                  :style => 'font-size: 14px;',
+                  :'data-unhide' => '#promo_code'
+      
+        #promo_code{:class => (@user.promo_code == nil or @user.promo_code.empty?) ? 'hidden' : ''}
+          = form.input :promo_code, :label => 'Promotional Code', :required => false, :input_html => { :class => 'max', :placeholder => 'Promo code' }
+  
+      = form.inputs do
+        = input_recaptcha(:errors => @user.errors[:captcha]) unless controller.skip_captcha?
+        %p{:style => "font-size: 12px"}
           By signing up you agree to the 
           = link_to 'Terms of Service', terms_of_service_url
           and the
           = link_to 'Privacy Policy', privacy_policy_url
-        = form.commit_button 'Sign Up', :button_html => {:class => 'btn btn-primary btn-block-phone btn-large'}
-        or
-        = link_to 'sign in if you have an account', login_path(:then => @redirect), :data => {:submit_email_address => 'web_user[rhlogin]'}
+      
+        .form-actions
+          = form.commit_button 'Sign Up', :button_html => {:class => 'btn btn-primary btn-block-phone btn-large'}
+
+.column-2
+  %h2{:style => "margin-top: 6px"}
+    Already have an account?
+    = link_to 'Sign in', login_path(:then => @redirect), :data => {:submit_email_address => 'web_user[rhlogin]'}
+  :plain
+    <p style="margin-top: 35px; font-size: 14.5px"><strong>You'll love OpenShift because it has:</strong></p>
+    <ul class="spaced-items">
+      <li>Built-in support for Java, Node.js, Ruby, Python, PHP, Perl and extensible functionality to add other languages.</li>
+      <li>Powerful command line client tools and a web management console to launch and manage your applications </li>
+      <li>Pre-created quickstarts to instantaneously boot your favorite application framework </li>
+      <li>A vibrant community forum watched around the clock by an army of developers, evangelists, and OpenShift devotees. </li>
+      <li>A wide range of developer resources, including technology specific get started pages, how-to blog posts and videos.</li>
+    </ul>
+  
+  
+      
