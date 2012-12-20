@@ -40,15 +40,14 @@
   %h2{:style => "margin-top: 6px"}
     Already have an account?
     = link_to 'Sign in', login_path(:then => @redirect), :data => {:submit_email_address => 'web_user[rhlogin]'}
-  :plain
-    <p style="margin-top: 35px; font-size: 14.5px"><strong>You'll love OpenShift because it has:</strong></p>
-    <ul class="spaced-items">
-      <li>Built-in support for Java, Node.js, Ruby, Python, PHP, Perl and extensible functionality to add other languages.</li>
-      <li>Powerful command line client tools and a web management console to launch and manage your applications </li>
-      <li>Pre-created quickstarts to instantaneously boot your favorite application framework </li>
-      <li>A vibrant community forum watched around the clock by an army of developers, evangelists, and OpenShift devotees. </li>
-      <li>A wide range of developer resources, including technology specific get started pages, how-to blog posts and videos.</li>
-    </ul>
+  %p{:style => "margin-top: 35px; font-size: 14.5px"}  
+    %strong You'll love OpenShift because it has:
+  %ul.spaced-items
+    %li Built-in support for Java, Node.js, Ruby, Python, PHP, Perl and extensible functionality to add other languages.
+    %li Powerful command line client tools and a web management console to launch and manage your applications
+    %li Pre-created quickstarts to instantaneously boot your favorite application framework
+    %li A vibrant community forum watched around the clock by an army of developers, evangelists, and OpenShift devotees.
+    %li A wide range of developer resources, including technology specific get started pages, how-to blog posts and videos.
   
   
       
