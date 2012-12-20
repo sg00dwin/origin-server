@@ -1,6 +1,6 @@
 #top.section-top
-  .masthead-enterprise
-    %a{:href => enterprise_product_url}
+  - if content_for? :top_banner
+    = yield :top_banner
   .container
     = link_to "Status", status_path, :title => 'Track open issues on the OpenShift status page', :class => 'btn btn-small btn-warning', :style => 'display:none;', :id => 'outage'
     .pull-right.login
@@ -26,7 +26,7 @@
       -#= link_to "Newsletter Sign Up", newsletter_signup_url
       -#= link_to "Plans and Pricing", pricing_url, :class => 'pricing'
       = link_to enterprise_product_url do
-        %span> Streamline App Delivery with
+        %span Streamline App Delivery with
         OpenShift Enterprise
 
 %nav#nav{:class => ((content_for? :nav_class) ? content_for(:nav_class) : 'section-nav lift-counter')}
