@@ -8,7 +8,7 @@
 
 Summary:   Dependencies for OpenShift development
 Name:      rhc-devenv
-Version: 1.3.2
+Version:   1.3.3
 Release:   1%{?dist}
 Group:     Development/Libraries
 License:   GPLv2
@@ -27,6 +27,7 @@ Requires:  openshift-origin-cartridge-jbossas-7
 Requires:  openshift-origin-cartridge-jbosseap-6.0
 Requires:  openshift-origin-cartridge-switchyard-0.6
 Requires:  openshift-origin-cartridge-jbossews-1.0
+Requires:  openshift-origin-cartridge-jbossews-2.0
 Requires:  openshift-origin-cartridge-perl-5.10
 Requires:  openshift-origin-cartridge-mysql-5.1
 Requires:  openshift-origin-cartridge-phpmyadmin-3.4
@@ -672,6 +673,9 @@ restorecon /etc/openshift/node.conf || :
 /sbin/service libra-data restart > /dev/null 2>&1 || :
 
 %changelog
+* Thu Dec 20 2012 William DeCoste <wdecoste@redhat.com> 1.3.3-1
+- enable ews2
+
 * Tue Dec 18 2012 Adam Miller <admiller@redhat.com> 1.3.2-1
 - change site and broker confs for passenger 3.0.17 (admiller@redhat.com)
 
