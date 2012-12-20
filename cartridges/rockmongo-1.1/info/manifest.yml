@@ -5,36 +5,28 @@ Version: 1.1.0
 License: ASL 2.0
 Vendor: code.google.com/p/rock-php/wiki/rock_mongo
 Website: http://rockmongo.com/
+Categories:
+  - embedded
 Provides:
+  - rockmongo-1.1
   - "rockmongo"
 Requires:
   - "mongodb"
-Conflicts:
 Cart-Data:
   - Key: connection_url
     Type: cart_data
     Description: "RockMongo connection URL"
-Native-Requires:
-Architecture: noarch
 Reservations:
   - MEM >= 100MB
-Components:
-  default:
-#    Dependencies: [rhc-openshift-origin-cartridge-php]
-    Service-Dependencies: ["mongodb-2.2"]
-    Publishes:
-      get-serve-info:
-        Type: "NET_TCP:db-config:url"
-    Subscribes:
-      set-mongo-connection-info:
-        Type: "NET_TCP:db:mongodb"
-        Required : true
-Groups:
-  default:
-    Components:
-      default : default
-    Scaling:
-      Min: 1
-      Max: 1
+Publishes:
+  get-serve-info:
+    Type: "NET_TCP:db-config:url"
+Subscribes:
+  set-mongo-connection-info:
+    Type: "NET_TCP:db:mongodb"
+    Required : true
+Scaling:
+  Min: 1
+  Max: 1
 Endpoints:
   - PROXY_PORT: 8080
