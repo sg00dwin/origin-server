@@ -173,6 +173,7 @@ Requires:  drupal6-wikitools
 Requires:  drupal6-wysiwyg
 Requires:  drupal6-openshift-features-community_wiki
 Requires:  drupal6-clamav
+Requires:  drupal6-xmlsitemap
 
 # Security ClamAV Requirements
 Requires:  clamav
