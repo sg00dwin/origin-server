@@ -25,10 +25,6 @@ Given /^an accepted node$/ do
 end
 
 Given /^the libra client tools$/ do
-  assert_file_exists $create_app_script
-  assert_file_exists $create_domain_script
   assert_file_exists $client_config
-  assert_file_exists $ctl_app_script
-
   assert_file_exists $rhc_script
 end
