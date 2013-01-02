@@ -40,21 +40,21 @@ a:hover,a:active {text-decoration: underline;}
 .table {
   th,
   td {
-    border-color: #383838;
+    border-color: $consoleTableBorderColor;
   }
   // Account for multiple tbody instances
   tbody + tbody {
-    border-color: #383838;
+    border-color: $consoleTableBorderColor;
   }
 }
 
 .table-bordered {
-  border-color: #383838;
+  border-color: $consoleTableBorderColor;
   th + th,
   td + td,
   th + td,
   td + th {
-    border-color: #383838;
+    border-color: $consoleTableBorderColor;
   }
 }
 
@@ -63,18 +63,16 @@ a:hover,a:active {text-decoration: underline;}
   tbody {
     tr:nth-child(odd) td,
     tr:nth-child(odd) th {
-      background-color: rgba(255,255,255,0.02);
+      background-color: $consoleTableStriped;
     }
   }
 }
 .table {
   tbody tr:hover td,
   tbody tr:hover th {
-    background-color: rgba(255,255,255,0.04);
+    background-color: $consoleTableStripedHover;
   }
 }
-
-.ie9 .table-fixed, .ie8 .table-fixed, .ie7 .table-fixed { table-layout: fixed } // allow td text-overflow
 
 
 // Forms
