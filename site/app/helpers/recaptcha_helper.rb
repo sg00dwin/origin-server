@@ -10,7 +10,7 @@ module RecaptchaHelper
         <div>
           <input type="text" class="max" placeholder="Type the words that appear below" id="recaptcha_response_field" name="recaptcha_response_field" />
           <div class="help-inline recaptcha_only_if_incorrect_so" style="#{options[:errors].present? ? '' : 'display:none;'}">Incorrect, please try again</div>
-          <div style="margin-top: 10px;" id="recaptcha_image"></div>
+          <div style="margin-top: 10px;" id="recaptcha_image" class="img-captcha img-recaptcha"></div>
 
           <div class='btn-toolbar btn-group'>
             <a class='btn btn-mini' href="javascript:Recaptcha.reload()">Get another</a>

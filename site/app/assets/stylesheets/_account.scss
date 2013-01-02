@@ -253,7 +253,7 @@ body.simple {
 .ie9 body.simple .gradient {filter: none;}/* IE9 SVG, needs conditional override of 'filter' to 'none'  */
 
 @media (max-width: 979px) {
-  #recaptcha_image {
+  .img-captcha, .img-recaptcha {
     max-width: 275px;
   }
 }
@@ -277,7 +277,7 @@ body.simple {
 }
 
 @media (max-width: 320px) {
-  #recaptcha_image {
+  .img-captcha, .img-recaptcha {
     max-width: 240px;
   }
 }
