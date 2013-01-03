@@ -46,7 +46,7 @@ class Watchman
       total_count = 0
       Dir[@var_lib + '/*'].each {|app_path|
         app_uuid = File.basename(app_path)
-        if app_uuid =~ /^[a-f0-9]{32}$/
+        if app_uuid =~ /^[a-f0-9]{24,32}$/
           begin
             # reduce load on node by skipping non-running apps
             app_env[app_uuid] = read_env(app_path) if is_running? app_uuid
@@ -69,7 +69,7 @@ class Watchman
         ts = DateTime.strptime(msg, '%b %d %T')
         timestamp = DateTime.civil(ts.year, ts.month, ts.day, ts.hour, ts.min, ts.sec, epoch.zone)
 
-        uuid = msg.scan(/[a-f0-9]{32}/).first
+        uuid = msg.scan(/[a-f0-9]{24,32}/).first
 
         # Skip any messages that occurred before we were started.
         # Assume those have been dealt with manually or on a previous run. 
