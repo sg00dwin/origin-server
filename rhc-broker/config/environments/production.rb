@@ -157,6 +157,7 @@ Broker::Application.configure do
           :plan_no => 10044929,
           :name => "FreeShift",
           :capabilities => {
+            'subaccounts' => false,
             'max_gears' => 3,
             'gear_sizes' => ["small"]
           }
@@ -165,6 +166,7 @@ Broker::Application.configure do
           :plan_no => 10044931,
           :name => "MegaShift",
           :capabilities => {
+            'subaccounts' => false,
             'max_gears' => 16,
             'gear_sizes' => ["small", "medium"],
             'max_storage_per_gear' => 30 # 30GB

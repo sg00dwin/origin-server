@@ -17,14 +17,14 @@ class UserExtController < UserController
   def update 
     unless @cloud_user
       log_action(@request_id, 'nil', @login, "UPDATE_USER", true, "User '#{@login}' not found")
-      return render_format_error(:not_found, "User not found", 99)
+      return render_error(:not_found, "User not found", 99)
     end
 
     begin
       @cloud_user.update_plan(params[:plan_id])
     rescue Exception => e
-      return render_format_exception(e, "UPDATE_USER")
+      return render_exception(e, "UPDATE_USER")
     end
-    render_format_success(:ok, "account", get_rest_user(@cloud_user), "UPDATE_USER", "Plan successfully changed")
+    render_success(:ok, "account", get_rest_user(@cloud_user), "UPDATE_USER", "Plan successfully changed")
   end
 end

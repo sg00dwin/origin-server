@@ -42,36 +42,40 @@ class CloudUser
       raise OpenShift::UserException.new("User #{self.login} has more consumed gears(#{self.consumed_gears}) than the '#{plan_id}' plan allows.", 153)
     end
     if plan_capabilities.has_key?("gear_sizes")
-      self.applications.each do |app|
-        if !plan_capabilities["gear_sizes"].include?(app.node_profile)
-          raise OpenShift::UserException.new("User #{self.login}, application '#{app.name}' has '#{app.node_profile}' type gear that the '#{plan_id}' plan does not allow.", 154)
-        end
-      end if self.applications
+      self.domains.each do |domain|
+        domain.applications.each do |app|
+          app.group_instances.uniq.each do |ginst|
+            if !plan_capabilities["gear_sizes"].include?(ginst.gear_size)
+              raise OpenShift::UserException.new("User #{self.login}, application '#{app.name}' has '#{ginst.gear_size}' type gear that the '#{plan_id}' plan does not allow.", 154)
+            end
+          end if app.group_instances
+        end if domain.applications
+      end if self.domains
     end
     addtl_storage = 0
     addtl_storage = plan_capabilities["max_storage_per_gear"] if plan_capabilities.has_key?("max_storage_per_gear")
-    self.applications.each do |app|
-      app.group_instances.uniq.each do |ginst|
-        if ginst.addtl_fs_gb && (ginst.addtl_fs_gb > addtl_storage)
-          carts = []
-          carts = ginst.gears[0].cartridges if ginst.gears[0]
-          raise OpenShift::UserException.new("User #{self.login}, application '#{app.name}', gears having [#{carts.join(",")}] components has additional file-system storage of #{ginst.addtl_fs_gb} GB that the '#{plan_id}' plan does not allow.", 159)
-        end
-      end if app.group_instances
-    end if self.applications
+    self.domains.each do |domain|
+      domain.applications.each do |app|
+        app.group_instances.uniq.each do |ginst|
+          if ginst.addtl_fs_gb && (ginst.addtl_fs_gb > addtl_storage)
+            carts = []
+            carts = ginst.gears[0].cartridges if ginst.gears[0]
+            raise OpenShift::UserException.new("User #{self.login}, application '#{app.name}', gears having [#{carts.join(",")}] components has additional file-system storage of #{ginst.addtl_fs_gb} GB that the '#{plan_id}' plan does not allow.", 159)
+          end
+        end if app.group_instances
+      end if domain.applications
+    end if self.domains
   end
 
   def assign_plan(plan_id, persist=false)
     plan_info = get_plan_info(plan_id)
     plan_capabilities = plan_info[:capabilities]
     user_capabilities = plan_capabilities.dup
-    user_capabilities.delete('max_gears')
 
     self.plan_id = plan_id
     self.capabilities_will_change!
     self.set_capabilities(user_capabilities)
-    self.max_gears = plan_capabilities['max_gears'] if plan_capabilities.has_key?('max_gears')
-    self.save if persist
+    self.save! if persist
   end
 
   def get_billing_account_no
@@ -119,7 +123,6 @@ class CloudUser
 
     old_plan_id = self.plan_id
     old_capabilities = self.get_capabilities
-    old_max_gears = old_capabilities["max_gears"]
     cur_time = Time.now.utc
     self.pending_plan_id = plan_id
     self.pending_plan_uptime = cur_time
@@ -138,7 +141,6 @@ class CloudUser
       self.plan_id = old_plan_id
       self.capabilities_will_change!
       self.set_capabilities(old_capabilities)
-      self.max_gears = old_max_gears
       self.save
       Rails.logger.error e
       raise
