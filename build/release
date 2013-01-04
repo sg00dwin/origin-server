@@ -283,13 +283,7 @@ class Release < Thor
       if after_date.nil? or after_date.empty?
         # Define a month timeline to trim down the package list to process
         # from brew's output
-        t = Time.new
-        if t.month == 1
-          last_month = 12
-        else
-          last_month = t.month - 1
-        end
-        after_date = "#{t.year}-#{last_month}-#{t.day}"
+        after_date = (Time.new - 60*60*24*30).strftime("%Y-%m-%d")
       end
 
       pkgs_need_tagging = get_packages_to_tag(src_brew_tag, target_brew_tag, after_date, options.include_internal?)
