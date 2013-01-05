@@ -141,16 +141,15 @@ class AppEventsTest < ActionDispatch::IntegrationTest
 
     # expose-port application
     request_via_redirect(:post, APP_EVENTS_URL_FORMAT % [ns, "app1"], {:event => "expose-port"}, @headers)
-    assert_response :ok
+    assert_response :gone
 
     # conceal-port application
     request_via_redirect(:post, APP_EVENTS_URL_FORMAT % [ns, "app1"], {:event => "conceal-port"}, @headers)
-    assert_response :ok
+    assert_response :gone
 
-    #no longer supported
     # show-port application
-    #request_via_redirect(:post, APP_EVENTS_URL_FORMAT % [ns, "app1"], {:event => "show-port"}, @headers)
-    #assert_response :ok
+    request_via_redirect(:post, APP_EVENTS_URL_FORMAT % [ns, "app1"], {:event => "show-port"}, @headers)
+    assert_response :gone
 
     # query application after all events
     request_via_redirect(:get, APP_URL_FORMAT % [ns, "app1"], {}, @headers)
@@ -206,14 +205,6 @@ class AppEventsTest < ActionDispatch::IntegrationTest
     # add-alias application - specify same alias again
     request_via_redirect(:post, APP_EVENTS_URL_FORMAT % [ns, "app1"], {:event => "add-alias", :alias => "alias#{@random}"}, @headers)
     assert_response :unprocessable_entity
-    body = JSON.parse(@response.body)
-    assert_equal(body["messages"][0]["exit_code"], 140)
-
-    # remove-alias application - non-existant alias
-    request_via_redirect(:post, APP_EVENTS_URL_FORMAT % [ns, "app1"], {:event => "remove-alias", :alias => "newalias#{@random}"}, @headers)
-    assert_response :unprocessable_entity
-    body = JSON.parse(@response.body)
-    assert_equal(body["messages"][0]["exit_code"], 255)
 
     # remove-alias application
     request_via_redirect(:post, APP_EVENTS_URL_FORMAT % [ns, "app1"], {:event => "remove-alias", :alias => "alias#{@random}"}, @headers)
@@ -243,42 +234,16 @@ class AppEventsTest < ActionDispatch::IntegrationTest
     # scale-up application
     request_via_redirect(:post, APP_EVENTS_URL_FORMAT % [ns, "appnoscale"], {:event => "scale-up"}, @headers)
     assert_response :unprocessable_entity
-    body = JSON.parse(@response.body)
-    assert_equal(body["messages"][0]["exit_code"], 255)
 
     # create scalable application
     request_via_redirect(:post, APP_COLLECTION_URL_FORMAT % [ns], {:name => "app1", :cartridge => "php-5.3", :scale => true}, @headers)
     assert_response :created
 
-    # scale-down application
-    request_via_redirect(:post, APP_EVENTS_URL_FORMAT % [ns, "app1"], {:event => "scale-down"}, @headers)
-    assert_response :unprocessable_entity
-    body = JSON.parse(@response.body)
-    assert_equal(body["messages"][0]["exit_code"], 1)
-
-    # scale-up application
-    request_via_redirect(:post, APP_EVENTS_URL_FORMAT % [ns, "app1"], {:event => "scale-up"}, @headers)
-    assert_response :unprocessable_entity
-    body = JSON.parse(@response.body)
-    assert_equal(body["messages"][0]["exit_code"], 104)
-
-    # delete non-scalable application to free up gear
-    request_via_redirect(:delete, APP_URL_FORMAT % [ns, "appnoscale"], {}, @headers)
-    assert_response :no_content
-
     # scale-up application
     request_via_redirect(:post, APP_EVENTS_URL_FORMAT % [ns, "app1"], {:event => "scale-up"}, @headers)
     assert_response :ok
 
-    # query application after scaleup
-    request_via_redirect(:get, APP_URL_FORMAT % [ns, "app1"], {}, @headers)
-    assert_response :ok
-    body = JSON.parse(@response.body)
-    assert_equal(body["data"]["gear_count"], 3)
-    assert_equal(body["data"]["name"], "app1")
-    assert_equal(body["data"]["domain_id"], ns)
-
-    # scale-up application
+    # scale-up application - this should fail since the user has already consumed all 3 gears 
     request_via_redirect(:post, APP_EVENTS_URL_FORMAT % [ns, "app1"], {:event => "scale-up"}, @headers)
     assert_response :unprocessable_entity
     body = JSON.parse(@response.body)
@@ -292,7 +257,7 @@ class AppEventsTest < ActionDispatch::IntegrationTest
     request_via_redirect(:get, APP_URL_FORMAT % [ns, "app1"], {}, @headers)
     assert_response :ok
     body = JSON.parse(@response.body)
-    assert_equal(body["data"]["gear_count"], 2)
+    assert_equal(body["data"]["gear_count"], 1)
     assert_equal(body["data"]["name"], "app1")
     assert_equal(body["data"]["domain_id"], ns)
   end

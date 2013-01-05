@@ -118,6 +118,10 @@ class AppCartridgesTest < ActionDispatch::IntegrationTest
     request_via_redirect(:post, APP_COLLECTION_URL_FORMAT % [ns], {:name => "appnoscale", :cartridge => "php-5.3"}, @headers)
     assert_response :created
 
+    # create an extra non-scalable application to consume all gears
+    request_via_redirect(:post, APP_COLLECTION_URL_FORMAT % [ns], {:name => "appnoscale2", :cartridge => "php-5.3"}, @headers)
+    assert_response :created
+
     # embed an invalid cartridge
     request_via_redirect(:post, APP_CARTRIDGES_URL_FORMAT % [ns, "appnoscale"], {:name => "invalid-cartridge"}, @headers)
     assert_response :bad_request
@@ -165,8 +169,8 @@ class AppCartridgesTest < ActionDispatch::IntegrationTest
 #    assert(!body["data"]["embedded"].key?("mysql-5.1"))
 #    assert_equal(body["data"]["name"], "appscale")
 
-    # delete the non-scalable application to free up a gear
-    request_via_redirect(:delete, APP_URL_FORMAT % [ns, "appnoscale"], {}, @headers)
+    # delete the second non-scalable application to free up a gear
+    request_via_redirect(:delete, APP_URL_FORMAT % [ns, "appnoscale2"], {}, @headers)
     assert_response :no_content
 
     # check the user's consumed gears count

@@ -75,7 +75,7 @@ class DomainTest < ActionDispatch::IntegrationTest
     assert_equal(body["messages"][0]["exit_code"], 106)
 
     # domain name not alphanumeric
-    request_via_redirect(:post, DOMAIN_COLLECTION_URL, {:id => "domain_name", :nolinks => true}, @headers)
+    request_via_redirect(:post, DOMAIN_COLLECTION_URL, {:id => "domain_#{rand(5)}", :nolinks => true}, @headers)
     assert_response :unprocessable_entity
     body = JSON.parse(@response.body)
     assert_equal(body["messages"][0]["exit_code"], 106)
@@ -105,7 +105,7 @@ class DomainTest < ActionDispatch::IntegrationTest
     request_via_redirect(:post, DOMAIN_COLLECTION_URL, {:id => new_ns, :nolinks => true}, @headers)
     assert_response :conflict
     body = JSON.parse(@response.body)
-    assert_equal(body["messages"][0]["exit_code"], 158)
+    assert_equal(body["messages"][0]["exit_code"], 103)
   end
 
   def test_domain_update_validation
@@ -139,7 +139,7 @@ class DomainTest < ActionDispatch::IntegrationTest
     assert_equal(body["messages"][0]["exit_code"], 106)
 
     # new domain name not alphanumeric
-    request_via_redirect(:put, DOMAIN_COLLECTION_URL + "/#{ns}", {:id => "domain_name"}, @headers)
+    request_via_redirect(:put, DOMAIN_COLLECTION_URL + "/#{ns}", {:id => "domain_#{rand(5)}"}, @headers)
     assert_response :unprocessable_entity
     body = JSON.parse(@response.body)
     assert_equal(body["messages"][0]["exit_code"], 106)
