@@ -132,7 +132,11 @@ def print_summary(fix)
 end
 
 def get_user_obj(login)
-  user = CloudUser.find_by(login: login)
+  user = nil
+  begin
+    user = CloudUser.find_by(login: login)
+  rescue Mongoid::Errors::DocumentNotFound
+  end
   unless user
     puts "User '#{login}' not found"
     exit 1

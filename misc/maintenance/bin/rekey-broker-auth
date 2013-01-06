@@ -12,7 +12,11 @@ def rekey
   users = []
   if RHLOGINS
     RHLOGINS.each do |rhlogin|
-      user = CloudUser.find_by(login: rhlogin)
+      user = nil
+      begin
+        user = CloudUser.find_by(login: rhlogin)
+      rescue Mongoid::Errors::DocumentNotFound
+      end
       if user
         users << user
       else
