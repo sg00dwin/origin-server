@@ -24,6 +24,6 @@ p_usage if opt['help']
 
 users = CloudUser.find_all(nil)
 users.each do |user|
-  user.force_delete
+  user.delete
 end if users
 
