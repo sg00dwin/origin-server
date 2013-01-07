@@ -44,7 +44,7 @@ class StatusApp < Sinatra::Base
 
   get '*/status' do
     @open = Issue.is_open
-    @resolved = Issue.resolved.merge(Issue.year)
+    @resolved = Issue.resolved.recent
     haml :index
   end
   
