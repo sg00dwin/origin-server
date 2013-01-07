@@ -198,12 +198,13 @@ else
         user = get_user_obj(login)
         process_user(user, list, fix)
       else
-        CloudUser.find_all(nil, {:with_plan => true}) do |user_hash|
-          user = CloudUser.hash_to_obj(user_hash)
+        CloudUser.with_plan do |user|
           process_user(user, list, fix)
         end
         print_summary(fix)
       end
+    rescue Mongoid::Errors::DocumentNotFound
+      # No users found
     ensure
       Express::Broker::DistributedLock.release_lock("billing_plan", hostname)
     end

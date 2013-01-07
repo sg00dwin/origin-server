@@ -129,7 +129,7 @@ class CloudUser
 
     #to minimize the window where the user can create gears without being on megashift plan
     self.assign_plan(default_plan_id) if old_plan_id && (old_plan_id != default_plan_id)
-    self.save
+    self.save!
 
     billing_api = Express::AriaBilling::Api.instance
     begin
@@ -141,7 +141,7 @@ class CloudUser
       self.plan_id = old_plan_id
       self.capabilities_will_change!
       self.set_capabilities(old_capabilities)
-      self.save
+      self.save!
       Rails.logger.error e
       raise
     end
