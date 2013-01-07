@@ -15,7 +15,7 @@ module OpenShift
     def destroy(app, gear, keep_uid=false, uid=nil, skip_hooks=false)
       unless skip_hooks
         web_framework_carts = CartridgeCache.cartridge_names("web_framework")
-        framework = app.component_instances.delete_if{ |cinst| not web_framework_carts.include?(cinst.cartridge_name)}.first
+        framework = app.component_instances.select{ |cinst| web_framework_carts.include?(cinst.cartridge_name)}.first
         Express::Broker::Nurture.application(app.domain.owner.login, app.domain.owner._id, app.name, app.domain.namespace, framework, "deconfigure", app._id.to_s, app.user_agent)
       end
       destroy_old(app, gear, keep_uid, uid, skip_hooks)
