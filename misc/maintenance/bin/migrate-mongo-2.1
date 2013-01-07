@@ -1,0 +1,143 @@
+#!/usr/bin/env ruby
+require 'rubygems'
+$:.unshift('/var/www/openshift/broker')
+require 'config/environment'
+
+def get_mongo_session
+  # Get Mongo session
+  config = Mongoid::Config.sessions["default"]
+  session = Moped::Session.new(config["hosts"])
+  session.use config["database"]
+  session.login(config["username"], config["password"])
+  session
+end
+
+def release_mongo_session(session)
+  # Exit session
+  session.logout
+end
+
+def migrate_user(user)
+  begin
+    cu = create_cloud_user(user)
+    dm = create_domains(user, cu)
+    create_applications(user, dm)
+  rescue Exception => e
+    puts "ERROR: Migration failed for User #{user['login']}: #{e.message}"
+    puts e.backtrace
+    return 1
+  end
+end
+
+def create_cloud_user(user)
+  cu = CloudUser.new
+  cu.login = user["login"] 
+  cu.consumed_gears = user["consumed_gears"]
+  cu.capabilities["max_gears"] = user["max_gears"]
+  cu.capabilities["subaccounts"] = user["capabilities"]["subaccounts"] if user["capabilities"].has_key?("subaccounts")
+  cu.capabilities["gear_sizes"] = user["capabilities"]["gear_sizes"] if user["capabilities"].has_key?("gear_sizes")
+  user["ssh_keys"].each do |ssh_key|
+    sk = SshKey.new
+    sk.name = ssh_key["name"]
+    sk.type = ssh_key["type"]
+    sk.content = ssh_key["content"]
+    cu.ssh_keys << sk
+  end if user.has_key?("ssh_keys")
+  cu.parent_user_id = CloudUser.find_by(login: user["parent_user_login"])._id
+  cu.plan_id = user["plan_id"]  if user.has_key?("plan_id")
+  cu.pending_plan_id = user["pending_plan_id"]  if user.has_key?("pending_plan_id")
+  cu.pending_plan_uptime = user["pending_plan_uptime"]  if user.has_key?("pending_plan_uptime")
+  cu.usage_account_id = user["usage_account_id"] if user.has_key?("usage_account_id")
+  cu.save!
+  Lock.create_lock(cu)
+  cu
+end
+
+def create_domains(user, cloud_user_obj)
+  dm = nil
+  if user.has_key?("domains")
+    num_doms = user["domains"].length
+    raise Exception.new("ERROR: user #{user['login']} has more than 1 domain") if num_doms > 1
+    if num_doms == 1
+      domain = user["domains"][0]
+      dm = Domain.new
+      dm.namespace = domain["namespace"]
+      dm.canonical_namespace = dm.namespace.downcase
+      dm.owner_id = cloud_user_obj._id
+      dm.user_ids << cloud_user_obj._id 
+      user["system_ssh_keys"].each do |ssh_key|
+        ssk = SystemSshKey.new
+        ssk = ssh_key["name"]
+        ssk = ssh_key["type"]
+        ssk = ssh_key["content"]
+        dm.system_ssh_keys << ssk
+      end if user.has_key?("system_ssh_keys")
+      #dm.env_vars =
+      dm.save!
+    end
+  end
+  dm
+end
+
+def create_applications(user, domain_obj)
+  user["apps"].each do |uapp|
+    app = Application.new
+    #app._id = Moped::BSON::ObjectId.from_string(uapp["uuid"].to_s)
+    app.name = uapp["name"]
+    app.canonical_name = app.name.downcase
+    app.scalable = uapp["scalable"]
+    app.init_git_url = uapp["init_git_url"] if uapp.has_key?("init_git_url") 
+    app.default_gear_size = uapp["node_profile"]
+    uapp["ssh_keys"].each do |ssh_key|
+      ask = ApplicationSshKey.new
+      ask = ssh_key["name"]
+      ask = ssh_key["type"]
+      ask = ssh_key["content"]
+      app.app_ssh_keys << ask
+    end if uapp.has_key?("ssh_keys")
+    app.domain_id = domain_obj._id
+    cinst_map = {}
+    uapp["comp_instances"].each do |comp_inst|
+      next if comp_inst["parent_cart_name"] == app.name
+      if cinst_map[comp_inst["parent_cart_name"]]
+        ci = cinst_map[comp_inst["parent_cart_name"]]
+        ci.component_properties = ci.component_properties.merge(comp_inst["cart_properties"])
+      else
+        ci = ComponentInstance.new
+        ci.cartridge_name = comp_inst["parent_cart_name"]
+        ci.component_name = CartridgeCache.find_cartridge(ci.cartridge_name).profiles[0].components[0].name
+        ci.component_properties = comp_inst["cart_properties"]
+        app.component_instances << ci
+        cinst_map[comp_inst["parent_cart_name"]] = ci
+      end
+    end if uapp.has_key?("comp_instances")
+=begin
+    app.domain_requires = 
+    app.component_instances = 
+    app.component_configure_order = 
+    app.component_start_order =
+    app.component_stop_order = 
+    app.group_instances = 
+    app.group_overrides =
+    app.aliases = 
+=end
+    app.save!
+  end if user.has_key?("apps")
+end
+
+puts "Migration Started..."
+begin
+  session = get_mongo_session
+  users = session[:user]
+
+  users.find.to_a.each do |user|
+    puts "Processing user #{user['login']}"
+    #puts user.inspect
+    migrate_user(user)
+  end
+  release_mongo_session(session)
+rescue Exception => e
+  puts e.message
+  puts e.backtrace
+end
+puts "Migration Done!"
