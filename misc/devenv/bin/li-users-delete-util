@@ -22,8 +22,6 @@ end
 p_usage if opt['help']
 
 
-users = CloudUser.find_all(nil)
-users.each do |user|
-  user.delete
-end if users
-
+CloudUser.delete_all
+Domain.delete_all
+Application.delete_all
