@@ -8,9 +8,9 @@ module RecaptchaHelper
       <label class="control-label recaptcha_only_if_audio" for="recaptcha_response_field">Are you a spam bot?</label>
       <div class="controls">
         <div>
-          <input type="text" class="input-xlarge" placeholder="Type the words that appear below" id="recaptcha_response_field" name="recaptcha_response_field" />
+          <input type="text" class="max" placeholder="Type the words that appear below" id="recaptcha_response_field" name="recaptcha_response_field" />
           <div class="help-inline recaptcha_only_if_incorrect_so" style="#{options[:errors].present? ? '' : 'display:none;'}">Incorrect, please try again</div>
-          <p style="margin-top: 10px;" id="recaptcha_image"></p>
+          <div style="margin-top: 10px;" id="recaptcha_image" class="img-captcha img-recaptcha"></div>
 
           <div class='btn-toolbar btn-group'>
             <a class='btn btn-mini' href="javascript:Recaptcha.reload()">Get another</a>
@@ -18,7 +18,7 @@ module RecaptchaHelper
             <a class='btn btn-mini recaptcha_only_if_audio' href="javascript:Recaptcha.switch_type('image')">Get an image CAPTCHA</a>
             <a class='btn btn-mini' href="javascript:Recaptcha.showhelp()">Help</a>
           </div>
-          <p style="color: gray; font-size: 10px">reCAPTCHA provided by Google - help fight spam and fix books!</p>
+          <div style="color: #555; font-size: 10px;margin-top:-10px">reCAPTCHA provided by Google - help fight spam and fix books!</div>
         </div>
       </div>
     </div>

@@ -3,7 +3,6 @@
 // ----------------------------------
 
 html {height: 100%;}
-body {background-color: #4e4e4e; background-image: none;color: #BABBBC;min-height: 100%;}
 $noiseImage: image-url('noise.png') !default; 
  
 
@@ -87,20 +86,7 @@ $noiseImage: image-url('noise.png') !default;
     font-size: 28px;
     width: 235px;
   }
-} 
-
-
-label {
-    color: inherit;
 }
-.form-actions {
-    background-color: transparent;
-    border: 0;
-    padding: 0 0 18px;
-}
-
-
-
 
 h2 + ul, h3 + ul, h4 + ul {
   margin-top: 9px;
@@ -134,9 +120,6 @@ web_user_password_confirmation_input button.eye:hover {opacity: 1;}
 .column-2 {
   width: 48%;
   float: left;
-}
-.simple.login .form-actions, .simple.new .form-actions {
-  margin-top: 10px;
 }
 .simple.login h1 {
   margin-bottom: 14px;
@@ -205,6 +188,7 @@ web_user_password_confirmation_input button.eye:hover {opacity: 1;}
 
 body.simple {
   min-height: 100%;
+  background-color: #4e4e4e;
   background-image: 
     $noiseImage,
     -moz-linear-gradient(top,  rgba(0,0,0,0.4) 50%, rgba(0,0,0,0) 100%);
@@ -268,6 +252,12 @@ body.simple {
 
 .ie9 body.simple .gradient {filter: none;}/* IE9 SVG, needs conditional override of 'filter' to 'none'  */
 
+@media (max-width: 979px) {
+  .img-captcha, .img-recaptcha {
+    max-width: 275px;
+  }
+}
+
 @media (max-width: 767px) {
   body.simple {
     background-image: $noiseImage;
@@ -287,7 +277,7 @@ body.simple {
 }
 
 @media (max-width: 320px) {
-  #recaptcha_image {
-    max-width: 250px;
+  .img-captcha, .img-recaptcha {
+    max-width: 240px;
   }
 }
