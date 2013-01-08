@@ -1,5 +1,55 @@
-# www.robotstxt.org/
-# www.google.com/support/webmasters/bin/answer.py?hl=en&answer=156449
+# openshift.redhat.com
+# 2013-01-02
 
+# All agents allowed
 User-agent: *
+
+# Console
+Disallow: /app/console/
+
+# Directories
+Disallow: /community/includes/
+Disallow: /community/misc/
+Disallow: /community/modules/
+Disallow: /community/profiles/
+Disallow: /community/scripts/
+Disallow: /community/themes/
+
+# Files
+Disallow: /community/CHANGELOG.txt
+Disallow: /community/cron.php
+Disallow: /community/INSTALL.mysql.txt
+Disallow: /community/INSTALL.pgsql.txt
+Disallow: /community/install.php
+Disallow: /community/INSTALL.txt
+Disallow: /community/LICENSE.txt
+Disallow: /community/MAINTAINERS.txt
+Disallow: /community/update.php
+Disallow: /community/UPGRADE.txt
+Disallow: /community/xmlrpc.php
+
+# Paths (clean URLs)
+Disallow: /community/admin/
+Disallow: /community/comment/reply/
+Disallow: /community/filter/tips/
+Disallow: /community/logout/
+Disallow: /community/node/add/
+Disallow: /community/search/
+Disallow: /community/user/register/
+Disallow: /community/user/password/
+Disallow: /community/user/login/
+
+# Paths (no clean URLs)
+Disallow: /community/?q=admin/
+Disallow: /community/?q=comment/reply/
+Disallow: /community/?q=filter/tips/
+Disallow: /community/?q=logout/
+Disallow: /community/?q=node/add/
+Disallow: /community/?q=search/
+Disallow: /community/?q=user/password/
+Disallow: /community/?q=user/register/
+Disallow: /community/?q=user/login/
+
+# Path to sitemap
+Sitemap: https://openshift.redhat.com/sitemap.xml
 
