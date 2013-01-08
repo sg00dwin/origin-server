@@ -74,7 +74,7 @@ function redhat_frontpage(){
                  This is the place to learn and engage with OpenShift users and developers. <br />";
   } 
 
-  if ($num_rows > 0) {
+  if ($user->uid && $num_rows > 0) {
     $content .= "<br /><h3>My Threads</h3>";
     $content .= views_embed_view('forum_views', 'block_1', $user->uid);
   }

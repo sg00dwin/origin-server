@@ -31,9 +31,8 @@ class Issue < ActiveRecord::Base
   scope :is_open, :conditions => {:resolved_at => nil}, :order => 'resolved_at DESC'
   scope :unresolved, :conditions => {:resolved_at => nil}, :order => 'resolved_at DESC'
 
-  def self.year(year=nil)
-    year ||= Date.today.year
-    where("created_at > ?",DateTime.new(year))
+  def self.recent
+    where("created_at > ?", 3.months.ago)
   end
 end
 

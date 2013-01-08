@@ -5,5 +5,8 @@
 - @open.each do |issue|
   = haml :issue, :locals => { :issue => issue }
 %h2 Resolved Issues
+- if @resolved.empty?
+  %p 
+    %em No recent issues
 - @resolved.each do |issue|
   = haml :issue, :locals => { :issue => issue }
