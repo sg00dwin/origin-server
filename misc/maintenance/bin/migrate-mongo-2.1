@@ -36,14 +36,14 @@ def create_cloud_user(user)
   cu.capabilities["max_gears"] = user["max_gears"]
   cu.capabilities["subaccounts"] = user["capabilities"]["subaccounts"] if user["capabilities"].has_key?("subaccounts")
   cu.capabilities["gear_sizes"] = user["capabilities"]["gear_sizes"] if user["capabilities"].has_key?("gear_sizes")
-  user["ssh_keys"].each do |ssh_key|
+  user["ssh_keys"].each do |ssh_key_name, ssh_key|
     sk = SshKey.new
-    sk.name = ssh_key["name"]
+    sk.name = ssh_key_name
     sk.type = ssh_key["type"]
-    sk.content = ssh_key["content"]
+    sk.content = ssh_key["key"]
     cu.ssh_keys << sk
   end if user.has_key?("ssh_keys")
-  cu.parent_user_id = CloudUser.find_by(login: user["parent_user_login"])._id
+  # FIXME cu.parent_user_id = CloudUser.find_by(login: user["parent_user_login"])._id
   cu.plan_id = user["plan_id"]  if user.has_key?("plan_id")
   cu.pending_plan_id = user["pending_plan_id"]  if user.has_key?("pending_plan_id")
   cu.pending_plan_uptime = user["pending_plan_uptime"]  if user.has_key?("pending_plan_uptime")
@@ -62,16 +62,16 @@ def create_domains(user, cloud_user_obj)
       domain = user["domains"][0]
       dm = Domain.new
       dm.namespace = domain["namespace"]
-      dm.canonical_namespace = dm.namespace.downcase
+      #dm.canonical_namespace = dm.namespace.downcase
       dm.owner_id = cloud_user_obj._id
       dm.user_ids << cloud_user_obj._id 
-      user["system_ssh_keys"].each do |ssh_key|
+      user["system_ssh_keys"].each do |ssh_key_name, ssh_key|
         ssk = SystemSshKey.new
-        ssk = ssh_key["name"]
-        ssk = ssh_key["type"]
-        ssk = ssh_key["content"]
+        ssk.name = ssh_key_name
+        ssk.type = "ssh-rsa"
+        ssk.content = ssh_key
         dm.system_ssh_keys << ssk
-      end if user.has_key?("system_ssh_keys")
+      end if user["system_ssh_keys"]
       #dm.env_vars =
       dm.save!
     end
@@ -83,17 +83,17 @@ def create_applications(user, domain_obj)
   user["apps"].each do |uapp|
     app = Application.new
     #app._id = Moped::BSON::ObjectId.from_string(uapp["uuid"].to_s)
-    app.uuid = uapp["uuid"]
+    # app.uuid = uapp["uuid"]
     app.name = uapp["name"]
-    app.canonical_name = app.name.downcase
+    # app.canonical_name = app.name.downcase
     app.scalable = uapp["scalable"]
     app.init_git_url = uapp["init_git_url"] if uapp.has_key?("init_git_url") 
     app.default_gear_size = uapp["node_profile"]
-    uapp["ssh_keys"].each do |ssh_key|
+    uapp["ssh_keys"].each do |ssh_key_name, ssh_key|
       ask = ApplicationSshKey.new
-      ask = ssh_key["name"]
-      ask = ssh_key["type"]
-      ask = ssh_key["content"]
+      ask.name = ssh_key_name
+      ask.type = "ssh-rsa"
+      ask.content = ssh_key
       app.app_ssh_keys << ask
     end if uapp.has_key?("ssh_keys")
     app.domain_id = domain_obj._id
@@ -128,16 +128,20 @@ def create_group_instances(new_app, old_app)
     new_comp_inst_hash[ci.cartridge_name] = ci
   }
 
+  puts "component_instances : #{new_comp_inst_hash.inspect}"
+
   old_cinst_hash = {}
   old_app['comp_instances'].each { |old_ci|
     old_cinst_hash[old_ci['name']] = old_ci
   }
+  puts "old component_instances : #{old_cinst_hash.inspect}"
   old_app['group_instances'].each { |old_gi|
     this_gis_carts = []
     is_singleton = (not new_app.scalable)
     is_app_dns = (not new_app.scalable)
     old_gi['component_instances'].each { |comp_name|
       cartname = old_cinst_hash[comp_name]['parent_cart_name']
+      next if cartname==new_app.name
       is_app_dns = true if cartname=='haproxy-1.4' unless is_app_dns
       is_singleton = CartridgeCache.find_cartridge(cartname).get_component(new_comp_inst_hash[cartname].component_name).is_singleton? unless is_singleton
       this_gis_carts << cartname unless cartname==new_app.name or this_gis_carts.include? cartname
@@ -149,7 +153,7 @@ def create_group_instances(new_app, old_app)
     }
     if not new_gi_id
       # create a new group instance
-      new_gi = GroupInstance.new
+      new_gi = GroupInstance.new(custom_id: Moped::BSON::ObjectId.new, gear_size: old_gi['node_profile'])
       new_app.group_instances.push(new_gi)
       new_gi_id = new_gi._id
     end
@@ -165,7 +169,13 @@ def create_group_instances(new_app, old_app)
         singleton = false
         app_dns = false
       end
-      new_gi.gears.push(Gear.new(custom_id: Moped::BSON::ObjectId.new, uuid: old_gear.uuid, group_instance: new_gi, host_singletons: singleton, app_dns: app_dns))
+      if app_dns
+        gear_id = new_app._id
+      else
+        gear_id = Moped::BSON::ObjectId.new
+      end
+      # new_gi.gears.push(Gear.new(custom_id: gear_id, uuid: old_gear.uuid, group_instance: new_gi, host_singletons: singleton, app_dns: app_dns))
+      new_gi.gears.push(Gear.new(custom_id: gear_id, group_instance: new_gi, host_singletons: singleton, app_dns: app_dns))
     }
     # finally fix the component instances of the new app to adopt the new group instance and its gears
     this_gis_carts.each { |cartname|
