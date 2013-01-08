@@ -1,5 +1,15 @@
 load File.dirname(__FILE__) + '/../../rhc-node/scripts/bin/rhc-watchman'
 
+
+# NOTE: At the time of this writing, the watchman tests are reliant on a hard-coded
+# year in the following locations:
+#
+#   * watchman_steps.rb
+#   * misc/watchman/*/jbossas-7/logs/server.log
+#
+# Until the supporting code and data is made to be agnostic of year, the aforementioned
+# pieces will need updated every year for the tests to pass/be meaningful.
+
 Given /^a Watchman object using "([^"]*)" and "([^"]*)"$/ do |log, epoch|
   class Watchman1 < Watchman
     attr_accessor :restarted
@@ -7,7 +17,7 @@ Given /^a Watchman object using "([^"]*)" and "([^"]*)"$/ do |log, epoch|
       @restarted = @restarted.nil? ? 1 : @restarted += 1
     end
 
-    def now() DateTime.new(2012, 02, 14, 18, 55, 00, 0, "+05:00") end
+    def now() DateTime.new(2013, 02, 14, 18, 55, 00, 0, "+05:00") end
   end
 
   home = File.expand_path("../misc/watchman", File.expand_path(File.dirname(__FILE__)))
@@ -46,7 +56,7 @@ Given /^a Watchman object using "([^"]*)" and "([^"]*)" expect "([^"]*)" excepti
       raise ExpectedException
     end
 
-    def now() DateTime.new(2012, 02, 14, 18, 55, 00, 0, "+05:00") end
+    def now() DateTime.new(2013, 02, 14, 18, 55, 00, 0, "+05:00") end
   end
 
   home = File.expand_path("../misc/watchman", File.expand_path(File.dirname(__FILE__)))
