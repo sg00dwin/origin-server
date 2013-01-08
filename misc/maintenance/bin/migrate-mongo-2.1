@@ -83,6 +83,7 @@ def create_applications(user, domain_obj)
   user["apps"].each do |uapp|
     app = Application.new
     #app._id = Moped::BSON::ObjectId.from_string(uapp["uuid"].to_s)
+    app.uuid = uapp["uuid"]
     app.name = uapp["name"]
     app.canonical_name = app.name.downcase
     app.scalable = uapp["scalable"]
@@ -111,18 +112,72 @@ def create_applications(user, domain_obj)
         cinst_map[comp_inst["parent_cart_name"]] = ci
       end
     end if uapp.has_key?("comp_instances")
+    create_group_instances(app, uapp)
 =begin
     app.domain_requires = 
-    app.component_instances = 
-    app.component_configure_order = 
-    app.component_start_order =
-    app.component_stop_order = 
-    app.group_instances = 
     app.group_overrides =
     app.aliases = 
 =end
     app.save!
   end if user.has_key?("apps")
+end
+
+def create_group_instances(new_app, old_app)
+  new_comp_inst_hash = {}
+  new_app.component_instances.each { |ci|
+    new_comp_inst_hash[ci.cartridge_name] = ci
+  }
+
+  old_cinst_hash = {}
+  old_app['comp_instances'].each { |old_ci|
+    old_cinst_hash[old_ci['name']] = old_ci
+  }
+  old_app['group_instances'].each { |old_gi|
+    this_gis_carts = []
+    is_singleton = (not new_app.scalable)
+    is_app_dns = (not new_app.scalable)
+    old_gi['component_instances'].each { |comp_name|
+      cartname = old_cinst_hash[comp_name]['parent_cart_name']
+      is_app_dns = true if cartname=='haproxy-1.4' unless is_app_dns
+      is_singleton = CartridgeCache.find_cartridge(cartname).get_component(new_comp_inst_hash[cartname].component_name).is_singleton? unless is_singleton
+      this_gis_carts << cartname unless cartname==new_app.name or this_gis_carts.include? cartname
+    }
+    new_gi_id = nil
+    this_gis_carts.each { |cartname|
+      new_gi_id = new_comp_inst_hash[cartname].group_instance_id
+      break unless new_gi_id.nil?
+    }
+    if not new_gi_id
+      # create a new group instance
+      new_gi = GroupInstance.new
+      new_app.group_instances.push(new_gi)
+      new_gi_id = new_gi._id
+    end
+    # gears from old_gi need to be put to new_gi_id
+    new_gi = new_app.group_instances.find(new_gi_id)
+    count = 0
+    old_gi['gears'].each { |old_gear|
+      count += 1
+      if count == 1 
+        singleton = is_singleton 
+        app_dns = is_app_dns
+      else 
+        singleton = false
+        app_dns = false
+      end
+      new_gi.gears.push(Gear.new(custom_id: Moped::BSON::ObjectId.new, uuid: old_gear.uuid, group_instance: new_gi, host_singletons: singleton, app_dns: app_dns))
+    }
+    # finally fix the component instances of the new app to adopt the new group instance and its gears
+    this_gis_carts.each { |cartname|
+      if new_comp_inst_hash[cartname].group_instance_id.nil? 
+        new_comp_inst_hash[cartname].group_instance_id = new_gi_id 
+      else
+        if new_comp_inst_hash[cartname].group_instance_id != new_gi_id
+          puts "FATAL ERROR : Flaw in migration logic. Please report. #{cartname}, #{new_gi_id}, #{new_app.name}"
+        end
+      end
+    }
+  }
 end
 
 puts "Migration Started..."
