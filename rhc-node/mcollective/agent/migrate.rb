@@ -27,7 +27,7 @@ module OpenShiftMigration
   # at any point and continue to pick up where it left off or make
   # harmless changes the 2-n times around.
   def self.migrate(uuid, namespace, version)
-    unless version == "2.0.21"
+    unless version == "2.0.22"
       return "Invalid version: #{version}", 255
     end
 
@@ -57,6 +57,22 @@ module OpenShiftMigration
       return output, exitcode
     end
 
+    if File.directory?(File.join(gear_home, "postgresql-8.4"))
+      socket_value = Util.get_env_var_value(gear_home, "OPENSHIFT_POSTGRESQL_DB_SOCKET").to_s
+
+      if (socket_value =~ /socket.+$/ )
+        output += "OPENSHIFT_POSTGRESQL_DB_SOCKET: #{socket_value}\n"
+        socket_value.gsub!(/socket.+$/, "socket")
+        output += "Translating OPENSHIFT_POSTGRESQL_DB_SOCKET: #{socket_value}\n"
+        Util.set_env_var_value(gear_home, "OPENSHIFT_POSTGRESQL_DB_SOCKET", socket_value)
+      end
+
+      cart_dir = "#{gear_home}/postgresql-8.4"
+
+      Util.replace_in_file("#{cart_dir}/data/pg_hba.conf", "ident$", "md5")
+      Util.replace_in_file("#{cart_dir}/data/postgresql.conf", "unix_socket_directory = '/tmp'", "unix_socket_directory = '#{cart_dir}/socket'")
+    end
+
     env_echos.each do |env_echo|
       echo_output, echo_exitcode = Util.execute_script(env_echo)
       output += echo_output
@@ -67,4 +83,7 @@ module OpenShiftMigration
     return output, exitcode
   end
 
+
 end
+
+
