@@ -1,0 +1,61 @@
+#!/usr/bin/env oo-ruby
+# -*- ruby -*-
+
+require 'rubygems'
+require 'mongo'
+require 'json'
+$:.unshift('/var/www/openshift/broker')
+require 'config/environment'
+
+# Configurable params
+$config = Rails.application.config.datastore
+
+def mongo_connect
+  if $config[:replica_set]
+    con = Mongo::ReplSetConnection.new(*$config[:host_port] \
+                                       << {:read => :secondary})
+  else
+    con = Mongo::Connection.new($config[:host_port][0], 
+                                $config[:host_port][1])
+  end
+  db = con.db($config[:db])
+  db.authenticate($config[:user], $config[:password])
+  $coll = con.db($config[:db]).collection($config[:collections][:user])
+end
+
+def alias_searches(reqaliases)
+  $coll.find({ "apps.aliases.0" => { "$exists" => true } },
+             { :fields => [ "apps.uuid", "apps.aliases", "apps.name", "apps.domain.namespace" ] } ) do |cursor|
+    cursor.each do |uhash|
+
+      id = uhash["_id"]
+
+      # Validate aliases are properly formed
+      uhash["apps"].each do |app|
+        
+        name = app["name"]
+
+        namespace = app["domain"]["namespace"]
+
+        if app["aliases"] != nil
+
+          app["aliases"].each do |server_alias|
+          
+            # Would we have rejected this alias
+            reqaliases.each do |rqalias|
+              if server_alias == rqalias
+                puts "#{server_alias}: #{id}: #{name}-#{namespace}"
+              end
+            end
+                        
+          end
+        end
+      end
+
+    end
+  end
+
+end
+
+mongo_connect
+alias_searches(ARGV)
