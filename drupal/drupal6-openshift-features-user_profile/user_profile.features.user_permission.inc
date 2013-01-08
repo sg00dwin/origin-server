@@ -1204,7 +1204,8 @@ function user_profile_user_default_permissions() {
   $permissions['edit field_kb_applies_to'] = array(
     'name' => 'edit field_kb_applies_to',
     'roles' => array(
-      '0' => 'moderator',
+      '0' => 'administrator',
+      '1' => 'moderator',
     ),
   );
 
@@ -1222,7 +1223,8 @@ function user_profile_user_default_permissions() {
   $permissions['edit field_kb_code'] = array(
     'name' => 'edit field_kb_code',
     'roles' => array(
-      '0' => 'moderator',
+      '0' => 'administrator',
+      '1' => 'moderator',
     ),
   );
 
@@ -1230,7 +1232,8 @@ function user_profile_user_default_permissions() {
   $permissions['edit field_kb_issue'] = array(
     'name' => 'edit field_kb_issue',
     'roles' => array(
-      '0' => 'moderator',
+      '0' => 'administrator',
+      '1' => 'moderator',
     ),
   );
 
@@ -1238,7 +1241,8 @@ function user_profile_user_default_permissions() {
   $permissions['edit field_kb_resolution'] = array(
     'name' => 'edit field_kb_resolution',
     'roles' => array(
-      '0' => 'moderator',
+      '0' => 'administrator',
+      '1' => 'moderator',
     ),
   );
 
@@ -1246,8 +1250,9 @@ function user_profile_user_default_permissions() {
   $permissions['edit field_page_image'] = array(
     'name' => 'edit field_page_image',
     'roles' => array(
-      '0' => 'moderator',
-      '1' => 'page author',
+      '0' => 'administrator',
+      '1' => 'moderator',
+      '2' => 'page author',
     ),
   );
 
@@ -1274,19 +1279,25 @@ function user_profile_user_default_permissions() {
   // Exported permission: edit field_quickstart_admin_tags
   $permissions['edit field_quickstart_admin_tags'] = array(
     'name' => 'edit field_quickstart_admin_tags',
-    'roles' => array(),
+    'roles' => array(
+      '0' => 'administrator',
+    ),
   );
 
   // Exported permission: edit field_quickstart_icon
   $permissions['edit field_quickstart_icon'] = array(
     'name' => 'edit field_quickstart_icon',
-    'roles' => array(),
+    'roles' => array(
+      '0' => 'administrator',
+    ),
   );
 
   // Exported permission: edit field_quickstart_priority
   $permissions['edit field_quickstart_priority'] = array(
     'name' => 'edit field_quickstart_priority',
-    'roles' => array(),
+    'roles' => array(
+      '0' => 'administrator',
+    ),
   );
 
   // Exported permission: edit field_search_meta_description
@@ -1304,7 +1315,8 @@ function user_profile_user_default_permissions() {
   $permissions['edit field_state'] = array(
     'name' => 'edit field_state',
     'roles' => array(
-      '0' => 'moderator',
+      '0' => 'administrator',
+      '1' => 'moderator',
     ),
   );
 
