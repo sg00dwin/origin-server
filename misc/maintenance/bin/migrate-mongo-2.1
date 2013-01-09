@@ -3,6 +3,8 @@ require 'rubygems'
 $:.unshift('/var/www/openshift/broker')
 require 'config/environment'
 
+$users_failed = []
+
 def get_mongo_session
   # Get Mongo session
   config = Mongoid::Config.sessions["default"]
@@ -17,37 +19,33 @@ def release_mongo_session(session)
   session.logout
 end
 
-def migrate_user(user)
-  begin
-    cu = create_cloud_user(user)
-    dm = create_domains(user, cu)
-    create_applications(user, dm)
-  rescue Exception => e
-    puts "ERROR: Migration failed for User #{user['login']}: #{e.message}"
-    puts e.backtrace
-    return 1
-  end
-end
-
 def create_cloud_user(user)
   cu = CloudUser.new
   cu.login = user["login"] 
   cu.consumed_gears = user["consumed_gears"]
   cu.capabilities["max_gears"] = user["max_gears"]
-  cu.capabilities["subaccounts"] = user["capabilities"]["subaccounts"] if user["capabilities"].has_key?("subaccounts")
-  cu.capabilities["gear_sizes"] = user["capabilities"]["gear_sizes"] if user["capabilities"].has_key?("gear_sizes")
+  if user["capabilities"]
+    user_cap = user["capabilities"]
+    cu.capabilities["subaccounts"] = user_cap["subaccounts"] if user_cap["subaccounts"]
+    cu.capabilities["gear_sizes"] = user_cap["gear_sizes"] if user_cap["gear_sizes"]
+    cu.capabilities["max_storage_per_gear"] = user_cap["max_storage_per_gear"] if user_cap["max_storage_per_gear"]
+  end
   user["ssh_keys"].each do |ssh_key_name, ssh_key|
     sk = SshKey.new
     sk.name = ssh_key_name
     sk.type = ssh_key["type"]
     sk.content = ssh_key["key"]
     cu.ssh_keys << sk
-  end if user.has_key?("ssh_keys")
-  # FIXME cu.parent_user_id = CloudUser.find_by(login: user["parent_user_login"])._id
-  cu.plan_id = user["plan_id"]  if user.has_key?("plan_id")
-  cu.pending_plan_id = user["pending_plan_id"]  if user.has_key?("pending_plan_id")
-  cu.pending_plan_uptime = user["pending_plan_uptime"]  if user.has_key?("pending_plan_uptime")
-  cu.usage_account_id = user["usage_account_id"] if user.has_key?("usage_account_id")
+  end if user["ssh_keys"]
+  begin
+    cu.parent_user_id = CloudUser.find_by(login: user["parent_user_login"])._id if user["parent_user_login"]
+  rescue Exception => e
+    raise Exception.new "Unable to find parent user #{user["parent_user_login"]}"
+  end
+  cu.plan_id = user["plan_id"]  if user["plan_id"]
+  cu.pending_plan_id = user["pending_plan_id"]  if user["pending_plan_id"]
+  cu.pending_plan_uptime = user["pending_plan_uptime"]  if user["pending_plan_uptime"]
+  cu.usage_account_id = user["usage_account_id"] if user["usage_account_id"]
   cu.save!
   Lock.create_lock(cu)
   cu
@@ -55,14 +53,14 @@ end
 
 def create_domains(user, cloud_user_obj)
   dm = nil
-  if user.has_key?("domains")
+  if user["domains"]
     num_doms = user["domains"].length
-    raise Exception.new("ERROR: user #{user['login']} has more than 1 domain") if num_doms > 1
+    raise Exception.new "Found more than 1 domain" if num_doms > 1
     if num_doms == 1
       domain = user["domains"][0]
       dm = Domain.new
       dm.namespace = domain["namespace"]
-      #dm.canonical_namespace = dm.namespace.downcase
+      dm.canonical_namespace = dm.namespace.downcase
       dm.owner_id = cloud_user_obj._id
       dm.user_ids << cloud_user_obj._id 
       user["system_ssh_keys"].each do |ssh_key_name, ssh_key|
@@ -85,9 +83,9 @@ def create_applications(user, domain_obj)
     #app._id = Moped::BSON::ObjectId.from_string(uapp["uuid"].to_s)
     # app.uuid = uapp["uuid"]
     app.name = uapp["name"]
-    # app.canonical_name = app.name.downcase
+    app.canonical_name = app.name.downcase
     app.scalable = uapp["scalable"]
-    app.init_git_url = uapp["init_git_url"] if uapp.has_key?("init_git_url") 
+    app.init_git_url = uapp["init_git_url"] if uapp["init_git_url"]
     app.default_gear_size = uapp["node_profile"]
     uapp["ssh_keys"].each do |ssh_key_name, ssh_key|
       ask = ApplicationSshKey.new
@@ -95,7 +93,7 @@ def create_applications(user, domain_obj)
       ask.type = "ssh-rsa"
       ask.content = ssh_key
       app.app_ssh_keys << ask
-    end if uapp.has_key?("ssh_keys")
+    end if uapp["ssh_keys"]
     app.domain_id = domain_obj._id
     cinst_map = {}
     uapp["comp_instances"].each do |comp_inst|
@@ -111,15 +109,12 @@ def create_applications(user, domain_obj)
         app.component_instances << ci
         cinst_map[comp_inst["parent_cart_name"]] = ci
       end
-    end if uapp.has_key?("comp_instances")
+    end if uapp["comp_instances"]
     create_group_instances(app, uapp)
-=begin
-    app.domain_requires = 
-    app.group_overrides =
-    app.aliases = 
-=end
+    app.aliases = user["aliases"] if user["aliases"] 
+    app.group_overrides = user["group_overrides"] if user["group_overrides"]
     app.save!
-  end if user.has_key?("apps")
+  end if user["apps"]
 end
 
 def create_group_instances(new_app, old_app)
@@ -128,23 +123,20 @@ def create_group_instances(new_app, old_app)
     new_comp_inst_hash[ci.cartridge_name] = ci
   }
 
-  puts "component_instances : #{new_comp_inst_hash.inspect}"
-
   old_cinst_hash = {}
   old_app['comp_instances'].each { |old_ci|
     old_cinst_hash[old_ci['name']] = old_ci
   }
-  puts "old component_instances : #{old_cinst_hash.inspect}"
   old_app['group_instances'].each { |old_gi|
     this_gis_carts = []
     is_singleton = (not new_app.scalable)
     is_app_dns = (not new_app.scalable)
     old_gi['component_instances'].each { |comp_name|
       cartname = old_cinst_hash[comp_name]['parent_cart_name']
-      next if cartname==new_app.name
-      is_app_dns = true if cartname=='haproxy-1.4' unless is_app_dns
+      next if cartname == new_app.name
+      is_app_dns = true if cartname == 'haproxy-1.4' unless is_app_dns
       is_singleton = CartridgeCache.find_cartridge(cartname).get_component(new_comp_inst_hash[cartname].component_name).is_singleton? unless is_singleton
-      this_gis_carts << cartname unless cartname==new_app.name or this_gis_carts.include? cartname
+      this_gis_carts << cartname unless this_gis_carts.include? cartname
     }
     new_gi_id = nil
     this_gis_carts.each { |cartname|
@@ -181,13 +173,24 @@ def create_group_instances(new_app, old_app)
     this_gis_carts.each { |cartname|
       if new_comp_inst_hash[cartname].group_instance_id.nil? 
         new_comp_inst_hash[cartname].group_instance_id = new_gi_id 
-      else
-        if new_comp_inst_hash[cartname].group_instance_id != new_gi_id
-          puts "FATAL ERROR : Flaw in migration logic. Please report. #{cartname}, #{new_gi_id}, #{new_app.name}"
-        end
+      elsif new_comp_inst_hash[cartname].group_instance_id != new_gi_id
+        raise Exception.new "Group instance migration failed. app: #{new_app.name}, cart: #{cartname}, expected group_instance_id: #{new_gi_id}, found group_instance_id: #{new_comp_inst_hash[cartname].group_instance_id}"
       end
     }
   }
+end
+
+def migrate_user(user)
+  begin
+    cu = create_cloud_user(user)
+    dm = create_domains(user, cu)
+    create_applications(user, dm)
+  rescue Exception => e
+    puts "ERROR: Migration failed for User #{user['login']}: #{e.message}"
+    puts e.backtrace
+    $users_failed << user['login']
+    return 1
+  end
 end
 
 puts "Migration Started..."
@@ -195,14 +198,31 @@ begin
   session = get_mongo_session
   users = session[:user]
 
-  users.find.to_a.each do |user|
+  # Process all users that DOES NOT have a parent user login
+  users.find({"$or"=>[{"parent_user_login"=>{"$exists"=>false}}, {"parent_user_login" => nil}]}).each do |user|
     puts "Processing user #{user['login']}"
     #puts user.inspect
     migrate_user(user)
   end
+  # Process all user that have a parent user login
+  users.find({"$and"=>[{"parent_user_login"=>{"$exists"=>true}}, {"parent_user_login"=>{"$ne"=>nil}}]}).each do |user|
+    puts "Processing user #{user['login']}"
+    #puts user.inspect
+    migrate_user(user)
+  end
+  
   release_mongo_session(session)
 rescue Exception => e
   puts e.message
   puts e.backtrace
+  exit 1
 end
-puts "Migration Done!"
+puts "***************************"
+if $users_failed.empty?
+  puts "Migration Done! - No failures"
+else
+  puts "Migration Done! - #{$users_failed.length} failures"
+  puts "Failed user logins:"
+  puts $users_failed.join("\n")
+end
+puts "***************************"
