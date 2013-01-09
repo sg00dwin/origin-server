@@ -111,8 +111,8 @@ def create_applications(user, domain_obj)
       end
     end if uapp["comp_instances"]
     create_group_instances(app, uapp)
-    app.aliases = user["aliases"] if user["aliases"] 
-    app.group_overrides = user["group_overrides"] if user["group_overrides"]
+    app.aliases = uapp["aliases"] if uapp["aliases"] 
+    app.group_overrides = uapp["group_overrides"] if uapp["group_overrides"]
     fix_connections(app)
     app.save!
   end if user["apps"]
