@@ -405,6 +405,14 @@ function user_profile_user_default_permissions() {
     ),
   );
 
+  // Exported permission: administer xmlsitemap
+  $permissions['administer xmlsitemap'] = array(
+    'name' => 'administer xmlsitemap',
+    'roles' => array(
+      '0' => 'administrator',
+    ),
+  );
+
   // Exported permission: cancel own vote
   $permissions['cancel own vote'] = array(
     'name' => 'cancel own vote',
@@ -482,10 +490,8 @@ function user_profile_user_default_permissions() {
     'name' => 'create document content',
     'roles' => array(
       '0' => 'administrator',
-      '1' => 'authenticated user',
-      '2' => 'blogger',
-      '3' => 'doc content owner',
-      '4' => 'moderator',
+      '1' => 'doc content owner',
+      '2' => 'moderator',
     ),
   );
 
