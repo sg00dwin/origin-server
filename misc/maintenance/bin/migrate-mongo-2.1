@@ -175,8 +175,9 @@ def create_group_instances(new_app, old_app)
       else
         gear_id = Moped::BSON::ObjectId.new
       end
-      # new_gi.gears.push(Gear.new(custom_id: gear_id, uuid: old_gear.uuid, group_instance: new_gi, host_singletons: singleton, app_dns: app_dns))
-      new_gi.gears.push(Gear.new(custom_id: gear_id, group_instance: new_gi, host_singletons: singleton, app_dns: app_dns, uuid: old_gear['uuid']))
+      gear = Gear.new(custom_id: gear_id, group_instance: new_gi, host_singletons: singleton, app_dns: app_dns,
+                      uuid: old_gear['uuid'], uid: old_gear['uid'], server_identity: old_gear['server_identity'])
+      new_gi.gears.push(gear)
     }
     # finally fix the component instances of the new app to adopt the new group instance and its gears
     this_gis_carts.each { |cartname|
