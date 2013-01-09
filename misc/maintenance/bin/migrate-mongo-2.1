@@ -113,8 +113,17 @@ def create_applications(user, domain_obj)
     create_group_instances(app, uapp)
     app.aliases = user["aliases"] if user["aliases"] 
     app.group_overrides = user["group_overrides"] if user["group_overrides"]
+    fix_connections(app)
     app.save!
   end if user["apps"]
+end
+
+def fix_connections(app)
+  features = app.requires
+  group_overrides = app.scalable ? [] : (app.gen_non_scalable_app_overrides(features))
+  connections, new_groups, new_group_overrides = app.elaborate(features, group_overrides)
+  app.set_connections(connections)
+  app.group_overrides = new_group_overrides
 end
 
 def create_group_instances(new_app, old_app)
