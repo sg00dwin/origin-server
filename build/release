@@ -299,9 +299,8 @@ class Release < Thor
         pkgs_need_tagging.each { |pkg| puts pkg }
       else
         puts "### Tagging the following packages into #{target_brew_tag}:"
-        pkgs_need_tagging.each do |pkg| 
-          puts pkg 
-          `brew tag-pkg #{target_brew_tag} #{pkg}`
+        puts pkgs_need_tagging
+        `brew tag-pkg #{target_brew_tag} #{pkgs_need_tagging.join(" ")}`
         end
       end
     ensure
