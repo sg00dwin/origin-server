@@ -17,21 +17,26 @@ end
 
 
 def delete_all_users
-  ds = OpenShift::DataStore.instance
-  users = ds.find_all("CloudUser")
-  users.each do |user|
-    delete_user((user['login']))
-  end if users
+  puts "Deleting all users..."
+  CloudUser.each do |user|
+    begin
+      user.force_delete
+    rescue Exception => e
+      puts "ERROR: Delete user #{user.login} failed: #{e.message}"
+    end  
+  end
+  puts "Done"
 end
 
 def delete_user(login)
-  puts "deleting user #{login}"
+  puts "Deleting user #{login}..."
   begin
-    cloud_user = CloudUser.find_by(login: login)
-    cloud_user.force_delete
+    user = CloudUser.find_by(login: login)
+    user.force_delete
   rescue Exception => e
-    puts "failed to delete user #{} #{e.message}"
+    puts "ERROR: Delete user #{login} failed: #{e.message}"
   end
+  puts "Done"
 end
 
 if args["--user"]
