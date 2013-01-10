@@ -300,7 +300,9 @@ class Release < Thor
       else
         puts "### Tagging the following packages into #{target_brew_tag}:"
         puts pkgs_need_tagging
-        `brew tag-pkg #{target_brew_tag} #{pkgs_need_tagging.join(" ")}`
+        puts "######### BEGIN: Brew Tag Output #########"
+        puts `brew tag-pkg #{target_brew_tag} #{pkgs_need_tagging.join(" ")}`
+        puts "######### END: Brew Tag Output #########"
         end
       end
     ensure
