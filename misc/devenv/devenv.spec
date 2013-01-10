@@ -8,7 +8,7 @@
 
 Summary:   Dependencies for OpenShift development
 Name:      rhc-devenv
-Version:   1.3.3
+Version:   1.3.4
 Release:   1%{?dist}
 Group:     Development/Libraries
 License:   GPLv2
@@ -674,6 +674,18 @@ restorecon /etc/openshift/node.conf || :
 /sbin/service libra-data restart > /dev/null 2>&1 || :
 
 %changelog
+* Thu Jan 10 2013 Adam Miller <admiller@redhat.com> 1.3.4-1
+- Round 2: Update broker and site configs to 3.0.17 passenger
+  (admiller@redhat.com)
+- Revert "Update broker and site configs to 3.0.17 passenger"
+  (admiller@redhat.com)
+- Update broker and site configs to 3.0.17 passenger (admiller@redhat.com)
+- enable ews2 (bdecoste@gmail.com)
+- devenv: add drupal6-xmlsitemap to spec (ansilva@redhat.com)
+- BZ BZ859471: Conform to section 7.2 of RFC 6797. (rmillner@redhat.com)
+- Revert "change site and broker confs for passenger 3.0.17"
+  (admiller@redhat.com)
+
 * Thu Dec 20 2012 William DeCoste <wdecoste@redhat.com> 1.3.3-1
 - enable ews2
 
