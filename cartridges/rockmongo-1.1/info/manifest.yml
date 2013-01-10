@@ -10,8 +10,6 @@ Categories:
 Provides:
   - rockmongo-1.1
   - "rockmongo"
-Requires:
-  - "mongodb"
 Cart-Data:
   - Key: connection_url
     Type: cart_data
