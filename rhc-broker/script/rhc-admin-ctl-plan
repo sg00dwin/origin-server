@@ -189,10 +189,10 @@ def process_user(user, list, fix)
 end
 
 if remove_plan_lock
-  Express::Broker::DistributedLock.release_lock("billing_plan")
+  DistributedLock.release_lock("billing_plan")
 else
   hostname = Socket.gethostname
-  if Express::Broker::DistributedLock.obtain_lock("billing_plan", hostname)
+  if DistributedLock.obtain_lock("billing_plan", hostname)
     begin
       if login
         user = get_user_obj(login)
@@ -206,7 +206,7 @@ else
     rescue Mongoid::Errors::DocumentNotFound
       # No users found
     ensure
-      Express::Broker::DistributedLock.release_lock("billing_plan", hostname)
+      DistributedLock.release_lock("billing_plan", hostname)
     end
   else
     puts "Failed to obtain lock to interact with billing plan"
