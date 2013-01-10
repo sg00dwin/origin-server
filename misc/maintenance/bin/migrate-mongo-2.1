@@ -203,6 +203,15 @@ def migrate_user(user)
   end
 end
 
+def migrate_district(old_district)
+  nd = District.new(name: old_district['name'], gear_size: old_district['node_profile'])
+  old_district.delete('node_profile')
+  old_district.delete('creation_time')
+  nd.assign_attributes(old_district)
+  nd.save
+  nd
+end
+
 puts "Migration Started..."
 begin
   session = get_mongo_session
@@ -220,6 +229,16 @@ begin
     #puts user.inspect
     migrate_user(user)
   end
+
+  puts "User migration complete. Migrating districts..."
+  session[:district].find.each { |old_district|
+    nd = migrate_district(old_district)
+    if nd.uuid==old_district['uuid']
+      puts "Successfully migrated district #{nd.name} (#{nd.uuid})"
+    else
+      puts "Failed to completely migrate district #{old_district['uuid']}"
+    end
+  }
   
   release_mongo_session(session)
 rescue Exception => e

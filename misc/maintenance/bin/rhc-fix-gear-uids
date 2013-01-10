@@ -17,7 +17,7 @@ def check_gear_uid(gear, new_uid)
   district["server_identities"].keys.each { |server_id|
     next if server_id == gear.get_proxy.id
     if $sender_hash[server_id].has_key? new_uid
-      raise Exception.new("ERROR : Gear #{gear.uuid} cannot set its uid to #{new_uid}, because the uid is taken in the district by another gear #{$sender_hash[server_id][String(new_uid)]} on node #{server_id}.")
+      raise Exception.new("ERROR : Gear #{gear.uuid} cannot set its uid to #{new_uid}, because the uid is taken in the district by another gear #{$sender_hash[server_id][new_uid]} on node #{server_id}.")
     end
   }
   if district["available_uids"].include? new_uid
