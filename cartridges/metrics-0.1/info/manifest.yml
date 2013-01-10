@@ -12,6 +12,7 @@ Cart-Data:
     Type: cart_data
     Description: "Application metrics URL"
 Provides:
+  - metrics-0.1
   - "metrics"
 Requires:
 Conflicts:
