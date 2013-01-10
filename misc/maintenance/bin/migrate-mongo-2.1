@@ -156,6 +156,7 @@ def create_group_instances(new_app, old_app)
       # create a new group instance
       new_gi = GroupInstance.new(custom_id: Moped::BSON::ObjectId.new, gear_size: old_gi['node_profile'])
       new_app.group_instances.push(new_gi)
+      new_gi.addtl_fs_gb = old_gi['addtl_fs_gb']
       new_gi_id = new_gi._id
     end
     # gears from old_gi need to be put to new_gi_id
@@ -237,6 +238,7 @@ begin
       puts "Successfully migrated district #{nd.name} (#{nd.uuid})"
     else
       puts "Failed to completely migrate district #{old_district['uuid']}"
+      $users_failed << "District uuid #{old_district['uuid']}"
     end
   }
   
