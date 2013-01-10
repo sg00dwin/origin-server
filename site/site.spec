@@ -144,6 +144,10 @@ rm -rf %{buildroot}
 %{sitedir}/public
 
 %changelog
+* Thu Jan 10 2013 Adam Miller <admiller@redhat.com> 1.3.3-2
+- bump site.spec Release: for fake chain-build with console
+  (admiller@redhat.com)
+
 * Thu Jan 10 2013 Adam Miller <admiller@redhat.com> 1.3.3-1
 - Merge pull request #745 from smarterclayton/bug_892232_show_recent_issues
   (dmcphers+openshiftbot@redhat.com)
