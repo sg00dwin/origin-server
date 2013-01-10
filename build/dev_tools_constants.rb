@@ -75,3 +75,5 @@ BASE_RELEASE_BRANCH = 'libra-rhel-6.3'
 JENKINS_BUILD_TOKEN = 'libra1'
 
 ACCEPT_DEVENV_SCRIPT = '/usr/bin/rhc-accept-devenv'
+
+CHAIN_BUILD_SETS = [ ['rubygem-openshift-origin-console','rhc-site'] ]

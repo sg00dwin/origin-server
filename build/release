@@ -174,7 +174,8 @@ class Release < Thor
       end
 
       run("echo -e 'y\nn' > #{options.temp_dir}/answerfile", :verbose => options.verbose?)
-      tito_cmd = "tito release brew < #{options.temp_dir}/answerfile"
+          
+
       build_failures = ''
       build_dirs.each do |build_info|
         build_dir = build_info[1]
@@ -189,12 +190,31 @@ class Release < Thor
             raise "Your version of tito is no longer supported after the Brew migration to git" if cmd_exit != 0
           end
 
+          if CHAIN_BUILD_SETS.flatten.include?(build_info[0])
+            # --no-build option requires tito v0.4.9-2 or higher, needed for chainbuilds
+            tito_cmd = "tito release brew --no-build < #{options.temp_dir}/answerfile"
+          else
+            tito_cmd = "tito release brew < #{options.temp_dir}/answerfile"
+          end
+          
           # Build the RPM in brew
           if push_failures.empty? && run(tito_cmd, :verbose => options.verbose?)
             puts "Done"
           else
             build_failures += "pushd #{working_dir} > /dev/null; #{tito_cmd}; popd > /dev/null;\n"
           end
+        end
+      end
+
+      chain_build_failures = ''
+      CHAIN_BUILD_SETS.each do | chain_set | 
+        puts "Brew chainbuilding for: #{chain_set.join(" : ")}"
+
+        cmd = "brew chain-build #{chain_set.join(" : ")}"
+        if push_failures.empty? && run(cmd, :verbose => options.verbose?)
+          puts "Done"
+        else
+          chain_build_failures += "brew chain-build #{chain_set.join(" : ")}\n" if ($?.exitstatus != 0) 
         end
       end
 
@@ -220,6 +240,12 @@ class Release < Thor
         puts build_failures
         puts "*************END BUILD FAILURES*****************\n"
       end
+      unless chain_build_failures.empty?
+        puts "************BEGIN CHAIN BUILD FAILURES****************"
+        puts chain_build_failures
+        puts "*************END CHAIN BUILD FAILURES*****************\n"
+      end
+
     ensure
       reset_orig_branches(orig_branches, options.verbose?)
     end
