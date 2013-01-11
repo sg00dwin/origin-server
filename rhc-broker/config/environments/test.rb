@@ -81,16 +81,10 @@ Broker::Application.configure do
   }
 
   config.datastore = {
-    :replica_set => true,
-    # Replica set example: [[<host-1>, <port-1>], [<host-2>, <port-2>], ...]
-    :host_port => [["localhost", 27017]],
-        
+    :host_port => "localhost:27017",
     :user => "openshift",
     :password => "mooo",
-    :db => "openshift_broker_dev",
-    :collections => {:user => "user_test",
-                     :district => "district_test",
-                     :distributed_lock => "distributed_lock_test"}
+    :db => "openshift_broker_test"
   }
 
   config.user_action_logging = {
