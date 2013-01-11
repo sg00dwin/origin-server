@@ -25,7 +25,6 @@
   = javascript_include_tag "site/home.js"
 
 - content_for :sub_layout do
-
   - cache 'product_body', :expires_in => 10.minutes do
     - Rails.logger.debug "Render body"
     #learn.section-striped.lift-counter
