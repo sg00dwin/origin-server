@@ -21,11 +21,8 @@ namespace=`basename $2`
 uuid=$3
 IP=$4
 
-source "/etc/openshift/node.conf"
-source ${CARTRIDGE_BASE_PATH}/abstract/info/lib/util
-
-cat <<EOF > "${OPENSHIFT_HTTP_CONF_DIR}/${uuid}_${namespace}_${application}/metrics-0.1.conf"
-ProxyPass /metrics http://$IP:8080/metrics status=I
-ProxyPassReverse /metrics http://$IP:8080/metrics
-
-EOF
+oo-frontend-connect \
+    --with-container-uuid "$uuid" \
+    --with-container-name "$application" \
+    --with-namespace "$namespace" \
+    --path "/metrics" --target "$IP:8080/metrics"

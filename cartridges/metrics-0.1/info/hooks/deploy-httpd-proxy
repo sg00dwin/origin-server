@@ -44,5 +44,3 @@ CART_INFO_DIR=$CARTRIDGE_BASE_PATH/embedded/metrics-0.1/info
 # Create virtualhost definition for apache
 #
 $CART_INFO_DIR/bin/deploy_httpd_proxy.sh $application $namespace $uuid $OPENSHIFT_METRICS_IP
-
-restart_httpd_graceful

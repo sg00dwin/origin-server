@@ -48,8 +48,10 @@ confirm_log_files_inactive "$ROCKMONGO_DIR/logs"
 runcon -l s0-s0:c0.c1023 rm -rf "$ROCKMONGO_DIR"
 
 #
-# Remove ProxyPass definition from apache
+# Remove Route
 #
-rm -f ${OPENSHIFT_HTTP_CONF_DIR}/${uuid}_${namespace}_${application}/rockmongo-1.1.conf || warning "Could not remove rockmongo apache definition" 156
-
-/usr/sbin/oo-httpd-singular graceful || warning "Failed to restart master httpd, please contact support" 120
+oo-frontend-disconnect \
+    --with-container-uuid "$uuid" \
+    --with-container-name "$application" \
+    --with-namespace "$namespace" \
+    --path "/rockmongo"

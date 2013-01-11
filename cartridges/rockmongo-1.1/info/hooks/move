@@ -45,5 +45,3 @@ $CART_INFO_DIR/bin/deploy_httpd_proxy.sh $application $namespace $uuid $ROCKMONG
 sed -e "s,TEMPLATE_SET_MONGODB_HOST,$OPENSHIFT_INTERNAL_IP," \
     -e "s,TEMPLATE_SET_MONGODB_PORT,$OPENSHIFT_MONGODB_DB_PORT," \
     $CART_INFO_DIR/rockmongo/config.php > $ROCKMONGO_DIR/rockmongo/config.php
-
-restart_httpd_graceful
