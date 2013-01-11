@@ -75,6 +75,13 @@ function user_profile_context_default_contexts() {
         'node_form' => '1',
       ),
     ),
+    'path' => array(
+      'values' => array(
+        'community' => 'community',
+        'community/*' => 'community/*',
+        'notifications/*' => 'notifications/*',
+      ),
+    ),
     'user_page' => array(
       'values' => array(
         'form' => 'form',
@@ -87,7 +94,7 @@ function user_profile_context_default_contexts() {
     ),
   );
   $context->reactions = array(
-    'menu' => '<front>',
+    'menu' => 'community',
   );
   $context->condition_mode = 0;
   $export['menu-active-community'] = $context;
@@ -109,6 +116,7 @@ function user_profile_context_default_contexts() {
     ),
     'path' => array(
       'values' => array(
+        'events' => 'events',
         'calendar' => 'calendar',
         'calendar/*' => 'calendar/*',
       ),
@@ -155,6 +163,15 @@ function user_profile_context_default_contexts() {
   $context->description = '';
   $context->tag = '';
   $context->conditions = array(
+    'node' => array(
+      'values' => array(
+        'discussion' => 'discussion',
+        'group' => 'group',
+      ),
+      'options' => array(
+        'node_form' => '1',
+      ),
+    ),
     'path' => array(
       'values' => array(
         'forums' => 'forums',
@@ -238,6 +255,7 @@ function user_profile_context_default_contexts() {
     ),
     'views' => array(
       'values' => array(
+        'nodes_by_category:page_2' => 'nodes_by_category:page_2',
         'nodes_by_category:page_5' => 'nodes_by_category:page_5',
       ),
     ),
@@ -279,19 +297,14 @@ function user_profile_context_default_contexts() {
   $context->conditions = array(
     'path' => array(
       'values' => array(
-        '<front>' => '<front>',
-      ),
-    ),
-    'user' => array(
-      'values' => array(
-        'anonymous user' => 'anonymous user',
+        'community' => 'community',
       ),
     ),
   );
   $context->reactions = array(
     'block' => array(
       'blocks' => array(
-        'block-2' => array(
+        'user_profile-community-messaging' => array(
           'module' => 'user_profile',
           'delta' => 'community-messaging',
           'region' => 'messaging',
@@ -358,6 +371,34 @@ function user_profile_context_default_contexts() {
   );
   $context->condition_mode = 1;
   $export['messaging-get-started'] = $context;
+
+  $context = new stdClass;
+  $context->disabled = FALSE; /* Edit this to true to make a default context disabled initially */
+  $context->api_version = 3;
+  $context->name = 'messaging-home';
+  $context->description = '';
+  $context->tag = '';
+  $context->conditions = array(
+    'path' => array(
+      'values' => array(
+        '<front>' => '<front>',
+      ),
+    ),
+  );
+  $context->reactions = array(
+    'block' => array(
+      'blocks' => array(
+        'user_profile-home-messaging' => array(
+          'module' => 'user_profile',
+          'delta' => 'home-messaging',
+          'region' => 'messaging',
+          'weight' => 0,
+        ),
+      ),
+    ),
+  );
+  $context->condition_mode = 1;
+  $export['messaging-home'] = $context;
 
   $context = new stdClass;
   $context->disabled = FALSE; /* Edit this to true to make a default context disabled initially */
@@ -460,23 +501,12 @@ function user_profile_context_default_contexts() {
   $context->description = 'Displays blocks for users who are logged in.';
   $context->tag = '';
   $context->conditions = array(
-    'menu' => array(
-      'values' => array(
-        '<front>' => '<front>',
-      ),
-    ),
     'path' => array(
       'values' => array(
-        '<front>' => '<front>',
-        'home' => 'home',
-        'user' => 'user',
+        'community' => 'community',
+        'community/*' => 'community/*',
         'user/*' => 'user/*',
         'forums/*' => 'forums/*',
-      ),
-    ),
-    'user' => array(
-      'values' => array(
-        'authenticated user' => 'authenticated user',
       ),
     ),
   );
@@ -487,7 +517,7 @@ function user_profile_context_default_contexts() {
           'module' => 'views',
           'delta' => 'user_profile_box-block_1',
           'region' => 'sidebar_left',
-          'weight' => 30,
+          'weight' => 10,
         ),
       ),
     ),
@@ -542,10 +572,14 @@ function user_profile_context_default_contexts() {
   $context->description = '';
   $context->tag = '';
   $context->conditions = array(
-    'menu' => array(
+    'path' => array(
       'values' => array(
-        '<front>' => '<front>',
-        'node/9435' => 'node/9435',
+        '~admin' => '~admin',
+        '~admin/*' => '~admin/*',
+        '~<front>' => '~<front>',
+        '~get-started' => '~get-started',
+        '~_errors/*' => '~_errors/*',
+        '*' => '*',
       ),
     ),
   );
@@ -556,7 +590,7 @@ function user_profile_context_default_contexts() {
           'module' => 'menu_block',
           'delta' => 1,
           'region' => 'sidebar_left',
-          'weight' => -10,
+          'weight' => 0,
         ),
       ),
     ),
@@ -574,7 +608,7 @@ function user_profile_context_default_contexts() {
     'path' => array(
       'values' => array(
         'forums/*' => 'forums/*',
-        '<front>' => '<front>',
+        'community' => 'community',
         'ideas' => 'ideas',
         'videos' => 'videos',
         'ideas/*' => 'ideas/*',
@@ -597,7 +631,7 @@ function user_profile_context_default_contexts() {
           'module' => 'poll',
           'delta' => 0,
           'region' => 'sidebar_left',
-          'weight' => 20,
+          'weight' => 15,
         ),
       ),
     ),

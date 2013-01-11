@@ -30,16 +30,21 @@ function user_profile_block($op = 'list', $delta = '', $edit = array()) {
         '<div class="messaging"><div class="container">'.
         '<div class="primary headline">Launch your <strong>Big Idea</strong> in minutes</div>' .
         '<div class="secondary">OpenShift is a next generation application hosting environment. Read on to see how easy it is to get started in the cloud.</div>' .
-        '</div></div>'.
-        user_profile_block_call_to_action();
+        '</div></div>';
       break;
     case 'learn-more-messaging':
       $block['content'] = 
         '<div class="messaging"><div class="container">'.
         '<div class="primary headline">Take your <strong>Apps</strong> to the Cloud</div>' .
         '<div class="secondary">OpenShift is a next generation application hosting environment. Read on to see how it can help you achieve your application goals.</div>' .
-        '</div></div>'.
-        user_profile_block_call_to_action();
+        '</div></div>';
+      break;
+    case 'home-messaging':
+      $block['content'] = 
+        '<div class="messaging messaging-home"><div class="container">'.
+        '<h1 class="primary headline">Develop and Scale <strong id="technology-rotate">Apps</strong> in the Cloud</h1>'.
+        '<h2 class="secondary">OpenShift is Red Hat\'s free, auto-scaling Platform as a Service (PaaS) for applications.  As an application platform in the cloud, OpenShift manages the stack so you can focus on your code.</h2>'.
+        '</div></div>';
       break;
     case 'developer-center-messaging':
       $block['content'] = 
@@ -49,13 +54,11 @@ function user_profile_block($op = 'list', $delta = '', $edit = array()) {
         '</div></div>';
       break;
     case 'community-messaging':
-      if (!user_is_logged_in()) {
-        $block['content'] = 
-          '<div class="messaging"><div class="container">'.
-          '<div class="primary headline">Join the <strong>OpenShift Community</strong></div>' .
-          '<div class="secondary">This is the place to learn and engage with OpenShift users and developers. Sign in to participate</div>' .
-          '</div></div>';
-      }
+      $block['content'] = 
+        '<div class="messaging"><div class="container">'.
+        '<div class="primary headline">Join the <strong>OpenShift Community</strong></div>' .
+        '<div class="secondary">This is the place to learn and engage with OpenShift users and developers. Sign in to participate</div>' .
+        '</div></div>';
       break;
     }
     return $block;

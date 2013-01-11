@@ -39,8 +39,8 @@ RedHatCloud::Application.routes.draw do
   match 'console/error' => 'product#console_error'
 
   # Buzz
-  match 'twitter_latest_tweet' => 'twitter#latest_tweet'
-  match 'twitter_latest_retweets' => 'twitter#latest_retweets'
+  match 'twitter/latest_tweets' => 'twitter#latest_tweets'
+  match 'twitter/latest_retweets' => 'twitter#latest_retweets'
 
   resource :account,
            :controller => :account,

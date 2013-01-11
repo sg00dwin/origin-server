@@ -1049,6 +1049,7 @@ body.home {
 	.messaging {
  		margin: 55px 0;
  	}
+  .section-nav.lift-counter { padding-bottom: 50px; }
  	.learn { 
 	 	li { 
 	 		img {
@@ -1120,6 +1121,10 @@ body.home {
 
   .home .messaging {
     margin: 10px 0 20px 0;
+  }
+
+  .home .section-nav.lift-counter {
+    padding-bottom: 25px;
   }
 
   .home #buzz {
