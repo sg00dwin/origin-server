@@ -110,17 +110,17 @@ def create_applications(user, domain_obj)
         cinst_map[comp_inst["parent_cart_name"]] = ci
       end
     end if uapp["comp_instances"]
-    create_group_instances(app, uapp)
+    group_overrides = create_group_instances(app, uapp)
     app.aliases = uapp["aliases"] if uapp["aliases"] 
-    app.group_overrides = uapp["group_overrides"] if uapp["group_overrides"]
-    fix_connections(app)
+    #  app.group_overrides = uapp["group_overrides"] if uapp["group_overrides"]
+    fix_connections(app, group_overrides)
     app.save!
   end if user["apps"]
 end
 
-def fix_connections(app)
+def fix_connections(app, group_overrides)
   features = app.requires
-  group_overrides = app.scalable ? [] : (app.gen_non_scalable_app_overrides(features))
+  group_overrides = group_overrides + (app.scalable ? [] : (app.gen_non_scalable_app_overrides(features)))
   connections, new_groups, new_group_overrides = app.elaborate(features, group_overrides)
   app.set_connections(connections)
   app.group_overrides = new_group_overrides
@@ -128,6 +128,7 @@ end
 
 def create_group_instances(new_app, old_app)
   new_comp_inst_hash = {}
+  return_group_overrides = []
   new_app.component_instances.each { |ci|
     new_comp_inst_hash[ci.cartridge_name] = ci
   }
@@ -140,11 +141,17 @@ def create_group_instances(new_app, old_app)
     this_gis_carts = []
     is_singleton = (not new_app.scalable)
     is_app_dns = (not new_app.scalable)
+    framework_cart = nil
     old_gi['component_instances'].each { |comp_name|
       cartname = old_cinst_hash[comp_name]['parent_cart_name']
       next if cartname == new_app.name
       is_app_dns = true if cartname == 'haproxy-1.4' unless is_app_dns
-      is_singleton = CartridgeCache.find_cartridge(cartname).get_component(new_comp_inst_hash[cartname].component_name).is_singleton? unless is_singleton
+      cart = CartridgeCache.find_cartridge(cartname)
+      is_singleton = cart.get_component(new_comp_inst_hash[cartname].component_name).is_singleton? unless is_singleton
+      if framework_cart.nil?
+        web_framework_carts = CartridgeCache.cartridge_names("web_framework")
+        framework_cart = { "comp" => new_comp_inst_hash[cartname].component_name, "cart" => cartname } if web_framework_carts.include? cartname
+      end
       this_gis_carts << cartname unless this_gis_carts.include? cartname
     }
     new_gi_id = nil
@@ -188,7 +195,20 @@ def create_group_instances(new_app, old_app)
         raise Exception.new "Group instance migration failed. app: #{new_app.name}, cart: #{cartname}, expected group_instance_id: #{new_gi_id}, found group_instance_id: #{new_comp_inst_hash[cartname].group_instance_id}"
       end
     }
+
+    # calculate group overrides based on scale min/max
+    if old_gi['supported_min']!=old_gi['supported_max'] and framework_cart
+      group_override = { "components" => [ framework_cart ] }
+      if old_gi['max']!=-1
+        max_gears = old_gi['max']+1
+        group_override['max_gears'] = max_gears
+      end
+      min_gears = old_gi['min']+1
+      group_override['min_gears'] = min_gears
+      return_group_overrides << group_override
+    end
   }
+  return_group_overrides
 end
 
 def migrate_user(user)
