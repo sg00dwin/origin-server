@@ -79,7 +79,7 @@ end
 
 def create_applications(user, domain_obj)
   user["apps"].each do |uapp|
-    app = Application.new
+    app = Application.new(domain: domain_obj)
     #app._id = Moped::BSON::ObjectId.from_string(uapp["uuid"].to_s)
     app.uuid = uapp["uuid"]
     app.name = uapp["name"]
