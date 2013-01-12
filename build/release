@@ -323,7 +323,6 @@ class Release < Thor
         puts "######### BEGIN: Brew Tag Output #########"
         puts `brew tag-pkg #{target_brew_tag} #{pkgs_need_tagging.join(" ")}`
         puts "######### END: Brew Tag Output #########"
-        end
       end
     ensure
       reset_orig_branches(orig_branches)
