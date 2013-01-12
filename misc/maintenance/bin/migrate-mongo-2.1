@@ -165,9 +165,13 @@ def create_group_instances(new_app, old_app)
       new_app.group_instances.push(new_gi)
       new_gi.addtl_fs_gb = old_gi['addtl_fs_gb']
       new_gi_id = new_gi._id
+    else
+      # gears from old_gi need to be put to new_gi_id
+      new_gi = new_app.group_instances.find(new_gi_id)
+      if new_gi.addtl_fs_gb != old_gi['addtl_fs_gb']
+        puts "ERROR : During migration of app '#{old_gi['uuid']}', 'additional storage' in different group instances could not be merged! Need to fix the storage manually."
+      end
     end
-    # gears from old_gi need to be put to new_gi_id
-    new_gi = new_app.group_instances.find(new_gi_id)
     count = 0
     old_gi['gears'].each { |old_gear|
       count += 1
