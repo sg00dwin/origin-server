@@ -4,9 +4,8 @@ class Tweet < RestApi::Base
   allow_anonymous
   singleton
 
-  self.site = 'https://api.twitter.com'
-  self.prefix = '/1.1/statuses/'
-
+  self.site = Rails.application.config.twitter_api_site
+  self.prefix = Rails.application.config.twitter_api_prefix
   schema do
     string :id, :text
     date :created_at
@@ -69,19 +68,19 @@ class Tweet < RestApi::Base
 
   class << self
     def oauth_consumer_key
-      ENV['TWITTER_OAUTH_CONSUMER_KEY'] || ''
+      Rails.application.config.twitter_oauth_consumer_key || ''
     end
 
     def oauth_consumer_secret
-      ENV['TWITTER_OAUTH_CONSUMER_SECRET'] || ''
+      Rails.application.config.twitter_oauth_consumer_secret || ''
     end
 
     def oauth_token
-      ENV['TWITTER_OAUTH_TOKEN'] || ''
+      Rails.application.config.twitter_oauth_token || ''
     end
 
     def oauth_token_secret
-      ENV['TWITTER_OAUTH_TOKEN_SECRET'] || ''
+      Rails.application.config.twitter_oauth_token_secret || ''
     end
 
     # twitter api 1.1 does not provide individual filters for retweets, so the strategy (recommended
