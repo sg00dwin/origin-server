@@ -3,7 +3,7 @@
 
 Summary:   Li broker components
 Name:      rhc-broker
-Version: 1.3.3
+Version: 1.3.4
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -135,6 +135,9 @@ if [ ! -f %{_localstatedir}/log/openshift/user_action.log ]; then
 fi
 
 %changelog
+* Mon Jan 14 2013 Adam Miller <admiller@redhat.com> 1.3.4-1
+- Bug 889017 (rchopra@redhat.com)
+
 * Thu Jan 10 2013 Adam Miller <admiller@redhat.com> 1.3.3-1
 - add missing loop for migrate (dmcphers@redhat.com)
 
