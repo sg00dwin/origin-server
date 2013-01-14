@@ -8,8 +8,8 @@
 
 Summary:   OpenShift Site Rails application
 Name:      rhc-site
-Version: 1.3.3
-Release:   2%{?dist}
+Version: 1.3.4
+Release:   1%{?dist}
 Group:     Network/Daemons
 License:   ASL 2.0
 URL:       http://openshift.redhat.com
@@ -144,6 +144,12 @@ rm -rf %{buildroot}
 %{sitedir}/public
 
 %changelog
+* Mon Jan 14 2013 Adam Miller <admiller@redhat.com> 1.3.4-1
+- Merge pull request #752 from smarterclayton/move_email_confirm_to_extended
+  (dmcphers+openshiftbot@redhat.com)
+- Move email_confirm tests to extended (it hits Streamline)
+  (ccoleman@redhat.com)
+
 * Thu Jan 10 2013 Adam Miller <admiller@redhat.com> 1.3.3-2
 - bump site.spec Release: for fake chain-build with console
   (admiller@redhat.com)
