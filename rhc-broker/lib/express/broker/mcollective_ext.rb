@@ -14,7 +14,7 @@ module OpenShift
     
     def destroy(app, gear, keep_uid=false, uid=nil, skip_hooks=false)
       unless skip_hooks
-        Express::Broker::Nurture.application(app.user.login, app.user.uuid, app.name, app.domain.namespace, app.framework, "deconfigure", app.uuid, app.user_agent)
+        Express::Broker::Nurture.application(app.user.login, app.user.uuid, app.name, app.domain.namespace, app.framework, "deconfigure", app.uuid, app.user_agent) if app.uuid==gear.uuid
       end
       destroy_old(app, gear, keep_uid, uid, skip_hooks)
     end

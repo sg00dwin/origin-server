@@ -5,7 +5,7 @@
 %global modname             user_profile
 
 Name:    drupal%{drupal_release}-openshift-features-%{modname}
-Version: 1.9.1
+Version: 1.9.2
 Release: 1%{?dist}
 Summary: Openshift Red Hat Custom User Profile Feature for Drupal6
 Group:   Applications/Publishing
@@ -41,6 +41,11 @@ rm -rf $RPM_BUILD_ROOT
 %{drupal_modules}/%{modname}
 
 %changelog
+* Thu Jan 10 2013 Adam Miller <admiller@redhat.com> 1.9.2-1
+- Add permissions for xmlsitemap to user profile feature (ccoleman@redhat.com)
+- Permissions on KB items aren't available for users with admin role but not
+  moderator role. (ccoleman@redhat.com)
+
 * Wed Dec 12 2012 Adam Miller <admiller@redhat.com> 1.9.1-1
 - bump_minor_versions for sprint 22 (admiller@redhat.com)
 

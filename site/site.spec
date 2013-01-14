@@ -8,7 +8,7 @@
 
 Summary:   OpenShift Site Rails application
 Name:      rhc-site
-Version: 1.3.2
+Version: 1.3.3
 Release:   2%{?dist}
 Group:     Network/Daemons
 License:   ASL 2.0
@@ -144,6 +144,34 @@ rm -rf %{buildroot}
 %{sitedir}/public
 
 %changelog
+* Thu Jan 10 2013 Adam Miller <admiller@redhat.com> 1.3.3-2
+- bump site.spec Release: for fake chain-build with console
+  (admiller@redhat.com)
+
+* Thu Jan 10 2013 Adam Miller <admiller@redhat.com> 1.3.3-1
+- Merge pull request #745 from smarterclayton/bug_892232_show_recent_issues
+  (dmcphers+openshiftbot@redhat.com)
+- Merge pull request #742 from smarterclayton/add_robots_for_john
+  (dmcphers+openshiftbot@redhat.com)
+- Bug 892232 - Show any resolved issues from the last 3 months
+  (ccoleman@redhat.com)
+- Update site robots.txt (ccoleman@redhat.com)
+- Introduce classes img-captcha img-recaptcha; Set border-color with variable;
+  Move .ie specific class to _core (sgoodwin@redhat.com)
+- switch :plain html to haml (sgoodwin@redhat.com)
+- _account.scss  - move body, label styles to _base  - condense style rules  -
+  remove duplicate form-actions rule  - move bg to body.simple  - control
+  reCaptcha widths at mobile portrait and tablet (sgoodwin@redhat.com)
+- add bullets for consistency with signup (sgoodwin@redhat.com)
+- change default event calendar view style (sgoodwin@redhat.com)
+- Merge pull request #726 from
+  smarterclayton/run_external_code_tests_in_extended (openshift+bot@redhat.com)
+- Merge pull request #685 from EmilyDirsh/master (openshift+bot@redhat.com)
+- Run all external integration test cases in the extended suite
+  (ccoleman@redhat.com)
+- Make enterprise banner responsive (edirsh@redhat.com)
+- Replace "speed" icon with "enterprise" icon on home page (edirsh@redhat.com)
+
 * Tue Dec 18 2012 Adam Miller <admiller@redhat.com> 1.3.2-2
 - bump site.spec Release: for fake chain-build with console
   (admiller@redhat.com)

@@ -5,7 +5,7 @@
 %global modname             redhat_frontpage
 
 Name:    drupal%{drupal_release}-openshift-%{modname}
-Version: 1.5.1
+Version: 1.5.2
 Release: 1%{?dist}
 Summary: Openshift Red Hat Front Page Custom Module for Drupal6
 Group:   Applications/Publishing
@@ -41,6 +41,10 @@ rm -rf $RPM_BUILD_ROOT
 %{drupal_modules}/%{modname}
 
 %changelog
+* Thu Jan 10 2013 Adam Miller <admiller@redhat.com> 1.5.2-1
+- Checking authenticated user before displaying My Threads in the community
+  frontpage (ffranz@redhat.com)
+
 * Sat Nov 17 2012 Adam Miller <admiller@redhat.com> 1.5.1-1
 - bump_minor_versions for sprint 21 (admiller@redhat.com)
 

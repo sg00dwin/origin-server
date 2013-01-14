@@ -2,7 +2,7 @@
 
 Summary:   Provides zend-5.6 support
 Name:      openshift-origin-cartridge-zend-5.6
-Version: 1.3.2
+Version: 1.3.3
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   ASL 2.0
@@ -107,6 +107,9 @@ rm -rf %{buildroot}
 %doc %{cartridgedir}/LICENSE
 
 %changelog
+* Thu Jan 10 2013 Adam Miller <admiller@redhat.com> 1.3.3-1
+- Fix BZ864797: Add doc for disable_auto_scaling marker (pmorie@gmail.com)
+
 * Tue Dec 18 2012 Adam Miller <admiller@redhat.com> 1.3.2-1
 - Fix for Bug 887202 (jhonce@redhat.com)
 
