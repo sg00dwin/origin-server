@@ -62,6 +62,8 @@ rh_configure_mongo() {
     echo 'db.getMongo().setSlaveOk();
           use openshift_broker_dev
           db.addUser("openshift", "mooo")
+          use openshift_broker_test
+          db.addUser("openshift", "mooo")
           exit
          ' | mongo
     # Stop mongod server
