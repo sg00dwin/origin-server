@@ -62,9 +62,9 @@ class Tweet < RestApi::Base
     s
   end
 
-  cache_method :find_every, :expires_in => 10.minutes
-  cache_method :openshift_tweets, :expires_in => 10.minutes
-  cache_method :openshift_retweets, :expires_in => 10.minutes
+  cache_method :find_every, :expires_in => 30.minutes
+  cache_method :openshift_tweets, :expires_in => 30.minutes
+  cache_method :openshift_retweets, :expires_in => 30.minutes
 
   class << self
     def oauth_consumer_key
