@@ -579,7 +579,7 @@ class Release < Thor
         # sync rhc gem
         puts "Syncing client gem to repo..."
         if File.exists?('../rhc')
-          unless run("#{rsync} ../rhc/pkg/*.gem #{repo}/#{mash_config}/client/gems/", :verbose => options.verbose?)
+          unless run("#{rsync} ../rhc/*.gem #{repo}/#{mash_config}/client/gems/", :verbose => options.verbose?)
             puts "ERROR - Gem sync failed."
             exit 1
           end
