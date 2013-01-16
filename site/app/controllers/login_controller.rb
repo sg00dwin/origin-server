@@ -8,7 +8,8 @@ class LoginController < ApplicationController
     @redirectUrl = params[:then] || params[:redirectUrl] || @referrerRedirect
     user_params = params[:web_user] || params
     @user = WebUser.new :rhlogin => (user_params[:rhlogin] || user_params[:login] || user_params[:email_address])
-    fetch_messages
+    @release_note = ReleaseNote.cached.latest rescue []
+    @events = Event.cached.upcoming.first(3) rescue []
   end
 
   def create
@@ -27,7 +28,8 @@ class LoginController < ApplicationController
 
     else
       logger.debug "  Authentication failed"
-      fetch_messages
+      @release_note = ReleaseNote.cached.latest rescue []
+      @events = Event.cached.upcoming.first(3) rescue []
       render :show
     end
   end
@@ -64,8 +66,4 @@ class LoginController < ApplicationController
       end
     end
 
-    def fetch_messages
-      @release_note = ReleaseNote.cached.latest rescue []
-      @events = Event.cached.upcoming.first(3) rescue []
-    end
 end
