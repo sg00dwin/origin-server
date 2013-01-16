@@ -22,6 +22,6 @@ end
 p_usage if opt['help']
 
 
-CloudUser.delete_all
-Domain.delete_all
 Application.delete_all
+Domain.delete_all
+CloudUser.delete_all
