@@ -44,6 +44,7 @@ module Online
         :httpd  => File.join('misc', 'devenv', 'etc', 'httpd', '/'),
         # Drupal modules
         :'custom_forms'                    => File.join('drupal', 'drupal6-openshift-custom_forms'                   , '/'),
+        :'features-application_quickstarts' => File.join('drupal', 'drupal6-openshift-features-application_quickstarts', '/'),
         :'features-blogs'                  => File.join('drupal', 'drupal6-openshift-features-blogs'                 , '/'),
         :'features-community_wiki'         => File.join('drupal', 'drupal6-openshift-features-community_wiki'        , '/'),
         :'features-forums'                 => File.join('drupal', 'drupal6-openshift-features-forums'                , '/'),
@@ -70,6 +71,7 @@ module Online
         :httpd  => '/etc/httpd',
         # Drupal modules
         :'custom_forms'                    => '/etc/drupal6/all/modules/custom/custom_forms',
+        :'features-application_quickstarts' => '/etc/drupal6/all/modules/features/application_quickstarts',
         :'features-blogs'                  => '/etc/drupal6/all/modules/features/blogs',
         :'features-community_wiki'         => '/etc/drupal6/all/modules/features/community_wiki',
         :'features-forums'                 => '/etc/drupal6/all/modules/features/forums',

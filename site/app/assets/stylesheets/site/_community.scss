@@ -256,6 +256,12 @@
     float: right;
   }
 }
+
+.community .profile-top > .picture {
+  float: left;
+  margin-right: 10px;
+}
+
 .badge.newbie { background-color: #89aa00; }
 .badge.member { background-color: #fc6b00; }
 .badge.accomplished { background-color: #191919; }

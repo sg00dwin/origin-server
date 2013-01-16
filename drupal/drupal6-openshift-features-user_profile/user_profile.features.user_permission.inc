@@ -591,7 +591,9 @@ function user_profile_user_default_permissions() {
   // Exported permission: create quickstart content
   $permissions['create quickstart content'] = array(
     'name' => 'create quickstart content',
-    'roles' => array(),
+    'roles' => array(
+      '0' => 'authenticated user',
+    ),
   );
 
   // Exported permission: create url aliases
@@ -879,7 +881,11 @@ function user_profile_user_default_permissions() {
   // Exported permission: delete own quickstart content
   $permissions['delete own quickstart content'] = array(
     'name' => 'delete own quickstart content',
-    'roles' => array(),
+    'roles' => array(
+      '0' => 'administrator',
+      '1' => 'authenticated user',
+      '2' => 'moderator',
+    ),
   );
 
   // Exported permission: delete own video content
@@ -1033,7 +1039,10 @@ function user_profile_user_default_permissions() {
   // Exported permission: edit any quickstart content
   $permissions['edit any quickstart content'] = array(
     'name' => 'edit any quickstart content',
-    'roles' => array(),
+    'roles' => array(
+      '0' => 'administrator',
+      '1' => 'moderator',
+    ),
   );
 
   // Exported permission: edit any video content
@@ -1311,6 +1320,8 @@ function user_profile_user_default_permissions() {
     'name' => 'edit field_quickstart_admin_tags',
     'roles' => array(
       '0' => 'administrator',
+      '1' => 'blogger',
+      '2' => 'moderator',
     ),
   );
 
@@ -1319,6 +1330,8 @@ function user_profile_user_default_permissions() {
     'name' => 'edit field_quickstart_icon',
     'roles' => array(
       '0' => 'administrator',
+      '1' => 'blogger',
+      '2' => 'moderator',
     ),
   );
 
@@ -1327,6 +1340,18 @@ function user_profile_user_default_permissions() {
     'name' => 'edit field_quickstart_priority',
     'roles' => array(
       '0' => 'administrator',
+      '1' => 'blogger',
+      '2' => 'moderator',
+    ),
+  );
+
+  // Exported permission: edit field_quickstart_trust
+  $permissions['edit field_quickstart_trust'] = array(
+    'name' => 'edit field_quickstart_trust',
+    'roles' => array(
+      '0' => 'administrator',
+      '1' => 'blogger',
+      '2' => 'moderator',
     ),
   );
 
@@ -1539,7 +1564,9 @@ function user_profile_user_default_permissions() {
   // Exported permission: edit own quickstart content
   $permissions['edit own quickstart content'] = array(
     'name' => 'edit own quickstart content',
-    'roles' => array(),
+    'roles' => array(
+      '0' => 'authenticated user',
+    ),
   );
 
   // Exported permission: edit own video content
@@ -2189,6 +2216,15 @@ function user_profile_user_default_permissions() {
   // Exported permission: view field_quickstart_priority
   $permissions['view field_quickstart_priority'] = array(
     'name' => 'view field_quickstart_priority',
+    'roles' => array(
+      '0' => 'anonymous user',
+      '1' => 'authenticated user',
+    ),
+  );
+
+  // Exported permission: view field_quickstart_trust
+  $permissions['view field_quickstart_trust'] = array(
+    'name' => 'view field_quickstart_trust',
     'roles' => array(
       '0' => 'anonymous user',
       '1' => 'authenticated user',

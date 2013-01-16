@@ -18,21 +18,21 @@ function application_quickstarts_fieldgroup_default_groups() {
         'description' => '',
       ),
       'display' => array(
-        'weight' => '-2',
-        '2' => array(
-          'format' => 'fieldset',
-          'exclude' => 0,
-        ),
-        '3' => array(
-          'format' => 'fieldset',
-          'exclude' => 1,
-        ),
+        'weight' => '0',
         'label' => 'hidden',
         'teaser' => array(
           'format' => 'fieldset',
           'exclude' => 1,
         ),
         'full' => array(
+          'format' => 'fieldset',
+          'exclude' => 1,
+        ),
+        '2' => array(
+          'format' => 'fieldset',
+          'exclude' => 0,
+        ),
+        '3' => array(
           'format' => 'fieldset',
           'exclude' => 1,
         ),
@@ -47,7 +47,7 @@ function application_quickstarts_fieldgroup_default_groups() {
         'description' => '',
       ),
     ),
-    'weight' => '-2',
+    'weight' => '1',
     'fields' => array(
       '0' => 'field_quickstart_priority',
       '1' => 'field_quickstart_admin_tags',
@@ -66,15 +66,7 @@ function application_quickstarts_fieldgroup_default_groups() {
         'description' => '',
       ),
       'display' => array(
-        'weight' => '-3',
-        '2' => array(
-          'format' => 'fieldset',
-          'exclude' => 0,
-        ),
-        '3' => array(
-          'format' => 'fieldset',
-          'exclude' => 0,
-        ),
+        'weight' => '-2',
         'label' => 'above',
         'teaser' => array(
           'format' => 'simple',
@@ -82,6 +74,14 @@ function application_quickstarts_fieldgroup_default_groups() {
         ),
         'full' => array(
           'format' => 'simple',
+          'exclude' => 0,
+        ),
+        '2' => array(
+          'format' => 'fieldset',
+          'exclude' => 0,
+        ),
+        '3' => array(
+          'format' => 'fieldset',
           'exclude' => 0,
         ),
         'token' => array(
@@ -95,13 +95,11 @@ function application_quickstarts_fieldgroup_default_groups() {
         'description' => '',
       ),
     ),
-    'weight' => '-3',
+    'weight' => '-1',
     'fields' => array(
-      '0' => 'field_cartridges_list',
-      '1' => 'field_git_repository_url',
-      '2' => 'field_code_language',
-      '3' => 'field_website',
-      '4' => 'field_quickstart_icon',
+      '0' => 'field_code_language',
+      '1' => 'field_website',
+      '2' => 'field_quickstart_icon',
     ),
   );
 

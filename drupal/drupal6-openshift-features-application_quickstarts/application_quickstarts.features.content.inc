@@ -11,16 +11,8 @@ function application_quickstarts_content_default_fields() {
     'field_name' => 'field_cartridges_list',
     'type_name' => 'quickstart',
     'display_settings' => array(
-      'weight' => '-2',
-      'parent' => 'group_quickstart_info',
-      '2' => array(
-        'format' => 'default',
-        'exclude' => 0,
-      ),
-      '3' => array(
-        'format' => 'default',
-        'exclude' => 0,
-      ),
+      'weight' => '-4',
+      'parent' => '',
       'label' => array(
         'format' => 'inline',
       ),
@@ -29,6 +21,14 @@ function application_quickstarts_content_default_fields() {
         'exclude' => 0,
       ),
       'full' => array(
+        'format' => 'default',
+        'exclude' => 0,
+      ),
+      '2' => array(
+        'format' => 'default',
+        'exclude' => 0,
+      ),
+      '3' => array(
         'format' => 'default',
         'exclude' => 0,
       ),
@@ -62,7 +62,7 @@ function application_quickstarts_content_default_fields() {
       ),
       'default_value_php' => NULL,
       'label' => 'Cartridges',
-      'weight' => '-2',
+      'weight' => '-3',
       'description' => '<p>All Quickstarts must require one or more cartridges.  When specifying a list of cartridges, you can do so using</p>
 <ul>
 <li>A comma delimited list of cartridge names: <code>php-5.3, mysql-5.1</code></li>
@@ -84,14 +84,6 @@ function application_quickstarts_content_default_fields() {
     'display_settings' => array(
       'weight' => 0,
       'parent' => 'group_quickstart_info',
-      '2' => array(
-        'format' => 'default',
-        'exclude' => 0,
-      ),
-      '3' => array(
-        'format' => 'default',
-        'exclude' => 0,
-      ),
       'label' => array(
         'format' => 'inline',
       ),
@@ -100,6 +92,14 @@ function application_quickstarts_content_default_fields() {
         'exclude' => 0,
       ),
       'full' => array(
+        'format' => 'default',
+        'exclude' => 0,
+      ),
+      '2' => array(
+        'format' => 'default',
+        'exclude' => 0,
+      ),
+      '3' => array(
         'format' => 'default',
         'exclude' => 0,
       ),
@@ -147,16 +147,8 @@ other|Other',
     'field_name' => 'field_git_repository_url',
     'type_name' => 'quickstart',
     'display_settings' => array(
-      'weight' => '-1',
-      'parent' => 'group_quickstart_info',
-      '2' => array(
-        'format' => 'default',
-        'exclude' => 0,
-      ),
-      '3' => array(
-        'format' => 'default',
-        'exclude' => 0,
-      ),
+      'weight' => '-3',
+      'parent' => '',
       'label' => array(
         'format' => 'inline',
       ),
@@ -165,6 +157,14 @@ other|Other',
         'exclude' => 0,
       ),
       'full' => array(
+        'format' => 'default',
+        'exclude' => 0,
+      ),
+      '2' => array(
+        'format' => 'default',
+        'exclude' => 0,
+      ),
+      '3' => array(
         'format' => 'default',
         'exclude' => 0,
       ),
@@ -193,7 +193,7 @@ other|Other',
       'default_value' => NULL,
       'default_value_php' => NULL,
       'label' => 'Git Repository URL',
-      'weight' => '-1',
+      'weight' => '-2',
       'description' => 'An optional URL to a Git repository that will be cloned into this quickstart on creation.  The created application will have the base content here.',
       'type' => 'text_textfield',
       'module' => 'text',
@@ -205,16 +205,8 @@ other|Other',
     'field_name' => 'field_quickstart_admin_tags',
     'type_name' => 'quickstart',
     'display_settings' => array(
-      'weight' => '32',
+      'weight' => '13',
       'parent' => 'group_quickstart_admin',
-      '2' => array(
-        'format' => 'default',
-        'exclude' => 0,
-      ),
-      '3' => array(
-        'format' => 'default',
-        'exclude' => 1,
-      ),
       'label' => array(
         'format' => 'hidden',
       ),
@@ -223,6 +215,14 @@ other|Other',
         'exclude' => 1,
       ),
       'full' => array(
+        'format' => 'default',
+        'exclude' => 1,
+      ),
+      '2' => array(
+        'format' => 'default',
+        'exclude' => 0,
+      ),
+      '3' => array(
         'format' => 'default',
         'exclude' => 1,
       ),
@@ -256,7 +256,7 @@ other|Other',
       ),
       'default_value_php' => NULL,
       'label' => 'Admin Tags',
-      'weight' => '32',
+      'weight' => '13',
       'description' => 'Provide administrative protected tags to be used',
       'type' => 'text_textfield',
       'module' => 'text',
@@ -270,14 +270,6 @@ other|Other',
     'display_settings' => array(
       'weight' => '2',
       'parent' => 'group_quickstart_info',
-      '2' => array(
-        'format' => 'image_plain',
-        'exclude' => 0,
-      ),
-      '3' => array(
-        'format' => 'image_plain',
-        'exclude' => 0,
-      ),
       'label' => array(
         'format' => 'hidden',
       ),
@@ -286,6 +278,14 @@ other|Other',
         'exclude' => 0,
       ),
       'full' => array(
+        'format' => 'image_plain',
+        'exclude' => 0,
+      ),
+      '2' => array(
+        'format' => 'image_plain',
+        'exclude' => 0,
+      ),
+      '3' => array(
         'format' => 'image_plain',
         'exclude' => 0,
       ),
@@ -350,16 +350,8 @@ other|Other',
     'field_name' => 'field_quickstart_priority',
     'type_name' => 'quickstart',
     'display_settings' => array(
-      'weight' => '31',
+      'weight' => '12',
       'parent' => 'group_quickstart_admin',
-      '2' => array(
-        'format' => 'default',
-        'exclude' => 1,
-      ),
-      '3' => array(
-        'format' => 'default',
-        'exclude' => 1,
-      ),
       'label' => array(
         'format' => 'hidden',
       ),
@@ -368,6 +360,14 @@ other|Other',
         'exclude' => 1,
       ),
       'full' => array(
+        'format' => 'default',
+        'exclude' => 1,
+      ),
+      '2' => array(
+        'format' => 'default',
+        'exclude' => 1,
+      ),
+      '3' => array(
         'format' => 'default',
         'exclude' => 1,
       ),
@@ -401,10 +401,72 @@ other|Other',
       ),
       'default_value_php' => NULL,
       'label' => 'Priority',
-      'weight' => '31',
+      'weight' => '12',
       'description' => 'Administrative option, gives this element higher priority in the visible display of the console.',
       'type' => 'number',
       'module' => 'number',
+    ),
+  );
+
+  // Exported field: field_quickstart_trust
+  $fields['quickstart-field_quickstart_trust'] = array(
+    'field_name' => 'field_quickstart_trust',
+    'type_name' => 'quickstart',
+    'display_settings' => array(
+      'weight' => '11',
+      'parent' => 'group_quickstart_admin',
+      'label' => array(
+        'format' => 'above',
+      ),
+      'teaser' => array(
+        'format' => 'default',
+        'exclude' => 0,
+      ),
+      'full' => array(
+        'format' => 'default',
+        'exclude' => 0,
+      ),
+      '4' => array(
+        'format' => 'default',
+        'exclude' => 0,
+      ),
+      '2' => array(
+        'format' => 'default',
+        'exclude' => 0,
+      ),
+      '3' => array(
+        'format' => 'default',
+        'exclude' => 0,
+      ),
+      'token' => array(
+        'format' => 'default',
+        'exclude' => 0,
+      ),
+    ),
+    'widget_active' => '1',
+    'type' => 'text',
+    'required' => '1',
+    'multiple' => '0',
+    'module' => 'text',
+    'active' => '1',
+    'text_processing' => '0',
+    'max_length' => '',
+    'allowed_values' => 'openshift|OpenShift Team
+trusted|Trusted
+community|Community',
+    'allowed_values_php' => '',
+    'widget' => array(
+      'default_value' => array(
+        '0' => array(
+          'value' => 'community',
+        ),
+      ),
+      'default_value_php' => NULL,
+      'label' => 'Provider',
+      'weight' => '-4',
+      'description' => 'Indicates who publishes this quickstart and thus what level of trust users should place in it.  Quickstarts published by the OpenShift team are given the highest level, then partners and trusted community members, then everyone else.',
+      'type' => 'optionwidgets_select',
+      'module' => 'optionwidgets',
     ),
   );
 
@@ -415,14 +477,6 @@ other|Other',
     'display_settings' => array(
       'weight' => '1',
       'parent' => 'group_quickstart_info',
-      '2' => array(
-        'format' => 'default',
-        'exclude' => 0,
-      ),
-      '3' => array(
-        'format' => 'default',
-        'exclude' => 0,
-      ),
       'label' => array(
         'format' => 'inline',
       ),
@@ -432,6 +486,14 @@ other|Other',
       ),
       'full' => array(
         'format' => 'url',
+        'exclude' => 0,
+      ),
+      '2' => array(
+        'format' => 'default',
+        'exclude' => 0,
+      ),
+      '3' => array(
+        'format' => 'default',
         'exclude' => 0,
       ),
       'token' => array(
@@ -487,6 +549,7 @@ other|Other',
   t('Icon');
   t('Language');
   t('Priority');
+  t('Provider');
   t('Website');
 
   return $fields;
