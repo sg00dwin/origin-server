@@ -230,7 +230,7 @@ class Release < Thor
 
         end
 
-        unless chain_scl_urls.empty?
+        unless chain_scm_urls.empty?
           cmd = "brew chain-build #{chain_scm_urls.join(" : ")}"
           if push_failures.empty? && run(cmd, :verbose => options.verbose?)
             puts "Done"
