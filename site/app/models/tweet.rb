@@ -1,11 +1,11 @@
 class Tweet < RestApi::Base
   include RestApi::Cacheable
+  include RestApi::Oauth
   allow_anonymous
   singleton
 
-  self.site = 'http://api.twitter.com'
-  self.prefix = '/1/statuses/'
-
+  self.site = Rails.application.config.twitter_api_site
+  self.prefix = Rails.application.config.twitter_api_prefix
   schema do
     string :id, :text
     date :created_at
@@ -43,6 +43,7 @@ class Tweet < RestApi::Base
 
   class User < RestApi::Base
   end
+
   has_one :user, :class_name => 'tweet/user'
   has_one :retweeted_status, :class_name => 'tweet'
 
@@ -62,26 +63,48 @@ class Tweet < RestApi::Base
   end
 
   cache_method :find_every, :expires_in => 30.minutes
+  cache_method :openshift_tweets, :expires_in => 30.minutes
+  cache_method :openshift_retweets, :expires_in => 30.minutes
 
   class << self
-    def openshift_tweets
-      all(
-        :from => "#{prefix}user_timeline/openshift.json",
-        :params => {
-          :count => 10,
-          :include_entities => true,
-        }
-      )
+    def oauth_consumer_key
+      Rails.application.config.twitter_oauth_consumer_key || ''
     end
+
+    def oauth_consumer_secret
+      Rails.application.config.twitter_oauth_consumer_secret || ''
+    end
+
+    def oauth_token
+      Rails.application.config.twitter_oauth_token || ''
+    end
+
+    def oauth_token_secret
+      Rails.application.config.twitter_oauth_token_secret || ''
+    end
+
+    # twitter api 1.1 does not provide individual filters for retweets, so the strategy (recommended
+    # by twitter) is to fetch a good amount of tweets from the user timeline and then filter
+    def openshift_timeline
+      params = {
+        'screen_name' => 'openshift',
+        'count' => 50,
+        'trim_user' => false,
+        'exclude_replies' => true,
+        'contributor_details' => true,
+        'include_rts' => true,
+      }
+      url = "#{prefix}user_timeline.json?#{params.map{|k,v| k + '=' + v.to_s}.join('&')}"
+      oauth "#{site}#{url}", oauth_consumer_key, oauth_consumer_secret, oauth_token, oauth_token_secret
+      all(:from => url)
+    end
+
+    def openshift_tweets
+      openshift_timeline.select {|tweet| ! tweet.respond_to? :retweeted_status}
+    end
+
     def openshift_retweets
-      all(
-        :from => "#{prefix}retweeted_by_user.json",
-        :params => {
-          :screen_name => :openshift,
-          :count => 10,
-          :include_entities => true,
-        }
-      )
+      openshift_timeline.select {|tweet| tweet.respond_to? :retweeted_status}
     end
   end
 end

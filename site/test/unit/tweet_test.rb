@@ -8,12 +8,19 @@ class TweetTest < ActiveSupport::TestCase
 
   def mock_tweets
     ActiveResource::HttpMock.respond_to do |mock|
-      mock.get('/1/statuses/retweeted_by_user.json?count=10&include_entities=true&screen_name=openshift', anonymous_json_header, IO.read('test/fixtures/retweets.json'))
-      mock.get('/1/statuses/user_timeline/openshift.json?count=10&include_entities=true', anonymous_json_header, IO.read('test/fixtures/openshift_tweets.json'))
+      mock.get(
+        '/1.1/statuses/user_timeline.json?screen_name=openshift&count=50&trim_user=false&exclude_replies=true&contributor_details=true&include_rts=true', 
+        anonymous_json_header, 
+        IO.read('test/fixtures/timeline.json'))
     end
   end
 
+  def mock_oauth
+    Tweet.expects(:oauth).at_least(0).returns(nil)
+  end
+
   def test_tweets
+    mock_oauth
     mock_tweets
 
     assert t = Tweet.openshift_tweets
@@ -25,6 +32,7 @@ class TweetTest < ActiveSupport::TestCase
   end
 
   def test_retweets
+    mock_oauth
     mock_tweets
 
     assert t = Tweet.openshift_retweets

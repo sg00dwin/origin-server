@@ -78,7 +78,15 @@ RedHatCloud::Application.configure do
   config.email_from = 'OpenShift <noreply@openshift.redhat.com>'
   config.marketing_mailing_list = ['Marketing Mailing List <jgurrero@redhat.com>', 'mthompso@redhat.com']
 
-  # Disable Rails's static asset server
+  # Twitter API information
+  config.twitter_api_site = 'https://api.twitter.com'
+  config.twitter_api_prefix = '/1.1/statuses/'
+  config.twitter_oauth_consumer_key = 'kRJ1Hjo3uNd2M8zKCCF0bw'
+  config.twitter_oauth_consumer_secret = 'psNvYg3IOAhWtngxBobajkYWKlus53xkNBQxWz3MU'
+  config.twitter_oauth_token = '17620820-rm2UBzOWYrETRh2Ut4rjkGISqmkfdlVKSYcmmAOGt'
+  config.twitter_oauth_token_secret = 'aFfOPRBJBckWarMxlWYg3MljK6EgoaKUW9CjFSsaG8'
+
+# Disable Rails's static asset server
   # In production, Apache or nginx will already do this
   config.serve_static_assets = true#false
 

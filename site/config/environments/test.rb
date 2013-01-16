@@ -64,6 +64,15 @@ RedHatCloud::Application.configure do
   config.aria_direct_post_name = 'test_website_new_payment'
   config.aria_direct_post_redirect_base = 'https://example.com'
 
+
+  # Twitter API information
+  config.twitter_api_site = 'https://api.twitter.com'
+  config.twitter_api_prefix = '/1.1/statuses/'
+  config.twitter_oauth_consumer_key = 'kRJ1Hjo3uNd2M8zKCCF0bw'
+  config.twitter_oauth_consumer_secret = 'psNvYg3IOAhWtngxBobajkYWKlus53xkNBQxWz3MU'
+  config.twitter_oauth_token = '17620820-rm2UBzOWYrETRh2Ut4rjkGISqmkfdlVKSYcmmAOGt'
+  config.twitter_oauth_token_secret = 'aFfOPRBJBckWarMxlWYg3MljK6EgoaKUW9CjFSsaG8'
+
   # Promo code Email notification setup
   config.email_from = 'OpenShift <noreply@openshift.redhat.com>'
   config.marketing_mailing_list = 'Marketing Mailing List <jgurrero@redhat.com>'
