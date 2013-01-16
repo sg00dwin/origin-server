@@ -231,11 +231,11 @@ class Release < Thor
         end
 
         unless chain_scm_urls.empty?
-          cmd = "brew chain-build libra-rhel-6.3 #{chain_scm_urls.join(" : ")}"
+          cmd = "brew chain-build libra-rhel-6.3-candidate #{chain_scm_urls.join(" : ")}"
           if push_failures.empty? && run(cmd, :verbose => options.verbose?)
             puts "Done"
           else
-            chain_build_failures += "brew chain-build libra-rhel-6.3 #{chain_scm_urls.join(" : ")}\n" if ($?.exitstatus != 0) 
+            chain_build_failures += "brew chain-build libra-rhel-6.3-candidate #{chain_scm_urls.join(" : ")}\n" if ($?.exitstatus != 0) 
           end
         end
       end
