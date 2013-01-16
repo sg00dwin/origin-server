@@ -8,7 +8,7 @@
 
 Summary:   OpenShift Site Rails application
 Name:      rhc-site
-Version: 1.3.4
+Version: 1.3.5
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   ASL 2.0
@@ -144,6 +144,19 @@ rm -rf %{buildroot}
 %{sitedir}/public
 
 %changelog
+* Wed Jan 16 2013 Adam Miller <admiller@redhat.com> 1.3.5-1
+- Additional method is not needed here (ffranz@redhat.com)
+- Fixes Bug 888383 (ffranz@redhat.com)
+- Fixes Bug 887887 (ffranz@redhat.com)
+- Merge pull request #754 from fabianofranz/dev/ffranz/twitter1.1
+  (dmcphers+openshiftbot@redhat.com)
+- Increased the Twitter cache timeout to 30 minutes (ffranz@redhat.com)
+- Fixed tests for fetching tweets with the new Twitter API (ffranz@redhat.com)
+- Added Twitter API development (read-only) keys (ffranz@redhat.com)
+- Removed unused artifacts (ffranz@redhat.com)
+- Fetching tweets using the new Twitter API (1.1) (ffranz@redhat.com)
+- Updating our Twitter clients to use the REST API 1.1 (ffranz@redhat.com)
+
 * Mon Jan 14 2013 Adam Miller <admiller@redhat.com> 1.3.4-1
 - Merge pull request #752 from smarterclayton/move_email_confirm_to_extended
   (dmcphers+openshiftbot@redhat.com)
