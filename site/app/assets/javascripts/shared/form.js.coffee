@@ -1,5 +1,13 @@
 $ = jQuery
 
+@transport_form_data = (data_attr_name, form_field_selector) ->
+  $("a[data-#{data_attr_name}]").click ->
+    actual = $(form_field_selector)
+    if actual and actual.val()
+      sep = (if (@href.indexOf("?") isnt -1) then "&" else "?")
+      @href = @href + sep + encodeURIComponent($(this).data(data_attr_name)) + "=" + encodeURIComponent(actual.val())
+    true;
+
 $ ->
   # /app/account/new
   # /app/account

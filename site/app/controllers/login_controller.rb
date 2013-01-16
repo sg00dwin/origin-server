@@ -28,6 +28,8 @@ class LoginController < ApplicationController
 
     else
       logger.debug "  Authentication failed"
+      @release_note = ReleaseNote.cached.latest rescue []
+      @events = Event.cached.upcoming.first(3) rescue []
       render :show
     end
   end
@@ -63,4 +65,5 @@ class LoginController < ApplicationController
       else referrer.to_s
       end
     end
+
 end
