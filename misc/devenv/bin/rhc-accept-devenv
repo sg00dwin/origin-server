@@ -1,6 +1,6 @@
 #!/usr/bin/env oo-ruby
 
-output = `rhc-accept-node`
+output = `oo-accept-node`
 exit_code = $?.exitstatus
 if exit_code != 0
   puts "Accept Node Output: #{output}"

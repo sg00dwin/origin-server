@@ -116,4 +116,4 @@ jenkins	ALL=(root) NOPASSWD: /bin/rpm
 jenkins	ALL=(root) NOPASSWD: /usr/bin/puppet
 jenkins	ALL=(root) NOPASSWD: /bin/sed
 jenkins	ALL=(root) NOPASSWD: /usr/bin/facter ipaddress
-jenkins ALL=(root) NOPASSWD: /usr/bin/rhc-accept-node
+jenkins ALL=(root) NOPASSWD: /usr/bin/oo-accept-node

@@ -392,6 +392,7 @@ service rhc-site restart
 echo > /var/www/openshift/broker/log/development.log
 service rhc-broker restart
 service httpd restart
+service openshift-port-proxy restart
 }, 60)
             puts output
             end
