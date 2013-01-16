@@ -1,5 +1,8 @@
 - @suppress_ribbon = true
 - content_for :title, 'Create an account'
+- content_for :javascripts do
+  :javascript
+    transport_form_data("submit-email-address", ":input:not(input[type=hidden]):first");
 
 .column-1
   %h1 Create an account
