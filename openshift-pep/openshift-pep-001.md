@@ -31,7 +31,7 @@ Specification
 -------------
 
 ###Entering the Downgrade Process:
-  Exit of the billing provider's dunning process in an arrears state is specified by an event from the billing provider (Aria).  When receiving the event, the users account will be marked as in_arrears (this logic must be transactional).  In the long term an event should be scheduled to take the user's account through the downgrade process.  In the short term we will want to manage the downgrade via a cron job similar to rhc-admin-ctl-usage --sync.  Let's refer to this as rhc-admin-ctl-plan --process-in-arrears.
+  Exit of the billing provider's dunning process in an arrears state is specified by an event from the billing provider (Aria).  When receiving the event, the user's account will be marked as in_arrears (this logic must be transactional) and pending_plan_id will be set to :freeshift.  In the long term an event should be scheduled to take the user's account through the downgrade process.  In the short term we will want to manage the downgrade via a cron job similar to rhc-admin-ctl-usage --sync.  Let's refer to this as rhc-admin-ctl-plan --process-in-arrears.
 
 ###User Downgrade:
   + Detected by plan_state of in_arrears
@@ -55,10 +55,10 @@ Specification
   
 ###Exiting an In Arrears State at a Later Date:
   If later the billing provider sends an event that a previously in arrears account has been resolved
-  - If the downgrade had already occurred they would be eligible to sign up for a paid plan again.  After signing up for the upgraded plan again:
-    - If their existing gears were deactivated, they can be reactivated.  The plan_state will be in left in a reactivating state in this scenario.  The activation will also need to be executed via a cron job until the scheduler exists (let's call it rhc-admin-ctl-plan --process-reactivations)
-    - Else if they were deleted the user is the same a new user in a paid plan
-  - Else the downgrade can be canceled and the user's pending_plan_id and plan_state restored.
+  + If the downgrade had already occurred they would be eligible to sign up for a paid plan again.  After signing up for the upgraded plan again:
+    + If their existing gears were deactivated, they can be reactivated.  The plan_state will be in left in a reactivating state in this scenario.  The activation will also need to be executed via a cron job until the scheduler exists (let's call it rhc-admin-ctl-plan --process-reactivations)
+    + Else if they were deleted the user is the same as a new user in a paid plan
+  + Else the downgrade can be canceled and the user's pending_plan_id and plan_state restored.
   
 ###Users in the Middle of the Dunning Process Grace Period:
   While the billing providers dunning process is ongoing no changes should happen to a user's assets.  They can continue to use OpenShift as they normally would.
@@ -82,7 +82,7 @@ Specification
   /user will also have the additional attribute of plan_state.
 
 ####Runtime:
-  Deactivate gear will be a new gear state with limited functionality and resources for a user accessing the gear.  Deactivate gear will be a mcollective call at the platform level.  Any restrictions we keep on deactivated gears need to be managed by the platform and not the carts.
+  Deactivate gear will be a new gear state with limited functionality and resources for a user accessing the gear.  Deactivate gear will be a mcollective hook at the platform level.  Any restrictions we keep on deactivated gears need to be managed by the platform and not the carts.
 
 ####Site:
   - The site will need to observe the in_arrears state (as indicated by Aria) on the user and disallow account upgrade.
@@ -115,7 +115,7 @@ Specification
 
 Backwards Compatibility
 -----------------------
-All changes are additive and backwards compatible.  Existing CLIs might not give first class messages about deactivated gears but the messages should be returned from the nodes anyway.
+All changes are additive and backwards compatible.  Existing CLIs might not give first class messages about deactivated gears but reasonable messages should be returned from the nodes anyway.
 
 
 Rationale
