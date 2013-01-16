@@ -25,7 +25,7 @@ def gear_up?(hostname, state='UP')
   csv.split.each do | haproxy_worker |
 
     worker_attrib_array = haproxy_worker.split(',')
-    if worker_attrib_array[17] and worker_attrib_array[1].to_s.start_with?('gear') and worker_attrib_array[17].to_s.start_with?(state)
+    if worker_attrib_array[17] and worker_attrib_array[1].to_s == "local-gear" and worker_attrib_array[17].to_s.start_with?(state)
       $logger.debug("Found: #{worker_attrib_array[1]} - #{worker_attrib_array[17]}")
       found = 0
     elsif worker_attrib_array[17] and worker_attrib_array[1].to_s.start_with?('gear') and not worker_attrib_array[17].to_s.start_with?(state)
@@ -101,7 +101,7 @@ Then /^(at least )?(\d+) gears will be in the cluster$/ do |fuzzy, expected|
       $logger.debug(results)
       $logger.debug("============ GEAR CSV END ============")
 
-      actual = results.split("\n").find_all {|l| l.start_with?('express,gear')}.length()
+      actual = results.split("\n").find_all {|l| l.start_with?('express,gear')}.length() + results.split("\n").find_all {|l| l.start_with?('express,local')}.length() 
       $logger.debug("Gear count: waiting for #{actual} to be #{'at least ' if fuzzy}#{expected}")
     end
   end
