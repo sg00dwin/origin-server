@@ -511,6 +511,7 @@ chmod u-s /bin/umount
 # chmod u-s /sbin/pam_timestamp_check
 chmod u-s /sbin/unix_chkpwd
 # chmod u-s /lib64/dbus-1/dbus-daemon-launch-helper
+chmod 4750 /usr/libexec/polkit-1/polkit-agent-helper-1
 
 # Remove all SGIDs - tkramer
 # chmod g-s /usr/bin/ssh-agent
