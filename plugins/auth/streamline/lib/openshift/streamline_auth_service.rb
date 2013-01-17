@@ -104,6 +104,7 @@ module OpenShift
       end
 
       def check_access(roles)
+=begin
         roles = [] unless roles
         unless roles.index('cloud_access_1')
           if roles.index('cloud_access_request_1')
@@ -112,6 +113,7 @@ module OpenShift
             raise OpenShift::UserValidationException.new("Found valid credentials but you haven't requested access yet", 147)
           end
         end
+=end
       end
 
       def get_cache(key)
