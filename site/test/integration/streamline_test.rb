@@ -49,6 +49,36 @@ class StreamlineIntegrationTest < ActionDispatch::IntegrationTest
     assert user.errors.empty?
   end
 
+  test 'should properly be entitled' do
+    user = new_streamline_user
+    omit_on_register unless user.register('/email_confirm')
+    assert user.confirm_email
+    assert_equal ['simple_authenticated'], user.roles
+    assert user.entitled?
+    assert !user.waiting_for_entitle?
+
+    assert_equal ['simple_authenticated', 'cloud_access_1'], user.roles!
+  end
+
+  test 'should be able to retrieve and acknowledge terms' do
+    user = new_streamline_user
+    omit_on_register unless user.register('/email_confirm')
+    assert user.confirm_email
+
+    assert terms = user.terms
+    assert terms.length >= 2
+    assert !user.accepted_terms?
+    assert_equal terms, user.terms!
+
+    assert user.accept_terms
+    assert user.accepted_terms?
+    assert user.terms.empty?
+
+    assert user.terms!.empty?
+
+    assert_equal ['simple_authenticated', 'cloud_access_1'], user.roles!
+  end
+
   test 'should suppress duplicate registration' do
     user = new_streamline_user
     omit_on_register unless user.register('/email_confirm')
