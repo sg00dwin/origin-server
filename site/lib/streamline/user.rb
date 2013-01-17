@@ -17,7 +17,10 @@ module Streamline
     end
 
     def terms
-      @terms ||= http_post(unacknowledged_terms_url) do |json|
+      @terms or terms!
+    end
+    def terms!
+      @terms = http_post(unacknowledged_terms_url) do |json|
         json['unacknowledgedTerms'] || []
       end
     end
