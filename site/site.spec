@@ -8,7 +8,7 @@
 
 Summary:   OpenShift Site Rails application
 Name:      rhc-site
-Version: 1.3.5
+Version: 1.3.6
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   ASL 2.0
@@ -144,6 +144,10 @@ rm -rf %{buildroot}
 %{sitedir}/public
 
 %changelog
+* Thu Jan 17 2013 Adam Miller <admiller@redhat.com> 1.3.6-1
+- Add test cases for streamline terms acceptance and the expected roles after
+  signin (ccoleman@redhat.com)
+
 * Wed Jan 16 2013 Adam Miller <admiller@redhat.com> 1.3.5-1
 - Additional method is not needed here (ffranz@redhat.com)
 - Fixes Bug 888383 (ffranz@redhat.com)
