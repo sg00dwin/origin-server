@@ -3,7 +3,7 @@
 
 Summary:   Li broker components
 Name:      rhc-broker
-Version: 1.3.4
+Version: 1.3.5
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -135,6 +135,9 @@ if [ ! -f %{_localstatedir}/log/openshift/user_action.log ]; then
 fi
 
 %changelog
+* Fri Jan 18 2013 Dan McPherson <dmcphers@redhat.com> 1.3.5-1
+- Fix BZ895843: migrate postgresql cartridges (pmorie@gmail.com)
+
 * Mon Jan 14 2013 Adam Miller <admiller@redhat.com> 1.3.4-1
 - Bug 889017 (rchopra@redhat.com)
 
