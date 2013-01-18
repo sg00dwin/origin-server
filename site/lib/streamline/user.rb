@@ -478,6 +478,7 @@ module Streamline
               else
                 errors.add(:base, I18n.t(:unknown))
               end
+              false
             end
           end
 
