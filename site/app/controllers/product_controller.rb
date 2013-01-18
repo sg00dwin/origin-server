@@ -2,8 +2,18 @@ class ProductController < SiteController
 
   def index
     @posts = BlogPost.cached.frontpage.first(3) rescue []
-    @tweets = Tweet.cached.openshift_tweets.first(4) rescue []
-    @retweets = Tweet.cached.openshift_retweets.first(4) rescue []
+    begin
+      @tweets = Tweet.cached.openshift_tweets.first(4)
+    rescue Exception => e
+      logger.error "Exception fetching tweets: #{e}\n#{e.backtrace.join("\n  ")}"
+      @tweets = []
+    end
+    begin
+      @retweets = Tweet.cached.openshift_retweets.first(4)
+    rescue Exception => e
+      logger.error "Exception fetching retweets: #{e}\n#{e.backtrace.join("\n  ")}"
+      @retweets = []
+    end
   end
 
   def not_found
