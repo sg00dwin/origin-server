@@ -8,7 +8,7 @@
 
 Summary:   Dependencies for OpenShift development
 Name:      rhc-devenv
-Version:   1.3.5
+Version:   1.3.6
 Release:   1%{?dist}
 Group:     Development/Libraries
 License:   GPLv2
@@ -511,6 +511,7 @@ chmod u-s /bin/umount
 # chmod u-s /sbin/pam_timestamp_check
 chmod u-s /sbin/unix_chkpwd
 # chmod u-s /lib64/dbus-1/dbus-daemon-launch-helper
+chmod 4750 /usr/libexec/polkit-1/polkit-agent-helper-1
 
 # Remove all SGIDs - tkramer
 # chmod g-s /usr/bin/ssh-agent
@@ -674,6 +675,10 @@ restorecon /etc/openshift/node.conf || :
 /sbin/service libra-data restart > /dev/null 2>&1 || :
 
 %changelog
+* Thu Jan 17 2013 Adam Miller <admiller@redhat.com> 1.3.6-1
+- Security remove other rights from /usr/libexec/polkit-1/polkit-agent-helper-1
+  (tkramer@redhat.com)
+
 * Wed Jan 16 2013 Adam Miller <admiller@redhat.com> 1.3.5-1
 - Fix BZ875910 (pmorie@gmail.com)
 
