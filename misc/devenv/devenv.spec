@@ -8,7 +8,7 @@
 
 Summary:   Dependencies for OpenShift development
 Name:      rhc-devenv
-Version:   1.3.6
+Version:   1.3.7
 Release:   1%{?dist}
 Group:     Development/Libraries
 License:   GPLv2
@@ -675,6 +675,10 @@ restorecon /etc/openshift/node.conf || :
 /sbin/service libra-data restart > /dev/null 2>&1 || :
 
 %changelog
+* Mon Jan 21 2013 Adam Miller <admiller@redhat.com> 1.3.7-1
+- enable direct addressing mode (dmcphers@redhat.com)
+- BZ 896364: Fix newline at end of file. (rmillner@redhat.com)
+
 * Thu Jan 17 2013 Adam Miller <admiller@redhat.com> 1.3.6-1
 - Security remove other rights from /usr/libexec/polkit-1/polkit-agent-helper-1
   (tkramer@redhat.com)
