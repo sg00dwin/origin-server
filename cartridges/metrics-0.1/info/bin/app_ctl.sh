@@ -31,7 +31,7 @@ case "$1" in
     start)
         if [ -f ${metrics_dir}/run/stop_lock ]
         then
-            echo "Application is explicitly stopped!  Use 'rhc app cartridge start -a ${cartridge_type} -c metrics-0.1' to start back up." 1>&2
+            echo "Application is explicitly stopped!  Use 'rhc app cartridge start -a ${OPENSHIFT_APP_NAME} -c ${cartridge_type}' to start back up." 1>&2
             exit 0
         else
             ensure_valid_httpd_process "$HTTPD_PID_FILE" "$HTTPD_CFG_FILE"
