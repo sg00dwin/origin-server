@@ -75,8 +75,7 @@ class FakeBeforeFilterTest < ActionController::TestCase
     make_request
 
     assert_response :success
-    assert_not_nil flash[:notice]
-    assert_match(/access setup/, flash[:notice])
+    assert_select "p", /As soon as you're granted access/
   end
 
   test 'fully logged in' do
