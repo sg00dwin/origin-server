@@ -169,4 +169,48 @@ class LoginFlowsTest < ActionDispatch::IntegrationTest
       assert @controller.previously_signed_in?
     end
   end
+
+  test 'ensure new user is queued properly' do
+    with_integrated do
+      user = unconfirmed_user
+      assert user.confirm_email
+      assert user.accept_terms
+
+      WebUser.any_instance.expects(:roles).at_least_once.returns(['cloud_access_request_1', 'simple_authenticated'])
+
+      set_user(user)
+      login
+      assert_response :success
+      assert_template :pending
+      assert_select 'h1', "You're in the queue!"
+
+      get console_path
+      assert_response :success
+      assert_template :pending
+      assert_select 'h1', "You're in the queue!"
+    end
+  end
+
+  test 'ensure new user catches streamline error properly' do
+    with_integrated do
+      user = unconfirmed_user
+      assert user.confirm_email
+      assert user.accept_terms
+
+      #WebUser.any_instance.expects(:roles).at_least_once.returns(['simple_authenticated'])
+      WebUser.any_instance.expects(:entitled?).at_least_once.returns(false)
+      WebUser.any_instance.expects(:waiting_for_entitle?).at_least_once.returns(true)
+
+      set_user(user)
+      login
+      assert_response :success
+      assert_template :pending
+      assert_select 'h1', "You're in the queue!"
+
+      get console_path
+      assert_response :success
+      assert_template :pending
+      assert_select 'h1', "You're in the queue!"
+    end
+  end
 end

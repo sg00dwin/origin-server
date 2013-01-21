@@ -30,20 +30,20 @@ class ActionDispatch::IntegrationTest
     def set_user(user)
       @user = user
     end
-    def login(user=nil)
+    def login(user=nil, expected=302)
       if user
         open_session do |sess|
           sess.https!
           sess.extend(CustomAssertions)
+          binding.pry
           sess.post login_path, :web_user => {:login => user.login, :password => user.password}
-          sess.assert_response 302
+          sess.assert_response expected if expected
         end
       else
         open_session
         https!
         self.extend(CustomAssertions)
         post login_path, :web_user => {:login => @user.login, :password => @user.password}
-        assert_response 302
       end
     end
   private

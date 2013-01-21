@@ -57,7 +57,7 @@ class StreamlineIntegrationTest < ActionDispatch::IntegrationTest
     assert user.entitled?
     assert !user.waiting_for_entitle?
 
-    assert_equal ['simple_authenticated', 'cloud_access_1'], user.roles!
+    assert_equal ['simple_authenticated', 'cloud_access_1'].sort, user.roles!.sort
   end
 
   test 'should be able to retrieve and acknowledge terms' do
@@ -75,8 +75,6 @@ class StreamlineIntegrationTest < ActionDispatch::IntegrationTest
     assert user.terms.empty?
 
     assert user.terms!.empty?
-
-    assert_equal ['simple_authenticated', 'cloud_access_1'], user.roles!
   end
 
   test 'should suppress duplicate registration' do

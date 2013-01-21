@@ -450,7 +450,7 @@ service openshift-port-proxy restart
                 test_queues[0] << ["Site Extended", "cd openshift-test/site; rake test:extended"]
               when 'rhc'
                 test_queues[0] << ["RHC Extended", "cucumber #{CUCUMBER_OPTIONS} -t @rhc_extended openshift-test/tests", {:retry_individually => true}]
-                test_queues[1] << ["RHC Integration", "cd openshift-test/rhc; bundle install --local; RHC_SERVER=localhost QUIET=1 bundle exec \"cucumber #{CUCUMBER_OPTIONS} features\"", {:retry_individually => true}]
+                test_queues[1] << ["RHC Integration", "cd openshift-test/rhc; bundle install; RHC_SERVER=localhost QUIET=1 bundle exec \"cucumber #{CUCUMBER_OPTIONS} features\"", {:retry_individually => true}]
 
               else
                 puts "Not supported for extended: #{extended_test}"

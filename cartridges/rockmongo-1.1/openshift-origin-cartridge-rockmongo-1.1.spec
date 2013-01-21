@@ -2,7 +2,7 @@
 %global frameworkdir %{_libexecdir}/openshift/cartridges/rockmongo-1.1
 
 Name: openshift-origin-cartridge-rockmongo-1.1
-Version: 1.18.1
+Version: 1.18.2
 Release: 1%{?dist}
 Summary: Embedded RockMongo support for OpenShift
 
@@ -59,6 +59,9 @@ rm -rf $RPM_BUILD_ROOT
 %doc %{cartridgedir}/LICENSE
 
 %changelog
+* Fri Jan 18 2013 Dan McPherson <dmcphers@redhat.com> 1.18.2-1
+- Replace expose/show/conceal-port hooks with Endpoints (ironcladlou@gmail.com)
+
 * Wed Dec 12 2012 Adam Miller <admiller@redhat.com> 1.18.1-1
 - bump_minor_versions for sprint 22 (admiller@redhat.com)
 

@@ -481,6 +481,7 @@ module Streamline
               else
                 errors.add(:base, I18n.t(:unknown))
               end
+              false
             end
           end
 
@@ -492,6 +493,7 @@ module Streamline
             raise Streamline::StreamlineException#, "Unable to communicate with streamline: #{$!}", $!.backtrace
           else
             errors.add(:base, I18n.t(:unknown))
+            false
           end
         end
       end
