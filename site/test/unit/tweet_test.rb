@@ -7,20 +7,24 @@ class TweetTest < ActiveSupport::TestCase
   setup{ ActiveResource::HttpMock.reset! }
 
   def mock_tweets
+    api_site = Rails.application.config.twitter_api_site
+    api_prefix = Rails.application.config.twitter_api_prefix
+    api_endpoint = 'user_timeline.json?screen_name=openshift&count=50&trim_user=false&exclude_replies=true&contributor_details=true&include_rts=true'
+    oauth_headers = Tweet.oauth(
+      "#{api_site}#{api_prefix}#{api_endpoint}", 
+      Rails.application.config.twitter_oauth_consumer_key,
+      Rails.application.config.twitter_oauth_consumer_secret,
+      Rails.application.config.twitter_oauth_token,
+      Rails.application.config.twitter_oauth_token_secret)
     ActiveResource::HttpMock.respond_to do |mock|
       mock.get(
-        '/1.1/statuses/user_timeline.json?screen_name=openshift&count=50&trim_user=false&exclude_replies=true&contributor_details=true&include_rts=true', 
-        anonymous_json_header, 
+        "#{api_prefix}#{api_endpoint}", 
+        oauth_headers, 
         IO.read('test/fixtures/timeline.json'))
     end
   end
 
-  def mock_oauth
-    Tweet.expects(:oauth).at_least(0).returns(nil)
-  end
-
   def test_tweets
-    mock_oauth
     mock_tweets
 
     assert t = Tweet.openshift_tweets
@@ -32,7 +36,6 @@ class TweetTest < ActiveSupport::TestCase
   end
 
   def test_retweets
-    mock_oauth
     mock_tweets
 
     assert t = Tweet.openshift_retweets
@@ -46,5 +49,15 @@ class TweetTest < ActiveSupport::TestCase
     assert_equal 'Michael McGrath', tw.retweeted_status.user.name
 
     assert_equal tw.text, tw.text_with_entities.join
+  end
+end
+
+module RestApi
+  module Oauth
+    module ClassMethods
+      private
+        def generate_oauth_nonce; '0'; end
+        def timestamp; '0'; end
+    end
   end
 end

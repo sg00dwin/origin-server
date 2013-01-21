@@ -3,11 +3,19 @@ require File.expand_path('../../test_helper', __FILE__)
 class ProductControllerTest < ActionController::TestCase
 
   def mock_tweets
-    Tweet.expects(:oauth).at_least(0).returns(nil)
+    api_site = Rails.application.config.twitter_api_site
+    api_prefix = Rails.application.config.twitter_api_prefix
+    api_endpoint = 'user_timeline.json?screen_name=openshift&count=50&trim_user=false&exclude_replies=true&contributor_details=true&include_rts=true'
+    oauth_headers = Tweet.oauth(
+      "#{api_site}#{api_prefix}#{api_endpoint}", 
+      Rails.application.config.twitter_oauth_consumer_key,
+      Rails.application.config.twitter_oauth_consumer_secret,
+      Rails.application.config.twitter_oauth_token,
+      Rails.application.config.twitter_oauth_token_secret)
     ActiveResource::HttpMock.respond_to do |mock|
       mock.get(
-        '/1.1/statuses/user_timeline.json?screen_name=openshift&count=50&trim_user=false&exclude_replies=true&contributor_details=true&include_rts=true', 
-        anonymous_json_header, 
+        "#{api_prefix}#{api_endpoint}", 
+        oauth_headers, 
         IO.read('test/fixtures/timeline.json'))
     end
   end
@@ -49,6 +57,16 @@ class ProductControllerTest < ActionController::TestCase
       assert tweets.length > 0
     rescue ActiveResource::BadRequest
       omit("Twitter is rejecting requests because of rate limits")
+    end
+  end
+end
+
+module RestApi
+  module Oauth
+    module ClassMethods
+      private
+        def generate_oauth_nonce; '0'; end
+        def timestamp; '0'; end
     end
   end
 end
