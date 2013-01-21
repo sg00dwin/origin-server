@@ -1,6 +1,9 @@
 require File.expand_path('../../test_helper', __FILE__)
 
 class AccountControllerTest < ActionController::TestCase
+  def setup
+    @controller.stubs(:skip_captcha?).returns(true)
+  end
 
   test "should get new unauthorized" do
     get :new
@@ -64,14 +67,6 @@ class AccountControllerTest < ActionController::TestCase
     assert_redirected_to complete_account_path(:promo_code => 'a_code')
   end
 
-  test "should ignore captcha non-integrated environment" do
-    Rails.configuration.expects(:captcha_secret).at_least_once.returns('123')
-    Rails.configuration.expects(:integrated).at_least_once.returns(false)
-    @controller.expects(:verify_recaptcha).once
-    post(:create, {:web_user => {}})
-    assert_response :success
-  end
-
   test "should render dashboard" do
     omit_if_aria_is_unavailable if Rails.configuration.aria_enabled
     with_unique_user
@@ -92,72 +87,6 @@ class AccountControllerTest < ActionController::TestCase
     end
   end
 
-  test "should render captcha" do
-    Rails.configuration.expects(:captcha_secret).at_least_once.returns('123')
-    get :new
-    assert_response :success
-    assert_select "#recaptcha_widget"
-  end
-
-  test "should render page without captcha when secret is present" do
-    Rails.configuration.expects(:captcha_secret).at_least_once.returns('123')
-    get :new, {:web_user => {}, :captcha_secret => '123'}
-    assert_response :success
-    assert css_select("#recaptcha_widget").empty?
-  end
-
-  test "should render page without captcha when secret is nil" do
-    Rails.configuration.expects(:captcha_secret).at_least_once.returns(nil)
-    get :new, {:web_user => {}}
-    assert_response :success
-    assert css_select("#recaptcha_widget").empty?
-  end
-
-  test "should ignore captcha when secret is correct" do
-    Rails.configuration.expects(:integrated).at_least_once.returns(false)
-    Rails.configuration.expects(:captcha_secret).at_least_once.returns('123')
-    @controller.expects(:verify_recaptcha).never
-    post(:create, {:web_user => {}, :captcha_secret => '123'})
-    assert_response :success
-    assert_template :new
-    assert_equal '123', assigns(:captcha_secret)
-    assert assigns(:user).errors.present?
-  end
-
-  test "should check captcha when secret is incorrect" do
-    Rails.configuration.expects(:captcha_secret).at_least_once.returns('123')
-    @controller.expects(:verify_recaptcha)
-    post(:create, {:web_user => {}, :captcha_secret => '321'})
-    assert_response :success
-    assert_template :new
-    assert_nil assigns(:captcha_secret)
-  end
-
-  test "should check captcha" do
-    Rails.configuration.expects(:captcha_secret).at_least_once.returns('123')
-    Rails.configuration.expects(:integrated).at_least_once.returns(false)
-    @controller.expects(:verify_recaptcha).returns(true)
-    post(:create, {:web_user => {}})
-    assert_response :success
-  end
-
-	test "should have captcha check fail" do
-    Rails.configuration.expects(:captcha_secret).at_least_once.returns('123')
-    Rails.configuration.expects(:integrated).at_least_once.returns(false)
-		@controller.expects(:verify_recaptcha).returns(false)
-		post(:create, {:web_user => {}})
-
-		assert_equal ["Captcha text didn't match"], Array(assigns(:user).errors[:captcha])
-    assert_nil assigns(:captcha_secret)
-	end
-
-  test "should have captcha check succeed when secret is nil" do
-    Rails.configuration.expects(:captcha_secret).at_least_once.returns(nil)
-    Rails.configuration.expects(:integrated).at_least_once.returns(false)
-		post(:create, {:web_user => {}})
-    assert_response :success
-	end
-
 	test "should get success on post and choosing Express" do
 		post(:create, {:web_user => get_post_form.merge({:cloud_access_choice => CloudAccess::EXPRESS})})
 
@@ -165,22 +94,11 @@ class AccountControllerTest < ActionController::TestCase
     assert_redirected_to complete_account_path
 	end
 
-  test "should register user from external" do
-    Rails.configuration.expects(:captcha_secret).at_least_once.returns('secret')
-    post(:create_external, {:json_data => '{"email_address":"tester@example.com","password":"pw1234"}', :captcha_secret => 'secret', :registration_referrer => 'appcelerator'})
-    assert_response :success
-  end
-
-  test "should fail register external with invalid secret" do
-    post(:create_external, {:json_data => '{"email_address":"tester@example.com","password":"pw1234"}', :captcha_secret => 'wrongsecret', :registration_referrer => 'appcelerator'})
-    assert_response 401
-  end
-  
   test "should fail register external with invalid password" do
     post(:create_external, {:json_data => '{"email_address":"tester@example.com","password":"pw"}', :captcha_secret => 'secret', :registration_referrer => 'appcelerator'})
     assert_response 400
   end
-  
+
   test "should fail register external with no registration referrer" do
     post(:create_external, {:json_data => '{"email_address":"tester@example.com","password":"pw1234"}', :captcha_secret => 'secret'})
     assert_response 400
