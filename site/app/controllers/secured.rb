@@ -99,7 +99,7 @@ module Secured
         else
           if user.waiting_for_entitle?
             logger.warn "Notifying user about pending account access"
-            flash[:notice] = "Note: We are still working on getting your access setup..."
+            #flash[:notice] = "We are still working on getting your access setup..."
             #FIXME: redirect to a page indicating that they don't have access yet
             render 'access/pending.html.haml'
           else
