@@ -6,13 +6,15 @@ class ProductController < SiteController
       @tweets = Tweet.cached.openshift_tweets.first(4)
     rescue Exception => e
       logger.error "Exception fetching tweets: #{e}\n#{e.backtrace.join("\n  ")}"
-      @tweets = []
+      logger.error @tweets.inspect
+      @tweets = [] if ! @tweets
     end
     begin
       @retweets = Tweet.cached.openshift_retweets.first(4)
     rescue Exception => e
       logger.error "Exception fetching retweets: #{e}\n#{e.backtrace.join("\n  ")}"
-      @retweets = []
+      logger.error @retweets.inspect
+      @retweets = [] if ! @retweets
     end
   end
 
