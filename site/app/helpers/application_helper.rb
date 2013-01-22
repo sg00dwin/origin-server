@@ -7,6 +7,8 @@ module ApplicationHelper
   include Console::ModelHelper
   include Console::SecuredHelper
 
+  include CaptchaHelper
+
   def logout_path(*args)
     controller.logout_path(*args)
   end
