@@ -50,6 +50,7 @@ RedHatCloud::Application.configure do
   }
   config.captcha_secret = 'secret'
   config.sso_verify_interval = 0
+  config.captcha_types = [:recaptcha]
 
   # Aria API information
   config.aria_enabled = true
