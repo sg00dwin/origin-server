@@ -35,14 +35,20 @@ function customGATracker() {
         promoCode = getParameterByName("promo_code");
         firstLogin = getParameterByName("confirm_signup");
         omniCode = getParameterByName("sc_cid");
+        // We're using the inputs here because we are mixing GET and POST pages
+        captchaType = $("input[name=captcha_type]").val();
+        captchaStatus = $("input[name=captcha_status]").val();
     }
     _gaq.push(['_setAccount', 'UA-30752912-1']);
     _gaq.push(['_setDomainName', 'redhat.com']);
     _gaq.push(['_setCustomVar', 3 ,'Omni', omniCode , 1]);
     _gaq.push(['_setSiteSpeedSampleRate', 10]);
-    
+
     if(/app\/account\/complete/.test(url) && typeof trackAdWordsConversion == "function"){
         trackAdWordsConversion('1007064360', '3qfsCMjw0gIQqKqa4AM');
+    }
+    if((/app\/account\/new/.test(url) || /app\/account\/complete/.test(url)) && captchaType && captchaStatus){
+        _gaq.push(['_trackEvent','Captcha',captchaType,captchaStatus]);
     }
     if(/community\/pricing/.test(url)){
         _gaq.push(['_setCustomVar', 4 ,'Viewed Pricing Page', 'Viewed Page', 1]);
