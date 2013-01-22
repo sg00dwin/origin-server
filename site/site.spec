@@ -8,7 +8,7 @@
 
 Summary:   OpenShift Site Rails application
 Name:      rhc-site
-Version: 1.3.8
+Version: 1.3.9
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   ASL 2.0
@@ -144,6 +144,15 @@ rm -rf %{buildroot}
 %{sitedir}/public
 
 %changelog
+* Tue Jan 22 2013 Adam Miller <admiller@redhat.com> 1.3.9-1
+- Merge pull request #776 from fabianofranz/master
+  (dmcphers+openshiftbot@redhat.com)
+- Ref bug 901949, Twitter tests removed to make sanity pass (ffranz@redhat.com)
+- Fix bug 901342 (ffranz@redhat.com)
+- Fix bug 901949, now mocking oauth timestamp and nonce instead of oauth itself
+  to provide better tests (ffranz@redhat.com)
+- Merge remote-tracking branch 'upstream/master' (ffranz@redhat.com)
+
 * Mon Jan 21 2013 Adam Miller <admiller@redhat.com> 1.3.8-1
 - Merge pull request #770 from
   smarterclayton/bug_887522_handle_service_failure_from_streamline
