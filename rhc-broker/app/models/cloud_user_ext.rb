@@ -1,4 +1,5 @@
 class CloudUser
+  include UtilHelper
   #alias :initialize_old :initialize
 
   #def initialize(login=nil, ssh=nil, ssh_type=nil, key_name=nil, capabilities=nil, parent_user_login=nil)
@@ -70,7 +71,7 @@ class CloudUser
   def assign_plan(plan_id, persist=false)
     plan_info = get_plan_info(plan_id)
     plan_capabilities = plan_info[:capabilities]
-    user_capabilities = plan_capabilities.dup
+    user_capabilities = deep_copy(plan_capabilities)
 
     self.plan_id = plan_id
     self.capabilities_will_change!

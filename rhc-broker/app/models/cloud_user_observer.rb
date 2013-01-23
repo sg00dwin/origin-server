@@ -1,4 +1,5 @@
 class CloudUserObserver < ActiveModel::Observer
+  include UtilHelper
   observe CloudUser
 
   def before_cloud_user_create(user)
@@ -8,7 +9,7 @@ class CloudUserObserver < ActiveModel::Observer
     if user.plan_id 
       raise OpenShift::UserException.new("Specified plan_id does not exist", 150) if !Express::AriaBilling::Plan.instance.valid_plan(user.plan_id)
       plan_details = Rails.application.config.billing[:aria][:plans][user.plan_id.to_sym]
-      user.set_capabilities(user_capabilities.merge(plan_details[:capabilities].dup))
+      user.set_capabilities(user_capabilities.merge(deep_copy(plan_details[:capabilities])))
     end
   end
 

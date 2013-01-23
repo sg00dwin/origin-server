@@ -22,7 +22,7 @@ class CtlUsageTest < ActionDispatch::IntegrationTest
     cu.save!
     Lock.create_lock(cu)
     namespace = "ns" + gen_uuid[0..9]
-    domain = Domain.new(namespace: namespace, owner: cu)
+    domain = Domain.new(namespace: namespace, canonical_namespace: namespace, owner: cu)
     domain.save!
     districts_enabled = Rails.configuration.msg_broker[:districts][:enabled] 
     Rails.configuration.msg_broker[:districts][:enabled] = false
@@ -126,7 +126,6 @@ class CtlUsageTest < ActionDispatch::IntegrationTest
     app = Application.find_by(name: app_name, domain: domain)
     app.destroy_app
 
-=begin #TODO: FIXME
     usage_records = []
     UsageRecord.where(login: login).asc(:time).each { |rec| usage_records << rec }
     assert_equal(4, usage_records.length)
@@ -134,11 +133,10 @@ class CtlUsageTest < ActionDispatch::IntegrationTest
     assert_equal(UsageRecord::EVENTS[:continue], usage_records[0].event)
     assert_equal(UsageRecord::USAGE_TYPES[:addtl_fs_gb], usage_records[1].usage_type)
     assert_equal(UsageRecord::EVENTS[:begin], usage_records[1].event)
-    assert_equal(UsageRecord::USAGE_TYPES[:addtl_fs_gb], usage_records[2].usage_type)
+    assert_equal(UsageRecord::USAGE_TYPES[:gear_usage], usage_records[2].usage_type)
     assert_equal(UsageRecord::EVENTS[:end], usage_records[2].event)
-    assert_equal(UsageRecord::USAGE_TYPES[:gear_usage], usage_records[3].usage_type)
+    assert_equal(UsageRecord::USAGE_TYPES[:addtl_fs_gb], usage_records[3].usage_type)
     assert_equal(UsageRecord::EVENTS[:end], usage_records[3].event)
-    assert_equal(UsageRecord::USAGE_TYPES[:gear_usage], usage_records[3].usage_type)
 
     # Sync the delete
     sync_usage
@@ -146,7 +144,6 @@ class CtlUsageTest < ActionDispatch::IntegrationTest
     usage_records = []
     UsageRecord.where(login: login).asc(:time).each { |rec| usage_records << rec }
     assert_equal(0, usage_records.length)
-=end 
   end
  
   def sync_usage
