@@ -15,7 +15,7 @@ Requires:  rhc-common
 Requires:  rhc-server-common
 Requires:  httpd
 Requires:  mod_ssl
-Requires:  mod_passenger
+Requires:  ruby193-mod_passenger
 Requires:  ruby193
 Requires:  ruby193-rubygem-json
 Requires:  ruby193-rubygem-parseconfig
