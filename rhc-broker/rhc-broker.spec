@@ -3,7 +3,7 @@
 
 Summary:   Li broker components
 Name:      rhc-broker
-Version: 1.3.5
+Version: 1.3.6
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -135,6 +135,12 @@ if [ ! -f %{_localstatedir}/log/openshift/user_action.log ]; then
 fi
 
 %changelog
+* Wed Jan 23 2013 Adam Miller <admiller@redhat.com> 1.3.6-1
+- Merge pull request #783 from ironcladlou/bz/903152 (dmcphers@redhat.com)
+- Reset app git repo file permissions to gear user/group
+  (ironcladlou@gmail.com)
+- remove mod_passenger req from broker (dmcphers@redhat.com)
+
 * Fri Jan 18 2013 Dan McPherson <dmcphers@redhat.com> 1.3.5-1
 - Fix BZ895843: migrate postgresql cartridges (pmorie@gmail.com)
 
