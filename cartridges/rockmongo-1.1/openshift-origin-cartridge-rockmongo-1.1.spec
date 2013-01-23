@@ -2,7 +2,7 @@
 %global frameworkdir %{_libexecdir}/openshift/cartridges/rockmongo-1.1
 
 Name: openshift-origin-cartridge-rockmongo-1.1
-Version: 1.18.3
+Version: 1.18.4
 Release: 1%{?dist}
 Summary: Embedded RockMongo support for OpenShift
 
@@ -59,6 +59,10 @@ rm -rf $RPM_BUILD_ROOT
 %doc %{cartridgedir}/LICENSE
 
 %changelog
+* Wed Jan 23 2013 Adam Miller <admiller@redhat.com> 1.18.4-1
+- Bug 903139 Removing user/pw from cart props since this cart doesn't control
+  them (dmcphers@redhat.com)
+
 * Tue Jan 22 2013 Adam Miller <admiller@redhat.com> 1.18.3-1
 - Fix typos in rhc instructions displayed to client (ironcladlou@gmail.com)
 
