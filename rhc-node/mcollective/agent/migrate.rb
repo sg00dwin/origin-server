@@ -73,6 +73,27 @@ module OpenShiftMigration
       Util.replace_in_file("#{cart_dir}/data/postgresql.conf", "unix_socket_directory = '/tmp'", "unix_socket_directory = '#{cart_dir}/socket'")
     end
 
+    # Many files in the app git repo may have been reset to root as a result of
+    # https://bugzilla.redhat.com/show_bug.cgi?id=903152. Reset the ownership
+    # of the known affected files to the gear user/group.
+    app_git_dir = File.join(gear_home, "git", "#{app_name}.git")
+    if File.directory?(app_git_dir)
+      files_to_reset = [
+        File.join(app_git_dir, "packed-refs"),
+        File.join(app_git_dir, "objects", "info", "packs"),
+        File.join(app_git_dir, "info", "refs")
+      ]
+
+      pack_dir = File.join(app_git_dir, "objects", "pack", "*")
+
+      begin
+        FileUtils.chown(uuid, uuid, files_to_reset)
+        FileUtils.chown(uuid, uuid, Dir.glob(pack_dir))
+      rescue Exception => e
+        output += "ERROR: Couldn't reset git repo ownership for gear #{uuid}: #{e.message}\n#{e.backtrace}\n"
+      end
+    end
+
     env_echos.each do |env_echo|
       echo_output, echo_exitcode = Util.execute_script(env_echo)
       output += echo_output
