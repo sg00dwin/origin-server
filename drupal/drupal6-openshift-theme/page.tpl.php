@@ -27,7 +27,7 @@
         else { $layout = 'both'; }
       }
     ?> 
-    <link type="image/png" rel="shortcut icon" href="/app/assets/images/favicon-32.png"></link>
+    <link type="image/png" rel="shortcut icon" href="/app/assets/favicon-32.png"></link>
     <link type="text/css" rel="stylesheet" href="/app/assets/overpass.css"></link>
     <script src="/app/assets/modernizr.min.js" type="text/javascript"></script>
     <link type="text/css" rel="stylesheet" href="/app/assets/common.css"></link>
