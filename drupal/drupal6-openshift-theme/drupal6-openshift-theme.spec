@@ -5,7 +5,7 @@
 %global drupal_themename    openshift-theme
 
 Name:           drupal6-%{drupal_themename}
-Version: 3.11.1
+Version: 3.11.2
 Release:        1%{?dist}
 Summary:        Red Hat Openshift theme for Drupal %{drupal_release}
 
@@ -44,6 +44,9 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
+* Wed Jan 23 2013 Adam Miller <admiller@redhat.com> 3.11.2-1
+- Bug 880854 - Fix community favicon in some browsers (ccoleman@redhat.com)
+
 * Wed Dec 12 2012 Adam Miller <admiller@redhat.com> 3.11.1-1
 - bump_minor_versions for sprint 22 (admiller@redhat.com)
 
