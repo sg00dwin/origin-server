@@ -1,3 +1,6 @@
+# We need this to ensure that the lib is properly reloaded
+require_dependency 'captcha_helper'
+
 module Account
   module Creation
     extend ActiveSupport::Concern

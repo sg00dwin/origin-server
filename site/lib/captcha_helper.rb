@@ -61,5 +61,5 @@ module CaptchaHelper
   end
 end
 
-require 'captcha_helper/picatcha'
-require 'captcha_helper/recaptcha'
+require_dependency 'captcha_helper/picatcha'
+require_dependency 'captcha_helper/recaptcha'
