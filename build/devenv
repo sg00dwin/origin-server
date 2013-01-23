@@ -201,7 +201,8 @@ module Express
 
       puts `pushd /tmp > /dev/null; rm -rf /tmp/clients; scp -r verifier:/etc/mcollective/ssl/clients/ .; scp -r clients/* #{hostname}:/etc/mcollective/ssl/clients/; popd > /dev/null`
 
-      ssh(hostname, "sed -i 's,^plugin.activemq.pool.1.host.*=.*,plugin.activemq.pool.1.host=#{internal_ip},' /etc/mcollective/server.cfg;" \
+      ssh(hostname, "sed -i 's,^plugin.activemq.pool.1.host.*=.*,plugin.activemq.pool.1.host=#{internal_ip},' /etc/mcollective/client.cfg;" \
+                    "sed -i 's,^plugin.activemq.pool.1.host.*=.*,plugin.activemq.pool.1.host=#{internal_ip},' /etc/mcollective/server.cfg;" \
                     "sed -i 's,^BROKER_HOST.*=.*,BROKER_HOST=#{internal_ip},' /etc/openshift/node.conf;" \
                     "service activemq stop; service mcollective restart", 240)
 
@@ -450,8 +451,7 @@ service openshift-port-proxy restart
                 test_queues[0] << ["Site Extended", "cd openshift-test/site; rake test:extended"]
               when 'rhc'
                 test_queues[0] << ["RHC Extended", "cucumber #{CUCUMBER_OPTIONS} -t @rhc_extended openshift-test/tests", {:retry_individually => true}]
-                test_queues[1] << ["RHC Integration", "cd openshift-test/rhc; bundle install; RHC_SERVER=localhost QUIET=1 bundle exec \"cucumber #{CUCUMBER_OPTIONS} features\"", {:retry_individually => true}]
-
+                test_queues[1] << ["RHC Integration", "cd openshift-test/rhc; bundle install --path=gems; RHC_SERVER=localhost QUIET=1 bundle exec \"cucumber #{CUCUMBER_OPTIONS} features\"", {:retry_individually => true}]
               else
                 puts "Not supported for extended: #{extended_test}"
                 exit 1

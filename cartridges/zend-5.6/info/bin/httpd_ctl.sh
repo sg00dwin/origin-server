@@ -34,7 +34,7 @@ case "$1" in
     start)
         _state=`get_app_state`
         if [ -f $cartridge_dir/run/stop_lock -o idle = "$_state" ]; then
-            echo "Application is explicitly stopped!  Use 'rhc app start -a ${cartridge_type}' to start back up." 1>&2
+            echo "Application is explicitly stopped!  Use 'rhc app start -a ${OPENSHIFT_APP_NAME}' to start back up." 1>&2
             exit 0
         else
             src_user_hook pre_start_${cartridge_type}
