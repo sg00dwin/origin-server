@@ -10,7 +10,7 @@ require 'cloud_user_ext'
 require File.expand_path('../../lib/express/broker/mcollective_ext', File.dirname(__FILE__))
 
 if Rails.application.config.datastore[:replica_set]
-  MongoMapper.connection = Mongo::ReplSetConnection.new(*Rails.application.config.datastore[:host_port] << {:read => :secondary})
+  MongoMapper.connection = Mongo::ReplSetConnection.new(*Rails.application.config.datastore[:host_port].dup << {:read => :secondary})
 else
   MongoMapper.connection = Mongo::Connection.new(Rails.application.config.datastore[:host_port][0], Rails.application.config.datastore[:host_port][1])
 end
