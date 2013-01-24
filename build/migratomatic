@@ -29,23 +29,6 @@ def generate_token
   rand(36**8).to_s(36)
 end
 
-def generate_app(cart_type, domain, scalable=false, embedded=[])
-  cart_name = cart_type.gsub(/-|\./,'')
-  token = generate_token
-  
-  app = {
-    :token => token,
-    :old_name => "old#{cart_name}#{token}",
-    :new_name => "new#{cart_name}#{token}",
-    :domain => domain,
-    :scalable => scalable,
-    :type => cart_type,
-    :embedded => embedded
-  }
-
-  app
-end
-
 def pull_artifacts(mig_config, devenv, version)
   puts "Pulling artifacts for #{version} from #{devenv}"
 
@@ -142,25 +125,33 @@ def up_gears(devenv, account)
   command(cmd)
 end
 
-def generate_apps(app_defs, domain)
-  puts "Generating apps for #{app_defs.length} cartridge combinations"
+def generate_apps(app_descriptors, domain)
+  puts "Generating apps for #{app_descriptors.length} cartridge combinations"
 
   apps = []
 
-  app_defs.each do |app_def|
-    case app_def
-    when String
-      #apps << generate_app(app_def, domain)
-      apps << generate_app(app_def, domain, false)
-    when Array  
-      #apps << generate_app(app_def.first, domain, false, app_def[1..-1])
-      apps << generate_app(app_def.first, domain, false, app_def[1..-1])
-    else
-      $stderr.puts "generate_apps does not know how to process classOf #{app_def.class}"
-    end
+  app_descriptors.each do |app_def|
+    apps << generate_app(app_def, domain)
   end
 
   apps
+end
+
+def generate_app(app_descriptor, domain)
+  cart_name = app_descriptor[:type].gsub(/-|\./,'')
+  token = generate_token
+  
+  app = {
+    :token => token,
+    :old_name => "old#{cart_name}#{token}",
+    :new_name => "new#{cart_name}#{token}",
+    :domain => domain,
+    :scalable => !!app_descriptor[:scalable], # coerce a boolean for scalable
+    :type => app_descriptor[:type],
+    :embedded => app_descriptor[:embedded]
+  }
+
+  app
 end
 
 def create_apps(mig_config, apps, config)
@@ -331,9 +322,7 @@ def diff_report(mig_config, apps, devenv)
     puts "Diffing #{app[:old_name]} against #{app[:new_name]} (#{app[:type]}#{carts}, #{app[:scalable] ? 'scalable' : 'unscalable'})"
     result_file = "/#{mig_config['tmp']}/#{app[:type]}#{carts}.#{app[:scalable] ? 'scalable' : 'unscalable'}.diff"
 
-    cmd = "ssh root@#{devenv} diff -r /var/lib/openshift/#{app[:old_name]}-* /var/lib/openshift/#{app[:new_name]}-* --exclude=repo > #{result_file} 2>&1"
-
-    command(cmd)
+    command("ssh root@#{devenv} diff -r /var/lib/openshift/#{app[:old_name]}-* /var/lib/openshift/#{app[:new_name]}-* --exclude=repo > #{result_file} 2>&1")
   end
 end
 
@@ -390,29 +379,17 @@ commands:
 USAGE
 end
 
-#cart_types = [ 'php-5.3', 'ruby-1.8', 'ruby-1.9', 'perl-5.10', 'jbossas-7', 'jbosseap-6.0', 'python-2.6', 'diy-0.1', 'nodejs-0.6',
-#               ['php-5.3', 'mysql-5.1'], ['php-5.3', 'postgresql-8.4'], ['php-5.3', 'mongodb-2.0'], 
-#               ['php-5.3', 'mongodb-2.0', 'rockmongo-1.1'], ['php-5.3', 'mysql-5.1', 'phpmyadmin-3.4'], 'jenkins-1.4'
-#             ]
+def app_descriptions
+  [ { type: 'php-5.3', 
+      embedded: %w(postgresql-8.4) },
+    { type: 'php-5.3', 
+      embedded: %w(postgresql-8.4),
+      scalable: true },
+    { type: 'php-5.3',
+      embedded: %w(mysql-5.1 phpmyadmin-3.4) }
+  ]
+end
 
-cart_types = [
-  ['php-5.3', 'postgresql-8.4'], 
-  ['nodejs-0.6', 'postgresql-8.4'], 
-  ['jbossas-7', 'postgresql-8.4'], 
-]
-
-#cart_types = [ 'jenkins-1.4', 
-#               ['php-5.3', 'jenkins-client-1.4'],
-#               ['ruby-1.8', 'jenkins-client-1.4'], 
-#               ['ruby-1.9', 'jenkins-client-1.4'],
-#               ['perl-5.10', 'jenkins-client-1.4'],
-#               ['jbossas-7', 'jenkins-client-1.4'],
-#               ['jbosseap-6.0', 'jenkins-client-1.4'],
-#               ['diy-0.1', 'jenkins-client-1.4'],
-#               ['nodejs-0.6', 'jenkins-client-1.4'],
-#               ['python-2.6', 'jenkins-client-1.4'],
-#]
-             
 def old_to_new_cart_types
   {}
 end
@@ -475,7 +452,7 @@ when 'test'
   create_domain(domain, account, config, devenv)
   add_ssh_key(account, config, mig_config['default_keyfile'])
   up_gears(devenv, account)
-  apps = generate_apps(cart_types, domain)
+  apps = generate_apps(app_descriptions, domain)
   create_apps(mig_config, apps, config)
   store_apps(mig_config, apps)
   update_devenv(mig_config, devenv, new_version)
@@ -485,7 +462,6 @@ when 'test'
   cleanup(mig_config, devenv)
 when 'create'
   devenv = create_devenv(mig_config, true)
-
   puts "devenv: #{devenv}"
 when 'setup'
   devenv = opt['devenv']
@@ -493,7 +469,7 @@ when 'setup'
   create_domain(domain, account, config, devenv)
   add_ssh_key(account, config, mig_config['default_keyfile'])
   up_gears(devenv, account)
-  apps = generate_apps(cart_types, domain)
+  apps = generate_apps(app_descriptions, domain)
   create_apps(mig_config, apps, config)
   store_apps(mig_config, apps)
 when 'update'
