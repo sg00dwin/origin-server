@@ -7,7 +7,7 @@
 
 Summary:       Multi-tenant cloud management system node tools
 Name:          rhc-node
-Version: 1.4.0
+Version: 1.4.1
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -236,6 +236,9 @@ fi
 
 
 %changelog
+* Wed Jan 23 2013 Adam Miller <admiller@redhat.com> 1.4.1-1
+- bump_minor_versions for sprint 23 (admiller@redhat.com)
+
 * Wed Jan 23 2013 Adam Miller <admiller@redhat.com> 1.3.4-1
 - Reset app git repo file permissions to gear user/group
   (ironcladlou@gmail.com)
