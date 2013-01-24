@@ -2,7 +2,7 @@
 %global frameworkdir %{_libexecdir}/openshift/cartridges/rockmongo-1.1
 
 Name: openshift-origin-cartridge-rockmongo-1.1
-Version: 1.18.4
+Version: 1.19.0
 Release: 1%{?dist}
 Summary: Embedded RockMongo support for OpenShift
 

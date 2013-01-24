@@ -5,7 +5,7 @@
 %global modname             redhat_frontpage
 
 Name:    drupal%{drupal_release}-openshift-%{modname}
-Version: 1.5.2
+Version: 1.6.0
 Release: 1%{?dist}
 Summary: Openshift Red Hat Front Page Custom Module for Drupal6
 Group:   Applications/Publishing
