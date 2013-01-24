@@ -1,6 +1,6 @@
 Summary:       SELinux policy for OpenShift nodes
 Name:          rhc-selinux
-Version: 1.2.0
+Version: 1.2.1
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -64,6 +64,9 @@ fi
 
 
 %changelog
+* Wed Jan 23 2013 Adam Miller <admiller@redhat.com> 1.2.1-1
+- bump_minor_versions for sprint 23 (admiller@redhat.com)
+
 * Thu Jan 10 2013 Adam Miller <admiller@redhat.com> 1.1.2-1
 - Allow apps to connect to port 8000 (http for websockets) and 5222/5223 (xmpp
   /jabber-old) and 6667 (ircd). (ramr@redhat.com)
