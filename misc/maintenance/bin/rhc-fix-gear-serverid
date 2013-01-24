@@ -1,0 +1,88 @@
+#!/usr/bin/env oo-ruby
+
+require 'rubygems'
+require 'getoptlong'
+
+def usage
+  puts <<USAGE
+== Synopsis
+
+rhc-fix-gear-serverid : Fix the server identity of a gear in mongo
+
+== Usage
+
+rhc-fix-gear-serverid OPTIONS
+
+Options:
+--gear_uuid <gear_uuid>
+    Gear uuid to fix
+--source_server_identity <server_identity>
+--target_server_identity <server_identity>
+    Target server identity
+-h|--help
+    Show Usage info
+USAGE
+  exit 255
+end
+
+opts = GetoptLong.new(
+    ["--gear_uuid",        "-g", GetoptLong::REQUIRED_ARGUMENT],
+    ["--target_server_identity", '-t', GetoptLong::REQUIRED_ARGUMENT],
+    ["--source_server_identity", '-s', GetoptLong::REQUIRED_ARGUMENT],
+    ["--help",             "-h", GetoptLong::NO_ARGUMENT]
+)
+
+args = {}
+begin
+  opts.each{ |k,v| args[k]=v }
+rescue GetoptLong::Error => e
+  usage
+end
+
+gear_uuid = args["--gear_uuid"]
+target_server_identity = args['--target_server_identity']
+source_server_identity = args['--source_server_identity']
+
+require "/var/www/openshift/broker/config/environment"
+
+Rails.configuration.msg_broker[:rpc_options][:disctimeout] = 20
+
+app, gear = Application.find_by_gear_uuid(gear_uuid)
+
+if gear.nil? or app.nil?
+  puts "ERROR: Gear not found: #{gear_uuid}"
+  exit 1
+end
+if gear.server_identity != source_server_identity
+  puts "ERROR: Gear's current server identity does not match given source identity '#{source_server_identity}'"
+  exit 1
+end
+
+
+node_hash, $sender_hash = OpenShift::ApplicationContainerProxy.get_all_gears
+
+if not $sender_hash.has_key? target_server_identity
+  puts "Cannot find target node '#{target_server_identity}'"
+  exit 1
+end
+
+if not $sender_hash[target_server_identity].values.include? gear_uuid
+  puts "Cannot find gear '#{gear_uuid}' on target node '#{target_server_identity}'"
+  exit 1
+end
+
+gear.server_identity = target_server_identity
+app.save
+
+#recheck
+sleep(5)
+app, gear = Application.find_by_gear_uuid(gear_uuid)
+
+if app and gear and gear.server_identity == target_server_identity
+  puts "Success"
+else
+  puts "Mongo save failed" 
+  exit 1
+end
+
+exit 0
