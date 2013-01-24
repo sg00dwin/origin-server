@@ -9,7 +9,7 @@
 Summary:   OpenShift Site Rails application
 Name:      rhc-site
 Version: 1.3.10
-Release:   1%{?dist}
+Release:   2%{?dist}
 Group:     Network/Daemons
 License:   ASL 2.0
 URL:       http://openshift.redhat.com
@@ -144,6 +144,9 @@ rm -rf %{buildroot}
 %{sitedir}/public
 
 %changelog
+* Thu Jan 24 2013 Adam Miller <admiller@redhat.com> - 1.3.10-2
+- bump for chain build
+
 * Wed Jan 23 2013 Adam Miller <admiller@redhat.com> 1.3.10-1
 - Merge remote-tracking branch 'upstream/master' (ffranz@redhat.com)
 - Bug 901949 - improved Twitter tests, now just mocking nonce and timestamp
