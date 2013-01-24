@@ -2,7 +2,7 @@
 %global frameworkdir %{_libexecdir}/openshift/cartridges/metrics-0.1
 
 Name: openshift-origin-cartridge-metrics-0.1
-Version: 1.4.0
+Version: 1.4.1
 Release: 1%{?dist}
 Summary: Embedded metrics support for express
 
@@ -54,6 +54,9 @@ rm -rf $RPM_BUILD_ROOT
 %{cartridgedir}/info/manifest.yml
 
 %changelog
+* Wed Jan 23 2013 Adam Miller <admiller@redhat.com> 1.4.1-1
+- bump_minor_versions for sprint 23 (admiller@redhat.com)
+
 * Tue Jan 22 2013 Adam Miller <admiller@redhat.com> 1.3.2-1
 - Fix typos in rhc instructions displayed to client (ironcladlou@gmail.com)
 
