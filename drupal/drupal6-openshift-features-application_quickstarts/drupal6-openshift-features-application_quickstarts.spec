@@ -5,7 +5,7 @@
 %global modname             application_quickstarts
 
 Name:    drupal%{drupal_release}-openshift-features-%{modname}
-Version: 1.3.0
+Version: 1.3.1
 Release: 1%{?dist}
 Summary: Openshift Application Quickstarts Feature for Drupal6
 Group:   Applications/Publishing
@@ -43,6 +43,9 @@ rm -rf $RPM_BUILD_ROOT
 %{drupal_modules}/%{modname}
 
 %changelog
+* Wed Jan 23 2013 Adam Miller <admiller@redhat.com> 1.3.1-1
+- bump_minor_versions for sprint 23 (admiller@redhat.com)
+
 * Thu Jan 10 2013 Adam Miller <admiller@redhat.com> 1.2.2-1
 - Bug 888699 - initial_git_url not in views after type change
   (ccoleman@redhat.com)
