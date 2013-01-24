@@ -191,6 +191,9 @@ Requires:  openscap-python
 Requires:  openscap-utils
 Requires:  html2text
 
+# Match the rubygem-activesupport RPM in STG and PROD
+Requires: rubygem-activesupport
+
 BuildArch: noarch
 
 %description
