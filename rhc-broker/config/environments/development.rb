@@ -47,7 +47,8 @@ Broker::Application.configure do
     :host_port => conf.get("MONGO_HOST_PORT", "localhost:27017"),
     :user => conf.get("MONGO_USER", ""),
     :password => conf.get("MONGO_PASSWORD", ""),
-    :db => conf.get("MONGO_DB", "openshift_broker_dev")
+    :db => conf.get("MONGO_DB", "openshift_broker_dev"),
+    :ssl => conf.get_bool("MONGO_SSL", "false")
   }
 
   config.usage_tracking = {
