@@ -314,7 +314,7 @@ def create_comparison_apps(old_to_new_cart_types, mig_config, apps, devenv, conf
 
           app[:embedded].each { |cart_type|
             cart_type = old_to_new_cart_types[cart_type] ? old_to_new_cart_types[cart_type] : cart_type
-            cart_command = "rhc app cartridge add --config #{config} -a #{app[:new_name]} -c #{cart_type} -p none 2>&1"
+            cart_command = "rhc cartridge add --config #{config} -a #{app[:new_name]} -c #{cart_type} -p none 2>&1"
             puts "Running: \"#{cart_command}\"" if VERBOSE
             output = `#{cart_command}`
             cmd_output(output)
