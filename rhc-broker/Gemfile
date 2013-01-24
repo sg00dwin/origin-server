@@ -15,7 +15,7 @@ group :other do
   gem 'mocha'
 end
 
-#gem 'mongoid'
+gem 'mongoid'
 
 gem 'xml-simple'
 gem 'regin'

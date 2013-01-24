@@ -81,17 +81,11 @@ Broker::Application.configure do
   }
 
   config.datastore = {
-    :replica_set => true,
-    # Replica set example: [[<host-1>, <port-1>], [<host-2>, <port-2>], ...]
-    :host_port => [["localhost", 27017]],
-
-    :user => "libra",
-    :password => "momo",
-    :db => "openshift_broker_dev",
-    :collections => {:user => "user_test",
-                     :district => "district_test",
-                     :application_template => "template_test",
-                     :distributed_lock => "distributed_lock_test"}
+    :host_port => "localhost:27017",
+    :user => "openshift",
+    :password => "mooo",
+    :db => "openshift_broker_test",
+    :ssl => false
   }
 
   config.user_action_logging = {
@@ -119,6 +113,7 @@ Broker::Application.configure do
           :plan_no => 10044929,
           :name => "FreeShift",
           :capabilities => {
+            'subaccounts' => false,
             'max_gears' => 3,
             'gear_sizes' => ["small"]
           }
@@ -127,6 +122,7 @@ Broker::Application.configure do
           :plan_no => 10044931,
           :name => "MegaShift",
           :capabilities => {
+            'subaccounts' => false,
             'max_gears' => 16,
             'gear_sizes' => ["small", "medium"],
             'max_storage_per_gear' => 30 # 30GB

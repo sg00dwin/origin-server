@@ -39,7 +39,7 @@ User errors:
 134: Invalid node profile
 135: Cartridge/Component/Feature not found in the application
 136: Cartridge/Component/Feature already embedded in the application
-137: Cartridge/Component/Feature can not be removed from the application.
+137: Cartridge/Component/Feature can not be added/removed from the application.
 138: User deletion not permitted for normal/non-subaccount user.
 139: Could not delete user, user has valid domain or applications.
 140: Alias already in use.
@@ -65,6 +65,7 @@ User errors:
 168: Invalid scaling facter provided. Value out of range.
 169: Could not completely distribute scales_from to all groups
 170: Could not resolve DNS
+171: Could not obtain lock 
 210: Can not override existing location for git repo
 211: Parent directory for git repo does not exist
 212: Could not find libra_id_rsa

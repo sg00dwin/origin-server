@@ -72,7 +72,7 @@ if timeout
   Rails.configuration.msg_broker[:rpc_options][:timeout] = timeout.to_i
 end
 
-user = CloudUser.find(login)
+user = CloudUser.find_by(login: login)
 app  = Application.find(user, app_name)
 reply = app.container.send(:run_cartridge_command, cartridge, app, app.gear, command, nil, false)
 

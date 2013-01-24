@@ -29,6 +29,7 @@ Requires:  rubygem-openshift-origin-auth-streamline
 Requires:  rubygem-openshift-origin-dns-dynect
 Requires:  rubygem-openshift-origin-msg-broker-mcollective
 Requires:  ruby193-rubygem-mongo_mapper
+Requires:  ruby193-rubygem-mongoid
 Requires:  ruby193-rubygem-wddx
 Requires:  ruby193-rubygem-pony
 Requires:  mcollective-qpid-plugin
@@ -67,7 +68,6 @@ mkdir -p %{buildroot}%{brokerdir}
 mkdir -p %{buildroot}/usr/lib/openshift/broker
 mkdir -p %{buildroot}/etc/openshift/plugins.d/
 
-mv application_templates %{buildroot}/usr/lib/openshift/broker
 cp -r . %{buildroot}%{brokerdir}
 ln -s %{brokerdir}/public %{buildroot}%{htmldir}/broker
 
@@ -113,7 +113,6 @@ rm -rf $RPM_BUILD_ROOT
 %attr(0750,-,-) %{_bindir}/rhc-admin-ctl-usage
 %attr(0750,-,-) %{_bindir}/rhc-admin-ctl-plan
 %attr(0750,-,-) %{_bindir}/rhc-admin-stale-dns
-/usr/lib/openshift/broker/application_templates
 
 %config(noreplace) /etc/openshift/quickstarts.json
 %config(noreplace) /etc/openshift/plugins.d/openshift-origin-msg-broker-mcollective.conf

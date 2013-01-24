@@ -8,21 +8,21 @@ Rails.configuration.msg_broker[:rpc_options][:disctimeout] = 20
 
 
 def check_gear_uid(gear, new_uid)
-  district = OpenShift::DataStore.instance.find_district_with_node(gear.server_identity)
-  # district = gear.get_proxy.district
-  if district.nil?
-    return 
+  if ! District.in("server_identities.name" => [server_identity]).exists?
+    return
   end
+  district = District.where("server_identities.name" => gear.server_identity)[0]
+  
   # first check if the new_uid is not taken by anyone on the member nodes (other than this gear's node)
-  district["server_identities"].keys.each { |server_id|
+  district.server_identities_hash.keys.each { |server_id|
     next if server_id == gear.get_proxy.id
     if $sender_hash[server_id].has_key? new_uid
-      raise Exception.new("ERROR : Gear #{gear.uuid} cannot set its uid to #{new_uid}, because the uid is taken in the district by another gear #{$sender_hash[server_id][String(new_uid)]} on node #{server_id}.")
+      raise Exception.new("ERROR : Gear #{gear.uuid} cannot set its uid to #{new_uid}, because the uid is taken in the district by another gear #{$sender_hash[server_id][new_uid]} on node #{server_id}.")
     end
   }
-  if district["available_uids"].include? new_uid
+  if district.available_uids.include? new_uid
     # check and reserve the uid with the district
-    if !OpenShift::DataStore.instance.reserve_district_uid(district["uuid"], new_uid)
+    if !district.reserve_given_uid(new_uid)
       raise Exception.new("Could not reserve uid #{new_uid} on district #{district["name"]} (#{district["uuid"]}).")
     end
   end
@@ -30,22 +30,33 @@ def check_gear_uid(gear, new_uid)
   return 
 end
 
-mongo_hash = {}
-query = {"$or" => [{"apps.group_instances.gears.0" => {"$exists" => true}}, {"consumed_gears" => {"$ne" => 0}}]}
-options = {:fields => ["apps.group_instances.gears.uuid", "apps.group_instances.gears.uid"], :timeout => false}
-ret = []
-OpenShift::DataStore.instance.user_collection.find(query, options) do |mcursor|
-  mcursor.each do |hash|
-    hash['apps'].each { |app|
-      app['group_instances'].each { |gi|
-        if gi['gears']
-          gi['gears'].each { |gear|
-            mongo_hash[gear['uuid']] = gear['uid']
-          }
-        end
-      } if app['group_instances']
-    } if hash['apps']
+$moped_session = Mongoid::Sessions.default
+
+def get_records(db, query, selection)
+  # 'by' - tweak to a larger number for faster results, smaller number if a timeout insults
+  by = 10000
+  skip_first = 0
+  while ( (results = $moped_session[db].find(query).select(selection).limit(by).skip(skip_first)) && results.any? )
+    results.each { |result| 
+      yield result 
+    }
+    skip_first += by
   end
+end
+
+mongo_hash = {}
+query = {"group_instances.gears.0" => {"$exists" => true}}
+selection = {"group_instances.gears.uuid" => 1, "group_instances.gears.uid" => 1}
+ret = []
+
+get_records(:applications, query, selection) do |app|
+  app['group_instances'].each { |gi|
+    if gi['gears']
+      gi['gears'].each { |gear|
+        mongo_hash[gear['uuid']] = gear['uid']
+      }
+    end
+  } if app['group_instances']
 end
 
 node_hash, $sender_hash = OpenShift::ApplicationContainerProxy.get_all_gears
@@ -66,7 +77,7 @@ mongo_hash.each { |gear_uuid,gear_uid|
   actual_uid = node_info[1]
   if gear_uid != actual_uid
     app, gear = Application::find_by_gear_uuid(gear_uuid)
-    msg = "Gear '#{gear_uuid}' in app #{app.name} for user '#{app.user.login}', needs its uid to be set from '#{gear_uid}' to '#{actual_uid}'..."
+    msg = "Gear '#{gear_uuid}' in app #{app.name} for user '#{app.domain.owner.login}', needs its uid to be set from '#{gear_uid}' to '#{actual_uid}'..."
     begin
       check_gear_uid(gear, actual_uid)
       gear.uid = actual_uid
@@ -81,9 +92,9 @@ mongo_hash.each { |gear_uuid,gear_uid|
   if gear_uid.class == String
     begin
       app, gear = Application::find_by_gear_uuid(gear_uuid)
-      msg = "Gear '#{gear_uuid}' in app #{app.name} for user '#{app.user.login}', needs its uid converted from String to Integer..."
+      msg = "Gear '#{gear_uuid}' in app #{app.name} for user '#{app.domain.owner.login}', needs its uid converted from String to Integer..."
       gear.uid = Integer(gear_uid)
-      app.save
+      gear.save
       msg += "done.\n"
       numerify_uid_summary << msg
     rescue Exception =>e

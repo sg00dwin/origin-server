@@ -51,25 +51,14 @@ module OpenShift
       end
     end
     
-    def namespace_available?(namespace)
-      login
-      has_txt_record = dyn_has_txt_record?(namespace, @auth_token)
-      return !has_txt_record
-    end
-    
-    def register_namespace(namespace)
-      login
-      dyn_create_txt_record(namespace, @auth_token, @@dyn_retries)
-    end
-    
-    def deregister_namespace(namespace)
-      login
-      dyn_delete_txt_record(namespace, @auth_token, @@dyn_retries)
-    end
-    
     def register_application(app_name, namespace, public_hostname)
       login
-      create_app_dns_entries(app_name, namespace, public_hostname, @auth_token, @@dyn_retries)
+      begin
+        create_app_dns_entries(app_name, namespace, public_hostname, @auth_token, @@dyn_retries)
+      rescue DNSAlreadyExistsException
+        logger.debug("DNS entry already exists for #{app_name}-#{namespace}.  Attempting to modify...")
+        modify_app_dns_entries(app_name, namespace, public_hostname, @auth_token, @@dyn_retries)
+      end
     end
     
     def deregister_application(app_name, namespace)
@@ -106,21 +95,7 @@ module OpenShift
         return @auth_token
       end
     end
-    
-    #
-    # Get a DNS txt entry
-    #
-    def self.has_dns_txt?(namespace)
-      dns = Resolv::DNS.new
-      resp = nil
-      begin
-        resp = dns.getresources("#{namespace}.#{@domain_suffix}", Resolv::DNS::Resource::IN::TXT)
-      rescue Exception => e
-        raise_dns_exception(e)
-      end
-      return resp && resp.length > 0
-    end
-  
+
     def dyn_login(retries=0)
       # Set your customer name, username, and password on the command line
       # Set up our HTTP object with the required host and path
@@ -239,37 +214,11 @@ module OpenShift
       dyn_delete(path, auth_token, retries)
     end
   
-    def dyn_create_txt_record(namespace, auth_token, retries=0)
-      fqdn = "#{namespace}.#{@domain_suffix}"
-      # Create the TXT record
-      path = "TXTRecord/#{@zone}/#{fqdn}/"
-      record_data = { :rdata => { :txtdata => "Text record for #{namespace}"}, :ttl => "60" }
-      dyn_post(path, record_data, auth_token, retries)
-    end
-  
-    def dyn_delete_txt_record(namespace, auth_token, retries=0)
-      fqdn = "#{namespace}.#{@domain_suffix}"
-      # Delete the TXT record
-      path = "TXTRecord/#{@zone}/#{fqdn}/"
-      dyn_delete(path, auth_token, retries)
-    end
-  
     def dyn_publish(auth_token, retries=0)
       # Publish the changes
       path = "Zone/#{@zone}/"
       publish_data = { "publish" => "true" }
       dyn_put(path, publish_data, auth_token, retries)
-    end
-  
-    def dyn_has_txt_record?(namespace, auth_token, raise_exception_on_exists=false)
-      fqdn = "#{namespace}.#{@domain_suffix}"
-      path = "TXTRecord/#{@zone}/#{fqdn}/"      
-      dyn_has = dyn_has?(path, auth_token)
-      if dyn_has && raise_exception_on_exists
-        raise UserException.new(103), "A namespace with name '#{namespace}' already exists"
-      else
-        return dyn_has
-      end
     end
     
     def handle_temp_redirect(resp, auth_token)
@@ -404,6 +353,17 @@ module OpenShift
             raise_dns_exception(nil, resp, data) unless dyn_success?(data)
           when Net::HTTPNotFound
             raise DNSNotFoundException.new(145), "DNS entry not found"
+          when Net::HTTPBadRequest
+            if put
+              raise_dns_exception(nil, resp)
+            else
+              if data
+                data = JSON.parse(data)
+                data['msgs'].each do |msg|
+                  raise OpenShift::DNSAlreadyExistsException.new("fqdn already in use. Please choose another.", 103) if msg['INFO'] == "make: Cannot add a CNAME at a node with data"
+                end if data.kind_of?(Hash) and data['msgs']
+              end
+            end
           when Net::HTTPTemporaryRedirect
             handle_temp_redirect(resp, auth_token)
           else

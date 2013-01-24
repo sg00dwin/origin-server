@@ -36,27 +36,25 @@ def migrate_gear(login, app_name, gear_uuid, version)
   out = StringIO.new
   out << "Migrating gear on node with: #{migrate_cmd}\n"
   begin
-    user = CloudUser.find(login)
+    user = nil
+    begin
+      user = CloudUser.find_by(login: login)
+    rescue Mongoid::Errors::DocumentNotFound
+    end
     if user
-      app = Application.find(user, app_name)
+      app, gear = Application.find_by_gear_uuid(gear_uuid)
       if app
-        gear = nil
-        app.gears.each do |app_gear|
-          if app_gear.uuid == gear_uuid
-            gear = app_gear
-            break
-          end
-        end
         if gear
           server_identity = gear.server_identity
-          gear.node_profile = app.node_profile if gear.node_profile.nil?
+          # gear.node_profile = app.node_profile if gear.node_profile.nil?
           begin
             Timeout::timeout(240) do
               output = ''
               exit_code = 1
               migrate = MIGRATION_CART_TYPES.nil? 
+              cartridges = gear.group_instance.all_component_instances.map { |ci| ci.cartridge_name }.uniq
               MIGRATION_CART_TYPES.each do |cart_name|
-                if gear.cartridges.include?(cart_name)
+                if cartridges.include?(cart_name)
                   migrate = true
                   break
                 end
@@ -86,7 +84,7 @@ def migrate_gear(login, app_name, gear_uuid, version)
                 redeploy_httpd_proxy = REDEPLOY_HTTPD_PROXY_CART_TYPES.nil?
 
                 if REDEPLOY_HTTPD_PROXY_CART_TYPES
-                  gear_cartridges = gear.cartridges
+                  gear_cartridges = cartridges
                   REDEPLOY_HTTPD_PROXY_CART_TYPES.each do |cart_name|
                     redeploy_httpd_proxy = gear_cartridges.include?(cart_name)
                     break if redeploy_httpd_proxy
@@ -101,16 +99,16 @@ def migrate_gear(login, app_name, gear_uuid, version)
                 #redeploy_aliases(gear, out) if recreate_httpd_proxy
 
                 restart_start_time = (Time.now.to_f * 1000).to_i
-                gear.configured_components.each do |comp_name|
+                cartridges.each do |gear_cart|
                   restart = RESTART_CART_TYPES.nil?
                   RESTART_CART_TYPES.each do |cart_name|
-                    if comp_name =~ /\/cart-#{cart_name}\/?/
+                    if gear_cart == cart_name
                       restart = true
                       break
                     end
                   end unless restart
                   if restart
-                    component = app.comp_instance_map[comp_name]
+                    component = gear.group_instance.all_component_instances.find { |ci| ci.cartridge_name==gear_cart }
                     restart_component(gear, component, out)
                   end
                 end
@@ -142,49 +140,44 @@ def restart_component(gear, component, out)
   if component
     leave_stopped = false
     reply = gear.status(component)
-    reply.cart_commands.each do |command_item|
-      case command_item[:command]
-      when "ATTR"
-        key = command_item[:args][0]
-        value = command_item[:args][1]
-        if key == 'status'
-          case value
-          when "ALREADY_STOPPED"
-            leave_stopped = true
-          when "ALREADY_IDLED"
-            leave_stopped = true
-          end
+    result.properties["attributes"][gear.uuid].each do |key, value|
+      if key == 'status'
+        case value
+        when "ALREADY_STOPPED"
+          leave_stopped = true
+        when "ALREADY_IDLED"
+          leave_stopped = true
         end
       end
     end
     unless leave_stopped
       begin
-        out << "Stopping component '#{component.name}' on gear with uuid '#{gear.uuid}' on node '#{gear.server_identity}'\n"
-        reply.append gear.stop(component)
+        out << "Stopping component '#{component.cartridge_name}' on gear with uuid '#{gear.uuid}' on node '#{gear.server_identity}'\n"
+        reply.append gear.stop(component.cartridge_name)
       rescue Exception => e
-        out << "WARNING: Error stopping component '#{component.name}' on gear with uuid '#{gear.uuid}' on node '#{gear.server_identity}': #{e.message}\n"
+        out << "WARNING: Error stopping component '#{component.cartridge_name}' on gear with uuid '#{gear.uuid}' on node '#{gear.server_identity}': #{e.message}\n"
       end
       begin
-        out << "Force stopping component '#{component.name}' on gear with uuid '#{gear.uuid}' on node '#{gear.server_identity}'\n"
-        reply.append gear.force_stop(component)
+        out << "Force stopping component '#{component.cartridge_name}' on gear with uuid '#{gear.uuid}' on node '#{gear.server_identity}'\n"
+        reply.append gear.force_stop(component.cartridge_name)
       rescue Exception => e
-        out << "WARNING: Error force stopping component '#{component.name}' on gear with uuid '#{gear.uuid}' on node '#{gear.server_identity}': #{e.message}\n"
+        out << "WARNING: Error force stopping component '#{component.cartridge_name}' on gear with uuid '#{gear.uuid}' on node '#{gear.server_identity}': #{e.message}\n"
       end
       num_tries = 2
       (1..num_tries).each do |i|
-        out << "Restarting component '#{component.name}' on gear with uuid '#{gear.uuid}' on node '#{gear.server_identity}'\n"
+        out << "Restarting component '#{component.cartridge_name}' on gear with uuid '#{gear.uuid}' on node '#{gear.server_identity}'\n"
         begin
-          reply.append gear.restart(component)
+          reply.append gear.restart(component.cartridge_name)
           break
         rescue Exception => e
           if i == num_tries
-            out << "Failed to restart component '#{component.name}' on gear with uuid '#{gear.uuid}' on node '#{gear.server_identity}' after #{num_tries} tries with exception: #{e.message}\n"
-            out << "***acceptable_error_restart_component={\"gear_uuid\":\"#{gear.uuid}\",\"component_name\":\"#{component.name}\",\"server_identity\":\"#{gear.server_identity}\",\"login\":\"#{gear.app.user.login}\",\"app_name\":\"#{gear.app.name}\"}***\n"
+            out << "Failed to restart component '#{component.cartridge_name}' on gear with uuid '#{gear.uuid}' on node '#{gear.server_identity}' after #{num_tries} tries with exception: #{e.message}\n"
+            out << "***acceptable_error_restart_component={\"gear_uuid\":\"#{gear.uuid}\",\"component_name\":\"#{component.cartridge_name}\",\"server_identity\":\"#{gear.server_identity}\",\"login\":\"#{gear.app.domain.owner.login}\",\"app_name\":\"#{gear.app.name}\"}***\n"
           end
         end
       end
     else
-      out << "Leaving component stopped '#{component.name}' on gear with uuid '#{gear.uuid}' on node '#{gear.server_identity}'\n"
+      out << "Leaving component stopped '#{component.cartridge_name}' on gear with uuid '#{gear.uuid}' on node '#{gear.server_identity}'\n"
     end
     out << "RESTART DEBUG OUTPUT:\n#{reply.debugIO.string}\n" unless reply.debugIO.string.empty?
     out << "RESTART ERROR OUTPUT:\n#{reply.errorIO.string}\n" unless reply.errorIO.string.empty?
@@ -200,18 +193,18 @@ def remove_httpd_proxy(gear, out)
 end
 
 def httpd_proxy_action(gear, action, out)
-  gear.configured_components.each do |comp_name|
-    component = gear.app.comp_instance_map[comp_name]
-    if component
-      out << "#{action} for '#{component.parent_cart_name}' on gear '#{gear.name}' with uuid '#{gear.uuid}' on node #{gear.server_identity}\n"
-      embedded = gear.app.embedded.include?(component.parent_cart_name)
-      reply = gear.app.container.send(:run_cartridge_command, (embedded ? "embedded/" : '') + component.parent_cart_name, gear.app, gear, action, nil, false)
+  gear_cartridges = gear.group_instance.all_component_instances.map { |ci| ci.cartridge_name }.uniq
+  embedded_carts = CartridgeCache.cartridge_names('embedded')
+  gear_cartridges.each do |cart|
+      out << "#{action} for '#{cart}' on gear '#{gear.name}' with uuid '#{gear.uuid}' on node #{gear.server_identity}\n"
+      embedded = embedded_carts.include? cart
+      reply = gear.get_proxy.send(:run_cartridge_command, (embedded ? "embedded/" : '') + cart, gear.app, gear, action, nil, false)
   
       out << "DEPLOY_HTTP_PROXY DEBUG OUTPUT:\n#{reply.debugIO.string}\n" unless reply.debugIO.string.empty?
       out << "DEPLOY_HTTP_PROXY ERROR OUTPUT:\n#{reply.errorIO.string}\n" unless reply.errorIO.string.empty?
       
       if reply.exitcode != 0
-        out << "#{action} for cart: #{component.parent_cart_name} on node exit code: #{reply.exitcode}\n"
+        out << "#{action} for cart: #{cart} on node exit code: #{reply.exitcode}\n"
         raise "Failed deploying httpd proxy for gear '#{gear.name}' with uuid '#{gear.uuid}' on node '#{gear.server_identity}'"
       end
     end
@@ -243,6 +236,7 @@ def add_to(stuffs, more_stuffs)
   end
 end
 
+##--------------------------refactored till here -----------------------------
 def migrate(version, continue=false, target_server_identity=nil, migrate_position=1, num_migrators=1)
   start_time = (Time.now.to_f * 1000).to_i
   logins_cnt = 0
@@ -257,18 +251,15 @@ def migrate(version, continue=false, target_server_identity=nil, migrate_positio
   
   puts "Getting all logins..."
   gather_users_start_time = (Time.now.to_f * 1000).to_i
-  query = {"apps.group_instances.gears.0" => {"$exists" => true}}
-  options = {:fields => ["uuid",
-                        "login",
-                        "apps.name",
-                        "apps.creation_time",
-                        "apps.comp_instances.parent_cart_name",
-                        "apps.comp_instances.name",
-                        "apps.group_instances.gears.uuid",
-                        "apps.group_instances.component_instances",
-                        "apps.group_instances.gears.server_identity",
-                        "apps.group_instances.gears.name"],
-             :timeout => false}
+  query = {"group_instances.gears.0" => {"$exists" => true}}
+  options = { "uuid" => 1,
+              "name" => 1,
+              "creation_time" => 1,
+              "component_instances.cartridge_name" => 1,
+              "component_instances.group_instance" => 1,
+              "group_instances.gears.uuid" => 1,
+              "group_instances.gears.server_identity" => 1,
+              "group_instances.gears.name" => 1}
   ret = []
   OpenShift::DataStore.instance.user_collection.find(query, options) do |mcursor|
     mcursor.each do |hash|

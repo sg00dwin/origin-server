@@ -6,9 +6,6 @@ require File.dirname(__FILE__) + "/../../controller/test/cucumber/support/00_set
 # Override any express specific settings now
 #
 
-# Override the dns helper module
-$dns_helper_module = File.dirname(__FILE__) + "/dns_helper"
-
 # Use the domain from the rails application configuration
 $domain = "dev.rhcloud.com"
 
@@ -30,7 +27,7 @@ $submodule_repo_dir = "/root/submodule_test_repo"
 #
 
 Dir.glob(File.dirname(__FILE__) + "/../../controller/test/cucumber/support/*").each { |helper|
-  require helper unless ["00_setup_helper.rb", "dns_helper.rb"].include? File.basename(helper)
+  require helper unless ["00_setup_helper.rb"].include? File.basename(helper)
 }
 
 

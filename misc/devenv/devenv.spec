@@ -602,7 +602,7 @@ EOF
 # Make sure that the datastore is available before adding test users
 for i in {1..5}
 do
-  echo "show collections" | mongo -u libra -p momo openshift_broker_dev
+  echo "show collections" | mongo -u openshift -p mooo openshift_broker_dev
   if [ $? -eq 0 ]
   then
     break
@@ -616,7 +616,7 @@ done
 # This must be done before the deployment of application templates!
 cd /var/www/openshift/broker
 echo "Creating named test user"
-bundle exec rails runner "CloudUser.new('user_with_multiple_gear_sizes@test.com').save"
+bundle exec rails runner "u=CloudUser.new(login: 'user_with_multiple_gear_sizes@test.com'); u.save; Lock.create_lock(u)"
 if [ $? -eq 0 ]
 then
   echo "Adding medium gear size to user"
@@ -627,7 +627,7 @@ fi
 
 # Create a test user with additional storage capabilities
 echo "Creating test user:  user_with_extra_storage@test.com"
-bundle exec rails runner "u=CloudUser.new('user_with_extra_storage@test.com'); u.capabilities['max_storage_per_gear'] = 10; u.save"
+bundle exec rails runner "u=CloudUser.new(login: 'user_with_extra_storage@test.com'); u.capabilities['max_storage_per_gear'] = 10; u.save; Lock.create_lock(u)"
 if [ $? -ne 0 ]
 then
   echo "user_with_extra_storage could not be created!"

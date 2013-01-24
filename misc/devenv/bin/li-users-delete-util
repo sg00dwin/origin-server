@@ -5,17 +5,15 @@ require '/var/www/openshift/broker/config/environment'
 def p_usage
     puts <<USAGE
 Usage: #{$0}
-Utility to cleanup user record from mongo and also deregister namespace
-
-  -n|--namespace Only delete given namespace (optional)                
+Utility to cleanup user record from mongo
+                
   -h|--help      Show Usage info
 
 USAGE
 exit 255
 end
 
-opts = GetoptLong.new(["--namespace",  "-n", GetoptLong::REQUIRED_ARGUMENT],
-                      ["--help",  "-h", GetoptLong::NO_ARGUMENT])
+opts = GetoptLong.new(["--help",  "-h", GetoptLong::NO_ARGUMENT])
 opt = {}
 opts.each do |o, a|
     opt[o[2..-1]] = a.to_s
@@ -23,15 +21,7 @@ end
 
 p_usage if opt['help']
 
-if opt['namespace']
-  dns = OpenShift::DynectPlugin.new
-  dns.deregister_namespace(opt['namespace'])
-  dns.publish
-  dns.close
-else 
-  users = CloudUser.find_all(nil)
-  users.each do |user|
-    user.force_delete
-  end if users
-end
 
+Application.delete_all
+Domain.delete_all
+CloudUser.delete_all

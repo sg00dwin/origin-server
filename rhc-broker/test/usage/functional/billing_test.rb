@@ -3,7 +3,7 @@ require 'test_helper'
 class BillingTest < ActiveSupport::TestCase
   def setup
     # Create user locally first
-    @user = CloudUser.new("aria_testuser_" + gen_uuid[0..9])
+    @user = CloudUser.new(login: "aria_testuser_#{gen_uuid[0..9]}")
     @user.save
     @user_id = Digest::MD5::hexdigest(@user.login)
     super
