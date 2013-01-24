@@ -5,7 +5,7 @@
 %global modname             blogs
 
 Name:    drupal%{drupal_release}-openshift-features-%{modname}
-Version: 1.11.0
+Version: 1.11.1
 Release: 1%{?dist}
 Summary: Openshift Red Hat Custom Blog Feature for Drupal6
 Group:   Applications/Publishing
@@ -41,6 +41,9 @@ rm -rf $RPM_BUILD_ROOT
 %{drupal_modules}/%{modname}
 
 %changelog
+* Wed Jan 23 2013 Adam Miller <admiller@redhat.com> 1.11.1-1
+- bump_minor_versions for sprint 23 (admiller@redhat.com)
+
 * Thu Jan 10 2013 Adam Miller <admiller@redhat.com> 1.10.2-1
 - Add event city, state, and start date to upcoming event json so it shows up
   on login page (ccoleman@redhat.com)
