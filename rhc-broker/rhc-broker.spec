@@ -3,7 +3,7 @@
 
 Summary:   Li broker components
 Name:      rhc-broker
-Version: 1.4.0
+Version: 1.4.1
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -135,6 +135,10 @@ if [ ! -f %{_localstatedir}/log/openshift/user_action.log ]; then
 fi
 
 %changelog
+* Wed Jan 23 2013 Adam Miller <admiller@redhat.com> 1.4.1-1
+- bump_minor_versions for sprint 23 (admiller@redhat.com)
+- dont add to the config on every call (dmcphers@redhat.com)
+
 * Wed Jan 23 2013 Adam Miller <admiller@redhat.com> 1.3.6-1
 - Merge pull request #783 from ironcladlou/bz/903152 (dmcphers@redhat.com)
 - Reset app git repo file permissions to gear user/group
