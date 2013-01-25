@@ -196,17 +196,16 @@ def httpd_proxy_action(gear, action, out)
   gear_cartridges = gear.group_instance.all_component_instances.map { |ci| ci.cartridge_name }.uniq
   embedded_carts = CartridgeCache.cartridge_names('embedded')
   gear_cartridges.each do |cart|
-      out << "#{action} for '#{cart}' on gear '#{gear.name}' with uuid '#{gear.uuid}' on node #{gear.server_identity}\n"
-      embedded = embedded_carts.include? cart
-      reply = gear.get_proxy.send(:run_cartridge_command, (embedded ? "embedded/" : '') + cart, gear.app, gear, action, nil, false)
+    out << "#{action} for '#{cart}' on gear '#{gear.name}' with uuid '#{gear.uuid}' on node #{gear.server_identity}\n"
+    embedded = embedded_carts.include? cart
+    reply = gear.get_proxy.send(:run_cartridge_command, (embedded ? "embedded/" : '') + cart, gear.app, gear, action, nil, false)
   
-      out << "DEPLOY_HTTP_PROXY DEBUG OUTPUT:\n#{reply.debugIO.string}\n" unless reply.debugIO.string.empty?
-      out << "DEPLOY_HTTP_PROXY ERROR OUTPUT:\n#{reply.errorIO.string}\n" unless reply.errorIO.string.empty?
+    out << "DEPLOY_HTTP_PROXY DEBUG OUTPUT:\n#{reply.debugIO.string}\n" unless reply.debugIO.string.empty?
+    out << "DEPLOY_HTTP_PROXY ERROR OUTPUT:\n#{reply.errorIO.string}\n" unless reply.errorIO.string.empty?
       
-      if reply.exitcode != 0
-        out << "#{action} for cart: #{cart} on node exit code: #{reply.exitcode}\n"
-        raise "Failed deploying httpd proxy for gear '#{gear.name}' with uuid '#{gear.uuid}' on node '#{gear.server_identity}'"
-      end
+    if reply.exitcode != 0
+      out << "#{action} for cart: #{cart} on node exit code: #{reply.exitcode}\n"
+      raise "Failed deploying httpd proxy for gear '#{gear.name}' with uuid '#{gear.uuid}' on node '#{gear.server_identity}'"
     end
   end
 end
@@ -236,7 +235,18 @@ def add_to(stuffs, more_stuffs)
   end
 end
 
-##--------------------------refactored till here -----------------------------
+def get_records(session, db, query, selection)
+  # 'by' - tweak to a larger number for faster results, smaller number if a timeout insults
+  by = 10000
+  skip_first = 0
+  while ( (results = session[db].find(query).select(selection).limit(by).skip(skip_first)) && results.any? )
+    results.each { |result| 
+      yield result 
+    }
+    skip_first += by
+  end
+end
+
 def migrate(version, continue=false, target_server_identity=nil, migrate_position=1, num_migrators=1)
   start_time = (Time.now.to_f * 1000).to_i
   logins_cnt = 0
@@ -253,46 +263,57 @@ def migrate(version, continue=false, target_server_identity=nil, migrate_positio
   gather_users_start_time = (Time.now.to_f * 1000).to_i
   query = {"group_instances.gears.0" => {"$exists" => true}}
   options = { "uuid" => 1,
+              "domain_id" =>1,
               "name" => 1,
-              "creation_time" => 1,
+              "created_at" => 1,
               "component_instances.cartridge_name" => 1,
               "component_instances.group_instance" => 1,
+              "group_instances._id" => 1,
               "group_instances.gears.uuid" => 1,
               "group_instances.gears.server_identity" => 1,
               "group_instances.gears.name" => 1}
   ret = []
-  OpenShift::DataStore.instance.user_collection.find(query, options) do |mcursor|
-    mcursor.each do |hash|
+  moped_session = Mongoid::Sessions.default
+
+  user_map = {}
+  get_records(moped_session, :cloud_users, {}, {"_id" => 1, "uuid" => 1, "login" => 1}) do |hash|
       logins_cnt += 1
       user_uuid = hash['uuid']
       user_login = hash['login']
-      print '.'
-      hash['apps'].each do |app|
-        component_instance_map = {}
-        app['comp_instances'].each do |ci|
-          component_instance_map[ci['name']] = ci['parent_cart_name'] 
-        end
-        app['group_instances'].each do |gi|
-          cart_names = []
-          gi['component_instances'].each do |ci_name|
-            cart_name = component_instance_map[ci_name]
-            cart_names |= [cart_name] if cart_name 
-          end
-          gi['gears'].each do |gear|
-            server_identity = gear['server_identity']
-            if (!target_server_identity || (server_identity == target_server_identity))
-              cart_names.each do |cart_name|
-                if $all_cart_types.nil? || $all_cart_types.include?(cart_name)
-                  node_to_gears[server_identity] = [] unless node_to_gears[server_identity]
-                  if $restart_only_cart_types.nil? || !$restart_only_cart_types.include?(cart_name) || (active_gears_map.include?(server_identity) && active_gears_map[server_identity].include?(gear['uuid'])) 
-                    node_to_gears[server_identity] << {:server_identity => server_identity, :uuid => gear['uuid'], :name => gear['name'], :app_name => app['name'], :login => user_login}
-                    break
-                  end
-                end
-              end
-            end
-          end
-        end
+      user_map[hash['_id'].to_s] = [user_uuid, user_login]
+  end
+
+  domain_map = {}
+  get_records(moped_session, :domains, {}, {"_id" => 1, "owner_id" => 1}) do |hash|
+    domain_map[hash['_id'].to_s] = hash['owner_id'].to_s
+  end
+
+  get_records(moped_session, :applications, query, options) do |app|
+    print '.'
+    user_id = domain_map[app['domain_id'].to_s]
+    user_uuid,user_login = user_map[user_id]
+    group_cart_map = {}
+    app['component_instances'].each do |ci|
+      gid = ci['group_instance'].to_s
+      group_cart_map[gid] = [] if not group_cart_map.has_key? gid
+      group_cart_map[gid] << ci['cartridge_name']
+    end
+  
+    app['group_instances'].each do |gi|
+      cart_names = group_cart_map[gi['_id'].to_s]
+      gi['gears'].each do |gear|
+	server_identity = gear['server_identity']
+	if (!target_server_identity || (server_identity == target_server_identity))
+	  cart_names.each do |cart_name|
+	    if $all_cart_types.nil? || $all_cart_types.include?(cart_name)
+	      node_to_gears[server_identity] = [] unless node_to_gears[server_identity]
+	      if $restart_only_cart_types.nil? || !$restart_only_cart_types.include?(cart_name) || (active_gears_map.include?(server_identity) && active_gears_map[server_identity].include?(gear['uuid'])) 
+		node_to_gears[server_identity] << {:server_identity => server_identity, :uuid => gear['uuid'], :name => gear['name'], :app_name => app['name'], :login => user_login}
+		break
+	      end
+	    end
+	  end
+	end
       end
     end
   end
