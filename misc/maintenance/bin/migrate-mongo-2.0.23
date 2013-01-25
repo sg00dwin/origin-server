@@ -83,6 +83,7 @@ def create_applications(user, domain_obj)
     #app._id = Moped::BSON::ObjectId.from_string(uapp["uuid"].to_s)
     app.uuid = uapp["uuid"]
     app.name = uapp["name"]
+    app.created_at = Time.parse(uapp["creation_time"])
     app.canonical_name = app.name.downcase
     app.scalable = uapp["scalable"]
     app.init_git_url = uapp["init_git_url"] if uapp["init_git_url"]
@@ -163,14 +164,15 @@ def create_group_instances(new_app, old_app)
       # create a new group instance
       new_gi = GroupInstance.new(custom_id: Moped::BSON::ObjectId.new, gear_size: old_gi['node_profile'])
       new_app.group_instances.push(new_gi)
-      new_gi.addtl_fs_gb = old_gi['addtl_fs_gb']
+      # FIXME : addtl_fs_gb not migrated properly yet
+      # new_gi.addtl_fs_gb = old_gi['addtl_fs_gb']
       new_gi_id = new_gi._id
     else
       # gears from old_gi need to be put to new_gi_id
       new_gi = new_app.group_instances.find(new_gi_id)
-      if new_gi.addtl_fs_gb != old_gi['addtl_fs_gb']
-        puts "ERROR : During migration of app '#{old_gi['uuid']}', 'additional storage' in different group instances could not be merged! Need to fix the storage manually."
-      end
+      # if new_gi.addtl_fs_gb != old_gi['addtl_fs_gb']
+      #  puts "ERROR : During migration of app '#{old_gi['uuid']}', 'additional storage' in different group instances could not be merged! Need to fix the storage manually."
+      # end
     end
     count = 0
     old_gi['gears'].each { |old_gear|
