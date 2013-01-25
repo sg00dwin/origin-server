@@ -89,6 +89,10 @@ module OpenShiftMigration
       begin
         FileUtils.chown(uuid, uuid, files_to_reset)
         FileUtils.chown(uuid, uuid, Dir.glob(pack_dir))
+
+        mcs_level = Util.get_mcs_level(uuid)
+        %x[chcon -l #{mcs_level} -R #{files_to_reset.join " "}]
+        %x[chcon -l #{mcs_level} -R #{Dir.glob(pack_dir)}]
       rescue Exception => e
         output += "ERROR: Couldn't reset git repo ownership for gear #{uuid}: #{e.message}\n#{e.backtrace}\n"
       end
