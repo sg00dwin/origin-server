@@ -39,6 +39,7 @@ rescue GetoptLong::Error => e
   usage
 end
 
+usage if args["--help"]
 gear_uuid = args["--gear_uuid"]
 target_server_identity = args['--target_server_identity']
 source_server_identity = args['--source_server_identity']

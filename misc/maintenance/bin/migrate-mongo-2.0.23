@@ -111,8 +111,11 @@ def create_applications(user, domain_obj)
         cinst_map[comp_inst["parent_cart_name"]] = ci
       end
     end if uapp["comp_instances"]
+    app.aliases = []
+    uapp["aliases"].each do |al|
+      app.aliases << al.downcase
+    end
     group_overrides = create_group_instances(app, uapp)
-    app.aliases = uapp["aliases"] if uapp["aliases"] 
     #  app.group_overrides = uapp["group_overrides"] if uapp["group_overrides"]
     fix_connections(app, group_overrides)
     app.save!
@@ -129,7 +132,7 @@ end
 
 def create_group_instances(new_app, old_app)
   new_comp_inst_hash = {}
-  return_group_overrides = []
+  group_override_map = {}
   new_app.component_instances.each { |ci|
     new_comp_inst_hash[ci.cartridge_name] = ci
   }
@@ -156,6 +159,7 @@ def create_group_instances(new_app, old_app)
       this_gis_carts << cartname unless this_gis_carts.include? cartname
     }
     new_gi_id = nil
+    addtl_fs_gb = nil
     this_gis_carts.each { |cartname|
       new_gi_id = new_comp_inst_hash[cartname].group_instance_id
       break unless new_gi_id.nil?
@@ -164,15 +168,18 @@ def create_group_instances(new_app, old_app)
       # create a new group instance
       new_gi = GroupInstance.new(custom_id: Moped::BSON::ObjectId.new, gear_size: old_gi['node_profile'])
       new_app.group_instances.push(new_gi)
-      # FIXME : addtl_fs_gb not migrated properly yet
-      # new_gi.addtl_fs_gb = old_gi['addtl_fs_gb']
+      addtl_fs_gb = old_gi['addtl_fs_gb']
       new_gi_id = new_gi._id
     else
       # gears from old_gi need to be put to new_gi_id
       new_gi = new_app.group_instances.find(new_gi_id)
-      # if new_gi.addtl_fs_gb != old_gi['addtl_fs_gb']
-      #  puts "ERROR : During migration of app '#{old_gi['uuid']}', 'additional storage' in different group instances could not be merged! Need to fix the storage manually."
-      # end
+      if addtl_fs_gb.nil? and old_gi['addtl_fs_gb']
+        addtl_fs_gb = old_gi['addtl_fs_gb']
+      elsif old_gi['addtl_fs_gb'] and addtl_fs_gb < old_gi['addtl_fs_gb']
+        # raise warning
+        puts "WARNING : Migration of app '#{new_app.name}'/'#{new_app.uuid}' will have some gears with mismatched additional filesystem storage"
+        addtl_fs_gb = old_gi['addtl_fs_gb']
+      end
     end
     count = 0
     old_gi['gears'].each { |old_gear|
@@ -203,18 +210,30 @@ def create_group_instances(new_app, old_app)
     }
 
     # calculate group overrides based on scale min/max
+    group_override = group_override_map[new_gi_id.to_s]
+    gi_comps = new_comp_inst_hash.values.select { |ci| ci.group_instance_id==new_gi_id }
+    group_components = gi_comps.map { |ci| { "comp" => ci.component_name, "cart" => ci.cartridge_name } }
+    group_override["components"] = group_components if group_override
+
     if old_gi['supported_min']!=old_gi['supported_max'] and framework_cart
-      group_override = { "components" => [ framework_cart ] }
+      group_override = { "components" => group_components } if group_override.nil?
       if old_gi['max']!=-1
         max_gears = old_gi['max']+1
         group_override['max_gears'] = max_gears
       end
       min_gears = old_gi['min']+1
       group_override['min_gears'] = min_gears
-      return_group_overrides << group_override
+      group_override[new_gi_id.to_s] = group_override
+    end
+
+    # group override for addtl_fs_gb
+    if addtl_fs_gb
+      group_override = { "components" => group_components } if group_override.nil?
+      group_override["addtl_fs_gb"] = addtl_fs_gb
+      group_override[new_gi_id.to_s] = group_override
     end
   }
-  return_group_overrides
+  group_override_map.values.dup
 end
 
 def migrate_user(user)
@@ -242,6 +261,14 @@ end
 puts "Migration Started..."
 begin
   session = get_mongo_session
+
+  # cleanup if starting from scratch
+  session[:cloud_users].find.remove_all
+  session[:applications].find.remove_all
+  session[:districts].find.remove_all
+  session[:locks].find.remove_all
+  session[:domains].find.remove_all
+
   users = session[:user]
 
   # Process all users that DOES NOT have a parent user login
