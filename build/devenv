@@ -802,6 +802,8 @@ yum -y install java-1.7.0-openjdk.i686 java-1.7.0-openjdk-devel.i686
 pushd #{DEV_TOOLS_EXT_REPO}
   build/devenv install_required_packages 2>&1
 popd
+
+/usr/bin/freshclam
 }
               SIBLING_REPOS.each_key do |repo_name|
                 cmd += "rm -rf /root/#{repo_name}; rm -rf /root/#{repo_name}-bare;"
