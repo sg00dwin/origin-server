@@ -17,6 +17,7 @@ Options:
 --gear_uuid <gear_uuid>
     Gear uuid to fix
 --source_server_identity <server_identity>
+    Source server identity
 --target_server_identity <server_identity>
     Target server identity
 -h|--help
