@@ -803,6 +803,7 @@ pushd #{DEV_TOOLS_EXT_REPO}
   build/devenv install_required_packages 2>&1
 popd
 
+# Update the Virus Definitions
 /usr/bin/freshclam
 }
               SIBLING_REPOS.each_key do |repo_name|
