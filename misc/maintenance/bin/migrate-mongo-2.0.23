@@ -259,8 +259,8 @@ def migrate_district(old_district)
 end
 
 puts "Migration Started..."
+session = get_mongo_session
 begin
-  session = get_mongo_session
 
   # cleanup if starting from scratch
   session[:cloud_users].find.remove_all
@@ -294,12 +294,13 @@ begin
       $users_failed << "District uuid #{old_district['uuid']}"
     end
   }
-  
-  release_mongo_session(session)
+
 rescue Exception => e
   puts e.message
   puts e.backtrace
   exit 1
+ensure
+  release_mongo_session(session)
 end
 puts "***************************"
 if $users_failed.empty?

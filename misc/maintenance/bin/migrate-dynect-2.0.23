@@ -6,9 +6,6 @@ require 'config/environment'
 
 @@dyn_retries = 2
 
-# Configurable params
-$config = Rails.application.config.datastore
-
 @end_point = Rails.configuration.dns[:dynect_url]
 @customer_name = Rails.configuration.dns[:dynect_customer_name]
 @user_name = Rails.configuration.dns[:dynect_user_name]
@@ -17,16 +14,12 @@ $config = Rails.application.config.datastore
 @zone = Rails.configuration.dns[:zone]
 
 def mongo_connect
-  if $config[:replica_set]
-    con = Mongo::ReplSetConnection.new(*$config[:host_port] \
-                                       << {:read => :secondary})
-  else
-    con = Mongo::Connection.new($config[:host_port][0], 
-                                $config[:host_port][1])
-  end
-  db = con.db($config[:db])
-  db.authenticate($config[:user], $config[:password])
-  $coll = con.db($config[:db]).collection("domains")
+  config = Mongoid::Config.sessions["default"]
+  host_port = config['hosts'].map { |host| host.split(':')}
+  con = Mongo::ReplSetConnection.new(*host_port << {:read => :secondary})
+  db = con.db(config['database'])
+  db.authenticate(config['username'],config['password'])
+  $coll = db.collection('domains')
 end
 
 def mongo_migrate
