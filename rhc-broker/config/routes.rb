@@ -53,9 +53,7 @@ Broker::Application.routes.draw do
   #     resources :products
   #   end
 
-  # You can have the root of your site routed with "root"getting_started
-  # just remember to delete public/index.html.
-  #root :to => "home#index"
+  #root :to => "base#show"
 
   # See how all your routes lay out with "rake routes"
 
