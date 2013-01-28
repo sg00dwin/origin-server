@@ -7,7 +7,7 @@
 
 Summary:       Multi-tenant cloud management system node tools
 Name:          rhc-node
-Version: 1.3.4
+Version: 1.3.5
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -236,6 +236,9 @@ fi
 
 
 %changelog
+* Mon Jan 28 2013 Adam Miller <admiller@redhat.com> 1.3.5-1
+- Bug 903152 - rhc app tidy changed ownership of git files (jhonce@redhat.com)
+
 * Wed Jan 23 2013 Adam Miller <admiller@redhat.com> 1.3.4-1
 - Reset app git repo file permissions to gear user/group
   (ironcladlou@gmail.com)
