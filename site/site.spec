@@ -114,13 +114,22 @@ ln -s %{sitedir}/public %{buildroot}%{htmldir}/app
 mkdir -p %{buildroot}%{sitedir}/run
 mkdir -p %{buildroot}%{sitedir}/log
 mkdir -p %{buildroot}%{sitedir}/tmp/cache/assets
-touch %{buildroot}%{sitedir}/log/production.log
 
 %clean
 rm -rf %{buildroot}
 
 %post
-/bin/touch %{sitedir}/log/production.log
+if [ ! -f %{sitedir}/log/production.log ]; then
+  /bin/touch %{sitedir}/log/production.log
+  chown root:libra_user %{sitedir}/log/production.log
+  chmod 660 %{sitedir}/log/production.log
+fi
+
+if [ ! -f %{sitedir}/log/development.log ]; then
+  /bin/touch %{sitedir}/log/development.log
+  chown root:libra_user %{sitedir}/log/development.log
+  chmod 660 %{sitedir}/log/development.log
+fi
 
 %files
 %attr(0770,root,libra_user) %{sitedir}/app/subsites/status/db
@@ -130,7 +139,8 @@ rm -rf %{buildroot}
 %attr(0770,root,libra_user) %{sitedir}/tmp
 %attr(0770,root,libra_user) %{sitedir}/tmp/cache
 %attr(0770,root,libra_user) %{sitedir}/tmp/cache/assets
-%attr(0660,root,libra_user) %{sitedir}/log/production.log
+%ghost %attr(0660,root,libra_user) %{sitedir}/log/production.log
+%ghost %attr(0660,root,libra_user) %{sitedir}/log/development.log
 
 %defattr(0640,root,libra_user,0750)
 %{sitedir}

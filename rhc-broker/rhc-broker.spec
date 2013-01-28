@@ -100,6 +100,7 @@ rm -rf $RPM_BUILD_ROOT
 %attr(0770,root,libra_user) %{brokerdir}/tmp
 %defattr(0640,root,libra_user,0750)
 %ghost %attr(0660,root,root) %{brokerdir}/log/production.log
+%ghost %attr(0660,root,root) %{brokerdir}/log/development.log
 %ghost %attr(0660,root,root) %{_var}/log/openshift/user_action.log
 %config(noreplace) %{brokerdir}/config/keys/public.pem
 %config(noreplace) %{brokerdir}/config/keys/private.pem
@@ -127,6 +128,12 @@ if [ ! -f %{brokerdir}/log/production.log ]; then
   /bin/touch %{brokerdir}/log/production.log
   chown root:libra_user %{brokerdir}/log/production.log
   chmod 660 %{brokerdir}/log/production.log
+fi
+
+if [ ! -f %{brokerdir}/log/development.log ]; then
+  /bin/touch %{brokerdir}/log/development.log
+  chown root:libra_user %{brokerdir}/log/development.log
+  chmod 660 %{brokerdir}/log/development.log
 fi
 
 if [ ! -f %{_localstatedir}/log/openshift/user_action.log ]; then
