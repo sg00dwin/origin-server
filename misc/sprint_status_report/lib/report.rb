@@ -60,6 +60,7 @@ class Report
       #TODO: This should probably be moved to the sprint itself
       deadlines.data = reports.select{|x| !(x.required? || x.first_day?) }.map{|x| {:date => x.due_date, :title => x.friendly || x.title} }
       deadlines.data << {:date => $sprint.end, :title => "Last Day of Sprint" }
+      deadlines.data = deadlines.data.sort_by{|x| x[:date] }
       data.unshift({
         :report => deadlines,
         :data => {
@@ -74,7 +75,7 @@ class Report
         {:date => $sprint.int,  :title => "First Push to INT" },
         {:date => $sprint.prod, :title => "Push to PROD" },
         {:date => $sprint.stg,  :title => "Push to STG" },
-      ]
+      ].sort_by{|x| x[:date] }
       data.unshift({
         :report => environments,
         :data => {
