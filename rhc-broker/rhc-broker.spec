@@ -65,11 +65,13 @@ rm -rf %{buildroot}
 mkdir -p %{buildroot}%{_bindir}
 mkdir -p %{buildroot}%{htmldir}
 mkdir -p %{buildroot}%{brokerdir}
+mkdir -p %{buildroot}%{brokerdir}/httpd/conf
 mkdir -p %{buildroot}/usr/lib/openshift/broker
 mkdir -p %{buildroot}/etc/openshift/plugins.d/
 
 cp -r . %{buildroot}%{brokerdir}
 ln -s %{brokerdir}/public %{buildroot}%{htmldir}/broker
+ln -sf /etc/httpd/conf/magic %{buildroot}%{brokerdir}/httpd/conf/magic
 
 mkdir -p %{buildroot}%{brokerdir}/run
 mkdir -p %{buildroot}%{brokerdir}/log
