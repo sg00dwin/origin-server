@@ -11,55 +11,44 @@ require 'config/environment'
 $config = Rails.application.config.datastore
 
 def mongo_connect
-  if $config[:replica_set]
-    con = Mongo::ReplSetConnection.new(*$config[:host_port] \
-                                       << {:read => :secondary})
-  else
-    con = Mongo::Connection.new($config[:host_port][0], 
-                                $config[:host_port][1])
-  end
-  db = con.db($config[:db])
-  db.authenticate($config[:user], $config[:password])
-  $coll = con.db($config[:db]).collection($config[:collections][:user])
+  config = Mongoid::Config.sessions["default"]
+  host_port = config['hosts'].map { |host| host.split(':')}
+  con = Mongo::ReplSetConnection.new(*host_port << {:read => :secondary})
+  db = con.db(config['database'])
+  db.authenticate(config['username'],config['password'])
+  $coll = db.collection('user')
 end
 
 @MALFORMED = Hash.new()
 @NOT_DNS = Hash.new()
 @DUPSET = Hash.new{ |hash, key| hash[key] = [] }
 def alias_validates
-  $coll.find({ "apps.aliases.0" => { "$exists" => true } },
-             { :fields => [ "apps.uuid", "apps.aliases", "apps.name", "apps.domain.namespace" ] } ) do |cursor|
-    cursor.each do |uhash|
+  $coll.find({ "aliases.0" => { "$exists" => true } },
+             { :fields => ["aliases", "name"] } ) do |cursor|
+    cursor.each do |hash|
 
-      id = uhash["_id"]
+      id = hash["_id"]
+      name = hash["name"]
 
-      # Validate aliases are properly formed
-      uhash["apps"].each do |app|
+      if hash["aliases"] != nil
+
+        hash["aliases"].each do |server_alias|
         
-        name = app["name"]
-
-        namespace = app["domain"]["namespace"]
-
-        if app["aliases"] != nil
-
-          app["aliases"].each do |server_alias|
-          
-            # Would we have rejected this alias
-            if !(server_alias =~ /\A[0-9a-zA-Z\-\.]+\z/) or
-                (server_alias =~ /#{Rails.configuration.openshift[:domain_suffix]}$/) or
-                (server_alias.length > 255 ) or
-                (server_alias.length == 0 ) or
-                (server_alias =~ /^\d+\.\d+\.\d+\.\d+$/)
-              @MALFORMED[server_alias]=[id, namespace, name, server_alias]
-              
-            elsif !(server_alias =~ /\.[0-9A-Za-z\-]*[0-9A-Za-z]$/)
-              @NOT_DNS[server_alias]=[id, namespace, name, server_alias]
-            end
+          # Would we have rejected this alias
+          if !(server_alias =~ /\A[0-9a-zA-Z\-\.]+\z/) or
+              (server_alias =~ /#{Rails.configuration.openshift[:domain_suffix]}$/) or
+              (server_alias.length > 255 ) or
+              (server_alias.length == 0 ) or
+              (server_alias =~ /^\d+\.\d+\.\d+\.\d+$/)
+            @MALFORMED[server_alias]=[id, name, server_alias]
             
-            d_server_alias = server_alias.downcase
-            @DUPSET[d_server_alias] << [id, namespace, name, server_alias]
-            
+          elsif !(server_alias =~ /\.[0-9A-Za-z\-]*[0-9A-Za-z]$/)
+            @NOT_DNS[server_alias]=[id, name, server_alias]
           end
+          
+          d_server_alias = server_alias.downcase
+          @DUPSET[d_server_alias] << [id, name, server_alias]
+          
         end
       end
 

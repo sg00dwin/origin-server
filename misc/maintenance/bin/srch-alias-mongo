@@ -11,47 +11,35 @@ require 'config/environment'
 $config = Rails.application.config.datastore
 
 def mongo_connect
-  if $config[:replica_set]
-    con = Mongo::ReplSetConnection.new(*$config[:host_port] \
-                                       << {:read => :secondary})
-  else
-    con = Mongo::Connection.new($config[:host_port][0], 
-                                $config[:host_port][1])
-  end
-  db = con.db($config[:db])
-  db.authenticate($config[:user], $config[:password])
-  $coll = con.db($config[:db]).collection($config[:collections][:user])
+  config = Mongoid::Config.sessions["default"]
+  host_port = config['hosts'].map { |host| host.split(':')}
+  con = Mongo::ReplSetConnection.new(*host_port << {:read => :secondary})
+  db = con.db(config['database'])
+  db.authenticate(config['username'],config['password'])
+  $coll = db.collection('applications')
 end
 
 def alias_searches(reqaliases)
-  $coll.find({ "apps.aliases.0" => { "$exists" => true } },
-             { :fields => [ "apps.uuid", "apps.aliases", "apps.name", "apps.domain.namespace" ] } ) do |cursor|
-    cursor.each do |uhash|
+  $coll.find({ "aliases.0" => { "$exists" => true } },
+             { :fields => ["aliases", "name"] } ) do |cursor|
+    cursor.each do |hash|
 
-      id = uhash["_id"]
+      id = hash["_id"]
+      name = hash["name"]
 
-      # Validate aliases are properly formed
-      uhash["apps"].each do |app|
+      if hash["aliases"] != nil
+
+        hash["aliases"].each do |server_alias|
         
-        name = app["name"]
-
-        namespace = app["domain"]["namespace"]
-
-        if app["aliases"] != nil
-
-          app["aliases"].each do |server_alias|
-          
-            # Would we have rejected this alias
-            reqaliases.each do |rqalias|
-              if server_alias == rqalias
-                puts "#{server_alias}: #{id}: #{name}-#{namespace}"
-              end
+          # Would we have rejected this alias
+          reqaliases.each do |rqalias|
+            if server_alias == rqalias
+              puts "#{server_alias}: #{id}: #{name}"
             end
-                        
           end
+                      
         end
       end
-
     end
   end
 
