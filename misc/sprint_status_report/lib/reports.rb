@@ -16,7 +16,9 @@ module SprintReport
     if @data.empty? && sprint && function
       @data = sprint.send(function)
     end
-    @data = @data.sort_by{|x| x.send(sort_key) || '' } if sort_key
+    if sort_key
+      @data.sort_by!{|x| x.is_a?(Hash) ? x[sort_key] : x.send(sort_key)}
+    end
     @data
   end
 
@@ -115,6 +117,7 @@ class StatsReport
         {:header => "Count"},
         {:header => "Name"},
       ],
+      :sort_key => :date
     })
   end
 end
@@ -130,6 +133,7 @@ class DeadlinesReport
         {:header => "Date"},
         {:header => "Title"}
       ],
+      :sort_key => :date
     })
   end
 end
@@ -145,6 +149,7 @@ class EnvironmentsReport
         {:header => "Date"},
         {:header => "Title"}
       ],
+      :sort_key => :date
     })
   end
 end

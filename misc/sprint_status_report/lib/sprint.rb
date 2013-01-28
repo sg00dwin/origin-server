@@ -8,10 +8,6 @@ class Sprint
   attr_accessor :eng_workspace_oid, :username, :password
   # Calendar related attributes
   attr_accessor :name, :number, :start, :end
-  # Overrides for calendar dates
-  attr_accessor :dcut, :needs_tasks, :tc_approved, :needs_tc
-  # Overrides for push dates
-  attr_accessor :dcut, :stg, :int
   # Rally related attributes
   attr_accessor :rally, :workspace, :project, :rally_config, :iterations, :notes
   # UserStory related attributes
@@ -35,11 +31,7 @@ class Sprint
     # This allows us to specify values in the notes section of Rally
     @notes   = get_notes
     overrides,@notes = @notes.partition{|x| x =~ /^\w+:/}
-    overrides = Hash[overrides.map{|k| (k,v) = k.split(/:/).map(&:strip); [k.downcase.to_sym,v] }]
-
-    overrides.each do |k,v|
-      instance_variable_set("@#{k}",v)
-    end
+    @config_dates = Hash[overrides.map{|k| (k,v) = k.split(/:/).map(&:strip); [k.downcase.to_sym,v] }]
   end
 
   def day
@@ -94,16 +86,10 @@ class Sprint
     @start ||= iterations.map{|x| Date.parse(x.start_date)}.sort.first
   end
 
-  def end
-    @end ||= iterations.map{|x| Date.parse(x.end_date)}.sort.last
-  end
-
   def date_for(key,default = 0)
-    value =
-      instance_variable_get("@#{key}") ||
+    @config_dates[key] ||=
       (block_given? ?  yield : default > 0 ? (start + default) : (send(:end) + default))
-    instance_variable_set("@#{key}",value)
-    value = Date.parse(value.to_s)
+    Date.parse(@config_dates[key].to_s)
   end
 
   def prod
@@ -181,6 +167,10 @@ class Sprint
     results[name][match]
   ensure
     processed[name] = true
+  end
+
+  def end
+    @end ||= iterations.map{|x| Date.parse(x.end_date)}.sort.last
   end
 
   private
