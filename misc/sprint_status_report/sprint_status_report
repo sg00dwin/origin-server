@@ -37,11 +37,15 @@ command :run do |c|
   c.option "--[no-]nag", "Nag the individual owners (overrides default overrides default for report)"
   c.option "--[no-]email", "Actually send the report (false by default)"
   c.option "--to EMAIL", "Who to send the email to (overrides default for report)"
+  c.option "--date DATE", "TESTING: Run report as of a specific date"
 
   c.description = "Run available reports"
   c.action do |args,options|
     options.report ||= choose("Report to run?",*CONFIG.reports.keys)
     options.report = options.report.to_sym
+    if options.date
+      $date = Date.parse(options.date)
+    end
 
     heading "Generating Status Report" do
       # Read Rally configuration file

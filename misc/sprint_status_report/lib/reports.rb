@@ -1,7 +1,7 @@
 require 'sprint'
 
 module SprintReport
-  attr_accessor :title, :headings, :function, :columns, :data, :day, :sort_key, :link, :friendly
+  attr_accessor :title, :headings, :function, :columns, :data, :day, :sort_key, :link, :friendly, :override
   attr_accessor :sprint
   def initialize(opts)
     opts.each do |k,v|
@@ -10,7 +10,6 @@ module SprintReport
 
     @columns = headings.map{|x| Column.new(x)}
     @data = []
-    @day ||= 1
   end
 
   def data
@@ -43,15 +42,23 @@ module SprintReport
   end
 
   def required?
-    sprint.days_until(day) <= 0
+    if day.nil?
+      true
+    else
+      ($date || Date.today) >= due_date
+    end
   end
 
   def first_day?
-    sprint.days_until(day) == 0
+    if day.nil?
+      false
+    else
+      ($date || Date.today) == due_date
+    end
   end
 
   def due_date
-    day.is_a?(Integer) ? (sprint.start + day) : sprint.send(day)
+    sprint.send(:date_for, (override || function), day)
   end
 
   class Column
@@ -118,6 +125,21 @@ class DeadlinesReport
   def initialize
     super({
       :title => "Upcoming Deadlines",
+      :function => :upcoming,
+      :headings => [
+        {:header => "Date"},
+        {:header => "Title"}
+      ],
+    })
+  end
+end
+
+class EnvironmentsReport
+  include SprintReport
+
+  def initialize
+    super({
+      :title => "Environment Pushes",
       :function => :upcoming,
       :headings => [
         {:header => "Date"},

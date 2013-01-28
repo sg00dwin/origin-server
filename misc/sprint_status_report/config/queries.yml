@@ -14,12 +14,14 @@
   :function:  :not_qe_ready
   :day:       4
   :sort_key:  :formatted_i_d
+  :override:  :needs_tc
 
 :not_approved:
   :title:     Test Cases Needing Development Approval
   :friendly:  Review and approve QE test cases
   :function:  :not_approved
   :day:       5
+  :override:  :tc_approved
 
 :no_tasks:
   :title:     User Stories Without Tasks
@@ -31,4 +33,5 @@
   :title:     User Stories to be Completed by DCUT
   :friendly:  Complete all stories for DCUT
   :function:  :not_dcut_complete
-  :day:       :dcut
+  :day:       9
+  :override:  :dcut

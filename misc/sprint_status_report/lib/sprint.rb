@@ -1,14 +1,19 @@
 require 'rally_rest_api'
 require 'user_story'
 require 'queries'
+require 'core_ext/date'
 
 class Sprint
   # Rally Config
   attr_accessor :eng_workspace_oid, :username, :password
   # Calendar related attributes
-  attr_accessor :name, :number, :start, :end, :dcut, :dcut_offset
+  attr_accessor :name, :number, :start, :end
+  # Overrides for calendar dates
+  attr_accessor :dcut, :needs_tasks, :tc_approved, :needs_tc
+  # Overrides for push dates
+  attr_accessor :dcut, :stg, :int
   # Rally related attributes
-  attr_accessor :rally, :workspace, :project, :rally_config, :iterations
+  attr_accessor :rally, :workspace, :project, :rally_config, :iterations, :notes
   # UserStory related attributes
   attr_accessor :stories, :processed, :results
   # Queries to run against US
@@ -26,20 +31,20 @@ class Sprint
     )
 
     @stories = get_stories
+
+    # This allows us to specify values in the notes section of Rally
+    @notes   = get_notes
+    overrides,@notes = @notes.partition{|x| x =~ /^\w+:/}
+    overrides = Hash[overrides.map{|k| (k,v) = k.split(/:/).map(&:strip); [k.downcase.to_sym,v] }]
+
+    overrides.each do |k,v|
+      instance_variable_set("@#{k}",v)
+    end
   end
 
   def day
     $date ||= Date.today # Allow overriding for testing
     ($date - start + 1).to_i
-  end
-
-  def days_until(num)
-    (case num
-    when Symbol
-      send(num) - start - day + 1
-    when Integer
-      num - day
-    end).to_i
   end
 
   def show_days(report)
@@ -57,7 +62,7 @@ class Sprint
             end
       puts "%s (%2d) - %s" % [x,day,req]
     end
-    $date = Date.today
+    $date ||= Date.today
   end
 
   def workspace
@@ -81,7 +86,7 @@ class Sprint
     @iterations ||= rally.find(:iteration, :project => project, :workspace => workspace){
       lte :start_date, Date.today.to_s
       gte :end_date, Date.today.to_s
-      equal :state, "Committed"
+      #equal :state, "Committed"
     }
   end
 
@@ -93,25 +98,38 @@ class Sprint
     @end ||= iterations.map{|x| Date.parse(x.end_date)}.sort.last
   end
 
-  def dcut
-    @dcut ||= (
-      # See if dcut was provided in the notes
-      notes_dcut,@notes = notes.partition{|x| x =~ /^DCUT:/}
-      notes_dcut = notes_dcut.map{|x| x.scan(/^DCUT: (.*)/) }.flatten
-
-      # If we don't specify dcut in the notes, just use the offset
-      notes_dcut.empty? ?
-        (start + dcut_offset) :
-        Date.parse(notes_dcut.first)
-    )
+  def date_for(key,default = 0)
+    value =
+      instance_variable_get("@#{key}") ||
+      (block_given? ?  yield : default > 0 ? (start + default) : (send(:end) + default))
+    instance_variable_set("@#{key}",value)
+    value = Date.parse(value.to_s)
   end
 
-  def notes
+  def prod
+    date_for(:prod){
+      send(:end).next(:monday)
+    }
+  end
+
+  def stg
+    date_for(:stg){
+      prod.previous(:thursday)
+    }
+  end
+
+  def int
+    date_for(:int){
+      start.next(:friday)
+    }
+  end
+
+  def get_notes
     # Combine the notes from all active iterations (each project has one)
     #   Split into lines based on HTML breaks and remove div tags
     #   Strip extra whitespace
     # This will leave as an array so we can remove meaningful lines (like dcut)
-    @notes ||= iterations.map(&:notes).compact.map{|x| x.split(/<br \/>/)}.flatten.map{|x| x.gsub(/<\/?div>/,'')}.map(&:strip)
+    iterations.map(&:notes).compact.map{|x| x.split(/<.+?>/)}.flatten.map(&:strip).delete_if{|x| x.empty?}
   end
 
   def number

@@ -15,85 +15,60 @@ Below are the reports that are defined, as well as the default settings for who 
 
 The following assumptions are made
 
-1. Stories that need QE means they **DO NOT** have the `no-qe` tag
 1. Design stories never require QE
-1. Stories that have QE notes means that there is some text in the notes section like, `[libra-qe]`, `tcms`, or `QE`
-1. Dcut is currently defined as day 8 and can be changed in `config/rally.yml`
+1. Stories that need QE means they **DO NOT** have the `no-qe` tag
+1. Stories that "have QE notes" means that there is some text in the notes section like, `[libra-qe]`, `tcms`, or `QE`
 
 Target Audiences
 ----------------
 These are the reports that can be run and who will receive emails.
-<table>
-  <tr>
-    <th>Target</th>
-    <th>Email</th>
-    <th>Nag</th>
-  </tr>
-  <tr>
-    <td>Dev</td>
-    <td>libra-devel</td>
-    <td>true</td>
-  </tr>
-  <tr>
-    <td>QE</td>
-    <td>libra-qe</td>
-    <td>false</td>
-  </tr>
-</table>
+
+| Target | Email       | Nag   |
+| ------ | -----       | ---   |
+| Dev    | libra-devel | true  |
+| QE     | libra-qe    | false |
 
 Queries That Are Run
 --------------------
+The due date is the date that the report is first included in the
+report (relative to the sprint start date).
 
-<table>
-  <tr>
-    <th>Target</th>
-    <th>Report Title</th>
-    <th>First Day Run</th>
-    <th>Includes</th>
-  </tr>
-  <tr>
-    <th>Dev</th>
-    <td>User Stories Without Tasks</td>
-    <td>2</td>
-    <td>Any stories without tasks</td>
-  </tr>
-  <tr>
-    <th></th>
-    <td>Blocked User Stories</td>
-    <td>*</td>
-    <td>Any stories marked as blocked</td>
-  </tr>
-  <tr>
-    <th></th>
-    <td>Test Cases Needing Development Approval</td>
-    <td>5</td>
-    <td>Any stories that need QE, have QE notes</td>
-  </tr>
-  <tr>
-    <th></th>
-    <td>User Stories to be Completed by DCUT</td>
-    <td>dcut</td>
-    <td>Any stories that have the os-DevCut tag that are not complete</td>
-  </tr>
-  <tr>
-    <th>QE</th>
-    <td>User Stories Requiring Test Cases</td>
-    <td>4</td>
-    <td>Any stories that need QE and do not have QE notes</td>
-  </tr>
-  <tr>
-    <th>Dev, QE</th>
-    <td>Test Cases Needing QE Re-submission</td>
-    <td>*</td>
-    <td>Any stories that need QE and have the TC-rejected tag</td>
-  </tr>
-</table>
+| Target  | Report Title                            | Includes Stories...                               | Due Date      | Override    |
+| ------  | ------------                            | -------------------                               | ------------- | --------    |
+| Dev     | User Stories Without Tasks              | without tasks                                     | 2             | needs_tasks |
+|         | Test Cases Needing Development Approval | that need QE, have QE notes                       | 5             | tc_approved |
+|         | User Stories to be Completed by DCUT    | that have the os-DevCut tag that are not complete | 9             | dcut        |
+| QE      | User Stories Requiring Test Cases       | that need QE and do not have QE notes             | 4             | needs_tc    |
 
-Overriding DCUT
-===============
-The DCUT date may be overridden by specifying a note in the current
-iteration (can be the iteration for any of the teams).
-Simply specify:
+The following reports are always included if there are matching stories.
+
+| Target  | Report Title                            | Includes Stories...                               |
+| ------  | ------------                            | -------------------                               |
+|         | Blocked User Stories                    | marked as blocked                                 |
+| Dev, QE | Test Cases Needing QE Re-submission     | that need QE and have the TC-rejected tag         |
+
+
+Environment Pushes
+==================
+
+| Environment | Push Date               | Override |
+| ----------- | ---------               | -------- |
+| INT         | First Friday of Sprint  | INT      |
+| STG         | Thursday before PROD    | STG      |
+| PROD        | Monday after Sprint END | PROD     |
+
+
+Overriding Dates
+================
+The dates for queries and environment pushes can be overridden by
+speficying the value in the `Override` column in the notes for the
+iteration.
+This will work if you specify it in any of the iterations, and will only
+accept the first date for a given key.
+This value is case insensitive and must have a `:` separating the date
+and key.
+
+For example:
 
   ```
   DCUT: YYYY-MM-DD
