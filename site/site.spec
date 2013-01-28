@@ -108,12 +108,17 @@ rm -f Gemfile.lock
 rm -rf %{buildroot}
 mkdir -p %{buildroot}%{htmldir}
 mkdir -p %{buildroot}%{sitedir}
-cp -r . %{buildroot}%{sitedir}
-ln -s %{sitedir}/public %{buildroot}%{htmldir}/app
-
 mkdir -p %{buildroot}%{sitedir}/run
 mkdir -p %{buildroot}%{sitedir}/log
 mkdir -p %{buildroot}%{sitedir}/tmp/cache/assets
+
+mkdir -p %{buildroot}%{sitedir}/httpd/conf
+mkdir -p -m 770 %{buildroot}%{sitedir}/httpd/logs
+mkdir -p %{buildroot}%{sitedir}/httpd/run
+
+cp -r . %{buildroot}%{sitedir}
+ln -s %{sitedir}/public %{buildroot}%{htmldir}/app
+ln -sf /etc/httpd/conf/magic %{buildroot}%{sitedir}/httpd/conf/magic
 
 %clean
 rm -rf %{buildroot}
@@ -139,6 +144,7 @@ fi
 %attr(0770,root,libra_user) %{sitedir}/tmp
 %attr(0770,root,libra_user) %{sitedir}/tmp/cache
 %attr(0770,root,libra_user) %{sitedir}/tmp/cache/assets
+%attr(0770,root,libra_user) %{sitedir}/log
 %ghost %attr(0660,root,libra_user) %{sitedir}/log/production.log
 %ghost %attr(0660,root,libra_user) %{sitedir}/log/development.log
 
