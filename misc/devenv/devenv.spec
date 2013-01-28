@@ -291,10 +291,6 @@ chmod 0644 %{jenkins}/.ssh/id_rsa.pub %{jenkins}/.ssh/known_hosts /root/.ssh/id_
 /bin/cp -rf %{devenvdir}/httpd.conf %{brokerdir}/httpd/
 /bin/cp -f %{devenvdir}/client.cfg %{devenvdir}/server.cfg /etc/mcollective
 /bin/cp -f %{devenvdir}/activemq.xml /etc/activemq
-mkdir -p %{sitedir}/httpd/logs
-mkdir -p %{sitedir}/httpd/run
-mkdir -p %{brokerdir}/httpd/logs
-mkdir -p %{brokerdir}/httpd/run
 ln -s %{sitedir}/public/* %{htmldir}
 ln -s /usr/lib64/httpd/modules/ %{sitedir}/httpd/modules
 ln -s /usr/lib64/httpd/modules/ %{brokerdir}/httpd/modules

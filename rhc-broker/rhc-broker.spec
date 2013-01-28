@@ -66,6 +66,8 @@ mkdir -p %{buildroot}%{_bindir}
 mkdir -p %{buildroot}%{htmldir}
 mkdir -p %{buildroot}%{brokerdir}
 mkdir -p %{buildroot}%{brokerdir}/httpd/conf
+mkdir -p -m 770 %{buildroot}%{brokerdir}/httpd/logs
+mkdir -p %{buildroot}%{brokerdir}/httpd/run
 mkdir -p %{buildroot}/usr/lib/openshift/broker
 mkdir -p %{buildroot}/etc/openshift/plugins.d/
 
@@ -98,6 +100,7 @@ rm -rf $RPM_BUILD_ROOT
 
 %files
 %attr(0770,root,libra_user) %{brokerdir}/tmp
+%attr(0770,root,libra_user) %{brokerdir}/log
 %defattr(0640,root,libra_user,0750)
 %ghost %attr(0660,root,root) %{brokerdir}/log/production.log
 %ghost %attr(0660,root,root) %{brokerdir}/log/development.log
@@ -136,10 +139,10 @@ if [ ! -f %{brokerdir}/log/development.log ]; then
   chmod 660 %{brokerdir}/log/development.log
 fi
 
-if [ ! -f %{_localstatedir}/log/openshift/user_action.log ]; then
-  /bin/touch %{_localstatedir}/log/openshift/user_action.log
-  chown root:libra_user %{_localstatedir}/log/openshift/user_action.log
-  chmod 660 %{_localstatedir}/log/openshift/user_action.log
+if [ ! -f %{_var}/log/openshift/user_action.log ]; then
+  /bin/touch %{_var}/log/openshift/user_action.log
+  chown root:libra_user %{_var}/log/openshift/user_action.log
+  chmod 660 %{_var}/log/openshift/user_action.log
 fi
 
 %changelog
