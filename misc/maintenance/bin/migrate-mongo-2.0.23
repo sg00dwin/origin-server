@@ -114,7 +114,7 @@ def create_applications(user, domain_obj)
     app.aliases = []
     uapp["aliases"].each do |al|
       app.aliases << al.downcase
-    end
+    end if uapp["aliases"]
     group_overrides = create_group_instances(app, uapp)
     #  app.group_overrides = uapp["group_overrides"] if uapp["group_overrides"]
     fix_connections(app, group_overrides)
