@@ -85,8 +85,9 @@ class UserApiTest < ActionDispatch::IntegrationTest
  
   def test_user_downgrade_with_too_many_gears
     user = CloudUser.new(login: @login)
+    Lock.create_lock(user)
     user.consumed_gears = 10
-    user.save
+    user.save!
     request_via_redirect(:put, USER_COLLECTION_URL, {:plan_id => :freeshift}, @headers)
     assert_response :unprocessable_entity
     body = JSON.parse(@response.body)
@@ -95,10 +96,11 @@ class UserApiTest < ActionDispatch::IntegrationTest
   
   def test_user_downgrade_with_large_gears
     user = CloudUser.new(login: @login)
+    Lock.create_lock(user)
     user_capabilities = user.get_capabilities
     user_capabilities['gear_sizes'] = ["small", "medium"]
     user.set_capabilities(user_capabilities)
-    user.save
+    user.save!
     #create app with large gears
     request_via_redirect(:post, "/rest/domains", {:id=> @login[0..15]}, @headers)
     assert_response :created
@@ -118,8 +120,11 @@ class UserApiTest < ActionDispatch::IntegrationTest
   end
 
   def test_user_downgrade_with_additional_storage
-    user = CloudUser.new(login: @login)
-    user.save
+    api = Express::AriaBilling::Api.instance
+    user_id = Digest::MD5::hexdigest(@login)
+    acct_no = api.create_fake_acct(user_id, :freeshift)
+    request_via_redirect(:put, USER_COLLECTION_URL, {:plan_id => :megashift}, @headers)
+    assert_response :ok
     #create app and add additional storage to the gear group
     request_via_redirect(:post, "/rest/domains", {:id=> @login[0..15]}, @headers)
     assert_response :created
@@ -127,9 +132,8 @@ class UserApiTest < ActionDispatch::IntegrationTest
     domain_id = body["data"]["id"]
     request_via_redirect(:post, "/rest/domains/#{domain_id}/applications", {:name => "app", :cartridge => "php-5.3"}, @headers)
     assert_response :created
-    user = CloudUser.find_by(login: @login)
-    user.applications[0].group_instances[0].addtl_fs_gb = 1
-    user.applications[0].save
+    request_via_redirect(:put, "/rest/domains/#{domain_id}/applications/app/cartridges/php-5.3", {:additional_gear_storage => 1}, @headers)
+    assert_response :ok
  
     request_via_redirect(:put, USER_COLLECTION_URL, {:plan_id => :freeshift}, @headers)
     assert_response :unprocessable_entity
@@ -190,7 +194,7 @@ class UserApiTest < ActionDispatch::IntegrationTest
     user = CloudUser.find_by(login: @login)
     user.pending_plan_id = "megashift"
     user.pending_plan_uptime = Time.now.utc-1000
-    user.save
+    user.save!
 
     `rhc-admin-ctl-plan --fix --login #{@login}`
 
@@ -226,7 +230,7 @@ class UserApiTest < ActionDispatch::IntegrationTest
     user = CloudUser.find_by(login: @login)
     user.pending_plan_id = "freeshift"
     user.pending_plan_uptime = Time.now.utc-1000
-    user.save
+    user.save!
 
     `rhc-admin-ctl-plan --fix --login #{@login}`
 
@@ -263,7 +267,7 @@ class UserApiTest < ActionDispatch::IntegrationTest
     assert_equal(user.plan_id, nil)
     user.pending_plan_id = "megashift"
     user.pending_plan_uptime = Time.now.utc-1000
-    user.save
+    user.save!
 
     `rhc-admin-ctl-plan --fix --login #{@login}`
 
@@ -304,7 +308,7 @@ class UserApiTest < ActionDispatch::IntegrationTest
     user.capabilities_will_change!
     user_capabilities["gear_sizes"].push("c9")
     user.set_capabilities(user_capabilities)
-    user.save
+    user.save!
 
     request_via_redirect(:post, "/rest/domains", {:id=> @login[0..15]}, @headers)
     assert_response :created
@@ -335,7 +339,7 @@ class UserApiTest < ActionDispatch::IntegrationTest
     #simulate user with valid plan but has inconsistent capabilities that can be fixed
     user = CloudUser.find_by(login: @login)
     user.max_gears = 10
-    user.save
+    user.save!
 
     `rhc-admin-ctl-plan --fix --login #{@login}`
 
@@ -360,7 +364,7 @@ class UserApiTest < ActionDispatch::IntegrationTest
     user.capabilities_will_change!
     user_capabilities["gear_sizes"].push("c9")
     user.set_capabilities(user_capabilities)
-    user.save
+    user.save!
     request_via_redirect(:post, "/rest/domains", {:id=> @login[0..15]}, @headers)
     assert_response :created
     body = JSON.parse(@response.body)

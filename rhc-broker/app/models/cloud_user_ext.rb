@@ -59,8 +59,7 @@ class CloudUser
       domain.applications.each do |app|
         app.group_instances.uniq.each do |ginst|
           if ginst.addtl_fs_gb && (ginst.addtl_fs_gb > addtl_storage)
-            carts = []
-            carts = ginst.gears[0].cartridges if ginst.gears[0]
+            carts = ginst.all_component_instances.map{ |c| c.to_hash["cart"] }
             raise OpenShift::UserException.new("User #{self.login}, application '#{app.name}', gears having [#{carts.join(",")}] components has additional file-system storage of #{ginst.addtl_fs_gb} GB that the '#{plan_id}' plan does not allow.", 159)
           end
         end if app.group_instances
