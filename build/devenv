@@ -344,14 +344,10 @@ module Express
         puts "Downloading logs and screenshots..."
         `rm -rf rhc/log; mkdir -p rhc/log/; pushd rhc/log > /dev/null; mkdir -p site/test/reports broker mcollective system screenshots selenium jbossas broker-profiler coverage; popd > /dev/null`
         scp_from(hostname, "/tmp/rhc/*", "rhc/log")
-        scp_from(hostname, "/var/www/openshift/site/httpd/logs/access_log", "rhc/log/site/access_log.log")
-        scp_from(hostname, "/var/www/openshift/site/httpd/logs/error_log", "rhc/log/site/error_log.log")
-        scp_from(hostname, "/var/www/openshift/site/log/*", "rhc/log/site")
+        scp_from(hostname, "/var/log/openshift/site/*", "rhc/log/site")
         scp_from(hostname, "/root/openshift-test/site/test/reports/*", "rhc/log/site/test/reports")
         scp_from(hostname, "/root/openshift-test/site/log/*", "rhc/log/site")
-        scp_from(hostname, "/var/www/openshift/broker/httpd/logs/access_log", "rhc/log/broker/access_log.log")
-        scp_from(hostname, "/var/www/openshift/broker/httpd/logs/error_log", "rhc/log/broker/error_log.log")
-        scp_from(hostname, "/var/www/openshift/broker/log/*", "rhc/log/broker")
+        scp_from(hostname, "/var/log/openshift/broker/*", "rhc/log/broker")
         scp_from(hostname, "/root/openshift-test/rhc-broker/log/*", "rhc/log/broker")
         scp_from(hostname, "/var/log/openshift/user_action.log", "rhc/log/broker/user_action.log")
         scp_from(hostname, "/var/log/mcollective.*", "rhc/log/mcollective")

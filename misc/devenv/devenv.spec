@@ -290,7 +290,11 @@ chmod 0644 %{jenkins}/.ssh/id_rsa.pub %{jenkins}/.ssh/known_hosts /root/.ssh/id_
 # Move over new http configurations
 /bin/cp -rf %{devenvdir}/httpd/* %{libradir}
 /bin/cp -rf %{devenvdir}/httpd.conf %{sitedir}/httpd/
+sed -i 's|^ErrorLog.*$|ErrorLog /var/log/openshift/site/httpd/error_log|' %{sitedir}/httpd/httpd.conf
+sed -i 's|^CustomLog.*$|CustomLog /var/log/openshift/site/httpd/access_log combined|' %{sitedir}/httpd/httpd.conf
 /bin/cp -rf %{devenvdir}/httpd.conf %{brokerdir}/httpd/
+sed -i 's|^ErrorLog.*$|ErrorLog /var/log/openshift/broker/httpd/error_log|' %{brokerdir}/httpd/httpd.conf
+sed -i 's|^CustomLog.*$|CustomLog /var/log/openshift/broker/httpd/access_log combined|' %{brokerdir}/httpd/httpd.conf
 /bin/cp -f %{devenvdir}/client.cfg %{devenvdir}/server.cfg /etc/mcollective
 /bin/cp -f %{devenvdir}/activemq.xml /etc/activemq
 ln -s %{sitedir}/public/* %{htmldir}

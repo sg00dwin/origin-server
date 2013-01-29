@@ -66,7 +66,6 @@ mkdir -p %{buildroot}%{_bindir}
 mkdir -p %{buildroot}%{htmldir}
 mkdir -p %{buildroot}%{brokerdir}
 mkdir -p %{buildroot}%{brokerdir}/httpd/conf
-mkdir -p -m 770 %{buildroot}%{brokerdir}/httpd/logs
 mkdir -p %{buildroot}%{brokerdir}/httpd/run
 mkdir -p %{buildroot}/usr/lib/openshift/broker
 mkdir -p %{buildroot}/etc/openshift/plugins.d/
@@ -76,8 +75,8 @@ ln -s %{brokerdir}/public %{buildroot}%{htmldir}/broker
 ln -sf /etc/httpd/conf/magic %{buildroot}%{brokerdir}/httpd/conf/magic
 
 mkdir -p %{buildroot}%{brokerdir}/run
-mkdir -p %{buildroot}%{brokerdir}/log
-mkdir -p %{buildroot}%{_var}/log/openshift
+mkdir -p %{buildroot}%{_var}/log/openshift/broker/
+mkdir -m 770 %{buildroot}%{_var}/log/openshift/broker/httpd/
 mkdir -p -m 770 %{buildroot}%{brokerdir}/tmp/cache
 mkdir -p -m 770 %{buildroot}%{brokerdir}/tmp/pids
 mkdir -p -m 770 %{buildroot}%{brokerdir}/tmp/sessions
@@ -100,10 +99,7 @@ rm -rf $RPM_BUILD_ROOT
 
 %files
 %attr(0770,root,libra_user) %{brokerdir}/tmp
-%attr(0770,root,libra_user) %{brokerdir}/log
 %defattr(0640,root,libra_user,0750)
-%ghost %attr(0660,root,root) %{brokerdir}/log/production.log
-%ghost %attr(0660,root,root) %{brokerdir}/log/development.log
 %ghost %attr(0660,root,root) %{_var}/log/openshift/user_action.log
 %config(noreplace) %{brokerdir}/config/keys/public.pem
 %config(noreplace) %{brokerdir}/config/keys/private.pem
@@ -112,6 +108,9 @@ rm -rf $RPM_BUILD_ROOT
 %attr(0750,-,-) %{brokerdir}/config/keys/generate_rsa_keys
 %attr(0750,-,-) %{brokerdir}/config/keys/generate_rsync_rsa_keys
 %attr(0750,-,-) %{brokerdir}/script
+%attr(0770,root,libra_user) %{_var}/log/openshift/broker/
+%ghost %attr(0660,root,libra_user) %{_var}/log/openshift/broker/production.log
+%ghost %attr(0660,root,libra_user) %{_var}/log/openshift/broker/development.log
 %{brokerdir}
 %{htmldir}/broker
 %attr(0750,-,-) %{_bindir}/rhc-admin-cartridge-do
@@ -127,17 +126,18 @@ rm -rf $RPM_BUILD_ROOT
 /etc/openshift/broker-dev.conf
 
 %post
-if [ ! -f %{brokerdir}/log/production.log ]; then
-  /bin/touch %{brokerdir}/log/production.log
-  chown root:libra_user %{brokerdir}/log/production.log
-  chmod 660 %{brokerdir}/log/production.log
+if [ ! -f %{_var}/log/openshift/broker/production.log ]; then
+  /bin/touch %{_var}/log/openshift/broker/production.log
+  chown root:libra_user %{_var}/log/openshift/broker/production.log
+  chmod 660 %{_var}/log/openshift/broker/production.log
 fi
 
-if [ ! -f %{brokerdir}/log/development.log ]; then
-  /bin/touch %{brokerdir}/log/development.log
-  chown root:libra_user %{brokerdir}/log/development.log
-  chmod 660 %{brokerdir}/log/development.log
+if [ ! -f %{_var}/log/openshift/broker/development.log ]; then
+  /bin/touch %{_var}/log/openshift/broker/development.log
+  chown root:libra_user %{_var}/log/openshift/broker/development.log
+  chmod 660 %{_var}/log/openshift/broker/development.log
 fi
+
 
 if [ ! -f %{_var}/log/openshift/user_action.log ]; then
   /bin/touch %{_var}/log/openshift/user_action.log
