@@ -104,6 +104,10 @@ class Release < Thor
       puts "ERROR - you need to kinit first"; exit 1
     end
 
+    unless run("rpmdev-bumpspec --version", :verbose => options.verbose?)
+      puts "ERROR - you need the rpmdevtools package installed"; exit 1
+    end
+
     branch = get_branch
     orig_branches = checkout_branch(branch, options.verbose?)
     begin
@@ -177,6 +181,7 @@ class Release < Thor
           
 
       build_failures = ''
+      chain_build_failures = ''
       build_dirs.each do |build_info|
         build_dir = build_info[1]
         working_dir = File.expand_path("../#{build_dir}", File.dirname(__FILE__))
@@ -191,6 +196,27 @@ class Release < Thor
           end
 
           if CHAIN_BUILD_SETS.flatten.include?(build_info[0])
+
+            # commands to bump spec of chain build members 
+            bumpspec_cmd = "rpmdev-bumpspec -c '- bump for chainbuild' #{build_info[1]}"
+            git_add_bumpspec = "git add #{build_info[1]}; git commit -m 'Bumping Release: for chainbuild'"
+            tag_nochangelog = "tito tag --keep-version --no-auto-changelog"
+            git_fetch_push_tags = "git fetch --tags && git pull && git push origin master && git push --tags"
+  
+            puts "=== Chain Build Package Found, Bumping Release ==="
+            puts "=- #{build_info[0]}"
+ 
+            unless run(bumpspec_cmd, :verbose => options.verbose?) and
+                      run(git_add_bumpspec, :verbose => options.verbose?) and
+                      run(tag_nochangelog, :verbose => options.verbose?) and
+                      run(git_fetch_puth_tags, :verbose => options.verbose?)
+              
+              chain_build_failures += "pushd #{working_dir} > /dev/null; #{rpmdev_bumpspec_cmd}; popd > /dev/null;\n"
+              chain_build_failures += "pushd #{working_dir} > /dev/null; #{git_add_bumpspec}; popd > /dev/null;\n"
+              chain_build_failures += "pushd #{working_dir} > /dev/null; #{tag_nochangelog}; popd > /dev/null;\n"
+              chain_build_failures += "pushd #{working_dir} > /dev/null; #{git_fetch_push_tags}; popd > /dev/null;\n"
+            end
+
             # --no-build option requires tito v0.4.9-2 or higher, needed for chainbuilds
             tito_cmd = "tito release brew --no-build < #{options.temp_dir}/answerfile"
           else
@@ -206,7 +232,6 @@ class Release < Thor
         end
       end
 
-      chain_build_failures = ''
       CHAIN_BUILD_SETS.each do | chain_set | 
         puts "Brew chainbuilding for: #{chain_set.join(" : ")}"
 
