@@ -1,8 +1,8 @@
 %if 0%{?fedora}
-    %global mco_agent_root /usr/libexec/mcollective/mcollective/agent/
+    %global mco_root /usr/libexec/mcollective/mcollective/
 %endif
 %if 0%{?rhel}
-    %global mco_agent_root /opt/rh/ruby193/root/usr/libexec/mcollective/mcollective/agent/
+    %global mco_root /opt/rh/ruby193/root/usr/libexec/mcollective/mcollective/
 %endif
 
 Summary:       Multi-tenant cloud management system node tools
@@ -92,13 +92,15 @@ mkdir -p %{buildroot}%{_var}/lib/openshift/.httpd.d
 mkdir -p %{buildroot}/%{_sysconfdir}/httpd/conf.d/
 mkdir -p %{buildroot}/lib64/security/
 mkdir -p %{buildroot}/sandbox
-mkdir -p %{buildroot}%{mco_agent_root}
+mkdir -p %{buildroot}%{mco_root}agent/
+mkdir -p %{buildroot}%{mco_root}lib/
 # ln -s %{_var}/lib/openshift/.httpd.d/ %{buildroot}/%{_sysconfdir}/httpd/conf.d/openshift
 
 cp -r lib %{buildroot}%{_libexecdir}/openshift
 cp -r conf/httpd %{buildroot}%{_sysconfdir}
 cp -r conf/openshift %{buildroot}%{_sysconfdir}
-cp mcollective/agent/* %{buildroot}%{mco_agent_root}
+cp mcollective/agent/* %{buildroot}%{mco_root}agent/
+cp mcollective/lib/* %{buildroot}%{mco_root}lib/
 cp scripts/bin/* %{buildroot}%{_bindir}
 cp scripts/init/* %{buildroot}%{_initddir}
 cp scripts/openshift_tmpwatch.sh %{buildroot}%{_sysconfdir}/cron.daily/openshift_tmpwatch.sh
@@ -195,7 +197,8 @@ fi
 
 %files
 %defattr(-,root,root,-)
-%attr(0640,-,-) %{mco_agent_root}*
+%attr(0640,-,-) %{mco_root}agent/*
+%attr(0640,-,-) %{mco_root}lib/*
 %attr(0750,-,-) %{_initddir}/libra-data
 %attr(0750,-,-) %{_initddir}/libra-tc
 %attr(0750,-,-) %{_initddir}/libra-watchman

@@ -62,7 +62,7 @@ module MCollective
         output = ""
         exitcode = 0
         begin
-          require "#{File.dirname(__FILE__)}/migrate"
+          require "#{File.dirname(__FILE__)}/../lib/migrate"
           output, exitcode = OpenShiftMigration::migrate(uuid, namespace, version)
         rescue LoadError => e
           exitcode = 127
