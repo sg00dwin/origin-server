@@ -29,7 +29,12 @@
           = form.input :promo_code, :label => 'Promotional Code', :required => false, :input_html => { :class => 'max', :placeholder => 'Promo code' }
   
       = form.inputs do
-        = input_recaptcha(:errors => @user.errors[:captcha]) unless controller.skip_captcha?
+        - unless controller.skip_captcha?
+          %input{:type => "hidden", :name => "captcha_secret", :value => @captcha_secret }
+          %input{:type => "hidden", :name => "captcha_type", :value => @captcha_type }
+          %input{:type => "hidden", :name => "captcha_status", :value => @captcha_status }
+          = render :partial => "captcha/#{@captcha_type}", :locals => {:errors => @user.errors[:captcha].present?, :form => form}
+ 
         %p{:style => "font-size: 12px"}
           By signing up you agree to the 
           = link_to 'Terms of Service', terms_of_service_url

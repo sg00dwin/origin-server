@@ -1314,3 +1314,14 @@ body.simple {
     }
 }
 
+#picatcha {
+  width: inherit !important;
+  top: -20px;
+}
+
+@media (max-width: 480px) {
+  #picatcha {
+    top: 5px;
+    padding-bottom: 30px !important;
+  }
+}

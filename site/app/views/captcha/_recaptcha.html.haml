@@ -1,0 +1,28 @@
+- js_required("to sign up for an OpenShift account")
+
+:ruby
+  options = {
+    :display => {
+      :theme => :custom,
+      :custom_theme_widget => 'recaptcha_widget'
+    },
+    :ssl => true
+  }
+
+#recaptcha_widget.control-group{:class => (errors ? 'error' : '')}
+  %label.control-label{ :class => :recaptcha_only_if_image, :for => :recaptcha_response_field } Are you a spam bot?
+  %label.control-label{ :class => :recaptcha_only_if_audio, :for => :recaptcha_response_field } Are you a spam bot?
+
+  .controls
+    %div
+      %input#recaptcha_response_field.input-xlarge{ :type => :text, :name => :recaptcha_response_field, :placeholder => 'Type the words that appear below' }
+      .help-inline.recaptcha_only_if_incorrect_sol Incorrect, please try again
+      %p#recaptcha_image{:style => "margin-top: 10px;"}
+      .btn-toolbar.btn-group
+        = link_to "Get Another", "javascript:Recaptcha.reload()", {:class => ['btn','btn-mini']}
+        = link_to "Get an audio CAPTCHA", "javascript:Recaptcha.switch_type('audio')", {:class => ['btn','btn-mini','recaptcha_only_if_image']}
+        = link_to "Get an image CAPTCHA", "javascript:Recaptcha.switch_type('image')", {:class => ['btn','btn-mini','recaptcha_only_if_audio']}
+        = link_to "Help", "javascript:Recaptcha.showhelp()", {:class => ['btn','btn-mini']}
+      %p{:style => "color: gray; font-size: 10px"} reCAPTCHA provided by Google - help fight spam and fix books!
+
+= recaptcha_tag(:challenge, options).html_safe

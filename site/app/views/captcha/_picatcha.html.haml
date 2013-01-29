@@ -1,0 +1,67 @@
+- js_required("to sign up for an OpenShift account")
+
+:ruby
+  options = {
+    :ssl => true
+  }
+
+#picatcha_widget.control-group{:class => (errors ? 'error' : '')}
+  %label.control-label{ :for => :picatcha} Captcha Question
+  .controls
+    .help-inline.picatcha_errors= errors ? "Incorrect, please try again" : ""
+
+  = picatcha_tag(:challenge, options).html_safe
+
+-# This CSS needs to be loaded here so that it will always come after the CSS loaded by
+-# the picatcha helpers
+:css
+  #picatcha_widget #picatcha {
+      background-color: transparent !important;
+      border: 0 !important;
+      margin-bottom: 10px;
+      margin-top: 0 !important;
+      padding: 0 0 20px;
+      position: relative;
+      width: 350px;
+  }
+
+  @media (max-width: 479px) { 
+    #picatcha_widget #picatcha {width: auto !important}
+  }
+
+  #picatcha_widget #picatcha a#picatcha_mini_top_link {
+      background-color: transparent !important;
+      color: inherit !important; 
+      text-align: right;
+      margin: 0;
+  }
+
+  #picatcha_widget p.picatcha_question {
+      font-size: 100%;
+      margin: 0;
+      text-align: left;
+  }
+
+  #picatcha_widget .picatcha .img_btn {
+      border: 2px solid #333;
+  }
+
+  #picatcha_widget .picatcha .img_btn:hover {
+      border-color: #aaa;
+  }
+
+  #picatcha_widget .picatchaRefreshButton {
+      background-color: transparent !important;
+      border: 1px solid #666666 !important;
+      border-radius: 2px 2px 2px 2px;
+      color: inherit !important;
+  }
+
+  @media (min-width: 767px) and (max-width: 979px)  {
+    #picatcha_widget #picatcha {width: 275px !important}
+  }
+
+  #picatcha_widget .refresh_str {
+    background-color: #7FC3E1;
+    color: #000;
+  }

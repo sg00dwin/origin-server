@@ -1,14 +1,20 @@
+# We need this to ensure that the lib is properly reloaded
+require_dependency 'captcha_helper'
+
 module Account
   module Creation
     extend ActiveSupport::Concern
 
-    def skip_captcha?
-      Rails.configuration.captcha_secret.nil? or params[:captcha_secret] == Rails.configuration.captcha_secret
+    # This mixin allows us to define multiple Captcha types
+    include CaptchaHelper
+
+    included do
+      before_filter :set_captcha_vars
+      before_filter :validate_captcha_type, :only => [:new,:create]
     end
 
     def new
       @redirect = params[:then] || params[:redirect].presence || params[:redirectUrl].presence
-      @captcha_secret = params[:captcha_secret].presence
 
       @user = WebUser.new params[:web_user]
     end
@@ -18,7 +24,6 @@ module Account
 
       @redirect = server_relative_uri(params[:then])
       @user = WebUser.new params[:web_user]
-      @captcha_secret = params[:captcha_secret]
 
       # Run validations
       valid = @user.valid?
@@ -28,17 +33,21 @@ module Account
       # See if the captcha secret was provided
       if skip_captcha?
         logger.warn "Captcha secret provided - ignoring captcha"
-      elsif sauce_testing? #Checks for sauce_testing cookie and development Rails
-        logger.warn "Sauce testing cookie provided - ignoring captcha"
       else
+        # Remove the captcha_secret since it was wrong
         @captcha_secret = nil
-        logger.debug "Checking captcha"
-        # Verify the captcha
-        unless verify_recaptcha
-          logger.debug "Captcha check failed"
-          valid = false
-          flash.delete(:recaptcha_error) # prevent the default flash from recaptcha gem
-          @user.errors[:captcha] = "Captcha text didn't match"
+        if sauce_testing? #Checks for sauce_testing cookie and development Rails
+          logger.warn "Sauce testing cookie provided - ignoring captcha"
+        else
+          logger.debug "Checking captcha"
+          # Verify the captcha
+          unless (valid = valid?({:request => request, :params => params}))
+            logger.debug "Captcha check failed"
+            @captcha_status = "Failed"
+            @user.errors[:captcha] = "Captcha text didn't match"
+          else
+            logger.debug "Captcha check passed"
+          end
         end
       end
 
@@ -75,6 +84,10 @@ module Account
         PromoCodeMailer.promo_code_email(@user).deliver
       end
 
+      # Store these in session so we can use it in the redirected method
+      session[:captcha_status] = "Passed"
+      session[:captcha_type]   = @captcha_type
+
       redirect_to complete_account_path(:promo_code => @user.promo_code.presence)
     end
 
@@ -87,6 +100,24 @@ module Account
       end
 
       render :create
+    end
+
+    private
+    def set_captcha_vars
+      # Handle everything we need here so we don't need params in the module
+      @captcha_secret  = params[:captcha_secret]
+      @captcha_type    = session[:captcha_type] || params[:captcha_type] || CaptchaHelper.random_captcha
+      @captcha_status  = session[:captcha_status] || params[:captcha_status] || "Viewed"
+
+      session[:captcha_type] = nil
+      session[:captcha_status] = nil
+    end
+
+    def validate_captcha_type
+      unless CaptchaHelper.available_captchas.has_key?(@captcha_type.to_sym)
+        params.delete(:captcha_type)
+        redirect_to new_account_path(params)
+      end
     end
   end
 end

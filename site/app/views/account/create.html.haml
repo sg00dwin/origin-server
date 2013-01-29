@@ -12,3 +12,7 @@
     at #{link_to_account_mailto} or on #{link_to_irc}.
 
   %p= link_to '« Back to the main page', root_path
+
+  %form
+    %input{:type => "hidden", :name => "captcha_type", :value => @captcha_type }
+    %input{:type => "hidden", :name => "captcha_status", :value => @captcha_status }
