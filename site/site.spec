@@ -8,7 +8,7 @@
 
 Summary:   OpenShift Site Rails application
 Name:      rhc-site
-Version: 1.4.1
+Version: 1.4.2
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   ASL 2.0
@@ -164,6 +164,20 @@ fi
 %{sitedir}/public
 
 %changelog
+* Tue Jan 29 2013 Adam Miller <admiller@redhat.com> 1.4.2-1
+- Fixed dependency loading for libs (fotios@redhat.com)
+- Fixed tracking.js for captcha story (fotios@redhat.com)
+- Fixed tests (fotios@redhat.com)
+- View changes for captcha (fotios@redhat.com)
+- Controllers changes and helper for captcha (fotios@redhat.com)
+- Added tracking code for Google Analytics to track captcha status
+  (fotios@redhat.com)
+- Added modular captcha libraries (fotios@redhat.com)
+- US2709: Captcha replacement (fotios@redhat.com)
+- Bug 892821 (dmcphers@redhat.com)
+- Bug 888692 (dmcphers@redhat.com)
+- fix references to rhc app cartridge (dmcphers@redhat.com)
+
 * Wed Jan 23 2013 Adam Miller <admiller@redhat.com> 1.4.1-1
 - bump_minor_versions for sprint 23 (admiller@redhat.com)
 
