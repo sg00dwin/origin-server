@@ -3,7 +3,7 @@
 
 Summary:   Li broker components
 Name:      rhc-broker
-Version: 1.4.1
+Version: 1.4.2
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -146,6 +146,70 @@ if [ ! -f %{_var}/log/openshift/user_action.log ]; then
 fi
 
 %changelog
+* Tue Jan 29 2013 Adam Miller <admiller@redhat.com> 1.4.2-1
+- Merge pull request #804 from rajatchopra/master
+  (dmcphers+openshiftbot@redhat.com)
+- Merge pull request #801 from pravisankar/dev/ravi/fix-broker-extended-tests
+  (dmcphers+openshiftbot@redhat.com)
+- restore mongo cursor and discard pagination (rchopra@redhat.com)
+- Bug 892821 (dmcphers@redhat.com)
+- Fix Broker Extended tests (rpenta@redhat.com)
+- Bug 888692 (dmcphers@redhat.com)
+- Bug 888692 (dmcphers@redhat.com)
+- Bug 902286 (dmcphers@redhat.com)
+- Bug 873180 (dmcphers@redhat.com)
+- refactored admin scripts (rchopra@redhat.com)
+- fix references to rhc app cartridge (dmcphers@redhat.com)
+- half done - rhc-admin-migrate refactorization (rchopra@redhat.com)
+- - Add SSL option to Rails config.datastore and to mongoid.yml
+  (rpenta@redhat.com)
+- - Use deep_copy() for copying user capabilities - Fix usage integration test
+  (rpenta@redhat.com)
+- more fixes (rpenta@redhat.com)
+- Fix usage integration tests (rpenta@redhat.com)
+- fix li-cleanup-util script, delete old mongo datastore tests
+  (rpenta@redhat.com)
+- model-refactor unit tests cleanup (rpenta@redhat.com)
+- Model-refactor changes:  - Remove MongoMapper references  - Move systems
+  tests, subuser tests and usage tests from li/rhc-broker to origin-
+  server/broker  - Remove stale files: mongo_data_store.rb, old
+  distributed_lock.rb  - Fix rhc-admin-ctl-plan (rpenta@redhat.com)
+- Added Distributed Lock using mongoid model + unit testcase
+  (rpenta@redhat.com)
+- rhc-admin-ctl-usage script rework (rpenta@redhat.com)
+- Populate mongoid.yml config from Rails datastore configuration
+  (rpenta@redhat.com)
+- fix nurture agent so that it sends correct app id for older apps
+  (rchopra@redhat.com)
+- fix nurture deconfigure event - send for app destroy only
+  (rchopra@redhat.com)
+- Fix for bug 892115 (abhgupta@redhat.com)
+- fix rhc-admin-ctl-plan (rpenta@redhat.com)
+- Bug 892132 (dmcphers@redhat.com)
+- Fixing extended broker tests (abhgupta@redhat.com)
+- Bug# 889957: part 2 (rpenta@redhat.com)
+- fixing mongoid.yml for broker tests (abhgupta@redhat.com)
+- fix mongoid.yml (dmcphers@redhat.com)
+- add dynect migration (dmcphers@redhat.com)
+- removing txt records (dmcphers@redhat.com)
+- refactoring to use getter/setter for user capabilities (abhgupta@redhat.com)
+- removed show-port from test (lnader@redhat.com)
+- removing app templates and other fixes (dmcphers@redhat.com)
+- fix all the cloud_user.find passing login falls (dmcphers@redhat.com)
+- test case fixes (dmcphers@redhat.com)
+- fix tests (dmcphers@redhat.com)
+- fix rhc broker tests (dmcphers@redhat.com)
+- fix broker functional tests (dmcphers@redhat.com)
+- fixing cloud user tests (dmcphers@redhat.com)
+- Updates for model refactor (dmcphers@redhat.com)
+- Removing usage model from li (moved to origin-server) (kraman@gmail.com)
+- fixup accept node and several cloud user usages (dmcphers@redhat.com)
+- test case fixes (dmcphers@redhat.com)
+- Fixing nurture call on app deletion (kraman@gmail.com)
+- changed app.uuid to app._id.to_s (lnader@redhat.com)
+- Add mongoid rpm as dependency (kraman@gmail.com)
+- Updates for model refactor (dmcphers@redhat.com)
+
 * Wed Jan 23 2013 Adam Miller <admiller@redhat.com> 1.4.1-1
 - bump_minor_versions for sprint 23 (admiller@redhat.com)
 - dont add to the config on every call (dmcphers@redhat.com)
