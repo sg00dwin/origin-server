@@ -8,7 +8,7 @@
 
 Summary:   Dependencies for OpenShift development
 Name:      rhc-devenv
-Version: 1.4.1
+Version: 1.4.2
 Release:   1%{?dist}
 Group:     Development/Libraries
 License:   GPLv2
@@ -663,6 +663,28 @@ restorecon /etc/openshift/node.conf || :
 /sbin/service libra-data restart > /dev/null 2>&1 || :
 
 %changelog
+* Tue Jan 29 2013 Adam Miller <admiller@redhat.com> 1.4.2-1
+- Bug 892821 (dmcphers@redhat.com)
+- Bug 888692 (dmcphers@redhat.com)
+- Bug 902286 (dmcphers@redhat.com)
+- move clamav update to base ami (dmcphers@redhat.com)
+- Merge pull request #789 from tkramer-rh/dev/tkramer/security/rubygem-
+  activesupport_match_stg_prod (dmcphers+openshiftbot@redhat.com)
+- Security - Added rubygem-activesupport to match stg and prod
+  (tkramer@redhat.com)
+- fix li-cleanup-util script, delete old mongo datastore tests
+  (rpenta@redhat.com)
+- Fix li-users-delete-util script (rpenta@redhat.com)
+- run rake tests using 'openshift_broker_test' mongo database
+  (rpenta@redhat.com)
+- Bug 892125 (dmcphers@redhat.com)
+- missing call to force delete (dmcphers@redhat.com)
+- fix test user creation (rchopra@redhat.com)
+- removing txt records (dmcphers@redhat.com)
+- fix all the cloud_user.find passing login falls (dmcphers@redhat.com)
+- fixup accept node and several cloud user usages (dmcphers@redhat.com)
+- test case fixes (dmcphers@redhat.com)
+
 * Wed Jan 23 2013 Adam Miller <admiller@redhat.com> 1.4.1-1
 - bump_minor_versions for sprint 23 (admiller@redhat.com)
 
