@@ -1,7 +1,7 @@
 #!/bin/bash
 
 echo "Enabling SSO for Broker..."
-sed -i 's/\:integrated => false/:integrated => true/' /var/www/openshift/broker/config/environments/development.rb
+sed -i 's/\INTEGRATED_AUTH=\"false\"/INTEGRATED_AUTH="true"/' /etc/openshift/plugins.d/openshift-origin-auth-streamline-dev.conf
 service rhc-broker restart
 
 echo "Enabling SSO for Site..."
