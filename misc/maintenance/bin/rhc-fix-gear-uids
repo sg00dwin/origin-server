@@ -8,7 +8,7 @@ Rails.configuration.msg_broker[:rpc_options][:disctimeout] = 20
 
 
 def check_gear_uid(gear, new_uid)
-  if ! District.in("server_identities.name" => [server_identity]).exists?
+  if ! District.in("server_identities.name" => [gear.server_identity]).exists?
     return
   end
   district = District.where("server_identities.name" => gear.server_identity)[0]
@@ -30,23 +30,29 @@ def check_gear_uid(gear, new_uid)
   return 
 end
 
-$moped_session = Mongoid::Sessions.default
-
-def get_records(db, query, selection)
-  # 'by' - tweak to a larger number for faster results, smaller number if a timeout insults
-  by = 10000
-  skip_first = 0
-  while ( (results = $moped_session[db].find(query).select(selection).limit(by).skip(skip_first)) && results.any? )
-    results.each { |result| 
-      yield result 
-    }
-    skip_first += by
+$config = Rails.application.config.datastore
+    
+def get_records(collection_name, query, selection)
+  if $config[:replica_set]
+    con = Mongo::ReplSetConnection.new(*$config[:host_port] \
+                   << {:read => :secondary})            
+  else
+    host_port = $config[:host_port].split(":")
+    con = Mongo::Connection.new(host_port[0], host_port[1])
+  end 
+  db = con.db($config[:db])
+  db.authenticate($config[:user], $config[:password])
+  coll = db.collection(collection_name)
+  coll.find(query, selection) do |mcursor|
+    mcursor.each do |hash|
+      yield hash
+    end            
   end
-end
+end 
 
 mongo_hash = {}
 query = {"group_instances.gears.0" => {"$exists" => true}}
-selection = {"group_instances.gears.uuid" => 1, "group_instances.gears.uid" => 1}
+selection = {:fields => ["group_instances.gears.uuid", "group_instances.gears.uid"], :timeout => false}
 ret = []
 
 get_records(:applications, query, selection) do |app|

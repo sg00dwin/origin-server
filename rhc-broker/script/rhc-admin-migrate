@@ -235,15 +235,24 @@ def add_to(stuffs, more_stuffs)
   end
 end
 
-def get_records(session, db, query, selection)
-  # 'by' - tweak to a larger number for faster results, smaller number if a timeout insults
-  by = 10000
-  skip_first = 0
-  while ( (results = session[db].find(query).select(selection).limit(by).skip(skip_first)) && results.any? )
-    results.each { |result| 
-      yield result 
-    }
-    skip_first += by
+$config = Rails.application.config.datastore
+
+def get_records(collection_name, query, selection)
+  if $config[:replica_set]
+    con = Mongo::ReplSetConnection.new(*$config[:host_port] \
+                   << {:read => :secondary})
+  else
+    host_port = $config[:host_port].split(":")
+    con = Mongo::Connection.new(host_port[0], host_port[1])
+  end
+
+  db = con.db($config[:db])
+  db.authenticate($config[:user], $config[:password])
+ 
+  db.collection(collection_name).find(query, selection) do |mcursor|
+    mcursor.each do |hash|
+      yield hash
+    end
   end
 end
 
@@ -262,21 +271,21 @@ def migrate(version, continue=false, target_server_identity=nil, migrate_positio
   puts "Getting all logins..."
   gather_users_start_time = (Time.now.to_f * 1000).to_i
   query = {"group_instances.gears.0" => {"$exists" => true}}
-  options = { "uuid" => 1,
-              "domain_id" =>1,
-              "name" => 1,
-              "created_at" => 1,
-              "component_instances.cartridge_name" => 1,
-              "component_instances.group_instance" => 1,
-              "group_instances._id" => 1,
-              "group_instances.gears.uuid" => 1,
-              "group_instances.gears.server_identity" => 1,
-              "group_instances.gears.name" => 1}
+  options = {:fields => [ "uuid",
+              "domain_id",
+              "name",
+              "created_at",
+              "component_instances.cartridge_name",
+              "component_instances.group_instance",
+              "group_instances._id",
+              "group_instances.gears.uuid",
+              "group_instances.gears.server_identity",
+              "group_instances.gears.name"], 
+             :timeout => false}
+               
   ret = []
-  moped_session = Mongoid::Sessions.default
-
   user_map = {}
-  get_records(moped_session, :cloud_users, {}, {"_id" => 1, "uuid" => 1, "login" => 1}) do |hash|
+  get_records(:cloud_users, {}, {:fields => ["_id", "uuid", "login"], :timeout => false}) do |hash|
       logins_cnt += 1
       user_uuid = hash['uuid']
       user_login = hash['login']
@@ -284,14 +293,27 @@ def migrate(version, continue=false, target_server_identity=nil, migrate_positio
   end
 
   domain_map = {}
-  get_records(moped_session, :domains, {}, {"_id" => 1, "owner_id" => 1}) do |hash|
+  get_records(:domains, {}, {:fields => ["_id" , "owner_id"], :timeout => false}) do |hash|
     domain_map[hash['_id'].to_s] = hash['owner_id'].to_s
   end
 
-  get_records(moped_session, :applications, query, options) do |app|
+  get_records(:applications, query, options) do |app|
     print '.'
     user_id = domain_map[app['domain_id'].to_s]
-    user_uuid,user_login = user_map[user_id]
+    if user_id.nil?
+      relocated_domain = Domain.where(_id: Moped::BSON::ObjectId.new(app['domain_id'])).first
+      user_id = relocated_domain.owner._id.to_s
+      user_uuid = relocated_domain.owner.uuid
+      user_login = relocated_domain.owner.login
+    else
+      if user_map.has_key? user_id
+        user_uuid,user_login = user_map[user_id]
+      else
+        relocated_user = CloudUser.where(_id: Moped::BSON::ObjectId.new(user_id)).first
+        user_uuid = relocated_user.uuid
+        user_login = relocated_user.login
+      end
+    end
     group_cart_map = {}
     app['component_instances'].each do |ci|
       gid = ci['group_instance'].to_s
