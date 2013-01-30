@@ -48,7 +48,7 @@ class AppCartridgeEventsTest < ActionDispatch::IntegrationTest
 
     # stop application cartridge - without embedding cartridge
     request_via_redirect(:post, APP_CARTRIDGE_EVENTS_URL_FORMAT % [ns, "app1", "mysql-5.1"], {:event => "stop"}, @headers)
-    assert_response :bad_request
+    assert_response :not_found
     body = JSON.parse(@response.body)
     assert_equal(body["messages"][0]["exit_code"], 129)
 
@@ -58,7 +58,7 @@ class AppCartridgeEventsTest < ActionDispatch::IntegrationTest
 
     # stop a different application cartridge
     request_via_redirect(:post, APP_CARTRIDGE_EVENTS_URL_FORMAT % [ns, "app1", "mongodb-2.2"], {:event => "stop"}, @headers)
-    assert_response :bad_request
+    assert_response :not_found
     body = JSON.parse(@response.body)
     assert_equal(body["messages"][0]["exit_code"], 129)
 

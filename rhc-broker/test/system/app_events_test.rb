@@ -181,7 +181,7 @@ class AppEventsTest < ActionDispatch::IntegrationTest
     request_via_redirect(:post, APP_EVENTS_URL_FORMAT % [ns, "app1"], {:event => "add-alias", :alias => ""}, @headers)
     assert_response :unprocessable_entity
     body = JSON.parse(@response.body)
-    assert_equal(body["messages"][0]["exit_code"], 105)
+    assert_equal(body["messages"][0]["exit_code"], 126)
 
     # add-alias application - specify invalid alias
     request_via_redirect(:post, APP_EVENTS_URL_FORMAT % [ns, "app1"], {:event => "add-alias", :alias => "invalid@alias"}, @headers)

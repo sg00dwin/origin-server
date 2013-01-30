@@ -124,7 +124,7 @@ class AppCartridgesTest < ActionDispatch::IntegrationTest
 
     # embed an invalid cartridge
     request_via_redirect(:post, APP_CARTRIDGES_URL_FORMAT % [ns, "appnoscale"], {:name => "invalid-cartridge"}, @headers)
-    assert_response :bad_request
+    assert_response :unprocessable_entity
     body = JSON.parse(@response.body)
     assert_equal(body["messages"][0]["exit_code"], 109)
 
@@ -210,7 +210,7 @@ class AppCartridgesTest < ActionDispatch::IntegrationTest
 
     # delete application cartridge - without embedding cartridge
     request_via_redirect(:delete, APP_CARTRIDGE_URL_FORMAT % [ns, "app1", "mysql-5.1"], {}, @headers)
-    assert_response :bad_request
+    assert_response :not_found
     body = JSON.parse(@response.body)
     assert_equal(body["messages"][0]["exit_code"], 129)
 
@@ -220,7 +220,7 @@ class AppCartridgesTest < ActionDispatch::IntegrationTest
 
     # delete a different application cartridge
     request_via_redirect(:delete, APP_CARTRIDGE_URL_FORMAT % [ns, "app1", "mongodb-2.2"], {}, @headers)
-    assert_response :bad_request
+    assert_response :not_found
     body = JSON.parse(@response.body)
     assert_equal(body["messages"][0]["exit_code"], 129)
 
