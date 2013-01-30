@@ -19,6 +19,7 @@ class CtlUsageTest < ActionDispatch::IntegrationTest
   test "ctl_usage_sync" do
     login = "user_" + gen_uuid
     cu = CloudUser.new(login: login)
+    cu.plan_id = "megashift"
     cu.save!
     Lock.create_lock(cu)
     namespace = "ns" + gen_uuid[0..9]
