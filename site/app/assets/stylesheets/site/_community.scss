@@ -792,6 +792,35 @@ html.js fieldset.collapsible .fieldset-wrapper {
   background-color: $openshiftBrightRed !important;
 }
 
+.view-event-calendar .calendar-calendar .month-view .full td.single-day div.monthview, .calendar-calendar .week-view .full td.multi-day div.weekview, .calendar-calendar .day-view .full td.multi-day div.dayview {
+    height: 1.9em;
+    margin: 0 auto;
+    overflow: hidden;
+    position: relative;
+}
+
+.calendar-calendar .month-view .full td.multi-day .calendar.monthview .contents, 
+.calendar-calendar .week-view .full td.multi-day .calendar.weekview .contents, 
+.calendar-calendar .month-view .full td.single-day .calendar.monthview .contents,
+.calendar-calendar .month-view .full td.single-day .calendar.weekview .contents {
+    left: 5px;
+    position: absolute;
+    width: 3000px;
+}
+
+.calendar-calendar .inner .view-field a {
+  color: #FFFFFF !important; 
+}
+
+.attachment .calendar-calendar th {
+    background-color: transparent;
+    border: 0;
+    max-width: 30px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+} 
+
 
 /* Event detail */
 .related-logo {
