@@ -2,6 +2,7 @@ class ApplicationController < ActionController::Base
   include Console::Rescue
   include Secured
   include AsyncAware
+  include BillingAware
 
   protect_from_forgery
 

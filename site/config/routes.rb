@@ -14,7 +14,7 @@ RedHatCloud::Application.routes.draw do
   match 'flex' => community_paas, :as => 'flex'
   match 'flex_redirect' => community_paas, :as => 'flex_redirect'
   match 'platform' => community_paas
-  match 'partners' => community_paas
+  match 'partners' => redirect('/community/partners')
 
   match 'getting_started' => get_started
   match 'getting_started/express' => get_started

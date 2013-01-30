@@ -46,6 +46,7 @@ module RedHatCloud
     Console.configure do |c|
       c.include_helpers = false
       c.security_controller = 'Console::Auth::None'
+      c.cached_capabilities = [:plan_upgrade_enabled]
     end
 
     config.user_agent = Console.config.user_agent

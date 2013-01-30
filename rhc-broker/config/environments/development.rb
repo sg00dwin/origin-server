@@ -116,7 +116,8 @@ Broker::Application.configure do
           :capabilities => {
             'subaccounts' => false,
             'max_gears' => 3,
-            'gear_sizes' => ["small"]
+            'gear_sizes' => ["small"],
+            'plan_upgrade_enabled' => true,
           }
         },
         :megashift => {
@@ -126,7 +127,8 @@ Broker::Application.configure do
             'subaccounts' => false,
             'max_gears' => 16,
             'gear_sizes' => ["small", "medium"],
-            'max_storage_per_gear' => 30 #GB
+            'max_storage_per_gear' => 30, # 30GB
+            'plan_upgrade_enabled' => true,
           },
           :charges => {
             :gear => { 

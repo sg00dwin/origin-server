@@ -2,17 +2,21 @@ class CloudUser
   include UtilHelper
   #alias :initialize_old :initialize
 
+  field :plan_id, type: String, pre_processed: true, default: ->{ Rails.configuration.billing[:aria][:default_plan] }
+
+  #
+  # Capability keys that should be preserved when a user's plan changes.
+  #
+  PRESERVE_CAPABILITIES_ON_PLAN_CHANGE = ['plan_upgrade_enabled']
+
   #def initialize(login=nil, ssh=nil, ssh_type=nil, key_name=nil, capabilities=nil, parent_user_login=nil)
   #  initialize_old(login, ssh, ssh_type, key_name, capabilities, parent_user_login)
   #end
 
   def get_plan_info(plan_id)
-    plan_id.downcase! if plan_id
-
-    if !plan_id || !Express::AriaBilling::Plan.instance.valid_plan(plan_id)
+    plan_id = plan_id.to_s.downcase.to_sym if plan_id
+    Express::AriaBilling::Plan.instance.plans[plan_id] or
       raise OpenShift::UserException.new("A plan with specified id does not exist", 150, "plan_id")
-    end
-    Express::AriaBilling::Plan.instance.plans[plan_id.to_sym]
   end
 
   def match_plan_capabilities(plan_id)
@@ -69,13 +73,20 @@ class CloudUser
 
   def assign_plan(plan_id, persist=false)
     plan_info = get_plan_info(plan_id)
-    plan_capabilities = plan_info[:capabilities]
-    user_capabilities = deep_copy(plan_capabilities)
+    cap = (self.get_capabilities || {}).
+      slice(*PRESERVE_CAPABILITIES_ON_PLAN_CHANGE).
+      reverse_merge!(plan_info[:capabilities])
 
     self.plan_id = plan_id
     self.capabilities_will_change!
-    self.set_capabilities(user_capabilities)
+    self.set_capabilities(cap)
     self.save! if persist
+  end
+
+  alias_method :original_default_capabilities, :default_capabilities
+  def default_capabilities
+    cap = original_default_capabilities
+    cap.merge!(get_plan_info(plan_id)[:capabilities]) if plan_id rescue cap
   end
 
   def get_billing_account_no
@@ -109,6 +120,8 @@ class CloudUser
 
     #check if subaccount user
     raise OpenShift::UserException.new("Plan change not allowed for subaccount user", 157) unless self.parent_user_id.nil?
+
+    raise OpenShift::UserException.new("Plan change is not allowed for this account", 220) unless self.capabilities['plan_upgrade_enabled']
 
     #check to see if user can be switched to the new plan
     self.check_plan_compatibility(plan_id)

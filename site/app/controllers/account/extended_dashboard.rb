@@ -19,8 +19,8 @@ module Account
       async{ @keys = Key.find :all, :as => @user }
 
       async do
-        rest_user = User.find :one, :as => @user
-        @plan = rest_user.plan.tap{ |c| c.name }
+        api_user = current_api_user
+        @plan = api_user.plan.tap{ |c| c.name }
       end
 
       join!(30)
