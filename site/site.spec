@@ -9,7 +9,7 @@
 Summary:   OpenShift Site Rails application
 Name:      rhc-site
 Version: 1.4.2
-Release:   1%{?dist}
+Release:   2%{?dist}
 Group:     Network/Daemons
 License:   ASL 2.0
 URL:       http://openshift.redhat.com
@@ -164,6 +164,9 @@ fi
 %{sitedir}/public
 
 %changelog
+* Wed Jan 30 2013 Adam Miller <admiller@redhat.com> - 1.4.2-2
+- bump for chainbuild
+
 * Tue Jan 29 2013 Adam Miller <admiller@redhat.com> 1.4.2-1
 - Fixed dependency loading for libs (fotios@redhat.com)
 - Fixed tracking.js for captcha story (fotios@redhat.com)
