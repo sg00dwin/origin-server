@@ -7,7 +7,7 @@ class DomainTest < ActionDispatch::IntegrationTest
   DOMAIN_COLLECTION_URL = "/rest/domains"
   
   def setup
-    @random = rand(1000000)
+    @random = rand(1000000000)
     @login = "user#{@random}"
     @headers = {}
     @headers["HTTP_AUTHORIZATION"] = "Basic " + Base64.encode64("#{@login}:password")

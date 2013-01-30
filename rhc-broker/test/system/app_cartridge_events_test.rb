@@ -15,7 +15,7 @@ class AppCartridgeEventsTest < ActionDispatch::IntegrationTest
   USER_URL = "/rest/user"
 
   def setup
-    @random = rand(1000000)
+    @random = rand(1000000000)
     @login = "user#{@random}"
     @headers = {}
     @headers["HTTP_AUTHORIZATION"] = "Basic " + Base64.encode64("#{@login}:password")
