@@ -32,6 +32,13 @@ body {
 h1,h2,h3,h4,h5,h6 {color: #fafbfc;}
 a:link,a:visited,a:hover,a:active {color:#6DB3C7;}
 a:hover,a:active {text-decoration: underline;}
+a:focus {
+    outline: thin dotted currentColor;
+    outline-offset: 0;
+}
+a:focus:active {
+    outline: none;
+}
 
 
 // Tables

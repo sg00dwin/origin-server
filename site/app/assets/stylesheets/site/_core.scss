@@ -4,6 +4,13 @@ $noiseImage: image-url('noise.png') !default;
 
 a { color: $linkColorBlue; }
 a:hover, a:active { color: $linkColorBlueHover; }
+a:focus {
+    outline: thin dotted currentColor;
+    outline-offset: 0;
+}
+a:focus:active {
+    outline: none;
+}
 
 // type customizations by section
 .column-content {
