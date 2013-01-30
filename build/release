@@ -182,6 +182,7 @@ class Release < Thor
 
       build_failures = ''
       chain_build_failures = ''
+      need_chain_build = false
       build_dirs.each do |build_info|
         build_dir = build_info[1]
         working_dir = File.expand_path("../#{build_dir}", File.dirname(__FILE__))
@@ -196,6 +197,8 @@ class Release < Thor
           end
 
           if CHAIN_BUILD_SETS.flatten.include?(build_info[0])
+
+            need_chain_build = true
 
             # commands to bump spec of chain build members 
             bumpspec_cmd = "rpmdev-bumpspec -c '- bump for chainbuild' #{build_info[1]}"
@@ -232,35 +235,37 @@ class Release < Thor
         end
       end
 
-      CHAIN_BUILD_SETS.each do | chain_set | 
-        puts "Brew chainbuilding for: #{chain_set.join(" : ")}"
+      if need_chain_build
+        CHAIN_BUILD_SETS.each do | chain_set | 
+          puts "Brew chainbuilding for: #{chain_set.join(" : ")}"
 
-        chain_scm_urls = []
+          chain_scm_urls = []
 
-        chain_set.each do | pkg |
-          head_commit_id = `git ls-remote \
-                            git://pkgs.devel.redhat.com/rpms/#{pkg} \
-                            refs/heads/libra-rhel-6.3`.split()[0]
-          
-          if $?.exitstatus != 0
-            chain_build_failures += "Chainset failed: #{chain_set.join(" : ")} ::\n"
-            chain_build_failures += "## git ls-remote failed for #{pkg} ::\n"
-            chain_build_failures += "## git ls-remote git://pkgs.devel.redhat.com/rpms/#{pkg} refs/heads/libra-rhel-6.3\n" 
+          chain_set.each do | pkg |
+            head_commit_id = `git ls-remote \
+                              git://pkgs.devel.redhat.com/rpms/#{pkg} \
+                              refs/heads/libra-rhel-6.3`.split()[0]
+            
+            if $?.exitstatus != 0
+              chain_build_failures += "Chainset failed: #{chain_set.join(" : ")} ::\n"
+              chain_build_failures += "## git ls-remote failed for #{pkg} ::\n"
+              chain_build_failures += "## git ls-remote git://pkgs.devel.redhat.com/rpms/#{pkg} refs/heads/libra-rhel-6.3\n" 
 
-            chain_scm_urls.clear
-            break
+              chain_scm_urls.clear
+              break
+            end
+
+            chain_scm_urls << "git://pkgs.devel.redhat.com/rpms/#{pkg}?##{head_commit_id}"
+
           end
 
-          chain_scm_urls << "git://pkgs.devel.redhat.com/rpms/#{pkg}?##{head_commit_id}"
-
-        end
-
-        unless chain_scm_urls.empty?
-          cmd = "brew chain-build libra-rhel-6.3-candidate #{chain_scm_urls.join(" : ")}"
-          if push_failures.empty? && run(cmd, :verbose => options.verbose?)
-            puts "Done"
-          else
-            chain_build_failures += "brew chain-build libra-rhel-6.3-candidate #{chain_scm_urls.join(" : ")}\n" if ($?.exitstatus != 0) 
+          unless chain_scm_urls.empty?
+            cmd = "brew chain-build libra-rhel-6.3-candidate #{chain_scm_urls.join(" : ")}"
+            if push_failures.empty? && run(cmd, :verbose => options.verbose?)
+              puts "Done"
+            else
+              chain_build_failures += "brew chain-build libra-rhel-6.3-candidate #{chain_scm_urls.join(" : ")}\n" if ($?.exitstatus != 0) 
+            end
           end
         end
       end
