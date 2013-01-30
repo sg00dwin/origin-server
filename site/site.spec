@@ -167,7 +167,7 @@ fi
 * Wed Jan 30 2013 Adam Miller <admiller@redhat.com> - 1.4.2-2
 - bump for chainbuild
 
-* Tue Jan 29 2013 Adam Miller <admiller@redhat.com> 1.4.2-1
+* Tue Jan 29 2013 Adam Miller <admiller@redhat.com> 1.4.2-2
 - Fixed dependency loading for libs (fotios@redhat.com)
 - Fixed tracking.js for captcha story (fotios@redhat.com)
 - Fixed tests (fotios@redhat.com)
