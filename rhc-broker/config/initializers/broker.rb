@@ -1,6 +1,7 @@
 ApplicationObserver.instance
 CloudUserObserver.instance
 DomainObserver.instance
+BillingObserver.instance
 #customizations to models
 require 'cloud_user_ext' 
 

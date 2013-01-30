@@ -66,10 +66,12 @@ def usage_record_to_billing_usage_type(billing_api, usage_record)
   when UsageRecord::USAGE_TYPES[:gear_usage]
     billing_usage_type = billing_api.usage_type[:gear][usage_record.gear_size.to_sym]
   when UsageRecord::USAGE_TYPES[:addtl_fs_gb]
-    billing_usage_type = billing_api.usage_type[:storage][:gigabyte_hour]
-  else
-    raise "Usage type not supported: '#{usage_record.usage_type}'"
+    billing_usage_type = billing_api.usage_type[:storage][:gigabyte]
+  when UsageRecord::USAGE_TYPES[:premium_cart]
+    billing_usage_type = billing_api.usage_type[:cartridge][usage_record.cart_name.to_sym]
   end
+  raise Exception.new "Billing usage type not supported for record: '#{usage_record}'" unless billing_usage_type
+  billing_usage_type
 end
 
 def usage_time(billing_api, acct_no, usage_record, begin_time, end_time)
