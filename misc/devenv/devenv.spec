@@ -621,9 +621,12 @@ fi
 
 # Create a test user with additional storage capabilities
 echo "Creating test user:  user_with_extra_storage@test.com"
-bundle exec rails runner "u=CloudUser.new(login: 'user_with_extra_storage@test.com'); u.capabilities['max_storage_per_gear'] = 10; u.save; Lock.create_lock(u)"
-if [ $? -ne 0 ]
+bundle exec rails runner "u=CloudUser.new(login: 'user_with_extra_storage@test.com'); u.save; Lock.create_lock(u)"
+if [ $? -eq 0 ]
 then
+  echo "Adding additional storage to user"
+  /usr/sbin/oo-admin-ctl-user -l user_with_extra_storage@test.com --setmaxstorage 10
+else
   echo "user_with_extra_storage could not be created!"
 fi
 
