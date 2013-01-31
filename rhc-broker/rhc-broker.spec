@@ -3,7 +3,7 @@
 
 Summary:   Li broker components
 Name:      rhc-broker
-Version: 1.4.2
+Version: 1.4.3
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -146,6 +146,22 @@ if [ ! -f %{_var}/log/openshift/user_action.log ]; then
 fi
 
 %changelog
+* Thu Jan 31 2013 Adam Miller <admiller@redhat.com> 1.4.3-1
+- fix rhc-admin-migrate (rchopra@redhat.com)
+- Bug 906496: Repair ownership of app Git repo objects (ironcladlou@gmail.com)
+- Merge pull request #820 from pravisankar/dev/ravi/us2626-unit-tests
+  (dmcphers+openshiftbot@redhat.com)
+- Merge pull request #816 from pravisankar/dev/ravi/us2626
+  (dmcphers+openshiftbot@redhat.com)
+- Premium cartridge usage unit tests (rpenta@redhat.com)
+- Collect/Sync Usage data for EAP cart (rpenta@redhat.com)
+- Making sure logins and domains left behind from earlier tests  are not
+  accidentally reused (abhgupta@redhat.com)
+- Merge pull request #814 from pravisankar/dev/ravi/fix-test
+  (dmcphers+openshiftbot@redhat.com)
+- Fix ctl_usage test (rpenta@redhat.com)
+- Fix for broker extended tests (abhgupta@redhat.com)
+
 * Tue Jan 29 2013 Adam Miller <admiller@redhat.com> 1.4.2-1
 - Merge pull request #804 from rajatchopra/master
   (dmcphers+openshiftbot@redhat.com)
