@@ -104,7 +104,8 @@ Broker::Application.configure do
                   :medium => 10014125,
                   :large => 10014127,
                   :xlarge => 10014151},
-        :storage => {:gigabyte_hour => 10037755}
+        :storage => {:gigabyte => 10037755},
+        :cartridge => {:"jbosseap-6.0" => 10041319}
       },
       :default_plan => :freeshift,
       :plans => {
@@ -124,11 +125,22 @@ Broker::Application.configure do
             'subaccounts' => false,
             'max_gears' => 16,
             'gear_sizes' => ["small", "medium"],
-            'max_storage_per_gear' => 30 # 30GB
+            'max_storage_per_gear' => 30 #GB
+          },
+          :charges => {
+            :gear => { 
+                      'small' => 5, #cents/hr
+                      'medium' => 12 #cents/hr
+                     },
+            :storage => {
+                         'gigabyte' => 100 #cents/month 
+                        },
+            :cartridge => {
+                           'jbosseap-6.0' => 3 #cents/hr
+                          } 
           }
         }
-      },
-      :supp_plans => {}
+      }
     }
   }
 
