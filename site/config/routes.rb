@@ -91,6 +91,8 @@ RedHatCloud::Application.routes.draw do
     resources :keys, :only => [:new, :create, :destroy]
   end
 
+  match 'account/help' => 'account#help', :via => [:get]
+
   match 'user/create/external' => 'account#create_external', :via => [:post]
 
   match 'user/reset_password' => app_redirect {|p, req| "account/password/reset?#{req.query_string}"}, :via => [:get]

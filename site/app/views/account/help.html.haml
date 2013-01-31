@@ -1,0 +1,9 @@
+- content_for :page_title, 'Account Help'
+
+%h1 Riker Ipsum
+= flashes
+.row
+  .span7
+    %section
+      = render :partial => 'help', :locals => {:user => @user}
+

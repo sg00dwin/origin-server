@@ -13,4 +13,7 @@ class AccountController < ApplicationController
   include Account::Creation
   include Account::ExternalCreation
   include Account::ExtendedDashboard
+
+  def help
+  end
 end
