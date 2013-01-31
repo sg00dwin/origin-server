@@ -1,9 +1,17 @@
 - content_for :page_title, 'Account Help'
+.row
+  .navbar.container.nav-collapse
+    = render :partial => 'help_banner', :locals => {:user => @user}
 
-%h1 Riker Ipsum
 = flashes
 .row
-  .span7
+  .span8
     %section
-      = render :partial => 'help', :locals => {:user => @user}
+      = render :partial => 'search'
+      = render :partial => 'faq'
+  .span4
+    %section
+      = render :partial => 'contact', :locals => {:user => @user}
+      = render :partial => 'customer_service'
+      = render :partial => 'tech_support'
 
