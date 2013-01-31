@@ -8,8 +8,8 @@
 
 Summary:   OpenShift Site Rails application
 Name:      rhc-site
-Version: 1.4.2
-Release:   2%{?dist}
+Version: 1.4.3
+Release:   1%{?dist}
 Group:     Network/Daemons
 License:   ASL 2.0
 URL:       http://openshift.redhat.com
@@ -164,6 +164,27 @@ fi
 %{sitedir}/public
 
 %changelog
+* Thu Jan 31 2013 Adam Miller <admiller@redhat.com> 1.4.3-1
+- Login controller doesn't rescue correctly (ccoleman@redhat.com)
+- Merge pull request #793 from jtharris/features/US3205
+  (dmcphers+openshiftbot@redhat.com)
+- Merge pull request #785 from sg00dwin/misc-dev
+  (dmcphers+openshiftbot@redhat.com)
+- CSS fixes for Bug 902173 - Events page /community/calendar is out of bounds
+  on Safari Iphone4S (sgoodwin@redhat.com)
+- set outline color to currentColor ftw (sgoodwin@redhat.com)
+- make focus outline light gray color (sgoodwin@redhat.com)
+- setting tab focus outline to be more visible (sgoodwin@redhat.com)
+- Adding call to console/_popover (sgoodwin@redhat.com)
+- Introduce classes img-captcha img-recaptcha; Set border-color with variable;
+  Move .ie specific class to _core (sgoodwin@redhat.com)
+- switch :plain html to haml (sgoodwin@redhat.com)
+- _account.scss  - move body, label styles to _base  - condense style rules  -
+  remove duplicate form-actions rule  - move bg to body.simple  - control
+  reCaptcha widths at mobile portrait and tablet (sgoodwin@redhat.com)
+- add bullets for consistency with signup (sgoodwin@redhat.com)
+- change default event calendar view style (sgoodwin@redhat.com)
+
 * Wed Jan 30 2013 Adam Miller <admiller@redhat.com> - 1.4.2-2
 - bump for chainbuild
 
