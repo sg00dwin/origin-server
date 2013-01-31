@@ -7,7 +7,7 @@
 
 Summary:       Multi-tenant cloud management system node tools
 Name:          rhc-node
-Version: 1.4.2
+Version: 1.4.3
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -239,6 +239,9 @@ fi
 
 
 %changelog
+* Thu Jan 31 2013 Adam Miller <admiller@redhat.com> 1.4.3-1
+- Bug 906496: Repair ownership of app Git repo objects (ironcladlou@gmail.com)
+
 * Tue Jan 29 2013 Adam Miller <admiller@redhat.com> 1.4.2-1
 - Bug 886182 (dmcphers@redhat.com)
 - Bug 874594 (dmcphers@redhat.com)
