@@ -237,8 +237,14 @@ module Secured
     # Retrieve a user object from the session.
     #
     def user_from_session
+      session[:_csrf_token] = SecureRandom.base64(32) if session[:_csrf_token].nil? || session[:_csrf_token].empty?
       if session[:login]
-        WebUser.new(:login => session[:login], :ticket => session[:ticket], :streamline_type => session[:streamline_type])
+        WebUser.new(
+          :login => session[:login], 
+          :ticket => session[:ticket], 
+          :streamline_type => session[:streamline_type], 
+          :session_id => session[:session_id],
+          :csrf_token => session[:_csrf_token])
       elsif cookies[:rh_sso]
         user_to_session(WebUser.find_by_ticket(cookies[:rh_sso])) rescue nil
       else
