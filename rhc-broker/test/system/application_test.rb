@@ -10,7 +10,7 @@ class ApplicationTest < ActionDispatch::IntegrationTest
   APP_EVENTS_URL_FORMAT = "/rest/domains/%s/applications/%s/events"
 
   def setup
-    @random = rand(1000000)
+    @random = rand(1000000000)
     @login = "user#{@random}"
     @headers = {}
     @headers["HTTP_AUTHORIZATION"] = "Basic " + Base64.encode64("#{@login}:password")

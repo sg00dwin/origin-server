@@ -12,7 +12,7 @@ class AppEventsTest < ActionDispatch::IntegrationTest
   APP_GEAR_GROUPS_URL_FORMAT = "/rest/domains/%s/applications/%s/gear_groups"
 
   def setup
-    @random = rand(1000000)
+    @random = rand(1000000000)
     @login = "user#{@random}"
     @headers = {}
     @headers["HTTP_AUTHORIZATION"] = "Basic " + Base64.encode64("#{@login}:password")
