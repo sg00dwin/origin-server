@@ -235,19 +235,13 @@ def add_to(stuffs, more_stuffs)
   end
 end
 
-$config = Rails.application.config.datastore
 
 def get_records(collection_name, query, selection)
-  if $config[:replica_set]
-    con = Mongo::ReplSetConnection.new(*$config[:host_port] \
-                   << {:read => :secondary})
-  else
-    host_port = $config[:host_port].split(":")
-    con = Mongo::Connection.new(host_port[0], host_port[1])
-  end
-
-  db = con.db($config[:db])
-  db.authenticate($config[:user], $config[:password])
+  config = Mongoid::Config.sessions["default"]
+  host_port = config['hosts'].map { |host| host.split(':')}
+  con = Mongo::ReplSetConnection.new(*host_port << {:read => :secondary})
+  db = con.db(config['database'])
+  db.authenticate(config['username'],config['password'])
  
   db.collection(collection_name).find(query, selection) do |mcursor|
     mcursor.each do |hash|
@@ -302,6 +296,7 @@ def migrate(version, continue=false, target_server_identity=nil, migrate_positio
     user_id = domain_map[app['domain_id'].to_s]
     if user_id.nil?
       relocated_domain = Domain.where(_id: Moped::BSON::ObjectId.new(app['domain_id'])).first
+      next if relocated_domain.nil?
       user_id = relocated_domain.owner._id.to_s
       user_uuid = relocated_domain.owner.uuid
       user_login = relocated_domain.owner.login
@@ -310,6 +305,7 @@ def migrate(version, continue=false, target_server_identity=nil, migrate_positio
         user_uuid,user_login = user_map[user_id]
       else
         relocated_user = CloudUser.where(_id: Moped::BSON::ObjectId.new(user_id)).first
+        next if relocated_user.nil?
         user_uuid = relocated_user.uuid
         user_login = relocated_user.login
       end

@@ -229,7 +229,7 @@ def create_group_instances(new_app, old_app)
     # group override for addtl_fs_gb
     if addtl_fs_gb and addtl_fs_gb > 0
       group_override = { "components" => group_components } if group_override.nil?
-      group_override["addtl_fs_gb"] = addtl_fs_gb
+      group_override["additional_filesystem_gb"] = addtl_fs_gb
       group_override_map[new_gi_id.to_s] = group_override
     end
   }
