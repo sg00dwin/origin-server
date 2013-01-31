@@ -1,7 +1,8 @@
 - content_for :page_title, 'Account Help'
 .row
-  .navbar.container.nav-collapse
-    = render :partial => 'help_banner', :locals => {:user => @user}
+  %section
+    .navbar
+      = render :partial => 'help_banner', :locals => {:user => @user}
 
 = flashes
 .row
