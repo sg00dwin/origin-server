@@ -14,8 +14,8 @@ quota_files=400000
 quota_blocks=10485760
 
 # For no over commitment, should be memory_limit_in_bytes / (Total System Memory - 1G)
-max_apps=10
-max_active_apps=10
+max_gears=10
+max_active_gears=10
 
 # PAM - resource limits
 # limits_core
