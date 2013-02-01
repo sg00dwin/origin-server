@@ -264,7 +264,7 @@ def migrate(version, continue=false, target_server_identity=nil, migrate_positio
                
   ret = []
   user_map = {}
-  OpenShift::DataStoreUtil.get_records(:cloud_users, {}, {:fields => ["_id", "uuid", "login"], :timeout => false}) do |hash|
+  OpenShift::DataStore.find(:cloud_users, {}, {:fields => ["_id", "uuid", "login"], :timeout => false}) do |hash|
       logins_cnt += 1
       user_uuid = hash['uuid']
       user_login = hash['login']
@@ -272,11 +272,11 @@ def migrate(version, continue=false, target_server_identity=nil, migrate_positio
   end
 
   domain_map = {}
-  OpenShift::DataStoreUtil.get_records(:domains, {}, {:fields => ["_id" , "owner_id"], :timeout => false}) do |hash|
+  OpenShift::DataStore.find(:domains, {}, {:fields => ["_id" , "owner_id"], :timeout => false}) do |hash|
     domain_map[hash['_id'].to_s] = hash['owner_id'].to_s
   end
 
-  OpenShift::DataStoreUtil.get_records(:applications, query, options) do |app|
+  OpenShift::DataStore.find(:applications, query, options) do |app|
     print '.'
     user_id = domain_map[app['domain_id'].to_s]
     if user_id.nil?
