@@ -1,9 +1,9 @@
 class BillingObserver < ActiveModel::Observer
   observe OpenShift::Cartridge
 
-  def get_cart_pricing(data)
+  def get_cart_usage_rate(data)
     cartridge = data[:cart]
     plan_details = Rails.application.config.billing[:aria][:plans][:megashift]
-    data[:price] = plan_details[:charges][:cartridge][cartridge]
+    data[:rate] = plan_details[:usage_rates][:cartridge][cartridge.to_sym]
   end
 end
