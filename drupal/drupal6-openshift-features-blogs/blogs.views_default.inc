@@ -583,6 +583,16 @@ function blogs_views_default_views() {
   ));
   $handler->override_option('items_per_page', 10);
   $handler->override_option('style_plugin', 'views_json');
+  $handler->override_option('style_options', array(
+    'root_object' => 'data',
+    'top_child_object' => 'node',
+    'field_output' => 'normal',
+    'plaintext_output' => 0,
+    'format' => 'simple',
+    'jsonp_prefix' => '',
+    'content_type' => 'default',
+    'using_views_api_mode' => 0,
+  ));
   $handler->override_option('path', 'api/v1/faq/topten.json');
   $handler->override_option('menu', array(
     'type' => 'none',
@@ -665,6 +675,16 @@ function blogs_views_default_views() {
     'output_lifespan' => '1800',
   ));
   $handler->override_option('style_plugin', 'views_json');
+  $handler->override_option('style_options', array(
+    'root_object' => 'data',
+    'top_child_object' => 'node',
+    'field_output' => 'normal',
+    'plaintext_output' => 0,
+    'format' => 'simple',
+    'jsonp_prefix' => '',
+    'content_type' => 'default',
+    'using_views_api_mode' => 0,
+  ));
   $handler->override_option('path', 'api/v1/faq.json');
   $handler->override_option('menu', array(
     'type' => 'none',
