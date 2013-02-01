@@ -8,10 +8,8 @@ $:.unshift('/var/www/openshift/broker')
 require 'config/environment'
 
 # Configurable params
-$config = Rails.application.config.datastore
-
 def mongo_connect
-  db = OpenShift::DataStoreUtil.get_database
+  db = OpenShift::DataStore.db
   $coll = db.collection('applications')
 end
 

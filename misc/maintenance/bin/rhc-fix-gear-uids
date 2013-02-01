@@ -35,7 +35,7 @@ query = {"group_instances.gears.0" => {"$exists" => true}}
 selection = {:fields => ["group_instances.gears.uuid", "group_instances.gears.uid"], :timeout => false}
 ret = []
 
-OpenShift::DataStoreUtil.get_records(:applications, query, selection) do |app|
+OpenShift::DataStore.find(:applications, query, selection) do |app|
   app['group_instances'].each { |gi|
     if gi['gears']
       gi['gears'].each { |gear|
