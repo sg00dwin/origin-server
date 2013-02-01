@@ -14,11 +14,7 @@ require 'config/environment'
 @zone = Rails.configuration.dns[:zone]
 
 def mongo_connect
-  config = Mongoid::Config.sessions["default"]
-  host_port = config['hosts'].map { |host| host.split(':')}
-  con = Mongo::ReplSetConnection.new(*host_port << {:read => :secondary})
-  db = con.db(config['database'])
-  db.authenticate(config['username'],config['password'])
+  db = OpenShift::DataStoreUtil.get_database
   $coll = db.collection('domains')
 end
 
