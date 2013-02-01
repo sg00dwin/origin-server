@@ -1,10 +1,7 @@
 %h1 Frequently Asked Questions
 
 %p
+  %ul
   - topten.each do |faq|
-    %p
-      %h2
-        = faq.name
-      -# we trust #body contains reasonable HTML markup
-      != faq.body
-      %hr
+    %li
+      %a{:href => faq.href}!= faq.name
