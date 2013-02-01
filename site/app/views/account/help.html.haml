@@ -9,7 +9,7 @@
   .span8
     %section
       = render :partial => 'search'
-      = render :partial => 'faq'
+      = render :partial => 'faq', :locals => {:topten => @topten}
   .span4
     %section
       = render :partial => 'contact', :locals => {:user => @user}

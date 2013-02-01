@@ -15,5 +15,6 @@ class AccountController < ApplicationController
   include Account::ExtendedDashboard
 
   def help
+    @topten = FaqItem.topten
   end
 end
