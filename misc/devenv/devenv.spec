@@ -625,7 +625,7 @@ bundle exec rails runner "u=CloudUser.new(login: 'user_with_extra_storage@test.c
 if [ $? -eq 0 ]
 then
   echo "Adding additional storage to user"
-  /usr/sbin/oo-admin-ctl-user -l user_with_extra_storage@test.com --setmaxstorage 10
+  /usr/sbin/oo-admin-ctl-user -l user_with_extra_storage@test.com --setmaxstorage 10 --setmaxgears 10
 else
   echo "user_with_extra_storage could not be created!"
 fi
