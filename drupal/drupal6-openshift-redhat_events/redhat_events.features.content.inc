@@ -428,15 +428,13 @@ function redhat_events_content_default_fields() {
       'year' => 'year',
       'month' => 'month',
       'day' => 'day',
-      'hour' => 'hour',
-      'minute' => 'minute',
     ),
-    'timezone_db' => 'UTC',
-    'tz_handling' => 'site',
+    'timezone_db' => '',
+    'tz_handling' => 'none',
     'todate' => 'optional',
     'repeat' => 0,
     'repeat_collapsed' => '',
-    'default_format' => 'redhat_events_date_format_medium',
+    'default_format' => 'medium',
     'widget' => array(
       'default_value' => 'blank',
       'default_value_code' => '',
@@ -511,68 +509,6 @@ function redhat_events_content_default_fields() {
       'description' => '',
       'type' => 'text_textfield',
       'module' => 'text',
-    ),
-  );
-
-  // Exported field: field_event_timezone
-  $fields['event-field_event_timezone'] = array(
-    'field_name' => 'field_event_timezone',
-    'type_name' => 'event',
-    'display_settings' => array(
-      'label' => array(
-        'format' => 'above',
-        'exclude' => 0,
-      ),
-      'teaser' => array(
-        'format' => 'default',
-        'exclude' => 0,
-      ),
-      'full' => array(
-        'format' => 'default',
-        'exclude' => 0,
-      ),
-      '4' => array(
-        'format' => 'default',
-        'exclude' => 0,
-      ),
-      '2' => array(
-        'format' => 'default',
-        'exclude' => 0,
-      ),
-      '3' => array(
-        'format' => 'default',
-        'exclude' => 0,
-      ),
-      'token' => array(
-        'format' => 'default',
-        'exclude' => 0,
-      ),
-    ),
-    'widget_active' => '1',
-    'type' => 'text',
-    'required' => '0',
-    'multiple' => '0',
-    'module' => 'text',
-    'active' => '1',
-    'text_processing' => '0',
-    'max_length' => '',
-    'allowed_values' => '',
-    'allowed_values_php' => '$timezones = preg_grep(\';^((Africa|America|Antarctica|Arctic|Asia|Atlantic|Australia|Europe|Indian|Pacific)/.*)$;\', timezone_identifiers_list());
-$additional = array("EST", "PST", "UTC");
-return array_merge($additional, $timezones);
-',
-    'widget' => array(
-      'default_value' => array(
-        '0' => array(
-          'value' => '',
-        ),
-      ),
-      'default_value_php' => NULL,
-      'label' => 'Timezone',
-      'weight' => '7',
-      'description' => 'The timezone of the specified event time, this is specially important for online events.',
-      'type' => 'optionwidgets_select',
-      'module' => 'optionwidgets',
     ),
   );
 
@@ -717,7 +653,6 @@ return array_merge($additional, $timezones);
   t('Short Description');
   t('Start Date');
   t('State');
-  t('Timezone');
   t('URL');
   t('Venue');
 
