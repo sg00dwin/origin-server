@@ -4,4 +4,4 @@
   %ul
   - topten.each do |faq|
     %li
-      %a{:href => faq.href}!= faq.name
+      %a{:href => faq.href, :rel => 'tooltip', :title => strip_tags(faq.body)}!= faq.name
