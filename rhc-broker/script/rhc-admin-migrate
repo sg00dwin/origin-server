@@ -270,7 +270,7 @@ def migrate(version, continue=false, target_server_identity=nil, migrate_positio
               "name",
               "created_at",
               "component_instances.cartridge_name",
-              "component_instances.group_instance",
+              "component_instances.group_instance_id",
               "group_instances._id",
               "group_instances.gears.uuid",
               "group_instances.gears.server_identity",
@@ -312,26 +312,26 @@ def migrate(version, continue=false, target_server_identity=nil, migrate_positio
     end
     group_cart_map = {}
     app['component_instances'].each do |ci|
-      gid = ci['group_instance'].to_s
+      gid = ci['group_instance_id'].to_s
       group_cart_map[gid] = [] if not group_cart_map.has_key? gid
       group_cart_map[gid] << ci['cartridge_name']
     end
-  
+
     app['group_instances'].each do |gi|
       cart_names = group_cart_map[gi['_id'].to_s]
       gi['gears'].each do |gear|
-	server_identity = gear['server_identity']
-	if (!target_server_identity || (server_identity == target_server_identity))
-	  cart_names.each do |cart_name|
-	    if $all_cart_types.nil? || $all_cart_types.include?(cart_name)
-	      node_to_gears[server_identity] = [] unless node_to_gears[server_identity]
-	      if $restart_only_cart_types.nil? || !$restart_only_cart_types.include?(cart_name) || (active_gears_map.include?(server_identity) && active_gears_map[server_identity].include?(gear['uuid'])) 
-		node_to_gears[server_identity] << {:server_identity => server_identity, :uuid => gear['uuid'], :name => gear['name'], :app_name => app['name'], :login => user_login}
-		break
-	      end
-	    end
-	  end
-	end
+      	server_identity = gear['server_identity']
+      	if (!target_server_identity || (server_identity == target_server_identity))
+      	  cart_names.each do |cart_name|
+      	    if $all_cart_types.nil? || $all_cart_types.include?(cart_name)
+      	      node_to_gears[server_identity] = [] unless node_to_gears[server_identity]
+      	      if $restart_only_cart_types.nil? || !$restart_only_cart_types.include?(cart_name) || (active_gears_map.include?(server_identity) && active_gears_map[server_identity].include?(gear['uuid'])) 
+            		node_to_gears[server_identity] << {:server_identity => server_identity, :uuid => gear['uuid'], :name => gear['name'], :app_name => app['name'], :login => user_login}
+            		break
+      	      end
+      	    end
+      	  end
+      	end
       end
     end
   end
