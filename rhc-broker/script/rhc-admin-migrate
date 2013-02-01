@@ -235,21 +235,6 @@ def add_to(stuffs, more_stuffs)
   end
 end
 
-
-def get_records(collection_name, query, selection)
-  config = Mongoid::Config.sessions["default"]
-  host_port = config['hosts'].map { |host| host.split(':')}
-  con = Mongo::ReplSetConnection.new(*host_port << {:read => :secondary})
-  db = con.db(config['database'])
-  db.authenticate(config['username'],config['password'])
- 
-  db.collection(collection_name).find(query, selection) do |mcursor|
-    mcursor.each do |hash|
-      yield hash
-    end
-  end
-end
-
 def migrate(version, continue=false, target_server_identity=nil, migrate_position=1, num_migrators=1)
   start_time = (Time.now.to_f * 1000).to_i
   logins_cnt = 0
@@ -279,7 +264,7 @@ def migrate(version, continue=false, target_server_identity=nil, migrate_positio
                
   ret = []
   user_map = {}
-  get_records(:cloud_users, {}, {:fields => ["_id", "uuid", "login"], :timeout => false}) do |hash|
+  OpenShift::DataStoreUtil.get_records(:cloud_users, {}, {:fields => ["_id", "uuid", "login"], :timeout => false}) do |hash|
       logins_cnt += 1
       user_uuid = hash['uuid']
       user_login = hash['login']
@@ -287,11 +272,11 @@ def migrate(version, continue=false, target_server_identity=nil, migrate_positio
   end
 
   domain_map = {}
-  get_records(:domains, {}, {:fields => ["_id" , "owner_id"], :timeout => false}) do |hash|
+  OpenShift::DataStoreUtil.get_records(:domains, {}, {:fields => ["_id" , "owner_id"], :timeout => false}) do |hash|
     domain_map[hash['_id'].to_s] = hash['owner_id'].to_s
   end
 
-  get_records(:applications, query, options) do |app|
+  OpenShift::DataStoreUtil.get_records(:applications, query, options) do |app|
     print '.'
     user_id = domain_map[app['domain_id'].to_s]
     if user_id.nil?
@@ -581,7 +566,12 @@ def migrate_from_file(file)
             append_to_file(error_file, migrate_on_node_cmd)
             break
           else
-            if OpenShift::DataStore.instance.find(Application.name, login, app_name)
+            user = nil
+            begin
+              user = CloudUser.find_by(login: login)
+            rescue Mongoid::Errors::DocumentNotFound
+            end
+            if user && Application.find(user, app_name)
               sleep 4
             else
               append_to_file(log_file, "App '#{app_name}' no longer found in datastore with uuid '#{gear_uuid}'.  Ignoring...")
