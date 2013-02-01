@@ -130,16 +130,24 @@ Broker::Application.configure do
             'max_storage_per_gear' => 30, # 30GB
             'plan_upgrade_enabled' => true,
           },
-          :charges => {
+          :usage_rates => {
             :gear => { 
-                      'small' => 5, #cents/hr
-                      'medium' => 12 #cents/hr
+                      :small => { 
+                                 :usd => 5 #cents/hr
+                                },
+                      :medium => {
+                                  :usd => 12 #cents/hr
+                                 }
                      },
             :storage => {
-                         'gigabyte' => 100 #cents/month 
+                         :gigabyte => {
+                                       :usd => 100 #cents/month
+                                      }
                         },
             :cartridge => {
-                           'jbosseap-6.0' => 3 #cents/hr
+                           :'jbosseap-6.0' => {
+                                               :usd => 3 #cents/hr
+                                              }
                           } 
           }
         }
