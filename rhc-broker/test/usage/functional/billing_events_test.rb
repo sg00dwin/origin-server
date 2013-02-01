@@ -1,3 +1,4 @@
+ENV["TEST_NAME"] = "usage_funtional_billing_events_test"
 require 'test_helper'
 
 class BillingEventsTest < ActiveSupport::TestCase

@@ -1,3 +1,4 @@
+ENV["TEST_NAME"] = "functional_broker_controller_test"
 require 'test_helper'
 
 class BrokerControllerTest < ActionController::TestCase
