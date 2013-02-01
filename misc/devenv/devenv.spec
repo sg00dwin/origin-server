@@ -44,6 +44,8 @@ Requires:  openshift-origin-cartridge-haproxy-1.4
 Requires:  openshift-origin-cartridge-nodejs-0.6
 Requires:  openshift-origin-cartridge-ruby-1.9-scl
 Requires:  openshift-origin-cartridge-zend-5.6
+Requires:  openshift-origin-cartridge-community-python-2.7
+Requires:  openshift-origin-cartridge-community-python-3.3
 Requires:  activemq
 Requires:  activemq-client
 #Requires:  qpid-cpp-server
