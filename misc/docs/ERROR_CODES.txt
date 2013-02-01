@@ -76,6 +76,7 @@ User errors:
 217: Destroy aborted
 218: Not found response from request.  Possibly need to update client tools.
 219: Unable to communicate with server
+220: Plan change is not allowed for this account.
 253: Could not open config file
 255: Usage error
 

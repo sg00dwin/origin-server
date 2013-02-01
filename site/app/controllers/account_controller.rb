@@ -12,5 +12,5 @@ class AccountController < ApplicationController
 
   include Account::Creation
   include Account::ExternalCreation
-  include Rails.configuration.aria_enabled ? Account::ExtendedDashboard : Account::Dashboard
+  include Account::ExtendedDashboard
 end
