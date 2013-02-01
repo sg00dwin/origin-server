@@ -3,7 +3,7 @@
 
 Summary:   Li broker components
 Name:      rhc-broker
-Version: 1.4.3
+Version: 1.4.4
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -146,6 +146,18 @@ if [ ! -f %{_var}/log/openshift/user_action.log ]; then
 fi
 
 %changelog
+* Fri Feb 01 2013 Adam Miller <admiller@redhat.com> 1.4.4-1
+- Bug 906669 (dmcphers@redhat.com)
+- Merge pull request #828 from pravisankar/dev/ravi/us2626-feedback
+  (dmcphers+openshiftbot@redhat.com)
+- Merge pull request #822 from
+  smarterclayton/us3350_establish_plan_upgrade_capability
+  (dmcphers+openshiftbot@redhat.com)
+- US2626 changes based on feedback - Store usage_rates for different currencies
+  (currently only have usd) in broker rails configuration (rpenta@redhat.com)
+- Review - remove old lines (ccoleman@redhat.com)
+- US3350 - Expose a plan_upgrade_enabled capability (ccoleman@redhat.com)
+
 * Thu Jan 31 2013 Adam Miller <admiller@redhat.com> 1.4.3-1
 - fix rhc-admin-migrate (rchopra@redhat.com)
 - Bug 906496: Repair ownership of app Git repo objects (ironcladlou@gmail.com)
