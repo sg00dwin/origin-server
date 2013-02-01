@@ -36,7 +36,7 @@ User errors:
 131: Error during estimation
 132: Insufficient Access Rights
 133: Could not delete user
-134: Invalid node profile
+134: Invalid gear profile
 135: Cartridge/Component/Feature not found in the application
 136: Cartridge/Component/Feature already embedded in the application
 137: Cartridge/Component/Feature can not be added/removed from the application.

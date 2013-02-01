@@ -1,3 +1,4 @@
+ENV["TEST_NAME"] = "unit_streamline_auth_test"
 require 'test_helper'
 require 'mocha'
 

@@ -1,3 +1,4 @@
+ENV["TEST_NAME"] = "unit_distributed_loct_test"
 require 'test_helper'
 
 class DistributedLockTest < ActiveSupport::TestCase
