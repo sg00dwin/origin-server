@@ -8,7 +8,7 @@
 
 Summary:   OpenShift Site Rails application
 Name:      rhc-site
-Version: 1.4.3
+Version: 1.4.4
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   ASL 2.0
@@ -164,6 +164,12 @@ fi
 %{sitedir}/public
 
 %changelog
+* Fri Feb 01 2013 Adam Miller <admiller@redhat.com> 1.4.4-1
+- Merge pull request #822 from
+  smarterclayton/us3350_establish_plan_upgrade_capability
+  (dmcphers+openshiftbot@redhat.com)
+- US3350 - Expose a plan_upgrade_enabled capability (ccoleman@redhat.com)
+
 * Thu Jan 31 2013 Adam Miller <admiller@redhat.com> 1.4.3-1
 - Login controller doesn't rescue correctly (ccoleman@redhat.com)
 - Merge pull request #793 from jtharris/features/US3205
