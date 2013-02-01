@@ -164,6 +164,9 @@ fi
 %{sitedir}/public
 
 %changelog
+* Fri Feb 01 2013 Adam Miller <admiller@redhat.com> 1.4.4-2
+- bump spec for chainbuild (admiller@redhat.com)
+
 * Fri Feb 01 2013 Adam Miller <admiller@redhat.com> - 1.4.4-2
 - bump spec for chain build
 
