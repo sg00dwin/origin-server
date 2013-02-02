@@ -17,7 +17,7 @@ Broker::Application.routes.draw do
   end
   
   scope "/billing/rest" do
-    resource :api, :only => [:show], :controller => :base
+    resource :api, :only => :show, :controller => :api
     resources :events, :controller => :billing_events, :only => [:create]
   end
   # Sample resource route with options:
