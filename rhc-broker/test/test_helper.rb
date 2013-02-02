@@ -1,10 +1,5 @@
-require 'simplecov'
-SimpleCov.start 'rails' do
-  coverage_dir 'test/coverage/'
-  command_name ENV["TEST_NAME"] ||'RHC broker tests'
-  add_filter 'test'
-  merge_timeout 1000
-end
+require File.expand_path('../coverage_helper.rb', __FILE__)
+
 ENV["RAILS_ENV"] = "test"
 require File.expand_path('../../config/environment', __FILE__)
 require 'rails/test_help'

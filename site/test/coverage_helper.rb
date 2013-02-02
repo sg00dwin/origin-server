@@ -1,5 +1,5 @@
 # Must be the first module imported at entry points (executables that run
-# in seperate processes from the test harness) otherwise coverage will be
+# in separate processes from the test harness) otherwise coverage will be
 # incomplete
 
 require 'simplecov'
