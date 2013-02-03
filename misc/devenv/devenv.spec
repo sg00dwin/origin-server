@@ -610,7 +610,7 @@ done
 # This must be done before the deployment of application templates!
 cd /var/www/openshift/broker
 echo "Creating named test user"
-bundle exec rails runner "u=CloudUser.new(login: 'user_with_multiple_gear_sizes@test.com'); u.save; Lock.create_lock(u)"
+curl https://localhost/broker/rest/user -u user_with_multiple_gear_sizes@test.com:pass
 if [ $? -eq 0 ]
 then
   echo "Adding medium gear size to user"
@@ -621,7 +621,8 @@ fi
 
 # Create a test user with additional storage capabilities
 echo "Creating test user:  user_with_extra_storage@test.com"
-bundle exec rails runner "u=CloudUser.new(login: 'user_with_extra_storage@test.com'); u.capabilities['max_storage_per_gear'] = 10; u.save; Lock.create_lock(u)"
+curl https://localhost/broker/rest/user -u user_with_extra_gear_storage@test.com:pass
+bundle exec rails runner "u=CloudUser.find_by_identitity('user_with_extra_storage@test.com'); u.capabilities['max_storage_per_gear'] = 10; u.save;"
 if [ $? -ne 0 ]
 then
   echo "user_with_extra_storage could not be created!"
