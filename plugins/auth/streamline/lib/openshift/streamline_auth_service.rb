@@ -33,26 +33,6 @@ module OpenShift
         return token
       end
 
-      def login(request, params, cookies)
-        data = JSON.parse(params['json_data'])
-        token = nil
-        username = nil
-        if params['broker_auth_key'] && params['broker_auth_iv']
-          token = validate_broker_key(params['broker_auth_iv'],params['broker_auth_key'])
-        else
-          login = data['rhlogin']
-          unless Rails.configuration.auth[:integrated]
-            raise OpenShift::AccessDeniedException if data['rhlogin'].nil? or data['rhlogin'].empty?
-            token = {:username => data['rhlogin'], :auth_method => :login}
-          else
-            password = params['password']
-            token =  check_login(request, login, password)
-          end
-        end
-        raise OpenShift::AccessDeniedException if token.nil? or token[:username].nil?
-        return token
-      end
-      
       private
       
       def check_login(request, user, password)
