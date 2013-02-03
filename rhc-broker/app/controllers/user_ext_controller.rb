@@ -1,6 +1,4 @@
 class UserExtController < UserController
-  respond_to :xml, :json
-  before_filter :authenticate, :check_version
 
   # GET /user
   def show

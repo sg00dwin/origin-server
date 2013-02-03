@@ -1,4 +1,5 @@
 class BillingController < BaseController
+
   before_filter :protect
 
   def protect

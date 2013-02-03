@@ -1,6 +1,4 @@
-
 class BillingEventsController < BillingController
-  respond_to :xml, :json
 
   # POST /billing/rest/events
   def create
