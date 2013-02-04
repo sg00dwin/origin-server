@@ -217,7 +217,7 @@ class Release < Thor
             unless run(bumpspec_cmd, :verbose => options.verbose?) and
                       run(git_add_bumpspec, :verbose => options.verbose?) and
                       run(tag_nochangelog, :verbose => options.verbose?) and
-                      run(git_fetch_puth_tags, :verbose => options.verbose?)
+                      run(git_fetch_push_tags, :verbose => options.verbose?)
               
               chain_build_failures += "pushd #{working_dir} > /dev/null; #{bumpspec_cmd}; popd > /dev/null;\n"
               chain_build_failures += "pushd #{working_dir} > /dev/null; #{git_add_bumpspec}; popd > /dev/null;\n"
