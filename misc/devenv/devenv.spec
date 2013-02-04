@@ -8,7 +8,7 @@
 
 Summary:   Dependencies for OpenShift development
 Name:      rhc-devenv
-Version: 1.4.4
+Version: 1.4.5
 Release:   1%{?dist}
 Group:     Development/Libraries
 License:   GPLv2
@@ -672,6 +672,16 @@ restorecon /etc/openshift/node.conf || :
 /sbin/service libra-data restart > /dev/null 2>&1 || :
 
 %changelog
+* Mon Feb 04 2013 Adam Miller <admiller@redhat.com> 1.4.5-1
+- Merge pull request #827 from fotioslindiakos/storage
+  (dmcphers+openshiftbot@redhat.com)
+- Merge pull request #812 from maxamillion/dev/admiller/move_logs
+  (dmcphers+openshiftbot@redhat.com)
+- Give storage user more gears for testing (fotios@redhat.com)
+- Use oo-admin-ctl-user script to modify max storage (fotios@redhat.com)
+- move all logs to /var/log/openshift/ so we can logrotate properly
+  (admiller@redhat.com)
+
 * Mon Feb 04 2013 Adam Miller <admiller@redhat.com> 1.4.4-1
 - working on testing coverage (dmcphers@redhat.com)
 - Merge pull request #834 from lnader/improve-test-coverage
