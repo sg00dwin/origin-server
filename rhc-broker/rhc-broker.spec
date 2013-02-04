@@ -3,7 +3,7 @@
 
 Summary:   Li broker components
 Name:      rhc-broker
-Version: 1.4.4
+Version: 1.4.5
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -146,6 +146,15 @@ if [ ! -f %{_var}/log/openshift/user_action.log ]; then
 fi
 
 %changelog
+* Mon Feb 04 2013 Adam Miller <admiller@redhat.com> 1.4.5-1
+- working on testing coverage (dmcphers@redhat.com)
+- handle numbers for users and passwords (dmcphers@redhat.com)
+- Merge pull request #834 from lnader/improve-test-coverage
+  (dmcphers+openshiftbot@redhat.com)
+- Better naming (dmcphers@redhat.com)
+- Added simplecov to rhc broker tests (lnader@redhat.com)
+- share db connection logic (dmcphers@redhat.com)
+
 * Fri Feb 01 2013 Adam Miller <admiller@redhat.com> 1.4.4-1
 - Bug 906669 (dmcphers@redhat.com)
 - Merge pull request #828 from pravisankar/dev/ravi/us2626-feedback
