@@ -15,13 +15,15 @@ end
 class StreamlineAuthTest < ActiveSupport::TestCase
   test "authentication with cache" do
     mock_request = mock("Request")
-    mock_request.expects(:headers).returns({"User-Agent" => ""})
     mock_request.expects(:cookies).returns({"rh_sso" => nil}) #{"rh_sso" => "abcde"})
+    mock_controller = mock("Controller")
+    mock_controller.expects(:request).returns(mock_request)
+    mock_controller.expects(:authenticate_with_http_basic).yields('login', 'pwd')
 
     Rails.configuration.auth[:integrated] = true
     Rails.configuration.action_controller.perform_caching = true
 
-    TestAuthService.new.authenticate(mock_request, 'login', 'pwd')
+    TestAuthService.new.authenticate_request(mock_controller)
 
     # The cookie should be written to the Rails cache
     cookie = Rails.cache.read("abcde")
@@ -30,14 +32,16 @@ class StreamlineAuthTest < ActiveSupport::TestCase
 
   test "authentication without cache" do
     mock_request = mock("Request")
-    mock_request.expects(:headers).returns({"User-Agent" => ""})
     mock_request.expects(:cookies).returns({"rh_sso" => "abcde"})
+    mock_controller = mock("Controller")
+    mock_controller.expects(:request).returns(mock_request)
+    mock_controller.expects(:authenticate_with_http_basic).yields('login', 'pwd')
 
     Rails.configuration.auth[:integrated] = true
     Rails.configuration.action_controller.perform_caching = true
 
     begin
-      TestCachedAuthService.new.authenticate(mock_request, 'login', 'pwd')
+      TestCachedAuthService.new.authenticate_request(mock_controller)
     rescue Exception => e
       assert false, e.message
     end
