@@ -3,8 +3,8 @@
     %global scl_prefix ruby193-
 %endif
 %global rubyabi 1.9.1
-%define htmldir %{_localstatedir}/www/html
-%define sitedir %{_localstatedir}/www/openshift/site
+%define htmldir %{_var}/www/html
+%define sitedir %{_var}/www/openshift/site
 
 Summary:   OpenShift Site Rails application
 Name:      rhc-site
@@ -97,13 +97,20 @@ such as images, CSS, JavaScript, and HTML.
 
 set -e
 
+mkdir -p %{buildroot}%{_var}/log/openshift/site/
+mkdir -m 770 %{buildroot}%{_var}/log/openshift/site/httpd/
+touch %{buildroot}%{_var}/log/openshift/site/httpd/production.log
+chmod 0666 %{buildroot}%{_var}/log/openshift/site/httpd/production.log
+
 rm -f Gemfile.lock
 bundle install --local
 
-RAILS_ENV=production RAILS_RELATIVE_URL_ROOT=/app bundle exec rake assets:precompile assets:public_pages
+RAILS_ENV=production RAILS_RELATIVE_URL_ROOT=/app \
+  RAILS_LOG_PATH=%{buildroot}%{_var}/log/openshift/site/httpd/production.log \
+  bundle exec rake assets:precompile assets:public_pages
 
 rm -rf tmp
-rm log/*
+rm -rf %{buildroot}%{_var}/log/openshift/*
 rm -f Gemfile.lock
 
 %{?scl:EOF}
@@ -113,11 +120,12 @@ rm -rf %{buildroot}
 mkdir -p %{buildroot}%{htmldir}
 mkdir -p %{buildroot}%{sitedir}
 mkdir -p %{buildroot}%{sitedir}/run
-mkdir -p %{buildroot}%{sitedir}/log
 mkdir -p %{buildroot}%{sitedir}/tmp/cache/assets
 
+mkdir -p %{buildroot}%{_var}/log/openshift/site/
+mkdir -m 770 %{buildroot}%{_var}/log/openshift/site/httpd/
+
 mkdir -p %{buildroot}%{sitedir}/httpd/conf
-mkdir -p -m 770 %{buildroot}%{sitedir}/httpd/logs
 mkdir -p %{buildroot}%{sitedir}/httpd/run
 
 cp -r . %{buildroot}%{sitedir}
@@ -128,16 +136,16 @@ ln -sf /etc/httpd/conf/magic %{buildroot}%{sitedir}/httpd/conf/magic
 rm -rf %{buildroot}
 
 %post
-if [ ! -f %{sitedir}/log/production.log ]; then
-  /bin/touch %{sitedir}/log/production.log
-  chown root:libra_user %{sitedir}/log/production.log
-  chmod 660 %{sitedir}/log/production.log
+if [ ! -f %{_var}/log/openshift/site/production.log ]; then
+  /bin/touch %{_var}/log/openshift/site/production.log
+  chown root:libra_user %{_var}/log/openshift/site/production.log
+  chmod 660 %{_var}/log/openshift/site/production.log
 fi
 
-if [ ! -f %{sitedir}/log/development.log ]; then
-  /bin/touch %{sitedir}/log/development.log
-  chown root:libra_user %{sitedir}/log/development.log
-  chmod 660 %{sitedir}/log/development.log
+if [ ! -f %{_var}/log/openshift/site/development.log ]; then
+  /bin/touch %{_var}/log/openshift/site/development.log
+  chown root:libra_user %{_var}/log/openshift/site/development.log
+  chmod 660 %{_var}/log/openshift/site/development.log
 fi
 
 %files
@@ -148,9 +156,9 @@ fi
 %attr(0770,root,libra_user) %{sitedir}/tmp
 %attr(0770,root,libra_user) %{sitedir}/tmp/cache
 %attr(0770,root,libra_user) %{sitedir}/tmp/cache/assets
-%attr(0770,root,libra_user) %{sitedir}/log
-%ghost %attr(0660,root,libra_user) %{sitedir}/log/production.log
-%ghost %attr(0660,root,libra_user) %{sitedir}/log/development.log
+%attr(0770,root,libra_user) %{_var}/log/openshift/site/
+%ghost %attr(0660,root,libra_user) %{_var}/log/openshift/site/production.log
+%ghost %attr(0660,root,libra_user) %{_var}/log/openshift/site/development.log
 
 %defattr(0640,root,libra_user,0750)
 %{sitedir}
