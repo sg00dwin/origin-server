@@ -272,6 +272,7 @@ gem install kramdown --no-rdoc --no-ri
 # Install gems for rhc to work on the devenv with ruby-1.9 
 gem install rspec --version 1.3.0 --no-rdoc --no-ri
 gem install fakefs --no-rdoc --no-ri
+gem install httpclient --version 2.3.2 --no-rdoc --no-ri
 
 # Move over all configs and scripts
 /bin/cp -rf %{devenvdir}/etc/* %{_sysconfdir}
