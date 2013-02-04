@@ -7,7 +7,7 @@
 
 Summary:       Multi-tenant cloud management system node tools
 Name:          rhc-node
-Version: 1.4.3
+Version: 1.4.4
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -239,6 +239,9 @@ fi
 
 
 %changelog
+* Mon Feb 04 2013 Adam Miller <admiller@redhat.com> 1.4.4-1
+- <resource_limits> specify limits in gears, not "apps" (lmeyer@redhat.com)
+
 * Thu Jan 31 2013 Adam Miller <admiller@redhat.com> 1.4.3-1
 - Bug 906496: Repair ownership of app Git repo objects (ironcladlou@gmail.com)
 
