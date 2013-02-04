@@ -16,7 +16,7 @@ module OpenShift
     def authenticate_request(controller)
       controller.authenticate_with_http_basic do |u, p|
         if Rails.configuration.auth[:integrated]
-          check_login(request.cookies['rh_sso'], u, p)
+          check_login(controller.request.cookies['rh_sso'], u, p)
         else
           u.present? ? {username: u} : nil
         end
@@ -29,8 +29,6 @@ module OpenShift
       else
         {:username => login}
       end
-      raise OpenShift::AccessDeniedException if token.nil? or token[:username].nil?
-      token
     end
 
     private
