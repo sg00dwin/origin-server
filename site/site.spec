@@ -8,7 +8,7 @@
 
 Summary:   OpenShift Site Rails application
 Name:      rhc-site
-Version: 1.4.5
+Version: 1.4.6
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   ASL 2.0
@@ -172,6 +172,17 @@ fi
 %{sitedir}/public
 
 %changelog
+* Mon Feb 04 2013 Adam Miller <admiller@redhat.com> 1.4.6-1
+- Merge pull request #827 from fotioslindiakos/storage
+  (dmcphers+openshiftbot@redhat.com)
+- Merge pull request #812 from maxamillion/dev/admiller/move_logs
+  (dmcphers+openshiftbot@redhat.com)
+- Changed message if the user wants to upgrade storage (fotios@redhat.com)
+- Added wrapper for storage_controller tests from console (fotios@redhat.com)
+- US2441: View for storage (fotios@redhat.com)
+- move all logs to /var/log/openshift/ so we can logrotate properly
+  (admiller@redhat.com)
+
 * Mon Feb 04 2013 Adam Miller <admiller@redhat.com> 1.4.5-1
 - working on testing coverage (dmcphers@redhat.com)
 - Merge pull request #838 from sg00dwin/partnerslink
