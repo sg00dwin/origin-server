@@ -3,7 +3,7 @@
 
 Summary:   Li broker components
 Name:      rhc-broker
-Version: 1.4.5
+Version: 1.4.6
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -146,6 +146,12 @@ if [ ! -f %{_var}/log/openshift/user_action.log ]; then
 fi
 
 %changelog
+* Mon Feb 04 2013 Adam Miller <admiller@redhat.com> 1.4.6-1
+- Merge pull request #812 from maxamillion/dev/admiller/move_logs
+  (dmcphers+openshiftbot@redhat.com)
+- move all logs to /var/log/openshift/ so we can logrotate properly
+  (admiller@redhat.com)
+
 * Mon Feb 04 2013 Adam Miller <admiller@redhat.com> 1.4.5-1
 - working on testing coverage (dmcphers@redhat.com)
 - handle numbers for users and passwords (dmcphers@redhat.com)
