@@ -5,7 +5,7 @@
 %global modname             blogs
 
 Name:    drupal%{drupal_release}-openshift-features-%{modname}
-Version: 1.11.2
+Version: 1.11.3
 Release: 1%{?dist}
 Summary: Openshift Red Hat Custom Blog Feature for Drupal6
 Group:   Applications/Publishing
@@ -41,6 +41,9 @@ rm -rf $RPM_BUILD_ROOT
 %{drupal_modules}/%{modname}
 
 %changelog
+* Mon Feb 04 2013 Adam Miller <admiller@redhat.com> 1.11.3-1
+- Bug 906879 - Fixed FAQ JSON API root object name (hripps@redhat.com)
+
 * Thu Jan 31 2013 Adam Miller <admiller@redhat.com> 1.11.2-1
 - US3318: Updated Blog feature to include FAQ API (hripps@redhat.com)
 
