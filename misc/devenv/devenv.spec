@@ -8,7 +8,7 @@
 
 Summary:   Dependencies for OpenShift development
 Name:      rhc-devenv
-Version: 1.4.3
+Version: 1.4.4
 Release:   1%{?dist}
 Group:     Development/Libraries
 License:   GPLv2
@@ -665,6 +665,12 @@ restorecon /etc/openshift/node.conf || :
 /sbin/service libra-data restart > /dev/null 2>&1 || :
 
 %changelog
+* Mon Feb 04 2013 Adam Miller <admiller@redhat.com> 1.4.4-1
+- working on testing coverage (dmcphers@redhat.com)
+- Merge pull request #834 from lnader/improve-test-coverage
+  (dmcphers+openshiftbot@redhat.com)
+- Bug 903325 (lnader@redhat.com)
+
 * Fri Feb 01 2013 Adam Miller <admiller@redhat.com> 1.4.3-1
 - Add community carts - python 2.7 + 3.3 to install on a devenv.
   (smitram@gmail.com)
