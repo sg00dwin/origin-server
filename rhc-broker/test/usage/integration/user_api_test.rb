@@ -32,7 +32,6 @@ class UserApiTest < ActionDispatch::IntegrationTest
     assert_equal(user["capabilities"]["gear_sizes"], ["small"])
     assert_equal(user["capabilities"].has_key?("max_storage_per_gear"), false)
     user = CloudUser.find_by(login: @login)
-    assert_equal(user.plan_id, nil)
   end
   
   def test_user_upgrade
@@ -265,7 +264,7 @@ class UserApiTest < ActionDispatch::IntegrationTest
 
     #simulate noplan to megashift failure
     user = CloudUser.find_by(login: @login)
-    assert_equal(user.plan_id, nil)
+    assert_equal(user.plan_id, "freeshift")
     user.pending_plan_id = "megashift"
     user.pending_plan_uptime = Time.now.utc-1000
     user.save!
@@ -303,7 +302,7 @@ class UserApiTest < ActionDispatch::IntegrationTest
     #simulate noplan to megashift failure thats not recoverable
     user = CloudUser.find_by(login: @login)
     user_capabilities = user.get_capabilities
-    assert_equal(user.plan_id, nil)
+    assert_equal(user.plan_id, "freeshift")
     user.pending_plan_id = "megashift"
     user.pending_plan_uptime = Time.now.utc-1000
     user.capabilities_will_change!
@@ -321,7 +320,7 @@ class UserApiTest < ActionDispatch::IntegrationTest
     `rhc-admin-ctl-plan --fix --login #{@login}`
 
     user = CloudUser.find_by(login: @login)
-    assert_equal(user.plan_id, nil)
+    assert_equal(user.plan_id, "freeshift")
     assert_equal(user.pending_plan_id, "megashift")
     assert_not_equal(user.pending_plan_uptime, nil)
   end
