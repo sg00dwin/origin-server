@@ -29,7 +29,7 @@ class DistributedLock
     end
     dlock_obj = nil
     begin
-      dlock_obj = where(filter).find_and_modify({"$set" => {owner_id: owner_id, type: type}}, 
+      dlock_obj = with(consistency: :strong).where(filter).find_and_modify({"$set" => {owner_id: owner_id, type: type}}, 
                                                 {:upsert => true, :new => true})
     rescue Moped::Errors::OperationFailure
     end
@@ -44,6 +44,6 @@ class DistributedLock
     Rails.logger.debug "release_distributed_lock, type: #{type}, owner_id: #{owner_id}"
     filter = { "type" => type }
     filter["owner_id"] = owner_id if owner_id
-    where(filter).destroy
+    with(consistency: :strong).where(filter).destroy
   end
 end
