@@ -254,6 +254,7 @@ def migrate_district(old_district)
   old_district.delete('node_profile')
   old_district.delete('creation_time')
   nd.assign_attributes(old_district)
+  nd.available_capacity = nd.available_uids.length
   nd.save
   nd
 end
