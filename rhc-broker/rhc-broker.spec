@@ -3,7 +3,7 @@
 
 Summary:   Li broker components
 Name:      rhc-broker
-Version: 1.4.7
+Version: 1.4.8
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -146,6 +146,11 @@ if [ ! -f %{_var}/log/openshift/user_action.log ]; then
 fi
 
 %changelog
+* Tue Feb 05 2013 Adam Miller <admiller@redhat.com> 1.4.8-1
+- Improving coverage tooling (dmcphers@redhat.com)
+- Merge pull request #849 from rajatchopra/master (dmcphers@redhat.com)
+- cleanup script for ops to clear pending op groups (rchopra@redhat.com)
+
 * Tue Feb 05 2013 Adam Miller <admiller@redhat.com> 1.4.7-1
 - Fix for bug 907683 - reading the distributed lock from the primary
   (abhgupta@redhat.com)
