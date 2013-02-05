@@ -8,8 +8,8 @@
 
 Summary:   OpenShift Site Rails application
 Name:      rhc-site
-Version: 1.4.6
-Release:   2%{?dist}
+Version: 1.4.7
+Release:   1%{?dist}
 Group:     Network/Daemons
 License:   ASL 2.0
 URL:       http://openshift.redhat.com
@@ -172,6 +172,11 @@ fi
 %{sitedir}/public
 
 %changelog
+* Tue Feb 05 2013 Adam Miller <admiller@redhat.com> 1.4.7-1
+- Merge pull request #848 from smarterclayton/fix_firesass_support
+  (dmcphers+openshiftbot@redhat.com)
+- Fix FireSass support in site (ccoleman@redhat.com)
+
 * Mon Feb 04 2013 Adam Miller <admiller@redhat.com> 1.4.6-2
 - bump for chainbuild
 
