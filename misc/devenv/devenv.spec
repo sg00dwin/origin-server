@@ -8,7 +8,7 @@
 
 Summary:   Dependencies for OpenShift development
 Name:      rhc-devenv
-Version: 1.4.5
+Version: 1.4.6
 Release:   1%{?dist}
 Group:     Development/Libraries
 License:   GPLv2
@@ -673,6 +673,9 @@ restorecon /etc/openshift/node.conf || :
 /sbin/service libra-data restart > /dev/null 2>&1 || :
 
 %changelog
+* Tue Feb 05 2013 Adam Miller <admiller@redhat.com> 1.4.6-1
+- Add Ruby 1.9 httpclient gem to devenv (ironcladlou@gmail.com)
+
 * Mon Feb 04 2013 Adam Miller <admiller@redhat.com> 1.4.5-1
 - Merge pull request #827 from fotioslindiakos/storage
   (dmcphers+openshiftbot@redhat.com)
