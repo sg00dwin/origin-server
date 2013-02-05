@@ -384,11 +384,11 @@ then
   service rhc-datastore restart
   sleep 5
 fi
-echo > /var/www/openshift/broker/log/development.log
-echo > /var/www/openshift/broker/httpd/logs/error_log
+echo > /var/log/openshift/broker/development.log
+echo > /var/log/openshift/broker/httpd/error_log
 service rhc-broker restart
-echo > /var/www/openshift/site/log/development.log
-echo > /var/www/openshift/site/httpd/logs/error_log
+echo > /var/log/openshift/site/development.log
+echo > /var/log/openshift/site/httpd/error_log
 service rhc-site restart
 service httpd restart
 service openshift-port-proxy restart

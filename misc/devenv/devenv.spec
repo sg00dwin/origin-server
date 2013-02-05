@@ -216,10 +216,10 @@ mkdir -p %{buildroot}%{devenvdir}
 mkdir -p %{buildroot}%{_initddir}
 mv %{buildroot}%{devenvdir}/init.d/* %{buildroot}%{_initddir}
 
-mkdir -p %{buildroot}%{brokerdir}/log
+mkdir -p %{buildroot}%{_var}/log/openshift/broker/
 
 # Setup mcollective client log
-touch %{buildroot}%{brokerdir}/log/mcollective-client.log
+touch %{buildroot}%{_var}/log/openshift/broker/mcollective-client.log
 
 # Setup the jenkins jobs
 mkdir -p %{buildroot}%{jenkins}/jobs
@@ -576,7 +576,7 @@ chmod 750 /usr/bin/crontab
 chmod 750 /usr/bin/at
 
 # Fix devenv log file ownership
-chown root:libra_user /var/www/openshift/broker/log/mcollective-client.log
+chown root:libra_user %{_var}/log/openshift/broker/mcollective-client.log
 
 ## For RKHUNTER to not use tmp any more
 # Added nagios_monitor user to match STG and PROD
@@ -655,7 +655,7 @@ cd /var/www/openshift/site && /usr/bin/scl enable ruby193 "rake assets:clean"
 
 %files
 %defattr(-,root,root,-)
-%attr(0660,-,-) %{brokerdir}/log/mcollective-client.log
+%attr(0660,-,-) %{_var}/log/openshift/broker/mcollective-client.log
 %config(noreplace) %{jenkins}/jobs/*/*
 %{jenkins}/jobs/sync_up.rb
 %{jenkins}/jobs/sync_down.rb
