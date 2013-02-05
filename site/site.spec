@@ -9,7 +9,7 @@
 Summary:   OpenShift Site Rails application
 Name:      rhc-site
 Version: 1.4.8
-Release:   1%{?dist}
+Release:   2%{?dist}
 Group:     Network/Daemons
 License:   ASL 2.0
 URL:       http://openshift.redhat.com
@@ -172,6 +172,9 @@ fi
 %{sitedir}/public
 
 %changelog
+* Tue Feb 05 2013 Adam Miller <admiller@redhat.com> - 1.4.8-2
+- bump for chainbuild
+
 * Tue Feb 05 2013 Adam Miller <admiller@redhat.com> 1.4.8-1
 - Improving coverage tooling (dmcphers@redhat.com)
 - Merge pull request #851 from smarterclayton/improve_capability_extension
