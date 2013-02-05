@@ -8,8 +8,8 @@
 
 Summary:   OpenShift Site Rails application
 Name:      rhc-site
-Version: 1.4.7
-Release:   2%{?dist}
+Version: 1.4.8
+Release:   1%{?dist}
 Group:     Network/Daemons
 License:   ASL 2.0
 URL:       http://openshift.redhat.com
@@ -172,6 +172,14 @@ fi
 %{sitedir}/public
 
 %changelog
+* Tue Feb 05 2013 Adam Miller <admiller@redhat.com> 1.4.8-1
+- Improving coverage tooling (dmcphers@redhat.com)
+- Merge pull request #851 from smarterclayton/improve_capability_extension
+  (dmcphers+openshiftbot@redhat.com)
+- Use string id instead of symbol id for plans (ccoleman@redhat.com)
+- Ensure that billing code cannot be reached without the appropriate plan
+  attribute (ccoleman@redhat.com)
+
 * Tue Feb 05 2013 Adam Miller <admiller@redhat.com> 1.4.7-2
 - bump for chainbuild
 
