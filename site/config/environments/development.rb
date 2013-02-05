@@ -73,10 +73,6 @@ RedHatCloud::Application.configure do
   # Expands the lines which load the assets
   config.assets.debug = true
 
-  config.sass.style = :nested
-  config.sass.line_comments = true
-  config.sass.relative_assets = true
-
   Console.configure do |c|
     c.api = (ENV['CONSOLE_API_MODE'] || 'local').to_sym
   end
