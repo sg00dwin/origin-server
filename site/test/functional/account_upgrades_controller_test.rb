@@ -31,6 +31,13 @@ class AccountUpgradesControllerTest < ActionController::TestCase
     assert_template :unchanged
   end
 
+  test "should redirect if the user lacks capabilities" do
+    user = with_user(full)
+    OnlineCapabilities.any_instance.expects(:plan_upgrade_enabled?).returns(false)
+    get :new, :plan_id => 'freeshift'
+    assert_redirected_to account_path
+  end
+
   test "should raise on invalid user" do
     user = with_user(full)
     user.expects(:extend).with(Aria::User)
