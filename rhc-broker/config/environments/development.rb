@@ -133,22 +133,26 @@ Broker::Application.configure do
           :usage_rates => {
             :gear => { 
                       :small => { 
-                                 :usd => 5 #cents/hr
+                                 :usd => 0.05, #$/hr
+                                 :duration => :hour
                                 },
                       :medium => {
-                                  :usd => 12 #cents/hr
+                                  :usd => 0.12, #$/hr
+                                  :duration => :hour
                                  }
                      },
             :storage => {
                          :gigabyte => {
-                                       :usd => 100 #cents/month
+                                       :usd => 1.00, #$/month
+                                       :duration => :month
                                       }
                         },
             :cartridge => {
                            :'jbosseap-6.0' => {
-                                               :usd => 3 #cents/hr
+                                               :usd => 0.03, #$/hr
+                                               :duration => :hour
                                               }
-                          } 
+                          }
           }
         }
       }
