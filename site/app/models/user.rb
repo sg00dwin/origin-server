@@ -11,5 +11,6 @@ class User
   def plan_upgrade_enabled
     !!capabilities[:plan_upgrade_enabled]
   end
+  alias_method :plan_upgrade_enabled?, :plan_upgrade_enabled
 end
 
