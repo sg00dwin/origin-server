@@ -7,8 +7,7 @@
 = flashes
 .row
   .span8
-    %section
-      = render :partial => 'search'
+    %section{'ng-app' => 'openshift'}
       = render :partial => 'faq', :locals => {:topten => @topten}
   .span4
     %section

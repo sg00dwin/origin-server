@@ -1,7 +1,20 @@
-%h1 Frequently Asked Questions
+%div{'ng-controller' => 'FaqController'}
+  %p
+    %input{:type => 'text', :placeholder => 'Search by keyword', 'ng-model' => 'searchTerm', 'ng-change' => 'filter()'}
 
-%p
-  %ul
-  - topten.each do |faq|
-    %li
-      %a{:href => faq.href, :rel => 'tooltip', :title => strip_tags(faq.body)}!= faq.name
+  %h1 Frequently Asked Questions
+
+  %p
+
+    %ul
+      %li{'ng-repeat' => 'q in questions | limitTo:10'}
+        %h3
+          %a{:href => '{{q.node.href}}', 'ng-bind-html-unsafe' => 'q.node.name'}
+        %p{'ng-bind-html-unsafe' => 'q.node.body'}
+
+
+    -#
+      %ul
+      - topten.each do |faq|
+        %li
+          %a{:href => faq.href, :rel => 'tooltip', :title => strip_tags(faq.body)}!= faq.name
