@@ -7,7 +7,7 @@ require 'simplecov'
 SimpleCov.start 'rails' do
   coverage_dir 'test/coverage/'
   command_name ENV["TEST_NAME"] || 'rhc broker tests'
-  add_group 'Libra Extensions', 'lib/express'
+  add_group 'Online Extensions', 'lib/online'
 
   merge_timeout 10000
 end
