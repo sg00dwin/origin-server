@@ -442,7 +442,7 @@ service openshift-port-proxy restart
                 test_queues[2] << ["REST API Group 3", "cucumber #{CUCUMBER_OPTIONS} -t @broker_api3 openshift-test/tests", {:retry_individually => true}]
                 test_queues[3] << ["REST API Group 4", "cucumber #{CUCUMBER_OPTIONS} -t @broker_api4 openshift-test/tests", {:retry_individually => true}]
                 test_queues[0] << ["Broker Domain System", "cd openshift-test/rhc-broker; rake test:domain_system_test", {:retry_individually => true}]
-                test_queues[2] << ["OpenShift Broker Unit Ext 1", "cd openshift-test/broker; rake test:oo_unit_ext1", {:retry_individually => true}]
+                test_queues[2] << ["OpenShift Broker Functionals Ext", "cd openshift-test/broker; rake test:functionals_ext", {:retry_individually => true}]
                 test_queues[3] << ["Broker Usage", "cd openshift-test/rhc-broker; rake test:usage"]
                 test_queues[0] << ["Broker Application System", "cd openshift-test/rhc-broker; rake test:application_system_test", {:retry_individually => true}]
                 test_queues[2] << ["Broker Cartridge System", "cd openshift-test/rhc-broker; rake test:cartridge_system_test", {:retry_individually => true}]
@@ -536,11 +536,9 @@ service openshift-port-proxy restart
               test_queues[0] << ["Broker Unit", "cd openshift-test/rhc-broker; rake test:units"]
               test_queues[1] << ["Broker Functional", "cd openshift-test/rhc-broker; rake test:functionals"]
               test_queues[0] << ["Broker Integration", "cd openshift-test/rhc-broker; rake test:integration"]
-              test_queues[1] << ["OpenShift Broker Functional", "cd openshift-test/broker; rake test:functionals"]
+              test_queues[1] << ["OpenShift Broker Units", "cd openshift-test/broker; rake test:units"]
               test_queues[0] << ["OpenShift Broker Integration", "cd openshift-test/broker; rake test:integration"]
-
-              test_queues[2] << ["OpenShift Broker Unit 1", "cd openshift-test/broker; rake test:oo_unit1"]
-              test_queues[2] << ["OpenShift Broker Unit 2", "cd openshift-test/broker; rake test:oo_unit2"]
+              test_queues[2] << ["OpenShift Broker Functional", "cd openshift-test/broker; rake test:functionals"]
               test_queues[3] << ["Broker Cucumber", "cucumber --strict -f html --out /tmp/rhc/broker_cucumber.html -f progress -t @broker openshift-test/tests"]
             end
 
