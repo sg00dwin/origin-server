@@ -5,6 +5,14 @@ require 'config/environment'
 
 $users_failed = []
 
+$global_cart_cache =  CartridgeCache.cartridges
+
+class CartridgeCache
+  def self.cartridges
+    return $global_cart_cache 
+  end
+end
+
 def get_mongo_session
   # Get Mongo session
   config = Mongoid::Config.sessions["default"]
@@ -175,7 +183,7 @@ def create_group_instances(new_app, old_app)
     }
     if not new_gi_id
       # create a new group instance
-      new_gi = GroupInstance.new(custom_id: Moped::BSON::ObjectId.new, gear_size: old_gi['node_profile'])
+      new_gi = GroupInstance.new(custom_id: Moped::BSON::ObjectId.new) #, gear_size: old_gi['node_profile'])
       new_app.group_instances.push(new_gi)
       addtl_fs_gb = old_gi['addtl_fs_gb']
       new_gi_id = new_gi._id
@@ -241,6 +249,13 @@ def create_group_instances(new_app, old_app)
       group_override["additional_filesystem_gb"] = addtl_fs_gb
       group_override_map[new_gi_id.to_s] = group_override
     end
+
+    # add the node_profile to group override if valid
+    if old_gi['node_profile']
+      group_override = { "components" => group_components } if group_override.nil?
+      group_override["gear_size"] = old_gi['node_profile']
+      group_override_map[new_gi_id.to_s] = group_override
+    end
   }
   group_override_map.values.dup
 end
@@ -281,18 +296,21 @@ begin
 
   users = session[:user]
 
+  t = Time.now
   # Process all users that DOES NOT have a parent user login
   users.find({"$or"=>[{"parent_user_login"=>{"$exists"=>false}}, {"parent_user_login" => nil}]}).each do |user|
-    puts "Processing user #{user['login']}"
+    # puts "Processing user #{user['login']}"
     #puts user.inspect
     migrate_user(user)
   end
   # Process all user that have a parent user login
   users.find({"$and"=>[{"parent_user_login"=>{"$exists"=>true}}, {"parent_user_login"=>{"$ne"=>nil}}]}).each do |user|
-    puts "Processing user #{user['login']}"
+    # puts "Processing user #{user['login']}"
     #puts user.inspect
     migrate_user(user)
   end
+
+  puts "Total time : #{Time.now - t }"
 
   puts "User migration complete. Migrating districts..."
   session[:district].find.each { |old_district|
