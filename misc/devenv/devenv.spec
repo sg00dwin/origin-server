@@ -540,10 +540,6 @@ mv -f /usr/share/openscap/scap-rhel6-xccdf.xml.tmp /usr/share/openscap/scap-rhel
 # Populate Drupal Database 
 echo "select count(*) from users;" | mysql -u root libra > /dev/null 2>&1 || zcat /usr/share/drupal6/sites/default/openshift-dump.gz | mysql -u root
 
-# Make the webserver use hsts - BZ801848
-#  ...only on SSL (BZ859471)
-echo "Header set Strict-Transport-Security \"max-age=15768000\" env=HTTPS" > /etc/httpd/conf.d/hsts.conf
-
 # Create place to drop proxy mod_cache files
 mkdir -p /srv/cache/mod_cache
 chmod 750 /srv/cache/mod_cache
