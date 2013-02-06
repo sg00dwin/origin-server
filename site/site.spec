@@ -8,8 +8,8 @@
 
 Summary:   OpenShift Site Rails application
 Name:      rhc-site
-Version: 1.4.8
-Release:   2%{?dist}
+Version: 1.4.9
+Release:   1%{?dist}
 Group:     Network/Daemons
 License:   ASL 2.0
 URL:       http://openshift.redhat.com
@@ -172,6 +172,17 @@ fi
 %{sitedir}/public
 
 %changelog
+* Wed Feb 06 2013 Adam Miller <admiller@redhat.com> 1.4.9-1
+- Merge pull request #861 from rhamilto/master (dmcphers@redhat.com)
+- Merge pull request #854 from fotioslindiakos/BZ907570 (dmcphers@redhat.com)
+- Tweaks to improve upon the rotate on hover effect of the logo.
+  (rhamilto@redhat.com)
+- Missing an alias for plan_upgrade_enabled? (ccoleman@redhat.com)
+- Bug 908171 - My account page throws an error when aria disabled
+  (ccoleman@redhat.com)
+- Bug 907570: Also change message for increasing user storage
+  (fotios@redhat.com)
+
 * Tue Feb 05 2013 Adam Miller <admiller@redhat.com> 1.4.8-2
 - bump for chainbuild
 
