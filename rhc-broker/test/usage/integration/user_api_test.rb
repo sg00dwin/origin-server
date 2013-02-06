@@ -35,7 +35,7 @@ class UserApiTest < ActionDispatch::IntegrationTest
   end
   
   def test_user_upgrade
-    api = Express::AriaBilling::Api.instance
+    api = Online::AriaBilling::Api.instance
     user_id = Digest::MD5::hexdigest(@login)
     acct_no = api.create_fake_acct(user_id, :freeshift)
     api.update_acct_status(acct_no, 1)
@@ -60,7 +60,7 @@ class UserApiTest < ActionDispatch::IntegrationTest
   end
 
   def test_user_downgrade
-    api = Express::AriaBilling::Api.instance
+    api = Online::AriaBilling::Api.instance
     user_id = Digest::MD5::hexdigest(@login)
     acct_no = api.create_fake_acct(user_id, :megashift)
     request_via_redirect(:put, USER_COLLECTION_URL, {:plan_id => :freeshift}, @headers)
@@ -120,7 +120,7 @@ class UserApiTest < ActionDispatch::IntegrationTest
   end
 
   def test_user_downgrade_with_additional_storage
-    api = Express::AriaBilling::Api.instance
+    api = Online::AriaBilling::Api.instance
     user_id = Digest::MD5::hexdigest(@login)
     acct_no = api.create_fake_acct(user_id, :freeshift)
     request_via_redirect(:put, USER_COLLECTION_URL, {:plan_id => :megashift}, @headers)
@@ -142,7 +142,7 @@ class UserApiTest < ActionDispatch::IntegrationTest
   end
 
   def test_user_upgrade_with_inactive_user
-    api = Express::AriaBilling::Api.instance
+    api = Online::AriaBilling::Api.instance
     user_id = Digest::MD5::hexdigest(@login)
     acct_no = api.create_fake_acct(user_id, :freeshift)
     api.update_acct_status(acct_no, 0)
@@ -166,7 +166,7 @@ class UserApiTest < ActionDispatch::IntegrationTest
   end
   
   def test_invalid_plan_id
-    api = Express::AriaBilling::Api.instance
+    api = Online::AriaBilling::Api.instance
     user_id = Digest::MD5::hexdigest(@login)
     acct_no = api.create_fake_acct(user_id, :freeshift)
     api.update_acct_status(acct_no, 1)
@@ -177,7 +177,7 @@ class UserApiTest < ActionDispatch::IntegrationTest
   end
 
   def test_plan_upgrade_free_to_mega_recovery
-    api = Express::AriaBilling::Api.instance
+    api = Online::AriaBilling::Api.instance
     user_id = Digest::MD5::hexdigest(@login)
     acct_no = api.create_fake_acct(user_id, :freeshift)
     request_via_redirect(:put, USER_COLLECTION_URL, {:plan_id => :freeshift}, @headers)
@@ -213,7 +213,7 @@ class UserApiTest < ActionDispatch::IntegrationTest
   end
  
   def test_plan_upgrade_mega_to_free_recovery
-    api = Express::AriaBilling::Api.instance
+    api = Online::AriaBilling::Api.instance
     user_id = Digest::MD5::hexdigest(@login)
     acct_no = api.create_fake_acct(user_id, :megashift)
     request_via_redirect(:put, USER_COLLECTION_URL, {:plan_id => :megashift}, @headers)
@@ -249,7 +249,7 @@ class UserApiTest < ActionDispatch::IntegrationTest
   end
  
   def test_plan_upgrade_noplan_to_mega_recovery_success
-    api = Express::AriaBilling::Api.instance
+    api = Online::AriaBilling::Api.instance
     user_id = Digest::MD5::hexdigest(@login)
     acct_no = api.create_fake_acct(user_id, :freeshift)
     request_via_redirect(:get, USER_COLLECTION_URL, {}, @headers)
@@ -286,7 +286,7 @@ class UserApiTest < ActionDispatch::IntegrationTest
   end
 
   def test_plan_upgrade_noplan_to_mega_recovery_failure
-    api = Express::AriaBilling::Api.instance
+    api = Online::AriaBilling::Api.instance
     user_id = Digest::MD5::hexdigest(@login)
     acct_no = api.create_fake_acct(user_id, :megashift)
     request_via_redirect(:get, USER_COLLECTION_URL, {}, @headers)
@@ -326,7 +326,7 @@ class UserApiTest < ActionDispatch::IntegrationTest
   end
 
   def test_fix_user_plan_capabilities_success
-    api = Express::AriaBilling::Api.instance
+    api = Online::AriaBilling::Api.instance
     user_id = Digest::MD5::hexdigest(@login)
     acct_no = api.create_fake_acct(user_id, :freeshift)
     request_via_redirect(:put, USER_COLLECTION_URL, {:plan_id => :freeshift}, @headers)
@@ -349,7 +349,7 @@ class UserApiTest < ActionDispatch::IntegrationTest
   end
 
   def test_fix_user_plan_capabilities_failure
-    api = Express::AriaBilling::Api.instance
+    api = Online::AriaBilling::Api.instance
     user_id = Digest::MD5::hexdigest(@login)
     acct_no = api.create_fake_acct(user_id, :freeshift)
     request_via_redirect(:put, USER_COLLECTION_URL, {:plan_id => :freeshift}, @headers)

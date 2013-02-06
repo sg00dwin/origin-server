@@ -77,14 +77,14 @@ class BrokerController < ApplicationController
               app_uuid_hash[app.uuid] = 1
             end
           }
-          Express::Broker::Nurture.application_bulk_update(bulk_update_array)
+          Online::Broker::Nurture.application_bulk_update(bulk_update_array)
         end
       else
         data = parse_json_data(params['json_data'])
         return unless data
         action = data['action']
         app_uuid = data['app_uuid']
-        Express::Broker::Nurture.application_update(action, app_uuid)
+        Online::Broker::Nurture.application_update(action, app_uuid)
       end
   
       # Just return a 200 success

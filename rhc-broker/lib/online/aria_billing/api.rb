@@ -1,7 +1,7 @@
 require 'rubygems'
 require 'wddx'
 
-module Express
+module Online
   module AriaBilling
     class Api
       attr_accessor :ah, :url, :usage_type
@@ -16,11 +16,11 @@ module Express
         end
         @url = access_info[:config][:url]
         @usage_type = access_info[:usage_type]
-        @ah = Express::AriaBilling::ApiHelper.instance(access_info)
+        @ah = Online::AriaBilling::ApiHelper.instance(access_info)
       end
 
       def self.instance
-        Express::AriaBilling::Api.new
+        Online::AriaBilling::Api.new
       end
 
       # NOTE: This method is only used for *Testing*
@@ -61,7 +61,7 @@ module Express
         begin
           result = get_response(@ah.get_usage_history(*args), __method__)
           usage_history = result.data["usage_history_records"]
-        rescue Express::AriaBilling::ErrorCodeException => e
+        rescue Online::AriaBilling::ErrorCodeException => e
           raise if e.error_code.to_s != "1008"
           usage_history = []
         end
@@ -81,7 +81,7 @@ module Express
       def update_master_plan(*args)
         begin
           get_response(@ah.update_master_plan(*args), __method__)
-        rescue Express::AriaBilling::ErrorCodeException => e
+        rescue Online::AriaBilling::ErrorCodeException => e
           raise if e.error_code.to_s != "1034"
         end
         return true
@@ -109,17 +109,17 @@ module Express
         begin
           return request.execute
         rescue RestClient::RequestTimeout, RestClient::ServerBrokeConnection, RestClient::SSLCertificateNotVerified => e
-          raise Express::AriaBilling::Exception.new "Failed to access resource: #{e.message}"
+          raise Online::AriaBilling::Exception.new "Failed to access resource: #{e.message}"
         rescue RestClient::ExceptionWithResponse => e
-          raise Express::AriaBilling::Exception.new "Exception: #{e.response}, #{e.message}"
+          raise Online::AriaBilling::Exception.new "Exception: #{e.response}, #{e.message}"
         rescue Exception => e
-          raise Express::AriaBilling::Exception.new "Failed to access resource: #{e.message}"
+          raise Online::AriaBilling::Exception.new "Failed to access resource: #{e.message}"
         end
         return nil
       end
 
       def convert_to_get_params(hash)
-        raise Express::AriaBilling::Exception.new "Param input is NOT a hash" unless hash.kind_of?(Hash)
+        raise Online::AriaBilling::Exception.new "Param input is NOT a hash" unless hash.kind_of?(Hash)
         param_str = ""
         hash.each do |k, v|
           param_str += "&" if param_str != ""
@@ -137,7 +137,7 @@ module Express
         response = WDDX.load(wddx_response)
         Rails.logger.debug "Aria Billing api response: #{response.inspect}"
         if response.error_code != 0 && ret_output
-          raise Express::AriaBilling::ErrorCodeException.new("#{method_name} failed with error message: #{response.error_msg}", response.error_code)
+          raise Online::AriaBilling::ErrorCodeException.new("#{method_name} failed with error message: #{response.error_msg}", response.error_code)
         end
         if ret_output
           return response

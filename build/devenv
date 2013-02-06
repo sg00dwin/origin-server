@@ -15,7 +15,7 @@ require 'lib/openshift/brew'
 
 include FileUtils
 
-module Express
+module Online
   class BuilderPlugin < OpenShift::Builder
     include OpenShift::BuilderHelper
     include OpenShift::SauceLabs
@@ -928,4 +928,4 @@ rm -rf #{working_dirs}
   end # class end
 end # module end
 
-Express::BuilderPlugin.start
+Online::BuilderPlugin.start
