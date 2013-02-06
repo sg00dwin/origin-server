@@ -11,7 +11,7 @@ class BillingTest < ActiveSupport::TestCase
   end
 
   test "get account no from user id" do
-    api = Express::AriaBilling::Api.instance
+    api = Online::AriaBilling::Api.instance
     acct_no = api.create_fake_acct(@user_id, :freeshift)
     assert_not_nil(acct_no, "account number is nil")
     acct_no_from_id = api.get_acct_no_from_user_id(@user_id)
@@ -19,7 +19,7 @@ class BillingTest < ActiveSupport::TestCase
   end
   
   test "get account info" do
-    api = Express::AriaBilling::Api.instance
+    api = Online::AriaBilling::Api.instance
     acct_no = api.create_fake_acct(@user_id, :freeshift)
     acct_info = api.get_acct_details_all(acct_no)
     assert_equal(acct_info["status_cd"], "1", "Account status #{acct_info["status_cd"]} expected 1")
@@ -27,7 +27,7 @@ class BillingTest < ActiveSupport::TestCase
   end
   
   test "get plans" do
-    api = Express::AriaBilling::Api.instance
+    api = Online::AriaBilling::Api.instance
     acct_no = api.create_fake_acct(@user_id, :freeshift)
     plans = api.get_acct_plans_all(acct_no)
     assert(plans.length == 1)
@@ -37,7 +37,7 @@ class BillingTest < ActiveSupport::TestCase
   end
   
   test "update account status" do
-    api = Express::AriaBilling::Api.instance
+    api = Online::AriaBilling::Api.instance
     acct_no = api.create_fake_acct(@user_id, :freeshift)
     acct_info = api.get_acct_details_all(acct_no)
     assert_equal(acct_info["status_cd"], "1", "Account status #{acct_info["status_cd"]} expected 1")
@@ -47,7 +47,7 @@ class BillingTest < ActiveSupport::TestCase
   end
   
   test "update master plan" do
-    api = Express::AriaBilling::Api.instance
+    api = Online::AriaBilling::Api.instance
     acct_no = api.create_fake_acct(@user_id, :freeshift)
     plans = api.get_acct_plans_all(acct_no)
     assert(plans.length == 1)
@@ -63,7 +63,7 @@ class BillingTest < ActiveSupport::TestCase
   end
   
 test "update master plan and then revert to previous" do
-    api = Express::AriaBilling::Api.instance
+    api = Online::AriaBilling::Api.instance
     acct_no = api.create_fake_acct(@user_id, :freeshift)
     plans = api.get_acct_plans_all(acct_no)
     assert(plans.length == 1)
@@ -86,7 +86,7 @@ test "update master plan and then revert to previous" do
   end
   
   test "update master plan to same plan" do
-    api = Express::AriaBilling::Api.instance
+    api = Online::AriaBilling::Api.instance
     acct_no = api.create_fake_acct(@user_id, :megashift)
     plans = api.get_acct_plans_all(acct_no)
     assert(plans.length == 1)

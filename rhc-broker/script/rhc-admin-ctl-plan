@@ -67,7 +67,7 @@ require "/var/www/openshift/broker/config/environment"
 Rails.configuration.analytics[:enabled] = false
 
 PLAN_UPDATE_THRESHOLD = 300  #5 mins
-$aria = Express::AriaBilling::Api.new
+$aria = Online::AriaBilling::Api.new
 $default_plan_id = Rails.application.config.billing[:aria][:default_plan].to_s
 $total_count = $failure_count = $progress_count = 0
 

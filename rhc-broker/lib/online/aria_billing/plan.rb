@@ -1,4 +1,4 @@
-module Express
+module Online
   module AriaBilling
     class Plan
       attr_accessor :plans
@@ -15,7 +15,7 @@ module Express
       end
 
       def self.instance
-        Express::AriaBilling::Plan.new
+        Online::AriaBilling::Plan.new
       end
 
       def valid_plan(plan_id)
