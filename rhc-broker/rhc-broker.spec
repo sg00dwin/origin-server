@@ -3,7 +3,7 @@
 
 Summary:   Li broker components
 Name:      rhc-broker
-Version: 1.4.8
+Version: 1.4.9
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -146,6 +146,18 @@ if [ ! -f %{_var}/log/openshift/user_action.log ]; then
 fi
 
 %changelog
+* Wed Feb 06 2013 Adam Miller <admiller@redhat.com> 1.4.9-1
+- Merge pull request #864 from danmcp/master (dmcphers@redhat.com)
+- Merge pull request #862 from pravisankar/dev/ravi/us2626-config-fix
+  (dmcphers@redhat.com)
+- more renames express -> online (dmcphers@redhat.com)
+- -Change usage rates from cents to dollars and add 'duration' field for each
+  usage type. (rpenta@redhat.com)
+- Merge pull request #858 from danmcp/master (dmcphers@redhat.com)
+- Bug 884934 (asari.ruby@gmail.com)
+- express -> online (dmcphers@redhat.com)
+- more coverage adjustments (dmcphers@redhat.com)
+
 * Tue Feb 05 2013 Adam Miller <admiller@redhat.com> 1.4.8-1
 - Improving coverage tooling (dmcphers@redhat.com)
 - Merge pull request #849 from rajatchopra/master (dmcphers@redhat.com)
