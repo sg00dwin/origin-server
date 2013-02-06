@@ -67,20 +67,31 @@ class AccountControllerTest < ActionController::TestCase
     assert_redirected_to complete_account_path(:promo_code => 'a_code')
   end
 
-  test "should render dashboard" do
-    omit_if_aria_is_unavailable if Rails.configuration.aria_enabled
-    with_unique_user
-    get :show
-    assert_response :success
-    assert assigns(:user).email_address.present?
-    assert assigns(:identities).present?
-    assert assigns(:domain).nil?
+  if Rails.configuration.aria_enabled
+    test "should render dashboard with aria" do
+      omit_if_aria_is_unavailable
+      with_unique_user
+      get :show
+      assert_response :success
+      assert assigns(:user).email_address.present?
+      assert assigns(:identities).present?
+      assert assigns(:domain).nil?
 
-    if Rails.configuration.aria_enabled
       assert assigns(:plan).present?, assigns(:user).inspect
       assert_select 'a', 'Upgrade now!'
       assert_select 'p', /FreeShift/, response.inspect
-    else
+    end
+  end
+
+  test "should render dashboard without aria" do
+    with_config(:aria_enabled, false) do
+      with_unique_user
+      get :show
+      assert_response :success
+      assert assigns(:user).email_address.present?
+      assert assigns(:identities).present?
+      assert assigns(:domain).nil?
+
       assert assigns(:plan).nil?
       assert_select 'a', /Learn more about upcoming/
       assert_select 'p', /FreeShift/, response.inspect
