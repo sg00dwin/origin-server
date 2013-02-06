@@ -72,6 +72,9 @@ Broker::Application.configure do
     :gear_sizes => conf.get("VALID_GEAR_SIZES", "small,medium,c9").split(","),
     :default_gear_capabilities => conf.get("DEFAULT_GEAR_CAPABILITIES", "small").split(","),
     :community_quickstarts_url => conf.get('COMMUNITY_QUICKSTARTS_URL'),
+    :scopes => ['Scope::Session', 'Scope::Userinfo'],
+    :default_scope => 'userinfo',
+    :scope_expirations => Scope.parse_expiration(conf.get('AUTH_SCOPE_TIMEOUTS'), 1.day),
   }
 
   config.auth = {

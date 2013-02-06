@@ -160,7 +160,10 @@ Broker::Application.configure do
     :default_max_gears => 3,
     :default_gear_size => "small",
     :default_gear_capabilities => ["small"],
-    :gear_sizes => ["small", "medium", "c9"]
+    :gear_sizes => ["small", "medium", "c9"],
+    :scopes => ['Scope::Session', 'Scope::Application', 'Scope::Userinfo'],
+    :default_scope => 'userinfo',
+    :scope_expirations => Scope.parse_expiration("session=1.days|2.days", 1.month),
   }
 
   # Profiler config
