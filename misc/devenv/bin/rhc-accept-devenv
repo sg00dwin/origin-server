@@ -23,22 +23,22 @@ end
 
 status_code = `curl -s -w %{http_code} --output /dev/null --insecure https://localhost/app`
 if status_code != '200'
-  puts "Tailing last 100 lines of /var/www/openshift/site/httpd/logs/error_log"
-  puts `tail -n 100 /var/www/openshift/site/httpd/logs/error_log`
+  puts "Tailing last 100 lines of /var/log/openshift/site/httpd/error_log"
+  puts `tail -n 100 /var/log/openshift/site/httpd/error_log`
   puts "\n\n"
-  puts "Tailing last 100 lines of /var/www/openshift/site/log/development.log"
-  puts `tail -n 100 /var/www/openshift/site/log/development.log`
+  puts "Tailing last 100 lines of /var/log/openshift/site/development.log"
+  puts `tail -n 100 /var/log/openshift/site/development.log`
   puts "****Site returned a status code of #{status_code}"
   exit 1
 end
 
 status_code = `curl -s -w %{http_code} --output /dev/null --user test:test --insecure  https://localhost/broker/rest/cartridges/standalone`
 if status_code != '200'
-  puts "Tailing last 100 lines of /var/www/openshift/broker/httpd/logs/error_log"
-  puts `tail -n 100 /var/www/openshift/broker/httpd/logs/error_log`
+  puts "Tailing last 100 lines of /var/log/openshift/broker/httpd/error_log"
+  puts `tail -n 100 /var/log/openshift/broker/httpd/error_log`
   puts "\n\n"
-  puts "Tailing last 100 lines of /var/www/openshift/broker/log/development.log"
-  puts `tail -n 100 /var/www/openshift/broker/log/development.log`
+  puts "Tailing last 100 lines of /var/log/openshift/broker/development.log"
+  puts `tail -n 100 /var/log/openshift/broker/development.log`
   puts "****Broker returned a status code of #{status_code}"
   exit 1
 end
