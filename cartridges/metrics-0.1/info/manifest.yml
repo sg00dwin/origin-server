@@ -1,4 +1,5 @@
 Name: metrics-0.1
+Namespace: METRICS
 Display-Name: OpenShift Metrics 0.1
 Description: "An experimental cartridge that demonstrates retrieving real-time statistics from your application. May be removed or replaced in the future."
 Version: 1.1.0
