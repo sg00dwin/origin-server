@@ -46,30 +46,52 @@ $ ->
 
   $('form#edit_aria_billing_info').validate
     rules:
-      # Commented out for now; the new layout isn't currently compatible.
-      #"aria_billing_info[first_name]":
-      #  required: true
-      #"aria_billing_info[last_name]":
-      #  required: true
+      "aria_billing_info[first_name]":
+        required: true
+      "aria_billing_info[last_name]":
+        required: true
       "aria_billing_info[address1]":
         required: true
-      #"aria_billing_info[city]":
-      #  required: true
-      #"aria_billing_info[state]":
-      #  required: true
+      "aria_billing_info[city]":
+        required: true
+      "aria_billing_info[state]":
+        required: true
       "aria_billing_info[country]":
         required: true
-      #"aria_billing_info[zip]":
-      #  required: true
+      "aria_billing_info[zip]":
+        required: true
 
   # /app/account/plans/<plan>/upgrade/edit
   $('form#upgrade_account_new_streamline_full_user').validate
     rules:
-      # Presently the JavaScript doesn't support inline forms, so we only
-      # validate the password using this framework for now
+      "streamline_full_user[streamline_full_user][first_name]":
+        required:   true
+      "streamline_full_user[streamline_full_user][last_name]":
+        required:   true
+      "streamline_full_user[streamline_full_user][title]":
+        required:   true
+      "streamline_full_user[streamline_full_user][company]":
+        required:   true
+      "streamline_full_user[streamline_full_user][phone_number]":
+        required:   true
+        maxlength:  10
       "streamline_full_user[streamline_full_user][password]":
         required:   true
         minlength:  6
-      "streamline_full_user[streamline_full_user][passwordConfirmation]":
+      "streamline_full_user[streamline_full_user][password_confirmation]":
         required:   true
         equalTo:    "#upgrade_account_upgrade_account_streamline_full_user_streamline_full_user_password"
+      "streamline_full_user[aria_billing_info][first_name]":
+        required:   true
+      "streamline_full_user[aria_billing_info][last_name]":
+        required:   true
+      "streamline_full_user[aria_billing_info][address1]":
+        required:   true
+      "streamline_full_user[aria_billing_info][city]":
+        required:   true
+      "streamline_full_user[aria_billing_info][state]":
+        required:   true
+      "streamline_full_user[aria_billing_info][zip]":
+        required:   true
+      "streamline_full_user[aria_billing_info][country]":
+        required:   true
