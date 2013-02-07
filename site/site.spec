@@ -172,7 +172,7 @@ fi
 %{sitedir}/public
 
 %changelog
-* Thu Feb 07 2013 Adam Miller <admiller@redhat.com> - 1.5.1-2
+* Thu Feb 07 2013 Adam Miller <admiller@redhat.com> 1.5.1-2
 - bump for chainbuild
 
 * Thu Feb 07 2013 Adam Miller <admiller@redhat.com> 1.5.1-1
