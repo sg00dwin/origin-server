@@ -6,6 +6,8 @@ require 'config/environment'
 $users_failed = []
 
 $global_cart_cache =  CartridgeCache.cartridges
+$web_framework_carts = CartridgeCache.cartridge_names("web_framework")
+$parent_login_map = {}
 
 class CartridgeCache
   def self.cartridges
@@ -46,7 +48,15 @@ def create_cloud_user(user)
     cu.ssh_keys << sk
   end if user["ssh_keys"]
   begin
-    cu.parent_user_id = CloudUser.find_by(login: user["parent_user_login"])._id if user["parent_user_login"]
+    plogin = user["parent_user_login"]
+    if plogin
+      p_id = $parent_login_map[plogin]
+      if p_id.nil?
+        p_id = CloudUser.find_by(login: plogin)._id
+        $parent_login_map[plogin] = p_id
+      end
+      cu.parent_user_id = p_id
+    end
   rescue Exception => e
     raise Exception.new "Unable to find parent user #{user["parent_user_login"]}"
   end
@@ -170,8 +180,7 @@ def create_group_instances(new_app, old_app)
       cart = CartridgeCache.find_cartridge(cartname)
       is_singleton = cart.get_component(new_comp_inst_hash[cartname].component_name).is_singleton? unless is_singleton
       if framework_cart.nil?
-        web_framework_carts = CartridgeCache.cartridge_names("web_framework")
-        framework_cart = { "comp" => new_comp_inst_hash[cartname].component_name, "cart" => cartname } if web_framework_carts.include? cartname
+        framework_cart = { "comp" => new_comp_inst_hash[cartname].component_name, "cart" => cartname } if $web_framework_carts.include? cartname
       end
       this_gis_carts << cartname unless this_gis_carts.include? cartname
     }
