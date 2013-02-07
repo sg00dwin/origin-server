@@ -1,4 +1,4 @@
-module Express
+module Online
   module AriaBilling
     class ApiHelper
       attr_accessor :auth_key, :client_no, :plans, :supp_plans, :usage_type
@@ -19,7 +19,7 @@ module Express
       end
 
       def self.instance(access_info=nil)
-        Express::AriaBilling::ApiHelper.new(access_info)
+        Online::AriaBilling::ApiHelper.new(access_info)
       end
      
       # NOTE: This method is only used for *Testing*
@@ -112,7 +112,7 @@ module Express
 
       def record_usage(gear_uuid, sync_time, user_id=nil, acct_no=nil, 
                             usage_type=@usage_type[:gear][:small], usage_units=1)
-        raise Express::AriaBilling::Exception.new "user_id or acct_no must be valid" if !user_id && !acct_no
+        raise Online::AriaBilling::Exception.new "user_id or acct_no must be valid" if !user_id && !acct_no
         args = {
           'usage_units' => usage_units,
           'usage_date' => Time.now.strftime("%Y-%m-%d %H:%M:%S"),
@@ -228,7 +228,7 @@ module Express
           if @plans.include?(plan_id)
             plan_no = @plans[plan_id][:plan_no]
           else
-            raise Express::AriaBilling::Exception.new "Invalid Billing Plan Id: #{plan_id}"
+            raise Online::AriaBilling::Exception.new "Invalid Billing Plan Id: #{plan_id}"
           end
         end
         plan_no
@@ -246,7 +246,7 @@ module Express
 
       def get_supp_plan_id(supp_plan_name)
         unless @supp_plans.include?(supp_plan_name)
-          raise Express::AriaBilling::Exception.new "Invalid Billing Supplemental Plan name: #{supp_plan_name}"
+          raise Online::AriaBilling::Exception.new "Invalid Billing Supplemental Plan name: #{supp_plan_name}"
         end
         @supp_plans[supp_plan_name][:plan_no]
       end

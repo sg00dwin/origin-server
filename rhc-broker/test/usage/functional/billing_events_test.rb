@@ -3,7 +3,7 @@ require 'test_helper'
 
 class BillingEventsTest < ActiveSupport::TestCase
   def setup
-    @api = Express::AriaBilling::Api.instance
+    @api = Online::AriaBilling::Api.instance
   end
 
   test "billing events" do

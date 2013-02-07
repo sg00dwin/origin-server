@@ -15,7 +15,7 @@ require 'lib/openshift/brew'
 
 include FileUtils
 
-module Express
+module Online
   class BuilderPlugin < OpenShift::Builder
     include OpenShift::BuilderHelper
     include OpenShift::SauceLabs
@@ -342,17 +342,18 @@ module Express
 
       def download_artifacts(hostname)
         puts "Downloading logs and screenshots..."
-        `rm -rf rhc/log; mkdir -p rhc/log/; pushd rhc/log > /dev/null; mkdir -p site/test/reports broker mcollective system screenshots selenium jbossas broker-profiler coverage; popd > /dev/null`
+        `rm -rf rhc/log; mkdir -p rhc/log/; pushd rhc/log > /dev/null; mkdir -p site/test/reports site/test/coverage broker/test/coverage origin-broker/test/coverage node/test/coverage mcollective system screenshots selenium jbossas broker-profiler coverage; popd > /dev/null`
         scp_from(hostname, "/tmp/rhc/*", "rhc/log")
-        scp_from(hostname, "/var/www/openshift/site/httpd/logs/access_log", "rhc/log/site/access_log.log")
-        scp_from(hostname, "/var/www/openshift/site/httpd/logs/error_log", "rhc/log/site/error_log.log")
-        scp_from(hostname, "/var/www/openshift/site/log/*", "rhc/log/site")
+        scp_from(hostname, "/var/log/openshift/site/*", "rhc/log/site")
         scp_from(hostname, "/root/openshift-test/site/test/reports/*", "rhc/log/site/test/reports")
         scp_from(hostname, "/root/openshift-test/site/log/*", "rhc/log/site")
-        scp_from(hostname, "/var/www/openshift/broker/httpd/logs/access_log", "rhc/log/broker/access_log.log")
-        scp_from(hostname, "/var/www/openshift/broker/httpd/logs/error_log", "rhc/log/broker/error_log.log")
-        scp_from(hostname, "/var/www/openshift/broker/log/*", "rhc/log/broker")
+        scp_from(hostname, "/root/openshift-test/site/test/coverage/*", "rhc/log/site/test/coverage")
+        scp_from(hostname, "/var/log/openshift/broker/*", "rhc/log/broker")
         scp_from(hostname, "/root/openshift-test/rhc-broker/log/*", "rhc/log/broker")
+        scp_from(hostname, "/root/openshift-test/rhc-broker/test/coverage/*", "rhc/log/broker/test/coverage")
+        scp_from(hostname, "/root/openshift-test/broker/log/*", "rhc/log/origin-broker")
+        scp_from(hostname, "/root/openshift-test/broker/test/coverage/*", "rhc/log/origin-broker/test/coverage")
+        scp_from(hostname, "/root/openshift-test/node/test/coverage/*", "rhc/log/node/test/coverage")
         scp_from(hostname, "/var/log/openshift/user_action.log", "rhc/log/broker/user_action.log")
         scp_from(hostname, "/var/log/mcollective.*", "rhc/log/mcollective")
         scp_from(hostname, "/var/log/httpd/access_log", "rhc/log/system/access_log.log")
@@ -388,11 +389,11 @@ then
   service rhc-datastore restart
   sleep 5
 fi
-echo > /var/www/openshift/broker/log/development.log
-echo > /var/www/openshift/broker/httpd/logs/error_log
+echo > /var/log/openshift/broker/development.log
+echo > /var/log/openshift/broker/httpd/error_log
 service rhc-broker restart
-echo > /var/www/openshift/site/log/development.log
-echo > /var/www/openshift/site/httpd/logs/error_log
+echo > /var/log/openshift/site/development.log
+echo > /var/log/openshift/site/httpd/error_log
 service rhc-site restart
 service httpd restart
 service openshift-port-proxy restart
@@ -441,7 +442,7 @@ service openshift-port-proxy restart
                 test_queues[2] << ["REST API Group 3", "cucumber #{CUCUMBER_OPTIONS} -t @broker_api3 openshift-test/tests", {:retry_individually => true}]
                 test_queues[3] << ["REST API Group 4", "cucumber #{CUCUMBER_OPTIONS} -t @broker_api4 openshift-test/tests", {:retry_individually => true}]
                 test_queues[0] << ["Broker Domain System", "cd openshift-test/rhc-broker; rake test:domain_system_test", {:retry_individually => true}]
-                test_queues[2] << ["OpenShift Broker Unit Ext 1", "cd openshift-test/broker; rake test:oo_unit_ext1", {:retry_individually => true}]
+                test_queues[2] << ["OpenShift Broker Functionals Ext", "cd openshift-test/broker; rake test:functionals_ext", {:retry_individually => true}]
                 test_queues[3] << ["Broker Usage", "cd openshift-test/rhc-broker; rake test:usage"]
                 test_queues[0] << ["Broker Application System", "cd openshift-test/rhc-broker; rake test:application_system_test", {:retry_individually => true}]
                 test_queues[2] << ["Broker Cartridge System", "cd openshift-test/rhc-broker; rake test:cartridge_system_test", {:retry_individually => true}]
@@ -459,10 +460,6 @@ service openshift-port-proxy restart
                 exit 1
               end
             end
-          elsif options.include_coverage?
-            test_queues[0] << ["OpenShift Node Unit Coverage", "cd openshift-test/node; rake coverage; cp -a coverage /tmp/rhc/openshift_node_coverage"]
-            test_queues[1] << ["Broker Unit and Functional Coverage", "cd openshift-test/rhc-broker; rake coverage; cp -a test/coverage /tmp/rhc/broker_coverage"]
-            test_queues[2] << ["OpenShift Broker Unit and Functional Coverage", "cd openshift-test/broker; rake coverage; cp -a test/coverage /tmp/rhc/openshift_broker_coverage"]
           elsif options.include_cucumber
             timeout = @@SSH_TIMEOUT
             timeout = @@SSH_TIMEOUT_OVERRIDES[options.include_cucumber] if not @@SSH_TIMEOUT_OVERRIDES[options.include_cucumber].nil?
@@ -539,12 +536,10 @@ service openshift-port-proxy restart
               test_queues[0] << ["Broker Unit", "cd openshift-test/rhc-broker; rake test:units"]
               test_queues[1] << ["Broker Functional", "cd openshift-test/rhc-broker; rake test:functionals"]
               test_queues[0] << ["Broker Integration", "cd openshift-test/rhc-broker; rake test:integration"]
-              test_queues[1] << ["OpenShift Broker Functional", "cd openshift-test/broker; rake test:functionals"]
+              test_queues[1] << ["OpenShift Broker Units", "cd openshift-test/broker; rake test:units"]
               test_queues[0] << ["OpenShift Broker Integration", "cd openshift-test/broker; rake test:integration"]
-
-              test_queues[2] << ["OpenShift Broker Unit 1", "cd openshift-test/broker; rake test:oo_unit1"]
-              test_queues[2] << ["OpenShift Broker Unit 2", "cd openshift-test/broker; rake test:oo_unit2"]
-              test_queues[3] << ["Broker Cucumber", "cucumber --strict -f html --out /tmp/rhc/broker_cucumber.html -f progress -t @broker openshift-test/tests"]
+              test_queues[2] << ["OpenShift Broker Functional", "cd openshift-test/broker; rake test:functionals"]
+              test_queues[3] << ["Broker Cucumber", "cucumber --strict -f html --out /tmp/rhc/broker_cucumber.html -f progress -t @broker -t ~@fedora-only openshift-test/tests"]
             end
 
             unless options.exclude_runtime?
@@ -933,4 +928,4 @@ rm -rf #{working_dirs}
   end # class end
 end # module end
 
-Express::BuilderPlugin.start
+Online::BuilderPlugin.start

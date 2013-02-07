@@ -136,7 +136,7 @@ def sync_usage(usage_records)
   end
 
   # Get billing act# for the user
-  billing_api = Express::AriaBilling::Api.new
+  billing_api = Online::AriaBilling::Api.new
   billing_user_id = Digest::MD5::hexdigest(usage_records[0].login)
   billing_acct_no = get_billing_user_acct_no(billing_api, billing_user_id)
     
@@ -184,7 +184,7 @@ end
 
 def list_usage(usage_records)
   # Get billing act# for the user
-  billing_api = Express::AriaBilling::Api.new
+  billing_api = Online::AriaBilling::Api.new
   billing_user_id = Digest::MD5::hexdigest(usage_records[0].login)
   billing_acct_no = get_billing_user_acct_no(billing_api, billing_user_id)
     

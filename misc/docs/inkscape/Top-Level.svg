@@ -598,7 +598,7 @@
            x="412.14224"
            y="503.67819"
            style="font-size:14px" /></flowRegion><flowPara
-         id="flowPara4283">mcollective is an opensource coordination project.  It has a client portion and server portion.  The server is running on each node and the client is on the express broker</flowPara><flowPara
+         id="flowPara4283">mcollective is an opensource coordination project.  It has a client portion and server portion.  The server is running on each node and the client is on the broker</flowPara><flowPara
          id="flowPara4285" /><flowPara
          id="flowPara4287">Facts are a feature of mcollective to get information about nodes and filter based on them</flowPara></flowRoot>    <flowRoot
        xml:space="preserve"

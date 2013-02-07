@@ -3,12 +3,11 @@
 # incomplete
 
 require 'simplecov'
+
 SimpleCov.start 'rails' do
   coverage_dir 'test/coverage/'
-  command_name ENV["TEST_NAME"] || 'broker tests'
+  command_name ENV["TEST_NAME"] || 'rhc broker tests'
+  add_group 'Online Extensions', 'lib/online'
 
-  # Filters - these files will be ignored.
-  add_filter '/test/'
-
-  merge_timeout 1000
+  merge_timeout 10000
 end

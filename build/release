@@ -199,12 +199,17 @@ class Release < Thor
           if CHAIN_BUILD_SETS.flatten.include?(build_info[0])
 
             need_chain_build = true
+            spec_filename = File.basename(build_info[2])
 
             # commands to bump spec of chain build members 
-            bumpspec_cmd = "rpmdev-bumpspec -c '- bump for chainbuild' #{build_info[2]}"
-            git_add_bumpspec = "git add #{build_info[2]}; git commit -m 'Bumping Release: for chainbuild'"
+            bumpspec_cmd = "rpmdev-bumpspec -c '- bump for chainbuild' #{spec_filename}"
+            git_add_bumpspec = "git add #{spec_filename}; git commit -m 'Bumping Release: for chainbuild'"
             tag_nochangelog = "tito tag --keep-version --no-auto-changelog"
             git_fetch_push_tags = "git fetch --tags && git pull && git push origin master && git push --tags"
+
+            # tito throws a permissions error if it tries to write the same
+            # filename out twice and then it will stack trace
+            `rm -f /tmp/tito/#{build_info[0].strip}*`
   
             puts "=== Chain Build Package Found, Bumping Release ==="
             puts "=- #{build_info[0]}"
@@ -212,7 +217,7 @@ class Release < Thor
             unless run(bumpspec_cmd, :verbose => options.verbose?) and
                       run(git_add_bumpspec, :verbose => options.verbose?) and
                       run(tag_nochangelog, :verbose => options.verbose?) and
-                      run(git_fetch_puth_tags, :verbose => options.verbose?)
+                      run(git_fetch_push_tags, :verbose => options.verbose?)
               
               chain_build_failures += "pushd #{working_dir} > /dev/null; #{bumpspec_cmd}; popd > /dev/null;\n"
               chain_build_failures += "pushd #{working_dir} > /dev/null; #{git_add_bumpspec}; popd > /dev/null;\n"

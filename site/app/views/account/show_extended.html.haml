@@ -12,7 +12,10 @@
 
   .span5
     %section
-      = render :partial => user_can_upgrade_plan? ? 'plan' : 'plan_info', :locals => {:plan => @plan}
+      - if @plan
+        = render :partial => 'plan', :locals => {:plan => @plan}
+      - else
+        = render :partial => 'plan_info'
 
     %section
       = render :partial => 'keys', :locals => {:keys => @keys}

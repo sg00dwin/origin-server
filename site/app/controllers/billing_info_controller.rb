@@ -1,7 +1,10 @@
 class BillingInfoController < ApplicationController
+  include BillingAware
+
   layout 'account'
 
   before_filter :authenticate_user!
+  before_filter :user_can_upgrade_plan!
 
   def edit
     @billing_info = current_user.extend(Aria::User).billing_info

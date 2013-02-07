@@ -55,7 +55,7 @@ class PlansApiTest < ActionDispatch::IntegrationTest
       plans = body["data"]
       assert(plans.length > 1)
       plans.each do |plan|
-        assert_not_nil(plan["id"], "Id for plan in nil")
+        assert_not_nil(plan["id"], "Id for plan is nil")
         assert_not_nil(plan["name"], "Name for plan #{plan["id"]} is nil")
         assert_not_nil(plan["plan_no"], "Plan no for plan #{plan["id"]} is nil")
       end

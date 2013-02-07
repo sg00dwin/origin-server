@@ -8,7 +8,7 @@
 
 Summary:   Dependencies for OpenShift development
 Name:      rhc-devenv
-Version: 1.4.3
+Version: 1.5.1
 Release:   1%{?dist}
 Group:     Development/Libraries
 License:   GPLv2
@@ -216,10 +216,10 @@ mkdir -p %{buildroot}%{devenvdir}
 mkdir -p %{buildroot}%{_initddir}
 mv %{buildroot}%{devenvdir}/init.d/* %{buildroot}%{_initddir}
 
-mkdir -p %{buildroot}%{brokerdir}/log
+mkdir -p %{buildroot}%{_var}/log/openshift/broker/
 
 # Setup mcollective client log
-touch %{buildroot}%{brokerdir}/log/mcollective-client.log
+touch %{buildroot}%{_var}/log/openshift/broker/mcollective-client.log
 
 # Setup the jenkins jobs
 mkdir -p %{buildroot}%{jenkins}/jobs
@@ -272,6 +272,7 @@ gem install kramdown --no-rdoc --no-ri
 # Install gems for rhc to work on the devenv with ruby-1.9 
 gem install rspec --version 1.3.0 --no-rdoc --no-ri
 gem install fakefs --no-rdoc --no-ri
+gem install httpclient --version 2.3.2 --no-rdoc --no-ri
 
 # Move over all configs and scripts
 /bin/cp -rf %{devenvdir}/etc/* %{_sysconfdir}
@@ -290,7 +291,11 @@ chmod 0644 %{jenkins}/.ssh/id_rsa.pub %{jenkins}/.ssh/known_hosts /root/.ssh/id_
 # Move over new http configurations
 /bin/cp -rf %{devenvdir}/httpd/* %{libradir}
 /bin/cp -rf %{devenvdir}/httpd.conf %{sitedir}/httpd/
+sed -i 's|^ErrorLog.*$|ErrorLog /var/log/openshift/site/httpd/error_log|' %{sitedir}/httpd/httpd.conf
+sed -i 's|^CustomLog.*$|CustomLog /var/log/openshift/site/httpd/access_log combined|' %{sitedir}/httpd/httpd.conf
 /bin/cp -rf %{devenvdir}/httpd.conf %{brokerdir}/httpd/
+sed -i 's|^ErrorLog.*$|ErrorLog /var/log/openshift/broker/httpd/error_log|' %{brokerdir}/httpd/httpd.conf
+sed -i 's|^CustomLog.*$|CustomLog /var/log/openshift/broker/httpd/access_log combined|' %{brokerdir}/httpd/httpd.conf
 /bin/cp -f %{devenvdir}/client.cfg %{devenvdir}/server.cfg /etc/mcollective
 /bin/cp -f %{devenvdir}/activemq.xml /etc/activemq
 ln -s %{sitedir}/public/* %{htmldir}
@@ -535,10 +540,6 @@ mv -f /usr/share/openscap/scap-rhel6-xccdf.xml.tmp /usr/share/openscap/scap-rhel
 # Populate Drupal Database 
 echo "select count(*) from users;" | mysql -u root libra > /dev/null 2>&1 || zcat /usr/share/drupal6/sites/default/openshift-dump.gz | mysql -u root
 
-# Make the webserver use hsts - BZ801848
-#  ...only on SSL (BZ859471)
-echo "Header set Strict-Transport-Security \"max-age=15768000\" env=HTTPS" > /etc/httpd/conf.d/hsts.conf
-
 # Create place to drop proxy mod_cache files
 mkdir -p /srv/cache/mod_cache
 chmod 750 /srv/cache/mod_cache
@@ -571,7 +572,7 @@ chmod 750 /usr/bin/crontab
 chmod 750 /usr/bin/at
 
 # Fix devenv log file ownership
-chown root:libra_user /var/www/openshift/broker/log/mcollective-client.log
+chown root:libra_user %{_var}/log/openshift/broker/mcollective-client.log
 
 ## For RKHUNTER to not use tmp any more
 # Added nagios_monitor user to match STG and PROD
@@ -622,9 +623,11 @@ fi
 # Create a test user with additional storage capabilities
 echo "Creating test user:  user_with_extra_storage@test.com"
 curl https://localhost/broker/rest/user -u user_with_extra_gear_storage@test.com:pass
-bundle exec rails runner "u=CloudUser.find_by_identitity('user_with_extra_storage@test.com'); u.capabilities['max_storage_per_gear'] = 10; u.save;"
-if [ $? -ne 0 ]
+if [ $? -eq 0 ]
 then
+  echo "Adding additional storage to user"
+  /usr/sbin/oo-admin-ctl-user -l user_with_extra_storage@test.com --setmaxstorage 10 --setmaxgears 10
+else
   echo "user_with_extra_storage could not be created!"
 fi
 
@@ -648,7 +651,7 @@ cd /var/www/openshift/site && /usr/bin/scl enable ruby193 "rake assets:clean"
 
 %files
 %defattr(-,root,root,-)
-%attr(0660,-,-) %{brokerdir}/log/mcollective-client.log
+%attr(0660,-,-) %{_var}/log/openshift/broker/mcollective-client.log
 %config(noreplace) %{jenkins}/jobs/*/*
 %{jenkins}/jobs/sync_up.rb
 %{jenkins}/jobs/sync_down.rb
@@ -666,6 +669,33 @@ restorecon /etc/openshift/node.conf || :
 /sbin/service libra-data restart > /dev/null 2>&1 || :
 
 %changelog
+* Thu Feb 07 2013 Adam Miller <admiller@redhat.com> 1.5.1-1
+- bump_minor_versions for sprint 24 (admiller@redhat.com)
+
+* Wed Feb 06 2013 Adam Miller <admiller@redhat.com> 1.4.7-1
+- Bug 908417: Do not force users to https. (mrunalp@gmail.com)
+- more coverage adjustments (dmcphers@redhat.com)
+- more clean up from log move, fix BZ#907808 (admiller@redhat.com)
+
+* Tue Feb 05 2013 Adam Miller <admiller@redhat.com> 1.4.6-1
+- Add Ruby 1.9 httpclient gem to devenv (ironcladlou@gmail.com)
+
+* Mon Feb 04 2013 Adam Miller <admiller@redhat.com> 1.4.5-1
+- Merge pull request #827 from fotioslindiakos/storage
+  (dmcphers+openshiftbot@redhat.com)
+- Merge pull request #812 from maxamillion/dev/admiller/move_logs
+  (dmcphers+openshiftbot@redhat.com)
+- Give storage user more gears for testing (fotios@redhat.com)
+- Use oo-admin-ctl-user script to modify max storage (fotios@redhat.com)
+- move all logs to /var/log/openshift/ so we can logrotate properly
+  (admiller@redhat.com)
+
+* Mon Feb 04 2013 Adam Miller <admiller@redhat.com> 1.4.4-1
+- working on testing coverage (dmcphers@redhat.com)
+- Merge pull request #834 from lnader/improve-test-coverage
+  (dmcphers+openshiftbot@redhat.com)
+- Bug 903325 (lnader@redhat.com)
+
 * Fri Feb 01 2013 Adam Miller <admiller@redhat.com> 1.4.3-1
 - Add community carts - python 2.7 + 3.3 to install on a devenv.
   (smitram@gmail.com)

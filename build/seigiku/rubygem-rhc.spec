@@ -9,7 +9,7 @@ Version:       1.1.0
 Release:       1%{?dist}
 Group:         Development/Tools
 License:       MIT
-URL:           https://openshift.redhat.com/app/express
+URL:           https://openshift.redhat.com/
 Source0:       http://rubygems.org/downloads/%{gemname}-%{version}.gem
 BuildRoot:     %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 Requires:      ruby(abi) = 1.8

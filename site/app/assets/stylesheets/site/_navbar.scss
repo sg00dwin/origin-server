@@ -18,10 +18,9 @@
   }
 
   .brand-image {
-    background: image-url('logo-medium.png') center top no-repeat transparent;
+    background: image-url('logo-medium.png') no-repeat 49% 0;
     height: $logoHeight;
-    //width: $logoWidth;
-    margin-bottom: 11px;
+    margin-bottom: 10px;
   }
 
   .brand > a {
@@ -29,10 +28,11 @@
     color: #fff;
     text-decoration:none;
     > .brand-image {
-      @include transition(all 0.2s);
+      @include transition-property(transform);
+      @include transition-duration(0.2s);
     }
     > .brand-text {
-    	border-bottom: 2px solid transparent;
+      border-bottom: 2px solid transparent;
       padding-bottom: 2px;
       color: white;
       text-align: center;
@@ -40,7 +40,7 @@
 
     &:hover {
       > .brand-image {
-        @include transform(rotate(-10deg));
+        @include transform(rotate(-9deg));
       }
       > .brand-text {
       	border-bottom: 2px solid #EB0011;

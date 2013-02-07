@@ -15,7 +15,7 @@ class CloudUser
 
   def get_plan_info(plan_id)
     plan_id = plan_id.to_s.downcase.to_sym if plan_id
-    Express::AriaBilling::Plan.instance.plans[plan_id] or
+    Online::AriaBilling::Plan.instance.plans[plan_id] or
       raise OpenShift::UserException.new("A plan with specified id does not exist", 150, "plan_id")
   end
 
@@ -93,7 +93,7 @@ class CloudUser
     if self.usage_account_id
       return self.usage_account_id
     else
-      billing_api = Express::AriaBilling::Api.instance
+      billing_api = Online::AriaBilling::Api.instance
       billing_user_id = Digest::MD5::hexdigest(self.login)
       account_no = nil
       begin
@@ -108,7 +108,7 @@ class CloudUser
 
   def get_billing_details
     begin
-      billing_api = Express::AriaBilling::Api.instance
+      billing_api = Online::AriaBilling::Api.instance
       return billing_api.get_acct_details_all(self.get_billing_account_no)
     rescue Exception => ex
       raise OpenShift::UserException.new("Could not get billing account info for user #{self.login} : #{ex.message}", 155)
@@ -144,7 +144,7 @@ class CloudUser
     self.assign_plan(default_plan_id) if old_plan_id && (old_plan_id != default_plan_id)
     self.save!
 
-    billing_api = Express::AriaBilling::Api.instance
+    billing_api = Online::AriaBilling::Api.instance
     begin
       #update plan in aria
       billing_api.update_master_plan(self.usage_account_id, plan_id.to_sym) unless plan_info[:plan_no] == account["plan_no"]

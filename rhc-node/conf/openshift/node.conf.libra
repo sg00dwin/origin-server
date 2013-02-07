@@ -5,7 +5,7 @@ GEAR_GECOS="OpenShift guest"             #Gecos information to populate for the 
 #BZ874587
 GEAR_MIN_UID=500                    #Lower bound of UID used to create gears
 GEAR_MAX_UID=6500                   #Upper bound of UID used to create gears
-OPENSHIFT_NODE_PLUGINS="/usr/libexec/openshift/lib/express/unix_user_observer,openshift-origin-node/plugins/unix_user_observer.rb"
+OPENSHIFT_NODE_PLUGINS="/usr/libexec/openshift/lib/online/unix_user_observer,openshift-origin-node/plugins/unix_user_observer.rb"
 CARTRIDGE_BASE_PATH="/usr/libexec/openshift/cartridges"  #Locations where cartridges are installed
 LAST_ACCESS_DIR="/var/lib/openshift/.last_access"    #Location to maintain last accessed time for gears
 PROXY_MIN_PORT_NUM=35531                  #Lower bound of port numbers used to proxy ports externally

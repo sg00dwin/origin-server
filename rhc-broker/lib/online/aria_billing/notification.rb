@@ -1,7 +1,7 @@
 require 'rubygems'
 require 'pony'
 
-module Express
+module Online
   module AriaBilling
     class Notification
 

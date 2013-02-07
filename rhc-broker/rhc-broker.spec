@@ -3,7 +3,7 @@
 
 Summary:   Li broker components
 Name:      rhc-broker
-Version: 1.4.4
+Version: 1.5.1
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -66,7 +66,6 @@ mkdir -p %{buildroot}%{_bindir}
 mkdir -p %{buildroot}%{htmldir}
 mkdir -p %{buildroot}%{brokerdir}
 mkdir -p %{buildroot}%{brokerdir}/httpd/conf
-mkdir -p -m 770 %{buildroot}%{brokerdir}/httpd/logs
 mkdir -p %{buildroot}%{brokerdir}/httpd/run
 mkdir -p %{buildroot}/usr/lib/openshift/broker
 mkdir -p %{buildroot}/etc/openshift/plugins.d/
@@ -76,8 +75,8 @@ ln -s %{brokerdir}/public %{buildroot}%{htmldir}/broker
 ln -sf /etc/httpd/conf/magic %{buildroot}%{brokerdir}/httpd/conf/magic
 
 mkdir -p %{buildroot}%{brokerdir}/run
-mkdir -p %{buildroot}%{brokerdir}/log
-mkdir -p %{buildroot}%{_var}/log/openshift
+mkdir -p %{buildroot}%{_var}/log/openshift/broker/
+mkdir -m 770 %{buildroot}%{_var}/log/openshift/broker/httpd/
 mkdir -p -m 770 %{buildroot}%{brokerdir}/tmp/cache
 mkdir -p -m 770 %{buildroot}%{brokerdir}/tmp/pids
 mkdir -p -m 770 %{buildroot}%{brokerdir}/tmp/sessions
@@ -100,10 +99,7 @@ rm -rf $RPM_BUILD_ROOT
 
 %files
 %attr(0770,root,libra_user) %{brokerdir}/tmp
-%attr(0770,root,libra_user) %{brokerdir}/log
 %defattr(0640,root,libra_user,0750)
-%ghost %attr(0660,root,root) %{brokerdir}/log/production.log
-%ghost %attr(0660,root,root) %{brokerdir}/log/development.log
 %ghost %attr(0660,root,root) %{_var}/log/openshift/user_action.log
 %config(noreplace) %{brokerdir}/config/keys/public.pem
 %config(noreplace) %{brokerdir}/config/keys/private.pem
@@ -112,6 +108,9 @@ rm -rf $RPM_BUILD_ROOT
 %attr(0750,-,-) %{brokerdir}/config/keys/generate_rsa_keys
 %attr(0750,-,-) %{brokerdir}/config/keys/generate_rsync_rsa_keys
 %attr(0750,-,-) %{brokerdir}/script
+%attr(0770,root,libra_user) %{_var}/log/openshift/broker/
+%ghost %attr(0660,root,libra_user) %{_var}/log/openshift/broker/production.log
+%ghost %attr(0660,root,libra_user) %{_var}/log/openshift/broker/development.log
 %{brokerdir}
 %{htmldir}/broker
 %attr(0750,-,-) %{_bindir}/rhc-admin-cartridge-do
@@ -127,17 +126,18 @@ rm -rf $RPM_BUILD_ROOT
 /etc/openshift/broker-dev.conf
 
 %post
-if [ ! -f %{brokerdir}/log/production.log ]; then
-  /bin/touch %{brokerdir}/log/production.log
-  chown root:libra_user %{brokerdir}/log/production.log
-  chmod 660 %{brokerdir}/log/production.log
+if [ ! -f %{_var}/log/openshift/broker/production.log ]; then
+  /bin/touch %{_var}/log/openshift/broker/production.log
+  chown root:libra_user %{_var}/log/openshift/broker/production.log
+  chmod 660 %{_var}/log/openshift/broker/production.log
 fi
 
-if [ ! -f %{brokerdir}/log/development.log ]; then
-  /bin/touch %{brokerdir}/log/development.log
-  chown root:libra_user %{brokerdir}/log/development.log
-  chmod 660 %{brokerdir}/log/development.log
+if [ ! -f %{_var}/log/openshift/broker/development.log ]; then
+  /bin/touch %{_var}/log/openshift/broker/development.log
+  chown root:libra_user %{_var}/log/openshift/broker/development.log
+  chmod 660 %{_var}/log/openshift/broker/development.log
 fi
+
 
 if [ ! -f %{_var}/log/openshift/user_action.log ]; then
   /bin/touch %{_var}/log/openshift/user_action.log
@@ -146,6 +146,48 @@ if [ ! -f %{_var}/log/openshift/user_action.log ]; then
 fi
 
 %changelog
+* Thu Feb 07 2013 Adam Miller <admiller@redhat.com> 1.5.1-1
+- Modifying tests to only set namespace and not the canonical_namespace
+  (abhgupta@redhat.com)
+- bump_minor_versions for sprint 24 (admiller@redhat.com)
+
+* Wed Feb 06 2013 Adam Miller <admiller@redhat.com> 1.4.9-1
+- Merge pull request #864 from danmcp/master (dmcphers@redhat.com)
+- Merge pull request #862 from pravisankar/dev/ravi/us2626-config-fix
+  (dmcphers@redhat.com)
+- more renames express -> online (dmcphers@redhat.com)
+- -Change usage rates from cents to dollars and add 'duration' field for each
+  usage type. (rpenta@redhat.com)
+- Merge pull request #858 from danmcp/master (dmcphers@redhat.com)
+- Bug 884934 (asari.ruby@gmail.com)
+- express -> online (dmcphers@redhat.com)
+- more coverage adjustments (dmcphers@redhat.com)
+
+* Tue Feb 05 2013 Adam Miller <admiller@redhat.com> 1.4.8-1
+- Improving coverage tooling (dmcphers@redhat.com)
+- Merge pull request #849 from rajatchopra/master (dmcphers@redhat.com)
+- cleanup script for ops to clear pending op groups (rchopra@redhat.com)
+
+* Tue Feb 05 2013 Adam Miller <admiller@redhat.com> 1.4.7-1
+- Fix for bug 907683 - reading the distributed lock from the primary
+  (abhgupta@redhat.com)
+- Fixing broker extended tests (abhgupta@redhat.com)
+
+* Mon Feb 04 2013 Adam Miller <admiller@redhat.com> 1.4.6-1
+- Merge pull request #812 from maxamillion/dev/admiller/move_logs
+  (dmcphers+openshiftbot@redhat.com)
+- move all logs to /var/log/openshift/ so we can logrotate properly
+  (admiller@redhat.com)
+
+* Mon Feb 04 2013 Adam Miller <admiller@redhat.com> 1.4.5-1
+- working on testing coverage (dmcphers@redhat.com)
+- handle numbers for users and passwords (dmcphers@redhat.com)
+- Merge pull request #834 from lnader/improve-test-coverage
+  (dmcphers+openshiftbot@redhat.com)
+- Better naming (dmcphers@redhat.com)
+- Added simplecov to rhc broker tests (lnader@redhat.com)
+- share db connection logic (dmcphers@redhat.com)
+
 * Fri Feb 01 2013 Adam Miller <admiller@redhat.com> 1.4.4-1
 - Bug 906669 (dmcphers@redhat.com)
 - Merge pull request #828 from pravisankar/dev/ravi/us2626-feedback

@@ -18,9 +18,11 @@ module Account
 
       async{ @keys = Key.find :all, :as => @user }
 
-      async do
-        api_user = current_api_user
-        @plan = api_user.plan.tap{ |c| c.name }
+      if user_can_upgrade_plan?
+        async do
+          api_user = current_api_user
+          @plan = api_user.plan.tap{ |c| c.name }
+        end
       end
 
       join!(30)

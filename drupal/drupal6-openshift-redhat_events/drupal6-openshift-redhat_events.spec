@@ -5,7 +5,7 @@
 %global modname             redhat_events
 
 Name:    drupal%{drupal_release}-openshift-%{modname}
-Version: 1.5.1
+Version: 1.6.1
 Release: 1%{?dist}
 Summary: Openshift Red Hat Events Custom Module for Drupal6
 Group:   Applications/Publishing
@@ -41,6 +41,13 @@ rm -rf $RPM_BUILD_ROOT
 %{drupal_modules}/%{modname}
 
 %changelog
+* Thu Feb 07 2013 Adam Miller <admiller@redhat.com> 1.6.1-1
+- bump_minor_versions for sprint 24 (admiller@redhat.com)
+
+* Mon Feb 04 2013 Adam Miller <admiller@redhat.com> 1.5.2-1
+- Bug 894552 - removes time and timezones from the Drupal Events module, now
+  just using dates (ffranz@redhat.com)
+
 * Sat Nov 17 2012 Adam Miller <admiller@redhat.com> 1.5.1-1
 - bump_minor_versions for sprint 21 (admiller@redhat.com)
 
