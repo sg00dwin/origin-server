@@ -46,7 +46,7 @@ def create_cloud_user(user)
   cu.pending_plan_id = user["pending_plan_id"]  if user["pending_plan_id"]
   cu.pending_plan_uptime = user["pending_plan_uptime"]  if user["pending_plan_uptime"]
   cu.usage_account_id = user["usage_account_id"] if user["usage_account_id"]
-  cu.save!
+  cu.save!(validate: false)
   Lock.create_lock(cu)
   cu
 end
@@ -81,7 +81,7 @@ def create_domains(user, cloud_user_obj)
       dm.system_ssh_keys << ssk
     end if user["system_ssh_keys"]
     #dm.env_vars =
-    dm.save!
+    dm.save!(validate: false)
   end
   dm
 end
@@ -127,7 +127,7 @@ def create_applications(user, domain_obj)
     group_overrides = create_group_instances(app, uapp)
     #  app.group_overrides = uapp["group_overrides"] if uapp["group_overrides"]
     fix_connections(app, group_overrides)
-    app.save!
+    app.save!(validate: false)
   end if user["apps"]
 end
 
