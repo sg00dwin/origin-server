@@ -18,7 +18,7 @@ class CtlUsageTest < ActionDispatch::IntegrationTest
     cu.save!
     Lock.create_lock(cu)
     
-    @domain = Domain.new(namespace: @namespace, canonical_namespace: @namespace, owner: cu)
+    @domain = Domain.new(namespace: @namespace, owner: cu)
     @domain.save!
     @districts_enabled = Rails.configuration.msg_broker[:districts][:enabled] 
     Rails.configuration.msg_broker[:districts][:enabled] = false
