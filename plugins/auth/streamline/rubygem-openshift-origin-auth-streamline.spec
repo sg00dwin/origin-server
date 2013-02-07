@@ -9,7 +9,7 @@
 
 Summary:        OpenShift plugin for streamline auth service
 Name:           rubygem-%{gem_name}
-Version: 1.3.0
+Version: 1.3.1
 Release:        1%{?dist}
 Group:          Development/Languages
 License:        ASL 2.0
@@ -81,6 +81,9 @@ rm -rf %{buildroot}
 /etc/openshift/plugins.d/openshift-origin-auth-streamline-dev.conf
 
 %changelog
+* Thu Feb 07 2013 Adam Miller <admiller@redhat.com> 1.3.1-1
+- bump_minor_versions for sprint 24 (admiller@redhat.com)
+
 * Tue Jan 29 2013 Adam Miller <admiller@redhat.com> 1.2.3-1
 - when changing variable names, change them all (admiller@redhat.com)
 - Don't use streamline auth service for rails test env (rpenta@redhat.com)
