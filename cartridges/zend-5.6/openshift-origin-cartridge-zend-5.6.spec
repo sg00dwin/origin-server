@@ -2,7 +2,7 @@
 
 Summary:   Provides zend-5.6 support
 Name:      openshift-origin-cartridge-zend-5.6
-Version: 1.4.2
+Version: 1.5.0
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   ASL 2.0
