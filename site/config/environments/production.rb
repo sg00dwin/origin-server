@@ -110,12 +110,6 @@ RedHatCloud::Application.configure do
                                  overpass.css
                                 )
 
-  if config.respond_to? :sass
-    config.sass.style = :compressed
-    config.sass.line_comments = false
-    config.sass.relative_assets = true
-  end
-
   Console.configure do |c|
     c.api = :local
   end

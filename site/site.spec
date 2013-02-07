@@ -3,12 +3,12 @@
     %global scl_prefix ruby193-
 %endif
 %global rubyabi 1.9.1
-%define htmldir %{_localstatedir}/www/html
-%define sitedir %{_localstatedir}/www/openshift/site
+%define htmldir %{_var}/www/html
+%define sitedir %{_var}/www/openshift/site
 
 Summary:   OpenShift Site Rails application
 Name:      rhc-site
-Version: 1.4.4
+Version: 1.5.1
 Release:   2%{?dist}
 Group:     Network/Daemons
 License:   ASL 2.0
@@ -97,13 +97,20 @@ such as images, CSS, JavaScript, and HTML.
 
 set -e
 
+mkdir -p %{buildroot}%{_var}/log/openshift/site/
+mkdir -m 770 %{buildroot}%{_var}/log/openshift/site/httpd/
+touch %{buildroot}%{_var}/log/openshift/site/httpd/production.log
+chmod 0666 %{buildroot}%{_var}/log/openshift/site/httpd/production.log
+
 rm -f Gemfile.lock
 bundle install --local
 
-RAILS_ENV=production RAILS_RELATIVE_URL_ROOT=/app bundle exec rake assets:precompile assets:public_pages
+RAILS_ENV=production RAILS_RELATIVE_URL_ROOT=/app \
+  RAILS_LOG_PATH=%{buildroot}%{_var}/log/openshift/site/httpd/production.log \
+  bundle exec rake assets:precompile assets:public_pages
 
 rm -rf tmp
-rm log/*
+rm -rf %{buildroot}%{_var}/log/openshift/*
 rm -f Gemfile.lock
 
 %{?scl:EOF}
@@ -113,11 +120,12 @@ rm -rf %{buildroot}
 mkdir -p %{buildroot}%{htmldir}
 mkdir -p %{buildroot}%{sitedir}
 mkdir -p %{buildroot}%{sitedir}/run
-mkdir -p %{buildroot}%{sitedir}/log
 mkdir -p %{buildroot}%{sitedir}/tmp/cache/assets
 
+mkdir -p %{buildroot}%{_var}/log/openshift/site/
+mkdir -m 770 %{buildroot}%{_var}/log/openshift/site/httpd/
+
 mkdir -p %{buildroot}%{sitedir}/httpd/conf
-mkdir -p -m 770 %{buildroot}%{sitedir}/httpd/logs
 mkdir -p %{buildroot}%{sitedir}/httpd/run
 
 cp -r . %{buildroot}%{sitedir}
@@ -128,16 +136,16 @@ ln -sf /etc/httpd/conf/magic %{buildroot}%{sitedir}/httpd/conf/magic
 rm -rf %{buildroot}
 
 %post
-if [ ! -f %{sitedir}/log/production.log ]; then
-  /bin/touch %{sitedir}/log/production.log
-  chown root:libra_user %{sitedir}/log/production.log
-  chmod 660 %{sitedir}/log/production.log
+if [ ! -f %{_var}/log/openshift/site/production.log ]; then
+  /bin/touch %{_var}/log/openshift/site/production.log
+  chown root:libra_user %{_var}/log/openshift/site/production.log
+  chmod 660 %{_var}/log/openshift/site/production.log
 fi
 
-if [ ! -f %{sitedir}/log/development.log ]; then
-  /bin/touch %{sitedir}/log/development.log
-  chown root:libra_user %{sitedir}/log/development.log
-  chmod 660 %{sitedir}/log/development.log
+if [ ! -f %{_var}/log/openshift/site/development.log ]; then
+  /bin/touch %{_var}/log/openshift/site/development.log
+  chown root:libra_user %{_var}/log/openshift/site/development.log
+  chmod 660 %{_var}/log/openshift/site/development.log
 fi
 
 %files
@@ -148,9 +156,9 @@ fi
 %attr(0770,root,libra_user) %{sitedir}/tmp
 %attr(0770,root,libra_user) %{sitedir}/tmp/cache
 %attr(0770,root,libra_user) %{sitedir}/tmp/cache/assets
-%attr(0770,root,libra_user) %{sitedir}/log
-%ghost %attr(0660,root,libra_user) %{sitedir}/log/production.log
-%ghost %attr(0660,root,libra_user) %{sitedir}/log/development.log
+%attr(0770,root,libra_user) %{_var}/log/openshift/site/
+%ghost %attr(0660,root,libra_user) %{_var}/log/openshift/site/production.log
+%ghost %attr(0660,root,libra_user) %{_var}/log/openshift/site/development.log
 
 %defattr(0640,root,libra_user,0750)
 %{sitedir}
@@ -164,6 +172,65 @@ fi
 %{sitedir}/public
 
 %changelog
+* Thu Feb 07 2013 Adam Miller <admiller@redhat.com> 1.5.1-2
+- bump for chainbuild
+
+* Thu Feb 07 2013 Adam Miller <admiller@redhat.com> 1.5.1-1
+- bump_minor_versions for sprint 24 (admiller@redhat.com)
+
+* Wed Feb 06 2013 Adam Miller <admiller@redhat.com> 1.4.9-2
+- bump for chainbuild
+
+* Wed Feb 06 2013 Adam Miller <admiller@redhat.com> 1.4.9-1
+- Merge pull request #861 from rhamilto/master (dmcphers@redhat.com)
+- Merge pull request #854 from fotioslindiakos/BZ907570 (dmcphers@redhat.com)
+- Tweaks to improve upon the rotate on hover effect of the logo.
+  (rhamilto@redhat.com)
+- Missing an alias for plan_upgrade_enabled? (ccoleman@redhat.com)
+- Bug 908171 - My account page throws an error when aria disabled
+  (ccoleman@redhat.com)
+- Bug 907570: Also change message for increasing user storage
+  (fotios@redhat.com)
+
+* Tue Feb 05 2013 Adam Miller <admiller@redhat.com> 1.4.8-2
+- bump for chainbuild
+
+* Tue Feb 05 2013 Adam Miller <admiller@redhat.com> 1.4.8-1
+- Improving coverage tooling (dmcphers@redhat.com)
+- Merge pull request #851 from smarterclayton/improve_capability_extension
+  (dmcphers+openshiftbot@redhat.com)
+- Use string id instead of symbol id for plans (ccoleman@redhat.com)
+- Ensure that billing code cannot be reached without the appropriate plan
+  attribute (ccoleman@redhat.com)
+
+* Tue Feb 05 2013 Adam Miller <admiller@redhat.com> 1.4.7-2
+- bump for chainbuild
+
+* Tue Feb 05 2013 Adam Miller <admiller@redhat.com> 1.4.7-1
+- Merge pull request #848 from smarterclayton/fix_firesass_support
+  (dmcphers+openshiftbot@redhat.com)
+- Fix FireSass support in site (ccoleman@redhat.com)
+
+* Mon Feb 04 2013 Adam Miller <admiller@redhat.com> 1.4.6-2
+- bump for chainbuild
+
+* Mon Feb 04 2013 Adam Miller <admiller@redhat.com> 1.4.6-1
+- Merge pull request #827 from fotioslindiakos/storage
+  (dmcphers+openshiftbot@redhat.com)
+- Merge pull request #812 from maxamillion/dev/admiller/move_logs
+  (dmcphers+openshiftbot@redhat.com)
+- Changed message if the user wants to upgrade storage (fotios@redhat.com)
+- Added wrapper for storage_controller tests from console (fotios@redhat.com)
+- US2441: View for storage (fotios@redhat.com)
+- move all logs to /var/log/openshift/ so we can logrotate properly
+  (admiller@redhat.com)
+
+* Mon Feb 04 2013 Adam Miller <admiller@redhat.com> 1.4.5-1
+- working on testing coverage (dmcphers@redhat.com)
+- Merge pull request #838 from sg00dwin/partnerslink
+  (dmcphers+openshiftbot@redhat.com)
+- add partners link in footer (sgoodwin@redhat.com)
+
 * Fri Feb 01 2013 Adam Miller <admiller@redhat.com> 1.4.4-2
 - bump spec for chainbuild (admiller@redhat.com)
 

@@ -436,7 +436,7 @@
          id="flowPara3866" /><flowPara
          id="flowPara3868">New apps get created on nodes with the least load</flowPara><flowPara
          id="flowPara3870" /><flowPara
-         id="flowPara3872">custom express agent is called from mcollective to issue configure/start/stop/deconfigure, etc scripts from the cartridges</flowPara><flowPara
+         id="flowPara3872">custom openshift agent is called from mcollective to issue configure/start/stop/deconfigure, etc scripts from the cartridges</flowPara><flowPara
          id="flowPara3916" /><flowPara
          id="flowPara3918">mcollective also has a &quot;direct&quot; communiation method which is faster then the default poll/timeout method</flowPara></flowRoot>    <path
        style="fill:none;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"

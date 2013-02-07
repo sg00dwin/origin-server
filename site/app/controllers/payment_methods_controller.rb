@@ -1,7 +1,10 @@
 class PaymentMethodsController < ApplicationController
+  include BillingAware
+
   layout 'account'
 
   before_filter :authenticate_user!
+  before_filter :user_can_upgrade_plan!
 
   def edit
     @user = current_user.extend Aria::User

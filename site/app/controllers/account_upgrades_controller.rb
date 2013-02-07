@@ -1,8 +1,11 @@
 class AccountUpgradesController < ApplicationController
+  include BillingAware
+
   layout 'account'
 
   before_filter :authenticate_user!, :except => :show
   before_filter :authenticate_user_for_upgrade!, :only => :show
+  before_filter :user_can_upgrade_plan!
 
   rescue_from Aria::Error do |e|
     @message = case e

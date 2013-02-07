@@ -1,4 +1,4 @@
-module Express
+module Online
   module AriaBilling
     class Event
 
@@ -157,7 +157,7 @@ MSG
             raise Exception.new "Invalid Event, id: #{ev}"
           end
           body.gsub!(/\n/, "<br/>")
-          Express::AriaBilling::Notification.report_event(ev, body, email_to) 
+          Online::AriaBilling::Notification.report_event(ev, body, email_to) 
         end
       end
      

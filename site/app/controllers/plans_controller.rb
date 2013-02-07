@@ -1,7 +1,10 @@
 class PlansController < ApplicationController
+  include BillingAware
+
   layout 'account'
 
   before_filter :authenticate_user!
+  before_filter :user_can_upgrade_plan!
 
   def index
     redirect_to :action => 'show'
