@@ -539,7 +539,7 @@ service openshift-port-proxy restart
               test_queues[1] << ["OpenShift Broker Units", "cd openshift-test/broker; rake test:units"]
               test_queues[0] << ["OpenShift Broker Integration", "cd openshift-test/broker; rake test:integration"]
               test_queues[2] << ["OpenShift Broker Functional", "cd openshift-test/broker; rake test:functionals"]
-              test_queues[3] << ["Broker Cucumber", "cucumber --strict -f html --out /tmp/rhc/broker_cucumber.html -f progress -t @broker openshift-test/tests"]
+              test_queues[3] << ["Broker Cucumber", "cucumber --strict -f html --out /tmp/rhc/broker_cucumber.html -f progress -t @broker -t ~@fedora-only openshift-test/tests"]
             end
 
             unless options.exclude_runtime?

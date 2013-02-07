@@ -66,7 +66,7 @@ DEV_TOOLS_REPO = 'origin-dev-tools'
 DEV_TOOLS_EXT_REPO = 'li'
 ADDTL_SIBLING_REPOS = SIBLING_REPOS_GIT_URL.keys - [DEV_TOOLS_REPO, DEV_TOOLS_EXT_REPO]
 
-CUCUMBER_OPTIONS = '--strict -f progress -f junit --out /tmp/rhc/cucumber_results'
+CUCUMBER_OPTIONS = '--strict -f progress -f junit --out /tmp/rhc/cucumber_results -t ~@fedora-only'
 IGNORE_PACKAGES = ['bind-local', 'rubygem-rhc', 'openshift-origin-broker', 'rubygem-openshift-origin-auth-mongo', 'rubygem-openshift-origin-dns-bind', 'openshift-origin', 'rubygem-openshift-origin-auth-kerberos', 'openshift-origin-cartridge-postgresql-9.1', 'cartridge-php-5.4', 'openshift-origin-console', 'openshift-origin-util','rubygem-openshift-origin-dns-nsupdate'] 
 $amz_options = {:key_name => KEY_PAIR, :instance_type => TYPE}
 
