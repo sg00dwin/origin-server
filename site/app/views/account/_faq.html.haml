@@ -1,20 +1,25 @@
-%div{'ng-controller' => 'FaqController'}
-  %p
+%div{'ng-app' => 'openshift', 'ng-controller' => 'FaqController'}
+  %div
     %input{:type => 'text', :placeholder => 'Search by keyword', 'ng-model' => 'searchTerm', 'ng-change' => 'filter()'}
 
   %h1 Frequently Asked Questions
 
-  %p
-
-    %ul
-      %li{'ng-repeat' => 'q in questions | limitTo:10'}
+  %div{:style => 'overflow-y: auto; height: 600px; margin-right: 12px;'}
+    %ul{'ng-init' => "topten = #{topten.collect{|f| { :node => f }}.to_json}; questions = topten",
+        'ng-show' => 'true',
+        :style => 'display: none;'}
+      %li{'ng-repeat' => 'q in questions'}
         %h3
-          %a{:href => '{{q.node.href}}', 'ng-bind-html-unsafe' => 'q.node.name'}
+          %a{:href => '{{ q.node.href }}', 'ng-bind-html-unsafe' => 'q.node.name'}
         %p{'ng-bind-html-unsafe' => 'q.node.body'}
 
-
-    -#
-      %ul
+    -# If javascript is not enabled, this will be the only rendered content
+    %ul{'ng-hide' => 'true'}
       - topten.each do |faq|
         %li
-          %a{:href => faq.href, :rel => 'tooltip', :title => strip_tags(faq.body)}!= faq.name
+          %h3
+            %a{:href => faq.href, :rel => 'tooltip'}
+              = raw faq.name
+          %p
+            = raw faq.body
+

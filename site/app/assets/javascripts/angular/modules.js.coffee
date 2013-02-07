@@ -6,9 +6,3 @@ angular.module('openshift', []).config(['$provide', ($provide) ->
   ])
 
 ])
-
-
-# TEMP!
-#.config(['$httpProvider', ($httpProvider) ->
-#  delete $httpProvider.defaults.headers.common["X-Requested-With"]
-#])
