@@ -3,7 +3,7 @@
 
 Summary:   Li broker components
 Name:      rhc-broker
-Version: 1.4.9
+Version: 1.4.10
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -146,6 +146,10 @@ if [ ! -f %{_var}/log/openshift/user_action.log ]; then
 fi
 
 %changelog
+* Thu Feb 07 2013 Dan McPherson <dmcphers@redhat.com> 1.4.10-1
+- Modifying tests to only set namespace and not the canonical_namespace
+  (abhgupta@redhat.com)
+
 * Wed Feb 06 2013 Adam Miller <admiller@redhat.com> 1.4.9-1
 - Merge pull request #864 from danmcp/master (dmcphers@redhat.com)
 - Merge pull request #862 from pravisankar/dev/ravi/us2626-config-fix
