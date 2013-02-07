@@ -63,24 +63,33 @@ def create_domains(user, cloud_user_obj)
   dm = nil
   if user["domains"]
     num_doms = user["domains"].length
-    raise Exception.new "Found more than 1 domain" if num_doms > 1
-    if num_doms == 1
-      domain = user["domains"][0]
-      dm = Domain.new
-      dm.namespace = domain["namespace"]
-      dm.canonical_namespace = dm.namespace.downcase
-      dm.owner_id = cloud_user_obj._id
-      dm.user_ids << cloud_user_obj._id 
-      user["system_ssh_keys"].each do |ssh_key_name, ssh_key|
-        ssk = SystemSshKey.new
-        ssk.name = ssh_key_name
-        ssk.type = "ssh-rsa"
-        ssk.content = ssh_key
-        dm.system_ssh_keys << ssk
-      end if user["system_ssh_keys"]
-      #dm.env_vars =
-      dm.save!
+    return nil if num_doms==0
+    dom_index = 0
+    if num_doms > 1
+      domain_map = {}
+      user['apps'].each { |a|
+        domain_map[a['namespace']] = a
+      }
+      if domain_map.length > 1
+        raise Exception.new "Found more than 1 domain in use" 
+      end
+      dom_index = user["domains"].index { |dom| dom["namespace"]==domain_map.keys[0] }  if domain_map.length==1
     end
+    domain = user["domains"][dom_index]
+    dm = Domain.new
+    dm.namespace = domain["namespace"]
+    dm.canonical_namespace = dm.namespace.downcase
+    dm.owner_id = cloud_user_obj._id
+    dm.user_ids << cloud_user_obj._id 
+    user["system_ssh_keys"].each do |ssh_key_name, ssh_key|
+      ssk = SystemSshKey.new
+      ssk.name = ssh_key_name
+      ssk.type = "ssh-rsa"
+      ssk.content = ssh_key
+      dm.system_ssh_keys << ssk
+    end if user["system_ssh_keys"]
+    #dm.env_vars =
+    dm.save!
   end
   dm
 end
@@ -114,7 +123,7 @@ def create_applications(user, domain_obj)
         ci = ComponentInstance.new
         ci.cartridge_name = comp_inst["parent_cart_name"]
         ci.component_name = CartridgeCache.find_cartridge(ci.cartridge_name).profiles[0].components[0].name
-        ci.component_properties = comp_inst["cart_properties"]
+        ci.component_properties = comp_inst["cart_properties"] if comp_inst["cart_properties"]
         app.component_instances << ci
         cinst_map[comp_inst["parent_cart_name"]] = ci
       end
