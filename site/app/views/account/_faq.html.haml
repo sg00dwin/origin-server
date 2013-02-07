@@ -4,7 +4,7 @@
 
   %h1 Frequently Asked Questions
 
-  %div{:style => 'overflow-y: auto; height: 600px; margin-right: 12px;'}
+  %div
     %ul{'ng-init' => "topten = #{topten.collect{|f| { :node => f }}.to_json}; questions = topten",
         'ng-show' => 'true',
         :style => 'display: none;'}
