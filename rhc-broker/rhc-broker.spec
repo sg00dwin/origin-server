@@ -3,7 +3,7 @@
 
 Summary:   Li broker components
 Name:      rhc-broker
-Version: 1.5.1
+Version: 1.5.2
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -146,6 +146,19 @@ if [ ! -f %{_var}/log/openshift/user_action.log ]; then
 fi
 
 %changelog
+* Fri Feb 08 2013 Adam Miller <admiller@redhat.com> 1.5.2-1
+- Merge pull request #873 from pravisankar/dev/ravi/fix-billevent-minor
+  (dmcphers+openshiftbot@redhat.com)
+- Fix: send billing events to correct email addr (rpenta@redhat.com)
+- Merge pull request #843 from smarterclayton/improve_action_logging
+  (dmcphers+openshiftbot@redhat.com)
+- Merge remote-tracking branch 'origin/master' into
+  isolate_api_behavior_from_base_controller (ccoleman@redhat.com)
+- Missed redundant filters (ccoleman@redhat.com)
+- Remove legacy controllers and helpers.  Fix API controller reference in
+  billing. (ccoleman@redhat.com)
+- Match origin-server refactor (ccoleman@redhat.com)
+
 * Thu Feb 07 2013 Adam Miller <admiller@redhat.com> 1.5.1-1
 - Modifying tests to only set namespace and not the canonical_namespace
   (abhgupta@redhat.com)
