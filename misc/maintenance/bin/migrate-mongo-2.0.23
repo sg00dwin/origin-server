@@ -1,13 +1,32 @@
 #!/usr/bin/env oo-ruby
 require 'rubygems'
+#require 'open4'
 $:.unshift('/var/www/openshift/broker')
 require 'config/environment'
 
-$users_failed = []
 
+$users_failed = []
+$session = nil
 $global_cart_cache =  CartridgeCache.cartridges
 $web_framework_carts = CartridgeCache.cartridge_names("web_framework")
 $parent_login_map = {}
+$phase1 = false
+$phase2 = false
+$serial = false
+$user_index = 0
+$total_processes = 4
+      
+def usage
+  puts "#{$0} [options]"
+  puts "options -"
+  puts "  --serial : Do not spawn processes, but run everything serially (ignores all other options)"
+  puts "  --num_processes <int> : Number of processes to spawn (default: 4)"
+  exit 1
+end
+
+if ARGV.include? "--help" or ARGV.include? "-h"
+  usage
+end
 
 class CartridgeCache
   def self.cartridges
@@ -78,12 +97,13 @@ def create_domains(user, cloud_user_obj)
     if num_doms > 1
       domain_map = {}
       user['apps'].each { |a|
-        domain_map[a['namespace']] = a
+        domain_map[a['domain']['namespace']] = a if a['domain'] and a['domain']['namespace']
       }
       if domain_map.length > 1
         raise Exception.new "Found more than 1 domain in use" 
       end
       dom_index = user["domains"].index { |dom| dom["namespace"]==domain_map.keys[0] }  if domain_map.length==1
+      dom_index = 0
     end
     domain = user["domains"][dom_index]
     dm = Domain.new
@@ -106,47 +126,84 @@ end
 
 def create_applications(user, domain_obj)
   user["apps"].each do |uapp|
-    app = Application.new(domain: domain_obj)
-    #app._id = Moped::BSON::ObjectId.from_string(uapp["uuid"].to_s)
-    app.uuid = uapp["uuid"]
-    app.name = uapp["name"]
-    app.created_at = Time.parse(uapp["creation_time"])
-    app.canonical_name = app.name.downcase
-    app.scalable = uapp["scalable"]
-    app.init_git_url = uapp["init_git_url"] if uapp["init_git_url"]
-    app.default_gear_size = uapp["node_profile"]
-    uapp["ssh_keys"].each do |ssh_key_name, ssh_key|
-      ask = ApplicationSshKey.new
-      ask.name = ssh_key_name
-      ask.type = "ssh-rsa"
-      ask.content = ssh_key
-      app.app_ssh_keys << ask
-    end if uapp["ssh_keys"]
-    app.domain_id = domain_obj._id
-    cinst_map = {}
-    uapp["comp_instances"].each do |comp_inst|
-      next if comp_inst["parent_cart_name"] == app.name
-      if cinst_map[comp_inst["parent_cart_name"]]
-        ci = cinst_map[comp_inst["parent_cart_name"]]
-        ci.component_properties = ci.component_properties.merge(comp_inst["cart_properties"])
-      else
-        ci = ComponentInstance.new
-        ci.cartridge_name = comp_inst["parent_cart_name"]
-        ci.component_name = CartridgeCache.find_cartridge(ci.cartridge_name).profiles[0].components[0].name
-        ci.component_properties = comp_inst["cart_properties"] if comp_inst["cart_properties"]
-        app.component_instances << ci
-        cinst_map[comp_inst["parent_cart_name"]] = ci
-      end
-    end if uapp["comp_instances"]
-    app.aliases = []
-    uapp["aliases"].each do |al|
-      app.aliases << al.downcase
-    end if uapp["aliases"]
-    group_overrides = create_group_instances(app, uapp)
-    #  app.group_overrides = uapp["group_overrides"] if uapp["group_overrides"]
-    fix_connections(app, group_overrides)
-    app.save!(validate: false)
+    begin
+      app = Application.new(domain: domain_obj)
+      #app._id = Moped::BSON::ObjectId.from_string(uapp["uuid"].to_s)
+      app.uuid = uapp["uuid"]
+      app.name = uapp["name"]
+      app.created_at = Time.parse(uapp["creation_time"])
+      app.canonical_name = app.name.downcase
+      app.scalable = uapp["scalable"]
+      app.init_git_url = uapp["init_git_url"] if uapp["init_git_url"]
+      app.default_gear_size = uapp["node_profile"]
+      uapp["ssh_keys"].each do |ssh_key_name, ssh_key|
+        ask = ApplicationSshKey.new
+        ask.name = ssh_key_name
+        ask.type = "ssh-rsa"
+        ask.content = ssh_key
+        app.app_ssh_keys << ask
+      end if uapp["ssh_keys"]
+      app.domain_id = domain_obj._id
+      cinst_map = {}
+      uapp["comp_instances"].each do |comp_inst|
+        next if comp_inst["parent_cart_name"] == app.name
+        if cinst_map[comp_inst["parent_cart_name"]]
+          ci = cinst_map[comp_inst["parent_cart_name"]]
+          ci.component_properties = ci.component_properties.merge(comp_inst["cart_properties"]) if comp_inst["cart_properties"]
+        else
+          ci = ComponentInstance.new
+          ci.cartridge_name = comp_inst["parent_cart_name"]
+          ci.component_name = CartridgeCache.find_cartridge(ci.cartridge_name).profiles[0].components[0].name
+          ci.component_properties = comp_inst["cart_properties"] if comp_inst["cart_properties"]
+          app.component_instances << ci
+          cinst_map[comp_inst["parent_cart_name"]] = ci
+        end
+      end if uapp["comp_instances"]
+      app.aliases = []
+      uapp["aliases"].each do |al|
+        app.aliases << al.downcase
+      end if uapp["aliases"]
+      group_overrides = create_group_instances(app, uapp)
+      #  app.group_overrides = uapp["group_overrides"] if uapp["group_overrides"]
+      fix_connections(app, group_overrides)
+      app.save!(validate: false)
+    rescue Exception=>e
+      try_save_app(app, uapp)
+    end
   end if user["apps"]
+end
+
+def try_save_app(app, uapp)
+  if app.group_instances[0] and app.group_instances[0].gears.length==0
+    if app.scalable
+      puts "Application #{uapp['name']}-#{uapp['domain']['namespace']} will not be migrated because it has zero gears. Please delete the DNS entry."
+    else
+       #examine
+       gis = app.group_instances.select { |gi| gi.gears.length==0 }
+       if gis > 1
+         puts "Application #{uapp['name']}-#{uapp['domain']['namespace']} will not be migrated because it has zero gears. Please delete the DNS entry."
+       else
+         gi = gis[0]
+         cis = app.component_instances.select { |ci| ci.group_instance_id.to_s == gi._id.to_s }
+         isclean = true
+         cis.each { |ci| isclean = false if $web_framework_carts.include? ci.cartridge_name }
+         if isclean
+           app.component_instances.delete_if { |ci| cis.include? ci }
+           app.group_instances.delete(gi)
+           begin
+             app.save!(validate: false)
+           rescue Exception=>e
+             puts "Application #{uapp['name']}-#{uapp['domain']['namespace']} will not be migrated because it has zero gears in a group instance and could not be rescued. Please delete the DNS entry."
+           end
+         else
+           puts "Application #{uapp['name']}-#{uapp['domain']['namespace']} will not be migrated because it has zero gears in its framework group instance. Please delete the DNS entry."
+         end
+       end
+    end
+  else
+    puts "ERROR: Migration failed for User #{user['login']}, Application #{uapp['name']}: #{e.message}"
+    puts e.backtrace
+  end
 end
 
 def fix_connections(app, group_overrides)
@@ -292,37 +349,54 @@ def migrate_district(old_district)
   nd
 end
 
-puts "Migration Started..."
-session = get_mongo_session
-begin
-
+def clean
   # cleanup if starting from scratch
-  session[:cloud_users].find.remove_all
-  session[:applications].find.remove_all
-  session[:districts].find.remove_all
-  session[:locks].find.remove_all
-  session[:domains].find.remove_all
+  $session[:cloud_users].find.remove_all
+  $session[:applications].find.remove_all
+  $session[:districts].find.remove_all
+  $session[:locks].find.remove_all
+  $session[:domains].find.remove_all
+end
 
-  users = session[:user]
-
+def user_phase1
+  puts "Running phase 1.."
   t = Time.now
+  users = $session[:user]
+  count = 0
+  processed_user_count = 0
   # Process all users that DOES NOT have a parent user login
-  users.find({"$or"=>[{"parent_user_login"=>{"$exists"=>false}}, {"parent_user_login" => nil}]}).each do |user|
-    # puts "Processing user #{user['login']}"
-    #puts user.inspect
-    migrate_user(user)
+  users.find({"$or"=>[{"parent_user_login"=>{"$exists"=>false}}, {"parent_user_login" => nil}]}).sort(:login => 1).each do |user|
+    count = 0 if count==$total_processes
+    if count == $user_index or $serial
+      migrate_user(user) 
+      processed_user_count += 1
+    end
+    count += 1
   end
+  puts "Time to run phase 1 (#{processed_user_count} users processed) - #{Time.now - t}"
+end
+
+def user_phase2
+  users = $session[:user]
+  puts "Running phase 2.."
+  t = Time.now
+  count = 0
+  processed_user_count = 0
   # Process all user that have a parent user login
-  users.find({"$and"=>[{"parent_user_login"=>{"$exists"=>true}}, {"parent_user_login"=>{"$ne"=>nil}}]}).each do |user|
-    # puts "Processing user #{user['login']}"
-    #puts user.inspect
-    migrate_user(user)
+  users.find({"$and"=>[{"parent_user_login"=>{"$exists"=>true}}, {"parent_user_login"=>{"$ne"=>nil}}]}).sort(:login => 1).each do |user|
+    count = 0 if count==$total_processes
+    if count == $user_index or $serial
+      migrate_user(user) 
+      processed_user_count += 1
+    end
+    count += 1
   end
+  puts "Time to run phase 2 (#{processed_user_count} users processed) - #{Time.now - t}"
+end
 
-  puts "Total time : #{Time.now - t }"
-
-  puts "User migration complete. Migrating districts..."
-  session[:district].find.each { |old_district|
+def district_migration
+  puts "Migrating districts..."
+  $session[:district].find.each { |old_district|
     nd = migrate_district(old_district)
     if nd.uuid==old_district['uuid']
       puts "Successfully migrated district #{nd.name} (#{nd.uuid})"
@@ -331,13 +405,72 @@ begin
       $users_failed << "District uuid #{old_district['uuid']}"
     end
   }
+end
+
+def parallelize
+  t = Time.now
+  $total_processes.times do |i|
+    cmd = "#{__FILE__} --phase1 --index #{i} --num_processes #{$total_processes} >& migrate_phase1_#{i}.log"
+    spawn cmd
+  end
+  print "Waiting for phase1 to get over.."
+  Process::waitall
+  puts "done"
+  puts "Half time : #{Time.now - t }"
+  $total_processes.times do |i|
+    cmd = "#{__FILE__} --phase2 --index #{i} --num_processes #{$total_processes} >& migrate_phase2_#{i}.log"
+    spawn cmd
+  end
+  print "Waiting for phase2 to get over.."
+  Process::waitall
+  puts "done"
+  puts "Total time : #{Time.now - t }"
+end
+
+def parse_args
+  if ARGV.include? "--serial"
+    $serial = true
+  end
+  if ARGV.include? "--phase1"
+    $phase1 = true
+  end
+  if ARGV.include? "--phase2"
+    $phase2 = true
+  end
+  if ARGV.include? "--index"
+    ind = ARGV.index("--index")
+    $user_index = ARGV[ind+1].to_i
+  end
+  if ARGV.include? "--num_processes"
+    ind = ARGV.index("--num_processes")
+    $total_processes = ARGV[ind+1].to_i
+  end
+  if $phase1 and $phase2
+    puts "ERROR : Can run either phase1 or phase2, not both" 
+    exit 1
+  end
+end
+
+begin
+  parse_args
+  $session = get_mongo_session
+
+  if not ($phase1 or $phase2) or $serial
+    puts "Migration Started..."
+    clean
+    district_migration
+    parallelize if not $serial
+  end
+
+  user_phase1 if $phase1 or $serial
+  user_phase2 if $phase2 or $serial
 
 rescue Exception => e
   puts e.message
   puts e.backtrace
   exit 1
 ensure
-  release_mongo_session(session)
+  release_mongo_session($session)
 end
 puts "***************************"
 if $users_failed.empty?
