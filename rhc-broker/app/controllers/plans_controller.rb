@@ -1,8 +1,7 @@
 class PlansController < BaseController
-  respond_to :xml, :json
-  before_filter :authenticate, :except => [:index, :show]
-  before_filter :check_version
-  
+
+  skip_before_filter :authenticate
+
   def index
     plans = []
     Online::AriaBilling::Plan.instance.plans.each do |key, value|
@@ -22,8 +21,8 @@ class PlansController < BaseController
     render_error(:not_found, "Plan not found.", 150, "SHOW_PLAN")
   end
 
-  def get_url
-    url = URI::join(request.url, "/broker/billing/rest")
-    return url.to_s
-  end
+  protected
+    def get_url
+      URI::join(request.url, "/broker/billing/rest").to_s
+    end
 end
