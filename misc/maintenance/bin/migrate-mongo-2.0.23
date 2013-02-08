@@ -168,42 +168,10 @@ def create_applications(user, domain_obj)
       fix_connections(app, group_overrides)
       app.save!(validate: false)
     rescue Exception=>e
-      try_save_app(app, uapp)
+      puts "ERROR: Migration failed for User #{user['login']}, Application #{uapp['name']}: #{e.message}"
+      puts e.backtrace
     end
   end if user["apps"]
-end
-
-def try_save_app(app, uapp)
-  if app.group_instances[0] and app.group_instances[0].gears.length==0
-    if app.scalable
-      puts "Application #{uapp['name']}-#{uapp['domain']['namespace']} will not be migrated because it has zero gears. Please delete the DNS entry."
-    else
-       #examine
-       gis = app.group_instances.select { |gi| gi.gears.length==0 }
-       if gis > 1
-         puts "Application #{uapp['name']}-#{uapp['domain']['namespace']} will not be migrated because it has zero gears. Please delete the DNS entry."
-       else
-         gi = gis[0]
-         cis = app.component_instances.select { |ci| ci.group_instance_id.to_s == gi._id.to_s }
-         isclean = true
-         cis.each { |ci| isclean = false if $web_framework_carts.include? ci.cartridge_name }
-         if isclean
-           app.component_instances.delete_if { |ci| cis.include? ci }
-           app.group_instances.delete(gi)
-           begin
-             app.save!(validate: false)
-           rescue Exception=>e
-             puts "Application #{uapp['name']}-#{uapp['domain']['namespace']} will not be migrated because it has zero gears in a group instance and could not be rescued. Please delete the DNS entry."
-           end
-         else
-           puts "Application #{uapp['name']}-#{uapp['domain']['namespace']} will not be migrated because it has zero gears in its framework group instance. Please delete the DNS entry."
-         end
-       end
-    end
-  else
-    puts "ERROR: Migration failed for User #{user['login']}, Application #{uapp['name']}: #{e.message}"
-    puts e.backtrace
-  end
 end
 
 def fix_connections(app, group_overrides)
@@ -365,7 +333,7 @@ def user_phase1
   count = 0
   processed_user_count = 0
   # Process all users that DOES NOT have a parent user login
-  users.find({"$or"=>[{"parent_user_login"=>{"$exists"=>false}}, {"parent_user_login" => nil}]}).sort(:login => 1).each do |user|
+  users.find({"$or"=>[{"parent_user_login"=>{"$exists"=>false}}, {"parent_user_login" => nil}]}).no_timeout.sort(:login => 1).each do |user|
     count = 0 if count==$total_processes
     if count == $user_index or $serial
       migrate_user(user) 
@@ -383,7 +351,7 @@ def user_phase2
   count = 0
   processed_user_count = 0
   # Process all user that have a parent user login
-  users.find({"$and"=>[{"parent_user_login"=>{"$exists"=>true}}, {"parent_user_login"=>{"$ne"=>nil}}]}).sort(:login => 1).each do |user|
+  users.find({"$and"=>[{"parent_user_login"=>{"$exists"=>true}}, {"parent_user_login"=>{"$ne"=>nil}}]}).no_timeout.sort(:login => 1).each do |user|
     count = 0 if count==$total_processes
     if count == $user_index or $serial
       migrate_user(user) 
