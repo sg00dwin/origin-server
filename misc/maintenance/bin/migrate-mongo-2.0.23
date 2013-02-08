@@ -330,16 +330,13 @@ def user_phase1
   puts "Running phase 1.."
   t = Time.now
   users = $session[:user]
-  count = 0
   processed_user_count = 0
   # Process all users that DOES NOT have a parent user login
-  users.find({"$or"=>[{"parent_user_login"=>{"$exists"=>false}}, {"parent_user_login" => nil}]}).no_timeout.sort(:login => 1).each do |user|
-    count = 0 if count==$total_processes
-    if count == $user_index or $serial
+  users.find({"$or"=>[{"parent_user_login"=>{"$exists"=>false}}, {"parent_user_login" => nil}]}).no_timeout.each do |user|
+    if $serial or user["login"].sum.modulo($total_processes)==$user_index
       migrate_user(user) 
       processed_user_count += 1
     end
-    count += 1
   end
   puts "Time to run phase 1 (#{processed_user_count} users processed) - #{Time.now - t}"
 end
@@ -348,16 +345,13 @@ def user_phase2
   users = $session[:user]
   puts "Running phase 2.."
   t = Time.now
-  count = 0
   processed_user_count = 0
   # Process all user that have a parent user login
-  users.find({"$and"=>[{"parent_user_login"=>{"$exists"=>true}}, {"parent_user_login"=>{"$ne"=>nil}}]}).no_timeout.sort(:login => 1).each do |user|
-    count = 0 if count==$total_processes
-    if count == $user_index or $serial
+  users.find({"$and"=>[{"parent_user_login"=>{"$exists"=>true}}, {"parent_user_login"=>{"$ne"=>nil}}]}).no_timeout.each do |user|
+    if $serial or user["login"].sum.modulo($total_processes)==$user_index
       migrate_user(user) 
       processed_user_count += 1
     end
-    count += 1
   end
   puts "Time to run phase 2 (#{processed_user_count} users processed) - #{Time.now - t}"
 end
