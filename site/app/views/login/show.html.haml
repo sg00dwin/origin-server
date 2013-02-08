@@ -27,6 +27,9 @@
         }
       }
     }
+    $(function() {
+      $('input, textarea').placeholder();
+    });
     transport_form_data('submit-email-address', ':input:not(input[type=hidden]):first');
   %script{:src => open_issues_jsonp_url('showOpenIssues')}
 
