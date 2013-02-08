@@ -333,7 +333,7 @@ def user_phase1
   processed_user_count = 0
   # Process all users that DOES NOT have a parent user login
   users.find({"$or"=>[{"parent_user_login"=>{"$exists"=>false}}, {"parent_user_login" => nil}]}).no_timeout.each do |user|
-    if $serial or user["login"].sum.modulo($total_processes)==$user_index
+    if $serial or (!user["login"] && $user_index==0) or user["login"].sum.modulo($total_processes)==$user_index
       migrate_user(user) 
       processed_user_count += 1
     end
@@ -348,7 +348,7 @@ def user_phase2
   processed_user_count = 0
   # Process all user that have a parent user login
   users.find({"$and"=>[{"parent_user_login"=>{"$exists"=>true}}, {"parent_user_login"=>{"$ne"=>nil}}]}).no_timeout.each do |user|
-    if $serial or user["login"].sum.modulo($total_processes)==$user_index
+    if $serial or (!user["login"] && $user_index==0) or user["login"].sum.modulo($total_processes)==$user_index
       migrate_user(user) 
       processed_user_count += 1
     end
