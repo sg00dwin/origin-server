@@ -6,7 +6,7 @@
 
 Name:    drupal%{drupal_release}-openshift-%{modname}
 Version: 1.1.1
-Release: 1%{?dist}
+Release: 2%{?dist}
 Summary: Openshift Red Hat Custom Forms for Drupal6
 Group:   Applications/Publishing
 License: GPLv2+
@@ -41,6 +41,9 @@ rm -rf $RPM_BUILD_ROOT
 %{drupal_modules}/%{modname}
 
 %changelog
+* Fri Feb 08 2013 Adam Miller <admiller@redhat.com> - 1.1.1-2
+- rebuilt
+
 * Thu Nov 08 2012 Adam Miller <admiller@redhat.com> 1.1.1-1
 - Bumping specs to at least 1.1 (dmcphers@redhat.com)
 

@@ -6,7 +6,7 @@
 
 Name:    drupal%{drupal_release}-openshift-features-%{modname}
 Version: 1.4.1
-Release: 1%{?dist}
+Release: 2%{?dist}
 Summary: Openshift Red Hat Custom Video Feature for Drupal6
 Group:   Applications/Publishing
 License: GPLv2+
@@ -41,6 +41,9 @@ rm -rf $RPM_BUILD_ROOT
 %{drupal_modules}/%{modname}
 
 %changelog
+* Fri Feb 08 2013 Adam Miller <admiller@redhat.com> - 1.4.1-2
+- rebuilt
+
 * Wed Aug 22 2012 Adam Miller <admiller@redhat.com> 1.4.1-1
 - bump_minor_versions for sprint 17 (admiller@redhat.com)
 

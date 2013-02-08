@@ -6,7 +6,7 @@
 
 Name:    drupal%{drupal_release}-openshift-features-%{modname}
 Version: 1.6.1
-Release: 1%{?dist}
+Release: 2%{?dist}
 Summary: Openshift Red Hat Custom Forums Feature for Drupal6
 Group:   Applications/Publishing
 License: GPLv2+
@@ -41,6 +41,9 @@ rm -rf $RPM_BUILD_ROOT
 %{drupal_modules}/%{modname}
 
 %changelog
+* Fri Feb 08 2013 Adam Miller <admiller@redhat.com> - 1.6.1-2
+- rebuilt
+
 * Thu Nov 01 2012 Adam Miller <admiller@redhat.com> 1.6.1-1
 - bump_minor_versions for sprint 20 (admiller@redhat.com)
 
