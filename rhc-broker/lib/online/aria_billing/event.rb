@@ -132,8 +132,8 @@ MSG
       end
 
       def self.handle_event(h)
-        email_to = OPS_ORDER_TEAM_EMAIL
         h['event_id'].each do |ev|
+          email_to = OPS_ORDER_TEAM_EMAIL
           case ev.to_i
           when 101
             body = acct_create(h)
