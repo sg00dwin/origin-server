@@ -9,7 +9,7 @@
 
 Summary:        OpenShift plugin for streamline auth service
 Name:           rubygem-%{gem_name}
-Version: 1.3.1
+Version: 1.3.2
 Release:        1%{?dist}
 Group:          Development/Languages
 License:        ASL 2.0
@@ -81,6 +81,11 @@ rm -rf %{buildroot}
 /etc/openshift/plugins.d/openshift-origin-auth-streamline-dev.conf
 
 %changelog
+* Fri Feb 08 2013 Adam Miller <admiller@redhat.com> 1.3.2-1
+- Merge remote-tracking branch 'origin/master' into
+  isolate_api_behavior_from_base_controller (ccoleman@redhat.com)
+- Remove legacy login() method on authservice (ccoleman@redhat.com)
+
 * Thu Feb 07 2013 Adam Miller <admiller@redhat.com> 1.3.1-1
 - bump_minor_versions for sprint 24 (admiller@redhat.com)
 
