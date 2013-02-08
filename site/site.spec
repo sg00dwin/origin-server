@@ -8,8 +8,8 @@
 
 Summary:   OpenShift Site Rails application
 Name:      rhc-site
-Version: 1.5.1
-Release:   2%{?dist}
+Version: 1.5.2
+Release:   1%{?dist}
 Group:     Network/Daemons
 License:   ASL 2.0
 URL:       http://openshift.redhat.com
@@ -172,6 +172,17 @@ fi
 %{sitedir}/public
 
 %changelog
+* Fri Feb 08 2013 Adam Miller <admiller@redhat.com> 1.5.2-1
+- Merge pull request #869 from sg00dwin/bug-fixes (ccoleman@redhat.com)
+- Merge pull request #871 from
+  smarterclayton/us3292_us3293_us3291_split_community_to_openshift_com
+  (dmcphers+openshiftbot@redhat.com)
+- US3291 US3292 US3293 - Move community to www.openshift.com
+  (ccoleman@redhat.com)
+- Bug 885194 - Fixed and activated upgrade form validations (hripps@redhat.com)
+- Add function for placehold on signin page include jquery_placeholder for ie9
+  and older (sgoodwin@redhat.com)
+
 * Thu Feb 07 2013 Adam Miller <admiller@redhat.com> 1.5.1-2
 - bump for chainbuild
 
