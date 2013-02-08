@@ -519,12 +519,12 @@ function openshift_filter_tips($tips, $long = FALSE, $extra = '') {
 
   $multiple = count($tips) > 1;
   if ($multiple) {
-    $output = t('input formats') .':';
+    $output = '<h2>' . t('Input Formats') .':'. '</h2>';
   }
 
   if (count($tips)) {
     if ($multiple) {
-      $output .= '<ul>';
+      $output .= '<dl>';
     }
     foreach ($tips as $name => $tiplist) {
       if ($multiple) {
