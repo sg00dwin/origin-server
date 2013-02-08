@@ -1,8 +1,5 @@
 <div id="node-<?php print $node->nid; ?>" class="node<?php if ($sticky) { print ' sticky'; } ?><?php if (!$status) { print ' node-unpublished'; } ?> node-blog">
 
-<h2><?php print $title; ?></h2>
-
-
   <div class="content clear-block">
     <?php if (geoip_country_code() == 'CN'): ?>  
       <?php print $content ?>

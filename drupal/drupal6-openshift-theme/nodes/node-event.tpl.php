@@ -8,12 +8,8 @@ $do = og_comment_perms_do();
 
 <section id="node-<?php print $node->nid; ?>" class="<?php if ($sticky) { print ' sticky'; } ?><?php if (!$status) { print ' node-unpublished'; } ?>">
 
-<div class="breadcrumb"><a href="<?php print base_path() ?>events">Events</a><span class="divider">/</span><?php print $title ?></div>
-
 <div class="events-post node node-events">
 
-  <div class="row">
-  <div class="span9">
     <div class="event-metadata">
 
         <?php if (strlen($node->field_event_logo[0]["view"]) > 0): ?>
@@ -23,8 +19,7 @@ $do = og_comment_perms_do();
                 </div>
             </figure>
         <?php endif; ?> 
-        
-        <h1><?php print $title ?></h1>
+
         <p class="event-date">
         	<?php print $node->field_event_start_date[0]["view"] ?>
             <?php if (strlen($node->field_event_timezone[0]["view"]) > 0): ?>
@@ -54,9 +49,6 @@ $do = og_comment_perms_do();
         <?php endif; ?> 
 
         <?php print $node->field_event_categories[0]["view"] ?>
-        
-    </div>
-  </div><!-- /row -->
 
 </div>  
 </section>

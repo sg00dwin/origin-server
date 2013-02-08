@@ -21,7 +21,25 @@ function openshift_theme() {
     'search_form' => array(
       'arguments' => array('form' => NULL),
     ),
+    'user_login' => array(
+      'template' => 'user-login',
+      'arguments' => array('form' => NULL),
+    ),
   );
+}
+
+function openshift_preprocess_user_login( &$variables ) {
+  #print_r($variables);
+  unset($variables['form']['name']['#description']);
+  unset($variables['form']['pass']['#description']);
+  //print_r($variables['form']);
+  $variables['form']['name']['#attributes'] = array('class' => 'input-max');
+  $variables['form']['pass']['#attributes'] = array('class' => 'input-max', 'autocomplete' => 'off');
+  $variables['form']['submit']['#attributes'] = array('class' => 'btn-block-phone btn-large');
+  $variables['form']['submit']['#value'] = 'Sign In';
+  $variables['form']['name']['#important'] = true;
+  $variables['form']['pass']['#important'] = true;
+  $variables['rendered'] = drupal_render($variables['form']);
 }
 
 function openshift_comment_form($form, $edit=array()) {
@@ -54,7 +72,6 @@ function openshift_imagecache($presetname, $path, $alt = '', $title = '', $attri
 
 
 function openshift_preprocess_page(&$vars) {
-
   //menu_set_active_menu_name('community_navigation');
   //drupal_set_header('X-UA-Compatible', 'IE=edge,chrome=1');
 
@@ -80,11 +97,29 @@ function openshift_preprocess_page(&$vars) {
     list($vars['product']) = explode(' ', trim($vars['section_title']));
   }
 
+  // Work around http://drupal.org/node/279767 where admin_menu
+  // overrides the link due to duplicate hooks
+  $user_title = $user->uid == 0 ? 'Log In to the Community' : 'My Account';
+  if (stripos($vars['head_title'],'icon_users.png')) {
+    $vars['head_title'] = $user_title.' | ' . variable_get('site_name', '');
+  }
+  if (stripos($vars['title'],'icon_users.png')) {
+    $vars['title'] = $user_title;
+  }
+
   // surface the highest navigation node
   // FIXME replace with better integration with drupal site nav and taxonomies
   $vars['heading'] = _openshift_heading($vars);
+  if ($vars['is_front']) {
+    $vars['body_classes'] .= ' home';
+  }
 
   _openshift_whitelist_css($vars);
+
+  #print "<!-- ";
+  #print_r(menu_get_active_trail());
+  #print_r($vars);
+  #print " -->";
 }
 
 function _openshift_page_arguments($item) {
@@ -217,9 +252,10 @@ function openshift_pager($tags = array(), $limit = 10, $element = 0, $parameters
  * aren't parented).
  */
 function _openshift_heading(&$vars) {
+  global $user;
   $page_title = $vars['title'];
-  //print "<!-- page_title: ".$page_title."-->";
   $item = end(menu_get_active_trail());
+  #print_r($item);
   if ($vars['forum']['new-topic']) {
     $type = 'discussion';
   }
@@ -227,30 +263,23 @@ function _openshift_heading(&$vars) {
     $node = $item['page_arguments'][0];
     $type = $node->type;
     $title = $node->title;
-    //print "<!-- title from node: ".$title."-->";
   }
   elseif ($item['path'] == 'comment/reply/%' && $item['page_arguments'] && $item['page_arguments'][0]) {
     $node = $item['page_arguments'][0];
     $type = $node->type;
   }
+  elseif ($item['link_path'] == 'user' && $user->uid == 0) {
+    $title = '';
+  }
   elseif ($item['link_path']) {
     $type = $item['link_path'];
-    /*if ($item['title_callback']) {
-      $arguments = $item['title_arguments'];
-      if (is_array($arguments)) {
-        $title = call_user_func_array($item['title_callback'], $arguments);
-      }
-    }
-    if (empty($title)) {*/
     $title = $page_title;
     if (empty($title)) {
       $title = $item['title'];
     }
-    //print "<!-- title from link_path: ".$title."-->";
   }
-  //FIXME: forums doesn't have a type, is this something we can detect via view config?
-  elseif ($item['href'] == '<front>') {
-    $type = 'openshift';
+  elseif ($item['path'] == 'community') {
+    $type = 'community';
   }
   switch ($type) {
   case 'home': $heading = "Overview"; break;
@@ -262,19 +291,19 @@ function _openshift_heading(&$vars) {
   case 'wikis': $heading = "Open Source Wiki"; break;
   case 'discussion':
   case 'groups':
-  case 'group': $heading = "Forums"; break;
-  case 'documentation': $heading = "Documentation"; break; // no title for some reason
+  case 'group': $heading = "Forum"; drupal_set_title($heading); break;
+  #case 'documentation': $heading = "Documentation"; break; // no title for some reason
   case 'community': $heading = "Welcome to OpenShift"; break; // override the default link title
   case 'calendar':
-  case 'event':
-  case 'events': $heading = "Events"; break; // no title for some reason
+  #case 'event':
+  #case 'events': $heading = "Upcoming Events"; break; // no title for some reason
   case 'knowledge_base':
   case 'kb': $heading = "Knowledge Base"; break; // no title for some reason
   case 'blogs': // no title for some reason
   case 'blog': $heading = "OpenShift Blog"; break;
   case 'faq': $heading = "Frequently Asked Questions"; break;
-  case 'videos': // no title for some reason
-  case 'video': $heading = "Videos"; break;
+  #case 'videos': // no title for some reason
+  #case 'video': $heading = "Videos"; break;
   default:
     $heading = $title;
   }
@@ -349,7 +378,11 @@ function openshift_form_element($element, $value) {
   // This is also used in the installer, pre-database setup.
   $t = get_t();
 
-  $output = '<div class="control-group"';
+  $output = '<div class="control-group';
+  if (!empty($element['#important'])) {
+    $output .= ' control-group-important';
+  }
+  $output .= '"';
   if (!empty($element['#id'])) {
     $output .= ' id="'. $element['#id'] .'-wrapper"';
   }
@@ -381,6 +414,12 @@ function openshift_form_element($element, $value) {
   $output .= "</div>\n";
 
   return $output;
+}
+
+function openshift_server_url() {
+  #$url = parse_url($GLOBALS['base_url']);
+  #return $url['scheme'].'://'.$url['host'];
+  return redhat_sso_server_url();
 }
 
 function openshift_button($element) {
@@ -543,8 +582,7 @@ function openshift_links($links, $attributes = array('class' => 'links')) {
       if ($i == $num_links) {
         $class .= ' last';
       }
-      if (isset($link['href']) && ($link['href'] == $_GET['q'] || ($link['href'] == '<front>' && drupal_is_front_page()))
-          && (empty($link['language']) || $link['language']->language == $language->language)) {
+      if (isset($link['href']) && (empty($link['language']) || $link['language']->language == $language->language)) {
         $class .= ' active';
       }
       //$output .= '<li'. drupal_attributes(array('class' => $class)) .'>';
@@ -656,58 +694,7 @@ function _openshift_get_group_description($node_id) {
 }
 
 function openshift_username($object) {
-
-  if ($object->uid && $object->name) {
-  	// BEGIN OVERRIDE.  If the user has provided a display name, we need to show the 
-  	// display name instead of the username.
-    $result = db_result(db_query("SELECT pv.value
-        FROM {profile_values} AS pv
-        LEFT JOIN {profile_fields} AS pf ON (pv.fid = pf.fid)
-        WHERE pv.uid = %d AND pf.name = '%s'", array($object->uid, 'profile_display_name')));
-    if (!empty($result)) {
-      $name = $result;
-    }
-    else {
-    	// Else we check for an email and remove the domain.
-      $name = $object->name;
-      $name_parts = explode('@', $name);
-      if (count($name_parts) > 1) {
-      	$name = $name_parts[0];
-      }
-    }
-
-    // Shorten the name when it is too long or it will break many tables.
-    if (drupal_strlen($name) > 20) {
-      $name = drupal_substr($name, 0, 15) .'...';
-    }
-    // END OVERRIDE
-
-    if (user_access('access user profiles')) {
-      $output = l($name, 'user/'. $object->uid, array('attributes' => array('title' => t('View user profile.'))));
-    }
-    else {
-      $output = check_plain($name);
-    }
-  }
-  else if ($object->name) {
-    // Sometimes modules display content composed by people who are
-    // not registered members of the site (e.g. mailing list or news
-    // aggregator modules). This clause enables modules to display
-    // the true author of the content.
-    if (!empty($object->homepage)) {
-      $output = l($object->name, $object->homepage, array('attributes' => array('rel' => 'nofollow')));
-    }
-    else {
-      $output = check_plain($object->name);
-    }
-
-    $output .= ' ('. t('not verified') .')';
-  }
-  else {
-    $output = check_plain(variable_get('anonymous', t('Anonymous')));
-  }
-
-  return $output;
+  return $object->name;
 }
 
 function openshift_preprocess_user_profile(&$vars) {
@@ -720,8 +707,7 @@ function openshift_preprocess_user_profile(&$vars) {
 }
 
 function strip_email($username) {
-  $pieces = explode("@", $username);
-  return $pieces[0];
+  return $username;
 }
 
 function readabledate($enterdate) {

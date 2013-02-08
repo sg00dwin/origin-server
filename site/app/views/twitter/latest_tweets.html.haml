@@ -1,0 +1,5 @@
+- cache 'tweets', :expires_in => 10.minutes do
+  - @tweets.each do |t|
+    .tweet
+      %p= tweet(t)
+      %small= t.user.name

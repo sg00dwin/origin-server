@@ -12,11 +12,7 @@ $streamline_host = 'https://streamline-proxy1.ops.rhcloud.com';
 #$cookie_domain = '.redhat.com';
 
 $conf['redhat_sso_enabled'] = true;
-$conf['redhat_sso_force_login'] = false;
-$conf['redhat_sso_login_url'] = '/app/login';
-$conf['redhat_sso_logout_url'] = '/app/logout';
-$conf['redhat_sso_verify_url'] = $streamline_host . '/wapps/streamline/cloudVerify.html';
-$conf['redhat_sso_register_url'] = '/app/user/new';
+$conf['redhat_sso_register_url'] = '/app/account/new';
 
 /**
  * RedHat User Info Settings
@@ -27,6 +23,7 @@ $conf['redhat_sso_register_url'] = '/app/user/new';
  *
  * For security these settings will be kept out of the repository.
  */
+$conf['redhat_login_url'] = $streamline_host . '/wapps/streamline/login.html';
 $conf['redhat_user_info_url'] = $streamline_host . '/wapps/streamline/userInfo.html';
 $conf['redhat_user_info_secret_key'] = 'sw33tl1Qu0r';
 ?>

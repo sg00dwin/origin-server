@@ -988,7 +988,7 @@ function blogs_views_default_views() {
     'type' => 'none',
   ));
   $handler->override_option('title', 'Content');
-  $handler->override_option('header', '<a class="pull-right" href="/community/blogs/feed"><img title="Subscribe to the blog RSS feed " alt="Syndicate content" src="/community/misc/feed.png"></a>');
+  $handler->override_option('header', '<a class="pull-right" href="/blogs/feed"><img title="Subscribe to the blog RSS feed " alt="Syndicate content" src="/misc/feed.png"></a>');
   $handler->override_option('header_format', '2');
   $handler->override_option('header_empty', 0);
   $handler->override_option('style_plugin', 'table');
@@ -1728,7 +1728,7 @@ function blogs_views_default_views() {
     'output_lifespan' => '1800',
   ));
   $handler->override_option('title', 'Videos');
-  $handler->override_option('header', 'Viewing this page from China?  See our [Tudou video page](/community/videos/tudou)!');
+  $handler->override_option('header', 'Viewing this page from China?  See our [Tudou video page](/videos/tudou)!');
   $handler->override_option('header_format', '1');
   $handler->override_option('header_empty', 1);
   $handler->override_option('items_per_page', 15);
@@ -1898,7 +1898,7 @@ function blogs_views_default_views() {
       'relationship' => 'none',
     ),
   ));
-  $handler->override_option('title', '');
+  $handler->override_option('title', 'Documentation');
   $handler->override_option('header', '');
   $handler->override_option('path', 'documentation');
   $handler->override_option('menu', array(
@@ -1916,7 +1916,7 @@ function blogs_views_default_views() {
     'name' => 'navigation',
   ));
   $handler = $view->new_display('feed', 'Blog feed', 'feed_1');
-  $handler->override_option('title', 'Blogs');
+  $handler->override_option('title', 'OpenShift Blogs');
   $handler->override_option('header', '');
   $handler->override_option('items_per_page', 0);
   $handler->override_option('style_plugin', 'rss');
@@ -2857,7 +2857,7 @@ function blogs_views_default_views() {
         'alter_text' => 0,
         'text' => '',
         'make_link' => 0,
-        'path' => '/community/node/[nid]',
+        'path' => '/node/[nid]',
         'absolute' => 1,
         'link_class' => '',
         'alt' => '',
@@ -3118,7 +3118,7 @@ function blogs_views_default_views() {
     'weight' => 0,
     'name' => 'navigation',
   ));
-  $handler = $view->new_display('page', 'Frontpage Blogs', 'page_7');
+  $handler = $view->new_display('page', 'Frontpage Blogs JSON', 'page_7');
   $handler->override_option('relationships', array());
   $handler->override_option('fields', array(
     'title' => array(
@@ -3127,7 +3127,7 @@ function blogs_views_default_views() {
         'alter_text' => 0,
         'text' => '',
         'make_link' => 0,
-        'path' => '/community/node/[nid]',
+        'path' => '/node/[nid]',
         'absolute' => 1,
         'link_class' => '',
         'alt' => '',
@@ -3414,7 +3414,7 @@ function blogs_views_default_views() {
         'alter_text' => 0,
         'text' => '',
         'make_link' => 0,
-        'path' => '/community/node/[nid]',
+        'path' => '/node/[nid]',
         'absolute' => 1,
         'link_class' => '',
         'alt' => '',
@@ -3881,6 +3881,248 @@ echo date(\'U\', strtotime($data->node_data_field_event_start_date_field_event_s
     'weight' => 0,
     'name' => 'navigation',
   ));
+  $handler = $view->new_display('block', 'Frontpage Embed Blogs', 'block_4');
+  $handler->override_option('relationships', array());
+  $handler->override_option('fields', array(
+    'path' => array(
+      'label' => '',
+      'alter' => array(
+        'alter_text' => 0,
+        'text' => '',
+        'make_link' => 0,
+        'path' => '',
+        'absolute' => 0,
+        'link_class' => '',
+        'alt' => '',
+        'rel' => '',
+        'prefix' => '',
+        'suffix' => '',
+        'target' => '',
+        'help' => '',
+        'trim' => 0,
+        'max_length' => '',
+        'word_boundary' => 1,
+        'ellipsis' => 1,
+        'html' => 0,
+        'strip_tags' => 1,
+      ),
+      'empty' => '',
+      'hide_empty' => 0,
+      'empty_zero' => 0,
+      'hide_alter_empty' => 0,
+      'absolute' => 1,
+      'exclude' => 1,
+      'id' => 'path',
+      'table' => 'node',
+      'field' => 'path',
+      'override' => array(
+        'button' => 'Use default',
+      ),
+      'relationship' => 'none',
+    ),
+    'field_summary_value' => array(
+      'label' => '',
+      'alter' => array(
+        'alter_text' => 0,
+        'text' => '',
+        'make_link' => 0,
+        'path' => '',
+        'absolute' => 0,
+        'link_class' => '',
+        'alt' => '',
+        'rel' => '',
+        'prefix' => '',
+        'suffix' => '',
+        'target' => '',
+        'help' => '',
+        'trim' => 0,
+        'max_length' => '',
+        'word_boundary' => 1,
+        'ellipsis' => 1,
+        'html' => 0,
+        'strip_tags' => 0,
+      ),
+      'empty' => '',
+      'hide_empty' => 1,
+      'empty_zero' => 0,
+      'hide_alter_empty' => 1,
+      'link_to_node' => 0,
+      'label_type' => 'none',
+      'format' => 'default',
+      'multiple' => array(
+        'group' => TRUE,
+        'multiple_number' => '',
+        'multiple_from' => '',
+        'multiple_reversed' => FALSE,
+      ),
+      'exclude' => 1,
+      'id' => 'field_summary_value',
+      'table' => 'node_data_field_summary',
+      'field' => 'field_summary_value',
+      'override' => array(
+        'button' => 'Use default',
+      ),
+      'relationship' => 'none',
+    ),
+    'created' => array(
+      'label' => '',
+      'alter' => array(
+        'alter_text' => 1,
+        'text' => 'Posted [created]
+',
+        'make_link' => 0,
+        'path' => '',
+        'absolute' => 0,
+        'link_class' => '',
+        'alt' => '',
+        'rel' => '',
+        'prefix' => '',
+        'suffix' => '',
+        'target' => '',
+        'help' => '',
+        'trim' => 0,
+        'max_length' => '',
+        'word_boundary' => 1,
+        'ellipsis' => 1,
+        'html' => 0,
+        'strip_tags' => 0,
+      ),
+      'empty' => '',
+      'hide_empty' => 1,
+      'empty_zero' => 0,
+      'hide_alter_empty' => 0,
+      'date_format' => 'custom',
+      'custom_date_format' => 'M jS',
+      'exclude' => 1,
+      'id' => 'created',
+      'table' => 'node',
+      'field' => 'created',
+      'override' => array(
+        'button' => 'Use default',
+      ),
+      'relationship' => 'none',
+    ),
+    'phpcode' => array(
+      'label' => '',
+      'alter' => array(
+        'alter_text' => 0,
+        'text' => '',
+        'make_link' => 0,
+        'path' => '',
+        'absolute' => 0,
+        'link_class' => '',
+        'alt' => '',
+        'rel' => '',
+        'prefix' => '',
+        'suffix' => '',
+        'target' => '',
+        'help' => '',
+        'trim' => 0,
+        'max_length' => '',
+        'word_boundary' => 1,
+        'ellipsis' => 1,
+        'html' => 0,
+        'strip_tags' => 0,
+      ),
+      'empty' => '',
+      'hide_empty' => 0,
+      'empty_zero' => 0,
+      'hide_alter_empty' => 0,
+      'value' => '<?php
+    $alter = array(
+      \'alter_text\' => $this->options[\'alter_value\'],
+      \'text\' => \'<a class="link-tile" href="[path]">[title][field_summary_value]<aside>[created]</aside></a>\',
+    );
+$tokens = $this->get_render_tokens($alter); 
+$format_id = db_result(db_query("SELECT format FROM {filter_formats} WHERE name = \'%s\'", \'Markdown with HTML\'));
+#print_r($data);
+#print \'Format id: \'.$format_id;
+
+?><a class="link-tile" href="<?php print $this->render_altered(array(\'text\' => \'[path]\'), $tokens); ?>">
+<?php print check_markup($data->node_data_field_summary_field_summary_value, $format_id, false); ?>
+<aside><?php print $this->render_altered(array(\'text\' => \'[created]\'), $tokens); ?></aside>
+</a>',
+      'exclude' => 0,
+      'id' => 'phpcode',
+      'table' => 'customfield',
+      'field' => 'phpcode',
+      'override' => array(
+        'button' => 'Use default',
+      ),
+      'relationship' => 'none',
+    ),
+  ));
+  $handler->override_option('filters', array(
+    'type' => array(
+      'operator' => 'in',
+      'value' => array(
+        'blog' => 'blog',
+      ),
+      'group' => '0',
+      'exposed' => FALSE,
+      'expose' => array(
+        'operator' => FALSE,
+        'label' => '',
+      ),
+      'id' => 'type',
+      'table' => 'node',
+      'field' => 'type',
+      'relationship' => 'none',
+    ),
+    'status' => array(
+      'operator' => '=',
+      'value' => '1',
+      'group' => '0',
+      'exposed' => FALSE,
+      'expose' => array(
+        'operator' => FALSE,
+        'label' => '',
+      ),
+      'id' => 'status',
+      'table' => 'node',
+      'field' => 'status',
+      'relationship' => 'none',
+    ),
+    'promote' => array(
+      'operator' => '=',
+      'value' => '1',
+      'group' => '0',
+      'exposed' => FALSE,
+      'expose' => array(
+        'operator' => FALSE,
+        'label' => '',
+      ),
+      'id' => 'promote',
+      'table' => 'node',
+      'field' => 'promote',
+      'override' => array(
+        'button' => 'Use default',
+      ),
+      'relationship' => 'none',
+    ),
+  ));
+  $handler->override_option('cache', array(
+    'type' => 'time',
+    'results_lifespan' => '300',
+    'output_lifespan' => '300',
+  ));
+  $handler->override_option('header', '<ul class="news unstyled">');
+  $handler->override_option('header_format', '46');
+  $handler->override_option('footer', '</ul>
+<p class="gutter"><a class="action-more" href="/blogs">Read the OpenShift blog</a></p>');
+  $handler->override_option('footer_format', '46');
+  $handler->override_option('footer_empty', 0);
+  $handler->override_option('items_per_page', 3);
+  $handler->override_option('style_plugin', 'default');
+  $handler->override_option('style_options', NULL);
+  $handler->override_option('row_plugin', 'fields');
+  $handler->override_option('row_options', array(
+    'inline' => array(),
+    'separator' => '',
+    'hide_empty' => 0,
+  ));
+  $handler->override_option('block_description', '');
+  $handler->override_option('block_caching', '-1');
 
   $views[$view->name] = $view;
 

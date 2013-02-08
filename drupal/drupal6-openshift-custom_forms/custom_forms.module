@@ -10,7 +10,8 @@ function custom_forms_form_alter(&$form, $form_state, $form_id) {
         $form['account']['pass']['#access'] = FALSE;
       }
       else {
-        $form['account']['#access'] = FALSE;
+        #$form['account']['#access'] = FALSE;
+        $form['account']['mail']['#access'] = FALSE;
       }
       break;
   }

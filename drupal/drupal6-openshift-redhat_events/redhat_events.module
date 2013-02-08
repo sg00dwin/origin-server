@@ -4,7 +4,8 @@ function redhat_events_menu() {
   $items['events'] = array(
     'page callback' => redhat_events_page,
     'access callback' => TRUE,
-    'type' => MENU_NORMAL_ITEM,
+    'title' => 'Upcoming Events',
+    'type' => MENU_CALLBACK,
   );
 
   return $items;

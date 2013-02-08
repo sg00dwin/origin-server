@@ -29,7 +29,7 @@ function blogs_context_default_contexts() {
           'module' => 'views',
           'delta' => 'nodes_by_category-block_2',
           'region' => 'sidebar_left',
-          'weight' => 0,
+          'weight' => 20,
         ),
       ),
     ),

@@ -849,11 +849,7 @@ html.js fieldset.collapsible .fieldset-wrapper {
 
 .forum-header-hat, .forum-header-right {display: none;}
 
-
-
-
-
-
-
-
-
+.community.page-user.not-logged-in {
+  .row-content > .row { background: none; }
+  .column-content { background: none; }
+}
