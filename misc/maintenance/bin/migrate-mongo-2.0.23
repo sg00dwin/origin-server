@@ -49,8 +49,26 @@ def release_mongo_session(session)
 end
 
 def create_cloud_user(user)
+  if user['apps'].nil? or user['apps'].empty?
+    if user["parent_user_login"] # Delete subaccounts without apps
+      puts "Skipping subaccount user without apps: #{user['login']}"
+      return nil
+    end
+    if (user["ssh_keys"].nil? or user['ssh_keys'].empty?) and user["max_gears"] == 3 and (user["domains"].nil? or user["domains"].empty?) 
+      if (user["capabilities"].nil? or user["capabilities"].empty?)
+        puts "Skipping user without apps, domains, ssh_keys, or capabilities: #{user['login']}"
+        return nil
+      else
+        user_cap = user["capabilities"]
+        if (user_cap["gear_sizes"].nil? or user_cap["gear_sizes"].length == 1) and !user_cap["subaccounts"] and !user_cap["max_storage_per_gear"]
+          puts "Skipping user without apps, domains, ssh_keys, or special capabilities: #{user['login']}"
+          return nil
+        end
+      end
+    end
+  end
   cu = CloudUser.new
-  cu.login = user["login"] 
+  cu.login = user["login"]
   cu.consumed_gears = user["consumed_gears"]
   cu.capabilities["max_gears"] = user["max_gears"]
   if user["capabilities"]
@@ -297,8 +315,10 @@ end
 def migrate_user(user)
   begin
     cu = create_cloud_user(user)
-    dm = create_domains(user, cu)
-    create_applications(user, dm)
+    if cu
+      dm = create_domains(user, cu)
+      create_applications(user, dm)
+    end
   rescue Exception => e
     puts "ERROR: Migration failed for User #{user['login']}: #{e.message}"
     puts e.backtrace
@@ -349,7 +369,7 @@ def user_phase2
   # Process all user that have a parent user login
   users.find({"$and"=>[{"parent_user_login"=>{"$exists"=>true}}, {"parent_user_login"=>{"$ne"=>nil}}]}).no_timeout.each do |user|
     if $serial or (!user["login"] && $user_index==0) or (user["login"] && user["login"].sum.modulo($total_processes)==$user_index)
-      migrate_user(user) 
+      migrate_user(user)
       processed_user_count += 1
     end
   end
