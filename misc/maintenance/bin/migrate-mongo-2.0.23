@@ -116,7 +116,7 @@ def create_domains(user, cloud_user_obj)
       domain_map = {}
       user['apps'].each { |a|
         domain_map[a['domain']['namespace']] = a if a['domain'] and a['domain']['namespace']
-      }
+      } if user['apps']
       if domain_map.length > 1
         raise Exception.new "Found more than 1 domain in use" 
       end
@@ -313,6 +313,7 @@ def create_group_instances(new_app, old_app)
 end
 
 def migrate_user(user)
+  puts user['login']
   begin
     cu = create_cloud_user(user)
     if cu
