@@ -2,7 +2,7 @@
 .row
   %section
     .navbar
-      = render :partial => 'help_banner', :locals => {:user => @user}
+      = render :partial => 'help_banner', :locals => {:user => @user, :user_on_basic_plan => @user_on_basic_plan}
 
 = flashes
 .row
@@ -11,7 +11,7 @@
       = render :partial => 'faq', :locals => {:topten => @topten}
   .span4
     %section
-      = render :partial => 'contact', :locals => {:user => @user}
+      = render :partial => 'contact', :locals => {:user => @user, :user_on_basic_plan => @user_on_basic_plan}
       = render :partial => 'customer_service'
       = render :partial => 'tech_support'
 

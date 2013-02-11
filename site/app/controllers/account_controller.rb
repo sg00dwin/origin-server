@@ -7,7 +7,7 @@ class AccountController < ApplicationController
     ['new','create','complete','create_external'].include?(action_name) ? 'simple' : 'console'
   end
 
-  before_filter :require_login, :only => :show
+  before_filter :require_login, :only => [:show, :help]
   protect_from_forgery :except => :create_external
 
   include Account::Creation
@@ -16,5 +16,7 @@ class AccountController < ApplicationController
 
   def help
     @topten = FaqItem.topten
+    @user = User.find :one, :as => current_user
+    @user_on_basic_plan = user_on_basic_plan?
   end
 end
