@@ -96,9 +96,9 @@ Broker::Application.configure do
   config.billing = {
     :aria => {
       :config => {
-        :url => "https://streamline-proxy1.ops.rhcloud.com/api/ws/api_ws_class_dispatcher.php",
-        :auth_key => "sRvjFqjSadu3AFB8jRAR3tqeH5Qf6XjW",
-        :client_no => 3754655
+        :url => conf.get("BILLING_PROVIDER_URL", ""),
+        :auth_key => conf.get("BILLING_PROVIDER_AUTH_KEY", ""),
+        :client_no => conf.get("BILLING_PROVIDER_CLIENT_NO", "0").to_i
       },
       :usage_type => {
         :gear => {:small => 10014123,
