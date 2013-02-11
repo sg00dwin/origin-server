@@ -515,42 +515,54 @@ function openshift_preprocess_search_result(&$vars) {
 }
 
 function openshift_filter_tips($tips, $long = FALSE, $extra = '') {
-  $output = '';
+	$output = '';
+	if ($long) {
+		$output = '<h2>' . t('Input Formats') . ':' . '</h2>';
+		$output .= '<h3>' . t('Default') . '</h3>';
+		$output .= '<small>' . t('Syntax highlighting of source code can be enabled with the following tags:') . '</small>';
+		$output .= '<ul><li>' . t('Generic syntax highlighting tags: "<code>&ltcode&gt</code>", "<code>&ltblockcode&gt</code>". ') . '</li>';
+		$output .= '<li>' . t('Language specific syntax highlighting tags:') . '</li></ul>';
+		$output .= '<table class="table table-bordered table-stripped">' . '<thead>Code</thead>' . '<thead>Syntax</thead>' . '</table>';
+	}
+	return $output;
+} 
+// function openshift_filter_tips($tips, $long = FALSE, $extra = '') {
+//   $output = '';
 
-  $multiple = count($tips) > 1;
-  if ($multiple) {
-    $output = '<h2>' . t('Input Formats') .':'. '</h2>';
-  }
+//   $multiple = count($tips) > 1;
+//   if ($multiple) {
+//     $output = '<h2>' . t('Input Formats') .':'. '</h2>';
+//   }
 
-  if (count($tips)) {
-    if ($multiple) {
-      $output .= '<dl>';
-    }
-    foreach ($tips as $name => $tiplist) {
-      if ($multiple) {
-        $output .= '<li>';
-        $output .= '<strong>'. $name .'</strong>:<br />';
-      }
+//   if (count($tips)) {
+//     if ($multiple) {
+//       $output .= '<dl>';
+//     }
+//     foreach ($tips as $name => $tiplist) {
+//       if ($multiple) {
+//         $output .= '<li>';
+//         $output .= '<strong>'. $name .'</strong>:<br />';
+//       }
 
-      if (count($tiplist) > 0) {
-        $output .= '<ul class="tips unstyled">';
-        foreach ($tiplist as $tip) {
-          $output .= '<li'. ($long ? ' id="filter-'. str_replace("/", "-", $tip['id']) .'">' : '>') . $tip['tip'] .'</li>';
-        }
-        $output .= '</ul>';
-      }
+//       if (count($tiplist) > 0) {
+//         $output .= '<ul class="tips unstyled">';
+//         foreach ($tiplist as $tip) {
+//           $output .= '<li'. ($long ? ' id="filter-'. str_replace("/", "-", $tip['id']) .'">' : '>') . $tip['tip'] .'</li>';
+//         }
+//         $output .= '</ul>';
+//       }
 
-      if ($multiple) {
-        $output .= '</li>';
-      }
-    }
-    if ($multiple) {
-      $output .= '</ul>';
-    }
-  }
+//       if ($multiple) {
+//         $output .= '</li>';
+//       }
+//     }
+//     if ($multiple) {
+//       $output .= '</ul>';
+//     }
+//   }
 
-  return $output;
-}
+//   return $output;
+// }
 
 function openshift_links($links, $attributes = array('class' => 'links')) {
   
