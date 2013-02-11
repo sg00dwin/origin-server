@@ -395,19 +395,14 @@ module Streamline
       not roles.include?('cloud_access_1') and roles.include?('cloud_access_request_1')
     end
 
-    def full_user(args={})
-      if @full_user.nil? or args.keys.any?
-        if self.full_user? and not args.keys.any?
-          # TODO: This returns a blank for now; remove this when userInfo
-          #       functions for full users.
-          @full_user = Streamline::FullUser.new
-        elsif args.keys.any?
-          @full_user = Streamline::FullUser.new args
-        elsif @full_user.nil?
-          @full_user = Streamline::FullUser.new
-        end
-      end
-      @full_user
+    def full_user(opts=nil)
+      @full_user ||= begin
+                       if self.full_user?
+                         @full_user = Streamline::FullUser.from_streamline(user_info!)
+                       else
+                         @full_user = Streamline::FullUser.new(opts)
+                       end
+                     end
     end
 
     def promote(streamline_hash)
@@ -425,6 +420,16 @@ module Streamline
       return false unless self.errors.empty?
 
       self.full_user?
+    end
+
+    def user_info!
+      user_info_args = {
+        'login' => @rhlogin,
+        'secretKey' => Rails.configuration.streamline[:user_info_secret]
+      }
+      http_post(user_info_url, user_info_args) do |json|
+        return json
+      end
     end
 
     protected

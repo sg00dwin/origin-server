@@ -317,7 +317,7 @@ class StreamlineUnitTest < ActiveSupport::TestCase
     assert @streamline.entitled?
     assert @streamline.entitled? # check for caching value
   end
-  
+
   test "entitle depends on req role" do
     roles, username = establish([CloudAccess.req_role(CloudAccess::EXPRESS)], 'test@example.com')
     assert_equal false, @streamline.entitled?
@@ -541,7 +541,7 @@ class StreamlineUnitTest < ActiveSupport::TestCase
   end
 
   test "promote simple user to full user" do
-    @streamline.expects(:http_post).times(2).yields({'username' => 'test1', 'roles' => ['simple_authenticated']}).then.yields({ 'roles' => ['authenticated']})
+    @streamline.expects(:http_post).yields({'login' => 'test1', 'roles' => ['simple_authenticated']})
 
     # First, establish a simple streamline user
     assert_equal true, @streamline.authenticate("test1", "test1")
@@ -551,15 +551,19 @@ class StreamlineUnitTest < ActiveSupport::TestCase
     assert user_info = full_user_args
     assert user_info[:intentionally_invalid_key] = 'foo'
     assert full_user = @streamline.full_user(user_info)
-    assert_equal true, full_user.promote(@streamline)
+
+    assert user = WebUser.new(:email_address => 'test@test.com', :password => user_info[:password])
+    user.expects(:http_post).yields({'login' => 'test1', 'roles' => ['authenticated']})
+    user.stubs(:rhlogin).returns('test1')
+    assert_equal true, full_user.promote(user)
 
     # Now ensure that the user was promoted
-    assert_equal true, @streamline.full_user?
+    #assert_equal true, @streamline.full_user?
     user_info.each_pair do |key,value|
       if key == :intentionally_invalid_key
-        assert_equal false, @streamline.full_user.respond_to?(key)
+        assert_equal false, full_user.respond_to?(key)
       else
-        assert_equal value, @streamline.full_user.send(key)
+        assert_equal value, full_user.send(key)
       end
     end
   end

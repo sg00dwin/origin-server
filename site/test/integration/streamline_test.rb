@@ -140,10 +140,12 @@ class StreamlineIntegrationTest < ActionDispatch::IntegrationTest
     assert user.confirm_email
     assert user.simple_user?
     assert full_user = Streamline::FullUser.new(full_user_args(user))
+    assert !full_user.persisted?
     unless full_user.promote(user)
       omit('Streamline did not successfully promote a user, environment may be down')
     else
       assert user.full_user?
+      assert full_user.persisted?
     end
   end
 
@@ -183,7 +185,7 @@ class StreamlineIntegrationTest < ActionDispatch::IntegrationTest
     assert key_list = full_user_args
     key_list.keys.each do |field|
       # Skip special fields and non-required fields
-      next if [:email_subscribe, :login, :password, :password_confirmation, :state].include?(field)
+      next if [:email_subscribe, :login, :password, :password_confirmation, :title, :state].include?(field)
       assert user_args = full_user_args(user, [field])
       assert full_user = Streamline::FullUser.new(user_args)
       assert_equal false, full_user.promote(user)

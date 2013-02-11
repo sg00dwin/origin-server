@@ -73,6 +73,15 @@ module Streamline
         end
       end
 
+      def from_streamline(json)
+        obj_opts = {}
+        json.each_pair do |k,v|
+          key = get_obj_attribute_map(k.to_sym)
+          obj_opts[key] = v
+        end
+        new(obj_opts, true)
+      end
+
       protected
         def attr_streamline(*args)
           opts = args.extract_options!

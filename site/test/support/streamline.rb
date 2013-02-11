@@ -32,6 +32,7 @@ class ActiveSupport::TestCase
       :first_name => 'Joe',
       :last_name => 'Somebody',
       :phone_number => '9191111111',
+      :title => 'CEO',
       :company => 'Test Corp.',
       :address1 => '12345 Happy Street',
       :city => 'Happyville',
