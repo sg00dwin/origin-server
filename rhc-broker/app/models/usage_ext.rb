@@ -1,0 +1,26 @@
+require 'usage'
+class Usage
+
+  def get_usage_rate(plan_id)
+    usage_rates, usage_rate = nil, nil
+
+    # Get the usage rates for the user's billing plan
+    user_plan = plan_id.to_sym || :freeshift    
+    if defined?(Rails) && Rails.configuration.billing
+      usage_rates = Rails.configuration.billing[:aria][:plans][user_plan][:usage_rates] rescue nil
+    end
+    
+    if usage_rates
+      case usage_type
+      when UsageRecord::USAGE_TYPES[:gear_usage]
+        usage_rate = usage_rates[:gear][gear_size.to_sym]
+      when UsageRecord::USAGE_TYPES[:addtl_fs_gb]
+        usage_rate = usage_rates[:storage][:gigabyte]
+      when UsageRecord::USAGE_TYPES[:premium_cart]
+        usage_rate = usage_rates[:cartridge][cart_name.to_sym]
+      end
+    end
+    usage_rate
+  end
+
+end
