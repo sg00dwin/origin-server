@@ -520,9 +520,18 @@ function openshift_filter_tips($tips, $long = FALSE, $extra = '') {
 		$output = '<h2>' . t('Input Formats') . ':' . '</h2>';
 		$output .= '<h3>' . t('Default') . '</h3>';
 		$output .= '<small>' . t('Syntax highlighting of source code can be enabled with the following tags:') . '</small>';
-		$output .= '<ul><li>' . t('Generic syntax highlighting tags: "<code>&ltcode&gt</code>", "<code>&ltblockcode&gt</code>". ') . '</li>';
-		$output .= '<li>' . t('Language specific syntax highlighting tags:') . '</li></ul>';
-		$output .= '<table class="table table-bordered table-stripped">' . '<thead>Code</thead>' . '<thead>Syntax</thead>' . '</table>';
+		$output .= '<ul><li>' . t('Generic syntax highlighting tags: "<code>&ltcode&gt</code>", "<code>&ltblockcode&gt</code>".') . '</li></ul>';
+		$output .= '<h4>' . t('For language specific syntax highlighting tags:') . '</h4>';
+		$output .= '<table class="table table-bordered table-stripped"><thead><tr>' . '<th>Code</th>' . '<th>Syntax</th>' . '</tr></thead>';
+		$output .= '<tbody>' . '<tr><td><code>&ltc&gt</code></td>' . '<td>Used for C code</td></tr>';
+		$output .= '<tr><td><code>&ltcpp&gt</code>' . '<td>Used for C++ code</td></tr>';
+		$output .= '<tr><td><code>&ltdrupal5&gt</code>' . '<td>Used for Drupal 5 code</td></tr>';
+		$output .= '<tr><td><code>&ltdrupal6&gt</code>' . '<td>Used for Drupal 6 code</td></tr>';
+		$output .= '<tr><td><code>&ltjava&gt</code>' . '<td>Used for Java code</td></tr>';
+		$output .= '<tr><td><code>&ltjavascript&gt</code>' . '<td>Used for Javascript code</td></tr>';
+		$output .= '<tr><td><code>&ltphp&gt</code>' . '<td>Used for PHP code</td></tr>';
+		$output .= '<tr><td><code>&ltpython&gt</code>' . '<td>Used for Python code</td></tr>';
+		$output .= '<tr><td><code>&ltruby&gt</code>' . '<td>Used for Ruby code</td></tr>' . '</tbody></table>';
 	}
 	return $output;
 } 
