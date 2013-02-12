@@ -6,7 +6,8 @@ function redhat_ideas_menu() {
   $items['ideas'] = array(
     'page callback' => redhat_ideas_page,
     'access callback' => TRUE,
-    'type' => MENU_NORMAL_ITEM,
+    'type' => MENU_CALLBACK,
+    'title'  => 'Vote on Features',
   );
   
   return $items;

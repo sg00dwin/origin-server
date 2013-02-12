@@ -410,6 +410,7 @@ function user_profile_user_default_permissions() {
     'name' => 'administer xmlsitemap',
     'roles' => array(
       '0' => 'administrator',
+      '1' => 'moderator',
     ),
   );
 
@@ -434,6 +435,7 @@ function user_profile_user_default_permissions() {
     'name' => 'change own username',
     'roles' => array(
       '0' => 'administrator',
+      '1' => 'authenticated user',
     ),
   );
 
@@ -490,8 +492,10 @@ function user_profile_user_default_permissions() {
     'name' => 'create document content',
     'roles' => array(
       '0' => 'administrator',
-      '1' => 'doc content owner',
-      '2' => 'moderator',
+      '1' => 'authenticated user',
+      '2' => 'blogger',
+      '3' => 'doc content owner',
+      '4' => 'moderator',
     ),
   );
 
@@ -1159,16 +1163,6 @@ function user_profile_user_default_permissions() {
     ),
   );
 
-  // Exported permission: edit field_event_timezone
-  $permissions['edit field_event_timezone'] = array(
-    'name' => 'edit field_event_timezone',
-    'roles' => array(
-      '0' => 'administrator',
-      '1' => 'blogger',
-      '2' => 'moderator',
-    ),
-  );
-
   // Exported permission: edit field_event_url
   $permissions['edit field_event_url'] = array(
     'name' => 'edit field_event_url',
@@ -1210,8 +1204,7 @@ function user_profile_user_default_permissions() {
   $permissions['edit field_kb_applies_to'] = array(
     'name' => 'edit field_kb_applies_to',
     'roles' => array(
-      '0' => 'administrator',
-      '1' => 'moderator',
+      '0' => 'moderator',
     ),
   );
 
@@ -1229,8 +1222,7 @@ function user_profile_user_default_permissions() {
   $permissions['edit field_kb_code'] = array(
     'name' => 'edit field_kb_code',
     'roles' => array(
-      '0' => 'administrator',
-      '1' => 'moderator',
+      '0' => 'moderator',
     ),
   );
 
@@ -2019,15 +2011,6 @@ function user_profile_user_default_permissions() {
   // Exported permission: view field_event_state
   $permissions['view field_event_state'] = array(
     'name' => 'view field_event_state',
-    'roles' => array(
-      '0' => 'anonymous user',
-      '1' => 'authenticated user',
-    ),
-  );
-
-  // Exported permission: view field_event_timezone
-  $permissions['view field_event_timezone'] = array(
-    'name' => 'view field_event_timezone',
     'roles' => array(
       '0' => 'anonymous user',
       '1' => 'authenticated user',

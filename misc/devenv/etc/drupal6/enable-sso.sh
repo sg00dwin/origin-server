@@ -10,8 +10,8 @@ service rhc-site restart
 
 echo "Enabling SSO for Drupal..."
 pushd /etc/drupal6/default/
-mv redhat_settings.php redhat_settings.php.orig
-cp redhat_settings_staging.php redhat_settings.php
-chown .libra_user redhat_settings.php
+sed -i "s/redhat_sso_skip_password'\]\ \=\ true/redhat_sso_skip_password'\]\ \=\ false/" /etc/drupal6/default/redhat_settings.php
+service httpd restart
 popd
+
 echo "Note: You can configure both Drupal and the site to use redhat.com domain to set cookies by editing the cookie_domain variable in redhat_settings.php and streamline :cookie_domain => nil in site development.rb, then restarting the services."

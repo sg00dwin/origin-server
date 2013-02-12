@@ -5,7 +5,7 @@
 %global modname             og_comment_perms
 
 Name:    drupal%{drupal_release}-openshift-%{modname}
-Version: 1.3.1
+Version: 1.3.2
 Release: 1%{?dist}
 Summary: Openshift Red Hat Organic Group Comment Custom Module for Drupal6
 Group:   Applications/Publishing
@@ -41,6 +41,12 @@ rm -rf $RPM_BUILD_ROOT
 %{drupal_modules}/%{modname}
 
 %changelog
+* Fri Feb 08 2013 Adam Miller <admiller@redhat.com> 1.3.2-1
+- bump Release: for all drupal packages for rebuild (admiller@redhat.com)
+
+* Fri Feb 08 2013 Adam Miller <admiller@redhat.com> - 1.3.1-2
+- rebuilt
+
 * Wed Jul 11 2012 Adam Miller <admiller@redhat.com> 1.3.1-1
 - bump_minor_versions for sprint 15 (admiller@redhat.com)
 

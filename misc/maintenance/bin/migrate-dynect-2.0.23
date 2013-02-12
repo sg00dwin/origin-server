@@ -12,30 +12,70 @@ require 'config/environment'
 @password = Rails.configuration.dns[:dynect_password]
 @domain_suffix = Rails.configuration.openshift[:domain_suffix]
 @zone = Rails.configuration.dns[:zone]
+  
+$total_processes = 1
+$index = 0
 
 def mongo_connect
   db = OpenShift::DataStore.db
-  $coll = db.collection('domains')
+  $coll = db.collection('user')
 end
 
-def mongo_migrate
-  puts "Checking for all users "
-  $coll.find( {}, { :fields => ["namespace"],
+def namespace_list
+  puts "Writing all namespaces to disk in namespaces_*"
+  $coll.find( {}, { :fields => ["domains.namespace"],
                                 :timeout => false }) do |cursor|
-    cursor.each { |dhash|
-      namespace = dhash["namespace"]
+    $total_processes.times do |i|
+      `echo -n > "namespaces_#{i}"`
+    end
+    cursor.each { |uhash|
+      uhash['domains'].each do |domain|
+        namespace = domain["namespace"]
+        index = namespace.sum.modulo($total_processes)
+        open("namespaces_#{index}", 'a') { |f|
+          f.puts namespace
+        }
+      end if uhash['domains']
+    }
+  end
+end
+
+def dynect_migrate
+  file = "namespaces_#{$index}"
+  puts "Processing #{file}"
+  change_made = false
+  i = 1
+  while true
+    line = File.open(file, &:gets)
+    login
+    if line && !line.empty?
+      namespace = line.chomp
       puts "Removing namespace: #{namespace}"
       begin
-        login
         if dyn_delete_txt_record(namespace, @auth_token, @@dyn_retries)
-          publish
+          change_made = true
         end
+        if i.modulo(100) == 0
+          publish if change_made
+          close
+          change_made = false
+        end
+      rescue Exception => e
+        puts e.message
+        puts e.backtrace
+      end
+      `sed -i '1,1d' #{file}`
+      i += 1
+    else
+      begin
+        publish if change_made
         close
       rescue Exception => e
         puts e.message
         puts e.backtrace
       end
-    }
+      break
+    end
   end
 end
 
@@ -304,7 +344,23 @@ def dyn_login(retries=0)
   return auth_token
 end
 
-mongo_connect
-puts "Dynect migration Started"
-mongo_migrate
-puts "Dynect migration Done!"
+if ARGV.include? "--list"
+  if ARGV.include? "--num_processes"
+    ind = ARGV.index("--num_processes")
+    $total_processes = ARGV[ind+1].to_i
+  end
+  mongo_connect
+  namespace_list
+elsif ARGV.include? "--migrate"
+  if ARGV.include? "--index"
+    ind = ARGV.index("--index")
+    $index = ARGV[ind+1].to_i
+  end
+  puts "Dynect Migration Started"
+  dynect_migrate
+  puts "Dynect Migration Done!"
+end
+
+puts "Done!"
+
+
