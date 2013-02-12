@@ -1,0 +1,8 @@
+#!/bin/bash
+mkdir -p compiled/src/
+bundle exec rake assets:precompile
+cp ../../public/assets/*.js compiled/src/
+
+mkdir -p compiled/tests/
+cp -r tests/ compiled/tests/
+find compiled -name "*.coffee" | xargs coffee -c
