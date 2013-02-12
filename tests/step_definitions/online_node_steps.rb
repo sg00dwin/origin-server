@@ -22,15 +22,28 @@ Then /^an account PAM limits file should( not)? exist$/ do |negate|
   end
 end
 
-Then /^an account cgroup directory should( not)? exist$/ do |negate|
-  cgroups_dir = '/cgroup/all/openshift'
-  cgdir = "#{cgroups_dir}/#{@account['accountname']}"
+Then /^the account should( not)? be subscribed to cgroup subsystems$/ do |negate|
 
-  if negate
-    assert_directory_not_exists cgdir
+  user_cgroup="/openshift/#{@account['accountname']}"
+  test_subsystems = ['cpu', 'cpuacct', 'memory', 'freezer', 'net_cls'].sort
+
+  # Create the list of cgroups to query
+  cmd =  "lscgroup " + test_subsystems.map {|s| "#{s}:#{user_cgroup}"}.join(' ')
+  reply = %x[#{cmd}]
+
+  # This is a horrible bit of cleverness
+  # each group is on one line.  split the lines to an array
+  # extract the subsystem list (before the colon) for each group
+  # split the subsystems on commas (in case there are joined subsystems)
+  # then flatten the list sort and remove duplicates
+  actual = reply.split.map {|s| s[/([^:]+)/,1] }.map {|g| g.split(',')}.flatten.uniq.sort
+
+  if negate then
+    assert_equal 0, actual.length
   else
-    assert_directory_exists cgdir
+    assert_equal actual, test_subsystems
   end
+
 end
 
 Then /^selinux labels on the account home directory should be correct$/ do

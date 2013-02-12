@@ -7,7 +7,7 @@ Feature: Account Management
     Then an account password entry should exist
     And an account PAM limits file should exist
     #And an HTTP proxy config file should exist
-    And an account cgroup directory should exist
+    And the account should be subscribed to cgroup subsystems
     And a traffic control entry should exist
     And an account home directory should exist
     And selinux labels on the account home directory should be correct
@@ -20,7 +20,7 @@ Feature: Account Management
     Then an account password entry should not exist
     And an account PAM limits file should not exist
     And a traffic control entry should not exist
-    And an account cgroup directory should not exist
+    And the account should not be subscribed to cgroup subsystems
     And an account home directory should not exist
     
  Scenario: Delete One Namespace
