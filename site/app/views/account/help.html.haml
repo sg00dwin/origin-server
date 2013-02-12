@@ -11,6 +11,8 @@
       = render :partial => 'faq', :locals => {:topten => @topten}
   .span4
     %section
+      -if @user_on_basic_plan
+        = render :partial => 'why_upgrade'
       = render :partial => 'contact', :locals => {:user => @user, :user_on_basic_plan => @user_on_basic_plan}
       = render :partial => 'customer_service'
       = render :partial => 'tech_support'
