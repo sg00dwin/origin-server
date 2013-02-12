@@ -1,10 +1,8 @@
 class FaqItem < RestApi::Base
   allow_anonymous
 
-  self.site = 'https://localhost:8118/'
-  self.prefix = '/api/v1/faq'
-
-  # TODO:  Get site and proxy info from the config
+  self.site = Rails.application.config.acct_help_faq_site
+  self.prefix = Rails.application.config.acct_help_faq_prefix
   self.proxy = nil
 
   schema do
