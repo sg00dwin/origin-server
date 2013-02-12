@@ -1,18 +1,20 @@
+require 'ipaddr'
+
 class BillingController < BaseController
 
+  skip_before_filter :authenticate
   before_filter :protect
 
   def protect
     Rails.logger.debug "Remote IP: #{request.remote_ip}"
-    # Access limited to Aria IP addresses
-    # Aria IP address range: 64.238.195.110 to 64.238.195.125
+    # Access limited to Aria IP address range
     valid_ip=false
     begin
-      if request.remote_ip =~ /\A(\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})\z/
-        if ($1 == "64") && ($2 == "238") && ($3 == "195") && ($4 >= "110" && $4 <= "125")
-          valid_ip=true
-        end
-      end
+      aria_config = Rails.application.config.billing[:aria][:config]
+      ipaddr_low = IPAddr.new(aria_config[:event_remote_ipaddr_begin]).to_i
+      ipaddr_high = IPAddr.new(aria_config[:event_remote_ipaddr_end]).to_i
+      ipaddr_remote = IPAddr.new(request.remote_ip).to_i
+      valid_ip = ((ipaddr_low..ipaddr_high) === ipaddr_remote)
     rescue Exception => e
       Rails.logger.error e
     end
