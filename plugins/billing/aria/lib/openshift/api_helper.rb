@@ -1,4 +1,4 @@
-module Online
+module OpenShift
   module AriaBilling
     class ApiHelper
       attr_accessor :auth_key, :client_no, :plans, :supp_plans, :usage_type
@@ -7,7 +7,7 @@ module Online
         if access_info != nil
           # no-op
         elsif defined? Rails
-          access_info = Rails.application.config.billing[:aria]
+          access_info = Rails.application.config.billing
         else
           raise Exception.new("Aria Billing Api Helper service is not initialized")
         end
@@ -19,7 +19,7 @@ module Online
       end
 
       def self.instance(access_info=nil)
-        Online::AriaBilling::ApiHelper.new(access_info)
+        OpenShift::AriaBilling::ApiHelper.new(access_info)
       end
      
       # NOTE: This method is only used for *Testing*
@@ -110,20 +110,49 @@ module Online
         }
       end
 
-      def record_usage(gear_uuid, sync_time, user_id=nil, acct_no=nil, 
-                            usage_type=@usage_type[:gear][:small], usage_units=1)
-        raise Online::AriaBilling::Exception.new "user_id or acct_no must be valid" if !user_id && !acct_no
+      def record_usage(acct_no, usage_type, usage_unit, gear_id, app_name,
+                       sync_time, usage_date) 
         args = {
-          'usage_units' => usage_units,
-          'usage_date' => Time.now.strftime("%Y-%m-%d %H:%M:%S"),
+          'acct_no' => acct_no,
           'usage_type' => usage_type,
+          'usage_units' => usage_unit,
+          'usage_date' => usage_date,
+          'qualifier_1' => gear_id,
+          'qualifier_2' => app_name,
+          'qualifier_3' => sync_time.to_i,
           'client_no' => @client_no,
           'auth_key' => @auth_key,
-          'qualifier_1' => gear_uuid,
-          'qualifier_2' => sync_time.to_i,
           'rest_call' => "record_usage"
         }
-        user_id ? args['userid']=user_id : args['acct_no']=acct_no
+        args
+      end
+
+      def bulk_record_usage(acct_nos, usage_types, usage_units, gear_ids, app_names,
+                            sync_time, usage_dates)
+        len = acct_nos.size
+        if (usage_types.size != len) or (usage_units.size != len) or
+           (gear_ids.size != len) or (app_names.size != len)
+          raise OpenShift::AriaBilling::Exception.new "Invalid input: array length mismatch"
+        end
+        if acct_nos.include?(nil) or usage_types.include?(nil) or usage_units.include?(nil) or
+           gear_ids.include?(nil) or app_names.include?(nil)
+          raise OpenShift::AriaBilling::Exception.new "Invalid input: array has nil"
+        end
+        sync_times = []
+        sync_time = sync_time.to_i
+        len.times { sync_times << sync_time }
+        args = {
+          'acct_no' => acct_nos.join('|'),
+          'usage_type' => usage_types.join('|'),
+          'usage_units' => usage_units.join('|'),
+          'usage_date' => usage_dates.join('|'),
+          'qualifier_1' => gear_ids.join('|'),
+          'qualifier_2' => app_names.join('|'),
+          'qualifier_3' => sync_times.join('|'),
+          'client_no' => @client_no,
+          'auth_key' => @auth_key,
+          'rest_call' => "bulk_record_usage"
+        }
         args
       end
 
@@ -228,7 +257,7 @@ module Online
           if @plans.include?(plan_id)
             plan_no = @plans[plan_id][:plan_no]
           else
-            raise Online::AriaBilling::Exception.new "Invalid Billing Plan Id: #{plan_id}"
+            raise OpenShift::AriaBilling::Exception.new "Invalid Billing Plan Id: #{plan_id}"
           end
         end
         plan_no
@@ -246,7 +275,7 @@ module Online
 
       def get_supp_plan_id(supp_plan_name)
         unless @supp_plans.include?(supp_plan_name)
-          raise Online::AriaBilling::Exception.new "Invalid Billing Supplemental Plan name: #{supp_plan_name}"
+          raise OpenShift::AriaBilling::Exception.new "Invalid Billing Supplemental Plan name: #{supp_plan_name}"
         end
         @supp_plans[supp_plan_name][:plan_no]
       end

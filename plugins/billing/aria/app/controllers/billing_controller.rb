@@ -10,7 +10,7 @@ class BillingController < BaseController
     # Access limited to Aria IP address range
     valid_ip=false
     begin
-      aria_config = Rails.application.config.billing[:aria][:config]
+      aria_config = Rails.application.config.billing[:config]
       ipaddr_low = IPAddr.new(aria_config[:event_remote_ipaddr_begin]).to_i
       ipaddr_high = IPAddr.new(aria_config[:event_remote_ipaddr_end]).to_i
       ipaddr_remote = IPAddr.new(request.remote_ip).to_i

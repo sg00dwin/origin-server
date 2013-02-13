@@ -1,4 +1,4 @@
-module Online
+module OpenShift
   module AriaBilling
     class Event
 
@@ -130,7 +130,7 @@ MSG
       end
 
       def self.handle_event(h)
-        aria_config = Rails.application.config.billing[:aria][:config]
+        aria_config = Rails.application.config.billing[:config]
         h['event_id'].each do |ev|
           email_to = aria_config[:event_orders_team_email]
           case ev.to_i
@@ -156,7 +156,7 @@ MSG
             raise Exception.new "Invalid Event, id: #{ev}"
           end
           body.gsub!(/\n/, "<br/>")
-          Online::AriaBilling::Notification.report_event(ev, body, email_to) 
+          OpenShift::AriaBilling::Notification.report_event(ev, body, email_to) 
         end
       end
      

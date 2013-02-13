@@ -27,6 +27,7 @@ Requires:  ruby193-rubygem-bson_ext
 Requires:  ruby193-rubygem-rest-client
 Requires:  rubygem-openshift-origin-auth-streamline
 Requires:  rubygem-openshift-origin-dns-dynect
+Requires:  rubygem-openshift-origin-billing-aria
 Requires:  rubygem-openshift-origin-msg-broker-mcollective
 Requires:  ruby193-rubygem-mongo_mapper
 Requires:  ruby193-rubygem-mongoid
@@ -83,7 +84,6 @@ mkdir -p -m 770 %{buildroot}%{brokerdir}/tmp/sessions
 mkdir -p -m 770 %{buildroot}%{brokerdir}/tmp/sockets
 
 mv %{buildroot}%{brokerdir}/script/rhc-admin-migrate %{buildroot}/%{_bindir}
-mv %{buildroot}%{brokerdir}/script/rhc-admin-ctl-usage %{buildroot}/%{_bindir}
 mv %{buildroot}%{brokerdir}/script/rhc-admin-ctl-plan %{buildroot}/%{_bindir}
 mv %{buildroot}%{brokerdir}/script/rhc-admin-stale-dns %{buildroot}/%{_bindir}
 
@@ -110,10 +110,11 @@ rm -rf $RPM_BUILD_ROOT
 %attr(0770,root,libra_user) %{_var}/log/openshift/broker/
 %ghost %attr(0660,root,libra_user) %{_var}/log/openshift/broker/production.log
 %ghost %attr(0660,root,libra_user) %{_var}/log/openshift/broker/development.log
+%ghost %attr(0660,root,libra_user) %{_var}/log/openshift/broker/usage.log
+%ghost %attr(0660,root,libra_user) %{_var}/log/openshift/broker/user_action.log
 %{brokerdir}
 %{htmldir}/broker
 %attr(0750,-,-) %{_bindir}/rhc-admin-migrate
-%attr(0750,-,-) %{_bindir}/rhc-admin-ctl-usage
 %attr(0750,-,-) %{_bindir}/rhc-admin-ctl-plan
 %attr(0750,-,-) %{_bindir}/rhc-admin-stale-dns
 
@@ -136,11 +137,16 @@ if [ ! -f %{_var}/log/openshift/broker/development.log ]; then
   chmod 660 %{_var}/log/openshift/broker/development.log
 fi
 
+if [ ! -f %{_var}/log/openshift/broker/user_action.log ]; then
+  /bin/touch %{_var}/log/openshift/broker/user_action.log
+  chown root:libra_user %{_var}/log/openshift/broker/user_action.log
+  chmod 660 %{_var}/log/openshift/broker/user_action.log
+fi
 
-if [ ! -f %{_var}/log/openshift/user_action.log ]; then
-  /bin/touch %{_var}/log/openshift/user_action.log
-  chown root:libra_user %{_var}/log/openshift/user_action.log
-  chmod 660 %{_var}/log/openshift/user_action.log
+if [ ! -f %{_var}/log/openshift/broker/usage.log ]; then
+  /bin/touch %{_var}/log/openshift/broker/usage.log
+  chown root:libra_user %{_var}/log/openshift/broker/usage.log
+  chmod 660 %{_var}/log/openshift/broker/usage.log
 fi
 
 %changelog

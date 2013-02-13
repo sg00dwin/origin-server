@@ -1,7 +1,7 @@
 require 'rubygems'
 require 'pony'
 
-module Online
+module OpenShift
   module AriaBilling
     class Notification
 
