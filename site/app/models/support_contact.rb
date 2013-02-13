@@ -5,8 +5,12 @@ class SupportContact
   
   attr_accessor :subject, :body, :user, :from
   
-  def initialize(user)
-    @user = user
+  def initialize(params)
+    Rails.logger.debug "params: #{params}"
+    @subject = params[:subject]
+    @body    = params[:body]
+    @user    = params[:user]
+    @from    = params[:from]
   end
   
   def persisted?

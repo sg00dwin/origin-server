@@ -1,8 +1,8 @@
 %h2 Email us
 %p
-  = semantic_form_for @support_contact, :url => 'contact', :simple => true, :html => {:id => 'new_user_form', :class => ''} do |form|
-    %input{:type => 'hidden', :name => 'from', :value => @user.login}
+  = semantic_form_for @post, :url => 'contact', :simple => true, :html => {:id => 'new_user_form', :class => ''} do |form|
     = form.inputs do
+      = form.input :from, :as => :hidden, :value => @user.login
       = form.input :subject, :as => :string, :input_html => { :placeholder => 'General Question (Subject)', :autofocus => true }
       = form.input :body, :as => :text, :input_html => { :placeholder => "Hi user, How can we help you?" }
       .form-actions

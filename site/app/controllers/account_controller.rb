@@ -18,12 +18,12 @@ class AccountController < ApplicationController
     @topten = FaqItem.topten
     @user = User.find :one, :as => current_user
     @user_on_basic_plan = user_on_basic_plan?
-    @support_contact = SupportContact.new(@user)
+    @post = SupportContact.new(:user => @user)
   end
   
   def contact_support
-    Rails.logger.info @support_contact
-    ## do stuff using AccountSupportContactMailer
+    @contact = SupportContact.new(params[:support_contact])
+    AccountSupportContactMailer.contact_email(@contact).deliver
     redirect_to( { :action => 'help' }, :flash => {:success => 'Account Support email has been sent.'} )
   end
 
