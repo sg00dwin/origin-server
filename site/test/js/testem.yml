@@ -5,6 +5,7 @@ src_files:
  - "../../app/assets/javascripts/**/*.js"
  - "../../app/assets/javascripts/**/*.js.coffee"
  - "tests/**/*.js"
+ - "tests/**/*.js.coffee"
 
 serve_files:
  - "compiled/**/*.js"

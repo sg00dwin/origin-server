@@ -92,6 +92,7 @@ RedHatCloud::Application.routes.draw do
   end
 
   match 'account/help' => 'account#help', :via => [:get]
+  match 'account/faqs' => 'account#faqs', :via => [:get]
 
   match 'user/create/external' => 'account#create_external', :via => [:post]
 

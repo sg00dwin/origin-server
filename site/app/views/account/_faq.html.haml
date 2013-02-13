@@ -5,13 +5,13 @@
   %h1 Frequently Asked Questions
 
   %div
-    %ul{'ng-init' => "topten = #{topten.collect{|f| { :node => f }}.to_json}; questions = topten",
+    %ul{'ng-init' => "topten = #{topten.to_json}; questions = topten",
         'ng-show' => 'true',
         :style => 'display: none;'}
       %li{'ng-repeat' => 'q in questions'}
         %h3
-          %a{:href => '{{ q.node.href }}', 'ng-bind-html-unsafe' => 'q.node.name'}
-        %p{'ng-bind-html-unsafe' => 'q.node.body'}
+          %a{:href => '{{ q.href }}', 'ng-bind-html-unsafe' => 'q.name'}
+        %p{'ng-bind-html-unsafe' => 'q.body'}
 
     -# If javascript is not enabled, this will be the only rendered content
     %ul{'ng-hide' => 'true'}

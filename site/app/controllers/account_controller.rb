@@ -19,4 +19,9 @@ class AccountController < ApplicationController
     @user = User.find :one, :as => current_user
     @user_on_basic_plan = user_on_basic_plan?
   end
+
+  # TODO:  Should this be a separate controller??
+  def faqs
+    render :json => FaqItem.all
+  end
 end
