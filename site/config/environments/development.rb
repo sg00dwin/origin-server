@@ -76,6 +76,9 @@ RedHatCloud::Application.configure do
   # FAQ API endpoint
   config.acct_help_faq_site = 'https://localhost:8118/'
   config.acct_help_faq_prefix = '/api/v1/faq/'
+  
+  # Account Support contact
+  config.acct_help_mail_to = 'os.accounts@redhat.com'
 
   Console.configure do |c|
     c.api = (ENV['CONSOLE_API_MODE'] || 'local').to_sym
