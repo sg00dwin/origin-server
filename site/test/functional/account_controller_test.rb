@@ -98,12 +98,12 @@ class AccountControllerTest < ActionController::TestCase
     end
   end
 
-	test "should get success on post and choosing Express" do
-		post(:create, {:web_user => get_post_form.merge({:cloud_access_choice => CloudAccess::EXPRESS})})
+  test "should get success on post and choosing Express" do
+    post(:create, {:web_user => get_post_form.merge({:cloud_access_choice => CloudAccess::EXPRESS})})
 
-		assert_equal 'openshift', assigns(:product)
+    assert_equal 'openshift', assigns(:product)
     assert_redirected_to complete_account_path
-	end
+  end
 
   test "should fail register external with invalid password" do
     post(:create_external, {:json_data => '{"email_address":"tester@example.com","password":"pw"}', :captcha_secret => 'secret', :registration_referrer => 'appcelerator'})
