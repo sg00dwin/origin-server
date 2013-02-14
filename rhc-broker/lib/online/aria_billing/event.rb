@@ -13,8 +13,6 @@ module Online
         "118" => "Account supplemental field value added event",
         "119" => "Account supplemental field value modified"
       }
-      OPS_ORDER_TEAM_EMAIL='OpenShift-Orders@redhat.com'
-      OPS_PEOPLE_TEAM_EMAIL='customerdata-na@redhat.com'
 
       def self.get_header
         data = <<MSG
@@ -132,14 +130,15 @@ MSG
       end
 
       def self.handle_event(h)
+        aria_config = Rails.application.config.billing[:aria][:config]
         h['event_id'].each do |ev|
-          email_to = OPS_ORDER_TEAM_EMAIL
+          email_to = aria_config[:event_orders_team_email]
           case ev.to_i
           when 101
             body = acct_create(h)
           when 102
             body = acct_contact(h)
-            email_to = OPS_PEOPLE_TEAM_EMAIL
+            email_to = aria_config[:event_peoples_team_email]
           when 105
             # Status Codes => 1:Active, -1:Suspended, -2:Cancelled, -3:Terminated
             if ["1", "-1", "-2", "-3"].include?(h['status_cd'])
