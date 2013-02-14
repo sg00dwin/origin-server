@@ -1,3 +1,5 @@
+require 'delegate'
+
 module Aria
   module User
     # mixins for Aria user integration
@@ -152,5 +154,9 @@ module Aria
           :supplemental => {:rhlogin => login},
         })
       end
+  end
+
+  class UserContext < SimpleDelegator
+    include Aria::User
   end
 end
