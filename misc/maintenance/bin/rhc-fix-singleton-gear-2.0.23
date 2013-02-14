@@ -1,0 +1,57 @@
+#!/usr/bin/env oo-ruby
+
+require 'rubygems'
+
+if ARGV.include? "--help" or ARGV.include? "-h"
+  puts "USAGE : #{__FILE__} [OPTIONS]"
+  puts "  OPTIONS -"
+  puts "     --fix  : Actually fix the broken gears, if this option is not given then no fix is performed, only reporting is done"
+  puts "     --help : Print this help"
+  exit 0
+end
+
+$:.unshift('/var/www/openshift/broker')
+require 'config/environment'
+
+def get_mongo_session
+  # Get Mongo session
+  config = Mongoid::Config.sessions["default"]
+  session = Moped::Session.new(config["hosts"])
+  session.use config["database"]
+  session.login(config["username"], config["password"])
+  session
+end
+
+def release_mongo_session(session)
+  # Exit session
+  session.logout
+end
+
+selection = {:fields=>["name", "uuid", "group_instances.gears.uuid", "group_instances.gears.app_dns", "group_instances.gears.host_singletons", "scalable"], :timeout=>false}
+query = { "scalable" => true, "group_instances.gears.host_singletons" => false}
+
+$session = get_mongo_session
+
+OpenShift::DataStore.find(:applications, query, selection) do |app|
+  next if not app['scalable']
+  gi_index = 0
+  app['group_instances'].each { |gi|
+    gear_index = 0
+    gi['gears'].each { |g|
+      if g['app_dns'] and g['uuid']==app['uuid'] and (not g['host_singletons'])
+        puts "Found issue with gear #{g['uuid']} in app #{app['name']}"
+        if ARGV.include? "--fix"
+          print "Fixing gear #{g['uuid']}.."
+            $session[:applications].find( {"uuid" => app['uuid']}).update({ "$set" => { "group_instances.#{gi_index}.gears.#{gear_index}.host_singletons" => true } } )
+          puts "done"
+          break
+        end
+      end
+      gear_index += 1
+    }
+    gi_index += 1
+  }
+end
+
+release_mongo_session($session)
+
