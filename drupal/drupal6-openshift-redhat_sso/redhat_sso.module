@@ -31,6 +31,27 @@ function redhat_sso_menu_alter(&$items) {
   $items['user/password']['type'] = MENU_CALLBACK;
   $items['user/password']['access callback'] = TRUE;
   $items['user/password']['page callback'] = '_redhat_sso_page_password';
+  $items['logout']['type'] = MENU_CALLBACK;
+  $items['logout']['access callback'] = TRUE;
+  $items['logout']['page callback'] = 'redhat_sso_logout';
+}
+
+function redhat_sso_logout() {
+  global $user;
+
+  watchdog('user', 'Session closed for %name.', array('%name' => $user->name));
+
+  // Destroy the current session:
+  session_destroy();
+  // Only variables can be passed by reference workaround.
+  $null = NULL;
+  user_module_invoke('logout', $null, $user);
+
+  // Load the anonymous user
+  $user = drupal_anonymous_user();
+
+  watchdog('user', 'Redirecting to %url.', array('%url' => redhat_sso_logout_url()));
+  _redhat_sso_redirect(redhat_sso_logout_url());
 }
 
 function _redhat_sso_title_page_user() {
@@ -39,7 +60,7 @@ function _redhat_sso_title_page_user() {
 }
 
 function redhat_sso_server_url() {
-  $url = variable_get('redhat_sso_host_url');
+  $url = variable_get('redhat_sso_host_url', NULL);
   if (!isset($url)) {
     $url = parse_url($GLOBALS['base_url']);
     $url = $url['scheme'].'://'.$url['host'];
@@ -48,10 +69,14 @@ function redhat_sso_server_url() {
 }
 
 function redhat_sso_change_password_url() {
-  return _redhat_sso_server_url() . variable_get('redhat_sso_change_password_uri', '/app/account/password/new');
+  return redhat_sso_server_url() . variable_get('redhat_sso_change_password_uri', '/app/account/password/new');
 }
 function redhat_sso_register_url() {
-  return _redhat_sso_server_url() . variable_get('redhat_sso_register_uri', '/app/account/new');
+  return redhat_sso_server_url() . variable_get('redhat_sso_register_uri', '/app/account/new');
+}
+function redhat_sso_logout_url() {
+  global $base_url;
+  return redhat_sso_server_url() . variable_get('redhat_sso_logout_uri', '/app/logout') . '?then='.$base_url;
 }
 
 /*
