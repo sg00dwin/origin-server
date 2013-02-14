@@ -1,10 +1,10 @@
 class ActiveSupport::TestCase
   def new_streamline_user
     id = ::SecureRandom.base64(10).gsub(/[^a-zA-Z0-9_\-]/, '_')
-    Streamline::Base.new(
+    Streamline::UserContext.new(Streamline::Base.new(
       :email_address => "os_#{id}@mailinator.com",
       :password => ::SecureRandom.base64(20)
-    ).extend(Streamline::User)
+    ))
   end
 end
 

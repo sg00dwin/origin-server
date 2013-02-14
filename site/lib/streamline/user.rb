@@ -17,10 +17,10 @@ module Streamline
     end
 
     def terms
-      @terms or terms!
+      super or terms!
     end
     def terms!
-      @terms = http_post(unacknowledged_terms_url) do |json|
+      self.terms = http_post(unacknowledged_terms_url) do |json|
         json['unacknowledgedTerms'] || []
       end
     end
@@ -30,7 +30,7 @@ module Streamline
     end
     def roles!
       self.roles = http_post(roles_url) do |json|
-        @rhlogin ||= json['username']
+        self.rhlogin ||= json['username']
         Rails.logger.warn "Roles user #{json['username']} different than active #{rhlogin}" if rhlogin != json['username']
         json['roles'] || []
       end
@@ -78,11 +78,11 @@ module Streamline
     end
 
     def logout
-      return unless @ticket
+      return unless self.ticket
 
       # Make the request
       req = Net::HTTP::Get.new( logout_url.request_uri )
-      req['Cookie'] = "rh_sso=#{@ticket}"
+      req['Cookie'] = "rh_sso=#{self.ticket}"
 
       # Create the request
       # Add timing code
@@ -118,9 +118,9 @@ module Streamline
 
           # Convert the accepted ids to strings to comparison
           # normally they are integers
-          terms_ids = @terms.map{|hash| hash['termId'].to_s}
+          terms_ids = self.terms.map{|hash| hash['termId'].to_s}
           if (terms_ids - json['term']).empty?
-            @terms.clear
+            self.terms.clear
           else
             Rails.logger.error("Streamline partial terms acceptance. Expected #{terms_ids} got #{json['term']}")
             errors.add(:base, I18n.t(:terms_error, :scope => :streamline))
@@ -235,7 +235,7 @@ module Streamline
 
     def complete_reset_password(token)
       args = {
-        :login => @rhlogin,
+        :login => self.rhlogin,
         :token => token
       }
       http_post(reset_password_url, args, false) do |json|
@@ -344,9 +344,9 @@ module Streamline
     # Get the user's email address.  Will raise on error
     #
     def load_email_address
-      @email_address = Rails.cache.fetch([Streamline::User.name, :email_by_login, @rhlogin], :expires_in => 5.minutes) do
+      self.email_address = Rails.cache.fetch([Streamline::User.name, :email_by_login, self.rhlogin], :expires_in => 5.minutes) do
         user_info_args = {
-          'login' => @rhlogin,
+          'login' => self.rhlogin,
           'secretKey' => Rails.configuration.streamline[:user_info_secret]
         }
         http_post(user_info_url, user_info_args) do |json|
@@ -359,7 +359,7 @@ module Streamline
     # Whether the user is authorized for a given cloud solution
     #<b>DEPRECATED</b>: Use entitled?
     def has_access?(solution)
-      @roles.nil? ? false : @roles.index(CloudAccess.auth_role(solution)) != nil
+      self.roles.nil? ? false : self.roles.index(CloudAccess.auth_role(solution)) != nil
     end
 
     #
@@ -367,7 +367,7 @@ module Streamline
     #
     #<b>DEPRECATED</b>: Use waiting_for_entitle?
     def has_requested?(solution)
-      @roles.nil? ? false : @roles.index(CloudAccess.req_role(solution)) != nil
+      self.roles.nil? ? false : self.roles.index(CloudAccess.req_role(solution)) != nil
     end
 
     # Return true if the user has access to OpenShift, and false if they are not yet
@@ -443,7 +443,7 @@ module Streamline
           req.set_form_data(args)
 
           # Include the ticket as a cookie if present
-          req.add_field('Cookie', "rh_sso=#{@ticket}") if @ticket
+          req.add_field('Cookie', "rh_sso=#{self.ticket}") if self.ticket
           req['User-Agent'] = Rails.configuration.user_agent
 
           ActiveSupport::Notifications.instrument("request.streamline",
@@ -576,5 +576,9 @@ module Streamline
       def change_password_url; service_base_url.merge('protected/changePassword.html'); end
       def request_password_reset_url; service_base_url.merge('resetPassword.html'); end
       def reset_password_url; service_base_url.merge('resetPasswordConfirmed.html'); end
+  end
+
+  class UserContext < SimpleDelegator
+    include Streamline::User
   end
 end

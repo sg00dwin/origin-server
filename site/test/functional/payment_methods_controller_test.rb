@@ -22,21 +22,21 @@ class PaymentMethodsControllerTest < ActionController::TestCase
 
   test "should display correctly for an existing payment method" do
     with_account_holder
-    mock_controller_user.expects(:payment_method).returns(Aria::PaymentMethod.new({}, true))
+    Aria::UserContext.any_instance.expects(:payment_method).returns(Aria::PaymentMethod.new({}, true))
     get :edit, :plan_id => :megashift
     assert_response :success
   end
 
   test "should redirect when aria reports success" do
     with_account_holder
-    mock_controller_user(Aria::User).expects(:has_valid_payment_method?).returns(true)
+    Aria::UserContext.any_instance.expects(:has_valid_payment_method?).returns(true)
     get :direct_update, :plan_id => :megashift
     assert_redirected_to account_path
   end
 
   test "should redirect when aria reports an error" do
     with_account_holder
-    mock_controller_user(Aria::User).expects(:has_valid_payment_method?).returns(true)
+    Aria::UserContext.any_instance.expects(:has_valid_payment_method?).returns(true)
     get(:direct_update, {:plan_id => :megashift, :error_messages => {
       0 => {
         :error_field => 'server_error',
