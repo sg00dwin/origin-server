@@ -265,7 +265,7 @@ function redhat_ideas_views_default_views() {
     'type' => 'none',
   ));
   $handler->override_option('header', '<p>View the current Feature Requests below, or submit a new one to the OpenShift team!</p>
-<div class="new-post-button"><a class="btn btn-create" href="/community/node/add/idea">Submit an Idea</a></div>
+<div class="new-post-button"><a class="btn btn-create" href="/node/add/idea">Submit an Idea</a></div>
 ');
   $handler->override_option('header_format', '2');
   $handler->override_option('header_empty', 1);
@@ -491,7 +491,7 @@ function redhat_ideas_views_default_views() {
   ));
   $handler->override_option('header', '');
   $handler->override_option('header_empty', 0);
-  $handler->override_option('footer', '<p><a class="action-more" href=\'/community/ideas/open?order=value&sort=desc\'>See other highly voted ideas</a></p>');
+  $handler->override_option('footer', '<p><a class="action-more" href=\'/ideas/open?order=value&sort=desc\'>See other highly voted ideas</a></p>');
   $handler->override_option('footer_format', '1');
   $handler->override_option('footer_empty', 0);
   $handler->override_option('use_ajax', TRUE);
@@ -745,7 +745,7 @@ function redhat_ideas_views_default_views() {
   ));
   $handler->override_option('header', '');
   $handler->override_option('header_empty', 0);
-  $handler->override_option('footer', '<p><a class="action-more" href=\'/community/ideas/implemented\'>See more implemented ideas</a></p>');
+  $handler->override_option('footer', '<p><a class="action-more" href=\'/ideas/implemented\'>See more implemented ideas</a></p>');
   $handler->override_option('footer_format', '1');
   $handler->override_option('footer_empty', 0);
   $handler->override_option('use_ajax', TRUE);
@@ -1045,7 +1045,7 @@ function redhat_ideas_views_default_views() {
   ));
   $handler->override_option('title', 'Implemented Ideas');
   $handler->override_option('header', '<p>We love your feedback - and here\'s proof! View the completed features below and don\'t be afraid to send us new ones!</p>
-<div class="new-post-button"><a class="btn btn-create" href="/community/node/add/idea">Submit an Idea</a></div>
+<div class="new-post-button"><a class="btn btn-create" href="/node/add/idea">Submit an Idea</a></div>
 ');
   $handler->override_option('items_per_page', 50);
   $handler->override_option('style_options', array(
@@ -1285,7 +1285,7 @@ function redhat_ideas_views_default_views() {
   ));
   $handler->override_option('header', '');
   $handler->override_option('header_empty', 0);
-  $handler->override_option('footer', '<p><a class="action-more" href=\'/community/ideas/open?order=created&sort=desc\'>See older ideas</a></p>');
+  $handler->override_option('footer', '<p><a class="action-more" href=\'/ideas/open?order=created&sort=desc\'>See older ideas</a></p>');
   $handler->override_option('footer_format', '1');
   $handler->override_option('footer_empty', 0);
   $handler->override_option('use_ajax', TRUE);

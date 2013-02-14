@@ -25,7 +25,11 @@
             global $user;
 
             print '<a class="btn btn-small" href="'.$openshift_server_url.'/app/console">My Apps</a> ';
-            print '<a class="btn btn-small" href="'.$openshift_server_url.'/app/account/new">Sign Up</a> ';
+            if ($user->uid == 0) {
+              print '<a class="btn btn-small" href="'.$openshift_server_url.'/app/account/new">Sign Up</a> ';
+            } else {
+              print '<a class="btn btn-small" href="/logout">Sign Out</a> ';
+            }
             ?>
           </div>
           <div class="mobile-block"><a href="/enterprise-paas"><span>Streamline App Delivery with  </span>OpenShift Enterprise</a></div>

@@ -61,4 +61,19 @@ class LogoutControllerTest < ActionController::TestCase
     get :show, {:then => 'http://www.google.com/a_test_page'}
     assert_redirected_to '/a_test_page'
   end
+
+  test 'should redirect from the same host at port 8118' do
+    get :show, {:then => "http://#{request.host}:8118"}
+    assert_redirected_to "http://#{request.host}:8118/"
+  end
+
+  test 'should redirect from the same host at port 8118 on a path' do
+    get :show, {:then => "http://#{request.host}:8118/a_test_page"}
+    assert_redirected_to "http://#{request.host}:8118/a_test_page"
+  end
+
+  test 'should not redirect from the same host at port 8118 when scheme is not http' do
+    get :show, {:then => "ftp://#{request.host}:8118/a_test_page"}
+    assert_response :success
+  end
 end

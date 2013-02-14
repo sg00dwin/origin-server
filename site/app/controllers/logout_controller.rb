@@ -12,7 +12,7 @@ class LogoutController < ApplicationController
   ensure
     case @cause
     when nil
-      redirect_to @redirect
+      redirect_to @redirect if @redirect
     when 'change_account'
       render :change_account
     end
