@@ -46,6 +46,7 @@ Requires:  openshift-origin-cartridge-ruby-1.9-scl
 Requires:  openshift-origin-cartridge-zend-5.6
 Requires:  openshift-origin-cartridge-community-python-2.7
 Requires:  openshift-origin-cartridge-community-python-3.3
+Requires:  openshift-origin-cartridge-mock
 Requires:  activemq
 Requires:  activemq-client
 #Requires:  qpid-cpp-server
