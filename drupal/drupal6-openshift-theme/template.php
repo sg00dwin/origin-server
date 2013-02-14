@@ -522,7 +522,7 @@ function openshift_filter_tips($tips, $long = FALSE, $extra = '') {
 		$output .= '<small>' . t('Syntax highlighting of source code can be enabled with the following tags:') . '</small>';
 		$output .= '<ul><li>' . t('Generic syntax highlighting tags: "<code>&ltcode&gt</code>", "<code>&ltblockcode&gt</code>".') . '</li></ul>';
 		$output .= '<h4>' . t('For language specific syntax highlighting tags:') . '</h4>';
-		$output .= '<table class="table table-bordered table-stripped"><thead><tr>' . '<th>Code</th>' . '<th>Syntax</th>' . '</tr></thead>';
+		$output .= '<table class="table table-bordered table-striped"><thead><tr>' . '<th>Code</th>' . '<th>Syntax</th>' . '</tr></thead>';
 		$output .= '<tbody>' . '<tr><td><code>&ltc&gt</code></td>' . '<td>Used for C code</td></tr>';
 		$output .= '<tr><td><code>&ltcpp&gt</code>' . '<td>Used for C++ code</td></tr>';
 		$output .= '<tr><td><code>&ltdrupal5&gt</code>' . '<td>Used for Drupal 5 code</td></tr>';
@@ -532,9 +532,22 @@ function openshift_filter_tips($tips, $long = FALSE, $extra = '') {
 		$output .= '<tr><td><code>&ltphp&gt</code>' . '<td>Used for PHP code</td></tr>';
 		$output .= '<tr><td><code>&ltpython&gt</code>' . '<td>Used for Python code</td></tr>';
 		$output .= '<tr><td><code>&ltruby&gt</code>' . '<td>Used for Ruby code</td></tr>' . '</tbody></table>';
+
+		$output .= '<h3>' . t('Options and Tips') . '</h3>';
+		$output .= '<ul><li>' . t('The supported tag styles are <code>&ltfoo&gt</code>, <code>[foo]</code>') . '</li>';
+		$output .= '<li>' .  t('Line numbering can be enabled/disabled with the attribute "linenumbers". Possible values are: "off" for no line numbers, "normal" for normal line numbers and "fancy" for fancy line numbers (every nth line number highlighted). The start line number can be specified with the attribute "start", which implicitly enables normal line numbering. For fancy line numbering the interval for the highlighted line numbers can be specified with the attribute "fancy", which implicitly enables fancy line numbering.') . '</li>';
+		$output .= '<li>' . t('If the source code between the tags contains a newline (e.g. immediatly after the opening tag), the highlighted source code will be displayed as a code block. Otherwise it will be displayed inline.') . '</li>';
+		$output .= '<li>' . t('A title can be added to a code block with the attribute "title".') . '</li></ul>';
+
+		$output .= '<h3>' . t('Examples') . '</h3>';
+		$output .= '<table class="table table-bordered table-striped"><thead><tr>' . '<th>You Type</th>' . '<th>You Get</th>' . '</tr></thead>';
+		$output .= '<tbody>' . '<tr><td><code>&ltcode&gtfoo = "bar";&lt/code&gt</code> ' . '<td>Inline code with the default synctax highlighting mode</td></tr>';
+		$output .= '<tr><td><code>&ltcode&gt;</br>foo = "bar"</br>baz = "foz";</br>&ltcode&gt</code>' . '<td class="text-center">Code block with the default syntax highlighting mode.</td></tr>';
+		$output .= '<tr><td><code>&ltcode lang="c" linenumbers="normal"&gt</br>foo = "bar";</br>baz = "foz";&lt/code&gt</br></code></td>' . '<td class="text-center">Code block with syntax highlighting for C source code and normal line numbers.</td></tr>';
+		$output .= '<tr><td><code>&ltcode language="cpp" start="23" fancy="7"&gt</br>
 	}
 	return $output;
-} 
+}
 // function openshift_filter_tips($tips, $long = FALSE, $extra = '') {
 //   $output = '';
 
