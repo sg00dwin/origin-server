@@ -183,4 +183,6 @@ Broker::Application.configure do
       }
     }
   }
+  #This is used for enforcing CSRF checkig
+  config.auth_cookie_name='rh_sso'
 end
