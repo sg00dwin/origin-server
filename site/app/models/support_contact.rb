@@ -7,10 +7,10 @@ class SupportContact
   
   def initialize(params)
     Rails.logger.debug "params: #{params}"
-    @subject = params[:subject]
-    @body    = params[:body]
-    @user    = params[:user]
-    @from    = params[:from]
+    @subject = params[:subject] || ''
+    @body    = params[:body] || ''
+    @user    = params[:user] || ''
+    @from    = params[:from] || ''
   end
   
   def persisted?
