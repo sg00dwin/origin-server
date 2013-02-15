@@ -139,7 +139,8 @@ class StreamlineIntegrationTest < ActionDispatch::IntegrationTest
     omit_on_register unless user.register('/email_confirm')
     assert user.confirm_email
     assert user.simple_user?
-    assert full_user = Streamline::FullUser.new(full_user_args(user))
+    assert config_hash = full_user_args(user)
+    assert full_user = Streamline::FullUser.new(config_hash)
     assert !full_user.persisted?
     unless full_user.promote(user)
       omit('Streamline did not successfully promote a user, environment may be down')
@@ -147,6 +148,15 @@ class StreamlineIntegrationTest < ActionDispatch::IntegrationTest
       assert user.full_user?
       assert full_user.persisted?
     end
+
+    assert user2 = Streamline::Base.new(
+      :email_address => config_hash[:login],
+      :password => config_hash[:password]
+    ).extend(Streamline::User)
+    assert user2.authenticate(config_hash[:login], config_hash[:password])
+    assert user2.full_user?
+    assert full_user2 = user.full_user
+    assert full_user2.persisted?
   end
 
   test 'should raise an error when the wrong secret key is used' do

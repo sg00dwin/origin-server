@@ -427,9 +427,7 @@ module Streamline
         'login' => @rhlogin,
         'secretKey' => Rails.configuration.streamline[:user_info_secret]
       }
-      http_post(user_info_url, user_info_args) do |json|
-        return json
-      end
+      http_post(user_info_url, user_info_args)
     end
 
     protected
