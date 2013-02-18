@@ -172,7 +172,7 @@ fi
 %{sitedir}/public
 
 %changelog
-* Mon Feb 18 2013 Dan McPherson - 1.4.10-2
+* Mon Feb 18 2013 Dan McPherson 1.4.10-2
 - bump for chainbuild
 
 * Mon Feb 18 2013 Dan McPherson <dmcphers@redhat.com> 1.4.10-1
