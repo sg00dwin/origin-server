@@ -199,7 +199,6 @@ class Release < Thor
           if CHAIN_BUILD_INITIATORS.include?(build_info[0])
 
             chain_sets_need_build = []
-            need_chain_build = true
             CHAIN_BUILD_SETS.each do |chain_set|
               if chain_set.include?(build_info[0])
                 chain_sets_need_build << chain_set
@@ -247,7 +246,7 @@ class Release < Thor
         end
       end
 
-      if need_chain_build
+      unless chain_sets_need_build.empty?
         chain_sets_need_build.uniq.each do | chain_set | 
           puts "Brew chainbuilding for: #{chain_set.join(" : ")}"
 
