@@ -9,7 +9,7 @@
 Summary:   OpenShift Site Rails application
 Name:      rhc-site
 Version: 1.4.10
-Release:   1%{?dist}
+Release:   2%{?dist}
 Group:     Network/Daemons
 License:   ASL 2.0
 URL:       http://openshift.redhat.com
@@ -172,6 +172,9 @@ fi
 %{sitedir}/public
 
 %changelog
+* Mon Feb 18 2013 Dan McPherson - 1.4.10-2
+- bump for chainbuild
+
 * Mon Feb 18 2013 Dan McPherson <dmcphers@redhat.com> 1.4.10-1
 - Bug 894248 - Console and broker must share a session for CSRF token checking
   to work (lnader@redhat.com)
