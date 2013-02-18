@@ -3,7 +3,7 @@
 
 Summary:   Li broker components
 Name:      rhc-broker
-Version: 1.4.10
+Version: 1.4.11
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -146,6 +146,12 @@ if [ ! -f %{_var}/log/openshift/user_action.log ]; then
 fi
 
 %changelog
+* Mon Feb 18 2013 Dan McPherson <dmcphers@redhat.com> 1.4.11-1
+- nurture send should use uuid for all events as is done with destroy
+  (rchopra@redhat.com)
+- Bug 894248 - Console and broker must share a session for CSRF token checking
+  to work (lnader@redhat.com)
+
 * Thu Feb 07 2013 Dan McPherson <dmcphers@redhat.com> 1.4.10-1
 - Modifying tests to only set namespace and not the canonical_namespace
   (abhgupta@redhat.com)
