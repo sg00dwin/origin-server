@@ -7,7 +7,7 @@ module OpenShift
 
     def run_cartridge_command(framework, app, gear, command, arg=nil, allow_move=true)
       if allow_move
-        Online::Broker::Nurture.application(app.domain.owner.login, app.domain.owner._id, app.name, app.domain.namespace, framework, command, app._id.to_s, app.user_agent)
+        Online::Broker::Nurture.application(app.domain.owner.login, app.domain.owner._id, app.name, app.domain.namespace, framework, command, app.uuid, app.user_agent)
       end
       run_cartridge_command_old(framework, app, gear, command, arg, allow_move)
     end
