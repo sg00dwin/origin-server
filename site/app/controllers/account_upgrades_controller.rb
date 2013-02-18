@@ -49,6 +49,7 @@ class AccountUpgradesController < ConsoleController
     @user.plan_id = plan_id
 
     if @user.save
+      render :upgraded and return if (@current_plan.basic? and !@plan.basic?)
       redirect_to account_plan_path, :flash => {:success => 'upgraded'}
     else
       render :unchanged and return if @plan == @current_plan

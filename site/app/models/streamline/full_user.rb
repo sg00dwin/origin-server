@@ -56,6 +56,7 @@ module Streamline
         :first_name => 'Joe',
         :last_name => 'Somebody',
         :phone_number => '9191111111',
+        :title => 'Evil Genius',
         :company => 'Red Hat, Inc.',
         :address1 => '12345 Happy Street',
         :city => 'Happyville',
