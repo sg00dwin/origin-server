@@ -6,7 +6,7 @@
 
 Name:           drupal6-%{drupal_themename}
 Version: 3.13.2
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        Red Hat Openshift theme for Drupal %{drupal_release}
 
 Group:          Applications/Publishing
@@ -44,6 +44,9 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
+* Mon Feb 18 2013 Adam Miller <admiller@redhat.com> 3.13.2-2
+- Bump spec for mass drupal rebuild
+
 * Fri Feb 08 2013 Adam Miller <admiller@redhat.com> 3.13.2-1
 - bump Release: for all drupal packages for rebuild (admiller@redhat.com)
 - US3291 US3292 US3293 - Move community to www.openshift.com
