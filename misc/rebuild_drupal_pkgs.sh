@@ -56,10 +56,10 @@ do
   pushd $dir > /dev/null;
     rpmdev-bumpspec -c "- Bump spec for mass drupal rebuild" *.spec
     git add *.spec; 
-    git commit -m "bumping spec for drupal mass rebuild"
     tito tag --keep-version --no-auto-changelog
   popd > /dev/null;
 done
+    
     
 git fetch --tags && git pull && git push origin master && git push --tags
 rm -fr /tmp/tito/* # This is dirty but keeps from colliding
