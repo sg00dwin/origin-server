@@ -78,6 +78,8 @@ ACCEPT_DEVENV_SCRIPT = '/usr/bin/rhc-accept-devenv'
 
 CHAIN_BUILD_SETS = [ ['rubygem-openshift-origin-console','rhc-site'] ]
 
+CHAIN_BUILD_INITIATORS = ['rubygem-openshift-origin-console']
+
 def guess_os(base_os=nil)
   "rhel"
 end
