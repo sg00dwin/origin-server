@@ -21,11 +21,8 @@ namespace=`basename $2`
 uuid=$3
 IP=$4
 
-source "/etc/openshift/node.conf"
-source ${CARTRIDGE_BASE_PATH}/abstract/info/lib/util
-
-cat <<EOF > "${OPENSHIFT_HTTP_CONF_DIR}/${uuid}_${namespace}_${application}/rockmongo-1.1.conf"
-ProxyPass /rockmongo http://$IP:8080/rockmongo status=I
-ProxyPassReverse /rockmongo http://$IP:8080/rockmongo
-
-EOF
+oo-frontend-connect \
+    --with-container-uuid "$uuid" \
+    --with-container-name "$application" \
+    --with-namespace "$namespace" \
+    --path "/rockmongo" --target "$IP:8080/rockmongo"

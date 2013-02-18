@@ -126,6 +126,6 @@ echo "Config: "
 cat "$vhcfg/$VHOST_CHOKE_CFG"
 echo ""
 echo -n "Restarting apache gracefully ... "
-restart_httpd_graceful
+/usr/sbin/oo-httpd-singular graceful
 echo "DONE"
 
