@@ -38,5 +38,3 @@ METRICS_IP=`embedded_find_open_ip $uid $APP_HOME`
 echo "export OPENSHIFT_METRICS_IP='$METRICS_IP'" > $APP_HOME/.env/OPENSHIFT_METRICS_IP
 $CART_INFO_DIR/bin/deploy_httpd_config.sh $application $uuid $METRICS_IP
 $CART_INFO_DIR/bin/deploy_httpd_proxy.sh $application $namespace $uuid $METRICS_IP
-
-restart_httpd_graceful

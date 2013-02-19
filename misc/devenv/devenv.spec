@@ -46,6 +46,7 @@ Requires:  openshift-origin-cartridge-ruby-1.9-scl
 Requires:  openshift-origin-cartridge-zend-5.6
 Requires:  openshift-origin-cartridge-community-python-2.7
 Requires:  openshift-origin-cartridge-community-python-3.3
+Requires:  openshift-origin-cartridge-mock
 Requires:  activemq
 Requires:  activemq-client
 #Requires:  qpid-cpp-server
@@ -356,9 +357,11 @@ sysctl net.netfilter.nf_conntrack_max=1048576
 /usr/libexec/mcollective/update_yaml.rb /etc/mcollective/facts.yaml
 crontab -u root %{devenvdir}/crontab
 
-# enable disk quotas
-/usr/bin/rhc-init-quota
-ls -lZ /var/aquota.user  | grep -q var_t && ( quotaoff /var && restorecon /var/aquota.user && quotaon /var )
+# enable disk quotas, on initial build of image
+[ -f /var/aquota.user ] || (
+  /usr/bin/rhc-init-quota
+  ls -lZ /var/aquota.user  | grep -q var_t && ( quotaoff /var && restorecon /var/aquota.user && quotaon /var )
+)
 
 # Setup swap for devenv
 [ -f /.swap ] || ( /bin/dd if=/dev/zero of=/.swap bs=1024 count=1024000

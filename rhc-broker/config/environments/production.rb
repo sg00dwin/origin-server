@@ -125,7 +125,12 @@ Broker::Application.configure do
       :config => {
         :url => conf.get("BILLING_PROVIDER_URL", ""),
         :auth_key => conf.get("BILLING_PROVIDER_AUTH_KEY", ""),
-        :client_no => conf.get("BILLING_PROVIDER_CLIENT_NO", "0").to_i
+        :client_no => conf.get("BILLING_PROVIDER_CLIENT_NO", "0").to_i,
+        :enable_event_notification => conf.get_bool("BILLING_PROVIDER_EVENT_NOTIFICATION", "false"),
+        :event_remote_ipaddr_begin => conf.get("BILLING_PROVIDER_EVENT_REMOTE_IPADDR_BEGIN", ""),
+        :event_remote_ipaddr_end => conf.get("BILLING_PROVIDER_EVENT_REMOTE_IPADDR_END", ""),
+        :event_orders_team_email => conf.get("BILLING_PROVIDER_EVENT_ORDERS_TEAM_EMAIL", ""),
+        :event_peoples_team_email => conf.get("BILLING_PROVIDER_EVENT_PEOPLES_TEAM_EMAIL", "")
       },
       :usage_type => {
         :gear => {:small => 10014123,

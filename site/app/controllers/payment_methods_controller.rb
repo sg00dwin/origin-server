@@ -7,7 +7,7 @@ class PaymentMethodsController < ApplicationController
   before_filter :user_can_upgrade_plan!
 
   def edit
-    @user = current_user.extend Aria::User
+    @user = Aria::UserContext.new(current_user)
     @payment_method = @user.payment_method
     @previous_payment_method = @payment_method.dup
 
@@ -50,7 +50,7 @@ class PaymentMethodsController < ApplicationController
         (h[key] ||= []) << v['error_key']
         h
       end
-      @user = current_user.extend Aria::User
+      @user = Aria::UserContext.new(current_user)
       unless @user.has_valid_payment_method?
         (@errors[:base] ||= []).unshift :unknown
       end

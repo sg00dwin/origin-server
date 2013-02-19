@@ -1,11 +1,9 @@
 #!/bin/bash
 
 #
-# Create virtualhost definition for apache
+# Create Frontend Route
 #
-# node_ssl_template.conf gets copied in unaltered and should contain
-# all of the configuration bits required for ssl to work including key location
-#
+
 function print_help {
     echo "Usage: $0 app-name namespace uuid IP"
 
@@ -21,39 +19,9 @@ namespace=`basename $2`
 uuid=$3
 IP=$4
 
-source "/etc/openshift/node.conf"
-source ${CARTRIDGE_BASE_PATH}/abstract/info/lib/util
 
-cat <<EOF > "/etc/httpd/conf.d/openshift/${uuid}_${namespace}_${application}/zzzzz_proxy.conf"
-  ProxyPass / http://$IP:8080/ status=I
-  ProxyPassReverse / http://$IP:8080/
-EOF
-
-cat <<EOF > "/etc/httpd/conf.d/openshift/${uuid}_${namespace}_${application}/zend_5_6_lighttpd.conf"
-  ProxyPass /ZendServer http://$IP:16081/ZendServer status=I
-  ProxyPassReverse /ZendServer http://$IP:16081/ZendServer
-
-EOF
-
-cat <<EOF > "/etc/httpd/conf.d/openshift/${uuid}_${namespace}_${application}/00000_default.conf"
-  ServerName ${application}-${namespace}.${CLOUD_DOMAIN}
-  ServerAdmin openshift-bofh@redhat.com 
-  DocumentRoot /var/www/html
-  DefaultType None
-EOF
-
-cat <<EOF > "/etc/httpd/conf.d/openshift/${uuid}_${namespace}_${application}.conf"
-<VirtualHost *:80>
-  RequestHeader append X-Forwarded-Proto "http"
-
-  Include /etc/httpd/conf.d/openshift/${uuid}_${namespace}_${application}/*.conf
-</VirtualHost>
-
-<VirtualHost *:443>
-  RequestHeader append X-Forwarded-Proto "https"
-
-$(/bin/cat $CART_INFO_DIR/configuration/node_ssl_template.conf)
-
-  Include /etc/httpd/conf.d/openshift/${uuid}_${namespace}_${application}/*.conf
-</VirtualHost>
-EOF
+oo-frontend-connect \
+    --with-container-uuid "$uuid" \
+    --with-container-name "$application" \
+    --with-namespace "$namespace" \
+    --path "" --target "$IP:8080"

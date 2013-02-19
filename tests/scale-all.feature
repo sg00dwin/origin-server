@@ -14,7 +14,6 @@ Feature: Scaling Verification Tests
     When 25 concurrent http connections are generated for 90 seconds
     Then at least 2 gears will be in the cluster
     When the application is destroyed
-    And the global httpd is restarted
     Then the application should not be accessible
     And the <type> health-check will not be successful
 
@@ -52,7 +51,6 @@ Feature: Scaling Verification Tests
     Then 1 gears will be in the cluster
     And the <type> health-check will be successful
     When the application is destroyed
-    And the global httpd is restarted
     Then the application should not be accessible
     And the <type> health-check will not be successful
 

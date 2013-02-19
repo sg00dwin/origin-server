@@ -13,7 +13,7 @@ class BillingInfoControllerTest < ActionController::TestCase
     omit_if_aria_is_unavailable
     with_account_holder
     aria_billing_info = Aria::BillingInfo.test.attributes
-    mock_controller_user(Aria::User).expects(:update_account).returns(true)
+    Aria::UserContext.any_instance.expects(:update_account).returns(true)
     post :update, :aria_billing_info => aria_billing_info
     assert_redirected_to account_path
   end
@@ -22,7 +22,7 @@ class BillingInfoControllerTest < ActionController::TestCase
     omit_if_aria_is_unavailable
     with_account_holder
     aria_billing_info = Aria::BillingInfo.test.attributes
-    mock_controller_user(Aria::User).expects(:update_account).returns(false)
+    Aria::UserContext.any_instance.expects(:update_account).returns(false)
     post :update, :aria_billing_info => aria_billing_info
     assert_template :edit
   end

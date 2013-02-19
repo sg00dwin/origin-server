@@ -7,7 +7,7 @@ Feature: rockmongo Embedded Cartridge Extended Checks
     
     When I embed a mongodb-2.2 cartridge into the application
     And I embed a rockmongo-1.1 cartridge into the application
-    Then the embedded rockmongo-1.1 cartridge http proxy file will exist
+    Then the http proxy /rockmongo will exist
     And 2 processes named httpd for rockmongo will be running
     And the embedded rockmongo-1.1 cartridge directory will exist
     And the embedded rockmongo-1.1 cartridge log files will exist
@@ -27,7 +27,7 @@ Feature: rockmongo Embedded Cartridge Extended Checks
 
     When I destroy the application
     Then 0 processes named httpd will be running
-    And the embedded rockmongo-1.1 cartridge http proxy file will not exist
+    And the http proxy /rockmongo will not exist
     And the embedded rockmongo-1.1 cartridge directory will not exist
     And the embedded rockmongo-1.1 cartridge log files will not exist
     And the embedded rockmongo-1.1 cartridge control script will not exist

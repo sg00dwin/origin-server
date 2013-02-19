@@ -40,8 +40,7 @@ class AccountUpgradesControllerTest < ActionController::TestCase
 
   test "should raise on invalid user" do
     user = with_user(full)
-    user.expects(:extend).with(Aria::User)
-    user.expects(:has_complete_account?).raises(Aria::UserIdCollision.new(1))
+    Aria::UserContext.any_instance.expects(:has_complete_account?).raises(Aria::UserIdCollision.new(1))
     get :show, plan
     assert_response :success
     assert m = assigns(:message)

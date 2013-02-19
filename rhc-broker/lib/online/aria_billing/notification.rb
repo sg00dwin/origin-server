@@ -26,7 +26,6 @@ module Online
         subject = "Aria Event Notification: #{event_id}"
         email_from = "openshift.billing@gmail.com"
         password = "vostok08"
-        email_to = "ariatesting@redhat.com"
 
         if response.kind_of?(String)
           body = response

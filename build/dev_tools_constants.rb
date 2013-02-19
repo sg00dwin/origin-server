@@ -77,3 +77,11 @@ JENKINS_BUILD_TOKEN = 'libra1'
 ACCEPT_DEVENV_SCRIPT = '/usr/bin/rhc-accept-devenv'
 
 CHAIN_BUILD_SETS = [ ['rubygem-openshift-origin-console','rhc-site'] ]
+
+def guess_os(base_os=nil)
+  "rhel"
+end
+
+def def_constants(base_os)
+  nil
+end

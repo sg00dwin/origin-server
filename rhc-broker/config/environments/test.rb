@@ -97,7 +97,12 @@ Broker::Application.configure do
       :config => {
         :url => "https://streamline-proxy1.ops.rhcloud.com/api/ws/api_ws_class_dispatcher.php",
         :auth_key => "sRvjFqjSadu3AFB8jRAR3tqeH5Qf6XjW",
-        :client_no => 3754655
+        :client_no => 3754655,
+        :enable_event_notification => false,
+        :event_remote_ipaddr_begin => "64.238.195.110", 
+        :event_remote_ipaddr_end => "64.238.195.125",
+        :event_orders_team_email => "ariatesting@redhat.com",
+        :event_peoples_team_email => "ariatesting@redhat.com"
       },
       :usage_type => {
         :gear => {:small => 10014123,

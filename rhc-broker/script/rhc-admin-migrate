@@ -198,7 +198,7 @@ def httpd_proxy_action(gear, action, out)
   gear_cartridges.each do |cart|
     out << "#{action} for '#{cart}' on gear '#{gear.name}' with uuid '#{gear.uuid}' on node #{gear.server_identity}\n"
     embedded = embedded_carts.include? cart
-    reply = gear.get_proxy.send(:run_cartridge_command, (embedded ? "embedded/" : '') + cart, gear.app, gear, action, nil, false)
+    reply = gear.get_proxy.send(:run_cartridge_command, (embedded ? "embedded/" : '') + cart, gear, action, nil, false)
   
     out << "DEPLOY_HTTP_PROXY DEBUG OUTPUT:\n#{reply.debugIO.string}\n" unless reply.debugIO.string.empty?
     out << "DEPLOY_HTTP_PROXY ERROR OUTPUT:\n#{reply.errorIO.string}\n" unless reply.errorIO.string.empty?

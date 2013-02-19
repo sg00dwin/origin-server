@@ -82,7 +82,6 @@ mkdir -p -m 770 %{buildroot}%{brokerdir}/tmp/pids
 mkdir -p -m 770 %{buildroot}%{brokerdir}/tmp/sessions
 mkdir -p -m 770 %{buildroot}%{brokerdir}/tmp/sockets
 
-mv %{buildroot}%{brokerdir}/script/rhc-admin-cartridge-do %{buildroot}/%{_bindir}
 mv %{buildroot}%{brokerdir}/script/rhc-admin-migrate %{buildroot}/%{_bindir}
 mv %{buildroot}%{brokerdir}/script/rhc-admin-ctl-usage %{buildroot}/%{_bindir}
 mv %{buildroot}%{brokerdir}/script/rhc-admin-ctl-plan %{buildroot}/%{_bindir}
@@ -113,7 +112,6 @@ rm -rf $RPM_BUILD_ROOT
 %ghost %attr(0660,root,libra_user) %{_var}/log/openshift/broker/development.log
 %{brokerdir}
 %{htmldir}/broker
-%attr(0750,-,-) %{_bindir}/rhc-admin-cartridge-do
 %attr(0750,-,-) %{_bindir}/rhc-admin-migrate
 %attr(0750,-,-) %{_bindir}/rhc-admin-ctl-usage
 %attr(0750,-,-) %{_bindir}/rhc-admin-ctl-plan

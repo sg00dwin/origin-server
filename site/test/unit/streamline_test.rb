@@ -287,7 +287,7 @@ class StreamlineUnitTest < ActiveSupport::TestCase
   end
 
   test "request access" do
-    @streamline.expects(:http_post).once
+    @streamline.expects(:http_post).twice.returns([])
     @streamline.request_access(CloudAccess::EXPRESS)
     assert @streamline.errors.empty?
   end

@@ -5,7 +5,7 @@ class AriaIntegrationTest < ActionDispatch::IntegrationTest
   setup { omit_if_aria_is_unavailable }
 
   test 'should correctly handle sessions' do
-    user = (WebUser.new :rhlogin => new_uuid).extend Aria::User
+    user = Aria::UserContext.new(WebUser.new :rhlogin => new_uuid)
 
     assert_nil user.destroy_session
 
@@ -22,7 +22,7 @@ class AriaIntegrationTest < ActionDispatch::IntegrationTest
   end
 
   test 'should correctly create and validate a simple user' do
-    user = (WebUser.new :rhlogin => new_uuid).extend Aria::User
+    user = Aria::UserContext.new(WebUser.new :rhlogin => new_uuid)
 
     assert !user.has_valid_account?
     assert !user.send(:has_account?)
@@ -38,7 +38,7 @@ class AriaIntegrationTest < ActionDispatch::IntegrationTest
   end
 
   test 'should set and update billing info' do
-    user = (WebUser.new :rhlogin => new_uuid).extend Aria::User
+    user = Aria::UserContext.new(WebUser.new :rhlogin => new_uuid)
 
     methods = Aria::BillingInfo.generated_attribute_methods.instance_methods
 

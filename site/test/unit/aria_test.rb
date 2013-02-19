@@ -189,8 +189,13 @@ class AriaUnitTest < ActiveSupport::TestCase
     e = assert_raise(Aria::InvalidMethod){ Aria.get_test }
   end
 
+  class TestUser
+    include ActiveModel::Validations
+    include Aria::User
+  end
+
   test 'should return false on create_account error' do
-    user = Object.new.extend(ActiveModel::Validations).extend(Aria::User)
+    user = TestUser.new
     user.expects(:login).returns('foo').at_least_once
     Aria.expects(:create_acct_complete).raises(Aria::AuthenticationError)
     assert !user.create_account
@@ -209,7 +214,7 @@ class AriaUnitTest < ActiveSupport::TestCase
       :userid => Digest::MD5::hexdigest('foo'),
     }).to_return(resp(ok_wddx))
 
-    user = Object.new.extend(ActiveModel::Validations).extend(Aria::User)
+    user = TestUser.new
     user.expects(:random_password).returns('passw0rd')
     user.expects(:login).returns('foo').at_least_once
     assert user.create_account
@@ -335,7 +340,7 @@ class AriaUnitTest < ActiveSupport::TestCase
   end
 
   test 'validates values for create account' do
-    user = Object.new.extend(ActiveModel::Validations).extend(Aria::User)
+    user = TestUser.new
     user.expects(:login).at_least_once.returns('foo')
     billing_info = Aria::BillingInfo.new
     assert !user.create_account(:billing_info => billing_info)
@@ -344,7 +349,7 @@ class AriaUnitTest < ActiveSupport::TestCase
   end
 
   test 'validates values for update account' do
-    user = Object.new.extend(ActiveModel::Validations).extend(Aria::User)
+    user = TestUser.new
     billing_info = Aria::BillingInfo.new
     assert !user.update_account(:billing_info => billing_info)
     assert user.errors.empty?

@@ -72,7 +72,7 @@
   <blockBuildWhenUpstreamBuilding>false</blockBuildWhenUpstreamBuilding>
   <authToken>libra1</authToken>
   <triggers class="vector"/>
-  <concurrentBuild>false</concurrentBuild>
+  <concurrentBuild>true</concurrentBuild>
   <builders>
     <hudson.tasks.Shell>
       <command>EXTENDED_TESTS_ARRAY=()
@@ -154,8 +154,9 @@ set -e
       build/devenv terminate ${IMAGE_NAME}_${BUILD_NUMBER}
       exit $RESULT
     fi
+  else
+    exit $RESULT
   fi
-
 popd</command>
     </hudson.tasks.Shell>
   </builders>

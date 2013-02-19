@@ -543,7 +543,7 @@ service openshift-port-proxy restart
             end
 
             unless options.exclude_runtime?
-              test_queues[0] << ["Runtime Unit", "cd openshift-test/node; rake unit_test"]
+              test_queues[0] << ["Runtime Unit", "cd openshift-test/node; rake test"]
               (1..4).each do |i|
                 test_queues[i-1] << ["Runtime Group #{i.to_s}", "cucumber #{CUCUMBER_OPTIONS} -t @runtime#{i.to_s} openshift-test/tests"]
               end

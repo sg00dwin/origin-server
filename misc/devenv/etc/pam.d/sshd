@@ -12,3 +12,4 @@ session    required     pam_openshift.so open env_params
 session    optional     pam_keyinit.so force revoke
 session    include      password-auth
 session    required     pam_namespace.so no_unmount_on_close
+session	   optional	pam_cgroup.so
