@@ -183,6 +183,22 @@ class Release < Thor
       build_failures = ''
       chain_build_failures = ''
       chain_sets_need_build = []
+      
+      # I hate to traverse this more times but this information is needed in
+      # advance of the tito commands so we can bump specs of all members of a 
+      # chain set
+      build_dirs.each do |build_info|
+        if CHAIN_BUILD_INITIATORS.include?(build_info[0])
+
+          CHAIN_BUILD_SETS.each do |chain_set|
+            if chain_set.include?(build_info[0])
+              chain_sets_need_build << chain_set
+            end
+          end
+        end
+      end
+
+
       build_dirs.each do |build_info|
         build_dir = build_info[1]
         working_dir = File.expand_path("../#{build_dir}", File.dirname(__FILE__))
@@ -196,13 +212,7 @@ class Release < Thor
             raise "Your version of tito is no longer supported after the Brew migration to git" if cmd_exit != 0
           end
 
-          if CHAIN_BUILD_INITIATORS.include?(build_info[0])
-
-            CHAIN_BUILD_SETS.each do |chain_set|
-              if chain_set.include?(build_info[0])
-                chain_sets_need_build << chain_set
-              end
-            end
+        if chain_sets_need_build.uniq.flatten.include?(build_info[0])
             
             spec_filename = File.basename(build_info[2])
 
