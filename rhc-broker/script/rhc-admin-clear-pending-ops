@@ -61,20 +61,20 @@ $count = 0
 def clean_app(a)
   $count += 1
   Application.run_in_application_lock(a) do
-    a.pending_op_groups.each { |op| op.delete if op.created_at < t } 
+    a.pending_op_groups.each { |op| op.delete if op.created_at < $t } 
     a.save
   end
 end
 
 hours = args["--time"] || 12
 hours = hours.to_i
-t = Time.now - hours*60*60
+$t = Time.now - hours*60*60
 uuid = args["--uuid"]
 
 if uuid.nil?
-  Application.lt("pending_op_groups.created_at" => t).each { |a| clean_app(a) }
+  Application.lt("pending_op_groups.created_at" => $t).each { |a| clean_app(a) }
 else
-  Application.where(:uuid => uuid).lt("pending_op_groups.created_at" => t).each { |a| clean_app(a) }
+  Application.where(:uuid => uuid).lt("pending_op_groups.created_at" => $t).each { |a| clean_app(a) }
 end
 
 puts "#{$count} applications were cleaned up"
