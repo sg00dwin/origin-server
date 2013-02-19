@@ -16,7 +16,8 @@ module Account
 
       async{ begin; user_default_domain; rescue ActiveResource::ResourceNotFound; end }
 
-      async{ @keys = Key.find :all, :as => @user }
+      async{ @keys = Key.all :as => @user }
+      async{ @authorizations = Authorization.all :as => @user }
 
       if user_can_upgrade_plan?
         async do

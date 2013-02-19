@@ -5,17 +5,21 @@
 .row
   .span7
     %section
+      - if @plan
+        = render :partial => 'plan', :locals => {:plan => @plan}
+      - else
+        = render :partial => 'plan_info'
+
+    %section
       = render :partial => 'user', :locals => {:user => @user, :show_email => @show_email, :identities => @identities}
 
     %section
       = render :partial => 'domain', :locals => {:domain => @domain}
 
   .span5
+
     %section
-      - if @plan
-        = render :partial => 'plan', :locals => {:plan => @plan}
-      - else
-        = render :partial => 'plan_info'
+      = render :partial => 'authorizations', :locals => {:authorizations => @authorizations}
 
     %section
       = render :partial => 'keys', :locals => {:keys => @keys}
