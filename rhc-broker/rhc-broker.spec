@@ -3,7 +3,7 @@
 
 Summary:   Li broker components
 Name:      rhc-broker
-Version: 1.5.2
+Version: 1.5.3
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -144,6 +144,22 @@ if [ ! -f %{_var}/log/openshift/user_action.log ]; then
 fi
 
 %changelog
+* Tue Feb 19 2013 Adam Miller <admiller@redhat.com> 1.5.3-1
+- make the clear pending ops script report what its doing (rchopra@redhat.com)
+- fix rhc-admin-clear-pending-ops (rchopra@redhat.com)
+- nurture send should use uuid for all events as is done with destroy
+  (rchopra@redhat.com)
+- stop passing extra app object (dmcphers@redhat.com)
+- initial git url for nurture (rchopra@redhat.com)
+- Merge pull request #888 from abhgupta/abhgupta-dev
+  (dmcphers+openshiftbot@redhat.com)
+- changes for US3402 - we are returning cartridge rates for all  plans
+  (abhgupta@redhat.com)
+- Remove Auth filter for billing controller (rpenta@redhat.com)
+- minor changes to usage_ext (abhgupta@redhat.com)
+- overriding get_usage_rate method in the usage class (abhgupta@redhat.com)
+- Bug 910076 Split out aria config from production.rb (dmcphers@redhat.com)
+
 * Fri Feb 08 2013 Adam Miller <admiller@redhat.com> 1.5.2-1
 - Merge pull request #873 from pravisankar/dev/ravi/fix-billevent-minor
   (dmcphers+openshiftbot@redhat.com)
