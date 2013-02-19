@@ -61,7 +61,14 @@ $count = 0
 def clean_app(a)
   $count += 1
   Application.run_in_application_lock(a) do
-    a.pending_op_groups.each { |op| op.delete if op.created_at < $t } 
+    a.pending_op_groups.each { |op| 
+      if op.created_at < $t 
+        puts
+        puts "Clearing op for app (#{a.uuid}) - #{op.inspect} "
+        op.delete 
+      end
+    } 
+
     a.save
   end
 end
