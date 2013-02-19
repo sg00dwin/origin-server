@@ -3,7 +3,7 @@
 
 Summary:   Li broker components
 Name:      rhc-broker
-Version: 1.4.11
+Version: 1.4.12
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -146,6 +146,9 @@ if [ ! -f %{_var}/log/openshift/user_action.log ]; then
 fi
 
 %changelog
+* Mon Feb 18 2013 Dan McPherson <dmcphers@redhat.com> 1.4.12-1
+- fix rhc-admin-clear-pending-ops (rchopra@redhat.com)
+
 * Mon Feb 18 2013 Dan McPherson <dmcphers@redhat.com> 1.4.11-1
 - nurture send should use uuid for all events as is done with destroy
   (rchopra@redhat.com)
