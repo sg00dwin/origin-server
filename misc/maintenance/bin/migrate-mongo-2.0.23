@@ -76,6 +76,7 @@ def create_cloud_user(user)
     cu.capabilities["subaccounts"] = user_cap["subaccounts"] if user_cap["subaccounts"]
     cu.capabilities["gear_sizes"] = user_cap["gear_sizes"] if user_cap["gear_sizes"]
     cu.capabilities["max_storage_per_gear"] = user_cap["max_storage_per_gear"] if user_cap["max_storage_per_gear"]
+    cu.capabilities["inherit_on_subaccounts"] = user_cap["inherit_on_subaccounts"] if user_cap["inherit_on_subaccounts"]
   end
   user["ssh_keys"].each do |ssh_key_name, ssh_key|
     sk = SshKey.new
