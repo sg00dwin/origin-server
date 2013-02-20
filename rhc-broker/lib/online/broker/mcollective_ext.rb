@@ -18,6 +18,7 @@ module OpenShift
         app = gear.app
         web_framework_carts = CartridgeCache.cartridge_names("web_framework")
         framework = app.component_instances.select{ |cinst| web_framework_carts.include?(cinst.cartridge_name)}.first
+        framework = framework.cartridge_name if framework
         if app.uuid==gear.uuid
           Online::Broker::Nurture.application(app.domain.owner.login, app.domain.owner._id, app.name, app.domain.namespace, framework, "deconfigure", app.uuid, app.user_agent, app.init_git_url)
         end

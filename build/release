@@ -182,7 +182,23 @@ class Release < Thor
 
       build_failures = ''
       chain_build_failures = ''
-      need_chain_build = false
+      chain_sets_need_build = []
+      
+      # I hate to traverse this more times but this information is needed in
+      # advance of the tito commands so we can bump specs of all members of a 
+      # chain set
+      build_dirs.each do |build_info|
+        if CHAIN_BUILD_INITIATORS.include?(build_info[0])
+
+          CHAIN_BUILD_SETS.each do |chain_set|
+            if chain_set.include?(build_info[0])
+              chain_sets_need_build << chain_set
+            end
+          end
+        end
+      end
+
+
       build_dirs.each do |build_info|
         build_dir = build_info[1]
         working_dir = File.expand_path("../#{build_dir}", File.dirname(__FILE__))
@@ -196,16 +212,15 @@ class Release < Thor
             raise "Your version of tito is no longer supported after the Brew migration to git" if cmd_exit != 0
           end
 
-          if CHAIN_BUILD_SETS.flatten.include?(build_info[0])
-
-            need_chain_build = true
+        if chain_sets_need_build.uniq.flatten.include?(build_info[0])
+            
             spec_filename = File.basename(build_info[2])
 
             # commands to bump spec of chain build members 
             bumpspec_cmd = "rpmdev-bumpspec -c '- bump for chainbuild' #{spec_filename}"
             git_add_bumpspec = "git add #{spec_filename}; git commit -m 'Bumping Release: for chainbuild'"
             tag_nochangelog = "tito tag --keep-version --no-auto-changelog"
-            git_fetch_push_tags = "git fetch --tags && git pull && git push origin master && git push --tags"
+            git_fetch_push_tags = "git fetch --tags && git pull && git push origin #{branch} && git push --tags"
 
             # tito throws a permissions error if it tries to write the same
             # filename out twice and then it will stack trace
@@ -240,8 +255,8 @@ class Release < Thor
         end
       end
 
-      if need_chain_build
-        CHAIN_BUILD_SETS.each do | chain_set | 
+      unless chain_sets_need_build.empty?
+        chain_sets_need_build.uniq.each do | chain_set | 
           puts "Brew chainbuilding for: #{chain_set.join(" : ")}"
 
           chain_scm_urls = []
