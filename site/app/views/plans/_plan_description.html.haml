@@ -1,11 +1,19 @@
-.plan
-  %h3= show_plan.name
-  %p= show_plan.description
-  %ol
-    - show_plan.features.each do |f|
-      %li=  "#{f.name}: #{f.value}"
-      - if f.name == 'Free Gears'
-        %li= "Max Gears: #{show_plan.max_gears}"
-        %li= "Gear Sizes: #{show_plan.gear_sizes.join(' and ')}"
+:ruby
+  #Rails.logger.debug plan.to_yaml
+  plan_items = Hash[plan.features.map{|x| [x.name,x.value] }]
+  price = plan_items.delete('Price')
+.plan{:id => plan.name.downcase}
+  %h3
+    = plan.name
+    %span.pull-right= price
+  %p
+    %em= plan.description
+  - if plan.respond_to?(:summary)
+    %p= plan.summary
+  %ul
+    - plan.features.each do |feature|
+      - next if feature.name == "Price"
+      %li= "#{feature.name}: #{feature.value}"
   - if select_button != ''
-    = link_to select_button, account_plan_upgrade_path(show_plan), :class => 'btn'
+    = link_to "Details", pricing_url(:anchor => plan.name.downcase), :class => 'btn'
+    = link_to select_button, account_plan_upgrade_path(plan), :class => 'btn btn-primary'
