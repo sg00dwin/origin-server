@@ -838,7 +838,7 @@ popd
           end
 
           unless options.skip_verify? || options.install_required_packages?
-            scp_remote_tests(hostname, options.branch)
+            scp_remote_tests(hostname)
             test_impl(name + '_' + build_num, hostname, instance, conn, options, image_id)
           end
         ensure
