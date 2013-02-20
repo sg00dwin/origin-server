@@ -176,7 +176,7 @@ class LoginFlowsTest < ActionDispatch::IntegrationTest
       assert user.confirm_email
       assert user.accept_terms
 
-      WebUser.any_instance.expects(:roles).at_least_once.returns(['cloud_access_request_1', 'simple_authenticated'])
+      WebUser::Integrated.any_instance.expects(:roles).at_least_once.returns(['cloud_access_request_1', 'simple_authenticated'])
 
       set_user(user)
       login
@@ -197,9 +197,8 @@ class LoginFlowsTest < ActionDispatch::IntegrationTest
       assert user.confirm_email
       assert user.accept_terms
 
-      #WebUser.any_instance.expects(:roles).at_least_once.returns(['simple_authenticated'])
-      WebUser.any_instance.expects(:entitled?).at_least_once.returns(false)
-      WebUser.any_instance.expects(:waiting_for_entitle?).at_least_once.returns(true)
+      WebUser::Integrated.any_instance.expects(:entitled?).at_least_once.returns(false)
+      WebUser::Integrated.any_instance.expects(:waiting_for_entitle?).at_least_once.returns(true)
 
       set_user(user)
       login
