@@ -110,14 +110,11 @@ RedHatCloud::Application.configure do
                                  overpass.css
                                 )
 
-  # FAQ API endpoint
-  config.acct_help_faq_site = 'https://localhost:8118/'
-  config.acct_help_faq_prefix = '/api/v1/faq/'
-  
   # Account Support contact
   config.acct_help_mail_to = 'os.accounts@redhat.com'
 
   Console.configure do |c|
     c.api = :local
+    c.community_url = 'https://www.openshift.com'
   end
 end

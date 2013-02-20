@@ -78,10 +78,6 @@ RedHatCloud::Application.configure do
   config.email_from = 'OpenShift <noreply@openshift.redhat.com>'
   config.marketing_mailing_list = 'Marketing Mailing List <jgurrero@redhat.com>'
 
-  # FAQ API endpoint
-  config.acct_help_faq_site = 'https://localhost:8118/'
-  config.acct_help_faq_prefix = '/api/v1/faq/'
-  
   # Account Support contact
   config.acct_help_mail_to = 'os.accounts@redhat.com'
 

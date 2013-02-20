@@ -1,9 +1,8 @@
-class BlogPost < RestApi::Base
+class BlogPost < CommunityApi::Base
   include RestApi::Cacheable
   allow_anonymous
 
-  self.site = 'https://openshift.redhat.com'
-  self.prefix = '/community/blogs/'
+  self.prefix = '/blogs/'
 
   schema do
     string :title, :summary, :href

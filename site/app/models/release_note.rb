@@ -1,10 +1,9 @@
-class ReleaseNote < RestApi::Base
+class ReleaseNote < CommunityApi::Base
   include RestApi::Cacheable
   allow_anonymous
   singleton
 
-  self.site = 'https://openshift.redhat.com'
-  self.prefix = '/community/releases/'
+  self.prefix = '/releases/'
 
   schema do
     string :title, :summary, :href

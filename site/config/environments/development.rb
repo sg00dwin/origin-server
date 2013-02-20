@@ -66,21 +66,18 @@ RedHatCloud::Application.configure do
   config.twitter_oauth_consumer_secret = 'psNvYg3IOAhWtngxBobajkYWKlus53xkNBQxWz3MU'
   config.twitter_oauth_token = '17620820-rm2UBzOWYrETRh2Ut4rjkGISqmkfdlVKSYcmmAOGt'
   config.twitter_oauth_token_secret = 'aFfOPRBJBckWarMxlWYg3MljK6EgoaKUW9CjFSsaG8'
-  
+
   # Do not compress assets
   config.assets.compress = false
 
   # Expands the lines which load the assets
   config.assets.debug = true
-  
-  # FAQ API endpoint
-  config.acct_help_faq_site = 'https://localhost:8118/'
-  config.acct_help_faq_prefix = '/api/v1/faq/'
-  
+
   # Account Support contact
   config.acct_help_mail_to = 'os.accounts@redhat.com'
 
   Console.configure do |c|
     c.api = (ENV['CONSOLE_API_MODE'] || 'local').to_sym
+    c.community_url = ENV['COMMUNITY_URL'] || 'https://localhost:8118'
   end
 end

@@ -1,9 +1,8 @@
-class Event < RestApi::Base
+class Event < CommunityApi::Base
   include RestApi::Cacheable
   allow_anonymous
 
-  self.site = 'https://openshift.redhat.com'
-  self.prefix = '/community/events/'
+  self.prefix = '/events/'
 
   schema do
     string :title, :href

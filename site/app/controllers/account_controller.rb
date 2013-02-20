@@ -20,7 +20,7 @@ class AccountController < ApplicationController
     @user_on_basic_plan = user_on_basic_plan?
     @post = SupportContact.new(:user => @user)
   end
-  
+
   def contact_support
     @contact = SupportContact.new(params[:support_contact])
     AccountSupportContactMailer.contact_email(@contact).deliver

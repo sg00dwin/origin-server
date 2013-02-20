@@ -1,21 +1,37 @@
-class FaqItem < RestApi::Base
+class FaqItem < CommunityApi::Base
+  include RestApi::Cacheable
   allow_anonymous
 
-  self.site = Rails.application.config.acct_help_faq_site
-  self.prefix = Rails.application.config.acct_help_faq_prefix
-  self.proxy = nil
+  self.prefix = '/api/v1/faq'
 
   schema do
     string :id, :href, :name, :updated, :summary, :body
   end
 
+  cache_method :topten, :expires_in => 10.minutes
+  cache_method :all, :expires_in => 10.minutes
+
   class << self
     def topten
-      find :all, :from => "#{self.prefix}/topten.json"
+      clean(find(:all, :from => "#{self.prefix}/topten.json"))
     end
 
     def all
-      find :all, :from => "#{self.prefix}.json"
+      clean(find(:all, :from => "#{self.prefix}.json"))
+    end
+
+    private
+
+    def clean(faqs)
+      faqs.collect do |faq|
+        h = ActionController::Base.helpers
+
+        faq.name = h.sanitize faq.name
+        faq.body = h.sanitize faq.body
+        faq.summary = h.sanitize faq.summary
+
+        faq
+      end
     end
 
   end
