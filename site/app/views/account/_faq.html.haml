@@ -1,8 +1,7 @@
-%div{'ng-app' => 'openshift', 'ng-controller' => 'FaqController'}
+%h1 Account Help
+%div{'ng-app' => 'openshift', 'ng-controller' => 'FaqController', :class => 'control-group-important'}
   %div
-    %input{:type => 'text', :placeholder => 'Search by keyword', 'ng-model' => 'searchTerm', 'ng-change' => 'filter()'}
-
-  %h1 Frequently Asked Questions
+    %input{:type => 'text', :class => 'span8', :placeholder => 'Search frequently asked questions', 'ng-model' => 'searchTerm', 'ng-change' => 'filter()'}
 
   %div
     %ul{'ng-init' => "topten = #{topten.to_json}; questions = topten",
@@ -22,4 +21,5 @@
               = raw faq.name
           %p
             = raw faq.body
+
 
