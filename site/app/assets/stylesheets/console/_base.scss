@@ -135,9 +135,13 @@ label {color: inherit;}
 ::-moz-selection {background: #f0f392;color: black;}
 ::-selection {background: #f0f392;color: black;}
 
+
+// Code
+// ----------------------------------------
+
 code, pre {
-  background-color: inherit;
-  border: 1px dotted #444;
+	background-color: $preBackground;
+	border: 1px solid $preBorder;
   border-radius: 0 0 0 0;
-  color: #babbbc;
+  color: $preColor;
   }
