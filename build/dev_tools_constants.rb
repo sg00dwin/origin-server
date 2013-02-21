@@ -70,7 +70,7 @@ CUCUMBER_OPTIONS = '--strict -f progress -f junit --out /tmp/rhc/cucumber_result
 IGNORE_PACKAGES = ['bind-local', 'rubygem-rhc', 'openshift-origin-broker', 'rubygem-openshift-origin-auth-mongo', 'rubygem-openshift-origin-dns-bind', 'openshift-origin', 'rubygem-openshift-origin-auth-kerberos', 'openshift-origin-cartridge-postgresql-9.1', 'cartridge-php-5.4', 'openshift-origin-console', 'openshift-origin-util','rubygem-openshift-origin-dns-nsupdate'] 
 $amz_options = {:key_name => KEY_PAIR, :instance_type => TYPE}
 
-BASE_RELEASE_BRANCH = 'libra-rhel-6.3'
+BASE_RELEASE_BRANCH = 'libra-rhel-6.4'
 
 JENKINS_BUILD_TOKEN = 'libra1'
 
