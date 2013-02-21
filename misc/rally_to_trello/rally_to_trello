@@ -35,24 +35,52 @@ end
 tag_to_label_color = {
   'os-documentation' => 'green',
   'TC-approved' => 'yellow',
+  'TC_approved' => 'yellow',
   'os-no-qe' => 'orange',
   'os-security' => 'red',
   'os-DevCut' => 'purple'
 }
 
 board_to_team = { 
-  '50f5d10ff44b270a080031be' => 'Business Integration (Sharks)',
-  #'50fc695dd58223727e00750c' => 'Documentation (Tigers)',
-  #'50fc6852d58223727e0074f0' => 'Enterprise (Eagles)',
-  #'50fc6814d58223727e0074e4' => 'Runtime (Centipedes)',
-  #'50fc6840d58223727e0074ea' => 'User Interface (Barracudas)',
-  #'50fc6840d58223727e0074ea' => 'Design (Pandas)' # Merging with UI
+  #'Business Integration (Sharks)' => '50f5d10ff44b270a080031be',
+  'Documentation (Tigers)' => '50fc695dd58223727e00750c',
+  'Enterprise (Eagles)' => '50fc6852d58223727e0074f0',
+  'Runtime (Centipedes)' => '50fc6814d58223727e0074e4',
+  #'User Interface (Barracudas)' => '50fc6840d58223727e0074ea',
+  #'Design (Pandas)' => '50fc6840d58223727e0074ea' # Merging with UI
 }
+
+title_tag_mapping = { 
+  "os-billing" => "billing",
+  "os-billing-summit-2013" => "summit2013",
+  "os-public" => "public",
+  "os-open-sourcing" => "openSourcing",
+  "os-devops" => "devOps",
+  "os-marketing" => "marketing",
+  "os-horizontal-scaling" => "horizontalScaling",
+  "os-backlog-review" => "backlogReview",
+  "os-doc-approved" => "docApproved",
+  "os-docs-ready" => "docReady",
+  "os-crossroads" => "crossroads",
+  "os-latest-lang-versions" => "latestLangVersions",
+  "os-metrics-monitoring" => "metricsMonitoring",
+  "os-no-sql" => "noSql",
+  "os-JBoss-Integration" => "jboss",
+  "os-onCloud-IDE" => "onCloudIDE",
+  "os-capture" => "capture",
+  "os-new-console" => "newConsole"
+}
+
+
+
+
+
 
 command :run do |c|
   c.syntax = "#{name}"
 
   c.option "--dry-run" , "Check what would happen if you actually ran it"
+  c.option "--delete-all-from-trello" , "Delete everything from the target boards"
 
   c.description = "Run available reports"
   c.action do |args, options|
@@ -75,9 +103,10 @@ command :run do |c|
     stories = stories.sort_by{|story| story.rank.to_i}
     stories_with_attachments = []
     failures = []
+    title_tags = []
+    deleted = {}
     count = 0
-
-    board_to_team.each do |board_id, team_name|
+    board_to_team.each do |team_name, board_id|
       new_list = nil
       backlog_list = nil
       summit_list = nil
@@ -96,6 +125,17 @@ command :run do |c|
       if new_list.nil? or backlog_list.nil? or summit_list.nil?
         puts 'New, backlog, and summit lists are required to move'
         exit 1
+      end
+      
+      if options.delete_all_from_trello && !options.dry_run
+        unless deleted[board_id]
+          [new_list, backlog_list, summit_list].each do |list|
+            list.cards.each do |card|
+              card.delete
+            end
+          end
+          deleted[board_id] = true
+        end
       end
 
       stories.each do |story|
@@ -136,7 +176,9 @@ command :run do |c|
                   tags << tag_to_label_color[tag]
                 else
                   summit = true if tag == "os-billing-summit-2013"
+                  tag = title_tag_mapping[tag] if title_tag_mapping[tag] 
                   addtl_tags << tag
+                  title_tags << tag
                 end
               else
                 ready = true
@@ -218,6 +260,8 @@ Copied from #{story.formatted_i_d}"
             end
       
             count += 1
+#            break if count >= 4
+
           end
         rescue Exception => e
           puts e.message
@@ -227,6 +271,7 @@ Copied from #{story.formatted_i_d}"
       end
     end
     puts "Failures: #{failures}"
+    puts "Tags: #{title_tags.uniq.pretty_inspect}"
     puts "Stories processed: #{count}"
     puts "Stories with attachments: #{stories_with_attachments.pretty_inspect}"
   end
