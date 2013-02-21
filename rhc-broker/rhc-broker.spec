@@ -3,7 +3,7 @@
 
 Summary:   Li broker components
 Name:      rhc-broker
-Version: 1.4.12
+Version: 1.4.13
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -146,6 +146,9 @@ if [ ! -f %{_var}/log/openshift/user_action.log ]; then
 fi
 
 %changelog
+* Thu Feb 21 2013 Adam Miller <admiller@redhat.com> 1.4.13-1
+- make the clear pending ops script report what its doing (rchopra@redhat.com)
+
 * Mon Feb 18 2013 Dan McPherson <dmcphers@redhat.com> 1.4.12-1
 - fix rhc-admin-clear-pending-ops (rchopra@redhat.com)
 
