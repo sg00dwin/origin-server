@@ -74,11 +74,13 @@ command :run do |c|
     stories = rally.get_stories
     stories = stories.sort_by{|story| story.rank.to_i}
     stories_with_attachments = []
+    failures = []
     count = 0
 
     board_to_team.each do |board_id, team_name|
       new_list = nil
       backlog_list = nil
+      summit_list = nil
       board = Trello::Board.find(board_id)
       board.lists.each do |list|
         case list.name
@@ -86,119 +88,145 @@ command :run do |c|
           new_list = list
         when 'Backlog'
           backlog_list = list
+        when 'Summit'
+          summit_list = list
         end
       end
 
-      if new_list.nil? or backlog_list.nil?
-        puts 'New and backlog lists are required to move'
+      if new_list.nil? or backlog_list.nil? or summit_list.nil?
+        puts 'New, backlog, and summit lists are required to move'
         exit 1
       end
 
       stories.each do |story|
-        if story.project.to_s.chomp.strip == team_name
-          puts "*************************************"
-          puts "ID: #{story.formatted_i_d}"
-          puts "Name: #{story.name}"
-          puts "Description: #{story.description}"
-          puts "Notes: #{story.notes}"
-          puts "Scheduled State: #{story.schedule_state}"
-          puts "Tags: #{story.tags.pretty_inspect}" 
-          puts "Size: #{story.plan_estimate}"
-          puts "Tasks: #{story.tasks.pretty_inspect}"
-          puts "Rank: #{story.rank.pretty_inspect}"
-          puts "Parent: #{story.parent}"
-          puts "Children: #{story.children.pretty_inspect}"
-          puts "Workspace: #{story.workspace}"
-          puts "Project: #{story.project}"
-          puts "Attachments: #{story.attachments}"
-
-          if story.attachments
-            stories_with_attachments << story.formatted_i_d
-          end
-
-          ready = false
-          tags = []
-          addtl_tags = []
-          story.tags.each do |tag|
-            tag = tag.to_s
-            if tag != 'os-ready'
-              if tag == 'os-docs-online' || tag == 'os-docs-enterprise' || tag == 'os-docs-origin'
-                tag = tag_to_label_color['os-documentation']
-              elsif tag_to_label_color[tag]
-                tags << tag_to_label_color[tag]
-              else
-                addtl_tags << tag
-              end
-            else
-              ready = true
+        begin
+          if story.project.to_s.chomp.strip == team_name
+            puts "*************************************"
+            puts "ID: #{story.formatted_i_d}"
+            puts "Name: #{story.name}"
+            puts "Description: #{story.description}"
+            puts "Notes: #{story.notes}"
+            puts "Scheduled State: #{story.schedule_state}"
+            puts "Tags: #{story.tags.pretty_inspect}" 
+            puts "Size: #{story.plan_estimate}"
+            puts "Tasks: #{story.tasks.pretty_inspect}"
+            puts "Rank: #{story.rank.pretty_inspect}"
+            puts "Parent: #{story.parent}"
+            puts "Children: #{story.children.pretty_inspect}"
+            puts "Workspace: #{story.workspace}"
+            puts "Project: #{story.project}"
+            puts "Attachments: #{story.attachments}"
+            puts "Iteration: #{story.iteration}"
+            puts "Release: #{story.release}"
+          
+            if story.attachments
+              stories_with_attachments << story.formatted_i_d
             end
-          end if story.tags
+
+            ready = false
+            summit = false
+            tags = []
+            addtl_tags = []
+            story.tags.each do |tag|
+              tag = tag.to_s
+              if tag != 'os-ready'
+                if tag == 'os-docs-online' || tag == 'os-docs-enterprise' || tag == 'os-docs-origin'
+                  tags << tag_to_label_color['os-documentation']
+                elsif tag_to_label_color[tag]
+                  tags << tag_to_label_color[tag]
+                else
+                  summit = true if tag == "os-billing-summit-2013"
+                  addtl_tags << tag
+                end
+              else
+                ready = true
+              end
+            end if story.tags
+            tags.uniq!
         
-          list_id = ready ? backlog_list.id : new_list.id
+            list_id = nil
+            if summit
+              list_id = summit_list.id
+            elsif ready
+              list_id = backlog_list.id
+            else
+              list_id = new_list.id
+            end
 
-          addtl_tags_name_addition = ' '
-          addtl_tags.each do |addtl_tag|
-            addtl_tags_name_addition += "[#{addtl_tag}] "
-          end
-          if story.parent
-            addtl_tags_name_addition += "[#{story.parent.to_s}] "
-          end
-          if story.children
-            addtl_tags_name_addition += "[epic] "
-          end
+            addtl_tags_name_addition = ' '
+            addtl_tags.each do |addtl_tag|
+              addtl_tags_name_addition += "[#{addtl_tag}] "
+            end
+            if story.parent
+              addtl_tags_name_addition += "[#{story.parent.to_s}] "
+            end
+            if story.children
+              addtl_tags_name_addition += "[epic] "
+            end
+            if story.release
+              addtl_tags_name_addition += "[Release: #{story.release.to_s}] "
+            end
+            if story.iteration
+              addtl_tags_name_addition += "[#{story.iteration.to_s}] "
+            end
 
-          name = "(#{story.plan_estimate ? story.plan_estimate.to_s : '?'})#{addtl_tags_name_addition}#{story.name}"
+            name = "(#{story.plan_estimate ? story.plan_estimate.to_s : '?'})#{addtl_tags_name_addition}#{story.name}"
 
-          desc = ''
-          if story.description && !story.description.empty?
-            desc = ReverseMarkdown.parse(story.description)
-          end
+            desc = ''
+            if story.description && !story.description.empty?
+              desc = ReverseMarkdown.parse(story.description)
+            end
 
-          notes = ''
-          if story.notes && !story.notes.empty?
-            notes = ReverseMarkdown.parse(story.notes)
-          end
+            notes = ''
+            if story.notes && !story.notes.empty?
+              notes = ReverseMarkdown.parse(story.notes)
+            end
 
-          description = "#{desc}
+            description = "#{desc}
 
 #{notes}
 
 Copied from #{story.formatted_i_d}"
         
-          unless options.dry_run
+            unless options.dry_run
 
-            card = Trello::Card.create({:name => name, :list_id => list_id, :description => description})
-            tags.each do |tag|
-              card.add_label(tag)
-            end
-
-            if story.tasks && !story.tasks.empty?
-              checklist = Trello::Checklist.create({:name => 'Tasks', :board_id => board.id})
-              story.tasks.each do |task|
-                checklist.add_item(task.to_s)
+              card = Trello::Card.create({:name => name, :list_id => list_id, :description => description})
+              tags.each do |tag|
+                card.add_label(tag)
               end
-              checklist.update!
-              card.add_checklist(checklist)
-            end
+
+              if story.tasks && !story.tasks.empty?
+                checklist = Trello::Checklist.create({:name => 'Tasks', :board_id => board.id})
+                story.tasks.each do |task|
+                  checklist.add_item(task.to_s)
+                end
+                checklist.update!
+                card.add_checklist(checklist)
+              end
             
-            if story.children && !story.children.empty?
-              checklist = Trello::Checklist.create({:name => 'Child Stories', :board_id => board.id})
-              story.children.each do |child|
-                checklist.add_item(child.to_s)
+              if story.children && !story.children.empty?
+                checklist = Trello::Checklist.create({:name => 'Child Stories', :board_id => board.id})
+                story.children.each do |child|
+                  checklist.add_item(child.to_s)
+                end
+                checklist.update!
+                card.add_checklist(checklist)
               end
-              checklist.update!
-              card.add_checklist(checklist)
+
+              card.update!
+
             end
-
-            card.update!
-
-          end
       
-          count += 1
-
+            count += 1
+          end
+        rescue Exception => e
+          puts e.message
+          puts e.backtrace
+          failures << story.formatted_i_d
         end
       end
     end
+    puts "Failures: #{failures}"
     puts "Stories processed: #{count}"
     puts "Stories with attachments: #{stories_with_attachments.pretty_inspect}"
   end
