@@ -6,15 +6,10 @@ module Account
 
     def show
       @user = current_user
-      logger.debug @user.inspect
+      @identities = Identity.find @user
+      @show_email = false
 
-      async do
-        @user.load_email_address
-        @identities = Identity.find @user
-        @show_email = @identities.any? {|i| i.id != i.email }
-      end
-
-      async{ begin; user_default_domain; rescue ActiveResource::ResourceNotFound; end }
+      async{ @domain = begin user_default_domain; rescue ActiveResource::ResourceNotFound; end }
 
       async{ @keys = Key.all :as => @user }
       async{ @authorizations = Authorization.all :as => @user }
@@ -28,7 +23,11 @@ module Account
 
       join!(30)
 
-      render :show_extended
+      if not @domain
+        flash[:info] = "You need to set a namespace before you can create applications"
+      elsif @keys.blank?
+        flash[:info] = "You need to set a public key before you can work with application code"
+      end
     end
   end
 end
