@@ -1,0 +1,205 @@
+#!/usr/bin/env ruby
+
+$LOAD_PATH.unshift(File.dirname(__FILE__) + '/lib') unless $LOAD_PATH.include?(File.dirname(__FILE__) + '/lib')
+
+require 'config'
+
+require 'rally_helper'
+require 'trello'
+require 'reverse_markdown'
+require 'nokogiri'
+
+require 'yaml'
+require 'commander/import'
+
+name="#{__FILE__}"
+
+program :name, "Move From Rally To Trello"
+program :version, "1.0.0"
+program :description, "A script move to Trello from Rally"
+
+# This loads the conf files and creates new objects
+#   based on the specified classes
+def load_conf(klass,args,single = false)
+  if single
+    klass.new(args)
+  else
+    Hash[*args.map do |key,val|
+      [key,klass.new(val)]
+    end.flatten]
+  end
+end
+
+
+
+tag_to_label_color = {
+  'os-documentation' => 'green',
+  'TC-approved' => 'yellow',
+  'os-no-qe' => 'orange',
+  'os-security' => 'red',
+  'os-DevCut' => 'purple'
+}
+
+board_to_team = { 
+  '50f5d10ff44b270a080031be' => 'Business Integration (Sharks)',
+  #'50fc695dd58223727e00750c' => 'Documentation (Tigers)',
+  #'50fc6852d58223727e0074f0' => 'Enterprise (Eagles)',
+  #'50fc6814d58223727e0074e4' => 'Runtime (Centipedes)',
+  #'50fc6840d58223727e0074ea' => 'User Interface (Barracudas)',
+  #'50fc6840d58223727e0074ea' => 'Design (Pandas)' # Merging with UI
+}
+
+command :run do |c|
+  c.syntax = "./rally_to_trello"
+
+  c.option "--dry-run" , "Check what would happen if you actually ran it"
+
+  c.description = "Run available reports"
+  c.action do |args, options|
+  
+    rally = load_conf(RallyHelper,CONFIG.rally,true)
+
+    Trello.configure do |config|
+      config.consumer_key = 'key'
+      config.consumer_secret = 'secret'
+      config.oauth_token = 'token'
+      config.oauth_token_secret = 'token_secret'
+    end
+
+    dan = Trello::Member.find("danmcp")
+    puts dan.full_name
+    
+    stories = rally.get_stories
+    stories = stories.sort_by{|story| story.rank.to_i}
+    stories_with_attachments = []
+    count = 0
+
+    board_to_team.each do |board_id, team_name|
+      new_list = nil
+      backlog_list = nil
+      board = Trello::Board.find(board_id)
+      board.lists.each do |list|
+        case list.name
+        when 'New'
+          new_list = list
+        when 'Backlog'
+          backlog_list = list
+        end
+      end
+
+      if new_list.nil? or backlog_list.nil?
+        puts 'New and backlog lists are required to move'
+        exit 1
+      end
+
+      stories.each do |story|
+        if story.project.to_s.chomp.strip == team_name
+          puts "*************************************"
+          puts "ID: #{story.formatted_i_d}"
+          puts "Name: #{story.name}"
+          puts "Description: #{story.description}"
+          puts "Notes: #{story.notes}"
+          puts "Scheduled State: #{story.schedule_state}"
+          puts "Tags: #{story.tags.pretty_inspect}" 
+          puts "Size: #{story.plan_estimate}"
+          puts "Tasks: #{story.tasks.pretty_inspect}"
+          puts "Rank: #{story.rank.pretty_inspect}"
+          puts "Parent: #{story.parent}"
+          puts "Children: #{story.children.pretty_inspect}"
+          puts "Workspace: #{story.workspace}"
+          puts "Project: #{story.project}"
+          puts "Attachments: #{story.attachments}"
+
+          if story.attachments
+            stories_with_attachments << story.formatted_i_d
+          end
+
+          ready = false
+          tags = []
+          addtl_tags = []
+          story.tags.each do |tag|
+            tag = tag.to_s
+            if tag != 'os-ready'
+              if tag == 'os-docs-online' || tag == 'os-docs-enterprise' || tag == 'os-docs-origin'
+                tag = tag_to_label_color['os-documentation']
+              elsif tag_to_label_color[tag]
+                tags << tag_to_label_color[tag]
+              else
+                addtl_tags << tag
+              end
+            else
+              ready = true
+            end
+          end if story.tags
+        
+          list_id = ready ? backlog_list.id : new_list.id
+
+          addtl_tags_name_addition = ' '
+          addtl_tags.each do |addtl_tag|
+            addtl_tags_name_addition += "[#{addtl_tag}] "
+          end
+          if story.parent
+            addtl_tags_name_addition += "[#{story.parent.to_s}] "
+          end
+          if story.children
+            addtl_tags_name_addition += "[epic] "
+          end
+
+          name = "(#{story.plan_estimate ? story.plan_estimate.to_s : '?'})#{addtl_tags_name_addition}#{story.name}"
+
+          desc = ''
+          if story.description && !story.description.empty?
+            desc = ReverseMarkdown.parse(story.description)
+          end
+
+          notes = ''
+          if story.notes && !story.notes.empty?
+            notes = ReverseMarkdown.parse(story.notes)
+          end
+
+          description = "#{desc}
+
+#{notes}
+
+Copied from #{story.formatted_i_d}"
+        
+          unless options.dry_run
+
+            card = Trello::Card.create({:name => name, :list_id => list_id, :description => description})
+            tags.each do |tag|
+              card.add_label(tag)
+            end
+
+            if story.tasks && !story.tasks.empty?
+              checklist = Trello::Checklist.create({:name => 'Tasks', :board_id => board.id})
+              story.tasks.each do |task|
+                checklist.add_item(task.to_s)
+              end
+              checklist.update!
+              card.add_checklist(checklist)
+            end
+            
+            if story.children && !story.children.empty?
+              checklist = Trello::Checklist.create({:name => 'Tasks', :board_id => board.id})
+              story.children.each do |child|
+                checklist.add_item(child.to_s)
+              end
+              checklist.update!
+              card.add_checklist(checklist)
+            end
+
+            card.update!
+
+          end
+      
+          count += 1
+          
+        end
+      end
+    end
+    puts "Stories processed: #{count}"
+    puts "Stories with attachments: #{stories_with_attachments.pretty_inspect}"
+  end
+end
+
+default_command :run
