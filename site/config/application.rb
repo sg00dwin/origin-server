@@ -14,8 +14,7 @@ module RedHatCloud
     # -- all .rb files in that directory are automatically loaded.
 
     # Set logs to somewhere more standard
-    config.paths['log'] =  ENV['RAILS_LOG_PATH'] ||
-                            "/var/log/openshift/site/#{Rails.env}.log"
+    config.paths['log'] = "#{ENV['RAILS_LOG_PATH']}site/#{Rails.env}.log" if ENV['RAILS_LOG_PATH']
 
     # Custom directories with classes and modules you want to be autoloadable.
     # config.autoload_paths += %W(#{config.root}/extras)
