@@ -50,15 +50,17 @@ board_to_team = {
 }
 
 command :run do |c|
-  c.syntax = "./rally_to_trello"
+  c.syntax = "#{name}"
 
   c.option "--dry-run" , "Check what would happen if you actually ran it"
 
   c.description = "Run available reports"
   c.action do |args, options|
   
-    rally = load_conf(RallyHelper,CONFIG.rally,true)
+    rally = load_conf(RallyHelper, CONFIG.rally, true)
 
+    #https://trello.com/1/appKey/generate
+    #https://trello.com/1/connect?key=...&name=MyApp&response_type=token&scope=read,write
     Trello.configure do |config|
       config.consumer_key = 'key'
       config.consumer_secret = 'secret'
@@ -180,7 +182,7 @@ Copied from #{story.formatted_i_d}"
             end
             
             if story.children && !story.children.empty?
-              checklist = Trello::Checklist.create({:name => 'Tasks', :board_id => board.id})
+              checklist = Trello::Checklist.create({:name => 'Child Stories', :board_id => board.id})
               story.children.each do |child|
                 checklist.add_item(child.to_s)
               end
@@ -193,7 +195,7 @@ Copied from #{story.formatted_i_d}"
           end
       
           count += 1
-          
+
         end
       end
     end
