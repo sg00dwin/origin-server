@@ -3,7 +3,7 @@
 
 Summary:   Li broker components
 Name:      rhc-broker
-Version: 1.5.3
+Version: 1.5.4
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -144,6 +144,13 @@ if [ ! -f %{_var}/log/openshift/user_action.log ]; then
 fi
 
 %changelog
+* Wed Feb 20 2013 Adam Miller <admiller@redhat.com> 1.5.4-1
+- open source rhc-admin-clear-pending-ops to oo-admin-clear-pending-ops
+  (rchopra@redhat.com)
+- Merge pull request #906 from rajatchopra/master
+  (dmcphers+openshiftbot@redhat.com)
+- fix framework field for nurture send (rchopra@redhat.com)
+
 * Tue Feb 19 2013 Adam Miller <admiller@redhat.com> 1.5.3-1
 - make the clear pending ops script report what its doing (rchopra@redhat.com)
 - fix rhc-admin-clear-pending-ops (rchopra@redhat.com)
