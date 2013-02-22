@@ -264,12 +264,12 @@ class Release < Thor
           chain_set.each do | pkg |
             head_commit_id = `git ls-remote \
                               git://pkgs.devel.redhat.com/rpms/#{pkg} \
-                              refs/heads/libra-rhel-6.4`.split()[0]
+                              refs/heads/libra-rhel-6`.split()[0]
             
             if $?.exitstatus != 0
               chain_build_failures += "Chainset failed: #{chain_set.join(" : ")} ::\n"
               chain_build_failures += "## git ls-remote failed for #{pkg} ::\n"
-              chain_build_failures += "## git ls-remote git://pkgs.devel.redhat.com/rpms/#{pkg} refs/heads/libra-rhel-6.4\n" 
+              chain_build_failures += "## git ls-remote git://pkgs.devel.redhat.com/rpms/#{pkg} refs/heads/libra-rhel-6\n" 
 
               chain_scm_urls.clear
               break
@@ -280,11 +280,11 @@ class Release < Thor
           end
 
           unless chain_scm_urls.empty?
-            cmd = "brew chain-build libra-rhel-6.4-candidate #{chain_scm_urls.join(" : ")}"
+            cmd = "brew chain-build libra-rhel-6-candidate #{chain_scm_urls.join(" : ")}"
             if push_failures.empty? && run(cmd, :verbose => options.verbose?)
               puts "Done"
             else
-              chain_build_failures += "brew chain-build libra-rhel-6.4-candidate #{chain_scm_urls.join(" : ")}\n" if ($?.exitstatus != 0) 
+              chain_build_failures += "brew chain-build libra-rhel-6-candidate #{chain_scm_urls.join(" : ")}\n" if ($?.exitstatus != 0) 
             end
           end
         end
@@ -516,7 +516,7 @@ class Release < Thor
       if tag_base =~ /^.*rhel-(\d)\.(\d)$/
         pkg_suffix = "el#{$1}_#{$2}"
       else
-        pkg_suffix = "el6_4"
+        pkg_suffix = "el6oso"
       end
   
       # Check the Brew installation

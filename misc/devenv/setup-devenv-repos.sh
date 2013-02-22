@@ -91,8 +91,8 @@ if [[ "$1" == "test" ]]; then
 cat >> /etc/yum.repos.d/devenv.repo <<EOF
 [devenv]
 name=Li repo for Enterprise Linux 6 - $basearch
-baseurl=https://mirror1.ops.rhcloud.com/libra/${2-libra-rhel-6.4}-test/\$basearch/
-        https://mirror2.ops.rhcloud.com/libra/${2-libra-rhel-6.4}-test/\$basearch/
+baseurl=https://mirror1.ops.rhcloud.com/libra/${2-libra-rhel-6}-test/\$basearch/
+        https://mirror2.ops.rhcloud.com/libra/${2-libra-rhel-6}-test/\$basearch/
 failovermethod=priority
 enabled=1
 gpgcheck=0
@@ -104,8 +104,8 @@ sslclientkey=/var/lib/yum/client-key.pem
 
 [devenv-source]
 name=Li repo for Enterprise Linux 6 - $basearch
-baseurl=https://mirror1.ops.rhcloud.com/libra/${2-libra-rhel-6.4}-test/source/SRPMS/
-        https://mirror2.ops.rhcloud.com/libra/${2-libra-rhel-6.4}-test/source/SRPMS/
+baseurl=https://mirror1.ops.rhcloud.com/libra/${2-libra-rhel-6}-test/source/SRPMS/
+        https://mirror2.ops.rhcloud.com/libra/${2-libra-rhel-6}-test/source/SRPMS/
 failovermethod=priority
 enabled=0
 gpgkey=https://mirror1.ops.rhcloud.com/libra/RPM-GPG-KEY-redhat-beta
@@ -121,8 +121,8 @@ else
 cat >> /etc/yum.repos.d/devenv.repo <<EOF
 [devenv]
 name=Li repo for Enterprise Linux 6 - $basearch
-baseurl=https://mirror1.ops.rhcloud.com/libra/${2-libra-rhel-6.4}-${1-candidate}/\$basearch/
-        https://mirror2.ops.rhcloud.com/libra/${2-libra-rhel-6.4}-${1-candidate}/\$basearch/
+baseurl=https://mirror1.ops.rhcloud.com/libra/${2-libra-rhel-6}-${1-candidate}/\$basearch/
+        https://mirror2.ops.rhcloud.com/libra/${2-libra-rhel-6}-${1-candidate}/\$basearch/
 failovermethod=priority
 enabled=1
 gpgcheck=0
@@ -135,8 +135,8 @@ sslclientkey=/var/lib/yum/client-key.pem
 [devenv-source]
 
 name=Li repo for Enterprise Linux 6 - $basearch
-baseurl=https://mirror1.ops.rhcloud.com/libra/${2-libra-rhel-6.4}-${1-candidate}/source/SRPMS/
-        https://mirror2.ops.rhcloud.com/libra/${2-libra-rhel-6.4}-${1-candidate}/source/SRPMS/
+baseurl=https://mirror1.ops.rhcloud.com/libra/${2-libra-rhel-6}-${1-candidate}/source/SRPMS/
+        https://mirror2.ops.rhcloud.com/libra/${2-libra-rhel-6}-${1-candidate}/source/SRPMS/
 failovermethod=priority
 enabled=0
 gpgkey=https://mirror1.ops.rhcloud.com/libra/RPM-GPG-KEY-redhat-beta

@@ -1,11 +1,11 @@
 # mash config file
 
-[libra-rhel-6.4-test]
+[libra-rhel-6-stage]
 rpm_path = %(arch)s/Packages
 repodata_path = %(arch)s/
 source_path = source/SRPMS
 debuginfo = True
-tag = libra-rhel-6.4-test
+tag = libra-rhel-6-stage
 inherit = True
 strict_keys = false
-arches = x86_64
+arches = i386 x86_64
