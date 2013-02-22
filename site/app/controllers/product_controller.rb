@@ -1,21 +1,11 @@
 class ProductController < SiteController
 
   def index
-    @posts = BlogPost.cached.frontpage.first(3) rescue []
-    begin
-      @tweets = Tweet.cached.openshift_tweets.first(4)
-    rescue Exception => e
-      logger.error "Exception fetching tweets: #{e}\n#{e.backtrace.join("\n  ")}"
-      logger.error @tweets.inspect
-      @tweets = [] if ! @tweets
-    end
-    begin
-      @retweets = Tweet.cached.openshift_retweets.first(4)
-    rescue Exception => e
-      logger.error "Exception fetching retweets: #{e}\n#{e.backtrace.join("\n  ")}"
-      logger.error @retweets.inspect
-      @retweets = [] if ! @retweets
-    end
+    redirect_to community_url
+  end
+
+  def legacy_redirect
+    redirect_to community_base_url(params[:route])
   end
 
   def not_found

@@ -35,7 +35,7 @@ class LoginFlowsTest < ActionDispatch::IntegrationTest
   # Make sure unauthenticated users can get to basic pages
   test "browse unauthenticated pages" do
 
-    ['/', '/login', '/account/new', '/account/password/new'].each do |url|
+    ['/login', '/account/new', '/account/password/new'].each do |url|
       get url, nil, {'SCRIPT_NAME' => '/app'}
       assert_response :success, "Requesting #{url}"
     end
@@ -43,10 +43,10 @@ class LoginFlowsTest < ActionDispatch::IntegrationTest
       '/user/new' => '/app/account/new',
       '/user/new/flex' => '/app/account/new',
       '/user/new/express' => '/app/account/new',
-      '/express' => '/community/paas',
-      '/flex' => '/community/paas',
-      '/platform' => '/community/paas',
-      '/getting_started' => '/community/get-started',
+      '/express' => community_base_url('paas'),
+      '/flex' => community_base_url('paas'),
+      '/platform' => community_base_url('paas'),
+      '/getting_started' => community_base_url('get-started'),
     }.each_pair do |url,to|
       get url, nil, {'SCRIPT_NAME' => '/app'}
       assert_redirected_to to, "Requesting #{url} => #{to}"
@@ -85,7 +85,7 @@ class LoginFlowsTest < ActionDispatch::IntegrationTest
 
   test 'user can visit site, login, has cookies' do
     get '/'
-    assert_response :success
+    assert_redirected_to community_url
 
     get_via_redirect '/console'
     assert_response :success
@@ -100,9 +100,11 @@ class LoginFlowsTest < ActionDispatch::IntegrationTest
     get('/account')
     assert_response :success
 
-    get_via_redirect '/logout'
-    assert_response :success
-    assert_equal '/', path
+    get '/logout'
+    assert_redirected_to root_path
+
+    get root_path
+    assert_redirected_to community_url
 
     assert_blank cookies['rh_sso']
     assert_equal 'true', cookies['prev_login']
@@ -114,8 +116,8 @@ class LoginFlowsTest < ActionDispatch::IntegrationTest
       user = new_streamline_user
 
       get '/'
-      assert_response :success
-      assert_select 'a', :text => /sign in/i
+      assert_redirected_to community_url
+
       assert !@controller.previously_signed_in?
 
       get new_account_path
@@ -165,7 +167,8 @@ class LoginFlowsTest < ActionDispatch::IntegrationTest
       assert_redirected_to root_path
 
       follow_redirect!
-      assert_select 'a', :text => /sign in/i
+      assert_redirected_to community_url
+      #assert_select 'a', :text => /sign in/i
       assert @controller.previously_signed_in?
     end
   end

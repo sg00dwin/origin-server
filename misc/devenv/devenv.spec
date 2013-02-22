@@ -239,6 +239,9 @@ rm -rf %{buildroot}
 
 %post
 
+# Ensure httpd can access static content in site/broker (symlinks)
+usermod -G libra_user -a apache
+
 # Setup node.conf for the devenv
 cp -f /etc/openshift/node.conf.libra /etc/openshift/node.conf
 restorecon /etc/openshift/node.conf || :

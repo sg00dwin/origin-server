@@ -1,5 +1,6 @@
 class ApplicationController < ActionController::Base
   include Console::Rescue
+  include Console::CommunityAware
   include Secured
   include AsyncAware
   include BillingAware
@@ -10,6 +11,7 @@ class ApplicationController < ActionController::Base
   rescue_from 'Streamline::Error',
               'Aria::Error', 'Aria::NotAvailable',
               :with => :generic_error
+  rescue_from :with => :generic_error
 
   protected
     def handle_unverified_request
