@@ -72,6 +72,7 @@ RedHatCloud::Application.configure do
 
   # Expands the lines which load the assets
   config.assets.debug = true
+  config.assets.logger = false
 
   Console.configure do |c|
     c.api = (ENV['CONSOLE_API_MODE'] || 'local').to_sym
