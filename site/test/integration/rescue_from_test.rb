@@ -46,7 +46,7 @@ class RescueFromTest < ActionDispatch::IntegrationTest
 
   def test_access_denied_results_in_redirect
     product_controller_raises(AccessDeniedException)
-
+  
     assert_response :redirect
   end
 end

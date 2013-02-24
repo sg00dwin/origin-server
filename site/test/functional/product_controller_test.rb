@@ -25,39 +25,23 @@ class ProductControllerTest < ActionController::TestCase
 
   test 'should be same origin protected' do
     get :index
-    assert_response :success
+    assert_redirected_to community_url
     assert_equal 'SAMEORIGIN', @response.to_a[1]['X-Frame-Options'], @response.inspect
   end
 
   test "should get index unauthorized" do
     get :index
-    assert assigns(:tweets).length > 0
-    assert assigns(:retweets).length > 0
-    assert_response :success
-    assert_select "head title", "OpenShift by Red Hat"
-    assert_select "script", :minimum => 1 do |elements|
-      assert elements.any?{ |e| e['src'].ends_with?('/status.js?id=outage') }
-    end
-    assert_select "ul.news.unstyled > li", :minimum => 1
-    assert_select "#buzz #buzz-retweets .tweet", :minimum => 1
-    assert_select "#buzz #buzz-tweets .tweet", :minimum => 1
+    assert_redirected_to community_url
   end
 
   test "should get index authorized" do
     get(:index, {}, {:login => "test", :ticket => "test" })
-    assert :success
+    assert_redirected_to community_url
   end
 
-  test "should be able to fetch tweets" do
-    begin 
-      assert tweets = Tweet.openshift_tweets
-      assert tweets.length > 0
-
-      assert tweets = Tweet.openshift_retweets
-      assert tweets.length > 0
-    rescue ActiveResource::BadRequest
-      omit("Twitter is rejecting requests because of rate limits")
-    end
+  test "legacy redirector should redirect" do
+    get :legacy_redirect, :route => 'foo'
+    assert_redirected_to community_base_url('foo')
   end
 end
 
