@@ -21,7 +21,7 @@ if exit_code != 0
   exit exit_code
 end
 
-status_code = `curl -s -w %{http_code} --output /dev/null --insecure https://localhost/app`
+status_code = `curl -s -w %{http_code} --output /dev/null --insecure https://localhost/app/login`
 if status_code != '200'
   puts "Tailing last 100 lines of /var/log/openshift/site/httpd/error_log"
   puts `tail -n 100 /var/log/openshift/site/httpd/error_log`

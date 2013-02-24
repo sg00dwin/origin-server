@@ -4,6 +4,7 @@ class GenerateSiteViewTask < GenerateConsoleViewTask
       view.class_eval do
         include routes.url_helpers
         include ApplicationHelper
+        include Console::CommunityAware
         include CommunityHelper
 
         def user_signed_in?

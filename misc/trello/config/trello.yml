@@ -1,0 +1,16 @@
+#https://trello.com/1/appKey/generate
+#https://trello.com/1/connect?key=cf13fc063fa50d55b9ff7da8cd388bcb&name=MyApp&response_type=token&scope=read,write
+---
+:consumer_key: cf13fc063fa50d55b9ff7da8cd388bcb
+:consumer_secret: c5a84c67a4820b6e24b2fefb614f7bb1a1bba4ebd66419f697fb063f608e7f32
+:oauth_token: 47b38e932fde6285bb8e6a8ad9fc4882c15cdbe6436bbeabfcee2bbec1fb5bec
+:oauth_token_secret: c5a84c67a4820b6e24b2fefb614f7bb1a1bba4ebd66419f697fb063f608e7f32
+:broker_id: 50f5d10ff44b270a080031be
+:origin_broker_id: 50fc6a1d6ecd57e86a0075d1
+:documentation_id: 50fc695dd58223727e00750c
+:enterprise_id: 50fc6852d58223727e0074f0
+:runtime_id: 50fc6814d58223727e0074e4
+:origin_runtime_id: 50fc6bb487602f214b003f71
+:ui_id: 50fc6840d58223727e0074ea
+:origin_ui_id: 50fc6c3087602f214b003f86
+:organization_id: openshift
