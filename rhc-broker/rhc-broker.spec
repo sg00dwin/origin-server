@@ -3,7 +3,7 @@
 
 Summary:   Li broker components
 Name:      rhc-broker
-Version: 1.5.4
+Version: 1.5.5
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -144,6 +144,21 @@ if [ ! -f %{_var}/log/openshift/user_action.log ]; then
 fi
 
 %changelog
+* Mon Feb 25 2013 Adam Miller <admiller@redhat.com> 1.5.5-1
+- Revert to original RAILS_LOG_PATH behavior (ccoleman@redhat.com)
+- Merge pull request #920 from
+  smarterclayton/bug_913816_work_around_bad_logtailer
+  (dmcphers+openshiftbot@redhat.com)
+- Bug 913816 - Fix log tailer to pick up the correct config
+  (ccoleman@redhat.com)
+- Merge pull request #918 from
+  smarterclayton/bug_912286_cleanup_robots_misc_for_split
+  (dmcphers+openshiftbot@redhat.com)
+- Bug 912286 - Cleanup robots.txt and others for split (ccoleman@redhat.com)
+- Tweak the log change so that is optional for developers running Rails
+  directly, has same behavior on devenv, and allows more control over the path
+  (ccoleman@redhat.com)
+
 * Wed Feb 20 2013 Adam Miller <admiller@redhat.com> 1.5.4-1
 - open source rhc-admin-clear-pending-ops to oo-admin-clear-pending-ops
   (rchopra@redhat.com)
