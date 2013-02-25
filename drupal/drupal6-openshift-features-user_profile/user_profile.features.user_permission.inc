@@ -518,6 +518,14 @@ function user_profile_user_default_permissions() {
     ),
   );
 
+  // Exported permission: create file content
+  $permissions['create file content'] = array(
+    'name' => 'create file content',
+    'roles' => array(
+      '0' => 'administrator',
+    ),
+  );
+
   // Exported permission: create group content
   $permissions['create group content'] = array(
     'name' => 'create group content',
@@ -648,6 +656,14 @@ function user_profile_user_default_permissions() {
     'roles' => array(
       '0' => 'administrator',
       '1' => 'moderator',
+    ),
+  );
+
+  // Exported permission: delete any file content
+  $permissions['delete any file content'] = array(
+    'name' => 'delete any file content',
+    'roles' => array(
+      '0' => 'administrator',
     ),
   );
 
@@ -787,6 +803,14 @@ function user_profile_user_default_permissions() {
   // Exported permission: delete own faq content
   $permissions['delete own faq content'] = array(
     'name' => 'delete own faq content',
+    'roles' => array(
+      '0' => 'administrator',
+    ),
+  );
+
+  // Exported permission: delete own file content
+  $permissions['delete own file content'] = array(
+    'name' => 'delete own file content',
     'roles' => array(
       '0' => 'administrator',
     ),
@@ -938,6 +962,14 @@ function user_profile_user_default_permissions() {
       '0' => 'administrator',
       '1' => 'blogger',
       '2' => 'moderator',
+    ),
+  );
+
+  // Exported permission: edit any file content
+  $permissions['edit any file content'] = array(
+    'name' => 'edit any file content',
+    'roles' => array(
+      '0' => 'administrator',
     ),
   );
 
@@ -1429,6 +1461,14 @@ function user_profile_user_default_permissions() {
   // Exported permission: edit own faq
   $permissions['edit own faq'] = array(
     'name' => 'edit own faq',
+    'roles' => array(
+      '0' => 'administrator',
+    ),
+  );
+
+  // Exported permission: edit own file content
+  $permissions['edit own file content'] = array(
+    'name' => 'edit own file content',
     'roles' => array(
       '0' => 'administrator',
     ),

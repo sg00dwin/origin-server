@@ -90,7 +90,7 @@
 </style>
 
 <section class="frame frame-primary">
-            
+
               <div class="row-fluid">
                 <div class="column-1">
 
@@ -100,11 +100,13 @@
                     <li>contribute to the wiki</li>
                     <li>vote for new features</li>
                   </ul> 
+
+                  <?php print openshift_status_messages(); ?>
                   <?php print $rendered; ?>
-                  <p class="pull-right smaller"><a href="/app/account/password/new">Forgot your password?</a></p>
+                  <p class="pull-right smaller"><a href="<?php print redhat_sso_change_password_url(); ?>">Forgot your password?</a></p>
                 </div>
                 <div class="column-2">
-                  <h2>Need an account? <a href="">Create one</a></h2>
+                  <h2>Need an account? <a href="<?php print redhat_sso_register_url(); ?>">Create one</a></h2>
                   <ul class="spaced-items">
                     <li>Code and deploy to the cloud in minutes.</li>
                     <li>No-Lock-In. Built on open technologies.</li>

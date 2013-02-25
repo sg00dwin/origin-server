@@ -15,7 +15,7 @@
 
             print '<a class="btn btn-small" href="'.$openshift_server_url.'/app/console">My Apps</a> ';
             if ($user->uid == 0) {
-              print '<a class="btn btn-small" href="'.$openshift_server_url.'/app/account/new">Sign Up</a> ';
+              print '<a class="btn btn-small" href="'.redhat_sso_register_url().'">Sign Up</a> ';
             } else {
               print '<a class="btn btn-small" href="/logout">Sign Out</a> ';
             }

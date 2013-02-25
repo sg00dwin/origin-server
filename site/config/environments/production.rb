@@ -112,5 +112,6 @@ RedHatCloud::Application.configure do
 
   Console.configure do |c|
     c.api = :local
+    c.community_url = 'https://www.openshift.com'
   end
 end
