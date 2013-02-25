@@ -294,7 +294,6 @@ class Release < Thor
             end
           end
         end
-      end
 
       unless requires_rebuild.empty?
         puts "************BEGIN REQUIRES REBUILD****************"
@@ -340,6 +339,7 @@ class Release < Thor
         end
       end
     end
+  end
 
   desc "sync", "Download a build from Brew (using Mash) and sync it to the OpenShift repos"
   method_option :stage, :type => :string, :desc => "Comma-delimited list of packages to sync.  Exclude NVR for latest versions.  (e.g. --stage='rhc, rhc-site-0.73.3-1')"
