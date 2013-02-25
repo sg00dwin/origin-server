@@ -8,8 +8,8 @@
 
 Summary:   OpenShift Site Rails application
 Name:      rhc-site
-Version: 1.5.4
-Release:   2%{?dist}
+Version: 1.5.5
+Release:   1%{?dist}
 Group:     Network/Daemons
 License:   ASL 2.0
 URL:       http://openshift.redhat.com
@@ -172,6 +172,36 @@ fi
 %{sitedir}/public
 
 %changelog
+* Mon Feb 25 2013 Adam Miller <admiller@redhat.com> 1.5.5-1
+- Merge pull request #922 from smarterclayton/bug_909992_more_community_fixes
+  (dmcphers+openshiftbot@redhat.com)
+- Bug 909992 - Fix login errors outside of login (ccoleman@redhat.com)
+- Revert to original RAILS_LOG_PATH behavior (ccoleman@redhat.com)
+- Merge pull request #920 from
+  smarterclayton/bug_913816_work_around_bad_logtailer
+  (dmcphers+openshiftbot@redhat.com)
+- Bug 913816 - Fix log tailer to pick up the correct config
+  (ccoleman@redhat.com)
+- Merge pull request #918 from
+  smarterclayton/bug_912286_cleanup_robots_misc_for_split
+  (dmcphers+openshiftbot@redhat.com)
+- Asset pages need community_aware (ccoleman@redhat.com)
+- Use a more generic redirect to old content, integrate new URL
+  (ccoleman@redhat.com)
+- Set icon sizes class names to correspond to pixels. I believe this is the
+  most sensible path for the time being. (sgoodwin@redhat.com)
+- rename OSicon to openshift-icon (sgoodwin@redhat.com)
+- Bug 912286 - Cleanup robots.txt and others for split (ccoleman@redhat.com)
+- Introduction of OSicon font set includes: - Four font type files -
+  OSicon.dev.svg master file generated from http://icomoon.io/app which will be
+  used for further modifications to the set. - OSicon.css contains core styles
+  - iconfont.css custom styles - inclusion of css within _stylesheets.html.haml
+  for both console and site - New styleguide file for showing entire set
+  (sgoodwin@redhat.com)
+- Tweak the log change so that is optional for developers running Rails
+  directly, has same behavior on devenv, and allows more control over the path
+  (ccoleman@redhat.com)
+
 * Wed Feb 20 2013 Adam Miller <admiller@redhat.com> 1.5.4-2
 - Bump spec for rebuild
 
