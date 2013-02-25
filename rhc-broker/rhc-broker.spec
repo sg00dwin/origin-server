@@ -144,6 +144,9 @@ if [ ! -f %{_var}/log/openshift/user_action.log ]; then
 fi
 
 %changelog
+* Mon Feb 25 2013 Adam Miller <admiller@redhat.com> 1.5.5-2
+- bump Release for fixed build target rebuild (admiller@redhat.com)
+
 * Mon Feb 25 2013 Adam Miller <admiller@redhat.com> 1.5.5-1
 - Revert to original RAILS_LOG_PATH behavior (ccoleman@redhat.com)
 - Merge pull request #920 from
