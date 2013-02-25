@@ -60,6 +60,7 @@ command :list do |c|
       puts "\nBoard Name: #{board.name}"
       lists = board.lists.target
       if options.list
+        lists = []
         lists.each do |list|
           if list.name == options.list
             lists = [list]
