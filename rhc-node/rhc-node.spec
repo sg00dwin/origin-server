@@ -237,6 +237,9 @@ fi
 
 
 %changelog
+* Mon Feb 25 2013 Adam Miller <admiller@redhat.com> 1.5.3-2
+- bump Release for fixed build target rebuild (admiller@redhat.com)
+
 * Mon Feb 25 2013 Adam Miller <admiller@redhat.com> 1.5.3-1
 - Add default NodeLogger configuration (ironcladlou@gmail.com)
 
