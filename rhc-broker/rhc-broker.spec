@@ -3,7 +3,7 @@
 
 Summary:   Li broker components
 Name:      rhc-broker
-Version: 1.5.2
+Version: 1.5.4
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
@@ -82,7 +82,6 @@ mkdir -p -m 770 %{buildroot}%{brokerdir}/tmp/pids
 mkdir -p -m 770 %{buildroot}%{brokerdir}/tmp/sessions
 mkdir -p -m 770 %{buildroot}%{brokerdir}/tmp/sockets
 
-mv %{buildroot}%{brokerdir}/script/rhc-admin-cartridge-do %{buildroot}/%{_bindir}
 mv %{buildroot}%{brokerdir}/script/rhc-admin-migrate %{buildroot}/%{_bindir}
 mv %{buildroot}%{brokerdir}/script/rhc-admin-ctl-usage %{buildroot}/%{_bindir}
 mv %{buildroot}%{brokerdir}/script/rhc-admin-ctl-plan %{buildroot}/%{_bindir}
@@ -113,7 +112,6 @@ rm -rf $RPM_BUILD_ROOT
 %ghost %attr(0660,root,libra_user) %{_var}/log/openshift/broker/development.log
 %{brokerdir}
 %{htmldir}/broker
-%attr(0750,-,-) %{_bindir}/rhc-admin-cartridge-do
 %attr(0750,-,-) %{_bindir}/rhc-admin-migrate
 %attr(0750,-,-) %{_bindir}/rhc-admin-ctl-usage
 %attr(0750,-,-) %{_bindir}/rhc-admin-ctl-plan
@@ -146,6 +144,29 @@ if [ ! -f %{_var}/log/openshift/user_action.log ]; then
 fi
 
 %changelog
+* Wed Feb 20 2013 Adam Miller <admiller@redhat.com> 1.5.4-1
+- open source rhc-admin-clear-pending-ops to oo-admin-clear-pending-ops
+  (rchopra@redhat.com)
+- Merge pull request #906 from rajatchopra/master
+  (dmcphers+openshiftbot@redhat.com)
+- fix framework field for nurture send (rchopra@redhat.com)
+
+* Tue Feb 19 2013 Adam Miller <admiller@redhat.com> 1.5.3-1
+- make the clear pending ops script report what its doing (rchopra@redhat.com)
+- fix rhc-admin-clear-pending-ops (rchopra@redhat.com)
+- nurture send should use uuid for all events as is done with destroy
+  (rchopra@redhat.com)
+- stop passing extra app object (dmcphers@redhat.com)
+- initial git url for nurture (rchopra@redhat.com)
+- Merge pull request #888 from abhgupta/abhgupta-dev
+  (dmcphers+openshiftbot@redhat.com)
+- changes for US3402 - we are returning cartridge rates for all  plans
+  (abhgupta@redhat.com)
+- Remove Auth filter for billing controller (rpenta@redhat.com)
+- minor changes to usage_ext (abhgupta@redhat.com)
+- overriding get_usage_rate method in the usage class (abhgupta@redhat.com)
+- Bug 910076 Split out aria config from production.rb (dmcphers@redhat.com)
+
 * Fri Feb 08 2013 Adam Miller <admiller@redhat.com> 1.5.2-1
 - Merge pull request #873 from pravisankar/dev/ravi/fix-billevent-minor
   (dmcphers+openshiftbot@redhat.com)

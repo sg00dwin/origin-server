@@ -53,6 +53,12 @@ function redhat_page_not_found() {
 }
 
 function redhat_page_access_denied() {
+  global $user;
+  if (user_is_anonymous()) {
+    header('Location: ' . url('user', array('query' => drupal_get_destination(), 'absolute' => TRUE)), TRUE, 302);
+    drupal_exit();
+    #drupal_goto('user', drupal_get_destination());
+  }
   $content = ' <section class="row">
                   <div class="span12">
                     <h2>You do not have permission to access this page</h2>

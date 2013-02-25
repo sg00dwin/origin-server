@@ -8,7 +8,7 @@
 
 Summary:   OpenShift Site Rails application
 Name:      rhc-site
-Version: 1.5.2
+Version: 1.5.4
 Release:   2%{?dist}
 Group:     Network/Daemons
 License:   ASL 2.0
@@ -172,6 +172,29 @@ fi
 %{sitedir}/public
 
 %changelog
+* Wed Feb 20 2013 Adam Miller <admiller@redhat.com> 1.5.4-2
+- Bump spec for rebuild
+
+* Tue Feb 19 2013 Adam Miller <admiller@redhat.com> 1.5.4-1
+- bump site for chainbuild (admiller@redhat.com)
+
+* Tue Feb 19 2013 Adam Miller <admiller@redhat.com> - 1.5.3-2
+- Bump for chainbuild
+
+* Tue Feb 19 2013 Adam Miller <admiller@redhat.com> 1.5.3-1
+- Merge pull request #891 from smarterclayton/bug_907647_remove_calls_to_extend
+  (dmcphers+openshiftbot@redhat.com)
+- Fix remaining unit test (ccoleman@redhat.com)
+- Bug 907647 - Remove calls to Object#extend from Streamline, use delegator
+  instead (ccoleman@redhat.com)
+- Remove test case usage of Object#extend (ccoleman@redhat.com)
+- Bug 909995 - Add logout link to log user out of community and console Bug
+  873918 - When accessing a protected resource in community, take user to login
+  page (ccoleman@redhat.com)
+- Merge pull request #878 from sg00dwin/misc-bugs
+  (dmcphers+openshiftbot@redhat.com)
+- Bug 905859: fix picatcha at mobile resolution (sgoodwin@redhat.com)
+
 * Fri Feb 08 2013 Adam Miller <admiller@redhat.com> 1.5.2-2
 - bump for chainbuild
 

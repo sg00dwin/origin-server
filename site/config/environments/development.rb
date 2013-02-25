@@ -72,6 +72,7 @@ RedHatCloud::Application.configure do
 
   # Expands the lines which load the assets
   config.assets.debug = true
+  config.assets.logger = false
 
   # Account Support contact
   config.acct_help_mail_to = 'os.accounts@redhat.com'

@@ -2,7 +2,7 @@
 
 Summary:   Provides zend-5.6 support
 Name:      openshift-origin-cartridge-zend-5.6
-Version: 1.5.1
+Version: 1.5.2
 Release:   1%{?dist}
 Group:     Development/Languages
 License:   ASL 2.0
@@ -104,6 +104,11 @@ rm -rf %{buildroot}
 %doc %{cartridgedir}/LICENSE
 
 %changelog
+* Tue Feb 19 2013 Adam Miller <admiller@redhat.com> 1.5.2-1
+- Switch from VirtualHosts to mod_rewrite based routing to support high
+  density. (rmillner@redhat.com)
+- Update cart manifests to be compatible with v2 spec (ironcladlou@gmail.com)
+
 * Thu Feb 07 2013 Adam Miller <admiller@redhat.com> 1.5.1-1
 - bump_minor_versions for sprint 24 (admiller@redhat.com)
 

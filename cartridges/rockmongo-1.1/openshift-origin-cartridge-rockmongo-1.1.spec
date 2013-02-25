@@ -2,7 +2,7 @@
 %global frameworkdir %{_libexecdir}/openshift/cartridges/rockmongo-1.1
 
 Name: openshift-origin-cartridge-rockmongo-1.1
-Version: 1.20.1
+Version: 1.20.2
 Release: 1%{?dist}
 Summary: Embedded RockMongo support for OpenShift
 
@@ -59,6 +59,15 @@ rm -rf $RPM_BUILD_ROOT
 %doc %{cartridgedir}/LICENSE
 
 %changelog
+* Tue Feb 19 2013 Adam Miller <admiller@redhat.com> 1.20.2-1
+- Audit of remaining front-end Apache touch points. (rmillner@redhat.com)
+- Switch from VirtualHosts to mod_rewrite based routing to support high
+  density. (rmillner@redhat.com)
+- Merge pull request #885 from jwhonce/dev/cartridge_refactor
+  (dmcphers+openshiftbot@redhat.com)
+- Bug 903530 Set version to framework version (dmcphers@redhat.com)
+- Update cart manifests to be compatible with v2 spec (ironcladlou@gmail.com)
+
 * Thu Feb 07 2013 Adam Miller <admiller@redhat.com> 1.20.1-1
 - bump_minor_versions for sprint 24 (admiller@redhat.com)
 

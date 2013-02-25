@@ -19,7 +19,7 @@ class AccountUpgradesController < ApplicationController
   def new
     plan_id = params[:plan_id]
 
-    aria_user = current_user.extend(Aria::User)
+    aria_user = Aria::UserContext.new(current_user)
 
     async do
       @user = User.find :one, :as => current_user
@@ -40,7 +40,7 @@ class AccountUpgradesController < ApplicationController
   def create
     plan_id = params[:plan_id]
 
-    aria_user = current_user.extend(Aria::User)
+    aria_user = Aria::UserContext.new(current_user)
     @payment_method = aria_user.payment_method
     @billing_info = aria_user.billing_info
 
@@ -61,10 +61,9 @@ class AccountUpgradesController < ApplicationController
   end
 
   def show
-    @user = current_user
-    @user.streamline_type!
-
-    @user.extend Aria::User
+    user = current_user
+    user.streamline_type!
+    @user = Aria::UserContext.new(user)
 
     redirect_to edit_account_plan_upgrade_path and return unless @user.full_user? && @user.has_complete_account?
     redirect_to account_plan_upgrade_payment_method_path and return unless @user.has_valid_payment_method?
@@ -72,10 +71,11 @@ class AccountUpgradesController < ApplicationController
   end
 
   def edit
-    @full_user = current_user.full_user
+    user = Aria::UserContext.new(current_user)
+    @full_user = user.full_user
     @full_user = Streamline::FullUser.test if !@full_user.persisted? && Rails.env.development?
 
-    @billing_info = current_user.extend(Aria::User).billing_info
+    @billing_info = user.billing_info
     copy_user_to_billing(@full_user, @billing_info) unless @billing_info.persisted?
   end
 
@@ -103,7 +103,7 @@ class AccountUpgradesController < ApplicationController
       render :edit and return unless @full_user.promote(user)
     end
 
-    user.extend Aria::User
+    user = Aria::UserContext.new(user)
     begin
       render :edit and return unless user.create_account(:billing_info => @billing_info)
     rescue Aria::AccountExists

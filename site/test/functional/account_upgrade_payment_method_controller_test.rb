@@ -22,14 +22,14 @@ class AccountUpgradePaymentMethodControllerTest < ActionController::TestCase
 
   test "should redirect when aria reports success" do
     with_account_holder
-    mock_controller_user(Aria::User).expects(:has_valid_payment_method?).returns(true)
+    Aria::UserContext.any_instance.expects(:has_valid_payment_method?).returns(true)
     get :direct_update, :plan_id => :megashift
     assert_redirected_to new_account_plan_upgrade_path
   end
 
   test "should redirect when aria reports an error" do
     with_account_holder
-    mock_controller_user(Aria::User).expects(:has_valid_payment_method?).returns(true)
+    Aria::UserContext.any_instance.expects(:has_valid_payment_method?).returns(true)
     get(:direct_create, {:plan_id => :megashift, :error_messages => {
       0 => {
         :error_field => 'server_error',

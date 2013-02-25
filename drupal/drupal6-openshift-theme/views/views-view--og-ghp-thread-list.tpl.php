@@ -70,7 +70,7 @@ New Thread</a></div>
 <?php elseif ($do->perm == 'join'): ?>
 <div><?php print t('You need to !join this group before you can post a new thread.', array('!join' => l(t('join'), 'og/subscribe/'. $do->group->nid))); ?></div>
 <?php elseif (!$user->uid): ?>
-<div><?php print t('!Login to post a new thread.', array('!Login' => l(t('Login'), variable_get('redhat_sso_login_url')))); ?></div>
+<div><?php print t('!Login to post a new thread.', array('!Login' => l(t('Login'), 'user'))); ?></div>
 <?php endif; ?></div>
 <!--div class="forum-header-right"> Place holder for Pager </div-->
 </div>

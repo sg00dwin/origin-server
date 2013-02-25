@@ -7,7 +7,7 @@ module Online
       #
       # Send application data (start, stop, etc)
       #
-      def self.application(login, user_uuid, app_name, user_namespace, type, action, app_uuid, user_agent)
+      def self.application(login, user_uuid, app_name, user_namespace, type, action, app_uuid, user_agent, init_git_url)
         return unless Rails.configuration.analytics[:enabled] && Rails.configuration.analytics[:nurture][:enabled]
         Rails.logger.debug "DEBUG: Sending to Nurture:application: app_uuid='#{app_uuid}' action='#{action}'"
         # Why curl?  So I could & at the end.  We don't want this blocking requests
@@ -19,6 +19,7 @@ module Online
                 --data-urlencode 'application[guid]=#{app_uuid}' \
                 --data-urlencode 'application[uuid]=#{user_uuid}' \
                 --data-urlencode 'application[name]=#{app_name}' \
+                --data-urlencode 'application[initial_git_url]=#{init_git_url}' \
                 --data-urlencode 'application[version]=na' \
                 --data-urlencode 'application[components]=#{type}' \
                 --data-urlencode 'application[user_type]=express' &")

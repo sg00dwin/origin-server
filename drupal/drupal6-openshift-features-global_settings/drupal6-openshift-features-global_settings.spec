@@ -6,7 +6,7 @@
 
 Name:    drupal%{drupal_release}-openshift-features-%{modname}
 Version: 1.5.2
-Release: 1%{?dist}
+Release: 2%{?dist}
 Summary: Openshift Red Hat Custom Forums Feature for Drupal6
 Group:   Applications/Publishing
 License: GPLv2+
@@ -41,6 +41,9 @@ rm -rf $RPM_BUILD_ROOT
 %{drupal_modules}/%{modname}
 
 %changelog
+* Mon Feb 18 2013 Adam Miller <admiller@redhat.com> 1.5.2-2
+- Bump spec for mass drupal rebuild
+
 * Fri Feb 08 2013 Adam Miller <admiller@redhat.com> 1.5.2-1
 - bump Release: for all drupal packages for rebuild (admiller@redhat.com)
 

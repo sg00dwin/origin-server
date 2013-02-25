@@ -122,7 +122,7 @@ class PlanSignupFlowTest < ActionDispatch::IntegrationTest
 
     # Do some direct checking here just to validate
     omit_if_aria_is_unavailable
-    user = WebUser.new(:rhlogin => user.rhlogin).extend(Aria::User)
+    user = Aria::UserContext.new(WebUser.new(:rhlogin => user.rhlogin))
     assert user.has_valid_payment_method?
     assert payment_method = user.payment_method
     assert payment_method.persisted?

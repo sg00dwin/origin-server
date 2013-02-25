@@ -70,10 +70,20 @@ CUCUMBER_OPTIONS = '--strict -f progress -f junit --out /tmp/rhc/cucumber_result
 IGNORE_PACKAGES = ['bind-local', 'rubygem-rhc', 'openshift-origin-broker', 'rubygem-openshift-origin-auth-mongo', 'rubygem-openshift-origin-dns-bind', 'openshift-origin', 'rubygem-openshift-origin-auth-kerberos', 'openshift-origin-cartridge-postgresql-9.1', 'cartridge-php-5.4', 'openshift-origin-console', 'openshift-origin-util','rubygem-openshift-origin-dns-nsupdate'] 
 $amz_options = {:key_name => KEY_PAIR, :instance_type => TYPE}
 
-BASE_RELEASE_BRANCH = 'libra-rhel-6.3'
+BASE_RELEASE_BRANCH = 'libra-rhel-6'
 
 JENKINS_BUILD_TOKEN = 'libra1'
 
 ACCEPT_DEVENV_SCRIPT = '/usr/bin/rhc-accept-devenv'
 
 CHAIN_BUILD_SETS = [ ['rubygem-openshift-origin-console','rhc-site'] ]
+
+CHAIN_BUILD_INITIATORS = ['rubygem-openshift-origin-console']
+
+def guess_os(base_os=nil)
+  "rhel"
+end
+
+def def_constants(base_os)
+  nil
+end

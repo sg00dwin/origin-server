@@ -7,11 +7,11 @@ class BillingInfoController < ApplicationController
   before_filter :user_can_upgrade_plan!
 
   def edit
-    @billing_info = current_user.extend(Aria::User).billing_info
+    @billing_info = Aria::UserContext.new(current_user).billing_info
   end
 
   def update
-    user = current_user.extend Aria::User
+    user = Aria::UserContext.new(current_user)
     @billing_info = Aria::BillingInfo.new params[:aria_billing_info]
     render :edit and return unless user.update_account(:billing_info => @billing_info)
     redirect_to next_path

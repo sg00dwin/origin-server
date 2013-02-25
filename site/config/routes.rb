@@ -1,24 +1,37 @@
 RedHatCloud::Application.routes.draw do
 
-  community_paas = redirect('/community/paas')
-  get_started = redirect('/community/get-started')
-  open_source_download = redirect('/community/open-source/download-origin')
+  def legacy_redirect(route, target, opts={})
+    opts.reverse_merge!(:defaults => {:route => target})
+    opts[route] = 'product#legacy_redirect'
+    match opts
+  end
 
-  # Legacy content redirects
-  match 'access/express(/:request)' => community_paas
-  match 'access/flex(/:request)' => community_paas
-  match 'features' => community_paas, :as => 'features'
-  match 'power' => community_paas
-  match 'about' => community_paas, :as => 'about'
-  match 'express' => community_paas, :as => 'express'
-  match 'flex' => community_paas, :as => 'flex'
-  match 'flex_redirect' => community_paas, :as => 'flex_redirect'
-  match 'platform' => community_paas
-  match 'partners' => redirect('/community/partners')
+  # Content that has been moved to the community
+  legacy_redirect 'access/express(/:request)', 'paas'
+  legacy_redirect 'access/flex(/:request)', 'paas'
+  legacy_redirect 'features', 'paas', :as => 'features'
+  legacy_redirect 'power', 'paas'
+  legacy_redirect 'about', 'paas', :as => 'about'
+  legacy_redirect 'express', 'paas', :as => 'express'
+  legacy_redirect 'flex', 'paas', :as => 'flex'
+  legacy_redirect 'flex_redirect', 'paas', :as => 'flex_redirect'
+  legacy_redirect 'platform', 'paas'
 
-  match 'getting_started' => get_started
-  match 'getting_started/express' => get_started
-  match 'getting_started/flex' => get_started
+  legacy_redirect 'partners', 'partners'
+
+  legacy_redirect 'getting_started', 'get-started'
+  legacy_redirect 'getting_started/express', 'get-started'
+  legacy_redirect 'getting_started/flex', 'get-started'
+
+  legacy_redirect 'opensource', 'open-source/download-origin'
+  legacy_redirect 'opensource/download', 'open-source/download-origin'
+
+  legacy_redirect 'legal', 'legal'
+  legacy_redirect 'legal/site_terms', 'legal/site_terms'
+  legacy_redirect 'legal/services_agreement', 'legal/services_agreement'
+  legacy_redirect 'legal/acceptable_use', 'legal/acceptable_use'
+  legacy_redirect 'legal/openshift_privacy', 'legal/openshift_privacy'
+
 
   match 'getting_started_external/:registration_referrer' => 'getting_started_external#show'
 
@@ -38,10 +51,11 @@ RedHatCloud::Application.routes.draw do
   match 'console/not_found' => 'product#console_not_found'
   match 'console/error' => 'product#console_error'
 
-  # Buzz
+  # External feeds
   match 'twitter/latest_tweets' => 'twitter#latest_tweets'
   match 'twitter/latest_retweets' => 'twitter#latest_retweets'
 
+  # Account Management
   resource :account,
            :controller => :account,
            :only => [:new, :create, :show] do
@@ -111,12 +125,6 @@ RedHatCloud::Application.routes.draw do
 
   match 'legal/acceptance_terms' => 'terms#acceptance_terms', :as => 'acceptance_terms'
 
-  match 'legal' => redirect('/community/legal')
-  match 'legal/site_terms' => redirect('/community/legal/site_terms')
-  match 'legal/services_agreement' => redirect('/community/legal/services_agreement')
-  match 'legal/acceptable_use' => redirect('/community/legal/acceptable_use')
-  match 'legal/openshift_privacy' => redirect('/community/legal/openshift_privacy')
-
   resource :login,
            :controller => "login",
            :only => [:show, :create]
@@ -135,8 +143,6 @@ RedHatCloud::Application.routes.draw do
 
   match 'new_application' => 'application_types#index', :via => :get
 
-  match 'opensource' => open_source_download
-  match 'opensource/download' => open_source_download
   resources   :download,
               :controller => 'download',
               :only => [:show,:index]

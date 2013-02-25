@@ -7,7 +7,7 @@
 
 Summary:       Multi-tenant cloud management system node tools
 Name:          rhc-node
-Version: 1.5.1
+Version: 1.5.2
 Release:       1%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
@@ -49,7 +49,6 @@ Requires:      haproxy
 Requires:      procmail
 Requires:      libevent
 Requires:      libevent-devel
-Requires:      mod_vhost_choke
 Requires:      GeoIP-devel
 Requires:      unixODBC
 Requires:      unixODBC-devel
@@ -210,7 +209,6 @@ fi
 %attr(0750,-,-) %{_bindir}/rhc-init-quota
 %attr(0750,-,-) %{_bindir}/ec2-prep.sh
 %attr(0750,-,-) %{_bindir}/remount-secure.sh
-%attr(0755,-,-) %{_bindir}/rhc-vhost-choke
 %dir %attr(0751,root,root) %{_var}/lib/openshift
 %dir %attr(0750,root,apache) %{_var}/lib/openshift/.httpd.d
 %dir %attr(0700,root,root) %{_var}/run/openshift
@@ -239,6 +237,13 @@ fi
 
 
 %changelog
+* Tue Feb 19 2013 Adam Miller <admiller@redhat.com> 1.5.2-1
+- No more vhosts, so no more rhc-vhost-choke. (rmillner@redhat.com)
+- Switch from VirtualHosts to mod_rewrite based routing to support high
+  density. (rmillner@redhat.com)
+- Update node.conf.libra to latest node.conf from origin-server
+  (jhonce@redhat.com)
+
 * Thu Feb 07 2013 Adam Miller <admiller@redhat.com> 1.5.1-1
 - bump_minor_versions for sprint 24 (admiller@redhat.com)
 

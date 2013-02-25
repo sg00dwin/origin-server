@@ -8,7 +8,7 @@
 
 Summary:   Dependencies for OpenShift development
 Name:      rhc-devenv
-Version: 1.5.2
+Version: 1.5.4
 Release:   1%{?dist}
 Group:     Development/Libraries
 License:   GPLv2
@@ -46,6 +46,7 @@ Requires:  openshift-origin-cartridge-ruby-1.9-scl
 Requires:  openshift-origin-cartridge-zend-5.6
 Requires:  openshift-origin-cartridge-community-python-2.7
 Requires:  openshift-origin-cartridge-community-python-3.3
+Requires:  openshift-origin-cartridge-mock
 Requires:  activemq
 Requires:  activemq-client
 #Requires:  qpid-cpp-server
@@ -238,6 +239,9 @@ rm -rf %{buildroot}
 
 %post
 
+# Ensure httpd can access static content in site/broker (symlinks)
+usermod -G libra_user -a apache
+
 # Setup node.conf for the devenv
 cp -f /etc/openshift/node.conf.libra /etc/openshift/node.conf
 restorecon /etc/openshift/node.conf || :
@@ -356,9 +360,11 @@ sysctl net.netfilter.nf_conntrack_max=1048576
 /usr/libexec/mcollective/update_yaml.rb /etc/mcollective/facts.yaml
 crontab -u root %{devenvdir}/crontab
 
-# enable disk quotas
-/usr/bin/rhc-init-quota
-ls -lZ /var/aquota.user  | grep -q var_t && ( quotaoff /var && restorecon /var/aquota.user && quotaon /var )
+# enable disk quotas, on initial build of image
+[ -f /var/aquota.user ] || (
+  /usr/bin/rhc-init-quota
+  ls -lZ /var/aquota.user  | grep -q var_t && ( quotaoff /var && restorecon /var/aquota.user && quotaon /var )
+)
 
 # Setup swap for devenv
 [ -f /.swap ] || ( /bin/dd if=/dev/zero of=/.swap bs=1024 count=1024000
@@ -669,6 +675,17 @@ restorecon /etc/openshift/node.conf || :
 /sbin/service libra-data restart > /dev/null 2>&1 || :
 
 %changelog
+* Wed Feb 20 2013 Adam Miller <admiller@redhat.com> 1.5.4-1
+- add action required prop (dmcphers@redhat.com)
+
+* Tue Feb 19 2013 Adam Miller <admiller@redhat.com> 1.5.3-1
+- Switch from VirtualHosts to mod_rewrite based routing to support high
+  density. (rmillner@redhat.com)
+- Bug 902243 - Guard for existing quotas (jhonce@redhat.com)
+- Add V2 mock cartridge to devenv.spec (pmorie@gmail.com)
+- syncing jenkins jobs (dmcphers@redhat.com)
+- added pam_cgroup.so to initial sshd pam settings (markllama@gmail.com)
+
 * Fri Feb 08 2013 Adam Miller <admiller@redhat.com> 1.5.2-1
 - US3291 US3292 US3293 - Move community to www.openshift.com
   (ccoleman@redhat.com)

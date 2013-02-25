@@ -1,0 +1,106 @@
+#!/usr/bin/env ruby
+
+$LOAD_PATH.unshift(File.dirname(__FILE__) + '/lib') unless $LOAD_PATH.include?(File.dirname(__FILE__) + '/lib')
+
+require 'config'
+
+require 'trello_helper'
+
+require 'pp'
+require 'yaml'
+require 'commander/import'
+
+name="#{__FILE__}"
+
+program :name, "Trello Utilities"
+program :version, "1.0.0"
+program :description, "An assortment of Trello utilities"
+
+# This loads the conf files and creates new objects
+#   based on the specified classes
+def load_conf(klass,args,single = false)
+  if single
+    klass.new(args)
+  else
+    Hash[*args.map do |key,val|
+      [key,klass.new(val)]
+    end.flatten]
+  end
+end
+
+tag_to_label_color = {
+  'documentation' => 'green',
+  'tc-approved' => 'yellow',
+  'no-qe' => 'orange',
+  'security' => 'red',
+  'devcut' => 'purple'
+}
+
+trello = load_conf(TrelloHelper, CONFIG.trello, true)
+
+command :list do |c|
+  c.syntax = "#{name} list"
+
+  c.option "--list LIST_NAME", "Restrict to a particular list"
+  c.option "--team TEAM_NAME (broker|ui|runtime|enterprise|documentation)", "Restrict to a team"
+
+  c.description = "An assortment of Trello queries"
+  c.action do |args, options|
+    
+    #puts trello.member('danmcp').full_name
+    puts "Organization: #{trello.org.name}"
+
+    if options.team
+      boards = trello.team_boards(options.team)
+    else
+      boards = trello.org_boards
+    end
+    
+    boards.each do |board|
+      puts "\nBoard Name: #{board.name}"
+      lists = board.lists.target
+      if options.list
+        lists = []
+        lists.each do |list|
+          if list.name == options.list
+            lists = [list]
+            break
+          end
+        end
+      end
+      lists.each do |list|
+        cards = list.cards.target
+        if !cards.empty?
+          puts "\n  List: #{list.name}  (#cards #{cards.length})"
+          puts "    Cards:"
+          cards.each_with_index do |card, index|
+            puts "     #{index+1}) #{card.name} (##{card.short_id})"
+            members = card.members
+            if !members.empty?
+              puts "       Assigne(es): #{members.map{|member| member.full_name}.join(',')}"
+            end
+          end
+        end
+      end
+    end
+    #puts trello.org_boards
+  end
+end
+
+command :report do |c|
+  c.syntax = "#{name} report"
+
+  c.description = "An assortment of Trello reporting utilities"
+  c.action do |args, options|
+  end
+end
+
+command :update do |c|
+  c.syntax = "#{name} update"
+
+  c.description = "An assortment of Trello modification utilities"
+  c.action do |args, options|
+  end
+end
+
+default_command :list

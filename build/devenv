@@ -543,14 +543,14 @@ service openshift-port-proxy restart
             end
 
             unless options.exclude_runtime?
-              test_queues[0] << ["Runtime Unit", "cd openshift-test/node; rake unit_test"]
+              test_queues[0] << ["Runtime Unit", "cd openshift-test/node; rake test"]
               (1..4).each do |i|
                 test_queues[i-1] << ["Runtime Group #{i.to_s}", "cucumber #{CUCUMBER_OPTIONS} -t @runtime#{i.to_s} openshift-test/tests"]
               end
             end
 
             unless options.exclude_site?
-              test_queues[0] << ["Site Check Applications",         'cd openshift-test/site; rake test:check:applications']
+              test_queues[0].unshift ["Site Check Applications",         'cd openshift-test/site; rake test:check:applications']
               test_queues[1].unshift ["Site Check Base",            'cd openshift-test/site; rake test:check:base']
               test_queues[1] << ["Site Check Cartridges",           'cd openshift-test/site; rake test:check:cartridges']
               test_queues[2] << ["Site Check Miscellaneous 1",      'cd openshift-test/site; rake test:check:misc1']
@@ -838,7 +838,7 @@ popd
           end
 
           unless options.skip_verify? || options.install_required_packages?
-            scp_remote_tests(hostname, options.branch)
+            scp_remote_tests(hostname)
             test_impl(name + '_' + build_num, hostname, instance, conn, options, image_id)
           end
         ensure

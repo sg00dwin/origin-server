@@ -94,7 +94,7 @@ class StreamlineIntegrationTest < ActionDispatch::IntegrationTest
   test 'should return token and accept it for confirmation' do
     assert confirmed_user
 
-    second_user = Streamline::Base.new(:ticket => confirmed_user.ticket).extend(Streamline::User)
+    second_user = Streamline::UserContext.new(Streamline::Base.new(:ticket => confirmed_user.ticket))
     second_user.establish
     assert_equal confirmed_user.login, second_user.login
   end
@@ -117,7 +117,7 @@ class StreamlineIntegrationTest < ActionDispatch::IntegrationTest
     assert confirmed_user.change_password, confirmed_user.errors.inspect
     assert confirmed_user.errors.empty?
 
-    second_user = Streamline::Base.new.extend(Streamline::User)
+    second_user = Streamline::UserContext.new(Streamline::Base.new)
     second_user.authenticate!(confirmed_user.login, 'testab')
     assert second_user.ticket != confirmed_user.ticket
   end

@@ -29,16 +29,15 @@ function openshift_theme() {
 }
 
 function openshift_preprocess_user_login( &$variables ) {
-  #print_r($variables);
   unset($variables['form']['name']['#description']);
   unset($variables['form']['pass']['#description']);
-  //print_r($variables['form']);
   $variables['form']['name']['#attributes'] = array('class' => 'input-max');
   $variables['form']['pass']['#attributes'] = array('class' => 'input-max', 'autocomplete' => 'off');
   $variables['form']['submit']['#attributes'] = array('class' => 'btn-block-phone btn-large');
   $variables['form']['submit']['#value'] = 'Sign In';
   $variables['form']['name']['#important'] = true;
   $variables['form']['pass']['#important'] = true;
+  #print_r($variables['form']);
   $variables['rendered'] = drupal_render($variables['form']);
 }
 
@@ -515,42 +514,101 @@ function openshift_preprocess_search_result(&$vars) {
 }
 
 function openshift_filter_tips($tips, $long = FALSE, $extra = '') {
-  $output = '';
+	$output = '';
+	if ($long) {
+		$output .= '<bold>' . t('Syntax highlighting of source code can be enabled with the following tags:') . '</bold>';
+		$output .= '<ul><li>' . t('Generic syntax highlighting tags: "<code>&ltcode&gt</code>", "<code>&ltblockcode&gt</code>".') . '</li></ul>';
+		$output .= '<h4>' . t('For language specific syntax highlighting tags:') . '</h4>';
+		$output .= '<table class="table table-bordered table-striped"><thead><tr>' . '<th>Code</th>' . '<th>Syntax</th>' . '</tr></thead>';
+		$output .= '<tbody>' . '<tr><td><code>&ltc&gt</code></td>' . '<td>Used for C code</td></tr>';
+		$output .= '<tr><td><code>&ltcpp&gt</code>' . '<td>Used for C++ code</td></tr>';
+		$output .= '<tr><td><code>&ltdrupal5&gt</code>' . '<td>Used for Drupal 5 code</td></tr>';
+		$output .= '<tr><td><code>&ltdrupal6&gt</code>' . '<td>Used for Drupal 6 code</td></tr>';
+		$output .= '<tr><td><code>&ltjava&gt</code>' . '<td>Used for Java code</td></tr>';
+		$output .= '<tr><td><code>&ltjavascript&gt</code>' . '<td>Used for Javascript code</td></tr>';
+		$output .= '<tr><td><code>&ltphp&gt</code>' . '<td>Used for PHP code</td></tr>';
+		$output .= '<tr><td><code>&ltpython&gt</code>' . '<td>Used for Python code</td></tr>';
+		$output .= '<tr><td><code>&ltruby&gt</code>' . '<td>Used for Ruby code</td></tr>' . '</tbody></table>';
 
-  $multiple = count($tips) > 1;
-  if ($multiple) {
-    $output = t('input formats') .':';
-  }
+		$output .= '<p>' . t('The language for the generic syntax highlighting tags can be specified with one of the attribute(s):<em>type,lang,language,class</em>. The possible values are:') . '</p>';
 
-  if (count($tips)) {
-    if ($multiple) {
-      $output .= '<ul>';
-    }
-    foreach ($tips as $name => $tiplist) {
-      if ($multiple) {
-        $output .= '<li>';
-        $output .= '<strong>'. $name .'</strong>:<br />';
-      }
+		$output .= '<ul><li>' . t('"<code>c</code>" for C code') . '</li>';
+		$output .= '<li>' . t('"<code>cpp</code>" for C++ code') . '</li>';
+		$output .= '<li>' . t('"<code>drupal5</code>" for Drupal 5 code') . '</li>';
+		$output .= '<li>' . t('"<code>drupal6</code>" for Drupal 6 code') . '</li>';
+		$output .= '<li>' . t('"<code>java</code>" for Java code') . '</li>';
+		$output .= '<li>' . t('"<code>javascript</code>" for javascript code') . '</li>';
+		$output .= '<li>' . t('"<code>php</code>" for PHP code') . '</li>';
+		$output .= '<li>' . t('"<code>python</code>" for Pyhton code') . '</li>';
+		$output .= '<li>' . t('"<code>ruby</code>" for Ruby code') . '</li></ul>';
 
-      if (count($tiplist) > 0) {
-        $output .= '<ul class="tips unstyled">';
-        foreach ($tiplist as $tip) {
-          $output .= '<li'. ($long ? ' id="filter-'. str_replace("/", "-", $tip['id']) .'">' : '>') . $tip['tip'] .'</li>';
-        }
-        $output .= '</ul>';
-      }
+		$output .= '<h3>' . t('Options and Tips') . '</h3>';
+		$output .= '<ul><li>' . t('The supported tag styles are <code>&ltfoo&gt</code>, <code>[foo]</code>') . '</li>';
+		$output .= '<li>' .  t('Line numbering can be enabled/disabled with the attribute "linenumbers". Possible values are: "off" for no line numbers, "normal" for normal line numbers and "fancy" for fancy line numbers (every nth line number highlighted). The start line number can be specified with the attribute "start", which implicitly enables normal line numbering. For fancy line numbering the interval for the highlighted line numbers can be specified with the attribute "fancy", which implicitly enables fancy line numbering.') . '</li>';
+		$output .= '<li>' . t('If the source code between the tags contains a newline (e.g. immediatly after the opening tag), the highlighted source code will be displayed as a code block. Otherwise it will be displayed inline.') . '</li>';
+		$output .= '<li>' . t('A title can be added to a code block with the attribute "title".') . '</li></ul>';
 
-      if ($multiple) {
-        $output .= '</li>';
-      }
-    }
-    if ($multiple) {
-      $output .= '</ul>';
-    }
-  }
+		$output .= '<h3>' . t('Defaults') . '</h3>';
+		$output .= '<ul><li>' . t('Default highlighting mode for generic syntax highlighting tags: when no language attribute is specified, no syntax highlighting will be done.');
+		$output .= '<li>' . t('Default line numbering: no line numbers.') . '</li></ul>';
 
-  return $output;
+		$output .= '<h3>' . t('Examples') . '</h3>';
+		$output .= '<table class="table table-bordered table-striped"><thead><tr>' . '<th>You Type</th>' . '<th>You Get</th>' . '</tr></thead>';
+		$output .= '<tbody>' . '<tr><td><pre>&ltcode&gtfoo = "bar";&lt/code&gt</pre> ' . '<td>Inline code with the default synctax highlighting mode</td></tr>';
+		$output .= '<tr><td><pre>&ltcode&gt;</br>foo = "bar"</br>baz = "foz";</br>&ltcode&gt</pre>' . '<td class="text-center">Code block with the default syntax highlighting mode.</td></tr>';
+		$output .= '<tr><td><pre>&ltcode lang="c" linenumbers="normal"&gt</br>foo = "bar";</br>baz = "foz";&lt/code&gt</br></pre></td>' . '<td class="text-center">Code block with syntax highlighting for C source code and normal line numbers.</td></tr>';
+		$output .= '<tr><td><pre>&ltcode language="java" start="23" fancy="7"&gt</br>foo = "bar"</br> baz = "foz";</br>&lt/code&gt</pre></td>' . '<td class="text-center">Code block with syntax highlighting for Java source code,line numbers starting from 23 and highlighted line numbers every 7th line.</td></tr>';
+		$output .= '<tr><td><pre>&ltc&gt</br>foo = "bar";</br>baz = "foz";</br>&lt/c&gt</pre></td>' . '<td class="text-center">Code block with syntax highlighting for C source code.</td></tr>';
+		$output .= '<tr><td><pre>&ltc start="23" fancy="7"&gt</br>foo = "bar";</br>baz = "foz";&ltc&gt</pre>' . '<td class="text-center">Code block with syntax highlighting for C source code,line numbers starting from 23 and highlighted line numbers every 7th line.' . '</tbody></table>';
+
+		$output .= '<h3>' . t('Quick Tips') . '</h3>';
+		$output .= '<ul><li>' . t('Two or more spaces at a line&#039s end = Line break.') . '</li>';
+		$output .= '<li>' . t('*Single asterisks* or _single underscores_ = <em>Emphasis</em>.') . '</li>';
+		$output .= '<li>' . t('**Double** or __double__ = <strong>Strong</strong>.') . '</li>';
+		$output .= '<li>' . t('This is [a link](http://the.link.example.com "The optional title text")') . '</li></ul>';
+
+
+		$output .= '<p>' . t('For complete details on the Markdown syntax, see the <a href="http://daringfireball.net/projects/markdown/syntax">Markdown Documentation</a> and <a href="http://michelf.com/projects/php-markdown/extra/">Markdown Extra Documentation</a> for tables, footnotes, and more. Web page addresses and e-mail addresses turn into links automatically.</br>Allowed HTML tags: &lta&gt &ltem&gt &ltstrong&gt &ltcite&gt &ltcode&gt &ltul&gt &ltol&gt &ltli&gt &ltdl&gt &ltdt&gt &ltdd&gt &ltp&gt &ltbr&gt &ltimg&gt &ltdiv&gt &ltblockcode&gt &ltpre&gt &lth1&gt &lth2&gt &lth3&gt &lth4&gt &lth5&gt &lth6&gt') . '</p>';
+	}
+	return $output;
 }
+// function openshift_filter_tips($tips, $long = FALSE, $extra = '') {
+//   $output = '';
+
+//   $multiple = count($tips) > 1;
+//   if ($multiple) {
+//     $output = '<h2>' . t('Input Formats') .':'. '</h2>';
+//   }
+
+//   if (count($tips)) {
+//     if ($multiple) {
+//       $output .= '<dl>';
+//     }
+//     foreach ($tips as $name => $tiplist) {
+//       if ($multiple) {
+//         $output .= '<li>';
+//         $output .= '<strong>'. $name .'</strong>:<br />';
+//       }
+
+//       if (count($tiplist) > 0) {
+//         $output .= '<ul class="tips unstyled">';
+//         foreach ($tiplist as $tip) {
+//           $output .= '<li'. ($long ? ' id="filter-'. str_replace("/", "-", $tip['id']) .'">' : '>') . $tip['tip'] .'</li>';
+//         }
+//         $output .= '</ul>';
+//       }
+
+//       if ($multiple) {
+//         $output .= '</li>';
+//       }
+//     }
+//     if ($multiple) {
+//       $output .= '</ul>';
+//     }
+//   }
+
+//   return $output;
+// }
 
 function openshift_links($links, $attributes = array('class' => 'links')) {
   

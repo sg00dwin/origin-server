@@ -182,7 +182,23 @@ class Release < Thor
 
       build_failures = ''
       chain_build_failures = ''
-      need_chain_build = false
+      chain_sets_need_build = []
+      
+      # I hate to traverse this more times but this information is needed in
+      # advance of the tito commands so we can bump specs of all members of a 
+      # chain set
+      build_dirs.each do |build_info|
+        if CHAIN_BUILD_INITIATORS.include?(build_info[0])
+
+          CHAIN_BUILD_SETS.each do |chain_set|
+            if chain_set.include?(build_info[0])
+              chain_sets_need_build << chain_set
+            end
+          end
+        end
+      end
+
+
       build_dirs.each do |build_info|
         build_dir = build_info[1]
         working_dir = File.expand_path("../#{build_dir}", File.dirname(__FILE__))
@@ -196,80 +212,85 @@ class Release < Thor
             raise "Your version of tito is no longer supported after the Brew migration to git" if cmd_exit != 0
           end
 
-          if CHAIN_BUILD_SETS.flatten.include?(build_info[0])
-
-            need_chain_build = true
-            spec_filename = File.basename(build_info[2])
-
-            # commands to bump spec of chain build members 
-            bumpspec_cmd = "rpmdev-bumpspec -c '- bump for chainbuild' #{spec_filename}"
-            git_add_bumpspec = "git add #{spec_filename}; git commit -m 'Bumping Release: for chainbuild'"
-            tag_nochangelog = "tito tag --keep-version --no-auto-changelog"
-            git_fetch_push_tags = "git fetch --tags && git pull && git push origin master && git push --tags"
-
-            # tito throws a permissions error if it tries to write the same
-            # filename out twice and then it will stack trace
-            `rm -f /tmp/tito/#{build_info[0].strip}*`
-  
-            puts "=== Chain Build Package Found, Bumping Release ==="
-            puts "=- #{build_info[0]}"
- 
-            unless run(bumpspec_cmd, :verbose => options.verbose?) and
-                      run(git_add_bumpspec, :verbose => options.verbose?) and
-                      run(tag_nochangelog, :verbose => options.verbose?) and
-                      run(git_fetch_push_tags, :verbose => options.verbose?)
-              
-              chain_build_failures += "pushd #{working_dir} > /dev/null; #{bumpspec_cmd}; popd > /dev/null;\n"
-              chain_build_failures += "pushd #{working_dir} > /dev/null; #{git_add_bumpspec}; popd > /dev/null;\n"
-              chain_build_failures += "pushd #{working_dir} > /dev/null; #{tag_nochangelog}; popd > /dev/null;\n"
-              chain_build_failures += "pushd #{working_dir} > /dev/null; #{git_fetch_push_tags}; popd > /dev/null;\n"
-            end
-
-            # --no-build option requires tito v0.4.9-2 or higher, needed for chainbuilds
-            tito_cmd = "tito release brew --no-build < #{options.temp_dir}/answerfile"
-          else
+          # Chain builds are special, will handle their tito release elsewhere
+          unless chain_sets_need_build.flatten.uniq.include?(build_info[0])
             tito_cmd = "tito release brew < #{options.temp_dir}/answerfile"
-          end
-          
-          # Build the RPM in brew
-          if push_failures.empty? && run(tito_cmd, :verbose => options.verbose?)
-            puts "Done"
-          else
-            build_failures += "pushd #{working_dir} > /dev/null; #{tito_cmd}; popd > /dev/null;\n"
+            # Build the RPM in brew
+            if push_failures.empty? && run(tito_cmd, :verbose => options.verbose?)
+              puts "Done"
+            else
+              build_failures += "pushd #{working_dir} > /dev/null; #{tito_cmd}; popd > /dev/null;\n"
+            end
           end
         end
       end
 
-      if need_chain_build
-        CHAIN_BUILD_SETS.each do | chain_set | 
+      unless chain_sets_need_build.empty?
+        # Hate traversing this *again* but unsure if there's a more clean 
+        # solution ... comments/patches welcome.
+        full_pkg_set = get_packages()
+        
+        chain_set_failures = []
+
+        # --no-build option requires tito v0.4.9-2 or higher, needed for chainbuilds
+        tito_cmd = "tito release brew --no-build < #{options.temp_dir}/answerfile"
+       
+        chain_sets_need_build.uniq.each do | chain_set | 
           puts "Brew chainbuilding for: #{chain_set.join(" : ")}"
+            
+          chain_set.each do | pkg |
+            working_dir = File.expand_path("../#{full_pkg_set[pkg][0]}", File.dirname(__FILE__))
+            inside(working_dir)
+              if push_failures.empty? && run(tito_cmd, :verbose => options.verbose?)
+                puts "Done"
+              else
+                build_failures += "pushd #{working_dir} > /dev/null; #{tito_cmd}; popd > /dev/null;\n"
+                chain_set_failures << chain_set
+              end
+            end
+          end
 
           chain_scm_urls = []
 
-          chain_set.each do | pkg |
-            head_commit_id = `git ls-remote \
-                              git://pkgs.devel.redhat.com/rpms/#{pkg} \
-                              refs/heads/libra-rhel-6.3`.split()[0]
-            
-            if $?.exitstatus != 0
-              chain_build_failures += "Chainset failed: #{chain_set.join(" : ")} ::\n"
-              chain_build_failures += "## git ls-remote failed for #{pkg} ::\n"
-              chain_build_failures += "## git ls-remote git://pkgs.devel.redhat.com/rpms/#{pkg} refs/heads/libra-rhel-6.3\n" 
+          unless chain_set_failures.include? chain_set
+            chain_set.each do | pkg |
+              head_commit_id = `git ls-remote \
+                                git://pkgs.devel.redhat.com/rpms/#{pkg} \
+                                refs/heads/libra-rhel-6`.split()[0]
+              
+              if $?.exitstatus != 0
+                chain_build_failures += "Chainset failed: #{chain_set.join(" : ")} ::\n"
+                chain_build_failures += "## git ls-remote failed for #{pkg} ::\n"
+                chain_build_failures += "## git ls-remote git://pkgs.devel.redhat.com/rpms/#{pkg} refs/heads/libra-rhel-6\n" 
 
-              chain_scm_urls.clear
-              break
+                chain_scm_urls.clear
+                break
+              end
+
+              chain_scm_urls << "git://pkgs.devel.redhat.com/rpms/#{pkg}?##{head_commit_id}"
             end
+          end
 
-            chain_scm_urls << "git://pkgs.devel.redhat.com/rpms/#{pkg}?##{head_commit_id}"
+          chain_set_failures.each do | failed_set |
+            
+            chain_build_failures += "#### Chainset failed: #{failed_set.join(" : ")}::"
+            chain_build_failures += "#### To fix, run the following commands in order, verifying each:"
+            chain_build_failures += "#### one passes before moving to the next"
+            failed_set.each do | pkg |
+              working_dir = File.expand_path("../#{full_pkg_set[pkg][0]}", File.dirname(__FILE__))
+              chain_build_failures += "# pushd #{working_dir} > /dev/null; #{tito_cmd}; popd > /dev/null;"
+            end
+            chain_build_failures += "# for i in #{failed_set.join(" ")} ; do scm+=\"\$(printf \"%s \" \"\$(printf \"%s : \" \"git://pkgs.devel.redhat.com/rpms/$i/?#\$(git ls-remote git://pkgs.devel.redhat.com/rpms/$i refs/heads/libra-rhel-6 | awk '{print $1}')\")\")\"; done;"
+            chain_build_failures += "# brew chain-build libra-rhel-6-dirty-build $\{scm%:*\}"
 
           end
 
           unless chain_scm_urls.empty?
-            cmd = "brew chain-build libra-rhel-6.3-candidate #{chain_scm_urls.join(" : ")}"
+            cmd = "brew chain-build libra-rhel-6-dirty-build #{chain_scm_urls.join(" : ")}"
             if push_failures.empty? && run(cmd, :verbose => options.verbose?)
               puts "Done"
             else
-              chain_build_failures += "brew chain-build libra-rhel-6.3-candidate #{chain_scm_urls.join(" : ")}\n" if ($?.exitstatus != 0) 
+              chain_build_failures += "#{cmd}\n" if ($?.exitstatus != 0) 
             end
           end
         end
@@ -319,7 +340,6 @@ class Release < Thor
         end
       end
     end
-  end
 
   desc "sync", "Download a build from Brew (using Mash) and sync it to the OpenShift repos"
   method_option :stage, :type => :string, :desc => "Comma-delimited list of packages to sync.  Exclude NVR for latest versions.  (e.g. --stage='rhc, rhc-site-0.73.3-1')"
@@ -501,7 +521,7 @@ class Release < Thor
       if tag_base =~ /^.*rhel-(\d)\.(\d)$/
         pkg_suffix = "el#{$1}_#{$2}"
       else
-        pkg_suffix = "el6_3"
+        pkg_suffix = "el6oso"
       end
   
       # Check the Brew installation
