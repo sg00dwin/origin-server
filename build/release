@@ -281,12 +281,12 @@ class Release < Thor
               chain_build_failures += "# pushd #{working_dir} > /dev/null; #{tito_cmd}; popd > /dev/null;"
             end
             chain_build_failures += "# for i in #{failed_set.join(" ")} ; do scm+=\"\$(printf \"%s \" \"\$(printf \"%s : \" \"git://pkgs.devel.redhat.com/rpms/$i/?#\$(git ls-remote git://pkgs.devel.redhat.com/rpms/$i refs/heads/libra-rhel-6 | awk '{print $1}')\")\")\"; done;"
-            chain_build_failures += "# brew chain-build libra-rhel-6-dirty-build $\{scm%:*\}"
+            chain_build_failures += "# brew chain-build libra-rhel-6-dirty $\{scm%:*\}"
 
           end
 
           unless chain_scm_urls.empty?
-            cmd = "brew chain-build libra-rhel-6-dirty-build #{chain_scm_urls.join(" : ")}"
+            cmd = "brew chain-build libra-rhel-6-dirty #{chain_scm_urls.join(" : ")}"
             if push_failures.empty? && run(cmd, :verbose => options.verbose?)
               puts "Done"
             else
