@@ -3,5 +3,5 @@ class @FaqService
 
   constructor: ($http) ->
     @faq = []
-    $http.get('/account/faqs').success (data) =>
+    $http.get('../account/faqs').success (data) =>
       @faq = data
