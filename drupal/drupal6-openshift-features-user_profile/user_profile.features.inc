@@ -62,6 +62,26 @@ function user_profile_imagecache_default_presets() {
 }
 
 /**
+ * Implementation of hook_node_info().
+ */
+function user_profile_node_info() {
+  $items = array(
+    'file' => array(
+      'name' => t('File'),
+      'module' => 'features',
+      'description' => t('For use in distributing files from the community.  Admin access only.'),
+      'has_title' => '1',
+      'title_label' => t('Title'),
+      'has_body' => '0',
+      'body_label' => '',
+      'min_word_count' => '0',
+      'help' => '',
+    ),
+  );
+  return $items;
+}
+
+/**
  * Implementation of hook_views_api().
  */
 function user_profile_views_api() {
