@@ -506,6 +506,7 @@ function user_profile_context_default_contexts() {
         'community' => 'community',
         'community/*' => 'community/*',
         'user/*' => 'user/*',
+        '~user/login' => '~user/login',
         'forums/*' => 'forums/*',
       ),
     ),

@@ -29,16 +29,15 @@ function openshift_theme() {
 }
 
 function openshift_preprocess_user_login( &$variables ) {
-  #print_r($variables);
   unset($variables['form']['name']['#description']);
   unset($variables['form']['pass']['#description']);
-  //print_r($variables['form']);
   $variables['form']['name']['#attributes'] = array('class' => 'input-max');
   $variables['form']['pass']['#attributes'] = array('class' => 'input-max', 'autocomplete' => 'off');
   $variables['form']['submit']['#attributes'] = array('class' => 'btn-block-phone btn-large');
   $variables['form']['submit']['#value'] = 'Sign In';
   $variables['form']['name']['#important'] = true;
   $variables['form']['pass']['#important'] = true;
+  #print_r($variables['form']);
   $variables['rendered'] = drupal_render($variables['form']);
 }
 
