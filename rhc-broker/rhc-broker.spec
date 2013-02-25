@@ -4,7 +4,7 @@
 Summary:   Li broker components
 Name:      rhc-broker
 Version: 1.5.5
-Release:   1%{?dist}
+Release:   2%{?dist}
 Group:     Network/Daemons
 License:   GPLv2
 URL:       http://openshift.redhat.com

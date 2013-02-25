@@ -8,7 +8,7 @@
 Summary:       Multi-tenant cloud management system node tools
 Name:          rhc-node
 Version: 1.5.3
-Release:       1%{?dist}
+Release:       2%{?dist}
 Group:         Network/Daemons
 License:       GPLv2
 URL:           http://openshift.redhat.com
