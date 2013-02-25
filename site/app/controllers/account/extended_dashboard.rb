@@ -3,6 +3,9 @@ module Account
     extend ActiveSupport::Concern
     include DomainAware
     include AsyncAware
+ 
+    # trigger synchronous module load 
+    [Key, Authorization, User, Domain, Plan] if Rails.env.development?
 
     def show
       @user = current_user
