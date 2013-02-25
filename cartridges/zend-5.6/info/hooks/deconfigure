@@ -62,4 +62,5 @@ oo-frontend-disconnect \
     --with-container-uuid "$uuid" \
     --with-container-name "$application" \
     --with-namespace "$namespace" \
-    --path ""
+    --path "" \
+    --path "/ZendServer"
