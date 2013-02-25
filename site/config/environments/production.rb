@@ -110,8 +110,5 @@ RedHatCloud::Application.configure do
                                  overpass.css
                                 )
 
-  Console.configure do |c|
-    c.api = :local
-    c.community_url = 'https://www.openshift.com'
-  end
+  Console.configure(ENV['CONSOLE_CONFIG_FILE'] || '/etc/openshift/console.conf')
 end

@@ -3,8 +3,8 @@ class ReleaseNote < RestApi::Base
   allow_anonymous
   singleton
 
-  self.site = 'https://openshift.redhat.com'
-  self.prefix = '/community/releases/'
+  self.site = Console.config.community_url
+  self.prefix = '/releases/'
 
   schema do
     string :title, :summary, :href

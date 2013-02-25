@@ -107,6 +107,7 @@ bundle install --local
 
 RAILS_ENV=production RAILS_RELATIVE_URL_ROOT=/app \
   RAILS_LOG_PATH=%{buildroot}%{_var}/log/openshift/site/httpd/production.log \
+  CONSOLE_CONFIG_FILE=conf/console.conf \
   bundle exec rake assets:precompile assets:public_pages
 
 rm -rf tmp
@@ -121,6 +122,7 @@ mkdir -p %{buildroot}%{htmldir}
 mkdir -p %{buildroot}%{sitedir}
 mkdir -p %{buildroot}%{sitedir}/run
 mkdir -p %{buildroot}%{sitedir}/tmp/cache/assets
+mkdir -p %{buildroot}/etc/openshift/
 
 mkdir -p %{buildroot}%{_var}/log/openshift/site/
 mkdir -m 770 %{buildroot}%{_var}/log/openshift/site/httpd/
@@ -131,6 +133,8 @@ mkdir -p %{buildroot}%{sitedir}/httpd/run
 cp -r . %{buildroot}%{sitedir}
 ln -s %{sitedir}/public %{buildroot}%{htmldir}/app
 ln -sf /etc/httpd/conf/magic %{buildroot}%{sitedir}/httpd/conf/magic
+
+cp conf/console.conf %{buildroot}/etc/openshift/
 
 %clean
 rm -rf %{buildroot}
@@ -165,6 +169,7 @@ fi
 %{htmldir}/app
 %config(noreplace) %{sitedir}/config/environments/production.rb
 %config(noreplace) %{sitedir}/app/subsites/status/config/hosts.yml
+%config(noreplace) /etc/openshift/console.conf
 %exclude %{sitedir}/public
 
 %files static
