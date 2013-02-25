@@ -8,7 +8,7 @@
 
 Summary:   Dependencies for OpenShift development
 Name:      rhc-devenv
-Version: 1.5.4
+Version: 1.5.5
 Release:   1%{?dist}
 Group:     Development/Libraries
 License:   GPLv2
@@ -675,6 +675,20 @@ restorecon /etc/openshift/node.conf || :
 /sbin/service libra-data restart > /dev/null 2>&1 || :
 
 %changelog
+* Mon Feb 25 2013 Adam Miller <admiller@redhat.com> 1.5.5-1
+- Devenv logs not getting output correctly (ccoleman@redhat.com)
+- Merge pull request #918 from
+  smarterclayton/bug_912286_cleanup_robots_misc_for_split
+  (dmcphers+openshiftbot@redhat.com)
+- Use a more generic redirect to old content, integrate new URL
+  (ccoleman@redhat.com)
+- Bug 912286 - Cleanup robots.txt and others for split (ccoleman@redhat.com)
+- new brew tag and dist-tag (admiller@redhat.com)
+- setup-devenv-repos.sh move to 6.4 (admiller@redhat.com)
+- Tweak the log change so that is optional for developers running Rails
+  directly, has same behavior on devenv, and allows more control over the path
+  (ccoleman@redhat.com)
+
 * Wed Feb 20 2013 Adam Miller <admiller@redhat.com> 1.5.4-1
 - add action required prop (dmcphers@redhat.com)
 
