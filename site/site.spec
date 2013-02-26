@@ -8,7 +8,7 @@
 
 Summary:   OpenShift Site Rails application
 Name:      rhc-site
-Version: 1.5.5
+Version: 1.5.6
 Release:   1%{?dist}
 Group:     Network/Daemons
 License:   ASL 2.0
@@ -177,6 +177,40 @@ fi
 %{sitedir}/public
 
 %changelog
+* Tue Feb 26 2013 Adam Miller <admiller@redhat.com> 1.5.6-1
+- Bug 915602 - Unable to signup (ccoleman@redhat.com)
+- Merge pull request #924 from smarterclayton/community_url_not_available
+  (dmcphers+openshiftbot@redhat.com)
+- Merge pull request #925 from smarterclayton/session_auth_support_2
+  (dmcphers+openshiftbot@redhat.com)
+- The community URL is not available for some operations - use the default
+  config if that is true (ccoleman@redhat.com)
+- Bug 915253 - Eagerly load referenced model classes in development mode
+  (ccoleman@redhat.com)
+- Merge remote-tracking branch 'origin/master' into session_auth_support_2
+  (ccoleman@redhat.com)
+- Merge remote-tracking branch 'origin/master' into session_auth_support_2
+  (ccoleman@redhat.com)
+- Cleanup auth token pages (ccoleman@redhat.com)
+- Tweak the log change so that is optional for developers running Rails
+  directly, has same behavior on devenv, and allows more control over the path
+  (ccoleman@redhat.com)
+- Improvements to authorization pages and the extended dashboard
+  (ccoleman@redhat.com)
+- Allow auth token access from site console, show specific message when
+  expired. (ccoleman@redhat.com)
+- Merge remote-tracking branch 'origin/master' into session_auth_support_2
+  (ccoleman@redhat.com)
+- Support console authorization management (ccoleman@redhat.com)
+- Merge remote-tracking branch 'origin/master' into session_auth_support_2
+  (ccoleman@redhat.com)
+- Merge remote-tracking branch 'origin/master' into session_auth_support_2
+  (ccoleman@redhat.com)
+- Merge branch 'isolate_api_behavior_from_base_controller' into
+  session_auth_support_2 (ccoleman@redhat.com)
+- Changes to the broker to match session auth support in the origin
+  (ccoleman@redhat.com)
+
 * Mon Feb 25 2013 Adam Miller <admiller@redhat.com> 1.5.5-1
 - Merge pull request #922 from smarterclayton/bug_909992_more_community_fixes
   (dmcphers+openshiftbot@redhat.com)
