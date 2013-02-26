@@ -43,11 +43,47 @@ module OpenShiftMigration
           return output, r
         end
 
+        # Its madness trying to parse the collection of Alias,
+        # ProxyPass and RewriteRule stanzas.  Re-run the cartridge
+        # deploy-httpd-proxy hooks.  The proper order appears to be:
+        # 1. Framework + Embedded
+        # 3. HAProxy  (can overwrite anything above)
+        Dir.glob(File.join(gear_home, '*')).map { |d|
+          File.basename(d)
+        }.select { |c|
+          not c.start_with?("haproxy-")
+        }.map { |f|
+          File.join(cartridge_root_dir,f,"info/hooks/deploy-httpd-proxy")
+        }.select { |h| 
+          File.exists?(h)
+        }.each do |hook|
+          o, r = Util.execute_script("#{hook} #{container_name} #{namespace} #{container_uuid}")
+          if r != 0
+            o << "ERROR: Failed to execute #{hook} #{container_name} #{namespace} #{container_uuid}"
+            return output, r
+          end
+        end
+
+        Dir.glob(File.join(gear_home, 'haproxy-*')).map { |d|
+          File.basename(d)
+        }.map { |f|
+          File.join(cartridge_root_dir,f,"info/hooks/deploy-httpd-proxy")
+        }.select { |h|
+           File.exists?(h)
+        }.each do |hook|
+          o, r = Util.execute_script("#{hook} #{container_name} #{namespace} #{container_uuid}")
+          if r != 0
+            o << "ERROR: Failed to execute #{hook} #{container_name} #{namespace} #{container_uuid}"
+            return output, r
+          end
+        end
+
+        # Extract idle and aliases
         server_config.each_line do |l|
-          clean_line = l.sub(/\#.*$/).strip
+          clean_line = l.sub(/\#.*$/,"").strip
 
           connections = []
-          
+
           case clean_line
           when /Alias.*restorer.php/
             o, r = Util.execute_script("oo-frontend-idle #{call_args} 2>&1")
@@ -63,41 +99,6 @@ module OpenShiftMigration
               output << "ERROR: Failed to add alias from: #{clean_line}"
               return output, r
             end
-          end
-        end
-
-        # Its madness trying to parse the collection of Alias,
-        # ProxyPass and RewriteRule stanzas.  Re-run the cartridge
-        # deploy-httpd-proxy hooks.  The proper order appears to be:
-        # 1. Framework + Embedded
-        # 3. HAProxy  (can overwrite anything above)
-        Dir.glob(File.join(gear_home, '*')).map { |d|
-          File.basename(d)
-        }.select { |c|
-          not c.start_with?("haproxy-")
-        }.map { |f|
-          File.join(cartridge_root_dir,f,"info/hooks/remove-httpd-proxy")
-        }.select { |h| 
-          File.exists?(h)
-        }.each do |hook|
-          o, r = Util.execute_script("#{hook} #{container_name} #{namespace} #{container_uuid}")
-          if r != 0
-            o << "ERROR: Failed to execute #{hook} #{container_name} #{namespace} #{container_uuid}"
-            return output, r
-          end
-        end
-
-        Dir.glob(File.join(gear_home, 'haproxy-*')).map { |d|
-          File.basename(d)
-        }.map { |f|
-          File.join(cartridge_root_dir,f,"info/hooks/remove-httpd-proxy")
-        }.select { |h|
-           File.exists?(h)
-        }.each do |hook|
-          o, r = Util.execute_script("#{hook} #{container_name} #{namespace} #{container_uuid}")
-          if r != 0
-            o << "ERROR: Failed to execute #{hook} #{container_name} #{namespace} #{container_uuid}"
-            return output, r
           end
         end
 
