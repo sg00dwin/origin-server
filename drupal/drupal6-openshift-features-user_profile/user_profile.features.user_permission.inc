@@ -591,7 +591,9 @@ function user_profile_user_default_permissions() {
   // Exported permission: create quickstart content
   $permissions['create quickstart content'] = array(
     'name' => 'create quickstart content',
-    'roles' => array(),
+    'roles' => array(
+      '0' => 'authenticated user',
+    ),
   );
 
   // Exported permission: create url aliases
@@ -728,7 +730,10 @@ function user_profile_user_default_permissions() {
   // Exported permission: delete any quickstart content
   $permissions['delete any quickstart content'] = array(
     'name' => 'delete any quickstart content',
-    'roles' => array(),
+    'roles' => array(
+      '0' => 'administrator',
+      '1' => 'moderator',
+    ),
   );
 
   // Exported permission: delete any video content
@@ -879,7 +884,9 @@ function user_profile_user_default_permissions() {
   // Exported permission: delete own quickstart content
   $permissions['delete own quickstart content'] = array(
     'name' => 'delete own quickstart content',
-    'roles' => array(),
+    'roles' => array(
+      '0' => 'authenticated user',
+    ),
   );
 
   // Exported permission: delete own video content
@@ -1033,7 +1040,10 @@ function user_profile_user_default_permissions() {
   // Exported permission: edit any quickstart content
   $permissions['edit any quickstart content'] = array(
     'name' => 'edit any quickstart content',
-    'roles' => array(),
+    'roles' => array(
+      '0' => 'administrator',
+      '1' => 'moderator',
+    ),
   );
 
   // Exported permission: edit any video content
@@ -1556,7 +1566,9 @@ function user_profile_user_default_permissions() {
   // Exported permission: edit own quickstart content
   $permissions['edit own quickstart content'] = array(
     'name' => 'edit own quickstart content',
-    'roles' => array(),
+    'roles' => array(
+      '0' => 'authenticated user',
+    ),
   );
 
   // Exported permission: edit own video content

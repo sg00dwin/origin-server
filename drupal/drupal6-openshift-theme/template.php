@@ -277,6 +277,9 @@ function _openshift_heading(&$vars) {
       $title = $item['title'];
     }
   }
+  elseif ($item['path'] == 'quickstarts') {
+    $type = 'quickstarts';
+  }
   elseif ($item['path'] == 'community') {
     $type = 'community';
   }
@@ -300,6 +303,8 @@ function _openshift_heading(&$vars) {
   case 'kb': $heading = "Knowledge Base"; break; // no title for some reason
   case 'blogs': // no title for some reason
   case 'blog': $heading = "OpenShift Blog"; break;
+  case 'quickstarts':
+  case 'quickstart': $heading = "QuickStarts"; break;
   case 'faq': $heading = "Frequently Asked Questions"; break;
   #case 'videos': // no title for some reason
   #case 'video': $heading = "Videos"; break;

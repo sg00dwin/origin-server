@@ -47,67 +47,18 @@ function application_quickstarts_fieldgroup_default_groups() {
         'description' => '',
       ),
     ),
-    'weight' => '-4',
+    'weight' => '6',
     'fields' => array(
       '0' => 'field_quickstart_trust',
-      '1' => 'field_quickstart_priority',
-      '2' => 'field_quickstart_admin_tags',
-    ),
-  );
-
-  // Exported group: group_quickstart_info
-  $groups['quickstart-group_quickstart_info'] = array(
-    'group_type' => 'standard',
-    'type_name' => 'quickstart',
-    'group_name' => 'group_quickstart_info',
-    'label' => 'Quickstart Info',
-    'settings' => array(
-      'form' => array(
-        'style' => 'fieldset',
-        'description' => '',
-      ),
-      'display' => array(
-        'weight' => '-3',
-        '2' => array(
-          'format' => 'fieldset',
-          'exclude' => 0,
-        ),
-        '3' => array(
-          'format' => 'fieldset',
-          'exclude' => 0,
-        ),
-        'label' => 'above',
-        'teaser' => array(
-          'format' => 'simple',
-          'exclude' => 0,
-        ),
-        'full' => array(
-          'format' => 'simple',
-          'exclude' => 0,
-        ),
-        'token' => array(
-          'format' => 'fieldset',
-          'exclude' => 0,
-        ),
-        '4' => array(
-          'format' => 'fieldset',
-          'exclude' => 0,
-        ),
-        'description' => '',
-      ),
-    ),
-    'weight' => '-6',
-    'fields' => array(
-      '0' => 'field_code_language',
-      '1' => 'field_website',
-      '2' => 'field_quickstart_icon',
+      '1' => 'field_quickstart_icon',
+      '2' => 'field_quickstart_priority',
+      '3' => 'field_quickstart_admin_tags',
     ),
   );
 
   // Translatables
   // Included for use with string extractors like potx.
   t('Quickstart Admin');
-  t('Quickstart Info');
 
   return $groups;
 }
