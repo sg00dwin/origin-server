@@ -10,7 +10,6 @@
     %div.control-group-important
       %input{:type => "hidden", :name => "then", :value => @redirect }
       %input{:type => "hidden", :name => "captcha_secret", :value => @captcha_secret }
-      = form.hidden_field :cloud_access_choice, :value => CloudAccess::EXPRESS
       = form.semantic_errors
       = form.inputs do
         = form.input :email_address, :input_html => { :type => 'email', :class => 'max', :placeholder => 'Valid email address', :autofocus => true }
