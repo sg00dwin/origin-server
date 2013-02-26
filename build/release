@@ -240,7 +240,7 @@ class Release < Thor
             
           chain_set.each do | pkg |
             working_dir = File.expand_path("../#{full_pkg_set[pkg][0]}", File.dirname(__FILE__))
-            inside(working_dir)
+            inside(working_dir) do
               if push_failures.empty? && run(tito_cmd, :verbose => options.verbose?)
                 puts "Done"
               else
@@ -294,6 +294,7 @@ class Release < Thor
             end
           end
         end
+      end
 
       unless requires_rebuild.empty?
         puts "************BEGIN REQUIRES REBUILD****************"
