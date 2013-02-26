@@ -278,6 +278,10 @@ gem install rspec --version 1.3.0 --no-rdoc --no-ri
 gem install fakefs --no-rdoc --no-ri
 gem install httpclient --version 2.3.2 --no-rdoc --no-ri
 
+# Work around issue with mongoid not being tagged into devenv yet,
+# REMOVE ME
+gem install mongoid --version 3.0.19 --no-rdoc --no-ri
+
 # Move over all configs and scripts
 /bin/cp -rf %{devenvdir}/etc/* %{_sysconfdir}
 /bin/cp -rf %{devenvdir}/bin/* %{_bindir}
@@ -617,7 +621,7 @@ done
 # This must be done before the deployment of application templates!
 cd /var/www/openshift/broker
 echo "Creating named test user"
-bundle exec rails runner "u=CloudUser.new(login: 'user_with_multiple_gear_sizes@test.com'); u.save; Lock.create_lock(u)"
+curl -k https://localhost/broker/rest/user -u user_with_multiple_gear_sizes@test.com:pass
 if [ $? -eq 0 ]
 then
   echo "Adding medium gear size to user"
@@ -628,7 +632,7 @@ fi
 
 # Create a test user with additional storage capabilities
 echo "Creating test user:  user_with_extra_storage@test.com"
-bundle exec rails runner "u=CloudUser.new(login: 'user_with_extra_storage@test.com'); u.save; Lock.create_lock(u)"
+curl -k https://localhost/broker/rest/user -u user_with_extra_storage@test.com:pass
 if [ $? -eq 0 ]
 then
   echo "Adding additional storage to user"

@@ -13,6 +13,8 @@ class LogoutController < ApplicationController
     case @cause
     when nil
       redirect_to @redirect if @redirect
+    when 'expired'
+      render :expired
     when 'change_account'
       render :change_account
     end

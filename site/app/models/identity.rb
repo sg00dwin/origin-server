@@ -1,6 +1,6 @@
 class Identity
 
-  attr_accessor :id, :type, :email, :url
+  attr_accessor :id, :type, :email, :url, :created_at, :updated_at, :provider, :uid
 
   def initialize(opts={})
     opts.each_pair do |k,v|

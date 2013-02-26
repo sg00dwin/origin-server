@@ -18,10 +18,16 @@ class ActionController::TestCase
   end
 
   def set_user(user)
-    session[:login] = user.login
-    session[:ticket] = user.ticket
-    session[:streamline_type] = user.streamline_type if user.respond_to? :streamline_type
+    user_to_session(user, session)
     super
+  end
+
+  def user_to_session(user, ses={})
+    ses[:login] = user.login
+    ses[:ticket] = user.ticket
+    ses[:api_ticket] = user.api_ticket
+    ses[:streamline_type] = user.streamline_type if user.respond_to? :streamline_type
+    ses
   end
 end
 
